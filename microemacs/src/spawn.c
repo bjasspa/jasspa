@@ -2072,7 +2072,7 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
      * otherwise it will call waitpid with -1 and loose the exit status of
      * this process */
     alarmState |= meALARM_PIPE_COMMAND ;
-    ffrp = popen((char *) cl, "r") ;
+    meio.rp = popen((char *) cl, "r") ;
     if(cd)
         meChdir(curdir) ;
     TTopen();
@@ -2099,7 +2099,7 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
 #ifdef _UNIX
     ret = meBufferInsertFile(bp,NULL,meRWFLAG_SILENT|meRWFLAG_PRESRVFMOD,0,0,0) ;
     /* close the pipe and get exit status */
-    ws = (meWAIT_STATUS) pclose(ffrp) ;
+    ws = (meWAIT_STATUS) pclose(meio.rp) ;
     if(WIFEXITED(ws))
         systemRet = WEXITSTATUS(ws) ;
     else

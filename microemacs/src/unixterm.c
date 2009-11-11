@@ -312,7 +312,7 @@ meSetupPathsAndUser(char *progname)
 #ifndef _SEARCH_PATH
 #define _SEARCH_PATH _DEFAULT_SEARCH_PATH
 #endif
-    static meUByte lpath[] = _SEARCH_PATH ;
+    static meUByte lpath[] = _SEARCH_PATH;
     struct stat dotstat, pwdstat;
     struct passwd *pwdp;            /* Password structure entry */
     meUByte *ss, buff[meBUF_SIZE_MAX] ;
@@ -458,7 +458,12 @@ meSetupPathsAndUser(char *progname)
             buff[ii] = '\0' ;
             ll = mePathAddSearchPath(ll,evalResult,buff,&gotUserPath) ;
         }
-
+        
+#if MEOPT_BINFS
+        /* also check for the built-in file system */
+        ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "{BFS}",&gotUserPath) ;
+#endif        
+        
         if(!gotUserPath && (homedir != NULL))
         {
             /* We have not found a user path so set ~/ as the user-path

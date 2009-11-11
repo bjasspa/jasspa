@@ -37,8 +37,8 @@ INSTDIR	      = /usr/local/bin
 INSTPROGFLAGS = -s -o -u root -g root -m 0775 -n $(INSTDIR)
 #
 # Always use Xpm from CSW
-MAKEWINDEFS   = -I /opt/csw/X11/include  -D_XPM
-MAKEWINLIBS   = -R /opt/csw/X11/lib/ -L /opt/csw/X11/lib/ -lXpm  
+MAKEWINDEFS   = -I /opt/csw/include  -D_XPM
+MAKEWINLIBS   = -R /opt/csw/lib/ -L /opt/csw/lib/ -lXpm  
 #
 # Local Definitions
 CP            = cp

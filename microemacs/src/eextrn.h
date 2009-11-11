@@ -1448,6 +1448,8 @@ extern int      putenv(const char *s);
 #define isUrlLink(fn)  (isHttpLink(fn) || isFtpLink(fn))
 #define isUrlFile(fn)  (!strncmp((char *)fn,"file:",5))
 
+/* is built-in file system test */
+#define isBfsFile(fn)  ((!strncmp((char *)fn,"bfs://",6))||(!strncmp((char *)fn,"{BFS}",5)))
 
 /* use this with some care */
 #define meFree(x) free(x)
@@ -1490,3 +1492,8 @@ extern int      putenv(const char *s);
 (selhilight.bp=sbp,selhilight.markLineNo=sln,selhilight.markOffset=slo,      \
  selhilight.dotLineNo=eln,selhilight.dotOffset=elo,                          \
  selhilight.flags = SELHIL_ACTIVE|SELHIL_FIXED|SELHIL_CHANGED)
+
+#if MEOPT_BINFS
+extern unsigned char binfs[1];          /* The built in file system data */
+extern bfs_t bfsdev;                    /* Built in file system device */
+#endif

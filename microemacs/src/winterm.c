@@ -5663,6 +5663,10 @@ meSetupPathsAndUser(char *progname)
             buff[ii] = '\0' ;
             ll = mePathAddSearchPath(ll,evalResult,buff,&gotUserPath) ;
         }
+#if MEOPT_BINFS
+        /* also check for the built-in file system */
+        ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "{BFS}",&gotUserPath) ;
+#endif        
         if(!gotUserPath && (appData != NULL))
         {
             /* We have not found a user path so add the $APPDATA as the user-path

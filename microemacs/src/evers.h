@@ -43,8 +43,8 @@
  * THE BUILD DATE OF THE SOFTWARE AND MUST NOT BE MODIFIED AS SUCH */
 #define meCENTURY       "20"          /* Current century. Y2 complient :-) */
 #define meYEAR          "09"          /* Current year */
-#define meMONTH         "10"          /* Current month */
-#define meDAY           "11"          /* Day of the month */
+#define meMONTH         "11"          /* Current month */
+#define meDAY           "09"          /* Day of the month */
 
 /* Version information - Date of build */
 #define	meDATE          meYEAR "/" meMONTH "/" meDAY 

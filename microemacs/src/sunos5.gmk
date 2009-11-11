@@ -44,7 +44,7 @@ LD            = $(CC)
 STRIP         =	strip
 INSTALL       =	install
 CDEBUG        = -Wall -g
-COPTIMISE     = -Wall -O3 -DNDEBUG=1 -Wno-uninitialized -Wno-unknown-pragmas
+COPTIMISE     = -Wall -g -O3 -DNDEBUG=1 -Wno-uninitialized -Wno-unknown-pragmas
 CDEFS         = -D_SUNOS5 -I. -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 
 CONSOLE_DEFS  = -D_ME_CONSOLE
 WINDOW_DEFS   = $(MAKEWINDEFS) -D_ME_WINDOW -I/usr/openwin/include
@@ -52,7 +52,7 @@ NANOEMACS_DEFS= -D_NANOEMACS
 LDDEBUG       =
 LDOPTIMISE    =
 LDFLAGS       = 
-LIBS          = -lnsl -lsocket -lintl
+LIBS          = -lz -lnsl -lsocket -lintl
 CONSOLE_LIBS  = -ltermcap
 WINDOW_LIBS   = $(MAKEWINLIBS) -L/usr/openwin/lib -lX11
 #
@@ -99,12 +99,12 @@ WINDOW_LIBS   = $(MAKEWINLIBS) -L/usr/openwin/lib -lX11
 # Source files
 STDHDR	= ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h \
 	  esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
-	  ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def
+	  ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def bfs.h
 STDSRC	= abbrev.c basic.c bind.c buffer.c crypt.c dirlist.c display.c \
 	  eval.c exec.c file.c fileio.c frame.c hilight.c history.c input.c \
 	  isearch.c key.c line.c macro.c main.c narrow.c next.c osd.c \
 	  print.c random.c regex.c region.c registry.c search.c spawn.c \
-	  spell.c tag.c termio.c time.c undo.c window.c word.c
+	  spell.c tag.c termio.c time.c undo.c window.c word.c bfs.c
 
 PLTHDR  = 
 PLTSRC  = unixterm.c
@@ -156,7 +156,7 @@ mew:	$(OBJ_W)
 mecw:	$(OBJ_B)
 	$(RM) $@
 	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o $@ $(OBJ_B) $(CONSOLE_LIBS) $(WINDOW_LIBS) $(LIBS)
-	$(STRIP) $@
+#	$(STRIP) $@
 
 me:	mecw
 	$(CP) mecw $@

@@ -121,6 +121,62 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
         return meFILETYPE_HTTP ;
     if(isFtpLink(file))
         return meFILETYPE_FTP ;
+#ifdef MEOPT_BINFS
+    if (isBfsFile(file))
+    {
+        bfsstat_t bfs_statbuf;
+        int file_type = meFILETYPE_NOTEXIST ;
+
+        if (bfs_stat (bfsdev, (char *)(file+5), &bfs_statbuf) == 0)
+        {
+            if (bfs_statbuf.st_mode == BFS_TYPE_FILE)
+                file_type = meFILETYPE_REGULAR ;
+            else if (bfs_statbuf.st_mode == BFS_TYPE_DIR)
+            {
+                if(flag & 2)
+                    mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s directory]", file) ;
+                file_type = meFILETYPE_DIRECTORY ;
+            }
+            if (stats != NULL)
+            {
+                /* Get the file size. */
+                stats->stsizeLow = (meUInt) bfs_statbuf.st_size ;
+                /* Set the permissions. */
+                stats->stmode = 0;
+                if (file_type == meFILETYPE_DIRECTORY)
+                {
+#ifdef _DOS
+                    stats->stmode = FA_DIR;
+#endif
+#ifdef _WIN32
+                    stats->stmode = FILE_ATTRIBUTE_DIRECTORY;
+#endif
+#ifdef _UNIX
+                    stats->stmode = S_IXUSR|S_IXGRP|S_IXOTH|0040000;
+#endif
+                }
+#ifdef _WIN32
+                stats->stmode |= FILE_ATTRIBUTE_READONLY;
+                /* Convert the time to Windows format */
+                stats->stmtime = bfs_statbuf.st_utc_mtime ;
+#endif
+#ifdef _DOS
+                stats->stmode |= FA_RDONLY;
+                stats->stmtime = bfs_statbuf.st_utc_mtime;
+#endif
+#ifdef _UNIX
+                stats->stdev = (int) bfsdev;
+                stats->stino = (meUInt) bfs_statbuf.st_bno;
+                stats->stmode |= S_IRGRP|S_IROTH|S_IRUSR;
+                if (file_type == meFILETYPE_REGULAR)
+                    stats->stmode |= 0100000;
+                stats->stmtime = bfs_statbuf.st_utc_mtime;
+#endif
+            }
+        }
+        return file_type;
+    }
+#endif
     if(isUrlFile(file))
         /* skip the file: */
         file += 5 ;
@@ -139,7 +195,7 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
         }
         if((file[ii-1] == DIR_CHAR) || ((ii == 2) && (file[1] == _DRV_CHAR)))
             goto gft_directory ;
-        
+
 #ifdef __DJGPP2__
         ii = meFileGetAttributes(file) ;
         if(ii < 0)
@@ -150,7 +206,7 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
             reg.x.ax = 0x4300 ;
             reg.x.dx = ((unsigned long) file) ;
             intdos(&reg, &reg);
-            
+
             if(reg.x.cflag)
                 return meFILETYPE_NOTEXIST ;
             ii = reg.x.cx ;
@@ -180,7 +236,7 @@ gft_directory:
     {
         DWORD status;
         int   len ;
-        
+
         if(((len = meStrlen(file)) == 0) ||
            (strchr(file,'*') != NULL) || (strchr(file,'?') != NULL))
         {
@@ -192,7 +248,7 @@ gft_directory:
         {
             HANDLE          *fh ;
             WIN32_FIND_DATA  fd ;
-            
+
             if(file[len-1] == DIR_CHAR)
             {
                 meUByte fn[meBUF_SIZE_MAX] ;
@@ -294,7 +350,7 @@ gft_directory:
                     ii += jj ;
                 }
             } while(((jj=lstat((char *)lbuf, &statbuf)) == 0) && (--maxi > 0) && S_ISLNK(statbuf.st_mode)) ;
-            
+
             if(lname != NULL)
             {
                 fileNameCorrect(lbuf,lname,NULL) ;
@@ -400,7 +456,7 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int *gotU
     } ;
     meUByte *pp, *ss, base_name[meBUF_SIZE_MAX] ;
     int ii, ll ;
-    
+
     /* Iterate over all of the paths */
     while(*path_base != '\0')
     {
@@ -416,13 +472,13 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int *gotU
             }
             pp++;
         }
-        
+
         /* Clean up any trailing directory characters */
         if((ll = meStrlen(base_name)) < _ROOT_DIR_LEN)
             continue;
         if(base_name[ll-1] == DIR_CHAR)
             ll-- ;
-        
+
         /* check for base_name/$user-name first */
         if(meUserName != NULL)
         {
@@ -452,7 +508,7 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int *gotU
                 index += ii ;
             }
         }
-        
+
         /* Append the search paths if necessary. We construct the standard
          * JASSPA MicroEmacs paths and then test for the existance of the
          * directory. If the directory exists then we add it to the search
@@ -467,7 +523,7 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int *gotU
             }
             else
                 base_name[ll] = '\0' ;
-            
+
             /* Test the directory for existance, if it does not exist
              * then do not add it as we do not want to search any
              * directory unecessarily. */
@@ -486,7 +542,6 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int *gotU
     }
     return index;
 }
-
 
 /* Look up the existance of a file along the normal or PATH
  * environment variable. Look first in the HOME directory if
@@ -568,6 +623,11 @@ fileLookup(meUByte *fname, meUByte *ext, meUByte flags, meUByte *outName)
 
         /* and try it out */
         fileNameCorrect(buf,outName,NULL) ;
+#if MEOPT_BINFS
+        /* Try to determine the file type. */
+        if (bfs_type (bfsdev, (char *)(outName+5)) == BFS_TYPE_FILE)
+            return 1;
+#endif
 #ifdef _UNIX
         if(flags & meFL_EXEC)
         {
@@ -693,7 +753,7 @@ gwd(meUByte drive)
 #ifdef _DOS
 #ifdef __DJGPP2__
     unsigned int curDrive=0, newDrive, availDrives ;
-    
+
     if(drive != 0)
     {
         _dos_getdrive(&curDrive) ;
@@ -704,7 +764,7 @@ gwd(meUByte drive)
             /* already current drive */
             curDrive = 0;
     }
-    
+
     if(getcwd(dir,meBUF_SIZE_MAX) == NULL)
         dir[0] = '\0' ;
     if(curDrive != 0)
@@ -801,7 +861,7 @@ inputFileName(meUByte *prompt, meUByte *fn, int corFlag)
             buf[ll] = '/' ;
             buf[ll+1] = '\0' ;
         }
-        if(corFlag) 
+        if(corFlag)
             fileNameCorrect(tmp,fn,NULL) ;
     }
     return s ;
@@ -927,6 +987,57 @@ getDirectoryInfo(meUByte *fname)
     FILENODE *cfh=NULL ;
     int noFiles=0;                        /* No files count */
 
+#if MEOPT_BINFS
+    if (isBfsFile (fname))
+    {
+        bfsdir_t dirp;
+        bfsdirent_t *dp;
+        bfsstat_t sbuf;
+        meUByte *ff;
+
+        /* Render the list of files. */
+        curHead = NULL ;
+        meStrcpy(bfname,fname) ;
+        fn = bfname+meStrlen(bfname) ;
+
+        if((dirp = bfs_opendir(bfsdev, (char *)fname+5)) != NULL)
+        {
+            while((dp = bfs_readdir(dirp)) != NULL)
+            {
+                if(((noFiles & 0x0f) == 0) &&
+                   ((curHead = (FILENODE *) meRealloc(curHead,sizeof(FILENODE)*(noFiles+16))) == NULL))
+                    return NULL ;
+                curFile = &(curHead[noFiles++]) ;
+                if((ff = malloc ((dp->len + 1) * sizeof (char))) == NULL)
+                    return NULL ;
+                meStrncpy(ff,(meUByte *)dp->name,dp->len);
+                ff[dp->len] = '\0';
+                curFile->lname = NULL ;
+                curFile->fname = ff ;
+                meStrcpy(fn,ff) ;
+                if (bfs_stat(bfsdev,(char *)bfname+5,&sbuf) != 0)
+                {
+                    sbuf.st_mode = BFS_TYPE_DIR;
+                    sbuf.st_size = 0;
+                }
+                /* construct attribute string */
+                curFile->attrib[0] = (sbuf.st_mode == BFS_TYPE_DIR) ? 'd' : '-' ;
+                curFile->attrib[1] = 'r';
+                curFile->attrib[2] = '-' ;
+                curFile->attrib[3] = (sbuf.st_mode == BFS_TYPE_DIR) ? 'x' : '-' ;
+                curFile->sizeHigh = 0 ;
+                curFile->sizeLow = (meUInt) sbuf.st_size ;
+                curFile->mtime = sbuf.st_utc_mtime;
+#ifdef _DOS
+                curFile->mtime = 0;
+#endif
+            }
+            bfs_closedir(dirp) ;
+        }
+    }
+    else
+#endif
+    {
 #ifdef _UNIX
     DIR    *dirp ;
 #if (defined _DIRENT)
@@ -1088,6 +1199,7 @@ getDirectoryInfo(meUByte *fname)
         FindClose(fh);
     }
 #endif
+    }
     curFile = curHead ;
     /* Build a profile of the current directory. */
     while(--noFiles >= 0)
@@ -1346,7 +1458,11 @@ readin(register meBuffer *bp, meUByte *fname)
             /* Make sure that we can read the file. If we are root then
              * we do not test the 'stat' bits. Root is allowed to read
              * anything */
-            if ((meTestRead (fn)) ||
+            if ((
+#if MEOPT_BINFS
+                (!isBfsFile (fname)) &&
+#endif
+                (meTestRead (fn))) ||
                 (
 #ifdef _UNIX
                  (meUid != 0) &&
@@ -1377,7 +1493,7 @@ readin(register meBuffer *bp, meUByte *fname)
                 if(mlyesno(prompt) <= 0)
                     goto error_end ;
             }
-#endif            
+#endif
 #ifdef _WIN32
             if(!meStatTestSystem(bp->stats))
             {
@@ -1536,7 +1652,7 @@ insertFile(int f, int n)
         if(mlyesno(prompt) <= 0)
             return meABORT ;
     }
-#endif            
+#endif
 #if MEOPT_DIRLIST
     if(s == meFILETYPE_DIRECTORY)
         flags |= meRWFLAG_MKDIR ;
@@ -1551,7 +1667,7 @@ insertFile(int f, int n)
     /* store current line in buffer */
     frameCur->bufferCur->dotLine = frameCur->windowCur->dotLine ;
     frameCur->bufferCur->dotLineNo = frameCur->windowCur->dotLineNo ;   /* must have the line no. correct */
-    
+
     if((n & 2) == 0)
         flags |= meRWFLAG_PRESRVFMOD ;
     if(n & 4)
@@ -1568,10 +1684,10 @@ insertFile(int f, int n)
            ((length = meAtoi(arg)) == 0))
             return meABORT ;
     }
-    
+
     if(((s = meBufferInsertFile(frameCur->bufferCur,fname,flags,uoffset,loffset,length)) > 0) && (n & 2))
         getFileStats(fname,meFINDFILESINGLE_GFS_OPT,&(frameCur->bufferCur->stats),NULL) ;
-        
+
     /* move the mark down 1 line into the correct place */
     frameCur->windowCur->markLine = meLineGetNext(frameCur->windowCur->markLine);
     frameCur->windowCur->markLineNo++ ;
@@ -1745,7 +1861,8 @@ findFileList(meUByte *fname, int bflag, meInt lineno, meUShort colno)
     bufHistNo++ ;
     fileNameCorrect(fname,fileName,&baseName) ;
 
-    if(!isUrlLink(fileName) && fileNameWild(baseName) && meTestRead(fileName))
+    if(!isUrlLink(fileName) && fileNameWild(baseName) &&
+       ((isBfsFile(fileName) || meTestRead(fileName))))
     {
         /* if the base name has a wild card letter (i.e. *, ? '[')
          * and a file with that exact name does not exist then load
@@ -1908,6 +2025,8 @@ writeCheck(meUByte *pathname, int flags, meStat *statp)
 #endif
     if(isUrlLink(pathname))
         return mlwrite (MWABORT,(meUByte *)"Cannot write to: %s",pathname);
+    if(isBfsFile(pathname))
+        return mlwrite (MWABORT,(meUByte *)"Cannot write to: %s",pathname);
 
     /* Quick test for read only. */
 #ifdef _UNIX
@@ -1972,7 +2091,7 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
         /* Quick check on the file write condition */
         if(writeCheck(fn,flags,&stats) <= 0)
             return NULL ;
-        
+
         if(flags & meWRITECHECK_CHECK)
         {
             /*
@@ -1980,7 +2099,7 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
              * other buffer and produce a warning if so.
              */
             meBuffer *bp = bheadp ;
-            
+
             while(bp != NULL)
             {
                 if((bp != frameCur->bufferCur) &&
@@ -2036,7 +2155,7 @@ fileOp(int f, int n)
     {
         if (inputFileName((meUByte *)"Delete file", sfname,1) <= 0)
             rr = 0 ;
-        else if(isHttpLink(sfname))
+        else if (isHttpLink(sfname) || isBfsFile(sfname))
             rr = mlwrite(MWABORT,(meUByte *)"[Cannot delete %s]",sfname);
         else if((n & meFILEOP_CHECK) && !isFtpLink(sfname))
         {
@@ -2124,7 +2243,7 @@ fileOp(int f, int n)
         {
 #ifdef _UNIX
             struct utimbuf fileTimes ;
-            
+
             fileTimes.actime = fileTimes.modtime = time(NULL) + meAtoi(dfname) ;
             utime((char *) sfname,&fileTimes) ;
 #endif
@@ -2192,7 +2311,7 @@ autowriteout(register meBuffer *bp)
            (ffWriteFileOpen(fn,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE,bp) > 0))
         {
             meLine *lp ;
-            
+
             lp = meLineGetNext(bp->baseLine);            /* First line.          */
             while((lp != bp->baseLine) &&
                   (ffWriteFileWrite(meLineGetLength(lp),meLineGetText(lp),
@@ -2269,7 +2388,7 @@ writeOut(register meBuffer *bp, meUInt flags, meUByte *fn)
 #endif
     autowriteremove(bp) ;
     meModeClear(bp->mode,MDEDIT) ;
-    
+
     if(fn != NULL)
     {
 #ifndef _WIN32
@@ -2319,7 +2438,7 @@ static int
 writeout(register meBuffer *bp, int flags)
 {
     meUByte lname[meBUF_SIZE_MAX], *fn ;
-    
+
     if(!meStrcmp(bp->name,"*stdin*"))
         fn = NULL ;
     else if((bp->name[0] == '*') || (bp->fileName == NULL))
@@ -2348,7 +2467,7 @@ writeout(register meBuffer *bp, int flags)
                 if(mlyesno((bp->fileFlag & meBFFLAG_BINARY) ? fileHasBinary:fileHasInLnEn) <= 0)
                     return ctrlg(meFALSE,1) ;
                 bp->fileFlag &= ~(meBFFLAG_BINARY|meBFFLAG_LTDIFF) ;
-            }                
+            }
         }
         fn = (lname[0] == '\0') ? bp->fileName:lname ;
         /* Quick check on the file write condition */
@@ -2403,7 +2522,7 @@ writeBuffer(int f, int n)
         return ctrlg(meFALSE,1);
     if((fn=writeFileChecks(fname,fn,lname,(n & 0x01)|meWRITECHECK_BUFFER)) == NULL)
         return meABORT ;
-    
+
     if(!writeOut(frameCur->bufferCur,((n & 0x02) ? meRWFLAG_IGNRNRRW:0),fn))
         return meFALSE ;
 
@@ -2565,7 +2684,6 @@ changeFileName(int f, int n)
 }
 #endif
 
-
 #ifdef _DOS
 int
 _meChdir(meUByte *path)
@@ -2663,6 +2781,17 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
             urle = p ;
             p1 = p ;
         }
+#ifdef MEOPT_BINFS
+        else if(isBfsFile(p1))
+        {
+            flag = 3 ;
+            urls = p1 ;
+            if((p=meStrchr(p1+5,DIR_CHAR)) == NULL)
+                p = p1 + meStrlen(p1) ;
+            urle = p ;
+            p1 = p ;
+        }
+#endif
         else if(isUrlFile(p1))
         {
             flag = 0 ;
@@ -2750,7 +2879,7 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
                 meRegNode *reg=NULL ;
                 meUByte *pe ;
                 int ll ;
-            
+
                 if((nameType == PATHNAME_PARTIAL) && (meStrchr(p,DIR_CHAR) == NULL))
                 {
                     /* special case when user is entering a file name and uses complete with 'xxxx/~yy' */
@@ -2768,7 +2897,7 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
                         ll = meStrlen(p) ;
                     else
                         ll = (int) (((size_t) pe) - ((size_t) (p))) ;
-                    
+
                     while((reg != NULL) && (((int) meStrlen(reg->name) != ll) || meStrncmp(p,reg->name,ll)))
                         reg = regGetNext(reg) ;
                 }
@@ -2925,6 +3054,10 @@ fileNameCorrect(meUByte *oldName, meUByte *newName, meUByte **baseName)
 
     if(isUrlLink(newName))
         return ;
+#if MEOPT_BINFS
+    if(isBfsFile(newName))
+        return ;
+#endif
 
     /* ensure the drive letter is stable, make it lower case */
     if((newName[1] == _DRV_CHAR) && isUpper(newName[0]))
@@ -2969,7 +3102,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
     WIN32_FIND_DATA fd;
     HANDLE *handle;
 #endif
-    
+
     if(isUrlLink(pathName))
     {
         if(dirList->path != NULL)
@@ -2996,7 +3129,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                 lp = hlp.next;
                 while(lp != &hlp)
                 {
-                    noFiles++ ;         
+                    noFiles++ ;
                     lp = lp->next;
                 }
                 if(noFiles &&
@@ -3043,12 +3176,13 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
 #endif
         return ;
     }
+
 #if MEOPT_REGISTRY
     if((pathName[0] == '~') && (pathName[1] == '\0') && (homedir != NULL))
     {
         meUByte *ss ;
         int len ;
-        
+
         if((dirList->path != NULL) && !meStrcmp(dirList->path,"~"))
            return ;
         meStrcpy(upb,homedir) ;
@@ -3075,7 +3209,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
 #endif
 #ifdef _WIN32
         int len ;
-        
+
         meFiletimeInit(stmtime) ;
         if(((len = strlen(pathName)) > 0) && (pathName[len-1] == DIR_CHAR))
         {
@@ -3089,7 +3223,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
             pathName[len-1] = DIR_CHAR ;
         }
 #endif
-    
+
         if((dirList->path != NULL) &&
            !meStrcmp(dirList->path,pathName) &&
 #if (defined _UNIX) || (defined _WIN32)
@@ -3100,7 +3234,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
            )
             return ;
     }
-    
+
     /* free off the old */
     meNullFree(dirList->path) ;
     freeFileList(dirList->size,dirList->list) ;
@@ -3136,7 +3270,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
             }
         }
     }
-    else
+    else (!isBfsFile(pathName))
     {
         struct ffblk fblk ;
         meUByte *ff, *ee, es[4] ;
@@ -3216,7 +3350,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
             }
         }
     }
-    else
+    else if (!isBfsFile(pathName))
     {
         meUByte *ff, *ee, es[4] ;
 
@@ -3267,6 +3401,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
     dirList->stmtime.dwLowDateTime = stmtime.dwLowDateTime ;
 #endif
 #ifdef _UNIX
+    if (!isBfsFile(pathName))
     {
         DIR    *dirp ;
 
@@ -3332,13 +3467,66 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
     }
 #endif  /* _UNIX */
 
+#ifdef MEOPT_BINFS
+    if (isBfsFile(pathName))
+    {
+        bfsdir_t dirp;
+
+        if((dirp = bfs_opendir(bfsdev, (char *)pathName+5)) != NULL)
+        {
+            bfsdirent_t *dirent;
+            meUByte *ff, *bb, fname[meBUF_SIZE_MAX] ;
+
+            meStrcpy(fname,pathName) ;
+            bb = fname + meStrlen(fname) ;
+
+            while((dirent = bfs_readdir(dirp)) != NULL)
+            {
+                if(((noFiles & 0x0f) == 0) &&
+                   ((fls = meRealloc(fls,sizeof(meUByte *) * (noFiles+16))) == NULL))
+                {
+                    noFiles = 0 ;
+                    break ;
+                }
+                if((ff = meMalloc(dirent->len+3)) == NULL)
+                {
+                    fls = NULL ;
+                    noFiles = 0 ;
+                    break ;
+                }
+                fls[noFiles++] = ff ;
+                meStrncpy(ff,dirent->name,dirent->len) ;
+                ff[dirent->len] = '\0';
+                if((ff[0] == '.') && ((ff[1] == '\0') || ((ff[1] == '.') && (ff[2] == '\0'))))
+                {
+                    ff += (ff[1] == '\0') ? 1:2 ;
+                    *ff++ = DIR_CHAR ;
+                    *ff   = '\0' ;
+                }
+                else
+                {
+                    meStrcpy(bb,ff) ;
+                    if (bfs_type (bfsdev, (char *)fname+5) == BFS_TYPE_DIR)
+                    {
+                        ff += meStrlen(ff) ;
+                        *ff++ = DIR_CHAR ;
+                        *ff   = '\0' ;
+                    }
+                }
+            }
+            bfs_closedir(dirp) ;
+        }
+        dirList->stmtime = stmtime ;
+    }
+#endif  /* MEOPT_BINFS */
+
 #if MEOPT_REGISTRY
     if(pathName == upb)
     {
         meRegNode *reg ;
         meUByte *ff ;
         int len ;
-        
+
         /* add the alias/abbrev paths to the list */
         if(((reg = regFind(NULL,(meUByte *)"history/alias-path")) != NULL) &&
            ((reg = regGetChild(reg)) != NULL))

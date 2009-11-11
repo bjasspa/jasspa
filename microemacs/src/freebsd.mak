@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# freebsd.mak - Make file for FreeBSD 
+# freebsd.mak - Make file for FreeBSD
 #
 # Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 #
@@ -22,7 +22,7 @@
 ##############################################################################
 #
 # Created:     Sat Jan 24 1998
-# Synopsis:    Make file for FreeBSD 
+# Synopsis:    Make file for FreeBSD
 # Notes:
 #	Run "make -f freebsd.mak"      for optimised build produces ./me
 #	Run "make -f freebsd.mak med"  for debug build produces     ./med
@@ -52,7 +52,7 @@ NANOEMACS_DEFS= -D_NANOEMACS
 LDDEBUG       =
 LDOPTIMISE    =
 LDFLAGS       =
-LIBS          =
+LIBS          = -lz
 CONSOLE_LIBS  = -ltermcap
 WINDOW_LIBS   = $(MAKEWINLIBS) -L/usr/X11R6/lib -lX11
 #
@@ -62,51 +62,51 @@ WINDOW_LIBS   = $(MAKEWINLIBS) -L/usr/X11R6/lib -lX11
 .c.oc:
 	$(CC) $(COPTIMISE) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
 
-.c.ow:	
+.c.ow:
 	$(CC) $(COPTIMISE) $(CDEFS) $(MICROEMACS_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
 
-.c.ob:	
+.c.ob:
 	$(CC) $(COPTIMISE) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
 
 .c.on:
 	$(CC) $(COPTIMISE) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
 
-.c.ov:	
+.c.ov:
 	$(CC) $(COPTIMISE) $(CDEFS) $(NANOEMACS_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
 
-.c.oe:	
+.c.oe:
 	$(CC) $(COPTIMISE) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
 
 # Debug Builds
 .c.odc:
 	$(CC) $(CDEBUG) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
 
-.c.odw:	
+.c.odw:
 	$(CC) $(CDEBUG) $(CDEFS) $(MICROEMACS_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
 
-.c.odb:	
+.c.odb:
 	$(CC) $(CDEBUG) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
 
 .c.odn:
 	$(CC) $(CDEBUG) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
 
-.c.odv:	
+.c.odv:
 	$(CC) $(CDEBUG) $(CDEFS) $(NANOEMACS_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
 
-.c.ode:	
+.c.ode:
 	$(CC) $(CDEBUG) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
 #
 # Source files
 STDHDR	= ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h \
 	  esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
-	  ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def
+	  ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def bfs.h
 STDSRC	= abbrev.c basic.c bind.c buffer.c crypt.c dirlist.c display.c \
 	  eval.c exec.c file.c fileio.c frame.c hilight.c history.c input.c \
 	  isearch.c key.c line.c macro.c main.c narrow.c next.c osd.c \
 	  print.c random.c regex.c region.c registry.c search.c spawn.c \
-	  spell.c tag.c termio.c time.c undo.c window.c word.c
+	  spell.c tag.c termio.c time.c undo.c window.c word.c bfs.c
 
-PLTHDR  = 
+PLTHDR  =
 PLTSRC  = unixterm.c
 
 HEADERS = $(STDHDR) $(PLTHDR)
@@ -225,4 +225,3 @@ $(OBJ_DB): $(HEADERS)
 $(OBJ_DN): $(HEADERS)
 $(OBJ_DV): $(HEADERS)
 $(OBJ_DE): $(HEADERS)
-

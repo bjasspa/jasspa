@@ -49,22 +49,22 @@
 
 /*
  * char-mask lookup tables
- * 
+ *
  * Table 1:
- * 
+ *
  * Bits   Function        Use
- * 
+ *
  * 0x0f    getType        Used by macro language to determine the arg type
  * 0x10    isDisplayable  Used in display to determine if a character can be directly displayed
  * 0x20    isPokable      Used by screen-poke to determine if a character can be directly poked
  * 0x40    isPrint        Used by print to determine if a character can be directly printed
  * 0x80    isSpace        Is a white char
- * 
- * 
+ *
+ *
  * Table 2:
- * 
+ *
  * Bits   Function        Use
- * 
+ *
  * 0x01    isLower        Is Lower case test
  * 0x02    isUpper        Is Upper case test
  * 0x03    isAlpha        Is Alpha test (Lower | Upper)
@@ -73,60 +73,60 @@
  * 0x08    isSpllExt      Is Spell Extended character (e.g. '.', '-' etc)
  * 0x0f    isSpllWord     Is Spell word
  * 0xf0    isWord         Is a word letter - selected by $buffer-mask
- * 
+ *
  */
 
 meUByte charMaskTbl1[256] =
 {
 #if (defined _DOS) || (defined _WIN32)
-    0x80, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0x2A, 0x2A, 
-    0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 
+    0x80, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA, 0x2A, 0x2A,
+    0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A,
 #else
-    0x80, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x8A, 0x8A, 0x8A, 0x8A, 0x8A, 0x0A, 0x0A, 
-    0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 
+    0x80, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x8A, 0x8A, 0x8A, 0x8A, 0x8A, 0x0A, 0x0A,
+    0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A,
 #endif
-    0xFA, 0x76, 0x79, 0x72, 0x74, 0x73, 0x75, 0x7A, 0x7A, 0x7A, 0x77, 0x7A, 0x7A, 0x78, 0x7C, 0x7A, 
-    0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x7B, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 
-    0x71, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 
-    0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 
-    0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 
+    0xFA, 0x76, 0x79, 0x72, 0x74, 0x73, 0x75, 0x7A, 0x7A, 0x7A, 0x77, 0x7A, 0x7A, 0x78, 0x7C, 0x7A,
+    0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x78, 0x7B, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
+    0x71, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
+    0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
+    0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
 #if (defined _DOS) || (defined _WIN32)
-    0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x3A, 
-    0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 
-    0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 
+    0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x3A,
+    0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A,
+    0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A,
     0x7A,
 #else
-    0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x0A, 
-    0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 
+    0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x0A,
+    0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A,
     0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A,
     0x0A,
 #endif
-          0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 
-    0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 
-    0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 
-    0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 
-    0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 
+          0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
+    0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
+    0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
+    0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
+    0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
     0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A
 };
 
 #if MEOPT_EXTENDED
 meUByte charMaskTbl2[256] =
 {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x08, 0x00, 
-    0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 
-    0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x00, 0x00, 0x00, 0x00, 0x10, 
-    0x00, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 
-    0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x08, 0x00,
+    0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
+    0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x00, 0x00, 0x00, 0x00, 0x10,
+    0x00, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
+    0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
@@ -135,9 +135,9 @@ meUByte charCaseTbl[256] = {
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
     0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
     0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F,
-    0x40, 'a',  'b',  'c',  'd',  'e',  'f',  'g',  'h',  'i',  'j',  'k',  'l',  'm',  'n',  'o',  
+    0x40, 'a',  'b',  'c',  'd',  'e',  'f',  'g',  'h',  'i',  'j',  'k',  'l',  'm',  'n',  'o',
     'p',  'q',  'r',  's',  't',  'u',  'v',  'w',  'x',  'y',  'z',  0x5B, 0x5C, 0x5D, 0x5E, 0x5F,
-    0x60, 'A',  'B',  'C',  'D',  'E',  'F',  'G',  'H',  'I',  'J',  'K',  'L',  'M',  'N',  'O',  
+    0x60, 'A',  'B',  'C',  'D',  'E',  'F',  'G',  'H',  'I',  'J',  'K',  'L',  'M',  'N',  'O',
     'P',  'Q',  'R',  'S',  'T',  'U',  'V',  'W',  'X',  'Y',  'Z',  0x7B, 0x7C, 0x7D, 0x7E, 0x7F,
     0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F,
     0x90, 0x91, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98, 0x99, 0x9A, 0x9B, 0x9C, 0x9D, 0x9E, 0x9F,
@@ -147,7 +147,7 @@ meUByte charCaseTbl[256] = {
     0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0xD9, 0xDA, 0xDB, 0xDC, 0xDD, 0xDE, 0xDF,
     0xE0, 0xE1, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7, 0xE8, 0xE9, 0xEA, 0xEB, 0xEC, 0xED, 0xEE, 0xEF,
     0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF
-};   
+};
 meUByte charUserLatinTbl[256] = {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
@@ -165,7 +165,7 @@ meUByte charUserLatinTbl[256] = {
     0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0xD9, 0xDA, 0xDB, 0xDC, 0xDD, 0xDE, 0xDF,
     0xE0, 0xE1, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7, 0xE8, 0xE9, 0xEA, 0xEB, 0xEC, 0xED, 0xEE, 0xEF,
     0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF
-}; 
+};
 meUByte charLatinUserTbl[256] = {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
@@ -183,7 +183,7 @@ meUByte charLatinUserTbl[256] = {
     0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0xD9, 0xDA, 0xDB, 0xDC, 0xDD, 0xDE, 0xDF,
     0xE0, 0xE1, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7, 0xE8, 0xE9, 0xEA, 0xEB, 0xEC, 0xED, 0xEE, 0xEF,
     0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF
-}; 
+};
 
 meUByte isWordMask=CHRMSK_DEFWORDMSK;
 meUByte charMaskFlags[]="luhs1234dpPwaAMLUk" ;
@@ -240,7 +240,7 @@ typedef void (*meATEXIT)(void) ;
 
 typedef int    (WSAAPI *meWSASTARTUP)(WORD,LPWSADATA) ;
 typedef int    (WSAAPI *meWSACLEANUP)(void) ;
-typedef SOCKET (WSAAPI *meSOCKETOPEN)(int,int,int) ;  
+typedef SOCKET (WSAAPI *meSOCKETOPEN)(int,int,int) ;
 typedef int    (WSAAPI *meSOCKETCONNECT)(SOCKET,const struct sockaddr FAR *,int) ;
 typedef int    (WSAAPI *meSOCKETCLOSE)(SOCKET) ;
 typedef int    (WSAAPI *meSOCKETGETERROR)(void) ;
@@ -248,7 +248,7 @@ typedef int    (WSAAPI *meSOCKETSETOPT)(SOCKET,int,int,const char FAR *,int) ;
 typedef int    (WSAAPI *meSOCKETREAD)(SOCKET,char FAR *,int,int) ;
 typedef int    (WSAAPI *meSOCKETWRITE)(SOCKET,const char FAR *,int,int) ;
 typedef struct servent FAR *(WSAAPI *meGETSERVBYNAME)(const char FAR *,const char FAR *) ;
-typedef struct hostent FAR *(WSAAPI *meGETHOSTBYNAME)(const char FAR *) ;  
+typedef struct hostent FAR *(WSAAPI *meGETHOSTBYNAME)(const char FAR *) ;
 typedef unsigned long (WSAAPI *meINET_ADDR)(const char   FAR *) ;
 typedef u_short (WSAAPI *meHTONS)(u_short) ;
 typedef int    (WSAAPI *meSOCKETSHUTDOWN)(SOCKET,int) ;
@@ -293,7 +293,6 @@ static meHTONS          meHtons ;
 #define meHtons          htons
 
 #endif
-
 
 #define meSOCKET_TIMEOUT 240000
 
@@ -347,7 +346,7 @@ static meUByte *
 strBase64Encode(meUByte *dd, meUByte *ss)
 {
     meUByte c1, c2, c3 ;
-    
+
     while((c1=*ss++) != '\0')
     {
         if((c2=*ss++) == '\0')
@@ -383,10 +382,10 @@ make_inet_addr(meUByte *hostname, meUByte *port, meUByte *proto)
 {
     struct hostent *hp ;
     struct servent *sp ;
-    
+
     memset(&meSockAddr,0,sizeof(meSockAddr)) ;
     meSockAddr.sin_family = AF_INET ;
-    
+
     if ((sp = meGetservbyname((char *)port,(char *)proto)) != NULL)
     {
         meSockAddr.sin_port = sp->s_port;
@@ -408,7 +407,7 @@ make_inet_addr(meUByte *hostname, meUByte *port, meUByte *proto)
         memcpy(&(meSockAddr.sin_addr),hp->h_addr,hp->h_length) ;
     else
         return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unknown host %s]", hostname) ;
-    
+
     return meTRUE ;
 }
 
@@ -433,7 +432,7 @@ ffurlConsoleAddText(meUByte *str, int flags)
         meLine *olp, *nlp ;
         meUByte buff[meBUF_SIZE_MAX], cc ;
         int ii, ll ;
-        
+
         olp = ffurlBp->dotLine ;
         ll = ii = ffurlBp->dotOffset ;
         meStrncpy(buff,meLineGetText(olp),ii) ;
@@ -464,7 +463,7 @@ ffurlConsoleAddText(meUByte *str, int flags)
         ffurlBp->dotLineNo = ffurlBp->lineCount ;
     }
     meBufferUpdateLocation(ffurlBp,(flags & 0x01) ? 0:1,ffurlBp->dotOffset) ;
-    
+
     if(!(flags & 0x04))
     {
         if(ffurlFlags & ffURL_SHOW_CONSOLE)
@@ -481,15 +480,15 @@ ffOpenConnectUrlSocket(meUByte *host, meUByte *port)
     meUByte buff[meBUF_SIZE_MAX] ;
     meSOCKET ss ;
     int ii ;
-    
+
     sprintf((char *)buff,"[Connecting to %s:%s]",host,port);
     if(ffurlBp != NULL)
         ffurlConsoleAddText(buff,0) ;
     mlwrite(MWCURSOR|MWSPEC,buff);
-    
+
     if(!make_inet_addr(host,port,(meUByte *)"tcp"))
         return meBadSocket ;
-    
+
     if((ss=meSocketOpen(AF_INET,SOCK_STREAM,IPPROTO_TCP)) < 0)
     {
         sprintf((char *)buff,"[Failed to open socket - %d]",meSocketGetError()) ;
@@ -509,10 +508,9 @@ ffOpenConnectUrlSocket(meUByte *host, meUByte *port)
         mlwrite(MWABORT|MWPAUSE|MWSPEC,buff) ;
         return meBadSocket ;
     }
-    
+
     return ss ;
 }
-
 
 static int
 ffReadSocketLine(meSOCKET ss, meUByte *buff)
@@ -542,13 +540,13 @@ static int
 ftpReadReply(void)
 {
     int ret ;
-    
+
     ffremain = 0 ;
     if(ffReadSocketLine(ffccsk,resultStr) <= 0)
         return meFALSE ;
     if(meStrlen(resultStr) < 4)
         return ftpERROR ;
-        
+
     ret = resultStr[0] - '0' ;
     if(resultStr[3] == '-')
     {
@@ -568,13 +566,12 @@ ftpReadReply(void)
     return ret ;
 }
 
-
-static int 
+static int
 ftpCommand(int flags, char *fmt, ...)
 {
     va_list ap;
     int ii ;
-    
+
     va_start(ap,fmt);
     vsprintf((char *)ffbuf,fmt,ap);
     va_end(ap);
@@ -601,12 +598,12 @@ ftpCommand(int flags, char *fmt, ...)
         return ftpPOS_COMPLETE ;
     return ftpReadReply();
 }
-    
+
 static void
 ffCloseSockets(int logoff)
 {
     timerClearExpired(SOCKET_TIMER_ID) ;
-    
+
     if(!meSocketIsBad(ffsock))
     {
         meSocketShutdown(ffsock,SHUT_RDWR);
@@ -627,7 +624,6 @@ ffCloseSockets(int logoff)
     ffremain = 0 ;
 }
 
-
 static int
 ftpLogin(meUByte *user, meUByte *pass)
 {
@@ -635,7 +631,7 @@ ftpLogin(meUByte *user, meUByte *pass)
     /* get the initial message */
     if(ftpReadReply() != ftpPOS_COMPLETE)
         return meFALSE ;
-    
+
     ii = ftpCommand(0,"USER %s",user) ;
     if(ii == ftpPOS_INTERMED)
         ii = ftpCommand(0,"PASS %s", pass) ;
@@ -657,17 +653,17 @@ ftpGetDataChannel(void)
     meUByte *aac, *ppc ;
     int aai[4], ppi[2] ;
     meUByte *ss ;
-    
+
     if(ftpCommand(0,"PASV") != ftpPOS_COMPLETE)
         return meABORT ;
-    if(((ss=meStrchr(resultStr,'(')) == NULL) || 
+    if(((ss=meStrchr(resultStr,'(')) == NULL) ||
        (sscanf((char *)ss,"(%d,%d,%d,%d,%d,%d)",aai,aai+1,aai+2,aai+3,ppi,ppi+1) != 6))
     {
         ss = (meUByte *) "[Failed to extract PASSIVE address]" ;
         if(ffurlBp != NULL)
             ffurlConsoleAddText(ss,0) ;
         return mlwrite(MWABORT|MWPAUSE|MWSPEC,ss) ;
-    }    
+    }
     aac = (meUByte *)&meSockAddr.sin_addr;
     ppc = (meUByte *)&meSockAddr.sin_port;
     aac[0] = (meUByte) aai[0] ;
@@ -684,10 +680,10 @@ ftpGetDataChannel(void)
             ffurlConsoleAddText(resultStr,0) ;
         return mlwrite(MWABORT|MWPAUSE|MWSPEC,resultStr) ;
     }
-    
+
     aai[0] = 1 ;
     meSocketSetOpt(ffsock,SOL_SOCKET,SO_REUSEADDR,(char *) aai,sizeof(int)) ;
-    
+
     if(meSocketConnect(ffsock,(struct sockaddr *) &meSockAddr,sizeof(meSockAddr)) < 0)
     {
         sprintf((char *)resultStr,"[Failed to connect data channel - %d]",meSocketGetError()) ;
@@ -698,13 +694,12 @@ ftpGetDataChannel(void)
     return meTRUE ;
 }
 
-
 int
 ffurlGetInfo(int type, meUByte **host, meUByte **port, meUByte **user, meUByte **pass)
 {
     meRegNode *root, *reg ;
     meUByte *ss ;
-    
+
     if (((root = regFind (NULL,(meUByte *)"/url")) == NULL) &&
         ((root = regSet (NULL,(meUByte *)"/url", NULL)) == NULL))
         return meFALSE ;
@@ -715,7 +710,7 @@ ffurlGetInfo(int type, meUByte **host, meUByte **port, meUByte **user, meUByte *
     if (((root = regFind (reg, *host)) == NULL) &&
         ((root = regSet (reg, *host, NULL)) == NULL))
         return meFALSE ;
-    
+
     reg = regFind (root,(meUByte *)"user") ;
     if (*user != NULL)
     {
@@ -809,14 +804,14 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
 {
     meUByte buff[meBUF_SIZE_MAX], lbuff[meBUF_SIZE_MAX+32], *ss ;
     int dirlist, ll ;
-    
+
     /* are we currently connected to this site?? */
     ffurlCreateName(buff,meURLTYPE_FTP,host,port,user,NULL,NULL) ;
     if((ffsockAddr == NULL) || meStrcmp(buff,ffsockAddr))
     {
         /* if we're already logged on somewhere else kill the connection */
         ffCloseSockets(1) ;
-        
+
         if(port == NULL)
             port = (meUByte *)"21" ;
         if(user == NULL)
@@ -825,10 +820,10 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
             user = (meUByte *)"ftp" ;
             pass = (meUByte *)"guest" ;
         }
-    
+
         if(meSocketIsBad(ffccsk=ffOpenConnectUrlSocket(host,port)))
             return meFALSE ;
-    
+
         if(ftpLogin(user,pass) <= 0)
         {
             ffCloseSockets(1) ;
@@ -851,7 +846,7 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
             ffsockHome = meStrdup(ss+1) ;
         }
     }
-    
+
     if((file[1] == '~') && (file[2] == '/'))
     {
         if(ffsockHome != NULL)
@@ -865,7 +860,7 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
         meStrcpy(buff+ll,file+2) ;
         file = buff ;
     }
-            
+
     if(rwflag & meRWFLAG_WRITE)
         ss = (meUByte *) "writing" ;
     else if(rwflag & meRWFLAG_READ)
@@ -887,7 +882,7 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
     {
         /* try to back-up the existing file - no error checking! */
         meUByte filename[meBUF_SIZE_MAX] ;
-        
+
         if(createBackupName(filename,file,'~',1) ||
            ((ftpCommand(0,"RNFR %s",file) == ftpPOS_INTERMED) &&
             (ftpCommand(0,"RNTO %s",filename) != ftpPOS_COMPLETE) &&
@@ -963,7 +958,7 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
     }
     if(!(rwflag & (meRWFLAG_WRITE|meRWFLAG_READ)))
         return meTRUE ;
-    
+
     ll = meStrlen(file) ;
     if(rwflag & meRWFLAG_FTPNLST)
         dirlist = -1 ;
@@ -971,16 +966,16 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
         dirlist = 1 ;
     else
         dirlist = 0 ;
-    
+
     /* send the read command */
     for(;;)
     {
         if(dirlist && (ftpCommand(0,"CWD %s",file) != ftpPOS_COMPLETE))
             break ;
-        
+
         if(ftpGetDataChannel() <= 0)
             break ;
-        
+
         if(rwflag & meRWFLAG_WRITE)
             ftpCommand(1,"STOR %s",file) ;
         else if(rwflag & meRWFLAG_FTPNLST)
@@ -989,7 +984,7 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
             ftpCommand(1,"LIST") ;
         else
             ftpCommand(1,"RETR %s",file) ;
-        
+
         /* find out if all's well */
         if(ftpReadReply() == ftpPOS_PRELIMIN)
         {
@@ -1014,7 +1009,7 @@ static int
 ffHttpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByte *file, meUInt rwflag)
 {
     meUByte buff[meBUF_SIZE_MAX+200], *thost, *tport, *ss, cc ;
-    
+
     if ((ss = getUsrVar((meUByte *)"http-proxy-addr")) != errorm)
     {
         thost = ss ;
@@ -1025,13 +1020,13 @@ ffHttpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUBy
         thost = host ;
         tport = port ;
     }
-    
+
     if(tport == NULL)
         tport = (meUByte *)"80" ;
-    
+
     if(meSocketIsBad(ffsock=ffOpenConnectUrlSocket(thost,tport)))
         return meFALSE ;
-       
+
     sprintf((char *)buff,"[Connected, reading %s]",file);
     if(ffurlBp != NULL)
     {
@@ -1123,7 +1118,7 @@ static void
 ffUrlFileSetupFlags(meUInt rwflag)
 {
     meUByte *ss ;
-    
+
     /* setup the flags and console buffer */
     ffurlFlags = ffURL_CONSOLE ;
     if ((ss = getUsrVar (ffurlFlagsVName[fftype-meURLTYPE_HTTP])) != errorm)
@@ -1150,15 +1145,15 @@ ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
 {
     meUByte buff[meBUF_SIZE_MAX+32], sockAddr[meBUF_SIZE_MAX], *host, *port, *ss, *dd, *ee, *uu, cc ;
     int ii ;
-    
+
 #ifdef _WIN32
     static int init=0 ;
     if(!init)
     {
-        HINSTANCE libHandle ; 
+        HINSTANCE libHandle ;
         meWSASTARTUP meWSAStartup ;
         meWSACLEANUP meWSACleanup ;
-        
+
         init = 1 ;
         if(((libHandle = LoadLibrary("ws2_32")) != NULL) &&
            ((meWSAStartup     = (meWSASTARTUP) GetProcAddress(libHandle,"WSAStartup")) != NULL) &&
@@ -1178,9 +1173,9 @@ ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
         {
             WSADATA wsaData;
             WORD    wVersionRequested;
-            
+
             wVersionRequested = MAKEWORD (1, 1);
-            
+
             if(meWSAStartup(wVersionRequested, &wsaData))
                 return mlwrite(MWABORT|MWPAUSE,"[Failed to initialise sockets]") ;
             atexit((meATEXIT) meWSACleanup) ;
@@ -1194,14 +1189,14 @@ ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
     fftype = (urlName[0] == 'f') ? meURLTYPE_FTP:meURLTYPE_HTTP ;
     if(rwflag & meRWFLAG_READ)
     {
-        ffrp = ffpInvalidVal ;
+        meio.rp = ffpInvalidVal ;
         ffsize = 0x7fffffff ;
     }
     else if(rwflag & meRWFLAG_WRITE)
-        ffwp = ffpInvalidVal ;
-    
+        meio.wp = ffpInvalidVal ;
+
     ffUrlFileSetupFlags(rwflag) ;
-    
+
     /* skip the http: or ftp: */
     ss = (fftype == meURLTYPE_FTP) ? urlName+6:urlName+7 ;
     dd = buff ;
@@ -1224,7 +1219,7 @@ ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
     *dd = '\0' ;
     *ee = '\0' ;
     ss-- ;
-    
+
     if(port != NULL)
         port[-1] = '\0' ;
     if(uu != NULL)
@@ -1234,10 +1229,10 @@ ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
         if((pass = meStrchr(uu,':')) != NULL)
             *pass++ = '\0' ;
     }
-    
+
     if(ffurlGetInfo(fftype,&host,&port,&user,&pass) <= 0)
         return meFALSE ;
-    
+
     if(ss[0] == '\0')
         ss = (meUByte *) "/" ;
     /* is it a http: or ftp: */
@@ -1245,7 +1240,7 @@ ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
         ii = ffFtpFileOpen(host,port,user,pass,ss,rwflag) ;
     else
         ii = ffHttpFileOpen(host,port,user,pass,ss,rwflag) ;
-    
+
     if(ii > 0)
     {
         if((rwflag & meRWFLAG_READ) && (ffurlReadBp != NULL))
@@ -1453,7 +1448,7 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
         {
             meUByte cc, dd ;
             int ii ;
-            
+
             while((dd=*s++) != '\0')
             {
                 if(dd == 's')
@@ -1556,7 +1551,7 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
     else
 #endif
         meStrcpy(filename,fn) ;
-    
+
 #ifdef _UNIX
     if((backl == '~') && ((meSystemCfg & (meSYSTEM_DOSFNAMES|meSYSTEM_HIDEBCKUP)) == meSYSTEM_HIDEBCKUP))
     {
@@ -1570,7 +1565,7 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
         while(--s != t) ;
         s[0] = '.' ;
     }
-#endif            
+#endif
     t = filename + meStrlen(filename) ;
 #ifndef _DOS
     if(meSystemCfg & meSYSTEM_DOSFNAMES)
@@ -1596,7 +1591,7 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
          */
         else if ((t - s) > 3)
             t[-1] = backl;
-#endif    
+#endif
         else
         {
             t = s ;
@@ -1621,49 +1616,63 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
 static int
 ffgetBuf(void)
 {
-#if MEOPT_SOCKET
-    if(ffrp == ffpInvalidVal)
+#ifdef MEOPT_BINFS
+    if (meio.type == ME_IO_BINFS)
     {
-        if((ffremain = ffsize-ffread) > 0)
-        {
-            if(ffremain > meFIOBUFSIZ)
-                ffremain = meFIOBUFSIZ ;
-            ffremain = meSocketRead(ffsock,(char *) ffbuf,ffremain,0) ;
-        }
+        ffremain = bfs_fread(ffbuf,1,meFIOBUFSIZ,meio.binfs) ;
         if(ffremain <= 0)
         {
+            /* if(ferror(meio.rp))*/
+            /* return mlwrite(MWABORT,(meUByte *)"[File read error %d]",errno); */
             ffremain = -1 ;
             return meTRUE ;
         }
-        if(ffurlFlags & ffURL_CLOSE_PROGRESS)
-            ffurlConsoleAddText((meUByte *)"#",(meLineGetLength(ffurlBp->dotLine) >= frameCur->width - 2) ? 0x02:0x03) ;
     }
     else
 #endif
+#if MEOPT_SOCKET
+        if(meio.rp == ffpInvalidVal)
+        {
+            if((ffremain = ffsize-ffread) > 0)
+            {
+                if(ffremain > meFIOBUFSIZ)
+                    ffremain = meFIOBUFSIZ ;
+                ffremain = meSocketRead(ffsock,(char *) ffbuf,ffremain,0) ;
+            }
+            if(ffremain <= 0)
+            {
+                ffremain = -1 ;
+                return meTRUE ;
+            }
+            if(ffurlFlags & ffURL_CLOSE_PROGRESS)
+                ffurlConsoleAddText((meUByte *)"#",(meLineGetLength(ffurlBp->dotLine) >= frameCur->width - 2) ? 0x02:0x03) ;
+        }
+        else
+#endif
 #ifdef _WIN32
-    {
-        if(ReadFile(ffrp,ffbuf,meFIOBUFSIZ,&ffremain,NULL) == 0)
         {
-            if((ffrp != GetStdHandle(STD_INPUT_HANDLE)) || (GetLastError() != ERROR_BROKEN_PIPE))
-                return mlwrite(MWABORT,"[File read error %d]",GetLastError());
+            if(ReadFile(meio.rp,ffbuf,meFIOBUFSIZ,&ffremain,NULL) == 0)
+            {
+                if((meio.rp != GetStdHandle(STD_INPUT_HANDLE)) || (GetLastError() != ERROR_BROKEN_PIPE))
+                    return mlwrite(MWABORT,"[File read error %d]",GetLastError());
+            }
+            if(ffremain <= 0)
+            {
+                ffremain = -1 ;
+                return meTRUE ;
+            }
         }
-        if(ffremain <= 0)
-        {
-            ffremain = -1 ;
-            return meTRUE ;
-        }
-    }
 #else
-    {
-        ffremain = fread(ffbuf,1,meFIOBUFSIZ,ffrp) ;
-        if(ffremain <= 0)
         {
-            if(ferror(ffrp))
-                return mlwrite(MWABORT,(meUByte *)"[File read error %d]",errno);
-            ffremain = -1 ;
-            return meTRUE ;
+            ffremain = fread(ffbuf,1,meFIOBUFSIZ,meio.rp) ;
+            if(ffremain <= 0)
+            {
+                if(ferror(meio.rp))
+                    return mlwrite(MWABORT,(meUByte *)"[File read error %d]",errno);
+                ffremain = -1 ;
+                return meTRUE ;
+            }
         }
-    }
 #endif
 #if MEOPT_CRYPT
     if(ffcrypt)
@@ -1678,13 +1687,13 @@ ffgetBuf(void)
  * Read a line from a file and create a new line to hold it.
  * If mode & MDBINARY then loading it in binary mode an a line
  * is upto 16 bytes long.
- * 
+ *
  * Returns meABORT if a serious system problem arose (read or malloc
  * failure).
  * Returns Error is nothing was read cos at the end of the file
  * Else success so returns meTRUE.
  */
-static int	
+static int
 ffgetline(meLine **line)
 {
     meLine  *lp ;
@@ -1692,7 +1701,7 @@ ffgetline(meLine **line)
     meUByte *endp ;
     meUByte cc, ecc=0 ;
     int len=0, newl, ii ;
-    
+
     do {
         if(ffremain <= 0)
         {
@@ -1743,9 +1752,9 @@ ffgetline(meLine **line)
                         ffflags |= meFFFLAG_BINARY ;
                     else
                         newl++ ;
-                
+
                 ffremain -= ((size_t) ffcur) - ((size_t) endp) ;
-                
+
                 if(newl)
                 {
                     if(len == 0)
@@ -1793,17 +1802,17 @@ ffgetline(meLine **line)
                 ecc = 0 ;
         }
     } while(ffremain < 0) ;
-    
+
     if(ffbinary)
     {
         if(len == 0)
             return meFALSE ;
-        
+
         if(ffbinary == meBINARY_BPL)
         {
             meUInt cpos ;
             meUByte cc ;
-            
+
             text = lp->text ;
             newl = meBINARY_BPL ;
             while(--newl >= 0)
@@ -1835,7 +1844,7 @@ ffgetline(meLine **line)
             }
             text[8] = ':' ;
             text[9] = ' ' ;
-            
+
             text[(meBINARY_BPL*3)+10] = ' ' ;
             text[(meBINARY_BPL*3)+11] = '|' ;
             text[(meBINARY_BPL*3)+12] = ' ' ;
@@ -1845,7 +1854,7 @@ ffgetline(meLine **line)
         else
         {
             meUByte cc ;
-            
+
             text = lp->text ;
             lp->length = len*2 ;
             text[len*2] = '\0' ;
@@ -1874,7 +1883,7 @@ ffgetline(meLine **line)
         }
         /* Don't flag as the end, otherwise we won't get a proper linep */
         /* mlwrite(MWCURSOR|MWPAUSE,"Warning - Incomplete last line");*/
-            
+
         lp->flag = meLINE_NOEOL ;				/* line has no \n */
     }
     else
@@ -1929,10 +1938,10 @@ ffReadFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
 #if MEOPT_CRYPT
         ffcrypt = ((flags & meRWFLAG_CRYPT) != 0) ;
 #endif
-    }        
+    }
     ffremain = 0 ;
     ffread = 0 ;
-    
+
     if(fname != NULL)
     {
         if(isUrlLink(fname))
@@ -1955,14 +1964,22 @@ ffReadFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
 #else
             return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[No url support in this version]") ;
 #endif
-        }        
+        }
+#ifdef MEOPT_BINFS
+        else if (isBfsFile(fname))
+        {
+            meio.binfs = bfs_fopen(bfsdev, (char *)(fname+5));
+            if (meio.binfs != NULL)
+                meio.type = ME_IO_BINFS;
+        }
+#endif
         else
         {
 #ifdef _WIN32
-            if((ffrp=CreateFile(fname,GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,
+            if((meio.rp=CreateFile(fname,GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,
                                FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
 #else
-            if ((ffrp=fopen((char *)fname, "rb")) == NULL)
+            if ((meio.rp=fopen((char *)fname, "rb")) == NULL)
 #endif
             {
                 if(!(flags & meRWFLAG_SILENT))
@@ -1970,13 +1987,16 @@ ffReadFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
                     mlwrite(MWCLEXEC,(meUByte *)"[%s: No such file]", fname);
                 return -2 ;
             }
+            meio.type = ME_IO_FILE;
         }
     }
 #ifdef _UNIX
 #if MEOPT_SOCKET
-    if(ffrp != ffpInvalidVal)
+    if((meio.rp != ffpInvalidVal) || (meio.type == ME_IO_BINFS))
 #endif
+    {
         meSigHold() ;
+    }
 #endif
 
     return meTRUE ;
@@ -1986,6 +2006,15 @@ ffReadFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
 static void
 ffReadFileClose(meUByte *fname, meUInt flags)
 {
+#if MEOPT_BINFS
+    if (meio.type == ME_IO_BINFS)
+    {
+        bfs_fclose (meio.binfs);
+        meio.type = ME_IO_NONE;
+        meio.binfs = NULL;
+    }
+    else 
+#endif
     /* Windows pipeCommand comes in as a pipe because the source file
      * has already been opened, but from now one treat it as a normal
      * file.
@@ -1993,22 +2022,22 @@ ffReadFileClose(meUByte *fname, meUInt flags)
      * 'delete when closed' flag.
      */
 #if MEOPT_SOCKET
-    if(ffrp == ffpInvalidVal)
+    if(meio.rp == ffpInvalidVal)
         ffUrlFileClose(fname,meRWFLAG_READ) ;
     else
 #endif
     {
 #ifdef _WIN32
-        if((ffrp != GetStdHandle(STD_INPUT_HANDLE)) &&
-           (CloseHandle(ffrp) == 0) && !(flags & meRWFLAG_SILENT))
+        if((meio.rp != GetStdHandle(STD_INPUT_HANDLE)) &&
+           (CloseHandle(meio.rp) == 0) && !(flags & meRWFLAG_SILENT))
             mlwrite(MWABORT|MWPAUSE,(meUByte *)"Error closing file");
 #else
 #ifdef _UNIX
-        /* ffrp could be stdin or a pipe */
-        if((fname != NULL) && (fclose(ffrp) != 0) && !(flags & meRWFLAG_SILENT))
+        /* meio.rp could be stdin or a pipe */
+        if((fname != NULL) && (fclose(meio.rp) != 0) && !(flags & meRWFLAG_SILENT))
             mlwrite(MWABORT|MWPAUSE,(meUByte *)"Error closing file");
 #else
-        if((ffrp != stdin) && (fclose(ffrp) != 0) && !(flags & meRWFLAG_SILENT))
+        if((meio.rp != stdin) && (fclose(meio.rp) != 0) && !(flags & meRWFLAG_SILENT))
             mlwrite(MWABORT|MWPAUSE,(meUByte *)"Error closing file");
 #endif
 #endif
@@ -2019,7 +2048,7 @@ ffReadFileClose(meUByte *fname, meUInt flags)
 }
 
 int
-ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp, 
+ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
            meUInt uoffset, meUInt loffset, meInt length)
 {
     meLine *lp0, *lp1, *lp2 ;
@@ -2031,7 +2060,7 @@ ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
     flags |= meRWFLAG_READ ;
     if(ffReadFileOpen(fname,flags,bp) <= 0)
         return meABORT ;
-    
+
     ffoffset = 0 ;
     if(length != 0)
     {
@@ -2041,16 +2070,16 @@ ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
             meUInt fsu, fsl ;
 #ifdef _LARGEFILE_SOURCE
             off_t fs ;
-            fseeko(ffrp,0,SEEK_END) ;
-            fs = ftello(ffrp) ;
+            fseeko(meio.rp,0,SEEK_END) ;
+            fs = ftello(meio.rp) ;
             fsu = (meUInt) (fs >> 32) ;
             fsl = (meUInt) fs ;
 #else
 #ifdef _WIN32
-            fsl = GetFileSize(ffrp,&fsu) ;
+            fsl = GetFileSize(meio.rp,&fsu) ;
 #else
-            fseek(ffrp,0,SEEK_END) ;
-            fsl = ftell(ffrp) ;
+            fseek(meio.rp,0,SEEK_END) ;
+            fsl = ftell(meio.rp) ;
             fsu = 0 ;
 #endif
 #endif
@@ -2076,16 +2105,16 @@ ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
             length += loffset ;
         }
 #ifdef _LARGEFILE_SOURCE
-        fseeko(ffrp,(((off_t) uoffset) << 32) | ((off_t) ffoffset),SEEK_SET) ;
+        fseeko(meio.rp,(((off_t) uoffset) << 32) | ((off_t) ffoffset),SEEK_SET) ;
 #else
 #ifdef _WIN32
-        SetFilePointer(ffrp,ffoffset,&uoffset,FILE_BEGIN) ;
+        SetFilePointer(meio.rp,ffoffset,&uoffset,FILE_BEGIN) ;
 #else
-        fseek(ffrp,ffoffset,SEEK_SET) ;
+        fseek(meio.rp,ffoffset,SEEK_SET) ;
 #endif
 #endif
     }
-    
+
     nline = 0;
     lp2 = hlp ;	        /* line after  insert */
     lp0 = lp2->prev ;	/* line before insert */
@@ -2107,9 +2136,9 @@ ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
     /* complete the link */
     lp2->prev = lp0;
     lp0->next = lp2;
-    
+
     ffReadFileClose(fname,flags) ;
-    
+
 #if MEOPT_SOCKET
     /* loading an ftp or http file can lead to a file name change, free
      * off the old one now that we don't need it any more */
@@ -2160,7 +2189,6 @@ ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
     return ss ;
 }
 
-
 static int
 ffputBuf(void)
 {
@@ -2169,7 +2197,7 @@ ffputBuf(void)
         meCrypt(ffbuf,ffremain) ;
 #endif
 #if MEOPT_SOCKET
-    if(ffwp == ffpInvalidVal)
+    if(meio.wp == ffpInvalidVal)
     {
         if(((int) meSocketWrite(ffsock,(char *) ffbuf,ffremain,0)) != ffremain)
         {
@@ -2184,13 +2212,13 @@ ffputBuf(void)
     {
 #ifdef _WIN32
         meInt written ;
-        if((WriteFile(ffwp,ffbuf,ffremain,&written,NULL) == 0) || (written != ffremain))
+        if((WriteFile(meio.wp,ffbuf,ffremain,&written,NULL) == 0) || (written != ffremain))
         {
             ffwerror = 1 ;
             return mlwrite(MWABORT,(meUByte *)"[Write failed - %d]",meFileGetError());
         }
 #else
-        if(((int) fwrite(ffbuf,1,ffremain,ffwp)) != ffremain)
+        if(((int) fwrite(ffbuf,1,ffremain,meio.wp)) != ffremain)
         {
             ffwerror = 1 ;
             return mlwrite(MWABORT,(meUByte *)"[Write failed - %d]",meFileGetError());
@@ -2203,12 +2231,12 @@ ffputBuf(void)
 
 #define ffputc(c)                                                            \
 (((ffbuf[ffremain++]=c),(ffremain == meFIOBUFSIZ))? ffputBuf():0)
-    
+
 int
 ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
 {
     int ii ;
-    
+
     ffwerror = 0 ;
     if(bp != NULL)
     {
@@ -2220,9 +2248,9 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
     if(fname == NULL)
     {
 #ifdef _WIN32
-        ffwp = GetStdHandle(STD_OUTPUT_HANDLE) ;
+        meio.wp = GetStdHandle(STD_OUTPUT_HANDLE) ;
 #else
-        ffwp = stdout ;
+        meio.wp = stdout ;
 #endif
         ffnewFile = 0 ;
     }
@@ -2260,31 +2288,31 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
             if(flags & meRWFLAG_BACKUP)
             {
                 meUByte filename[meBUF_SIZE_MAX] ;
-                
+
                 ii = createBackupName(filename,fname,'~',1) ;
                 if(!ii)
                 {
 #ifdef _WIN32
                     /* Win95 first version has nasty bug in MoveFile, doing
-                     * 
+                     *
                      * MoveFile("a.bbb","a.bbb~")
                      * CreateFile("a.bbb",..)
-                     * 
+                     *
                      * Resulted in a.bbb backing up to a.bbb~ and then for some unknown bloody
                      * reason opening a.bbb opens a.bbb~ instead of creating a new file.
-                     * 
+                     *
                      * So alternatively do:
                      *
                      * MoveFile("a.bbb","a.bbb~.~_~")
                      * MoveFile("a.bbb~.~_~","a.bbb~")
                      * CreateFile("a.bbb",..)
-                     * 
+                     *
                      * Which sadly works (we love you bill!)
-                     * 
+                     *
                      * This is done for all flavours of windows as these drives can be networked
                      */
                     meUByte filenameOldB[meBUF_SIZE_MAX], *filenameOld ;
-                    
+
                     if(!(meSystemCfg & meSYSTEM_DOSFNAMES))
                     {
                         strcpy(filenameOldB,fname) ;
@@ -2304,7 +2332,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
                     if(!(meSystemCfg & meSYSTEM_DOSFNAMES) && (keptVersions > 0))
                     {
                         int ll ;
-                        
+
                         ll = meStrlen(filename)-1 ;
                         filename[ll++] = '.' ;
                         filename[ll++] = '~' ;
@@ -2330,7 +2358,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
                                 sprintf((char *)filename+ll,"%d~",ii) ;
                                 if(meRename(filename,filename2) && (ffFileOp(filename,filename2,meRWFLAG_DELETE,-1) <= 0))
                                 {
-                                    mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s (%d - %s)]", 
+                                    mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s (%d - %s)]",
                                             filename2,errno,sys_errlist[errno]) ;
                                     if(meUnlink(filename))
                                     {
@@ -2345,7 +2373,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
                     if(!meTestExist(filename) && meUnlink(filename))
                         mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to remove backup file %s]", filename) ;
                     else if(meRename(filenameOld,filename) && (ffFileOp(filenameOld,filename,meRWFLAG_DELETE,-1) <= 0))
-                        mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s (%d - %s)]", 
+                        mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s (%d - %s)]",
                                 filename,errno,sys_errlist[errno]) ;
                     else if(bp != NULL)
                     {
@@ -2426,23 +2454,23 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
                 create = OPEN_ALWAYS ;
             else
                 create = CREATE_ALWAYS ;
-            
+
             /* cannot write to a readonly file */
             if(!ffnewFile && meTestWrite(fname))
                 meFileSetAttributes(fname,FILE_ATTRIBUTE_NORMAL) ;
-            
+
             /* Windows must open the file with the correct permissions to support the
              * compress attribute
              */
-            if((ffwp=CreateFile(fname,GENERIC_WRITE,FILE_SHARE_READ,NULL,create,
-                               ((bp == NULL) ? meUmask:bp->stats.stmode),
-                               NULL)) == INVALID_HANDLE_VALUE)
+            if((meio.wp=CreateFile(fname,GENERIC_WRITE,FILE_SHARE_READ,NULL,create,
+                                   ((bp == NULL) ? meUmask:bp->stats.stmode),
+                                   NULL)) == INVALID_HANDLE_VALUE)
             {
                 mlwrite(MWABORT,(meUByte *)"[Cannot open file \"%s\" for writing - %d]",fname,GetLastError());
                 return -3 ;
             }
             if(flags & meRWFLAG_OPENEND)
-                SetFilePointer(ffwp,0,NULL,FILE_END) ;
+                SetFilePointer(meio.wp,0,NULL,FILE_END) ;
         }
 #else
         {
@@ -2451,7 +2479,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
                 ss = "ab" ;
             else
                 ss = "wb" ;
-            if((ffwp=fopen((char *)fname,ss)) == NULL)
+            if((meio.wp=fopen((char *)fname,ss)) == NULL)
             {
                 mlwrite(MWABORT,(meUByte *)"[Cannot open file \"%s\" for writing]",fname);
                 return -3 ;
@@ -2502,11 +2530,11 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
     }
 #ifdef _UNIX
 #if MEOPT_SOCKET
-    if(ffwp != ffpInvalidVal)
+    if(meio.wp != ffpInvalidVal)
 #endif
         meSigHold() ;
 #endif
-    
+
 #if (defined _DOS)
     /* the directory time stamps on dos are not updated so the best
      * we can do is flag that the dirLists are out of date when WE
@@ -2525,12 +2553,11 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
     return meTRUE ;
 }
 
-
 int
 ffWriteFileWrite(register int len, register meUByte *buff, int eolFlag)
 {
     meUByte cc, dd ;
-    
+
     if(ffbinary)
     {
         if(ffbinary == meBINARY_BPL)
@@ -2570,7 +2597,7 @@ ffWriteFileWrite(register int len, register meUByte *buff, int eolFlag)
                 if(ffputc(cc))
                     return meABORT ;
             }
-        }            
+        }
     }
     else
     {
@@ -2594,7 +2621,7 @@ int
 ffWriteFileClose(meUByte *fname, meUInt flags, meBuffer *bp)
 {
     int ret ;
-    
+
     /* add a ^Z at the end of the file if needed */
     ret = meABORT ;
     if(!ffwerror)
@@ -2604,9 +2631,9 @@ ffWriteFileClose(meUByte *fname, meUInt flags, meBuffer *bp)
         if(ffputBuf() >= 0)
             ret = meTRUE ;
     }
-              
+
 #if MEOPT_SOCKET
-    if(ffwp == ffpInvalidVal)
+    if(meio.wp == ffpInvalidVal)
     {
         if(ffUrlFileClose(fname,flags) <= 0)
             ret = meABORT ;
@@ -2614,10 +2641,10 @@ ffWriteFileClose(meUByte *fname, meUInt flags, meBuffer *bp)
     else
 #endif
 #ifdef _WIN32
-    if((ffwp != GetStdHandle(STD_OUTPUT_HANDLE)) && (CloseHandle(ffwp) == 0) && !ffwerror)
+    if((meio.wp != GetStdHandle(STD_OUTPUT_HANDLE)) && (CloseHandle(meio.wp) == 0) && !ffwerror)
         ret = mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Error closing file - %d]",meFileGetError());
 #else
-    if((ffwp != stdout) && (fclose(ffwp) != 0) && !ffwerror)
+    if((meio.wp != stdout) && (fclose(meio.wp) != 0) && !ffwerror)
         ret = mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Error closing file - %d]",meFileGetError());
 #endif
 #ifdef _UNIX
@@ -2631,7 +2658,6 @@ ffWriteFileClose(meUByte *fname, meUInt flags, meBuffer *bp)
     return ret ;
 }
 
-
 int
 ffWriteFile(meUByte *fname, meUInt flags, meBuffer *bp)
 {
@@ -2640,7 +2666,7 @@ ffWriteFile(meUByte *fname, meUInt flags, meBuffer *bp)
     {
         register meLine *lp ;
         long noLines ;
-        
+
         /* store the number of lines now cos the close may narrow the buffer
          * and the number of lines will be wrong */
         noLines = bp->lineCount+1 ;
@@ -2678,13 +2704,13 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
     int rr=meTRUE, r1 ;
 #if MEOPT_SOCKET
     int notFtpWrite ;
-#endif        
-    
+#endif
+
     if(dfname != NULL)
     {
 #if MEOPT_SOCKET
         meUByte *sfn ;
-#endif        
+#endif
         int sft, dft ;
         if(((sft=isFtpLink(sfname)) == 0) && isHttpLink(sfname))
            sft = 2 ;
@@ -2707,7 +2733,7 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
              * ftp location as the failure is likely caused by the file not existing */
             if((rr=ffWriteFileOpen(dfname,(dFlags & (meRWFLAG_DELETE|meRWFLAG_BACKUP|meRWFLAG_SILENT)),NULL)) <= 0)
             {
-                if((rr != -5) || !dft) 
+                if((rr != -5) || !dft)
                     return rr ;
                 rr = meTRUE ;
             }
@@ -2721,11 +2747,11 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
             {
                 meUByte *dfn, sfbuff[meBUF_SIZE_MAX], dfbuff[meBUF_SIZE_MAX] ;
                 int ll ;
-                
+
                 /* special case, moving a file on an ftp site (e.g. rename a file) */
                 if(ffReadFileOpen(sfname,(dFlags & meRWFLAG_SILENT),NULL) <= 0)
                     return meABORT ;
-                
+
                 dfn = dfname + (((size_t) sfn)- ((size_t) sfname)) ;
                 if((sfn[1] == '~') && (sfn[2] == '/'))
                 {
@@ -2774,7 +2800,7 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
         FILETIME creationTime, lastAccessTime, lastWriteTime ;
 #endif
         int presTimeStamp ;
-        
+
         if((rr=ffReadFileOpen(sfname,meRWFLAG_READ|(dFlags & (meRWFLAG_NODIRLIST|meRWFLAG_SILENT)),NULL)) <= 0)
             return rr ;
         if((rr=ffWriteFileOpen(dfname,meRWFLAG_WRITE|(dFlags & (meRWFLAG_BACKUP|meRWFLAG_SILENT)),NULL)) <= 0)
@@ -2782,23 +2808,23 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
             ffReadFileClose(sfname,meRWFLAG_READ|(dFlags & meRWFLAG_SILENT)) ;
             return rr ;
         }
-        presTimeStamp = ((dFlags & meRWFLAG_PRESRVTS) && (ffrp != ffpInvalidVal) && (ffwp != ffpInvalidVal)) ;
+        presTimeStamp = ((dFlags & meRWFLAG_PRESRVTS) && (meio.rp != ffpInvalidVal) && (meio.wp != ffpInvalidVal)) ;
         if(presTimeStamp)
         {
 #ifdef _UNIX
             struct stat stt ;
-            if((presTimeStamp = (fstat(fileno(ffrp),&stt) == 0)))
+            if((presTimeStamp = (fstat(fileno(meio.rp),&stt) == 0)))
             {
                 fileTimes.actime = stt.st_atime ;
                 fileTimes.modtime = stt.st_mtime ;
             }
 #endif
 #ifdef _WIN32
-            presTimeStamp = GetFileTime(ffrp,&creationTime,&lastAccessTime,&lastWriteTime) ;
+            presTimeStamp = GetFileTime(meio.rp,&creationTime,&lastAccessTime,&lastWriteTime) ;
 #endif
         }
 #if MEOPT_SOCKET
-        notFtpWrite = (ffwp != ffpInvalidVal) ;
+        notFtpWrite = (meio.wp != ffpInvalidVal) ;
 #endif
         for(;;)
         {
@@ -2813,7 +2839,7 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
         ffremain = 0 ;
 #ifdef _WIN32
         if(presTimeStamp)
-            SetFileTime(ffwp,&creationTime,&lastAccessTime,&lastWriteTime) ;
+            SetFileTime(meio.wp,&creationTime,&lastAccessTime,&lastWriteTime) ;
 #endif
         rr = ffWriteFileClose(dfname,meRWFLAG_WRITE|(dFlags & meRWFLAG_SILENT),NULL) ;
         if(r1 <= 0)

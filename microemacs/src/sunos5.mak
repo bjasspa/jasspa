@@ -46,30 +46,29 @@ STRIP         =	strip
 INSTALL       =	install
 CDEBUG        =	-g
 COPTIMISE     =	-xO3 -DNDEBUG=1
-CDEFS         = -D_SUNOS5 -I. -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 
+CDEFS         = -D_SUNOS5 -I. -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 CONSOLE_DEFS  = -D_ME_CONSOLE
 WINDOW_DEFS   = $(MAKEWINDEFS) -D_ME_WINDOW -I/usr/openwin/include
 NANOEMACS_DEFS= -D_NANOEMACS
 LDDEBUG       =
 LDOPTIMISE    =
 LDFLAGS       = $(getconf LFS64_LDFLAGS)
-LIBS          = -lnsl -lsocket -lintl $(getconf LFS64_LIBS)
+LIBS          = -lz -lnsl -lsocket -lintl $(getconf LFS64_LIBS)
 CONSOLE_LIBS  = -ltermcap
 WINDOW_LIBS   = $(MAKEWINLIBS) -L/usr/openwin/lib -lX11
 #
 # Rules
 .SUFFIXES: .c .oc .ow .ob .on .ov .oe .odc .odw .odb .odn .odv .ode
 
-
 .c.oc:
 	$(CC) $(COPTIMISE) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o _$*.o -c $<
 	@$(MV) _$*.o $@
 
-.c.ow:	
+.c.ow:
 	$(CC) $(COPTIMISE) $(CDEFS) $(MICROEMACS_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o _$*.o -c $<
 	@$(MV) _$*.o $@
 
-.c.ob:	
+.c.ob:
 	$(CC) $(COPTIMISE) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o _$*.o -c $<
 	@$(MV) _$*.o $@
 
@@ -77,11 +76,11 @@ WINDOW_LIBS   = $(MAKEWINLIBS) -L/usr/openwin/lib -lX11
 	$(CC) $(COPTIMISE) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o _$*.o -c $<
 	@$(MV) _$*.o $@
 
-.c.ov:	
+.c.ov:
 	$(CC) $(COPTIMISE) $(CDEFS) $(NANOEMACS_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o _$*.o -c $<
 	@$(MV) _$*.o $@
 
-.c.oe:	
+.c.oe:
 	$(CC) $(COPTIMISE) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o _$*.o -c $<
 	@$(MV) _$*.o $@
 
@@ -90,11 +89,11 @@ WINDOW_LIBS   = $(MAKEWINLIBS) -L/usr/openwin/lib -lX11
 	$(CC) $(CDEBUG) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o _$*.o -c $<
 	@$(MV) _$*.o $@
 
-.c.odw:	
+.c.odw:
 	$(CC) $(CDEBUG) $(CDEFS) $(MICROEMACS_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o _$*.o -c $<
 	@$(MV) _$*.o $@
 
-.c.odb:	
+.c.odb:
 	$(CC) $(CDEBUG) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o _$*.o -c $<
 	@$(MV) _$*.o $@
 
@@ -102,25 +101,25 @@ WINDOW_LIBS   = $(MAKEWINLIBS) -L/usr/openwin/lib -lX11
 	$(CC) $(CDEBUG) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o _$*.o -c $<
 	@$(MV) _$*.o $@
 
-.c.odv:	
+.c.odv:
 	$(CC) $(CDEBUG) $(CDEFS) $(NANOEMACS_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o _$*.o -c $<
 	@$(MV) _$*.o $@
 
-.c.ode:	
+.c.ode:
 	$(CC) $(CDEBUG) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o _$*.o -c $<
 	@$(MV) _$*.o $@
 #
 # Source files
 STDHDR	= ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h \
 	  esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
-	  ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def
+	  ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def bfs.h
 STDSRC	= abbrev.c basic.c bind.c buffer.c crypt.c dirlist.c display.c \
 	  eval.c exec.c file.c fileio.c frame.c hilight.c history.c input.c \
 	  isearch.c key.c line.c macro.c main.c narrow.c next.c osd.c \
 	  print.c random.c regex.c region.c registry.c search.c spawn.c \
-	  spell.c tag.c termio.c time.c undo.c window.c word.c
+	  spell.c tag.c termio.c time.c undo.c window.c word.c bfs.c
 
-PLTHDR  = 
+PLTHDR  =
 PLTSRC  = unixterm.c
 
 HEADERS = $(STDHDR) $(PLTHDR)

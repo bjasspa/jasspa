@@ -149,6 +149,7 @@
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _DRAGNDROP     1                /* Drag and drop supported.      */
+#define _BINFS         1                /* Use the built-in File system  */
 #define _meDEF_SYS_ERRLIST              /* errno.h not def sys_errlist   */
 
 /* Search path for CSW Sun build. */
@@ -195,6 +196,7 @@
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _DRAGNDROP     1                /* Drag and drop supported.      */
+#define _BINFS         1                /* Use the built-in File system  */
 #define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa:/usr/local/share/jasspa"
 #endif
 
@@ -247,6 +249,7 @@
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _DRAGNDROP     1                /* Drag and drop supported.      */
+#define _BINFS         1                /* Use the built-in File system  */
 #define _DEFAULT_SEARCH_PATH "/usr/share/jasspa:/usr/local/jasspa"
 #endif
 
@@ -269,6 +272,7 @@
 #define _SOCKET        1                /* Supports url reading          */
 #define _DRAGNDROP     1                /* Drag and drop supported.      */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
+#define _BINFS         1                /* Use the built-in File system  */
 #define _DEFAULT_SEARCH_PATH "/usr/share/jasspa:/usr/local/jasspa:/usr/local/share/jasspa"
 /* Under cygwin sys_errlist is defined slightly differently - redefine   */
 #define sys_errlist _sys_errlist        /* sys_errlist specially defined */
@@ -315,6 +319,7 @@
 **************************************************************************/
 #ifdef _MINGW
 #define _WIN32         1                /* Use win32                     */
+#define _BINFS         1                /* Use the built-in File system  */
 #endif
 
 /**************************************************************************
@@ -341,6 +346,7 @@
 #define _CLIPBRD       1                /* Inter window clip board supp  */
 #define _WINDOW        1                /* Windowed, resizing & title    */
 #define _INSENSE_CASE  1                /* File names case insensitive   */
+#define _BINFS         1                /* Use the built-in File system  */
 #define _DRAGNDROP     1                /* Drag and drop supported.      */
 #define _DRV_CHAR     ':'               /* drive divide letter, C:\dos   */
 #define _CONVDIR_CHAR '\\'              /* Filename convert '\\' => '/'  */
@@ -375,6 +381,10 @@
 
 #ifndef _ME_CONSOLE             /* window only mode?                     */
 #undef _TCAP                    /* Do not want Termcap                   */
+#endif
+
+#ifdef _BINFS
+#define MEOPT_BINFS     1       /* enable the built in file system       */
 #endif
 
 #ifndef _NANOEMACS
@@ -579,6 +589,9 @@ typedef unsigned int   meUInt ;
 #define _DEFAULT_SEARCH_PATH ""
 #endif
 
+#if MEOPT_BINFS
+#include "bfs.h"        /* Binary file system definitions. */
+#endif
 #include "emode.h"      /* Mode enum, type & var defs    */
 #include "estruct.h"    /* Type structure definitions    */
 #include "edef.h"       /* Global variable definitions   */

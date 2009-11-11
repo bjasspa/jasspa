@@ -1268,7 +1268,7 @@ mesetup(int argc, char *argv[])
     }
     else
         meGidSize = 0 ;
-
+    
     /* Set the required alarms first so we always have them */
     /* setup alarm process for timers */
 #ifdef _POSIX_SIGNALS
@@ -1321,7 +1321,28 @@ mesetup(int argc, char *argv[])
 
     /* initialize the editor and process the command line arguments */
     initHistory() ;                     /* allocate history space */
-
+    
+    /* Initialise the built-in file system. Note for speed we only check the
+     * header. */
+#if MEOPT_BINFS
+#ifndef _WIN32
+    bfsdev = bfs_mount (argv[0], BFS_CHECK_HEAD);
+#else
+    /* On MS-Windows then argv[0] is not the actual name of the executable.
+     * Use the Windows specific system call to determine the executable file.
+     * Scope the "exepath" locally so it is discarded once the pathname is
+     * passed to the mount and we exit the braces.
+     *
+     * Thanks to Petro 2009-11-09. */
+    {
+        TCHAR exepath[MAX_PATH];
+        
+        GetModuleFileName(0, exepath, MAX_PATH);
+        bfsdev = bfs_mount (exepath, BFS_CHECK_HEAD);
+    }
+#endif
+#endif
+    
     /* scan through the command line and get all global options */
     carg = rarg = 1 ;
     for( ; carg < argc; ++carg)
@@ -1736,9 +1757,9 @@ missing_arg:
                     bp->intFlag |= BIFFILE ;
                     noFiles++ ;
 #ifdef _WIN32
-                    ffrp = GetStdHandle(STD_INPUT_HANDLE) ;
+                    meio.rp = GetStdHandle(STD_INPUT_HANDLE) ;
 #else
-                    ffrp = stdin ;
+                    meio.rp = stdin ;
 #endif
                     stdinflag = 1 ;
                     goto handle_stdin ;

@@ -452,6 +452,28 @@ typedef struct  meWindow {
 #endif
 } meWindow ;
 
+#define ME_IO_NONE          0           /* No file operation. */
+#define ME_IO_FILE          1           /* Regular file system file handle */
+#define ME_IO_SOCKET        2           /* A socket transfer. */
+#define ME_IO_BINFS         3           /* A Built-in file system operation. */
+#define ME_IO_PIPE          4           /* A pipe operation. */
+
+/* Define a file pointer type. */
+typedef struct meIo {
+    meUInt type;                        /* Currently operation in progress */
+
+#ifdef _WIN32
+    HANDLE    rp;                       /* File read pointer, all func. */
+    HANDLE    wp;                       /* File write pointer, all func.*/
+#else
+    FILE     *rp;                       /* File read pointer, all func. */
+    FILE     *wp;                       /* File write pointer, all func.*/
+#endif
+#ifdef MEOPT_BINFS
+    bfsfile_t binfs;                    /* The built-in file system handle */
+#endif
+} meIo;
+
 /* SWP 2002-01-09 - Windows file timestamps use 2 longs, a dwHigh and a dwLow
  *                  to count the 100 nanosecs since 1601-01-01 (why???)
  *                  So create an meFiletime type to handle this which is

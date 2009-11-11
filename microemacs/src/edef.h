@@ -392,6 +392,7 @@ extern int        screenUpdateDisabledCount ;
 extern meUByte    meCopyright[] ;
 
 /* fileio file pointer */
+#if 0
 #ifdef _WIN32
 extern HANDLE     ffrp;
 extern HANDLE     ffwp;
@@ -399,6 +400,8 @@ extern HANDLE     ffwp;
 extern FILE      *ffrp;
 extern FILE      *ffwp;
 #endif
+#endif
+extern meIo       meio;                 /* The current I/O operation    */
 
 #if MEOPT_OSD
 extern int        osdCol ;              /* The osd current column */
@@ -501,6 +504,7 @@ int       lastIndex = -1 ;              /* The last user executed comm  */
 int       thisCommand = 0 ;             /* The cur. user executed key   */
 int       thisIndex = -1 ;              /* The cur. user executed comm  */
 
+#if 0
 #ifdef _WIN32
 HANDLE    ffrp;                         /* File read pointer, all func. */
 HANDLE    ffwp;                         /* File write pointer, all func.*/
@@ -508,6 +512,8 @@ HANDLE    ffwp;                         /* File write pointer, all func.*/
 FILE     *ffrp;                         /* File read pointer, all func. */
 FILE     *ffwp;                         /* File write pointer, all func.*/
 #endif
+#endif
+meIo      meio;                         /* The current I/O operation    */
 meUShort  thiskey ;                     /* the current key              */
 meUByte   hexdigits[] = "0123456789ABCDEF";
 meUInt    cursorBlink = 0;              /* cursor-blink blink time      */
@@ -822,4 +828,7 @@ meUByte   clipState=CLIP_DISABLED;      /* clipboard status flag        */
 struct s_DragAndDrop *dadHead = NULL;   /* Drag and drop list           */
 #endif
 
+#if MEOPT_BINFS
+bfs_t bfsdev = NULL;                    /* Built-in File system mount point. */
+#endif
 #endif
