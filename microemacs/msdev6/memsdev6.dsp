@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_WIN32" /D "_URLSUPP" /D NDEBUG=1 /D "_ME_WINDOW" /YX /FD /c
+# ADD CPP /nologo /G4 /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_WIN32" /D "_URLSUPP" /D NDEBUG=1 /D "_ME_WINDOW" /YX /FD /Zm1000 /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x809 /d "NDEBUG"
@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ws2_32.lib /nologo /subsystem:windows /machine:I386 /out:"Release/me32.exe"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ws2_32.lib ..\src\win32\lib\libz.a /nologo /subsystem:windows /machine:I386 /out:"Release/me32.exe"
 
 !ELSEIF  "$(CFG)" == "memsdev6 - Win32 Debug"
 
@@ -69,7 +69,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_WIN32" /D "_SOCKET" /D "_ME_WINDOW" /YX /FD /GZ /c
+# ADD CPP /nologo /G4 /ML /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_WIN32" /D "_SOCKET" /D "_ME_WINDOW" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x809 /d "_DEBUG"
@@ -79,7 +79,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ws2_32.lib /nologo /subsystem:windows /debug /machine:I386 /out:"Debug/me32.exe" /pdbtype:sept
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib ws2_32.lib ..\src\win32\lib\libz.a /nologo /subsystem:windows /debug /machine:I386 /out:"Debug/me32.exe" /pdbtype:sept
 
 !ENDIF 
 
@@ -93,158 +93,202 @@ LINK32=link.exe
 # Begin Source File
 
 SOURCE=..\src\abbrev.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\basic.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\bfs.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\bind.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\buffer.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\crypt.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\dirlist.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\display.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\eval.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\exec.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\file.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\fileio.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\frame.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\hilight.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\history.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\input.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\isearch.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\key.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\line.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\macro.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\main.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\narrow.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\next.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\osd.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\print.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\random.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\regex.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\region.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\registry.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\search.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\spawn.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\spell.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\tag.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\termio.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\time.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\undo.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\window.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\winprint.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\winterm.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # Begin Source File
 
 SOURCE=..\src\word.c
+# ADD CPP /I "..\src\win32\include" /D "_BINFS"
 # End Source File
 # End Group
 # Begin Group "Header Files"
