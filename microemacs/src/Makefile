@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20090905.1241>
+# Last Modified: <20091213.1158>
 #
 ##############################################################################
 
@@ -18,7 +18,7 @@ include $(TOPDIR)/etc/makeinc
 STDHDR	=	ebind.h		edef.h		eextrn.h	efunc.h		\
 		emain.h		emode.h		eprint.h	esearch.h	\
 		eskeys.h	estruct.h	eterm.h		evar.h		\
-		evers.h		eopt.h
+		evers.h		eopt.h		bfs.h
 
 STDDEF	=	ebind.def	efunc.def	eprint.def	evar.def	\
 		etermcap.def	emode.def	eskeys.def
@@ -32,7 +32,7 @@ STDSRC	=	abbrev.c	basic.c		bind.c		buffer.c	\
 		random.c	regex.c		region.c	registry.c	\
 		search.c	spawn.c		spell.c		tag.c		\
 		termio.c	time.c		undo.c		window.c	\
-		word.c
+		word.c		bfs.c
 
 PLTSRC	=	unixterm.c	dosterm.c	winterm.c	winprint.c	\
 		me.rc		ne.rc		memsvc20.rc	nec.rc		\

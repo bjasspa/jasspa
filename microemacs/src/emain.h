@@ -106,6 +106,7 @@
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _DRAGNDROP     1                /* Drag and drop supported.      */
+#define _BINFS         1                /* Use the built-in File system  */
 #define _meDEF_SYS_ERRLIST              /* errno.h not def sys_errlist   */
 #define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
 #endif

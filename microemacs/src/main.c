@@ -1322,27 +1322,6 @@ mesetup(int argc, char *argv[])
     /* initialize the editor and process the command line arguments */
     initHistory() ;                     /* allocate history space */
     
-    /* Initialise the built-in file system. Note for speed we only check the
-     * header. */
-#if MEOPT_BINFS
-#ifndef _WIN32
-    bfsdev = bfs_mount (argv[0], BFS_CHECK_HEAD);
-#else
-    /* On MS-Windows then argv[0] is not the actual name of the executable.
-     * Use the Windows specific system call to determine the executable file.
-     * Scope the "exepath" locally so it is discarded once the pathname is
-     * passed to the mount and we exit the braces.
-     *
-     * Thanks to Petro 2009-11-09. */
-    {
-        TCHAR exepath[MAX_PATH];
-        
-        GetModuleFileName(0, exepath, MAX_PATH);
-        bfsdev = bfs_mount (exepath, BFS_CHECK_HEAD);
-    }
-#endif
-#endif
-    
     /* scan through the command line and get all global options */
     carg = rarg = 1 ;
     for( ; carg < argc; ++carg)
@@ -1568,7 +1547,9 @@ missing_arg:
             noFiles = 1 ;
         }
     }
+    /* Set up the path information. */
     meSetupPathsAndUser(argv[0]) ;
+
 #if MEOPT_CLIENTSERVER
     if(userClientServer && TTconnectClientServer())
     {

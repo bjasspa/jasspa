@@ -120,6 +120,13 @@ meSetupPathsAndUser(char *progname)
 #endif
     }
     
+#if MEOPT_BINFS
+    /* Initialise the built-in file system. Note for speed we only check the
+     * header. Scope the "exepath" locally so it is discarded once the
+     * pathname is passed to the mount and we exit the braces. */
+    bfsdev = bfs_mount (meProgName, BFS_CHECK_HEAD);
+#endif
+    
     if(meUserName == NULL)
     {
         if(((ss = meGetenv ("MENAME")) == NULL) || (ss[0] == '\0'))

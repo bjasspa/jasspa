@@ -5553,9 +5553,15 @@ meSetupPathsAndUser(char *progname)
         /* not yet initialised so mlwrite will exit */
         mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Failed to get cwd\n") ;
 
-    /* setup the $progname make it an absolute path. */
-    if(executableLookup(progname,evalResult))
+    /* Setup the $progname make it an absolute path. On MS-Windows use the
+     * Windows specific system call to determine the full executable filename
+     * and then perform an executableLookup() in order to correct the
+     * filename. - Thanks to Petro 2009-11-09. */
+    if(((GetModuleFileName(0, buff, sizeof (buff)) > 0) && executableLookup(buff,evalResult)) ||
+       executableLookup(progname,evalResult))
+    {
         meProgName = meStrdup(evalResult) ;
+    }
     else
     {
 #ifdef _ME_FREE_ALL_MEMORY
@@ -5565,6 +5571,13 @@ meSetupPathsAndUser(char *progname)
         meProgName = (meUByte *)progname ;
 #endif
     }
+
+#if MEOPT_BINFS
+    /* Initialise the built-in file system. Note for speed we only check the
+     * header. Scope the "exepath" locally so it is discarded once the
+     * pathname is passed to the mount and we exit the braces. */
+    bfsdev = bfs_mount (meProgName, BFS_CHECK_HEAD);
+#endif
 
 #if (defined CSIDL_APPDATA)
     /* Get a pointer to an item ID list that represents the path of a

@@ -54,6 +54,13 @@
 #include <X11/Sunkeysym.h>
 #endif
 
+/* For HP-UX then include the system headers for pstat which are used to
+ * determine the location of the executable. */
+#ifdef _HPUX
+#include <sys/pstat.h>
+#include <sys/param.h>
+#endif
+
 #ifdef _USG                     /* System V */
 /* We need this stuff to do the pipes properly. */
 #ifdef _TERMIOS
@@ -302,6 +309,81 @@ static meUShort mouseKeys[8] = { 0, 1, 2, 3, 4, 5 } ;
 
 #endif
 
+/** 
+ * Get the executable file name.
+ * 
+ * @param [in] argname The argument name of the programme.
+ * @param [in,out] execpath The buffer to be filled with the filename
+ * @param [in] execlen The length of the buffer in bytes.
+ * 
+ * @return The status of the call.
+ * @retval 0 The call failed.
+ * @retval 1 The call was successful.
+ */
+static int
+execFilename (char *argname, char *execpath, int execlen)
+{
+    int status = 0;                     /* The call failed. */
+#ifdef _SUNOS
+    pid_t pid;
+    
+    /* Get the PID */
+    if ((pid = getpid ()) >= 0)
+    {
+        char buf [meBUF_SIZE_MAX];
+        int n;
+        
+        /* Create the pathname of the executable in the /proc file system and
+         * read in the link. */
+        sprintf (buf, "/proc/%d/path/a.out", pid);
+        if ((n = readlink (buf, execpath, execlen)) >= 0)
+        {
+            execpath [n] = '\0';
+            status = 1;
+        }
+    }
+#elif (defined _LINUX)
+    pid_t pid;
+    
+    /* Get the PID */
+    if ((pid = getpid ()) >= 0)
+    {
+        char buf [meBUF_SIZE_MAX];
+        int n;
+        
+        /* Create the pathname of the executable in the /proc file system and
+         * read in the link. */
+        sprintf (buf, "/proc/%d/exe", pid);
+        if ((n = readlink (buf, execpath, execlen)) >= 0)
+        {
+            execpath [n] = '\0';
+            status = 1;
+        }
+    }
+#elif (defined _HPUX)
+    /* The following only works on later version of HPUX >11.00 */
+#if 0
+     pid_t pid;
+    
+    /* Get the PID */
+    if ((pid = getpid ()) >= 0)
+    {
+        struct pst_status pst;
+        
+        pst.pst_pid = -1;
+        if (pstat_getproc (&pst, sizeof (pst), 0, pid) > 0)
+        {
+            /* Get the name of the file. */
+            if ((n = pstat_getpathname (execpath, execlen, &pst.pst_fid_text)) > 0)
+                status = 1;
+        }
+    }
+#endif
+#endif
+    /* The call failed. */
+    return status;
+}
+
 void
 meSetupPathsAndUser(char *progname)
 {
@@ -342,9 +424,13 @@ meSetupPathsAndUser(char *progname)
     if(curdir == NULL)
         /* not yet initialised so mlwrite will exit */
         mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Failed to get cwd\n") ;
-
-    /* setup the $progname make it an absolute path. */
-    if((ii = executableLookup((meUByte *) progname,evalResult)) == 0)
+    
+    /* Setup the $progname make it an absolute path. Where the system
+     * provides a system call to get the absolute path then we use that (i.e.
+     * the /proc file system, where the system does not then we fall back to
+     * looking for the executable from the program name. */
+    if(((ii = execFilename (progname, evalResult, sizeof (evalResult))) == 0) &&
+       ((ii = executableLookup((meUByte *) progname,evalResult)) == 0))
     {
         /* Some shells, specifically zsh, will execute from the current
          * directory and pass through the argv[0] parameter with no pathname
@@ -367,6 +453,14 @@ meSetupPathsAndUser(char *progname)
         meProgName = (meUByte *)progname ;
 #endif
     }
+    
+#if MEOPT_BINFS
+    /* Initialise the built-in file system. Note for speed we only check the
+     * header. Scope the "exepath" locally so it is discarded once the
+     * pathname is passed to the mount and we exit the braces. */
+    bfsdev = bfs_mount (meProgName, BFS_CHECK_HEAD);
+#endif
+        
     if((meUserName == NULL) &&
        ((ss = meGetenv ("MENAME")) != NULL) && (ss[0] != '\0'))
         meUserName = meStrdup(ss) ;
