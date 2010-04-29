@@ -1002,10 +1002,10 @@ hilight(int f, int n)
         meInt fmCol, toCol ;
         
         if((meGetString((meUByte *)"From",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
-           ((fmCol = (meUByte) meAtoi(buf)) < 0) ||
+           ((fmCol = (meUShort) meAtoi(buf)) < 0) ||
            (!(n & ADDTOKEN_REMOVE) &&
             ((meGetString((meUByte *)"To",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
-             ((toCol = (meUByte) meAtoi(buf)) < fmCol))))
+             ((toCol = (meUShort) meAtoi(buf)) < fmCol))))
             return meFALSE ;
         while(((node = meHilightGetColumnHilight(root)) != NULL) && (meHilightGetFromColumn(node) < fmCol))
             root = node ;
