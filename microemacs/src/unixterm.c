@@ -4,7 +4,7 @@
  * unixterm.c - Unix X-Term and Termcap support routines.
  *
  * Copyright (C) 1993-2001 Steven Phillips
- * Copyright (C) 2002-2009 JASSPA (www.jasspa.com)
+ * Copyright (C) 2002-2010 JASSPA (www.jasspa.com)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -330,13 +330,16 @@ execFilename (char *argname, char *execpath, int execlen)
     /* Get the PID */
     if ((pid = getpid ()) >= 0)
     {
+        struct stat statbuf;
         char buf [meBUF_SIZE_MAX];
         int n;
         
         /* Create the pathname of the executable in the /proc file system and
          * read in the link. */
         sprintf (buf, "/proc/%d/path/a.out", pid);
-        if ((n = readlink (buf, execpath, execlen)) >= 0)
+        if ((lstat(buf, &statbuf) != 0) &&
+            (S_ISLNK(statbuf.st_mode)) &&
+            ((n = readlink (buf, execpath, execlen)) > 0))
         {
             execpath [n] = '\0';
             status = 1;
@@ -348,13 +351,16 @@ execFilename (char *argname, char *execpath, int execlen)
     /* Get the PID */
     if ((pid = getpid ()) >= 0)
     {
+        struct stat statbuf;
         char buf [meBUF_SIZE_MAX];
         int n;
         
         /* Create the pathname of the executable in the /proc file system and
          * read in the link. */
         sprintf (buf, "/proc/%d/exe", pid);
-        if ((n = readlink (buf, execpath, execlen)) >= 0)
+        if ((lstat(buf, &statbuf) != 0) &&
+            (S_ISLNK(statbuf.st_mode)) &&
+            ((n = readlink (buf, execpath, execlen)) > 0))
         {
             execpath [n] = '\0';
             status = 1;
