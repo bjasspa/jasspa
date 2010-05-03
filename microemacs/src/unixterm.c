@@ -2972,14 +2972,49 @@ XTERMsetFont(char *fontName)
 {
     int ii;
     XFontStruct *font ;
-
-    if (fontName == NULL)
-        fontName = "-*-fixed-medium-r-normal--15-*-*-*-c-90-*";
-
-    /* Load the basic font into the server */
-    if((font=XLoadQueryFont(mecm.xdisplay,fontName)) == NULL)
-        return meFALSE ;
-
+    
+    if (fontName != NULL)
+    {
+        /* Load the basic font into the server, fail if we cannot find it. */
+        if((font=XLoadQueryFont(mecm.xdisplay,fontName)) == NULL)
+            return meFALSE ;
+    }
+    else
+    {
+        /* No font has been specified. Attempt to find a font that we know
+         * might exist. We provide a few alternatives to fall back on as this
+         * was an issue with Fedora. Only search for mono or character
+         * upright fonts. */
+        char *altFonts[] =
+        {
+            "-*-clean-medium-r-*-*-*-130-*-*-*-*-iso8859-1",
+            "-*-clean-medium-r-*-*-*-130-*-*-*-*-iso8859-*",
+            "-*-fixed-medium-r-*-*-*-120-*-*-*-*-iso8859-*",
+            "-*-*-medium-r-*-*-*-*-*-*-c-*-iso8859-*",
+            "-*-*-medium-r-*-*-*-*-*-*-m-*-iso8859-*",
+            "-*-*-regular-r-*-*-*-*-*-*-c-*-iso8859-*",
+            "-*-*-regular-r-*-*-*-*-*-*-m-*-iso8859-*",
+            "-*-*-medium-r-*-*-*-*-*-*-c-*-*-*",
+            "-*-*-medium-r-*-*-*-*-*-*-m-*-*-*",
+            "-*-*-regular-r-*-*-*-*-*-*-c-*-*-*",
+            "-*-*-regular-r-*-*-*-*-*-*-m-*-*-*",
+            NULL
+        };
+        char **p = altFonts;
+        
+        /* There is no font specified, iterate over the fonts to find
+         * something we can load as default unstead of failing. */
+        do
+        {
+            /* Advance the font and bail out if we cannot load anyting. */
+            if ((fontName = *p++) == NULL)
+                return meFALSE ;
+            /* Load the font into the server. We will drop out of the loop if the  */
+            font = XLoadQueryFont(mecm.xdisplay,fontName);
+        }
+        while (font == NULL);
+    }
+    
     /* Make sure that the font is legal and we do not get a divide by zero
      * error through zero width characters. */
     if ((font->ascent + font->descent == 0) ||
