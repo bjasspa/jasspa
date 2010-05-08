@@ -718,6 +718,7 @@ exitEmacs(int f, int n)
             meNullFree(searchPath) ;
             meNullFree(homedir) ;
             meNullFree(curdir) ;
+            meNullFree(frameTitle) ;
 
             for(ii=0 ; ii<numStrHist ; ii++)
                 free(strHist[ii]) ;
