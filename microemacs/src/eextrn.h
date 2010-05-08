@@ -1142,8 +1142,6 @@ extern void gettimeofday (struct meTimeval *tp, struct meTimezone *tz);
  * Why the hell we need these functions and the ANSI 'C' functions are not
  * valid is beyond belief - typical bloody Microsoft !!
  */
-extern int chdir(const char *name) ;
-extern int _getdrive(void) ;
 #define meChdir(dir)        chdir(dir)
 #define meRename(src,dst)   (MoveFile(src,dst)==meFALSE)
 #define meUnlink(fn)        (DeleteFile(fn)==meFALSE)

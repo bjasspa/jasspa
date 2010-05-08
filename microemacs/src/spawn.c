@@ -70,8 +70,12 @@
 
 #endif /* _UNIX */
 
+#ifdef _WIN32
+#include <direct.h>
+#endif
+
 #ifdef _DOS
-#include	<process.h>
+#include <process.h>
 #endif
 
 
