@@ -422,12 +422,15 @@ define-macro cvs-log-list
     
 0 define-macro cvs-get-message-template
     !force 0 find-file "./CVS/Template"
-    !if &not $status
-        !if &not &seq &set #l0 &find "cvsci" ".etf" "ERROR" 
-            !force 0 find-file #l0
-        !endif
+    !if &and $status &gre $window-eline 1
+    !elif &not &seq &set #l0 &find "cvsci" ".etf" "ERROR" 
+      !if $status
+        0 delete-buffer $buffer-bname
+      !endif
+      !force 0 find-file #l0
     !endif
     !if $status
+      !if &gre $window-eline 1
         beginning-of-buffer
         set-mark
         end-of-buffer
@@ -435,7 +438,8 @@ define-macro cvs-log-list
         copy-region
         set-variable .cvs.message @y
         -1 yank
-        0 delete-buffer $buffer-bname
+      !endif
+      0 delete-buffer $buffer-bname
     !endif
     0x10 goto-position "\x82"
 !emacro
