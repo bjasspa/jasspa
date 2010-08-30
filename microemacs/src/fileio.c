@@ -1024,9 +1024,11 @@ ffHttpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUBy
     if(tport == NULL)
         tport = (meUByte *)"80" ;
 
+    /* if we're already logged on somewhere else kill the connection */
+    ffCloseSockets(0) ;
     if(meSocketIsBad(ffsock=ffOpenConnectUrlSocket(thost,tport)))
         return meFALSE ;
-
+    
     sprintf((char *)buff,"[Connected, reading %s]",file);
     if(ffurlBp != NULL)
     {
@@ -1078,7 +1080,7 @@ ffHttpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUBy
     }
     if(meSocketWrite(ffsock,(char *)buff,meStrlen(buff),0) <= 0)
     {
-        ffCloseSockets(1) ;
+        ffCloseSockets(0) ;
         return meFALSE ;
     }
     /* must now ditch the header, read up to the first blank line */
@@ -1103,12 +1105,11 @@ ffHttpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUBy
                 /* printf("Got Location: [%s]\n",ss) ;*/
                 if(ffurlBp != NULL)
                     ffurlConsoleAddText((meUByte *)"",0x04) ;
-                ffCloseSockets(1) ;
                 return ffUrlFileOpen(ss,user,pass,rwflag) ;
             }
         }
     }
-    ffCloseSockets(1) ;
+    ffCloseSockets(0) ;
     if(rwflag & meRWFLAG_SILENT)
         return meABORT ;
     return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to read header of %s]",ss) ;
@@ -1616,10 +1617,10 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
 static int
 ffgetBuf(void)
 {
-#ifdef MEOPT_BINFS
-    if (meio.type == ME_IO_BINFS)
+#ifdef MEOPT_TFS
+    if (meio.type == ME_IO_TFS)
     {
-        ffremain = bfs_fread(ffbuf,1,meFIOBUFSIZ,meio.binfs) ;
+        ffremain = tfs_fread(ffbuf,1,meFIOBUFSIZ,meio.tfsp) ;
         if(ffremain <= 0)
         {
             /* if(ferror(meio.rp))*/
@@ -1965,12 +1966,12 @@ ffReadFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
             return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[No url support in this version]") ;
 #endif
         }
-#ifdef MEOPT_BINFS
-        else if (isBfsFile(fname))
+#ifdef MEOPT_TFS
+        else if (isTfsFile(fname))
         {
-            meio.binfs = bfs_fopen(bfsdev, (char *)(fname+5));
-            if (meio.binfs != NULL)
-                meio.type = ME_IO_BINFS;
+            meio.tfsp = tfs_fopen(tfsdev, (char *)(fname+5));
+            if (meio.tfsp != NULL)
+                meio.type = ME_IO_TFS;
         }
 #endif
         else
@@ -1992,7 +1993,7 @@ ffReadFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
     }
 #ifdef _UNIX
 #if MEOPT_SOCKET
-    if((meio.rp != ffpInvalidVal) || (meio.type == ME_IO_BINFS))
+    if((meio.rp != ffpInvalidVal) || (meio.type == ME_IO_TFS))
 #endif
     {
         meSigHold() ;
@@ -2006,12 +2007,12 @@ ffReadFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
 static void
 ffReadFileClose(meUByte *fname, meUInt flags)
 {
-#if MEOPT_BINFS
-    if (meio.type == ME_IO_BINFS)
+#if MEOPT_TFS
+    if (meio.type == ME_IO_TFS)
     {
-        bfs_fclose (meio.binfs);
+        tfs_fclose (meio.tfsp);
         meio.type = ME_IO_NONE;
-        meio.binfs = NULL;
+        meio.tfsp = NULL;
     }
     else 
 #endif
