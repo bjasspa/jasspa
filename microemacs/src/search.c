@@ -55,19 +55,6 @@ meUByte  srchRPat[meBUF_SIZE_MAX] ;         /* Reversed pattern array */
 int      srchLastState=meFALSE ;            /* status of last search */
 meUByte *srchLastMatch=NULL ;               /* pointer to the last match string */
 
-/*
- * boundry -- Return information depending on whether we may search no
- *      further.  Beginning of file and end of file are the obvious
- *      cases, but we may want to add further optional boundry restrictions
- *      in future, a la VMS EDT.  At the moment, just return meTRUE or
- *      meFALSE depending on if a boundry is hit (ouch).
- */
-#define boundry(curline,curoff,dir)                                          \
-(((dir) == meFORWARD) ?                                                      \
- (curline == frameCur->bufferCur->baseLine) :                                \
- ((curoff == 0) && (meLineGetPrev(curline) == frameCur->bufferCur->baseLine)))
-
-
 #if MEOPT_MAGIC
 
 int           srchLastMagic = 0 ;              /* last search was a magic        */
@@ -357,8 +344,7 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
  * scanner -- Search for a pattern in either direction.
  */
 static int 
-scanner(meUByte *patrn, int direct, int beg_or_end, int *count,
-        SCANNERPOS *sp)
+scanner(meUByte *patrn, int direct, int beg_or_end, int *count, SCANNERPOS *sp)
 {
     register meUByte cc, aa, bb ;       /* character at current position */
     register meUByte *patptr;           /* pointer into pattern */
@@ -371,82 +357,44 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count,
     register meInt curlnno, matchlnno ;
     
     srchLastState = meFALSE ;
-    /* If we are going in reverse, then the 'end' is actually the beginning of
-     * the pattern. Toggle it.
-     */
-    beg_or_end ^= direct;
     
     /* Setup local scan pointers to global ".". */
+    aa = patrn[0] ;
     curline = frameCur->windowCur->dotLine;
     curlnno = frameCur->windowCur->dotLineNo;
     if (direct == meFORWARD)
-        curptr = curline->text+frameCur->windowCur->dotOffset ;
-    else /* Reverse.*/
-        curoff = frameCur->windowCur->dotOffset;
-    
-    /* Scan each character until we hit the head link record. */
-/*    if (boundry(curline, curoff, direct))*/
-/*        return meFALSE ;*/
-    
-    aa = patrn[0] ;
-    for (;;)
     {
-        /* Get the character resolving newlines, and
-         * test it against first char in pattern.
-         */
-        if (direct == meFORWARD)
+        curptr = curline->text+frameCur->windowCur->dotOffset ;
+        for (;;)
         {
+            /* Get the character resolving newlines, and
+             * test it against first char in pattern.
+             */
             if((cc=*curptr++) == '\0')    /* if at EOL */
             {
-                if(curline != frameCur->bufferCur->baseLine)
-                {
-                    curline = meLineGetNext(curline) ;  /* skip to next line */
-                    curlnno++ ;
-                    curptr = curline->text ;
-                    cc = meCHAR_NL;        /* and return a <NL> */
-                    if((*count > 0) && (--(*count) == 0) &&
-                       ((patrn[0] != meCHAR_NL) || (patrn[1] != '\0')))
-                        /* must check that the pattern isn't "\n" */
-                        break ;
-                }
+                /* if on last line or searching a fixed number of lines and this is the last */
+                if((curline == frameCur->bufferCur->baseLine) ||
+                   ((*count > 0) && (--(*count) == 0) &&
+                    /* must check that the pattern isn't "\n" */
+                    ((patrn[0] != meCHAR_NL) || (patrn[1] != '\0'))))
+                    return meFALSE;  /* We could not find a match */
+                
+                curline = meLineGetNext(curline) ;  /* skip to next line */
+                curlnno++ ;
+                curptr = curline->text ;
+                cc = meCHAR_NL;
             }
-        }
-        else /* Reverse.*/
-        {
-            if (curoff == 0)
-            {
-                if((curline = meLineGetPrev(curline)) == frameCur->bufferCur->baseLine)
-                    cc = '\0';
-                else
-                {
-                    if((*count > 0) && (--(*count) == 0))
-                        break ;
-                    curlnno-- ;
-                    curoff = meLineGetLength(curline);
-                    cc = meCHAR_NL;
-                }
-            }
-            else
-                cc = meLineGetChar(curline, --curoff);
-        }
-        if(cc == '\0')
-            break ;
-        
-        if(cEq(cc,aa)) /* if we find it..*/
-        {
-            /* Setup match pointers.
-            */
-            matchline = curline ;
-            matchlnno = curlnno ;
-            matchptr = curptr ;
-            matchoff = curoff ;
-            patptr = &patrn[0];
             
-            /* Scan through the pattern for a match.
-            */
-            while((bb = *++patptr) != '\0')
+            if(cEq(cc,aa)) /* if we find it..*/
             {
-                if (direct == meFORWARD)
+                /* Setup match pointers. */
+                matchline = curline ;
+                matchlnno = curlnno ;
+                matchptr = curptr ;
+                patptr = &patrn[0];
+                
+                /* Scan through the pattern for a match. */
+                while((bb = *++patptr) != '\0')
                 {
                     if((cc=*matchptr++) == '\0')    /* if at EOL */
                     {
@@ -458,8 +406,63 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count,
                             cc = meCHAR_NL;          /* and return a <NL> */
                         }
                     }
+                    if (cNotEq(cc,bb))
+                        break ;
                 }
-                else /* Reverse.*/
+                if(bb == '\0')
+                {
+                    /* Save the current position in case we need to restore it on a match. */
+                    if(curptr == curline->text)
+                    {
+                        curline = meLineGetPrev(curline) ;
+                        curlnno-- ;
+                        curoff = meLineGetLength(curline);
+                    }
+                    else
+                        curoff = ((size_t) curptr) - ((size_t) curline->text) - 1 ;
+                    matchoff = ((size_t) matchptr) - ((size_t) matchline->text) ;
+                    break ;
+                }
+            }
+            if(TTbreakTest(1))
+            {
+                ctrlg(meFALSE,1) ;
+                return meFALSE ;
+            }
+        }
+    }
+    else /* Reverse.*/
+    {
+        curoff = frameCur->windowCur->dotOffset;
+        for (;;)
+        {
+            /* Get the character resolving newlines, and
+             * test it against first char in pattern.
+             */
+            if(curoff == 0)
+            {
+                if(((curline = meLineGetPrev(curline)) == frameCur->bufferCur->baseLine) ||
+                   ((*count > 0) && (--(*count) == 0)))
+                    return meFALSE;  /* We could not find a match */
+                curlnno-- ;
+                curoff = meLineGetLength(curline);
+                cc = meCHAR_NL;
+            }
+            else
+                cc = meLineGetChar(curline, --curoff);
+            
+            if(cEq(cc,aa)) /* if we find it..*/
+            {
+                /* Setup match pointers.
+                 */
+                matchline = curline ;
+                matchlnno = curlnno ;
+                matchoff = curoff ;
+                patptr = &patrn[0];
+                
+                /* Scan through the pattern for a match.
+                 */
+                while((bb = *++patptr) != '\0')
                 {
                     if (matchoff == 0)
                     {
@@ -474,86 +477,69 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count,
                     }
                     else
                         cc = meLineGetChar(matchline, --matchoff);
+                    if(cNotEq(cc,bb))
+                        break ;
                 }
-                if (cNotEq(cc,bb))
-                    goto fail;
-            }
-            
-            /*
-             * A SUCCESSFULL MATCH!!!
-             * reset the frameCur->windowCur "." pointers
-             * Fill in the scanner position structure if required.
-             */
-            /* Save the current position in case we need to restore it on a
-             * match.
-             */
-            if (direct == meFORWARD)
-            {
-                if(curptr == curline->text)
+                
+                if(bb == '\0')
                 {
-                    curline = meLineGetPrev(curline) ;
-                    curlnno-- ;
-                    curoff = meLineGetLength(curline);
+                    /* Save the current position in case we need to restore it on a match. */
+                    if(curoff == meLineGetLength(curline))  /* if at EOL */
+                    {
+                        curline = meLineGetNext(curline) ;  /* skip to next line */
+                        curlnno++ ;
+                        curoff = 0;
+                    }
+                    else
+                        curoff++ ;  /* get the char */
+                    
+                    break ;
                 }
-                else
-                    curoff = ((size_t) curptr) - ((size_t) curline->text) - 1 ;
-                matchoff = ((size_t) matchptr) - ((size_t) matchline->text) ;
+                
             }
-            else /* Reverse.*/
+            if(TTbreakTest(1))
             {
-                if(curoff == meLineGetLength(curline))  /* if at EOL */
-                {
-                    curline = meLineGetNext(curline) ;  /* skip to next line */
-                    curlnno++ ;
-                    curoff = 0;
-                }
-                else
-                    curoff++ ;  /* get the char */
+                ctrlg(meFALSE,1) ;
+                return meFALSE ;
             }
-        
-            
-            if (sp != NULL)
-            {
-                sp->startline = curline;
-                sp->startoff = curoff;
-                sp->startline_no = curlnno ;
-                sp->endline = matchline;
-                sp->endoffset = matchoff;
-                sp->endline_no = matchlnno ;
-            }
-            setShowRegion(frameCur->bufferCur,curlnno,curoff,matchlnno,matchoff) ;
-            if (beg_or_end == PTEND) /* at end of string */
-            {
-                frameCur->windowCur->dotLine = matchline ;
-                frameCur->windowCur->dotOffset = matchoff ;
-                frameCur->windowCur->dotLineNo = matchlnno ;
-            }
-            else /* at beginning of string */
-            {
-                frameCur->windowCur->dotLine = curline;
-                frameCur->windowCur->dotOffset = curoff;
-                frameCur->windowCur->dotLineNo = curlnno ;
-            }
-             /* Flag that we have moved and got a region to hilight.*/
-            frameCur->windowCur->updateFlags |= WFMOVEL|WFSELHIL ;
-            srchLastMatch = srchPat ;
-            srchLastState = meTRUE ;
-            return meTRUE;
-            
         }
-fail:   /* continue to search */
-        if(TTbreakTest(1))
-        {
-            ctrlg(meFALSE,1) ;
-            return meFALSE ;
-        }
-        
-/*        if (boundry(curline, curoff, direct))*/
-/*            break;*/
-        /* Quit when we have done our work !! */
     }
-    
-    return meFALSE;  /* We could not find a match */
+                    
+    /*
+     * A SUCCESSFULL MATCH!!!
+     * reset the frameCur->windowCur "." pointers
+     * Fill in the scanner position structure if required.
+     */
+    if(sp != NULL)
+    {
+        sp->startline = curline;
+        sp->startoff = curoff;
+        sp->startline_no = curlnno ;
+        sp->endline = matchline;
+        sp->endoffset = matchoff;
+        sp->endline_no = matchlnno ;
+    }
+    setShowRegion(frameCur->bufferCur,curlnno,curoff,matchlnno,matchoff) ;
+    /* If we are going in reverse, then the 'end' is actually the beginning of the pattern. Toggle it. */
+    if((beg_or_end ^ direct) == PTEND) /* at end of string */
+    {
+        frameCur->windowCur->dotLine = matchline ;
+        frameCur->windowCur->dotOffset = matchoff ;
+        frameCur->windowCur->dotLineNo = matchlnno ;
+    }
+    else /* at beginning of string */
+    {
+        frameCur->windowCur->dotLine = curline;
+        frameCur->windowCur->dotOffset = curoff;
+        frameCur->windowCur->dotLineNo = curlnno ;
+    }
+    /* Flag that we have moved and got a region to hilight.*/
+    frameCur->windowCur->updateFlags |= WFMOVEL|WFSELHIL ;
+    srchLastMatch = srchPat ;
+    srchLastState = meTRUE ;
+    return meTRUE;
+                    
+        
 }
 
 int
