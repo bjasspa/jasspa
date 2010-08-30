@@ -894,8 +894,10 @@ typedef struct meKill {
 #define FUN_ARG1        0x01
 #define FUN_ARG2        0x02
 #define FUN_ARG3        0x04
+#if MEOPT_EXTENDED
 #define FUN_SETVAR      0x08
 #define FUN_GETVAR      0x10
+#endif
 #define FUN_MONAMIC     FUN_ARG1
 #define FUN_DYNAMIC     (FUN_ARG1|FUN_ARG2)
 #define FUN_TRINAMIC    (FUN_ARG1|FUN_ARG2|FUN_ARG3)
