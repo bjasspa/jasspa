@@ -52,14 +52,14 @@ STRIP         =	strip
 INSTALL       =	install
 CDEBUG        =	-g -Wall
 COPTIMISE     =	-O3 -DNDEBUG=1 -Wall -Wno-uninitialized
-CDEFS         = -D_ZAURUS -I.
+CDEFS         = -D_ZAURUS -I. -I../3rdparty/tfs
 CONSOLE_DEFS  = -D_ME_CONSOLE
 WINDOW_DEFS   = $(MAKEWINDEFS) -D_ME_WINDOW
 NANOEMACS_DEFS= -D_NANOEMACS
 LDDEBUG       =
 LDOPTIMISE    =
 LDFLAGS       = 
-LIBS          = 
+LIBS          = -ltfs -lzlib
 WINDOW_LIBS   = $(MAKEWINLIBS) -L/usr/X11R6/lib -lX11
 #
 # figure out if termcap is avaiable or if ncurses should be tried

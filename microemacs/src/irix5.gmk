@@ -45,14 +45,14 @@ STRIP         =	strip
 INSTALL       =	install
 CDEBUG        = -Wall -g
 COPTIMISE     = -Wall -O3 -DNDEBUG=1 -Wno-uninitialized
-CDEFS         = -D_IRIX5 -I.
+CDEFS         = -D_IRIX5 -I. -I../3rdparty/tfs
 CONSOLE_DEFS  = -D_ME_CONSOLE
 WINDOW_DEFS   = $(MAKEWINDEFS) -D_ME_WINDOW
 NANOEMACS_DEFS= -D_NANOEMACS
 LDDEBUG       =
 LDOPTIMISE    =
 LDFLAGS       =
-LIBS          =
+LIBS          = -ltfs -lzlib
 CONSOLE_LIBS  = -ltermcap
 WINDOW_LIBS   = $(MAKEWINLIBS) -lX11
 #

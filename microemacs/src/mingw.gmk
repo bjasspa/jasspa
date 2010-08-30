@@ -52,7 +52,7 @@ STRIP         =	strip
 INSTALL       =	install
 CDEBUG        =	-g -Wall
 COPTIMISE     =	-O3 -DNDEBUG=1 -Wall -Wno-uninitialized
-CDEFS         = -D_MINGW -I.
+CDEFS         = -D_MINGW -I. -I../3rdparty/tfs
 CONSOLE_DEFS  = -D_ME_CONSOLE
 WINDOW_DEFS   = -D_ME_WINDOW
 MICROEMACS_DEFS= -D_SOCKET
@@ -60,7 +60,7 @@ NANOEMACS_DEFS= -D_NANOEMACS
 LDDEBUG       = -g
 LDOPTIMISE    = -O3
 LDFLAGS       =
-LIBS          = -lshell32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32
+LIBS          = -ltfs -lzlib -lshell32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32
 CONSOLE_LIBS  = 
 WINDOW_LIBS   = 
 #
