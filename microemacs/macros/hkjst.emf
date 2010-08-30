@@ -323,6 +323,8 @@ set-variable .fhook-jst.item-list-r4 "H4  \ecB\\1\ecA"
     jst-add-file-support "php"
     ; Allow make inserts
     jst-add-file-support "make"
+    ; Allow xml inserts
+    jst-add-file-support "xml"
 !endif
 
 ; must replace the normal fill-paragraph with one which will skip inserts 
