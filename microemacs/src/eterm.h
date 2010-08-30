@@ -107,7 +107,8 @@ extern void       doIdlePickEvent(void) ;
 #endif
 extern void       setAlarm(meInt absTime, meInt offTime) ;
 
-extern void       meSetupPathsAndUser(char *progname) ;
+extern void       meSetupProgname(char *progname) ;
+extern void       meSetupPathsAndUser(void) ;
 
 #ifdef _UNIX
 
