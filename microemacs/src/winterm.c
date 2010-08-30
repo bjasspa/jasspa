@@ -4491,6 +4491,10 @@ TTwaitForChar(void)
         }
     }
 #endif
+#ifdef _ME_WIN32_FULL_DEBUG
+    /* Do heap walk before getting next char */
+    _CrtCheckMemory();
+#endif
 #if MEOPT_CALLBACK
     /* IDLE TIME: Check the idle time events */
     if(kbdmode == meIDLE)
@@ -4532,10 +4536,6 @@ TTwaitForChar(void)
 
         /* Suspend until there is another message to process. */
         TTflush () ;                /* Make sure the screen is up-to-date */
-#ifdef _ME_WIN32_FULL_DEBUG
-        /* Do heap walk in idle time */
-        _CrtCheckMemory();
-#endif
         meGetMessage(&msg,0);         /* Suspend for a message */
 
         /* Closing down the system */
@@ -5535,18 +5535,10 @@ meSetupUserName(void)
     meUserName = meStrdup(nn) ;
 }
 
-/* meSetupPathsAndUser
- *
- * On windows the user name has already been setup - required for ini file reading
- * The ini file may also have found an mepath or meinstallpath setting */
 void
-meSetupPathsAndUser(char *progname)
+meSetupProgname(char *progname)
 {
-    char *ss, *appData, buff[meBUF_SIZE_MAX], appDataBuff[meBUF_SIZE_MAX] ;
-    int ii, ll, gotUserPath ;
-#if (defined CSIDL_APPDATA)
-    LPITEMIDLIST idList ;
-#endif
+    char buff[meBUF_SIZE_MAX] ;
 
     curdir = gwd(0) ;
     if(curdir == NULL)
@@ -5568,15 +5560,22 @@ meSetupPathsAndUser(char *progname)
         /* stops problems on exit */
         meProgName = meStrdup(progname) ;
 #else
-        meProgName = (meUByte *)progname ;
+        meProgName = (meUByte *) progname ;
 #endif
     }
+}
 
-#if MEOPT_BINFS
-    /* Initialise the built-in file system. Note for speed we only check the
-     * header. Scope the "exepath" locally so it is discarded once the
-     * pathname is passed to the mount and we exit the braces. */
-    bfsdev = bfs_mount (meProgName, BFS_CHECK_HEAD);
+/* meSetupPathsAndUser
+ *
+ * On windows the user name has already been setup - required for ini file reading
+ * The ini file may also have found an mepath or meinstallpath setting */
+void
+meSetupPathsAndUser(void)
+{
+    char *ss, *appData, buff[meBUF_SIZE_MAX], appDataBuff[meBUF_SIZE_MAX] ;
+    int ii, ll, gotUserPath ;
+#if (defined CSIDL_APPDATA)
+    LPITEMIDLIST idList ;
 #endif
 
 #if (defined CSIDL_APPDATA)
@@ -5669,16 +5668,16 @@ meSetupPathsAndUser(char *progname)
         }
 
         /* also check for directories in the same location as the binary */
-        if((meProgName != NULL) && ((ss=meStrrchr(meProgName,DIR_CHAR)) != NULL))
+        if((ss=meStrrchr(meProgName,DIR_CHAR)) != NULL)
         {
             ii = (((size_t) ss) - ((size_t) meProgName)) ;
             strncpy(buff,meProgName,ii) ;
             buff[ii] = '\0' ;
             ll = mePathAddSearchPath(ll,evalResult,buff,&gotUserPath) ;
         }
-#if MEOPT_BINFS
+#if MEOPT_TFS
         /* also check for the built-in file system */
-        ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "{BFS}",&gotUserPath) ;
+        ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "{TFS}",&gotUserPath) ;
 #endif        
         if(!gotUserPath && (appData != NULL))
         {
@@ -5888,15 +5887,15 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
 #endif
 
 #ifdef _ME_WIN32_FULL_DEBUG
-    _CrtSetReportMode( _CRT_WARN, _CRTDBG_MODE_FILE );
-    _CrtSetReportFile( _CRT_WARN, _CRTDBG_FILE_STDERR );
-    _CrtSetReportMode( _CRT_ERROR, _CRTDBG_MODE_FILE );
-    _CrtSetReportFile( _CRT_ERROR, _CRTDBG_FILE_STDERR );
-    _CrtSetReportMode( _CRT_ASSERT, _CRTDBG_MODE_FILE );
-    _CrtSetReportFile( _CRT_ASSERT, _CRTDBG_FILE_STDERR );
+    freopen("std.err","w",stderr) ;
+    _CrtSetReportMode(_CRT_WARN,_CRTDBG_MODE_FILE) ;
+    _CrtSetReportFile(_CRT_WARN,_CRTDBG_FILE_STDERR) ;
+    _CrtSetReportMode(_CRT_ERROR,_CRTDBG_MODE_FILE) ;
+    _CrtSetReportFile(_CRT_ERROR,_CRTDBG_FILE_STDERR) ;
+    _CrtSetReportMode(_CRT_ASSERT,_CRTDBG_MODE_FILE) ;
+    _CrtSetReportFile(_CRT_ASSERT,_CRTDBG_FILE_STDERR) ;
     /* Enable heap checking on each allocate and free */
-    _CrtSetDbgFlag (_CRTDBG_ALLOC_MEM_DF|_CRTDBG_DELAY_FREE_MEM_DF|
-                    _CRTDBG_LEAK_CHECK_DF|_CRTDBG_DELAY_FREE_MEM_DF);
+    _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) |_CRTDBG_ALLOC_MEM_DF|_CRTDBG_LEAK_CHECK_DF|_CRTDBG_DELAY_FREE_MEM_DF);
 #endif
 
 /*     if(logfp == NULL)*/
@@ -5998,61 +5997,8 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
     /* Get the rest of the parameters from the passed in command line */
     if ((lpCmdLine != NULL) && (*lpCmdLine != '\0'))
     {
-        char *lpbuf;                    /* Newly allocated line buffer */
-        char cc;                        /* Local character buffer */
-        char endc;                      /* Termination character for option. */
-
-        lpbuf = meStrdup (lpCmdLine);
-        while (*lpbuf != '\0')
-        {
-            /* Construct larger argv container */
-            argv = meRealloc(argv, (sizeof (char *) * (argc+2)));
-            argv [argc+1] = NULL;
-
-            /* Determine the end of option. This may be a quoted string
-             * option or unquoted string option. */
-            if ((endc=*lpbuf) != '"')
-            {
-                /* if the next argument does not start with a '-' (an Com-line option)
-                 * and the rest of the line makes up the name of an existing file then
-                 * add the rest of the line as the last arg and quit. Why? Windows
-                 * stupidity of course! With Explorer extension associativity a user
-                 * should specify to open .foo files with [me32 "%1"] so the file name
-                 * is correctly quoted. But windows being windows allows [me32] so when
-                 * the user double clicks on c:\program files\fred.foo the command line
-                 * is [me32 c:\program files\fred.foo] - nuff said. */
-                if((endc != '-') && !meTestRead(lpbuf))
-                {
-                    argv [argc++] = lpbuf;
-                    break ;
-                }
-                endc = ' ';
-            }
-            else
-                lpbuf++;
-
-            /* Scan to the end of the string */
-            argv [argc++] = lpbuf;
-            while ((cc = *lpbuf) != '\0')
-            {
-                if (cc == endc)
-                {
-                    *lpbuf++ = '\0';
-                    break;
-                }
-                else
-                    lpbuf++;
-            }
-
-            /* Remove any white space */
-            while ((cc = *lpbuf) != '\0')
-            {
-                if (cc == ' ')
-                    lpbuf++;
-                else
-                    break;
-            }
-        }
+        extern int mesetupInsertResourceString(char *ss, int argi, int oargc, char **oargv[]) ;
+        argc = mesetupInsertResourceString(meStrdup(lpCmdLine),1,argc,&argv) ;
     }
 #endif /* !_ME_CONSOLE */
 
@@ -6582,8 +6528,9 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
             InvalidateRect (hWnd, NULL, meFALSE);
             meFrameGetWinPaintAll(frame) = 1 ;
         }
-        goto unhandled_message;         /* Assume unhandled */
-
+        /* ME redraws all background in WM_PAINT so return done to reduce flicker */
+        return 1 ;
+        
     case WM_NCMOUSEMOVE:
         /* The mouse is in the non-client area, therefore the cursor may have changed,
          * reset the last lParam to force a reset of the cursor when it re-enters the
