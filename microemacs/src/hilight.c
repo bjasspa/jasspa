@@ -1944,9 +1944,9 @@ BracketJump:
                     if((hilno = node->ignore) == 0)
                         hilno = vp1->wind->buffer->hilight ;
                     meHilightBranchType = node->type ;
-                    mode &= ~meHIL_MODETOEOL ;
                     hd.root = hilights[hilno] ;
                     hd.cnode = hd.root;
+                    mode = (mode & ~(meHIL_MODETOEOL|HFCASE|HFTOKEWS)) | (meHilightGetFlags(hd.root) & (HFCASE|HFTOKEWS)) ;
                 }
                 if(hd.blkp->column == dstPos)
                 {
@@ -2111,7 +2111,7 @@ hilightCurLineOffsetEval(meWindow *wp)
     
     root = hilights[hilno];          /* Root of the hilighting */
     
-    mode = (meHIL_MODESTTLN|meHIL_MODESTART|(meHilightGetFlags(root) & HFCASE)) ;
+    mode = (meHIL_MODESTTLN|meHIL_MODESTART|(meHilightGetFlags(root) & (HFCASE|HFTOKEWS))) ;
     /*    if(vp1->bracket != NULL)*/
     /*    {*/
     /*        node = vp1->bracket ;*/
@@ -2302,6 +2302,7 @@ column_token:
                     if((hilno = node->ignore) == 0)
                         hilno = wp->buffer->hilight ;
                     root = hilights[hilno] ;
+                    mode = (mode & ~(meHIL_MODETOEOL|HFCASE|HFTOKEWS)) | (meHilightGetFlags(root) & (HFCASE|HFTOKEWS)) ;
                 }
             }
             if(dstPos)
