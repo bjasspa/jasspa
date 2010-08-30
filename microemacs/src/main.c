@@ -1223,6 +1223,136 @@ doOneKey(void)
     commandDepth-- ;
 }
 
+int
+mesetupInsertResourceString(char *ss, int argi, int oargc, char **oargv[])
+{
+    char **argv=NULL ;
+    char cc ;
+    int nargc=0 ;
+    
+    for(;;)
+    {
+        while(((cc=*ss) != '\0') && isSpace(cc))
+            ss++ ;
+        if(cc == '\0')
+            break ;
+                    
+        if((nargc & 0x0f) == 0)
+        {
+            /* Construct larger argv container */
+            if(nargc == 0)
+                argv = meMalloc(sizeof(char *) * (oargc + 17)) ;
+            else
+                argv = meRealloc(argv,sizeof(char *) * (oargc + nargc + 17)) ;
+            if(argv == NULL)
+                return oargc ;
+        }
+        /* Determine the end of option. This may be a quoted string
+         * option or unquoted string option. */
+        if(cc != '"')
+        {
+            argv[argi + nargc++] = ss ;
+#ifdef _WIN32
+            /* if the next argument does not start with a '-' (an Com-line option)
+             * and the rest of the line makes up the name of an existing file then
+             * add the rest of the line as the last arg and quit. Why? Windows
+             * stupidity of course! With Explorer extension associativity a user
+             * should specify to open .foo files with [me32 "%1"] so the file name
+             * is correctly quoted. But windows being windows allows [me32] so when
+             * the user double clicks on c:\program files\fred.foo the command line
+             * is [me32 c:\program files\fred.foo] - nuff said. */
+            if((cc != '-') && !meTestRead(ss))
+                break ;
+#endif
+            while((cc = *ss) != '\0')
+            {
+                if(isSpace(cc))
+                {
+                    *ss++ = '\0';
+                    break;
+                }
+                ss++;
+            }
+        }
+        else
+        {
+            argv[argi + nargc++] = ++ss ;
+            /* Scan to the end of the string */
+            while((cc = *ss) != '\0')
+            {
+                if(cc == '"')
+                {
+                    *ss++ = '\0';
+                    break;
+                }
+                ss++;
+            }
+        }
+    }
+    if(nargc == 0)
+        return oargc ;
+    if(argi)
+        memcpy(argv,(*oargv),sizeof(char *) * argi) ;
+    memcpy((argv+argi+nargc),((*oargv)+argi),sizeof(char *) * (oargc-argi+1)) ;
+    *oargv = argv ;
+    return oargc + nargc ;
+}
+
+int
+mesetupInsertResourceFile(char *fname, int iarg, int oargc, char **oargv[])
+{
+    meUInt len ;
+    FILE *fp ;
+    char *buff ;
+    
+    if((fp = fopen(fname,"rb")) == NULL)
+    {
+        sprintf((char *)evalResult,"%s Error: Failed to open [%s] for reading\n",(*oargv)[0],fname);
+        mePrintMessage(evalResult) ;
+        meExit(1);
+    }
+    fseek(fp,0,SEEK_END) ;
+    len = ftell(fp) ;
+    fseek(fp,0,SEEK_SET) ;
+    buff = (char *) meMalloc(len+1) ;
+    if(fread(buff,1,len,fp) < len)
+    {
+        sprintf((char *)evalResult,"%s Error: Failed to read [%s]\n",(*oargv)[0],fname);
+        mePrintMessage(evalResult) ;
+        meExit(1);
+    }
+    fclose(fp) ;
+    buff[len] = '\0' ;
+/*    rr = dpgCalloc(1,sizeof(dpgResourceFile)) ;*/
+
+    return mesetupInsertResourceString(buff,iarg,oargc,oargv) ;
+}
+
+int
+mesetupInsertTsfResource(int oargc, char **oargv[])
+{
+    tfsstat_t st ;
+    tfsfile_t fp ;
+    meInt len ;
+    char *buff ;
+    
+    if((tfs_stat(tfsdev,"/@@clo",&st) != 0) || (st.st_mode != TFS_TYPE_FILE) ||
+       ((fp = tfs_fopen(tfsdev,"/@@clo")) == NULL))
+        return oargc ;
+    len = st.st_size ;
+    buff = (char *) meMalloc(len+1) ;
+    if(tfs_fread(buff,1,len,fp) < len)
+    {
+        sprintf((char *)evalResult,"%s Error: Failed to read [{tfs}/@@clo]\n") ;
+        mePrintMessage(evalResult) ;
+        meExit(1);
+    }
+    tfs_fclose(fp) ;
+    buff[len] = '\0' ;
+    
+    return mesetupInsertResourceString(buff,1,oargc,oargv) ;
+}
+
 void
 mesetup(int argc, char *argv[])
 {
@@ -1243,6 +1373,7 @@ mesetup(int argc, char *argv[])
     startTime = (meInt) time(NULL) ;
     
     /* asserts to check that the defines are consistent */
+    assert(argv[0] != NULL) ;
 #if MEOPT_NARROW
     /* more info is required to undo a narrow than can be held in the main
      * structure so an alternative definition is used, but elements within it
@@ -1322,6 +1453,12 @@ mesetup(int argc, char *argv[])
 
     /* initialize the editor and process the command line arguments */
     initHistory() ;                     /* allocate history space */
+    meSetupProgname(argv[0]) ;
+#if MEOPT_TFS
+    /* Initialise the tack-on file system. Note for speed we only check the header. */
+    if((tfsdev = tfs_mount(meProgName,TFS_CHECK_HEAD)) != NULL)
+        argc = mesetupInsertTsfResource(argc,&argv) ;
+#endif
     
     /* scan through the command line and get all global options */
     carg = rarg = 1 ;
@@ -1539,7 +1676,12 @@ missing_arg:
             }
         }
         else if(argv[carg][0] == '@')
-            file = (meUByte *) argv[carg] + 1 ;
+        {
+            if(argv[carg][1] == '@')
+                argc = mesetupInsertResourceFile(argv[carg] + 2,carg+1,argc,&argv) ;
+            else
+                file = (meUByte *) argv[carg] + 1 ;
+        }
         else if((argv[carg][0] == '+') && (argv[carg][1] == '\0'))
             goto missing_arg ;
         else
@@ -1549,7 +1691,7 @@ missing_arg:
         }
     }
     /* Set up the path information. */
-    meSetupPathsAndUser(argv[0]) ;
+    meSetupPathsAndUser() ;
 
 #if MEOPT_CLIENTSERVER
     if(userClientServer && TTconnectClientServer())
