@@ -97,11 +97,8 @@ static meUByte dosColors[dosNumColors*3] =
     
 
 void
-meSetupPathsAndUser(char *progname)
+meSetupProgname(char *progname)
 {
-    meUByte *ss, buff[meBUF_SIZE_MAX] ;
-    int ii, ll, gotUserPath ;
-    
     curdir = gwd(0) ;
     if(curdir == NULL)
         /* not yet initialised so mlwrite will exit */
@@ -119,13 +116,13 @@ meSetupPathsAndUser(char *progname)
         meProgName = (meUByte *)progname ;
 #endif
     }
-    
-#if MEOPT_BINFS
-    /* Initialise the built-in file system. Note for speed we only check the
-     * header. Scope the "exepath" locally so it is discarded once the
-     * pathname is passed to the mount and we exit the braces. */
-    bfsdev = bfs_mount (meProgName, BFS_CHECK_HEAD);
-#endif
+}
+
+void
+meSetupPathsAndUser(void)
+{
+    meUByte *ss, buff[meBUF_SIZE_MAX] ;
+    int ii, ll, gotUserPath ;
     
     if(meUserName == NULL)
     {
@@ -194,7 +191,7 @@ meSetupPathsAndUser(char *progname)
         }
         
         /* also check for directories in the same location as the binary */
-        if((meProgName != NULL) && ((ss=meStrrchr(meProgName,DIR_CHAR)) != NULL))
+        if((ss=meStrrchr(meProgName,DIR_CHAR)) != NULL)
         {
             ii = (((size_t) ss) - ((size_t) meProgName)) ;
             meStrncpy(buff,meProgName,ii) ;

@@ -391,21 +391,12 @@ execFilename (char *argname, char *execpath, int execlen)
 }
 
 void
-meSetupPathsAndUser(char *progname)
+meSetupProgname(char *progname)
 {
-    /* Pre-built search path, this is a path built into the executable. The
-     * installation root path of the installation macros searched in the order
-     * specified. Once a directory has been located then it is used as the
-     * default path. */
-#ifndef _SEARCH_PATH
-#define _SEARCH_PATH _DEFAULT_SEARCH_PATH
-#endif
-    static meUByte lpath[] = _SEARCH_PATH;
     struct stat dotstat, pwdstat;
-    struct passwd *pwdp;            /* Password structure entry */
-    meUByte *ss, buff[meBUF_SIZE_MAX] ;
-    int ii, ll, gotUserPath ;
-
+    meUByte cc, *ss, *dd ;
+    int ii, ll ;
+    
     /* If PWD is accurate, use it instead of calling gwd.
      * This solves problems with bad ~/ as the shell will
      * store as /user/.... etc.
@@ -415,8 +406,6 @@ meSetupPathsAndUser(char *progname)
        (stat(".", &dotstat) == 0) && (dotstat.st_ino == pwdstat.st_ino) &&
        (dotstat.st_dev == pwdstat.st_dev))
     {
-        meUByte cc, *dd ;
-
         ll = meStrlen(ss) ;
         curdir = dd = meMalloc(ll+2) ;
         while((cc=*ss++) != '\0')
@@ -459,14 +448,23 @@ meSetupPathsAndUser(char *progname)
         meProgName = (meUByte *)progname ;
 #endif
     }
-    
-#if MEOPT_BINFS
-    /* Initialise the built-in file system. Note for speed we only check the
-     * header. Scope the "exepath" locally so it is discarded once the
-     * pathname is passed to the mount and we exit the braces. */
-    bfsdev = bfs_mount (meProgName, BFS_CHECK_HEAD);
-#endif
+}
         
+void
+meSetupPathsAndUser(void)
+{
+    /* Pre-built search path, this is a path built into the executable. The
+     * installation root path of the installation macros searched in the order
+     * specified. Once a directory has been located then it is used as the
+     * default path. */
+#ifndef _SEARCH_PATH
+#define _SEARCH_PATH _DEFAULT_SEARCH_PATH
+#endif
+    static meUByte lpath[] = _SEARCH_PATH;
+    struct passwd *pwdp;            /* Password structure entry */
+    meUByte *ss, buff[meBUF_SIZE_MAX] ;
+    int ii, ll, gotUserPath ;
+
     if((meUserName == NULL) &&
        ((ss = meGetenv ("MENAME")) != NULL) && (ss[0] != '\0'))
         meUserName = meStrdup(ss) ;
@@ -551,7 +549,7 @@ meSetupPathsAndUser(char *progname)
         }
 
         /* also check for directories in the same location as the binary */
-        if((meProgName != NULL) && ((ss=meStrrchr(meProgName,DIR_CHAR)) != NULL))
+        if((ss=meStrrchr(meProgName,DIR_CHAR)) != NULL)
         {
             ii = (((size_t) ss) - ((size_t) meProgName)) ;
             meStrncpy(buff,meProgName,ii) ;
@@ -559,9 +557,9 @@ meSetupPathsAndUser(char *progname)
             ll = mePathAddSearchPath(ll,evalResult,buff,&gotUserPath) ;
         }
         
-#if MEOPT_BINFS
+#if MEOPT_TFS
         /* also check for the built-in file system */
-        ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "{BFS}",&gotUserPath) ;
+        ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "{TFS}",&gotUserPath) ;
 #endif        
         
         if(!gotUserPath && (homedir != NULL))
