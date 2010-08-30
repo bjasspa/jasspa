@@ -75,6 +75,7 @@ set-variable .fhook-vb.collapse-mnext "-1"
     hilight .hilight.vb 1 "begin"        .scheme.keyword
     hilight .hilight.vb 1 "End"          .scheme.keyword
     hilight .hilight.vb 1 "Exit"         .scheme.keyword
+    hilight .hilight.vb 1 "Class"        .scheme.keyword
     hilight .hilight.vb 1 "Function"     .scheme.keyword
     hilight .hilight.vb 1 "While"        .scheme.keyword
     hilight .hilight.vb 1 "Until"        .scheme.keyword
@@ -132,6 +133,7 @@ set-variable .fhook-vb.collapse-mnext "-1"
     indent .hilight.vb i "^#"
     indent .hilight.vb e "\"" "\"" ""
     indent .hilight.vb N "Declare" -t
+    indent .hilight.vb N "Class" t
     indent .hilight.vb N "Function" t
     indent .hilight.vb N "Property" t
     indent .hilight.vb N "Sub" t
@@ -149,9 +151,10 @@ set-variable .fhook-vb.collapse-mnext "-1"
     indent .hilight.vb o "\\.End\\s" 0
     indent .hilight.vb N "Type" t
     indent .hilight.vb S "Resume\\s+Next" 0
-    indent .hilight.vb O "End\\s+Select" -2t
+    indent .hilight.vb O "End\\s+Class" -t
     indent .hilight.vb O "End\\s+Function" -t
     indent .hilight.vb O "End\\s+Property" -t
+    indent .hilight.vb O "End\\s+Select" -2t
     indent .hilight.vb O "End\\s+Sub" -t
     indent .hilight.vb O "End\\s+Type" -t
     indent .hilight.vb O "Exit\\s+For" 0
