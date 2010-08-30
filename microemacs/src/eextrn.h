@@ -1447,7 +1447,7 @@ extern int      putenv(const char *s);
 #define isUrlFile(fn)  (!strncmp((char *)fn,"file:",5))
 
 /* is built-in file system test */
-#define isBfsFile(fn)  ((!strncmp((char *)fn,"bfs://",6))||(!strncmp((char *)fn,"{BFS}",5)))
+#define isTfsFile(fn)  ((!strncmp((char *)fn,"tfs://",6)) || (!strncmp((char *)fn,"{TFS}",5)))
 
 /* use this with some care */
 #define meFree(x) free(x)
@@ -1491,7 +1491,7 @@ extern int      putenv(const char *s);
  selhilight.dotLineNo=eln,selhilight.dotOffset=elo,                          \
  selhilight.flags = SELHIL_ACTIVE|SELHIL_FIXED|SELHIL_CHANGED)
 
-#if MEOPT_BINFS
-extern unsigned char binfs[1];          /* The built in file system data */
-extern bfs_t bfsdev;                    /* Built in file system device */
+#if MEOPT_TFS
+extern unsigned char tfsdat[1];         /* The tack-on file system data */
+extern tfs_t tfsdev;                    /* Tack-on file system device */
 #endif

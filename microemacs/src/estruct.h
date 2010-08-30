@@ -455,7 +455,7 @@ typedef struct  meWindow {
 #define ME_IO_NONE          0           /* No file operation. */
 #define ME_IO_FILE          1           /* Regular file system file handle */
 #define ME_IO_SOCKET        2           /* A socket transfer. */
-#define ME_IO_BINFS         3           /* A Built-in file system operation. */
+#define ME_IO_TFS           3           /* A Tack-on file system operation. */
 #define ME_IO_PIPE          4           /* A pipe operation. */
 
 /* Define a file pointer type. */
@@ -469,8 +469,8 @@ typedef struct meIo {
     FILE     *rp;                       /* File read pointer, all func. */
     FILE     *wp;                       /* File write pointer, all func.*/
 #endif
-#ifdef MEOPT_BINFS
-    bfsfile_t binfs;                    /* The built-in file system handle */
+#ifdef MEOPT_TFS
+    tfsfile_t tfsp;                     /* The tack-on file system handle */
 #endif
 } meIo;
 
@@ -894,10 +894,8 @@ typedef struct meKill {
 #define FUN_ARG1        0x01
 #define FUN_ARG2        0x02
 #define FUN_ARG3        0x04
-#if MEOPT_EXTENDED
 #define FUN_SETVAR      0x08
 #define FUN_GETVAR      0x10
-#endif
 #define FUN_MONAMIC     FUN_ARG1
 #define FUN_DYNAMIC     (FUN_ARG1|FUN_ARG2)
 #define FUN_TRINAMIC    (FUN_ARG1|FUN_ARG2|FUN_ARG3)

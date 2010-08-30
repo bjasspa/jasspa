@@ -828,7 +828,7 @@ meUByte   clipState=CLIP_DISABLED;      /* clipboard status flag        */
 struct s_DragAndDrop *dadHead = NULL;   /* Drag and drop list           */
 #endif
 
-#if MEOPT_BINFS
-bfs_t bfsdev = NULL;                    /* Built-in File system mount point. */
+#if MEOPT_TFS
+tfs_t tfsdev = NULL;                    /* Built-in File system mount point. */
 #endif
 #endif
