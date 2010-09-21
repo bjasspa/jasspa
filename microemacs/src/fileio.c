@@ -1977,8 +1977,19 @@ ffReadFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
         else
         {
 #ifdef _WIN32
-            if((meio.rp=CreateFile(fname,GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,
-                               FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
+            /* On windows a file could be temporarily lock be another process (e.g. virus scanner)
+             * so if the failure is ERROR_SHARING_VIOLATION wait and try again */
+            int retries=5 ;
+            for(;;)
+            {
+                if(((meio.rp=CreateFile(fname,GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,
+                                        FILE_ATTRIBUTE_NORMAL,NULL)) != INVALID_HANDLE_VALUE) ||
+                   (GetLastError() != ERROR_SHARING_VIOLATION) ||
+                   (--retries == 0))
+                    break ;
+                Sleep(100) ;
+            }
+            if(meio.rp == INVALID_HANDLE_VALUE)
 #else
             if ((meio.rp=fopen((char *)fname, "rb")) == NULL)
 #endif
