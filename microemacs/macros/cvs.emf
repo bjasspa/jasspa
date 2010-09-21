@@ -1678,7 +1678,7 @@ define-macro cvs-resolve-conflicts
             !if #l5
                 insert-string &spr " -%s--- %s%s      -                      %s" #l7 #l8 #l9 #l4
             !else
-                insert-string &spr " -%s--- CVS Error - status failure on this file:              %s" #l7 #l4
+                insert-string &spr " -%s--- CVS Error: failure on this file: %s" #l7 #l4
                 !goto del-break-out
             !endif
             beginning-of-line
@@ -1713,9 +1713,9 @@ define-macro cvs-resolve-conflicts
             set-variable #l5 $status
             find-buffer #l1
             !if #l5
-                insert-string &spr " d%s--- %s%s      -                   %s/\n" #l7 #l8 #l9 #l4
+                insert-string &spr " d%s--- %s%s      -                      %s/\n" #l7 #l8 #l9 #l4
             !else
-                insert-string &spr " d%s--- CVS Error - status failure on this dir:            %s/\n" #l7 #l4
+                insert-string &spr " d%s--- CVS Error: failure on this dir:  %s/\n" #l7 #l4
                 !goto del-break-out
             !endif
             beginning-of-line
