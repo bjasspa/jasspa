@@ -50,6 +50,7 @@ set-variable .fhook-emf.item-list-r1 "Macr \ecB\\1\ecA"
     hilight .hilight.emf 0  ";.*"                       .scheme.comment
     hilight .hilight.emf 0  ";\\s*[tT][oO][dD][oO].*"   .scheme.error
     hilight .hilight.emf 4  "!"   "\\}\\W" ""           .scheme.keyword
+    hilight .hilight.emf 4  "!ema"   "\\}\\W" ""        .scheme.function
     hilight .hilight.emf 4  "&"   "\\}\\W" ""           .scheme.operator
     hilight .hilight.emf 4  "\\." "\\}\\W" ""           .scheme.variable
     hilight .hilight.emf 4  "%"   "\\}\\W" ""           .scheme.variable
