@@ -8,7 +8,6 @@
 ; Authors:     Steven Phillips
 ;
 0 define-macro-file ftp ftp-rename-buffer
-0 define-macro-file cvs cvs-init
 0 define-macro-file clearcs cc-init
 !if &not &exi fhook-html
     define-macro-file hkhtml fhook-html
@@ -883,8 +882,8 @@ define-macro file-browser-swap-buffers
     set-variable #l0 1
     !if $window-col
         !while &not &seq "" &set #l1 &lget .fhook-dirlst.col-name &inc #l0 1
-            set-variable #l2 &sub &sin #l1 @wl 1
-            !if &and &gre &add 1 $window-col #l2 &les $window-col &add #l2 &len #l1
+            !if &les &set #l2 &sub &sin #l1 @wl 1 0
+            !elif &and &gre &add 1 $window-col #l2 &les $window-col &add #l2 &len #l1
                 !goto got-col
             !endif
         !done
@@ -2177,10 +2176,13 @@ osd .osd.dirlst 90  "M" "File \HSelection"      .osd.dirlsts
 !emacro
 set-variable .toolbar-file-list-create.filter 1
 
-!if &reg "/history/cvs/en-strt" "0"
-    cvs-init
-!endif
 !if &reg "/history/clearcase/en-strt" "0"
     cc-init
+!endif
+!if &reg "/history/cvs/en-strt" "0"
+  !force exec-file "cvs"
+!endif
+!if &reg "/history/svn/en-strt" "0"
+  !force exec-file "svn"
 !endif
 buffer-init-fhook "dirlst"
