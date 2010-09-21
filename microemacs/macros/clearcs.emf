@@ -259,7 +259,6 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
         osd-dialog &cat "ClearCase - " &lget .cc-init.names @# "    Current buffer is not located in a directory!    " "  \HAbort  "
         !abort
     !endif
-    !force unset-variable .cc-init.refresh
     !if &exi :fmpf
         10 dirlst-tag-list
         goto-position "\x82"
@@ -1195,6 +1194,8 @@ define-macro cc-update
     !if &equ $window-line :ccco-last
         !return
     !endif
+    ; Clearcase can flush stdin (on unix only?) so write another 'YES' to ensure it doesn't hang
+    ipipe-write &cond &band $system 0x100 "YES\CJ" "YES\CM"
     set-variable #l0 $window-line
     goto-line :ccco-last
     !while &gre #l0 $window-line
@@ -2080,7 +2081,7 @@ osd .osd.ccgen 0 "s" 66 16 -1 -1
 osd .osd.ccgen 10  "" ""
 osd .osd.ccgen 20  "Sfh" "  \HCleartool Command: " 30
 osd .osd.ccgen 30  "EtxHfz" .scheme.osd-entry 42 1 "" 1 cc-setup-entry
-osd .osd.ccgen 40  "Sfh" "  Version \HSeparator: " 60
+osd .osd.ccgen 40  "Sfh" "  Version \HSeparator: " 50
 osd .osd.ccgen 50  "EtxHfz" .scheme.osd-entry 10 1 "" 2 cc-setup-entry
 osd .osd.ccgen 60  "" ""
 osd .osd.ccgen 70  "fh" "    "
