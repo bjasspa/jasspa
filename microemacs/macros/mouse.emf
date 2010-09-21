@@ -601,6 +601,9 @@
         ; if we were scrolling in the current window then don't retore the old position
         !force goto-position "\x82"
     !endif
+    !if &equ &band .mouse-event.r 7 5
+      4 show-region
+    !endif
 !emacro
 0 define-macro mouse-wdown-scroll
     !if @?
@@ -614,6 +617,9 @@
         ; if we were scrolling in the current window then don't retore the old position
         !force goto-position "\x82"
     !endif
+    !if &equ &band .mouse-event.r 7 5
+      4 show-region
+    !endif
 !emacro
 0 define-macro mouse-wleft-scroll
     !force @# scroll-left
@@ -623,6 +629,9 @@
         ; if we were scrolling in the current window then don't retore the old position
         !force goto-position "\x82"
     !endif
+    !if &equ &band .mouse-event.r 7 5
+      4 show-region
+    !endif
 !emacro
 0 define-macro mouse-wright-scroll
     !force @# scroll-right
@@ -631,6 +640,9 @@
     !if &not &equ #l1 $window-id
         ; if we were scrolling in the current window then don't retore the old position
         !force goto-position "\x82"
+    !endif
+    !if &equ &band .mouse-event.r 7 5
+      4 show-region
     !endif
 !emacro
 
@@ -746,13 +758,12 @@
 !emacro
 
 0 define-macro mouse-event
-    set-variable #l1 @cck
+    0 show-region
+    set-variable .r $result
     set-variable .x $mouse-x
     set-variable .y $mouse-y
-    ; get the current region settings
-    0 show-region
-    set-variable #l2 $result
-    !if &equ &band #l2 7 5
+    set-variable #l1 @cck
+    !if &equ &band .r 7 5
         3 show-region
     !endif
     ; decrement the msshift
@@ -805,20 +816,20 @@
     !else
         !return
     !endif
-    !if &band #l2 1
+    !if &band .r 1
         !force show-region
     !endif
     !if &not &seq #l0 ""
         !force !force execute-line #l0
         set-variable #l3 $status
         0 show-region
-        set-variable #l2 $result
+        set-variable .r $result
     !else
         goto-position "\x82"
         set-variable #l3 1
     !endif
     ; was the region showing, if so make sure it is
-    !if &band #l2 1
+    !if &band .r 1
         !force show-region
     !endif
     !return #l3
@@ -828,9 +839,11 @@ set-variable .mouse-event.msshift 0
 set-variable .mouse-event.mask "mouse-%s-1"
 
 0 define-macro mouse-wheel-event
-    set-variable #l1 @cck
+    0 show-region
+    set-variable .mouse-event.r $result
     set-variable .mouse-event.x $mouse-x
     set-variable .mouse-event.y $mouse-y
+    set-variable #l1 @cck
     0x21 set-position "\x82"
     1 set-cursor-to-mouse
     !if &not &seq &set #l0 &ind &cat ":" #l1 "ERROR"
