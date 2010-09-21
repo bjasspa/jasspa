@@ -158,3 +158,19 @@ define-macro write-region
     delete-buffer $buffer-bname
     goto-position "\x88"
 !emacro
+
+define-macro execute-region
+  set-alpha-mark "a"
+  3 narrow-buffer
+  !force !force !force execute-buffer $buffer-bname
+  !if &set #l0 &not $status
+    set-alpha-mark "a"
+  !endif
+  end-of-buffer
+  2 narrow-buffer
+  goto-alpha-mark "a"
+  !if #l0
+    ml-write &spr "[Error executing region in %s, line %d]" $buffer-bname $window-line
+    !abort
+  !endif
+!emacro
