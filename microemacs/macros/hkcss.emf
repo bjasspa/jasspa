@@ -36,15 +36,18 @@ set-variable .fhook-css.item-list-r1 "Item \ecB\\1\ecA"
     ; css file highlighting
     0 hilight .hilight.css 3 50                     $global-scheme
     ; Strings and things
-    hilight .hilight.css 20 "'" "'" ""              .scheme.string
-    hilight .hilight.css 20 "\"" "\"" ""            .scheme.string
+    hilight .hilight.css 4 "'" "'" ""               .scheme.string
+    hilight .hilight.css 4 "\"" "\"" ""             .scheme.string
+    hilight .hilight.css 4  "url(" ")" ""           .scheme.string
     ; Comments.
     hilight .hilight.css 20 "/\\*" "*/" ""          .scheme.comment
     hilight .hilight.css 4  "<!--" "-->" ""         .scheme.comment
-    ; class
+    ; class & ids
     hilight .hilight.css 1  "\\.\\w+"               .scheme.variable
+    hilight .hilight.css 1  "\\#\\w+"               .scheme.variable
     ; Separators
     hilight .hilight.css 0  ":active"               .scheme.operator
+    hilight .hilight.css 0  ":first-child"          .scheme.operator
     hilight .hilight.css 0  ":focus"                .scheme.operator
     hilight .hilight.css 0  ":hover"                .scheme.operator
     hilight .hilight.css 0  ":lang(\\w*)"           .scheme.operator
@@ -76,11 +79,13 @@ set-variable .fhook-css.item-list-r1 "Item \ecB\\1\ecA"
     hilight .hilight.css 1  "border"                .scheme.keyword
     hilight .hilight.css 1  "border-bottom"         .scheme.keyword
     hilight .hilight.css 1  "border-bottom-width"   .scheme.keyword
+    hilight .hilight.css 1  "border-collapse"       .scheme.keyword
     hilight .hilight.css 1  "border-color"          .scheme.keyword
     hilight .hilight.css 1  "border-left"           .scheme.keyword
     hilight .hilight.css 1  "border-left-width"     .scheme.keyword
     hilight .hilight.css 1  "border-right"          .scheme.keyword
     hilight .hilight.css 1  "border-right-width"    .scheme.keyword
+    hilight .hilight.css 1  "border-spacing"        .scheme.keyword
     hilight .hilight.css 1  "border-style"          .scheme.keyword
     hilight .hilight.css 1  "border-top"            .scheme.keyword
     hilight .hilight.css 1  "border-top-color"      .scheme.keyword
@@ -88,7 +93,6 @@ set-variable .fhook-css.item-list-r1 "Item \ecB\\1\ecA"
     hilight .hilight.css 1  "border-top-width"      .scheme.keyword
     hilight .hilight.css 1  "border-width"          .scheme.keyword
     hilight .hilight.css 1  "border-width-top"      .scheme.keyword
-    hilight .hilight.css 1  "bottom"                .scheme.keyword
     hilight .hilight.css 1  "capitalize"            .scheme.keyword
     hilight .hilight.css 1  "cellpadding"           .scheme.keyword
     hilight .hilight.css 1  "cellspacing"           .scheme.keyword
@@ -135,6 +139,8 @@ set-variable .fhook-css.item-list-r1 "Item \ecB\\1\ecA"
     hilight .hilight.css 1  "marker-offset"         .scheme.keyword
     hilight .hilight.css 1  "marks"                 .scheme.keyword
     hilight .hilight.css 1  "medium"                .scheme.keyword
+    hilight .hilight.css 1  "max-height"            .scheme.keyword
+    hilight .hilight.css 1  "max-width"             .scheme.keyword
     hilight .hilight.css 1  "min-height"            .scheme.keyword
     hilight .hilight.css 1  "min-width"             .scheme.keyword
     hilight .hilight.css 1  "monospace"             .scheme.keyword
@@ -174,7 +180,6 @@ set-variable .fhook-css.item-list-r1 "Item \ecB\\1\ecA"
     hilight .hilight.css 1  "text-transform"        .scheme.keyword
     hilight .hilight.css 1  "text-valign"           .scheme.keyword
     hilight .hilight.css 1  "thin"                  .scheme.keyword
-    hilight .hilight.css 1  "top"                   .scheme.keyword
     hilight .hilight.css 1  "unicode-range"         .scheme.keyword
     hilight .hilight.css 1  "units-per-em"          .scheme.keyword
     hilight .hilight.css 1  "uppercase"             .scheme.keyword
@@ -189,24 +194,42 @@ set-variable .fhook-css.item-list-r1 "Item \ecB\\1\ecA"
     hilight .hilight.css 1  "x-large"               .scheme.keyword
     hilight .hilight.css 1  "z-index"               .scheme.keyword
     ; token values
+    hilight .hilight.css 1  "absolute"              .scheme.prepro
+    hilight .hilight.css 1  "block"                 .scheme.prepro
     hilight .hilight.css 1  "bold"                  .scheme.prepro
+    hilight .hilight.css 1  "both"                  .scheme.prepro
+    hilight .hilight.css 1  "bottom"                .scheme.prepro
     hilight .hilight.css 1  "center"                .scheme.prepro
+    hilight .hilight.css 1  "collapse"              .scheme.prepro
+    hilight .hilight.css 1  "default"               .scheme.prepro
     hilight .hilight.css 1  "fixed"                 .scheme.prepro
+    hilight .hilight.css 1  "hidden"                .scheme.prepro
+    hilight .hilight.css 1  "inline"                .scheme.prepro
     hilight .hilight.css 1  "italic"                .scheme.prepro
     hilight .hilight.css 1  "justify"               .scheme.prepro
     hilight .hilight.css 1  "left"                  .scheme.prepro
     hilight .hilight.css 1  "light"                 .scheme.prepro
     hilight .hilight.css 1  "middle"                .scheme.prepro
+    hilight .hilight.css 1  "no-repeat"             .scheme.prepro
+    hilight .hilight.css 1  "nowrap"                .scheme.prepro
     hilight .hilight.css 1  "none"                  .scheme.prepro
     hilight .hilight.css 1  "normal"                .scheme.prepro
+    hilight .hilight.css 1  "relative"              .scheme.prepro
     hilight .hilight.css 1  "right"                 .scheme.prepro
     hilight .hilight.css 1  "solid"                 .scheme.prepro
+    hilight .hilight.css 1  "top"                   .scheme.prepro
     hilight .hilight.css 1  "transparent"           .scheme.prepro
     hilight .hilight.css 1  "underline"             .scheme.prepro
+    hilight .hilight.css 1  "visible"               .scheme.prepro
     ; fonts
-    hilight .hilight.css 1  "Arial"                 .scheme.prepro
-    hilight .hilight.css 1  "Helvetica"             .scheme.prepro
-    hilight .hilight.css 1  "sans-serif"            .scheme.prepro
+    hilight .hilight.css 1  "arial"                 .scheme.constant
+    hilight .hilight.css 1  "georgia"               .scheme.constant
+    hilight .hilight.css 1  "helvetica"             .scheme.constant
+    hilight .hilight.css 1  "sans-serif"            .scheme.constant
+    hilight .hilight.css 1  "serif"                 .scheme.constant
+    hilight .hilight.css 1  "times"                 .scheme.constant
+    hilight .hilight.css 1  "times new roman"       .scheme.constant
+    hilight .hilight.css 1  "verdana"               .scheme.constant
     ; colors
     hilight .hilight.css 1  "black"                 .scheme.prepro
     hilight .hilight.css 1  "blue"                  .scheme.prepro
