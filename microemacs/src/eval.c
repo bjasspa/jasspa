@@ -70,17 +70,17 @@ meNamesList varbNames={1,0,NULL,NULL,0} ;
 
 /* The following horrid global variable solves a horrid problem, consider:
    define-macro l3
-      set-variable @1 @2
+   set-variable @1 @2
    !emacro
    define-macro l2
-      l3 @1 @2
+   l3 @1 @2
    !emacro
    define-macro l1
-      l2 @1 @2
+   l2 @1 @2
    !emacro
    define-macro Test
-      l1 #l0 @#
-      ml-write #l0
+   l1 #l0 @#
+   ml-write #l0
    !emacro
    500 Test
  * The above example should write out "500".
@@ -178,8 +178,8 @@ meVariable *
 SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue, register meVarList *varList)
 {
     /* set a user variable */
-    register meVariable *vptr, *vp ;
-    register int ii, jj ;
+    meVariable *vptr, *vp ;
+    int ii, jj ;
     
     vptr = (meVariable *) varList ;
     ii = varList->count ;
@@ -215,6 +215,9 @@ SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue, register meVarList *varList)
     if((vp = (meVariable *) meMalloc(sizeof(meVariable)+meStrlen(vname))) != NULL)
     {
         meStrcpy(vp->name,vname) ;
+#if MEOPT_CMDHASH
+        vp->hash = cmdHashFunc(vname) ;
+#endif
         vp->next = vptr->next ;
         vptr->next = vp ;
         varList->count++ ;
@@ -294,7 +297,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 return meFALSE ;
             break ;
         }
-    
+        
     case TKARG:
         if(*nn == 'w')
         {
@@ -338,7 +341,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             if(nn[2] == 'k')
             {
                 meUByte *saves, savcle ;
-                          
+                
                 /* use the macro string to key evaluator to get the value,
                  * must set this up carefully and restore state */
                 savcle = clexec;        /* save execution mode */
@@ -421,7 +424,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             return mlwrite(MWABORT,(meUByte *)"[Cannot set variable %s]",vname);
         break ;
 #endif
-    
+        
     case TKENV:
         /* set an environment variable */
         status = biChopFindString(nn,14,envars,NEVARS) ;
@@ -512,7 +515,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         case EVSYSTEM:
             {
                 meSystemCfg = (meSystemCfg & ~meSYSTEM_MASK) | 
-                          (meAtoi(vvalue)&meSYSTEM_MASK) ;
+                      (meAtoi(vvalue)&meSYSTEM_MASK) ;
 #if MEOPT_EXTENDED
                 if(meSystemCfg & meSYSTEM_DOSFNAMES)
                     keptVersions = 0 ;
@@ -650,7 +653,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 meLine   *odotp ;
                 meUShort  odoto ;
                 meInt     lineno ;
-
+                
                 odotp = frameCur->windowCur->dotLine ;
                 lineno = frameCur->windowCur->dotLineNo ;
                 odoto = frameCur->windowCur->dotOffset ;
@@ -904,7 +907,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             break ;
         case EVLINEFLAGS:
             frameCur->windowCur->dotLine->flag = ((meLineFlag) (meAtoi(vvalue) & meLINE_SET_MASK)) |
-                      (frameCur->windowCur->dotLine->flag & ~meLINE_SET_MASK) ;
+                  (frameCur->windowCur->dotLine->flag & ~meLINE_SET_MASK) ;
             break ;
 #endif
 #if MEOPT_HILIGHT
@@ -1417,16 +1420,36 @@ hook_jump:
 meUByte *
 getUsrLclCmdVar(meUByte *vname, register meVarList *varList)
 {
-    register meVariable *vptr, *vp ;
-    register int ii, jj ;
+    meByte *s1, *s2, ss ;
+#if MEOPT_CMDHASH
+    meVariable *vp ;
+    meUInt hash ;
+    
+    hash = cmdHashFunc(vname) ;
+    vp = varList->head ;
+    while(vp != NULL)
+    {
+        if(vp->hash == hash)
+        {
+            s1 = (meByte *) vp->name ;
+            s2 = (meByte *) vname ;
+            for( ; ((ss=*s1++) == *s2) ; s2++)
+                if(ss == 0)
+                    return(vp->value);
+            if(ss > *s2)
+                break ;
+        }
+        vp = vp->next ;
+    }
+#else
+    meVariable *vptr, *vp ;
+    int ii, jj ;
     
     vptr = varList->head ;
     ii = varList->count ;
     /* scan the list looking for the user var name */
     while(ii)
     {
-        meByte *s1, *s2, ss ;
-        
         jj = ii>>1 ;
         vp = vptr ;
         while(--jj >= 0)
@@ -1445,6 +1468,7 @@ getUsrLclCmdVar(meUByte *vname, register meVarList *varList)
             vptr = vp->next ;
         }
     }
+#endif
     return errorm ;     /* return errorm on a bad reference */
 }
 
@@ -1477,157 +1501,28 @@ getMacroArg(int index)
 }
 
 
-meUByte *
-getval(meUByte *tkn)   /* find the value of a token */
+static meUByte *
+gtarg(meUByte *tkn)
 {
-    switch (getMacroTypeS(tkn)) 
+    meUByte buff[meBUF_SIZE_MAX], prompt[meBUF_SIZE_MAX], buff2[meBUF_SIZE_MAX] ;
+    
+    switch(tkn[1])
     {
-    case TKARG:
-        if(tkn[1] == 'w')
-        {
-            if(alarmState & meALARM_VARIABLE)
-                return tkn ;
-            if(tkn[2] == 'l')
-            {
-                register int blen ;
-                meUByte *ss, *dd ;
-                /* Current buffer line fetch */
-                blen = frameCur->windowCur->dotLine->length;
-                if (blen >= meBUF_SIZE_MAX)
-                    blen = meBUF_SIZE_MAX-1 ;
-                ss = frameCur->windowCur->dotLine->text ;
-                dd = evalResult ;
-                while(--blen >= 0)
-                    *dd++ = *ss++ ;
-                *dd = '\0' ;
-            }
-            else
-            {
-                /* Current Buffer character fetch */
-                evalResult[0] = meWindowGetChar(frameCur->windowCur) ;
-                evalResult[1] = '\0';
-            }
-        }
-        else if(tkn[1] == '#')
-        {
-            if(alarmState & meALARM_VARIABLE)
-                return tkn ;
-            return meItoa(meRegCurr->n) ;
-        }
-        else if(tkn[1] == '?')
-        {
-            if(alarmState & meALARM_VARIABLE)
-                return tkn ;
-            return meItoa(meRegCurr->f) ;
-        }
-        else if(isDigit(tkn[1]))
-        {
-            int index ;
-            meUByte *ss ;
-            
-            if((index = meAtoi(tkn+1)) == 0)
-            {
-                ss = meRegCurr->commandName ;
-                if(ss == NULL)
-                    return (meUByte *) "" ;
-            }
-            else if((ss = getMacroArg(index)) == NULL)
-                return abortm ;
-            return ss ;
-        }
-#if MEOPT_EXTENDED
-        else if((tkn[1] == 's') && isDigit(tkn[2]))
-        {
-            int ii ;
-            
-            if(srchLastState != meTRUE)
-                return abortm ;
-            if((ii=tkn[2]-'0') == 0)
-                return srchLastMatch ;
-#if MEOPT_MAGIC
-            if(srchLastMagic && (ii <= mereRegexGroupNo()))
-            {
-                int jj ;
-                if((jj=mereRegexGroupStart(ii)) >= 0)
-                {
-                    ii=mereRegexGroupEnd(ii) - jj ;
-                    if(ii >= meBUF_SIZE_MAX)
-                        ii = meBUF_SIZE_MAX-1 ;
-                    memcpy(evalResult,srchLastMatch+jj,ii) ;
-                }
-                else
-                    ii = 0 ;
-                evalResult[ii] = '\0';
-                return evalResult ;
-            }
-#endif
-            return abortm ;
-        }
-        else if(tkn[1] == 'h')
-        {
-            meUByte buff[meBUF_SIZE_MAX] ;
-            int ht, hn ;
-            
-            if(alarmState & meALARM_VARIABLE)
-                return tkn ;
-            
-            /* get the history type */
-            if((tkn[2] > '0') && (tkn[2] <= '4'))
-                ht = tkn[2]-'0' ;
-            else
-                ht = 0 ;
-            
-            /* Get and evaluate the next argument - this is the history number */
-            if(meGetString(NULL,0,0,buff,meBUF_SIZE_MAX) <= 0)
-                return abortm ;
-            hn = meAtoi(buff) ;
-            
-            return mePtos(strHist[(ht*meHISTORY_SIZE)+hn]) ;
-        }
-        else if(tkn[1] == 'y')
-        {
-            meUByte *ss, *dd, cc ;
-            meKillNode *killp;
-            meKill *kl ;
-            int ii ;
-            
-            if(alarmState & meALARM_VARIABLE)
-                return tkn ;
-            
-            if(isDigit(tkn[2]))
-            {
-                /* Don't use the X or windows clipboard in this case */
-                ii = meAtoi(tkn+2) ;
-                kl = klhead ;
-                while((kl != NULL) && (--ii >= 0))
-                    kl = kl->next ;
-            }
-            else
-            {
-#ifdef _CLIPBRD
-                TTgetClipboard() ;
-#endif
-                kl = klhead ;
-            }
-            if(kl == (meKill*) NULL)
-                return abortm ;
-            dd = evalResult ;
-            killp = kl->kill ;
-            ii = meBUF_SIZE_MAX-1 ;
-            while(ii && (killp != NULL))
-            {
-                ss = killp->data ;
-                while(((cc=*ss++) != '\0') && (--ii >= 0))
-                    *dd++ = cc ;
-                killp = killp->next;
-            }
-            *dd = '\0' ;
-        }
-        else if(tkn[1] == 'c')
+    case '#':
+        if(alarmState & meALARM_VARIABLE)
+            return tkn ;
+        return meItoa(meRegCurr->n) ;
+        
+    case '?':
+        if(alarmState & meALARM_VARIABLE)
+            return tkn ;
+        return meItoa(meRegCurr->f) ;
+        
+    case 'c':
         {
             meUShort key ;
             int kk, index ;
-                        
+            
             kk = (tkn[3] == 'k') ;
             if(tkn[2] == 'c')
             {
@@ -1680,226 +1575,12 @@ getval(meUByte *tkn)   /* find the value of a token */
             }
             else
                 meStrcpy(evalResult,getCommandName(index)) ;
+            return evalResult ;
         }
-        else if(tkn[1] == 'm')
-        {
-            if(tkn[2] == 'l')
-            {
-                /* interactive argument */
-                /* note: the result buffer cant be used directly as it is used
-                 *       in modeline which is is by update which can be used
-                 *       by meGetStringFromUser
-                 */
-                static meUByte **strList=NULL ;
-                static int strListSize=0 ;
-                meUByte cc, *ss, buff[meBUF_SIZE_MAX] ;
-                meUByte comp[meBUF_SIZE_MAX], *tt, divChr ;
-                meUByte prompt[meBUF_SIZE_MAX] ;
-                int option=0 ;
-                int ret, flag, defH ;
-                
-                if((flag=tkn[3]) != '\0')
-                {
-                    flag = hexToNum(flag) ;
-                    if(((cc=tkn[4]) > '0') && (cc<='9'))
-                        cc -= '0' ;
-                    else if(cc == 'a')
-                        cc = 10 ;
-                    else
-                        cc = 11 ;
-                    if(cc == 1)
-                        option = MLFILE ;
-                    else
-                    {
-                        if(cc == 7)
-                        {
-                            mlgsStrList = modeName ;
-                            mlgsStrListSize = MDNUMMODES ;
-                        }
-                        else if(cc == 9)
-                        {
-                            flag |= 0x100 ;
-                            cc = 7 ;
-                        }
-                        else if(cc == 10)
-                        {
-                            flag |= 0x300 ;
-                            cc = 7 ;
-                        }
-                        if(cc < 11)
-                            option = 1 << (cc-2) ;
-                    }
-#if (MLFILECASE != MLFILE)
-                    if(option & MLFILE)
-                        option |= MLFILECASE ;
-#if (MLBUFFERCASE != MLBUFFER)
-                    else if(option & MLBUFFER)
-                        option |= MLBUFFERCASE ;
-#endif
-#endif
-                }
-                else
-                    cc = 0 ;
-                
-                /* Get and evaluate the next argument - this is the prompt */
-                if(meGetString(NULL,0,0,prompt,meBUF_SIZE_MAX) <= 0)
-                    return abortm ;
-                if(flag & 0x01)
-                {
-                    /* Get and evaluate the next argument - this is the default
-                     * value */
-                    if(meGetString(NULL,0,0,buff,meBUF_SIZE_MAX) <= 0)
-                        return abortm ;
-                    addHistory(option,buff) ;
-                    defH = 1 ;
-                }
-                else
-                    defH = 0 ;
-                if(flag & 0x02)
-                {
-                    /* Get and evaluate the next argument - this is the ml
-                     * line init value */
-                    if(meGetString(NULL,0,0,buff,meBUF_SIZE_MAX) <= 0)
-                        return abortm ;
-                    option |= MLNORESET ;
-                }
-                if(flag & 0x04)
-                    /* set the first key to 'tab' to expand the input according 
-                     * to the completion list */
-                    meGetKeyFirst = ME_SPECIAL|SKEY_tab ;
-                if(flag & 0x08)
-                    option |= MLNOHIST|MLHIDEVAL ;
-                
-                if(flag & 0x100)
-                {
-                    /* Get and evaluate the next argument - this is the
-                     * completion list */
-                    if(meGetString(NULL,0,0,comp,meBUF_SIZE_MAX) <= 0)
-                        return abortm ;
-                    if(flag & 0x200)
-                    {
-                        meBuffer *bp ;
-                        meLine *lp ;
-                        flag &= ~0x100 ;
-                        if((bp = bfind(comp,0)) == NULL)
-                            return abortm ;
-                        if(bp->lineCount > strListSize)
-                        {
-                            strListSize = bp->lineCount ;
-                            if((strList = meRealloc(strList,strListSize*sizeof(meUByte *))) == NULL)
-                            {
-                                strListSize = 0 ;
-                                return abortm ;
-                            }
-                        }
-                        lp = bp->baseLine ;
-                        mlgsStrListSize = 0 ;
-                        while((lp=meLineGetNext(lp)) != bp->baseLine)
-                            strList[mlgsStrListSize++] = lp->text ;
-                    }
-                    else
-                    {
-                        ss = comp ;
-                        divChr = *ss++ ;
-                        mlgsStrListSize = 0 ;
-                        while((tt = meStrchr(ss,divChr)) != NULL)
-                        {
-                            *tt++ = '\0' ;
-                            if(mlgsStrListSize == strListSize)
-                            {
-                                if((strList = meRealloc(strList,(strListSize+8)*sizeof(meUByte *))) == NULL)
-                                {
-                                    strListSize = 0 ;
-                                    return abortm ;
-                                }
-                                strListSize += 8 ;
-                            }
-                            strList[mlgsStrListSize++] = ss ;
-                            ss = tt ;
-                        }
-                    }
-                    mlgsStrList = strList ;
-                }
-                if(cc == 1)
-                {
-                    if(!(option & MLNORESET))
-                        getFilePath(frameCur->bufferCur->fileName,buff) ;
-                    option &= MLHIDEVAL ;
-                    option |= MLFILECASE|MLNORESET|MLMACNORT ;
-
-                    if((ret = meGetStringFromUser(prompt,option,0,buff,meBUF_SIZE_MAX)) > 0)
-                        fileNameCorrect(buff,evalResult,NULL) ;
-                }
-                else
-                {
-                    /* Note that buffer result cannot be used directly as in the process
-                     * of updating the screen the result buffer can be used by meItoa
-                     * so use a temp buffer and copy across. note that inputFileName
-                     * above doesn't suffer from this as the function uses a temp buffer
-                     */
-                    ret = meGetStringFromUser(prompt,option,defH,buff,meBUF_SIZE_MAX) ;
-                    meStrncpy(evalResult,buff,meBUF_SIZE_MAX) ;
-                    evalResult[meBUF_SIZE_MAX-1] = '\0' ;
-                }
-                if(ret < 0)
-                    return abortm ;
-            }
-            else if(tkn[2] == 'c')
-            {
-                meUByte *ss, *helpStr, buff[meBUF_SIZE_MAX] ;
-                meUByte prompt[meBUF_SIZE_MAX], helpBuff[meBUF_SIZE_MAX] ;
-                int ret ;
-                
-                if((ret=tkn[3]) != '\0')
-                    ret -= '0' ;
-                
-                /* Get and evaluate the next argument - this is the prompt */
-                if(meGetString(NULL,0,0,prompt,meBUF_SIZE_MAX) <= 0)
-                    return abortm ;
-                if(ret & 0x01)
-                {
-                    /* Get and evaluate the next argument - this is valid
-                     * values list */
-                    if(meGetString(NULL,0,0,buff,meBUF_SIZE_MAX) <= 0)
-                        return abortm ;
-                    ss = buff ;
-                }
-                else
-                    ss = NULL ;
-                if(ret & 0x04)
-                {
-                    /* Get and evaluate the next argument - this is the help string */
-                    if(meGetString(NULL,0,0,helpBuff,meBUF_SIZE_MAX) <= 0)
-                        return abortm ;
-                    helpStr = helpBuff ;
-                }
-                else
-                    helpStr = NULL ;
-                ret = (ret & 0x02) ? mlCR_QUOTE_CHAR:0 ;
-                
-                clexec = meFALSE ;
-                ret = mlCharReply(prompt,ret,ss,helpStr) ;
-                clexec = meTRUE ;
-                if(ret < 0)
-                    return abortm ;
-                evalResult[0] = ret ;
-                evalResult[1] = 0 ;
-            }
-            else
-                return abortm ;
-                    
-        }
-        else if(tkn[1] == 'p')
-        {
-            /* parent command name */
-            if(meRegCurr->prev->commandName == NULL)
-                return (meUByte *) "" ;
-            return meRegCurr->prev->commandName ;
-        }
-        else if((tkn[1] == 'f') && (tkn[2] == 's'))
+    case 'f':
+        if(tkn[2] == 's')
         {
             /* frame store @fs <row> <col> */
-            meUByte buff[meBUF_SIZE_MAX] ;
             int row, col ;
             
             /* Get and evaluate the arguments */
@@ -1915,14 +1596,370 @@ getval(meUByte *tkn)   /* find the value of a token */
                 evalResult[0] = frameCur->store[row].text[col] ;
                 evalResult[1] = 0 ;
             }
+            return evalResult ;
         }
-        else
-#endif
+        break ;
+        
+    case 'h':
         {
-            mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown argument %s]",tkn);
+            int ht, hn ;
+            
+            if(alarmState & meALARM_VARIABLE)
+                return tkn ;
+            
+            /* get the history type */
+            if((tkn[2] > '0') && (tkn[2] <= '4'))
+                ht = tkn[2]-'0' ;
+            else
+                ht = 0 ;
+            
+            /* Get and evaluate the next argument - this is the history number */
+            if(meGetString(NULL,0,0,buff,meBUF_SIZE_MAX) <= 0)
+                return abortm ;
+            hn = meAtoi(buff) ;
+            
+            return mePtos(strHist[(ht*meHISTORY_SIZE)+hn]) ;
+        }
+        
+    case 'm':
+        if(tkn[2] == 'l')
+        {
+            /* interactive argument */
+            /* note: the result buffer cant be used directly as it is used
+             *       in modeline which is is by update which can be used
+             *       by meGetStringFromUser
+             */
+            static meUByte **strList=NULL ;
+            static int strListSize=0 ;
+            meUByte cc, *ss ;
+            meUByte *tt, divChr ;
+            int option=0 ;
+            int ret, flag, defH ;
+            
+            if((flag=tkn[3]) != '\0')
+            {
+                flag = hexToNum(flag) ;
+                if(((cc=tkn[4]) > '0') && (cc<='9'))
+                    cc -= '0' ;
+                else if(cc == 'a')
+                    cc = 10 ;
+                else
+                    cc = 11 ;
+                if(cc == 1)
+                    option = MLFILE ;
+                else
+                {
+                    if(cc == 7)
+                    {
+                        mlgsStrList = modeName ;
+                        mlgsStrListSize = MDNUMMODES ;
+                    }
+                    else if(cc == 9)
+                    {
+                        flag |= 0x100 ;
+                        cc = 7 ;
+                    }
+                    else if(cc == 10)
+                    {
+                        flag |= 0x300 ;
+                        cc = 7 ;
+                    }
+                    if(cc < 11)
+                        option = 1 << (cc-2) ;
+                }
+#if (MLFILECASE != MLFILE)
+                if(option & MLFILE)
+                    option |= MLFILECASE ;
+#if (MLBUFFERCASE != MLBUFFER)
+                else if(option & MLBUFFER)
+                    option |= MLBUFFERCASE ;
+#endif
+#endif
+            }
+            else
+                cc = 0 ;
+            
+            /* Get and evaluate the next argument - this is the prompt */
+            if(meGetString(NULL,0,0,prompt,meBUF_SIZE_MAX) <= 0)
+                return abortm ;
+            if(flag & 0x01)
+            {
+                /* Get and evaluate the next argument - this is the default
+                 * value */
+                if(meGetString(NULL,0,0,buff,meBUF_SIZE_MAX) <= 0)
+                    return abortm ;
+                addHistory(option,buff) ;
+                defH = 1 ;
+            }
+            else
+                defH = 0 ;
+            if(flag & 0x02)
+            {
+                /* Get and evaluate the next argument - this is the ml
+                 * line init value */
+                if(meGetString(NULL,0,0,buff,meBUF_SIZE_MAX) <= 0)
+                    return abortm ;
+                option |= MLNORESET ;
+            }
+            if(flag & 0x04)
+                /* set the first key to 'tab' to expand the input according 
+                 * to the completion list */
+                meGetKeyFirst = ME_SPECIAL|SKEY_tab ;
+            if(flag & 0x08)
+                option |= MLNOHIST|MLHIDEVAL ;
+            
+            if(flag & 0x100)
+            {
+                /* Get and evaluate the next argument - this is the
+                 * completion list */
+                if(meGetString(NULL,0,0,buff2,meBUF_SIZE_MAX) <= 0)
+                    return abortm ;
+                if(flag & 0x200)
+                {
+                    meBuffer *bp ;
+                    meLine *lp ;
+                    flag &= ~0x100 ;
+                    if((bp = bfind(buff2,0)) == NULL)
+                        return abortm ;
+                    if(bp->lineCount > strListSize)
+                    {
+                        strListSize = bp->lineCount ;
+                        if((strList = meRealloc(strList,strListSize*sizeof(meUByte *))) == NULL)
+                        {
+                            strListSize = 0 ;
+                            return abortm ;
+                        }
+                    }
+                    lp = bp->baseLine ;
+                    mlgsStrListSize = 0 ;
+                    while((lp=meLineGetNext(lp)) != bp->baseLine)
+                        strList[mlgsStrListSize++] = lp->text ;
+                }
+                else
+                {
+                    ss = buff2 ;
+                    divChr = *ss++ ;
+                    mlgsStrListSize = 0 ;
+                    while((tt = meStrchr(ss,divChr)) != NULL)
+                    {
+                        *tt++ = '\0' ;
+                        if(mlgsStrListSize == strListSize)
+                        {
+                            if((strList = meRealloc(strList,(strListSize+8)*sizeof(meUByte *))) == NULL)
+                            {
+                                strListSize = 0 ;
+                                return abortm ;
+                            }
+                            strListSize += 8 ;
+                        }
+                        strList[mlgsStrListSize++] = ss ;
+                        ss = tt ;
+                    }
+                }
+                mlgsStrList = strList ;
+            }
+            if(cc == 1)
+            {
+                if(!(option & MLNORESET))
+                    getFilePath(frameCur->bufferCur->fileName,buff) ;
+                option &= MLHIDEVAL ;
+                option |= MLFILECASE|MLNORESET|MLMACNORT ;
+                
+                if((ret = meGetStringFromUser(prompt,option,0,buff,meBUF_SIZE_MAX)) > 0)
+                    fileNameCorrect(buff,evalResult,NULL) ;
+            }
+            else
+            {
+                /* Note that buffer result cannot be used directly as in the process
+                 * of updating the screen the result buffer can be used by meItoa
+                 * so use a temp buffer and copy across. note that inputFileName
+                 * above doesn't suffer from this as the function uses a temp buffer
+                 */
+                ret = meGetStringFromUser(prompt,option,defH,buff,meBUF_SIZE_MAX) ;
+                meStrncpy(evalResult,buff,meBUF_SIZE_MAX) ;
+                evalResult[meBUF_SIZE_MAX-1] = '\0' ;
+            }
+            if(ret >= 0)
+                return evalResult ;
+        }
+        else if(tkn[2] == 'c')
+        {
+            meUByte *ss, *helpStr ;
+            int ret ;
+            
+            if((ret=tkn[3]) != '\0')
+                ret -= '0' ;
+            
+            /* Get and evaluate the next argument - this is the prompt */
+            if(meGetString(NULL,0,0,prompt,meBUF_SIZE_MAX) <= 0)
+                return abortm ;
+            if(ret & 0x01)
+            {
+                /* Get and evaluate the next argument - this is valid
+                 * values list */
+                if(meGetString(NULL,0,0,buff,meBUF_SIZE_MAX) <= 0)
+                    return abortm ;
+                ss = buff ;
+            }
+            else
+                ss = NULL ;
+            if(ret & 0x04)
+            {
+                /* Get and evaluate the next argument - this is the help string */
+                if(meGetString(NULL,0,0,buff2,meBUF_SIZE_MAX) <= 0)
+                    return abortm ;
+                helpStr = buff2 ;
+            }
+            else
+                helpStr = NULL ;
+            ret = (ret & 0x02) ? mlCR_QUOTE_CHAR:0 ;
+            
+            clexec = meFALSE ;
+            ret = mlCharReply(prompt,ret,ss,helpStr) ;
+            clexec = meTRUE ;
+            if(ret >= 0)
+            {
+                evalResult[0] = ret ;
+                evalResult[1] = 0 ;
+                return evalResult ;
+            }
+        }
+        return abortm ;
+    
+    case 'p':
+        /* parent command name */
+        if(meRegCurr->prev->commandName == NULL)
+            return (meUByte *) "" ;
+        return meRegCurr->prev->commandName ;
+        
+#if MEOPT_EXTENDED
+    case 's':
+        if(isDigit(tkn[2]))
+        {
+            int ii ;
+            
+            if(srchLastState != meTRUE)
+                return abortm ;
+            if((ii=tkn[2]-'0') == 0)
+                return srchLastMatch ;
+#if MEOPT_MAGIC
+            if(srchLastMagic && (ii <= mereRegexGroupNo()))
+            {
+                int jj ;
+                if((jj=mereRegexGroupStart(ii)) >= 0)
+                {
+                    ii=mereRegexGroupEnd(ii) - jj ;
+                    if(ii >= meBUF_SIZE_MAX)
+                        ii = meBUF_SIZE_MAX-1 ;
+                    memcpy(evalResult,srchLastMatch+jj,ii) ;
+                }
+                else
+                    ii = 0 ;
+                evalResult[ii] = '\0';
+                return evalResult ;
+            }
+#endif
             return abortm ;
         }
-        return evalResult ;
+        break ;
+#endif
+    
+    case 'w':
+        if(alarmState & meALARM_VARIABLE)
+            return tkn ;
+        if(tkn[2] == 'l')
+        {
+            register int blen ;
+            meUByte *ss, *dd ;
+            /* Current buffer line fetch */
+            blen = frameCur->windowCur->dotLine->length;
+            if (blen >= meBUF_SIZE_MAX)
+                blen = meBUF_SIZE_MAX-1 ;
+            ss = frameCur->windowCur->dotLine->text ;
+            dd = evalResult ;
+            while(--blen >= 0)
+                *dd++ = *ss++ ;
+            *dd = '\0' ;
+            return evalResult ;
+        }
+        else
+        {
+            /* Current Buffer character fetch */
+            evalResult[0] = meWindowGetChar(frameCur->windowCur) ;
+            evalResult[1] = '\0';
+            return evalResult ;
+        }
+        break ;
+        
+    case 'y':
+        {
+            meUByte *ss, *dd, cc ;
+            meKillNode *killp;
+            meKill *kl ;
+            int ii ;
+            
+            if(alarmState & meALARM_VARIABLE)
+                return tkn ;
+            
+            if(isDigit(tkn[2]))
+            {
+                /* Don't use the X or windows clipboard in this case */
+                ii = meAtoi(tkn+2) ;
+                kl = klhead ;
+                while((kl != NULL) && (--ii >= 0))
+                    kl = kl->next ;
+            }
+            else
+            {
+#ifdef _CLIPBRD
+                TTgetClipboard() ;
+#endif
+                kl = klhead ;
+            }
+            if(kl == (meKill*) NULL)
+                return abortm ;
+            dd = evalResult ;
+            killp = kl->kill ;
+            ii = meBUF_SIZE_MAX-1 ;
+            while(ii && (killp != NULL))
+            {
+                ss = killp->data ;
+                while(((cc=*ss++) != '\0') && (--ii >= 0))
+                    *dd++ = cc ;
+                killp = killp->next;
+            }
+            *dd = '\0' ;
+            return evalResult ;
+        }
+        
+    default:
+        if(isDigit(tkn[1]))
+        {
+            int index ;
+            meUByte *ss ;
+            
+            if((index = meAtoi(tkn+1)) == 0)
+            {
+                ss = meRegCurr->commandName ;
+                if(ss == NULL)
+                    return (meUByte *) "" ;
+            }
+            else if((ss = getMacroArg(index)) == NULL)
+                return abortm ;
+            return ss ;
+        }
+    }
+    mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown argument %s]",tkn);
+    return abortm ;
+}
+
+meUByte *
+getval(meUByte *tkn)   /* find the value of a token */
+{
+    switch (getMacroTypeS(tkn)) 
+    {
+    case TKARG:
+        return gtarg(tkn) ;
         
     case TKREG:
         if(alarmState & meALARM_VARIABLE)
@@ -1942,13 +1979,13 @@ getval(meUByte *tkn)   /* find the value of a token */
                 return rp->reg[cc] ;
             break ;
         }
-    
+        
 #if MEOPT_EXTENDED
     case TKVAR:
         if(alarmState & meALARM_VARIABLE)
             return tkn ;
         return getUsrVar(tkn+1) ;
-    
+        
     case TKLVR:
         {
             meUByte *ss, *tt ;
@@ -1997,10 +2034,10 @@ getval(meUByte *tkn)   /* find the value of a token */
         if(alarmState & meALARM_VARIABLE)
             return tkn ;
         return gtenv(tkn+1) ;
-    
+        
     case TKFUN:
         return gtfun(tkn+1) ;
-    
+        
     case TKSTR:
         tkn++ ;
     case TKCMD:
@@ -2043,33 +2080,50 @@ meGetDayOfYear(meInt year, meInt month, meInt day)
 }
 #endif
 
+
 meUByte *
 gtfun(meUByte *fname)  /* evaluate a function given name of function */
 {
 #if MEOPT_EXTENDED
     meRegister *regs ;     /* pointer to relevant regs if setting var */
 #endif
-    register int fnum;      /* index to function to eval */
     meUByte arg1[meBUF_SIZE_MAX];      /* value of first argument */
     meUByte arg2[meBUF_SIZE_MAX];      /* value of second argument */
     meUByte arg3[meBUF_SIZE_MAX];      /* value of third argument */
     meUByte *varVal ;
+    meUInt fnam, s1 ;
+    int fnum;      /* index to function to eval */
+    int hi, low ;
     
-    /* look the function up in the function table */
-    if((fnum = biChopFindString(fname,3,funcNames,NFUNCS)) < 0)
+    /* look the function up in the function table - encode the first 3 letters of the name to a uint */
+    fnam = (((meUInt) fname[0]) << 16) | (((meUInt) fname[1]) << 8) | ((meUInt) fname[2]) ;
+    
+    hi  = NFUNCS-1;             /* Set hi water to end of table */
+    low = 0;                    /* Set low water to start of table */
+    for(;;)
     {
-        mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown function &%s]",fname);
-        return abortm ;
+        fnum = (low + hi) >> 1;          /* Get mid value. */
+        
+        if((s1=funcNames[fnum]) == fnam)
+            break ;
+        if(s1 > fnam)
+            hi = fnum - 1;               /* Discard bottom half */
+        else
+            low = fnum + 1;              /* Discard top half */
+        if(low > hi)
+        {
+            mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown function &%s %x]",fname,fnam);
+            return abortm ;
+        }
     }
+
 #if MEOPT_EXTENDED
     if((fnum == UFCBIND) || (fnum == UFNBIND))
     {
         meUInt arg ;
-        meUShort ii ;
         int jj ;
         
-        ii = meGetKey(meGETKEY_SILENT) ;
-        if((jj = decode_key(ii,&arg)) < 0)
+        if((jj = decode_key(meGetKey(meGETKEY_SILENT),&arg)) < 0)
             return errorm ;
         if(fnum == UFCBIND)
             meStrcpy(evalResult,getCommandName(jj)) ;
@@ -2463,7 +2517,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             
             if(meRegexComp(&meRegexStrCmp,arg2,(fnum == UFXREP) ? 0:meREGEX_ICASE) != meREGEX_OKAY)
                 return abortm ;
-    
+            
             slen = meStrlen(arg1) ;
             for(;;)
             {
@@ -3058,7 +3112,7 @@ get_flag:
 #ifdef _WIN32
                         SYSTEMTIME tmp;
                         FILETIME ftmp;
-                    
+                        
                         if(FileTimeToLocalFileTime(&stats.stmtime,&ftmp) && FileTimeToSystemTime(&ftmp,&tmp))
                             sprintf((char *)v7,"%4d%2d%2d%2d%2d%2d",
                                     tmp.wYear,tmp.wMonth,tmp.wDay,
@@ -3120,24 +3174,24 @@ get_flag:
                     else
 #endif
 #ifdef _DOS
-                    if((stats.stmtime & 0x0ffff) != 0x7fff)
-                    {
-                        meInt year, month, day, doy ;
-                        
-                        year = ((stats.stmtime >> 25) & 0x007f)+1980 ;
-                        month = ((stats.stmtime >> 21) & 0x000f) ;
-                        day = ((stats.stmtime >> 16) & 0x001f) ;
-                        doy = meGetDayOfYear(year,month,day) ;
-                        sprintf((char *)evalResult,"%4d%3d%2d%2d-%2d%2d%2d  -",
-                                (int) year,(int) doy,(int) month,(int) day,
-                                (int) ((stats.stmtime >> 11) & 0x001f),
-                                (int) ((stats.stmtime >>  5) & 0x003f),
-                                (int) ((stats.stmtime & 0x001f)  << 1)) ;
-                    }
-                    else
+                        if((stats.stmtime & 0x0ffff) != 0x7fff)
+                        {
+                            meInt year, month, day, doy ;
+                            
+                            year = ((stats.stmtime >> 25) & 0x007f)+1980 ;
+                            month = ((stats.stmtime >> 21) & 0x000f) ;
+                            day = ((stats.stmtime >> 16) & 0x001f) ;
+                            doy = meGetDayOfYear(year,month,day) ;
+                            sprintf((char *)evalResult,"%4d%3d%2d%2d-%2d%2d%2d  -",
+                                    (int) year,(int) doy,(int) month,(int) day,
+                                    (int) ((stats.stmtime >> 11) & 0x001f),
+                                    (int) ((stats.stmtime >>  5) & 0x003f),
+                                    (int) ((stats.stmtime & 0x001f)  << 1)) ;
+                        }
+                        else
 #endif
 #ifdef _WIN32
-                    SYSTEMTIME tmp;
+                            SYSTEMTIME tmp;
                     FILETIME ftmp;
                     meInt doy ;
                     
@@ -3153,7 +3207,7 @@ get_flag:
                         sprintf((char *)evalResult, "   -  - - -- - - -  -") ;
                     return evalResult;
                 }
-            
+                
             case 'r':
                 /* File read permission */
                 /* If its a nasty or it doesn't exist - no */
@@ -3188,7 +3242,7 @@ get_flag:
                 evalResult[0] = typeRet[ftype] ;
                 evalResult[1] = '\0' ;
                 return evalResult ;
-            
+                
             case 'w':
                 /* File write permission */
                 /* If nasty or url - no */
@@ -3204,7 +3258,7 @@ get_flag:
                    )
                     return meLtoa(1) ;
                 return meLtoa(meStatTestWrite(stats)) ;
-            
+                
             case 'x':
                 /* File execute permission */
                 /* If nasty or doesnt exist, or url then no */

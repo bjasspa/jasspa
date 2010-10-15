@@ -33,7 +33,7 @@
 
 
 #define	DEFVAR(s,v)	v,
-#define	DEFFUN(v,s,t)
+#define	DEFFUN(v,s,h,t)
 #define	DEFDER(v,s,t)
 
 enum	{
@@ -46,7 +46,7 @@ enum	{
 
 
 #define	DEFVAR(s,v)	/* NULL */
-#define	DEFFUN(v,s,t)	v,
+#define	DEFFUN(v,s,h,t)	v,
 #define	DEFDER(v,s,t)
 
 enum	{
@@ -59,7 +59,7 @@ enum	{
 
 
 #define	DEFVAR(s,v)	/* NULL */
-#define	DEFFUN(v,s,t)
+#define	DEFFUN(v,s,h,t)
 #define	DEFDER(v,s,t)   v,
 
 enum	{
@@ -81,7 +81,7 @@ enum	{
 /**	list of recognized environment variables	*/
 
 #define	DEFVAR(s,v)	(meUByte *) s,
-#define	DEFFUN(v,s,t)
+#define	DEFFUN(v,s,h,t)
 #define	DEFDER(v,s,t)
 
 meUByte *envars[] =
@@ -98,10 +98,10 @@ meUByte *envars[] =
 /**	list of recognized user function names	*/
 
 #define	DEFVAR(s,v)	/* NULL */
-#define	DEFFUN(v,s,t)	(meUByte *) s,
+#define	DEFFUN(v,s,h,t)	(meUInt) h,
 #define	DEFDER(v,s,t)
 
-meUByte *funcNames[] =
+meUInt funcNames[] =
 {
 #include	"evar.def"
 };
@@ -113,7 +113,7 @@ meUByte *funcNames[] =
 /**	list of recognized user function types	*/
 
 #define	DEFVAR(s,v)	/* NULL */
-#define	DEFFUN(v,s,t)	t,
+#define	DEFFUN(v,s,h,t)	t,
 #define	DEFDER(v,s,t)
 
 meUByte funcTypes[] =
@@ -131,7 +131,7 @@ meUByte funcTypes[] =
  * As of ME'04 this list is nolonger used, see docmd in exec.c
  */
 #define	DEFVAR(s,v)	/* NULL */
-#define	DEFFUN(v,s,t)
+#define	DEFFUN(v,s,h,t)
 #define	DEFDER(v,s,t)	(meUByte *) s,
 
 meUByte *derNames[] =
@@ -158,7 +158,7 @@ meUByte *derNames[] =
 #define DRFLAG_JUMP        0x200
 
 #define	DEFVAR(s,v)	/* NULL */
-#define	DEFFUN(v,s,t)
+#define	DEFFUN(v,s,h,t)
 #define	DEFDER(v,s,t)	t,
 
 int dirTypes[] =

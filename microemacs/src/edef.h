@@ -270,7 +270,7 @@ extern  meUByte   displaySpace;         /* space ' ' display character */
 extern  meUByte  *envars[];             /* list of recognized env. vars */
 extern  meUByte  *derNames[];           /* name list of directives      */
 extern  meUByte   derTypes[];           /* type list of directives      */
-extern  meUByte  *funcNames[];          /* name list of user funcs      */
+extern  meUInt    funcNames[];          /* name list of user funcs      */
 extern  meUByte   funcTypes[];          /* type list of user funcs      */
 extern  meKillNode *kbufp;              /* current kill buffer chunk pointer */
 extern  meKillNode *kbufh;              /* kill buffer header pointer   */

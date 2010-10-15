@@ -558,6 +558,9 @@ typedef struct meVariable
 {
     struct meVariable *next ;                   /* Next pointer, MUST BE FIRST as with meVarList */
     meUByte           *value ;                  /* value (string)               */
+#if MEOPT_CMDHASH
+    meUInt             hash ;                   /* name hash for rapid search   */
+#endif
     meUByte            name[1] ;                /* name of user variable        */
 } meVariable;
 

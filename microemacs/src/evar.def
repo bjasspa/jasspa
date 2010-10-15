@@ -223,107 +223,107 @@ DEFVAR ("window-xcl-scroll",   EVWXCLSCROLL)    /* window x cur line scroll posi
 DEFVAR ("window-y-scroll",     EVWYSCROLL)      /* window y scroll position */
 #endif
 
-DEFFUN (UFABS,      "abs", FUN_MONAMIC)     /* absolute value of a number */
-DEFFUN (UFADD,      "add", FUN_DYNAMIC)     /* add two numbers together */
-DEFFUN (UFAND,      "and", FUN_DYNAMIC)     /* boolean 'and' two logics together */
+DEFFUN (UFABS,      "abs", 0x616273, FUN_MONAMIC)     /* absolute value of a number */
+DEFFUN (UFADD,      "add", 0x616464, FUN_DYNAMIC)     /* add two numbers together */
+DEFFUN (UFAND,      "and", 0x616E64, FUN_DYNAMIC)     /* boolean 'and' two logics together */
 #if MEOPT_EXTENDED
-DEFFUN (UFATOI,     "ato", FUN_MONAMIC)     /* char to integer i.e. "A" to "41" */
+DEFFUN (UFATOI,     "ato", 0x61746F, FUN_MONAMIC)     /* char to integer i.e. "A" to "41" */
 #endif
-DEFFUN (UFBAND,     "ban", FUN_DYNAMIC)     /* Binary and test */
-DEFFUN (UFBMODE,    "bmo", FUN_MONAMIC)     /* Test for a given buffer mode */
-DEFFUN (UFBNOT,     "bno", FUN_MONAMIC)     /* Binary not test */
-DEFFUN (UFBOR,      "bor", FUN_DYNAMIC)     /* Binary or test */
-DEFFUN (UFBSTAT,    "bst", FUN_MONAMIC)     /* Buffer stats */
-DEFFUN (UFBXOR,     "bxo", FUN_DYNAMIC)     /* Binary xor test */
-DEFFUN (UFCAT,      "cat", FUN_DYNAMIC)     /* concatinate string */
+DEFFUN (UFBAND,     "ban", 0x62616E, FUN_DYNAMIC)     /* Binary and test */
+DEFFUN (UFBMODE,    "bmo", 0x626D6F, FUN_MONAMIC)     /* Test for a given buffer mode */
+DEFFUN (UFBNOT,     "bno", 0x626E6F, FUN_MONAMIC)     /* Binary not test */
+DEFFUN (UFBOR,      "bor", 0x626F72, FUN_DYNAMIC)     /* Binary or test */
+DEFFUN (UFBSTAT,    "bst", 0x627374, FUN_MONAMIC)     /* Buffer stats */
+DEFFUN (UFBXOR,     "bxo", 0x62786F, FUN_DYNAMIC)     /* Binary xor test */
+DEFFUN (UFCAT,      "cat", 0x636174, FUN_DYNAMIC)     /* concatinate string */
 #if MEOPT_EXTENDED
-DEFFUN (UFCBIND,    "cbi", FUN_MONAMIC)     /* Get keys command binding */
-DEFFUN (UFCOND,     "con", FUN_TRINAMIC)    /* conditional */
-DEFFUN (UFDEC,      "dec", FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* decrement variable and set */
+DEFFUN (UFCBIND,    "cbi", 0x636269, FUN_MONAMIC)     /* Get keys command binding */
+DEFFUN (UFCOND,     "con", 0x636F6E, FUN_TRINAMIC)    /* conditional */
+DEFFUN (UFDEC,      "dec", 0x646563, FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* decrement variable and set */
 #endif
-DEFFUN (UFDIV,      "div", FUN_DYNAMIC)     /* division */
-DEFFUN (UFEQUAL,    "equ", FUN_DYNAMIC)     /* logical equality check */
+DEFFUN (UFDIV,      "div", 0x646976, FUN_DYNAMIC)     /* division */
+DEFFUN (UFEQUAL,    "equ", 0x657175, FUN_DYNAMIC)     /* logical equality check */
 #if MEOPT_EXTENDED
-DEFFUN (UFEXIST,    "exi", FUN_MONAMIC|FUN_SETVAR) /* does the var/command exist */
-DEFFUN (UFFIND,     "fin", FUN_DYNAMIC)     /* find file */
+DEFFUN (UFEXIST,    "exi", 0x657869, FUN_MONAMIC|FUN_SETVAR) /* does the var/command exist */
+DEFFUN (UFFIND,     "fin", 0x66696E, FUN_DYNAMIC)     /* find file */
 #endif
-DEFFUN (UFGMODE,    "gmo", FUN_MONAMIC)     /* Test for a given global mode */
-DEFFUN (UFGREATER,  "gre", FUN_DYNAMIC)     /* logical greater than */
+DEFFUN (UFGMODE,    "gmo", 0x676D6F, FUN_MONAMIC)     /* Test for a given global mode */
+DEFFUN (UFGREATER,  "gre", 0x677265, FUN_DYNAMIC)     /* logical greater than */
 #if MEOPT_EXTENDED
-DEFFUN (UFINC,      "inc", FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* increment variable and set */
+DEFFUN (UFINC,      "inc", 0x696E63, FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* increment variable and set */
 #endif
-DEFFUN (UFIND,      "ind", FUN_MONAMIC)     /* evaluate indirect value */
+DEFFUN (UFIND,      "ind", 0x696E64, FUN_MONAMIC)     /* evaluate indirect value */
 #if MEOPT_EXTENDED
-DEFFUN (UFINWORD,   "inw", FUN_MONAMIC)     /* given char inword? */
-DEFFUN (UFIREP,     "ire", FUN_TRINAMIC)    /* case insensitive replace str in str */
+DEFFUN (UFINWORD,   "inw", 0x696E77, FUN_MONAMIC)     /* given char inword? */
+DEFFUN (UFIREP,     "ire", 0x697265, FUN_TRINAMIC)    /* case insensitive replace str in str */
 #endif
-DEFFUN (UFISEQUAL,  "ise", FUN_DYNAMIC)     /* case insensitive string logical equality check */
+DEFFUN (UFISEQUAL,  "ise", 0x697365, FUN_DYNAMIC)     /* case insensitive string logical equality check */
 #if MEOPT_EXTENDED
-DEFFUN (UFISIN,     "isi", FUN_DYNAMIC)     /* case insensitive str in str */
-DEFFUN (UFITOA,     "ito", FUN_MONAMIC)     /* integer to char i.e. "41" to "A" */
-DEFFUN (UFKBIND,    "kbi", FUN_DYNAMIC)     /* Get commands key binding */
-DEFFUN (UFLDEL,     "lde", FUN_DYNAMIC)     /* delete list index value */
+DEFFUN (UFISIN,     "isi", 0x697369, FUN_DYNAMIC)     /* case insensitive str in str */
+DEFFUN (UFITOA,     "ito", 0x69746F, FUN_MONAMIC)     /* integer to char i.e. "41" to "A" */
+DEFFUN (UFKBIND,    "kbi", 0x6B6269, FUN_DYNAMIC)     /* Get commands key binding */
+DEFFUN (UFLDEL,     "lde", 0x6C6465, FUN_DYNAMIC)     /* delete list index value */
 #endif
-DEFFUN (UFLEFT,     "lef", FUN_DYNAMIC)     /* left string(string, len) */
-DEFFUN (UFLEN,      "len", FUN_MONAMIC)     /* Length of a string */
-DEFFUN (UFLESS,     "les", FUN_DYNAMIC)     /* logical less than */
+DEFFUN (UFLEFT,     "lef", 0x6C6566, FUN_DYNAMIC)     /* left string(string, len) */
+DEFFUN (UFLEN,      "len", 0x6C656E, FUN_MONAMIC)     /* Length of a string */
+DEFFUN (UFLESS,     "les", 0x6C6573, FUN_DYNAMIC)     /* logical less than */
 #if MEOPT_EXTENDED
-DEFFUN (UFLFIND,    "lfi", FUN_DYNAMIC)     /* list find value return index */
-DEFFUN (UFLGET,     "lge", FUN_DYNAMIC)     /* list get index value */
-DEFFUN (UFLINS,     "lin", FUN_TRINAMIC)    /* list insert index value */
-DEFFUN (UFLSET,     "lse", FUN_TRINAMIC)    /* list set index value */
+DEFFUN (UFLFIND,    "lfi", 0x6C6669, FUN_DYNAMIC)     /* list find value return index */
+DEFFUN (UFLGET,     "lge", 0x6C6765, FUN_DYNAMIC)     /* list get index value */
+DEFFUN (UFLINS,     "lin", 0x6C696E, FUN_TRINAMIC)    /* list insert index value */
+DEFFUN (UFLSET,     "lse", 0x6C7365, FUN_TRINAMIC)    /* list set index value */
 #endif
-DEFFUN (UFMID,      "mid", FUN_TRINAMIC)    /* mid string(string, pos, len) */
-DEFFUN (UFMOD,      "mod", FUN_DYNAMIC)     /* mod */
-DEFFUN (UFMUL,      "mul", FUN_DYNAMIC)     /* multiplication */
+DEFFUN (UFMID,      "mid", 0x6D6964, FUN_TRINAMIC)    /* mid string(string, pos, len) */
+DEFFUN (UFMOD,      "mod", 0x6D6F64, FUN_DYNAMIC)     /* mod */
+DEFFUN (UFMUL,      "mul", 0x6D756C, FUN_DYNAMIC)     /* multiplication */
 #if MEOPT_EXTENDED
-DEFFUN (UFNBIND,    "nbi", FUN_MONAMIC)     /* Get keys command binding narg */
-DEFFUN (UFNBMODE,   "nbm", FUN_DYNAMIC)     /* Test for a given named buffer mode */
+DEFFUN (UFNBIND,    "nbi", 0x6E6269, FUN_MONAMIC)     /* Get keys command binding narg */
+DEFFUN (UFNBMODE,   "nbm", 0x6E626D, FUN_DYNAMIC)     /* Test for a given named buffer mode */
 #endif
-DEFFUN (UFNEG,      "neg", FUN_MONAMIC)     /* negate */
-DEFFUN (UFNOT,      "not", FUN_MONAMIC)     /* logical not */
-DEFFUN (UFOPT,      "opt", FUN_MONAMIC)     /* MEOPT availability test */
-DEFFUN (UFOR,       "or",  FUN_DYNAMIC)     /* boolean 'or' two logics together */
+DEFFUN (UFNEG,      "neg", 0x6E6567, FUN_MONAMIC)     /* negate */
+DEFFUN (UFNOT,      "not", 0x6E6F74, FUN_MONAMIC)     /* logical not */
+DEFFUN (UFOPT,      "opt", 0x6F7074, FUN_MONAMIC)     /* MEOPT availability test */
+DEFFUN (UFOR,       "or",  0x6F7200, FUN_DYNAMIC)     /* boolean 'or' two logics together */
 #if MEOPT_EXTENDED
-DEFFUN (UFPDEC,     "pde", FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* post decrement variable and set */
-DEFFUN (UFPINC,     "pin", FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* post increment variable and set */
+DEFFUN (UFPDEC,     "pde", 0x706465, FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* post decrement variable and set */
+DEFFUN (UFPINC,     "pin", 0x70696E, FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* post increment variable and set */
 #endif
 #if MEOPT_REGISTRY
-DEFFUN (UFREGISTRY, "reg", FUN_DYNAMIC)     /* Retreive a registry value */
+DEFFUN (UFREGISTRY, "reg", 0x726567, FUN_DYNAMIC)     /* Retreive a registry value */
 #endif
 #if MEOPT_EXTENDED
-DEFFUN (UFREP,      "rep", FUN_TRINAMIC)    /* replace str in str */
+DEFFUN (UFREP,      "rep", 0x726570, FUN_TRINAMIC)    /* replace str in str */
 #endif
-DEFFUN (UFRIGHT,    "rig", FUN_DYNAMIC)     /* right string(string, pos) */
+DEFFUN (UFRIGHT,    "rig", 0x726967, FUN_DYNAMIC)     /* right string(string, pos) */
 #if MEOPT_EXTENDED
-DEFFUN (UFRISIN,    "ris", FUN_DYNAMIC)     /* recursive case insensitive str in str */
-DEFFUN (UFRSIN,     "rsi", FUN_DYNAMIC)     /* recursive str in str */
+DEFFUN (UFRISIN,    "ris", 0x726973, FUN_DYNAMIC)     /* recursive case insensitive str in str */
+DEFFUN (UFRSIN,     "rsi", 0x727369, FUN_DYNAMIC)     /* recursive str in str */
 #endif
-DEFFUN (UFSEQUAL,   "seq", FUN_DYNAMIC)     /* string logical equality check */
+DEFFUN (UFSEQUAL,   "seq", 0x736571, FUN_DYNAMIC)     /* string logical equality check */
 #if MEOPT_EXTENDED
-DEFFUN (UFSET,      "set", FUN_DYNAMIC|FUN_SETVAR)     /* Set variable */
+DEFFUN (UFSET,      "set", 0x736574, FUN_DYNAMIC|FUN_SETVAR)     /* Set variable */
 #endif
-DEFFUN (UFSGREAT,   "sgr", FUN_DYNAMIC)     /* string logical greater than */
+DEFFUN (UFSGREAT,   "sgr", 0x736772, FUN_DYNAMIC)     /* string logical greater than */
 #if MEOPT_EXTENDED
-DEFFUN (UFSIN,      "sin", FUN_DYNAMIC)     /* str in str */
+DEFFUN (UFSIN,      "sin", 0x73696E, FUN_DYNAMIC)     /* str in str */
 #endif
-DEFFUN (UFSLESS,    "sle", FUN_DYNAMIC)     /* string logical less than */
+DEFFUN (UFSLESS,    "sle", 0x736C65, FUN_DYNAMIC)     /* string logical less than */
 #if MEOPT_EXTENDED
-DEFFUN (UFSLOWER,   "slo", FUN_MONAMIC)     /* string to lower case */
-DEFFUN (UFSPRINT,   "spr", FUN_MONAMIC)     /* string logical less than */
-DEFFUN (UFSTAT,     "sta", FUN_DYNAMIC)     /* file stats */
+DEFFUN (UFSLOWER,   "slo", 0x736C6F, FUN_MONAMIC)     /* string to lower case */
+DEFFUN (UFSPRINT,   "spr", 0x737072, FUN_MONAMIC)     /* string logical less than */
+DEFFUN (UFSTAT,     "sta", 0x737461, FUN_DYNAMIC)     /* file stats */
 #endif
-DEFFUN (UFSUB,      "sub", FUN_DYNAMIC)     /* subtraction */
+DEFFUN (UFSUB,      "sub", 0x737562, FUN_DYNAMIC)     /* subtraction */
 #if MEOPT_EXTENDED
-DEFFUN (UFSUPPER,   "sup", FUN_MONAMIC)     /* string to upper case */
-DEFFUN (UFTRIMB,    "trb", FUN_MONAMIC)     /* Trim whitespace both */
-DEFFUN (UFTRIML,    "trl", FUN_MONAMIC)     /* Trim whitespace left */
-DEFFUN (UFTRIMR,    "trr", FUN_MONAMIC)     /* Trim whitespace right */
-DEFFUN (UFWHICH,    "whi", FUN_MONAMIC)     /* Does a which on a given program name */
-DEFFUN (UFXIREP,    "xir", FUN_TRINAMIC)    /* regexp case insensitive replace str in str */
-DEFFUN (UFXISEQ,    "xis", FUN_DYNAMIC)     /* regexp case insensitive string logical equality check */
-DEFFUN (UFXREP,     "xre", FUN_TRINAMIC)    /* regexp replace str in str */
-DEFFUN (UFXSEQ,     "xse", FUN_DYNAMIC)     /* regexp string logical equality check */
+DEFFUN (UFSUPPER,   "sup", 0x737570, FUN_MONAMIC)     /* string to upper case */
+DEFFUN (UFTRIMB,    "trb", 0x747262, FUN_MONAMIC)     /* Trim whitespace both */
+DEFFUN (UFTRIML,    "trl", 0x74726C, FUN_MONAMIC)     /* Trim whitespace left */
+DEFFUN (UFTRIMR,    "trr", 0x747272, FUN_MONAMIC)     /* Trim whitespace right */
+DEFFUN (UFWHICH,    "whi", 0x776869, FUN_MONAMIC)     /* Does a which on a given program name */
+DEFFUN (UFXIREP,    "xir", 0x786972, FUN_TRINAMIC)    /* regexp case insensitive replace str in str */
+DEFFUN (UFXISEQ,    "xis", 0x786973, FUN_DYNAMIC)     /* regexp case insensitive string logical equality check */
+DEFFUN (UFXREP,     "xre", 0x787265, FUN_TRINAMIC)    /* regexp replace str in str */
+DEFFUN (UFXSEQ,     "xse", 0x787365, FUN_DYNAMIC)     /* regexp string logical equality check */
 #endif
 
 DEFDER (DRABORT,    "abo", DRFLAG_SWITCH|DRFLAG_ARG|DRFLAG_NARG|DRFLAG_OPTARG)
