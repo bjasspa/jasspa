@@ -62,6 +62,7 @@
   
   0 hilight .hilight.svn-con 2 100 $global-scheme
   hilight .hilight.svn-con 0x102 "\\[\\*\\*\\*\\* SVN [^ ]+ completed successfully" .scheme.no1
+  hilight .hilight.svn-con 0x102 "\\[\\*\\*\\*\\* SVN Server [^ ]+ completed successfully" .scheme.no1
   hilight .hilight.svn-con 0x102 "\\[\\*\\*\\*\\* SVN" .scheme.error
   
   ; fix the *files* buffer hilighting for svn additions
@@ -96,20 +97,22 @@ set-variable .fhook-svn-status.command-kbind &rig &lset &lset &lset &lset &lset 
 set-variable .fhook-svn-status.command-desc  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-desc  1 "" 2 "" 3 "Help on Subversion Status" 4 "Open Subversion menu" 5 "Rerun svn-status" 6 "" 2
 set-variable .fhook-svn-status.refresh "svn-status-refresh"
 
-set-variable .svn.cnames  "|Add|Blame|Checkout|Commit|Copy|Delete|Diff|Info|Move|Status|Update|"
-set-variable .svn.cflags  "|RIrS*!|Vhs|URr$|CRrS*!|||ZRxWwS|||ZRAIuwS|ZRMS*!|"
+set-variable .svn.cnames  "|Add|Blame|Checkout|Commit|Copy|Delete|Diff|Log|Move|Status|Update|Server Copy|Server Move|"
+set-variable .svn.cflags  "|RIS*!|Vhs|UR$|CRS*!|NPrS*!|KrS*!|ZRxWwS|Vs|NPrS*!|ZRAIuwS|ZRMS*|nCPs*!|nCPs*!|"
 set-variable .svn.cdefs1  "|1|0|0|"
 set-variable .svn.cdefs2  "|0|0|"
 set-variable .svn.cdefs3  "||1|0|"
 set-variable .svn.cdefs4  "||1|0|"
-set-variable .svn.cdefs5  "|"
-set-variable .svn.cdefs6  "|"
+set-variable .svn.cdefs5  "||1|0|"
+set-variable .svn.cdefs6  "|0|0|"
 set-variable .svn.cdefs7  "|0|1|0|1|0|"
-set-variable .svn.cdefs8  "|"
-set-variable .svn.cdefs9  "|"
+set-variable .svn.cdefs8  "|0|"
+set-variable .svn.cdefs9  "||1|0|"
 set-variable .svn.cdefs10 "|1|1|0|0|1|0|"
 set-variable .svn.cdefs11 "|1|1|0|"
-set-variable .svn.ccount  11
+set-variable .svn.cdefs12 "|||1|"
+set-variable .svn.cdefs13 "|||1|"
+set-variable .svn.ccount  13
 
 set-variable .svn.com &reg &spr "/history/%s/svn/com" $platform "svn"
 !if &sin " " .svn.com
@@ -426,22 +429,48 @@ set-variable #l9 .svn.ccount
         osd .osd.svn-osd &inc #l2 1 "fh" "    "
         osd .osd.svn-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HInclude ignored files" #l0 svn-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
+      !elif &seq #l1 "K"
+        osd .osd.svn-osd &inc #l2 1 "fh" "    "
+        osd .osd.svn-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HKeep local file(s)" #l0 svn-osd-cbc
+        set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "M"
         osd .osd.svn-osd &inc #l2 1 "fh" "    "
         osd .osd.svn-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Checkout \Hmissing items" #l0 svn-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "N"
         !if &equ .find-file.file-count 1
-          osd .osd.svn-osd &inc #l2 1 "Sf" "    \HNew Name or Directory:" &add #l2 2
+          osd .osd.svn-osd &inc #l2 1 "Sf" "    \HDestination Name or Directory:" &add #l2 2
           set-variable .svn.cname .find-file.file1
         !else
-          osd .osd.svn-osd &inc #l2 1 "Sf" "    \HNew Directory:" &add #l2 2
+          osd .osd.svn-osd &inc #l2 1 "Sf" "    \HDestination Directory:" &add #l2 2
           set-variable .svn.cname ""
         !endif
         osd .osd.svn-osd &inc #l2 1 "fh" "      "
         osd .osd.svn-osd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 60 1 "" #l0 svn-osd-name
         set-variable #l3 &con #l3 #l3 #l2
         osd .osd.svn-osd &inc #l2 1 "f"  "    "
+      !elif &seq #l1 "n"
+        !force svn-get-base-url $buffer-fname
+        !if &equ .find-file.file-count 1
+          osd .osd.svn-osd &inc #l2 1 "Sf" "    Source item repository URL (please check):"
+          osd .osd.svn-osd &inc #l2 1 "Sf" &cat "      " &set .svn.crep-url &cat .svn.crep-url .find-file.file1
+          osd .osd.svn-osd &inc #l2 1 "f"  ""
+          osd .osd.svn-osd &inc #l2 1 "Sf" "    \HDestination item repository URL:" &add #l2 2
+        !else
+          osd .osd.svn-osd &inc #l2 1 "Sf" "    Source base repository URL (please check):"
+          osd .osd.svn-osd &inc #l2 1 "Sf" &cat "      " .svn.crep-url
+          osd .osd.svn-osd &inc #l2 1 "f"  ""
+          osd .osd.svn-osd &inc #l2 1 "Sf" "    \HDestination base repository URL:" &add #l2 2
+        !endif
+        set-variable .svn.crep-surl .svn.crep-url
+        osd .osd.svn-osd &inc #l2 1 "fh" "      "
+        osd .osd.svn-osd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 60 1 "" #l0 svn-osd-rep-url
+        set-variable #l3 &con #l3 #l3 #l2
+        osd .osd.svn-osd &inc #l2 1 "f"  "    "
+      !elif &seq #l1 "P"
+        osd .osd.svn-osd &inc #l2 1 "fh" "    "
+        osd .osd.svn-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Create \Hintermediate directories" #l0 svn-osd-cbc
+        set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "R"
         osd .osd.svn-osd &inc #l2 1 "fh" "    "
         osd .osd.svn-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecurse into sub-directories" #l0 svn-osd-cbc
@@ -873,17 +902,51 @@ define-macro svn-checkout
 
 define-macro svn-commit
   4 svn-osd
-  set-variable #l2 &spr "%s commit %s" .svn.com &con &lget .svn.cvalues4 1 "" "--depth=empty "
+  set-variable #l2 &spr "%s commit %s" .svn.com &con &lget .svn.cvalues4 2 "" "--depth=empty "
   set-variable #l2 &spr "%s-m \"%s\" " #l2 .svn.ccomquot
   set-variable .svn.ccomment4 .svn.ccomment
   7 svn-get-file-list 0 0 #l2
   4 svn-exec 3 $buffer-fname
 !emacro
 
+;; SVN Copy ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro svn-copy
+  5 svn-osd
+  !if &seq "" &trr .svn.cname
+    osd-dialog "Subversion - Copy" "    A valid destination name must be given!    " "  \HAbort  "
+    !abort
+  !endif
+  set-variable #l2 &spr "%s copy %s" .svn.com &con &lget .svn.cvalues5 2 "--parents " ""
+  7 svn-get-file-list 0 0 #l2
+  find-buffer "*svn-cmdline*"
+  end-of-line
+  !if &sin " " .svn.cname
+    -1 insert-string &cat &cat " \"" &rep &rep .svn.cname "\\" "\\\\" "\"" "\\\"" "\""
+  !else
+    -1 insert-string &cat " " .svn.cname
+  !endif
+  goto-position "\x82"
+  5 svn-exec 3 $buffer-fname
+  !if &seq $buffer-fname ""
+  !elif &not &band $buffer-fmod 0x10000
+  !elif &lget .svn.cvalues5 3
+    dirlst-refresh
+  !endif
+!emacro
+
 ;; SVN Delete ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro svn-delete
-  osd-dialog "Subversion - Delete" "    Not yet implemented!    " "  \HAbort  "
+  6 svn-osd
+  set-variable #l2 &spr "%s delete %s" .svn.com &con &lget .svn.cvalues6 1 "--keep-local " ""
+  7 svn-get-file-list 0 0 #l2
+  7 svn-exec 3 $buffer-fname
+  !if &seq $buffer-fname ""
+  !elif &not &band $buffer-fmod 0x10000
+  !elif &lget .svn.cvalues6 2
+    dirlst-refresh
+  !endif
 !emacro
 
 ;; SVN Diff ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -925,6 +988,41 @@ define-macro svn-diff
   !endif
   7 svn-get-file-list 0 &lget .svn.cvalues7 1 #l2
   7 svn-exec 1 $buffer-fname
+!emacro
+
+;; SVN Log ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro svn-log
+  8 svn-osd
+  set-variable #l2 &spr "%s log %s" .svn.com &con &lget .svn.cvalues8 1 "-v " ""
+  7 svn-get-file-list 0 0 #l2
+  8 svn-exec 1 $buffer-fname
+!emacro
+
+;; SVN Move ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro svn-move
+  9 svn-osd
+  !if &seq "" &trr .svn.cname
+    osd-dialog "Subversion - Move" "    A valid destination name must be given!    " "  \HAbort  "
+    !abort
+  !endif
+  set-variable #l2 &spr "%s move %s" .svn.com &con &lget .svn.cvalues9 2 "--parents " ""
+  7 svn-get-file-list 0 0 #l2
+  find-buffer "*svn-cmdline*"
+  end-of-line
+  !if &sin " " .svn.cname
+    -1 insert-string &cat &cat " \"" &rep &rep .svn.cname "\\" "\\\\" "\"" "\\\"" "\""
+  !else
+    -1 insert-string &cat " " .svn.cname
+  !endif
+  goto-position "\x82"
+  9 svn-exec 3 $buffer-fname
+  !if &seq $buffer-fname ""
+  !elif &not &band $buffer-fmod 0x10000
+  !elif &lget .svn.cvalues9 3
+    dirlst-refresh
+  !endif
 !emacro
 
 ;; SVN Status ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -977,6 +1075,8 @@ define-macro svn-diff
     !endif
     forward-line
   !done
+  goto-line :svn-last
+  replace-string &con &bmo "magic" "\\\\" "\\" "/"
   goto-alpha-mark  "I"
   1 buffer-mode "view"
   -1 buffer-mode "edit"
@@ -1065,6 +1165,94 @@ define-macro svn-update
   11 svn-exec 3 $buffer-fname
 !emacro
 
+;; SVN Server Copy ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro svn-server-copy
+  12 svn-osd
+  set-variable #l3 .svn.crep-surl
+  !if &seq "" &set #l4 &trr .svn.crep-url
+    osd-dialog "Subversion - Server Copy" "    A valid destination URL must be given!    " "  \HAbort  "
+    !abort
+  !endif
+  1 svn-get-file-list 0 0
+  find-buffer "*svn-cmdline*"
+  end-of-line
+  !if &equ .find-file.file-count 1
+    set-mark
+    beginning-of-line
+    -1 kill-region
+    !if &sin " " #l3
+      -1 insert-string &spr " \"%s\"" &rep &rep #l3 "\\" "\\\\" "\"" "\\\""
+    !else
+      -1 insert-string &cat " " #l3
+    !endif
+  !elif &sin " " #l3
+    osd-dialog "Subversion - Server Copy" "    The source URL has a space - not currently supported for multiple files!    " "  \HAbort  "
+    !abort
+  !else
+    backward-delete-char
+    beginning-of-line
+    -1 replace-string "\b\"" &cat " \"" #l3
+    beginning-of-line
+    -1 replace-string "\b" &cat " " #l3
+  !endif
+  beginning-of-line
+  insert-string &spr "%s copy -m \"%s\" %s" .svn.com .svn.ccomquot &con &lget .svn.cvalues12 3 "--parents " ""
+  set-variable .svn.ccomment12 .svn.ccomment
+  end-of-line
+  !if &sin " " #l4
+    -1 insert-string &spr " \"%s\"" &rep &rep #l4 "\\" "\\\\" "\"" "\\\""
+  !else
+    -1 insert-string &cat " " #l4
+  !endif
+  goto-position "\x82"
+  12 svn-exec 3 $buffer-fname
+!emacro
+
+;; SVN Server Move ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro svn-server-move
+  13 svn-osd
+  set-variable #l3 .svn.crep-surl
+  !if &seq "" &set #l4 &trr .svn.crep-url
+    osd-dialog "Subversion - Server Move" "    A valid destination URL must be given!    " "  \HAbort  "
+    !abort
+  !endif
+  1 svn-get-file-list 0 0
+  find-buffer "*svn-cmdline*"
+  end-of-line
+  !if &equ .find-file.file-count 1
+    set-mark
+    beginning-of-line
+    -1 kill-region
+    !if &sin " " #l3
+      -1 insert-string &spr " \"%s\"" &rep &rep #l3 "\\" "\\\\" "\"" "\\\""
+    !else
+      -1 insert-string &cat " " #l3
+    !endif
+  !elif &sin " " #l3
+    osd-dialog "Subversion - Server Move" "    The source URL has a space - not currently supported for multiple files!    " "  \HAbort  "
+    !abort
+  !else
+    backward-delete-char
+    beginning-of-line
+    -1 replace-string "\b\"" &cat " \"" #l3
+    beginning-of-line
+    -1 replace-string "\b" &cat " " #l3
+  !endif
+  beginning-of-line
+  insert-string &spr "%s move -m \"%s\" %s" .svn.com .svn.ccomquot &con &lget .svn.cvalues13 3 "--parents " ""
+  set-variable .svn.ccomment13 .svn.ccomment
+  end-of-line
+  !if &sin " " #l4
+    -1 insert-string &spr " \"%s\"" &rep &rep #l4 "\\" "\\\\" "\"" "\\\""
+  !else
+    -1 insert-string &cat " " #l4
+  !endif
+  goto-position "\x82"
+  13 svn-exec 3 $buffer-fname
+!emacro
+
 ;; SVN Setup dialog ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 0 define-macro svn-setup-entry
@@ -1138,7 +1326,7 @@ define-macro svn-update
   set-variable #l0 0
   set-variable #l4 &mul @# 0x1000
   !while &not &seq "" &set #l1 &mid #l9 &pinc #l0 1 1
-    !if &not &sin #l1 "NSsv*!"
+    !if &not &sin #l1 "NnSsUv*!$"
       set-variable #l2 &mul #l0 100
       osd #l8 &inc #l2 1 ""
       !if &seq #l1 "A"
@@ -1148,9 +1336,21 @@ define-macro svn-update
         osd #l8 &inc #l2 1 "Sf" "    \HComment template file:" &add #l2 2
         osd #l8 &inc #l2 1 "fh" "        "
         osd #l8 &inc #l2 1 "EtxHfz" .scheme.osd-entry 36 1 "" @# svn-setup-ctf
+      !elif &seq #l1 "h"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} R\Haw out, remove header etc" &bor #l4 #l0 svn-setup-cbc
       !elif &seq #l1 "I"
         osd #l8 &inc #l2 1 "fh" "    "
         osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HInclude ignored files" &bor #l4 #l0 svn-setup-cbc
+      !elif &seq #l1 "K"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HKeep local file(s)" &bor #l4 #l0 svn-setup-cbc
+      !elif &seq #l1 "M"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Checkout \Hmissing items" &bor #l4 #l0 svn-setup-cbc
+      !elif &seq #l1 "P"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Create \Hintermediate directories" &bor #l4 #l0 svn-setup-cbc
       !elif &seq #l1 "R"
         osd #l8 &inc #l2 1 "fh" "    "
         osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecurse into sub-directories" &bor #l4 #l0 svn-setup-cbc
@@ -1160,6 +1360,9 @@ define-macro svn-update
       !elif &seq #l1 "u"
         osd #l8 &inc #l2 1 "fh" "    "
         osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Get o\Hut-of-date info from server" &bor #l4 #l0 svn-setup-cbc
+      !elif &seq #l1 "V"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HVerbose output" &bor #l4 #l0 svn-setup-cbc
       !elif &seq #l1 "W"
         osd #l8 &inc #l2 1 "fh" "    "
         osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Ignore \Hwhite spaces" &bor #l4 #l0 svn-setup-cbc
@@ -1179,10 +1382,10 @@ define-macro svn-update
   !done
 !emacro
 set-variable .svn-setup-page.cur 1
-set-variable .svn-setup-page.order "|1|2|3|4|||5|||6|7|"
+set-variable .svn-setup-page.order "|1|2|3|4|5|6|7|8|9|10|11|12|13|"
 
 -1 osd .osd.svn-tlc
-osd .osd.svn-tlc 0 "sS" .scheme.osd-child 10 12 -1 -1
+osd .osd.svn-tlc 0 "sS" .scheme.osd-child 12 12 -1 -1
 set-variable #l9 .svn.ccount
 !repeat
   !if &not &seq "" &set #l8 &lget .svn-setup-page.order #l9
@@ -1193,8 +1396,8 @@ set-variable #l9 .svn.ccount
 osd .osd.svn-tll 0 "s" 17 16 -1 -1
 osd .osd.svn-tll 10 "" ""
 osd .osd.svn-tll 20 "S" "  Select Tool:" 50
-osd .osd.svn-tll 40 "fh" "  "
-osd .osd.svn-tll 50 "IbHt" .scheme.osd-sbar 10 12 .osd.svn-tlc
+osd .osd.svn-tll 40 "fh" " "
+osd .osd.svn-tll 50 "IbHt" .scheme.osd-sbar 12 12 .osd.svn-tlc
 
 1 svn-setup-page
 
@@ -1293,14 +1496,16 @@ define-macro svn
   osd @# 10 "" "\HUpdate files"      f svn-update
   osd @# 30 "" "\HDiff files"        f svn-diff
   osd @# 20 "" "\HCommit files"      f svn-commit
-  osd @# 40 "" "Item \HInfo"         f svn-info
+  osd @# 40 "" "Item \HLog"          f svn-log
   osd @# 50 "" "Item \HBlame"        f svn-blame
-  osd @# 60 "" "Item \HCopy"         f svn-copy
-  osd @# 60 "" "Item \HMove"         f svn-move
   !if :tag-count
+    osd @# 55 "" "\HCopy items"      f svn-copy
+    osd @# 60 "" "\HMove items"      f svn-move
     osd @# 70 "" "\HAdd items"       f svn-add
     osd @# 80 "" "Delete items"      f svn-delete
   !else
+    osd @# 55 "" "Copy items"
+    osd @# 60 "" "Move items"
     osd @# 70 "" "Add items"
     osd @# 80 "" "Delete items"
   !endif
