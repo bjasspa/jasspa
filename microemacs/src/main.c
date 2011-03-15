@@ -294,8 +294,8 @@ execute(register int c, register int f, register int n)
      * so many hoops I've changed the input support so that macros can fail
      * in such a way as to indicate that they have not handled this input,
      * this allows them to pick and choose.
-     * The method chosen is to check the command variable status if the macro
-     * aborted, if .status is set to "0" then its not handled the input
+     * The method chosen is to check the command variable .status: if the macro
+     * aborted && .status == "0" then its not handled the input
      */
 #if MEOPT_EXTENDED
     if((ii=frameCur->bufferCur->inputFunc) >= 0)
