@@ -1979,7 +1979,7 @@ ffReadFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
 #ifdef _WIN32
             /* On windows a file could be temporarily lock be another process (e.g. virus scanner)
              * so if the failure is ERROR_SHARING_VIOLATION wait and try again */
-            int retries=5 ;
+            int retries=10 ;
             for(;;)
             {
                 if(((meio.rp=CreateFile(fname,GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,
