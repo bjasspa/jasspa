@@ -411,9 +411,9 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
                             set-variable #l5 &spr "%s%s%s" &lef #l5 4 &mid #l5 7 4 &mid #l5 12 6
                         !endif
                     !elif &xseq #l5 "\\(\\d\\d\\d\\d\\)[-/]\\(\\d\\d\\)[-/]\\(\\d\\d\\)\\( \\(\\d\\d\\):\\(\\d\\d\\)\\(:\\(\\d\\d\\)\\)?\\)?"
-                        set-variable #l5 &spr "%s%2d%2d%2d%2d%2d" @s1 @s2 @s3 @s5 @s6 @s8
+                        set-variable #l5 &spr "%s%2d%2d%2d%2d%2d" @s1 &mod &cat "100" @s2 100 &mod &cat "100" @s3 100 &mod &cat "100" @s5 100 &mod &cat "100" @s6 100 &mod &cat "100" @s8 100
                     !elif &xseq #l5 "\\(\\d\\d\\)[-/]\\(\\d\\d\\)[-/]\\(\\d\\d\\)\\( \\(\\d\\d\\):\\(\\d\\d\\)\\(:\\(\\d\\d\\)\\)?\\)?"
-                        set-variable #l5 &spr "%s%s%2d%2d%2d%2d%2d" &lef $time 2 @s1 @s2 @s3 @s5 @s6 @s8
+                        set-variable #l5 &spr "%s%s%2d%2d%2d%2d%2d" &lef $time 2 @s1 &mod &cat "100" @s2 100 &mod &cat "100" @s3 100 &mod &cat "100" @s5 100 &mod &cat "100" @s6 100 &mod &cat "100" @s8 100
                     !else
                         ml-write &spr "[Malformed -%s time parameter]" #l3
                         !abort
