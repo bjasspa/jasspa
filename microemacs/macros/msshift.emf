@@ -8,90 +8,89 @@
 ; Authors:     Steven Phillips
 ;
 0 define-macro msshift-pick
-    set-variable .msshift.state 1
+  set-variable .msshift.state 1
 !emacro
 
 0 define-macro msshift-input
-    set-variable .status "0"
-    !if &seq @cc "abort-command"
-        ; ensure a breakout if C-g is pressed
-        set-variable $buffer-input &con &seq .msshift.input "msshift-input" "" .msshift.input
-        !abort
-    !elif &seq @cck "redraw"
-        ; abort to tell ME to handle the actual input
-        !abort
-    !elif &seq @cck "callback"
-        !abort
-    !elif &seq @cck "idle-pick"
-        !abort
-    !endif
-    ; restore the input function so this only gets called once!
-    set-variable $buffer-input .msshift.input
-    ; only treat delete and backspace specially
-    !if &lfi "|backward-delete-char|forward-delete-char|kill-region|" @cc
-        set-variable .status "1"
-        -1 yank
-        kill-region
-        !return
-    !elif &lfi "|kill-rectangle|" @cc
-        set-variable .status "1"
-        -1 yank
-        execute-named-command @cc
-        !return
-    !elif &seq "copy-region" @cc
-        set-variable .status "1"
-        !return
-    !elif &seq "yank" @cc
-        set-variable .status "1"
-        -1 yank
-        -1 kill-region
-        yank
-        !return
-    !elif &seq "mouse-event" @cc
-        set-variable .mouse-event.msshift 3
-    !elif &set #l0 &sin "mouse-pick-" @cck
-        set-variable #l0 &spr "%s-drop-%s" &lef @cck &add #l0 4 &rig @cck &add #l0 10
-        !if &seq "mouse-event" @cc
-            set-variable #l1 &sin "yank" &reg &cat "/history/mouse/" #l0 ""
-        !else &not &set #l1 &sin "yank" @cc
-            set-variable #l1 &sin "yank" &cbind #l0
-        !endif
-        !if #l1
-            set-variable #l2 @cqk
-            set-variable .status "1"
-            -1 yank
-            -1 kill-region
-            yank
-            !return
-        !endif
-    !endif
-    ; reset the last command to the copy-region
-    set-variable @cl copy-region
+  set-variable .status "0"
+  !if &seq @cc "abort-command"
+    ; ensure a breakout if C-g is pressed
+    set-variable $buffer-input &con &seq .msshift.input "msshift-input" "" .msshift.input
     !abort
+  !elif &seq @cck "redraw"
+    ; abort to tell ME to handle the actual input
+    !abort
+  !elif &seq @cck "callback"
+    !abort
+  !elif &seq @cck "idle-pick"
+    !abort
+  !endif
+  ; restore the input function so this only gets called once!
+  set-variable $buffer-input .msshift.input
+  !if &lfi "|backward-delete-char|forward-delete-char|" @cc
+    set-variable .status "1"
+    -1 yank
+    -1 kill-region
+    !return
+  !elif &lfi "|kill-region|kill-rectangle|" @cc
+    set-variable .status "1"
+    -1 yank
+    execute-named-command @cc
+    !return
+  !elif &seq "copy-region" @cc
+    set-variable .status "1"
+    !return
+  !elif &lfi "|yank|newline|" @cc
+    -1 yank
+    -1 kill-region
+  !elif &seq @cck @cc
+    -1 yank
+    -1 kill-region
+  !elif &seq "mouse-event" @cc
+    set-variable .mouse-event.msshift 3
+  !elif &set #l0 &sin "mouse-pick-" @cck
+    set-variable #l0 &spr "%s-drop-%s" &lef @cck &add #l0 4 &rig @cck &add #l0 10
+    !if &seq "mouse-event" @cc
+      set-variable #l1 &sin "yank" &reg &cat "/history/mouse/" #l0 ""
+    !else &not &set #l1 &sin "yank" @cc
+      set-variable #l1 &sin "yank" &cbind #l0
+    !endif
+    !if #l1
+      set-variable #l2 @cqk
+      set-variable .status "1"
+      -1 yank
+      -1 kill-region
+      yank
+      !return
+    !endif
+  !endif
+  ; reset the last command to the copy-region
+  set-variable @cl copy-region
+  !abort
 !emacro
 
 0 define-macro msshift
-    !if &equ .state 2
-        copy-region
-        set-variable .input $buffer-input
-        set-variable $buffer-input msshift-input
-    !endif
-    set-variable .state -1
+  !if &equ .state 2
+    copy-region
+    set-variable .input $buffer-input
+    set-variable $buffer-input msshift-input
+  !endif
+  set-variable .state -1
 !emacro
 
 0 define-macro msshift-move
-    !if &equ .msshift.state 1
-        set-mark
-        set-variable .msshift.state 2
-    !endif
-    set-variable #l1 &cbind &rep @cck "S-" ""
-    set-variable @cl @cl
-    !if @?
-        @# execute-named-command #l1
-    !else
-        execute-named-command #l1
-    !endif
-    set-variable @cc #l1
+  !if &equ .msshift.state 1
+    set-mark
+    set-variable .msshift.state 2
+  !endif
+  set-variable #l1 &cbind &rep @cck "S-" ""
+  set-variable @cl @cl
+  !if @?
+    @# execute-named-command #l1
+  !else
+    execute-named-command #l1
+  !endif
+  set-variable @cc #l1
 !emacro
 
 set-variable .msshift.state -1
@@ -101,11 +100,11 @@ global-bind-key msshift "S-drop"
 
 set-variable #l0 0
 !while &not &seq "" &set #l1 &lget "|up|down|left|right|home|end|page-up|page-down|C-left|C-right|C-up|C-down|C-home|C-end|" &inc #l0 1
-    !if &not &seq &cbin #l1 "ERROR"
-        !if &seq &nbin #l1 ""
-            global-bind-key msshift-move &cat "S-" #l1
-        !else
-            &nbin #l1 global-bind-key msshift-move &cat "S-" #l1
-        !endif
+  !if &not &seq &cbin #l1 "ERROR"
+    !if &seq &nbin #l1 ""
+      global-bind-key msshift-move &cat "S-" #l1
+    !else
+      &nbin #l1 global-bind-key msshift-move &cat "S-" #l1
     !endif
+  !endif
 !done
