@@ -56,6 +56,8 @@ set-variable .fhook-vb.collapse-mnext "-1"
     hilight .hilight.vb 1 "True"         .scheme.prepro
     hilight .hilight.vb 1 "False"        .scheme.prepro
     hilight .hilight.vb 1 "Nothing"      .scheme.prepro
+    hilight .hilight.vb 1 "Null"         .scheme.prepro
+    hilight .hilight.vb 1 "Empty"        .scheme.prepro
     hilight .hilight.vb 1 "Binary"       .scheme.prepro
     hilight .hilight.vb 1 "Access"       .scheme.prepro
     hilight .hilight.vb 1 "Read"         .scheme.prepro
