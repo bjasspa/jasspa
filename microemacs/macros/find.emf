@@ -133,7 +133,8 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
             set-variable #l0 &spr "%s%s/%02d/%02d %02d:%02d:%02d " #l0 &lef #l1 4 &mid #l1 4 2 &mid #l1 6 2 &mid #l1 8 2 &mid #l1 10 2 &mid #l1 12 2
         !endif
     !endif
-    insert-string &spr "%s%s%s%s\n" #l0 #p1 &ind &cat ".find-proc.base" #p0 #p2
+    insert-string &spr "%s%s%s%s" #l0 #p1 &ind &cat ".find-proc.base" #p0 #p2
+    insert-newline
     find-buffer #l3
 !emacro
 
@@ -152,7 +153,8 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
         !until &not $status
         !if #p6
             33 find-buffer "*grep*"
-            insert-string &spr "%s%s%s: Binary file has %d match%s\n" #p1 &ind &cat ".find-proc.base" #p0 #p2 #p6 &con &equ #p6 1 "" "es" 
+            insert-string &spr "%s%s%s: Binary file has %d match%s" #p1 &ind &cat ".find-proc.base" #p0 #p2 #p6 &con &equ #p6 1 "" "es" 
+            insert-newline
             find-buffer #l0
         !endif
     !else
@@ -171,7 +173,8 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
                     set-variable #l5 &add #l5 :line-offset
                 !endif
                 33 find-buffer "*grep*"
-                insert-string &spr "%s%s%s:%d:%s\n" #p1 &ind &cat ".find-proc.base" #p0 #p2 #l5 #l6 
+                insert-string &spr "%s%s%s:%d:%s" #p1 &ind &cat ".find-proc.base" #p0 #p2 #l5 #l6 
+                insert-newline
                 find-buffer #l0
                 set-variable $window-line &add 1 #l1
                 set-variable #p6 &add #p6 1
@@ -276,12 +279,14 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
                         set-variable #l3 &lget "|failed to load file|page-file failed to load file|file to large (use -u)|file to large|" #l3
                         !if &not &sin "|" #l9
                             find-buffer "*grep*"
-                            insert-string &spr "%s%s%s: Error - %s\n" #l1 &ind &cat ".find-proc.base" #l0 #l2 #l3
+                            insert-string &spr "%s%s%s: Error - %s" #l1 &ind &cat ".find-proc.base" #l0 #l2 #l3
+                            insert-newline
                         !elif &sin "!" #l9
                             execute-line &spr "-1 %s %s%s \"%s\"" &lget #p9 7 #l8 #l2 #l3 
                         !else
                             find-buffer "*find*"
-                            insert-string &spr "[**** Error: %s %s%s%s ****]\n" #l3 #l1 &ind &cat ".find-proc.base" #l0 #l2
+                            insert-string &spr "[**** Error: %s %s%s%s ****]" #l3 #l1 &ind &cat ".find-proc.base" #l0 #l2
+                            insert-newline
                         !endif
                         !cont
                     !endif
@@ -480,6 +485,7 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
 !emacro
 
 ; @1 = 'initial find options' @2 = 'comm-line', [@3 = from-dir] returns #p7 = init counters, #p8 = from-dir #p9 = find options 
+; @#: 0x01 = search string required
 0 define-macro find-options
     set-variable #l9 @1
     set-variable #l0 @2
@@ -487,7 +493,7 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
         find-proc-option 
         !tjump &sin "-" &lget #l9 1 2
     !done
-    !if &not @#
+    !if &band @# 1
         !if &seq "" &trl #l0
             ml-write "[No search string given]"
             !abort
@@ -495,7 +501,7 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
         set-variable #l0 &cat "-w " #l0
         find-proc-option
     !endif
-    find-proc-file-mask
+    @# find-proc-file-mask
     !if &not &sin "m" &lget #l9 1
         set-variable #l1 &lget #l9 2
         str-to-regex #l1
@@ -544,7 +550,7 @@ define-macro grep
         set-variable #l5 @ml00 &cat "Grep " #l1
     !endif
     set-variable #l6 &trl &spr "%s %s" #l1 #l5
-    0 find-options "\bf\b\b\b\b\b\b\b" #l6 @2
+    3 find-options "\bf\b\b\b\b\b\b\b" #l6 @2
     !if &sin "&" &lget #l9 1
         @# find-proc-spawn "*grep*" "grep" #l5 #l8
         popup-window "*grep*"
@@ -558,7 +564,8 @@ define-macro grep
     !force 0 delete-buffer "*grep*"
     find-buffer "*grep*"
     set-variable $buffer-fname #l8
-    insert-string &spr "Directory:  %s\nGrep: %s\n\n" #l8 #l6
+    insert-string &spr "Directory:  %s\nGrep: %s" #l8 #l6
+    2 insert-newline
     !if &band $system 0x1000000
         beginning-of-buffer
         set-mark
@@ -620,7 +627,7 @@ define-macro find
         set-variable #l5 @ml00 &cat "Find " #l1
     !endif
     set-variable #l6 &spr "%s %s" #l1 #l5
-    find-options "\b|rdf\b\b\b\b\b\b\b" #l6 @2
+    0 find-options "\b|rdf\b\b\b\b\b\b\b" #l6 @2
     !if &sin "&" &lget #l9 1
         @# find-proc-spawn "*find*" "find" #l5 #l8
         popup-window "*find*"
@@ -638,7 +645,8 @@ define-macro find
         !force 0 delete-buffer "*find*"
         find-buffer "*find*"
         set-variable $buffer-fname #l8
-        insert-string &spr "Directory: %s\nFind: %s\n\n" #l8 &trb #l6
+        insert-string &spr "Directory: %s\nFind: %s" #l8 &trb #l6
+        2 insert-newline
     !endif
     set-variable #l0 " Attr "
     !if &not &sin "2" &lget #l9 1
@@ -749,7 +757,8 @@ define-macro find-rerun
     !if &les @# 0
         ; reporting an error
         33 find-buffer "*replace*"
-        insert-string &spr "%s%s%s: Error - %s\n" #p1 &ind &cat ".find-proc.base" #p0 #p2 @2
+        insert-string &spr "%s%s%s: Error - %s" #p1 &ind &cat ".find-proc.base" #p0 #p2 @2
+        insert-newline
         !force goto-position "\x82"
         !return
     !endif
@@ -796,7 +805,8 @@ define-macro find-rerun
         !force goto-position "\x82"
         set-variable #l6 $buffer-bname
         33 find-buffer "*replace*"
-        insert-string &spr "%s%s%s: Error - read-only\n" #p1 &ind &cat ".find-proc.base" #p0 #p2
+        insert-string &spr "%s%s%s: Error - read-only" #p1 &ind &cat ".find-proc.base" #p0 #p2
+        insert-newline
         find-buffer #l6
     !elif #l2
         -1 buffer-mode "view"
@@ -819,10 +829,11 @@ define-macro find-rerun
             set-variable #l6 $buffer-bname
             33 find-buffer "*replace*"
             !if #l3
-                insert-string &spr "%s%s%s: %d replacement%s\n" #p1 &ind &cat ".find-proc.base" #p0 #p2 &lget #l2 1 &con &equ &lget #l2 1 1 "" "s" 
+                insert-string &spr "%s%s%s: %d replacement%s" #p1 &ind &cat ".find-proc.base" #p0 #p2 &lget #l2 1 &con &equ &lget #l2 1 1 "" "s" 
             !else
-                insert-string &spr "%s%s%s (%s): %d replacement%s\n" #p1 &ind &cat ".find-proc.base" #p0 #p2 #l6 &lget #l2 1 &con &equ &lget #l2 1 1 "" "s" 
+                insert-string &spr "%s%s%s (%s): %d replacement%s" #p1 &ind &cat ".find-proc.base" #p0 #p2 #l6 &lget #l2 1 &con &equ &lget #l2 1 1 "" "s" 
             !endif
+            insert-newline
             find-buffer #l6
             set-variable #p6 &lget #l2 1
             set-variable .t &lget #l2 3
@@ -863,7 +874,7 @@ define-macro replace-string-in-files
     set-variable .rsif-callback.f #l1    
     set-variable .rsif-callback.t #l2
     set-variable .rsif-callback.l 0
-    find-options "\b|@!fb\b\b\b\b\b\brsif-callback\b" #l6 @4
+    0 find-options "\b|@!fb\b\b\b\b\b\brsif-callback\b" #l6 @4
     !if &sin "d" &lget #l9 1
         ml-write "[Option -d not supported - cannot replace strings in directories]"
         !abort
@@ -894,7 +905,8 @@ define-macro replace-string-in-files
     !force 0 delete-buffer "*replace*"
     find-buffer "*replace*"
     set-variable $buffer-fname #l8
-    insert-string &spr "Directory:  %s\nReplace string: %s %s %s\n\n" #l8 #l1 #l2 #l0
+    insert-string &spr "Directory:  %s\nReplace string: %s %s %s" #l8 #l1 #l2 #l0
+    2 insert-newline
     !if &band $system 0x1000000
         beginning-of-buffer
         set-mark
