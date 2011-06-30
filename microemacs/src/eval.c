@@ -2965,9 +2965,9 @@ get_flag:
                         while(--count >= 0)
                         {
                             if(index+nn >= meBUF_SIZE_MAX)
-                                /* break if we dont have enough space */
-                                break ;
-                            meStrcpy(arg3+index,arg2) ;
+                                /* only copy amount we have space for */
+                                nn = meBUF_SIZE_MAX - 1 - index ;
+                            memcpy(arg3+index,arg2,nn) ;
                             index += nn ;
                         }
                         break;
