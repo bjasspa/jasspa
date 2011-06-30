@@ -49,7 +49,7 @@ global-bind-key save-buffers-exit-emacs "A-f4"
 ; Setup the get-next-line stuff for grep and compiling
 ;
 set-variable $line-template "[0-9]+"
-set-variable $file-template "[a-zA-Z]:[-0-9a-zA-Z\\\\/_.~]+\\|[-0-9a-zA-Z\\\\/_.~]+"
+set-variable $file-template "[a-zA-Z]:[^\n*?\"<>|:]+\\|[^\n*?\"<>|:]+"
 set-variable %xgrep-com "grep -n"
 add-next-line "*grep*" "%f: %l:"
 ; These definitions are for the Microsoft MSCV 2.0+ compiler
