@@ -617,7 +617,11 @@ fileLookup(meUByte *fname, meUByte *ext, meUByte flags, meUByte *outName)
         if (ii <= 0)
             continue;
         /* Add a directory separator if missing */
+#ifdef _CONVDIR_CHAR
+        if ((buf[ii-1] != DIR_CHAR) && (buf[ii-1] != _CONVDIR_CHAR))
+#else
         if (buf[ii-1] != DIR_CHAR)
+#endif
             buf[ii++] = DIR_CHAR ;
         meStrcpy(buf+ii,fname) ;               /* Concatinate the name */
 
