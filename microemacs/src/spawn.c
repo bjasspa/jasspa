@@ -122,24 +122,59 @@ __mkTempName (meUByte *buf, meUByte *name, meUByte *ext)
     if(tmpDir == NULL)
     {
         /* Get location of the temporary directory from the environment $TEMP */
-        if ((pp = (meUByte *) meGetenv ("TEMP")) != NULL)
-            tmpDir = meMalloc((ii=meStrlen(pp))+2) ;
-        if(tmpDir != NULL)
+        if((((pp = (meUByte *) meGetenv ("TMP")) == NULL) || meTestDir(pp)) &&
+           (((pp = (meUByte *) meGetenv ("TEMP")) == NULL) || meTestDir(pp)))
         {
-            meStrcpy(tmpDir,pp) ;
-            if(tmpDir[ii-1] != PIPEDIR_CHAR)
-            {
-                tmpDir[ii++] = PIPEDIR_CHAR ;
-                tmpDir[ii]   = '\0' ;
-            }
-        }
-        else
+            pp = NULL ;
 #if (defined _DOS) || (defined _WIN32)
-            /* the C drive is more reliable than ./ as ./ could be on a CD-Rom etc */
-            tmpDir = "c:\\" ;
-#else
-            tmpDir = "./" ;
+            /* the C drive is more reliable than ./ as ./ could be on a CD-Rom etc, but in recent
+             * versions of windows c:\ is readonly so look around for a temp folder */
+            if(!meTestDir("c:\\tmp\\"))
+                tmpDir = "c:\\tmp\\" ;
+            else if(!meTestDir("c:\\temp\\"))
+                tmpDir = "c:\\temp\\" ;
+#if (defined _WIN32)
+            else if(((pp = (meUByte *) meGetenv ("USERPROFILE")) != NULL) && !meTestDir(pp))
+            {
+                ii = meStrlen(pp) ;
+                memcpy(buf,pp,ii) ;
+                if(buf[ii-1] != PIPEDIR_CHAR)
+                    buf[ii++] = PIPEDIR_CHAR ;
+                strcpy(buf+ii,"Local Settings\\Temp") ;
+                if(!meTestDir(buf))
+                    pp = buf ;
+            }
+            else if(((pp = (meUByte *) meGetenv ("WINDIR")) != NULL) && !meTestDir(pp))
+            {
+                ii = meStrlen(pp) ;
+                memcpy(buf,pp,ii) ;
+                if(buf[ii-1] != PIPEDIR_CHAR)
+                    buf[ii++] = PIPEDIR_CHAR ;
+                strcpy(buf+ii,"Temp") ;
+                if(!meTestDir(buf))
+                    pp = buf ;
+            }
 #endif
+#endif
+        }
+        if(tmpDir == NULL)
+        {
+            if((pp != NULL) && ((ii = meStrlen(pp)) > 0) && ((tmpDir = meMalloc(ii+2)) != NULL))
+            {
+                meStrcpy(tmpDir,pp) ;
+                if(tmpDir[ii-1] != PIPEDIR_CHAR)
+                {
+                    tmpDir[ii++] = PIPEDIR_CHAR ;
+                    tmpDir[ii]   = '\0' ;
+                }
+            }
+            else 
+#if (defined _DOS) || (defined _WIN32)
+                tmpDir = "c:\\" ;
+#else
+                tmpDir = "./" ;
+#endif
+        }
     }
     if(ext == NULL)
         ext = "" ;
