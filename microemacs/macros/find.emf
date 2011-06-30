@@ -477,6 +477,19 @@ set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
         set-variable &cat ".find-proc.mask" &inc #l3 1 #l4
         set-variable &cat ".find-proc.base" #l3 #l5
     !done
+    !if #l3
+    !elif &not &band @# 2
+    !elif &seq $buffer-bname "*grep*"
+      set-variable #l4 ""
+      set-variable $window-line 4
+      !while &xse @wl &spr "\\(%s\\):%s:.*" $file-template $line-template
+        !if &not &seq #l4 &set #l5 @s1
+          set-variable &cat ".find-proc.mask" &inc #l3 1 &set #l4 #l5
+          set-variable &cat ".find-proc.base" #l3 ""
+        !endif
+        forward-line
+      !done
+    !endif
     !if &not #l3
         ml-write "[No file mask given]"
         !abort
