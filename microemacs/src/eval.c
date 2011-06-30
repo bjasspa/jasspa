@@ -3000,7 +3000,7 @@ get_flag:
                             arg3[index++] = c;  /* Just a literal char - pass in */
                     }
                 }
-                else if(index >= meBUF_SIZE_MAX)
+                else if(index >= meBUF_SIZE_MAX-1)
                     break ;
                 else
                     arg3[index++] = c;          /* Just a literal char - pass in */
