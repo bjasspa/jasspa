@@ -38,6 +38,20 @@ set-variable .fhook-asp.indent-width 2
         hilight .hilight.asp      0xa0 "End Sub$" .hilight.vbscript .scheme.keyword
         hilight .hilight.asptag   0x80 "<%" .hilight.vbscript .scheme.prepro
         hilight .hilight.vbscript 0x80 "%>" 0 .scheme.prepro
+        
+        hilight .hilight.vbscript 1 "Request.Cookies" .scheme.function
+        hilight .hilight.vbscript 1 "Request.Form" .scheme.function
+        hilight .hilight.vbscript 1 "Request.QueryString" .scheme.function
+        hilight .hilight.vbscript 1 "Request" .scheme.function
+        hilight .hilight.vbscript 1 "Request.ServerVariables" .scheme.function
+        hilight .hilight.vbscript 1 "Response.Cookies" .scheme.function
+        hilight .hilight.vbscript 1 "Response.End" .scheme.function
+        hilight .hilight.vbscript 1 "Response.Flush" .scheme.function
+        hilight .hilight.vbscript 1 "Response.Redirect" .scheme.function
+        hilight .hilight.vbscript 1 "Response.Write" .scheme.function
+        hilight .hilight.vbscript 1 "Server.HTMLEncode" .scheme.function
+        hilight .hilight.vbscript 1 "Server.Transfer" .scheme.function
+        hilight .hilight.vbscript 1 "Server.URLEncode" .scheme.function
     !endif
 !endif
 !if &sin "d" .fhook-asp.setup
