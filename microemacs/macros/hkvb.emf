@@ -49,6 +49,7 @@ set-variable .fhook-vb.collapse-mnext "-1"
     hilight .hilight.vb 0 "<>"           .scheme.operator
     hilight .hilight.vb 1 "And"          .scheme.operator
     hilight .hilight.vb 1 "Is"           .scheme.operator
+    hilight .hilight.vb 1 "Mod"          .scheme.operator
     hilight .hilight.vb 1 "Not"          .scheme.operator
     hilight .hilight.vb 1 "Or"           .scheme.operator
     hilight .hilight.vb 1 "Xor"          .scheme.operator
@@ -103,7 +104,7 @@ set-variable .fhook-vb.collapse-mnext "-1"
     hilight .hilight.vb 1 "Const"        .scheme.type
     hilight .hilight.vb 1 "Declare"      .scheme.type
     hilight .hilight.vb 1 "Dim"          .scheme.type
-    hilight .hilight.vb 1 "End\\s+Type" .scheme.type
+    hilight .hilight.vb 1 "End\\s+Type"  .scheme.type
     hilight .hilight.vb 1 "Explicit"     .scheme.type
     hilight .hilight.vb 1 "Explicit"     .scheme.type
     hilight .hilight.vb 1 "Global"       .scheme.type
@@ -142,7 +143,7 @@ set-variable .fhook-vb.collapse-mnext "-1"
     ; A Then at the end of the line, then indent + i; otherwise this is
     ; a single line 'if ... then' and no indenation is required.
     indent .hilight.vb N "Then" t
-    indent .hilight.vb N "Then\\s+\\w+" 0
+    indent .hilight.vb n "\\sThen\\s+\\}\\S" 0
     indent .hilight.vb N "Begin" t
     indent .hilight.vb S "Else" -t
     indent .hilight.vb S "Case" -t
@@ -159,17 +160,14 @@ set-variable .fhook-vb.collapse-mnext "-1"
     indent .hilight.vb O "End\\s+Select" -2t
     indent .hilight.vb O "End\\s+Sub" -t
     indent .hilight.vb O "End\\s+Type" -t
+    indent .hilight.vb O "Exit\\s+Do" 0
     indent .hilight.vb O "Exit\\s+For" 0
     indent .hilight.vb O "Exit\\s+Function" 0
     indent .hilight.vb O "Exit\\s+Property" 0
     indent .hilight.vb O "Exit\\s+Sub" 0
-    indent .hilight.vb N "While" t
-    indent .hilight.vb N "Do\\s+While" t
     indent .hilight.vb N "Do" t
     indent .hilight.vb O "Wend" -t
     indent .hilight.vb O "Loop" -t
-    indent .hilight.vb O "Loop\\s+While" -t
-    indent .hilight.vb O "Exit\\s+Do" 0
     indent .hilight.vb N "For" t
     indent .hilight.vb O "Next" -t
     indent .hilight.vb f "^\\w+:" 0
