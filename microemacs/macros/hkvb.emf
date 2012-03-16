@@ -147,6 +147,7 @@ set-variable .fhook-vb.collapse-mnext "-1"
     indent .hilight.vb N "Begin" t
     indent .hilight.vb S "Else" -t
     indent .hilight.vb S "Case" -t
+    indent .hilight.vb S "Case\\s+Else" -t
     indent .hilight.vb N "Select\\s+Case" 2t
     indent .hilight.vb O "ElseIf" -t
     indent .hilight.vb O "End" -t
