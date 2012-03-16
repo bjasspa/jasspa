@@ -92,8 +92,11 @@ set-variable .fhook-jst.item-list-r4 "H4  \ecB\\1\ecA"
     ; are none below then there is no adverse effect.
     0 hilight  .hilight.jst 2 100                               $global-scheme
     hilight .hilight.jst 0x890 "\\*\\*" .hilight.jstB           .scheme.hide
+    hilight .hilight.jst 0 "\\*\\*\\*+"                         $global-scheme
     hilight .hilight.jst 0x890 "//" .hilight.jstI               .scheme.hide
+    hilight .hilight.jst 0 "///+"                               $global-scheme
     hilight .hilight.jst 0x890 "__" .hilight.jstU               .scheme.hide
+    hilight .hilight.jst 0 "___+"                               $global-scheme
     hilight .hilight.jst 0x890 "@@" .hilight.jstM               .scheme.hide
     hilight .hilight.jst 0x814 "\"\"" "\"\"" ""                 .scheme.quote
     hilight .hilight.jst 0x814 "``" "``" "\\"                   .scheme.no2

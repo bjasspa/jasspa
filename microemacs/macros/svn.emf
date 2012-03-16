@@ -53,12 +53,19 @@
   hilight .hilight.svn-status 0x102 "[ *]I" .scheme.hide
   hilight .hilight.svn-status 0x102 "[ *]M" .scheme.no2
   hilight .hilight.svn-status 0x102 "[ *]R" .scheme.prepro
-  hilight .hilight.svn-status 0x102 "[ *]U" .scheme.prepro
+  hilight .hilight.svn-status 0x102 "[ *]X" .scheme.prepro
   hilight .hilight.svn-status 0x102 "[ *]!" .scheme.no1
   hilight .hilight.svn-status 0x102 "[ *]~" .scheme.hlred
+  hilight .hilight.svn-status 0x102 "[ *] M" .scheme.no2
+  hilight .hilight.svn-status 0x102 "[ *] C" .scheme.hlred
   hilight .hilight.svn-status 0x102 " Flags  " .scheme.header
   hilight .hilight.svn-status 0x102 "\\[\\*\\*\\*\\* SVN [^ ]+ completed successfully" .scheme.no1
   hilight .hilight.svn-status 0x102 "\\[\\*\\*\\*\\* SVN" .scheme.error
+  hilight .hilight.svn-status 0x102 "[ *]D.......\\*" .scheme.hlred
+  hilight .hilight.svn-status 0x102 "[ *]M.......\\*" .scheme.hlred
+  hilight .hilight.svn-status 0x102 "[ *]R.......\\*" .scheme.hlred
+  hilight .hilight.svn-status 0x102 "[ *] M......\\*" .scheme.hlred
+  hilight .hilight.svn-status 0x102 "[ *]  ......\\*" .scheme.prepro
   
   0 hilight .hilight.svn-con 2 100 $global-scheme
   hilight .hilight.svn-con 0x102 "\\[\\*\\*\\*\\* SVN [^ ]+ completed successfully" .scheme.no1
@@ -97,8 +104,8 @@ set-variable .fhook-svn-status.command-kbind &rig &lset &lset &lset &lset &lset 
 set-variable .fhook-svn-status.command-desc  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-desc  1 "" 2 "" 3 "Help on Subversion Status" 4 "Open Subversion menu" 5 "Rerun svn-status" 6 "" 2
 set-variable .fhook-svn-status.refresh "svn-status-refresh"
 
-set-variable .svn.cnames  "|Add|Blame|Checkout|Commit|Copy|Delete|Diff|Log|Move|Status|Update|Server Copy|Server Move|Resolve|"
-set-variable .svn.cflags  "|RIS*!|Vhs|UR$|CRS*!|NPrS*!|KrS*!|ZRxWwS|Vs|NPrS*!|ZRAIuwS|ZRMS*|nCPs*!|nCPs*!|ZRaS*|"
+set-variable .svn.cnames  "|Add|Blame|Checkout|Commit|Copy|Delete|Diff|Log|Move|Status|Update|Server Copy|Server Move|Resolve|Ignore|"
+set-variable .svn.cflags  "|RIS*!|Vhs|UR$|CRS*!|NPrS*!|KrS*!|ZRxWwS|Vs|NPrS*!|ZRAIuwS|ZRMS*|nCPs*!|nCPs*!|ZRaS*|Zi|"
 set-variable .svn.cdefs1  "|1|0|0|"
 set-variable .svn.cdefs2  "|0|0|"
 set-variable .svn.cdefs3  "||1|0|"
@@ -113,7 +120,8 @@ set-variable .svn.cdefs11 "|1|1|0|"
 set-variable .svn.cdefs12 "|||1|"
 set-variable .svn.cdefs13 "|||1|"
 set-variable .svn.cdefs14 "|0|0|2|"
-set-variable .svn.ccount  14
+set-variable .svn.cdefs15 "||"
+set-variable .svn.ccount  15
 
 set-variable .svn.com &reg &spr "/history/%s/svn/com" $platform "svn"
 !if &sin " " .svn.com
@@ -313,6 +321,25 @@ set-variable #l9 .svn.ccount
     set-variable $result .svn.ccomment
   !endif
 !emacro
+0 define-macro svn-osd-init-ignore-mask
+  !if .find-file.file-count
+    set-variable #l0 0
+    set-variable #l1 ""
+    !while &les &pinc #l0 1 .find-file.file-count
+      set-variable #l1 &spr "%s%s\n" #l1 &ind &cat ".find-file.file" #l0 
+    !done
+    set-variable .svn.cignrmsk #l1
+  !elif &not &exi .svn.cignrmsk
+    set-variable .svn.cignrmsk ""
+  !endif
+!emacro
+0 define-macro svn-osd-meim
+  !if &les @# 0
+    set-variable .svn.cignrmsk @ml2 "" .svn.cignrmsk
+  !else
+    set-variable $result .svn.cignrmsk
+  !endif
+!emacro
 0 define-macro svn-osd-rep-url
   !if &not &len &set #l1 .svn.crep-url 
     set-variable #l1 .svn.def-rep-url
@@ -452,6 +479,13 @@ set-variable #l9 .svn.ccount
         osd .osd.svn-osd &inc #l2 1 "fh" "    "
         osd .osd.svn-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HInclude ignored files" #l0 svn-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
+      !elif &seq #l1 "i"
+        svn-osd-init-ignore-mask
+        osd .osd.svn-osd &inc #l2 1 "Sf" "    \HIgnore file masks (one per line):" &add #l2 2
+        osd .osd.svn-osd &inc #l2 1 "fh" "      "
+        osd .osd.svn-osd &inc #l2 1 "EtNxHfhz" .scheme.osd-entry 60 10 "" f svn-osd-meim
+        set-variable #l3 &con #l3 #l3 #l2
+        osd .osd.svn-osd &inc #l2 1 "f"  "    "
       !elif &seq #l1 "K"
         osd .osd.svn-osd &inc #l2 1 "fh" "    "
         osd .osd.svn-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HKeep local file(s)" #l0 svn-osd-cbc
@@ -630,7 +664,7 @@ set-variable #l9 .svn.ccount
     beginning-of-buffer
     replace-string "^ +" ""
   !else
-    2 replace-string "$" "\b"
+    &con &band @# 8 2 1 replace-string "$" "\b"
   !endif
   !if &band @# 4
     beginning-of-buffer
@@ -964,7 +998,7 @@ define-macro svn-delete
   6 svn-osd
   set-variable #l2 &spr "%s delete %s" .svn.com &con &lget .svn.cvalues6 1 "--keep-local " ""
   7 svn-get-file-list 0 0 #l2
-  7 svn-exec 3 $buffer-fname
+  6 svn-exec 3 $buffer-fname
   !if &seq $buffer-fname ""
   !elif &not &band $buffer-fmod 0x10000
   !elif &lget .svn.cvalues6 2
@@ -1011,6 +1045,22 @@ define-macro svn-diff
   !endif
   7 svn-get-file-list 0 &lget .svn.cvalues7 1 #l2
   7 svn-exec 1 $buffer-fname
+!emacro
+
+;; SVN Ignore ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro svn-ignore
+  15 svn-osd
+  !if &seq "" &set #l3 &rep &rep &trb .svn.cignrmsk "\\" "\\\\" "\"" "\\\""
+    osd-dialog "Subversion - Ignore" "    A file mask list must be given!    " "  \HAbort  "
+    !abort
+  !endif
+  !if &seq &rig $SHELL -3 "csh"
+    set-variable #l3 &rep #l3 "\n" "\\\n"
+  !endif
+  set-variable #l2 &spr "%s propset svn:ignore \"%s\" " .svn.com #l3
+  6 svn-get-file-list 0 1 #l2
+  15 svn-exec 3 $buffer-fname
 !emacro
 
 ;; SVN Log ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1416,7 +1466,7 @@ define-macro svn-server-move
   !done
 !emacro
 set-variable .svn-setup-page.cur 1
-set-variable .svn-setup-page.order "|1|2|3|4|5|6|7|8|9|11|12|13|14|10|"
+set-variable .svn-setup-page.order "|1|2|3|4|5|6|7|9|10|12|13|14|15|11|8|"
 
 -1 osd .osd.svn-tlc
 osd .osd.svn-tlc 0 "sS" .scheme.osd-child 12 12 -1 -1
