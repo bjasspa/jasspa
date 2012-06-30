@@ -584,7 +584,49 @@ define-macro html-insert-attrib
     !endif
     &cond #l9 1 -1 buffer-mode "exact"
 !emacro
-set-variable .html-insert-main-tag.tags "|HTML|HEAD|/HEAD|TITLE|BODY|"
+set-variable .html-insert-main-tag.tags "|html|head|/head|title|body|"
+
+0 define-macro html-insert-block
+  set-variable #l9 @1
+  ; If there is a region then italic/emphasise the region, otherwise insert an <em> block
+  0 show-region
+  set-variable #l0 $result
+  !if &equ &band #l0 5 5
+    ; a region is hilighted
+    !if &not &band $result 2
+      3 show-region
+    !endif
+    ; Find start/end of region.
+    -2 show-region
+    set-variable #l0 $window-line
+    set-variable #l1 $window-col
+    set-position "\x82"
+    2 show-region
+    set-position "\x83"
+    set-variable #l2 $window-line
+    ; Determine start of region.
+    !if &or &gre #l0 #l2 &gre $window-col $window-col
+      set-variable #l3 1
+    !else
+      set-variable #l3 0
+    !endif
+    ; italic the region.
+    goto-position &cond #l3 "\x83" "\x82"
+    insert-string &spr "<%s>" #l9
+    goto-position &cond #l3 "\x82" "\x83"
+    insert-string &spr "</%s>" #l9
+  !else
+    ; No region hilighted, insert em and move in between
+    insert-string &spr "<%s></%s>" #l9 #l9
+    &add &len #l9 3 backward-char
+  !endif
+!emacro
+define-macro html-insert-em
+  html-insert-block "em"
+!emacro
+define-macro html-insert-strong
+  html-insert-block "strong"
+!emacro
 
 define-macro html-insert-color
     html-get-color " \HInsert "
@@ -601,14 +643,14 @@ define-macro html-create-table
     !endif
     set-variable #l2 $window-col
     set-variable #l4 0
-    insert-string "<TABLE>\n" @mna
+    insert-string "<table>\n" @mna
     !while &gre &pdec #l1 1 0
         !if $buffer-indent
             tab
         !else
             &add #l2 2 insert-space
         !endif
-        insert-string "<TR>\n"
+        insert-string "<tr>\n"
         !if &not #l4
             set-variable #l4 $window-line
         !endif
@@ -619,21 +661,21 @@ define-macro html-create-table
             !else
                 &add #l2 4 insert-space
             !endif
-            insert-string "<TD></TD>\n"
+            insert-string "<td></td>\n"
             !jump -7
         !endif
         !if $buffer-indent
-            insert-string "</TR>"
+            insert-string "</tr>"
             newline
         !else
-            insert-string &spr "%n</TR>\n" &add #l2 2 " "
+            insert-string &spr "%n</tr>\n" &add #l2 2 " "
         !endif
     !done
     !if $buffer-indent
-        insert-string "</TABLE>"
+        insert-string "</table>"
         tab
     !else
-        insert-string &spr "%n</TABLE>" #l2 " "
+        insert-string &spr "%n</table>" #l2 " "
     !endif
     !if #l4
         set-variable $window-line #l4
@@ -674,8 +716,8 @@ define-macro html-view-iexplorer
     set-variable #l0 &reg &spr "/history/%s/html-iexplorer" $platform "iexplore \"%f\""
     html-view-launch #l0 @1
 !emacro
-define-macro html-view-netscape
-    set-variable #l0 &reg &spr "/history/%s/html-netscape" $platform "netscape \"%f\""
+define-macro html-view-firefox
+    set-variable #l0 &reg &spr "/history/%s/html-firefox" $platform "firefox \"%f\""
     html-view-launch #l0 @1
 !emacro
 
@@ -684,9 +726,9 @@ define-macro html-config-iexplorer
     set-variable #l0 @ml2 "IExplorer Command-line" #l0
     set-registry &spr "/history/%s/html-iexplorer" $platform #l0
 !emacro
-define-macro html-config-netscape
-    set-variable #l0 &reg &spr "/history/%s/html-netscape" $platform "netscape \"%f\""
-    set-variable #l0 @ml2 "Netscape Command-line" #l0
-    set-registry &spr "/history/%s/html-netscape" $platform #l0
+define-macro html-config-firefox
+    set-variable #l0 &reg &spr "/history/%s/html-firefox" $platform "firefox \"%f\""
+    set-variable #l0 @ml2 "Firefox Command-line" #l0
+    set-registry &spr "/history/%s/html-firefox" $platform #l0
 !emacro
 

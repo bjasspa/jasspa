@@ -17,6 +17,11 @@ define-macro fhook-vb
 set-variable .fhook-vb.name "Visual Basic"
 set-variable .fhook-vb.setup &reg "/history/fhook/vb" "dfghiopx"
 set-variable .fhook-vb.setup-mask "adefghikmoptux"
+set-variable .fhook-vb.command-flag  "|"
+set-variable .fhook-vb.command-name  "|"
+set-variable .fhook-vb.command-nbind "|"
+set-variable .fhook-vb.command-kbind "|"
+set-variable .fhook-vb.command-desc  "|"
 set-variable .fhook-vb.tags "vbtags"
 set-variable .fhook-vb.comment "|'||'|' | '|r|"
 set-variable .fhook-vb.indent-width 2

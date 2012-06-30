@@ -27,6 +27,13 @@ set-variable .fhook-asp.indent-width 2
 ; load in the html core
 !force execute-file "htmlcore" "asp" 
 
+!if &not &sin "html-insert" .fhook-vb.command-name
+  set-variable .fhook-vb.command-flag  &cat .fhook-vb.command-flag  "thb|thb|"
+  set-variable .fhook-vb.command-name  &cat .fhook-vb.command-name  "html-insert-strong|html-insert-em|"
+  set-variable .fhook-vb.command-nbind &cat .fhook-vb.command-nbind "||"
+  set-variable .fhook-vb.command-kbind &cat .fhook-vb.command-kbind "C-c C-b|C-c C-i|"
+  set-variable .fhook-vb.command-desc  &cat .fhook-vb.command-desc  "Insert strong block|Insert emphasis block|"
+!endif
 ; add the <% %> vb script support
 !if &and &sin "h" .fhook-asp.setup &band .hilight.flags 0x02 
     hilight .hilight.asptag 4 "=\\{[^ \t\n<>]*<%" "%>[^ \t\n>]*" ""  .scheme.string

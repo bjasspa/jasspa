@@ -12,11 +12,11 @@ set-variable #l9 &cat ".fhook-" #l0
 
 ; buffer-init variables
 set-variable &ind &cat #l9 ".comment"  "|<!--|-->|-|  -- | --||"
-set-variable &ind &cat #l9 ".command-flag"  &cat &ind &cat #l9 ".command-flag"  "thb|thb|b|b|thb|th|th|th|th|h|th|h|"
-set-variable &ind &cat #l9 ".command-name"  &cat &ind &cat #l9 ".command-name"  "html-forward-tag|html-backward-tag|html-forward-tag|html-backward-tag|html-goto-matching-tag|html-find-tag|html-collapse-tag||html-view-netscape||html-view-iexplorer||"
-set-variable &ind &cat #l9 ".command-nbind" &cat &ind &cat #l9 ".command-nbind" "|||||||||||||"
-set-variable &ind &cat #l9 ".command-kbind" &cat &ind &cat #l9 ".command-kbind" "S-right|S-left|esc C-f|esc C-b|C-]||||||||"
-set-variable &ind &cat #l9 ".command-desc"  &cat &ind &cat #l9 ".command-desc"  "Forward Tag|Backward Tag|||Goto Matching Tag|Find Tag|Collapse/Uncollapse Tag||Preview in Netscape|            (configure using html-config-netscape)|Preview in IExplorer|            (configure using html-config-iexplorer)|"
+set-variable &ind &cat #l9 ".command-flag"  &cat &ind &cat #l9 ".command-flag"  "thb|thb|b|b|thb|th|th|th|th|h|th|h|thb|thb|"
+set-variable &ind &cat #l9 ".command-name"  &cat &ind &cat #l9 ".command-name"  "html-forward-tag|html-backward-tag|html-forward-tag|html-backward-tag|html-goto-matching-tag|html-find-tag|html-collapse-tag||html-view-firefox||html-view-iexplorer||html-insert-strong|html-insert-em|"
+set-variable &ind &cat #l9 ".command-nbind" &cat &ind &cat #l9 ".command-nbind" "|||||||||||||||"
+set-variable &ind &cat #l9 ".command-kbind" &cat &ind &cat #l9 ".command-kbind" "S-right|S-left|esc C-f|esc C-b|C-]||||||||C-c C-b|C-c C-i|"
+set-variable &ind &cat #l9 ".command-desc"  &cat &ind &cat #l9 ".command-desc"  "Forward Tag|Backward Tag|||Goto Matching Tag|Find Tag|Collapse/Uncollapse Tag||Preview in Firefox|            (configure using html-config-firefox)|Preview in IExplorer|            (configure using html-config-iexplorer)|Insert strong block|Insert emphasis block|"
 set-variable &ind &cat #l9 ".exact" -1
 
 ;html-create-table
