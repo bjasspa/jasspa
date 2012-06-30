@@ -14,353 +14,357 @@
 ; If an argument is given it runs in spotless mode which removes blank
 ; ines as well
 define-macro clean
-    ;
-    ; Prepare to clean up file.
-    ; Remember position & magic mode
-    set-position "\x81"
-    set-variable #l1 &not &bmod magic
-    !if #l1
-        1 buffer-mode "magic"
-    !endif
-    ;
-    ; Get rid of trailing white space on EOL
-    beginning-of-buffer
-    replace-string "[\t ]+$" ""
-    beginning-of-buffer
-    replace-string "[ ]+\t" "\t"
-    ;
-    ; Strip trailing blank lines.
-    end-of-buffer
+  ;
+  ; Prepare to clean up file.
+  ; Remember position & magic mode
+  set-position "\x81"
+  set-variable #l1 &not &bmod magic
+  !if #l1
+    1 buffer-mode "magic"
+  !endif
+  ;
+  ; Get rid of trailing white space on EOL
+  beginning-of-buffer
+  replace-string "[\t ]+$" ""
+  beginning-of-buffer
+  replace-string "[ ]+\t" "\t"
+  ;
+  ; Strip trailing blank lines.
+  end-of-buffer
+  backward-line
+  !while &and &gre $window-line 1 &sequal @wc "\n"
+    set-mark
+    forward-line
+    -1 kill-region
     backward-line
-    !while &and &gre $window-line 1 &sequal @wc "\n"
-        set-mark
-        forward-line
-        -1 kill-region
-        backward-line
-    !done
-    ;
-    ; if argument given then run a 'spotless' macro, i.e.
-    ; Reduce multiple blank lines to single blanks 
-    !if @?
-        !repeat
-            beginning-of-buffer
-            replace-string "\n\n\n" "\n\n"
-            beginning-of-buffer
-            !force search-forward "\n\n\n"
-        !until &not $status
-    !endif
-    ;
-    ; Clean up - restore buffer modes etc.
-    ; Move back to starting position & restore original magic mode
-    !force goto-position "\x81"
-    !if #l1
-        -1 buffer-mode "magic"
-    !endif
-    !if &seq @p ""
-        screen-update
-        ml-write "[Cleaned up buffer]"
-    !endif
+  !done
+  ;
+  ; if argument given then run a 'spotless' macro, i.e.
+  ; Reduce multiple blank lines to single blanks 
+  !if @?
+    !repeat
+      beginning-of-buffer
+      replace-string "\n\n\n" "\n\n"
+      beginning-of-buffer
+      !force search-forward "\n\n\n"
+    !until &not $status
+  !endif
+  ;
+  ; Clean up - restore buffer modes etc.
+  ; Move back to starting position & restore original magic mode
+  !force goto-position "\x81"
+  !if #l1
+    -1 buffer-mode "magic"
+  !endif
+  !if &seq @p ""
+    screen-update
+    ml-write "[Cleaned up buffer]"
+  !endif
 !emacro
 ;
 ; Insert a normal none c-mode/indent tab (still effected by tab mode)
 define-macro normal-tab
-    ; Remember we have set indent
-    set-variable #l0 &bmod cmode
-    set-variable #l1 $buffer-indent
-    set-variable $buffer-indent 0
-    !force !force @# tab
-    set-variable #l2 $status
-    set-variable $buffer-indent #l1
-    !return #l2
+  ; Remember we have set indent
+  set-variable #l0 &bmod cmode
+  set-variable #l1 $buffer-indent
+  set-variable $buffer-indent 0
+  !force !force @# tab
+  set-variable #l2 $status
+  set-variable $buffer-indent #l1
+  !return #l2
 !emacro
 ;
 ; tabs-to-spaces - Convert all of the tabs to spaces.
 define-macro tabs-to-spaces
-    ; Remember line
-    set-variable #l0 $window-line
-    beginning-of-buffer
+  ; Remember line
+  set-variable #l0 $window-line
+  beginning-of-buffer
+  !force search-forward "\t"
+  !while $status
+    set-variable #l1 $window-acol
+    backward-delete-char
+    &sub #l1 $window-acol insert-space
     !force search-forward "\t"
-    !while $status
-        set-variable #l1 $window-acol
-        backward-delete-char
-        &sub #l1 $window-acol insert-space
-        !force search-forward "\t"
-    !done
-    goto-line #l0
-    screen-update
-    ml-write "[Converted tabs]"
+  !done
+  goto-line #l0
+  screen-update
+  ml-write "[Converted tabs]"
 !emacro
 ;
 ; sort-case-lines
 ; Sort lines case insensitivelly regardless of the current 'exact' mode
 ; setting.
 define-macro sort-lines-ignore-case
-    set-variable #l0 &bmod exact
-    -1 buffer-mode "exact"
-    !if @?
-        @# sort-lines
-    !else
-        sort-lines
-    !endif
-    &cond #l0 1 -1 buffer-mode "exact"
+  set-variable #l0 &bmod exact
+  -1 buffer-mode "exact"
+  !if @?
+    @# sort-lines
+  !else
+    sort-lines
+  !endif
+  &cond #l0 1 -1 buffer-mode "exact"
 !emacro
 
 define-macro paragraph-to-line
-    set-variable #l1 $buffer-fill-mode
-    set-variable $buffer-fill-mode "O"
-    !force !force &sub 0 @# fill-paragraph
-    !if &not $status
-        set-variable $buffer-fill-mode #l1
-        !abort
-    !endif
+  set-variable #l1 $buffer-fill-mode
+  set-variable $buffer-fill-mode "O"
+  !force !force &sub 0 @# fill-paragraph
+  !if &not $status
     set-variable $buffer-fill-mode #l1
+    !abort
+  !endif
+  set-variable $buffer-fill-mode #l1
 !emacro
 ;
 ; create the delete-indentation command usually bound to "esc ^"
 define-macro delete-indentation
-    !repeat
-        beginning-of-line
-        !while &sin @wc " \t"
-            forward-delete-char
-        !done
-        backward-delete-char
-        backward-char
-        !while &sin @wc " \t"
-            forward-delete-char
-            backward-char
-        !done
-        forward-char
-        !if &not &sequal @wc "\n"
-            insert-space
-        !endif
-    !until &les &dec @# 1 1
+  !if &set #l0 &les @# 1
+    set-variable @# &abs @# 
+  !endif
+  !repeat
+    beginning-of-line
+    !while &sin @wc " \t"
+      forward-delete-char
+    !done
+    backward-delete-char
+    backward-char
+    !while &sin @wc " \t"
+      forward-delete-char
+      backward-char
+    !done
+    forward-char
+    !if #l0
+    !elif &not &seq @wc "\n"
+      insert-space
+    !endif
+  !until &les &dec @# 1 1
 !emacro
 ; ifill-paragraph - intelligently try to fill paragraphs by spotting
 ; bullet lists etc.
 0 define-macro ifill-para2
-    set-variable #l0 $window-line
-    end-of-line
-    backward-paragraph
-    ; Special case for first line
-    !if &seq &trb @wl ""
-        forward-line
-    !endif
-    set-variable #l1 $window-line
-    beginning-of-line
-    !while &les $window-line #l0
-        !force -1 search-forward &spr "^[ \t]*[^%s]\\{0,3\\}[%s][ \t]" .ifill-para2.bullet .ifill-para2.bullet
-        !if $status
-            2 backward-char
-            set-variable #l2 &mid @wl $window-col 1
+  set-variable #l0 $window-line
+  end-of-line
+  backward-paragraph
+  ; Special case for first line
+  !if &seq &trb @wl ""
+    forward-line
+  !endif
+  set-variable #l1 $window-line
+  beginning-of-line
+  !while &les $window-line #l0
+    !force -1 search-forward &spr "^[ \t]*[^%s]\\{0,3\\}[%s][ \t]" .ifill-para2.bullet .ifill-para2.bullet
+    !if $status
+      2 backward-char
+      set-variable #l2 &mid @wl $window-col 1
+      beginning-of-line
+      search-forward "^[ \t]*"
+      str-to-regex #l2
+      set-variable #l2 &spr "^%s[^%s]\\{0,3\\}%s[ \t]" &lef @wl $window-col .ifill-para2.bullet #l2
+      beginning-of-line
+      forward-line
+      !force &sub &sub $window-line #l0 1 search-forward #l2
+      !if $status
+        #l0 goto-line
+        set-variable #l3 0
+        !repeat
+          !force -1 search-forward #l2
+          !if $status
             beginning-of-line
-            search-forward "^[ \t]*"
-            str-to-regex #l2
-            set-variable #l2 &spr "^%s[^%s]\\{0,3\\}%s[ \t]" &lef @wl $window-col .ifill-para2.bullet #l2
-            beginning-of-line
-            forward-line
-            !force &sub &sub $window-line #l0 1 search-forward #l2
-            !if $status
-                #l0 goto-line
-                set-variable #l3 0
-                !repeat
-                    !force -1 search-forward #l2
-                    !if $status
-                        beginning-of-line
-                        set-variable #l4 $window-line
-                        insert-newline
-                        ifill-para2
-                        !if #l3
-                            search-forward "^$"
-                            1 kill-line
-                            -1 yank
-                        !endif
-                        #l4 goto-line
-                        set-variable #l3 1
-                    !endif
-                    backward-line
-                !until &equ #l1 $window-line
-                !if &not &seq @wl ""
-                    ifill-para2
-                !endif
-                !if #l3
-                    search-forward "^$"
-                    1 kill-line
-                    -1 yank
-                !endif
-                forward-paragraph
-                beginning-of-line
-                !return
+            set-variable #l4 $window-line
+            insert-newline
+            ifill-para2
+            !if #l3
+              search-forward "^$"
+              1 kill-line
+              -1 yank
             !endif
-        !else
-            forward-line
+            #l4 goto-line
+            set-variable #l3 1
+          !endif
+          backward-line
+        !until &equ #l1 $window-line
+        !if &not &seq @wl ""
+          ifill-para2
         !endif
-    !done
-    !if &len .mode
-        @# fill-paragraph .mode
+        !if #l3
+          search-forward "^$"
+          1 kill-line
+          -1 yank
+        !endif
+        forward-paragraph
+        beginning-of-line
+        !return
+      !endif
     !else
-        set-variable #l0 $recent-keys
-        @# fill-paragraph @mna
-        !if &seq #l0 &set #l1 $recent-keys
-        !elif &lfin "|a |o |" &slo &lef #l1 2
-            set-variable .mode &lef #l1 1
-        !endif
+      forward-line
     !endif
+  !done
+  !if &len .mode
+    @# fill-paragraph .mode
+  !else
+    set-variable #l0 $recent-keys
+    @# fill-paragraph @mna
+    !if &seq #l0 &set #l1 $recent-keys
+    !elif &lfin "|a |o |" &slo &lef #l1 2
+      set-variable .mode &lef #l1 1
+    !endif
+  !endif
 !emacro
 
 0 define-macro ifill-para1
-    !force forward-paragraph
+  !force forward-paragraph
+  !if &not $status
+    !return
+  !endif
+  set-variable #l0 &sub $window-line 1
+  backward-paragraph
+  ; Special case for first line
+  !if &seq &trb @wl ""
+    forward-line
+  !endif
+  beginning-of-line
+  set-variable #l1 $window-line
+  set-variable #l2 0
+  !repeat
+    !if &gre $window-line #l0
+      !jump 4
+    !endif
+    !force -1 search-forward "[0-9A-Za-z]"
     !if &not $status
+      ; no alpha-numeric chars, treat this line as a divider
+      !if &gre $window-line #l1
+        set-variable #l3 $window-line
+        insert-newline
+        2 backward-line
+        @# ifill-para2
+        1 kill-line
+        -1 yank
+        set-variable #l0 &add #l0 &sub $window-line #l3
+      !endif
+      !if #l2
+        set-variable #l3 &sub $window-line 1
+        #l2 goto-line
+        1 kill-line
+        -1 yank
+        #l3 goto-line
+      !else
+        set-variable #l0 &add #l0 1
+      !endif
+      !if &equ $window-line #l0
         !return
+      !endif
+      forward-line
+      set-variable #l2 $window-line
+      insert-newline
+      set-variable #l1 $window-line
+    !else
+      forward-line
+      beginning-of-line
     !endif
-    set-variable #l0 &sub $window-line 1
-    backward-paragraph
-    ; Special case for first line
-    !if &seq &trb @wl ""
-        forward-line
-    !endif
-    beginning-of-line
-    set-variable #l1 $window-line
-    set-variable #l2 0
-    !repeat
-        !if &gre $window-line #l0
-            !jump 4
-        !endif
-        !force -1 search-forward "[0-9A-Za-z]"
-        !if &not $status
-            ; no alpha-numeric chars, treat this line as a divider
-            !if &gre $window-line #l1
-                set-variable #l3 $window-line
-                insert-newline
-                2 backward-line
-                @# ifill-para2
-                1 kill-line
-                -1 yank
-                set-variable #l0 &add #l0 &sub $window-line #l3
-            !endif
-            !if #l2
-                set-variable #l3 &sub $window-line 1
-                #l2 goto-line
-                1 kill-line
-                -1 yank
-                #l3 goto-line
-            !else
-                set-variable #l0 &add #l0 1
-            !endif
-            !if &equ $window-line #l0
-                !return
-            !endif
-            forward-line
-            set-variable #l2 $window-line
-            insert-newline
-            set-variable #l1 $window-line
-        !else
-            forward-line
-            beginning-of-line
-        !endif
-    !until 0
+  !until 0
 !emacro
 
 define-macro ifill-paragraph
-    ; Save mark at point.
-    !if &not @?
-        set-mark
+  ; Save mark at point.
+  !if &not @?
+    set-mark
+  !endif
+  !if &les @# 0
+    set-variable #l0 -1
+    set-variable @# &abs @#
+  !elif @#
+    set-variable #l0 1
+  !else
+    !return
+  !endif
+  set-variable .ifill-para2.mode ""
+  !if &les &len &set #l2 &rep $fill-bullet "]" "" &len $fill-bullet
+    set-variable #l2 &cat "]" #l2
+  !endif
+  !if &les &len &set #l3 &rep #l2 "\\" "" &len #l2
+    set-variable #l3 &cat #l3 "\\\\"
+  !endif
+  !if &les &len &set #l2 &rep #l3 "-" "" &len #l3
+    set-variable #l2 &cat #l2 "\\-"
+  !endif
+  set-variable .ifill-para2.bullet #l2
+  set-variable #l1 &cond &bmod "magic" 1 -1
+  1 buffer-mode "magic"
+  beginning-of-line
+  !while &gre &pdec @# 1 0
+    !force !force #l0 ifill-para1
+    !if &not $status
+      #l1 buffer-mode "magic"
+      !abort
+    !elif &seq @wc ""
+      set-variable @# 0
     !endif
-    !if &les @# 0
-        set-variable #l0 -1
-        set-variable @# &abs @#
-    !elif @#
-        set-variable #l0 1
-    !else
-        !return
-    !endif
-    set-variable .ifill-para2.mode ""
-    !if &les &len &set #l2 &rep $fill-bullet "]" "" &len $fill-bullet
-        set-variable #l2 &cat "]" #l2
-    !endif
-    !if &les &len &set #l3 &rep #l2 "\\" "" &len #l2
-        set-variable #l3 &cat #l3 "\\\\"
-    !endif
-    !if &les &len &set #l2 &rep #l3 "-" "" &len #l3
-        set-variable #l2 &cat #l2 "\\-"
-    !endif
-    set-variable .ifill-para2.bullet #l2
-    set-variable #l1 &cond &bmod "magic" 1 -1
-    1 buffer-mode "magic"
-    beginning-of-line
-    !while &gre &pdec @# 1 0
-        !force !force #l0 ifill-para1
-        !if &not $status
-            #l1 buffer-mode "magic"
-            !abort
-        !elif &seq @wc ""
-            set-variable @# 0
-        !endif
-    !done
-    #l1 buffer-mode "magic"
-    ; If no arguments specified then restore the cursor position.
-    !if &not @?
-        exchange-point-and-mark
-    !endif
+  !done
+  #l1 buffer-mode "magic"
+  ; If no arguments specified then restore the cursor position.
+  !if &not @?
+    exchange-point-and-mark
+  !endif
 !emacro
 ;
 0 define-macro restyle-region-int
+  set-variable #l0 $window-line
+  set-alpha-mark "\x82"
+  exchange-point-and-mark
+  !if &gre $window-line #l0
     set-variable #l0 $window-line
     set-alpha-mark "\x82"
     exchange-point-and-mark
-    !if &gre $window-line #l0
-        set-variable #l0 $window-line
-        set-alpha-mark "\x82"
-        exchange-point-and-mark
-    !endif
-    !if $buffer-indent
-        !while &les $window-line #l0
-            beginning-of-line
-            tab @mna
-            forward-line
-        !done
-        beginning-of-line
+  !endif
+  !if $buffer-indent
+    !while &les $window-line #l0
+      beginning-of-line
+      tab @mna
+      forward-line
+    !done
+    beginning-of-line
+  !else
+    !if &seq $buffer-fhook "fhook-nroff"
+      set-variable #l1 "1 nroff-para"
+    !elif &seq $buffer-fhook "fhook-latex"
+      set-variable #l1 "1 latex-para"
     !else
-        !if &seq $buffer-fhook "fhook-nroff"
-            set-variable #l1 "1 nroff-para"
-        !elif &seq $buffer-fhook "fhook-latex"
-            set-variable #l1 "1 latex-para"
-        !else
-            set-variable #l1 "1 ifill-paragraph"
-        !endif
-        !while &les $window-line #l0
-            execute-line #l1
-            set-mark
-            goto-alpha-mark "\x82"
-            set-variable #l0 $window-line
-            exchange-point-and-mark
-        !done
+      set-variable #l1 "1 ifill-paragraph"
     !endif
+    !while &les $window-line #l0
+      execute-line #l1
+      set-mark
+      goto-alpha-mark "\x82"
+      set-variable #l0 $window-line
+      exchange-point-and-mark
+    !done
+  !endif
 !emacro
 
 define-macro restyle-region
-    ml-write "[Restyling...]"
-    set-variable #l0 $mouse
-    set-variable #l1 $system
-    set-variable $mouse &bor 0x50000 &band 0xffff #l0
-    set-variable $system &bor $system 0x1000
-    !force !force restyle-region-int
-    !if &not $status
-        set-variable $system #l1
-        set-variable $mouse #l0
-        !abort
-    !endif
+  ml-write "[Restyling...]"
+  set-variable #l0 $mouse
+  set-variable #l1 $system
+  set-variable $mouse &bor 0x50000 &band 0xffff #l0
+  set-variable $system &bor $system 0x1000
+  !force !force restyle-region-int
+  !if &not $status
     set-variable $system #l1
     set-variable $mouse #l0
-    ml-write "[Restyle complete]"
+    !abort
+  !endif
+  set-variable $system #l1
+  set-variable $mouse #l0
+  ml-write "[Restyle complete]"
 !emacro
 
 define-macro restyle-buffer
-    set-alpha-mark "\x81"
-    end-of-buffer
-    set-mark
-    beginning-of-buffer
-    restyle-region
-    goto-alpha-mark "\x81"
+  set-alpha-mark "\x81"
+  end-of-buffer
+  set-mark
+  beginning-of-buffer
+  restyle-region
+  goto-alpha-mark "\x81"
 !emacro
 
 ; Increase or decrease the indent by the buffer indent.
@@ -374,92 +378,92 @@ define-macro restyle-buffer
 ; then we adjust the point or mark position at the end of the region such
 ; that it is at the end of the line. 
 define-macro indent-increase
-    !if &not @?
-        set-variable @# $buffer-indent-width
+  !if &not @?
+    set-variable @# $buffer-indent-width
+  !endif
+  0 show-region
+  !if &set #l0 &equ &band $result 5 5
+    !if &not &band $result 2
+      3 show-region
     !endif
-    0 show-region
-    !if &set #l0 &equ &band $result 5 5
-        !if &not &band $result 2
-            3 show-region
+    set-alpha-mark "\x81"
+    set-variable #l2 $window-line
+    set-variable #l4 $window-col
+    -2 show-region
+    set-alpha-mark "\x82"
+    set-variable #l1 $window-line
+    set-variable #l3 $window-col
+    !if &les #l2 #l1
+      ; Bottom to top selection, point is at top and mark is at bottom,
+      ; turn it around and make sure that the mark is at the end of the
+      ; line, if it is not then move it because we do no want to
+      ; decrease the indent and for the mark to be at column 0 as the
+      ; region looses a line (unless the region is empty). 
+      set-variable #l1 #l2
+      set-variable #l2 $window-line
+      set-variable #l3 #l4
+      set-variable #l4 $window-col
+      !if &gre #l4 0
+        ; Only adjust if our position is greater than 0. 
+        end-of-line
+        !if &les #l4 $window-col
+          set-alpha-mark "\x82"
+          -3 show-region
         !endif
+      !endif
+    !else
+      ; Top to bottom selection. If point is in the middle of the line
+      ; then place it at the end, we want to make sure that we do not
+      ; loose dot to column 0. We only make an adjustment if we are not
+      ; at column 0. 
+      2 show-region
+      !if &gre #l4 0
+        end-of-line
+        3 show-region
         set-alpha-mark "\x81"
-        set-variable #l2 $window-line
         set-variable #l4 $window-col
-        -2 show-region
-        set-alpha-mark "\x82"
-        set-variable #l1 $window-line
-        set-variable #l3 $window-col
-        !if &les #l2 #l1
-            ; Bottom to top selection, point is at top and mark is at bottom,
-            ; turn it around and make sure that the mark is at the end of the
-            ; line, if it is not then move it because we do no want to
-            ; decrease the indent and for the mark to be at column 0 as the
-            ; region looses a line (unless the region is empty). 
-            set-variable #l1 #l2
-            set-variable #l2 $window-line
-            set-variable #l3 #l4
-            set-variable #l4 $window-col
-            !if &gre #l4 0
-                ; Only adjust if our position is greater than 0. 
-                end-of-line
-                !if &les #l4 $window-col
-                    set-alpha-mark "\x82"
-                    -3 show-region
-                !endif
-            !endif
-        !else
-            ; Top to bottom selection. If point is in the middle of the line
-            ; then place it at the end, we want to make sure that we do not
-            ; loose dot to column 0. We only make an adjustment if we are not
-            ; at column 0. 
-            2 show-region
-            !if &gre #l4 0
-                end-of-line
-                3 show-region
-                set-alpha-mark "\x81"
-                set-variable #l4 $window-col
-            !endif
-        !endif
-        ; Decrement the region if we are at column 0.
-        !if &equ #l4 0
-            set-variable #l2 &sub #l2 1
-        !endif
-    !else
-        set-alpha-mark "\x81"
-        set-variable #l1 &set #l2 $window-line
+      !endif
     !endif
-    set-variable $window-line #l1
-    !repeat
-        beginning-of-line
-        search-buffer "em" "[^ \t]"
-        backward-char
-        set-variable #l3 &add $window-acol @#
-        !if $window-col
-            $window-col backward-delete-char
-            -1 yank
-        !endif
-        !if &les #l3 1
-        !elif &bmod "tab"
-            #l3 insert-space
-        !else
-            insert-string &spr "%n%n" &div #l3 $tab-width "\t" &mod #l3 $tab-width " "
-        !endif
-        forward-line
-    !until &gre $window-line #l2
-    !if #l0
-        goto-alpha-mark "\x82"
-        -3 show-region
-        goto-alpha-mark "\x81"
-        !force show-region
-    !else
-        goto-alpha-mark "\x81"
+    ; Decrement the region if we are at column 0.
+    !if &equ #l4 0
+      set-variable #l2 &sub #l2 1
     !endif
+  !else
+    set-alpha-mark "\x81"
+    set-variable #l1 &set #l2 $window-line
+  !endif
+  set-variable $window-line #l1
+  !repeat
+    beginning-of-line
+    search-buffer "em" "[^ \t]"
+    backward-char
+    set-variable #l3 &add $window-acol @#
+    !if $window-col
+      $window-col backward-delete-char
+      -1 yank
+    !endif
+    !if &les #l3 1
+    !elif &bmod "tab"
+      #l3 insert-space
+    !else
+      insert-string &spr "%n%n" &div #l3 $tab-width "\t" &mod #l3 $tab-width " "
+    !endif
+    forward-line
+  !until &gre $window-line #l2
+  !if #l0
+    goto-alpha-mark "\x82"
+    -3 show-region
+    goto-alpha-mark "\x81"
+    !force show-region
+  !else
+    goto-alpha-mark "\x81"
+  !endif
 !emacro
 
 
 define-macro indent-decrease
-    !if &not @?
-        set-variable @# $buffer-indent-width
-    !endif
-    &neg @# indent-increase
+  !if &not @?
+    set-variable @# $buffer-indent-width
+  !endif
+  &neg @# indent-increase
 !emacro
