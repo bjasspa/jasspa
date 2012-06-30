@@ -132,5 +132,4 @@ define-macro notes-import-skwyrul
     beginning-of-buffer
     insert-string "-!- enf -!-\n"
     beginning-of-buffer
-    
 !emacro
