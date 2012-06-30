@@ -305,6 +305,9 @@ extern  int fnamecmp(meUByte *f1, meUByte *f2) ;
 #define meFILETYPE_NOTEXIST   3
 #define meFILETYPE_HTTP       4
 #define meFILETYPE_FTP        5
+#define gfsERRON_ILLEGAL_NAME 1
+#define gfsERRON_BAD_FILE     2
+#define gfsERRON_DIR          4
 extern  int getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname) ;
 extern  int mePathAddSearchPath(int index, meUByte *path_name,
                                 meUByte *path_base, int *gotUserPath) ;

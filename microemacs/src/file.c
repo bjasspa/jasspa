@@ -133,7 +133,7 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
                 file_type = meFILETYPE_REGULAR ;
             else if (tfs_statbuf.st_mode == TFS_TYPE_DIR)
             {
-                if(flag & 2)
+                if(flag & gfsERRON_DIR)
                     mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s directory]", file) ;
                 file_type = meFILETYPE_DIRECTORY ;
             }
@@ -189,7 +189,7 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
            (strchr(file,'*') != NULL) ||
            (strchr(file,'?') != NULL))
         {
-            if(flag & 1)
+            if(flag & gfsERRON_ILLEGAL_NAME)
                 mlwrite(MWABORT|MWPAUSE,"[%s illegal name]", file);
             return meFILETYPE_NOTEXIST ;
         }
@@ -225,7 +225,7 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
         if(ii & meFILE_ATTRIB_DIRECTORY)
         {
 gft_directory:
-            if(flag & 2)
+            if(flag & gfsERRON_DIR)
                 mlwrite(MWABORT|MWPAUSE,"[%s directory]", file) ;
             return meFILETYPE_DIRECTORY ;
         }
@@ -240,7 +240,7 @@ gft_directory:
         if(((len = meStrlen(file)) == 0) ||
            (strchr(file,'*') != NULL) || (strchr(file,'?') != NULL))
         {
-            if(flag & 1)
+            if(flag & gfsERRON_ILLEGAL_NAME)
                 mlwrite(MWABORT|MWPAUSE,"[%s illegal name]", file);
             return meFILETYPE_NOTEXIST ;
         }
@@ -280,7 +280,7 @@ gft_directory:
         if (status & FILE_ATTRIBUTE_DIRECTORY)
         {
 gft_directory:
-            if(flag & 2)
+            if(flag & gfsERRON_DIR)
                 mlwrite(MWABORT|MWPAUSE,"[%s directory]", file);
             return meFILETYPE_DIRECTORY ;
         }
@@ -335,7 +335,7 @@ gft_directory:
                     stmtime = statbuf.st_mtime ;
                 if((jj=readlink((char *)lbuf,(char *)buf, meBUF_SIZE_MAX)) <= 0)
                 {
-                    if(flag & 1)
+                    if(flag & gfsERRON_BAD_FILE)
                         mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s symbolic link problems]", file);
                     return meFILETYPE_NASTY ;
                 }
@@ -367,7 +367,7 @@ gft_directory:
             }
             if(jj)
             {
-                if(flag & 1)
+                if(flag & gfsERRON_BAD_FILE)
                     mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s dangling symbolic link]",lbuf);
                 if(stats != NULL)
                     stats->stmtime = stmtime ;
@@ -399,11 +399,11 @@ gft_directory:
         }
         if(S_ISDIR(statbuf.st_mode))
         {
-            if(flag & 2)
+            if(flag & gfsERRON_DIR)
                 mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s directory]", file);
             return meFILETYPE_DIRECTORY ;
         }
-        if(flag & 1)
+        if(flag & gfsERRON_BAD_FILE)
         {
 #ifdef S_IFIFO
             if(S_ISFIFO(statbuf.st_mode))
@@ -920,7 +920,7 @@ meTestExecutable(meUByte *fileName)
 #endif
 
 #if MEOPT_DIRLIST
-#define meFINDFILESINGLE_GFS_OPT 1
+#define meFINDFILESINGLE_GFS_OPT (gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE)
 #define FILENODE_ATTRIBLEN 4
 
 typedef struct FILENODE {
@@ -1343,7 +1343,7 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
 }
 
 #else
-#define meFINDFILESINGLE_GFS_OPT 3
+#define meFINDFILESINGLE_GFS_OPT (gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE|gfsERRON_DIR)
 #endif
 
 /*
@@ -1386,7 +1386,7 @@ readin(register meBuffer *bp, meUByte *fname)
 #endif
         meStat stats ;
         int ft ;
-        if((ft=getFileStats(fn,1,&(bp->stats),lfn)) == meFILETYPE_HTTP)
+        if((ft=getFileStats(fn,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE,&(bp->stats),lfn)) == meFILETYPE_HTTP)
             meModeSet(bp->mode,MDVIEW) ;
         else if(ft != meFILETYPE_FTP)
         {
@@ -1402,7 +1402,7 @@ readin(register meBuffer *bp, meUByte *fname)
             {
                 if(doRcsCommand(fn,rcsCoStr) <= 0)
                     goto error_end ;
-                if((ft=getFileStats(fn,1,&(bp->stats),lfn)) == meFILETYPE_NASTY)
+                if((ft=getFileStats(fn,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE,&(bp->stats),lfn)) == meFILETYPE_NASTY)
                     goto error_end ;
             }
 #endif
@@ -1748,9 +1748,10 @@ findFileSingle(meUByte *fname, int bflag, meInt lineno, meUShort colno)
 #endif
 #ifdef _UNIX
     meStat  stats ;
-    gft = getFileStats(fname,meFINDFILESINGLE_GFS_OPT,&stats,NULL) ;
+    gft = getFileStats(fname,meFINDFILESINGLE_GFS_OPT & (bflag | ~BFND_CREAT),&stats,NULL) ;
 #else
-    gft = getFileStats(fname,meFINDFILESINGLE_GFS_OPT,NULL,NULL) ;
+    /* Stop getFileStats complaining on gfsERRON_ILLEGAL_NAME if BFND_CREAT not set (error reported elsewhere) */
+    gft = getFileStats(fname,meFINDFILESINGLE_GFS_OPT & (bflag | ~BFND_CREAT),NULL,NULL) ;
 #endif
     if((gft == meFILETYPE_NASTY) ||
 #if (MEOPT_DIRLIST == 0)
@@ -2075,7 +2076,7 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
             dfname[s++] = DIR_CHAR ;
         meStrcpy(dfname+s,getFileBaseName(sfname)) ;
     }
-    if (((s=getFileStats(dfname,3,&stats,lfname)) != meFILETYPE_REGULAR) && (s != meFILETYPE_NOTEXIST)
+    if (((s=getFileStats(dfname,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE|gfsERRON_DIR,&stats,lfname)) != meFILETYPE_REGULAR) && (s != meFILETYPE_NOTEXIST)
 #if MEOPT_SOCKET
         && (s != meFILETYPE_FTP)
 #endif
@@ -2625,7 +2626,7 @@ appendBuffer(int f, int n)
     if(inputFileName((meUByte *)"Append to file",fname,1) <= 0)
         return meABORT ;
 
-    if(((ss=getFileStats(fname,3,NULL,lname)) != meFILETYPE_REGULAR) && (ss != meFILETYPE_NOTEXIST))
+    if(((ss=getFileStats(fname,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE|gfsERRON_DIR,NULL,lname)) != meFILETYPE_REGULAR) && (ss != meFILETYPE_NOTEXIST))
         return meABORT ;
     fn = (lname[0] == '\0') ? fname:lname ;
     if(ss == meFILETYPE_NOTEXIST)
@@ -2666,7 +2667,7 @@ changeFileName(int f, int n)
     if ((s=inputFileName((meUByte *)"New file name",fname,1)) == meABORT)
         return s ;
 
-    if(((ft=getFileStats(fname,3,NULL,lname)) != meFILETYPE_REGULAR) && (ft != meFILETYPE_NOTEXIST)
+    if(((ft=getFileStats(fname,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE|gfsERRON_DIR,NULL,lname)) != meFILETYPE_REGULAR) && (ft != meFILETYPE_NOTEXIST)
 #if MEOPT_SOCKET
         && (ft != meFILETYPE_FTP)
 #endif
