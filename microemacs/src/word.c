@@ -357,8 +357,14 @@ backDelWord(int f, int n)
                 size++ ;
         } while(--n) ;
         
-        if((n == 0) && !inWord())
-            meWindowForwardChar(frameCur->windowCur, 1) ;
+        if(n == 0)
+        {
+            if(inWord())
+                /* must be at start of the buffer, add on the initial char */
+                size++ ;
+            else
+                meWindowForwardChar(frameCur->windowCur, 1) ;
+        }
     }
 
     if(ldelete(size,3) <= 0)
