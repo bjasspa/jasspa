@@ -353,15 +353,15 @@ define-macro major-mode-help
         major-mode-help-add-item "major-mode-help" "" "View This Help Page"
         major-mode-help-add-item "" "" ""
     !endif
-    !if &sin "d" #l0
-        major-mode-help-add-item "normal-tab" "" "Insert a Normal Tab"
-    !endif
     set-variable #l7 0
     !while &not &seq "" &set #l6 &lget #l1 &inc #l7 1
         !if &sin "h" #l6
             major-mode-help-add-item &lget #l3 #l7 &lget #l2 #l7 &lget #l4 #l7
         !endif
     !done
+    !if &sin "d" #l0
+        major-mode-help-add-item "normal-tab" "" "Insert a Normal Tab"
+    !endif
     !if &not &seq &lget &ind &spr ".fhook-%s.comment" #l5 1 ""
         major-mode-help-add-item "" "" ""
         major-mode-help-add-item "comment-start" "" "Start Comment"
@@ -478,13 +478,13 @@ define-macro major-mode-help
             set-variable #l6 &cat &sup &lef #l5 1 &rig #l5 1
         !endif
         major-mode-tool-add-item "" "L" &cat #l6 " Tools:" #l8
-        major-mode-tool-add-item "" "L" "" #l8
+        !if &not &sin "p" #l0
+          major-mode-tool-add-item "" "L" "" #l8
+        !endif
     !endif
     !if &sin "p" #l0
         major-mode-tool-add-item "major-mode-help" "" "View \HHelp Page" #l8
-    !endif
-    !if &sin "d" #l0
-        major-mode-tool-add-item "normal-tab" "" "Insert a Normal Tab" #l8
+        major-mode-tool-add-item "" "L" "" #l8
     !endif
     set-variable #l7 0
     !while &not &seq "" &set #l6 &lget #l1 &inc #l7 1
@@ -492,6 +492,9 @@ define-macro major-mode-help
             major-mode-tool-add-item &lget #l3 #l7 &lget #l2 #l7 &lget #l4 #l7 #l8
         !endif
     !done
+    !if &sin "d" #l0
+        major-mode-tool-add-item "normal-tab" "" "Insert a Normal Tab" #l8
+    !endif
     !if &sin "#" #l0
         major-mode-tool-add-item "" "" "" #l8
         major-mode-tool-add-item "comment-start" "" "Start Comment" #l8
