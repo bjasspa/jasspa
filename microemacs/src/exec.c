@@ -880,14 +880,14 @@ dobuf(meLine *hlp)
     meByte debug=0;
 #endif
     meUByte *tline;               /* Temp line */
-    int status;                 /* status return */
+    int status;                   /* status return */
     meLine *lp;                   /* pointer to line to execute */
     meLine *wlp;                  /* line to while */
     meLine *rlp;                  /* line to repeat */
     
-    clexec = meTRUE;                      /* in cline execution */
+    clexec = meTRUE;              /* in cline execution */
     execstr = NULL ;
-    execlevel = 0;                      /* Reset execution level */
+    execlevel = 0;                /* Reset execution level */
     
     /* starting at the beginning of the buffer */
     wlp = NULL;
@@ -1652,7 +1652,18 @@ lineExec (int f, int n, meUByte *cmdstr)
     meRegCurr->n = n ;
     
     status = docmd(cmdstr,tkn) ;
-    
+#if MEOPT_DEBUGM
+    if((macbug & 0x40) && (status == meTRUE) && (execstr != NULL) && (execstr[0] != '\0'))
+    {
+        meUByte cc ;
+        /* eat leading spaces */
+        while(((cc=*execstr) == ' ') || (cc == '\t'))
+            execstr++ ;
+        /* dump comments, empties and labels here */
+        if((cc != ';') && (cc != '\0'))
+            status = mlwrite(MWABORT|MWWAIT,(meUByte *)"[Extra text at end of line: %s]",execstr);
+    }
+#endif    
     /* restore old arguments */
     execlevel = oldexec ;
     clexec = oldcle;

@@ -3023,7 +3023,7 @@ get_flag:
              * 4 -> H - If file is a HTTP url
              * 5 -> F - If file is a FTP url
              */
-            ftype = getFileStats(arg2,1,&stats,evalResult) ;
+            ftype = getFileStats(arg2,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE,&stats,evalResult) ;
             switch(arg1[0])
             {
             case 'a':
