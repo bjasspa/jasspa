@@ -3241,7 +3241,9 @@ do_keydown:
             if((ttmodif & ME_CONTROL) && (wParam >= '0') && (wParam <= '9'))
             {
                 static meUByte shiftDigits[] = ")!\"#$%^&*(";
-
+                if((wParam == '6') && (ttmodif == (ME_CONTROL|ME_SHIFT)))
+                    /* Windows also sends a WM_CHAR (0x1e) message for a C-S-6 (presumably because this equates to the special ^^ (0x1e) char) so don't add this one */ 
+                    return meFALSE;
                 cc  = (ttmodif & (ME_CONTROL|ME_ALT)) | ((ttmodif & ME_SHIFT) ? shiftDigits [wParam - '0'] : wParam) ;
             }
             else if ((lParam & (1<<29)) == 0)  /* Get out quickly - this is fastest check */
