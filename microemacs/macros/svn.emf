@@ -633,7 +633,7 @@ set-variable #l9 .svn.ccount
     set-variable .dcount 0
     !while &les &pinc #l0 1 .find-file.file-count
       set-variable #l4 &ind &cat ".find-file.file" #l0
-      !if &seq "/" &rig #l4 &sub &len #l4 1
+      !if &seq "/" &rig #l4 -1
         set-variable #l4 &lef #l4 -1
         !if &and &band @# 1 &sin " " #l4
           set-variable #l4 &rep &rep #l4 "\\" "\\\\" "\"" "\\\""
@@ -1512,7 +1512,7 @@ osd .osd.svn-nb 1 "Pft" "General" .osd.svn-gen
 osd .osd.svn-nb 2 "Pft" "Tools" .osd.svn-tl
 osd .osd.svn-nb 100 "It" .osd.svn-gen
 
-osd .osd.svn-stp 0 "batcDIHs" 5 4 70 24 -1 -1 2010 100 .scheme.osd-title "ClearCase Setup"
+osd .osd.svn-stp 0 "batcDIHs" 5 4 70 24 -1 -1 2010 100 .scheme.osd-title "Subversion Setup"
 osd .osd.svn-stp 100 "It" .osd.svn-nb
 osd .osd.svn-stp 2000 ""
 osd .osd.svn-stp 2010 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
