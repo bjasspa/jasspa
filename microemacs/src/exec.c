@@ -1652,18 +1652,16 @@ lineExec (int f, int n, meUByte *cmdstr)
     meRegCurr->n = n ;
     
     status = docmd(cmdstr,tkn) ;
-#if MEOPT_DEBUGM
-    if((macbug & 0x40) && (status == meTRUE) && (execstr != NULL) && (execstr[0] != '\0'))
+    if((n & 0x2) && (status == meTRUE) && (execstr != NULL) && (execstr[0] != '\0'))
     {
         meUByte cc ;
         /* eat leading spaces */
         while(((cc=*execstr) == ' ') || (cc == '\t'))
             execstr++ ;
         /* dump comments, empties and labels here */
-        if((cc != ';') && (cc != '\0'))
+        if(cc != '\0')
             status = mlwrite(MWABORT|MWWAIT,(meUByte *)"[Extra text at end of line: %s]",execstr);
     }
-#endif    
     /* restore old arguments */
     execlevel = oldexec ;
     clexec = oldcle;
