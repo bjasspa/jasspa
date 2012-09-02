@@ -877,7 +877,7 @@ meGetConsoleMessage(MSG *msg, int mode)
 
         hmem = WinKillToClipboard ();
         EmptyClipboard();
-        SetClipboardData (CF_OEMTEXT, hmem);
+        SetClipboardData(((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT : CF_TEXT), hmem);
         CloseClipboard();
 
         clipState &= ~CLIP_OWNER;
@@ -4085,7 +4085,13 @@ changeFont(int f, int n)
 #ifdef _ME_WINDOW
     if (meSystemCfg & meSYSTEM_CONSOLE)
 #endif /* _ME_WINDOW */
-        return notAvailable(f,n) ;
+    {
+        meUByte buff[FONTBUFSIZ] ;            /* Input buffer */
+        if(meGetString("Font Type [ANSI=0,OEM=255]", 0, 0, buff, FONTBUFSIZ) <= 0)
+            return meFALSE ;
+        ttlogfont.lfCharSet = (meUByte) meAtoi(buff) ;
+        return meTRUE ;
+    }
 #endif
 
 #ifdef _ME_WINDOW
@@ -4107,7 +4113,7 @@ changeFont(int f, int n)
             return (meFALSE);
         if (fontName[0] == '\0')
             status = TTchangeFont (NULL, -1, 0, 0, 0);
-        else if ((meGetString ("Font Type [ANSI=0]", 0, 0, buff, FONTBUFSIZ) > 0) &&
+        else if ((meGetString ("Font Type [ANSI=0,OEM=255]", 0, 0, buff, FONTBUFSIZ) > 0) &&
                  ((fontType = meAtoi(buff)),
                   (meGetString ("Font Weight [1-9; 0=don't care]", 0, 0, buff, FONTBUFSIZ) > 0)) &&
                  ((fontWeight = meAtoi(buff)),
@@ -4863,6 +4869,8 @@ TTstart (void)
             coord.Y = 0;
             SetConsoleCursorPosition(hOutput,coord);
         }
+        /* make the default charSet OEM for cut-n-paste to clipboard */
+        ttlogfont.lfCharSet = 255 ;
     }
 #ifdef _ME_WINDOW
     else
