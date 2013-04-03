@@ -59,11 +59,12 @@ set-variable .fhook-vb.collapse-mnext "-1"
     hilight .hilight.vb 1 "Or"           .scheme.operator
     hilight .hilight.vb 1 "Xor"          .scheme.operator
     ; Constants
-    hilight .hilight.vb 1 "True"         .scheme.prepro
-    hilight .hilight.vb 1 "False"        .scheme.prepro
-    hilight .hilight.vb 1 "Nothing"      .scheme.prepro
-    hilight .hilight.vb 1 "Null"         .scheme.prepro
-    hilight .hilight.vb 1 "Empty"        .scheme.prepro
+    hilight .hilight.vb 1 "True"         .scheme.constant
+    hilight .hilight.vb 1 "False"        .scheme.constant
+    hilight .hilight.vb 1 "Nothing"      .scheme.constant
+    hilight .hilight.vb 1 "Null"         .scheme.constant
+    hilight .hilight.vb 1 "Empty"        .scheme.constant
+    hilight .hilight.vb 1 "Err"          .scheme.constant
     hilight .hilight.vb 1 "Binary"       .scheme.prepro
     hilight .hilight.vb 1 "Access"       .scheme.prepro
     hilight .hilight.vb 1 "Read"         .scheme.prepro
@@ -78,7 +79,6 @@ set-variable .fhook-vb.collapse-mnext "-1"
     hilight .hilight.vb 1 "GoTo"         .scheme.keyword
     hilight .hilight.vb 1 "Then"         .scheme.keyword
     hilight .hilight.vb 1 "Case"         .scheme.keyword
-    hilight .hilight.vb 1 "LCase"        .scheme.keyword
     hilight .hilight.vb 1 "Select"       .scheme.keyword
     hilight .hilight.vb 1 "begin"        .scheme.keyword
     hilight .hilight.vb 1 "End"          .scheme.keyword
@@ -101,6 +101,11 @@ set-variable .fhook-vb.collapse-mnext "-1"
     hilight .hilight.vb 1 "Property"     .scheme.keyword
     hilight .hilight.vb 1 "Error"        .scheme.keyword
     hilight .hilight.vb 1 "ReDim"        .scheme.keyword
+    hilight .hilight.vb 1 "LCase"        .scheme.function
+    hilight .hilight.vb 1 "UCase"        .scheme.function
+    hilight .hilight.vb 1 "IsEmpty"      .scheme.function
+    hilight .hilight.vb 1 "IsNull"       .scheme.function
+    hilight .hilight.vb 1 "IsNumeric"    .scheme.function
     ; Types
     hilight .hilight.vb 1 "Attribute"    .scheme.type
     hilight .hilight.vb 1 "Boolean"      .scheme.type
