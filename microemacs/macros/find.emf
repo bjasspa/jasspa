@@ -38,6 +38,7 @@
     !if &not &exist .hilight.find
       set-variable .hilight.find &pinc .hilight.next 1
       set-variable .hilight.grep &pinc .hilight.next 1
+      set-variable .hilight.grepn &pinc .hilight.next 1
     !endif
     0 hilight .hilight.find 0        $global-scheme
     hilight .hilight.find 0x102 "Directory: \\{" .scheme.link
@@ -50,10 +51,14 @@
     hilight .hilight.find 0x102 "\\[\\*\\*\\*\\* Error" .scheme.error
     0 hilight .hilight.grep 0        $global-scheme
     hilight .hilight.grep 0x102 "Directory: \\{" .scheme.link
-    hilight .hilight.grep 0x100 "\\a:/[^:]+:\\d+:" .scheme.no2
-    hilight .hilight.grep 0x100 "[^:]+:\\d+:" .scheme.no2
+    hilight .hilight.grep 0x180 "\\a:/[^:]+\\}:[0-9]" .hilight.grepn .scheme.no2
+    hilight .hilight.grep 0x180 "[^:]+\\}:[0-9]" .hilight.grepn .scheme.no2
+    hilight .hilight.grep 64 "\x85\x85\x85" "..." .scheme.hide
     hilight .hilight.grep 0x102 "[^:]+: Binary" .scheme.prepro
     hilight .hilight.grep 0x102 "[^:]+: Error" .scheme.error
+    0 hilight .hilight.grepn 0 .scheme.no2
+    hilight .hilight.grepn 0 ":" .scheme.no1
+    hilight .hilight.grepn 0x80 "[0-9]\\{:" .hilight.grep .scheme.no1
   !endif
   
   0 define-macro return-get-next-line
@@ -164,22 +169,51 @@
       !else
         !force search-buffer #p7 #p4
       !endif
-      !if $status
+      !if &not $status
+        !return
+      !elif &sin "e" #p9
+        set-alpha-mark "\x82"
+        -2 show-region
+        set-variable #l5 $window-line
+        set-mark
+        goto-alpha-mark "\x82"
+        copy-region
+        set-variable #l6 &rep @y "\n" " "
+        -1 yank
+      !else
         set-variable #l1 $window-line
         -2 show-region
         set-variable #l5 $window-line
-        set-variable #l6 @wl
-        !if &exi :page-0
-          set-variable #l5 &add #l5 :line-offset
+        !if &les &len &set #l6 @wl 500
+        !elif &les $window-col 100
+          set-variable #l6 &cat &lef #l6 500 "\x85\x85\x85"
+        !else
+          set-variable $window-col &sub $window-col 100
+          set-mark
+          !force set-variable $window-col &add $window-col 500
+          set-variable #l6 $status
+          copy-region
+          set-variable #l6 &cat &cat "\x85\x85\x85" @y &con #l6 "\x85\x85\x85" ""
+          -1 yank
         !endif
-        33 find-buffer "*grep*"
-        insert-string &spr "%s%s%s:%d:%s" #p1 &ind &cat ".find-proc.base" #p0 #p2 #l5 #l6 
-        insert-newline
-        find-buffer #l0
-        set-variable $window-line &add 1 #l1
-        set-variable #p6 &add #p6 1
       !endif
-    !until &not $status
+      !if &exi :page-0
+        set-variable #l5 &add #l5 :line-offset
+      !endif
+      33 find-buffer "*grep*"
+      insert-string &spr "%s%s%s:%d:%s" #p1 &ind &cat ".find-proc.base" #p0 #p2 #l5 #l6 
+      insert-newline
+      set-variable #p6 &add #p6 1
+      find-buffer #l0
+      !if &sin "e" #p9
+        goto-alpha-mark "\x82"
+        !if &not &len #l6
+          forward-char
+        !endif
+      !else
+        set-variable $window-line &add 1 #l1
+      !endif
+    !until 0
   !endif
 !emacro
 
@@ -392,7 +426,7 @@
     set-variable #p0 &trl &rig #p0 #l1
     set-variable #l2 &lget #p9 1
     !while &len &set #l3 &lef #l0 1
-      !if &sin #l3 "uxgprdfmibl234@-"
+      !if &sin #l3 "uxgprdfmibl234@-aoe"
         set-variable #l2 &cat #l2 #l3
       !elif &sin #l3 "UXGPRDFMIBL"
         set-variable #l2 &rep #l2 &slo #l3 ""
@@ -509,10 +543,12 @@
   !elif &seq $buffer-bname "*grep*"
     set-variable #l4 ""
     set-variable $window-line 4
-    !while &xse @wl &spr "\\(%s\\):%s:.*" $file-template $line-template
-      !if &not &seq #l4 &set #l5 @s1
-        set-variable &cat ".find-proc.mask" &inc #l3 1 &set #l4 #l5
-        set-variable &cat ".find-proc.base" #l3 ""
+    !while &les $window-line $window-eline
+      !if &not &xse @wl &spr "\\(%s\\):%s:.*" $file-template $line-template
+      !elif &not &seq #l4 &set #l5 @s1
+        set-variable #l6 &rsin "/" &set #l4 #l5
+        set-variable &cat ".find-proc.mask" &inc #l3 1 &rig #l5 #l6
+        set-variable &cat ".find-proc.base" #l3 &lef #l5 #l6
       !endif
       forward-line
     !done
