@@ -22,8 +22,8 @@
 set-variable .org.addr-reg  "|recno|fname|sname|nname|slct|notes|pfname|psname|home/addr|home/tel|home/fax|home/mob|home/email|home/www|home/ftp|work/comp|work/addr|work/tel|work/fax|work/mob|work/email|work/www|work/ftp|"
 set-variable .org.addr-lbl  "|Record No|First Name|Surname|Nick Name|Selected|Notes|Partner First Name|Partner Surname|Home Address|Home Telephone|Home Fax|Home Mobile|Home E-Mail|Home WWW Page|Home FTP Site|Work Company|Work Address|Work Telephone|Work Fax|Work Mobile|Work E-Mail|Work WWW Page|Work FTP Site|"
 !if &band .org.aflag 0x100
-    set-variable .org.addr-reg &cat .org.addr-reg "dob|pdob|dom|c1name|c1dob|c2name|c2dob|c3name|c3dob|"
-    set-variable .org.addr-lbl &cat .org.addr-lbl "Date-Of-Birth|Partner DOB|Date-Of-Marriage|Child1 Name|Child1 DOB|Child2 Name|Child2 DOB|Child3 Name|Child3 DOB|"
+    set-variable .org.addr-reg &cat .org.addr-reg "dob|pdob|dom|c1name|c1dob|c2name|c2dob|c3name|c3dob|pmob|pemail|"
+    set-variable .org.addr-lbl &cat .org.addr-lbl "Date-Of-Birth|Partner DOB|Date-Of-Marriage|Child1 Name|Child1 DOB|Child2 Name|Child2 DOB|Child3 Name|Child3 DOB|Partner Mobile|Partner Email|"
 !endif
 
 ; Create the address osd dialog
@@ -572,13 +572,17 @@ osd .osd.orga-f 660 "f" " "
 -1 osd .osd.orga-h
 osd .osd.orga-h   0 "s" 62 15 -1 -1 
 ;osd .osd.orga-h  10 ""
-osd .osd.orga-h  20 "Shf" " Partner  " 30
+osd .osd.orga-h  20 "Shf" " \HPartner  " 30
 osd .osd.orga-h  30 "EtxfhH" .scheme.osd-entry "###############" 7 org-addr-set-entry
 osd .osd.orga-h  40 "hf" " "
 !if &band .org.aflag 0x100
     osd .osd.orga-h 50 "EtxfHh" .scheme.osd-entry "####################" 8 org-addr-set-entry
-    osd .osd.orga-h 52 "hf" "  DOB "
-    osd .osd.orga-h 54 "ExfH" .scheme.osd-entry "#########" 25 org-addr-set-entry
+    osd .osd.orga-h 51 "hf" "  DOB "
+    osd .osd.orga-h 52 "ExfH" .scheme.osd-entry "#########" 25 org-addr-set-entry
+    osd .osd.orga-h 53 "hf" "   Mobile "
+    osd .osd.orga-h 54 "EtxfHh" .scheme.osd-entry "####################" 33 org-addr-set-entry
+    osd .osd.orga-h 55 "hf" " EMail "
+    osd .osd.orga-h 56 "EtxfH" .scheme.osd-entry "########################" 34 org-addr-set-entry
 !else
     osd .osd.orga-h  50 "EtxfH" .scheme.osd-entry "####################" 8 org-addr-set-entry
 !endif
@@ -594,9 +598,9 @@ osd .osd.orga-h  60 "Shf" " \HAddress  " 70
 osd .osd.orga-h  80 "" 
 osd .osd.orga-h  90 "Shf" " \HTel      " 100
 !if &band .org.aflag 0x100
-    osd .osd.orga-h 100 "EtxfHh" .scheme.osd-entry "#########################" 10 org-addr-set-entry
-    osd .osd.orga-h 102 "hf" "  Chld "
-    osd .osd.orga-h 104 "EtxfHh" .scheme.osd-entry "########" 27 org-addr-set-entry
+    osd .osd.orga-h 100 "EtxfHh" .scheme.osd-entry "####################" 10 org-addr-set-entry
+    osd .osd.orga-h 102 "hf" " Child "
+    osd .osd.orga-h 104 "EtxfHh" .scheme.osd-entry "#############" 27 org-addr-set-entry
     osd .osd.orga-h 106 "hf" "  "
     osd .osd.orga-h 108 "ExfH" .scheme.osd-entry "#########" 28 org-addr-set-entry
 !else
@@ -604,9 +608,9 @@ osd .osd.orga-h  90 "Shf" " \HTel      " 100
 !endif
 osd .osd.orga-h 110 "Shf" " Fa\Hx      " 120
 !if &band .org.aflag 0x100
-    osd .osd.orga-h 120 "EtxfHh" .scheme.osd-entry "#########################" 11 org-addr-set-entry
-    osd .osd.orga-h 122 "hf" "  Chld "
-    osd .osd.orga-h 124 "EtxfHh" .scheme.osd-entry "########" 29 org-addr-set-entry
+    osd .osd.orga-h 120 "EtxfHh" .scheme.osd-entry "####################" 11 org-addr-set-entry
+    osd .osd.orga-h 122 "hf" " Child "
+    osd .osd.orga-h 124 "EtxfHh" .scheme.osd-entry "#############" 29 org-addr-set-entry
     osd .osd.orga-h 126 "hf" "  "
     osd .osd.orga-h 128 "ExfH" .scheme.osd-entry "#########" 30 org-addr-set-entry
 !else
@@ -614,9 +618,9 @@ osd .osd.orga-h 110 "Shf" " Fa\Hx      " 120
 !endif
 osd .osd.orga-h 130 "Shf" " Mobile   " 140
 !if &band .org.aflag 0x100
-    osd .osd.orga-h 140 "EtxfHh" .scheme.osd-entry "#########################" 12 org-addr-set-entry
-    osd .osd.orga-h 142 "hf" "  Chld "
-    osd .osd.orga-h 144 "EtxfHh" .scheme.osd-entry "########" 31 org-addr-set-entry
+    osd .osd.orga-h 140 "EtxfHh" .scheme.osd-entry "####################" 12 org-addr-set-entry
+    osd .osd.orga-h 142 "hf" " Child "
+    osd .osd.orga-h 144 "EtxfHh" .scheme.osd-entry "#############" 31 org-addr-set-entry
     osd .osd.orga-h 146 "hf" "  "
     osd .osd.orga-h 148 "ExfH" .scheme.osd-entry "#########" 32 org-addr-set-entry
 !else
@@ -625,9 +629,11 @@ osd .osd.orga-h 130 "Shf" " Mobile   " 140
 osd .osd.orga-h 150 "" 
 osd .osd.orga-h 160 "Shf" " \HE-Mail   " 170
 osd .osd.orga-h 170 "EtxfH" .scheme.osd-entry "########################################" 13 org-addr-set-entry
-osd .osd.orga-h 180 "Shf" " \HWWW      " 190
-osd .osd.orga-h 190 "EtxfH" .scheme.osd-entry "########################################" 14 org-addr-set-entry
-osd .osd.orga-h 200 "Shf" " FT\HP      " 210
+!if &not &band .org.aflag 0x100
+  osd .osd.orga-h 180 "Shf" " \HWWW      " 190
+  osd .osd.orga-h 190 "EtxfH" .scheme.osd-entry "########################################" 14 org-addr-set-entry
+!endif
+osd .osd.orga-h 200 "Shf" " FTP      " 210
 osd .osd.orga-h 210 "EtxfH" .scheme.osd-entry "########################################" 15 org-addr-set-entry
 
 -1 osd .osd.orga-w
