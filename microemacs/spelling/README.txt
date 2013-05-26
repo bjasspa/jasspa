@@ -1,6 +1,6 @@
 > -!- document -!-
 > This is part of the JASSPA MicroEmacs macro files
-> Copyright (C) 2004 JASSPA (www.jasspa.com)
+> Copyright (C) 2004-2009 JASSPA (www.jasspa.com)
 > See the file me.emf for copying and conditions.
 >
 
@@ -17,6 +17,8 @@ ls_frfr - French spell rules and dictionary.
 ls_itit - Italian spell rules and dictionary.
 ls_plpl - Polish spell rules and dictionary.
 ls_ptpt - Portuguese spell rules and dictionary.
+ls_ruye - Russian (YE) spell rules and dictionary.
+ls_ruyo - Russian (YO) spell rules and dictionary.
 
 The files  contained  within a  spelling  archive  use the naming
 convention:
