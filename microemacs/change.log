@@ -4,8 +4,20 @@
 >
 >  Created By    : Jon Green
 >  Created       : Fri Feb 6 11:13:34 2004
->  Last Modified : <091012.0844>
+>  Last Modified : <091017.1800>
 >
+
+  [091017] man page - added Linux hypenation for line continuation. 
+
+  [091015] SQL  template  - added  some  missing  types and  standardised  the
+           hilighting a bit.
+
+  [091015] Added missing accents to ISO complete for abbreviations.
+
+  [091015] user-setup  -  removed  dead  Auto  buffer  mode  and   reorganised
+           remaining options
+  
+  [091015] notes - added 'i' binding to tree to insert new note.
 
   [091011] Patch release of fixes; release date specified as 2009/10/11.
 
