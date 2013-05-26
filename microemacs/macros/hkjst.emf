@@ -308,6 +308,8 @@ set-variable .fhook-jst.item-list-r4 "H4  \ecB\\1\ecA"
     jst-add-file-support "pseudo"
     ; Allow BNF inserts
     jst-add-file-support "bnf"
+    ; Allow XML Code inserts
+    jst-add-file-support "xml"
     ; Allow C Code inserts
     jst-add-file-support "c"
     ; Allow C++ Code inserts ...
