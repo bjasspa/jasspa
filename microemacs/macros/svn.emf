@@ -100,7 +100,7 @@ set-variable .fhook-svn-status.setup-mask    "aceghlopq"
 set-variable .fhook-svn-status.command-flag  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-flag  1 "" 2 "" 3 "t" 4 "thbio" 5 "thbio" 6 "bio" 2
 set-variable .fhook-svn-status.command-name  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-name  1 "" 2 "" 3 "osd" 4 "svn-context-menu" 5 "svn-status" 6 "svn-status" 2
 set-variable .fhook-svn-status.command-nbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-nbind 1 "" 2 "" 3 .osd.svn-hlp 4 "" 5 "" 6 "" 2
-set-variable .fhook-svn-status.command-kbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-kbind 1 "" 2 "" 3 "" 4 "k" 5 "C-return" 6 "C-j" 2
+set-variable .fhook-svn-status.command-kbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-kbind 1 "" 2 "" 3 "" 4 "k" 5 "C-return" 6 "f5" 2
 set-variable .fhook-svn-status.command-desc  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-desc  1 "" 2 "" 3 "Help on Subversion Status" 4 "Open Subversion menu" 5 "Rerun svn-status" 6 "" 2
 set-variable .fhook-svn-status.refresh "svn-status-refresh"
 
