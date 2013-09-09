@@ -242,3 +242,11 @@ define-macro calc
     @# calc-buffer
     !force goto-position "\x81"
 !emacro
+define-macro calc-insert
+  !force set-variable #l0 @1
+  !if &not $status
+    set-variable #l0 @ml "Enter sum"
+  !endif
+  calc #l0
+  insert-string .calc.result
+!emacro

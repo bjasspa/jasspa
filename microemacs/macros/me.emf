@@ -77,6 +77,7 @@ define-macro-file dmf display-matching-fence
 define-macro-file etfinsrt insert-template
 define-macro-file xfind xfind xgrep rgrep
 define-macro-file schemosd scheme-editor
+define-macro-file calc calc calc-insert
 define-macro-file mouseosd context-menu
 define-macro-file printstp print-setup
 define-macro-file abbrlist abbrev-list
@@ -87,7 +88,6 @@ define-macro-file word describe-word
 define-macro-file vm vm mail-setup
 define-macro-file watch
 define-macro-file gdiff
-define-macro-file calc
 define-macro-file draw
 define-macro-file ftp
 
