@@ -109,6 +109,7 @@ set-variable .fhook-vb.collapse-mnext "-1"
     ; Types
     hilight .hilight.vb 1 "Attribute"    .scheme.type
     hilight .hilight.vb 1 "Boolean"      .scheme.type
+    hilight .hilight.vb 1 "ByRef"        .scheme.type
     hilight .hilight.vb 1 "ByVal"        .scheme.type
     hilight .hilight.vb 1 "Collection"   .scheme.type
     hilight .hilight.vb 1 "Const"        .scheme.type
