@@ -11,401 +11,441 @@
 ;
 ; One off set up of tools variables.
 !if &not &exi %diff-com
-    ; Assume GNU diff utility - probably the best under all platforms !!.
-    ;set-variable %diff-com "diff -c -w"
-    ; Standard diff utility
-    set-variable %diff-com "diff"
+  ; Assume GNU diff utility - probably the best under all platforms !!.
+  ;set-variable %diff-com "diff -c -w"
+  ; Standard diff utility
+  set-variable %diff-com "diff"
 !endif
 
 add-file-hook "*compile* *grep*" fhook-ipipe
 -1 add-next-line "*compile*" "^->"
 
 0 define-macro compile-ipipe
-    !if &not &exi :compile-last
-        set-variable :compile-last 4
-    !endif
-    goto-alpha-mark "I"
-    !if &equ $window-line :compile-last
-        !return
-    !endif
-    set-variable #l0 $window-line
-    set-variable $window-line &sub :compile-last 1
-    !repeat
-        !force 0 get-next-line
-        !if &not $status
-            set-variable $window-line #l0
-        !elif &les $window-line #l0
-            !if &isin "error" @wl
-                set-variable $line-scheme .scheme.error
-            !elif &isin "warn"  @wl
-                set-variable $line-scheme .scheme.comment
-            !else
-                set-variable $line-scheme .scheme.error
-            !endif
-            !if &not &bmod "wrap"
-                !force set-variable $window-acol &sub $window-width 1
-                !if $status
-                    ; pretend to wrap the error lines otherwise the message will be off screen
-                    set-variable #l1 $line-scheme
-                    set-variable #l2 $window-line
-                    set-mark
-                    end-of-line
-                    copy-region
-                    insert-string "\n->"
-                    0 reyank
-                    -1 yank
-                    set-variable $line-scheme #l1
-                    !force set-variable $window-acol &sub $window-width 1
-                    !if $status
-                        insert-string "\\\n->"
-                        !jump -4
-                    !endif
-                    set-variable #l0 &add #l0 &sub $window-line #l2
-                !endif
-            !endif
+  !if &not &exi :compile-last
+    set-variable :compile-last 4
+    5 buffer-bind-key compile "C-return"
+    5 buffer-bind-key compile "C-j"
+  !endif
+  goto-alpha-mark "I"
+  !if &equ $window-line :compile-last
+    !return
+  !endif
+  set-variable #l0 $window-line
+  set-variable $window-line &sub :compile-last 1
+  !repeat
+    !force 0 get-next-line
+    !if &not $status
+      set-variable $window-line #l0
+    !elif &les $window-line #l0
+      !if &isin "error" @wl
+        set-variable $line-scheme .scheme.error
+      !elif &isin "warn"  @wl
+        set-variable $line-scheme .scheme.comment
+      !else
+        set-variable $line-scheme .scheme.error
+      !endif
+      !if &not &bmod "wrap"
+        !force set-variable $window-acol &sub $window-width 1
+        !if $status
+          ; pretend to wrap the error lines otherwise the message will be off screen
+          set-variable #l1 $line-scheme
+          set-variable #l2 $window-line
+          set-mark
+          end-of-line
+          copy-region
+          insert-string "\n->"
+          0 reyank
+          -1 yank
+          set-variable $line-scheme #l1
+          !force set-variable $window-acol &sub $window-width 1
+          !if $status
+            insert-string "\\\n->"
+            !jump -4
+          !endif
+          set-variable #l0 &add #l0 &sub $window-line #l2
         !endif
-    !until &not &les $window-line #l0
-    set-variable :compile-last #l0
+      !endif
+    !endif
+  !until &not &les $window-line #l0
+  set-variable :compile-last #l0
 !emacro
 define-macro compile
-    !force set-variable #l1 @1
-    !if $status
-        set-variable %compile-com #l1
-    !elif &not &band @# 4
-        !if &seq %compile-com "ERROR"
-            set-variable %compile-com "make "
-        !endif
-        set-variable %compile-com @ml20 "compile" %compile-com
-        &band @# 1 save-some-buffers @mna
-        set-variable .lastp &lef $buffer-fname &rsin "/" $buffer-fname
-    !elif &not &exi .lastp
-        ml-write "[Cannot recompile - compile has not been executed]" 
-        !abort
-    !else
-        &band @# 1 save-some-buffers @mna
-        popup-window "*compile*"
-        set-variable $buffer-fname .lastp
+  !if &band @# 8
+    !if &not &exi .lastp
+      ml-write "[Cannot recompile - compile has not been executed]" 
+      !abort
     !endif
-    &con &band @# 2 0x80 0x280 ipipe-shell-command %compile-com "*compile*" compile-ipipe @mna
+    set-variable #l2 .lastp
+  !elif &seq $buffer-fname ""
+    ml-write "[Cannot compile - current buffer has no file name]" 
+    !abort
+  !else
+    set-variable #l2 &lef $buffer-fname &rsin "/" $buffer-fname
+  !endif
+  !if &band @# 16
+    set-variable #l0 @ml24 "Auto-touch file" &con &exi .tfn .tfn ""
+    !if &len #l0
+      set-variable .tfn &stat a #l0
+    !elif &exi .tfn
+      unset-variable .tfn
+    !endif
+  !endif
+  !if &set #l9 &exi .tfn
+    set-position "\x81"
+    !force 2 find-buffer .tfn
+    !if &not $status
+      0x400 file-op .tfn ""
+    !elif &set #l9 &not &bmod "edit"
+      set-variable #l0 &con &bmod "backup" 1 -1
+      -1 buffer-mode "backup" 
+      1 buffer-mode "edit"
+      save-buffer @nma
+      #l0 buffer-mode "backup" 
+    !endif
+    goto-position "\x81"
+  !endif
+  !force set-variable #l1 @1
+  !if $status
+    set-variable %compile-com #l1
+  !elif &not &band @# 4
+    !if &seq %compile-com "ERROR"
+      set-variable %compile-com "make "
+    !endif
+    set-variable #l3 &con &band @# 8 &spr "recompile (%s)" #l2 "compile"   
+    set-variable %compile-com @ml20 #l3 %compile-com
+  !elif &seq %compile-com "ERROR"
+    ml-write "[Cannot compile - compile command has not been set]"
+  !endif
+  &band @# 1 save-some-buffers @mna
+  !if &band @# 8
+    popup-window "*compile*"
+    set-variable $buffer-fname #l2
+  !else
+    set-variable .lastp #l2
+  !endif
+  &con &band @# 2 0x80 0x280 ipipe-shell-command %compile-com "*compile*" compile-ipipe @mna
+  !if #l9
+    ml-write &spr "[auto-touch: %s]" .tfn 
+  !endif
 !emacro
 define-macro recompile
-    &bor @# 4 compile
+  &bor @# 4 compile
 !emacro
 define-macro which
-    !force set-variable #l0 @1
-    !if &not $status
-        set-variable #l0 @ml04 "Program name"
-    !endif
-    set-variable .result &which #l0
-    !if &seq .result "ERROR"
-        ml-write "[Program not found]"
-        !abort
-    !endif
-    ml-write .result
+  !force set-variable #l0 @1
+  !if &not $status
+    set-variable #l0 @ml04 "Program name"
+  !endif
+  set-variable .result &which #l0
+  !if &seq .result "ERROR"
+    ml-write "[Program not found]"
+    !abort
+  !endif
+  ml-write .result
 !emacro
 
 define-macro diff
-    !force set-variable #l1 @2
-    !if $status
-        set-variable #l0 @1
-    !else
-        set-variable #l0 @ml01 "Old Version"
-        set-variable #l1 @ml01 "New Version"
-    !endif
-    ; Winsows/DOS ONLY: If the file name ends with a '/' for a directory diff
-    ; then remove it. Correct the forward slash to backslash.
-    !if &band $system 0x100
-        set-variable #l0 &rep #l0 "/" "\\"
-        set-variable #l0 &xrep #l0 "\\\\$" ""
-        set-variable #l1 &rep #l1 "/" "\\"
-        set-variable #l1 &xrep #l1 "\\\\$" ""
-    !endif
-    0x204 ipipe-shell-command &spr "%s%s \"%s\" \"%s\"" %diff-com &cond &band @# 2 " -r" "" #l0 #l1 "*diff*"
-    !force popup-window  "*diff*"
+  !force set-variable #l1 @2
+  !if $status
+    set-variable #l0 @1
+  !else
+    set-variable #l0 @ml01 "Old Version"
+    set-variable #l1 @ml01 "New Version"
+  !endif
+  ; Winsows/DOS ONLY: If the file name ends with a '/' for a directory diff
+  ; then remove it. Correct the forward slash to backslash.
+  !if &band $system 0x100
+    set-variable #l0 &rep #l0 "/" "\\"
+    set-variable #l0 &xrep #l0 "\\\\$" ""
+    set-variable #l1 &rep #l1 "/" "\\"
+    set-variable #l1 &xrep #l1 "\\\\$" ""
+  !endif
+  0x204 ipipe-shell-command &spr "%s%s \"%s\" \"%s\"" %diff-com &cond &band @# 2 " -r" "" #l0 #l1 "*diff*"
+  !force popup-window  "*diff*"
 !emacro
 define-macro diff-changes
-    !if &seq $buffer-fname ""
-        ml-write "[Current buffer has no file name]"
-        !abort
+  !if &seq $buffer-fname ""
+    ml-write "[Current buffer has no file name]"
+    !abort
+  !endif
+  !if &bmod "edit"
+    set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+    !if &iseq #l0 "y"
+      save-buffer
     !endif
-    !if &bmod "edit"
-        set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-        !if &iseq #l0 "y"
-            save-buffer
-        !endif
-    !endif
-    ; get the real file name - this only has effect on unix, copes with symbolic links
-    set-variable #l0 &stat "a" $buffer-fname
-    ; get the backup name
-    set-variable #l1 $buffer-backup
-    diff #l1 #l0
+  !endif
+  ; get the real file name - this only has effect on unix, copes with symbolic links
+  set-variable #l0 &stat "a" $buffer-fname
+  ; get the backup name
+  set-variable #l1 $buffer-backup
+  diff #l1 #l0
 !emacro
 define-macro rdiff
-    3 diff @1 @2
+  3 diff @1 @2
 !emacro
 define-macro xdiff
-    !if &not &exi %xdiff-com
-        ml-write "[Error: %xdiff-com variable not set]"
-        !abort
-    !endif
-    !force set-variable #l2 @2
-    !if $status
-        set-variable #l1 @1
-    !else
-        set-variable #l1 @ml01 "Left file"
-        set-variable #l2 @ml01 "Right file"
-    !endif
-    !if &sin " " #l1
-        set-variable #l1 &cat &cat "\"" &rep &rep #l1 "\\" "\\\\" "\"" "\\\"" "\""
-    !endif
-    !if &sin " " #l2
-        set-variable #l2 &cat &cat "\"" &rep &rep #l2 "\\" "\\\\" "\"" "\\\"" "\""
-    !endif
-    !force set-variable #l3 @3
-    !if &or &not $status &seq "" #l3
-        set-variable #l3 #l1
-    !elif &sin " " #l3
-        set-variable #l3 &cat &cat "\"" &rep &rep #l3 "\\" "\\\\" "\"" "\\\"" "\""
-    !endif
-    !force set-variable #l4 @4
-    !if &or &not $status &seq "" #l4
-        set-variable #l4 #l2
-    !elif &sin " " #l4
-        set-variable #l4 &cat &cat "\"" &rep &rep #l4 "\\" "\\\\" "\"" "\\\"" "\""
-    !endif
-    set-variable #l0 &rep &rep %xdiff-com "%lf" #l1 "%rf" #l2
-    set-variable #l0 &rep &rep #l0 "%lt" #l3 "%rt" #l4
-    !force 0x4 shell-command #l0
+  !if &not &exi %xdiff-com
+    ml-write "[Error: %xdiff-com variable not set]"
+    !abort
+  !endif
+  !force set-variable #l2 @2
+  !if $status
+    set-variable #l1 @1
+  !else
+    set-variable #l1 @ml01 "Left file"
+    set-variable #l2 @ml01 "Right file"
+  !endif
+  !if &sin " " #l1
+    set-variable #l1 &cat &cat "\"" &rep &rep #l1 "\\" "\\\\" "\"" "\\\"" "\""
+  !endif
+  !if &sin " " #l2
+    set-variable #l2 &cat &cat "\"" &rep &rep #l2 "\\" "\\\\" "\"" "\\\"" "\""
+  !endif
+  !force set-variable #l3 @3
+  !if &or &not $status &seq "" #l3
+    set-variable #l3 #l1
+  !elif &sin " " #l3
+    set-variable #l3 &cat &cat "\"" &rep &rep #l3 "\\" "\\\\" "\"" "\\\"" "\""
+  !endif
+  !force set-variable #l4 @4
+  !if &or &not $status &seq "" #l4
+    set-variable #l4 #l2
+  !elif &sin " " #l4
+    set-variable #l4 &cat &cat "\"" &rep &rep #l4 "\\" "\\\\" "\"" "\\\"" "\""
+  !endif
+  set-variable #l0 &rep &rep %xdiff-com "%lf" #l1 "%rf" #l2
+  set-variable #l0 &rep &rep #l0 "%lt" #l3 "%rt" #l4
+  !force 0x4 shell-command #l0
 !emacro
 
 define-macro execute-tool
-    !if @?
-        set-variable #l9 @#
+  !if @?
+    set-variable #l9 @#
+  !else
+    !force set-variable #l9 @1
+    !if &not $status
+      set-variable #l9 @ml "Tool name"
+    !endif
+  !endif
+  !if &seq "" &set #l1 &reg &spr "/history/%s/tool/%s/command" $platform #l9 ""
+    ml-write "[No command-line set]"
+    !abort
+  !endif
+  !if &seq $buffer-fname ""
+    !if &or &or &or &or &sin "%ff" #l1 &sin "%fp" #l1 &sin "%fn" #l1 &sin "%fb" #l1 &sin "%fe" #l1
+      ml-write "[Cannot run command with this buffer - no file name]"
+      !abort
+    !endif
+    set-variable #l4 $buffer-bname
+    set-variable #l5 $buffer-bname
+    set-variable #l6 ""
+    set-variable #l7 ""
+  !else
+    set-variable #l7 $buffer-bname
+    set-variable #l2 $buffer-fname
+    !if &seq "" &set #l4 &rig #l2 &rsin "/" #l2
+      ; cope with a directory name
+      set-variable #l3 &lef #l2 &rsin "/" &lef #l2 &sub &len #l2 1
+      set-variable #l4 &rig #l2 &len #l3
     !else
-        !force set-variable #l9 @1
-        !if &not $status
-            set-variable #l9 @ml "Tool name"
-        !endif
+      set-variable #l3 &lef #l2 &rsin "/" #l2
     !endif
-    !if &seq "" &set #l1 &reg &spr "/history/%s/tool/%s/command" $platform #l9 ""
-        ml-write "[No command-line set]"
-        !abort
-    !endif
-    !if &seq $buffer-fname ""
-        !if &or &or &or &or &sin "%ff" #l1 &sin "%fp" #l1 &sin "%fn" #l1 &sin "%fb" #l1 &sin "%fe" #l1
-            ml-write "[Cannot run command with this buffer - no file name]"
-            !abort
-        !endif
-        set-variable #l4 $buffer-bname
-        set-variable #l5 $buffer-bname
-        set-variable #l6 ""
-        set-variable #l7 ""
+    !if &set #l5 &rsin "." #l4
+      set-variable #l6 &rig #l4 &sub #l5 1
+      set-variable #l5 &lef #l4 &sub #l5 1
     !else
-        set-variable #l7 $buffer-bname
-        set-variable #l2 $buffer-fname
-        !if &seq "" &set #l4 &rig #l2 &rsin "/" #l2
-            ; cope with a directory name
-            set-variable #l3 &lef #l2 &rsin "/" &lef #l2 &sub &len #l2 1
-            set-variable #l4 &rig #l2 &len #l3
-        !else
-            set-variable #l3 &lef #l2 &rsin "/" #l2
-        !endif
-        !if &set #l5 &rsin "." #l4
-            set-variable #l6 &rig #l4 &sub #l5 1
-            set-variable #l5 &lef #l4 &sub #l5 1
-        !else
-            ; cope with no extension
-            set-variable #l5 #l4
-            set-variable #l6 ""
-        !endif
-        !if &band $system 0x400
-            set-variable #l2 &rep #l2 "/" "\\"
-            set-variable #l3 &rep #l3 "/" "\\"
-        !endif
-        set-variable #l1 &rep #l1 "%ff" #l2
-        set-variable #l1 &rep #l1 "%fp" #l3
-        set-variable #l1 &rep #l1 "%fn" #l4
-        set-variable #l1 &rep #l1 "%fb" #l5
-        set-variable #l1 &rep #l1 "%fe" #l6
+      ; cope with no extension
+      set-variable #l5 #l4
+      set-variable #l6 ""
     !endif
-    set-variable #l0 &reg &spr "/history/%s/tool/%s/flag" $platform #l9 0x1a
-    !if &and &bmod "edit" &band #l0 0x01
-        !if &band #l0 0x02
-            set-variable #l2 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-            !if &iseq #l2 "y"
-                save-buffer @mna
-            !endif
-        !else
-            save-buffer @mna
-        !endif
+    !if &band $system 0x400
+      set-variable #l2 &rep #l2 "/" "\\"
+      set-variable #l3 &rep #l3 "/" "\\"
     !endif
-    !if &band #l0 0x04
-        &cond &band #l0 0x08 1 0 save-some-buffers @mna
-    !endif
-    !if &seq "" &set #l2 &reg &spr "/history/%s/tool/%s/bname" $platform #l9 ""
-        set-variable #l3 1
+    set-variable #l1 &rep #l1 "%ff" #l2
+    set-variable #l1 &rep #l1 "%fp" #l3
+    set-variable #l1 &rep #l1 "%fn" #l4
+    set-variable #l1 &rep #l1 "%fb" #l5
+    set-variable #l1 &rep #l1 "%fe" #l6
+  !endif
+  set-variable #l0 &reg &spr "/history/%s/tool/%s/flag" $platform #l9 0x1a
+  !if &and &bmod "edit" &band #l0 0x01
+    !if &band #l0 0x02
+      set-variable #l2 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+      !if &iseq #l2 "y"
+        save-buffer @mna
+      !endif
     !else
-        set-variable #l3 0
-        set-variable #l2 &rep #l2 "%fn" #l4
-        set-variable #l2 &rep #l2 "%fb" #l5
-        set-variable #l2 &rep #l2 "%fe" #l6
+      save-buffer @mna
     !endif
-    !if &band #l0 0x20
-        set-variable #l3 &bor #l3 2
-    !endif
-    !if &band #l0 0x40
-        !if &band #l0 0x10
-            #l3 ipipe-shell-command #l1 #l2
-        !else
-            0 shell-command #l1
-        !endif
-    !elif &band #l0 0x10
-        #l3 pipe-shell-command #l1 #l2
+  !endif
+  !if &band #l0 0x04
+    &cond &band #l0 0x08 1 0 save-some-buffers @mna
+  !endif
+  !if &seq "" &set #l2 &reg &spr "/history/%s/tool/%s/bname" $platform #l9 ""
+    set-variable #l3 1
+  !else
+    set-variable #l3 0
+    set-variable #l2 &rep #l2 "%fn" #l4
+    set-variable #l2 &rep #l2 "%fb" #l5
+    set-variable #l2 &rep #l2 "%fe" #l6
+  !endif
+  !if &band #l0 0x20
+    set-variable #l3 &bor #l3 2
+  !endif
+  !if &band #l0 0x40
+    !if &band #l0 0x10
+      #l3 ipipe-shell-command #l1 #l2
     !else
-        shell-command #l1
+      0 shell-command #l1
     !endif
-    ;reread the buffer
-    !if &band #l0 0x80
-        popup-window #l7
-        reread-file
-    !endif
+  !elif &band #l0 0x10
+    #l3 pipe-shell-command #l1 #l2
+  !else
+    shell-command #l1
+  !endif
+  ;reread the buffer
+  !if &band #l0 0x80
+    popup-window #l7
+    reread-file
+  !endif
 !emacro
 
 ; uniq - As per the unix command, removes duplicated lines in a
 ; sorted region. Operates about point and mark.
 ; Jon. Added 99/12/11; missing from our toolset.
 define-macro uniq
+  set-variable #l0 $window-line
+  set-alpha-mark "t"
+  exchange-point-and-mark
+  !if &gre $window-line #l0
     set-variable #l0 $window-line
     set-alpha-mark "t"
     exchange-point-and-mark
-    !if &gre $window-line #l0
-        set-variable #l0 $window-line
-        set-alpha-mark "t"
-        exchange-point-and-mark
-    !endif
-    beginning-of-line
-    set-variable #l1 @wl
-    !force forward-line
-    ; Check for end of buffer.
-    !if &not $status
+  !endif
+  beginning-of-line
+  set-variable #l1 @wl
+  !force forward-line
+  ; Check for end of buffer.
+  !if &not $status
+    goto-alpha-mark "t"
+    !return
+  !endif
+  ; Check the remaining lines.
+  !while &less $window-line #l0
+    !if &seq #l1 @wl
+      1 kill-line
+      set-variable #l0 &sub #l0 1
+    !else
+      set-variable #l1 @wl
+      !force forward-line
+      !if &not $status
         goto-alpha-mark "t"
         !return
+      !endif
     !endif
-    ; Check the remaining lines.
-    !while &less $window-line #l0
-        !if &seq #l1 @wl
-            1 kill-line
-            set-variable #l0 &sub #l0 1
-        !else
-            set-variable #l1 @wl
-            !force forward-line
-            !if &not $status
-                goto-alpha-mark "t"
-                !return
-            !endif
-        !endif
-    !done
-    goto-alpha-mark "t"
+  !done
+  goto-alpha-mark "t"
 !emacro
 
 define-macro find-bfile
-    &bor @# 2 find-file @mna
+  &bor @# 2 find-file @mna
 !emacro
 
 define-macro find-cfile
-    &bor @# 4 find-file @mna
+  &bor @# 4 find-file @mna
 !emacro
 
 ; reread-file - reloads the current buffer's file into the current buffer
 define-macro reread-file
-    !if &seq $buffer-fname ""
-        ml-write "[Invalid buffer]"
-        !bell
-        !abort
-    !endif
-    0xce set-position "\x81"
-    ; are we at the end of the buffer?
-    set-variable #l7 &seq @wc ""
-    ; is the file loaded in binary or crypt mode?
-    set-variable #l0 &bor &cond &band @# 1 1 33 &cond &bmod "crypt" 4 0
-    !if &bmod "binary"
-        set-variable #l0 &bor #l0 2
-    !elif &bmod "rbin"
-        set-variable #l0 &bor #l0 8
-    !endif
-    #l0 read-file $buffer-fname
-    !force goto-position "\x81"
-    !if #l7
-        end-of-buffer
-    !endif
+  !if &seq $buffer-fname ""
+    ml-write "[Invalid buffer]"
+    !bell
+    !abort
+  !endif
+  0xce set-position "\x81"
+  ; are we at the end of the buffer?
+  set-variable #l7 &seq @wc ""
+  ; is the file loaded in binary or crypt mode?
+  set-variable #l0 &bor &cond &band @# 1 1 33 &cond &bmod "crypt" 4 0
+  !if &bmod "binary"
+    set-variable #l0 &bor #l0 2
+  !elif &bmod "rbin"
+    set-variable #l0 &bor #l0 8
+  !endif
+  #l0 read-file $buffer-fname
+  !force goto-position "\x81"
+  !if #l7
+    end-of-buffer
+  !endif
 !emacro
 
 define-macro reread-all
-    0xde set-position "\x82"
-    set-variable #l0 $buffer-bname
-    set-variable #l1 0
-    set-variable $buffer-names "[^*].*"
-    !while &not &seq &set #l2 $buffer-names ""
-        !if &nbmod #l2 "nact"
-        !else
-            find-buffer #l2
-            !if &band $buffer-fmod 0x10000
-            !elif &len $buffer-fname
-                !if &band @# 0x01
-                    !if &not &bstat o
-                        !cont
-                    !endif
-                !endif
-                !if &bmod "edit"
-                    !if &les #l1 0
-                        set-variable #l3 "n"
-                    !elif &gre #l1 0
-                        set-variable #l3 "y"
-                    !else
-                        set-variable #l3 @mc5 &cat $buffer-fname ": Discard changes (?/y/n/a/o) ? " "aAnNoOyY"  "(Y)es, (N)o, Yes to (A)ll, N(o) to All, (C-g)Abort ? "
-                        !if &iseq #l3 "a"
-                            set-variable #l1 1
-                            set-variable #l3 "y"
-                        !elif &iseq #l3 "o"
-                            set-variable #l1 -1
-                            set-variable #l3 "n"
-                        !endif
-                    !endif
-                !else
-                    set-variable #l3 "y"
-                !endif
-                !if &iseq #l3 "y"
-                    !if &seq $buffer-bname #l0
-                        !force goto-position "\x82"
-                        0 reread-file
-                        0xde set-position "\x82"
-                    !else
-                        0 reread-file
-                    !endif
-                !endif
-            !endif
+  0xde set-position "\x82"
+  set-variable #l0 $buffer-bname
+  set-variable #l1 0
+  set-variable $buffer-names "[^*].*"
+  !while &not &seq &set #l2 $buffer-names ""
+    !if &nbmod #l2 "nact"
+    !else
+      find-buffer #l2
+      !if &band $buffer-fmod 0x10000
+      !elif &len $buffer-fname
+        !if &band @# 0x01
+          !if &not &bstat o
+            !cont
+          !endif
         !endif
-    !done
-    !force goto-position "\x82"
+        !if &bmod "edit"
+          !if &les #l1 0
+            set-variable #l3 "n"
+          !elif &gre #l1 0
+            set-variable #l3 "y"
+          !else
+            set-variable #l3 @mc5 &cat $buffer-fname ": Discard changes (?/y/n/a/o) ? " "aAnNoOyY"  "(Y)es, (N)o, Yes to (A)ll, N(o) to All, (C-g)Abort ? "
+            !if &iseq #l3 "a"
+              set-variable #l1 1
+              set-variable #l3 "y"
+            !elif &iseq #l3 "o"
+              set-variable #l1 -1
+              set-variable #l3 "n"
+            !endif
+          !endif
+        !else
+          set-variable #l3 "y"
+        !endif
+        !if &iseq #l3 "y"
+          !if &seq $buffer-bname #l0
+            !force goto-position "\x82"
+            0 reread-file
+            0xde set-position "\x82"
+          !else
+            0 reread-file
+          !endif
+        !endif
+      !endif
+    !endif
+  !done
+  !force goto-position "\x82"
 !emacro
 
 define-macro save-kbd-macro
-    !force set-variable #l1 @1
-    !if &not $status
-        set-variable #l1 @ml "Save macro as command name"
-    !endif
-    name-kbd-macro #l1
-    !if &seq &set #l2 &find $user-name ".emf" "ERROR"
-        set-variable #l2 &spr "%s%s.emf" $user-path $user-name
-    !endif
-    set-variable #l3 $buffer-bname
-    !force find-file #l2
-    !if &not $status
-        ml-write &spr "[Failed to load user macro file %s.emf]" $user-name
-        !abort
-    !endif
-    end-of-buffer
-    insert-macro #l1
-    -1 find-buffer $buffer-bname
-    find-buffer #l3
+  !force set-variable #l1 @1
+  !if &not $status
+    set-variable #l1 @ml "Save macro as command name"
+  !endif
+  name-kbd-macro #l1
+  !if &seq &set #l2 &find $user-name ".emf" "ERROR"
+    set-variable #l2 &spr "%s%s.emf" $user-path $user-name
+  !endif
+  set-variable #l3 $buffer-bname
+  !force find-file #l2
+  !if &not $status
+    ml-write &spr "[Failed to load user macro file %s.emf]" $user-name
+    !abort
+  !endif
+  end-of-buffer
+  insert-macro #l1
+  -1 find-buffer $buffer-bname
+  find-buffer #l3
 !emacro
