@@ -39,7 +39,7 @@ set-variable .fhook-cvs-state.setup-mask    "aceghlopq"
 set-variable .fhook-cvs-state.command-flag  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-flag  1 "" 2 "" 3 "t" 4 "thbio" 5 "thbio" 6 "bio" 2
 set-variable .fhook-cvs-state.command-name  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-name  1 "" 2 "" 3 "osd" 4 "cvs-context-menu" 5 "cvs-state" 6 "cvs-state" 2
 set-variable .fhook-cvs-state.command-nbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-nbind 1 "" 2 "" 3 .osd.cvshlp 4 "" 5 "" 6 "" 2
-set-variable .fhook-cvs-state.command-kbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-kbind 1 "" 2 "" 3 "" 4 "k" 5 "C-return" 6 "C-j" 2
+set-variable .fhook-cvs-state.command-kbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-kbind 1 "" 2 "" 3 "" 4 "k" 5 "C-return" 6 "f5" 2
 set-variable .fhook-cvs-state.command-desc  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-desc  1 "" 2 "" 3 "Help on CVS States" 4 "Open CVS menu" 5 "Rerun cvs-state" 6 "" 2
 set-variable .fhook-cvs-state.refresh "cvs-state-refresh"
 
