@@ -282,7 +282,7 @@ int osdMainMenuId=-1 ;
  * 
  * osdDIALOG menu functions
  * 
-****************************************************************************/
+ ****************************************************************************/
 /*
  * dialogFind
  * Find the root of the on-screen data definitions
@@ -510,7 +510,7 @@ itemFind (osdDIALOG *rp, int item, meUByte *name)
     if (rp->flags & RF_ALPHA)
     {
         register meUByte *ss ;
-    
+        
         for (mp = rp->itemTail; mp != NULL; mp = mp->prev)
         {
             /* Compare the item string data */
@@ -564,7 +564,7 @@ itemAdd (osdDIALOG *rp, osdITEM *newmp)
     if (rp->flags & RF_ALPHA)
     {
         register meUByte *ss ;
-    
+        
         for (mp = rp->itemTail; mp != NULL; mp = mp->prev)
         {
             /* Compare the item string data */
@@ -632,8 +632,8 @@ menuExecute(osdITEM *mp, int flags, int n)
     meUByte oldAllKeys, oldForce ;
     meUByte oldUseMlBinds ;
     
-	/* NOTE - we must cache the mp->flags as the item may not
-	 * exist after execution. */
+    /* NOTE - we must cache the mp->flags as the item may not
+     * exist after execution. */
     if ((mpflags=mp->flags) & MF_NBPAGE)
     {
         /* This can only get executed when the user has selected it, so
@@ -651,11 +651,11 @@ menuExecute(osdITEM *mp, int flags, int n)
         }
         return meTRUE ;
     }
-
+    
     /* Make sure that there is something to do */
     if(mp->cmdIndex < 0)
         return meABORT;
-
+    
     oldForce = meRegHead->force ;
     oldAllKeys = TTallKeys ;
     TTallKeys = 0 ;
@@ -669,7 +669,7 @@ menuExecute(osdITEM *mp, int flags, int n)
         oldUseMlBinds = useMlBinds ;
         
         useMlBinds = 1 ;
-    
+        
         frameCur->mlStatus = MLSTATUS_POSOSD ;
         if(mpflags & MF_NINPUT)
             frameCur->mlStatus |= MLSTATUS_NINPUT ;
@@ -728,7 +728,7 @@ menuExecute(osdITEM *mp, int flags, int n)
     }
     else
         n = mp->argc ;
-
+    
     /* Call the function specified */
     if (mpflags & MF_STR)             /* String function */
         f = lineExec (f, n, mp->strData + mp->cmdIndex);
@@ -773,7 +773,7 @@ menuRenderArea(int x, int y, int len, int dep)
         meUByte *textp ;
         meUByte  cc ;
         int   ii, xx ;
-    
+        
         while(--dep >= 0)
         {
             schmp = frameCur->store[y].scheme + x ;
@@ -790,7 +790,7 @@ menuRenderArea(int x, int y, int len, int dep)
         }
     }
 #endif
-
+    
 #ifdef _WIN32
 #ifdef _ME_CONSOLE
 #ifdef _ME_WINDOW
@@ -801,7 +801,7 @@ menuRenderArea(int x, int y, int len, int dep)
         meUByte *textp ;
         WORD  cc ;
         int   ii, xx ;
-    
+        
         while(--dep >= 0)
         {
             schmp = frameCur->store[y].scheme + x ;
@@ -828,7 +828,7 @@ menuRenderArea(int x, int y, int len, int dep)
     }
 #endif /* _ME_WINDOW */
 #endif /* _WIN32 */
-
+    
 #ifdef _UNIX
 #ifdef _ME_WINDOW
 #ifdef _ME_CONSOLE
@@ -875,7 +875,6 @@ menuRenderArea(int x, int y, int len, int dep)
     }
 #endif /* _ME_CONSOLE */
 #endif /* _UNIX */
-
 }
 
 
@@ -889,7 +888,7 @@ static int
 osdDisplaySnapshotCreate(osdDISPLAY *md)
 {
     int area;                           /* Area of the screen */
-
+    
     /* Allocate a new area */
     area = md->depth * md->width;      /* Pixel area coverage */
     if(md->area > 0)
@@ -1346,7 +1345,6 @@ initScrollBar(meSCROLLBAR *sb, int sbarLen, int flags)
         if(flags & WMVWIDE)
             sb->flags |= WMWIDE ;
     }
-        
     
     return sb ;
 }
@@ -1465,7 +1463,7 @@ menuRenderChildMain(osdDISPLAY *md, osdCONTEXT *mcp, int flags)
         colp += mdw+1 ;
         txtp += mdw+1 ;
     }
-        
+    
     for( ; depth ; depth--,txtp+=mdw,colp+=mdw,ctxtp+=cmdw,ccolp+=cmdw)
     {
         memcpy (colp, ccolp, width * sizeof (meUShort));
@@ -1678,7 +1676,7 @@ osdRenderEntry(meUByte *txtp, meUByte *ss, int flags, int cpos,
         cpos -= len+1 ;
         s1 = meStrchr(s2,meCHAR_NL) ;
     } 
-        
+    
     col = 0 ;
     while(s1 != NULL)
     {
@@ -1760,7 +1758,7 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
     
     mcp = &md->context[offset] ;
     mp = mcp->menu ;
-        
+    
     if(mp->flags & MF_CHILD)
     {
         osdCHILD    *child;                 /* Child pointer */
@@ -1787,8 +1785,8 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
                     menuRenderChildScrollBar(horzSBar,md,mcp) ;
                 }
                 else if((-cmd->x != horzSBar->curPos) &&
-                         ((horzSBar->curPos = -cmd->x),
-                          fillScrollBar(horzSBar,0)))
+                        ((horzSBar->curPos = -cmd->x),
+                         fillScrollBar(horzSBar,0)))
                     menuRenderChildScrollBar(horzSBar,md,mcp) ;
             }
             if((vertSBar = child->vertSBar) != NULL)
@@ -1803,8 +1801,8 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
                     menuRenderChildScrollBar(vertSBar,md,mcp) ;
                 }
                 else if((-cmd->y != vertSBar->curPos) &&
-                         ((vertSBar->curPos = -cmd->y),
-                          fillScrollBar(vertSBar,0)))
+                        ((vertSBar->curPos = -cmd->y),
+                         fillScrollBar(vertSBar,0)))
                     menuRenderChildScrollBar(vertSBar,md,mcp) ;
             }
             if(flags & osdRENDITEM_REFOCUS)
@@ -2099,7 +2097,7 @@ osdDisp(meUByte *buf, meUByte *cont, int cpos)
     TTmove(osdRow,osdCol) ;
     TTflush();
 }                
-                
+
 /*
  * menuRenderLine
  * Render a line of the menu with borders.
@@ -2111,7 +2109,7 @@ menuRenderLine(osdDISPLAY *md, int x, int y, meScheme scheme,
     meUShort *colp ;
     meUByte  *txtp ;
     meUByte   cc ;
-
+    
     colp = md->drawnSchm + (y*md->width) + x ;
     txtp = md->drawnText + (y*md->width) + x ;
     
@@ -2163,7 +2161,7 @@ menuRenderLine(osdDISPLAY *md, int x, int y, meScheme scheme,
         *colp++ = scheme ;
         *txtp++ = cc ;
     }
-
+    
     /* Add the righthand character */
     if((type == 4) || drawBoarder)
     {
@@ -2541,7 +2539,7 @@ static void
 osdDisplayPop (osdDISPLAY *md)
 {
     osdDISPLAY *tmd, *pmd ;             /* Temporary display frame */
-
+    
     if (md == NULL)                     /* Nothing to do ?? */
         return;                         /* Nope - quit */
     
@@ -2690,7 +2688,7 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
             jj = md->numContexts ;
             while(--jj >= 0)
                 if((md->context[jj].child != NULL) && (md->context[jj].child->display != NULL))
-                        md->context[jj].child->display->prev = nmd ;
+                    md->context[jj].child->display->prev = nmd ;
             
             if(child)
 	    {
@@ -2730,8 +2728,8 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
             free(md) ;
             md = nmd ;
         }
-/*        md->focalX[0] = md->focalX[1] = 0 ;*/
-/*        md->focalY[0] = md->focalY[1] = 0 ;*/
+        /* md->focalX[0] = md->focalX[1] = 0 ;*/
+        /* md->focalY[0] = md->focalY[1] = 0 ;*/
         md->flags &= ~RF_REDRAW ;   /* Remove the internal redraw flag */
     }
     /* Set the CONFIG flag to stop dialogResetDisplays messing with this */
@@ -2860,7 +2858,7 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
                 displayDestructChild(mcp->child) ;
                 mcp->child = NULL ;
             }
-
+            
             /* correct the size if to big */
             if(width > maxWidth)
             {
@@ -2883,7 +2881,7 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
                 if(mp->flags & MF_SCRLBOX)
                 {
                     meSCROLLBAR *sb ;
-                
+                    
                     width -= 2 ;
                     depth -= 2 ;
                     if(flags & WMHWIDE)
@@ -3042,7 +3040,7 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
                 maxWidth -= subWidth + 1 ;
                 md->multi++;                 /* Next column */
                 md->depth = maxDepth;        /* Depth of column (allow for border) */
-            
+                
                 /* Assign the new width to the items */
                 for ( ; jj < ii ; jj++)
                     mcp[jj].width = subWidth;    /* Assign the colum width */
@@ -3109,7 +3107,7 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
     md->flags &= ~RF_CONFIG ;
     /* now render the dialog itself */
     menuRender(md) ;
-
+    
     return md ;
 }
 
@@ -3275,7 +3273,7 @@ menuPosition(osdDISPLAY *md, int redraw)
             md->y = frameCur->depth + 1 - md->depth ;
     }
 }
-            
+
 
 static int
 osdDisplayFindFirst(osdDISPLAY *md)
@@ -3316,7 +3314,7 @@ osdDisplayPush(int id, int flags)
     }
     /* Execute the initialization command if present */
     if(rp->cmdIndex >= 0)
-       execFunc((int) rp->cmdIndex,0,1) ;
+        execFunc((int) rp->cmdIndex,0,1) ;
     
     /* Construct the menu */
     if((md=menuConfigure(rp,NULL,0)) == NULL)
@@ -3334,7 +3332,7 @@ osdDisplayPush(int id, int flags)
     
     /* Position the menu */
     menuPosition(md,0);
-        
+    
     if(flags & meOSD_FOCUS_MENU)
     {
         /* Make this the current display */
@@ -3388,7 +3386,7 @@ osdDisplayPush(int id, int flags)
     osdDisplaySetDefaultContext(md) ;
     osdDisplayUpdate(md,osdRENDITEM_REFOCUS) ;
     
-          
+    
     /* Snapshot the region occupied by the menu. */
     osdDisplaySnapshotStore(md) ;
     osdDisplaySnapshotDraw(md,0,0,md->width,md->depth,1) ;
@@ -3399,7 +3397,7 @@ osdDisplayPush(int id, int flags)
     
     return md ;
 }
-    
+
 
 void
 osdStoreAll(void)
@@ -3449,7 +3447,7 @@ osdRestoreAll(int garb)
             menuPosition(tmd,1);
             osdDisplaySetDefaultContext(tmd) ;
             osdDisplayUpdate(tmd,0) ;
-        
+            
             /* Snapshot the region occupied by the menu. */
             osdDisplaySnapshotStore(tmd) ;
         }
@@ -3458,7 +3456,7 @@ osdRestoreAll(int garb)
             osdDisplaySnapshotStore(tmd) ;
         
         osdDisplaySnapshotDraw(tmd,0,0,tmd->width,tmd->depth,1) ;
-    
+        
         tmd = tmd->next ;
     }
     /* Restore state */
@@ -3518,7 +3516,7 @@ osdDisplaySub(osdDISPLAY *md, int flags)
     osdDISPLAY *nmd ;
     osdITEM *mp;
     int index;
-
+    
     if(((index = md->curContext) == -1) ||
        ((mp = md->context[index].menu) == NULL) ||
        !(mp->flags & (MF_SUBMNU|MF_COMBO)) ||
@@ -3716,11 +3714,11 @@ osdDisplayResize(int dx, int dy)
     
     /* restore the screen underneath */
     osdDisplaySnapshotRestore(md) ;
-                
+    
     /* Find the root and reconstruct the menu */
     if((md = menuConfigure(md->dialog,md,0)) == NULL)
         return ;
-                
+    
     /* Position the menu */
     menuPosition(md,1);
     osdDisplaySetDefaultContext(md) ;
@@ -3728,7 +3726,7 @@ osdDisplayResize(int dx, int dy)
     
     /* Snapshot the region occupied by the menu. */
     osdDisplaySnapshotStore(md) ;
-                
+    
     /* Render it to screen */
     osdDisplaySnapshotDraw(md,0,0,md->width,md->depth,0) ;
     if(md->width > xx)
@@ -4149,8 +4147,8 @@ osdDisplayGetMousePosition(osdDISPLAY *md, meShort xx, meShort yy, int leftPick)
                     if(yy >= child->wndDepth)
                     {
                         /* only playing with the scroll bar if
-                         * 1) Its a leftPick event
-                         * 2) There is one
+                         * 1. Its a leftPick event
+                         * 2. There is one
                          */
                         if((leftPick == 1) && (child->horzSBar != NULL))
                         {
@@ -4188,8 +4186,8 @@ osdDisplayMouseLocate(int leftPick)
     
     /* Go to the last entry in the list */
     for (md = osdCurMd; md->next != NULL; md = md->next)
-         ;
-
+        ;
+    
     /* Iterate backwards over the menu display blocks to locate the position
      * of the mouse. */
     for(;;)
@@ -4547,7 +4545,7 @@ osdDisplayKeyMove(int dir)
     ret = osdDisplayFindClosest(dir,mdTop,NULL,posCur,posBest) ;
     if((posBest[1] > 16384) && ((dir == osdMOVE_PAGE_UP) || (dir == osdMOVE_PAGE_DOWN)))
         return osdDisplayKeyMove((dir == osdMOVE_PAGE_UP) ? osdMOVE_TOP:osdMOVE_BOTTOM) ;
-       
+    
     if((ret < 0) ||
        ((dir & (osdMOVE_LEFT|osdMOVE_RIGHT)) && (posBest[1] > 0)) ||
        ((dir == osdMOVE_UP) && (posBest[1] > 16384)))
@@ -4641,7 +4639,7 @@ osdDisplayRedraw(void)
             break ;
         tmd = tmd->prev ;
     }
-
+    
     /* Now redraw all the osdDisplayHds back again */
     while(tmd != NULL)
     {
@@ -4705,7 +4703,7 @@ menuInteraction (int *retState)
     meUInt arg ;
     int state ;
     osdITEM *mp ;
-
+    
     *retState = meFALSE ;
     
     /* Hide the cursor */
@@ -4841,7 +4839,7 @@ menuInteraction (int *retState)
             else
                 nit = 0 ;
             break ;
-        
+            
         case ME_SPECIAL|SKEY_mouse_move_3:
             if(!(osdCurMd->flags & RF_RISLBUT))
                 break ;
@@ -4850,7 +4848,7 @@ menuInteraction (int *retState)
         case ME_SPECIAL|SKEY_mouse_move:  /* Mouse moved */
             nit = osdDisplayMouseLocate(0) ;
             break ;
-        
+            
         case ME_SPECIAL|SKEY_mouse_drop_3:
             if(!(osdCurMd->flags & RF_RISLBUT))
             {
@@ -4931,14 +4929,14 @@ menuInteraction (int *retState)
                 state = meOSD_EXECUTE_MENU|meOSD_OPEN_MENU|meOSD_FOCUS_MENU|meOSD_ENTER_MENU;
             }
             break;
-        
+            
         case ME_SPECIAL|SKEY_mouse_wup:
             nit = osdDisplayKeyMove(osdMOVE_PAGE_UP) ;
             break ;
         case ME_SPECIAL|SKEY_mouse_wdown:
             nit = osdDisplayKeyMove(osdMOVE_PAGE_DOWN) ;
             break ;
-        
+            
         default:
 #else
         {
@@ -5099,7 +5097,7 @@ execute_item:
                 nit = osdDisplayTabMove(osdCurChild,0,0) ;
                 state = meOSD_KEY_MOVE ;
                 break ;
-                      
+                
             case CK_RECENT:                 /* ^L  - Redraw the screen */
                 sgarbf = meTRUE;
                 update(meTRUE) ;
@@ -5262,13 +5260,12 @@ execute_item:
 #endif
                     )
                 osdDisplaySetNewFocus(0) ;
-
         }
         else
             /* Set the new position */
             osdDisplaySetNewFocus(state) ;
     }
-        
+    
     /* Restore the context */
     if(osdCursorState != cursorState)
         showCursor(meTRUE,osdCursorState-cursorState) ;
@@ -5292,7 +5289,7 @@ osd (int f, int n)
     meUByte oldClexec;	                /* command line execution flag	*/
     meUByte buf [meBUF_SIZE_MAX];       /* Reply buffer */
     int   noDis, ii, jj ;               /* Status of the invocation */
-
+    
     /* If no arguments are defined then a menu is being
      * defined. */
     if((f == meFALSE) || (n < 0))
@@ -5371,7 +5368,7 @@ osd (int f, int n)
             }
             return meTRUE ;              /* Finished */
         }
-                
+        
         if(id > 32767)
             return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Invalid identity [%s]", buf);
         
@@ -5504,7 +5501,6 @@ osd (int f, int n)
         if ((rp = dialogFind (id)) == NULL)
             return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Osd dialog %d undefined]", id);
         
-            
         /* Get the enable flag */
         if (meGetString((meUByte *)"Flags", 0, 0, buf,meBUF_SIZE_MAX) <= 0)
             return meABORT ;
@@ -5588,7 +5584,7 @@ osd (int f, int n)
         }
         else
             flags |= MF_SEP ;
-
+        
         /* Get the command */
         if((ii = meGetString((meUByte *)"Command", MLCOMMAND|MLEXECNOUSER, 0, buf, meBUF_SIZE_MAX)) < 0)
             return meABORT ;
@@ -5696,10 +5692,10 @@ osd (int f, int n)
             mp->len = 3 ;
             return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Entry size is too small]");
         }
-
+        
         return meTRUE ;
     }
-
+    
     noDis = 0 ;
     pmd = NULL ;
     md = osdDisplayHd ;
@@ -5726,11 +5722,11 @@ do_control_inter:
     /* we must set the clexec flag to false to ensure we execute
      * as if we are not currently running a macro. This is for 2 reasons
      * 
-     * 1)  We are now waiting for user input. If this flag is set then the
+     * 1.  We are now waiting for user input. If this flag is set then the
      *     rest of the system thinks the opposite so things like screen
      *     updates wont happen.
      * 
-     * 2)  If a command like find-file is executed (not as a string) it would
+     * 2.  If a command like find-file is executed (not as a string) it would
      *     not get the argument of the user and fail if this flag was set.
      */
     oldClexec = clexec ;
@@ -5769,7 +5765,7 @@ do_control_inter:
     return ii ;
 }
 
-    
+
 void
 osdMainMenuUpdate(int force)
 {

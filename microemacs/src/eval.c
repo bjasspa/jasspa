@@ -1825,7 +1825,7 @@ gtarg(meUByte *tkn)
             }
         }
         return abortm ;
-    
+        
     case 'p':
         /* parent command name */
         if(meRegCurr->prev->commandName == NULL)
@@ -1863,7 +1863,7 @@ gtarg(meUByte *tkn)
         }
         break ;
 #endif
-    
+        
     case 'w':
         if(alarmState & meALARM_VARIABLE)
             return tkn ;
@@ -2116,7 +2116,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             return abortm ;
         }
     }
-
+    
 #if MEOPT_EXTENDED
     if((fnum == UFCBIND) || (fnum == UFNBIND))
     {
@@ -3175,23 +3175,23 @@ get_flag:
 #endif
 #ifdef _DOS
                         if((stats.stmtime & 0x0ffff) != 0x7fff)
-                        {
-                            meInt year, month, day, doy ;
-                            
-                            year = ((stats.stmtime >> 25) & 0x007f)+1980 ;
-                            month = ((stats.stmtime >> 21) & 0x000f) ;
-                            day = ((stats.stmtime >> 16) & 0x001f) ;
-                            doy = meGetDayOfYear(year,month,day) ;
-                            sprintf((char *)evalResult,"%4d%3d%2d%2d-%2d%2d%2d  -",
-                                    (int) year,(int) doy,(int) month,(int) day,
-                                    (int) ((stats.stmtime >> 11) & 0x001f),
-                                    (int) ((stats.stmtime >>  5) & 0x003f),
-                                    (int) ((stats.stmtime & 0x001f)  << 1)) ;
-                        }
-                        else
+                    {
+                        meInt year, month, day, doy ;
+                        
+                        year = ((stats.stmtime >> 25) & 0x007f)+1980 ;
+                        month = ((stats.stmtime >> 21) & 0x000f) ;
+                        day = ((stats.stmtime >> 16) & 0x001f) ;
+                        doy = meGetDayOfYear(year,month,day) ;
+                        sprintf((char *)evalResult,"%4d%3d%2d%2d-%2d%2d%2d  -",
+                                (int) year,(int) doy,(int) month,(int) day,
+                                (int) ((stats.stmtime >> 11) & 0x001f),
+                                (int) ((stats.stmtime >>  5) & 0x003f),
+                                (int) ((stats.stmtime & 0x001f)  << 1)) ;
+                    }
+                    else
 #endif
 #ifdef _WIN32
-                            SYSTEMTIME tmp;
+                        SYSTEMTIME tmp;
                     FILETIME ftmp;
                     meInt doy ;
                     
