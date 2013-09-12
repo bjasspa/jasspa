@@ -19,387 +19,385 @@ set-variable %tag-ignore   ":SCCS/:CVS/:.svn/:"
 
 set-variable #l0 0
 !while &exi &cat ".about.arg" #l0
-    set-variable #l2 &ind &cat ".about.arg" &pinc #l0 1
-    set-variable #l1 &lef #l2 2
-    set-variable #l2 &rig #l2 2
-    !if &seq #l1 "-o"
-        set-variable %tag-option #l2
-    !elif &seq #l1 "-t"
-        set-variable %tag-file #l2
-    !elif &seq #l1 "-m"
-        set-variable %tag-filemask #l2
-    !elif &seq #l1 "-i"
-        set-variable %tag-ignore #l2
-    !endif
+  set-variable #l2 &ind &cat ".about.arg" &pinc #l0 1
+  set-variable #l1 &lef #l2 2
+  set-variable #l2 &rig #l2 2
+  !if &seq #l1 "-o"
+    set-variable %tag-option #l2
+  !elif &seq #l1 "-t"
+    set-variable %tag-file #l2
+  !elif &seq #l1 "-m"
+    set-variable %tag-filemask #l2
+  !elif &seq #l1 "-i"
+    set-variable %tag-ignore #l2
+  !endif
 !done
 
 set-char-mask "1" ":_~"
 !if &exist .hilight.java
 !elif &exist .hilight.next
-    set-variable .hilight.java &pinc .hilight.next 1
+  set-variable .hilight.java &pinc .hilight.next 1
 !else
-    set-variable .hilight.java 1
+  set-variable .hilight.java 1
 !endif
 0 indent .hilight.java 12
 
 0 define-macro javatags-add-tag
-    forward-word
-    set-variable #l0 $window-col
-    backward-word
-    set-variable #l1 &mid @wl $window-col &sub #l0 $window-col
-    !if &set #l2 &sin ":" #l1
-        !if &sin "::" #l1
-            set-variable #l1 &rig #l1 &add #l2 1
-        !else
-            set-variable #l1 &lef #l1 &sub #l2 1
-        !endif
+  forward-word
+  set-variable #l0 $window-col
+  backward-word
+  set-variable #l1 &mid @wl $window-col &sub #l0 $window-col
+  !if &set #l2 &sin ":" #l1
+    !if &sin "::" #l1
+      set-variable #l1 &rig #l1 &add #l2 1
+    !else
+      set-variable #l1 &lef #l1 &sub #l2 1
     !endif
-    set-variable $window-col #l0
-    set-variable #l3 @wl
-    next-window
-    !tjump &sin "m" %tag-option 4
-    beginning-of-buffer
-    !force search-forward &spr "^%s\t" #l1
-    !if &not $status
-        end-of-buffer
-        insert-string #l1
-        insert-string "\t"
-        insert-string #p9
-        insert-string "\t/^"
-        insert-string #l3
-        insert-string "$/"
-    !endif
-    next-window
+  !endif
+  set-variable $window-col #l0
+  set-variable #l3 @wl
+  next-window
+  !tjump &sin "m" %tag-option 4
+  beginning-of-buffer
+  !force search-forward &spr "^%s\t" #l1
+  !if &not $status
+    end-of-buffer
+    insert-string #l1
+    insert-string "\t"
+    insert-string #p9
+    insert-string "\t/^"
+    insert-string #l3
+    insert-string "$/"
+  !endif
+  next-window
 !emacro
 
 0 define-macro javatags-move-to-next
-    set-variable #l0 &cat @1 "\\|//\\|/\\*"
-    set-variable #l9 #p9
-    !repeat
-        search-forward #l0
-        !if &seq @s0 "/*"
-            backward-char
-            goto-matching-fence
-            2 forward-char
-        !elif &seq @s0 "//"
-            end-of-line
-        !else
-            !return
-        !endif
-    !until 0
+  set-variable #l0 &cat @1 "\\|//\\|/\\*"
+  set-variable #l9 #p9
+  !repeat
+    search-forward #l0
+    !if &seq @s0 "/*"
+      backward-char
+      goto-matching-fence
+      2 forward-char
+    !elif &seq @s0 "//"
+      end-of-line
+    !else
+      !return
+    !endif
+  !until 0
 !emacro
 
 0 define-macro javatags-add-tag-list
-    set-variable #l0 @1
-    set-variable #l9 #p9
-    set-variable #l1 0
-    !repeat
-        !if &seq @wc #l0
-            forward-char
-            !return
-        !elif &seq @wc ""
-            !return
-        !elif &seq @wc "\n"
-            set-variable #l1 1
-        !elif &seq @wc "/"
-            set-variable #l1 0
-            !if &seq &mid @wl $window-col 2 "/*"
-                goto-matching-fence
-            !endif
-        !elif &and #l1 &seq @wc "#"
-            set-variable #l1 0
-            end-of-line
-        !elif &sin @wc "({"
-            ; something nasty is going on, lets get out
-            search-forward #l0
-            backward-char
-            !return
-        !elif &not &sin @wc " \t"
-            set-variable #l1 0
-            !if &seq @wc "="
-                search-forward &cat ",\\|" #l0
-                2 backward-char
-            !elif &xse @wc "\\w"
-                javatags-add-tag
-                backward-char
-            !endif
-        !endif
-        forward-char
-    !until 0
+  set-variable #l0 @1
+  set-variable #l9 #p9
+  set-variable #l1 0
+  !repeat
+    !if &seq @wc #l0
+      forward-char
+      !return
+    !elif &seq @wc ""
+      !return
+    !elif &seq @wc "\n"
+      set-variable #l1 1
+    !elif &seq @wc "/"
+      set-variable #l1 0
+      !if &seq &mid @wl $window-col 2 "/*"
+        goto-matching-fence
+      !endif
+    !elif &and #l1 &seq @wc "#"
+      set-variable #l1 0
+      end-of-line
+    !elif &sin @wc "({"
+      ; something nasty is going on, lets get out
+      search-forward #l0
+      backward-char
+      !return
+    !elif &not &sin @wc " \t"
+      set-variable #l1 0
+      !if &seq @wc "="
+        search-forward &cat ",\\|" #l0
+        2 backward-char
+      !elif &xse @wc "\\w"
+        javatags-add-tag
+        backward-char
+      !endif
+    !endif
+    forward-char
+  !until 0
 !emacro
 
 0 define-macro javatags-add-struct-tag-list
-    set-variable #l9 #p9
-    !repeat
-        javatags-move-to-next "[:,;)}[]"
-        !if &not $status
-            !return
-        !elif &seq @s0 "}"
-            !return
-        !else
-            backward-char
-            backward-word
-            javatags-add-tag
-            javatags-move-to-next "[,;(]"
-            !if &seq @s0 "("
-                backward-char
-                goto-matching-fence
-                !jump -4
-            !endif
-        !endif
-    !until 0
+  set-variable #l9 #p9
+  !repeat
+    javatags-move-to-next "[:,;)}[]"
+    !if &not $status
+      !return
+    !elif &seq @s0 "}"
+      !return
+    !else
+      backward-char
+      backward-word
+      javatags-add-tag
+      javatags-move-to-next "[,;(]"
+      !if &seq @s0 "("
+        backward-char
+        goto-matching-fence
+        !jump -4
+      !endif
+    !endif
+  !until 0
 !emacro
 
 0 define-macro javatags-add-file
-    ; ensure : is considered part of a word for java
-    set-variable $buffer-mask "luh1"
-    set-variable #l9 $buffer-fname
-    !if &seq &lef #l9 #g1 #g2
-        set-variable #l9 &rig #l9 #g1
-    !endif
-    ml-write &spr "[Parsing file %s]" #l9
-    ; the hooks may not be loaded, must setup the main indent & magic modes ourselves
-    1 buffer-mode "magic"
-    set-variable $buffer-indent .hilight.java
-    set-variable #l0 0
-    set-variable #l6 ""
-    beginning-of-buffer
-    !while 1
-        !force 0 javatags-move-to-next "['\"=,;({]\\|\\<enum\\s+\\(\\w+\\)?\\s*{\\|\\<typedef\\>\\|\\<struct\\s+\\w+\\s*[{;]\\|\\<class\\s+\\w+"
-        !if &not $status
-            !return
-        !elif &sin @s0 "'\""
-            backward-char
-            !force search-forward &cat "[^\\\\]\\(\\\\\\)*" @s0
-            !if &not $status
-                forward-char
-            !endif
-        !elif &sin @s0 ",;="
+  ; ensure : is considered part of a word for java
+  set-variable $buffer-mask "luh1"
+  set-variable #l9 $buffer-fname
+  !if &seq &lef #l9 #g1 #g2
+    set-variable #l9 &rig #l9 #g1
+  !endif
+  ml-write &spr "[Parsing file %s]" #l9
+  ; the hooks may not be loaded, must setup the main indent & magic modes ourselves
+  1 buffer-mode "magic"
+  set-variable $buffer-indent .hilight.java
+  set-variable #l0 0
+  set-variable #l6 ""
+  beginning-of-buffer
+  !while 1
+    !force 0 javatags-move-to-next "['\"=,;({]\\|\\<enum\\s+\\(\\w+\\)?\\s*{\\|\\<typedef\\>\\|\\<struct\\s+\\w+\\s*[{;]\\|\\<class\\s+\\w+"
+    !if &not $status
+      !return
+    !elif &sin @s0 "'\""
+      !force search-forward &spr "\\([^\\\\%s]\\|\\\\.\\)*%s" @s0 @s0
+      !if &not $status
+        forward-char
+      !endif
+    !elif &sin @s0 ",;="
 *add-variable
-            !if &sin "v" %tag-option
-                backward-char
-                search-backward "[]};\\w]"
-                !if &seq @s0 ";"
-                    forward-char
-                !elif &seq @s0 "]"
-                    goto-matching-fence
-                    !jump -3
-                !elif &not &seq @s0 "}"
-                    !if &not &seq &lef &trl @wl 6 "extern"
-                        javatags-add-tag
-                    !endif
-                !endif
-            !else
-                backward-char
-            !endif
-*var-assign-skip
-            javatags-move-to-next "[,;({'\"]"
-            !if &sin @s0 "{("
-                backward-char
-                goto-matching-fence
-                !goto var-assign-skip
-            !elif &sin @s0 "\"'"
-                backward-char
-                !force search-forward &cat "[^\\\\]\\(\\\\\\)*" @s0
-                !if &not $status
-                    forward-char
-                !endif
-                !goto var-assign-skip
-            !endif
-        !elif &seq @s0 "("
-            backward-char
-            set-alpha-mark "t"
-            goto-matching-fence
-            javatags-move-to-next "[;,({]\\|\\w"
-            !if &seq @s0 "("
-                !goto add-variable
-            !elif &seq @s0 ","
-                search-forward ";"
-            !elif &seq @s0 ";"
-            !elif &not &seq @s0 "{"
-                ; word char, this could be a K&R style function
-                ; quick sanity check by seeing if a '{' comes before a '('
-                ; this is not full proof but its better than nothing
-                set-alpha-mark "T"
-                !force javatags-move-to-next "[({]"
-                !if &not $status
-                !elif &seq @s0 "{"
-                    !jump 4
-                !endif
-                goto-alpha-mark "T"
-            !else
-                goto-alpha-mark "t"
-                backward-word
-                javatags-add-tag
-                javatags-move-to-next "{"
-*javatag-skip-brace
-                backward-char
-                set-variable #l1 $window-line
-                goto-matching-fence
-                set-variable #l2 $window-line
-                set-alpha-mark "t"
-                set-variable $window-line #l1
-                !if &less $window-line #l2
-                    !force &sub $window-line #l2 search-forward "^\\s*#\\s*define\\>"
-                    !if $status
-                        javatags-add-tag
-                        beginning-of-line
-                        forward-line
-                        !jump -6
-                    !endif
-                !endif
-                goto-alpha-mark "t"
-            !endif
-        !elif &seq @s0 "{"
-            !if &not &xse @wl "\\s*extern\\s*\"C\".*"
-                !goto javatag-skip-brace
-            !endif
-        !elif &seq &lef @s0 4 "enum"
-*javatag-enum
-            !if &not &seq @s1 ""
-                backward-word
-                javatags-add-tag
-                search-forward "{"
-            !endif
-            !if &sin "e" %tag-option
-                javatags-add-tag-list "}"
-            !else
-                search-forward "}"
-            !endif
-            javatags-add-tag-list ";"
-        !elif &seq @s0 "typedef"
-            search-forward "\\w+"
-            !if &seq @s0 "struct"
-                search-forward ";\\|{"
-                !if &seq @s0 "{"
-                    search-backward "\\<struct\\>"
-                    forward-word
-                    !goto javatag-struct
-                !endif
-                ; probably a "typedef struct old_type new_type ;" line
-                backward-word
-                javatags-add-tag
-                search-forward ";"
-            !elif &seq @s0 "enum"
-                search-forward "\\s+\\(\\w+\\)?\\s*{"
-                !goto javatag-enum
-            !else
-                search-forward ";"
-                search-backward "\\w\\|[])]"
-                !if &sin @s0 ")]"
-                    goto-matching-fence
-                    !tjump &seq @s0 "]" -3
-                    backward-word
-                !endif
-                javatags-add-tag
-                search-forward ";"
-            !endif
-        !elif &seq &lef @s0 6 "struct"
-            !if &sin ";" @s0
-                !cont
-            !endif
-            backward-word
-*javatag-struct
-            javatags-add-tag-list "{"
-            !if &sin "s" %tag-option
-                javatags-add-struct-tag-list
-            !else
-                backward-char
-                goto-matching-fence
-            !endif
-        !elif &seq &lef @s0 5 "class"
-            set-alpha-mark "t"
-            javatags-move-to-next "[;{]"
-            !if &seq @s0 "{"
-                goto-alpha-mark "t"
-                backward-word
-                javatags-add-tag
-                javatags-move-to-next "{"
-            !endif
-        !elif &seq &lef @s0 6 "extern"
-            search-forward ";"
+      !if &sin "v" %tag-option
+        backward-char
+        search-backward "[]};\\w]"
+        !if &seq @s0 ";"
+          forward-char
+        !elif &seq @s0 "]"
+          goto-matching-fence
+          !jump -3
+        !elif &not &seq @s0 "}"
+          !if &not &seq &lef &trl @wl 6 "extern"
+            javatags-add-tag
+          !endif
         !endif
-    !done
+      !else
+        backward-char
+      !endif
+*var-assign-skip
+      javatags-move-to-next "[,;({'\"]"
+      !if &sin @s0 "{("
+        backward-char
+        goto-matching-fence
+        !goto var-assign-skip
+      !elif &sin @s0 "\"'"
+        !force search-forward &spr "\\([^\\\\%s]\\|\\\\.\\)*%s" @s0 @s0
+        !if &not $status
+          forward-char
+        !endif
+        !goto var-assign-skip
+      !endif
+    !elif &seq @s0 "("
+      backward-char
+      set-alpha-mark "t"
+      goto-matching-fence
+      javatags-move-to-next "[;,({]\\|\\w"
+      !if &seq @s0 "("
+        !goto add-variable
+      !elif &seq @s0 ","
+        search-forward ";"
+      !elif &seq @s0 ";"
+      !elif &not &seq @s0 "{"
+        ; word char, this could be a K&R style function
+        ; quick sanity check by seeing if a '{' comes before a '('
+        ; this is not full proof but its better than nothing
+        set-alpha-mark "T"
+        !force javatags-move-to-next "[({]"
+        !if &not $status
+        !elif &seq @s0 "{"
+          !jump 4
+        !endif
+        goto-alpha-mark "T"
+      !else
+        goto-alpha-mark "t"
+        backward-word
+        javatags-add-tag
+        javatags-move-to-next "{"
+*javatag-skip-brace
+        backward-char
+        set-variable #l1 $window-line
+        goto-matching-fence
+        set-variable #l2 $window-line
+        set-alpha-mark "t"
+        set-variable $window-line #l1
+        !if &less $window-line #l2
+          !force &sub $window-line #l2 search-forward "^\\s*#\\s*define\\>"
+          !if $status
+            javatags-add-tag
+            beginning-of-line
+            forward-line
+            !jump -6
+          !endif
+        !endif
+        goto-alpha-mark "t"
+      !endif
+    !elif &seq @s0 "{"
+      !if &not &xse @wl "\\s*extern\\s*\"C\".*"
+        !goto javatag-skip-brace
+      !endif
+    !elif &seq &lef @s0 4 "enum"
+*javatag-enum
+      !if &not &seq @s1 ""
+        backward-word
+        javatags-add-tag
+        search-forward "{"
+      !endif
+      !if &sin "e" %tag-option
+        javatags-add-tag-list "}"
+      !else
+        search-forward "}"
+      !endif
+      javatags-add-tag-list ";"
+    !elif &seq @s0 "typedef"
+      search-forward "\\w+"
+      !if &seq @s0 "struct"
+        search-forward ";\\|{"
+        !if &seq @s0 "{"
+          search-backward "\\<struct\\>"
+          forward-word
+          !goto javatag-struct
+        !endif
+        ; probably a "typedef struct old_type new_type ;" line
+        backward-word
+        javatags-add-tag
+        search-forward ";"
+      !elif &seq @s0 "enum"
+        search-forward "\\s+\\(\\w+\\)?\\s*{"
+        !goto javatag-enum
+      !else
+        search-forward ";"
+        search-backward "\\w\\|[])]"
+        !if &sin @s0 ")]"
+          goto-matching-fence
+          !tjump &seq @s0 "]" -3
+          backward-word
+        !endif
+        javatags-add-tag
+        search-forward ";"
+      !endif
+    !elif &seq &lef @s0 6 "struct"
+      !if &sin ";" @s0
+        !cont
+      !endif
+      backward-word
+*javatag-struct
+      javatags-add-tag-list "{"
+      !if &sin "s" %tag-option
+        javatags-add-struct-tag-list
+      !else
+        backward-char
+        goto-matching-fence
+      !endif
+    !elif &seq &lef @s0 5 "class"
+      set-alpha-mark "t"
+      javatags-move-to-next "[;{]"
+      !if &seq @s0 "{"
+        goto-alpha-mark "t"
+        backward-word
+        javatags-add-tag
+        javatags-move-to-next "{"
+      !endif
+    !elif &seq &lef @s0 6 "extern"
+      search-forward ";"
+    !endif
+  !done
 !emacro
 
 0 define-macro javatags-parse-tags
-    ml-write "All done! Parsing tags file."
-    beginning-of-buffer
-    set-mark
-    replace-string "\\\\" "\\\\\\\\"
-    end-of-buffer
-    sort-lines
+  ml-write "All done! Parsing tags file."
+  beginning-of-buffer
+  set-mark
+  replace-string "\\\\" "\\\\\\\\"
+  end-of-buffer
+  sort-lines
 !emacro
 
 define-macro javatags-process-buffers
-    !repeat
-        set-variable #l0 $buffer-bname
-        !if &xse #l0 "^.*<[0-9]*>$"
-            set-variable #l1 &lef #l0 &sub &rsin "<" #l0 1
-        !else
-            set-variable #l1 #l0
-        !endif
-        !if &iseq #l1 %tag-bname
-            !return
-        !elif &lfind %tag-ignore #l1
-        !elif &band $buffer-fmod 0x10000
-            set-variable #l2 $buffer-fname
-            set-variable #l3 0
-            !while &not &seq &set #l4 &lget %tag-filemask &inc #l3 1 ""
-                !force find-file &cat #l2 #l4 
-            !done
-        !else
-            beginning-of-buffer
-            !force javatags-add-file
-            !if &not $status
-                ml-write &spr "[Warning: javatags-add-file failed on \"%s\"]" $buffer-fname
-                !bell
-                ;set-variable #l9 @cq
-            !endif
-        !endif
-        0 delete-buffer #l0
-    !until 0
+  !repeat
+    set-variable #l0 $buffer-bname
+    !if &xse #l0 "^.*<[0-9]*>$"
+      set-variable #l1 &lef #l0 &sub &rsin "<" #l0 1
+    !else
+      set-variable #l1 #l0
+    !endif
+    !if &iseq #l1 %tag-bname
+      !return
+    !elif &lfind %tag-ignore #l1
+    !elif &band $buffer-fmod 0x10000
+      set-variable #l2 $buffer-fname
+      set-variable #l3 0
+      !while &not &seq &set #l4 &lget %tag-filemask &inc #l3 1 ""
+        !force find-file &cat #l2 #l4 
+      !done
+    !else
+      beginning-of-buffer
+      !force javatags-add-file
+      !if &not $status
+        ml-write &spr "[Warning: javatags-add-file failed on \"%s\"]" $buffer-fname
+        !bell
+        ;set-variable #l9 @cq
+      !endif
+    !endif
+    0 delete-buffer #l0
+  !until 0
 !emacro
 
 define-macro javatags
-    !if &seq &lget %tag-filemask 1 ""
-        ml-write "[No input file mask set!]"
-        !abort
-    !endif
-    delete-other-windows
-    split-window-vertically
-    find-buffer "*scratch*"
-    set-variable #l0 &stat "a" "."
-    find-file %tag-file
-    set-variable %tag-bname $buffer-bname 
-    -1 buffer-mode "view"
-    !force 0 delete-buffer "*scratch*"
-    set-variable #g1 &rsin "/" $buffer-fname
-    set-variable #g2 &lef $buffer-fname #g1
-    !if &not &sin "a" %tag-option
-        beginning-of-buffer
-        set-mark
-        end-of-buffer
-        -1 kill-region
-    !else
-        end-of-buffer
-    !endif
-    !if &sin "r" %tag-option
-        set-variable %tag-filemask &lins %tag-filemask -1 "[^.]*/"
-    !endif
-    1 buffer-mode "magic"
-    1 buffer-mode "exact"
-    next-window
-    !if &iseq $buffer-bname %tag-bname
-        !force find-file #l0
-    !endif
-    javatags-process-buffers
-    javatags-parse-tags
+  !if &seq &lget %tag-filemask 1 ""
+    ml-write "[No input file mask set!]"
+    !abort
+  !endif
+  delete-other-windows
+  split-window-vertically
+  find-buffer "*scratch*"
+  set-variable #l0 &stat "a" "."
+  find-file %tag-file
+  set-variable %tag-bname $buffer-bname 
+  -1 buffer-mode "view"
+  !force 0 delete-buffer "*scratch*"
+  set-variable #g1 &rsin "/" $buffer-fname
+  set-variable #g2 &lef $buffer-fname #g1
+  !if &not &sin "a" %tag-option
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+  !else
+    end-of-buffer
+  !endif
+  !if &sin "r" %tag-option
+    set-variable %tag-filemask &lins %tag-filemask -1 "[^.]*/"
+  !endif
+  1 buffer-mode "magic"
+  1 buffer-mode "exact"
+  next-window
+  !if &iseq $buffer-bname %tag-bname
+    !force find-file #l0
+  !endif
+  javatags-process-buffers
+  javatags-parse-tags
 !emacro
-  
+
 0 define-macro start-up
-    javatags
-    quick-exit
+  javatags
+  quick-exit
 !emacro
 
 ; load in user extensions if found
