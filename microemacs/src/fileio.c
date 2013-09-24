@@ -191,7 +191,12 @@ meUByte charMaskFlags[]="luhs1234dpPwaAMLUk" ;
 
 meUByte *charKeyboardMap=NULL ;
 
-#define meFIOBUFSIZ 2048              /* File read/write buffer size  */
+/* File read/write buffer size  */
+#if MEOPT_SMALLIOBUFF
+#define meFIOBUFSIZ 2048
+#else
+#define meFIOBUFSIZ 32768
+#endif
 
 static meInt     ffremain ;
 static meInt     ffread ;
@@ -1008,7 +1013,7 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
 static int
 ffHttpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByte *file, meUInt rwflag)
 {
-    meUByte buff[meBUF_SIZE_MAX+200], *thost, *tport, *ss, cc ;
+    meUByte buff[meBUF_SIZE_MAX+meBUF_SIZE_MAX], *thost, *tport, *ss, *s1, cc ;
 
     if ((ss = getUsrVar((meUByte *)"http-proxy-addr")) != errorm)
     {
@@ -1058,6 +1063,13 @@ ffHttpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUBy
         meStrcat(ss,"\r\nAuthorization: Basic ") ;
         ss += 23 ;
         ss = strBase64Encode(ss,user) ;
+    }
+    if((s1 = getUsrVar((meUByte *)"http-cookies")) != errorm)
+    {
+        meStrcpy(ss,"\r\nCookie: ") ;
+        ss += 10 ;
+        meStrcpy(ss,s1) ;
+        ss += meStrlen(ss) ;
     }
     meStrcpy(ss,"\r\n\r\n") ;
     if(ffurlBp != NULL)
