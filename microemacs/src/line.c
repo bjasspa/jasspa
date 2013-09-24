@@ -71,6 +71,17 @@ meLineShrink(meLine *lp, int newlen)
             assert (nlp != NULL) ;
             nlp->next->prev = nlp ;
             nlp->prev->next = nlp ;
+            if(nlp->flag & meLINE_ANCHOR)
+            {
+                /* update anchors */
+                meAnchor *ap = frameCur->bufferCur->anchorList;
+                while(ap != NULL)
+                {
+                    if(ap->line == lp)
+                        ap->line = nlp ;
+                    ap = ap->next;
+                }
+            }
             meFrameLoopBegin() ;
             wp = loopFrame->windowList;                    /* Update windows       */
             while (wp != NULL)
