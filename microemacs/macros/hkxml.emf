@@ -106,7 +106,8 @@ set-variable .fhook-xml.exact -1
     indent .hilight.xml b "<\\?" "\\?>"
     indent .hilight.xml n "<[^/!]" t 
     indent .hilight.xml o "</"    -t 
-    indent .hilight.xml o "/>"    -t 
+    indent .hilight.xml n "/>"    -t 
+    indent .hilight.xml o "^\\s*/>"    -t 
 !endif
 
 0 define-macro chook-xml
