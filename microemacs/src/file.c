@@ -2765,12 +2765,12 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
     /* search for
      * 1) set to root,  xxxx/http:// -> http://  (for urls)
      * 2) set to root,  xxxx/ftp://  -> ftp://   (for urls)
-* 2) set to root,  xxxx/file:yy -> yy       (for urls)
-* 3) set to root,  xxxx///yyyyy -> //yyyyy  (for network drives)
-* 4) set to root,  xxxx//yyyyy  -> /yyyyy
-* 5) set to Drive, xxxx/z:yyyyy -> z:yyyyy
-* 6) set to home,  xxxx/~yyyyy  -> ~yyyyy
-*/
+     * 2) set to root,  xxxx/file:yy -> yy       (for urls)
+     * 3) set to root,  xxxx///yyyyy -> //yyyyy  (for network drives)
+     * 4) set to root,  xxxx//yyyyy  -> /yyyyy
+     * 5) set to Drive, xxxx/z:yyyyy -> z:yyyyy
+     * 6) set to home,  xxxx/~yyyyy  -> ~yyyyy
+     */
     for(;;)
     {
         if(isHttpLink(p1))

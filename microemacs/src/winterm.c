@@ -4934,10 +4934,10 @@ TTahead (void)
          * 1) The user is running a big command (execute macro 3 billion times) and
          *    has carried on typing 128+ chars (without pressing the abort key)
          * 2) Pasting in a dos window using the window paste results in lots of keys
-*    all at once, the clipboard must contain 128+ chars.
-* (1) is unlikely compared to the (2) so rather than lose the extra chars,
-* keep them there until there enough room in the input key buffer to store
-* them. */
+         *    all at once, the clipboard must contain 128+ chars.
+         * (1) is unlikely compared to the (2) so rather than lose the extra chars,
+         * keep them there until there enough room in the input key buffer to store
+         * them. */
         while(TTnoKeys != KEYBUFSIZ)
         {
             if((hInput != INVALID_HANDLE_VALUE) &&

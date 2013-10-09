@@ -57,9 +57,9 @@
 #ifndef __ETERM_H
 #define __ETERM_H
 
-/**************************************************************************
-* Common variables, constants and defines                                 *
-**************************************************************************/
+/*************************************************************************
+ * Common variables, constants and defines                               *
+ *************************************************************************/
 
 /* Standard key input definitions, found in termio.c */
 typedef struct meTRANSKEY {
@@ -182,8 +182,8 @@ extern	char *tgoto(char *, int, int ) ;
 #define TTNbell()      (putchar(meCHAR_BELL),fflush(stdout))
 #define TTdieTest()    if(alarmState & meALARM_DIE) meDie()
 #define TTbreakTest(x) ((--TTbreakCnt == 0) &&                         \
-                       (((alarmState & meALARM_DIE) && meDie()) ||     \
-                        (TTbreakCnt=TTBREAKCNT,TTahead(),TTbreakFlag)))
+                        (((alarmState & meALARM_DIE) && meDie()) ||    \
+                         (TTbreakCnt=TTBREAKCNT,TTahead(),TTbreakFlag)))
 #if MEOPT_MOUSE
 extern void TTinitMouse(void);
 #endif
@@ -259,8 +259,8 @@ typedef struct
 #define meXMAP_FONT      -1             /* Unmapped and requires font change */
 #define meXMAP_UNMAP      0             /* Unmapped, no font change required */
 #define meXMAP_MAP        1             /* Window is mapped */
-#define meFrameSetXMapState(ff,v)   (((meFrameData *) ff->termData)->xmap = (v))
-#define meFrameGetXMapState(ff)     (((meFrameData *) ff->termData)->xmap)
+#define meFrameSetXMapState(ff,v) (((meFrameData *) ff->termData)->xmap = (v))
+#define meFrameGetXMapState(ff)   (((meFrameData *) ff->termData)->xmap)
 
 typedef struct
 {
@@ -374,21 +374,21 @@ extern void TTsendClientServer(meUByte *) ;
 #ifdef _WIN32
 
 #define meHWndNull NULL
-#define	_MULTI_TIMER 1		     /* Multiple timers can be set at once */
+#define	_MULTI_TIMER 1		        /* Multiple timers can be set at once */
 #ifdef _ME_CONSOLE
 /* strange but true, when running as a console app, you can't assign ids
  * so effectively when a timer pops you have to work out which one has
  * if any. Bummer is you can kill them either! Thank you Bill */
-#define	_MULTI_NOID_TIMER 1	     /* Multi timer but no ids */
+#define	_MULTI_NOID_TIMER 1             /* Multi timer but no ids */
 #endif
-#define	TIMER_MIN    1		     /* The minimum timer allowed */
+#define	TIMER_MIN    1                  /* The minimum timer allowed */
 /* executable extension list, in reverse order of dos priority - Must have the end NULL
  * included 4dos's btm files for completeness */
 #define noExecExtensions 4
 extern meUByte *execExtensions[noExecExtensions] ;
 
 extern meUInt *colTable ;
-extern HWND baseHwnd ;               /* This is the base hidden window handle */
+extern HWND baseHwnd ;                  /* This is the base hidden window handle */
 
 extern int TTstart(void) ;
 extern int TTopen(void) ;
@@ -430,7 +430,7 @@ extern int TTend(void) ;
 
 #ifdef _ME_WINDOW
 
-extern RECT ttRect ;                 /* Area of screen to update */
+extern RECT ttRect ;                    /* Area of screen to update */
 extern int fdepth, fwidth ;
 extern int ascent ;
 
@@ -530,8 +530,8 @@ extern int  WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte 
 
 #ifdef _DOS
 
-#define	_CONST_TIMER 1		     /* Constantly checked timer */
-#define	TIMER_MIN    0		     /* The minimum timer allowed */
+#define	_CONST_TIMER 1		        /* Constantly checked timer */
+#define	TIMER_MIN    0		        /* The minimum timer allowed */
 /* executable extension list, in reverse order of dos priority - Must have the end NULL
  * included 4dos's btm files for completeness */
 #define noExecExtensions 4
@@ -585,20 +585,20 @@ void TTinitMouse(void) ;
 
 enum
 {
-    AUTOS_TIMER_ID=0,          /* Auto save timer handle         */
-    SLEEP_TIMER_ID,            /* Sleep timer                    */
-    CURSOR_TIMER_ID,           /* Cursor blink timer handle      */
+    AUTOS_TIMER_ID=0,                   /* Auto save timer handle         */
+    SLEEP_TIMER_ID,                     /* Sleep timer                    */
+    CURSOR_TIMER_ID,                    /* Cursor blink timer handle      */
 #if MEOPT_CALLBACK
-    CALLB_TIMER_ID,            /* Macro callback timer           */
-    IDLE_TIMER_ID,             /* Idle timer handle              */
+    CALLB_TIMER_ID,                     /* Macro callback timer           */
+    IDLE_TIMER_ID,                      /* Idle timer handle              */
 #endif
 #if MEOPT_MOUSE
-    MOUSE_TIMER_ID,            /* Mouse timer handle             */
+    MOUSE_TIMER_ID,                     /* Mouse timer handle             */
 #endif
 #if MEOPT_SOCKET
-    SOCKET_TIMER_ID,           /* socket connection time-out     */
+    SOCKET_TIMER_ID,                    /* socket connection time-out     */
 #endif
-    NUM_TIMERS                 /* Number of timers               */
+    NUM_TIMERS                          /* Number of timers               */
 } ;
 
 #define TIMER_SET      0x01             /* Timer is active                */
@@ -625,9 +625,9 @@ typedef struct TIMERBLOCK
 
 #define timerClearExpired(id) (meTimerState[(id)] = meTimerState[(id)] & ~TIMER_EXPIRED)
 
-extern meUByte     meTimerState[] ;/* State of the timers, set or expired */
-extern meInt       meTimerTime[] ; /* Absolute time of the timers */
-extern TIMERBLOCK *timers ;        /* Head of timer list             */
+extern meUByte     meTimerState[] ;     /* State of the timers, set or expired */
+extern meInt       meTimerTime[] ;      /* Absolute time of the timers */
+extern TIMERBLOCK *timers ;             /* Head of timer list             */
 
 /*
  * timerSet
@@ -639,7 +639,7 @@ extern TIMERBLOCK *timers ;        /* Head of timer list             */
  *          if (tim == 0) Absolute time is unknown but value
  *              is needed in meTimerTime.
  *          if (tim < 0)  Absolute time is unknown and value
-                is not needed.
+ *              is not needed.
  * offset - offset from the current time to alarm.
  */
 extern void timerSet (int id, meInt tim, meInt offset) ;
@@ -657,6 +657,6 @@ extern void timerCheck(meInt tim) ;
 #endif
 
 /* flag used when idle-drop needs to be called */
-#define IDLE_STATE_DROP         0x04  /* Idle timer is running */
+#define IDLE_STATE_DROP         0x04    /* Idle timer is running */
 
 #endif /* __ETERM_H */

@@ -323,7 +323,7 @@ typedef struct meLine
 #define WMVBAR  0x100                   /* PUBLIC:  Window has a vertical bar    */
 #define WMHORIZ 0x200                   /* PRIVATE: This is a horizontal bar     */
 #define WMWIDE  0x400                   /* PRIVATE: Wide scroll-bar (internal)   */
-  
+
 /* The user interface mask for the scroll mode */
 #define WMUSER  (WMVWIDE|WMUP|WMDOWN|WMBOTTM|WMSCROL|WMRVBOX|WMHWIDE|WMSPLIT|WMVBAR)
 /*
@@ -447,7 +447,7 @@ typedef struct  meWindow {
 #endif
 #if MEOPT_SCROLL
     meUShort           vertScrollBarPos[WCVSBML-WCVSBSPLIT+1];
-                                                /* Vert Scroll bar positions*/
+                                                /* Vert Scroll bar positions    */
     meUShort           vertScrollBarMode;       /* Operating mode of window     */
 #endif
 } meWindow ;
@@ -461,7 +461,7 @@ typedef struct  meWindow {
 /* Define a file pointer type. */
 typedef struct meIo {
     meUInt type;                        /* Currently operation in progress */
-
+    
 #ifdef _WIN32
     HANDLE    rp;                       /* File read pointer, all func. */
     HANDLE    wp;                       /* File write pointer, all func.*/

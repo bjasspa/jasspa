@@ -420,10 +420,10 @@ extern int        osdRow ;              /* The osd current row */
 extern struct s_DragAndDrop *dadHead;   /* Drag and drop list */
 #endif
 
-/**************************************************************************
-* Constant declarations for the external definitions above. These are     *
-* only processed in main.c                                                *
-**************************************************************************/
+/*************************************************************************
+ * Constant declarations for the external definitions above. These are   *
+ * only processed in main.c                                              *
+ *************************************************************************/
 #ifdef  maindef
 
 /* for MAIN.C */
@@ -537,7 +537,7 @@ int       gsbarmode = (WMUP |           /* Has upper end cap            */
                        | WMSPLIT        /* Has a splitter               */
                        | WMVBAR         /* Window has a vertical bar    */
 #endif
-                      );                /* global scroll bar mode       */
+                       );               /* global scroll bar mode       */
 meUByte   boxChars[BCLEN+1] =           /* Set of box characters        */
 "|+++++++++-";
 meUByte   windowChars[WCLEN+1] =        /* Set of window characters     */
@@ -623,9 +623,9 @@ meUInt    meSystemCfg=                  /* ME system config variable    */
 #ifdef _WIN32
 (meSYSTEM_RGBCOLOR|meSYSTEM_FONTS|meSYSTEM_OSDCURSOR|meSYSTEM_MSSYSTEM|meSYSTEM_DRIVES|meSYSTEM_DOSFNAMES|meSYSTEM_TABINDANY|meSYSTEM_ALTMENU|meSYSTEM_ALTPRFX1|meSYSTEM_CTCHASPC
 #if MEOPT_IPIPES
-|meSYSTEM_IPIPES
+ |meSYSTEM_IPIPES
 #endif
-) ;
+ ) ;
 #endif
 #ifdef _UNIX
 (meSYSTEM_RGBCOLOR|meSYSTEM_FONTS|meSYSTEM_OSDCURSOR|meSYSTEM_UNIXSYSTEM|meSYSTEM_IPIPES|meSYSTEM_TABINDANY|meSYSTEM_ALTMENU|meSYSTEM_ALTPRFX1) ;
@@ -634,9 +634,9 @@ meUInt    meSystemCfg=                  /* ME system config variable    */
 meUInt    meSYSTEM_MASK=                /* ME system mask - dependant on win32 flavour */
 (meSYSTEM_FONTS|meSYSTEM_OSDCURSOR|meSYSTEM_TABINDANY|meSYSTEM_ALTMENU|meSYSTEM_ALTPRFX1|meSYSTEM_KEEPUNDO|meSYSTEM_FONTFIX|meSYSTEM_CTCHASPC|meSYSTEM_SHOWWHITE|meSYSTEM_HIDEBCKUP|meSYSTEM_TABINDFST|meSYSTEM_NOEMPTYANK|meSYSTEM_NOCLIPBRD
 #if !defined (_WIN32s)
-|meSYSTEM_CLNTSRVR
+ |meSYSTEM_CLNTSRVR
 #endif
-) ;
+ ) ;
 #endif
 
 #if MEOPT_MOUSE
@@ -695,17 +695,17 @@ int       osdRow=0 ;                    /* The osd current row */
 meLine     *lpStore = NULL;             /* line off which to store macro*/
 meBuffer   *lpStoreBp = NULL;           /* help is stored in a buffer   */
 meUShort  prefixc[ME_PREFIX_NUM+1]=
-{ ME_INVALID_KEY,                       /* unused 0th value             */
-  ME_SPECIAL|SKEY_esc,                  /* prefix1 = Escape             */
-  'X'-'@',                              /* prefix2 = ^X                 */
-  'H'-'@',                              /* prefix3 = ^H                 */
-  ME_INVALID_KEY, ME_INVALID_KEY,       /* rest unused                  */
-  ME_INVALID_KEY, ME_INVALID_KEY,
-  ME_INVALID_KEY, ME_INVALID_KEY,
-  ME_INVALID_KEY, ME_INVALID_KEY,
-  ME_INVALID_KEY, ME_INVALID_KEY,
-  ME_INVALID_KEY, ME_INVALID_KEY,
-  ME_INVALID_KEY
+{   ME_INVALID_KEY,                     /* unused 0th value             */
+    ME_SPECIAL|SKEY_esc,                /* prefix1 = Escape             */
+    'X'-'@',                            /* prefix2 = ^X                 */
+    'H'-'@',                            /* prefix3 = ^H                 */
+    ME_INVALID_KEY, ME_INVALID_KEY,     /* rest unused                  */
+    ME_INVALID_KEY, ME_INVALID_KEY,
+    ME_INVALID_KEY, ME_INVALID_KEY,
+    ME_INVALID_KEY, ME_INVALID_KEY,
+    ME_INVALID_KEY, ME_INVALID_KEY,
+    ME_INVALID_KEY, ME_INVALID_KEY,
+    ME_INVALID_KEY
 } ;
 meUShort  reptc    = 'U'-'@';           /* current universal repeat char*/
 meUShort  breakc   = 'G'-'@';           /* current abort-command char*/

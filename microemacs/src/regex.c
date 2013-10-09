@@ -155,8 +155,7 @@ meRegexFree(meRegex *regex) ;
 #define toUpper(c)       (isLower(c) ? toupper(c):(c))
 #define toggleCase(c)    (isUpper(c) ? tolower(c):(isLower(c) ? toupper(c):(c)))
 #define hexToNum(c)      ((c <= '9') ? (c^0x30)   : \
-                          (c >= 'a') ? (c-'a'+10) : \
-                                       (c-'A'+10))
+                          (c >= 'a') ? (c-'a'+10) : (c-'A'+10))
 #define MEOPT_MAGIC 1
 
 #else
@@ -482,7 +481,7 @@ add_more:
                 meRegexItem **itp, **iap ;
                 int *iip ;
                 if((itp=(meRegexItem **)malloc((matchSz+128+4)*(sizeof(meRegexItem *)+sizeof(meRegexItem *)+
-                                                sizeof(int)+sizeof(int)))) == NULL)
+                                                                sizeof(int)+sizeof(int)))) == NULL)
                     return -1 ;
                 matchSz += 128 ;
                 memcpy(itp,matchItem,matchLen*sizeof(meRegexItem *)) ;

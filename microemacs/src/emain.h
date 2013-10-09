@@ -66,9 +66,9 @@
  */
 #define DIR_CHAR  '/'   /* directory divide char, ie /bin/ */
 
-/**************************************************************************
-* UNIX : IRIX                                                             *
-**************************************************************************/
+/*************************************************************************
+ * UNIX : IRIX                                                           *
+ *************************************************************************/
 #if (defined _IRIX5) || (defined _IRIX6)
 #define meSYSTEM_NAME  "irix"           /* Identity name of the system   */
 #define _IRIX          1                /* This is an irix box           */
@@ -87,9 +87,9 @@
 #define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
 #endif
 
-/**************************************************************************
-* UNIX : HPUX                                                             *
-**************************************************************************/
+/*************************************************************************
+ * UNIX : HPUX                                                           *
+ *************************************************************************/
 #if (defined _HPUX9) || (defined _HPUX10) || (defined _HPUX11)
 #define meSYSTEM_NAME "hpux"            /* Identity name of the system   */
 #define _HPUX          1                /* This is a hpux box            */
@@ -111,9 +111,9 @@
 #define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
 #endif
 
-/**************************************************************************
-* UNIX : UNIXWARE                                                         *
-**************************************************************************/
+/*************************************************************************
+ * UNIX : UNIXWARE                                                       *
+ *************************************************************************/
 #ifdef _UNIXWR1 
 #define meSYSTEM_NAME  "unixwr1"        /* Identity name of the system   */
 #define _UNIX          1                /* This is a UNIX system         */
@@ -131,9 +131,9 @@
 #define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
 #endif
 
-/**************************************************************************
-* UNIX : SunOS Sparc + Intel                                              *
-**************************************************************************/
+/*************************************************************************
+ * UNIX : SunOS Sparc + Intel                                            *
+ *************************************************************************/
 /* _SUNOS5 == Sparc Solaris; _SUNOS_X86 == i86 Solaris */
 #if (defined _SUNOS5) || (defined _SUNOS_X86)
 #define meSYSTEM_NAME  "sunos"          /* Identity name of the system   */
@@ -161,9 +161,9 @@
 #endif
 #endif
 
-/**************************************************************************
-* UNIX : FreeBSD based OSs                                                *
-**************************************************************************/
+/*************************************************************************
+ * UNIX : FreeBSD based OSs                                              *
+ *************************************************************************/
 #ifdef _DARWIN
 #define meSYSTEM_NAME  "darwin"         /* Identity name of the system   */
 #define _FREEBSD_BASE  1                /* Uses FreeBSD as base          */
@@ -201,9 +201,9 @@
 #define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa:/usr/local/share/jasspa"
 #endif
 
-/**************************************************************************
-* UNIX : AIX                                                              *
-**************************************************************************/
+/*************************************************************************
+ * UNIX : AIX                                                            *
+ *************************************************************************/
 #ifdef _AIX
 #define meSYSTEM_NAME  "aix"            /* Identity name of the system   */
 #define _UNIX          1                /* This is a UNIX system         */
@@ -224,9 +224,9 @@
 #define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
 #endif
 
-/**************************************************************************
-* UNIX : Linux based OSs                                                  *
-**************************************************************************/
+/*************************************************************************
+ * UNIX : Linux based OSs                                                *
+ *************************************************************************/
 #ifdef _LINUX
 #define meSYSTEM_NAME  "linux"          /* Identity name of the system   */
 #define _LINUX_BASE    1                /* Uses Linux as base            */
@@ -254,9 +254,9 @@
 #define _DEFAULT_SEARCH_PATH "/usr/share/jasspa:/usr/local/jasspa"
 #endif
 
-/**************************************************************************
-* UNIX : Cyqwin on Windows                                                *
-**************************************************************************/
+/*************************************************************************
+ * UNIX : Cyqwin on Windows                                              *
+ *************************************************************************/
 #ifdef _CYGWIN
 #define meSYSTEM_NAME  "cygwin"         /* Identity name of the system   */
 #define _UNIX          1                /* This is a UNIX system         */
@@ -279,11 +279,11 @@
 #define sys_errlist _sys_errlist        /* sys_errlist specially defined */
 #endif /* _CYGWIN */
 
-/**************************************************************************
-* UNIX : OpenStep NexT                                                    *
-*                                                                         *
-* Tested on Openstep 4.2 / NeXT Motorola 040                              *
-**************************************************************************/
+/*************************************************************************
+ * UNIX : OpenStep NexT                                                  *
+ *                                                                       *
+ * Tested on Openstep 4.2 / NeXT Motorola 040                            *
+ *************************************************************************/
 #ifdef _NEXT
 #define meSYSTEM_NAME  "openstep"       /* Identity name of the system   */
 #define _UNIX          1                /* This is a UNIX system         */
@@ -302,9 +302,9 @@
 #define _DEFAULT_SEARCH_PATH "/usr/local/jasspa"
 #endif /* _NEXT */
 
-/**************************************************************************
-* Microsoft : DOS                                                         *
-**************************************************************************/
+/*************************************************************************
+ * Microsoft : DOS                                                       *
+ *************************************************************************/
 #ifdef _DOS
 #define meSYSTEM_NAME  "dos"            /* Identity name of the system   */
 #define _CTRLZ         1                /* ^Z at end of files (MSDOS)    */
@@ -315,17 +315,17 @@
 #define _CONVDIR_CHAR '\\'              /* Filename convert '\\' => '/'  */
 #endif /* _DOS */
 
-/**************************************************************************
-* MinGW : GNU GCC on Windows                                              *
-**************************************************************************/
+/*************************************************************************
+ * MinGW : GNU GCC on Windows                                            *
+ *************************************************************************/
 #ifdef _MINGW
 #define _WIN32         1                /* Use win32                     */
 #define _METFS         1                /* Use the tack-on file system   */
 #endif
 
-/**************************************************************************
-* Microsoft : 32s/'95/'98/NT                                              *
-**************************************************************************/
+/*************************************************************************
+ * Microsoft : 32s/'95/'98/NT                                            *
+ *************************************************************************/
 #ifdef _WIN32s
 #define _WIN32         1                /* Use win32                     */
 #endif
@@ -545,18 +545,18 @@
 #include <crtdbg.h>
 #endif
 
-/**************************************************************************
-* USG[UNIX] : Include definitions. Assumed (near) POSIX compliance        *
-**************************************************************************/
+/*************************************************************************
+ * USG[UNIX] : Include definitions. Assumed (near) POSIX compliance      *
+ *************************************************************************/
 #if (defined _USG)
 #include <signal.h>                     /* Required for signal(2)        */
 #include <sys/stat.h>                   /* Required for stat(2) types    */
 #include <unistd.h>
 #endif
 
-/**************************************************************************
-* BSD[UNIX] : Include definitions (Support for BSD 4.2/3 only)            *
-**************************************************************************/
+/*************************************************************************
+ * BSD[UNIX] : Include definitions (Support for BSD 4.2/3 only)          *
+ *************************************************************************/
 #if (defined _BSD_43) || (defined _BSD42)
 /* Additional definitions for BSD4.2 and BSD4.3 */
 #define _BSD                1           /* This is version of BSD        */

@@ -122,7 +122,7 @@ int
 meRegexComp(meRegex *regex, unsigned char *regStr, int flags) ;
 int
 meRegexMatch(meRegex *regex, unsigned char *string, int len, 
-			 int offsetS, int offsetE, int flags) ;
+             int offsetS, int offsetE, int flags) ;
 
 extern char    *meRegexCompErrors[] ;
 extern meRegex  mereRegex ;         /* meRegex used by main search */

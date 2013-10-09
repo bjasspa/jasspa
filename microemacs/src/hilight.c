@@ -207,7 +207,7 @@ addTokenNode(meHilight *root, meUByte *token, int flags)
     /* Have we run out of room, is so try to optimize */
     if(!(flags & ADDTOKEN_OPTIM) && (hilListSize(root) == 0xfe))
         hilNodeOptimize(root,flags) ;
-
+    
     if((*token == meCHAR_LEADER) && (*++token != meCHAR_TRAIL_LEADER))
     {
         /* special test */
@@ -1107,7 +1107,7 @@ do {                                                                         \
     case meHIL_TEST_CLASS:                                                   \
         {                                                                    \
 	    meUByte rc, nrc ;                                                \
-                                                                             \
+            \
 	    __ts = testStr ;                                                 \
 	    for(ret=*testStr++ ; ret>0 ; ret--)                              \
             {                                                                \
@@ -1417,7 +1417,7 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
                        (findTokenSingleCharTest(lastChar,nn->tknSttTst) ||
                         ((mode & meHIL_MODETOKEWS) && (mode & meHIL_MODETOKEND) &&
                          findTokenSingleCharTest(' ',nn->tknSttTst))) &&
-                        findTokenSingleCharTest(*s1,nn->tknEndTst))
+                       findTokenSingleCharTest(*s1,nn->tknEndTst))
                     {
                         *len = s1-text ;
                         return nn ;
@@ -2041,7 +2041,7 @@ hiline_exit:
     while((__cc = *__ss++) != '\0')                                          \
     {                                                                        \
         hilOffsetChar(off,dstPos,dstJmp,__cc,tw)                             \
-        lastcc = __cc ;                                                      \
+              lastcc = __cc ;                                                      \
     }                                                                        \
 }
 
@@ -2053,7 +2053,7 @@ hiline_exit:
     {                                                                        \
         lastcc = *__ss++ ;                                                   \
         hilOffsetChar(off,dstPos,dstJmp,lastcc,tw)                           \
-    }                                                                        \
+          }                                                                        \
 }
 
 static int
@@ -2069,7 +2069,7 @@ hilOffsetReplaceString(register meUByte **offPtr, register int dstPos,
             cc = varTable[cc] ;
         lastcc = cc ;
         hilOffsetChar(off,dstPos,dd,cc,tw)
-    }
+          }
     
     rlen = dstPos-rlen ;
     if(len)
@@ -2253,8 +2253,8 @@ column_token:
                         len -= node->clsSttOff ;
                     }
                     dstPos = hilOffsetReplaceString(&off,dstPos,&dstJmp,node->rclose,len,tw) ;
-					if(*off)
-						cc = *off ;
+                    if(*off)
+                        cc = *off ;
                 }
                 else
                 {
@@ -2543,12 +2543,12 @@ meGetIndent(meUByte *prompt)
     /* The indent type may be specified in a number of different ways:-
      * 
      * -4, 4, 8, ....        This is a character based indent.
-         * t,+t,-t,2t,-2t, ....  indentWidth based indent. 
+     * t,+t,-t,2t,-2t, ....  indentWidth based indent. 
      * -2/3t, 3/2t, ...      tagsize vulgar fraction based indent.
      */
     if(meGetString(prompt,0,0,buf,32) <= 0)
         return meABORT ;
-        
+    
     /* Get rid of any leading white space. */
     for (q = buf; (*q == ' ') || (*q == '\t'); q++)
         ;
@@ -2623,7 +2623,7 @@ indent(int f, int n)
             (meGetString((meUByte *)"Lines",0,0,buf,meBUF_SIZE_MAX) <= 0)))
             return meABORT ;
         if((root = createHilight(indno,(itype & HICMODE) ? meHICMODE_SIZE:0,
-                                           &noIndents,&indents)) == NULL)
+                                 &noIndents,&indents)) == NULL)
             return meFALSE ;
         meIndentGetFlags(root) = itype ;
         if(itype & HICMODE)
@@ -2693,7 +2693,7 @@ indent(int f, int n)
     if(meIndentGetFlags(root) & HICMODE)
     {
         if((itype = mlCharReply((meUByte *)"Type: ",0,ctypesChar,NULL)) == -1)
-              return meFALSE ;
+            return meFALSE ;
         itype = (int) (((meUByte *)meStrchr(ctypesChar,itype)) - ctypesChar) ;
         if(itype < meHICMODE_SIZE)
         {
@@ -2716,7 +2716,7 @@ indent(int f, int n)
     if(((itype = mlCharReply((meUByte *)"Type: ",0,typesChar,NULL)) == -1) ||
        (meGetString((meUByte *)"Token",0,0,buf,meBUF_SIZE_MAX) <= 0))
         return meFALSE ;
-
+    
     itype = (int) (((meUByte *)meStrchr(typesChar,itype)) - typesChar) ;
     if(itype >= noINDTYPES)
     {
@@ -2997,7 +2997,7 @@ indentLine(int *inComment)
     displayTab = bdisplayTab ;
     displayNewLine = bdisplayNewLine ;
     displaySpace = bdisplaySpace ;    
-
+    
     /*    printf("\nIndent line to %d\n\n",ind) ;*/
     /* Always do the doto change so the tab on the left hand edge moves
      * the cursor to the first non-white char

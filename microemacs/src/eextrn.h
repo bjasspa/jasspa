@@ -80,9 +80,9 @@ extern  int     meGetStringFromChar(meUShort cc, meUByte *d) ;
 extern	void	meGetStringFromKey(meUShort cc, meUByte *seq);
 extern	int     decode_fncname(meUByte *fname, int silent);
 extern	int	bindkey(meUByte *prom, int f, int n, meUShort *lclNoBinds,
-                               meBind **lclBinds) ;
+                        meBind **lclBinds) ;
 extern	int	unbindkey(meUByte *prom, int n, meUShort *lclNoBinds,
-                                 meBind **lclBinds) ;
+                          meBind **lclBinds) ;
 extern	int	globalBindKey(int f, int n);
 extern	int	globalUnbindKey(int f, int n);
 #if MEOPT_LOCALBIND
@@ -257,7 +257,7 @@ extern	meUByte *gtfun(meUByte *fname);
 extern  meUByte *getUsrLclCmdVar(meUByte *vname, register meVarList *varList) ;
 #define getUsrVar(vname) getUsrLclCmdVar(vname,&usrVarList)
 extern	meVariable *SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue,
-                                           register meVarList *varList) ;
+                                    register meVarList *varList) ;
 extern	int	setVar(meUByte *vname, meUByte *vvalue, meRegister *regs) ;
 extern	int	setVariable(int f, int n);
 extern	meUByte *meItoa(int i);
@@ -276,7 +276,7 @@ extern	int	unsetVariable(int f, int n);
 extern	int	mePushRegisters(int flags);
 extern	int	mePopRegisters(int flags);
 extern  int     biChopFindString(register meUByte *ss, register int len, 
-                                        register meUByte **tbl, register int size) ;
+                                 register meUByte **tbl, register int size) ;
 extern	int	execFunc(int index, int f, int n) ;
 extern  void    execFuncHidden(int keyCode, int index, meUInt arg) ;
 #define meEBF_ARG_GIVEN   0x01
@@ -289,7 +289,7 @@ extern  int     lineExec(int f, int n, meUByte *cmdstr);
 extern	meUByte  *token(meUByte *src, meUByte *tok);
 extern	int	macarg(meUByte *tok);
 extern  int     meGetString(meUByte *prompt, int option, int defnum,
-                               meUByte *buffer, int size);
+                            meUByte *buffer, int size);
 extern	int	storemac(int f, int n);
 extern	int	execFile(meUByte *fname, int f, int n);
 extern	int	executeNamedCommand(int f, int n);
@@ -362,7 +362,7 @@ extern  void    fileNameSetHome(meUByte *ss) ;
 #define PATHNAME_COMPLETE 0
 #define PATHNAME_PARTIAL  1
 extern  void    pathNameCorrect(meUByte *oldName, int nameType, 
-                                       meUByte *newName, meUByte **baseName) ;
+                                meUByte *newName, meUByte **baseName) ;
 #ifdef _WIN32
 extern  void    fileNameCorrect(meUByte *oldName, meUByte *newName, meUByte **baseName) ;
 #else
@@ -401,7 +401,7 @@ extern int      createBackupName(meUByte *filename, meUByte *fn, meUByte backl, 
 
 extern int      ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp) ;
 extern int      ffWriteFileWrite(register int len, 
-                                        register meUByte *buff, int eolFlag) ;
+                                 register meUByte *buff, int eolFlag) ;
 extern int      ffWriteFileClose(meUByte *fname, meUInt flags, meBuffer *bp) ;
 extern int      ffWriteFile(meUByte *fname, meUInt flags, meBuffer *bp) ;
 #if MEOPT_EXTENDED
@@ -865,7 +865,7 @@ extern int  anyChangedRegistry(void);
 #define meEXPAND_PRINTABLE 0x04
 extern  int     expandchar(int c, meUByte *d, int flags) ;
 extern  int     expandexp(int slen, meUByte *s, int dlen, int doff,
-                                 meUByte *d, int cpos, int *opos, int flags) ;
+                          meUByte *d, int cpos, int *opos, int flags) ;
 extern	int	eq(int bc, int pc);
 extern	int	searchForw(int f, int n);
 extern	int	huntForw(int f, int n);
@@ -994,7 +994,7 @@ extern	void    TTbell(void);
 extern  int     charListToShorts(meUShort *sl, meUByte *cl) ;
 extern  int     keyListToShorts(meUShort *sl, meUByte *kl) ;
 extern  void    translateKeyAdd(meTRANSKEY *tcapKeys, int count, int time,
-                                       meUShort *key, meUShort map) ;
+                                meUShort *key, meUShort map) ;
 extern	int	translateKey(int f, int n);
 extern  char   *meTParm(char *str, ...) ;
 
@@ -1327,7 +1327,7 @@ extern int meGidInGidList(gid_t gid) ;
 #ifndef meExit
 extern void exit(int i) ;
 #if MEOPT_CLIENTSERVER
-    /* Close & delete the client file */
+/* Close & delete the client file */
 #define meExit(n) (TTkillClientServer(),exit(n))
 #else
 #define meExit exit
@@ -1420,8 +1420,7 @@ extern int      putenv(const char *s);
 #endif
 
 #define	hexToNum(c)      ((c <= '9') ? (c^0x30)   : \
-                          (c >= 'a') ? (c-'a'+10) : \
-                                       (c-'A'+10))
+                          (c >= 'a') ? (c-'a'+10) : (c-'A'+10))
 
 /*	Macro argument token types					*/
 

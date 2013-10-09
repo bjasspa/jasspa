@@ -206,7 +206,7 @@ bufferSetEdit(void)
         if(meModeTest(frameCur->bufferCur->mode,MDUNDO))
         {
             meUndoNode        *uu ;
-
+            
             uu = meUndoCreateNode(sizeof(meUndoNode)) ;
             uu->type |= meUNDO_SPECIAL|meUNDO_SET_EDIT ;
             /* Add and narrows, must get the right order */
@@ -218,10 +218,10 @@ bufferSetEdit(void)
        (frameCur->bufferCur->name[0] != '*'))
     {
         struct   meTimeval tp ;
-
+        
         gettimeofday(&tp,NULL) ;
         frameCur->bufferCur->autoTime = ((tp.tv_sec-startTime+autoTime)*1000) +
-                  (tp.tv_usec/1000) ;
+              (tp.tv_usec/1000) ;
         if(!isTimerExpired(AUTOS_TIMER_ID) &&
            (!isTimerSet(AUTOS_TIMER_ID) || 
             (meTimerTime[AUTOS_TIMER_ID] > frameCur->bufferCur->autoTime)))
@@ -234,11 +234,11 @@ void
 lineSetChanged(register int flag)
 {
     frameCur->windowCur->dotLine->flag |= meLINE_CHANGED ;
-
+    
     if (frameCur->bufferCur->windowCount != 1)             /* If more than 1 window, update rest */
     {
         register meWindow *wp;
-
+        
         meFrameLoopBegin() ;
         wp = loopFrame->windowList;
         while (wp != NULL)
@@ -271,7 +271,7 @@ lineMakeSpace(int n)
     meLine   *lp_old;
     meUShort  doto ;
     int     newl ;
-
+    
     lp_old = frameCur->windowCur->dotLine;			/* Current line         */
     if((newl=(n+((int) meLineGetLength(lp_old)))) > 0x0fff0)
     {
@@ -281,10 +281,10 @@ lineMakeSpace(int n)
     if (lp_old == frameCur->bufferCur->baseLine)		/* At the end: special  */
     {
         /*---	Allocate a new line */
-
+        
         if ((lp_new=meLineMalloc(n,1)) == NULL)    /* Allocate new line    */
             return NULL ;
-
+        
         /*---	Link in with the previous line */
         frameCur->bufferCur->lineCount++ ;
         lp_new->next = lp_old;
@@ -296,7 +296,7 @@ lineMakeSpace(int n)
 #endif
         lp_old->prev->next = lp_new;
         lp_old->prev = lp_new;
-
+        
         if(lp_old->flag & meLINE_ANCHOR)
             /* update the position of any anchors - important for narrows */
             meLineResetAnchors(meLINEANCHOR_IF_LESS|meLINEANCHOR_RETAIN,frameCur->bufferCur,
@@ -314,14 +314,14 @@ lineMakeSpace(int n)
         {
             meUByte *cp2 ;
             meInt ii ;
-
+            
             /*---	Allocate new line of correct length */
-
+            
             if ((lp_new = meLineMalloc(newl,1)) == NULL)
                 return NULL ;
-
+            
             /*---	Copy line */
-
+            
             cp1 = &lp_old->text[0];
             cp2 = &lp_new->text[0];
             ii = (meInt) doto ;
@@ -330,9 +330,9 @@ lineMakeSpace(int n)
             cp2 += n;
             while((*cp2++ = *cp1++))
                 ;
-
+            
             /*---	Re-link in the new line */
-
+            
             lp_new->prev = lp_old->prev;
             lp_new->next = lp_old->next;
             /* preserve the $line-scheme */
@@ -354,7 +354,7 @@ lineMakeSpace(int n)
         {
             meUByte *cp2 ;
             meUShort ii ;
-
+            
             lp_new = lp_old;                      /* Pretend new line     */
             lp_new->unused -= n ;
             lp_new->length = newl ;
@@ -372,7 +372,7 @@ lineMakeSpace(int n)
                                    lp_old,lp_new,doto,n);
         }
     }
-
+    
     meFrameLoopBegin() ;
     wp = loopFrame->windowList;                    /* Update windows       */
     while (wp != NULL)
@@ -411,7 +411,7 @@ int
 lineInsertChar(int n, int c)
 {
     meUByte *cp;
-
+    
     lineSetChanged(WFMOVEC|WFMAIN);		/* Declare editied buffer */
     if ((cp = lineMakeSpace(n))==NULL)  /* Make space for the characters */
         return meFALSE ;	        /* Error !!! */
@@ -425,7 +425,7 @@ int
 lineInsertString(register int n, register meUByte *cp)
 {
     meUByte *lp ;
-
+    
     /* if n == 0 the length if the string is unknown calc the length */
     if((n == 0) &&
        ((n = meStrlen(cp)) == 0))
@@ -730,7 +730,7 @@ int
 bufferInsertTab(int f, int n)	/* insert tabs forward into text */
 {
     register int s ;
-
+    
     if(n <= 0)
         return meTRUE ;
     if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
@@ -772,7 +772,7 @@ bufferInsertString(int f, int n)
     /* insert it */
     for(; n>0 ; n--)
         count += bufferInsertText(tstring,status) ;
-
+    
 #if MEOPT_UNDO
     meUndoAddInsChars(count) ;
 #endif
@@ -825,7 +825,7 @@ killSave(void)
 {
     meShort count=0 ;
     meKill *thiskl, *lastkl ;/* pointer to last klist element */
-
+    
     /*
      * see if klhead points to anything, if not then our job is easy,
      * we setup klhead and make currkill point to the kill buffer that
@@ -865,7 +865,7 @@ killSave(void)
         lastkl->next = (meKill*) NULL;
         reyankLastYank = NULL ;
     }
-
+    
     /*
      * There was a klhead. malloc a new klist element and wire it in to
      * the head of the list.
@@ -876,11 +876,11 @@ killSave(void)
     klhead = thiskl ;
     thiskl->kill = NULL ;
     currkill = &(thiskl->kill) ;
-
+    
 #ifdef _CLIPBRD
     TTsetClipboard() ;
 #endif
-
+    
     return meTRUE ;
 }
 
@@ -892,7 +892,7 @@ meUByte *
 killAddNode(meInt count)
 {
     meKillNode *nbl ;
-
+    
     if((nbl = (meKillNode*) meMalloc(sizeof(meKillNode)+count)) == NULL)
         return NULL ;
     nbl->next = NULL ;
@@ -1102,7 +1102,7 @@ mldelete(meInt noChrs, meUByte *kstring)
             else
             {
                 meUByte *s1, *s2 ;
-            
+                
                 s1 = slp->text+soff ;
                 s2 = elp->text+eoff ;
                 while((*s1++ = *s2++) != '\0')
@@ -1368,7 +1368,7 @@ ldelete(meInt nn, int kflag)
 #if MEOPT_NARROW
     if((lflag & meLINE_ANCHOR_NARROW) ||
        (len && (meLineGetFlag(ll) & meLINE_ANCHOR_NARROW)))
-
+        
     {
         /* the kill probably includes one or more narrows, find them, expand then and
          * add them to the size of the kill */
@@ -1423,7 +1423,7 @@ yankfrom(struct meKill *pklist)
 {
     int len=0 ;
     meKillNode *killp ;
-
+    
 #if MEOPT_EXTENDED
     if(meLineGetFlag(frameCur->windowCur->dotLine) & meLINE_PROTECT)
     {
@@ -1455,7 +1455,7 @@ yank(int f, int n)
 {
     register int ret ;		/* return from "yankfrom()" */
     register int len = 0 ;	/* return from "yankfrom()" */
-
+    
     commandFlag[CK_YANK] = (comSelStart|comSelSetDot|comSelSetMark|comSelSetFix) ;
     if(n == 0)
     {
@@ -1486,7 +1486,7 @@ yank(int f, int n)
         commandFlag[CK_YANK] = comSelKill ;
         return meTRUE ;
     }
-        
+    
 #ifdef _CLIPBRD
     TTgetClipboard() ;
 #endif
@@ -1496,10 +1496,10 @@ yank(int f, int n)
     /* Check we can change the buffer */
     if((ret=bufferSetEdit()) <= 0)
         return ret ;
-
+    
     /* place the mark on the current line */
     windowSetMark(meFALSE, meFALSE);
-
+    
     /* for each time.... */
     while(n--)
     {
@@ -1544,7 +1544,7 @@ reyank(int f, int n)
             /* Last command was not a reyank or yank, set reyankLastYank to
              * NULL so we bitch */
             reyankLastYank = NULL ;
-    
+        
         if(reyankLastYank == NULL)
             /*
              * Last command was not a yank or reyank (or someone was
@@ -1556,7 +1556,7 @@ reyank(int f, int n)
              * would loose text with no hope of recovering it.
              */
             return mlwrite(MWABORT,(meUByte *)"[reyank must IMMEDIATELY follow a yank or reyank]");
-    
+        
         if(((reyankLastYank = reyankLastYank->next) == NULL) && (n < 0))
             /* Fail if got to the end and n is -ve */
             return meFALSE ;
@@ -1574,7 +1574,7 @@ reyank(int f, int n)
     /* Set the mark here so that we can delete the region in the next
      * reyank command. */
     windowSetMark(meFALSE, meFALSE);
-
+    
     /* If we've fallen off the end of the klist and there are no more
      * elements, wrap around to the most recent delete. This makes it
      * appear as if the linked list of kill buffers is actually
@@ -1601,7 +1601,7 @@ reyank(int f, int n)
 #endif
     /* Remember that this is a reyank command for next time. */
     thisflag = meCFRYANK;
-
+    
     return meTRUE ;
 }
 
