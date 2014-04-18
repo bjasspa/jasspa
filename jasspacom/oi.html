@@ -5,7 +5,7 @@
     <meta name="description" content="Jasspa Home"/>
     <meta name="resource-type" content="document"/>
     <meta name="distribution" content="global"/>
-    <meta name="keywords" content="jasspa microemacs, microemacs, emacs, uemacs, free, text, editor, JASSPA, me"/>
+    <meta name="keywords" content="OpenIndiana, HP N40L Microserver"/>
     <meta name="authors" content="JASSPA"/>
     <meta name="GENERATOR" content="MicroEmacs"/>
     <title>MicroEmacs JASSPA Distribution</title>
@@ -14,10 +14,9 @@
     <!-- BASE HREF="http://www.jasspa.com" -->
 
     <!--JASSPA - common from this point -->
-    <!-- BACKGROUND="meback.png"  -->
   </head>
   <body>
-  
+
   <!-- Title -->
   <div id="title">
   <table>
@@ -75,82 +74,41 @@
   <!-- Sidebar -->
   <div id="sidebarcontent">
   <div id="sidebar">
-  <h2 align="center">Jasspa's MicroEmacs</h2>
-  <p align="center"><img alt="melogo" src="images/logo.png"/></p>
-  <h2>Quick Links</h2>
-  <ul>
-    <li><a href="downlatest.html">Download</a></li>
-    <li><a href="spelling.html">Spelling Dictionaries</a></li>
-  </ul>
+  <p align="center"><img alt="oilogo" src="images/oi_normal_1886x495x400_bg_trans.gif" width="150"/></p>
   </div>
 
   <!-- Main -->
   <div id="main">
-   
-  <h1>Debian Download</h1>
-  
-  <p>Last Upload: 10th October 2006</p>
 
-  <h2>Complete Package</h2>
-  
-  <table class="download">
-    <tr>
-      <thead>
-      <th>Download Image</th>
-      <th>Pre-built Installation Files</th>
-      <th>Byte<br/>Size</th>
-      <th>Last update<br/>yyyy-mm-dd</th>
-      </thead>
-    </tr>
-    <tr>
-      <td class="file"><a href="release_20090909/debian/lenny_debian_5.03/me-jasspa_0.0.20090909_i386.deb">jasspa-me_20090909_i386.deb</a></td>
-      <td class="description">Linux: Debian (Lenny/5.03) i386 package</td>
-      <td class="size"></td>
-      <td class="date">2009-09-09</td>
-    </tr>
-  </table>
-
-  <h3>Package Installation</h3>
-  <p>As <i>root</i> run the package manager.</p>
-
-  <!-- NanoEmacs - Package and Binary Downloads -->
-
-  <h2>NanoEmacs</h2>
-  
-  <p>Small foot print version of JASSPA MicroEmacs. Runs without macro files.</p>
-
-  <table class="download">
-    <tr>
-      <thead>
-      <th>NanoEmacs<br/>Executable<br/>Images</th>
-      <th>Optional<i> - Small foot print MicroEmacs may be run with no
-        configuration files. This component may be built from the standard source. Use these
-        binaries to give you Emacs on a box via a floppy with no configuration files.</i></th>
-        <th>Byte<br/>Size</th>
-        <th>Last update<br/>yyyy-mm-dd</th>
-      </thead>
-    </tr>
-    <tr>
-      <td class="file">
-        <a href="release_20060909/jasspa-ne-linux-i386-2.2-20060909.gz">jasspa-ne-linux-i386-2.2-20060909.gz</a>
-      </td>
-      <td class="description">Linux (>= 2.2.x - 2.4.x) - NanoEmacs console version.</td>
-      <td class="size">85755</td>
-      <td class="date">2006-09-09</td>
-    </tr>
-  </table>
-
-  <h3>Installation</h3>
-
-  <p>
-  <ul>
-    <li>Unpack using <tt>gunzip</tt></li>
-    <li>rename to <b>ne</b></li>
-    <li>Apply execute permissions <b>chmod a+rx ne</b></li>
-    <li>As <i>root</i> copy to the desired binary directory i.e. <tt>/usr/bin</tt>.</li>
-  </ul>
-  </p>
-
+      <h1>OpenIndiana Small System Server Build</h1>
+      
+      <p>The following document contains some notes to configure
+      <b>OpenIndiana</b> on a <b>HP N40L MicroServer</b>. The server provides
+      DNS, E-mail, web services, calendar, address book, file storage and
+      print services to mobile devices such as iPad and Android.</p>
+      
+      <p>These notes are made available on an as-is basis with no warranty in
+      the hope that they may be useful to somebody else building their own
+      server. They are based on notes accumulated as I built my own server,
+      this turned out to be time consuming as there was no quick reference in
+      one place and required a lot of searching to find information.</b>
+      
+      <ul>
+          <li><b><a href="oi/oi_setup.pdf">oi_setup.pdf</a></b> OpenIndiana Small System Server Build (PDF 1.7MB)</li>
+      </ul>
+      
+      If you find any errata, or have anything else to add, then please drop
+      me an E-Mail ("jon" at this site address) and I will endeavour to keep
+      the document up to date.
+      
+      <h2>OpenIndiana</h2>
+      
+      <ul>
+          <li><b><a href="http://www.openindiana.org">www.openindiana.org</a></b> OpenIndiana Operating System.</li>
+          <li><b><a href="http://www.openindiana.co.uk">www.openindiana.co.uk</a></b> OpenIndiana UK - alternative OpenIndiana distribution.</li>
+      </ul>
+      
+      
   <h1>NO WARRANTY</h1>
 
   <p>This program is licensed free of charge, there is no warranty for the
@@ -162,14 +120,15 @@
   performance of the program is with you. Should the program prove defective,
   you assume the cost of all necessary servicing, repair or correction.</p>
 
-  <p>In no event unless required by applicable law or agreed to in writing will
-  any copyright holder, or any other party who may modify and/or redistribute
-  the program as permitted above, be liable to you for damages, including any
-  general, special, incidental or consequential damages arising out of the use
-  or inability to use the program (including but not limited to loss of data or
-  data being rendered inaccurate or losses sustained by you or third parties or
-  a failure of the program to operate with any other programs), even if such
-  holder or other party has been advised of the possibility of such damages.</p>
+  <p>In no event unless required by applicable law or agreed to in writing
+  will any copyright holder, or any other party who may modify and/or
+  redistribute the program as permitted above, be liable to you for damages,
+  including any general, special, incidental or consequential damages arising
+  out of the use or inability to use the program (including but not limited to
+  loss of data or data being rendered inaccurate or losses sustained by you or
+  third parties or a failure of the program to operate with any other
+  programs), even if such holder or other party has been advised of the
+  possibility of such damages.</p>
 
   <p>By downloading any material from this site you agree to these
   conditions.</p>
@@ -178,7 +137,7 @@
 
   <div class="clearfloats"><!-- Clear --></div>
   <div id="footer">
-  <p>Copyright &copy; 2000-2006 Jasspa</p>
+  <p>Copyright &copy; 2014 Jasspa</p>
   </div>
   </div>
   </body>
