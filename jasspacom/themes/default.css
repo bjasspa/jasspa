@@ -8,12 +8,12 @@
  *  Module        : Styles for Jasspa Site
  *
  *  Object Name   : $RCSfile: default.css,v $
- *  Revision      : $Revision: 1.2 $
- *  Date          : $Date: 2006-10-11 22:05:04 $
+ *  Revision      : $Revision: 1.3 $
+ *  Date          : $Date: 2014-04-18 17:08:12 $
  *  Author        : $Author: jon $
  *  Created By    : Jon Green
  *  Created       : Sun Sep 24 21:42:18 2006
- *  Last Modified : <061011.2240>
+ *  Last Modified : <140418.1808>
  *
  *  Description	  : The style theme for JASSPA Web site.
  *
@@ -381,7 +381,7 @@
     font-size: 1.2em;
     color: yellow;
     text-align: center;
-    align: center;
+/*    align: center;*/
   }
   
   /* Download Tables */
@@ -410,7 +410,7 @@
     font-size: 1.2em;
     color: yellow;
     text-align: center;
-    align: center;
+/*    align: center;*/
   }
   
   table.download td.size {  
@@ -452,7 +452,7 @@
     
     
   img#main {
-    align: top;
+/*    align: top;*/
     border: none;
   }
   
