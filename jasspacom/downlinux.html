@@ -84,6 +84,11 @@
   
   <h1>Linux Download</h1>
   
+  <p>Please note the <b>Known Issues</b> at the bottom of this page for Fedora and RedHat systems.</p>
+  
+  <h2>Eee PC</h2>
+  <p>For Asus Eee PC then use the  <a href="zeroinst.html">Zero Install</a> image.</p>
+  
   <h2>RedHat Complete Package (RPM)</h2>
   
   <table class="download">
@@ -479,6 +484,29 @@
   </ul>
   </p>
   
+  <h1>Known Issues</h1>
+  
+  <p>JASSPA MicroEmacs is not starting up in a X-Windows mode on <b>Fedora
+  11/12</b> and possibly some other RedHat systems. On executing <b>me</b>
+  then it silently fails to start. The reason for this is that the built-in
+  default font cannot be resolved. In order to fix this then the following
+  steps may be taken:</p>
+  
+  
+  <ul>
+    
+    <li>Create a file <tt>.Xresources</tt> in the <tt>$HOME</tt> directory if it does not already exist.</li>
+    
+    <li>Add the line <pre>MicroEmacs*font: -*-fixed-medium-r-*-*-*-*-*-*-*-*-*</pre> to the <tt>.Xresources</tt> file.
+    
+    <li>Merge the local resources definitions to the XServer with the command:
+    <pre>% xrdb -merge $HOME/.Xresources</pre>
+    After performing these steps then any pre-built MicroEmacs will run up correctly and not silently fail.</li>
+  </ul>
+  
+  <p>If you wish to re-build the binary with the default font then edit
+  <tt>unixterm.c::2976</tt> and change the default font string.</p> 
+
   <h1>NO WARRANTY</h1>
   
   <p>This program is licensed free of charge, there is no warranty for the
