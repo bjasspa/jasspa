@@ -56,6 +56,7 @@ add-next-line "*grep*" "%f: %l:"
 set-variable %compile-com "nmake "
 0 add-next-line "*compile*"
 add-next-line "*compile*" " *%f(%l) : \\(fatal error\\|error\\|warning\\)"
+add-next-line "*compile*" " *%f(%l,\\d+): \\(fatal error\\|error\\|warning\\)"
 add-next-line "*compile*" " *%f:%l:"
 ; Load additional hooks required for win32.
 define-macro-file hkipipe ishell perldb

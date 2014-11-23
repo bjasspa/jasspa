@@ -242,6 +242,7 @@ add-file-hook ".sh .ksh .csh .login .cshrc .profile .tcshrc"  fhook-shell
 add-file-hook ".ini .hpj .reg .rgy"                           fhook-ini
 add-file-hook ".htm .html .htp .hts"                          fhook-html
 add-file-hook ".lhtm .lhtml"                                  fhook-lhtml
+add-file-hook ".cs"                                           fhook-cs
 add-file-hook ".css"                                          fhook-css
 add-file-hook ".bas .cls"                                     fhook-vb
 add-file-hook ".asp"                                          fhook-asp
@@ -278,7 +279,7 @@ add-file-hook ".texi"                                         fhook-texi
 add-file-hook ".idl"                                          fhook-idl
 add-file-hook ".info dir"                                     fhook-info
 add-file-hook ".diff .dif *diff*"                             fhook-diff
-add-file-hook ".xml .xsl .xul"                                fhook-xml
+add-file-hook ".xml .xsl .xul .xaml"                          fhook-xml
 add-file-hook ".ex .exw .exu .e .ew .eu"                      fhook-euphor
 add-file-hook ".pls"                                          fhook-pls
 add-file-hook ".lua"                                          fhook-lua
