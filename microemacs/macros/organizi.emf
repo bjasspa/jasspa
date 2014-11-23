@@ -291,8 +291,8 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " \HCancel  "   f void
     set-variable .org.aimp-delimit  &reg "/org/set/aimp-delimit" "\""
     osd .osd.fobm 55 "BcftHx" .scheme.osd-ebtt " \HOptions  " 1 org-aie-options
     set-variable .osd-get-file.title "Select Import File"
-    set-variable .osd-get-file.file-type "|Text file|All files|"
-    set-variable .osd-get-file.file-mask "|*.txt|*|"
+    set-variable .osd-get-file.file-type "|CSV file|Text file|All files|"
+    set-variable .osd-get-file.file-mask "|*.csv|*.txt|*|"
     set-variable .osd-get-file.flags 0
     set-variable .osd-get-file.ft 1
     !force osd-get-file
@@ -364,6 +364,39 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " \HCancel  "   f void
     !endif
 !emacro
 
+;ADR;Post Office Address;Extended Address;Street;Locality;Region;Postal Code;Country
+;ADR;HOME:P.O. Box 101;Suite 101;123 Main Street;Any Town;CA;91921-1234;USA
+
+0 define-macro insert-field-vcf
+  set-variable #l1 @2
+  !if &band @# 1
+    set-variable #l1 &reg &spr "/org/addr/%d/%s" .org.addr #l1 ""
+  !endif
+  !if &len #l1
+    !if &seq &lef &set #l2 @1 4 "TEL;"
+      set-variable #l1 &rep #l1 " " ""
+    !endif
+    insert-string #l2
+    !if &band @# 2
+      set-variable #l3 @3
+      #l3 var-str-sub #l1 @4 "\x01"
+      set-variable #l1 &spr "%s%n" #l1 &sub #l3 .var-str-sub.count "\x01"
+    !endif
+    !tjump &sin "\n" #l1 2
+    !if &xse #l1 ".*[\x80-\xff].*"
+      insert-string ";CHARSET=WINDOWS-1252;ENCODING=QUOTED-PRINTABLE:"
+      set-variable #l4 0
+      !while &len &set #l5 &mid #l1 &pinc #l4 1 1
+        insert-string &con &seq #l5 "\x01" ";" &spr "=%02X" &atoi #l5
+      !done
+    !else
+      insert-string ":"
+      insert-string &rep #l1 "\x01" ";"
+    !endif
+    insert-string "\n"
+  !endif
+!emacro
+
 0 define-macro org-address-export
     set-variable .org.aexp-header  &reg "/org/set/aexp-header" "1"
     set-variable .org.aexp-endrec  &reg "/org/set/aexp-endrec" "\\n"
@@ -375,8 +408,8 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " \HCancel  "   f void
     osd .osd.fobm 110 ""
     osd .osd.fobm 120 "Cpxt" "^[ *] \HOnly Selected" 6 org-aexp-options-set
     set-variable .osd-get-file.title "Select Export File"
-    set-variable .osd-get-file.file-type "|Text file|All files|"
-    set-variable .osd-get-file.file-mask "|*.txt|*|"
+    set-variable .osd-get-file.file-type "|vCard file|CSV file|Text file|All files|"
+    set-variable .osd-get-file.file-mask "|*.vcf|*.csv|*.txt|*|"
     set-variable .osd-get-file.flags 0
     set-variable .osd-get-file.ft 1
     !force osd-get-file
@@ -393,59 +426,159 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " \HCancel  "   f void
     org-aie-setdelimit "aexp"
     !force 0 delete-buffer "*org-export-tmp*"
     find-buffer "*org-export-tmp*"
-    !if .org.aexp-header
-        set-variable #l3 0
-        !while &not &seq &set #l4 &lget .org.addr-lbl &inc #l3 1 ""
-            !if &and &gre .org.aexp-addrfld 1 &seq &rig #l4 5 "Address"
-                set-variable #l5 1
-                !repeat
-                    insert-string &spr "%s%s%s%d%s" #g1 #g2 #l4 #l5 #g2
-                !until &equ &pinc #l5 1 .org.aexp-addrfld
-            !else
-                !if &gre #l3 1
-                    insert-string #g1
-                !endif
-                insert-string &spr "%s%s%s" #g2 #l4 #g2
-            !endif
-        !done
-        insert-string #g0
-    !endif
     set-variable #l1 .org.addr
     set-variable #l7 .org.iaddr
-    set-variable #l2 0
-    set-variable .org.addr "0"
-    set-variable .org.iaddr &cond &gre .org.iaddr -1 0 -1
-    !repeat
+    !if &iseq &rig #l0 -4 ".vcf"
+      set-variable #l2 0
+      set-variable .org.addr "0"
+      set-variable .org.iaddr &cond &gre .org.iaddr -1 0 -1
+      !repeat
         org-addr-inc-recno
         !if &not &seq .org.addr "*"
-            !if &or &not .org.aexp-select &seq "*" &reg &spr "/org/addr/%d/slct" .org.addr "" 
-                set-variable #l2 &add #l2 1
-                set-variable #l3 0
-                !while &not &seq &set #l4 &lget .org.addr-reg &inc #l3 1 ""
-                    !if &equ #l3 1
-                        insert-string &spr "%s%d%s" #g2 .org.addr #g2
-                    !else
-                        set-variable #l5 &reg &spr "/org/addr/%d/%s" .org.addr #l4 ""
-                        !if &seq #g2 ""
-                            set-variable #l5 &rep #l5 #g1 .org.aexp-seperator
-                        !else
-                            set-variable #l5 &rep #l5 #g2 &cat #g2 #g2
-                        !endif
-                        !if &and &gre .org.aexp-addrfld 1 &seq &rig #l4 5 "addr"
-                            ; Given the user has asked for the addr to be split into 'n' fields,
-                            ; replace the first 'n-1' \n's with field separators
-                            set-variable #l6 &spr "%s%s%s" #g2 #g1 #g2
-                            &sub .org.aexp-addrfld 1 var-str-sub #l5 "\n" #l6
-                            set-variable #l5 &spr "%s%n" #l5 &sub .org.aexp-addrfld &add .var-str-sub.count 1 #l6
-                        !endif
-                        set-variable #l5 &rep #l5 #g0 .org.aexp-endrec
-                        insert-string &spr "%s%s%s%s" #g1 #g2 #l5 #g2
-                    !endif
-                !done
-                insert-string #g0
+          !if &and .org.aexp-select &not &seq "*" &reg &spr "/org/addr/%d/slct" .org.addr ""
+          !elif &or &len &set #l3 &reg &spr "/org/addr/%d/sname" .org.addr "" &len &set #l4 &reg &spr "/org/addr/%d/fname" .org.addr ""
+            set-variable #l2 &add #l2 1
+            0 insert-field-vcf "BEGIN" "VCARD"
+            0 insert-field-vcf "VERSION" "2.1"
+            !if &set #l6 &sin " " #l4
+              set-variable #l6 &spr "%s\x01%s\x01%s\x01\x01" #l3 &lef #l4 #l6 &rig #l4 &add #l6 1
+            !else
+              set-variable #l6 &spr "%s\x01%s\x01\x01\x01" #l3 #l4
             !endif
+            0 insert-field-vcf "N" #l6
+            set-variable #l5 &trb &spr "%s %s" #l4 #l3
+            !if &not &band .org.aflag 0x100
+            !elif &xse &reg &spr "/org/addr/%d/dob" .org.addr "" "\\(\\d\\d?\\)\\([-/]\\)\\(\\d\\d?\\)\\(\\2\\(\\d\\d\\(\\d\\d\\)?\\)\\)?"
+              set-variable #l6 &con &seq @s5 "" &lef $time 4 @s5
+              !if &equ &len #l6 2
+                set-variable #l6 &con &gre #l6 &mid $time 2 2 &add 1900 #l6 &add 2000 #l6
+              !endif
+              set-variable #l6 &spr "%s-%02d-%02d" #l6 @s3 @s1
+              0 insert-field-vcf "BDAY" #l6
+            !endif
+            insert-field-vcf "TEL;HOME" "home/tel"
+            insert-field-vcf "TEL;CELL" "home/mob"
+            insert-field-vcf "TEL;FAX" "home/fax"
+            insert-field-vcf "EMAIL;HOME" "home/email"
+            insert-field-vcf "URL:" "home/www"
+            3 insert-field-vcf "ADR;HOME" "home/addr" 6 "\n"
+            insert-field-vcf "ORG" "work/comp"
+            insert-field-vcf "TEL;WORK" "work/tel"
+            insert-field-vcf "TEL;CELL" "work/mob"
+            insert-field-vcf "TEL;FAX" "work/fax"
+            insert-field-vcf "EMAIL;WORK" "work/email"
+            insert-field-vcf "URL" "work/www"
+            3 insert-field-vcf "ADR;WORK" "work/addr" 6 "\n"
+            set-variable .nn &reg &spr "/org/addr/%d/notes" .org.addr ""
+            !if &band .org.aflag 0x100
+              !if &or &len &set #l4 &reg &spr "/org/addr/%d/c3name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c3dob" .org.addr ""
+                set-variable .nn &spr "Child 3: %s%s\n%s" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6 .nn
+              !endif
+              !if &or &len &set #l4 &reg &spr "/org/addr/%d/c2name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c2dob" .org.addr ""
+                set-variable .nn &spr "Child 2: %s%s\n%s" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6 .nn
+              !endif
+              !if &or &len &set #l4 &reg &spr "/org/addr/%d/c1name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c1dob" .org.addr ""
+                set-variable .nn &spr "Child 1: %s%s\n%s" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6 .nn
+              !endif
+              !if &len &set #l4 &reg &spr "/org/addr/%d/dom" .org.addr ""
+                set-variable .nn &spr "Date-of-marriage: %s\n%s" #l4 .nn
+              !endif
+            !endif
+            !if &len &set #l4 &reg &spr "/org/addr/%d/pfname" .org.addr ""
+              !if &len &set #l6 &reg &spr "/org/addr/%d/psname" .org.addr ""
+                set-variable #l3 #l6
+              !endif
+              set-variable #l6 &spr "Partner of: %s %s\n%s" #l4 #l3 .nn
+            !else
+              set-variable #l6 .nn
+            !endif
+            0 insert-field-vcf "NOTE" &trb #l6
+            0 insert-field-vcf "END" "VCARD"
+            !if &not &band .org.aflag 0x100
+            !elif &not &len #l4
+            !elif &or &or &len &reg &spr "/org/addr/%d/pmob" .org.addr "" &len &reg &spr "/org/addr/%d/pemail" .org.addr "" &len &reg &spr "/org/addr/%d/pdob" .org.addr ""
+              set-variable #l2 &add #l2 1
+              0 insert-field-vcf "BEGIN" "VCARD"
+              0 insert-field-vcf "VERSION" "2.1"
+              !if &set #l6 &sin " " #l4
+                set-variable #l6 &spr "%s\x01%s\x01%s\x01\x01" #l3 &lef #l4 #l6 &rig #l4 &add #l6 1
+              !else
+                set-variable #l6 &spr "%s\x01%s\x01\x01\x01" #l3 #l4
+              !endif
+              0 insert-field-vcf "N" #l6
+              !if &xse &reg &spr "/org/addr/%d/pdob" .org.addr "" "\(\d\d?\)\([-/]\)\(\d\d?\)\(\2\(\d\d\(\d\d\)?\)\)?"
+                set-variable #l6 &con &seq @s5 "" &lef $time 4 @s5
+                !if &equ &len #l6 2
+                  set-variable #l6 &con &gre #l6 &mid $time 2 2 &add 1900 #l6 &add 2000 #l6
+                !endif
+                set-variable #l6 &spr "%s-%02d-%02d" #l6 @s3 @s1
+                0 insert-field-vcf "BDAY" #l6
+              !endif
+              insert-field-vcf "TEL;HOME" "home/tel"
+              insert-field-vcf "TEL;CELL" "pmob"
+              insert-field-vcf "EMAIL;HOME" "pemail"
+              insert-field-vcf "URL" "home/www"
+              3 insert-field-vcf "ADR;HOME" "home/addr" 6 "\n"
+              set-variable #l6 &trb &spr "Partner of: %s\n%s" #l5 .nn
+              0 insert-field-vcf "NOTE" #l6
+              0 insert-field-vcf "END" "VCARD"
+            !endif
+          !endif
         !endif
-    !until &seq .org.addr "*"
+      !until &seq .org.addr "*"
+    !else
+      !if .org.aexp-header
+        set-variable #l3 0
+        !while &not &seq &set #l4 &lget .org.addr-lbl &inc #l3 1 ""
+          !if &and &gre .org.aexp-addrfld 1 &seq &rig #l4 5 "Address"
+            set-variable #l5 1
+            !repeat
+              insert-string &spr "%s%s%s%d%s" #g1 #g2 #l4 #l5 #g2
+            !until &equ &pinc #l5 1 .org.aexp-addrfld
+          !else
+            !if &gre #l3 1
+              insert-string #g1
+            !endif
+            insert-string &spr "%s%s%s" #g2 #l4 #g2
+          !endif
+        !done
+        insert-string #g0
+      !endif
+      set-variable #l2 0
+      set-variable .org.addr "0"
+      set-variable .org.iaddr &cond &gre .org.iaddr -1 0 -1
+      !repeat
+        org-addr-inc-recno
+        !if &not &seq .org.addr "*"
+          !if &or &not .org.aexp-select &seq "*" &reg &spr "/org/addr/%d/slct" .org.addr "" 
+            set-variable #l2 &add #l2 1
+            set-variable #l3 0
+            !while &not &seq &set #l4 &lget .org.addr-reg &inc #l3 1 ""
+              !if &equ #l3 1
+                insert-string &spr "%s%d%s" #g2 .org.addr #g2
+              !else
+                set-variable #l5 &reg &spr "/org/addr/%d/%s" .org.addr #l4 ""
+                !if &seq #g2 ""
+                  set-variable #l5 &rep #l5 #g1 .org.aexp-seperator
+                !else
+                  set-variable #l5 &rep #l5 #g2 &cat #g2 #g2
+                !endif
+                !if &and &gre .org.aexp-addrfld 1 &seq &rig #l4 5 "addr"
+                  ; Given the user has asked for the addr to be split into 'n' fields,
+                  ; replace the first 'n-1' \n's with field separators
+                  set-variable #l6 &spr "%s%s%s" #g2 #g1 #g2
+                  &sub .org.aexp-addrfld 1 var-str-sub #l5 "\n" #l6
+                  set-variable #l5 &spr "%s%n" #l5 &sub .org.aexp-addrfld &add .var-str-sub.count 1 #l6
+                !endif
+                set-variable #l5 &rep #l5 #g0 .org.aexp-endrec
+                insert-string &spr "%s%s%s%s" #g1 #g2 #l5 #g2
+              !endif
+            !done
+            insert-string #g0
+          !endif
+        !endif
+      !until &seq .org.addr "*"
+    !endif
     set-variable .org.addr #l1
     set-variable .org.iaddr #l7
     !force write-buffer #l0 @mna
