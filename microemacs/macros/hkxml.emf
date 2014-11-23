@@ -170,5 +170,3 @@ set-variable .fhook-xml.exact -1
 !emacro
 
 buffer-init-fhook "xml"
-
-
