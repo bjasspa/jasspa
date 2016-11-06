@@ -227,6 +227,7 @@ static meUByte   ffcrypt=0 ;
 #if MEOPT_SOCKET
 
 #include <stdarg.h>
+#include <time.h>
 
 #ifdef _WIN32
 /* winsock2.h must be included before */
@@ -1013,8 +1014,16 @@ ffFtpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByt
 static int
 ffHttpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByte *file, meUInt rwflag)
 {
-    meUByte buff[meBUF_SIZE_MAX+meBUF_SIZE_MAX], *thost, *tport, *ss, *s1, cc ;
+    meUByte pfb[meBUF_SIZE_MAX], buff[meBUF_SIZE_MAX+meBUF_SIZE_MAX], *thost, *tport, *ss, *s1, *pfn, cc ;
+    meInt pfs;
+    FILE *pfp=NULL;
 
+    if(((ss = getUsrVar((meUByte *)"http-post-file")) != errorm) && (*ss != '\0'))
+    {
+        if((pfp=fopen((char *)ss,"rb")) == NULL)
+            return meFALSE ;
+        pfn = ss;
+    }
     if ((ss = getUsrVar((meUByte *)"http-proxy-addr")) != errorm)
     {
         thost = ss ;
@@ -1032,8 +1041,11 @@ ffHttpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUBy
     /* if we're already logged on somewhere else kill the connection */
     ffCloseSockets(0) ;
     if(meSocketIsBad(ffsock=ffOpenConnectUrlSocket(thost,tport)))
+    {
+        if(pfp != NULL)
+            fclose(pfp);
         return meFALSE ;
-    
+    }
     sprintf((char *)buff,"[Connected, reading %s]",file);
     if(ffurlBp != NULL)
     {
@@ -1041,14 +1053,25 @@ ffHttpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUBy
         ffurlConsoleAddText(buff,0) ;
     }
     mlwrite(MWCURSOR|MWSPEC,buff);
-
-    /* send GET message to http */
-    meStrcpy(buff,"GET ") ;
-    if(thost == host)
-        meStrcpy(buff+4,file) ;
+    
+    ss = buff;
+    if(pfp != NULL)
+    {
+        /* send POST message to http */
+        meStrcpy(ss,"POST ") ;
+        ss += 5;
+    }
     else
-        ffurlCreateName(buff+4,fftype,host,port,NULL,NULL,file) ;
-    ss = buff + meStrlen(buff) ;
+    {
+        /* send GET message to http */
+        meStrcpy(ss,"GET ") ;
+        ss += 4;
+    }
+    if(thost == host)
+        meStrcpy(ss,file) ;
+    else
+        ffurlCreateName(ss,fftype,host,port,NULL,NULL,file) ;
+    ss += meStrlen(ss) ;
     meStrcpy(ss," HTTP/1.0\r\nConnection: Keep-Alive\r\nHost: ") ;
     ss += meStrlen(ss) ;
     meStrcpy(ss,host) ;
@@ -1063,6 +1086,22 @@ ffHttpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUBy
         meStrcat(ss,"\r\nAuthorization: Basic ") ;
         ss += 23 ;
         ss = strBase64Encode(ss,user) ;
+    }
+    if(pfp != NULL)
+    {
+        meInt ii, ll;
+        meUByte *s2 ;
+        fseek(pfp,0,SEEK_END);
+        ii = ftell(pfp) ;
+        fseek(pfp,ffoffset,SEEK_SET) ;
+        if((s1 = meStrrchr(pfn,'/')) == NULL)
+            s1 = pfn;
+        if((s2 = meStrrchr(s1,'\\')) == NULL)
+            s2 = s1;
+        pfs = sprintf(pfb,"\r\n----5Iz6dTINmxNFw6S42Ryf98IBXX1NCe%x",clock());
+        ll = sprintf(pfb+pfs,"\r\nContent-Disposition: form-data; name=\"file\"; filename=\"%s\"\r\nContent-Type: application/octet-stream\r\n\r\n",s2);
+        ss += sprintf(ss,"\r\nContent-Length: %d",pfs-2+ll+ii+pfs+4);
+        SetUsrLclCmdVar((meUByte *) "http-post-file",(meUByte *) "",&usrVarList) ;
     }
     if((s1 = getUsrVar((meUByte *)"http-cookies")) != errorm)
     {
@@ -1093,8 +1132,33 @@ ffHttpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUBy
     if(meSocketWrite(ffsock,(char *)buff,meStrlen(buff),0) <= 0)
     {
         ffCloseSockets(0) ;
+        if(pfp != NULL)
+            fclose(pfp);
         return meFALSE ;
     }
+    if(pfp != NULL)
+    {
+        meInt ii;
+        if(meSocketWrite(ffsock,(char *)pfb+2,meStrlen(pfb+2),0) <= 0)
+        {
+            ffCloseSockets(0) ;
+            fclose(pfp);
+            return meFALSE ;
+        }
+        while(((ii=fread(ffbuf,1,meFIOBUFSIZ,pfp)) > 0) &&
+              (meSocketWrite(ffsock,(char *)ffbuf,ii,0) > 0))
+            ;
+        fclose(pfp);
+        if(ii != 0)
+            return meFALSE ;
+        meStrcpy(pfb+pfs,"--\r\n");
+        if(meSocketWrite(ffsock,(char *)pfb,pfs+4,0) <= 0)
+        {
+            ffCloseSockets(0) ;
+            return meFALSE ;
+        }
+    }
+
     /* must now ditch the header, read up to the first blank line */
     while(ffReadSocketLine(ffsock,buff) > 0)
     {
