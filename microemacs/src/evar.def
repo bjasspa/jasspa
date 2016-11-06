@@ -245,7 +245,13 @@ DEFFUN (UFDIV,      "div", 0x646976, FUN_DYNAMIC)     /* division */
 DEFFUN (UFEQUAL,    "equ", 0x657175, FUN_DYNAMIC)     /* logical equality check */
 #if MEOPT_EXTENDED
 DEFFUN (UFEXIST,    "exi", 0x657869, FUN_MONAMIC|FUN_SETVAR) /* does the var/command exist */
+DEFFUN (UFFABS,     "fab", 0x666162, FUN_MONAMIC)     /* floating point absolute */
+DEFFUN (UFFADD,     "fad", 0x666164, FUN_DYNAMIC)     /* floating point add */
+DEFFUN (UFFDIV,     "fdi", 0x666469, FUN_DYNAMIC)     /* floating point divide */
 DEFFUN (UFFIND,     "fin", 0x66696E, FUN_DYNAMIC)     /* find file */
+DEFFUN (UFFMUL,     "fmu", 0x666D75, FUN_DYNAMIC)     /* floating point multiply */
+DEFFUN (UFFSQRT,    "fsq", 0x667371, FUN_MONAMIC)     /* floating point square root */
+DEFFUN (UFFSUB,     "fsu", 0x667375, FUN_DYNAMIC)     /* floating point subtract */
 #endif
 DEFFUN (UFGMODE,    "gmo", 0x676D6F, FUN_MONAMIC)     /* Test for a given global mode */
 DEFFUN (UFGREATER,  "gre", 0x677265, FUN_DYNAMIC)     /* logical greater than */

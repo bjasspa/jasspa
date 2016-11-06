@@ -54,6 +54,9 @@ extern meUByte time_stamp[];   /* Time stamp string */
 #endif
 
 #if MEOPT_EXTENDED
+#include <math.h>
+#define meFtoa(dd) (sprintf(evalResult,"%.16e",(dd)),evalResult)
+#define meAtof(ss) (atof(ss))
 static time_t timeOffset=0 ;            /* Time offset in seconds */
 
 #ifdef _INSENSE_CASE
@@ -2288,6 +2291,12 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
                 evalResult[1] = '\0' ;
             return evalResult ;
         }
+    case UFFABS:        return meFtoa(fabs(meAtof(arg1)));
+    case UFFADD:        return meFtoa(meAtof(arg1) + meAtof(arg2));
+    case UFFDIV:        return meFtoa(meAtof(arg1) / meAtof(arg2));
+    case UFFMUL:        return meFtoa(meAtof(arg1) * meAtof(arg2));
+    case UFFSQRT:       return meFtoa(sqrt(meAtof(arg1)));
+    case UFFSUB:        return meFtoa(meAtof(arg1) - meAtof(arg2));
 #endif
     case UFCAT:
         {
@@ -2985,11 +2994,27 @@ get_flag:
                             index += sprintf((char *)arg3+index,(char *)p,nn) ;
                         *s = c ;
                         break;
+                    case 'e':                   /* Float (double precision) */
+                    case 'f':                   /* Float (double precision) */
+                    case 'g':                   /* Float (double precision) */
+                        {
+                            double dd;
+                            if (macarg (arg2) <= 0) 
+                                return abortm;
+                            dd = meAtof(arg2) ;
+                            c = *s ;
+                            *s = '\0' ;
+                            if(index < meBUF_SIZE_MAX-16)
+                                /* Only do it if we have enough space */
+                                index += sprintf((char *)arg3+index,(char *)p,dd) ;
+                            *s = c ;
+                            break;
+                        }
                     default:
-                        if(isDigit(c))
+                        if(isDigit(c) || (c == '.'))
                         {
                             count = c - '0' ;
-                            while((c = *s++),isDigit(c)) 
+                            while(((c = *s++) == '.') || isDigit(c)) 
                                 count = (count*10) + (c-'0') ;
                             s-- ;
                             goto get_flag ;
