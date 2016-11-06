@@ -139,7 +139,7 @@ BEGIN
 END
 #endif
 
-#if 1
+#ifdef _ME_WINDOW
 // Enable if window support required
 IDD_QUITEXIT DIALOG DISCARDABLE  0, 0, 219, 60
 #ifndef __BORLANDC__
@@ -300,7 +300,7 @@ END
 //
 // Bitmap
 //
-#if 1
+#ifdef _ME_WINDOW
 // enable if print or window support required
 
 IDB_BITMAP1             BITMAP  DISCARDABLE     "ne32.bmp"
