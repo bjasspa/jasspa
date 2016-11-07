@@ -3792,7 +3792,7 @@ meFrameSetWindowTitle(meFrame *frame, meUByte *str)
 
 #ifdef _CLIPBRD
 void
-TTsetClipboard(void)
+TTsetClipboard(int cpData)
 {
     if(!(meSystemCfg & (meSYSTEM_CONSOLE|meSYSTEM_NOCLIPBRD)) &&
        !(clipState & (CLIP_OWNER|CLIP_RECEIVING|CLIP_DISABLED)) && (kbdmode != mePLAY))
@@ -3828,7 +3828,7 @@ TTgetClipboard(void)
         clipState &= ~(CLIP_RECEIVING|CLIP_RECEIVED) ;
         /* reset the increment clip size to zero (just incase there was an interuption) */
         meClipSize=0 ;
-        TTsetClipboard() ;
+        TTsetClipboard(0);
     }
 }
 #endif

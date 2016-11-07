@@ -138,6 +138,13 @@ copyRegion(int f, int n)
     meUShort markOffset, dotOffset ;
 #endif
     
+    if(n < 0)
+    {
+#ifdef _CLIPBRD
+        TTsetClipboard(1);        
+#endif
+        return meTRUE;
+    }
     if(getregion(&region) <= 0)
         return meFALSE ;
     left = region.size ;

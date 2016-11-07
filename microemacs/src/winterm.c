@@ -1933,27 +1933,28 @@ WinKillToClipboard (void)
 /*
  * TTsetClipboard
  * Make the information available to other applications.
- * Do not copy the data simply mark the clipboard signalling
- * that data is available.
+ * Do not copy the data (unless cpData != 0) simply mark the clipboard signalling that data is available.
  */
 void
-TTsetClipboard (void)
+TTsetClipboard(int cpData)
 {
+    HANDLE hmem=NULL;
     /* We aquire the clipboard and flush it under the following conditions;
      * "We do NOT own it" or "Clipboard is stale". The clipboard becomes stale
      * when we own it but another application has aquired our clipboard data.
      * In this case we need to reset the clipboard so that the application may
      * aquire our next data block that has changed. */
-    if((!(clipState & CLIP_OWNER) || (clipState & CLIP_STALE)) &&
+    if((!(clipState & CLIP_OWNER) || (clipState & CLIP_STALE) || cpData) &&
        !(clipState & CLIP_DISABLED) && !(meSystemCfg & meSYSTEM_NOCLIPBRD) &&
-       (kbdmode != mePLAY) && OpenClipboard(baseHwnd))
+       ((kbdmode != mePLAY) || cpData) && ((cpData == 0) || ((hmem = WinKillToClipboard()) != NULL)) &&
+       OpenClipboard(baseHwnd))
     {
         if(clipState & CLIP_OWNER)
             /* if we are currently the owner of the clipboard, the call to EmptyClipboard
              * will generate a WM_DESTROYCLIPBOARD to this window, ignore it! */
             clipState |= CLIP_IGNORE_DC ;
         EmptyClipboard();
-        SetClipboardData (((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT : CF_TEXT), NULL);
+        SetClipboardData(((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT : CF_TEXT),hmem);
         CloseClipboard ();
         clipState |= CLIP_OWNER ;
         clipState &= ~CLIP_STALE ;

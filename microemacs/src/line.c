@@ -878,7 +878,7 @@ killSave(void)
     currkill = &(thiskl->kill) ;
     
 #ifdef _CLIPBRD
-    TTsetClipboard() ;
+    TTsetClipboard(0);
 #endif
     
     return meTRUE ;
