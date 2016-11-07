@@ -1979,13 +1979,13 @@ ffgetline(meLine **line)
                 ffcur++ ;
             }
             else if(ffflags & meFFFLAG_NOTSET)
-                ffflags = (ffflags & ~meFFFLAG_NOTSET) | meFFFLAG_LF ;
-            else if((ffflags & (meFFFLAG_CR|meFFFLAG_LF)) != meFFFLAG_LF)
+                ffflags = (ffflags & ~meFFFLAG_NOTSET) | meFFFLAG_CR ;
+            else if((ffflags & (meFFFLAG_CR|meFFFLAG_LF)) != meFFFLAG_CR)
                 ffflags |= meFFFLAG_LTDIFF ;
         }
         else if(ffflags & meFFFLAG_NOTSET)
-            ffflags = (ffflags & ~meFFFLAG_NOTSET) | meFFFLAG_CR ;
-        else if((ffflags & (meFFFLAG_CR|meFFFLAG_LF)) != meFFFLAG_CR)
+            ffflags = (ffflags & ~meFFFLAG_NOTSET) | meFFFLAG_LF ;
+        else if((ffflags & (meFFFLAG_CR|meFFFLAG_LF)) != meFFFLAG_LF)
             ffflags |= meFFFLAG_LTDIFF ;
     }
     *line = lp ;
@@ -2697,8 +2697,8 @@ ffWriteFileWrite(register int len, register meUByte *buff, int eolFlag)
         }
         if(eolFlag)
         {
-            if(((ffflags & meFFFLAG_LF) && ffputc('\r')) ||
-               ((ffflags & meFFFLAG_CR) && ffputc('\n')))
+            if(((ffflags & meFFFLAG_CR) && ffputc('\r')) ||
+               ((ffflags & meFFFLAG_LF) && ffputc('\n')))
                 return meABORT ;
         }
     }

@@ -44,7 +44,7 @@ define-macro start-up
             ml-write &cat &cat &cat &cat "[Processing \"" $buffer-fname "\" - "  #l0 "]"
         !endif
         !if #l2
-            ; flag as a unix file and as edited, then save
+            ; flag as a windows file and as edited, then save
             1 buffer-mode "cr"
             1 buffer-mode "lf"
             -1 buffer-mode "ctrlz"

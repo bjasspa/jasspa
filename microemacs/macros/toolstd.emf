@@ -49,7 +49,7 @@
     !if &band $buffer-fmod 0x10000
         set-variable #l2 "Dir d"
     !else
-        set-variable #l2 &lget "|?0?|Unx|Mac|Win|?4?|?5?|?6?|Dos|" &add 1 &add &add &bmod "cr" &mul 2 &bmod "lf" &mul 4 &bmod "ctrlz"
+        set-variable #l2 &lget "|?0?|Mac|Unx|Win|?4?|?5?|?6?|Dos|" &add 1 &add &add &bmod "cr" &mul 2 &bmod "lf" &mul 4 &bmod "ctrlz"
         set-variable #l2 &cat #l2 " -"
     !endif
     !if &band $system 0x80

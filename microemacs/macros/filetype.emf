@@ -3,7 +3,7 @@
 ; Copyright (C) 1998-2009 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
-; Synopsis:    Dos to unix text file convertion routine.
+; Synopsis:    command-line file type info print
 ; Authors:     Steven Phillips
 ;
 ; Usage:
@@ -22,7 +22,7 @@ define-macro start-up
             set-variable #l0 "Binary"
         !else
             set-variable #l0 &add 1 &add &add &bmod "cr" &mul &bmod "lf" 2 &mul &bmod "ctrlz" 4
-            set-variable #l0 &lget "|Strange0|Unix|Mac|Windows|Strange4|Strange5|Strange6|Dos|" #l0
+            set-variable #l0 &lget "|Strange0|Mac|Unix|Windows|Strange4|Strange5|Strange6|Dos|" #l0
             !if &band $buffer-fmod 0x100000
                 set-variable #l2 &cat #l2 "EOL"
             !endif

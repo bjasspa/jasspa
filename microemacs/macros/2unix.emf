@@ -10,8 +10,8 @@
 ;     me [-B] "@2unix" <files>
 ;
 ; set the default so empty files are handled correctly
-1 global-mode "cr"
--1 global-mode "lf"
+-1 global-mode "cr"
+1 global-mode "lf"
 -1 global-mode "ctrlz"
 define-macro start-up
     delete-other-windows
@@ -31,7 +31,7 @@ define-macro start-up
             !if &band $buffer-fmod 0x100000
                 set-variable #l0 &cat #l0 " (bad), fix"
                 set-variable #l2 1
-            !elif &sub #l3 1
+            !elif &sub #l3 2
                 set-variable #l0 &cat #l0 ", fix"
                 set-variable #l2 1
             !else
@@ -45,8 +45,8 @@ define-macro start-up
         !endif
         !if #l2
             ; flag as a unix file and as edited, then save
-            1 buffer-mode "cr"
-            -1 buffer-mode "lf"
+            -1 buffer-mode "cr"
+            1 buffer-mode "lf"
             -1 buffer-mode "ctrlz"
             1 buffer-mode "edit"
             0 save-buffer

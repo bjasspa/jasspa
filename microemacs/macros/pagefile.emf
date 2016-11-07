@@ -624,10 +624,10 @@ define-macro page-file
     beginning-of-buffer
     ; make sure we don't have ctrlz mode on, this will corrupt the file if saved.
     -1 buffer-mode "ctrlz"
-    1 buffer-mode "cr"
-    ; try to guess the lf mode from the size of the buffer compared to the size on disk, mac not supported, can be manually set.
+    1 buffer-mode "lf"
+    ; try to guess the cr mode from the size of the buffer compared to the size on disk, mac not supported, can be manually set.
     0 buffer-info
-    &cond &gre &lget :page-0 1 &add &lget $result 6 &div &lget $result 8 2 1 -1 buffer-mode "lf"
+    &cond &gre &lget :page-0 1 &add &lget $result 6 &div &lget $result 8 2 1 -1 buffer-mode "cr"
     buffer-bind-key "page-file-save-buffer" "C-x C-s"
     buffer-bind-key "page-file-beginning-of-buffer" "home"
     buffer-bind-key "page-file-end-of-buffer" "end"
