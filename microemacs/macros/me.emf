@@ -225,6 +225,7 @@ add-file-hook "*registry*"                                    fhook-reg
 add-file-hook "*icommand* *shell*"                            fhook-ipipe
 add-file-hook ".emf"                                          fhook-emf
 add-file-hook ".doc"                                          fhook-doc
+add-file-hook ".apt"                                          fhook-apt
 add-file-hook ".txt"                                          fhook-txt
 add-file-hook ".jst"                                          fhook-jst
 add-file-hook ".tex .sty"                                     fhook-latex
