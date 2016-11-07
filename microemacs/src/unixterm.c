@@ -424,7 +424,7 @@ meSetupProgname(char *progname)
      * provides a system call to get the absolute path then we use that (i.e.
      * the /proc file system, where the system does not then we fall back to
      * looking for the executable from the program name. */
-    if(((ii = execFilename (progname, evalResult, sizeof (evalResult))) == 0) &&
+    if(((ii = execFilename (progname, (char *) evalResult, sizeof (evalResult))) == 0) &&
        ((ii = executableLookup((meUByte *) progname,evalResult)) == 0))
     {
         /* Some shells, specifically zsh, will execute from the current
@@ -749,6 +749,23 @@ waitForEvent(int mode)
 #endif /* _USEPOLL */
                 if(!ii)
                 {
+                    /* BEGIN: 2013-05-26 */
+                    /* This test seems to fail in OpenSolaris running in an
+                     * X-Window which is remote (i.e. running though a SSH
+                     * tunnel). Certainly the behaviour with the local window
+                     * manager is different from the remote window in that
+                     * more X-Window events are received AND the FIORDCHK
+                     * seems to return 0 remotely and non-zero locally (even
+                     * when it should be zero). If this a X-Windows session
+                     * then ignore and do not die. */
+                    if (!(meSystemCfg & meSYSTEM_CONSOLE))
+                    {
+                        /* This is X-Windows running and is probably a signal
+                         * for an alarm or a X-Windows event */
+                        break;
+                    }
+                    /* END: 2013-05-26 */
+                    
                     /* Found this test can go wrong in some strange case,
                      * which is a real bummer as me now dies! as a fix, and I
                      * know its a bit of a bodge, only die is this happens 3
