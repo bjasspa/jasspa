@@ -7,6 +7,12 @@
 ; Synopsis:    Create a list of abbreviations for the toolbar
 ; Authors:     Steven Phillips
 ;
+; Notes:       To use this tool via key bindings add a binding eaf-list-goto, i.e.
+;
+;    global-bind-key eaf-list-goto "f9"
+;
+; to get into the abbrev-list, then use 'return' to insert an abbrev and f2 to open/close a fold
+
 !if &band .hilight.flags 0x01
     !if &not &exist .hilight.abbrev-item
         set-variable .hilight.abbrev-item &pinc .hilight.next 1
@@ -42,70 +48,93 @@
 !emacro
 
 define-macro eaf-list-execute
-    0 show-region
-    set-variable #l5 $result
-    !if &xseq &rig @wl $window-col "\\(</FOLD>\\)*<FOLD[+-]>.*"
-        set-variable #l0 &add 4 &add $window-col &sin "<FOLD" &rig @wl $window-col
-        set-variable #l1 &con &seq &mid @wl #l0 1 "-" "+" "-"
-        -1 buffer-mode "view"
-        set-variable #l2 $window-line
-        set-variable #l9 $buffer-bname
-        !force 0 find-buffer :eaf-list
-        !if $status
-            set-variable $window-line #l2
-            set-variable $window-col #l0
-            forward-delete-char
-            insert-string #l1
-            !if &seq #l1 "+"
-                set-variable $window-line &add #l2 1
-                set-mark
-                !force eaf-list-fold-find-close
-                !if $status
-                    set-variable #l3 $window-line
-                    4 narrow-buffer
-                    find-buffer #l9
-                    set-variable $window-line &add #l2 1
-                    set-mark
-                    set-variable $window-line #l3
-                    -1 kill-region
-                !endif
-            !else
-                set-variable $window-line &add #l2 1
-                !force 2 narrow-buffer
-                !if $status
-                    set-mark
-                    set-variable $window-line &add #l2 1
-                    0 copy-region
-                    find-buffer #l9
-                    -1 buffer-mode "view"
-                    set-variable $window-line &add #l2 1
-                    yank
-                    -1 yank
-                !endif
-            !endif
-            find-buffer #l9
-            set-variable $window-line #l2
-        !endif
-        set-variable $window-col #l0
-        forward-delete-char
-        insert-string #l1
-        -1 buffer-mode "edit"
-        1 buffer-mode "view"
-        goto-position "\x82"
-    !elif &not &set #l0 &sin ":EXSTR:" @wl
-        goto-position "\x82"
-    !elif &seq &trb &lef @wl &add $window-col 1 ""
-        goto-position "\x82"
-    !elif &seq &trb &mid @wl $window-col &sub &sub #l0 1 $window-col ""
-        goto-position "\x82"
-    !else
-        set-variable #l0 &rig @wl &add #l0 6
-        goto-position "\x82"
-        !if &band #l5 1
-            !force show-region
-        !endif
-        execute-line &spr "execute-string \"%s\"" #l0
+  0 show-region
+  set-variable #l5 $result
+  !if &band @# 2
+    !if &set #l1 &sin "<FOLD+>" @wl
+    !elif &not &set #l1 &sin "<FOLD->" @wl
+      goto-position "\x82"
     !endif
+    set-variable $window-col &sub #l1 1
+  !endif
+  !if &xseq &rig @wl $window-col "\\(</FOLD>\\)*<FOLD[+-]>.*"
+    set-variable #l0 &add 4 &add $window-col &sin "<FOLD" &rig @wl $window-col
+    set-variable #l1 &con &seq &mid @wl #l0 1 "-" "+" "-"
+    -1 buffer-mode "view"
+    set-variable #l2 $window-line
+    set-variable #l9 $buffer-bname
+    !force 0 find-buffer :eaf-list
+    !if $status
+      set-variable $window-line #l2
+      set-variable $window-col #l0
+      forward-delete-char
+      insert-string #l1
+      !if &seq #l1 "+"
+        set-variable $window-line &add #l2 1
+        set-mark
+        !force eaf-list-fold-find-close
+        !if $status
+          set-variable #l3 $window-line
+          4 narrow-buffer
+          find-buffer #l9
+          set-variable $window-line &add #l2 1
+          set-mark
+          set-variable $window-line #l3
+          -1 kill-region
+        !endif
+      !else
+        set-variable $window-line &add #l2 1
+        !force 2 narrow-buffer
+        !if $status
+          set-mark
+          set-variable $window-line &add #l2 1
+          0 copy-region
+          find-buffer #l9
+          -1 buffer-mode "view"
+          set-variable $window-line &add #l2 1
+          yank
+          -1 yank
+        !endif
+      !endif
+      find-buffer #l9
+      set-variable $window-line #l2
+    !endif
+    set-variable $window-col #l0
+    forward-delete-char
+    insert-string #l1
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    !if &seq &lef @cck 10 "mouse-drop"
+      goto-position "\x82"
+    !endif
+  !elif &not &set #l0 &sin ":EXSTR:" @wl
+    goto-position "\x82"
+  !else
+    !if &set #l1 &seq &lef @cck 10 "mouse-drop"
+      set-variable #l1 &or &seq &trb &lef &rep @wl "</FOLD>" "" &add $window-col 1 "" &seq &trb &mid @wl $window-col &sub &sub #l0 1 $window-col ""
+    !endif
+    set-variable #l0 &rig @wl &add #l0 6
+    goto-position "\x82"
+    !if &band #l5 1
+      !force show-region
+    !endif
+    !if &not #l1
+      execute-line &spr "execute-string \"%s\"" #l0
+    !endif
+  !endif
+!emacro
+
+define-macro eaf-list-goto
+  0x21 set-position "\x82"
+  !force toolbar-make-tool-visible "*abbrev-list*"
+  set-variable #l0 $window-id
+  !repeat
+    3 next-window
+    !if &equ #l0 $window-id
+      ml-write "[Failed to locate *abbrev-list* window]"
+      !abort
+    !endif
+  !until &seq $buffer-bname "*abbrev-list*"
 !emacro
 
 0 define-macro eaf-list-create
@@ -207,6 +236,8 @@ define-macro eaf-list-execute
     set-variable :mouse-pick-1 mouse-void
     set-variable :mouse-drop-1 eaf-list-execute
     set-variable :eaf-list #l0
+    buffer-bind-key eaf-list-execute "return"
+    3 buffer-bind-key eaf-list-execute "f2"
     -1 buffer-mode "edit"
     1 buffer-mode "view"
     goto-position "\x86"
