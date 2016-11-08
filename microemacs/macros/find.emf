@@ -426,7 +426,7 @@
     set-variable #p0 &trl &rig #p0 #l1
     set-variable #l2 &lget #p9 1
     !while &len &set #l3 &lef #l0 1
-      !if &sin #l3 "uxgprdfmibl234@-aoe"
+      !if &sin #l3 "uxgprdfmibl234@-aoecC"
         set-variable #l2 &cat #l2 #l3
       !elif &sin #l3 "UXGPRDFMIBL"
         set-variable #l2 &rep #l2 &slo #l3 ""
@@ -683,7 +683,16 @@ define-macro grep
     buffer-init-hooks
     ml-write #l0
   !endif
-  !return #l3
+  !if &sin "C" &lget #l9 1
+    set-variable $result 0
+  !elif &not #l3
+    set-variable $result -1
+    !abort
+  !elif &sin "c" &lget #l9 1
+    set-variable $result &lget #l7 1
+  !else
+    set-variable $result &con &lget #l7 1 0 1
+  !endif
 !emacro
 define-macro grep-rerun
   beginning-of-buffer
@@ -795,7 +804,16 @@ define-macro find
     buffer-init-hooks
     ml-write #l0
   !endif
-  !return #l3
+  !if &sin "C" &lget #l9 1
+    set-variable $result 0
+  !elif &not #l3
+    set-variable $result -1
+    !abort
+  !elif &sin "c" &lget #l9 1
+    set-variable $result &add &lget #l7 2 &lget #l7 3
+  !else
+    set-variable $result &con &add &lget #l7 2 &lget #l7 3 0 1
+  !endif
 !emacro
 define-macro find-rerun
   beginning-of-buffer
@@ -1003,7 +1021,16 @@ define-macro replace-string-in-files
     set-variable $window-line 3
     ml-write #l0
   !endif
-  !return #l3
+  !if &sin "C" &lget #l9 1
+    set-variable $result 0
+  !elif &not #l3
+    set-variable $result -1
+    !abort
+  !elif &sin "c" &lget #l9 1
+    set-variable $result #l6
+  !else
+    set-variable $result &con #l6 0 1
+  !endif
 !emacro
 
 define-macro query-replace-string-in-files
