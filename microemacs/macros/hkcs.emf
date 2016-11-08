@@ -15,7 +15,7 @@ define-macro fhook-cs
 ; buffer-init variables
 set-variable .fhook-cs.setup &reg "/history/fhook/cs" "bdfghnopx"
 set-variable .fhook-cs.setup-mask "abdefghikmnoptuxrv"
-set-variable .fhook-cs.tags "cstags"
+set-variable .fhook-cs.tags "ctags"
 set-variable .fhook-cs.comment "|/*| */|*| * | * |fr|"
 set-variable .fhook-cs.comment-1 "|/**| */|*| * | * |f|"
 ; Set up the collapse of functions
