@@ -28,7 +28,10 @@
 !endif
 !force read-registry "/history" $user-name "c"
 set-variable $kept-versions &reg &spr "/history/%s/kept-vers" $platform "0"
-set-variable $file-ignore   &reg &spr "/history/%s/file-ignore" $platform ""
+; This check allows the ME '-v $file-ignore=...' command-line option to be used to define required value   
+!if &seq $file-ignore ""
+  set-variable $file-ignore &reg &spr "/history/%s/file-ignore" $platform ""
+!endif
 
 0 define-macro-file buffinit buffer-init buffer-init-fhook buffer-bind-create fhook-default
 0 define-macro-file utils frame-handle ascii-time var-str-sub str-to-regex filemask-to-regex copy-registry create-file-path
@@ -55,13 +58,14 @@ set-variable .osd.next &cond &exi .osd.next .osd.next &add .osd.tmp 1
 0 exec-file "find"
 
 define-macro start-up
-    set-variable $buffer-fname &stat a "."
-    ml-write &spr "Exec: [%s] [%s] [%s] [%s] [%s] [%s]" .about.arg0 .about.arg1 .about.arg2 .about.arg3 .about.arg4 .about.arg5
-    ml-write &cat "Find from dir: " $buffer-fname
-    !if &exi .about.argn
-        .about.argn execute-named-command .about.arg0 .about.arg1 .about.arg2 .about.arg3 .about.arg4 .about.arg5
-    !else
-        execute-named-command .about.arg0 .about.arg1 .about.arg2 .about.arg3 .about.arg4 .about.arg5
-    !endif
-    0 exit-emacs
+  set-variable $buffer-fname &stat a "."
+  ml-write &spr "Exec: [%s] [%s] [%s] [%s] [%s] [%s]" .about.arg0 .about.arg1 .about.arg2 .about.arg3 .about.arg4 .about.arg5
+  ml-write &cat "Find from dir: " $buffer-fname
+  !if &exi .about.argn
+    .about.argn execute-named-command .about.arg0 .about.arg1 .about.arg2 .about.arg3 .about.arg4 .about.arg5
+  !else
+    execute-named-command .about.arg0 .about.arg1 .about.arg2 .about.arg3 .about.arg4 .about.arg5
+  !endif
+  set-variable #l9 $result
+  4 exit-emacs #l9
 !emacro
