@@ -7,6 +7,9 @@
 ; Synopsis:    Organizer address book import/export macros.
 ; Authors:     Steven Phillips
 ;
+; Uncomment the following if you want to use Android's extended VCARD fields 
+;set-variable .org.android 1
+;
 !if &seq .osd-get-file.cmd "ERROR"
     execute-file fileopen
 !endif
@@ -436,12 +439,12 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " \HCancel  "   f void
         org-addr-inc-recno
         !if &not &seq .org.addr "*"
           !if &and .org.aexp-select &not &seq "*" &reg &spr "/org/addr/%d/slct" .org.addr ""
-          !elif &or &len &set #l3 &reg &spr "/org/addr/%d/sname" .org.addr "" &len &set #l4 &reg &spr "/org/addr/%d/fname" .org.addr ""
+          !elif &or &len &set #l3 &reg &spr "/org/addr/%d/sname" .org.addr "" &len &set #l4 &trb &reg &spr "/org/addr/%d/fname" .org.addr ""
             set-variable #l2 &add #l2 1
             0 insert-field-vcf "BEGIN" "VCARD"
             0 insert-field-vcf "VERSION" "2.1"
             !if &set #l6 &sin " " #l4
-              set-variable #l6 &spr "%s\x01%s\x01%s\x01\x01" #l3 &lef #l4 #l6 &rig #l4 &add #l6 1
+              set-variable #l6 &spr "%s\x01%s\x01%s\x01\x01" #l3 &lef #l4 &sub #l6 1 &rig #l4 #l6
             !else
               set-variable #l6 &spr "%s\x01%s\x01\x01\x01" #l3 #l4
             !endif
@@ -471,24 +474,49 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " \HCancel  "   f void
             3 insert-field-vcf "ADR;WORK" "work/addr" 6 "\n"
             set-variable .nn &reg &spr "/org/addr/%d/notes" .org.addr ""
             !if &band .org.aflag 0x100
-              !if &or &len &set #l4 &reg &spr "/org/addr/%d/c3name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c3dob" .org.addr ""
-                set-variable .nn &spr "Child 3: %s%s\n%s" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6 .nn
-              !endif
-              !if &or &len &set #l4 &reg &spr "/org/addr/%d/c2name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c2dob" .org.addr ""
-                set-variable .nn &spr "Child 2: %s%s\n%s" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6 .nn
-              !endif
-              !if &or &len &set #l4 &reg &spr "/org/addr/%d/c1name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c1dob" .org.addr ""
-                set-variable .nn &spr "Child 1: %s%s\n%s" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6 .nn
-              !endif
-              !if &len &set #l4 &reg &spr "/org/addr/%d/dom" .org.addr ""
-                set-variable .nn &spr "Date-of-marriage: %s\n%s" #l4 .nn
+              !if .org.android
+                !if &or &len &set #l4 &reg &spr "/org/addr/%d/c1name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c1dob" .org.addr ""
+                  0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s%s;3;;;;;;;;;;;;;" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6
+                !endif
+                !if &or &len &set #l4 &reg &spr "/org/addr/%d/c2name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c2dob" .org.addr ""
+                  0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s%s;3;;;;;;;;;;;;;" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6
+                !endif
+                !if &or &len &set #l4 &reg &spr "/org/addr/%d/c3name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c3dob" .org.addr ""
+                  0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s%s;3;;;;;;;;;;;;;" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6
+                !endif
+                !if &xse &reg &spr "/org/addr/%d/dom" .org.addr "" "\\(\\d\\d?\\)\\([-/]\\)\\(\\d\\d?\\)\\(\\2\\(\\d\\d\\(\\d\\d\\)?\\)\\)?"
+                  set-variable #l6 &con &seq @s5 "" &lef $time 4 @s5
+                  !if &equ &len #l6 2
+                    set-variable #l6 &con &gre #l6 &mid $time 2 2 &add 1900 #l6 &add 2000 #l6
+                  !endif
+                  set-variable #l6 &spr "%s-%02d-%02d" #l6 @s3 @s1
+                  0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/contact_event;%s;1;;;;;;;;;;;;;" #l6
+                !endif
+              !else
+                !if &or &len &set #l4 &reg &spr "/org/addr/%d/c3name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c3dob" .org.addr ""
+                  set-variable .nn &spr "Child 3: %s%s\n%s" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6 .nn
+                !endif
+                !if &or &len &set #l4 &reg &spr "/org/addr/%d/c2name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c2dob" .org.addr ""
+                  set-variable .nn &spr "Child 2: %s%s\n%s" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6 .nn
+                !endif
+                !if &or &len &set #l4 &reg &spr "/org/addr/%d/c1name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c1dob" .org.addr ""
+                  set-variable .nn &spr "Child 1: %s%s\n%s" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6 .nn
+                !endif
+                !if &len &set #l4 &reg &spr "/org/addr/%d/dom" .org.addr ""
+                  set-variable .nn &spr "Date-of-marriage: %s\n%s" #l4 .nn
+                !endif
               !endif
             !endif
             !if &len &set #l4 &reg &spr "/org/addr/%d/pfname" .org.addr ""
               !if &len &set #l6 &reg &spr "/org/addr/%d/psname" .org.addr ""
                 set-variable #l3 #l6
               !endif
-              set-variable #l6 &spr "Partner of: %s %s\n%s" #l4 #l3 .nn
+              !if .org.android
+                0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s %s;10;;;;;;;;;;;;;" #l4 #l3
+                set-variable #l6 .nn
+              !else
+                set-variable #l6 &spr "Partner of: %s %s\n%s" #l4 #l3 .nn
+              !endif
             !else
               set-variable #l6 .nn
             !endif
@@ -519,7 +547,29 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " \HCancel  "   f void
               insert-field-vcf "EMAIL;HOME" "pemail"
               insert-field-vcf "URL" "home/www"
               3 insert-field-vcf "ADR;HOME" "home/addr" 6 "\n"
-              set-variable #l6 &trb &spr "Partner of: %s\n%s" #l5 .nn
+              !if .org.android
+                !if &or &len &set #l4 &reg &spr "/org/addr/%d/c1name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c1dob" .org.addr ""
+                  0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s%s;3;;;;;;;;;;;;;" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6
+                !endif
+                !if &or &len &set #l4 &reg &spr "/org/addr/%d/c2name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c2dob" .org.addr ""
+                  0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s%s;3;;;;;;;;;;;;;" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6
+                !endif
+                !if &or &len &set #l4 &reg &spr "/org/addr/%d/c3name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c3dob" .org.addr ""
+                  0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s%s;3;;;;;;;;;;;;;" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6
+                !endif
+                !if &xse &reg &spr "/org/addr/%d/dom" .org.addr "" "\\(\\d\\d?\\)\\([-/]\\)\\(\\d\\d?\\)\\(\\2\\(\\d\\d\\(\\d\\d\\)?\\)\\)?"
+                  set-variable #l6 &con &seq @s5 "" &lef $time 4 @s5
+                  !if &equ &len #l6 2
+                    set-variable #l6 &con &gre #l6 &mid $time 2 2 &add 1900 #l6 &add 2000 #l6
+                  !endif
+                  set-variable #l6 &spr "%s-%02d-%02d" #l6 @s3 @s1
+                  0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/contact_event;%s;1;;;;;;;;;;;;;" #l6
+                !endif
+                0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s;10;;;;;;;;;;;;;" #l5
+                set-variable #l6 .nn
+              !else
+                set-variable #l6 &trb &spr "Partner of: %s\n%s" #l5 .nn
+              !endif
               0 insert-field-vcf "NOTE" #l6
               0 insert-field-vcf "END" "VCARD"
             !endif
@@ -591,4 +641,3 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " \HCancel  "   f void
     find-buffer #l9
     ml-write &spr "[Exported %d records to \"%s\"]" #l2 #l0
 !emacro
-
