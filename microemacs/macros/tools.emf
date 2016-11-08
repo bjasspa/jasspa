@@ -31,6 +31,21 @@ add-file-hook "*compile* *grep*" fhook-ipipe
     !return
   !endif
   set-variable #l0 $window-line
+  !if &not &bmod "wrap"
+    ; ipipe command will wrap at 1022 even when wrap is disabled, glue the lines back together
+    !while &gre $window-line :compile-last
+      backward-line
+      end-of-line
+      !if &equ $window-col 1023
+        backward-char
+        !if &seq @wc "\\"
+          forward-delete-char
+          forward-delete-char
+          set-variable #l0 &sub #l0 1
+        !endif
+      !endif
+    !done
+  !endif
   set-variable $window-line &sub :compile-last 1
   !repeat
     !force 0 get-next-line
@@ -129,7 +144,7 @@ define-macro compile
   !endif
 !emacro
 define-macro recompile
-  &bor @# 4 compile
+  &bor @# 12 compile
 !emacro
 define-macro which
   !force set-variable #l0 @1
