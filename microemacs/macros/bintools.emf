@@ -1,20 +1,11 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1997-2016 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
 ;
-;  Author        : $Author: bill $
-;  Created By    : Steven Phillips
-;  Created       : 2009-10-09 11:49:57
-;  Last Modified : <161109.0056>
+; Synopsis:    Binary mode tools
+; Authors:     Steven Phillips
 ;
-;  Description
-;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 2009 Maxexam Ltd.
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 define-macro bin-txt-to-hex
   !force set-variable #l1 @1
   !if &not $status
@@ -54,7 +45,7 @@ define-macro bin-hex-to-txt
   set-variable $result #l4
 !emacro
 
-0 define-macro bin-hex-to-dis-txt
+0 define-macro ibin-hex-to-dis-txt
   set-variable #l1 @1
   set-variable #l4 ""
   set-variable #l2 0
@@ -116,15 +107,24 @@ define-macro bin-hex-to-txt
 0 define-macro binary-set-line
   set-variable #l1 @1
   set-variable #l2 @2
-  bin-hex-to-dis-txt #l2
+  ibin-hex-to-dis-txt #l2
   set-variable #l3 $result
   set-variable #l2 &xrep #l2 "\\(..\\)" "\\1 "
   set-variable @wl &spr "%s?: %s%n |  %s" &lef #l1 7 #l2 &sub 48 &len #l2 " " #l3
 !emacro
 
 define-macro bin-move-backward
-  !if &not &or &bmo "binary" &bmo "rbin"
+  !if &bmo "binary"
+    !force &set #l1 $window-col binary-get-line-info
+    !if &not $status
+      ml-write "[ERROR: Bad cursor position or badly formatted line]"
+      !abort
+    !endif
+  !elif &not &bmo "rbin"
     ml-write "[ERROR: Not a binary or rbin buffer]"
+    !abort
+  !elif &band $window-col 1
+    ml-write "[ERROR: Bad cursor position, currently in the middle of a character]"
     !abort
   !endif
   !force set-variable #l5 @1
@@ -134,11 +134,6 @@ define-macro bin-move-backward
   calc #l5
   set-variable #l5 .calc.result
   !if &bmo "binary"
-    !force &set #l1 $window-col binary-get-line-info
-    !if &not $status
-      ml-write "[ERROR: Bad cursor position or badly formatted line]"
-      !abort
-    !endif
     set-variable #l5 &sub #l5 &lget #l9 3
     &div &add #l5 15 16 backward-line
     set-variable #l5 &sub 15 &mod &add #l5 15 16
@@ -148,10 +143,6 @@ define-macro bin-move-backward
       set-variable $window-col &add 10 &mul #l5 3
     !endif
   !else
-    !if &band $window-col 1
-      ml-write "[ERROR: Bad cursor position, currently in the middle of a character]"
-      !abort
-    !endif
     set-variable #l1 $window-line
     &mul #l5 2 backward-char
     set-variable #l2 $window-line
@@ -161,8 +152,17 @@ define-macro bin-move-backward
 !emacro       
 
 define-macro bin-move-forward
-  !if &not &or &bmo "binary" &bmo "rbin"
-    ml-write "[ERROR: Not a binary or rbin buffer]"
+  !if &bmo "binary"
+    !force &set #l1 $window-col binary-get-line-info
+    !if &not $status
+      ml-write "[ERROR: Bad cursor position or badly formatted line]"
+      !abort
+    !endif
+  !elif &not &bmo "rbin"
+    ml-write "[ERROR: Not a binary or rbin mode buffer]"
+    !abort
+  !elif &band $window-col 1
+    ml-write "[ERROR: Bad cursor position, currently in the middle of a character]"
     !abort
   !endif
   !force set-variable #l5 @1
@@ -172,11 +172,6 @@ define-macro bin-move-forward
   calc #l5
   set-variable #l5 .calc.result
   !if &bmo "binary"
-    !force &set #l1 $window-col binary-get-line-info
-    !if &not $status
-      ml-write "[ERROR: Bad cursor position or badly formatted line]"
-      !abort
-    !endif
     set-variable #l5 &add #l5 &lget #l9 3
     &div #l5 16 forward-line
     set-variable #l5 &mod #l5 16
@@ -186,10 +181,6 @@ define-macro bin-move-forward
       set-variable $window-col &add 10 &mul #l5 3
     !endif
   !else
-    !if &band $window-col 1
-      ml-write "[ERROR: Bad cursor position, currently in the middle of a character]"
-      !abort
-    !endif
     set-variable #l1 $window-line
     &mul #l5 2 forward-char
     set-variable #l2 $window-line
@@ -198,259 +189,6 @@ define-macro bin-move-forward
   !endif
 !emacro       
 
-define-macro bin-kill-region
-  !if &not @#
-    !return
-  !elif &bmo "binary"
-    !force $window-col binary-get-line-info
-    !if &not $status
-      ml-write "[ERROR: Bad cursor position or badly formatted line]"
-      !abort
-    !endif
-    set-variable #l8 #l9
-    set-variable #l0 $window-line
-    exchange-point-and-mark
-    !force $window-col binary-get-line-info
-    !if &not $status
-      exchange-point-and-mark
-      ml-write "[ERROR: Bad mark position or badly formatted line]"
-      !abort
-    !endif
-    !if &gre $window-line #l0
-      exchange-point-and-mark
-    !elif &gre #l0 $window-line
-      set-variable #l7 #l8
-      set-variable #l8 #l9
-      set-variable #l9 #l7
-    !elif &not &set #l1 &sub &lget #l9 3 &lget #l8 3
-      !return
-    !else
-      !if &les #l1 0
-        set-variable #l7 #l8
-        set-variable #l8 #l9
-        set-variable #l9 #l7
-        set-variable #l1 &neg #l1
-      !endif
-      !if &equ &set #l1 &mul #l1 2 &len &lget #l8 2
-        beginning-of-line
-        set-mark
-        forward-line
-        -1 kill-region
-        !if &gre @# 0
-          set-variable @y &lget #l8 2
-        !endif
-      !else
-        !if &gre @# 0
-          set-variable @y &mid &lget #l8 2 &set #l7 &mul &lget #l8 3 2 #l1
-        !endif
-        set-variable #l2 &lget #l8 1
-        set-variable #l3 &cat &lef &lget #l8 2 #l7 &rig &lget #l8 2 &add #l7 #l1
-        binary-set-line #l2 #l3
-        set-variable $window-col &add 10 &mul &lget #l8 3 3
-        set-mark
-        3 show-region
-      !endif
-      !return
-    !endif
-    !if &not &set #l0 &mul 2 &lget #l8 3
-      set-variable #l1 ""
-    !elif &les #l0 &len &lget #l8 2
-      binary-set-line &lget #l8 1 &lef &lget #l8 2 #l0
-      set-variable #l1 &rig &lget #l8 2 #l0
-      forward-line
-    !else
-      set-variable #l1 ""
-      forward-line
-    !endif
-    set-variable #l3 $window-line
-    beginning-of-line
-    exchange-point-and-mark
-    !if &not &set #l4 &mul 2 &lget #l9 3
-      set-variable #l2 ""
-      set-variable #l5 0
-    !elif &gre &set #l5 &sub &len &lget #l9 2 #l4 0
-      !if &and #l0 &les &add #l0 #l5 33
-        set-variable #l5 $window-line
-        set-variable $window-line &dec #l3 1
-        set-variable @wl ""
-        set-mark
-        set-variable $window-line #l5
-        binary-set-line &lget #l8 1 &cat &lef &lget #l8 2 #l0 &rig &lget #l9 2 #l4
-        set-variable #l5 &div #l0 2
-      !else
-        binary-set-line &lget #l9 1 &rig &lget #l9 2 #l4
-        set-variable #l5 0
-      !endif
-      set-variable #l2 &lef &lget #l9 2 #l4
-    !else
-      set-variable #l2 ""
-      set-variable #l5 0
-      forward-line
-    !endif
-    beginning-of-line
-    !if &gre $window-line #l3
-      @# kill-region
-      !if &gre @# 0
-        set-position "\x82"
-        !force 0 delete-buffer "*bin-del-tmp*"
-        find-buffer "*bin-del-tmp*"
-        yank
-        beginning-of-buffer
-        insert-string #l1
-        insert-newline
-        set-variable #l1 &len #l1
-        !while &not &seq @wc "" 
-          !if &seq &trb @wl ""
-            beginning-of-line
-            set-mark
-            forward-line
-            -1 kill-region
-          !elif &not &xseq @wl "\\([\\h?]+\\):\\(\\( +\\h\\h\\)+ +\\)|  \\(.*\\)"
-            set-variable #l0 &lef @wl 40
-            !force 0 delete-buffer "*bin-del-tmp*"
-            goto-position "\x82"
-            ml-write &spr "[ERROR: Bad line found: %s...]" #l0
-            !abort
-          !else
-            set-variable #l0 &rep @s2 " " ""
-            !if &gre &add #l1 &len #l0 512
-              set-variable @wl #l0
-              set-variable #l1 &len #l0
-              forward-line
-            !else
-              backward-line
-              end-of-line
-              insert-string #l0
-              set-variable #l1 $window-col
-              forward-line
-              beginning-of-line
-              set-mark
-              forward-line
-              -1 kill-region
-            !endif
-          !endif
-        !done
-        !if &seq #l2 ""
-        !elif &gre &add #l1 &len #l2 512
-          set-variable @wl #l2
-        !else
-          backward-line
-          end-of-line
-          insert-string #l2
-        !endif
-        beginning-of-buffer
-        set-mark
-        end-of-buffer
-        -1 yank
-        kill-region
-        !force 0 delete-buffer "*bin-del-tmp*"
-        goto-position "\x82"
-      !endif
-    !elif &gre @# 0
-      set-variable @y &cat #l1 #l2
-    !endif
-    set-variable $window-col &add 10 &mul #l5 3
-    set-mark
-    3 show-region
-  !elif &bmo "rbin"
-    !if &band $window-col 1
-      ml-write "[ERROR: Bad cursor position, currently in the middle of a character]"
-      !abort
-    !endif
-    exchange-point-and-mark
-    !if &band $window-col 1
-      exchange-point-and-mark
-      ml-write "[ERROR: Bad mark position, currently in the middle of a character]"
-      !abort
-    !endif
-    exchange-point-and-mark
-    @# kill-region
-    !if &gre @# 0
-      set-position "\x82"
-      !force 0 delete-buffer "*bin-del-tmp*"
-      find-buffer "*bin-del-tmp*"
-      yank
-      !if &gre $window-eline 1
-        beginning-of-buffer
-        !while &not &seq @wc ""
-          end-of-line
-          !if &equ $window-col 512
-            forward-line
-          !elif &gre $window-col 512
-            set-variable $window-col 512
-            insert-newline
-          !elif &les &sub $window-eline $window-line 2
-            forward-line
-          !else
-            forward-delete-char
-          !endif
-        !done
-        beginning-of-buffer
-        set-mark
-        end-of-buffer
-        -1 yank
-        kill-region
-      !endif
-      !force 0 delete-buffer "*bin-del-tmp*"
-      goto-position "\x82"
-      end-of-line
-      !if &gre $window-col 512
-        set-variable $window-col 512
-        insert-newline
-        end-of-line
-        set-variable #l4 $window-col
-        forward-line
-        end-of-line
-        !if &seq @wc ""
-        !elif &les &add $window-col #l4 513
-          beginning-of-line
-          backward-delete-char
-        !endif
-      !endif
-      goto-position "\x82"
-    !endif
-  !else
-    @# kill-region
-    !if &gre @# 0
-      set-position "\x82"
-      !force 0 delete-buffer "*bin-del-tmp*"
-      find-buffer "*bin-del-tmp*"
-      yank
-      !repeat
-        !force backward-char
-        !if $status
-          !if &seq &set #l1 @wc "\n"
-            insert-string "0A"
-          !else
-            forward-delete-char
-            insert-string &spr "%02x" &atoi #l1
-          !endif
-          2 backward-char
-        !endif
-      !until &not $status
-      !while &not &seq @wc "" 
-        end-of-line
-        !if &equ $window-col 512
-          forward-line
-        !elif &gre $window-col 512
-          set-variable $window-col 512
-          insert-newline
-        !elif &les &sub $window-eline $window-line 2
-          forward-line
-        !else
-          forward-delete-char
-        !endif
-      !done
-      backward-char
-      set-mark
-      beginning-of-buffer
-      -1 yank
-      copy-region
-      !force 0 delete-buffer "*bin-del-tmp*"
-      goto-position "\x82"
-    !endif
-  !endif
-!emacro
 define-macro bin-yank-to-hex
   set-position "\x82"
   set-variable #l1 &cat &con &bmo "cr" "0D" "" &con &bmo "lf" "0A" ""
@@ -686,7 +424,7 @@ define-macro bin-yank
 
 define-macro bin-insert-hex-string
   !if &not &or &bmo "binary" &bmo "rbin"
-    ml-write "[ERROR: Not a binary or rbin buffer]"
+    ml-write "[ERROR: Not a binary or rbin mode buffer]"
     !abort
   !endif
   !force set-variable #l1 @1
@@ -764,7 +502,7 @@ define-macro bin-insert-hex-string
 
 define-macro bin-insert-string
   !if &not &or &bmo "binary" &bmo "rbin"
-    ml-write "[ERROR: Not a binary or rbin buffer]"
+    ml-write "[ERROR: Not a binary or rbin mode buffer]"
     !abort
   !endif
   !force set-variable #l1 @1
@@ -872,7 +610,7 @@ define-macro bin-insert-string
 
 define-macro bin-hex-search-forward
   !if &not &or &bmo "binary" &bmo "rbin"
-    ml-write "[ERROR: Not a binary or rbin buffer]"
+    ml-write "[ERROR: Not a binary or rbin mode buffer]"
     !abort
   !elif &les @# 1
     ml-write "[ERROR: Numeric arg must be greater than zero]"
@@ -895,7 +633,7 @@ define-macro bin-hex-search-forward
 
 define-macro bin-search-forward
   !if &not &or &bmo "binary" &bmo "rbin"
-    ml-write "[ERROR: Not a binary or rbin buffer]"
+    ml-write "[ERROR: Not a binary or rbin mode buffer]"
     !abort
   !elif &les @# 1
     ml-write "[ERROR: Numeric arg must be greater than zero]"
