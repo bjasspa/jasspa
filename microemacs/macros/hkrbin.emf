@@ -1,0 +1,75 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1997-2009 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Synopsis:    Binary file hook
+; Authors:     Steven Phillips
+;
+define-macro-file bintools bin-move-backward bin-move-forward bin-yank bin-insert-hex-string bin-insert-string bin-hex-search-forward bin-search-forward
+define-macro fhook-rbin
+  !if &not &bmod "rbin"
+    !if &seq $buffer-fname ""
+      ml-write "[Buffer has no file name]"
+      !abort
+    !endif
+    !if &bmod "edit"
+      ml-write "[Buffer has been changed]"
+      !abort
+    !endif
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    1 buffer-mode "rbin"
+    insert-file $buffer-fname
+    -1 buffer-mode "edit"
+    beginning-of-buffer
+  !endif
+  @# buffer-init "rbin"
+  buffer-init-hooks
+!emacro
+
+; buffer-init variables
+set-variable .fhook-rbin.setup &reg "/history/fhook/rbin" "ghop"
+set-variable .fhook-rbin.setup-mask "aeghkmopu"
+set-variable .fhook-rbin.command-flag  "|thbo|thbo|thbo|thbo|thbo|thbo|th|th|th|th|thbo|"
+set-variable .fhook-rbin.command-name  "|rbin-backward-word|rbin-forward-word|bin-move-backward|bin-move-forward|bin-search-forward|bin-hex-search-forward||bin-insert-string|bin-insert-hex-string||bin-yank|"
+set-variable .fhook-rbin.command-nbind "||||||||||||"
+set-variable .fhook-rbin.command-kbind "|C-left|C-right|S-up|S-down|C-x s|esc s|||||A-C-y|"
+set-variable .fhook-rbin.command-desc  "|Backward 16 bytes|Forward 16 bytes|Move \Hbackward|Move \Hforward|\HSearch forward (txt)|Search forward (he\Hx)||\HInsert string|Insert \Hhex string||Binary \Hyank|"
+global-bind-key bin-yank "A-C-y"
+
+!if &and &sin "h" .fhook-rbin.setup &band .hilight.flags 0x02 
+  !if &not &exist .hilight.rbin
+    set-variable .hilight.rbin &pinc .hilight.next 1
+  !endif
+  0 hilight .hilight.rbin 0 $global-scheme
+  hilight .hilight.rbin 0x400  32  64 .scheme.no1
+  hilight .hilight.rbin 0x400  96 128 .scheme.no2
+  hilight .hilight.rbin 0x400 160 192 .scheme.no1
+  hilight .hilight.rbin 0x400 224 256 .scheme.no2
+  ; hilight .hilight.rbin 0x400 288 320 .scheme.no1
+  ; hilight .hilight.rbin 0x400 352 384 .scheme.no1
+  ; hilight .hilight.rbin 0x400 416 448 .scheme.no1
+  ; hilight .hilight.rbin 0x400 480 512 .scheme.no1
+!endif
+
+define-macro rbin-backward-word
+  backward-char
+  !if &seq @wc "\n"
+    backward-char
+  !endif
+  &sub $window-col &mul 32 &div $window-col 32 backward-char
+!emacro       
+
+define-macro rbin-forward-word
+  !if &seq @wc "\n"
+    forward-char
+  !endif
+  set-variable $window-col &sub &mul 32 &add 1 &div $window-col 32 1
+  ; make sure the last command is a forward-char to preserve region hilighting if shown
+  forward-char
+!emacro       
+
+buffer-init-fhook "rbin"

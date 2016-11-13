@@ -6,103 +6,57 @@
 ; Synopsis:    Binary file hook
 ; Authors:     Steven Phillips
 ;
+define-macro-file bintools bin-move-backward bin-move-forward bin-yank bin-insert-hex-string bin-insert-string bin-hex-search-forward bin-search-forward
 define-macro fhook-binary
-    !if &not &bmod "binary"
-        !if &seq $buffer-fname ""
-            ml-write "[Buffer has no file name]"
-            !abort
-        !endif
-        !if &bmod "edit"
-            ml-write "[Buffer has been changed]"
-            !abort
-        !endif
-        beginning-of-buffer
-        set-mark
-        end-of-buffer
-        -1 kill-region
-        1 buffer-mode "binary"
-        insert-file $buffer-fname
-        -1 buffer-mode "edit"
-        beginning-of-buffer
+  !if &not &bmod "binary"
+    !if &seq $buffer-fname ""
+      ml-write "[Buffer has no file name]"
+      !abort
     !endif
-    @# buffer-init "binary"
-    buffer-init-hooks
+    !if &bmod "edit"
+      ml-write "[Buffer has been changed]"
+      !abort
+    !endif
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    1 buffer-mode "binary"
+    insert-file $buffer-fname
+    -1 buffer-mode "edit"
+    beginning-of-buffer
+  !endif
+  @# buffer-init "binary"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
 set-variable .fhook-binary.setup &reg "/history/fhook/binary" "ghop"
 set-variable .fhook-binary.setup-mask "aeghkmopu"
-set-variable .fhook-binary.command-flag  "|thbio|th|thbo|thbo|"
-set-variable .fhook-binary.command-name  "|binary-swap-section||binary-move-backward|binary-move-forward|"
-set-variable .fhook-binary.command-nbind "|||||"
-set-variable .fhook-binary.command-kbind "|tab||A-up|A-down|"
-set-variable .fhook-binary.command-desc  "|\HSwap section||Move \Hbackward|Move \Hforward|"
+set-variable .fhook-binary.command-flag  "|thbio|th|thbo|thbo|thbo|thbo|th|th|th|th|thbio|"
+set-variable .fhook-binary.command-name  "|binary-swap-section||bin-move-backward|bin-move-forward|bin-search-forward|bin-hex-search-forward||bin-insert-string|bin-insert-hex-string||bin-yank|"
+set-variable .fhook-binary.command-nbind "||||||||||||"
+set-variable .fhook-binary.command-kbind "|tab||S-up|S-down|C-x s|esc s|||||A-C-y|"
+set-variable .fhook-binary.command-desc  "|S\Hwap section||Move \Hbackward|Move \Hforward|\HSearch forward (txt)|Search forward (he\Hx)||\HInsert string|Insert \Hhex string||Binary \Hyank|"
+global-bind-key bin-yank "A-C-y"
 
 !if &and &sin "h" .fhook-binary.setup &band .hilight.flags 0x02 
-    !if &not &exist .hilight.binary
-        set-variable .hilight.binary &pinc .hilight.next 1
-    !endif
-    0 hilight .hilight.binary 0         $global-scheme
-    hilight .hilight.binary 0x400  0  9 .scheme.no2
-    hilight .hilight.binary 0x400 58 78 .scheme.no1
+  !if &not &exist .hilight.binary
+    set-variable .hilight.binary &pinc .hilight.next 1
+  !endif
+  0 hilight .hilight.binary 0         $global-scheme
+  hilight .hilight.binary 0x400  0  9 .scheme.no2
+  hilight .hilight.binary 0x400 58 78 .scheme.no1
 !endif
 
-define-macro binary-move-backward
-    set-variable #l5 @ml "Move backward by"
-    calc #l5
-    set-variable #l5 .calc.result
-    !if &gre $window-col 57
-        !if &gre $window-col 62
-            set-variable #l5 &sub #l5 &sub $window-col 62
-        !endif
-        set-variable $window-col 62
-    !else
-        !if &gre $window-col 10
-            set-variable #l5 &sub #l5 &div &sub $window-col 10 3
-        !endif
-        set-variable $window-col 10
-    !endif
-    &div &add #l5 15 16 backward-line
-    set-variable #l5 &sub 15 &mod &add #l5 15 16
-    !if &gre $window-col 57
-        #l5 forward-char
-    !else
-        &mul #l5 3 forward-char
-    !endif
-!emacro       
-
-define-macro binary-move-forward
-    set-variable #l5 @ml "Move forward by"
-    calc #l5
-    set-variable #l5 .calc.result
-    !if &gre $window-col 57
-        !if &gre $window-col 62
-            set-variable #l5 &add #l5 &sub $window-col 62
-        !endif
-        set-variable $window-col 62
-    !else
-        !if &gre $window-col 10
-            set-variable #l5 &add #l5 &div &sub $window-col 10 3
-        !endif
-        set-variable $window-col 10
-    !endif
-    &div #l5 16 forward-line
-    set-variable #l5 &mod #l5 16
-    !if &gre $window-col 57
-        #l5 forward-char
-    !else
-        &mul #l5 3 forward-char
-    !endif
-!emacro       
-
 define-macro binary-swap-section
-    !if &gre $window-col 9
-        !if &les $window-col 62
-            set-variable $window-col &add 62 &div &sub $window-col 10 3
-        !else
-            set-variable $window-col &add 10 &mul &sub $window-col 62 3
-        !endif
+  !if &gre $window-col 9
+    !if &les $window-col 62
+      set-variable $window-col &add 62 &div &sub $window-col 10 3
+    !else
+      set-variable $window-col &add 10 &mul &sub $window-col 62 3
     !endif
+  !endif
 !emacro
-    
+
 buffer-init-fhook "binary"
