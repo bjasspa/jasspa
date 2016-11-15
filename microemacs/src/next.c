@@ -121,7 +121,7 @@ flNextFind(meUByte *str, meUByte **curFilePtr, meInt *curLine)
 int
 getNextLine(int f,int n)
 {
-    int     noNextLines, ii, no, rr ;
+    int     noNextLines, ii, ll, no, rr ;
     meUByte **nextLines ;
     meUByte  *nextFile=NULL ;
     meInt   curLine=-1 ;
@@ -129,21 +129,33 @@ getNextLine(int f,int n)
     
     for(ii=0 ; ii<noNextLine ; ii++)
     {
-        if((tbp = bfind(nextName[ii],0)) != NULL)
-        {
-            if(tbp == frameCur->bufferCur)
-            {
-                bp = tbp ;
-                no = ii ;
-                break ;
+        ll = meStrlen(nextName[ii]);
+	tbp = bheadp;
+	while(tbp != NULL)
+	{
+#ifdef _INSENSE_CASE
+	    if((rr=meStrnicmp(tbp->name,nextName[ii],ll)) == 0)
+#else
+	    if((rr=meStrncmp(tbp->name,nextName[ii],ll)) == 0)
+#endif
+	    {
+                if(tbp == frameCur->bufferCur)
+                {
+                    bp = tbp ;
+                    no = ii ;
+                    break ;
+                }
+                if((n & 0x01) && 
+                   ((bp == NULL) || (bp->windowCount < tbp->windowCount) ||
+                    ((bp->windowCount == tbp->windowCount) && (bp->histNo < tbp->histNo))))
+                {
+                    bp = tbp ;
+                    no = ii ;
+                }
             }
-            if((n & 0x01) && 
-               ((bp == NULL) || (bp->windowCount < tbp->windowCount) ||
-                ((bp->windowCount == tbp->windowCount) && (bp->histNo < tbp->histNo))))
-            {
-                bp = tbp ;
-                no = ii ;
-            }
+            else if(rr > 0)
+                break;
+	    tbp = tbp->next;
         }
     }
     if(bp == NULL)
