@@ -2186,17 +2186,25 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
         return evalResult;
 #if MEOPT_EXTENDED
     case UFEXIST:
-        switch (getMacroTypeS(arg1)) 
+        switch (getMacroTypeS(arg1))
         {
+        case TKLVR:
+        case TKCVR:
+            if(((hi=meStrlen(arg1)) > 2) && (arg1[--hi] == arg1[0]))
+            {
+                /* simple buffer exists */
+                arg1[hi] = '\0';
+                if(arg1[0] == ':')
+                    return (meLtoa(bfind(arg1+1,0) != NULL));
+                return (meLtoa(decode_fncname(arg1+1,1) >= 0));
+            }
         case TKARG:
         case TKREG:
         case TKVAR:
-        case TKLVR:
-        case TKCVR:
         case TKENV:
             /* all variable types */
-            varVal=getval(arg1) ;
-            return (meLtoa((varVal != abortm) && (varVal != errorm))) ;
+            varVal = getval(arg1);
+            return (meLtoa((varVal != abortm) && (varVal != errorm)));
             
         case TKCMD:
             return (meLtoa(decode_fncname(arg1,1) >= 0)) ;
