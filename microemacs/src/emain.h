@@ -384,10 +384,6 @@
 #undef _TCAP                    /* Do not want Termcap                   */
 #endif
 
-#ifdef _METFS
-#define MEOPT_TFS       1        /* enable the tack-on file system        */
-#endif
-
 #ifndef _NANOEMACS
 /*************************************************************************
  * MicroEmacs Configuration options - all feature version                *
@@ -453,6 +449,9 @@
 #else
 /* DO NOT CHANGE THIS VALUE */
 #define MEOPT_SOCKET    0
+#endif
+#ifdef _METFS
+#define MEOPT_TFS       1       /* enable the tack-on file system        */
 #endif
 
 /* the name used on about etc           */

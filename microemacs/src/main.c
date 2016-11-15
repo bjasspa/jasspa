@@ -1328,6 +1328,7 @@ mesetupInsertResourceFile(char *fname, int iarg, int oargc, char **oargv[])
     return mesetupInsertResourceString(buff,iarg,oargc,oargv) ;
 }
 
+#if MEOPT_TFS
 int
 mesetupInsertTsfResource(int oargc, char **oargv[])
 {
@@ -1352,6 +1353,7 @@ mesetupInsertTsfResource(int oargc, char **oargv[])
     
     return mesetupInsertResourceString(buff,1,oargc,oargv) ;
 }
+#endif
 
 void
 mesetup(int argc, char *argv[])
