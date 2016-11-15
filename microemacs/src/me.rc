@@ -27,9 +27,11 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#ifndef __BORLANDC__
-#include "afxres.h"
-#endif // ! __BORLANDC__
+#include <Windows.h>
+
+#ifndef IDC_STATIC
+#define IDC_STATIC -1
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -289,12 +291,6 @@ END
 
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// Bitmap
-//
-
-IDB_BITMAP1             BITMAP  DISCARDABLE     "me32.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
