@@ -8,18 +8,18 @@
 ; Authors:     Steve Phillips
 ;
 define-macro fhook-blist
-    !force set-variable $window-line 3
-    -1 buffer-mode "view"
-    !while &len @wc
-        !force blist-set-line
-        forward-line
-    !done
-    -1 buffer-mode "edit"
-    1 buffer-mode "view"
-    beginning-of-buffer
-    @# buffer-init "blist"
-    set-variable :mouse-word-select "2 blist-command"
-    buffer-init-hooks
+  !force set-variable $window-line 3
+  -1 buffer-mode "view"
+  !while &len @wc
+    !force blist-set-line
+    forward-line
+  !done
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"
+  beginning-of-buffer
+  @# buffer-init "blist"
+  set-variable :mouse-word-select "2 blist-command"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -33,127 +33,132 @@ set-variable .fhook-blist.command-kbind "|return|1|space|2|d|D||e|E|s|S||u|U|v|V
 set-variable .fhook-blist.command-desc  "|Switch to Buffer & Only Window||Switch to Buffer||Toggle Buffer \HDeletion Flag||            ('D' in first column), see x|Toggle Buffer \HEdited Status||Toggle Buffer \HSave Flag||            ('S' in second column), see x|\HUpdate Buffer List||Toggle Buffer \HView mode||Execute all the 'D' and 'S' flags||            currently set ('S' first)|"
 
 0 define-macro blist-set-line
-    set-variable #l0 &mid @wl 11 &sub &sin &mid @wl 10 1 &rig @wl 11 1
-    set-variable #l1 &lget &ind &set #l2 &spr ":%s:buffer-info" #l0 1
-    set-variable #l3 $window-col
-    beginning-of-line
-    !if &sin "D" #l1
-        set-variable @wc "D"
-    !elif &nbmod #l0 "nact"
-        set-variable @wc " "
-    !elif &exi &spr ":%s:watch" #l0
-        set-variable @wc "W"
-    !else
-        set-variable @wc "@"
+  set-variable #l0 &mid @wl 11 &sub &sin &mid @wl 10 1 &rig @wl 11 1
+  set-variable #l1 &lget &ind &set #l2 &spr ":%s:buffer-info" #l0 1
+  set-variable #l3 $window-col
+  beginning-of-line
+  !if &sin "D" #l1
+    set-variable @wc "D"
+  !elif &nbmod #l0 "nact"
+    set-variable @wc " "
+  !elif &exi &spr ":%s:watch" #l0
+    set-variable @wc "W"
+  !else
+    set-variable @wc "@"
+  !endif
+  forward-char
+  !if &seq #l0 "*buffers*"
+    set-variable @wc "%"
+  !elif &nbmod #l0 "edit"
+    set-variable @wc &con &sin "S" #l1 "S" "*"
+  !else
+    !if &sin "S" #l1
+      set-variable &ind #l2 &lset &ind #l2 1 &rep #l1 "S" ""
     !endif
-    forward-char
-    !if &seq #l0 "*buffers*"
-        set-variable @wc "%"
-    !elif &nbmod #l0 "edit"
-        set-variable @wc &con &sin "S" #l1 "S" "*"
+    !if &nbmod #l0 "view"
+      set-variable @wc "%"
     !else
-        !if &sin "S" #l1
-            set-variable &ind #l2 &lset &ind #l2 1 &rep #l1 "S" ""
-        !endif
-        !if &nbmod #l0 "view"
-            set-variable @wc "%"
-        !else
-            set-variable @wc " "
-        !endif
+      set-variable @wc " "
     !endif
-    set-variable $window-col #l3
+  !endif
+  set-variable $window-col #l3
 !emacro
 
 0 define-macro blist-command
-    !if &not &seq $buffer-bname "*buffers*"
-        !abort
-    !endif
-    !if &equ @# 7
-        ; 'x' - execute the save & delete flags
-        ; loop through first time to do all the saves
-        ; loop through second time deleting all nact buffers
-        ; loop through third time deleting all the rest
-        ; *buffers* list buffer at this point
-        set-variable $buffer-names ".*"
-        !while &not &seq &set #l0 $buffer-names ""
-            !if &sin "S" &lget &ind &spr ":%s:buffer-info" #l0 1
-                find-buffer #l0
-                save-buffer @mna
-            !endif
-        !done
-        set-variable $buffer-names ".*"
-        !while &not &seq &set #l0 $buffer-names ""
-            !if &not &nbmod #l0 "nact"
-            !elif &sin "D" &lget &ind &spr ":%s:buffer-info" #l0 1
-                delete-buffer #l0 @mna
-            !endif
-        !done
-        set-variable $buffer-names ".*"
-        !while &not &seq &set #l0 $buffer-names ""
-            !if &seq #l0 "*buffers*"
-            !elif &sin "D" &lget &ind &spr ":%s:buffer-info" #l0 1
-                delete-buffer #l0 @mna
-            !endif
-        !done
-        find-buffer "*buffers*"
-        !if &sin "D" &lget :buffer-info 1
-            delete-buffer "*buffers*"
-        !else
-            list-buffers
-        !endif
-        !return
-    !endif
-    !if &or &les &len @wl 12 &les $window-line 3
-        ml-write "[Invalid buffer list line]"
-        !abort
-    !endif
-    ; set #l0 to the name of the buffer
-    set-variable #l0 &mid @wl 11 &sub &sin &mid @wl 10 1 &rig @wl 11 1
-    set-variable #l1 ""
-    !if &equ @# 1
-        ; '1' - make buffer current and only window
-        0 find-buffer #l0
-        delete-other-windows
-        !return
-    !elif &equ @# 2
-        ; '2' - make buffer current
-        0 find-buffer #l0
-        !return
-    !elif &equ @# 3
-        ; 'd' - toggle buffer deletion flag
-        set-variable #l1 "D"
-    !elif &equ @# 4
-        ; 'e' - toggle buffer edit mode
-        0 named-buffer-mode #l0 "edit"
-    !elif &equ @# 5
-        ; 's' - toggle buffer save flag
-        !if &not &nbmod #l0 "edit"
-            forward-line
-            ml-write &spr "[No changes made to buffer %s]" #l0
-            !abort
-        !endif
-        set-variable #l1 "S"
-    !elif &equ @# 6
-        ; 'v' - toggle buffer view mode
-        0 named-buffer-mode #l0 "view"
+  !if &not &seq $buffer-bname "*buffers*"
+    !abort
+  !endif
+  !if &equ @# 7
+    ; 'x' - execute the save & delete flags
+    ; loop through first time to do all the saves
+    ; loop through second time deleting all nact buffers
+    ; loop through third time deleting all the rest
+    ; *buffers* list buffer at this point
+    set-variable $buffer-names ".*"
+    !while &not &seq &set #l0 $buffer-names ""
+      !if &sin "S" &lget &ind &spr ":%s:buffer-info" #l0 1
+        find-buffer #l0
+        save-buffer @mna
+      !endif
+    !done
+    set-variable $buffer-names ".*"
+    !while &not &seq &set #l0 $buffer-names ""
+      !if &not &nbmod #l0 "nact"
+      !elif &sin "D" &lget &ind &spr ":%s:buffer-info" #l0 1
+        delete-buffer #l0 @mna
+      !endif
+    !done
+    set-variable $buffer-names ".*"
+    !while &not &seq &set #l0 $buffer-names ""
+      !if &seq #l0 "*buffers*"
+      !elif &sin "D" &lget &ind &spr ":%s:buffer-info" #l0 1
+        delete-buffer #l0 @mna
+      !endif
+    !done
+    find-buffer "*buffers*"
+    !if &sin "D" &lget :buffer-info 1
+      delete-buffer "*buffers*"
     !else
-        ; invalid command
-        ml-write "[Invalid command]"
-        !abort
+      list-buffers
     !endif
-    !if &not &len #l1
-    !elif &not &exi &set #l2 &spr ":%s:buffer-info" #l0
-        set-variable &ind #l2 &lset "||" 1 #l1
-    !elif &sin #l1 &set #l3 &lget &ind #l2 1
-        set-variable &ind #l2 &lset &ind #l2 1 &rep #l3 #l1 ""
-    !else
-        set-variable &ind #l2 &lset &ind #l2 1 &cat #l3 #l1
-    !endif
-    -1 buffer-mode "view"
-    blist-set-line
-    -1 buffer-mode "edit"
-    1 buffer-mode "view"
+    !return
+  !endif
+  !if &or &les &len @wl 12 &les $window-line 3
+    ml-write "[Invalid buffer list line]"
+    !abort
+  !endif
+  ; set #l0 to the name of the buffer
+  set-variable #l0 &mid @wl 11 &sub &sin &mid @wl 10 1 &rig @wl 11 1
+  set-variable #l1 ""
+  !if &not &exi &spr ":%s:" #l0
+    !tjump &les @# 3 2
     forward-line
+    ml-write &spr "[Buffer no longer exists - %s]" #l0
+    !abort
+  !elif &equ @# 1
+    ; '1' - make buffer current and only window
+    0 find-buffer #l0
+    delete-other-windows
+    !return
+  !elif &equ @# 2
+    ; '2' - make buffer current
+    0 find-buffer #l0
+    !return
+  !elif &equ @# 3
+    ; 'd' - toggle buffer deletion flag
+    set-variable #l1 "D"
+  !elif &equ @# 4
+    ; 'e' - toggle buffer edit mode
+    0 named-buffer-mode #l0 "edit"
+  !elif &equ @# 5
+    ; 's' - toggle buffer save flag
+    !if &not &nbmod #l0 "edit"
+      forward-line
+      ml-write &spr "[No changes made to buffer %s]" #l0
+      !abort
+    !endif
+    set-variable #l1 "S"
+  !elif &equ @# 6
+    ; 'v' - toggle buffer view mode
+    0 named-buffer-mode #l0 "view"
+  !else
+    ; invalid command
+    ml-write "[Invalid command]"
+    !abort
+  !endif
+  !if &not &len #l1
+  !elif &not &exi &set #l2 &spr ":%s:buffer-info" #l0
+    set-variable &ind #l2 &lset "||" 1 #l1
+  !elif &sin #l1 &set #l3 &lget &ind #l2 1
+    set-variable &ind #l2 &lset &ind #l2 1 &rep #l3 #l1 ""
+  !else
+    set-variable &ind #l2 &lset &ind #l2 1 &cat #l3 #l1
+  !endif
+  -1 buffer-mode "view"
+  blist-set-line
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"
+  forward-line
 !emacro
 
 buffer-init-fhook "blist"
