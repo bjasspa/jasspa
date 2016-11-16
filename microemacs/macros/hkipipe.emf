@@ -7,783 +7,779 @@
 ; Authors:     Steven Phillips & Jon Green
 ;
 !if &band .hilight.flags 0x02
-    !if &not &exist .hilight.gdb
-        set-variable .hilight.gdb &pinc .hilight.next 1
-    !endif
-    0 hilight  .hilight.gdb 0             $global-scheme
-    hilight .hilight.gdb 2 "(gdb)"        .scheme.keyword
-    hilight .hilight.gdb 2 "Source file is more recent" .scheme.error
-    hilight .hilight.gdb 2 "(dbx)"        .scheme.keyword
-    hilight .hilight.gdb 2 "  DB<[0-9]*>" .scheme.keyword
+  !if &not &exist .hilight.gdb
+    set-variable .hilight.gdb &pinc .hilight.next 1
+  !endif
+  0 hilight  .hilight.gdb 0             $global-scheme
+  hilight .hilight.gdb 2 "(gdb)"        .scheme.keyword
+  hilight .hilight.gdb 2 "Source file is more recent" .scheme.error
+  hilight .hilight.gdb 2 "(dbx)"        .scheme.keyword
+  hilight .hilight.gdb 2 "  DB<[0-9]*>" .scheme.keyword
 !endif
 
 ; Local macro to allow the next line to be selected when the <return> key is
 ; pressed on a line or the mouse. 
 0 define-macro return-get-next-line
-    !force backward-line
-    get-next-line
+  !force backward-line
+  get-next-line
 !emacro
 0 define-macro mouse-get-next-line
-    set-cursor-to-mouse
-    !force backward-line
-    get-next-line
+  set-cursor-to-mouse
+  !force backward-line
+  get-next-line
 !emacro
 
 0 define-macro ipipe-write-prompt
-    goto-alpha-mark "I"
-    set-variable #l9 1
-    set-variable #l0 $buffer-bname
-    set-position "\x83"
-    set-variable #l1 @1
-    !if &not :mode
-        set-variable #l2 $window-col
-        !force -1 search-backward :prompt
-        !if $status
-            2 show-region
-            set-variable :mode $window-col
-            set-mark
-            end-of-line
-            kill-region
-            !force find-buffer &cat #l0 "-hist"
-            1 buffer-mode "hide"
-            !force find-buffer &cat #l0 "-cmd"
-            1 buffer-mode "hide"
-            beginning-of-buffer
-            yank
-            -1 yank
-            set-mark
-            end-of-buffer
-            -1 kill-region
-            !force set-variable $window-col &sub #l2 :mode
-            goto-position "\x83"
-        !else
-            set-variable $window-col #l2
-        !endif
-    !endif
-    !if :mode
-        !force find-buffer &cat #l0 "-cmd"
-        !if &seq #l1 "\CM"
-            ; execute the current line
-            set-variable #l3 @wl
-            !if &set #l1 &seq &lef #l3 1 "!"
-                ; implement the unix style !com...
-                !if &set #l4 &sin " " #l3
-                !elif &set #l4 &sin "\t" #l3
-                !else
-                    set-variable #l4 &add &len #l3 1
-                !endif
-                set-variable #l5 &mid #l3 1 &sub #l4 2
-                !if &seq #l5 "!"
-                    set-variable #l5 ""
-                !else
-                    str-to-regex #l5
-                !endif
-                !force find-buffer &cat #l0 "-hist"
-                end-of-buffer
-                backward-char
-                !force search-backward &cat "^" #l5
-                !if &not $status
-                    goto-position "\x83"
-                    set-variable #l6 @wl
-                    end-of-line
-                    insert-string &spr "\nError - event not found: %s\n%s" #l5 &lef #l6 :mode
-                    set-alpha-mark "I"
-                    set-variable :mode 0
-                    !return
-                !endif
-                set-variable #l3 &cat @wl &rig #l3 &sub #l4 1
-                goto-position "\x83"
-                end-of-line
-                insert-newline
-                set-position "\x83"
-            !endif
-            !if &or &band $system 0x100 &seq $platform "cygwin"
-                !if &xis #l3 "[ \t]*[a-z]:\\([ \t].*\\)?"
-                    set-variable #l4 &slo &lef &trb #l3 1
-                    !if &exi &cat ":dir-" #l4
-                        set-variable #l4 &ind &cat ":dir-" #l4
-                    !else
-                        set-variable #l4 &cat #l4 ":"
-                    !endif
-                    goto-position "\x83"
-                    set-variable #l4 &stat "a" &cat $buffer-fname #l4
-                    !if &seq &stat "t" #l4 "D"
-                        set-variable #l5 $buffer-fname
-                        set-variable $buffer-fname #l4
-                        !force find-buffer &cat #l0 "-cmd"
-                        set-variable $buffer-fname #l5
-                        ; must set the old one as well - the starting path is not 
-                        ; automatically stored
-                        !if &seq &mid #l5 1 1 ":"
-                            set-variable &ind &cat ":dir-" &slo &lef #l5 1 #l5
-                        !endif
-                    !endif
-                !endif
-            !endif
-            set-variable #l2 #l3
-            !if &xise #l3 "[ \t]*cdd?[ \t]*\\S.*"
-                set-variable #l4 &trb &xirep #l3 "[ \t]*cdd?\\(.*\\)" "\\1"
-                !if &xise #l4 "[a-z]:\\([^\\/].*\\)?"
-                    !if &not &exi &ind &cat ":dir-" &slo &lef #l4 1
-                        set-variable &ind &cat ":dir-" &slo &lef #l4 1 &stat "a" &lef #l4 2
-                    !endif
-                    set-variable #l4 &stat "a" &cat &ind &cat ":dir-" &slo &lef #l4 1 &rig #l4 2
-                    goto-position "\x83"
-                !else
-                    goto-position "\x83"
-                    set-variable #l4 &stat "a" &cat $buffer-fname #l4
-                !endif
-                !if &seq &stat "t" #l4 "D"
-                    set-variable #l5 $buffer-fname
-                    set-variable $buffer-fname #l4
-                    !force find-buffer &cat #l0 "-cmd"
-                    set-variable $buffer-fname #l5
-                    !if &or &band $system 0x100 &seq $platform "cygwin"
-                        ; must set the old one as well - the starting path is not 
-                        ; automatically stored
-                        !if &seq &mid #l5 1 1 ":"
-                            set-variable &ind &cat ":dir-" &slo &lef #l5 1 #l5
-                        !endif
-                        !if &seq &mid #l4 1 1 ":"
-                            set-variable &ind &cat ":dir-" &slo &lef #l4 1 #l4
-                        !endif
-                        ; ensure '/' are '\\'
-                        set-variable #l4 &rep #l4 "/" "\\"
-                        set-variable #l2 &cat "cd " #l4
-                        set-variable #l3 #l2
-                        !if &and &seq &mid #l4 1 1 ":" &not &seq &lef #l4 1 &lef #l5 1
-                            ; we're changing drives as well! force this as some shell
-                            ; use cdd to do this automatically - inconsistent
-                            set-variable #l3 &spr "%s\CM\CJ%s" &lef #l4 2 #l3
-                        !endif
-                    !endif
-                !endif
-            !endif
-            !if &not &seq #l2 ""
-                !force find-buffer &cat #l0 "-hist"
-                end-of-buffer
-                insert-string #l2
-                forward-line
-            !endif
-            goto-position "\x83"
-            !if :noecho
-                !if &not #l1
-                    end-of-line
-                !else
-                    insert-string #l3
-                !endif
-                insert-newline
-            !elif &not #l1
-                set-variable $window-col :mode
-                set-mark
-                end-of-line
-                -1 kill-region
-            !endif
-            set-alpha-mark "I"
-            set-variable :mode 0
-            !if &or &band $system 0x100 &seq $platform "cygwin"
-                ipipe-write &spr "%s\CM\CJ" #l3
-            !else
-                ipipe-write &spr "%s\CM" #l3
-            !endif
-        !elif &seq #l1 "\CI"
-            ; tab filename completion
-            !if &sin @wc " \t\n"
-                set-variable #l1 $window-col
-                !force backward-char
-                !if &not &sin @wc " \t\n"
-                    !goto complete-file
-                !endif
-                set-variable $window-col #l1
-                set-variable #l2 ""
-            !else
-*complete-file
-                set-variable #l2 &rsin " " &lef @wl $window-col
-                !if &not &set #l1 &sin " " &rig @wl $window-col
-                    set-variable #l1 &len &rig @wl $window-col
-                !endif
-                set-variable #l1 &add $window-col #l1
-                set-variable #l2 &mid @wl #l2 &sub #l1 #l2
-                set-variable $window-col #l1
-            !endif
-            goto-position "\x83"
-            !if &or &band $system 0x100 &seq $platform "cygwin"
-                ; on windows change '\' to '/'
-                set-variable #l2 &rep #l2 "\\" "/"
-            !endif
-            set-variable #l3 &stat "a" &cat $buffer-fname #l2
-            !force !force set-variable #l4 @ml61 "Filename" #l3
-            !if &not $status
-                set-variable $window-col &add :mode #l1
-                set-alpha-mark "I"
-                !return
-            !endif
-            set-variable #l5 &rsin "/" #l3
-            !if &seq &lef #l3 #l5 &lef #l4 #l5
-                ; base path is the same, replace with original
-                set-variable #l4 &cat &lef #l2 &rsin "/" #l2 &rig #l4 #l5
-            !endif
-            !if &or &band $system 0x100 &seq $platform "cygwin"
-                ; on windows change '/' to '\'
-                set-variable #l4 &rep #l4 "/" "\\"
-            !endif
-            !force find-buffer &cat #l0 "-cmd"
-            &len #l2 backward-delete-char
-            -1 yank
-            insert-string #l4
-            !goto update-cmdline
-        !elif &sin #l1 "\CN\CP"
-            ; next/prev history
-            set-variable #l3 @wl
-            !force find-buffer &cat #l0 "-hist"
-            !if &seq @wc ""
-                set-variable :cmd #l3
-            !endif
-            !force !force execute-string #l1
-            set-variable #l3 @wl
-            !if &seq @wc ""
-                set-variable #l3 :cmd 
-            !endif
-            !force find-buffer &cat #l0 "-cmd"
-            beginning-of-buffer
-            insert-string #l3
-            set-mark
-            end-of-buffer
-            -1 kill-region
-            !goto update-cmdline
-        !else
-            ; edit the current line
-            !if &seq #l1 "\CH"
-                !force !force backward-delete-char
-            !else
-                set-variable #l1 &rep #l1 "\e" "\E"
-                !force !force execute-string #l1
-            !endif
-            set-variable #l9 $status
-*update-cmdline
-            !if &gre $window-line 1
-                beginning-of-buffer
-                end-of-line
-                set-variable #l9 0
-            !endif
-            set-variable #l2 $window-col
-            set-variable #l3 @wl
-            set-variable $window-col #l2
-            goto-position "\x83"
-            set-variable $window-col :mode
-            set-mark
-            end-of-line
-            -1 kill-region
-            insert-string #l3
-            set-variable $window-col &add :mode #l2
-            ml-write ""
-            set-alpha-mark "I"
-        !endif
+  goto-alpha-mark "I"
+  set-variable #l9 1
+  set-variable #l0 $buffer-bname
+  set-position "\x83"
+  set-variable #l1 @1
+  !if &not :mode
+    set-variable #l2 $window-col
+    !force -1 search-backward :prompt
+    !if $status
+      2 show-region
+      set-variable :mode $window-col
+      set-mark
+      end-of-line
+      kill-region
+      !force find-buffer &cat #l0 "-hist"
+      1 buffer-mode "hide"
+      !force find-buffer &cat #l0 "-cmd"
+      1 buffer-mode "hide"
+      beginning-of-buffer
+      yank
+      -1 yank
+      set-mark
+      end-of-buffer
+      -1 kill-region
+      !force set-variable $window-col &sub #l2 :mode
+      goto-position "\x83"
     !else
-        ipipe-write #l1
+      set-variable $window-col #l2
     !endif
-    !if &not #l9
-        !bell
+  !endif
+  !if :mode
+    !force find-buffer &cat #l0 "-cmd"
+    !if &seq #l1 "\CM"
+      ; execute the current line
+      set-variable #l3 @wl
+      !if &set #l1 &seq &lef #l3 1 "!"
+        ; implement the unix style !com...
+        !if &set #l4 &sin " " #l3
+        !elif &set #l4 &sin "\t" #l3
+        !else
+          set-variable #l4 &add &len #l3 1
+        !endif
+        set-variable #l5 &mid #l3 1 &sub #l4 2
+        !if &seq #l5 "!"
+          set-variable #l5 ""
+        !else
+          str-to-regex #l5
+        !endif
+        !force find-buffer &cat #l0 "-hist"
+        end-of-buffer
+        backward-char
+        !force search-backward &cat "^" #l5
+        !if &not $status
+          goto-position "\x83"
+          set-variable #l6 @wl
+          end-of-line
+          insert-string &spr "\nError - event not found: %s\n%s" #l5 &lef #l6 :mode
+          set-alpha-mark "I"
+          set-variable :mode 0
+          !return
+        !endif
+        set-variable #l3 &cat @wl &rig #l3 &sub #l4 1
+        goto-position "\x83"
+        end-of-line
+        insert-newline
+        set-position "\x83"
+      !endif
+      !if &or &band $system 0x100 &seq $platform "cygwin"
+        !if &xis #l3 "[ \t]*[a-z]:\\([ \t].*\\)?"
+          set-variable #l4 &slo &lef &trb #l3 1
+          !if &exi &cat ":dir-" #l4
+            set-variable #l4 &ind &cat ":dir-" #l4
+          !else
+            set-variable #l4 &cat #l4 ":"
+          !endif
+          goto-position "\x83"
+          set-variable #l4 &stat "a" &cat $buffer-fname #l4
+          !if &seq &stat "t" #l4 "D"
+            set-variable #l5 $buffer-fname
+            set-variable $buffer-fname #l4
+            !force find-buffer &cat #l0 "-cmd"
+            set-variable $buffer-fname #l5
+            ; must set the old one as well - the starting path is not 
+            ; automatically stored
+            !if &seq &mid #l5 1 1 ":"
+              set-variable &ind &cat ":dir-" &slo &lef #l5 1 #l5
+            !endif
+          !endif
+        !endif
+      !endif
+      set-variable #l2 #l3
+      !if &xise #l3 "[ \t]*cdd?[ \t]*\\S.*"
+        set-variable #l4 &trb &xirep #l3 "[ \t]*cdd?\\(.*\\)" "\\1"
+        !if &xise #l4 "[a-z]:\\([^\\/].*\\)?"
+          !if &not &exi &ind &cat ":dir-" &slo &lef #l4 1
+            set-variable &ind &cat ":dir-" &slo &lef #l4 1 &stat "a" &lef #l4 2
+          !endif
+          set-variable #l4 &stat "a" &cat &ind &cat ":dir-" &slo &lef #l4 1 &rig #l4 2
+          goto-position "\x83"
+        !else
+          goto-position "\x83"
+          set-variable #l4 &stat "a" &cat $buffer-fname #l4
+        !endif
+        !if &seq &stat "t" #l4 "D"
+          set-variable #l5 $buffer-fname
+          set-variable $buffer-fname #l4
+          !force find-buffer &cat #l0 "-cmd"
+          set-variable $buffer-fname #l5
+          !if &or &band $system 0x100 &seq $platform "cygwin"
+            ; must set the old one as well - the starting path is not 
+            ; automatically stored
+            !if &seq &mid #l5 1 1 ":"
+              set-variable &ind &cat ":dir-" &slo &lef #l5 1 #l5
+            !endif
+            !if &seq &mid #l4 1 1 ":"
+              set-variable &ind &cat ":dir-" &slo &lef #l4 1 #l4
+            !endif
+            ; ensure '/' are '\\'
+            set-variable #l4 &rep #l4 "/" "\\"
+            set-variable #l2 &cat "cd " #l4
+            set-variable #l3 #l2
+            !if &and &seq &mid #l4 1 1 ":" &not &seq &lef #l4 1 &lef #l5 1
+              ; we're changing drives as well! force this as some shell
+              ; use cdd to do this automatically - inconsistent
+              set-variable #l3 &spr "%s\CM\CJ%s" &lef #l4 2 #l3
+            !endif
+          !endif
+        !endif
+      !endif
+      !if &not &seq #l2 ""
+        !force find-buffer &cat #l0 "-hist"
+        end-of-buffer
+        insert-string #l2
+        forward-line
+      !endif
+      goto-position "\x83"
+      !if :noecho
+        !if &not #l1
+          end-of-line
+        !else
+          insert-string #l3
+        !endif
+        insert-newline
+      !elif &not #l1
+        set-variable $window-col :mode
+        set-mark
+        end-of-line
+        -1 kill-region
+      !endif
+      set-alpha-mark "I"
+      set-variable :mode 0
+      !if &or &band $system 0x100 &seq $platform "cygwin"
+        ipipe-write &spr "%s\CM\CJ" #l3
+      !else
+        ipipe-write &spr "%s\CM" #l3
+      !endif
+    !elif &seq #l1 "\CI"
+      ; tab filename completion
+      !if &sin @wc " \t\n"
+        set-variable #l1 $window-col
+        !force backward-char
+        !if &not &sin @wc " \t\n"
+          !goto complete-file
+        !endif
+        set-variable $window-col #l1
+        set-variable #l2 ""
+      !else
+*complete-file
+        set-variable #l2 &rsin " " &lef @wl $window-col
+        !if &not &set #l1 &sin " " &rig @wl $window-col
+          set-variable #l1 &len &rig @wl $window-col
+        !endif
+        set-variable #l1 &add $window-col #l1
+        set-variable #l2 &mid @wl #l2 &sub #l1 #l2
+        set-variable $window-col #l1
+      !endif
+      goto-position "\x83"
+      !if &or &band $system 0x100 &seq $platform "cygwin"
+        ; on windows change '\' to '/'
+        set-variable #l2 &rep #l2 "\\" "/"
+      !endif
+      set-variable #l3 &stat "a" &cat $buffer-fname #l2
+      !force !force set-variable #l4 @ml61 "Filename" #l3
+      !if &not $status
+        set-variable $window-col &add :mode #l1
+        set-alpha-mark "I"
+        !return
+      !endif
+      set-variable #l5 &rsin "/" #l3
+      !if &seq &lef #l3 #l5 &lef #l4 #l5
+        ; base path is the same, replace with original
+        set-variable #l4 &cat &lef #l2 &rsin "/" #l2 &rig #l4 #l5
+      !endif
+      !if &or &band $system 0x100 &seq $platform "cygwin"
+        ; on windows change '/' to '\'
+        set-variable #l4 &rep #l4 "/" "\\"
+      !endif
+      !force find-buffer &cat #l0 "-cmd"
+      &len #l2 backward-delete-char
+      -1 yank
+      insert-string #l4
+      !goto update-cmdline
+    !elif &sin #l1 "\CN\CP"
+      ; next/prev history
+      set-variable #l3 @wl
+      !force find-buffer &cat #l0 "-hist"
+      !if &seq @wc ""
+        set-variable :cmd #l3
+      !endif
+      !force !force execute-string #l1
+      set-variable #l3 @wl
+      !if &seq @wc ""
+        set-variable #l3 :cmd 
+      !endif
+      !force find-buffer &cat #l0 "-cmd"
+      beginning-of-buffer
+      insert-string #l3
+      set-mark
+      end-of-buffer
+      -1 kill-region
+      !goto update-cmdline
+    !else
+      ; edit the current line
+      !if &seq #l1 "\CH"
+        !force !force backward-delete-char
+      !else
+        set-variable #l1 &rep #l1 "\e" "\E"
+        !force !force execute-string #l1
+      !endif
+      set-variable #l9 $status
+*update-cmdline
+      !if &gre $window-line 1
+        beginning-of-buffer
+        end-of-line
+        set-variable #l9 0
+      !endif
+      set-variable #l2 $window-col
+      set-variable #l3 @wl
+      set-variable $window-col #l2
+      goto-position "\x83"
+      set-variable $window-col :mode
+      set-mark
+      end-of-line
+      -1 kill-region
+      insert-string #l3
+      set-variable $window-col &add :mode #l2
+      ml-write ""
+      set-alpha-mark "I"
     !endif
+  !else
+    ipipe-write #l1
+  !endif
+  !if &not #l9
+    !bell
+  !endif
 !emacro
 0 define-macro ipipe-minoutput
-    set-variable #l2 @cck
-    set-variable #l3 @cc
-    !if &not &bmod "pipe"
-        set-variable $buffer-input ""
-        !if &gre &len @cc 1
-            !goto exec-lbl
-        !endif
-        insert-string @cc
-        !return
-    !elif &les &len @cc 2
-        set-variable #l1 @cc
-    !elif &set #l0 &lfi "|tab|backward-delete-char|newline|" #l3
-        set-variable #l1 &lget "|\t|\b|\CM|" #l0
-    !elif &set #l0 &lfi "|backspace|" #l2
-        set-variable #l1 &lget "|\b|" #l0
-    !elif &seq "quote-char" #l3
-        ml-write "Quote: "
-        set-variable #l1 @cqk
-    !else
+  set-variable #l2 @cck
+  set-variable #l3 @cc
+  !if &not &bmod "pipe"
+    set-variable $buffer-input ""
+    !if &gre &len @cc 1
+      !goto exec-lbl
+    !endif
+    insert-string @cc
+    !return
+  !elif &les &len @cc 2
+    set-variable #l1 @cc
+  !elif &set #l0 &lfi "|tab|backward-delete-char|newline|" #l3
+    set-variable #l1 &lget "|\t|\b|\CM|" #l0
+  !elif &set #l0 &lfi "|backspace|" #l2
+    set-variable #l1 &lget "|\b|" #l0
+  !elif &seq "quote-char" #l3
+    ml-write "Quote: "
+    set-variable #l1 @cqk
+  !else
 *exec-lbl
-        !if &seq #l3 "ERROR"
-            ml-write &spr "[Key not bound \"%s\"]" #l2
-            !abort
-        !endif
-        execute-line &spr "!nma %s %s" &cond @? @# "" #l3
-        !return
+    !if &seq #l3 "ERROR"
+      ml-write &spr "[Key not bound \"%s\"]" #l2
+      !abort
     !endif
-    !if &exi :prompt
-        ipipe-write-prompt #l1
-    !else
-        goto-alpha-mark "I"
-        !if &or &band $system 0x100 &seq $platform "cygwin"
-            set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
-        !endif
-        ipipe-write #l1
+    execute-line &spr "!nma %s %s" &cond @? @# "" #l3
+    !return
+  !endif
+  !if &exi :prompt
+    ipipe-write-prompt #l1
+  !else
+    goto-alpha-mark "I"
+    !if &or &band $system 0x100 &seq $platform "cygwin"
+      set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
     !endif
+    ipipe-write #l1
+  !endif
 !emacro
 
 0 define-macro ipipe-output 
-    set-variable #l2 @cck
-    set-variable #l3 @cc
-    !if &les &len #l3 2
-        set-variable #l1 #l3
-;    !elif &and &band $system 0x100 &seq #l3 "newline" 
-        ; For Windows we need a \r\n sequence - over-ride the default.
-;        set-variable #l1 "\CM\CJ"
-    !elif &set #l0 &lfi "|tab|backward-delete-char|newline|beginning-of-line|backward-char|forward-delete-char|end-of-line|forward-char|kill-line|recenter|forward-line|backward-line|expand-abbrev|forward-word|backward-word|" #l3
-        set-variable #l1 &lget "|\CI|\CH|\CM|\CA|\CB|\CD|\CE|\CF|\CK|\CL|\CN|\CP|\e\e|\ef|\eb|" #l0
-    !elif &set #l0 &lfi "|backspace|" #l2
-        set-variable #l1 &lget "|\b|" #l0
-    !elif &seq "yank" #l3
-        set-variable #l1 @y
-    !elif &seq "quote-char" #l3
-        ml-write "Quote: "
-        set-variable #l1 @cqk
-    !elif &and &seq "mouse-event" #l3 &sin "yank" &reg &cat "/history/mouse/" #l2 ""
-        set-variable #l1 @y
-    !elif &seq #l3 "ERROR"
-        ml-write &spr "[Key not bound \"%s\"]" #l2
-        !abort
-    !else
-        execute-line &spr "!nma %s %s" &cond @? @# "" #l3
-        !return
+  set-variable #l2 @cck
+  set-variable #l3 @cc
+  !if &les &len #l3 2
+    set-variable #l1 #l3
+    ;    !elif &and &band $system 0x100 &seq #l3 "newline" 
+    ; For Windows we need a \r\n sequence - over-ride the default.
+    ;        set-variable #l1 "\CM\CJ"
+  !elif &set #l0 &lfi "|tab|backward-delete-char|newline|beginning-of-line|backward-char|forward-delete-char|end-of-line|forward-char|kill-line|recenter|forward-line|backward-line|expand-abbrev|forward-word|backward-word|" #l3
+    set-variable #l1 &lget "|\CI|\CH|\CM|\CA|\CB|\CD|\CE|\CF|\CK|\CL|\CN|\CP|\e\e|\ef|\eb|" #l0
+  !elif &set #l0 &lfi "|backspace|" #l2
+    set-variable #l1 &lget "|\b|" #l0
+  !elif &seq "yank" #l3
+    set-variable #l1 @y
+  !elif &seq "quote-char" #l3
+    ml-write "Quote: "
+    set-variable #l1 @cqk
+  !elif &and &seq "mouse-event" #l3 &sin "yank" &reg &cat "/history/mouse/" #l2 ""
+    set-variable #l1 @y
+  !elif &seq #l3 "ERROR"
+    ml-write &spr "[Key not bound \"%s\"]" #l2
+    !abort
+  !else
+    execute-line &spr "!nma %s %s" &cond @? @# "" #l3
+    !return
+  !endif
+  !if &exi :prompt
+    ipipe-write-prompt #l1
+  !else
+    goto-alpha-mark "I"
+    !if &or &band $system 0x100 &seq $platform "cygwin"
+      set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
     !endif
-    !if &exi :prompt
-        ipipe-write-prompt #l1
-    !else
-        goto-alpha-mark "I"
-        !if &or &band $system 0x100 &seq $platform "cygwin"
-            set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
-        !endif
-        ipipe-write #l1
-    !endif
+    ipipe-write #l1
+  !endif
 !emacro 
 
 0 define-macro ipipe-mode
-    !if &not @?
-        set-variable :imode &mod &add :imode 1 3
-    !else
-        set-variable :imode @#
-    !endif
-    !if &equ :imode 1
-        set-variable $buffer-input ipipe-output
-        1 buffer-mode "lock"
-        goto-alpha-mark "I"
-        ml-write "[Input mode set to semi-immersion - f3 to change]"
-    !elif &equ :imode 2
-        set-variable $buffer-input ""
-        1 buffer-mode "lock"
-        goto-alpha-mark "I"
-        ml-write "[Input mode set to full-immersion - f3 to change]"
-        !repeat
-            screen-update
-            set-variable #l0 @cqk
-            !if &not &bmo "pipe"
-                !return
-            !elif &equ &len #l0 1
-                ipipe-write #l0
-            !elif &seq #l0 "f3"
-                0 ipipe-mode
-                !return
-            !endif
-        !until 0
-    !else
-        set-variable $buffer-input ""
-        -1 buffer-mode "lock"
-        ml-write "[Input mode set to browse - f3 to change]"
-    !endif
+  !if &not @?
+    set-variable :imode &mod &add :imode 1 3
+  !else
+    set-variable :imode @#
+  !endif
+  !if &equ :imode 1
+    set-variable $buffer-input ipipe-output
+    1 buffer-mode "lock"
+    goto-alpha-mark "I"
+    ml-write "[Input mode set to semi-immersion - f3 to change]"
+  !elif &equ :imode 2
+    set-variable $buffer-input ""
+    1 buffer-mode "lock"
+    goto-alpha-mark "I"
+    ml-write "[Input mode set to full-immersion - f3 to change]"
+    !repeat
+      screen-update
+      set-variable #l0 @cqk
+      !if &not &bmo "pipe"
+        !return
+      !elif &equ &len #l0 1
+        ipipe-write #l0
+      !elif &seq #l0 "f3"
+        0 ipipe-mode
+        !return
+      !endif
+    !until 0
+  !else
+    set-variable $buffer-input ""
+    -1 buffer-mode "lock"
+    ml-write "[Input mode set to browse - f3 to change]"
+  !endif
 !emacro
 
 0 define-macro ipipe-input
-    !if &not @#
-        ; process has ended, clear-up
-        set-variable $buffer-input ""
-        set-variable $buffer-ipipe ""
-        !force buffer-unbind-key &kbin "" ipipe-mode
-    !endif
-    !if &equ :imode 2
-        2 screen-update
-    !endif
+  !if &not @#
+    ; process has ended, clear-up
+    set-variable $buffer-input ""
+    set-variable $buffer-ipipe ""
+    !force buffer-unbind-key &kbin "" ipipe-mode
+  !endif
+  !if &equ :imode 2
+    2 screen-update
+  !endif
 !emacro
 
 0 define-macro ipipe-rerun
-    beginning-of-buffer
-    !if &seq &lef @wl 3 "cd "
-        forward-line
-    !endif
-    &con &bmod "wrap" 0 0x200 ipipe-shell-command @wl $buffer-bname @mna
-    popup-window $buffer-bname
-    !if &not &seq $buffer-fhook "fhook-ipipe"
-        ; gdb & dbx + others dont auto setup the hook, they do it manually
-        fhook-ipipe
-    !endif
+  beginning-of-buffer
+  !if &seq &lef @wl 3 "cd "
+    forward-line
+  !endif
+  &con &bmod "wrap" 0 0x200 ipipe-shell-command @wl $buffer-bname @mna
+  popup-window $buffer-bname
+  !if &not &seq $buffer-fhook "fhook-ipipe"
+    ; gdb & dbx + others dont auto setup the hook, they do it manually
+    fhook-ipipe
+  !endif
 !emacro
 
 define-macro fhook-ipipe
-    set-variable $buffer-mask "luh1"
-    set-variable $buffer-fhook "fhook-ipipe"
-    buffer-bind-create "bo" "C-c C-k" ""  ipipe-kill
-    buffer-bind-create "bo" "C-c C-c" "2" ipipe-kill
-    buffer-bind-create "bo" "C-return" "" ipipe-rerun
-    buffer-bind-create "bo" "C-j" ""      ipipe-rerun
-    !if &seq $buffer-bname "*shell*"
-        set-variable $buffer-ipipe ipipe-input
-    !elif &seq $buffer-bname "*gdb*"
-        set-variable $buffer-dhook debug-reset-line
-        set-variable $buffer-ipipe gdb-input
-        !if &band .hilight.flags 0x02
-            set-variable $buffer-hilight .hilight.gdb
-        !endif
-        set-variable :last-line 1
-    !elif &seq $buffer-bname "*dbx*"
-        set-variable $buffer-dhook debug-reset-line
-        !if &band .hilight.flags 0x02
-            set-variable $buffer-hilight .hilight.gdb
-        !endif
-        set-variable :last-line 1
-    !elif &seq $buffer-bname "*perldb*"
-        set-variable $buffer-dhook debug-reset-line
-        set-variable $buffer-ipipe perldb-input
-        set-variable :mode 0
-        set-variable :prompt "^  DB<[0-9]*> "
-        !if &band $system 0x100
-	    set-variable :noecho 1
-	!endif
-        !if &band .hilight.flags 0x02
-            set-variable $buffer-hilight .hilight.gdb
-        !endif
-        set-variable :last-line 1
-    !else
-        set-variable $buffer-input ipipe-minoutput
-        !if &seq $buffer-bname "*compile*"
-            ; Bind mouse to select the line.
-            set-variable :mouse-word-select "mouse-get-next-line"
-            ; Bind <return> to select the buffer - same as mouse.
-            buffer-bind-key return-get-next-line "return"
-        !elif &seq $buffer-bname "*grep*"
-            set-variable :mouse-word-select "mouse-get-next-line"
-            ; Bind <return> to select the buffer - same as mouse.
-            buffer-bind-key return-get-next-line "return"
-        !endif
-        !if &exi my-fhook-ipipe
-            my-fhook-ipipe
-        !endif
-        !return
+  set-variable $buffer-mask "luh1"
+  set-variable $buffer-fhook "fhook-ipipe"
+  buffer-bind-create "bo" "C-c C-k" ""  ipipe-kill
+  buffer-bind-create "bo" "C-c C-c" "2" ipipe-kill
+  buffer-bind-create "bo" "C-return" "" ipipe-rerun
+  buffer-bind-create "bo" "C-j" ""      ipipe-rerun
+  !if &seq $buffer-bname "*shell*"
+    set-variable $buffer-ipipe ipipe-input
+  !elif &seq $buffer-bname "*gdb*"
+    set-variable $buffer-dhook debug-reset-line
+    set-variable $buffer-ipipe gdb-input
+    !if &band .hilight.flags 0x02
+      set-variable $buffer-hilight .hilight.gdb
     !endif
-    -1 buffer-mode "wrap"
-    1 buffer-mode "magic"
-    buffer-bind-create "bo" "f3" "" ipipe-mode
-    1 ipipe-mode
-    buffer-init-hooks
+    set-variable :last-line 1
+  !elif &seq $buffer-bname "*dbx*"
+    set-variable $buffer-dhook debug-reset-line
+    !if &band .hilight.flags 0x02
+      set-variable $buffer-hilight .hilight.gdb
+    !endif
+    set-variable :last-line 1
+  !elif &seq $buffer-bname "*perldb*"
+    set-variable $buffer-dhook debug-reset-line
+    set-variable $buffer-ipipe perldb-input
+    set-variable :mode 0
+    set-variable :prompt "^  DB<[0-9]*> "
+    !if &band $system 0x100
+	    set-variable :noecho 1
+    !endif
+    !if &band .hilight.flags 0x02
+      set-variable $buffer-hilight .hilight.gdb
+    !endif
+    set-variable :last-line 1
+  !else
+    set-variable $buffer-input ipipe-minoutput
+    !if &or &seq &lef $buffer-bname 9 "*compile*" &seq &lef $buffer-bname 6 "*grep*"
+      ; Bind mouse to select the line.
+      set-variable :mouse-word-select "mouse-get-next-line"
+      ; Bind <return> to select the buffer - same as mouse.
+      buffer-bind-key return-get-next-line "return"
+    !endif
+    !if &exi my-fhook-ipipe
+      my-fhook-ipipe
+    !endif
+    !return
+  !endif
+  -1 buffer-mode "wrap"
+  1 buffer-mode "magic"
+  buffer-bind-create "bo" "f3" "" ipipe-mode
+  1 ipipe-mode
+  buffer-init-hooks
 !emacro
 
 define-macro ishell
-    set-variable #l0 $buffer-bname
-    !force 0 find-buffer "*shell*"
-    !if &and $status &bmod "pipe"
-        find-buffer #l0
-    !elif &band $system 0x100           ; is it MS-DOS type system ?
-        !if &seq $platform "win32"
-            ; For windows DOS shell in a window we need to drop the command
-            ; shell (!c!) and run a detached process (!d!). Optionally allow
-            ; the user to run a different command shell %comspec2. This must
-            ; be a 32-bit app, so if you use a 16-bit 4DOS as the default
-            ; command shell, you will need to set %comspec2 to "command.com" 
-            4 ipipe-shell-command &cond &seq $ME_ISHELL "ERROR" $COMSPEC $ME_ISHELL "*shell*"
-        !else
-            0 ipipe-shell-command $COMSPEC "*shell*"
-        !endif
-    !elif &seq $platform "cygwin"
-        ; For cygwin then convert the COMSPEC path into a cygwin path for
-        ; pipe execution. This is executed in cygwin space rather than MS-DOS
-        ; space. 
-        set-variable #l1 &xir $COMSPEC "^\\([a-z]\\):" "/cygdrive/\\1"
-        set-variable #l1 &xir #l1 "\\\\" "/"
-        0 ipipe-shell-command #l1  "*shell*"
+  set-variable #l0 $buffer-bname
+  !force 0 find-buffer "*shell*"
+  !if &and $status &bmod "pipe"
+    find-buffer #l0
+  !elif &band $system 0x100           ; is it MS-DOS type system ?
+    !if &seq $platform "win32"
+      ; For windows DOS shell in a window we need to drop the command
+      ; shell (!c!) and run a detached process (!d!). Optionally allow
+      ; the user to run a different command shell %comspec2. This must
+      ; be a 32-bit app, so if you use a 16-bit 4DOS as the default
+      ; command shell, you will need to set %comspec2 to "command.com" 
+      4 ipipe-shell-command &cond &seq $ME_ISHELL "ERROR" $COMSPEC $ME_ISHELL "*shell*"
     !else
-        ; UNIX based platforms then we may simply run the shell.
-        0 ipipe-shell-command $SHELL "*shell*"
+      0 ipipe-shell-command $COMSPEC "*shell*"
     !endif
-    popup-window "*shell*"
-    !if &exi .ishell.prompt
-        set-variable :mode 0
-        set-variable :prompt .ishell.prompt
-        set-variable :noecho .ishell.noecho
-    !endif
+  !elif &seq $platform "cygwin"
+    ; For cygwin then convert the COMSPEC path into a cygwin path for
+    ; pipe execution. This is executed in cygwin space rather than MS-DOS
+    ; space. 
+    set-variable #l1 &xir $COMSPEC "^\\([a-z]\\):" "/cygdrive/\\1"
+    set-variable #l1 &xir #l1 "\\\\" "/"
+    0 ipipe-shell-command #l1  "*shell*"
+  !else
+    ; UNIX based platforms then we may simply run the shell.
+    0 ipipe-shell-command $SHELL "*shell*"
+  !endif
+  popup-window "*shell*"
+  !if &exi .ishell.prompt
+    set-variable :mode 0
+    set-variable :prompt .ishell.prompt
+    set-variable :noecho .ishell.noecho
+  !endif
 !emacro
 
 0 define-macro debug-reset-line
-    set-variable #l0 $buffer-bname
-    !if &not &seq %gdbdbx1 "ERROR"
-        !force 0 find-buffer %gdbdbx1
-        !if $status
-            !force 0 goto-line %gdbdbx2
-            set-variable $line-scheme -1
-            find-buffer #l0
-        !endif
-        unset-variable %gdbdbx1
+  set-variable #l0 $buffer-bname
+  !if &not &seq %gdbdbx1 "ERROR"
+    !force 0 find-buffer %gdbdbx1
+    !if $status
+      !force 0 goto-line %gdbdbx2
+      set-variable $line-scheme -1
+      find-buffer #l0
     !endif
+    unset-variable %gdbdbx1
+  !endif
 !emacro
 
 0 define-macro gdb-add-breakpoint
-    set-variable #l0 &spr "b %s:%s\CM" &rig $buffer-fname &rsin "/" $buffer-fname $window-aline
-    set-variable #l1 $buffer-bname
-    !force popup-window "*gdb*"
-    !if &not $status
-        popup-window #l1
-        ml-write "No *gdb* running!"
-        !abort
-    !endif
-    ipipe-write #l0
+  set-variable #l0 &spr "b %s:%s\CM" &rig $buffer-fname &rsin "/" $buffer-fname $window-aline
+  set-variable #l1 $buffer-bname
+  !force popup-window "*gdb*"
+  !if &not $status
     popup-window #l1
+    ml-write "No *gdb* running!"
+    !abort
+  !endif
+  ipipe-write #l0
+  popup-window #l1
 !emacro
 
 0 define-macro gdb-input
-    set-variable #l1 $buffer-bname
-    goto-alpha-mark "I"
-    beginning-of-line
-    set-variable #g4 #l1
-    !force &sub -1 &sub $window-line :last-line search-backward "\CZ\CZ"
+  set-variable #l1 $buffer-bname
+  goto-alpha-mark "I"
+  beginning-of-line
+  set-variable #g4 #l1
+  !force &sub -1 &sub $window-line :last-line search-backward "\CZ\CZ"
+  !if $status
+    debug-reset-line
+    2 forward-char
+    set-variable #l2 &rig @wl $window-col
+    set-variable #l3 &lef #l2 &sub &sin ":" #l2 1
+    set-variable #l2 &rig #l2 &sin ":" #l2
+    set-variable %gdbdbx2 &lef #l2 &sub &sin ":" #l2 1
+    2 backward-char
+    set-mark
+    forward-line
+    -1 kill-region
+    1 scroll-up
+    forward-char
+    !force find-file #l3 @mna
     !if $status
-        debug-reset-line
-        2 forward-char
-        set-variable #l2 &rig @wl $window-col
-        set-variable #l3 &lef #l2 &sub &sin ":" #l2 1
-        set-variable #l2 &rig #l2 &sin ":" #l2
-        set-variable %gdbdbx2 &lef #l2 &sub &sin ":" #l2 1
-        2 backward-char
-        set-mark
-        forward-line
-        -1 kill-region
-        1 scroll-up
-        forward-char
-        !force find-file #l3 @mna
-        !if $status
-            set-variable %gdbdbx1 $buffer-bname
-            find-buffer #l1
-            popup-window %gdbdbx1
-            !force 0 goto-line %gdbdbx2
-            !if $status
-                set-variable $line-scheme .scheme.trace
-                recenter
-            !endif
-            popup-window #l1
-        !endif
-    !else
-        forward-line
+      set-variable %gdbdbx1 $buffer-bname
+      find-buffer #l1
+      popup-window %gdbdbx1
+      !force 0 goto-line %gdbdbx2
+      !if $status
+        set-variable $line-scheme .scheme.trace
+        recenter
+      !endif
+      popup-window #l1
     !endif
-    goto-alpha-mark  "I"
-    set-variable :last-line $window-line
-    !if &not @#
-        ; process has ended, clear-up
-        debug-reset-line
-        0 ipipe-input
-    !endif
+  !else
+    forward-line
+  !endif
+  goto-alpha-mark  "I"
+  set-variable :last-line $window-line
+  !if &not @#
+    ; process has ended, clear-up
+    debug-reset-line
+    0 ipipe-input
+  !endif
 !emacro
 
 define-macro gdb
-    set-variable #l0 $buffer-bname
-    !force 0 find-buffer "*gdb*"
-    !if $status
-        find-buffer #l0
-        popup-window  "*gdb*"
-        !if &bmod "pipe"
-            !return
-        !endif
-        screen-update
+  set-variable #l0 $buffer-bname
+  !force 0 find-buffer "*gdb*"
+  !if $status
+    find-buffer #l0
+    popup-window  "*gdb*"
+    !if &bmod "pipe"
+      !return
     !endif
-    set-variable #l0 @ml01 "gdb program"
-    set-variable #l1 @ml "gdb args"
-    0 ipipe-shell-command &spr "gdb -f %s %s" #l0 #l1 "*gdb*"
-    popup-window "*gdb*"
-    fhook-ipipe
-    global-bind-key gdb-add-breakpoint "f9"
+    screen-update
+  !endif
+  set-variable #l0 @ml01 "gdb program"
+  set-variable #l1 @ml "gdb args"
+  0 ipipe-shell-command &spr "gdb -f %s %s" #l0 #l1 "*gdb*"
+  popup-window "*gdb*"
+  fhook-ipipe
+  global-bind-key gdb-add-breakpoint "f9"
 !emacro
 
 0 define-macro dbx-add-breakpoint
-    set-variable #l0 &spr "file %s\CMstop at %s\CM" &rig $buffer-fname &rsin "/" $buffer-fname $window-aline
-    set-variable #l1 $buffer-bname
-    !force popup-window "*dbx*"
-    !if &not $status
-        popup-window #l1
-        ml-write "No *dbx* running!"
-        !abort
-    !endif
-    ipipe-write #l0
+  set-variable #l0 &spr "file %s\CMstop at %s\CM" &rig $buffer-fname &rsin "/" $buffer-fname $window-aline
+  set-variable #l1 $buffer-bname
+  !force popup-window "*dbx*"
+  !if &not $status
     popup-window #l1
+    ml-write "No *dbx* running!"
+    !abort
+  !endif
+  ipipe-write #l0
+  popup-window #l1
 !emacro
 
 0 define-macro dbx-input
-    set-variable #l2 $buffer-bname
-    goto-alpha-mark "I"
-    beginning-of-line
-    !force &sub -1 &sub $window-line :last-line search-buffer "bem" "stopped in \\S+ at line \\(\\d+\\) in file \"\\([^\n]+\\)\""
+  set-variable #l2 $buffer-bname
+  goto-alpha-mark "I"
+  beginning-of-line
+  !force &sub -1 &sub $window-line :last-line search-buffer "bem" "stopped in \\S+ at line \\(\\d+\\) in file \"\\([^\n]+\\)\""
+  !if $status
+    debug-reset-line
+    set-variable %gdbdbx2 @s1
+    set-variable #l0 @s2
+    popup-window ""
+    find-file #l0 @mna
+    set-variable %gdbdbx1 $buffer-bname
+    !force 0 goto-line %gdbdbx2
     !if $status
-        debug-reset-line
-        set-variable %gdbdbx2 @s1
-        set-variable #l0 @s2
-        popup-window ""
-        find-file #l0 @mna
-        set-variable %gdbdbx1 $buffer-bname
-        !force 0 goto-line %gdbdbx2
-        !if $status
-            set-variable $line-scheme .scheme.trace
-            recenter
-        !endif
-        popup-window #l2
+      set-variable $line-scheme .scheme.trace
+      recenter
     !endif
-    goto-alpha-mark  "I"
-    set-variable :last-line $window-line
-    !if &not @#
-        ; process has ended, clear-up
-        debug-reset-line
-        0 ipipe-input
-    !endif
+    popup-window #l2
+  !endif
+  goto-alpha-mark  "I"
+  set-variable :last-line $window-line
+  !if &not @#
+    ; process has ended, clear-up
+    debug-reset-line
+    0 ipipe-input
+  !endif
 !emacro
 
 0 define-macro dbx-input-irix
-    set-variable #l2 $buffer-bname
-    goto-alpha-mark "I"
-    beginning-of-line
-    !force &sub -1 &sub $window-line :last-line search-buffer "bem" "stopped at \\[[^:\n]*:\\(\\d+\\)\\s+\\S+\\s+\\([^]\n]+\\)]"
+  set-variable #l2 $buffer-bname
+  goto-alpha-mark "I"
+  beginning-of-line
+  !force &sub -1 &sub $window-line :last-line search-buffer "bem" "stopped at \\[[^:\n]*:\\(\\d+\\)\\s+\\S+\\s+\\([^]\n]+\\)]"
+  !if $status
+    debug-reset-line
+    set-variable %gdbdbx2 @s1
+    set-variable #l0 @s2
+    popup-window ""
+    find-file #l0 @mna
+    set-variable %gdbdbx1 $buffer-bname
+    !force 0 goto-line %gdbdbx2
     !if $status
-        debug-reset-line
-        set-variable %gdbdbx2 @s1
-        set-variable #l0 @s2
-        popup-window ""
-        find-file #l0 @mna
-        set-variable %gdbdbx1 $buffer-bname
-        !force 0 goto-line %gdbdbx2
-        !if $status
-            set-variable $line-scheme .scheme.trace
-            recenter
-        !endif
-        popup-window #l2
+      set-variable $line-scheme .scheme.trace
+      recenter
     !endif
-    goto-alpha-mark  "I"
-    set-variable :last-line $window-line
-    !if &not @#
-        ; process has ended, clear-up
-        debug-reset-line
-        0 ipipe-input
-    !endif
+    popup-window #l2
+  !endif
+  goto-alpha-mark  "I"
+  set-variable :last-line $window-line
+  !if &not @#
+    ; process has ended, clear-up
+    debug-reset-line
+    0 ipipe-input
+  !endif
 !emacro
 
 define-macro dbx
-    set-variable #l0 $buffer-bname
-    !force 0 find-buffer "*dbx*"
-    !if $status
-        find-buffer #l0
-        popup-window  "*dbx*"
-        !if &bmod "pipe"
-            !return
-        !endif
-        screen-update
+  set-variable #l0 $buffer-bname
+  !force 0 find-buffer "*dbx*"
+  !if $status
+    find-buffer #l0
+    popup-window  "*dbx*"
+    !if &bmod "pipe"
+      !return
     !endif
-    set-variable #l0 @ml01 "dbx program"
-    set-variable #l1 @ml "dbx args"
-    0 ipipe-shell-command &spr "dbx %s %s" #l0 #l1 "*dbx*"
-    popup-window "*dbx*"
-    fhook-ipipe
-    set-variable :mode 0
-    set-variable :prompt "^\\((dbx) \\)+"
-    !if &seq $platform "irix"
-        set-variable $buffer-ipipe dbx-input-irix
-        ipipe-write "set $showfilename=2\CMset $repeatmode=1\CM"
-        ipipe-write "alias n `next`\CMalias s `step`\CMalias p `print`\CMalias c `cont`\CMalias b `stop in`\CM"
-    !else
-        set-variable $buffer-ipipe dbx-input
-        ipipe-write "dbxenv output_short_file_name off\CM"
-        ipipe-write "alias n=next\CMalias s=step\CMalias p=print\CMalias c=cont\CMalias b=\"stop in\"\CM"
-    !endif
-    global-bind-key dbx-add-breakpoint "f9"
+    screen-update
+  !endif
+  set-variable #l0 @ml01 "dbx program"
+  set-variable #l1 @ml "dbx args"
+  0 ipipe-shell-command &spr "dbx %s %s" #l0 #l1 "*dbx*"
+  popup-window "*dbx*"
+  fhook-ipipe
+  set-variable :mode 0
+  set-variable :prompt "^\\((dbx) \\)+"
+  !if &seq $platform "irix"
+    set-variable $buffer-ipipe dbx-input-irix
+    ipipe-write "set $showfilename=2\CMset $repeatmode=1\CM"
+    ipipe-write "alias n `next`\CMalias s `step`\CMalias p `print`\CMalias c `cont`\CMalias b `stop in`\CM"
+  !else
+    set-variable $buffer-ipipe dbx-input
+    ipipe-write "dbxenv output_short_file_name off\CM"
+    ipipe-write "alias n=next\CMalias s=step\CMalias p=print\CMalias c=cont\CMalias b=\"stop in\"\CM"
+  !endif
+  global-bind-key dbx-add-breakpoint "f9"
 !emacro
 
 0 define-macro perldb-add-breakpoint
-    !if &not &seq %gdbdbx1 $buffer-bname
-        ml-write "[Breakpoints can only be set inthe current file]"
-        !abort
-    !endif
-    set-variable #l0 &spr "b %d\CM" $window-aline
-    !if &band $system 0x100
-	set-variable #l0 &cat #l0 "\CJ"
-    !endif
-    !force popup-window "*perldb*"
-    !if &not $status
-        popup-window %gdbdbx1
-        ml-write "No *perldb* running!"
-        !abort
-    !endif
-    ipipe-write #l0
+  !if &not &seq %gdbdbx1 $buffer-bname
+    ml-write "[Breakpoints can only be set inthe current file]"
+    !abort
+  !endif
+  set-variable #l0 &spr "b %d\CM" $window-aline
+  !if &band $system 0x100
+    set-variable #l0 &cat #l0 "\CJ"
+  !endif
+  !force popup-window "*perldb*"
+  !if &not $status
     popup-window %gdbdbx1
+    ml-write "No *perldb* running!"
+    !abort
+  !endif
+  ipipe-write #l0
+  popup-window %gdbdbx1
 !emacro
 
 0 define-macro perldb-input
-    set-variable #l1 $buffer-bname
-    goto-alpha-mark "I"
-    beginning-of-line
-    set-variable #g4 #l1
-    !force &sub -1 &sub $window-line :last-line search-backward "^\\w+::[\\w:]*(\\([^)]+\\):\\([0-9]+\\)):"
+  set-variable #l1 $buffer-bname
+  goto-alpha-mark "I"
+  beginning-of-line
+  set-variable #g4 #l1
+  !force &sub -1 &sub $window-line :last-line search-backward "^\\w+::[\\w:]*(\\([^)]+\\):\\([0-9]+\\)):"
+  !if $status
+    set-variable #l2 @s1
+    set-variable #l3 @s2
+    debug-reset-line
+    !force find-file #l2 @mna
     !if $status
-        set-variable #l2 @s1
-        set-variable #l3 @s2
-        debug-reset-line
-        !force find-file #l2 @mna
-        !if $status
-            set-variable %gdbdbx1 $buffer-bname
-            set-variable %gdbdbx2 #l3
-            find-buffer #l1
-            popup-window %gdbdbx1
-            !force 0 goto-line %gdbdbx2
-            !if $status
-                set-variable $line-scheme .scheme.trace
-                recenter
-            !endif
-            popup-window #l1
-        !endif
-    !else
-        forward-line
+      set-variable %gdbdbx1 $buffer-bname
+      set-variable %gdbdbx2 #l3
+      find-buffer #l1
+      popup-window %gdbdbx1
+      !force 0 goto-line %gdbdbx2
+      !if $status
+        set-variable $line-scheme .scheme.trace
+        recenter
+      !endif
+      popup-window #l1
     !endif
-    goto-alpha-mark  "I"
-    set-variable :last-line $window-line
-    !if &not @#
-        ; process has ended, clear-up
-        debug-reset-line
-        0 ipipe-input
-    !endif
+  !else
+    forward-line
+  !endif
+  goto-alpha-mark  "I"
+  set-variable :last-line $window-line
+  !if &not @#
+    ; process has ended, clear-up
+    debug-reset-line
+    0 ipipe-input
+  !endif
 !emacro
 
 define-macro perldb
-    set-variable #l0 $buffer-bname
-    !force 0 find-buffer "*perldb*"
-    !if $status
-        find-buffer #l0
-        popup-window  "*perldb*"
-        !if &bmod "pipe"
-            !return
-        !endif
-        screen-update
+  set-variable #l0 $buffer-bname
+  !force 0 find-buffer "*perldb*"
+  !if $status
+    find-buffer #l0
+    popup-window  "*perldb*"
+    !if &bmod "pipe"
+      !return
     !endif
-    !if &not &band @# 2
-        set-variable #l0 @ml01 "perldb - script file"
-    !elif &seq $buffer-fname ""
-        ml-write "[Current buffer has no file name]"
-        !abort
-    !else
-        set-variable #l0 $buffer-fname
-    !endif
-    set-variable #l1 @ml "perldb - script args"
-    !if &band $system 0x100
-        12 ipipe-shell-command &spr "perl -d %s %s" #l0 #l1 "*perldb*"
-    !else
-        0 ipipe-shell-command &spr "perl -d %s %s" #l0 #l1 "*perldb*"
-    !endif
-    popup-window "*perldb*"
-    fhook-ipipe
-    global-bind-key perldb-add-breakpoint "f9"
+    screen-update
+  !endif
+  !if &not &band @# 2
+    set-variable #l0 @ml01 "perldb - script file"
+  !elif &seq $buffer-fname ""
+    ml-write "[Current buffer has no file name]"
+    !abort
+  !else
+    set-variable #l0 $buffer-fname
+  !endif
+  set-variable #l1 @ml "perldb - script args"
+  !if &band $system 0x100
+    12 ipipe-shell-command &spr "perl -d %s %s" #l0 #l1 "*perldb*"
+  !else
+    0 ipipe-shell-command &spr "perl -d %s %s" #l0 #l1 "*perldb*"
+  !endif
+  popup-window "*perldb*"
+  fhook-ipipe
+  global-bind-key perldb-add-breakpoint "f9"
 !emacro
 
 ; load in user extensions if found

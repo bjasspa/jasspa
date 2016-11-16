@@ -132,6 +132,21 @@ define-macro compile
     ml-write "[Cannot compile - compile command has not been set]"
   !endif
   &band @# 1 save-some-buffers @mna
+  !if &not &exi ":*compile*:"
+  !elif &nbmo "*compile*" "pipe"
+    set-variable #l3 @mc5 &spr "Compile already running, kill (?/y/n/g) ? " "gGnNyY"  "(Y)es, (N)o, (G)oto, (C-g)Abort ? "
+    popup-window "*compile*"
+    !if &iseq #l3 "g"
+      !return
+    !elif &iseq #l3 "n"
+      set-variable #l3 1
+      !tjump &exi &spr ":*compile*%d:" &inc #l3 1 0
+      change-buffer-name &spr "*compile*%d" #l3
+      find-buffer "*compile*"
+    !else
+      ipipe-kill
+    !endif
+  !endif
   !if &band @# 8
     popup-window "*compile*"
     set-variable $buffer-fname #l2
