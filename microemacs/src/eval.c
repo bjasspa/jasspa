@@ -55,8 +55,8 @@ extern meUByte time_stamp[];   /* Time stamp string */
 
 #if MEOPT_EXTENDED
 #include <math.h>
-#define meFtoa(dd) (sprintf(evalResult,"%.16e",(dd)),evalResult)
-#define meAtof(ss) (atof(ss))
+#define meFtoa(dd) (sprintf((char *) evalResult,"%.16e",(dd)),evalResult)
+#define meAtof(ss) (atof((const char *) ss))
 static time_t timeOffset=0 ;            /* Time offset in seconds */
 
 #ifdef _INSENSE_CASE
@@ -430,7 +430,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         
     case TKENV:
         /* set an environment variable */
-        status = biChopFindString(nn,14,envars,NEVARS) ;
+        status = biChopFindString(nn,envars,NEVARS) ;
         switch(status)
         {
         case EVAUTOTIME:
@@ -1128,7 +1128,7 @@ gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
 #endif
     
     /* scan the list, looking for the referenced name */
-    ii = biChopFindString(vname,14,envars,NEVARS) ;
+    ii = biChopFindString(vname,envars,NEVARS) ;
     switch(ii)
     {
         /* Fetch the appropriate value */
@@ -2083,7 +2083,6 @@ meGetDayOfYear(meInt year, meInt month, meInt day)
 }
 #endif
 
-
 meUByte *
 gtfun(meUByte *fname)  /* evaluate a function given name of function */
 {
@@ -2093,33 +2092,23 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
     meUByte arg1[meBUF_SIZE_MAX];      /* value of first argument */
     meUByte arg2[meBUF_SIZE_MAX];      /* value of second argument */
     meUByte arg3[meBUF_SIZE_MAX];      /* value of third argument */
-    meUByte *varVal ;
-    meUInt fnam, s1 ;
-    int fnum;      /* index to function to eval */
-    int hi, low ;
+    meUByte *varVal;
+    int ii, fnum=-1;                   /* index to function to eval */
     
-    /* look the function up in the function table - encode the first 3 letters of the name to a uint */
-    fnam = (((meUInt) fname[0]) << 16) | (((meUInt) fname[1]) << 8) | ((meUInt) fname[2]) ;
-    
-    hi  = NFUNCS-1;             /* Set hi water to end of table */
-    low = 0;                    /* Set low water to start of table */
-    for(;;)
+    if(((ii = fname[0] - 'a') >= 0) && (ii < 26) && ((ii = funcOffst[ii]) != 255))
     {
-        fnum = (low + hi) >> 1;          /* Get mid value. */
-        
-        if((s1=funcNames[fnum]) == fnam)
-            break ;
-        if(s1 > fnam)
-            hi = fnum - 1;               /* Discard bottom half */
-        else
-            low = fnum + 1;              /* Discard top half */
-        if(low > hi)
-        {
-            mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown function &%s %x]",fname,fnam);
-            return abortm ;
-        }
+        meUShort fn, fnam = (((meUShort) fname[1]) << 8) | ((meUShort) fname[2]) ;
+        while((fn=funcTails[ii]) < fnam)
+            ii++;
+        if(fn == fnam)
+            fnum = ii;
     }
-    
+    if(fnum < 0)
+    {
+        mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown function &%s]",fname);
+        return abortm ;
+    }
+
 #if MEOPT_EXTENDED
     if((fnum == UFCBIND) || (fnum == UFNBIND))
     {
@@ -2140,7 +2129,6 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
     /* retrieve the arguments */
     {
         meUByte alarmStateStr=alarmState ;
-        int ii ;
         
 #if MEOPT_EXTENDED
         if(funcTypes[fnum] & FUN_SETVAR)
@@ -2172,7 +2160,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
         }
         alarmState = alarmStateStr ;
     }
-    
+        
     /* and now evaluate it! */
     switch(fnum)
     {
@@ -2190,10 +2178,10 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
         {
         case TKLVR:
         case TKCVR:
-            if(((hi=meStrlen(arg1)) > 2) && (arg1[--hi] == arg1[0]))
+            if(((ii=meStrlen(arg1)) > 2) && (arg1[--ii] == arg1[0]))
             {
                 /* simple buffer exists */
-                arg1[hi] = '\0';
+                arg1[ii] = '\0';
                 if(arg1[0] == ':')
                     return (meLtoa(bfind(arg1+1,0) != NULL));
                 return (meLtoa(decode_fncname(arg1+1,1) >= 0));
@@ -2241,12 +2229,13 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
 #endif
             {
                 for(ii=0 ; ii<keyTableSize ; ii++)
-                    if((keytab[ii].index == idx) &&
-                       (keytab[ii].arg == narg))
+                {
+                    if((keytab[ii].index == idx) && (keytab[ii].arg == narg))
                     {
                         code = keytab[ii].code ;
                         break ;
                     }
+                }
             }
             if(code != ME_INVALID_KEY)
                 meGetStringFromKey(code,evalResult) ;

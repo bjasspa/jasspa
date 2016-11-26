@@ -1098,9 +1098,9 @@ ffHttpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUBy
             s1 = pfn;
         if((s2 = meStrrchr(s1,'\\')) == NULL)
             s2 = s1;
-        pfs = sprintf(pfb,"\r\n----5Iz6dTINmxNFw6S42Ryf98IBXX1NCe%x",clock());
-        ll = sprintf(pfb+pfs,"\r\nContent-Disposition: form-data; name=\"file\"; filename=\"%s\"\r\nContent-Type: application/octet-stream\r\n\r\n",s2);
-        ss += sprintf(ss,"\r\nContent-Length: %d",pfs-2+ll+ii+pfs+4);
+        pfs = sprintf((char *) pfb,"\r\n----5Iz6dTINmxNFw6S42Ryf98IBXX1NCe%x",(meUInt) clock());
+        ll = sprintf((char *) pfb+pfs,"\r\nContent-Disposition: form-data; name=\"file\"; filename=\"%s\"\r\nContent-Type: application/octet-stream\r\n\r\n",s2);
+        ss += sprintf((char *) ss,"\r\nContent-Length: %d",pfs-2+ll+ii+pfs+4);
         SetUsrLclCmdVar((meUByte *) "http-post-file",(meUByte *) "",&usrVarList) ;
     }
     if((s1 = getUsrVar((meUByte *)"http-cookies")) != errorm)
@@ -1254,14 +1254,14 @@ ffUrlFileOpen(meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag)
             wVersionRequested = MAKEWORD (1, 1);
 
             if(meWSAStartup(wVersionRequested, &wsaData))
-                return mlwrite(MWABORT|MWPAUSE,"[Failed to initialise sockets]") ;
+                return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to initialise sockets]") ;
             atexit((meATEXIT) meWSACleanup) ;
         }
         else
             meSocketOpen = NULL ;
     }
     if(meSocketOpen == NULL)
-        return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[No url support on this machine]") ;
+        return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[No url support on this machine]") ;
 #endif
     fftype = (urlName[0] == 'f') ? meURLTYPE_FTP:meURLTYPE_HTTP ;
     if(rwflag & meRWFLAG_READ)
@@ -1728,10 +1728,10 @@ ffgetBuf(void)
 #endif
 #ifdef _WIN32
         {
-            if(ReadFile(meio.rp,ffbuf,meFIOBUFSIZ,&ffremain,NULL) == 0)
+            if(ReadFile(meio.rp,ffbuf,meFIOBUFSIZ,(DWORD *)&ffremain,NULL) == 0)
             {
                 if((meio.rp != GetStdHandle(STD_INPUT_HANDLE)) || (GetLastError() != ERROR_BROKEN_PIPE))
-                    return mlwrite(MWABORT,"[File read error %d]",GetLastError());
+                    return mlwrite(MWABORT,(meUByte *)"[File read error %d]",GetLastError());
             }
             if(ffremain <= 0)
             {
@@ -2058,7 +2058,7 @@ ffReadFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
             int retries=10 ;
             for(;;)
             {
-                if(((meio.rp=CreateFile(fname,GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,
+                if(((meio.rp=CreateFile((const char *) fname,GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,
                                         FILE_ATTRIBUTE_NORMAL,NULL)) != INVALID_HANDLE_VALUE) ||
                    (GetLastError() != ERROR_SHARING_VIOLATION) ||
                    (--retries == 0))
@@ -2164,7 +2164,7 @@ ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
             fsl = (meUInt) fs ;
 #else
 #ifdef _WIN32
-            fsl = GetFileSize(meio.rp,&fsu) ;
+            fsl = GetFileSize(meio.rp,(DWORD *) &fsu) ;
 #else
             fseek(meio.rp,0,SEEK_END) ;
             fsl = ftell(meio.rp) ;
@@ -2196,7 +2196,7 @@ ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
         fseeko(meio.rp,(((off_t) uoffset) << 32) | ((off_t) ffoffset),SEEK_SET) ;
 #else
 #ifdef _WIN32
-        SetFilePointer(meio.rp,ffoffset,&uoffset,FILE_BEGIN) ;
+        SetFilePointer(meio.rp,ffoffset,(PLONG) &uoffset,FILE_BEGIN) ;
 #else
         fseek(meio.rp,ffoffset,SEEK_SET) ;
 #endif
@@ -2300,7 +2300,7 @@ ffputBuf(void)
     {
 #ifdef _WIN32
         meInt written ;
-        if((WriteFile(meio.wp,ffbuf,ffremain,&written,NULL) == 0) || (written != ffremain))
+        if((WriteFile(meio.wp,ffbuf,ffremain,(DWORD *)&written,NULL) == 0) || (written != ffremain))
         {
             ffwerror = 1 ;
             return mlwrite(MWABORT,(meUByte *)"[Write failed - %d]",meFileGetError());
@@ -2403,13 +2403,13 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
 
                     if(!(meSystemCfg & meSYSTEM_DOSFNAMES))
                     {
-                        strcpy(filenameOldB,fname) ;
-                        strcat(filenameOldB,".~a~") ;
+                        meStrcpy(filenameOldB,fname) ;
+                        meStrcat(filenameOldB,".~a~") ;
                         filenameOld = filenameOldB ;
                         if(!meTestExist(filenameOld) && meUnlink(filenameOld))
-                            mlwrite(MWABORT|MWPAUSE,"[Unable to remove backup file %s]", filenameOld) ;
+                            mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to remove backup file %s]", filenameOld) ;
                         else if(meRename(fname,filenameOld) && (ffFileOp(fname,filenameOld,meRWFLAG_DELETE,-1) <= 0))
-                            mlwrite(MWABORT|MWPAUSE,"[Unable to backup file to %s]",filenameOld) ;
+                            mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s]",filenameOld) ;
                     }
                     else
                         filenameOld = fname ;
@@ -2496,7 +2496,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
                 if(!meTestDir(fname))
                 {
 #ifdef _WIN32
-                    ii = (RemoveDirectory(fname) == 0) ;
+                    ii = (RemoveDirectory((const char *)fname) == 0) ;
 #else
                     ii = rmdir((char *) fname) ;
                     if(ii && (errno == ENOTDIR))
@@ -2518,7 +2518,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
             if(flags & meRWFLAG_MKDIR)
             {
 #ifdef _WIN32
-                if(CreateDirectory(fname,NULL) == 0)
+                if(CreateDirectory((const char *)fname,NULL) == 0)
 #else
 #ifdef _DOS
                 if(mkdir((char *)fname,0) != 0)
@@ -2550,7 +2550,7 @@ ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp)
             /* Windows must open the file with the correct permissions to support the
              * compress attribute
              */
-            if((meio.wp=CreateFile(fname,GENERIC_WRITE,FILE_SHARE_READ,NULL,create,
+            if((meio.wp=CreateFile((const char *) fname,GENERIC_WRITE,FILE_SHARE_READ,NULL,create,
                                    ((bp == NULL) ? meUmask:bp->stats.stmode),
                                    NULL)) == INVALID_HANDLE_VALUE)
             {

@@ -44,9 +44,8 @@
 #endif
 
 #if (defined _WIN32) || (defined _DOS)
-/* executable extension list, in reverse order of dos priority
- * included 4dos's btm files for completeness */
-meUByte *execExtensions[noExecExtensions] = {".btm", ".bat", ".exe", ".com"} ;
+/* executable extension list, in reverse order of dos priority */
+meUByte *execExtensions[noExecExtensions] = {(meUByte *) ".cmd",(meUByte *) ".bat",(meUByte *) ".exe",(meUByte *) ".com"} ;
 #endif
 
 /* SpecialChars; This is an array of special characters, below 32 used for

@@ -226,7 +226,7 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
         {
 gft_directory:
             if(flag & gfsERRON_DIR)
-                mlwrite(MWABORT|MWPAUSE,"[%s directory]", file) ;
+                mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s directory]", file) ;
             return meFILETYPE_DIRECTORY ;
         }
         return meFILETYPE_REGULAR ;
@@ -238,10 +238,10 @@ gft_directory:
         int   len ;
         
         if(((len = meStrlen(file)) == 0) ||
-           (strchr(file,'*') != NULL) || (strchr(file,'?') != NULL))
+           (meStrchr(file,'*') != NULL) || (meStrchr(file,'?') != NULL))
         {
             if(flag & gfsERRON_ILLEGAL_NAME)
-                mlwrite(MWABORT|MWPAUSE,"[%s illegal name]", file);
+                mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s illegal name]", file);
             return meFILETYPE_NOTEXIST ;
         }
         if(stats != NULL)
@@ -252,13 +252,13 @@ gft_directory:
             if(file[len-1] == DIR_CHAR)
             {
                 meUByte fn[meBUF_SIZE_MAX] ;
-                strcpy(fn,file) ;
+                meStrcpy(fn,file) ;
                 fn[len] = '.' ;
                 fn[len+1] = '\0' ;
-                fh = FindFirstFile(fn,&fd) ;
+                fh = FindFirstFile((const char *) fn,&fd) ;
             }
             else
-                fh = FindFirstFile(file,&fd) ;
+                fh = FindFirstFile((const char *) file,&fd) ;
             if(fh == INVALID_HANDLE_VALUE)
             {
                 if((file[len-1] == DIR_CHAR) || ((len == 2) && (file[1] == _DRV_CHAR)))
@@ -275,13 +275,13 @@ gft_directory:
         }
         else if((file[len-1] == DIR_CHAR) || ((len == 2) && (file[1] == _DRV_CHAR)))
             goto gft_directory ;
-        else if((status = GetFileAttributes(file)) == 0xFFFFFFFF)
+        else if((status = GetFileAttributes((const char *) file)) == 0xFFFFFFFF)
             return meFILETYPE_NOTEXIST ;
         if (status & FILE_ATTRIBUTE_DIRECTORY)
         {
 gft_directory:
             if(flag & gfsERRON_DIR)
-                mlwrite(MWABORT|MWPAUSE,"[%s directory]", file);
+                mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s directory]", file);
             return meFILETYPE_DIRECTORY ;
         }
         /* FILE_ATTRIBUTE_ARCHIVE
@@ -743,7 +743,7 @@ gwd(meUByte drive)
     }
     
     /* Pick up the directory information */
-    GetCurrentDirectory (meBUF_SIZE_MAX, dir);
+    GetCurrentDirectory (meBUF_SIZE_MAX,(char *) dir);
     if (meStrlen(dir) > 2)
     {
         meUByte *p;                   /* Local character pointer */
@@ -902,7 +902,7 @@ int
 meTestExecutable(meUByte *fileName)
 {
     int ii ;
-    if((ii = strlen(fileName)) > 4)
+    if((ii = meStrlen(fileName)) > 4)
     {
         meUByte *ee ;
         ee = fileName+ii-4 ;
@@ -1160,7 +1160,7 @@ getDirectoryInfo(meUByte *fname)
         }
 #endif
 #ifdef _WIN32
-        static meUByte *searchString = "*.*";
+        static meUByte *searchString = (meUByte *) "*.*";
         HANDLE          *fh ;
         WIN32_FIND_DATA  fd ;
         meUByte           *ff ;
@@ -1170,7 +1170,7 @@ getDirectoryInfo(meUByte *fname)
         meStrcpy(bfname,fname) ;
         fn = bfname+meStrlen(bfname) ;
         meStrcpy(fn,searchString) ;
-        if((fh = FindFirstFile(bfname,&fd)) != INVALID_HANDLE_VALUE)
+        if((fh = FindFirstFile((const char *) bfname,&fd)) != INVALID_HANDLE_VALUE)
         {
             do
             {
@@ -1178,7 +1178,7 @@ getDirectoryInfo(meUByte *fname)
                    ((curHead = (FILENODE *) meRealloc(curHead,sizeof(FILENODE)*(noFiles+16))) == NULL))
                     return NULL ;
                 curFile = &(curHead[noFiles++]) ;
-                if((ff = meStrdup(fd.cFileName)) == NULL)
+                if((ff = meStrdup((meUByte *) fd.cFileName)) == NULL)
                     return NULL ;
                 curFile->fname = ff ;
                 curFile->lname = NULL ;
@@ -1309,7 +1309,7 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
 #ifdef _WIN32
             if(FileTimeToLocalFileTime(&fnode->mtime,&ftmp) &&
                FileTimeToSystemTime(&ftmp,&tmp))
-            len += sprintf(buf+len, "%4d/%02d/%02d %02d:%02d:%02d ",
+            len += sprintf((char *)buf+len, "%4d/%02d/%02d %02d:%02d:%02d ",
                            tmp.wYear,tmp.wMonth,tmp.wDay,tmp.wHour,tmp.wMinute,tmp.wSecond) ;
         else
 #endif
@@ -1481,7 +1481,7 @@ readin(register meBuffer *bp, meUByte *fname)
 #if ((defined _UNIX) || (defined _DOS))
                 mlwrite(MWABORT,(meUByte *)"[%s: %s]", fn, sys_errlist[errno]) ;
 #else
-                mlwrite(MWABORT,"[cannot read: %s]", fn) ;
+                mlwrite(MWABORT,(meUByte *)"[cannot read: %s]", fn) ;
 #endif
                 /* Zap the filename - it is invalid.
                    We only want a buffer */
@@ -1507,7 +1507,7 @@ readin(register meBuffer *bp, meUByte *fname)
             {
                 /* if windows system file read in a readonly */
                 meModeSet(bp->mode,MDVIEW) ;
-                mlwrite(MWCURSOR|MWCLEXEC,"[Reading %s (system file)]", fn);
+                mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"[Reading %s (system file)]", fn);
             }
             else
 #endif
@@ -2260,7 +2260,7 @@ fileOp(int f, int n)
             HANDLE fp ;
             FILETIME ft ;
             SYSTEMTIME st ;
-            if((fp=CreateFile(sfname,GENERIC_READ|GENERIC_WRITE,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,
+            if((fp=CreateFile((const char *) sfname,GENERIC_READ|GENERIC_WRITE,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,
                               FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
             {
                 mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[%s: Cannot access file]",sfname);
@@ -2823,8 +2823,8 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
                     while(p1[2] == DIR_CHAR)
                         p1++ ;
                     urls = p1 ;
-                    if((p=strchr(p1+2,DIR_CHAR)) == NULL)
-                        p = p1 + strlen(p1) ;
+                    if((p=meStrchr(p1+2,DIR_CHAR)) == NULL)
+                        p = p1 + meStrlen(p1) ;
                     urle = p ;
                     p1 = p ;
                 }
@@ -3078,13 +3078,13 @@ fileNameCorrect(meUByte *oldName, meUByte *newName, meUByte **baseName)
          * the correct a single name letter case by using FindFirstFile*/
         HANDLE *handle;
         WIN32_FIND_DATA fd;
-        if((handle = FindFirstFile(newName,&fd)) != INVALID_HANDLE_VALUE)
+        if((handle = FindFirstFile((const char *) newName,&fd)) != INVALID_HANDLE_VALUE)
         {
-            strcpy(bn,fd.cFileName) ;
+            meStrcpy(bn,fd.cFileName) ;
             /* If a directory that append the '/' */
             if(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
             {
-                bn += strlen(bn) ;
+                bn += meStrlen(bn) ;
                 *bn++ = DIR_CHAR ;
                 *bn = '\0' ;
             }
@@ -3220,10 +3220,10 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         int len ;
         
         meFiletimeInit(stmtime) ;
-        if(((len = strlen(pathName)) > 0) && (pathName[len-1] == DIR_CHAR))
+        if(((len = meStrlen(pathName)) > 0) && (pathName[len-1] == DIR_CHAR))
         {
             pathName[len-1] = '\0';
-            if((handle = FindFirstFile(pathName,&fd)) != INVALID_HANDLE_VALUE)
+            if((handle = FindFirstFile((const char *) pathName,&fd)) != INVALID_HANDLE_VALUE)
             {
                 stmtime.dwHighDateTime = fd.ftLastWriteTime.dwHighDateTime ;
                 stmtime.dwLowDateTime = fd.ftLastWriteTime.dwLowDateTime ;
@@ -3365,7 +3365,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         
         /* append the *.* - Note that this function assumes the pathName has a '/' and
          * its an array with 3 extra char larger than the string size */
-        ee = pathName + strlen(pathName) ;
+        ee = pathName + meStrlen(pathName) ;
         ee[0] = '*' ;
         es[1] = ee[1] ;
         ee[1] = '.' ;
@@ -3373,7 +3373,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         ee[2] = '*' ;
         es[3] = ee[3] ;
         ee[3] = '\0' ;
-        handle = FindFirstFile(pathName,&fd) ;
+        handle = FindFirstFile((const char *) pathName,&fd) ;
         ee[0] = '\0' ;
         ee[1] = es[1] ;
         ee[2] = es[2] ;
@@ -3395,10 +3395,10 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                     break ;
                 }
                 fls[noFiles++] = ff ;
-                strcpy(ff,fd.cFileName) ;
+                meStrcpy(ff,fd.cFileName) ;
                 if(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
                 {
-                    ff += strlen(ff) ;
+                    ff += meStrlen(ff) ;
                     *ff++ = DIR_CHAR ;
                     *ff   = '\0' ;
                 }

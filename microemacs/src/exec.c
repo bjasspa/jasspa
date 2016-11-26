@@ -62,30 +62,19 @@
 int relJumpTo ;
 
 int
-biChopFindString(register meUByte *ss, register int len, register meUByte **tbl,
-                 register int size)
+biChopFindString(register meUByte *ss, register meUByte **tbl, register int size)
 {
-    register int hi, low, mid, ll ;
+    register int lo=0,hi=size,mid,cd;
     
-    hi  = size-1;               /* Set hi water to end of table */
-    low = 0;                    /* Set low water to start of table */
-    
-    do
-    {
-        meUByte *s1, *s2, cc ;
-        mid = (low + hi) >> 1;          /* Get mid value. */
-        
-        ll = len ;
-        s1 = tbl[mid] ;
-        s2 = ss ;
-        for( ; ((cc=*s1++) == *s2) ; s2++)
-            if(!--ll || (cc == 0))
-                return mid ;
-        if(cc > *s2)
-            hi = mid - 1;               /* Discard bottom half */
+    do {
+        mid = (lo + hi) >> 1;
+        if((cd=meStrcmp(tbl[mid],ss)) == 0)
+            return mid;
+        if(cd > 0)
+            hi = mid;
         else
-            low = mid + 1;              /* Discard top half */
-    } while(low <= hi);                 /* Until converges */
+            lo = mid + 1;
+    } while(lo < hi);
     
     return -1 ;
 }
@@ -105,8 +94,8 @@ token(meUByte *src, meUByte *tok)
     
     ss = src ;
     dd = tok ;
-    /* note tokEnd is set to tok+meBUF_SIZE_MAX-1 to leave room for the terminating \0 */
-    tokEnd = dd + meBUF_SIZE_MAX-1 ;
+    /* note tokEnd is set to tok+bSize-5 to leave room for a special key and a terminating \0 */
+    tokEnd = dd + meTOKENBUF_SIZE_MAX-5 ;
     
     /*---       First scan past any whitespace in the source string */
     
@@ -299,15 +288,11 @@ quote_spec_key1:
         ss-- ;
     else
     {
-        do
-        {
+        *dd++ = cc;
+        while(!isSpace(cc=*ss++))
             *dd++ = cc;
-            if((cc=*ss++) == '\0')
-            {
-                ss-- ;
-                break ;
-            }
-        } while((cc != ' ') && (cc != '\t')) ;
+        if(cc == '\0')
+            ss-- ;
     }
     *dd = 0 ;
     return ss ;
@@ -337,12 +322,12 @@ meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
             cc = buff[3] ;
             execstr = token(execstr, buff);
             if(cc == 'a')
-                execstr = ss ;
+                execstr = ss;
             if(prompt == NULL)
-                resultStr[0] = '\0' ;
+                resultStr[0] = '\0';
             else
                 meStrcpy(resultStr,prompt) ;
-            if(lineExec (0, 1, buff) <= 0)
+            if(lineExec(0, 1, buff) <= 0)
                 return meABORT ;
             meStrncpy(buffer,resultStr,size-1) ;
             buffer[size-1] = '\0' ;
@@ -420,10 +405,10 @@ int
 fnctest(void)
 {
     register meBind *ktp;                       /* Keyboard character array */
-    register meCommand *cmd ;                       /* Names pointer */
-    meUInt key ;
+    register meCommand *cmd;                    /* Names pointer */
+    meUInt key, kk;
     meUByte outseq[12];
-    int count=0, ii;                            /* Counter of errors */
+    int count=0, ii, jj, fc, fn;                        /* Counter of errors */
     
     /* test the command hash table */
     for (ii=0; ii < CK_MAX; ii++)
@@ -456,13 +441,63 @@ fnctest(void)
      * then return the index into the names table.  */
     
     for (ktp = &keytab[0]; ktp[1].code != 0; ktp++)
+    {
         if (ktp->code > ktp[1].code)
         {
             count++;
             meGetStringFromKey(ktp->code, outseq);
             mlwrite(MWWAIT,(meUByte *) "[%s] key out of place",outseq);
         }
+    }
     
+    /* now check the user funcs */
+    fc = -1;
+    fn = 0;
+    key = 0;
+    for(ii=0 ; ii<NFUNCS ; ii++)
+    {
+        if((funcNames[ii][0] < 'a') || (funcNames[ii][0] > 'z'))
+        {
+            count++;
+            mlwrite(MWWAIT,(meUByte *) "funcNames Error: Function [%s] does not start with a lowercase letter",funcNames[ii]);
+            break;
+        }
+        kk = (funcNames[ii][1] << 8) | funcNames[ii][2];
+        if(funcTails[ii] != kk)
+        {
+            count++;
+            mlwrite(MWWAIT,(meUByte *) "funcTails Error: Tail wrong for function [%s], should be %04x",funcNames[ii],kk);
+            break;
+        }
+        kk |= (funcNames[ii][0] << 16);
+        if(kk <= key)
+        {
+            count++;
+            mlwrite(MWWAIT,(meUByte *) "funcNames Error: [%s] out of sequence with [%s]", 
+                    funcNames[ii-1],funcNames[ii]);
+        }
+        if(((kk&0xff0000) != (key&0xff0000)))
+        {
+            jj = (kk>>16) - 'a';
+            while(++fc < jj)
+            {
+                if(funcOffst[fc] != 255)
+                {
+                    count++;
+                    mlwrite(MWWAIT,(meUByte *) "funcNames Error: Function offset for %d ('%c') should be 255", 
+                            fc,fc+'a');
+                }
+            }
+            if(funcOffst[fc] != fn)
+            {
+                count++;
+                mlwrite(MWWAIT,(meUByte *) "funcNames Error: Function offset for %d ('%c') should be %d", 
+                        fc,funcNames[ii][0],fn);
+            }
+        }
+        key = kk;
+        fn++;
+    }
     if(count)
         mlwrite(MWWAIT,(meUByte *) "!test: %d Error(s) Detected",count);
     return (count);
@@ -472,7 +507,7 @@ fnctest(void)
 static int
 domstore(meUByte *cline)
 {
-    register meUByte cc ;          /* Character */
+    register meUByte *ss,cc;
     
     if(mcStore == 2)
     {
@@ -507,21 +542,18 @@ domstore(meUByte *cline)
         execlevel = 0 ;
         return meTRUE ;
     }
-    else
+    ss = cline ;
+    if(isDigit(cc))
     {
-        meUByte *ss = cline ;
-        if(isDigit(cc))
-        {
-            do
-                cc = *++ss ;
-            while(isDigit(cc)) ;
-            while((cc == ' ') || (cc == '\t'))
-                cc = *++ss ;
-        }
-        if((cc == 'd') && !meStrncmp(ss, getCommandName(CK_DEFMAC),12) &&
-           (((cc=ss[12]) == ' ') || (cc == '\t') || (cc == ';') || (cc == '\0')))
-            execlevel++ ;
+        do
+            cc = *++ss ;
+        while(isDigit(cc)) ;
+        while((cc == ' ') || (cc == '\t'))
+            cc = *++ss ;
     }
+    if((cc == 'd') && !meStrncmp(ss, getCommandName(CK_DEFMAC),12) &&
+       (((cc=ss[12]) == ' ') || (cc == '\t') || (cc == ';') || (cc == '\0')))
+        execlevel++ ;
     return addLine(lpStore,cline) ;
 }
 
@@ -574,11 +606,8 @@ docmd(meUByte *cline, register meUByte *tkn)
     
     /* process argument */
 try_again:
-    execstr = token(execstr, tkn);
-    if((status=getMacroTypeS(tkn)) == TKDIR)
+    if((status=getMacroType(cc)) == TKDIR)
     {
-        int dirType ;
-        
         /* SWP 2003-12-22 Used to use the biChopFindString to look the
          * derivative up in a name table, but after profiling found this to be
          * the second biggest consumer of cpu and the function was 3rd (token
@@ -591,111 +620,116 @@ try_again:
          * 
          * So yes this does look horrid but its fast!
          */
-        status = -1 ;
+        int dirType ;
+        meUByte c1, c2, c3;
         
-        cc = tkn[1] ;
-        if(cc > 'e')
+        if(((c1 = *++execstr) <= ' ') || ((c2 = *++execstr) <= ' ') || ((c3 = *++execstr) <= ' '))
         {
-            if(cc < 'r')
+            if((c1 != 'i') || (c2 != 'f') || (c3 > ' '))
+                return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown directive %s]",cline);
+            status = DRIF ;
+        }
+        else
+        {
+            while((cc=*++execstr) > ' ')
+                ;
+            status = -1 ;
+            if(c1 > 'e')
             {
-                if(cc < 'i')
+                if(c1 < 'r')
                 {
-                    if(cc == 'f')
+                    if(c1 < 'i')
                     {
-                        if((tkn[2] == 'o') && (tkn[3] == 'r'))
-                            status = DRFORCE ;
+                        if(c1 == 'f')
+                        {
+                            if((c2 == 'o') && (c3 == 'r'))
+                                status = DRFORCE ;
+                        }
+                        else if(c1 == 'g')
+                        {
+                            if((c2 == 'o') && (c3 == 't'))
+                                status = DRGOTO ;
+                        }
                     }
-                    else if(cc == 'g')
+                    else if(c1 == 'j')
                     {
-                        if((tkn[2] == 'o') && (tkn[3] == 't'))
-                            status = DRGOTO ;
+                        if((c2 == 'u') && (c3 == 'm'))
+                            status = DRJUMP ;
+                    }
+                    else if(c1 == 'n')
+                    {
+                        if((c2 == 'm') && (c3 == 'a'))
+                            status = DRNMACRO ;
                     }
                 }
-                else if(cc == 'i')
+                else if(c1 == 'r')
                 {
-                    if((tkn[2] == 'f') && (tkn[3] == '\0'))
-                        status = DRIF ;
+                    if(c2 == 'e')
+                    {
+                        if(c3 == 'p')
+                            status = DRREPEAT ;
+                        else if(c3 == 't')
+                            status = DRRETURN ;
+                    }
                 }
-                else if(cc == 'j')
+                else if(c1 > 't')
                 {
-                    if((tkn[2] == 'u') && (tkn[3] == 'm'))
-                        status = DRJUMP ;
+                    if(c1 == 'u')
+                    {
+                        if((c2 == 'n') && (c3 == 't'))
+                            status = DRUNTIL ;
+                    }
+                    else if(c1 == 'w')
+                    {
+                        if((c2 == 'h') && (c3 == 'i'))
+                            status = DRWHILE ;
+                    }
                 }
-                else if(cc == 'n')
+                else if(c1 == 't')
                 {
-                    if((tkn[2] == 'm') && (tkn[3] == 'a'))
-                        status = DRNMACRO ;
-                }
-            }
-            else if(cc == 'r')
-            {
-                if(tkn[2] == 'e')
-                {
-                    if(tkn[3] == 'p')
-                        status = DRREPEAT ;
-                    else if(tkn[3] == 't')
-                        status = DRRETURN ;
-                }
-            }
-            else if(cc > 't')
-            {
-                if(cc == 'u')
-                {
-                    if((tkn[2] == 'n') && (tkn[3] == 't'))
-                        status = DRUNTIL ;
-                }
-                else if(cc == 'w')
-                {
-                    if((tkn[2] == 'h') && (tkn[3] == 'i'))
-                        status = DRWHILE ;
-                }
-            }
-            else if(cc == 't')
-            {
-                if((tkn[2] == 'g') && (tkn[3] == 'o'))
-                    status = DRTGOTO ;
-                if((tkn[2] == 'j') && (tkn[3] == 'u'))
-                    status = DRTJUMP ;
+                    if((c2 == 'g') && (c3 == 'o'))
+                        status = DRTGOTO ;
+                    if((c2 == 'j') && (c3 == 'u'))
+                        status = DRTJUMP ;
 #if KEY_TEST
-                else if((tkn[2] == 'e') && (tkn[3] == 's'))
-                    status = DRTEST ;
+                    else if((c2 == 'e') && (c3 == 's'))
+                        status = DRTEST ;
 #endif
+                }
             }
-        }
-        else if(cc == 'e')
-        {
-            cc = tkn[2] ;
-            if(cc > 'l')
+            else if(c1 == 'e')
             {
-                if((cc == 'n') && (tkn[3] == 'd'))
-                    status = DRENDIF ;
-                else if((cc == 'm') && (tkn[3] == 'a'))
-                    status = DREMACRO ;
+                if(c2 > 'l')
+                {
+                    if((c2 == 'n') && (c3 == 'd'))
+                        status = DRENDIF ;
+                    else if((c2 == 'm') && (c3 == 'a'))
+                        status = DREMACRO ;
+                }
+                else if(c2 == 'l')
+                {
+                    if(c3 == 'i')
+                        status = DRELIF ;
+                    else if(c3 == 's')
+                        status = DRELSE ;
+                }
             }
-            else if(cc == 'l')
+            else if(c1 > 'b')
             {
-                if(tkn[3] == 'i')
-                    status = DRELIF ;
-                else if(tkn[3] == 's')
-                    status = DRELSE ;
+                if((c2 == 'o') && (c3 == 'n'))
+                    status = (c1 == 'c') ? DRCONTIN:DRDONE ;
             }
-        }
-        else if(cc > 'b')
-        {
-            if((tkn[2] == 'o') && (tkn[3] == 'n'))
-                status = (cc == 'c') ? DRCONTIN:DRDONE ;
-        }
-        else if(cc == 'b')
-        {
-            if((tkn[2] == 'e') && (tkn[3] == 'l'))
-                status = DRBELL ;
-        }
-        else if((cc == 'a') && (tkn[2] == 'b') && (tkn[3] == 'o'))
-            status = DRABORT ;
-        
-        if(status < 0)
-            return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown directive %s]",tkn);
-        
+            else if(c1 == 'b')
+            {
+                if((c2 == 'e') && (c3 == 'l'))
+                    status = DRBELL ;
+            }
+            else if((c1 == 'a') && (c2 == 'b') && (c3 == 'o'))
+                status = DRABORT ;
+            
+            if(status < 0)
+                return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown directive %s]",cline);
+        }        
         dirType = dirTypes[status] ;
         
         if(execlevel == 0)
@@ -750,9 +784,13 @@ elif_jump:
                 return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unexpected !emacro]");
             case DRFORCE:
                 (meRegCurr->force)++ ;
+                while((cc == ' ') || (cc == '\t'))
+                    cc = *++execstr;
                 goto try_again;
             case DRNMACRO:
                 nmacro = meTRUE;
+                while((cc == ' ') || (cc == '\t'))
+                    cc = *++execstr;
                 goto try_again;
             case DRABORT:
                 if(f)
@@ -794,7 +832,7 @@ elif_jump:
     /* first set up the default command values */
     f = meFALSE;
     n = 1;
-    
+    execstr = token(execstr,tkn);
     if(status != TKCMD)
     {
         meUByte *tmp ;

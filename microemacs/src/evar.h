@@ -45,7 +45,7 @@ enum	{
 #undef	DEFDER
 
 
-#define	DEFVAR(s,v)	/* NULL */
+#define	DEFVAR(s,v)
 #define	DEFFUN(v,s,h,t)	v,
 #define	DEFDER(v,s,t)
 
@@ -58,7 +58,7 @@ enum	{
 #undef	DEFDER
 
 
-#define	DEFVAR(s,v)	/* NULL */
+#define	DEFVAR(s,v)
 #define	DEFFUN(v,s,h,t)
 #define	DEFDER(v,s,t)   v,
 
@@ -97,13 +97,18 @@ meUByte *envars[] =
 
 /**	list of recognized user function names	*/
 
-#define	DEFVAR(s,v)	/* NULL */
-#define	DEFFUN(v,s,h,t)	(meUInt) h,
+#define	DEFVAR(s,v)
+#define	DEFFUN(v,s,h,t)	(meUShort) (h & 0xffff),
 #define	DEFDER(v,s,t)
 
-meUInt funcNames[] =
+meUShort funcTails[] =
 {
 #include	"evar.def"
+    0xffff
+};
+/* This array can be tested using the !test directive, enable KEY_TEST in exec.c */
+meUByte funcOffst[26] = {
+    0, 4,10,13,15,17,24,255,26,255,33,34,42,45,49,51,255,53,58,68,255,255,71,72,255,255
 };
 
 #undef	DEFVAR
@@ -112,7 +117,7 @@ meUInt funcNames[] =
 
 /**	list of recognized user function types	*/
 
-#define	DEFVAR(s,v)	/* NULL */
+#define	DEFVAR(s,v)
 #define	DEFFUN(v,s,h,t)	t,
 #define	DEFDER(v,s,t)
 
@@ -130,7 +135,7 @@ meUByte funcTypes[] =
  * 
  * As of ME'04 this list is nolonger used, see docmd in exec.c
  */
-#define	DEFVAR(s,v)	/* NULL */
+#define	DEFVAR(s,v)
 #define	DEFFUN(v,s,h,t)
 #define	DEFDER(v,s,t)	(meUByte *) s,
 
@@ -143,6 +148,7 @@ meUByte *derNames[] =
 #undef	DEFFUN
 #undef	DEFDER
 #endif
+
 /**	list of user directive types	*/
 #define DRFLAG_ASGLEXECLVL 0x001
 #define DRFLAG_ADBLEXECLVL 0x002
@@ -157,7 +163,7 @@ meUByte *derNames[] =
 #define DRFLAG_NARG        0x100
 #define DRFLAG_JUMP        0x200
 
-#define	DEFVAR(s,v)	/* NULL */
+#define	DEFVAR(s,v)
 #define	DEFFUN(v,s,h,t)
 #define	DEFDER(v,s,t)	t,
 
@@ -170,5 +176,19 @@ int dirTypes[] =
 #undef	DEFFUN
 #undef	DEFDER
 
+#if KEY_TEST
+#define	DEFVAR(s,v)
+#define	DEFFUN(v,s,h,t)	(meUByte *) s,
+#define	DEFDER(v,s,t)
+
+meUByte *funcNames[] =
+{
+#include	"evar.def"
+};
+
+#undef	DEFVAR
+#undef	DEFFUN
+#undef	DEFDER
+#endif
 
 #endif /* maindef */

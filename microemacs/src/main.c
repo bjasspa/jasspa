@@ -585,7 +585,6 @@ exitEmacs(int f, int n)
             s = mlyesno((meUByte *)buff) ;
         }
     }
-
     if(s > 0)
     {
         meBuffer *bp, *nbp ;
@@ -1344,7 +1343,7 @@ mesetupInsertTsfResource(int oargc, char **oargv[])
     buff = (char *) meMalloc(len+1) ;
     if(tfs_fread(buff,1,len,fp) < len)
     {
-        sprintf((char *)evalResult,"%s Error: Failed to read [{tfs}/@@clo]\n") ;
+        sprintf((char *)evalResult,"%s Error: Failed to read [{tfs}/@@clo]\n",(*oargv)[0]) ;
         mePrintMessage(evalResult) ;
         meExit(1);
     }

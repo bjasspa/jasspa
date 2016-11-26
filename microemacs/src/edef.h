@@ -48,7 +48,7 @@ extern  mePosition *position ;          /* Position stack head          */
 #endif
 extern  meUShort   hilBlockS ;          /* Hilight - HilBlock array siz */
 extern  meInt      cursorState ;        /* Current state of cursor      */
-extern  meUByte   *meProgName ;           /* the program name (argv[0])   */
+extern  meUByte   *meProgName ;         /* the program name (argv[0])   */
 extern  meUByte  **ModeLineStr ;        /* modeline line format         */
 extern  meUByte    orgModeLineStr[] ;   /* original modeline line format*/
 extern  meUByte   *modeLineStr ;        /* current modeline format      */
@@ -79,7 +79,7 @@ extern  meUByte    filleoslen;          /* Fill E-O-S ' ' insert len    */
 extern  meUByte    fillignore[];        /* Fill Ignore character class  */
 extern  meUByte    fillmode;            /* Justify mode                 */
 #endif
-extern  meUByte    indentWidth;             /* Virtual Tab size             */
+extern  meUByte    indentWidth;         /* Virtual Tab size             */
 extern  meUByte    tabWidth;            /* Real TAB size                */
 extern  meUByte   *homedir;             /* Home directory               */
 extern  meUByte   *searchPath;          /* emf search path              */
@@ -270,8 +270,9 @@ extern  meUByte   displaySpace;         /* space ' ' display character */
 extern  meUByte  *envars[];             /* list of recognized env. vars */
 extern  meUByte  *derNames[];           /* name list of directives      */
 extern  meUByte   derTypes[];           /* type list of directives      */
-extern  meUInt    funcNames[];          /* name list of user funcs      */
 extern  meUByte   funcTypes[];          /* type list of user funcs      */
+extern  meUShort  funcTails[];          /* user func 2nd & 3rd letters as short      */
+extern  meUByte   funcOffst[];          /* func offset into list based on 1st letter */
 extern  meKillNode *kbufp;              /* current kill buffer chunk pointer */
 extern  meKillNode *kbufh;              /* kill buffer header pointer   */
 extern  meUByte   lkbdptr[];            /* Holds last keybd macro data  */
@@ -464,7 +465,7 @@ meColor   noColors=0 ;                  /* No defined colours           */
 meInt     styleTableSize=2 ;            /* Size of the style table      */
 meSchemeSet *hilBlock;                  /* Hilighting style change      */
 meInt     cursorState=0 ;               /* Current state of cursor      */
-meUByte  *meProgName=NULL ;               /* the program name (argv[0])   */
+meUByte  *meProgName=NULL ;             /* the program name (argv[0])   */
 meUByte   orgModeLineStr[]="%s%r%u " ME_SHORTNAME " (%e) - %l %b (%f) ";
 meUByte  *modeLineStr=orgModeLineStr;   /* current modeline format      */
 meInt     autoTime=300 ;                /* auto save time in seconds    */
@@ -542,50 +543,50 @@ meUByte   boxChars[BCLEN+1] =           /* Set of box characters        */
 "|+++++++++-";
 meUByte   windowChars[WCLEN+1] =        /* Set of window characters     */
 {
-    '=',                                /* Mode line current sep */
-    '-',                                /* Mode libe inactive sep */
-    '#',                                /* Root indicator */
-    '*',                                /* Edit indicator */
-    '%',                                /* View indicator */
+    '=',                                /* Mode line current sep        */
+    '-',                                /* Mode libe inactive sep       */
+    '#',                                /* Root indicator               */
+    '*',                                /* Edit indicator               */
+    '%',                                /* View indicator               */
     /* Single scroll bar */
-    '=',                                /* Buffer split */
-    '^',                                /* Scroll bar up */
-    ' ',                                /* Scroll bar up shaft */
-    ' ',                                /* Scroll box */
-    ' ',                                /* Scroll bar down shaft */
-    'v',                                /* Scroll bar down */
-    '*',                                /* Scroll bar/mode line point */
+    '=',                                /* Buffer split                 */
+    '^',                                /* Scroll bar up                */
+    ' ',                                /* Scroll bar up shaft          */
+    ' ',                                /* Scroll box                   */
+    ' ',                                /* Scroll bar down shaft        */
+    'v',                                /* Scroll bar down              */
+    '*',                                /* Scroll bar/mode line point   */
     /* Double scroll bar */
-    '=','=',                            /* Buffer split */
-    '^','^',                            /* Scroll bar up */
-    ' ',' ',                            /* Scroll bar up shaft */
-    ' ',' ',                            /* Scroll box */
-    ' ',' ',                            /* Scroll bar down shaft */
-    'v','v',                            /* Scroll bar down */
-    '*','*',                            /* Scroll bar/mode line point */
+    '=','=',                            /* Buffer split                 */
+    '^','^',                            /* Scroll bar up                */
+    ' ',' ',                            /* Scroll bar up shaft          */
+    ' ',' ',                            /* Scroll box                   */
+    ' ',' ',                            /* Scroll bar down shaft        */
+    'v','v',                            /* Scroll bar down              */
+    '*','*',                            /* Scroll bar/mode line point   */
     /* Single horizontal scroll bar */
-    '|',                                /* Buffer split */
-    '<',                                /* Scroll bar left */
-    ' ',                                /* Scroll bar left shaft */
-    ' ',                                /* Scroll box */
-    ' ',                                /* Scroll bar right shaft */
-    '>',                                /* Scroll bar right */
-    '*',                                /* Scroll bar/mode line point */
+    '|',                                /* Buffer split                 */
+    '<',                                /* Scroll bar left              */
+    ' ',                                /* Scroll bar left shaft        */
+    ' ',                                /* Scroll box                   */
+    ' ',                                /* Scroll bar right shaft       */
+    '>',                                /* Scroll bar right             */
+    '*',                                /* Scroll bar/mode line point   */
     /* Double horizontal scroll bar */
-    '|','|',                            /* Buffer split */
-    '<','<',                            /* Scroll bar left */
-    ' ',' ',                            /* Scroll bar left shaft */
-    ' ',' ',                            /* Scroll box */
-    ' ',' ',                            /* Scroll bar right shaft */
-    '>','>',                            /* Scroll bar right */
-    '*','*',                            /* Scroll bar/mode line point */
-    ' ',                                /* OSD title bar char */
-    'x',                                /* OSD Title bar kill char */
-    '*',                                /* OSD resize char */
-    ' ',                                /* OSD button start char e.g. '['   */
-    '>',                                /* OSD default button start char e.g. '>'   */
-    ' ',                                /* OSD button close char e.g. ']'   */
-    '<',                                /* OSD default button close char e.g. '<'   */
+    '|','|',                            /* Buffer split                 */
+    '<','<',                            /* Scroll bar left              */
+    ' ',' ',                            /* Scroll bar left shaft        */
+    ' ',' ',                            /* Scroll box                   */
+    ' ',' ',                            /* Scroll bar right shaft       */
+    '>','>',                            /* Scroll bar right             */
+    '*','*',                            /* Scroll bar/mode line point   */
+    ' ',                                /* OSD title bar char           */
+    'x',                                /* OSD Title bar kill char      */
+    '*',                                /* OSD resize char              */
+    ' ',                                /* OSD button start char e.g. '[' */
+    '>',                                /* OSD default button start char e.g. '>' */
+    ' ',                                /* OSD button close char e.g. ']' */
+    '<',                                /* OSD default button close char e.g. '<' */
     /* Display characters */
     '>',                                /* tab \t display character     */
     '\\',                               /* new-line \n display character*/
@@ -675,12 +676,12 @@ sigset_t  meSigHoldMask ;               /* signals help when spawning and readin
 #ifdef _BSD_SIGNALS
 int       meSigHoldMask = 0;            /* signals held when spawning and reading */
 #endif /* _BSD_SIGNALS */
-int       meSigLevel = 0;               /* signal level */
+int       meSigLevel = 0;               /* signal level                 */
 #endif /* _UNIX */
 
 /* Environment Variables */
 #if (defined _UNIX) && (defined _NOPUTENV)
-char    **meEnviron = NULL;             /* Our own environment */
+char    **meEnviron = NULL;             /* Our own environment          */
 #endif /* (defined _UNIX) && (defined _NOPUTENV) */
 
 #if MEOPT_IPIPES
@@ -689,8 +690,8 @@ int       noIpipes=0 ;                  /* count of all the cur pipes   */
 #endif
 
 #if MEOPT_OSD
-int       osdCol=0 ;                    /* The osd current column */
-int       osdRow=0 ;                    /* The osd current row */
+int       osdCol=0 ;                    /* The osd current column       */
+int       osdRow=0 ;                    /* The osd current row          */
 #endif
 meLine     *lpStore = NULL;             /* line off which to store macro*/
 meBuffer   *lpStoreBp = NULL;           /* help is stored in a buffer   */
@@ -708,20 +709,20 @@ meUShort  prefixc[ME_PREFIX_NUM+1]=
     ME_INVALID_KEY
 } ;
 meUShort  reptc    = 'U'-'@';           /* current universal repeat char*/
-meUShort  breakc   = 'G'-'@';           /* current abort-command char*/
+meUShort  breakc   = 'G'-'@';           /* current abort-command char   */
 
-meKill    *klhead  = NULL;              /* klist header pointer            */
-meUByte   lkbdptr[meBUF_SIZE_MAX];      /* Holds last keybd macro data     */
-int       lkbdlen=0;                    /* Holds length of last macro      */
-meUByte  *kbdptr=NULL;                  /* start of current keyboard buf   */
-int       kbdlen=0;                     /* len of current macro            */
-int       kbdoff=0;                     /* current offset of macro         */
-int       kbdrep=0;                     /* number of repetitions           */
-meUByte   emptym[]  = "";               /* empty literal                   */
-meUByte   errorm[]  = "ERROR";          /* error literal                   */
-meUByte   abortm[]  = "ABORT";          /* abort literal                   */
-meUByte   truem[]   = "1";              /* true literal            */
-meUByte   falsem[]  = "0";              /* false litereal                  */
+meKill    *klhead  = NULL;              /* klist header pointer         */
+meUByte   lkbdptr[meBUF_SIZE_MAX];      /* Holds last keybd macro data  */
+int       lkbdlen=0;                    /* Holds length of last macro   */
+meUByte  *kbdptr=NULL;                  /* start of current keyboard buf*/
+int       kbdlen=0;                     /* len of current macro         */
+int       kbdoff=0;                     /* current offset of macro      */
+int       kbdrep=0;                     /* number of repetitions        */
+meUByte   emptym[]  = "";               /* empty literal                */
+meUByte   errorm[]  = "ERROR";          /* error literal                */
+meUByte   abortm[]  = "ABORT";          /* abort literal                */
+meUByte   truem[]   = "1";              /* true literal                 */
+meUByte   falsem[]  = "0";              /* false litereal               */
 
 /* global buffer names */
 meUByte   BvariablesN[] = "*variables*" ;
@@ -749,7 +750,7 @@ meUByte   BserverN[] = "*server*" ;
 #endif
 
 #if MEOPT_EXTENDED
-meVarList usrVarList={NULL,0} ;         /* user variables list             */
+meVarList usrVarList={NULL,0} ;         /* user variables list          */
 meUByte  *fileIgnore=NULL ;
 meUByte  *frameTitle=NULL ;             /* String used in frame title   */
 #endif

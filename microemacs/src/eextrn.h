@@ -275,8 +275,7 @@ extern	int	unsetVariable(int f, int n);
 /* exec.c externals */
 extern	int	mePushRegisters(int flags);
 extern	int	mePopRegisters(int flags);
-extern  int     biChopFindString(register meUByte *ss, register int len, 
-                                 register meUByte **tbl, register int size) ;
+extern  int     biChopFindString(register meUByte *ss, register meUByte **tbl, register int size) ;
 extern	int	execFunc(int index, int f, int n) ;
 extern  void    execFuncHidden(int keyCode, int index, meUInt arg) ;
 #define meEBF_ARG_GIVEN   0x01
@@ -286,7 +285,7 @@ extern  int     execBufferFunc(meBuffer *bp, int index, int flags, int n) ;
 extern  int     lineExec(int f, int n, meUByte *cmdstr);
 /* Note  tok (the destination token string) must be meTOKENBUF_SIZE_MAX in size, 
  * returning a string no bigger than meBUF_SIZE_MAX with the \0 */
-extern	meUByte  *token(meUByte *src, meUByte *tok);
+extern	meUByte *token(meUByte *src, meUByte *tok);
 extern	int	macarg(meUByte *tok);
 extern  int     meGetString(meUByte *prompt, int option, int defnum,
                             meUByte *buffer, int size);
@@ -881,7 +880,7 @@ extern  void    __mkTempName(meUByte *buf, meUByte *name);
 #define mkTempName(bb,nn,ee) __mkTempName((bb),(nn))
 #else
 extern  void    __mkTempName(meUByte *buf, meUByte *name, meUByte *ext);
-#define mkTempName(bb,nn,ee) __mkTempName((bb),(nn),(ee))
+#define mkTempName(bb,nn,ee) __mkTempName((meUByte *)(bb),(meUByte *)(nn),(meUByte *)(ee))
 #endif
 #ifdef _WIN32
 extern void mkTempCommName(meUByte *filename, meUByte *basename) ;
@@ -1145,23 +1144,23 @@ extern void gettimeofday (struct meTimeval *tp, struct meTimezone *tz);
  * Why the hell we need these functions and the ANSI 'C' functions are not
  * valid is beyond belief - typical bloody Microsoft !!
  */
-#define meChdir(dir)        chdir(dir)
-#define meRename(src,dst)   (MoveFile(src,dst)==meFALSE)
-#define meUnlink(fn)        (DeleteFile(fn)==meFALSE)
+#define meChdir(dir)        chdir((const char *)(dir))
+#define meRename(src,dst)   (MoveFile((const char *)(src),(const char *)(dst))==meFALSE)
+#define meUnlink(fn)        (DeleteFile((const char *)(fn))==meFALSE)
 /* Doesn't exist if function returns -1 */
-#define meTestExist(fn)     (((int) GetFileAttributes(fn)) < 0)
+#define meTestExist(fn)     (((int) GetFileAttributes((const char *) (fn))) < 0)
 /* Can't read if doesn't exist or its a directory */
-#define meTestRead(fn)      (GetFileAttributes(fn) & FILE_ATTRIBUTE_DIRECTORY)
+#define meTestRead(fn)      (GetFileAttributes((const char *) (fn)) & FILE_ATTRIBUTE_DIRECTORY)
 /* Can't write if exists and its readonly or a directory */
-#define meTestWrite(fn)     ((((int) GetFileAttributes(fn)) & 0xffff8001) > 0)
+#define meTestWrite(fn)     ((((int) GetFileAttributes((const char *) (fn))) & 0xffff8001) > 0)
 /* File is a directory */
-#define meTestDir(fn)       ((GetFileAttributes(fn) & (0xf0000000|FILE_ATTRIBUTE_DIRECTORY)) != FILE_ATTRIBUTE_DIRECTORY)
+#define meTestDir(fn)       ((GetFileAttributes((const char *) (fn)) & (0xf0000000|FILE_ATTRIBUTE_DIRECTORY)) != FILE_ATTRIBUTE_DIRECTORY)
 extern int meTestExecutable(meUByte *fileName) ;
 #define meStatTestRead(st)  (((st).stmode & FILE_ATTRIBUTE_DIRECTORY) == 0)
 #define meStatTestWrite(st) (((st).stmode & (FILE_ATTRIBUTE_DIRECTORY|FILE_ATTRIBUTE_READONLY)) == 0)
 #define meStatTestSystem(st) (((st).stmode & FILE_ATTRIBUTE_SYSTEM) == 0)
-#define meFileGetAttributes GetFileAttributes
-#define meFileSetAttributes SetFileAttributes
+#define meFileGetAttributes(fn) GetFileAttributes((const char *) (fn))
+#define meFileSetAttributes(fn,attr) SetFileAttributes((const char *) (fn),attr)
 extern void WinShutdown (void);
 #define meExit(status)      (WinShutdown(), ExitProcess(status))
 #endif

@@ -517,7 +517,7 @@ regSet (meRegNode *sroot, meUByte *subkey, meUByte *value)
 
     if (subkey != NULL)
     {
-        meUByte buf [1024];
+        meUByte buf[meBUF_SIZE_MAX];
         meRegNode *tnp;
         meUByte *p;
 

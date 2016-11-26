@@ -102,7 +102,7 @@ static const char *pcdExactlyStrings[] =
     "Minimum"
 };
 
-static char *regPrintName = "/print" ;
+static meUByte *regPrintName = (meUByte *) "/print" ;
 static meRegNode *regPrint;
 
 /*
@@ -228,10 +228,10 @@ getPrinterInfo (int index)
                       (strcmp (printer.param [mePI_WINDRIVER].p, pi2[ii].pDriverName) == 0)) &&*/
                      ((printer.param [mePI_WINDEVICE].p != NULL) &&
                       (pi2[ii].pPrinterName != NULL) &&
-                      (strcmp (printer.param [mePI_WINDEVICE].p, pi2[ii].pPrinterName) == 0)) &&
+                      (meStrcmp (printer.param [mePI_WINDEVICE].p, pi2[ii].pPrinterName) == 0)) &&
                      ((printer.param [mePI_WINPORT].p != NULL) &&
                       (pi2[ii].pPortName != NULL) &&
-                      (strcmp (printer.param [mePI_WINPORT].p, pi2[ii].pPortName) == 0))))
+                      (meStrcmp (printer.param [mePI_WINPORT].p, pi2[ii].pPortName) == 0))))
                 {
                     /* Set this to our index. */
                     index = ii;
@@ -260,7 +260,7 @@ getPrinterInfo (int index)
                     /* Build movable global object */
                     if ((hDevNames = GlobalAlloc (GMEM_MOVEABLE|GMEM_ZEROINIT, jj)) == NULL)
                     {
-                        mlwrite (MWABORT|MWPAUSE, "Cannot allocate device memory");
+                        mlwrite (MWABORT|MWPAUSE,(meUByte *) "Cannot allocate device memory");
                         break;
                     }
 
@@ -522,8 +522,8 @@ pcdComputeFont (PAGEDESC *pd, int pagex, int selx, int pagey, int sely, int poin
     SetMapMode (hDC, MM_TEXT);
 
     /* Select the font into the system */
-    printFont (&logfont, printer.param [mePI_FONTFACE].p);
-    strncpy (pd->fontName, printer.param [mePI_FONTFACE].p, 32);
+    printFont(&logfont,(char *) printer.param [mePI_FONTFACE].p);
+    meStrncpy(pd->fontName, printer.param [mePI_FONTFACE].p, 32);
     pd->fontName[31] = '\0';
 
     /* Quick check on the selection */
@@ -555,7 +555,7 @@ pcdComputeFont (PAGEDESC *pd, int pagex, int selx, int pagey, int sely, int poin
         int ii;
         /* Create the font */
         if ((hFont = CreateFontIndirect (&logfont)) == 0)
-            return mlwrite (MWABORT|MWPAUSE, "Cannot create font");
+            return mlwrite(MWABORT|MWPAUSE,(meUByte *) "Cannot create font");
 
         /* A Font has been created, now determine what the size of the page is. */
         SelectObject (hDC, hFont);
@@ -589,7 +589,7 @@ pcdComputeFont (PAGEDESC *pd, int pagex, int selx, int pagey, int sely, int poin
         if (sely != PAGSIZ_DONTCARE)
         {
             if (papery > pd->papery)
-                mlwrite (0, "Cannot get veritical font scale");
+                mlwrite(0,(meUByte *) "Cannot get veritical font scale");
 
             /* If we do not care about the width, or we have acheived the
              * requested width we have finished. */
@@ -603,7 +603,7 @@ pcdComputeFont (PAGEDESC *pd, int pagex, int selx, int pagey, int sely, int poin
         else if (selx != PAGSIZ_DONTCARE)
         {
             if (paperx > pd->paperx)
-                mlwrite (0, "Cannot get horizontal font scale");
+                mlwrite(0,(meUByte *) "Cannot get horizontal font scale");
             else if ((sely == PAGSIZ_DONTCARE) || (papery <= pd->papery))
                 goto done;
 
@@ -613,7 +613,7 @@ pcdComputeFont (PAGEDESC *pd, int pagex, int selx, int pagey, int sely, int poin
         }
     }
     while (++retries < 2);
-    mlwrite (0, "Cannot find page size");
+    mlwrite(0,(meUByte *) "Cannot find page size");
 done:
     /* Back compute the settings according to the user request
      * Sort out the horizontal sizing first. */
@@ -653,11 +653,11 @@ pcdEnumFontFamiliesCallback (ENUMLOGFONT *lpelf, NEWTEXTMETRIC *lpntm, int fontT
     {
         DWORD index;
 
-        index = SendMessage ((HWND) lParam, CB_ADDSTRING, 0, (LPARAM) lpelf->elfLogFont.lfFaceName);
+        index = SendMessage((HWND) lParam,CB_ADDSTRING,0,(LPARAM) lpelf->elfLogFont.lfFaceName);
         if ((index >= 0) &&
             (printer.param [mePI_FONTFACE].p != NULL) &&
-            (strcmp (printer.param [mePI_FONTFACE].p,  lpelf->elfLogFont.lfFaceName) == 0))
-            SendMessage ((HWND) lParam, CB_SETCURSEL, index, 0);
+            (meStrcmp(printer.param [mePI_FONTFACE].p,lpelf->elfLogFont.lfFaceName) == 0))
+            SendMessage((HWND) lParam,CB_SETCURSEL,index,0);
     }
     return meTRUE;
 }
@@ -747,7 +747,7 @@ pcdChange (HWND hWnd)
 
     /* Copy the new font into the registry immediatly */
     printer.param[mePI_FONTFACE].p =
-              regGetString (regSet (regPrint, printNames[mePI_FONTFACE], buf),(meUByte *) "Courier New");
+          regGetString(regSet(regPrint,printNames[mePI_FONTFACE],(meUByte *) buf),(meUByte *) "Courier New");
 
     /* Compute the size of the font */
     pcdComputeFont (&pd,
@@ -804,10 +804,10 @@ pcdDeviceName (HWND hWnd)
                  &((char *)(hDev))[hDev->wOutputOffset]);
 
         /* Write the names into the registry */
-        regSet (regPrint, printNames[mePI_WINDRIVER], &((char *)(hDev))[hDev->wDriverOffset]);
-        regSet (regPrint, printNames[mePI_WINDEVICE], &((char *)(hDev))[hDev->wDeviceOffset]);
-        regSet (regPrint, printNames[mePI_WINPORT], &((char *)(hDev))[hDev->wOutputOffset]);
-        regSet (regPrint, printNames[mePI_WINDEFAULT], (hDev->wDefault == 0) ? "0" : "1");
+        regSet (regPrint, printNames[mePI_WINDRIVER],(meUByte *) &((char *)(hDev))[hDev->wDriverOffset]);
+        regSet (regPrint, printNames[mePI_WINDEVICE],(meUByte *) &((char *)(hDev))[hDev->wDeviceOffset]);
+        regSet (regPrint, printNames[mePI_WINPORT],(meUByte *) &((char *)(hDev))[hDev->wOutputOffset]);
+        regSet (regPrint, printNames[mePI_WINDEFAULT],(hDev->wDefault == 0) ? (meUByte *) "0":(meUByte *) "1");
         GlobalUnlock (printDlg.hDevNames);
     }
     else
@@ -835,7 +835,6 @@ pcdDialogue (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     HWND dWnd;                          /* Dialogue window handle */
     int ii;                             /* Local loop counter */
-    char buf [40];                      /* Local character buffer */
 
     switch (message)
     {
@@ -861,7 +860,6 @@ pcdDialogue (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         SendMessage (dWnd, CB_SETCURSEL, (WPARAM) printer.param[mePI_SPECY].l, 0);
 
         /* Fill in the number of rows. */
-        buf [1] = '\0';
         dWnd = GetDlgItem (hWnd, IDC_ROWS);
         SendMessage (dWnd, CB_RESETCONTENT, 0, 0);  /* Reset contents */
         for (ii = 0; ii < 6; ii++)
@@ -869,7 +867,6 @@ pcdDialogue (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         SendMessage (dWnd, WM_SETTEXT, 0, (LPARAM) meItoa(printer.param[mePI_ROWS].l));
 
         /* Fill in the number of columns. */
-        buf [1] = '\0';
         dWnd = GetDlgItem (hWnd, IDC_COLUMNS);
         SendMessage (dWnd, CB_RESETCONTENT, 0, 0);  /* Reset contents */
         for (ii = 0; ii < 6; ii++)
@@ -908,9 +905,9 @@ pcdDialogue (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             printDlg.lStructSize = sizeof (printDlg);
             printDlg.hwndOwner = hWnd;
             printDlg.hDevMode = NULL;
-            printDlg.hDevNames = printMakeDevNames (printer.param[mePI_WINDRIVER].p,
-                                                    printer.param[mePI_WINDEVICE].p,
-                                                    printer.param[mePI_WINPORT].p,
+            printDlg.hDevNames = printMakeDevNames ((char *) printer.param[mePI_WINDRIVER].p,
+                                                    (char *) printer.param[mePI_WINDEVICE].p,
+                                                    (char *) printer.param[mePI_WINPORT].p,
                                                     printer.param[mePI_WINDEFAULT].l);
             printDlg.Flags = (PD_DISABLEPRINTTOFILE|
                               PD_HIDEPRINTTOFILE|
@@ -1014,7 +1011,7 @@ pcdDialogue (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             /* User has edited the dialogue. */
             if (HIWORD(wParam) == CBN_EDITCHANGE)
             {
-                char buf [30];
+                char buf[30];
                 char *spos;
                 char *epos;
 
@@ -1199,7 +1196,6 @@ WinPrintThread (LPVOID wParam)
 
     HWND curHwnd ;
     DOCINFO di;                         /* Document information. */
-    RECT paperArea;                     /* Paper area */
     HFONT fontTab [PFONT_MAX];          /* Font table */
     char nambuf [meBUF_SIZE_MAX];               /* Name buffer */
     char *docName;
@@ -1269,12 +1265,6 @@ WinPrintThread (LPVOID wParam)
     /* Set the font mapper into text mode */
     SetMapMode (printDlg.hDC, MM_TEXT);
 
-    /* Get the size of the device */
-    paperArea.left   = GetDeviceCaps(printDlg.hDC, LOGPIXELSX);   /* 1/4 inch */
-    paperArea.right  = GetDeviceCaps(printDlg.hDC, HORZRES);
-    paperArea.bottom = GetDeviceCaps(printDlg.hDC, VERTRES);      /* Vertical resolution */
-    paperArea.top    = GetDeviceCaps(printDlg.hDC, LOGPIXELSY);   /* 1/4 inch */
-
     /* Set up the font size */
     if (constructFontTable (printDlg.hDC, fontTab, pd.cell.sizeX, pd.cell.sizeY, pd.fontName) == meFALSE)
         goto dlg_exit;
@@ -1340,7 +1330,7 @@ do { \
                         ll = (cc == 'c') ? 3:1 ;
                         if((charIdx+ll) > ihead->length)
                         {
-                            mlwrite (0, "[Illegal printer character Esc-%02x]", cc);
+                            mlwrite(0,(meUByte *) "[Illegal printer character Esc-%02x]", cc);
                             break ;
                         }
                         if(cc == 'c')
@@ -1399,7 +1389,7 @@ do { \
                     colNo = 0;
                 }
                 else
-                    mlwrite (0, "[Illegal printer character Esc-%02x]", cc);
+                    mlwrite(0,(meUByte *) "[Illegal printer character Esc-%02x]", cc);
                 continue;
             }
             /* New line */
@@ -1497,7 +1487,7 @@ WinPrint (meUByte *docName, meLine *ihead)
 
     /* Make sure we are not already running a print spool. */
     if (printStatus & PRINT_SPOOLING)
-        return mlwrite (MWABORT, "Print spooler currently processing a job in the background");
+        return mlwrite (MWABORT,(meUByte *) "[Print spooler currently processing a job in the background]");
 
     /* Create a thread to spool to the printer */
     args[0] = (char *)(docName);
@@ -1505,7 +1495,7 @@ WinPrint (meUByte *docName, meLine *ihead)
 
     if (!CreateThread (NULL, 0, (LPTHREAD_START_ROUTINE) WinPrintThread,
                        (LPVOID) args, 0, &threadId))
-        return mlwrite (MWABORT, "Cannot create printing thread");
+        return mlwrite (MWABORT,(meUByte *) "[Cannot create printing thread]");
 
     return meTRUE;
 }
@@ -1518,14 +1508,14 @@ int
 printSetup (int n)
 {
     /* Construct the default registry entry for windows */
-    if((regPrint = regFind (NULL,regPrintName)) == NULL)
-        regPrint = regSet (NULL, regPrintName, NULL);
+    if((regPrint = regFind(NULL,regPrintName)) == NULL)
+        regPrint = regSet(NULL,regPrintName, NULL);
     if (regPrint == NULL)
-        return mlwrite (MWABORT, "[Cannot locate print registry]");
+        return mlwrite (MWABORT,(meUByte *) "[Cannot locate print registry]");
 
     /* Make sure we are not already running a print spool. */
     if ((printStatus & PRINT_SPOOLING) && (n >= 0))
-        return mlwrite (MWABORT, "Print spooler currently processing a job in the background");
+        return mlwrite (MWABORT,(meUByte *) "[Print spooler currently processing a job in the background]");
 
     if ((n == -2) || (n == 0))
     {
@@ -1559,7 +1549,7 @@ printSetup (int n)
     {
         /* Dialog box not required, simply setup the printer */
         /* Copy the new font into the registry immediatly */
-        printer.param [mePI_FONTFACE].p = "Courier New" ;
+        printer.param [mePI_FONTFACE].p = (meUByte *) "Courier New" ;
 
         /* Compute the size of the font */
         pcdComputeFont (&pd,

@@ -617,7 +617,7 @@ move_on:
 
 /* meRegexMatch
  *
- * returns 1 if matched at current location, else 0
+ * returns 1 if matched at current location, else 0. offset* is ignored if meREGEX_MATCHWHOLE is used.
  */
 int
 meRegexMatch(meRegex *regex, unsigned char *string, int len, 
@@ -627,42 +627,54 @@ meRegexMatch(meRegex *regex, unsigned char *string, int len,
     
     /* check args are valid first, if not fail */
     if(!(regex->flags & meREGEX_VALID) || (offsetS < 0) || (offsetE > len))
-        return 0 ;
+        return 0;
     
-    matchFlags = flags ;
+    if((matchFlags = flags) & meREGEX_MATCHWHOLE)
+    {
+        /* if we are at the start test this case else theres no match */
+        if(len == 0)
+        {
+            if((regex->flags & meREGEX_MAYBEEMPTY) && meRegexGroupMatch(regex,string,len,0))
+                return 1;
+        }
+        else if(meRegexClassTest(regex->start,string[0]) && meRegexGroupMatch(regex,string,len,0) && (regex->group[0].end == len))
+            return 1;
+        return 0;
+    }
     
     /* if the regex can only be matched at the start of a line or this
      * match must match the whole string... */
-    if((regex->flags & meREGEX_BEGLINE) || (matchFlags & meREGEX_MATCHWHOLE))
+    if(regex->flags & meREGEX_BEGLINE)
     {
         /* if we are at the start test this case else theres no match */
-        if((offsetS == 0) &&
-           ((regex->flags & meREGEX_MAYBEEMPTY) || meRegexClassTest(regex->start,*string)) &&
-           meRegexGroupMatch(regex,string,len,0) &&
-           (!(matchFlags & meREGEX_MATCHWHOLE) || (regex->group[0].end == len)))
-            return 1 ;
-        return 0 ;
+        if(offsetS != 0)
+            return 0;
+        if(regex->flags & meREGEX_MAYBEEMPTY)
+            return meRegexGroupMatch(regex,string,len,0);
+        if((len > 0) && meRegexClassTest(regex->start,string[0]) && meRegexGroupMatch(regex,string,len,0))
+            return 1;
     }
-    
-    if(flags & meREGEX_BACKWARD)
+    else if(flags & meREGEX_BACKWARD)
     {
-        offset = offsetE ;
+        offset = offsetE;
+        if(regex->flags & meREGEX_MAYBEEMPTY)
+            return meRegexGroupMatch(regex,string,len,offset);
         do
-            if(((regex->flags & meREGEX_MAYBEEMPTY) || meRegexClassTest(regex->start,string[offset])) &&
-               meRegexGroupMatch(regex,string,len,offset))
-                return 1 ;
+            if(meRegexClassTest(regex->start,string[offset]) && meRegexGroupMatch(regex,string,len,offset))
+                return 1;
         while(--offset >= offsetS) ;
     }
     else
     {
-        offset = offsetS ;
+        offset = offsetS;
+        if(regex->flags & meREGEX_MAYBEEMPTY)
+            return meRegexGroupMatch(regex,string,len,offset);
         do
-            if(((regex->flags & meREGEX_MAYBEEMPTY) || meRegexClassTest(regex->start,string[offset])) &&
-               meRegexGroupMatch(regex,string,len,offset))
-                return 1 ;
+            if(meRegexClassTest(regex->start,string[offset]) && meRegexGroupMatch(regex,string,len,offset))
+                return 1;
         while(++offset <= offsetE) ;
     }
-    return 0 ;
+    return 0;
 }
 
 static meRegexItem *

@@ -89,7 +89,7 @@ set_timestamp(meBuffer *bp)
     meWindow *owp, win ;
     meBuffer *obp ;
     meUByte   pos[TSNUMFIELD];	/* pos of fields in search */
-    meUByte   patt[1024];    	/* Search pattern */
+    meUByte   patt[512];    	/* Search pattern */
     int     ii, jj ;
     
     /*---	Determine if time stamping is to be performed. */

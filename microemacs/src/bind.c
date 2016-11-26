@@ -66,7 +66,7 @@ meGetKeyFromString(meUByte **tp)
             while(((dd=*s1) != '\0') && (dd != ' '))
                 s1++ ;
             *s1 = '\0' ;
-            skey = biChopFindString(ss-2,13,specKeyNames,SKEY_MAX) ;
+            skey = biChopFindString(ss-2,specKeyNames,SKEY_MAX) ;
             *s1 = dd ;
             
             if(skey >= 0)
@@ -115,7 +115,7 @@ meGetKey(int flag)
     if(clexec == meTRUE)
     {
         meUByte *tp;		/* pointer into the token */
-        meUByte tok[meBUF_SIZE_MAX];	/* command incoming */
+        meUByte tok[meTOKENBUF_SIZE_MAX];	/* command incoming */
         
         tp = execstr ;
         execstr = token(tp,tok) ;

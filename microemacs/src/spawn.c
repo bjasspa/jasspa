@@ -130,9 +130,9 @@ __mkTempName (meUByte *buf, meUByte *name, meUByte *ext)
             /* the C drive is more reliable than ./ as ./ could be on a CD-Rom etc, but in recent
              * versions of windows c:\ is readonly so look around for a temp folder */
             if(!meTestDir("c:\\tmp\\"))
-                tmpDir = "c:\\tmp\\" ;
+                tmpDir = (meUByte *) "c:\\tmp\\" ;
             else if(!meTestDir("c:\\temp\\"))
-                tmpDir = "c:\\temp\\" ;
+                tmpDir = (meUByte *) "c:\\temp\\" ;
 #if (defined _WIN32)
             else if(((pp = (meUByte *) meGetenv ("USERPROFILE")) != NULL) && !meTestDir(pp))
             {
@@ -140,7 +140,7 @@ __mkTempName (meUByte *buf, meUByte *name, meUByte *ext)
                 memcpy(buf,pp,ii) ;
                 if(buf[ii-1] != PIPEDIR_CHAR)
                     buf[ii++] = PIPEDIR_CHAR ;
-                strcpy(buf+ii,"Local Settings\\Temp") ;
+                meStrcpy(buf+ii,"Local Settings\\Temp") ;
                 if(!meTestDir(buf))
                     pp = buf ;
             }
@@ -150,7 +150,7 @@ __mkTempName (meUByte *buf, meUByte *name, meUByte *ext)
                 memcpy(buf,pp,ii) ;
                 if(buf[ii-1] != PIPEDIR_CHAR)
                     buf[ii++] = PIPEDIR_CHAR ;
-                strcpy(buf+ii,"Temp") ;
+                meStrcpy(buf+ii,"Temp") ;
                 if(!meTestDir(buf))
                     pp = buf ;
             }
@@ -170,14 +170,14 @@ __mkTempName (meUByte *buf, meUByte *name, meUByte *ext)
             }
             else 
 #if (defined _DOS) || (defined _WIN32)
-                tmpDir = "c:\\" ;
+                tmpDir = (meUByte *) "c:\\" ;
 #else
-                tmpDir = "./" ;
+                tmpDir = (meUByte *) "./" ;
 #endif
         }
     }
     if(ext == NULL)
-        ext = "" ;
+        ext = (meUByte *) "" ;
 
     if(name != NULL)
         sprintf((char *)buf, "%sme%s%s",tmpDir,name,ext) ;
@@ -821,7 +821,7 @@ ipipeRead(meIPipe *ipipe)
     meLine   *lp_old ;
     int     len, curOff, maxOff, curRow, ii ;
     meUInt  noLines ;
-    meUByte  *p1, cc, buff[1025] ;
+    meUByte  *p1, cc, buff[meBUF_SIZE_MAX+1] ;
     meUByte   rbuff[meBUF_SIZE_MAX] ;
     int     curROff=0, curRRead=0 ;
 #if _UNIX
@@ -2016,7 +2016,7 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
 #else
     meUByte filnam[meBUF_SIZE_MAX] ;
 
-    mkTempCommName(filnam,COMMAND_FILE) ;
+    mkTempCommName(filnam,(meUByte *) COMMAND_FILE) ;
 #endif
 
     /* get rid of the output buffer if it exists and create new */

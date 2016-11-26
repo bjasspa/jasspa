@@ -829,13 +829,13 @@ composePage (int f)
 {
     meLine *head = NULL;
     meLine *tail = NULL;
-    meUByte buf [1024*5];                 /* Heafty line store !! */
-    meUByte *p;                           /* Pointer to the buffer */
+    meUByte buf [1024*5];               /* Heafty line store !! */
+    meUByte *p;                         /* Pointer to the buffer */
     int xx;                             /* Page column iterator */
     int yy;                             /* Page row iterator */
     int ll;                             /* Lines on page iterator */
     int ii;
-    meLine *lp;                           /* Pointer to the line */
+    meLine *lp;                         /* Pointer to the line */
 
     /* Handle the end of file case */
     if (f)
@@ -1174,7 +1174,6 @@ printLinkLine (meBuffer *bp, meLine *nlp, meUShort lno)
         printer.pLineNo++;              /* Next line */
 }
 
-#define PRTSIZ 2048
 #if MEOPT_HILIGHT
 static int
 printAddLine (meBuffer *bp, meLine *lp, meVideoLine *vps)
