@@ -192,10 +192,10 @@ meUByte charMaskFlags[]="luhs1234dpPwaAMLUk" ;
 meUByte *charKeyboardMap=NULL ;
 
 /* File read/write buffer size  */
-#if MEOPT_SMALLIOBUFF
-#define meFIOBUFSIZ 2048
-#else
+#if MEOPT_LARGEBUF
 #define meFIOBUFSIZ 32768
+#else
+#define meFIOBUFSIZ 2048
 #endif
 
 static meInt     ffremain ;

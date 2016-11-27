@@ -414,6 +414,7 @@
 #define MEOPT_CMDHASH   1       /* use a hash table for command lookup   */
 #define MEOPT_POSITION  1       /* enable set & goto position            */
 #define MEOPT_EXTENDED  1       /* enable miscellaneous extended features*/
+#define MEOPT_LARGEBUF  1       /* enable large variable & fileio buffers*/
 #define MEOPT_CALLBACK  1       /* enable macro callbacks                */
 #define MEOPT_SPAWN     1       /* enable spawning                       */
 #define MEOPT_SCROLL    1       /* enable scroll bars                    */
