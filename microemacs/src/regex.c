@@ -623,8 +623,6 @@ int
 meRegexMatch(meRegex *regex, unsigned char *string, int len, 
              int offsetS, int offsetE, int flags)
 {
-    int offset ;
-    
     /* check args are valid first, if not fail */
     if(!(regex->flags & meREGEX_VALID) || (offsetS < 0) || (offsetE > len))
         return 0;
@@ -656,23 +654,26 @@ meRegexMatch(meRegex *regex, unsigned char *string, int len,
     }
     else if(flags & meREGEX_BACKWARD)
     {
-        offset = offsetE;
         if(regex->flags & meREGEX_MAYBEEMPTY)
-            return meRegexGroupMatch(regex,string,len,offset);
+            return meRegexGroupMatch(regex,string,len,offsetE);
         do
-            if(meRegexClassTest(regex->start,string[offset]) && meRegexGroupMatch(regex,string,len,offset))
+            if(meRegexClassTest(regex->start,string[offsetE]) && meRegexGroupMatch(regex,string,len,offsetE))
                 return 1;
-        while(--offset >= offsetS) ;
+        while(--offsetE >= offsetS) ;
+    }
+    else if(regex->flags & meREGEX_MAYBEEMPTY)
+    {
+        do
+            if(meRegexGroupMatch(regex,string,len,offsetS))
+                return 1;
+        while(++offsetS <= offsetE) ;
     }
     else
-    {
-        offset = offsetS;
-        if(regex->flags & meREGEX_MAYBEEMPTY)
-            return meRegexGroupMatch(regex,string,len,offset);
+    {        
         do
-            if(meRegexClassTest(regex->start,string[offset]) && meRegexGroupMatch(regex,string,len,offset))
+            if(meRegexClassTest(regex->start,string[offsetS]) && meRegexGroupMatch(regex,string,len,offsetS))
                 return 1;
-        while(++offset <= offsetE) ;
+        while(++offsetS <= offsetE) ;
     }
     return 0;
 }
