@@ -42,7 +42,7 @@
 ****************************************************************************/
 
 int APIENTRY
-WinMain (HANDLE hInstance, HANDLE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     MSG msg;                            /* Message buffer */
     HWND   ttHwnd;                      /* This is the window handle */

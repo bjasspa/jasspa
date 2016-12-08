@@ -26,7 +26,7 @@
 #
 # Author      : Jon Green
 # Created     : 22nd February 1997
-# Last Edited : <020430.0009>
+# Last Edited : <181230.1259>
 #
 # History     : JG  220297 Original  Constructed from emacssrc
 #
@@ -108,8 +108,8 @@ ICONS	=	me32.ico	c.ico		cpp.ico		h.ico \
 		emf.ico		awk.ico		i.ico		rc.ico \
 		rul.ico		log.ico		err.ico		lbn.ico \
 		lib.ico		htm.ico		htp.ico		sm.ico \
-		pso.ico		asm.ico		erf.ico		jst.ico
-
+		pso.ico		asm.ico		erf.ico		jst.ico \
+		bat.ico		cfg.ico		asp.ico		vb.ico
 #
 # Standard build rules
 #

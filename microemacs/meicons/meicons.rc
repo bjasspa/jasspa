@@ -34,6 +34,9 @@
  *                     32x32 : Times New Roman. 12pt Bold
  *                     16x16 : Terminal          6pt Regular
  * 
+ * 32x32 : Arial Bold 17 or 18 if 2 letter
+ * 16x16 : Arial Condensed 10
+ * 
  *                 The 'c', 'h' and 'e' icons (which are a bit better than
  *                 most of the others) were created in Misrosft Word Art
  *                 using School Book font and imported into MS paint, shrunk
@@ -153,6 +156,10 @@ IDI_ICON_071 ICON DISCARDABLE         "pso.ico"       // 069 Post script orderin
 IDI_ICON_072 ICON DISCARDABLE         "asm.ico"       // 070 Assembler File.
 IDI_ICON_073 ICON DISCARDABLE         "erf.ico"       // 071 erf file.
 IDI_ICON_074 ICON DISCARDABLE         "jst.ico"       // 072 jst file.
+IDI_ICON_075 ICON DISCARDABLE         "bat.ico"       // 073 bat file.
+IDI_ICON_076 ICON DISCARDABLE         "cfg.ico"       // 074 bat file.
+IDI_ICON_077 ICON DISCARDABLE         "asp.ico"       // 075 bat file.
+IDI_ICON_078 ICON DISCARDABLE         "vb.ico"        // 076 bat file.
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
