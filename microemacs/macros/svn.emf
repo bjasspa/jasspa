@@ -52,7 +52,7 @@
   hilight .hilight.svn-status 0x102 "[ *]D" .scheme.no1
   hilight .hilight.svn-status 0x102 "[ *]I" .scheme.hide
   hilight .hilight.svn-status 0x102 "[ *]M" .scheme.no2
-  hilight .hilight.svn-status 0x102 "[ *]R" .scheme.prepro
+  hilight .hilight.svn-status 0x102 "[ *]R" .scheme.type
   hilight .hilight.svn-status 0x102 "[ *]X" .scheme.prepro
   hilight .hilight.svn-status 0x102 "[ *]!" .scheme.no1
   hilight .hilight.svn-status 0x102 "[ *]~" .scheme.hlred
@@ -105,14 +105,14 @@ set-variable .fhook-svn-status.command-desc  &rig &lset &lset &lset &lset &lset 
 set-variable .fhook-svn-status.refresh "svn-status-refresh"
 
 set-variable .svn.cnames  "|Add|Blame|Checkout|Commit|Copy|Delete|Diff|Log|Move|Status|Update|Server Copy|Server Move|Resolve|Ignore|"
-set-variable .svn.cflags  "|RIS*!|Vhs|UR$|CRS*!|NPrS*!|KrS*!|ZRxWwS|Vs|NPrS*!|ZRAIuwS|ZRMS*|nCPs*!|nCPs*!|ZRaS*|Zi|"
+set-variable .svn.cflags  "|RIS*!|Vhs|UR$|CRS*!|NPrS*!|KrS*!|ZRxWpwS|Vs|NPrS*!|ZRAIuwS|ZRMS*|nCPs*!|nCPs*!|ZRaS*|Zi|"
 set-variable .svn.cdefs1  "|1|0|0|"
 set-variable .svn.cdefs2  "|0|0|"
 set-variable .svn.cdefs3  "||1|0|"
 set-variable .svn.cdefs4  "||1|0|"
 set-variable .svn.cdefs5  "||1|0|"
 set-variable .svn.cdefs6  "|0|0|"
-set-variable .svn.cdefs7  "|0|1|0|1|0|"
+set-variable .svn.cdefs7  "|0|1|0|1|0|0|"
 set-variable .svn.cdefs8  "|0|"
 set-variable .svn.cdefs9  "||1|0|"
 set-variable .svn.cdefs10 "|1|1|0|0|1|0|"
@@ -564,6 +564,10 @@ set-variable #l9 .svn.ccount
       !elif &seq #l1 "w"
         osd .osd.svn-osd &inc #l2 1 "fh" "    "
         osd .osd.svn-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use \Hsingle window" #l0 svn-osd-cbc
+        set-variable #l3 &con #l3 #l3 #l2
+      !elif &seq #l1 "p"
+        osd .osd.svn-osd &inc #l2 1 "fh" "    "
+        osd .osd.svn-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Diff against \Hprevious version" #l0 svn-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "x"
         osd .osd.svn-osd &inc #l2 1 "fh" "    "
@@ -1023,7 +1027,7 @@ define-macro svn-delete
 !emacro
 define-macro svn-diff
   7 svn-osd
-  set-variable #l2 &spr "%s diff %s" .svn.com &con &lget .svn.cvalues7 2 "" "--depth=immediates "
+  set-variable #l2 &spr "%s diff %s%s" .svn.com &con &lget .svn.cvalues7 2 "" "--depth=immediates " &con &lget .svn.cvalues7 5 "-r PREV " ""
   !if &lget .svn.cvalues7 3
     !if &xse &set #l0 %diff-com "\\( *\\(\"[^\"]+\"\\|[^\" ][^ ]*\\)\\) .*" 
       set-variable #l1 &len @s1
@@ -1453,6 +1457,9 @@ define-macro svn-server-move
       !elif &seq #l1 "w"
         osd #l8 &inc #l2 1 "fh" "    "
         osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use \Hsingle window" &bor #l4 #l0 svn-setup-cbc
+      !elif &seq #l1 "p"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Diff against \Hprevious version" &bor #l4 #l0 svn-setup-cbc
       !elif &seq #l1 "x"
         osd #l8 &inc #l2 1 "fh" "    "
         osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use \HME diff tool" &bor #l4 #l0 svn-setup-cbc
