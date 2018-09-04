@@ -496,7 +496,7 @@ getBestGap(void)
     meUShort bestoff, curroff, off ;
     
     last = 'z';				/* Reset word */
-    off = frameCur->windowCur->dotOffset ;
+    curroff = off = frameCur->windowCur->dotOffset ;
     for(;;)
     {
         if(((c=meLineGetChar(frameCur->windowCur->dotLine,off)) == '\0') || (c == ' '))
