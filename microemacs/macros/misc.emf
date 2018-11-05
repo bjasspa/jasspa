@@ -85,7 +85,7 @@ define-macro number-items
     set-variable #l1 @ml "Number offset"
     set-variable #l2 @ml "Chars per Number"
     set-variable #l3 @ml "Number of lines"
-    set-variable #l4 &spr "%%%dd" #l2
+    set-variable #l4 &spr "%%%s%dd" &con @# "" "0" #l2
     !while &gre &pdec #l3 1 0
         set-variable #l5 $window-col
         insert-string &spr #l4 &pinc #l1 1
