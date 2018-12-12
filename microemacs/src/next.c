@@ -141,9 +141,9 @@ getNextLine(int f,int n)
 	    {
                 if(tbp == frameCur->bufferCur)
                 {
-                    bp = tbp ;
-                    no = ii ;
-                    break ;
+                    bp = tbp;
+                    no = ii;
+                    break;
                 }
                 if((n & 0x01) && 
                    ((bp == NULL) || (bp->windowCount < tbp->windowCount) ||
@@ -157,6 +157,8 @@ getNextLine(int f,int n)
                 break;
 	    tbp = tbp->next;
         }
+        if(bp == frameCur->bufferCur)
+            break;
     }
     if(bp == NULL)
         return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No next buffer found]") ;
