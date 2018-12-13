@@ -3065,8 +3065,24 @@ get_flag:
                 return evalResult ;
                 
             case 'd':
-                /* file date stamp */
-                ftype = meFiletimeToInt(stats.stmtime) ;
+                /* file date stamp to int */
+#ifdef _WIN32
+                /* returns true if file time is the initialize value */
+                if((stats.stmtime.dwHighDateTime == -1) && (stats.stmtime.dwLowDateTime = -1))
+                    ftype = -1;
+                else
+                {
+                    /* Convert the file time into standard unix epoch time, this will fail in 2038 */
+                    ULARGE_INTEGER uli;
+                    uli.LowPart = stats.stmtime.dwLowDateTime;
+                    uli.HighPart = stats.stmtime.dwHighDateTime;
+                    uli.QuadPart /= 10000000;
+                    uli.QuadPart -= 11644473600;
+                    ftype = uli.LowPart;
+                }
+#else
+                ftype = stats.stmtime;
+#endif
                 break ;
                 
             case 'i':

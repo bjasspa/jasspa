@@ -5836,7 +5836,7 @@ meIniFileRead(void)
         {
             GetPrivateProfileString(iniSections [ii],lpTemp,"",
                                     buf1,meBUF_SIZE_MAX,ME_INI_FILE);
-            meIniFileEntry((meUByte *) lpTemp,(meUByte *)buf1);
+            meIniFileEntry((meUByte *) lpTemp,(meUByte *) buf1);
         }
         
         /* Do not process any more default sections */

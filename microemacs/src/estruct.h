@@ -490,9 +490,6 @@ typedef FILETIME meFiletime ;
 /* initialize to a recognizable duff value */
 #define meFiletimeInit(t1)            ((t1).dwHighDateTime = (t1).dwLowDateTime = -1)
 
-/* returns true if file time is the initialize value */
-#define meFiletimeIsInit(t1)          (((t1).dwHighDateTime == -1) && ((t1).dwLowDateTime = -1))
-
 /* return meTRUE if t1 == t2 */
 #define meFiletimeIsSame(t1,t2)                 \
 (((t1).dwHighDateTime == (t2).dwHighDateTime) && ((t1).dwLowDateTime == (t2).dwLowDateTime))
@@ -501,11 +498,6 @@ typedef FILETIME meFiletime ;
 #define meFiletimeIsModified(t1,t2)             \
 (((t1).dwHighDateTime == (t2).dwHighDateTime) ? \
  ((t1).dwLowDateTime > (t2).dwLowDateTime):((t1).dwHighDateTime > (t2).dwHighDateTime))
-
-/* return a single int value - Dangerously ingoring the higher bits! */
-#define meFiletimeToInt(t1)                     \
-((meFiletimeIsInit(t1)) ? -1:                   \
- ((((t1).dwLowDateTime  >> 24) & 0x000000ff) | (((t1).dwHighDateTime << 8) & 0x7fffff00)))
 
 #else
 #ifdef _UNIX
@@ -517,17 +509,11 @@ typedef meInt meFiletime ;
 /* initialize to a recognizable duff value */
 #define meFiletimeInit(t1)            ((t1) = -1)
 
-/* returns true if file time is the initialize value */
-#define meFiletimeIsInit(t1)          ((t1) == -1)
-
 /* return meTRUE if t1 == t2 */
 #define meFiletimeIsSame(t1,t2)       ((t1) == (t2))
 
 /* return meTRUE if t1 is newer than t2 */
 #define meFiletimeIsModified(t1,t2)   ((t1) > (t2))
-
-/* return a single in value */
-#define meFiletimeToInt(t1)           (t1)
 
 #endif
 
