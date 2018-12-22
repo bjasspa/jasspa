@@ -249,8 +249,9 @@
             !endif
         !else
             !force backward-char
-            forward-word
-            !if #l0
+            !force forward-word
+            !if &not $status
+            !elif #l0
                 backward-word
             !endif
             !if &gre &add $window-acol 2 &add $window-xcl-scroll $window-width
