@@ -271,8 +271,8 @@ extern  meUByte  *envars[];             /* list of recognized env. vars */
 extern  meUByte  *derNames[];           /* name list of directives      */
 extern  meUByte   derTypes[];           /* type list of directives      */
 extern  meUByte   funcTypes[];          /* type list of user funcs      */
-extern  meUShort  funcTails[];          /* user func 2nd & 3rd letters as short      */
 extern  meUByte   funcOffst[];          /* func offset into list based on 1st letter */
+extern  int       funcHashs[];          /* user func letters as int hash*/
 extern  meKillNode *kbufp;              /* current kill buffer chunk pointer */
 extern  meKillNode *kbufh;              /* kill buffer header pointer   */
 extern  meUByte   lkbdptr[];            /* Holds last keybd macro data  */

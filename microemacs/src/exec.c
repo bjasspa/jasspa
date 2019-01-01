@@ -404,12 +404,15 @@ macarg(meUByte *tok)               /* get a macro line argument */
 int
 fnctest(void)
 {
-    register meBind *ktp;                       /* Keyboard character array */
-    register meCommand *cmd;                    /* Names pointer */
-    meUInt key, kk;
+    meBind *ktp;                       /* Keyboard character array */
+    meCommand *cmd;                    /* Names pointer */
+#if MEOPT_CMDHASH
+    meUInt key;
+#endif
     meUByte outseq[12];
-    int count=0, ii, jj, fc, fn;                        /* Counter of errors */
+    int count=0,ix,ii,jj,fn;                 /* Counter of errors */
     
+#if MEOPT_CMDHASH
     /* test the command hash table */
     for (ii=0; ii < CK_MAX; ii++)
     {
@@ -424,6 +427,7 @@ fnctest(void)
                     getCommandName(ii),key) ;
         }
     }
+#endif
     
     /* test the command alphabetically ordered list */
     cmd = cmdHead ;
@@ -445,58 +449,53 @@ fnctest(void)
         if (ktp->code > ktp[1].code)
         {
             count++;
-            meGetStringFromKey(ktp->code, outseq);
+            meGetStringFromKey(ktp->code,outseq);
             mlwrite(MWWAIT,(meUByte *) "[%s] key out of place",outseq);
         }
     }
-    
     /* now check the user funcs */
-    fc = -1;
-    fn = 0;
-    key = 0;
-    for(ii=0 ; ii<NFUNCS ; ii++)
+    ix = 0;
+    while(funcNames[++ix] != NULL)
     {
-        if((funcNames[ii][0] < 'a') || (funcNames[ii][0] > 'z'))
+        ii = funcNames[ix][0] - 'a';
+        jj = (((int) funcNames[ix][0]) << 16);
+        if((ii = funcOffst[ii]) == 0)
         {
             count++;
-            mlwrite(MWWAIT,(meUByte *) "funcNames Error: Function [%s] does not start with a lowercase letter",funcNames[ii]);
-            break;
+            mlwrite(MWWAIT,(meUByte *) "funcLookup Error: Offset for function [%s] is zero",funcNames[ix]);
         }
-        kk = (funcNames[ii][1] << 8) | funcNames[ii][2];
-        if(funcTails[ii] != kk)
+        else if((funcHashs[ii] & 0x0ff0000) != jj)
         {
             count++;
-            mlwrite(MWWAIT,(meUByte *) "funcTails Error: Tail wrong for function [%s], should be %04x",funcNames[ii],kk);
-            break;
+            mlwrite(MWWAIT,(meUByte *) "funcLookup Error: Offset for function [%s] is wrong, points to %s",funcNames[ix],funcNames[ii]);
         }
-        kk |= (funcNames[ii][0] << 16);
-        if(kk <= key)
+        else
         {
-            count++;
-            mlwrite(MWWAIT,(meUByte *) "funcNames Error: [%s] out of sequence with [%s]", 
-                    funcNames[ii-1],funcNames[ii]);
-        }
-        if(((kk&0xff0000) != (key&0xff0000)))
-        {
-            jj = (kk>>16) - 'a';
-            while(++fc < jj)
+            jj |= (((int) funcNames[ix][1]) << 8) | ((int) funcNames[ix][2]);
+            if((fn=funcHashs[ii]) != jj)
             {
-                if(funcOffst[fc] != 255)
+                if(fn < jj)
                 {
-                    count++;
-                    mlwrite(MWWAIT,(meUByte *) "funcNames Error: Function offset for %d ('%c') should be 255", 
-                            fc,fc+'a');
+                    while((fn=funcHashs[++ii]) < jj)
+                        ;
+                    if(fn != jj)
+                    {
+                        count++;
+                        mlwrite(MWWAIT,(meUByte *) "funcLookup Error: Failed to ffind function [%s], hash 0x%h",funcNames[ix],jj);
+                    }
+                }
+                else
+                {
+                    while((fn=funcHashs[--ii]) > jj)
+                        ;
+                    if(fn != jj)
+                    {
+                        count++;
+                        mlwrite(MWWAIT,(meUByte *) "funcLookup Error: Failed to bfind function [%s], hash 0x%h",funcNames[ix],jj);
+                    }
                 }
             }
-            if(funcOffst[fc] != fn)
-            {
-                count++;
-                mlwrite(MWWAIT,(meUByte *) "funcNames Error: Function offset for %d ('%c') should be %d", 
-                        fc,funcNames[ii][0],fn);
-            }
         }
-        key = kk;
-        fn++;
     }
     if(count)
         mlwrite(MWWAIT,(meUByte *) "!test: %d Error(s) Detected",count);

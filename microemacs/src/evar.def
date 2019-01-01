@@ -293,11 +293,7 @@ DEFFUN (UFOR,       "or",  0x6F7200, FUN_DYNAMIC)     /* boolean 'or' two logics
 #if MEOPT_EXTENDED
 DEFFUN (UFPDEC,     "pde", 0x706465, FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* post decrement variable and set */
 DEFFUN (UFPINC,     "pin", 0x70696E, FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* post increment variable and set */
-#endif
-#if MEOPT_REGISTRY
 DEFFUN (UFREGISTRY, "reg", 0x726567, FUN_DYNAMIC)     /* Retreive a registry value */
-#endif
-#if MEOPT_EXTENDED
 DEFFUN (UFREP,      "rep", 0x726570, FUN_TRINAMIC)    /* replace str in str */
 #endif
 DEFFUN (UFRIGHT,    "rig", 0x726967, FUN_DYNAMIC)     /* right string(string, pos) */

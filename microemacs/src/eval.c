@@ -2093,32 +2093,44 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
     meUByte arg2[meBUF_SIZE_MAX];      /* value of second argument */
     meUByte arg3[meBUF_SIZE_MAX];      /* value of third argument */
     meUByte *varVal;
-    int ii, fnum=-1;                   /* index to function to eval */
+    int ii, fnum=-1;
     
-    if(((ii = fname[0] - 'a') >= 0) && (ii < 26) && ((ii = funcOffst[ii]) != 255))
+    if(((ii = fname[0] - 'a') >= 0) && (ii < 26) && ((ii = funcOffst[ii]) != 0))
     {
-        meUShort fn, fnam = (((meUShort) fname[1]) << 8) | ((meUShort) fname[2]) ;
-        while((fn=funcTails[ii]) < fnam)
-            ii++;
-        if(fn == fnam)
+        int fn, fnam = (((int) fname[0]) << 16) | (((int) fname[1]) << 8) | ((int) fname[2]) ;
+        if((fn=funcHashs[ii]) == fnam)
             fnum = ii;
+        else if(fn < fnam)
+        {
+            while((fn=funcHashs[++ii]) < fnam)
+                ;
+            if(fn == fnam)
+                fnum = ii;
+        }
+        else
+        {
+            while((fn=funcHashs[--ii]) > fnam)
+                ;
+            if(fn == fnam)
+                fnum = ii;
+        }
     }
     if(fnum < 0)
     {
         mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown function &%s]",fname);
         return abortm ;
     }
-
+    
 #if MEOPT_EXTENDED
     if((fnum == UFCBIND) || (fnum == UFNBIND))
     {
         meUInt arg ;
-        int jj ;
+        int ii;
         
-        if((jj = decode_key(meGetKey(meGETKEY_SILENT),&arg)) < 0)
+        if((ii = decode_key(meGetKey(meGETKEY_SILENT),&arg)) < 0)
             return errorm ;
         if(fnum == UFCBIND)
-            meStrcpy(evalResult,getCommandName(jj)) ;
+            meStrcpy(evalResult,getCommandName(ii)) ;
         else if(arg == 0)
             evalResult[0] = '\0' ;
         else
@@ -2129,6 +2141,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
     /* retrieve the arguments */
     {
         meUByte alarmStateStr=alarmState ;
+        int ii ;
         
 #if MEOPT_EXTENDED
         if(funcTypes[fnum] & FUN_SETVAR)
@@ -2160,7 +2173,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
         }
         alarmState = alarmStateStr ;
     }
-        
+    
     /* and now evaluate it! */
     switch(fnum)
     {
@@ -2884,9 +2897,8 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             meStrcpy(evalResult,arg3) ;
             return evalResult ;
         }
-#endif
-#if MEOPT_REGISTRY
     case UFREGISTRY:
+#if MEOPT_REGISTRY
         {
             meRegNode *reg;
             meUByte *p = arg2;
@@ -2908,8 +2920,9 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
                 meStrcpy (evalResult, p);
             return evalResult;
         }
+#else
+        break;
 #endif
-#if MEOPT_EXTENDED
     case UFSPRINT:                         /* Monamic function !! */
         {
             /*
@@ -3337,7 +3350,6 @@ get_flag:
     }
     return abortm ;
 }
-
 
 #if MEOPT_EXTENDED
 /* numeric arg can overide prompted value */

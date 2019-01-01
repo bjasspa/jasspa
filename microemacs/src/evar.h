@@ -50,8 +50,8 @@ enum	{
 #define	DEFDER(v,s,t)
 
 enum	{
+    NFNULL,
 #include	"evar.def"
-    NFUNCS			/* Number of functions */
 } ;	
 #undef	DEFVAR
 #undef	DEFFUN
@@ -94,21 +94,25 @@ meUByte *envars[] =
 #undef	DEFFUN
 #undef	DEFDER
 
-
 /**	list of recognized user function names	*/
 
 #define	DEFVAR(s,v)
-#define	DEFFUN(v,s,h,t)	(meUShort) (h & 0xffff),
+#define	DEFFUN(v,s,h,t)	h,
 #define	DEFDER(v,s,t)
 
-meUShort funcTails[] =
+int funcHashs[] =
 {
+    0x000000,
 #include	"evar.def"
-    0xffff
+    0x1000000
 };
 /* This array can be tested using the !test directive, enable KEY_TEST in exec.c */
 meUByte funcOffst[26] = {
-    0, 4,10,13,15,17,24,255,26,255,33,34,42,45,49,51,255,53,58,68,255,255,71,72,255,255
+#if MEOPT_EXTENDED
+    2,7,12,15,16,21,26,0,28,0,34,39,43,49,51,53,0,56,62,70,0,0,72,75,0,0
+#else
+    1,6,10,11,12,0,14,0,15,0,0,18,21,24,26,0,0,27,29,0,0,0,0,0,0,0
+#endif
 };
 
 #undef	DEFVAR
@@ -123,31 +127,13 @@ meUByte funcOffst[26] = {
 
 meUByte funcTypes[] =
 {
+    0,
 #include	"evar.def"
 };
 
 #undef	DEFVAR
 #undef	DEFFUN
 #undef	DEFDER
-
-#if 0
-/* list of recognized user directive names
- * 
- * As of ME'04 this list is nolonger used, see docmd in exec.c
- */
-#define	DEFVAR(s,v)
-#define	DEFFUN(v,s,h,t)
-#define	DEFDER(v,s,t)	(meUByte *) s,
-
-meUByte *derNames[] =
-{
-#include	"evar.def"
-};
-
-#undef	DEFVAR
-#undef	DEFFUN
-#undef	DEFDER
-#endif
 
 /**	list of user directive types	*/
 #define DRFLAG_ASGLEXECLVL 0x001
@@ -183,7 +169,9 @@ int dirTypes[] =
 
 meUByte *funcNames[] =
 {
+    NULL,
 #include	"evar.def"
+    NULL
 };
 
 #undef	DEFVAR
