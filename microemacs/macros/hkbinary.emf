@@ -6,7 +6,7 @@
 ; Synopsis:    Binary file hook
 ; Authors:     Steven Phillips
 ;
-define-macro-file bintools bin-move-backward bin-move-forward bin-yank bin-insert-hex-string bin-insert-string bin-hex-search-forward bin-search-forward
+define-macro-file bintools bin-move-backward bin-move-forward bin-copy-region bin-yank bin-insert-hex-string bin-insert-string bin-hex-search-forward bin-search-forward
 define-macro fhook-binary
   !if &not &bmod "binary"
     !if &seq $buffer-fname ""
@@ -33,12 +33,11 @@ define-macro fhook-binary
 ; buffer-init variables
 set-variable .fhook-binary.setup &reg "/history/fhook/binary" "ghop"
 set-variable .fhook-binary.setup-mask "aeghkmopu"
-set-variable .fhook-binary.command-flag  "|thbio|th|thbo|thbo|thbo|thbo|th|th|th|th|thbio|"
-set-variable .fhook-binary.command-name  "|binary-swap-section||bin-move-backward|bin-move-forward|bin-search-forward|bin-hex-search-forward||bin-insert-string|bin-insert-hex-string||bin-yank|"
-set-variable .fhook-binary.command-nbind "||||||||||||"
-set-variable .fhook-binary.command-kbind "|tab||S-up|S-down|C-x s|esc s|||||A-C-y|"
-set-variable .fhook-binary.command-desc  "|S\Hwap section||Move \Hbackward|Move \Hforward|\HSearch forward (txt)|Search forward (he\Hx)||\HInsert string|Insert \Hhex string||Binary \Hyank|"
-global-bind-key bin-yank "A-C-y"
+set-variable .fhook-binary.command-flag  "|thbio|th|thbo|thbo|thbo|thbo|th|th|th|th|thbio|thbio|"
+set-variable .fhook-binary.command-name  "|binary-swap-section||bin-move-backward|bin-move-forward|bin-search-forward|bin-hex-search-forward||bin-insert-string|bin-insert-hex-string||bin-copy-region|bin-yank|"
+set-variable .fhook-binary.command-nbind "|||||||||||||"
+set-variable .fhook-binary.command-kbind "|tab||S-up|S-down|C-x s|esc s|||||A-C-w|A-C-y|"
+set-variable .fhook-binary.command-desc  "|S\Hwap section||Move \Hbackward|Move \Hforward|\HSearch forward (txt)|Search forward (he\Hx)||\HInsert string|Insert \Hhex string||Binary \Hcopy region|Binary \Hyank|"
 
 !if &and &sin "h" .fhook-binary.setup &band .hilight.flags 0x02 
   !if &not &exist .hilight.binary

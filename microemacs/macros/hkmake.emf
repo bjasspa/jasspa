@@ -25,7 +25,8 @@ set-variable .fhook-make.comment "|#||#|# | #|r|"
     !endif
     0 hilight  .hilight.make 0                 $global-scheme
     hilight .hilight.make 0  ":"               .scheme.variable
-    hilight .hilight.make 4  "[^\\]\"" "\"" "\\" .scheme.string
+    hilight .hilight.make 4  ":\\{\"" "\"" "\\" .scheme.string
+    hilight .hilight.make 4  "[^\\]\\{\"" "\"" "\\" .scheme.string
     hilight .hilight.make 0  "/\\*\\."         $global-scheme
     hilight .hilight.make 2  "#"               .scheme.comment
     hilight .hilight.make 4  "\\$(" ")" ""     .scheme.variable
@@ -42,6 +43,14 @@ set-variable .fhook-make.comment "|#||#|# | #|r|"
     hilight .hilight.make 1  "\\$<"            .scheme.keyword
     ; Highlight the TODO markers in comments.
     hilight .hilight.make 18 "#\\s+[Tt][Oo][Dd][Oo]" .scheme.error
+    ; nmake IFs
+    hilight .hilight.make 0x23 "!IF"           .scheme.prepro
+    hilight .hilight.make 0x23 "!ELSE"         .scheme.prepro
+    hilight .hilight.make 0x23 "!ENDIF"        .scheme.prepro
+    ; gmake IFs
+    hilight .hilight.make 0x23 "ifeq"          .scheme.prepro
+    hilight .hilight.make 0x23 "else"          .scheme.prepro
+    hilight .hilight.make 0x23 "endif"         .scheme.prepro
 !endif
 
 buffer-init-fhook "make"
