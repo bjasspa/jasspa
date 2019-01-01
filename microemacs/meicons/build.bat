@@ -6,9 +6,7 @@ rem See the file main.c for copying and conditions.
 set OPTIONS=
 set LOGFILE=
 set LOGFILEA=
-set MECORE=
 set MEDEBUG=
-set METYPE=
 set MAKEFILE=
 :build_option
 if "%1." == "."    goto build_cont
@@ -18,9 +16,7 @@ if "%1" == "-h"    goto build_help
 if "%1" == "-l"    goto build_logf
 if "%1" == "-la"   goto build_logfa
 if "%1" == "-m"    goto build_mkfl
-if "%1" == "-ne"   set  MECORE= BCOR=ne
 if "%1" == "-S"    set  OPTIONS= spotless
-if "%1" == "-t"    goto build_type
 shift
 goto build_option
 
@@ -42,15 +38,9 @@ set MAKEFILE=%1
 shift
 goto build_option
 
-:build_type
-shift
-set METYPE= BTYP=%1
-shift
-goto build_option
-
 :build_cont
 
-set OPTIONS=%MECORE%%MEDEBUG%%METYPE%%OPTIONS%
+set OPTIONS=%MEDEBUG%%OPTIONS%
 
 if NOT "%MAKEFILE%." == "." goto build_got_makefile
 
@@ -119,13 +109,7 @@ echo              win32vc6.mak  Win32 build using MS VC version 6 (or 98)
 echo              win32vc8.mak  Win32 build using MS VC version 8 (or 2005)
 echo              win32vc9.mak  Win32 build using MS VC version 9 (or 2008)
 echo              win32vc10.mak  Win32 build using MS VC version 10 (or 2010)
-echo     -ne  : for NanoEmacs build (output is ne).
 echo     -S   : Build clean spotless.
-echo     -t {type}
-echo          : Sets build type:
-echo               c  Console support only
-echo               w  Wondow support only (default)
-echo               cw Console and window support
 echo.
 
 :build_exit

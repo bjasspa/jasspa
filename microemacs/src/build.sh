@@ -6,7 +6,7 @@
 OPTIONS=
 LOGFILE=
 LOGFILEA=
-MAINTYPE=me
+MECORE=
 METYPE=
 MEDEBUG=
 MAKEFILE=
@@ -45,7 +45,7 @@ do
         echo ""
         exit 1
     elif [ $1 = "-C" ] ; then
-        OPTIONS=clean
+        OPTIONS=" clean"
     elif [ $1 = "-D" ] ; then
         shift
         if [ -n "$MAKECDEFS" ] ; then
@@ -54,7 +54,7 @@ do
             MAKECDEFS="-D$1"
         fi
     elif [ $1 = "-d" ] ; then
-        MEDEBUG=d
+        MEDEBUG=" BCFG=debug"
     elif [ $1 = "-l" ] ; then
         shift
         LOGFILE="$1"
@@ -65,7 +65,7 @@ do
         shift
         MAKEFILE=$1
     elif [ $1 = "-ne" ] ; then
-        MAINTYPE=ne
+        MECORE=" BCOR=ne"
     elif [ $1 = "-p" ] ; then
         shift
         if [ -n "$MAKECDEFS" ] ; then
@@ -74,10 +74,10 @@ do
             MAKECDEFS="-D_SEARCH_PATH=\\"'"'"$1\\"'"'
         fi
     elif [ $1 = "-S" ] ; then
-        OPTIONS=spotless
+        OPTIONS=" spotless"
     elif [ $1 = "-t" ] ; then
         shift
-        METYPE=$1
+        METYPE=" BTYP=$1"
     else
         echo "Error: Unkown option $1, run build -h for help"
         echo ""
@@ -142,6 +142,8 @@ if [ -z "$MAKEFILE" ] ; then
             fi                
         fi
         X11_MAKELIB=/usr/X11R6/lib
+    elif [ `echo $PLATFORM | sed -e "s/^MINGW32_NT.*/MINGW32_NT/"` = "MINGW32_NT" ] ; then
+        MAKEBAS=win32mingw
     elif [ $PLATFORM = "OpenBSD" ] ; then
         MAKEBAS=openbsd
         X11_MAKEINC=/usr/X11R6/include
@@ -197,7 +199,10 @@ if [ -z "$MAKEFILE" ] ; then
     fi
 fi
 
-if [ -z "$OPTIONS" ] ; then
+if [ "$MAKEFILE" = "win32mingw.gmk" ] ; then
+    # No X11 required as this uses native windows
+    X11_INCLUDE=
+elif [ -z "$OPTIONS" ] ; then
     # Check for an X11 install.
     if [ "$METYPE" = "c" ] ; then
         X11_INCLUDE=
@@ -209,10 +214,9 @@ if [ -z "$OPTIONS" ] ; then
         else
             echo "No X-11 support found, forcing terminal only."
             X11_INCLUDE=
-            METYPE=c
+            METYPE=" BTYP=c"
         fi
     fi
-    OPTIONS="$MAINTYPE$MEDEBUG$METYPE"
     if [ -n "$X11_INCLUDE" ] ; then
         MAKEWINDEFS=
         MAKEWINLIBS=
@@ -244,6 +248,7 @@ if [ -z "$OPTIONS" ] ; then
         export MAKEWINDEFS MAKEWINLIBS
     fi
 fi
+OPTIONS="$MECORE$MEDEBUG$METYPE$OPTIONS"
 MAKECDEFS="MAKECDEFS=$MAKECDEFS"
 if [ -r $MAKEFILE ] ; then
     if [ -n "$LOGFILE" ] ; then

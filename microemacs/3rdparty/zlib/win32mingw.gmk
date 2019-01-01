@@ -10,61 +10,73 @@
 #
 ##############################################################################
 
-BUILDID  = win32vs6
+A        = .a
+EXE      = .exe
+
+CC       = gcc
+RC       = windres
+MK       = make
+LD       = $(CC)
+STRIP    = strip
+AR       = ar
+RM       = rm -f
+RMDIR    = rm -rf
+
+BUILDID  = win32mingw
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
-A        = .lib
-EXE      = .exe
-CC       = cl
-CCDEFS   = -nologo -DWIN32 -D_WIN32 -D_WIN32_WINNT=0x500 
-LD       = link
-LDDEFS   = -nologo
-AR       = lib
-ARFLAGS  = -nologo
-RC       = rc.exe
-RCFLAGS  = 
-RM       = rm.exe -f
-RMDIR    = rm.exe -f -r
+TRDPARTY = ..
 
-!IF "$(BCFG)" == "release"
-OUTDIR   = $(OUTDIRR)
-CCFLAGS  = $(CCDEFS) -MD -GX -YX -O2 -W3 -DNDEBUG=1 -Fp$(OUTDIRR)/vc50.pch
-LDFLAGS  = $(LDDEFS)
-LDLIBS   = 
-!ELSE
+CCDEFS   = -D_MINGW -Wall
+CCFLAGSR = -O3 -DNDEBUG=1 -Wno-uninitialized
+CCFLAGSD = -g
+LDDEFS   = 
+LDFLAGSR = -O3
+LDFLAGSD = -g
+ARFLAGSR = rcs
+ARFLAGSD = rcs
+RCFLAGS  =
+
+ifeq "$(BCFG)" "debug"
 OUTDIR   = $(OUTDIRD)
-CCFLAGS  = $(CCDEFS) -MDd -Z7 -GZ -GX -Yd -YX -Od -W3 -D_DEBUG -Fp$(OUTDIRD)/vc50.pch
-LDFLAGS  = $(LDDEFS)
-LDLIBS   = 
-!ENDIF
+CCFLAGS  = $(CCFLAGSD)
+LDFLAGS  = $(LDFLAGSD)
+ARFLAGS  = $(ARFLAGSD)
+else
+OUTDIR   = $(OUTDIRR)
+CCFLAGS  = $(CCFLAGSR)
+LDFLAGS  = $(LDFLAGSR)
+ARFLAGS  = $(ARFLAGSR)
+endif
 
-LIBNAME  = zlib 
+LIBNAME  = zlib
 LIBFILE  = $(LIBNAME)$(A)
 LIBHDRS  = zutil.h zlib.h zconf.in.h zconf.h trees.h inftrees.h inflate.h \
-	   inffixed.h inffast.h deflate.h crc32.h win32vs6.mak
+	   inffixed.h inffast.h deflate.h crc32.h $(BUILDID).gmk
 LIBOBJS  = $(OUTDIR)/adler32.o $(OUTDIR)/compress.o $(OUTDIR)/crc32.o $(OUTDIR)/gzio.o $(OUTDIR)/uncompr.o \
 	   $(OUTDIR)/deflate.o $(OUTDIR)/trees.o $(OUTDIR)/zutil.o $(OUTDIR)/inflate.o $(OUTDIR)/infback.o \
 	   $(OUTDIR)/inftrees.o $(OUTDIR)/inffast.o
 
 .SUFFIXES: .c .o
 
-.c{$(OUTDIR)}.o:
-	$(CC) $(CCDEFS) $(CCFLAGS) -c $< -Fo$@
+$(OUTDIR)/%.o : %.c
+	$(CC) $(CCDEFS) $(CCFLAGS) -c -o $@ $<
 
 all: $(OUTDIR)/$(LIBFILE)
 
 $(OUTDIR)/$(LIBFILE): $(OUTDIR) $(LIBOBJS)
 	$(RM) $@
-	$(AR) $(ARFLAGS) -out:$@ $(LIBOBJS)
+	$(AR) $(ARFLAGS) $@ $(LIBOBJS)
 
 $(LIBOBJS): $(LIBHDRS)
 
 $(OUTDIR):
-	if not exist $(OUTDIR)/ mkdir $(OUTDIR)
+	[ -d $(OUTDIR) ] || mkdir $(OUTDIR)
 
 clean:
-	$(RMDIR) $(OUTDIRR) $(OUTDIRD)
+	$(RMDIR) $(OUTDIRD)
+	$(RMDIR) $(OUTDIRR)
 
-spotless:	clean
+spotless: clean
 	$(RM) *~
 	$(RM) tags
