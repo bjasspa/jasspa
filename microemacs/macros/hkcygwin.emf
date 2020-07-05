@@ -89,519 +89,519 @@ set-variable .cygwin.cygpath &cat #l0 "\\bin;"
 ; Set up the cynus root.
 set-variable .cygwin.root &spr "//cygdrive/%s%s" &lef #l2 1 &rig #l2 2
 !if &not &exist %cygwin-prompt
-    set-variable %cygwin-prompt "bash-[0-9\\.a-z]+\\$"
+  set-variable %cygwin-prompt "bash-[0-9\\.a-z]+\\$"
 !endif
 !if &not &exist %cygwin-hilight
-    set-variable %cygwin-hilight 1
+  set-variable %cygwin-hilight 1
 !endif
 ;
 ; Hilighting for the shell.
 ;
 !if &band .hilight.flags 0x02
-    ; Introduce some hilighting for the shell. We hilight the prompt and
-    ; a few commands that are used alot.
-    !if &not &exist .hilight.cygwin
-        set-variable .hilight.cygwin &pinc .hilight.next 1
-    !endif
-    0 hilight .hilight.cygwin 0                    $global-scheme
-    ; Colors
-    ; Executable
-    hilight   .hilight.cygwin 0x44 "\e\\[01;32" "" "\\}\e\\[0m" "" "" .scheme.file
-    ; Directory
-    hilight   .hilight.cygwin 0x44 "\e\\[01;34" "" "\\}\e\\[0m" "" "" .scheme.bold
-    ; Symbolic link + Source code
-    hilight   .hilight.cygwin 0x44 "\e\\[01;36" "" "\\}\e\\[0m" "" "" .scheme.dir-slink
-    ; Zip archive
-    hilight   .hilight.cygwin 0x44 "\e\\[01;31" "" "\\}\e\\[0m" "" "" .scheme.prepro
-    ; Graphic
-    hilight   .hilight.cygwin 0x44 "\e\\[01;35" "" "\\}\e\\[0m" "" "" .scheme.keyword
-    hilight   .hilight.cygwin 0x40 "\e\\[0m" ""               $global-scheme
-    hilight   .hilight.cygwin 0x40 "\e\\[m" ""                $global-scheme
-    ; General rule to remove any color codes not covered.
-    hilight   .hilight.cygwin 0x40 "\e\\[[0-9]+;[0-9]+" ""    $global-scheme
-     ; Commonly used commands
-    hilight   .hilight.cygwin 1 "awk"              .scheme.keyword
-    hilight   .hilight.cygwin 1 "cat"              .scheme.keyword
-    hilight   .hilight.cygwin 1 "cc"               .scheme.keyword
-    hilight   .hilight.cygwin 1 "cd"               .scheme.keyword
-    hilight   .hilight.cygwin 1 "chmod"            .scheme.keyword
-    hilight   .hilight.cygwin 1 "compress"         .scheme.keyword
-    hilight   .hilight.cygwin 1 "cpio"             .scheme.keyword
-    hilight   .hilight.cygwin 1 "df"               .scheme.keyword
-    hilight   .hilight.cygwin 1 "du"               .scheme.keyword
-    hilight   .hilight.cygwin 1 "echo"             .scheme.keyword
-    hilight   .hilight.cygwin 1 "find"             .scheme.keyword
-    hilight   .hilight.cygwin 1 "gawk"             .scheme.keyword
-    hilight   .hilight.cygwin 1 "gcc"              .scheme.keyword
-    hilight   .hilight.cygwin 1 "grep"             .scheme.keyword
-    hilight   .hilight.cygwin 1 "gunzip"           .scheme.keyword
-    hilight   .hilight.cygwin 1 "gzip"             .scheme.keyword
-    hilight   .hilight.cygwin 1 "install"          .scheme.keyword
-    hilight   .hilight.cygwin 1 "kill"             .scheme.keyword
-    hilight   .hilight.cygwin 1 "ln"               .scheme.keyword
-    hilight   .hilight.cygwin 1 "lp"               .scheme.keyword
-    hilight   .hilight.cygwin 1 "lpr"              .scheme.keyword
-    hilight   .hilight.cygwin 1 "ls"               .scheme.keyword
-    hilight   .hilight.cygwin 1 "make"             .scheme.keyword
-    hilight   .hilight.cygwin 1 "nmake"            .scheme.keyword
-    hilight   .hilight.cygwin 1 "mkdir"            .scheme.keyword
-    hilight   .hilight.cygwin 1 "mv"               .scheme.keyword
-    hilight   .hilight.cygwin 1 "pack"             .scheme.keyword
-    hilight   .hilight.cygwin 1 "ps"               .scheme.keyword
-    hilight   .hilight.cygwin 1 "pwd"              .scheme.keyword
-    hilight   .hilight.cygwin 1 "rm"               .scheme.keyword
-    hilight   .hilight.cygwin 1 "rmdir"            .scheme.keyword
-    hilight   .hilight.cygwin 1 "sed"              .scheme.keyword
-    hilight   .hilight.cygwin 1 "sort"             .scheme.keyword
-    hilight   .hilight.cygwin 1 "tar"              .scheme.keyword
-    hilight   .hilight.cygwin 1 "test"             .scheme.keyword
-    hilight   .hilight.cygwin 1 "uncompress"       .scheme.keyword
-    hilight   .hilight.cygwin 1 "unpack"           .scheme.keyword
-    hilight   .hilight.cygwin 1 "who"              .scheme.keyword
-    hilight   .hilight.cygwin 1 "zcat"             .scheme.keyword
-    ; Hilight the common operators.
-    hilight   .hilight.cygwin 1 ">"                .scheme.operator
-    hilight   .hilight.cygwin 1 "<"                .scheme.operator
-    hilight   .hilight.cygwin 1 "|"                .scheme.operator
-    hilight   .hilight.cygwin 1 ">&"               .scheme.operator
-    hilight   .hilight.cygwin 1 "&&"               .scheme.operator
-    hilight   .hilight.cygwin 1 "||"               .scheme.operator
-    ; Command line variables
-    hilight   .hilight.cygwin 1 "\\$\\w+"          .scheme.variable
-    hilight   .hilight.cygwin 1 "\\$[{(]\\w+[})]"  .scheme.variable
-    hilight   .hilight.cygwin 0 %cygwin-prompt     .scheme.type
+  ; Introduce some hilighting for the shell. We hilight the prompt and
+  ; a few commands that are used alot.
+  !if &not &exist .hilight.cygwin
+    set-variable .hilight.cygwin &pinc .hilight.next 1
+  !endif
+  0 hilight .hilight.cygwin 0                    $global-scheme
+  ; Colors
+  ; Executable
+  hilight   .hilight.cygwin 0x44 "\e\\[01;32" "" "\\}\e\\[0m" "" "" .scheme.file
+  ; Directory
+  hilight   .hilight.cygwin 0x44 "\e\\[01;34" "" "\\}\e\\[0m" "" "" .scheme.bold
+  ; Symbolic link + Source code
+  hilight   .hilight.cygwin 0x44 "\e\\[01;36" "" "\\}\e\\[0m" "" "" .scheme.dir-slink
+  ; Zip archive
+  hilight   .hilight.cygwin 0x44 "\e\\[01;31" "" "\\}\e\\[0m" "" "" .scheme.prepro
+  ; Graphic
+  hilight   .hilight.cygwin 0x44 "\e\\[01;35" "" "\\}\e\\[0m" "" "" .scheme.keyword
+  hilight   .hilight.cygwin 0x40 "\e\\[0m" ""               $global-scheme
+  hilight   .hilight.cygwin 0x40 "\e\\[m" ""                $global-scheme
+  ; General rule to remove any color codes not covered.
+  hilight   .hilight.cygwin 0x40 "\e\\[[0-9]+;[0-9]+" ""    $global-scheme
+  ; Commonly used commands
+  hilight   .hilight.cygwin 1 "awk"              .scheme.keyword
+  hilight   .hilight.cygwin 1 "cat"              .scheme.keyword
+  hilight   .hilight.cygwin 1 "cc"               .scheme.keyword
+  hilight   .hilight.cygwin 1 "cd"               .scheme.keyword
+  hilight   .hilight.cygwin 1 "chmod"            .scheme.keyword
+  hilight   .hilight.cygwin 1 "compress"         .scheme.keyword
+  hilight   .hilight.cygwin 1 "cpio"             .scheme.keyword
+  hilight   .hilight.cygwin 1 "df"               .scheme.keyword
+  hilight   .hilight.cygwin 1 "du"               .scheme.keyword
+  hilight   .hilight.cygwin 1 "echo"             .scheme.keyword
+  hilight   .hilight.cygwin 1 "find"             .scheme.keyword
+  hilight   .hilight.cygwin 1 "gawk"             .scheme.keyword
+  hilight   .hilight.cygwin 1 "gcc"              .scheme.keyword
+  hilight   .hilight.cygwin 1 "grep"             .scheme.keyword
+  hilight   .hilight.cygwin 1 "gunzip"           .scheme.keyword
+  hilight   .hilight.cygwin 1 "gzip"             .scheme.keyword
+  hilight   .hilight.cygwin 1 "install"          .scheme.keyword
+  hilight   .hilight.cygwin 1 "kill"             .scheme.keyword
+  hilight   .hilight.cygwin 1 "ln"               .scheme.keyword
+  hilight   .hilight.cygwin 1 "lp"               .scheme.keyword
+  hilight   .hilight.cygwin 1 "lpr"              .scheme.keyword
+  hilight   .hilight.cygwin 1 "ls"               .scheme.keyword
+  hilight   .hilight.cygwin 1 "make"             .scheme.keyword
+  hilight   .hilight.cygwin 1 "nmake"            .scheme.keyword
+  hilight   .hilight.cygwin 1 "mkdir"            .scheme.keyword
+  hilight   .hilight.cygwin 1 "mv"               .scheme.keyword
+  hilight   .hilight.cygwin 1 "pack"             .scheme.keyword
+  hilight   .hilight.cygwin 1 "ps"               .scheme.keyword
+  hilight   .hilight.cygwin 1 "pwd"              .scheme.keyword
+  hilight   .hilight.cygwin 1 "rm"               .scheme.keyword
+  hilight   .hilight.cygwin 1 "rmdir"            .scheme.keyword
+  hilight   .hilight.cygwin 1 "sed"              .scheme.keyword
+  hilight   .hilight.cygwin 1 "sort"             .scheme.keyword
+  hilight   .hilight.cygwin 1 "tar"              .scheme.keyword
+  hilight   .hilight.cygwin 1 "test"             .scheme.keyword
+  hilight   .hilight.cygwin 1 "uncompress"       .scheme.keyword
+  hilight   .hilight.cygwin 1 "unpack"           .scheme.keyword
+  hilight   .hilight.cygwin 1 "who"              .scheme.keyword
+  hilight   .hilight.cygwin 1 "zcat"             .scheme.keyword
+  ; Hilight the common operators.
+  hilight   .hilight.cygwin 1 ">"                .scheme.operator
+  hilight   .hilight.cygwin 1 "<"                .scheme.operator
+  hilight   .hilight.cygwin 1 "|"                .scheme.operator
+  hilight   .hilight.cygwin 1 ">&"               .scheme.operator
+  hilight   .hilight.cygwin 1 "&&"               .scheme.operator
+  hilight   .hilight.cygwin 1 "||"               .scheme.operator
+  ; Command line variables
+  hilight   .hilight.cygwin 1 "\\$\\w+"          .scheme.variable
+  hilight   .hilight.cygwin 1 "\\$[{(]\\w+[})]"  .scheme.variable
+  hilight   .hilight.cygwin 0 %cygwin-prompt     .scheme.type
 !else
-    set-variable %cygwin-hilight 0
+  set-variable %cygwin-hilight 0
 !endif
 ;
 ; Macros to control the shell window.
 ;
 define-macro cygpipe-break
-    2 ipipe-kill
-    ml-write "cygwin break"
+  0 ipipe-kill
+  ml-write "cygwin break"
 !emacro
 ;
 ; Set the cygwin directory, passed in #p3
 ; We take the name from the BASH shell.
 0 define-macro cygwin-setdir
-    set-variable .cygwin.raw #p3
-    set-variable #l1 &xrep #p3 "^[^\x1a]*\x1a" ""
-    !if &not &seq "//cygdrive/" &lef #l1 11
-        ; See if this is a DOS directory.
-        !if &xseq #l1 "^[a-zA-Z]:.*"
-            ; This is a DOS path. 
-            set-variable .cygwin.dosdir #l1
-            set-variable .cygwin.cygdir #l1
-            set-variable $buffer-fname
-            !return
-        !else
-            ; This must be a local path name, convert to drive.
-            set-variable #l1 &cat .cygwin.root &rig #l1 1
-        !endif
+  set-variable .cygwin.raw #p3
+  set-variable #l1 &xrep #p3 "^[^\x1a]*\x1a" ""
+  !if &not &seq "//cygdrive/" &lef #l1 11
+    ; See if this is a DOS directory.
+    !if &xseq #l1 "^[a-zA-Z]:.*"
+      ; This is a DOS path. 
+      set-variable .cygwin.dosdir #l1
+      set-variable .cygwin.cygdir #l1
+      set-variable $buffer-fname
+      !return
+    !else
+      ; This must be a local path name, convert to drive.
+      set-variable #l1 &cat .cygwin.root &rig #l1 1
     !endif
-    ; Change the cygname into a DOS name.
-    set-variable #l2 &rig #l1 11
-    set-variable #l2 &cat &lef #l2 1 &cat ":" &rig #l2 1
-    set-variable #l2 &rep #l2 "/" "\\"
-    set-variable .cygwin.dosdir #l2
-    ; Change the buffer file name to directory, add trailing '/'
-    set-variable #l2 &cat #l2 "\\" 
-    set-variable $buffer-fname &rep #l2 "\\" "/"
-    ; Backslash spaces 
-    set-variable #l3 &rep #l1 " " "\\ "
-    set-variable .cygwin.cygdir &rig #l3 1
-    ; 5000 ml-write &cat "Cygdir = " .cygwin.cygdir
-    ; 5000 ml-write &cat "Dosdir = " .cygwin.dosdir
+  !endif
+  ; Change the cygname into a DOS name.
+  set-variable #l2 &rig #l1 11
+  set-variable #l2 &cat &lef #l2 1 &cat ":" &rig #l2 1
+  set-variable #l2 &rep #l2 "/" "\\"
+  set-variable .cygwin.dosdir #l2
+  ; Change the buffer file name to directory, add trailing '/'
+  set-variable #l2 &cat #l2 "\\" 
+  set-variable $buffer-fname &rep #l2 "\\" "/"
+  ; Backslash spaces 
+  set-variable #l3 &rep #l1 " " "\\ "
+  set-variable .cygwin.cygdir &rig #l3 1
+  ; 5000 ml-write &cat "Cygdir = " .cygwin.cygdir
+  ; 5000 ml-write &cat "Dosdir = " .cygwin.dosdir
 !emacro
 
 0 define-macro cygpipe-write-prompt
-    goto-alpha-mark "I"
-    set-variable #l9 1
-    set-variable #l0 $buffer-bname
-    set-position "\x83"
-    set-variable #l1 @1
-    !if &not :mode
-        set-variable #l2 $window-col
-        ; Look for the prompt
-        !force -1 search-backward :prompt
-        !if $status
-            2 show-region
-            set-variable :mode $window-col
-            set-mark
-            end-of-line
-            kill-region
-            !force find-buffer &cat #l0 "-hist"
-            1 buffer-mode "hide"
-            !force find-buffer &cat #l0 "-cmd"
-            1 buffer-mode "hide"
-            beginning-of-buffer
-            yank
-            -1 yank
-            set-mark
-            end-of-buffer
-            -1 kill-region
-            !force set-variable $window-col &sub #l2 :mode
-            goto-position "\x83"
-        !else
-            set-variable $window-col #l2
-        !endif
-    !endif
-    !if :mode
-        !force find-buffer &cat #l0 "-cmd"
-        !if &seq #l1 "\CM"
-            ; execute the current line
-            set-variable #l3 @wl
-            !if &set #l1 &seq &lef #l3 1 "!"
-                ; implement the unix style !com...
-                !if &set #l4 &sin " " #l3
-                !elif &set #l4 &sin "\t" #l3
-                !else
-                    set-variable #l4 &add &len #l3 1
-                !endif
-                set-variable #l5 &mid #l3 1 &sub #l4 2
-                !if &seq #l5 "!"
-                    set-variable #l5 ""
-                !else
-                    str-to-regex #l5
-                !endif
-                !force find-buffer &cat #l0 "-hist"
-                end-of-buffer
-                backward-char
-                !force search-backward &cat "^" #l5
-                !if &not $status
-                    goto-position "\x83"
-                    set-variable #l6 @wl
-                    end-of-line
-                    insert-string &spr "\nError - event not found: %s\n%s" #l5 &lef #l6 :mode
-                    set-alpha-mark "I"
-                    set-variable :mode 0
-                    !return
-                !endif
-                set-variable #l3 &cat @wl &rig #l3 &sub #l4 1
-                goto-position "\x83"
-                end-of-line
-                insert-newline
-                set-position "\x83"
-            !endif
-            !if &band $system 0x100
-                !if &xis #l3 "[ \t]*[a-z]:\\([ \t].*\\)?"
-                    set-variable #l4 &slo &lef &trb #l3 1
-                    !if &exi &cat ":dir-" #l4
-                        set-variable #l4 &ind &cat ":dir-" #l4
-                    !else
-                        set-variable #l4 &cat #l4 ":"
-                    !endif
-                    goto-position "\x83"
-                    set-variable #l4 &stat "a" &cat $buffer-fname #l4
-                    !if &seq &stat "t" #l4 "D"
-                        set-variable #l5 $buffer-fname
-                        set-variable $buffer-fname #l4
-                        !force find-buffer &cat #l0 "-cmd"
-                        set-variable $buffer-fname #l5
-                        ; must set the old one as well - the starting path is not 
-                        ; automatically stored
-                        !if &seq &mid #l5 1 1 ":"
-                            set-variable &ind &cat ":dir-" &slo &lef #l5 1 #l5
-                        !endif
-                    !endif
-                !endif
-            !endif
-            set-variable #l2 #l3
-            !if &not &seq #l2 ""
-                !force find-buffer &cat #l0 "-hist"
-                end-of-buffer
-                insert-string #l2
-                forward-line
-            !endif
-            goto-position "\x83"
-            !if :noecho
-                !if &not #l1
-                    end-of-line
-                !else
-                    insert-string #l3
-                !endif
-                insert-newline
-            !elif &not #l1
-                set-variable $window-col :mode
-                set-mark
-                end-of-line
-                -1 kill-region
-            !endif
-            set-alpha-mark "I"
-            set-variable :mode 0
-            ipipe-write &spr "%s\CM" #l3
-        !elif &seq #l1 "\CI"
-            ; tab filename completion
-            !if &sin @wc " \t\n"
-                set-variable #l1 $window-col
-                !force backward-char
-                !if &not &sin @wc " \t\n"
-                    !goto complete-file
-                !endif
-                set-variable $window-col #l1
-                set-variable #l2 ""
-            !else
-*complete-file
-                set-variable #l2 &rsin " " &lef @wl $window-col
-                !if &not &set #l1 &sin " " &rig @wl $window-col
-                    set-variable #l1 &len &rig @wl $window-col
-                !endif
-                set-variable #l1 &add $window-col #l1
-                set-variable #l2 &mid @wl #l2 &sub #l1 #l2
-                set-variable $window-col #l1
-            !endif
-            goto-position "\x83"
-            ; Change "\ " to " " and '/' to '\\'
-            set-variable #l2 &rep #l2 "\\ " " "
-            set-variable #l2 &rep #l2 "/" "\\"
-            set-variable #l3 &stat "a" &cat $buffer-fname #l2
-            !force !force set-variable #l4 @ml61 "Filename" #l3
-            !if &not $status
-                set-variable $window-col &add :mode #l1
-                set-alpha-mark "I"
-                !return
-            !endif
-            set-variable #l5 &rsin "/" #l3
-            !if &seq &lef #l3 #l5 &lef #l4 #l5
-                ; base path is the same, replace with original
-                set-variable #l4 &cat &lef #l2 &rsin "/" #l2 &rig #l4 #l5
-            !endif
-            ; Change '/' to '\' and " " to "\ " and "[a-z]:" to "/cygdrive/?"
-            set-variable #l4 &rep #l4 "\\" "/"
-            set-variable #l4 &rep #l4 " " "\\ "
-            set-variable #l4 &rep #l4 "^\\([a-zA-Z]:" "/cygdrive/\\1"
-            !force find-buffer &cat #l0 "-cmd"
-            &len #l2 backward-delete-char
-            -1 yank
-            insert-string #l4
-            !goto update-cmdline
-        !elif &sin #l1 "\CN\CP"
-            ; next/prev history
-            set-variable #l3 @wl
-            !force find-buffer &cat #l0 "-hist"
-            !if &seq @wc ""
-                set-variable :cmd #l3
-            !endif
-            !force !force execute-string #l1
-            set-variable #l3 @wl
-            !if &seq @wc ""
-                set-variable #l3 :cmd 
-            !endif
-            !force find-buffer &cat #l0 "-cmd"
-            beginning-of-buffer
-            insert-string #l3
-            set-mark
-            end-of-buffer
-            -1 kill-region
-            !goto update-cmdline
-        !else
-            ; edit the current line
-            !if &seq #l1 "\CH"
-                !force !force backward-delete-char
-            !else
-                set-variable #l1 &rep #l1 "\e" "\E"
-                !force !force execute-string #l1
-            !endif
-            set-variable #l9 $status
-*update-cmdline
-            !if &gre $window-line 1
-                beginning-of-buffer
-                end-of-line
-                set-variable #l9 0
-            !endif
-            set-variable #l2 $window-col
-            set-variable #l3 @wl
-            set-variable $window-col #l2
-            goto-position "\x83"
-            set-variable $window-col :mode
-            set-mark
-            end-of-line
-            -1 kill-region
-            insert-string #l3
-            set-variable $window-col &add :mode #l2
-            ml-write ""
-            set-alpha-mark "I"
-        !endif
+  goto-alpha-mark "I"
+  set-variable #l9 1
+  set-variable #l0 $buffer-bname
+  set-position "\x83"
+  set-variable #l1 @1
+  !if &not :mode
+    set-variable #l2 $window-col
+    ; Look for the prompt
+    !force -1 search-backward :prompt
+    !if $status
+      2 show-region
+      set-variable :mode $window-col
+      set-mark
+      end-of-line
+      kill-region
+      !force find-buffer &cat #l0 "-hist"
+      1 buffer-mode "hide"
+      !force find-buffer &cat #l0 "-cmd"
+      1 buffer-mode "hide"
+      beginning-of-buffer
+      yank
+      -1 yank
+      set-mark
+      end-of-buffer
+      -1 kill-region
+      !force set-variable $window-col &sub #l2 :mode
+      goto-position "\x83"
     !else
-        ipipe-write #l1
+      set-variable $window-col #l2
     !endif
-    !if &not #l9
-        !bell
+  !endif
+  !if :mode
+    !force find-buffer &cat #l0 "-cmd"
+    !if &seq #l1 "\CM"
+      ; execute the current line
+      set-variable #l3 @wl
+      !if &set #l1 &seq &lef #l3 1 "!"
+        ; implement the unix style !com...
+        !if &set #l4 &sin " " #l3
+        !elif &set #l4 &sin "\t" #l3
+        !else
+          set-variable #l4 &add &len #l3 1
+        !endif
+        set-variable #l5 &mid #l3 1 &sub #l4 2
+        !if &seq #l5 "!"
+          set-variable #l5 ""
+        !else
+          str-to-regex #l5
+        !endif
+        !force find-buffer &cat #l0 "-hist"
+        end-of-buffer
+        backward-char
+        !force search-backward &cat "^" #l5
+        !if &not $status
+          goto-position "\x83"
+          set-variable #l6 @wl
+          end-of-line
+          insert-string &spr "\nError - event not found: %s\n%s" #l5 &lef #l6 :mode
+          set-alpha-mark "I"
+          set-variable :mode 0
+          !return
+        !endif
+        set-variable #l3 &cat @wl &rig #l3 &sub #l4 1
+        goto-position "\x83"
+        end-of-line
+        insert-newline
+        set-position "\x83"
+      !endif
+      !if &band $system 0x100
+        !if &xis #l3 "[ \t]*[a-z]:\\([ \t].*\\)?"
+          set-variable #l4 &slo &lef &trb #l3 1
+          !if &exi &cat ":dir-" #l4
+            set-variable #l4 &ind &cat ":dir-" #l4
+          !else
+            set-variable #l4 &cat #l4 ":"
+          !endif
+          goto-position "\x83"
+          set-variable #l4 &stat "a" &cat $buffer-fname #l4
+          !if &seq &stat "t" #l4 "D"
+            set-variable #l5 $buffer-fname
+            set-variable $buffer-fname #l4
+            !force find-buffer &cat #l0 "-cmd"
+            set-variable $buffer-fname #l5
+            ; must set the old one as well - the starting path is not 
+            ; automatically stored
+            !if &seq &mid #l5 1 1 ":"
+              set-variable &ind &cat ":dir-" &slo &lef #l5 1 #l5
+            !endif
+          !endif
+        !endif
+      !endif
+      set-variable #l2 #l3
+      !if &not &seq #l2 ""
+        !force find-buffer &cat #l0 "-hist"
+        end-of-buffer
+        insert-string #l2
+        forward-line
+      !endif
+      goto-position "\x83"
+      !if :noecho
+        !if &not #l1
+          end-of-line
+        !else
+          insert-string #l3
+        !endif
+        insert-newline
+      !elif &not #l1
+        set-variable $window-col :mode
+        set-mark
+        end-of-line
+        -1 kill-region
+      !endif
+      set-alpha-mark "I"
+      set-variable :mode 0
+      ipipe-write &spr "%s\CM" #l3
+    !elif &seq #l1 "\CI"
+      ; tab filename completion
+      !if &sin @wc " \t\n"
+        set-variable #l1 $window-col
+        !force backward-char
+        !if &not &sin @wc " \t\n"
+          !goto complete-file
+        !endif
+        set-variable $window-col #l1
+        set-variable #l2 ""
+      !else
+*complete-file
+        set-variable #l2 &rsin " " &lef @wl $window-col
+        !if &not &set #l1 &sin " " &rig @wl $window-col
+          set-variable #l1 &len &rig @wl $window-col
+        !endif
+        set-variable #l1 &add $window-col #l1
+        set-variable #l2 &mid @wl #l2 &sub #l1 #l2
+        set-variable $window-col #l1
+      !endif
+      goto-position "\x83"
+      ; Change "\ " to " " and '/' to '\\'
+      set-variable #l2 &rep #l2 "\\ " " "
+      set-variable #l2 &rep #l2 "/" "\\"
+      set-variable #l3 &stat "a" &cat $buffer-fname #l2
+      !force !force set-variable #l4 @ml61 "Filename" #l3
+      !if &not $status
+        set-variable $window-col &add :mode #l1
+        set-alpha-mark "I"
+        !return
+      !endif
+      set-variable #l5 &rsin "/" #l3
+      !if &seq &lef #l3 #l5 &lef #l4 #l5
+        ; base path is the same, replace with original
+        set-variable #l4 &cat &lef #l2 &rsin "/" #l2 &rig #l4 #l5
+      !endif
+      ; Change '/' to '\' and " " to "\ " and "[a-z]:" to "/cygdrive/?"
+      set-variable #l4 &rep #l4 "\\" "/"
+      set-variable #l4 &rep #l4 " " "\\ "
+      set-variable #l4 &rep #l4 "^\\([a-zA-Z]:" "/cygdrive/\\1"
+      !force find-buffer &cat #l0 "-cmd"
+      &len #l2 backward-delete-char
+      -1 yank
+      insert-string #l4
+      !goto update-cmdline
+    !elif &sin #l1 "\CN\CP"
+      ; next/prev history
+      set-variable #l3 @wl
+      !force find-buffer &cat #l0 "-hist"
+      !if &seq @wc ""
+        set-variable :cmd #l3
+      !endif
+      !force !force execute-string #l1
+      set-variable #l3 @wl
+      !if &seq @wc ""
+        set-variable #l3 :cmd 
+      !endif
+      !force find-buffer &cat #l0 "-cmd"
+      beginning-of-buffer
+      insert-string #l3
+      set-mark
+      end-of-buffer
+      -1 kill-region
+      !goto update-cmdline
+    !else
+      ; edit the current line
+      !if &seq #l1 "\CH"
+        !force !force backward-delete-char
+      !else
+        set-variable #l1 &rep #l1 "\e" "\E"
+        !force !force execute-string #l1
+      !endif
+      set-variable #l9 $status
+*update-cmdline
+      !if &gre $window-line 1
+        beginning-of-buffer
+        end-of-line
+        set-variable #l9 0
+      !endif
+      set-variable #l2 $window-col
+      set-variable #l3 @wl
+      set-variable $window-col #l2
+      goto-position "\x83"
+      set-variable $window-col :mode
+      set-mark
+      end-of-line
+      -1 kill-region
+      insert-string #l3
+      set-variable $window-col &add :mode #l2
+      ml-write ""
+      set-alpha-mark "I"
     !endif
+  !else
+    ipipe-write #l1
+  !endif
+  !if &not #l9
+    !bell
+  !endif
 !emacro
 
 0 define-macro cygpipe-output
-    set-variable #l2 @cck
-    set-variable #l3 @cc
-    !if &les &len @cc 2
-        set-variable #l1 #l3
-    !elif &set #l0 &lfi "|tab|backward-delete-char|newline|beginning-of-line|backward-char|forward-delete-char|end-of-line|forward-char|kill-line|recenter|forward-line|backward-line|expand-abbrev|forward-word|backward-word|" #l3
-        set-variable #l1 &lget "|\CI|\CH|\CM|\CA|\CB|\CD|\CE|\CF|\CK|\CL|\CN|\CP|\e\e|\ef|\eb|" #l0
-    !elif &set #l0 &lfi "|backspace|" #l2
-        set-variable #l1 &lget "|\b|" #l0
-    !elif &seq "yank" #l3
-        set-variable #l1 @y
-    !elif &seq "quote-char" #l3
-        ml-write "Quote: "
-        set-variable #l1 @cqk
-    !elif &and &seq "mouse-event" #l3 &sin "yank" &reg &cat "/history/mouse/" #l2 ""
-        set-variable #l1 @y
-    !elif &seq #l3 "ERROR"
-        ml-write &spr "[Key not bound \"%s\"]" #l2
-        !abort
-    !else
-        execute-line &spr "!nma %s %s" &cond @? @# "" #l3
-        !return
+  set-variable #l2 @cck
+  set-variable #l3 @cc
+  !if &les &len @cc 2
+    set-variable #l1 #l3
+  !elif &set #l0 &lfi "|tab|backward-delete-char|newline|beginning-of-line|backward-char|forward-delete-char|end-of-line|forward-char|kill-line|recenter|forward-line|backward-line|expand-abbrev|forward-word|backward-word|" #l3
+    set-variable #l1 &lget "|\CI|\CH|\CM|\CA|\CB|\CD|\CE|\CF|\CK|\CL|\CN|\CP|\e\e|\ef|\eb|" #l0
+  !elif &set #l0 &lfi "|backspace|" #l2
+    set-variable #l1 &lget "|\b|" #l0
+  !elif &seq "yank" #l3
+    set-variable #l1 @y
+  !elif &seq "quote-char" #l3
+    ml-write "Quote: "
+    set-variable #l1 @cqk
+  !elif &and &seq "mouse-event" #l3 &sin "yank" &reg &cat "/history/mouse/" #l2 ""
+    set-variable #l1 @y
+  !elif &seq #l3 "ERROR"
+    ml-write &spr "[Key not bound \"%s\"]" #l2
+    !abort
+  !else
+    execute-line &spr "!nma %s %s" &cond @? @# "" #l3
+    !return
+  !endif
+  !if &exi :prompt
+    cygpipe-write-prompt #l1
+  !else
+    goto-alpha-mark "I"
+    !if &band $system 0x100
+      set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
     !endif
-    !if &exi :prompt
-        cygpipe-write-prompt #l1
-    !else
-        goto-alpha-mark "I"
-        !if &band $system 0x100
-            set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
-        !endif
-        ipipe-write #l1
-    !endif
+    ipipe-write #l1
+  !endif
 !emacro
 
 0 define-macro cygpipe-mode
-    !if &not @?
-        set-variable :imode &mod &add :imode 1 3
-    !else
-        set-variable :imode @#
-    !endif
-    !if &equ :imode 1
-        set-variable $buffer-input cygpipe-output
-        1 buffer-mode "lock"
-        goto-alpha-mark "I"
-        ml-write "[Input mode set to semi-immersion - f3 to change]"
-    !elif &equ :imode 2
-        set-variable $buffer-input ""
-        1 buffer-mode "lock"
-        goto-alpha-mark "I"
-        ml-write "[Input mode set to full-immersion - f3 to change]"
-        !repeat
-            screen-update
-            set-variable #l0 @cqk
-            !if &not &bmo "pipe"
-                !return
-            !elif &equ &len #l0 1
-                ipipe-write #l0
-            !elif &seq #l0 "f3"
-                0 cygpipe-mode
-                !return
-            !endif
-        !until 0
-    !else
-        set-variable $buffer-input ""
-        -1 buffer-mode "lock"
-        ml-write "[Input mode set to browse - f3 to change]"
-    !endif
+  !if &not @?
+    set-variable :imode &mod &add :imode 1 3
+  !else
+    set-variable :imode @#
+  !endif
+  !if &equ :imode 1
+    set-variable $buffer-input cygpipe-output
+    1 buffer-mode "lock"
+    goto-alpha-mark "I"
+    ml-write "[Input mode set to semi-immersion - f3 to change]"
+  !elif &equ :imode 2
+    set-variable $buffer-input ""
+    1 buffer-mode "lock"
+    goto-alpha-mark "I"
+    ml-write "[Input mode set to full-immersion - f3 to change]"
+    !repeat
+      screen-update
+      set-variable #l0 @cqk
+      !if &not &bmo "pipe"
+        !return
+      !elif &equ &len #l0 1
+        ipipe-write #l0
+      !elif &seq #l0 "f3"
+        0 cygpipe-mode
+        !return
+      !endif
+    !until 0
+  !else
+    set-variable $buffer-input ""
+    -1 buffer-mode "lock"
+    ml-write "[Input mode set to browse - f3 to change]"
+  !endif
 !emacro
 
 0 define-macro cygpipe-clear
-    beginning-of-buffer
-    set-mark
-    end-of-buffer
-    kill-region
+  beginning-of-buffer
+  set-mark
+  end-of-buffer
+  kill-region
 !emacro    
 
 0 define-macro cygpipe-input
-    !if &not @#
-        ; process has ended, clear-up
-        set-variable $buffer-input ""
-        set-variable $buffer-ipipe ""
-        !force buffer-unbind-key &kbin "" cygpipe-mode
-    !endif
-    !if &not &exi .cygwin.input
-        set-variable .cygwin.input 0
-    !else
-        set-variable .cygwin.input &add .cygwin.input 1
-    !endif
-    ; Use the BASH shell information to determine our current 
-    ; directory. We hook this out of the output from BASH and 
-    ; then remove it from the buffer.
-    set-position "\x83"
-    !force -2 search-backward "\x1a"
-    !if $status
-        set-variable #l3 @wl
-        beginning-of-line
-        set-mark
-        forward-line
-        kill-region
-        -1 yank
-        goto-position "\x83"
-        cygwin-setdir
-    !endif
-    !if &equ :imode 2
-        2 screen-update
-    !endif
+  !if &not @#
+    ; process has ended, clear-up
+    set-variable $buffer-input ""
+    set-variable $buffer-ipipe ""
+    !force buffer-unbind-key &kbin "" cygpipe-mode
+  !endif
+  !if &not &exi .cygwin.input
+    set-variable .cygwin.input 0
+  !else
+    set-variable .cygwin.input &add .cygwin.input 1
+  !endif
+  ; Use the BASH shell information to determine our current 
+  ; directory. We hook this out of the output from BASH and 
+  ; then remove it from the buffer.
+  set-position "\x83"
+  !force -2 search-backward "\x1a"
+  !if $status
+    set-variable #l3 @wl
+    beginning-of-line
+    set-mark
+    forward-line
+    kill-region
+    -1 yank
+    goto-position "\x83"
+    cygwin-setdir
+  !endif
+  !if &equ :imode 2
+    2 screen-update
+  !endif
 !emacro
 
 0 define-macro cygpipe-kill
-    !force ipipe-kill
-    !force 0 delete-buffer $buffer-bname
+  !force ipipe-kill
+  !force 0 delete-buffer $buffer-bname
 !emacro
 
 0 define-macro cygpipe-rerun
-    beginning-of-buffer
-    !if &seq &lef @wl 3 "cd "
-        forward-line
-    !endif
-    0 ipipe-shell-command @wl $buffer-bname
+  beginning-of-buffer
+  !if &seq &lef @wl 3 "cd "
+    forward-line
+  !endif
+  0 ipipe-shell-command @wl $buffer-bname
 !emacro
 
 define-macro cygwin
-    ; Set up the cygwin environment as default usage.
-    set-variable .path $PATH
-    set-variable $PATH &cat .cygwin.cygpath $PATH
-    ; Call the cygwin process
-    set-variable #l0 $buffer-bname
-    set-variable #l8 "*cygwin*"
-    !force 0 find-buffer #l8
-    !if &and $status &bmod "pipe"
-        ; Cygus buffer is found. Find another buffer.
-        set-variable #l9 1
+  ; Set up the cygwin environment as default usage.
+  set-variable .path $PATH
+  set-variable $PATH &cat .cygwin.cygpath $PATH
+  ; Call the cygwin process
+  set-variable #l0 $buffer-bname
+  set-variable #l8 "*cygwin*"
+  !force 0 find-buffer #l8
+  !if &and $status &bmod "pipe"
+    ; Cygus buffer is found. Find another buffer.
+    set-variable #l9 1
 *again        
-        set-variable #l8 &spr "*cygwin%d*"&pinc #l9 1
-        !force 0 find-buffer #l8
-        !if $status
-            !goto again
-        !endif
+    set-variable #l8 &spr "*cygwin%d*"&pinc #l9 1
+    !force 0 find-buffer #l8
+    !if $status
+      !goto again
     !endif
-    set-variable $TERM "EMACS"
-    set-variable $EMACS "*term*"
-    4 ipipe-shell-command "bash -i -m" #l8
-    !endif
-    ; Restore the default path.
-    set-variable $PATH .path
-    popup-window #l8
-    ; find-buffer #l8
-    fhook-cygwin
+  !endif
+  set-variable $TERM "EMACS"
+  set-variable $EMACS "*term*"
+  4 ipipe-shell-command "bash -i -m" #l8
+!endif
+; Restore the default path.
+set-variable $PATH .path
+popup-window #l8
+; find-buffer #l8
+fhook-cygwin
 !emacro
 
 0 define-macro fhook-cygwin
-    set-variable $buffer-fhook "fhook-cygwin"
-    set-variable $buffer-ipipe "cygpipe-input"
-    ; Bind the keys
-    buffer-bind-create "bo" "C-c C-k" ""  cygpipe-kill
-    buffer-bind-create "bo" "C-c C-c" "2" cygpipe-kill
-    buffer-bind-create "bo" "C-return" "" cygpipe-rerun
-    buffer-bind-create "bo" "C-j" ""      cygpipe-rerun
-    buffer-bind-create "bo" "f3" ""  cygpipe-mode
-    buffer-bind-create "bo" "f5" ""  cygpipe-clear
-    -1 buffer-mode "wrap"
-    1 buffer-mode "magic"
-    set-variable :prompt %cygwin-prompt
-    set-variable :noecho 1
-    set-variable :mode 0
-    set-variable $buffer-mask "luh1"
-    ; Enable hilighting if requested.
-    !if %cygwin-hilight
-        set-variable $buffer-hilight .hilight.cygwin
-    !endif
-    1 cygpipe-mode
-    buffer-init-hooks
+  set-variable $buffer-fhook "fhook-cygwin"
+  set-variable $buffer-ipipe "cygpipe-input"
+  ; Bind the keys
+  buffer-bind-create "bo" "C-c C-k" ""  cygpipe-kill
+  buffer-bind-create "bo" "C-c C-c" "2" cygpipe-kill
+  buffer-bind-create "bo" "C-return" "" cygpipe-rerun
+  buffer-bind-create "bo" "C-j" ""      cygpipe-rerun
+  buffer-bind-create "bo" "f3" ""  cygpipe-mode
+  buffer-bind-create "bo" "f5" ""  cygpipe-clear
+  -1 buffer-mode "wrap"
+  1 buffer-mode "magic"
+  set-variable :prompt %cygwin-prompt
+  set-variable :noecho 1
+  set-variable :mode 0
+  set-variable $buffer-mask "luh1"
+  ; Enable hilighting if requested.
+  !if %cygwin-hilight
+    set-variable $buffer-hilight .hilight.cygwin
+  !endif
+  1 cygpipe-mode
+  buffer-init-hooks
 !emacro
 
 buffer-init-fhook "cygwin"
