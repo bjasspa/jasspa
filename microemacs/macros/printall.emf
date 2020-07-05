@@ -13,17 +13,17 @@ execute-file "me"
 execute-file "print"
 
 define-macro print-all-buffers
-    !force delete-buffer "*scratch*"
-    delete-other-windows
-    !while &not &seq $buffer-bname "*scratch*"
-        print-buffer
-        delete-buffer $buffer-bname
-    !done
+  !force delete-buffer "*scratch*"
+  delete-other-windows
+  !while &not &seq $buffer-bname "*scratch*"
+    print-buffer
+    delete-buffer $buffer-bname
+  !done
 !emacro
 
 define-macro start-up
-    print-all-buffers
-    quick-exit
+  print-all-buffers
+  quick-exit
 !emacro
 
 

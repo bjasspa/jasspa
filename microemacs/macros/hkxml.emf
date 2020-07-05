@@ -16,10 +16,10 @@
 ;     Not sure about the VB or java - do not use them myself.
 ;
 define-macro fhook-xml
-    set-variable #l0 &mid $buffer-bname &rsin "." $buffer-bname 3
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "xml"
-    buffer-init-hooks
+  set-variable #l0 &mid $buffer-bname &rsin "." $buffer-bname 3
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "xml"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -35,138 +35,138 @@ set-variable .fhook-xml.indent-width 2
 set-variable .fhook-xml.exact -1
 
 !if &not &exist fhook-vb
-    !force exec-file "hkvb"
+  !force exec-file "hkvb"
 !endif
 !if &not &exist fhook-js
-    !force exec-file "hkjs"
+  !force exec-file "hkjs"
 !endif
 !if &not &exist xml-forward-tag
-    !force exec-file "xmlutil"
+  !force exec-file "xmlutil"
 !endif
 
 !if &not &exist .hilight.xml
-    set-variable .hilight.xml   &pinc .hilight.next 1
-    set-variable .hilight.xmlT  &pinc .hilight.next 1
+  set-variable .hilight.xml   &pinc .hilight.next 1
+  set-variable .hilight.xmlT  &pinc .hilight.next 1
 !endif
 !if &and &sin "h" .fhook-xml.setup &band .hilight.flags 0x02 
-    0 hilight .hilight.xml 3 200                        $global-scheme
-    hilight .hilight.xml 0x80 "<[\\t ]*[-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
-    hilight .hilight.xml 0x80 "<\\?[\\t ]*[-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
-    hilight .hilight.xml 0x80 "<![\\t ]*[^-][-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
-    hilight .hilight.xml 4 "<!\\[CDATA\\[" "]]>" ""     .scheme.variable
-    hilight .hilight.xml 4 "<!--" "-->" ""              .scheme.comment
-    hilight .hilight.xml 0 "&\\w\\w;"                   .scheme.operator
-    hilight .hilight.xml 0 "&\\w\\w\\w;"                .scheme.operator
-    hilight .hilight.xml 0 "&\\w\\w\\w\\w;"             .scheme.operator
-    hilight .hilight.xml 0x804 "\"" "\"" ""             .scheme.string
-    
-    0 hilight .hilight.xmlT 0                           $global-scheme
-    hilight .hilight.xmlT 4  "\"" "\"" ""               .scheme.string
-    hilight .hilight.xmlT 0x80 ">" .hilight.xml         .scheme.keyword
-    hilight .hilight.xmlT 0x80 "/>" .hilight.xml        .scheme.keyword
-    hilight .hilight.xmlT 0x80 "\\?>" .hilight.xml      .scheme.keyword
-    
-    !if &exist .hilight.javascript
-        hilight .hilight.xml 0x80 "<script\\s+type=\"text/javascript[^>]*>" .hilight.javascript .scheme.prepro
-        hilight .hilight.javascript 0x80 "</script>" 0  .scheme.prepro
-    !endif
-    !if &exist .hilight.vbscript
-        hilight .hilight.xml 0x80 "<script\\s+type=\"text/vbscript[^>]*>" .hilight.vbscript .scheme.prepro
-        hilight .hilight.vbscript 0x80 "</script>" 0    .scheme.prepro
-    !endif
+  0 hilight .hilight.xml 3 200                        $global-scheme
+  hilight .hilight.xml 0x80 "<[\\t ]*[-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
+  hilight .hilight.xml 0x80 "<\\?[\\t ]*[-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
+  hilight .hilight.xml 0x80 "<![\\t ]*[^-][-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
+  hilight .hilight.xml 4 "<!\\[CDATA\\[" "]]>" ""     .scheme.variable
+  hilight .hilight.xml 4 "<!--" "-->" ""              .scheme.comment
+  hilight .hilight.xml 0 "&\\w\\w;"                   .scheme.operator
+  hilight .hilight.xml 0 "&\\w\\w\\w;"                .scheme.operator
+  hilight .hilight.xml 0 "&\\w\\w\\w\\w;"             .scheme.operator
+  hilight .hilight.xml 0x804 "\"" "\"" ""             .scheme.string
+  
+  0 hilight .hilight.xmlT 0                           $global-scheme
+  hilight .hilight.xmlT 4  "\"" "\"" ""               .scheme.string
+  hilight .hilight.xmlT 0x80 ">" .hilight.xml         .scheme.keyword
+  hilight .hilight.xmlT 0x80 "/>" .hilight.xml        .scheme.keyword
+  hilight .hilight.xmlT 0x80 "\\?>" .hilight.xml      .scheme.keyword
+  
+  !if &exist .hilight.javascript
+    hilight .hilight.xml 0x80 "<script\\s+type=\"text/javascript[^>]*>" .hilight.javascript .scheme.prepro
+    hilight .hilight.javascript 0x80 "</script>" 0  .scheme.prepro
+  !endif
+  !if &exist .hilight.vbscript
+    hilight .hilight.xml 0x80 "<script\\s+type=\"text/vbscript[^>]*>" .hilight.vbscript .scheme.prepro
+    hilight .hilight.vbscript 0x80 "</script>" 0    .scheme.prepro
+  !endif
 !endif
 
 !if &sin "d" .fhook-xml.setup
-    0 indent .hilight.xmlT 1 500
-    0 indent .hilight.xml 3 20 .hilight.xmlT
-    !if &exist .indent.javascript
-        indent .hilight.xmlT t "<script\\s+type=\"text/javascript[^>]*>" .indent.javascript
-        indent .hilight.xml  x "<script\\s+type=\"text/javascript[^>]*>" t .indent.javascript
-        indent .hilight.xmlT t "<script\\s+type=\"text/jscript[^>]*>"    .indent.javascript
-        indent .hilight.xml  x "<script\\s+type=\"text/jscript[^>]*>"    t .indent.javascript
-        indent .hilight.xmlT t "<script\\s+language=\"?javascript[^>]*>" .indent.javascript
-        indent .hilight.xml  x "<script\\s+language=\"?javascript[^>]*>" t .indent.javascript
-        indent .hilight.xmlT t "<script\\s+language=\"?jscript[^>]*>"    .indent.javascript
-        indent .hilight.xml  x "<script\\s+language=\"?jscript[^>]*>"    t .indent.javascript
-        indent .indent.javascript w "</script>" -t 0
-    !endif
-    !if &exist .indent.vbscript
-        indent .hilight.xmlT t "<script\\s+type=\"text/vbscript[^>]*>" .indent.vbscript
-        indent .hilight.xml  x "<script\\s+type=\"text/vbscript[^>]*>" t .indent.vbscript
-        indent .hilight.xmlT t "<script\\s+language=\"?vbscript[^>]*>" .indent.vbscript
-        indent .hilight.xml  x "<script\\s+language=\"?vbscript[^>]*>" t .indent.vbscript
-        indent .indent.vbscript w "</script>" -t 0
-    !endif
-    indent .hilight.xmlT t "</script>" 0
-    indent .hilight.xml  o "</script>" -t
-    ; Define the indentation tokens. XML is well defined so there are
-    ; always opening and closing brackets.
-    indent .hilight.xml e "\"" "\"" ""
-    indent .hilight.xml b "<!--" "-->"
-    indent .hilight.xml b "<\\?" "\\?>"
-    indent .hilight.xml n "<[^/!]" t 
-    indent .hilight.xml o "</"    -t 
-    indent .hilight.xml n "/>"    -t 
-    indent .hilight.xml o "^\\s*/>"    -t 
+  0 indent .hilight.xmlT 1 500
+  0 indent .hilight.xml 3 20 .hilight.xmlT
+  !if &exist .indent.javascript
+    indent .hilight.xmlT t "<script\\s+type=\"text/javascript[^>]*>" .indent.javascript
+    indent .hilight.xml  x "<script\\s+type=\"text/javascript[^>]*>" t .indent.javascript
+    indent .hilight.xmlT t "<script\\s+type=\"text/jscript[^>]*>"    .indent.javascript
+    indent .hilight.xml  x "<script\\s+type=\"text/jscript[^>]*>"    t .indent.javascript
+    indent .hilight.xmlT t "<script\\s+language=\"?javascript[^>]*>" .indent.javascript
+    indent .hilight.xml  x "<script\\s+language=\"?javascript[^>]*>" t .indent.javascript
+    indent .hilight.xmlT t "<script\\s+language=\"?jscript[^>]*>"    .indent.javascript
+    indent .hilight.xml  x "<script\\s+language=\"?jscript[^>]*>"    t .indent.javascript
+    indent .indent.javascript w "</script>" -t 0
+  !endif
+  !if &exist .indent.vbscript
+    indent .hilight.xmlT t "<script\\s+type=\"text/vbscript[^>]*>" .indent.vbscript
+    indent .hilight.xml  x "<script\\s+type=\"text/vbscript[^>]*>" t .indent.vbscript
+    indent .hilight.xmlT t "<script\\s+language=\"?vbscript[^>]*>" .indent.vbscript
+    indent .hilight.xml  x "<script\\s+language=\"?vbscript[^>]*>" t .indent.vbscript
+    indent .indent.vbscript w "</script>" -t 0
+  !endif
+  indent .hilight.xmlT t "</script>" 0
+  indent .hilight.xml  o "</script>" -t
+  ; Define the indentation tokens. XML is well defined so there are
+  ; always opening and closing brackets.
+  indent .hilight.xml e "\"" "\"" ""
+  indent .hilight.xml b "<!--" "-->"
+  indent .hilight.xml b "<\\?" "\\?>"
+  indent .hilight.xml n "<[^/!]" t 
+  indent .hilight.xml o "</"    -t 
+  indent .hilight.xml n "/>"    -t 
+  indent .hilight.xml o "^\\s*/>"    -t 
 !endif
 
 0 define-macro chook-xml
-    !force 2 indent
-    !if &equ $result .indent.vbscript
-        !if &seq :chook "vb"
-            !return
-        !endif
-        set-variable :chook "vb"
-    !elif &equ $result .indent.javascript
-        !if &seq :chook "js"
-            !return
-        !endif
-        set-variable :chook "js"
-    !elif &exi :chook
-        unset-variable :chook
+  !force 2 indent
+  !if &equ $result .indent.vbscript
+    !if &seq :chook "vb"
+      !return
+    !endif
+    set-variable :chook "vb"
+  !elif &equ $result .indent.javascript
+    !if &seq :chook "js"
+      !return
+    !endif
+    set-variable :chook "js"
+  !elif &exi :chook
+    unset-variable :chook
+  !else
+    !return
+  !endif
+  !if &sin "s" .fhook-xml.setup
+    !if &exi :chook
+      set-variable :auto-spell &cond &seq $buffer-input "auto-spell-input" 1 -1
+      -1 auto-spell
     !else
-        !return
+      :auto-spell auto-spell
     !endif
-    !if &sin "s" .fhook-xml.setup
-        !if &exi :chook
-            set-variable :auto-spell &cond &seq $buffer-input "auto-spell-input" 1 -1
-            -1 auto-spell
-        !else
-            :auto-spell auto-spell
-        !endif
-    !endif
-    !if .toolbar.open
-        ; flag that the buffer type has changed
-        set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x004
-    !endif
+  !endif
+  !if .toolbar.open
+    ; flag that the buffer type has changed
+    set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x004
+  !endif
 !emacro
 
 0 define-macro xml-spell-word
-    ; simply skip any text in a <..> token - put a 5 line limit on it
-    set-variable #l0 $window-col
-    set-variable #l1 $window-line
-    -2 show-region
-    set-variable #l2 $window-col
-    !force -5 search-buffer "bem" "[<>]"
-    !if $status
-        set-variable #l3 @wc
-        set-variable $window-line #l1
-        set-variable $window-col #l0
-        !if &seq #l3 "<"
-            ; this is a <..> token, skip all if spelling buffer (@# != 0)
-            !if @#
-                !force search-forward ">"
-                set-variable .spell.check-word ""
-            !endif
-            !return
-        !endif
-    !endif
-    ; must redefine the region as the search blows it away
-    set-variable $window-col #l2
-    -3 show-region
+  ; simply skip any text in a <..> token - put a 5 line limit on it
+  set-variable #l0 $window-col
+  set-variable #l1 $window-line
+  -2 show-region
+  set-variable #l2 $window-col
+  !force -5 search-buffer "bem" "[<>]"
+  !if $status
+    set-variable #l3 @wc
+    set-variable $window-line #l1
     set-variable $window-col #l0
-    3 show-region
-    !abort
+    !if &seq #l3 "<"
+      ; this is a <..> token, skip all if spelling buffer (@# != 0)
+      !if @#
+        !force search-forward ">"
+        set-variable .spell.check-word ""
+      !endif
+      !return
+    !endif
+  !endif
+  ; must redefine the region as the search blows it away
+  set-variable $window-col #l2
+  -3 show-region
+  set-variable $window-col #l0
+  3 show-region
+  !abort
 !emacro
 
 buffer-init-fhook "xml"

@@ -10,8 +10,8 @@
 ; Notes:       See docmacro.emf for documentation
 ;
 define-macro fhook-apt
-    ; use the document fhook in docmacro
-    @# doc-fhook-body "apt" "apt"
+  ; use the document fhook in docmacro
+  @# doc-fhook-body "apt" "apt"
 !emacro
 
 ; buffer-init variables
@@ -23,56 +23,56 @@ set-variable .fhook-apt.setup-mask "aefghijkmnopstuwx"
 execute-file "docmacro" "apt"
 
 !if &not &exist .hilight.apt
-    set-variable .hilight.apt  &pinc .hilight.next 1
+  set-variable .hilight.apt  &pinc .hilight.next 1
 !endif
 
 !if &and &sin "h" .fhook-apt.setup &band .hilight.flags 0x02
-    0 hilight .hilight.apt 0x00 $global-scheme
-    
-    set-variable #l0 .hilight.apt
-    ; Title
-    hilight #l0 4 "^\\s+---+" "^\\s*$" "" .scheme.comment
-    ; Headings
-    hilight #l0 2 "^\\w.*" .scheme.function
-    hilight #l0 2 "^\*+ \\w.*" .scheme.function
-    ; Lists
-    hilight #l0 1 "^\\s+\*" .scheme.operator
-    hilight #l0 1 "^\\s+[\[][\[]\\w+[\]][\]]" .scheme.operator
-    hilight #l0 1 "^\\s+[\[][^\]]+[\]]" .scheme.operator
-    hilight #l0 1 "^\\s+[\[][\]]" .scheme.type
-    ; Verbatim
-    hilight #l0 4 "^[-+]---[-+]+" "^[-+]---[-+]+" "" .scheme.quote
-    ; Figure Caption
-    hilight #l0 1 "^[\[][^\]]+[\]]" .scheme.type
-    ; Table
-    hilight #l0 2 "^[*]--" .scheme.keyword
-    ; Horizontal line
-    hilight #l0 2 "^===+" .scheme.operator
-    ; Page break
-    hilight #l0 2 "^^L" .scheme.hlred
-    ; Text styles
-    hilight #l0 1 "<[^>]+>" .scheme.bold-italic
-    hilight #l0 1 "<<[^>]+>>" .scheme.bold
-    hilight #l0 1 "<<<[^>]+>>>" .scheme.string
-    ; Links
-    hilight #l0 1 "{[^}]+}" .scheme.prepro
-    hilight #l0 1 "{{[^}]+}}" .scheme.keyword
-    hilight #l0 1 "{{{[^}]+}\\w[^}]+}}" .scheme.keyword
-    ; Bad links
-    hilight #l0 1 "{[^}]+" .scheme.error
-    hilight #l0 1 "{{[^}]+" .scheme.error
-    hilight #l0 1 "{{{[^}]+" .scheme.error
-    hilight #l0 1 "{{{[^}]+}\\w[^}]+" .scheme.error
-    ; Line break
-    hilight #l0 0 "\\\\\s*$" .scheme.bold-under
-    ; Non breaking space
-    hilight #l0 0 "\\\\ " .scheme.under
-    ; Escaped special characters
-    hilight #l0 0 "\\\\[\]\[<>{}=~+*\\]" .scheme.type
-    hilight #l0 0 "\\\\-" .scheme.type
-    hilight #l0 1 "\\\\\\w+" .scheme.type
-    ; Comments
-    hilight #l0 2 "^~~" .scheme.comment
+  0 hilight .hilight.apt 0x00 $global-scheme
+  
+  set-variable #l0 .hilight.apt
+  ; Title
+  hilight #l0 4 "^\\s+---+" "^\\s*$" "" .scheme.comment
+  ; Headings
+  hilight #l0 2 "^\\w.*" .scheme.function
+  hilight #l0 2 "^\*+ \\w.*" .scheme.function
+  ; Lists
+  hilight #l0 1 "^\\s+\*" .scheme.operator
+  hilight #l0 1 "^\\s+[\[][\[]\\w+[\]][\]]" .scheme.operator
+  hilight #l0 1 "^\\s+[\[][^\]]+[\]]" .scheme.operator
+  hilight #l0 1 "^\\s+[\[][\]]" .scheme.type
+  ; Verbatim
+  hilight #l0 4 "^[-+]---[-+]+" "^[-+]---[-+]+" "" .scheme.quote
+  ; Figure Caption
+  hilight #l0 1 "^[\[][^\]]+[\]]" .scheme.type
+  ; Table
+  hilight #l0 2 "^[*]--" .scheme.keyword
+  ; Horizontal line
+  hilight #l0 2 "^===+" .scheme.operator
+  ; Page break
+  hilight #l0 2 "^^L" .scheme.hlred
+  ; Text styles
+  hilight #l0 1 "<[^>]+>" .scheme.bold-italic
+  hilight #l0 1 "<<[^>]+>>" .scheme.bold
+  hilight #l0 1 "<<<[^>]+>>>" .scheme.string
+  ; Links
+  hilight #l0 1 "{[^}]+}" .scheme.prepro
+  hilight #l0 1 "{{[^}]+}}" .scheme.keyword
+  hilight #l0 1 "{{{[^}]+}\\w[^}]+}}" .scheme.keyword
+  ; Bad links
+  hilight #l0 1 "{[^}]+" .scheme.error
+  hilight #l0 1 "{{[^}]+" .scheme.error
+  hilight #l0 1 "{{{[^}]+" .scheme.error
+  hilight #l0 1 "{{{[^}]+}\\w[^}]+" .scheme.error
+  ; Line break
+  hilight #l0 0 "\\\\\s*$" .scheme.bold-under
+  ; Non breaking space
+  hilight #l0 0 "\\\\ " .scheme.under
+  ; Escaped special characters
+  hilight #l0 0 "\\\\[\]\[<>{}=~+*\\]" .scheme.type
+  hilight #l0 0 "\\\\-" .scheme.type
+  hilight #l0 1 "\\\\\\w+" .scheme.type
+  ; Comments
+  hilight #l0 2 "^~~" .scheme.comment
 !endif
 
 buffer-init-fhook "apt"

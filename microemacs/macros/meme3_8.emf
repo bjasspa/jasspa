@@ -8,264 +8,264 @@
 ; Authors:     Steven Phillips
 ;
 define-macro unmark-buffer
-    -1 buffer-mode "edit"
+  -1 buffer-mode "edit"
 !emacro
 ; Add a buffer mode
 define-macro add-mode
-    ; Has the require mode been given as an argument, if so add it
-    !force 1 buffer-mode @1
-    !if &not $status
-        ; No - use 1 buffer-mode to add a mode
-        !nma 1 buffer-mode
-    !endif
+  ; Has the require mode been given as an argument, if so add it
+  !force 1 buffer-mode @1
+  !if &not $status
+    ; No - use 1 buffer-mode to add a mode
+    !nma 1 buffer-mode
+  !endif
 !emacro
 define-macro delete-mode
-    !force -1 buffer-mode @1
-    !if &not $status
-        !nma -1 buffer-mode
-    !endif
+  !force -1 buffer-mode @1
+  !if &not $status
+    !nma -1 buffer-mode
+  !endif
 !emacro
 define-macro add-global-mode 
-    !force 1 global-mode @1
-    !if &not $status
-        !nma 1 global-mode
-    !endif
+  !force 1 global-mode @1
+  !if &not $status
+    !nma 1 global-mode
+  !endif
 !emacro
 define-macro delete-global-mode
-    !force -1 global-mode @1
-    !if &not $status
-        !nma -1 global-mode
-    !endif
+  !force -1 global-mode @1
+  !if &not $status
+    !nma -1 global-mode
+  !endif
 !emacro
 define-macro apropos
-    !force command-apropos @1
-    !if &not $status
-        !nma command-apropos
-    !endif
+  !force command-apropos @1
+  !if &not $status
+    !nma command-apropos
+  !endif
 !emacro
 define-macro backward-character
-    @# backward-char
+  @# backward-char
 !emacro
 define-macro forward-character
-    @# forward-char
+  @# forward-char
 !emacro
 define-macro next-line
-    @# forward-line
+  @# forward-line
 !emacro
 define-macro next-page
-    scroll-down
+  scroll-down
 !emacro
 define-macro next-paragraph
-    @# forward-paragraph
+  @# forward-paragraph
 !emacro
 define-macro next-word
-    @# forward-word
+  @# forward-word
 !emacro
 define-macro beginning-of-file
-    beginning-of-buffer
+  beginning-of-buffer
 !emacro
 define-macro end-of-file
-    end-of-buffer
+  end-of-buffer
 !emacro
 define-macro begin-macro
-    start-kbd-macro
+  start-kbd-macro
 !emacro
 define-macro end-macro
-    end-kbd-macro
+  end-kbd-macro
 !emacro
 define-macro bind-to-key
-    !force global-bind-key @1 @2
-    !if &not $status
-        !nma global-bind-key
-    !endif
+  !force global-bind-key @1 @2
+  !if &not $status
+    !nma global-bind-key
+  !endif
 !emacro
 define-macro unbind-key
-    !force global-unbind-key @1
-    !if &not $status
-        !nma global-unbind-key
-    !endif
+  !force global-unbind-key @1
+  !if &not $status
+    !nma global-unbind-key
+  !endif
 !emacro
 define-macro buffer-position
-    buffer-info
+  buffer-info
 !emacro
 define-macro case-region-lower
-    lower-case-region
+  lower-case-region
 !emacro
 define-macro case-region-upper
-    upper-case-region
+  upper-case-region
 !emacro
 define-macro case-word-capitalize
-    @# case-word-capitalize
+  @# case-word-capitalize
 !emacro
 define-macro case-word-lower
-    @# lower-case-word
+  @# lower-case-word
 !emacro
 define-macro case-word-upper
-    @# upper-case-word
+  @# upper-case-word
 !emacro
 define-macro clear-message-line
-    0 ml-write
+  0 ml-write
 !emacro
 define-macro delete-next-character
-    @# forward-delete-char
+  @# forward-delete-char
 !emacro
 define-macro delete-next-word
-    @# forward-kill-word
+  @# forward-kill-word
 !emacro
 define-macro delete-previous-character
-    @# backward-delete-char
+  @# backward-delete-char
 !emacro
 define-macro delete-previous-word
-    @# backward-kill-word
+  @# backward-kill-word
 !emacro
 define-macro execute-command-line
-    !force @# execute-line @1
-    !if &not $status
-        !nma @# execute-line
-    !endif
+  !force @# execute-line @1
+  !if &not $status
+    !nma @# execute-line
+  !endif
 !emacro
 define-macro execute-macro
-    @# execute-kbd-macro
+  @# execute-kbd-macro
 !emacro
 define-macro file-name-insert
-    @# insert-file-name
+  @# insert-file-name
 !emacro
 define-macro file-name-insert
-    @# insert-file-name
+  @# insert-file-name
 !emacro
 define-macro grow-window
-    @# change-window-depth
+  @# change-window-depth
 !emacro
 define-macro shrink-window
-    &neg @# change-window-depth
+  &neg @# change-window-depth
 !emacro
 define-macro split-current-window
-    @# split-window-vertically
+  @# split-window-vertically
 !emacro
 define-macro handle-tab
-    @# tab
+  @# tab
 !emacro
 define-macro i-shell
-    shell
+  shell
 !emacro
 define-macro incremental-search
-    !nma isearch-forward
+  !nma isearch-forward
 !emacro
 define-macro reverse-incremental-search
-    !nma isearch-backward
+  !nma isearch-backward
 !emacro
 define-macro search-reverse
-    !force set-variable #l0 @1
-    !if $status
-        @# search-backward #l0
-    !else
-        !nma @# search-backward
-    !endif
+  !force set-variable #l0 @1
+  !if $status
+    @# search-backward #l0
+  !else
+    !nma @# search-backward
+  !endif
 !emacro
 define-macro kill-to-end-of-line
-    @# kill-line
+  @# kill-line
 !emacro
 define-macro move-window-down
-    scroll-down
+  scroll-down
 !emacro
 define-macro move-window-up
-    scroll-up
+  scroll-up
 !emacro
 define-macro name-buffer
-    !force @# change-buffer-name @1
-    !if &not $status
-        !nma @# change-buffer-name
-    !endif
+  !force @# change-buffer-name @1
+  !if &not $status
+    !nma @# change-buffer-name
+  !endif
 !emacro
 define-macro open-line
-    @# insert-newline
+  @# insert-newline
 !emacro
 define-macro reverse-incremental-search
-    !force set-variable #l0 @1
-    !if $status
-        pipe-shell-command #l0
-    !else
-        !nma pipe-shell-command
-    !endif
+  !force set-variable #l0 @1
+  !if $status
+    pipe-shell-command #l0
+  !else
+    !nma pipe-shell-command
+  !endif
 !emacro
 define-macro previous-line
-    @# backward-line
+  @# backward-line
 !emacro
 define-macro previous-page
-    scroll-up
+  scroll-up
 !emacro
 define-macro previous-paragraph
-    @# backward-paragraph
+  @# backward-paragraph
 !emacro
 define-macro previous-word
-    @# backward-word
+  @# backward-word
 !emacro
 define-macro previous-word
-    @# backward-word
+  @# backward-word
 !emacro
 define-macro quote-character
-    !force set-variable #l0 @1
-    !if $status
-        @# quote-char @1
-    !else
-        !nma @# quote-char
-    !endif
+  !force set-variable #l0 @1
+  !if $status
+    @# quote-char @1
+  !else
+    !nma @# quote-char
+  !endif
 !emacro
 define-macro redraw-display
-    recenter
+  recenter
 !emacro
 define-macro restore-window
-    goto-position "\x80"
+  goto-position "\x80"
 !emacro
 define-macro save-window
-    1 set-position "\x80"
+  1 set-position "\x80"
 !emacro
 define-macro save-file
-    @# save-buffer
+  @# save-buffer
 !emacro
 define-macro scroll-next-down
-    !if @?
-        @# scroll-next-window-down
-    !else
-        scroll-next-window-down
-    !endif
+  !if @?
+    @# scroll-next-window-down
+  !else
+    scroll-next-window-down
+  !endif
 !emacro
 define-macro scroll-next-up
-    !if @?
-        @# scroll-next-window-up
-    !else
-        scroll-next-window-up
-    !endif
+  !if @?
+    @# scroll-next-window-up
+  !else
+    scroll-next-window-up
+  !endif
 !emacro
 define-macro select-buffer
-    !force @# find-buffer @1
-    !if &not $status
-        !nma @# find-buffer
-    !endif
+  !force @# find-buffer @1
+  !if &not $status
+    !nma @# find-buffer
+  !endif
 !emacro
 define-macro set
-    !force set-variable @1 @2
-    !if &not $status
-        !nma set-variable
-    !endif
+  !force set-variable @1 @2
+  !if &not $status
+    !nma set-variable
+  !endif
 !emacro
 define-macro top-bottom-switch
-    !if &equ $window-line 1
-        end-of-buffer
-    !else
-        beginning-of-buffer
-    !endif
+  !if &equ $window-line 1
+    end-of-buffer
+  !else
+    beginning-of-buffer
+  !endif
 !emacro
 define-macro transpose-characters
-    transpose-chars
+  transpose-chars
 !emacro
 define-macro update-screen
-    screen-update
+  screen-update
 !emacro
 define-macro write-message
-    !force ml-write @1
-    !if &not $status
-        !nma ml-write
-    !endif
+  !force ml-write @1
+  !if &not $status
+    !nma ml-write
+  !endif
 !emacro
 

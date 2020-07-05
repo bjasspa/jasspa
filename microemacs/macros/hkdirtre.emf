@@ -8,12 +8,12 @@
 ; Authors:     Steven Phillips
 ;
 define-macro fhook-dirtre
-    @# buffer-init "dirtre"
-    set-variable :mouse-pick-1 void
-    set-variable :mouse-drop-1 dirtre-mouse-drop-1
-    set-variable :mouse-pick-3 void
-    set-variable :mouse-drop-3 dirtre-mouse-drop-3
-    buffer-init-hooks
+  @# buffer-init "dirtre"
+  set-variable :mouse-pick-1 void
+  set-variable :mouse-drop-1 dirtre-mouse-drop-1
+  set-variable :mouse-pick-3 void
+  set-variable :mouse-drop-3 dirtre-mouse-drop-3
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -27,30 +27,30 @@ set-variable .fhook-dirtre.command-kbind "|tab|f10||space|o|O|+|c|C|-|return|C-r
 set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|Close File \HBrowser||\HSelect Directory|\HOpen Directory|||\HClose Directory|||Open/Close \HDirectory|\HRecursively Open/Close Directory||"
 
 !if &and &sin "h" .fhook-dirtre.setup &band .hilight.flags 0x02 
-    !if &not &exist .hilight.dirtre
-        set-variable .hilight.dirtre  &pinc .hilight.next 1
-        set-variable .hilight.dirtre2 &pinc .hilight.next 1
-    !endif
-    0 hilight .hilight.dirtre 0 $global-scheme
-    !if &seq &lef $box-chars 1 "|"
-        hilight .hilight.dirtre  0x081 "+" .hilight.dirtre2   $global-scheme
-        
-        0 hilight  .hilight.dirtre2 0                         $global-scheme
-        hilight .hilight.dirtre2 0x081 "+" .hilight.dirtre    .scheme.dir-closed
-        hilight .hilight.dirtre2 0x081 "?" .hilight.dirtre    .scheme.dir-uknown
-        hilight .hilight.dirtre2 0x080 "." .hilight.dirtre    $global-scheme
-    !else
-        hilight .hilight.dirtre  0x001 "+"   .scheme.dir-closed
-        hilight .hilight.dirtre  0x001 "-"   .scheme.dir-open
-        hilight .hilight.dirtre  0x001 "?"   .scheme.dir-uknown
-        ; Color the directory lines if not default.
-        hilight .hilight.dirtre  0x001 &lef $box-chars   1 .scheme.dir-tree
-        hilight .hilight.dirtre  0x001 &rig $box-chars  10 .scheme.dir-tree
-        hilight .hilight.dirtre  0x001 &mid $box-chars 3 1 .scheme.dir-tree
-        hilight .hilight.dirtre  0x001 &mid $box-chars 6 1 .scheme.dir-tree
-    !endif
-    hilight .hilight.dirtre 0x101 "*"       .scheme.dir-select
-    hilight .hilight.dirtre 0x002 " \\{-> " .scheme.dir-slink
+  !if &not &exist .hilight.dirtre
+    set-variable .hilight.dirtre  &pinc .hilight.next 1
+    set-variable .hilight.dirtre2 &pinc .hilight.next 1
+  !endif
+  0 hilight .hilight.dirtre 0 $global-scheme
+  !if &seq &lef $box-chars 1 "|"
+    hilight .hilight.dirtre  0x081 "+" .hilight.dirtre2   $global-scheme
+    
+    0 hilight  .hilight.dirtre2 0                         $global-scheme
+    hilight .hilight.dirtre2 0x081 "+" .hilight.dirtre    .scheme.dir-closed
+    hilight .hilight.dirtre2 0x081 "?" .hilight.dirtre    .scheme.dir-uknown
+    hilight .hilight.dirtre2 0x080 "." .hilight.dirtre    $global-scheme
+  !else
+    hilight .hilight.dirtre  0x001 "+"   .scheme.dir-closed
+    hilight .hilight.dirtre  0x001 "-"   .scheme.dir-open
+    hilight .hilight.dirtre  0x001 "?"   .scheme.dir-uknown
+    ; Color the directory lines if not default.
+    hilight .hilight.dirtre  0x001 &lef $box-chars   1 .scheme.dir-tree
+    hilight .hilight.dirtre  0x001 &rig $box-chars  10 .scheme.dir-tree
+    hilight .hilight.dirtre  0x001 &mid $box-chars 3 1 .scheme.dir-tree
+    hilight .hilight.dirtre  0x001 &mid $box-chars 6 1 .scheme.dir-tree
+  !endif
+  hilight .hilight.dirtre 0x101 "*"       .scheme.dir-select
+  hilight .hilight.dirtre 0x002 " \\{-> " .scheme.dir-slink
 !endif
 
 ;
@@ -59,120 +59,120 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|Close File \HB
 ; performed since the macro is only bound to the *directory* buffer.
 ;
 0 define-macro dirtre-select-directory
-    ; Save the *directory* line number and window position for re-frame
-    ; Render the new *directory* list and re-frame.
-    set-variable #l2 $window-line    ; Save the line number
-    set-variable #l3 $window-y-scroll
-    @# directory-tree
-    !if &band $window-flags 0x1000
-        1 buffer-mode "hide"
+  ; Save the *directory* line number and window position for re-frame
+  ; Render the new *directory* list and re-frame.
+  set-variable #l2 $window-line    ; Save the line number
+  set-variable #l3 $window-y-scroll
+  @# directory-tree
+  !if &band $window-flags 0x1000
+    1 buffer-mode "hide"
+  !endif
+  set-variable $window-line #l2
+  set-variable $window-y-scroll #l3
+  !if &not &band @# 2              ; Making the directory current ??
+    !return                      ; No - do not update the *files* window
+  !endif
+  ; Render the *files* information.
+  set-variable #l0 $buffer-fname
+  1 set-position "\x81"
+  !force 0 popup-window "*files*"
+  !if $status
+    !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.file-process :file-process
+      read-file #l0
+      !if &not &seq .fhook-dirlst.file-process :file-process
+        ; old buffer with the wrong processing - refresh
+        !force 0 delete-buffer $buffer-bname
+        find-file #l0
+      !endif
+      change-buffer-name "*files*"
+      buffer-bind-create "bio" "f10" "" file-browser-close
+      buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
+    !elif &band .find-file.flags 1
+      0 dirlst-refresh
     !endif
-    set-variable $window-line #l2
-    set-variable $window-y-scroll #l3
-    !if &not &band @# 2              ; Making the directory current ??
-        !return                      ; No - do not update the *files* window
-    !endif
-    ; Render the *files* information.
-    set-variable #l0 $buffer-fname
-    1 set-position "\x81"
-    !force 0 popup-window "*files*"
-    !if $status
-        !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.file-process :file-process
-            read-file #l0
-            !if &not &seq .fhook-dirlst.file-process :file-process
-                ; old buffer with the wrong processing - refresh
-                !force 0 delete-buffer $buffer-bname
-                find-file #l0
-            !endif
-            change-buffer-name "*files*"
-            buffer-bind-create "bio" "f10" "" file-browser-close
-            buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
-        !elif &band .find-file.flags 1
-            0 dirlst-refresh
-        !endif
-    !endif
-    goto-position "\x81"
+  !endif
+  goto-position "\x81"
 !emacro
 
 0 define-macro dirtre-mouse-drop-1
-    ; For the directory position use registers as follows:-
-    ;   #l0 - The current cursor position.
-    ;   #l1 - The selection box position.
-    set-cursor-to-mouse
-    set-variable #l0 $window-col
-    beginning-of-line
-    !force -1 search-forward &cat &cat "[-?+" &rig $box-chars 10 "] "
-    !if &not $status
-        set-variable $window-col #l0
-        !if &band $window-flags 0x1000
-            1 goto-position "\x82"
-        !endif
-        !return
-    !endif
-    set-variable #l1 $window-col
+  ; For the directory position use registers as follows:-
+  ;   #l0 - The current cursor position.
+  ;   #l1 - The selection box position.
+  set-cursor-to-mouse
+  set-variable #l0 $window-col
+  beginning-of-line
+  !force -1 search-forward &cat &cat "[-?+" &rig $box-chars 10 "] "
+  !if &not $status
     set-variable $window-col #l0
-    ; Save the *directory* line number and window position for re-frame
-    set-variable #l2 $window-line
-    set-variable #l3 $window-y-scroll
-    ; if '+', '-' or '?' tag position.
-    !if &equ &sub #l1 2 #l0
-        &cond @? @# 0x66 directory-tree
-        !if &band $window-flags 0x1000
-            1 buffer-mode "hide"
-        !endif
-        set-variable #l4 0
-    !elif &les #l0 #l1
-        ; hit char between the name and '+'/'-'
-        !if &band $window-flags 0x1000
-            1 goto-position "\x82"
-        !endif
-        !return
-    !else
-        ; hit the name, just select it
-        0x02 directory-tree
-        !if &band $window-flags 0x1000
-            1 buffer-mode "hide"
-        !endif
-        set-variable #l4 1
-    !endif
-    ; Reframe the *directory* window:
-    ; Done by going to the old line number and reframing the window
-    set-variable $window-line #l2
-    set-variable $window-y-scroll #l3
-    set-variable #l0 $buffer-fname
-    ; if this is a toolbar dir-tree go back to the original window - return now so popup of *files* works okay
     !if &band $window-flags 0x1000
-        1 goto-position "\x82"
+      1 goto-position "\x82"
     !endif
-    !if #l4
-        ; If selected the name then setup the echo in the *files* directory.
-        1 set-position "\x81"
-        !force 1 popup-window "*files*"
-        !if $status
-            !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.file-process :file-process
-                read-file #l0
-                !if &not &seq .fhook-dirlst.file-process :file-process
-                    ; old buffer with the wrong processing - refresh
-                    !force 0 delete-buffer $buffer-bname
-                    find-file #l0
-                !endif
-                change-buffer-name "*files*"
-                buffer-bind-create "bio" "f10" "" file-browser-close
-                buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
-            !elif &band .find-file.flags 1
-                0 dirlst-refresh
-            !endif
-        !endif
-        goto-position "\x81"
-    !endif
-    ; if this is a toolbar dir-tree go back to the original window
+    !return
+  !endif
+  set-variable #l1 $window-col
+  set-variable $window-col #l0
+  ; Save the *directory* line number and window position for re-frame
+  set-variable #l2 $window-line
+  set-variable #l3 $window-y-scroll
+  ; if '+', '-' or '?' tag position.
+  !if &equ &sub #l1 2 #l0
+    &cond @? @# 0x66 directory-tree
     !if &band $window-flags 0x1000
-        1 goto-position "\x82"
+      1 buffer-mode "hide"
     !endif
+    set-variable #l4 0
+  !elif &les #l0 #l1
+    ; hit char between the name and '+'/'-'
+    !if &band $window-flags 0x1000
+      1 goto-position "\x82"
+    !endif
+    !return
+  !else
+    ; hit the name, just select it
+    0x02 directory-tree
+    !if &band $window-flags 0x1000
+      1 buffer-mode "hide"
+    !endif
+    set-variable #l4 1
+  !endif
+  ; Reframe the *directory* window:
+  ; Done by going to the old line number and reframing the window
+  set-variable $window-line #l2
+  set-variable $window-y-scroll #l3
+  set-variable #l0 $buffer-fname
+  ; if this is a toolbar dir-tree go back to the original window - return now so popup of *files* works okay
+  !if &band $window-flags 0x1000
+    1 goto-position "\x82"
+  !endif
+  !if #l4
+    ; If selected the name then setup the echo in the *files* directory.
+    1 set-position "\x81"
+    !force 1 popup-window "*files*"
+    !if $status
+      !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.file-process :file-process
+        read-file #l0
+        !if &not &seq .fhook-dirlst.file-process :file-process
+          ; old buffer with the wrong processing - refresh
+          !force 0 delete-buffer $buffer-bname
+          find-file #l0
+        !endif
+        change-buffer-name "*files*"
+        buffer-bind-create "bio" "f10" "" file-browser-close
+        buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
+      !elif &band .find-file.flags 1
+        0 dirlst-refresh
+      !endif
+    !endif
+    goto-position "\x81"
+  !endif
+  ; if this is a toolbar dir-tree go back to the original window
+  !if &band $window-flags 0x1000
+    1 goto-position "\x82"
+  !endif
 !emacro
 
 0 define-macro dirtre-mouse-drop-3
-    0xa6 dirtre-mouse-drop-1
+  0xa6 dirtre-mouse-drop-1
 !emacro
 
 buffer-init-fhook "dirtre"

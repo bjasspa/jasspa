@@ -29,10 +29,10 @@ osd 0  85  "D"
 osd 0  90  "Mdfsr" " \HHelp "     9
 ; shrink the default window size so it fits
 !if &not &set #l0 &reg &spr "/history/%s/frame-width" %platform "0"
-    change-frame-width 71
+  change-frame-width 71
 !endif
 !if &not &set #l0 &reg &spr "/history/%s/frame-depth" %platform "0"
-    change-frame-depth 28
+  change-frame-depth 28
 !endif
 
 ; no vt100-nam on linux, this may cause problems in an ishell

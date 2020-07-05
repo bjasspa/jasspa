@@ -8,188 +8,188 @@
 ; Authors:     Steven Phillips
 ;
 !if &not &exi .org.list
-    set-variable .org.list "Default"
-    set-variable .org.listitem 0
+  set-variable .org.list "Default"
+  set-variable .org.listitem 0
 !endif
 
 0 define-macro org-list-init
-    org-list-setup
+  org-list-setup
 !emacro
-    
+
 0 define-macro org-list-entry
-    set-variable #l0 &reg &spr "/org/list/%s/%d" .org.list &abs @# ""
-    !if &les @# 0
-        !if &seq #l0 " "
-            set-variable #l0 ""
-        !endif
-        set-variable #l1 @ml2 "" #l0
-        !if &not &seq #l0 #l1
-            !if &seq #l1 ""
-                set-registry &spr "/org/list/%s/%d" .org.list &abs @# " "
-            !else
-                set-registry &spr "/org/list/%s/%d" .org.list &abs @# #l1
-            !endif
-            mark-registry "/org" "u"
-        !endif
-    !else
-        set-variable $result #l0
+  set-variable #l0 &reg &spr "/org/list/%s/%d" .org.list &abs @# ""
+  !if &les @# 0
+    !if &seq #l0 " "
+      set-variable #l0 ""
     !endif
+    set-variable #l1 @ml2 "" #l0
+    !if &not &seq #l0 #l1
+      !if &seq #l1 ""
+        set-registry &spr "/org/list/%s/%d" .org.list &abs @# " "
+      !else
+        set-registry &spr "/org/list/%s/%d" .org.list &abs @# #l1
+      !endif
+      mark-registry "/org" "u"
+    !endif
+  !else
+    set-variable $result #l0
+  !endif
 !emacro
 0 define-macro org-list-new
-    set-variable #l0 ""
-    osd-entry "Organizer" "\HNew List : " #l0 20
-    set-variable .org.list #l0
-    set-registry &spr "/org/list/%s" .org.list ""
-    mark-registry "/org" "u"
-    org-list-item
+  set-variable #l0 ""
+  osd-entry "Organizer" "\HNew List : " #l0 20
+  set-variable .org.list #l0
+  set-registry &spr "/org/list/%s" .org.list ""
+  mark-registry "/org" "u"
+  org-list-item
 !emacro
 0 define-macro org-list-del
-    set-variable #l0 &spr "Delete %s list?" .org.list
-    !force !force osd-xdialog "Organizer" #l0 2 "  \HYes  " "  \HNo  "
-    !if &and $status &equ $result 1
-        delete-registry &cat "/org/list/" .org.list
-        mark-registry "/org" "u"
-        set-variable .org.list "Default"
-        org-list-setup
-    !endif
+  set-variable #l0 &spr "Delete %s list?" .org.list
+  !force !force osd-xdialog "Organizer" #l0 2 "  \HYes  " "  \HNo  "
+  !if &and $status &equ $result 1
+    delete-registry &cat "/org/list/" .org.list
+    mark-registry "/org" "u"
+    set-variable .org.list "Default"
+    org-list-setup
+  !endif
 !emacro
 0 define-macro org-list-nolines
-    set-variable #l0  &reg &spr "/org/list/%s/nolines" .org.list 1
-    !if &les @# 0
-        set-variable #l1 @ml2 "" #l0
-        !if &and &gre #l1 0 &not &seq #l0 #l1
-            set-registry &spr "/org/list/%s/nolines" .org.list #l1
-            mark-registry "/org" "u"
-            org-list-setup
-        !endif
-    !else
-        set-variable $result #l0
+  set-variable #l0  &reg &spr "/org/list/%s/nolines" .org.list 1
+  !if &les @# 0
+    set-variable #l1 @ml2 "" #l0
+    !if &and &gre #l1 0 &not &seq #l0 #l1
+      set-registry &spr "/org/list/%s/nolines" .org.list #l1
+      mark-registry "/org" "u"
+      org-list-setup
     !endif
+  !else
+    set-variable $result #l0
+  !endif
 !emacro
 
 0 define-macro org-list-item
-    set-variable .org.listitem @#
-    org-list-setup
+  set-variable .org.listitem @#
+  org-list-setup
 !emacro
 0 define-macro org-list-item-button
-    !if &equ @# 1
-        ; New
-        set-variable .org.listsize &add .org.listsize 1
-        set-variable .org.listitem .org.listsize
-        set-registry &spr "/org/list/%s/%d" .org.list .org.listitem " "
-    !elif &equ @# 2
-        ; Up
-        set-variable #l0 &reg &spr "/org/list/%s/%d" .org.list .org.listitem " "
-        set-variable #l1 &sub .org.listitem 1
-        set-registry &spr "/org/list/%s/%d" .org.list .org.listitem &reg &spr "/org/list/%s/%d" .org.list #l1 " "
-        set-registry &spr "/org/list/%s/%d" .org.list #l1 #l0
-        set-variable .org.listitem #l1
-    !elif &equ @# 3
-        ; Down
-        set-variable #l0 &reg &spr "/org/list/%s/%d" .org.list .org.listitem " "
-        set-variable #l1 &add .org.listitem 1
-        set-registry &spr "/org/list/%s/%d" .org.list .org.listitem &reg &spr "/org/list/%s/%d" .org.list #l1 " "
-        set-registry &spr "/org/list/%s/%d" .org.list #l1 #l0
-        set-variable .org.listitem #l1
-    !elif &equ @# 4
-        ; Insert
-        set-variable .org.listsize &add .org.listsize 1
-        set-variable #l0 .org.listsize
-        !repeat
-            set-registry &spr "/org/list/%s/%d" .org.list #l0 &reg &spr "/org/list/%s/%d" .org.list &sub #l0 1 " "
-        !until &equ &dec #l0 1 .org.listitem
-        set-registry &spr "/org/list/%s/%d" .org.list #l0 " "
-    !elif &equ @# 5
-        ; Delete
-        set-variable #l0 .org.listitem
-        !while &les &pinc #l0 1  .org.listsize
-            set-registry &spr "/org/list/%s/%d" .org.list &sub #l0 1 &reg &spr "/org/list/%s/%d" .org.list #l0 " "
-        !done
-        delete-registry &spr "/org/list/%s/%d" .org.list .org.listsize
-        set-variable .org.listsize &sub .org.listsize 1
-        !if &gre .org.listitem .org.listsize
-            set-variable .org.listitem .org.listsize
-        !endif
+  !if &equ @# 1
+    ; New
+    set-variable .org.listsize &add .org.listsize 1
+    set-variable .org.listitem .org.listsize
+    set-registry &spr "/org/list/%s/%d" .org.list .org.listitem " "
+  !elif &equ @# 2
+    ; Up
+    set-variable #l0 &reg &spr "/org/list/%s/%d" .org.list .org.listitem " "
+    set-variable #l1 &sub .org.listitem 1
+    set-registry &spr "/org/list/%s/%d" .org.list .org.listitem &reg &spr "/org/list/%s/%d" .org.list #l1 " "
+    set-registry &spr "/org/list/%s/%d" .org.list #l1 #l0
+    set-variable .org.listitem #l1
+  !elif &equ @# 3
+    ; Down
+    set-variable #l0 &reg &spr "/org/list/%s/%d" .org.list .org.listitem " "
+    set-variable #l1 &add .org.listitem 1
+    set-registry &spr "/org/list/%s/%d" .org.list .org.listitem &reg &spr "/org/list/%s/%d" .org.list #l1 " "
+    set-registry &spr "/org/list/%s/%d" .org.list #l1 #l0
+    set-variable .org.listitem #l1
+  !elif &equ @# 4
+    ; Insert
+    set-variable .org.listsize &add .org.listsize 1
+    set-variable #l0 .org.listsize
+    !repeat
+      set-registry &spr "/org/list/%s/%d" .org.list #l0 &reg &spr "/org/list/%s/%d" .org.list &sub #l0 1 " "
+    !until &equ &dec #l0 1 .org.listitem
+    set-registry &spr "/org/list/%s/%d" .org.list #l0 " "
+  !elif &equ @# 5
+    ; Delete
+    set-variable #l0 .org.listitem
+    !while &les &pinc #l0 1  .org.listsize
+      set-registry &spr "/org/list/%s/%d" .org.list &sub #l0 1 &reg &spr "/org/list/%s/%d" .org.list #l0 " "
+    !done
+    delete-registry &spr "/org/list/%s/%d" .org.list .org.listsize
+    set-variable .org.listsize &sub .org.listsize 1
+    !if &gre .org.listitem .org.listsize
+      set-variable .org.listitem .org.listsize
     !endif
-    mark-registry "/org" "u"
+  !endif
+  mark-registry "/org" "u"
 !emacro
 
 0 define-macro org-list-setup
-    -1 osd .osd.orgl-p
-    osd .osd.orgl-p 0 "Absf" 22 0 0 0
-    set-variable #l0 0
-    !force find-registry "/org/list" #l0
-    !while $status
-        osd .osd.orgl-p 1 "" $result f org-list-set-list
-        !force find-registry "/org/list" &inc #l0 1
-    !done
-    osd .osd.orgl-p 1 "" "Default" f org-list-set-list
-    -1 osd .osd.orgl-c
-    osd .osd.orgl-c 0 "s" 60 25 -1 -1
-    set-variable #l0 0
-    set-variable #l1 &reg &spr "/org/list/%s/nolines" .org.list 1
-    !while &not &seq "" &reg &spr "/org/list/%s/%d" .org.list &inc #l0 1 ""
-        !if &equ #l0 .org.listitem
-            osd .osd.orgl-c    &mul #l0 2 "HfhzxR" .scheme.osd-entry 4 #l1 #l0 #l0 org-list-item
-        !else
-            osd .osd.orgl-c    &mul #l0 2 "fhzxR"  4 #l1 #l0 #l0 org-list-item
-        !endif
-        osd .osd.orgl-c &add 1 &mul #l0 2 "ENfzx" 56 #l1 "" #l0 org-list-entry
-    !done
-    set-variable .org.listsize &sub #l0 1
-    !if &not .org.listsize
-        osd .osd.orgl-c 2 "" ""
-    !endif
-    osd .osd.orgl 30 "MdtHmxszfh" .scheme.osd-entry 20 1 .org.list .osd.orgl-p
-    osd .osd.orgl 100 "RBtxhcfH" .scheme.osd-ebtt " \HNew " 1 org-list-item-button
-    !if &gre .org.listitem 1
-        osd .osd.orgl 110 "RBtxhcfH" .scheme.osd-ebtt " \HUp " 2 org-list-item-button
+  -1 osd .osd.orgl-p
+  osd .osd.orgl-p 0 "Absf" 22 0 0 0
+  set-variable #l0 0
+  !force find-registry "/org/list" #l0
+  !while $status
+    osd .osd.orgl-p 1 "" $result f org-list-set-list
+    !force find-registry "/org/list" &inc #l0 1
+  !done
+  osd .osd.orgl-p 1 "" "Default" f org-list-set-list
+  -1 osd .osd.orgl-c
+  osd .osd.orgl-c 0 "s" 60 25 -1 -1
+  set-variable #l0 0
+  set-variable #l1 &reg &spr "/org/list/%s/nolines" .org.list 1
+  !while &not &seq "" &reg &spr "/org/list/%s/%d" .org.list &inc #l0 1 ""
+    !if &equ #l0 .org.listitem
+      osd .osd.orgl-c    &mul #l0 2 "HfhzxR" .scheme.osd-entry 4 #l1 #l0 #l0 org-list-item
     !else
-        osd .osd.orgl 110 "BHcfh" .scheme.osd-dbtt " Up "
+      osd .osd.orgl-c    &mul #l0 2 "fhzxR"  4 #l1 #l0 #l0 org-list-item
     !endif
-    !if &and .org.listitem &les .org.listitem .org.listsize
-        osd .osd.orgl 120 "RBtxhcfH" .scheme.osd-ebtt " \HDown " 3 org-list-item-button
-    !else
-        osd .osd.orgl 120 "BHcfh" .scheme.osd-dbtt " Down "
-    !endif
-    !if .org.listitem
-        osd .osd.orgl 130 "RBtxhcfH" .scheme.osd-ebtt " \HInsert " 4 org-list-item-button
-        osd .osd.orgl 140 "RBtxcfH" .scheme.osd-ebtt " D\Helete " 5 org-list-item-button
-    !else
-        osd .osd.orgl 130 "BHcfh" .scheme.osd-dbtt " Insert "
-        osd .osd.orgl 140 "BHcf"  .scheme.osd-dbtt " Delete "
-    !endif
+    osd .osd.orgl-c &add 1 &mul #l0 2 "ENfzx" 56 #l1 "" #l0 org-list-entry
+  !done
+  set-variable .org.listsize &sub #l0 1
+  !if &not .org.listsize
+    osd .osd.orgl-c 2 "" ""
+  !endif
+  osd .osd.orgl 30 "MdtHmxszfh" .scheme.osd-entry 20 1 .org.list .osd.orgl-p
+  osd .osd.orgl 100 "RBtxhcfH" .scheme.osd-ebtt " \HNew " 1 org-list-item-button
+  !if &gre .org.listitem 1
+    osd .osd.orgl 110 "RBtxhcfH" .scheme.osd-ebtt " \HUp " 2 org-list-item-button
+  !else
+    osd .osd.orgl 110 "BHcfh" .scheme.osd-dbtt " Up "
+  !endif
+  !if &and .org.listitem &les .org.listitem .org.listsize
+    osd .osd.orgl 120 "RBtxhcfH" .scheme.osd-ebtt " \HDown " 3 org-list-item-button
+  !else
+    osd .osd.orgl 120 "BHcfh" .scheme.osd-dbtt " Down "
+  !endif
+  !if .org.listitem
+    osd .osd.orgl 130 "RBtxhcfH" .scheme.osd-ebtt " \HInsert " 4 org-list-item-button
+    osd .osd.orgl 140 "RBtxcfH" .scheme.osd-ebtt " D\Helete " 5 org-list-item-button
+  !else
+    osd .osd.orgl 130 "BHcfh" .scheme.osd-dbtt " Insert "
+    osd .osd.orgl 140 "BHcf"  .scheme.osd-dbtt " Delete "
+  !endif
 !emacro     
 
 0 define-macro org-list-buffer
-    beginning-of-line
-    insert-string &spr "       List: %s\n\n" .org.list
-    set-variable #l0 0
-    !while &not &seq "" &set #l1 &reg &spr "/org/list/%s/%d" .org.list &inc #l0 1 ""
-        set-variable #l4 &add $window-line 1
-        insert-string &spr "%2d: %s\n" #l0 #l1
-        set-variable #l5 $window-line
-        !while &not &equ $window-line #l4
-            backward-line
-            insert-string "    "
-            beginning-of-line
-        !done
-        set-variable $window-line #l5
+  beginning-of-line
+  insert-string &spr "       List: %s\n\n" .org.list
+  set-variable #l0 0
+  !while &not &seq "" &set #l1 &reg &spr "/org/list/%s/%d" .org.list &inc #l0 1 ""
+    set-variable #l4 &add $window-line 1
+    insert-string &spr "%2d: %s\n" #l0 #l1
+    set-variable #l5 $window-line
+    !while &not &equ $window-line #l4
+      backward-line
+      insert-string "    "
+      beginning-of-line
     !done
-    insert-newline
-    screen-update
+    set-variable $window-line #l5
+  !done
+  insert-newline
+  screen-update
 !emacro
 
 0 define-macro org-list-set-list
-    !if &not &seq .org.list $result
-        set-variable .org.list $result
-        set-variable .org.listitem 0
-        org-list-setup
-    !endif
+  !if &not &seq .org.list $result
+    set-variable .org.list $result
+    set-variable .org.listitem 0
+    org-list-setup
+  !endif
 !emacro
 
 
-    
+
 -1 osd .osd.orgl
 osd .osd.orgl  10 ""
 osd .osd.orgl  20 "Shf" "  \HList: " 30 

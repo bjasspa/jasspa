@@ -8,62 +8,62 @@
 ; Authors:     Jon Green
 ;
 !if &seq %tool-null-file "ERROR"
-    !if &band $system 0x080
-        set-variable %tool-null-file "/dev/null"
-    !else
-        set-variable %tool-null-file &spr "\"%s\"" &find "null" ""
-    !endif
+  !if &band $system 0x080
+    set-variable %tool-null-file "/dev/null"
+  !else
+    set-variable %tool-null-file &spr "\"%s\"" &find "null" ""
+  !endif
 !endif
 ; Once only. Add the default xgrep & xfind command line.
 !if &not &exi %xgrep-com
-    set-variable %xgrep-com "grep"
+  set-variable %xgrep-com "grep"
 !endif
 ; By default use "find" on Windows then use the native windows tools from
 ; "http://unxutils.sourceforge.net/" and set the absolute path to %xfind-com
 !if &not &exi %xfind-com
-    set-variable %xfind-com "find"
+  set-variable %xfind-com "find"
 !endif
 
 define-macro xgrep
-    !force set-variable #l0 @1
-    !if &not $status
-        set-variable #l0 @ml00 %xgrep-com
-    !endif
-    !if @?
-        0 pipe-shell-command &spr "%s %s %s" %xgrep-com #l0 %tool-null-file "*grep*" @mna
-    !else
-        0x200 ipipe-shell-command &spr "%s %s %s" %xgrep-com #l0 %tool-null-file "*grep*" @mna
-    !endif
+  !force set-variable #l0 @1
+  !if &not $status
+    set-variable #l0 @ml00 %xgrep-com
+  !endif
+  !if @?
+    0 pipe-shell-command &spr "%s %s %s" %xgrep-com #l0 %tool-null-file "*grep*" @mna
+  !else
+    0x200 ipipe-shell-command &spr "%s %s %s" %xgrep-com #l0 %tool-null-file "*grep*" @mna
+  !endif
 !emacro
 define-macro rgrep
-    !if &not &exi %xfind-com
-        exec-file "find"
+  !if &not &exi %xfind-com
+    exec-file "find"
+  !endif
+  !force set-variable #l2 @3
+  !if &not $status
+    set-variable #l0 @ml00 "RGrep for"
+    set-variable #l1 @ml01 "RGrep from directory"
+    set-variable #l2 @ml00 "RGrep file mask"
+  !else
+    set-variable #l0 @1
+    set-variable #l1 @2
+  !endif
+  !if &seq $platform "win32"
+    ; If this is a drive then add a dot to the end.
+    !if &xis #l1 "[a-z]:/"
+      set-variable #l1 &cat #l1 "."
     !endif
-    !force set-variable #l2 @3
-    !if &not $status
-        set-variable #l0 @ml00 "RGrep for"
-        set-variable #l1 @ml01 "RGrep from directory"
-        set-variable #l2 @ml00 "RGrep file mask"
-    !else
-        set-variable #l0 @1
-        set-variable #l1 @2
-    !endif
-    !if &seq $platform "win32"
-         ; If this is a drive then add a dot to the end.
-         !if &xis #l1 "[a-z]:/"
-             set-variable #l1 &cat #l1 "."
-         !endif
-         set-variable #l1 &xrep #l1 "/$" ""
-         set-variable #l1 &rep #l1 "/" "\\"
-         set-variable #l3 ";"
-     !else
-         set-variable #l3 "\\;"
-     !endif
-     !if @?
-         4 pipe-shell-command &spr "%s \"%s\" -name \"%s\" -exec %s \"%s\" {} %s %s" %xfind-com #l1 #l2 %xgrep-com #l0 %tool-null-file #l3 "*grep*" @mna
-     !else
-         4 ipipe-shell-command &spr "%s \"%s\" -name \"%s\" -exec %s \"%s\" {} %s %s" %xfind-com #l1 #l2 %xgrep-com #l0 %tool-null-file #l3 "*grep*" @mna
-    !endif
+    set-variable #l1 &xrep #l1 "/$" ""
+    set-variable #l1 &rep #l1 "/" "\\"
+    set-variable #l3 ";"
+  !else
+    set-variable #l3 "\\;"
+  !endif
+  !if @?
+    4 pipe-shell-command &spr "%s \"%s\" -name \"%s\" -exec %s \"%s\" {} %s %s" %xfind-com #l1 #l2 %xgrep-com #l0 %tool-null-file #l3 "*grep*" @mna
+  !else
+    4 ipipe-shell-command &spr "%s \"%s\" -name \"%s\" -exec %s \"%s\" {} %s %s" %xfind-com #l1 #l2 %xgrep-com #l0 %tool-null-file #l3 "*grep*" @mna
+  !endif
 !emacro
 
 ;
@@ -75,35 +75,35 @@ define-macro rgrep
 ; @param string     The search string.
 ;
 define-macro xfind
-    !force set-variable #l1 @2
-    !if &not $status
-        set-variable #l0 @ml01 "Find in directory"
-        set-variable #l1 @ml00 "Find what"
-    !else
-        set-variable #l0 @1
+  !force set-variable #l1 @2
+  !if &not $status
+    set-variable #l0 @ml01 "Find in directory"
+    set-variable #l1 @ml00 "Find what"
+  !else
+    set-variable #l0 @1
+  !endif
+  ; Convert to absolute path.
+  set-variable #l0 &stat "a" #l0
+  !if &band $system 0x100
+    ; If this is a drive then add a dot to the end.
+    !if &xis #l0 "[a-z]:/"
+      set-variable #l0 &cat #l0 "."
     !endif
-    ; Convert to absolute path.
-    set-variable #l0 &stat "a" #l0
-    !if &band $system 0x100
-        ; If this is a drive then add a dot to the end.
-        !if &xis #l0 "[a-z]:/"
-            set-variable #l0 &cat #l0 "."
-        !endif
-        set-variable #l0 &rep #l0 "/" "\\"
-        set-variable #l0 &xrep #l0 "\\\\$" ""
-        !if @?
-            0x4 pipe-shell-command &spr "%s \"%s\" -name \"%s\" -print" %xfind-com #l0 #l1 "*xfind*" @mna
-        !else
-            0x4 ipipe-shell-command &spr "%s \"%s\" -name \"%s\" -print" %xfind-com  #l0 #l1 "*xfind*" @mna
-        !endif
+    set-variable #l0 &rep #l0 "/" "\\"
+    set-variable #l0 &xrep #l0 "\\\\$" ""
+    !if @?
+      0x4 pipe-shell-command &spr "%s \"%s\" -name \"%s\" -print" %xfind-com #l0 #l1 "*xfind*" @mna
     !else
-        ;set-variable #l0 &xrep #l0 "/$" ""
-        !if @?
-            0x0 pipe-shell-command &spr "%s \"%s\" -name \"%s\" -print" %xfind-com #l0 #l1 "*xfind*" @mna
-        !else
-            0x0 ipipe-shell-command &spr "%s \"%s\" -name \"%s\" -print" %xfind-com  #l0 #l1 "*xfind*" @mna
-        !endif
+      0x4 ipipe-shell-command &spr "%s \"%s\" -name \"%s\" -print" %xfind-com  #l0 #l1 "*xfind*" @mna
     !endif
+  !else
+    ;set-variable #l0 &xrep #l0 "/$" ""
+    !if @?
+      0x0 pipe-shell-command &spr "%s \"%s\" -name \"%s\" -print" %xfind-com #l0 #l1 "*xfind*" @mna
+    !else
+      0x0 ipipe-shell-command &spr "%s \"%s\" -name \"%s\" -print" %xfind-com  #l0 #l1 "*xfind*" @mna
+    !endif
+  !endif
 !emacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -114,36 +114,36 @@ define-macro xfind
 
 ; Read a file from the list of files
 0 define-macro xfind-read
-    set-variable #l0 @wl
-    !if &les $window-line 4
-        ml-write "Invalid line"
-        !abort
-    !elif &seq #l0 ""
-        ml-write "Empty line"
-        !abort
-    !elif &seq &lef #l0 5 "[EXIT"
-        ml-write "End"
-        !abort
-    !elif &xis #l0 "^.*find.*: .*"
-        ml-write "Error line"
-        !abort
-    !endif
-    ; Use the popup-window to manage our buffers, this will keep the *xfind*
-    ; buffer on screen and split the window if this is the only window. Once
-    ; the file is loaded (if found) then we delete the temporary popup window
-    ; again. 
-    popup-window "*xfind-temp*"
-    !force find-file #l0 @nma
-    delete-buffer "*xfind-temp*"
+  set-variable #l0 @wl
+  !if &les $window-line 4
+    ml-write "Invalid line"
+    !abort
+  !elif &seq #l0 ""
+    ml-write "Empty line"
+    !abort
+  !elif &seq &lef #l0 5 "[EXIT"
+    ml-write "End"
+    !abort
+  !elif &xis #l0 "^.*find.*: .*"
+    ml-write "Error line"
+    !abort
+  !endif
+  ; Use the popup-window to manage our buffers, this will keep the *xfind*
+  ; buffer on screen and split the window if this is the only window. Once
+  ; the file is loaded (if found) then we delete the temporary popup window
+  ; again. 
+  popup-window "*xfind-temp*"
+  !force find-file #l0 @nma
+  delete-buffer "*xfind-temp*"
 !emacro
 ; Handle a tar file being read.
 define-macro fhook-xfind
-    -1 buffer-mode "view"
-    -1 buffer-mode "wrap"
-    buffer-init "xfind"
-    buffer-bind-create "bio" "return" "" xfind-read
-    set-variable :mouse-word-select xfind-read
-    buffer-init-hooks
+  -1 buffer-mode "view"
+  -1 buffer-mode "wrap"
+  buffer-init "xfind"
+  buffer-bind-create "bio" "return" "" xfind-read
+  set-variable :mouse-word-select xfind-read
+  buffer-init-hooks
 !emacro
 ; The xfind buffer-init variables.
 set-variable .fhook-xfind.name "Find"
@@ -151,17 +151,17 @@ set-variable .fhook-xfind.setup &reg "/history/fhook/xfind" "ghmop"
 set-variable .fhook-xfind.setup-mask    "aceghop"
 ; Define the hilighting.
 !if &and &sin "h" .fhook-xfind.setup &band .hilight.flags 0x02
-    !if &not &exist .hilight.xfind
-        set-variable .hilight.xfind &pinc .hilight.next 1
-    !endif
-    0 hilight .hilight.xfind 0                  $global-scheme
-    !if &band $system 0x100
-        hilight .hilight.xfind 2   "find.exe: " .scheme.comment
-    !else
-        hilight .hilight.xfind 0x2 "find: "     .scheme.comment
-    !endif
-    hilight .hilight.xfind 0x102   "\\[EXIT"    .scheme.comment
-    hilight .hilight.xfind 0x102   "cd "        .scheme.link
+  !if &not &exist .hilight.xfind
+    set-variable .hilight.xfind &pinc .hilight.next 1
+  !endif
+  0 hilight .hilight.xfind 0                  $global-scheme
+  !if &band $system 0x100
+    hilight .hilight.xfind 2   "find.exe: " .scheme.comment
+  !else
+    hilight .hilight.xfind 0x2 "find: "     .scheme.comment
+  !endif
+  hilight .hilight.xfind 0x102   "\\[EXIT"    .scheme.comment
+  hilight .hilight.xfind 0x102   "cd "        .scheme.link
 !endif
 ; Add the file hook and complete buffer setup.
 add-file-hook "*xfind*" fhook-xfind

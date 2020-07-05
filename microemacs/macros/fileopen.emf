@@ -12,250 +12,250 @@ set-variable .osd.fo-width 20
 set-variable .osd.fo-depth 10
 
 !if &seq .osd.fom "ERROR"
-    set-variable .osd.fom  &pinc .osd.next 1
-    set-variable .osd.fofm &pinc .osd.next 1
-    set-variable .osd.fofc &pinc .osd.next 1
-    set-variable .osd.foft &pinc .osd.next 1
-    set-variable .osd.fodm &pinc .osd.next 1
-    ; increment by 2 cos we need 1 for .osd.fodv if this is a drive system
-    set-variable .osd.fodc &pinc .osd.next 2
-    set-variable .osd.fobm &pinc .osd.next 1
+  set-variable .osd.fom  &pinc .osd.next 1
+  set-variable .osd.fofm &pinc .osd.next 1
+  set-variable .osd.fofc &pinc .osd.next 1
+  set-variable .osd.foft &pinc .osd.next 1
+  set-variable .osd.fodm &pinc .osd.next 1
+  ; increment by 2 cos we need 1 for .osd.fodv if this is a drive system
+  set-variable .osd.fodc &pinc .osd.next 2
+  set-variable .osd.fobm &pinc .osd.next 1
 !endif
 
 define-macro osd-fo-fileselect
-    !if &seq $result .osd.fo-file
-        osd-fo-okay
-    !else
-        set-variable .osd.fo-file $result
-    !endif
+  !if &seq $result .osd.fo-file
+    osd-fo-okay
+  !else
+    set-variable .osd.fo-file $result
+  !endif
 !emacro
 
 define-macro osd-fo-filetype
-    !if @#
-        !if &seq .osd-get-file.cmd ""
-            set-variable .osd-get-file.result &cat .osd.fo-path @1
-        !else
-            !force execute-named-command .osd-get-file.cmd &cat .osd.fo-path @1
-        !endif
+  !if @#
+    !if &seq .osd-get-file.cmd ""
+      set-variable .osd-get-file.result &cat .osd.fo-path @1
     !else
-        set-variable #l0 @1
-        filemask-to-regex #l0
-        set-variable $file-names &cat .osd.fo-path #l0
-        !while &not &seq &set #l3 $file-names ""
-            osd .osd.fofc 1 "RxBd" #l3 0 "osd-fo-fileselect"
-            set-variable #p4 0
-        !done
+      !force execute-named-command .osd-get-file.cmd &cat .osd.fo-path @1
     !endif
-!emacro
-    
-define-macro osd-fo-filelist
-    set-variable #l2 .osd.fo-file
-    set-variable #l4 1
-    -1 osd .osd.fofc
-    osd .osd.fofc 0 &cond &band $system 0x100 "AisSf" "AsSf" .scheme.osd-child .osd.fo-width .osd.fo-depth -1 -1
-*loopp
-    !while &not &seq #l2 ""
-        !if &set #l1 &sin "," #l2
-            set-variable #l0 &lef #l2 &sub #l1 1
-            set-variable #l2 &rig #l2 #l1
-        !else
-            set-variable #l0 #l2
-            set-variable #l2 ""
-        !endif
-        ; if the last char in the mask is a ? or * then add [^/] so we don't get a path
-        !if &sin &set #l1 &rig #l0 &sub &len #l0 1 "?*"
-            !if &seq #l1 "?"
-                ; if a ? then the ? is replaced with a [..]
-                set-variable #l0 &lef #l0 &sub &len #l0 1
-            !endif
-            !if &band .osd.fo-options 1
-                set-variable #l0 &cat #l0 "[^/]"
-            !else
-                set-variable #l0 &cat #l0 "[^~/]"
-            !endif
-        !elif &band .osd.fo-options 1
-            ; a -> a~
-            @# osd-fo-filetype &cat #l0 "~*"
-            ; a -> a.~~~
-            @# osd-fo-filetype &cat #l0 ".~*"
-            !if &band $system 0x400
-                ; on windows and dos a.emf is backed up to a.em~ so a.emf~* will not show
-                ; the backup file - neither will a as this is backed up to a.~~~ we must
-                ; do windos specific stuff for these cases.
-                !if &set #l1 &rsin "." #l0
-                    !if &gre &len #l0 &set #l1 &add 2 #l1
-                        ; a.emf -> a.em~
-                        @# osd-fo-filetype &cat &lef #l0 #l1 "~*"
-                    !endif
-                !endif
-            !endif
-        !endif
-        @# osd-fo-filetype #l0
+  !else
+    set-variable #l0 @1
+    filemask-to-regex #l0
+    set-variable $file-names &cat .osd.fo-path #l0
+    !while &not &seq &set #l3 $file-names ""
+      osd .osd.fofc 1 "RxBd" #l3 0 "osd-fo-fileselect"
+      set-variable #p4 0
     !done
-    !if @#
-        !abort
-    !elif #l4
-        osd .osd.fofc 1 "" " "
+  !endif
+!emacro
+
+define-macro osd-fo-filelist
+  set-variable #l2 .osd.fo-file
+  set-variable #l4 1
+  -1 osd .osd.fofc
+  osd .osd.fofc 0 &cond &band $system 0x100 "AisSf" "AsSf" .scheme.osd-child .osd.fo-width .osd.fo-depth -1 -1
+*loopp
+  !while &not &seq #l2 ""
+    !if &set #l1 &sin "," #l2
+      set-variable #l0 &lef #l2 &sub #l1 1
+      set-variable #l2 &rig #l2 #l1
+    !else
+      set-variable #l0 #l2
+      set-variable #l2 ""
     !endif
+    ; if the last char in the mask is a ? or * then add [^/] so we don't get a path
+    !if &sin &set #l1 &rig #l0 &sub &len #l0 1 "?*"
+      !if &seq #l1 "?"
+        ; if a ? then the ? is replaced with a [..]
+        set-variable #l0 &lef #l0 &sub &len #l0 1
+      !endif
+      !if &band .osd.fo-options 1
+        set-variable #l0 &cat #l0 "[^/]"
+      !else
+        set-variable #l0 &cat #l0 "[^~/]"
+      !endif
+    !elif &band .osd.fo-options 1
+      ; a -> a~
+      @# osd-fo-filetype &cat #l0 "~*"
+      ; a -> a.~~~
+      @# osd-fo-filetype &cat #l0 ".~*"
+      !if &band $system 0x400
+        ; on windows and dos a.emf is backed up to a.em~ so a.emf~* will not show
+        ; the backup file - neither will a as this is backed up to a.~~~ we must
+        ; do windos specific stuff for these cases.
+        !if &set #l1 &rsin "." #l0
+          !if &gre &len #l0 &set #l1 &add 2 #l1
+            ; a.emf -> a.em~
+            @# osd-fo-filetype &cat &lef #l0 #l1 "~*"
+          !endif
+        !endif
+      !endif
+    !endif
+    @# osd-fo-filetype #l0
+  !done
+  !if @#
+    !abort
+  !elif #l4
+    osd .osd.fofc 1 "" " "
+  !endif
 !emacro
 
 0 define-macro osd-fo-fileset
-    !if &les @# 0
-        set-variable .osd.fo-file @ml20 "" .osd.fo-file
-        ; user may have typed in a path so see
-        set-variable #l1 &rsin "/" .osd.fo-file
-        !if &band $system 0x100
-            !if &gre &rsin "\\" .osd.fo-file #l1
-                set-variable #l1 &rsin "\\" .osd.fo-file
-            !endif
-        !endif
-        !if #l1
-            set-variable .osd.fo-path &cat .osd.fo-path &lef .osd.fo-file #l1 
-            osd-fo-dirlist
-            set-variable .osd.fo-file &rig .osd.fo-file #l1 
-        !endif
-        0 osd-fo-filelist
-    !else
-        set-variable $result .osd.fo-file
+  !if &les @# 0
+    set-variable .osd.fo-file @ml20 "" .osd.fo-file
+    ; user may have typed in a path so see
+    set-variable #l1 &rsin "/" .osd.fo-file
+    !if &band $system 0x100
+      !if &gre &rsin "\\" .osd.fo-file #l1
+        set-variable #l1 &rsin "\\" .osd.fo-file
+      !endif
     !endif
+    !if #l1
+      set-variable .osd.fo-path &cat .osd.fo-path &lef .osd.fo-file #l1 
+      osd-fo-dirlist
+      set-variable .osd.fo-file &rig .osd.fo-file #l1 
+    !endif
+    0 osd-fo-filelist
+  !else
+    set-variable $result .osd.fo-file
+  !endif
 !emacro
 
 define-macro osd-fo-masksel
-    set-variable .osd-get-file.ft @#
-    set-variable #l0 &lget .osd-get-file.file-type @#
-    osd .osd.fofm 6 "xMdscfHt" .scheme.osd-entry &spr "%s%n" &lef #l0 .osd.fo-width &sub .osd.fo-width &len #l0 " " .osd.foft
-    set-variable .osd.fo-mask &lget .osd-get-file.file-mask @#
-    set-variable .osd.fo-file .osd.fo-mask
-    0 osd-fo-filelist
+  set-variable .osd-get-file.ft @#
+  set-variable #l0 &lget .osd-get-file.file-type @#
+  osd .osd.fofm 6 "xMdscfHt" .scheme.osd-entry &spr "%s%n" &lef #l0 .osd.fo-width &sub .osd.fo-width &len #l0 " " .osd.foft
+  set-variable .osd.fo-mask &lget .osd-get-file.file-mask @#
+  set-variable .osd.fo-file .osd.fo-mask
+  0 osd-fo-filelist
 !emacro
 
 define-macro osd-fo-dirselect
-    !if &seq $result "../"
-        set-variable #l1 &lef .osd.fo-path &sub &len .osd.fo-path 1
-        set-variable .osd.fo-path &lef #l1 &rsin "/" #l1
-    !else
-        set-variable .osd.fo-path &cat .osd.fo-path $result
-    !endif
-    osd-fo-dirlist
-    0 osd-fo-filelist
+  !if &seq $result "../"
+    set-variable #l1 &lef .osd.fo-path &sub &len .osd.fo-path 1
+    set-variable .osd.fo-path &lef #l1 &rsin "/" #l1
+  !else
+    set-variable .osd.fo-path &cat .osd.fo-path $result
+  !endif
+  osd-fo-dirlist
+  0 osd-fo-filelist
 !emacro
 
 define-macro osd-fo-dirlist
-    -1 osd .osd.fodc
-    osd .osd.fodc 0 &cond &band $system 0x100 "AisSf" "AsSf" .scheme.osd-child .osd.fo-width .osd.fo-depth -1 -1
-    set-variable #l1 1
-    set-variable $file-names &cat .osd.fo-path ".*/"
-    set-variable .osd.fo-path $result
-    !while &not &seq &set #l3 $file-names ""
-        !if &not &seq #l3 "./"
-            osd .osd.fodc &pinc #l1 1 "x" #l3 f "osd-fo-dirselect"
-        !endif
-    !done
-    !if &equ #l1 1
-        osd .osd.fodc 1 "" " "
+  -1 osd .osd.fodc
+  osd .osd.fodc 0 &cond &band $system 0x100 "AisSf" "AsSf" .scheme.osd-child .osd.fo-width .osd.fo-depth -1 -1
+  set-variable #l1 1
+  set-variable $file-names &cat .osd.fo-path ".*/"
+  set-variable .osd.fo-path $result
+  !while &not &seq &set #l3 $file-names ""
+    !if &not &seq #l3 "./"
+      osd .osd.fodc &pinc #l1 1 "x" #l3 f "osd-fo-dirselect"
     !endif
-    !if &band $system 0x200
-        osd .osd.fodm 6 "xMdscfHt" .scheme.osd-entry &spr "%s%n" &lef .osd.fo-path 2 &sub .osd.fo-width 2 " " .osd.fodv
-    !endif
+  !done
+  !if &equ #l1 1
+    osd .osd.fodc 1 "" " "
+  !endif
+  !if &band $system 0x200
+    osd .osd.fodm 6 "xMdscfHt" .scheme.osd-entry &spr "%s%n" &lef .osd.fo-path 2 &sub .osd.fo-width 2 " " .osd.fodv
+  !endif
 !emacro
 
 0 define-macro osd-fo-dirset
-    !if &les @# 0
-        set-variable .osd.fo-path @ml24 "" .osd.fo-path
-        !if &not &sin &rig .osd.fo-path &sub &len .osd.fo-path 1 "/:\\"
-            set-variable .osd.fo-path &cat .osd.fo-path "/"
-        !endif
-        osd-fo-dirlist
-        0 osd-fo-filelist
-    !else
-        set-variable $result .osd.fo-path
+  !if &les @# 0
+    set-variable .osd.fo-path @ml24 "" .osd.fo-path
+    !if &not &sin &rig .osd.fo-path &sub &len .osd.fo-path 1 "/:\\"
+      set-variable .osd.fo-path &cat .osd.fo-path "/"
     !endif
+    osd-fo-dirlist
+    0 osd-fo-filelist
+  !else
+    set-variable $result .osd.fo-path
+  !endif
 !emacro
 
 define-macro osd-fo-okay
-    !if &seq .osd.fo-file ""
-        osd-dialog "Find File" "Error: No files selected!" "  \HOK  "
-    !else
-        !if &or &or &sin "*" .osd.fo-file &sin "?" .osd.fo-file &sin "," .osd.fo-file
-            !if &band .osd-get-file.flags 1
-                !if &band .osd-get-file.flags 2
-                    set-variable #l0 &spr "\"%s\" may match multiple files, continue?" .osd.fo-file
-                    osd-xdialog "Find File" #l0 1 "  \HYes  " "  \HNo  "
-                    !if &equ $result 2
-                        !return
-                    !endif
-                !endif
-                set-variable .osd-get-file.status 1
-                1 osd-fo-filelist
-            !else
-                osd-dialog "Find File" "Error: Invalid file name selected!" "  \HOK  "
-            !endif
-        !else
-            set-variable .osd-get-file.status 1
-            1 osd-fo-filetype .osd.fo-file
-            !abort
+  !if &seq .osd.fo-file ""
+    osd-dialog "Find File" "Error: No files selected!" "  \HOK  "
+  !else
+    !if &or &or &sin "*" .osd.fo-file &sin "?" .osd.fo-file &sin "," .osd.fo-file
+      !if &band .osd-get-file.flags 1
+        !if &band .osd-get-file.flags 2
+          set-variable #l0 &spr "\"%s\" may match multiple files, continue?" .osd.fo-file
+          osd-xdialog "Find File" #l0 1 "  \HYes  " "  \HNo  "
+          !if &equ $result 2
+            !return
+          !endif
         !endif
+        set-variable .osd-get-file.status 1
+        1 osd-fo-filelist
+      !else
+        osd-dialog "Find File" "Error: Invalid file name selected!" "  \HOK  "
+      !endif
+    !else
+      set-variable .osd-get-file.status 1
+      1 osd-fo-filetype .osd.fo-file
+      !abort
     !endif
+  !endif
 !emacro
 
 0 define-macro osd-fo-options
-    !if &les @# 0
-        ; set the mode
-        !if &equ @# -1
-            set-variable .osd.fo-options &bxor .osd.fo-options 1
-            0 osd-fo-filelist
-        !else
-            set-variable .osd.fo-options &bxor .osd.fo-options &abs @#
-        !endif
-    !elif &not &band .osd.fo-options @#
-        !abort
+  !if &les @# 0
+    ; set the mode
+    !if &equ @# -1
+      set-variable .osd.fo-options &bxor .osd.fo-options 1
+      0 osd-fo-filelist
+    !else
+      set-variable .osd.fo-options &bxor .osd.fo-options &abs @#
     !endif
+  !elif &not &band .osd.fo-options @#
+    !abort
+  !endif
 !emacro
 
 0 define-macro osd-fo-resize
-    set-variable #l0 &sub &lef $result 4 24
-    set-variable #l1 &sub &rig $result 4 9
-    !if &les #l0 20
-        !if &les #l1 7
-            !abort
-        !endif
-        set-variable #l0 20
-    !endif
+  set-variable #l0 &sub &lef $result 4 24
+  set-variable #l1 &sub &rig $result 4 9
+  !if &les #l0 20
     !if &les #l1 7
-        set-variable #l1 7
+      !abort
     !endif
-    ; change the width & depth
-    !if &band #l0 1
-        osd .osd.fom 5  "h" "  "
-    !else
-        osd .osd.fom 5  "h" " "
-    !endif
-    set-variable #l0 &div #l0 2
-    !if &band $scroll-bar 0x01
-        set-variable #l0 &sub #l0 1
-    !endif
-    !if &band $scroll-bar 0x40
-        set-variable #l1 &sub #l1 1
-    !endif
-    set-variable .osd.fo-width #l0
-    set-variable .osd.fo-depth #l1
-    set-variable #l2 &spr "%n" #l0 "#"
-    !if &band $system 0x100
-        osd .osd.fofc 0 "AisSf" .scheme.osd-child .osd.fo-width .osd.fo-depth -1 -1
-        osd .osd.fodc 0 "AisSf" .scheme.osd-child .osd.fo-width .osd.fo-depth -1 -1
-    !else
-        osd .osd.fofc 0 "AsSf" .scheme.osd-child .osd.fo-width .osd.fo-depth -1 -1
-        osd .osd.fodc 0 "AsSf" .scheme.osd-child .osd.fo-width .osd.fo-depth -1 -1
-    !endif
-    osd .osd.fofm 3 "ExHtfc" .scheme.osd-entry #l2 1 osd-fo-fileset
-    osd .osd.fofm 4 "IbHt" .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fofc
-    osd .osd.fodm 3 "ExHtfc" .scheme.osd-entry #l2 1 osd-fo-dirset
-    osd .osd.fodm 4 "IbHt" .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fodc
-    !if &band $system 0x200
-        osd .osd.fodm 6 "xMdscfHt" .scheme.osd-entry &spr "%s%n" &lef .osd.fo-path 2 &sub .osd.fo-width 2 " " .osd.fodv
-    !endif
-    set-variable #l3 &lget .osd-get-file.file-type .osd-get-file.ft
-    osd .osd.fofm 6 "xMdscfHt" .scheme.osd-entry &spr "%s%n" &lef #l3 .osd.fo-width &sub .osd.fo-width &len #l3 " " .osd.foft
+    set-variable #l0 20
+  !endif
+  !if &les #l1 7
+    set-variable #l1 7
+  !endif
+  ; change the width & depth
+  !if &band #l0 1
+    osd .osd.fom 5  "h" "  "
+  !else
+    osd .osd.fom 5  "h" " "
+  !endif
+  set-variable #l0 &div #l0 2
+  !if &band $scroll-bar 0x01
+    set-variable #l0 &sub #l0 1
+  !endif
+  !if &band $scroll-bar 0x40
+    set-variable #l1 &sub #l1 1
+  !endif
+  set-variable .osd.fo-width #l0
+  set-variable .osd.fo-depth #l1
+  set-variable #l2 &spr "%n" #l0 "#"
+  !if &band $system 0x100
+    osd .osd.fofc 0 "AisSf" .scheme.osd-child .osd.fo-width .osd.fo-depth -1 -1
+    osd .osd.fodc 0 "AisSf" .scheme.osd-child .osd.fo-width .osd.fo-depth -1 -1
+  !else
+    osd .osd.fofc 0 "AsSf" .scheme.osd-child .osd.fo-width .osd.fo-depth -1 -1
+    osd .osd.fodc 0 "AsSf" .scheme.osd-child .osd.fo-width .osd.fo-depth -1 -1
+  !endif
+  osd .osd.fofm 3 "ExHtfc" .scheme.osd-entry #l2 1 osd-fo-fileset
+  osd .osd.fofm 4 "IbHt" .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fofc
+  osd .osd.fodm 3 "ExHtfc" .scheme.osd-entry #l2 1 osd-fo-dirset
+  osd .osd.fodm 4 "IbHt" .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fodc
+  !if &band $system 0x200
+    osd .osd.fodm 6 "xMdscfHt" .scheme.osd-entry &spr "%s%n" &lef .osd.fo-path 2 &sub .osd.fo-width 2 " " .osd.fodv
+  !endif
+  set-variable #l3 &lget .osd-get-file.file-type .osd-get-file.ft
+  osd .osd.fofm 6 "xMdscfHt" .scheme.osd-entry &spr "%s%n" &lef #l3 .osd.fo-width &sub .osd.fo-width &len #l3 " " .osd.foft
 !emacro
 
 osd .osd.fofm 0 "I" 3
@@ -269,7 +269,7 @@ osd .osd.fodm 1 "S" " \HDirectories:" 3
 osd .osd.fodm 3 "ExHtfc" .scheme.osd-entry "####################" 1 osd-fo-dirset
 osd .osd.fodm 4 "IbHt" .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fodc
 !if &band $system 0x200
-    osd .osd.fodm 5 "S" " Dri\Hve:" 6
+  osd .osd.fodm 5 "S" " Dri\Hve:" 6
 !endif
 
 osd .osd.fobm 0   "D" 20
@@ -292,66 +292,66 @@ osd .osd.fom 5  "h" " "
 osd .osd.fom 6  "It" .osd.fobm
 
 0 define-macro osd-get-file
-    osd .osd.fom 0  "batcDIHR" 3 6 6 2 .scheme.osd-title .osd-get-file.title osd-fo-resize
-    set-variable .osd.fo-path &lef $buffer-fname &rsin "/" $buffer-fname
-    !if &seq .osd.fodv "ERROR"
-        set-variable .osd.fodv &add .osd.fodc 1
-        !if &band $system 0x200
-            osd .osd.fodv 0 "bs" -1 0 22 0 
-            set-variable #l0 0
-            set-variable $file-names ".:/"
-            !while &not &seq &set #l1 $file-names ""
-                osd .osd.fodv &inc #l0 1 "" &lef #l1 2 f "osd-fo-dirselect"
-            !done
-        !endif
+  osd .osd.fom 0  "batcDIHR" 3 6 6 2 .scheme.osd-title .osd-get-file.title osd-fo-resize
+  set-variable .osd.fo-path &lef $buffer-fname &rsin "/" $buffer-fname
+  !if &seq .osd.fodv "ERROR"
+    set-variable .osd.fodv &add .osd.fodc 1
+    !if &band $system 0x200
+      osd .osd.fodv 0 "bs" -1 0 22 0 
+      set-variable #l0 0
+      set-variable $file-names ".:/"
+      !while &not &seq &set #l1 $file-names ""
+        osd .osd.fodv &inc #l0 1 "" &lef #l1 2 f "osd-fo-dirselect"
+      !done
     !endif
-    osd-fo-dirlist
-    !if &seq .file-type ""
-        set-variable .file-type &cat "\bAll files" &reg "/history/file-type" "\b"
-        set-variable .file-mask &cat "\b*" &reg "/history/file-mask" "\b"
-    !endif
-    -1 osd .osd.foft
-    osd .osd.foft 0 "bs" -1 0 22 0 
-    set-variable #l0 0
-    !while &not &seq &set #l1 &lget .file-type &inc #l0 1 ""
-        osd .osd.foft #l0 "" #l1 #l0 "osd-fo-masksel"
-    !done
-    .osd-get-file.ft osd-fo-masksel
-    set-variable .status 0
-    !force !force .osd.fom osd
-    !return .status
+  !endif
+  osd-fo-dirlist
+  !if &seq .file-type ""
+    set-variable .file-type &cat "\bAll files" &reg "/history/file-type" "\b"
+    set-variable .file-mask &cat "\b*" &reg "/history/file-mask" "\b"
+  !endif
+  -1 osd .osd.foft
+  osd .osd.foft 0 "bs" -1 0 22 0 
+  set-variable #l0 0
+  !while &not &seq &set #l1 &lget .file-type &inc #l0 1 ""
+    osd .osd.foft #l0 "" #l1 #l0 "osd-fo-masksel"
+  !done
+  .osd-get-file.ft osd-fo-masksel
+  set-variable .status 0
+  !force !force .osd.fom osd
+  !return .status
 !emacro
 set-variable .osd-get-file.cmd &cond &seq .osd-get-file.cmd "ERROR" "" .osd-get-file.cmd
 set-variable .osd-get-file.file-type &cond &seq .osd-get-file.file-type "ERROR" "" .osd-get-file.file-type
 
 0 define-macro osd-file-open-cmd
-    set-variable #l0 &bor 1 &band .osd.fo-options 6
-    !if &band .osd.fo-options 8
-        !force #l0 view-file @1 @mna
-    !else
-        !force #l0 find-file @1 @mna
-    !endif
+  set-variable #l0 &bor 1 &band .osd.fo-options 6
+  !if &band .osd.fo-options 8
+    !force #l0 view-file @1 @mna
+  !else
+    !force #l0 find-file @1 @mna
+  !endif
 !emacro
 
 define-macro osd-file-open
-    osd .osd.fobm 110 ""
-    osd .osd.fobm 120 "Cfpxt" &cat .osd.checkbox-chars "\} \HView File"     8 osd-fo-options
-    osd .osd.fobm 130 "Cfpxt" &cat .osd.checkbox-chars "\} \HBinary File"   2 osd-fo-options
-    osd .osd.fobm 140 "Cfpxt" &cat .osd.checkbox-chars "\} \HEncrypt File"  4 osd-fo-options
-    set-variable .osd-get-file.title "Find File"
-    set-variable .osd-get-file.file-type ""
-    set-variable .osd-get-file.ft .ft
-    set-variable .osd-get-file.flags 3
-    set-variable .osd-get-file.cmd "osd-file-open-cmd"
-    !force osd-get-file
-    set-variable #l0 $status
-    osd .osd.fobm 110 "D"
-    osd .osd.fobm 120 "D"
-    osd .osd.fobm 130 "D"
-    osd .osd.fobm 140 "D"
-    set-variable .ft .osd-get-file.ft
-    set-variable .osd-get-file.cmd ""
-    !return #l0
+  osd .osd.fobm 110 ""
+  osd .osd.fobm 120 "Cfpxt" &cat .osd.checkbox-chars "\} \HView File"     8 osd-fo-options
+  osd .osd.fobm 130 "Cfpxt" &cat .osd.checkbox-chars "\} \HBinary File"   2 osd-fo-options
+  osd .osd.fobm 140 "Cfpxt" &cat .osd.checkbox-chars "\} \HEncrypt File"  4 osd-fo-options
+  set-variable .osd-get-file.title "Find File"
+  set-variable .osd-get-file.file-type ""
+  set-variable .osd-get-file.ft .ft
+  set-variable .osd-get-file.flags 3
+  set-variable .osd-get-file.cmd "osd-file-open-cmd"
+  !force osd-get-file
+  set-variable #l0 $status
+  osd .osd.fobm 110 "D"
+  osd .osd.fobm 120 "D"
+  osd .osd.fobm 130 "D"
+  osd .osd.fobm 140 "D"
+  set-variable .ft .osd-get-file.ft
+  set-variable .osd-get-file.cmd ""
+  !return #l0
 !emacro
 set-variable .osd-file-open.ft 1
 

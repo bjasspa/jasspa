@@ -14,845 +14,845 @@
 ; me.emf must be executed to define colors etc.
 set-variable .start-up &seq %platform "ERROR"
 !if .start-up
-    execute-file "me"
+  execute-file "me"
 !endif
 set-variable %gdiff-com &cond &seq %gdiff-com "ERROR" "diff -c -w" %gdiff-com
 
 !if &seq .osd.gdiff "ERROR"
-    set-variable .osd.gdiff &pinc .osd.next 1
-    set-variable .osd.gdiff-s &pinc .osd.next 1
-    set-variable .osd.gdiff-help &pinc .osd.next 1
+  set-variable .osd.gdiff &pinc .osd.next 1
+  set-variable .osd.gdiff-s &pinc .osd.next 1
+  set-variable .osd.gdiff-help &pinc .osd.next 1
 !endif
 
 0 define-macro gdiff-top
-    !while &not &equ $line-scheme -1
-        !force backward-line
-        !if &not $status
-            !return
-        !endif
-    !done
-    forward-line
+  !while &not &equ $line-scheme -1
+    !force backward-line
+    !if &not $status
+      !return
+    !endif
+  !done
+  forward-line
 !emacro
-    
+
 0 define-macro gdiff-next-unassigned
-    !if &les @# 0
-        !if &equ $window-line 1
-            end-of-buffer
-        !endif
-    !elif &seq @wc ""
-        beginning-of-buffer
+  !if &les @# 0
+    !if &equ $window-line 1
+      end-of-buffer
     !endif
-    !while &not &equ $line-scheme -1
-        !force @# forward-line
-        !if &not $status
-            ml-write "[No more unassigned differences found]"
-            !bell
-            !abort
-        !endif
-    !done
-    !while &not &or &or &equ $line-scheme .scheme.gdfpad &equ $line-scheme .scheme.gdfadd &equ $line-scheme .scheme.gdfchange
-        !force @# forward-line
-        !if &not $status
-            ml-write "[No more unassigned differences found]"
-            !bell
-            !abort
-        !endif
-    !done
-    !if &les @# 0
-        gdiff-top
+  !elif &seq @wc ""
+    beginning-of-buffer
+  !endif
+  !while &not &equ $line-scheme -1
+    !force @# forward-line
+    !if &not $status
+      ml-write "[No more unassigned differences found]"
+      !bell
+      !abort
     !endif
-    recenter
+  !done
+  !while &not &or &or &equ $line-scheme .scheme.gdfpad &equ $line-scheme .scheme.gdfadd &equ $line-scheme .scheme.gdfchange
+    !force @# forward-line
+    !if &not $status
+      ml-write "[No more unassigned differences found]"
+      !bell
+      !abort
+    !endif
+  !done
+  !if &les @# 0
+    gdiff-top
+  !endif
+  recenter
 !emacro
 
 0 define-macro gdiff-next
-    !if &les @# 0
-        !if &equ $window-line 1
-            end-of-buffer
-        !endif
-    !elif &seq @wc ""
-        beginning-of-buffer
+  !if &les @# 0
+    !if &equ $window-line 1
+      end-of-buffer
     !endif
-    !while &not &equ $line-scheme -1
-        !force @# forward-line
-        !if &not $status
-            ml-write "[No more differences found]"
-            !bell
-            !abort
-        !endif
-    !done
-    !while &equ $line-scheme -1
-        !force @# forward-line
-        !if &not $status
-            ml-write "[No more differences found]"
-            !bell
-            !abort
-        !endif
-    !done
-    !if &les @# 0
-        gdiff-top
+  !elif &seq @wc ""
+    beginning-of-buffer
+  !endif
+  !while &not &equ $line-scheme -1
+    !force @# forward-line
+    !if &not $status
+      ml-write "[No more differences found]"
+      !bell
+      !abort
     !endif
-    recenter
+  !done
+  !while &equ $line-scheme -1
+    !force @# forward-line
+    !if &not $status
+      ml-write "[No more differences found]"
+      !bell
+      !abort
+    !endif
+  !done
+  !if &les @# 0
+    gdiff-top
+  !endif
+  recenter
 !emacro
 
 0 define-macro gdiff-select
-    set-variable #l0 $window-line
-    !if &or &or &equ $line-scheme .scheme.gdfpad &equ $line-scheme .scheme.gdfselpad &equ $line-scheme .scheme.gdfrejpad
-        set-variable $line-scheme &cond @# .scheme.gdfselpad .scheme.gdfrejpad
-    !else
-        set-variable $line-scheme &cond @# .scheme.gdfsel .scheme.gdfrej
-    !endif
-    forward-line
-    !if &equ $window-id .gdiff.wid
-        next-window
-    !else
-        previous-window
-    !endif
-    set-variable $window-line #l0
-    !if &or &or &equ $line-scheme .scheme.gdfpad &equ $line-scheme .scheme.gdfselpad &equ $line-scheme .scheme.gdfrejpad
-        set-variable $line-scheme .scheme.gdfrejpad
-    !else
-        set-variable $line-scheme .scheme.gdfrej
-    !endif
-    forward-line
-    !if &equ $window-id .gdiff.wid
-        next-window
-    !else
-        previous-window
-    !endif
+  set-variable #l0 $window-line
+  !if &or &or &equ $line-scheme .scheme.gdfpad &equ $line-scheme .scheme.gdfselpad &equ $line-scheme .scheme.gdfrejpad
+    set-variable $line-scheme &cond @# .scheme.gdfselpad .scheme.gdfrejpad
+  !else
+    set-variable $line-scheme &cond @# .scheme.gdfsel .scheme.gdfrej
+  !endif
+  forward-line
+  !if &equ $window-id .gdiff.wid
+    next-window
+  !else
+    previous-window
+  !endif
+  set-variable $window-line #l0
+  !if &or &or &equ $line-scheme .scheme.gdfpad &equ $line-scheme .scheme.gdfselpad &equ $line-scheme .scheme.gdfrejpad
+    set-variable $line-scheme .scheme.gdfrejpad
+  !else
+    set-variable $line-scheme .scheme.gdfrej
+  !endif
+  forward-line
+  !if &equ $window-id .gdiff.wid
+    next-window
+  !else
+    previous-window
+  !endif
 !emacro
 
 0 define-macro gdiff-line-select
-    !if &equ $line-scheme -1
-        ml-write "[Invalid line]"
-        !bell
-        !abort
-    !endif
-    @# gdiff-select
+  !if &equ $line-scheme -1
+    ml-write "[Invalid line]"
+    !bell
+    !abort
+  !endif
+  @# gdiff-select
 !emacro
 
 0 define-macro gdiff-region-select
-    !if &equ $line-scheme -1
-        ml-write "[Invalid line]"
-        !bell
-        !abort
-    !endif
-    set-variable #l1 $window-line
-    gdiff-top
-    !while &not &equ $line-scheme -1
-        @# gdiff-select
-    !done
-    set-variable $window-line #l1
+  !if &equ $line-scheme -1
+    ml-write "[Invalid line]"
+    !bell
+    !abort
+  !endif
+  set-variable #l1 $window-line
+  gdiff-top
+  !while &not &equ $line-scheme -1
+    @# gdiff-select
+  !done
+  set-variable $window-line #l1
 !emacro
 
 0 define-macro gdiff-global-select
-    set-variable #l1 $window-line
-    beginning-of-buffer
-    !while &not &seq @wc ""
-        !if &not &equ $line-scheme -1
-            @# gdiff-select
-        !else
-            forward-line
-        !endif
-    !done
-    set-variable $window-line #l1
+  set-variable #l1 $window-line
+  beginning-of-buffer
+  !while &not &seq @wc ""
+    !if &not &equ $line-scheme -1
+      @# gdiff-select
+    !else
+      forward-line
+    !endif
+  !done
+  set-variable $window-line #l1
 !emacro
 
 0 define-macro gdiff-menu-select
-    set-variable #l1 &band @# 3
-    !if #l1
-        !if &band #l1 1
-            !if &not &equ $window-id .gdiff.wid
-                previous-window
-            !endif
-        !elif &equ $window-id .gdiff.wid
-            next-window
-        !endif
+  set-variable #l1 &band @# 3
+  !if #l1
+    !if &band #l1 1
+      !if &not &equ $window-id .gdiff.wid
+        previous-window
+      !endif
+    !elif &equ $window-id .gdiff.wid
+      next-window
     !endif
-    !if &band @# 16
-        #l1 gdiff-region-select
-    !elif &band @# 32
-        #l1 gdiff-line-select
-    !else
-        #l1 gdiff-global-select
-    !endif
+  !endif
+  !if &band @# 16
+    #l1 gdiff-region-select
+  !elif &band @# 32
+    #l1 gdiff-line-select
+  !else
+    #l1 gdiff-global-select
+  !endif
 !emacro
 
 0 define-macro gdiff-menu-sel
-    -1 osd .osd.gdiff-s
-    osd .osd.gdiff-s 0 b
-    osd .osd.gdiff-s 1 "" "Select Left" &add @# 1 gdiff-menu-select
-    osd .osd.gdiff-s 2 "" "Select Right" &add @# 2 gdiff-menu-select
-    osd .osd.gdiff-s 3 "" "Select Neither" &add @# 0 gdiff-menu-select
+  -1 osd .osd.gdiff-s
+  osd .osd.gdiff-s 0 b
+  osd .osd.gdiff-s 1 "" "Select Left" &add @# 1 gdiff-menu-select
+  osd .osd.gdiff-s 2 "" "Select Right" &add @# 2 gdiff-menu-select
+  osd .osd.gdiff-s 3 "" "Select Neither" &add @# 0 gdiff-menu-select
 !emacro
 
 0 define-macro gdiff-mouse-pick-1
-    set-cursor-to-mouse
-    beginning-of-line
-    set-variable #l0 &band $mouse-pos 15
-    !if &equ #l0 0
-        ; main text area
-    !elif &equ #l0 1
-        ; Message line
-    !elif &equ #l0 2
-        ; ml-write "Mouse on Mode line "
-    !elif &equ #l0 3
-        ; ml-write "Mouse on divider"
-    !elif &equ #l0 4
-        ; ml-write "Mouse on split"
-    !elif &equ #l0 5
-        ; ml-write "Mouse on up-arrow"
-        1 scroll-up
-        1 global-bind-key scroll-up "mouse-time-1"
-    !elif &equ #l0 6
-        ; ml-write "Mouse on upper-shaft"
-        scroll-up
-        10 global-bind-key scroll-up "mouse-time-1"
-    !elif &equ #l0 7
-        ; ml-write "Mouse on box"
-        1 set-scroll-with-mouse         ; Lock mouse position to scroller
-        global-bind-key set-scroll-with-mouse "mouse-move-1"
-    !elif &equ #l0 8
-        ; ml-write "Mouse on lower shaft"
-        scroll-down
-        10 global-bind-key scroll-down "mouse-time-1"
-    !elif &equ #l0 9
-        ; ml-write "Mouse on down-arrow"
-        1 scroll-down
-        1 global-bind-key scroll-down "mouse-time-1"
-    !elif &equ #l0 10
-        ; ml-write "Mouse on corner"
-    !elif &equ #l0 11
-        ; ml-write "Mouse on Menu"
-    !else
-        ml-write "Mouse-pos ERROR !!"
-    !endif
+  set-cursor-to-mouse
+  beginning-of-line
+  set-variable #l0 &band $mouse-pos 15
+  !if &equ #l0 0
+    ; main text area
+  !elif &equ #l0 1
+    ; Message line
+  !elif &equ #l0 2
+    ; ml-write "Mouse on Mode line "
+  !elif &equ #l0 3
+    ; ml-write "Mouse on divider"
+  !elif &equ #l0 4
+    ; ml-write "Mouse on split"
+  !elif &equ #l0 5
+    ; ml-write "Mouse on up-arrow"
+    1 scroll-up
+    1 global-bind-key scroll-up "mouse-time-1"
+  !elif &equ #l0 6
+    ; ml-write "Mouse on upper-shaft"
+    scroll-up
+    10 global-bind-key scroll-up "mouse-time-1"
+  !elif &equ #l0 7
+    ; ml-write "Mouse on box"
+    1 set-scroll-with-mouse         ; Lock mouse position to scroller
+    global-bind-key set-scroll-with-mouse "mouse-move-1"
+  !elif &equ #l0 8
+    ; ml-write "Mouse on lower shaft"
+    scroll-down
+    10 global-bind-key scroll-down "mouse-time-1"
+  !elif &equ #l0 9
+    ; ml-write "Mouse on down-arrow"
+    1 scroll-down
+    1 global-bind-key scroll-down "mouse-time-1"
+  !elif &equ #l0 10
+    ; ml-write "Mouse on corner"
+  !elif &equ #l0 11
+    ; ml-write "Mouse on Menu"
+  !else
+    ml-write "Mouse-pos ERROR !!"
+  !endif
 !emacro
 0 define-macro gdiff-mouse-drop-1
-    !force global-unbind-key "mouse-move-1"
-    !force global-unbind-key "mouse-time-1"
-    set-cursor-to-mouse
-    beginning-of-line
-    !if &equ $mouse-pos 0
-        ; main text area
-        !if &not &equ $line-scheme -1
-            gdiff-region-select
-        !endif
+  !force global-unbind-key "mouse-move-1"
+  !force global-unbind-key "mouse-time-1"
+  set-cursor-to-mouse
+  beginning-of-line
+  !if &equ $mouse-pos 0
+    ; main text area
+    !if &not &equ $line-scheme -1
+      gdiff-region-select
     !endif
+  !endif
 !emacro
 
 0 define-macro gdiff-create-comb1
-    !force 0 delete-buffer .gdiff.bncom
-    find-buffer .gdiff.bncom
-    find-buffer .gdiff.bnnew
-    beginning-of-buffer
-    set-mark
-    !repeat
-        !if &or &seq @wc "" &not &equ $line-scheme -1
+  !force 0 delete-buffer .gdiff.bncom
+  find-buffer .gdiff.bncom
+  find-buffer .gdiff.bnnew
+  beginning-of-buffer
+  set-mark
+  !repeat
+    !if &or &seq @wc "" &not &equ $line-scheme -1
+      copy-region
+      find-buffer .gdiff.bncom
+      yank
+      -1 yank
+      find-buffer .gdiff.bnnew
+      !if &seq @wc ""
+        find-buffer .gdiff.bncom
+        !return
+      !endif
+      !while &not &equ $line-scheme -1
+        !if &or &or &equ $line-scheme .scheme.gdfpad &equ $line-scheme .scheme.gdfadd &equ $line-scheme .scheme.gdfchange
+          ; the correct diff has not been selected
+          delete-buffer .gdiff.bncom
+          !abort
+        !endif
+        ; was the new or old selected?
+        !if &or &equ $line-scheme .scheme.gdfsel &equ $line-scheme .scheme.gdfselpad
+          ; the new
+          !if &equ $line-scheme .scheme.gdfsel
+            set-mark
+            forward-line
             copy-region
             find-buffer .gdiff.bncom
             yank
             -1 yank
             find-buffer .gdiff.bnnew
-            !if &seq @wc ""
-                find-buffer .gdiff.bncom
-                !return
-            !endif
-            !while &not &equ $line-scheme -1
-                !if &or &or &equ $line-scheme .scheme.gdfpad &equ $line-scheme .scheme.gdfadd &equ $line-scheme .scheme.gdfchange
-                    ; the correct diff has not been selected
-                    delete-buffer .gdiff.bncom
-                    !abort
-                !endif
-                ; was the new or old selected?
-                !if &or &equ $line-scheme .scheme.gdfsel &equ $line-scheme .scheme.gdfselpad
-                    ; the new
-                    !if &equ $line-scheme .scheme.gdfsel
-                        set-mark
-                        forward-line
-                        copy-region
-                        find-buffer .gdiff.bncom
-                        yank
-                        -1 yank
-                        find-buffer .gdiff.bnnew
-                    !else
-                        forward-line
-                    !endif
-                !else
-                    set-variable #l0 $window-line
-                    find-buffer .gdiff.bnold
-                    set-variable $window-line #l0
-                    !if &equ $line-scheme .scheme.gdfsel
-                        ; the old - otherwise neither
-                        set-mark
-                        forward-line
-                        copy-region
-                        find-buffer .gdiff.bncom
-                        yank
-                        -1 yank
-                    !endif
-                    find-buffer .gdiff.bnnew
-                    forward-line
-                !endif
-            !done
-            set-mark
-        !else
+          !else
             forward-line
+          !endif
+        !else
+          set-variable #l0 $window-line
+          find-buffer .gdiff.bnold
+          set-variable $window-line #l0
+          !if &equ $line-scheme .scheme.gdfsel
+            ; the old - otherwise neither
+            set-mark
+            forward-line
+            copy-region
+            find-buffer .gdiff.bncom
+            yank
+            -1 yank
+          !endif
+          find-buffer .gdiff.bnnew
+          forward-line
         !endif
-    !until 0
+      !done
+      set-mark
+    !else
+      forward-line
+    !endif
+  !until 0
 !emacro
 
 0 define-macro gdiff-create-comb
-    set-variable #l0 $window-line
-    set-variable #l1 $window-y-scroll
-    set-variable #l2 $buffer-bname
-    delete-other-windows
-    !force !force gdiff-create-comb1
-    set-variable #l3 $status
-    2 split-window-vertically
-    change-window-depth 2
-    find-buffer "*gdiff current lines*"
+  set-variable #l0 $window-line
+  set-variable #l1 $window-y-scroll
+  set-variable #l2 $buffer-bname
+  delete-other-windows
+  !force !force gdiff-create-comb1
+  set-variable #l3 $status
+  2 split-window-vertically
+  change-window-depth 2
+  find-buffer "*gdiff current lines*"
+  previous-window
+  1 split-window-horizontally
+  set-variable .gdiff.wid $window-id
+  find-buffer .gdiff.bnold
+  !if #l3
+    set-variable $window-line #l0
+    set-variable $window-y-scroll #l1
+  !else
+    recenter
+  !endif
+  next-window
+  find-buffer .gdiff.bnnew
+  !if #l3
+    set-variable $window-line #l0
+    set-variable $window-y-scroll #l1
+  !else
+    recenter
+  !endif
+  !if &seq #l2 .gdiff.bnold
     previous-window
-    1 split-window-horizontally
-    set-variable .gdiff.wid $window-id
-    find-buffer .gdiff.bnold
-    !if #l3
-        set-variable $window-line #l0
-        set-variable $window-y-scroll #l1
-    !else
-        recenter
-    !endif
-    next-window
-    find-buffer .gdiff.bnnew
-    !if #l3
-        set-variable $window-line #l0
-        set-variable $window-y-scroll #l1
-    !else
-        recenter
-    !endif
-    !if &seq #l2 .gdiff.bnold
-        previous-window
-    !endif
-    !if #l3
-        !return
-    !endif
-    ml-write "[Error: Unassigned difference]"
-    !abort
+  !endif
+  !if #l3
+    !return
+  !endif
+  ml-write "[Error: Unassigned difference]"
+  !abort
 !emacro
 0 define-macro gdiff-save
-    !if @?
-        popup-window &cond &les @# 0 .gdiff.bnold .gdiff.bnnew
-    !endif
-    set-variable #l1 $buffer-bname
-    set-variable #l0 $buffer-fname
-    !if &seq #l0 ""
-	ml-write "[Error: Cannot save as this file]"
-	!return
-    !endif
-    !force gdiff-create-comb
-    !if $status
-        find-buffer .gdiff.bncom
-        !force !force 0 write-buffer #l0
-        0 delete-buffer $buffer-bname
-    !endif
-    find-buffer #l1
+  !if @?
+    popup-window &cond &les @# 0 .gdiff.bnold .gdiff.bnnew
+  !endif
+  set-variable #l1 $buffer-bname
+  set-variable #l0 $buffer-fname
+  !if &seq #l0 ""
+    ml-write "[Error: Cannot save as this file]"
+    !return
+  !endif
+  !force gdiff-create-comb
+  !if $status
+    find-buffer .gdiff.bncom
+    !force !force 0 write-buffer #l0
+    0 delete-buffer $buffer-bname
+  !endif
+  find-buffer #l1
 !emacro
 
 0 define-macro-file osd osd-save-as
 0 define-macro gdiff-save-as
-    set-variable #l1 $buffer-bname
-    !force gdiff-create-comb
-    !if $status
-        find-buffer .gdiff.bncom
-        set-variable $buffer-fname .gdiff.fnnew
-        !if @?
-            !force !force osd-save-as
-        !else
-            !force !force !nma write-buffer
-        !endif
-        0 delete-buffer $buffer-bname
+  set-variable #l1 $buffer-bname
+  !force gdiff-create-comb
+  !if $status
+    find-buffer .gdiff.bncom
+    set-variable $buffer-fname .gdiff.fnnew
+    !if @?
+      !force !force osd-save-as
+    !else
+      !force !force !nma write-buffer
     !endif
-    find-buffer #l1
+    0 delete-buffer $buffer-bname
+  !endif
+  find-buffer #l1
 !emacro
 
 0 define-macro gdiff-exit
-    set-variable #l0 @mc5 "Quit gdiff (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)No ? "
-    !if &iseq #l0 "n"
-        !return
-    !endif
-    delete-other-windows
-    !force 0 delete-buffer .gdiff.bndiff
-    !force 0 delete-buffer .gdiff.bnold
-    !force 0 delete-buffer .gdiff.bnnew
-    set-variable $scroll .gdiff.scroll
-    !if &not @#
-        save-buffers-exit-emacs
-    !endif
-    set-variable .gdiff.wait 0
+  set-variable #l0 @mc5 "Quit gdiff (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)No ? "
+  !if &iseq #l0 "n"
+    !return
+  !endif
+  delete-other-windows
+  !force 0 delete-buffer .gdiff.bndiff
+  !force 0 delete-buffer .gdiff.bnold
+  !force 0 delete-buffer .gdiff.bnnew
+  set-variable $scroll .gdiff.scroll
+  !if &not @#
+    save-buffers-exit-emacs
+  !endif
+  set-variable .gdiff.wait 0
 !emacro
 
 0 define-macro gdiff-input
-    !if &seq @cck "redraw"
-        3 screen-update
-        0xcf set-position "\x81"
-        set-variable #l2 $window-xcl-scroll
-        set-variable #l3 $buffer-tab-width
-        !if &not &set #l4 &equ $window-id .gdiff.wid
-            previous-window
-        !endif
-        !if &sub #l3 $buffer-tab-width
-            set-variable $buffer-tab-width #l3
-        !endif
-        !force 0xce goto-position "\x81"
-        set-variable #l0 @wl
-        next-window
-        !if &sub #l3 $buffer-tab-width
-            set-variable $buffer-tab-width #l3
-        !endif
-        !force 0xce goto-position "\x81"
-        set-variable #l1 @wl
-        next-window
-        !if &sub #l3 $buffer-tab-width
-            set-variable $buffer-tab-width #l3
-        !endif
-        !if #l4
-            set-variable $window-line 2
-            set-variable @wl #l1
-            backward-line
-            set-variable @wl #l0
-        !else
-            beginning-of-buffer
-            set-variable @wl #l0
-            forward-line
-            set-variable @wl #l1
-        !endif
-        !force set-variable $window-x-scroll #l2
-        !force set-variable $window-xcl-scroll #l2
-        !force 0xc1 goto-position "\x81"
-        @# screen-update
-        !return
-    !elif &seq @cck "callback"
-        !force execute-named-command @cc
-        !return
+  !if &seq @cck "redraw"
+    3 screen-update
+    0xcf set-position "\x81"
+    set-variable #l2 $window-xcl-scroll
+    set-variable #l3 $buffer-tab-width
+    !if &not &set #l4 &equ $window-id .gdiff.wid
+      previous-window
     !endif
-    !if &lfi "|esc h|" @cck
-        .osd.gdiff-help osd
-    !elif &lfi "|delete-buffer|" @cc
-        gdiff-exit
-    !elif &lfi "|save-buffers-exit-emacs|" @cc
-        0 gdiff-exit
-    !elif &lfi "|tab|" @cck
-        !jump 2
-    !elif &lfi "|next-window|previous-window|" @cc
-        !if &equ $window-id .gdiff.wid
-            next-window
-        !else
-            previous-window
-        !endif
-    !elif &lfi "|C-up|p|" @cck
-        -1 gdiff-next
-    !elif &lfi "|C-down|n|" @cck
-        1 gdiff-next
-    !elif &lfi "|esc up|P|" @cck
-        -1 gdiff-next-unassigned
-    !elif &lfi "|esc down|N|" @cck
-        1 gdiff-next-unassigned
-    !elif &lfi "|mouse-pick-1|" @cck
-        gdiff-mouse-pick-1
-    !elif &lfi "|mouse-drop-1|" @cck
-        gdiff-mouse-drop-1
-    !elif &lfi "|context-menu|" @cc
-        set-variable $mouse-x $cursor-x
-        set-variable $mouse-y &add $cursor-y 1
-        .osd.gdiff osd
-    !elif &lfi "|mouse-drop-3|" @cck
-        .osd.gdiff osd
-    !elif &lfi "|g|" @cck
-       gdiff-global-select
-    !elif &lfi "|G|" @cck
-       0 gdiff-global-select
-    !elif &lfi "|r|space|newline|" @cck
-       gdiff-region-select
-    !elif &lfi "|R|space|newline|" @cck
-       0 gdiff-region-select
-    !elif &lfi "|l|" @cc
-       gdiff-line-select
-    !elif &lfi "|L|" @cc
-       0 gdiff-line-select
-    !elif &lfi "|save-buffer|" @cc
-        gdiff-save
-    !elif &lfi "|write-buffer|" @cc
-        gdiff-save-as
-    !elif &lfi "|backward-char|forward-char|backward-word|forward-word|" @cc
-        &mul &cond &sin "forward" @cc 1 -1 &cond &sin "char" @cc 4 &div $window-width 2 scroll-right
-    !elif &lfi "|mouse-wheel-event|backward-line|forward-line|scroll-down|scroll-up|scroll-left|scroll-right|beginning-of-buffer|end-of-buffer|goto-line|backward-paragraph|forward-paragraph|recenter|set-scroll-with-mouse|isearch-forward|isearch-backward|search-forward|search-backward|hunt-forward|hunt-backward|display-whitespaces|" @cc
-        execute-line &spr "!nma %s %s" &cond @? @# "" @cc
+    !if &sub #l3 $buffer-tab-width
+      set-variable $buffer-tab-width #l3
     !endif
+    !force 0xce goto-position "\x81"
+    set-variable #l0 @wl
+    next-window
+    !if &sub #l3 $buffer-tab-width
+      set-variable $buffer-tab-width #l3
+    !endif
+    !force 0xce goto-position "\x81"
+    set-variable #l1 @wl
+    next-window
+    !if &sub #l3 $buffer-tab-width
+      set-variable $buffer-tab-width #l3
+    !endif
+    !if #l4
+      set-variable $window-line 2
+      set-variable @wl #l1
+      backward-line
+      set-variable @wl #l0
+    !else
+      beginning-of-buffer
+      set-variable @wl #l0
+      forward-line
+      set-variable @wl #l1
+    !endif
+    !force set-variable $window-x-scroll #l2
+    !force set-variable $window-xcl-scroll #l2
+    !force 0xc1 goto-position "\x81"
+    @# screen-update
+    !return
+  !elif &seq @cck "callback"
+    !force execute-named-command @cc
+    !return
+  !endif
+  !if &lfi "|esc h|" @cck
+    .osd.gdiff-help osd
+  !elif &lfi "|delete-buffer|" @cc
+    gdiff-exit
+  !elif &lfi "|save-buffers-exit-emacs|" @cc
+    0 gdiff-exit
+  !elif &lfi "|tab|" @cck
+    !jump 2
+  !elif &lfi "|next-window|previous-window|" @cc
+    !if &equ $window-id .gdiff.wid
+      next-window
+    !else
+      previous-window
+    !endif
+  !elif &lfi "|C-up|p|" @cck
+    -1 gdiff-next
+  !elif &lfi "|C-down|n|" @cck
+    1 gdiff-next
+  !elif &lfi "|esc up|P|" @cck
+    -1 gdiff-next-unassigned
+  !elif &lfi "|esc down|N|" @cck
+    1 gdiff-next-unassigned
+  !elif &lfi "|mouse-pick-1|" @cck
+    gdiff-mouse-pick-1
+  !elif &lfi "|mouse-drop-1|" @cck
+    gdiff-mouse-drop-1
+  !elif &lfi "|context-menu|" @cc
+    set-variable $mouse-x $cursor-x
+    set-variable $mouse-y &add $cursor-y 1
+    .osd.gdiff osd
+  !elif &lfi "|mouse-drop-3|" @cck
+    .osd.gdiff osd
+  !elif &lfi "|g|" @cck
+    gdiff-global-select
+  !elif &lfi "|G|" @cck
+    0 gdiff-global-select
+  !elif &lfi "|r|space|newline|" @cck
+    gdiff-region-select
+  !elif &lfi "|R|space|newline|" @cck
+    0 gdiff-region-select
+  !elif &lfi "|l|" @cc
+    gdiff-line-select
+  !elif &lfi "|L|" @cc
+    0 gdiff-line-select
+  !elif &lfi "|save-buffer|" @cc
+    gdiff-save
+  !elif &lfi "|write-buffer|" @cc
+    gdiff-save-as
+  !elif &lfi "|backward-char|forward-char|backward-word|forward-word|" @cc
+    &mul &cond &sin "forward" @cc 1 -1 &cond &sin "char" @cc 4 &div $window-width 2 scroll-right
+  !elif &lfi "|mouse-wheel-event|backward-line|forward-line|scroll-down|scroll-up|scroll-left|scroll-right|beginning-of-buffer|end-of-buffer|goto-line|backward-paragraph|forward-paragraph|recenter|set-scroll-with-mouse|isearch-forward|isearch-backward|search-forward|search-backward|hunt-forward|hunt-backward|display-whitespaces|" @cc
+    execute-line &spr "!nma %s %s" &cond @? @# "" @cc
+  !endif
 !emacro
 
 define-macro gdiff
-    !force 0 delete-buffer .bndiff
+  !force 0 delete-buffer .bndiff
+  !force 0 delete-buffer .bnold
+  !force 0 delete-buffer .bnnew
+  !force 0 delete-buffer .bncom
+  !force set-variable .fnnew @2
+  !if $status
+    set-variable .fnold @1
+  !elif &band @# 1
+    set-variable .fnold @ml01 "Left file"
+    set-variable .fnnew @ml01 "Right file"
+  !else
+    set-variable .osd-get-file.title "Gdiff - Left File"
+    set-variable .osd-get-file.flags 0
+    set-variable .osd-get-file.ft 1
+    osd-get-file
+    set-variable .fnold .osd-get-file.result
+    set-variable .osd-get-file.title "Gdiff - Right File"
+    osd-get-file
+    set-variable .fnnew .osd-get-file.result
+  !endif
+  set-variable .fnold-name .fnold
+  set-variable .fnnew-name .fnnew
+  !force set-variable .fnold-name @3
+  !force set-variable .fnnew-name @4
+  !if &band $window-flags 0x1000
+    ; if this is a toolbar window move to the next normal window
+    !force next-window
+  !endif
+  !force 2 find-buffer .fnold
+  !if $status
+    !if &bmod "edit"
+      screen-update
+      set-variable #l0 @mc5 "Save left file first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+      !if &iseq #l0 "y"
+        save-buffer
+      !endif
+    !endif
+  !endif
+  !force 2 find-buffer .fnnew
+  !if $status
+    !if &bmod "edit"
+      screen-update
+      set-variable #l0 @mc5 "Save right file first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+      !if &iseq #l0 "y"
+        save-buffer
+      !endif
+    !endif
+  !endif
+  ; get the files
+  find-buffer .bnold
+  !force insert-file .fnold
+  !if &not $status
+    ml-write &spr "[Failed to load %s]" .fnold
+    !abort
+  !endif
+  set-variable $buffer-fname .fnold
+  find-buffer .bnnew
+  !force insert-file .fnnew
+  !if &not $status
     !force 0 delete-buffer .bnold
-    !force 0 delete-buffer .bnnew
-    !force 0 delete-buffer .bncom
-    !force set-variable .fnnew @2
-    !if $status
-        set-variable .fnold @1
-    !elif &band @# 1
-        set-variable .fnold @ml01 "Left file"
-        set-variable .fnnew @ml01 "Right file"
-    !else
-        set-variable .osd-get-file.title "Gdiff - Left File"
-        set-variable .osd-get-file.flags 0
-        set-variable .osd-get-file.ft 1
-        osd-get-file
-        set-variable .fnold .osd-get-file.result
-        set-variable .osd-get-file.title "Gdiff - Right File"
-        osd-get-file
-        set-variable .fnnew .osd-get-file.result
-    !endif
-    set-variable .fnold-name .fnold
-    set-variable .fnnew-name .fnnew
-    !force set-variable .fnold-name @3
-    !force set-variable .fnnew-name @4
-    !if &band $window-flags 0x1000
-        ; if this is a toolbar window move to the next normal window
-        !force next-window
-    !endif
-    !force 2 find-buffer .fnold
-    !if $status
-        !if &bmod "edit"
-            screen-update
-            set-variable #l0 @mc5 "Save left file first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-            !if &iseq #l0 "y"
-                save-buffer
-            !endif
-        !endif
-    !endif
-    !force 2 find-buffer .fnnew
-    !if $status
-        !if &bmod "edit"
-            screen-update
-            set-variable #l0 @mc5 "Save right file first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-            !if &iseq #l0 "y"
-                save-buffer
-            !endif
-        !endif
-    !endif
-    ; get the files
-    find-buffer .bnold
-    !force insert-file .fnold
-    !if &not $status
-        ml-write &spr "[Failed to load %s]" .fnold
-        !abort
-    !endif
-    set-variable $buffer-fname .fnold
+    ml-write &spr "[Failed to load %s]" .fnnew
+    !abort
+  !endif
+  set-variable $buffer-fname .fnnew
+  0 pipe-shell-command &spr "%s \"%s\" \"%s\"" %gdiff-com .fnold .fnnew .bndiff @mna
+  delete-other-windows
+  set-variable .status 0
+  find-buffer .bndiff
+  -1 buffer-mode "view"
+  end-of-buffer
+  insert-string "***\n"
+  set-alpha-mark "l"
+  !force search-backward "^--- [0-9]*,[0-9]* ---"
+  !while $status
+    set-variable .status &add .status 1
+    set-variable #l2 &rig @wl 4
+    set-variable #l3 &lget &rig @wl 2 1
+    set-variable #l4 0
     find-buffer .bnnew
-    !force insert-file .fnnew
-    !if &not $status
-        !force 0 delete-buffer .bnold
-        ml-write &spr "[Failed to load %s]" .fnnew
-        !abort
-    !endif
-    set-variable $buffer-fname .fnnew
-    0 pipe-shell-command &spr "%s \"%s\" \"%s\"" %gdiff-com .fnold .fnnew .bndiff @mna
-    delete-other-windows
-    set-variable .status 0
+    goto-line #l2
     find-buffer .bndiff
-    -1 buffer-mode "view"
-    end-of-buffer
-    insert-string "***\n"
-    set-alpha-mark "l"
-    !force search-backward "^--- [0-9]*,[0-9]* ---"
-    !while $status
-        set-variable .status &add .status 1
-        set-variable #l2 &rig @wl 4
-        set-variable #l3 &lget &rig @wl 2 1
-        set-variable #l4 0
-        find-buffer .bnnew
-        goto-line #l2
-        find-buffer .bndiff
-        forward-line
-        set-alpha-mark "n"
-        !if &seq &lef @wl 3 "***"
-            set-variable #l4 1
-        !endif
-        search-backward "^\\*\\*\\*"
-        set-variable #l2 &rig @wl 4
-        set-variable #l3 &spr "%s--%s\n" &lget &rig @wl 2 1 #l3
-        find-buffer .bnold
-        goto-line #l2
-        find-buffer .bndiff
-        forward-line
-        set-alpha-mark "o"
-        !if &seq &lef @wl 3 "---"
-            set-variable #l4 &add #l4 2
-        !endif
-        goto-alpha-mark "l"
-        insert-string #l3
-        backward-line
-        set-alpha-mark "l"
-        !if &equ #l4 3
-        !elif &equ #l4 1
-            goto-alpha-mark "o"
-            !repeat
-                !if &seq @wc " "
-                    find-buffer .bnnew
-                    forward-line
-                    find-buffer .bnold
-                    forward-line
-                !elif &seq @wc "+"
-                    find-buffer .bnnew
-                    insert-newline
-                    backward-line
-                    set-variable $line-scheme .scheme.gdfpad
-                    forward-line
-                    find-buffer .bnold
-                    set-variable $line-scheme .scheme.gdfadd
-                    forward-line
-                !elif &seq @wc "-"
-                    find-buffer .bnnew
-                    insert-newline
-                    backward-line
-                    set-variable $line-scheme .scheme.gdfpad
-                    forward-line
-                    find-buffer .bnold
-                    set-variable $line-scheme .scheme.gdfadd
-                    forward-line
-                !endif
-                find-buffer .bndiff
-                forward-line
-            !until &seq &lef @wl 3 "---"
-        !elif &equ #l4 2
-            goto-alpha-mark "n"
-            !repeat
-                !if &seq @wc " "
-                    find-buffer .bnold
-                    forward-line
-                    find-buffer .bnnew
-                    forward-line
-                !elif &seq @wc "+"
-                    find-buffer .bnold
-                    insert-newline
-                    backward-line
-                    set-variable $line-scheme .scheme.gdfpad
-                    forward-line
-                    find-buffer .bnnew
-                    set-variable $line-scheme .scheme.gdfadd
-                    forward-line
-                !elif &seq @wc "-"
-                    find-buffer .bnold
-                    insert-newline
-                    backward-line
-                    set-variable $line-scheme .scheme.gdfpad
-                    forward-line
-                    find-buffer .bnnew
-                    set-variable $line-scheme .scheme.gdfadd
-                    forward-line
-                !endif
-                find-buffer .bndiff
-                forward-line
-            !until &seq &lef @wl 3 "***"
-            goto-alpha-mark "o"
-        !else
-            set-variable #l5 0
-            goto-alpha-mark "o"
-            !repeat
-                !if &seq @wc " "
-                    goto-alpha-mark "n"
-*diff-new
-                    !if &seq @wc " "
-                        find-buffer .bnold
-                        forward-line
-                        find-buffer .bnnew
-                        forward-line
-                        find-buffer .bndiff
-                        forward-line
-                        set-alpha-mark "n"
-                        goto-alpha-mark "o"
-                        forward-line
-                        set-alpha-mark "o"
-                    !elif &seq @wc "+"
-                        find-buffer .bnold
-                        insert-newline
-                        backward-line
-                        set-variable $line-scheme .scheme.gdfpad
-                        forward-line
-                        find-buffer .bnnew
-                        set-variable $line-scheme .scheme.gdfadd
-                        forward-line
-                        find-buffer .bndiff
-                        forward-line
-                        !tjump @wc "+" -10
-                        set-alpha-mark "n"
-                        goto-alpha-mark "o"
-                    !elif &seq @wc "-"
-                        find-buffer .bnold
-                        insert-newline
-                        backward-line
-                        set-variable $line-scheme .scheme.gdfpad
-                        forward-line
-                        find-buffer .bnnew
-                        set-variable $line-scheme .scheme.gdfadd
-                        forward-line
-                        find-buffer .bndiff
-                        forward-line
-                        !tjump @wc "-" -10
-                        set-alpha-mark "n"
-                        goto-alpha-mark "o"
-                    !else
-                        ml-write "[unexpected diff line (1)]"
-                        !abort
-                    !endif
-                !elif &seq @wc "+"
-                    goto-alpha-mark "n"
-                    !if &not &seq @wc " "
-                        ml-write "[unexpected diff line (2)]"
-                        !abort
-                    !endif
-                    goto-alpha-mark "o"
-                    find-buffer .bnnew
-                    insert-newline
-                    backward-line
-                    set-variable $line-scheme .scheme.gdfpad
-                    forward-line
-                    find-buffer .bnold
-                    set-variable $line-scheme .scheme.gdfadd
-                    forward-line
-                    find-buffer .bndiff
-                    forward-line
-                    !tjump @wc "+" -10
-                    set-alpha-mark "o"
-                !elif &seq @wc "-"
-                    goto-alpha-mark "n"
-                    !if &not &seq @wc " "
-                        ; could be removing the last few lines
-                        !if &not &seq &lef @wl 3 "***"
-                            ml-write "[unexpected diff line (3)]"
-                            !abort
-                        !endif
-                    !endif
-                    goto-alpha-mark "o"
-                    find-buffer .bnnew
-                    insert-newline
-                    backward-line
-                    set-variable $line-scheme .scheme.gdfpad
-                    forward-line
-                    find-buffer .bnold
-                    set-variable $line-scheme .scheme.gdfadd
-                    forward-line
-                    find-buffer .bndiff
-                    forward-line
-                    !tjump @wc "-" -10
-                    set-alpha-mark "o"
-                !elif &seq @wc "!"
-                    goto-alpha-mark "n"
-                    !if &not &seq @wc "!"
-                        ml-write "[unexpected diff line (4)]"
-                        !abort
-                    !endif
-*diff-jump
-                    set-variable #l3 0
-                    !if &seq @wc "!"
-                        set-variable #l3 1
-                    !endif
-                    goto-alpha-mark "o"
-                    !if &seq @wc "!"
-                        set-variable #l3 &add #l3 2
-                    !endif
-                    !if #l3
-                        find-buffer .bnold
-                        !if &band #l3 2
-                            set-variable $line-scheme .scheme.gdfchange
-                            forward-line
-                            find-buffer .bndiff
-                            forward-line
-                            set-alpha-mark "o"
-                        !else
-                            insert-newline
-                            backward-line
-                            set-variable $line-scheme .scheme.gdfpad
-                            forward-line
-                        !endif
-                        find-buffer .bnnew
-                        !if &band #l3 1
-                            set-variable $line-scheme .scheme.gdfchange
-                            forward-line
-                            find-buffer .bndiff
-                            goto-alpha-mark "n"
-                            forward-line
-                            set-alpha-mark "n"
-                        !else
-                            insert-newline
-                            backward-line
-                            set-variable $line-scheme .scheme.gdfpad
-                            forward-line
-                        !endif
-                        find-buffer .bndiff
-                        goto-alpha-mark "n"
-                        !goto diff-jump
-                    !endif
-                !else
-                    ml-write "[unexpected diff line (5)]"
-                    !abort
-                !endif
-                !if &seq &lef @wl 3 "---"
-                    goto-alpha-mark "n"
-                    !tgoto &not &seq &lef @wl 3 "***" diff-new
-                    goto-alpha-mark "o"
-                    set-variable #l5 1
-                !endif
-            !until #l5
-        !endif
-        !force search-backward "^--- [0-9]*,[0-9]* ---"
-    !done
-    goto-alpha-mark "l"
-    2 split-window-vertically
-    change-window-depth 2
-    set-variable $window-flags &bor $window-flags 2
-    !force 0 delete-buffer "*gdiff current lines*"
-    find-buffer "*gdiff current lines*"
-    2 insert-newline
-    2 backward-line
-    previous-window
-    1 split-window-horizontally
-    set-variable .wid $window-id
+    forward-line
+    set-alpha-mark "n"
+    !if &seq &lef @wl 3 "***"
+      set-variable #l4 1
+    !endif
+    search-backward "^\\*\\*\\*"
+    set-variable #l2 &rig @wl 4
+    set-variable #l3 &spr "%s--%s\n" &lget &rig @wl 2 1 #l3
     find-buffer .bnold
-    beginning-of-buffer
-    -1 buffer-mode "edit"
-    1 buffer-mode "view"
-    set-variable $buffer-mode-line &spr "- %%b %%l - (%s) " .fnold-name
-    !if &seq &lef .fnold-name 1 "*"
-	osd .osd.gdiff 120  ""   "Save Left"
-	set-variable $buffer-fname ""
-    !else
-	osd .osd.gdiff 120  ""   "Save \HLeft"      -1 gdiff-save
-	set-variable $buffer-fname .fnold-name
+    goto-line #l2
+    find-buffer .bndiff
+    forward-line
+    set-alpha-mark "o"
+    !if &seq &lef @wl 3 "---"
+      set-variable #l4 &add #l4 2
     !endif
-    set-variable $buffer-input gdiff-input
-    next-window
-    find-buffer .bnnew
-    beginning-of-buffer
-    -1 buffer-mode "edit"
-    1 buffer-mode "view"
-    set-variable $buffer-mode-line &spr "- %%b %%l - (%s) " .fnnew-name
-    !if &seq &lef .fnnew-name 1 "*"
-	osd .osd.gdiff 130  ""   "Save Right"
-	set-variable $buffer-fname ""
+    goto-alpha-mark "l"
+    insert-string #l3
+    backward-line
+    set-alpha-mark "l"
+    !if &equ #l4 3
+    !elif &equ #l4 1
+      goto-alpha-mark "o"
+      !repeat
+        !if &seq @wc " "
+          find-buffer .bnnew
+          forward-line
+          find-buffer .bnold
+          forward-line
+        !elif &seq @wc "+"
+          find-buffer .bnnew
+          insert-newline
+          backward-line
+          set-variable $line-scheme .scheme.gdfpad
+          forward-line
+          find-buffer .bnold
+          set-variable $line-scheme .scheme.gdfadd
+          forward-line
+        !elif &seq @wc "-"
+          find-buffer .bnnew
+          insert-newline
+          backward-line
+          set-variable $line-scheme .scheme.gdfpad
+          forward-line
+          find-buffer .bnold
+          set-variable $line-scheme .scheme.gdfadd
+          forward-line
+        !endif
+        find-buffer .bndiff
+        forward-line
+      !until &seq &lef @wl 3 "---"
+    !elif &equ #l4 2
+      goto-alpha-mark "n"
+      !repeat
+        !if &seq @wc " "
+          find-buffer .bnold
+          forward-line
+          find-buffer .bnnew
+          forward-line
+        !elif &seq @wc "+"
+          find-buffer .bnold
+          insert-newline
+          backward-line
+          set-variable $line-scheme .scheme.gdfpad
+          forward-line
+          find-buffer .bnnew
+          set-variable $line-scheme .scheme.gdfadd
+          forward-line
+        !elif &seq @wc "-"
+          find-buffer .bnold
+          insert-newline
+          backward-line
+          set-variable $line-scheme .scheme.gdfpad
+          forward-line
+          find-buffer .bnnew
+          set-variable $line-scheme .scheme.gdfadd
+          forward-line
+        !endif
+        find-buffer .bndiff
+        forward-line
+      !until &seq &lef @wl 3 "***"
+      goto-alpha-mark "o"
     !else
-	osd .osd.gdiff 130  ""   "Save \HRight"      1 gdiff-save
-	set-variable $buffer-fname .fnnew-name
+      set-variable #l5 0
+      goto-alpha-mark "o"
+      !repeat
+        !if &seq @wc " "
+          goto-alpha-mark "n"
+*diff-new
+          !if &seq @wc " "
+            find-buffer .bnold
+            forward-line
+            find-buffer .bnnew
+            forward-line
+            find-buffer .bndiff
+            forward-line
+            set-alpha-mark "n"
+            goto-alpha-mark "o"
+            forward-line
+            set-alpha-mark "o"
+          !elif &seq @wc "+"
+            find-buffer .bnold
+            insert-newline
+            backward-line
+            set-variable $line-scheme .scheme.gdfpad
+            forward-line
+            find-buffer .bnnew
+            set-variable $line-scheme .scheme.gdfadd
+            forward-line
+            find-buffer .bndiff
+            forward-line
+            !tjump @wc "+" -10
+            set-alpha-mark "n"
+            goto-alpha-mark "o"
+          !elif &seq @wc "-"
+            find-buffer .bnold
+            insert-newline
+            backward-line
+            set-variable $line-scheme .scheme.gdfpad
+            forward-line
+            find-buffer .bnnew
+            set-variable $line-scheme .scheme.gdfadd
+            forward-line
+            find-buffer .bndiff
+            forward-line
+            !tjump @wc "-" -10
+            set-alpha-mark "n"
+            goto-alpha-mark "o"
+          !else
+            ml-write "[unexpected diff line (1)]"
+            !abort
+          !endif
+        !elif &seq @wc "+"
+          goto-alpha-mark "n"
+          !if &not &seq @wc " "
+            ml-write "[unexpected diff line (2)]"
+            !abort
+          !endif
+          goto-alpha-mark "o"
+          find-buffer .bnnew
+          insert-newline
+          backward-line
+          set-variable $line-scheme .scheme.gdfpad
+          forward-line
+          find-buffer .bnold
+          set-variable $line-scheme .scheme.gdfadd
+          forward-line
+          find-buffer .bndiff
+          forward-line
+          !tjump @wc "+" -10
+          set-alpha-mark "o"
+        !elif &seq @wc "-"
+          goto-alpha-mark "n"
+          !if &not &seq @wc " "
+            ; could be removing the last few lines
+            !if &not &seq &lef @wl 3 "***"
+              ml-write "[unexpected diff line (3)]"
+              !abort
+            !endif
+          !endif
+          goto-alpha-mark "o"
+          find-buffer .bnnew
+          insert-newline
+          backward-line
+          set-variable $line-scheme .scheme.gdfpad
+          forward-line
+          find-buffer .bnold
+          set-variable $line-scheme .scheme.gdfadd
+          forward-line
+          find-buffer .bndiff
+          forward-line
+          !tjump @wc "-" -10
+          set-alpha-mark "o"
+        !elif &seq @wc "!"
+          goto-alpha-mark "n"
+          !if &not &seq @wc "!"
+            ml-write "[unexpected diff line (4)]"
+            !abort
+          !endif
+*diff-jump
+          set-variable #l3 0
+          !if &seq @wc "!"
+            set-variable #l3 1
+          !endif
+          goto-alpha-mark "o"
+          !if &seq @wc "!"
+            set-variable #l3 &add #l3 2
+          !endif
+          !if #l3
+            find-buffer .bnold
+            !if &band #l3 2
+              set-variable $line-scheme .scheme.gdfchange
+              forward-line
+              find-buffer .bndiff
+              forward-line
+              set-alpha-mark "o"
+            !else
+              insert-newline
+              backward-line
+              set-variable $line-scheme .scheme.gdfpad
+              forward-line
+            !endif
+            find-buffer .bnnew
+            !if &band #l3 1
+              set-variable $line-scheme .scheme.gdfchange
+              forward-line
+              find-buffer .bndiff
+              goto-alpha-mark "n"
+              forward-line
+              set-alpha-mark "n"
+            !else
+              insert-newline
+              backward-line
+              set-variable $line-scheme .scheme.gdfpad
+              forward-line
+            !endif
+            find-buffer .bndiff
+            goto-alpha-mark "n"
+            !goto diff-jump
+          !endif
+        !else
+          ml-write "[unexpected diff line (5)]"
+          !abort
+        !endif
+        !if &seq &lef @wl 3 "---"
+          goto-alpha-mark "n"
+          !tgoto &not &seq &lef @wl 3 "***" diff-new
+          goto-alpha-mark "o"
+          set-variable #l5 1
+        !endif
+      !until #l5
     !endif
-    set-variable $buffer-input gdiff-input
-    set-variable .gdiff.scroll $scroll
-    set-variable $scroll &bor &band $scroll 0xff00 0x2
-    !if .status
-        ml-write &spr "[%d differences found]" .status
-    !else
-        ml-write "[No differences found]"
-    !endif
-    set-variable .wait 1
-    !force !force command-wait
-    !force 0 delete-buffer "*gdiff current lines*"
+    !force search-backward "^--- [0-9]*,[0-9]* ---"
+  !done
+  goto-alpha-mark "l"
+  2 split-window-vertically
+  change-window-depth 2
+  set-variable $window-flags &bor $window-flags 2
+  !force 0 delete-buffer "*gdiff current lines*"
+  find-buffer "*gdiff current lines*"
+  2 insert-newline
+  2 backward-line
+  previous-window
+  1 split-window-horizontally
+  set-variable .wid $window-id
+  find-buffer .bnold
+  beginning-of-buffer
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"
+  set-variable $buffer-mode-line &spr "- %%b %%l - (%s) " .fnold-name
+  !if &seq &lef .fnold-name 1 "*"
+    osd .osd.gdiff 120  ""   "Save Left"
+    set-variable $buffer-fname ""
+  !else
+    osd .osd.gdiff 120  ""   "Save \HLeft"      -1 gdiff-save
+    set-variable $buffer-fname .fnold-name
+  !endif
+  set-variable $buffer-input gdiff-input
+  next-window
+  find-buffer .bnnew
+  beginning-of-buffer
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"
+  set-variable $buffer-mode-line &spr "- %%b %%l - (%s) " .fnnew-name
+  !if &seq &lef .fnnew-name 1 "*"
+    osd .osd.gdiff 130  ""   "Save Right"
+    set-variable $buffer-fname ""
+  !else
+    osd .osd.gdiff 130  ""   "Save \HRight"      1 gdiff-save
+    set-variable $buffer-fname .fnnew-name
+  !endif
+  set-variable $buffer-input gdiff-input
+  set-variable .gdiff.scroll $scroll
+  set-variable $scroll &bor &band $scroll 0xff00 0x2
+  !if .status
+    ml-write &spr "[%d differences found]" .status
+  !else
+    ml-write "[No differences found]"
+  !endif
+  set-variable .wait 1
+  !force !force command-wait
+  !force 0 delete-buffer "*gdiff current lines*"
 !emacro
 
 define-macro-file osdmisc osd-search
@@ -907,33 +907,33 @@ set-variable .gdiff.bnnew  "*gdiff right*"
 set-variable .gdiff.bncom  "*gdiff com*"
 
 !if .start-up
-    define-macro start-up
-        ; Delete all of the windows. We use 2 to force this as there may be a toolbar present. 
-        !force 2 delete-other-windows
-        set-variable #l0 &set #l1 ""
-        set-variable #l2 $buffer-bname
-        !repeat
-          !if &seq "*" &lef $buffer-bname 1 
-          !elif &seq $buffer-fname ""
-          !elif &seq #l0 ""
-            ; first file
-            set-variable #l0 $buffer-fname
-          !elif &seq #l1 ""
-            ; second file
-            set-variable #l1 $buffer-fname
-          !else
-            ; more than 2 files given - error
-            5000 ml-write "[Usage error: me \"@gdiff\" <old> <new>]"
-            0 quick-exit
-          !endif 
-          next-buffer
-        !until &seq $buffer-bname #l2
-        !if &seq #l1 ""
-          5000 ml-write "[Usage error: me \"@gdiff\" <old> <new>]"
-        !else
-          gdiff #l0 #l1
-        !endif
+  define-macro start-up
+    ; Delete all of the windows. We use 2 to force this as there may be a toolbar present. 
+    !force 2 delete-other-windows
+    set-variable #l0 &set #l1 ""
+    set-variable #l2 $buffer-bname
+    !repeat
+      !if &seq "*" &lef $buffer-bname 1 
+      !elif &seq $buffer-fname ""
+      !elif &seq #l0 ""
+        ; first file
+        set-variable #l0 $buffer-fname
+      !elif &seq #l1 ""
+        ; second file
+        set-variable #l1 $buffer-fname
+      !else
+        ; more than 2 files given - error
+        5000 ml-write "[Usage error: me \"@gdiff\" <old> <new>]"
         0 quick-exit
-    !emacro
+      !endif 
+      next-buffer
+    !until &seq $buffer-bname #l2
+    !if &seq #l1 ""
+      5000 ml-write "[Usage error: me \"@gdiff\" <old> <new>]"
+    !else
+      gdiff #l0 #l1
+    !endif
+    0 quick-exit
+  !emacro
 !endif
 

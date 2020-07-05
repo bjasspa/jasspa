@@ -8,9 +8,9 @@
 ; Authors:     Pedro Miguel Gomes
 ;
 define-macro fhook-cobol
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "cobol"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "cobol"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -21,209 +21,209 @@ set-variable .fhook-cobol.comment "|*||*|* | *|r|"
 set-variable .fhook-cobol.exact -1
 
 !if &and &sin "h" .fhook-cobol.setup &band .hilight.flags 0x02 
-    ; High-light COBOL-85
-    !if &not &exist .hilight.cobol
-        set-variable .hilight.cobol &pinc .hilight.next 1
-    !endif
-    0 hilight  .hilight.cobol 1                           $global-scheme
-    hilight .hilight.cobol 4 "'" "'" ""                   .scheme.string
-    hilight .hilight.cobol 4 "\"" "\"" ""                 .scheme.string
-    hilight .hilight.cobol 0x102 "*"                      .scheme.comment
-    
-    hilight .hilight.cobol 1 "data"                       .scheme.keyword
-    hilight .hilight.cobol 1 "division"                   .scheme.keyword
-    hilight .hilight.cobol 1 "end program"                .scheme.keyword
-    hilight .hilight.cobol 1 "exit"                       .scheme.keyword
-    hilight .hilight.cobol 1 "program-id"                 .scheme.keyword
-    hilight .hilight.cobol 1 "section"                    .scheme.keyword
-    
-    hilight .hilight.cobol 1 "access"                     .scheme.keyword
-    hilight .hilight.cobol 1 "all"                        .scheme.keyword
-    hilight .hilight.cobol 1 "alternate"                  .scheme.keyword
-    hilight .hilight.cobol 1 "area"                       .scheme.keyword
-    hilight .hilight.cobol 1 "areas"                      .scheme.keyword
-    hilight .hilight.cobol 1 "assign"                     .scheme.keyword
-    hilight .hilight.cobol 1 "author"                     .scheme.keyword
-    hilight .hilight.cobol 1 "binary"                     .scheme.keyword
-    hilight .hilight.cobol 1 "binary-sequential"          .scheme.keyword
-    hilight .hilight.cobol 1 "characters"                 .scheme.keyword
-    hilight .hilight.cobol 1 "class"                      .scheme.keyword
-    hilight .hilight.cobol 1 "code-set"                   .scheme.keyword
-    hilight .hilight.cobol 1 "comma"                      .scheme.keyword
-    hilight .hilight.cobol 1 "configuration"              .scheme.keyword
-    hilight .hilight.cobol 1 "contains"                   .scheme.keyword
-    hilight .hilight.cobol 1 "currency sign"              .scheme.keyword
-    hilight .hilight.cobol 1 "date-compiled"              .scheme.keyword
-    hilight .hilight.cobol 1 "date-written"               .scheme.keyword
-    hilight .hilight.cobol 1 "debugging mode"             .scheme.keyword
-    hilight .hilight.cobol 1 "decimal-point"              .scheme.keyword
-    hilight .hilight.cobol 1 "delimiter"                  .scheme.keyword
-    hilight .hilight.cobol 1 "division"                   .scheme.keyword
-    hilight .hilight.cobol 1 "duplicates"                 .scheme.keyword
-    hilight .hilight.cobol 1 "dynamic"                    .scheme.keyword
-    hilight .hilight.cobol 1 "environment"                .scheme.keyword
-    hilight .hilight.cobol 1 "file"                       .scheme.keyword
-    hilight .hilight.cobol 1 "id division"                .scheme.keyword
-    hilight .hilight.cobol 1 "identification division"    .scheme.keyword
-    hilight .hilight.cobol 1 "input-output section"       .scheme.keyword
-    hilight .hilight.cobol 1 "installation"               .scheme.keyword
-    hilight .hilight.cobol 1 "is"                         .scheme.keyword
-    hilight .hilight.cobol 1 "key"                        .scheme.keyword
-    hilight .hilight.cobol 1 "line-sequential"            .scheme.keyword
-    hilight .hilight.cobol 1 "memory size"                .scheme.keyword
-    hilight .hilight.cobol 1 "mode"                       .scheme.keyword
-    hilight .hilight.cobol 1 "modules"                    .scheme.keyword
-    hilight .hilight.cobol 1 "multiple"                   .scheme.keyword
-    hilight .hilight.cobol 1 "native"                     .scheme.keyword
-    hilight .hilight.cobol 1 "object-computer"            .scheme.keyword
-    hilight .hilight.cobol 1 "off"                        .scheme.keyword
-    hilight .hilight.cobol 1 "on"                         .scheme.keyword
-    hilight .hilight.cobol 1 "optional"                   .scheme.keyword
-    hilight .hilight.cobol 1 "organization"               .scheme.keyword
-    hilight .hilight.cobol 1 "padding"                    .scheme.keyword
-    hilight .hilight.cobol 1 "position"                   .scheme.keyword
-    hilight .hilight.cobol 1 "program-collating sequence" .scheme.keyword
-    hilight .hilight.cobol 1 "random"                     .scheme.keyword
-    hilight .hilight.cobol 1 "record"                     .scheme.keyword
-    hilight .hilight.cobol 1 "records"                    .scheme.keyword
-    hilight .hilight.cobol 1 "relative"                   .scheme.keyword
-    hilight .hilight.cobol 1 "remarks"                    .scheme.keyword
-    hilight .hilight.cobol 1 "reserve"                    .scheme.keyword
-    hilight .hilight.cobol 1 "same"                       .scheme.keyword
-    hilight .hilight.cobol 1 "security"                   .scheme.keyword
-    hilight .hilight.cobol 1 "segment-limit"              .scheme.keyword
-    hilight .hilight.cobol 1 "select"                     .scheme.keyword
-    hilight .hilight.cobol 1 "select"                     .scheme.keyword
-    hilight .hilight.cobol 1 "sequential"                 .scheme.keyword
-    hilight .hilight.cobol 1 "sort"                       .scheme.keyword
-    hilight .hilight.cobol 1 "sort-merge"                 .scheme.keyword
-    hilight .hilight.cobol 1 "source-computer"            .scheme.keyword
-    hilight .hilight.cobol 1 "special-names"              .scheme.keyword
-    hilight .hilight.cobol 1 "standard-1"                 .scheme.keyword
-    hilight .hilight.cobol 1 "standard-2"                 .scheme.keyword
-    hilight .hilight.cobol 1 "status"                     .scheme.keyword
-    hilight .hilight.cobol 1 "string"                     .scheme.keyword
-    hilight .hilight.cobol 1 "through"                    .scheme.keyword
-    hilight .hilight.cobol 1 "thru"                       .scheme.keyword
-    hilight .hilight.cobol 1 "with"                       .scheme.keyword
-    hilight .hilight.cobol 1 "words"                      .scheme.keyword
-    
-    hilight .hilight.cobol 1 "accept"                     .scheme.keyword
-    hilight .hilight.cobol 1 "after"                      .scheme.keyword
-    hilight .hilight.cobol 1 "are"                        .scheme.keyword
-    hilight .hilight.cobol 1 "block"                      .scheme.keyword
-    hilight .hilight.cobol 1 "bottom"                     .scheme.keyword
-    hilight .hilight.cobol 1 "communcation"               .scheme.keyword
-    hilight .hilight.cobol 1 "contains"                   .scheme.keyword
-    hilight .hilight.cobol 1 "copy"                       .scheme.keyword
-    hilight .hilight.cobol 1 "declaratives"               .scheme.keyword
-    hilight .hilight.cobol 1 "delimited by"               .scheme.keyword
-    hilight .hilight.cobol 1 "display"                    .scheme.keyword
-    hilight .hilight.cobol 1 "error"                      .scheme.keyword
-    hilight .hilight.cobol 1 "external"                   .scheme.keyword
-    hilight .hilight.cobol 1 "fd"                         .scheme.keyword
-    hilight .hilight.cobol 1 "false"                      .scheme.keyword
-    hilight .hilight.cobol 1 "file"                       .scheme.keyword
-    hilight .hilight.cobol 1 "file-control"               .scheme.keyword
-    hilight .hilight.cobol 1 "footing"                    .scheme.keyword
-    hilight .hilight.cobol 1 "global"                     .scheme.keyword
-    hilight .hilight.cobol 1 "high"                       .scheme.keyword
-    hilight .hilight.cobol 1 "i-o-control"                .scheme.keyword
-    hilight .hilight.cobol 1 "in"                         .scheme.keyword
-    hilight .hilight.cobol 1 "input-output"               .scheme.keyword
-    hilight .hilight.cobol 1 "i-o"                        .scheme.keyword
-    hilight .hilight.cobol 1 "label"                      .scheme.keyword
-    hilight .hilight.cobol 1 "line"                       .scheme.keyword
-    hilight .hilight.cobol 1 "linkage"                    .scheme.keyword
-    hilight .hilight.cobol 1 "low"                        .scheme.keyword
-    hilight .hilight.cobol 1 "move"                       .scheme.keyword
-    hilight .hilight.cobol 1 "object-computer"            .scheme.keyword
-    hilight .hilight.cobol 1 "occurs"                     .scheme.keyword
-    hilight .hilight.cobol 1 "ommited"                    .scheme.keyword
-    hilight .hilight.cobol 1 "pic"                        .scheme.keyword
-    hilight .hilight.cobol 1 "position"                   .scheme.keyword
-    hilight .hilight.cobol 1 "procedure"                  .scheme.keyword
-    hilight .hilight.cobol 1 "redefines"                  .scheme.keyword
-    hilight .hilight.cobol 1 "renames"                    .scheme.keyword
-    hilight .hilight.cobol 1 "reverse"                    .scheme.keyword
-    hilight .hilight.cobol 1 "screen"                     .scheme.keyword
-    hilight .hilight.cobol 1 "size"                       .scheme.keyword
-    hilight .hilight.cobol 1 "space"                      .scheme.keyword
-    hilight .hilight.cobol 1 "spaces"                     .scheme.keyword
-    hilight .hilight.cobol 1 "standard"                   .scheme.keyword
-    hilight .hilight.cobol 1 "standard"                   .scheme.keyword
-    hilight .hilight.cobol 1 "time"                       .scheme.keyword
-    hilight .hilight.cobol 1 "times"                      .scheme.keyword
-    hilight .hilight.cobol 1 "true"                       .scheme.keyword
-    hilight .hilight.cobol 1 "top"                        .scheme.keyword
-    hilight .hilight.cobol 1 "use"                        .scheme.keyword
-    hilight .hilight.cobol 1 "value"                      .scheme.keyword
-    hilight .hilight.cobol 1 "value"                      .scheme.keyword
-    hilight .hilight.cobol 1 "varying"                    .scheme.keyword
-    hilight .hilight.cobol 1 "working-storage"            .scheme.keyword
-    hilight .hilight.cobol 1 "when set to"                .scheme.keyword
-    hilight .hilight.cobol 1 "zero"                       .scheme.keyword
-    hilight .hilight.cobol 1 "zeros"                      .scheme.keyword
-    
-    hilight .hilight.cobol 1 "close"                      .scheme.keyword
-    hilight .hilight.cobol 1 "delete file"                .scheme.keyword
-    hilight .hilight.cobol 1 "delete"                     .scheme.keyword
-    hilight .hilight.cobol 1 "dynamic"                    .scheme.keyword
-    hilight .hilight.cobol 1 "input"                      .scheme.keyword
-    hilight .hilight.cobol 1 "inspect"                    .scheme.keyword
-    hilight .hilight.cobol 1 "if"                         .scheme.keyword
-    hilight .hilight.cobol 1 "else"                       .scheme.keyword
-    hilight .hilight.cobol 1 "invalid"                    .scheme.keyword
-    hilight .hilight.cobol 1 "lock"                       .scheme.keyword
-    hilight .hilight.cobol 1 "next"                       .scheme.keyword
-    hilight .hilight.cobol 1 "open"                       .scheme.keyword
-    hilight .hilight.cobol 1 "output"                     .scheme.keyword
-    hilight .hilight.cobol 1 "previous"                   .scheme.keyword
-    hilight .hilight.cobol 1 "read"                       .scheme.keyword
-    hilight .hilight.cobol 1 "rewrite"                    .scheme.keyword
-    hilight .hilight.cobol 1 "replacing"                  .scheme.keyword
-    hilight .hilight.cobol 1 "replacing all"              .scheme.keyword
-    hilight .hilight.cobol 1 "stop run"                   .scheme.keyword
-    hilight .hilight.cobol 1 "write"                      .scheme.keyword
-    
-    hilight .hilight.cobol 1 "display"                    .scheme.keyword
-    hilight .hilight.cobol 1 "erase eos"                  .scheme.keyword
-    hilight .hilight.cobol 1 "erase eol"                  .scheme.keyword
-    hilight .hilight.cobol 1 "exception"                  .scheme.keyword
-    hilight .hilight.cobol 1 "go to"                      .scheme.keyword
-    hilight .hilight.cobol 1 "line"                       .scheme.keyword
-    hilight .hilight.cobol 1 "perform"                    .scheme.keyword
-    hilight .hilight.cobol 1 "to"                         .scheme.keyword
-    
-    hilight .hilight.cobol 1 "end-"                       .scheme.keyword
-    ; end-xxx delimiter, present in RM/COBOL-85, dont know if its standard-85 ??
-    
-    hilight .hilight.cobol 1 "("                          .scheme.operator
-    hilight .hilight.cobol 1 ")"                          .scheme.operator
-    hilight .hilight.cobol 1 "\\."                        .scheme.operator
-    hilight .hilight.cobol 1 "/"                          .scheme.operator
-    hilight .hilight.cobol 1 "<"                          .scheme.operator
-    hilight .hilight.cobol 1 "="                          .scheme.operator
-    hilight .hilight.cobol 1 ">"                          .scheme.operator
-    hilight .hilight.cobol 1 "not"                        .scheme.operator
-    hilight .hilight.cobol 1 "and"                        .scheme.operator
-    hilight .hilight.cobol 1 "or"                         .scheme.operator
-    
-    
-    hilight .hilight.cobol 1 "binary"                     .scheme.type
-    hilight .hilight.cobol 1 "comp"                       .scheme.type
-    hilight .hilight.cobol 1 "comp-1"                     .scheme.type
-    hilight .hilight.cobol 1 "comp-3"                     .scheme.type
-    hilight .hilight.cobol 1 "comp-4"                     .scheme.type
-    hilight .hilight.cobol 1 "comp-6"                     .scheme.type
-    hilight .hilight.cobol 1 "computational"              .scheme.type
-    hilight .hilight.cobol 1 "computational-1"            .scheme.type
-    hilight .hilight.cobol 1 "computational-3"            .scheme.type
-    hilight .hilight.cobol 1 "computational-4"            .scheme.type
-    hilight .hilight.cobol 1 "computational-6"            .scheme.type
-    hilight .hilight.cobol 1 "display"                    .scheme.type
-    hilight .hilight.cobol 1 "index"                      .scheme.type
-    hilight .hilight.cobol 1 "pic"                        .scheme.type
+  ; High-light COBOL-85
+  !if &not &exist .hilight.cobol
+    set-variable .hilight.cobol &pinc .hilight.next 1
+  !endif
+  0 hilight  .hilight.cobol 1                           $global-scheme
+  hilight .hilight.cobol 4 "'" "'" ""                   .scheme.string
+  hilight .hilight.cobol 4 "\"" "\"" ""                 .scheme.string
+  hilight .hilight.cobol 0x102 "*"                      .scheme.comment
+  
+  hilight .hilight.cobol 1 "data"                       .scheme.keyword
+  hilight .hilight.cobol 1 "division"                   .scheme.keyword
+  hilight .hilight.cobol 1 "end program"                .scheme.keyword
+  hilight .hilight.cobol 1 "exit"                       .scheme.keyword
+  hilight .hilight.cobol 1 "program-id"                 .scheme.keyword
+  hilight .hilight.cobol 1 "section"                    .scheme.keyword
+  
+  hilight .hilight.cobol 1 "access"                     .scheme.keyword
+  hilight .hilight.cobol 1 "all"                        .scheme.keyword
+  hilight .hilight.cobol 1 "alternate"                  .scheme.keyword
+  hilight .hilight.cobol 1 "area"                       .scheme.keyword
+  hilight .hilight.cobol 1 "areas"                      .scheme.keyword
+  hilight .hilight.cobol 1 "assign"                     .scheme.keyword
+  hilight .hilight.cobol 1 "author"                     .scheme.keyword
+  hilight .hilight.cobol 1 "binary"                     .scheme.keyword
+  hilight .hilight.cobol 1 "binary-sequential"          .scheme.keyword
+  hilight .hilight.cobol 1 "characters"                 .scheme.keyword
+  hilight .hilight.cobol 1 "class"                      .scheme.keyword
+  hilight .hilight.cobol 1 "code-set"                   .scheme.keyword
+  hilight .hilight.cobol 1 "comma"                      .scheme.keyword
+  hilight .hilight.cobol 1 "configuration"              .scheme.keyword
+  hilight .hilight.cobol 1 "contains"                   .scheme.keyword
+  hilight .hilight.cobol 1 "currency sign"              .scheme.keyword
+  hilight .hilight.cobol 1 "date-compiled"              .scheme.keyword
+  hilight .hilight.cobol 1 "date-written"               .scheme.keyword
+  hilight .hilight.cobol 1 "debugging mode"             .scheme.keyword
+  hilight .hilight.cobol 1 "decimal-point"              .scheme.keyword
+  hilight .hilight.cobol 1 "delimiter"                  .scheme.keyword
+  hilight .hilight.cobol 1 "division"                   .scheme.keyword
+  hilight .hilight.cobol 1 "duplicates"                 .scheme.keyword
+  hilight .hilight.cobol 1 "dynamic"                    .scheme.keyword
+  hilight .hilight.cobol 1 "environment"                .scheme.keyword
+  hilight .hilight.cobol 1 "file"                       .scheme.keyword
+  hilight .hilight.cobol 1 "id division"                .scheme.keyword
+  hilight .hilight.cobol 1 "identification division"    .scheme.keyword
+  hilight .hilight.cobol 1 "input-output section"       .scheme.keyword
+  hilight .hilight.cobol 1 "installation"               .scheme.keyword
+  hilight .hilight.cobol 1 "is"                         .scheme.keyword
+  hilight .hilight.cobol 1 "key"                        .scheme.keyword
+  hilight .hilight.cobol 1 "line-sequential"            .scheme.keyword
+  hilight .hilight.cobol 1 "memory size"                .scheme.keyword
+  hilight .hilight.cobol 1 "mode"                       .scheme.keyword
+  hilight .hilight.cobol 1 "modules"                    .scheme.keyword
+  hilight .hilight.cobol 1 "multiple"                   .scheme.keyword
+  hilight .hilight.cobol 1 "native"                     .scheme.keyword
+  hilight .hilight.cobol 1 "object-computer"            .scheme.keyword
+  hilight .hilight.cobol 1 "off"                        .scheme.keyword
+  hilight .hilight.cobol 1 "on"                         .scheme.keyword
+  hilight .hilight.cobol 1 "optional"                   .scheme.keyword
+  hilight .hilight.cobol 1 "organization"               .scheme.keyword
+  hilight .hilight.cobol 1 "padding"                    .scheme.keyword
+  hilight .hilight.cobol 1 "position"                   .scheme.keyword
+  hilight .hilight.cobol 1 "program-collating sequence" .scheme.keyword
+  hilight .hilight.cobol 1 "random"                     .scheme.keyword
+  hilight .hilight.cobol 1 "record"                     .scheme.keyword
+  hilight .hilight.cobol 1 "records"                    .scheme.keyword
+  hilight .hilight.cobol 1 "relative"                   .scheme.keyword
+  hilight .hilight.cobol 1 "remarks"                    .scheme.keyword
+  hilight .hilight.cobol 1 "reserve"                    .scheme.keyword
+  hilight .hilight.cobol 1 "same"                       .scheme.keyword
+  hilight .hilight.cobol 1 "security"                   .scheme.keyword
+  hilight .hilight.cobol 1 "segment-limit"              .scheme.keyword
+  hilight .hilight.cobol 1 "select"                     .scheme.keyword
+  hilight .hilight.cobol 1 "select"                     .scheme.keyword
+  hilight .hilight.cobol 1 "sequential"                 .scheme.keyword
+  hilight .hilight.cobol 1 "sort"                       .scheme.keyword
+  hilight .hilight.cobol 1 "sort-merge"                 .scheme.keyword
+  hilight .hilight.cobol 1 "source-computer"            .scheme.keyword
+  hilight .hilight.cobol 1 "special-names"              .scheme.keyword
+  hilight .hilight.cobol 1 "standard-1"                 .scheme.keyword
+  hilight .hilight.cobol 1 "standard-2"                 .scheme.keyword
+  hilight .hilight.cobol 1 "status"                     .scheme.keyword
+  hilight .hilight.cobol 1 "string"                     .scheme.keyword
+  hilight .hilight.cobol 1 "through"                    .scheme.keyword
+  hilight .hilight.cobol 1 "thru"                       .scheme.keyword
+  hilight .hilight.cobol 1 "with"                       .scheme.keyword
+  hilight .hilight.cobol 1 "words"                      .scheme.keyword
+  
+  hilight .hilight.cobol 1 "accept"                     .scheme.keyword
+  hilight .hilight.cobol 1 "after"                      .scheme.keyword
+  hilight .hilight.cobol 1 "are"                        .scheme.keyword
+  hilight .hilight.cobol 1 "block"                      .scheme.keyword
+  hilight .hilight.cobol 1 "bottom"                     .scheme.keyword
+  hilight .hilight.cobol 1 "communcation"               .scheme.keyword
+  hilight .hilight.cobol 1 "contains"                   .scheme.keyword
+  hilight .hilight.cobol 1 "copy"                       .scheme.keyword
+  hilight .hilight.cobol 1 "declaratives"               .scheme.keyword
+  hilight .hilight.cobol 1 "delimited by"               .scheme.keyword
+  hilight .hilight.cobol 1 "display"                    .scheme.keyword
+  hilight .hilight.cobol 1 "error"                      .scheme.keyword
+  hilight .hilight.cobol 1 "external"                   .scheme.keyword
+  hilight .hilight.cobol 1 "fd"                         .scheme.keyword
+  hilight .hilight.cobol 1 "false"                      .scheme.keyword
+  hilight .hilight.cobol 1 "file"                       .scheme.keyword
+  hilight .hilight.cobol 1 "file-control"               .scheme.keyword
+  hilight .hilight.cobol 1 "footing"                    .scheme.keyword
+  hilight .hilight.cobol 1 "global"                     .scheme.keyword
+  hilight .hilight.cobol 1 "high"                       .scheme.keyword
+  hilight .hilight.cobol 1 "i-o-control"                .scheme.keyword
+  hilight .hilight.cobol 1 "in"                         .scheme.keyword
+  hilight .hilight.cobol 1 "input-output"               .scheme.keyword
+  hilight .hilight.cobol 1 "i-o"                        .scheme.keyword
+  hilight .hilight.cobol 1 "label"                      .scheme.keyword
+  hilight .hilight.cobol 1 "line"                       .scheme.keyword
+  hilight .hilight.cobol 1 "linkage"                    .scheme.keyword
+  hilight .hilight.cobol 1 "low"                        .scheme.keyword
+  hilight .hilight.cobol 1 "move"                       .scheme.keyword
+  hilight .hilight.cobol 1 "object-computer"            .scheme.keyword
+  hilight .hilight.cobol 1 "occurs"                     .scheme.keyword
+  hilight .hilight.cobol 1 "ommited"                    .scheme.keyword
+  hilight .hilight.cobol 1 "pic"                        .scheme.keyword
+  hilight .hilight.cobol 1 "position"                   .scheme.keyword
+  hilight .hilight.cobol 1 "procedure"                  .scheme.keyword
+  hilight .hilight.cobol 1 "redefines"                  .scheme.keyword
+  hilight .hilight.cobol 1 "renames"                    .scheme.keyword
+  hilight .hilight.cobol 1 "reverse"                    .scheme.keyword
+  hilight .hilight.cobol 1 "screen"                     .scheme.keyword
+  hilight .hilight.cobol 1 "size"                       .scheme.keyword
+  hilight .hilight.cobol 1 "space"                      .scheme.keyword
+  hilight .hilight.cobol 1 "spaces"                     .scheme.keyword
+  hilight .hilight.cobol 1 "standard"                   .scheme.keyword
+  hilight .hilight.cobol 1 "standard"                   .scheme.keyword
+  hilight .hilight.cobol 1 "time"                       .scheme.keyword
+  hilight .hilight.cobol 1 "times"                      .scheme.keyword
+  hilight .hilight.cobol 1 "true"                       .scheme.keyword
+  hilight .hilight.cobol 1 "top"                        .scheme.keyword
+  hilight .hilight.cobol 1 "use"                        .scheme.keyword
+  hilight .hilight.cobol 1 "value"                      .scheme.keyword
+  hilight .hilight.cobol 1 "value"                      .scheme.keyword
+  hilight .hilight.cobol 1 "varying"                    .scheme.keyword
+  hilight .hilight.cobol 1 "working-storage"            .scheme.keyword
+  hilight .hilight.cobol 1 "when set to"                .scheme.keyword
+  hilight .hilight.cobol 1 "zero"                       .scheme.keyword
+  hilight .hilight.cobol 1 "zeros"                      .scheme.keyword
+  
+  hilight .hilight.cobol 1 "close"                      .scheme.keyword
+  hilight .hilight.cobol 1 "delete file"                .scheme.keyword
+  hilight .hilight.cobol 1 "delete"                     .scheme.keyword
+  hilight .hilight.cobol 1 "dynamic"                    .scheme.keyword
+  hilight .hilight.cobol 1 "input"                      .scheme.keyword
+  hilight .hilight.cobol 1 "inspect"                    .scheme.keyword
+  hilight .hilight.cobol 1 "if"                         .scheme.keyword
+  hilight .hilight.cobol 1 "else"                       .scheme.keyword
+  hilight .hilight.cobol 1 "invalid"                    .scheme.keyword
+  hilight .hilight.cobol 1 "lock"                       .scheme.keyword
+  hilight .hilight.cobol 1 "next"                       .scheme.keyword
+  hilight .hilight.cobol 1 "open"                       .scheme.keyword
+  hilight .hilight.cobol 1 "output"                     .scheme.keyword
+  hilight .hilight.cobol 1 "previous"                   .scheme.keyword
+  hilight .hilight.cobol 1 "read"                       .scheme.keyword
+  hilight .hilight.cobol 1 "rewrite"                    .scheme.keyword
+  hilight .hilight.cobol 1 "replacing"                  .scheme.keyword
+  hilight .hilight.cobol 1 "replacing all"              .scheme.keyword
+  hilight .hilight.cobol 1 "stop run"                   .scheme.keyword
+  hilight .hilight.cobol 1 "write"                      .scheme.keyword
+  
+  hilight .hilight.cobol 1 "display"                    .scheme.keyword
+  hilight .hilight.cobol 1 "erase eos"                  .scheme.keyword
+  hilight .hilight.cobol 1 "erase eol"                  .scheme.keyword
+  hilight .hilight.cobol 1 "exception"                  .scheme.keyword
+  hilight .hilight.cobol 1 "go to"                      .scheme.keyword
+  hilight .hilight.cobol 1 "line"                       .scheme.keyword
+  hilight .hilight.cobol 1 "perform"                    .scheme.keyword
+  hilight .hilight.cobol 1 "to"                         .scheme.keyword
+  
+  hilight .hilight.cobol 1 "end-"                       .scheme.keyword
+  ; end-xxx delimiter, present in RM/COBOL-85, dont know if its standard-85 ??
+  
+  hilight .hilight.cobol 1 "("                          .scheme.operator
+  hilight .hilight.cobol 1 ")"                          .scheme.operator
+  hilight .hilight.cobol 1 "\\."                        .scheme.operator
+  hilight .hilight.cobol 1 "/"                          .scheme.operator
+  hilight .hilight.cobol 1 "<"                          .scheme.operator
+  hilight .hilight.cobol 1 "="                          .scheme.operator
+  hilight .hilight.cobol 1 ">"                          .scheme.operator
+  hilight .hilight.cobol 1 "not"                        .scheme.operator
+  hilight .hilight.cobol 1 "and"                        .scheme.operator
+  hilight .hilight.cobol 1 "or"                         .scheme.operator
+  
+  
+  hilight .hilight.cobol 1 "binary"                     .scheme.type
+  hilight .hilight.cobol 1 "comp"                       .scheme.type
+  hilight .hilight.cobol 1 "comp-1"                     .scheme.type
+  hilight .hilight.cobol 1 "comp-3"                     .scheme.type
+  hilight .hilight.cobol 1 "comp-4"                     .scheme.type
+  hilight .hilight.cobol 1 "comp-6"                     .scheme.type
+  hilight .hilight.cobol 1 "computational"              .scheme.type
+  hilight .hilight.cobol 1 "computational-1"            .scheme.type
+  hilight .hilight.cobol 1 "computational-3"            .scheme.type
+  hilight .hilight.cobol 1 "computational-4"            .scheme.type
+  hilight .hilight.cobol 1 "computational-6"            .scheme.type
+  hilight .hilight.cobol 1 "display"                    .scheme.type
+  hilight .hilight.cobol 1 "index"                      .scheme.type
+  hilight .hilight.cobol 1 "pic"                        .scheme.type
 !endif
 
 buffer-init-fhook "cobol"

@@ -8,7 +8,7 @@
 ; Authors:     Steven Phillips
 ;
 !if &not &exi .osd.melogo
-    set-variable .osd.melogo &pinc .osd.next 1
+  set-variable .osd.melogo &pinc .osd.next 1
 !endif
 
 -1 osd .osd.melogo

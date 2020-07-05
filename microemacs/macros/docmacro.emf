@@ -46,7 +46,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <090829.1742>
+;         > Modified:     <200620.1226>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -82,137 +82,137 @@ set-variable #l1 @1
 set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
 
 !if &and &sin "h" #l0 &band .hilight.flags 0x02
-    !if &not &exist .hilight.doc
-        set-variable .hilight.doc  &pinc .hilight.next 1
-        set-variable .hilight.doc1 &pinc .hilight.next 1
-    !endif
-    !if &not &exist &ind &cat ".hilight." #l1
-        set-variable  &ind &cat ".hilight." #l1 .hilight.doc
-    !endif
-    ; Define the hilighting. Note that we use a look back so that
-    ; we can process the inserted schemes if necessary. Ordinarily
-    ; we do not need it. This will only hurt branch tokens, as there
-    ; are none below then there is no adverse effect.
-    0 hilight  .hilight.doc 2 100                               $global-scheme
-    hilight .hilight.doc 0x20 "*\\}[ \t]+\\w"                   .scheme.no1
-    hilight .hilight.doc 0x21 "\\m)"                            .scheme.no1
-    hilight .hilight.doc 0x21 "\\m\\m)"                         .scheme.no1
-    hilight .hilight.doc 0x21 "\\d+)"                           .scheme.no1
-    hilight .hilight.doc 0x21 "\\d+\\a)"                        .scheme.no1
-    hilight .hilight.doc 1 "\\*[A-Za-z_]+\\*"                   .scheme.bold
-    hilight .hilight.doc 1 "<[A-Za-z_]+>"                       .scheme.italic
-    hilight .hilight.doc 1 "_[A-Za-z0-9]+_"                     .scheme.under
-    hilight .hilight.doc 0 "^\\s*\\[\\w*\\]"                    .scheme.no1
-    hilight .hilight.doc 0x22 "[0-9]+\\.[0-9.]*[ \t]+\\w"       .scheme.header
-    hilight .hilight.doc 0x804 "\"" "\"" "\\"                   .scheme.string
-    hilight .hilight.doc 0x804 "`" "'" ""                       .scheme.no1
-    hilight .hilight.doc 0    "'.'"                             .scheme.quote
-    hilight .hilight.doc 0    "'\\\\.'"                         .scheme.quote
-    hilight .hilight.doc 0x22 "^[ \t]*Appendix [[:alpha:]]"     .scheme.header
-    hilight .hilight.doc 0x22 "_\\W"                            .scheme.comment
-    hilight .hilight.doc 0x22 ">"                               .scheme.comment
-    hilight .hilight.doc 0x80 "^[ \t]+@" .hilight.doc1          .scheme.no2
-    ; HTTP links etc.
-    hilight .hilight.doc 0 "file:[-@~_a-zA-Z#%=\\.:\\/0-9]+"    .scheme.link
-    hilight .hilight.doc 0 "http:[-@~_a-zA-Z#%?&=\\.:\\/0-9]+"  .scheme.link
-    hilight .hilight.doc 0 "https:[-@~_a-zA-Z#%?&=\\.:\\/0-9]+" .scheme.link
-    hilight .hilight.doc 0 "ftp:[-_a-zA-Z@%.:\\/0-9]+"          .scheme.link
-    hilight .hilight.doc 0 "mailto:[-_a-zA-Z@%.:\\/0-9]+"       .scheme.link
-    hilight .hilight.doc 0 "news:[-_a-zA-Z@%.:\\\\/@0-9]+"      .scheme.link 
-    ; @ block
-    0 hilight .hilight.doc1 0                                   .scheme.no2
-    hilight   .hilight.doc1 0x80 "^[ \t]*\n" .hilight.doc       $global-scheme
-    hilight   .hilight.doc1 0x80 "^\n"       .hilight.doc       $global-scheme
-    
-    ; Allow inserts into the documentation mode. You may add to the
-    ; available inserts by adding to your mydoc.emf file
-    
-    ; Allow MicroEmacs Macro .emf inserts
-    ; Force the ".emf" scheme to be loaded into the context of the document
-    ; scheme. We delimit the .emf scheme with a pair of markers ">emf>" and
-    ; ">doc>"
-    ;
-    ; Force the hilighting mode to load if not already loaded.
-    !if &not &exi .hilight.emf
-        !force execute-file "hkemf"
-    !endif
-    ; If the hilighting mode is loaded then modify it.
-    !if &and &sin "h" .fhook-emf.setup &band .hilight.flags 0x02 
-        hilight .hilight.doc 0x80 "^>emf>" .hilight.emf .scheme.hide
-        hilight .hilight.emf 0x80 "^>doc>" .hilight.doc .scheme.hide
-    !endif
-    
-    ; Allow Pseudo Code inserts
-    ; Force the ".pseudo" scheme to be loaded into the context of the document
-    ; scheme. We delimit the .emf scheme with a pair of markers ">pseudo>" and
-    ; ">doc>"
-    ;
-    ; Force the hilighting mode to load if not already loaded.
-    !if &not &exi .hilight.pseudo
-        !force execute-file "hkpseudo"
-    !endif
-    ; If the hilighting mode is loaded then modify it.
-    !if &exi .hilight.pseudo
-        hilight .hilight.doc 0x80 "^>pseudo>" .hilight.pseudo .scheme.hide
-        hilight .hilight.pseudo 0x80 "^>doc>" .hilight.doc .scheme.hide
-    !endif
-    
-    ; Allow BNF inserts
-    ; Force the ".bnf" scheme to be loaded into the context of the document
-    ; scheme. We delimit the .emf scheme with a pair of markers ">bnf>" and
-    ; ">doc>"
-    ;
-    ; Force the hilighting mode to load if not already loaded.
-    !if &not &exi .hilight.bnf
-        !force execute-file "hkbnf"
-    !endif
-    ; If the hilighting mode is loaded then modify it.
-    !if &and &sin "h" .fhook-bnf.setup &band .hilight.flags 0x02 
-        hilight .hilight.doc 0x80 "^>bnf>" .hilight.bnf .scheme.hide
-        hilight .hilight.bnf 0x80 "^>doc>" .hilight.doc .scheme.hide
-    !endif
-    
-    ; Allow C Code inserts
-    ; Force the ".c" scheme to be loaded into the context of the document
-    ; scheme. We delimit the .emf scheme with a pair of markers ">c>" and
-    ; ">doc>"
-    ;
-    ; Force the hilighting mode to load if not already loaded.
-    !if &not &exi .hilight.c
-        !force execute-file "hkc"
-    !endif
-    ; If the hilighting mode is loaded then modify it.
-    !if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02 
-        hilight .hilight.doc 0x80 "^>c>"   .hilight.c   .scheme.hide
-        hilight .hilight.c   0x80 "^>doc>" .hilight.doc .scheme.hide
-    !endif
-    
-    ; Allow C++ Code inserts ...
-    !if &not &exi .hilight.cpp
-        !force execute-file "hkcpp"
-    !endif
-    !if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02 
-        hilight .hilight.doc 0x80 "^>cpp>"     .hilight.cpp .scheme.hide
-        hilight .hilight.doc 0x80 "^>c\\+\\+>" .hilight.cpp .scheme.hide
-        hilight .hilight.cpp 0x80 "^>doc>"     .hilight.doc .scheme.hide
-    !endif
-    ; Allow Perl Code inserts ...
-    !if &not &exi .hilight.perl
-        !force execute-file "hkperl"
-    !endif
-    !if &and &sin "h" .fhook-perl.setup &band .hilight.flags 0x02 
-        hilight .hilight.doc  0x80 "^>perl>" .hilight.perl .scheme.hide
-        hilight .hilight.doc  0x80 "^>pl>"   .hilight.perl .scheme.hide
-        hilight .hilight.perl 0x80 "^>doc>"  .hilight.doc  .scheme.hide
-    !endif
-    ; Allow TCL Code inserts ...
-    !if &not &exi .hilight.tcl
-        !force execute-file "hktcl"
-    !endif
-    !if &and &sin "h" .fhook-tcl.setup &band .hilight.flags 0x02 
-        hilight .hilight.doc 0x80 "^>tcl>" .hilight.tcl .scheme.hide
-        hilight .hilight.tcl 0x80 "^>doc>" .hilight.doc .scheme.hide
-    !endif
+  !if &not &exist .hilight.doc
+    set-variable .hilight.doc  &pinc .hilight.next 1
+    set-variable .hilight.doc1 &pinc .hilight.next 1
+  !endif
+  !if &not &exist &ind &cat ".hilight." #l1
+    set-variable  &ind &cat ".hilight." #l1 .hilight.doc
+  !endif
+  ; Define the hilighting. Note that we use a look back so that
+  ; we can process the inserted schemes if necessary. Ordinarily
+  ; we do not need it. This will only hurt branch tokens, as there
+  ; are none below then there is no adverse effect.
+  0 hilight  .hilight.doc 2 100                               $global-scheme
+  hilight .hilight.doc 0x20 "*\\}[ \t]+\\w"                   .scheme.no1
+  hilight .hilight.doc 0x21 "\\m)"                            .scheme.no1
+  hilight .hilight.doc 0x21 "\\m\\m)"                         .scheme.no1
+  hilight .hilight.doc 0x21 "\\d+)"                           .scheme.no1
+  hilight .hilight.doc 0x21 "\\d+\\a)"                        .scheme.no1
+  hilight .hilight.doc 1 "\\*[A-Za-z_]+\\*"                   .scheme.bold
+  hilight .hilight.doc 1 "<[A-Za-z_]+>"                       .scheme.italic
+  hilight .hilight.doc 1 "_[A-Za-z0-9]+_"                     .scheme.under
+  hilight .hilight.doc 0 "^\\s*\\[\\w*\\]"                    .scheme.no1
+  hilight .hilight.doc 0x22 "[0-9]+\\.[0-9.]*[ \t]+\\w"       .scheme.header
+  hilight .hilight.doc 0x804 "\"" "\"" "\\"                   .scheme.string
+  hilight .hilight.doc 0x804 "`" "'" ""                       .scheme.no1
+  hilight .hilight.doc 0    "'.'"                             .scheme.quote
+  hilight .hilight.doc 0    "'\\\\.'"                         .scheme.quote
+  hilight .hilight.doc 0x22 "^[ \t]*Appendix [[:alpha:]]"     .scheme.header
+  hilight .hilight.doc 0x22 "_\\W"                            .scheme.comment
+  hilight .hilight.doc 0x22 ">"                               .scheme.comment
+  hilight .hilight.doc 0x80 "^[ \t]+@" .hilight.doc1          .scheme.no2
+  ; HTTP links etc.
+  hilight .hilight.doc 0 "file:[-@~_a-zA-Z#%=\\.:\\/0-9]+"    .scheme.link
+  hilight .hilight.doc 0 "http:[-@~_a-zA-Z#%?&=\\.:\\/0-9]+"  .scheme.link
+  hilight .hilight.doc 0 "https:[-@~_a-zA-Z#%?&=\\.:\\/0-9]+" .scheme.link
+  hilight .hilight.doc 0 "ftp:[-_a-zA-Z@%.:\\/0-9]+"          .scheme.link
+  hilight .hilight.doc 0 "mailto:[-_a-zA-Z@%.:\\/0-9]+"       .scheme.link
+  hilight .hilight.doc 0 "news:[-_a-zA-Z@%.:\\\\/@0-9]+"      .scheme.link 
+  ; @ block
+  0 hilight .hilight.doc1 0                                   .scheme.no2
+  hilight   .hilight.doc1 0x80 "^[ \t]*\n" .hilight.doc       $global-scheme
+  hilight   .hilight.doc1 0x80 "^\n"       .hilight.doc       $global-scheme
+  
+  ; Allow inserts into the documentation mode. You may add to the
+  ; available inserts by adding to your mydoc.emf file
+  
+  ; Allow MicroEmacs Macro .emf inserts
+  ; Force the ".emf" scheme to be loaded into the context of the document
+  ; scheme. We delimit the .emf scheme with a pair of markers ">emf>" and
+  ; ">doc>"
+  ;
+  ; Force the hilighting mode to load if not already loaded.
+  !if &not &exi .hilight.emf
+    !force execute-file "hkemf"
+  !endif
+  ; If the hilighting mode is loaded then modify it.
+  !if &and &sin "h" .fhook-emf.setup &band .hilight.flags 0x02 
+    hilight .hilight.doc 0x80 "^>emf>" .hilight.emf .scheme.hide
+    hilight .hilight.emf 0x80 "^>doc>" .hilight.doc .scheme.hide
+  !endif
+  
+  ; Allow Pseudo Code inserts
+  ; Force the ".pseudo" scheme to be loaded into the context of the document
+  ; scheme. We delimit the .emf scheme with a pair of markers ">pseudo>" and
+  ; ">doc>"
+  ;
+  ; Force the hilighting mode to load if not already loaded.
+  !if &not &exi .hilight.pseudo
+    !force execute-file "hkpseudo"
+  !endif
+  ; If the hilighting mode is loaded then modify it.
+  !if &exi .hilight.pseudo
+    hilight .hilight.doc 0x80 "^>pseudo>" .hilight.pseudo .scheme.hide
+    hilight .hilight.pseudo 0x80 "^>doc>" .hilight.doc .scheme.hide
+  !endif
+  
+  ; Allow BNF inserts
+  ; Force the ".bnf" scheme to be loaded into the context of the document
+  ; scheme. We delimit the .emf scheme with a pair of markers ">bnf>" and
+  ; ">doc>"
+  ;
+  ; Force the hilighting mode to load if not already loaded.
+  !if &not &exi .hilight.bnf
+    !force execute-file "hkbnf"
+  !endif
+  ; If the hilighting mode is loaded then modify it.
+  !if &and &sin "h" .fhook-bnf.setup &band .hilight.flags 0x02 
+    hilight .hilight.doc 0x80 "^>bnf>" .hilight.bnf .scheme.hide
+    hilight .hilight.bnf 0x80 "^>doc>" .hilight.doc .scheme.hide
+  !endif
+  
+  ; Allow C Code inserts
+  ; Force the ".c" scheme to be loaded into the context of the document
+  ; scheme. We delimit the .emf scheme with a pair of markers ">c>" and
+  ; ">doc>"
+  ;
+  ; Force the hilighting mode to load if not already loaded.
+  !if &not &exi .hilight.c
+    !force execute-file "hkc"
+  !endif
+  ; If the hilighting mode is loaded then modify it.
+  !if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02 
+    hilight .hilight.doc 0x80 "^>c>"   .hilight.c   .scheme.hide
+    hilight .hilight.c   0x80 "^>doc>" .hilight.doc .scheme.hide
+  !endif
+  
+  ; Allow C++ Code inserts ...
+  !if &not &exi .hilight.cpp
+    !force execute-file "hkcpp"
+  !endif
+  !if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02 
+    hilight .hilight.doc 0x80 "^>cpp>"     .hilight.cpp .scheme.hide
+    hilight .hilight.doc 0x80 "^>c\\+\\+>" .hilight.cpp .scheme.hide
+    hilight .hilight.cpp 0x80 "^>doc>"     .hilight.doc .scheme.hide
+  !endif
+  ; Allow Perl Code inserts ...
+  !if &not &exi .hilight.perl
+    !force execute-file "hkperl"
+  !endif
+  !if &and &sin "h" .fhook-perl.setup &band .hilight.flags 0x02 
+    hilight .hilight.doc  0x80 "^>perl>" .hilight.perl .scheme.hide
+    hilight .hilight.doc  0x80 "^>pl>"   .hilight.perl .scheme.hide
+    hilight .hilight.perl 0x80 "^>doc>"  .hilight.doc  .scheme.hide
+  !endif
+  ; Allow TCL Code inserts ...
+  !if &not &exi .hilight.tcl
+    !force execute-file "hktcl"
+  !endif
+  !if &and &sin "h" .fhook-tcl.setup &band .hilight.flags 0x02 
+    hilight .hilight.doc 0x80 "^>tcl>" .hilight.tcl .scheme.hide
+    hilight .hilight.tcl 0x80 "^>doc>" .hilight.doc .scheme.hide
+  !endif
 !endif
 
 ; load docutl.emf to get the doc support macros
@@ -220,100 +220,100 @@ execute-file "docutl"
 
 ; Defualt body of a fhook
 define-macro doc-fhook-body
-    set-variable #l1 @1
-    ; if arg is 0 this is a new file so add template
-    @# buffer-init #l1 
-    ; Over-ride any special document modes
-    set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
-    !force set-variable #l2 @2
-    !if &and $status &sin "n" #l0
-        ; Search for additional modes in a -!- document -!-
-        ;
-        ; -!- Document; fill-column: <digit> -!-
-        ;
-        ;
-        beginning-of-buffer
-        !force -20 search-buffer "em" &spr "-[*!]-[ \t]*%s[ \t]*" #l2
-        !if $status
-            ; Search for fill-column: <var>;
-            !force -1 search-buffer "em" "fill-column[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;]"
-            !if $status
-                set-variable $buffer-fill-col @s1
-                beginning-of-line
-            !endif
-            ; Search for fill-mode: <string>
-            !force -1 search-buffer "em" "fill-mode[ \t]*:[ \t]*\\([a-zA-Z]+\\)[ \t]*[-;]"            
-            !if $status
-                set-variable #l0 @s1
-                !if &iseq #l0 "left"
-                    set-variable $buffer-fill-mode "L"
-                !elif &iseq #l0 "none"
-                    set-variable $buffer-fill-mode "n"
-                !elif &iseq #l0 "right"
-                    set-variable $buffer-fill-mode "R"
-                !elif &iseq #l0 "full"
-                    set-variable $buffer-fill-mode "B"
-                !elif &iseq #l0 "both"
-                    set-variable $buffer-fill-mode "B"
-                !elif &iseq #l0 "center"
-                    set-variable $buffer-fill-mode "C"
-                !endif
-                beginning-of-line
-            !endif
-            ; Add any others in here.
-
-            ; Back to the start of the buffer
-            beginning-of-buffer
+  set-variable #l1 @1
+  ; if arg is 0 this is a new file so add template
+  @# buffer-init #l1 
+  ; Over-ride any special document modes
+  set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
+  !force set-variable #l2 @2
+  !if &and $status &sin "n" #l0
+    ; Search for additional modes in a -!- document -!-
+    ;
+    ; -!- Document; fill-column: <digit> -!-
+    ;
+    ;
+    beginning-of-buffer
+    !force -20 search-buffer "em" &spr "-[*!]-[ \t]*%s[ \t]*" #l2
+    !if $status
+      ; Search for fill-column: <var>;
+      !force -1 search-buffer "em" "fill-column[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;]"
+      !if $status
+        set-variable $buffer-fill-col @s1
+        beginning-of-line
+      !endif
+      ; Search for fill-mode: <string>
+      !force -1 search-buffer "em" "fill-mode[ \t]*:[ \t]*\\([a-zA-Z]+\\)[ \t]*[-;]"            
+      !if $status
+        set-variable #l0 @s1
+        !if &iseq #l0 "left"
+          set-variable $buffer-fill-mode "L"
+        !elif &iseq #l0 "none"
+          set-variable $buffer-fill-mode "n"
+        !elif &iseq #l0 "right"
+          set-variable $buffer-fill-mode "R"
+        !elif &iseq #l0 "full"
+          set-variable $buffer-fill-mode "B"
+        !elif &iseq #l0 "both"
+          set-variable $buffer-fill-mode "B"
+        !elif &iseq #l0 "center"
+          set-variable $buffer-fill-mode "C"
         !endif
+        beginning-of-line
+      !endif
+      ; Add any others in here.
+      
+      ; Back to the start of the buffer
+      beginning-of-buffer
     !endif
-    buffer-init-hooks
+  !endif
+  buffer-init-hooks
 !emacro
 
 ; convert a doc/txt buffer to jst
 define-macro-file hkjst fhook-jst
 define-macro doc-to-jst
-    beginning-of-buffer
-    set-variable #l8 &bmod "exact"
-    set-variable #l9 &bmod "magic"
-    1 buffer-mode "magic"
-    -1 buffer-mode "exact"
-    !force -1 search-forward "-!-[ \t]*\\(document\\|text\\).*-!-"
-    !if $status
-        set-variable #l0 &rep @s0 @s1 "jst"
-        set-variable #l0 &rep @wl @s0 #l0
-        beginning-of-line
-        set-mark
-        end-of-line
-        kill-region
-        -1 yank
-        insert-string #l0
-    !else
-        insert-string "> -!- jst -!-\n"
-    !endif
-    ; convert old docmode to jst
-    ; italic <...> -> ~...~
-    beginning-of-buffer
-    replace-string "<\\(\\S[^>\n]*\\)>" "~\\1~"
-    ; change and >doc> to >end> and protect the starting >mode>
-    beginning-of-buffer
-    replace-string "^>doc>" "\b>end>"
-    beginning-of-buffer
-    replace-string "^>c\\+\\+>" "\b>cpp>"
-    beginning-of-buffer
-    replace-string "^>\\(\\w+\\)>" "\b>\\1>"
-    ; literal paragraphs starting with >, @ or _ all change to >@
-    beginning-of-buffer
-    replace-string "^\\([ \t]*\n\\) \\([ \t]*\\)[>@_]" "\\1\b>@\\2"
-    beginning-of-buffer
-    replace-string "^\\([ \t]*\n\\)[>@_]  " "\\1\b>@ "
-    beginning-of-buffer
-    replace-string "^\\([ \t]*\n\\)\\([ \t]*\\)[>@_]" "\\1>@\\2"
-    beginning-of-buffer
-    replace-string "^\b>" ">"
-    beginning-of-buffer
-    &cond #l8 1 -1 buffer-mode "exact"
-    &cond #l9 1 -1 buffer-mode "magic"
-    fhook-jst
+  beginning-of-buffer
+  set-variable #l8 &bmod "exact"
+  set-variable #l9 &bmod "magic"
+  1 buffer-mode "magic"
+  -1 buffer-mode "exact"
+  !force -1 search-forward "-!-[ \t]*\\(document\\|text\\).*-!-"
+  !if $status
+    set-variable #l0 &rep @s0 @s1 "jst"
+    set-variable #l0 &rep @wl @s0 #l0
+    beginning-of-line
+    set-mark
+    end-of-line
+    kill-region
+    -1 yank
+    insert-string #l0
+  !else
+    insert-string "> -!- jst -!-\n"
+  !endif
+  ; convert old docmode to jst
+  ; italic <...> -> ~...~
+  beginning-of-buffer
+  replace-string "<\\(\\S[^>\n]*\\)>" "~\\1~"
+  ; change and >doc> to >end> and protect the starting >mode>
+  beginning-of-buffer
+  replace-string "^>doc>" "\b>end>"
+  beginning-of-buffer
+  replace-string "^>c\\+\\+>" "\b>cpp>"
+  beginning-of-buffer
+  replace-string "^>\\(\\w+\\)>" "\b>\\1>"
+  ; literal paragraphs starting with >, @ or _ all change to >@
+  beginning-of-buffer
+  replace-string "^\\([ \t]*\n\\) \\([ \t]*\\)[>@_]" "\\1\b>@\\2"
+  beginning-of-buffer
+  replace-string "^\\([ \t]*\n\\)[>@_]  " "\\1\b>@ "
+  beginning-of-buffer
+  replace-string "^\\([ \t]*\n\\)\\([ \t]*\\)[>@_]" "\\1>@\\2"
+  beginning-of-buffer
+  replace-string "^\b>" ">"
+  beginning-of-buffer
+  &cond #l8 1 -1 buffer-mode "exact"
+  &cond #l9 1 -1 buffer-mode "magic"
+  fhook-jst
 !emacro
 
 set-variable &ind &spr ".fhook-%s.command-flag"  #l1 "|thb|hb|th|thb|th|h|h|thb|thb|thb|thb|thb|h|h|th|h|h|thb|thb|thb|thb|thb|"
@@ -322,8 +322,8 @@ set-variable &ind &spr ".fhook-%s.command-nbind" #l1 "||||||||||||||||||0|1|2|3|
 set-variable &ind &spr ".fhook-%s.command-kbind" #l1 "|C-c C-h|C-c C-s||C-c o||||C-c C-b|C-c C-c|C-c C-l|C-c <|C-c C-r||||||C-c a|C-c b|C-c c|C-c l|C-c n|"
 set-variable &ind &spr ".fhook-%s.command-desc"  #l1 "|\HShow Current Settings|Spell Check Buffer|Convert to JST|Paragrah to line||Format paragraph:||Both Justify|Center Justify|Left Justify|Margin Justify|Right Justify|Format Paragraph|Smart Format Paragraph||Change justification mode:||Auto justify mode|Both justify mode|Center justify mode|Left justify mode|None justify mode|"
 !if &sin "f" #l0
-    ; Define the folding definitions.
-    set-variable &ind &spr ".fhook-%s.collapse-open" #l1  "^[ \t]*\\(Appendix[ \t]+[A-Z][0-9.]*\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
-    set-variable &ind &spr ".fhook-%s.collapse-close" #l1 "^[ \t]*\\(Appendix[ \t]+[A-Z][0-9.]*\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
-    set-variable &ind &spr ".fhook-%s.collapse-mnext" #l1 "-1"
+  ; Define the folding definitions.
+  set-variable &ind &spr ".fhook-%s.collapse-open" #l1  "^[ \t]*\\(Appendix[ \t]+[A-Z][0-9.]*\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
+  set-variable &ind &spr ".fhook-%s.collapse-close" #l1 "^[ \t]*\\(Appendix[ \t]+[A-Z][0-9.]*\\|[0-9]\\.[0-9.]*\\)[ \t]+\\w"
+  set-variable &ind &spr ".fhook-%s.collapse-mnext" #l1 "-1"
 !endif

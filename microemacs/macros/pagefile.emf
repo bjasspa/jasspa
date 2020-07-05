@@ -11,642 +11,642 @@
 set-variable %page-file-backup &cond &exi %page-file-backup %page-file-backup -1
 
 0 define-macro page-file-set-mode-line
-    set-variable #l0 &rep $mode-line "%f" $buffer-fname
-    set-variable #l0 &rep #l0 "%b" &spr "%%b : page %d of %d" &add 1 &div &lget :page-0 1 .page-file.page-size &div :page-fsize .page-file.page-size
-    set-variable $buffer-mode-line &rep #l0 "%l" ": line %l"
+  set-variable #l0 &rep $mode-line "%f" $buffer-fname
+  set-variable #l0 &rep #l0 "%b" &spr "%%b : page %d of %d" &add 1 &div &lget :page-0 1 .page-file.page-size &div :page-fsize .page-file.page-size
+  set-variable $buffer-mode-line &rep #l0 "%l" ": line %l"
 !emacro
 
 define-macro page-file-save-buffer
-    ; move the existing version somewhere safe first
-    set-variable #l0 $buffer-bname
-    set-variable #l1 $buffer-fname
-    set-variable #l2 $buffer-backup
-    set-variable #l7 &add &bmod "cr" &mul &bmod "lf" 2
-    0 buffer-info
-    set-variable #l8 $result
-    set-variable #l9 &add &add &lget :page-0 1 &lget #l8 5 &cond &equ #l7 3 &lget #l8 7 0
-    !if &bmod "backup"
-        !force 0 delete-buffer "*Page-tmp2*"
-        find-buffer "*Page-tmp2*"
-        1 buffer-mode "backup"
-        0 write-buffer #l1 @mna
-        !force 0 delete-buffer $buffer-bname
-        find-buffer #l0
-    !else
-        0x40 file-op #l1 #l2 @mna
-        !if &or &not &seq &stat "t" #l1 "X" &not &seq &stat "t" #l2 "R"
-            ml-write &spr "[Failed to move file \"%s\" to \"%s\"]" #l1 #l2
-            !abort
-        !endif
-    !endif
-    !if &not &equ &stat "s" #l2 :page-fsize
-        ml-write &spr "[File size of moved file \"%s\" is not correct, something has gone wrong]" #l2
-        !abort
-    !endif
-    ml-write &spr "[Writing pre-page to \"%s\"]" #l1
-    set-variable #l3 &lget :page-0 1
+  ; move the existing version somewhere safe first
+  set-variable #l0 $buffer-bname
+  set-variable #l1 $buffer-fname
+  set-variable #l2 $buffer-backup
+  set-variable #l7 &add &bmod "cr" &mul &bmod "lf" 2
+  0 buffer-info
+  set-variable #l8 $result
+  set-variable #l9 &add &add &lget :page-0 1 &lget #l8 5 &cond &equ #l7 3 &lget #l8 7 0
+  !if &bmod "backup"
     !force 0 delete-buffer "*Page-tmp2*"
     find-buffer "*Page-tmp2*"
-    -1 buffer-mode "ctrlz"
-    &cond &band #l7 1 1 -1 buffer-mode "cr"
-    &cond &band #l7 2 1 -1 buffer-mode "lf"
-    set-variable #l5 0
-    !while &les #l5 &sub #l3 1
-        set-variable #l6 &add #l5 .page-file.page-size
-        !if &gre #l6 &sub #l3 1
-            set-variable #l6 &sub #l3 1
-        !endif
-        4 insert-file #l2 0 #l5 &sub #l6 #l5
-        set-variable #l6 &lget $result 2
-        0 append-buffer #l1
-        set-mark
-        beginning-of-buffer
-        -1 kill-region
-        set-variable #l5 #l6
-    !done
+    1 buffer-mode "backup"
+    0 write-buffer #l1 @mna
+    !force 0 delete-buffer $buffer-bname
     find-buffer #l0
-    ml-write &spr "[Writing page to \"%s\"]" #l1
+  !else
+    0x40 file-op #l1 #l2 @mna
+    !if &or &not &seq &stat "t" #l1 "X" &not &seq &stat "t" #l2 "R"
+      ml-write &spr "[Failed to move file \"%s\" to \"%s\"]" #l1 #l2
+      !abort
+    !endif
+  !endif
+  !if &not &equ &stat "s" #l2 :page-fsize
+    ml-write &spr "[File size of moved file \"%s\" is not correct, something has gone wrong]" #l2
+    !abort
+  !endif
+  ml-write &spr "[Writing pre-page to \"%s\"]" #l1
+  set-variable #l3 &lget :page-0 1
+  !force 0 delete-buffer "*Page-tmp2*"
+  find-buffer "*Page-tmp2*"
+  -1 buffer-mode "ctrlz"
+  &cond &band #l7 1 1 -1 buffer-mode "cr"
+  &cond &band #l7 2 1 -1 buffer-mode "lf"
+  set-variable #l5 0
+  !while &les #l5 &sub #l3 1
+    set-variable #l6 &add #l5 .page-file.page-size
+    !if &gre #l6 &sub #l3 1
+      set-variable #l6 &sub #l3 1
+    !endif
+    4 insert-file #l2 0 #l5 &sub #l6 #l5
+    set-variable #l6 &lget $result 2
     0 append-buffer #l1
-    ml-write &spr "[Writing post-page to \"%s\"]" #l1
-    set-variable #l3 :page-fsize
-    set-variable #l5 &lget :page-1 2
-    find-buffer "*Page-tmp2*"
-    !while &les #l5 #l3
-        set-variable #l6 &add #l5 .page-file.page-size
-        4 insert-file #l2 0 #l5 &sub #l6 #l5
-        set-variable #l6 &lget $result 2
-        0 append-buffer #l1
-        set-mark
-        beginning-of-buffer
-        -1 kill-region
-        set-variable #l5 #l6
-    !done
-    !force 0 delete-buffer "*Page-tmp2*"
-    find-buffer #l0
-    -1 buffer-mode "edit"
-    set-variable :page-fsize &stat "s" #l1
-    page-file-goto-byte #l9
-    ml-write &spr "[Saved \"%s\"]" #l1
+    set-mark
+    beginning-of-buffer
+    -1 kill-region
+    set-variable #l5 #l6
+  !done
+  find-buffer #l0
+  ml-write &spr "[Writing page to \"%s\"]" #l1
+  0 append-buffer #l1
+  ml-write &spr "[Writing post-page to \"%s\"]" #l1
+  set-variable #l3 :page-fsize
+  set-variable #l5 &lget :page-1 2
+  find-buffer "*Page-tmp2*"
+  !while &les #l5 #l3
+    set-variable #l6 &add #l5 .page-file.page-size
+    4 insert-file #l2 0 #l5 &sub #l6 #l5
+    set-variable #l6 &lget $result 2
+    0 append-buffer #l1
+    set-mark
+    beginning-of-buffer
+    -1 kill-region
+    set-variable #l5 #l6
+  !done
+  !force 0 delete-buffer "*Page-tmp2*"
+  find-buffer #l0
+  -1 buffer-mode "edit"
+  set-variable :page-fsize &stat "s" #l1
+  page-file-goto-byte #l9
+  ml-write &spr "[Saved \"%s\"]" #l1
 !emacro
 
 0 define-macro page-file-page-up
-    !if &not &lget :page-0 1
-        !abort
+  !if &not &lget :page-0 1
+    !abort
+  !endif
+  !if &bmod "edit"
+    set-variable #l0 @mc5 "About to change page, save changes (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+    !if &iseq #l0 "y"
+      page-file-save-buffer
     !endif
-    !if &bmod "edit"
-        set-variable #l0 @mc5 "About to change page, save changes (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-        !if &iseq #l0 "y"
-            page-file-save-buffer
-        !endif
-    !endif
-    goto-alpha-mark "\x83"
-    set-mark
-    end-of-buffer
-    -1 kill-region
-    set-variable :page-1 :page-0
+  !endif
+  goto-alpha-mark "\x83"
+  set-mark
+  end-of-buffer
+  -1 kill-region
+  set-variable :page-1 :page-0
+  beginning-of-buffer
+  set-variable #l0 &sub &lget :page-1 1 .page-file.page-size
+  !if &les #l0 .page-file.page-size
+    set-variable #l0 0
+  !endif
+  4 insert-file $buffer-fname 0 #l0 &sub &lget :page-1 1 #l0
+  set-variable :page-0 $result
+  !if &gre :line-offset -1
+    set-variable :line-offset &sub :line-offset &sub $window-aline 2
+  !endif
+  set-alpha-mark "\x83"
+  !if &and #l0 &not &bmod "binary"
+    ; ditch the first line as it could be incomplete
     beginning-of-buffer
-    set-variable #l0 &sub &lget :page-1 1 .page-file.page-size
-    !if &les #l0 .page-file.page-size
-        set-variable #l0 0
-    !endif
-    4 insert-file $buffer-fname 0 #l0 &sub &lget :page-1 1 #l0
-    set-variable :page-0 $result
-    !if &gre :line-offset -1
-        set-variable :line-offset &sub :line-offset &sub $window-aline 2
-    !endif
-    set-alpha-mark "\x83"
-    !if &and #l0 &not &bmod "binary"
-        ; ditch the first line as it could be incomplete
-        beginning-of-buffer
-        set-mark
-        end-of-line
-        set-variable :page-0 &lset :page-0 1 &add &lget :page-0 1 $window-col
-        forward-char
-        -1 kill-region
-    !endif
-    -1 buffer-mode "edit"
-    page-file-set-mode-line
+    set-mark
+    end-of-line
+    set-variable :page-0 &lset :page-0 1 &add &lget :page-0 1 $window-col
+    forward-char
+    -1 kill-region
+  !endif
+  -1 buffer-mode "edit"
+  page-file-set-mode-line
 !emacro
 
 0 define-macro page-file-page-down
-    !if &equ &lget :page-1 2 :page-fsize
-        !abort
+  !if &equ &lget :page-1 2 :page-fsize
+    !abort
+  !endif
+  !if &bmod "edit"
+    set-variable #l0 @mc5 "About to change page, save changes (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+    !if &iseq #l0 "y"
+      page-file-save-buffer
     !endif
-    !if &bmod "edit"
-        set-variable #l0 @mc5 "About to change page, save changes (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-        !if &iseq #l0 "y"
-            page-file-save-buffer
-        !endif
-    !endif
-    beginning-of-buffer
-    set-mark
-    goto-alpha-mark "\x83"
-    !if &gre :line-offset -1
-        set-variable :line-offset &add :line-offset &sub $window-aline 1
-    !endif
-    -1 kill-region
-    set-variable :page-0 :page-1
-    end-of-buffer
-    4 insert-file $buffer-fname 0 &lget :page-0 2 .page-file.page-size
-    set-variable :page-1 $result
-    exchange-point-and-mark
-    set-alpha-mark "\x83"
-    -1 buffer-mode "edit"
-    page-file-set-mode-line
+  !endif
+  beginning-of-buffer
+  set-mark
+  goto-alpha-mark "\x83"
+  !if &gre :line-offset -1
+    set-variable :line-offset &add :line-offset &sub $window-aline 1
+  !endif
+  -1 kill-region
+  set-variable :page-0 :page-1
+  end-of-buffer
+  4 insert-file $buffer-fname 0 &lget :page-0 2 .page-file.page-size
+  set-variable :page-1 $result
+  exchange-point-and-mark
+  set-alpha-mark "\x83"
+  -1 buffer-mode "edit"
+  page-file-set-mode-line
 !emacro
 
 define-macro page-file-beginning-of-buffer
-    !if &seq &lget :page-0 1 "0"
-        beginning-of-buffer
-    !endif
-    !if &bmod "edit"
-        set-variable #l0 @mc5 "About to change page, save changes (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-        !if &iseq #l0 "y"
-            page-file-save-buffer
-        !endif
-    !endif
+  !if &seq &lget :page-0 1 "0"
     beginning-of-buffer
-    set-mark
-    end-of-buffer
-    -1 kill-region
-    ; insert the first two pages
-    4 insert-file $buffer-fname 0 0 .page-file.page-size
-    set-variable :page-0 $result
-    4 insert-file $buffer-fname 0 &lget :page-0 2 .page-file.page-size
-    set-variable :page-1 $result
-    set-variable :line-offset 0
-    exchange-point-and-mark
-    set-alpha-mark "\x83"
-    beginning-of-buffer
-    -1 buffer-mode "edit"
-    page-file-set-mode-line
+  !endif
+  !if &bmod "edit"
+    set-variable #l0 @mc5 "About to change page, save changes (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+    !if &iseq #l0 "y"
+      page-file-save-buffer
+    !endif
+  !endif
+  beginning-of-buffer
+  set-mark
+  end-of-buffer
+  -1 kill-region
+  ; insert the first two pages
+  4 insert-file $buffer-fname 0 0 .page-file.page-size
+  set-variable :page-0 $result
+  4 insert-file $buffer-fname 0 &lget :page-0 2 .page-file.page-size
+  set-variable :page-1 $result
+  set-variable :line-offset 0
+  exchange-point-and-mark
+  set-alpha-mark "\x83"
+  beginning-of-buffer
+  -1 buffer-mode "edit"
+  page-file-set-mode-line
 !emacro
 
 define-macro page-file-end-of-buffer
-    !if &equ &lget :page-1 2 :page-fsize
-        end-of-buffer
-    !endif
-    !if &bmod "edit"
-        set-variable #l0 @mc5 "About to change page, save changes (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-        !if &iseq #l0 "y"
-            page-file-save-buffer
-        !endif
-        -1 buffer-mode "edit"
-    !endif
-    beginning-of-buffer
-    set-alpha-mark "\x83"
-    set-variable :page-0 &spr "|%d|%d|" :page-fsize :page-fsize
-    set-variable :line-offset -1
-    page-file-page-up
-    page-file-page-up
+  !if &equ &lget :page-1 2 :page-fsize
     end-of-buffer
+  !endif
+  !if &bmod "edit"
+    set-variable #l0 @mc5 "About to change page, save changes (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+    !if &iseq #l0 "y"
+      page-file-save-buffer
+    !endif
+    -1 buffer-mode "edit"
+  !endif
+  beginning-of-buffer
+  set-alpha-mark "\x83"
+  set-variable :page-0 &spr "|%d|%d|" :page-fsize :page-fsize
+  set-variable :line-offset -1
+  page-file-page-up
+  page-file-page-up
+  end-of-buffer
 !emacro
 
 define-macro page-file-goto-byte
-    !force set-variable #l1 @1
-    !if &not $status
-        set-variable #l1 @ml "Goto byte"
+  !force set-variable #l1 @1
+  !if &not $status
+    set-variable #l1 @ml "Goto byte"
+  !endif
+  !if &les #l1 0
+    set-variable #l1 &add :page-fsize #l1
+  !endif
+  !if &or &les #l1 0 &not &gre :page-fsize #l1
+    ml-write &spr "[Invalid byte offset, range 0 to %d or -%d to -1]" &sub :page-fsize 1 :page-fsize
+    !abort
+  !endif
+  !if &bmod "edit"
+    set-variable #l0 @mc5 "About to change page, save changes (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+    !if &iseq #l0 "y"
+      page-file-save-buffer
     !endif
-    !if &les #l1 0
-        set-variable #l1 &add :page-fsize #l1
-    !endif
-    !if &or &les #l1 0 &not &gre :page-fsize #l1
-        ml-write &spr "[Invalid byte offset, range 0 to %d or -%d to -1]" &sub :page-fsize 1 :page-fsize
-        !abort
-    !endif
-    !if &bmod "edit"
-        set-variable #l0 @mc5 "About to change page, save changes (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-        !if &iseq #l0 "y"
-            page-file-save-buffer
-        !endif
-        -1 buffer-mode "edit"
-    !endif
-    beginning-of-buffer
+    -1 buffer-mode "edit"
+  !endif
+  beginning-of-buffer
+  set-alpha-mark "\x83"
+  set-variable :page-0 &spr "|%d|%d|" #l1 #l1
+  set-variable :line-offset -1
+  page-file-page-up
+  beginning-of-buffer
+  set-alpha-mark "\x83"
+  set-variable :page-1 :page-0
+  !force page-file-page-down
+  !if &not $status
+    ; we're at the end, repair
+    end-of-buffer
     set-alpha-mark "\x83"
-    set-variable :page-0 &spr "|%d|%d|" #l1 #l1
-    set-variable :line-offset -1
-    page-file-page-up
-    beginning-of-buffer
-    set-alpha-mark "\x83"
-    set-variable :page-1 :page-0
-    !force page-file-page-down
-    !if &not $status
-        ; we're at the end, repair
-        end-of-buffer
-        set-alpha-mark "\x83"
-        set-variable :page-1 &spr "|%d|%d|" &lget :page-0 2 &lget :page-0 2
-    !endif
-    goto-alpha-mark "\x83"
-    !if &gre &lget :page-1 1 #l1
-        backward-line
-    !endif
+    set-variable :page-1 &spr "|%d|%d|" &lget :page-0 2 &lget :page-0 2
+  !endif
+  goto-alpha-mark "\x83"
+  !if &gre &lget :page-1 1 #l1
+    backward-line
+  !endif
 !emacro
 
 define-macro page-file-goto-page
-    !force set-variable #l0 @1
-    !if &not $status
-        set-variable #l0 @ml "Goto page"
-    !endif
-    !if &or &les #l0 1 &gre #l0 &div :page-fsize .page-file.page-size
-        ml-write &spr "[Invalid page number, range 1 to %d]" &div :page-fsize .page-file.page-size
-        !abort
-    !endif
-    set-variable #l0 &sub &mul #l0 .page-file.page-size &div .page-file.page-size 2
-    !if &gre #l0 :page-fsize
-        set-variable #l0 &sub :page-fsize 1
-    !endif
-    page-file-goto-byte &sub &mul #l0 .page-file.page-size &div .page-file.page-size 2
+  !force set-variable #l0 @1
+  !if &not $status
+    set-variable #l0 @ml "Goto page"
+  !endif
+  !if &or &les #l0 1 &gre #l0 &div :page-fsize .page-file.page-size
+    ml-write &spr "[Invalid page number, range 1 to %d]" &div :page-fsize .page-file.page-size
+    !abort
+  !endif
+  set-variable #l0 &sub &mul #l0 .page-file.page-size &div .page-file.page-size 2
+  !if &gre #l0 :page-fsize
+    set-variable #l0 &sub :page-fsize 1
+  !endif
+  page-file-goto-byte &sub &mul #l0 .page-file.page-size &div .page-file.page-size 2
 !emacro
 
 define-macro page-file-scroll-up
-    0x13f set-position "\x81"
-    set-variable #l0 &sub $window-line $window-y-scroll
-    !if @?
-        !force @# scroll-up
-    !else
-        !force scroll-up
-    !endif
-    !if &not $status
-        !if &lget :page-0 1
-            !force page-file-page-up
-            !if &not $status
-                goto-position "\x81"
-                !abort
-            !endif
-        !endif
+  0x13f set-position "\x81"
+  set-variable #l0 &sub $window-line $window-y-scroll
+  !if @?
+    !force @# scroll-up
+  !else
+    !force scroll-up
+  !endif
+  !if &not $status
+    !if &lget :page-0 1
+      !force page-file-page-up
+      !if &not $status
         goto-position "\x81"
-        set-variable $window-y-scroll &sub $window-line #l0 
-        !if @?
-            !force @# scroll-up
-        !else
-            !force scroll-up
-        !endif
+        !abort
+      !endif
     !endif
+    goto-position "\x81"
+    set-variable $window-y-scroll &sub $window-line #l0 
+    !if @?
+      !force @# scroll-up
+    !else
+      !force scroll-up
+    !endif
+  !endif
 !emacro
 
 define-macro page-file-backward-line
-    0x13f set-position "\x81"
-    set-variable #l0 &sub $window-line $window-y-scroll
-    !if @?
-        !force @# backward-line
-    !else
-        !force backward-line
-    !endif
-    !if &not $status
-        !if &lget :page-0 1
-            !force page-file-page-up
-            !if &not $status
-                goto-position "\x81"
-                !abort
-            !endif
-        !endif
+  0x13f set-position "\x81"
+  set-variable #l0 &sub $window-line $window-y-scroll
+  !if @?
+    !force @# backward-line
+  !else
+    !force backward-line
+  !endif
+  !if &not $status
+    !if &lget :page-0 1
+      !force page-file-page-up
+      !if &not $status
         goto-position "\x81"
-        set-variable $window-y-scroll &sub $window-line #l0 
-        !if @?
-            !force @# backward-line
-        !else
-            !force backward-line
-        !endif
+        !abort
+      !endif
     !endif
+    goto-position "\x81"
+    set-variable $window-y-scroll &sub $window-line #l0 
+    !if @?
+      !force @# backward-line
+    !else
+      !force backward-line
+    !endif
+  !endif
 !emacro
 
 define-macro page-file-scroll-down
-    0x13f set-position "\x81"
-    set-variable #l0 &sub $window-line $window-y-scroll
-    !if @?
-        !force @# scroll-down
-    !else
-        !force scroll-down
-    !endif
-    ; if at the end of the buffer check we should be at the end
-    !if &or &not $status &les $window-eline &add $window-line $window-depth
-        !if &les &lget :page-1 2 :page-fsize
-            !if &equ $window-line $window-eline
-                goto-position "\x81"
-                backward-line
-                set-variable #l0 &sub #l0 1 
-                0x13f set-position "\x81"
-            !endif
-            !force page-file-page-down
-            !if &not $status
-                goto-position "\x81"
-                !abort
-            !endif
-        !endif
+  0x13f set-position "\x81"
+  set-variable #l0 &sub $window-line $window-y-scroll
+  !if @?
+    !force @# scroll-down
+  !else
+    !force scroll-down
+  !endif
+  ; if at the end of the buffer check we should be at the end
+  !if &or &not $status &les $window-eline &add $window-line $window-depth
+    !if &les &lget :page-1 2 :page-fsize
+      !if &equ $window-line $window-eline
         goto-position "\x81"
-        set-variable $window-y-scroll &sub $window-line #l0 
-        !if @?
-            @# scroll-down
-        !else
-            scroll-down
-        !endif
+        backward-line
+        set-variable #l0 &sub #l0 1 
+        0x13f set-position "\x81"
+      !endif
+      !force page-file-page-down
+      !if &not $status
+        goto-position "\x81"
+        !abort
+      !endif
     !endif
+    goto-position "\x81"
+    set-variable $window-y-scroll &sub $window-line #l0 
+    !if @?
+      @# scroll-down
+    !else
+      scroll-down
+    !endif
+  !endif
 !emacro
 
 define-macro page-file-forward-line
-    0x13f set-position "\x81"
-    set-variable #l0 &sub $window-line $window-y-scroll
-    !if @?
-        !force @# forward-line
-    !else
-        !force forward-line
-    !endif
-    ; if at the end of the buffer check we should be at the end
-    !if &or &not $status &les $window-eline &add $window-line $window-depth
-        !if &les &lget :page-1 2 :page-fsize
-            !if &equ $window-line $window-eline
-                goto-position "\x81"
-                backward-line
-                set-variable #l0 &sub #l0 1 
-                0x13f set-position "\x81"
-            !endif
-            !force page-file-page-down
-            !if &not $status
-                goto-position "\x81"
-                !abort
-            !endif
-        !endif
+  0x13f set-position "\x81"
+  set-variable #l0 &sub $window-line $window-y-scroll
+  !if @?
+    !force @# forward-line
+  !else
+    !force forward-line
+  !endif
+  ; if at the end of the buffer check we should be at the end
+  !if &or &not $status &les $window-eline &add $window-line $window-depth
+    !if &les &lget :page-1 2 :page-fsize
+      !if &equ $window-line $window-eline
         goto-position "\x81"
-        set-variable $window-y-scroll &sub $window-line #l0 
-        !if @?
-            @# forward-line
-        !else
-            forward-line
-        !endif
+        backward-line
+        set-variable #l0 &sub #l0 1 
+        0x13f set-position "\x81"
+      !endif
+      !force page-file-page-down
+      !if &not $status
+        goto-position "\x81"
+        !abort
+      !endif
     !endif
+    goto-position "\x81"
+    set-variable $window-y-scroll &sub $window-line #l0 
+    !if @?
+      @# forward-line
+    !else
+      forward-line
+    !endif
+  !endif
 !emacro
 
 define-macro page-file-search-forward
-    !force search-forward @mna
-    ; if at the end of the buffer check we should be at the end
-    !while &and &not $status &les &lget :page-1 2 :page-fsize
-        0x13f set-position "\x81"
-        !force page-file-page-down
-        !if &not $status
-            goto-position "\x81"
-            !abort
-        !endif
-        goto-position "\x81"
-        !force hunt-forward
-    !done
+  !force search-forward @mna
+  ; if at the end of the buffer check we should be at the end
+  !while &and &not $status &les &lget :page-1 2 :page-fsize
+    0x13f set-position "\x81"
+    !force page-file-page-down
     !if &not $status
-        end-of-buffer
-        ml-write "[Not found]"
-        !abort
+      goto-position "\x81"
+      !abort
     !endif
+    goto-position "\x81"
+    !force hunt-forward
+  !done
+  !if &not $status
+    end-of-buffer
+    ml-write "[Not found]"
+    !abort
+  !endif
 !emacro
 
 define-macro page-file-search-backward
-    !force search-backward @mna
-    ; if at the end of the buffer check we should be at the end
-    !while &and &not $status &lget :page-0 1
-        0x13f set-position "\x81"
-        !force page-file-page-up
-        !if &not $status
-            goto-position "\x81"
-            !abort
-        !endif
-        goto-position "\x81"
-        !force hunt-backward
-    !done
+  !force search-backward @mna
+  ; if at the end of the buffer check we should be at the end
+  !while &and &not $status &lget :page-0 1
+    0x13f set-position "\x81"
+    !force page-file-page-up
     !if &not $status
-        beginning-of-buffer
-        ml-write "[Not found]"
-        !abort
+      goto-position "\x81"
+      !abort
     !endif
+    goto-position "\x81"
+    !force hunt-backward
+  !done
+  !if &not $status
+    beginning-of-buffer
+    ml-write "[Not found]"
+    !abort
+  !endif
 !emacro
 
 define-macro page-file-search-buffer
-    ; assumed a macro is calling this command
-    !force search-buffer &set #l1 @1 &set #l2 @2 @mna
-    !if $status
-    !elif &sin "b" #l1
-        !while &and &not $status &lget :page-0 1
-            0x13f set-position "\x81"
-            !force page-file-page-up
-            !if &not $status
-                goto-position "\x81"
-                !abort
-            !endif
-            goto-position "\x81"
-            !force search-buffer #l1 #l2 @mna
-        !done
-        !if &not $status
-            beginning-of-buffer
-            !abort
-        !endif
-    !else
-        ; if at the end of the buffer check we should be at the end
-        !while &and &not $status &les &lget :page-1 2 :page-fsize
-            0x13f set-position "\x81"
-            !force page-file-page-down
-            !if &not $status
-                goto-position "\x81"
-                !abort
-            !endif
-            goto-position "\x81"
-            !force search-buffer #l1 #l2 @mna
-        !done
-        !if &not $status
-            end-of-buffer
-            !abort
-        !endif
+  ; assumed a macro is calling this command
+  !force search-buffer &set #l1 @1 &set #l2 @2 @mna
+  !if $status
+  !elif &sin "b" #l1
+    !while &and &not $status &lget :page-0 1
+      0x13f set-position "\x81"
+      !force page-file-page-up
+      !if &not $status
+        goto-position "\x81"
+        !abort
+      !endif
+      goto-position "\x81"
+      !force search-buffer #l1 #l2 @mna
+    !done
+    !if &not $status
+      beginning-of-buffer
+      !abort
     !endif
+  !else
+    ; if at the end of the buffer check we should be at the end
+    !while &and &not $status &les &lget :page-1 2 :page-fsize
+      0x13f set-position "\x81"
+      !force page-file-page-down
+      !if &not $status
+        goto-position "\x81"
+        !abort
+      !endif
+      goto-position "\x81"
+      !force search-buffer #l1 #l2 @mna
+    !done
+    !if &not $status
+      end-of-buffer
+      !abort
+    !endif
+  !endif
 !emacro
 
 0 define-macro page-file-isearch
-    set-variable #l0 @#
-    !repeat
-        !if &band #l0 4
-            !if &band #l0 2
-                !force search-backward #l1
-                !if &not $status
-                    beginning-of-buffer
-                    !if &lget :page-0 1
-                        !goto next-page-back
-                    !endif
+  set-variable #l0 @#
+  !repeat
+    !if &band #l0 4
+      !if &band #l0 2
+        !force search-backward #l1
+        !if &not $status
+          beginning-of-buffer
+          !if &lget :page-0 1
+            !goto next-page-back
+          !endif
 *beg-of-buff
-                    execute-line &spr "isearch-backward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\"" 
-                !else
-                    2 show-region
-                    execute-line &spr "0 isearch-backward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\"" 
-                !endif
-            !else
-                set-variable #l2 &xrep #l1 "\\(.\\)" " \"\\1\"" 
-                !force search-forward #l1
-                !if &not $status
-                    end-of-buffer
-                    !if &les &lget :page-1 2 :page-fsize
-                        !goto next-page-forw
-                    !endif
+          execute-line &spr "isearch-backward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\"" 
+        !else
+          2 show-region
+          execute-line &spr "0 isearch-backward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\"" 
+        !endif
+      !else
+        set-variable #l2 &xrep #l1 "\\(.\\)" " \"\\1\"" 
+        !force search-forward #l1
+        !if &not $status
+          end-of-buffer
+          !if &les &lget :page-1 2 :page-fsize
+            !goto next-page-forw
+          !endif
 *end-of-buff
-                    execute-line &spr "isearch-forward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\""
-                !else
-                    -2 show-region
-                    execute-line &spr "0 isearch-forward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\""
-                !endif
-            !endif
-        !elif &band #l0 2
-            0 isearch-backward @mna
+          execute-line &spr "isearch-forward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\""
         !else
-            0 isearch-forward @mna
+          -2 show-region
+          execute-line &spr "0 isearch-forward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\""
         !endif
-        ; did the user break out of isearch via executing another command?
-        !if &not &xseq @cc "page-file-isearch.*"
-            !return
+      !endif
+    !elif &band #l0 2
+      0 isearch-backward @mna
+    !else
+      0 isearch-forward @mna
+    !endif
+    ; did the user break out of isearch via executing another command?
+    !if &not &xseq @cc "page-file-isearch.*"
+      !return
+    !endif
+    set-variable #l1 @h4 0
+    !if $window-col
+      !return
+    !elif &equ $window-line 1
+      set-variable #l0 &bor #l0 6
+      !if &lget :page-0 1
+        !if &band #l0 1
+          set-variable #l2 @mc5 "Continue search onto the previous page (?/y/n/a) ? " "yYnNaA" "(Y)es, (N)o, Yes to (A)ll, (C-g)Abort ? "
+          !if &iseq #l2 "n"
+            beginning-of-buffer
+            !goto beg-of-buff
+          !elif &iseq #l2 "a"
+            set-variable #l0 &bxo #l0 1
+          !endif
         !endif
-        set-variable #l1 @h4 0
-        !if $window-col
-            !return
-        !elif &equ $window-line 1
-            set-variable #l0 &bor #l0 6
-            !if &lget :page-0 1
-                !if &band #l0 1
-                    set-variable #l2 @mc5 "Continue search onto the previous page (?/y/n/a) ? " "yYnNaA" "(Y)es, (N)o, Yes to (A)ll, (C-g)Abort ? "
-                    !if &iseq #l2 "n"
-                        beginning-of-buffer
-                        !goto beg-of-buff
-                    !elif &iseq #l2 "a"
-                        set-variable #l0 &bxo #l0 1
-                    !endif
-                !endif
 *next-page-back
-                !force page-file-page-up
-                !if &not $status
-                    beginning-of-buffer
-                    !abort
-                !endif
-                goto-alpha-mark "\x83"
-            !else
-                beginning-of-buffer
-                !goto beg-of-buff
-            !endif
-        !elif &equ $window-line $window-eline
-            set-variable #l0 &bor 4 &band #l0 1
-            !if &les &lget :page-1 2 :page-fsize
-                !if &band #l0 1
-                    set-variable #l2 @mc5 "Continue search onto the next page (?/y/n/a) ? " "yYnNaA" "(Y)es, (N)o, Yes to (A)ll, (C-g)Abort ? "
-                    !if &iseq #l2 "n"
-                        end-of-buffer
-                        !goto end-of-buff
-                    !elif &iseq #l2 "a"
-                        set-variable #l0 &bxor #l0 1
-                    !endif
-                !endif
-*next-page-forw
-                !force page-file-page-down
-                !if &not $status
-                    end-of-buffer
-                    !abort
-                !endif
-                goto-alpha-mark "\x83"
-            !else
-                end-of-buffer
-                !goto end-of-buff
-            !endif
-        !else
-            !return
+        !force page-file-page-up
+        !if &not $status
+          beginning-of-buffer
+          !abort
         !endif
-    !until 0
+        goto-alpha-mark "\x83"
+      !else
+        beginning-of-buffer
+        !goto beg-of-buff
+      !endif
+    !elif &equ $window-line $window-eline
+      set-variable #l0 &bor 4 &band #l0 1
+      !if &les &lget :page-1 2 :page-fsize
+        !if &band #l0 1
+          set-variable #l2 @mc5 "Continue search onto the next page (?/y/n/a) ? " "yYnNaA" "(Y)es, (N)o, Yes to (A)ll, (C-g)Abort ? "
+          !if &iseq #l2 "n"
+            end-of-buffer
+            !goto end-of-buff
+          !elif &iseq #l2 "a"
+            set-variable #l0 &bxor #l0 1
+          !endif
+        !endif
+*next-page-forw
+        !force page-file-page-down
+        !if &not $status
+          end-of-buffer
+          !abort
+        !endif
+        goto-alpha-mark "\x83"
+      !else
+        end-of-buffer
+        !goto end-of-buff
+      !endif
+    !else
+      !return
+    !endif
+  !until 0
 !emacro
 
 define-macro page-file-isearch-forward
-    @# page-file-isearch
+  @# page-file-isearch
 !emacro
 define-macro page-file-isearch-backward
-    &bor @# 2 page-file-isearch
+  &bor @# 2 page-file-isearch
 !emacro
 define-macro page-file-print-line-number
-    !if &les :line-offset 0
-        ml-write "[Current file line number is unknown]"
-        !abort
-    !endif
-    ml-write &spr "[Current file line number is %d]" &add :line-offset $window-aline
+  !if &les :line-offset 0
+    ml-write "[Current file line number is unknown]"
+    !abort
+  !endif
+  ml-write &spr "[Current file line number is %d]" &add :line-offset $window-aline
 !emacro
 
 define-macro page-file
-    !force set-variable #l0 @1
-    !if &not $status
-        set-variable #l1 &cond &band @# 2 "page-bfile" "page-file"
-        set-variable #l0 @ml01 #l1
-    !endif
-    !if &not &seq &stat "t" #l0 "R"
-        ml-write "[Unsupported file type - must be a regular file]"
-        !abort
-    !endif
-    set-variable #l4 &stat "s" #l0 
-    !if &les #l4 &mul .page-file.page-size 4
-        ml-write "[File < page-size * 4 - whats the point]"
-        !abort
-    !endif
-    !if @#
-        ; check to see if this file is already paged
-        set-variable #l1 &rig #l0 &rsin "/" #l0
-        set-variable $buffer-names &spr "\*Page %s.*" #l1
-        !while &not &seq &set #l2 $buffer-names ""
-            find-buffer #l2
-            !if &seq $buffer-fname #l0
-                screen-update
-                set-variable #l3 @mc5 "File already paged, create a new page buffer (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-                !if &not &iseq #l3 "y" 
-                    !return
-                !endif
-                set-variable $buffer-names ""
-            !endif
-        !done
-        ; create the page buffer
-        !if &band @# 2
-            find-buffer "*Page-tmp-bin*"
-            1 buffer-mode "binary"
-            !if &not &exi "fhook-binary"
-                !force execute-file "hkbinary"
-            !endif
-            !force fhook-binary
-        !elif &band @# 16
-            find-buffer "*Page-tmp*"
-        !else
-            find-buffer &spr "*Page-tmp %s" #l1
+  !force set-variable #l0 @1
+  !if &not $status
+    set-variable #l1 &cond &band @# 2 "page-bfile" "page-file"
+    set-variable #l0 @ml01 #l1
+  !endif
+  !if &not &seq &stat "t" #l0 "R"
+    ml-write "[Unsupported file type - must be a regular file]"
+    !abort
+  !endif
+  set-variable #l4 &stat "s" #l0 
+  !if &les #l4 &mul .page-file.page-size 4
+    ml-write "[File < page-size * 4 - whats the point]"
+    !abort
+  !endif
+  !if @#
+    ; check to see if this file is already paged
+    set-variable #l1 &rig #l0 &rsin "/" #l0
+    set-variable $buffer-names &spr "\*Page %s.*" #l1
+    !while &not &seq &set #l2 $buffer-names ""
+      find-buffer #l2
+      !if &seq $buffer-fname #l0
+        screen-update
+        set-variable #l3 @mc5 "File already paged, create a new page buffer (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+        !if &not &iseq #l3 "y" 
+          !return
         !endif
-        set-variable #l2 0
-        !force change-buffer-name &spr "\*Page %s" #l1
-        !while &not $status
-            !force change-buffer-name &spr "\*Page %s<%d>" #l1 &inc #l2 1
-        !done
+        set-variable $buffer-names ""
+      !endif
+    !done
+    ; create the page buffer
+    !if &band @# 2
+      find-buffer "*Page-tmp-bin*"
+      1 buffer-mode "binary"
+      !if &not &exi "fhook-binary"
+        !force execute-file "hkbinary"
+      !endif
+      !force fhook-binary
+    !elif &band @# 16
+      find-buffer "*Page-tmp*"
     !else
-        set-variable #l2 @2
-        !force 0 delete-buffer #l2
-        find-buffer #l2
+      find-buffer &spr "*Page-tmp %s" #l1
     !endif
-    set-variable $buffer-fname #l0
-    set-variable :page-fsize #l4
-    %page-file-backup buffer-mode "backup"
-    page-file-beginning-of-buffer
-    beginning-of-buffer
-    ; make sure we don't have ctrlz mode on, this will corrupt the file if saved.
-    -1 buffer-mode "ctrlz"
-    1 buffer-mode "lf"
-    ; try to guess the cr mode from the size of the buffer compared to the size on disk, mac not supported, can be manually set.
-    0 buffer-info
-    &cond &gre &lget :page-0 1 &add &lget $result 6 &div &lget $result 8 2 1 -1 buffer-mode "cr"
-    buffer-bind-key "page-file-save-buffer" "C-x C-s"
-    buffer-bind-key "page-file-beginning-of-buffer" "home"
-    buffer-bind-key "page-file-end-of-buffer" "end"
-    buffer-bind-key "page-file-scroll-up" "page-up"
-    1 buffer-bind-key "page-file-scroll-up" "A-up"
-    buffer-bind-key "page-file-backward-line" "up"
-    5 buffer-bind-key "page-file-backward-line" "C-up"
-    buffer-bind-key "page-file-scroll-down" "page-down"
-    1 buffer-bind-key "page-file-scroll-down" "A-down"
-    buffer-bind-key "page-file-forward-line" "down"
-    5 buffer-bind-key "page-file-forward-line" "C-down"
-    buffer-bind-key "page-file-search-backward" "C-x r"
-    buffer-bind-key "page-file-search-forward" "C-x s"
-    buffer-bind-key "page-file-isearch-backward" "C-r"
-    buffer-bind-key "page-file-isearch-forward" "C-s"
+    set-variable #l2 0
+    !force change-buffer-name &spr "\*Page %s" #l1
+    !while &not $status
+      !force change-buffer-name &spr "\*Page %s<%d>" #l1 &inc #l2 1
+    !done
+  !else
+    set-variable #l2 @2
+    !force 0 delete-buffer #l2
+    find-buffer #l2
+  !endif
+  set-variable $buffer-fname #l0
+  set-variable :page-fsize #l4
+  %page-file-backup buffer-mode "backup"
+  page-file-beginning-of-buffer
+  beginning-of-buffer
+  ; make sure we don't have ctrlz mode on, this will corrupt the file if saved.
+  -1 buffer-mode "ctrlz"
+  1 buffer-mode "lf"
+  ; try to guess the cr mode from the size of the buffer compared to the size on disk, mac not supported, can be manually set.
+  0 buffer-info
+  &cond &gre &lget :page-0 1 &add &lget $result 6 &div &lget $result 8 2 1 -1 buffer-mode "cr"
+  buffer-bind-key "page-file-save-buffer" "C-x C-s"
+  buffer-bind-key "page-file-beginning-of-buffer" "home"
+  buffer-bind-key "page-file-end-of-buffer" "end"
+  buffer-bind-key "page-file-scroll-up" "page-up"
+  1 buffer-bind-key "page-file-scroll-up" "A-up"
+  buffer-bind-key "page-file-backward-line" "up"
+  5 buffer-bind-key "page-file-backward-line" "C-up"
+  buffer-bind-key "page-file-scroll-down" "page-down"
+  1 buffer-bind-key "page-file-scroll-down" "A-down"
+  buffer-bind-key "page-file-forward-line" "down"
+  5 buffer-bind-key "page-file-forward-line" "C-down"
+  buffer-bind-key "page-file-search-backward" "C-x r"
+  buffer-bind-key "page-file-search-forward" "C-x s"
+  buffer-bind-key "page-file-isearch-backward" "C-r"
+  buffer-bind-key "page-file-isearch-forward" "C-s"
 !emacro
 
 define-macro page-bfile
-    3 page-file
+  3 page-file
 !emacro
 
 set-variable .page-file.page-size 1048576

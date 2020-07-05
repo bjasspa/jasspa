@@ -13,8 +13,8 @@
 ;     Notation One (ASN.1) (Extract from the Blue Book).
 ;
 define-macro fhook-asn1
-    @# buffer-init "asn1"
-    buffer-init-hooks
+  @# buffer-init "asn1"
+  buffer-init-hooks
 !emacro
 
 ; Note the indentation is not very good so don't enable by default
@@ -23,79 +23,79 @@ set-variable .fhook-asn1.setup-mask "aebdghikmnoptux"
 set-variable .fhook-asn1.comment "|--||=|-- | --|r|"
 
 !if &not &exist .hilight.asn1
-    set-variable .hilight.asn1  &pinc .hilight.next 1
-    set-variable .hilight.asn1C &pinc .hilight.next 1
+  set-variable .hilight.asn1  &pinc .hilight.next 1
+  set-variable .hilight.asn1C &pinc .hilight.next 1
 !endif
 !if &and &sin "h" .fhook-asn1.setup &band .hilight.flags 0x02 
-    ; Hilight ASN.1 Mode
-    0 hilight  .hilight.asn1  0                   $global-scheme
-    hilight .hilight.asn1  0x80 "--" .hilight.asn1C .scheme.comment
-    hilight .hilight.asn1  1 "::="             .scheme.operator
-    hilight .hilight.asn1  1 "ABSENT"          .scheme.keyword
-    hilight .hilight.asn1  1 "ANY"             .scheme.keyword
-    hilight .hilight.asn1  1 "APPLICATION"     .scheme.keyword
-    hilight .hilight.asn1  1 "BEGIN"           .scheme.keyword
-    hilight .hilight.asn1  1 "BIT"             .scheme.keyword
-    hilight .hilight.asn1  1 "BOOLEAN"         .scheme.type
-    hilight .hilight.asn1  1 "BY"              .scheme.keyword
-    hilight .hilight.asn1  1 "CHOICE"          .scheme.keyword
-    hilight .hilight.asn1  1 "COMPONENT"       .scheme.keyword
-    hilight .hilight.asn1  1 "COMPONENTS"      .scheme.keyword
-    hilight .hilight.asn1  1 "DEFAULT"         .scheme.keyword
-    hilight .hilight.asn1  1 "DEFINED"         .scheme.keyword
-    hilight .hilight.asn1  1 "DEFINITIONS"     .scheme.keyword
-    hilight .hilight.asn1  1 "END"             .scheme.keyword
-    hilight .hilight.asn1  1 "ENUMERATED"      .scheme.keyword
-    hilight .hilight.asn1  1 "EXPLICIT"        .scheme.keyword
-    hilight .hilight.asn1  1 "EXPORTS"         .scheme.keyword
-    hilight .hilight.asn1  1 "EXTERNAL"        .scheme.keyword
-    hilight .hilight.asn1  1 "FALSE"           .scheme.type
-    hilight .hilight.asn1  1 "FROM"            .scheme.keyword
-    hilight .hilight.asn1  1 "IDENTIFIER"      .scheme.type
-    hilight .hilight.asn1  1 "IMPLICIT"        .scheme.keyword
-    hilight .hilight.asn1  1 "IMPORTS"         .scheme.keyword
-    hilight .hilight.asn1  1 "INCLUDES"        .scheme.keyword
-    hilight .hilight.asn1  1 "INTEGER"         .scheme.type
-    hilight .hilight.asn1  1 "MAX"             .scheme.keyword
-    hilight .hilight.asn1  1 "MIN"             .scheme.keyword
-    hilight .hilight.asn1  1 "MINUS-INFINITY"  .scheme.keyword
-    hilight .hilight.asn1  1 "NULL"            .scheme.type
-    hilight .hilight.asn1  1 "OBJECT"          .scheme.type
-    hilight .hilight.asn1  1 "OCTET"           .scheme.type 
-    hilight .hilight.asn1  1 "OF"              .scheme.keyword
-    hilight .hilight.asn1  1 "OPTIONAL"        .scheme.keyword
-    hilight .hilight.asn1  1 "PLUS-INFINITY"   .scheme.keyword
-    hilight .hilight.asn1  1 "PRESENT"         .scheme.keyword
-    hilight .hilight.asn1  1 "PRIVATE"         .scheme.keyword
-    hilight .hilight.asn1  1 "REAL"            .scheme.type
-    hilight .hilight.asn1  1 "SEQUENCE"        .scheme.keyword
-    hilight .hilight.asn1  1 "SET"             .scheme.keyword
-    hilight .hilight.asn1  1 "SIZE"            .scheme.keyword
-    hilight .hilight.asn1  1 "STRING"          .scheme.type
-    hilight .hilight.asn1  1 "TAGS"            .scheme.keyword
-    hilight .hilight.asn1  1 "TRUE"            .scheme.type
-    hilight .hilight.asn1  1 "UNIVERSAL"       .scheme.keyword
-    hilight .hilight.asn1  1 "WITH"            .scheme.keyword
-    ;
-    hilight .hilight.asn1  1 "OBJECT-TYPE"     .scheme.keyword
-    hilight .hilight.asn1  1 "SYNTAX"          .scheme.keyword
-    hilight .hilight.asn1  1 "ACCESS"          .scheme.keyword
-    hilight .hilight.asn1  1 "INDEX"           .scheme.keyword
-    hilight .hilight.asn1  1 "STATUS"          .scheme.keyword
-    hilight .hilight.asn1  1 "DESCRIPTION"     .scheme.keyword
-    ;
-    0 hilight  .hilight.asn1C 0                    .scheme.comment
-    hilight .hilight.asn1C 0x80 "--"   .hilight.asn1 .scheme.comment
-    hilight .hilight.asn1C 0x80 "\n"   .hilight.asn1 .scheme.comment
+  ; Hilight ASN.1 Mode
+  0 hilight  .hilight.asn1  0                   $global-scheme
+  hilight .hilight.asn1  0x80 "--" .hilight.asn1C .scheme.comment
+  hilight .hilight.asn1  1 "::="             .scheme.operator
+  hilight .hilight.asn1  1 "ABSENT"          .scheme.keyword
+  hilight .hilight.asn1  1 "ANY"             .scheme.keyword
+  hilight .hilight.asn1  1 "APPLICATION"     .scheme.keyword
+  hilight .hilight.asn1  1 "BEGIN"           .scheme.keyword
+  hilight .hilight.asn1  1 "BIT"             .scheme.keyword
+  hilight .hilight.asn1  1 "BOOLEAN"         .scheme.type
+  hilight .hilight.asn1  1 "BY"              .scheme.keyword
+  hilight .hilight.asn1  1 "CHOICE"          .scheme.keyword
+  hilight .hilight.asn1  1 "COMPONENT"       .scheme.keyword
+  hilight .hilight.asn1  1 "COMPONENTS"      .scheme.keyword
+  hilight .hilight.asn1  1 "DEFAULT"         .scheme.keyword
+  hilight .hilight.asn1  1 "DEFINED"         .scheme.keyword
+  hilight .hilight.asn1  1 "DEFINITIONS"     .scheme.keyword
+  hilight .hilight.asn1  1 "END"             .scheme.keyword
+  hilight .hilight.asn1  1 "ENUMERATED"      .scheme.keyword
+  hilight .hilight.asn1  1 "EXPLICIT"        .scheme.keyword
+  hilight .hilight.asn1  1 "EXPORTS"         .scheme.keyword
+  hilight .hilight.asn1  1 "EXTERNAL"        .scheme.keyword
+  hilight .hilight.asn1  1 "FALSE"           .scheme.type
+  hilight .hilight.asn1  1 "FROM"            .scheme.keyword
+  hilight .hilight.asn1  1 "IDENTIFIER"      .scheme.type
+  hilight .hilight.asn1  1 "IMPLICIT"        .scheme.keyword
+  hilight .hilight.asn1  1 "IMPORTS"         .scheme.keyword
+  hilight .hilight.asn1  1 "INCLUDES"        .scheme.keyword
+  hilight .hilight.asn1  1 "INTEGER"         .scheme.type
+  hilight .hilight.asn1  1 "MAX"             .scheme.keyword
+  hilight .hilight.asn1  1 "MIN"             .scheme.keyword
+  hilight .hilight.asn1  1 "MINUS-INFINITY"  .scheme.keyword
+  hilight .hilight.asn1  1 "NULL"            .scheme.type
+  hilight .hilight.asn1  1 "OBJECT"          .scheme.type
+  hilight .hilight.asn1  1 "OCTET"           .scheme.type 
+  hilight .hilight.asn1  1 "OF"              .scheme.keyword
+  hilight .hilight.asn1  1 "OPTIONAL"        .scheme.keyword
+  hilight .hilight.asn1  1 "PLUS-INFINITY"   .scheme.keyword
+  hilight .hilight.asn1  1 "PRESENT"         .scheme.keyword
+  hilight .hilight.asn1  1 "PRIVATE"         .scheme.keyword
+  hilight .hilight.asn1  1 "REAL"            .scheme.type
+  hilight .hilight.asn1  1 "SEQUENCE"        .scheme.keyword
+  hilight .hilight.asn1  1 "SET"             .scheme.keyword
+  hilight .hilight.asn1  1 "SIZE"            .scheme.keyword
+  hilight .hilight.asn1  1 "STRING"          .scheme.type
+  hilight .hilight.asn1  1 "TAGS"            .scheme.keyword
+  hilight .hilight.asn1  1 "TRUE"            .scheme.type
+  hilight .hilight.asn1  1 "UNIVERSAL"       .scheme.keyword
+  hilight .hilight.asn1  1 "WITH"            .scheme.keyword
+  ;
+  hilight .hilight.asn1  1 "OBJECT-TYPE"     .scheme.keyword
+  hilight .hilight.asn1  1 "SYNTAX"          .scheme.keyword
+  hilight .hilight.asn1  1 "ACCESS"          .scheme.keyword
+  hilight .hilight.asn1  1 "INDEX"           .scheme.keyword
+  hilight .hilight.asn1  1 "STATUS"          .scheme.keyword
+  hilight .hilight.asn1  1 "DESCRIPTION"     .scheme.keyword
+  ;
+  0 hilight  .hilight.asn1C 0                    .scheme.comment
+  hilight .hilight.asn1C 0x80 "--"   .hilight.asn1 .scheme.comment
+  hilight .hilight.asn1C 0x80 "\n"   .hilight.asn1 .scheme.comment
 !endif
 !if &sin "d" .fhook-asn1.setup
-    ; This does not work very well so we do not enable it by default.
-    ; This is becuse of the syntax of the language on a ::=
-    0 indent   .hilight.asn1 0 50
-    indent  .hilight.asn1 N "BEGIN" t
-    indent  .hilight.asn1 O "END" -t
-    indent  .hilight.asn1 n "{" t
-    indent  .hilight.asn1 o "}" -t
+  ; This does not work very well so we do not enable it by default.
+  ; This is becuse of the syntax of the language on a ::=
+  0 indent   .hilight.asn1 0 50
+  indent  .hilight.asn1 N "BEGIN" t
+  indent  .hilight.asn1 O "END" -t
+  indent  .hilight.asn1 n "{" t
+  indent  .hilight.asn1 o "}" -t
 !endif
 
 buffer-init-fhook "asn1"

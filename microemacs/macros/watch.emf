@@ -30,158 +30,158 @@
 ;   * Use the watch-reset command with a n argument of 0 to stop all watches.
 ;
 0 define-macro watch-callback
-    !if &seq &lef @cl 8 "isearch-"
-        .watch.time create-callback watch-callback
-        !return
-    !endif
-    0 show-region
-    set-variable #l8 &band $result 0x07
-    set-variable #l0 $window-id
-    set-variable #l9 0
-    !repeat
-        !if &exi :watch
-            !if &exi :watch-size
-                set-variable #l2 &stat s $buffer-fname
-                ;ml-write &spr "Watch-size %s : %s %s" $time :watch-size #l2
-                !if &equ :watch-size #l2
-                !elif &les #l2 :watch-size
-                    !force !force reread-file
-                    set-variable $buffer-mode-line &rep $buffer-mode-line "%k" "%kW"
-                    set-variable :watch-size #l2
-                    set-variable :watch "0"
-                    set-variable #l9 1
-                !elif &gre #l2 :watch-size
-                    0xce set-position "\x81"
-                    set-variable #l5 &seq @wc ""
-                    end-of-buffer
-                    ; check whether the last read had only a partial line (no terminating \n)
-                    !if &set #l6 &gre $window-line 1
-                        backward-line
-                        set-variable #l6 &cond &band $line-flags 0x10 &add $window-line 1 0
-                        forward-line
-                    !endif
-                    set-variable #l4 &bmod "edit"
-                    !force 1 buffer-mode "edit" "y"
-                    !force !force 4 insert-file $buffer-fname 0 :watch-size &sub #l2 :watch-size
-                    !if &and #l6 &sub $window-line #l6
-                        set-variable $window-line #l6
-                        backward-delete-char
-                    !endif
-                    &cond #l4 1 -1 buffer-mode "edit"
-                    !force goto-position "\x81"
-                    !if #l5
-                        end-of-buffer
-                    !endif
-                    set-variable :watch-size #l2
-                    set-variable #l9 1
-                !endif
-            !else
-                set-variable #l2 &stat d $buffer-fname
-                ;ml-write &spr "Watch-date %s : %s %s" $time :watch #l2
-                !if &gre #l2 :watch
-                    ml-write &spr "[Watch updating %s]" $buffer-bname
-                    !force !force reread-file
-                    set-variable $buffer-mode-line &rep $buffer-mode-line "%k" "%kW"
-                    set-variable #l9 1
-                    set-variable :watch #l2
-                !endif
-            !endif
-        !endif
-        ; visit EVERY window otherwise we might not get back to the starting one (toolbar!)
-        3 next-window
-    !until &equ $window-id #l0
+  !if &seq &lef @cl 8 "isearch-"
     .watch.time create-callback watch-callback
-    !if #l9
-        0 ml-write
-        screen-update
-    !elif &equ #l8 7
-        !force show-region
-    !elif &equ #l8 5
-        !force 4 show-region
+    !return
+  !endif
+  0 show-region
+  set-variable #l8 &band $result 0x07
+  set-variable #l0 $window-id
+  set-variable #l9 0
+  !repeat
+    !if &exi :watch
+      !if &exi :watch-size
+        set-variable #l2 &stat s $buffer-fname
+        ;ml-write &spr "Watch-size %s : %s %s" $time :watch-size #l2
+        !if &equ :watch-size #l2
+        !elif &les #l2 :watch-size
+          !force !force reread-file
+          set-variable $buffer-mode-line &rep $buffer-mode-line "%k" "%kW"
+          set-variable :watch-size #l2
+          set-variable :watch "0"
+          set-variable #l9 1
+        !elif &gre #l2 :watch-size
+          0xce set-position "\x81"
+          set-variable #l5 &seq @wc ""
+          end-of-buffer
+          ; check whether the last read had only a partial line (no terminating \n)
+          !if &set #l6 &gre $window-line 1
+            backward-line
+            set-variable #l6 &cond &band $line-flags 0x10 &add $window-line 1 0
+            forward-line
+          !endif
+          set-variable #l4 &bmod "edit"
+          !force 1 buffer-mode "edit" "y"
+          !force !force 4 insert-file $buffer-fname 0 :watch-size &sub #l2 :watch-size
+          !if &and #l6 &sub $window-line #l6
+            set-variable $window-line #l6
+            backward-delete-char
+          !endif
+          &cond #l4 1 -1 buffer-mode "edit"
+          !force goto-position "\x81"
+          !if #l5
+            end-of-buffer
+          !endif
+          set-variable :watch-size #l2
+          set-variable #l9 1
+        !endif
+      !else
+        set-variable #l2 &stat d $buffer-fname
+        ;ml-write &spr "Watch-date %s : %s %s" $time :watch #l2
+        !if &gre #l2 :watch
+          ml-write &spr "[Watch updating %s]" $buffer-bname
+          !force !force reread-file
+          set-variable $buffer-mode-line &rep $buffer-mode-line "%k" "%kW"
+          set-variable #l9 1
+          set-variable :watch #l2
+        !endif
+      !endif
     !endif
+    ; visit EVERY window otherwise we might not get back to the starting one (toolbar!)
+    3 next-window
+  !until &equ $window-id #l0
+  .watch.time create-callback watch-callback
+  !if #l9
+    0 ml-write
+    screen-update
+  !elif &equ #l8 7
+    !force show-region
+  !elif &equ #l8 5
+    !force 4 show-region
+  !endif
 !emacro
 
 define-macro watch
-    !if @?
-    !elif &exi :watch
-        set-variable @# -1
-    !else
-        set-variable @# @mc1 "Watch method: (1)Reread (2)Reread-append (3)Append (1/2/3) ? " "123"
+  !if @?
+  !elif &exi :watch
+    set-variable @# -1
+  !else
+    set-variable @# @mc1 "Watch method: (1)Reread (2)Reread-append (3)Append (1/2/3) ? " "123"
+  !endif
+  !if &not @#
+    watch-time
+  !elif &les @# 0
+    !if &exi :watch
+      unset-variable :watch
+      !force unset-variable :watch-size
+      set-variable $buffer-mode-line &rep $buffer-mode-line "%kW" "%k"
+      !if &not &dec .count 1
+        -1 create-callback watch-callback
+      !endif
     !endif
-    !if &not @#
-        watch-time
-    !elif &les @# 0
-        !if &exi :watch
-            unset-variable :watch
-            !force unset-variable :watch-size
-            set-variable $buffer-mode-line &rep $buffer-mode-line "%kW" "%k"
-            !if &not &dec .count 1
-                -1 create-callback watch-callback
-            !endif
-        !endif
-        ml-write &spr "[Watch disabled]"
-    !else
-        !if &not &exi :watch
-            set-variable #l0 &stat d $buffer-fname
-            !if &equ #l0 -1
-                ml-write "[Invalid buffer for watch]"
-                !bell
-                !abort
-            !endif
-            set-variable :watch #l0
-            set-variable $buffer-mode-line &rep $buffer-mode-line "%k" "%kW"
-            !if &not &pinc .count 1
-                .time create-callback watch-callback
-            !endif
-        !endif
-        !if &equ @# 3
-            set-variable :watch-size &stat s $buffer-fname
-        !elif &equ @# 2
-            set-variable :watch-size 0x7fffffff
-        !elif &exi :watch-size
-            unset-variable :watch-size
-        !endif
-        ml-write &spr "[Watch enabled]"
+    ml-write &spr "[Watch disabled]"
+  !else
+    !if &not &exi :watch
+      set-variable #l0 &stat d $buffer-fname
+      !if &equ #l0 -1
+        ml-write "[Invalid buffer for watch]"
+        !bell
+        !abort
+      !endif
+      set-variable :watch #l0
+      set-variable $buffer-mode-line &rep $buffer-mode-line "%k" "%kW"
+      !if &not &pinc .count 1
+        .time create-callback watch-callback
+      !endif
     !endif
+    !if &equ @# 3
+      set-variable :watch-size &stat s $buffer-fname
+    !elif &equ @# 2
+      set-variable :watch-size 0x7fffffff
+    !elif &exi :watch-size
+      unset-variable :watch-size
+    !endif
+    ml-write &spr "[Watch enabled]"
+  !endif
 !emacro
 
 define-macro watch-reset
-    -1 create-callback watch-callback
-    set-variable .watch.count 0
-    set-variable #l2 ""
-    set-variable #l1 $buffer-bname
-    set-variable $buffer-names ".*"
-    !while &not &seq &set #l0 $buffer-names ""
-        !if &exi &spr ":%s:watch" #l0
-            !if @#
-                set-variable #l2 &spr "%s %s" #l2 #l0
-                set-variable .watch.count &add .watch.count 1
-            !else
-                find-buffer #l0
-                set-variable $buffer-mode-line &rep $buffer-mode-line "%kW" "%k"
-                unset-variable :watch
-                !force unset-variable :watch-size
-            !endif
-        !endif
-    !done
-    find-buffer #l1
-    !if &not @#
-        ml-write "[All watches have been removed]"
-    !elif .watch.count
-        ml-write &spr "[Watched buffers:%s]" #l2
-        .watch.time create-callback watch-callback
-    !else
-        ml-write "[No watched buffers]"
+  -1 create-callback watch-callback
+  set-variable .watch.count 0
+  set-variable #l2 ""
+  set-variable #l1 $buffer-bname
+  set-variable $buffer-names ".*"
+  !while &not &seq &set #l0 $buffer-names ""
+    !if &exi &spr ":%s:watch" #l0
+      !if @#
+        set-variable #l2 &spr "%s %s" #l2 #l0
+        set-variable .watch.count &add .watch.count 1
+      !else
+        find-buffer #l0
+        set-variable $buffer-mode-line &rep $buffer-mode-line "%kW" "%k"
+        unset-variable :watch
+        !force unset-variable :watch-size
+      !endif
     !endif
+  !done
+  find-buffer #l1
+  !if &not @#
+    ml-write "[All watches have been removed]"
+  !elif .watch.count
+    ml-write &spr "[Watched buffers:%s]" #l2
+    .watch.time create-callback watch-callback
+  !else
+    ml-write "[No watched buffers]"
+  !endif
 !emacro
 
 define-macro watch-time
-    set-variable #l0 @ml1 "Watch time (s)" &div .watch.time 1000
-    set-variable .watch.time &mul 1000 &cond &les #l0 1 1 #l0
-    watch-reset
+  set-variable #l0 @ml1 "Watch time (s)" &div .watch.time 1000
+  set-variable .watch.time &mul 1000 &cond &les #l0 1 1 #l0
+  watch-reset
 !emacro
 
 !if &not &exi .watch.time
-    set-variable .watch.time 10000
-    set-variable .watch.count 0
+  set-variable .watch.time 10000
+  set-variable .watch.count 0
 !endif

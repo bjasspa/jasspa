@@ -12,286 +12,286 @@ define-macro-file htmltool html-to-ehf
 define-macro-file format clean
 
 define-macro ehf-process-buffer
-    ; Carry on as normal
-    set-variable #l1 &rig $buffer-fname &rsin "/" $buffer-fname
-    set-variable #l1 &lef #l1 &sub &sin ".htm" #l1 1
-    ml-write &spr "[Processing %s]" #l1
-    set-variable #l3 ""
-    end-of-buffer
-    set-mark
-    !force search-backward "<HR>"
-    -1 kill-region
+  ; Carry on as normal
+  set-variable #l1 &rig $buffer-fname &rsin "/" $buffer-fname
+  set-variable #l1 &lef #l1 &sub &sin ".htm" #l1 1
+  ml-write &spr "[Processing %s]" #l1
+  set-variable #l3 ""
+  end-of-buffer
+  set-mark
+  !force search-backward "<HR>"
+  -1 kill-region
 *start
-    ; collect all the <!-- XI: buffer-mode(2) --> references
-    beginning-of-buffer
-    !force search-forward "<!-- XI: "
-    !while $status
-        set-mark
-        search-forward " -->"
-        set-alpha-mark "T"
-        4 backward-char
-        copy-region
-        !if &seq #l3 ""
-            set-variable #l3 @y
-        !endif
-        beginning-of-buffer
-        search-forward "^[^!]"
-        backward-char
-        yank
-        -1 yank
-        insert-newline
-        2 backward-char
-        !if &seq @wc ")"
-            forward-delete-char
-            !repeat
-                backward-char
-            !until &seq @wc "("
-            forward-delete-char
-            1 kill-line
-            set-variable #l0 @y
-            -1 yank
-        !else
-            forward-char
-            set-variable #l0 ""
-        !endif
-        set-variable #l2 $window-col
-        beginning-of-line
-        insert-string "!"
-        !if &and &sin @wc "!&" &gre #l2 4
-            insert-string "4"
-        !else
-            insert-string " "
-        !endif
-        insert-string #l0
-        &sub 2 &len #l0 insert-space
-        goto-alpha-mark "T"
-        !force search-forward "<!-- XI: "
-    !done
+  ; collect all the <!-- XI: buffer-mode(2) --> references
+  beginning-of-buffer
+  !force search-forward "<!-- XI: "
+  !while $status
+    set-mark
+    search-forward " -->"
+    set-alpha-mark "T"
+    4 backward-char
+    copy-region
     !if &seq #l3 ""
-        ; Create the <!-- XI: references from the title
-        beginning-of-buffer
-        search-forward "<TITLE>"
-        set-mark
-        search-forward "</TITLE>"
-        8 backward-char
-        copy-region
-        set-variable #l0 @y
-        -1 yank
-        beginning-of-buffer
-        forward-line
-        insert-string &spr "<!-- XI: %s -->\n" #l0
-        !goto start
+      set-variable #l3 @y
     !endif
     beginning-of-buffer
     search-forward "^[^!]"
     backward-char
+    yank
+    -1 yank
+    insert-newline
+    2 backward-char
+    !if &seq @wc ")"
+      forward-delete-char
+      !repeat
+        backward-char
+      !until &seq @wc "("
+      forward-delete-char
+      1 kill-line
+      set-variable #l0 @y
+      -1 yank
+    !else
+      forward-char
+      set-variable #l0 ""
+    !endif
+    set-variable #l2 $window-col
+    beginning-of-line
+    insert-string "!"
+    !if &and &sin @wc "!&" &gre #l2 4
+      insert-string "4"
+    !else
+      insert-string " "
+    !endif
+    insert-string #l0
+    &sub 2 &len #l0 insert-space
+    goto-alpha-mark "T"
+    !force search-forward "<!-- XI: "
+  !done
+  !if &seq #l3 ""
+    ; Create the <!-- XI: references from the title
+    beginning-of-buffer
+    search-forward "<TITLE>"
     set-mark
-    !force search-forward "<HR>"
-    -1 kill-region
-    set-variable $buffer-fill-col 78
-    set-variable #g0 1
-    html-to-ehf
+    search-forward "</TITLE>"
+    8 backward-char
+    copy-region
+    set-variable #l0 @y
+    -1 yank
     beginning-of-buffer
-    !force replace-string "\CJ\CJ\CJ\CJ" "\CJ\CJ\CJ"
-    beginning-of-buffer
+    forward-line
+    insert-string &spr "<!-- XI: %s -->\n" #l0
+    !goto start
+  !endif
+  beginning-of-buffer
+  search-forward "^[^!]"
+  backward-char
+  set-mark
+  !force search-forward "<HR>"
+  -1 kill-region
+  set-variable $buffer-fill-col 78
+  set-variable #g0 1
+  html-to-ehf
+  beginning-of-buffer
+  !force replace-string "\CJ\CJ\CJ\CJ" "\CJ\CJ\CJ"
+  beginning-of-buffer
+  !force search-forward "\els"
+  !while $status
+    set-mark
+    !force search-forward "\elm"
+    3 backward-char
+    kill-region
+    set-variable #l0 @y
+    -1 yank
+    set-variable #l0 &rig #l0 &rsin "/" #l0
+    set-variable #l0 &lef #l0 &sub &sin ".htm" #l0 1
+    insert-string #l0
     !force search-forward "\els"
-    !while $status
-        set-mark
-        !force search-forward "\elm"
-        3 backward-char
-        kill-region
-        set-variable #l0 @y
-        -1 yank
-        set-variable #l0 &rig #l0 &rsin "/" #l0
-        set-variable #l0 &lef #l0 &sub &sin ".htm" #l0 1
-        insert-string #l0
-        !force search-forward "\els"
-    !done
-    beginning-of-buffer
-    insert-string &spr "#%s#%s\n" #l1 #l3
-    1 buffer-mode "magic"
-    beginning-of-buffer
-    !force search-forward "^|"
-    !while $status
-        forward-line
-        !if &seq @wl ""
-            ; usually only one blank line, if two or more
-            ; then one is the wrong side of the ^| line
-            forward-delete-char
-            !if &seq @wl ""
-                delete-blank-lines
-                backward-line
-                insert-newline
-                forward-char
-            !endif
-        !endif
-        !force search-forward "^|"
-    !done
-    beginning-of-buffer
-    !force replace-string "^\\$emf-scheme\CJ" "\esB"
-    beginning-of-buffer
-    !force replace-string "^\\$ehf-scheme\CJ" "\esA"
-    ; strip blank lines at the top and bottom
-    end-of-buffer
-    backward-line
-    !while &seq @wc "\n"
-        1 kill-line
-        -1 yank
+  !done
+  beginning-of-buffer
+  insert-string &spr "#%s#%s\n" #l1 #l3
+  1 buffer-mode "magic"
+  beginning-of-buffer
+  !force search-forward "^|"
+  !while $status
+    forward-line
+    !if &seq @wl ""
+      ; usually only one blank line, if two or more
+      ; then one is the wrong side of the ^| line
+      forward-delete-char
+      !if &seq @wl ""
+        delete-blank-lines
         backward-line
-    !done
-    beginning-of-buffer
-    search-forward "^[^!#]"
-    backward-char
-    !while &seq @wc "\n"
-        1 kill-line
-        -1 yank
-    !done
+        insert-newline
+        forward-char
+      !endif
+    !endif
+    !force search-forward "^|"
+  !done
+  beginning-of-buffer
+  !force replace-string "^\\$emf-scheme\CJ" "\esB"
+  beginning-of-buffer
+  !force replace-string "^\\$ehf-scheme\CJ" "\esA"
+  ; strip blank lines at the top and bottom
+  end-of-buffer
+  backward-line
+  !while &seq @wc "\n"
+    1 kill-line
+    -1 yank
+    backward-line
+  !done
+  beginning-of-buffer
+  search-forward "^[^!#]"
+  backward-char
+  !while &seq @wc "\n"
+    1 kill-line
+    -1 yank
+  !done
 !emacro
 
 define-macro ehf-process-all
-    !force 0 delete-buffer "*scratch*"
-    delete-other-windows
-    split-window-vertically
-    find-file "me.ehf"
+  !force 0 delete-buffer "*scratch*"
+  delete-other-windows
+  split-window-vertically
+  find-file "me.ehf"
+  beginning-of-buffer
+  set-mark
+  end-of-buffer
+  -1 kill-region
+  next-window
+  !while &not &seq $buffer-bname "me.ehf"
+    ehf-process-buffer
     beginning-of-buffer
+    set-mark
+    !if &seq @wc "#"
+      forward-line
+      !jump -2
+    !endif
+    copy-region
+    next-window
+    beginning-of-buffer
+    yank
+    -1 yank
+    next-window
     set-mark
     end-of-buffer
-    -1 kill-region
+    copy-region
     next-window
-    !while &not &seq $buffer-bname "me.ehf"
-        ehf-process-buffer
-        beginning-of-buffer
-        set-mark
-        !if &seq @wc "#"
-            forward-line
-            !jump -2
-        !endif
-        copy-region
-        next-window
-        beginning-of-buffer
-        yank
-        -1 yank
-        next-window
-        set-mark
-        end-of-buffer
-        copy-region
-        next-window
-        end-of-buffer
-        yank
-        -1 yank
-        next-window
-        0 delete-buffer $buffer-bname
-    !done
-    ; now convert all the page names to something sensible
-    ml-write "[Processing links - this could take some time]" 
-    beginning-of-buffer
-    1 buffer-mode "magic"
-    !force search-forward "\els"
-    !while $status
-        set-alpha-mark "T"
-        set-mark
-        search-forward "\elm"
-        3 backward-char
-        kill-region
-        set-variable #l3 @y
-        -1 yank
-        3 forward-char
-        set-mark
-        search-forward "\e"
-        backward-char
-        copy-region
-        set-variable #l0 @y
-        -1 yank
-        !if &set #l1 &rsin "(" #l0
-            set-variable #l2 &rig #l0 #l1
-            !if &equ &len #l2 2
-                set-variable #l2 &spr "^!.%s " &lef #l2 1
-            !else
-                set-variable #l2 &cat "^!." &lef #l2 2
-            !endif
-            set-variable #l0 &lef #l0 &sub #l1 1
-        !else
-            set-variable #l2 "^!.  "
-        !endif
-        str-to-regex #l0
-        set-variable #l0 &cat #l2 #l0
-        beginning-of-buffer
-        !force search-forward #l0
-        !if $status
-            goto-alpha-mark "T"
-        !else
-            !force search-forward &spr "^#%s#" #l3
-            !if $status
-                set-variable #l0 &rig @wl $window-col
-                goto-alpha-mark "T"
-                insert-string #l0
-            !else
-                goto-alpha-mark "T"
-            !endif
-        !endif
-        !force search-forward "\els"
-    !done
-    beginning-of-buffer
+    end-of-buffer
+    yank
+    -1 yank
+    next-window
+    0 delete-buffer $buffer-bname
+  !done
+  ; now convert all the page names to something sensible
+  ml-write "[Processing links - this could take some time]" 
+  beginning-of-buffer
+  1 buffer-mode "magic"
+  !force search-forward "\els"
+  !while $status
+    set-alpha-mark "T"
     set-mark
-    search-forward "^!"
-    beginning-of-line
+    search-forward "\elm"
+    3 backward-char
     kill-region
-    ; Apply special fixes
-    ml-write "[Fixing @hash]" 
+    set-variable #l3 @y
+    -1 yank
+    3 forward-char
+    set-mark
+    search-forward "\e"
+    backward-char
+    copy-region
+    set-variable #l0 @y
+    -1 yank
+    !if &set #l1 &rsin "(" #l0
+      set-variable #l2 &rig #l0 #l1
+      !if &equ &len #l2 2
+        set-variable #l2 &spr "^!.%s " &lef #l2 1
+      !else
+        set-variable #l2 &cat "^!." &lef #l2 2
+      !endif
+      set-variable #l0 &lef #l0 &sub #l1 1
+    !else
+      set-variable #l2 "^!.  "
+    !endif
+    str-to-regex #l0
+    set-variable #l0 &cat #l2 #l0
     beginning-of-buffer
-    !force replace-string "@hash" "@#"
-    ml-write "[Fixing esc backslash]" 
-    beginning-of-buffer
-    !force replace-string "esc backslash" "esc \\\\"
-    ml-write "[Fixing http: links]" 
-    ; Move the http and email address curior hilighting start string (\ecG) out
-    ; of the way so cut and paste gets the right thing
-    beginning-of-buffer
-    !force replace-string " \ecGhttp:" "\ecG http:"
-    beginning-of-buffer
-    !force replace-string " \ecDEmail:\ecA\ecGsupport" "\ecG Email:support"
-    beginning-of-buffer
-    !force replace-string " \ecGjasspa-subscribe@" "\ecG jasspa-subscribe@"
-    beginning-of-buffer
-    !force replace-string " \ecGjasspa-unsubscribe@" "\ecG jasspa-unsubscribe@"
-    ; find and fix all split underlines
-    beginning-of-buffer
+    !force search-forward #l0
+    !if $status
+      goto-alpha-mark "T"
+    !else
+      !force search-forward &spr "^#%s#" #l3
+      !if $status
+        set-variable #l0 &rig @wl $window-col
+        goto-alpha-mark "T"
+        insert-string #l0
+      !else
+        goto-alpha-mark "T"
+      !endif
+    !endif
+    !force search-forward "\els"
+  !done
+  beginning-of-buffer
+  set-mark
+  search-forward "^!"
+  beginning-of-line
+  kill-region
+  ; Apply special fixes
+  ml-write "[Fixing @hash]" 
+  beginning-of-buffer
+  !force replace-string "@hash" "@#"
+  ml-write "[Fixing esc backslash]" 
+  beginning-of-buffer
+  !force replace-string "esc backslash" "esc \\\\"
+  ml-write "[Fixing http: links]" 
+  ; Move the http and email address curior hilighting start string (\ecG) out
+  ; of the way so cut and paste gets the right thing
+  beginning-of-buffer
+  !force replace-string " \ecGhttp:" "\ecG http:"
+  beginning-of-buffer
+  !force replace-string " \ecDEmail:\ecA\ecGsupport" "\ecG Email:support"
+  beginning-of-buffer
+  !force replace-string " \ecGjasspa-subscribe@" "\ecG jasspa-subscribe@"
+  beginning-of-buffer
+  !force replace-string " \ecGjasspa-unsubscribe@" "\ecG jasspa-unsubscribe@"
+  ; find and fix all split underlines
+  beginning-of-buffer
+  !force search-forward "\ecB[^\e]*\n"
+  !while $status
+    2 backward-char
+    !if &seq @wc " "
+      forward-delete-char
+    !else
+      forward-char
+    !endif
+    insert-string "\ecA"
+    forward-char
+    !force search-forward " *"
+    insert-string "\ecB"
     !force search-forward "\ecB[^\e]*\n"
-    !while $status
-        2 backward-char
-        !if &seq @wc " "
-            forward-delete-char
-        !else
-            forward-char
-        !endif
-        insert-string "\ecA"
-        forward-char
-        !force search-forward " *"
-        insert-string "\ecB"
-        !force search-forward "\ecB[^\e]*\n"
-    !done
-    ; find and fix all split links
+  !done
+  ; find and fix all split links
+  !force search-forward "\elm[^\e]*\n"
+  !while $status
+    2 backward-char
+    !if &seq @wc " "
+      forward-delete-char
+    !else
+      forward-char
+    !endif
+    insert-string "\eln"
+    forward-char
+    !force search-forward " *"
+    insert-string "\eln"
     !force search-forward "\elm[^\e]*\n"
-    !while $status
-        2 backward-char
-        !if &seq @wc " "
-            forward-delete-char
-        !else
-            forward-char
-        !endif
-        insert-string "\eln"
-        forward-char
-        !force search-forward " *"
-        insert-string "\eln"
-        !force search-forward "\elm[^\e]*\n"
-    !done
-    ; clean the buffer
-    clean
+  !done
+  ; clean the buffer
+  clean
 !emacro
 
 ; don't advertise the definition of start-up
 0 define-macro start-up
-    ehf-process-all
-    quick-exit
+  ehf-process-all
+  quick-exit
 !emacro
 

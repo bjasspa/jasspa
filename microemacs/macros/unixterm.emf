@@ -10,18 +10,18 @@ define-macro-file hkman man
 define-macro-file hkipipe ishell gdb dbx perldb
 add-file-hook ".C" fhook-cpp
 0 define-macro exec-me
-    ipipe-shell-command &spr "\"%s\" %s" $progname @1 @mna
+  ipipe-shell-command &spr "\"%s\" %s" $progname @1 @mna
 !emacro
 !if &band $system 0x01
-    ; Not using X
-    !if &not &band $system 0x02
-        ; no color - change the window chars so osd is more usable
-        set-variable $window-chars &spr "%s=x*[>]<%s" &lef $window-chars 47 &rig $window-chars 54
-    !endif
+  ; Not using X
+  !if &not &band $system 0x02
+    ; no color - change the window chars so osd is more usable
+    set-variable $window-chars &spr "%s=x*[>]<%s" &lef $window-chars 47 &rig $window-chars 54
+  !endif
 !else
-    !if &not &seq &set #l0 &reg &spr "/history/%s/font" $platform "" ""
-        change-font #l0
-    !endif
+  !if &not &seq &set #l0 &reg &spr "/history/%s/font" $platform "" ""
+    change-font #l0
+  !endif
 !endif
 ;
 ; setup the next-error stuff including grep and compiling
@@ -38,4 +38,4 @@ set-variable $rcs-cou-com  "co -l %f"
 set-variable $rcs-ci-com   "ci -u -m\"%m\" %f"
 ;set-variable $rcs-cif-com  "ci -u -m\"%m\" %f"
 ; Declare the .dir file found in X11 font directory, this is not an info file.
-add-file-hook ".dir"                                          fhook-txt
+add-file-hook ".dir" fhook-txt

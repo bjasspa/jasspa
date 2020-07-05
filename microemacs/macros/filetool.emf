@@ -27,274 +27,274 @@
 ;     0x2000 : use all files in .find-file vars (i.e. %*[..%] multi-file command), the <file-name> arg is not used
 ;     0x4000 : Capture output to buffer <output-buffer-name>
 0 define-macro file-tool-run
-    !if &band @# 0x1000 
-        set-variable .p .find-file.file-dir
-        set-variable #l1 &rep &ind &cat ".find-file.file" @2 "%" "\bA"
-    !elif &band @# 0x2000
-        set-variable .p .find-file.file-dir
-        set-variable #l1 &rep .find-file.file1 "%" "\bA"
-    !else
-        set-variable #l2 @2
-        !if &seq "" &set #l1 &rig #l2 &rsin "/" #l2
-            ; cope with a directory name
-            set-variable #l1 &rig #l2 &rsin "/" &lef #l2 -1
-        !endif
-        set-variable .p &lef #l2 &neg &len #l1
-        set-variable #l1 &rep #l1 "%" "\bA"
+  !if &band @# 0x1000 
+    set-variable .p .find-file.file-dir
+    set-variable #l1 &rep &ind &cat ".find-file.file" @2 "%" "\bA"
+  !elif &band @# 0x2000
+    set-variable .p .find-file.file-dir
+    set-variable #l1 &rep .find-file.file1 "%" "\bA"
+  !else
+    set-variable #l2 @2
+    !if &seq "" &set #l1 &rig #l2 &rsin "/" #l2
+      ; cope with a directory name
+      set-variable #l1 &rig #l2 &rsin "/" &lef #l2 -1
     !endif
-    set-variable #l0 &rep &rep &rep &rep &rep @1 "%%" "\bA" "%\"" "\bE" "%[" "\bB" "%|" "\bC" "%]" "\bD"
-    set-variable #l2 &rep &rep &rep &rep .p "%" "\bA" "[" "\bB" "|" "\bC" "]" "\bD"
-    set-variable #l0 &rep #l0 "%p" #l2
-    !if &band $system 0x100
-        set-variable #l2 &rep #l2 "/" "\\"
+    set-variable .p &lef #l2 &neg &len #l1
+    set-variable #l1 &rep #l1 "%" "\bA"
+  !endif
+  set-variable #l0 &rep &rep &rep &rep &rep @1 "%%" "\bA" "%\"" "\bE" "%[" "\bB" "%|" "\bC" "%]" "\bD"
+  set-variable #l2 &rep &rep &rep &rep .p "%" "\bA" "[" "\bB" "|" "\bC" "]" "\bD"
+  set-variable #l0 &rep #l0 "%p" #l2
+  !if &band $system 0x100
+    set-variable #l2 &rep #l2 "/" "\\"
+  !endif
+  set-variable #l0 &rep #l0 "%P" #l2
+  !if &seq &rig #l1 -1 "/"
+    set-variable #l1 &lef #l1 -1
+  !endif
+  !if &gre &set #l4 &rsin "." #l1 1
+    set-variable #l2 &lef #l1 &sub #l4 1
+    set-variable #l3 &rig #l1 &sub #l4 1
+  !else
+    set-variable #l2 #l1
+    set-variable #l3 ""
+  !endif
+  set-variable #l9 0
+  !while &set #l7 &sin "%i[" #l0
+    set-variable #l4 &rig #l0 &add #l7 2
+    !if &not &set #l5 &sin "]" #l4
+      ml-write "[Error: Missing ']' in %i input]"
+      !abort
     !endif
-    set-variable #l0 &rep #l0 "%P" #l2
-    !if &seq &rig #l1 -1 "/"
-        set-variable #l1 &lef #l1 -1
-    !endif
-    !if &gre &set #l4 &rsin "." #l1 1
-        set-variable #l2 &lef #l1 &sub #l4 1
-        set-variable #l3 &rig #l1 &sub #l4 1
-    !else
-        set-variable #l2 #l1
-        set-variable #l3 ""
-    !endif
-    set-variable #l9 0
-    !while &set #l7 &sin "%i[" #l0
-        set-variable #l4 &rig #l0 &add #l7 2
-        !if &not &set #l5 &sin "]" #l4
-            ml-write "[Error: Missing ']' in %i input]"
-            !abort
-        !endif
-        set-variable #l4 &spr "\r%s\r" &rep &lef #l4 &sub #l5 1 "|" "\r"
-        set-variable #l6 &rep &rep &rep #l4 "%f" #l1 "%b" #l2 "%e" #l3
-        set-variable #l6 &rep &rep &rep &rep #l6 "\bA" "%" "\bB" "[" "\bC" "|" "\bD" "]"
-        set-variable #l5 &spr "set-variable #l6 @ml%s%s \"%s\" \"%s\"" &con &seq &lget #l6 3 "" 0 1 &lget #l6 1 &lget #l6 2 &lget #l6 3
-        execute-line #l5
-        set-variable #l6 &rep &rep &rep &rep #l6 "%" "\bA" "[" "\bB" "|" "\bC" "]" "\bD"
-        set-variable #l0 &spr "%s%s%s" &lef #l0 &sub #l7 1 #l6 &rig #l0 &add &add #l7 &len #l4 1
-        set-variable #l0 &rep #l0 &cat "%" &inc #l9 1 #l6
-    !done
-    set-position "\x8a"
-    !force 0 delete-buffer "*file-tool-temp*"
-    find-buffer "*file-tool-temp*"
-    set-variable $buffer-fname .p
-    !if &not &band @# 0x2000
-        !if &sin "%*[" #l0
-            !if &not &sin "]" #l0
-                ml-write "[Error: Missing ']' in %*[ multi-file command line]"
-                !abort
-            !endif
-            set-variable #l0 &rep &rep #l0 "%*[" "" "]" ""
-        !endif
-        set-variable #l0 &rep &rep &rep #l0 "%f" #l1 "%b" #l2 "%e" #l3
-        set-variable #l0 &rep &rep &rep &rep #l0 "\bA" "%" "\bB" "[" "\bC" "|" "\bD" "]"
-        !while &set #l4 &sin "\bE" #l0
-            !if &not &set #l5 &sin "\bE" &rig #l0 &add #l4 1
-                ml-write "[Error: Missing '%\"' in command line]"
-                !abort
-            !elif &not &xse &set #l7 &mid #l0 &add #l4 1 &sub #l5 1 ".*\\s.*"
-            !elif &band $system 0x100
-                set-variable #l7 &spr "\"%s\"" #l7
-            !else
-                set-variable #l7 &spr "\"%s\"" &rep &rep #l7 "\\" "\\\\" "\"" "\\\""
-            !endif
-            set-variable #l0 &spr "%s%s%s" &lef #l0 &sub #l4 1 #l7 &rig #l0 &add &add #l4 #l5 2
-        !done
-        ml-write &spr "[Launching: %s]" #l0
-        !if &band @# 0x20
-            !force !force execute-line #l0
-        !elif &band @# 0x80
-            ; capture output
-            set-variable #l4 &cond &band @# 0x200 0x25 5
-            !tjump &not &band @# 0x4000 3
-            set-variable #l4 &bxor #l4 1 
-            set-variable #l7 &rep &rep &rep @3 "%f" #l1 "%b" #l2 "%e" #l3
-            !tjump &not &band @# 0x100 2
-            set-variable #l4 &bor #l4 2 
-            !if &band @# 0x40
-                !force !force #l4 ipipe-shell-command #l0 #l7
-            !else
-                !force !force #l4 pipe-shell-command #l0 #l7
-            !endif
-        !else
-            !force !force &bor &cond &band @# 0x40 0 1 &cond &band @# 0x200 0x24 4 shell-command #l0
-        !endif
-    !elif &not &set #l7 &sin "%*[" #l0
-        ml-write "[Error: Missing '%*[' in command line]"
+    set-variable #l4 &spr "\r%s\r" &rep &lef #l4 &sub #l5 1 "|" "\r"
+    set-variable #l6 &rep &rep &rep #l4 "%f" #l1 "%b" #l2 "%e" #l3
+    set-variable #l6 &rep &rep &rep &rep #l6 "\bA" "%" "\bB" "[" "\bC" "|" "\bD" "]"
+    set-variable #l5 &spr "set-variable #l6 @ml%s%s \"%s\" \"%s\"" &con &seq &lget #l6 3 "" 0 1 &lget #l6 1 &lget #l6 2 &lget #l6 3
+    execute-line #l5
+    set-variable #l6 &rep &rep &rep &rep #l6 "%" "\bA" "[" "\bB" "|" "\bC" "]" "\bD"
+    set-variable #l0 &spr "%s%s%s" &lef #l0 &sub #l7 1 #l6 &rig #l0 &add &add #l7 &len #l4 1
+    set-variable #l0 &rep #l0 &cat "%" &inc #l9 1 #l6
+  !done
+  set-position "\x8a"
+  !force 0 delete-buffer "*file-tool-temp*"
+  find-buffer "*file-tool-temp*"
+  set-variable $buffer-fname .p
+  !if &not &band @# 0x2000
+    !if &sin "%*[" #l0
+      !if &not &sin "]" #l0
+        ml-write "[Error: Missing ']' in %*[ multi-file command line]"
         !abort
+      !endif
+      set-variable #l0 &rep &rep #l0 "%*[" "" "]" ""
+    !endif
+    set-variable #l0 &rep &rep &rep #l0 "%f" #l1 "%b" #l2 "%e" #l3
+    set-variable #l0 &rep &rep &rep &rep #l0 "\bA" "%" "\bB" "[" "\bC" "|" "\bD" "]"
+    !while &set #l4 &sin "\bE" #l0
+      !if &not &set #l5 &sin "\bE" &rig #l0 &add #l4 1
+        ml-write "[Error: Missing '%\"' in command line]"
+        !abort
+      !elif &not &xse &set #l7 &mid #l0 &add #l4 1 &sub #l5 1 ".*\\s.*"
+      !elif &band $system 0x100
+        set-variable #l7 &spr "\"%s\"" #l7
+      !else
+        set-variable #l7 &spr "\"%s\"" &rep &rep #l7 "\\" "\\\\" "\"" "\\\""
+      !endif
+      set-variable #l0 &spr "%s%s%s" &lef #l0 &sub #l4 1 #l7 &rig #l0 &add &add #l4 #l5 2
+    !done
+    ml-write &spr "[Launching: %s]" #l0
+    !if &band @# 0x20
+      !force !force execute-line #l0
+    !elif &band @# 0x80
+      ; capture output
+      set-variable #l4 &cond &band @# 0x200 0x25 5
+      !tjump &not &band @# 0x4000 3
+      set-variable #l4 &bxor #l4 1 
+      set-variable #l7 &rep &rep &rep @3 "%f" #l1 "%b" #l2 "%e" #l3
+      !tjump &not &band @# 0x100 2
+      set-variable #l4 &bor #l4 2 
+      !if &band @# 0x40
+        !force !force #l4 ipipe-shell-command #l0 #l7
+      !else
+        !force !force #l4 pipe-shell-command #l0 #l7
+      !endif
     !else
-        set-variable #l4 &rig #l0 &add #l7 2
-        !if &not &set #l5 &sin "]" #l4
-            ml-write "[Error: Missing ']' in %*[ multi-file command line]"
-            !abort
+      !force !force &bor &cond &band @# 0x40 0 1 &cond &band @# 0x200 0x24 4 shell-command #l0
+    !endif
+  !elif &not &set #l7 &sin "%*[" #l0
+    ml-write "[Error: Missing '%*[' in command line]"
+    !abort
+  !else
+    set-variable #l4 &rig #l0 &add #l7 2
+    !if &not &set #l5 &sin "]" #l4
+      ml-write "[Error: Missing ']' in %*[ multi-file command line]"
+      !abort
+    !endif
+    set-variable #l4 &lef #l4 &sub #l5 1
+    set-variable #l8 &rig #l0 &add &add #l7 #l5 2
+    -1 insert-string &lef #l0 &sub #l7 1
+    set-variable #l9 0
+    !while &les &pinc #l9 1 .find-file.file-count
+      set-variable #l1 &rep &ind &cat ".find-file.file" #l9 "%" "\bA"
+      !if &seq &rig #l1 -1 "/"
+        set-variable #l1 &lef #l1 -1
+      !endif
+      set-variable #l2 &rep #l4 "%f" #l1
+      !if &gre &set #l3 &rsin "." #l1 1
+        set-variable #l2 &rep &rep #l2 "%b" &lef #l1 &sub #l3 1 "%e" &rig #l1 &sub #l3 1
+      !else
+        set-variable #l2 &rep &rep #l2 "%b" #l1 "%e" ""
+      !endif
+      -1 insert-string #l2
+    !done
+    -1 insert-string #l8
+    beginning-of-buffer
+    !if &seq @wc "*"
+      set-variable @wc " "
+    !endif
+    !force replace-string "\bA" "%"
+    beginning-of-buffer
+    !force replace-string "\bB" "["
+    beginning-of-buffer
+    !force replace-string "\bC" "|"
+    beginning-of-buffer
+    !force replace-string "\bD" "]"
+    beginning-of-buffer
+    !repeat
+      !force search-buffer "me" "\bE"
+      !if $status
+        backward-delete-char
+        backward-delete-char
+        set-mark
+        !force search-buffer "me" "\bE"
+        !if &not $status
+          ml-write "[Error: Missing '%\"' in command line]"
+          !abort
         !endif
-        set-variable #l4 &lef #l4 &sub #l5 1
-        set-variable #l8 &rig #l0 &add &add #l7 #l5 2
-        -1 insert-string &lef #l0 &sub #l7 1
-        set-variable #l9 0
-        !while &les &pinc #l9 1 .find-file.file-count
-            set-variable #l1 &rep &ind &cat ".find-file.file" #l9 "%" "\bA"
-            !if &seq &rig #l1 -1 "/"
-                set-variable #l1 &lef #l1 -1
-            !endif
-            set-variable #l2 &rep #l4 "%f" #l1
-            !if &gre &set #l3 &rsin "." #l1 1
-                set-variable #l2 &rep &rep #l2 "%b" &lef #l1 &sub #l3 1 "%e" &rig #l1 &sub #l3 1
-            !else
-                set-variable #l2 &rep &rep #l2 "%b" #l1 "%e" ""
-            !endif
-            -1 insert-string #l2
-        !done
-        -1 insert-string #l8
-        beginning-of-buffer
-        !if &seq @wc "*"
-            set-variable @wc " "
-        !endif
-        !force replace-string "\bA" "%"
-        beginning-of-buffer
-        !force replace-string "\bB" "["
-        beginning-of-buffer
-        !force replace-string "\bC" "|"
-        beginning-of-buffer
-        !force replace-string "\bD" "]"
-        beginning-of-buffer
-        !repeat
-            !force search-buffer "me" "\bE"
-            !if $status
-                backward-delete-char
-                backward-delete-char
-                set-mark
-                !force search-buffer "me" "\bE"
-                !if &not $status
-                    ml-write "[Error: Missing '%\"' in command line]"
-                    !abort
-                !endif
-                backward-delete-char
-                backward-delete-char
-                kill-region
-                !if &not &xse &set #l3 @y ".*\\s.*"
-                !elif &band $system 0x100
-                    set-variable #l3 &spr "\"%s\"" #l3
-                !else
-                    set-variable #l3 &spr "\"%s\"" &rep &rep #l3 "\\" "\\\\" "\"" "\\\""
-                !endif
-                -1 insert-string #l3
-                -1 yank
-            !endif
-        !until &not $status
-        ml-write &spr "[Launching: %s]" &lef @wl 500
-        !if &band @# 0x20
-            !force !force execute-buffer "*file-tool-temp*"
-        !elif &band @# 0x80
-            ; capture output
-            set-variable #l4 &cond &band @# 0x200 0x125 0x105
-            !tjump &not &band @# 0x4000 3
-            set-variable #l4 &bxor #l4 1 
-            set-variable #l7 @3
-            !tjump &not &band @# 0x100 2
-            set-variable #l4 &bor #l4 2 
-            !if &band @# 0x40
-                !force !force #l4 ipipe-shell-command "*file-tool-temp*" #l7
-            !else
-                !force !force #l4 pipe-shell-command "*file-tool-temp*" #l7
-            !endif
+        backward-delete-char
+        backward-delete-char
+        kill-region
+        !if &not &xse &set #l3 @y ".*\\s.*"
+        !elif &band $system 0x100
+          set-variable #l3 &spr "\"%s\"" #l3
         !else
-            !force !force &bor &cond &band @# 0x40 0 1 &cond &band @# 0x200 0x124 0x104 shell-command "*file-tool-temp*"
+          set-variable #l3 &spr "\"%s\"" &rep &rep #l3 "\\" "\\\\" "\"" "\\\""
         !endif
+        -1 insert-string #l3
+        -1 yank
+      !endif
+    !until &not $status
+    ml-write &spr "[Launching: %s]" &lef @wl 500
+    !if &band @# 0x20
+      !force !force execute-buffer "*file-tool-temp*"
+    !elif &band @# 0x80
+      ; capture output
+      set-variable #l4 &cond &band @# 0x200 0x125 0x105
+      !tjump &not &band @# 0x4000 3
+      set-variable #l4 &bxor #l4 1 
+      set-variable #l7 @3
+      !tjump &not &band @# 0x100 2
+      set-variable #l4 &bor #l4 2 
+      !if &band @# 0x40
+        !force !force #l4 ipipe-shell-command "*file-tool-temp*" #l7
+      !else
+        !force !force #l4 pipe-shell-command "*file-tool-temp*" #l7
+      !endif
+    !else
+      !force !force &bor &cond &band @# 0x40 0 1 &cond &band @# 0x200 0x124 0x104 shell-command "*file-tool-temp*"
     !endif
-    set-variable #l1 $status
-    !if &seq $buffer-bname "*file-tool-temp*"
-        !force goto-position "\x8a"
-    !endif
-    !force 0 delete-buffer "*file-tool-temp*"
-    !return #l1
+  !endif
+  set-variable #l1 $status
+  !if &seq $buffer-bname "*file-tool-temp*"
+    !force goto-position "\x8a"
+  !endif
+  !force 0 delete-buffer "*file-tool-temp*"
+  !return #l1
 !emacro
 
 0 define-macro file-tool-exec
-    !if &set #l1 &les @# 0
-        set-variable @# &abs @#
-    !elif .find-file.file-count
-    !elif &or &or &sin "%f" #l0 &sin "%b" #l0 &sin "%e" #l0
-        ml-write "[Error: No files selected]"
-        !abort
-    !endif
-    set-variable #l8 $buffer-bname
-    set-variable #l0 &reg &spr "/history/%s/file-tool/%d/cmd" $platform @# ""
-    set-variable #l9 &reg &spr "/history/%s/file-tool/%d/flag" $platform @# "0x240"
-    !if &and &bmod "edit" &band #l9 0x01
-        !if &band #l9 0x02
-            set-variable #l2 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-            !if &iseq #l2 "y"
-                save-buffer @mna
-            !endif
-        !else
-            save-buffer @mna
-        !endif
-    !endif
-    !if &band #l9 0x04
-        &cond &band #l9 0x08 1 0 save-some-buffers @mna
-    !endif
-    !if &len &set #l3 &reg &spr "/history/%s/file-tool/%d/bname" $platform @# ""
-        set-variable #l9 &bor #l9 0x4000
-    !endif
-    !if #l1
-        !force set-variable #l2 @1
-        !if $status
-        !elif &len $buffer-fname
-            set-variable #l2 $buffer-fname
-        !else
-            set-variable #l2 $buffer-bname
-        !endif
-        #l9 file-tool-run #l0 #l2 #l3
-    !elif &sin "%*[" #l0
-        &bor 0x2000 #l9 file-tool-run #l0 "" #l3
-    !elif &equ .find-file.file-count 1
-        &bor 0x1000 #l9 file-tool-run #l0 1 #l3
+  !if &set #l1 &les @# 0
+    set-variable @# &abs @#
+  !elif .find-file.file-count
+  !elif &or &or &sin "%f" #l0 &sin "%b" #l0 &sin "%e" #l0
+    ml-write "[Error: No files selected]"
+    !abort
+  !endif
+  set-variable #l8 $buffer-bname
+  set-variable #l0 &reg &spr "/history/%s/file-tool/%d/cmd" $platform @# ""
+  set-variable #l9 &reg &spr "/history/%s/file-tool/%d/flag" $platform @# "0x240"
+  !if &and &bmod "edit" &band #l9 0x01
+    !if &band #l9 0x02
+      set-variable #l2 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+      !if &iseq #l2 "y"
+        save-buffer @mna
+      !endif
     !else
-        set-variable #l2 @mc5 &spr "Launch %d separate processes (?/y/n) ? " .find-file.file-count "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-        !if &not &iseq #l2 "y"
-            !abort
-        !endif
-        set-variable #l2 0
-        !while &les &pinc #l2 1 .find-file.file-count
-            &bor 0x1000 #l9 file-tool-run #l0 #l2 #l3
-        !done
+      save-buffer @mna
     !endif
-    ;reread the buffer
-    !if &band #l9 0x400
-        popup-window #l8
-        reread-file
+  !endif
+  !if &band #l9 0x04
+    &cond &band #l9 0x08 1 0 save-some-buffers @mna
+  !endif
+  !if &len &set #l3 &reg &spr "/history/%s/file-tool/%d/bname" $platform @# ""
+    set-variable #l9 &bor #l9 0x4000
+  !endif
+  !if #l1
+    !force set-variable #l2 @1
+    !if $status
+    !elif &len $buffer-fname
+      set-variable #l2 $buffer-fname
+    !else
+      set-variable #l2 $buffer-bname
     !endif
+    #l9 file-tool-run #l0 #l2 #l3
+  !elif &sin "%*[" #l0
+    &bor 0x2000 #l9 file-tool-run #l0 "" #l3
+  !elif &equ .find-file.file-count 1
+    &bor 0x1000 #l9 file-tool-run #l0 1 #l3
+  !else
+    set-variable #l2 @mc5 &spr "Launch %d separate processes (?/y/n) ? " .find-file.file-count "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+    !if &not &iseq #l2 "y"
+      !abort
+    !endif
+    set-variable #l2 0
+    !while &les &pinc #l2 1 .find-file.file-count
+      &bor 0x1000 #l9 file-tool-run #l0 #l2 #l3
+    !done
+  !endif
+  ;reread the buffer
+  !if &band #l9 0x400
+    popup-window #l8
+    reread-file
+  !endif
 !emacro
 
 0 define-macro file-tool-exec-default
-    set-variable #l0 @1
-    !if &not &seq &set #l1 &rig #l0 &rsin "/" #l0 ""
-        set-variable #l5 &con &band 2 @# 0x800 0x10
-        set-variable #l6 0
-        set-variable #l2 0
-        !while &not &seq &reg &set #l3 &spr "/history/%s/file-tool/%d" $platform &inc #l2 1 "" ""
-            !if &band 0x1000 &set #l4 &reg &cat #l3 "/flag" "0x240"
-            !elif &not &band #l5 #l4
-            !elif &seq &set #l4 &reg &cat #l3 "/mask" "" ""
-            !elif &xis &con &seq &lef #l4 1 "^" #l0 #l1 #l4
-                !if &not &band 1 @#
-                    !force &neg #l2 file-tool-exec #l0
-                    !return
-                !elif #l6
-                    !force &neg #l5 file-tool-menu #l0
-                    !return
-                !else
-                    set-variable #l6 #l2
-                !endif
-            !endif
-        !done
-        !if #l6
-            !force &neg #l6 file-tool-exec #l0
-            !return
+  set-variable #l0 @1
+  !if &not &seq &set #l1 &rig #l0 &rsin "/" #l0 ""
+    set-variable #l5 &con &band 2 @# 0x800 0x10
+    set-variable #l6 0
+    set-variable #l2 0
+    !while &not &seq &reg &set #l3 &spr "/history/%s/file-tool/%d" $platform &inc #l2 1 "" ""
+      !if &band 0x1000 &set #l4 &reg &cat #l3 "/flag" "0x240"
+      !elif &not &band #l5 #l4
+      !elif &seq &set #l4 &reg &cat #l3 "/mask" "" ""
+      !elif &xis &con &seq &lef #l4 1 "^" #l0 #l1 #l4
+        !if &not &band 1 @#
+          !force &neg #l2 file-tool-exec #l0
+          !return
+        !elif #l6
+          !force &neg #l5 file-tool-menu #l0
+          !return
+        !else
+          set-variable #l6 #l2
         !endif
+      !endif
+    !done
+    !if #l6
+      !force &neg #l6 file-tool-exec #l0
+      !return
     !endif
-    !abort
+  !endif
+  !abort
 !emacro
 

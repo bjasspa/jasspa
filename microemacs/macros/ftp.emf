@@ -8,485 +8,485 @@
 ; Authors:     Steven Phillips
 ;
 !if &not &exi dirlst-sort-list
-    0 exec-file "hkdirlst"
+  0 exec-file "hkdirlst"
 !endif
 
 define-macro ftp
-    !if &band $window-flags 0x1000
-        ; if this is a toolbar window move to the next normal window
-        !force next-window
-    !endif
-    set-variable #l0 $buffer-bname
-    @# ftp-create-layout
-    popup-window "*ftp-files*"
-    !if &seq $buffer-fname ""
-        screen-update
-        ftp-connect
-    !elif &seq #l0 "*ftp-files*"
-        ftp-connect
-    !endif
+  !if &band $window-flags 0x1000
+    ; if this is a toolbar window move to the next normal window
+    !force next-window
+  !endif
+  set-variable #l0 $buffer-bname
+  @# ftp-create-layout
+  popup-window "*ftp-files*"
+  !if &seq $buffer-fname ""
+    screen-update
+    ftp-connect
+  !elif &seq #l0 "*ftp-files*"
+    ftp-connect
+  !endif
 !emacro
 
 !if &not &exi .osd.ftp
-    set-variable .osd.ftp &pinc .osd.next 1
-    set-variable .ftp.name ""
+  set-variable .osd.ftp &pinc .osd.next 1
+  set-variable .ftp.name ""
 !endif
 
 define-macro ftp-connect
-    ftp-data-entry-setup
-    set-variable .do 0
-    !force .osd.ftp osd
-    !if .do
-        set-variable #l0 &reg &spr "/url/ftp/%s/path" .ftp.name ""
-        !if &not &seq &lef #l0 1 "/"
-            set-variable #l0 &cat "/~/" #l0
-        !endif
-        find-file &spr "ftp://%s%s" .ftp.name #l0 @mna
-        !if &not &seq $buffer-bname "*ftp-files*"
-            set-variable #l1 $buffer-bname
-            !force 0 find-buffer "*ftp-files*"
-            !if $status
-                ftp-rename-buffer
-            !endif
-            find-buffer #l1
-            !force change-buffer-name "*ftp-files*"
-        !endif
-        buffer-bind-create "bio" "f10" "" file-browser-close
-        buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
+  ftp-data-entry-setup
+  set-variable .do 0
+  !force .osd.ftp osd
+  !if .do
+    set-variable #l0 &reg &spr "/url/ftp/%s/path" .ftp.name ""
+    !if &not &seq &lef #l0 1 "/"
+      set-variable #l0 &cat "/~/" #l0
     !endif
+    find-file &spr "ftp://%s%s" .ftp.name #l0 @mna
+    !if &not &seq $buffer-bname "*ftp-files*"
+      set-variable #l1 $buffer-bname
+      !force 0 find-buffer "*ftp-files*"
+      !if $status
+        ftp-rename-buffer
+      !endif
+      find-buffer #l1
+      !force change-buffer-name "*ftp-files*"
+    !endif
+    buffer-bind-create "bio" "f10" "" file-browser-close
+    buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
+  !endif
 !emacro
 
 0 define-macro ftp-rename-buffer
-    set-variable #l0 &len $buffer-fname
-    !if &equ #l0 0
-        delete-buffer $buffer-bname
+  set-variable #l0 &len $buffer-fname
+  !if &equ #l0 0
+    delete-buffer $buffer-bname
+  !else
+    1 buffer-mode "hide"
+    !if &seq &rig $buffer-fname &sub #l0 1 "/"
+      set-variable #l1 &rig $buffer-fname &rsin "/" &lef $buffer-fname &sub #l0 1
     !else
-        1 buffer-mode "hide"
-        !if &seq &rig $buffer-fname &sub #l0 1 "/"
-            set-variable #l1 &rig $buffer-fname &rsin "/" &lef $buffer-fname &sub #l0 1
-        !else
-            set-variable #l1 &rig $buffer-fname &rsin "/" $buffer-fname
-        !endif
-        set-variable $buffer-names #l1
-        !if &not &seq $buffer-names ""
-            set-variable #l0 0
-            set-variable #l2 &cat #l1 "<%d>"
-            !repeat
-                set-variable #l1 &spr #l2 &inc #l0 1
-                set-variable $buffer-names #l1
-            !until &seq $buffer-names ""
-        !endif
-        change-buffer-name #l1
+      set-variable #l1 &rig $buffer-fname &rsin "/" $buffer-fname
     !endif
+    set-variable $buffer-names #l1
+    !if &not &seq $buffer-names ""
+      set-variable #l0 0
+      set-variable #l2 &cat #l1 "<%d>"
+      !repeat
+        set-variable #l1 &spr #l2 &inc #l0 1
+        set-variable $buffer-names #l1
+      !until &seq $buffer-names ""
+    !endif
+    change-buffer-name #l1
+  !endif
 !emacro
 
 0 define-macro ftp-create-layout
-    !if &band $window-flags 0x1000
-        ; if this is a toolbar window move to the next normal window
-        !force next-window
-    !endif
-    !if &seq $buffer-fname ""
-        set-variable #l0 ""
-        set-variable #l1 ""
-    !elif &seq &lef $buffer-fname 6 "ftp://"
-        set-variable #l0 ""
-        set-variable #l1 &lef $buffer-fname &rsin "/" $buffer-fname
+  !if &band $window-flags 0x1000
+    ; if this is a toolbar window move to the next normal window
+    !force next-window
+  !endif
+  !if &seq $buffer-fname ""
+    set-variable #l0 ""
+    set-variable #l1 ""
+  !elif &seq &lef $buffer-fname 6 "ftp://"
+    set-variable #l0 ""
+    set-variable #l1 &lef $buffer-fname &rsin "/" $buffer-fname
+  !else
+    set-variable #l0 &stat "t" $buffer-fname
+    !if &seq #l0 "D"
+      set-variable #l0 $buffer-fname
+    !elif &seq #l0 "R"
+      set-variable #l0 &lef $buffer-fname &rsin "/" $buffer-fname
     !else
-        set-variable #l0 &stat "t" $buffer-fname
-        !if &seq #l0 "D"
-            set-variable #l0 $buffer-fname
-        !elif &seq #l0 "R"
-            set-variable #l0 &lef $buffer-fname &rsin "/" $buffer-fname
-        !else
-            set-variable #l0 ""
-        !endif
-        set-variable #l1 ""
+      set-variable #l0 ""
     !endif
-    !if &seq #l0 ""
-        set-variable #l0 &stat "a" "."
+    set-variable #l1 ""
+  !endif
+  !if &seq #l0 ""
+    set-variable #l0 &stat "a" "."
+  !endif
+  1 set-position "\x81"
+  !if &sin "s" %ftp-flags
+    !if .toolbar.open
+      !force toolbar-make-tool-visible "*ftp-console*"
+      !tjump &not $status 2
+    !else
+      !force 0 popup-window "*ftp-console*"
+      !if &not $status
+        delete-other-windows
+        2 split-window-vertically
+        change-window-depth 15
+        find-buffer "*ftp-console*"
+        buffer-bind-create "bio" "f10" "" file-browser-close
+        3 previous-window
+        1 set-position "\x81"
+      !else
+        goto-position "\x81"
+      !endif
     !endif
-    1 set-position "\x81"
-    !if &sin "s" %ftp-flags
-        !if .toolbar.open
-            !force toolbar-make-tool-visible "*ftp-console*"
-            !tjump &not $status 2
-        !else
-            !force 0 popup-window "*ftp-console*"
-            !if &not $status
-                delete-other-windows
-                2 split-window-vertically
-                change-window-depth 15
-                find-buffer "*ftp-console*"
-                buffer-bind-create "bio" "f10" "" file-browser-close
-                3 previous-window
-                1 set-position "\x81"
-            !else
-                goto-position "\x81"
-            !endif
-        !endif
-    !endif
-    !if @#
-        ; setup the local *files* directory
-        !force 0 popup-window "*files*"
-        find-buffer "*files*"
-        !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.mode :dirlst-mode
-            read-file #l0
-            !if &not &seq .fhook-dirlst.mode :dirlst-mode
-                ; old buffer with the wrong processing - refresh
-                !force 0 delete-buffer $buffer-bname
-                find-file #l0
-            !endif
-            change-buffer-name "*files*"
-        !endif
-        !if &not &band $window-flags 0x1000
-            buffer-bind-create "bio" "f10" "" file-browser-close
-        !endif
-        buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
-    !endif
-    goto-position "\x81"
-    ; setup the ftp *ftp-files* directory
-    !force 0 popup-window "*ftp-files*"
-    !if &not $status
-        !if &seq $buffer-bname "*files*"
-            2 split-window-horizontally
-        !endif
-        find-buffer "*ftp-files*"
-    !endif
-    !if &seq #l1 $buffer-fname
-        !if &seq #l1 ""
-            set-variable :mouse-pick-1 void
-            set-variable :mouse-drop-1 void
-            set-variable :mouse-pick-3 void
-            set-variable :mouse-drop-3 ftp-connect
-        !endif
-    !elif &not &seq #l1 ""
-        ftp-rename-buffer
-        read-file #l1
-        change-buffer-name "*ftp-files*"
+  !endif
+  !if @#
+    ; setup the local *files* directory
+    !force 0 popup-window "*files*"
+    find-buffer "*files*"
+    !if &not &and &seq #l0 $buffer-fname &seq .fhook-dirlst.mode :dirlst-mode
+      read-file #l0
+      !if &not &seq .fhook-dirlst.mode :dirlst-mode
+        ; old buffer with the wrong processing - refresh
+        !force 0 delete-buffer $buffer-bname
+        find-file #l0
+      !endif
+      change-buffer-name "*files*"
     !endif
     !if &not &band $window-flags 0x1000
-        buffer-bind-create "bio" "f10" "" file-browser-close
+      buffer-bind-create "bio" "f10" "" file-browser-close
     !endif
     buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
+  !endif
+  goto-position "\x81"
+  ; setup the ftp *ftp-files* directory
+  !force 0 popup-window "*ftp-files*"
+  !if &not $status
+    !if &seq $buffer-bname "*files*"
+      2 split-window-horizontally
+    !endif
+    find-buffer "*ftp-files*"
+  !endif
+  !if &seq #l1 $buffer-fname
+    !if &seq #l1 ""
+      set-variable :mouse-pick-1 void
+      set-variable :mouse-drop-1 void
+      set-variable :mouse-pick-3 void
+      set-variable :mouse-drop-3 ftp-connect
+    !endif
+  !elif &not &seq #l1 ""
+    ftp-rename-buffer
+    read-file #l1
+    change-buffer-name "*ftp-files*"
+  !endif
+  !if &not &band $window-flags 0x1000
+    buffer-bind-create "bio" "f10" "" file-browser-close
+  !endif
+  buffer-bind-create "bio" "tab" "" file-browser-swap-buffers
 !emacro
 
 0 define-macro ftp-console-tool
-    !if &sin "s" %ftp-flags
-        set-variable %ftp-flags &rep %ftp-flags "s" ""
-    !endif
-    find-buffer "*ftp-console*"
-    set-variable :mouse-pick-1 "toolbar-mouse-region-pick"
-    set-variable :mouse-drop-1 "toolbar-mouse-region-drop"
+  !if &sin "s" %ftp-flags
+    set-variable %ftp-flags &rep %ftp-flags "s" ""
+  !endif
+  find-buffer "*ftp-console*"
+  set-variable :mouse-pick-1 "toolbar-mouse-region-pick"
+  set-variable :mouse-drop-1 "toolbar-mouse-region-drop"
 !emacro
 
 0 define-macro ftp-regfile-entry
-    !if &les @# 0
-        set-variable #l0 @ml2 "" .ftp.url-file
-        !if &seq #l0 .ftp.url-file
-            !return
-        !endif
-        !if &seq &set .ftp.url-file #l0 ""
-            ; user has removed the file name
-            set-registry "/url" ""
-            mark-registry "/url" "F"
-            !return
-        !endif
-        ; me file name entered remove the .e?f extension, if found must force an osd update
-        !if &xis &rig #l0 &sub &len #l0 4 "\\.e.f"
-            set-variable #l0 &lef #l0 &sub &len #l0 4
-            -2 osd
-        !endif
-        ; is it a base name or full path? set #l0 to base and #l1 to full file name
-        !if &sin "/" #l0
-            set-variable #l1 &cat #l0 ".erf"
-            set-variable #l0 &rig #l0 &rsin "/" #l0
-        !else
-            ; try to find it, if not add to $user-path
-            !if &seq &set #l1 &find #l0 ".erf" "ERROR"
-                set-variable #l1 &stat "a" &spr "%s%s.erf" $user-path #l0
-            !endif
-        !endif
-        set-variable #l3 &stat "r" #l1
-        ; we now have #l0 = new base, #l1 new file name, #l3 new file exist?
-        !if #l3
-            ; has the current url file been changed
-            set-variable $result ""
-            !force mark-registry "/url" "g"
-            !if &sin "u" $result
-                ; file changed, confirm action
-                osd-xdialog "FTP" "Current URL registry file has been changed" 1 " \HSave " " \HDiscard " " \HCancel "
-                !if &equ $result 1
-                    !force save-registry "/url" "" @mna
-                    !if &not $status
-                        -2 osd
-                        !return
-                    !endif
-                !endif
-                !if &equ $result 3
-                    -2 osd
-                    !return
-                !endif
-            !endif
-            ; delete the existing registry
-            !force mark-registry "/url" "U"
-            !force 0 delete-registry "/url" @mna
-            ; read the registry
-            read-registry "url" #l1 "cby"
-            ; clear the current entry
-            set-variable .ftp.name ""
-        !else
-            ; new file does not exist, write it now to create it and change the
-            ; current file to the new name
-            set-registry "/url" #l1
-            mark-registry "/url" "fyb"
-            !force save-registry "/url" #l1 @mna
-        !endif
-        ; can we store just the base name or the whole path?
-        !if &seq &find #l0 ".erf" #l1
-            set-variable #l1 #l0
-        !endif
-        ; force an osd update
-        -2 osd
-    !else
-        set-variable $result .ftp.url-file
+  !if &les @# 0
+    set-variable #l0 @ml2 "" .ftp.url-file
+    !if &seq #l0 .ftp.url-file
+      !return
     !endif
+    !if &seq &set .ftp.url-file #l0 ""
+      ; user has removed the file name
+      set-registry "/url" ""
+      mark-registry "/url" "F"
+      !return
+    !endif
+    ; me file name entered remove the .e?f extension, if found must force an osd update
+    !if &xis &rig #l0 &sub &len #l0 4 "\\.e.f"
+      set-variable #l0 &lef #l0 &sub &len #l0 4
+      -2 osd
+    !endif
+    ; is it a base name or full path? set #l0 to base and #l1 to full file name
+    !if &sin "/" #l0
+      set-variable #l1 &cat #l0 ".erf"
+      set-variable #l0 &rig #l0 &rsin "/" #l0
+    !else
+      ; try to find it, if not add to $user-path
+      !if &seq &set #l1 &find #l0 ".erf" "ERROR"
+        set-variable #l1 &stat "a" &spr "%s%s.erf" $user-path #l0
+      !endif
+    !endif
+    set-variable #l3 &stat "r" #l1
+    ; we now have #l0 = new base, #l1 new file name, #l3 new file exist?
+    !if #l3
+      ; has the current url file been changed
+      set-variable $result ""
+      !force mark-registry "/url" "g"
+      !if &sin "u" $result
+        ; file changed, confirm action
+        osd-xdialog "FTP" "Current URL registry file has been changed" 1 " \HSave " " \HDiscard " " \HCancel "
+        !if &equ $result 1
+          !force save-registry "/url" "" @mna
+          !if &not $status
+            -2 osd
+            !return
+          !endif
+        !endif
+        !if &equ $result 3
+          -2 osd
+          !return
+        !endif
+      !endif
+      ; delete the existing registry
+      !force mark-registry "/url" "U"
+      !force 0 delete-registry "/url" @mna
+      ; read the registry
+      read-registry "url" #l1 "cby"
+      ; clear the current entry
+      set-variable .ftp.name ""
+    !else
+      ; new file does not exist, write it now to create it and change the
+      ; current file to the new name
+      set-registry "/url" #l1
+      mark-registry "/url" "fyb"
+      !force save-registry "/url" #l1 @mna
+    !endif
+    ; can we store just the base name or the whole path?
+    !if &seq &find #l0 ".erf" #l1
+      set-variable #l1 #l0
+    !endif
+    ; force an osd update
+    -2 osd
+  !else
+    set-variable $result .ftp.url-file
+  !endif
 !emacro
 
 0 define-macro ftp-console-checkbox
-    set-variable #l0 &sin "s" %ftp-flags
-    !if &les @# 0
-        set-variable %ftp-flags &cond #l0 "cp" "csp"
-        set-registry "/url/ftp-flags" %ftp-flags
-        mark-registry "/url" "u"
-        previous-window
-        ftp-create-layout
-        screen-update
-    !elif &not #l0
-        !abort
-    !endif
+  set-variable #l0 &sin "s" %ftp-flags
+  !if &les @# 0
+    set-variable %ftp-flags &cond #l0 "cp" "csp"
+    set-registry "/url/ftp-flags" %ftp-flags
+    mark-registry "/url" "u"
+    previous-window
+    ftp-create-layout
+    screen-update
+  !elif &not #l0
+    !abort
+  !endif
 !emacro
 
 0 define-macro ftp-site-delete
-    delete-registry &cat "/url/ftp/" .ftp.name
-    mark-registry "/url" "u"
-    ftp-site-name-set ""
+  delete-registry &cat "/url/ftp/" .ftp.name
+  mark-registry "/url" "u"
+  ftp-site-name-set ""
 !emacro
 
 0 define-macro ftp-site-name-set
-    set-variable #l0 @1
-    set-variable .ftp.name #l0
-    !if &not &seq #l0 ""
-        !force find-registry "/url/ftp" 0
-        !if &not $status
-            set-registry "/url/ftp" ""
-        !endif
-        !force find-registry &cat "/url/ftp/" #l0 0
-        !if &not $status
-            set-registry &cat "/url/ftp/" #l0 ""
-            mark-registry "/url" "u"
-        !endif
-        osd .osd.ftp 75  "BtxcfH" .scheme.osd-ebtt " \HDelete " f ftp-site-delete
-    !else
-        osd .osd.ftp 75  "BtcfH" .scheme.osd-dbtt " Delete "
+  set-variable #l0 @1
+  set-variable .ftp.name #l0
+  !if &not &seq #l0 ""
+    !force find-registry "/url/ftp" 0
+    !if &not $status
+      set-registry "/url/ftp" ""
     !endif
+    !force find-registry &cat "/url/ftp/" #l0 0
+    !if &not $status
+      set-registry &cat "/url/ftp/" #l0 ""
+      mark-registry "/url" "u"
+    !endif
+    osd .osd.ftp 75  "BtxcfH" .scheme.osd-ebtt " \HDelete " f ftp-site-delete
+  !else
+    osd .osd.ftp 75  "BtcfH" .scheme.osd-dbtt " Delete "
+  !endif
 !emacro
 
 0 define-macro ftp-data-entry-setup
-    ; if we have just changed the name or host,
-    ; should the user/pass/path be enabled/disabled
-    !if &seq &reg &spr "/url/ftp/%s/host" .ftp.name "" ""
-        osd .osd.ftp 100 "Shf" "  User Name"
-        osd .osd.ftp 101 "Sf" "          Password"
-        osd .osd.ftp 110 "SExHhf" .scheme.osd-entry "###############"
-        osd .osd.ftp 130 "SExHfR" .scheme.osd-entry "###############"
-        osd .osd.ftp 140 "Sf" "  Initial Host Path"
-        osd .osd.ftp 150 "SExHf"  .scheme.osd-entry "##################################"
-    !else
-        osd .osd.ftp 100 "Shf" "  \HUser Name" 110
-        osd .osd.ftp 101 "Sf" "          \HPassword" 130
-        osd .osd.ftp 110 "EtxHhf" .scheme.osd-entry "###############" 2 ftp-data-entry
-        osd .osd.ftp 130 "ExHfR"  .scheme.osd-entry "###############" 3 ftp-data-entry
-        osd .osd.ftp 140 "Sf" "  \HInitial Host Path" 150
-        osd .osd.ftp 150 "EtxHf"  .scheme.osd-entry "##################################" 4 ftp-data-entry
-    !endif
+  ; if we have just changed the name or host,
+  ; should the user/pass/path be enabled/disabled
+  !if &seq &reg &spr "/url/ftp/%s/host" .ftp.name "" ""
+    osd .osd.ftp 100 "Shf" "  User Name"
+    osd .osd.ftp 101 "Sf" "          Password"
+    osd .osd.ftp 110 "SExHhf" .scheme.osd-entry "###############"
+    osd .osd.ftp 130 "SExHfR" .scheme.osd-entry "###############"
+    osd .osd.ftp 140 "Sf" "  Initial Host Path"
+    osd .osd.ftp 150 "SExHf"  .scheme.osd-entry "##################################"
+  !else
+    osd .osd.ftp 100 "Shf" "  \HUser Name" 110
+    osd .osd.ftp 101 "Sf" "          \HPassword" 130
+    osd .osd.ftp 110 "EtxHhf" .scheme.osd-entry "###############" 2 ftp-data-entry
+    osd .osd.ftp 130 "ExHfR"  .scheme.osd-entry "###############" 3 ftp-data-entry
+    osd .osd.ftp 140 "Sf" "  \HInitial Host Path" 150
+    osd .osd.ftp 150 "EtxHf"  .scheme.osd-entry "##################################" 4 ftp-data-entry
+  !endif
 !emacro
 
 0 define-macro ftp-host-setup
-    -1 osd .osd.tmp
-    osd .osd.tmp 0 "bso" -21 0 23 0 -1 -1
-    set-variable #l0 0
-    !while 1
-        !force find-registry "/url/ftp" &pinc #l0 1
-        !if &not $status
-            !if &equ #l0 1
-                osd .osd.tmp 1 "" "<None Defined>"
-            !endif
-            !return
-        !endif
-        osd .osd.tmp #l0 "" $result 1 ftp-host-set
-    !done
+  -1 osd .osd.tmp
+  osd .osd.tmp 0 "bso" -21 0 23 0 -1 -1
+  set-variable #l0 0
+  !while 1
+    !force find-registry "/url/ftp" &pinc #l0 1
+    !if &not $status
+      !if &equ #l0 1
+        osd .osd.tmp 1 "" "<None Defined>"
+      !endif
+      !return
+    !endif
+    osd .osd.tmp #l0 "" $result 1 ftp-host-set
+  !done
 !emacro
 
 0 define-macro ftp-host-set
-    ftp-site-name-set $result
-    ftp-data-entry-setup
+  ftp-site-name-set $result
+  ftp-data-entry-setup
 !emacro
 
 0 define-macro ftp-host-entry
-    set-variable #l0 &reg &spr "/url/ftp/%s/host" .ftp.name ""
-    !if &not &seq "" &set #l4 &reg &spr "/url/ftp/%s/port" .ftp.name ""
-        set-variable #l0 &spr "%s:%s" #l0 #l4
+  set-variable #l0 &reg &spr "/url/ftp/%s/host" .ftp.name ""
+  !if &not &seq "" &set #l4 &reg &spr "/url/ftp/%s/port" .ftp.name ""
+    set-variable #l0 &spr "%s:%s" #l0 #l4
+  !endif
+  !if &les @# 0
+    set-variable #l1 @ml2 "" #l0
+    !if &seq #l1 #l0
+      !return
     !endif
-    !if &les @# 0
-        set-variable #l1 @ml2 "" #l0
-        !if &seq #l1 #l0
-            !return
+    !if &seq &lef #l1 6 "ftp://"
+      set-variable #l1 &rig #l1 6
+    !endif
+    set-variable #l8 17
+    set-variable #l7 "\b\b\b\b\b\b"
+    !if &set #l9 &sin "@" #l1
+      set-variable #l8 &bor #l8 2
+      set-variable #l2 &lef #l1 &sub #l9 1
+      set-variable #l1 &rig #l1 #l9
+      !if &set #l9 &sin ":" #l2
+        set-variable #l8 &bor #l8 4
+        set-variable #l7 &lset #l7 3 &rig #l2 #l9
+        set-variable #l2 &lef #l2 &sub #l9 1
+      !endif
+      set-variable #l7 &lset #l7 2 #l2
+    !endif
+    !if &set #l9 &sin "/" #l1
+      set-variable #l2 &rig #l1 &sub #l9 1
+      set-variable #l1 &lef #l1 &sub #l9 1
+      !if &not &seq #l2 "/"
+        !if &seq &lef #l2 3 "/~/"
+          set-variable #l2 &rig #l2 1
         !endif
-        !if &seq &lef #l1 6 "ftp://"
-            set-variable #l1 &rig #l1 6
-        !endif
-        set-variable #l8 17
-        set-variable #l7 "\b\b\b\b\b\b"
-        !if &set #l9 &sin "@" #l1
-            set-variable #l8 &bor #l8 2
-            set-variable #l2 &lef #l1 &sub #l9 1
-            set-variable #l1 &rig #l1 #l9
-            !if &set #l9 &sin ":" #l2
-                set-variable #l8 &bor #l8 4
-                set-variable #l7 &lset #l7 3 &rig #l2 #l9
-                set-variable #l2 &lef #l2 &sub #l9 1
-            !endif
-            set-variable #l7 &lset #l7 2 #l2
-        !endif
-        !if &set #l9 &sin "/" #l1
-            set-variable #l2 &rig #l1 &sub #l9 1
-            set-variable #l1 &lef #l1 &sub #l9 1
-            !if &not &seq #l2 "/"
-                !if &seq &lef #l2 3 "/~/"
-                    set-variable #l2 &rig #l2 1
-                !endif
-                set-variable #l8 &bor #l8 8
-                set-variable #l7 &lset #l7 4 #l2
-            !endif
-        !endif
-        !if &set #l9 &sin ":" #l1
-            set-variable #l7 &lset #l7 5 &rig #l1 #l9
-            set-variable #l1 &lef #l1 &sub #l9 1
-        !endif
+        set-variable #l8 &bor #l8 8
+        set-variable #l7 &lset #l7 4 #l2
+      !endif
+    !endif
+    !if &set #l9 &sin ":" #l1
+      set-variable #l7 &lset #l7 5 &rig #l1 #l9
+      set-variable #l1 &lef #l1 &sub #l9 1
+    !endif
+    !if &seq #l1 ""
+      !return
+    !endif
+    !if &seq .ftp.name ""
+      !if &and &band #l8 2 &not &seq #l2 ""
+        set-variable #l0 &spr "%s(%s)" #l1 &lget #l7 2
+      !else
+        set-variable #l0 #l1
+      !endif
+      ftp-site-name-set #l0
+    !endif
+    set-variable #l7 &lset #l7 1 #l1
+    set-variable #l0 1
+    set-variable #l9 1
+    !repeat
+      !if &band #l8 #l9
+        set-variable #l1 &lget #l7 #l0
+        set-variable #l2 &spr "/url/ftp/%s/%s" .ftp.name &lget "|host|user|pass|path|port|" #l0
         !if &seq #l1 ""
-            !return
+          !force delete-registry #l2
+        !else
+          !force set-registry #l2 #l1
+          !if &equ #l0 3
+            !force mark-registry #l2 "!"
+          !endif
         !endif
-        !if &seq .ftp.name ""
-            !if &and &band #l8 2 &not &seq #l2 ""
-                set-variable #l0 &spr "%s(%s)" #l1 &lget #l7 2
-            !else
-                set-variable #l0 #l1
-            !endif
-            ftp-site-name-set #l0
-        !endif
-        set-variable #l7 &lset #l7 1 #l1
-        set-variable #l0 1
-        set-variable #l9 1
-        !repeat
-            !if &band #l8 #l9
-                set-variable #l1 &lget #l7 #l0
-                set-variable #l2 &spr "/url/ftp/%s/%s" .ftp.name &lget "|host|user|pass|path|port|" #l0
-                !if &seq #l1 ""
-                    !force delete-registry #l2
-                !else
-                    !force set-registry #l2 #l1
-                    !if &equ #l0 3
-                        !force mark-registry #l2 "!"
-                    !endif
-                !endif
-            !endif
-            set-variable #l9 &mul #l9 2
-        !until &equ &pinc #l0 1 5
-        mark-registry "/url" "u"
-        ftp-data-entry-setup
-        -2 osd
-    !else
-        set-variable $result #l0
-    !endif
+      !endif
+      set-variable #l9 &mul #l9 2
+    !until &equ &pinc #l0 1 5
+    mark-registry "/url" "u"
+    ftp-data-entry-setup
+    -2 osd
+  !else
+    set-variable $result #l0
+  !endif
 !emacro
 0 define-macro ftp-data-entry
-    set-variable #l2 &spr "/url/ftp/%s/%s" .ftp.name &lget "|name|user|pass|path|" &set #l3 &abs @#
-    !if &equ #l3 1
-        set-variable #l1 .ftp.name
+  set-variable #l2 &spr "/url/ftp/%s/%s" .ftp.name &lget "|name|user|pass|path|" &set #l3 &abs @#
+  !if &equ #l3 1
+    set-variable #l1 .ftp.name
+  !else
+    set-variable #l1 &reg #l2 ""
+  !endif
+  !if &les @# 0
+    !if &equ #l3 3
+      set-variable #l0 @mla "" ""
     !else
-        set-variable #l1 &reg #l2 ""
+      set-variable #l0 @ml2 "" #l1
     !endif
-    !if &les @# 0
-        !if &equ #l3 3
-            set-variable #l0 @mla "" ""
-        !else
-            set-variable #l0 @ml2 "" #l1
+    !if &seq #l0 #l1
+      !return
+    !endif
+    !if &equ @# -1
+      ; entered a name, cannot be empty
+      !if &seq #l0 ""
+        !return
+      !endif
+      !force find-registry &cat "/url/ftp/" #l0 0
+      !if $status
+        ; if we already have an ftp entry of this name, simply change to it
+      !elif &not &or &seq .ftp.name "" &seq .ftp.name #l0
+        ; if not and we are already looking at an ftp entry, does
+        ; the user want to rename this one or create anew one?
+        set-variable #l9 &spr "  Rename \"%s\" to \"%s\" or create new?  " .ftp.name #l0
+        osd-xdialog "FTP" #l9 1 " \HRename " " Create \HNew " " \HCancel "
+        !if &equ $result 3
+          !return
         !endif
-        !if &seq #l0 #l1
-            !return
+        !if &equ $result 1
+          copy-registry &cat "/url/ftp/" .ftp.name &cat "/url/ftp/" #l0
+          delete-registry &cat "/url/ftp/" .ftp.name
         !endif
-        !if &equ @# -1
-            ; entered a name, cannot be empty
-            !if &seq #l0 ""
-                !return
-            !endif
-            !force find-registry &cat "/url/ftp/" #l0 0
-            !if $status
-                ; if we already have an ftp entry of this name, simply change to it
-            !elif &not &or &seq .ftp.name "" &seq .ftp.name #l0
-                ; if not and we are already looking at an ftp entry, does
-                ; the user want to rename this one or create anew one?
-                set-variable #l9 &spr "  Rename \"%s\" to \"%s\" or create new?  " .ftp.name #l0
-                osd-xdialog "FTP" #l9 1 " \HRename " " Create \HNew " " \HCancel "
-                !if &equ $result 3
-                    !return
-                !endif
-                !if &equ $result 1
-                    copy-registry &cat "/url/ftp/" .ftp.name &cat "/url/ftp/" #l0
-                    delete-registry &cat "/url/ftp/" .ftp.name
-                !endif
-            !endif
-            ftp-site-name-set #l0
-        !elif &seq #l0 ""
-            delete-registry #l2
-        !else
-            !if &equ @# -4
-                !if &seq &lef #l0 1 "/"
-                !elif &seq &lef #l0 2 "~/"
-                !else
-                    set-variable #l0 &cat "~/" #l0
-                !endif
-            !endif
-            set-registry #l2 #l0
-            !if &equ @# -3
-                mark-registry #l2 "!"
-            !endif
-        !endif
-        mark-registry "/url" "u"
-        ftp-data-entry-setup
-    !elif &or &sub #l3 3 &seq #l1 ""
-        set-variable $result #l1
+      !endif
+      ftp-site-name-set #l0
+    !elif &seq #l0 ""
+      delete-registry #l2
     !else
-        set-variable $result "************"
+      !if &equ @# -4
+        !if &seq &lef #l0 1 "/"
+        !elif &seq &lef #l0 2 "~/"
+        !else
+          set-variable #l0 &cat "~/" #l0
+        !endif
+      !endif
+      set-registry #l2 #l0
+      !if &equ @# -3
+        mark-registry #l2 "!"
+      !endif
     !endif
+    mark-registry "/url" "u"
+    ftp-data-entry-setup
+  !elif &or &sub #l3 3 &seq #l1 ""
+    set-variable $result #l1
+  !else
+    set-variable $result "************"
+  !endif
 !emacro
 
 0 define-macro ftp-make-default
-    !force read-registry "/history" $user-name "cbr"
-    !if &seq .ftp.url-file ""
-        delete-registry "/history/url-file"
-    !else
-        set-registry "/history/url-file" .ftp.url-file
-    !endif
-    save-registry "/history" ""
+  !force read-registry "/history" $user-name "cbr"
+  !if &seq .ftp.url-file ""
+    delete-registry "/history/url-file"
+  !else
+    set-registry "/history/url-file" .ftp.url-file
+  !endif
+  save-registry "/history" ""
 !emacro
 
 0 define-macro ftp-do-connect
-    !if &not &seq .ftp.name ""
-        set-variable .ftp-connect.do 1
-        !abort
-    !endif
-    osd-dialog "FTP Error" "  Cannot connect - No site details!  "  "  \HOK  "
+  !if &not &seq .ftp.name ""
+    set-variable .ftp-connect.do 1
+    !abort
+  !endif
+  osd-dialog "FTP Error" "  Cannot connect - No site details!  "  "  \HOK  "
 !emacro
 
 -1 osd .osd.ftp
@@ -519,14 +519,14 @@ osd .osd.ftp 630 "BthrfH" .scheme.osd-ebtt " \HCancel "   f void
 osd .osd.ftp 640 "f" "  "
 
 !if &not &exi .ftp.url-file
-    !if &not &seq &set .ftp.url-file &reg "/history/url-file" "" ""
-        !force read-registry "/url" .ftp.url-file "y" 
-        !if &not $status
-            ; set ftp erf file is missing
-            set-registry "/url" &stat "a" &spr "%s%s.erf" $user-path .ftp.url-file
-            mark-registry "/url" "fybu"
-        !endif
+  !if &not &seq &set .ftp.url-file &reg "/history/url-file" "" ""
+    !force read-registry "/url" .ftp.url-file "y" 
+    !if &not $status
+      ; set ftp erf file is missing
+      set-registry "/url" &stat "a" &spr "%s%s.erf" $user-path .ftp.url-file
+      mark-registry "/url" "fybu"
     !endif
-    set-variable %ftp-flags &reg "/url/ftp-flags" "csp"
+  !endif
+  set-variable %ftp-flags &reg "/url/ftp-flags" "csp"
 !endif
 ftp-site-name-set ""

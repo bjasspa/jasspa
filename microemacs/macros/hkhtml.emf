@@ -8,16 +8,16 @@
 ; Authors:     Steven Phillips
 ;
 define-macro fhook-html
-    set-variable #l0 &mid $buffer-bname &rsin "." $buffer-bname 3
-    !if &sin "c" .fhook-html.setup
-        !jump 2
-    !elif &or &seq #l0 "hts" &seq #l0 "htp"
-        set-variable $buffer-mask "luh1"
-        @# buffer-init "html"
-    !else
-        html-process-buffer
-    !endif
-    buffer-init-hooks
+  set-variable #l0 &mid $buffer-bname &rsin "." $buffer-bname 3
+  !if &sin "c" .fhook-html.setup
+    !jump 2
+  !elif &or &seq #l0 "hts" &seq #l0 "htp"
+    set-variable $buffer-mask "luh1"
+    @# buffer-init "html"
+  !else
+    html-process-buffer
+  !endif
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -41,108 +41,108 @@ set-variable .fhook-html.command-kbind &cat .fhook-html.command-kbind "C-c C-h|"
 set-variable .fhook-html.command-desc  &cat .fhook-html.command-desc  "Preview in MicroEmacs|"
 
 !if &and &sin "h" .fhook-html.setup &band .hilight.flags 0x01 
-    !if &not &exist .hilight.htmlN
-        set-variable .hilight.htmlN  &pinc .hilight.next 1
-        set-variable .hilight.htmlNL &pinc .hilight.next 1
-    !endif
-    0 hilight .hilight.htmlN 0                          $global-scheme
-    hilight .hilight.htmlN 0x44 "\ecA" "" "\\}\e" "" "" $global-scheme
-    hilight .hilight.htmlN 0x44 "\ecB" "" "\\}\e" "" "" .scheme.under    ; underline
-    hilight .hilight.htmlN 0x44 "\ecC" "" "\\}\e" "" "" .scheme.italic   ; italic
-    hilight .hilight.htmlN 0x44 "\ecD" "" "\\}\e" "" "" .scheme.bold     ; bold
-    hilight .hilight.htmlN 0x44 "\ecE" "" "\\}\e" "" "" .scheme.header   ; Header
-    hilight .hilight.htmlN 0x44 "\ecF" "" "\\}\e" "" "" .scheme.comment  ; image
-    hilight .hilight.htmlN 0x44 "\ecG" "" "\\}\e" "" "" .scheme.type     ; TT (curior)
-    hilight .hilight.htmlN 0xc0 "\els" "" .hilight.htmlNL $global-scheme ; link start
-    hilight .hilight.htmlN 0x44 "\elm" "" "\ele" "" ""  .scheme.link     ; link name
-    
-    0 hilight .hilight.htmlNL 0                         $global-scheme
-    hilight .hilight.htmlNL 0x80 "\\}\elm" .hilight.htmlN $global-scheme
-    hilight .hilight.htmlNL 0x40 "." ""                 $global-scheme
+  !if &not &exist .hilight.htmlN
+    set-variable .hilight.htmlN  &pinc .hilight.next 1
+    set-variable .hilight.htmlNL &pinc .hilight.next 1
+  !endif
+  0 hilight .hilight.htmlN 0                          $global-scheme
+  hilight .hilight.htmlN 0x44 "\ecA" "" "\\}\e" "" "" $global-scheme
+  hilight .hilight.htmlN 0x44 "\ecB" "" "\\}\e" "" "" .scheme.under    ; underline
+  hilight .hilight.htmlN 0x44 "\ecC" "" "\\}\e" "" "" .scheme.italic   ; italic
+  hilight .hilight.htmlN 0x44 "\ecD" "" "\\}\e" "" "" .scheme.bold     ; bold
+  hilight .hilight.htmlN 0x44 "\ecE" "" "\\}\e" "" "" .scheme.header   ; Header
+  hilight .hilight.htmlN 0x44 "\ecF" "" "\\}\e" "" "" .scheme.comment  ; image
+  hilight .hilight.htmlN 0x44 "\ecG" "" "\\}\e" "" "" .scheme.type     ; TT (curior)
+  hilight .hilight.htmlN 0xc0 "\els" "" .hilight.htmlNL $global-scheme ; link start
+  hilight .hilight.htmlN 0x44 "\elm" "" "\ele" "" ""  .scheme.link     ; link name
+  
+  0 hilight .hilight.htmlNL 0                         $global-scheme
+  hilight .hilight.htmlNL 0x80 "\\}\elm" .hilight.htmlN $global-scheme
+  hilight .hilight.htmlNL 0x40 "." ""                 $global-scheme
 !endif
 
 define-macro-file htmltool html-to-ehf
 
 0 define-macro html-process-link
-    set-variable #l0 $window-col
-    set-variable #l1 $window-line
-    ; end of link must be found within 5 lines
-    !force -5 search-forward "\ele"
-    !if $status
-        !force -5 search-backward "\els"
-        !if &and $status &or &les $window-line #l1 &and &equ $window-line #l1 &not &gre $window-col #l0
-            3 forward-char
-            set-mark
-            -1 search-forward "\elm"
-            3 backward-char
-            copy-region
-            set-variable #l0 @y
-            -1 yank
-            !if &set #l1 &sin "#" #l0
-                set-variable #l8 &rig #l0 #l1
-                set-variable #l0 &lef #l0 &sub #l1 1
-            !else
-                set-variable #l8 ""
-            !endif
-            !if &not &seq #l0 ""
-                !if &and &seq &lef #l0 1 "/" &set #l2 &sin "/" &rig $buffer-fname 7
-                    set-variable #l0 &cat &lef $buffer-fname &add 6 #l2 #l0
-                !endif
-                !force find-file #l0
-                !if &not $status
-                    ml-write &spr "[Failed to find link \"%s\"]" #l0
-                    !abort
-                !endif
-            !endif
-            !if &not &seq #l8 ""
-                !force search-forward &cat #l8 "\elm"
-                beginning-of-line
-            !endif
-            !return
+  set-variable #l0 $window-col
+  set-variable #l1 $window-line
+  ; end of link must be found within 5 lines
+  !force -5 search-forward "\ele"
+  !if $status
+    !force -5 search-backward "\els"
+    !if &and $status &or &les $window-line #l1 &and &equ $window-line #l1 &not &gre $window-col #l0
+      3 forward-char
+      set-mark
+      -1 search-forward "\elm"
+      3 backward-char
+      copy-region
+      set-variable #l0 @y
+      -1 yank
+      !if &set #l1 &sin "#" #l0
+        set-variable #l8 &rig #l0 #l1
+        set-variable #l0 &lef #l0 &sub #l1 1
+      !else
+        set-variable #l8 ""
+      !endif
+      !if &not &seq #l0 ""
+        !if &and &seq &lef #l0 1 "/" &set #l2 &sin "/" &rig $buffer-fname 7
+          set-variable #l0 &cat &lef $buffer-fname &add 6 #l2 #l0
         !endif
+        !force find-file #l0
+        !if &not $status
+          ml-write &spr "[Failed to find link \"%s\"]" #l0
+          !abort
+        !endif
+      !endif
+      !if &not &seq #l8 ""
+        !force search-forward &cat #l8 "\elm"
+        beginning-of-line
+      !endif
+      !return
     !endif
-    set-variable $window-line #l1
-    set-variable $window-col #l0
-    ml-write "Error! Not in a link"
-    !abort
+  !endif
+  set-variable $window-line #l1
+  set-variable $window-col #l0
+  ml-write "Error! Not in a link"
+  !abort
 !emacro
 
 define-macro html-process-buffer
-    set-variable $buffer-fill-col &sub $window-width 2
-    beginning-of-buffer
-    set-variable #g0 0
-    html-to-ehf
-    beginning-of-buffer
-    !if &iseq &lef $buffer-fname 7 "http://"
-        set-variable #l0 &lef $buffer-fname &add 7 &sin "/" &rig $buffer-fname 7
-    !else
-        set-variable #l0 "file:/"
-    !endif
-    1 buffer-mode "magic"
-    replace-string "http:/\\([^/]\\)" &cat #l0 "\\1"
-    beginning-of-buffer
-    !if &and &sin "h" .fhook-html.setup &band .hilight.flags 0x01 
-        set-variable $buffer-hilight .hilight.htmlN
-    !endif
-    -1 buffer-mode "edit"
-    1 buffer-mode "view"
-    set-variable :mouse-word-select html-process-link
-    buffer-bind-create "bio" "return" "" html-process-link
-    ml-write "Done!"
+  set-variable $buffer-fill-col &sub $window-width 2
+  beginning-of-buffer
+  set-variable #g0 0
+  html-to-ehf
+  beginning-of-buffer
+  !if &iseq &lef $buffer-fname 7 "http://"
+    set-variable #l0 &lef $buffer-fname &add 7 &sin "/" &rig $buffer-fname 7
+  !else
+    set-variable #l0 "file:/"
+  !endif
+  1 buffer-mode "magic"
+  replace-string "http:/\\([^/]\\)" &cat #l0 "\\1"
+  beginning-of-buffer
+  !if &and &sin "h" .fhook-html.setup &band .hilight.flags 0x01 
+    set-variable $buffer-hilight .hilight.htmlN
+  !endif
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"
+  set-variable :mouse-word-select html-process-link
+  buffer-bind-create "bio" "return" "" html-process-link
+  ml-write "Done!"
 !emacro
 
 0 define-macro html-show-buffer
-    end-of-buffer
-    set-mark
-    beginning-of-buffer
-    copy-region
-    set-variable #l8 $buffer-fname
-    !force 0 delete-buffer &cat "*" $buffer-bname
-    find-buffer &cat "*" $buffer-bname
-    set-variable $buffer-fname &lef #l8 &rsin "/" #l8
-    yank
-    -1 yank
-    html-process-buffer
+  end-of-buffer
+  set-mark
+  beginning-of-buffer
+  copy-region
+  set-variable #l8 $buffer-fname
+  !force 0 delete-buffer &cat "*" $buffer-bname
+  find-buffer &cat "*" $buffer-bname
+  set-variable $buffer-fname &lef #l8 &rsin "/" #l8
+  yank
+  -1 yank
+  html-process-buffer
 !emacro
 
 buffer-init-fhook "html"

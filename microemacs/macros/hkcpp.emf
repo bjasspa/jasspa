@@ -13,11 +13,11 @@
 ;       the first line.
 ;
 define-macro fhook-cpp
-    ; Is it an include h file or a c file?
-    set-variable #l0 &con &isin ".h" $buffer-bname "hpp" "cpp"
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "cpp" #l0
-    buffer-init-hooks
+  ; Is it an include h file or a c file?
+  set-variable #l0 &con &isin ".h" $buffer-bname "hpp" "cpp"
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "cpp" #l0
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -103,335 +103,335 @@ set-variable .fhook-cpp.item-list-s6 "^[ \t]*class[ \t]+\\(\\w+\\)\\([ \t]+:\\|[
 set-variable .fhook-cpp.item-list-r6 "Clss \ecB\\1\ecA"
 
 !if &not &exist .hilight.cpp
-    set-variable .hilight.cpp &pinc .hilight.next 1
+  set-variable .hilight.cpp &pinc .hilight.next 1
 !endif
 !if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02
-    ; High-light C++ Mode
-    0 hilight .hilight.cpp  2 50             $global-scheme
-    hilight .hilight.cpp 0x3a "#" "\\"       .scheme.prepro
-    hilight .hilight.cpp    2 "//"           .scheme.comment
-    hilight .hilight.cpp   20 "/\\*" "*/" "" .scheme.comment
-    hilight .hilight.cpp    4 "\"" "\"" "\\" .scheme.string
-    hilight .hilight.cpp    0 "'.'"          .scheme.quote
-    hilight .hilight.cpp    0 "'\\\\.'"      .scheme.quote
-    hilight .hilight.cpp    0 "'\\\\x\\h\\h'" .scheme.quote
-    hilight .hilight.cpp    0 "'\\\\'"       .scheme.error
-    hilight .hilight.cpp    0 "'\\\\''"      .scheme.quote
-    !if &band .hilight.flags 0x04
-        hilight .hilight.cpp 0 "^\\a\\w*\\}\\s(" .scheme.function
-        hilight .hilight.cpp 0 "^\\a\\w*\\}(" .scheme.function
-        hilight .hilight.cpp 0 "^\\a\\w*::~?\\w+\\}\\s(" .scheme.function
-        hilight .hilight.cpp 0 "^\\a\\w*::~?\\w+\\}(" .scheme.function
+  ; High-light C++ Mode
+  0 hilight .hilight.cpp  2 50             $global-scheme
+  hilight .hilight.cpp 0x3a "#" "\\"       .scheme.prepro
+  hilight .hilight.cpp    2 "//"           .scheme.comment
+  hilight .hilight.cpp   20 "/\\*" "*/" "" .scheme.comment
+  hilight .hilight.cpp    4 "\"" "\"" "\\" .scheme.string
+  hilight .hilight.cpp    0 "'.'"          .scheme.quote
+  hilight .hilight.cpp    0 "'\\\\.'"      .scheme.quote
+  hilight .hilight.cpp    0 "'\\\\x\\h\\h'" .scheme.quote
+  hilight .hilight.cpp    0 "'\\\\'"       .scheme.error
+  hilight .hilight.cpp    0 "'\\\\''"      .scheme.quote
+  !if &band .hilight.flags 0x04
+    hilight .hilight.cpp 0 "^\\a\\w*\\}\\s(" .scheme.function
+    hilight .hilight.cpp 0 "^\\a\\w*\\}(" .scheme.function
+    hilight .hilight.cpp 0 "^\\a\\w*::~?\\w+\\}\\s(" .scheme.function
+    hilight .hilight.cpp 0 "^\\a\\w*::~?\\w+\\}(" .scheme.function
+  !endif
+  hilight .hilight.cpp    0 "^\\a\\w*\\}:" .scheme.link
+  ; keywords
+  hilight .hilight.cpp    1 "asm"          .scheme.keyword
+  hilight .hilight.cpp    1 "break"        .scheme.keyword
+  hilight .hilight.cpp    1 "case"         .scheme.keyword
+  hilight .hilight.cpp    1 "catch"        .scheme.keyword
+  hilight .hilight.cpp    1 "continue"     .scheme.keyword
+  hilight .hilight.cpp    1 "default"      .scheme.keyword
+  hilight .hilight.cpp    1 "delete"       .scheme.keyword
+  hilight .hilight.cpp    1 "do"           .scheme.keyword
+  hilight .hilight.cpp    1 "else"         .scheme.keyword
+  hilight .hilight.cpp    1 "for"          .scheme.keyword
+  hilight .hilight.cpp    1 "goto"         .scheme.keyword
+  hilight .hilight.cpp    1 "if"           .scheme.keyword
+  hilight .hilight.cpp    1 "new"          .scheme.keyword
+  hilight .hilight.cpp    1 "operator"     .scheme.keyword
+  hilight .hilight.cpp    1 "private"      .scheme.keyword
+  hilight .hilight.cpp    1 "protected"    .scheme.keyword
+  hilight .hilight.cpp    1 "public"       .scheme.keyword
+  hilight .hilight.cpp    1 "return"       .scheme.keyword
+  hilight .hilight.cpp    1 "sizeof"       .scheme.keyword
+  hilight .hilight.cpp    1 "switch"       .scheme.keyword
+  hilight .hilight.cpp    1 "this"         .scheme.keyword
+  hilight .hilight.cpp    1 "throw"        .scheme.keyword
+  hilight .hilight.cpp    1 "try"          .scheme.keyword
+  hilight .hilight.cpp    1 "while"        .scheme.keyword
+  ; types
+  hilight .hilight.cpp    1 "auto"         .scheme.type
+  hilight .hilight.cpp    1 "bool"         .scheme.type
+  hilight .hilight.cpp    1 "char"         .scheme.type
+  hilight .hilight.cpp    1 "class"        .scheme.type
+  hilight .hilight.cpp    1 "complex"      .scheme.type
+  hilight .hilight.cpp    1 "const"        .scheme.type
+  hilight .hilight.cpp    1 "double"       .scheme.type
+  hilight .hilight.cpp    1 "enum"         .scheme.type
+  hilight .hilight.cpp    1 "extern"       .scheme.type
+  hilight .hilight.cpp    1 "float"        .scheme.type
+  hilight .hilight.cpp    1 "friend"       .scheme.type
+  hilight .hilight.cpp    1 "inline"       .scheme.type
+  hilight .hilight.cpp    1 "int"          .scheme.type
+  hilight .hilight.cpp    1 "long"         .scheme.type
+  hilight .hilight.cpp    1 "namespace"    .scheme.type
+  hilight .hilight.cpp    1 "register"     .scheme.type
+  hilight .hilight.cpp    1 "short"        .scheme.type
+  hilight .hilight.cpp    1 "signed"       .scheme.type
+  hilight .hilight.cpp    1 "size_t"       .scheme.type
+  hilight .hilight.cpp    1 "static"       .scheme.type
+  hilight .hilight.cpp    1 "struct"       .scheme.type
+  hilight .hilight.cpp    1 "template"     .scheme.type
+  hilight .hilight.cpp    1 "typedef"      .scheme.type
+  hilight .hilight.cpp    1 "union"        .scheme.type
+  hilight .hilight.cpp    1 "unsigned"     .scheme.type
+  hilight .hilight.cpp    1 "virtual"      .scheme.type
+  hilight .hilight.cpp    1 "void"         .scheme.type
+  hilight .hilight.cpp    1 "volatile"     .scheme.type
+  ;
+  hilight .hilight.cpp    1 "static_cast"      .scheme.type
+  hilight .hilight.cpp    1 "dynamic_cast"     .scheme.type
+  hilight .hilight.cpp    1 "const_cast"       .scheme.type
+  hilight .hilight.cpp    1 "reinterpret_cast" .scheme.type
+  ; Type qualifiers.
+  hilight .hilight.cpp    1 "__restrict"   .scheme.type
+  hilight .hilight.cpp    1 "__unaligned"  .scheme.type
+  ; Add some system types
+  hilight .hilight.cpp    1 "FILE"         .scheme.type
+  ; Pre-processor directives
+  hilight .hilight.cpp    0 "__DATE__"     .scheme.prepro
+  hilight .hilight.cpp    0 "__FILE__"     .scheme.prepro
+  hilight .hilight.cpp    0 "__LINE__"     .scheme.prepro
+  hilight .hilight.cpp    0 "__STDC__"     .scheme.prepro
+  hilight .hilight.cpp    0 "__TIME__"     .scheme.prepro
+  hilight .hilight.cpp    0 "NULL"         .scheme.prepro
+  !if &band .hilight.flags 0x08
+    ; hilight constants, e.g. numbers
+    hilight .hilight.cpp 1 "\\d+"          .scheme.constant
+    hilight .hilight.cpp 1 "-\\d+"         .scheme.constant
+    hilight .hilight.cpp 1 "0x\\h+"        .scheme.constant
+    hilight .hilight.cpp 1 "0X\\h+"        .scheme.constant
+    hilight .hilight.cpp 1 "\\d+\\.\\d+"   .scheme.constant
+    hilight .hilight.cpp 1 "-\\d+\\.\\d+"  .scheme.constant
+    hilight .hilight.cpp 1 "\\d+\\.\\d+f"  .scheme.constant
+    hilight .hilight.cpp 1 "-\\d+\\.\\d+f" .scheme.constant
+  !endif
+  
+  ; Doxygen highlighting extensions. Highlights keywords in Doxygen
+  !if &sin "l" .fhook-cpp.setup
+    ; Create a new doxygen hilighting scheme
+    !if &not &exi .hilight.cppdoxygen
+      set-variable .hilight.cppdoxygen   &pinc .hilight.next 1
+      set-variable .hilight.cppdoxygenc  &pinc .hilight.next 1
+      set-variable .hilight.pcppdoxygenc &pinc .hilight.next 1
+      set-variable .hilight.pcppdoxygen  &pinc .hilight.next 1
     !endif
-    hilight .hilight.cpp    0 "^\\a\\w*\\}:" .scheme.link
-    ; keywords
-    hilight .hilight.cpp    1 "asm"          .scheme.keyword
-    hilight .hilight.cpp    1 "break"        .scheme.keyword
-    hilight .hilight.cpp    1 "case"         .scheme.keyword
-    hilight .hilight.cpp    1 "catch"        .scheme.keyword
-    hilight .hilight.cpp    1 "continue"     .scheme.keyword
-    hilight .hilight.cpp    1 "default"      .scheme.keyword
-    hilight .hilight.cpp    1 "delete"       .scheme.keyword
-    hilight .hilight.cpp    1 "do"           .scheme.keyword
-    hilight .hilight.cpp    1 "else"         .scheme.keyword
-    hilight .hilight.cpp    1 "for"          .scheme.keyword
-    hilight .hilight.cpp    1 "goto"         .scheme.keyword
-    hilight .hilight.cpp    1 "if"           .scheme.keyword
-    hilight .hilight.cpp    1 "new"          .scheme.keyword
-    hilight .hilight.cpp    1 "operator"     .scheme.keyword
-    hilight .hilight.cpp    1 "private"      .scheme.keyword
-    hilight .hilight.cpp    1 "protected"    .scheme.keyword
-    hilight .hilight.cpp    1 "public"       .scheme.keyword
-    hilight .hilight.cpp    1 "return"       .scheme.keyword
-    hilight .hilight.cpp    1 "sizeof"       .scheme.keyword
-    hilight .hilight.cpp    1 "switch"       .scheme.keyword
-    hilight .hilight.cpp    1 "this"         .scheme.keyword
-    hilight .hilight.cpp    1 "throw"        .scheme.keyword
-    hilight .hilight.cpp    1 "try"          .scheme.keyword
-    hilight .hilight.cpp    1 "while"        .scheme.keyword
-    ; types
-    hilight .hilight.cpp    1 "auto"         .scheme.type
-    hilight .hilight.cpp    1 "bool"         .scheme.type
-    hilight .hilight.cpp    1 "char"         .scheme.type
-    hilight .hilight.cpp    1 "class"        .scheme.type
-    hilight .hilight.cpp    1 "complex"      .scheme.type
-    hilight .hilight.cpp    1 "const"        .scheme.type
-    hilight .hilight.cpp    1 "double"       .scheme.type
-    hilight .hilight.cpp    1 "enum"         .scheme.type
-    hilight .hilight.cpp    1 "extern"       .scheme.type
-    hilight .hilight.cpp    1 "float"        .scheme.type
-    hilight .hilight.cpp    1 "friend"       .scheme.type
-    hilight .hilight.cpp    1 "inline"       .scheme.type
-    hilight .hilight.cpp    1 "int"          .scheme.type
-    hilight .hilight.cpp    1 "long"         .scheme.type
-    hilight .hilight.cpp    1 "namespace"    .scheme.type
-    hilight .hilight.cpp    1 "register"     .scheme.type
-    hilight .hilight.cpp    1 "short"        .scheme.type
-    hilight .hilight.cpp    1 "signed"       .scheme.type
-    hilight .hilight.cpp    1 "size_t"       .scheme.type
-    hilight .hilight.cpp    1 "static"       .scheme.type
-    hilight .hilight.cpp    1 "struct"       .scheme.type
-    hilight .hilight.cpp    1 "template"     .scheme.type
-    hilight .hilight.cpp    1 "typedef"      .scheme.type
-    hilight .hilight.cpp    1 "union"        .scheme.type
-    hilight .hilight.cpp    1 "unsigned"     .scheme.type
-    hilight .hilight.cpp    1 "virtual"      .scheme.type
-    hilight .hilight.cpp    1 "void"         .scheme.type
-    hilight .hilight.cpp    1 "volatile"     .scheme.type
     ;
-    hilight .hilight.cpp    1 "static_cast"      .scheme.type
-    hilight .hilight.cpp    1 "dynamic_cast"     .scheme.type
-    hilight .hilight.cpp    1 "const_cast"       .scheme.type
-    hilight .hilight.cpp    1 "reinterpret_cast" .scheme.type
-    ; Type qualifiers.
-    hilight .hilight.cpp    1 "__restrict"   .scheme.type
-    hilight .hilight.cpp    1 "__unaligned"  .scheme.type
-    ; Add some system types
-    hilight .hilight.cpp    1 "FILE"         .scheme.type
-    ; Pre-processor directives
-    hilight .hilight.cpp    0 "__DATE__"     .scheme.prepro
-    hilight .hilight.cpp    0 "__FILE__"     .scheme.prepro
-    hilight .hilight.cpp    0 "__LINE__"     .scheme.prepro
-    hilight .hilight.cpp    0 "__STDC__"     .scheme.prepro
-    hilight .hilight.cpp    0 "__TIME__"     .scheme.prepro
-    hilight .hilight.cpp    0 "NULL"         .scheme.prepro
-    !if &band .hilight.flags 0x08
-        ; hilight constants, e.g. numbers
-        hilight .hilight.cpp 1 "\\d+"          .scheme.constant
-        hilight .hilight.cpp 1 "-\\d+"         .scheme.constant
-        hilight .hilight.cpp 1 "0x\\h+"        .scheme.constant
-        hilight .hilight.cpp 1 "0X\\h+"        .scheme.constant
-        hilight .hilight.cpp 1 "\\d+\\.\\d+"   .scheme.constant
-        hilight .hilight.cpp 1 "-\\d+\\.\\d+"  .scheme.constant
-        hilight .hilight.cpp 1 "\\d+\\.\\d+f"  .scheme.constant
-        hilight .hilight.cpp 1 "-\\d+\\.\\d+f" .scheme.constant
-    !endif
-
-    ; Doxygen highlighting extensions. Highlights keywords in Doxygen
-    !if &sin "l" .fhook-cpp.setup
-        ; Create a new doxygen hilighting scheme
-        !if &not &exi .hilight.cppdoxygen
-            set-variable .hilight.cppdoxygen   &pinc .hilight.next 1
-            set-variable .hilight.cppdoxygenc  &pinc .hilight.next 1
-            set-variable .hilight.pcppdoxygenc &pinc .hilight.next 1
-            set-variable .hilight.pcppdoxygen  &pinc .hilight.next 1
-        !endif
-        ;
-        ; Cater for the /** .. */ type of comment.
-        ;
-        ; Add a hook into the normal C++ hilighing. We jump into cppdoxygen when
-        ; we see an opening "/**" or "/*!".
-        hilight .hilight.cpp 0x80 "/\\*\\*" .hilight.cppdoxygenc  .scheme.comment
-        hilight .hilight.cpp 0x80 "/\\*!"   .hilight.cppdoxygenc  .scheme.comment
-        ; Doxygen hilighting space.
-        0 hilight .hilight.cppdoxygenc  2 50                      .scheme.comment
-        ; "\}" or "@}"
-        hilight .hilight.cppdoxygenc    1 "[\\\\@]}"              .scheme.keyword
-        ; "\{" or "@{"
-        hilight .hilight.cppdoxygenc    1 "[\\\\@]{"              .scheme.keyword
-        ; "\a anyWord" or "@a anyWord"
-        hilight .hilight.cppdoxygenc    1 "[\\\\@]a[ \t]+\\w+"    .scheme.keyword
-        ; "\anyWord" or "@anyWord" - Use branch token and close when not a word!
-        hilight .hilight.cppdoxygenc    4 "[\\\\@]" "\\}\\W" ""   .scheme.keyword
-        ; We must return to C when we see the close of comment "*/"
-        hilight .hilight.cppdoxygenc 0x80 "\\*/" .hilight.cpp     .scheme.comment
-        ;
-        ; Special hilighting for a 'C' parameter - branch from the doxygen
-        ; space into scheme for the parameter. Note that @param is defined
-        ; after the generic '@' definitions.
-        ;
-        ; Special for @param, @see, @retval
-        hilight .hilight.cppdoxygenc 0x80 "[\\\\@]param"  .hilight.pcppdoxygenc .scheme.keyword
-        hilight .hilight.cppdoxygenc 0x80 "[\\\\@]see"    .hilight.pcppdoxygenc .scheme.keyword
-        hilight .hilight.cppdoxygenc 0x80 "[\\\\@]retval" .hilight.pcppdoxygenc .scheme.keyword
-        ; Doxygen parameter hilighting space.
-        0 hilight .hilight.pcppdoxygenc 2 50 .scheme.error
-        ; Hilight the next word and finish.
-        hilight .hilight.pcppdoxygenc 0x80 "\\w+" .hilight.cppdoxygenc .scheme.prepro
-        ; We must return to C when we see the close of comment "*/"
-        hilight .hilight.pcppdoxygenc 0x80 "\\*/" .hilight.cpp .scheme.error
-        ;
-        ; Cater for the /// type of comment
-        ;
-        ; Add a hook into the normal C++ hilighing. We jump into cppdoxygen when
-        ; we see an opening "///" or "//!".
-        hilight .hilight.cpp 0x80 "///" .hilight.cppdoxygen  .scheme.comment
-        hilight .hilight.cpp 0x80 "//!" .hilight.cppdoxygen  .scheme.comment
-        ; Doxygen hilighting space.
-        0 hilight .hilight.cppdoxygen   2 50                      .scheme.comment
-        ; "\}" or "@}"
-        hilight .hilight.cppdoxygen    1 "[\\\\@]}"              .scheme.keyword
-        ; "\{" or "@{"
-        hilight .hilight.cppdoxygen    1 "[\\\\@]{"              .scheme.keyword
-        ; "\a anyWord" or "@a anyWord"
-        hilight .hilight.cppdoxygen    1 "[\\\\@]a[ \t]+\\w+"    .scheme.keyword
-        ; "\anyWord" or "@anyWord" - Use branch token and close when not a word!
-        hilight .hilight.cppdoxygen    4 "[\\\\@]" "\\}\\W" ""   .scheme.keyword
-        ; We must return to C when we see the close of comment "*/"
-        hilight .hilight.cppdoxygen 0x80 "\n" .hilight.cpp       .scheme.comment
-        ;
-        ; Special hilighting for a 'C++' parameter - branch from the doxygen
-        ; space into scheme for the parameter. Note that @param is defined
-        ; after
-        ; the generic '@' definitions.
-        ;
-        ; Special for @param, @see, @retval
-        hilight .hilight.cppdoxygen 0x80 "[\\\\@]param"  .hilight.pcppdoxygen .scheme.keyword
-        hilight .hilight.cppdoxygen 0x80 "[\\\\@]see"    .hilight.pcppdoxygen .scheme.keyword
-        hilight .hilight.cppdoxygen 0x80 "[\\\\@]retval" .hilight.pcppdoxygen .scheme.keyword
-        ; Doxygen parameter hilighting space.
-        0 hilight .hilight.pcppdoxygen 2 50 .scheme.error
-        ; Hilight the next word and finish.
-        hilight .hilight.pcppdoxygen 0x80 "\\w+" .hilight.cppdoxygen .scheme.prepro
-        ; We must return to C when we see the close of comment "*/"
-        hilight .hilight.pcppdoxygen 0x80 "$" .hilight.cpp .scheme.error
-    !endif
-
-    ; Extend the hilighting for the IEEE Std 1003.1 <stdint.h>
-    ; See http://www.opengroup.org/onlinepubs/007904975/basedefs/stdint.h.html
-    !if &sin "q" .fhook-cpp.setup
-        hilight .hilight.cpp    1 "uint8_t"          .scheme.type
-        hilight .hilight.cpp    1 "int8_t"           .scheme.type
-        hilight .hilight.cpp    1 "uint16_t"         .scheme.type
-        hilight .hilight.cpp    1 "int16_t"          .scheme.type
-        hilight .hilight.cpp    1 "uint32_t"         .scheme.type
-        hilight .hilight.cpp    1 "int32_t"          .scheme.type
-        hilight .hilight.cpp    1 "uint64_t"         .scheme.type
-        hilight .hilight.cpp    1 "int64_t"          .scheme.type
-        ; Minimum with integers
-        hilight .hilight.cpp    1 "int_least8_t"     .scheme.type
-        hilight .hilight.cpp    1 "int_least16_t"    .scheme.type
-        hilight .hilight.cpp    1 "int_least32_t"    .scheme.type
-        hilight .hilight.cpp    1 "int_least64_t"    .scheme.type
-        hilight .hilight.cpp    1 "uint_least8_t"    .scheme.type
-        hilight .hilight.cpp    1 "uint_least16_t"   .scheme.type
-        hilight .hilight.cpp    1 "uint_least32_t"   .scheme.type
-        hilight .hilight.cpp    1 "uint_least64_t"   .scheme.type
-        ; Fastest minimum-width integer types
-        hilight .hilight.cpp    1 "int_fast8_t"      .scheme.type
-        hilight .hilight.cpp    1 "int_fast16_t"     .scheme.type
-        hilight .hilight.cpp    1 "int_fast32_t"     .scheme.type
-        hilight .hilight.cpp    1 "int_fast64_t"     .scheme.type
-        hilight .hilight.cpp    1 "uint_fast8_t"     .scheme.type
-        hilight .hilight.cpp    1 "uint_fast16_t"    .scheme.type
-        hilight .hilight.cpp    1 "uint_fast32_t"    .scheme.type
-        hilight .hilight.cpp    1 "uint_fast64_t"    .scheme.type
-        ; Integer types capable of holding object pointers
-        hilight .hilight.cpp    1 "intptr_t"         .scheme.type
-        hilight .hilight.cpp    1 "uintptr_t"        .scheme.type
-        ; Greatest-width integer types
-        hilight .hilight.cpp    1 "intmax_t"         .scheme.type
-        hilight .hilight.cpp    1 "uintmax_t"        .scheme.type
-        ; Other types
-        hilight .hilight.cpp    1 "ptrdiff_t"        .scheme.type
-        hilight .hilight.cpp    1 "sig_atomic_t"     .scheme.type
-        hilight .hilight.cpp    1 "wchar_t"          .scheme.type
-        hilight .hilight.cpp    1 "wint_t"           .scheme.type
-        ; Limits of exact-width integer types
-        hilight .hilight.cpp    1 "INT8_MIN"         .scheme.prepro
-        hilight .hilight.cpp    1 "INT8_MAX"         .scheme.prepro
-        hilight .hilight.cpp    1 "UINT8_MAX"        .scheme.prepro
-        hilight .hilight.cpp    1 "INT16_MIN"        .scheme.prepro
-        hilight .hilight.cpp    1 "INT16_MAX"        .scheme.prepro
-        hilight .hilight.cpp    1 "UINT16_MAX"       .scheme.prepro
-        hilight .hilight.cpp    1 "INT32_MIN"        .scheme.prepro
-        hilight .hilight.cpp    1 "INT32_MAX"        .scheme.prepro
-        hilight .hilight.cpp    1 "UINT32_MAX"       .scheme.prepro
-        hilight .hilight.cpp    1 "INT64_MIN"        .scheme.prepro
-        hilight .hilight.cpp    1 "INT64_MAX"        .scheme.prepro
-        hilight .hilight.cpp    1 "UINT64_MAX"       .scheme.prepro
-        ; Limits of minimum-width integer types
-        hilight .hilight.cpp    1 "INT_LEAST8_MIN"   .scheme.prepro
-        hilight .hilight.cpp    1 "INT_LEAST8_MAX"   .scheme.prepro
-        hilight .hilight.cpp    1 "UINT_LEAST8_MAX"  .scheme.prepro
-        hilight .hilight.cpp    1 "INT_LEAST16_MIN"  .scheme.prepro
-        hilight .hilight.cpp    1 "INT_LEAST16_MAX"  .scheme.prepro
-        hilight .hilight.cpp    1 "UINT_LEAST16_MAX" .scheme.prepro
-        hilight .hilight.cpp    1 "INT_LEAST32_MIN"  .scheme.prepro
-        hilight .hilight.cpp    1 "INT_LEAST32_MAX"  .scheme.prepro
-        hilight .hilight.cpp    1 "UINT_LEAST32_MAX" .scheme.prepro
-        hilight .hilight.cpp    1 "INT_LEAST64_MIN"  .scheme.prepro
-        hilight .hilight.cpp    1 "INT_LEAST64_MAX"  .scheme.prepro
-        hilight .hilight.cpp    1 "UINT_LEAST64_MAX" .scheme.prepro
-        ; Limits of fastest minimum-width integer types
-        hilight .hilight.cpp    1 "INT_FAST8_MIN"    .scheme.prepro
-        hilight .hilight.cpp    1 "INT_FAST8_MAX"    .scheme.prepro
-        hilight .hilight.cpp    1 "UINT_FAST8_MAX"   .scheme.prepro
-        hilight .hilight.cpp    1 "INT_FAST16_MIN"   .scheme.prepro
-        hilight .hilight.cpp    1 "INT_FAST16_MAX"   .scheme.prepro
-        hilight .hilight.cpp    1 "UINT_FAST16_MAX"  .scheme.prepro
-        hilight .hilight.cpp    1 "INT_FAST32_MIN"   .scheme.prepro
-        hilight .hilight.cpp    1 "INT_FAST32_MAX"   .scheme.prepro
-        hilight .hilight.cpp    1 "UINT_FAST32_MAX"  .scheme.prepro
-        hilight .hilight.cpp    1 "INT_FAST64_MIN"   .scheme.prepro
-        hilight .hilight.cpp    1 "INT_FAST64_MAX"   .scheme.prepro
-        hilight .hilight.cpp    1 "UINT_FAST64_MAX"  .scheme.prepro
-        ; Limits of integer types capable of holding object pointers
-        hilight .hilight.cpp    1 "INTPTR_MIN"       .scheme.prepro
-        hilight .hilight.cpp    1 "INTPTR_MAX"       .scheme.prepro
-        ; Maximum value of pointer-holding unsigned integer type:
-        hilight .hilight.cpp    1 "UINTPTR_MAX"      .scheme.prepro
-        ; Limits of greatest-width integer types
-        hilight .hilight.cpp    1 "INTMAX_MIN"       .scheme.prepro
-        hilight .hilight.cpp    1 "INTMAX_MAX"       .scheme.prepro
-        hilight .hilight.cpp    1 "UINTMAX_MAX"      .scheme.prepro
-        ; Limits of Other Integer Types
-        ; Limits of ptrdiff_t:
-        hilight .hilight.cpp    1 "PTRDIFF_MIN"      .scheme.prepro
-        hilight .hilight.cpp    1 "PTRDIFF_MAX"      .scheme.prepro
-        ; Limits of sig_atomic_t:
-        hilight .hilight.cpp    1 "SIG_ATOMIC_MIN"   .scheme.prepro
-        hilight .hilight.cpp    1 "SIG_ATOMIC_MAX"   .scheme.prepro
-        ; Limit of size_t:
-        hilight .hilight.cpp    1 "SIZE_MAX"         .scheme.prepro
-        ; Limits of wchar_t:
-        hilight .hilight.cpp    1 "WCHAR_MIN"        .scheme.prepro
-        hilight .hilight.cpp    1 "WCHAR_MAX"        .scheme.prepro
-        ; Limits of wint_t:
-        hilight .hilight.cpp    1 "WINT_MIN"         .scheme.prepro
-        hilight .hilight.cpp    1 "WINT_MAX"         .scheme.prepro
-    !endif
-
-    ; Hilight curly braces used when it is difficult to differentiate between
-    ; a round bracket and curly brace.
-    !if &sin "r" .fhook-cpp.setup
-        hilight .hilight.cpp 1 "{"                             .scheme.keyword
-        hilight .hilight.cpp 1 "}"                             .scheme.keyword
-    !endif
-
-    ; Pick up bogus C++ constructs extension
-    !if &sin "v" .fhook-cpp.setup
-        ; Detect a for loop with no body - put semi-colon on next line, i.e.
-        ; for (i = 1; i < 10; i++);
-        ; { ... }
-        hilight .hilight.cpp  2 "\\s\\{for[ \t]*([^()]*)[ \t]*;" .scheme.hlred
-        ; Detect a for loop with no body - put semi-colon on next line, i.e.
-        ; while (i == 1);
-        ; { ... }
-        ; hilight .hilight.cpp  2 "\\s\\{while[ \t]*([^()]*)[ \t]*;" .scheme.hlred
-        ; Detect a bad 'if' statement that is terminated with ';' e.g.
-        ; if (i < x);
-        ; { ... }
-        hilight .hilight.cpp  2 "\\s\\{if[ \t]*([^()]*)[ \t]*;"  .scheme.hlred
-        ; Detect a spurious '\' at the end of the line that is
-        ; not a string or #define. i.e.
-        ; char *d = "This is a " \
-        ;           "Duff string continuation";
-        hilight .hilight.cpp  2 "\\\\$"                   .scheme.hlred
-    !endif
+    ; Cater for the /** .. */ type of comment.
+    ;
+    ; Add a hook into the normal C++ hilighing. We jump into cppdoxygen when
+    ; we see an opening "/**" or "/*!".
+    hilight .hilight.cpp 0x80 "/\\*\\*" .hilight.cppdoxygenc  .scheme.comment
+    hilight .hilight.cpp 0x80 "/\\*!"   .hilight.cppdoxygenc  .scheme.comment
+    ; Doxygen hilighting space.
+    0 hilight .hilight.cppdoxygenc  2 50                      .scheme.comment
+    ; "\}" or "@}"
+    hilight .hilight.cppdoxygenc    1 "[\\\\@]}"              .scheme.keyword
+    ; "\{" or "@{"
+    hilight .hilight.cppdoxygenc    1 "[\\\\@]{"              .scheme.keyword
+    ; "\a anyWord" or "@a anyWord"
+    hilight .hilight.cppdoxygenc    1 "[\\\\@]a[ \t]+\\w+"    .scheme.keyword
+    ; "\anyWord" or "@anyWord" - Use branch token and close when not a word!
+    hilight .hilight.cppdoxygenc    4 "[\\\\@]" "\\}\\W" ""   .scheme.keyword
+    ; We must return to C when we see the close of comment "*/"
+    hilight .hilight.cppdoxygenc 0x80 "\\*/" .hilight.cpp     .scheme.comment
+    ;
+    ; Special hilighting for a 'C' parameter - branch from the doxygen
+    ; space into scheme for the parameter. Note that @param is defined
+    ; after the generic '@' definitions.
+    ;
+    ; Special for @param, @see, @retval
+    hilight .hilight.cppdoxygenc 0x80 "[\\\\@]param"  .hilight.pcppdoxygenc .scheme.keyword
+    hilight .hilight.cppdoxygenc 0x80 "[\\\\@]see"    .hilight.pcppdoxygenc .scheme.keyword
+    hilight .hilight.cppdoxygenc 0x80 "[\\\\@]retval" .hilight.pcppdoxygenc .scheme.keyword
+    ; Doxygen parameter hilighting space.
+    0 hilight .hilight.pcppdoxygenc 2 50 .scheme.error
+    ; Hilight the next word and finish.
+    hilight .hilight.pcppdoxygenc 0x80 "\\w+" .hilight.cppdoxygenc .scheme.prepro
+    ; We must return to C when we see the close of comment "*/"
+    hilight .hilight.pcppdoxygenc 0x80 "\\*/" .hilight.cpp .scheme.error
+    ;
+    ; Cater for the /// type of comment
+    ;
+    ; Add a hook into the normal C++ hilighing. We jump into cppdoxygen when
+    ; we see an opening "///" or "//!".
+    hilight .hilight.cpp 0x80 "///" .hilight.cppdoxygen  .scheme.comment
+    hilight .hilight.cpp 0x80 "//!" .hilight.cppdoxygen  .scheme.comment
+    ; Doxygen hilighting space.
+    0 hilight .hilight.cppdoxygen   2 50                      .scheme.comment
+    ; "\}" or "@}"
+    hilight .hilight.cppdoxygen    1 "[\\\\@]}"              .scheme.keyword
+    ; "\{" or "@{"
+    hilight .hilight.cppdoxygen    1 "[\\\\@]{"              .scheme.keyword
+    ; "\a anyWord" or "@a anyWord"
+    hilight .hilight.cppdoxygen    1 "[\\\\@]a[ \t]+\\w+"    .scheme.keyword
+    ; "\anyWord" or "@anyWord" - Use branch token and close when not a word!
+    hilight .hilight.cppdoxygen    4 "[\\\\@]" "\\}\\W" ""   .scheme.keyword
+    ; We must return to C when we see the close of comment "*/"
+    hilight .hilight.cppdoxygen 0x80 "\n" .hilight.cpp       .scheme.comment
+    ;
+    ; Special hilighting for a 'C++' parameter - branch from the doxygen
+    ; space into scheme for the parameter. Note that @param is defined
+    ; after
+    ; the generic '@' definitions.
+    ;
+    ; Special for @param, @see, @retval
+    hilight .hilight.cppdoxygen 0x80 "[\\\\@]param"  .hilight.pcppdoxygen .scheme.keyword
+    hilight .hilight.cppdoxygen 0x80 "[\\\\@]see"    .hilight.pcppdoxygen .scheme.keyword
+    hilight .hilight.cppdoxygen 0x80 "[\\\\@]retval" .hilight.pcppdoxygen .scheme.keyword
+    ; Doxygen parameter hilighting space.
+    0 hilight .hilight.pcppdoxygen 2 50 .scheme.error
+    ; Hilight the next word and finish.
+    hilight .hilight.pcppdoxygen 0x80 "\\w+" .hilight.cppdoxygen .scheme.prepro
+    ; We must return to C when we see the close of comment "*/"
+    hilight .hilight.pcppdoxygen 0x80 "$" .hilight.cpp .scheme.error
+  !endif
+  
+  ; Extend the hilighting for the IEEE Std 1003.1 <stdint.h>
+  ; See http://www.opengroup.org/onlinepubs/007904975/basedefs/stdint.h.html
+  !if &sin "q" .fhook-cpp.setup
+    hilight .hilight.cpp    1 "uint8_t"          .scheme.type
+    hilight .hilight.cpp    1 "int8_t"           .scheme.type
+    hilight .hilight.cpp    1 "uint16_t"         .scheme.type
+    hilight .hilight.cpp    1 "int16_t"          .scheme.type
+    hilight .hilight.cpp    1 "uint32_t"         .scheme.type
+    hilight .hilight.cpp    1 "int32_t"          .scheme.type
+    hilight .hilight.cpp    1 "uint64_t"         .scheme.type
+    hilight .hilight.cpp    1 "int64_t"          .scheme.type
+    ; Minimum with integers
+    hilight .hilight.cpp    1 "int_least8_t"     .scheme.type
+    hilight .hilight.cpp    1 "int_least16_t"    .scheme.type
+    hilight .hilight.cpp    1 "int_least32_t"    .scheme.type
+    hilight .hilight.cpp    1 "int_least64_t"    .scheme.type
+    hilight .hilight.cpp    1 "uint_least8_t"    .scheme.type
+    hilight .hilight.cpp    1 "uint_least16_t"   .scheme.type
+    hilight .hilight.cpp    1 "uint_least32_t"   .scheme.type
+    hilight .hilight.cpp    1 "uint_least64_t"   .scheme.type
+    ; Fastest minimum-width integer types
+    hilight .hilight.cpp    1 "int_fast8_t"      .scheme.type
+    hilight .hilight.cpp    1 "int_fast16_t"     .scheme.type
+    hilight .hilight.cpp    1 "int_fast32_t"     .scheme.type
+    hilight .hilight.cpp    1 "int_fast64_t"     .scheme.type
+    hilight .hilight.cpp    1 "uint_fast8_t"     .scheme.type
+    hilight .hilight.cpp    1 "uint_fast16_t"    .scheme.type
+    hilight .hilight.cpp    1 "uint_fast32_t"    .scheme.type
+    hilight .hilight.cpp    1 "uint_fast64_t"    .scheme.type
+    ; Integer types capable of holding object pointers
+    hilight .hilight.cpp    1 "intptr_t"         .scheme.type
+    hilight .hilight.cpp    1 "uintptr_t"        .scheme.type
+    ; Greatest-width integer types
+    hilight .hilight.cpp    1 "intmax_t"         .scheme.type
+    hilight .hilight.cpp    1 "uintmax_t"        .scheme.type
+    ; Other types
+    hilight .hilight.cpp    1 "ptrdiff_t"        .scheme.type
+    hilight .hilight.cpp    1 "sig_atomic_t"     .scheme.type
+    hilight .hilight.cpp    1 "wchar_t"          .scheme.type
+    hilight .hilight.cpp    1 "wint_t"           .scheme.type
+    ; Limits of exact-width integer types
+    hilight .hilight.cpp    1 "INT8_MIN"         .scheme.prepro
+    hilight .hilight.cpp    1 "INT8_MAX"         .scheme.prepro
+    hilight .hilight.cpp    1 "UINT8_MAX"        .scheme.prepro
+    hilight .hilight.cpp    1 "INT16_MIN"        .scheme.prepro
+    hilight .hilight.cpp    1 "INT16_MAX"        .scheme.prepro
+    hilight .hilight.cpp    1 "UINT16_MAX"       .scheme.prepro
+    hilight .hilight.cpp    1 "INT32_MIN"        .scheme.prepro
+    hilight .hilight.cpp    1 "INT32_MAX"        .scheme.prepro
+    hilight .hilight.cpp    1 "UINT32_MAX"       .scheme.prepro
+    hilight .hilight.cpp    1 "INT64_MIN"        .scheme.prepro
+    hilight .hilight.cpp    1 "INT64_MAX"        .scheme.prepro
+    hilight .hilight.cpp    1 "UINT64_MAX"       .scheme.prepro
+    ; Limits of minimum-width integer types
+    hilight .hilight.cpp    1 "INT_LEAST8_MIN"   .scheme.prepro
+    hilight .hilight.cpp    1 "INT_LEAST8_MAX"   .scheme.prepro
+    hilight .hilight.cpp    1 "UINT_LEAST8_MAX"  .scheme.prepro
+    hilight .hilight.cpp    1 "INT_LEAST16_MIN"  .scheme.prepro
+    hilight .hilight.cpp    1 "INT_LEAST16_MAX"  .scheme.prepro
+    hilight .hilight.cpp    1 "UINT_LEAST16_MAX" .scheme.prepro
+    hilight .hilight.cpp    1 "INT_LEAST32_MIN"  .scheme.prepro
+    hilight .hilight.cpp    1 "INT_LEAST32_MAX"  .scheme.prepro
+    hilight .hilight.cpp    1 "UINT_LEAST32_MAX" .scheme.prepro
+    hilight .hilight.cpp    1 "INT_LEAST64_MIN"  .scheme.prepro
+    hilight .hilight.cpp    1 "INT_LEAST64_MAX"  .scheme.prepro
+    hilight .hilight.cpp    1 "UINT_LEAST64_MAX" .scheme.prepro
+    ; Limits of fastest minimum-width integer types
+    hilight .hilight.cpp    1 "INT_FAST8_MIN"    .scheme.prepro
+    hilight .hilight.cpp    1 "INT_FAST8_MAX"    .scheme.prepro
+    hilight .hilight.cpp    1 "UINT_FAST8_MAX"   .scheme.prepro
+    hilight .hilight.cpp    1 "INT_FAST16_MIN"   .scheme.prepro
+    hilight .hilight.cpp    1 "INT_FAST16_MAX"   .scheme.prepro
+    hilight .hilight.cpp    1 "UINT_FAST16_MAX"  .scheme.prepro
+    hilight .hilight.cpp    1 "INT_FAST32_MIN"   .scheme.prepro
+    hilight .hilight.cpp    1 "INT_FAST32_MAX"   .scheme.prepro
+    hilight .hilight.cpp    1 "UINT_FAST32_MAX"  .scheme.prepro
+    hilight .hilight.cpp    1 "INT_FAST64_MIN"   .scheme.prepro
+    hilight .hilight.cpp    1 "INT_FAST64_MAX"   .scheme.prepro
+    hilight .hilight.cpp    1 "UINT_FAST64_MAX"  .scheme.prepro
+    ; Limits of integer types capable of holding object pointers
+    hilight .hilight.cpp    1 "INTPTR_MIN"       .scheme.prepro
+    hilight .hilight.cpp    1 "INTPTR_MAX"       .scheme.prepro
+    ; Maximum value of pointer-holding unsigned integer type:
+    hilight .hilight.cpp    1 "UINTPTR_MAX"      .scheme.prepro
+    ; Limits of greatest-width integer types
+    hilight .hilight.cpp    1 "INTMAX_MIN"       .scheme.prepro
+    hilight .hilight.cpp    1 "INTMAX_MAX"       .scheme.prepro
+    hilight .hilight.cpp    1 "UINTMAX_MAX"      .scheme.prepro
+    ; Limits of Other Integer Types
+    ; Limits of ptrdiff_t:
+    hilight .hilight.cpp    1 "PTRDIFF_MIN"      .scheme.prepro
+    hilight .hilight.cpp    1 "PTRDIFF_MAX"      .scheme.prepro
+    ; Limits of sig_atomic_t:
+    hilight .hilight.cpp    1 "SIG_ATOMIC_MIN"   .scheme.prepro
+    hilight .hilight.cpp    1 "SIG_ATOMIC_MAX"   .scheme.prepro
+    ; Limit of size_t:
+    hilight .hilight.cpp    1 "SIZE_MAX"         .scheme.prepro
+    ; Limits of wchar_t:
+    hilight .hilight.cpp    1 "WCHAR_MIN"        .scheme.prepro
+    hilight .hilight.cpp    1 "WCHAR_MAX"        .scheme.prepro
+    ; Limits of wint_t:
+    hilight .hilight.cpp    1 "WINT_MIN"         .scheme.prepro
+    hilight .hilight.cpp    1 "WINT_MAX"         .scheme.prepro
+  !endif
+  
+  ; Hilight curly braces used when it is difficult to differentiate between
+  ; a round bracket and curly brace.
+  !if &sin "r" .fhook-cpp.setup
+    hilight .hilight.cpp 1 "{"                             .scheme.keyword
+    hilight .hilight.cpp 1 "}"                             .scheme.keyword
+  !endif
+  
+  ; Pick up bogus C++ constructs extension
+  !if &sin "v" .fhook-cpp.setup
+    ; Detect a for loop with no body - put semi-colon on next line, i.e.
+    ; for (i = 1; i < 10; i++);
+    ; { ... }
+    hilight .hilight.cpp  2 "\\s\\{for[ \t]*([^()]*)[ \t]*;" .scheme.hlred
+    ; Detect a for loop with no body - put semi-colon on next line, i.e.
+    ; while (i == 1);
+    ; { ... }
+    ; hilight .hilight.cpp  2 "\\s\\{while[ \t]*([^()]*)[ \t]*;" .scheme.hlred
+    ; Detect a bad 'if' statement that is terminated with ';' e.g.
+    ; if (i < x);
+    ; { ... }
+    hilight .hilight.cpp  2 "\\s\\{if[ \t]*([^()]*)[ \t]*;"  .scheme.hlred
+    ; Detect a spurious '\' at the end of the line that is
+    ; not a string or #define. i.e.
+    ; char *d = "This is a " \
+    ;           "Duff string continuation";
+    hilight .hilight.cpp  2 "\\\\$"                   .scheme.hlred
+  !endif
 !endif
 !if &sin "d" .fhook-cpp.setup
-    ; Allman Style
-    0 indent .hilight.cpp 12
-    indent .hilight.cpp "u" " * "
-    !if &sin "y" .fhook-cpp.setup
-        ; Redefine for GNU Style C++ use t=2
-        indent .hilight.cpp "s" t
-        indent .hilight.cpp "b" t
-        indent .hilight.cpp "e" t
-        indent .hilight.cpp "a" -t
-        indent .hilight.cpp "w" 0
-    !endif        
+  ; Allman Style
+  0 indent .hilight.cpp 12
+  indent .hilight.cpp "u" " * "
+  !if &sin "y" .fhook-cpp.setup
+    ; Redefine for GNU Style C++ use t=2
+    indent .hilight.cpp "s" t
+    indent .hilight.cpp "b" t
+    indent .hilight.cpp "e" t
+    indent .hilight.cpp "a" -t
+    indent .hilight.cpp "w" 0
+  !endif        
 !endif
 ;
 ; setup fuctions to auto-load from cmacros

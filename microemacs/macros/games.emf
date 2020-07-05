@@ -8,27 +8,27 @@
 ; Authors:     Steven Phillips
 ;
 define-macro cross-word
-    execute-file crosswd
-    cross-word
+  execute-file crosswd
+  cross-word
 !emacro
 define-macro Mahjongg
-    execute-file mahjongg
-    Mahjongg
+  execute-file mahjongg
+  Mahjongg
 !emacro
 define-macro Match-It
-    execute-file matchit
-    Match-It
+  execute-file matchit
+  Match-It
 !emacro
 define-macro Metris
-    execute-file metris
-    Metris
+  execute-file metris
+  Metris
 !emacro
 define-macro Patience
-    execute-file patience
-    Patience
+  execute-file patience
+  Patience
 !emacro
 define-macro Triangle
-    execute-file triangle
-    Triangle
+  execute-file triangle
+  Triangle
 !emacro
 

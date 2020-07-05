@@ -8,9 +8,9 @@
 ; Authors:     Pedro Gomes
 ;
 define-macro fhook-python
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "python"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "python"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -31,96 +31,96 @@ set-variable .fhook-python.item-list-s2 "^[ \t]*class*[ \t]+\\(\\w+\\)"
 set-variable .fhook-python.item-list-r2 "Class \ecB\\1\ecA"
 
 !if &and &sin "h" .fhook-python.setup &band .hilight.flags 0x02
-    !if &not &exist .hilight.python
-        set-variable .hilight.python &pinc .hilight.next 1
-    !endif
-    0 hilight .hilight.python 0                     $global-scheme
-    hilight   .hilight.python 2 "#"                 .scheme.comment
-    hilight   .hilight.python 4 "\"" "\"" "\\"      .scheme.string
-    hilight   .hilight.python 0 "\\["               .scheme.string
-    hilight   .hilight.python 0 "\\]"               .scheme.string
-    ; Quote
-    hilight   .hilight.python 4 "'" "'" "\\"        .scheme.quote
-    ; Variables
-    hilight   .hilight.python 1 "\\.real"           .scheme.variable
-    hilight   .hilight.python 1 "\\.imag"           .scheme.variable
-    hilight   .hilight.python 1 "TypeError"         .scheme.variable
-    hilight   .hilight.python 1 "OverflowError"     .scheme.variable
-    hilight   .hilight.python 1 "ZeroDivisionError" .scheme.variable
-    ; Keywords
-    hilight   .hilight.python 1 "and"               .scheme.keyword
-    hilight   .hilight.python 1 "assert"            .scheme.keyword
-    hilight   .hilight.python 1 "break"             .scheme.keyword
-    hilight   .hilight.python 1 "class"             .scheme.keyword
-    hilight   .hilight.python 1 "continue"          .scheme.keyword
-    hilight   .hilight.python 1 "def"               .scheme.keyword
-    hilight   .hilight.python 1 "del"               .scheme.keyword
-    hilight   .hilight.python 1 "elif"              .scheme.keyword
-    hilight   .hilight.python 1 "else"              .scheme.keyword
-    hilight   .hilight.python 1 "except"            .scheme.keyword
-    hilight   .hilight.python 1 "exec"              .scheme.keyword
-    hilight   .hilight.python 1 "finally"           .scheme.keyword
-    hilight   .hilight.python 1 "for"               .scheme.keyword
-    hilight   .hilight.python 1 "from"              .scheme.keyword
-    hilight   .hilight.python 1 "global"            .scheme.keyword
-    hilight   .hilight.python 1 "if"                .scheme.keyword
-    hilight   .hilight.python 1 "import"            .scheme.keyword
-    hilight   .hilight.python 1 "import from"       .scheme.keyword
-    hilight   .hilight.python 1 "in"                .scheme.keyword
-    hilight   .hilight.python 1 "is"                .scheme.keyword
-    hilight   .hilight.python 1 "lambda"            .scheme.keyword
-    hilight   .hilight.python 1 "not"               .scheme.keyword
-    hilight   .hilight.python 1 "or"                .scheme.keyword
-    hilight   .hilight.python 1 "pass"              .scheme.keyword
-    hilight   .hilight.python 1 "print"             .scheme.keyword
-    hilight   .hilight.python 1 "raise"             .scheme.keyword
-    hilight   .hilight.python 1 "return"            .scheme.keyword
-    hilight   .hilight.python 1 "try"               .scheme.keyword
-    hilight   .hilight.python 1 "then"              .scheme.keyword
-    hilight   .hilight.python 1 "while"             .scheme.keyword
-    ; Operators
-    hilight   .hilight.python 0 "("                 .scheme.operator
-    hilight   .hilight.python 0 ")"                 .scheme.operator
-    hilight   .hilight.python 1 ":"                 .scheme.operator
-    hilight   .hilight.python 1 "<"                 .scheme.operator
-    hilight   .hilight.python 1 ">"                 .scheme.operator
-    hilight   .hilight.python 1 "<="                .scheme.operator
-    hilight   .hilight.python 1 ">="                .scheme.operator
-    hilight   .hilight.python 1 "=="                .scheme.operator
-    hilight   .hilight.python 1 "="                 .scheme.operator
-    hilight   .hilight.python 1 "!="                .scheme.operator
-    hilight   .hilight.python 1 ","                 .scheme.operator
-    hilight   .hilight.python 1 "\\."               .scheme.operator
-    
-    hilight   .hilight.python 1 "abs"               .scheme.operator
-    hilight   .hilight.python 1 "int"               .scheme.operator
-    hilight   .hilight.python 1 "long"              .scheme.operator
-    hilight   .hilight.python 1 "float"             .scheme.operator
-    hilight   .hilight.python 1 "-"                 .scheme.operator
-    hilight   .hilight.python 1 "+"                 .scheme.operator
-    hilight   .hilight.python 1 "%"                 .scheme.operator
-    hilight   .hilight.python 1 "/"                 .scheme.operator
-    hilight   .hilight.python 1 "*"                 .scheme.operator
-    hilight   .hilight.python 1 "divmod"            .scheme.operator
-    hilight   .hilight.python 1 "pow"               .scheme.operator
-    hilight   .hilight.python 1 "~"                 .scheme.operator
-    hilight   .hilight.python 0 "\\^"               .scheme.operator
-    hilight   .hilight.python 1 "&"                 .scheme.operator
-    hilight   .hilight.python 1 "|"                 .scheme.operator
-    hilight   .hilight.python 1 "<<"                .scheme.operator
-    hilight   .hilight.python 1 ">>"                .scheme.operator
-    hilight   .hilight.python 1 "len"               .scheme.operator
-    hilight   .hilight.python 1 "and"               .scheme.operator
-    hilight   .hilight.python 1 "or"                .scheme.operator
-    hilight   .hilight.python 1 "not"               .scheme.operator
-    hilight   .hilight.python 1 "min"               .scheme.operator
-    hilight   .hilight.python 1 "\\.append"         .scheme.operator
-    hilight   .hilight.python 1 "\\.count"          .scheme.operator
-    hilight   .hilight.python 1 "\\.index"          .scheme.operator
-    hilight   .hilight.python 1 "\\.insert"         .scheme.operator
-    hilight   .hilight.python 1 "\\.remove"         .scheme.operator
-    hilight   .hilight.python 1 "\\.reverse"        .scheme.operator
-    hilight   .hilight.python 1 "\\.sort"           .scheme.operator
+  !if &not &exist .hilight.python
+    set-variable .hilight.python &pinc .hilight.next 1
+  !endif
+  0 hilight .hilight.python 0                     $global-scheme
+  hilight   .hilight.python 2 "#"                 .scheme.comment
+  hilight   .hilight.python 4 "\"" "\"" "\\"      .scheme.string
+  hilight   .hilight.python 0 "\\["               .scheme.string
+  hilight   .hilight.python 0 "\\]"               .scheme.string
+  ; Quote
+  hilight   .hilight.python 4 "'" "'" "\\"        .scheme.quote
+  ; Variables
+  hilight   .hilight.python 1 "\\.real"           .scheme.variable
+  hilight   .hilight.python 1 "\\.imag"           .scheme.variable
+  hilight   .hilight.python 1 "TypeError"         .scheme.variable
+  hilight   .hilight.python 1 "OverflowError"     .scheme.variable
+  hilight   .hilight.python 1 "ZeroDivisionError" .scheme.variable
+  ; Keywords
+  hilight   .hilight.python 1 "and"               .scheme.keyword
+  hilight   .hilight.python 1 "assert"            .scheme.keyword
+  hilight   .hilight.python 1 "break"             .scheme.keyword
+  hilight   .hilight.python 1 "class"             .scheme.keyword
+  hilight   .hilight.python 1 "continue"          .scheme.keyword
+  hilight   .hilight.python 1 "def"               .scheme.keyword
+  hilight   .hilight.python 1 "del"               .scheme.keyword
+  hilight   .hilight.python 1 "elif"              .scheme.keyword
+  hilight   .hilight.python 1 "else"              .scheme.keyword
+  hilight   .hilight.python 1 "except"            .scheme.keyword
+  hilight   .hilight.python 1 "exec"              .scheme.keyword
+  hilight   .hilight.python 1 "finally"           .scheme.keyword
+  hilight   .hilight.python 1 "for"               .scheme.keyword
+  hilight   .hilight.python 1 "from"              .scheme.keyword
+  hilight   .hilight.python 1 "global"            .scheme.keyword
+  hilight   .hilight.python 1 "if"                .scheme.keyword
+  hilight   .hilight.python 1 "import"            .scheme.keyword
+  hilight   .hilight.python 1 "import from"       .scheme.keyword
+  hilight   .hilight.python 1 "in"                .scheme.keyword
+  hilight   .hilight.python 1 "is"                .scheme.keyword
+  hilight   .hilight.python 1 "lambda"            .scheme.keyword
+  hilight   .hilight.python 1 "not"               .scheme.keyword
+  hilight   .hilight.python 1 "or"                .scheme.keyword
+  hilight   .hilight.python 1 "pass"              .scheme.keyword
+  hilight   .hilight.python 1 "print"             .scheme.keyword
+  hilight   .hilight.python 1 "raise"             .scheme.keyword
+  hilight   .hilight.python 1 "return"            .scheme.keyword
+  hilight   .hilight.python 1 "try"               .scheme.keyword
+  hilight   .hilight.python 1 "then"              .scheme.keyword
+  hilight   .hilight.python 1 "while"             .scheme.keyword
+  ; Operators
+  hilight   .hilight.python 0 "("                 .scheme.operator
+  hilight   .hilight.python 0 ")"                 .scheme.operator
+  hilight   .hilight.python 1 ":"                 .scheme.operator
+  hilight   .hilight.python 1 "<"                 .scheme.operator
+  hilight   .hilight.python 1 ">"                 .scheme.operator
+  hilight   .hilight.python 1 "<="                .scheme.operator
+  hilight   .hilight.python 1 ">="                .scheme.operator
+  hilight   .hilight.python 1 "=="                .scheme.operator
+  hilight   .hilight.python 1 "="                 .scheme.operator
+  hilight   .hilight.python 1 "!="                .scheme.operator
+  hilight   .hilight.python 1 ","                 .scheme.operator
+  hilight   .hilight.python 1 "\\."               .scheme.operator
+  
+  hilight   .hilight.python 1 "abs"               .scheme.operator
+  hilight   .hilight.python 1 "int"               .scheme.operator
+  hilight   .hilight.python 1 "long"              .scheme.operator
+  hilight   .hilight.python 1 "float"             .scheme.operator
+  hilight   .hilight.python 1 "-"                 .scheme.operator
+  hilight   .hilight.python 1 "+"                 .scheme.operator
+  hilight   .hilight.python 1 "%"                 .scheme.operator
+  hilight   .hilight.python 1 "/"                 .scheme.operator
+  hilight   .hilight.python 1 "*"                 .scheme.operator
+  hilight   .hilight.python 1 "divmod"            .scheme.operator
+  hilight   .hilight.python 1 "pow"               .scheme.operator
+  hilight   .hilight.python 1 "~"                 .scheme.operator
+  hilight   .hilight.python 0 "\\^"               .scheme.operator
+  hilight   .hilight.python 1 "&"                 .scheme.operator
+  hilight   .hilight.python 1 "|"                 .scheme.operator
+  hilight   .hilight.python 1 "<<"                .scheme.operator
+  hilight   .hilight.python 1 ">>"                .scheme.operator
+  hilight   .hilight.python 1 "len"               .scheme.operator
+  hilight   .hilight.python 1 "and"               .scheme.operator
+  hilight   .hilight.python 1 "or"                .scheme.operator
+  hilight   .hilight.python 1 "not"               .scheme.operator
+  hilight   .hilight.python 1 "min"               .scheme.operator
+  hilight   .hilight.python 1 "\\.append"         .scheme.operator
+  hilight   .hilight.python 1 "\\.count"          .scheme.operator
+  hilight   .hilight.python 1 "\\.index"          .scheme.operator
+  hilight   .hilight.python 1 "\\.insert"         .scheme.operator
+  hilight   .hilight.python 1 "\\.remove"         .scheme.operator
+  hilight   .hilight.python 1 "\\.reverse"        .scheme.operator
+  hilight   .hilight.python 1 "\\.sort"           .scheme.operator
 !endif
 
 buffer-init-fhook "python"

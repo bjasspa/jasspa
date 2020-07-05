@@ -14,149 +14,149 @@ set-variable .org.bind-r0 "|1|1|1|1|"
 
 ; Create the current month osd dialog
 0 define-macro org-month-init-day
-    set-variable #l1 &reg &spr "/org/cal/%s/%s/%s" .org.year .org.month @# &reg &spr "/org/cal/*/%s/%s" .org.month @# ""
-    set-variable #l1 &spr "  %2d\n%s" @# &lef #l1 6
-    set-variable #l2 &add @# &mid .org.info 3 1
-    !if &equ @# .org.day
-        osd .osd.orgm-c &add 100 #l2 &cond &mod #l2 7 "RGfxhHz" "RGfxHz" .scheme.osd-entry 6 2 #l1 @# org-month-change-day
-    !else
-        osd .osd.orgm-c &add 100 #l2 &cond &mod #l2 7 "RGfxhz" "RGfxz" 6 2 #l1 @# org-month-change-day
-    !endif
+  set-variable #l1 &reg &spr "/org/cal/%s/%s/%s" .org.year .org.month @# &reg &spr "/org/cal/*/%s/%s" .org.month @# ""
+  set-variable #l1 &spr "  %2d\n%s" @# &lef #l1 6
+  set-variable #l2 &add @# &mid .org.info 3 1
+  !if &equ @# .org.day
+    osd .osd.orgm-c &add 100 #l2 &cond &mod #l2 7 "RGfxhHz" "RGfxHz" .scheme.osd-entry 6 2 #l1 @# org-month-change-day
+  !else
+    osd .osd.orgm-c &add 100 #l2 &cond &mod #l2 7 "RGfxhz" "RGfxz" 6 2 #l1 @# org-month-change-day
+  !endif
 !emacro
 
 
 0 define-macro org-month-init
-    set-variable .org.page 0
-    set-variable .org.week 0
-    org-cal-info
-    ; create the month selection menu
-    osd .osd.org-m 0 "b"
-    set-variable #l1 0
-    !while &not &equ &inc #l1 1 13
-        osd .osd.org-m #l1 "" &lget .org.months #l1 #l1 org-month-change-month
-    !done
-    ; create the day bar
-    set-variable #l4 7
-    set-variable #l5 "Gz"
-    !while #l4
-        set-variable #l4 &sub #l4 1
-        set-variable #l6 &add 1 &mod &add #l4 &lef .org.set 1 7
-        osd .osd.orgm-c &add #l4 1 #l5 6 1 &spr " %s" &lef &lget .org.days #l6 3
-        set-variable #l5 "Ghz"
-    !done
-    set-variable #l4 &lef .org.info 2
-    set-variable #l5 &mid .org.info 3 1
-    osd .osd.orgm 30 "Mdtmxsfh" &lget .org.months .org.month .osd.org-m
-    set-variable #l2 1
-    set-variable #l6 0
-    !repeat
-        !if #l5
-            set-variable #l5 &sub #l5 1
-            osd .osd.orgm-c &add 100 #l2 &cond &mod #l2 7 "Gfhz" "Gfz" 6 2 ""
-        !elif &equ #l6 #l4
-            osd .osd.orgm-c &add 100 #l2 &cond &mod #l2 7 "Gfhz" "Gfz" 6 2 ""
-        !else
-            set-variable #l6 &add #l6 1
-            #l6 org-month-init-day
-        !endif
-    !until &equ &inc #l2 1 43
+  set-variable .org.page 0
+  set-variable .org.week 0
+  org-cal-info
+  ; create the month selection menu
+  osd .osd.org-m 0 "b"
+  set-variable #l1 0
+  !while &not &equ &inc #l1 1 13
+    osd .osd.org-m #l1 "" &lget .org.months #l1 #l1 org-month-change-month
+  !done
+  ; create the day bar
+  set-variable #l4 7
+  set-variable #l5 "Gz"
+  !while #l4
+    set-variable #l4 &sub #l4 1
+    set-variable #l6 &add 1 &mod &add #l4 &lef .org.set 1 7
+    osd .osd.orgm-c &add #l4 1 #l5 6 1 &spr " %s" &lef &lget .org.days #l6 3
+    set-variable #l5 "Ghz"
+  !done
+  set-variable #l4 &lef .org.info 2
+  set-variable #l5 &mid .org.info 3 1
+  osd .osd.orgm 30 "Mdtmxsfh" &lget .org.months .org.month .osd.org-m
+  set-variable #l2 1
+  set-variable #l6 0
+  !repeat
+    !if #l5
+      set-variable #l5 &sub #l5 1
+      osd .osd.orgm-c &add 100 #l2 &cond &mod #l2 7 "Gfhz" "Gfz" 6 2 ""
+    !elif &equ #l6 #l4
+      osd .osd.orgm-c &add 100 #l2 &cond &mod #l2 7 "Gfhz" "Gfz" 6 2 ""
+    !else
+      set-variable #l6 &add #l6 1
+      #l6 org-month-init-day
+    !endif
+  !until &equ &inc #l2 1 43
 !emacro     
 
 0 define-macro org-month-change-year
-    !if &les @# 0
-        set-variable #l0 @ml2 "" .org.year
-        !if &and &equ #l0 0 &not &seq #l0 "*"
-            osd-dialog "Organizer" "Error: Invalid year!" "  \HOK  "
-            !return
-        !endif
-        set-variable .org.year #l0
-        set-variable .org.day 0
-        org-month-init
-    !else
-        set-variable $result .org.year
+  !if &les @# 0
+    set-variable #l0 @ml2 "" .org.year
+    !if &and &equ #l0 0 &not &seq #l0 "*"
+      osd-dialog "Organizer" "Error: Invalid year!" "  \HOK  "
+      !return
     !endif
+    set-variable .org.year #l0
+    set-variable .org.day 0
+    org-month-init
+  !else
+    set-variable $result .org.year
+  !endif
 !emacro
 
 0 define-macro org-month-inc-year
-    set-variable .org.day 0
-    @# org-inc-year
-    org-month-init
+  set-variable .org.day 0
+  @# org-inc-year
+  org-month-init
 !emacro
 
 0 define-macro org-month-change-month
-    set-variable .org.month @#
-    set-variable .org.day 0
-    org-month-init
+  set-variable .org.month @#
+  set-variable .org.day 0
+  org-month-init
 !emacro
 
 0 define-macro org-month-change-day
-    set-variable #l0 .org.day
-    set-variable .org.day @#
-    !if #l0
-        #l0 org-month-init-day
-    !endif
-    @# org-month-init-day
+  set-variable #l0 .org.day
+  set-variable .org.day @#
+  !if #l0
+    #l0 org-month-init-day
+  !endif
+  @# org-month-init-day
 !emacro
 
 0 define-macro org-month-inc-month
-    set-variable .org.month &add .org.month @#
-    !while &les .org.month 1
-        set-variable .org.month &add .org.month 12
-        -1 org-inc-year
-    !done
-    !while &gre .org.month 12
-        set-variable .org.month &sub .org.month 12
-        1 org-inc-year
-    !done
-    set-variable .org.day 0
-    org-month-init
+  set-variable .org.month &add .org.month @#
+  !while &les .org.month 1
+    set-variable .org.month &add .org.month 12
+    -1 org-inc-year
+  !done
+  !while &gre .org.month 12
+    set-variable .org.month &sub .org.month 12
+    1 org-inc-year
+  !done
+  set-variable .org.day 0
+  org-month-init
 !emacro
 
 0 define-macro org-month-set-notes
-    !if .org.day
-        !if &les @# 0
-            set-variable #l0 &reg &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day &reg &spr "/org/cal/*/%s/%s" .org.month .org.day ""
-            set-variable #l1 @ml2 "" #l0
-            !if &not &seq #l0 #l1
-                !if &seq #l1 &reg &spr "/org/cal/*/%s/%s" .org.month .org.day ""
-                    delete-registry &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day #l1
-                !elif &seq #l1 ""
-                    set-registry &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day " "
-                !else
-                    set-registry &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day #l1
-                !endif
-                mark-registry "/org" "u"
-                .org.day org-month-init-day
-            !endif
+  !if .org.day
+    !if &les @# 0
+      set-variable #l0 &reg &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day &reg &spr "/org/cal/*/%s/%s" .org.month .org.day ""
+      set-variable #l1 @ml2 "" #l0
+      !if &not &seq #l0 #l1
+        !if &seq #l1 &reg &spr "/org/cal/*/%s/%s" .org.month .org.day ""
+          delete-registry &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day #l1
+        !elif &seq #l1 ""
+          set-registry &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day " "
         !else
-            set-variable $result &reg &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day  &reg &spr "/org/cal/*/%s/%s" .org.month .org.day ""
+          set-registry &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day #l1
         !endif
+        mark-registry "/org" "u"
+        .org.day org-month-init-day
+      !endif
     !else
-        set-variable $result ""
+      set-variable $result &reg &spr "/org/cal/%s/%s/%s" .org.year .org.month .org.day  &reg &spr "/org/cal/*/%s/%s" .org.month .org.day ""
     !endif
+  !else
+    set-variable $result ""
+  !endif
 !emacro
 
 0 define-macro org-month-buffer
-    beginning-of-line
-    insert-string &spr "       %s %s\n\n" &lget .org.months .org.month .org.year
-    set-variable #l0 1
-    set-variable #l1 &lef .org.info 2
-    set-variable #l2 &mid .org.info 3 1
-    !repeat
-        set-variable #l3 &reg &spr "/org/cal/%s/%s/%s" .org.year .org.month #l0 &reg &spr "/org/cal/*/%s/%s" .org.month #l0 ""
-        set-variable #l4 &add $window-line 1
-        insert-string &spr "%2d %s %s\n" #l0 &lef &lget .org.days &inc #l2 1 3 #l3
-        set-variable #l5 $window-line
-        !while &not &equ $window-line #l4
-            backward-line
-            insert-string "       "
-            beginning-of-line
-        !done
-        set-variable $window-line #l5
-        set-variable #l2 &mod #l2 7
-    !until &equ &pinc #l0 1 #l1
-    insert-newline
-    screen-update
+  beginning-of-line
+  insert-string &spr "       %s %s\n\n" &lget .org.months .org.month .org.year
+  set-variable #l0 1
+  set-variable #l1 &lef .org.info 2
+  set-variable #l2 &mid .org.info 3 1
+  !repeat
+    set-variable #l3 &reg &spr "/org/cal/%s/%s/%s" .org.year .org.month #l0 &reg &spr "/org/cal/*/%s/%s" .org.month #l0 ""
+    set-variable #l4 &add $window-line 1
+    insert-string &spr "%2d %s %s\n" #l0 &lef &lget .org.days &inc #l2 1 3 #l3
+    set-variable #l5 $window-line
+    !while &not &equ $window-line #l4
+      backward-line
+      insert-string "       "
+      beginning-of-line
+    !done
+    set-variable $window-line #l5
+    set-variable #l2 &mod #l2 7
+  !until &equ &pinc #l0 1 #l1
+  insert-newline
+  screen-update
 !emacro
 
 osd .osd.orgm-c 0 "G"

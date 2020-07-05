@@ -8,22 +8,22 @@
 ; Authors:     Steven Phillips
 ;
 !if &seq .osd.schm "ERROR"
-    0 define-macro schm-osd
-    !emacro
-    set-variable .osd.schm    &pinc .osd.next 1
-    set-variable .osd.schmc   &pinc .osd.next 1
-    set-variable .osd.schm-c  &pinc .osd.next 1
-    set-variable .osd.schm-cc &pinc .osd.next 1
-    set-variable .osd.schm-s  &pinc .osd.next 1
-    set-variable .osd.schm-sc &pinc .osd.next 1
-    set-variable .osd.schm-d  &pinc .osd.next 1
-    set-variable .osd.schm-nb &pinc .osd.next 1
-    set-variable .schm-osd.desc ""
-    set-variable .schm-osd.comm ""
-    set-variable .schm-osd.page 0
-    set-variable .schm-osd.def-schm "|0|1|0|1|0|1|0|1|0|8|0|8|0|8|0|8|"
-    add-color 127 0 0 0
-    add-color-scheme 127 0 0 0 0 0 0 0 0
+  0 define-macro schm-osd
+  !emacro
+  set-variable .osd.schm    &pinc .osd.next 1
+  set-variable .osd.schmc   &pinc .osd.next 1
+  set-variable .osd.schm-c  &pinc .osd.next 1
+  set-variable .osd.schm-cc &pinc .osd.next 1
+  set-variable .osd.schm-s  &pinc .osd.next 1
+  set-variable .osd.schm-sc &pinc .osd.next 1
+  set-variable .osd.schm-d  &pinc .osd.next 1
+  set-variable .osd.schm-nb &pinc .osd.next 1
+  set-variable .schm-osd.desc ""
+  set-variable .schm-osd.comm ""
+  set-variable .schm-osd.page 0
+  set-variable .schm-osd.def-schm "|0|1|0|1|0|1|0|1|0|8|0|8|0|8|0|8|"
+  add-color 127 0 0 0
+  add-color-scheme 127 0 0 0 0 0 0 0 0
 !endif
 ; reset the fname so the dialog is reset correctly
 set-variable .schm-osd.fname "ERROR"
@@ -48,684 +48,684 @@ set-variable .schm-osd.sectn8 "|Card Background|Card Foreground|Mahjongg 1|Mahjo
 set-variable .schm-osd.sectv8 "|.scheme.cardback|.scheme.cardfore|.scheme.mjg1|.scheme.mjg2|.scheme.mi1|.scheme.mi2|.scheme.mi3|.scheme.met-back|.scheme.met-fore1|.scheme.met-fore2|"
 
 0 define-macro schm-osd-load-fname
-    !if &seq &find .schm-osd.fname ".emf" "ERROR"
-        !if &equ @# 2
-            !return
-        !elif @#
-            set-variable #l1 &spr "  File \"%s\" not found, reset scheme?  " .schm-osd.fname
-            osd-xdialog "Scheme Editor" #l1 2 "  \HYes  " "  \HNo  "
-            !if &not &equ $result 1
-                !return
-            !endif
-        !endif
-        schm-osd-init "schemed"
-    !else
-        !if @#
-            set-variable #l1 &spr "  %s scheme file \"%s\"?  " &cond &equ @# 2 "Reload" "Load" .schm-osd.fname
-            osd-xdialog "Scheme Editor" #l1 1 "  \HYes  " "  \HNo  "
-            !if &not &equ $result 1
-                !return
-            !endif
-        !endif
-        schm-osd-init .schm-osd.fname
+  !if &seq &find .schm-osd.fname ".emf" "ERROR"
+    !if &equ @# 2
+      !return
+    !elif @#
+      set-variable #l1 &spr "  File \"%s\" not found, reset scheme?  " .schm-osd.fname
+      osd-xdialog "Scheme Editor" #l1 2 "  \HYes  " "  \HNo  "
+      !if &not &equ $result 1
+        !return
+      !endif
     !endif
+    schm-osd-init "schemed"
+  !else
+    !if @#
+      set-variable #l1 &spr "  %s scheme file \"%s\"?  " &cond &equ @# 2 "Reload" "Load" .schm-osd.fname
+      osd-xdialog "Scheme Editor" #l1 1 "  \HYes  " "  \HNo  "
+      !if &not &equ $result 1
+        !return
+      !endif
+    !endif
+    schm-osd-init .schm-osd.fname
+  !endif
 !emacro
 
 0 define-macro schm-osd-set-fname
-    !if &gre @# 0
-        set-variable $result .schm-osd.fname
+  !if &gre @# 0
+    set-variable $result .schm-osd.fname
+  !else
+    set-variable #l0 @ml2 "" .schm-osd.fname
+    ; to get out of the entry user will have pushed any char (tab, enter etc.) eat it
+    set-variable #l1 @cq
+    !if &seq #l0 .schm-osd.fname
+      set-variable @# 2
     !else
-        set-variable #l0 @ml2 "" .schm-osd.fname
-        ; to get out of the entry user will have pushed any char (tab, enter etc.) eat it
-        set-variable #l1 @cq
-        !if &seq #l0 .schm-osd.fname
-            set-variable @# 2
-        !else
-            set-variable .schm-osd.fname #l0
-        !endif
-        @# schm-osd-load-fname
+      set-variable .schm-osd.fname #l0
     !endif
+    @# schm-osd-load-fname
+  !endif
 !emacro
 
 0 define-macro schm-osd-setup-type
-    !if &les @# 0
-        -1 osd .osd.tmp
-        osd .osd.tmp 0 "bs" 10 0 0 0
-        osd .osd.tmp 1 "" "\HScreen"  0 schm-osd-set-type
-        osd .osd.tmp 2 "" "\HPrinter" 1 schm-osd-set-type
-    !else
-        set-variable $result &lget "|Screen|Printer|" &add .schm-osd.type 1
-    !endif
+  !if &les @# 0
+    -1 osd .osd.tmp
+    osd .osd.tmp 0 "bs" 10 0 0 0
+    osd .osd.tmp 1 "" "\HScreen"  0 schm-osd-set-type
+    osd .osd.tmp 2 "" "\HPrinter" 1 schm-osd-set-type
+  !else
+    set-variable $result &lget "|Screen|Printer|" &add .schm-osd.type 1
+  !endif
 !emacro
 0 define-macro schm-osd-set-type
-    set-variable .schm-osd.type @#
-    schm-osd-set-flags
+  set-variable .schm-osd.type @#
+  schm-osd-set-flags
 !emacro
 
 0 define-macro schm-osd-set-desc
-    !if &les @# 0
-        set-variable .schm-osd.desc @ml2 "" .schm-osd.desc
-    !else
-        set-variable $result .schm-osd.desc
-    !endif
+  !if &les @# 0
+    set-variable .schm-osd.desc @ml2 "" .schm-osd.desc
+  !else
+    set-variable $result .schm-osd.desc
+  !endif
 !emacro
 0 define-macro schm-osd-set-comm
-    !if &les @# 0
-        set-variable .schm-osd.comm @ml2 "" .schm-osd.comm
-    !else
-        set-variable $result .schm-osd.comm
-    !endif
+  !if &les @# 0
+    set-variable .schm-osd.comm @ml2 "" .schm-osd.comm
+  !else
+    set-variable $result .schm-osd.comm
+  !endif
 !emacro
 0 define-macro schm-osd-setup-flags
-    !if &les @# 0
-        -1 osd .osd.tmp
-        osd .osd.tmp 0 "bs" 32 0 0 0
-        !if .schm-osd.type
-            osd .osd.tmp 1 "" &lget .options 1 0 schm-osd-set-flags
-            osd .osd.tmp 2 "" &lget .options 2 1 schm-osd-set-flags
-            osd .osd.tmp 3 "" &lget .options 3 2 schm-osd-set-flags
-            osd .osd.tmp 4 "" &lget .options 4 3 schm-osd-set-flags
-            osd .osd.tmp 5 "" &lget .options 7 6 schm-osd-set-flags
-            osd .osd.tmp 6 "" &lget .options 8 7 schm-osd-set-flags
-        !else
-            osd .osd.tmp 1 "" "\HCompletely Disabled"  0 schm-osd-set-flags
-            osd .osd.tmp 2 "" "\HReformatting Only"    1 schm-osd-set-flags
-            osd .osd.tmp 3 "" "\HFully Enabled"        3 schm-osd-set-flags
-        !endif
-    !elif .schm-osd.type
-        set-variable $result &lget .schm-osd-setup-flags.options &add .schm-osd.print-option 1
+  !if &les @# 0
+    -1 osd .osd.tmp
+    osd .osd.tmp 0 "bs" 32 0 0 0
+    !if .schm-osd.type
+      osd .osd.tmp 1 "" &lget .options 1 0 schm-osd-set-flags
+      osd .osd.tmp 2 "" &lget .options 2 1 schm-osd-set-flags
+      osd .osd.tmp 3 "" &lget .options 3 2 schm-osd-set-flags
+      osd .osd.tmp 4 "" &lget .options 4 3 schm-osd-set-flags
+      osd .osd.tmp 5 "" &lget .options 7 6 schm-osd-set-flags
+      osd .osd.tmp 6 "" &lget .options 8 7 schm-osd-set-flags
     !else
-        set-variable $result &lget "|Completely Disabled|Reformatting Only||Fully Enabled|" &add .schm-osd.hilight-flags 1
+      osd .osd.tmp 1 "" "\HCompletely Disabled"  0 schm-osd-set-flags
+      osd .osd.tmp 2 "" "\HReformatting Only"    1 schm-osd-set-flags
+      osd .osd.tmp 3 "" "\HFully Enabled"        3 schm-osd-set-flags
     !endif
+  !elif .schm-osd.type
+    set-variable $result &lget .schm-osd-setup-flags.options &add .schm-osd.print-option 1
+  !else
+    set-variable $result &lget "|Completely Disabled|Reformatting Only||Fully Enabled|" &add .schm-osd.hilight-flags 1
+  !endif
 !emacro
 0 define-macro schm-osd-set-flags
-    !if .schm-osd.type
-        set-variable .schm-osd.print-option @#
-        osd .osd.schm 60  "Sfh" "    \HPrint Option: " 70
-    !else
-        set-variable .schm-osd.hilight-flags @#
-        osd .osd.schm 60  "Sfh" "  \HBuffer Hilight: " 70
-    !endif
+  !if .schm-osd.type
+    set-variable .schm-osd.print-option @#
+    osd .osd.schm 60  "Sfh" "    \HPrint Option: " 70
+  !else
+    set-variable .schm-osd.hilight-flags @#
+    osd .osd.schm 60  "Sfh" "  \HBuffer Hilight: " 70
+  !endif
 !emacro
 set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color|Use Fonts & Fore Color|||Use Fore & Back Color|Use Fonts, Fore & Back Color|"
 
 0 define-macro schm-osd-get-color
-    set-variable #l0 &spr ".schm-osd.col-%03d-" @#
-    set-variable #p7 &ind &cat #l0 "r"
-    set-variable #p8 &ind &cat #l0 "g"
-    set-variable #p9 &ind &cat #l0 "b"
+  set-variable #l0 &spr ".schm-osd.col-%03d-" @#
+  set-variable #p7 &ind &cat #l0 "r"
+  set-variable #p8 &ind &cat #l0 "g"
+  set-variable #p9 &ind &cat #l0 "b"
 !emacro
 
 0 define-macro schm-osd-set-color
-    set-variable #l0 &spr ".schm-osd.col-%03d-" @#
-    set-variable &ind &cat #l0 "r" #p7
-    set-variable &ind &cat #l0 "g" #p8
-    set-variable &ind &cat #l0 "b" #p9
+  set-variable #l0 &spr ".schm-osd.col-%03d-" @#
+  set-variable &ind &cat #l0 "r" #p7
+  set-variable &ind &cat #l0 "g" #p8
+  set-variable &ind &cat #l0 "b" #p9
 !emacro
 
 0 define-macro schm-osd-set-color-no
-    !if &gre .schm-osd.curcol -1
-        osd .osd.schmc &add 100 .schm-osd.curcol &cond &mod &add .schm-osd.curcol 1 6 "Hfxhz" "Hfxz" &add 128 .schm-osd.curcol 2 2 "" .schm-osd.curcol schm-osd-set-color-no
+  !if &gre .schm-osd.curcol -1
+    osd .osd.schmc &add 100 .schm-osd.curcol &cond &mod &add .schm-osd.curcol 1 6 "Hfxhz" "Hfxz" &add 128 .schm-osd.curcol 2 2 "" .schm-osd.curcol schm-osd-set-color-no
+  !endif
+  !if &gre &set .schm-osd.curcol @# -1
+    osd .osd.schmc &add 100 @# &cond &mod &add @# 1 6 "GHfxhz" "GHfxz" &add 128 @# 2 2 "" @# schm-osd-set-color-no
+    !if .schm-osd.page
+    !else
+      @# schm-osd-get-color
+      set-variable .schm-osd.comp1 #l7
+      set-variable .schm-osd.comp2 #l8
+      set-variable .schm-osd.comp3 #l9
+      add-color 127 #l7 #l8 #l9
+      add-color-scheme 127 0 127 0 127 0 127 0 127
     !endif
-    !if &gre &set .schm-osd.curcol @# -1
-        osd .osd.schmc &add 100 @# &cond &mod &add @# 1 6 "GHfxhz" "GHfxz" &add 128 @# 2 2 "" @# schm-osd-set-color-no
-        !if .schm-osd.page
-        !else
-            @# schm-osd-get-color
-            set-variable .schm-osd.comp1 #l7
-            set-variable .schm-osd.comp2 #l8
-            set-variable .schm-osd.comp3 #l9
-            add-color 127 #l7 #l8 #l9
-            add-color-scheme 127 0 127 0 127 0 127 0 127
-        !endif
-    !endif
+  !endif
 !emacro
 
 0 define-macro schm-osd-set-colcomp
-    set-variable #l2 &cat ".schm-osd.comp" &abs @#
-    !if &les @# 0
-        set-variable #l0 &ind #l2
-        set-variable #l1 @ml2 "" #l0
-        !if &les #l1 0
-            set-variable #l1 0
-        !elif &gre #l1 255
-            set-variable #l1 255
-        !endif
-        !if &not &equ #l1 #l0
-            set-variable &ind #l2 #l1
-            add-color 127 .schm-osd.comp1 .schm-osd.comp2 .schm-osd.comp3
-        !endif
-    !else
-        set-variable $result &spr "%3d" &ind #l2
+  set-variable #l2 &cat ".schm-osd.comp" &abs @#
+  !if &les @# 0
+    set-variable #l0 &ind #l2
+    set-variable #l1 @ml2 "" #l0
+    !if &les #l1 0
+      set-variable #l1 0
+    !elif &gre #l1 255
+      set-variable #l1 255
     !endif
+    !if &not &equ #l1 #l0
+      set-variable &ind #l2 #l1
+      add-color 127 .schm-osd.comp1 .schm-osd.comp2 .schm-osd.comp3
+    !endif
+  !else
+    set-variable $result &spr "%3d" &ind #l2
+  !endif
 !emacro
 
 0 define-macro schm-osd-inc-colcomp
-    set-variable #l2 &cat ".schm-osd.comp" &div @# 0x100
-    !if &band 0x80 @#
-        set-variable #l1 &sub &ind #l2 &band @# 0x7f
-    !else
-        set-variable #l1 &add &ind #l2 &band @# 0x7f
-    !endif
-    !if &les #l1 0
-    !elif &gre #l1 255
-    !else
-        set-variable &ind #l2 #l1
-        add-color 127 .schm-osd.comp1 .schm-osd.comp2 .schm-osd.comp3
-    !endif
+  set-variable #l2 &cat ".schm-osd.comp" &div @# 0x100
+  !if &band 0x80 @#
+    set-variable #l1 &sub &ind #l2 &band @# 0x7f
+  !else
+    set-variable #l1 &add &ind #l2 &band @# 0x7f
+  !endif
+  !if &les #l1 0
+  !elif &gre #l1 255
+  !else
+    set-variable &ind #l2 #l1
+    add-color 127 .schm-osd.comp1 .schm-osd.comp2 .schm-osd.comp3
+  !endif
 !emacro
 
 0 define-macro schm-osd-set-cursor
-    !if &gre .schm-osd.curcol -1
-        set-variable .schm-osd.cursor .schm-osd.curcol
-        osd .osd.schm-cc 13 "BdtxHf" &add 128 .schm-osd.cursor "      " f schm-osd-set-cursor
-    !endif
+  !if &gre .schm-osd.curcol -1
+    set-variable .schm-osd.cursor .schm-osd.curcol
+    osd .osd.schm-cc 13 "BdtxHf" &add 128 .schm-osd.cursor "      " f schm-osd-set-cursor
+  !endif
 !emacro
 
 0 define-macro schm-osd-color-add
-    !if &gre .schm-osd.nocol 120
-        osd-dialog "Scheme Edit" "Error: To many colors! Maximum is 120" "  \HOK  "
-    !else
-        set-variable #l0 &pinc .schm-osd.nocol 1
-        set-variable #l7 .schm-osd.comp1
-        set-variable #l8 .schm-osd.comp2
-        set-variable #l9 .schm-osd.comp3
-        #l0 schm-osd-set-color
-        add-color &add 128 #l0 #l7 #l8 #l9
-        add-color-scheme &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0
-        #l0 schm-osd-set-color-no
-    !endif
+  !if &gre .schm-osd.nocol 120
+    osd-dialog "Scheme Edit" "Error: To many colors! Maximum is 120" "  \HOK  "
+  !else
+    set-variable #l0 &pinc .schm-osd.nocol 1
+    set-variable #l7 .schm-osd.comp1
+    set-variable #l8 .schm-osd.comp2
+    set-variable #l9 .schm-osd.comp3
+    #l0 schm-osd-set-color
+    add-color &add 128 #l0 #l7 #l8 #l9
+    add-color-scheme &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0
+    #l0 schm-osd-set-color-no
+  !endif
 !emacro
 
 0 define-macro schm-osd-color-change
-    !if &gre .schm-osd.curcol -1
-        set-variable #l0 .schm-osd.curcol
-        set-variable #l7 .schm-osd.comp1
-        set-variable #l8 .schm-osd.comp2
-        set-variable #l9 .schm-osd.comp3
-        #l0 schm-osd-set-color
-        add-color &add 128 #l0 #l7 #l8 #l9
-        add-color-scheme &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0
-    !endif
+  !if &gre .schm-osd.curcol -1
+    set-variable #l0 .schm-osd.curcol
+    set-variable #l7 .schm-osd.comp1
+    set-variable #l8 .schm-osd.comp2
+    set-variable #l9 .schm-osd.comp3
+    #l0 schm-osd-set-color
+    add-color &add 128 #l0 #l7 #l8 #l9
+    add-color-scheme &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0
+  !endif
 !emacro
 
 0 define-macro schm-osd-init-print-scheme
-    1 schm-osd-set-type
-    ; get the scheme description
-    beginning-of-buffer
-    !force search-buffer "em" "Description:"
-    !if $status
-        set-variable .schm-osd.desc &trb &rig @wl $window-col
+  1 schm-osd-set-type
+  ; get the scheme description
+  beginning-of-buffer
+  !force search-buffer "em" "Description:"
+  !if $status
+    set-variable .schm-osd.desc &trb &rig @wl $window-col
+  !endif
+  beginning-of-buffer
+  set-variable .schm-osd.comm ""
+  !force search-buffer "eM" "Comment:"
+  !if $status
+    set-variable .schm-osd.comm &rep &rep &rep &trb &rig @wl $window-col "\\\\" "\b" "\\n" "\n" "\b" "\\"
+  !endif
+  ; get the print options
+  set-variable #l0 "1"
+  beginning-of-buffer
+  !force search-buffer "em" "scheme-flags"
+  !if $status
+    set-variable #l0 &band 0x07 &trb &rig @wl &add $window-col 1
+  !endif
+  #l0 schm-osd-set-flags
+  ; load all the print color definitions
+  ; format of line must be: print-color col-no red green blue
+  beginning-of-buffer
+  !force search-buffer "em" "print-color \\(\\w*\\) \\(\\w*\\) \\(\\w*\\) \\(\\w*\\)"
+  !while $status
+    set-variable #l0 @s1
+    set-variable #l7 @s2
+    set-variable #l8 @s3
+    set-variable #l9 @s4
+    #l0 schm-osd-set-color
+    !if &not &les #l0 .schm-osd.nocol
+      set-variable .schm-osd.nocol &add #l0 1
     !endif
-    beginning-of-buffer
-    set-variable .schm-osd.comm ""
-    !force search-buffer "eM" "Comment:"
-    !if $status
-        set-variable .schm-osd.comm &rep &rep &rep &trb &rig @wl $window-col "\\\\" "\b" "\\n" "\n" "\b" "\\"
-    !endif
-    ; get the print options
-    set-variable #l0 "1"
-    beginning-of-buffer
-    !force search-buffer "em" "scheme-flags"
-    !if $status
-        set-variable #l0 &band 0x07 &trb &rig @wl &add $window-col 1
-    !endif
-    #l0 schm-osd-set-flags
-    ; load all the print color definitions
-    ; format of line must be: print-color col-no red green blue
-    beginning-of-buffer
     !force search-buffer "em" "print-color \\(\\w*\\) \\(\\w*\\) \\(\\w*\\) \\(\\w*\\)"
-    !while $status
-        set-variable #l0 @s1
-        set-variable #l7 @s2
-        set-variable #l8 @s3
-        set-variable #l9 @s4
-        #l0 schm-osd-set-color
-        !if &not &les #l0 .schm-osd.nocol
-            set-variable .schm-osd.nocol &add #l0 1
-        !endif
-        !force search-buffer "em" "print-color \\(\\w*\\) \\(\\w*\\) \\(\\w*\\) \\(\\w*\\)"
-    !done
-    ; load all the print schemes
-    ; format of line must be: print-scheme scheme-var fore-col back-col font
-    beginning-of-buffer
+  !done
+  ; load all the print schemes
+  ; format of line must be: print-scheme scheme-var fore-col back-col font
+  beginning-of-buffer
+  !force search-buffer "em" "print-scheme \\(\\w*\\) \\(\\w*\\) \\(\\w*\\) \\(\\w*\\)"
+  !while $status
+    set-variable #l1 &ind @s1
+    set-variable #l2 @s2
+    set-variable #l3 @s3
+    set-variable #l4 @s4
+    set-variable &ind &cat ".schm-osd.schm-" #l1 &spr "|%s|%s|%s|%s|%s|%s|%s|%s|%s|0|%s|0|%s|0|%s|0|" #l2 #l3 #l2 #l3 #l2 #l3 #l2 #l3 #l4 #l4 #l4 #l4
     !force search-buffer "em" "print-scheme \\(\\w*\\) \\(\\w*\\) \\(\\w*\\) \\(\\w*\\)"
-    !while $status
-        set-variable #l1 &ind @s1
-        set-variable #l2 @s2
-        set-variable #l3 @s3
-        set-variable #l4 @s4
-        set-variable &ind &cat ".schm-osd.schm-" #l1 &spr "|%s|%s|%s|%s|%s|%s|%s|%s|%s|0|%s|0|%s|0|%s|0|" #l2 #l3 #l2 #l3 #l2 #l3 #l2 #l3 #l4 #l4 #l4 #l4
-        !force search-buffer "em" "print-scheme \\(\\w*\\) \\(\\w*\\) \\(\\w*\\) \\(\\w*\\)"
-    !done
+  !done
 !emacro
 0 define-macro schm-osd-init-screen-scheme
-    0 schm-osd-set-type
-    ; get the scheme description
-    beginning-of-buffer
-    !force search-buffer "eM" "Description:"
-    !if $status
-        set-variable .schm-osd.desc &trb &rig @wl $window-col
+  0 schm-osd-set-type
+  ; get the scheme description
+  beginning-of-buffer
+  !force search-buffer "eM" "Description:"
+  !if $status
+    set-variable .schm-osd.desc &trb &rig @wl $window-col
+  !endif
+  beginning-of-buffer
+  set-variable .schm-osd.comm ""
+  !force search-buffer "eM" "Comment:"
+  !if $status
+    set-variable .schm-osd.comm &rep &rep &rep &trb &rig @wl $window-col "\\\\" "\b" "\\n" "\n" "\b" "\\"
+  !endif
+  ; get the osd cursor state
+  beginning-of-buffer
+  !force search-buffer "eM" "$system &bnot"
+  !if $status
+    set-variable .schm-osd.osdcursor 0
+  !endif
+  ; get the buffer hilight enabled flag
+  beginning-of-buffer
+  !force search-buffer "eM" ".hilight.flags"
+  !if $status
+    set-variable #l0 &band 0x03 &trb &rig @wl $window-col
+  !endif
+  #l0 schm-osd-set-flags
+  ; load all the color definitions
+  ; format of line must be: add-color &set var col-no red green blue
+  beginning-of-buffer
+  !force search-buffer "eM" "add-color "
+  !while $status
+    3 forward-word
+    backward-word
+    set-variable #l0 &add 0 &rig @wl $window-col
+    2 forward-word
+    backward-word
+    set-variable #l7 &add 0 &rig @wl $window-col
+    2 forward-word
+    backward-word
+    set-variable #l8 &add 0 &rig @wl $window-col
+    2 forward-word
+    backward-word
+    set-variable #l9 &add 0 &rig @wl $window-col
+    #l0 schm-osd-set-color
+    !if &not &les #l0 .schm-osd.nocol
+      set-variable .schm-osd.nocol &add #l0 1
     !endif
-    beginning-of-buffer
-    set-variable .schm-osd.comm ""
-    !force search-buffer "eM" "Comment:"
-    !if $status
-        set-variable .schm-osd.comm &rep &rep &rep &trb &rig @wl $window-col "\\\\" "\b" "\\n" "\n" "\b" "\\"
-    !endif
-    ; get the osd cursor state
-    beginning-of-buffer
-    !force search-buffer "eM" "$system &bnot"
-    !if $status
-        set-variable .schm-osd.osdcursor 0
-    !endif
-    ; get the buffer hilight enabled flag
-    beginning-of-buffer
-    !force search-buffer "eM" ".hilight.flags"
-    !if $status
-        set-variable #l0 &band 0x03 &trb &rig @wl $window-col
-    !endif
-    #l0 schm-osd-set-flags
-    ; load all the color definitions
-    ; format of line must be: add-color &set var col-no red green blue
-    beginning-of-buffer
     !force search-buffer "eM" "add-color "
-    !while $status
-        3 forward-word
-        backward-word
-        set-variable #l0 &add 0 &rig @wl $window-col
-        2 forward-word
-        backward-word
-        set-variable #l7 &add 0 &rig @wl $window-col
-        2 forward-word
-        backward-word
-        set-variable #l8 &add 0 &rig @wl $window-col
-        2 forward-word
-        backward-word
-        set-variable #l9 &add 0 &rig @wl $window-col
-        #l0 schm-osd-set-color
-        !if &not &les #l0 .schm-osd.nocol
-            set-variable .schm-osd.nocol &add #l0 1
-        !endif
-        !force search-buffer "eM" "add-color "
-    !done
-    ; get the cursor color out
-    beginning-of-buffer
-    !force search-buffer "eM" "$cursor-color"
-    !if $status
-        forward-word
-        backward-word
-        4 forward-char
-        set-variable .schm-osd.cursor &add 0 &rig @wl $window-col
-    !endif
-    ; load all the color schemes
-    ; format of line must be: add-color-scheme scheme .col001 .col002 .col003 .... [# # # # # ..]
-    beginning-of-buffer
+  !done
+  ; get the cursor color out
+  beginning-of-buffer
+  !force search-buffer "eM" "$cursor-color"
+  !if $status
+    forward-word
+    backward-word
+    4 forward-char
+    set-variable .schm-osd.cursor &add 0 &rig @wl $window-col
+  !endif
+  ; load all the color schemes
+  ; format of line must be: add-color-scheme scheme .col001 .col002 .col003 .... [# # # # # ..]
+  beginning-of-buffer
+  !force search-buffer "eM" "add-color-scheme"
+  !while $status
+    forward-word
+    set-variable #l0 $window-col
+    backward-word
+    set-variable #l1 &ind &mid @wl $window-col &sub #l0 $window-col
+    set-variable #l2 .schm-osd.def-schm
+    set-variable #l0 1
+    !repeat
+      forward-word
+      !force -1 search-buffer "em" "[0-9]"
+      !if $status
+        backward-char
+        set-variable #l2 &lset #l2 #l0 &add 0 &rig @wl $window-col
+      !else
+        set-variable #l0 16
+      !endif
+    !until &equ &pinc #l0 1 16
+    set-variable &ind &cat ".schm-osd.schm-" #l1 #l2
     !force search-buffer "eM" "add-color-scheme"
-    !while $status
-        forward-word
-        set-variable #l0 $window-col
-        backward-word
-        set-variable #l1 &ind &mid @wl $window-col &sub #l0 $window-col
-        set-variable #l2 .schm-osd.def-schm
-        set-variable #l0 1
-        !repeat
-            forward-word
-            !force -1 search-buffer "em" "[0-9]"
-            !if $status
-                backward-char
-                set-variable #l2 &lset #l2 #l0 &add 0 &rig @wl $window-col
-            !else
-                set-variable #l0 16
-            !endif
-        !until &equ &pinc #l0 1 16
-        set-variable &ind &cat ".schm-osd.schm-" #l1 #l2
-        !force search-buffer "eM" "add-color-scheme"
-    !done
+  !done
 !emacro
 
 0 define-macro schm-osd-init
-    !force find-file &find @1 ".emf" @mna
-    !if &not $status
-        ml-write &spr "[Failed to find file %s]" @1
-        !abort
-    !endif
-    ; setup sensible defaults
-    set-variable .schm-osd.desc ""
-    set-variable .schm-osd.hilight-flags 3
-    set-variable .schm-osd.print-option  1
-    set-variable .schm-osd.osdcursor 1
-    set-variable .schm-osd.cursor 0
-    set-variable .schm-osd.nocol 0
-    ; is it a screen or print scheme and call the appropriate loader
-    beginning-of-buffer
-    !force search-buffer "em" "print-scheme"
-    !if $status
-        schm-osd-init-print-scheme
-    !else
-        schm-osd-init-screen-scheme
-    !endif
-    ; loose the buffer and setup the GUI
-    -1 find-buffer $buffer-bname
-    find-buffer .schm-osd.buffer
-    -1 osd .osd.schmc
-    osd .osd.schmc 0 "Gs" 19 18 -1 -1
-    set-variable #l0 0
-    !repeat
-        #l0 schm-osd-get-color
-        add-color &add 128 #l0 #l7 #l8 #l9
-        add-color-scheme &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0
-        osd .osd.schmc &add 100 #l0 &cond &mod &add #l0 1 6 "Hfxhz" "Hfxz" &add 128 #l0 2 2 "" #l0 schm-osd-set-color-no
-    !until &not &les &inc #l0 1 .schm-osd.nocol
-    set-variable .schm-osd.curcol .schm-osd.cursor
-    schm-osd-set-cursor
-    0 schm-osd-set-color-no
-    1 schm-osd-set-scheme-section
+  !force find-file &find @1 ".emf" @mna
+  !if &not $status
+    ml-write &spr "[Failed to find file %s]" @1
+    !abort
+  !endif
+  ; setup sensible defaults
+  set-variable .schm-osd.desc ""
+  set-variable .schm-osd.hilight-flags 3
+  set-variable .schm-osd.print-option  1
+  set-variable .schm-osd.osdcursor 1
+  set-variable .schm-osd.cursor 0
+  set-variable .schm-osd.nocol 0
+  ; is it a screen or print scheme and call the appropriate loader
+  beginning-of-buffer
+  !force search-buffer "em" "print-scheme"
+  !if $status
+    schm-osd-init-print-scheme
+  !else
+    schm-osd-init-screen-scheme
+  !endif
+  ; loose the buffer and setup the GUI
+  -1 find-buffer $buffer-bname
+  find-buffer .schm-osd.buffer
+  -1 osd .osd.schmc
+  osd .osd.schmc 0 "Gs" 19 18 -1 -1
+  set-variable #l0 0
+  !repeat
+    #l0 schm-osd-get-color
+    add-color &add 128 #l0 #l7 #l8 #l9
+    add-color-scheme &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0
+    osd .osd.schmc &add 100 #l0 &cond &mod &add #l0 1 6 "Hfxhz" "Hfxz" &add 128 #l0 2 2 "" #l0 schm-osd-set-color-no
+  !until &not &les &inc #l0 1 .schm-osd.nocol
+  set-variable .schm-osd.curcol .schm-osd.cursor
+  schm-osd-set-cursor
+  0 schm-osd-set-color-no
+  1 schm-osd-set-scheme-section
 !emacro
 
 
 0 define-macro schm-osd-show-schm-comp
-    set-variable #l0 &mul @# 2
-    set-variable #l1 &ind &cat ".schm-osd.schm-" .schm-osd.curschm
-    set-variable #l2 &add 128 &lget #l1 &add #l0 1
-    set-variable #l3 &add 128 &lget #l1 &add #l0 2
-    set-variable #l4 &add 128 &lget #l1 &add #l0 9
-    set-variable #l5 &add 128 &lget #l1 &add #l0 10
-    set-variable #l6 &add 110 &mul @# 100
-    osd .osd.schm-sc #l6 "BtxHfh" #l2 "  " #l0 schm-osd-set-schm-colcomp
-    osd .osd.schm-sc &add #l6 20 "BxHfh" #l3 "  " &add #l0 1 schm-osd-set-schm-colcomp
-    add-color-scheme &add 123 @# #l2 #l3 #l2 #l3 #l2 #l3 #l2 #l3 #l4 #l5 #l4 #l5 #l4 #l5 #l4 #l5
+  set-variable #l0 &mul @# 2
+  set-variable #l1 &ind &cat ".schm-osd.schm-" .schm-osd.curschm
+  set-variable #l2 &add 128 &lget #l1 &add #l0 1
+  set-variable #l3 &add 128 &lget #l1 &add #l0 2
+  set-variable #l4 &add 128 &lget #l1 &add #l0 9
+  set-variable #l5 &add 128 &lget #l1 &add #l0 10
+  set-variable #l6 &add 110 &mul @# 100
+  osd .osd.schm-sc #l6 "BtxHfh" #l2 "  " #l0 schm-osd-set-schm-colcomp
+  osd .osd.schm-sc &add #l6 20 "BxHfh" #l3 "  " &add #l0 1 schm-osd-set-schm-colcomp
+  add-color-scheme &add 123 @# #l2 #l3 #l2 #l3 #l2 #l3 #l2 #l3 #l4 #l5 #l4 #l5 #l4 #l5 #l4 #l5
 !emacro
-    
+
 0 define-macro schm-osd-set-schm-colcomp
-    set-variable #l0 &ind &cat ".schm-osd.schm-" .schm-osd.curschm
-    !if &gre .schm-osd.curcol -1
-        set-variable #l0 &lset #l0 &add @# 1 .schm-osd.curcol
-        set-variable &ind &cat ".schm-osd.schm-" .schm-osd.curschm #l0
-        &div @# 2 schm-osd-show-schm-comp
-    !else
-        &lget #l0 &add @# 1 schm-osd-set-color-no
-    !endif
+  set-variable #l0 &ind &cat ".schm-osd.schm-" .schm-osd.curschm
+  !if &gre .schm-osd.curcol -1
+    set-variable #l0 &lset #l0 &add @# 1 .schm-osd.curcol
+    set-variable &ind &cat ".schm-osd.schm-" .schm-osd.curschm #l0
+    &div @# 2 schm-osd-show-schm-comp
+  !else
+    &lget #l0 &add @# 1 schm-osd-set-color-no
+  !endif
 !emacro
 0 define-macro schm-osd-set-osd-cursor
-    !if &les @# 0
-        set-variable .schm-osd.osdcursor &bxor .schm-osd.osdcursor 1
-    !elif &not .schm-osd.osdcursor
-        !abort
-    !endif
+  !if &les @# 0
+    set-variable .schm-osd.osdcursor &bxor .schm-osd.osdcursor 1
+  !elif &not .schm-osd.osdcursor
+    !abort
+  !endif
 !emacro
 
 0 define-macro schm-osd-set-schm-fntcomp
-    set-variable #l0 &band &abs @# 0x0ff
-    set-variable #l1 &sub &div  &abs @# 0x100 1
-    set-variable #l2 &ind &cat ".schm-osd.schm-" .schm-osd.curschm
-    set-variable #l3 &lget #l2 &add &mul #l1 2 9
-    set-variable #l4 &lget #l2 &add &mul #l1 2 10
-    !if &les @# 0
-        !if #l0
-            set-variable #l5 &bxor #l3 #l0
-            set-variable #l2 &lset #l2 &add &mul #l1 2 9 #l5
-            !if &band 0x08 &bxor #l3 #l4
-                set-variable #l4 &bxor #l5 8
-            !else
-                set-variable #l4 #l5
-            !endif
-        !else
-            !if &band 0x08 &bxor #l3 #l4
-                set-variable #l4 #l3
-            !else
-                set-variable #l4 &bxor #l3 8
-            !endif
-        !endif
-        set-variable #l2 &lset #l2 &add &mul #l1 2 10 #l4
-        set-variable &ind &cat ".schm-osd.schm-" .schm-osd.curschm #l2
-        #l1 schm-osd-show-schm-comp
-    !elif &not #l0
-        !if &not &band 0x08 &bxor #l3 #l4
-            !abort
-        !endif
-    !elif &not &band #l3 #l0
-        !abort
+  set-variable #l0 &band &abs @# 0x0ff
+  set-variable #l1 &sub &div  &abs @# 0x100 1
+  set-variable #l2 &ind &cat ".schm-osd.schm-" .schm-osd.curschm
+  set-variable #l3 &lget #l2 &add &mul #l1 2 9
+  set-variable #l4 &lget #l2 &add &mul #l1 2 10
+  !if &les @# 0
+    !if #l0
+      set-variable #l5 &bxor #l3 #l0
+      set-variable #l2 &lset #l2 &add &mul #l1 2 9 #l5
+      !if &band 0x08 &bxor #l3 #l4
+        set-variable #l4 &bxor #l5 8
+      !else
+        set-variable #l4 #l5
+      !endif
+    !else
+      !if &band 0x08 &bxor #l3 #l4
+        set-variable #l4 #l3
+      !else
+        set-variable #l4 &bxor #l3 8
+      !endif
     !endif
+    set-variable #l2 &lset #l2 &add &mul #l1 2 10 #l4
+    set-variable &ind &cat ".schm-osd.schm-" .schm-osd.curschm #l2
+    #l1 schm-osd-show-schm-comp
+  !elif &not #l0
+    !if &not &band 0x08 &bxor #l3 #l4
+      !abort
+    !endif
+  !elif &not &band #l3 #l0
+    !abort
+  !endif
 !emacro
 
 ; compare 2 color schemes @1 @2, returns 0=same, 1=diff in $result
 0 define-macro schm-osd-cmp-schm
-    set-variable $result 1
-    set-variable #l1 &ind &cat ".schm-osd.schm-" @1
-    set-variable #l2 &ind &cat ".schm-osd.schm-" @2
-    set-variable #l3 0
-    !repeat
-        !if &not &equ &lget #l1 #l3 &lget #l2 #l3
-            !return
-        !endif
-    !until &equ &inc #l3 1 16
-    set-variable $result 0
+  set-variable $result 1
+  set-variable #l1 &ind &cat ".schm-osd.schm-" @1
+  set-variable #l2 &ind &cat ".schm-osd.schm-" @2
+  set-variable #l3 0
+  !repeat
+    !if &not &equ &lget #l1 #l3 &lget #l2 #l3
+      !return
+    !endif
+  !until &equ &inc #l3 1 16
+  set-variable $result 0
 !emacro
 
 0 define-macro schm-osd-setup-scheme-var
-    !if &les @# 0
-        -1 osd .osd.tmp
-        osd .osd.tmp 0 "bs" 20 0 0 0
-        set-variable #l0 &ind &cat ".schm-osd.sectn" .schm-osd.cursect
-        set-variable #l1 0
-        !while &not &seq "" &set #l2 &lget #l0 &inc #l1 1
-            osd .osd.tmp #l1 "" #l2 #l1 schm-osd-set-scheme-var
-        !done
-    !else
-        set-variable $result &lget &ind &cat ".schm-osd.sectn" .schm-osd.cursect .schm-osd.cursvar
-    !endif
+  !if &les @# 0
+    -1 osd .osd.tmp
+    osd .osd.tmp 0 "bs" 20 0 0 0
+    set-variable #l0 &ind &cat ".schm-osd.sectn" .schm-osd.cursect
+    set-variable #l1 0
+    !while &not &seq "" &set #l2 &lget #l0 &inc #l1 1
+      osd .osd.tmp #l1 "" #l2 #l1 schm-osd-set-scheme-var
+    !done
+  !else
+    set-variable $result &lget &ind &cat ".schm-osd.sectn" .schm-osd.cursect .schm-osd.cursvar
+  !endif
 !emacro
 0 define-macro schm-osd-set-scheme-var
-    set-variable .schm-osd.cursvar @#
-    set-variable #l0 &ind &lget &ind &cat ".schm-osd.sectv" .schm-osd.cursect @#
-    set-variable .schm-osd.curschm #l0
-    !if &not &exi &cat ".schm-osd.schm-" #l0
-        set-variable &ind &cat ".schm-osd.schm-" #l0 .schm-osd.def-schm
-    !endif
-    set-variable #l1 0
-    !repeat
-        #l1 schm-osd-show-schm-comp
-    !until &equ &inc #l1 1 4
+  set-variable .schm-osd.cursvar @#
+  set-variable #l0 &ind &lget &ind &cat ".schm-osd.sectv" .schm-osd.cursect @#
+  set-variable .schm-osd.curschm #l0
+  !if &not &exi &cat ".schm-osd.schm-" #l0
+    set-variable &ind &cat ".schm-osd.schm-" #l0 .schm-osd.def-schm
+  !endif
+  set-variable #l1 0
+  !repeat
+    #l1 schm-osd-show-schm-comp
+  !until &equ &inc #l1 1 4
 !emacro
 
 0 define-macro schm-osd-setup-scheme-section
-    !if &les @# 0
-        -1 osd .osd.tmp
-        osd .osd.tmp 0 "bs" 20 0 0 0
-        set-variable #l1 0
-        !while &not &seq "" &set #l2 &lget .schm-osd.sectn &inc #l1 1
-            osd .osd.tmp #l1 "" #l2 #l1 schm-osd-set-scheme-section
-        !done
-    !else
-        set-variable $result &lget .schm-osd.sectn .schm-osd.cursect
-    !endif
+  !if &les @# 0
+    -1 osd .osd.tmp
+    osd .osd.tmp 0 "bs" 20 0 0 0
+    set-variable #l1 0
+    !while &not &seq "" &set #l2 &lget .schm-osd.sectn &inc #l1 1
+      osd .osd.tmp #l1 "" #l2 #l1 schm-osd-set-scheme-section
+    !done
+  !else
+    set-variable $result &lget .schm-osd.sectn .schm-osd.cursect
+  !endif
 !emacro
 0 define-macro schm-osd-set-scheme-section
-    set-variable .schm-osd.cursect @#
-    1 schm-osd-set-scheme-var
+  set-variable .schm-osd.cursect @#
+  1 schm-osd-set-scheme-var
 !emacro
 
 0 define-macro schm-osd-color-init
-    set-variable .schm-osd.page 0
+  set-variable .schm-osd.page 0
 !emacro
 0 define-macro schm-osd-scheme-init
-    set-variable .schm-osd.page 1
+  set-variable .schm-osd.page 1
 !emacro
 
 0 define-macro schm-osd-store-screen-scheme
-    ; Set the osd cursor flag
-    insert-string &spr "set-variable $system %s 0x020\n" &cond .schm-osd.osdcursor "&bor $system" "&band $system &bnot"
-    ; Setup the schemes hilight flags
-    set-variable #l0 .schm-osd.hilight-flags
-    schm-osd-cmp-schm $global-scheme .scheme.function
-    set-variable #l0 &bor #l0 &cond $result 0x04 0
-    schm-osd-cmp-schm $global-scheme .scheme.constant
-    set-variable #l0 &bor #l0 &cond $result 0x08 0
-    insert-string &spr "set-variable .hilight.flags %d\n" #l0
-    ; write-out all the color definitions
-    insert-string "; Create the colors first\n"
-    set-variable #l0 0
-    !repeat
-        #l0 schm-osd-get-color
-        insert-string &spr "add-color &set .col%d %d %d %d %d\n" #l0 #l0 #l7 #l8 #l9
-    !until &not &les &inc #l0 1 .schm-osd.nocol
-    ; Write-out the cursor color
-    insert-string "; Set the required cursor-color\n"
-    insert-string &spr "set-variable $cursor-color .col%d\n" .schm-osd.cursor
-    ; write-out all the color schemes
-    insert-string "; Create the color schemes\n"
-    set-variable #l0 1
-    set-variable #l1 &lget .schm-osd.sectn 1
-    !repeat
-        insert-string &spr "; %s\n" #l1
-        set-variable #l1 0
-        !while &not &seq "" &set #l3 &lget &ind &cat ".schm-osd.sectv" #l0 &inc #l1 1
-            set-variable #l2 &ind #l3
-            !if &exi &cat ".schm-osd.schm-" #l2
-                insert-string &cat "add-color-scheme " #l3
-                set-variable #l3 1
-                insert-string &spr " .col%d" &lget &ind &cat ".schm-osd.schm-" #l2 #l3
-                !if &les &pinc #l3 1 8
-                    !jump -2
-                !endif
-                insert-string &spr " %d" &lget &ind &cat ".schm-osd.schm-" #l2 #l3
-                !if &les &pinc #l3 1 16
-                    !jump -2
-                !endif
-                insert-string "\n"
-            !endif
-        !done
-    !until &seq "" &set #l1 &lget .schm-osd.sectn &inc #l0 1
+  ; Set the osd cursor flag
+  insert-string &spr "set-variable $system %s 0x020\n" &cond .schm-osd.osdcursor "&bor $system" "&band $system &bnot"
+  ; Setup the schemes hilight flags
+  set-variable #l0 .schm-osd.hilight-flags
+  schm-osd-cmp-schm $global-scheme .scheme.function
+  set-variable #l0 &bor #l0 &cond $result 0x04 0
+  schm-osd-cmp-schm $global-scheme .scheme.constant
+  set-variable #l0 &bor #l0 &cond $result 0x08 0
+  insert-string &spr "set-variable .hilight.flags %d\n" #l0
+  ; write-out all the color definitions
+  insert-string "; Create the colors first\n"
+  set-variable #l0 0
+  !repeat
+    #l0 schm-osd-get-color
+    insert-string &spr "add-color &set .col%d %d %d %d %d\n" #l0 #l0 #l7 #l8 #l9
+  !until &not &les &inc #l0 1 .schm-osd.nocol
+  ; Write-out the cursor color
+  insert-string "; Set the required cursor-color\n"
+  insert-string &spr "set-variable $cursor-color .col%d\n" .schm-osd.cursor
+  ; write-out all the color schemes
+  insert-string "; Create the color schemes\n"
+  set-variable #l0 1
+  set-variable #l1 &lget .schm-osd.sectn 1
+  !repeat
+    insert-string &spr "; %s\n" #l1
+    set-variable #l1 0
+    !while &not &seq "" &set #l3 &lget &ind &cat ".schm-osd.sectv" #l0 &inc #l1 1
+      set-variable #l2 &ind #l3
+      !if &exi &cat ".schm-osd.schm-" #l2
+        insert-string &cat "add-color-scheme " #l3
+        set-variable #l3 1
+        insert-string &spr " .col%d" &lget &ind &cat ".schm-osd.schm-" #l2 #l3
+        !if &les &pinc #l3 1 8
+          !jump -2
+        !endif
+        insert-string &spr " %d" &lget &ind &cat ".schm-osd.schm-" #l2 #l3
+        !if &les &pinc #l3 1 16
+          !jump -2
+        !endif
+        insert-string "\n"
+      !endif
+    !done
+  !until &seq "" &set #l1 &lget .schm-osd.sectn &inc #l0 1
 !emacro
 0 define-macro schm-osd-store-print-scheme
-    ; Setup the printer options
-    insert-string &spr "set-registry \"/print/scheme-flags\" %d\n" .schm-osd.print-option
-    ; write-out all the color definitions
-    insert-string "; Create the colors first\n0 print-color\n"
-    set-variable #l0 0
-    !repeat
-        #l0 schm-osd-get-color
-        insert-string &spr "print-color %d %d %d %d\n" #l0 #l7 #l8 #l9
-    !until &not &les &inc #l0 1 .schm-osd.nocol
-    ; write-out all the printer schemes
-    insert-string "; Create the printer schemes\n0 print-scheme\n"
-    set-variable #l0 1
-    set-variable #l1 &lget .schm-osd.sectn 1
-    !repeat
-        insert-string &spr "; %s\n" #l1
-        set-variable #l1 0
-        !while &not &seq "" &set #l3 &lget &ind &cat ".schm-osd.sectv" #l0 &inc #l1 1
-            set-variable #l2 &ind #l3
-            !if &exi &cat ".schm-osd.schm-" #l2
-                set-variable #l4 &ind &cat ".schm-osd.schm-" #l2
-                insert-string &spr "print-scheme %s %d %d %d\n" #l3 &lget #l4 1 &lget #l4 2 &lget #l4 9
-            !endif
-        !done
-    !until &seq "" &set #l1 &lget .schm-osd.sectn &inc #l0 1
+  ; Setup the printer options
+  insert-string &spr "set-registry \"/print/scheme-flags\" %d\n" .schm-osd.print-option
+  ; write-out all the color definitions
+  insert-string "; Create the colors first\n0 print-color\n"
+  set-variable #l0 0
+  !repeat
+    #l0 schm-osd-get-color
+    insert-string &spr "print-color %d %d %d %d\n" #l0 #l7 #l8 #l9
+  !until &not &les &inc #l0 1 .schm-osd.nocol
+  ; write-out all the printer schemes
+  insert-string "; Create the printer schemes\n0 print-scheme\n"
+  set-variable #l0 1
+  set-variable #l1 &lget .schm-osd.sectn 1
+  !repeat
+    insert-string &spr "; %s\n" #l1
+    set-variable #l1 0
+    !while &not &seq "" &set #l3 &lget &ind &cat ".schm-osd.sectv" #l0 &inc #l1 1
+      set-variable #l2 &ind #l3
+      !if &exi &cat ".schm-osd.schm-" #l2
+        set-variable #l4 &ind &cat ".schm-osd.schm-" #l2
+        insert-string &spr "print-scheme %s %d %d %d\n" #l3 &lget #l4 1 &lget #l4 2 &lget #l4 9
+      !endif
+    !done
+  !until &seq "" &set #l1 &lget .schm-osd.sectn &inc #l0 1
 !emacro
 0 define-macro schm-osd-store
-    ; create the header
-    insert-string &spr "; Generated %s scheme file for JASSPA MicroEmacs\n" &cond .schm-osd.type "printer" "color"
-    insert-string "; Copyright (C) 1999-2009 JASSPA (www.jasspa.com)\n"
-    insert-string "; See the file me.emf for copying and conditions.\n"
-    insert-string &spr "; Description: %s\n" .schm-osd.desc
-    !if &not &seq .schm-osd.comm ""
-        insert-string &spr "; Comment: %s\n" &rep &rep .schm-osd.comm "\\" "\\\\" "\n" "\\n"
-    !endif
-    !if .schm-osd.type
-        schm-osd-store-print-scheme
-    !else
-        schm-osd-store-screen-scheme
-    !endif
+  ; create the header
+  insert-string &spr "; Generated %s scheme file for JASSPA MicroEmacs\n" &cond .schm-osd.type "printer" "color"
+  insert-string "; Copyright (C) 1999-2009 JASSPA (www.jasspa.com)\n"
+  insert-string "; See the file me.emf for copying and conditions.\n"
+  insert-string &spr "; Description: %s\n" .schm-osd.desc
+  !if &not &seq .schm-osd.comm ""
+    insert-string &spr "; Comment: %s\n" &rep &rep .schm-osd.comm "\\" "\\\\" "\n" "\\n"
+  !endif
+  !if .schm-osd.type
+    schm-osd-store-print-scheme
+  !else
+    schm-osd-store-screen-scheme
+  !endif
 !emacro
 
 0 define-macro schm-osd-set-to-text
-    set-variable #l1 &ind &cat ".schm-osd.schm-" $global-scheme
-    set-variable &ind &cat ".schm-osd.schm-" .schm-osd.curschm #l1
-    .schm-osd.cursvar schm-osd-set-scheme-var
+  set-variable #l1 &ind &cat ".schm-osd.schm-" $global-scheme
+  set-variable &ind &cat ".schm-osd.schm-" .schm-osd.curschm #l1
+  .schm-osd.cursvar schm-osd-set-scheme-var
 !emacro
 
 0 define-macro schm-osd-current
-    ; create a temporary buffer
-    find-buffer "*schm-osd temp buffer*"
-    ; insert the new settings
-    schm-osd-store-screen-scheme
-    ; execute the buffer
-    !force execute-buffer "*schm-osd temp buffer*"
-    ; kill the temp buffer and update screen
-    delete-buffer "*schm-osd temp buffer*"
-    find-buffer .schm-osd.buffer
-    1 execute-named-command .schm-osd.redraw
-    -3 osd
+  ; create a temporary buffer
+  find-buffer "*schm-osd temp buffer*"
+  ; insert the new settings
+  schm-osd-store-screen-scheme
+  ; execute the buffer
+  !force execute-buffer "*schm-osd temp buffer*"
+  ; kill the temp buffer and update screen
+  delete-buffer "*schm-osd temp buffer*"
+  find-buffer .schm-osd.buffer
+  1 execute-named-command .schm-osd.redraw
+  -3 osd
 !emacro
 
 0 define-macro schm-osd-save
-    ; create the file name using the $user-path
-    !force find-file &spr "%s%s.emf" $user-path .schm-osd.fname @mna
-    !if &not $status
-        !return
-    !endif
-    ; clear the buffer
-    beginning-of-buffer
-    set-mark
-    end-of-buffer
-    -1 kill-region
-    ; insert the new settings
-    schm-osd-store
-    ; save the file
-    save-buffer @mna
-    -1 find-buffer $buffer-bname
-    find-buffer .schm-osd.buffer
+  ; create the file name using the $user-path
+  !force find-file &spr "%s%s.emf" $user-path .schm-osd.fname @mna
+  !if &not $status
+    !return
+  !endif
+  ; clear the buffer
+  beginning-of-buffer
+  set-mark
+  end-of-buffer
+  -1 kill-region
+  ; insert the new settings
+  schm-osd-store
+  ; save the file
+  save-buffer @mna
+  -1 find-buffer $buffer-bname
+  find-buffer .schm-osd.buffer
 !emacro
 
 0 define-macro schm-osd-install
-    ; First save the current scheme
-    schm-osd-save
-    ; setup local variables for the scheme type
-    !if .schm-osd.type
-        set-variable #l1 "printers"
-        set-variable #l2 "print-setup"
-    !else
-        set-variable #l1 "schemes"
-        set-variable #l2 "scheme"
+  ; First save the current scheme
+  schm-osd-save
+  ; setup local variables for the scheme type
+  !if .schm-osd.type
+    set-variable #l1 "printers"
+    set-variable #l2 "print-setup"
+  !else
+    set-variable #l1 "schemes"
+    set-variable #l2 "scheme"
+  !endif
+  ; Name load in the main scheme macro file
+  !force find-file &find #l1 ".emf" @mna
+  !if &not $status
+    ml-write &spr "[Failed to find main %s.emf file]" #l1
+    !abort
+  !endif
+  beginning-of-buffer
+  !force search-buffer "em" &spr "set-variable *\\.%s\\.scheme-files" #l2
+  !if $status
+    beginning-of-line
+    execute-line @wl
+    !if &not &set #l0 &lfind &ind &spr ".%s.scheme-files" #l2 .schm-osd.fname
+      set-variable #l0 -1
+      set-variable &ind &spr ".%s.scheme-files" #l2 &lset &ind &spr ".%s.scheme-files" #l2 #l0 .schm-osd.fname
     !endif
-    ; Name load in the main scheme macro file
-    !force find-file &find #l1 ".emf" @mna
-    !if &not $status
-        ml-write &spr "[Failed to find main %s.emf file]" #l1
-        !abort
-    !endif
+    insert-string &spr "set-variable .%s.scheme-files \"%s\"" #l2 &ind &spr ".%s.scheme-files" #l2
+    1 kill-line
     beginning-of-buffer
-    !force search-buffer "em" &spr "set-variable *\\.%s\\.scheme-files" #l2
+    !force search-buffer "em" &spr "set-variable *\\.%s\\.scheme-names" #l2
     !if $status
-        beginning-of-line
-        execute-line @wl
-        !if &not &set #l0 &lfind &ind &spr ".%s.scheme-files" #l2 .schm-osd.fname
-            set-variable #l0 -1
-            set-variable &ind &spr ".%s.scheme-files" #l2 &lset &ind &spr ".%s.scheme-files" #l2 #l0 .schm-osd.fname
-        !endif
-        insert-string &spr "set-variable .%s.scheme-files \"%s\"" #l2 &ind &spr ".%s.scheme-files" #l2
-        1 kill-line
-        beginning-of-buffer
-        !force search-buffer "em" &spr "set-variable *\\.%s\\.scheme-names" #l2
-        !if $status
-            beginning-of-line
-            execute-line @wl
-            set-variable &ind &spr ".%s.scheme-names" #l2 &lset &ind &spr ".%s.scheme-names" #l2 #l0 .schm-osd.desc
-            insert-string &spr "set-variable .%s.scheme-names \"%s\"" #l2 &ind &spr ".%s.scheme-names" #l2
-            1 kill-line
-        !endif
-        ; save changes locally
-        set-variable #l0 &stat "a" &spr "%s%s.emf" $user-path #l1
-        !if &seq #l0 $buffer-fname
-            !force save-buffer #l0 @mna
-        !else
-            !force write-buffer #l0 @mna
-        !endif
-        -1 find-buffer $buffer-bname
-        find-buffer .schm-osd.buffer
+      beginning-of-line
+      execute-line @wl
+      set-variable &ind &spr ".%s.scheme-names" #l2 &lset &ind &spr ".%s.scheme-names" #l2 #l0 .schm-osd.desc
+      insert-string &spr "set-variable .%s.scheme-names \"%s\"" #l2 &ind &spr ".%s.scheme-names" #l2
+      1 kill-line
     !endif
+    ; save changes locally
+    set-variable #l0 &stat "a" &spr "%s%s.emf" $user-path #l1
+    !if &seq #l0 $buffer-fname
+      !force save-buffer #l0 @mna
+    !else
+      !force write-buffer #l0 @mna
+    !endif
+    -1 find-buffer $buffer-bname
+    find-buffer .schm-osd.buffer
+  !endif
 !emacro
 
 set-variable #l0 &mid $window-chars  6 1
@@ -883,17 +883,17 @@ osd .osd.schm 625 "BtcfHhx" .scheme.osd-ebtt " \HInstall " f schm-osd-install
 osd .osd.schm 630 "BtcfH"   .scheme.osd-ebtt " \HClose " f void
 
 define-macro scheme-editor
-    set-variable .schm-osd.buffer $buffer-bname
-    set-variable .schm-osd.redraw &cbind "redraw"
-    !force set-variable #l0 @1
-    !if $status
-        set-variable .schm-osd.fname #l0
-        0 schm-osd-load-fname
-    !elif &seq .schm-osd.fname "ERROR"
-        !if &seq &set .schm-osd.fname .change-scheme.current "ERROR"
-            set-variable .schm-osd.fname "schemed"
-        !endif
-        0 schm-osd-load-fname
+  set-variable .schm-osd.buffer $buffer-bname
+  set-variable .schm-osd.redraw &cbind "redraw"
+  !force set-variable #l0 @1
+  !if $status
+    set-variable .schm-osd.fname #l0
+    0 schm-osd-load-fname
+  !elif &seq .schm-osd.fname "ERROR"
+    !if &seq &set .schm-osd.fname .change-scheme.current "ERROR"
+      set-variable .schm-osd.fname "schemed"
     !endif
-    .osd.schm osd
+    0 schm-osd-load-fname
+  !endif
+  .osd.schm osd
 !emacro

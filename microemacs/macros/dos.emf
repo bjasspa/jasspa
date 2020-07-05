@@ -7,23 +7,23 @@
 ; Authors:     Steven Phillips
 ;
 0 define-macro exec-me
-    pipe-shell-command &spr "%s %s" $progname @1 @mna
+  pipe-shell-command &spr "%s %s" $progname @1 @mna
 !emacro
 ; Setup the screen resolution
 define-macro reset-25
-    change-font "3" "0"
+  change-font "3" "0"
 !emacro
 define-macro reset-50
-    change-font "3" "1"
+  change-font "3" "1"
 !emacro
 define-macro reset-def
-    !if &seq $TERM "E80x50"
-        reset-50
-    !elif &seq $TERM "E80x25"
-        reset-25
-    !else    
-        change-font &reg &spr "/history/%s/font" %platform "3" &reg &spr "/history/%s/font-dbl" $platform "1"
-    !endif
+  !if &seq $TERM "E80x50"
+    reset-50
+  !elif &seq $TERM "E80x25"
+    reset-25
+  !else    
+    change-font &reg &spr "/history/%s/font" %platform "3" &reg &spr "/history/%s/font-dbl" $platform "1"
+  !endif
 !emacro
 global-bind-key reset-25  "C-c 2"
 global-bind-key reset-50  "C-c 5"

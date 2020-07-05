@@ -7,9 +7,9 @@
 ; Authors:     Gabriel Tabares-Barreiro, Steven Phillips & Detlef Groth
 ;
 define-macro fhook-js
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "js"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "js"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -34,212 +34,212 @@ set-variable .fhook-js.item-list-s3 "^[ \t]*\\([\.a-zA-Z0-9_]+\\) = function[ \t
 set-variable .fhook-js.item-list-r3 "Meth \ecB\\1\ecA"
 
 !if &not &exist .hilight.js
-    set-variable .hilight.js &pinc .hilight.next 1
+  set-variable .hilight.js &pinc .hilight.next 1
 !endif
 !if &and &sin "h" .fhook-js.setup &band .hilight.flags 0x02 
-    ; High-light js Mode
-    0 hilight .hilight.js 2 50             $global-scheme
-    hilight .hilight.js 2  "//"            .scheme.comment
-    hilight .hilight.js 20 "/\\*" "*/" ""  .scheme.comment
-    hilight .hilight.js 4 "\"" "\"" "\\"   .scheme.string
-    hilight .hilight.js 0x804 "\\W\\{'" "'" "\\" .scheme.quote
-    ;
-    hilight .hilight.js 1 "break"          .scheme.keyword
-    hilight .hilight.js 1 "case"           .scheme.keyword
-    hilight .hilight.js 1 "catch"          .scheme.keyword
-    hilight .hilight.js 1 "continue"       .scheme.keyword
-    hilight .hilight.js 1 "default"        .scheme.keyword
-    hilight .hilight.js 1 "do"             .scheme.keyword
-    hilight .hilight.js 1 "else"           .scheme.keyword
-    hilight .hilight.js 1 "for"            .scheme.keyword
-    hilight .hilight.js 1 "goto"           .scheme.keyword
-    hilight .hilight.js 1 "if"             .scheme.keyword
-    hilight .hilight.js 1 "return"         .scheme.keyword
-    hilight .hilight.js 1 "super"          .scheme.keyword
-    hilight .hilight.js 1 "switch"         .scheme.keyword
-    hilight .hilight.js 1 "throw"          .scheme.keyword
-    hilight .hilight.js 1 "try"            .scheme.keyword
-    hilight .hilight.js 1 "while"          .scheme.keyword
-    
-    hilight .hilight.js 1 "virtual"        .scheme.type
-    hilight .hilight.js 1 "var"            .scheme.variable
-    hilight .hilight.js 1 "this"           .scheme.variable
-    hilight .hilight.js 1 "null"           .scheme.prepro
-    hilight .hilight.js 1 "true"           .scheme.prepro
-    hilight .hilight.js 1 "false"          .scheme.prepro
-    hilight .hilight.js 1 "not"            .scheme.operator
-    
-    ;DOM elements hilights 0x12
-    hilight .hilight.js 1 "anchors"        .scheme.prepro
-    hilight .hilight.js 1 "button"         .scheme.prepro
-    hilight .hilight.js 1 "checkbox"       .scheme.prepro
-    hilight .hilight.js 1 "Date"           .scheme.prepro
-    hilight .hilight.js 1 "document"       .scheme.prepro
-    hilight .hilight.js 1 "elements"       .scheme.prepro
-    hilight .hilight.js 1 "forms"          .scheme.prepro
-    hilight .hilight.js 1 "frames"         .scheme.prepro
-    hilight .hilight.js 1 "hidden"         .scheme.prepro
-    hilight .hilight.js 1 "history"        .scheme.prepro
-    hilight .hilight.js 1 "links"          .scheme.prepro
-    hilight .hilight.js 1 "location"       .scheme.prepro
-    hilight .hilight.js 1 "Math"           .scheme.prepro
-    hilight .hilight.js 1 "options"        .scheme.prepro
-    hilight .hilight.js 1 "password"       .scheme.prepro
-    hilight .hilight.js 1 "reset"          .scheme.prepro
-    hilight .hilight.js 1 "select"         .scheme.prepro
-    hilight .hilight.js 1 "submit"         .scheme.prepro
-    hilight .hilight.js 1 "text"           .scheme.prepro
-    hilight .hilight.js 1 "textarea"       .scheme.prepro
-    hilight .hilight.js 1 "window"         .scheme.prepro
-    ;DOM properties
-    hilight .hilight.js 1 "action"         .scheme.prepro
-    hilight .hilight.js 1 "alinkColor"     .scheme.prepro
-    hilight .hilight.js 1 "appCodeName"    .scheme.prepro
-    hilight .hilight.js 1 "appName"        .scheme.prepro
-    hilight .hilight.js 1 "appVersion"     .scheme.prepro
-    hilight .hilight.js 1 "bgColor"        .scheme.prepro
-    hilight .hilight.js 1 "checked"        .scheme.prepro
-    hilight .hilight.js 1 "cookie"         .scheme.prepro
-    hilight .hilight.js 1 "defaultChecked" .scheme.prepro
-    hilight .hilight.js 1 "defaultSelected" .scheme.prepro
-    hilight .hilight.js 1 "defaultStatus"  .scheme.prepro
-    hilight .hilight.js 1 "defaultValue"   .scheme.prepro
-    hilight .hilight.js 1 "E"              .scheme.prepro
-    hilight .hilight.js 1 "encoding"       .scheme.prepro
-    hilight .hilight.js 1 "fgColor"        .scheme.prepro
-    hilight .hilight.js 1 "hash"           .scheme.prepro
-    hilight .hilight.js 1 "host"           .scheme.prepro
-    hilight .hilight.js 1 "hostname"       .scheme.prepro
-    hilight .hilight.js 1 "href"           .scheme.prepro
-    hilight .hilight.js 1 "index"          .scheme.prepro
-    hilight .hilight.js 1 "lastModified"   .scheme.prepro
-    hilight .hilight.js 1 "length"         .scheme.prepro
-    hilight .hilight.js 1 "linkColor"      .scheme.prepro
-    hilight .hilight.js 1 "LN2"            .scheme.prepro
-    hilight .hilight.js 1 "location"       .scheme.prepro
-    hilight .hilight.js 1 "LOG2E"          .scheme.prepro
-    hilight .hilight.js 1 "LOG10E"         .scheme.prepro
-    hilight .hilight.js 1 "method"         .scheme.prepro
-    hilight .hilight.js 1 "name"           .scheme.prepro
-    hilight .hilight.js 1 "opener"         .scheme.prepro
-    hilight .hilight.js 1 "parent"         .scheme.prepro
-    hilight .hilight.js 1 "pathname"       .scheme.prepro
-    hilight .hilight.js 1 "PI"             .scheme.prepro
-    hilight .hilight.js 1 "port"           .scheme.prepro
-    hilight .hilight.js 1 "protocol"       .scheme.prepro
-    hilight .hilight.js 1 "referrer"       .scheme.prepro
-    hilight .hilight.js 1 "search"         .scheme.prepro
-    hilight .hilight.js 1 "selected"       .scheme.prepro
-    hilight .hilight.js 1 "selectedIndex"  .scheme.prepro
-    hilight .hilight.js 1 "self"           .scheme.prepro
-    hilight .hilight.js 1 "SQRT1_2"        .scheme.prepro
-    hilight .hilight.js 1 "status"         .scheme.prepro
-    hilight .hilight.js 1 "target"         .scheme.prepro
-    hilight .hilight.js 1 "text"           .scheme.prepro
-    hilight .hilight.js 1 "title"          .scheme.prepro
-    hilight .hilight.js 1 "top"            .scheme.prepro
-    hilight .hilight.js 1 "userAgent"      .scheme.prepro
-    hilight .hilight.js 1 "value"          .scheme.prepro
-    hilight .hilight.js 1 "vlinkColor"     .scheme.prepro
-    ;Keywords and methods
-    hilight .hilight.js 1 "abs"            .scheme.keyword
-    hilight .hilight.js 1 "acos"           .scheme.keyword
-    hilight .hilight.js 1 "alert"          .scheme.keyword
-    hilight .hilight.js 1 "asin"           .scheme.keyword
-    hilight .hilight.js 1 "atan"           .scheme.keyword
-    hilight .hilight.js 1 "back"           .scheme.keyword
-    hilight .hilight.js 1 "big"            .scheme.keyword
-    hilight .hilight.js 1 "blink"          .scheme.keyword
-    hilight .hilight.js 1 "blur"           .scheme.keyword
-    hilight .hilight.js 1 "bold"           .scheme.keyword
-    hilight .hilight.js 1 "ceil"           .scheme.keyword
-    hilight .hilight.js 1 "chaAt"          .scheme.keyword
-    hilight .hilight.js 1 "clear"          .scheme.keyword
-    hilight .hilight.js 1 "clearTimeout"   .scheme.keyword
-    hilight .hilight.js 1 "click"          .scheme.keyword
-    hilight .hilight.js 1 "close"          .scheme.keyword
-    hilight .hilight.js 1 "confirm"        .scheme.keyword
-    hilight .hilight.js 1 "cos"            .scheme.keyword
-    hilight .hilight.js 1 "escape"         .scheme.keyword
-    hilight .hilight.js 1 "eval"           .scheme.keyword
-    hilight .hilight.js 1 "exp"            .scheme.keyword
-    hilight .hilight.js 1 "floor"          .scheme.keyword
-    hilight .hilight.js 1 "focus"          .scheme.keyword
-    hilight .hilight.js 1 "fontcolor"      .scheme.keyword
-    hilight .hilight.js 1 "fontsize"       .scheme.keyword
-    hilight .hilight.js 1 "forward"        .scheme.keyword
-    hilight .hilight.js 1 "getDate"        .scheme.keyword
-    hilight .hilight.js 1 "getDay"         .scheme.keyword
-    hilight .hilight.js 1 "getHours"       .scheme.keyword
-    hilight .hilight.js 1 "getMinutes"     .scheme.keyword
-    hilight .hilight.js 1 "getMonth"       .scheme.keyword
-    hilight .hilight.js 1 "getSeconds"     .scheme.keyword
-    hilight .hilight.js 1 "getTime"        .scheme.keyword
-    hilight .hilight.js 1 "getTimezoneOffset" .scheme.keyword
-    hilight .hilight.js 1 "getYear"        .scheme.keyword
-    hilight .hilight.js 1 "indexOf"        .scheme.keyword
-    hilight .hilight.js 1 "isNaN"          .scheme.keyword
-    hilight .hilight.js 1 "italics"        .scheme.keyword
-    hilight .hilight.js 1 "lastIndexOf"    .scheme.keyword
-    hilight .hilight.js 1 "link"           .scheme.keyword
-    hilight .hilight.js 1 "log"            .scheme.keyword
-    hilight .hilight.js 1 "max"            .scheme.keyword
-    hilight .hilight.js 1 "min"            .scheme.keyword
-    hilight .hilight.js 1 "open"           .scheme.keyword
-    hilight .hilight.js 1 "parse"          .scheme.keyword
-    hilight .hilight.js 1 "parseFloat"     .scheme.keyword
-    hilight .hilight.js 1 "parseInt"       .scheme.keyword
-    hilight .hilight.js 1 "pow"            .scheme.keyword
-    hilight .hilight.js 1 "prompt"         .scheme.keyword
-    hilight .hilight.js 1 "random"         .scheme.keyword
-    hilight .hilight.js 1 "round"          .scheme.keyword
-    hilight .hilight.js 1 "select"         .scheme.keyword
-    hilight .hilight.js 1 "setDate"        .scheme.keyword
-    hilight .hilight.js 1 "setHours"       .scheme.keyword
-    hilight .hilight.js 1 "setMinutes"     .scheme.keyword
-    hilight .hilight.js 1 "setMonth"       .scheme.keyword
-    hilight .hilight.js 1 "setSeconds"     .scheme.keyword
-    hilight .hilight.js 1 "setTime"        .scheme.keyword
-    hilight .hilight.js 1 "setTimeout"     .scheme.keyword
-    hilight .hilight.js 1 "setYear"        .scheme.keyword
-    hilight .hilight.js 1 "sin"            .scheme.keyword
-    hilight .hilight.js 1 "small"          .scheme.keyword
-    hilight .hilight.js 1 "sqrt"           .scheme.keyword
-    hilight .hilight.js 1 "strike"         .scheme.keyword
-    hilight .hilight.js 1 "sub"            .scheme.keyword
-    hilight .hilight.js 1 "submit"         .scheme.keyword
-    hilight .hilight.js 1 "substring"      .scheme.keyword
-    hilight .hilight.js 1 "sup"            .scheme.keyword
-    hilight .hilight.js 1 "tan"            .scheme.keyword
-    hilight .hilight.js 1 "toGMTString"    .scheme.keyword
-    hilight .hilight.js 1 "toLocaleString" .scheme.keyword
-    hilight .hilight.js 1 "toLowerCase"    .scheme.keyword
-    hilight .hilight.js 1 "toString"       .scheme.keyword
-    hilight .hilight.js 1 "toUpperCase"    .scheme.keyword
-    hilight .hilight.js 1 "unEscape"       .scheme.keyword
-    hilight .hilight.js 1 "UTC"            .scheme.keyword
-    hilight .hilight.js 1 "write"          .scheme.keyword
-    hilight .hilight.js 1 "writeln"        .scheme.keyword
-    ;
-    !if &band .hilight.flags 0x04
-        ; function definitions
-        hilight .hilight.js 0 "\\s\\{function\\s+\\w+\\s?\\}(" .scheme.function
-    !endif
-    ; let html based files use the java hilight for any JavaScripts
-    set-variable .hilight.javascript .hilight.js
+  ; High-light js Mode
+  0 hilight .hilight.js 2 50             $global-scheme
+  hilight .hilight.js 2  "//"            .scheme.comment
+  hilight .hilight.js 20 "/\\*" "*/" ""  .scheme.comment
+  hilight .hilight.js 4 "\"" "\"" "\\"   .scheme.string
+  hilight .hilight.js 0x804 "\\W\\{'" "'" "\\" .scheme.quote
+  ;
+  hilight .hilight.js 1 "break"          .scheme.keyword
+  hilight .hilight.js 1 "case"           .scheme.keyword
+  hilight .hilight.js 1 "catch"          .scheme.keyword
+  hilight .hilight.js 1 "continue"       .scheme.keyword
+  hilight .hilight.js 1 "default"        .scheme.keyword
+  hilight .hilight.js 1 "do"             .scheme.keyword
+  hilight .hilight.js 1 "else"           .scheme.keyword
+  hilight .hilight.js 1 "for"            .scheme.keyword
+  hilight .hilight.js 1 "goto"           .scheme.keyword
+  hilight .hilight.js 1 "if"             .scheme.keyword
+  hilight .hilight.js 1 "return"         .scheme.keyword
+  hilight .hilight.js 1 "super"          .scheme.keyword
+  hilight .hilight.js 1 "switch"         .scheme.keyword
+  hilight .hilight.js 1 "throw"          .scheme.keyword
+  hilight .hilight.js 1 "try"            .scheme.keyword
+  hilight .hilight.js 1 "while"          .scheme.keyword
+  
+  hilight .hilight.js 1 "virtual"        .scheme.type
+  hilight .hilight.js 1 "var"            .scheme.variable
+  hilight .hilight.js 1 "this"           .scheme.variable
+  hilight .hilight.js 1 "null"           .scheme.prepro
+  hilight .hilight.js 1 "true"           .scheme.prepro
+  hilight .hilight.js 1 "false"          .scheme.prepro
+  hilight .hilight.js 1 "not"            .scheme.operator
+  
+  ;DOM elements hilights 0x12
+  hilight .hilight.js 1 "anchors"        .scheme.prepro
+  hilight .hilight.js 1 "button"         .scheme.prepro
+  hilight .hilight.js 1 "checkbox"       .scheme.prepro
+  hilight .hilight.js 1 "Date"           .scheme.prepro
+  hilight .hilight.js 1 "document"       .scheme.prepro
+  hilight .hilight.js 1 "elements"       .scheme.prepro
+  hilight .hilight.js 1 "forms"          .scheme.prepro
+  hilight .hilight.js 1 "frames"         .scheme.prepro
+  hilight .hilight.js 1 "hidden"         .scheme.prepro
+  hilight .hilight.js 1 "history"        .scheme.prepro
+  hilight .hilight.js 1 "links"          .scheme.prepro
+  hilight .hilight.js 1 "location"       .scheme.prepro
+  hilight .hilight.js 1 "Math"           .scheme.prepro
+  hilight .hilight.js 1 "options"        .scheme.prepro
+  hilight .hilight.js 1 "password"       .scheme.prepro
+  hilight .hilight.js 1 "reset"          .scheme.prepro
+  hilight .hilight.js 1 "select"         .scheme.prepro
+  hilight .hilight.js 1 "submit"         .scheme.prepro
+  hilight .hilight.js 1 "text"           .scheme.prepro
+  hilight .hilight.js 1 "textarea"       .scheme.prepro
+  hilight .hilight.js 1 "window"         .scheme.prepro
+  ;DOM properties
+  hilight .hilight.js 1 "action"         .scheme.prepro
+  hilight .hilight.js 1 "alinkColor"     .scheme.prepro
+  hilight .hilight.js 1 "appCodeName"    .scheme.prepro
+  hilight .hilight.js 1 "appName"        .scheme.prepro
+  hilight .hilight.js 1 "appVersion"     .scheme.prepro
+  hilight .hilight.js 1 "bgColor"        .scheme.prepro
+  hilight .hilight.js 1 "checked"        .scheme.prepro
+  hilight .hilight.js 1 "cookie"         .scheme.prepro
+  hilight .hilight.js 1 "defaultChecked" .scheme.prepro
+  hilight .hilight.js 1 "defaultSelected" .scheme.prepro
+  hilight .hilight.js 1 "defaultStatus"  .scheme.prepro
+  hilight .hilight.js 1 "defaultValue"   .scheme.prepro
+  hilight .hilight.js 1 "E"              .scheme.prepro
+  hilight .hilight.js 1 "encoding"       .scheme.prepro
+  hilight .hilight.js 1 "fgColor"        .scheme.prepro
+  hilight .hilight.js 1 "hash"           .scheme.prepro
+  hilight .hilight.js 1 "host"           .scheme.prepro
+  hilight .hilight.js 1 "hostname"       .scheme.prepro
+  hilight .hilight.js 1 "href"           .scheme.prepro
+  hilight .hilight.js 1 "index"          .scheme.prepro
+  hilight .hilight.js 1 "lastModified"   .scheme.prepro
+  hilight .hilight.js 1 "length"         .scheme.prepro
+  hilight .hilight.js 1 "linkColor"      .scheme.prepro
+  hilight .hilight.js 1 "LN2"            .scheme.prepro
+  hilight .hilight.js 1 "location"       .scheme.prepro
+  hilight .hilight.js 1 "LOG2E"          .scheme.prepro
+  hilight .hilight.js 1 "LOG10E"         .scheme.prepro
+  hilight .hilight.js 1 "method"         .scheme.prepro
+  hilight .hilight.js 1 "name"           .scheme.prepro
+  hilight .hilight.js 1 "opener"         .scheme.prepro
+  hilight .hilight.js 1 "parent"         .scheme.prepro
+  hilight .hilight.js 1 "pathname"       .scheme.prepro
+  hilight .hilight.js 1 "PI"             .scheme.prepro
+  hilight .hilight.js 1 "port"           .scheme.prepro
+  hilight .hilight.js 1 "protocol"       .scheme.prepro
+  hilight .hilight.js 1 "referrer"       .scheme.prepro
+  hilight .hilight.js 1 "search"         .scheme.prepro
+  hilight .hilight.js 1 "selected"       .scheme.prepro
+  hilight .hilight.js 1 "selectedIndex"  .scheme.prepro
+  hilight .hilight.js 1 "self"           .scheme.prepro
+  hilight .hilight.js 1 "SQRT1_2"        .scheme.prepro
+  hilight .hilight.js 1 "status"         .scheme.prepro
+  hilight .hilight.js 1 "target"         .scheme.prepro
+  hilight .hilight.js 1 "text"           .scheme.prepro
+  hilight .hilight.js 1 "title"          .scheme.prepro
+  hilight .hilight.js 1 "top"            .scheme.prepro
+  hilight .hilight.js 1 "userAgent"      .scheme.prepro
+  hilight .hilight.js 1 "value"          .scheme.prepro
+  hilight .hilight.js 1 "vlinkColor"     .scheme.prepro
+  ;Keywords and methods
+  hilight .hilight.js 1 "abs"            .scheme.keyword
+  hilight .hilight.js 1 "acos"           .scheme.keyword
+  hilight .hilight.js 1 "alert"          .scheme.keyword
+  hilight .hilight.js 1 "asin"           .scheme.keyword
+  hilight .hilight.js 1 "atan"           .scheme.keyword
+  hilight .hilight.js 1 "back"           .scheme.keyword
+  hilight .hilight.js 1 "big"            .scheme.keyword
+  hilight .hilight.js 1 "blink"          .scheme.keyword
+  hilight .hilight.js 1 "blur"           .scheme.keyword
+  hilight .hilight.js 1 "bold"           .scheme.keyword
+  hilight .hilight.js 1 "ceil"           .scheme.keyword
+  hilight .hilight.js 1 "chaAt"          .scheme.keyword
+  hilight .hilight.js 1 "clear"          .scheme.keyword
+  hilight .hilight.js 1 "clearTimeout"   .scheme.keyword
+  hilight .hilight.js 1 "click"          .scheme.keyword
+  hilight .hilight.js 1 "close"          .scheme.keyword
+  hilight .hilight.js 1 "confirm"        .scheme.keyword
+  hilight .hilight.js 1 "cos"            .scheme.keyword
+  hilight .hilight.js 1 "escape"         .scheme.keyword
+  hilight .hilight.js 1 "eval"           .scheme.keyword
+  hilight .hilight.js 1 "exp"            .scheme.keyword
+  hilight .hilight.js 1 "floor"          .scheme.keyword
+  hilight .hilight.js 1 "focus"          .scheme.keyword
+  hilight .hilight.js 1 "fontcolor"      .scheme.keyword
+  hilight .hilight.js 1 "fontsize"       .scheme.keyword
+  hilight .hilight.js 1 "forward"        .scheme.keyword
+  hilight .hilight.js 1 "getDate"        .scheme.keyword
+  hilight .hilight.js 1 "getDay"         .scheme.keyword
+  hilight .hilight.js 1 "getHours"       .scheme.keyword
+  hilight .hilight.js 1 "getMinutes"     .scheme.keyword
+  hilight .hilight.js 1 "getMonth"       .scheme.keyword
+  hilight .hilight.js 1 "getSeconds"     .scheme.keyword
+  hilight .hilight.js 1 "getTime"        .scheme.keyword
+  hilight .hilight.js 1 "getTimezoneOffset" .scheme.keyword
+  hilight .hilight.js 1 "getYear"        .scheme.keyword
+  hilight .hilight.js 1 "indexOf"        .scheme.keyword
+  hilight .hilight.js 1 "isNaN"          .scheme.keyword
+  hilight .hilight.js 1 "italics"        .scheme.keyword
+  hilight .hilight.js 1 "lastIndexOf"    .scheme.keyword
+  hilight .hilight.js 1 "link"           .scheme.keyword
+  hilight .hilight.js 1 "log"            .scheme.keyword
+  hilight .hilight.js 1 "max"            .scheme.keyword
+  hilight .hilight.js 1 "min"            .scheme.keyword
+  hilight .hilight.js 1 "open"           .scheme.keyword
+  hilight .hilight.js 1 "parse"          .scheme.keyword
+  hilight .hilight.js 1 "parseFloat"     .scheme.keyword
+  hilight .hilight.js 1 "parseInt"       .scheme.keyword
+  hilight .hilight.js 1 "pow"            .scheme.keyword
+  hilight .hilight.js 1 "prompt"         .scheme.keyword
+  hilight .hilight.js 1 "random"         .scheme.keyword
+  hilight .hilight.js 1 "round"          .scheme.keyword
+  hilight .hilight.js 1 "select"         .scheme.keyword
+  hilight .hilight.js 1 "setDate"        .scheme.keyword
+  hilight .hilight.js 1 "setHours"       .scheme.keyword
+  hilight .hilight.js 1 "setMinutes"     .scheme.keyword
+  hilight .hilight.js 1 "setMonth"       .scheme.keyword
+  hilight .hilight.js 1 "setSeconds"     .scheme.keyword
+  hilight .hilight.js 1 "setTime"        .scheme.keyword
+  hilight .hilight.js 1 "setTimeout"     .scheme.keyword
+  hilight .hilight.js 1 "setYear"        .scheme.keyword
+  hilight .hilight.js 1 "sin"            .scheme.keyword
+  hilight .hilight.js 1 "small"          .scheme.keyword
+  hilight .hilight.js 1 "sqrt"           .scheme.keyword
+  hilight .hilight.js 1 "strike"         .scheme.keyword
+  hilight .hilight.js 1 "sub"            .scheme.keyword
+  hilight .hilight.js 1 "submit"         .scheme.keyword
+  hilight .hilight.js 1 "substring"      .scheme.keyword
+  hilight .hilight.js 1 "sup"            .scheme.keyword
+  hilight .hilight.js 1 "tan"            .scheme.keyword
+  hilight .hilight.js 1 "toGMTString"    .scheme.keyword
+  hilight .hilight.js 1 "toLocaleString" .scheme.keyword
+  hilight .hilight.js 1 "toLowerCase"    .scheme.keyword
+  hilight .hilight.js 1 "toString"       .scheme.keyword
+  hilight .hilight.js 1 "toUpperCase"    .scheme.keyword
+  hilight .hilight.js 1 "unEscape"       .scheme.keyword
+  hilight .hilight.js 1 "UTC"            .scheme.keyword
+  hilight .hilight.js 1 "write"          .scheme.keyword
+  hilight .hilight.js 1 "writeln"        .scheme.keyword
+  ;
+  !if &band .hilight.flags 0x04
+    ; function definitions
+    hilight .hilight.js 0 "\\s\\{function\\s+\\w+\\s?\\}(" .scheme.function
+  !endif
+  ; let html based files use the java hilight for any JavaScripts
+  set-variable .hilight.javascript .hilight.js
 !endif
 !if &sin "d" .fhook-js.setup
-    ; create a simple indentation rule for javascript - real java files use the built in C indentation
-    0 indent .hilight.js 1 20
-    indent .hilight.js n "{"  t
-    indent .hilight.js o "}" -t
-    indent .hilight.js e "\"" "\"" "\\"
-    indent .hilight.js e "\'" "\'" "\\"
-    indent .hilight.js b "\\[" "]"
-    indent .hilight.js b "(" ")"
-    indent .hilight.js b "/\\*" "\\*/"
-    indent .hilight.js i "//"  
-    set-variable .indent.javascript .hilight.js
+  ; create a simple indentation rule for javascript - real java files use the built in C indentation
+  0 indent .hilight.js 1 20
+  indent .hilight.js n "{"  t
+  indent .hilight.js o "}" -t
+  indent .hilight.js e "\"" "\"" "\\"
+  indent .hilight.js e "\'" "\'" "\\"
+  indent .hilight.js b "\\[" "]"
+  indent .hilight.js b "(" ")"
+  indent .hilight.js b "/\\*" "\\*/"
+  indent .hilight.js i "//"  
+  set-variable .indent.javascript .hilight.js
 !endif
 
 buffer-init-fhook "js"

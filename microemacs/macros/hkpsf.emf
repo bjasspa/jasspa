@@ -12,8 +12,8 @@
 ;     used so infrequently. Not all of the tags may be included.
 ;
 define-macro fhook-psf
-    @# buffer-init "psf"
-    buffer-init-hooks
+  @# buffer-init "psf"
+  buffer-init-hooks
 !emacro
 
 set-variable .fhook-psf.setup &reg "/history/fhook/psf" "bdghinopx"
@@ -21,91 +21,91 @@ set-variable .fhook-psf.setup-mask "aebdghikmnoptux"
 set-variable .fhook-psf.comment "|#||#|# | #||"
 ; Hilighting
 !if &and &sin "h" .fhook-psf.setup &band .hilight.flags 0x02
-    !if &not &exist .hilight.psf
-        set-variable .hilight.psf  &pinc .hilight.next 1
-    !endif
-
-    ; Make file highlighting
-    0 hilight .hilight.psf 2 50                  $global-scheme
-    hilight .hilight.psf 2     "#"               .scheme.comment
-    hilight .hilight.psf 4  "\"" "\"" ""         .scheme.string
-    ;
-    hilight .hilight.psf 0x20 "bundle"           .scheme.function
-    hilight .hilight.psf 0x20 "category\\}[^_]"  .scheme.function
-    hilight .hilight.psf 0x20 "control_files"    .scheme.function
-    hilight .hilight.psf 0x20 "distribution"     .scheme.function
-    hilight .hilight.psf 0x20 "fileset"          .scheme.function
-    hilight .hilight.psf 0x20 "product"          .scheme.function
-    hilight .hilight.psf 0x20 "subproduct"       .scheme.function
-    hilight .hilight.psf 0x20 "vendor"           .scheme.function
-    ;
-    hilight .hilight.psf 0x20 "ancestor"         .scheme.keyword
-    hilight .hilight.psf 0x20 "architecture"     .scheme.keyword
-    hilight .hilight.psf 0x20 "category_tag"     .scheme.keyword
-    hilight .hilight.psf 0x20 "category_title"   .scheme.keyword
-    hilight .hilight.psf 0x20 "control_files"    .scheme.keyword
-    hilight .hilight.psf 0x20 "copyright"        .scheme.keyword
-    hilight .hilight.psf 0x20 "corequisites"     .scheme.keyword
-    hilight .hilight.psf 0x20 "description"      .scheme.keyword
-    hilight .hilight.psf 0x20 "directory"        .scheme.keyword
-    hilight .hilight.psf 0x20 "end"              .scheme.keyword
-    hilight .hilight.psf 0x20 "exrequisites"     .scheme.keyword
-    hilight .hilight.psf 0x20 "file"             .scheme.keyword
-    hilight .hilight.psf 0x20 "file_permissions" .scheme.keyword
-    hilight .hilight.psf 0x20 "is_kernel"        .scheme.keyword
-    hilight .hilight.psf 0x20 "is_locatable"     .scheme.keyword
-    hilight .hilight.psf 0x20 "is_patch"         .scheme.keyword
-    hilight .hilight.psf 0x20 "is_reboot"        .scheme.keyword
-    hilight .hilight.psf 0x20 "is_sparse"        .scheme.keyword
-    hilight .hilight.psf 0x20 "layout_version"   .scheme.keyword
-    hilight .hilight.psf 0x20 "machine_type"     .scheme.keyword
-    hilight .hilight.psf 0x20 "number"           .scheme.keyword
-    hilight .hilight.psf 0x20 "os_name"          .scheme.keyword
-    hilight .hilight.psf 0x20 "os_release"       .scheme.keyword
-    hilight .hilight.psf 0x20 "os_version"       .scheme.keyword
-    hilight .hilight.psf 0x20 "postkernel"       .scheme.keyword
-    hilight .hilight.psf 0x20 "prereqisites"     .scheme.keyword
-    hilight .hilight.psf 0x20 "readme"           .scheme.keyword
-    hilight .hilight.psf 0x20 "revision"         .scheme.keyword
-    hilight .hilight.psf 0x20 "share_link"       .scheme.keyword
-    hilight .hilight.psf 0x20 "supersedes"       .scheme.keyword
-    hilight .hilight.psf 0x20 "tag"              .scheme.keyword
-    hilight .hilight.psf 0x20 "title"            .scheme.keyword
-    hilight .hilight.psf 0x20 "vendor_tag"       .scheme.keyword
-    ; Control file attributes
-    hilight .hilight.psf 0x20 "checkinstall"     .scheme.type
-    hilight .hilight.psf 0x20 "checkremove"      .scheme.type
-    hilight .hilight.psf 0x20 "configure"        .scheme.type
-    hilight .hilight.psf 0x20 "control_file[^s]" .scheme.type
-    hilight .hilight.psf 0x20 "fix"              .scheme.type
-    hilight .hilight.psf 0x20 "postinstall"      .scheme.type
-    hilight .hilight.psf 0x20 "postremove"       .scheme.type
-    hilight .hilight.psf 0x20 "preinstall"       .scheme.type
-    hilight .hilight.psf 0x20 "preremove"        .scheme.type
-    hilight .hilight.psf 0x20 "request"          .scheme.type
-    hilight .hilight.psf 0x20 "unconfigure"      .scheme.type
-    hilight .hilight.psf 0x20 "unpostinstall"    .scheme.type
-    hilight .hilight.psf 0x20 "unpreinstall"     .scheme.type
-    hilight .hilight.psf 0x20 "verify"           .scheme.type
-    hilight .hilight.psf 0x20 "space"            .scheme.type
-    ; Variables
-    hilight .hilight.psf 0 "true"                .scheme.prepro
-    hilight .hilight.psf 0 "false"               .scheme.prepro
+  !if &not &exist .hilight.psf
+    set-variable .hilight.psf  &pinc .hilight.next 1
+  !endif
+  
+  ; Make file highlighting
+  0 hilight .hilight.psf 2 50                  $global-scheme
+  hilight .hilight.psf 2     "#"               .scheme.comment
+  hilight .hilight.psf 4  "\"" "\"" ""         .scheme.string
+  ;
+  hilight .hilight.psf 0x20 "bundle"           .scheme.function
+  hilight .hilight.psf 0x20 "category\\}[^_]"  .scheme.function
+  hilight .hilight.psf 0x20 "control_files"    .scheme.function
+  hilight .hilight.psf 0x20 "distribution"     .scheme.function
+  hilight .hilight.psf 0x20 "fileset"          .scheme.function
+  hilight .hilight.psf 0x20 "product"          .scheme.function
+  hilight .hilight.psf 0x20 "subproduct"       .scheme.function
+  hilight .hilight.psf 0x20 "vendor"           .scheme.function
+  ;
+  hilight .hilight.psf 0x20 "ancestor"         .scheme.keyword
+  hilight .hilight.psf 0x20 "architecture"     .scheme.keyword
+  hilight .hilight.psf 0x20 "category_tag"     .scheme.keyword
+  hilight .hilight.psf 0x20 "category_title"   .scheme.keyword
+  hilight .hilight.psf 0x20 "control_files"    .scheme.keyword
+  hilight .hilight.psf 0x20 "copyright"        .scheme.keyword
+  hilight .hilight.psf 0x20 "corequisites"     .scheme.keyword
+  hilight .hilight.psf 0x20 "description"      .scheme.keyword
+  hilight .hilight.psf 0x20 "directory"        .scheme.keyword
+  hilight .hilight.psf 0x20 "end"              .scheme.keyword
+  hilight .hilight.psf 0x20 "exrequisites"     .scheme.keyword
+  hilight .hilight.psf 0x20 "file"             .scheme.keyword
+  hilight .hilight.psf 0x20 "file_permissions" .scheme.keyword
+  hilight .hilight.psf 0x20 "is_kernel"        .scheme.keyword
+  hilight .hilight.psf 0x20 "is_locatable"     .scheme.keyword
+  hilight .hilight.psf 0x20 "is_patch"         .scheme.keyword
+  hilight .hilight.psf 0x20 "is_reboot"        .scheme.keyword
+  hilight .hilight.psf 0x20 "is_sparse"        .scheme.keyword
+  hilight .hilight.psf 0x20 "layout_version"   .scheme.keyword
+  hilight .hilight.psf 0x20 "machine_type"     .scheme.keyword
+  hilight .hilight.psf 0x20 "number"           .scheme.keyword
+  hilight .hilight.psf 0x20 "os_name"          .scheme.keyword
+  hilight .hilight.psf 0x20 "os_release"       .scheme.keyword
+  hilight .hilight.psf 0x20 "os_version"       .scheme.keyword
+  hilight .hilight.psf 0x20 "postkernel"       .scheme.keyword
+  hilight .hilight.psf 0x20 "prereqisites"     .scheme.keyword
+  hilight .hilight.psf 0x20 "readme"           .scheme.keyword
+  hilight .hilight.psf 0x20 "revision"         .scheme.keyword
+  hilight .hilight.psf 0x20 "share_link"       .scheme.keyword
+  hilight .hilight.psf 0x20 "supersedes"       .scheme.keyword
+  hilight .hilight.psf 0x20 "tag"              .scheme.keyword
+  hilight .hilight.psf 0x20 "title"            .scheme.keyword
+  hilight .hilight.psf 0x20 "vendor_tag"       .scheme.keyword
+  ; Control file attributes
+  hilight .hilight.psf 0x20 "checkinstall"     .scheme.type
+  hilight .hilight.psf 0x20 "checkremove"      .scheme.type
+  hilight .hilight.psf 0x20 "configure"        .scheme.type
+  hilight .hilight.psf 0x20 "control_file[^s]" .scheme.type
+  hilight .hilight.psf 0x20 "fix"              .scheme.type
+  hilight .hilight.psf 0x20 "postinstall"      .scheme.type
+  hilight .hilight.psf 0x20 "postremove"       .scheme.type
+  hilight .hilight.psf 0x20 "preinstall"       .scheme.type
+  hilight .hilight.psf 0x20 "preremove"        .scheme.type
+  hilight .hilight.psf 0x20 "request"          .scheme.type
+  hilight .hilight.psf 0x20 "unconfigure"      .scheme.type
+  hilight .hilight.psf 0x20 "unpostinstall"    .scheme.type
+  hilight .hilight.psf 0x20 "unpreinstall"     .scheme.type
+  hilight .hilight.psf 0x20 "verify"           .scheme.type
+  hilight .hilight.psf 0x20 "space"            .scheme.type
+  ; Variables
+  hilight .hilight.psf 0 "true"                .scheme.prepro
+  hilight .hilight.psf 0 "false"               .scheme.prepro
 !endif
 ; Indentation scheme
 !if &sin "d" .fhook-psf.setup
-    0 indent  .hilight.psf 0 50
-    indent .hilight.psf n "^[ \t]*bundle" t
-    indent .hilight.psf n "^[ \t]*category[^_]" t
-    indent .hilight.psf n "^[ \t]*control_files" t
-    indent .hilight.psf n "^[ \t]*distribution" t
-    indent .hilight.psf n "^[ \t]*fileset" t
-    indent .hilight.psf n "^[ \t]*product" t
-    indent .hilight.psf n "^[ \t]*subproduct" t
-    indent .hilight.psf n "^[ \t]*vendor" t
-    indent .hilight.psf o "^[ \t]*end" -t
-    indent .hilight.psf e "\"" "\"" ""
-    indent .hilight.psf i "#"
+  0 indent  .hilight.psf 0 50
+  indent .hilight.psf n "^[ \t]*bundle" t
+  indent .hilight.psf n "^[ \t]*category[^_]" t
+  indent .hilight.psf n "^[ \t]*control_files" t
+  indent .hilight.psf n "^[ \t]*distribution" t
+  indent .hilight.psf n "^[ \t]*fileset" t
+  indent .hilight.psf n "^[ \t]*product" t
+  indent .hilight.psf n "^[ \t]*subproduct" t
+  indent .hilight.psf n "^[ \t]*vendor" t
+  indent .hilight.psf o "^[ \t]*end" -t
+  indent .hilight.psf e "\"" "\"" ""
+  indent .hilight.psf i "#"
 !endif
 
 buffer-init-fhook "psf"

@@ -9,384 +9,384 @@
 ;
 define-macro-file charsutl charset-change-exec
 define-macro spell-add-word
-    !if @?
-        ; add the spell extended chars
-        set-variable $buffer-mask &cat $buffer-mask "s"
-        !force backward-char
-        !while &pdec @# 1
-            !force forward-word
-            !if &not $status
-                set-variable $buffer-mask &rep $buffer-mask "s" ""
-                !abort
-            !endif
-            !force backward-word
-            set-variable #l0 $window-col
-            forward-word
-            set-variable #l1 &mid @wl #l0 &sub $window-col #l0
-            !if &seq @wc ">"
-                forward-char
-                set-variable #l2 &rig @wl $window-col
-                end-of-line
-                0x15 spell #l1 #l2
-            !else
-                !if &seq @wc "/"
-                    forward-char
-                    set-variable #l2 &trb &rig @wl $window-col
-                    end-of-line
-                !else
-                    set-variable #l2 ""
-                !endif
-                0x05 spell #l1 #l2
-            !endif
-        !done
+  !if @?
+    ; add the spell extended chars
+    set-variable $buffer-mask &cat $buffer-mask "s"
+    !force backward-char
+    !while &pdec @# 1
+      !force forward-word
+      !if &not $status
         set-variable $buffer-mask &rep $buffer-mask "s" ""
-    !else
-        !nma 0x05 spell
-    !endif
+        !abort
+      !endif
+      !force backward-word
+      set-variable #l0 $window-col
+      forward-word
+      set-variable #l1 &mid @wl #l0 &sub $window-col #l0
+      !if &seq @wc ">"
+        forward-char
+        set-variable #l2 &rig @wl $window-col
+        end-of-line
+        0x15 spell #l1 #l2
+      !else
+        !if &seq @wc "/"
+          forward-char
+          set-variable #l2 &trb &rig @wl $window-col
+          end-of-line
+        !else
+          set-variable #l2 ""
+        !endif
+        0x05 spell #l1 #l2
+      !endif
+    !done
+    set-variable $buffer-mask &rep $buffer-mask "s" ""
+  !else
+    !nma 0x05 spell
+  !endif
 !emacro
 
 define-macro spell-conv-aff-accent-chars
-    beginning-of-buffer
-    replace-string "`[Aa]"  "à"
-    beginning-of-buffer
-    replace-string "\\([^[]\\)\\^[Aa]"  "\\1â"
-    beginning-of-buffer
-    replace-string "'[Aa]"  "á"
-    beginning-of-buffer
-    replace-string "\"[Aa]"  "ä"
-    beginning-of-buffer
-    replace-string "`[Ee]"  "è"
-    beginning-of-buffer
-    replace-string "\\([^[]\\)\\^[Ee]"  "\\1ê"
-    beginning-of-buffer
-    replace-string "'[Ee]"  "é"
-    beginning-of-buffer
-    replace-string "\"[Ee]" "ë"
-    beginning-of-buffer
-    replace-string "'[Ii]"  "í"
-    beginning-of-buffer
-    replace-string "\\([^[]\\)\\^[Ii]"  "\\1î"
-    beginning-of-buffer
-    replace-string "\"[Ii]" "ï"
-    beginning-of-buffer
-    replace-string "'[Nn]"  "ñ"
-    beginning-of-buffer
-    replace-string "`[Oo]"  "ò"
-    beginning-of-buffer
-    replace-string "\\([^[]\\)\\^[Oo]"  "\\1ô"
-    beginning-of-buffer
-    replace-string "'[Oo]"  "ó"
-    beginning-of-buffer
-    replace-string "\"[Oo]"  "ö"
-    beginning-of-buffer
-    replace-string "`[Uu]"  "ù"
-    beginning-of-buffer
-    replace-string "\\([^[]\\)\\^[Uu]"  "\\1û"
-    beginning-of-buffer
-    replace-string "'[Uu]"  "ú"
-    beginning-of-buffer
-    replace-string "\"[Uu]" "ü"
-    beginning-of-buffer
+  beginning-of-buffer
+  replace-string "`[Aa]"  "à"
+  beginning-of-buffer
+  replace-string "\\([^[]\\)\\^[Aa]"  "\\1â"
+  beginning-of-buffer
+  replace-string "'[Aa]"  "á"
+  beginning-of-buffer
+  replace-string "\"[Aa]"  "ä"
+  beginning-of-buffer
+  replace-string "`[Ee]"  "è"
+  beginning-of-buffer
+  replace-string "\\([^[]\\)\\^[Ee]"  "\\1ê"
+  beginning-of-buffer
+  replace-string "'[Ee]"  "é"
+  beginning-of-buffer
+  replace-string "\"[Ee]" "ë"
+  beginning-of-buffer
+  replace-string "'[Ii]"  "í"
+  beginning-of-buffer
+  replace-string "\\([^[]\\)\\^[Ii]"  "\\1î"
+  beginning-of-buffer
+  replace-string "\"[Ii]" "ï"
+  beginning-of-buffer
+  replace-string "'[Nn]"  "ñ"
+  beginning-of-buffer
+  replace-string "`[Oo]"  "ò"
+  beginning-of-buffer
+  replace-string "\\([^[]\\)\\^[Oo]"  "\\1ô"
+  beginning-of-buffer
+  replace-string "'[Oo]"  "ó"
+  beginning-of-buffer
+  replace-string "\"[Oo]"  "ö"
+  beginning-of-buffer
+  replace-string "`[Uu]"  "ù"
+  beginning-of-buffer
+  replace-string "\\([^[]\\)\\^[Uu]"  "\\1û"
+  beginning-of-buffer
+  replace-string "'[Uu]"  "ú"
+  beginning-of-buffer
+  replace-string "\"[Uu]" "ü"
+  beginning-of-buffer
 !emacro
 
 0 define-macro spell-conv-aff-rules
-    set-variable .rule ""
-    set-variable .args ""
-    set-variable .argn ""
-    beginning-of-buffer
-    !force search-buffer "em" "^\\(flag\\|prefixes\\|suffixes\\)"
-    !if &seq @s1 "flag"
-        ml-write &spr "Failed to find initial prefixes or suffixes label (found flag label first on line %d)" $window-line
-        !abort
+  set-variable .rule ""
+  set-variable .args ""
+  set-variable .argn ""
+  beginning-of-buffer
+  !force search-buffer "em" "^\\(flag\\|prefixes\\|suffixes\\)"
+  !if &seq @s1 "flag"
+    ml-write &spr "Failed to find initial prefixes or suffixes label (found flag label first on line %d)" $window-line
+    !abort
+  !endif
+  set-variable #l0 $window-line
+  beginning-of-buffer
+  !while &not &equ $window-line #l0
+    !if &not &seq &lef &trl @wl 1 "#"
+      insert-string "#"
+      beginning-of-line
     !endif
-    set-variable #l0 $window-line
-    beginning-of-buffer
-    !while &not &equ $window-line #l0
-        !if &not &seq &lef &trl @wl 1 "#"
-            insert-string "#"
-            beginning-of-line
-        !endif
-        forward-line
-    !done
-    !while 1
-        beginning-of-line
-        !force search-buffer "em" "^\\(flag[ \t]+\\(*?\\)\\([A-Za-a]\\)[ \t]*:\\|prefixes\\|suffixes\\|[^\n>#]+>\\)"
-        !if &not $status
-            beginning-of-buffer
-            ; fix the comments
-            replace-string "#" ";"
-            beginning-of-buffer
-            !return
-        !elif &not &seq @s3 ""
-            set-variable .rule @s3
-            set-variable .argn &cond &seq @s2 "" "1" "2"
-            beginning-of-line
-            insert-string ";"
-        !elif &seq @s1 "prefixes"
-            set-variable .args "-"
-            beginning-of-line
-            insert-string ";"
-        !elif &seq @s1 "suffixes"
-            set-variable .args " "
-            beginning-of-line
-            insert-string ";"
-        !else
-            !if &seq &trb @s1 ">"
-                delete-indentation
-            !endif
-            !force -1 search-buffer "eM" "#"
-            !if &not $status
-                end-of-line
-                insert-string "#"
-            !endif
-            beginning-of-line
-            insert-string "\""
-            -1 search-buffer "eM" ">"
-            backward-delete-char
-            insert-string "\"_\"\"_ \""
-            !force -1 search-buffer "eM" ",-"
-            !if $status
-                backward-delete-char
-            !endif
-            -1 search-buffer "eM" "#"
-            backward-delete-char
-            insert-string "\"\n;"
-            2 backward-char
-            !force execute-string "\E-1\CXR[^\\\\]-\N\CF\CF\E \CR\"\"\CF\CW\CS,\CB\"_\"\CD"
-            beginning-of-line
-            -1 replace-string "[ \t]+" ""
-            beginning-of-line
-            -1 replace-string "_" " "
-            beginning-of-line
-            !if &seq &lef @wl 3 "\".\""
-                forward-char
-                forward-delete-char
-                backward-char
-            !endif
-            !if &seq .args ""
-                5000 ml-write &spr "Warning: Expected prefixes or suffixes label before line %d - defaulting to suffix" $window-line 
-                set-variable .args " "
-            !endif
-            !if &seq .args ""
-                5000 ml-write &spr "Error: Expected flag label before line %d - must be manually fixed" $window-line 
-                set-variable .argn "2"
-                set-variable .rule "?"
-            !endif
-            insert-string &spr "%s%s add-spell-rule \"%s\" " .args .argn .rule
-            set-mark
-            end-of-line
-            lower-case-region
-            insert-space
-            forward-delete-char
-        !endif
-        forward-line
-    !done
+    forward-line
+  !done
+  !while 1
+    beginning-of-line
+    !force search-buffer "em" "^\\(flag[ \t]+\\(*?\\)\\([A-Za-a]\\)[ \t]*:\\|prefixes\\|suffixes\\|[^\n>#]+>\\)"
+    !if &not $status
+      beginning-of-buffer
+      ; fix the comments
+      replace-string "#" ";"
+      beginning-of-buffer
+      !return
+    !elif &not &seq @s3 ""
+      set-variable .rule @s3
+      set-variable .argn &cond &seq @s2 "" "1" "2"
+      beginning-of-line
+      insert-string ";"
+    !elif &seq @s1 "prefixes"
+      set-variable .args "-"
+      beginning-of-line
+      insert-string ";"
+    !elif &seq @s1 "suffixes"
+      set-variable .args " "
+      beginning-of-line
+      insert-string ";"
+    !else
+      !if &seq &trb @s1 ">"
+        delete-indentation
+      !endif
+      !force -1 search-buffer "eM" "#"
+      !if &not $status
+        end-of-line
+        insert-string "#"
+      !endif
+      beginning-of-line
+      insert-string "\""
+      -1 search-buffer "eM" ">"
+      backward-delete-char
+      insert-string "\"_\"\"_ \""
+      !force -1 search-buffer "eM" ",-"
+      !if $status
+        backward-delete-char
+      !endif
+      -1 search-buffer "eM" "#"
+      backward-delete-char
+      insert-string "\"\n;"
+      2 backward-char
+      !force execute-string "\E-1\CXR[^\\\\]-\N\CF\CF\E \CR\"\"\CF\CW\CS,\CB\"_\"\CD"
+      beginning-of-line
+      -1 replace-string "[ \t]+" ""
+      beginning-of-line
+      -1 replace-string "_" " "
+      beginning-of-line
+      !if &seq &lef @wl 3 "\".\""
+        forward-char
+        forward-delete-char
+        backward-char
+      !endif
+      !if &seq .args ""
+        5000 ml-write &spr "Warning: Expected prefixes or suffixes label before line %d - defaulting to suffix" $window-line 
+        set-variable .args " "
+      !endif
+      !if &seq .args ""
+        5000 ml-write &spr "Error: Expected flag label before line %d - must be manually fixed" $window-line 
+        set-variable .argn "2"
+        set-variable .rule "?"
+      !endif
+      insert-string &spr "%s%s add-spell-rule \"%s\" " .args .argn .rule
+      set-mark
+      end-of-line
+      lower-case-region
+      insert-space
+      forward-delete-char
+    !endif
+    forward-line
+  !done
 !emacro
 
 define-macro spell-conv-aff-buffer
-    set-variable #l0 @mc5 "Current Char Set should be set to ISO-8895 - continue (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-    !if &seq &slo #l0 "n"
-        !abort
-    !endif
-    1 buffer-mode "magic"
-    1 buffer-mode "exact"
-    set-variable #l0 @mc5 "Fix aff accent letters (`a, \"o etc) to Latin1 chars (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-    !if &seq &slo #l0 "y"
-        spell-conv-aff-accent-chars
-    !endif
-    spell-conv-aff-rules
-    ml-write "Conversion complete and successfully - please check output carefully"
+  set-variable #l0 @mc5 "Current Char Set should be set to ISO-8895 - continue (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+  !if &seq &slo #l0 "n"
+    !abort
+  !endif
+  1 buffer-mode "magic"
+  1 buffer-mode "exact"
+  set-variable #l0 @mc5 "Fix aff accent letters (`a, \"o etc) to Latin1 chars (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+  !if &seq &slo #l0 "y"
+    spell-conv-aff-accent-chars
+  !endif
+  spell-conv-aff-rules
+  ml-write "Conversion complete and successfully - please check output carefully"
 !emacro
 
 define-macro spell-conv-aff-deutsch
-    set-variable #l0 @mc5 "Current Char Set should be set to ISO-8895 - continue (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-    !if &seq &slo #l0 "n"
-        !abort
-    !endif
-    ; fix the accent & sS letters first
-    1 buffer-mode "magic"
-    1 buffer-mode "exact"
-    beginning-of-buffer
-    replace-string "sS" "ß"
-    beginning-of-buffer
-    replace-string "[Aa]\"" "ä"
-    beginning-of-buffer
-    replace-string "[Oo]\"" "ö"
-    beginning-of-buffer
-    replace-string "[Uu]\"" "ü"
-    beginning-of-buffer
-    ; ZZZZ need to fix rules with [^ SS ] here
-    ; now convert the rules
-    spell-conv-aff-rules
-    ml-write "Conversion complete and successfully - please check output carefully"
+  set-variable #l0 @mc5 "Current Char Set should be set to ISO-8895 - continue (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+  !if &seq &slo #l0 "n"
+    !abort
+  !endif
+  ; fix the accent & sS letters first
+  1 buffer-mode "magic"
+  1 buffer-mode "exact"
+  beginning-of-buffer
+  replace-string "sS" "ß"
+  beginning-of-buffer
+  replace-string "[Aa]\"" "ä"
+  beginning-of-buffer
+  replace-string "[Oo]\"" "ö"
+  beginning-of-buffer
+  replace-string "[Uu]\"" "ü"
+  beginning-of-buffer
+  ; ZZZZ need to fix rules with [^ SS ] here
+  ; now convert the rules
+  spell-conv-aff-rules
+  ml-write "Conversion complete and successfully - please check output carefully"
 !emacro
 
 define-macro spell-conv-aff-russian
-    set-variable #l0 @mc5 "Current Char Set should be set to ISO-8895 - continue (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-    !if &seq &slo #l0 "n"
-        !abort
-    !endif
-    ; Generate Yo or Ye?
-    set-variable #l0 @mc5 "Generate Ye or Yo version (?/e/o) ? " "eEoO" "Y(e), Y(o), (C-g)Abort ? "
-    set-variable #l1 &cond &seq &slo #l0 "o" "ye" "ey"
-    1 buffer-mode "magic"
-    1 buffer-mode "exact"
-    beginning-of-buffer
-    replace-string &cat "^#" &lef #l1 1 ""
-    beginning-of-buffer
-    replace-string &spr "^#%s.*\n" &rig #l1 1 ""
-    beginning-of-buffer
-    charset-change-exec "koi8-r" ""
-    beginning-of-buffer
-    ; now convert the rules
-    spell-conv-aff-rules
-    ml-write "Conversion complete and successfully - please check output carefully"
+  set-variable #l0 @mc5 "Current Char Set should be set to ISO-8895 - continue (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+  !if &seq &slo #l0 "n"
+    !abort
+  !endif
+  ; Generate Yo or Ye?
+  set-variable #l0 @mc5 "Generate Ye or Yo version (?/e/o) ? " "eEoO" "Y(e), Y(o), (C-g)Abort ? "
+  set-variable #l1 &cond &seq &slo #l0 "o" "ye" "ey"
+  1 buffer-mode "magic"
+  1 buffer-mode "exact"
+  beginning-of-buffer
+  replace-string &cat "^#" &lef #l1 1 ""
+  beginning-of-buffer
+  replace-string &spr "^#%s.*\n" &rig #l1 1 ""
+  beginning-of-buffer
+  charset-change-exec "koi8-r" ""
+  beginning-of-buffer
+  ; now convert the rules
+  spell-conv-aff-rules
+  ml-write "Conversion complete and successfully - please check output carefully"
 !emacro
 
 define-macro spell-conv-accent-chars
-    1 buffer-mode "magic"
-    1 buffer-mode "exact"
-    beginning-of-buffer
-    replace-string "`A"  "À"
-    beginning-of-buffer
-    replace-string "\\^A"  "Â"
-    beginning-of-buffer
-    replace-string "'A"  "Á"
-    beginning-of-buffer
-    replace-string "\"A"  "Ä"
-    beginning-of-buffer
-    replace-string "`E"  "È"
-    beginning-of-buffer
-    replace-string "\\^E"  "Ê"
-    beginning-of-buffer
-    replace-string "'E"  "É"
-    beginning-of-buffer
-    replace-string "\"E" "Ë"
-    beginning-of-buffer
-    replace-string "'I"  "Í"
-    beginning-of-buffer
-    replace-string "\\^I"  "Î"
-    beginning-of-buffer
-    replace-string "\"I" "Ï"
-    beginning-of-buffer
-    replace-string "'N"  "Ñ"
-    beginning-of-buffer
-    replace-string "~N"  "Ñ"
-    beginning-of-buffer
-    replace-string "`O"  "Ò"
-    beginning-of-buffer
-    replace-string "'O"  "Ô"
-    beginning-of-buffer
-    replace-string "'O"  "Ó"
-    beginning-of-buffer
-    replace-string "\"O" "Ö"
-    beginning-of-buffer
-    replace-string "`U"  "Ù"
-    beginning-of-buffer
-    replace-string "\\^U"  "Û"
-    beginning-of-buffer
-    replace-string "'U"  "Ú"
-    beginning-of-buffer
-    replace-string "\"U" "Ü"
-    beginning-of-buffer
-    replace-string "`a"  "à"
-    beginning-of-buffer
-    replace-string "\\^a"  "â"
-    beginning-of-buffer
-    replace-string "'a"  "á"
-    beginning-of-buffer
-    replace-string "\"a" "ä"
-    beginning-of-buffer
-    replace-string "`e"  "è"
-    beginning-of-buffer
-    replace-string "\\^e"  "ê"
-    beginning-of-buffer
-    replace-string "'e"  "é"
-    beginning-of-buffer
-    replace-string "\"e" "ë"
-    beginning-of-buffer
-    replace-string "'i"  "í"
-    beginning-of-buffer
-    replace-string "\\^i"  "î"
-    beginning-of-buffer
-    replace-string "\"i" "ï"
-    beginning-of-buffer
-    replace-string "'n"  "ñ"
-    beginning-of-buffer
-    replace-string "~n"  "ñ"
-    beginning-of-buffer
-    replace-string "`o"  "ò"
-    beginning-of-buffer
-    replace-string "\\^o"  "ô"
-    beginning-of-buffer
-    replace-string "'o"  "ó"
-    beginning-of-buffer
-    replace-string "\"o" "ö"
-    beginning-of-buffer
-    replace-string "`u"  "ù"
-    beginning-of-buffer
-    replace-string "\\^u"  "û"
-    beginning-of-buffer
-    replace-string "'u"  "ú"
-    beginning-of-buffer
-    replace-string "\"u" "ü"
-    beginning-of-buffer
+  1 buffer-mode "magic"
+  1 buffer-mode "exact"
+  beginning-of-buffer
+  replace-string "`A"  "À"
+  beginning-of-buffer
+  replace-string "\\^A"  "Â"
+  beginning-of-buffer
+  replace-string "'A"  "Á"
+  beginning-of-buffer
+  replace-string "\"A"  "Ä"
+  beginning-of-buffer
+  replace-string "`E"  "È"
+  beginning-of-buffer
+  replace-string "\\^E"  "Ê"
+  beginning-of-buffer
+  replace-string "'E"  "É"
+  beginning-of-buffer
+  replace-string "\"E" "Ë"
+  beginning-of-buffer
+  replace-string "'I"  "Í"
+  beginning-of-buffer
+  replace-string "\\^I"  "Î"
+  beginning-of-buffer
+  replace-string "\"I" "Ï"
+  beginning-of-buffer
+  replace-string "'N"  "Ñ"
+  beginning-of-buffer
+  replace-string "~N"  "Ñ"
+  beginning-of-buffer
+  replace-string "`O"  "Ò"
+  beginning-of-buffer
+  replace-string "'O"  "Ô"
+  beginning-of-buffer
+  replace-string "'O"  "Ó"
+  beginning-of-buffer
+  replace-string "\"O" "Ö"
+  beginning-of-buffer
+  replace-string "`U"  "Ù"
+  beginning-of-buffer
+  replace-string "\\^U"  "Û"
+  beginning-of-buffer
+  replace-string "'U"  "Ú"
+  beginning-of-buffer
+  replace-string "\"U" "Ü"
+  beginning-of-buffer
+  replace-string "`a"  "à"
+  beginning-of-buffer
+  replace-string "\\^a"  "â"
+  beginning-of-buffer
+  replace-string "'a"  "á"
+  beginning-of-buffer
+  replace-string "\"a" "ä"
+  beginning-of-buffer
+  replace-string "`e"  "è"
+  beginning-of-buffer
+  replace-string "\\^e"  "ê"
+  beginning-of-buffer
+  replace-string "'e"  "é"
+  beginning-of-buffer
+  replace-string "\"e" "ë"
+  beginning-of-buffer
+  replace-string "'i"  "í"
+  beginning-of-buffer
+  replace-string "\\^i"  "î"
+  beginning-of-buffer
+  replace-string "\"i" "ï"
+  beginning-of-buffer
+  replace-string "'n"  "ñ"
+  beginning-of-buffer
+  replace-string "~n"  "ñ"
+  beginning-of-buffer
+  replace-string "`o"  "ò"
+  beginning-of-buffer
+  replace-string "\\^o"  "ô"
+  beginning-of-buffer
+  replace-string "'o"  "ó"
+  beginning-of-buffer
+  replace-string "\"o" "ö"
+  beginning-of-buffer
+  replace-string "`u"  "ù"
+  beginning-of-buffer
+  replace-string "\\^u"  "û"
+  beginning-of-buffer
+  replace-string "'u"  "ú"
+  beginning-of-buffer
+  replace-string "\"u" "ü"
+  beginning-of-buffer
 !emacro
 !if 0
-    ; some aff files use a" instead of "a ...
-    define-macro spell-conv-buffer-chars
-        beginning-of-buffer
-        replace-string "A\"" "Ä"
-        beginning-of-buffer
-        replace-string "a\"" "ä"
-        beginning-of-buffer
-        replace-string "O\"" "Ö"
-        beginning-of-buffer
-        replace-string "o\"" "ö"
-        beginning-of-buffer
-        replace-string "U\"" "Ü"
-        beginning-of-buffer
-        replace-string "u\"" "ü"
-        beginning-of-buffer
-    !emacro
+  ; some aff files use a" instead of "a ...
+  define-macro spell-conv-buffer-chars
+    beginning-of-buffer
+    replace-string "A\"" "Ä"
+    beginning-of-buffer
+    replace-string "a\"" "ä"
+    beginning-of-buffer
+    replace-string "O\"" "Ö"
+    beginning-of-buffer
+    replace-string "o\"" "ö"
+    beginning-of-buffer
+    replace-string "U\"" "Ü"
+    beginning-of-buffer
+    replace-string "u\"" "ü"
+    beginning-of-buffer
+  !emacro
 !endif
 
 define-macro spell-conv-word-buffer
-    spell-conv-buffer-chars
-    1000000 spell-add-word
+  spell-conv-buffer-chars
+  1000000 spell-add-word
 !emacro
 
 define-macro edit-dictionary
-    set-variable #l0 @ml04 "Dictionary to edit"
-    set-variable #l1 &spr "*%s*" &rig #l0 &rsin "/" #l0
-    !force 0 find-buffer #l1
-    !if $status
-        !return
-    !endif
-    find-buffer #l1
-    -1 add-dictionary #l0
-    beginning-of-buffer
-    buffer-bind-create "b" "C-c C-c" "" restore-dictionary
-    ml-write "Use C-c C-c to restore the dictionary"
+  set-variable #l0 @ml04 "Dictionary to edit"
+  set-variable #l1 &spr "*%s*" &rig #l0 &rsin "/" #l0
+  !force 0 find-buffer #l1
+  !if $status
+    !return
+  !endif
+  find-buffer #l1
+  -1 add-dictionary #l0
+  beginning-of-buffer
+  buffer-bind-create "b" "C-c C-c" "" restore-dictionary
+  ml-write "Use C-c C-c to restore the dictionary"
 !emacro
 
 define-macro restore-dictionary
-    beginning-of-buffer
-    !if &seq &lef @wl 12 "Dictionary: "
-        set-variable #l3 &rig @wl 12
-    !else
-        2 ml-write "Dictionary ID string lost, Aborting!"
-        !abort
-    !endif
-    !force 0 delete-dictionary #l3
-    0 add-dictionary #l3
-    end-of-buffer
-    set-variable #l0 $window-line
-    beginning-of-buffer
-    forward-line
-    !force #l0 spell-add-word
-    beginning-of-buffer
-    ml-write "All Done!!"
+  beginning-of-buffer
+  !if &seq &lef @wl 12 "Dictionary: "
+    set-variable #l3 &rig @wl 12
+  !else
+    2 ml-write "Dictionary ID string lost, Aborting!"
+    !abort
+  !endif
+  !force 0 delete-dictionary #l3
+  0 add-dictionary #l3
+  end-of-buffer
+  set-variable #l0 $window-line
+  beginning-of-buffer
+  forward-line
+  !force #l0 spell-add-word
+  beginning-of-buffer
+  ml-write "All Done!!"
 !emacro
 
 

@@ -7,13 +7,13 @@
 ; Authors:     Jon Green
 ;
 define-macro fhook-reg
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "reg"
-    set-variable :mouse-pick-1 void
-    set-variable :mouse-drop-1 reg-toggle-hidden
-    set-variable :mouse-pick-3 void
-    set-variable :mouse-drop-3 reg-set-node
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "reg"
+  set-variable :mouse-pick-1 void
+  set-variable :mouse-drop-1 reg-toggle-hidden
+  set-variable :mouse-pick-3 void
+  set-variable :mouse-drop-3 reg-set-node
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -27,153 +27,153 @@ set-variable .fhook-reg.command-kbind "|space|return|c|m|d|delete|i|insert|"
 set-variable .fhook-reg.command-desc  "|\HToggle Tree Visibility|\HSet Value of Current Node|\HCopy Current Node|\HMove Current Node|\HDelete Current Node||\HInsert New Node||"
 
 !if &and &sin "h" .fhook-reg.setup &band .hilight.flags 0x02 
-    !if &not &exist .hilight.reg
-        set-variable .hilight.reg  &pinc .hilight.next 1
-    !endif
-    0 hilight  .hilight.reg  0                    $global-scheme
-    hilight .hilight.reg  0x101 "*"            .scheme.select
-    hilight .hilight.reg  0x001 "+"            .scheme.dir-closed
-    hilight .hilight.reg  0x001 "-"            .scheme.dir-open
-    hilight .hilight.reg  0x001 "!"            .scheme.dir-open
-    hilight .hilight.reg  0x000 "="            .scheme.keyword
-    hilight .hilight.reg  0x004 "\"" "\"" "\\" .scheme.string
-    ; Color the directory lines if requested.
-    !if &not &seq &lef $box-chars 1 "|"
-        hilight .hilight.reg 0x001 &lef $box-chars  1   .scheme.dir-tree
-        hilight .hilight.reg 0x001 &rig $box-chars 10   .scheme.dir-tree
-        hilight .hilight.reg 0x001 &mid $box-chars  3 1 .scheme.dir-tree
-        hilight .hilight.reg 0x001 &mid $box-chars  6 1 .scheme.dir-tree
-    !endif
-    hilight .hilight.reg  0x002 "->"  .scheme.dirslink
+  !if &not &exist .hilight.reg
+    set-variable .hilight.reg  &pinc .hilight.next 1
+  !endif
+  0 hilight  .hilight.reg  0                    $global-scheme
+  hilight .hilight.reg  0x101 "*"            .scheme.select
+  hilight .hilight.reg  0x001 "+"            .scheme.dir-closed
+  hilight .hilight.reg  0x001 "-"            .scheme.dir-open
+  hilight .hilight.reg  0x001 "!"            .scheme.dir-open
+  hilight .hilight.reg  0x000 "="            .scheme.keyword
+  hilight .hilight.reg  0x004 "\"" "\"" "\\" .scheme.string
+  ; Color the directory lines if requested.
+  !if &not &seq &lef $box-chars 1 "|"
+    hilight .hilight.reg 0x001 &lef $box-chars  1   .scheme.dir-tree
+    hilight .hilight.reg 0x001 &rig $box-chars 10   .scheme.dir-tree
+    hilight .hilight.reg 0x001 &mid $box-chars  3 1 .scheme.dir-tree
+    hilight .hilight.reg 0x001 &mid $box-chars  6 1 .scheme.dir-tree
+  !endif
+  hilight .hilight.reg  0x002 "->"  .scheme.dirslink
 !endif
 
 0 define-macro reg-toggle-hidden
-    beginning-of-line
-    !force -1 search-forward "[+-] "
-    !if $status
-        2 backward-char
-        !if &seq @wc "-"
-            set-variable #l0 "h"
-        !elif &seq @wc "+"
-            set-variable #l0 "H"
-        !else
-            beginning-of-line
-            !return
-        !endif
-        set-variable #l2 $window-line
-        set-variable #l3 $window-y-scroll
-        &sub #l2 1 mark-registry "" #l0
-        list-registry
-        set-variable $window-line #l2
-        set-variable $window-y-scroll #l3
+  beginning-of-line
+  !force -1 search-forward "[+-] "
+  !if $status
+    2 backward-char
+    !if &seq @wc "-"
+      set-variable #l0 "h"
+    !elif &seq @wc "+"
+      set-variable #l0 "H"
+    !else
+      beginning-of-line
+      !return
     !endif
+    set-variable #l2 $window-line
+    set-variable #l3 $window-y-scroll
+    &sub #l2 1 mark-registry "" #l0
+    list-registry
+    set-variable $window-line #l2
+    set-variable $window-y-scroll #l3
+  !endif
 !emacro
 
 0 define-macro reg-set-node
-    beginning-of-line
-    !if &les &len @wl 4
-        ml-write "[Invalid line]"
-        !abort
-    !endif
-    set-variable #l2 $window-line
-    set-variable #l3 $window-y-scroll
-    ; get the complete node name into $result
-    &sub #l2 1 mark-registry "" "?"
-    set-variable #l1 $result
-    mark-registry #l1 "g"
-    !if &sin "!" $result
-        set-variable #l0 @ml &spr "Set %s to" &rig #l1 &rsin "/" #l1
-    !else
-        set-variable #l0 @ml1 &spr "Set %s to" &rig #l1 &rsin "/" #l1 &reg #l1 ""
-    !endif
-    set-registry #l1 #l0
-    list-registry
-    set-variable $window-line #l2
-    set-variable $window-y-scroll #l3
+  beginning-of-line
+  !if &les &len @wl 4
+    ml-write "[Invalid line]"
+    !abort
+  !endif
+  set-variable #l2 $window-line
+  set-variable #l3 $window-y-scroll
+  ; get the complete node name into $result
+  &sub #l2 1 mark-registry "" "?"
+  set-variable #l1 $result
+  mark-registry #l1 "g"
+  !if &sin "!" $result
+    set-variable #l0 @ml &spr "Set %s to" &rig #l1 &rsin "/" #l1
+  !else
+    set-variable #l0 @ml1 &spr "Set %s to" &rig #l1 &rsin "/" #l1 &reg #l1 ""
+  !endif
+  set-registry #l1 #l0
+  list-registry
+  set-variable $window-line #l2
+  set-variable $window-y-scroll #l3
 !emacro
 
 0 define-macro reg-insert-node
-    beginning-of-line
-    !if &and &gre $buffer-line 1 &les &len @wl 4
-        ml-write "[Invalid line]"
-        !abort
-    !endif
-    set-variable #l2 $window-line
-    set-variable #l3 $window-y-scroll
-    ; get the complete node name into $result
-    &sub #l2 1 mark-registry "" "?"
-    set-variable #l1 $result
-    set-variable #l4 @ml &spr "Name of new node to add to %s" &rig #l1 &rsin "/" #l1
-    set-variable #l0 @ml &spr "Set %s to" #l4
-    set-registry &spr "%s/%s" #l1 #l4 #l0
-    list-registry
-    set-variable $window-line #l2
-    set-variable $window-y-scroll #l3
+  beginning-of-line
+  !if &and &gre $buffer-line 1 &les &len @wl 4
+    ml-write "[Invalid line]"
+    !abort
+  !endif
+  set-variable #l2 $window-line
+  set-variable #l3 $window-y-scroll
+  ; get the complete node name into $result
+  &sub #l2 1 mark-registry "" "?"
+  set-variable #l1 $result
+  set-variable #l4 @ml &spr "Name of new node to add to %s" &rig #l1 &rsin "/" #l1
+  set-variable #l0 @ml &spr "Set %s to" #l4
+  set-registry &spr "%s/%s" #l1 #l4 #l0
+  list-registry
+  set-variable $window-line #l2
+  set-variable $window-y-scroll #l3
 !emacro
 
 0 define-macro reg-delete-node
-    beginning-of-line
-    !if &les &len @wl 4
-        ml-write "[Invalid line]"
-        !abort
-    !endif
-    set-variable #l2 $window-line
-    set-variable #l3 $window-y-scroll
-    ; get the complete node name into $result
-    &sub #l2 1 mark-registry "" "?"
-    delete-registry $result @mna
-    list-registry
-    set-variable $window-line #l2
-    set-variable $window-y-scroll #l3
+  beginning-of-line
+  !if &les &len @wl 4
+    ml-write "[Invalid line]"
+    !abort
+  !endif
+  set-variable #l2 $window-line
+  set-variable #l3 $window-y-scroll
+  ; get the complete node name into $result
+  &sub #l2 1 mark-registry "" "?"
+  delete-registry $result @mna
+  list-registry
+  set-variable $window-line #l2
+  set-variable $window-y-scroll #l3
 !emacro
 
 0 define-macro reg-copy-node
-    beginning-of-line
-    !if &les &len @wl 4
-        ml-write "[Invalid line]"
-        !abort
-    !endif
-    set-variable #l2 $window-line
-    ; get the complete node name into $result
-    &sub #l2 1 mark-registry "" "?"
-    set-variable #l1 $result
-    set-variable #l4 @ml2 &spr "Copy node %s to" #l1 &lef #l1 &rsin "/" #l1
+  beginning-of-line
+  !if &les &len @wl 4
+    ml-write "[Invalid line]"
+    !abort
+  !endif
+  set-variable #l2 $window-line
+  ; get the complete node name into $result
+  &sub #l2 1 mark-registry "" "?"
+  set-variable #l1 $result
+  set-variable #l4 @ml2 &spr "Copy node %s to" #l1 &lef #l1 &rsin "/" #l1
+  !force mark-registry #l4 "?"
+  !if $status
+    set-variable #l4 &spr "%s/%s" $result &rig #l1 &rsin "/" #l1
     !force mark-registry #l4 "?"
     !if $status
-        set-variable #l4 &spr "%s/%s" $result &rig #l1 &rsin "/" #l1
-        !force mark-registry #l4 "?"
-        !if $status
-            ml-write &spr "[Registry node %s already exists]"  $result
-            !abort
-        !endif
+      ml-write &spr "[Registry node %s already exists]"  $result
+      !abort
     !endif
-    copy-registry #l1 #l4    
-    list-registry
+  !endif
+  copy-registry #l1 #l4    
+  list-registry
 !emacro
 
 0 define-macro reg-move-node
-    beginning-of-line
-    !if &les &len @wl 4
-        ml-write "[Invalid line]"
-        !abort
-    !endif
-    set-variable #l2 $window-line
-    ; get the complete node name into $result
-    &sub #l2 1 mark-registry "" "?"
-    set-variable #l1 $result
-    set-variable #l4 @ml2 &spr "Move node %s to" &rig #l1 &rsin "/" #l1 &lef #l1 &rsin "/" #l1
+  beginning-of-line
+  !if &les &len @wl 4
+    ml-write "[Invalid line]"
+    !abort
+  !endif
+  set-variable #l2 $window-line
+  ; get the complete node name into $result
+  &sub #l2 1 mark-registry "" "?"
+  set-variable #l1 $result
+  set-variable #l4 @ml2 &spr "Move node %s to" &rig #l1 &rsin "/" #l1 &lef #l1 &rsin "/" #l1
+  !force mark-registry #l4 "?"
+  !if $status
+    set-variable #l4 &spr "%s/%s" $result &rig #l1 &rsin "/" #l1
     !force mark-registry #l4 "?"
     !if $status
-        set-variable #l4 &spr "%s/%s" $result &rig #l1 &rsin "/" #l1
-        !force mark-registry #l4 "?"
-        !if $status
-            ml-write &spr "[Registry node %s already exists]"  $result
-            !abort
-        !endif
+      ml-write &spr "[Registry node %s already exists]"  $result
+      !abort
     !endif
-    copy-registry #l1 #l4    
-    delete-registry #l1
-    list-registry
+  !endif
+  copy-registry #l1 #l4    
+  delete-registry #l1
+  list-registry
 !emacro
 
 buffer-init-fhook "reg"

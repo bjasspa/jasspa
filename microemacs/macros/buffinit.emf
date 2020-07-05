@@ -12,90 +12,90 @@ define-macro-file collapse collapse-current collapse-all beginning-of-function e
 0 define-macro-file etfinsrt
 
 0 define-macro buffer-init-modes
-    set-variable #l1 &ind &spr ".%s.setup" $buffer-fhook
-    ; setup buffer modes
-    !if &sin "e" #l1
-        1 buffer-mode "exact"
-    !elif &sin "E" #l1
-        -1 buffer-mode "exact"
-    !endif
-    !if &sin "m" #l1
-        1 buffer-mode "magic"
-    !elif &sin "M" #l1
-        -1 buffer-mode "magic"
-    !endif
-    !if &sin "d" #l1
-        set-variable $buffer-indent &ind &cat ".hilight." &rig $buffer-fhook 6
-    !elif &sin "i" #l1
-        1 buffer-mode "indent"
-    !elif &sin "I" #l1
-        -1 buffer-mode "indent"
-    !endif
-    !if &sin "j" #l1
-        1 buffer-mode "justify"
-    !elif &sin "J" #l1
-        -1 buffer-mode "justify"
-    !endif
-    !if &sin "w" #l1
-        1 buffer-mode "wrap"
-    !elif &sin "W" #l1
-        -1 buffer-mode "wrap"
-    !endif
-    !if &sin "t" #l1
-        1 buffer-mode "tab"
-    !elif &sin "T" #l1
-        -1 buffer-mode "tab"
-    !endif
-    !if &sin "x" #l1
-        1 buffer-mode "time"
-    !elif &sin "X" #l1
-        -1 buffer-mode "time"
-    !endif
-    !if &sin "k" #l1
-        1 buffer-mode "backup"
-    !elif &sin "K" #l1
-        -1 buffer-mode "backup"
-    !endif
-    ; setup fence displaying - is the dmf extension being used?
-    !if .display-matching-fence.dmf
-        set-variable &ind &spr ".%s.dmf" $buffer-fhook &cond &sin "G" #l1 0 .display-matching-fence.dmf
-    !elif &sin "G" #l1
-        -1 buffer-mode "fence"
-    !endif
-    !if &sin "u" #l1
-        1 buffer-mode "undo"
-    !elif &sin "U" #l1
-        -1 buffer-mode "undo"
-    !endif
+  set-variable #l1 &ind &spr ".%s.setup" $buffer-fhook
+  ; setup buffer modes
+  !if &sin "e" #l1
+    1 buffer-mode "exact"
+  !elif &sin "E" #l1
+    -1 buffer-mode "exact"
+  !endif
+  !if &sin "m" #l1
+    1 buffer-mode "magic"
+  !elif &sin "M" #l1
+    -1 buffer-mode "magic"
+  !endif
+  !if &sin "d" #l1
+    set-variable $buffer-indent &ind &cat ".hilight." &rig $buffer-fhook 6
+  !elif &sin "i" #l1
+    1 buffer-mode "indent"
+  !elif &sin "I" #l1
+    -1 buffer-mode "indent"
+  !endif
+  !if &sin "j" #l1
+    1 buffer-mode "justify"
+  !elif &sin "J" #l1
+    -1 buffer-mode "justify"
+  !endif
+  !if &sin "w" #l1
+    1 buffer-mode "wrap"
+  !elif &sin "W" #l1
+    -1 buffer-mode "wrap"
+  !endif
+  !if &sin "t" #l1
+    1 buffer-mode "tab"
+  !elif &sin "T" #l1
+    -1 buffer-mode "tab"
+  !endif
+  !if &sin "x" #l1
+    1 buffer-mode "time"
+  !elif &sin "X" #l1
+    -1 buffer-mode "time"
+  !endif
+  !if &sin "k" #l1
+    1 buffer-mode "backup"
+  !elif &sin "K" #l1
+    -1 buffer-mode "backup"
+  !endif
+  ; setup fence displaying - is the dmf extension being used?
+  !if .display-matching-fence.dmf
+    set-variable &ind &spr ".%s.dmf" $buffer-fhook &cond &sin "G" #l1 0 .display-matching-fence.dmf
+  !elif &sin "G" #l1
+    -1 buffer-mode "fence"
+  !endif
+  !if &sin "u" #l1
+    1 buffer-mode "undo"
+  !elif &sin "U" #l1
+    -1 buffer-mode "undo"
+  !endif
 !emacro
 
 ; setup buffer bindings
 ; Create a buffer binding
 ;     buffer-bind-create <flag> <kbind> <narg> <command>
 0 define-macro buffer-bind-create
-    set-variable #l1 @1
-    set-variable #l2 @2
-    !if &not &sin "i" #l1
-        !if &exi .buffer-bind-key.map-from
-            !if &not &set #l0 &lfind .buffer-bind-key.map-from #l2
-                !return
-            !elif &seq &set #l2 &lget .buffer-bind-key.map-to #l0 ""
-                !return
-            !endif
-        !endif
+  set-variable #l1 @1
+  set-variable #l2 @2
+  !if &not &sin "i" #l1
+    !if &exi .buffer-bind-key.map-from
+      !if &not &set #l0 &lfind .buffer-bind-key.map-from #l2
+        !return
+      !elif &seq &set #l2 &lget .buffer-bind-key.map-to #l0 ""
+        !return
+      !endif
     !endif
-    !if &not &sin "o" #l1
-        !if &not &seq &cbind #l2 "ERROR"
-            !return
-        !endif
+  !endif
+  !if &not &sin "o" #l1
+    !if &not &seq &cbind #l2 "ERROR"
+      !return
     !endif
-    set-variable #l3 @3
-    set-variable #l4 @4
-    !if &seq #l3 ""
-        !force buffer-bind-key #l4 #l2
-    !else
-        !force #l3 buffer-bind-key #l4 #l2
-    !endif
+  !endif
+  set-variable #l3 @3
+  set-variable #l4 @4
+  !if &seq #l3 ""
+    !force buffer-bind-key #l4 #l2
+  !else
+    !force #l3 buffer-bind-key #l4 #l2
+  !endif
 !emacro
 
 ; Build the .fhook-xxx.command-flag/name/nbind/kbind/desc lists. We convert
@@ -104,252 +104,252 @@ define-macro-file collapse collapse-current collapse-all beginning-of-function e
 ; completed. Note that if the template is executed again then the command-n
 ; variables are reinstated and a new set of command variables are constructed.
 0 define-macro buffer-command-setup
-    set-variable #l0 0
-    ; If a .fhook-xxx.command-1 variable exists then delete all of the
-    ; .fhook-xxx.command-yyyy variables and re-load.
-    !if &exi &spr ".%s.command-%d" $buffer-fhook #l0
-        ; Delete the existing variables if they exist - this only happens on
-        ; a re-load of the template.
-        set-variable &spr ".%s.command-flag"  $buffer-fhook "||"
-        set-variable &spr ".%s.command-name"  $buffer-fhook "||"
-        set-variable &spr ".%s.command-nbind" $buffer-fhook "||"
-        set-variable &spr ".%s.command-kbind" $buffer-fhook "||"
-        set-variable &spr ".%s.command-desc"  $buffer-fhook "||"
-        ; Create the new command list.
-        !repeat
-            ; Generate the command lame and increment for &lset index.
-            set-variable #l1 &spr ".%s.command-%d" $buffer-fhook #l0
-            set-variable #l0 &add #l0 1
-            ; Add command item to the command lists.
-            set-variable #l2 &spr ".%s.command-flag"  $buffer-fhook
-            set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 1 ""
-            set-variable #l2 &spr ".%s.command-nbind"  $buffer-fhook
-            set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 2 ""
-            set-variable #l2 &spr ".%s.command-name"  $buffer-fhook
-            set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 3 ""
-            set-variable #l2 &spr ".%s.command-kbind"  $buffer-fhook
-            set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 4 ""
-            set-variable #l2 &spr ".%s.command-desc"  $buffer-fhook
-            set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 5 ""
-            ; Delete the existing command item now that it is added. If the
-            ; template is re-executed then the variable is re-created and
-            ; will be evaluated next time.
-            !force unset-variable &ind #l1
-        !until &not &exi &spr ".%s.command-%d" $buffer-fhook #l0
-    !endif
+  set-variable #l0 0
+  ; If a .fhook-xxx.command-1 variable exists then delete all of the
+  ; .fhook-xxx.command-yyyy variables and re-load.
+  !if &exi &spr ".%s.command-%d" $buffer-fhook #l0
+    ; Delete the existing variables if they exist - this only happens on
+    ; a re-load of the template.
+    set-variable &spr ".%s.command-flag"  $buffer-fhook "||"
+    set-variable &spr ".%s.command-name"  $buffer-fhook "||"
+    set-variable &spr ".%s.command-nbind" $buffer-fhook "||"
+    set-variable &spr ".%s.command-kbind" $buffer-fhook "||"
+    set-variable &spr ".%s.command-desc"  $buffer-fhook "||"
+    ; Create the new command list.
+    !repeat
+      ; Generate the command lame and increment for &lset index.
+      set-variable #l1 &spr ".%s.command-%d" $buffer-fhook #l0
+      set-variable #l0 &add #l0 1
+      ; Add command item to the command lists.
+      set-variable #l2 &spr ".%s.command-flag"  $buffer-fhook
+      set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 1 ""
+      set-variable #l2 &spr ".%s.command-nbind"  $buffer-fhook
+      set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 2 ""
+      set-variable #l2 &spr ".%s.command-name"  $buffer-fhook
+      set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 3 ""
+      set-variable #l2 &spr ".%s.command-kbind"  $buffer-fhook
+      set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 4 ""
+      set-variable #l2 &spr ".%s.command-desc"  $buffer-fhook
+      set-variable &ind #l2 &lset &ind #l2 #l0 &lget &ind #l1 5 ""
+      ; Delete the existing command item now that it is added. If the
+      ; template is re-executed then the variable is re-created and
+      ; will be evaluated next time.
+      !force unset-variable &ind #l1
+    !until &not &exi &spr ".%s.command-%d" $buffer-fhook #l0
+  !endif
 !emacro
 
 0 define-macro buffer-init
-    set-variable #l9 $result
-    set-variable $buffer-fhook &cat "fhook-" &set #l8 @1
-    buffer-command-setup
-    set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
-    !if &not @#
-        !if &sin "n" #l0
-            !force set-variable #l1 @2
-            set-variable #l1 &cond $status #l1 #l8
-            etfinsrt #l1
-        !endif
+  set-variable #l9 $result
+  set-variable $buffer-fhook &cat "fhook-" &set #l8 @1
+  buffer-command-setup
+  set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
+  !if &not @#
+    !if &sin "n" #l0
+      !force set-variable #l1 @2
+      set-variable #l1 &cond $status #l1 #l8
+      etfinsrt #l1
     !endif
-    !if &set #l1 &reg &spr "/history/fhook/%s-tab-width" #l8 "0"
-        set-variable $buffer-tab-width #l1
-    !elif &set #l1 &ind &spr ".%s.tab-width" $buffer-fhook
-        set-variable $buffer-tab-width #l1
+  !endif
+  !if &set #l1 &reg &spr "/history/fhook/%s-tab-width" #l8 "0"
+    set-variable $buffer-tab-width #l1
+  !elif &set #l1 &ind &spr ".%s.tab-width" $buffer-fhook
+    set-variable $buffer-tab-width #l1
+  !endif
+  !if &set #l1 &reg &spr "/history/fhook/%s-indent-width" #l8 "0"
+    set-variable $buffer-indent-width #l1
+  !elif &set #l1 &ind &spr ".%s.indent-width" $buffer-fhook
+    set-variable $buffer-indent-width #l1
+  !endif
+  !if &set #l1 &reg &spr "/history/fhook/%s-fill-col" #l8 "0"
+    set-variable $buffer-fill-col #l1
+  !elif &set #l1 &ind &spr ".%s.fill-col" $buffer-fhook
+    set-variable $buffer-fill-col #l1
+  !endif
+  !if &len &set #l1 &reg &spr "/history/fhook/%s-fill-mode" #l8 ""
+    !if &len &trr #l1
+      set-variable $buffer-fill-mode &trr #l1
     !endif
-    !if &set #l1 &reg &spr "/history/fhook/%s-indent-width" #l8 "0"
-        set-variable $buffer-indent-width #l1
-    !elif &set #l1 &ind &spr ".%s.indent-width" $buffer-fhook
-        set-variable $buffer-indent-width #l1
+  !elif &exi &set #l1 &spr ".%s.fill-mode" $buffer-fhook
+    !if &len &set #l1 &trr &ind #l1
+      set-variable $buffer-fill-mode &trr #l1
     !endif
-    !if &set #l1 &reg &spr "/history/fhook/%s-fill-col" #l8 "0"
-        set-variable $buffer-fill-col #l1
-    !elif &set #l1 &ind &spr ".%s.fill-col" $buffer-fhook
-        set-variable $buffer-fill-col #l1
+  !endif
+  buffer-init-modes
+  set-variable #l7 0
+  !if &sin "h" #l0
+    !if &band .hilight.flags 0x02 
+      !jump 2
+    !else &and &band .hilight.flags 0x01 &sin "1" &ind &spr ".%s.setup-mask" $buffer-fhook
+      set-variable #l7 1
+      set-variable $buffer-hilight &ind &cat ".hilight." &rig $buffer-fhook 6
     !endif
-    !if &len &set #l1 &reg &spr "/history/fhook/%s-fill-mode" #l8 ""
-        !if &len &trr #l1
-            set-variable $buffer-fill-mode &trr #l1
-        !endif
-    !elif &exi &set #l1 &spr ".%s.fill-mode" $buffer-fhook
-        !if &len &set #l1 &trr &ind #l1
-            set-variable $buffer-fill-mode &trr #l1
-        !endif
+  !endif
+  !if &sin "b" #l0
+    !force buffer-abbrev-file &rig $buffer-fhook 6
+  !endif
+  set-variable #l1 &ind &spr ".%s.command-flag"  $buffer-fhook
+  set-variable #l2 &ind &spr ".%s.command-kbind" $buffer-fhook
+  set-variable #l3 &ind &spr ".%s.command-nbind" $buffer-fhook
+  set-variable #l4 &ind &spr ".%s.command-name"  $buffer-fhook
+  set-variable #l6 0
+  !while &not &seq "" &set #l5 &lget #l1 &inc #l6 1
+    !if &sin "b" #l5
+      !if &not &sin "H" #l5
+        !jump 2
+      !elif #l7
+        !force buffer-bind-create #l5 &lget #l2 #l6 &lget #l3 #l6 &lget #l4 #l6
+      !endif
     !endif
-    buffer-init-modes
-    set-variable #l7 0
-    !if &sin "h" #l0
-        !if &band .hilight.flags 0x02 
-            !jump 2
-        !else &and &band .hilight.flags 0x01 &sin "1" &ind &spr ".%s.setup-mask" $buffer-fhook
-            set-variable #l7 1
-            set-variable $buffer-hilight &ind &cat ".hilight." &rig $buffer-fhook 6
-        !endif
+  !done
+  !if &sin "d" #l0
+    buffer-bind-create "bi" "C-tab" "" normal-tab
+  !endif
+  set-variable #l5 &ind &spr ".%s.comment" $buffer-fhook
+  !if &not &seq &lget #l5 1 ""
+    buffer-bind-create "b" "C-c C-s" "" comment-start
+    buffer-bind-create "b" "C-c C-c" "" comment-line
+    buffer-bind-create "b" "C-c C-d" "" uncomment-line
+    buffer-bind-create "b" "C-c C-e" "" comment-to-end-of-line
+    buffer-bind-create "b" "C-c C-o" "" comment-restyle
+    !if &sin "r" &lget #l5 6
+      buffer-bind-create "bo" "esc o" "" comment-restyle
+      buffer-bind-create "bo" "esc q" "" comment-restyle
     !endif
-    !if &sin "b" #l0
-        !force buffer-abbrev-file &rig $buffer-fhook 6
+  !endif
+  !if &or &exi &ind &spr ".%s.fold" $buffer-fhook &sin "fold-open:" $result
+    !force 0 fold-setup $result
+    !if &not $status
+      !jump 3
     !endif
-    set-variable #l1 &ind &spr ".%s.command-flag"  $buffer-fhook
-    set-variable #l2 &ind &spr ".%s.command-kbind" $buffer-fhook
-    set-variable #l3 &ind &spr ".%s.command-nbind" $buffer-fhook
-    set-variable #l4 &ind &spr ".%s.command-name"  $buffer-fhook
-    set-variable #l6 0
-    !while &not &seq "" &set #l5 &lget #l1 &inc #l6 1
-        !if &sin "b" #l5
-            !if &not &sin "H" #l5
-                !jump 2
-            !elif #l7
-                !force buffer-bind-create #l5 &lget #l2 #l6 &lget #l3 #l6 &lget #l4 #l6
-            !endif
-        !endif
-    !done
-    !if &sin "d" #l0
-        buffer-bind-create "bi" "C-tab" "" normal-tab
+  !elif &sin "f" #l0
+    buffer-bind-create "b" "f2" "" collapse-current 
+    buffer-bind-create "b" "C-f2" "" collapse-all 
+    buffer-bind-create "b" "esc C-a" "" beginning-of-function
+    buffer-bind-create "b" "esc C-e" "" end-of-function
+    buffer-bind-create "b" "esc C-h" "" mark-function
+  !endif
+  !if &sin "s" #l0
+    !if &not &seq %language "Default"
+      !if &reg "/history/spell/autospell" "0"
+        1 auto-spell
+      !endif
     !endif
-    set-variable #l5 &ind &spr ".%s.comment" $buffer-fhook
-    !if &not &seq &lget #l5 1 ""
-        buffer-bind-create "b" "C-c C-s" "" comment-start
-        buffer-bind-create "b" "C-c C-c" "" comment-line
-        buffer-bind-create "b" "C-c C-d" "" uncomment-line
-        buffer-bind-create "b" "C-c C-e" "" comment-to-end-of-line
-        buffer-bind-create "b" "C-c C-o" "" comment-restyle
-        !if &sin "r" &lget #l5 6
-            buffer-bind-create "bo" "esc o" "" comment-restyle
-            buffer-bind-create "bo" "esc q" "" comment-restyle
-        !endif
+  !endif
+  !if &not &seq #l9 ""
+    !if &set #l1 &xseq #l9 ".*tab-width[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;].*"
+      set-variable $buffer-tab-width @s1
     !endif
-    !if &or &exi &ind &spr ".%s.fold" $buffer-fhook &sin "fold-open:" $result
-        !force 0 fold-setup $result
-        !if &not $status
-            !jump 3
-        !endif
-    !elif &sin "f" #l0
-        buffer-bind-create "b" "f2" "" collapse-current 
-        buffer-bind-create "b" "C-f2" "" collapse-all 
-        buffer-bind-create "b" "esc C-a" "" beginning-of-function
-        buffer-bind-create "b" "esc C-e" "" end-of-function
-        buffer-bind-create "b" "esc C-h" "" mark-function
+    !if &xseq #l9 ".*indent-width[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;].*"
+      set-variable $buffer-indent-width @s1
+    !elif #l1
+      set-variable $buffer-indent-width $buffer-tab-width
     !endif
-    !if &sin "s" #l0
-        !if &not &seq %language "Default"
-            !if &reg "/history/spell/autospell" "0"
-                1 auto-spell
-            !endif
-        !endif
-    !endif
-    !if &not &seq #l9 ""
-        !if &set #l1 &xseq #l9 ".*tab-width[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;].*"
-            set-variable $buffer-tab-width @s1
-        !endif
-        !if &xseq #l9 ".*indent-width[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;].*"
-            set-variable $buffer-indent-width @s1
-        !elif #l1
-            set-variable $buffer-indent-width $buffer-tab-width
-        !endif
-    !endif
+  !endif
 !emacro
 
 0 define-macro buffer-init-hooks
-    ; execute user extensions if defined
-    set-variable #l0 &rig $buffer-fhook 6
-    !if &exist &cat "my-fhook-" #l0
-        execute-named-command &cat "my-fhook-" #l0
-    !endif
-    !if &exist "my-fhook-always"
-        my-fhook-always
-    !endif
+  ; execute user extensions if defined
+  set-variable #l0 &rig $buffer-fhook 6
+  !if &exist &cat "my-fhook-" #l0
+    execute-named-command &cat "my-fhook-" #l0
+  !endif
+  !if &exist "my-fhook-always"
+    my-fhook-always
+  !endif
+  set-variable #l1 $buffer-bhook
+  !if &exist &cat "my-bhook-" #l0
+    set-variable $buffer-bhook &cat "my-bhook-" #l0
+  !endif
+  !if &exist my-bhook-always
     set-variable #l1 $buffer-bhook
-    !if &exist &cat "my-bhook-" #l0
-        set-variable $buffer-bhook &cat "my-bhook-" #l0
-    !endif
-    !if &exist my-bhook-always
-        set-variable #l1 $buffer-bhook
-        set-variable $buffer-bhook my-bhook-always
-    !endif
-    !if &not &seq #l1 "ERROR"
-        set-variable $buffer-bhook buffer-init-bhook
-    !endif
+    set-variable $buffer-bhook my-bhook-always
+  !endif
+  !if &not &seq #l1 "ERROR"
+    set-variable $buffer-bhook buffer-init-bhook
+  !endif
+  set-variable #l1 $buffer-ehook
+  !if &exist &cat "my-ehook-" #l0
+    set-variable $buffer-ehook &cat "my-ehook-" #l0
+  !endif
+  !if &exist my-ehook-always
     set-variable #l1 $buffer-ehook
-    !if &exist &cat "my-ehook-" #l0
-        set-variable $buffer-ehook &cat "my-ehook-" #l0
+    set-variable $buffer-ehook my-ehook-always
+  !endif
+  !if &not &seq #l1 "ERROR"
+    set-variable $buffer-ehook buffer-init-ehook
+  !endif
+  !if &exist &cat "my-dhook-" #l0
+    !if &exist my-dhook-always
+      set-variable $buffer-dhook buffer-init-dhook
+    !else
+      set-variable $buffer-dhook &cat "my-dhook-" #l0
     !endif
-    !if &exist my-ehook-always
-        set-variable #l1 $buffer-ehook
-        set-variable $buffer-ehook my-ehook-always
-    !endif
-    !if &not &seq #l1 "ERROR"
-        set-variable $buffer-ehook buffer-init-ehook
-    !endif
-    !if &exist &cat "my-dhook-" #l0
-        !if &exist my-dhook-always
-            set-variable $buffer-dhook buffer-init-dhook
-        !else
-            set-variable $buffer-dhook &cat "my-dhook-" #l0
-        !endif
-    !elif &exist my-dhook-always
-        set-variable $buffer-dhook my-dhook-always
-    !endif
+  !elif &exist my-dhook-always
+    set-variable $buffer-dhook my-dhook-always
+  !endif
 !emacro
 
 0 define-macro buffer-init-fhook
-    set-variable #l9 @1
-    !if &not &seq &set #l2 &reg &spr "/history/fhook/%s-fomark" #l9 "" ""
-        set-variable #l3 &reg &spr "/history/fhook/%s-fcmark" #l9 ""
-        !if &not &seq &set #l1 &lget &set #l4 &ind &spr ".fhook-%s.comment" #l9 1 ""
-            set-variable #l0 &spr "\b%s %s\b%s %s\b%s\b" #l1 #l2 #l1 #l3 &trr &lget #l4 2
-            str-to-regex #l1
-            str-to-regex #l2
-            str-to-regex #l3
-            set-variable #l0 &spr "%s%s[ \t]*%s\b%s[ \t]*%s\b" #l0 #l1 #l2 #l1 #l3
-            set-variable &ind &spr ".fhook-%s.fold" #l9 #l0
-        !endif
+  set-variable #l9 @1
+  !if &not &seq &set #l2 &reg &spr "/history/fhook/%s-fomark" #l9 "" ""
+    set-variable #l3 &reg &spr "/history/fhook/%s-fcmark" #l9 ""
+    !if &not &seq &set #l1 &lget &set #l4 &ind &spr ".fhook-%s.comment" #l9 1 ""
+      set-variable #l0 &spr "\b%s %s\b%s %s\b%s\b" #l1 #l2 #l1 #l3 &trr &lget #l4 2
+      str-to-regex #l1
+      str-to-regex #l2
+      str-to-regex #l3
+      set-variable #l0 &spr "%s%s[ \t]*%s\b%s[ \t]*%s\b" #l0 #l1 #l2 #l1 #l3
+      set-variable &ind &spr ".fhook-%s.fold" #l9 #l0
     !endif
-    set-variable #l1 &ind &spr ".fhook-%s.name" #l9
-    !if &seq #l1 "ERROR"
-        set-variable #l1 &cat &sup &lef #l9 1 &rig #l9 1
-    !endif
-    ml-write &spr "[%s file hook loaded]" #l1
-    ; load in user extensions if found
-    !force execute-file &cat "my" #l9
+  !endif
+  set-variable #l1 &ind &spr ".fhook-%s.name" #l9
+  !if &seq #l1 "ERROR"
+    set-variable #l1 &cat &sup &lef #l9 1 &rig #l9 1
+  !endif
+  ml-write &spr "[%s file hook loaded]" #l1
+  ; load in user extensions if found
+  !force execute-file &cat "my" #l9
 !emacro
 
 0 define-macro buffer-init-bhook
-    set-variable #l0 &rig $buffer-fhook 6
-    !if &exist &cat "bhook-" #l0
-        execute-named-command &cat "bhook-" #l0
-    !endif
-    !if &exist &cat "my-bhook-" #l0
-        execute-named-command &cat "my-bhook-" #l0
-    !endif
-    !if &exist "my-bhook-always"
-        my-bhook-always
-    !endif
+  set-variable #l0 &rig $buffer-fhook 6
+  !if &exist &cat "bhook-" #l0
+    execute-named-command &cat "bhook-" #l0
+  !endif
+  !if &exist &cat "my-bhook-" #l0
+    execute-named-command &cat "my-bhook-" #l0
+  !endif
+  !if &exist "my-bhook-always"
+    my-bhook-always
+  !endif
 !emacro
 0 define-macro buffer-init-ehook
-    set-variable #l0 &rig $buffer-fhook 6
-    !if &exist &cat "ehook-" #l0
-        execute-named-command &cat "ehook-" #l0
-    !endif
-    !if &exist &cat "my-ehook-" #l0
-        execute-named-command &cat "my-ehook-" #l0
-    !endif
-    !if &exist "my-ehook-always"
-        my-ehook-always
-    !endif
+  set-variable #l0 &rig $buffer-fhook 6
+  !if &exist &cat "ehook-" #l0
+    execute-named-command &cat "ehook-" #l0
+  !endif
+  !if &exist &cat "my-ehook-" #l0
+    execute-named-command &cat "my-ehook-" #l0
+  !endif
+  !if &exist "my-ehook-always"
+    my-ehook-always
+  !endif
 !emacro
 0 define-macro buffer-init-dhook
-    set-variable #l0 &rig $buffer-fhook 6
-    !if &exist &cat "my-dhook-" #l0
-        execute-named-command &cat "my-dhook-" #l0
-    !endif
-    !if &exist "my-dhook-always"
-        my-dhook-always
-    !endif
+  set-variable #l0 &rig $buffer-fhook 6
+  !if &exist &cat "my-dhook-" #l0
+    execute-named-command &cat "my-dhook-" #l0
+  !endif
+  !if &exist "my-dhook-always"
+    my-dhook-always
+  !endif
 !emacro
 
 ; define the default hook
 define-macro fhook-default
-    @# buffer-init "default"
-    buffer-init-hooks
+  @# buffer-init "default"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables

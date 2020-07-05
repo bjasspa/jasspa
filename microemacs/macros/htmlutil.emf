@@ -8,129 +8,129 @@
 ; Authors:     Steven Phillips
 ;
 0 define-macro html-spell-word
-    ; simply skip any text in a <..> token - put a 5 line limit on it
-    set-variable #l0 $window-col
-    set-variable #l1 $window-line
-    -2 show-region
-    set-variable #l2 $window-col
-    !force -5 search-buffer "bem" "[<>]"
-    !if $status
-        set-variable #l3 @wc
-        set-variable $window-line #l1
-        set-variable $window-col #l0
-        !if &seq #l3 "<"
-            ; this is a <..> token, skip all if spelling buffer (@# != 0)
-            !if @#
-                !force search-forward ">"
-                set-variable .spell.check-word ""
-            !endif
-            !return
-        !endif
-    !endif
-    ; must redefine the region as the search blows it away
-    set-variable $window-col #l2
-    -3 show-region
+  ; simply skip any text in a <..> token - put a 5 line limit on it
+  set-variable #l0 $window-col
+  set-variable #l1 $window-line
+  -2 show-region
+  set-variable #l2 $window-col
+  !force -5 search-buffer "bem" "[<>]"
+  !if $status
+    set-variable #l3 @wc
+    set-variable $window-line #l1
     set-variable $window-col #l0
-    3 show-region
-    !abort
+    !if &seq #l3 "<"
+      ; this is a <..> token, skip all if spelling buffer (@# != 0)
+      !if @#
+        !force search-forward ">"
+        set-variable .spell.check-word ""
+      !endif
+      !return
+    !endif
+  !endif
+  ; must redefine the region as the search blows it away
+  set-variable $window-col #l2
+  -3 show-region
+  set-variable $window-col #l0
+  3 show-region
+  !abort
 !emacro
 
 0 define-macro html-toggle-mode
-    !if &seq $buffer-fhook "fhook-html"
-        set-variable :auto-spell &cond &seq $buffer-input "auto-spell-input" 1 -1
-        !if &sin "s" .fhook-html.setup
-            -1 auto-spell
-        !endif
-        set-variable $buffer-fhook "fhook-vb"
-        !if &sin "d" .fhook-html.setup
-            set-variable $buffer-indent .hilight.vb
-        !endif
-    !else
-        set-variable $buffer-fhook "fhook-html"
-        !if &sin "d" .fhook-html.setup
-            set-variable $buffer-indent .hilight.html
-        !endif
-        !if &sin "s" .fhook-html.setup
-            :auto-spell auto-spell
-        !endif
+  !if &seq $buffer-fhook "fhook-html"
+    set-variable :auto-spell &cond &seq $buffer-input "auto-spell-input" 1 -1
+    !if &sin "s" .fhook-html.setup
+      -1 auto-spell
     !endif
-    !if .toolbar.open
-        ; flag that the buffer type has changed
-        set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x004
+    set-variable $buffer-fhook "fhook-vb"
+    !if &sin "d" .fhook-html.setup
+      set-variable $buffer-indent .hilight.vb
     !endif
+  !else
+    set-variable $buffer-fhook "fhook-html"
+    !if &sin "d" .fhook-html.setup
+      set-variable $buffer-indent .hilight.html
+    !endif
+    !if &sin "s" .fhook-html.setup
+      :auto-spell auto-spell
+    !endif
+  !endif
+  !if .toolbar.open
+    ; flag that the buffer type has changed
+    set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x004
+  !endif
 !emacro
 
 0 define-macro html-get-color-schm
-    set-variable #l8 @1
-    add-color @# &cat "0x" &lef #l8 2 &cat "0x" &mid #l8 2 2 &cat "0x" &rig #l8 4
-    add-color-scheme @# 0 @# 0 @# 0 @# 0 @#
+  set-variable #l8 @1
+  add-color @# &cat "0x" &lef #l8 2 &cat "0x" &mid #l8 2 2 &cat "0x" &rig #l8 4
+  add-color-scheme @# 0 @# 0 @# 0 @# 0 @#
 !emacro
 
 0 define-macro html-get-color-com
-    set-variable #l8 .html-get-color.icolor
-    set-variable #l0 &band &abs @# 3
-    set-variable #l9 &mul &sub #l0 1 2
-    set-variable #l1 &cat "0x" &mid #l8 #l9 2
-    !if &band &abs @# 0xff000
-        ; incramental button press
-        !if &band 0x100 @#
-            set-variable #l1 &sub #l1 &div @# 0x1000
-        !else
-            set-variable #l1 &add #l1 &div @# 0x1000
-        !endif
+  set-variable #l8 .html-get-color.icolor
+  set-variable #l0 &band &abs @# 3
+  set-variable #l9 &mul &sub #l0 1 2
+  set-variable #l1 &cat "0x" &mid #l8 #l9 2
+  !if &band &abs @# 0xff000
+    ; incramental button press
+    !if &band 0x100 @#
+      set-variable #l1 &sub #l1 &div @# 0x1000
     !else
-        !if &band &abs @# 0x010
-            set-variable #l1 &rig #l1 2
-        !else
-            set-variable #l1 &spr "%3d" #l1
-        !endif
-        !if &gre @# 0
-            set-variable $result #l1
-            !return
-        !endif
-        set-variable #l1 @ml2 "" #l1
-        !if &band &abs @# 0x010
-            set-variable #l1 &cat "0x" &add #l1 0
-        !endif
+      set-variable #l1 &add #l1 &div @# 0x1000
     !endif
-    !if &les #l1 0
-        set-variable #l1 0
-    !elif &gre #l1 255
-        set-variable #l1 255
+  !else
+    !if &band &abs @# 0x010
+      set-variable #l1 &rig #l1 2
+    !else
+      set-variable #l1 &spr "%3d" #l1
     !endif
-    set-variable #l8 &spr "%s%02x%s" &lef #l8 #l9 #l1 &rig #l8 &add #l9 2
-    set-variable .html-get-color.icolor #l8
-    127 html-get-color-schm #l8
+    !if &gre @# 0
+      set-variable $result #l1
+      !return
+    !endif
+    set-variable #l1 @ml2 "" #l1
+    !if &band &abs @# 0x010
+      set-variable #l1 &cat "0x" &add #l1 0
+    !endif
+  !endif
+  !if &les #l1 0
+    set-variable #l1 0
+  !elif &gre #l1 255
+    set-variable #l1 255
+  !endif
+  set-variable #l8 &spr "%s%02x%s" &lef #l8 #l9 #l1 &rig #l8 &add #l9 2
+  set-variable .html-get-color.icolor #l8
+  127 html-get-color-schm #l8
 !emacro
 
 0 define-macro html-get-color-pal
-    !if &not @?
-        -1 osd .osd.tmp
-        osd .osd.tmp 0 "btcHIs" 38 12 -1 -1 610 .scheme.osd-title "Set HTML Pallette Color" 
-        osd .osd.tmp 100 ""
-        osd .osd.tmp 200 "Ic" .osd.htmlcolr
-        osd .osd.tmp 300 ""
-        osd .osd.tmp 610 "BtcfH" .scheme.osd-ebtt " \HCancel " f void
-        set-variable .mode 1
-        !force .osd.tmp osd
-        set-variable .mode 0
-    !elif .mode
-        set-registry &cat "/history/fhook/html-col" @# .html-get-color.icolor
-        &add @# 128 html-get-color-schm .html-get-color.icolor
-        !abort
-    !else
-        set-variable #l8 &reg &cat "/history/fhook/html-col" @# &lget .html-get-color.default &add @# 1
-        set-variable .html-get-color.icolor #l8
-        127 html-get-color-schm #l8
-    !endif
+  !if &not @?
+    -1 osd .osd.tmp
+    osd .osd.tmp 0 "btcHIs" 38 12 -1 -1 610 .scheme.osd-title "Set HTML Pallette Color" 
+    osd .osd.tmp 100 ""
+    osd .osd.tmp 200 "Ic" .osd.htmlcolr
+    osd .osd.tmp 300 ""
+    osd .osd.tmp 610 "BtcfH" .scheme.osd-ebtt " \HCancel " f void
+    set-variable .mode 1
+    !force .osd.tmp osd
+    set-variable .mode 0
+  !elif .mode
+    set-registry &cat "/history/fhook/html-col" @# .html-get-color.icolor
+    &add @# 128 html-get-color-schm .html-get-color.icolor
+    !abort
+  !else
+    set-variable #l8 &reg &cat "/history/fhook/html-col" @# &lget .html-get-color.default &add @# 1
+    set-variable .html-get-color.icolor #l8
+    127 html-get-color-schm #l8
+  !endif
 !emacro
 
 set-variable #l0 &mid $window-chars  6 1
 set-variable #l1 &mid $window-chars 10 1
 !if &not &exist .osd.htmlcol
-    set-variable .osd.htmlcol &pinc .osd.next 1
-    add-color 127 0 0 0
-    add-color-scheme 127 0 127 0 127 0 127 0 127
+  set-variable .osd.htmlcol &pinc .osd.next 1
+  add-color 127 0 0 0
+  add-color-scheme 127 0 127 0 127 0 127 0 127
 !endif
 set-variable .osd.htmlcoll &pinc .osd.next 1
 set-variable .osd.htmlcolr &pinc .osd.next 1
@@ -209,202 +209,202 @@ osd .osd.htmlcol 600 "RBtcxfHh" .scheme.osd-ebtt " Set \HPal " f html-get-color-
 osd .osd.htmlcol 620 "BtcfH" .scheme.osd-ebtt " \HCancel " 0 void
 
 define-macro html-get-color
-    !force set-variable #l0 @1
-    !if &not $status
-        set-variable #l0 " &Done "
-    !endif
-    set-variable .html-get-color-pal.mode 0
-    osd .osd.htmlcol 610 "BtcfHh" .scheme.osd-ebtt #l0 f void
-    set-variable .icolor &rig .color 1
-    127 html-get-color-schm .icolor
-    -1 osd .osd.htmlcolr
-    osd .osd.htmlcolr 0 "G"
-    set-variable #l0 0
-    !repeat
-        set-variable #l1 &reg &cat "/history/fhook/html-col" #l0 &lget .default &add #l0 1
-        &add #l0 128 html-get-color-schm #l1
-        osd .osd.htmlcolr &add 100 #l0 &cond &mod &add #l0 1 8 "RGHfxhz" "RGHfxz" &add 128 #l0 3 2 "" #l0 html-get-color-pal
-    !until &not &les &inc #l0 1 16
-    .osd.htmlcol osd
-    set-variable .color &cat "#" .icolor
+  !force set-variable #l0 @1
+  !if &not $status
+    set-variable #l0 " &Done "
+  !endif
+  set-variable .html-get-color-pal.mode 0
+  osd .osd.htmlcol 610 "BtcfHh" .scheme.osd-ebtt #l0 f void
+  set-variable .icolor &rig .color 1
+  127 html-get-color-schm .icolor
+  -1 osd .osd.htmlcolr
+  osd .osd.htmlcolr 0 "G"
+  set-variable #l0 0
+  !repeat
+    set-variable #l1 &reg &cat "/history/fhook/html-col" #l0 &lget .default &add #l0 1
+    &add #l0 128 html-get-color-schm #l1
+    osd .osd.htmlcolr &add 100 #l0 &cond &mod &add #l0 1 8 "RGHfxhz" "RGHfxz" &add 128 #l0 3 2 "" #l0 html-get-color-pal
+  !until &not &les &inc #l0 1 16
+  .osd.htmlcol osd
+  set-variable .color &cat "#" .icolor
 !emacro
 set-variable .html-get-color.color "#000000"
 set-variable .html-get-color.default "|000000|c80000|00c800|c8c800|0000c8|c800c8|00c8c8|c8c8c8|000000|ff0000|00ff00|ffff00|0000ff|ff00ff|00ffff|ffffff|"
 
 define-macro html-forward-tag
-    forward-char
-    set-variable #l9 &bmod "magic"
-    1 buffer-mode "magic"
-    !force search-forward "[<>]"
-    !if &not $status
-        end-of-buffer
-        !force backward-char
-    !else
-        backward-char
-        !if &seq @s0 ">"
-            forward-char
-        !endif
+  forward-char
+  set-variable #l9 &bmod "magic"
+  1 buffer-mode "magic"
+  !force search-forward "[<>]"
+  !if &not $status
+    end-of-buffer
+    !force backward-char
+  !else
+    backward-char
+    !if &seq @s0 ">"
+      forward-char
     !endif
-    &cond #l9 1 -1 buffer-mode "magic"
+  !endif
+  &cond #l9 1 -1 buffer-mode "magic"
 !emacro
 
 define-macro html-backward-tag
-    backward-char
-    set-variable #l9 &bmod "magic"
-    1 buffer-mode "magic"
-    !force search-backward "[<>]"
-    !if &not $status
-        beginning-of-buffer
-    !else
-        forward-char
-        !if &seq @s0 "<"
-            backward-char
-        !endif
+  backward-char
+  set-variable #l9 &bmod "magic"
+  1 buffer-mode "magic"
+  !force search-backward "[<>]"
+  !if &not $status
+    beginning-of-buffer
+  !else
+    forward-char
+    !if &seq @s0 "<"
+      backward-char
     !endif
-    &cond #l9 1 -1 buffer-mode "magic"
+  !endif
+  &cond #l9 1 -1 buffer-mode "magic"
 !emacro
 
 define-macro html-goto-matching-tag
-    set-position "\x81"
-    !if &seq @wc "<"
-        forward-char
-    !endif
+  set-position "\x81"
+  !if &seq @wc "<"
     forward-char
-    html-backward-tag
-    !if &not &seq @wc "<"
-        goto-position "\x81"
-        !abort
-    !endif
-    set-variable #l0 &add $window-col 1
-    !if &set #l1 &seq &mid @wl #l0 1 "/"
-        set-variable #l0 &add #l0 1
+  !endif
+  forward-char
+  html-backward-tag
+  !if &not &seq @wc "<"
+    goto-position "\x81"
+    !abort
+  !endif
+  set-variable #l0 &add $window-col 1
+  !if &set #l1 &seq &mid @wl #l0 1 "/"
+    set-variable #l0 &add #l0 1
+  !else
+    forward-char
+  !endif
+  set-variable #l2 &rig @wl #l0
+  !if &set #l0 &sin ">" #l2
+    set-variable #l2 &lef #l2 &sub #l0 1
+  !endif
+  !if &set #l0 &sin " " #l2
+    set-variable #l2 &lef #l2 &sub #l0 1
+  !endif
+  set-variable #l2 &cat "<\\(/?\\)" #l2
+  set-variable #l9 &bmod "magic"
+  set-variable #l8 &bmod "exact"
+  1 buffer-mode "magic"
+  -1 buffer-mode "exact"
+  set-variable #l0 1
+  !repeat
+    !if #l1
+      !force search-backward #l2
     !else
-        forward-char
+      !force search-forward #l2
     !endif
-    set-variable #l2 &rig @wl #l0
-    !if &set #l0 &sin ">" #l2
-        set-variable #l2 &lef #l2 &sub #l0 1
-    !endif
-    !if &set #l0 &sin " " #l2
-        set-variable #l2 &lef #l2 &sub #l0 1
-    !endif
-    set-variable #l2 &cat "<\\(/?\\)" #l2
-    set-variable #l9 &bmod "magic"
-    set-variable #l8 &bmod "exact"
-    1 buffer-mode "magic"
-    -1 buffer-mode "exact"
-    set-variable #l0 1
-    !repeat
-        !if #l1
-            !force search-backward #l2
-        !else
-            !force search-forward #l2
-        !endif
-        !if $status
-            set-variable #l0 &add #l0 &con &bxor #l1 &seq @s1 "/" -1 1
-        !else
-            set-variable #l0 -1
-        !endif
-    !until &les #l0 1
-    &cond #l9 1 -1 buffer-mode "magic"
-    &cond #l8 1 -1 buffer-mode "exact"
-    !if #l0
-        goto-position "\x81"
-        !if &seq @p ""
-            ml-write "[matching tag not found]"
-        !endif
-        !abort
+    !if $status
+      set-variable #l0 &add #l0 &con &bxor #l1 &seq @s1 "/" -1 1
     !else
-        -2 show-region
-        -1 show-region
+      set-variable #l0 -1
     !endif
+  !until &les #l0 1
+  &cond #l9 1 -1 buffer-mode "magic"
+  &cond #l8 1 -1 buffer-mode "exact"
+  !if #l0
+    goto-position "\x81"
+    !if &seq @p ""
+      ml-write "[matching tag not found]"
+    !endif
+    !abort
+  !else
+    -2 show-region
+    -1 show-region
+  !endif
 !emacro
 
 define-macro html-collapse-tag
-    set-position "\x83"
-    set-variable #l0 $window-line
-    !force 2 narrow-buffer
-    !if $status
-        set-variable $window-line #l0
-        !return
-    !endif
-    !force html-goto-matching-tag
-    !if &not $status
-        ml-write "[Failed to find matching tag]"
-        !abort
-    !endif
-    set-variable #l1 $window-line
-    !if &equ #l0 #l1
-        goto-position "\x83"
-        ml-write "[tag is on one line - whats the point?]"
-        !abort
-    !endif
-    !if &gre #l1 #l0
-        html-forward-tag
-        set-variable #l5 &rig @wl $window-col
-        backward-char
-    !else
-        set-variable #l4 &lef @wl $window-col
-        forward-word
-        set-variable #l6 $window-col
-        backward-word
-        set-variable #l7 &mid @wl $window-col &sub #l6 $window-col
-    !endif
-    !force html-goto-matching-tag
-    !if &not &and $status &equ $window-line #l0
-        goto-position "\x83"
-        ml-write "[Weird tag mismatch problem - abort]"
-        !abort
-    !endif
-    !if &gre #l0 #l1
-        html-forward-tag
-        set-variable #l5 &rig @wl $window-col
-        forward-line
-    !else
-        set-variable #l4 &lef @wl $window-col
-        forward-word
-        set-variable #l6 $window-col
-        backward-word
-        set-variable #l7 &mid @wl $window-col &sub #l6 $window-col
-    !endif
-    !if &not &seq &trb #l4 ""
-        goto-position "\x83"
-        ml-write "[Extra text at the start of tag - abort]"
-        !abort
-    !elif &not &seq &trb #l5 ""
-        goto-position "\x83"
-        ml-write "[Extra text at the end of tag - abort]"
-        !abort
-    !endif
-    set-mark
-    set-variable $window-line #l1
-    !if &gre #l1 #l0
-        forward-line
-    !endif
-    0x34 narrow-buffer .scheme.fold-close &spr "%s<%s> ... </%s>" #l4 #l7 #l7
+  set-position "\x83"
+  set-variable #l0 $window-line
+  !force 2 narrow-buffer
+  !if $status
+    set-variable $window-line #l0
+    !return
+  !endif
+  !force html-goto-matching-tag
+  !if &not $status
+    ml-write "[Failed to find matching tag]"
+    !abort
+  !endif
+  set-variable #l1 $window-line
+  !if &equ #l0 #l1
+    goto-position "\x83"
+    ml-write "[tag is on one line - whats the point?]"
+    !abort
+  !endif
+  !if &gre #l1 #l0
+    html-forward-tag
+    set-variable #l5 &rig @wl $window-col
+    backward-char
+  !else
+    set-variable #l4 &lef @wl $window-col
+    forward-word
+    set-variable #l6 $window-col
+    backward-word
+    set-variable #l7 &mid @wl $window-col &sub #l6 $window-col
+  !endif
+  !force html-goto-matching-tag
+  !if &not &and $status &equ $window-line #l0
+    goto-position "\x83"
+    ml-write "[Weird tag mismatch problem - abort]"
+    !abort
+  !endif
+  !if &gre #l0 #l1
+    html-forward-tag
+    set-variable #l5 &rig @wl $window-col
+    forward-line
+  !else
+    set-variable #l4 &lef @wl $window-col
+    forward-word
+    set-variable #l6 $window-col
+    backward-word
+    set-variable #l7 &mid @wl $window-col &sub #l6 $window-col
+  !endif
+  !if &not &seq &trb #l4 ""
+    goto-position "\x83"
+    ml-write "[Extra text at the start of tag - abort]"
+    !abort
+  !elif &not &seq &trb #l5 ""
+    goto-position "\x83"
+    ml-write "[Extra text at the end of tag - abort]"
+    !abort
+  !endif
+  set-mark
+  set-variable $window-line #l1
+  !if &gre #l1 #l0
+    forward-line
+  !endif
+  0x34 narrow-buffer .scheme.fold-close &spr "%s<%s> ... </%s>" #l4 #l7 #l7
 !emacro
 
 ; n html-find-tag "name"
 ; If n is 0 then the search starts at the top of the buffer
 define-macro html-find-tag
-    !force set-variable #l0 @1
-    !if &not $status
-        set-variable #l0 @ml "Find HTML Tag"
+  !force set-variable #l0 @1
+  !if &not $status
+    set-variable #l0 @ml "Find HTML Tag"
+  !endif
+  !if &not @#
+    beginning-of-buffer
+  !endif
+  set-variable #l9 &bmod "exact"
+  -1 buffer-mode "exact"
+  !force search-forward &cat "<" #l0
+  set-variable #l1 $status
+  &cond #l9 1 -1 buffer-mode "exact"
+  !if &not #l1
+    !if &or &seq @p "" &seq &lef @p 6 "mouse-"
+      ml-write "[Tag not found]"
     !endif
-    !if &not @#
-        beginning-of-buffer
-    !endif
-    set-variable #l9 &bmod "exact"
-    -1 buffer-mode "exact"
-    !force search-forward &cat "<" #l0
-    set-variable #l1 $status
-    &cond #l9 1 -1 buffer-mode "exact"
-    !if &not #l1
-        !if &or &seq @p "" &seq &lef @p 6 "mouse-"
-            ml-write "[Tag not found]"
-        !endif
-        !abort
-    !endif
+    !abort
+  !endif
 !emacro
 
 ; n html-insert-tag "name"
@@ -413,71 +413,71 @@ define-macro html-find-tag
 ;      0x02  ignore the current region
 ;      0x04  leave cursor at end of start tag
 define-macro html-insert-tag
-    set-variable #l2 0
-    !if &not &band 0x02 @#
-        0 show-region
-        !if &equ &band $result 0x05 0x05
-            set-variable #l2 $result
-            3 show-region
-        !endif
+  set-variable #l2 0
+  !if &not &band 0x02 @#
+    0 show-region
+    !if &equ &band $result 0x05 0x05
+      set-variable #l2 $result
+      3 show-region
     !endif
-    !force set-variable #l0 @1
-    !if &not $status
-        set-variable #l0 @ml "Insert HTML Tag"
-    !endif
+  !endif
+  !force set-variable #l0 @1
+  !if &not $status
+    set-variable #l0 @ml "Insert HTML Tag"
+  !endif
+  !if #l2
+    ; get the end of the current  region
+    &cond &band #l2 0x08 -2 2 show-region
+    set-variable #l3 $window-line
+    set-variable #l4 $window-col
+    &cond &band #l2 0x08 2 -2 show-region
+  !endif
+  set-position "\x81"
+  !force forward-char
+  !force html-backward-tag
+  !if &not $status
+    goto-position "\x81"
+  !elif &seq @wc "<"
+    !force html-forward-tag
+  !else
+    goto-position "\x81"
+  !endif
+  ; Use the single tag syntax if only 1 tag
+  set-variable #l9 "/"
+  !if &band @# 1
+    set-variable #l9 ""        
+  !endif
+  insert-string &spr "<%s%s>" #l0 #l9
+  !if &band @# 1
+    set-variable #l5 $window-line
+    set-variable #l6 $window-col
     !if #l2
-        ; get the end of the current  region
-        &cond &band #l2 0x08 -2 2 show-region
-        set-variable #l3 $window-line
-        set-variable #l4 $window-col
-        &cond &band #l2 0x08 2 -2 show-region
-    !endif
-    set-position "\x81"
-    !force forward-char
-    !force html-backward-tag
-    !if &not $status
+      !if &equ $window-line #l3
+        set-variable $window-col &add #l4 &add &len #l0 2
+      !else
+        set-variable $window-line #l3
+        set-variable $window-col #l4
+      !endif
+      set-position "\x81"
+      !force forward-char
+      !force html-backward-tag
+      !if &not $status
         goto-position "\x81"
-    !elif &seq @wc "<"
+      !elif &seq @wc "<"
         !force html-forward-tag
-    !else
+      !else
         goto-position "\x81"
+      !endif
     !endif
-    ; Use the single tag syntax if only 1 tag
-    set-variable #l9 "/"
-    !if &band @# 1
-        set-variable #l9 ""        
+    set-variable #l1 $window-col
+    insert-string &spr "</%s>" #l0
+    !if &band @# 4
+      set-variable $window-line #l5
+      set-variable $window-col #l6
+    !else
+      set-variable $window-col #l1
     !endif
-    insert-string &spr "<%s%s>" #l0 #l9
-    !if &band @# 1
-        set-variable #l5 $window-line
-        set-variable #l6 $window-col
-        !if #l2
-            !if &equ $window-line #l3
-                set-variable $window-col &add #l4 &add &len #l0 2
-            !else
-                set-variable $window-line #l3
-                set-variable $window-col #l4
-            !endif
-            set-position "\x81"
-            !force forward-char
-            !force html-backward-tag
-            !if &not $status
-                goto-position "\x81"
-            !elif &seq @wc "<"
-                !force html-forward-tag
-            !else
-                goto-position "\x81"
-            !endif
-        !endif
-        set-variable #l1 $window-col
-        insert-string &spr "</%s>" #l0
-        !if &band @# 4
-            set-variable $window-line #l5
-            set-variable $window-col #l6
-        !else
-            set-variable $window-col #l1
-        !endif
-    !endif
+  !endif
 !emacro
 
 ; n html-insert-attrib "name"
@@ -486,103 +486,103 @@ define-macro html-insert-tag
 ;      0x02  insert an =
 ;      0x04  insert an =""
 define-macro html-insert-attrib
-    !force set-variable #l0 @1
-    !if &not $status
-        set-variable #l0 @ml "HTML Attribute"
+  !force set-variable #l0 @1
+  !if &not $status
+    set-variable #l0 @ml "HTML Attribute"
+  !endif
+  0x5bf set-position "\x81"
+  !force html-backward-tag
+  !if &not &and $status &seq @wc "<"
+    0x0bf goto-position "\x81"
+    ml-write "[Error: Not in a tag]"
+    !abort
+  !endif
+  set-mark
+  !force html-forward-tag
+  !if &not $status
+    !jump 3
+  !elif &seq @wc "<"
+    backward-char
+    search-backward "\\S"
+    forward-char
+    !if &seq @wc " "
+      forward-char
     !endif
-    0x5bf set-position "\x81"
-    !force html-backward-tag
-    !if &not &and $status &seq @wc "<"
-        0x0bf goto-position "\x81"
-        ml-write "[Error: Not in a tag]"
-        !abort
+  !else
+    ; Find the ">", handle "/>" although this is strictly xml
+    backward-char
+    !if &seq @wc ">"
+      backward-char
     !endif
-    set-mark
-    !force html-forward-tag
-    !if &not $status
-        !jump 3
-    !elif &seq @wc "<"
-        backward-char
-        search-backward "\\S"
-        forward-char
-        !if &seq @wc " "
-            forward-char
-        !endif
-    !else
-        ; Find the ">", handle "/>" although this is strictly xml
-        backward-char
-        !if &seq @wc ">"
-            backward-char
-        !endif
-        !if &not &seq @wc "/"
-            forward-char
-        !endif
+    !if &not &seq @wc "/"
+      forward-char
     !endif
-    !if &band @# 1
-        copy-region
-        !if &xis @y &spr ".*\\s%s%s\\(.*\\)" #l0 &cond &band @# 2 "=\"?" ""
-            set-variable #l1 &len @s1
-            #l1 backward-char
-            -1 yank
-            0x500 goto-position "\x81"
-            !return
-        !endif
-        -1 yank
+  !endif
+  !if &band @# 1
+    copy-region
+    !if &xis @y &spr ".*\\s%s%s\\(.*\\)" #l0 &cond &band @# 2 "=\"?" ""
+      set-variable #l1 &len @s1
+      #l1 backward-char
+      -1 yank
+      0x500 goto-position "\x81"
+      !return
     !endif
-    0x500 goto-position "\x81"
-    !if &not $window-col
-    !elif &not &seq &mid @wl &sub $window-col 1 1 " "
-        insert-space
-    !endif
-    insert-string #l0
-    !if &band @# 2
-        insert-string "="
-    !elif &band @# 4
-        insert-string "=\"\""
-        backward-char
-    !endif
+    -1 yank
+  !endif
+  0x500 goto-position "\x81"
+  !if &not $window-col
+  !elif &not &seq &mid @wl &sub $window-col 1 1 " "
+    insert-space
+  !endif
+  insert-string #l0
+  !if &band @# 2
+    insert-string "="
+  !elif &band @# 4
+    insert-string "=\"\""
+    backward-char
+  !endif
 !emacro
 
 0 define-macro html-insert-main-tag
-    set-variable #l9 &bmod "exact"
-    -1 buffer-mode "exact"
-    beginning-of-buffer
-    !force search-forward &cat "<" &lget .tags @#
-    !if $status
-        backward-char
-        !force html-forward-tag
-    !elif &seq &lef &lget .tags @# 1 "/"
-        &sub @# 1 html-insert-main-tag
-        search-forward &cat "<" &lget .tags @#
-        forward-char
+  set-variable #l9 &bmod "exact"
+  -1 buffer-mode "exact"
+  beginning-of-buffer
+  !force search-forward &cat "<" &lget .tags @#
+  !if $status
+    backward-char
+    !force html-forward-tag
+  !elif &seq &lef &lget .tags @# 1 "/"
+    &sub @# 1 html-insert-main-tag
+    search-forward &cat "<" &lget .tags @#
+    forward-char
+  !else
+    !if &not &set #l1 &lget "|0|1|2|2|3|" @#
+      end-of-buffer
+      insert-string &spr "</%s>" &lget .tags @#
+      beginning-of-buffer
+      insert-string &spr "<%s>\n" &lget .tags @#
+      backward-char
     !else
-        !if &not &set #l1 &lget "|0|1|2|2|3|" @#
-            end-of-buffer
-            insert-string &spr "</%s>" &lget .tags @#
-            beginning-of-buffer
-            insert-string &spr "<%s>\n" &lget .tags @#
-            backward-char
-        !else
-            #l1 html-insert-main-tag
-            insert-string &spr "\n<%s>" &lget .tags @#
-            set-variable #l2 $window-line
-            set-variable #l3 $window-col
-            !if &set #l1 &lget "|0|5|0|0|1|" @#
-                set-variable #l1 &cat "</" &lget .tags #l1
-                !force search-forward #l1
-                !if $status
-                    &add &len #l1 1 backward-char
-                !endif
-            !endif
-            !if &not &equ @# 4
-                insert-newline
-            !endif
-            insert-string &spr "</%s>" &lget .tags @#
-            set-variable $window-line #l2
-            set-variable $window-col #l3
+      #l1 html-insert-main-tag
+      insert-string &spr "\n<%s>" &lget .tags @#
+      set-variable #l2 $window-line
+      set-variable #l3 $window-col
+      !if &set #l1 &lget "|0|5|0|0|1|" @#
+        set-variable #l1 &cat "</" &lget .tags #l1
+        !force search-forward #l1
+        !if $status
+          &add &len #l1 1 backward-char
         !endif
+      !endif
+      !if &not &equ @# 4
+        insert-newline
+      !endif
+      insert-string &spr "</%s>" &lget .tags @#
+      set-variable $window-line #l2
+      set-variable $window-col #l3
     !endif
-    &cond #l9 1 -1 buffer-mode "exact"
+  !endif
+  &cond #l9 1 -1 buffer-mode "exact"
 !emacro
 set-variable .html-insert-main-tag.tags "|html|head|/head|title|body|"
 
@@ -629,106 +629,106 @@ define-macro html-insert-strong
 !emacro
 
 define-macro html-insert-color
-    html-get-color " \HInsert "
-    insert-string .html-get-color.color
+  html-get-color " \HInsert "
+  insert-string .html-get-color.color
 !emacro
 
 define-macro html-create-table
-    !force set-variable #l1 @2
-    !if $status
-        set-variable #l0 @1
-    !else
-        set-variable #l0 @ml1 "Number of Columns" 2
-        set-variable #l1 @ml1 "Number of Rows" 2
-    !endif
-    set-variable #l2 $window-col
-    set-variable #l4 0
-    insert-string "<table>\n" @mna
-    !while &gre &pdec #l1 1 0
-        !if $buffer-indent
-            tab
-        !else
-            &add #l2 2 insert-space
-        !endif
-        insert-string "<tr>\n"
-        !if &not #l4
-            set-variable #l4 $window-line
-        !endif
-        set-variable #l3 #l0
-        !if &gre &pdec #l3 1 0
-            !if $buffer-indent
-                tab
-            !else
-                &add #l2 4 insert-space
-            !endif
-            insert-string "<td></td>\n"
-            !jump -7
-        !endif
-        !if $buffer-indent
-            insert-string "</tr>"
-            newline
-        !else
-            insert-string &spr "%n</tr>\n" &add #l2 2 " "
-        !endif
-    !done
+  !force set-variable #l1 @2
+  !if $status
+    set-variable #l0 @1
+  !else
+    set-variable #l0 @ml1 "Number of Columns" 2
+    set-variable #l1 @ml1 "Number of Rows" 2
+  !endif
+  set-variable #l2 $window-col
+  set-variable #l4 0
+  insert-string "<table>\n" @mna
+  !while &gre &pdec #l1 1 0
     !if $buffer-indent
-        insert-string "</table>"
-        tab
+      tab
     !else
-        insert-string &spr "%n</table>" #l2 " "
+      &add #l2 2 insert-space
     !endif
-    !if #l4
-        set-variable $window-line #l4
-        end-of-line
-        5 backward-char
+    insert-string "<tr>\n"
+    !if &not #l4
+      set-variable #l4 $window-line
     !endif
+    set-variable #l3 #l0
+    !if &gre &pdec #l3 1 0
+      !if $buffer-indent
+        tab
+      !else
+        &add #l2 4 insert-space
+      !endif
+      insert-string "<td></td>\n"
+      !jump -7
+    !endif
+    !if $buffer-indent
+      insert-string "</tr>"
+      newline
+    !else
+      insert-string &spr "%n</tr>\n" &add #l2 2 " "
+    !endif
+  !done
+  !if $buffer-indent
+    insert-string "</table>"
+    tab
+  !else
+    insert-string &spr "%n</table>" #l2 " "
+  !endif
+  !if #l4
+    set-variable $window-line #l4
+    end-of-line
+    5 backward-char
+  !endif
 !emacro
 
 0 define-macro html-view-launch
-    !force set-variable #l1 @2
-    !if &not $status
-        !if &seq $buffer-fname ""
-            ml-write "[Current buffer has no file name]"
-            !abort
-        !endif
-        !if &bmod "edit"
-            set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-            !if &iseq #l0 "y"
-                save-buffer
-            !endif
-        !endif
-        set-variable #l1 $buffer-fname
+  !force set-variable #l1 @2
+  !if &not $status
+    !if &seq $buffer-fname ""
+      ml-write "[Current buffer has no file name]"
+      !abort
     !endif
-    !if &seq &lef #l1 7 "http://"
-    !elif &seq &lef #l1 6 "ftp://"
-    !else
-        !if &band $system 0x100
-            set-variable #l1 &rep #l1 "/" "\\"
-        !endif
-        set-variable #l1 &cat "file:" #l1
+    !if &bmod "edit"
+      set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+      !if &iseq #l0 "y"
+        save-buffer
+      !endif
     !endif
-    set-variable #l0 &rep @1 "%%" "\b"
-    set-variable #l0 &rep #l0 "%f" #l1
-    set-variable #l0 &rep #l0 "\b" "%"
-    2 ipipe-shell-command #l0 "*html-viewer*" @mna
+    set-variable #l1 $buffer-fname
+  !endif
+  !if &seq &lef #l1 7 "http://"
+  !elif &seq &lef #l1 6 "ftp://"
+  !else
+    !if &band $system 0x100
+      set-variable #l1 &rep #l1 "/" "\\"
+    !endif
+    set-variable #l1 &cat "file:" #l1
+  !endif
+  set-variable #l0 &rep @1 "%%" "\b"
+  set-variable #l0 &rep #l0 "%f" #l1
+  set-variable #l0 &rep #l0 "\b" "%"
+  2 ipipe-shell-command #l0 "*html-viewer*" @mna
 !emacro
 define-macro html-view-iexplorer
-    set-variable #l0 &reg &spr "/history/%s/html-iexplorer" $platform "iexplore \"%f\""
-    html-view-launch #l0 @1
+  set-variable #l0 &reg &spr "/history/%s/html-iexplorer" $platform "iexplore \"%f\""
+  html-view-launch #l0 @1
 !emacro
 define-macro html-view-firefox
-    set-variable #l0 &reg &spr "/history/%s/html-firefox" $platform "firefox \"%f\""
-    html-view-launch #l0 @1
+  set-variable #l0 &reg &spr "/history/%s/html-firefox" $platform "firefox \"%f\""
+  html-view-launch #l0 @1
 !emacro
 
 define-macro html-config-iexplorer
-    set-variable #l0 &reg &spr "/history/%s/html-iexplorer" $platform "iexplore \"%f\""
-    set-variable #l0 @ml2 "IExplorer Command-line" #l0
-    set-registry &spr "/history/%s/html-iexplorer" $platform #l0
+  set-variable #l0 &reg &spr "/history/%s/html-iexplorer" $platform "iexplore \"%f\""
+  set-variable #l0 @ml2 "IExplorer Command-line" #l0
+  set-registry &spr "/history/%s/html-iexplorer" $platform #l0
 !emacro
 define-macro html-config-firefox
-    set-variable #l0 &reg &spr "/history/%s/html-firefox" $platform "firefox \"%f\""
-    set-variable #l0 @ml2 "Firefox Command-line" #l0
-    set-registry &spr "/history/%s/html-firefox" $platform #l0
+  set-variable #l0 &reg &spr "/history/%s/html-firefox" $platform "firefox \"%f\""
+  set-variable #l0 @ml2 "Firefox Command-line" #l0
+  set-registry &spr "/history/%s/html-firefox" $platform #l0
 !emacro
 

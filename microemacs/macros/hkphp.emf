@@ -8,9 +8,9 @@
 ; Authors:     Bruno Sabin & Steven Phillips
 ;
 define-macro fhook-php
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "php"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "php"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -26,7 +26,7 @@ set-variable .fhook-php.indent-width  2
 
 ; load in php script & the html core
 !if &not &exist fhook-phps
-    !force exec-file "hkphps"
+  !force exec-file "hkphps"
 !endif
 !force execute-file "htmlcore" "php" 
 
@@ -35,60 +35,60 @@ set-variable .fhook-php.item-list-s5 "^[ \t]*function[ \t]+\\(\\w[1-9A-Za-z_']*\
 set-variable .fhook-php.item-list-r5 "Func \ecB\\1\ecA"
 
 !if &and &sin "h" .fhook-php.setup &band .hilight.flags 0x02 
-    hilight .hilight.phptag 4 "=\\{[^ \t\n<>]*<\\?php" "\\?>[^ \t\n>]*" ""  .scheme.string
-    hilight .hilight.phptag 4 "=\\{\"[^\"\n<]*<\\?php" "\\?>[^\"]*\"" ""  .scheme.string
-    ; use hilight scheme to handle script inside a script token
-    !if &not &exist .hilight.phpJS
-        set-variable .hilight.phpJS &pinc .hilight.next 1
-    !endif
-    -1 hilight .hilight.php 0x80 "<script\\s+language=\"?javascript[^>]*>"
-    hilight .hilight.php 0x80 "<script\\s+language\{=javascript" .hilight.phpJS .scheme.prepro
-    hilight .hilight.php 0x80 "<script\\s+language\{=\"javascript\"" .hilight.phpJS .scheme.prepro
-    
-    0 hilight .hilight.phpJS 1                          $global-scheme
-    hilight .hilight.phpJS 4 "=\\{\"" "\"" "\\"         .scheme.string
-    hilight .hilight.phpJS 4 "=\\{" "\\}[ \t\n>]" ""    .scheme.string
-    hilight .hilight.phpJS 4 "=\\{[^ \t\n<>]*<\\?php" "\\?>[^ \t\n>]*" "" .scheme.string
-    hilight .hilight.phpJS 4 "=\\{\"[^\"\n<]*<\\?php" "\\?>[^\"]*\"" "" .scheme.string
-    hilight .hilight.phpJS 1 "type"                     .scheme.operator
-    hilight .hilight.phpJS 1 "src"                      .scheme.operator
-    hilight .hilight.phpJS 0x80 ">" .hilight.javascript .scheme.keyword
-    
-    ; now setup php hilighting to use phpscript hilighting
-    !if &exist .hilight.phpscript
-        hilight .hilight.php       0x80 "<\\?"     .hilight.phpscript .scheme.prepro
-        hilight .hilight.php       0x80 "<\\?php"  .hilight.phpscript .scheme.prepro
-        hilight .hilight.php       0xa0 "#\\?php"  .hilight.phpscript .scheme.prepro
-        hilight .hilight.php       0xa0 "//\\?php" .hilight.phpscript .scheme.prepro
-        hilight .hilight.php      0x180 "}$"       .hilight.phpscript $global-scheme
-        hilight .hilight.phptag    0x80 "<\\?"     .hilight.phpscript .scheme.prepro
-        hilight .hilight.phptag    0x80 "<\\?php"  .hilight.phpscript .scheme.prepro
-        hilight .hilight.phpscript 0x80 "\\?>" 0   .scheme.prepro
-    !endif
+  hilight .hilight.phptag 4 "=\\{[^ \t\n<>]*<\\?php" "\\?>[^ \t\n>]*" ""  .scheme.string
+  hilight .hilight.phptag 4 "=\\{\"[^\"\n<]*<\\?php" "\\?>[^\"]*\"" ""  .scheme.string
+  ; use hilight scheme to handle script inside a script token
+  !if &not &exist .hilight.phpJS
+    set-variable .hilight.phpJS &pinc .hilight.next 1
+  !endif
+  -1 hilight .hilight.php 0x80 "<script\\s+language=\"?javascript[^>]*>"
+  hilight .hilight.php 0x80 "<script\\s+language\{=javascript" .hilight.phpJS .scheme.prepro
+  hilight .hilight.php 0x80 "<script\\s+language\{=\"javascript\"" .hilight.phpJS .scheme.prepro
+  
+  0 hilight .hilight.phpJS 1                          $global-scheme
+  hilight .hilight.phpJS 4 "=\\{\"" "\"" "\\"         .scheme.string
+  hilight .hilight.phpJS 4 "=\\{" "\\}[ \t\n>]" ""    .scheme.string
+  hilight .hilight.phpJS 4 "=\\{[^ \t\n<>]*<\\?php" "\\?>[^ \t\n>]*" "" .scheme.string
+  hilight .hilight.phpJS 4 "=\\{\"[^\"\n<]*<\\?php" "\\?>[^\"]*\"" "" .scheme.string
+  hilight .hilight.phpJS 1 "type"                     .scheme.operator
+  hilight .hilight.phpJS 1 "src"                      .scheme.operator
+  hilight .hilight.phpJS 0x80 ">" .hilight.javascript .scheme.keyword
+  
+  ; now setup php hilighting to use phpscript hilighting
+  !if &exist .hilight.phpscript
+    hilight .hilight.php       0x80 "<\\?"     .hilight.phpscript .scheme.prepro
+    hilight .hilight.php       0x80 "<\\?php"  .hilight.phpscript .scheme.prepro
+    hilight .hilight.php       0xa0 "#\\?php"  .hilight.phpscript .scheme.prepro
+    hilight .hilight.php       0xa0 "//\\?php" .hilight.phpscript .scheme.prepro
+    hilight .hilight.php      0x180 "}$"       .hilight.phpscript $global-scheme
+    hilight .hilight.phptag    0x80 "<\\?"     .hilight.phpscript .scheme.prepro
+    hilight .hilight.phptag    0x80 "<\\?php"  .hilight.phpscript .scheme.prepro
+    hilight .hilight.phpscript 0x80 "\\?>" 0   .scheme.prepro
+  !endif
 !endif
 !if &sin "d" .fhook-php.setup
-    !if &exist .indent.phpscript
-        indent .hilight.phptag t "<\\?"              .indent.phpscript
-        indent .hilight.phptag t "<\\?php"           .indent.phpscript
-        indent .hilight.phptag t "^\\s*\\{#\\?php"   .indent.phpscript
-        indent .hilight.phptag t "^\\s*\\{//\\?php"  .indent.phpscript
-        indent .hilight.phptag t "^\\s*\\{}\\s*$"    .indent.phpscript
-        indent .hilight.phptag t "^\\s*\\{}\\s*//"   .indent.phpscript
-        indent .hilight.phptag t "^\\s*\\{}\\s*/\\*" .indent.phpscript
-        indent .hilight.phptag t "^function "        .indent.phpscript
-        indent .hilight.phptag t "^class "           .indent.phpscript
-        indent .hilight.phptag t "\\?>"              .hilight.php
-        indent .hilight.phptag e "'" "'" "\\"
-        indent .hilight.phptag e "`" "`" "\\"
-        indent .hilight.phptag e "\"" "\"" "\\"
-        
-        indent .hilight.php x "^<\\?"    0 .indent.phpscript
-        indent .hilight.php x ".<\\?"    t .indent.phpscript
-        indent .hilight.phpscript w "\\?>" -t 0
-        ; picking up the </script> seems wrong, but the look-back phptag can incorrectly
-        ; identify javascript as php, this limits the damage (hopefully)
-        indent .hilight.phpscript w "</script>" -t 0
-    !endif
+  !if &exist .indent.phpscript
+    indent .hilight.phptag t "<\\?"              .indent.phpscript
+    indent .hilight.phptag t "<\\?php"           .indent.phpscript
+    indent .hilight.phptag t "^\\s*\\{#\\?php"   .indent.phpscript
+    indent .hilight.phptag t "^\\s*\\{//\\?php"  .indent.phpscript
+    indent .hilight.phptag t "^\\s*\\{}\\s*$"    .indent.phpscript
+    indent .hilight.phptag t "^\\s*\\{}\\s*//"   .indent.phpscript
+    indent .hilight.phptag t "^\\s*\\{}\\s*/\\*" .indent.phpscript
+    indent .hilight.phptag t "^function "        .indent.phpscript
+    indent .hilight.phptag t "^class "           .indent.phpscript
+    indent .hilight.phptag t "\\?>"              .hilight.php
+    indent .hilight.phptag e "'" "'" "\\"
+    indent .hilight.phptag e "`" "`" "\\"
+    indent .hilight.phptag e "\"" "\"" "\\"
+    
+    indent .hilight.php x "^<\\?"    0 .indent.phpscript
+    indent .hilight.php x ".<\\?"    t .indent.phpscript
+    indent .hilight.phpscript w "\\?>" -t 0
+    ; picking up the </script> seems wrong, but the look-back phptag can incorrectly
+    ; identify javascript as php, this limits the damage (hopefully)
+    indent .hilight.phpscript w "</script>" -t 0
+  !endif
 !endif
 
 buffer-init-fhook "php"

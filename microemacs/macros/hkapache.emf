@@ -8,9 +8,9 @@
 ; Author:     Jon Green
 ;
 define-macro fhook-apache
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "apache"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "apache"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -37,229 +37,229 @@ set-variable .fhook-apache.collapse-mclose "1"
 set-variable .fhook-apache.collapse-mnext "-1"
 
 !if &not &exist .hilight.apache
-    set-variable .hilight.apache    &pinc .hilight.next 1
-    set-variable .hilight.apachedoc &pinc .hilight.next 1
-    ; Fast lookback indentation scheme.
-    set-variable .hilight.apacheT   &pinc .hilight.next 1
+  set-variable .hilight.apache    &pinc .hilight.next 1
+  set-variable .hilight.apachedoc &pinc .hilight.next 1
+  ; Fast lookback indentation scheme.
+  set-variable .hilight.apacheT   &pinc .hilight.next 1
 !endif
 
 !if &and &sin "h" .fhook-apache.setup &band .hilight.flags 0x02
-    ; Samba hilighting
-    0 hilight .hilight.apache 2 25  $global-scheme
-    ; Comments
-    hilight .hilight.apache  0x2 "#" .scheme.comment
-    ;
-    hilight .hilight.apache  0x2 "#\\s*todo" .scheme.error
-    ; String literals
-    hilight .hilight.apache    4 "\"" "\"" "\\" .scheme.string
-    ;
-    hilight .hilight.apache  0x21 "Include" .scheme.prepro
-    ; Line continuation.
-    hilight .hilight.apache    0 "\\\\$" .scheme.prepro
-    ; Operators
-    hilight .hilight.apache    1 "and" .scheme.operator
-    hilight .hilight.apache    1 "or" .scheme.operator
-    hilight .hilight.apache    1 "eq" .scheme.operator
-    hilight .hilight.apache    1 "in" .scheme.operator
-    ; Variables
-    hilight .hilight.apache    1 "on" .scheme.variable
-    hilight .hilight.apache    1 "off" .scheme.variable
-    hilight .hilight.apache    1 "none" .scheme.variable
-    hilight .hilight.apache    1 "from" .scheme.variable
-    hilight .hilight.apache    1 "all" .scheme.variable
-    hilight .hilight.apache    1 "allow" .scheme.variable
-    hilight .hilight.apache    1 "deny" .scheme.variable
-    hilight .hilight.apache    1 "localhost" .scheme.variable
-    ; Reserved Words
-    hilight .hilight.apache 0x21 "AccessConfig" .scheme.keyword
-    hilight .hilight.apache 0x21 "AccessFileName" .scheme.keyword
-    hilight .hilight.apache 0x21 "AccessLog" .scheme.keyword
-    hilight .hilight.apache 0x21 "AddCharset" .scheme.keyword
-    hilight .hilight.apache 0x21 "AddDescription" .scheme.keyword
-    hilight .hilight.apache 0x21 "AddDirIcon" .scheme.keyword
-    hilight .hilight.apache 0x21 "AddEncoding" .scheme.keyword
-    hilight .hilight.apache 0x21 "AddHandler" .scheme.keyword
-    hilight .hilight.apache 0x21 "AddIcon" .scheme.keyword
-    hilight .hilight.apache 0x21 "AddIconByEncoding" .scheme.keyword
-    hilight .hilight.apache 0x21 "AddIconByType" .scheme.keyword
-    hilight .hilight.apache 0x21 "AddLanguage" .scheme.keyword
-    hilight .hilight.apache 0x21 "AddModule" .scheme.keyword
-    hilight .hilight.apache 0x21 "AddParentIcon" .scheme.keyword
-    hilight .hilight.apache 0x21 "AddType" .scheme.keyword
-    hilight .hilight.apache 0x21 "AddUnknownIcon" .scheme.keyword
-    hilight .hilight.apache 0x21 "Alias" .scheme.keyword
-    hilight .hilight.apache 0x21 "Allow" .scheme.keyword
-    hilight .hilight.apache 0x21 "AllowOverride" .scheme.keyword
-    hilight .hilight.apache 0x21 "AlwaysWelcome" .scheme.keyword
-    hilight .hilight.apache 0x21 "AuthConfig" .scheme.keyword
-    hilight .hilight.apache 0x21 "AuthGroupFile" .scheme.keyword
-    hilight .hilight.apache 0x21 "AuthUserFile" .scheme.keyword
-    hilight .hilight.apache 0x21 "BindAddress" .scheme.keyword
-    hilight .hilight.apache 0x21 "BrowserMatch" .scheme.keyword
-    hilight .hilight.apache 0x21 "CacheAccessLog" .scheme.keyword
-    hilight .hilight.apache 0x21 "CacheClean" .scheme.keyword
-    hilight .hilight.apache 0x21 "CacheDefaultExpire" .scheme.keyword
-    hilight .hilight.apache 0x21 "CacheDefaultExpiry" .scheme.keyword
-    hilight .hilight.apache 0x21 "CacheExpiryCheck" .scheme.keyword
-    hilight .hilight.apache 0x21 "CacheGcInterval" .scheme.keyword
-    hilight .hilight.apache 0x21 "CacheLastModifiedFactor" .scheme.keyword
-    hilight .hilight.apache 0x21 "CacheLimit_[12]" .scheme.keyword
-    hilight .hilight.apache 0x21 "CacheLockTimeOut" .scheme.keyword
-    hilight .hilight.apache 0x21 "CacheMaxExpire" .scheme.keyword
-    hilight .hilight.apache 0x21 "CacheNoConnect" .scheme.keyword
-    hilight .hilight.apache 0x21 "CacheRefreshInterval" .scheme.keyword
-    hilight .hilight.apache 0x21 "CacheRoot" .scheme.keyword
-    hilight .hilight.apache 0x21 "CacheSize" .scheme.keyword
-    hilight .hilight.apache 0x21 "CacheTimeMargin" .scheme.keyword
-    hilight .hilight.apache 0x21 "CacheUnused" .scheme.keyword
-    hilight .hilight.apache 0x21 "Caching" .scheme.keyword
-    hilight .hilight.apache 0x21 "ClearModuleList" .scheme.keyword
-    hilight .hilight.apache 0x21 "CustomLog" .scheme.keyword
-    hilight .hilight.apache 0x21 "DELETE-Script" .scheme.keyword
-    hilight .hilight.apache 0x21 "DefProt" .scheme.keyword
-    hilight .hilight.apache 0x21 "DefaultIcon" .scheme.keyword
-    hilight .hilight.apache 0x21 "DefaultType" .scheme.keyword
-    hilight .hilight.apache 0x21 "Deny" .scheme.keyword
-    hilight .hilight.apache 0x21 "DirAccess" .scheme.keyword
-    hilight .hilight.apache 0x21 "DirAddHref" .scheme.keyword
-    hilight .hilight.apache 0x21 "DirReadme" .scheme.keyword
-    hilight .hilight.apache 0x21 "DirShowBrackets" .scheme.keyword
-    hilight .hilight.apache 0x21 "DirShowBytes" .scheme.keyword
-    hilight .hilight.apache 0x21 "DirShowCase" .scheme.keyword
-    hilight .hilight.apache 0x21 "DirShowDate" .scheme.keyword
-    hilight .hilight.apache 0x21 "DirShowDescription" .scheme.keyword
-    hilight .hilight.apache 0x21 "DirShowGroup" .scheme.keyword
-    hilight .hilight.apache 0x21 "DirShowHTMLTitles" .scheme.keyword
-    hilight .hilight.apache 0x21 "DirShowHidden" .scheme.keyword
-    hilight .hilight.apache 0x21 "DirShowIcons" .scheme.keyword
-    hilight .hilight.apache 0x21 "DirShowMaxDescriptionLength" .scheme.keyword
-    hilight .hilight.apache 0x21 "DirShowMaxLength" .scheme.keyword
-    hilight .hilight.apache 0x21 "DirShowMinLength" .scheme.keyword
-    hilight .hilight.apache 0x21 "DirShowMode" .scheme.keyword
-    hilight .hilight.apache 0x21 "DirShowOwner" .scheme.keyword
-    hilight .hilight.apache 0x21 "DirShowSize" .scheme.keyword
-    hilight .hilight.apache 0x21 "DirectoryIndex" .scheme.keyword
-    hilight .hilight.apache 0x21 "DocumentRoot" .scheme.keyword
-    hilight .hilight.apache 0x21 "EBCDICConvertByType" .scheme.keyword
-    hilight .hilight.apache 0x21 "ErrorDocument" .scheme.keyword
-    hilight .hilight.apache 0x21 "ErrorLog" .scheme.keyword
-    hilight .hilight.apache 0x21 "Exec" .scheme.keyword
-    hilight .hilight.apache 0x21 "ExtendedStatus" .scheme.keyword
-    hilight .hilight.apache 0x21 "FTPDirInfo" .scheme.keyword
-    hilight .hilight.apache 0x21 "Fail" .scheme.keyword
-    hilight .hilight.apache 0x21 "FileInfo" .scheme.keyword
-    hilight .hilight.apache 0x21 "Gc" .scheme.keyword
-    hilight .hilight.apache 0x21 "GcDailyGc" .scheme.keyword
-    hilight .hilight.apache 0x21 "GcMemUsage" .scheme.keyword
-    hilight .hilight.apache 0x21 "Group" .scheme.keyword
-    hilight .hilight.apache 0x21 "HTBin" .scheme.keyword
-    hilight .hilight.apache 0x21 "HeaderName" .scheme.keyword
-    hilight .hilight.apache 0x21 "HostnameLookups" .scheme.keyword
-    hilight .hilight.apache 0x21 "IdentityCheck" .scheme.keyword
-    hilight .hilight.apache 0x21 "IndexIgnore" .scheme.keyword
-    hilight .hilight.apache 0x21 "IndexOptions" .scheme.keyword
-    hilight .hilight.apache 0x21 "InputTimeOut" .scheme.keyword
-    hilight .hilight.apache 0x21 "KeepAlive" .scheme.keyword
-    hilight .hilight.apache 0x21 "KeepAliveTimeout" .scheme.keyword
-    hilight .hilight.apache 0x21 "KeepExpired" .scheme.keyword
-    hilight .hilight.apache 0x21 "LanguagePriority" .scheme.keyword
-    hilight .hilight.apache 0x21 "Limit" .scheme.keyword
-    hilight .hilight.apache 0x21 "Listen" .scheme.keyword
-    hilight .hilight.apache 0x21 "LoadModule" .scheme.keyword
-    hilight .hilight.apache 0x21 "LockFile" .scheme.keyword
-    hilight .hilight.apache 0x21 "LogFileDateExt" .scheme.keyword
-    hilight .hilight.apache 0x21 "LogFormat" .scheme.keyword
-    hilight .hilight.apache 0x21 "LogLevel" .scheme.keyword
-    hilight .hilight.apache 0x21 "LogTime" .scheme.keyword
-    hilight .hilight.apache 0x21 "MIMEMagicFile" .scheme.keyword
-    hilight .hilight.apache 0x21 "Map" .scheme.keyword
-    hilight .hilight.apache 0x21 "MaxClients" .scheme.keyword
-    hilight .hilight.apache 0x21 "MaxContentLengthBuffer" .scheme.keyword
-    hilight .hilight.apache 0x21 "MaxKeepAliveRequests" .scheme.keyword
-    hilight .hilight.apache 0x21 "MaxRequestsPerChild" .scheme.keyword
-    hilight .hilight.apache 0x21 "MaxSpareServers" .scheme.keyword
-    hilight .hilight.apache 0x21 "MetaDir" .scheme.keyword
-    hilight .hilight.apache 0x21 "MetaSuffix" .scheme.keyword
-    hilight .hilight.apache 0x21 "MinSpareServers" .scheme.keyword
-    hilight .hilight.apache 0x21 "NameVirtualHost" .scheme.keyword
-    hilight .hilight.apache 0x21 "NoCache" .scheme.keyword
-    hilight .hilight.apache 0x21 "NoLog" .scheme.keyword
-    hilight .hilight.apache 0x21 "Options" .scheme.keyword
-    hilight .hilight.apache 0x21 "Order" .scheme.keyword
-    hilight .hilight.apache 0x21 "OutputTimeOut" .scheme.keyword
-    hilight .hilight.apache 0x21 "POST-Script" .scheme.keyword
-    hilight .hilight.apache 0x21 "PUT-Script" .scheme.keyword
-    hilight .hilight.apache 0x21 "Pass" .scheme.keyword
-    hilight .hilight.apache 0x21 "PidFile" .scheme.keyword
-    hilight .hilight.apache 0x21 "Port" .scheme.keyword
-    hilight .hilight.apache 0x21 "Protect" .scheme.keyword
-    hilight .hilight.apache 0x21 "ProxyAccessLog" .scheme.keyword
-    hilight .hilight.apache 0x21 "ProxyRequests" .scheme.keyword
-    hilight .hilight.apache 0x21 "ProxyVia" .scheme.keyword
-    hilight .hilight.apache 0x21 "ReadmeName" .scheme.keyword
-    hilight .hilight.apache 0x21 "Redirect" .scheme.keyword
-    hilight .hilight.apache 0x21 "ResourceConfig" .scheme.keyword
-    hilight .hilight.apache 0x21 "Satisfy" .scheme.keyword
-    hilight .hilight.apache 0x21 "ScoreBoardFile" .scheme.keyword
-    hilight .hilight.apache 0x21 "ScriptAlias" .scheme.keyword
-    hilight .hilight.apache 0x21 "ScriptTimeOut" .scheme.keyword
-    hilight .hilight.apache 0x21 "Search" .scheme.keyword
-    hilight .hilight.apache 0x21 "ServerAdmin" .scheme.keyword
-    hilight .hilight.apache 0x21 "ServerName" .scheme.keyword
-    hilight .hilight.apache 0x21 "ServerRoot" .scheme.keyword
-    hilight .hilight.apache 0x21 "ServerSignature" .scheme.keyword
-    hilight .hilight.apache 0x21 "ServerType" .scheme.keyword
-    hilight .hilight.apache 0x21 "SetEnvIf" .scheme.keyword
-    hilight .hilight.apache 0x21 "SetHandler" .scheme.keyword
-    hilight .hilight.apache 0x21 "StartServers" .scheme.keyword
-    hilight .hilight.apache 0x21 "SuffixCaseSense" .scheme.keyword
-    hilight .hilight.apache 0x21 "Timeout" .scheme.keyword
-    hilight .hilight.apache 0x21 "TypesConfig" .scheme.keyword
-    hilight .hilight.apache 0x21 "User" .scheme.keyword
-    hilight .hilight.apache 0x21 "Welcome" .scheme.keyword
-    ; SSL
-    hilight .hilight.apache 0x21 "SSLCACertificateFile" .scheme.keyword
-    hilight .hilight.apache 0x21 "SSLCACertificatePath" .scheme.keyword
-    hilight .hilight.apache 0x21 "SSLCARevocationFile" .scheme.keyword
-    hilight .hilight.apache 0x21 "SSLCARevocationPath" .scheme.keyword
-    hilight .hilight.apache 0x21 "SSLCertificateChainFile" .scheme.keyword
-    hilight .hilight.apache 0x21 "SSLCertificateFile" .scheme.keyword
-    hilight .hilight.apache 0x21 "SSLCertificateKeyFile" .scheme.keyword
-    hilight .hilight.apache 0x21 "SSLCipherSuite" .scheme.keyword
-    hilight .hilight.apache 0x21 "SSLEngine" .scheme.keyword
-    hilight .hilight.apache 0x21 "SSLLog" .scheme.keyword
-    hilight .hilight.apache 0x21 "SSLLogLevel" .scheme.keyword
-    hilight .hilight.apache 0x21 "SSLMutex" .scheme.keyword
-    hilight .hilight.apache 0x21 "SSLOptions" .scheme.keyword
-    hilight .hilight.apache 0x21 "SSLPassPhraseDialog" .scheme.keyword
-    hilight .hilight.apache 0x21 "SSLRandomSeed" .scheme.keyword
-    hilight .hilight.apache 0x21 "SSLRequire" .scheme.keyword
-    hilight .hilight.apache 0x21 "SSLSessionCache" .scheme.keyword
-    hilight .hilight.apache 0x21 "SSLSessionCacheTimeout" .scheme.keyword
-    hilight .hilight.apache 0x21 "SSLVerifyClient" .scheme.keyword
-    hilight .hilight.apache 0x21 "SSLVerifyDepth" .scheme.keyword
-    hilight .hilight.apache 0x21 "TransferLog" .scheme.keyword
-    ; Perl
-    hilight .hilight.apache 0x21 "PerlHandler" .scheme.keyword
-    hilight .hilight.apache 0x21 "PerlModule" .scheme.keyword
-    hilight .hilight.apache 0x21 "PerlOptions" .scheme.keyword
-    hilight .hilight.apache 0x21 "PerlResponseHandler" .scheme.keyword
-    hilight .hilight.apache 0x21 "PerlSendHeader" .scheme.keyword
-    hilight .hilight.apache 0x21 "PerlSwitches" .scheme.keyword
-    hilight .hilight.apache 0x21 "PerlTaintCheck" .scheme.keyword
-    hilight .hilight.apache 0x21 "PerlWarn" .scheme.keyword
-    ;
-    hilight .hilight.apache 4 "<\\w" ">" "" .scheme.function
-    hilight .hilight.apache 4 "</\\w" ">" "" .scheme.function
-    ; Special variables.
-    hilight .hilight.apache    4 "%{" "}" "" .scheme.variable
-    ; Numeric constants
-    !if &band .hilight.flags 0x08
-        ; hilight constants, e.g. numbers
-        hilight .hilight.apache 1 "[[:digit:]]+" .scheme.constant
-        hilight .hilight.apache 1 "-[[:digit:]]+" .scheme.constant
-        hilight .hilight.apache 1 "0[x][[:xdigit:]]+" .scheme.constant
-    !endif
+  ; Samba hilighting
+  0 hilight .hilight.apache 2 25  $global-scheme
+  ; Comments
+  hilight .hilight.apache  0x2 "#" .scheme.comment
+  ;
+  hilight .hilight.apache  0x2 "#\\s*todo" .scheme.error
+  ; String literals
+  hilight .hilight.apache    4 "\"" "\"" "\\" .scheme.string
+  ;
+  hilight .hilight.apache  0x21 "Include" .scheme.prepro
+  ; Line continuation.
+  hilight .hilight.apache    0 "\\\\$" .scheme.prepro
+  ; Operators
+  hilight .hilight.apache    1 "and" .scheme.operator
+  hilight .hilight.apache    1 "or" .scheme.operator
+  hilight .hilight.apache    1 "eq" .scheme.operator
+  hilight .hilight.apache    1 "in" .scheme.operator
+  ; Variables
+  hilight .hilight.apache    1 "on" .scheme.variable
+  hilight .hilight.apache    1 "off" .scheme.variable
+  hilight .hilight.apache    1 "none" .scheme.variable
+  hilight .hilight.apache    1 "from" .scheme.variable
+  hilight .hilight.apache    1 "all" .scheme.variable
+  hilight .hilight.apache    1 "allow" .scheme.variable
+  hilight .hilight.apache    1 "deny" .scheme.variable
+  hilight .hilight.apache    1 "localhost" .scheme.variable
+  ; Reserved Words
+  hilight .hilight.apache 0x21 "AccessConfig" .scheme.keyword
+  hilight .hilight.apache 0x21 "AccessFileName" .scheme.keyword
+  hilight .hilight.apache 0x21 "AccessLog" .scheme.keyword
+  hilight .hilight.apache 0x21 "AddCharset" .scheme.keyword
+  hilight .hilight.apache 0x21 "AddDescription" .scheme.keyword
+  hilight .hilight.apache 0x21 "AddDirIcon" .scheme.keyword
+  hilight .hilight.apache 0x21 "AddEncoding" .scheme.keyword
+  hilight .hilight.apache 0x21 "AddHandler" .scheme.keyword
+  hilight .hilight.apache 0x21 "AddIcon" .scheme.keyword
+  hilight .hilight.apache 0x21 "AddIconByEncoding" .scheme.keyword
+  hilight .hilight.apache 0x21 "AddIconByType" .scheme.keyword
+  hilight .hilight.apache 0x21 "AddLanguage" .scheme.keyword
+  hilight .hilight.apache 0x21 "AddModule" .scheme.keyword
+  hilight .hilight.apache 0x21 "AddParentIcon" .scheme.keyword
+  hilight .hilight.apache 0x21 "AddType" .scheme.keyword
+  hilight .hilight.apache 0x21 "AddUnknownIcon" .scheme.keyword
+  hilight .hilight.apache 0x21 "Alias" .scheme.keyword
+  hilight .hilight.apache 0x21 "Allow" .scheme.keyword
+  hilight .hilight.apache 0x21 "AllowOverride" .scheme.keyword
+  hilight .hilight.apache 0x21 "AlwaysWelcome" .scheme.keyword
+  hilight .hilight.apache 0x21 "AuthConfig" .scheme.keyword
+  hilight .hilight.apache 0x21 "AuthGroupFile" .scheme.keyword
+  hilight .hilight.apache 0x21 "AuthUserFile" .scheme.keyword
+  hilight .hilight.apache 0x21 "BindAddress" .scheme.keyword
+  hilight .hilight.apache 0x21 "BrowserMatch" .scheme.keyword
+  hilight .hilight.apache 0x21 "CacheAccessLog" .scheme.keyword
+  hilight .hilight.apache 0x21 "CacheClean" .scheme.keyword
+  hilight .hilight.apache 0x21 "CacheDefaultExpire" .scheme.keyword
+  hilight .hilight.apache 0x21 "CacheDefaultExpiry" .scheme.keyword
+  hilight .hilight.apache 0x21 "CacheExpiryCheck" .scheme.keyword
+  hilight .hilight.apache 0x21 "CacheGcInterval" .scheme.keyword
+  hilight .hilight.apache 0x21 "CacheLastModifiedFactor" .scheme.keyword
+  hilight .hilight.apache 0x21 "CacheLimit_[12]" .scheme.keyword
+  hilight .hilight.apache 0x21 "CacheLockTimeOut" .scheme.keyword
+  hilight .hilight.apache 0x21 "CacheMaxExpire" .scheme.keyword
+  hilight .hilight.apache 0x21 "CacheNoConnect" .scheme.keyword
+  hilight .hilight.apache 0x21 "CacheRefreshInterval" .scheme.keyword
+  hilight .hilight.apache 0x21 "CacheRoot" .scheme.keyword
+  hilight .hilight.apache 0x21 "CacheSize" .scheme.keyword
+  hilight .hilight.apache 0x21 "CacheTimeMargin" .scheme.keyword
+  hilight .hilight.apache 0x21 "CacheUnused" .scheme.keyword
+  hilight .hilight.apache 0x21 "Caching" .scheme.keyword
+  hilight .hilight.apache 0x21 "ClearModuleList" .scheme.keyword
+  hilight .hilight.apache 0x21 "CustomLog" .scheme.keyword
+  hilight .hilight.apache 0x21 "DELETE-Script" .scheme.keyword
+  hilight .hilight.apache 0x21 "DefProt" .scheme.keyword
+  hilight .hilight.apache 0x21 "DefaultIcon" .scheme.keyword
+  hilight .hilight.apache 0x21 "DefaultType" .scheme.keyword
+  hilight .hilight.apache 0x21 "Deny" .scheme.keyword
+  hilight .hilight.apache 0x21 "DirAccess" .scheme.keyword
+  hilight .hilight.apache 0x21 "DirAddHref" .scheme.keyword
+  hilight .hilight.apache 0x21 "DirReadme" .scheme.keyword
+  hilight .hilight.apache 0x21 "DirShowBrackets" .scheme.keyword
+  hilight .hilight.apache 0x21 "DirShowBytes" .scheme.keyword
+  hilight .hilight.apache 0x21 "DirShowCase" .scheme.keyword
+  hilight .hilight.apache 0x21 "DirShowDate" .scheme.keyword
+  hilight .hilight.apache 0x21 "DirShowDescription" .scheme.keyword
+  hilight .hilight.apache 0x21 "DirShowGroup" .scheme.keyword
+  hilight .hilight.apache 0x21 "DirShowHTMLTitles" .scheme.keyword
+  hilight .hilight.apache 0x21 "DirShowHidden" .scheme.keyword
+  hilight .hilight.apache 0x21 "DirShowIcons" .scheme.keyword
+  hilight .hilight.apache 0x21 "DirShowMaxDescriptionLength" .scheme.keyword
+  hilight .hilight.apache 0x21 "DirShowMaxLength" .scheme.keyword
+  hilight .hilight.apache 0x21 "DirShowMinLength" .scheme.keyword
+  hilight .hilight.apache 0x21 "DirShowMode" .scheme.keyword
+  hilight .hilight.apache 0x21 "DirShowOwner" .scheme.keyword
+  hilight .hilight.apache 0x21 "DirShowSize" .scheme.keyword
+  hilight .hilight.apache 0x21 "DirectoryIndex" .scheme.keyword
+  hilight .hilight.apache 0x21 "DocumentRoot" .scheme.keyword
+  hilight .hilight.apache 0x21 "EBCDICConvertByType" .scheme.keyword
+  hilight .hilight.apache 0x21 "ErrorDocument" .scheme.keyword
+  hilight .hilight.apache 0x21 "ErrorLog" .scheme.keyword
+  hilight .hilight.apache 0x21 "Exec" .scheme.keyword
+  hilight .hilight.apache 0x21 "ExtendedStatus" .scheme.keyword
+  hilight .hilight.apache 0x21 "FTPDirInfo" .scheme.keyword
+  hilight .hilight.apache 0x21 "Fail" .scheme.keyword
+  hilight .hilight.apache 0x21 "FileInfo" .scheme.keyword
+  hilight .hilight.apache 0x21 "Gc" .scheme.keyword
+  hilight .hilight.apache 0x21 "GcDailyGc" .scheme.keyword
+  hilight .hilight.apache 0x21 "GcMemUsage" .scheme.keyword
+  hilight .hilight.apache 0x21 "Group" .scheme.keyword
+  hilight .hilight.apache 0x21 "HTBin" .scheme.keyword
+  hilight .hilight.apache 0x21 "HeaderName" .scheme.keyword
+  hilight .hilight.apache 0x21 "HostnameLookups" .scheme.keyword
+  hilight .hilight.apache 0x21 "IdentityCheck" .scheme.keyword
+  hilight .hilight.apache 0x21 "IndexIgnore" .scheme.keyword
+  hilight .hilight.apache 0x21 "IndexOptions" .scheme.keyword
+  hilight .hilight.apache 0x21 "InputTimeOut" .scheme.keyword
+  hilight .hilight.apache 0x21 "KeepAlive" .scheme.keyword
+  hilight .hilight.apache 0x21 "KeepAliveTimeout" .scheme.keyword
+  hilight .hilight.apache 0x21 "KeepExpired" .scheme.keyword
+  hilight .hilight.apache 0x21 "LanguagePriority" .scheme.keyword
+  hilight .hilight.apache 0x21 "Limit" .scheme.keyword
+  hilight .hilight.apache 0x21 "Listen" .scheme.keyword
+  hilight .hilight.apache 0x21 "LoadModule" .scheme.keyword
+  hilight .hilight.apache 0x21 "LockFile" .scheme.keyword
+  hilight .hilight.apache 0x21 "LogFileDateExt" .scheme.keyword
+  hilight .hilight.apache 0x21 "LogFormat" .scheme.keyword
+  hilight .hilight.apache 0x21 "LogLevel" .scheme.keyword
+  hilight .hilight.apache 0x21 "LogTime" .scheme.keyword
+  hilight .hilight.apache 0x21 "MIMEMagicFile" .scheme.keyword
+  hilight .hilight.apache 0x21 "Map" .scheme.keyword
+  hilight .hilight.apache 0x21 "MaxClients" .scheme.keyword
+  hilight .hilight.apache 0x21 "MaxContentLengthBuffer" .scheme.keyword
+  hilight .hilight.apache 0x21 "MaxKeepAliveRequests" .scheme.keyword
+  hilight .hilight.apache 0x21 "MaxRequestsPerChild" .scheme.keyword
+  hilight .hilight.apache 0x21 "MaxSpareServers" .scheme.keyword
+  hilight .hilight.apache 0x21 "MetaDir" .scheme.keyword
+  hilight .hilight.apache 0x21 "MetaSuffix" .scheme.keyword
+  hilight .hilight.apache 0x21 "MinSpareServers" .scheme.keyword
+  hilight .hilight.apache 0x21 "NameVirtualHost" .scheme.keyword
+  hilight .hilight.apache 0x21 "NoCache" .scheme.keyword
+  hilight .hilight.apache 0x21 "NoLog" .scheme.keyword
+  hilight .hilight.apache 0x21 "Options" .scheme.keyword
+  hilight .hilight.apache 0x21 "Order" .scheme.keyword
+  hilight .hilight.apache 0x21 "OutputTimeOut" .scheme.keyword
+  hilight .hilight.apache 0x21 "POST-Script" .scheme.keyword
+  hilight .hilight.apache 0x21 "PUT-Script" .scheme.keyword
+  hilight .hilight.apache 0x21 "Pass" .scheme.keyword
+  hilight .hilight.apache 0x21 "PidFile" .scheme.keyword
+  hilight .hilight.apache 0x21 "Port" .scheme.keyword
+  hilight .hilight.apache 0x21 "Protect" .scheme.keyword
+  hilight .hilight.apache 0x21 "ProxyAccessLog" .scheme.keyword
+  hilight .hilight.apache 0x21 "ProxyRequests" .scheme.keyword
+  hilight .hilight.apache 0x21 "ProxyVia" .scheme.keyword
+  hilight .hilight.apache 0x21 "ReadmeName" .scheme.keyword
+  hilight .hilight.apache 0x21 "Redirect" .scheme.keyword
+  hilight .hilight.apache 0x21 "ResourceConfig" .scheme.keyword
+  hilight .hilight.apache 0x21 "Satisfy" .scheme.keyword
+  hilight .hilight.apache 0x21 "ScoreBoardFile" .scheme.keyword
+  hilight .hilight.apache 0x21 "ScriptAlias" .scheme.keyword
+  hilight .hilight.apache 0x21 "ScriptTimeOut" .scheme.keyword
+  hilight .hilight.apache 0x21 "Search" .scheme.keyword
+  hilight .hilight.apache 0x21 "ServerAdmin" .scheme.keyword
+  hilight .hilight.apache 0x21 "ServerName" .scheme.keyword
+  hilight .hilight.apache 0x21 "ServerRoot" .scheme.keyword
+  hilight .hilight.apache 0x21 "ServerSignature" .scheme.keyword
+  hilight .hilight.apache 0x21 "ServerType" .scheme.keyword
+  hilight .hilight.apache 0x21 "SetEnvIf" .scheme.keyword
+  hilight .hilight.apache 0x21 "SetHandler" .scheme.keyword
+  hilight .hilight.apache 0x21 "StartServers" .scheme.keyword
+  hilight .hilight.apache 0x21 "SuffixCaseSense" .scheme.keyword
+  hilight .hilight.apache 0x21 "Timeout" .scheme.keyword
+  hilight .hilight.apache 0x21 "TypesConfig" .scheme.keyword
+  hilight .hilight.apache 0x21 "User" .scheme.keyword
+  hilight .hilight.apache 0x21 "Welcome" .scheme.keyword
+  ; SSL
+  hilight .hilight.apache 0x21 "SSLCACertificateFile" .scheme.keyword
+  hilight .hilight.apache 0x21 "SSLCACertificatePath" .scheme.keyword
+  hilight .hilight.apache 0x21 "SSLCARevocationFile" .scheme.keyword
+  hilight .hilight.apache 0x21 "SSLCARevocationPath" .scheme.keyword
+  hilight .hilight.apache 0x21 "SSLCertificateChainFile" .scheme.keyword
+  hilight .hilight.apache 0x21 "SSLCertificateFile" .scheme.keyword
+  hilight .hilight.apache 0x21 "SSLCertificateKeyFile" .scheme.keyword
+  hilight .hilight.apache 0x21 "SSLCipherSuite" .scheme.keyword
+  hilight .hilight.apache 0x21 "SSLEngine" .scheme.keyword
+  hilight .hilight.apache 0x21 "SSLLog" .scheme.keyword
+  hilight .hilight.apache 0x21 "SSLLogLevel" .scheme.keyword
+  hilight .hilight.apache 0x21 "SSLMutex" .scheme.keyword
+  hilight .hilight.apache 0x21 "SSLOptions" .scheme.keyword
+  hilight .hilight.apache 0x21 "SSLPassPhraseDialog" .scheme.keyword
+  hilight .hilight.apache 0x21 "SSLRandomSeed" .scheme.keyword
+  hilight .hilight.apache 0x21 "SSLRequire" .scheme.keyword
+  hilight .hilight.apache 0x21 "SSLSessionCache" .scheme.keyword
+  hilight .hilight.apache 0x21 "SSLSessionCacheTimeout" .scheme.keyword
+  hilight .hilight.apache 0x21 "SSLVerifyClient" .scheme.keyword
+  hilight .hilight.apache 0x21 "SSLVerifyDepth" .scheme.keyword
+  hilight .hilight.apache 0x21 "TransferLog" .scheme.keyword
+  ; Perl
+  hilight .hilight.apache 0x21 "PerlHandler" .scheme.keyword
+  hilight .hilight.apache 0x21 "PerlModule" .scheme.keyword
+  hilight .hilight.apache 0x21 "PerlOptions" .scheme.keyword
+  hilight .hilight.apache 0x21 "PerlResponseHandler" .scheme.keyword
+  hilight .hilight.apache 0x21 "PerlSendHeader" .scheme.keyword
+  hilight .hilight.apache 0x21 "PerlSwitches" .scheme.keyword
+  hilight .hilight.apache 0x21 "PerlTaintCheck" .scheme.keyword
+  hilight .hilight.apache 0x21 "PerlWarn" .scheme.keyword
+  ;
+  hilight .hilight.apache 4 "<\\w" ">" "" .scheme.function
+  hilight .hilight.apache 4 "</\\w" ">" "" .scheme.function
+  ; Special variables.
+  hilight .hilight.apache    4 "%{" "}" "" .scheme.variable
+  ; Numeric constants
+  !if &band .hilight.flags 0x08
+    ; hilight constants, e.g. numbers
+    hilight .hilight.apache 1 "[[:digit:]]+" .scheme.constant
+    hilight .hilight.apache 1 "-[[:digit:]]+" .scheme.constant
+    hilight .hilight.apache 1 "0[x][[:xdigit:]]+" .scheme.constant
+  !endif
 !endif
 
 buffer-init-fhook "apache"

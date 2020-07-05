@@ -8,9 +8,9 @@
 ; Authors:     Gabriel Tabares-Barreiro & Steven Phillips
 ;
 define-macro fhook-jsp
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "jsp"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "jsp"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -25,62 +25,62 @@ set-variable .fhook-jsp.command-desc  "|"
 
 ; load in Java & the html core
 !if &not &exist fhook-java
-    !force exec-file "hkjava"
+  !force exec-file "hkjava"
 !endif
 !force execute-file "htmlcore" "jsp" 
 
 ; add the <% %> java script support
 !if &and &sin "h" .fhook-jsp.setup &band .hilight.flags 0x02 
-    ; add JSP html extensions
-    hilight .hilight.jsp 4 "<%--" "%>" ""     .scheme.comment
-    hilight .hilight.jsp 4 "<%@" "%>" ""      .scheme.prepro
-    hilight .hilight.jsptag 4 "=\\{[^ \t\n<>]*<%" "%>[^ \t\n>]*" ""  .scheme.string
-    hilight .hilight.jsptag 4 "=\\{\"[^\"\n<]*<%" "%>[^\"]*\"" ""  .scheme.string
-    ; use hilight scheme to handle script inside a script token
-    !if &not &exist .hilight.jspjs
-        set-variable .hilight.jspjs &pinc .hilight.next 1
-    !endif
-    -1 hilight .hilight.jsp 0x80 "<script\\s+language=\"?javascript[^>]*>"
-    hilight .hilight.jsp 0x80 "<script\\s+language\{=javascript" .hilight.jspjs .scheme.prepro
-    hilight .hilight.jsp 0x80 "<script\\s+language\{=\"javascript\"" .hilight.jspjs .scheme.prepro
-    
-    0 hilight .hilight.jspjs 1                          $global-scheme
-    hilight .hilight.jspjs 4 "=\\{\"" "\"" "\\"         .scheme.string
-    hilight .hilight.jspjs 4 "=\\{" "\\}[ \t\n>]" ""    .scheme.string
-    hilight .hilight.jspjs 4 "=\\{[^ \t\n<>]*<\\?php" "\\?>[^ \t\n>]*" "" .scheme.string
-    hilight .hilight.jspjs 4 "=\\{\"[^\"\n<]*<\\?php" "\\?>[^\"]*\"" "" .scheme.string
-    hilight .hilight.jspjs 1 "type"                     .scheme.operator
-    hilight .hilight.jspjs 1 "src"                      .scheme.operator
-    hilight .hilight.jspjs 0x80 ">" .hilight.javascript .scheme.keyword
-    
-    !if &exist .hilight.java
-        hilight .hilight.jsp        0x80 "<%" .hilight.java .scheme.prepro
-        hilight .hilight.jsptag     0x80 "<%" .hilight.java .scheme.prepro
-        hilight .hilight.java       0x80 "%>" 0 .scheme.prepro
-    !endif
-    !if &exist .hilight.javascript
-        ; %> does not terminate a javascript block but a java section can
-        ; be classed as javascript due to the fast lookback tokens
-        hilight .hilight.javascript 0x80 "%>" 0 .scheme.prepro
-    !endif
+  ; add JSP html extensions
+  hilight .hilight.jsp 4 "<%--" "%>" ""     .scheme.comment
+  hilight .hilight.jsp 4 "<%@" "%>" ""      .scheme.prepro
+  hilight .hilight.jsptag 4 "=\\{[^ \t\n<>]*<%" "%>[^ \t\n>]*" ""  .scheme.string
+  hilight .hilight.jsptag 4 "=\\{\"[^\"\n<]*<%" "%>[^\"]*\"" ""  .scheme.string
+  ; use hilight scheme to handle script inside a script token
+  !if &not &exist .hilight.jspjs
+    set-variable .hilight.jspjs &pinc .hilight.next 1
+  !endif
+  -1 hilight .hilight.jsp 0x80 "<script\\s+language=\"?javascript[^>]*>"
+  hilight .hilight.jsp 0x80 "<script\\s+language\{=javascript" .hilight.jspjs .scheme.prepro
+  hilight .hilight.jsp 0x80 "<script\\s+language\{=\"javascript\"" .hilight.jspjs .scheme.prepro
+  
+  0 hilight .hilight.jspjs 1                          $global-scheme
+  hilight .hilight.jspjs 4 "=\\{\"" "\"" "\\"         .scheme.string
+  hilight .hilight.jspjs 4 "=\\{" "\\}[ \t\n>]" ""    .scheme.string
+  hilight .hilight.jspjs 4 "=\\{[^ \t\n<>]*<\\?php" "\\?>[^ \t\n>]*" "" .scheme.string
+  hilight .hilight.jspjs 4 "=\\{\"[^\"\n<]*<\\?php" "\\?>[^\"]*\"" "" .scheme.string
+  hilight .hilight.jspjs 1 "type"                     .scheme.operator
+  hilight .hilight.jspjs 1 "src"                      .scheme.operator
+  hilight .hilight.jspjs 0x80 ">" .hilight.javascript .scheme.keyword
+  
+  !if &exist .hilight.java
+    hilight .hilight.jsp        0x80 "<%" .hilight.java .scheme.prepro
+    hilight .hilight.jsptag     0x80 "<%" .hilight.java .scheme.prepro
+    hilight .hilight.java       0x80 "%>" 0 .scheme.prepro
+  !endif
+  !if &exist .hilight.javascript
+    ; %> does not terminate a javascript block but a java section can
+    ; be classed as javascript due to the fast lookback tokens
+    hilight .hilight.javascript 0x80 "%>" 0 .scheme.prepro
+  !endif
 !endif
 !if &sin "d" .fhook-jsp.setup
-    !if &exist .indent.java
-        indent .hilight.jsptag t "<%" .indent.java
-        indent .hilight.jsptag t "%>" .hilight.jsp
-        
-        indent .hilight.jsp x "^<%" 0 .indent.java
-        indent .hilight.jsp x ".<%" t .indent.java
-        indent .indent.java w "%>" -t 0
-    !endif
-    !if &exist .indent.javascript
-        indent .indent.javascript t "^\\s*\\{}\\s*$"  .indent.javascript
-        indent .indent.javascript t "^\\s*\\{}\\s*//" .indent.javascript
-        indent .indent.javascript t "^function " .indent.javascript
-        ; %> does not terminate a javascript block but a java section can
-        ; be classed as javascript due to the fast lookback tokens
-        indent .indent.javascript w "%>" -t 0
-    !endif
+  !if &exist .indent.java
+    indent .hilight.jsptag t "<%" .indent.java
+    indent .hilight.jsptag t "%>" .hilight.jsp
+    
+    indent .hilight.jsp x "^<%" 0 .indent.java
+    indent .hilight.jsp x ".<%" t .indent.java
+    indent .indent.java w "%>" -t 0
+  !endif
+  !if &exist .indent.javascript
+    indent .indent.javascript t "^\\s*\\{}\\s*$"  .indent.javascript
+    indent .indent.javascript t "^\\s*\\{}\\s*//" .indent.javascript
+    indent .indent.javascript t "^function " .indent.javascript
+    ; %> does not terminate a javascript block but a java section can
+    ; be classed as javascript due to the fast lookback tokens
+    indent .indent.javascript w "%>" -t 0
+  !endif
 !endif
 
 buffer-init-fhook "jsp"

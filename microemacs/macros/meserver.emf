@@ -8,39 +8,39 @@
 ; Authors:     steven phillips
 ;
 0 define-macro server-input
-    goto-alpha-mark "I"
-    !if &equ $window-line :last-line
-        !return
+  goto-alpha-mark "I"
+  !if &equ $window-line :last-line
+    !return
+  !endif
+  set-variable #l0 $window-line
+  set-variable #l1 $buffer-bname
+  goto-line :last-line
+  !while &gre #l0 $window-line
+    set-variable #l5 &add $window-line 1
+    !if &seq @wc "C"
+      set-variable #l2 &lget &rig @wl 1 1
+      set-variable #l3 &rig @wl &add 3 &len #l2
+      !if &not &lfind :client-list #l2
+        set-variable :client-list &lin :client-list -1 #l2
+        set-variable &ind &spr ":%s-buffer" #l2 ""
+      !endif
+      popup-window ""
+      set-variable #l4 &ind &spr ":%s-buffer" #l2
+      !if &not &seq #l4 ""
+        !force 0 find-buffer #l4
+      !endif
+      !force execute-line #l3
+      set-variable #l4 $buffer-bname
+      popup-window #l1
+      set-variable &ind &spr ":%s-buffer" #l2 #l4
+    !elif &seq @wc "M"
+      set-variable #l2 &lget &rig @wl 1 1
+      set-variable #l3 &rig @wl &add 3 &len #l2
+      ml-write &spr "Message from client %s: %s" #l2 #l3
     !endif
-    set-variable #l0 $window-line
-    set-variable #l1 $buffer-bname
-    goto-line :last-line
-    !while &gre #l0 $window-line
-        set-variable #l5 &add $window-line 1
-        !if &seq @wc "C"
-            set-variable #l2 &lget &rig @wl 1 1
-            set-variable #l3 &rig @wl &add 3 &len #l2
-            !if &not &lfind :client-list #l2
-                set-variable :client-list &lin :client-list -1 #l2
-                set-variable &ind &spr ":%s-buffer" #l2 ""
-            !endif
-            popup-window ""
-            set-variable #l4 &ind &spr ":%s-buffer" #l2
-            !if &not &seq #l4 ""
-                !force 0 find-buffer #l4
-            !endif
-            !force execute-line #l3
-            set-variable #l4 $buffer-bname
-            popup-window #l1
-            set-variable &ind &spr ":%s-buffer" #l2 #l4
-        !elif &seq @wc "M"
-            set-variable #l2 &lget &rig @wl 1 1
-            set-variable #l3 &rig @wl &add 3 &len #l2
-            ml-write &spr "Message from client %s: %s" #l2 #l3
-        !endif
-        goto-line #l5
-    !done
-    goto-alpha-mark  "I"
-    set-variable :last-line $window-line
-    -1 find-buffer $buffer-bname
+    goto-line #l5
+  !done
+  goto-alpha-mark  "I"
+  set-variable :last-line $window-line
+  -1 find-buffer $buffer-bname
 !emacro

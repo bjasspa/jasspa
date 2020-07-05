@@ -10,44 +10,44 @@
 ;     me "@filetype" <files>
 ;
 define-macro start-up
-    delete-other-windows
-    !while &not &seq $buffer-bname "*scratch*"
-        set-variable #l1 &rig $buffer-fname -59 
-        ml-write &spr "Processing [%s]" #l1
-        ; what type of file is it
-        set-variable #l2 ""
-        !if &band $buffer-fmod 0x10000
-            set-variable #l0 "Directory"
-        !elif &band $buffer-fmod 0x80000
-            set-variable #l0 "Binary"
-        !else
-            set-variable #l0 &add 1 &add &add &bmod "cr" &mul &bmod "lf" 2 &mul &bmod "ctrlz" 4
-            set-variable #l0 &lget "|Strange0|Mac|Unix|Windows|Strange4|Strange5|Strange6|Dos|" #l0
-            !if &band $buffer-fmod 0x100000
-                set-variable #l2 &cat #l2 "EOL"
-            !endif
-            end-of-buffer
-            !force backward-line
-            !if &band $line-flags 0x10
-                !if &len #l2
-                    set-variable #l2 &cat #l2 ", "
-                !endif
-                set-variable #l2 &cat #l2 "EOF"
-            !endif
-        !endif
+  delete-other-windows
+  !while &not &seq $buffer-bname "*scratch*"
+    set-variable #l1 &rig $buffer-fname -59 
+    ml-write &spr "Processing [%s]" #l1
+    ; what type of file is it
+    set-variable #l2 ""
+    !if &band $buffer-fmod 0x10000
+      set-variable #l0 "Directory"
+    !elif &band $buffer-fmod 0x80000
+      set-variable #l0 "Binary"
+    !else
+      set-variable #l0 &add 1 &add &add &bmod "cr" &mul &bmod "lf" 2 &mul &bmod "ctrlz" 4
+      set-variable #l0 &lget "|Strange0|Mac|Unix|Windows|Strange4|Strange5|Strange6|Dos|" #l0
+      !if &band $buffer-fmod 0x100000
+        set-variable #l2 &cat #l2 "EOL"
+      !endif
+      end-of-buffer
+      !force backward-line
+      !if &band $line-flags 0x10
         !if &len #l2
-            set-variable #l0 &spr "%s (bad %s)" #l0 #l2
+          set-variable #l2 &cat #l2 ", "
         !endif
-        !if &band $system 0x1000000
-            -1 ml-write &spr "%s%n%s" #l1 &sub 60 &len #l1 " " #l0
-        !else
-            find-buffer "*scratch*"
-            insert-string &spr "%s%n%s\n" #l1 &sub 60 &len #l1 " " #l0
-            -1 find-buffer "*scratch*"
-        !endif
-        delete-buffer $buffer-bname
-    !done
-    !if &band $system 0x1000000
-        0 quick-exit
+        set-variable #l2 &cat #l2 "EOF"
+      !endif
     !endif
+    !if &len #l2
+      set-variable #l0 &spr "%s (bad %s)" #l0 #l2
+    !endif
+    !if &band $system 0x1000000
+      -1 ml-write &spr "%s%n%s" #l1 &sub 60 &len #l1 " " #l0
+    !else
+      find-buffer "*scratch*"
+      insert-string &spr "%s%n%s\n" #l1 &sub 60 &len #l1 " " #l0
+      -1 find-buffer "*scratch*"
+    !endif
+    delete-buffer $buffer-bname
+  !done
+  !if &band $system 0x1000000
+    0 quick-exit
+  !endif
 !emacro

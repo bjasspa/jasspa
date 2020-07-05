@@ -15,301 +15,301 @@ set-variable .list.init-len 1014
 ; list-create <name> [char]
 ; create a new list with the label <name> and separator [char] (default is '\b' if omitted)
 define-macro list-create
-    !force set-variable #l0 @1
-    !if &not $status
-        set-variable #l0 @ml "Create list"
-    !endif
-    !force set-variable #l1 @2
-    !if &not $status
-        set-variable #l1 "\b"
-    !endif
-    !if &exi &cat ".list." #l0
-        ml-write &spr "[List \"%s\" already exists]" #l0
-        !abort
-    !endif
-    set-variable &ind &cat ".list." #l0 "1"
-    set-variable &ind &spr ".list.%s-1" #l0 &spr "%s0%s%d%s" #l1 #l1 .list.init-len #l1
+  !force set-variable #l0 @1
+  !if &not $status
+    set-variable #l0 @ml "Create list"
+  !endif
+  !force set-variable #l1 @2
+  !if &not $status
+    set-variable #l1 "\b"
+  !endif
+  !if &exi &cat ".list." #l0
+    ml-write &spr "[List \"%s\" already exists]" #l0
+    !abort
+  !endif
+  set-variable &ind &cat ".list." #l0 "1"
+  set-variable &ind &spr ".list.%s-1" #l0 &spr "%s0%s%d%s" #l1 #l1 .list.init-len #l1
 !emacro
 
 ; list-remove <name>
 ; remove (i.e. free or delete) list <name>
 define-macro list-remove
-    !force set-variable #l0 @1
-    !if &not $status
-        set-variable #l0 @ml "Remove list"
-    !endif
-    !if &not &exi &cat ".list." #l0
-        ml-write &spr "[List \"%s\" does not exist]" #l0
-        !abort
-    !endif
-    set-variable #l1 &ind &cat ".list." #l0
-    !repeat
-        !force unset-variable &ind &spr ".list.%s-%d" #l0 #l1
-    !until &dec #l1 1
-    unset-variable &ind &cat ".list." #l0
+  !force set-variable #l0 @1
+  !if &not $status
+    set-variable #l0 @ml "Remove list"
+  !endif
+  !if &not &exi &cat ".list." #l0
+    ml-write &spr "[List \"%s\" does not exist]" #l0
+    !abort
+  !endif
+  set-variable #l1 &ind &cat ".list." #l0
+  !repeat
+    !force unset-variable &ind &spr ".list.%s-%d" #l0 #l1
+  !until &dec #l1 1
+  unset-variable &ind &cat ".list." #l0
 !emacro
 
 ; list-ins-var <name> <var-no>
 0 define-macro list-ins-var
-    set-variable #l0 @1
-    set-variable #l1 @2
-    set-variable #l2 &add 1 &ind &cat ".list." #l0
-    set-variable &ind &cat ".list." #l0 #l2
-    !while &gre #l2 #l1
-        set-variable &ind &spr ".list.%s-%d" #l0 #l2 &ind &spr ".list.%s-%d" #l0 &sub #l2 1
-        set-variable #l2 &sub #l2 1
-    !done
-    set-variable #l2 &lef &ind &spr ".list.%s-1" #l0 1
-    set-variable &ind &spr ".list.%s-%d" #l0 #l1  &spr "%s0%s%d%s" #l2 #l2 .list.init-len #l2
+  set-variable #l0 @1
+  set-variable #l1 @2
+  set-variable #l2 &add 1 &ind &cat ".list." #l0
+  set-variable &ind &cat ".list." #l0 #l2
+  !while &gre #l2 #l1
+    set-variable &ind &spr ".list.%s-%d" #l0 #l2 &ind &spr ".list.%s-%d" #l0 &sub #l2 1
+    set-variable #l2 &sub #l2 1
+  !done
+  set-variable #l2 &lef &ind &spr ".list.%s-1" #l0 1
+  set-variable &ind &spr ".list.%s-%d" #l0 #l1  &spr "%s0%s%d%s" #l2 #l2 .list.init-len #l2
 !emacro
 ; list-ins <name> <index> <value>
 define-macro list-ins
-    !force set-variable #l9 @3
-    !if $status
-        set-variable #l0 @1
-        set-variable #l1 @2
-    !else
-        set-variable #l0 @ml "List name"
-        set-variable #l1 @ml "List index"
-        set-variable #l9 @ml "List value"
-    !endif
-    !if &not &exi &cat ".list." #l0
-        ml-write &spr "[List \"%s\" does not exist]" #l0
-        !abort
-    !endif
+  !force set-variable #l9 @3
+  !if $status
+    set-variable #l0 @1
+    set-variable #l1 @2
+  !else
+    set-variable #l0 @ml "List name"
+    set-variable #l1 @ml "List index"
+    set-variable #l9 @ml "List value"
+  !endif
+  !if &not &exi &cat ".list." #l0
+    ml-write &spr "[List \"%s\" does not exist]" #l0
+    !abort
+  !endif
 *ins_try_again
-    set-variable #l2 &ind &cat ".list." #l0
-    !if &les #l1 0
-        set-variable #l3 #l2
-        set-variable #l1 &add 1 &set #l5 &lget &ind &set #l4 &spr ".list.%s-%d" #l0 #l3 1
-    !elif &not #l1
-        set-variable #l3 1
-        set-variable #l5 &lget &ind &set #l4 &spr ".list.%s-%d" #l0 #l3 1
-        set-variable #l1 1
-    !else
-        set-variable #l8 #l1
-        set-variable #l3 1
-        !while &gre &sub #l1 1 &set #l5 &lget &ind &set #l4 &spr ".list.%s-%d" #l0 #l3 1
-            !if &equ #l3 #l2
-                set-variable #l1 &add #l5 1
-                !goto ins_val
-            !endif
-            set-variable #l1 &sub #l1 #l5
-            set-variable #l3 &add #l3 1
-        !done
-    !endif
+  set-variable #l2 &ind &cat ".list." #l0
+  !if &les #l1 0
+    set-variable #l3 #l2
+    set-variable #l1 &add 1 &set #l5 &lget &ind &set #l4 &spr ".list.%s-%d" #l0 #l3 1
+  !elif &not #l1
+    set-variable #l3 1
+    set-variable #l5 &lget &ind &set #l4 &spr ".list.%s-%d" #l0 #l3 1
+    set-variable #l1 1
+  !else
+    set-variable #l8 #l1
+    set-variable #l3 1
+    !while &gre &sub #l1 1 &set #l5 &lget &ind &set #l4 &spr ".list.%s-%d" #l0 #l3 1
+      !if &equ #l3 #l2
+        set-variable #l1 &add #l5 1
+        !goto ins_val
+      !endif
+      set-variable #l1 &sub #l1 #l5
+      set-variable #l3 &add #l3 1
+    !done
+  !endif
 *ins_val
-    set-variable #l6 &ind #l4
-    set-variable #l7 &add &len #l9 1
-    !if &gre #l7 .list.init-len
-        ml-write "[List value length too long]"
-        !abort
-    !endif        
-    !if &gre #l7 &lget #l6 2
-        !if &equ #l1 1
-            ; inserting at the start, create a new variable before this one and add to the new
-            list-ins-var #l0 #l3
-            set-variable #l5 0
-            set-variable #l6 &ind #l4
-        !elif &gre #l1 #l5
-            ; inserting at the end, create a new variable after this one and add to the new
-            set-variable #l3 &add #l3 1
-            list-ins-var #l0 #l3
-            set-variable #l4 &spr ".list.%s-%d" #l0 #l3
-            set-variable #l5 0
-            set-variable #l6 &ind #l4
-        !else
-            
-            ml-write "Arrgghhhh"
-            !abort
-            
-            set-variable #l1 0
-            set-variable #l7 &div &sub .list.init-len &lget #l6 2 2
-            !while &gre &sub #l7 &set #l2 &add 1 &len &lget #l6 &add #l1 2 0
-                set-variable #l7 &sub #l7 #l2
-                set-variable #l1 &add #l1 1
-            !done
-            !if &not #l1
-                set-variable #l7 &sub #l7 #l2
-                set-variable #l1 1
-            !endif
-                
-            set-variable #l1 #l8
-            !goto ins_try_again
-        !endif
+  set-variable #l6 &ind #l4
+  set-variable #l7 &add &len #l9 1
+  !if &gre #l7 .list.init-len
+    ml-write "[List value length too long]"
+    !abort
+  !endif        
+  !if &gre #l7 &lget #l6 2
+    !if &equ #l1 1
+      ; inserting at the start, create a new variable before this one and add to the new
+      list-ins-var #l0 #l3
+      set-variable #l5 0
+      set-variable #l6 &ind #l4
+    !elif &gre #l1 #l5
+      ; inserting at the end, create a new variable after this one and add to the new
+      set-variable #l3 &add #l3 1
+      list-ins-var #l0 #l3
+      set-variable #l4 &spr ".list.%s-%d" #l0 #l3
+      set-variable #l5 0
+      set-variable #l6 &ind #l4
+    !else
+      
+      ml-write "Arrgghhhh"
+      !abort
+      
+      set-variable #l1 0
+      set-variable #l7 &div &sub .list.init-len &lget #l6 2 2
+      !while &gre &sub #l7 &set #l2 &add 1 &len &lget #l6 &add #l1 2 0
+        set-variable #l7 &sub #l7 #l2
+        set-variable #l1 &add #l1 1
+      !done
+      !if &not #l1
+        set-variable #l7 &sub #l7 #l2
+        set-variable #l1 1
+      !endif
+      
+      set-variable #l1 #l8
+      !goto ins_try_again
     !endif
-    set-variable #l6 &lins #l6 &add #l1 2 #l9
-    set-variable #l6 &lset #l6 1 &add #l5 1
-    set-variable &ind #l4 &lset #l6 2 &sub &lget #l6 2 #l7
+  !endif
+  set-variable #l6 &lins #l6 &add #l1 2 #l9
+  set-variable #l6 &lset #l6 1 &add #l5 1
+  set-variable &ind #l4 &lset #l6 2 &sub &lget #l6 2 #l7
 !emacro
 
 ; list-del <name> <index>
 define-macro list-del
-    !force set-variable #l1 @2
-    !if $status
-        set-variable #l0 @1
-    !else
-        set-variable #l0 @ml "List name"
-        set-variable #l1 @ml "List index"
-    !endif
-    !if &not &exi &cat ".list." #l0
-        ml-write &spr "[List \"%s\" does not exist]" #l0
-        !abort
-    !endif
-    !if &les #l1 1
+  !force set-variable #l1 @2
+  !if $status
+    set-variable #l0 @1
+  !else
+    set-variable #l0 @ml "List name"
+    set-variable #l1 @ml "List index"
+  !endif
+  !if &not &exi &cat ".list." #l0
+    ml-write &spr "[List \"%s\" does not exist]" #l0
+    !abort
+  !endif
+  !if &les #l1 1
+    !return
+  !endif
+  set-variable #l2 &ind &cat ".list." #l0
+  set-variable #l3 1
+  !repeat
+    set-variable #l4 &spr ".list.%s-%d" #l0 #l3
+    set-variable #l5 &lget &ind #l4 1
+    !if &gre #l1 #l5
+      !if &equ #l3 #l2
         !return
+      !endif
+    !else
+      set-variable #l6 &ind #l4
+      set-variable #l7 &len &lget #l6 &add #l1 2
+      set-variable #l6 &ldel #l6 &add #l1 2
+      set-variable #l6 &lset #l6 1 &sub #l5 1
+      set-variable &ind #l4 &lset #l6 2 &add &lget #l6 2 &add #l7 1
+      !return
     !endif
-    set-variable #l2 &ind &cat ".list." #l0
-    set-variable #l3 1
-    !repeat
-        set-variable #l4 &spr ".list.%s-%d" #l0 #l3
-        set-variable #l5 &lget &ind #l4 1
-        !if &gre #l1 #l5
-            !if &equ #l3 #l2
-                !return
-            !endif
-        !else
-            set-variable #l6 &ind #l4
-            set-variable #l7 &len &lget #l6 &add #l1 2
-            set-variable #l6 &ldel #l6 &add #l1 2
-            set-variable #l6 &lset #l6 1 &sub #l5 1
-            set-variable &ind #l4 &lset #l6 2 &add &lget #l6 2 &add #l7 1
-            !return
-        !endif
-        set-variable #l1 &sub #l1 #l4
-        set-variable #l3 &add #l3 1
-    !until 0
+    set-variable #l1 &sub #l1 #l4
+    set-variable #l3 &add #l3 1
+  !until 0
 !emacro
 
 ; list-get <name> <index> <value>
 define-macro list-set
-    !force set-variable #l2 @3
-    !if $status
-        set-variable #l0 @1
-        set-variable #l1 @2
-    !else
-        set-variable #l0 @ml "List name"
-        set-variable #l1 @ml "List index"
-        set-variable #l2 @ml "List value"
-    !endif
-    !if &not &exi &cat ".list." #l0
-        ml-write &spr "[List \"%s\" does not exist]" #l0
-        !abort
-    !endif
-    !force list-del #l0 #l1
-    list-ins #l0 #l1 #l2
+  !force set-variable #l2 @3
+  !if $status
+    set-variable #l0 @1
+    set-variable #l1 @2
+  !else
+    set-variable #l0 @ml "List name"
+    set-variable #l1 @ml "List index"
+    set-variable #l2 @ml "List value"
+  !endif
+  !if &not &exi &cat ".list." #l0
+    ml-write &spr "[List \"%s\" does not exist]" #l0
+    !abort
+  !endif
+  !force list-del #l0 #l1
+  list-ins #l0 #l1 #l2
 !emacro
 
 ; list-get <name> <index> <variable>
 define-macro list-get
-    !force set-variable #l1 @2
-    !if $status
-        set-variable #l0 @1
-    !else
-        set-variable #l0 @ml "List name"
-        set-variable #l1 @ml "List index"
+  !force set-variable #l1 @2
+  !if $status
+    set-variable #l0 @1
+  !else
+    set-variable #l0 @ml "List name"
+    set-variable #l1 @ml "List index"
+  !endif
+  !if &not &exi &cat ".list." #l0
+    ml-write &spr "[List \"%s\" does not exist]" #l0
+    !abort
+  !endif
+  set-variable #l9 ""
+  !if &les #l1 1
+    !goto set_val
+  !endif
+  set-variable #l2 &ind &cat ".list." #l0
+  set-variable #l3 1
+  !while &gre #l1 &set #l4 &lget &ind &spr ".list.%s-%d" #l0 #l3 1
+    !if &equ #l3 #l2
+      !goto set_val
     !endif
-    !if &not &exi &cat ".list." #l0
-        ml-write &spr "[List \"%s\" does not exist]" #l0
-        !abort
-    !endif
-    set-variable #l9 ""
-    !if &les #l1 1
-        !goto set_val
-    !endif
-    set-variable #l2 &ind &cat ".list." #l0
-    set-variable #l3 1
-    !while &gre #l1 &set #l4 &lget &ind &spr ".list.%s-%d" #l0 #l3 1
-        !if &equ #l3 #l2
-            !goto set_val
-        !endif
-        set-variable #l1 &sub #l1 #l4
-        set-variable #l3 &add #l3 1
-    !done
-    set-variable #l9 &lget &ind &spr ".list.%s-%d" #l0 #l3 &add #l1 2
+    set-variable #l1 &sub #l1 #l4
+    set-variable #l3 &add #l3 1
+  !done
+  set-variable #l9 &lget &ind &spr ".list.%s-%d" #l0 #l3 &add #l1 2
 *set_val
-    !force set-variable @3 #l9
-    !if &not $status
-        set-variable @mn #l9
-    !endif
+  !force set-variable @3 #l9
+  !if &not $status
+    set-variable @mn #l9
+  !endif
 !emacro
 
 ; list-get <name> <str> <variable>
 define-macro list-find
-    !force set-variable #l1 @2
-    !if $status
-        set-variable #l0 @1
-    !else
-        set-variable #l0 @ml "List name"
-        set-variable #l1 @ml "Find value"
+  !force set-variable #l1 @2
+  !if $status
+    set-variable #l0 @1
+  !else
+    set-variable #l0 @ml "List name"
+    set-variable #l1 @ml "Find value"
+  !endif
+  !if &not &exi &cat ".list." #l0
+    ml-write &spr "[List \"%s\" does not exist]" #l0
+    !abort
+  !endif
+  set-variable #l2 &ind &cat ".list." #l0
+  set-variable #l3 1
+  set-variable #l8 0
+  !while &not &gre #l3 #l2
+    set-variable #l9 &ind &spr ".list.%s-%d" #l0 #l3 1
+    set-variable #l4 &lget #l9 1
+    set-variable #l9 &rig #l9 &add 2 &add &len #l4 &len &lget #l9 2
+    !if &set #l9 &lfind #l9 #l1
+      set-variable #l9 &add #l9 #l8
+      !goto set_val
     !endif
-    !if &not &exi &cat ".list." #l0
-        ml-write &spr "[List \"%s\" does not exist]" #l0
-        !abort
-    !endif
-    set-variable #l2 &ind &cat ".list." #l0
-    set-variable #l3 1
-    set-variable #l8 0
-    !while &not &gre #l3 #l2
-        set-variable #l9 &ind &spr ".list.%s-%d" #l0 #l3 1
-        set-variable #l4 &lget #l9 1
-        set-variable #l9 &rig #l9 &add 2 &add &len #l4 &len &lget #l9 2
-        !if &set #l9 &lfind #l9 #l1
-            set-variable #l9 &add #l9 #l8
-            !goto set_val
-        !endif
-        set-variable #l8 &add #l8 #l4
-        set-variable #l3 &add #l3 1
-    !done
+    set-variable #l8 &add #l8 #l4
+    set-variable #l3 &add #l3 1
+  !done
 *set_val
-    !force set-variable @3 #l9
-    !if &not $status
-        set-variable @mn #l9
-    !endif
+  !force set-variable @3 #l9
+  !if &not $status
+    set-variable @mn #l9
+  !endif
 !emacro
 
 define-macro find-print
-    !force set-variable #l1 @2
-    !if $status
-        set-variable #l0 @1
-    !else
-        set-variable #l0 @ml01 "Find from"
-        set-variable #l1 @ml "Find mask"
-    !endif
-    !force list-remove "find"
-    list-create "find"
-    list-ins "find" 0 #l0 
-    !force delete-buffer "*find*"
-    popup-window "*find*"
-    set-variable #l3 0
-    !repeat
-        ;insert-string &spr "Looking in: %s\n" #l0
-        ;screen-update
-        !if @#
-            ml-write &cat "Finding: " &mid "-/|\\" #l3 1
-            !if &not &pdec #l3 1
-                set-variable #l3 3
-            !endif
-        !endif
-        list-del "find" 1
-        set-variable $file-names &cat #l0 #l1
-        !while &not &seq &set #l2 $file-names ""
-            insert-string &spr "%s%s\n" #l0 #l2
-            !if @#
-                screen-update
-            !endif
-        !done
-        set-variable $file-names &cat #l0 ".*/"
-        !while &not &seq &set #l2 $file-names ""
-            !if &not &or &seq #l2 "./" &seq #l2 "../"
-                list-ins "find" 0 &cat #l0 #l2
-            !endif
-        !done
-        list-get "find" 1 #l0
-    !until &seq #l0 ""
+  !force set-variable #l1 @2
+  !if $status
+    set-variable #l0 @1
+  !else
+    set-variable #l0 @ml01 "Find from"
+    set-variable #l1 @ml "Find mask"
+  !endif
+  !force list-remove "find"
+  list-create "find"
+  list-ins "find" 0 #l0 
+  !force delete-buffer "*find*"
+  popup-window "*find*"
+  set-variable #l3 0
+  !repeat
+    ;insert-string &spr "Looking in: %s\n" #l0
+    ;screen-update
     !if @#
-        ml-write &spr "[Find complete, %d matche(s)]" &sub $window-line 1
+      ml-write &cat "Finding: " &mid "-/|\\" #l3 1
+      !if &not &pdec #l3 1
+        set-variable #l3 3
+      !endif
     !endif
+    list-del "find" 1
+    set-variable $file-names &cat #l0 #l1
+    !while &not &seq &set #l2 $file-names ""
+      insert-string &spr "%s%s\n" #l0 #l2
+      !if @#
+        screen-update
+      !endif
+    !done
+    set-variable $file-names &cat #l0 ".*/"
+    !while &not &seq &set #l2 $file-names ""
+      !if &not &or &seq #l2 "./" &seq #l2 "../"
+        list-ins "find" 0 &cat #l0 #l2
+      !endif
+    !done
+    list-get "find" 1 #l0
+  !until &seq #l0 ""
+  !if @#
+    ml-write &spr "[Find complete, %d matche(s)]" &sub $window-line 1
+  !endif
 !emacro
 
 ;set-variable .list.foo-0 &lset .list.foo-0 1 "1"

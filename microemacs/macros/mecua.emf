@@ -24,134 +24,134 @@ define-macro-file osdhelp osd-help
 ;   0x01 - if set then report failure
 ;   0x02 - cursor does not have to be in region
 0 define-macro cua-get-region
-    0 show-region
-    set-variable #l0 $result
-    !if &equ &band #l0 5 5
-        ; a region is hilighted, sanity check that the cursor is
-        ; in it before killing it
-        set-position "\x81"
-        !if &band @# 2
-        !elif &not &band #l0 2
-        !elif &not &band #l0 8
-            !force backward-char
-            0 show-region
-            !if &not &band $result 8
-                goto-alpha-mark "\x81"
-                !if &band @# 1
-                    ml-write "[Cursor is not within current region]"
-                    !bell
-                !endif
-                !abort
-            !endif
-        !endif
-        2 show-region
-        set-alpha-mark "\x81"
-        -2 show-region
-        set-mark
+  0 show-region
+  set-variable #l0 $result
+  !if &equ &band #l0 5 5
+    ; a region is hilighted, sanity check that the cursor is
+    ; in it before killing it
+    set-position "\x81"
+    !if &band @# 2
+    !elif &not &band #l0 2
+    !elif &not &band #l0 8
+      !force backward-char
+      0 show-region
+      !if &not &band $result 8
         goto-alpha-mark "\x81"
-    !elif &band @# 1
-        ml-write "[No region in this window]"
-        !bell
+        !if &band @# 1
+          ml-write "[Cursor is not within current region]"
+          !bell
+        !endif
         !abort
-    !else
-        !abort
+      !endif
     !endif
+    2 show-region
+    set-alpha-mark "\x81"
+    -2 show-region
+    set-mark
+    goto-alpha-mark "\x81"
+  !elif &band @# 1
+    ml-write "[No region in this window]"
+    !bell
+    !abort
+  !else
+    !abort
+  !endif
 !emacro
 
 ; cut & copy only operate on the current hilight region
 define-macro cut
-    3 cua-get-region
-    kill-region @mna
+  3 cua-get-region
+  kill-region @mna
 !emacro
 define-macro copy
-    3 cua-get-region
-    copy-region
-    goto-position "\x81"
-    show-region
+  3 cua-get-region
+  copy-region
+  goto-position "\x81"
+  show-region
 !emacro
 ; paste must remove the hilight region first if there is one 
 define-macro paste
-    !force 0 cua-get-region
-    !if $status
-        -1 kill-region @mna
-    !endif
-    @# yank @mna
+  !force 0 cua-get-region
+  !if $status
+    -1 kill-region @mna
+  !endif
+  @# yank @mna
 !emacro
 
 define-macro select-all
-    set-position "\x81"
-    beginning-of-buffer
-    -3 show-region
-    end-of-buffer
-    3 show-region
-    goto-position "\x81"
-    show-region
+  set-position "\x81"
+  beginning-of-buffer
+  -3 show-region
+  end-of-buffer
+  3 show-region
+  goto-position "\x81"
+  show-region
 !emacro
 
 define-macro backspace
-    !force 0 cua-get-region
-    !if $status
-        -1 kill-region @mna
-    !elif @?
-        @# backward-delete-char @mna
-    !else
-        backward-delete-char @mna
-    !endif
+  !force 0 cua-get-region
+  !if $status
+    -1 kill-region @mna
+  !elif @?
+    @# backward-delete-char @mna
+  !else
+    backward-delete-char @mna
+  !endif
 !emacro
 
 define-macro delete
-    !force 0 cua-get-region
-    !if $status
-        -1 kill-region @mna
-    !elif @?
-        @# forward-delete-char @mna
-    !else
-        forward-delete-char @mna
-    !endif
+  !force 0 cua-get-region
+  !if $status
+    -1 kill-region @mna
+  !elif @?
+    @# forward-delete-char @mna
+  !else
+    forward-delete-char @mna
+  !endif
 !emacro
 
 define-macro cua-lower-case-region
-    3 cua-get-region
-    lower-case-region @mna
-    exchange-point-and-mark
-    -3 show-region
-    exchange-point-and-mark
-    3 show-region
-    goto-position "\x81"
-    show-region
+  3 cua-get-region
+  lower-case-region @mna
+  exchange-point-and-mark
+  -3 show-region
+  exchange-point-and-mark
+  3 show-region
+  goto-position "\x81"
+  show-region
 !emacro
 
 define-macro cua-upper-case-region
-    3 cua-get-region
-    upper-case-region @mna
-    exchange-point-and-mark
-    -3 show-region
-    exchange-point-and-mark
-    3 show-region
-    goto-position "\x81"
-    show-region
+  3 cua-get-region
+  upper-case-region @mna
+  exchange-point-and-mark
+  -3 show-region
+  exchange-point-and-mark
+  3 show-region
+  goto-position "\x81"
+  show-region
 !emacro
 
 define-macro forward-paragraph-start
-    beginning-of-line
-    !force 2 forward-paragraph
-    !if $status
-        backward-paragraph
-    !endif
+  beginning-of-line
+  !force 2 forward-paragraph
+  !if $status
+    backward-paragraph
+  !endif
 !emacro
 
 define-macro forward-word-start
-    !if &inw @wc
-        !force forward-word
-    !endif
+  !if &inw @wc
     !force forward-word
-    !if $status
-        backward-word
-    !endif
+  !endif
+  !force forward-word
+  !if $status
+    backward-word
+  !endif
 !emacro
 
 define-macro previous-buffer
-     &neg @# next-buffer
+  &neg @# next-buffer
 !emacro
 
 ; get rid of all default ME bindings
@@ -235,29 +235,29 @@ set-variable .buffer-bind-key.map-from "|C-c C-c|C-c C-d|"
 set-variable .buffer-bind-key.map-to   "|C-#|C-~|"
 
 0 define-macro msshift-pick
-    set-variable .msshift.state 1
+  set-variable .msshift.state 1
 !emacro
 
 0 define-macro msshift
-    !if &equ .state 2
-        3 show-region
-    !endif
-    set-variable .state -1
+  !if &equ .state 2
+    3 show-region
+  !endif
+  set-variable .state -1
 !emacro
 
 0 define-macro msshift-move
-    !if &equ .msshift.state 1
-        -3 show-region
-        set-variable .msshift.state 2
-    !endif
-    set-variable #l1 &cbind &rep @cck "S-" ""
-    set-variable @cl @cl
-    !if @?
-        @# execute-named-command #l1
-    !else
-        execute-named-command #l1
-    !endif
-    set-variable @cc #l1
+  !if &equ .msshift.state 1
+    -3 show-region
+    set-variable .msshift.state 2
+  !endif
+  set-variable #l1 &cbind &rep @cck "S-" ""
+  set-variable @cl @cl
+  !if @?
+    @# execute-named-command #l1
+  !else
+    execute-named-command #l1
+  !endif
+  set-variable @cc #l1
 !emacro
 
 set-variable .msshift.state -1
@@ -267,13 +267,13 @@ global-bind-key msshift "S-drop"
 
 set-variable #l0 0
 !while &not &seq "" &set #l1 &lget "|up|down|left|right|home|end|page-up|page-down|C-left|C-right|C-up|C-down|C-home|C-end|" &inc #l0 1
-    !if &not &seq &cbin #l1 "ERROR"
-        !if &seq &nbin #l1 ""
-            global-bind-key msshift-move &cat "S-" #l1
-        !else
-            &nbin #l1 global-bind-key msshift-move &cat "S-" #l1
-        !endif
+  !if &not &seq &cbin #l1 "ERROR"
+    !if &seq &nbin #l1 ""
+      global-bind-key msshift-move &cat "S-" #l1
+    !else
+      &nbin #l1 global-bind-key msshift-move &cat "S-" #l1
     !endif
+  !endif
 !done
 
 ; redo the mouse

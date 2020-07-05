@@ -7,9 +7,9 @@
 ; Authors:     Steven Phillips
 ;
 define-macro fhook-fvwm
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "fvwm"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "fvwm"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -20,111 +20,111 @@ set-variable .fhook-fvwm.comment "|#||#|# | #|r|"
 set-variable .fhook-fvwm.exact -1
 
 !if &and &sin "h" .fhook-fvwm.setup &band .hilight.flags 0x02 
-    !if &not &exist .hilight.fvwm
-        set-variable .hilight.fvwm &pinc .hilight.next 1
-    !endif
-    ;
-    ; High-light FVWM Config file
-    0 hilight .hilight.fvwm 1                        $global-scheme
-    hilight .hilight.fvwm 2 "#"                      .scheme.comment
-    hilight .hilight.fvwm 4 "\"" "\"" "\\"           .scheme.string
-    
-    hilight .hilight.fvwm 0 "\\s\\{function"         .scheme.operator
-    hilight .hilight.fvwm 0 "\\s\\{popup"            .scheme.operator
-    
-    hilight .hilight.fvwm 1 "borderwidth"            .scheme.operator
-    hilight .hilight.fvwm 1 "circulatedown"          .scheme.operator
-    hilight .hilight.fvwm 1 "circulateup"            .scheme.operator
-    hilight .hilight.fvwm 1 "color"                  .scheme.operator
-    hilight .hilight.fvwm 1 "cursormove"             .scheme.operator
-    hilight .hilight.fvwm 1 "delete"                 .scheme.operator
-    hilight .hilight.fvwm 1 "desk"                   .scheme.operator
-    hilight .hilight.fvwm 1 "destroy"                .scheme.operator
-    hilight .hilight.fvwm 1 "exec"                   .scheme.operator
-    hilight .hilight.fvwm 1 "handles"                .scheme.operator
-    hilight .hilight.fvwm 1 "handlewidth"            .scheme.operator
-    hilight .hilight.fvwm 1 "icon"                   .scheme.operator
-    hilight .hilight.fvwm 1 "iconify"                .scheme.operator
-    hilight .hilight.fvwm 1 "lower"                  .scheme.operator
-    hilight .hilight.fvwm 1 "maximize"               .scheme.operator
-    hilight .hilight.fvwm 1 "minimize"               .scheme.operator
-    hilight .hilight.fvwm 1 "module"                 .scheme.operator
-    hilight .hilight.fvwm 1 "move"                   .scheme.operator
-    hilight .hilight.fvwm 1 "nohandles"              .scheme.operator
-    hilight .hilight.fvwm 1 "nop"                    .scheme.operator
-    hilight .hilight.fvwm 1 "notitle"                .scheme.operator
-    hilight .hilight.fvwm 1 "quit"                   .scheme.operator
-    hilight .hilight.fvwm 1 "raise"                  .scheme.operator
-    hilight .hilight.fvwm 1 "raiselower"             .scheme.operator
-    hilight .hilight.fvwm 1 "refresh"                .scheme.operator
-    hilight .hilight.fvwm 1 "resize"                 .scheme.operator
-    hilight .hilight.fvwm 1 "restart"                .scheme.operator
-    hilight .hilight.fvwm 1 "startsondesk"           .scheme.operator
-    hilight .hilight.fvwm 1 "staysontop"             .scheme.operator
-    hilight .hilight.fvwm 1 "stick"                  .scheme.operator
-    hilight .hilight.fvwm 1 "sticky"                 .scheme.operator
-    hilight .hilight.fvwm 1 "swallow"                .scheme.operator
-    hilight .hilight.fvwm 1 "swallowmode"            .scheme.operator
-    hilight .hilight.fvwm 1 "title"                  .scheme.operator
-    hilight .hilight.fvwm 1 "titleicon"              .scheme.operator
-    hilight .hilight.fvwm 1 "togglepage"             .scheme.operator
-    hilight .hilight.fvwm 1 "wait"                   .scheme.operator
-    hilight .hilight.fvwm 1 "windowlistskip"         .scheme.operator
-    ;
-    hilight .hilight.fvwm 0x24 "*" "\\}\\W" ""       .scheme.variable
-    hilight .hilight.fvwm 0x20 "function"            .scheme.variable
-    hilight .hilight.fvwm 0x20 "endfunction"         .scheme.variable
-    hilight .hilight.fvwm 0x20 "popup"               .scheme.variable
-    hilight .hilight.fvwm 0x20 "endpopup"            .scheme.variable
-    hilight .hilight.fvwm 0x20 "+"                   .scheme.variable
-    hilight .hilight.fvwm 1 "addtofunc"              .scheme.variable
-    hilight .hilight.fvwm 1 "addtomenu"              .scheme.variable
-    ;
-    hilight .hilight.fvwm 0x20 "clicktime"           .scheme.keyword
-    hilight .hilight.fvwm 0x20 "clicktofocus"        .scheme.keyword
-    hilight .hilight.fvwm 0x20 "defaultcolors"       .scheme.keyword
-    hilight .hilight.fvwm 0x20 "desktopscale"        .scheme.keyword
-    hilight .hilight.fvwm 0x20 "desktopsize"         .scheme.keyword
-    hilight .hilight.fvwm 0x20 "edgeresistance"      .scheme.keyword
-    hilight .hilight.fvwm 0x20 "edgescroll"          .scheme.keyword
-    hilight .hilight.fvwm 0x20 "font"                .scheme.keyword
-    hilight .hilight.fvwm 0x20 "hibackcolor"         .scheme.keyword
-    hilight .hilight.fvwm 0x20 "hiforecolor"         .scheme.keyword
-    hilight .hilight.fvwm 0x20 "hilightcolors"       .scheme.keyword
-    hilight .hilight.fvwm 0x20 "iconbox"             .scheme.keyword
-    hilight .hilight.fvwm 0x20 "iconfont"            .scheme.keyword
-    hilight .hilight.fvwm 0x20 "iconpath"            .scheme.keyword
-    hilight .hilight.fvwm 0x20 "key"                 .scheme.keyword
-    hilight .hilight.fvwm 0x20 "menubackcolor"       .scheme.keyword
-    hilight .hilight.fvwm 0x20 "menufont"            .scheme.keyword
-    hilight .hilight.fvwm 0x20 "menuforecolor"       .scheme.keyword
-    hilight .hilight.fvwm 0x20 "menustipplecolor"    .scheme.keyword
-    hilight .hilight.fvwm 0x20 "modulepath"          .scheme.keyword
-    hilight .hilight.fvwm 0x20 "mouse"               .scheme.keyword
-    hilight .hilight.fvwm 0x20 "mwmborders"          .scheme.keyword
-    hilight .hilight.fvwm 0x20 "mwmbuttons"          .scheme.keyword
-    hilight .hilight.fvwm 0x20 "mwmdecorhints"       .scheme.keyword
-    hilight .hilight.fvwm 0x20 "mwmfunctionhints"    .scheme.keyword
-    hilight .hilight.fvwm 0x20 "mwmhintoverride"     .scheme.keyword
-    hilight .hilight.fvwm 0x20 "mwmmenus"            .scheme.keyword
-    hilight .hilight.fvwm 0x20 "nopposition"         .scheme.keyword
-    hilight .hilight.fvwm 0x20 "opaquemove"          .scheme.keyword
-    hilight .hilight.fvwm 0x20 "pager"               .scheme.keyword
-    hilight .hilight.fvwm 0x20 "pagerbackcolor"      .scheme.keyword
-    hilight .hilight.fvwm 0x20 "pagerforecolor"      .scheme.keyword
-    hilight .hilight.fvwm 0x20 "pixmappath"          .scheme.keyword
-    hilight .hilight.fvwm 0x20 "randomplacement"     .scheme.keyword
-    hilight .hilight.fvwm 0x20 "smartplacement"      .scheme.keyword
-    hilight .hilight.fvwm 0x20 "stdbackcolor"        .scheme.keyword
-    hilight .hilight.fvwm 0x20 "stdforecolor"        .scheme.keyword
-    hilight .hilight.fvwm 0x20 "stickybackcolor"     .scheme.keyword
-    hilight .hilight.fvwm 0x20 "stickycolors"        .scheme.keyword
-    hilight .hilight.fvwm 0x20 "stickyforecolor"     .scheme.keyword
-    hilight .hilight.fvwm 0x20 "stubbornicons"       .scheme.keyword
-    hilight .hilight.fvwm 0x20 "stubbornplacement"   .scheme.keyword
-    hilight .hilight.fvwm 0x20 "style"               .scheme.keyword
-    hilight .hilight.fvwm 0x20 "suppressicons"       .scheme.keyword
-    hilight .hilight.fvwm 0x20 "windowfont"          .scheme.keyword
+  !if &not &exist .hilight.fvwm
+    set-variable .hilight.fvwm &pinc .hilight.next 1
+  !endif
+  ;
+  ; High-light FVWM Config file
+  0 hilight .hilight.fvwm 1                        $global-scheme
+  hilight .hilight.fvwm 2 "#"                      .scheme.comment
+  hilight .hilight.fvwm 4 "\"" "\"" "\\"           .scheme.string
+  
+  hilight .hilight.fvwm 0 "\\s\\{function"         .scheme.operator
+  hilight .hilight.fvwm 0 "\\s\\{popup"            .scheme.operator
+  
+  hilight .hilight.fvwm 1 "borderwidth"            .scheme.operator
+  hilight .hilight.fvwm 1 "circulatedown"          .scheme.operator
+  hilight .hilight.fvwm 1 "circulateup"            .scheme.operator
+  hilight .hilight.fvwm 1 "color"                  .scheme.operator
+  hilight .hilight.fvwm 1 "cursormove"             .scheme.operator
+  hilight .hilight.fvwm 1 "delete"                 .scheme.operator
+  hilight .hilight.fvwm 1 "desk"                   .scheme.operator
+  hilight .hilight.fvwm 1 "destroy"                .scheme.operator
+  hilight .hilight.fvwm 1 "exec"                   .scheme.operator
+  hilight .hilight.fvwm 1 "handles"                .scheme.operator
+  hilight .hilight.fvwm 1 "handlewidth"            .scheme.operator
+  hilight .hilight.fvwm 1 "icon"                   .scheme.operator
+  hilight .hilight.fvwm 1 "iconify"                .scheme.operator
+  hilight .hilight.fvwm 1 "lower"                  .scheme.operator
+  hilight .hilight.fvwm 1 "maximize"               .scheme.operator
+  hilight .hilight.fvwm 1 "minimize"               .scheme.operator
+  hilight .hilight.fvwm 1 "module"                 .scheme.operator
+  hilight .hilight.fvwm 1 "move"                   .scheme.operator
+  hilight .hilight.fvwm 1 "nohandles"              .scheme.operator
+  hilight .hilight.fvwm 1 "nop"                    .scheme.operator
+  hilight .hilight.fvwm 1 "notitle"                .scheme.operator
+  hilight .hilight.fvwm 1 "quit"                   .scheme.operator
+  hilight .hilight.fvwm 1 "raise"                  .scheme.operator
+  hilight .hilight.fvwm 1 "raiselower"             .scheme.operator
+  hilight .hilight.fvwm 1 "refresh"                .scheme.operator
+  hilight .hilight.fvwm 1 "resize"                 .scheme.operator
+  hilight .hilight.fvwm 1 "restart"                .scheme.operator
+  hilight .hilight.fvwm 1 "startsondesk"           .scheme.operator
+  hilight .hilight.fvwm 1 "staysontop"             .scheme.operator
+  hilight .hilight.fvwm 1 "stick"                  .scheme.operator
+  hilight .hilight.fvwm 1 "sticky"                 .scheme.operator
+  hilight .hilight.fvwm 1 "swallow"                .scheme.operator
+  hilight .hilight.fvwm 1 "swallowmode"            .scheme.operator
+  hilight .hilight.fvwm 1 "title"                  .scheme.operator
+  hilight .hilight.fvwm 1 "titleicon"              .scheme.operator
+  hilight .hilight.fvwm 1 "togglepage"             .scheme.operator
+  hilight .hilight.fvwm 1 "wait"                   .scheme.operator
+  hilight .hilight.fvwm 1 "windowlistskip"         .scheme.operator
+  ;
+  hilight .hilight.fvwm 0x24 "*" "\\}\\W" ""       .scheme.variable
+  hilight .hilight.fvwm 0x20 "function"            .scheme.variable
+  hilight .hilight.fvwm 0x20 "endfunction"         .scheme.variable
+  hilight .hilight.fvwm 0x20 "popup"               .scheme.variable
+  hilight .hilight.fvwm 0x20 "endpopup"            .scheme.variable
+  hilight .hilight.fvwm 0x20 "+"                   .scheme.variable
+  hilight .hilight.fvwm 1 "addtofunc"              .scheme.variable
+  hilight .hilight.fvwm 1 "addtomenu"              .scheme.variable
+  ;
+  hilight .hilight.fvwm 0x20 "clicktime"           .scheme.keyword
+  hilight .hilight.fvwm 0x20 "clicktofocus"        .scheme.keyword
+  hilight .hilight.fvwm 0x20 "defaultcolors"       .scheme.keyword
+  hilight .hilight.fvwm 0x20 "desktopscale"        .scheme.keyword
+  hilight .hilight.fvwm 0x20 "desktopsize"         .scheme.keyword
+  hilight .hilight.fvwm 0x20 "edgeresistance"      .scheme.keyword
+  hilight .hilight.fvwm 0x20 "edgescroll"          .scheme.keyword
+  hilight .hilight.fvwm 0x20 "font"                .scheme.keyword
+  hilight .hilight.fvwm 0x20 "hibackcolor"         .scheme.keyword
+  hilight .hilight.fvwm 0x20 "hiforecolor"         .scheme.keyword
+  hilight .hilight.fvwm 0x20 "hilightcolors"       .scheme.keyword
+  hilight .hilight.fvwm 0x20 "iconbox"             .scheme.keyword
+  hilight .hilight.fvwm 0x20 "iconfont"            .scheme.keyword
+  hilight .hilight.fvwm 0x20 "iconpath"            .scheme.keyword
+  hilight .hilight.fvwm 0x20 "key"                 .scheme.keyword
+  hilight .hilight.fvwm 0x20 "menubackcolor"       .scheme.keyword
+  hilight .hilight.fvwm 0x20 "menufont"            .scheme.keyword
+  hilight .hilight.fvwm 0x20 "menuforecolor"       .scheme.keyword
+  hilight .hilight.fvwm 0x20 "menustipplecolor"    .scheme.keyword
+  hilight .hilight.fvwm 0x20 "modulepath"          .scheme.keyword
+  hilight .hilight.fvwm 0x20 "mouse"               .scheme.keyword
+  hilight .hilight.fvwm 0x20 "mwmborders"          .scheme.keyword
+  hilight .hilight.fvwm 0x20 "mwmbuttons"          .scheme.keyword
+  hilight .hilight.fvwm 0x20 "mwmdecorhints"       .scheme.keyword
+  hilight .hilight.fvwm 0x20 "mwmfunctionhints"    .scheme.keyword
+  hilight .hilight.fvwm 0x20 "mwmhintoverride"     .scheme.keyword
+  hilight .hilight.fvwm 0x20 "mwmmenus"            .scheme.keyword
+  hilight .hilight.fvwm 0x20 "nopposition"         .scheme.keyword
+  hilight .hilight.fvwm 0x20 "opaquemove"          .scheme.keyword
+  hilight .hilight.fvwm 0x20 "pager"               .scheme.keyword
+  hilight .hilight.fvwm 0x20 "pagerbackcolor"      .scheme.keyword
+  hilight .hilight.fvwm 0x20 "pagerforecolor"      .scheme.keyword
+  hilight .hilight.fvwm 0x20 "pixmappath"          .scheme.keyword
+  hilight .hilight.fvwm 0x20 "randomplacement"     .scheme.keyword
+  hilight .hilight.fvwm 0x20 "smartplacement"      .scheme.keyword
+  hilight .hilight.fvwm 0x20 "stdbackcolor"        .scheme.keyword
+  hilight .hilight.fvwm 0x20 "stdforecolor"        .scheme.keyword
+  hilight .hilight.fvwm 0x20 "stickybackcolor"     .scheme.keyword
+  hilight .hilight.fvwm 0x20 "stickycolors"        .scheme.keyword
+  hilight .hilight.fvwm 0x20 "stickyforecolor"     .scheme.keyword
+  hilight .hilight.fvwm 0x20 "stubbornicons"       .scheme.keyword
+  hilight .hilight.fvwm 0x20 "stubbornplacement"   .scheme.keyword
+  hilight .hilight.fvwm 0x20 "style"               .scheme.keyword
+  hilight .hilight.fvwm 0x20 "suppressicons"       .scheme.keyword
+  hilight .hilight.fvwm 0x20 "windowfont"          .scheme.keyword
 !endif
 
 buffer-init-fhook "fvwm"

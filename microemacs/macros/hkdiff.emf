@@ -18,9 +18,9 @@
 ;     - Added item-list support for differences
 ;
 define-macro fhook-diff
-    ; Set up the buffer modes
-    @# buffer-init "diff"
-    buffer-init-hooks
+  ; Set up the buffer modes
+  @# buffer-init "diff"
+  buffer-init-hooks
 !emacro
 
 ; Setup the buffer
@@ -42,96 +42,96 @@ set-variable .fhook-diff.item-list-s4 "^Only[^:]*:\\s*\\(.*\\)\\s*$"
 set-variable .fhook-diff.item-list-r4 "Add/Del \ecB\\1\ecA"
 
 !if &not &exi .hilight.diff
-    set-variable .hilight.diff  &pinc .hilight.next 1
+  set-variable .hilight.diff  &pinc .hilight.next 1
 !endif
 
 !if &and &sin "h" .fhook-diff.setup &band .hilight.flags 0x02
-    0 hilight .hilight.diff 0                 $global-scheme
-    ; Gnu diff utility, uses --context
-    hilight .hilight.diff 0x102 "!"           .scheme.no1
-    hilight .hilight.diff 0x102 "+"           .scheme.no1
-    hilight .hilight.diff 0x102 "-"           .scheme.no1
-    ; Regular diff utility. May be a bit too colored !!
-    hilight .hilight.diff 0x102 "<"           .scheme.no2
-    hilight .hilight.diff 0x102 ">"           .scheme.prepro
-    ; Patch files GNU diff -Naur old new > file.patch
-    hilight .hilight.diff 0x102 "diff"        .scheme.function
-    hilight .hilight.diff 0x102 "@@"          .scheme.keyword
-    ; Common
-    hilight .hilight.diff 0x102 "*\\*\\*\\*"  .scheme.keyword
-    hilight .hilight.diff 0x102 "*\\*\\*"     .scheme.no2
-    hilight .hilight.diff 0x102 "--- "        .scheme.prepro
-    hilight .hilight.diff 0x102 "Only"        .scheme.comment
-    hilight .hilight.diff 0x102 "Files"       .scheme.comment
+  0 hilight .hilight.diff 0                 $global-scheme
+  ; Gnu diff utility, uses --context
+  hilight .hilight.diff 0x102 "!"           .scheme.no1
+  hilight .hilight.diff 0x102 "+"           .scheme.no1
+  hilight .hilight.diff 0x102 "-"           .scheme.no1
+  ; Regular diff utility. May be a bit too colored !!
+  hilight .hilight.diff 0x102 "<"           .scheme.no2
+  hilight .hilight.diff 0x102 ">"           .scheme.prepro
+  ; Patch files GNU diff -Naur old new > file.patch
+  hilight .hilight.diff 0x102 "diff"        .scheme.function
+  hilight .hilight.diff 0x102 "@@"          .scheme.keyword
+  ; Common
+  hilight .hilight.diff 0x102 "*\\*\\*\\*"  .scheme.keyword
+  hilight .hilight.diff 0x102 "*\\*\\*"     .scheme.no2
+  hilight .hilight.diff 0x102 "--- "        .scheme.prepro
+  hilight .hilight.diff 0x102 "Only"        .scheme.comment
+  hilight .hilight.diff 0x102 "Files"       .scheme.comment
 !endif
 
 ; Find the next file
 0 define-macro diff-next-file
-    !if &les @# 0
-        !if &equ $window-line 1
-            end-of-buffer
-        !endif
-    !elif &seq @wc ""
-        beginning-of-buffer
+  !if &les @# 0
+    !if &equ $window-line 1
+      end-of-buffer
     !endif
-    !force search-forward "^diff "
-    !if &not $status
-        ml-write "[No more files]"
-        !bell
-        !abort
-    !endif
-    recenter
+  !elif &seq @wc ""
+    beginning-of-buffer
+  !endif
+  !force search-forward "^diff "
+  !if &not $status
+    ml-write "[No more files]"
+    !bell
+    !abort
+  !endif
+  recenter
 !emacro
 ; Find the previous file
 0 define-macro diff-previous-file
-    !if &les @# 0
-        !if &equ $window-line 1
-            end-of-buffer
-        !endif
-    !elif &seq @wc ""
-        beginning-of-buffer
+  !if &les @# 0
+    !if &equ $window-line 1
+      end-of-buffer
     !endif
-    !force search-backward "^diff "
-    !if &not $status
-        ml-write "[No more files]"
-        !bell
-        !abort
-    !endif
-    recenter
+  !elif &seq @wc ""
+    beginning-of-buffer
+  !endif
+  !force search-backward "^diff "
+  !if &not $status
+    ml-write "[No more files]"
+    !bell
+    !abort
+  !endif
+  recenter
 !emacro
 ; Find the next change
 0 define-macro diff-next-change
-    !if &les @# 0
-        !if &equ $window-line 1
-            end-of-buffer
-        !endif
-    !elif &seq @wc ""
-        beginning-of-buffer
+  !if &les @# 0
+    !if &equ $window-line 1
+      end-of-buffer
     !endif
-    !force search-forward "^\\(@@.*@@\\)\\|\\(--- [0-9]*,[0-9]* ---\\)"
-    !if &not $status
-        ml-write "[No more differences]"
-        !bell
-        !abort
-    !endif
-    recenter
+  !elif &seq @wc ""
+    beginning-of-buffer
+  !endif
+  !force search-forward "^\\(@@.*@@\\)\\|\\(--- [0-9]*,[0-9]* ---\\)"
+  !if &not $status
+    ml-write "[No more differences]"
+    !bell
+    !abort
+  !endif
+  recenter
 !emacro
 ; Find the previous change
 0 define-macro diff-previous-change
-    !if &les @# 0
-        !if &equ $window-line 1
-            end-of-buffer
-        !endif
-    !elif &seq @wc ""
-        beginning-of-buffer
+  !if &les @# 0
+    !if &equ $window-line 1
+      end-of-buffer
     !endif
-    !force search-backward "^\\(@@.*@@\\)\\|\\(--- [0-9]*,[0-9]* ---\\)"
-    !if &not $status
-        ml-write "[No more differences]"
-        !bell
-        !abort
-    !endif
-    recenter
+  !elif &seq @wc ""
+    beginning-of-buffer
+  !endif
+  !force search-backward "^\\(@@.*@@\\)\\|\\(--- [0-9]*,[0-9]* ---\\)"
+  !if &not $status
+    ml-write "[No more differences]"
+    !bell
+    !abort
+  !endif
+  recenter
 !emacro
 
 buffer-init-fhook "diff"

@@ -10,17 +10,17 @@
 ;     me "@jst2text" <jst-files>
 ;
 define-macro start-up
-    delete-other-windows
-    !while &not &seq $buffer-bname "*scratch*"
-        ; use default file name with no prompt
-        !force 2 jst-to-text
-        !if &not $status
-            5000 command-wait
-            !force 0 delete-buffer "*jst-tmp*"
-        !endif
-        delete-buffer $buffer-bname
-    !done
-    exit-emacs
+  delete-other-windows
+  !while &not &seq $buffer-bname "*scratch*"
+    ; use default file name with no prompt
+    !force 2 jst-to-text
+    !if &not $status
+      5000 command-wait
+      !force 0 delete-buffer "*jst-tmp*"
+    !endif
+    delete-buffer $buffer-bname
+  !done
+  exit-emacs
 !emacro
 
 execute-file "me"

@@ -8,8 +8,8 @@
 ; Authors:     Jon Green
 ;
 define-macro fhook-bnf
-    @# buffer-init "bnf"
-    buffer-init-hooks
+  @# buffer-init "bnf"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -18,20 +18,20 @@ set-variable .fhook-bnf.setup &reg "/history/fhook/bnf" "ghix"
 set-variable .fhook-bnf.setup-mask "aeghikmtux"
 
 !if &and &sin "h" .fhook-bnf.setup &band .hilight.flags 0x02 
-    !if &not &exist .hilight.bnf
-        set-variable .hilight.bnf &pinc .hilight.next 1
-    !endif
-    0 hilight .hilight.bnf 2 50                 $global-scheme
-    hilight .hilight.bnf 4 "<[[:alpha:]]" ">" "" .scheme.variable
-    hilight .hilight.bnf 1 "::="                .scheme.keyword
-    hilight .hilight.bnf 1 "\\["                .scheme.keyword
-    hilight .hilight.bnf 1 "]"                  .scheme.keyword
-    hilight .hilight.bnf 1 "{"                  .scheme.keyword
-    hilight .hilight.bnf 1 "}"                  .scheme.keyword
-    hilight .hilight.bnf 1 "|"                  .scheme.keyword
-    hilight .hilight.bnf 2 "!!"                 .scheme.comment
-    hilight .hilight.bnf 2 "^#"                 .scheme.comment
-    hilight .hilight.bnf 2 "^//"                .scheme.comment
+  !if &not &exist .hilight.bnf
+    set-variable .hilight.bnf &pinc .hilight.next 1
+  !endif
+  0 hilight .hilight.bnf 2 50                 $global-scheme
+  hilight .hilight.bnf 4 "<[[:alpha:]]" ">" "" .scheme.variable
+  hilight .hilight.bnf 1 "::="                .scheme.keyword
+  hilight .hilight.bnf 1 "\\["                .scheme.keyword
+  hilight .hilight.bnf 1 "]"                  .scheme.keyword
+  hilight .hilight.bnf 1 "{"                  .scheme.keyword
+  hilight .hilight.bnf 1 "}"                  .scheme.keyword
+  hilight .hilight.bnf 1 "|"                  .scheme.keyword
+  hilight .hilight.bnf 2 "!!"                 .scheme.comment
+  hilight .hilight.bnf 2 "^#"                 .scheme.comment
+  hilight .hilight.bnf 2 "^//"                .scheme.comment
 !endif
 
 buffer-init-fhook "bnf"

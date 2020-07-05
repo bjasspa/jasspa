@@ -1540,7 +1540,7 @@ define-macro dirlst-search
       set-variable #l5 #l0
       set-variable #l7 &lef #l4 -1
       !while &set #l6 &sin "/" #l7
-        set-variable #l5 &cat #l0 &lef #l7 #l6
+        set-variable #l5 &cat #l5 &lef #l7 #l6
         !force 0x100 file-op &lef #l5 -1
         set-variable #l7 &rig #l7 #l6
       !done

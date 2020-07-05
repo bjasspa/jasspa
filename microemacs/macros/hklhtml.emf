@@ -8,9 +8,9 @@
 ; Authors:     Steven Phillips & Jeremy Cowgar
 ;
 define-macro fhook-lhtml
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "lhtml"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "lhtml"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -26,35 +26,35 @@ set-variable .fhook-lhtml.indent-width 2
 
 ; load in lua script & the html core
 !if &not &exist fhook-lua
-    !force exec-file "hklua"
+  !force exec-file "hklua"
 !endif
 !force execute-file "htmlcore" "lhtml" 
 
 ; add the <?lua ?> lua script support
 !if &and &sin "h" .fhook-lhtml.setup &band .hilight.flags 0x02 
-    hilight .hilight.lhtmltag 4 "=\\{[^ \t\n<>]*<\\?lua" "\\?>[^ \t\n>]*" ""  .scheme.string
-    hilight .hilight.lhtmltag 4 "=\\{\"[^\"\n<]*<\\?lua" "\\?>[^\"]*\"" ""  .scheme.string
-    !if &exist .hilight.luascript
-        hilight .hilight.lhtml     0x80 "<\\?lua" .hilight.luascript .scheme.prepro
-        hilight .hilight.lhtmltag  0x80 "<\\?lua" .hilight.luascript .scheme.prepro
-        hilight .hilight.luascript 0x80 "\\?>" 0 .scheme.prepro
-        hilight .hilight.lhtml     0x80 "<%" .hilight.luascript .scheme.prepro
-        hilight .hilight.lhtmltag  0x80 "<%" .hilight.luascript .scheme.prepro
-        hilight .hilight.luascript 0x80 "%>" 0 .scheme.prepro
-    !endif
+  hilight .hilight.lhtmltag 4 "=\\{[^ \t\n<>]*<\\?lua" "\\?>[^ \t\n>]*" ""  .scheme.string
+  hilight .hilight.lhtmltag 4 "=\\{\"[^\"\n<]*<\\?lua" "\\?>[^\"]*\"" ""  .scheme.string
+  !if &exist .hilight.luascript
+    hilight .hilight.lhtml     0x80 "<\\?lua" .hilight.luascript .scheme.prepro
+    hilight .hilight.lhtmltag  0x80 "<\\?lua" .hilight.luascript .scheme.prepro
+    hilight .hilight.luascript 0x80 "\\?>" 0 .scheme.prepro
+    hilight .hilight.lhtml     0x80 "<%" .hilight.luascript .scheme.prepro
+    hilight .hilight.lhtmltag  0x80 "<%" .hilight.luascript .scheme.prepro
+    hilight .hilight.luascript 0x80 "%>" 0 .scheme.prepro
+  !endif
 !endif
 !if &sin "d" .fhook-lhtml.setup
-    !if &exist .indent.luascript
-        indent .hilight.lhtmltag t "<\\?lua" .indent.luascript
-        indent .hilight.lhtmltag t "\\?>" .hilight.lhtml
-        indent .hilight.lhtmltag t "<%" .indent.luascript
-        indent .hilight.lhtmltag t "%>" .hilight.lhtml
-        
-        indent .hilight.lhtml x "<\\?lua" t .indent.luascript
-        indent .hilight.lhtml x "<%" t .indent.luascript
-        indent .indent.luascript w "\\?>" -t 0
-        indent .indent.luascript w "%>" -t 0
-    !endif
+  !if &exist .indent.luascript
+    indent .hilight.lhtmltag t "<\\?lua" .indent.luascript
+    indent .hilight.lhtmltag t "\\?>" .hilight.lhtml
+    indent .hilight.lhtmltag t "<%" .indent.luascript
+    indent .hilight.lhtmltag t "%>" .hilight.lhtml
+    
+    indent .hilight.lhtml x "<\\?lua" t .indent.luascript
+    indent .hilight.lhtml x "<%" t .indent.luascript
+    indent .indent.luascript w "\\?>" -t 0
+    indent .indent.luascript w "%>" -t 0
+  !endif
 !endif
 
 buffer-init-fhook "lhtml"

@@ -25,286 +25,286 @@ define-macro-file osdhelp osd-help
 ; commands to customize the main menu. The name of the commands must be
 ; osd-ohook-XXXX and osd-chook-XXXX where XXXX is the hook label
 0 define-macro osd-main
-    ; preserve the visibility state of the current region
-    0 show-region
-    set-variable #l2 $result
-    !if &equ &band #l2 7 5
-        3 show-region
+  ; preserve the visibility state of the current region
+  0 show-region
+  set-variable #l2 $result
+  !if &equ &band #l2 7 5
+    3 show-region
+  !endif
+  ; disable the buffer specific tools menu
+  !if &exi &ind .chook
+    execute-named-command .chook
+  !endif
+  !if &seq @cl "undo"
+    !jump 2
+  !elif &and &seq @cl "osd-redo" .undo.count
+    osd 2 20  ""  "\HRedo" f osd-redo
+  !else
+    osd 2 20  ""  "Redo"
+  !endif
+  set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
+  !if &sin "p" #l0
+    osd 9 10 "" "\HMajor Mode Help      esc h" f major-mode-help
+  !else
+    osd 9 10 "D"
+  !endif
+  !if &sin "o" #l0
+    set-variable #l9 &ind &spr ".%s.name" $buffer-fhook
+    !if &seq #l9 "ERROR"
+      set-variable #l9 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
     !endif
-    ; disable the buffer specific tools menu
-    !if &exi &ind .chook
-        execute-named-command .chook
-    !endif
-    !if &seq @cl "undo"
-        !jump 2
-    !elif &and &seq @cl "osd-redo" .undo.count
-        osd 2 20  ""  "\HRedo" f osd-redo
-    !else
-        osd 2 20  ""  "Redo"
-    !endif
-    set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
-    !if &sin "p" #l0
-        osd 9 10 "" "\HMajor Mode Help      esc h" f major-mode-help
-    !else
-        osd 9 10 "D"
-    !endif
-    !if &sin "o" #l0
-        set-variable #l9 &ind &spr ".%s.name" $buffer-fhook
-        !if &seq #l9 "ERROR"
-            set-variable #l9 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
-        !endif
-        osd 6 10 "M" &cat #l9 " \HTools" .osd.tmp major-mode-tool
-        osd 6 20 "-"
-    !else
-        osd 6 10 "D"
-        osd 6 20 "D"
-    !endif
-    !if &seq &ind &spr ".%s.setup-mask" $buffer-fhook "ERROR"
-        osd 6 190 "D"
-    !else
-        osd 6 190 "" "\HMajor Mode Setup..." f major-mode-setup
-    !endif
-    ; let the current buffer type modify the menu
-    !if &exi &set #l0 &cat "osd-ohook-" &rig $buffer-fhook 6
-        set-variable .chook &cat "osd-chook-" &rig $buffer-fhook 6
-        execute-named-command #l0
-    !endif
-    !if &band #l2 1
-        show-region
-    !endif
+    osd 6 10 "M" &cat #l9 " \HTools" .osd.tmp major-mode-tool
+    osd 6 20 "-"
+  !else
+    osd 6 10 "D"
+    osd 6 20 "D"
+  !endif
+  !if &seq &ind &spr ".%s.setup-mask" $buffer-fhook "ERROR"
+    osd 6 190 "D"
+  !else
+    osd 6 190 "" "\HMajor Mode Setup..." f major-mode-setup
+  !endif
+  ; let the current buffer type modify the menu
+  !if &exi &set #l0 &cat "osd-ohook-" &rig $buffer-fhook 6
+    set-variable .chook &cat "osd-chook-" &rig $buffer-fhook 6
+    execute-named-command #l0
+  !endif
+  !if &band #l2 1
+    show-region
+  !endif
 !emacro
 ; Handle the 'New' command. Create text documents called "newXX" which will hold the new document.
 0 define-macro osd-new-buffer
-    set-variable #l0 1
-    !repeat
-        !force 0 find-buffer &set #l1 &spr "new%d" #l0
-        !if $status
-        !elif &not &seq "X" &stat "t" &set #l2 &cat $user-path #l1 
-        !elif &seq "X" &stat "t" &cat #l2 "#" 
-            find-file #l2
-            !return
-        !endif
-        set-variable #l0 &add #l0 1
-    !until 0
+  set-variable #l0 1
+  !repeat
+    !force 0 find-buffer &set #l1 &spr "new%d" #l0
+    !if $status
+    !elif &not &seq "X" &stat "t" &set #l2 &cat $user-path #l1 
+    !elif &seq "X" &stat "t" &cat #l2 "#" 
+      find-file #l2
+      !return
+    !endif
+    set-variable #l0 &add #l0 1
+  !until 0
 !emacro
 
 0 define-macro osd-1-buffer-select
-    0 find-buffer $result
+  0 find-buffer $result
 !emacro
 0 define-macro osd-1-buffer
-    set-variable #l1 ".*"
-    !if &sub @# 15
-    !elif &set #l2 &lfi &reg "/history/file-type" "\b" $result
-        set-variable #l1 &lget &reg "/history/file-mask" "\b" #l2
-        filemask-to-regex #l1
-        set-variable #l1 &cat &rep #l1 "," "\\(<\\d+>\\)?\\|" "\\(<\\d+>\\)?"
+  set-variable #l1 ".*"
+  !if &sub @# 15
+  !elif &set #l2 &lfi &reg "/history/file-type" "\b" $result
+    set-variable #l1 &lget &reg "/history/file-mask" "\b" #l2
+    filemask-to-regex #l1
+    set-variable #l1 &cat &rep #l1 "," "\\(<\\d+>\\)?\\|" "\\(<\\d+>\\)?"
+  !endif
+  -1 osd 17
+  osd 17 0 &cond &band $system 0x100 "Aif" "Af"
+  set-variable #l4 0
+  set-variable #l5 0
+  set-variable $buffer-names #l1
+  !while &set #l6 &len &set #l3 $buffer-names
+    !if &not &nbmod #l3 "hide"
+      osd 17 1 "" #l3 0 osd-1-buffer-select
+      set-variable #l4 &add #l4 1
+      !if &gre #l6 #l5
+        set-variable #l5 #l6
+      !endif
     !endif
-    -1 osd 17
-    osd 17 0 &cond &band $system 0x100 "Aif" "Af"
-    set-variable #l4 0
-    set-variable #l5 0
-    set-variable $buffer-names #l1
-    !while &set #l6 &len &set #l3 $buffer-names
-        !if &not &nbmod #l3 "hide"
-            osd 17 1 "" #l3 0 osd-1-buffer-select
-            set-variable #l4 &add #l4 1
-            !if &gre #l6 #l5
-                set-variable #l5 #l6
-            !endif
-        !endif
-    !done
-    !if &gre #l4 &sub $frame-depth 2
-        -1 osd @#
-        osd @# 0 "sI" -1 0 &add &inc #l5 1 2 0 10
-        osd @# 10 "IbHt" .scheme.osd-sbar #l5 &sub $frame-depth 2 17
-        osd 17 0 &cond &band $system 0x100 "Aifs" "Afs" #l5 &sub $frame-depth 2 -1 -1
-    !else
-        !if &not #l4
-            osd 17 1 "" "<none found>"
-        !endif
-        -1 osd @#
-        osd @# 0 "sIb" 0 0 0 0 10
-        osd @# 10 "IHt" .scheme.osd-sbar 17
+  !done
+  !if &gre #l4 &sub $frame-depth 2
+    -1 osd @#
+    osd @# 0 "sI" -1 0 &add &inc #l5 1 2 0 10
+    osd @# 10 "IbHt" .scheme.osd-sbar #l5 &sub $frame-depth 2 17
+    osd 17 0 &cond &band $system 0x100 "Aifs" "Afs" #l5 &sub $frame-depth 2 -1 -1
+  !else
+    !if &not #l4
+      osd 17 1 "" "<none found>"
     !endif
+    -1 osd @#
+    osd @# 0 "sIb" 0 0 0 0 10
+    osd @# 10 "IHt" .scheme.osd-sbar 17
+  !endif
 !emacro
 
 0 define-macro osd-1-file-select
-    0 find-file $result
+  0 find-file $result
 !emacro
 0 define-macro osd-1-file
-    set-variable #l1 ".*[^~/]"
-    !if &sub @# 12
-    !elif &set #l2 &lfi &reg "/history/file-type" "\b" $result
-        set-variable #l1 &lget &reg "/history/file-mask" "\b" #l2
-        filemask-to-regex #l1
-        set-variable #l1 &rep #l1 "," "\\|"
+  set-variable #l1 ".*[^~/]"
+  !if &sub @# 12
+  !elif &set #l2 &lfi &reg "/history/file-type" "\b" $result
+    set-variable #l1 &lget &reg "/history/file-mask" "\b" #l2
+    filemask-to-regex #l1
+    set-variable #l1 &rep #l1 "," "\\|"
+  !endif
+  -1 osd 17
+  osd 17 0 &cond &band $system 0x100 "Aif" "Af"
+  set-variable #l4 0
+  set-variable #l5 0
+  set-variable $file-names #l1
+  !while &set #l6 &len &set #l3 $file-names
+    osd 17 1 ""  #l3 0 osd-1-file-select
+    set-variable #l4 &add #l4 1
+    !if &gre #l6 #l5
+      set-variable #l5 #l6
     !endif
-    -1 osd 17
-    osd 17 0 &cond &band $system 0x100 "Aif" "Af"
-    set-variable #l4 0
-    set-variable #l5 0
-    set-variable $file-names #l1
-    !while &set #l6 &len &set #l3 $file-names
-        osd 17 1 ""  #l3 0 osd-1-file-select
-        set-variable #l4 &add #l4 1
-        !if &gre #l6 #l5
-            set-variable #l5 #l6
-        !endif
-    !done
-    !if &gre #l4 &sub $frame-depth 2
-        -1 osd @#
-        osd @# 0 "sI" -1 0 &add &inc #l5 1 2 0 10
-        osd @# 10 "IbHt" .scheme.osd-sbar #l5 &sub $frame-depth 2 17
-        osd 17 0 &cond &band $system 0x100 "Aifs" "Afs" #l5 &sub $frame-depth 2 -1 -1
-    !else
-        !if &not #l4
-            osd 17 1 "" "<none found>"
-        !endif
-        -1 osd @#
-        osd @# 0 "sIb" 0 0 0 0 10
-        osd @# 10 "IHt" .scheme.osd-sbar 17
+  !done
+  !if &gre #l4 &sub $frame-depth 2
+    -1 osd @#
+    osd @# 0 "sI" -1 0 &add &inc #l5 1 2 0 10
+    osd @# 10 "IbHt" .scheme.osd-sbar #l5 &sub $frame-depth 2 17
+    osd 17 0 &cond &band $system 0x100 "Aifs" "Afs" #l5 &sub $frame-depth 2 -1 -1
+  !else
+    !if &not #l4
+      osd 17 1 "" "<none found>"
     !endif
+    -1 osd @#
+    osd @# 0 "sIb" 0 0 0 0 10
+    osd @# 10 "IHt" .scheme.osd-sbar 17
+  !endif
 !emacro
 
 0 define-macro osd-save
-    !if &seq &lef $buffer-bname 1 "*"
-        osd-save-as
-    !elif &seq $buffer-fname ""
-        osd-save-as
-    !else
-        !nma save-buffer
-    !endif
+  !if &seq &lef $buffer-bname 1 "*"
+    osd-save-as
+  !elif &seq $buffer-fname ""
+    osd-save-as
+  !else
+    !nma save-buffer
+  !endif
 !emacro
 0 define-macro osd-save-as
-    set-variable .osd-get-file.title "Save Buffer As"
-    set-variable .osd-get-file.flags 0
-    set-variable .osd-get-file.ft 1
-    osd-get-file
-    set-variable #l0 .osd-get-file.result
-    !if &not &stat "w" #l0
-        3 osd-dialog "Save Buffer As" "  Invalid file name  " 10 6 " \HOK "
-        !abort
-    !elif &sequ &stat "t" #l0 "R"
-        3 osd-xdialog "Save Buffer As" "  Over-write existing file?  " 1 10 6 " \HYes " " \HNo "
-        !if &equ $result 2
-            !abort
-        !endif
+  set-variable .osd-get-file.title "Save Buffer As"
+  set-variable .osd-get-file.flags 0
+  set-variable .osd-get-file.ft 1
+  osd-get-file
+  set-variable #l0 .osd-get-file.result
+  !if &not &stat "w" #l0
+    3 osd-dialog "Save Buffer As" "  Invalid file name  " 10 6 " \HOK "
+    !abort
+  !elif &sequ &stat "t" #l0 "R"
+    3 osd-xdialog "Save Buffer As" "  Over-write existing file?  " 1 10 6 " \HYes " " \HNo "
+    !if &equ $result 2
+      !abort
     !endif
-    0 write-buffer #l0
+  !endif
+  0 write-buffer #l0
 !emacro
 0 define-macro osd-save-all
-    set-variable #l2 $buffer-bname
-    set-variable $buffer-names "[^*].*"
-    !while &not &seq &set #l0 $buffer-names ""
-        !if &nbmod #l0 "edit"
+  set-variable #l2 $buffer-bname
+  set-variable $buffer-names "[^*].*"
+  !while &not &seq &set #l0 $buffer-names ""
+    !if &nbmod #l0 "edit"
 *try-again
-            find-buffer #l0
-            set-variable #l1 &spr "  Save changes to buffer \"%s\"  \n\n  File: %s  " #l0 $buffer-fname
-            find-buffer #l2
-            3 osd-xdialog "Save All" #l1 1 10 6 " \HYes" " \HNo " " \HCancel "
-            !if &equ $result 3
-                !abort
-            !elif &equ $result 1
-                find-buffer #l0
-                !force osd-save
-                !if &not $status
-                    !goto try-again
-                !endif
-                find-buffer #l2
-            !endif
-        !endif
-    !done
-    ; can't do registry and dictionaries in macro code
-    2 save-registry @mna
-    2 save-dictionary @mna
-    3 osd-xdialog "Save All" "  Save current session  " 1 10 8 " \HYes " " \HNo " " \HCancel "
-    !if &equ $result 3
+      find-buffer #l0
+      set-variable #l1 &spr "  Save changes to buffer \"%s\"  \n\n  File: %s  " #l0 $buffer-fname
+      find-buffer #l2
+      3 osd-xdialog "Save All" #l1 1 10 6 " \HYes" " \HNo " " \HCancel "
+      !if &equ $result 3
         !abort
-    !elif &equ $result 1
-        0 save-session
+      !elif &equ $result 1
+        find-buffer #l0
+        !force osd-save
+        !if &not $status
+          !goto try-again
+        !endif
+        find-buffer #l2
+      !endif
     !endif
+  !done
+  ; can't do registry and dictionaries in macro code
+  2 save-registry @mna
+  2 save-dictionary @mna
+  3 osd-xdialog "Save All" "  Save current session  " 1 10 8 " \HYes " " \HNo " " \HCancel "
+  !if &equ $result 3
+    !abort
+  !elif &equ $result 1
+    0 save-session
+  !endif
 !emacro
 0 define-macro osd-close
-    !if &bmod "edit"
-        set-variable #l0 &spr "Buffer \"%s\" has been changed" $buffer-bname
-        3 osd-xdialog "Buffer Close" #l0 1 10 6 " \HSave First " " \HLose Changes " " \HCancel "
-        !if &equ $result 3
-            !abort
-        !elif &equ $result 1
-            osd-save
-        !endif
+  !if &bmod "edit"
+    set-variable #l0 &spr "Buffer \"%s\" has been changed" $buffer-bname
+    3 osd-xdialog "Buffer Close" #l0 1 10 6 " \HSave First " " \HLose Changes " " \HCancel "
+    !if &equ $result 3
+      !abort
+    !elif &equ $result 1
+      osd-save
     !endif
-    !if &bmod "pipe"
-        set-variable #l0 &spr "Buffer \"%s\" has active process" $buffer-bname
-        3 osd-xdialog "Buffer Close" #l0 1 10 6 " \HKill " " \HCancel "
-        !if &equ $result 2
-            !abort
-        !endif
+  !endif
+  !if &bmod "pipe"
+    set-variable #l0 &spr "Buffer \"%s\" has active process" $buffer-bname
+    3 osd-xdialog "Buffer Close" #l0 1 10 6 " \HKill " " \HCancel "
+    !if &equ $result 2
+      !abort
     !endif
-    0 delete-buffer $buffer-bname @mna
+  !endif
+  0 delete-buffer $buffer-bname @mna
 !emacro
 0 define-macro osd-undo
-    !if &seq @cl "undo"
-        set-variable .undo.count &add .undo.count 1
-    !else
-        set-variable .undo.count 1
-    !endif
-    set-variable @cl @cl
-    @# undo
-    set-variable @cc undo
+  !if &seq @cl "undo"
+    set-variable .undo.count &add .undo.count 1
+  !else
+    set-variable .undo.count 1
+  !endif
+  set-variable @cl @cl
+  @# undo
+  set-variable @cc undo
 !emacro
 0 define-macro osd-redo
-    !if &seq @cl "osd-redo"
-        !if &not .undo.count
-            ml-write "[Nothing left to redo]"
-            !abort
-        !endif
-        set-variable @cl undo
-    !elif &not &seq @cl "undo"
-        ml-write "[Undo was not the last operation]"
-        set-variable @cc void
-        !abort
-    !elif &les .undo.count 1
-        ml-write "[osd-undo must be used for osd-redo to work]"
-        set-variable @cc void
-        !abort
-    !else
-        set-variable .undo.count &sub 0 .undo.count
+  !if &seq @cl "osd-redo"
+    !if &not .undo.count
+      ml-write "[Nothing left to redo]"
+      !abort
     !endif
-    undo
-    !if &inc .undo.count 1
-        set-variable @cc osd-redo
-    !endif
+    set-variable @cl undo
+  !elif &not &seq @cl "undo"
+    ml-write "[Undo was not the last operation]"
+    set-variable @cc void
+    !abort
+  !elif &les .undo.count 1
+    ml-write "[osd-undo must be used for osd-redo to work]"
+    set-variable @cc void
+    !abort
+  !else
+    set-variable .undo.count &sub 0 .undo.count
+  !endif
+  undo
+  !if &inc .undo.count 1
+    set-variable @cc osd-redo
+  !endif
 !emacro
 set-variable .undo.count 0
 0 define-macro osd-narrow-buffer
-    !if @#
-        set-variable #l0 $window-line
-        exchange-point-and-mark
-        !if &les #l0 $window-line
-            exchange-point-and-mark
-        !endif
-        0x34 narrow-buffer .scheme.fold-close &cat &lef @wl 60 " ..."
-    !else
-        0x33 narrow-buffer .scheme.fold-close "{{{" "}}}"
+  !if @#
+    set-variable #l0 $window-line
+    exchange-point-and-mark
+    !if &les #l0 $window-line
+      exchange-point-and-mark
     !endif
+    0x34 narrow-buffer .scheme.fold-close &cat &lef @wl 60 " ..."
+  !else
+    0x33 narrow-buffer .scheme.fold-close "{{{" "}}}"
+  !endif
 !emacro
 0 define-macro osd-record-macro
-    set-variable #l0 &spr "  Note: The mouse cannot be used during macro recording,  \n        use the key binding \"%s\" to stop." &kbin "" end-kbd-macro
-    osd-dialog "Record Macro" #l0 "  \HOK  "
-    start-kbd-macro
+  set-variable #l0 &spr "  Note: The mouse cannot be used during macro recording,  \n        use the key binding \"%s\" to stop." &kbin "" end-kbd-macro
+  osd-dialog "Record Macro" #l0 "  \HOK  "
+  start-kbd-macro
 !emacro
 define-macro display-main-menu
-    osd -1 &set .osd.menu &bxor .osd.menu 1
-    !if &exi .help
-    !elif &not &set .help .osd.menu
-        !if &seq "esc =" &set #l0 &kbin 655360 osd
-        !elif &seq &cbin "esc =" "osd"
-            set-variable #l0 &cat #l0 "\" or \"esc ="
-        !endif
-        set-variable #l0 &spr "  Use \"%s\" to access the main menu  \n  or execute display-main-menu" #l0
-        osd-dialog "Display Main Menu" #l0 "  \HOK  "
+  osd -1 &set .osd.menu &bxor .osd.menu 1
+  !if &exi .help
+  !elif &not &set .help .osd.menu
+    !if &seq "esc =" &set #l0 &kbin 655360 osd
+    !elif &seq &cbin "esc =" "osd"
+      set-variable #l0 &cat #l0 "\" or \"esc ="
     !endif
+    set-variable #l0 &spr "  Use \"%s\" to access the main menu  \n  or execute display-main-menu" #l0
+    osd-dialog "Display Main Menu" #l0 "  \HOK  "
+  !endif
 !emacro
 ;
 ; MENU #1 - FILE sub-menu
@@ -398,7 +398,7 @@ osd 4 170 "i" "\HScroll Bars"                    f "&set $scroll-bar &bxor $scro
 osd 4 180 ""  "\HToolbar               S-f11"    f toolbar
 osd 4 190 ""  "\HWhitespaces           f11"      f display-whitespaces
 !if &reg "/history/find-buffer" "0"
-    osd 4 110 "M" "Bu\Hffer (by type)"          14
+  osd 4 110 "M" "Bu\Hffer (by type)"          14
 !endif
 ;
 ; MENU #5 - FORMAT sub-menu
@@ -468,10 +468,10 @@ osd 7 160 ""  "S\Hhell               C-x c"       f shell
 ; Setup the users tools
 set-variable #l0 0
 !repeat
-    !if &not &seq "" &set #l1 &reg &spr "/history/%s/tool/%d/name" $platform #l0 ""
-        osd 7 200 "-"
-        osd 7 &add 201 #l0 "" &spr "\H%d %s" #l0 #l1 #l0 execute-tool
-    !endif
+  !if &not &seq "" &set #l1 &reg &spr "/history/%s/tool/%d/name" $platform #l0 ""
+    osd 7 200 "-"
+    osd 7 &add 201 #l0 "" &spr "\H%d %s" #l0 #l1 #l0 execute-tool
+  !endif
 !until &equ &inc #l0 1 10
 ;
 ; MENU #8 - WINDOW sub-menu
@@ -490,11 +490,11 @@ osd 8 100 "-"
 osd 8 110 ""  "\HPrevious Window     C-x C-p"     f previous-window
 osd 8 120 ""  "\HNext Window         C-x C-o"     f next-window
 !if &and &not &band $system 0x01 &opt "mwf"
-    ; running a version that can support multiple frames
-    osd 8 150 "-"
-    osd 8 160 ""  "Create New \HFrame    C-x 5 2" f create-frame
-    osd 8 170 ""  "\HClose This Frame    C-x 5 0" f delete-frame
-    osd 8 180 ""  "Ne\Hxt Frame          C-x 5 o" f next-frame
+  ; running a version that can support multiple frames
+  osd 8 150 "-"
+  osd 8 160 ""  "Create New \HFrame    C-x 5 2" f create-frame
+  osd 8 170 ""  "\HClose This Frame    C-x 5 0" f delete-frame
+  osd 8 180 ""  "Ne\Hxt Frame          C-x 5 o" f next-frame
 !endif
 ;
 ; MENU #9 - HELP sub-window
@@ -529,15 +529,15 @@ osd 11 0 "b"
 osd 14 0 "b"
 set-variable #l1 0
 !while &not &seq &set #l2 &lget #l0 &inc #l1 1 ""
-    osd 11 #l1 "Md" #l2 12 osd-1-file
-    osd 14 #l1 "Md" #l2 15 osd-1-buffer
+  osd 11 #l1 "Md" #l2 12 osd-1-file
+  osd 14 #l1 "Md" #l2 15 osd-1-buffer
 !done
 0 define-macro osd-find-buffer
-    !if &band @# 1
-        set-variable $mouse-x &add $cursor-x 1
-        set-variable $mouse-y &sub $cursor-y 1
-    !endif
-    14 osd
+  !if &band @# 1
+    set-variable $mouse-x &add $cursor-x 1
+    set-variable $mouse-y &sub $cursor-y 1
+  !endif
+  14 osd
 !emacro
 ;
 ; MENU #21 - GAMES sub-menu
@@ -553,109 +553,109 @@ osd 21 60  ""  "\HTriangle"   f Triangle
 ; n osd-xdialog "title" "prompt" default [x-pos y-pos] "But1" "but2" ...
 ;
 0 define-macro osd-xdialog
-    -1 osd .osd.tmp
-    osd .osd.tmp 0 ""
-    osd .osd.tmp 1 ""
-    osd .osd.tmp 2 "c" @2
-    osd .osd.tmp 3 ""
-    set-variable #l0 1
-    set-variable #l2 1
-    set-variable #l4 2
-    !if &band @# 2
-        set-variable #l6 &spr "a\" %d %d" @4 @5
-        set-variable #l5 5
-    !else
-        set-variable #l6 "\""
-        set-variable #l5 3
-    !endif
-    !while #l2
-        !force set-variable #l1 &ind &cat "@" &add #l0 #l5
-        !if &not $status
-            set-variable #l2 0
-        !else
-            set-variable #l4 &add #l4 &add &len #l1 &cond &sin "\H" #l1 3 4
-            set-variable #l3 &cat "set-variable $result " #l0
-            osd .osd.tmp &mul #l0 10 "BtcfhHi" .scheme.osd-ebtt #l1 f #l3
-            set-variable #l0 &add #l0 1
-        !endif
-    !done
-    set-variable #l0 @1
-    set-variable #l6 &spr "%s %d 0 0 0 " #l6 #l4
-    !if &set #l1 @3
-        set-variable #l6 &spr "I%s %d" #l6 &mul #l1 10
-    !endif
-    execute-line &spr "osd %d 0 \"bstcH%s %d \"%s\"" .osd.tmp #l6 .scheme.osd-title #l0
-    !force !force .osd.tmp osd
+  -1 osd .osd.tmp
+  osd .osd.tmp 0 ""
+  osd .osd.tmp 1 ""
+  osd .osd.tmp 2 "c" @2
+  osd .osd.tmp 3 ""
+  set-variable #l0 1
+  set-variable #l2 1
+  set-variable #l4 2
+  !if &band @# 2
+    set-variable #l6 &spr "a\" %d %d" @4 @5
+    set-variable #l5 5
+  !else
+    set-variable #l6 "\""
+    set-variable #l5 3
+  !endif
+  !while #l2
+    !force set-variable #l1 &ind &cat "@" &add #l0 #l5
     !if &not $status
-        !if &band @# 1
-            !abort
-        !endif
-        set-variable $result -1
+      set-variable #l2 0
+    !else
+      set-variable #l4 &add #l4 &add &len #l1 &cond &sin "\H" #l1 3 4
+      set-variable #l3 &cat "set-variable $result " #l0
+      osd .osd.tmp &mul #l0 10 "BtcfhHi" .scheme.osd-ebtt #l1 f #l3
+      set-variable #l0 &add #l0 1
     !endif
+  !done
+  set-variable #l0 @1
+  set-variable #l6 &spr "%s %d 0 0 0 " #l6 #l4
+  !if &set #l1 @3
+    set-variable #l6 &spr "I%s %d" #l6 &mul #l1 10
+  !endif
+  execute-line &spr "osd %d 0 \"bstcH%s %d \"%s\"" .osd.tmp #l6 .scheme.osd-title #l0
+  !force !force .osd.tmp osd
+  !if &not $status
+    !if &band @# 1
+      !abort
+    !endif
+    set-variable $result -1
+  !endif
 !emacro
 ;
 ; n osd-dialog "title" "prompt" [x-pos y-pos] "But1"
 ;
 0 define-macro osd-dialog
-    @# osd-xdialog @1 @2 1 @3 @4 @5
+  @# osd-xdialog @1 @2 1 @3 @4 @5
 !emacro
 ;
 ; n osd-entry "title" "prompt" "variable" [x-pos y-pos] ["entry-size (WxH)" ["type"]]
 ; simple osd value entry
 0 define-macro osd-entry
-    set-variable .value @3
-    set-variable #l2 1
-    !if &band @# 2
-        set-variable #l6 &spr "a\" %d %d" @4 @5
-        set-variable #l5 6
-    !else
-        set-variable #l6 "\""
-        set-variable #l5 4
+  set-variable .value @3
+  set-variable #l2 1
+  !if &band @# 2
+    set-variable #l6 &spr "a\" %d %d" @4 @5
+    set-variable #l5 6
+  !else
+    set-variable #l6 "\""
+    set-variable #l5 4
+  !endif
+  !force set-variable #l0 &ind &cat "@" &pinc #l5 1
+  !if &not $status
+    set-variable #l0 30
+  !elif &sin "x" #l0
+    set-variable #l2 &rig #l0 &sin "x" #l0
+    set-variable #l0 &lef #l0 &sub &sin "x" #l0 1
+  !endif
+  set-variable #l1 ""
+  !force set-variable #l1 &ind &cat "@" #l5
+  set-variable .type &cat "@ml2" #l1
+  -1 osd .osd.tmp
+  execute-line &spr "osd %d 0 \"bcIDtH%s 17 10 %d \"%s\"" .osd.tmp #l6 .scheme.osd-title @1
+  osd .osd.tmp 1 ""
+  osd .osd.tmp 2 "fh" "  "
+  osd .osd.tmp 3 "Sfh" @2 10
+  !if &gre #l2 1
+    osd .osd.tmp  4 "f" "  "
+    osd .osd.tmp  5 "fh" "  "
+    osd .osd.tmp 10 "EtNxHRfhz" .scheme.osd-entry #l0 #l2 "" f osd-entry-value
+  !else
+    !if &band @# 4
+      osd .osd.tmp 4 "f" "  "
+      osd .osd.tmp 5 "fh" "  "
     !endif
-    !force set-variable #l0 &ind &cat "@" &pinc #l5 1
-    !if &not $status
-        set-variable #l0 30
-    !elif &sin "x" #l0
-        set-variable #l2 &rig #l0 &sin "x" #l0
-        set-variable #l0 &lef #l0 &sub &sin "x" #l0 1
-    !endif
-    set-variable #l1 ""
-    !force set-variable #l1 &ind &cat "@" #l5
-    set-variable .type &cat "@ml2" #l1
-    -1 osd .osd.tmp
-    execute-line &spr "osd %d 0 \"bcIDtH%s 17 10 %d \"%s\"" .osd.tmp #l6 .scheme.osd-title @1
-    osd .osd.tmp 1 ""
-    osd .osd.tmp 2 "fh" "  "
-    osd .osd.tmp 3 "Sfh" @2 10
-    !if &gre #l2 1
-        osd .osd.tmp  4 "f" "  "
-        osd .osd.tmp  5 "fh" "  "
-        osd .osd.tmp 10 "EtNxHRfhz" .scheme.osd-entry #l0 #l2 "" f osd-entry-value
-    !else
-        !if &band @# 4
-            osd .osd.tmp 4 "f" "  "
-            osd .osd.tmp 5 "fh" "  "
-        !endif
-        osd .osd.tmp 10 "EtxHRfhz" .scheme.osd-entry #l0 #l2 "" f osd-entry-value
-    !endif
-    osd .osd.tmp 15 "f" "  "
-    osd .osd.tmp 16 ""
-    osd .osd.tmp 17 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
-    osd .osd.tmp 18 "BtcfH" .scheme.osd-ebtt " \HCancel " 0 void
-    .osd.tmp osd
-    set-variable @3 .value
+    osd .osd.tmp 10 "EtxHRfhz" .scheme.osd-entry #l0 #l2 "" f osd-entry-value
+  !endif
+  osd .osd.tmp 15 "f" "  "
+  osd .osd.tmp 16 ""
+  osd .osd.tmp 17 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
+  osd .osd.tmp 18 "BtcfH" .scheme.osd-ebtt " \HCancel " 0 void
+  .osd.tmp osd
+  set-variable @3 .value
 !emacro
 0 define-macro osd-entry-value
-    !if &les @# 0
-        set-variable .osd-entry.value &ind .osd-entry.type "" .osd-entry.value
-    !else
-        set-variable $result .osd-entry.value
-    !endif
+  !if &les @# 0
+    set-variable .osd-entry.value &ind .osd-entry.type "" .osd-entry.value
+  !else
+    set-variable $result .osd-entry.value
+  !endif
 !emacro
 
 ; execute any emulation osd file, e.g. Emacs, Vi etc
 !if &exi %emulate
-    !force execute-file &cat "osd" %emulate
+  !force execute-file &cat "osd" %emulate
 !endif
 ; load in user extensions if found
 !force execute-file "myosd"

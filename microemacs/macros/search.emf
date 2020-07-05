@@ -8,133 +8,133 @@
 ; Authors:     Steven Phillips
 ;
 define-macro replace-all-string
-    !force set-variable #l0 @3
+  !force set-variable #l0 @3
+  !if &not $status
+    set-variable #l1 @ml05 "Replace all"
+    set-variable #l2 @ml05 &spr "Replace [%s] with" #l1
+    set-variable #l0 @ml00 "In files"
+    !if &band @# 2
+      set-variable #l3 @ml05 "Use grep string"
+    !endif
+  !else
+    set-variable #l1 @1
+    set-variable #l2 @2
+    !if &band @# 2
+      set-variable #l3 @4
+    !endif
+  !endif
+  !if &not &band @# 2
+    set-variable #l3 #l1
+  !endif
+  &band @# 1 save-some-buffers @mna
+  set-variable #l0 &spr "\"%s\" %s" #l3 #l0
+  1 xgrep #l0
+  !while 1
+    !force get-next-line @mna
     !if &not $status
-        set-variable #l1 @ml05 "Replace all"
-        set-variable #l2 @ml05 &spr "Replace [%s] with" #l1
-        set-variable #l0 @ml00 "In files"
-        !if &band @# 2
-            set-variable #l3 @ml05 "Use grep string"
-        !endif
-    !else
-        set-variable #l1 @1
-        set-variable #l2 @2
-        !if &band @# 2
-            set-variable #l3 @4
-        !endif
+      ml-write "All done!"
+      !return
     !endif
-    !if &not &band @# 2
-        set-variable #l3 #l1
-    !endif
-    &band @# 1 save-some-buffers @mna
-    set-variable #l0 &spr "\"%s\" %s" #l3 #l0
-    1 xgrep #l0
-    !while 1
-        !force get-next-line @mna
-        !if &not $status
-            ml-write "All done!"
-            !return
-        !endif
-        -1 replace-string #l1 #l2
-    !done
+    -1 replace-string #l1 #l2
+  !done
 !emacro
 
 define-macro query-replace-all-string
-    !force set-variable #l0 @3
+  !force set-variable #l0 @3
+  !if &not $status
+    set-variable #l1 @ml05 "Query replace all"
+    set-variable #l2 @ml05 &spr "Replace [%s] with" #l1
+    set-variable #l0 @ml00 "In files"
+    !if &band @# 2
+      set-variable #l3 @ml05 "Use grep string"
+    !endif
+  !else
+    set-variable #l1 @1
+    set-variable #l2 @2
+    !if &band @# 2
+      set-variable #l3 @4
+    !endif
+  !endif
+  !if &not &band @# 2
+    set-variable #l3 #l1
+  !endif
+  &band @# 1 save-some-buffers @mna
+  set-variable #l0 &spr "\"%s\" %s" #l3 #l0
+  1 xgrep #l0
+  set-variable #l4 0
+  !repeat
+    !force get-next-line @mna
     !if &not $status
-        set-variable #l1 @ml05 "Query replace all"
-        set-variable #l2 @ml05 &spr "Replace [%s] with" #l1
-        set-variable #l0 @ml00 "In files"
-        !if &band @# 2
-            set-variable #l3 @ml05 "Use grep string"
-        !endif
+      ml-write "All done!"
+      !return
+    !endif
+    !if #l4
+      -1 replace-string #l1 #l2 @mna
     !else
-        set-variable #l1 @1
-        set-variable #l2 @2
-        !if &band @# 2
-            set-variable #l3 @4
-        !endif
-    !endif
-    !if &not &band @# 2
-        set-variable #l3 #l1
-    !endif
-    &band @# 1 save-some-buffers @mna
-    set-variable #l0 &spr "\"%s\" %s" #l3 #l0
-    1 xgrep #l0
-    set-variable #l4 0
-    !repeat
-        !force get-next-line @mna
-        !if &not $status
+      set-variable $recent-keys ""
+      -1 query-replace-string #l1 #l2 @mna
+      set-variable #l5 $recent-keys
+      set-variable #l6 &sub &len #l5 &len &rep #l5 " " ""
+      set-variable #l5 &cat " " #l5
+      !while #l6
+        set-variable #l7 &slo &lget #l5 #l6
+        !if &lfin "|y|n|i|l|!|u|c-g|.|" #l7
+          ; found the query input, handle it
+          !if &seq #l7 "l"
             ml-write "All done!"
             !return
-        !endif
-        !if #l4
-            -1 replace-string #l1 #l2 @mna
+          !elif &seq #l7 "!"
+            set-variable #l4 1
+          !elif &seq #l7 "i"
+            set-variable #l2 @h4 0
+          !endif
+          set-variable #l6 0
         !else
-            set-variable $recent-keys ""
-            -1 query-replace-string #l1 #l2 @mna
-            set-variable #l5 $recent-keys
-            set-variable #l6 &sub &len #l5 &len &rep #l5 " " ""
-            set-variable #l5 &cat " " #l5
-            !while #l6
-                set-variable #l7 &slo &lget #l5 #l6
-                !if &lfin "|y|n|i|l|!|u|c-g|.|" #l7
-                    ; found the query input, handle it
-                    !if &seq #l7 "l"
-                        ml-write "All done!"
-                        !return
-                    !elif &seq #l7 "!"
-                        set-variable #l4 1
-                    !elif &seq #l7 "i"
-                        set-variable #l2 @h4 0
-                    !endif
-                    set-variable #l6 0
-                !else
-                    set-variable #l6 &sub #l6 1
-                !endif
-            !done
+          set-variable #l6 &sub #l6 1
         !endif
-    !until 0
+      !done
+    !endif
+  !until 0
 !emacro
 ;
 define-macro replace-all-pairs
-    !force set-variable #l0 @1
-    !if &not $status
-        set-variable #l0 @ml01 "Replace in files"
+  !force set-variable #l0 @1
+  !if &not $status
+    set-variable #l0 @ml01 "Replace in files"
+  !endif
+  set-variable #l4 $buffer-bname
+  !if &band @# 1
+    save-some-buffers @mna
+    set-variable #l1 @mc5 "Warning: This will save all buffers, continue (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+    !if &iseq #l1 "n"
+      !abort
     !endif
-    set-variable #l4 $buffer-bname
-    !if &band @# 1
-        save-some-buffers @mna
-        set-variable #l1 @mc5 "Warning: This will save all buffers, continue (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-        !if &iseq #l1 "n"
-            !abort
-        !endif
+  !endif
+  0 save-some-buffers
+  beginning-of-buffer
+  !while &not &seq &set #l5 @wc ""
+    set-variable #l6 &rig @wl 1
+    !if &not &set #l7 &sin #l5 #l6
+      ml-write "[Invalid line]"
+      !abort
     !endif
-    0 save-some-buffers
-    beginning-of-buffer
-    !while &not &seq &set #l5 @wc ""
-        set-variable #l6 &rig @wl 1
-        !if &not &set #l7 &sin #l5 #l6
-            ml-write "[Invalid line]"
-            !abort
-        !endif
-        set-variable #l1 &lef #l6 &sub #l7 1
-        set-variable #l6 &rig #l6 #l7
-        !if &not &set #l7 &sin #l5 #l6
-            ml-write "[Invalid line]"
-            !abort
-        !endif
-        set-variable #l2 &lef #l6 &sub #l7 1
-        set-variable #l6 &rig #l6 #l7
-        !if &not &set #l7 &sin #l5 #l6
-            set-variable #l3 #l1
-        !else
-            set-variable #l3 &lef #l6 &sub #l7 1
-        !endif
-        2 replace-all-string #l1 #l2 #l0 #l3
-        find-buffer #l4
-        forward-line
-    !done
-    0 save-some-buffers
+    set-variable #l1 &lef #l6 &sub #l7 1
+    set-variable #l6 &rig #l6 #l7
+    !if &not &set #l7 &sin #l5 #l6
+      ml-write "[Invalid line]"
+      !abort
+    !endif
+    set-variable #l2 &lef #l6 &sub #l7 1
+    set-variable #l6 &rig #l6 #l7
+    !if &not &set #l7 &sin #l5 #l6
+      set-variable #l3 #l1
+    !else
+      set-variable #l3 &lef #l6 &sub #l7 1
+    !endif
+    2 replace-all-string #l1 #l2 #l0 #l3
+    find-buffer #l4
+    forward-line
+  !done
+  0 save-some-buffers
 !emacro
 

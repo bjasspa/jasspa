@@ -50,104 +50,104 @@
 ;    the american.ewf file can exist anywhere in the ME $search-path
 ;
 !if &not &exi .osd.word
-    set-variable .osd.word &pinc .osd.next 1
-    set-variable .osd.wordc &pinc .osd.next 1
+  set-variable .osd.word &pinc .osd.next 1
+  set-variable .osd.wordc &pinc .osd.next 1
 !endif
 
 define-macro describe-word-find
-    set-variable #l0 @1
-    ml-write &spr "[Searching for %s ...]" #l0
-    set-variable #l1 &spr &ind &spr ".describe-word.%s-command" .spell.language #l0 #l0 #l0 #l0 #l0
-    2 pipe-shell-command #l1 "*describe-word*" @mna
-    find-buffer "*describe-word*"
-    set-variable #l1 &spr &ind &spr ".describe-word.%s-search" .spell.language #l0 #l0 #l0 #l0 #l0
-    set-variable .describe-word.descn 0
+  set-variable #l0 @1
+  ml-write &spr "[Searching for %s ...]" #l0
+  set-variable #l1 &spr &ind &spr ".describe-word.%s-command" .spell.language #l0 #l0 #l0 #l0 #l0
+  2 pipe-shell-command #l1 "*describe-word*" @mna
+  find-buffer "*describe-word*"
+  set-variable #l1 &spr &ind &spr ".describe-word.%s-search" .spell.language #l0 #l0 #l0 #l0 #l0
+  set-variable .describe-word.descn 0
+  !force search-buffer "Em" #l1
+  !while $status
+    set-variable #l2 &rep &rep @s1 "\n" " " "\t" " "
+    set-variable #l3 ""
+    !if &gre &len #l2 60
+      set-variable #l4 &lef #l2 &rsin " " &lef #l2 60
+      set-variable #l2 &cat "    " &rig #l2 &len #l4
+      set-variable #l3 &spr "%s%s\n" #l3 #l4
+      !jump -4
+    !endif
+    set-variable #l3 &spr "%s%s\n" #l3 #l2
+    osd .osd.wordc &inc .describe-word.descn 1 "xu" #l3 f describe-word-pick
+    set-variable &ind &cat ".describe-word.desc" .describe-word.descn #l3
     !force search-buffer "Em" #l1
-    !while $status
-        set-variable #l2 &rep &rep @s1 "\n" " " "\t" " "
-        set-variable #l3 ""
-        !if &gre &len #l2 60
-            set-variable #l4 &lef #l2 &rsin " " &lef #l2 60
-            set-variable #l2 &cat "    " &rig #l2 &len #l4
-            set-variable #l3 &spr "%s%s\n" #l3 #l4
-            !jump -4
-        !endif
-        set-variable #l3 &spr "%s%s\n" #l3 #l2
-        osd .osd.wordc &inc .describe-word.descn 1 "xu" #l3 f describe-word-pick
-        set-variable &ind &cat ".describe-word.desc" .describe-word.descn #l3
-        !force search-buffer "Em" #l1
-    !done
-    0 ml-write
+  !done
+  0 ml-write
 !emacro
 
 0 define-macro describe-word-lup
-    -1 osd .osd.wordc
-    osd .osd.wordc 0 "sS" .scheme.osd-child 60 10 -1 -1
-    !if &seq .describe-word.word ""
-        osd .osd.wordc 1 ""
-        !return
-    !endif
-    set-variable #l6 $buffer-bname
-    set-variable #l7 $window-line
-    set-variable #l8 $window-y-scroll
-    set-variable #l9 $window-col
-    set-variable #l5 $mouse
-    set-variable $mouse &bor 0x50000 &band 0xffff #l5
-    !force !force describe-word-find .describe-word.word
-    set-variable #l1 $status
-    !force delete-buffer "*describe-word*"
-    !if &not .describe-word.descn
-        !if #l1
-            spell-rules-init
-            257 spell .describe-word.word
-            !if &and &seq &lef $result 1 "O" &sin "/" $result
-                set-variable #l0 &rig $result 1
-                set-variable #l0 &lef #l0 &sub &sin "/" #l0 1
-                !if &not &seq #l0 .describe-word.word
-                    !force !force describe-word-find #l0
-                    set-variable #l1 $status
-                    !force delete-buffer "*describe-word*"
-                !endif
-            !endif
-        !endif    
-        !if &not .describe-word.descn
-            osd .osd.wordc 1 "" &cond #l1 "Failed to find" "Aborted"
+  -1 osd .osd.wordc
+  osd .osd.wordc 0 "sS" .scheme.osd-child 60 10 -1 -1
+  !if &seq .describe-word.word ""
+    osd .osd.wordc 1 ""
+    !return
+  !endif
+  set-variable #l6 $buffer-bname
+  set-variable #l7 $window-line
+  set-variable #l8 $window-y-scroll
+  set-variable #l9 $window-col
+  set-variable #l5 $mouse
+  set-variable $mouse &bor 0x50000 &band 0xffff #l5
+  !force !force describe-word-find .describe-word.word
+  set-variable #l1 $status
+  !force delete-buffer "*describe-word*"
+  !if &not .describe-word.descn
+    !if #l1
+      spell-rules-init
+      257 spell .describe-word.word
+      !if &and &seq &lef $result 1 "O" &sin "/" $result
+        set-variable #l0 &rig $result 1
+        set-variable #l0 &lef #l0 &sub &sin "/" #l0 1
+        !if &not &seq #l0 .describe-word.word
+          !force !force describe-word-find #l0
+          set-variable #l1 $status
+          !force delete-buffer "*describe-word*"
         !endif
+      !endif
+    !endif    
+    !if &not .describe-word.descn
+      osd .osd.wordc 1 "" &cond #l1 "Failed to find" "Aborted"
     !endif
-    set-variable $mouse #l5
-    find-buffer #l6
-    set-variable $window-line #l7
-    set-variable $window-y-scroll #l8
-    set-variable $window-col #l9
+  !endif
+  set-variable $mouse #l5
+  find-buffer #l6
+  set-variable $window-line #l7
+  set-variable $window-y-scroll #l8
+  set-variable $window-col #l9
 !emacro
 
 0 define-macro describe-word-com
-    !if &les @# 0
-        set-variable .describe-word.word @ml2 "" .describe-word.word
-    !elif &gre @# 0
-        set-variable $result .describe-word.word
-    !endif
+  !if &les @# 0
+    set-variable .describe-word.word @ml2 "" .describe-word.word
+  !elif &gre @# 0
+    set-variable $result .describe-word.word
+  !endif
 !emacro
 
 0 define-macro describe-word-pick
-    set-variable #l0 $mouse-y
-    set-variable #l1 $mouse-x
+  set-variable #l0 $mouse-y
+  set-variable #l1 $mouse-x
+  !if &inw @fs #l0 #l1
+    set-variable #l2 @fs #l0 #l1
+    set-variable #l1 &sub #l1 1
     !if &inw @fs #l0 #l1
-        set-variable #l2 @fs #l0 #l1
-        set-variable #l1 &sub #l1 1
-        !if &inw @fs #l0 #l1
-            set-variable #l2 &cat @fs #l0 #l1 #l2
-            !jump -3
-        !endif
-        set-variable #l1 $mouse-x
-        set-variable #l1 &add #l1 1
-        !if &inw @fs #l0 #l1
-            set-variable #l2 &cat #l2 @fs #l0 #l1
-            !jump -3
-        !endif
-        set-variable .describe-word.word #l2
-        describe-word-lup
+      set-variable #l2 &cat @fs #l0 #l1 #l2
+      !jump -3
     !endif
+    set-variable #l1 $mouse-x
+    set-variable #l1 &add #l1 1
+    !if &inw @fs #l0 #l1
+      set-variable #l2 &cat #l2 @fs #l0 #l1
+      !jump -3
+    !endif
+    set-variable .describe-word.word #l2
+    describe-word-lup
+  !endif
 !emacro
 
 osd .osd.word 0  "batcHsID" 9 3 66 17 -1 -1 30 20 .scheme.osd-title "Describe Word"
@@ -165,49 +165,49 @@ osd .osd.word 90 "BHrfth"  .scheme.osd-ebtt " \HClose "   0 void
 osd .osd.word 95 "f" "    "
 
 define-macro describe-word
-    !if &not &exi &ind &spr ".%s-command" .spell.language
-        set-variable #l0 &spr "  Not setup for current language (%s),  \n    see word.emf for more information." .spell.language
-        osd-dialog "Describe Word" #l0 " \HOkay "
-        !abort
+  !if &not &exi &ind &spr ".%s-command" .spell.language
+    set-variable #l0 &spr "  Not setup for current language (%s),  \n    see word.emf for more information." .spell.language
+    osd-dialog "Describe Word" #l0 " \HOkay "
+    !abort
+  !endif
+  !force set-variable #l3 @1
+  !if $status
+    set-variable .word #l3
+  !elif &inw @wc
+    set-variable #l0 $window-col
+    forward-char
+    backward-word
+    set-variable #l1 $window-col
+    forward-word
+    set-variable .word &mid @wl #l1 &sub $window-col #l1
+    set-variable $window-col #l0
+  !else
+    set-variable .word ""
+  !endif
+  describe-word-lup
+  ; if the search variable is not set then we are simply lanching the look-up
+  !if &not &exi &ind &spr ".%s-search" .spell.language
+    !if &seq .word ""
+      set-variable #l0 ""
+      osd-entry "Describe Word" "\HWord : " #l0 20
+      set-variable .word #l0
     !endif
-    !force set-variable #l3 @1
-    !if $status
-        set-variable .word #l3
-    !elif &inw @wc
-        set-variable #l0 $window-col
-        forward-char
-        backward-word
-        set-variable #l1 $window-col
-        forward-word
-        set-variable .word &mid @wl #l1 &sub $window-col #l1
-        set-variable $window-col #l0
-    !else
-        set-variable .word ""
-    !endif
-    describe-word-lup
-    ; if the search variable is not set then we are simply lanching the look-up
-    !if &not &exi &ind &spr ".%s-search" .spell.language
-        !if &seq .word ""
-            set-variable #l0 ""
-            osd-entry "Describe Word" "\HWord : " #l0 20
-            set-variable .word #l0
-        !endif
-        set-variable #l1 &spr &ind &spr ".describe-word.%s-command" .spell.language .word .word .word .word .word
-        2 ipipe-shell-command #l1 "*describe-word*" @mna
-        !return
-    !endif
-    0 describe-word-com
-    !force .osd.word osd
-    !if &not $status
-        !return &not @#
-    !endif
-    !if @#
-        beginning-of-line
-        set-mark
-        set-variable #l0 0
-        !while &gre .descn &pinc #l0 1
-            insert-string &ind &cat ".desc" #l0
-        !done
-    !endif
+    set-variable #l1 &spr &ind &spr ".describe-word.%s-command" .spell.language .word .word .word .word .word
+    2 ipipe-shell-command #l1 "*describe-word*" @mna
+    !return
+  !endif
+  0 describe-word-com
+  !force .osd.word osd
+  !if &not $status
+    !return &not @#
+  !endif
+  !if @#
+    beginning-of-line
+    set-mark
+    set-variable #l0 0
+    !while &gre .descn &pinc #l0 1
+      insert-string &ind &cat ".desc" #l0
+    !done
+  !endif
 !emacro
 

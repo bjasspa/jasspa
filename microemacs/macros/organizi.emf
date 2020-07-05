@@ -11,218 +11,218 @@
 ;set-variable .org.android 1
 ;
 !if &seq .osd-get-file.cmd "ERROR"
-    execute-file fileopen
+  execute-file fileopen
 !endif
 !if &seq .osd.org-aimp "ERROR"
-    set-variable .osd.org-aimp &pinc .osd.next 1
-    set-variable .osd.org-aimpc &pinc .osd.next 1
-    set-variable .osd.org-aieo &pinc .osd.next 1
+  set-variable .osd.org-aimp &pinc .osd.next 1
+  set-variable .osd.org-aimpc &pinc .osd.next 1
+  set-variable .osd.org-aieo &pinc .osd.next 1
 !endif
 
 !if &seq .org.addr-reg "ERROR"
-    execute-file "organiza"
+  execute-file "organiza"
 !endif
 
 0 define-macro org-imp-first-record
-    set-variable #p9 0
-    set-variable #p8 "\b"
-    !while 1
-        set-variable #p9 &add #p9 1
-        set-mark
-        !if &seq @wc #g2
-            !repeat 
-                forward-char
-                search-forward &cat "\\" #g2
-            !until &not &seq @wc #g2
-        !else
-            search-forward &spr "[%s%s]" #g1 #g0
-            backward-char
-        !endif
-        !if .org.aimp-header
-            copy-region
-            set-variable #l3 @y
-            -1 yank
-            !if &seq &lef #l3 1 #g2
-                set-variable #l3 &mid #l3 1 &sub &len #l3 2
-                set-variable #l4 &spr "%s%s" #g2 #g2
-                set-variable #l3 &rep #l3 #l4 #g2
-            !endif
-            !if &seq #l3 ""
-                set-variable #l3 #p9
-            !endif
-        !else
-            set-variable #l3 #p9
-        !endif
-        set-variable #p8 &spr "%s%s\b" #p8 #l3
-        !if &seq @wc #g0
-            !return
-        !endif
+  set-variable #p9 0
+  set-variable #p8 "\b"
+  !while 1
+    set-variable #p9 &add #p9 1
+    set-mark
+    !if &seq @wc #g2
+      !repeat 
         forward-char
-    !done
+        search-forward &cat "\\" #g2
+      !until &not &seq @wc #g2
+    !else
+      search-forward &spr "[%s%s]" #g1 #g0
+      backward-char
+    !endif
+    !if .org.aimp-header
+      copy-region
+      set-variable #l3 @y
+      -1 yank
+      !if &seq &lef #l3 1 #g2
+        set-variable #l3 &mid #l3 1 &sub &len #l3 2
+        set-variable #l4 &spr "%s%s" #g2 #g2
+        set-variable #l3 &rep #l3 #l4 #g2
+      !endif
+      !if &seq #l3 ""
+        set-variable #l3 #p9
+      !endif
+    !else
+      set-variable #l3 #p9
+    !endif
+    set-variable #p8 &spr "%s%s\b" #p8 #l3
+    !if &seq @wc #g0
+      !return
+    !endif
+    forward-char
+  !done
 !emacro
 
 0 define-macro org-imp-get-record
-    set-variable #p9 0
-    !while 1
-        set-variable #p9 &add #p9 1
-        set-mark
-        !if &seq @wc #g2
-            !repeat 
-                forward-char
-                search-forward &cat "\\" #g2
-            !until &not &seq @wc #g2
-        !else
-            search-forward &spr "[%s%s]" #g1 #g0
-            backward-char
-        !endif
-        !if &set #l1 &lget .org.imp-field-map #p9
-            copy-region
-            set-variable #l3 @y
-            -1 yank
-            !if &not &seq #l3 ""
-                !if &seq &lef #l3 1 #g2
-                    set-variable #l3 &mid #l3 1 &sub &len #l3 2
-                    set-variable #l4 &spr "%s%s" #g2 #g2
-                    set-variable #l3 &rep #l3 #l4 #g2
-                !endif
-                set-variable #l4 &cat "/org/tmp/" &lget .org.addr-reg #l1
-                set-variable #l5 &reg #l4 ""
-                !if &not &seq #l5 ""
-                    set-variable #l6 &lget .org.imp-field-app #p9
-                    set-variable #l6 &rep #l6 "\\n" "\n"
-                    set-variable #l5 &cat #l5 #l6
-                !endif
-                set-variable #l6 &lget .org.imp-field-pre #p9
-                set-variable #l6 &rep #l6 "\\n" "\n"
-                set-variable #l5 &cat &cat #l5 #l6 #l3
-                set-registry #l4 #l5
-            !endif
-        !endif
-        !if &seq @wc #g0
-            forward-char
-            !return
-        !endif
+  set-variable #p9 0
+  !while 1
+    set-variable #p9 &add #p9 1
+    set-mark
+    !if &seq @wc #g2
+      !repeat 
         forward-char
-    !done
+        search-forward &cat "\\" #g2
+      !until &not &seq @wc #g2
+    !else
+      search-forward &spr "[%s%s]" #g1 #g0
+      backward-char
+    !endif
+    !if &set #l1 &lget .org.imp-field-map #p9
+      copy-region
+      set-variable #l3 @y
+      -1 yank
+      !if &not &seq #l3 ""
+        !if &seq &lef #l3 1 #g2
+          set-variable #l3 &mid #l3 1 &sub &len #l3 2
+          set-variable #l4 &spr "%s%s" #g2 #g2
+          set-variable #l3 &rep #l3 #l4 #g2
+        !endif
+        set-variable #l4 &cat "/org/tmp/" &lget .org.addr-reg #l1
+        set-variable #l5 &reg #l4 ""
+        !if &not &seq #l5 ""
+          set-variable #l6 &lget .org.imp-field-app #p9
+          set-variable #l6 &rep #l6 "\\n" "\n"
+          set-variable #l5 &cat #l5 #l6
+        !endif
+        set-variable #l6 &lget .org.imp-field-pre #p9
+        set-variable #l6 &rep #l6 "\\n" "\n"
+        set-variable #l5 &cat &cat #l5 #l6 #l3
+        set-registry #l4 #l5
+      !endif
+    !endif
+    !if &seq @wc #g0
+      forward-char
+      !return
+    !endif
+    forward-char
+  !done
 !emacro
 
 0 define-macro org-imp-record
-    !force org-imp-get-record
-    !if &not $status
-        !abort
-    !endif
-    !if &seq &set #l0 &reg "/org/tmp/recno" "" ""
-        set-variable #l0 .org.naddr
-    !else
-        delete-registry "/org/tmp/recno"
-    !endif
-    !if &not &les #l0 .org.naddr
-        set-variable .org.naddr &add #l0 1
-        set-registry "/org/addr/naddr" .org.naddr
-    !endif
-    !force find-registry &spr "/org/addr/%d" #l0 0
-    !if $status
-        delete-registry &spr "/org/addr/%d" #l0
-    !endif
-    copy-registry "/org/tmp" &spr "/org/addr/%d" #l0
-    delete-registry "/org/tmp"
-    mark-registry "/org" "u"
+  !force org-imp-get-record
+  !if &not $status
+    !abort
+  !endif
+  !if &seq &set #l0 &reg "/org/tmp/recno" "" ""
+    set-variable #l0 .org.naddr
+  !else
+    delete-registry "/org/tmp/recno"
+  !endif
+  !if &not &les #l0 .org.naddr
+    set-variable .org.naddr &add #l0 1
+    set-registry "/org/addr/naddr" .org.naddr
+  !endif
+  !force find-registry &spr "/org/addr/%d" #l0 0
+  !if $status
+    delete-registry &spr "/org/addr/%d" #l0
+  !endif
+  copy-registry "/org/tmp" &spr "/org/addr/%d" #l0
+  delete-registry "/org/tmp"
+  mark-registry "/org" "u"
 !emacro
 
 0 define-macro org-aimp-crt-field
-    set-variable #l0 &lef &lget .org.imp-field-nms @# 15
-    !if &gre &set #l1 &lget .org.imp-field-map @# 0
-        set-variable #l1 &lget .org.addr-lbl #l1
-    !else
-        set-variable #l1 "<None>"
-    !endif
-    set-variable #l0 &spr "%s%n  %s%n  " #l0 &sub 15 &len #l0 " " #l1 &sub 20 &len #l1 " "
-    set-variable #l1 &lef &lget .org.imp-field-app @# 6
-    set-variable #l2 &lget .org.imp-field-pre @#
-    set-variable #l0 &spr "%s%s%n  %s" #l0 #l1 &sub 6 &len #l1 " " #l2
-    osd .osd.org-aimpc @# "Rx" #l0 @# org-aimp-select-field
+  set-variable #l0 &lef &lget .org.imp-field-nms @# 15
+  !if &gre &set #l1 &lget .org.imp-field-map @# 0
+    set-variable #l1 &lget .org.addr-lbl #l1
+  !else
+    set-variable #l1 "<None>"
+  !endif
+  set-variable #l0 &spr "%s%n  %s%n  " #l0 &sub 15 &len #l0 " " #l1 &sub 20 &len #l1 " "
+  set-variable #l1 &lef &lget .org.imp-field-app @# 6
+  set-variable #l2 &lget .org.imp-field-pre @#
+  set-variable #l0 &spr "%s%s%n  %s" #l0 #l1 &sub 6 &len #l1 " " #l2
+  osd .osd.org-aimpc @# "Rx" #l0 @# org-aimp-select-field
 !emacro
 
 0 define-macro org-aimp-select-field
-    set-variable .org.aimp-field @#
-    set-variable #l0 &lef &lget .org.imp-field-nms @# 15 
-    osd .osd.org-aimp 50  "Hfhz" .scheme.osd-entry 15 1 #l0
-    !if &gre &set #l0 &lget .org.imp-field-map @# 0
-        osd .osd.org-aimp 70  "MdtmxsfHzh" .scheme.osd-entry 20 1 &lget .org.addr-lbl #l0 .osd.org-m
-    !else
-        osd .osd.org-aimp 70  "MdtmxsfHzh" .scheme.osd-entry 20 1 "<None>" .osd.org-m
-    !endif
+  set-variable .org.aimp-field @#
+  set-variable #l0 &lef &lget .org.imp-field-nms @# 15 
+  osd .osd.org-aimp 50  "Hfhz" .scheme.osd-entry 15 1 #l0
+  !if &gre &set #l0 &lget .org.imp-field-map @# 0
+    osd .osd.org-aimp 70  "MdtmxsfHzh" .scheme.osd-entry 20 1 &lget .org.addr-lbl #l0 .osd.org-m
+  !else
+    osd .osd.org-aimp 70  "MdtmxsfHzh" .scheme.osd-entry 20 1 "<None>" .osd.org-m
+  !endif
 !emacro
 
 0 define-macro org-aimp-set-field
-    set-variable .org.imp-field-map &lset .org.imp-field-map .org.aimp-field @#
-    !if &gre @# 0
-        set-variable #l1 &lget .org.addr-lbl @#
-    !else
-        set-variable #l1 "<None>"
-    !endif
-    osd .osd.org-aimp 70  "MdtmxsfHzh" .scheme.osd-entry 20 1 #l1 .osd.org-m
-    .org.aimp-field org-aimp-crt-field
+  set-variable .org.imp-field-map &lset .org.imp-field-map .org.aimp-field @#
+  !if &gre @# 0
+    set-variable #l1 &lget .org.addr-lbl @#
+  !else
+    set-variable #l1 "<None>"
+  !endif
+  osd .osd.org-aimp 70  "MdtmxsfHzh" .scheme.osd-entry 20 1 #l1 .osd.org-m
+  .org.aimp-field org-aimp-crt-field
 !emacro
 
 0 define-macro org-aimp-set-entry
-    set-variable #l0 &lget "|.org.imp-field-app|.org.imp-field-pre|" &abs @#
-    set-variable #l1 &lget &ind #l0 .org.aimp-field
-    !if &les @# 0
-        set-variable #l2 @ml2 "" #l1
-        !if &not &seq #l2 #l1
-            set-variable &ind #l0 &lset &ind #l0 .org.aimp-field #l2
-            .org.aimp-field org-aimp-crt-field
-        !endif
-    !else
-        set-variable $result #l1
+  set-variable #l0 &lget "|.org.imp-field-app|.org.imp-field-pre|" &abs @#
+  set-variable #l1 &lget &ind #l0 .org.aimp-field
+  !if &les @# 0
+    set-variable #l2 @ml2 "" #l1
+    !if &not &seq #l2 #l1
+      set-variable &ind #l0 &lset &ind #l0 .org.aimp-field #l2
+      .org.aimp-field org-aimp-crt-field
     !endif
+  !else
+    set-variable $result #l1
+  !endif
 !emacro
 
 0 define-macro org-aimp-store
-    set-registry "/org/set/aimp-names" .org.imp-field-nms
-    set-registry "/org/set/aimp-map" .org.imp-field-map
-    set-registry "/org/set/aimp-append" .org.imp-field-app
-    set-registry "/org/set/aimp-prepend" .org.imp-field-pre
-    mark-registry "/org" "u"
+  set-registry "/org/set/aimp-names" .org.imp-field-nms
+  set-registry "/org/set/aimp-map" .org.imp-field-map
+  set-registry "/org/set/aimp-append" .org.imp-field-app
+  set-registry "/org/set/aimp-prepend" .org.imp-field-pre
+  mark-registry "/org" "u"
 !emacro
 
 0 define-macro org-aimp-import
-    set-variable #l0 0
-    !repeat
-        ml-write &spr "[Importing record %d]" &inc #l0 1
-        !force org-imp-record
-    !until &not $status
-    ml-write &spr "[Done, %d records imported]" #l0
+  set-variable #l0 0
+  !repeat
+    ml-write &spr "[Importing record %d]" &inc #l0 1
+    !force org-imp-record
+  !until &not $status
+  ml-write &spr "[Done, %d records imported]" #l0
 !emacro
 
 0 define-macro org-aie-options-set
-    set-variable #l0 &abs @#
-    set-variable #l1 &spr ".org.%s-%s" .org.aie-type &lget "|endrec|endfld|delimit|addrfld|header|" #l0
-    !if &gre #l0 4
-        !if &les @# 0
-            set-variable &ind #l1 &bxor &ind #l1 1
-        !elif &not &ind #l1
-            !abort
-        !endif
-    !else
-        !if &les @# 0
-            set-variable &ind #l1 @ml2 "" &ind #l1
-        !else
-            set-variable $result &ind #l1
-        !endif
+  set-variable #l0 &abs @#
+  set-variable #l1 &spr ".org.%s-%s" .org.aie-type &lget "|endrec|endfld|delimit|addrfld|header|" #l0
+  !if &gre #l0 4
+    !if &les @# 0
+      set-variable &ind #l1 &bxor &ind #l1 1
+    !elif &not &ind #l1
+      !abort
     !endif
+  !else
+    !if &les @# 0
+      set-variable &ind #l1 @ml2 "" &ind #l1
+    !else
+      set-variable $result &ind #l1
+    !endif
+  !endif
 !emacro
 
 0 define-macro org-aie-store
-    set-registry &spr "/org/set/%s-header" .org.aie-type &ind &spr ".org.%s-header" .org.aie-type
-    set-registry &spr "/org/set/%s-endrec" .org.aie-type &ind &spr ".org.%s-endrec" .org.aie-type
-    set-registry &spr "/org/set/%s-endfld" .org.aie-type &ind &spr ".org.%s-endfld" .org.aie-type
-    set-registry &spr "/org/set/%s-delimit" .org.aie-type &ind &spr ".org.%s-delimit" .org.aie-type
-    !if &seq .org.aie-type "aexp" 
-        set-registry &spr "/org/set/%s-addrfld" .org.aie-type &ind &spr ".org.%s-addrfld" .org.aie-type
-    !endif
-    mark-registry "/org" "u"
+  set-registry &spr "/org/set/%s-header" .org.aie-type &ind &spr ".org.%s-header" .org.aie-type
+  set-registry &spr "/org/set/%s-endrec" .org.aie-type &ind &spr ".org.%s-endrec" .org.aie-type
+  set-registry &spr "/org/set/%s-endfld" .org.aie-type &ind &spr ".org.%s-endfld" .org.aie-type
+  set-registry &spr "/org/set/%s-delimit" .org.aie-type &ind &spr ".org.%s-delimit" .org.aie-type
+  !if &seq .org.aie-type "aexp" 
+    set-registry &spr "/org/set/%s-addrfld" .org.aie-type &ind &spr ".org.%s-addrfld" .org.aie-type
+  !endif
+  mark-registry "/org" "u"
 !emacro
 
 osd .osd.org-aieo 0 "batcDHs" 3 6 36 0 -1 -1 160 .scheme.osd-title "Options"
@@ -241,29 +241,29 @@ osd .osd.org-aieo 150 "BhcfxH" .scheme.osd-ebtt " \HStore " f org-aie-store
 osd .osd.org-aieo 160 "BcfH"   .scheme.osd-ebtt "  \HOk  "  1 void
 
 0 define-macro org-aie-options
-    !if &equ @# 1
-        osd .osd.org-aieo 0   "batcDHs" 3 6 36 0 -1 -1 160 .scheme.osd-title "Import Options"
-        osd .osd.org-aieo 20  "Shf" "  Import File has Header  " 100
-        osd .osd.org-aieo 120 "D"
-        osd .osd.org-aieo 130 "D"
-        osd .osd.org-aieo 135 "D"
-        set-variable .org.aie-type "aimp" 
-    !else
-        osd .osd.org-aieo 0   "batcDHs" 3 6 36 0 -1 -1 160 .scheme.osd-title "Export Options"
-        osd .osd.org-aieo 20  "Shf" "    Export Record Header  " 100
-        osd .osd.org-aieo 120 "Shf" "     Export Addresses to  " 130
-        osd .osd.org-aieo 130 "ExfHh" .scheme.osd-entry "####" 4 org-aie-options-set
-        osd .osd.org-aieo 135 "f" " fields    "
-        set-variable .org.aie-type "aexp" 
-    !endif
-    .osd.org-aieo osd
+  !if &equ @# 1
+    osd .osd.org-aieo 0   "batcDHs" 3 6 36 0 -1 -1 160 .scheme.osd-title "Import Options"
+    osd .osd.org-aieo 20  "Shf" "  Import File has Header  " 100
+    osd .osd.org-aieo 120 "D"
+    osd .osd.org-aieo 130 "D"
+    osd .osd.org-aieo 135 "D"
+    set-variable .org.aie-type "aimp" 
+  !else
+    osd .osd.org-aieo 0   "batcDHs" 3 6 36 0 -1 -1 160 .scheme.osd-title "Export Options"
+    osd .osd.org-aieo 20  "Shf" "    Export Record Header  " 100
+    osd .osd.org-aieo 120 "Shf" "     Export Addresses to  " 130
+    osd .osd.org-aieo 130 "ExfHh" .scheme.osd-entry "####" 4 org-aie-options-set
+    osd .osd.org-aieo 135 "f" " fields    "
+    set-variable .org.aie-type "aexp" 
+  !endif
+  .osd.org-aieo osd
 !emacro
 
 0 define-macro org-aie-setdelimit
-    set-variable #l0 @1
-    set-variable #g0 &rep &rep &ind &spr ".org.%s-endrec"  #l0 "\\n" "\n" "\\t" "\t"
-    set-variable #g1 &rep &rep &ind &spr ".org.%s-endfld"  #l0 "\\n" "\n" "\\t" "\t"
-    set-variable #g2 &rep &rep &ind &spr ".org.%s-delimit" #l0 "\\n" "\n" "\\t" "\t"
+  set-variable #l0 @1
+  set-variable #g0 &rep &rep &ind &spr ".org.%s-endrec"  #l0 "\\n" "\n" "\\t" "\t"
+  set-variable #g1 &rep &rep &ind &spr ".org.%s-endfld"  #l0 "\\n" "\n" "\\t" "\t"
+  set-variable #g2 &rep &rep &ind &spr ".org.%s-delimit" #l0 "\\n" "\n" "\\t" "\t"
 !emacro
 
 osd .osd.org-aimp  0  "batcHDs" 9 3 62 26 -1 -1 640 .scheme.osd-title "Import Address Database"
@@ -288,83 +288,83 @@ osd .osd.org-aimp 640 "BhcfH"  .scheme.osd-ebtt " \HImport  " f org-aimp-import
 osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " \HCancel  "   f void
 
 0 define-macro org-address-import
-    set-variable .org.aimp-header   &reg "/org/set/aimp-header" "1"
-    set-variable .org.aimp-endrec   &reg "/org/set/aimp-endrec" "\\n"
-    set-variable .org.aimp-endfld &reg "/org/set/aimp-endfld" ","
-    set-variable .org.aimp-delimit  &reg "/org/set/aimp-delimit" "\""
-    osd .osd.fobm 55 "BcftHx" .scheme.osd-ebtt " \HOptions  " 1 org-aie-options
-    set-variable .osd-get-file.title "Select Import File"
-    set-variable .osd-get-file.file-type "|CSV file|Text file|All files|"
-    set-variable .osd-get-file.file-mask "|*.csv|*.txt|*|"
-    set-variable .osd-get-file.flags 0
-    set-variable .osd-get-file.ft 1
-    !force osd-get-file
-    set-variable #l0 $status
-    osd .osd.fobm 55  "D"
-    !if &not #l0
-        !return
-    !endif
-    set-variable #l0 .osd-get-file.result
-    set-variable #l7 $buffer-bname
-    org-aie-setdelimit "aimp"
-    !force 0 delete-buffer "*org-import-tmp*"
-    find-buffer "*org-import-tmp*"
-    !force insert-file #l0
-    !if &equ $window-line 1
-        delete-buffer "*org-import-tmp*"
-        find-buffer #l7
-        ml-write "[Failed to load import file]"
-        !abort
-    !endif
-    beginning-of-buffer
-    !force org-imp-first-record
-    !if &or &not $status &not #l9
-        delete-buffer "*org-import-tmp*"
-        find-buffer #l7
-        ml-write "[Failed to import first record]"
-        !abort
-    !endif
-    !if .org.aimp-header
-        forward-char
-    !else
-        beginning-of-buffer
-    !endif
-    set-variable .org.imp-field-nms #l8
-    !if &seq #l8 &reg "/org/set/aimp-names" ""
-        set-variable .org.imp-field-map &reg "/org/set/aimp-map" ""
-        set-variable .org.imp-field-app &reg "/org/set/aimp-append" ""
-        set-variable .org.imp-field-pre &reg "/org/set/aimp-prepend" ""
-    !else
-        set-variable .org.imp-field-map &spr "%n" &add #l9 1 "\b"
-        set-variable .org.imp-field-app &spr "%n" &add #l9 1 "\b"
-        set-variable .org.imp-field-pre &spr "%n" &add #l9 1 "\b"
-    !endif
-    ; create the setup dialog
-    -1 osd .osd.org-aimpc
-    osd .osd.org-aimpc 0 "sS" .scheme.osd-child 54 20 -1 -1
-    set-variable #l0 0
-    !while &les &inc #l0 1 #l9
-        #l0 org-aimp-crt-field
-    !done
-    ; create the fields menu
-    osd .osd.org-m 0 "b"
-    set-variable #l0 0
-    !while &not &seq &set #l1 &lget .org.addr-lbl &inc #l0 1 ""
-        osd .osd.org-m #l0 "" #l1 #l0 org-aimp-set-field
-    !done
-    osd .osd.org-m #l0 "" "<None>" -1 org-aimp-set-field
-    1 org-aimp-select-field
-    !force !force .osd.org-aimp osd
+  set-variable .org.aimp-header   &reg "/org/set/aimp-header" "1"
+  set-variable .org.aimp-endrec   &reg "/org/set/aimp-endrec" "\\n"
+  set-variable .org.aimp-endfld &reg "/org/set/aimp-endfld" ","
+  set-variable .org.aimp-delimit  &reg "/org/set/aimp-delimit" "\""
+  osd .osd.fobm 55 "BcftHx" .scheme.osd-ebtt " \HOptions  " 1 org-aie-options
+  set-variable .osd-get-file.title "Select Import File"
+  set-variable .osd-get-file.file-type "|CSV file|Text file|All files|"
+  set-variable .osd-get-file.file-mask "|*.csv|*.txt|*|"
+  set-variable .osd-get-file.flags 0
+  set-variable .osd-get-file.ft 1
+  !force osd-get-file
+  set-variable #l0 $status
+  osd .osd.fobm 55  "D"
+  !if &not #l0
+    !return
+  !endif
+  set-variable #l0 .osd-get-file.result
+  set-variable #l7 $buffer-bname
+  org-aie-setdelimit "aimp"
+  !force 0 delete-buffer "*org-import-tmp*"
+  find-buffer "*org-import-tmp*"
+  !force insert-file #l0
+  !if &equ $window-line 1
     delete-buffer "*org-import-tmp*"
     find-buffer #l7
+    ml-write "[Failed to load import file]"
+    !abort
+  !endif
+  beginning-of-buffer
+  !force org-imp-first-record
+  !if &or &not $status &not #l9
+    delete-buffer "*org-import-tmp*"
+    find-buffer #l7
+    ml-write "[Failed to import first record]"
+    !abort
+  !endif
+  !if .org.aimp-header
+    forward-char
+  !else
+    beginning-of-buffer
+  !endif
+  set-variable .org.imp-field-nms #l8
+  !if &seq #l8 &reg "/org/set/aimp-names" ""
+    set-variable .org.imp-field-map &reg "/org/set/aimp-map" ""
+    set-variable .org.imp-field-app &reg "/org/set/aimp-append" ""
+    set-variable .org.imp-field-pre &reg "/org/set/aimp-prepend" ""
+  !else
+    set-variable .org.imp-field-map &spr "%n" &add #l9 1 "\b"
+    set-variable .org.imp-field-app &spr "%n" &add #l9 1 "\b"
+    set-variable .org.imp-field-pre &spr "%n" &add #l9 1 "\b"
+  !endif
+  ; create the setup dialog
+  -1 osd .osd.org-aimpc
+  osd .osd.org-aimpc 0 "sS" .scheme.osd-child 54 20 -1 -1
+  set-variable #l0 0
+  !while &les &inc #l0 1 #l9
+    #l0 org-aimp-crt-field
+  !done
+  ; create the fields menu
+  osd .osd.org-m 0 "b"
+  set-variable #l0 0
+  !while &not &seq &set #l1 &lget .org.addr-lbl &inc #l0 1 ""
+    osd .osd.org-m #l0 "" #l1 #l0 org-aimp-set-field
+  !done
+  osd .osd.org-m #l0 "" "<None>" -1 org-aimp-set-field
+  1 org-aimp-select-field
+  !force !force .osd.org-aimp osd
+  delete-buffer "*org-import-tmp*"
+  find-buffer #l7
 !emacro
 
 0 define-macro org-aexp-options-set
-    !if &les @# 0
-        set-variable .org.aexp-select &bxor .org.aexp-select 1
-    !elif &not .org.aexp-select
-        !abort
-    !endif
+  !if &les @# 0
+    set-variable .org.aexp-select &bxor .org.aexp-select 1
+  !elif &not .org.aexp-select
+    !abort
+  !endif
 !emacro
 
 ;ADR;Post Office Address;Extended Address;Street;Locality;Region;Postal Code;Country
@@ -401,57 +401,140 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " \HCancel  "   f void
 !emacro
 
 0 define-macro org-address-export
-    set-variable .org.aexp-header  &reg "/org/set/aexp-header" "1"
-    set-variable .org.aexp-endrec  &reg "/org/set/aexp-endrec" "\\n"
-    set-variable .org.aexp-endfld  &reg "/org/set/aexp-endfld" ","
-    set-variable .org.aexp-delimit &reg "/org/set/aexp-delimit" "\""
-    set-variable .org.aexp-addrfld &reg "/org/set/aexp-addrfld" "1"
-    set-variable .org.aexp-select  0
-    osd .osd.fobm 55 "BcftHx" .scheme.osd-ebtt " \HOptions  " 2 org-aie-options
-    osd .osd.fobm 110 ""
-    osd .osd.fobm 120 "Cpxt" "^[ *] \HOnly Selected" 6 org-aexp-options-set
-    set-variable .osd-get-file.title "Select Export File"
-    set-variable .osd-get-file.file-type "|vCard file|CSV file|Text file|All files|"
-    set-variable .osd-get-file.file-mask "|*.vcf|*.csv|*.txt|*|"
-    set-variable .osd-get-file.flags 0
-    set-variable .osd-get-file.ft 1
-    !force osd-get-file
-    set-variable #l0 $status
-    osd .osd.fobm 55  "D"
-    osd .osd.fobm 110 "D"
-    osd .osd.fobm 120 "D"
-    !if &not #l0
-        !return
-    !endif
-    set-variable #l0 .osd-get-file.result
-    ml-write &spr "[Exporting database to \"%s\"]" #l0
-    set-variable #l9 $buffer-bname
-    org-aie-setdelimit "aexp"
-    !force 0 delete-buffer "*org-export-tmp*"
-    find-buffer "*org-export-tmp*"
-    set-variable #l1 .org.addr
-    set-variable #l7 .org.iaddr
-    !if &iseq &rig #l0 -4 ".vcf"
-      set-variable #l2 0
-      set-variable .org.addr "0"
-      set-variable .org.iaddr &cond &gre .org.iaddr -1 0 -1
-      !repeat
-        org-addr-inc-recno
-        !if &not &seq .org.addr "*"
-          !if &and .org.aexp-select &not &seq "*" &reg &spr "/org/addr/%d/slct" .org.addr ""
-          !elif &or &len &set #l3 &reg &spr "/org/addr/%d/sname" .org.addr "" &len &set #l4 &trb &reg &spr "/org/addr/%d/fname" .org.addr ""
+  set-variable .org.aexp-header  &reg "/org/set/aexp-header" "1"
+  set-variable .org.aexp-endrec  &reg "/org/set/aexp-endrec" "\\n"
+  set-variable .org.aexp-endfld  &reg "/org/set/aexp-endfld" ","
+  set-variable .org.aexp-delimit &reg "/org/set/aexp-delimit" "\""
+  set-variable .org.aexp-addrfld &reg "/org/set/aexp-addrfld" "1"
+  set-variable .org.aexp-select  0
+  osd .osd.fobm 55 "BcftHx" .scheme.osd-ebtt " \HOptions  " 2 org-aie-options
+  osd .osd.fobm 110 ""
+  osd .osd.fobm 120 "Cpxt" "^[ *] \HOnly Selected" 6 org-aexp-options-set
+  set-variable .osd-get-file.title "Select Export File"
+  set-variable .osd-get-file.file-type "|vCard file|CSV file|Text file|All files|"
+  set-variable .osd-get-file.file-mask "|*.vcf|*.csv|*.txt|*|"
+  set-variable .osd-get-file.flags 0
+  set-variable .osd-get-file.ft 1
+  !force osd-get-file
+  set-variable #l0 $status
+  osd .osd.fobm 55  "D"
+  osd .osd.fobm 110 "D"
+  osd .osd.fobm 120 "D"
+  !if &not #l0
+    !return
+  !endif
+  set-variable #l0 .osd-get-file.result
+  ml-write &spr "[Exporting database to \"%s\"]" #l0
+  set-variable #l9 $buffer-bname
+  org-aie-setdelimit "aexp"
+  !force 0 delete-buffer "*org-export-tmp*"
+  find-buffer "*org-export-tmp*"
+  set-variable #l1 .org.addr
+  set-variable #l7 .org.iaddr
+  !if &iseq &rig #l0 -4 ".vcf"
+    set-variable #l2 0
+    set-variable .org.addr "0"
+    set-variable .org.iaddr &cond &gre .org.iaddr -1 0 -1
+    !repeat
+      org-addr-inc-recno
+      !if &not &seq .org.addr "*"
+        !if &and .org.aexp-select &not &seq "*" &reg &spr "/org/addr/%d/slct" .org.addr ""
+        !elif &or &len &set #l3 &reg &spr "/org/addr/%d/sname" .org.addr "" &len &set #l4 &trb &reg &spr "/org/addr/%d/fname" .org.addr ""
+          set-variable #l2 &add #l2 1
+          0 insert-field-vcf "BEGIN" "VCARD"
+          0 insert-field-vcf "VERSION" "2.1"
+          !if &set #l6 &sin " " #l4
+            set-variable #l6 &spr "%s\x01%s\x01%s\x01\x01" #l3 &lef #l4 &sub #l6 1 &rig #l4 #l6
+          !else
+            set-variable #l6 &spr "%s\x01%s\x01\x01\x01" #l3 #l4
+          !endif
+          0 insert-field-vcf "N" #l6
+          set-variable #l5 &trb &spr "%s %s" #l4 #l3
+          !if &not &band .org.aflag 0x100
+          !elif &xse &reg &spr "/org/addr/%d/dob" .org.addr "" "\\(\\d\\d?\\)\\([-/]\\)\\(\\d\\d?\\)\\(\\2\\(\\d\\d\\(\\d\\d\\)?\\)\\)?"
+            set-variable #l6 &con &seq @s5 "" &lef $time 4 @s5
+            !if &equ &len #l6 2
+              set-variable #l6 &con &gre #l6 &mid $time 2 2 &add 1900 #l6 &add 2000 #l6
+            !endif
+            set-variable #l6 &spr "%s-%02d-%02d" #l6 @s3 @s1
+            0 insert-field-vcf "BDAY" #l6
+          !endif
+          insert-field-vcf "TEL;HOME" "home/tel"
+          insert-field-vcf "TEL;CELL" "home/mob"
+          insert-field-vcf "TEL;FAX" "home/fax"
+          insert-field-vcf "EMAIL;HOME" "home/email"
+          insert-field-vcf "URL:" "home/www"
+          3 insert-field-vcf "ADR;HOME" "home/addr" 6 "\n"
+          insert-field-vcf "ORG" "work/comp"
+          insert-field-vcf "TEL;WORK" "work/tel"
+          insert-field-vcf "TEL;CELL" "work/mob"
+          insert-field-vcf "TEL;FAX" "work/fax"
+          insert-field-vcf "EMAIL;WORK" "work/email"
+          insert-field-vcf "URL" "work/www"
+          3 insert-field-vcf "ADR;WORK" "work/addr" 6 "\n"
+          set-variable .nn &reg &spr "/org/addr/%d/notes" .org.addr ""
+          !if &band .org.aflag 0x100
+            !if .org.android
+              !if &or &len &set #l4 &reg &spr "/org/addr/%d/c1name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c1dob" .org.addr ""
+                0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s%s;3;;;;;;;;;;;;;" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6
+              !endif
+              !if &or &len &set #l4 &reg &spr "/org/addr/%d/c2name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c2dob" .org.addr ""
+                0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s%s;3;;;;;;;;;;;;;" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6
+              !endif
+              !if &or &len &set #l4 &reg &spr "/org/addr/%d/c3name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c3dob" .org.addr ""
+                0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s%s;3;;;;;;;;;;;;;" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6
+              !endif
+              !if &xse &reg &spr "/org/addr/%d/dom" .org.addr "" "\\(\\d\\d?\\)\\([-/]\\)\\(\\d\\d?\\)\\(\\2\\(\\d\\d\\(\\d\\d\\)?\\)\\)?"
+                set-variable #l6 &con &seq @s5 "" &lef $time 4 @s5
+                !if &equ &len #l6 2
+                  set-variable #l6 &con &gre #l6 &mid $time 2 2 &add 1900 #l6 &add 2000 #l6
+                !endif
+                set-variable #l6 &spr "%s-%02d-%02d" #l6 @s3 @s1
+                0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/contact_event;%s;1;;;;;;;;;;;;;" #l6
+              !endif
+            !else
+              !if &or &len &set #l4 &reg &spr "/org/addr/%d/c3name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c3dob" .org.addr ""
+                set-variable .nn &spr "Child 3: %s%s\n%s" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6 .nn
+              !endif
+              !if &or &len &set #l4 &reg &spr "/org/addr/%d/c2name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c2dob" .org.addr ""
+                set-variable .nn &spr "Child 2: %s%s\n%s" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6 .nn
+              !endif
+              !if &or &len &set #l4 &reg &spr "/org/addr/%d/c1name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c1dob" .org.addr ""
+                set-variable .nn &spr "Child 1: %s%s\n%s" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6 .nn
+              !endif
+              !if &len &set #l4 &reg &spr "/org/addr/%d/dom" .org.addr ""
+                set-variable .nn &spr "Date-of-marriage: %s\n%s" #l4 .nn
+              !endif
+            !endif
+          !endif
+          !if &len &set #l4 &reg &spr "/org/addr/%d/pfname" .org.addr ""
+            !if &len &set #l6 &reg &spr "/org/addr/%d/psname" .org.addr ""
+              set-variable #l3 #l6
+            !endif
+            !if .org.android
+              0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s %s;10;;;;;;;;;;;;;" #l4 #l3
+              set-variable #l6 .nn
+            !else
+              set-variable #l6 &spr "Partner of: %s %s\n%s" #l4 #l3 .nn
+            !endif
+          !else
+            set-variable #l6 .nn
+          !endif
+          0 insert-field-vcf "NOTE" &trb #l6
+          0 insert-field-vcf "END" "VCARD"
+          !if &not &band .org.aflag 0x100
+          !elif &not &len #l4
+          !elif &or &or &len &reg &spr "/org/addr/%d/pmob" .org.addr "" &len &reg &spr "/org/addr/%d/pemail" .org.addr "" &len &reg &spr "/org/addr/%d/pdob" .org.addr ""
             set-variable #l2 &add #l2 1
             0 insert-field-vcf "BEGIN" "VCARD"
             0 insert-field-vcf "VERSION" "2.1"
             !if &set #l6 &sin " " #l4
-              set-variable #l6 &spr "%s\x01%s\x01%s\x01\x01" #l3 &lef #l4 &sub #l6 1 &rig #l4 #l6
+              set-variable #l6 &spr "%s\x01%s\x01%s\x01\x01" #l3 &lef #l4 #l6 &rig #l4 &add #l6 1
             !else
               set-variable #l6 &spr "%s\x01%s\x01\x01\x01" #l3 #l4
             !endif
             0 insert-field-vcf "N" #l6
-            set-variable #l5 &trb &spr "%s %s" #l4 #l3
-            !if &not &band .org.aflag 0x100
-            !elif &xse &reg &spr "/org/addr/%d/dob" .org.addr "" "\\(\\d\\d?\\)\\([-/]\\)\\(\\d\\d?\\)\\(\\2\\(\\d\\d\\(\\d\\d\\)?\\)\\)?"
+            !if &xse &reg &spr "/org/addr/%d/pdob" .org.addr "" "\(\d\d?\)\([-/]\)\(\d\d?\)\(\2\(\d\d\(\d\d\)?\)\)?"
               set-variable #l6 &con &seq @s5 "" &lef $time 4 @s5
               !if &equ &len #l6 2
                 set-variable #l6 &con &gre #l6 &mid $time 2 2 &add 1900 #l6 &add 2000 #l6
@@ -460,184 +543,101 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " \HCancel  "   f void
               0 insert-field-vcf "BDAY" #l6
             !endif
             insert-field-vcf "TEL;HOME" "home/tel"
-            insert-field-vcf "TEL;CELL" "home/mob"
-            insert-field-vcf "TEL;FAX" "home/fax"
-            insert-field-vcf "EMAIL;HOME" "home/email"
-            insert-field-vcf "URL:" "home/www"
+            insert-field-vcf "TEL;CELL" "pmob"
+            insert-field-vcf "EMAIL;HOME" "pemail"
+            insert-field-vcf "URL" "home/www"
             3 insert-field-vcf "ADR;HOME" "home/addr" 6 "\n"
-            insert-field-vcf "ORG" "work/comp"
-            insert-field-vcf "TEL;WORK" "work/tel"
-            insert-field-vcf "TEL;CELL" "work/mob"
-            insert-field-vcf "TEL;FAX" "work/fax"
-            insert-field-vcf "EMAIL;WORK" "work/email"
-            insert-field-vcf "URL" "work/www"
-            3 insert-field-vcf "ADR;WORK" "work/addr" 6 "\n"
-            set-variable .nn &reg &spr "/org/addr/%d/notes" .org.addr ""
-            !if &band .org.aflag 0x100
-              !if .org.android
-                !if &or &len &set #l4 &reg &spr "/org/addr/%d/c1name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c1dob" .org.addr ""
-                  0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s%s;3;;;;;;;;;;;;;" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6
-                !endif
-                !if &or &len &set #l4 &reg &spr "/org/addr/%d/c2name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c2dob" .org.addr ""
-                  0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s%s;3;;;;;;;;;;;;;" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6
-                !endif
-                !if &or &len &set #l4 &reg &spr "/org/addr/%d/c3name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c3dob" .org.addr ""
-                  0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s%s;3;;;;;;;;;;;;;" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6
-                !endif
-                !if &xse &reg &spr "/org/addr/%d/dom" .org.addr "" "\\(\\d\\d?\\)\\([-/]\\)\\(\\d\\d?\\)\\(\\2\\(\\d\\d\\(\\d\\d\\)?\\)\\)?"
-                  set-variable #l6 &con &seq @s5 "" &lef $time 4 @s5
-                  !if &equ &len #l6 2
-                    set-variable #l6 &con &gre #l6 &mid $time 2 2 &add 1900 #l6 &add 2000 #l6
-                  !endif
-                  set-variable #l6 &spr "%s-%02d-%02d" #l6 @s3 @s1
-                  0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/contact_event;%s;1;;;;;;;;;;;;;" #l6
-                !endif
-              !else
-                !if &or &len &set #l4 &reg &spr "/org/addr/%d/c3name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c3dob" .org.addr ""
-                  set-variable .nn &spr "Child 3: %s%s\n%s" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6 .nn
-                !endif
-                !if &or &len &set #l4 &reg &spr "/org/addr/%d/c2name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c2dob" .org.addr ""
-                  set-variable .nn &spr "Child 2: %s%s\n%s" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6 .nn
-                !endif
-                !if &or &len &set #l4 &reg &spr "/org/addr/%d/c1name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c1dob" .org.addr ""
-                  set-variable .nn &spr "Child 1: %s%s\n%s" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6 .nn
-                !endif
-                !if &len &set #l4 &reg &spr "/org/addr/%d/dom" .org.addr ""
-                  set-variable .nn &spr "Date-of-marriage: %s\n%s" #l4 .nn
-                !endif
+            !if .org.android
+              !if &or &len &set #l4 &reg &spr "/org/addr/%d/c1name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c1dob" .org.addr ""
+                0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s%s;3;;;;;;;;;;;;;" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6
               !endif
-            !endif
-            !if &len &set #l4 &reg &spr "/org/addr/%d/pfname" .org.addr ""
-              !if &len &set #l6 &reg &spr "/org/addr/%d/psname" .org.addr ""
-                set-variable #l3 #l6
+              !if &or &len &set #l4 &reg &spr "/org/addr/%d/c2name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c2dob" .org.addr ""
+                0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s%s;3;;;;;;;;;;;;;" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6
               !endif
-              !if .org.android
-                0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s %s;10;;;;;;;;;;;;;" #l4 #l3
-                set-variable #l6 .nn
-              !else
-                set-variable #l6 &spr "Partner of: %s %s\n%s" #l4 #l3 .nn
+              !if &or &len &set #l4 &reg &spr "/org/addr/%d/c3name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c3dob" .org.addr ""
+                0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s%s;3;;;;;;;;;;;;;" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6
               !endif
-            !else
-              set-variable #l6 .nn
-            !endif
-            0 insert-field-vcf "NOTE" &trb #l6
-            0 insert-field-vcf "END" "VCARD"
-            !if &not &band .org.aflag 0x100
-            !elif &not &len #l4
-            !elif &or &or &len &reg &spr "/org/addr/%d/pmob" .org.addr "" &len &reg &spr "/org/addr/%d/pemail" .org.addr "" &len &reg &spr "/org/addr/%d/pdob" .org.addr ""
-              set-variable #l2 &add #l2 1
-              0 insert-field-vcf "BEGIN" "VCARD"
-              0 insert-field-vcf "VERSION" "2.1"
-              !if &set #l6 &sin " " #l4
-                set-variable #l6 &spr "%s\x01%s\x01%s\x01\x01" #l3 &lef #l4 #l6 &rig #l4 &add #l6 1
-              !else
-                set-variable #l6 &spr "%s\x01%s\x01\x01\x01" #l3 #l4
-              !endif
-              0 insert-field-vcf "N" #l6
-              !if &xse &reg &spr "/org/addr/%d/pdob" .org.addr "" "\(\d\d?\)\([-/]\)\(\d\d?\)\(\2\(\d\d\(\d\d\)?\)\)?"
+              !if &xse &reg &spr "/org/addr/%d/dom" .org.addr "" "\\(\\d\\d?\\)\\([-/]\\)\\(\\d\\d?\\)\\(\\2\\(\\d\\d\\(\\d\\d\\)?\\)\\)?"
                 set-variable #l6 &con &seq @s5 "" &lef $time 4 @s5
                 !if &equ &len #l6 2
                   set-variable #l6 &con &gre #l6 &mid $time 2 2 &add 1900 #l6 &add 2000 #l6
                 !endif
                 set-variable #l6 &spr "%s-%02d-%02d" #l6 @s3 @s1
-                0 insert-field-vcf "BDAY" #l6
+                0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/contact_event;%s;1;;;;;;;;;;;;;" #l6
               !endif
-              insert-field-vcf "TEL;HOME" "home/tel"
-              insert-field-vcf "TEL;CELL" "pmob"
-              insert-field-vcf "EMAIL;HOME" "pemail"
-              insert-field-vcf "URL" "home/www"
-              3 insert-field-vcf "ADR;HOME" "home/addr" 6 "\n"
-              !if .org.android
-                !if &or &len &set #l4 &reg &spr "/org/addr/%d/c1name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c1dob" .org.addr ""
-                  0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s%s;3;;;;;;;;;;;;;" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6
-                !endif
-                !if &or &len &set #l4 &reg &spr "/org/addr/%d/c2name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c2dob" .org.addr ""
-                  0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s%s;3;;;;;;;;;;;;;" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6
-                !endif
-                !if &or &len &set #l4 &reg &spr "/org/addr/%d/c3name" .org.addr "" &len &set #l6 &reg &spr "/org/addr/%d/c3dob" .org.addr ""
-                  0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s%s;3;;;;;;;;;;;;;" #l4 &con &seq #l6 "" "" &cat " DOB: " #l6
-                !endif
-                !if &xse &reg &spr "/org/addr/%d/dom" .org.addr "" "\\(\\d\\d?\\)\\([-/]\\)\\(\\d\\d?\\)\\(\\2\\(\\d\\d\\(\\d\\d\\)?\\)\\)?"
-                  set-variable #l6 &con &seq @s5 "" &lef $time 4 @s5
-                  !if &equ &len #l6 2
-                    set-variable #l6 &con &gre #l6 &mid $time 2 2 &add 1900 #l6 &add 2000 #l6
-                  !endif
-                  set-variable #l6 &spr "%s-%02d-%02d" #l6 @s3 @s1
-                  0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/contact_event;%s;1;;;;;;;;;;;;;" #l6
-                !endif
-                0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s;10;;;;;;;;;;;;;" #l5
-                set-variable #l6 .nn
-              !else
-                set-variable #l6 &trb &spr "Partner of: %s\n%s" #l5 .nn
-              !endif
-              0 insert-field-vcf "NOTE" #l6
-              0 insert-field-vcf "END" "VCARD"
+              0 insert-field-vcf "X-ANDROID-CUSTOM" &spr "vnd.android.cursor.item/relation;%s;10;;;;;;;;;;;;;" #l5
+              set-variable #l6 .nn
+            !else
+              set-variable #l6 &trb &spr "Partner of: %s\n%s" #l5 .nn
             !endif
+            0 insert-field-vcf "NOTE" #l6
+            0 insert-field-vcf "END" "VCARD"
           !endif
         !endif
-      !until &seq .org.addr "*"
-    !else
-      !if .org.aexp-header
-        set-variable #l3 0
-        !while &not &seq &set #l4 &lget .org.addr-lbl &inc #l3 1 ""
-          !if &and &gre .org.aexp-addrfld 1 &seq &rig #l4 5 "Address"
-            set-variable #l5 1
-            !repeat
-              insert-string &spr "%s%s%s%d%s" #g1 #g2 #l4 #l5 #g2
-            !until &equ &pinc #l5 1 .org.aexp-addrfld
-          !else
-            !if &gre #l3 1
-              insert-string #g1
-            !endif
-            insert-string &spr "%s%s%s" #g2 #l4 #g2
-          !endif
-        !done
-        insert-string #g0
       !endif
-      set-variable #l2 0
-      set-variable .org.addr "0"
-      set-variable .org.iaddr &cond &gre .org.iaddr -1 0 -1
-      !repeat
-        org-addr-inc-recno
-        !if &not &seq .org.addr "*"
-          !if &or &not .org.aexp-select &seq "*" &reg &spr "/org/addr/%d/slct" .org.addr "" 
-            set-variable #l2 &add #l2 1
-            set-variable #l3 0
-            !while &not &seq &set #l4 &lget .org.addr-reg &inc #l3 1 ""
-              !if &equ #l3 1
-                insert-string &spr "%s%d%s" #g2 .org.addr #g2
-              !else
-                set-variable #l5 &reg &spr "/org/addr/%d/%s" .org.addr #l4 ""
-                !if &seq #g2 ""
-                  set-variable #l5 &rep #l5 #g1 .org.aexp-seperator
-                !else
-                  set-variable #l5 &rep #l5 #g2 &cat #g2 #g2
-                !endif
-                !if &and &gre .org.aexp-addrfld 1 &seq &rig #l4 5 "addr"
-                  ; Given the user has asked for the addr to be split into 'n' fields,
-                  ; replace the first 'n-1' \n's with field separators
-                  set-variable #l6 &spr "%s%s%s" #g2 #g1 #g2
-                  &sub .org.aexp-addrfld 1 var-str-sub #l5 "\n" #l6
-                  set-variable #l5 &spr "%s%n" #l5 &sub .org.aexp-addrfld &add .var-str-sub.count 1 #l6
-                !endif
-                set-variable #l5 &rep #l5 #g0 .org.aexp-endrec
-                insert-string &spr "%s%s%s%s" #g1 #g2 #l5 #g2
-              !endif
-            !done
-            insert-string #g0
+    !until &seq .org.addr "*"
+  !else
+    !if .org.aexp-header
+      set-variable #l3 0
+      !while &not &seq &set #l4 &lget .org.addr-lbl &inc #l3 1 ""
+        !if &and &gre .org.aexp-addrfld 1 &seq &rig #l4 5 "Address"
+          set-variable #l5 1
+          !repeat
+            insert-string &spr "%s%s%s%d%s" #g1 #g2 #l4 #l5 #g2
+          !until &equ &pinc #l5 1 .org.aexp-addrfld
+        !else
+          !if &gre #l3 1
+            insert-string #g1
           !endif
+          insert-string &spr "%s%s%s" #g2 #l4 #g2
         !endif
-      !until &seq .org.addr "*"
+      !done
+      insert-string #g0
     !endif
-    set-variable .org.addr #l1
-    set-variable .org.iaddr #l7
-    !force write-buffer #l0 @mna
-    !if &not $status
-        delete-buffer $buffer-bname
-        find-buffer #l9
-        !abort
-    !endif
+    set-variable #l2 0
+    set-variable .org.addr "0"
+    set-variable .org.iaddr &cond &gre .org.iaddr -1 0 -1
+    !repeat
+      org-addr-inc-recno
+      !if &not &seq .org.addr "*"
+        !if &or &not .org.aexp-select &seq "*" &reg &spr "/org/addr/%d/slct" .org.addr "" 
+          set-variable #l2 &add #l2 1
+          set-variable #l3 0
+          !while &not &seq &set #l4 &lget .org.addr-reg &inc #l3 1 ""
+            !if &equ #l3 1
+              insert-string &spr "%s%d%s" #g2 .org.addr #g2
+            !else
+              set-variable #l5 &reg &spr "/org/addr/%d/%s" .org.addr #l4 ""
+              !if &seq #g2 ""
+                set-variable #l5 &rep #l5 #g1 .org.aexp-seperator
+              !else
+                set-variable #l5 &rep #l5 #g2 &cat #g2 #g2
+              !endif
+              !if &and &gre .org.aexp-addrfld 1 &seq &rig #l4 5 "addr"
+                ; Given the user has asked for the addr to be split into 'n' fields,
+                ; replace the first 'n-1' \n's with field separators
+                set-variable #l6 &spr "%s%s%s" #g2 #g1 #g2
+                &sub .org.aexp-addrfld 1 var-str-sub #l5 "\n" #l6
+                set-variable #l5 &spr "%s%n" #l5 &sub .org.aexp-addrfld &add .var-str-sub.count 1 #l6
+              !endif
+              set-variable #l5 &rep #l5 #g0 .org.aexp-endrec
+              insert-string &spr "%s%s%s%s" #g1 #g2 #l5 #g2
+            !endif
+          !done
+          insert-string #g0
+        !endif
+      !endif
+    !until &seq .org.addr "*"
+  !endif
+  set-variable .org.addr #l1
+  set-variable .org.iaddr #l7
+  !force write-buffer #l0 @mna
+  !if &not $status
     delete-buffer $buffer-bname
     find-buffer #l9
-    ml-write &spr "[Exported %d records to \"%s\"]" #l2 #l0
+    !abort
+  !endif
+  delete-buffer $buffer-bname
+  find-buffer #l9
+  ml-write &spr "[Exported %d records to \"%s\"]" #l2 #l0
 !emacro

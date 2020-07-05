@@ -8,9 +8,9 @@
 ; Authors:     Jon Green
 ;
 define-macro fhook-m4
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "m4"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "m4"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -19,67 +19,67 @@ set-variable .fhook-m4.setup-mask "aeghikmnotux"
 set-variable .fhook-m4.comment "|#||#|# | #|r|"
 
 !if &and &sin "h" .fhook-m4.setup &band .hilight.flags 0x02 
-    !if &not &exist .hilight.m4
-        set-variable .hilight.m4 &pinc .hilight.next 1
-    !endif
-    ;
-    ; Hi-light m4 Mode
-    0 hilight .hilight.m4  0                      $global-scheme
-    ; Variables
-    hilight .hilight.m4    0 "\\$[0-9\\*#@]"      .scheme.variable
-    ; comments, strings and quotes
-    ;hilight .hilight.m4    4  "``" "''" "\\"     .scheme.string ; This is not good
-    ;hilight .hilight.m4    4  "`" "'" "\\"       .scheme.string ; This is not good
-    hilight .hilight.m4    2 "^\\s*#"             .scheme.comment
-    hilight .hilight.m4    2 "[^$']*#"            .scheme.comment
-    ; keywords
-    hilight .hilight.m4    1 "builtin"            .scheme.keyword
-    hilight .hilight.m4    1 "changecom"          .scheme.keyword
-    hilight .hilight.m4    1 "changequote"        .scheme.keyword
-    hilight .hilight.m4    1 "changeword"         .scheme.keyword
-    hilight .hilight.m4    1 "debugfile"          .scheme.keyword
-    hilight .hilight.m4    1 "define"             .scheme.keyword
-    hilight .hilight.m4    1 "defn"               .scheme.keyword
-    hilight .hilight.m4    1 "divert"             .scheme.keyword
-    hilight .hilight.m4    1 "dnl"                .scheme.keyword
-    hilight .hilight.m4    1 "dumpdef"            .scheme.keyword
-    hilight .hilight.m4    1 "esyscmd"            .scheme.keyword
-    hilight .hilight.m4    1 "ifdef"              .scheme.keyword
-    hilight .hilight.m4    1 "ifelse"             .scheme.keyword
-    hilight .hilight.m4    1 "include"            .scheme.keyword
-    hilight .hilight.m4    1 "indir"              .scheme.keyword
-    hilight .hilight.m4    1 "m4wrap"             .scheme.keyword
-    hilight .hilight.m4    1 "popdef"             .scheme.keyword
-    hilight .hilight.m4    1 "pushdef"            .scheme.keyword
-    hilight .hilight.m4    1 "shift"              .scheme.keyword
-    hilight .hilight.m4    1 "sinclude"           .scheme.keyword
-    hilight .hilight.m4    1 "syscmd"             .scheme.keyword
-    hilight .hilight.m4    1 "undefine"           .scheme.keyword
-    hilight .hilight.m4    1 "undefine"           .scheme.keyword
-    hilight .hilight.m4    1 "undivert"           .scheme.keyword
-    ;
-    hilight .hilight.m4    1 "format"             .scheme.keyword
-    hilight .hilight.m4    1 "index"              .scheme.keyword
-    hilight .hilight.m4    1 "len"                .scheme.keyword
-    hilight .hilight.m4    1 "maketemp"           .scheme.keyword
-    hilight .hilight.m4    1 "patsubst"           .scheme.keyword
-    hilight .hilight.m4    1 "regexp"             .scheme.keyword
-    hilight .hilight.m4    1 "substr"             .scheme.keyword
-    hilight .hilight.m4    1 "translit"           .scheme.keyword
-    ; Trace - make them stand out.
-    hilight .hilight.m4    1 "traceoff"           .scheme.error
-    hilight .hilight.m4    1 "traceon"            .scheme.error
-    ; Operators
-    hilight .hilight.m4    1 "EQUAL"              .scheme.operator
-    hilight .hilight.m4    1 "NOT-EQUAL"          .scheme.operator
-    hilight .hilight.m4    1 "decr"               .scheme.operator
-    hilight .hilight.m4    1 "divnum"             .scheme.operator
-    hilight .hilight.m4    1 "incr"               .scheme.operator
-    hilight .hilight.m4    1 "sysval"             .scheme.operator
-    ; Preprocessor
-    hilight .hilight.m4    1 "__file__"           .scheme.prepro
-    hilight .hilight.m4    1 "__line__"           .scheme.prepro
-    hilight .hilight.m4    1 "__unix__"           .scheme.prepro
+  !if &not &exist .hilight.m4
+    set-variable .hilight.m4 &pinc .hilight.next 1
+  !endif
+  ;
+  ; Hi-light m4 Mode
+  0 hilight .hilight.m4  0                      $global-scheme
+  ; Variables
+  hilight .hilight.m4    0 "\\$[0-9\\*#@]"      .scheme.variable
+  ; comments, strings and quotes
+  ;hilight .hilight.m4    4  "``" "''" "\\"     .scheme.string ; This is not good
+  ;hilight .hilight.m4    4  "`" "'" "\\"       .scheme.string ; This is not good
+  hilight .hilight.m4    2 "^\\s*#"             .scheme.comment
+  hilight .hilight.m4    2 "[^$']*#"            .scheme.comment
+  ; keywords
+  hilight .hilight.m4    1 "builtin"            .scheme.keyword
+  hilight .hilight.m4    1 "changecom"          .scheme.keyword
+  hilight .hilight.m4    1 "changequote"        .scheme.keyword
+  hilight .hilight.m4    1 "changeword"         .scheme.keyword
+  hilight .hilight.m4    1 "debugfile"          .scheme.keyword
+  hilight .hilight.m4    1 "define"             .scheme.keyword
+  hilight .hilight.m4    1 "defn"               .scheme.keyword
+  hilight .hilight.m4    1 "divert"             .scheme.keyword
+  hilight .hilight.m4    1 "dnl"                .scheme.keyword
+  hilight .hilight.m4    1 "dumpdef"            .scheme.keyword
+  hilight .hilight.m4    1 "esyscmd"            .scheme.keyword
+  hilight .hilight.m4    1 "ifdef"              .scheme.keyword
+  hilight .hilight.m4    1 "ifelse"             .scheme.keyword
+  hilight .hilight.m4    1 "include"            .scheme.keyword
+  hilight .hilight.m4    1 "indir"              .scheme.keyword
+  hilight .hilight.m4    1 "m4wrap"             .scheme.keyword
+  hilight .hilight.m4    1 "popdef"             .scheme.keyword
+  hilight .hilight.m4    1 "pushdef"            .scheme.keyword
+  hilight .hilight.m4    1 "shift"              .scheme.keyword
+  hilight .hilight.m4    1 "sinclude"           .scheme.keyword
+  hilight .hilight.m4    1 "syscmd"             .scheme.keyword
+  hilight .hilight.m4    1 "undefine"           .scheme.keyword
+  hilight .hilight.m4    1 "undefine"           .scheme.keyword
+  hilight .hilight.m4    1 "undivert"           .scheme.keyword
+  ;
+  hilight .hilight.m4    1 "format"             .scheme.keyword
+  hilight .hilight.m4    1 "index"              .scheme.keyword
+  hilight .hilight.m4    1 "len"                .scheme.keyword
+  hilight .hilight.m4    1 "maketemp"           .scheme.keyword
+  hilight .hilight.m4    1 "patsubst"           .scheme.keyword
+  hilight .hilight.m4    1 "regexp"             .scheme.keyword
+  hilight .hilight.m4    1 "substr"             .scheme.keyword
+  hilight .hilight.m4    1 "translit"           .scheme.keyword
+  ; Trace - make them stand out.
+  hilight .hilight.m4    1 "traceoff"           .scheme.error
+  hilight .hilight.m4    1 "traceon"            .scheme.error
+  ; Operators
+  hilight .hilight.m4    1 "EQUAL"              .scheme.operator
+  hilight .hilight.m4    1 "NOT-EQUAL"          .scheme.operator
+  hilight .hilight.m4    1 "decr"               .scheme.operator
+  hilight .hilight.m4    1 "divnum"             .scheme.operator
+  hilight .hilight.m4    1 "incr"               .scheme.operator
+  hilight .hilight.m4    1 "sysval"             .scheme.operator
+  ; Preprocessor
+  hilight .hilight.m4    1 "__file__"           .scheme.prepro
+  hilight .hilight.m4    1 "__line__"           .scheme.prepro
+  hilight .hilight.m4    1 "__unix__"           .scheme.prepro
 !endif
 
 buffer-init-fhook "m4"

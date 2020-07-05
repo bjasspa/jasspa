@@ -10,20 +10,20 @@
 ; frame-handle
 ; gets another key from user to determine the frame command
 0 define-macro frame-handle
-    set-variable #l1 @cck
-    !if @?
-        set-variable #l1 &spr "Arg %d: %s" @# #l1
-    !endif
-    !force set-variable #l0 @mc2 #l1
-    !if &not &set #l1 &lfind .key #l0
-        ml-write "[Frame key not bound]"
-        !bell
-        !abort
-    !endif
-    !if &and &seq &set #l3 &lget .n #l1 "" @?
-        set-variable #l3 @#
-    !endif
-    execute-line &spr "%s %s @mna" #l3 &lget .cmd #l1
+  set-variable #l1 @cck
+  !if @?
+    set-variable #l1 &spr "Arg %d: %s" @# #l1
+  !endif
+  !force set-variable #l0 @mc2 #l1
+  !if &not &set #l1 &lfind .key #l0
+    ml-write "[Frame key not bound]"
+    !bell
+    !abort
+  !endif
+  !if &and &seq &set #l3 &lget .n #l1 "" @?
+    set-variable #l3 @#
+  !endif
+  execute-line &spr "%s %s @mna" #l3 &lget .cmd #l1
 !emacro
 set-variable .frame-handle.key "|0|1|2|o|"
 set-variable .frame-handle.n   "||1|||"
@@ -31,104 +31,104 @@ set-variable .frame-handle.cmd "|delete-frame|create-frame|create-frame|next-fra
 ; ascii-time
 ; Get the time as an ASCII string. Return in #p9,
 0 define-macro ascii-time
-    set-variable #l0 $time
-    ; Get Day of week & month labels.
-    set-variable #l1 &mid "SunMonTueWedThuFriSatSun" &mul &mid #l0 11 1 3 3
-    set-variable #l2 &mid "JanFebMarAprMayJunJulAugSepOctNovDec" &mul &sub &mid #l0 7 2 1 3 3
-    !if &exi .format
-        set-variable #l3 &rep .format "%%" "\b"
-        set-variable #l3 &rep &rep &rep &rep &rep &rep &rep &rep &rep &rep &rep #l3 "%a" #l1 "%b" #l2 "%#d" &trb &mid #l0 9 2 "%#H" &trb &mid #l0 12 2 "%#j" &trb &mid #l0 4 3 "%#m" &trb &mid #l0 7 2 "%#M" &trb &mid #l0 14 2 "%#S" &trb &mid #l0 16 2 "%#w" &mid #l0 11 1 "%#y" &mid #l0 2 2 "%#Y" &lef #l0 4
-        set-variable #l0 &rep #l0 " " "0"
-        set-variable #l3 &rep &rep &rep &rep &rep &rep &rep &rep &rep #l3 "%d" &mid #l0 9 2 "%H" &mid #l0 12 2 "%j" &mid #l0 4 3 "%m" &mid #l0 7 2 "%M" &mid #l0 14 2 "%S" &mid #l0 16 2 "%w" &mid #l0 11 1 "%y" &mid #l0 2 2 "%Y" &lef #l0 4
-        set-variable #p9 &rep #l3 "\b" "%"
-    !else
-        ; Use default format: 'Day' 'Month' 'Day of Month' hh:mm:ss YYYY
-        set-variable #p9 &spr "%s %s %d %02d:%02d:%02d %s" #l1 #l2 &mid #l0 9 2 &mid #l0 12 2 &mid #l0 14 2 &mid #l0 16 2 &lef #l0 4
-    !endif
+  set-variable #l0 $time
+  ; Get Day of week & month labels.
+  set-variable #l1 &mid "SunMonTueWedThuFriSatSun" &mul &mid #l0 11 1 3 3
+  set-variable #l2 &mid "JanFebMarAprMayJunJulAugSepOctNovDec" &mul &sub &mid #l0 7 2 1 3 3
+  !if &exi .format
+    set-variable #l3 &rep .format "%%" "\b"
+    set-variable #l3 &rep &rep &rep &rep &rep &rep &rep &rep &rep &rep &rep #l3 "%a" #l1 "%b" #l2 "%#d" &trb &mid #l0 9 2 "%#H" &trb &mid #l0 12 2 "%#j" &trb &mid #l0 4 3 "%#m" &trb &mid #l0 7 2 "%#M" &trb &mid #l0 14 2 "%#S" &trb &mid #l0 16 2 "%#w" &mid #l0 11 1 "%#y" &mid #l0 2 2 "%#Y" &lef #l0 4
+    set-variable #l0 &rep #l0 " " "0"
+    set-variable #l3 &rep &rep &rep &rep &rep &rep &rep &rep &rep #l3 "%d" &mid #l0 9 2 "%H" &mid #l0 12 2 "%j" &mid #l0 4 3 "%m" &mid #l0 7 2 "%M" &mid #l0 14 2 "%S" &mid #l0 16 2 "%w" &mid #l0 11 1 "%y" &mid #l0 2 2 "%Y" &lef #l0 4
+    set-variable #p9 &rep #l3 "\b" "%"
+  !else
+    ; Use default format: 'Day' 'Month' 'Day of Month' hh:mm:ss YYYY
+    set-variable #p9 &spr "%s %s %d %02d:%02d:%02d %s" #l1 #l2 &mid #l0 9 2 &mid #l0 12 2 &mid #l0 14 2 &mid #l0 16 2 &lef #l0 4
+  !endif
 !emacro
 
 ; sub any occurrence of @2 in @1 to @3
 0 define-macro var-str-sub
-    set-variable #l9 @1
-    set-variable #l0 @2
-    set-variable #l1 @3
-    !if &not @?
-        set-variable @# 0
+  set-variable #l9 @1
+  set-variable #l0 @2
+  set-variable #l1 @3
+  !if &not @?
+    set-variable @# 0
+  !endif
+  set-variable .count 0
+  set-variable #l2 0
+  !while &set #l3 &sin #l0 &rig #l9 #l2
+    set-variable #l3 &add #l2 &sub #l3 1
+    set-variable #l4 &cat &lef #l9 #l3 #l1
+    set-variable #l2 &len #l4
+    set-variable #l9 &cat #l4 &rig #l9 &add #l3 &len #l0
+    !if &equ &inc .count 1 @#
+      set-variable @1 #l9
+      !return
     !endif
-    set-variable .count 0
-    set-variable #l2 0
-    !while &set #l3 &sin #l0 &rig #l9 #l2
-        set-variable #l3 &add #l2 &sub #l3 1
-        set-variable #l4 &cat &lef #l9 #l3 #l1
-        set-variable #l2 &len #l4
-        set-variable #l9 &cat #l4 &rig #l9 &add #l3 &len #l0
-        !if &equ &inc .count 1 @#
-            set-variable @1 #l9
-            !return
-        !endif
-    !done
-    set-variable @1 #l9
+  !done
+  set-variable @1 #l9
 !emacro
 
 ; convert a string to a regex compliant search string
 0 define-macro str-to-regex
-    set-variable @1 &xrep @1 "[\\\\[*+.?^$]" "\\\\\\0"
+  set-variable @1 &xrep @1 "[\\\\[*+.?^$]" "\\\\\\0"
 !emacro
 
 ; convert a string to a regex compliant search string
 0 define-macro filemask-to-regex
-    set-variable #l9 @1
-    set-variable #l2 0
-    !while &not &seq "" &set #l3 &mid #l9 #l2 1
-        !if &seq #l3 "*"
-            set-variable #l9 &spr "%s.%s" &lef #l9 #l2 &rig #l9 #l2
-            set-variable #l2 &add #l2 2
-        !elif &seq #l3 "?"
-            set-variable #l9 &spr "%s.%s" &lef #l9 #l2 &rig #l9 &add #l2 1
-            set-variable #l2 &add #l2 1
-        !elif &seq #l3 "["
-            set-variable #l2 &add #l2 &add 2 &sin "]" &rig #l9 &add #l2 2
-        !elif &sin #l3 "\\+.$^"
-            set-variable #l9 &spr "%s\\%s" &lef #l9 #l2 &rig #l9 #l2
-            set-variable #l2 &add #l2 2
-        !else
-            set-variable #l2 &add #l2 1
-        !endif
-    !done
-    set-variable @1 #l9
+  set-variable #l9 @1
+  set-variable #l2 0
+  !while &not &seq "" &set #l3 &mid #l9 #l2 1
+    !if &seq #l3 "*"
+      set-variable #l9 &spr "%s.%s" &lef #l9 #l2 &rig #l9 #l2
+      set-variable #l2 &add #l2 2
+    !elif &seq #l3 "?"
+      set-variable #l9 &spr "%s.%s" &lef #l9 #l2 &rig #l9 &add #l2 1
+      set-variable #l2 &add #l2 1
+    !elif &seq #l3 "["
+      set-variable #l2 &add #l2 &add 2 &sin "]" &rig #l9 &add #l2 2
+    !elif &sin #l3 "\\+.$^"
+      set-variable #l9 &spr "%s\\%s" &lef #l9 #l2 &rig #l9 #l2
+      set-variable #l2 &add #l2 2
+    !else
+      set-variable #l2 &add #l2 1
+    !endif
+  !done
+  set-variable @1 #l9
 !emacro
 
 ; copy-registry <from> <to>
 ; copy <from> and its children to <to>
 0 define-macro copy-registry
-    set-variable #l0 @1
-    set-variable #l1 @2
-    set-variable #l2 &reg #l0 ""
-    set-registry #l1 #l2
-    mark-registry #l0 "g"
-    mark-registry #l1 $result
-    set-variable #l3 0
-    !while 1
-        !force find-registry #l0 &pinc #l3 1
-        !if &not $status
-            !return
-        !endif
-        set-variable #l2 $result
-        copy-registry &spr "%s/%s" #l0 #l2 &spr "%s/%s" #l1 #l2
-    !done
+  set-variable #l0 @1
+  set-variable #l1 @2
+  set-variable #l2 &reg #l0 ""
+  set-registry #l1 #l2
+  mark-registry #l0 "g"
+  mark-registry #l1 $result
+  set-variable #l3 0
+  !while 1
+    !force find-registry #l0 &pinc #l3 1
+    !if &not $status
+      !return
+    !endif
+    set-variable #l2 $result
+    copy-registry &spr "%s/%s" #l0 #l2 &spr "%s/%s" #l1 #l2
+  !done
 !emacro
 
 ; create-file-path <file>
 ; given a file name <path>/<basename> create the <path>
 0 define-macro create-file-path
-    set-variable #l0 @1
-    set-variable #l1 0
-    !while &set #l2 &sin "/" &rig #l0 #l1
-        set-variable #l1 &add #l1 #l2
-        set-variable #l2 &lef #l0 &sub #l1 1
-        !if &and &band $system 0x100 &les #l1 4 
-        !elif &seq &stat "t" #l2 "X"
-            !force 0x100 file-op &cat "file:" #l2
-        !endif
-    !done
+  set-variable #l0 @1
+  set-variable #l1 0
+  !while &set #l2 &sin "/" &rig #l0 #l1
+    set-variable #l1 &add #l1 #l2
+    set-variable #l2 &lef #l0 &sub #l1 1
+    !if &and &band $system 0x100 &les #l1 4 
+    !elif &seq &stat "t" #l2 "X"
+      !force 0x100 file-op &cat "file:" #l2
+    !endif
+  !done
 !emacro

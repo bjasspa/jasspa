@@ -45,7 +45,7 @@
     set-variable .hilight.svn-con &pinc .hilight.next 1
     set-variable .hilight.svn-status &pinc .hilight.next 1
   !endif
-    set-variable .hilight.svn-blm &pinc .hilight.next 1
+  set-variable .hilight.svn-blm &pinc .hilight.next 1
   0 hilight .hilight.svn-status 2 100      $global-scheme
   hilight .hilight.svn-status 0x102 "[ *]A" .scheme.no2
   hilight .hilight.svn-status 0x102 "[ *]C" .scheme.hlred
@@ -376,20 +376,20 @@ set-variable #l9 .svn.ccount
   !endif
 !emacro
 0 define-macro svn-resolve-a
-    !if &les @# 0
-        set-variable #l0 &abs @#
-        -1 osd #l0
-        osd #l0 0 "bs" 20 0 0 0
-        set-variable #l1 0
-        !while &not &seq "" &set #l2 &lget .svn-resolve.al &inc #l1 1
-            osd #l0 #l1 "" #l2 #l1 svn-resolve-as
-        !done
-    !else
-        set-variable $result &rep &lget .svn-resolve.al &lget .svn-osd.values .svn-osd.o-a "\H" ""
-    !endif
+  !if &les @# 0
+    set-variable #l0 &abs @#
+    -1 osd #l0
+    osd #l0 0 "bs" 20 0 0 0
+    set-variable #l1 0
+    !while &not &seq "" &set #l2 &lget .svn-resolve.al &inc #l1 1
+      osd #l0 #l1 "" #l2 #l1 svn-resolve-as
+    !done
+  !else
+    set-variable $result &rep &lget .svn-resolve.al &lget .svn-osd.values .svn-osd.o-a "\H" ""
+  !endif
 !emacro
 0 define-macro svn-resolve-as
-    set-variable .svn-osd.values &lset .svn-osd.values .svn-osd.o-a @#
+  set-variable .svn-osd.values &lset .svn-osd.values .svn-osd.o-a @#
 !emacro
 0 define-macro svn-osd
   set-position "\x82"
@@ -1564,14 +1564,14 @@ define-macro svn
 ;; SVN directory list/status context menu ;;;;;;;;;;;;;;;;;;
 
 0 define-macro svn-clear-console
-    set-position "\x82"
-    find-buffer "*svn-console*"
-    beginning-of-buffer
-    set-mark
-    end-of-buffer
-    -1 kill-region
-    -1 buffer-mode "edit"
-    goto-position "\x82"
+  set-position "\x82"
+  find-buffer "*svn-console*"
+  beginning-of-buffer
+  set-mark
+  end-of-buffer
+  -1 kill-region
+  -1 buffer-mode "edit"
+  goto-position "\x82"
 !emacro
 
 0 define-macro osd-svn-file-menu

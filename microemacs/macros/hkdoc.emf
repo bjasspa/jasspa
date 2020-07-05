@@ -10,8 +10,8 @@
 ; Notes:       See docmacro.emf for documentation
 ;
 define-macro fhook-doc
-    ; use the document fhook in docmacro
-    @# doc-fhook-body "doc" "document"
+  ; use the document fhook in docmacro
+  @# doc-fhook-body "doc" "document"
 !emacro
 
 ; buffer-init variables

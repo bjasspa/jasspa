@@ -80,6 +80,7 @@ set-variable .fhook-vb.collapse-mnext "-1"
   hilight .hilight.vb 1 "Then"         .scheme.keyword
   hilight .hilight.vb 1 "Case"         .scheme.keyword
   hilight .hilight.vb 1 "Select"       .scheme.keyword
+  hilight .hilight.vb 0 "\\.Select"    $global-scheme
   hilight .hilight.vb 1 "begin"        .scheme.keyword
   hilight .hilight.vb 1 "End"          .scheme.keyword
   hilight .hilight.vb 1 "Exit"         .scheme.keyword

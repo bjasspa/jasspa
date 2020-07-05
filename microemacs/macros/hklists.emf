@@ -10,10 +10,10 @@
 set-char-mask "2" "-$&#!%:@."
 
 define-macro fhook-lists
-    set-variable $buffer-mask "luh12"
-    @# buffer-init "lists"
-    set-variable :mouse-word-select ehf-process-link
-    buffer-init-hooks
+  set-variable $buffer-mask "luh12"
+  @# buffer-init "lists"
+  set-variable :mouse-word-select ehf-process-link
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -27,21 +27,21 @@ set-variable .fhook-lists.command-kbind "|return|"
 set-variable .fhook-lists.command-desc  "|\HGet Help on Item|"
 
 !if &and &sin "h" .fhook-lists.setup &band .hilight.flags 0x02 
-    !if &not &exist .hilight.lists
-        set-variable .hilight.lists &pinc .hilight.next 1
-    !endif
-    0 hilight  .hilight.lists 0x000                         $global-scheme
-    hilight .hilight.lists 0x102 "Buffer"                   .scheme.header
-    hilight .hilight.lists 0x102 "Global"                   .scheme.header
-    hilight .hilight.lists 0x102 "Ml"                       .scheme.header
-    hilight .hilight.lists 0x102 "Register"                 .scheme.header
-    hilight .hilight.lists 0x102 "System"                   .scheme.header
-    hilight .hilight.lists 0x004 "\"" "\"" "\\"             .scheme.string
-    hilight .hilight.lists 0x004 "[[:alpha:]]" "\\}\\s" ""  .scheme.no1
-    hilight .hilight.lists 0x004 "\\$\\w" "\\}\\s" ""       .scheme.no1
-    hilight .hilight.lists 0x004 "%\\w" "\\}\\s" ""         .scheme.no1
-    hilight .hilight.lists 0x004 ":\\w" "\\}\\s" ""         .scheme.no1
-    hilight .hilight.lists 0x004 "#\\w" "\\}\\s" ""         .scheme.no1
+  !if &not &exist .hilight.lists
+    set-variable .hilight.lists &pinc .hilight.next 1
+  !endif
+  0 hilight  .hilight.lists 0x000                         $global-scheme
+  hilight .hilight.lists 0x102 "Buffer"                   .scheme.header
+  hilight .hilight.lists 0x102 "Global"                   .scheme.header
+  hilight .hilight.lists 0x102 "Ml"                       .scheme.header
+  hilight .hilight.lists 0x102 "Register"                 .scheme.header
+  hilight .hilight.lists 0x102 "System"                   .scheme.header
+  hilight .hilight.lists 0x004 "\"" "\"" "\\"             .scheme.string
+  hilight .hilight.lists 0x004 "[[:alpha:]]" "\\}\\s" ""  .scheme.no1
+  hilight .hilight.lists 0x004 "\\$\\w" "\\}\\s" ""       .scheme.no1
+  hilight .hilight.lists 0x004 "%\\w" "\\}\\s" ""         .scheme.no1
+  hilight .hilight.lists 0x004 ":\\w" "\\}\\s" ""         .scheme.no1
+  hilight .hilight.lists 0x004 "#\\w" "\\}\\s" ""         .scheme.no1
 !endif
 
 define-macro-file hkehf ehf-process-link ehf-find-help
@@ -51,36 +51,36 @@ define-macro-file hkehf ehf-process-link ehf-find-help
 ; end of the line. This makes it easy to process
 ; the command where there are multiple key bindings.
 0 define-macro lists-find-link
-    set-mark
-    end-of-line
-    ; Search for the string on the end of the current line.
-    ; Handles *bindings* buffer.
-    ;
-    ; "C-u" ......................... universal-argument
-    ; "C-x" ......................... 2 prefix
-    ;
-    !force -1 search-backward " \\([#$@]?[-a-zA-Z0-9]+\\) *$"
-    !if $status 
-        ehf-find-help @s1
-        !return
-    !endif
-    ; Search for the string at the start of the line.
-    ; Handles *variables* and *commads* buffers.
-    ; 
-    ;     $buffer-bname ................. "hklists.emf"
-    ;
-    ;     backward-char ................. "C-b"
-    ;                                     "kp-left"
-    ;
-    !force search-backward "^ +\\([#$@]?[-a-zA-Z0-9]+\\)"
-    !if $status
-        ehf-find-help @s1
-        !return
-    !endif
-    ; Must be an error.
-    exchange-point-and-mark
-    ml-write "Error! Not in a link"
-    !abort
+  set-mark
+  end-of-line
+  ; Search for the string on the end of the current line.
+  ; Handles *bindings* buffer.
+  ;
+  ; "C-u" ......................... universal-argument
+  ; "C-x" ......................... 2 prefix
+  ;
+  !force -1 search-backward " \\([#$@]?[-a-zA-Z0-9]+\\) *$"
+  !if $status 
+    ehf-find-help @s1
+    !return
+  !endif
+  ; Search for the string at the start of the line.
+  ; Handles *variables* and *commads* buffers.
+  ; 
+  ;     $buffer-bname ................. "hklists.emf"
+  ;
+  ;     backward-char ................. "C-b"
+  ;                                     "kp-left"
+  ;
+  !force search-backward "^ +\\([#$@]?[-a-zA-Z0-9]+\\)"
+  !if $status
+    ehf-find-help @s1
+    !return
+  !endif
+  ; Must be an error.
+  exchange-point-and-mark
+  ml-write "Error! Not in a link"
+  !abort
 !emacro
 
 buffer-init-fhook "lists"

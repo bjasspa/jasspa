@@ -8,9 +8,9 @@
 ; Notes:       Based on Pascal hook by Steven Phillips
 ;
 define-macro fhook-mod2
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "mod2"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "mod2"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -36,126 +36,126 @@ set-variable .fhook-mod2.collapse-mclose "1"
 set-variable .fhook-mod2.collapse-mnext "-1"
 
 !if &and &sin "h" .fhook-mod2.setup &band .hilight.flags 0x02 
-    ; High-light Pascal Mode
-    !if &not &exist .hilight.mod2
-        set-variable .hilight.mod2 &pinc .hilight.next 1
-    !endif
-    0 hilight .hilight.mod2 2 50             $global-scheme
-;    hilight .hilight.mod2 4 "{" "}" ""       .scheme.comment
-    hilight .hilight.mod2 4 "(\\*" "*)" ""   .scheme.comment
-    hilight .hilight.mod2 2 "//"             .scheme.comment
-    hilight .hilight.mod2 0x1004 "'" "'" ""  .scheme.string
-    hilight .hilight.mod2 0x1004 "\"" "\"" "" .scheme.string
-    
-    hilight .hilight.mod2 1 "BEGIN"          .scheme.keyword
-    hilight .hilight.mod2 1 "CASE"           .scheme.keyword
-    hilight .hilight.mod2 1 "CONST"          .scheme.keyword
-    hilight .hilight.mod2 1 "DEFINITION"     .scheme.keyword
-    hilight .hilight.mod2 1 "DO"             .scheme.keyword
-    hilight .hilight.mod2 1 "DOWNTO"         .scheme.keyword
-    hilight .hilight.mod2 1 "ELSE"           .scheme.keyword
-    hilight .hilight.mod2 1 "END"            .scheme.keyword
-    hilight .hilight.mod2 1 "EXIT"           .scheme.keyword
-    hilight .hilight.mod2 1 "EXPORT"         .scheme.keyword
-    hilight .hilight.mod2 1 "FILE"           .scheme.keyword
-    hilight .hilight.mod2 1 "FOR"            .scheme.keyword
-    hilight .hilight.mod2 1 "FUNCTION"       .scheme.keyword
-    hilight .hilight.mod2 1 "FROM"           .scheme.keyword
-    hilight .hilight.mod2 1 "GOTO"           .scheme.keyword
-    hilight .hilight.mod2 1 "IF"             .scheme.keyword
-    hilight .hilight.mod2 1 "ELSIF"          .scheme.keyword
-    hilight .hilight.mod2 1 "IMPLEMENTATION" .scheme.keyword
-    hilight .hilight.mod2 1 "IMPORT"         .scheme.keyword
-    hilight .hilight.mod2 1 "IN"             .scheme.keyword
-    hilight .hilight.mod2 1 "LOOP"           .scheme.keyword
-    hilight .hilight.mod2 1 "MODULE"         .scheme.keyword
-    hilight .hilight.mod2 1 "NIL"            .scheme.keyword
-    hilight .hilight.mod2 1 "OF"             .scheme.keyword
-    hilight .hilight.mod2 1 "PROCEDURE"      .scheme.keyword
-    hilight .hilight.mod2 1 "QUALIFIED"      .scheme.keyword
-    hilight .hilight.mod2 1 "REPEAT"         .scheme.keyword
-    hilight .hilight.mod2 1 "RETURN"         .scheme.keyword
-    hilight .hilight.mod2 1 "SET"            .scheme.keyword
-    hilight .hilight.mod2 1 "THEN"           .scheme.keyword
-    hilight .hilight.mod2 1 "TO"             .scheme.keyword
-    hilight .hilight.mod2 1 "TYPE"           .scheme.keyword
-    hilight .hilight.mod2 1 "UNTIL"          .scheme.keyword
-    hilight .hilight.mod2 1 "VAR"            .scheme.keyword
-    hilight .hilight.mod2 1 "WHILE"          .scheme.keyword
-    hilight .hilight.mod2 1 "WITH"           .scheme.keyword
-    
-    hilight .hilight.mod2 1 "ARRAY"          .scheme.type
-    hilight .hilight.mod2 1 "BITSET"         .scheme.type
-    hilight .hilight.mod2 1 "BOOLEAN"        .scheme.type
-    hilight .hilight.mod2 1 "CARDINAL"       .scheme.type
-    hilight .hilight.mod2 1 "CHAR"           .scheme.type
-    hilight .hilight.mod2 1 "FLOAT"          .scheme.type
-    hilight .hilight.mod2 1 "INTEGER"        .scheme.type
-    hilight .hilight.mod2 1 "LONGINT"        .scheme.type
-    hilight .hilight.mod2 1 "LONGREAL"       .scheme.type
-    hilight .hilight.mod2 1 "PROC"           .scheme.type
-    hilight .hilight.mod2 1 "REAL"           .scheme.type
-    hilight .hilight.mod2 1 "RECORD"         .scheme.type
-    
-    hilight .hilight.mod2 1 "ABS"            .scheme.operator
-    hilight .hilight.mod2 1 "AND"            .scheme.operator
-    hilight .hilight.mod2 1 "CAP"            .scheme.operator
-    hilight .hilight.mod2 1 "CHR"            .scheme.operator
-    hilight .hilight.mod2 1 "CMPLX"          .scheme.operator
-    hilight .hilight.mod2 1 "DEC"            .scheme.operator
-    hilight .hilight.mod2 1 "DISPOSE"        .scheme.operator
-    hilight .hilight.mod2 1 "DIV"            .scheme.operator
-    hilight .hilight.mod2 1 "EXCL"           .scheme.operator
-    hilight .hilight.mod2 1 "FLOAT"          .scheme.operator
-    hilight .hilight.mod2 1 "HALT"           .scheme.operator
-    hilight .hilight.mod2 1 "HIGH"           .scheme.operator
-    hilight .hilight.mod2 1 "IM"             .scheme.operator
-    hilight .hilight.mod2 1 "INC"            .scheme.operator
-    hilight .hilight.mod2 1 "INCL"           .scheme.operator
-    hilight .hilight.mod2 1 "INT"            .scheme.operator
-    hilight .hilight.mod2 1 "LENGTH"         .scheme.operator
-    hilight .hilight.mod2 1 "LFLOAT"         .scheme.operator
-    hilight .hilight.mod2 1 "MAX"            .scheme.operator
-    hilight .hilight.mod2 1 "MIN"            .scheme.operator
-    hilight .hilight.mod2 1 "MOD"            .scheme.operator
-    hilight .hilight.mod2 1 "NOT"            .scheme.operator
-    hilight .hilight.mod2 1 "NEW"            .scheme.operator
-    hilight .hilight.mod2 1 "OR"             .scheme.operator
-    hilight .hilight.mod2 1 "ODD"            .scheme.operator
-    hilight .hilight.mod2 1 "ORD"            .scheme.operator
-    hilight .hilight.mod2 1 "RE"             .scheme.operator
-    hilight .hilight.mod2 1 "SIZE"           .scheme.operator
-    hilight .hilight.mod2 1 "TRUNC"          .scheme.operator
-    hilight .hilight.mod2 1 "VAL"            .scheme.operator
-    hilight .hilight.mod2 1 "XOR"            .scheme.operator
-    
-    hilight .hilight.mod2 1 "FALSE"          .scheme.prepro
-    hilight .hilight.mod2 1 "TRUE"           .scheme.prepro
-    
-    hilight .hilight.mod2 1 "EOF"            .scheme.prepro
-    hilight .hilight.mod2 1 "EOL"            .scheme.prepro
-    hilight .hilight.mod2 1 "EOLN"           .scheme.prepro
+  ; High-light Pascal Mode
+  !if &not &exist .hilight.mod2
+    set-variable .hilight.mod2 &pinc .hilight.next 1
+  !endif
+  0 hilight .hilight.mod2 2 50             $global-scheme
+  ;    hilight .hilight.mod2 4 "{" "}" ""       .scheme.comment
+  hilight .hilight.mod2 4 "(\\*" "*)" ""   .scheme.comment
+  hilight .hilight.mod2 2 "//"             .scheme.comment
+  hilight .hilight.mod2 0x1004 "'" "'" ""  .scheme.string
+  hilight .hilight.mod2 0x1004 "\"" "\"" "" .scheme.string
+  
+  hilight .hilight.mod2 1 "BEGIN"          .scheme.keyword
+  hilight .hilight.mod2 1 "CASE"           .scheme.keyword
+  hilight .hilight.mod2 1 "CONST"          .scheme.keyword
+  hilight .hilight.mod2 1 "DEFINITION"     .scheme.keyword
+  hilight .hilight.mod2 1 "DO"             .scheme.keyword
+  hilight .hilight.mod2 1 "DOWNTO"         .scheme.keyword
+  hilight .hilight.mod2 1 "ELSE"           .scheme.keyword
+  hilight .hilight.mod2 1 "END"            .scheme.keyword
+  hilight .hilight.mod2 1 "EXIT"           .scheme.keyword
+  hilight .hilight.mod2 1 "EXPORT"         .scheme.keyword
+  hilight .hilight.mod2 1 "FILE"           .scheme.keyword
+  hilight .hilight.mod2 1 "FOR"            .scheme.keyword
+  hilight .hilight.mod2 1 "FUNCTION"       .scheme.keyword
+  hilight .hilight.mod2 1 "FROM"           .scheme.keyword
+  hilight .hilight.mod2 1 "GOTO"           .scheme.keyword
+  hilight .hilight.mod2 1 "IF"             .scheme.keyword
+  hilight .hilight.mod2 1 "ELSIF"          .scheme.keyword
+  hilight .hilight.mod2 1 "IMPLEMENTATION" .scheme.keyword
+  hilight .hilight.mod2 1 "IMPORT"         .scheme.keyword
+  hilight .hilight.mod2 1 "IN"             .scheme.keyword
+  hilight .hilight.mod2 1 "LOOP"           .scheme.keyword
+  hilight .hilight.mod2 1 "MODULE"         .scheme.keyword
+  hilight .hilight.mod2 1 "NIL"            .scheme.keyword
+  hilight .hilight.mod2 1 "OF"             .scheme.keyword
+  hilight .hilight.mod2 1 "PROCEDURE"      .scheme.keyword
+  hilight .hilight.mod2 1 "QUALIFIED"      .scheme.keyword
+  hilight .hilight.mod2 1 "REPEAT"         .scheme.keyword
+  hilight .hilight.mod2 1 "RETURN"         .scheme.keyword
+  hilight .hilight.mod2 1 "SET"            .scheme.keyword
+  hilight .hilight.mod2 1 "THEN"           .scheme.keyword
+  hilight .hilight.mod2 1 "TO"             .scheme.keyword
+  hilight .hilight.mod2 1 "TYPE"           .scheme.keyword
+  hilight .hilight.mod2 1 "UNTIL"          .scheme.keyword
+  hilight .hilight.mod2 1 "VAR"            .scheme.keyword
+  hilight .hilight.mod2 1 "WHILE"          .scheme.keyword
+  hilight .hilight.mod2 1 "WITH"           .scheme.keyword
+  
+  hilight .hilight.mod2 1 "ARRAY"          .scheme.type
+  hilight .hilight.mod2 1 "BITSET"         .scheme.type
+  hilight .hilight.mod2 1 "BOOLEAN"        .scheme.type
+  hilight .hilight.mod2 1 "CARDINAL"       .scheme.type
+  hilight .hilight.mod2 1 "CHAR"           .scheme.type
+  hilight .hilight.mod2 1 "FLOAT"          .scheme.type
+  hilight .hilight.mod2 1 "INTEGER"        .scheme.type
+  hilight .hilight.mod2 1 "LONGINT"        .scheme.type
+  hilight .hilight.mod2 1 "LONGREAL"       .scheme.type
+  hilight .hilight.mod2 1 "PROC"           .scheme.type
+  hilight .hilight.mod2 1 "REAL"           .scheme.type
+  hilight .hilight.mod2 1 "RECORD"         .scheme.type
+  
+  hilight .hilight.mod2 1 "ABS"            .scheme.operator
+  hilight .hilight.mod2 1 "AND"            .scheme.operator
+  hilight .hilight.mod2 1 "CAP"            .scheme.operator
+  hilight .hilight.mod2 1 "CHR"            .scheme.operator
+  hilight .hilight.mod2 1 "CMPLX"          .scheme.operator
+  hilight .hilight.mod2 1 "DEC"            .scheme.operator
+  hilight .hilight.mod2 1 "DISPOSE"        .scheme.operator
+  hilight .hilight.mod2 1 "DIV"            .scheme.operator
+  hilight .hilight.mod2 1 "EXCL"           .scheme.operator
+  hilight .hilight.mod2 1 "FLOAT"          .scheme.operator
+  hilight .hilight.mod2 1 "HALT"           .scheme.operator
+  hilight .hilight.mod2 1 "HIGH"           .scheme.operator
+  hilight .hilight.mod2 1 "IM"             .scheme.operator
+  hilight .hilight.mod2 1 "INC"            .scheme.operator
+  hilight .hilight.mod2 1 "INCL"           .scheme.operator
+  hilight .hilight.mod2 1 "INT"            .scheme.operator
+  hilight .hilight.mod2 1 "LENGTH"         .scheme.operator
+  hilight .hilight.mod2 1 "LFLOAT"         .scheme.operator
+  hilight .hilight.mod2 1 "MAX"            .scheme.operator
+  hilight .hilight.mod2 1 "MIN"            .scheme.operator
+  hilight .hilight.mod2 1 "MOD"            .scheme.operator
+  hilight .hilight.mod2 1 "NOT"            .scheme.operator
+  hilight .hilight.mod2 1 "NEW"            .scheme.operator
+  hilight .hilight.mod2 1 "OR"             .scheme.operator
+  hilight .hilight.mod2 1 "ODD"            .scheme.operator
+  hilight .hilight.mod2 1 "ORD"            .scheme.operator
+  hilight .hilight.mod2 1 "RE"             .scheme.operator
+  hilight .hilight.mod2 1 "SIZE"           .scheme.operator
+  hilight .hilight.mod2 1 "TRUNC"          .scheme.operator
+  hilight .hilight.mod2 1 "VAL"            .scheme.operator
+  hilight .hilight.mod2 1 "XOR"            .scheme.operator
+  
+  hilight .hilight.mod2 1 "FALSE"          .scheme.prepro
+  hilight .hilight.mod2 1 "TRUE"           .scheme.prepro
+  
+  hilight .hilight.mod2 1 "EOF"            .scheme.prepro
+  hilight .hilight.mod2 1 "EOL"            .scheme.prepro
+  hilight .hilight.mod2 1 "EOLN"           .scheme.prepro
 !endif
 
 define-macro mod2-compile
-    !force set-variable %compile-tmp @1
-    !if $status
-        set-variable %compile-com %compile-tmp
-        unset-variable %compile-tmp
-    !else
-        !if &seq %compile-com "ERROR"
-            set-variable %compile-com "gpmake "
-        !endif
-        set-variable %main-module " "
-        set-variable %main-module @ml20 "main module" %main-module
+  !force set-variable %compile-tmp @1
+  !if $status
+    set-variable %compile-com %compile-tmp
+    unset-variable %compile-tmp
+  !else
+    !if &seq %compile-com "ERROR"
+      set-variable %compile-com "gpmake "
     !endif
-    @# save-some-buffers @mna
-    !if &xisequal %main-module "\\W*"
-        set-variable %compile-com &cat "gpmake " $buffer-fname
-    !else
-        set-variable %compile-com &cat "gpmake " %main-module
-    !endif
-    0 ipipe-shell-command %compile-com "*compile*" @mna
+    set-variable %main-module " "
+    set-variable %main-module @ml20 "main module" %main-module
+  !endif
+  @# save-some-buffers @mna
+  !if &xisequal %main-module "\\W*"
+    set-variable %compile-com &cat "gpmake " $buffer-fname
+  !else
+    set-variable %compile-com &cat "gpmake " %main-module
+  !endif
+  0 ipipe-shell-command %compile-com "*compile*" @mna
 !emacro
 
 buffer-init-fhook "mod2"

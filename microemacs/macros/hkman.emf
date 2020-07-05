@@ -9,15 +9,15 @@
 set-char-mask "3" "-._"
 
 define-macro fhook-man
-    set-variable $buffer-mask "luh13"
-    @# buffer-init "man"
-    1 buffer-mode "view"
-    set-variable :mouse-word-select man-process-link
-    buffer-init-hooks
+  set-variable $buffer-mask "luh13"
+  @# buffer-init "man"
+  1 buffer-mode "view"
+  set-variable :mouse-word-select man-process-link
+  buffer-init-hooks
 !emacro
 ; Set up the man command.
 !if &not &exi %man-com
-    set-variable %man-com "man"
+  set-variable %man-com "man"
 !endif
 ; buffer-init variables
 set-variable .fhook-man.name "UNIX Man page"
@@ -33,213 +33,213 @@ set-variable .fhook-man.item-list-s1 "^\\([-A-Z][-A-Z\CH ]+\\)"
 set-variable .fhook-man.item-list-r1 "Sec \\1"
 ; must expand the item-list hilighting scheme to handle man page's ^H's
 !if &not &exi .hilight.list-item
-    !force execute-file "itemlist"
+  !force execute-file "itemlist"
 !endif
 !if &exi .hilight.list-item
-    hilight .hilight.list-item 64 "\\(.\\)\CH\\1\\}[^\CH]" "\\1" .scheme.function
-    hilight .hilight.list-item 64 "\\(.\\)\CH\\1\CH\\1\CH\\1\\}[^\CH]" "\\1" .scheme.function
+  hilight .hilight.list-item 64 "\\(.\\)\CH\\1\\}[^\CH]" "\\1" .scheme.function
+  hilight .hilight.list-item 64 "\\(.\\)\CH\\1\CH\\1\CH\\1\\}[^\CH]" "\\1" .scheme.function
 !endif
 
 !if &and &sin "h" .fhook-man.setup &band .hilight.flags 0x02
-    !if &not &exist .hilight.man "ERROR"
-        set-variable .hilight.man &pinc .hilight.next 1
-    !endif
-    0 hilight  .hilight.man 0                                $global-scheme
-    ; ignore
-    hilight .hilight.man 64 ".\CH" ""                        $global-scheme
-    ; normal underline/italic
-    hilight .hilight.man 64 "_\CH\\(.\\)\\}[^\CH]" "\\1"     .scheme.italic
-    hilight .hilight.man 64 "\\(.\\)\CH_\\}[^\CH]" "\\1"     .scheme.italic
-    ; bold - first is for nroff -man
-    hilight .hilight.man 64 "\\(.\\)\CH\\1\\}[^\CH]" "\\1"   .scheme.bold
-    hilight .hilight.man 64 "_\CH_\CH_\CH_\\}[^\CH]" "_"     .scheme.header
-    hilight .hilight.man 64 "\\(.\\)\CH\\1\CH\\1\CH\\1\\}[^\CH]" "\\1" .scheme.header
-    ; bold underline
-    hilight .hilight.man 64 "_\CH_\CH_\CH_\CH_\\}[^\CH]" "_" .scheme.italic
-    hilight .hilight.man 64 "_\CH\\(.\\)\CH\\1\CH\\1\CH\\1\\}[^\CH]" "\\1" .scheme.italic
-    ; Note that we do a .^H._^H_ check first to ensure we do not mix
-    ; bold and italic.
-    hilight .hilight.man 64 "\\(.\\)\CH\\1_\CH_\\}[^\CH]" "\\1_" .scheme.bold
-
-    ; GNU/Linux/Cygwin manual page hilighting.
-    ; Linux uses some non-ASCII characters in manual pages correct.
-    ; Right single quote
-    hilight .hilight.man 64 "_\CH\xe2\x80\x99" "'"            .scheme.italic
-    hilight .hilight.man 64 "\xe2\x80\x99\CH\xe2\x80\x99" "'" .scheme.bold
-    hilight .hilight.man 64 "\xe2\x80\x99"                "'" $global-scheme
-    ; Another right single quote
-    hilight .hilight.man 64 "_\CH\xc2\xb4" "'"                .scheme.italic
-    hilight .hilight.man 64 "\xc2\xb4\CH\xc2\xb4" "'"         .scheme.bold
-    hilight .hilight.man 64 "\xc2\xb4" "'"                    $global-scheme
-    ; Left single quote
-    hilight .hilight.man 64 "_\CH\xe2\x80\x98" "`"            .scheme.italic
-    hilight .hilight.man 64 "\xe2\x80\x98\CH\xe2\x80\x98" "`" .scheme.bold
-    hilight .hilight.man 64 "\xe2\x80\x98" "`"                $global-scheme
-    ; Right double quote
-    hilight .hilight.man 64 "_\CH\xe2\x80\x9C" "\""           .scheme.italic
-    hilight .hilight.man 64 "\xe2\x80\x9C\CH\xe2\x80\x9C" "\"" .scheme.bold
-    hilight .hilight.man 64 "\xe2\x80\x9C"                "\"" $global-scheme
-    ; Left double quote
-    hilight .hilight.man 64 "_\CH\xe2\x80\x9D" "\""            .scheme.italic
-    hilight .hilight.man 64 "\xe2\x80\x9D\CH\xe2\x80\x9D" "\"" .scheme.bold
-    hilight .hilight.man 64 "\xe2\x80\x9D" "\""                $global-scheme
-    ; Bullet
-    hilight .hilight.man 64 "_\CH\xc2\xb7" "*"                .scheme.italic
-    hilight .hilight.man 64 "\xc2\xb7\CH\xc2\xb7" "*"         .scheme.bold
-    hilight .hilight.man 64 "\xc2\xb7" "*"                    $global-scheme
-    ; Hyphen
-    hilight .hilight.man 64 "_\CH\xe2\x80\x94" "-"            .scheme.italic
-    hilight .hilight.man 64 "\xe2\x80\x94\CH\xe2\x80\x94" "-" .scheme.bold
-    hilight .hilight.man 64 "\xe2\x80\x94" "-"                $global-scheme
-    ; Hypen / line continuation
-    hilight .hilight.man 64 "_\CH\xe2\x80\x90" "-"            .scheme.italic
-    hilight .hilight.man 64 "\xe2\x80\x90\CH\xe2\x80\x90" "-" .scheme.bold
-    hilight .hilight.man 64 "\xe2\x80\x90" "-"                $global-scheme
-    ; Vertical bar or pipe
-    hilight .hilight.man 64 "_\CH\xe2\x94\x82" "|"            .scheme.italic
-    hilight .hilight.man 64 "\xe2\x94\x82\CH\xe2\x94\x82" "|" .scheme.bold
-    hilight .hilight.man 64 "\xe2\x94\x82" "|"                $global-scheme
+  !if &not &exist .hilight.man "ERROR"
+    set-variable .hilight.man &pinc .hilight.next 1
+  !endif
+  0 hilight  .hilight.man 0                                $global-scheme
+  ; ignore
+  hilight .hilight.man 64 ".\CH" ""                        $global-scheme
+  ; normal underline/italic
+  hilight .hilight.man 64 "_\CH\\(.\\)\\}[^\CH]" "\\1"     .scheme.italic
+  hilight .hilight.man 64 "\\(.\\)\CH_\\}[^\CH]" "\\1"     .scheme.italic
+  ; bold - first is for nroff -man
+  hilight .hilight.man 64 "\\(.\\)\CH\\1\\}[^\CH]" "\\1"   .scheme.bold
+  hilight .hilight.man 64 "_\CH_\CH_\CH_\\}[^\CH]" "_"     .scheme.header
+  hilight .hilight.man 64 "\\(.\\)\CH\\1\CH\\1\CH\\1\\}[^\CH]" "\\1" .scheme.header
+  ; bold underline
+  hilight .hilight.man 64 "_\CH_\CH_\CH_\CH_\\}[^\CH]" "_" .scheme.italic
+  hilight .hilight.man 64 "_\CH\\(.\\)\CH\\1\CH\\1\CH\\1\\}[^\CH]" "\\1" .scheme.italic
+  ; Note that we do a .^H._^H_ check first to ensure we do not mix
+  ; bold and italic.
+  hilight .hilight.man 64 "\\(.\\)\CH\\1_\CH_\\}[^\CH]" "\\1_" .scheme.bold
+  
+  ; GNU/Linux/Cygwin manual page hilighting.
+  ; Linux uses some non-ASCII characters in manual pages correct.
+  ; Right single quote
+  hilight .hilight.man 64 "_\CH\xe2\x80\x99" "'"            .scheme.italic
+  hilight .hilight.man 64 "\xe2\x80\x99\CH\xe2\x80\x99" "'" .scheme.bold
+  hilight .hilight.man 64 "\xe2\x80\x99"                "'" $global-scheme
+  ; Another right single quote
+  hilight .hilight.man 64 "_\CH\xc2\xb4" "'"                .scheme.italic
+  hilight .hilight.man 64 "\xc2\xb4\CH\xc2\xb4" "'"         .scheme.bold
+  hilight .hilight.man 64 "\xc2\xb4" "'"                    $global-scheme
+  ; Left single quote
+  hilight .hilight.man 64 "_\CH\xe2\x80\x98" "`"            .scheme.italic
+  hilight .hilight.man 64 "\xe2\x80\x98\CH\xe2\x80\x98" "`" .scheme.bold
+  hilight .hilight.man 64 "\xe2\x80\x98" "`"                $global-scheme
+  ; Right double quote
+  hilight .hilight.man 64 "_\CH\xe2\x80\x9C" "\""           .scheme.italic
+  hilight .hilight.man 64 "\xe2\x80\x9C\CH\xe2\x80\x9C" "\"" .scheme.bold
+  hilight .hilight.man 64 "\xe2\x80\x9C"                "\"" $global-scheme
+  ; Left double quote
+  hilight .hilight.man 64 "_\CH\xe2\x80\x9D" "\""            .scheme.italic
+  hilight .hilight.man 64 "\xe2\x80\x9D\CH\xe2\x80\x9D" "\"" .scheme.bold
+  hilight .hilight.man 64 "\xe2\x80\x9D" "\""                $global-scheme
+  ; Bullet
+  hilight .hilight.man 64 "_\CH\xc2\xb7" "*"                .scheme.italic
+  hilight .hilight.man 64 "\xc2\xb7\CH\xc2\xb7" "*"         .scheme.bold
+  hilight .hilight.man 64 "\xc2\xb7" "*"                    $global-scheme
+  ; Hyphen
+  hilight .hilight.man 64 "_\CH\xe2\x80\x94" "-"            .scheme.italic
+  hilight .hilight.man 64 "\xe2\x80\x94\CH\xe2\x80\x94" "-" .scheme.bold
+  hilight .hilight.man 64 "\xe2\x80\x94" "-"                $global-scheme
+  ; Hypen / line continuation
+  hilight .hilight.man 64 "_\CH\xe2\x80\x90" "-"            .scheme.italic
+  hilight .hilight.man 64 "\xe2\x80\x90\CH\xe2\x80\x90" "-" .scheme.bold
+  hilight .hilight.man 64 "\xe2\x80\x90" "-"                $global-scheme
+  ; Vertical bar or pipe
+  hilight .hilight.man 64 "_\CH\xe2\x94\x82" "|"            .scheme.italic
+  hilight .hilight.man 64 "\xe2\x94\x82\CH\xe2\x94\x82" "|" .scheme.bold
+  hilight .hilight.man 64 "\xe2\x94\x82" "|"                $global-scheme
 !endif
 
 define-macro aman
-    !if &bmod "edit"
-        set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-        !if &iseq #l0 "y"
-            save-buffer
-        !endif
+  !if &bmod "edit"
+    set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+    !if &iseq #l0 "y"
+      save-buffer
     !endif
-    pipe-shell-command &spr "soelim %s | tbl -TX | neqn | nroff -man | col -x" $buffer-fname
-    -1 buffer-mode "view"
-    set-mark
-    2 forward-line
-    forward-word
-    beginning-of-line
-    -1 kill-region
-    fhook-man
+  !endif
+  pipe-shell-command &spr "soelim %s | tbl -TX | neqn | nroff -man | col -x" $buffer-fname
+  -1 buffer-mode "view"
+  set-mark
+  2 forward-line
+  forward-word
+  beginning-of-line
+  -1 kill-region
+  fhook-man
 !emacro
 
 0 define-macro man-backward-word
-    !repeat
-        backward-char
-    !until &inw @wc
-    !repeat
-        !force backward-char
-        !if &not $status
-            !return
-        !endif
-    !until &not &or &inw @wc &sin @wc "\b_"
-    forward-char
+  !repeat
+    backward-char
+  !until &inw @wc
+  !repeat
+    !force backward-char
+    !if &not $status
+      !return
+    !endif
+  !until &not &or &inw @wc &sin @wc "\b_"
+  forward-char
 !emacro
 
 0 define-macro man-forward-word
-    !repeat
-        forward-char
-    !until &inw @wc
-    !repeat
-        forward-char
-    !until &not &or &inw @wc &sin @wc "\b_"
+  !repeat
+    forward-char
+  !until &inw @wc
+  !repeat
+    forward-char
+  !until &not &or &inw @wc &sin @wc "\b_"
 !emacro
 
 0 define-macro man-process-link
-    set-variable #l0 $window-col
-    !while &not &inw @wc
-        !if &not &sin @wc "\b_"
-            set-variable $window-col #l0
-            ml-write "Error! Not in a link"
-            !abort
-        !endif
-        forward-char
-    !done
-    ; Goto beginning of word and place mark
-    forward-char
-    man-backward-word
-    set-mark
-    ; Goto end of line and copy region
-    end-of-line
-    copy-region
-    set-cursor-to-mouse
-    find-buffer "*Man-tmp"
-    set-variable $buffer-mask "luh13"
-    beginning-of-buffer
-    yank
-    -1 yank
-    !force man-clean
-    forward-word
-    set-variable #l2 $window-col
-    !if &seq @wc "("
-        forward-char
-        !if &sin @wc "123456789"
-            forward-char
-            !if &not &seq @wc ")"
-                forward-char
-            !endif
-            !if &seq @wc ")"
-                forward-char
-                set-variable #l2 $window-col
-            !endif
-        !endif
+  set-variable #l0 $window-col
+  !while &not &inw @wc
+    !if &not &sin @wc "\b_"
+      set-variable $window-col #l0
+      ml-write "Error! Not in a link"
+      !abort
     !endif
-    beginning-of-buffer
-    set-variable #l2 &lef @wl #l2
-    delete-buffer "*Man-tmp"
-    man #l2
+    forward-char
+  !done
+  ; Goto beginning of word and place mark
+  forward-char
+  man-backward-word
+  set-mark
+  ; Goto end of line and copy region
+  end-of-line
+  copy-region
+  set-cursor-to-mouse
+  find-buffer "*Man-tmp"
+  set-variable $buffer-mask "luh13"
+  beginning-of-buffer
+  yank
+  -1 yank
+  !force man-clean
+  forward-word
+  set-variable #l2 $window-col
+  !if &seq @wc "("
+    forward-char
+    !if &sin @wc "123456789"
+      forward-char
+      !if &not &seq @wc ")"
+        forward-char
+      !endif
+      !if &seq @wc ")"
+        forward-char
+        set-variable #l2 $window-col
+      !endif
+    !endif
+  !endif
+  beginning-of-buffer
+  set-variable #l2 &lef @wl #l2
+  delete-buffer "*Man-tmp"
+  man #l2
 !emacro
 
 define-macro man-clean
-    -1 buffer-mode "view"
-    1 buffer-mode "magic"
-    beginning-of-buffer
-    replace-string ".\CH_\CH\(.\)\CH.\CH.\CH." "\\1"
-    beginning-of-buffer
-    replace-string ".\CH_\CH\(.\)" "\1"
-
-    beginning-of-buffer
-    replace-string "_\CH.\CH.\CH.\CH\(.\)" "\\1"
-
-    beginning-of-buffer
-    replace-string ".\CH.\CH.\CH\(.\)" "\\1"
-    beginning-of-buffer
-    replace-string "_\CH_\CH_\CH_" "_"
-
-    beginning-of-buffer
-    replace-string "\(.\)\CH_" "\\1"
-    beginning-of-buffer
-    replace-string "_\CH\(.\)" "\\1"
-
-    beginning-of-buffer
-    replace-string ".\CH" ""
-    beginning-of-buffer
-    -1 buffer-mode "edit"
+  -1 buffer-mode "view"
+  1 buffer-mode "magic"
+  beginning-of-buffer
+  replace-string ".\CH_\CH\(.\)\CH.\CH.\CH." "\\1"
+  beginning-of-buffer
+  replace-string ".\CH_\CH\(.\)" "\1"
+  
+  beginning-of-buffer
+  replace-string "_\CH.\CH.\CH.\CH\(.\)" "\\1"
+  
+  beginning-of-buffer
+  replace-string ".\CH.\CH.\CH\(.\)" "\\1"
+  beginning-of-buffer
+  replace-string "_\CH_\CH_\CH_" "_"
+  
+  beginning-of-buffer
+  replace-string "\(.\)\CH_" "\\1"
+  beginning-of-buffer
+  replace-string "_\CH\(.\)" "\\1"
+  
+  beginning-of-buffer
+  replace-string ".\CH" ""
+  beginning-of-buffer
+  -1 buffer-mode "edit"
 !emacro
 
 define-macro man
-    !force set-variable #l9 @1
-    !if &not $status
-        set-variable #l9 @ml "Man on"
+  !force set-variable #l9 @1
+  !if &not $status
+    set-variable #l9 @ml "Man on"
+  !endif
+  set-variable #l0 #l9
+  set-variable #l1 ""
+  ; is there a section ? if so remove it
+  set-variable #l3 &len #l0
+  !if &equ &rsin ")" #l0 #l3
+    !if &gre &set #l2 &rsin "(" #l0 &sub #l3 5
+      set-variable #l1 &rig #l0 #l2
+      set-variable #l1 &lef #l1 &sub &len #l1 1
+      set-variable #l0 &lef #l0 &sub #l2 1
+      !if &seq $platform "sunos"
+        set-variable #l1 &cat "-s " #l1
+      !endif
     !endif
-    set-variable #l0 #l9
-    set-variable #l1 ""
-    ; is there a section ? if so remove it
-    set-variable #l3 &len #l0
-    !if &equ &rsin ")" #l0 #l3
-        !if &gre &set #l2 &rsin "(" #l0 &sub #l3 5
-            set-variable #l1 &rig #l0 #l2
-            set-variable #l1 &lef #l1 &sub &len #l1 1
-            set-variable #l0 &lef #l0 &sub #l2 1
-            !if &seq $platform "sunos"
-                set-variable #l1 &cat "-s " #l1
-            !endif
-        !endif
-    !endif
-    0 pipe-shell-command &spr "%s %s %s" %man-com #l1 #l0 &cat "*Man on " #l9
-    -1 buffer-mode "view"
-    set-mark
-    2 forward-line
-    forward-word
-    beginning-of-line
-    -1 kill-region
-    set-variable $buffer-fhook "fhook-man"
-    fhook-man
+  !endif
+  0 pipe-shell-command &spr "%s %s %s" %man-com #l1 #l0 &cat "*Man on " #l9
+  -1 buffer-mode "view"
+  set-mark
+  2 forward-line
+  forward-word
+  beginning-of-line
+  -1 kill-region
+  set-variable $buffer-fhook "fhook-man"
+  fhook-man
 !emacro
 
 buffer-init-fhook "man"

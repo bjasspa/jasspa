@@ -8,115 +8,115 @@
 ; Authors:     Steven Phillips
 ;
 !if &band .hilight.flags 0x01 
-    !if &not &exist .hilight.bookmark
-        set-variable .hilight.bookmark &pinc .hilight.next 1
-    !endif
-    0 hilight .hilight.bookmark 0 $global-scheme
-    hilight .hilight.bookmark 0x1 "^." .scheme.header
+  !if &not &exist .hilight.bookmark
+    set-variable .hilight.bookmark &pinc .hilight.next 1
+  !endif
+  0 hilight .hilight.bookmark 0 $global-scheme
+  hilight .hilight.bookmark 0x1 "^." .scheme.header
 !endif
 
 0 define-macro bookmark-command
-    set-variable #l0 &lef @wl 1
-    goto-position "\x82"
-    !if &equ @# 1
-        goto-alpha-mark #l0
-        161 set-position "\x82"
-        !return
-    !elif &equ @# 2
-        set-variable #l1 &ind &cat ":bkmk-" #l0
-        osd-entry "Bookmark" "\HLabel : " #l1 30
-        set-variable &ind &cat ":bkmk-" #l0 #l1
-    !elif &equ @# 3
-        !force unset-variable &ind &cat ":bkmk-" #l0
-        !force set-variable :bkmk-list &rep :bkmk-list #l0 ""
-    !endif
-    ; force an update by deleting buffer
-    !force 0 delete-buffer "*bookmark*"
-    set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
+  set-variable #l0 &lef @wl 1
+  goto-position "\x82"
+  !if &equ @# 1
+    goto-alpha-mark #l0
+    161 set-position "\x82"
+    !return
+  !elif &equ @# 2
+    set-variable #l1 &ind &cat ":bkmk-" #l0
+    osd-entry "Bookmark" "\HLabel : " #l1 30
+    set-variable &ind &cat ":bkmk-" #l0 #l1
+  !elif &equ @# 3
+    !force unset-variable &ind &cat ":bkmk-" #l0
+    !force set-variable :bkmk-list &rep :bkmk-list #l0 ""
+  !endif
+  ; force an update by deleting buffer
+  !force 0 delete-buffer "*bookmark*"
+  set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
 !emacro
 
 0 define-macro bookmark-mouse-pick-1
-    set-variable .bookmark-mouse-drop-1.line $window-line
-    goto-position "\x82"
+  set-variable .bookmark-mouse-drop-1.line $window-line
+  goto-position "\x82"
 !emacro
 
 0 define-macro bookmark-mouse-drop-1
-    set-variable #l0 $window-line
-    set-variable #l1 $window-eline
-    set-variable #l2 &lef @wl 1
-    goto-position "\x82"
-    !if &equ .line #l0
-        !if &equ #l0 1
-            bookmark-set
-        !elif &les #l0 #l1
-            goto-alpha-mark #l2
-        !endif
+  set-variable #l0 $window-line
+  set-variable #l1 $window-eline
+  set-variable #l2 &lef @wl 1
+  goto-position "\x82"
+  !if &equ .line #l0
+    !if &equ #l0 1
+      bookmark-set
+    !elif &les #l0 #l1
+      goto-alpha-mark #l2
     !endif
+  !endif
 !emacro
 
 0 define-macro bookmark-mouse-drop-3
-    !if &equ $window-line 1
-    !elif &les $window-line $window-eline
-        -1 osd .osd.tmp
-        osd .osd.tmp 0 b
-        osd .osd.tmp 10 "" "\HGoto      (C-x a)" 1 bookmark-command
-        osd .osd.tmp 20 "" "\HSet Label"         2 bookmark-command
-        osd .osd.tmp 30 "" "\HDelete"            3 bookmark-command
-        !force !force .osd.tmp osd
-    !endif
-    goto-position "\x82"
+  !if &equ $window-line 1
+  !elif &les $window-line $window-eline
+    -1 osd .osd.tmp
+    osd .osd.tmp 0 b
+    osd .osd.tmp 10 "" "\HGoto      (C-x a)" 1 bookmark-command
+    osd .osd.tmp 20 "" "\HSet Label"         2 bookmark-command
+    osd .osd.tmp 30 "" "\HDelete"            3 bookmark-command
+    !force !force .osd.tmp osd
+  !endif
+  goto-position "\x82"
 !emacro
 
 define-macro bookmark-set
-    set-alpha-mark @mna
-    !if $status
-        set-variable #l0 &left $recent-keys 2
-        !if &seq &rig #l0 1 " "
-            set-variable #l0 &lef #l0 1
-            set-variable &cat ":bkmk-" #l0 &trb &mid @wl $window-col 50
-            !if &not &exi :bkmk-list
-                set-variable :bkmk-list #l0
-            !elif &not &sin #l0 :bkmk-list
-                set-variable :bkmk-list &cat :bkmk-list #l0
-            !endif
-            ; force an update by deleting buffer
-            !force 0 delete-buffer "*bookmark*"
-            set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
-        !endif
+  set-alpha-mark @mna
+  !if $status
+    set-variable #l0 &left $recent-keys 2
+    !if &seq &rig #l0 1 " "
+      set-variable #l0 &lef #l0 1
+      set-variable &cat ":bkmk-" #l0 &trb &mid @wl $window-col 50
+      !if &not &exi :bkmk-list
+        set-variable :bkmk-list #l0
+      !elif &not &sin #l0 :bkmk-list
+        set-variable :bkmk-list &cat :bkmk-list #l0
+      !endif
+      ; force an update by deleting buffer
+      !force 0 delete-buffer "*bookmark*"
+      set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
     !endif
+  !endif
 !emacro
 global-bind-key bookmark-set "C-x C-a"
 
 0 define-macro bookmark-create
-    set-position "\x86"
-    set-variable #l0 $buffer-bname
-    find-buffer "*bookmark*"
-    -1 buffer-mode "undo"
-    -1 buffer-mode "view"
+  set-position "\x86"
+  set-variable #l0 $buffer-bname
+  find-buffer "*bookmark*"
+  -1 buffer-mode "undo"
+  -1 buffer-mode "view"
+  beginning-of-buffer
+  set-mark
+  end-of-buffer
+  -1 kill-region
+  insert-string &spr "<Create Bookmark> (C-x C-a)\n"
+  !if &not &seq &set #l1 &ind &spr ":%s:bkmk-list" #l0 "ERROR"
+    set-variable #l2 0
+    !while &not &seq &set #l3 &lef #l1 1 ""
+      insert-string &spr "%s %s\n" #l3 &ind &spr ":%s:bkmk-%s" #l0 #l3
+      set-variable #l1 &rig #l1 1
+    !done
     beginning-of-buffer
     set-mark
     end-of-buffer
-    -1 kill-region
-    insert-string &spr "<Create Bookmark> (C-x C-a)\n"
-    !if &not &seq &set #l1 &ind &spr ":%s:bkmk-list" #l0 "ERROR"
-        set-variable #l2 0
-        !while &not &seq &set #l3 &lef #l1 1 ""
-            insert-string &spr "%s %s\n" #l3 &ind &spr ":%s:bkmk-%s" #l0 #l3
-            set-variable #l1 &rig #l1 1
-        !done
-        beginning-of-buffer
-        set-mark
-        end-of-buffer
-        sort-lines
-    !endif
-    beginning-of-buffer
-    set-variable $line-scheme .scheme.header
-    set-variable $buffer-hilight .hilight.bookmark
-    set-variable :mouse-pick-1 bookmark-mouse-pick-1
-    set-variable :mouse-drop-1 bookmark-mouse-drop-1
-    set-variable :mouse-pick-3 void
-    set-variable :mouse-drop-3 bookmark-mouse-drop-3
-    -1 buffer-mode "edit"
-    1 buffer-mode "view"
-    goto-position "\x86"
+    sort-lines
+  !endif
+  beginning-of-buffer
+  set-variable $line-scheme .scheme.header
+  set-variable $buffer-hilight .hilight.bookmark
+  set-variable :mouse-pick-1 bookmark-mouse-pick-1
+  set-variable :mouse-drop-1 bookmark-mouse-drop-1
+  set-variable :mouse-pick-3 void
+  set-variable :mouse-drop-3 bookmark-mouse-drop-3
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"
+  goto-position "\x86"
 !emacro

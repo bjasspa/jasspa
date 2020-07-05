@@ -7,9 +7,9 @@
 ; Authors:     Jon Green
 ;
 define-macro fhook-imake
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "imake"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "imake"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -19,27 +19,27 @@ set-variable .fhook-imake.setup-mask "aeghikmnoptux"
 set-variable .fhook-imake.comment "|/*| */|*| * | * |fr|"
 
 !if &and &sin "h" .fhook-imake.setup &band .hilight.flags 0x02 
-    !if &not &exist .hilight.imake
-        set-variable .hilight.imake &pinc .hilight.next 1
-    !endif
-    ; Imakefile file highlighting
-    0 hilight  .hilight.imake 2  50             $global-scheme
-    hilight .hilight.imake 0  ":"               .scheme.variable       
-    hilight .hilight.imake 4  "\"" "\"" "\\"    .scheme.string
-    hilight .hilight.imake 20 "/\\*" "*/" ""    .scheme.comment
-    hilight .hilight.imake 0  "/\\*\\."         $global-scheme
-    hilight .hilight.imake 50 "#"               .scheme.prepro
-    hilight .hilight.imake 4  "\\$(" ")" ""     .scheme.variable    
-    hilight .hilight.imake 1  "\\$O"            .scheme.variable    
-    hilight .hilight.imake 1  "\\$T"            .scheme.variable    
-    hilight .hilight.imake 0  "\\.SUFFIXES"     .scheme.keyword   
-    hilight .hilight.imake 0  "\\.IGNORE"       .scheme.keyword   
-    hilight .hilight.imake 0  "\\.DEFAULT"      .scheme.keyword   
-    hilight .hilight.imake 0  "\\.PRECIOUS"     .scheme.keyword   
-    hilight .hilight.imake 1  "\\$@"            .scheme.keyword   
-    hilight .hilight.imake 1  "\\$\\$@"         .scheme.keyword   
-    hilight .hilight.imake 1  "\\$\\*"          .scheme.keyword   
-    hilight .hilight.imake 1  "\\$<"            .scheme.keyword   
+  !if &not &exist .hilight.imake
+    set-variable .hilight.imake &pinc .hilight.next 1
+  !endif
+  ; Imakefile file highlighting
+  0 hilight  .hilight.imake 2  50             $global-scheme
+  hilight .hilight.imake 0  ":"               .scheme.variable       
+  hilight .hilight.imake 4  "\"" "\"" "\\"    .scheme.string
+  hilight .hilight.imake 20 "/\\*" "*/" ""    .scheme.comment
+  hilight .hilight.imake 0  "/\\*\\."         $global-scheme
+  hilight .hilight.imake 50 "#"               .scheme.prepro
+  hilight .hilight.imake 4  "\\$(" ")" ""     .scheme.variable    
+  hilight .hilight.imake 1  "\\$O"            .scheme.variable    
+  hilight .hilight.imake 1  "\\$T"            .scheme.variable    
+  hilight .hilight.imake 0  "\\.SUFFIXES"     .scheme.keyword   
+  hilight .hilight.imake 0  "\\.IGNORE"       .scheme.keyword   
+  hilight .hilight.imake 0  "\\.DEFAULT"      .scheme.keyword   
+  hilight .hilight.imake 0  "\\.PRECIOUS"     .scheme.keyword   
+  hilight .hilight.imake 1  "\\$@"            .scheme.keyword   
+  hilight .hilight.imake 1  "\\$\\$@"         .scheme.keyword   
+  hilight .hilight.imake 1  "\\$\\*"          .scheme.keyword   
+  hilight .hilight.imake 1  "\\$<"            .scheme.keyword   
 !endif
 
 buffer-init-fhook "imake"

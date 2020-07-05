@@ -14,44 +14,44 @@
 1 global-mode "lf"
 -1 global-mode "ctrlz"
 define-macro start-up
-    delete-other-windows
-    !while &not &seq $buffer-bname "*scratch*"
-        set-variable #l2 0
-        !if &band $buffer-fmod 0x10000
-            set-variable #l0 "Directory, skip"
-        !elif &band $buffer-fmod 0x80000
-            set-variable #l0 "Binary, skip"
-        !else
-            set-variable #l3 &add &add &bmod "cr" &mul &bmod "lf" 2 &mul &bmod "ctrlz" 4
-            set-variable #l0 &mid "Strange0Unix    Mac     Windows Strange4Strange5Strange6Dos" &mul #l3 8 8
-            !if &seq &rig #l0 -1 " "
-                set-variable #l0 &lef #l0 -1
-                !jump -2
-            !endif
-            !if &band $buffer-fmod 0x100000
-                set-variable #l0 &cat #l0 " (bad), fix"
-                set-variable #l2 1
-            !elif &sub #l3 2
-                set-variable #l0 &cat #l0 ", fix"
-                set-variable #l2 1
-            !else
-                set-variable #l0 &cat #l0 ", okay"
-            !endif
-        !endif
-        !if &band $system 0x1000000
-            -1 ml-write &cat &cat $buffer-fname " - " #l0
-        !else
-            ml-write &cat &cat &cat &cat "[Processing \"" $buffer-fname "\" - "  #l0 "]"
-        !endif
-        !if #l2
-            ; flag as a unix file and as edited, then save
-            -1 buffer-mode "cr"
-            1 buffer-mode "lf"
-            -1 buffer-mode "ctrlz"
-            1 buffer-mode "edit"
-            0 save-buffer
-        !endif
-        delete-buffer $buffer-bname
-    !done
-    exit-emacs
+  delete-other-windows
+  !while &not &seq $buffer-bname "*scratch*"
+    set-variable #l2 0
+    !if &band $buffer-fmod 0x10000
+      set-variable #l0 "Directory, skip"
+    !elif &band $buffer-fmod 0x80000
+      set-variable #l0 "Binary, skip"
+    !else
+      set-variable #l3 &add &add &bmod "cr" &mul &bmod "lf" 2 &mul &bmod "ctrlz" 4
+      set-variable #l0 &mid "Strange0Unix    Mac     Windows Strange4Strange5Strange6Dos" &mul #l3 8 8
+      !if &seq &rig #l0 -1 " "
+        set-variable #l0 &lef #l0 -1
+        !jump -2
+      !endif
+      !if &band $buffer-fmod 0x100000
+        set-variable #l0 &cat #l0 " (bad), fix"
+        set-variable #l2 1
+      !elif &sub #l3 2
+        set-variable #l0 &cat #l0 ", fix"
+        set-variable #l2 1
+      !else
+        set-variable #l0 &cat #l0 ", okay"
+      !endif
+    !endif
+    !if &band $system 0x1000000
+      -1 ml-write &cat &cat $buffer-fname " - " #l0
+    !else
+      ml-write &cat &cat &cat &cat "[Processing \"" $buffer-fname "\" - "  #l0 "]"
+    !endif
+    !if #l2
+      ; flag as a unix file and as edited, then save
+      -1 buffer-mode "cr"
+      1 buffer-mode "lf"
+      -1 buffer-mode "ctrlz"
+      1 buffer-mode "edit"
+      0 save-buffer
+    !endif
+    delete-buffer $buffer-bname
+  !done
+  exit-emacs
 !emacro

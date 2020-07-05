@@ -8,9 +8,9 @@
 ; Authors:     Steven Phillips
 ;
 define-macro fhook-asp
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "asp"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "asp"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -36,43 +36,43 @@ set-variable .fhook-asp.indent-width 2
 !endif
 ; add the <% %> vb script support
 !if &and &sin "h" .fhook-asp.setup &band .hilight.flags 0x02 
-    hilight .hilight.asptag 4 "=\\{[^ \t\n<>]*<%" "%>[^ \t\n>]*" ""  .scheme.string
-    hilight .hilight.asptag 4 "=\\{\"[^\"\n<]*<%" "%>[^\"]*\"" ""  .scheme.string
-    !if &exist .hilight.vbscript
-        hilight .hilight.asp      0x80 "<%" .hilight.vbscript .scheme.prepro
-        hilight .hilight.asp      0xa0 "End If$" .hilight.vbscript .scheme.keyword
-        hilight .hilight.asp      0xa0 "End Function$" .hilight.vbscript .scheme.keyword
-        hilight .hilight.asp      0xa0 "End Sub$" .hilight.vbscript .scheme.keyword
-        hilight .hilight.asptag   0x80 "<%" .hilight.vbscript .scheme.prepro
-        hilight .hilight.vbscript 0x80 "%>" 0 .scheme.prepro
-        
-        hilight .hilight.vbscript 1 "Request.Cookies" .scheme.function
-        hilight .hilight.vbscript 1 "Request.Form" .scheme.function
-        hilight .hilight.vbscript 1 "Request.QueryString" .scheme.function
-        hilight .hilight.vbscript 1 "Request" .scheme.function
-        hilight .hilight.vbscript 1 "Request.ServerVariables" .scheme.function
-        hilight .hilight.vbscript 1 "Response.Cookies" .scheme.function
-        hilight .hilight.vbscript 1 "Response.End" .scheme.function
-        hilight .hilight.vbscript 1 "Response.Flush" .scheme.function
-        hilight .hilight.vbscript 1 "Response.Redirect" .scheme.function
-        hilight .hilight.vbscript 1 "Response.Write" .scheme.function
-        hilight .hilight.vbscript 1 "Server.HTMLEncode" .scheme.function
-        hilight .hilight.vbscript 1 "Server.Transfer" .scheme.function
-        hilight .hilight.vbscript 1 "Server.URLEncode" .scheme.function
-    !endif
+  hilight .hilight.asptag 4 "=\\{[^ \t\n<>]*<%" "%>[^ \t\n>]*" ""  .scheme.string
+  hilight .hilight.asptag 4 "=\\{\"[^\"\n<]*<%" "%>[^\"]*\"" ""  .scheme.string
+  !if &exist .hilight.vbscript
+    hilight .hilight.asp      0x80 "<%" .hilight.vbscript .scheme.prepro
+    hilight .hilight.asp      0xa0 "End If$" .hilight.vbscript .scheme.keyword
+    hilight .hilight.asp      0xa0 "End Function$" .hilight.vbscript .scheme.keyword
+    hilight .hilight.asp      0xa0 "End Sub$" .hilight.vbscript .scheme.keyword
+    hilight .hilight.asptag   0x80 "<%" .hilight.vbscript .scheme.prepro
+    hilight .hilight.vbscript 0x80 "%>" 0 .scheme.prepro
+    
+    hilight .hilight.vbscript 1 "Request.Cookies" .scheme.function
+    hilight .hilight.vbscript 1 "Request.Form" .scheme.function
+    hilight .hilight.vbscript 1 "Request.QueryString" .scheme.function
+    hilight .hilight.vbscript 1 "Request" .scheme.function
+    hilight .hilight.vbscript 1 "Request.ServerVariables" .scheme.function
+    hilight .hilight.vbscript 1 "Response.Cookies" .scheme.function
+    hilight .hilight.vbscript 1 "Response.End" .scheme.function
+    hilight .hilight.vbscript 1 "Response.Flush" .scheme.function
+    hilight .hilight.vbscript 1 "Response.Redirect" .scheme.function
+    hilight .hilight.vbscript 1 "Response.Write" .scheme.function
+    hilight .hilight.vbscript 1 "Server.HTMLEncode" .scheme.function
+    hilight .hilight.vbscript 1 "Server.Transfer" .scheme.function
+    hilight .hilight.vbscript 1 "Server.URLEncode" .scheme.function
+  !endif
 !endif
 !if &sin "d" .fhook-asp.setup
-    !if &exist .indent.vbscript
-        indent .hilight.asptag t "<%" .indent.vbscript
-        indent .hilight.asptag t "[\t ]*End If$" .hilight.vbscript
-        indent .hilight.asptag t "[\t ]*End Function$" .hilight.vbscript
-        indent .hilight.asptag t "[\t ]*End Sub$" .hilight.vbscript
-        indent .hilight.asptag t "%>" .hilight.asp
-        
-        indent .hilight.asp x "^<%" 0 .indent.vbscript
-        indent .hilight.asp x ".<%" t .indent.vbscript
-        indent .indent.vbscript w "%>" -t 0
-    !endif
+  !if &exist .indent.vbscript
+    indent .hilight.asptag t "<%" .indent.vbscript
+    indent .hilight.asptag t "^[\t ]*End If$" .hilight.vbscript
+    indent .hilight.asptag t "^[\t ]*End Function$" .hilight.vbscript
+    indent .hilight.asptag t "^[\t ]*End Sub$" .hilight.vbscript
+    indent .hilight.asptag t "%>" .hilight.asp
+    
+    indent .hilight.asp x "^<%" 0 .indent.vbscript
+    indent .hilight.asp x ".<%" t .indent.vbscript
+    indent .indent.vbscript w "%>" -t 0
+  !endif
 !endif
 
 buffer-init-fhook "asp"

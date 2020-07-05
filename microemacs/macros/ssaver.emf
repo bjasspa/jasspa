@@ -9,38 +9,38 @@
 ;
 set-variable %screen-saver 0
 define-macro screen-saver
-    !if &not &pinc %screen-saver 1
-        !if &seq @cck "idle-pick"
-            ; default is to switch on in 5 minutes time
-            &cond @? @# 300000 create-callback screen-saver
+  !if &not &pinc %screen-saver 1
+    !if &seq @cck "idle-pick"
+      ; default is to switch on in 5 minutes time
+      &cond @? @# 300000 create-callback screen-saver
+    !else
+      !if &seq @cck "callback"
+        @# create-callback screen-saver
+      !elif @?
+        ; user has suppled argument, install or remove
+        !if &gre @# 0
+          &mul @# 60000 global-bind-key screen-saver "idle-pick"
         !else
-            !if &seq @cck "callback"
-                @# create-callback screen-saver
-            !elif @?
-                ; user has suppled argument, install or remove
-                !if &gre @# 0
-                    &mul @# 60000 global-bind-key screen-saver "idle-pick"
-                !else
-                    !force global-unbind-key "idle-pick"
-                !endif
-                set-variable %screen-saver &sub %screen-saver 1
-                !return
-            !endif
-            set-variable @# $frame-depth
-            !while &dec @# 1
-                2 screen-poke @# 0 $global-scheme &spr "%n" $frame-width " "
-            !done
-            0 screen-poke 0 0 $global-scheme &spr "%n" $frame-width " "
-            -1 show-cursor
-            ; must set this to stop recursion when waiting for a key!
-            set-variable %screen-saver 0
-            set-variable @# @cg
-            set-variable %screen-saver 1
-            1 show-cursor
-            screen-update
-            0 ml-write
+          !force global-unbind-key "idle-pick"
         !endif
+        set-variable %screen-saver &sub %screen-saver 1
+        !return
+      !endif
+      set-variable @# $frame-depth
+      !while &dec @# 1
+        2 screen-poke @# 0 $global-scheme &spr "%n" $frame-width " "
+      !done
+      0 screen-poke 0 0 $global-scheme &spr "%n" $frame-width " "
+      -1 show-cursor
+      ; must set this to stop recursion when waiting for a key!
+      set-variable %screen-saver 0
+      set-variable @# @cg
+      set-variable %screen-saver 1
+      1 show-cursor
+      screen-update
+      0 ml-write
     !endif
-    set-variable %screen-saver &sub %screen-saver 1
+  !endif
+  set-variable %screen-saver &sub %screen-saver 1
 !emacro
 

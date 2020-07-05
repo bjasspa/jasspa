@@ -8,214 +8,214 @@
 ; Authors:     Steven Phillips
 ;
 !if &not &exi .osd.toolbar
-    set-variable .osd.toolbar &pinc .osd.next 1
+  set-variable .osd.toolbar &pinc .osd.next 1
 !endif
 
 0 define-macro toolbar-setup-cmd
-    ; reset the toolbar flag
-    set-variable #l9 1
-    !if &and &gre @# 0 &les @# 5
-        !if &lget .toolbar.flag @#
-            ; remove the toolbar
-            set-variable #l0 1
-            !while &not &seq "" &set #l1 &lget .toolbar.tool-flag #l0
-                !if &band #l1 &lget .toolbar.conv @#
-                    set-variable .toolbar.tool-name &ldel .toolbar.tool-name #l0
-                    set-variable .toolbar.tool-buff &ldel .toolbar.tool-buff #l0
-                    set-variable .toolbar.tool-file &ldel .toolbar.tool-file #l0
-                    set-variable .toolbar.tool-size &ldel .toolbar.tool-size #l0
-                    set-variable .toolbar.tool-flag &ldel .toolbar.tool-flag #l0
-                    set-variable .toolbar.tool-cmd  &ldel .toolbar.tool-cmd  #l0
-                !else
-                    set-variable #l0 &add #l0 1
-                !endif
-            !done
-            set-variable .toolbar.flag &lset .toolbar.flag @# 0
-            set-variable .toolbar.flag &lset .toolbar.flag 5 &sub &lget .toolbar.flag 5 1 
+  ; reset the toolbar flag
+  set-variable #l9 1
+  !if &and &gre @# 0 &les @# 5
+    !if &lget .toolbar.flag @#
+      ; remove the toolbar
+      set-variable #l0 1
+      !while &not &seq "" &set #l1 &lget .toolbar.tool-flag #l0
+        !if &band #l1 &lget .toolbar.conv @#
+          set-variable .toolbar.tool-name &ldel .toolbar.tool-name #l0
+          set-variable .toolbar.tool-buff &ldel .toolbar.tool-buff #l0
+          set-variable .toolbar.tool-file &ldel .toolbar.tool-file #l0
+          set-variable .toolbar.tool-size &ldel .toolbar.tool-size #l0
+          set-variable .toolbar.tool-flag &ldel .toolbar.tool-flag #l0
+          set-variable .toolbar.tool-cmd  &ldel .toolbar.tool-cmd  #l0
         !else
-            ; add the toolbar
-            set-variable .toolbar.tool-name &lins .toolbar.tool-name -1 "Toolbar"
-            set-variable .toolbar.tool-buff &lins .toolbar.tool-buff -1 &spr "*toolbar-%s*" &lget "|left|top|right|bottom|" @#
-            set-variable .toolbar.tool-file &lins .toolbar.tool-file -1 "tooldef"
-            set-variable .toolbar.tool-size &lins .toolbar.tool-size -1 "100"
-            set-variable .toolbar.tool-flag &lins .toolbar.tool-flag -1 &bor 1 &lget .toolbar.conv @#
-            set-variable .toolbar.tool-cmd  &lins .toolbar.tool-cmd  -1 "toolbar-default"
-            set-variable .toolbar.flag &lset .toolbar.flag @# 1
-            set-variable .toolbar.flag &lset .toolbar.flag 5 &add &lget .toolbar.flag 5 1 
+          set-variable #l0 &add #l0 1
         !endif
-    !elif &equ @# 5
-        ; store all the current state
-        set-variable #l0 0
-        !while &not &seq "" &set #l1 &lget .toolbar.tool-flag &inc #l0 1
-            !force 0 popup-window &lget .toolbar.tool-buff #l0
-            !if $status
-                set-variable #l2 &lfind .toolbar.conv &band #l1 0xf000
-                set-variable #l3 &cond &band 1 #l2 $window-depth $window-width
-                set-variable .toolbar.size &lset .toolbar.size #l2 &cond &band 1 #l2 $window-width $window-depth
-                ; must store the window size for all paged tools
-                set-variable #l4 #l0
-                !if &band #l1 0x800
-                    set-variable #l1 &lget .toolbar.tool-flag &dec #l4 1
-                    !jump -2
-                !endif
-                set-variable .toolbar.tool-size &lset .toolbar.tool-size #l4 #l3
-                !if &band &lget .toolbar.tool-flag &inc #l4 1 0x800
-                    !jump -2
-                !endif
-            !endif
-        !done
-        ; don't need to reset the toolbar
-        set-variable #l9 0
-    !elif &equ @# 6
-        ; fix tool size
-        !if &set #l0 &lfind .toolbar.tool-buff $buffer-bname
-            set-variable #l1 &bxor 0x100 &lget .toolbar.tool-flag #l0
-            set-variable #l2 &lfind .toolbar.conv &band #l1 0xf000
-            set-variable $window-flags &cond &band #l1 0x100 0x11ff &sub 0x11fe &band #l2 1
-            !if &band #l1 0x800
-                set-variable #l1 &lget .toolbar.tool-flag &dec #l0 1
-                !jump -2
-            !endif
-            set-variable .toolbar.tool-flag &lset .toolbar.tool-flag #l0 &bxor 0x100 &lget .toolbar.tool-flag #l0
-            !if &band &lget .toolbar.tool-flag &inc #l0 1 0x800
-                !jump -2
-            !endif
-        !endif
-        ; don't need to reset the toolbar
-        set-variable #l9 0
-    !elif &equ &abs @# 7
-        ; remove the current tool
-        !if &set #l0 &lfind .toolbar.tool-buff $buffer-bname
-            set-variable #l1 &lget .toolbar.tool-flag #l0
-            set-variable #l2 &lfind .toolbar.conv &band #l1 0xf000
-            ; Note - when called by the add tool to remove the default tool the hidden flag has been set, just set the page
-            !if &band #l1 0x800
-                ; page tool make previous tool visible
-                set-variable #l3 &lget .toolbar.tool-flag &sub #l0 1
-                !if &not &or &band #l3 0x800 &band &lget .toolbar.tool-flag &add #l0 1 0x800
-                    ; last user of this window
-                    set-variable #l3 &bxor #l3 0x200
-                !endif
-                !if &not &equ @# -7
-                    ; if not called from adding tool to remove the default tool, make this visible
-                    set-variable #l3 &bxor #l3 0x400
-                !endif
-                set-variable .toolbar.tool-flag &lset .toolbar.tool-flag &sub #l0 1 #l3
-            !elif &band #l1 0x200
-                ; next is a page tool make it visible
-                set-variable #l3 &bxor &lget .toolbar.tool-flag &add #l0 1 0x800
-                !if &not &band &lget .toolbar.tool-flag &add #l0 2 0x800
-                    ; last user of this window
-                    set-variable #l3 &bxor #l3 0x200
-                !endif
-                !if &not &equ @# -7
-                    ; if not called from adding tool to remove the default tool, make this visible
-                    set-variable #l3 &bxor #l3 0x400
-                !endif
-                set-variable .toolbar.tool-flag &lset .toolbar.tool-flag &add #l0 1 #l3
-            !endif
-            set-variable .toolbar.tool-name &ldel .toolbar.tool-name #l0
-            set-variable .toolbar.tool-buff &ldel .toolbar.tool-buff #l0
-            set-variable .toolbar.tool-file &ldel .toolbar.tool-file #l0
-            set-variable .toolbar.tool-size &ldel .toolbar.tool-size #l0
-            set-variable .toolbar.tool-flag &ldel .toolbar.tool-flag #l0
-            set-variable .toolbar.tool-cmd  &ldel .toolbar.tool-cmd  #l0
-            set-variable .toolbar.flag &lset .toolbar.flag #l2 &sub &lget .toolbar.flag #l2 1 
-        !endif
-        !if &equ @# -7
-            !return
-        !endif
-    !elif &or &equ @# 8 &equ @# 9
-        ; add a tool
-        !if &set #l0 &lfind .toolbar.tool-descs $result
-            !if &set #l1 &lfind .toolbar.tool-buff $buffer-bname
-                set-variable #l2 &lfind .toolbar.conv &band &lget .toolbar.tool-flag #l1 0xf000
-                set-variable #l3 &bor &lget .toolbar.tool-flags #l0 &band &lget .toolbar.tool-flag #l1 0xf000
-                !if &equ @# 9
-                    ; adding as sub-page
-                    set-variable #l3 &bor #l3 0xa00
-                    set-variable .toolbar.tool-flag &lset .toolbar.tool-flag #l1 &bor &lget .toolbar.tool-flag #l1 0x600
-                !elif &band &lget .toolbar.tool-flag #l1 0x200
-                    ; adding a new windowed tool after a paged tool, move to the last tool of this page
-                    !while &equ &band &lget .toolbar.tool-flag &add #l1 1 0xa00 0xa00
-                        set-variable #l1 &add #l1 1
-                    !done
-                !endif
-                set-variable .toolbar.tool-name &lins .toolbar.tool-name &add #l1 1 &lget .toolbar.tool-names #l0
-                set-variable .toolbar.tool-buff &lins .toolbar.tool-buff &add #l1 1 &lget .toolbar.tool-buffs #l0
-                set-variable .toolbar.tool-file &lins .toolbar.tool-file &add #l1 1 &lget .toolbar.tool-files #l0
-                set-variable .toolbar.tool-size &lins .toolbar.tool-size &add #l1 1 &lget .toolbar.tool-size #l1
-                set-variable .toolbar.tool-flag &lins .toolbar.tool-flag &add #l1 1 #l3
-                set-variable .toolbar.tool-cmd  &lins .toolbar.tool-cmd  &add #l1 1 &lget .toolbar.tool-cmds #l0
-                set-variable .toolbar.flag &lset .toolbar.flag #l2 &add &lget .toolbar.flag #l2 1 
-                !if &seq &lget .toolbar.tool-cmd #l1 "toolbar-default"
-                    ; remove the dummy tool
-                    -7 toolbar-setup-cmd
-                !endif
-            !endif
-        !endif
+      !done
+      set-variable .toolbar.flag &lset .toolbar.flag @# 0
+      set-variable .toolbar.flag &lset .toolbar.flag 5 &sub &lget .toolbar.flag 5 1 
+    !else
+      ; add the toolbar
+      set-variable .toolbar.tool-name &lins .toolbar.tool-name -1 "Toolbar"
+      set-variable .toolbar.tool-buff &lins .toolbar.tool-buff -1 &spr "*toolbar-%s*" &lget "|left|top|right|bottom|" @#
+      set-variable .toolbar.tool-file &lins .toolbar.tool-file -1 "tooldef"
+      set-variable .toolbar.tool-size &lins .toolbar.tool-size -1 "100"
+      set-variable .toolbar.tool-flag &lins .toolbar.tool-flag -1 &bor 1 &lget .toolbar.conv @#
+      set-variable .toolbar.tool-cmd  &lins .toolbar.tool-cmd  -1 "toolbar-default"
+      set-variable .toolbar.flag &lset .toolbar.flag @# 1
+      set-variable .toolbar.flag &lset .toolbar.flag 5 &add &lget .toolbar.flag 5 1 
     !endif
-    !force read-registry "/history" $user-name "cbr"
-    !if &equ @# 5
-        set-registry "/history/toolbar/size" .toolbar.size
+  !elif &equ @# 5
+    ; store all the current state
+    set-variable #l0 0
+    !while &not &seq "" &set #l1 &lget .toolbar.tool-flag &inc #l0 1
+      !force 0 popup-window &lget .toolbar.tool-buff #l0
+      !if $status
+        set-variable #l2 &lfind .toolbar.conv &band #l1 0xf000
+        set-variable #l3 &cond &band 1 #l2 $window-depth $window-width
+        set-variable .toolbar.size &lset .toolbar.size #l2 &cond &band 1 #l2 $window-width $window-depth
+        ; must store the window size for all paged tools
+        set-variable #l4 #l0
+        !if &band #l1 0x800
+          set-variable #l1 &lget .toolbar.tool-flag &dec #l4 1
+          !jump -2
+        !endif
+        set-variable .toolbar.tool-size &lset .toolbar.tool-size #l4 #l3
+        !if &band &lget .toolbar.tool-flag &inc #l4 1 0x800
+          !jump -2
+        !endif
+      !endif
+    !done
+    ; don't need to reset the toolbar
+    set-variable #l9 0
+  !elif &equ @# 6
+    ; fix tool size
+    !if &set #l0 &lfind .toolbar.tool-buff $buffer-bname
+      set-variable #l1 &bxor 0x100 &lget .toolbar.tool-flag #l0
+      set-variable #l2 &lfind .toolbar.conv &band #l1 0xf000
+      set-variable $window-flags &cond &band #l1 0x100 0x11ff &sub 0x11fe &band #l2 1
+      !if &band #l1 0x800
+        set-variable #l1 &lget .toolbar.tool-flag &dec #l0 1
+        !jump -2
+      !endif
+      set-variable .toolbar.tool-flag &lset .toolbar.tool-flag #l0 &bxor 0x100 &lget .toolbar.tool-flag #l0
+      !if &band &lget .toolbar.tool-flag &inc #l0 1 0x800
+        !jump -2
+      !endif
     !endif
-    set-registry "/history/toolbar/tool-name" .toolbar.tool-name
-    set-registry "/history/toolbar/tool-buff" .toolbar.tool-buff
-    set-registry "/history/toolbar/tool-file" .toolbar.tool-file
-    set-registry "/history/toolbar/tool-size" .toolbar.tool-size
-    set-registry "/history/toolbar/tool-flag" .toolbar.tool-flag
-    set-registry "/history/toolbar/tool-cmd"  .toolbar.tool-cmd
-    save-registry "/history" ""
-    !if #l9
-        goto-position "\x82"
-        toolbar-close
-        toolbar-open
-        5 next-window
-        0x21 set-position "\x82"
+    ; don't need to reset the toolbar
+    set-variable #l9 0
+  !elif &equ &abs @# 7
+    ; remove the current tool
+    !if &set #l0 &lfind .toolbar.tool-buff $buffer-bname
+      set-variable #l1 &lget .toolbar.tool-flag #l0
+      set-variable #l2 &lfind .toolbar.conv &band #l1 0xf000
+      ; Note - when called by the add tool to remove the default tool the hidden flag has been set, just set the page
+      !if &band #l1 0x800
+        ; page tool make previous tool visible
+        set-variable #l3 &lget .toolbar.tool-flag &sub #l0 1
+        !if &not &or &band #l3 0x800 &band &lget .toolbar.tool-flag &add #l0 1 0x800
+          ; last user of this window
+          set-variable #l3 &bxor #l3 0x200
+        !endif
+        !if &not &equ @# -7
+          ; if not called from adding tool to remove the default tool, make this visible
+          set-variable #l3 &bxor #l3 0x400
+        !endif
+        set-variable .toolbar.tool-flag &lset .toolbar.tool-flag &sub #l0 1 #l3
+      !elif &band #l1 0x200
+        ; next is a page tool make it visible
+        set-variable #l3 &bxor &lget .toolbar.tool-flag &add #l0 1 0x800
+        !if &not &band &lget .toolbar.tool-flag &add #l0 2 0x800
+          ; last user of this window
+          set-variable #l3 &bxor #l3 0x200
+        !endif
+        !if &not &equ @# -7
+          ; if not called from adding tool to remove the default tool, make this visible
+          set-variable #l3 &bxor #l3 0x400
+        !endif
+        set-variable .toolbar.tool-flag &lset .toolbar.tool-flag &add #l0 1 #l3
+      !endif
+      set-variable .toolbar.tool-name &ldel .toolbar.tool-name #l0
+      set-variable .toolbar.tool-buff &ldel .toolbar.tool-buff #l0
+      set-variable .toolbar.tool-file &ldel .toolbar.tool-file #l0
+      set-variable .toolbar.tool-size &ldel .toolbar.tool-size #l0
+      set-variable .toolbar.tool-flag &ldel .toolbar.tool-flag #l0
+      set-variable .toolbar.tool-cmd  &ldel .toolbar.tool-cmd  #l0
+      set-variable .toolbar.flag &lset .toolbar.flag #l2 &sub &lget .toolbar.flag #l2 1 
     !endif
+    !if &equ @# -7
+      !return
+    !endif
+  !elif &or &equ @# 8 &equ @# 9
+    ; add a tool
+    !if &set #l0 &lfind .toolbar.tool-descs $result
+      !if &set #l1 &lfind .toolbar.tool-buff $buffer-bname
+        set-variable #l2 &lfind .toolbar.conv &band &lget .toolbar.tool-flag #l1 0xf000
+        set-variable #l3 &bor &lget .toolbar.tool-flags #l0 &band &lget .toolbar.tool-flag #l1 0xf000
+        !if &equ @# 9
+          ; adding as sub-page
+          set-variable #l3 &bor #l3 0xa00
+          set-variable .toolbar.tool-flag &lset .toolbar.tool-flag #l1 &bor &lget .toolbar.tool-flag #l1 0x600
+        !elif &band &lget .toolbar.tool-flag #l1 0x200
+          ; adding a new windowed tool after a paged tool, move to the last tool of this page
+          !while &equ &band &lget .toolbar.tool-flag &add #l1 1 0xa00 0xa00
+            set-variable #l1 &add #l1 1
+          !done
+        !endif
+        set-variable .toolbar.tool-name &lins .toolbar.tool-name &add #l1 1 &lget .toolbar.tool-names #l0
+        set-variable .toolbar.tool-buff &lins .toolbar.tool-buff &add #l1 1 &lget .toolbar.tool-buffs #l0
+        set-variable .toolbar.tool-file &lins .toolbar.tool-file &add #l1 1 &lget .toolbar.tool-files #l0
+        set-variable .toolbar.tool-size &lins .toolbar.tool-size &add #l1 1 &lget .toolbar.tool-size #l1
+        set-variable .toolbar.tool-flag &lins .toolbar.tool-flag &add #l1 1 #l3
+        set-variable .toolbar.tool-cmd  &lins .toolbar.tool-cmd  &add #l1 1 &lget .toolbar.tool-cmds #l0
+        set-variable .toolbar.flag &lset .toolbar.flag #l2 &add &lget .toolbar.flag #l2 1 
+        !if &seq &lget .toolbar.tool-cmd #l1 "toolbar-default"
+          ; remove the dummy tool
+          -7 toolbar-setup-cmd
+        !endif
+      !endif
+    !endif
+  !endif
+  !force read-registry "/history" $user-name "cbr"
+  !if &equ @# 5
+    set-registry "/history/toolbar/size" .toolbar.size
+  !endif
+  set-registry "/history/toolbar/tool-name" .toolbar.tool-name
+  set-registry "/history/toolbar/tool-buff" .toolbar.tool-buff
+  set-registry "/history/toolbar/tool-file" .toolbar.tool-file
+  set-registry "/history/toolbar/tool-size" .toolbar.tool-size
+  set-registry "/history/toolbar/tool-flag" .toolbar.tool-flag
+  set-registry "/history/toolbar/tool-cmd"  .toolbar.tool-cmd
+  save-registry "/history" ""
+  !if #l9
+    goto-position "\x82"
+    toolbar-close
+    toolbar-open
+    5 next-window
+    0x21 set-position "\x82"
+  !endif
 !emacro
 
 0 define-macro toolbar-setup-findc
-    toolbar-make-tool-visible &lget .toolbar.tool-buffs @#
+  toolbar-make-tool-visible &lget .toolbar.tool-buffs @#
 !emacro
-    
+
 0 define-macro toolbar-setup-find
-    -1 osd .osd.tmp
-    osd .osd.tmp 0 "b"
-    set-variable #l0 0
-    set-variable #l1 0
-    !while &not &seq &set #l2 &lget .toolbar.tool-descs &inc #l1 1 ""
-        !if &lfind .toolbar.tool-buff &lget .toolbar.tool-buffs #l1
-            osd .osd.tmp &inc #l0 1 "" #l2 #l1 toolbar-setup-findc
-        !endif
-    !done
-    !if &not #l0
-        osd .osd.tmp 1 "" "<No tools added>"
+  -1 osd .osd.tmp
+  osd .osd.tmp 0 "b"
+  set-variable #l0 0
+  set-variable #l1 0
+  !while &not &seq &set #l2 &lget .toolbar.tool-descs &inc #l1 1 ""
+    !if &lfind .toolbar.tool-buff &lget .toolbar.tool-buffs #l1
+      osd .osd.tmp &inc #l0 1 "" #l2 #l1 toolbar-setup-findc
     !endif
+  !done
+  !if &not #l0
+    osd .osd.tmp 1 "" "<No tools added>"
+  !endif
 !emacro
 
 0 define-macro toolbar-setup-add
-    set-variable #l9 &cond &sin "page" $result 9 8
-    -1 osd .osd.tmp
-    osd .osd.tmp 0 "b"
-    set-variable #l0 0
-    set-variable #l1 0
-    !while &not &seq &set #l2 &lget .toolbar.tool-descs &inc #l1 1 ""
-        !if &not &lfind .toolbar.tool-buff &lget .toolbar.tool-buffs #l1
-            osd .osd.tmp &inc #l0 1 "" #l2 #l9 toolbar-setup-cmd
-        !endif
-    !done
-    !if &not #l0
-        osd .osd.tmp 1 "" "<No more tools>"
+  set-variable #l9 &cond &sin "page" $result 9 8
+  -1 osd .osd.tmp
+  osd .osd.tmp 0 "b"
+  set-variable #l0 0
+  set-variable #l1 0
+  !while &not &seq &set #l2 &lget .toolbar.tool-descs &inc #l1 1 ""
+    !if &not &lfind .toolbar.tool-buff &lget .toolbar.tool-buffs #l1
+      osd .osd.tmp &inc #l0 1 "" #l2 #l9 toolbar-setup-cmd
     !endif
+  !done
+  !if &not #l0
+    osd .osd.tmp 1 "" "<No more tools>"
+  !endif
 !emacro
 
 0 define-macro toolbar-refresh-tool
-    !if &lfind .toolbar.tool-buff $buffer-bname
-        ; force an update by deleting buffer
-        !force 0 delete-buffer $buffer-bname
-        set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
-    !endif
+  !if &lfind .toolbar.tool-buff $buffer-bname
+    ; force an update by deleting buffer
+    !force 0 delete-buffer $buffer-bname
+    set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
+  !endif
 !emacro
 
 osd .osd.toolbar 0  "bB"
@@ -227,50 +227,50 @@ osd .osd.toolbar 40 "-"
 osd .osd.toolbar 50 ""  "\HStore Current State" 5 toolbar-setup-cmd
 
 0 define-macro toolbar-setup
-    osd .osd.toolbar 20 "" "Remove Tool"
-    osd .osd.toolbar 30 "" "Fix Tool Size"
-    !if &set #l1 &lfind .toolbar.tool-buff $buffer-bname
-        set-variable #l2 &lget .toolbar.tool-flag #l1
-        set-variable #l0 &lfind .toolbar.conv &band #l2 0xf000
-        !if &gre &lget .toolbar.flag #l0 1
-            osd .osd.toolbar 20 "" "\HDelete Tool" 7 toolbar-setup-cmd
-        !endif
-        !if &band #l2 0x100
-            osd .osd.toolbar 30 "" "Un\Hfix Tool Size" 6 toolbar-setup-cmd
-        !else
-            osd .osd.toolbar 30 "" "\HFix Tool Size" 6 toolbar-setup-cmd
-        !endif
+  osd .osd.toolbar 20 "" "Remove Tool"
+  osd .osd.toolbar 30 "" "Fix Tool Size"
+  !if &set #l1 &lfind .toolbar.tool-buff $buffer-bname
+    set-variable #l2 &lget .toolbar.tool-flag #l1
+    set-variable #l0 &lfind .toolbar.conv &band #l2 0xf000
+    !if &gre &lget .toolbar.flag #l0 1
+      osd .osd.toolbar 20 "" "\HDelete Tool" 7 toolbar-setup-cmd
     !endif
-    !if &not &lget .toolbar.flag 1
-        osd .osd.toolbar 60 "" "Add \HLeft Toolbar" 1 toolbar-setup-cmd
-    !elif &gre &lget .toolbar.flag 5 1
-        osd .osd.toolbar 60 "" "Delete \HLeft Toolbar" 1 toolbar-setup-cmd
+    !if &band #l2 0x100
+      osd .osd.toolbar 30 "" "Un\Hfix Tool Size" 6 toolbar-setup-cmd
     !else
-        osd .osd.toolbar 60 "D"
+      osd .osd.toolbar 30 "" "\HFix Tool Size" 6 toolbar-setup-cmd
     !endif
-    !if &not &lget .toolbar.flag 2
-        osd .osd.toolbar 70 ""   "Add \HTop Toolbar" 2 toolbar-setup-cmd
-    !elif &gre &lget .toolbar.flag 5 1
-        osd .osd.toolbar 70 ""   "Delete \HTop Toolbar" 2 toolbar-setup-cmd
-    !else
-        osd .osd.toolbar 70 "D"
-    !endif
-    !if &not &lget .toolbar.flag 3
-        osd .osd.toolbar 80 "" "Add R\Hight Toolbar" 3 toolbar-setup-cmd
-    !elif &gre &lget .toolbar.flag 5 1
-        osd .osd.toolbar 80 "" "Delete R\Hight Toolbar" 3 toolbar-setup-cmd
-    !else
-        osd .osd.toolbar 80 "D"
-    !endif
-    !if &not &lget .toolbar.flag 4
-        osd .osd.toolbar 90 "" "Add \HBottom Toolbar" 4 toolbar-setup-cmd
-    !elif &gre &lget .toolbar.flag 5 1
-        osd .osd.toolbar 90 "" "Delete \HBottom Toolbar" 4 toolbar-setup-cmd
-    !else
-        osd .osd.toolbar 90 "D"
-    !endif
-    !force !force .osd.toolbar osd
-    goto-position "\x82"
+  !endif
+  !if &not &lget .toolbar.flag 1
+    osd .osd.toolbar 60 "" "Add \HLeft Toolbar" 1 toolbar-setup-cmd
+  !elif &gre &lget .toolbar.flag 5 1
+    osd .osd.toolbar 60 "" "Delete \HLeft Toolbar" 1 toolbar-setup-cmd
+  !else
+    osd .osd.toolbar 60 "D"
+  !endif
+  !if &not &lget .toolbar.flag 2
+    osd .osd.toolbar 70 ""   "Add \HTop Toolbar" 2 toolbar-setup-cmd
+  !elif &gre &lget .toolbar.flag 5 1
+    osd .osd.toolbar 70 ""   "Delete \HTop Toolbar" 2 toolbar-setup-cmd
+  !else
+    osd .osd.toolbar 70 "D"
+  !endif
+  !if &not &lget .toolbar.flag 3
+    osd .osd.toolbar 80 "" "Add R\Hight Toolbar" 3 toolbar-setup-cmd
+  !elif &gre &lget .toolbar.flag 5 1
+    osd .osd.toolbar 80 "" "Delete R\Hight Toolbar" 3 toolbar-setup-cmd
+  !else
+    osd .osd.toolbar 80 "D"
+  !endif
+  !if &not &lget .toolbar.flag 4
+    osd .osd.toolbar 90 "" "Add \HBottom Toolbar" 4 toolbar-setup-cmd
+  !elif &gre &lget .toolbar.flag 5 1
+    osd .osd.toolbar 90 "" "Delete \HBottom Toolbar" 4 toolbar-setup-cmd
+  !else
+    osd .osd.toolbar 90 "D"
+  !endif
+  !force !force .osd.toolbar osd
+  goto-position "\x82"
 !emacro
 
 ; load the list of available toolbar tools

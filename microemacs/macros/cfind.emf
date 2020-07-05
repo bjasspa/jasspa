@@ -17,14 +17,14 @@
 ;        .about.arg3   - second argument for the command (if required etc)
 ;
 !if &not &exi .about.arg0
-    -1 ml-write "Error: Find command not set"
-    0 exit-emacs
+  -1 ml-write "Error: Find command not set"
+  0 exit-emacs
 !elif &seq .about.arg1 "ERROR"
-    -1 ml-write &spr "Error: Arguments for the %s command not given" .about.arg0
-    0 exit-emacs
+  -1 ml-write &spr "Error: Arguments for the %s command not given" .about.arg0
+  0 exit-emacs
 !elif &seq &find $user-name ".erf" "ERROR"
-    -1 ml-write &spr "Error: Failed to find ME registry for \"%s\"" $user-name
-    0 exit-emacs
+  -1 ml-write &spr "Error: Failed to find ME registry for \"%s\"" $user-name
+  0 exit-emacs
 !endif
 !force read-registry "/history" $user-name "c"
 set-variable $kept-versions &reg &spr "/history/%s/kept-vers" $platform "0"
@@ -36,22 +36,22 @@ set-variable $kept-versions &reg &spr "/history/%s/kept-vers" $platform "0"
 0 define-macro-file buffinit buffer-init buffer-init-fhook buffer-bind-create fhook-default
 0 define-macro-file utils frame-handle ascii-time var-str-sub str-to-regex filemask-to-regex copy-registry create-file-path
 0 define-macro exec-file
-    set-variable .first 1
-    !force @# execute-file @1
-    !if $status
-        !return
+  set-variable .first 1
+  !force @# execute-file @1
+  !if $status
+    !return
+  !endif
+  !if .first
+    !if &seq &set #l0 &find @1 ".emf" "ERROR"
+      ml-write &spr "[Failed to find Macro file %s.emf]" @1
+    !else
+      find-file #l0
+      !force execute-buffer $buffer-bname
+      ml-write &spr "[Error found in Macro file %s, line %d]" #l0 $window-line
     !endif
-    !if .first
-        !if &seq &set #l0 &find @1 ".emf" "ERROR"
-            ml-write &spr "[Failed to find Macro file %s.emf]" @1
-        !else
-            find-file #l0
-            !force execute-buffer $buffer-bname
-            ml-write &spr "[Error found in Macro file %s, line %d]" #l0 $window-line
-        !endif
-        set-variable .first 0
-    !endif
-    !abort
+    set-variable .first 0
+  !endif
+  !abort
 !emacro
 set-variable .osd.tmp 40
 set-variable .osd.next &cond &exi .osd.next .osd.next &add .osd.tmp 1

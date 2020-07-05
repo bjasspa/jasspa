@@ -30,18 +30,18 @@
 ; Standard Terminal Fonts - standard weight use  0 4
 ; Standard Terminal Fonts - heavy weight use     0 7
 !if &band $system 0x01
-    ; using a console interface
-    1 change-font .change-font.type
+  ; using a console interface
+  1 change-font .change-font.type
 !else
-    ; using our own window
-    set-variable #l0 &reg &spr "/history/%s/font" $platform ""
-    set-variable #l1 &reg &spr "/history/%s/font-weight" $platform "0"
-    set-variable #l2 &reg &spr "/history/%s/font-width" $platform "0"
-    set-variable #l3 &reg &spr "/history/%s/font-depth" $platform "0"
-    1 change-font #l0 .change-font.type #l1 #l2 #l3
+  ; using our own window
+  set-variable #l0 &reg &spr "/history/%s/font" $platform ""
+  set-variable #l1 &reg &spr "/history/%s/font-weight" $platform "0"
+  set-variable #l2 &reg &spr "/history/%s/font-width" $platform "0"
+  set-variable #l3 &reg &spr "/history/%s/font-depth" $platform "0"
+  1 change-font #l0 .change-font.type #l1 #l2 #l3
 !endif
 0 define-macro exec-me
-    ipipe-shell-command &spr "\"%s\" %s" $progname @1 @mna
+  ipipe-shell-command &spr "\"%s\" %s" $progname @1 @mna
 !emacro
 ; Add A-f4 as an exit binding
 global-bind-key save-buffers-exit-emacs "A-f4"
@@ -70,53 +70,53 @@ set-variable .ishell.noecho "1"
 ;--- CYGWIN
 ; Try to find cygwin automatically.
 !if &not &exi %cygwin-path
-    !if &seq "D" &stat "t" "c:/cygwin"
-        set-variable %cygwin-path "c:/cygwin"
-        !if &not &exi $INFOPATH
-            set-variable $INFOPATH &cat %cygwin-path "/usr/share/info"
-        !endif
+  !if &seq "D" &stat "t" "c:/cygwin"
+    set-variable %cygwin-path "c:/cygwin"
+    !if &not &exi $INFOPATH
+      set-variable $INFOPATH &cat %cygwin-path "/usr/share/info"
     !endif
+  !endif
 !endif
 ; Define the cygwin dummy macro. This reports an error if the cygwin environment
 ; has not been defined in the user start-up file.
 define-macro cygwin
-    !if &seq %cygwin-path "ERROR"
-        ; Bitch if the environment is not defined.
-        5000 ml-write "[Error: %cygwin-path not set - see hkcygwin.emf]"
-        !abort
-        ; See if bash exists.
-    !elif &seq "R" &stat "t" &cat %cygwin-path "/bin/bash.exe"
-        ; Load the macro file and execute the cygwin session.
-        !force exec-file "hkcygwin"
-        !if $status
-            cygwin
-        !endif
-    !else
-        5000 ml-write &spr "[Error: Cannot find bash program. %s]" &cat %cygwin-path "/bin/bash.exe"
-        !abort
+  !if &seq %cygwin-path "ERROR"
+    ; Bitch if the environment is not defined.
+    5000 ml-write "[Error: %cygwin-path not set - see hkcygwin.emf]"
+    !abort
+    ; See if bash exists.
+  !elif &seq "R" &stat "t" &cat %cygwin-path "/bin/bash.exe"
+    ; Load the macro file and execute the cygwin session.
+    !force exec-file "hkcygwin"
+    !if $status
+      cygwin
     !endif
+  !else
+    5000 ml-write &spr "[Error: Cannot find bash program. %s]" &cat %cygwin-path "/bin/bash.exe"
+    !abort
+  !endif
 !emacro
 ; Define a dummy man macro. This reports an error if the cygwin environment
 ; has not been defined in the user start-up file.
 define-macro man
-    !if &not &exi %man-com
-        !if &seq %cygwin-path "ERROR"
-            ; Bitch if the environment is not defined.
-            5000 ml-write "[Error: %cygwin-path not set - see hkcygwin.emf]"
-            !abort
-            ; See if the max.exe file exists.
-        !elif &seq "R" &stat "t" &cat %cygwin-path "/bin/man.exe"
-            ; Load the macro file and execute the man file
-            set-variable %man-com &cat %cygwin-path "/bin/man.exe"
-        !else
-            5000 ml-write "[Error: Cannot find man program.]"
-            !abort
-        !endif
+  !if &not &exi %man-com
+    !if &seq %cygwin-path "ERROR"
+      ; Bitch if the environment is not defined.
+      5000 ml-write "[Error: %cygwin-path not set - see hkcygwin.emf]"
+      !abort
+      ; See if the max.exe file exists.
+    !elif &seq "R" &stat "t" &cat %cygwin-path "/bin/man.exe"
+      ; Load the macro file and execute the man file
+      set-variable %man-com &cat %cygwin-path "/bin/man.exe"
+    !else
+      5000 ml-write "[Error: Cannot find man program.]"
+      !abort
     !endif
-    !force exec-file "hkman"
-    !if $status
-        man
-    !endif
+  !endif
+  !force exec-file "hkman"
+  !if $status
+    man
+  !endif
 !emacro
 ; Bind the windows Menu key to the context menu.
 global-bind-key context-menu "menu"

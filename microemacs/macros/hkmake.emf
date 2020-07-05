@@ -7,9 +7,9 @@
 ; Authors:     Jon Green
 ;
 define-macro fhook-make
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "make" "makefile"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "make" "makefile"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -19,38 +19,38 @@ set-variable .fhook-make.setup-mask "aeghikmnoptux"
 set-variable .fhook-make.comment "|#||#|# | #|r|"
 
 !if &and &sin "h" .fhook-make.setup &band .hilight.flags 0x02 
-    ; Make file highlighting
-    !if &not &exist .hilight.make
-        set-variable .hilight.make &pinc .hilight.next 1
-    !endif
-    0 hilight  .hilight.make 0                 $global-scheme
-    hilight .hilight.make 0  ":"               .scheme.variable
-    hilight .hilight.make 4  ":\\{\"" "\"" "\\" .scheme.string
-    hilight .hilight.make 4  "[^\\]\\{\"" "\"" "\\" .scheme.string
-    hilight .hilight.make 0  "/\\*\\."         $global-scheme
-    hilight .hilight.make 2  "#"               .scheme.comment
-    hilight .hilight.make 4  "\\$(" ")" ""     .scheme.variable
-    hilight .hilight.make 1  "\\$O"            .scheme.variable
-    hilight .hilight.make 1  "\\$T"            .scheme.variable
-    hilight .hilight.make 0  "\\.SUFFIXES"     .scheme.keyword
-    hilight .hilight.make 0  "\\.IGNORE"       .scheme.keyword
-    hilight .hilight.make 0  "\\.DEFAULT"      .scheme.keyword
-    hilight .hilight.make 0  "\\.PRECIOUS"     .scheme.keyword
-    hilight .hilight.make 1  "\\$@"            .scheme.keyword
-    hilight .hilight.make 1  "\\$\\$@"         .scheme.keyword
-    hilight .hilight.make 1  "\\$\\*"          .scheme.keyword
-    hilight .hilight.make 1  "\\$^"            .scheme.keyword
-    hilight .hilight.make 1  "\\$<"            .scheme.keyword
-    ; Highlight the TODO markers in comments.
-    hilight .hilight.make 18 "#\\s+[Tt][Oo][Dd][Oo]" .scheme.error
-    ; nmake IFs
-    hilight .hilight.make 0x23 "!IF"           .scheme.prepro
-    hilight .hilight.make 0x23 "!ELSE"         .scheme.prepro
-    hilight .hilight.make 0x23 "!ENDIF"        .scheme.prepro
-    ; gmake IFs
-    hilight .hilight.make 0x23 "ifeq"          .scheme.prepro
-    hilight .hilight.make 0x23 "else"          .scheme.prepro
-    hilight .hilight.make 0x23 "endif"         .scheme.prepro
+  ; Make file highlighting
+  !if &not &exist .hilight.make
+    set-variable .hilight.make &pinc .hilight.next 1
+  !endif
+  0 hilight  .hilight.make 0                 $global-scheme
+  hilight .hilight.make 0  ":"               .scheme.variable
+  hilight .hilight.make 4  ":\\{\"" "\"" "\\" .scheme.string
+  hilight .hilight.make 4  "[^\\]\\{\"" "\"" "\\" .scheme.string
+  hilight .hilight.make 0  "/\\*\\."         $global-scheme
+  hilight .hilight.make 2  "#"               .scheme.comment
+  hilight .hilight.make 4  "\\$(" ")" ""     .scheme.variable
+  hilight .hilight.make 1  "\\$O"            .scheme.variable
+  hilight .hilight.make 1  "\\$T"            .scheme.variable
+  hilight .hilight.make 0  "\\.SUFFIXES"     .scheme.keyword
+  hilight .hilight.make 0  "\\.IGNORE"       .scheme.keyword
+  hilight .hilight.make 0  "\\.DEFAULT"      .scheme.keyword
+  hilight .hilight.make 0  "\\.PRECIOUS"     .scheme.keyword
+  hilight .hilight.make 1  "\\$@"            .scheme.keyword
+  hilight .hilight.make 1  "\\$\\$@"         .scheme.keyword
+  hilight .hilight.make 1  "\\$\\*"          .scheme.keyword
+  hilight .hilight.make 1  "\\$^"            .scheme.keyword
+  hilight .hilight.make 1  "\\$<"            .scheme.keyword
+  ; Highlight the TODO markers in comments.
+  hilight .hilight.make 18 "#\\s+[Tt][Oo][Dd][Oo]" .scheme.error
+  ; nmake IFs
+  hilight .hilight.make 0x23 "!IF"           .scheme.prepro
+  hilight .hilight.make 0x23 "!ELSE"         .scheme.prepro
+  hilight .hilight.make 0x23 "!ENDIF"        .scheme.prepro
+  ; gmake IFs
+  hilight .hilight.make 0x23 "ifeq"          .scheme.prepro
+  hilight .hilight.make 0x23 "else"          .scheme.prepro
+  hilight .hilight.make 0x23 "endif"         .scheme.prepro
 !endif
 
 buffer-init-fhook "make"

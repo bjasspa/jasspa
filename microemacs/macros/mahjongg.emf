@@ -20,14 +20,14 @@
 ; #g9
 ;       The source material.
 0 define-macro mjg-fill
-    set-variable #g0 @1  ; Start index
-    set-variable #g1 @2  ; number of tiles
-    !repeat
-        set-variable #g8 &sprint "%s%s%s" &lef #g8 #g0   &lef #g9 1   &rig #g8 &add #g0 1
-        set-variable #g9 &rig #g9 1
-        set-variable #g0 &add #g0 5
-        set-variable #g1 &sub #g1 1
-    !until &equ #g1 0
+  set-variable #g0 @1  ; Start index
+  set-variable #g1 @2  ; number of tiles
+  !repeat
+    set-variable #g8 &sprint "%s%s%s" &lef #g8 #g0   &lef #g9 1   &rig #g8 &add #g0 1
+    set-variable #g9 &rig #g9 1
+    set-variable #g0 &add #g0 5
+    set-variable #g1 &sub #g1 1
+  !until &equ #g1 0
 !emacro
 ;
 ; mjg-adjacent
@@ -61,120 +61,120 @@
 ;   #g2 - The adjacent grid
 ;
 0 define-macro mjg-adjacent
-    ; Get the number of the tile and convert into
-    ; a tile position.
-    ; A quick check to make sure we are in range.
-    !if &or &les @# 0 &gre @# 134
-        !return             ; Out of range.
+  ; Get the number of the tile and convert into
+  ; a tile position.
+  ; A quick check to make sure we are in range.
+  !if &or &les @# 0 &gre @# 134
+    !return             ; Out of range.
+  !endif
+  
+  ; Compute the special cases
+  !if &gre @# 119
+    ;        set-variable $debug 1
+    set-variable #g0 @#
+    !if &equ #g0 120
+      !if &seq &mid :mjg-tiles 600 1 "\xfe"
+        set-variable #g2 "000000000"
+      !else
+        set-variable #g2 "100101001"
+      !endif
+    !elif &equ #g0 133
+      !if &seq &mid :mjg-tiles 665 1 "\xfe"
+        set-variable #g2 "000000000"
+      !elif &seq &mid :mjg-tiles 670 1 "\xfe"
+        set-variable #g2 "110010100"
+      !else
+        set-variable #g2 "110011100"
+      !endif
+    !elif &equ #g0 134
+      !if &seq &mid :mjg-tiles 670 1 "\xfe"
+        set-variable #g2 "000000000"
+      !else
+        set-variable #g2 "110010100"
+      !endif
+    !elif &equ #g0 127
+      !if &seq &mid :mjg-tiles 639 1 "\xfe"
+        set-variable #g2 "000000000"
+      !else
+        set-variable #g2 "500000000"
+      !endif
     !endif
-
-    ; Compute the special cases
-    !if &gre @# 119
-;        set-variable $debug 1
-        set-variable #g0 @#
-        !if &equ #g0 120
-            !if &seq &mid :mjg-tiles 600 1 "\xfe"
-                set-variable #g2 "000000000"
-            !else
-                set-variable #g2 "100101001"
-            !endif
-        !elif &equ #g0 133
-            !if &seq &mid :mjg-tiles 665 1 "\xfe"
-                set-variable #g2 "000000000"
-            !elif &seq &mid :mjg-tiles 670 1 "\xfe"
-                set-variable #g2 "110010100"
-            !else
-                set-variable #g2 "110011100"
-            !endif
-        !elif &equ #g0 134
-            !if &seq &mid :mjg-tiles 670 1 "\xfe"
-                set-variable #g2 "000000000"
-            !else
-                set-variable #g2 "110010100"
-            !endif
-        !elif &equ #g0 127
-            !if &seq &mid :mjg-tiles 639 1 "\xfe"
-                set-variable #g2 "000000000"
-            !else
-                set-variable #g2 "500000000"
-            !endif
-        !endif
-        !return
-    !endif
-
-    set-variable #g0 &mul @# 5
-    ; Workout if the tile is vacant map 0..5.
-    set-variable #g1 &sin "\xfe" &mid :mjg-tiles #g0 5
-    set-variable #g1 &cond &equ #g1 0 "5" &sub #g1 1
-    set-variable #g2 #g1
-
-    ; Work out the top line.
-    !if &les #g0 75
-        set-variable #g2 &cat #g2 "000"
-    !else
-        !if &equ &mod #g0 75 0
-            set-variable #g2 &cat #g2 "0"
-        !else
-            ; Position 1
-            set-variable #g1 &sin "\xfe" &mid :mjg-tiles &sub #g0 80 5
-            set-variable #g1 &cond &equ #g1 0 "5" &sub #g1 1
-            set-variable #g2 &cat #g2 #g1
-        !endif
-        ; Position 2
-        set-variable #g1 &sin "\xfe" &mid :mjg-tiles &sub #g0 75 5
-        set-variable #g1 &cond &equ #g1 0 "5" &sub #g1 1
-        set-variable #g2 &cat #g2 #g1
-        ; Position 3
-        !if &equ &mod #g0 75 70
-            set-variable #g2 &cat #g2 "0"
-        !else
-            set-variable #g1 &sin "\xfe" &mid :mjg-tiles &sub #g0 70 5
-            set-variable #g1 &cond &equ #g1 0 "5" &sub #g1 1
-            set-variable #g2 &cat #g2 #g1
-        !endif
-    !endif
-    ; Work out the middle line.
-    ; Position 4.
+    !return
+  !endif
+  
+  set-variable #g0 &mul @# 5
+  ; Workout if the tile is vacant map 0..5.
+  set-variable #g1 &sin "\xfe" &mid :mjg-tiles #g0 5
+  set-variable #g1 &cond &equ #g1 0 "5" &sub #g1 1
+  set-variable #g2 #g1
+  
+  ; Work out the top line.
+  !if &les #g0 75
+    set-variable #g2 &cat #g2 "000"
+  !else
     !if &equ &mod #g0 75 0
-        set-variable #g2 &cat #g2 "0"
+      set-variable #g2 &cat #g2 "0"
     !else
-        set-variable #g1 &sin "\xfe" &mid :mjg-tiles &sub #g0 5 5
-        set-variable #g1 &cond &equ #g1 0 "5" &sub #g1 1
-        set-variable #g2 &cat #g2 #g1
+      ; Position 1
+      set-variable #g1 &sin "\xfe" &mid :mjg-tiles &sub #g0 80 5
+      set-variable #g1 &cond &equ #g1 0 "5" &sub #g1 1
+      set-variable #g2 &cat #g2 #g1
     !endif
-    ; Position 5.
+    ; Position 2
+    set-variable #g1 &sin "\xfe" &mid :mjg-tiles &sub #g0 75 5
+    set-variable #g1 &cond &equ #g1 0 "5" &sub #g1 1
+    set-variable #g2 &cat #g2 #g1
+    ; Position 3
     !if &equ &mod #g0 75 70
-        set-variable #g2 &cat #g2 "0"
+      set-variable #g2 &cat #g2 "0"
     !else
-        set-variable #g1 &sin "\xfe" &mid :mjg-tiles &add #g0 5 5
-        set-variable #g1 &cond &equ #g1 0 "5" &sub #g1 1
-        set-variable #g2 &cat #g2 #g1
+      set-variable #g1 &sin "\xfe" &mid :mjg-tiles &sub #g0 70 5
+      set-variable #g1 &cond &equ #g1 0 "5" &sub #g1 1
+      set-variable #g2 &cat #g2 #g1
     !endif
-    ; Position 6
-    !if &gre #g0 524
-        set-variable #g2 &cat #g2 "000"
+  !endif
+  ; Work out the middle line.
+  ; Position 4.
+  !if &equ &mod #g0 75 0
+    set-variable #g2 &cat #g2 "0"
+  !else
+    set-variable #g1 &sin "\xfe" &mid :mjg-tiles &sub #g0 5 5
+    set-variable #g1 &cond &equ #g1 0 "5" &sub #g1 1
+    set-variable #g2 &cat #g2 #g1
+  !endif
+  ; Position 5.
+  !if &equ &mod #g0 75 70
+    set-variable #g2 &cat #g2 "0"
+  !else
+    set-variable #g1 &sin "\xfe" &mid :mjg-tiles &add #g0 5 5
+    set-variable #g1 &cond &equ #g1 0 "5" &sub #g1 1
+    set-variable #g2 &cat #g2 #g1
+  !endif
+  ; Position 6
+  !if &gre #g0 524
+    set-variable #g2 &cat #g2 "000"
+  !else
+    !if &equ &mod #g0 75 0
+      set-variable #g2 &cat #g2 "0"
     !else
-        !if &equ &mod #g0 75 0
-            set-variable #g2 &cat #g2 "0"
-        !else
-            ; Position 7
-            set-variable #g1 &sin "\xfe" &mid :mjg-tiles &add #g0 70 5
-            set-variable #g1 &cond &equ #g1 0 "5" &sub #g1 1
-            set-variable #g2 &cat #g2 #g1
-        !endif
-        ; Position 8
-        set-variable #g1 &sin "\xfe" &mid :mjg-tiles &add #g0 75 5
-        set-variable #g1 &cond &equ #g1 0 "5" &sub #g1 1
-        set-variable #g2 &cat #g2 #g1
-        ; Position 9
-        !if &equ &mod #g0 75 70
-            set-variable #g2 &cat #g2 "0"
-        !else
-            set-variable #g1 &sin "\xfe" &mid :mjg-tiles &add #g0 80 5
-            set-variable #g1 &cond &equ #g1 0 "5" &sub #g1 1
-            set-variable #g2 &cat #g2 #g1
-        !endif
+      ; Position 7
+      set-variable #g1 &sin "\xfe" &mid :mjg-tiles &add #g0 70 5
+      set-variable #g1 &cond &equ #g1 0 "5" &sub #g1 1
+      set-variable #g2 &cat #g2 #g1
     !endif
+    ; Position 8
+    set-variable #g1 &sin "\xfe" &mid :mjg-tiles &add #g0 75 5
+    set-variable #g1 &cond &equ #g1 0 "5" &sub #g1 1
+    set-variable #g2 &cat #g2 #g1
+    ; Position 9
+    !if &equ &mod #g0 75 70
+      set-variable #g2 &cat #g2 "0"
+    !else
+      set-variable #g1 &sin "\xfe" &mid :mjg-tiles &add #g0 80 5
+      set-variable #g1 &cond &equ #g1 0 "5" &sub #g1 1
+      set-variable #g2 &cat #g2 #g1
+    !endif
+  !endif
 !emacro
 ;
 ; mjg-draw-tile
@@ -197,309 +197,309 @@
 ;   #g9 - Column
 ;
 0 define-macro mjg-draw-tile
-    ; Get the number of the tile and convert into
-    ; a tile position.
-    ; A quick check to make sure we are in range.
-    !if &or &les @# 0 &gre @# 134
-        !return             ; Out of range.
+  ; Get the number of the tile and convert into
+  ; a tile position.
+  ; A quick check to make sure we are in range.
+  !if &or &les @# 0 &gre @# 134
+    !return             ; Out of range.
+  !endif
+  
+  ; Get the adjacenty information
+  @# mjg-adjacent     ; Get the adjacency list.
+  
+  ; Determine if the centre pixel is zero. If so then allocate
+  ; a blank set of box characters.
+  set-variable #g3 &lef #g2 1           ; Centre pixel
+  set-variable #g7 &cond &equ #g3 0 "           " $box-chars
+  
+  ; Get the tile index.
+  set-variable #g0 &mul @# 5
+  
+  ; Set up for the color
+  !if &gre #g3 2                       ; last 2
+    set-variable :mjg-cps .scheme.mjg2
+    set-variable :mjg-cpf &add 3 &mul &sub #g3 3 32
+  !else
+    set-variable :mjg-cps .scheme.mjg1
+    set-variable :mjg-cpf &add 35 &mul #g3 32
+  !endif
+  
+  ; Get the row and column. #g8 = row; #g9 = column
+  set-variable #g8 &mul 5 &div #g0 75   ; The row.
+  set-variable #g9 &add 1 &mod #g0 75   ; The column
+  ; Add the origin
+  set-variable #g8 &add #g8 :mjg-y0     ; Add row base
+  set-variable #g9 &add #g9 :mjg-x0     ; Add colunm base
+  
+  !if &gre #g0 599                     ; Check out the special tiles.
+    set-variable #g8 &add 18 :mjg-y0 ; The row
+    !if &equ @# 120                 ; West single
+      :mjg-cpf screen-poke      #g8   &sub #g9 1 :mjg-cps &sprint "%s%4s" &mid #g7 1 1 &rig #g7 10
+      :mjg-cpf screen-poke &add #g8 1 &sub #g9 1 :mjg-cps &sprint "%s    "  &lef #g7 1
+      :mjg-cpf screen-poke &add #g8 2 &sub #g9 1 :mjg-cps &sprint "%s    "  &lef #g7 1
+      :mjg-cpf screen-poke &add #g8 3 &sub #g9 1 :mjg-cps &sprint "%s    "  &lef #g7 1
+      :mjg-cpf screen-poke &add #g8 4 &sub #g9 1 :mjg-cps &sprint "%s    "  &lef #g7 1
+      :mjg-cpf screen-poke &add #g8 5 &sub #g9 1 :mjg-cps &sprint "%s%4s" &mid #g7 3 1 &rig #g7 10
+      !if &gre #g3 0
+        :mjg-cpf screen-poke      #g8   &add #g9 4 :mjg-cps &mid #g7 8 1
+        :mjg-cpf screen-poke &add #g8 5 &add #g9 4 :mjg-cps &mid #g7 8 1
+      !endif
+      !goto fill-centre
+    !elif &and &equ @# 127 &equ #g3 5 ; Centre
+      set-variable #g9 &sub #g9 2    ; Offset to centre
+      !goto fill-normal
+    !elif &equ @# 133                ; East single
+      :mjg-cpf screen-poke      #g8   #g9 :mjg-cps &sprint "%4s%s" &rig #g7 10 &mid #g7 2 1
+      :mjg-cpf screen-poke &add #g8 1 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
+      :mjg-cpf screen-poke &add #g8 2 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
+      :mjg-cpf screen-poke &add #g8 3 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
+      :mjg-cpf screen-poke &add #g8 4 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
+      :mjg-cpf screen-poke &add #g8 5 #g9 :mjg-cps &sprint "%4s%s" &rig #g7 10 &mid #g7 4 1
+      !if &gre #g3 0
+        :mjg-cpf screen-poke      #g8   &sub #g9 1 :mjg-cps &mid #g7 6 1
+        :mjg-cpf screen-poke &add #g8 5 &sub #g9 1 :mjg-cps &mid #g7 6 1
+      !endif
+      !goto fill-centre
+    !elif &equ @# 134                ; East double
+      :mjg-cpf screen-poke      #g8   #g9 :mjg-cps &sprint "%4s%s" &rig #g7 10 &mid #g7 2 1
+      :mjg-cpf screen-poke &add #g8 1 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
+      :mjg-cpf screen-poke &add #g8 2 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
+      :mjg-cpf screen-poke &add #g8 3 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
+      :mjg-cpf screen-poke &add #g8 4 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
+      :mjg-cpf screen-poke &add #g8 5 #g9 :mjg-cps &sprint "%4s%s" &rig #g7 10 &mid #g7 4 1
+      !if &gre #g3 0
+        :mjg-cpf screen-poke      #g8   &sub #g9 1 :mjg-cps &mid #g7 5 1
+        :mjg-cpf screen-poke &add #g8 5 &sub #g9 1 :mjg-cps &mid #g7 9 1
+      !endif
+      !goto fill-centre
     !endif
-
-    ; Get the adjacenty information
-    @# mjg-adjacent     ; Get the adjacency list.
-
-    ; Determine if the centre pixel is zero. If so then allocate
-    ; a blank set of box characters.
-    set-variable #g3 &lef #g2 1           ; Centre pixel
-    set-variable #g7 &cond &equ #g3 0 "           " $box-chars
-
-    ; Get the tile index.
-    set-variable #g0 &mul @# 5
-
-    ; Set up for the color
-    !if &gre #g3 2                       ; last 2
-        set-variable :mjg-cps .scheme.mjg2
-        set-variable :mjg-cpf &add 3 &mul &sub #g3 3 32
-    !else
-        set-variable :mjg-cps .scheme.mjg1
-        set-variable :mjg-cpf &add 35 &mul #g3 32
-    !endif
-
-    ; Get the row and column. #g8 = row; #g9 = column
-    set-variable #g8 &mul 5 &div #g0 75   ; The row.
-    set-variable #g9 &add 1 &mod #g0 75   ; The column
-    ; Add the origin
-    set-variable #g8 &add #g8 :mjg-y0     ; Add row base
-    set-variable #g9 &add #g9 :mjg-x0     ; Add colunm base
-
-    !if &gre #g0 599                     ; Check out the special tiles.
-        set-variable #g8 &add 18 :mjg-y0 ; The row
-        !if &equ @# 120                 ; West single
-            :mjg-cpf screen-poke      #g8   &sub #g9 1 :mjg-cps &sprint "%s%4s" &mid #g7 1 1 &rig #g7 10
-            :mjg-cpf screen-poke &add #g8 1 &sub #g9 1 :mjg-cps &sprint "%s    "  &lef #g7 1
-            :mjg-cpf screen-poke &add #g8 2 &sub #g9 1 :mjg-cps &sprint "%s    "  &lef #g7 1
-            :mjg-cpf screen-poke &add #g8 3 &sub #g9 1 :mjg-cps &sprint "%s    "  &lef #g7 1
-            :mjg-cpf screen-poke &add #g8 4 &sub #g9 1 :mjg-cps &sprint "%s    "  &lef #g7 1
-            :mjg-cpf screen-poke &add #g8 5 &sub #g9 1 :mjg-cps &sprint "%s%4s" &mid #g7 3 1 &rig #g7 10
-            !if &gre #g3 0
-                :mjg-cpf screen-poke      #g8   &add #g9 4 :mjg-cps &mid #g7 8 1
-                :mjg-cpf screen-poke &add #g8 5 &add #g9 4 :mjg-cps &mid #g7 8 1
-            !endif
-            !goto fill-centre
-        !elif &and &equ @# 127 &equ #g3 5 ; Centre
-            set-variable #g9 &sub #g9 2    ; Offset to centre
-            !goto fill-normal
-        !elif &equ @# 133                ; East single
-            :mjg-cpf screen-poke      #g8   #g9 :mjg-cps &sprint "%4s%s" &rig #g7 10 &mid #g7 2 1
-            :mjg-cpf screen-poke &add #g8 1 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
-            :mjg-cpf screen-poke &add #g8 2 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
-            :mjg-cpf screen-poke &add #g8 3 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
-            :mjg-cpf screen-poke &add #g8 4 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
-            :mjg-cpf screen-poke &add #g8 5 #g9 :mjg-cps &sprint "%4s%s" &rig #g7 10 &mid #g7 4 1
-            !if &gre #g3 0
-                :mjg-cpf screen-poke      #g8   &sub #g9 1 :mjg-cps &mid #g7 6 1
-                :mjg-cpf screen-poke &add #g8 5 &sub #g9 1 :mjg-cps &mid #g7 6 1
-            !endif
-            !goto fill-centre
-        !elif &equ @# 134                ; East double
-            :mjg-cpf screen-poke      #g8   #g9 :mjg-cps &sprint "%4s%s" &rig #g7 10 &mid #g7 2 1
-            :mjg-cpf screen-poke &add #g8 1 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
-            :mjg-cpf screen-poke &add #g8 2 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
-            :mjg-cpf screen-poke &add #g8 3 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
-            :mjg-cpf screen-poke &add #g8 4 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
-            :mjg-cpf screen-poke &add #g8 5 #g9 :mjg-cps &sprint "%4s%s" &rig #g7 10 &mid #g7 4 1
-            !if &gre #g3 0
-                :mjg-cpf screen-poke      #g8   &sub #g9 1 :mjg-cps &mid #g7 5 1
-                :mjg-cpf screen-poke &add #g8 5 &sub #g9 1 :mjg-cps &mid #g7 9 1
-            !endif
-            !goto fill-centre
-        !endif
-        !return
-    !endif
+    !return
+  !endif
 *fill-normal
-    ; Set up for the left side.
-    set-variable #g4 &mid #g2 4 1         ; W tile
-    set-variable #g5 &mid #g2 1 1         ; NW tile
-    set-variable #g6 &mid #g2 2 1         ; N tile
-
-    ; Compute the West side wall and put the pixel edge.
-    !if &not &les #g3 #g4                 ; if (C >= W) render edge.
-        :mjg-cpf screen-poke &add #g8 1 &sub #g9 1 :mjg-cps &lef #g7 1
-        :mjg-cpf screen-poke &add #g8 2 &sub #g9 1 :mjg-cps &lef #g7 1
-        :mjg-cpf screen-poke &add #g8 3 &sub #g9 1 :mjg-cps &lef #g7 1
-        :mjg-cpf screen-poke &add #g8 4 &sub #g9 1 :mjg-cps &lef #g7 1
-    !endif
-
-    ; Compute the North-West corner and put the pixel edge.
-    !if &or &or &les #g3 #g4 &les #g3 #g5 &les #g3 #g6
-        set-variable #g1 ""              ; Failed the corner.
-    !elif &and &and &gre #g3 #g4 &gre #g3 #g5 &gre #g3 #g6
-        set-variable #g1 &mid #g7 1 1     ; Use top left corner.
-    !elif &and &and &equ #g3 #g4 &gre #g3 #g5 &gre #g3 #g6
-        set-variable #g1 &mid #g7 5 1     ; Use a downward 'T'
-    !elif &and &and &gre #g3 #g4 &gre #g3 #g5 &equ #g3 #g6
-        set-variable #g1 &mid #g7 6 1     ; Use a rightward 'T'
-    !else
-        set-variable #g1 &mid #g7 7 1     ; Use a cross.
-    !endif
-    !if &not &seq #g1 ""
-        :mjg-cpf screen-poke #g8 &sub #g9 1 :mjg-cps #g1
-    !endif
-
-    ; Compute the North side wall and put the pixel edge.
-    !if &not &les #g3 #g6                 ; if (C >= N) render edge.
-        :mjg-cpf screen-poke #g8 #g9 :mjg-cps &sprint "%4s" &rig #g7 10
-    !endif
-
-    ; Set up for the upper right side.
-    set-variable #g4 &mid #g2 5 1         ; E tile.
-    set-variable #g5 &mid #g2 3 1         ; NE tile.
-
-    ; Compute the North-East corner and put the pixel edge.
-    !if &or &or &les #g3 #g4 &les #g3 #g5 &les #g3 #g6
-        set-variable #g1 ""              ; Failed the corner.
-    !elif &and &and &gre #g3 #g4 &gre #g3 #g5 &gre #g3 #g6
-        set-variable #g1 &mid #g7 2 1     ; Use top right corner.
-    !elif &and &and &equ #g3 #g4 &gre #g3 #g5 &gre #g3 #g6
-        set-variable #g1 &mid #g7 5 1     ; Use a downward 'T'
-    !elif &and &and &gre #g3 #g4 &gre #g3 #g5 &equ #g3 #g6
-        set-variable #g1 &mid #g7 8 1     ; Use a leftward 'T'
-    !else
-        set-variable #g1 &mid #g7 7 1     ; Use a cross.
-    !endif
-    !if &not &seq #g1 ""
-        :mjg-cpf screen-poke #g8 &add #g9 4 :mjg-cps #g1
-    !endif
-
-    ; Compute the East side wall and put the pixel edge.
-    !if &not &les #g3 #g4                 ; if (C >= E) render edge.
-        :mjg-cpf screen-poke &add #g8 1 &add #g9 4 :mjg-cps &lef #g7 1
-        :mjg-cpf screen-poke &add #g8 2 &add #g9 4 :mjg-cps &lef #g7 1
-        :mjg-cpf screen-poke &add #g8 3 &add #g9 4 :mjg-cps &lef #g7 1
-        :mjg-cpf screen-poke &add #g8 4 &add #g9 4 :mjg-cps &lef #g7 1
-    !endif
-
-    ; Set up for the lower right side
-    set-variable #g5 &mid #g2 8 1         ; SE tile
-    set-variable #g6 &mid #g2 7 1         ; S tile
-
-    ; Compute the South-East corner and put the pixel edge.
-    !if &or &or &les #g3 #g4 &les #g3 #g5 &les #g3 #g6
-        set-variable #g1 ""              ; Failed the corner.
-    !elif &and &and &gre #g3 #g4 &gre #g3 #g5 &gre #g3 #g6
-        set-variable #g1 &mid #g7 4 1     ; Use bottom right corner.
-    !elif &and &and &equ #g3 #g4 &gre #g3 #g5 &gre #g3 #g6
-        set-variable #g1 &mid #g7 9 1     ; Use a upward 'T'
-    !elif &and &and &gre #g3 #g4 &gre #g3 #g5 &equ #g3 #g6
-        set-variable #g1 &mid #g7 8 1     ; Use a leftward 'T'
-    !else
-        set-variable #g1 &mid #g7 7 1     ; Use a cross.
-    !endif
-    !if &not &seq #g1 ""
-        :mjg-cpf screen-poke &add #g8 5 &add #g9 4 :mjg-cps #g1
-    !endif
-
-    ; Compute the South side wall and put the pixel edge.
-    !if &not &les #g3 #g6                 ; if (C >= S) render edge.
-        :mjg-cpf screen-poke &add #g8 5 #g9 :mjg-cps &sprint "%4s" &rig #g7 10
-    !endif
-
-    ; Set up for the lower left side
-    set-variable #g4 &mid #g2 4 1         ; W tile
-    set-variable #g5 &mid #g2 6 1         ; SW tile
-
-    ; Compute the South-West corner and put the pixel edge.
-    !if &or &or &les #g3 #g4 &les #g3 #g5 &les #g3 #g6
-        set-variable #g1 ""              ; Failed the corner.
-    !elif &and &and &gre #g3 #g4 &gre #g3 #g5 &gre #g3 #g6
-        set-variable #g1 &mid #g7 3 1     ; Use bottom left corner.
-    !elif &and &and &equ #g3 #g4 &gre #g3 #g5 &gre #g3 #g6
-        set-variable #g1 &mid #g7 9 1     ; Use a upward 'T'
-    !elif &and &and &gre #g3 #g4 &gre #g3 #g5 &equ #g3 #g6
-        set-variable #g1 &mid #g7 6 1     ; Use a rightward 'T'
-    !else
-        set-variable #g1 &mid #g7 7 1     ; Use a cross.
-    !endif
-    !if &not &seq #g1 ""
-        :mjg-cpf screen-poke &add #g8 5 &sub #g9 1 :mjg-cps #g1
-    !endif
-
+  ; Set up for the left side.
+  set-variable #g4 &mid #g2 4 1         ; W tile
+  set-variable #g5 &mid #g2 1 1         ; NW tile
+  set-variable #g6 &mid #g2 2 1         ; N tile
+  
+  ; Compute the West side wall and put the pixel edge.
+  !if &not &les #g3 #g4                 ; if (C >= W) render edge.
+    :mjg-cpf screen-poke &add #g8 1 &sub #g9 1 :mjg-cps &lef #g7 1
+    :mjg-cpf screen-poke &add #g8 2 &sub #g9 1 :mjg-cps &lef #g7 1
+    :mjg-cpf screen-poke &add #g8 3 &sub #g9 1 :mjg-cps &lef #g7 1
+    :mjg-cpf screen-poke &add #g8 4 &sub #g9 1 :mjg-cps &lef #g7 1
+  !endif
+  
+  ; Compute the North-West corner and put the pixel edge.
+  !if &or &or &les #g3 #g4 &les #g3 #g5 &les #g3 #g6
+    set-variable #g1 ""              ; Failed the corner.
+  !elif &and &and &gre #g3 #g4 &gre #g3 #g5 &gre #g3 #g6
+    set-variable #g1 &mid #g7 1 1     ; Use top left corner.
+  !elif &and &and &equ #g3 #g4 &gre #g3 #g5 &gre #g3 #g6
+    set-variable #g1 &mid #g7 5 1     ; Use a downward 'T'
+  !elif &and &and &gre #g3 #g4 &gre #g3 #g5 &equ #g3 #g6
+    set-variable #g1 &mid #g7 6 1     ; Use a rightward 'T'
+  !else
+    set-variable #g1 &mid #g7 7 1     ; Use a cross.
+  !endif
+  !if &not &seq #g1 ""
+    :mjg-cpf screen-poke #g8 &sub #g9 1 :mjg-cps #g1
+  !endif
+  
+  ; Compute the North side wall and put the pixel edge.
+  !if &not &les #g3 #g6                 ; if (C >= N) render edge.
+    :mjg-cpf screen-poke #g8 #g9 :mjg-cps &sprint "%4s" &rig #g7 10
+  !endif
+  
+  ; Set up for the upper right side.
+  set-variable #g4 &mid #g2 5 1         ; E tile.
+  set-variable #g5 &mid #g2 3 1         ; NE tile.
+  
+  ; Compute the North-East corner and put the pixel edge.
+  !if &or &or &les #g3 #g4 &les #g3 #g5 &les #g3 #g6
+    set-variable #g1 ""              ; Failed the corner.
+  !elif &and &and &gre #g3 #g4 &gre #g3 #g5 &gre #g3 #g6
+    set-variable #g1 &mid #g7 2 1     ; Use top right corner.
+  !elif &and &and &equ #g3 #g4 &gre #g3 #g5 &gre #g3 #g6
+    set-variable #g1 &mid #g7 5 1     ; Use a downward 'T'
+  !elif &and &and &gre #g3 #g4 &gre #g3 #g5 &equ #g3 #g6
+    set-variable #g1 &mid #g7 8 1     ; Use a leftward 'T'
+  !else
+    set-variable #g1 &mid #g7 7 1     ; Use a cross.
+  !endif
+  !if &not &seq #g1 ""
+    :mjg-cpf screen-poke #g8 &add #g9 4 :mjg-cps #g1
+  !endif
+  
+  ; Compute the East side wall and put the pixel edge.
+  !if &not &les #g3 #g4                 ; if (C >= E) render edge.
+    :mjg-cpf screen-poke &add #g8 1 &add #g9 4 :mjg-cps &lef #g7 1
+    :mjg-cpf screen-poke &add #g8 2 &add #g9 4 :mjg-cps &lef #g7 1
+    :mjg-cpf screen-poke &add #g8 3 &add #g9 4 :mjg-cps &lef #g7 1
+    :mjg-cpf screen-poke &add #g8 4 &add #g9 4 :mjg-cps &lef #g7 1
+  !endif
+  
+  ; Set up for the lower right side
+  set-variable #g5 &mid #g2 8 1         ; SE tile
+  set-variable #g6 &mid #g2 7 1         ; S tile
+  
+  ; Compute the South-East corner and put the pixel edge.
+  !if &or &or &les #g3 #g4 &les #g3 #g5 &les #g3 #g6
+    set-variable #g1 ""              ; Failed the corner.
+  !elif &and &and &gre #g3 #g4 &gre #g3 #g5 &gre #g3 #g6
+    set-variable #g1 &mid #g7 4 1     ; Use bottom right corner.
+  !elif &and &and &equ #g3 #g4 &gre #g3 #g5 &gre #g3 #g6
+    set-variable #g1 &mid #g7 9 1     ; Use a upward 'T'
+  !elif &and &and &gre #g3 #g4 &gre #g3 #g5 &equ #g3 #g6
+    set-variable #g1 &mid #g7 8 1     ; Use a leftward 'T'
+  !else
+    set-variable #g1 &mid #g7 7 1     ; Use a cross.
+  !endif
+  !if &not &seq #g1 ""
+    :mjg-cpf screen-poke &add #g8 5 &add #g9 4 :mjg-cps #g1
+  !endif
+  
+  ; Compute the South side wall and put the pixel edge.
+  !if &not &les #g3 #g6                 ; if (C >= S) render edge.
+    :mjg-cpf screen-poke &add #g8 5 #g9 :mjg-cps &sprint "%4s" &rig #g7 10
+  !endif
+  
+  ; Set up for the lower left side
+  set-variable #g4 &mid #g2 4 1         ; W tile
+  set-variable #g5 &mid #g2 6 1         ; SW tile
+  
+  ; Compute the South-West corner and put the pixel edge.
+  !if &or &or &les #g3 #g4 &les #g3 #g5 &les #g3 #g6
+    set-variable #g1 ""              ; Failed the corner.
+  !elif &and &and &gre #g3 #g4 &gre #g3 #g5 &gre #g3 #g6
+    set-variable #g1 &mid #g7 3 1     ; Use bottom left corner.
+  !elif &and &and &equ #g3 #g4 &gre #g3 #g5 &gre #g3 #g6
+    set-variable #g1 &mid #g7 9 1     ; Use a upward 'T'
+  !elif &and &and &gre #g3 #g4 &gre #g3 #g5 &equ #g3 #g6
+    set-variable #g1 &mid #g7 6 1     ; Use a rightward 'T'
+  !else
+    set-variable #g1 &mid #g7 7 1     ; Use a cross.
+  !endif
+  !if &not &seq #g1 ""
+    :mjg-cpf screen-poke &add #g8 5 &sub #g9 1 :mjg-cps #g1
+  !endif
+  
 *fill-centre
-    ; Fill in the centre with data
-    !if &equ #g3 0
-        :mjg-cpf screen-poke &add #g8 1 #g9 :mjg-cps "    "
-        :mjg-cpf screen-poke &add #g8 2 #g9 :mjg-cps "    "
-        :mjg-cpf screen-poke &add #g8 3 #g9 :mjg-cps "    "
-        ; make the last poke do a flush
-        &sub :mjg-cpf 2 screen-poke &add #g8 4 #g9 :mjg-cps "    "
+  ; Fill in the centre with data
+  !if &equ #g3 0
+    :mjg-cpf screen-poke &add #g8 1 #g9 :mjg-cps "    "
+    :mjg-cpf screen-poke &add #g8 2 #g9 :mjg-cps "    "
+    :mjg-cpf screen-poke &add #g8 3 #g9 :mjg-cps "    "
+    ; make the last poke do a flush
+    &sub :mjg-cpf 2 screen-poke &add #g8 4 #g9 :mjg-cps "    "
+  !else
+    set-variable #g4 &mid :mjg-tiles &add #g0 &sub #g3 1 1
+    set-variable #g4 &sub &atoi #g4 1
+    !if &les #g4 8
+      ; Handle the Seasons and Flower tiles separately since
+      ; there are only 4 tiles in the set.
+      set-variable #g4 &mul #g4 4
     !else
-        set-variable #g4 &mid :mjg-tiles &add #g0 &sub #g3 1 1
-        set-variable #g4 &sub &atoi #g4 1
-        !if &les #g4 8
-            ; Handle the Seasons and Flower tiles separately since
-            ; there are only 4 tiles in the set.
-            set-variable #g4 &mul #g4 4
-        !else
-            set-variable #g4 &sub #g4 8       ; Zero base
-            set-variable #g4 &div #g4 4       ; 1 tiles per 4 characters
-            set-variable #g4 &add #g4 8       ; Offset from 1st 8 characters
-            set-variable #g4 &mul #g4 4       ; Get tile index
-        !endif
-        ; If this is the selected tile then hilight it differently
-        !if &equ :mjg-sel-tile-id @#
-            ; invert the scheme
-            set-variable :mjg-cpf &add :mjg-cpf 16
-        !endif
-        ; Poke the centre of the tile
-        :mjg-cpf screen-poke &add #g8 1 #g9 :mjg-cps &mid :mjg-tile-r0 #g4 4
-        :mjg-cpf screen-poke &add #g8 2 #g9 :mjg-cps &mid :mjg-tile-r1 #g4 4
-        :mjg-cpf screen-poke &add #g8 3 #g9 :mjg-cps &mid :mjg-tile-r2 #g4 4
-        ; make the last poke do a flush
-        &sub :mjg-cpf 2 screen-poke &add #g8 4 #g9 :mjg-cps &mid :mjg-tile-r3 #g4 4
+      set-variable #g4 &sub #g4 8       ; Zero base
+      set-variable #g4 &div #g4 4       ; 1 tiles per 4 characters
+      set-variable #g4 &add #g4 8       ; Offset from 1st 8 characters
+      set-variable #g4 &mul #g4 4       ; Get tile index
     !endif
+    ; If this is the selected tile then hilight it differently
+    !if &equ :mjg-sel-tile-id @#
+      ; invert the scheme
+      set-variable :mjg-cpf &add :mjg-cpf 16
+    !endif
+    ; Poke the centre of the tile
+    :mjg-cpf screen-poke &add #g8 1 #g9 :mjg-cps &mid :mjg-tile-r0 #g4 4
+    :mjg-cpf screen-poke &add #g8 2 #g9 :mjg-cps &mid :mjg-tile-r1 #g4 4
+    :mjg-cpf screen-poke &add #g8 3 #g9 :mjg-cps &mid :mjg-tile-r2 #g4 4
+    ; make the last poke do a flush
+    &sub :mjg-cpf 2 screen-poke &add #g8 4 #g9 :mjg-cps &mid :mjg-tile-r3 #g4 4
+  !endif
 !emacro
 ;
 ; mjg-deal - Deal the tiles
 ;
 0 define-macro mjg-deal
-    ;
-    ; Shuffle the pack.
-    ;
-    ml-write "Shuffling Tiles..."
-    find-buffer "*mahjongg*"               ; Select the buffer
-    !force forward-line                    ; Not sure ???
-    -1 buffer-mode "view"
-    -1 buffer-mode "indent"
-    ; Kill the buffer off
-    beginning-of-buffer
-    delete-other-windows
-    set-mark
-    end-of-buffer
-    -1 kill-region
-    ; Shuffle by generating random key and then sorting.
-    beginning-of-buffer
-    set-variable #g1 1
-    !repeat
-        insert-string &spr "%3d %9d" &pinc #g1 1 $random
-        newline
-    !until &gre #g1 144
-    ; Sort the lines using the random column
-    beginning-of-buffer
-    set-mark
-    144 forward-line
-    4 sort-lines
-    beginning-of-buffer
-    set-variable #g9 ""              ; #g9 will be the shuffled pack
-    ; Collect the shuffled data from the buffer.
-    !repeat
-        set-variable #g1 @wl         ; Read line from buffer
-        forward-line
-        set-variable #g9 &cat #g9 &itoa &lef #g1 3
-    !until &equ &len #g9 144
-
-    ml-write "Allocating Tiles..."
-    ; Fill the 3D table with data
-    set-variable #g8 &sprint "%675s" "\xfe" ; Table size is 600
-    mjg-fill   5 12       ; [0,1,0] =   5. Level 0 - line 0.
-    mjg-fill  90  8       ; [1,3,0] =  90. Level 0 - line 1.
-    mjg-fill 160 10       ; [2,2,0] = 160. Level 0 - line 2.
-    mjg-fill 230 12       ; [3,1,0] = 230. Level 0 - line 3.
-    mjg-fill 305 12       ; [4,1,0] = 305. Level 0 - line 4.
-    mjg-fill 385 10       ; [5,2,0] = 385. Level 0 - line 5.
-    mjg-fill 465  8       ; [6,3,0] = 465. Level 0 - line 6.
-    mjg-fill 530 12       ; [7,1,0] = 530. Level 0 - line 7.
-    ;
-    mjg-fill  96  6       ; [1,4,1] =  96. Level 1 - line 1.
-    mjg-fill 171  6       ; [2,4,1] = 171. Level 1 - line 2.
-    mjg-fill 246  6       ; [3,4,1] = 246. Level 1 - line 3.
-    mjg-fill 321  6       ; [4,4,1] = 321. Level 1 - line 4.
-    mjg-fill 396  6       ; [5,4,1] = 396. Level 1 - line 5.
-    mjg-fill 471  6       ; [6,4,1] = 471. Level 1 - line 6.
-    ;
-    mjg-fill 177  4       ; [2,5,2] = 177. Level 2 - line 2.
-    mjg-fill 252  4       ; [3,5,2] = 252. Level 2 - line 3.
-    mjg-fill 327  4       ; [4,5,2] = 327. Level 2 - line 4.
-    mjg-fill 402  4       ; [5,5,2] = 402. Level 2 - line 5.
-    ;
-    mjg-fill 258  2       ; [3,6,3] = 258. Level 3 - line 3.
-    mjg-fill 333  2       ; [4,6,3] = 333. Level 3 - line 4.
-
-    ; Add the special mid tiles.
-    mjg-fill 600  1       ; Special West
-    mjg-fill 639  1       ; Special Centre
-    mjg-fill 665  1       ; Special East 1
-    mjg-fill 670  1       ; Special East 2
-
-    set-variable :mjg-sel-tile-id 255   ; No tile selected
-    set-variable :mjg-tiles #g8          ; Allocate the tiles.
-    set-variable :mjg-again #g8          ; Remember the tiles.
-    set-variable :mjg-togo  144         ; Number of tiles to go.
-    beginning-of-buffer
-    set-mark
-    end-of-buffer
-    -1 kill-region
-    -1 buffer-mode "edit"
-     1 buffer-mode "view"
-    ml-write "C-l to redraw the screen"
+  ;
+  ; Shuffle the pack.
+  ;
+  ml-write "Shuffling Tiles..."
+  find-buffer "*mahjongg*"               ; Select the buffer
+  !force forward-line                    ; Not sure ???
+  -1 buffer-mode "view"
+  -1 buffer-mode "indent"
+  ; Kill the buffer off
+  beginning-of-buffer
+  delete-other-windows
+  set-mark
+  end-of-buffer
+  -1 kill-region
+  ; Shuffle by generating random key and then sorting.
+  beginning-of-buffer
+  set-variable #g1 1
+  !repeat
+    insert-string &spr "%3d %9d" &pinc #g1 1 $random
+    newline
+  !until &gre #g1 144
+  ; Sort the lines using the random column
+  beginning-of-buffer
+  set-mark
+  144 forward-line
+  4 sort-lines
+  beginning-of-buffer
+  set-variable #g9 ""              ; #g9 will be the shuffled pack
+  ; Collect the shuffled data from the buffer.
+  !repeat
+    set-variable #g1 @wl         ; Read line from buffer
+    forward-line
+    set-variable #g9 &cat #g9 &itoa &lef #g1 3
+  !until &equ &len #g9 144
+  
+  ml-write "Allocating Tiles..."
+  ; Fill the 3D table with data
+  set-variable #g8 &sprint "%675s" "\xfe" ; Table size is 600
+  mjg-fill   5 12       ; [0,1,0] =   5. Level 0 - line 0.
+  mjg-fill  90  8       ; [1,3,0] =  90. Level 0 - line 1.
+  mjg-fill 160 10       ; [2,2,0] = 160. Level 0 - line 2.
+  mjg-fill 230 12       ; [3,1,0] = 230. Level 0 - line 3.
+  mjg-fill 305 12       ; [4,1,0] = 305. Level 0 - line 4.
+  mjg-fill 385 10       ; [5,2,0] = 385. Level 0 - line 5.
+  mjg-fill 465  8       ; [6,3,0] = 465. Level 0 - line 6.
+  mjg-fill 530 12       ; [7,1,0] = 530. Level 0 - line 7.
+  ;
+  mjg-fill  96  6       ; [1,4,1] =  96. Level 1 - line 1.
+  mjg-fill 171  6       ; [2,4,1] = 171. Level 1 - line 2.
+  mjg-fill 246  6       ; [3,4,1] = 246. Level 1 - line 3.
+  mjg-fill 321  6       ; [4,4,1] = 321. Level 1 - line 4.
+  mjg-fill 396  6       ; [5,4,1] = 396. Level 1 - line 5.
+  mjg-fill 471  6       ; [6,4,1] = 471. Level 1 - line 6.
+  ;
+  mjg-fill 177  4       ; [2,5,2] = 177. Level 2 - line 2.
+  mjg-fill 252  4       ; [3,5,2] = 252. Level 2 - line 3.
+  mjg-fill 327  4       ; [4,5,2] = 327. Level 2 - line 4.
+  mjg-fill 402  4       ; [5,5,2] = 402. Level 2 - line 5.
+  ;
+  mjg-fill 258  2       ; [3,6,3] = 258. Level 3 - line 3.
+  mjg-fill 333  2       ; [4,6,3] = 333. Level 3 - line 4.
+  
+  ; Add the special mid tiles.
+  mjg-fill 600  1       ; Special West
+  mjg-fill 639  1       ; Special Centre
+  mjg-fill 665  1       ; Special East 1
+  mjg-fill 670  1       ; Special East 2
+  
+  set-variable :mjg-sel-tile-id 255   ; No tile selected
+  set-variable :mjg-tiles #g8          ; Allocate the tiles.
+  set-variable :mjg-again #g8          ; Remember the tiles.
+  set-variable :mjg-togo  144         ; Number of tiles to go.
+  beginning-of-buffer
+  set-mark
+  end-of-buffer
+  -1 kill-region
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"
+  ml-write "C-l to redraw the screen"
 !emacro
 ;
 ; mjg-score-draw
@@ -509,117 +509,117 @@
 ; to sort this out properly - Jon 13/06/97.
 ;
 0 define-macro mjg-score-draw
-    ; Draw the frame for the score
-    3 screen-poke      :mjg-y0    &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-    3 screen-poke &add :mjg-y0  1 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s    %s" &lef $box-chars 1 &lef $box-chars 1
-    3 screen-poke &add :mjg-y0  2 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-    ; Draw frames for the menu options.
-    3 screen-poke &add :mjg-y0  3 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-    3 screen-poke &add :mjg-y0  4 &add :mjg-x0 70 .scheme.mjg1 &sprint "%sNew %s" &lef $box-chars 1 &lef $box-chars 1
-    3 screen-poke &add :mjg-y0  5 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-
-    3 screen-poke &add :mjg-y0  6 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-    3 screen-poke &add :mjg-y0  7 &add :mjg-x0 70 .scheme.mjg1 &sprint "%sSame%s" &lef $box-chars 1 &lef $box-chars 1
-    3 screen-poke &add :mjg-y0  8 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-
-    3 screen-poke &add :mjg-y0  9 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-    3 screen-poke &add :mjg-y0 10 &add :mjg-x0 70 .scheme.mjg1 &sprint "%sQuit%s" &lef $box-chars 1 &lef $box-chars 1
-    3 screen-poke &add :mjg-y0 11 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-
-    3 screen-poke &add :mjg-y0 12 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-    3 screen-poke &add :mjg-y0 13 &add :mjg-x0 70 .scheme.mjg1 &sprint "%sHelp%s" &lef $box-chars 1 &lef $box-chars 1
-    3 screen-poke &add :mjg-y0 14 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-    ; Draw the color levels
-    67 screen-poke &add :mjg-y0 28 &add :mjg-x0 66 .scheme.mjg2 " Level 5 "
-    35 screen-poke &add :mjg-y0 29 &add :mjg-x0 66 .scheme.mjg2 " Level 4 "
-     3 screen-poke &add :mjg-y0 30 &add :mjg-x0 66 .scheme.mjg2 " Level 3 "
-    99 screen-poke &add :mjg-y0 31 &add :mjg-x0 66 .scheme.mjg1 " Level 2 "
-    67 screen-poke &add :mjg-y0 32 &add :mjg-x0 66 .scheme.mjg1 " Level 1 "
-
-    1 screen-poke &add :mjg-y0 1 &add :mjg-x0 71 .scheme.mjg1 &sprint "%3d" :mjg-togo
+  ; Draw the frame for the score
+  3 screen-poke      :mjg-y0    &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  3 screen-poke &add :mjg-y0  1 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s    %s" &lef $box-chars 1 &lef $box-chars 1
+  3 screen-poke &add :mjg-y0  2 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  ; Draw frames for the menu options.
+  3 screen-poke &add :mjg-y0  3 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  3 screen-poke &add :mjg-y0  4 &add :mjg-x0 70 .scheme.mjg1 &sprint "%sNew %s" &lef $box-chars 1 &lef $box-chars 1
+  3 screen-poke &add :mjg-y0  5 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  
+  3 screen-poke &add :mjg-y0  6 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  3 screen-poke &add :mjg-y0  7 &add :mjg-x0 70 .scheme.mjg1 &sprint "%sSame%s" &lef $box-chars 1 &lef $box-chars 1
+  3 screen-poke &add :mjg-y0  8 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  
+  3 screen-poke &add :mjg-y0  9 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  3 screen-poke &add :mjg-y0 10 &add :mjg-x0 70 .scheme.mjg1 &sprint "%sQuit%s" &lef $box-chars 1 &lef $box-chars 1
+  3 screen-poke &add :mjg-y0 11 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  
+  3 screen-poke &add :mjg-y0 12 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  3 screen-poke &add :mjg-y0 13 &add :mjg-x0 70 .scheme.mjg1 &sprint "%sHelp%s" &lef $box-chars 1 &lef $box-chars 1
+  3 screen-poke &add :mjg-y0 14 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  ; Draw the color levels
+  67 screen-poke &add :mjg-y0 28 &add :mjg-x0 66 .scheme.mjg2 " Level 5 "
+  35 screen-poke &add :mjg-y0 29 &add :mjg-x0 66 .scheme.mjg2 " Level 4 "
+  3 screen-poke &add :mjg-y0 30 &add :mjg-x0 66 .scheme.mjg2 " Level 3 "
+  99 screen-poke &add :mjg-y0 31 &add :mjg-x0 66 .scheme.mjg1 " Level 2 "
+  67 screen-poke &add :mjg-y0 32 &add :mjg-x0 66 .scheme.mjg1 " Level 1 "
+  
+  1 screen-poke &add :mjg-y0 1 &add :mjg-x0 71 .scheme.mjg1 &sprint "%3d" :mjg-togo
 !emacro
 ;
 ; mjg-draw
 ; Draw all of the mahjong tiles.
 ;
 0 define-macro mjg-draw
-    !if &not &equ @# 1
-        !return
-    !endif
-    delete-other-windows
-    screen-update
-    ; Work out origin of the x axis
-    set-variable :mjg-x0 &div $frame-width 2
-    set-variable :mjg-x0 &sub :mjg-x0 &div 76 2
-    set-variable :mjg-x0 &cond &les :mjg-x0 0 0 :mjg-x0
-    ; Work out the origin of the y-axis
-    set-variable :mjg-y0 &sub &div $frame-depth 2 1
-    set-variable :mjg-y0 &sub :mjg-y0 &div 41 2
-    set-variable :mjg-y0 &cond &les :mjg-y0 0 0 :mjg-y0
-
-    set-variable :mjg-temp 0
-    !repeat
-        :mjg-temp mjg-draw-tile
-        set-variable :mjg-temp &add :mjg-temp 1
-    !until &gre :mjg-temp 134
-    mjg-score-draw
+  !if &not &equ @# 1
+    !return
+  !endif
+  delete-other-windows
+  screen-update
+  ; Work out origin of the x axis
+  set-variable :mjg-x0 &div $frame-width 2
+  set-variable :mjg-x0 &sub :mjg-x0 &div 76 2
+  set-variable :mjg-x0 &cond &les :mjg-x0 0 0 :mjg-x0
+  ; Work out the origin of the y-axis
+  set-variable :mjg-y0 &sub &div $frame-depth 2 1
+  set-variable :mjg-y0 &sub :mjg-y0 &div 41 2
+  set-variable :mjg-y0 &cond &les :mjg-y0 0 0 :mjg-y0
+  
+  set-variable :mjg-temp 0
+  !repeat
+    :mjg-temp mjg-draw-tile
+    set-variable :mjg-temp &add :mjg-temp 1
+  !until &gre :mjg-temp 134
+  mjg-score-draw
 !emacro
 ;
 ; mjg-min-redraw
 ; Do a minimum tile redraw following tile removal.
 ;
 0 define-macro mjg-min-redraw
-    ; Special centre tile removed
-    !if &equ @# 127
-        @# mjg-draw-tile
-        51 mjg-draw-tile
-        52 mjg-draw-tile
-        66 mjg-draw-tile
-        67 mjg-draw-tile
+  ; Special centre tile removed
+  !if &equ @# 127
+    @# mjg-draw-tile
+    51 mjg-draw-tile
+    52 mjg-draw-tile
+    66 mjg-draw-tile
+    67 mjg-draw-tile
     ; Special West tile removed
-    !elif &equ @# 120
-        @# mjg-draw-tile
-        46 mjg-draw-tile
-        61 mjg-draw-tile
+  !elif &equ @# 120
+    @# mjg-draw-tile
+    46 mjg-draw-tile
+    61 mjg-draw-tile
     ; Special East 1 tile removed
-    !elif &equ @# 133
-        @# mjg-draw-tile
-        57 mjg-draw-tile
-        72 mjg-draw-tile
+  !elif &equ @# 133
+    @# mjg-draw-tile
+    57 mjg-draw-tile
+    72 mjg-draw-tile
     ; Special East 2 tile removed
-    !elif &equ @# 134
-        134 mjg-draw-tile
-        133 mjg-draw-tile
+  !elif &equ @# 134
+    134 mjg-draw-tile
+    133 mjg-draw-tile
     ; Regular tile removed
-    !else
-        @#  mjg-draw-tile
-        &sub @# 16 mjg-draw-tile
-        &sub @# 15 mjg-draw-tile
-        &sub @# 14 mjg-draw-tile
-        &sub @#  1 mjg-draw-tile
-        &add @#  1 mjg-draw-tile
-        &add @# 14 mjg-draw-tile
-        &add @# 15 mjg-draw-tile
-        &add @# 16 mjg-draw-tile
-        ; Redraw the specials
-
-        ; Check West
-        !if &not &seq &mid :mjg-tiles 600 1 "\xfe"
-            120 mjg-draw-tile
-        !endif
-        ; Check centre
-        !if &not &seq &mid :mjg-tiles 639 1 "\xfe"
-            127 mjg-draw-tile
-        !endif
-        ; Check East 1
-        !if &not &seq &mid :mjg-tiles 665 1 "\xfe"
-            133 mjg-draw-tile
-        !endif
-        ; Check East 2
-        !if &not &seq &mid :mjg-tiles 670 1 "\xfe"
-            134 mjg-draw-tile
-        !endif
+  !else
+    @#  mjg-draw-tile
+    &sub @# 16 mjg-draw-tile
+    &sub @# 15 mjg-draw-tile
+    &sub @# 14 mjg-draw-tile
+    &sub @#  1 mjg-draw-tile
+    &add @#  1 mjg-draw-tile
+    &add @# 14 mjg-draw-tile
+    &add @# 15 mjg-draw-tile
+    &add @# 16 mjg-draw-tile
+    ; Redraw the specials
+    
+    ; Check West
+    !if &not &seq &mid :mjg-tiles 600 1 "\xfe"
+      120 mjg-draw-tile
     !endif
+    ; Check centre
+    !if &not &seq &mid :mjg-tiles 639 1 "\xfe"
+      127 mjg-draw-tile
+    !endif
+    ; Check East 1
+    !if &not &seq &mid :mjg-tiles 665 1 "\xfe"
+      133 mjg-draw-tile
+    !endif
+    ; Check East 2
+    !if &not &seq &mid :mjg-tiles 670 1 "\xfe"
+      134 mjg-draw-tile
+    !endif
+  !endif
 !emacro
 ;
 ; mjg-test
@@ -631,343 +631,343 @@
 ;
 ; Uses: #g0/1/2/3
 0 define-macro mjg-test
-    ; Get the number of the tile and convert into
-    ; a tile position.
-    set-variable :mjg-temp1 @#
-    set-variable :mjg-temp2 :mjg-sel-tile-id
-
-    ; Get current tile type.
-    set-variable #g0 &mul @# 5
-    set-variable #g0 &add #g0 &sub &lef @1 1 1
-    set-variable #g2 &atoi &mid :mjg-tiles #g0 1
-    set-variable #g2 &sub #g2 1
-
-    ; Get selected tile type.
-    set-variable #g1 &mul :mjg-sel-tile-id 5
-    set-variable #g1 &add #g1 &sub :mjg-sel-pos 1
-    set-variable #g3 &atoi &mid :mjg-tiles #g1 1
-    set-variable #g3 &sub #g3 1
-
-    ; Test if the tiles are from the same set
-    !if &equ &div #g2 4 &div #g3 4
-        set-variable :mjg-tiles &sprint "%s%s%s" &lef :mjg-tiles #g0 "\xfe" &rig :mjg-tiles &add #g0 1
-        set-variable :mjg-tiles &sprint "%s%s%s" &lef :mjg-tiles #g1 "\xfe" &rig :mjg-tiles &add #g1 1
-        set-variable :mjg-sel-tile-id 255
-        set-variable :mjg-togo &sub :mjg-togo 2
-        :mjg-temp1 mjg-min-redraw
-        :mjg-temp2 mjg-min-redraw
-        mjg-score-draw
-    !endif
+  ; Get the number of the tile and convert into
+  ; a tile position.
+  set-variable :mjg-temp1 @#
+  set-variable :mjg-temp2 :mjg-sel-tile-id
+  
+  ; Get current tile type.
+  set-variable #g0 &mul @# 5
+  set-variable #g0 &add #g0 &sub &lef @1 1 1
+  set-variable #g2 &atoi &mid :mjg-tiles #g0 1
+  set-variable #g2 &sub #g2 1
+  
+  ; Get selected tile type.
+  set-variable #g1 &mul :mjg-sel-tile-id 5
+  set-variable #g1 &add #g1 &sub :mjg-sel-pos 1
+  set-variable #g3 &atoi &mid :mjg-tiles #g1 1
+  set-variable #g3 &sub #g3 1
+  
+  ; Test if the tiles are from the same set
+  !if &equ &div #g2 4 &div #g3 4
+    set-variable :mjg-tiles &sprint "%s%s%s" &lef :mjg-tiles #g0 "\xfe" &rig :mjg-tiles &add #g0 1
+    set-variable :mjg-tiles &sprint "%s%s%s" &lef :mjg-tiles #g1 "\xfe" &rig :mjg-tiles &add #g1 1
+    set-variable :mjg-sel-tile-id 255
+    set-variable :mjg-togo &sub :mjg-togo 2
+    :mjg-temp1 mjg-min-redraw
+    :mjg-temp2 mjg-min-redraw
+    mjg-score-draw
+  !endif
 !emacro
 ;
 ; mjg-again - Play the same game again
 ;
 0 define-macro mjg-again
-    set-variable :mjg-sel-tile-id 255   ; No tile selected
-    set-variable :mjg-tiles :mjg-again
-    set-variable :mjg-togo  144         ; Number of tiles to go.
-    1 mjg-draw
+  set-variable :mjg-sel-tile-id 255   ; No tile selected
+  set-variable :mjg-tiles :mjg-again
+  set-variable :mjg-togo  144         ; Number of tiles to go.
+  1 mjg-draw
 !emacro
 ;
 ; mjg-quit - Quit the game
 ;
 0 define-macro mjg-quit
-    !force delete-buffer "*mahjongg*"
+  !force delete-buffer "*mahjongg*"
 !emacro
 ;
 ; mjg-help - Help information
 ;
 0 define-macro mjg-help
-    !force help-command "Mahjongg"
-    !if $status
-        delete-window
-    !endif
+  !force help-command "Mahjongg"
+  !if $status
+    delete-window
+  !endif
 !emacro
 ; mjg-mouse
 ; Turn the mouse position and click into a selection action.
 ;
 0 define-macro mjg-mouse
-    set-variable #g0 &sub $mouse-x :mjg-x0
-    set-variable #g1 &sub $mouse-y :mjg-y0
-
-    ; Check X min/X max
-    !if &or &les #g0 1 &gre #g0 75
-;       ml-write &sprint "Failed invalid tile position (%d,%d)." #g0 #g1
-        !return         ; Not on a tile.
+  set-variable #g0 &sub $mouse-x :mjg-x0
+  set-variable #g1 &sub $mouse-y :mjg-y0
+  
+  ; Check X min/X max
+  !if &or &les #g0 1 &gre #g0 75
+    ;       ml-write &sprint "Failed invalid tile position (%d,%d)." #g0 #g1
+    !return         ; Not on a tile.
+  !endif
+  ; Check Y min/Y max
+  !if &or &les #g1 1 &gre #g1 40
+    ;        ml-write &sprint "Failed invalid tile position (%d,%d)." #g0 #g1
+    !return         ; Not on a tile
+  !endif
+  ; Check for buttons
+  !if &and &gre #g0 70 &les #g0 75
+    ; New game
+    !if &equ #g1 4
+      mjg-deal
+      !return
+      ; Same game
+    !elif &equ #g1 7
+      mjg-again
+      !return
+      ; Quit Game
+    !elif &equ #g1 10
+      mjg-quit
+      !return
+    !elif &equ #g1 13
+      mjg-help
+      !return
     !endif
-    ; Check Y min/Y max
-    !if &or &les #g1 1 &gre #g1 40
-;        ml-write &sprint "Failed invalid tile position (%d,%d)." #g0 #g1
-        !return         ; Not on a tile
+  !endif
+  
+  ; Check for a special mid tile
+  !if &and &gre #g1 18 &les #g1 23
+    ; Check West
+    !if &and &and &gre #g0 1 &les #g0 5 &not &seq &mid :mjg-tiles 600 1 "\xfe"
+      set-variable #g9 120
+      !goto do-adjacent
+      ; Check centre
+    !elif &and &and &gre #g0 33 &les #g0 38 &not &seq &mid :mjg-tiles 639 1 "\xfe"
+      set-variable #g9 127
+      !goto do-adjacent
+      ; Check East 1
+    !elif &and &and &gre #g0 65 &les #g0 70 &not &seq &mid :mjg-tiles 665 1 "\xfe"
+      set-variable #g9 133
+      !goto do-adjacent
+      ; Check East 2
+    !elif &and &and &gre #g0 70 &les #g0 75 &not &seq &mid :mjg-tiles 670 1 "\xfe"
+      set-variable #g9 134
+      !goto do-adjacent
     !endif
-    ; Check for buttons
-    !if &and &gre #g0 70 &les #g0 75
-        ; New game
-        !if &equ #g1 4
-            mjg-deal
-            !return
-        ; Same game
-        !elif &equ #g1 7
-            mjg-again
-            !return
-        ; Quit Game
-        !elif &equ #g1 10
-            mjg-quit
-            !return
-        !elif &equ #g1 13
-            mjg-help
-            !return
-        !endif
-    !endif
-
-    ; Check for a special mid tile
-    !if &and &gre #g1 18 &les #g1 23
-        ; Check West
-        !if &and &and &gre #g0 1 &les #g0 5 &not &seq &mid :mjg-tiles 600 1 "\xfe"
-            set-variable #g9 120
-            !goto do-adjacent
-        ; Check centre
-        !elif &and &and &gre #g0 33 &les #g0 38 &not &seq &mid :mjg-tiles 639 1 "\xfe"
-            set-variable #g9 127
-            !goto do-adjacent
-        ; Check East 1
-        !elif &and &and &gre #g0 65 &les #g0 70 &not &seq &mid :mjg-tiles 665 1 "\xfe"
-            set-variable #g9 133
-            !goto do-adjacent
-        ; Check East 2
-        !elif &and &and &gre #g0 70 &les #g0 75 &not &seq &mid :mjg-tiles 670 1 "\xfe"
-            set-variable #g9 134
-            !goto do-adjacent
-        !endif
-    !endif
-
-    ; The mouse is on the grid. Get the tile position
-    ; Check the Y - we must be in the middle of a tile.
-    set-variable #g1 &sub #g1 1
-    set-variable #g0 &sub #g0 1
-    !if &or &gre &mod #g1 5 3 &gre &mod #g0 5 3
-;        ml-write &sprint "Failed invalid tile position (%d,%d) mod (%d,%d)." $mouse-x $mouse-y #g0 #g1
-        !return         ; Not in the centre
-    !endif
-    ; Turn the mouse position into a tile address.
-    set-variable #g9 &add &mul &div #g1 5 15 &div #g0 5
+  !endif
+  
+  ; The mouse is on the grid. Get the tile position
+  ; Check the Y - we must be in the middle of a tile.
+  set-variable #g1 &sub #g1 1
+  set-variable #g0 &sub #g0 1
+  !if &or &gre &mod #g1 5 3 &gre &mod #g0 5 3
+    ;        ml-write &sprint "Failed invalid tile position (%d,%d) mod (%d,%d)." $mouse-x $mouse-y #g0 #g1
+    !return         ; Not in the centre
+  !endif
+  ; Turn the mouse position into a tile address.
+  set-variable #g9 &add &mul &div #g1 5 15 &div #g0 5
 *do-adjacent
-
-    ; Check if we are unselecting the position
-    !if &equ :mjg-sel-tile-id #g9
-        set-variable :mjg-sel-tile-id 255
-        #g9 mjg-draw-tile    ; Unselect the tile.
-        !return
-    !endif
-    ; Get the adjaceny information. We want to know if
-    ; the tile position is valid. Result in #g2
-    #g9 mjg-adjacent
-
-    ; Test for a blank tile or edge adjacency
-    set-variable #g0 &lef #g2 1
-    !if &equ #g0 0
-        !return       ; Fail the tile - blank !!
-    !elif &not &or &gre #g0 &mid #g2 4 1 &gre #g0 &mid #g2 5 1
-        !return       ; Fail the tile not on edge
-    !endif
-
-    ; Test special cases.
-    ; Special centre; Level 4 - test for presense of level 5.
-    !if &and &equ #g0 4 &not &seq &mid :mjg-tiles 639 1 "\xfe"
-        !return
+  
+  ; Check if we are unselecting the position
+  !if &equ :mjg-sel-tile-id #g9
+    set-variable :mjg-sel-tile-id 255
+    #g9 mjg-draw-tile    ; Unselect the tile.
+    !return
+  !endif
+  ; Get the adjaceny information. We want to know if
+  ; the tile position is valid. Result in #g2
+  #g9 mjg-adjacent
+  
+  ; Test for a blank tile or edge adjacency
+  set-variable #g0 &lef #g2 1
+  !if &equ #g0 0
+    !return       ; Fail the tile - blank !!
+  !elif &not &or &gre #g0 &mid #g2 4 1 &gre #g0 &mid #g2 5 1
+    !return       ; Fail the tile not on edge
+  !endif
+  
+  ; Test special cases.
+  ; Special centre; Level 4 - test for presense of level 5.
+  !if &and &equ #g0 4 &not &seq &mid :mjg-tiles 639 1 "\xfe"
+    !return
     ; Special West
-    !elif &and &or &equ #g9 46 &equ #g9 61 &not &seq &mid :mjg-tiles 600 1 "\xfe"
-        !return
+  !elif &and &or &equ #g9 46 &equ #g9 61 &not &seq &mid :mjg-tiles 600 1 "\xfe"
+    !return
     ; Special East 1
-    !elif &and &equ #g9 133 &not &seq &mid :mjg-tiles 670 1 "\xfe"
-        !return
+  !elif &and &equ #g9 133 &not &seq &mid :mjg-tiles 670 1 "\xfe"
+    !return
     ; Special East 2
-    !elif &and &or &equ #g9 57 &equ #g9 72 &not &seq &mid :mjg-tiles 665 1 "\xfe"
-        !return
-    !endif
-
-    ; Try selecting the tile.
-    !if &equ :mjg-sel-tile-id 255
-        set-variable :mjg-sel-tile-id #g9    ; Record the tile identity
-        set-variable :mjg-sel-pos #g0        ; Record the tile height
-        #g9 mjg-draw-tile    ; Select the tile.
-        !return
-    !endif
-     #g9 mjg-test #g2
+  !elif &and &or &equ #g9 57 &equ #g9 72 &not &seq &mid :mjg-tiles 665 1 "\xfe"
+    !return
+  !endif
+  
+  ; Try selecting the tile.
+  !if &equ :mjg-sel-tile-id 255
+    set-variable :mjg-sel-tile-id #g9    ; Record the tile identity
+    set-variable :mjg-sel-pos #g0        ; Record the tile height
+    #g9 mjg-draw-tile    ; Select the tile.
+    !return
+  !endif
+  #g9 mjg-test #g2
 !emacro
 ;
 ; mjg-uselect
 ; Unselect the currently selected tile.
 0 define-macro mjg-uselect
-    !if &not &equ  :mjg-sel-tile-id 255
-        set-variable #g9 :mjg-sel-tile-id    ; Remember the selected tile
-        set-variable :mjg-sel-tile-id 255   ; Unselect the current tile
-        #g9 mjg-draw-tile                    ; Unselect the tile.
-    !endif
+  !if &not &equ  :mjg-sel-tile-id 255
+    set-variable #g9 :mjg-sel-tile-id    ; Remember the selected tile
+    set-variable :mjg-sel-tile-id 255   ; Unselect the current tile
+    #g9 mjg-draw-tile                    ; Unselect the tile.
+  !endif
 !emacro
 ;
 ; bhook-mahjongg
 ; Buffer hook - entry into the *mahjongg* buffer.
 ;
 0 define-macro bhook-mahjongg
-    ; Turn off the cursor, menu, scroll bars and toolbar.
-    -1 show-cursor
-    !force osd -1 0
-    set-variable :scroll-bar $scroll-bar
-    set-variable $scroll-bar 0
-    !if .Mahjongg.toolbar
-        ; note - we cannot open/close the toolbar directly as this changes the window layout which must not be done in an bhook
-        -1 create-callback toolbar-open
-        !if .toolbar.open
-            1 create-callback toolbar-close
-        !endif
+  ; Turn off the cursor, menu, scroll bars and toolbar.
+  -1 show-cursor
+  !force osd -1 0
+  set-variable :scroll-bar $scroll-bar
+  set-variable $scroll-bar 0
+  !if .Mahjongg.toolbar
+    ; note - we cannot open/close the toolbar directly as this changes the window layout which must not be done in an bhook
+    -1 create-callback toolbar-open
+    !if .toolbar.open
+      1 create-callback toolbar-close
     !endif
+  !endif
 !emacro
 ;
 ; ehook-mahjongg
 ; Exit Mah Jongg buffer.
 ;
 0 define-macro ehook-mahjongg
-    ; Turn on the cursor & restore menu, scroll bars and toolbar
-    1 show-cursor
-    set-variable $scroll-bar :scroll-bar
-    !force osd -1 1
-    !if .Mahjongg.toolbar
-        ; note - we cannot open/close the toolbar directly as this changes the window layout which must not be done in an ehook
-        -1 create-callback toolbar-close
-        !if &not .toolbar.open
-            1 create-callback toolbar-open
-        !endif
+  ; Turn on the cursor & restore menu, scroll bars and toolbar
+  1 show-cursor
+  set-variable $scroll-bar :scroll-bar
+  !force osd -1 1
+  !if .Mahjongg.toolbar
+    ; note - we cannot open/close the toolbar directly as this changes the window layout which must not be done in an ehook
+    -1 create-callback toolbar-close
+    !if &not .toolbar.open
+      1 create-callback toolbar-open
     !endif
+  !endif
 !emacro
 
 define-macro Mahjongg
-    set-variable .toolbar &cond &exi .toolbar .toolbar .toolbar.open
-    set-variable $random 0        ; Set it so we get a new seed
-    find-buffer "*mahjongg*"
-    !if &not &seq $buffer-bhook "bhook-mahjongg"
-        ;
-        ; Set up the tiles
-        ;
-        set-variable :mjg-tile-r0 ""
-        set-variable :mjg-tile-r1 ""
-        set-variable :mjg-tile-r2 ""
-        set-variable :mjg-tile-r3 ""
-        ;
-        ; Constuct the tiles.
-        ;
-        ;
-        ; Total = 36 + 36 + 36 + 4 + 4 + 16 + 12
-        ;       = 144
-        ;
-        ; Width ways Max 14 tiles = 4 * 14 + 1 = 57
-        ;                         = 5 * 14 + 1 = 71
-        ;
-        ; Depth ways Max 8 tiles  = 5 * 8 + 1  = 41
-        ;
-        ; +----+----+----+----+
-        ; | ** | ** | ** | ** |
-        ; |SUM |WIN |AUT |SPR | 1 off each = 4
-        ; | MER| TER| UMN| ING|
-        ; | ** | ** | ** | ** |
-        ; +----+----+----+----+
-        set-variable :mjg-tile-r0 &cat :mjg-tile-r0 " **  **  **  ** "
-        set-variable :mjg-tile-r1 &cat :mjg-tile-r1 "SUM WIN AUT SPR "
-        set-variable :mjg-tile-r2 &cat :mjg-tile-r2 " MER TER UMN ING"
-        set-variable :mjg-tile-r3 &cat :mjg-tile-r3 " **  **  **  ** "
-        ; +----+----+----+----+
-        ; |P  @|O  @|B  @|C  @|
-        ; | L  | R  | B  | H  | 1 off each = 4
-        ; |  U |  C |  O |  R |
-        ; |@  M|@  H|@  O|@  Y|
-        ; +----+----+----+----+
-        set-variable :mjg-tile-r0 &cat :mjg-tile-r0 "P  @O  @B  @C  @"
-        set-variable :mjg-tile-r1 &cat :mjg-tile-r1 " L   R   A   H  "
-        set-variable :mjg-tile-r2 &cat :mjg-tile-r2 "  U   C   M   R "
-        set-variable :mjg-tile-r3 &cat :mjg-tile-r3 "@  M@  H@  B@  Y"
-        ; +----+----+----+----+----+----+----+----+----+
-        ; |   9| oo8|oo 7|   6|   5|   4|   3|   2| o 1|
-        ; |ooo | oo |  o | oo |o o |o o |o   | o  |oOo | 4 off each = 36
-        ; |ooo | oo | oo | oo | o  |    | o  |    |oOo |
-        ; |ooo | oo | oo | oo |o o |o o |  o | o  | o  |
-        ; +----+----+----+----+----+----+----+----+----+
-        set-variable :mjg-tile-r0 &cat :mjg-tile-r0 "   9 oo8oo 7   6   5   4   3   2 o 1"
-        set-variable :mjg-tile-r1 &cat :mjg-tile-r1 "ooo  oo   o  oo o o o o o    o  oOo "
-        set-variable :mjg-tile-r2 &cat :mjg-tile-r2 "ooo  oo  oo  oo  o       o      oOo "
-        set-variable :mjg-tile-r3 &cat :mjg-tile-r3 "ooo  oo  oo  oo o o o o   o  o   o  "
-        ; +----+----+----+----+----+----+----+----+----+
-        ; |   9|\8 /|   7|   6| 5  |   4|   3|   2|   1|
-        ; |!!! | !! | !  |! ! |! ! |! ! |    | !  | \o |
-        ; |!!! | !! |!!! |! ! | !  |    | !  |    | /@@|  4 off each = 36
-        ; |!!! |/  \|!!! |! ! |! ! |! ! |! ! | !  |  /\|
-        ; +----+----+----+----+----+----+----+----+----+
-        set-variable :mjg-tile-r0 &cat :mjg-tile-r0 "   9\\  /   7   6   5   4   3   2   1"
-        set-variable :mjg-tile-r1 &cat :mjg-tile-r1 "!!! !88! !  ! ! ! ! ! !      !   \\o "
-        set-variable :mjg-tile-r2 &cat :mjg-tile-r2 "!!! !88!!!! ! !  !       !       /@@"
-        set-variable :mjg-tile-r3 &cat :mjg-tile-r3 "!!! /  \\!!! ! ! ! ! ! ! ! !  !    /\\"
-        ; +----+----+----+----+----+----+----+----+----+
-        ; | # 9|   8|   7| o 6|/~5 |   4| ~3 |  2 |   1|
-        ; |/@\ |~|~ |~~  |--- | #~ |CD  |~~  | ~  |~~~ |  4 off each = 36
-        ; | #  | ~  | #  | %  | ## | @  | #  |~~~ | $  |
-        ; |/ } |##  |/ } |oOo |<#> |<#\ |/ } | #  |/#D |
-        ; +----+----+----+----+----+----+----+----+----+
-        set-variable :mjg-tile-r0 &cat :mjg-tile-r0 " # 9   8   7 o 6/~5    4 ~3   2    1"
-        set-variable :mjg-tile-r1 &cat :mjg-tile-r1 "/@\\ ~|~ ~~  ---  #~ CD  ~~   ~  ~~~ "
-        set-variable :mjg-tile-r2 &cat :mjg-tile-r2 " #   ~   #   %   ##  @   #  ~~~  $  "
-        set-variable :mjg-tile-r3 &cat :mjg-tile-r3 "/ } ##  / } oOo <#> <#\\ / }  #  /#D "
-        ; +----+----+----+
-        ; |+-+B|   C|   F|
-        ; || | |o|o |/#\ |
-        ; || | | |  |### | 4 off each = 12
-        ; |+-+ | |  |### |
-        ; +----+----+----+
-        set-variable :mjg-tile-r0 &cat :mjg-tile-r0 &sprint "%s%2s%s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1 "   C   F"
-        set-variable :mjg-tile-r1 &cat :mjg-tile-r1 &sprint "%s B%s%s"  &lef $box-chars 1 &lef $box-chars 1 "o|o /#\\ "
-        set-variable :mjg-tile-r2 &cat :mjg-tile-r2 &sprint "%s  %s%s"  &lef $box-chars 1 &lef $box-chars 1 " |  ### "
-        set-variable :mjg-tile-r3 &cat :mjg-tile-r3 &sprint "%s%2s%s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1 " |  ### "
-        ; +----+----+----+----+
-        ; |   N|   E|   S|   W|
-        ; || | ||-- ||-- || | |
-        ; ||/| ||-  |+-+ ||^| | 4 off each = 16
-        ; || | ||-- |--| |/ \ |
-        ; +----+----+----+----+
-        set-variable :mjg-tile-r0 &cat :mjg-tile-r0 "   N   E   S   W"
-        ; North
-        set-variable :mjg-tile-r1 &sprint "%s%s%s%s " :mjg-tile-r1 &mid $box-chars 1 1 &mid $box-chars 2 1 &mid $box-chars 5 1
-        set-variable :mjg-tile-r2 &sprint "%s%3s "    :mjg-tile-r2 &lef $box-chars 1
-        set-variable :mjg-tile-r3 &sprint "%s%s%s%s " :mjg-tile-r3 &mid $box-chars 9 1 &mid $box-chars 3 1 &mid $box-chars 4 1
-        ; East
-        set-variable :mjg-tile-r1 &sprint "%s%s%2s "  :mjg-tile-r1 &mid $box-chars 1 1 &rig $box-chars 10
-        set-variable :mjg-tile-r2 &sprint "%s%s%s  "  :mjg-tile-r2 &mid $box-chars 6 1 &rig $box-chars 10
-        set-variable :mjg-tile-r3 &sprint "%s%s%2s "  :mjg-tile-r3 &mid $box-chars 3 1 &rig $box-chars 10
-        ; South
-        set-variable :mjg-tile-r1 &sprint "%s%s%s%s " :mjg-tile-r1 &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-        set-variable :mjg-tile-r2 &sprint "%s%s%s%s " :mjg-tile-r2 &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 2 1
-        set-variable :mjg-tile-r3 &sprint "%s%s%s%s " :mjg-tile-r3 &mid $box-chars 3 1 &rig $box-chars 10  &mid $box-chars 4 1
-        ; West
-        set-variable :mjg-tile-r1 &sprint "%s%s %s "  :mjg-tile-r1 &lef $box-chars 1   &lef $box-chars 1
-        set-variable :mjg-tile-r2 &sprint "%s%3s "    :mjg-tile-r2 &lef $box-chars 1
-        set-variable :mjg-tile-r3 &sprint "%s%s%s%s " :mjg-tile-r3 &mid $box-chars 3 1 &mid $box-chars 9 1 &mid $box-chars 4 1
-        
-        set-variable $buffer-scheme .scheme.mjg1
-        ; Set up the bindings
-        buffer-bind-key mjg-draw    "redraw"
-      1 buffer-bind-key mjg-draw    "C-l"
-        buffer-bind-key mjg-deal    "n"
-        buffer-bind-key mjg-quit    "q"
-        buffer-bind-key mjg-again   "a"
-      1 buffer-bind-key mjg-draw    "r"
-        buffer-bind-create "bo" "esc h" "" mjg-help
-        ; Mouse bindings
-        buffer-bind-key void        "mouse-pick-1"
-        buffer-bind-key mjg-mouse   "mouse-drop-1"
-        buffer-bind-key void        "mouse-pick-2"
-        buffer-bind-key void        "mouse-drop-2"
-        buffer-bind-key mjg-uselect "mouse-pick-3"
-        buffer-bind-key void        "mouse-drop-3"
-        set-variable $buffer-bhook bhook-mahjongg
-        set-variable $buffer-ehook ehook-mahjongg
-        bhook-mahjongg
-    !endif
-    mjg-deal
+  set-variable .toolbar &cond &exi .toolbar .toolbar .toolbar.open
+  set-variable $random 0        ; Set it so we get a new seed
+  find-buffer "*mahjongg*"
+  !if &not &seq $buffer-bhook "bhook-mahjongg"
+    ;
+    ; Set up the tiles
+    ;
+    set-variable :mjg-tile-r0 ""
+    set-variable :mjg-tile-r1 ""
+    set-variable :mjg-tile-r2 ""
+    set-variable :mjg-tile-r3 ""
+    ;
+    ; Constuct the tiles.
+    ;
+    ;
+    ; Total = 36 + 36 + 36 + 4 + 4 + 16 + 12
+    ;       = 144
+    ;
+    ; Width ways Max 14 tiles = 4 * 14 + 1 = 57
+    ;                         = 5 * 14 + 1 = 71
+    ;
+    ; Depth ways Max 8 tiles  = 5 * 8 + 1  = 41
+    ;
+    ; +----+----+----+----+
+    ; | ** | ** | ** | ** |
+    ; |SUM |WIN |AUT |SPR | 1 off each = 4
+    ; | MER| TER| UMN| ING|
+    ; | ** | ** | ** | ** |
+    ; +----+----+----+----+
+    set-variable :mjg-tile-r0 &cat :mjg-tile-r0 " **  **  **  ** "
+    set-variable :mjg-tile-r1 &cat :mjg-tile-r1 "SUM WIN AUT SPR "
+    set-variable :mjg-tile-r2 &cat :mjg-tile-r2 " MER TER UMN ING"
+    set-variable :mjg-tile-r3 &cat :mjg-tile-r3 " **  **  **  ** "
+    ; +----+----+----+----+
+    ; |P  @|O  @|B  @|C  @|
+    ; | L  | R  | B  | H  | 1 off each = 4
+    ; |  U |  C |  O |  R |
+    ; |@  M|@  H|@  O|@  Y|
+    ; +----+----+----+----+
+    set-variable :mjg-tile-r0 &cat :mjg-tile-r0 "P  @O  @B  @C  @"
+    set-variable :mjg-tile-r1 &cat :mjg-tile-r1 " L   R   A   H  "
+    set-variable :mjg-tile-r2 &cat :mjg-tile-r2 "  U   C   M   R "
+    set-variable :mjg-tile-r3 &cat :mjg-tile-r3 "@  M@  H@  B@  Y"
+    ; +----+----+----+----+----+----+----+----+----+
+    ; |   9| oo8|oo 7|   6|   5|   4|   3|   2| o 1|
+    ; |ooo | oo |  o | oo |o o |o o |o   | o  |oOo | 4 off each = 36
+    ; |ooo | oo | oo | oo | o  |    | o  |    |oOo |
+    ; |ooo | oo | oo | oo |o o |o o |  o | o  | o  |
+    ; +----+----+----+----+----+----+----+----+----+
+    set-variable :mjg-tile-r0 &cat :mjg-tile-r0 "   9 oo8oo 7   6   5   4   3   2 o 1"
+    set-variable :mjg-tile-r1 &cat :mjg-tile-r1 "ooo  oo   o  oo o o o o o    o  oOo "
+    set-variable :mjg-tile-r2 &cat :mjg-tile-r2 "ooo  oo  oo  oo  o       o      oOo "
+    set-variable :mjg-tile-r3 &cat :mjg-tile-r3 "ooo  oo  oo  oo o o o o   o  o   o  "
+    ; +----+----+----+----+----+----+----+----+----+
+    ; |   9|\8 /|   7|   6| 5  |   4|   3|   2|   1|
+    ; |!!! | !! | !  |! ! |! ! |! ! |    | !  | \o |
+    ; |!!! | !! |!!! |! ! | !  |    | !  |    | /@@|  4 off each = 36
+    ; |!!! |/  \|!!! |! ! |! ! |! ! |! ! | !  |  /\|
+    ; +----+----+----+----+----+----+----+----+----+
+    set-variable :mjg-tile-r0 &cat :mjg-tile-r0 "   9\\  /   7   6   5   4   3   2   1"
+    set-variable :mjg-tile-r1 &cat :mjg-tile-r1 "!!! !88! !  ! ! ! ! ! !      !   \\o "
+    set-variable :mjg-tile-r2 &cat :mjg-tile-r2 "!!! !88!!!! ! !  !       !       /@@"
+    set-variable :mjg-tile-r3 &cat :mjg-tile-r3 "!!! /  \\!!! ! ! ! ! ! ! ! !  !    /\\"
+    ; +----+----+----+----+----+----+----+----+----+
+    ; | # 9|   8|   7| o 6|/~5 |   4| ~3 |  2 |   1|
+    ; |/@\ |~|~ |~~  |--- | #~ |CD  |~~  | ~  |~~~ |  4 off each = 36
+    ; | #  | ~  | #  | %  | ## | @  | #  |~~~ | $  |
+    ; |/ } |##  |/ } |oOo |<#> |<#\ |/ } | #  |/#D |
+    ; +----+----+----+----+----+----+----+----+----+
+    set-variable :mjg-tile-r0 &cat :mjg-tile-r0 " # 9   8   7 o 6/~5    4 ~3   2    1"
+    set-variable :mjg-tile-r1 &cat :mjg-tile-r1 "/@\\ ~|~ ~~  ---  #~ CD  ~~   ~  ~~~ "
+    set-variable :mjg-tile-r2 &cat :mjg-tile-r2 " #   ~   #   %   ##  @   #  ~~~  $  "
+    set-variable :mjg-tile-r3 &cat :mjg-tile-r3 "/ } ##  / } oOo <#> <#\\ / }  #  /#D "
+    ; +----+----+----+
+    ; |+-+B|   C|   F|
+    ; || | |o|o |/#\ |
+    ; || | | |  |### | 4 off each = 12
+    ; |+-+ | |  |### |
+    ; +----+----+----+
+    set-variable :mjg-tile-r0 &cat :mjg-tile-r0 &sprint "%s%2s%s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1 "   C   F"
+    set-variable :mjg-tile-r1 &cat :mjg-tile-r1 &sprint "%s B%s%s"  &lef $box-chars 1 &lef $box-chars 1 "o|o /#\\ "
+    set-variable :mjg-tile-r2 &cat :mjg-tile-r2 &sprint "%s  %s%s"  &lef $box-chars 1 &lef $box-chars 1 " |  ### "
+    set-variable :mjg-tile-r3 &cat :mjg-tile-r3 &sprint "%s%2s%s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1 " |  ### "
+    ; +----+----+----+----+
+    ; |   N|   E|   S|   W|
+    ; || | ||-- ||-- || | |
+    ; ||/| ||-  |+-+ ||^| | 4 off each = 16
+    ; || | ||-- |--| |/ \ |
+    ; +----+----+----+----+
+    set-variable :mjg-tile-r0 &cat :mjg-tile-r0 "   N   E   S   W"
+    ; North
+    set-variable :mjg-tile-r1 &sprint "%s%s%s%s " :mjg-tile-r1 &mid $box-chars 1 1 &mid $box-chars 2 1 &mid $box-chars 5 1
+    set-variable :mjg-tile-r2 &sprint "%s%3s "    :mjg-tile-r2 &lef $box-chars 1
+    set-variable :mjg-tile-r3 &sprint "%s%s%s%s " :mjg-tile-r3 &mid $box-chars 9 1 &mid $box-chars 3 1 &mid $box-chars 4 1
+    ; East
+    set-variable :mjg-tile-r1 &sprint "%s%s%2s "  :mjg-tile-r1 &mid $box-chars 1 1 &rig $box-chars 10
+    set-variable :mjg-tile-r2 &sprint "%s%s%s  "  :mjg-tile-r2 &mid $box-chars 6 1 &rig $box-chars 10
+    set-variable :mjg-tile-r3 &sprint "%s%s%2s "  :mjg-tile-r3 &mid $box-chars 3 1 &rig $box-chars 10
+    ; South
+    set-variable :mjg-tile-r1 &sprint "%s%s%s%s " :mjg-tile-r1 &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    set-variable :mjg-tile-r2 &sprint "%s%s%s%s " :mjg-tile-r2 &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 2 1
+    set-variable :mjg-tile-r3 &sprint "%s%s%s%s " :mjg-tile-r3 &mid $box-chars 3 1 &rig $box-chars 10  &mid $box-chars 4 1
+    ; West
+    set-variable :mjg-tile-r1 &sprint "%s%s %s "  :mjg-tile-r1 &lef $box-chars 1   &lef $box-chars 1
+    set-variable :mjg-tile-r2 &sprint "%s%3s "    :mjg-tile-r2 &lef $box-chars 1
+    set-variable :mjg-tile-r3 &sprint "%s%s%s%s " :mjg-tile-r3 &mid $box-chars 3 1 &mid $box-chars 9 1 &mid $box-chars 4 1
+    
+    set-variable $buffer-scheme .scheme.mjg1
+    ; Set up the bindings
+    buffer-bind-key mjg-draw    "redraw"
+    1 buffer-bind-key mjg-draw    "C-l"
+    buffer-bind-key mjg-deal    "n"
+    buffer-bind-key mjg-quit    "q"
+    buffer-bind-key mjg-again   "a"
+    1 buffer-bind-key mjg-draw    "r"
+    buffer-bind-create "bo" "esc h" "" mjg-help
+    ; Mouse bindings
+    buffer-bind-key void        "mouse-pick-1"
+    buffer-bind-key mjg-mouse   "mouse-drop-1"
+    buffer-bind-key void        "mouse-pick-2"
+    buffer-bind-key void        "mouse-drop-2"
+    buffer-bind-key mjg-uselect "mouse-pick-3"
+    buffer-bind-key void        "mouse-drop-3"
+    set-variable $buffer-bhook bhook-mahjongg
+    set-variable $buffer-ehook ehook-mahjongg
+    bhook-mahjongg
+  !endif
+  mjg-deal
 !emacro

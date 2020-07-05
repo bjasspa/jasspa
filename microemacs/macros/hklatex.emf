@@ -8,8 +8,8 @@
 ; Authors:     Detlef Groth, Steve Phillips & Jon Green
 ;
 define-macro fhook-latex
-    @# buffer-init "latex"
-    buffer-init-hooks
+  @# buffer-init "latex"
+  buffer-init-hooks
 !emacro
 
 ; Set up the buffer.
@@ -61,332 +61,332 @@ set-variable .fhook-latex.item-list-r6 "Mark \ecB\\1\ecA"
 set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*%\\|^[ \t]*$\\|^[ \t]*\\\\\\(newpag\\|section\\|chap\\|subsec\\|subsubsec\\|label\\|begin\\|paragraph\\|subparagraph\\|end\\)\\)"
 
 !if &sin "f" .fhook-latex.setup
-    ; Set up collapse for LaTeX
-    set-variable .fhook-latex.collapse-open  "\\\\chapter\\|\\\\section\\|\\\\subsection"
-    set-variable .fhook-latex.collapse-close "\\\\chapter\\|\\\\section\\|\\\\subsection\\|\\\\markboth\\|\\\\end{document}"
-    set-variable .fhook-latex.collapse-mnext "-1"
+  ; Set up collapse for LaTeX
+  set-variable .fhook-latex.collapse-open  "\\\\chapter\\|\\\\section\\|\\\\subsection"
+  set-variable .fhook-latex.collapse-close "\\\\chapter\\|\\\\section\\|\\\\subsection\\|\\\\markboth\\|\\\\end{document}"
+  set-variable .fhook-latex.collapse-mnext "-1"
 !endif
 
 !if &seq $platform "win32"
-    ; Win32, lets assume that everybody is using MikTex, and why not !!
-    set-variable %latex-view    &cond &seq %latex-view    "ERROR" "yap"  %latex-view
-    set-variable %latex-compile &cond &seq %latex-compile "ERROR" "latex --c-style-errors --halt-on-error " %latex-compile
-    ; Add hooks for the latex compiler errors
-    0 add-next-line "*latex-compile*"
-    add-next-line "*latex-compile*" "%f:%l:"
+  ; Win32, lets assume that everybody is using MikTex, and why not !!
+  set-variable %latex-view    &cond &seq %latex-view    "ERROR" "yap"  %latex-view
+  set-variable %latex-compile &cond &seq %latex-compile "ERROR" "latex --c-style-errors --halt-on-error " %latex-compile
+  ; Add hooks for the latex compiler errors
+  0 add-next-line "*latex-compile*"
+  add-next-line "*latex-compile*" "%f:%l:"
 !else
-    set-variable %latex-compile &cond &seq %latex-compile "ERROR" "latex -interaction=nonstopmode" %latex-compile
-    set-variable %latex-view    &cond &seq %latex-view    "ERROR" "xdvi"  %latex-view
+  set-variable %latex-compile &cond &seq %latex-compile "ERROR" "latex -interaction=nonstopmode" %latex-compile
+  set-variable %latex-view    &cond &seq %latex-view    "ERROR" "xdvi"  %latex-view
 !endif
 
 !if &and &sin "h" .fhook-latex.setup &band .hilight.flags 0x02
-    !if &not &exist .hilight.latex
-        set-variable .hilight.latex &pinc .hilight.next 1
-        set-variable .hilight.latexs &pinc .hilight.next 1
-        set-variable .hilight.latexb &pinc .hilight.next 1
-        set-variable .hilight.latext &pinc .hilight.next 1
-        set-variable .hilight.latexh &pinc .hilight.next 1
-        set-variable .hilight.latexi &pinc .hilight.next 1
-        set-variable .hilight.latexm &pinc .hilight.next 1
-        set-variable .hilight.latexn &pinc .hilight.next 1
-        set-variable .hilight.latexbi &pinc .hilight.next 1
-        set-variable .hilight.latexbt &pinc .hilight.next 1
-        set-variable .hilight.latexib &pinc .hilight.next 1
-        set-variable .hilight.latexit &pinc .hilight.next 1
-        set-variable .hilight.latextb &pinc .hilight.next 1
-        set-variable .hilight.latexti &pinc .hilight.next 1
-        set-variable .hilight.latexv &pinc .hilight.next 1
+  !if &not &exist .hilight.latex
+    set-variable .hilight.latex &pinc .hilight.next 1
+    set-variable .hilight.latexs &pinc .hilight.next 1
+    set-variable .hilight.latexb &pinc .hilight.next 1
+    set-variable .hilight.latext &pinc .hilight.next 1
+    set-variable .hilight.latexh &pinc .hilight.next 1
+    set-variable .hilight.latexi &pinc .hilight.next 1
+    set-variable .hilight.latexm &pinc .hilight.next 1
+    set-variable .hilight.latexn &pinc .hilight.next 1
+    set-variable .hilight.latexbi &pinc .hilight.next 1
+    set-variable .hilight.latexbt &pinc .hilight.next 1
+    set-variable .hilight.latexib &pinc .hilight.next 1
+    set-variable .hilight.latexit &pinc .hilight.next 1
+    set-variable .hilight.latextb &pinc .hilight.next 1
+    set-variable .hilight.latexti &pinc .hilight.next 1
+    set-variable .hilight.latexv &pinc .hilight.next 1
+  !endif
+  ; hilight-latex-common <hilightScheme> <schemeIdentifier>
+  ;
+  ; Take all of the common objects that are used in the various hilighting
+  ; schemes and apply them to the current hilighting format.
+  ;
+  0 define-macro hilight-latex-common
+    ; Get the arguments into the local registers for speed.
+    set-variable #l1 @1
+    set-variable #l2 @2
+    ; Comments
+    hilight #l1 2 "^%"                .scheme.comment
+    ;symbols
+    hilight #l1 64 "\\$\\\\bullet\\$" "·" #l2
+    hilight #l1 64 "\\\\>" "    ‘" #l2
+    hilight #l1 64 "\\\\\\\\" "\f" #l2
+    hilight #l1 64 "\\$\\\\vert\\$" "|" #l2
+    hilight #l1 64 "\\$\\\\beta\\$" "ß*" #l2
+    hilight #l1 64 "\\$\\\\alpha\\$" "a*" #l2
+    hilight #l1 64 "\\$\\\\mu\\$" "µ" #l2
+    hilight #l1 64 "\\$\\\\ldots\\$" "..." #l2
+    hilight #l1 64 "\\$\\\\geqq\\$" "|>=|" #l2
+    hilight #l1 64 "\\$\\\\leqq\\$" "|<=|" #l2
+    hilight #l1 64 "\\$\\^{\\\\rm TM}\\$" "™" #l2
+    hilight #l1 64 "\\$\\^{\\\\copyright}\\$" "©" #l2
+    hilight #l1 64 "\\$\\^{\\\\circledR}\\$" "®" #l2
+    hilight #l1 64 "\\$\\^{\\\\circ}\\$" "°" #l2
+    hilight #l1 64 "\\\\_" "_" #l2
+    hilight #l1 64 "\\\\-" "" #l2
+    hilight #l1 64 "\\\\ " " " #l2
+    hilight #l1 64 "\\\\textbackslash" "\\" #l2
+    hilight #l1 64 "\\\\textbar" "|" #l2
+    hilight #l1 64 "\\\\textless" "<" #l2
+    hilight #l1 64 "\\\\textgreater" ">" #l2
+    hilight #l1 64 "\\\\textasciicircum" "^" #l2
+    hilight #l1 64 "\\\\textasciitilde" "~" #l2
+    
+    ; Umlauts only examples, use gsar.exe for umlauts
+    ; tranlations during compiling
+    hilight #l1 64 "\"a" "ä" #l2
+    hilight #l1 64 "\"o" "ö" #l2
+    hilight #l1 64 "\\\\`a" "à" #l2
+    hilight #l1 64 "\\\\`e" "è" #l2
+    hilight #l1 64 "\\\\'e" "é" #l2
+    ; Double quotes
+    hilight #l1 64 "``" "`" #l2
+    hilight #l1 64 "''" "'" #l2
+    ; Quotes
+    hilight #l1 64 "\\\\glqq " "„" #l2
+    hilight #l1 64 "\\\\grqq" "\"" #l2
+    ; specials
+    hilight #l1 64 "\\\\BibTeX\\}\\W" "BibTeX" .scheme.bold
+    hilight #l1 64 "\\\\LaTeX\\}\\W"  "LaTeX" .scheme.bold
+    hilight #l1 64 "\\\\teTeX\\}\\W"  "teTeX" .scheme.bold
+    hilight #l1 64 "\\\\LaTeXe\\}\\W" "LaTeXe" .scheme.bold
+    hilight #l1 64 "\\\\Linux\\}\\W"  "Linux" .scheme.bold
+    hilight #l1 64 "\\\\TeX\\}\\W"    "TeX" .scheme.bold
+    hilight #l1 64 "\\\\MF\\}\\W"     "MF" .scheme.bold
+    hilight #l1 64 "\\\\AmSLaTeX\\}\\W" "AmSLaTeX" .scheme.bold
+    hilight #l1 64 "\\\\dvipdfm\\\\" "dvipdfm" .scheme.bold
+    ; character quoting
+    hilight #l1 64 "\\$\\(.\\)\\$" "\\1" #l2
+    hilight #l1 64 "\\\\\\$" "$" #l2
+    hilight #l1 64 "\\\\{" "{" #l2
+    hilight #l1 64 "\\\\}" "}" #l2
+    hilight #l1 64 "\\\\%" "%" #l2
+    hilight #l1 64 "\\\\#" "#" #l2
+    hilight #l1 64 "\\\\&" "&" #l2
+    hilight #l1 64 "\\\\char`\\\\\\(.\\)" "\\1" #l2
+    hilight #l1 64 "~" " "                                     #l2
+    ;references
+    hilight #l1 64 "\\\\index{[^}]*}" "" #l2
+    hilight #l1 64 "\\\\label{[^}]*}" "" #l2
+    hilight #l1 64 "\\\\plabel{[^}]*}" "" #l2
+    hilight #l1 64 "\\\\pdfbookmark\\[[^]]*]{[^}]*}{[^}]*}" "" #l2
+    hilight #l1 68 "\\\\cite\\[" "[Cite: " "]{[^}]*}" "]" "" #l2
+    hilight #l1 68 "\\\\citet\\[" "[Citet: " "]{[^}]*}" "]" "" #l2
+    hilight #l1 68 "\\\\cite{" "[Cite: " "}" "]" "" #l2
+    hilight #l1 68 "\\\\citet{" "[Citet: " "}" "]" "" #l2
+    hilight #l1 68 "\\\\ref{" "" "}" "" "" .scheme.link
+    hilight #l1 68 "\\\\pref{" "" "}" "" "" .scheme.link
+    hilight #l1 68 "\\\\includegraphics{" "[Image: " "}" "]" "" .scheme.keyword
+    hilight #l1 68 "\\\\caption{" "Caption: " "}" "" "" #l2
+    hilight #l1 68 "\\\\pageref{" "|" "}" "|‘" "" .scheme.link
+    hilight #l1 68 "\\\\link{" "" "}{[^}]*}" "" "" .scheme.link
+    hilight #l1 68 "\\\\footnote{" "[Footnote: " "}" "]" "" .scheme.keyword
+    hilight #l1 68 "\\\\dest{" "" "}" "" "" .scheme.link
+    hilight #l1 68 "\\\\emph{" "" "}" "" "" .scheme.bold
+    ; Other Text modifiers
+    hilight #l1 68 "\\\\textrm{" "" "}" "" "" #l2
+    hilight #l1 68 "\\\\textsf{" "" "}" "" "" #l2
+    ; For literal text surround in verticals - some people
+    ; use this. Uncomment to enable.
+    ; hilight #l1 68 "|" "" "|" "" "" .scheme.string
+    hilight #l1 64 "\\\\\\\\$" "" #l2
+  !emacro
+  
+  0 hilight .hilight.latex 0                                     $global-scheme
+  ; take out the \% token first so we can hilight comments correctly
+  hilight .hilight.latex 0 "\\\\%"                               .scheme.prepro
+  hilight .hilight.latex 0 "\\\\_"                               .scheme.prepro
+  hilight .hilight.latex 2 "%"                                   .scheme.comment
+  hilight .hilight.latex 0 "\\\\\\\\"                            .scheme.keyword
+  hilight .hilight.latex 4 "\\\\" "\\}\\W" ""                    .scheme.keyword
+  hilight .hilight.latex 0 "\\\\section\\*?{[^}]*}"              .scheme.header
+  hilight .hilight.latex 0 "\\\\subsection\\*?{[^}]*}"           .scheme.header
+  hilight .hilight.latex 0 "\\\\ref{[^}]*}"                      .scheme.link
+  hilight .hilight.latex 0 "\\\\link{[^}]*}{[^}]*}"              .scheme.link
+  hilight .hilight.latex 0 "\\\\dest{[^}]*}"                     .scheme.link
+  ; Font control
+  hilight .hilight.latex 0 "\\\\tt\\W"                           .scheme.operator
+  hilight .hilight.latex 0 "\\\\it\\W"                           .scheme.operator
+  hilight .hilight.latex 0 "\\\\bf\\W"                           .scheme.operator
+  hilight .hilight.latex 0 "\\\\textbf"                          .scheme.operator
+  hilight .hilight.latex 0 "\\\\textit"                          .scheme.operator
+  hilight .hilight.latex 0 "\\\\texttt"                          .scheme.operator
+  hilight .hilight.latex 0 "\\\\textcolor"                       .scheme.operator
+  hilight .hilight.latex 0 "\\\\textnormal"                      .scheme.operator
+  
+  ;; simulation hilighting
+  set-variable #l2 &rig $box-chars 10
+  0 hilight .hilight.latexs 0                                           $global-scheme
+  ; Common hilighting components
+  hilight-latex-common                                 .hilight.latexs  $global-scheme
+  ;comments
+  hilight .hilight.latexs 2 "[^\\\\]\\{%"                               .scheme.comment
+  hilight .hilight.latexs 4 "\\\\" "\\}\\W" ""                          .scheme.keyword
+  ;headers
+  hilight .hilight.latexs 68 "\\\\chapter\\*?{" "*" "}" "" ""           .scheme.header
+  hilight .hilight.latexs 68 "\\\\part\\*?{" "Part: " "}" "" ""          .scheme.header
+  hilight .hilight.latexs 68 "\\\\section\\*?{" "**" "}" "" ""          .scheme.header
+  hilight .hilight.latexs 68 "\\\\subsection\\*?{" "***" "}" "" ""      .scheme.header
+  hilight .hilight.latexs 68 "\\\\subsubsection\\*?{" "****" "}" "" ""  .scheme.header
+  hilight .hilight.latexs 68 "\\\\paragraph\\*?{" "*****" "}" "" ""     .scheme.header
+  hilight .hilight.latexs 68 "\\\\subparagraph\\*?{" "******" "}" "" "" .scheme.header
+  hilight .hilight.latexs 68 "\\\\markboth{" "" "}{[^}]*}" "" ""        .scheme.header
+  hilight .hilight.latexs 68 "\\\\bibliography{" "<<Bibliography: " "}" ">>" "" .scheme.keyword
+  hilight .hilight.latexs 64 "\\\\tableofcontents" "<<Table of Contents>>" .scheme.keyword
+  ;
+  ; hide some unimportant tokens completely
+  hilight .hilight.latexs 64 "\\\\bibliographystyle{[^}]*}" ""          $global-scheme
+  hilight .hilight.latexs 64 "\\\\pagenumbering{[^}]*}" ""              $global-scheme
+  hilight .hilight.latexs 64 "\\\\newline" ""                           $global-scheme
+  ;Lines
+  hilight .hilight.latexs 64 "\\\\newpage" &spr "%n<<Page Break>>%n" 32 #l2 32 #l2 .scheme.italic
+  hilight .hilight.latexs 64 "\\\\hline" &spr "%n" 78 #l2               $global-scheme
+  hilight .hilight.latexs 64 "\\\\toprule" &spr "%n" 64 #l2             $global-scheme
+  hilight .hilight.latexs 64 "\\\\bottomrule" &spr "%n" 64 #l2          $global-scheme
+  ; Begin and End
+  hilight .hilight.latexs 68 "\\\\begin{" "|" "}" ">>" ""               .scheme.keyword
+  hilight .hilight.latexs 68 "\\\\end{" "<<" "}" "|" ""                 .scheme.keyword
+  hilight .hilight.latexs 68 "\\\\verb\\+" "" "\\+" "" ""               $global-scheme
+  ;
+  hilight .hilight.latexs 0xc0 "\\\\begin{verbatim}" "|verbatim>>" .hilight.latexv .scheme.keyword
+  hilight .hilight.latexs 64 "\\\\begin{figure}\\[[^]]*]" "|figure>>"              .scheme.keyword
+  hilight .hilight.latexs 64 "\\\\begin{table}\\[[^]]*]" "|table>>"                .scheme.keyword
+  hilight .hilight.latexs 64 "\\\\begin{tabular}{[^}]*}" "|tabular>>"              .scheme.keyword
+  hilight .hilight.latexs 68 "\\\\begin{biography}{" "|biography: " "}" ">>" ""    .scheme.keyword
+  ; Division help
+  hilight .hilight.latexs 64 "\\\\-" ""                 .scheme.italic
+  hilight .hilight.latexs 64 "\\\\item" "   *"          .scheme.italic
+  hilight .hilight.latexs 64 "\\\\itemitem" "       *"  .scheme.italic
+  hilight .hilight.latexs 68 "\\\\item\\[" "" "]" "" "" .scheme.bold
+  hilight .hilight.latexs 64 "\\\\ind" "    "           $global-scheme
+  ; Environment
+  hilight .hilight.latexs 64 "&" "|"                     $global-scheme
+  hilight .hilight.latexs 64 "\\\\linewidth" "ˆlw|"   .scheme.italic
+  hilight .hilight.latexs 64 "\\\\pdfimage width" "PNG*" .scheme.italic
+  ; textformat
+  hilight .hilight.latexs 0xc0 "\\\\textbf{" ""     .hilight.latexb .scheme.bold
+  hilight .hilight.latexs 0xc0 "\\\\textit{" ""     .hilight.latexi .scheme.italic
+  hilight .hilight.latexs 0xc0 "\\\\texttt{" ""     .hilight.latext .scheme.string
+  hilight .hilight.latexs 0xc0 "\\\\textnormal{" "" .hilight.latexn $global-scheme
+  hilight .hilight.latexs 0xc0 "{\\\\ttfamily" ""   .hilight.latext .scheme.string
+  hilight .hilight.latexs 0xc0 "{\\\\bf *" ""       .hilight.latexb .scheme.bold
+  hilight .hilight.latexs 0xc0 "{\\\\it *" ""       .hilight.latexi .scheme.italic
+  hilight .hilight.latexs 0xc0 "{\\\\tt *" ""       .hilight.latext .scheme.string
+  ;hilight .hilight.latexs 0xc0 "\\$" ""            .hilight.latexm .scheme.string
+  ;
+  ; hilight scheme for normal
+  ;
+  0 hilight  .hilight.latexn 2 50                                     $global-scheme
+  hilight-latex-common                              .hilight.latexn   $global-scheme
+  hilight .hilight.latexn 0xc0 "}" ""               .hilight.latexs   $global-scheme
+  hilight .hilight.latexn 0xc0 "{\\\\bf *" ""       .hilight.latexb  .scheme.bold
+  hilight .hilight.latexn 0xc0 "{\\\\it *" ""       .hilight.latexi  .scheme.italic
+  hilight .hilight.latexn 0xc0 "{\\\\tt *" ""       .hilight.latext  .scheme.string
+  hilight .hilight.latexn 0xc0 "\\\\textbf{" ""     .hilight.latexb  .scheme.bold
+  hilight .hilight.latexn 0xc0 "\\\\textit{" ""     .hilight.latexbi .scheme.italic
+  hilight .hilight.latexn 0xc0 "\\\\texttt{" ""     .hilight.latexbt .scheme.string
+  hilight .hilight.latexn 0xc0 "\\\\textnormal{" "" .hilight.latexn  .scheme.error
+  ;
+  ; hilight scheme for bold
+  ;
+  0 hilight  .hilight.latexb 2 50                                    .scheme.bold
+  hilight-latex-common                              .hilight.latexb  .scheme.bold
+  hilight .hilight.latexb 0xc0 "}" ""               .hilight.latexs  .scheme.bold
+  hilight .hilight.latexb 0xc0 "{\\\\bf *" ""       .hilight.latexb  .scheme.error
+  hilight .hilight.latexb 0xc0 "{\\\\it *" ""       .hilight.latexbi .scheme.italic
+  hilight .hilight.latexb 0xc0 "{\\\\tt *" ""       .hilight.latexbt .scheme.string
+  hilight .hilight.latexb 0xc0 "\\\\textbf{" ""     .hilight.latexb  .scheme.error
+  hilight .hilight.latexb 0xc0 "\\\\textit{" ""     .hilight.latexbi .scheme.italic
+  hilight .hilight.latexb 0xc0 "\\\\texttt{" ""     .hilight.latexbt .scheme.string
+  hilight .hilight.latexb 0xc0 "\\\\textnormal{" "" .hilight.latexn  $global-scheme
+  ;
+  ; hilight scheme for italic
+  ;
+  0 hilight  .hilight.latexi 2 50                                    .scheme.italic
+  hilight-latex-common                              .hilight.latexi  .scheme.italic
+  hilight .hilight.latexi 0xc0 "}" ""               .hilight.latexs  .scheme.italic
+  hilight .hilight.latexi 0xc0 "{\\\\bf *" ""       .hilight.latexib .scheme.bold
+  hilight .hilight.latexi 0xc0 "{\\\\it *" ""       .hilight.latexi  .scheme.error
+  hilight .hilight.latexi 0xc0 "{\\\\tt *" ""       .hilight.latexit .scheme.string
+  hilight .hilight.latexi 0xc0 "{\\\\tt *" ""       .hilight.latexit .scheme.string
+  hilight .hilight.latexi 0xc0 "\\\\textbf{" ""     .hilight.latexib .scheme.bold
+  hilight .hilight.latexi 0xc0 "\\\\textit{" ""     .hilight.latexi  .scheme.error
+  hilight .hilight.latexi 0xc0 "\\\\texttt{" ""     .hilight.latexit .scheme.string
+  hilight .hilight.latexi 0xc0 "\\\\textnormal{" "" .hilight.latexn  $global-scheme
+  ;
+  ; hilight scheme for fixed-font
+  ;
+  0 hilight  .hilight.latext 2 50                                    .scheme.string
+  hilight-latex-common                              .hilight.latext  .scheme.string
+  hilight .hilight.latext 0xc0 "}" ""               .hilight.latexs  .scheme.string
+  hilight .hilight.latext 0xc0 "{\\\\bf *" ""       .hilight.latextb .scheme.bold
+  hilight .hilight.latext 0xc0 "{\\\\it *" ""       .hilight.latexti .scheme.italic
+  hilight .hilight.latext 0xc0 "{\\\\tt *" ""       .hilight.latext  .scheme.error
+  hilight .hilight.latext 0xc0 "\\\\textbf{" ""     .hilight.latextb .scheme.bold
+  hilight .hilight.latext 0xc0 "\\\\textit{" ""     .hilight.latexti .scheme.italic
+  hilight .hilight.latext 0xc0 "\\\\texttt{" ""     .hilight.latext  .scheme.error
+  hilight .hilight.latext 0xc0 "\\\\textnormal{" "" .hilight.latexn  $global-scheme
+  ;
+  ; hilight scheme for italic bold
+  ;
+  0 hilight  .hilight.latexib 2 50                      .scheme.bold
+  hilight-latex-common                 .hilight.latexib .scheme.bold
+  hilight .hilight.latexib 0xc0 "}" "" .hilight.latexi  .scheme.italic
+  ;
+  ; hilight scheme for italic fixed-font
+  ;
+  0 hilight  .hilight.latexit 2 50                      .scheme.bold
+  hilight-latex-common                 .hilight.latexit .scheme.bold
+  hilight .hilight.latexit 0xc0 "}" "" .hilight.latexi  .scheme.italic
+  ;
+  ; hilight scheme for bold italic
+  ;
+  0 hilight  .hilight.latexbi 2 50                      .scheme.italic
+  hilight-latex-common                 .hilight.latexit .scheme.italic
+  hilight .hilight.latexbi 0xc0 "}" "" .hilight.latexb  .scheme.bold
+  ;
+  ; hilight scheme for bold fixed-font
+  ;
+  0 hilight  .hilight.latexbt 2 50                      .scheme.string
+  hilight-latex-common                 .hilight.latexbt .scheme.string
+  hilight .hilight.latexbt 0xc0 "}" "" .hilight.latexb  .scheme.bold
+  ;
+  ; hilight scheme for fixed-font bold
+  ;
+  0 hilight  .hilight.latextb 2 50                      .scheme.bold
+  hilight-latex-common                 .hilight.latextb .scheme.bold
+  hilight .hilight.latextb 0xc0 "}" "" .hilight.latext  .scheme.string
+  ;
+  ; hilight scheme for fixed-font italic
+  ;
+  0 hilight  .hilight.latexti 2 50                      .scheme.italic
+  hilight-latex-common                 .hilight.latexti .scheme.italic
+  hilight .hilight.latexti 0xc0 "}" "" .hilight.latext  .scheme.string
+  ;
+  ; hilight scheme for maths
+  ;
+  0 hilight  .hilight.latexm 2 50                        .scheme.string
+  hilight-latex-common                  .hilight.latexm  .scheme.string
+  hilight .hilight.latexm 0xc0 "\\$" "" .hilight.latexs  .scheme.string
+  ;
+  ; hilight scheme for verbatim text
+  ;
+  0 hilight  .hilight.latexv 2 50                                $global-scheme
+  hilight .hilight.latexv 0xc0 "\\\\end{verbatim}" "<<verbatim|" .hilight.latexs .scheme.keyword
+  
+  0 define-macro latex-swap-hilight
+    !if &equal $buffer-hilight .hilight.latex
+      set-variable $buffer-hilight .hilight.latexs
+      1 buffer-mode "view"
+    !else
+      set-variable $buffer-hilight .hilight.latex
+      -1 buffer-mode "view"
     !endif
-    ; hilight-latex-common <hilightScheme> <schemeIdentifier>
-    ;
-    ; Take all of the common objects that are used in the various hilighting
-    ; schemes and apply them to the current hilighting format.
-    ;
-    0 define-macro hilight-latex-common
-        ; Get the arguments into the local registers for speed.
-        set-variable #l1 @1
-        set-variable #l2 @2
-        ; Comments
-        hilight #l1 2 "^%"                .scheme.comment
-        ;symbols
-        hilight #l1 64 "\\$\\\\bullet\\$" "·" #l2
-        hilight #l1 64 "\\\\>" "    ‘" #l2
-        hilight #l1 64 "\\\\\\\\" "\f" #l2
-        hilight #l1 64 "\\$\\\\vert\\$" "|" #l2
-        hilight #l1 64 "\\$\\\\beta\\$" "ß*" #l2
-        hilight #l1 64 "\\$\\\\alpha\\$" "a*" #l2
-        hilight #l1 64 "\\$\\\\mu\\$" "µ" #l2
-        hilight #l1 64 "\\$\\\\ldots\\$" "..." #l2
-        hilight #l1 64 "\\$\\\\geqq\\$" "|>=|" #l2
-        hilight #l1 64 "\\$\\\\leqq\\$" "|<=|" #l2
-        hilight #l1 64 "\\$\\^{\\\\rm TM}\\$" "™" #l2
-        hilight #l1 64 "\\$\\^{\\\\copyright}\\$" "©" #l2
-        hilight #l1 64 "\\$\\^{\\\\circledR}\\$" "®" #l2
-        hilight #l1 64 "\\$\\^{\\\\circ}\\$" "°" #l2
-        hilight #l1 64 "\\\\_" "_" #l2
-        hilight #l1 64 "\\\\-" "" #l2
-        hilight #l1 64 "\\\\ " " " #l2
-        hilight #l1 64 "\\\\textbackslash" "\\" #l2
-        hilight #l1 64 "\\\\textbar" "|" #l2
-        hilight #l1 64 "\\\\textless" "<" #l2
-        hilight #l1 64 "\\\\textgreater" ">" #l2
-        hilight #l1 64 "\\\\textasciicircum" "^" #l2
-        hilight #l1 64 "\\\\textasciitilde" "~" #l2
-
-        ; Umlauts only examples, use gsar.exe for umlauts
-        ; tranlations during compiling
-        hilight #l1 64 "\"a" "ä" #l2
-        hilight #l1 64 "\"o" "ö" #l2
-        hilight #l1 64 "\\\\`a" "à" #l2
-        hilight #l1 64 "\\\\`e" "è" #l2
-        hilight #l1 64 "\\\\'e" "é" #l2
-        ; Double quotes
-        hilight #l1 64 "``" "`" #l2
-        hilight #l1 64 "''" "'" #l2
-        ; Quotes
-        hilight #l1 64 "\\\\glqq " "„" #l2
-        hilight #l1 64 "\\\\grqq" "\"" #l2
-        ; specials
-        hilight #l1 64 "\\\\BibTeX\\}\\W" "BibTeX" .scheme.bold
-        hilight #l1 64 "\\\\LaTeX\\}\\W"  "LaTeX" .scheme.bold
-        hilight #l1 64 "\\\\teTeX\\}\\W"  "teTeX" .scheme.bold
-        hilight #l1 64 "\\\\LaTeXe\\}\\W" "LaTeXe" .scheme.bold
-        hilight #l1 64 "\\\\Linux\\}\\W"  "Linux" .scheme.bold
-        hilight #l1 64 "\\\\TeX\\}\\W"    "TeX" .scheme.bold
-        hilight #l1 64 "\\\\MF\\}\\W"     "MF" .scheme.bold
-        hilight #l1 64 "\\\\AmSLaTeX\\}\\W" "AmSLaTeX" .scheme.bold
-        hilight #l1 64 "\\\\dvipdfm\\\\" "dvipdfm" .scheme.bold
-        ; character quoting
-        hilight #l1 64 "\\$\\(.\\)\\$" "\\1" #l2
-        hilight #l1 64 "\\\\\\$" "$" #l2
-        hilight #l1 64 "\\\\{" "{" #l2
-        hilight #l1 64 "\\\\}" "}" #l2
-        hilight #l1 64 "\\\\%" "%" #l2
-        hilight #l1 64 "\\\\#" "#" #l2
-        hilight #l1 64 "\\\\&" "&" #l2
-        hilight #l1 64 "\\\\char`\\\\\\(.\\)" "\\1" #l2
-        hilight #l1 64 "~" " "                                     #l2
-        ;references
-        hilight #l1 64 "\\\\index{[^}]*}" "" #l2
-        hilight #l1 64 "\\\\label{[^}]*}" "" #l2
-        hilight #l1 64 "\\\\plabel{[^}]*}" "" #l2
-        hilight #l1 64 "\\\\pdfbookmark\\[[^]]*]{[^}]*}{[^}]*}" "" #l2
-        hilight #l1 68 "\\\\cite\\[" "[Cite: " "]{[^}]*}" "]" "" #l2
-        hilight #l1 68 "\\\\citet\\[" "[Citet: " "]{[^}]*}" "]" "" #l2
-        hilight #l1 68 "\\\\cite{" "[Cite: " "}" "]" "" #l2
-        hilight #l1 68 "\\\\citet{" "[Citet: " "}" "]" "" #l2
-        hilight #l1 68 "\\\\ref{" "" "}" "" "" .scheme.link
-        hilight #l1 68 "\\\\pref{" "" "}" "" "" .scheme.link
-        hilight #l1 68 "\\\\includegraphics{" "[Image: " "}" "]" "" .scheme.keyword
-        hilight #l1 68 "\\\\caption{" "Caption: " "}" "" "" #l2
-        hilight #l1 68 "\\\\pageref{" "|" "}" "|‘" "" .scheme.link
-        hilight #l1 68 "\\\\link{" "" "}{[^}]*}" "" "" .scheme.link
-        hilight #l1 68 "\\\\footnote{" "[Footnote: " "}" "]" "" .scheme.keyword
-        hilight #l1 68 "\\\\dest{" "" "}" "" "" .scheme.link
-        hilight #l1 68 "\\\\emph{" "" "}" "" "" .scheme.bold
-        ; Other Text modifiers
-        hilight #l1 68 "\\\\textrm{" "" "}" "" "" #l2
-        hilight #l1 68 "\\\\textsf{" "" "}" "" "" #l2
-        ; For literal text surround in verticals - some people
-        ; use this. Uncomment to enable.
-        ; hilight #l1 68 "|" "" "|" "" "" .scheme.string
-        hilight #l1 64 "\\\\\\\\$" "" #l2
-    !emacro
-
-    0 hilight .hilight.latex 0                                     $global-scheme
-    ; take out the \% token first so we can hilight comments correctly
-    hilight .hilight.latex 0 "\\\\%"                               .scheme.prepro
-    hilight .hilight.latex 0 "\\\\_"                               .scheme.prepro
-    hilight .hilight.latex 2 "%"                                   .scheme.comment
-    hilight .hilight.latex 0 "\\\\\\\\"                            .scheme.keyword
-    hilight .hilight.latex 4 "\\\\" "\\}\\W" ""                    .scheme.keyword
-    hilight .hilight.latex 0 "\\\\section\\*?{[^}]*}"              .scheme.header
-    hilight .hilight.latex 0 "\\\\subsection\\*?{[^}]*}"           .scheme.header
-    hilight .hilight.latex 0 "\\\\ref{[^}]*}"                      .scheme.link
-    hilight .hilight.latex 0 "\\\\link{[^}]*}{[^}]*}"              .scheme.link
-    hilight .hilight.latex 0 "\\\\dest{[^}]*}"                     .scheme.link
-    ; Font control
-    hilight .hilight.latex 0 "\\\\tt\\W"                           .scheme.operator
-    hilight .hilight.latex 0 "\\\\it\\W"                           .scheme.operator
-    hilight .hilight.latex 0 "\\\\bf\\W"                           .scheme.operator
-    hilight .hilight.latex 0 "\\\\textbf"                          .scheme.operator
-    hilight .hilight.latex 0 "\\\\textit"                          .scheme.operator
-    hilight .hilight.latex 0 "\\\\texttt"                          .scheme.operator
-    hilight .hilight.latex 0 "\\\\textcolor"                       .scheme.operator
-    hilight .hilight.latex 0 "\\\\textnormal"                      .scheme.operator
-
-    ;; simulation hilighting
-    set-variable #l2 &rig $box-chars 10
-    0 hilight .hilight.latexs 0                                           $global-scheme
-    ; Common hilighting components
-    hilight-latex-common                                 .hilight.latexs  $global-scheme
-    ;comments
-    hilight .hilight.latexs 2 "[^\\\\]\\{%"                               .scheme.comment
-    hilight .hilight.latexs 4 "\\\\" "\\}\\W" ""                          .scheme.keyword
-    ;headers
-    hilight .hilight.latexs 68 "\\\\chapter\\*?{" "*" "}" "" ""           .scheme.header
-    hilight .hilight.latexs 68 "\\\\part\\*?{" "Part: " "}" "" ""          .scheme.header
-    hilight .hilight.latexs 68 "\\\\section\\*?{" "**" "}" "" ""          .scheme.header
-    hilight .hilight.latexs 68 "\\\\subsection\\*?{" "***" "}" "" ""      .scheme.header
-    hilight .hilight.latexs 68 "\\\\subsubsection\\*?{" "****" "}" "" ""  .scheme.header
-    hilight .hilight.latexs 68 "\\\\paragraph\\*?{" "*****" "}" "" ""     .scheme.header
-    hilight .hilight.latexs 68 "\\\\subparagraph\\*?{" "******" "}" "" "" .scheme.header
-    hilight .hilight.latexs 68 "\\\\markboth{" "" "}{[^}]*}" "" ""        .scheme.header
-    hilight .hilight.latexs 68 "\\\\bibliography{" "<<Bibliography: " "}" ">>" "" .scheme.keyword
-    hilight .hilight.latexs 64 "\\\\tableofcontents" "<<Table of Contents>>" .scheme.keyword
-    ;
-    ; hide some unimportant tokens completely
-    hilight .hilight.latexs 64 "\\\\bibliographystyle{[^}]*}" ""          $global-scheme
-    hilight .hilight.latexs 64 "\\\\pagenumbering{[^}]*}" ""              $global-scheme
-    hilight .hilight.latexs 64 "\\\\newline" ""                           $global-scheme
-    ;Lines
-    hilight .hilight.latexs 64 "\\\\newpage" &spr "%n<<Page Break>>%n" 32 #l2 32 #l2 .scheme.italic
-    hilight .hilight.latexs 64 "\\\\hline" &spr "%n" 78 #l2               $global-scheme
-    hilight .hilight.latexs 64 "\\\\toprule" &spr "%n" 64 #l2             $global-scheme
-    hilight .hilight.latexs 64 "\\\\bottomrule" &spr "%n" 64 #l2          $global-scheme
-    ; Begin and End
-    hilight .hilight.latexs 68 "\\\\begin{" "|" "}" ">>" ""               .scheme.keyword
-    hilight .hilight.latexs 68 "\\\\end{" "<<" "}" "|" ""                 .scheme.keyword
-    hilight .hilight.latexs 68 "\\\\verb\\+" "" "\\+" "" ""               $global-scheme
-    ;
-    hilight .hilight.latexs 0xc0 "\\\\begin{verbatim}" "|verbatim>>" .hilight.latexv .scheme.keyword
-    hilight .hilight.latexs 64 "\\\\begin{figure}\\[[^]]*]" "|figure>>"              .scheme.keyword
-    hilight .hilight.latexs 64 "\\\\begin{table}\\[[^]]*]" "|table>>"                .scheme.keyword
-    hilight .hilight.latexs 64 "\\\\begin{tabular}{[^}]*}" "|tabular>>"              .scheme.keyword
-    hilight .hilight.latexs 68 "\\\\begin{biography}{" "|biography: " "}" ">>" ""    .scheme.keyword
-    ; Division help
-    hilight .hilight.latexs 64 "\\\\-" ""                 .scheme.italic
-    hilight .hilight.latexs 64 "\\\\item" "   *"          .scheme.italic
-    hilight .hilight.latexs 64 "\\\\itemitem" "       *"  .scheme.italic
-    hilight .hilight.latexs 68 "\\\\item\\[" "" "]" "" "" .scheme.bold
-    hilight .hilight.latexs 64 "\\\\ind" "    "           $global-scheme
-    ; Environment
-    hilight .hilight.latexs 64 "&" "|"                     $global-scheme
-    hilight .hilight.latexs 64 "\\\\linewidth" "ˆlw|"   .scheme.italic
-    hilight .hilight.latexs 64 "\\\\pdfimage width" "PNG*" .scheme.italic
-    ; textformat
-    hilight .hilight.latexs 0xc0 "\\\\textbf{" ""     .hilight.latexb .scheme.bold
-    hilight .hilight.latexs 0xc0 "\\\\textit{" ""     .hilight.latexi .scheme.italic
-    hilight .hilight.latexs 0xc0 "\\\\texttt{" ""     .hilight.latext .scheme.string
-    hilight .hilight.latexs 0xc0 "\\\\textnormal{" "" .hilight.latexn $global-scheme
-    hilight .hilight.latexs 0xc0 "{\\\\ttfamily" ""   .hilight.latext .scheme.string
-    hilight .hilight.latexs 0xc0 "{\\\\bf *" ""       .hilight.latexb .scheme.bold
-    hilight .hilight.latexs 0xc0 "{\\\\it *" ""       .hilight.latexi .scheme.italic
-    hilight .hilight.latexs 0xc0 "{\\\\tt *" ""       .hilight.latext .scheme.string
-    ;hilight .hilight.latexs 0xc0 "\\$" ""            .hilight.latexm .scheme.string
-    ;
-    ; hilight scheme for normal
-    ;
-    0 hilight  .hilight.latexn 2 50                                     $global-scheme
-    hilight-latex-common                              .hilight.latexn   $global-scheme
-    hilight .hilight.latexn 0xc0 "}" ""               .hilight.latexs   $global-scheme
-    hilight .hilight.latexn 0xc0 "{\\\\bf *" ""       .hilight.latexb  .scheme.bold
-    hilight .hilight.latexn 0xc0 "{\\\\it *" ""       .hilight.latexi  .scheme.italic
-    hilight .hilight.latexn 0xc0 "{\\\\tt *" ""       .hilight.latext  .scheme.string
-    hilight .hilight.latexn 0xc0 "\\\\textbf{" ""     .hilight.latexb  .scheme.bold
-    hilight .hilight.latexn 0xc0 "\\\\textit{" ""     .hilight.latexbi .scheme.italic
-    hilight .hilight.latexn 0xc0 "\\\\texttt{" ""     .hilight.latexbt .scheme.string
-    hilight .hilight.latexn 0xc0 "\\\\textnormal{" "" .hilight.latexn  .scheme.error
-    ;
-    ; hilight scheme for bold
-    ;
-    0 hilight  .hilight.latexb 2 50                                    .scheme.bold
-    hilight-latex-common                              .hilight.latexb  .scheme.bold
-    hilight .hilight.latexb 0xc0 "}" ""               .hilight.latexs  .scheme.bold
-    hilight .hilight.latexb 0xc0 "{\\\\bf *" ""       .hilight.latexb  .scheme.error
-    hilight .hilight.latexb 0xc0 "{\\\\it *" ""       .hilight.latexbi .scheme.italic
-    hilight .hilight.latexb 0xc0 "{\\\\tt *" ""       .hilight.latexbt .scheme.string
-    hilight .hilight.latexb 0xc0 "\\\\textbf{" ""     .hilight.latexb  .scheme.error
-    hilight .hilight.latexb 0xc0 "\\\\textit{" ""     .hilight.latexbi .scheme.italic
-    hilight .hilight.latexb 0xc0 "\\\\texttt{" ""     .hilight.latexbt .scheme.string
-    hilight .hilight.latexb 0xc0 "\\\\textnormal{" "" .hilight.latexn  $global-scheme
-    ;
-    ; hilight scheme for italic
-    ;
-    0 hilight  .hilight.latexi 2 50                                    .scheme.italic
-    hilight-latex-common                              .hilight.latexi  .scheme.italic
-    hilight .hilight.latexi 0xc0 "}" ""               .hilight.latexs  .scheme.italic
-    hilight .hilight.latexi 0xc0 "{\\\\bf *" ""       .hilight.latexib .scheme.bold
-    hilight .hilight.latexi 0xc0 "{\\\\it *" ""       .hilight.latexi  .scheme.error
-    hilight .hilight.latexi 0xc0 "{\\\\tt *" ""       .hilight.latexit .scheme.string
-    hilight .hilight.latexi 0xc0 "{\\\\tt *" ""       .hilight.latexit .scheme.string
-    hilight .hilight.latexi 0xc0 "\\\\textbf{" ""     .hilight.latexib .scheme.bold
-    hilight .hilight.latexi 0xc0 "\\\\textit{" ""     .hilight.latexi  .scheme.error
-    hilight .hilight.latexi 0xc0 "\\\\texttt{" ""     .hilight.latexit .scheme.string
-    hilight .hilight.latexi 0xc0 "\\\\textnormal{" "" .hilight.latexn  $global-scheme
-    ;
-    ; hilight scheme for fixed-font
-    ;
-    0 hilight  .hilight.latext 2 50                                    .scheme.string
-    hilight-latex-common                              .hilight.latext  .scheme.string
-    hilight .hilight.latext 0xc0 "}" ""               .hilight.latexs  .scheme.string
-    hilight .hilight.latext 0xc0 "{\\\\bf *" ""       .hilight.latextb .scheme.bold
-    hilight .hilight.latext 0xc0 "{\\\\it *" ""       .hilight.latexti .scheme.italic
-    hilight .hilight.latext 0xc0 "{\\\\tt *" ""       .hilight.latext  .scheme.error
-    hilight .hilight.latext 0xc0 "\\\\textbf{" ""     .hilight.latextb .scheme.bold
-    hilight .hilight.latext 0xc0 "\\\\textit{" ""     .hilight.latexti .scheme.italic
-    hilight .hilight.latext 0xc0 "\\\\texttt{" ""     .hilight.latext  .scheme.error
-    hilight .hilight.latext 0xc0 "\\\\textnormal{" "" .hilight.latexn  $global-scheme
-    ;
-    ; hilight scheme for italic bold
-    ;
-    0 hilight  .hilight.latexib 2 50                      .scheme.bold
-    hilight-latex-common                 .hilight.latexib .scheme.bold
-    hilight .hilight.latexib 0xc0 "}" "" .hilight.latexi  .scheme.italic
-    ;
-    ; hilight scheme for italic fixed-font
-    ;
-    0 hilight  .hilight.latexit 2 50                      .scheme.bold
-    hilight-latex-common                 .hilight.latexit .scheme.bold
-    hilight .hilight.latexit 0xc0 "}" "" .hilight.latexi  .scheme.italic
-    ;
-    ; hilight scheme for bold italic
-    ;
-    0 hilight  .hilight.latexbi 2 50                      .scheme.italic
-    hilight-latex-common                 .hilight.latexit .scheme.italic
-    hilight .hilight.latexbi 0xc0 "}" "" .hilight.latexb  .scheme.bold
-    ;
-    ; hilight scheme for bold fixed-font
-    ;
-    0 hilight  .hilight.latexbt 2 50                      .scheme.string
-    hilight-latex-common                 .hilight.latexbt .scheme.string
-    hilight .hilight.latexbt 0xc0 "}" "" .hilight.latexb  .scheme.bold
-    ;
-    ; hilight scheme for fixed-font bold
-    ;
-    0 hilight  .hilight.latextb 2 50                      .scheme.bold
-    hilight-latex-common                 .hilight.latextb .scheme.bold
-    hilight .hilight.latextb 0xc0 "}" "" .hilight.latext  .scheme.string
-    ;
-    ; hilight scheme for fixed-font italic
-    ;
-    0 hilight  .hilight.latexti 2 50                      .scheme.italic
-    hilight-latex-common                 .hilight.latexti .scheme.italic
-    hilight .hilight.latexti 0xc0 "}" "" .hilight.latext  .scheme.string
-    ;
-    ; hilight scheme for maths
-    ;
-    0 hilight  .hilight.latexm 2 50                        .scheme.string
-    hilight-latex-common                  .hilight.latexm  .scheme.string
-    hilight .hilight.latexm 0xc0 "\\$" "" .hilight.latexs  .scheme.string
-    ;
-    ; hilight scheme for verbatim text
-    ;
-    0 hilight  .hilight.latexv 2 50                                $global-scheme
-    hilight .hilight.latexv 0xc0 "\\\\end{verbatim}" "<<verbatim|" .hilight.latexs .scheme.keyword
-
-    0 define-macro latex-swap-hilight
-        !if &equal $buffer-hilight .hilight.latex
-            set-variable $buffer-hilight .hilight.latexs
-            1 buffer-mode "view"
-        !else
-            set-variable $buffer-hilight .hilight.latex
-            -1 buffer-mode "view"
-        !endif
-    !emacro
-    ; redefine to free memory
-    0 define-macro hilight-latex-common
-    !emacro
+  !emacro
+  ; redefine to free memory
+  0 define-macro hilight-latex-common
+  !emacro
 !endif
 ;
 ; TeX language specific macros.
@@ -394,32 +394,32 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*%\\|^[ \t]*$\\|^[ \t]*\
 ; latex-forward-paragraph; Advance to the start of the next paragraph This is
 ; a little bit different from the latex-para as we ignore comments.
 0 define-macro latex-forward-paragraph
-    ; Iterate for the number of times requested.
-    !while &gre &pdec @# 1 0
-        forward-line
-        ; Find the end of the paragraph
-        !force search-buffer "em" .fhook-latex.paragraph-srch
-        !if &not $status
-            end-of-buffer
-            !return
-        !endif
-        beginning-of-line
-    !done
+  ; Iterate for the number of times requested.
+  !while &gre &pdec @# 1 0
+    forward-line
+    ; Find the end of the paragraph
+    !force search-buffer "em" .fhook-latex.paragraph-srch
+    !if &not $status
+      end-of-buffer
+      !return
+    !endif
+    beginning-of-line
+  !done
 !emacro
 ; latex-backward-paragraph; Advance to the start of the previous paragraph
 ; This is a little bit different from the latex-para as we ignore comments.
 0 define-macro latex-backward-paragraph
-    ; Iterate for the number of times requested.
-    !while &gre &pdec @# 1 0
-        backward-line
-        ; Find the start of the paragraph
-        !force search-buffer "bem" .fhook-latex.paragraph-srch
-        !if &not $status
-            beginning-of-buffer
-            !return
-        !endif
-        beginning-of-line
-    !done
+  ; Iterate for the number of times requested.
+  !while &gre &pdec @# 1 0
+    backward-line
+    ; Find the start of the paragraph
+    !force search-buffer "bem" .fhook-latex.paragraph-srch
+    !if &not $status
+      beginning-of-buffer
+      !return
+    !endif
+    beginning-of-line
+  !done
 !emacro
 ; latex-para; Format the paragraph. We do this by inserting blank lines
 ; around our selected paragraph and then performing a fill operation on it.
@@ -428,228 +428,228 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*%\\|^[ \t]*$\\|^[ \t]*\
 ; Note: If no arguments are supplied then the current position is retained in
 ; the paragraph. This position is saved as 'mark'.
 0 define-macro latex-para
-    ; Save mark at point.
-    !if &not @?
-        set-mark
+  ; Save mark at point.
+  !if &not @?
+    set-mark
+  !endif
+  beginning-of-line
+  !while &gre &pdec @# 1 0
+    ; Skip blank lines, we do this here incase we are within multiple
+    ; blank lines which causes things to go wrong.
+    beginning-of-line
+    !force search-buffer "m" "\\S"
+    end-of-line
+    ; Find the end of the paragraph
+    !force search-buffer "em" .fhook-latex.paragraph-srch
+    !if &not $status
+      !abort
+      end-of-buffer
+      ; Force an ending !!
+      set-variable @# 1
     !endif
     beginning-of-line
-    !while &gre &pdec @# 1 0
-        ; Skip blank lines, we do this here incase we are within multiple
-        ; blank lines which causes things to go wrong.
-        beginning-of-line
-        !force search-buffer "m" "\\S"
-        end-of-line
-        ; Find the end of the paragraph
-        !force search-buffer "em" .fhook-latex.paragraph-srch
-        !if &not $status
-            !abort
-            end-of-buffer
-            ; Force an ending !!
-            set-variable @# 1
-        !endif
-        beginning-of-line
-        insert-newline
-        ; Jump back line.
-        backward-line
-        ; Find the start of the paragraph
-        !force search-buffer "bem" .fhook-latex.paragraph-srch
-        !if $status
-            end-of-line
-        !else
-            beginning-of-buffer
-        !endif
-        insert-newline
-        fill-paragraph
-        search-buffer "bem" "^$"
-        forward-delete-char
-        search-buffer "em" "^$"
-        beginning-of-line
-        forward-delete-char
-    !done
-    ; If no argument specified then restore the cursor position
-    !if &not @?
-        exchange-point-and-mark
+    insert-newline
+    ; Jump back line.
+    backward-line
+    ; Find the start of the paragraph
+    !force search-buffer "bem" .fhook-latex.paragraph-srch
+    !if $status
+      end-of-line
+    !else
+      beginning-of-buffer
     !endif
+    insert-newline
+    fill-paragraph
+    search-buffer "bem" "^$"
+    forward-delete-char
+    search-buffer "em" "^$"
+    beginning-of-line
+    forward-delete-char
+  !done
+  ; If no argument specified then restore the cursor position
+  !if &not @?
+    exchange-point-and-mark
+  !endif
 !emacro
 
 define-macro latex-compile
-    !if &bmod "edit"
-        set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-        !if &iseq #l0 "y"
-            save-buffer
-        !endif
+  !if &bmod "edit"
+    set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+    !if &iseq #l0 "y"
+      save-buffer
     !endif
-    set-variable #l0 @ml20 "latex-compile" &spr "%s %s" %latex-compile &rig $buffer-fname &rsin "/" $buffer-fname
-    0 ipipe-shell-command #l0 "*latex-compile*"
+  !endif
+  set-variable #l0 @ml20 "latex-compile" &spr "%s %s" %latex-compile &rig $buffer-fname &rsin "/" $buffer-fname
+  0 ipipe-shell-command #l0 "*latex-compile*"
 !emacro
 
 define-macro latex-view
-    set-variable #l0 &rig $buffer-fname &rsin "/" $buffer-fname
-    set-variable #l0 &lef #l0 &sub &rsin "." #l0 1
-    set-variable #l0 @ml20 "latex-view" &spr "%s %s" %latex-view #l0
-    0 ipipe-shell-command #l0 "*latex-view*"
+  set-variable #l0 &rig $buffer-fname &rsin "/" $buffer-fname
+  set-variable #l0 &lef #l0 &sub &rsin "." #l0 1
+  set-variable #l0 @ml20 "latex-view" &spr "%s %s" %latex-view #l0
+  0 ipipe-shell-command #l0 "*latex-view*"
 !emacro
 
 define-macro latex-list-label
-    set-variable #l0 .fhook-latex.item-list-s1
-    set-variable #l1 .fhook-latex.item-list-r1
-    set-variable #l2 .fhook-latex.item-list-s2
-    set-variable .fhook-latex.item-list-s1 "\\\\label\\*?{\\([^}]*\\)}"
-    set-variable .fhook-latex.item-list-r1 "Lbl  \ecB\\1\ecA"
-    unset-variable .fhook-latex.item-list-s2
-    !force !force item-list
-    set-variable .fhook-latex.item-list-s1 #l0
-    set-variable .fhook-latex.item-list-r1 #l1
-    set-variable .fhook-latex.item-list-s2 #l2
+  set-variable #l0 .fhook-latex.item-list-s1
+  set-variable #l1 .fhook-latex.item-list-r1
+  set-variable #l2 .fhook-latex.item-list-s2
+  set-variable .fhook-latex.item-list-s1 "\\\\label\\*?{\\([^}]*\\)}"
+  set-variable .fhook-latex.item-list-r1 "Lbl  \ecB\\1\ecA"
+  unset-variable .fhook-latex.item-list-s2
+  !force !force item-list
+  set-variable .fhook-latex.item-list-s1 #l0
+  set-variable .fhook-latex.item-list-r1 #l1
+  set-variable .fhook-latex.item-list-s2 #l2
 !emacro
 
 0 define-macro latex-goto-buffer
-    popup-window &mid $buffer-bname 1 &sub &len $buffer-bname 13
+  popup-window &mid $buffer-bname 1 &sub &len $buffer-bname 13
 !emacro
 
 define-macro latex-goto-section
-    set-variable #l0 &mid $buffer-bname 1 &sub &len $buffer-bname 13
-    set-variable #l2 @wl
-    set-variable #l1 &lef #l2 4
-    !if &seq #l1 "Chap"
-        set-variable #l1 "chapter"
-        set-variable #l2 &rig #l2 12
-    !elif &seq #l1 "Sect"
-        set-variable #l1 "section"
-        set-variable #l2 &rig #l2 13
-    !elif &seq #l1 "SSec"
-        set-variable #l1 "subsection"
-        set-variable #l2 &rig #l2 14
-    !elif &seq #l1 "SSSe"
-        set-variable #l1 "\\(sub\\)+subsection"
-        set-variable #l2 &rig #l2 15
-    !elif &seq #l1 "Labe"
-        set-variable #l1 "label"
-        set-variable #l2 &rig #l2 12
-    !else
-        ml-write "[Invalid line!]"
-        !abort
-    !endif
-    str-to-regex #l2
-    popup-window #l0
-    beginning-of-buffer
-    !force search-buffer "em" &spr "\\\\%s\\*?{\\(\\\\centerline{\\)?%s}" #l1 #l2
-    !if &not $status
-        ml-write &spr "[Failed to find section \"%s\"]" #l2
-        !abort
-    !endif
-    beginning-of-line
+  set-variable #l0 &mid $buffer-bname 1 &sub &len $buffer-bname 13
+  set-variable #l2 @wl
+  set-variable #l1 &lef #l2 4
+  !if &seq #l1 "Chap"
+    set-variable #l1 "chapter"
+    set-variable #l2 &rig #l2 12
+  !elif &seq #l1 "Sect"
+    set-variable #l1 "section"
+    set-variable #l2 &rig #l2 13
+  !elif &seq #l1 "SSec"
+    set-variable #l1 "subsection"
+    set-variable #l2 &rig #l2 14
+  !elif &seq #l1 "SSSe"
+    set-variable #l1 "\\(sub\\)+subsection"
+    set-variable #l2 &rig #l2 15
+  !elif &seq #l1 "Labe"
+    set-variable #l1 "label"
+    set-variable #l2 &rig #l2 12
+  !else
+    ml-write "[Invalid line!]"
+    !abort
+  !endif
+  str-to-regex #l2
+  popup-window #l0
+  beginning-of-buffer
+  !force search-buffer "em" &spr "\\\\%s\\*?{\\(\\\\centerline{\\)?%s}" #l1 #l2
+  !if &not $status
+    ml-write &spr "[Failed to find section \"%s\"]" #l2
+    !abort
+  !endif
+  beginning-of-line
 !emacro
 
 0 define-macro latex-ref-goto-label
-    set-alpha-mark "R"
-    ; end of link must be found within 2 lines
-    end-of-line
-    !force -2 search-buffer "bem" "\\\\ref\\({[^\n}]*}\\)"
-    !if &not $status
-        goto-alpha-mark "R"
-        ml-write "[Failed to find \\ref{...}]"
-        !abort
-    !endif
-    set-alpha-mark "R"
-    set-variable #l0 @s1
-    beginning-of-buffer
-    !force search-buffer "em" &cat "\\\\label" #l0
-    !if &not $status
-        goto-alpha-mark "R"
-        ml-write &spr "[Failed to find \\label%s]" #l0
-        !abort
-    !endif
-    beginning-of-line
+  set-alpha-mark "R"
+  ; end of link must be found within 2 lines
+  end-of-line
+  !force -2 search-buffer "bem" "\\\\ref\\({[^\n}]*}\\)"
+  !if &not $status
+    goto-alpha-mark "R"
+    ml-write "[Failed to find \\ref{...}]"
+    !abort
+  !endif
+  set-alpha-mark "R"
+  set-variable #l0 @s1
+  beginning-of-buffer
+  !force search-buffer "em" &cat "\\\\label" #l0
+  !if &not $status
+    goto-alpha-mark "R"
+    ml-write &spr "[Failed to find \\label%s]" #l0
+    !abort
+  !endif
+  beginning-of-line
 !emacro
 
 define-macro latex-ref-go-back
-    goto-alpha-mark "R"
+  goto-alpha-mark "R"
 !emacro
 
 ; latex-spell-word; modify the spelling rules so that the speller does
 ; not complain about TeX commands.
 0 define-macro latex-spell-word
-    ; simply skip any word starting with a \
-    -2 show-region
-    !force backward-char
-    !if &seq @wc "\\"
-        2 show-region
-        set-variable .spell.check-word ""
+  ; simply skip any word starting with a \
+  -2 show-region
+  !force backward-char
+  !if &seq @wc "\\"
+    2 show-region
+    set-variable .spell.check-word ""
+    !return
+  !elif &seq @wc "-"
+    !if &xse &mid @wl &sub $window-col 2 3 "\\w\\\\-"
+      forward-char
+      !while &xse &lef @wl $window-col ".*\\w+\\(\\\\-\\|[-.']\\)"
+        backward-char
+        backward-word
+      !done
+      search-buffer "em" "\\w+\\(\\(\\\\-\\|[-.']\\)\\w+\\)+"
+      set-variable .spell.check-word &rep @s0 "\\-" ""
+      !return
+    !endif
+  !endif
+  2 show-region
+  !if &seq @wc "\\"
+    !force forward-char
+    !if &seq @wc "-"
+      !force forward-char
+      !if &inw @wc
+        -2 show-region
+        search-buffer "em" "\\(\\w*\\)\\\\-\\(\\w*\\)"
+        set-variable .spell.check-word &cat @s1 @s2
         !return
-    !elif &seq @wc "-"
-        !if &xse &mid @wl &sub $window-col 2 3 "\\w\\\\-"
-            forward-char
-            !while &xse &lef @wl $window-col ".*\\w+\\(\\\\-\\|[-.']\\)"
-                backward-char
-                backward-word
-            !done
-            search-buffer "em" "\\w+\\(\\(\\\\-\\|[-.']\\)\\w+\\)+"
-            set-variable .spell.check-word &rep @s0 "\\-" ""
-            !return
-        !endif
+      !endif
     !endif
-    2 show-region
-    !if &seq @wc "\\"
-        !force forward-char
-        !if &seq @wc "-"
-            !force forward-char
-            !if &inw @wc
-                -2 show-region
-                search-buffer "em" "\\(\\w*\\)\\\\-\\(\\w*\\)"
-                set-variable .spell.check-word &cat @s1 @s2
-                !return
-            !endif
-        !endif
-    !endif
-    2 show-region
-    !abort
+  !endif
+  2 show-region
+  !abort
 !emacro
 
 ;; latex popup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; ------------- greek  letters --------------------------------;
 0 define-macro latex-popup-greek
-    insert-string &lget "|$\\alpha$|$\\beta$|$\\gamma$|$\\delta$|$\\epsilon$|$\\mu$|$\\zeta$" @#
+  insert-string &lget "|$\\alpha$|$\\beta$|$\\gamma$|$\\delta$|$\\epsilon$|$\\mu$|$\\zeta$" @#
 !emacro
 ;------------------------ headers ------------------------------------;
 0 define-macro latex-popup-header
-    execute-string &lget "|\\chapter{\p}\P|\\section{\p}\P|\\subsection{\p}\P|\\subsubsection{\p}\P|\\paragraph{\p}\P|\\subparagraph{\p}\P|" @#
+  execute-string &lget "|\\chapter{\p}\P|\\section{\p}\P|\\subsection{\p}\P|\\subsubsection{\p}\P|\\paragraph{\p}\P|\\subparagraph{\p}\P|" @#
 !emacro
 ;------------------------ symbols ------------------------------------;
 0 define-macro latex-popup-symbol
-    insert-string &lget "|$\^{\\rm TM}$|$^{\\copyright$}|$^{\\circledR}$|\\glqq|\\grqq|" @#
+  insert-string &lget "|$\^{\\rm TM}$|$^{\\copyright$}|$^{\\circledR}$|\\glqq|\\grqq|" @#
 !emacro
 ;------------------------ cross-reference ------------------------------------;
 0 define-macro latex-popup-reference
-    execute-string &lget "|\\ref{\p}\P|\\pageref{\p}\P|\\label{\p}\P|\\cite{\p}\P|" @#
+  execute-string &lget "|\\ref{\p}\P|\\pageref{\p}\P|\\label{\p}\P|\\cite{\p}\P|" @#
 !emacro
- ;------------------------ format  ------------------------------------;
+;------------------------ format  ------------------------------------;
 0 define-macro latex-popup-format
-    execute-string &lget "|\\textbf{\p}\P|\\textit{\p}\P|\\Large{\p}\P|\\large{\p}\P|\\small{\p}\P|\\footnotesize{\p}\P|\\scriptsize{\p}\P|" @#
+  execute-string &lget "|\\textbf{\p}\P|\\textit{\p}\P|\\Large{\p}\P|\\large{\p}\P|\\small{\p}\P|\\footnotesize{\p}\P|\\scriptsize{\p}\P|" @#
 !emacro
- ;------------------------ environment  ------------------------------------;
+;------------------------ environment  ------------------------------------;
 0 define-macro latex-popup-environment
-    execute-string &lget "|\\begin{enumerate}\N \\item \p\N\f\\item \N\\end{enumerate}\P|\\begin{itemize}\N \\item \p\N\f\\item \N\\end{itemize}\P|" @#
+  execute-string &lget "|\\begin{enumerate}\N \\item \p\N\f\\item \N\\end{enumerate}\P|\\begin{itemize}\N \\item \p\N\f\\item \N\\end{itemize}\P|" @#
 !emacro
 ;---------------------- higher and lower numbers --------------------------;
 0 define-macro latex-make-format
-    kill-region
-    execute-string &lget "|$^|$_|\\textit{|\\textbf{|" @#
-    yank
-    -1 yank
-    execute-string &lget "|$|$|}|}|" @#
+  kill-region
+  execute-string &lget "|$^|$_|\\textit{|\\textbf{|" @#
+  yank
+  -1 yank
+  execute-string &lget "|$|$|}|}|" @#
 !emacro
 
 ;------------ latex-popup ------------------------------------------------
 !if &not &exist .osd.latex-popup
-    ; set up the osd tool menu & help dialog
-    set-variable .osd.latex-popup &pinc .osd.next 1
-    set-variable .osd.latex-popgk &pinc .osd.next 1
-    set-variable .osd.latex-pophd &pinc .osd.next 1
-    set-variable .osd.latex-popsb &pinc .osd.next 1
-    set-variable .osd.latex-poprf &pinc .osd.next 1
-    set-variable .osd.latex-popft &pinc .osd.next 1
-    set-variable .osd.latex-popev &pinc .osd.next 1
+  ; set up the osd tool menu & help dialog
+  set-variable .osd.latex-popup &pinc .osd.next 1
+  set-variable .osd.latex-popgk &pinc .osd.next 1
+  set-variable .osd.latex-pophd &pinc .osd.next 1
+  set-variable .osd.latex-popsb &pinc .osd.next 1
+  set-variable .osd.latex-poprf &pinc .osd.next 1
+  set-variable .osd.latex-popft &pinc .osd.next 1
+  set-variable .osd.latex-popev &pinc .osd.next 1
 !endif
 
 osd .osd.latex-popgk 0   "b"
@@ -711,14 +711,14 @@ osd .osd.latex-popup 5   "M" "\HGreek"         .osd.latex-popgk
 osd .osd.latex-popup 6   "M" "\HSymbols"       .osd.latex-popsb
 
 define-macro latex-popup
-    !if @#
-        ; redefine the position to be next to the cursor if this has
-        ; been invoked with an argument.
-        osd .osd.latex-popup  0 "ba" &add $cursor-x 1 &sub $cursor-y 1
-    !else
-        osd .osd.latex-popup  0 "b"
-    !endif
-    .osd.latex-popup osd
+  !if @#
+    ; redefine the position to be next to the cursor if this has
+    ; been invoked with an argument.
+    osd .osd.latex-popup  0 "ba" &add $cursor-x 1 &sub $cursor-y 1
+  !else
+    osd .osd.latex-popup  0 "b"
+  !endif
+  .osd.latex-popup osd
 !emacro
 
 ; Find the previous opening latex block.
@@ -738,74 +738,74 @@ define-macro latex-popup
 ;     Mismatch of \begin and \end. The position information is supplied.
 ;
 0 define-macro latex-block-find-backward
-    set-variable #l9 0
-    set-variable #l8 "||"
-    set-variable #l7 "||"
-    set-variable #l6 "||"
-    set-variable #l5 "o"
-    !repeat
-        ; Search for begin or end.
-        !force search-buffer "bem" "\\\\\\(begin\\|end\\){\\([^}]+\\)}"
+  set-variable #l9 0
+  set-variable #l8 "||"
+  set-variable #l7 "||"
+  set-variable #l6 "||"
+  set-variable #l5 "o"
+  !repeat
+    ; Search for begin or end.
+    !force search-buffer "bem" "\\\\\\(begin\\|end\\){\\([^}]+\\)}"
+    !if $status
+      ; Save the search
+      set-variable #l1 @s1
+      set-variable #l2 @s2
+      ; ml-write &spr "Found[%d] \\%s{%s}:%d" #l9 #l1 #l2 $window-line
+      
+      ; Make sure we are not in a comment.
+      !if &gre $window-col 0
+        !force -1 search-buffer "bem" "\\(^%\\|[^\\\\]%\\)"
         !if $status
-            ; Save the search
-            set-variable #l1 @s1
-            set-variable #l2 @s2
-            ; ml-write &spr "Found[%d] \\%s{%s}:%d" #l9 #l1 #l2 $window-line
-
-            ; Make sure we are not in a comment.
-            !if &gre $window-col 0
-                !force -1 search-buffer "bem" "\\(^%\\|[^\\\\]%\\)"
-                !if $status
-                    ; Found comment, start search again.
-                    set-variable #l5 "c"
-                !endif
-            !endif
-
-            ; Process the search.
-            !if &seq #l5 "c"
-                set-variable #l5 "o"
-            !elif &iseq #l1 "end"
-                ; Found an '\end' push onto the stack.
-                set-variable #l9 &add #l9 1
-                set-variable #l8 &lset #l8 #l9 #l2
-                set-variable #l7 &lset #l7 #l9 $window-line
-                set-variable #l6 &lset #l6 #l9 $window-col
-                set-variable #l5 "b"
-            !elif &equ #l9 0
-                ; Found a '\begin' with nothing on stack exit with an open status.
-                set-variable #l5 "q"
-                set-variable #p9 &spr "|o|%s|%d|%d|" #l2 $window-line $window-col
-            !else
-                ; Found a '\begin' with '\end' on the stack
-                !if &not &seq #l2 &lget #l8 #l9
-                    ; The '\begin' does not match the '\end'
-                    set-variable #l5 "q"
-                    set-variable #p9 &spr "|m|%s|%d|%d|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9 #l2 $window-line $window-col
-                !else
-                    set-variable #l9 &sub #l9 1
-                    set-variable #l5 "b"
-                !endif
-            !endif
-        !elif &gre #l9 0
-            set-variable #l5 "q"
-            set-variable #p9 &spr "|e|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+          ; Found comment, start search again.
+          set-variable #l5 "c"
+        !endif
+      !endif
+      
+      ; Process the search.
+      !if &seq #l5 "c"
+        set-variable #l5 "o"
+      !elif &iseq #l1 "end"
+        ; Found an '\end' push onto the stack.
+        set-variable #l9 &add #l9 1
+        set-variable #l8 &lset #l8 #l9 #l2
+        set-variable #l7 &lset #l7 #l9 $window-line
+        set-variable #l6 &lset #l6 #l9 $window-col
+        set-variable #l5 "b"
+      !elif &equ #l9 0
+        ; Found a '\begin' with nothing on stack exit with an open status.
+        set-variable #l5 "q"
+        set-variable #p9 &spr "|o|%s|%d|%d|" #l2 $window-line $window-col
+      !else
+        ; Found a '\begin' with '\end' on the stack
+        !if &not &seq #l2 &lget #l8 #l9
+          ; The '\begin' does not match the '\end'
+          set-variable #l5 "q"
+          set-variable #p9 &spr "|m|%s|%d|%d|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9 #l2 $window-line $window-col
         !else
-            set-variable #l5 "q"
-            set-variable #p9 "|n|"
+          set-variable #l9 &sub #l9 1
+          set-variable #l5 "b"
         !endif
-        !if &seq #l5 "b"
-            !force backward-char
-            !if $status
-                set-variable #l5 "o"
-            !elif &gre #l9 0
-                set-variable #l5 "q"
-                set-variable #p9 &spr "|e|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
-            !else
-                set-variable #l5 "q"
-                set-variable #p9 "|n|"
-            !endif
-        !endif
-    !until &seq #l5 "q"
+      !endif
+    !elif &gre #l9 0
+      set-variable #l5 "q"
+      set-variable #p9 &spr "|e|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+    !else
+      set-variable #l5 "q"
+      set-variable #p9 "|n|"
+    !endif
+    !if &seq #l5 "b"
+      !force backward-char
+      !if $status
+        set-variable #l5 "o"
+      !elif &gre #l9 0
+        set-variable #l5 "q"
+        set-variable #p9 &spr "|e|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+      !else
+        set-variable #l5 "q"
+        set-variable #p9 "|n|"
+      !endif
+    !endif
+  !until &seq #l5 "q"
 !emacro
 
 ; Find the next closing latex block.
@@ -825,69 +825,69 @@ define-macro latex-popup
 ;     Mismatch of \begin and \end. The position information is supplied.
 ;
 0 define-macro latex-block-find-forward
-    set-variable #l9 0
-    set-variable #l8 "||"
-    set-variable #l7 "||"
-    set-variable #l6 "||"
-    set-variable #l5 "o"
-    set-variable #l4 0
-    !repeat
-        ; Search for begin or end.
-        !force search-buffer "em" "\\\\\\(begin\\|end\\){\\([^}]+\\)}"
-        ; 1 screen-update
+  set-variable #l9 0
+  set-variable #l8 "||"
+  set-variable #l7 "||"
+  set-variable #l6 "||"
+  set-variable #l5 "o"
+  set-variable #l4 0
+  !repeat
+    ; Search for begin or end.
+    !force search-buffer "em" "\\\\\\(begin\\|end\\){\\([^}]+\\)}"
+    ; 1 screen-update
+    !if $status
+      ; Save the search
+      set-variable #l1 @s1
+      set-variable #l2 @s2
+      set-variable #l4 &add #l4 1
+      ; ml-write &spr "Processing[%05d/%d] \\%s{%s}:%d" #l4 #l9 #l1 #l2 $window-line
+      
+      ; Make sure we are not in a comment.
+      set-position "\x82"
+      !if &gre $window-col 0
+        backward-char
+        !force -1 search-buffer "bem" "\\(^%\\|[^\\\\]%\\)"
         !if $status
-            ; Save the search
-            set-variable #l1 @s1
-            set-variable #l2 @s2
-            set-variable #l4 &add #l4 1
-            ; ml-write &spr "Processing[%05d/%d] \\%s{%s}:%d" #l4 #l9 #l1 #l2 $window-line
-
-            ; Make sure we are not in a comment.
-            set-position "\x82"
-            !if &gre $window-col 0
-                backward-char
-                !force -1 search-buffer "bem" "\\(^%\\|[^\\\\]%\\)"
-                !if $status
-                    ; Found comment, start search again.
-                    set-variable #l5 "c"
-                !endif
-           !endif
-           goto-position "\x82"
-
-            ; Process the search.
-            !if &seq #l5 "c"
-                set-variable #l5 "o"
-                end-of-line
-            !elif &iseq #l1 "begin"
-                ; Found an '\begin' push onto the stack.
-                set-variable #l9 &add #l9 1
-                set-variable #l8 &lset #l8 #l9 #l2
-                set-variable #l7 &lset #l7 #l9 $window-line
-                set-variable #l6 &lset #l6 #l9 $window-col
-                set-variable #l5 "o"
-            !elif &equ #l9 0
-                ; Found a '\end' with nothing on stack exit with an open status.
-                set-variable #l5 "q"
-                set-variable #p9 &spr "|o|%s|%d|%d|" #l2 $window-line $window-col
-            !else
-                ; Found a '\begin' with '\end' on the stack
-                !if &not &seq #l2 &lget #l8 #l9
-                    ; The '\end' does not match the '\begin'
-                    set-variable #l5 "q"
-                    set-variable #p9 &spr "|m|%s|%d|%d|%s|%d|%d|" #l2 $window-line $window-col &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
-                !else
-                    set-variable #l9 &sub #l9 1
-                    set-variable #l5 "o"
-                !endif
-            !endif
-        !elif &gre #l9 0
-            set-variable #l5 "q"
-            set-variable #p9 &spr "|e|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
-        !else
-            set-variable #l5 "q"
-            set-variable #p9 "|n|"
+          ; Found comment, start search again.
+          set-variable #l5 "c"
         !endif
-    !until &seq #l5 "q"
+      !endif
+      goto-position "\x82"
+      
+      ; Process the search.
+      !if &seq #l5 "c"
+        set-variable #l5 "o"
+        end-of-line
+      !elif &iseq #l1 "begin"
+        ; Found an '\begin' push onto the stack.
+        set-variable #l9 &add #l9 1
+        set-variable #l8 &lset #l8 #l9 #l2
+        set-variable #l7 &lset #l7 #l9 $window-line
+        set-variable #l6 &lset #l6 #l9 $window-col
+        set-variable #l5 "o"
+      !elif &equ #l9 0
+        ; Found a '\end' with nothing on stack exit with an open status.
+        set-variable #l5 "q"
+        set-variable #p9 &spr "|o|%s|%d|%d|" #l2 $window-line $window-col
+      !else
+        ; Found a '\begin' with '\end' on the stack
+        !if &not &seq #l2 &lget #l8 #l9
+          ; The '\end' does not match the '\begin'
+          set-variable #l5 "q"
+          set-variable #p9 &spr "|m|%s|%d|%d|%s|%d|%d|" #l2 $window-line $window-col &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+        !else
+          set-variable #l9 &sub #l9 1
+          set-variable #l5 "o"
+        !endif
+      !endif
+    !elif &gre #l9 0
+      set-variable #l5 "q"
+      set-variable #p9 &spr "|e|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+    !else
+      set-variable #l5 "q"
+      set-variable #p9 "|n|"
+    !endif
+  !until &seq #l5 "q"
 !emacro
 
 ; Find the next closing latex block that has not been opened.
@@ -911,229 +911,229 @@ define-macro latex-popup
 ;     Syntax error found.
 ;
 0 define-macro tex-block-find-forward
-    set-variable #l9 0
-    set-variable #l8 "||"
-    set-variable #l7 "||"
-    set-variable #l6 "||"
-    set-variable #l5 "o"
-    set-variable #l4 0
-    !repeat
-        ; Search for next significant construct
-        !force search-buffer "em" "\\(\\\\begin{\\|\\\\end{\\|[{}$\\[\\]]\\)"
+  set-variable #l9 0
+  set-variable #l8 "||"
+  set-variable #l7 "||"
+  set-variable #l6 "||"
+  set-variable #l5 "o"
+  set-variable #l4 0
+  !repeat
+    ; Search for next significant construct
+    !force search-buffer "em" "\\(\\\\begin{\\|\\\\end{\\|[{}$\\[\\]]\\)"
+    !if $status
+      ; Save the search
+      set-variable #l1 @s1
+      set-variable #l4 &add #l4 1
+      ; ml-write &spr "Processing[%05d/%d] %s:%d \"%s\" \"%s\" \"%s\"" #l4 #l9 #l1 $window-line #l8 #l7 #l6
+      ; 1 screen-update
+      
+      ; Make sure we are not in a comment.
+      !if &gre $window-col 1
+        set-variable #l3 $window-col
+        backward-char
+        !force -1 search-buffer "bem" "\\(^%\\|[^\\\\]%\\)"
         !if $status
-            ; Save the search
-            set-variable #l1 @s1
-            set-variable #l4 &add #l4 1
-            ; ml-write &spr "Processing[%05d/%d] %s:%d \"%s\" \"%s\" \"%s\"" #l4 #l9 #l1 $window-line #l8 #l7 #l6
-            ; 1 screen-update
-
-            ; Make sure we are not in a comment.
-            !if &gre $window-col 1
-                set-variable #l3 $window-col
-                backward-char
-                !force -1 search-buffer "bem" "\\(^%\\|[^\\\\]%\\)"
-                !if $status
-                    ; Found comment, start search again.
-                    set-variable #l5 "c"
-                !endif
-                set-variable $window-col #l3
-            !endif
-            
-            ; Process the search.
-            !if &seq #l5 "c"
-                set-variable #l5 "o"
-                end-of-line
-            !elif &seq #l1 "\\begin{"
-                ; See if this is a verbatim environment, if so then skip over
-                ; it.
-                set-variable #l3 ""
-                !while &not &sin @wc "{}$[]\n"
-                    set-variable #l3 &cat #l3 @wc
-                    forward-char
-                !done
-                !if &not &seq @wc "}"
-                    set-variable #l5 "q"
-                    set-variable #p9 &spr "|s|Badly formed \\begin label|%d|%d|" $window-line $window-col
-                !elif &seq #l3 "verbatim"
-                    !force search-buffer "em" "\\\\end{verbatim}"
-                    !if $status
-                        set-variable #l5 "s"
-                    !else
-                        set-variable #l5 "q"
-                        set-variable #p9 &spr "|o|verbatim|%d|%d|" #l1 $window-line $window-col
-                    !endif
-                !else
-                    forward-char
-                !endif
-
-                ; Determine if skipping.
-                !if &seq #l5 "q"
-                !elif &seq #l5 "s"
-                    set-variable #l5 "o"
-                !else
-                    ; Push onto the stack.
-                    set-variable #l9 &add #l9 1
-                    set-variable #l8 &lset #l8 #l9 #l3
-                    set-variable #l7 &lset #l7 #l9 $window-line
-                    set-variable #l6 &lset #l6 #l9 $window-col
-                !endif
-            !elif &seq #l1 "\\end{"
-                set-variable #l3 ""
-                !while &not &sin @wc "{}$[]\n"
-                    set-variable #l3 &cat #l3 @wc
-                    forward-char
-                !done
-                !if &not &seq @wc "}"
-                    set-variable #l5 "q"
-                    set-variable #p9 &spr "|s|Badly formed \\end label|%d|%d|" $window-line $window-col
-                !elif &equ #l9 0
-                    set-variable #l5 "q"
-                    set-variable #p9 &spr "|e|%s|%d|%d|" #l1 $window-line $window-col
-                !elif &not &seq #l3 &lget #l8 #l9
-                    ; Found an '\end' mis-match
-                    set-variable #l5 "q"
-                    !if &sin &lget #l8 #l9 "{[$"
-                        set-variable #p9 &spr "|o|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
-                    !else
-                        set-variable #p9 &spr "|m|%s|%d|%d|%s|%d|%d|" #l3 $window-line $window-col &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
-                    !endif
-                !else
-                    forward-char
-                    set-variable #l8 &lset #l8 #l9 ""
-                    set-variable #l7 &lset #l7 #l9 ""
-                    set-variable #l6 &lset #l6 #l9 ""
-                    set-variable #l9 &sub #l9 1
-                !endif
-            !elif &or &seq #l1 "{" &seq #l1 "["
-                ; Simple test to see if '[' is in a {[} enclosure.
-                !if &and &iseq #l1 "[" &seq @wc "}"
-                    !if &gre $window-col 1
-                        2 backward-char
-                        !if &seq @wc "{"
-                            set-variable #l5 "s"
-                        !endif
-                        2 forward-char
-                    !endif
-                !endif
-
-                ; Simple test to see if '{' is escaped '\{'.
-                !if &and &seq #l1 "{" &gre $window-col 1
-                    2 backward-char
-                    !if &seq @wc "\\"
-                        set-variable #l5 "s"
-                    !endif
-                    2 forward-char
-                !endif
-                ;
-                ; Precheck.
-                !if &seq #l5 "s"
-                    set-variable #l5 "o"
-                !else
-                    ; Push onto the stack.
-                    set-variable #l9 &add #l9 1
-                    set-variable #l8 &lset #l8 #l9 #l1
-                    set-variable #l7 &lset #l7 #l9 $window-line
-                    set-variable #l6 &lset #l6 #l9 &sub $window-col 1
-                !endif
-                set-variable #l5 "o"
-            !elif &seq #l1 "}"
-                ; Simple test to see if '}' is escaped '\}'.
-                !if &gre $window-col 1
-                    2 backward-char
-                    !if &seq @wc "\\"
-                        set-variable #l5 "s"
-                    !endif
-                    2 forward-char
-                !endif
-                ; Precheck.
-                !if &seq #l5 "s"
-                    ; Skipping escaped character.
-                    set-variable #l5 "o"
-                !elif &equ #l9 0
-                    ; Mismatched.
-                    set-variable #l5 "q"
-                    set-variable #p9 &spr "|e|%s|%d|%d|" #l1 $window-line &sub $window-col 1
-                !elif &not &seq "{" &lget #l8 #l9
-                    ; Found a '}' with '{' on the stack
-                    set-variable #l5 "q"
-                    set-variable #p9 &spr "|o|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
-                !else
-                    ; Matched - pop last opening off the stack.
-                    set-variable #l8 &lset #l8 #l9 ""
-                    set-variable #l7 &lset #l7 #l9 ""
-                    set-variable #l6 &lset #l6 #l9 ""
-                    set-variable #l9 &sub #l9 1
-                !endif
-            !elif &seq #l1 "]"
-                ; Simple test to see if '[' is in a {[} enclosure.
-                !if &seq @wc "}"
-                    !if &gre $window-col 1
-                        2 backward-char
-                        !if &seq @wc "{"
-                            set-variable #l5 "s"
-                        !endif
-                        2 forward-char
-                    !endif
-                !endif
-
-                ; Process the close bracket.
-                !if &seq #l5 "s"
-                    set-variable #l5 "o"
-                !elif &equ #l9 0
-                    set-variable #l5 "q"
-                    set-variable #p9 &spr "|e|%s|%d|%d|" #l1 $window-line &sub $window-col 1
-                !elif &not &seq "[" &lget #l8 #l9
-                    ; Found a ']' without '[' on the stack
-                    set-variable #l5 "q"
-                    set-variable #p9 &spr "|o|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
-                !else
-                    set-variable #l8 &lset #l8 #l9 ""
-                    set-variable #l7 &lset #l7 #l9 ""
-                    set-variable #l6 &lset #l6 #l9 ""
-                    set-variable #l9 &sub #l9 1
-                !endif
-            !elif &iseq #l1 "$"
-                ; Simple test to see if '$' is escaped '\$'.
-                !if &gre $window-col 1
-                    2 backward-char
-                    !if &seq @wc "\\"
-                        set-variable #l5 "s"
-                    !endif
-                    2 forward-char
-                !endif
-
-                ; Precheck.
-                !if &seq #l5 "s"
-                    set-variable #l5 "o"
-                ; Found a '$' with '$' on the stack
-                !elif &seq "$" &lget #l8 #l9
-                    set-variable #l8 &lset #l8 #l9 ""
-                    set-variable #l7 &lset #l7 #l9 ""
-                    set-variable #l6 &lset #l6 #l9 ""
-                    set-variable #l9 &sub #l9 1
-                !else
-                    set-variable #l9 &add #l9 1
-                    set-variable #l8 &lset #l8 #l9 #l1
-                    set-variable #l7 &lset #l7 #l9 $window-line
-                    set-variable #l6 &lset #l6 #l9 &sub $window-col 1
-                !endif
-;            !elif &equ #l9 0
-;                ; Found a '\end' with nothing on stack exit with an open status.
-;                set-variable #l5 "q"
-;                set-variable #p9 &spr "|o|%s|%d|%d|" #l1 $window-line $window-col
-            !else
-                ; Error - should never get here.
-                set-variable #l5 "q"
-                set-variable #p9 &spr "|H|%s|%d|%d|" #l1 $window-line $window-col
-            !endif
-        !elif &gre #l9 0
-            set-variable #l5 "q"
-            set-variable #p9 &spr "|o|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
-        !else
-            set-variable #l5 "q"
-            set-variable #p9 "|n|"
+          ; Found comment, start search again.
+          set-variable #l5 "c"
         !endif
-    !until &seq #l5 "q"
+        set-variable $window-col #l3
+      !endif
+      
+      ; Process the search.
+      !if &seq #l5 "c"
+        set-variable #l5 "o"
+        end-of-line
+      !elif &seq #l1 "\\begin{"
+        ; See if this is a verbatim environment, if so then skip over
+        ; it.
+        set-variable #l3 ""
+        !while &not &sin @wc "{}$[]\n"
+          set-variable #l3 &cat #l3 @wc
+          forward-char
+        !done
+        !if &not &seq @wc "}"
+          set-variable #l5 "q"
+          set-variable #p9 &spr "|s|Badly formed \\begin label|%d|%d|" $window-line $window-col
+        !elif &seq #l3 "verbatim"
+          !force search-buffer "em" "\\\\end{verbatim}"
+          !if $status
+            set-variable #l5 "s"
+          !else
+            set-variable #l5 "q"
+            set-variable #p9 &spr "|o|verbatim|%d|%d|" #l1 $window-line $window-col
+          !endif
+        !else
+          forward-char
+        !endif
+        
+        ; Determine if skipping.
+        !if &seq #l5 "q"
+        !elif &seq #l5 "s"
+          set-variable #l5 "o"
+        !else
+          ; Push onto the stack.
+          set-variable #l9 &add #l9 1
+          set-variable #l8 &lset #l8 #l9 #l3
+          set-variable #l7 &lset #l7 #l9 $window-line
+          set-variable #l6 &lset #l6 #l9 $window-col
+        !endif
+      !elif &seq #l1 "\\end{"
+        set-variable #l3 ""
+        !while &not &sin @wc "{}$[]\n"
+          set-variable #l3 &cat #l3 @wc
+          forward-char
+        !done
+        !if &not &seq @wc "}"
+          set-variable #l5 "q"
+          set-variable #p9 &spr "|s|Badly formed \\end label|%d|%d|" $window-line $window-col
+        !elif &equ #l9 0
+          set-variable #l5 "q"
+          set-variable #p9 &spr "|e|%s|%d|%d|" #l1 $window-line $window-col
+        !elif &not &seq #l3 &lget #l8 #l9
+          ; Found an '\end' mis-match
+          set-variable #l5 "q"
+          !if &sin &lget #l8 #l9 "{[$"
+            set-variable #p9 &spr "|o|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+          !else
+            set-variable #p9 &spr "|m|%s|%d|%d|%s|%d|%d|" #l3 $window-line $window-col &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+          !endif
+        !else
+          forward-char
+          set-variable #l8 &lset #l8 #l9 ""
+          set-variable #l7 &lset #l7 #l9 ""
+          set-variable #l6 &lset #l6 #l9 ""
+          set-variable #l9 &sub #l9 1
+        !endif
+      !elif &or &seq #l1 "{" &seq #l1 "["
+        ; Simple test to see if '[' is in a {[} enclosure.
+        !if &and &iseq #l1 "[" &seq @wc "}"
+          !if &gre $window-col 1
+            2 backward-char
+            !if &seq @wc "{"
+              set-variable #l5 "s"
+            !endif
+            2 forward-char
+          !endif
+        !endif
+        
+        ; Simple test to see if '{' is escaped '\{'.
+        !if &and &seq #l1 "{" &gre $window-col 1
+          2 backward-char
+          !if &seq @wc "\\"
+            set-variable #l5 "s"
+          !endif
+          2 forward-char
+        !endif
+        ;
+        ; Precheck.
+        !if &seq #l5 "s"
+          set-variable #l5 "o"
+        !else
+          ; Push onto the stack.
+          set-variable #l9 &add #l9 1
+          set-variable #l8 &lset #l8 #l9 #l1
+          set-variable #l7 &lset #l7 #l9 $window-line
+          set-variable #l6 &lset #l6 #l9 &sub $window-col 1
+        !endif
+        set-variable #l5 "o"
+      !elif &seq #l1 "}"
+        ; Simple test to see if '}' is escaped '\}'.
+        !if &gre $window-col 1
+          2 backward-char
+          !if &seq @wc "\\"
+            set-variable #l5 "s"
+          !endif
+          2 forward-char
+        !endif
+        ; Precheck.
+        !if &seq #l5 "s"
+          ; Skipping escaped character.
+          set-variable #l5 "o"
+        !elif &equ #l9 0
+          ; Mismatched.
+          set-variable #l5 "q"
+          set-variable #p9 &spr "|e|%s|%d|%d|" #l1 $window-line &sub $window-col 1
+        !elif &not &seq "{" &lget #l8 #l9
+          ; Found a '}' with '{' on the stack
+          set-variable #l5 "q"
+          set-variable #p9 &spr "|o|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+        !else
+          ; Matched - pop last opening off the stack.
+          set-variable #l8 &lset #l8 #l9 ""
+          set-variable #l7 &lset #l7 #l9 ""
+          set-variable #l6 &lset #l6 #l9 ""
+          set-variable #l9 &sub #l9 1
+        !endif
+      !elif &seq #l1 "]"
+        ; Simple test to see if '[' is in a {[} enclosure.
+        !if &seq @wc "}"
+          !if &gre $window-col 1
+            2 backward-char
+            !if &seq @wc "{"
+              set-variable #l5 "s"
+            !endif
+            2 forward-char
+          !endif
+        !endif
+        
+        ; Process the close bracket.
+        !if &seq #l5 "s"
+          set-variable #l5 "o"
+        !elif &equ #l9 0
+          set-variable #l5 "q"
+          set-variable #p9 &spr "|e|%s|%d|%d|" #l1 $window-line &sub $window-col 1
+        !elif &not &seq "[" &lget #l8 #l9
+          ; Found a ']' without '[' on the stack
+          set-variable #l5 "q"
+          set-variable #p9 &spr "|o|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+        !else
+          set-variable #l8 &lset #l8 #l9 ""
+          set-variable #l7 &lset #l7 #l9 ""
+          set-variable #l6 &lset #l6 #l9 ""
+          set-variable #l9 &sub #l9 1
+        !endif
+      !elif &iseq #l1 "$"
+        ; Simple test to see if '$' is escaped '\$'.
+        !if &gre $window-col 1
+          2 backward-char
+          !if &seq @wc "\\"
+            set-variable #l5 "s"
+          !endif
+          2 forward-char
+        !endif
+        
+        ; Precheck.
+        !if &seq #l5 "s"
+          set-variable #l5 "o"
+          ; Found a '$' with '$' on the stack
+        !elif &seq "$" &lget #l8 #l9
+          set-variable #l8 &lset #l8 #l9 ""
+          set-variable #l7 &lset #l7 #l9 ""
+          set-variable #l6 &lset #l6 #l9 ""
+          set-variable #l9 &sub #l9 1
+        !else
+          set-variable #l9 &add #l9 1
+          set-variable #l8 &lset #l8 #l9 #l1
+          set-variable #l7 &lset #l7 #l9 $window-line
+          set-variable #l6 &lset #l6 #l9 &sub $window-col 1
+        !endif
+        ;            !elif &equ #l9 0
+        ;                ; Found a '\end' with nothing on stack exit with an open status.
+        ;                set-variable #l5 "q"
+        ;                set-variable #p9 &spr "|o|%s|%d|%d|" #l1 $window-line $window-col
+      !else
+        ; Error - should never get here.
+        set-variable #l5 "q"
+        set-variable #p9 &spr "|H|%s|%d|%d|" #l1 $window-line $window-col
+      !endif
+    !elif &gre #l9 0
+      set-variable #l5 "q"
+      set-variable #p9 &spr "|o|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+    !else
+      set-variable #l5 "q"
+      set-variable #p9 "|n|"
+    !endif
+  !until &seq #l5 "q"
 !emacro
 
 ; Find the next opening tex block that has not been opened.
@@ -1154,675 +1154,675 @@ define-macro latex-popup
 ;     The position information is supplied.
 ;
 0 define-macro tex-block-find-backward
-    set-variable #l9 0
-    set-variable #l8 "||"
-    set-variable #l7 "||"
-    set-variable #l6 "||"
-    set-variable #l5 "o"
-    set-variable #l4 0
-    !repeat
-        ; !force backward-char
-        ; Search for next significant construct
-        !force search-buffer "bem" "\\([{}$\\[\\]]\\|\\\\begin{\\|\\\\end{\\)"
+  set-variable #l9 0
+  set-variable #l8 "||"
+  set-variable #l7 "||"
+  set-variable #l6 "||"
+  set-variable #l5 "o"
+  set-variable #l4 0
+  !repeat
+    ; !force backward-char
+    ; Search for next significant construct
+    !force search-buffer "bem" "\\([{}$\\[\\]]\\|\\\\begin{\\|\\\\end{\\)"
+    !if $status
+      ; Save the search
+      set-variable #l1 @s1
+      set-variable #l4 &add #l4 1
+      ; 1 screen-update
+      ; 50 ml-write &spr "Processing[%05d/%d] %s:%d \"%s\" \"%s\" \"%s\"" #l4 #l9 #l1 $window-line #l8 #l7 #l6
+      
+      ; Make sure we are not in a comment.
+      set-position "\x82"
+      !if &gre $window-col 1
+        backward-char
+        !force -1 search-buffer "bem" "\\(^%\\|[^\\\\]%\\)"
         !if $status
-            ; Save the search
-            set-variable #l1 @s1
-            set-variable #l4 &add #l4 1
-            ; 1 screen-update
-            ; 50 ml-write &spr "Processing[%05d/%d] %s:%d \"%s\" \"%s\" \"%s\"" #l4 #l9 #l1 $window-line #l8 #l7 #l6
-
-            ; Make sure we are not in a comment.
-            set-position "\x82"
-            !if &gre $window-col 1
-                backward-char
-                !force -1 search-buffer "bem" "\\(^%\\|[^\\\\]%\\)"
-                !if $status
-                    ; Found comment, start search again.
-                    set-variable #l5 "c"
-                !endif
-            !endif
-            goto-position "\x82"
-
-            ; Process the search.
-            !if &seq #l5 "c"
-                !if &equ $window-col 0
-                    backward-line
-                    end-of-line
-                !endif
-                set-variable #l5 "o"
-            !elif &seq #l1 "\\end{"
-                exchange-point-and-mark
-                set-variable #l3 ""
-                forward-char
-                !while &not &sin @wc "}\n"
-                    set-variable #l3 &cat #l3 @wc
-                    forward-char
-                !done
-                !if &and &seq @wc "}" &seq #l3 "verbatim"
-                    !force search-buffer "bem" "\\\\begin{verbatim}"
-                    !if $status
-                        set-variable #l5 "s"
-                    !endif
-                !endif
-
-                ; Determine if skipping.
-                !if &seq #l5 "s"
-                    set-variable #l5 "b"
-                !else
-                    goto-position "\x82"
-                    ; Push onto the stack.
-                    set-variable #l9 &add #l9 1
-                    set-variable #l8 &lset #l8 #l9 "\\end"
-                    set-variable #l7 &lset #l7 #l9 $window-line
-                    set-variable #l6 &lset #l6 #l9 $window-col
-                !endif
-            !elif &seq #l1 "\\begin{"
-                ; Pop the '\end'
-                !if &seq #l5 "q"
-                !elif &equ #l9 0
-                    set-variable #l5 "q"
-                    set-variable #p9 &spr "|o|%s|%d|%d|" #l1 $window-line $window-col
-                !elif &not &seq "\\end" &lget #l8 #l9
-                    ; Found a '\end' with '\begin' on the stack
-                    set-variable #l5 "q"
-                    set-variable #p9 &spr "|m|%s|%d|%d|%s|%d|%d|" "\\end" $window-line $window-col &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
-                !else
-                    set-variable #l8 &lset #l8 #l9 ""
-                    set-variable #l7 &lset #l7 #l9 ""
-                    set-variable #l6 &lset #l6 #l9 ""
-                    set-variable #l9 &sub #l9 1
-                !endif
-            !elif &or &iseq #l1 "}" &iseq #l1 "]"
-                ; Simple test to see if '[' is in a {[} enclosure.
-                !if &gre $window-col 0
-                    backward-char
-                    ; Simple test to see if '{' is escaped '\{'.
-                    !if &and &iseq #l1 "{" &seq @wc "\\"
-                        set-variable #l5 "s"
-                    !elif &and &iseq @wc "{" &seq #l1 "["
-                        2 forward-char
-                        !if &seq @wc "}"
-                            set-variable #l5 "s"
-                        !endif
-                        2 backward-char
-                    !endif
-                    forward-char
-                !endif
-
-                ; Precheck.
-                !if &not &seq #l5 "s"
-                    ; Push onto the stack.
-                    set-variable #l9 &add #l9 1
-                    set-variable #l8 &lset #l8 #l9 #l1
-                    set-variable #l7 &lset #l7 #l9 $window-line
-                    set-variable #l6 &lset #l6 #l9 $window-col
-                !endif
-                set-variable #l5 "o"
-            !elif &iseq #l1 "{"
-                ; Simple test to see if '{' is escaped '\{'.
-                !if &gre $window-col 0
-                    backward-char
-                    !if &seq @wc "\\"
-                        set-variable #l5 "s"
-                    !endif
-                    forward-char
-                !endif
-                ; Precheck.
-                !if &seq #l5 "s"
-                    ; Skipping escaped character.
-                    set-variable #l5 "o"
-                !elif &equ #l9 0
-                    ; Mismatched.
-                    set-variable #l5 "q"
-                    set-variable #p9 &spr "|o|%s|%d|%d|" #l1 $window-line $window-col
-                !elif &not &seq "}" &lget #l8 #l9
-                    ; Found a '}' with '{' on the stack
-                    set-variable #l5 "q"
-                    set-variable #p9 &spr "|m|%s|%d|%d|%s|%d|%d|" #l1 $window-line $window-col &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
-                !else
-                    ; Matched - pop last opening off the stack.
-                    set-variable #l8 &lset #l8 #l9 ""
-                    set-variable #l7 &lset #l7 #l9 ""
-                    set-variable #l6 &lset #l6 #l9 ""
-                    set-variable #l9 &sub #l9 1
-                !endif
-            !elif &iseq #l1 "["
-                ; Simple test to see if '[' is in a {[} enclosure.
-                !if &gre $window-col 0
-                    backward-char
-                    !if &seq @wc "{"
-                        2 forward-char
-                        !if &seq @wc "}"
-                            set-variable #l5 "s"
-                        !endif
-                        2 backward-char
-                    !endif
-                    forward-char
-                !endif
-
-                ; Process the close bracket.
-                !if &seq #l5 "s"
-                    set-variable #l5 "o"
-                !elif &equ #l9 0
-                    set-variable #l5 "q"
-                    set-variable #p9 &spr "|o|%s|%d|%d|" #l1 $window-line $window-col
-                !elif &not &seq "]" &lget #l8 #l9
-                    ; Found a ']' with '[' on the stack
-                    set-variable #l5 "q"
-                    set-variable #p9 &spr "|m|%s|%d|%d|%s|%d|%d|" #l1 $window-line $window-col &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
-                !else
-                    set-variable #l8 &lset #l8 #l9 ""
-                    set-variable #l7 &lset #l7 #l9 ""
-                    set-variable #l6 &lset #l6 #l9 ""
-                    set-variable #l9 &sub #l9 1
-                !endif
-            !elif &iseq #l1 "$"
-                ; Simple test to see if '$' is escaped '\$'.
-                !if &gre $window-col 0
-                    backward-char
-                    !if &seq @wc "\\"
-                        set-variable #l5 "s"
-                    !endif
-                    forward-char
-                !endif
-
-                ; Precheck.
-                !if &seq #l5 "s"
-                    set-variable #l5 "o"
-                ; Found a '$' with '$' on the stack
-                !elif &seq "$" &lget #l8 #l9
-                    set-variable #l8 &lset #l8 #l9 ""
-                    set-variable #l7 &lset #l7 #l9 ""
-                    set-variable #l6 &lset #l6 #l9 ""
-                    set-variable #l9 &sub #l9 1
-                !else
-                    set-variable #l9 &add #l9 1
-                    set-variable #l8 &lset #l8 #l9 #l1
-                    set-variable #l7 &lset #l7 #l9 $window-line
-                    set-variable #l6 &lset #l6 #l9 $window-col
-                !endif
-            !elif &equ #l9 0
-                ; Found a '\end' with nothing on stack exit with an open status.
-                set-variable #l5 "q"
-                set-variable #p9 &spr "|o|%s|%d|%d|" #l1 $window-line $window-col
-            !else
-                ; Error - should never get here.
-                set-variable #l5 "q"
-                set-variable #p9 &spr "|H|%s|%d|%d|" #l1 $window-line $window-col
-            !endif
-        !elif &gre #l9 0
-            set-variable #l5 "q"
-            set-variable #p9 &spr "|e|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+          ; Found comment, start search again.
+          set-variable #l5 "c"
+        !endif
+      !endif
+      goto-position "\x82"
+      
+      ; Process the search.
+      !if &seq #l5 "c"
+        !if &equ $window-col 0
+          backward-line
+          end-of-line
+        !endif
+        set-variable #l5 "o"
+      !elif &seq #l1 "\\end{"
+        exchange-point-and-mark
+        set-variable #l3 ""
+        forward-char
+        !while &not &sin @wc "}\n"
+          set-variable #l3 &cat #l3 @wc
+          forward-char
+        !done
+        !if &and &seq @wc "}" &seq #l3 "verbatim"
+          !force search-buffer "bem" "\\\\begin{verbatim}"
+          !if $status
+            set-variable #l5 "s"
+          !endif
+        !endif
+        
+        ; Determine if skipping.
+        !if &seq #l5 "s"
+          set-variable #l5 "b"
         !else
-            set-variable #l5 "q"
-            set-variable #p9 "|n|"
+          goto-position "\x82"
+          ; Push onto the stack.
+          set-variable #l9 &add #l9 1
+          set-variable #l8 &lset #l8 #l9 "\\end"
+          set-variable #l7 &lset #l7 #l9 $window-line
+          set-variable #l6 &lset #l6 #l9 $window-col
         !endif
-        !if &and &seq #l5 "f" 0
-            !force forward-char
-            !if &not $status
-                !if &gre #l9 0
-                    set-variable #l5 "q"
-                    set-variable #p9 &spr "|e|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
-                !else
-                    set-variable #l5 "q"
-                    set-variable #p9 "|n|"
-                !endif
+      !elif &seq #l1 "\\begin{"
+        ; Pop the '\end'
+        !if &seq #l5 "q"
+        !elif &equ #l9 0
+          set-variable #l5 "q"
+          set-variable #p9 &spr "|o|%s|%d|%d|" #l1 $window-line $window-col
+        !elif &not &seq "\\end" &lget #l8 #l9
+          ; Found a '\end' with '\begin' on the stack
+          set-variable #l5 "q"
+          set-variable #p9 &spr "|m|%s|%d|%d|%s|%d|%d|" "\\end" $window-line $window-col &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+        !else
+          set-variable #l8 &lset #l8 #l9 ""
+          set-variable #l7 &lset #l7 #l9 ""
+          set-variable #l6 &lset #l6 #l9 ""
+          set-variable #l9 &sub #l9 1
+        !endif
+      !elif &or &iseq #l1 "}" &iseq #l1 "]"
+        ; Simple test to see if '[' is in a {[} enclosure.
+        !if &gre $window-col 0
+          backward-char
+          ; Simple test to see if '{' is escaped '\{'.
+          !if &and &iseq #l1 "{" &seq @wc "\\"
+            set-variable #l5 "s"
+          !elif &and &iseq @wc "{" &seq #l1 "["
+            2 forward-char
+            !if &seq @wc "}"
+              set-variable #l5 "s"
             !endif
-            set-variable #l5 "o"
+            2 backward-char
+          !endif
+          forward-char
         !endif
-    !until &seq #l5 "q"
+        
+        ; Precheck.
+        !if &not &seq #l5 "s"
+          ; Push onto the stack.
+          set-variable #l9 &add #l9 1
+          set-variable #l8 &lset #l8 #l9 #l1
+          set-variable #l7 &lset #l7 #l9 $window-line
+          set-variable #l6 &lset #l6 #l9 $window-col
+        !endif
+        set-variable #l5 "o"
+      !elif &iseq #l1 "{"
+        ; Simple test to see if '{' is escaped '\{'.
+        !if &gre $window-col 0
+          backward-char
+          !if &seq @wc "\\"
+            set-variable #l5 "s"
+          !endif
+          forward-char
+        !endif
+        ; Precheck.
+        !if &seq #l5 "s"
+          ; Skipping escaped character.
+          set-variable #l5 "o"
+        !elif &equ #l9 0
+          ; Mismatched.
+          set-variable #l5 "q"
+          set-variable #p9 &spr "|o|%s|%d|%d|" #l1 $window-line $window-col
+        !elif &not &seq "}" &lget #l8 #l9
+          ; Found a '}' with '{' on the stack
+          set-variable #l5 "q"
+          set-variable #p9 &spr "|m|%s|%d|%d|%s|%d|%d|" #l1 $window-line $window-col &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+        !else
+          ; Matched - pop last opening off the stack.
+          set-variable #l8 &lset #l8 #l9 ""
+          set-variable #l7 &lset #l7 #l9 ""
+          set-variable #l6 &lset #l6 #l9 ""
+          set-variable #l9 &sub #l9 1
+        !endif
+      !elif &iseq #l1 "["
+        ; Simple test to see if '[' is in a {[} enclosure.
+        !if &gre $window-col 0
+          backward-char
+          !if &seq @wc "{"
+            2 forward-char
+            !if &seq @wc "}"
+              set-variable #l5 "s"
+            !endif
+            2 backward-char
+          !endif
+          forward-char
+        !endif
+        
+        ; Process the close bracket.
+        !if &seq #l5 "s"
+          set-variable #l5 "o"
+        !elif &equ #l9 0
+          set-variable #l5 "q"
+          set-variable #p9 &spr "|o|%s|%d|%d|" #l1 $window-line $window-col
+        !elif &not &seq "]" &lget #l8 #l9
+          ; Found a ']' with '[' on the stack
+          set-variable #l5 "q"
+          set-variable #p9 &spr "|m|%s|%d|%d|%s|%d|%d|" #l1 $window-line $window-col &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+        !else
+          set-variable #l8 &lset #l8 #l9 ""
+          set-variable #l7 &lset #l7 #l9 ""
+          set-variable #l6 &lset #l6 #l9 ""
+          set-variable #l9 &sub #l9 1
+        !endif
+      !elif &iseq #l1 "$"
+        ; Simple test to see if '$' is escaped '\$'.
+        !if &gre $window-col 0
+          backward-char
+          !if &seq @wc "\\"
+            set-variable #l5 "s"
+          !endif
+          forward-char
+        !endif
+        
+        ; Precheck.
+        !if &seq #l5 "s"
+          set-variable #l5 "o"
+          ; Found a '$' with '$' on the stack
+        !elif &seq "$" &lget #l8 #l9
+          set-variable #l8 &lset #l8 #l9 ""
+          set-variable #l7 &lset #l7 #l9 ""
+          set-variable #l6 &lset #l6 #l9 ""
+          set-variable #l9 &sub #l9 1
+        !else
+          set-variable #l9 &add #l9 1
+          set-variable #l8 &lset #l8 #l9 #l1
+          set-variable #l7 &lset #l7 #l9 $window-line
+          set-variable #l6 &lset #l6 #l9 $window-col
+        !endif
+      !elif &equ #l9 0
+        ; Found a '\end' with nothing on stack exit with an open status.
+        set-variable #l5 "q"
+        set-variable #p9 &spr "|o|%s|%d|%d|" #l1 $window-line $window-col
+      !else
+        ; Error - should never get here.
+        set-variable #l5 "q"
+        set-variable #p9 &spr "|H|%s|%d|%d|" #l1 $window-line $window-col
+      !endif
+    !elif &gre #l9 0
+      set-variable #l5 "q"
+      set-variable #p9 &spr "|e|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+    !else
+      set-variable #l5 "q"
+      set-variable #p9 "|n|"
+    !endif
+    !if &and &seq #l5 "f" 0
+      !force forward-char
+      !if &not $status
+        !if &gre #l9 0
+          set-variable #l5 "q"
+          set-variable #p9 &spr "|e|%s|%d|%d|" &lget #l8 #l9 &lget #l7 #l9 &lget #l6 #l9
+        !else
+          set-variable #l5 "q"
+          set-variable #p9 "|n|"
+        !endif
+      !endif
+      set-variable #l5 "o"
+    !endif
+  !until &seq #l5 "q"
 !emacro
 
 ; Down up a level by advancing backwards to the next bracket that closes a
 ; statement. i.e. Finds the next "\begin{", "{" or "["
 define-macro tex-find-backward
-    set-position "\x81"
-    tex-block-find-backward
-    set-variable #l0 &lget #l9 1
-    !if &seq #l0 "n"
-        ml-write "No bracket mismatches."
-    !elif &seq #l0 "o"
-        ml-write &spr "Next '%s':%d/%d" &lget #l9 2 &lget #l9 3 &lget #l9 4
-    !elif &seq #l0 "m"
-        ml-write &spr "Mismatch '%s':%d/%d ... '%s':%d/%d" &lget #l9 5 &lget #l9 6 &lget #l9 7 &lget #l9 2 &lget #l9 3 &lget #l9 4
-    !elif &seq #l0 "e"
-        ml-write &spr "No matching '%s':%d/%d" &lget #l9 2 &lget #l9 2 &lget #l9 3 &lget #l9 4
-    !else
-        ml-write &spr "ERROR: status=%s(%s)" #l0 #l9
-    !endif
+  set-position "\x81"
+  tex-block-find-backward
+  set-variable #l0 &lget #l9 1
+  !if &seq #l0 "n"
+    ml-write "No bracket mismatches."
+  !elif &seq #l0 "o"
+    ml-write &spr "Next '%s':%d/%d" &lget #l9 2 &lget #l9 3 &lget #l9 4
+  !elif &seq #l0 "m"
+    ml-write &spr "Mismatch '%s':%d/%d ... '%s':%d/%d" &lget #l9 5 &lget #l9 6 &lget #l9 7 &lget #l9 2 &lget #l9 3 &lget #l9 4
+  !elif &seq #l0 "e"
+    ml-write &spr "No matching '%s':%d/%d" &lget #l9 2 &lget #l9 2 &lget #l9 3 &lget #l9 4
+  !else
+    ml-write &spr "ERROR: status=%s(%s)" #l0 #l9
+  !endif
 !emacro
 
 ; Find the next \begin{...} block backwards.
 define-macro latex-find-backward
-    set-position "\x81"
-    latex-block-find-backward
-    set-variable #l0 &lget #l9 1
-    !if &seq #l0 "n"
-        ml-write "At outermost level. No \\begin{...} ... \\end{...} mismatch."
-    !elif &seq #l0 "o"
-        ml-write &spr "Next \\begin{%s}:%d(%d)" &lget #l9 2 &lget #l9 3 &lget #l9 4
-    !elif &seq #l0 "m"
-        ml-write &spr "Mismatch \\begin{%s}:%d(%d) ... \\end{%s}:%d(%d)." &lget #l9 5 &lget #l9 6 &lget #l9 7 &lget #l9 2 &lget #l9 3 &lget #l9 4
-    !elif &seq #l0 "e"
-        ml-write &spr "No \begin{%s} matching \\end{%s}:%d(%d)." &lget #l9 2 &lget #l9 2 &lget #l9 3 &lget #l9 4
-    !else
-        ml-write &spr "ERROR: status=%s(%s)" #l0 #l9
-    !endif
+  set-position "\x81"
+  latex-block-find-backward
+  set-variable #l0 &lget #l9 1
+  !if &seq #l0 "n"
+    ml-write "At outermost level. No \\begin{...} ... \\end{...} mismatch."
+  !elif &seq #l0 "o"
+    ml-write &spr "Next \\begin{%s}:%d(%d)" &lget #l9 2 &lget #l9 3 &lget #l9 4
+  !elif &seq #l0 "m"
+    ml-write &spr "Mismatch \\begin{%s}:%d(%d) ... \\end{%s}:%d(%d)." &lget #l9 5 &lget #l9 6 &lget #l9 7 &lget #l9 2 &lget #l9 3 &lget #l9 4
+  !elif &seq #l0 "e"
+    ml-write &spr "No \begin{%s} matching \\end{%s}:%d(%d)." &lget #l9 2 &lget #l9 2 &lget #l9 3 &lget #l9 4
+  !else
+    ml-write &spr "ERROR: status=%s(%s)" #l0 #l9
+  !endif
 !emacro
 
 ; Find the next open \end{...} block forwards.
 define-macro latex-find-forward
-    set-position "\x81"
-    latex-block-find-forward
-    set-variable #l0 &lget #l9 1
-    !if &seq #l0 "n"
-        ml-write "At outermost level. No \\begin{...} ... \\end{...} mismatch."
-    !elif &seq #l0 "o"
-        set-variable $window-line &lget #l9 3
-        set-variable $window-col &lget #l9 4
-        ml-write &spr "Next \\end{%s}:%d(%d)" &lget #l9 2 &lget #l9 3 &lget #l9 4
-    !elif &seq #l0 "m"
-        set-variable $window-line &lget #l9 3
-        set-variable $window-col &lget #l9 4
-        ml-write &spr "Mismatch \\begin{%s}:%d(%d) ... \\end{%s}:%d(%d)." &lget #l9 5 &lget #l9 6 &lget #l9 7 &lget #l9 2 &lget #l9 3 &lget #l9 4
-    !elif &seq #l0 "e"
-        set-variable $window-line &lget #l9 3
-        set-variable $window-col &lget #l9 4
-        ml-write &spr "No \end{%s} matching \\begin{%s}:%d(%d)." &lget #l9 2 &lget #l9 2 &lget #l9 3 &lget #l9 4
-    !else
-        ml-write &spr "ERROR: status=%s(%s)" #l0 #l9
-    !endif
+  set-position "\x81"
+  latex-block-find-forward
+  set-variable #l0 &lget #l9 1
+  !if &seq #l0 "n"
+    ml-write "At outermost level. No \\begin{...} ... \\end{...} mismatch."
+  !elif &seq #l0 "o"
+    set-variable $window-line &lget #l9 3
+    set-variable $window-col &lget #l9 4
+    ml-write &spr "Next \\end{%s}:%d(%d)" &lget #l9 2 &lget #l9 3 &lget #l9 4
+  !elif &seq #l0 "m"
+    set-variable $window-line &lget #l9 3
+    set-variable $window-col &lget #l9 4
+    ml-write &spr "Mismatch \\begin{%s}:%d(%d) ... \\end{%s}:%d(%d)." &lget #l9 5 &lget #l9 6 &lget #l9 7 &lget #l9 2 &lget #l9 3 &lget #l9 4
+  !elif &seq #l0 "e"
+    set-variable $window-line &lget #l9 3
+    set-variable $window-col &lget #l9 4
+    ml-write &spr "No \end{%s} matching \\begin{%s}:%d(%d)." &lget #l9 2 &lget #l9 2 &lget #l9 3 &lget #l9 4
+  !else
+    ml-write &spr "ERROR: status=%s(%s)" #l0 #l9
+  !endif
 !emacro
 
 ; Goto the last unclosed latex block. i.e. moves to \begin{...} This is
 ; typically bound to C-c C-u
 define-macro tex-goto-last-unclosed-latex-block
-    set-position "\x81"
-    latex-block-find-backward
-    set-variable #l0 &lget #l9 1
-    !if &seq #l0 "n"
-        goto-position "\x81"
-        ml-write "Not Found - at outermost level. (All \\begin{...} ... \\end{...} matched)"
-    !elif &seq #l0 "o"
-        set-variable $window-line &lget #l9 3
-        set-variable $window-col &lget #l9 4
-        ml-write &spr "Next \\begin{%s}:%d(%d)" &lget #l9 2 &lget #l9 3 &lget #l9 4
-    !elif &seq #l0 "m"
-        set-variable $window-line &lget #l9 3
-        set-variable $window-col &lget #l9 4
-        ml-write &spr "Mismatch \\begin{%s}:%d(%d) ... \\end{%s}:%d(%d)." &lget #l9 5 &lget #l9 6 &lget #l9 7 &lget #l9 2 &lget #l9 3 &lget #l9 4
-    !elif &seq #l0 "e"
-        goto-position "\x81"
-        ml-write &spr "No \begin{%s} matching \\end{%s}:%d(%d)." &lget #l9 2 &lget #l9 2 &lget #l9 3 &lget #l9 4
-    !else
-        ml-write &spr "Macro error: Status=%s(%s)" #l0 #l9
-    !endif
+  set-position "\x81"
+  latex-block-find-backward
+  set-variable #l0 &lget #l9 1
+  !if &seq #l0 "n"
+    goto-position "\x81"
+    ml-write "Not Found - at outermost level. (All \\begin{...} ... \\end{...} matched)"
+  !elif &seq #l0 "o"
+    set-variable $window-line &lget #l9 3
+    set-variable $window-col &lget #l9 4
+    ml-write &spr "Next \\begin{%s}:%d(%d)" &lget #l9 2 &lget #l9 3 &lget #l9 4
+  !elif &seq #l0 "m"
+    set-variable $window-line &lget #l9 3
+    set-variable $window-col &lget #l9 4
+    ml-write &spr "Mismatch \\begin{%s}:%d(%d) ... \\end{%s}:%d(%d)." &lget #l9 5 &lget #l9 6 &lget #l9 7 &lget #l9 2 &lget #l9 3 &lget #l9 4
+  !elif &seq #l0 "e"
+    goto-position "\x81"
+    ml-write &spr "No \begin{%s} matching \\end{%s}:%d(%d)." &lget #l9 2 &lget #l9 2 &lget #l9 3 &lget #l9 4
+  !else
+    ml-write &spr "Macro error: Status=%s(%s)" #l0 #l9
+  !endif
 !emacro
 
 ; Create an \end{...} to match the last unclosed \begin{...}
 ; Typically bound to "C-c C-e"
 define-macro tex-close-latex-block
-    set-position "\x81"
-    set-variable #l1 ""
-    latex-block-find-backward
-    set-variable #l0 &lget #l9 1
-    !if &seq #l0 "n"
-        goto-position "\x81"
-        ml-write "Not Found - at outermost level. (All \\begin{...} ... \\end{...} matched)"
-        !abort
-    !elif &seq #l0 "o"
-        goto-position "\x81"
-        insert-string &spr "\\end{%s}" &lget #l9 2
-        ml-write &spr "Found \\begin{%s} at line %d col %d" &lget #l9 2 &lget #l9 3 &lget #l9 4
-        !return
-    !elif &seq #l0 "m"
-        set-variable $window-line &lget #l9 3
-        set-variable $window-col &lget #l9 4
-        set-variable #l1 &spr "Mismatch \\begin{%s}:%d(%d) ... \\end{%s}:%d(%d)." &lget #l9 5 &lget #l9 6 &lget #l9 7 &lget #l9 2 &lget #l9 3 &lget #l9 4
-    !elif &seq #l0 "e"
-        set-variable $window-line &lget #l9 3
-        set-variable $window-col &lget #l9 4
-        set-variable #l1 &spr "No \begin{%s} matching \\end{%s}:%d(%d)." &lget #l9 2 &lget #l9 2 &lget #l9 3 &lget #l9 4
-    !else
-        set-variable #l1 &spr "Macro error: Status=%s(%s)" #l0 #l9
-    !endif
-    ; See if the user wants to stay at the error.
-    set-variable #l1 @mc5 &cat #l1 " Remain at error (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-    !if &iseq #l1 "n"
-        goto-position "\x81"
-    !endif
+  set-position "\x81"
+  set-variable #l1 ""
+  latex-block-find-backward
+  set-variable #l0 &lget #l9 1
+  !if &seq #l0 "n"
+    goto-position "\x81"
+    ml-write "Not Found - at outermost level. (All \\begin{...} ... \\end{...} matched)"
+    !abort
+  !elif &seq #l0 "o"
+    goto-position "\x81"
+    insert-string &spr "\\end{%s}" &lget #l9 2
+    ml-write &spr "Found \\begin{%s} at line %d col %d" &lget #l9 2 &lget #l9 3 &lget #l9 4
+    !return
+  !elif &seq #l0 "m"
+    set-variable $window-line &lget #l9 3
+    set-variable $window-col &lget #l9 4
+    set-variable #l1 &spr "Mismatch \\begin{%s}:%d(%d) ... \\end{%s}:%d(%d)." &lget #l9 5 &lget #l9 6 &lget #l9 7 &lget #l9 2 &lget #l9 3 &lget #l9 4
+  !elif &seq #l0 "e"
+    set-variable $window-line &lget #l9 3
+    set-variable $window-col &lget #l9 4
+    set-variable #l1 &spr "No \begin{%s} matching \\end{%s}:%d(%d)." &lget #l9 2 &lget #l9 2 &lget #l9 3 &lget #l9 4
+  !else
+    set-variable #l1 &spr "Macro error: Status=%s(%s)" #l0 #l9
+  !endif
+  ; See if the user wants to stay at the error.
+  set-variable #l1 @mc5 &cat #l1 " Remain at error (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+  !if &iseq #l1 "n"
+    goto-position "\x81"
+  !endif
 !emacro
 
 ; Verify that all of the latex blocks are closed from the current position.
 define-macro latex-verify
-    set-position "\x81"
-    !if &band @# 1
-        ml-write "Verifying whole buffer ..."
-        beginning-of-buffer
+  set-position "\x81"
+  !if &band @# 1
+    ml-write "Verifying whole buffer ..."
+    beginning-of-buffer
+  !else
+    ml-write "Verifying from current position ..."
+  !endif
+  tex-block-find-forward
+  set-variable #l0 &lget #l9 1
+  !if &seq #l0 "n"
+  !elif &seq #l0 "o"
+    set-variable $window-line &lget #l9 3
+    set-variable $window-col &lget #l9 4
+    !if &sin &lget #l9 2 "{[$"
+      ml-write &spr "[ERROR: No bracket matching %s at %d:%d]" &lget #l9 2 &lget #l9 3 &lget #l9 4
     !else
-        ml-write "Verifying from current position ..."
+      ml-write &spr "[ERROR: No \\end for \\begin{%s} at %d:%d]" &lget #l9 2 &lget #l9 3 &lget #l9 4
     !endif
-    tex-block-find-forward
-    set-variable #l0 &lget #l9 1
-    !if &seq #l0 "n"
-    !elif &seq #l0 "o"
-        set-variable $window-line &lget #l9 3
-        set-variable $window-col &lget #l9 4
-        !if &sin &lget #l9 2 "{[$"
-            ml-write &spr "[ERROR: No bracket matching %s at %d:%d]" &lget #l9 2 &lget #l9 3 &lget #l9 4
-        !else
-            ml-write &spr "[ERROR: No \\end for \\begin{%s} at %d:%d]" &lget #l9 2 &lget #l9 3 &lget #l9 4
-        !endif
-        !abort
-    !elif &seq #l0 "m"
-        set-variable $window-line &lget #l9 3
-        set-variable $window-col &lget #l9 4
-        set-mark
-        set-variable $window-line &lget #l9 6
-        set-variable $window-col &lget #l9 7
-        ml-write &spr "[ERROR: Mismatched \\begin{%s}  at %d:%d ... \\end{%s}  at %d:%d]" &lget #l9 5 &lget #l9 6 &lget #l9 7 &lget #l9 2 &lget #l9 3 &lget #l9 4
-        !abort
-    !elif &seq #l0 "e"
-        set-variable $window-line &lget #l9 3
-        set-variable $window-col &lget #l9 4
-        !if &sin &lget #l9 2 "}]$"
-            ml-write &spr "[ERROR: No bracket matching %s at %d:%d]" &lget #l9 2 &lget #l9 3 &lget #l9 4
-        !else
-            ml-write &spr "[ERROR: No \\begin for \\end{%s} at %d:%d]" &lget #l9 2 &lget #l9 3 &lget #l9 4
-        !endif
-        !abort
-    !elif &seq #l0 "s"
-        set-variable $window-line &lget #l9 3
-        set-variable $window-col &lget #l9 4
-        ml-write &spr "[SYNTAX ERROR: %s  at %d:%d]" &lget #l9 2 &lget #l9 3 &lget #l9 4
-        !abort
+    !abort
+  !elif &seq #l0 "m"
+    set-variable $window-line &lget #l9 3
+    set-variable $window-col &lget #l9 4
+    set-mark
+    set-variable $window-line &lget #l9 6
+    set-variable $window-col &lget #l9 7
+    ml-write &spr "[ERROR: Mismatched \\begin{%s}  at %d:%d ... \\end{%s}  at %d:%d]" &lget #l9 5 &lget #l9 6 &lget #l9 7 &lget #l9 2 &lget #l9 3 &lget #l9 4
+    !abort
+  !elif &seq #l0 "e"
+    set-variable $window-line &lget #l9 3
+    set-variable $window-col &lget #l9 4
+    !if &sin &lget #l9 2 "}]$"
+      ml-write &spr "[ERROR: No bracket matching %s at %d:%d]" &lget #l9 2 &lget #l9 3 &lget #l9 4
     !else
-        ml-write &spr "[Macro error: Status=%s (%s)]" #l0 #l9
-        !abort
+      ml-write &spr "[ERROR: No \\begin for \\end{%s} at %d:%d]" &lget #l9 2 &lget #l9 3 &lget #l9 4
     !endif
-    !if &band @# 1
-        goto-position "\x81"
-    !endif
-    ml-write "[Verification complete - no problems found]"
+    !abort
+  !elif &seq #l0 "s"
+    set-variable $window-line &lget #l9 3
+    set-variable $window-col &lget #l9 4
+    ml-write &spr "[SYNTAX ERROR: %s  at %d:%d]" &lget #l9 2 &lget #l9 3 &lget #l9 4
+    !abort
+  !else
+    ml-write &spr "[Macro error: Status=%s (%s)]" #l0 #l9
+    !abort
+  !endif
+  !if &band @# 1
+    goto-position "\x81"
+  !endif
+  ml-write "[Verification complete - no problems found]"
 !emacro
 
 ; Handle the expansion of LaTeX abbreviations. The only one we handle here is
 ; \\end{}. If we are not performing an expansion then simply return NULL.
 0 define-macro latex-pre-expand-abbrev
-    ; Handling \end.
-    !if &not &seq &mid @wl &sub $window-col 5 5 "\\end{"
-        !abort
-    !endif
-    ; Set up the buffer to look for the backward tag.
-    set-position "\x81"
-    5 backward-char
-    ; Find the block backwards.
-    latex-block-find-backward
-    set-variable #l0 &lget #l9 1
-    !if &seq #l0 "o"
-        ; Found a match - insert it.
-        goto-position "\x81"
-        insert-string &spr "%s" &lget #l9 2
-        !return
-    !endif
-    ; Failed. Restore position and return abort.
-    goto-position "\x81"
+  ; Handling \end.
+  !if &not &seq &mid @wl &sub $window-col 5 5 "\\end{"
     !abort
+  !endif
+  ; Set up the buffer to look for the backward tag.
+  set-position "\x81"
+  5 backward-char
+  ; Find the block backwards.
+  latex-block-find-backward
+  set-variable #l0 &lget #l9 1
+  !if &seq #l0 "o"
+    ; Found a match - insert it.
+    goto-position "\x81"
+    insert-string &spr "%s" &lget #l9 2
+    !return
+  !endif
+  ; Failed. Restore position and return abort.
+  goto-position "\x81"
+  !abort
 !emacro
 
 ; Insert a quote for Tex in context sensitive way. A numeric argument always
 ; inserts a literal quote. This is simply bound to '"'
 define-macro tex-insert-quote
-    ; If there is an arqument then insert a literal.
-    !if @?
-        set-variable #l0 "\""
+  ; If there is an arqument then insert a literal.
+  !if @?
+    set-variable #l0 "\""
+  !else
+    set-variable #l0 "''"
+    ; If we are in a verbatim environment then insert a literal.
+    set-position "\x81"
+    latex-block-find-backward
+    set-variable #l1 &lget #l9 1
+    goto-position "\x81"
+    ; Process.
+    !if &and &seq #l1 "o" &seq "verbatim" &lget #l9 2
+      ; Verbatim environment.
+      set-variable #l0 "\""
+    !elif &equ $window-col 0
+      ; If we are at the start of the line or the previous character is
+      ; space then insert an opening quote.
+      set-variable #l0 "``"
     !else
-        set-variable #l0 "''"
-        ; If we are in a verbatim environment then insert a literal.
-        set-position "\x81"
-        latex-block-find-backward
-        set-variable #l1 &lget #l9 1
-        goto-position "\x81"
-        ; Process.
-        !if &and &seq #l1 "o" &seq "verbatim" &lget #l9 2
-            ; Verbatim environment.
-            set-variable #l0 "\""
-        !elif &equ $window-col 0
-            ; If we are at the start of the line or the previous character is
-            ; space then insert an opening quote.
-            set-variable #l0 "``"
-        !else
-            ; Find the previous character.
-            !force backward-char
-            !if $status
-                set-variable #l1 @wc
-                !if &sin #l1 " \t"
-                    set-variable #l0 "``"
-                !elif &sin #l1 "\\"
-                    set-variable #l0 "\""
-                !endif
-                forward-char
-            !endif
+      ; Find the previous character.
+      !force backward-char
+      !if $status
+        set-variable #l1 @wc
+        !if &sin #l1 " \t"
+          set-variable #l0 "``"
+        !elif &sin #l1 "\\"
+          set-variable #l0 "\""
         !endif
+        forward-char
+      !endif
     !endif
-    insert-string #l0
+  !endif
+  insert-string #l0
 !emacro
 
 ; Inserts an underscore, bound to "_"
 define-macro tex-insert-underscore
-    ; If there is an arqument then insert a literal.
-    !if @?
-        set-variable #l0 "_"
+  ; If there is an arqument then insert a literal.
+  !if @?
+    set-variable #l0 "_"
+  !else
+    ; If we are in a verbatim environment then insert a literal.
+    set-position "\x81"
+    latex-block-find-backward
+    set-variable #l0 &lget #l9 1
+    goto-position "\x81"
+    ; Process.
+    !if &and &seq #l0 "o" &seq "verbatim" &lget #l9 2
+      ; Verbatim environment.
+      set-variable #l0 "_"
+    !elif &equ $window-col 0
+      ; If we are at the start of the line or the previous character is
+      ; space then insert an opening quote.
+      set-variable #l0 "\\_"
     !else
-        ; If we are in a verbatim environment then insert a literal.
-        set-position "\x81"
-        latex-block-find-backward
-        set-variable #l0 &lget #l9 1
-        goto-position "\x81"
-        ; Process.
-        !if &and &seq #l0 "o" &seq "verbatim" &lget #l9 2
-            ; Verbatim environment.
-            set-variable #l0 "_"
-        !elif &equ $window-col 0
-            ; If we are at the start of the line or the previous character is
-            ; space then insert an opening quote.
-            set-variable #l0 "\\_"
-        !else
-            ; Find the previous character.
-            backward-char
-            set-variable #l1 @wc
-            !if &sin #l1 "\\"
-                set-variable #l0 "_"
-            !else
-                set-variable #l0 "\\_"
-            !endif
-            forward-char
-        !endif
+      ; Find the previous character.
+      backward-char
+      set-variable #l1 @wc
+      !if &sin #l1 "\\"
+        set-variable #l0 "_"
+      !else
+        set-variable #l0 "\\_"
+      !endif
+      forward-char
     !endif
-    insert-string #l0
+  !endif
+  insert-string #l0
 !emacro
 
 ; Insert a set of brackets, typically bound to "C-c {"
 define-macro tex-insert-braces
-    ; If it is a region then brace the region, otherwise insert a brace pair.
-    ; character.
-    0 show-region
-    set-variable #l0 $result
-    !if &equ &band #l0 5 5
-        ; a region is hilighted
-        !if &not &band $result 2
-            3 show-region
-        !endif
-        ; Find start/end of region.
-        -2 show-region
-        set-variable #l0 $window-line
-        set-variable #l1 $window-col
-        set-position "\x82"
-        2 show-region
-        set-position "\x83"
-        set-variable #l2 $window-line
-        ; Determine start of region.
-        !if &or &gre #l0 #l2 &gre $window-col $window-col
-            set-variable #l3 1
-        !else
-            set-variable #l3 0
-        !endif
-        ; bold the region.
-        goto-position &cond #l3 "\x83" "\x82"
-        insert-string "{"
-        goto-position &cond #l3 "\x82" "\x83"
-        insert-string "}"
-    !else
-        ; No region hilighted, insert bold and move to center of brackets.
-        insert-string "{}"
-        backward-char
+  ; If it is a region then brace the region, otherwise insert a brace pair.
+  ; character.
+  0 show-region
+  set-variable #l0 $result
+  !if &equ &band #l0 5 5
+    ; a region is hilighted
+    !if &not &band $result 2
+      3 show-region
     !endif
+    ; Find start/end of region.
+    -2 show-region
+    set-variable #l0 $window-line
+    set-variable #l1 $window-col
+    set-position "\x82"
+    2 show-region
+    set-position "\x83"
+    set-variable #l2 $window-line
+    ; Determine start of region.
+    !if &or &gre #l0 #l2 &gre $window-col $window-col
+      set-variable #l3 1
+    !else
+      set-variable #l3 0
+    !endif
+    ; bold the region.
+    goto-position &cond #l3 "\x83" "\x82"
+    insert-string "{"
+    goto-position &cond #l3 "\x82" "\x83"
+    insert-string "}"
+  !else
+    ; No region hilighted, insert bold and move to center of brackets.
+    insert-string "{}"
+    backward-char
+  !endif
 !emacro
 
 ; Move to the next set of braces, typically bound to "C-c }".
 ; n Move up 'n' levels.
 ; -n Move backwards 'n' levels
 define-macro tex-up-list
-    ; Get numeric argument.
-    !if @?
-        set-variable #l1 @#
-    !else
-        set-variable #l1 1
-    !endif
-    ; Do the processing.
-    !if &less #l1 0
-        !while #l1 &less 0
-            tex-block-find-backward
-            set-variable #l0 &lget #l9 1
-            !if &seq #l0 "n"
-                ml-write "At outmost level."
-                set-variable #l1 0
-            !elif &seq #l0 "o"
-                ; Found !
-            !endif
-            set-variable #l1 &add #l1 1
-        !done
-    !else
-        !while #l1 &gre 0
-            tex-block-find-forward
-            set-variable #l0 &lget #l9 1
-            !if &seq #l0 "n"
-                ml-write "At outmost level."
-                set-variable #l1 0
-            !elif &seq #l0 "o"
-                ; Found !
-            !endif
-            set-variable #l1 &sub #l1 1
-        !done
-    !endif
+  ; Get numeric argument.
+  !if @?
+    set-variable #l1 @#
+  !else
+    set-variable #l1 1
+  !endif
+  ; Do the processing.
+  !if &less #l1 0
+    !while #l1 &less 0
+      tex-block-find-backward
+      set-variable #l0 &lget #l9 1
+      !if &seq #l0 "n"
+        ml-write "At outmost level."
+        set-variable #l1 0
+      !elif &seq #l0 "o"
+        ; Found !
+      !endif
+      set-variable #l1 &add #l1 1
+    !done
+  !else
+    !while #l1 &gre 0
+      tex-block-find-forward
+      set-variable #l0 &lget #l9 1
+      !if &seq #l0 "n"
+        ml-write "At outmost level."
+        set-variable #l1 0
+      !elif &seq #l0 "o"
+        ; Found !
+      !endif
+      set-variable #l1 &sub #l1 1
+    !done
+  !endif
 !emacro
 
 define-macro latex-italic
-    ; If it is a region then italic the region, otherwise insert a italic
-    ; character.
-    0 show-region
-    set-variable #l0 $result
-    !if &equ &band #l0 5 5
-        ; a region is hilighted
-        !if &not &band $result 2
-            3 show-region
-        !endif
-        ; Find start/end of region.
-        -2 show-region
-        set-variable #l0 $window-line
-        set-variable #l1 $window-col
-        set-position "\x82"
-        2 show-region
-        set-position "\x83"
-        set-variable #l2 $window-line
-        ; Determine start of region.
-        !if &or &gre #l0 #l2 &gre $window-col $window-col
-            set-variable #l3 1
-        !else
-            set-variable #l3 0
-        !endif
-        ; italic the region.
-        goto-position &cond #l3 "\x83" "\x82"
-        insert-string "\\textit{"
-        goto-position &cond #l3 "\x82" "\x83"
-        insert-string "}"
-    !else
-        ; No region hilighted, insert italic and move to center of brackets.
-        insert-string "\\textit{}"
-        backward-char
+  ; If it is a region then italic the region, otherwise insert a italic
+  ; character.
+  0 show-region
+  set-variable #l0 $result
+  !if &equ &band #l0 5 5
+    ; a region is hilighted
+    !if &not &band $result 2
+      3 show-region
     !endif
+    ; Find start/end of region.
+    -2 show-region
+    set-variable #l0 $window-line
+    set-variable #l1 $window-col
+    set-position "\x82"
+    2 show-region
+    set-position "\x83"
+    set-variable #l2 $window-line
+    ; Determine start of region.
+    !if &or &gre #l0 #l2 &gre $window-col $window-col
+      set-variable #l3 1
+    !else
+      set-variable #l3 0
+    !endif
+    ; italic the region.
+    goto-position &cond #l3 "\x83" "\x82"
+    insert-string "\\textit{"
+    goto-position &cond #l3 "\x82" "\x83"
+    insert-string "}"
+  !else
+    ; No region hilighted, insert italic and move to center of brackets.
+    insert-string "\\textit{}"
+    backward-char
+  !endif
 !emacro
 
 define-macro latex-bold
-    ; If it is a region then bold the region, otherwise insert a bold
-    ; character.
-    0 show-region
-    set-variable #l0 $result
-    !if &equ &band #l0 5 5
-        ; a region is hilighted
-        !if &not &band $result 2
-            3 show-region
-        !endif
-        ; Find start/end of region.
-        -2 show-region
-        set-variable #l0 $window-line
-        set-variable #l1 $window-col
-        set-position "\x82"
-        2 show-region
-        set-position "\x83"
-        set-variable #l2 $window-line
-        ; Determine start of region.
-        !if &or &gre #l0 #l2 &gre $window-col $window-col
-            set-variable #l3 1
-        !else
-            set-variable #l3 0
-        !endif
-        ; bold the region.
-        goto-position &cond #l3 "\x83" "\x82"
-        insert-string "\\textbf{"
-        goto-position &cond #l3 "\x82" "\x83"
-        insert-string "}"
-    !else
-        ; No region hilighted, insert bold and move to center of brackets.
-        insert-string "\\textbf{}"
-        backward-char
+  ; If it is a region then bold the region, otherwise insert a bold
+  ; character.
+  0 show-region
+  set-variable #l0 $result
+  !if &equ &band #l0 5 5
+    ; a region is hilighted
+    !if &not &band $result 2
+      3 show-region
     !endif
+    ; Find start/end of region.
+    -2 show-region
+    set-variable #l0 $window-line
+    set-variable #l1 $window-col
+    set-position "\x82"
+    2 show-region
+    set-position "\x83"
+    set-variable #l2 $window-line
+    ; Determine start of region.
+    !if &or &gre #l0 #l2 &gre $window-col $window-col
+      set-variable #l3 1
+    !else
+      set-variable #l3 0
+    !endif
+    ; bold the region.
+    goto-position &cond #l3 "\x83" "\x82"
+    insert-string "\\textbf{"
+    goto-position &cond #l3 "\x82" "\x83"
+    insert-string "}"
+  !else
+    ; No region hilighted, insert bold and move to center of brackets.
+    insert-string "\\textbf{}"
+    backward-char
+  !endif
 !emacro
 
 define-macro latex-mono
-    ; If it is a region then mono the region, otherwise insert a mono
-    ; character.
-    0 show-region
-    set-variable #l0 $result
-    !if &equ &band #l0 5 5
-        ; a region is hilighted
-        !if &not &band $result 2
-            3 show-region
-        !endif
-        ; Find start/end of region.
-        -2 show-region
-        set-variable #l0 $window-line
-        set-variable #l1 $window-col
-        set-position "\x82"
-        2 show-region
-        set-position "\x83"
-        set-variable #l2 $window-line
-        ; Determine start of region.
-        !if &or &gre #l0 #l2 &gre $window-col $window-col
-            set-variable #l3 1
-        !else
-            set-variable #l3 0
-        !endif
-        ; mono the region.
-        goto-position &cond #l3 "\x83" "\x82"
-        insert-string "\\texttt{"
-        goto-position &cond #l3 "\x82" "\x83"
-        insert-string "}"
-    !else
-        ; No region hilighted, insert mono and move to center of brackets.
-        insert-string "\\texttt{}"
-        backward-char
+  ; If it is a region then mono the region, otherwise insert a mono
+  ; character.
+  0 show-region
+  set-variable #l0 $result
+  !if &equ &band #l0 5 5
+    ; a region is hilighted
+    !if &not &band $result 2
+      3 show-region
     !endif
+    ; Find start/end of region.
+    -2 show-region
+    set-variable #l0 $window-line
+    set-variable #l1 $window-col
+    set-position "\x82"
+    2 show-region
+    set-position "\x83"
+    set-variable #l2 $window-line
+    ; Determine start of region.
+    !if &or &gre #l0 #l2 &gre $window-col $window-col
+      set-variable #l3 1
+    !else
+      set-variable #l3 0
+    !endif
+    ; mono the region.
+    goto-position &cond #l3 "\x83" "\x82"
+    insert-string "\\texttt{"
+    goto-position &cond #l3 "\x82" "\x83"
+    insert-string "}"
+  !else
+    ; No region hilighted, insert mono and move to center of brackets.
+    insert-string "\\texttt{}"
+    backward-char
+  !endif
 !emacro
 
 buffer-init-fhook "latex"

@@ -13,106 +13,106 @@
 ;     and dictionary word expansion.
 ;
 define-macro expand-abbrev-handle
-    ; if the last command was expand-look-back call this again
-    !if &seq @cl expand-look-back
-        !goto look-back
-    !endif
-    ; Try abbrev files
+  ; if the last command was expand-look-back call this again
+  !if &seq @cl expand-look-back
+    !goto look-back
+  !endif
+  ; Try abbrev files
+  !if &seq @p ""
+    ml-write "[Using expand-abbrev]"
+  !endif
+  !force expand-abbrev
+  !if $status
+    !return
+  !endif        
+  ; if buffer has an fhook specific pre abbrev expander use that
+  !if &exi &set #l0 &cat &rig $buffer-fhook 6 "-pre-expand-abbrev"
     !if &seq @p ""
-        ml-write "[Using expand-abbrev]"
+      ml-write &spr "[Using %s]" #l0
     !endif
-    !force expand-abbrev
+    !force execute-named-command #l0
     !if $status
-        !return
-    !endif        
-    ; if buffer has an fhook specific pre abbrev expander use that
-    !if &exi &set #l0 &cat &rig $buffer-fhook 6 "-pre-expand-abbrev"
-        !if &seq @p ""
-            ml-write &spr "[Using %s]" #l0
-        !endif
-        !force execute-named-command #l0
-        !if $status
-            !return
-        !endif
+      !return
     !endif
-    ; Try iso accents
-    !if &or :iso-accents .expand-iso-accents.on
-        !if &seq @p ""
-            ml-write "[Using expand-iso-accents]"
-        !endif
-        !force expand-iso-accents
-        !if $status
-            ; Quit - we found an expansion.
-            !return
-        !endif
+  !endif
+  ; Try iso accents
+  !if &or :iso-accents .expand-iso-accents.on
+    !if &seq @p ""
+      ml-write "[Using expand-iso-accents]"
     !endif
-    !if .expand-look-back.on
+    !force expand-iso-accents
+    !if $status
+      ; Quit - we found an expansion.
+      !return
+    !endif
+  !endif
+  !if .expand-look-back.on
 *look-back
-        !if &seq @p ""
-            ml-write "[Using expand-look-back]"
-        !endif
-        !force expand-look-back
-        !if $status
-            ; Quit - we found an expansion.
-            !return
-        !endif
-    !endif
-    !if &not &seq "ERROR" :expand-abbrev
-        ; if buffer has a specific abbrev expander use that
-        !if &seq @p ""
-            ml-write &spr "[Using %s]" :expand-abbrev
-        !endif
-        !force execute-named-command :expand-abbrev
-    !elif &exi &set #l0 &cat &rig $buffer-fhook 6 "-expand-abbrev"
-        ; if buffer has an fhook specific abbrev expander use that
-        !if &seq @p ""
-            ml-write &spr "[Using %s]" #l0
-        !endif
-        !force execute-named-command #l0
-    !elif .expand-word.on
-        ; else if enabled, use expand-word
-        !if &seq @p ""
-            ml-write "[Using expand-word]"
-        !endif
-        !force expand-word
-    !endif
-    !if $status
-        ; Quit - we found an expansion.
-        !return
-    !endif
     !if &seq @p ""
-        ml-write "[Failed to find an expansion]"
-        !bell
+      ml-write "[Using expand-look-back]"
     !endif
-    !abort
+    !force expand-look-back
+    !if $status
+      ; Quit - we found an expansion.
+      !return
+    !endif
+  !endif
+  !if &not &seq "ERROR" :expand-abbrev
+    ; if buffer has a specific abbrev expander use that
+    !if &seq @p ""
+      ml-write &spr "[Using %s]" :expand-abbrev
+    !endif
+    !force execute-named-command :expand-abbrev
+  !elif &exi &set #l0 &cat &rig $buffer-fhook 6 "-expand-abbrev"
+    ; if buffer has an fhook specific abbrev expander use that
+    !if &seq @p ""
+      ml-write &spr "[Using %s]" #l0
+    !endif
+    !force execute-named-command #l0
+  !elif .expand-word.on
+    ; else if enabled, use expand-word
+    !if &seq @p ""
+      ml-write "[Using expand-word]"
+    !endif
+    !force expand-word
+  !endif
+  !if $status
+    ; Quit - we found an expansion.
+    !return
+  !endif
+  !if &seq @p ""
+    ml-write "[Failed to find an expansion]"
+    !bell
+  !endif
+  !abort
 !emacro
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; expand-iso-accents routines
 
 define-macro expand-iso-accents
-    !if &not &set #l0 &lfind "|+-|12|14|34|`a|^a|'a|\"a|~a|.a|ae|,c|co|`e|^e|'e|\"e|`i|^i|'i|\"i|'d|~n|oe|`o|^o|'o|\"o|~o|/:|/o|rg|sz|tm|`u|^u|'u|\"u|'y|'t|\"y|`A|^A|'A|\"A|~A|.A|AE|,C|`E|^E|'E|\"E|`I|^I|'I|\"I|'D|~N|OE|`O|^O|'O|\"O|~O|/*|/O|`U|^U|'U|\"U|'Y|'T|\"Y|^Z|^!|^?|" &mid @wl &sub $window-col 2 2
-        !abort
-    !endif
-    backward-delete-char
-    backward-delete-char
-    set-variable #l0 &lget "|±|½|¼|¾|à|â|á|ä|ã|å|æ|ç|©|è|ê|é|ë|ì|î|í|ï|ð|ñ|œ|ò|ô|ó|ö|õ|÷|ø|®|ß|™|ù|û|ú|ü|ý|þ|ÿ|À|Â|Á|Ä|Ã|Å|Æ|Ç|È|Ê|É|Ë|Ì|Î|Í|Ï|Ð|Ñ|Œ|Ò|Ô|Ó|Ö|Õ|×|Ø|Ù|Û|Ú|Ü|Ý|Þ|Ÿ|ž|¡|¿|" #l0
-    0 set-char-mask "L"
-    !if &set #l1 &sin #l0 $result
-        0 set-char-mask "U"
-        set-variable #l0 &mid $result #l1 1
-    !endif
-    insert-string #l0
+  !if &not &set #l0 &lfind "|+-|12|14|34|`a|^a|'a|\"a|~a|.a|ae|,c|co|`e|^e|'e|\"e|`i|^i|'i|\"i|'d|~n|oe|`o|^o|'o|\"o|~o|/:|/o|rg|sz|tm|`u|^u|'u|\"u|'y|'t|\"y|`A|^A|'A|\"A|~A|.A|AE|,C|`E|^E|'E|\"E|`I|^I|'I|\"I|'D|~N|OE|`O|^O|'O|\"O|~O|/*|/O|`U|^U|'U|\"U|'Y|'T|\"Y|^Z|^!|^?|" &mid @wl &sub $window-col 2 2
+    !abort
+  !endif
+  backward-delete-char
+  backward-delete-char
+  set-variable #l0 &lget "|±|½|¼|¾|à|â|á|ä|ã|å|æ|ç|©|è|ê|é|ë|ì|î|í|ï|ð|ñ|œ|ò|ô|ó|ö|õ|÷|ø|®|ß|™|ù|û|ú|ü|ý|þ|ÿ|À|Â|Á|Ä|Ã|Å|Æ|Ç|È|Ê|É|Ë|Ì|Î|Í|Ï|Ð|Ñ|Œ|Ò|Ô|Ó|Ö|Õ|×|Ø|Ù|Û|Ú|Ü|Ý|Þ|Ÿ|ž|¡|¿|" #l0
+  0 set-char-mask "L"
+  !if &set #l1 &sin #l0 $result
+    0 set-char-mask "U"
+    set-variable #l0 &mid $result #l1 1
+  !endif
+  insert-string #l0
 !emacro
 
 define-macro iso-accents-mode
-    !if &not @?
-        set-variable .expand-iso-accents.on &bxor .expand-iso-accents.on 1
-        ml-write &spr "[Global iso-accents-mode is now %s]" &cond .expand-iso-accents.on "on" "off"
-    !else
-        set-variable :iso-accents &bxor :iso-accents 1
-        ml-write &spr "[Buffer iso-accents-mode is now %s]" &cond :iso-accents "on" "off"
-    !endif
+  !if &not @?
+    set-variable .expand-iso-accents.on &bxor .expand-iso-accents.on 1
+    ml-write &spr "[Global iso-accents-mode is now %s]" &cond .expand-iso-accents.on "on" "off"
+  !else
+    set-variable :iso-accents &bxor :iso-accents 1
+    ml-write &spr "[Buffer iso-accents-mode is now %s]" &cond :iso-accents "on" "off"
+  !endif
 !emacro
 set-variable .expand-iso-accents.on &cond &exi .expand-iso-accents.on .expand-iso-accents.on 0
 
@@ -120,99 +120,99 @@ set-variable .expand-iso-accents.on &cond &exi .expand-iso-accents.on .expand-is
 ; expand-look-back routine
 
 define-macro expand-look-back
-    set-position "\x81"
-    backward-char
-    !if &not &inw @wc
-        goto-position "\x81"
-        !abort
-    !endif
-    forward-char
-    set-variable #l1 $window-col
-    backward-word
-    !if &seq @cl "expand-look-back"
-        .ilen forward-char
-        &sub #l1 $window-col forward-delete-char
-        -1 yank
-        goto-alpha-mark "\x84"
-    !else
-        set-variable .ilen &sub #l1 $window-col
-        set-variable #l1 &mid @wl $window-col .ilen
-        str-to-regex #l1
-        set-variable .pat &spr "\\<%s\\w*" #l1
-        set-variable .list "\b"
-    !endif
-    set-variable #l0 &cond &bmod "magic" 1 -1
-    1 buffer-mode "magic"
-    !force -100 search-backward .pat
-    !while $status
-        set-variable #l1 &rig @s0 .ilen
-        !if &not &lfind .list #l1
-            set-alpha-mark "\x84"
-            #l0 buffer-mode "magic"
-            goto-position "\x81"
-            insert-string #l1
-            set-variable .list &lins .list 0 #l1
-            ; if called from the abbrev-handler @cc wont be right
-            set-variable @cc expand-look-back
-            !return
-        !endif
-        !force -100 search-backward .pat
-    !done
-    #l0 buffer-mode "magic"
+  set-position "\x81"
+  backward-char
+  !if &not &inw @wc
     goto-position "\x81"
-    !if &seq @p ""
-        ml-write "[Failed to find another matching word]"
-        !bell
-    !endif
     !abort
+  !endif
+  forward-char
+  set-variable #l1 $window-col
+  backward-word
+  !if &seq @cl "expand-look-back"
+    .ilen forward-char
+    &sub #l1 $window-col forward-delete-char
+    -1 yank
+    goto-alpha-mark "\x84"
+  !else
+    set-variable .ilen &sub #l1 $window-col
+    set-variable #l1 &mid @wl $window-col .ilen
+    str-to-regex #l1
+    set-variable .pat &spr "\\<%s\\w*" #l1
+    set-variable .list "\b"
+  !endif
+  set-variable #l0 &cond &bmod "magic" 1 -1
+  1 buffer-mode "magic"
+  !force -100 search-backward .pat
+  !while $status
+    set-variable #l1 &rig @s0 .ilen
+    !if &not &lfind .list #l1
+      set-alpha-mark "\x84"
+      #l0 buffer-mode "magic"
+      goto-position "\x81"
+      insert-string #l1
+      set-variable .list &lins .list 0 #l1
+      ; if called from the abbrev-handler @cc wont be right
+      set-variable @cc expand-look-back
+      !return
+    !endif
+    !force -100 search-backward .pat
+  !done
+  #l0 buffer-mode "magic"
+  goto-position "\x81"
+  !if &seq @p ""
+    ml-write "[Failed to find another matching word]"
+    !bell
+  !endif
+  !abort
 !emacro
 set-variable .expand-look-back.on &cond &exi .expand-look-back.on .expand-look-back.on 1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; expand-word routines
 define-macro expand-word
-    backward-char
-    !if &inw @wc
-        ; Invoke the rules to setup spell
-        spell-rules-init
-        forward-char
-        set-variable #l0 $buffer-bname
-        set-variable #l1 $window-line
-        set-variable #l2 $window-y-scroll
-        set-variable #l3 $window-col
-        backward-word
-        set-variable #l8 $window-col
-        set-variable #l9 &sub #l3 #l8
-        set-variable #l4 &mid @wl $window-col #l9
-        !force 0 delete-buffer "*expand-word*"
-        find-buffer "*expand-word*"
-        set-variable $find-words &cat #l4 ".*"
-        !while &not &seq "" &set #l5 $find-words
-            insert-string #l5
-            insert-newline
-        !done
-        !force backward-delete-char
-        find-buffer #l0
-        set-variable $window-line #l1
-        set-variable $window-y-scroll #l2
-        set-variable $window-col #l8
-        -3 show-region
-        set-variable $window-col #l3
-        3 show-region
-        2 screen-update
-        !force !force set-variable #l5 @ml6a "expand-word" #l4 "*expand-word*"
-        !if &not $status
-            0 delete-buffer "*expand-word*"
-            !abort
-        !endif
-        #l9 backward-delete-char
-        -1 yank
-        insert-string #l5
-    !else
-        forward-char
-        ml-write "[Invalid cursor position]"
-        !abort
+  backward-char
+  !if &inw @wc
+    ; Invoke the rules to setup spell
+    spell-rules-init
+    forward-char
+    set-variable #l0 $buffer-bname
+    set-variable #l1 $window-line
+    set-variable #l2 $window-y-scroll
+    set-variable #l3 $window-col
+    backward-word
+    set-variable #l8 $window-col
+    set-variable #l9 &sub #l3 #l8
+    set-variable #l4 &mid @wl $window-col #l9
+    !force 0 delete-buffer "*expand-word*"
+    find-buffer "*expand-word*"
+    set-variable $find-words &cat #l4 ".*"
+    !while &not &seq "" &set #l5 $find-words
+      insert-string #l5
+      insert-newline
+    !done
+    !force backward-delete-char
+    find-buffer #l0
+    set-variable $window-line #l1
+    set-variable $window-y-scroll #l2
+    set-variable $window-col #l8
+    -3 show-region
+    set-variable $window-col #l3
+    3 show-region
+    2 screen-update
+    !force !force set-variable #l5 @ml6a "expand-word" #l4 "*expand-word*"
+    !if &not $status
+      0 delete-buffer "*expand-word*"
+      !abort
     !endif
+    #l9 backward-delete-char
+    -1 yank
+    insert-string #l5
+  !else
+    forward-char
+    ml-write "[Invalid cursor position]"
+    !abort
+  !endif
 !emacro
 set-variable .expand-word.on &cond &exi .expand-word.on .expand-word.on 0
 

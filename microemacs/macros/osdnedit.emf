@@ -76,11 +76,11 @@ osd 8 90  ""  "\HDelete Window       C-1" f delete-window
 osd 8 110 ""  "\HPrevious Window"      f previous-window
 osd 8 120 ""  "\HNext Window"          f next-window
 !if &and &not &band $system 0x01 &opt "mwf"
-    ; running a version that can support multiple frames
-    osd 8 150 "-"
-    osd 8 160 ""  "Create New \HFrame" f create-frame
-    osd 8 170 ""  "\HClose This Frame" f delete-frame
-    osd 8 180 ""  "Ne\Hxt Frame"       f next-frame
+  ; running a version that can support multiple frames
+  osd 8 150 "-"
+  osd 8 160 ""  "Create New \HFrame" f create-frame
+  osd 8 170 ""  "\HClose This Frame" f delete-frame
+  osd 8 180 ""  "Ne\Hxt Frame"       f next-frame
 !endif
 ; Help
 osd 9 20  ""  "General \HHelp         C-h" f osd-help

@@ -9,15 +9,15 @@
 ;
 define-macro-file sessnstp session-setup
 !if &not &exi toolbar-setup-cmd
-    0 define-macro-file toolstp toolbar-setup-cmd
+  0 define-macro-file toolstp toolbar-setup-cmd
 !endif
 
 0 define-macro session
-    set-variable .list "\b"
-    set-variable $file-names &cat $user-path ".*\\.esf"
-    !while &not &seq &set #l1 $file-names ""
-        set-variable .list &lins .list -1 &lef #l1 -4
-    !done
+  set-variable .list "\b"
+  set-variable $file-names &cat $user-path ".*\\.esf"
+  !while &not &seq &set #l1 $file-names ""
+    set-variable .list &lins .list -1 &lef #l1 -4
+  !done
 !emacro
 set-variable .session.update 1
 set-variable .session.amark 0
@@ -28,317 +28,317 @@ set-variable .session.kill 1
 ; 2: |<buffer-name>|<not-used>|<not-used>|<not-used>|<dot-line>|<dot-col>|<mark-line>|<mark-col>|<on-mode-list>|
 ; 3: |<amark1-let>|<amark1-line>|<amark1-col>|<amark2-let>....|<amarkN-col>||
 0 define-macro update-session-buff
-    !if &nbmod &set #l1 @1 "hide"
-        !return
-    !elif &not &seq &lef #l1 1 "*"
-    !elif &seq #l1 "*files*"
-    !elif &not &seq #l1 "*ftp-files*"
-        !return
-    !endif
-    4 find-buffer #l1
-    !if &seq &set #l2 $buffer-fname ""
-        find-buffer "*session_tmp*"
-    !elif &bmod "nact"
-        set-variable #l3 &spr "\n\b%s\b\b\b\b%d\b%d\b%d\b%d\b" $buffer-bname $window-line $window-col $window-mark-line $window-mark-col
-        set-variable #l5 0
-        set-variable $mode-names ".*"
-        !while &not &seq &set #l4 $mode-names ""
-            ; The view mode will only be set if its force (see below) so maintain it
-            !if &bmod #l4
-                set-variable #l3 &cat #l3 &mid $mode-chars #l5 1
-            !endif
-            set-variable #l5 &add #l5 1
-        !done
-        find-buffer "*session_tmp*"
-        insert-string #l2
-        insert-string &cat #l3 "\b\n\b\b\n"
+  !if &nbmod &set #l1 @1 "hide"
+    !return
+  !elif &not &seq &lef #l1 1 "*"
+  !elif &seq #l1 "*files*"
+  !elif &not &seq #l1 "*ftp-files*"
+    !return
+  !endif
+  4 find-buffer #l1
+  !if &seq &set #l2 $buffer-fname ""
+    find-buffer "*session_tmp*"
+  !elif &bmod "nact"
+    set-variable #l3 &spr "\n\b%s\b\b\b\b%d\b%d\b%d\b%d\b" $buffer-bname $window-line $window-col $window-mark-line $window-mark-col
+    set-variable #l5 0
+    set-variable $mode-names ".*"
+    !while &not &seq &set #l4 $mode-names ""
+      ; The view mode will only be set if its force (see below) so maintain it
+      !if &bmod #l4
+        set-variable #l3 &cat #l3 &mid $mode-chars #l5 1
+      !endif
+      set-variable #l5 &add #l5 1
+    !done
+    find-buffer "*session_tmp*"
+    insert-string #l2
+    insert-string &cat #l3 "\b\n\b\b\n"
+  !else
+    set-variable #l3 &spr "\n\b%s\b\b\b\b%d\b%d\b" $buffer-bname $window-aline $window-col
+    !force exchange-point-and-mark
+    !if $status
+      set-variable #l3 &spr "%s%d\b%d\b" #l3 $window-aline $window-col
+      !force exchange-point-and-mark
     !else
-        set-variable #l3 &spr "\n\b%s\b\b\b\b%d\b%d\b" $buffer-bname $window-aline $window-col
-        !force exchange-point-and-mark
-        !if $status
-            set-variable #l3 &spr "%s%d\b%d\b" #l3 $window-aline $window-col
-            !force exchange-point-and-mark
-        !else
-            set-variable #l3 &cat #l3 "0\b0\b"
-        !endif
-        set-variable #l5 0
-        set-variable $mode-names ".*"
-        !while &not &seq &set #l4 $mode-names ""
-            ; must check if the view mode was forced of just because the file is readonly - not foolproof but nearly
-            !if &not &bmod #l4
-            !elif &not &seq #l4 "view"
-                set-variable #l3 &cat #l3 &mid $mode-chars #l5 1
-            !elif &band 0x100 $system
-                !tjump &not &band 1 $buffer-fmod 2
-            !elif &band 148 $buffer-fmod 1 0
-                set-variable #l3 &cat #l3 &mid $mode-chars #l5 1
-            !endif
-            set-variable #l5 &add #l5 1
-        !done
-        set-variable #l4 "\b"
-        !if .session.amark
-            0 goto-alpha-mark
-            !if &len &set #l5 $result
-                set-position "\x89"
-                !while &len #l5
-                    !force goto-alpha-mark &left #l5 1
-                    !if $status
-                        set-variable #l4 &spr "%s%s\b%d\b%d\b" #l4 &left #l5 1 $window-aline $window-col
-                    !endif
-                    set-variable #l5 &rig #l5 1
-                !done
-                goto-position "\x89"
-            !endif
-        !endif
-        find-buffer "*session_tmp*"
-        insert-string #l2
-        insert-string &cat #l3 "\b\n"
-        insert-string &cat #l4 "\b\n"
+      set-variable #l3 &cat #l3 "0\b0\b"
     !endif
+    set-variable #l5 0
+    set-variable $mode-names ".*"
+    !while &not &seq &set #l4 $mode-names ""
+      ; must check if the view mode was forced of just because the file is readonly - not foolproof but nearly
+      !if &not &bmod #l4
+      !elif &not &seq #l4 "view"
+        set-variable #l3 &cat #l3 &mid $mode-chars #l5 1
+      !elif &band 0x100 $system
+        !tjump &not &band 1 $buffer-fmod 2
+      !elif &band 148 $buffer-fmod 1 0
+        set-variable #l3 &cat #l3 &mid $mode-chars #l5 1
+      !endif
+      set-variable #l5 &add #l5 1
+    !done
+    set-variable #l4 "\b"
+    !if .session.amark
+      0 goto-alpha-mark
+      !if &len &set #l5 $result
+        set-position "\x89"
+        !while &len #l5
+          !force goto-alpha-mark &left #l5 1
+          !if $status
+            set-variable #l4 &spr "%s%s\b%d\b%d\b" #l4 &left #l5 1 $window-aline $window-col
+          !endif
+          set-variable #l5 &rig #l5 1
+        !done
+        goto-position "\x89"
+      !endif
+    !endif
+    find-buffer "*session_tmp*"
+    insert-string #l2
+    insert-string &cat #l3 "\b\n"
+    insert-string &cat #l4 "\b\n"
+  !endif
 !emacro
 
 0 define-macro update-session
-    !if &and &band @# 1 &not .session.update
-        !return
-    !elif &or &not &exi %session-name &seq %session-name ""
-        set-variable %session-name $user-name
-    !endif
+  !if &and &band @# 1 &not .session.update
+    !return
+  !elif &or &not &exi %session-name &seq %session-name ""
+    set-variable %session-name $user-name
+  !endif
+  set-position "\x88"
+  ml-write &spr "[Saving session \"%s\"...]" %session-name
+  !if &equ &set #l8 $frame-id .notes.frame-id
+    notes-close
     set-position "\x88"
-    ml-write &spr "[Saving session \"%s\"...]" %session-name
-    !if &equ &set #l8 $frame-id .notes.frame-id
-        notes-close
-        set-position "\x88"
+  !endif
+  !force 0 delete-buffer "*session_tmp*"
+  find-buffer "*session_tmp*"
+  -1 buffer-mode "time"
+  set-variable #l1 $time
+  set-variable #l3 0
+  set-variable #l9 "\b\benfs\b1\b"
+  !while &len &set #l2 &mid #l1 &pinc #l3 1 1
+    set-variable #l9 &cat #l9 &itoa &add 65 #l2
+  !done
+  !force unset-variable .session.scheme
+  !if &not &exi .change-scheme.current
+  !elif &not &seq .change-scheme.current &reg &spr "/history/%s/scheme" %platform "schemed"
+    set-variable .session.scheme .change-scheme.current
+  !endif
+  insert-string &cat #l9 "\b\bvars\b\b\n"
+  insert-string &spr "\bplatform\b%s\n" $platform
+  insert-string &spr "\bsystem\b%s\n" $system
+  insert-string &spr "\bupdate\b%s\n" .session.update
+  insert-string &spr "\bamark\b%s\n" .session.amark
+  insert-string &spr "\bkill\b%s\n" .session.kill
+  !if &band $system 0x01
+    set-variable #l1 "c-"
+    set-variable #l2 "w-"
+  !else
+    set-variable #l1 "w-"
+    set-variable #l2 "c-"
+  !endif
+  set-variable #l5 0
+  !while &not &seq "" &set #l3 &lget .pn &inc #l5 1
+    !if &exi &set #l4 &lget .pv #l5
+      insert-string &spr "\b%s%s\b%s\n" #l1 #l3 &ind #l4
     !endif
-    !force 0 delete-buffer "*session_tmp*"
-    find-buffer "*session_tmp*"
-    -1 buffer-mode "time"
-    set-variable #l1 $time
-    set-variable #l3 0
-    set-variable #l9 "\b\benfs\b1\b"
-    !while &len &set #l2 &mid #l1 &pinc #l3 1 1
-        set-variable #l9 &cat #l9 &itoa &add 65 #l2
-    !done
-    !force unset-variable .session.scheme
-    !if &not &exi .change-scheme.current
-    !elif &not &seq .change-scheme.current &reg &spr "/history/%s/scheme" %platform "schemed"
-        set-variable .session.scheme .change-scheme.current
+    !if &exi &set #l4 &spr ".session.%s%s" #l2 #l3
+      insert-string &spr "\b%s%s\b%s\n" #l2 #l3 &ind #l4
     !endif
-    insert-string &cat #l9 "\b\bvars\b\b\n"
-    insert-string &spr "\bplatform\b%s\n" $platform
-    insert-string &spr "\bsystem\b%s\n" $system
-    insert-string &spr "\bupdate\b%s\n" .session.update
-    insert-string &spr "\bamark\b%s\n" .session.amark
-    insert-string &spr "\bkill\b%s\n" .session.kill
-    !if &band $system 0x01
-        set-variable #l1 "c-"
-        set-variable #l2 "w-"
+  !done
+  insert-string &cat #l9 "\b\bhist\b\b\n"
+  set-variable #l2 0
+  !repeat
+    set-variable #l3 19
+    insert-string &spr "\b%d\b%s\b\n" #l2 &ind &spr "@h%d" #l2 #l3
+    !tjump &pdec #l3 1 -1
+  !until &equ &inc #l2 1 5
+  insert-string &cat #l9 "\b\bbuff\b\b\n"
+  goto-position "\x88"
+  set-variable #l0 $buffer-bname
+  update-session-buff #l0
+  set-variable $buffer-names ".*"
+  !while &not &seq &set #l1 $buffer-names ""
+    !if &not &seq #l1 #l0
+      update-session-buff #l1
+    !endif
+  !done
+  find-buffer "*session_tmp*"
+  !if .session.kill
+    set-variable #l1 15
+    !repeat
+      !force set-variable #l2 &ind &cat "@y" #l1
+      !if &gre &len #l2 1020
+      !elif &len #l2
+        insert-string &cat #l9 "\b\bkill\b\b\n"
+        insert-string #l2
+        insert-newline
+      !endif
+    !until &not &pdec #l1 1
+  !endif
+  !if &exi .toolbar.open
+    insert-string &cat #l9 "\b\btoolbar\b\b\n"
+    !if .toolbar.open
+      ; get the current state of the toolbar
+      set-variable #l1 0
+      !while &not &seq "" &set #l2 &lget .tv &inc #l1 1
+        set-variable &cat ".v" #l1 &reg &cat "/history/toolbar/" #l2 ""
+      !done
+      ; store the current toolbar state
+      !force 5 toolbar-setup-cmd
+      goto-position "\x88"
+      find-buffer "*session_tmp*"
+      ; store the state and restore
+      set-variable #l1 0
+      !while &not &seq "" &set #l2 &lget .tv &inc #l1 1
+        insert-string &spr "\b%s\b%s\n" #l2 &reg &cat "/history/toolbar/" #l2 ""
+        set-registry &cat "/history/toolbar/" #l2 &ind &cat ".v" #l1
+        !force unset-variable &cat ".v" #l1
+      !done
     !else
-        set-variable #l1 "w-"
-        set-variable #l2 "c-"
+      set-variable #l1 0
+      !while &not &seq "" &set #l2 &lget .tv &inc #l1 1
+        insert-string &spr "\b%s\b%s\n" #l2 &reg &cat "/history/toolbar/" #l2 ""
+      !done
     !endif
-    set-variable #l5 0
-    !while &not &seq "" &set #l3 &lget .pn &inc #l5 1
-        !if &exi &set #l4 &lget .pv #l5
-            insert-string &spr "\b%s%s\b%s\n" #l1 #l3 &ind #l4
-        !endif
-        !if &exi &set #l4 &spr ".session.%s%s" #l2 #l3
-            insert-string &spr "\b%s%s\b%s\n" #l2 #l3 &ind #l4
-        !endif
-    !done
-    insert-string &cat #l9 "\b\bhist\b\b\n"
-    set-variable #l2 0
-    !repeat
-        set-variable #l3 19
-        insert-string &spr "\b%d\b%s\b\n" #l2 &ind &spr "@h%d" #l2 #l3
-        !tjump &pdec #l3 1 -1
-    !until &equ &inc #l2 1 5
-    insert-string &cat #l9 "\b\bbuff\b\b\n"
-    goto-position "\x88"
-    set-variable #l0 $buffer-bname
-    update-session-buff #l0
-    set-variable $buffer-names ".*"
-    !while &not &seq &set #l1 $buffer-names ""
-        !if &not &seq #l1 #l0
-            update-session-buff #l1
-        !endif
-    !done
+  !endif
+  goto-position "\x88"
+  set-variable #l1 $window-id
+  set-variable #l2 0
+  4 next-window
+  set-variable #l3 &spr "\b%d\b%d\b0\b0\b" &sub $window-scroll-bar $window-width &sub $window-mode-line $window-depth
+  !repeat
+    set-variable &cat ".v" &pinc #l2 1 &spr "\b%d\b%d\b%d\b%d\b%d\b%d\b%d\b%d\b%d\b%d\b%d\b%s\b\n" &equ $window-id #l1 $window-flags &sub $window-scroll-bar $window-width &sub $window-mode-line $window-depth $window-scroll-bar $window-mode-line $window-aline $window-col $window-x-scroll $window-xcl-scroll $window-y-scroll $buffer-bname
+    !if &gre $window-scroll-bar &lget #l3 3
+      set-variable #l3 &lset #l3 3 $window-scroll-bar
+    !endif
+    !if &gre $window-mode-line &lget #l3 4
+      set-variable #l3 &lset #l3 4 $window-mode-line
+    !endif
+    !force 0 next-window
+  !until &not $status
+  goto-position "\x88"
+  find-buffer "*session_tmp*"
+  insert-string &cat #l9 "\b\bwin\b\b\n"
+  insert-string &cat #l3 "\n"
+  set-variable #l1 0
+  !while &les #l1 #l2
+    insert-string &ind &cat ".v" #l1
+    !force unset-variable &cat ".v" &pinc #l1 1
+  !done
+  !if &equ #l8 .notes.frame-id
+    find-buffer .notes.current
+    set-variable #l2 $buffer-fname
     find-buffer "*session_tmp*"
-    !if .session.kill
-        set-variable #l1 15
-        !repeat
-            !force set-variable #l2 &ind &cat "@y" #l1
-            !if &gre &len #l2 1020
-            !elif &len #l2
-                insert-string &cat #l9 "\b\bkill\b\b\n"
-                insert-string #l2
-                insert-newline
-            !endif
-        !until &not &pdec #l1 1
-    !endif
-    !if &exi .toolbar.open
-        insert-string &cat #l9 "\b\btoolbar\b\b\n"
-        !if .toolbar.open
-            ; get the current state of the toolbar
-            set-variable #l1 0
-            !while &not &seq "" &set #l2 &lget .tv &inc #l1 1
-                set-variable &cat ".v" #l1 &reg &cat "/history/toolbar/" #l2 ""
-            !done
-            ; store the current toolbar state
-            !force 5 toolbar-setup-cmd
-            goto-position "\x88"
-            find-buffer "*session_tmp*"
-            ; store the state and restore
-            set-variable #l1 0
-            !while &not &seq "" &set #l2 &lget .tv &inc #l1 1
-                insert-string &spr "\b%s\b%s\n" #l2 &reg &cat "/history/toolbar/" #l2 ""
-                set-registry &cat "/history/toolbar/" #l2 &ind &cat ".v" #l1
-                !force unset-variable &cat ".v" #l1
-            !done
-        !else
-            set-variable #l1 0
-            !while &not &seq "" &set #l2 &lget .tv &inc #l1 1
-                insert-string &spr "\b%s\b%s\n" #l2 &reg &cat "/history/toolbar/" #l2 ""
-            !done
-        !endif
-    !endif
-    goto-position "\x88"
-    set-variable #l1 $window-id
-    set-variable #l2 0
-    4 next-window
-    set-variable #l3 &spr "\b%d\b%d\b0\b0\b" &sub $window-scroll-bar $window-width &sub $window-mode-line $window-depth
+    insert-string &cat #l9 "\b\bnotes\b\b\n"
+    insert-string &cat #l2 "\n"
+  !endif
+  insert-string &cat #l9 "\b\bend\b\b\n"
+  0 write-buffer &spr "%s%s.esf" $user-path %session-name
+  !force 0 delete-buffer $buffer-bname
+  goto-position "\x88"
+  !if &equ #l8 .notes.frame-id
     !repeat
-        set-variable &cat ".v" &pinc #l2 1 &spr "\b%d\b%d\b%d\b%d\b%d\b%d\b%d\b%d\b%d\b%d\b%d\b%s\b\n" &equ $window-id #l1 $window-flags &sub $window-scroll-bar $window-width &sub $window-mode-line $window-depth $window-scroll-bar $window-mode-line $window-aline $window-col $window-x-scroll $window-xcl-scroll $window-y-scroll $buffer-bname
-        !if &gre $window-scroll-bar &lget #l3 3
-            set-variable #l3 &lset #l3 3 $window-scroll-bar
-        !endif
-        !if &gre $window-mode-line &lget #l3 4
-            set-variable #l3 &lset #l3 4 $window-mode-line
-        !endif
-        !force 0 next-window
-    !until &not $status
-    goto-position "\x88"
-    find-buffer "*session_tmp*"
-    insert-string &cat #l9 "\b\bwin\b\b\n"
-    insert-string &cat #l3 "\n"
-    set-variable #l1 0
-    !while &les #l1 #l2
-        insert-string &ind &cat ".v" #l1
-        !force unset-variable &cat ".v" &pinc #l1 1
-    !done
-    !if &equ #l8 .notes.frame-id
-        find-buffer .notes.current
-        set-variable #l2 $buffer-fname
-        find-buffer "*session_tmp*"
-        insert-string &cat #l9 "\b\bnotes\b\b\n"
-        insert-string &cat #l2 "\n"
-    !endif
-    insert-string &cat #l9 "\b\bend\b\b\n"
-    0 write-buffer &spr "%s%s.esf" $user-path %session-name
-    !force 0 delete-buffer $buffer-bname
-    goto-position "\x88"
-    !if &equ #l8 .notes.frame-id
-        !repeat
-            3 next-frame
-        !until &equ $frame-id #l8
-    !endif
-    ml-write "[Session saved]"
+      3 next-frame
+    !until &equ $frame-id #l8
+  !endif
+  ml-write "[Session saved]"
 !emacro
 set-variable .update-session.pv "|.session.scheme|$scroll|$scroll-bar|$frame-width|$frame-depth|.toolbar.open|"
 set-variable .update-session.pn "|scheme|scroll|sbar|framew|framed|tbopen|"
 set-variable .update-session.tv "|size|tool-name|tool-buff|tool-file|tool-size|tool-flag|tool-cmd|"
 
 define-macro save-session
-    !if &or &not &exi %session-name &seq %session-name ""
-        set-variable %session-name $user-name
+  !if &or &not &exi %session-name &seq %session-name ""
+    set-variable %session-name $user-name
+  !endif
+  !if &band @# 1
+    !force set-variable #l0 @1
+    !if &not $status
+      session
+      set-variable #l0 @ml19 "Save session" %session-name .session.list
     !endif
-    !if &band @# 1
-        !force set-variable #l0 @1
-        !if &not $status
-            session
-            set-variable #l0 @ml19 "Save session" %session-name .session.list
-        !endif
-        set-variable %session-name #l0
-    !endif
-    0 update-session
+    set-variable %session-name #l0
+  !endif
+  0 update-session
 !emacro
 
 0 define-macro read-session-win
-    set-variable #l0 @1
-    set-variable #l1 @2
-    !if &gre #l1 1
-        set-variable #l2 @3
-        ; find the window pair that spans the whole width or depth
-        set-variable #l3 &sub &lget #l2 3 &lget #l2 1
-        set-variable #l4 &sub &lget #l2 4 &lget #l2 2
-        set-variable #l5 &ind &cat ".read-session.v" #l0
-        set-variable #l7 1
-        !repeat
-            set-variable #l6 &ind &cat ".read-session.v" &add #l0 #l7
-            !if &equ #l3 &sub &lget #l5 5 &lget #l6 3
-                ; vertical split
-                1 split-window-vertically
-                !force &sub &sub &lget #l5 6 &lget #l2 2 $window-depth change-window-depth
-                set-variable #l8 &lset #l2 4 &lget #l5 6
-                read-session-win #l0 #l7 #l8
-                next-window
-                set-variable #l8 &lset #l2 2 &lget #l6 4
-                read-session-win &add #l0 #l7 &sub #l1 #l7 #l8
-                !return
-            !elif &equ #l4 &sub &lget #l5 6 &lget #l6 4
-                ; horizontal split
-                1 split-window-horizontally
-                !force &sub &sub &lget #l5 5 &lget #l2 1 $window-width change-window-width
-                set-variable #l8 &lset #l2 3 &lget #l5 5
-                read-session-win #l0 #l7 #l8
-                next-window
-                set-variable #l8 &lset #l2 1 &lget #l6 3
-                read-session-win &add #l0 #l7 &sub #l1 #l7 #l8
-                !return
-            !endif
-            set-variable #l5 #l6
-        !until &equ #l1 &inc #l7 1
-        1000 ml-write "[Failed to find window divide]"
-        !abort
-    !else
-        set-variable #l3 &ind &cat ".read-session.v" #l0
-        !force find-buffer &lget #l3 12
-        !force set-variable $window-flags &lget #l3 2
-        !force set-variable $window-aline &lget #l3 7
-        !force set-variable $window-col &lget #l3 8
-        !force set-variable $window-y-scroll &lget #l3 11
-        !force set-variable $window-xcl-scroll &lget #l3 10
-        !force set-variable $window-x-scroll &lget #l3 9
-        !if &lget #l3 1
-            set-position "\x88"
-        !endif
+  set-variable #l0 @1
+  set-variable #l1 @2
+  !if &gre #l1 1
+    set-variable #l2 @3
+    ; find the window pair that spans the whole width or depth
+    set-variable #l3 &sub &lget #l2 3 &lget #l2 1
+    set-variable #l4 &sub &lget #l2 4 &lget #l2 2
+    set-variable #l5 &ind &cat ".read-session.v" #l0
+    set-variable #l7 1
+    !repeat
+      set-variable #l6 &ind &cat ".read-session.v" &add #l0 #l7
+      !if &equ #l3 &sub &lget #l5 5 &lget #l6 3
+        ; vertical split
+        1 split-window-vertically
+        !force &sub &sub &lget #l5 6 &lget #l2 2 $window-depth change-window-depth
+        set-variable #l8 &lset #l2 4 &lget #l5 6
+        read-session-win #l0 #l7 #l8
+        next-window
+        set-variable #l8 &lset #l2 2 &lget #l6 4
+        read-session-win &add #l0 #l7 &sub #l1 #l7 #l8
+        !return
+      !elif &equ #l4 &sub &lget #l5 6 &lget #l6 4
+        ; horizontal split
+        1 split-window-horizontally
+        !force &sub &sub &lget #l5 5 &lget #l2 1 $window-width change-window-width
+        set-variable #l8 &lset #l2 3 &lget #l5 5
+        read-session-win #l0 #l7 #l8
+        next-window
+        set-variable #l8 &lset #l2 1 &lget #l6 3
+        read-session-win &add #l0 #l7 &sub #l1 #l7 #l8
+        !return
+      !endif
+      set-variable #l5 #l6
+    !until &equ #l1 &inc #l7 1
+    1000 ml-write "[Failed to find window divide]"
+    !abort
+  !else
+    set-variable #l3 &ind &cat ".read-session.v" #l0
+    !force find-buffer &lget #l3 12
+    !force set-variable $window-flags &lget #l3 2
+    !force set-variable $window-aline &lget #l3 7
+    !force set-variable $window-col &lget #l3 8
+    !force set-variable $window-y-scroll &lget #l3 11
+    !force set-variable $window-xcl-scroll &lget #l3 10
+    !force set-variable $window-x-scroll &lget #l3 9
+    !if &lget #l3 1
+      set-position "\x88"
     !endif
+  !endif
 !emacro
 
 0 define-macro read-session-me-quit
-    set-variable #l0 $window-line
-    set-variable #l1 $buffer-bname
-    !force search-buffer "em" "^\b\bme-quit\b\b\n"
-    !if &not $status
+  set-variable #l0 $window-line
+  set-variable #l1 $buffer-bname
+  !force search-buffer "em" "^\b\bme-quit\b\b\n"
+  !if &not $status
+    !return
+  !endif
+  ;1000 ml-write "[*** Recovering from emergency quit ***]"
+  !while &not &seq @wc ""
+    !if &seq &trb @wl ""
+    !elif &not &seq @wl "\b\bme-quit\b\b"
+      !force !force find-file @wl @mna
+      find-buffer #l1
+      !if &seq "abort-command" &cbin &lget &cat " " $recent-keys 1
         !return
+      !endif
     !endif
-    ;1000 ml-write "[*** Recovering from emergency quit ***]"
-    !while &not &seq @wc ""
-        !if &seq &trb @wl ""
-        !elif &not &seq @wl "\b\bme-quit\b\b"
-            !force !force find-file @wl @mna
-            find-buffer #l1
-            !if &seq "abort-command" &cbin &lget &cat " " $recent-keys 1
-                !return
-            !endif
-        !endif
-        forward-line
-    !done
-    end-of-buffer
-    set-mark
-    set-variable $window-line #l0
-    -1 kill-region
-    !force !force 0 write-buffer &spr "%s%s.esf" $user-path %session-name
-    set-variable $buffer-bname #l1
+    forward-line
+  !done
+  end-of-buffer
+  set-mark
+  set-variable $window-line #l0
+  -1 kill-region
+  !force !force 0 write-buffer &spr "%s%s.esf" $user-path %session-name
+  set-variable $buffer-bname #l1
 !emacro
 ; 0x01 merge into current session
 ; 0x02 don't get session name from user, reload current
@@ -347,335 +347,335 @@ define-macro save-session
 ; 0x10 don't load window info (i.e. window layout & visible buffer)
 ; 0x20 don't error if esf file is not found
 define-macro read-session
-    !if &or &not &exi %session-name &seq %session-name ""
-        set-variable %session-name $user-name
-    !endif
-    !if &band @# 2
-        ; use the default session
-        set-variable #l0 %session-name
-    !else
-        !force set-variable #l0 @1
-        !if &not $status
-            session
-            !if &les &len .session.list 2
-                ml-write "[No sessions to load]"
-                !abort
-            !endif
-            set-variable #l0 @ml19 "Read session" %session-name .session.list
-        !endif
-    !endif
-    !if &not &seq "R" &stat t &set #l1 &spr "%s%s.esf" $user-path #l0
-        !if &band @# 32
-            set-variable %session-name #l0
-            0 change-scheme
-            !return
-        !endif
-        ml-write &spr "[Session Error: cannot read session file \"%s\"]" #l1
+  !if &or &not &exi %session-name &seq %session-name ""
+    set-variable %session-name $user-name
+  !endif
+  !if &band @# 2
+    ; use the default session
+    set-variable #l0 %session-name
+  !else
+    !force set-variable #l0 @1
+    !if &not $status
+      session
+      !if &les &len .session.list 2
+        ml-write "[No sessions to load]"
         !abort
+      !endif
+      set-variable #l0 @ml19 "Read session" %session-name .session.list
     !endif
-    !if &band @# 1
-        save-some-buffers
-        set-variable #l3 0
-        set-variable #l4 0
-        set-variable $buffer-names ".*"
-        !while &not &seq &set #l2 $buffer-names ""
-            !if &and &nbmod #l2 "edit" &not &seq &lef #l2 1 "*" 
-                set-variable #l3 &add #l3 1
-            !elif &seq #l2 "*server*" 
-            !elif &nbmod #l2 "pipe"
-                set-variable #l4 &add #l4 1
-            !endif
-        !done
-        !if &add #l3 #l4
-            set-variable #l5 &con #l3 &spr "%d modified buffer%s" #l3 &con &equ #l3 1 "" "s" ""
-            !if #l4
-                set-variable #l5 &spr "%s%s%d active process%s" #l5 &con &len #l5 " and " "" #l4 &con &equ #l4 1 "" "es"
-            !endif
-            set-variable #l5 @mc5 &spr "%s exist%s, continue anyway (?/y/n) ?" #l5 &con &equ &add #l3 #l4 1 "s" "" "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-            !if &iseq #l5 "n"
-                !abort
-            !endif
-        !endif
-        !if &not &seq %session-name #l0
-            !force update-session
-        !endif
-        set-variable $buffer-names ".*"
-        !while &not &seq &set #l2 $buffer-names ""
-            !if &not &seq #l2 $buffer-bname
-                !force 0 delete-buffer #l2
-            !endif
-        !done
-        !force 0 delete-buffer $buffer-bname
+  !endif
+  !if &not &seq "R" &stat t &set #l1 &spr "%s%s.esf" $user-path #l0
+    !if &band @# 32
+      set-variable %session-name #l0
+      0 change-scheme
+      !return
     !endif
-    ml-write &spr "[Loading session \"%s\"...]" #l0
-    set-position "\x88"
-    set-variable %session-name #l0
-    set-variable $frame-title &cat "MicroEmacs: " %session-name
-    set-variable .session.update 1
-    set-variable .session.amark 0
-    set-variable .session.kill 1
-    set-variable #l5 0
-    !while &not &seq "" &set #l3 &lget .update-session.pn &inc #l5 1
-        !force unset-variable &cat ".session.c-" #l3
-        !force unset-variable &cat ".session.w-" #l3
+    ml-write &spr "[Session Error: cannot read session file \"%s\"]" #l1
+    !abort
+  !endif
+  !if &band @# 1
+    save-some-buffers
+    set-variable #l3 0
+    set-variable #l4 0
+    set-variable $buffer-names ".*"
+    !while &not &seq &set #l2 $buffer-names ""
+      !if &and &nbmod #l2 "edit" &not &seq &lef #l2 1 "*" 
+        set-variable #l3 &add #l3 1
+      !elif &seq #l2 "*server*" 
+      !elif &nbmod #l2 "pipe"
+        set-variable #l4 &add #l4 1
+      !endif
     !done
-    !force 0 delete-buffer "*session_tmp*"
-    find-buffer "*session_tmp*"
-    insert-file #l1
-    beginning-of-buffer
-    !if &not &xse @wl "^\\(\b\benfs\b\\(\\d*\\)\b[0-9A-J ]+\b\b\\)\\l+\b\b$"
-        !force 0 delete-buffer "*session_tmp*"
-        goto-position "\x88"
-        ml-write &spr "[File \"%s\" does not appear to be a saved session]" %session-name
+    !if &add #l3 #l4
+      set-variable #l5 &con #l3 &spr "%d modified buffer%s" #l3 &con &equ #l3 1 "" "s" ""
+      !if #l4
+        set-variable #l5 &spr "%s%s%d active process%s" #l5 &con &len #l5 " and " "" #l4 &con &equ #l4 1 "" "es"
+      !endif
+      set-variable #l5 @mc5 &spr "%s exist%s, continue anyway (?/y/n) ?" #l5 &con &equ &add #l3 #l4 1 "s" "" "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
+      !if &iseq #l5 "n"
         !abort
+      !endif
     !endif
-    set-variable #l9 @s1
-    set-variable #l7 @s2
-    !if &not &band @# 12
-        !if &seq $frame-id .notes.frame-id
-            !force notes-close
-            set-position "\x88"
-        !endif
-        !if &exi .toolbar.open
-            !force toolbar-close
-        !endif
-        delete-other-windows
+    !if &not &seq %session-name #l0
+      !force update-session
     !endif
-    !force unset-variable .notes
-    set-variable #l0 ""
-    set-variable #l8 0
-    beginning-of-line
-    !repeat
-        !force search-buffer "em" &spr "^%s\\(\\l+\\)\b\b$" #l9
-        !if $status
-            set-variable #l1 @s1
-            beginning-of-line
-            !if #l8
-                backward-char
-                copy-region
-                forward-char
-                set-variable #l8 0
-            !endif
-            forward-line
-            !if &seq #l1 "end"
-                ; handle emergancy quit sections
-                read-session-me-quit
-                !force 0 delete-buffer "*session_tmp*"
-                goto-position "\x88"
-                !if &band @# 16
-                !elif &exi .notes
-                    notes-file .notes
-                    !force unset-variable .notes
-                !elif &and &band @# 8 &not &seq #l0 ""
-                    find-buffer #l0
-                !endif
-                ml-write &spr "[Session read]"
-                !return
-            !elif &seq #l1 "kill"
-                set-mark
-                set-variable #l8 1
-            !elif &seq #l1 "vars"
-                !while &xse @wl "^\b\\([^\b]+\\)\b\\(.*\\)"
-                    !if &seq &lef &set #l2 @s1 9 ".session."
-                        set-variable &ind @s1 @s2
-                    !elif &seq &lef #l2 1 "$"
-                        set-variable &cat ".session." &rig #l2 1 @s2
-                    !else
-                        set-variable &cat ".session." #l2 @s2
-                    !endif
-                    forward-line
-                !done
-                set-variable .svp &cond &band $system 0x01 ".session.c-" ".session.w-"
-                set-variable #l2 &cat .svp "scheme"
-                &exi &ind #l2 change-scheme &ind #l2
-            !elif &seq #l1 "hist"
-                !while &len &set #l3 &lget @wl 1
-                    2 search-buffer "eM" "\b"
-                    set-mark
-                    backward-char
-                    search-buffer "em" "\b$"
-                    backward-char
-                    copy-region
-                    set-variable &ind &cat "@h" #l3 @y
-                    -1 yank
-                    beginning-of-line
-                    forward-line
-                !done
-            !elif &band @# 4
-            !elif &seq #l1 "buff"
-                !while &sgr @wc " "
-                    set-mark
-                    search-buffer "em" "^\b"
-                    2 backward-char
-                    copy-region
-                    set-variable #l2 @y
-                    -1 yank
-                    forward-char
-                    set-variable #l3 @wl
-                    forward-line
-                    set-variable #l4 @wl
-                    forward-line
-                    set-variable #l5 $window-line
-                    set-variable #l6 &lget #l3 9
-                    !if &les #l7 1
-                        ; Handle modes in ME pre 20061010
-                        set-variable #l6 &cat "c" &rep &xrep #l6 "[dDkQS1-8]" "" "c" "l"
-                    !endif
-                    !if &seq &lget #l4 1 ""
-                        ; no amarks, create an inactive buffer
-                        !force 7 find-buffer #l2 @mna
-                        !if $status
-                            !force 2 change-buffer-name &lget #l3 1
-                            set-variable #l1 0
-                            set-variable $mode-names ".*"
-                            !if &not &seq &set #l2 $mode-names ""
-                                !if &not &lfind "|edit|lock|nact|narrow|pipe|" #l2
-                                    !force &con &sin &mid $mode-chars #l1 1 #l6 1 -1 buffer-mode #l2
-                                !endif
-                                set-variable #l1 &add #l1 1
-                                !jump -5
-                            !endif
-                            !force set-variable $window-mark-line &lget #l3 7
-                            !force set-variable $window-mark-col &lget #l3 8
-                            !force set-variable $window-line &lget #l3 5
-                            !force set-variable $window-col &lget #l3 6
-                        !endif
-                    !else
-                        set-variable #l1 &add &add &cond &sin "b" #l6 2 0 &cond &sin "Y" #l6 4 0 &cond &sin "r" #l6 8 0
-                        !force #l1 find-file #l2 @mna
-                        !if $status
-                            !force 2 change-buffer-name &lget #l3 1
-                            set-variable #l1 0
-                            set-variable $mode-names ".*"
-                            !if &not &seq &set #l2 $mode-names ""
-                                !if &not &lfind "|binary|edit|lock|nact|narrow|pipe|rbin|" #l2
-                                    !force &con &sin &mid $mode-chars #l1 1 #l6 1 -1 buffer-mode #l2
-                                !endif
-                                set-variable #l1 &add #l1 1
-                                !jump -5
-                            !endif
-                            set-variable #l1 0
-                            !if &not &seq &set #l2 &lget #l4 &inc #l1 1 ""
-                                !force set-variable $window-aline &lget #l4 &inc #l1 1
-                                !force set-variable $window-col &lget #l4 &inc #l1 1
-                                set-alpha-mark #l2
-                                !jump -4
-                            !endif
-                            !if &lget #l3 7
-                                !force set-variable $window-aline &lget #l3 7
-                                !force set-variable $window-col &lget #l3 8
-                                set-mark
-                            !endif
-                            !force set-variable $window-aline &lget #l3 5
-                            !force set-variable $window-col &lget #l3 6
-                        !endif
-                    !endif
-                    !if &seq #l0 ""
-                        set-variable #l0 &lget #l3 1
-                    !endif
-                    find-buffer "*session_tmp*"
-                    set-variable $window-line #l5
-                !done
-            !elif &band @# 8
-            !elif &seq #l1 "toolbar"
-                !while &xse @wl "^\b\\([^\b]+\\)\b\\(.*\\)"
-                    set-variable &ind &cat ".toolbar." @s1 @s2
-                    forward-line
-                !done
-                !if &exi &set #l2 &cat .svp "tbopen"
-                    set-variable .toolbar.open &ind #l2
-                !endif
-            !elif &seq #l1 "win"
-                set-variable #l2 @wl
-                set-variable #l3 0
-                forward-line
-                !while &xse &lef @wl 3 "\b[01]\b"
-                    set-variable &cat ".v" &pinc #l3 1 @wl
-                    forward-line
-                !done
-                ; resize the frame and set scroll and scroll-bar
-                !if &exi &set #l4 &cat .svp "scroll"
-                    set-variable $scroll &ind #l4
-                !endif
-                !if &exi &set #l4 &cat .svp "sbar"
-                    set-variable $scroll-bar &ind #l4
-                !endif
-                !if &not &band $system 1
-                    !if &exi &set #l4 &cat .svp "framed"
-                        !force change-frame-depth &ind #l4
-                    !endif
-                    !if &exi &set #l4 &cat .svp "framew"
-                        !force change-frame-width &ind #l4
-                    !endif
-                !endif
-                !if .toolbar.open
-                    goto-position "\x88"
-                    !force !force 0 toolbar-open
-                    set-position "\x88"
-                    find-buffer "*session_tmp*"
-                !endif
-                !if &not &band @# 16
-                    ; Only load win layout if session console mode and size are the same
-                    set-variable #l6 0
-                    !if &band 0x01 &bxor .session.system $system
-                        ml-write "[Session type incompatible - cannot recreate window layout]"
-                    !elif &sub &sub &lget #l2 3 &lget #l2 1 $window-width
-                        ml-write "[Frame width not correct - cannot recreate window layout]"
-                    !elif &sub &sub &lget #l2 4 &lget #l2 2 $window-depth
-                        ml-write "[Frame depth not correct - cannot recreate window layout]"
-                    !else
-                        ; correct frame size - restore the window layout
-                        !force read-session-win 0 #l3 #l2
-                        set-variable #l6 $status
-                    !endif
-                    !if &not #l6
-                        set-variable @# &bor @# 8
-                    !endif
-                    goto-position "\x88"
-                    find-buffer "*session_tmp*"
-                !endif
-                !while &pdec #l3 1
-                    !force unset-variable &cat ".v" #l3
-                !done
-            !elif &seq #l1 "notes"
-                set-variable .notes @wl
-            !else
-                1000 ml-write &spr "[Warning: Unknown session section \"%s\" - skipping]" #l1
-            !endif
-            backward-char
-        !endif
-    !until &not $status
+    set-variable $buffer-names ".*"
+    !while &not &seq &set #l2 $buffer-names ""
+      !if &not &seq #l2 $buffer-bname
+        !force 0 delete-buffer #l2
+      !endif
+    !done
+    !force 0 delete-buffer $buffer-bname
+  !endif
+  ml-write &spr "[Loading session \"%s\"...]" #l0
+  set-position "\x88"
+  set-variable %session-name #l0
+  set-variable $frame-title &cat "MicroEmacs: " %session-name
+  set-variable .session.update 1
+  set-variable .session.amark 0
+  set-variable .session.kill 1
+  set-variable #l5 0
+  !while &not &seq "" &set #l3 &lget .update-session.pn &inc #l5 1
+    !force unset-variable &cat ".session.c-" #l3
+    !force unset-variable &cat ".session.w-" #l3
+  !done
+  !force 0 delete-buffer "*session_tmp*"
+  find-buffer "*session_tmp*"
+  insert-file #l1
+  beginning-of-buffer
+  !if &not &xse @wl "^\\(\b\benfs\b\\(\\d*\\)\b[0-9A-J ]+\b\b\\)\\l+\b\b$"
     !force 0 delete-buffer "*session_tmp*"
     goto-position "\x88"
-    ml-write &spr "[Session file \"%s\" is corrupt - missing end marker]" %session-name
+    ml-write &spr "[File \"%s\" does not appear to be a saved session]" %session-name
     !abort
+  !endif
+  set-variable #l9 @s1
+  set-variable #l7 @s2
+  !if &not &band @# 12
+    !if &seq $frame-id .notes.frame-id
+      !force notes-close
+      set-position "\x88"
+    !endif
+    !if &exi .toolbar.open
+      !force toolbar-close
+    !endif
+    delete-other-windows
+  !endif
+  !force unset-variable .notes
+  set-variable #l0 ""
+  set-variable #l8 0
+  beginning-of-line
+  !repeat
+    !force search-buffer "em" &spr "^%s\\(\\l+\\)\b\b$" #l9
+    !if $status
+      set-variable #l1 @s1
+      beginning-of-line
+      !if #l8
+        backward-char
+        copy-region
+        forward-char
+        set-variable #l8 0
+      !endif
+      forward-line
+      !if &seq #l1 "end"
+        ; handle emergancy quit sections
+        read-session-me-quit
+        !force 0 delete-buffer "*session_tmp*"
+        goto-position "\x88"
+        !if &band @# 16
+        !elif &exi .notes
+          notes-file .notes
+          !force unset-variable .notes
+        !elif &and &band @# 8 &not &seq #l0 ""
+          find-buffer #l0
+        !endif
+        ml-write &spr "[Session read]"
+        !return
+      !elif &seq #l1 "kill"
+        set-mark
+        set-variable #l8 1
+      !elif &seq #l1 "vars"
+        !while &xse @wl "^\b\\([^\b]+\\)\b\\(.*\\)"
+          !if &seq &lef &set #l2 @s1 9 ".session."
+            set-variable &ind @s1 @s2
+          !elif &seq &lef #l2 1 "$"
+            set-variable &cat ".session." &rig #l2 1 @s2
+          !else
+            set-variable &cat ".session." #l2 @s2
+          !endif
+          forward-line
+        !done
+        set-variable .svp &cond &band $system 0x01 ".session.c-" ".session.w-"
+        set-variable #l2 &cat .svp "scheme"
+        &exi &ind #l2 change-scheme &ind #l2
+      !elif &seq #l1 "hist"
+        !while &len &set #l3 &lget @wl 1
+          2 search-buffer "eM" "\b"
+          set-mark
+          backward-char
+          search-buffer "em" "\b$"
+          backward-char
+          copy-region
+          set-variable &ind &cat "@h" #l3 @y
+          -1 yank
+          beginning-of-line
+          forward-line
+        !done
+      !elif &band @# 4
+      !elif &seq #l1 "buff"
+        !while &sgr @wc " "
+          set-mark
+          search-buffer "em" "^\b"
+          2 backward-char
+          copy-region
+          set-variable #l2 @y
+          -1 yank
+          forward-char
+          set-variable #l3 @wl
+          forward-line
+          set-variable #l4 @wl
+          forward-line
+          set-variable #l5 $window-line
+          set-variable #l6 &lget #l3 9
+          !if &les #l7 1
+            ; Handle modes in ME pre 20061010
+            set-variable #l6 &cat "c" &rep &xrep #l6 "[dDkQS1-8]" "" "c" "l"
+          !endif
+          !if &seq &lget #l4 1 ""
+            ; no amarks, create an inactive buffer
+            !force 7 find-buffer #l2 @mna
+            !if $status
+              !force 2 change-buffer-name &lget #l3 1
+              set-variable #l1 0
+              set-variable $mode-names ".*"
+              !if &not &seq &set #l2 $mode-names ""
+                !if &not &lfind "|edit|lock|nact|narrow|pipe|" #l2
+                  !force &con &sin &mid $mode-chars #l1 1 #l6 1 -1 buffer-mode #l2
+                !endif
+                set-variable #l1 &add #l1 1
+                !jump -5
+              !endif
+              !force set-variable $window-mark-line &lget #l3 7
+              !force set-variable $window-mark-col &lget #l3 8
+              !force set-variable $window-line &lget #l3 5
+              !force set-variable $window-col &lget #l3 6
+            !endif
+          !else
+            set-variable #l1 &add &add &cond &sin "b" #l6 2 0 &cond &sin "Y" #l6 4 0 &cond &sin "r" #l6 8 0
+            !force #l1 find-file #l2 @mna
+            !if $status
+              !force 2 change-buffer-name &lget #l3 1
+              set-variable #l1 0
+              set-variable $mode-names ".*"
+              !if &not &seq &set #l2 $mode-names ""
+                !if &not &lfind "|binary|edit|lock|nact|narrow|pipe|rbin|" #l2
+                  !force &con &sin &mid $mode-chars #l1 1 #l6 1 -1 buffer-mode #l2
+                !endif
+                set-variable #l1 &add #l1 1
+                !jump -5
+              !endif
+              set-variable #l1 0
+              !if &not &seq &set #l2 &lget #l4 &inc #l1 1 ""
+                !force set-variable $window-aline &lget #l4 &inc #l1 1
+                !force set-variable $window-col &lget #l4 &inc #l1 1
+                set-alpha-mark #l2
+                !jump -4
+              !endif
+              !if &lget #l3 7
+                !force set-variable $window-aline &lget #l3 7
+                !force set-variable $window-col &lget #l3 8
+                set-mark
+              !endif
+              !force set-variable $window-aline &lget #l3 5
+              !force set-variable $window-col &lget #l3 6
+            !endif
+          !endif
+          !if &seq #l0 ""
+            set-variable #l0 &lget #l3 1
+          !endif
+          find-buffer "*session_tmp*"
+          set-variable $window-line #l5
+        !done
+      !elif &band @# 8
+      !elif &seq #l1 "toolbar"
+        !while &xse @wl "^\b\\([^\b]+\\)\b\\(.*\\)"
+          set-variable &ind &cat ".toolbar." @s1 @s2
+          forward-line
+        !done
+        !if &exi &set #l2 &cat .svp "tbopen"
+          set-variable .toolbar.open &ind #l2
+        !endif
+      !elif &seq #l1 "win"
+        set-variable #l2 @wl
+        set-variable #l3 0
+        forward-line
+        !while &xse &lef @wl 3 "\b[01]\b"
+          set-variable &cat ".v" &pinc #l3 1 @wl
+          forward-line
+        !done
+        ; resize the frame and set scroll and scroll-bar
+        !if &exi &set #l4 &cat .svp "scroll"
+          set-variable $scroll &ind #l4
+        !endif
+        !if &exi &set #l4 &cat .svp "sbar"
+          set-variable $scroll-bar &ind #l4
+        !endif
+        !if &not &band $system 1
+          !if &exi &set #l4 &cat .svp "framed"
+            !force change-frame-depth &ind #l4
+          !endif
+          !if &exi &set #l4 &cat .svp "framew"
+            !force change-frame-width &ind #l4
+          !endif
+        !endif
+        !if .toolbar.open
+          goto-position "\x88"
+          !force !force 0 toolbar-open
+          set-position "\x88"
+          find-buffer "*session_tmp*"
+        !endif
+        !if &not &band @# 16
+          ; Only load win layout if session console mode and size are the same
+          set-variable #l6 0
+          !if &band 0x01 &bxor .session.system $system
+            ml-write "[Session type incompatible - cannot recreate window layout]"
+          !elif &sub &sub &lget #l2 3 &lget #l2 1 $window-width
+            ml-write "[Frame width not correct - cannot recreate window layout]"
+          !elif &sub &sub &lget #l2 4 &lget #l2 2 $window-depth
+            ml-write "[Frame depth not correct - cannot recreate window layout]"
+          !else
+            ; correct frame size - restore the window layout
+            !force read-session-win 0 #l3 #l2
+            set-variable #l6 $status
+          !endif
+          !if &not #l6
+            set-variable @# &bor @# 8
+          !endif
+          goto-position "\x88"
+          find-buffer "*session_tmp*"
+        !endif
+        !while &pdec #l3 1
+          !force unset-variable &cat ".v" #l3
+        !done
+      !elif &seq #l1 "notes"
+        set-variable .notes @wl
+      !else
+        1000 ml-write &spr "[Warning: Unknown session section \"%s\" - skipping]" #l1
+      !endif
+      backward-char
+    !endif
+  !until &not $status
+  !force 0 delete-buffer "*session_tmp*"
+  goto-position "\x88"
+  ml-write &spr "[Session file \"%s\" is corrupt - missing end marker]" %session-name
+  !abort
 !emacro
 
 0 define-macro session-shut-down
-    !if &band @# 0x20
-        set-variable #l0 0
-        set-variable $buffer-names ".*"
-        !while &not &seq &set #l1 $buffer-names ""
-            !if &seq &lef #l1 1 "*"
-            !elif &nbmod #l1 "edit"
-                ; we need to do something, if this is the first create the temp buffer
-                !if &not &pinc #l0 1
-                    !force 0 delete-buffer "*session_tmp*"
-                    find-buffer "*session_tmp*"
-                    insert-string "\n\b\bme-quit\b\b\n"
-                !endif
-                4 find-buffer #l1
-                set-variable #l3 $buffer-fname
-                find-buffer "*session_tmp*"
-                insert-string &cat #l3 "\n"
-            !endif
-        !done
-        !if #l0
-            find-buffer "*session_tmp*"
-            0 append-buffer &spr "%s%s.esf" $user-path %session-name
+  !if &band @# 0x20
+    set-variable #l0 0
+    set-variable $buffer-names ".*"
+    !while &not &seq &set #l1 $buffer-names ""
+      !if &seq &lef #l1 1 "*"
+      !elif &nbmod #l1 "edit"
+        ; we need to do something, if this is the first create the temp buffer
+        !if &not &pinc #l0 1
+          !force 0 delete-buffer "*session_tmp*"
+          find-buffer "*session_tmp*"
+          insert-string "\n\b\bme-quit\b\b\n"
         !endif
-    !elif &not &band @# 0x10
-        update-session
+        4 find-buffer #l1
+        set-variable #l3 $buffer-fname
+        find-buffer "*session_tmp*"
+        insert-string &cat #l3 "\n"
+      !endif
+    !done
+    !if #l0
+      find-buffer "*session_tmp*"
+      0 append-buffer &spr "%s%s.esf" $user-path %session-name
     !endif
+  !elif &not &band @# 0x10
+    update-session
+  !endif
 !emacro
 global-bind-key session-shut-down "shut-down"

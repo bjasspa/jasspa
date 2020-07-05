@@ -9,23 +9,23 @@
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 !if &not &exi .osd.sssnc
-    set-variable .osd.sssn &pinc .osd.next 1
+  set-variable .osd.sssn &pinc .osd.next 1
 !endif
 
 0 define-macro session-setup-entry
-    !if &les @# 0
-        set-variable %session-name @ml2 "" %session-name
-    !else
-        set-variable $result %session-name
-    !endif
+  !if &les @# 0
+    set-variable %session-name @ml2 "" %session-name
+  !else
+    set-variable $result %session-name
+  !endif
 !emacro
 0 define-macro session-setup-cb
-    set-variable #l0 &ind &set #l1 &cat ".session." &lget "|kill|amark|update|" &abs @#
-    !if &les @# 0
-        set-variable &ind #l1 &bxor #l0 1
-    !elif &not #l0
-        !abort
-    !endif
+  set-variable #l0 &ind &set #l1 &cat ".session." &lget "|kill|amark|update|" &abs @#
+  !if &les @# 0
+    set-variable &ind #l1 &bxor #l0 1
+  !elif &not #l0
+    !abort
+  !endif
 !emacro
 
 -1 osd .osd.sssn
@@ -48,8 +48,8 @@ osd .osd.sssn 510 ""
 osd .osd.sssn 520 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
 
 define-macro session-setup
-    !if &not &exi %session-name
-        set-variable %session-name $user-name
-    !endif
-    !force .osd.sssn osd
+  !if &not &exi %session-name
+    set-variable %session-name $user-name
+  !endif
+  !force .osd.sssn osd
 !emacro

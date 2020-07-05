@@ -12,21 +12,21 @@
 ;     clean and speed up start-up
 ;
 0 define-macro spell-rules-init
-    !if &not &exi .spell.language
-        set-variable #l0 &spr "  Language \"%s\" not supported!  " &reg "/history/language" "Default"
-        osd-dialog "Spelling Checker" #l0 "  \HOk  "
-        !abort
+  !if &not &exi .spell.language
+    set-variable #l0 &spr "  Language \"%s\" not supported!  " &reg "/history/language" "Default"
+    osd-dialog "Spelling Checker" #l0 "  \HOk  "
+    !abort
+  !endif
+  !force execute-file &cat "lsr" .spell.language
+  !if &not $status
+    !if @#
+      set-variable #l0 &spr "  Rules and dictionaries for language \"%s\"  \n     are not available, please download." &reg "/history/language" "Default"
+      osd-dialog "Spelling Checker" #l0 "  \HOk  "
     !endif
-    !force execute-file &cat "lsr" .spell.language
-    !if &not $status
-        !if @#
-            set-variable #l0 &spr "  Rules and dictionaries for language \"%s\"  \n     are not available, please download." &reg "/history/language" "Default"
-            osd-dialog "Spelling Checker" #l0 "  \HOk  "
-        !endif
-        !abort
-    !endif
-    ; Add the eXtended, Main and Personal dictionaries
-    add-dictionary &cat "lsdx" .spell.language
-    add-dictionary &cat "lsdm" .spell.language
-    add-dictionary &cat "lsdp" .spell.language
+    !abort
+  !endif
+  ; Add the eXtended, Main and Personal dictionaries
+  add-dictionary &cat "lsdx" .spell.language
+  add-dictionary &cat "lsdm" .spell.language
+  add-dictionary &cat "lsdp" .spell.language
 !emacro

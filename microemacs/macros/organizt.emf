@@ -13,164 +13,164 @@ set-variable .org.set-month 1
 set-variable .org.set-day 1
 
 0 define-macro org-setup-init
-    set-variable .org.page 4
-    org-setup-page
-    org-setup-month
-    org-setup-day
-    org-setup-1dofw
-    set-variable .org.aflag &reg "/org/set/aflag" "0x34"
+  set-variable .org.page 4
+  org-setup-page
+  org-setup-month
+  org-setup-day
+  org-setup-1dofw
+  set-variable .org.aflag &reg "/org/set/aflag" "0x34"
 !emacro     
 
 0 define-macro org-setup-file
-    set-variable #l1 &reg "/org" .org.dfile
-    !if &les @# 0
-        set-variable #l0 @ml2 "" #l1
-        !if &not &seq #l0 #l1
-            org-init #l0
-            org-setup-init
-        !endif
-    !else
-        set-variable $result #l1
+  set-variable #l1 &reg "/org" .org.dfile
+  !if &les @# 0
+    set-variable #l0 @ml2 "" #l1
+    !if &not &seq #l0 #l1
+      org-init #l0
+      org-setup-init
     !endif
+  !else
+    set-variable $result #l1
+  !endif
 !emacro
 
 0 define-macro org-setup-page
-    !if @?
-        set-registry "/org/set/initpage" &sub @# 1
-        mark-registry "/org" "u"
-    !else
-        set-variable @# &add 1 &reg "/org/set/initpage" "0"
-    !endif
-    osd .osd.orgt 60 "MdtxmsfHz" .scheme.osd-entry 12 1 &lget .org.pages @# .osd.org-m org-setup-pagec
+  !if @?
+    set-registry "/org/set/initpage" &sub @# 1
+    mark-registry "/org" "u"
+  !else
+    set-variable @# &add 1 &reg "/org/set/initpage" "0"
+  !endif
+  osd .osd.orgt 60 "MdtxmsfHz" .scheme.osd-entry 12 1 &lget .org.pages @# .osd.org-m org-setup-pagec
 !emacro
 
 0 define-macro org-setup-pagec
-    -1 osd .osd.org-m
-    osd .osd.org-m 0 "bs" 14 0 0 0
-    set-variable #l0 0
-    !while &not &seq "" &set #l1 &lget .org.pages &inc #l0 1
-        osd .osd.org-m #l0 "" #l1 #l0 org-setup-page
-    !done
+  -1 osd .osd.org-m
+  osd .osd.org-m 0 "bs" 14 0 0 0
+  set-variable #l0 0
+  !while &not &seq "" &set #l1 &lget .org.pages &inc #l0 1
+    osd .osd.org-m #l0 "" #l1 #l0 org-setup-page
+  !done
 !emacro
 
 0 define-macro org-setup-month
-    !if @?
-        set-variable .org.set-month @#
-    !endif
-    osd .osd.orgt 120 "MdhtxmsfHz" .scheme.osd-entry 12 1 &lget .org.months .org.set-month .osd.org-m org-setup-monthc
+  !if @?
+    set-variable .org.set-month @#
+  !endif
+  osd .osd.orgt 120 "MdhtxmsfHz" .scheme.osd-entry 12 1 &lget .org.months .org.set-month .osd.org-m org-setup-monthc
 !emacro
 
 0 define-macro org-setup-monthc
-    -1 osd .osd.org-m
-    osd .osd.org-m 0 "bs" 14 0 0 0
-    set-variable #l0 0
-    !while &not &seq "" &set #l1 &lget .org.months &inc #l0 1
-        osd .osd.org-m #l0 "" #l1 #l0 org-setup-month
-    !done
+  -1 osd .osd.org-m
+  osd .osd.org-m 0 "bs" 14 0 0 0
+  set-variable #l0 0
+  !while &not &seq "" &set #l1 &lget .org.months &inc #l0 1
+    osd .osd.org-m #l0 "" #l1 #l0 org-setup-month
+  !done
 !emacro
 
 0 define-macro org-setup-monthe
-    !if &les @# 0
-        set-variable #l1 &lget .org.months .org.set-month
-        set-variable #l0 @ml2 "" #l1
-        !if &not &seq #l0 #l1
-            set-variable .org.months &lset .org.months .org.set-month #l0
-            set-registry "/org/set/months" .org.months
-            mark-registry "/org" "u"
-            -2 osd
-        !endif
-    !else
-        set-variable $result &lget .org.months .org.set-month
+  !if &les @# 0
+    set-variable #l1 &lget .org.months .org.set-month
+    set-variable #l0 @ml2 "" #l1
+    !if &not &seq #l0 #l1
+      set-variable .org.months &lset .org.months .org.set-month #l0
+      set-registry "/org/set/months" .org.months
+      mark-registry "/org" "u"
+      -2 osd
     !endif
+  !else
+    set-variable $result &lget .org.months .org.set-month
+  !endif
 !emacro
 
 0 define-macro org-setup-day
-    !if @?
-        set-variable .org.set-day @#
-    !endif
-    osd .osd.orgt 160 "MdhtxmsfHz" .scheme.osd-entry 12 1 &lget .org.days .org.set-day .osd.org-m org-setup-dayc
+  !if @?
+    set-variable .org.set-day @#
+  !endif
+  osd .osd.orgt 160 "MdhtxmsfHz" .scheme.osd-entry 12 1 &lget .org.days .org.set-day .osd.org-m org-setup-dayc
 !emacro
 
 0 define-macro org-setup-dayc
-    -1 osd .osd.org-m
-    osd .osd.org-m 0 "bs" 14 0 0 0
-    set-variable #l0 0
-    !while &not &seq "" &set #l1 &lget .org.days &inc #l0 1
-        osd .osd.org-m #l0 "" #l1 #l0 org-setup-day
-    !done
+  -1 osd .osd.org-m
+  osd .osd.org-m 0 "bs" 14 0 0 0
+  set-variable #l0 0
+  !while &not &seq "" &set #l1 &lget .org.days &inc #l0 1
+    osd .osd.org-m #l0 "" #l1 #l0 org-setup-day
+  !done
 !emacro
 
 0 define-macro org-setup-daye
-    !if &les @# 0
-        set-variable #l1 &lget .org.days .org.set-day
-        set-variable #l0 @ml2 "" #l1
-        !if &not &seq #l0 #l1
-            set-variable .org.days &lset .org.days .org.set-day #l0
-            set-registry "/org/set/days" .org.days
-            mark-registry "/org" "u"
-            -2 osd
-        !endif
-    !else
-        set-variable $result &lget .org.days .org.set-day
+  !if &les @# 0
+    set-variable #l1 &lget .org.days .org.set-day
+    set-variable #l0 @ml2 "" #l1
+    !if &not &seq #l0 #l1
+      set-variable .org.days &lset .org.days .org.set-day #l0
+      set-registry "/org/set/days" .org.days
+      mark-registry "/org" "u"
+      -2 osd
     !endif
+  !else
+    set-variable $result &lget .org.days .org.set-day
+  !endif
 !emacro
 
 0 define-macro org-setup-1dofw
-    !if @?
-        !if &not &equ &sub @# 1 &lef .org.set 1
-            set-registry "/org/set/1dofw" &sub @# 1
-            mark-registry "/org" "u"
-            set-variable .org.set &spr "%1d%1d" &sub @# 1 &rig .org.set 1
-        !endif
-    !else
-        set-variable @# &add 1 &lef .org.set 1
+  !if @?
+    !if &not &equ &sub @# 1 &lef .org.set 1
+      set-registry "/org/set/1dofw" &sub @# 1
+      mark-registry "/org" "u"
+      set-variable .org.set &spr "%1d%1d" &sub @# 1 &rig .org.set 1
     !endif
-    osd .osd.orgt 210 "MdtxmsfHz" .scheme.osd-entry 12 1 &lget .org.days @# .osd.org-m org-setup-1dofwc
+  !else
+    set-variable @# &add 1 &lef .org.set 1
+  !endif
+  osd .osd.orgt 210 "MdtxmsfHz" .scheme.osd-entry 12 1 &lget .org.days @# .osd.org-m org-setup-1dofwc
 !emacro
 
 0 define-macro org-setup-1dofwc
-    -1 osd .osd.org-m
-    osd .osd.org-m 0 "bs" 14 0 0 0
-    set-variable #l0 0
-    !while &not &seq "" &set #l1 &lget .org.days &inc #l0 1
-        osd .osd.org-m #l0 "" #l1 #l0 org-setup-1dofw
-    !done
+  -1 osd .osd.org-m
+  osd .osd.org-m 0 "bs" 14 0 0 0
+  set-variable #l0 0
+  !while &not &seq "" &set #l1 &lget .org.days &inc #l0 1
+    osd .osd.org-m #l0 "" #l1 #l0 org-setup-1dofw
+  !done
 !emacro
 
 0 define-macro org-setup-1wofy
-    !if &les @# 0
-        set-variable #l1 &rig .org.set 1
-        set-variable #l0 @ml2 "" #l1
-        !if &les #l0 1
-            set-variable #l0 1
-        !elif &gre #l0 7
-            set-variable #l0 7
-        !endif
-        !if &not &seq #l0 #l1
-            set-registry "/org/set/1dofw" #l0
-            mark-registry "/org" "u"
-            set-variable .org.set &spr "%1d%1d" &lef .org.set 1 #l0
-        !endif
-    !else
-        set-variable $result &rig .org.set 1
+  !if &les @# 0
+    set-variable #l1 &rig .org.set 1
+    set-variable #l0 @ml2 "" #l1
+    !if &les #l0 1
+      set-variable #l0 1
+    !elif &gre #l0 7
+      set-variable #l0 7
     !endif
+    !if &not &seq #l0 #l1
+      set-registry "/org/set/1dofw" #l0
+      mark-registry "/org" "u"
+      set-variable .org.set &spr "%1d%1d" &lef .org.set 1 #l0
+    !endif
+  !else
+    set-variable $result &rig .org.set 1
+  !endif
 !emacro
 
 0 define-macro org-setup-aflag-check
-    !if &les @# 0
-        set-variable @# &abs @#
-        !if &les @# 0x10
-            set-variable .org.aflag &band .org.aflag 0xfff0
-        !endif
-        set-variable .org.aflag &bxor .org.aflag @#
-        set-registry "/org/set/aflag" .org.aflag
-        mark-registry "/org" "u"
-        !if &band @# 0x100
-            0 define-macro-file organiza org-addr-init
-        !endif
-    !elif &not &band .org.aflag @#
-        !abort
+  !if &les @# 0
+    set-variable @# &abs @#
+    !if &les @# 0x10
+      set-variable .org.aflag &band .org.aflag 0xfff0
     !endif
+    set-variable .org.aflag &bxor .org.aflag @#
+    set-registry "/org/set/aflag" .org.aflag
+    mark-registry "/org" "u"
+    !if &band @# 0x100
+      0 define-macro-file organiza org-addr-init
+    !endif
+  !elif &not &band .org.aflag @#
+    !abort
+  !endif
 !emacro
 
 osd .osd.orgt  5  ""

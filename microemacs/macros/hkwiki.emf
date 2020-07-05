@@ -8,10 +8,10 @@
 ; Authors:     Steven Phillips
 ;
 define-macro fhook-wiki
-    @# buffer-init "wiki"
-    &cond &sin "c" .fhook-wiki.setup 1 0 wiki-edit-mode
-    buffer-init-hooks
-    wiki-add-to-last
+  @# buffer-init "wiki"
+  &cond &sin "c" .fhook-wiki.setup 1 0 wiki-edit-mode
+  buffer-init-hooks
+  wiki-add-to-last
 !emacro    
 
 ; buffer-init variables
@@ -32,360 +32,360 @@ set-variable .fhook-wiki.collapse-mnext "-1"
 
 ; Quick check to make sure that hilighting is required.
 !if &and &sin "h" .fhook-wiki.setup &band .hilight.flags 0x02 
-    !if &not &exist .hilight.wiki
-        set-variable .hilight.wiki &pinc .hilight.next 1
-        set-variable .hilight.wikiL &pinc .hilight.next 1
-        set-variable .hilight.wikiE &pinc .hilight.next 1
-    !endif
-    
-    ; Non-authoring mode hilight
-    0 hilight .hilight.wiki  0                        $global-scheme
-    hilight .hilight.wiki 2 "^-\\*-\\s*mode:\\s*wiki"  .scheme.hide
-    hilight .hilight.wiki 0x42 "^\\*\\s*\\}\\S" ""     .scheme.header
-    hilight .hilight.wiki 0x42 "^\\*\\*+\\s*\\}\\S" "" .scheme.no1
-    hilight .hilight.wiki 0xc0 ":#\\}\\w" ""          .hilight.wikiL .scheme.link
-    hilight .hilight.wiki 0xc0 ":\\w[^:#]*#\\}\\w" "" .hilight.wikiL .scheme.link
-    hilight .hilight.wiki 0xc0 ":\\}\\w" ""           .hilight.wikiL .scheme.link
-    
-    0 hilight .hilight.wikiL 0                        .scheme.link
-    hilight .hilight.wikiL 0xc0 ":" "" .hilight.wiki  .scheme.link
-    
-    ; authoring mode hilight
-    0 hilight .hilight.wikiE  0                $global-scheme
-    hilight .hilight.wikiE 2 "^-\\*-\\s*mode:\\s*wiki" .scheme.hide
-    hilight .hilight.wikiE 0x2 "^\\*\\s*\\S" .scheme.header
-    hilight .hilight.wikiE 0x1 ":#\\w[^:]*:"   .scheme.link
-    hilight .hilight.wikiE 0x1 ":\\w[^:]*:"    .scheme.link
+  !if &not &exist .hilight.wiki
+    set-variable .hilight.wiki &pinc .hilight.next 1
+    set-variable .hilight.wikiL &pinc .hilight.next 1
+    set-variable .hilight.wikiE &pinc .hilight.next 1
+  !endif
+  
+  ; Non-authoring mode hilight
+  0 hilight .hilight.wiki  0                        $global-scheme
+  hilight .hilight.wiki 2 "^-\\*-\\s*mode:\\s*wiki"  .scheme.hide
+  hilight .hilight.wiki 0x42 "^\\*\\s*\\}\\S" ""     .scheme.header
+  hilight .hilight.wiki 0x42 "^\\*\\*+\\s*\\}\\S" "" .scheme.no1
+  hilight .hilight.wiki 0xc0 ":#\\}\\w" ""          .hilight.wikiL .scheme.link
+  hilight .hilight.wiki 0xc0 ":\\w[^:#]*#\\}\\w" "" .hilight.wikiL .scheme.link
+  hilight .hilight.wiki 0xc0 ":\\}\\w" ""           .hilight.wikiL .scheme.link
+  
+  0 hilight .hilight.wikiL 0                        .scheme.link
+  hilight .hilight.wikiL 0xc0 ":" "" .hilight.wiki  .scheme.link
+  
+  ; authoring mode hilight
+  0 hilight .hilight.wikiE  0                $global-scheme
+  hilight .hilight.wikiE 2 "^-\\*-\\s*mode:\\s*wiki" .scheme.hide
+  hilight .hilight.wikiE 0x2 "^\\*\\s*\\S" .scheme.header
+  hilight .hilight.wikiE 0x1 ":#\\w[^:]*:"   .scheme.link
+  hilight .hilight.wikiE 0x1 ":\\w[^:]*:"    .scheme.link
 !endif
 
 0 define-macro wiki-edit-key
-    !if &and :wikimode &seq @1 ""
-        set-variable #p9 0
-        !if &equ &len @cck 1
-            @3 insert-string @cck
-            !return
-        !elif &set #l0 &lfin "|space|delete|backspace|return|tab|" @cck
-            set-variable #l1 &lget "|insert-space|forward-delete-char|backward-delete-char|newline|tab|" #l0
-            !if @2
-                @3 execute-named-command #l1 @mna 
-            !else
-                execute-named-command #l1 @mna 
-            !endif
-            !return
-        !elif &and &equ &len @cck 4 &seq &lef @cck 2 "\\x"
-            @3 insert-string &itoa &cat "0" &rig @cck 1
-            !return
-        !endif
+  !if &and :wikimode &seq @1 ""
+    set-variable #p9 0
+    !if &equ &len @cck 1
+      @3 insert-string @cck
+      !return
+    !elif &set #l0 &lfin "|space|delete|backspace|return|tab|" @cck
+      set-variable #l1 &lget "|insert-space|forward-delete-char|backward-delete-char|newline|tab|" #l0
+      !if @2
+        @3 execute-named-command #l1 @mna 
+      !else
+        execute-named-command #l1 @mna 
+      !endif
+      !return
+    !elif &and &equ &len @cck 4 &seq &lef @cck 2 "\\x"
+      @3 insert-string &itoa &cat "0" &rig @cck 1
+      !return
     !endif
-    set-variable #p9 1
+  !endif
+  set-variable #p9 1
 !emacro
 
 define-macro wiki-edit-mode
-    wiki-edit-key @p @? @#
-    !if #l9
-        !if @?
-            set-variable :wikimode &cond @# 1 0
-        !else
-            set-variable :wikimode &bxor :wikimode 1
-        !endif
-        !if :wikimode
-            -1 buffer-mode "view"
-            set-variable $buffer-hilight .hilight.wikiE
-            ml-write "[Edit mode enabled]"
-        !else
-            1 buffer-mode "view"
-            set-variable $buffer-hilight .hilight.wiki
-            ml-write "[Edit mode disabled]"
-        !endif
+  wiki-edit-key @p @? @#
+  !if #l9
+    !if @?
+      set-variable :wikimode &cond @# 1 0
+    !else
+      set-variable :wikimode &bxor :wikimode 1
     !endif
+    !if :wikimode
+      -1 buffer-mode "view"
+      set-variable $buffer-hilight .hilight.wikiE
+      ml-write "[Edit mode enabled]"
+    !else
+      1 buffer-mode "view"
+      set-variable $buffer-hilight .hilight.wiki
+      ml-write "[Edit mode disabled]"
+    !endif
+  !endif
 !emacro
 
 0 define-macro wiki-load-file
-    -1 buffer-mode "edit"
-    1 buffer-mode "view"
-    beginning-of-buffer
-    fhook-wiki
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"
+  beginning-of-buffer
+  fhook-wiki
 !emacro
 
 define-macro wiki-help
-    wiki-edit-key @p @? @#
-    !if #l9
-        major-mode-help
-    !endif
+  wiki-edit-key @p @? @#
+  !if #l9
+    major-mode-help
+  !endif
 !emacro
 
 define-macro wiki-scroll-down
-    wiki-edit-key @p @? @#
-    !if #l9
-        scroll-down
-    !endif
+  wiki-edit-key @p @? @#
+  !if #l9
+    scroll-down
+  !endif
 !emacro
 
 define-macro wiki-scroll-up
-    wiki-edit-key @p @? @#
-    !if #l9
-        scroll-up
-    !endif
+  wiki-edit-key @p @? @#
+  !if #l9
+    scroll-up
+  !endif
 !emacro
 
 define-macro wiki-forward-node
-    ml-write &spr "next [%s] [%s] [%s]" @cc @cck &lef $recent-keys 20
-    wiki-edit-key @p @? @#
-    !if #l9
-        end-of-line
-        !while &gre &pdec @# 1 0
-            !force search-buffer "Em" "^\\*+[ \t]*\\S"
-            !if &not $status
-                ml-write "[Error: no more nodes]"
-                !abort
-            !endif
-        !done
-        beginning-of-line
-        wiki-add-to-last
-    !endif
+  ml-write &spr "next [%s] [%s] [%s]" @cc @cck &lef $recent-keys 20
+  wiki-edit-key @p @? @#
+  !if #l9
+    end-of-line
+    !while &gre &pdec @# 1 0
+      !force search-buffer "Em" "^\\*+[ \t]*\\S"
+      !if &not $status
+        ml-write "[Error: no more nodes]"
+        !abort
+      !endif
+    !done
+    beginning-of-line
+    wiki-add-to-last
+  !endif
 !emacro
 
 define-macro wiki-backward-node
-    wiki-edit-key @p @? @#
-    !if #l9
-        set-variable @# &add @# 1
-        end-of-line
-        !while &gre &pdec @# 1 0
-            backward-char
-            !force search-buffer "bEm" "^\\*+[ \t]*\\S"
-            !if &not $status
-                ml-write "[Error: no more nodes]"
-                !abort
-            !endif
-        !done
-        beginning-of-line
-        wiki-add-to-last
-    !endif
+  wiki-edit-key @p @? @#
+  !if #l9
+    set-variable @# &add @# 1
+    end-of-line
+    !while &gre &pdec @# 1 0
+      backward-char
+      !force search-buffer "bEm" "^\\*+[ \t]*\\S"
+      !if &not $status
+        ml-write "[Error: no more nodes]"
+        !abort
+      !endif
+    !done
+    beginning-of-line
+    wiki-add-to-last
+  !endif
 !emacro
 
 define-macro wiki-beginning-of-node
-    wiki-edit-key @p @? @#
-    !if #l9
-        0 wiki-backward-node
-    !endif
+  wiki-edit-key @p @? @#
+  !if #l9
+    0 wiki-backward-node
+  !endif
 !emacro
 
 define-macro wiki-goto-node
-    wiki-edit-key @p @? @#
-    !if #l9
-        !force set-variable #l0 @1
-        !if &not $status
-            set-variable #l0 @ml1 "Goto node" .last
-        !endif
-        set-variable #l1 #l0
-        str-to-regex #l0
-        set-position "\x81"
-        beginning-of-buffer
-        !force search-buffer "Em" &spr "^\\*+[ \t]*%s[ \t]*$" #l0
-        !if $status
-            beginning-of-line
-            set-variable .last #l1
-            wiki-add-to-last
-            !return
-        !endif
-        goto-position "\x81"
-        ml-write &spr "[Failed to find node \"%s\"]" #l1
-        !abort
+  wiki-edit-key @p @? @#
+  !if #l9
+    !force set-variable #l0 @1
+    !if &not $status
+      set-variable #l0 @ml1 "Goto node" .last
     !endif
+    set-variable #l1 #l0
+    str-to-regex #l0
+    set-position "\x81"
+    beginning-of-buffer
+    !force search-buffer "Em" &spr "^\\*+[ \t]*%s[ \t]*$" #l0
+    !if $status
+      beginning-of-line
+      set-variable .last #l1
+      wiki-add-to-last
+      !return
+    !endif
+    goto-position "\x81"
+    ml-write &spr "[Failed to find node \"%s\"]" #l1
+    !abort
+  !endif
 !emacro
 set-variable .wiki-goto-node.last ""
 
 define-macro wiki-forward-link
-    wiki-edit-key @p @? @#
-    !if #l9
-        !while &gre &pdec @# 1 0
-            forward-char
-            !force search-buffer "Em" ":#?\\w[^:]*:"
-            !if &not $status
-                backward-char
-                ml-write "[Error: no more links]"
-                !abort
-            !endif
-            -2 show-region
-        !done
-    !endif
+  wiki-edit-key @p @? @#
+  !if #l9
+    !while &gre &pdec @# 1 0
+      forward-char
+      !force search-buffer "Em" ":#?\\w[^:]*:"
+      !if &not $status
+        backward-char
+        ml-write "[Error: no more links]"
+        !abort
+      !endif
+      -2 show-region
+    !done
+  !endif
 !emacro
 
 define-macro wiki-backward-link
-    wiki-edit-key @p @? @#
-    !if #l9
-        !force @# search-buffer "bEm" ":#?\\w[^:]*:"
-        !if &not $status
-            -1 show-region
-            ml-write "[Error: no more links]"
-            !abort
-        !endif
-        -2 show-region
+  wiki-edit-key @p @? @#
+  !if #l9
+    !force @# search-buffer "bEm" ":#?\\w[^:]*:"
+    !if &not $status
+      -1 show-region
+      ml-write "[Error: no more links]"
+      !abort
     !endif
+    -2 show-region
+  !endif
 !emacro
 
 define-macro wiki-goto-link
-    wiki-edit-key @p @? @#
-    !if #l9
-        set-variable #l0 $window-line
-        set-variable #l1 $window-col
-        forward-char
-        !force -2 search-buffer "bEm" ":\\(\\w[^#:]*\\)?\\(#\\w[^:]*\\)?:"
-        !if $status
-            2 show-region
-            !if &gre #l0 $window-line
-            !elif &and &equ #l0 $window-line &gre #l1 $window-col
-            !else
-                -2 show-region
-                set-variable #l2 @s1
-                set-variable #l3 @s2
-                !if &not &seq #l2 ""
-                    !force 0 find-file #l2
-                    !if &not $status
-                        !force find-file #l2
-                        fhook-wiki
-                        !if &not :wikimode
-                            wiki-edit-mode
-                        !endif
-                        ml-write &spr "[Warning: failed to find wiki file \"%s\"]" #l2
-                        !return
-                    !elif &not &seq $buffer-fhook "fhook-wiki"
-                        fhook-wiki
-                        ml-write &spr "[Warning: Link file \"%s\" may not be a wiki file]" #l2
-                    !endif
-                !endif
-                beginning-of-buffer
-                !if &gre &len #l3 1
-                    set-variable #l4 &rig #l3 1
-                    str-to-regex #l4
-                    set-variable #l4 &xrep #l4 "[ \n\t]+" "[ \t]+"
-                    !force search-buffer "Em" &spr "^*+[ \t]*%s[ \t]*\\([:#].*\\)?$" #l4
-                    !if &not $status
-                        wiki-add-to-last
-                        ml-write &spr "[Error: failed to find link \"%s\"]" &rig #l3 1
-                        !abort
-                    !endif
-                    beginning-of-line
-                    wiki-add-to-last
-                !endif
-                !return
+  wiki-edit-key @p @? @#
+  !if #l9
+    set-variable #l0 $window-line
+    set-variable #l1 $window-col
+    forward-char
+    !force -2 search-buffer "bEm" ":\\(\\w[^#:]*\\)?\\(#\\w[^:]*\\)?:"
+    !if $status
+      2 show-region
+      !if &gre #l0 $window-line
+      !elif &and &equ #l0 $window-line &gre #l1 $window-col
+      !else
+        -2 show-region
+        set-variable #l2 @s1
+        set-variable #l3 @s2
+        !if &not &seq #l2 ""
+          !force 0 find-file #l2
+          !if &not $status
+            !force find-file #l2
+            fhook-wiki
+            !if &not :wikimode
+              wiki-edit-mode
             !endif
+            ml-write &spr "[Warning: failed to find wiki file \"%s\"]" #l2
+            !return
+          !elif &not &seq $buffer-fhook "fhook-wiki"
+            fhook-wiki
+            ml-write &spr "[Warning: Link file \"%s\" may not be a wiki file]" #l2
+          !endif
         !endif
-        ml-write "[Error: cursor is not in a link]"
-        !abort
+        beginning-of-buffer
+        !if &gre &len #l3 1
+          set-variable #l4 &rig #l3 1
+          str-to-regex #l4
+          set-variable #l4 &xrep #l4 "[ \n\t]+" "[ \t]+"
+          !force search-buffer "Em" &spr "^*+[ \t]*%s[ \t]*\\([:#].*\\)?$" #l4
+          !if &not $status
+            wiki-add-to-last
+            ml-write &spr "[Error: failed to find link \"%s\"]" &rig #l3 1
+            !abort
+          !endif
+          beginning-of-line
+          wiki-add-to-last
+        !endif
+        !return
+      !endif
     !endif
+    ml-write "[Error: cursor is not in a link]"
+    !abort
+  !endif
 !emacro
 
 0 define-macro wiki-add-to-last
-    set-position "\x81"
-    set-variable #l1 $buffer-fname
-    !if &not &seq #l1 ""
-        set-variable #l2 $window-line
-        find-buffer "*wiki-last*"
-        1 buffer-mode "hide"
-        end-of-buffer
-        insert-string #l1
-        forward-line
-        insert-string #l2
-    !endif
-    goto-position "\x81"
+  set-position "\x81"
+  set-variable #l1 $buffer-fname
+  !if &not &seq #l1 ""
+    set-variable #l2 $window-line
+    find-buffer "*wiki-last*"
+    1 buffer-mode "hide"
+    end-of-buffer
+    insert-string #l1
+    forward-line
+    insert-string #l2
+  !endif
+  goto-position "\x81"
 !emacro
 
 define-macro wiki-goto-last
-    wiki-edit-key @p @? @#
-    !if #l9
-        set-position "\x81"
-        !force 0 find-buffer "*wiki-last*"
-        !if &not $status
-            ml-write "[No last history]"
-            !abort
-        !endif
-        end-of-buffer
-        !force 4 backward-line
-        !if &not $status
-            goto-position "\x81"
-            ml-write "[No last history]"
-            !abort
-        !endif
-        set-variable #l1 @wl
-        forward-line
-        set-variable #l2 @wl
-        forward-line
-        set-mark
-        2 forward-line
-        -1 kill-region
-        !force 0 find-file #l1
-        !if &not $status
-            goto-position "\x81"
-            ml-write &spr "[Failed to load wiki file \"%s\"]" #l1
-            !abort
-        !endif
-        !force goto-line #l2
+  wiki-edit-key @p @? @#
+  !if #l9
+    set-position "\x81"
+    !force 0 find-buffer "*wiki-last*"
+    !if &not $status
+      ml-write "[No last history]"
+      !abort
     !endif
+    end-of-buffer
+    !force 4 backward-line
+    !if &not $status
+      goto-position "\x81"
+      ml-write "[No last history]"
+      !abort
+    !endif
+    set-variable #l1 @wl
+    forward-line
+    set-variable #l2 @wl
+    forward-line
+    set-mark
+    2 forward-line
+    -1 kill-region
+    !force 0 find-file #l1
+    !if &not $status
+      goto-position "\x81"
+      ml-write &spr "[Failed to load wiki file \"%s\"]" #l1
+      !abort
+    !endif
+    !force goto-line #l2
+  !endif
 !emacro
 
 define-macro wiki-node-menu
-    wiki-edit-key @p @? @#
-    !if #l9
-        set-position "\x81"
-        -1 osd .osd.tmp
-        osd .osd.tmp 0 "sS" .scheme.osd-child .w .d 0 -1
-        set-variable #l1 0
-        beginning-of-buffer
-        !force search-buffer "Em" "^\\*\\(\\**\\)[ \t]*\\(\\S[^:#\n]*\\)"
-        !while $status
-            set-variable #l2 &spr "%n%s" &len @s1 "  " &trb @s2
-            osd .osd.tmp &inc #l1 1 "" #l2 #l1 wiki-node-menu-sel
-            !force search-buffer "Em" "^\\*\\(\\**\\)[ \t]*\\(\\S[^:#\n]*\\)"
-        !done
-        goto-position "\x81"
-        .osd.wikim osd
-    !endif
+  wiki-edit-key @p @? @#
+  !if #l9
+    set-position "\x81"
+    -1 osd .osd.tmp
+    osd .osd.tmp 0 "sS" .scheme.osd-child .w .d 0 -1
+    set-variable #l1 0
+    beginning-of-buffer
+    !force search-buffer "Em" "^\\*\\(\\**\\)[ \t]*\\(\\S[^:#\n]*\\)"
+    !while $status
+      set-variable #l2 &spr "%n%s" &len @s1 "  " &trb @s2
+      osd .osd.tmp &inc #l1 1 "" #l2 #l1 wiki-node-menu-sel
+      !force search-buffer "Em" "^\\*\\(\\**\\)[ \t]*\\(\\S[^:#\n]*\\)"
+    !done
+    goto-position "\x81"
+    .osd.wikim osd
+  !endif
 !emacro
 set-variable .wiki-node-menu.w 40
 set-variable .wiki-node-menu.d 25
 
 0 define-macro wiki-node-menu-sel
-    set-variable #l3 &trb $result
-    beginning-of-buffer
-    set-variable #l4 #l3
-    str-to-regex #l4
-    !force search-buffer "Em" &spr "^*+[ \t]*%s[ \t]*\\([:#].*\\)?$" #l4
-    !if &not $status
-        ml-write &spr "[Error: failed to find link \"%s\"]" #l3
-        !abort
-    !endif
-    beginning-of-line
-    wiki-add-to-last
+  set-variable #l3 &trb $result
+  beginning-of-buffer
+  set-variable #l4 #l3
+  str-to-regex #l4
+  !force search-buffer "Em" &spr "^*+[ \t]*%s[ \t]*\\([:#].*\\)?$" #l4
+  !if &not $status
+    ml-write &spr "[Error: failed to find link \"%s\"]" #l3
+    !abort
+  !endif
+  beginning-of-line
+  wiki-add-to-last
 !emacro
 
 0 define-macro wiki-node-menu-resize
-    set-variable #l0 &sub &lef $result 4 &add 8 &band $scroll-bar 0x01
-    set-variable #l1 &sub &mid $result 4 4 8
-    !if &les #l0 26
-        !if &les #l1 3
-            !abort
-        !endif
-        set-variable #l0 26
-    !endif
+  set-variable #l0 &sub &lef $result 4 &add 8 &band $scroll-bar 0x01
+  set-variable #l1 &sub &mid $result 4 4 8
+  !if &les #l0 26
     !if &les #l1 3
-        set-variable #l1 3
+      !abort
     !endif
-    ; change the width
-    !if &band $scroll-bar 0x01
-        set-variable #l0 &sub #l0 1
-    !endif
-    !if &band $scroll-bar 0x40
-        set-variable #l1 &sub #l1 1
-    !endif
-    set-variable .wiki-node-menu.w #l0
-    set-variable .wiki-node-menu.d #l1
-    osd .osd.tmp 0 "sS" .scheme.osd-child #l0 #l1 0 -1
-    osd .osd.wikim 20 "IbHh" .scheme.osd-sbar #l0 #l1 .osd.tmp
+    set-variable #l0 26
+  !endif
+  !if &les #l1 3
+    set-variable #l1 3
+  !endif
+  ; change the width
+  !if &band $scroll-bar 0x01
+    set-variable #l0 &sub #l0 1
+  !endif
+  !if &band $scroll-bar 0x40
+    set-variable #l1 &sub #l1 1
+  !endif
+  set-variable .wiki-node-menu.w #l0
+  set-variable .wiki-node-menu.d #l1
+  osd .osd.tmp 0 "sS" .scheme.osd-child #l0 #l1 0 -1
+  osd .osd.wikim 20 "IbHh" .scheme.osd-sbar #l0 #l1 .osd.tmp
 !emacro
 
 !if &not &exi .osd.wikim
-    set-variable .osd.wikim &pinc .osd.next 1
+  set-variable .osd.wikim &pinc .osd.next 1
 !endif
 -1 osd .osd.wikim
 osd .osd.wikim 0  "batcIHR" 3 6 20 .scheme.osd-title "Node List" wiki-node-menu-resize

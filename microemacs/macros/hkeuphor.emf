@@ -8,9 +8,9 @@
 ; Authors:     Rodolfo Valeiras & Steven Phillips
 ;
 define-macro fhook-euphor
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "euphor"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "euphor"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -32,64 +32,64 @@ set-variable .fhook-euphor.item-list-s4 "^\\(global[ \t]+\\)?procedure[ \t]+\\(\
 set-variable .fhook-euphor.item-list-r4 "Proc \ecB\\2\ecA"
 
 !if &not &exist .hilight.euphor
-    set-variable .hilight.euphor &pinc .hilight.next 1
+  set-variable .hilight.euphor &pinc .hilight.next 1
 !endif
 !if &and &sin "h" .fhook-euphor.setup &band .hilight.flags 0x02 
-    0 hilight .hilight.euphor 1 $global-scheme
-    
-    hilight .hilight.euphor 2 "--"           .scheme.comment
-    
-    hilight .hilight.euphor 1 "and"          .scheme.keyword
-    hilight .hilight.euphor 1 "by"           .scheme.keyword
-    hilight .hilight.euphor 1 "constant"     .scheme.keyword
-    hilight .hilight.euphor 1 "do"           .scheme.keyword
-    hilight .hilight.euphor 1 "else"         .scheme.keyword
-    hilight .hilight.euphor 1 "elsif"        .scheme.keyword
-    hilight .hilight.euphor 1 "end"          .scheme.keyword
-    hilight .hilight.euphor 1 "exit"         .scheme.keyword
-    hilight .hilight.euphor 1 "for"          .scheme.keyword
-    hilight .hilight.euphor 1 "function"     .scheme.keyword
-    hilight .hilight.euphor 1 "global"       .scheme.keyword
-    hilight .hilight.euphor 1 "if"           .scheme.keyword
-    hilight .hilight.euphor 1 "include"      .scheme.keyword
-    hilight .hilight.euphor 1 "not"          .scheme.keyword
-    hilight .hilight.euphor 1 "or"           .scheme.keyword
-    hilight .hilight.euphor 1 "procedure"    .scheme.keyword
-    hilight .hilight.euphor 1 "return"       .scheme.keyword
-    hilight .hilight.euphor 1 "then"         .scheme.keyword
-    hilight .hilight.euphor 1 "to"           .scheme.keyword
-    hilight .hilight.euphor 1 "type"         .scheme.keyword
-    hilight .hilight.euphor 1 "while"        .scheme.keyword
-    hilight .hilight.euphor 1 "else"         .scheme.keyword
-    hilight .hilight.euphor 1 "with"         .scheme.keyword
-    hilight .hilight.euphor 1 "without"      .scheme.keyword
-    hilight .hilight.euphor 1 "xor"          .scheme.keyword
-    
-    hilight .hilight.euphor 1 "object"       .scheme.type
-    hilight .hilight.euphor 1 "sequence"     .scheme.type
-    hilight .hilight.euphor 1 "atom"         .scheme.type
-    hilight .hilight.euphor 1 "integer"      .scheme.type
-    
-    hilight .hilight.euphor 4 "\"" "\"" "\\" .scheme.string
-    hilight .hilight.euphor 4 "'" "'" "\\"   .scheme.string
+  0 hilight .hilight.euphor 1 $global-scheme
+  
+  hilight .hilight.euphor 2 "--"           .scheme.comment
+  
+  hilight .hilight.euphor 1 "and"          .scheme.keyword
+  hilight .hilight.euphor 1 "by"           .scheme.keyword
+  hilight .hilight.euphor 1 "constant"     .scheme.keyword
+  hilight .hilight.euphor 1 "do"           .scheme.keyword
+  hilight .hilight.euphor 1 "else"         .scheme.keyword
+  hilight .hilight.euphor 1 "elsif"        .scheme.keyword
+  hilight .hilight.euphor 1 "end"          .scheme.keyword
+  hilight .hilight.euphor 1 "exit"         .scheme.keyword
+  hilight .hilight.euphor 1 "for"          .scheme.keyword
+  hilight .hilight.euphor 1 "function"     .scheme.keyword
+  hilight .hilight.euphor 1 "global"       .scheme.keyword
+  hilight .hilight.euphor 1 "if"           .scheme.keyword
+  hilight .hilight.euphor 1 "include"      .scheme.keyword
+  hilight .hilight.euphor 1 "not"          .scheme.keyword
+  hilight .hilight.euphor 1 "or"           .scheme.keyword
+  hilight .hilight.euphor 1 "procedure"    .scheme.keyword
+  hilight .hilight.euphor 1 "return"       .scheme.keyword
+  hilight .hilight.euphor 1 "then"         .scheme.keyword
+  hilight .hilight.euphor 1 "to"           .scheme.keyword
+  hilight .hilight.euphor 1 "type"         .scheme.keyword
+  hilight .hilight.euphor 1 "while"        .scheme.keyword
+  hilight .hilight.euphor 1 "else"         .scheme.keyword
+  hilight .hilight.euphor 1 "with"         .scheme.keyword
+  hilight .hilight.euphor 1 "without"      .scheme.keyword
+  hilight .hilight.euphor 1 "xor"          .scheme.keyword
+  
+  hilight .hilight.euphor 1 "object"       .scheme.type
+  hilight .hilight.euphor 1 "sequence"     .scheme.type
+  hilight .hilight.euphor 1 "atom"         .scheme.type
+  hilight .hilight.euphor 1 "integer"      .scheme.type
+  
+  hilight .hilight.euphor 4 "\"" "\"" "\\" .scheme.string
+  hilight .hilight.euphor 4 "'" "'" "\\"   .scheme.string
 !endif
 
 !if &sin "d" .fhook-euphor.setup
-    0 indent .hilight.euphor 1 10
-
-    indent .hilight.euphor N "function"      t
-    indent .hilight.euphor O "end function" -t
-    indent .hilight.euphor N "type"          t
-    indent .hilight.euphor O "end type"     -t
-    indent .hilight.euphor N "for"           t
-    indent .hilight.euphor O "end for"      -t
-    indent .hilight.euphor N "while"         t
-    indent .hilight.euphor O "end while"    -t
-    indent .hilight.euphor N "if"            t
-    indent .hilight.euphor S "else"         -t
-    indent .hilight.euphor S "elsif"        -t
-    indent .hilight.euphor O "end if"       -t
-    indent .hilight.euphor i "--"
+  0 indent .hilight.euphor 1 10
+  
+  indent .hilight.euphor N "function"      t
+  indent .hilight.euphor O "end function" -t
+  indent .hilight.euphor N "type"          t
+  indent .hilight.euphor O "end type"     -t
+  indent .hilight.euphor N "for"           t
+  indent .hilight.euphor O "end for"      -t
+  indent .hilight.euphor N "while"         t
+  indent .hilight.euphor O "end while"    -t
+  indent .hilight.euphor N "if"            t
+  indent .hilight.euphor S "else"         -t
+  indent .hilight.euphor S "elsif"        -t
+  indent .hilight.euphor O "end if"       -t
+  indent .hilight.euphor i "--"
 !endif
 
 buffer-init-fhook "euphor"

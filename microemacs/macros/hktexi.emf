@@ -10,8 +10,8 @@
 ; Notes:       Could benifit with some tools.
 ;
 define-macro fhook-texi
-    @# buffer-init "texi"
-    buffer-init-hooks
+  @# buffer-init "texi"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -21,12 +21,12 @@ set-variable .fhook-texi.setup-mask "abeghikmoptux"
 set-variable .fhook-texi.comment "|@c |||@c |||"
 
 !if &and &sin "h" .fhook-texi.setup &band .hilight.flags 0x02 
-    !if &not &exist .hilight.texi
-        set-variable .hilight.texi  &pinc .hilight.next 1
-    !endif
-    0 hilight .hilight.texi 0                  $global-scheme
-    hilight .hilight.texi   0  "@c .*"         .scheme.comment
-    hilight .hilight.texi   4  "@" "\\}\\W" "" .scheme.keyword
+  !if &not &exist .hilight.texi
+    set-variable .hilight.texi  &pinc .hilight.next 1
+  !endif
+  0 hilight .hilight.texi 0                  $global-scheme
+  hilight .hilight.texi   0  "@c .*"         .scheme.comment
+  hilight .hilight.texi   4  "@" "\\}\\W" "" .scheme.keyword
 !endif
 
 buffer-init-fhook "texi"

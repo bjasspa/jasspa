@@ -7,8 +7,8 @@
 ; Authors:     Detlef Groth, Steve Phillips & Jon Green
 ;
 define-macro fhook-bibtex
-    @# buffer-init "bibtex"
-    buffer-init-hooks
+  @# buffer-init "bibtex"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -26,33 +26,33 @@ set-variable .fhook-bibtex.collapse-close "^@\\|\\'"
 set-variable .fhook-bibtex.collapse-mnext "-1" 
 
 !if &and &sin "h" .fhook-bibtex.setup &band .hilight.flags 0x02 
-    !if &not &exist .hilight.bibtex
-        set-variable .hilight.bibtex  &pinc .hilight.next 1
-        set-variable .hilight.bibtexs &pinc .hilight.next 1
+  !if &not &exist .hilight.bibtex
+    set-variable .hilight.bibtex  &pinc .hilight.next 1
+    set-variable .hilight.bibtexs &pinc .hilight.next 1
+  !endif
+  ; normal token hilighting    
+  0 hilight .hilight.bibtex 0                       $global-scheme
+  hilight .hilight.bibtex 0 "^\\s*\\{@\\w*\\}{"    .scheme.bold
+  hilight .hilight.bibtex 0 "^\\s*\\{\\w*\\s*\\}={*" .scheme.italic
+  hilight .hilight.bibtex 0 "^\\s*\\{\\w*\\s*\\}=\\s{*" .scheme.italic
+  
+  ; bibtex simulation hilighting 
+  0 hilight .hilight.bibtexs 0                               $global-scheme
+  hilight .hilight.bibtexs 0x44 "\\\\bibitem{" "" "}" "" ""  .scheme.bold
+  hilight .hilight.bibtexs 0x44 "{\\\\em " "" "}" "" ""      .scheme.italic
+  ;hilight .hilight.bibtexs 64 "\\\\newblock " ""       ; any idea ??
+  ;hilight .hilight.bibtexs 0x44 "year = " "Y: " "," ""  .scheme.bold
+  ;hilight .hilight.bibtexs 0x44 "@ARTICLE{" "*" "," "*" "" .scheme.hlred
+  
+  0 define-macro bibtex-swap-hilight
+    !if &equal $buffer-hilight .hilight.bibtex
+      set-variable $buffer-hilight .hilight.bibtexs
+      1 buffer-mode "view"
+    !else
+      set-variable $buffer-hilight .hilight.bibtex
+      -1 buffer-mode "view"
     !endif
-    ; normal token hilighting    
-    0 hilight .hilight.bibtex 0                       $global-scheme
-    hilight .hilight.bibtex 0 "^\\s*\\{@\\w*\\}{"    .scheme.bold
-    hilight .hilight.bibtex 0 "^\\s*\\{\\w*\\s*\\}={*" .scheme.italic
-    hilight .hilight.bibtex 0 "^\\s*\\{\\w*\\s*\\}=\\s{*" .scheme.italic
-    
-    ; bibtex simulation hilighting 
-    0 hilight .hilight.bibtexs 0                               $global-scheme
-    hilight .hilight.bibtexs 0x44 "\\\\bibitem{" "" "}" "" ""  .scheme.bold
-    hilight .hilight.bibtexs 0x44 "{\\\\em " "" "}" "" ""      .scheme.italic
-    ;hilight .hilight.bibtexs 64 "\\\\newblock " ""       ; any idea ??
-    ;hilight .hilight.bibtexs 0x44 "year = " "Y: " "," ""  .scheme.bold
-    ;hilight .hilight.bibtexs 0x44 "@ARTICLE{" "*" "," "*" "" .scheme.hlred
-
-    0 define-macro bibtex-swap-hilight
-        !if &equal $buffer-hilight .hilight.bibtex
-            set-variable $buffer-hilight .hilight.bibtexs
-            1 buffer-mode "view"
-        !else
-            set-variable $buffer-hilight .hilight.bibtex
-            -1 buffer-mode "view"
-        !endif
-    !emacro
+  !emacro
 !endif
 
 buffer-init-fhook "bibtex"

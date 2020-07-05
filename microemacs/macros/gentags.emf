@@ -15,41 +15,41 @@
 ;      the gui can be disabled by passing an argument of -1.
 ;
 !if &not &exi .osd.gtf
-    set-variable .osd.gtf &pinc .osd.next 1
+  set-variable .osd.gtf &pinc .osd.next 1
 !endif
 
 0 define-macro generate-tags-file-entry
-    !if &gre @# 0
-        set-variable $result &cond &equ @# 1 .generate-tags-file.flags &cond &equ @# 2 .generate-tags-file.path .generate-tags-file.tfile
-    !elif &equ @# -1
-        set-variable .generate-tags-file.flags @ml20 "" .generate-tags-file.flags
-    !elif &equ @# -2
-        set-variable .generate-tags-file.path @ml21 "" .generate-tags-file.path
-    !else
-        set-variable .generate-tags-file.tfile @ml24 "" .generate-tags-file.tfile
-    !endif
+  !if &gre @# 0
+    set-variable $result &cond &equ @# 1 .generate-tags-file.flags &cond &equ @# 2 .generate-tags-file.path .generate-tags-file.tfile
+  !elif &equ @# -1
+    set-variable .generate-tags-file.flags @ml20 "" .generate-tags-file.flags
+  !elif &equ @# -2
+    set-variable .generate-tags-file.path @ml21 "" .generate-tags-file.path
+  !else
+    set-variable .generate-tags-file.tfile @ml24 "" .generate-tags-file.tfile
+  !endif
 !emacro
 
 0 define-macro generate-tags-file-flags
-    set-variable #l0 &lget "|a|e|m|p|r|s|v|" @#
-    !if &sin #l0 .generate-tags-file.flags
-        set-variable .generate-tags-file.flags &rep .generate-tags-file.flags #l0 ""
-    !else
-        set-variable .generate-tags-file.flags &cat .generate-tags-file.flags #l0
-    !endif
+  set-variable #l0 &lget "|a|e|m|p|r|s|v|" @#
+  !if &sin #l0 .generate-tags-file.flags
+    set-variable .generate-tags-file.flags &rep .generate-tags-file.flags #l0 ""
+  !else
+    set-variable .generate-tags-file.flags &cat .generate-tags-file.flags #l0
+  !endif
 !emacro
 
 0 define-macro generate-tags-file-exec
-    set-position "\x81"
-    find-buffer "*generate-tags-file tmp*"
-    set-variable $buffer-fname .generate-tags-file.path
-    set-variable #l1 &spr "\"@%s\" -f \"-o%s\"" .generate-tags-file.type .generate-tags-file.flags
-    !if &not &seq .generate-tags-file.tfile "tags"
-        set-variable #l1 &spr "%s \"-t%s\"" #l1 .generate-tags-file.tfile
-    !endif
-    !force exec-me #l1
-    !force delete-buffer "*generate-tags-file tmp*"
-    goto-position "\x81"
+  set-position "\x81"
+  find-buffer "*generate-tags-file tmp*"
+  set-variable $buffer-fname .generate-tags-file.path
+  set-variable #l1 &spr "\"@%s\" -f \"-o%s\"" .generate-tags-file.type .generate-tags-file.flags
+  !if &not &seq .generate-tags-file.tfile "tags"
+    set-variable #l1 &spr "%s \"-t%s\"" #l1 .generate-tags-file.tfile
+  !endif
+  !force exec-me #l1
+  !force delete-buffer "*generate-tags-file tmp*"
+  goto-position "\x81"
 !emacro
 
 -1 osd .osd.gtf
@@ -88,31 +88,31 @@ osd .osd.gtf 260 "BcfH"   .scheme.osd-ebtt " \HCancel "    1 void
 ; generate-tags-file [tagtype] [start-path]
 ; runs ME @<tagtype> -f -o<tags-options>...
 define-macro generate-tags-file
-    !if &exi &ind &spr ".%s.tags" $buffer-fhook
-        set-variable .type &ind &spr ".%s.tags" $buffer-fhook
-    !else
-        !force set-variable .type @1
-        !if &not $status
-            set-variable .type @ml "tag command"
-        !endif
+  !if &exi &ind &spr ".%s.tags" $buffer-fhook
+    set-variable .type &ind &spr ".%s.tags" $buffer-fhook
+  !else
+    !force set-variable .type @1
+    !if &not $status
+      set-variable .type @ml "tag command"
     !endif
-    !if &seq &lef .type 1 "!"
-        ; direct shell command - run it
-        0 ipipe-shell-command &rig .type 1 "*generate-tags*"
-        !return
-    !endif
-    set-variable .tfile "tags"
-    set-variable .path &lef $buffer-fname &rsin "/" $buffer-fname
-    !force set-variable #l2 @2
-    !if $status
-        set-variable .path &stat "a" &cat .path #l2
-    !endif
-    !if &band @# 1
-        ; if bit 1 is set then just do it
-        generate-tags-file-exec
-    !else
-        .osd.gtf osd
-    !endif
+  !endif
+  !if &seq &lef .type 1 "!"
+    ; direct shell command - run it
+    0 ipipe-shell-command &rig .type 1 "*generate-tags*"
+    !return
+  !endif
+  set-variable .tfile "tags"
+  set-variable .path &lef $buffer-fname &rsin "/" $buffer-fname
+  !force set-variable #l2 @2
+  !if $status
+    set-variable .path &stat "a" &cat .path #l2
+  !endif
+  !if &band @# 1
+    ; if bit 1 is set then just do it
+    generate-tags-file-exec
+  !else
+    .osd.gtf osd
+  !endif
 !emacro
 set-variable .generate-tags-file.flags &rep %tag-option "c" ""
 

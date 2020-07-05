@@ -8,11 +8,11 @@
 ; Authors:     Pedro Gomes
 ;
 define-macro fhook-slang
-    ; Is it an include h file or a c file?
-    set-variable #l0 &con &isin ".h" $buffer-bname "h" "c"
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "slang" #l0
-    buffer-init-hooks
+  ; Is it an include h file or a c file?
+  set-variable #l0 &con &isin ".h" $buffer-bname "h" "c"
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "slang" #l0
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -33,77 +33,77 @@ set-variable .fhook-slang.collapse-mclose "1"
 set-variable .fhook-slang.collapse-mnext "-1"
 
 !if &not &exist .hilight.slang
-    set-variable .hilight.slang &pinc .hilight.next 1
+  set-variable .hilight.slang &pinc .hilight.next 1
 !endif
 !if &and &sin "h" .fhook-slang.setup &band .hilight.flags 0x02
-    0 hilight .hilight.slang  2 50                       $global-scheme
-    ; comments, strings and quotes
-    hilight .hilight.slang 0x3a "#" "\\"                 .scheme.prepro
-    hilight .hilight.slang   18 "%"                      .scheme.comment
-    hilight .hilight.slang    4 "\"" "\"" "\\"           .scheme.string
-    hilight .hilight.slang    0 "'.'"                    .scheme.quote
-    hilight .hilight.slang    0 "'\\\\.'"                .scheme.quote
-    hilight .hilight.slang    0 "'\\\\'"                 .scheme.error
-    hilight .hilight.slang    0 "'\\\\''"                .scheme.quote
-    ; Function names and goto labels
-    !if &band .hilight.flags 0x04
-        hilight .hilight.slang    0 "^\\w+\\}\\s("      .scheme.function
-        hilight .hilight.slang    0 "^\\w+\\}("          .scheme.function
-    !endif
-    hilight .hilight.slang    0 "^\\w+\\}:"              .scheme.link
-    ; keywords
-    hilight .hilight.slang    1 "break"                  .scheme.keyword
-    hilight .hilight.slang    1 "return"                 .scheme.keyword
-    hilight .hilight.slang    1 "continue"               .scheme.keyword
-    hilight .hilight.slang    1 "EXECUTE_ERROR_BLOCK"    .scheme.keyword
-    hilight .hilight.slang    1 "\<USER_BLOCK[0-4]\>"    .scheme.keyword
-    hilight .hilight.slang    1 "EXIT_BLOCK ERROR_BLOCK" .scheme.keyword
-    hilight .hilight.slang    1 "\<X_USER_BLOCK[0-4]\>"  .scheme.keyword
-    hilight .hilight.slang    1 "NULL"                   .scheme.keyword
-    hilight .hilight.slang    1 "case"                   .scheme.keyword
-
-    hilight .hilight.slang    1 "do"                     .scheme.keyword
-    hilight .hilight.slang    1 "forever"                .scheme.keyword
-    hilight .hilight.slang    1 "else"                   .scheme.keyword
-    hilight .hilight.slang    1 "for"                    .scheme.keyword
-    hilight .hilight.slang    1 "_for"                   .scheme.keyword
-    hilight .hilight.slang    1 "goto"                   .scheme.keyword
-    hilight .hilight.slang    1 "if"                     .scheme.keyword
-    hilight .hilight.slang    1 "!if"                    .scheme.keyword
-    hilight .hilight.slang    1 "return"                 .scheme.keyword
-    hilight .hilight.slang    1 "switch"                 .scheme.keyword
-    hilight .hilight.slang    1 "while"                  .scheme.keyword
-
-    hilight .hilight.slang    1 "sizeof"                 .scheme.operator
-    hilight .hilight.slang    1 "or"                     .scheme.operator
-    hilight .hilight.slang    1 "and"                    .scheme.operator
-    hilight .hilight.slang    1 "andelse"                .scheme.operator
-    hilight .hilight.slang    1 "orelse"                 .scheme.operator
-    hilight .hilight.slang    1 "shr"                    .scheme.operator
-    hilight .hilight.slang    1 "shl"                    .scheme.operator
-    hilight .hilight.slang    1 "xor"                    .scheme.operator
-    hilight .hilight.slang    1 "not"                    .scheme.operator
-    hilight .hilight.slang    1 "[-%+/&*=<>|!~^@]"       .scheme.operator
-
-    hilight .hilight.slang    1 "define"                 .scheme.type
-    hilight .hilight.slang    1 "struct"                 .scheme.type
-    hilight .hilight.slang    1 "typedef"                .scheme.type
-    hilight .hilight.slang    1 "variable"               .scheme.type
-    ; Pre-processor directives
-    !if &band .hilight.flags 0x08
-        ; hilight constants, e.g. numbers
-        hilight .hilight.slang 1 "[[:digit:]]+"                  .scheme.constant
-        hilight .hilight.slang 1 "-[[:digit:]]+"                 .scheme.constant
-        hilight .hilight.slang 1 "0[xX][[:xdigit:]]+"            .scheme.constant
-        hilight .hilight.slang 1 "[[:digit:]]+\\.[[:digit:]]+"   .scheme.constant
-        hilight .hilight.slang 1 "-[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
-        hilight .hilight.slang 1 "[[:digit:]]+\\.[[:digit:]]+f"  .scheme.constant
-        hilight .hilight.slang 1 "-[[:digit:]]+\\.[[:digit:]]+f" .scheme.constant
-    !endif
+  0 hilight .hilight.slang  2 50                       $global-scheme
+  ; comments, strings and quotes
+  hilight .hilight.slang 0x3a "#" "\\"                 .scheme.prepro
+  hilight .hilight.slang   18 "%"                      .scheme.comment
+  hilight .hilight.slang    4 "\"" "\"" "\\"           .scheme.string
+  hilight .hilight.slang    0 "'.'"                    .scheme.quote
+  hilight .hilight.slang    0 "'\\\\.'"                .scheme.quote
+  hilight .hilight.slang    0 "'\\\\'"                 .scheme.error
+  hilight .hilight.slang    0 "'\\\\''"                .scheme.quote
+  ; Function names and goto labels
+  !if &band .hilight.flags 0x04
+    hilight .hilight.slang    0 "^\\w+\\}\\s("      .scheme.function
+    hilight .hilight.slang    0 "^\\w+\\}("          .scheme.function
+  !endif
+  hilight .hilight.slang    0 "^\\w+\\}:"              .scheme.link
+  ; keywords
+  hilight .hilight.slang    1 "break"                  .scheme.keyword
+  hilight .hilight.slang    1 "return"                 .scheme.keyword
+  hilight .hilight.slang    1 "continue"               .scheme.keyword
+  hilight .hilight.slang    1 "EXECUTE_ERROR_BLOCK"    .scheme.keyword
+  hilight .hilight.slang    1 "\<USER_BLOCK[0-4]\>"    .scheme.keyword
+  hilight .hilight.slang    1 "EXIT_BLOCK ERROR_BLOCK" .scheme.keyword
+  hilight .hilight.slang    1 "\<X_USER_BLOCK[0-4]\>"  .scheme.keyword
+  hilight .hilight.slang    1 "NULL"                   .scheme.keyword
+  hilight .hilight.slang    1 "case"                   .scheme.keyword
+  
+  hilight .hilight.slang    1 "do"                     .scheme.keyword
+  hilight .hilight.slang    1 "forever"                .scheme.keyword
+  hilight .hilight.slang    1 "else"                   .scheme.keyword
+  hilight .hilight.slang    1 "for"                    .scheme.keyword
+  hilight .hilight.slang    1 "_for"                   .scheme.keyword
+  hilight .hilight.slang    1 "goto"                   .scheme.keyword
+  hilight .hilight.slang    1 "if"                     .scheme.keyword
+  hilight .hilight.slang    1 "!if"                    .scheme.keyword
+  hilight .hilight.slang    1 "return"                 .scheme.keyword
+  hilight .hilight.slang    1 "switch"                 .scheme.keyword
+  hilight .hilight.slang    1 "while"                  .scheme.keyword
+  
+  hilight .hilight.slang    1 "sizeof"                 .scheme.operator
+  hilight .hilight.slang    1 "or"                     .scheme.operator
+  hilight .hilight.slang    1 "and"                    .scheme.operator
+  hilight .hilight.slang    1 "andelse"                .scheme.operator
+  hilight .hilight.slang    1 "orelse"                 .scheme.operator
+  hilight .hilight.slang    1 "shr"                    .scheme.operator
+  hilight .hilight.slang    1 "shl"                    .scheme.operator
+  hilight .hilight.slang    1 "xor"                    .scheme.operator
+  hilight .hilight.slang    1 "not"                    .scheme.operator
+  hilight .hilight.slang    1 "[-%+/&*=<>|!~^@]"       .scheme.operator
+  
+  hilight .hilight.slang    1 "define"                 .scheme.type
+  hilight .hilight.slang    1 "struct"                 .scheme.type
+  hilight .hilight.slang    1 "typedef"                .scheme.type
+  hilight .hilight.slang    1 "variable"               .scheme.type
+  ; Pre-processor directives
+  !if &band .hilight.flags 0x08
+    ; hilight constants, e.g. numbers
+    hilight .hilight.slang 1 "[[:digit:]]+"                  .scheme.constant
+    hilight .hilight.slang 1 "-[[:digit:]]+"                 .scheme.constant
+    hilight .hilight.slang 1 "0[xX][[:xdigit:]]+"            .scheme.constant
+    hilight .hilight.slang 1 "[[:digit:]]+\\.[[:digit:]]+"   .scheme.constant
+    hilight .hilight.slang 1 "-[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
+    hilight .hilight.slang 1 "[[:digit:]]+\\.[[:digit:]]+f"  .scheme.constant
+    hilight .hilight.slang 1 "-[[:digit:]]+\\.[[:digit:]]+f" .scheme.constant
+  !endif
 !endif
 !if &sin "d" .fhook-slang.setup
-    0 indent .hilight.slang 12
-    indent .hilight.slang "u" " * "
+  0 indent .hilight.slang 12
+  indent .hilight.slang "u" " * "
 !endif
 
 ; setup fuctions to auto-load from cmacros

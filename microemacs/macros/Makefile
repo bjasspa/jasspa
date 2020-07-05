@@ -51,7 +51,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkpls.emf	hkpseudo.emf	hkpsf.emf	hkpython.emf	\
 	hkr.emf		hkreg.emf	hkruby.emf	hkrul.emf	\
 	hksamba.emf	hkscheme.emf	hksgml.emf	hkshell.emf	\
-	hkslang.emf	hkspec.emf	hksql.emf	\
+	hkslang.emf	hkspec.emf	hksql.emf	hkswift.emf	\
 	hktcl.emf	hktexi.emf	hktxt.emf	\
 	hkvb.emf	hkverilg.emf	hkvhdl.emf	hkvrml.emf	\
 	hkwiki.emf	\
@@ -63,8 +63,8 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	jst2text.emf	jstags.emf	jstutl.emf	\
 	keyboard.emf	killlist.emf	\
 	language.emf	langutl.emf	linux.emf	list.emf	\
-	mahjongg.emf	mail.emf	mailmerg.emf	majormod.emf	\
-	matchit.emf	me.emf		mecua.emf	\
+	macos.emf	mahjongg.emf	mail.emf	mailmerg.emf	\
+	majormod.emf	matchit.emf	me.emf		mecua.emf	\
 	meemacs.emf	melogo.emf	meme3_8.emf	menedit.emf	\
 	meserver.emf	metris.emf	misc.emf	mouse.emf	\
 	mouseosd.emf	mouserec.emf	msshift.emf	\

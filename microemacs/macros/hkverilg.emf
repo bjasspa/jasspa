@@ -8,9 +8,9 @@
 ; Authors:     Steven Phillips
 ;
 define-macro fhook-verilg
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "verilg"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "verilg"
+  buffer-init-hooks
 !emacro    
 
 ; buffer-init variables
@@ -21,82 +21,82 @@ set-variable .fhook-verilg.comment "|//||/|// | //|r|"
 set-variable .fhook-verilg.comment-1 "|/*| */|*| * | * |f|"
 
 !if &not &exist .hilight.verilg
-    set-variable .hilight.verilg &pinc .hilight.next 1
+  set-variable .hilight.verilg &pinc .hilight.next 1
 !endif
 !if &and &sin "h" .fhook-verilg.setup &band .hilight.flags 0x02 
-    0 hilight .hilight.verilg 0                        $global-scheme
-    !if &band .hilight.flags 0x04
-        hilight .hilight.verilg 0 "^module\\s+\\w+"  .scheme.function
-    !endif
-    hilight .hilight.verilg 18 "//"           .scheme.comment
-    hilight .hilight.verilg 20 "/\\*" "*/" "" .scheme.comment
-    hilight .hilight.verilg 4  "\"" "\"" "\\" .scheme.string
-    
-    hilight .hilight.verilg 1  "assign" .scheme.keyword
-    hilight .hilight.verilg 1  "module" .scheme.keyword
-    
-    
-    hilight .hilight.verilg 1  "initial" .scheme.keyword
-    hilight .hilight.verilg 1  "begin" .scheme.keyword
-    hilight .hilight.verilg 1  "end" .scheme.keyword
-    hilight .hilight.verilg 1  "if" .scheme.keyword
-    hilight .hilight.verilg 1  "else" .scheme.keyword
-    hilight .hilight.verilg 1  "case" .scheme.keyword
-    hilight .hilight.verilg 1  "endcase" .scheme.keyword
-    hilight .hilight.verilg 1  "always" .scheme.keyword
-    hilight .hilight.verilg 1  "default" .scheme.keyword
-    hilight .hilight.verilg 1  "input" .scheme.keyword
-    hilight .hilight.verilg 1  "inout" .scheme.keyword
-    hilight .hilight.verilg 1  "output" .scheme.keyword
-    hilight .hilight.verilg 1  "begin" .scheme.keyword
-    hilight .hilight.verilg 1  "end" .scheme.keyword
-    hilight .hilight.verilg 1  "endmodule" .scheme.keyword
-    
-    hilight .hilight.verilg 1  "reg" .scheme.type
-    hilight .hilight.verilg 1  "time" .scheme.type
-    hilight .hilight.verilg 1  "integer" .scheme.type
-    hilight .hilight.verilg 1  "real" .scheme.type
-    hilight .hilight.verilg 1  "realtime" .scheme.type
-    hilight .hilight.verilg 1  "wire" .scheme.type
-    hilight .hilight.verilg 1  "tri" .scheme.type
-    hilight .hilight.verilg 1  "tri1" .scheme.type
-    hilight .hilight.verilg 1  "supply0" .scheme.type
-    hilight .hilight.verilg 1  "wand" .scheme.type
-    hilight .hilight.verilg 1  "triand" .scheme.type
-    hilight .hilight.verilg 1  "tri0" .scheme.type
-    hilight .hilight.verilg 1  "supply1" .scheme.type
-    hilight .hilight.verilg 1  "wor" .scheme.type
-    hilight .hilight.verilg 1  "trior" .scheme.type
-    
-    hilight .hilight.verilg 1  "vectored" .scheme.prepro
-    hilight .hilight.verilg 1  "scalared" .scheme.prepro
-    hilight .hilight.verilg 1  "strong0" .scheme.prepro
-    hilight .hilight.verilg 1  "pull0" .scheme.prepro
-    hilight .hilight.verilg 1  "weak0" .scheme.prepro
-    hilight .hilight.verilg 1  "strong1" .scheme.prepro
-    hilight .hilight.verilg 1  "pull1" .scheme.prepro
-    hilight .hilight.verilg 1  "weak1" .scheme.prepro
-    hilight .hilight.verilg 1  "small" .scheme.prepro
-    hilight .hilight.verilg 1  "medium" .scheme.prepro
-    hilight .hilight.verilg 1  "large" .scheme.prepro
-    hilight .hilight.verilg 1  "highz0" .scheme.prepro
-    hilight .hilight.verilg 1  "highz1" .scheme.prepro
-    
-    !if &band .hilight.flags 0x08
-        ; hilight constants, e.g. numbers
-        hilight .hilight.verilg 1 "[[:digit:]]+"       .scheme.constant
-        hilight .hilight.verilg 1 "-[[:digit:]]+"      .scheme.constant
-        hilight .hilight.verilg 1 "'[hH][ \t]*[[:xdigit:]]+" .scheme.constant
-        hilight .hilight.verilg 1 "[[:digit:]]+'[hH][ \t]*[[:xdigit:]]+" .scheme.constant
-        hilight .hilight.verilg 1 "'[dD][ \t]*[[:digit:]]+" .scheme.constant
-        hilight .hilight.verilg 1 "[[:digit:]]+'[dD][ \t]*[[:digit:]]+" .scheme.constant
-        hilight .hilight.verilg 1 "'[bB][ \t]*[01]+" .scheme.constant
-        hilight .hilight.verilg 1 "[[:digit:]]+'[bB][ \t]*[01]+" .scheme.constant
-        hilight .hilight.verilg 1 "'[bB][ \t]*[xz]" .scheme.constant
-        hilight .hilight.verilg 1 "[[:digit:]]+'[bB][ \t]*[xz]" .scheme.constant
-        hilight .hilight.verilg 1 "[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
-        hilight .hilight.verilg 1 "-[[:digit:]]+\\.[[:digit:]]+" .scheme.constant
-    !endif
+  0 hilight .hilight.verilg 0                        $global-scheme
+  !if &band .hilight.flags 0x04
+    hilight .hilight.verilg 0 "^module\\s+\\w+"  .scheme.function
+  !endif
+  hilight .hilight.verilg 18 "//"           .scheme.comment
+  hilight .hilight.verilg 20 "/\\*" "*/" "" .scheme.comment
+  hilight .hilight.verilg 4  "\"" "\"" "\\" .scheme.string
+  
+  hilight .hilight.verilg 1  "assign" .scheme.keyword
+  hilight .hilight.verilg 1  "module" .scheme.keyword
+  
+  
+  hilight .hilight.verilg 1  "initial" .scheme.keyword
+  hilight .hilight.verilg 1  "begin" .scheme.keyword
+  hilight .hilight.verilg 1  "end" .scheme.keyword
+  hilight .hilight.verilg 1  "if" .scheme.keyword
+  hilight .hilight.verilg 1  "else" .scheme.keyword
+  hilight .hilight.verilg 1  "case" .scheme.keyword
+  hilight .hilight.verilg 1  "endcase" .scheme.keyword
+  hilight .hilight.verilg 1  "always" .scheme.keyword
+  hilight .hilight.verilg 1  "default" .scheme.keyword
+  hilight .hilight.verilg 1  "input" .scheme.keyword
+  hilight .hilight.verilg 1  "inout" .scheme.keyword
+  hilight .hilight.verilg 1  "output" .scheme.keyword
+  hilight .hilight.verilg 1  "begin" .scheme.keyword
+  hilight .hilight.verilg 1  "end" .scheme.keyword
+  hilight .hilight.verilg 1  "endmodule" .scheme.keyword
+  
+  hilight .hilight.verilg 1  "reg" .scheme.type
+  hilight .hilight.verilg 1  "time" .scheme.type
+  hilight .hilight.verilg 1  "integer" .scheme.type
+  hilight .hilight.verilg 1  "real" .scheme.type
+  hilight .hilight.verilg 1  "realtime" .scheme.type
+  hilight .hilight.verilg 1  "wire" .scheme.type
+  hilight .hilight.verilg 1  "tri" .scheme.type
+  hilight .hilight.verilg 1  "tri1" .scheme.type
+  hilight .hilight.verilg 1  "supply0" .scheme.type
+  hilight .hilight.verilg 1  "wand" .scheme.type
+  hilight .hilight.verilg 1  "triand" .scheme.type
+  hilight .hilight.verilg 1  "tri0" .scheme.type
+  hilight .hilight.verilg 1  "supply1" .scheme.type
+  hilight .hilight.verilg 1  "wor" .scheme.type
+  hilight .hilight.verilg 1  "trior" .scheme.type
+  
+  hilight .hilight.verilg 1  "vectored" .scheme.prepro
+  hilight .hilight.verilg 1  "scalared" .scheme.prepro
+  hilight .hilight.verilg 1  "strong0" .scheme.prepro
+  hilight .hilight.verilg 1  "pull0" .scheme.prepro
+  hilight .hilight.verilg 1  "weak0" .scheme.prepro
+  hilight .hilight.verilg 1  "strong1" .scheme.prepro
+  hilight .hilight.verilg 1  "pull1" .scheme.prepro
+  hilight .hilight.verilg 1  "weak1" .scheme.prepro
+  hilight .hilight.verilg 1  "small" .scheme.prepro
+  hilight .hilight.verilg 1  "medium" .scheme.prepro
+  hilight .hilight.verilg 1  "large" .scheme.prepro
+  hilight .hilight.verilg 1  "highz0" .scheme.prepro
+  hilight .hilight.verilg 1  "highz1" .scheme.prepro
+  
+  !if &band .hilight.flags 0x08
+    ; hilight constants, e.g. numbers
+    hilight .hilight.verilg 1 "[[:digit:]]+"       .scheme.constant
+    hilight .hilight.verilg 1 "-[[:digit:]]+"      .scheme.constant
+    hilight .hilight.verilg 1 "'[hH][ \t]*[[:xdigit:]]+" .scheme.constant
+    hilight .hilight.verilg 1 "[[:digit:]]+'[hH][ \t]*[[:xdigit:]]+" .scheme.constant
+    hilight .hilight.verilg 1 "'[dD][ \t]*[[:digit:]]+" .scheme.constant
+    hilight .hilight.verilg 1 "[[:digit:]]+'[dD][ \t]*[[:digit:]]+" .scheme.constant
+    hilight .hilight.verilg 1 "'[bB][ \t]*[01]+" .scheme.constant
+    hilight .hilight.verilg 1 "[[:digit:]]+'[bB][ \t]*[01]+" .scheme.constant
+    hilight .hilight.verilg 1 "'[bB][ \t]*[xz]" .scheme.constant
+    hilight .hilight.verilg 1 "[[:digit:]]+'[bB][ \t]*[xz]" .scheme.constant
+    hilight .hilight.verilg 1 "[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
+    hilight .hilight.verilg 1 "-[[:digit:]]+\\.[[:digit:]]+" .scheme.constant
+  !endif
 !endif
 
 buffer-init-fhook "verilg"

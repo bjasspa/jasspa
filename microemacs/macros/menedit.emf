@@ -30,22 +30,22 @@ define-macro-file osd osd-new-buffer osd-save osd-save-as osd-close osd-undo osd
 define-macro-file osdmisc osd-find-tag osd-search osd-goto-line
 define-macro-file osdhelp osd-help
 define-macro select-all
-    beginning-of-buffer
-    set-mark
-    end-of-buffer
+  beginning-of-buffer
+  set-mark
+  end-of-buffer
 !emacro
 define-macro forward-paragraph-start
-    beginning-of-line
-    !force 2 forward-paragraph
-    !if $status
-        backward-paragraph
-    !endif
+  beginning-of-line
+  !force 2 forward-paragraph
+  !if $status
+    backward-paragraph
+  !endif
 !emacro
 define-macro forward-word-start
-    !force 2 forward-word
-    !if $status
-        backward-word
-    !endif
+  !force 2 forward-word
+  !if $status
+    backward-word
+  !endif
 !emacro
 
 ; get rid of all default ME bindings

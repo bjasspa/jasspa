@@ -8,10 +8,10 @@
 ; Authors:     Steven Phillips
 ;
 !if &seq .osd.crosswd "ERROR"
-    set-variable .osd.crosswd  &pinc .osd.next 1
-    set-variable .osd.crosswdc &pinc .osd.next 1
-    set-variable .osd.crosswdl &pinc .osd.next 1
-    set-variable .osd.crosswdr &pinc .osd.next 1
+  set-variable .osd.crosswd  &pinc .osd.next 1
+  set-variable .osd.crosswdc &pinc .osd.next 1
+  set-variable .osd.crosswdl &pinc .osd.next 1
+  set-variable .osd.crosswdr &pinc .osd.next 1
 !endif
 
 0 define-macro crosswd
@@ -19,366 +19,366 @@
 
 ; <wrd-no> crosswd-create-word-list
 define-macro crosswd-create-word-list
-    !force 0 delete-buffer &cat "*crosswd " @#
-    find-buffer &cat "*crosswd " @#
-    ; get anagram
-    set-variable #l9 &ind &cat ".crosswd.anagram" @#
-    !if &set #l8 &not &seq #l9 ""
-        set-variable #l7 &spr "[%s]" #l9
-    !else
-        set-variable #l7 "[A-Z]"
+  !force 0 delete-buffer &cat "*crosswd " @#
+  find-buffer &cat "*crosswd " @#
+  ; get anagram
+  set-variable #l9 &ind &cat ".crosswd.anagram" @#
+  !if &set #l8 &not &seq #l9 ""
+    set-variable #l7 &spr "[%s]" #l9
+  !else
+    set-variable #l7 "[A-Z]"
+  !endif
+  ; get the number of letters
+  set-variable #l1 &ind &cat ".crosswd.noletter" @#
+  ; create the word mask
+  set-variable #l2 0
+  set-variable #l3 ""
+  !repeat
+    !if &seq &set #l4 &ind &spr ".crosswd.letter%d-%d" @# #l2 " "
+      set-variable #l4 #l7
     !endif
-    ; get the number of letters
-    set-variable #l1 &ind &cat ".crosswd.noletter" @#
-    ; create the word mask
-    set-variable #l2 0
-    set-variable #l3 ""
-    !repeat
-        !if &seq &set #l4 &ind &spr ".crosswd.letter%d-%d" @# #l2 " "
-            set-variable #l4 #l7
-        !endif
-        set-variable #l3 &cat #l3 #l4
-    !until &equ &inc #l2 1 #l1
-    ml-write &spr "[Creating word list for %s]" #l3
-    set-variable $find-words #l3
-    !while &not &seq &set #l4 $find-words ""
-        !if #l8
-            set-variable #l7 #l9
-            set-variable #l0 0
-            !if &set #l6 &sin &mid #l4 #l0 1 #l7
-                set-variable #l7 &cat &lef #l7 &sub #l6 1 &rig #l7 #l6
-                !tjump &les &inc #l0 1 #l1 -2
-            !endif
-            !if &equ #l0 #l1
-                insert-string &cat &sup #l4 "\n"
-            !endif
-        !else
-            insert-string &cat &sup #l4 "\n"
-        !endif
-    !done
+    set-variable #l3 &cat #l3 #l4
+  !until &equ &inc #l2 1 #l1
+  ml-write &spr "[Creating word list for %s]" #l3
+  set-variable $find-words #l3
+  !while &not &seq &set #l4 $find-words ""
+    !if #l8
+      set-variable #l7 #l9
+      set-variable #l0 0
+      !if &set #l6 &sin &mid #l4 #l0 1 #l7
+        set-variable #l7 &cat &lef #l7 &sub #l6 1 &rig #l7 #l6
+        !tjump &les &inc #l0 1 #l1 -2
+      !endif
+      !if &equ #l0 #l1
+        insert-string &cat &sup #l4 "\n"
+      !endif
+    !else
+      insert-string &cat &sup #l4 "\n"
+    !endif
+  !done
 !emacro
 
 0 define-macro crosswd-crossref-init
-    set-variable #l0 0
-    !repeat
-        set-variable &ind &cat ".crosswd.crossref" #l0 "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    !until &equ &inc #l0 1 10
-    set-variable .crosswd.crossrefused "\b0\b0\b0\b0\b0\b0\b0\b0\b0\b0\b"
+  set-variable #l0 0
+  !repeat
+    set-variable &ind &cat ".crosswd.crossref" #l0 "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  !until &equ &inc #l0 1 10
+  set-variable .crosswd.crossrefused "\b0\b0\b0\b0\b0\b0\b0\b0\b0\b0\b"
 !emacro
 
 0 define-macro crosswd-crossref-add
-    find-buffer &cat "*crosswd " @#
-    set-variable #l0 ""
-    set-variable #l9 "|"
-    set-variable #l1 &ind &cat ".crosswd.noletter" @#
-    set-variable #l2 0
-    !repeat
-        !if &not &seq &set #l4 &ind &spr ".crosswd.crossref%d-%d" @# #l2 " "
-            set-variable .crosswd.crossrefused &lset .crosswd.crossrefused &add #l4 1 1
-            set-variable #l0 &cat #l0 #l4
-            set-variable #l9 &spr "%s%d|" #l9 #l2
-            set-variable &ind &cat ".crosswd.gotcrossref" @# 1
-            set-variable #l5 &ind &cat ".crosswd.crossref" #l4
-            set-variable #l3 ""
-            beginning-of-buffer
-            !while &not &seq @wl ""
-                set-variable #l6 &mid @wl #l2 1
-                !if &not &sin #l6 #l3
-                    !if &sin #l6 #l5
-                        set-variable #l3 &cat #l3 #l6
-                    !endif
-                !endif
-                forward-line
-            !done
-            set-variable &ind &cat ".crosswd.crossref" #l4 #l3
+  find-buffer &cat "*crosswd " @#
+  set-variable #l0 ""
+  set-variable #l9 "|"
+  set-variable #l1 &ind &cat ".crosswd.noletter" @#
+  set-variable #l2 0
+  !repeat
+    !if &not &seq &set #l4 &ind &spr ".crosswd.crossref%d-%d" @# #l2 " "
+      set-variable .crosswd.crossrefused &lset .crosswd.crossrefused &add #l4 1 1
+      set-variable #l0 &cat #l0 #l4
+      set-variable #l9 &spr "%s%d|" #l9 #l2
+      set-variable &ind &cat ".crosswd.gotcrossref" @# 1
+      set-variable #l5 &ind &cat ".crosswd.crossref" #l4
+      set-variable #l3 ""
+      beginning-of-buffer
+      !while &not &seq @wl ""
+        set-variable #l6 &mid @wl #l2 1
+        !if &not &sin #l6 #l3
+          !if &sin #l6 #l5
+            set-variable #l3 &cat #l3 #l6
+          !endif
         !endif
-    !until &equ &inc #l2 1 #l1
-    set-variable &ind &cat ".crosswd.gotcrossref" @# #l0
-    set-variable &ind &cat ".crosswd.crossrefpos" @# #l9
+        forward-line
+      !done
+      set-variable &ind &cat ".crosswd.crossref" #l4 #l3
+    !endif
+  !until &equ &inc #l2 1 #l1
+  set-variable &ind &cat ".crosswd.gotcrossref" @# #l0
+  set-variable &ind &cat ".crosswd.crossrefpos" @# #l9
 !emacro
 
 0 define-macro crosswd-crossref-list
-    !force 0 delete-buffer "*crosswd tmp*"
-    find-buffer "*crosswd tmp*"
-    insert-newline
-    set-variable #l0 1
-    set-variable #l1 0
-    !repeat
-        !if &lget .crosswd.crossrefused &add #l1 1
-            set-variable #l2 &ind &cat ".crosswd.crossref" #l1
-            !if &seq #l2 ""
-                set-variable #l2 " "
-            !endif
-        !else
-            set-variable #l2 "."
-        !endif
-        beginning-of-buffer
-        !if &equ &len #l2 1
-            end-of-line
-            set-variable #l3 #l0
-            !while &pdec #l3 1
-                insert-string #l2
-                forward-line
-            !done
-        !else
-            set-variable #l4 #l0
-            set-variable #l0 0
-            set-mark
-            end-of-buffer
-            kill-region
-            !while &not &seq #l2 ""
-                set-variable #l5 &lef #l2 1
-                set-variable #l2 &rig #l2 1
-                set-variable #l0 &add #l0 #l4
-                yank
-                exchange-point-and-mark
-                end-of-line
-                set-variable #l3 #l4
-                insert-string #l5
-                forward-line
-                !tjump &dec #l3 1 -2
-            !done
-        !endif
-    !until &equ &inc #l1 1 10
+  !force 0 delete-buffer "*crosswd tmp*"
+  find-buffer "*crosswd tmp*"
+  insert-newline
+  set-variable #l0 1
+  set-variable #l1 0
+  !repeat
+    !if &lget .crosswd.crossrefused &add #l1 1
+      set-variable #l2 &ind &cat ".crosswd.crossref" #l1
+      !if &seq #l2 ""
+        set-variable #l2 " "
+      !endif
+    !else
+      set-variable #l2 "."
+    !endif
+    beginning-of-buffer
+    !if &equ &len #l2 1
+      end-of-line
+      set-variable #l3 #l0
+      !while &pdec #l3 1
+        insert-string #l2
+        forward-line
+      !done
+    !else
+      set-variable #l4 #l0
+      set-variable #l0 0
+      set-mark
+      end-of-buffer
+      kill-region
+      !while &not &seq #l2 ""
+        set-variable #l5 &lef #l2 1
+        set-variable #l2 &rig #l2 1
+        set-variable #l0 &add #l0 #l4
+        yank
+        exchange-point-and-mark
+        end-of-line
+        set-variable #l3 #l4
+        insert-string #l5
+        forward-line
+        !tjump &dec #l3 1 -2
+      !done
+    !endif
+  !until &equ &inc #l1 1 10
 !emacro
 
 0 define-macro crosswd-crossref-compile2
-    !if &not &seq &set #l0 &ind &cat ".crosswd.gotcrossref" @# ""
-        set-variable #l9 @1
-        ; construct a search pattern for this word
-        set-variable #l1 &spr "^%n" &ind &cat ".crosswd.noletter" @# "."
-        set-variable #l2 0
-        !repeat
-            set-variable #l3 &mid #l0 &pinc #l2 1 1
-            set-variable #l3 &mid #l9 #l3 1
-            set-variable #l4 &lget &ind &cat ".crosswd.crossrefpos" @# #l2
-            set-variable #l1 &spr "%s%s%s" &lef #l1 &add #l4 1 #l3 &rig #l1 &add #l4 2
-        !until &equ #l2 &len #l0
-        find-buffer "*crosswd tmp2*"
-        insert-string &spr "Word %d\n\n" @#
-        ; now find all the words that match
-        find-buffer &cat "*crosswd " @#
-        beginning-of-buffer
-        !force search-forward #l1
-        !if &not $status
-            !abort
-        !endif
-        !repeat
-            beginning-of-line
-            set-mark
-            forward-line
-            copy-region
-            find-buffer "*crosswd tmp2*"
-            yank
-            -1 yank
-            find-buffer &cat "*crosswd " @#
-            !force search-forward #l1
-        !until &not $status
-        find-buffer "*crosswd tmp2*"
-        insert-newline
-    !endif
-!emacro
-    
-0 define-macro crosswd-crossref-compile
-    find-buffer "*crosswd tmp*"
+  !if &not &seq &set #l0 &ind &cat ".crosswd.gotcrossref" @# ""
+    set-variable #l9 @1
+    ; construct a search pattern for this word
+    set-variable #l1 &spr "^%n" &ind &cat ".crosswd.noletter" @# "."
+    set-variable #l2 0
+    !repeat
+      set-variable #l3 &mid #l0 &pinc #l2 1 1
+      set-variable #l3 &mid #l9 #l3 1
+      set-variable #l4 &lget &ind &cat ".crosswd.crossrefpos" @# #l2
+      set-variable #l1 &spr "%s%s%s" &lef #l1 &add #l4 1 #l3 &rig #l1 &add #l4 2
+    !until &equ #l2 &len #l0
+    find-buffer "*crosswd tmp2*"
+    insert-string &spr "Word %d\n\n" @#
+    ; now find all the words that match
+    find-buffer &cat "*crosswd " @#
     beginning-of-buffer
-    !while &not &seq &set #l0 @wl ""
-        !if &sin " " #l0
-            ; no solution
-        !else
-            !force 0 delete-buffer "*crosswd tmp2*"
-            set-variable #l1 0
-            set-variable #l2 1
-            !repeat
-                !force #l1 crosswd-crossref-compile2 #l0
-                !if &not $status
-                    set-variable #l2 0
-                    set-variable #l0 .crosswd.noword
-                !endif
-            !until &equ &inc #l1 1 .crosswd.noword
-            !if #l2
-                find-buffer "*crosswd tmp2*"
-                beginning-of-buffer
-                set-mark
-                end-of-buffer
-                copy-region
-                find-buffer "*cross-word*"
-                insert-string &spr "Cross Reference Solution [%s]\n\n" #l0
-                yank
-                -1 yank
-            !endif
-            find-buffer "*crosswd tmp*"
+    !force search-forward #l1
+    !if &not $status
+      !abort
+    !endif
+    !repeat
+      beginning-of-line
+      set-mark
+      forward-line
+      copy-region
+      find-buffer "*crosswd tmp2*"
+      yank
+      -1 yank
+      find-buffer &cat "*crosswd " @#
+      !force search-forward #l1
+    !until &not $status
+    find-buffer "*crosswd tmp2*"
+    insert-newline
+  !endif
+!emacro
+
+0 define-macro crosswd-crossref-compile
+  find-buffer "*crosswd tmp*"
+  beginning-of-buffer
+  !while &not &seq &set #l0 @wl ""
+    !if &sin " " #l0
+      ; no solution
+    !else
+      !force 0 delete-buffer "*crosswd tmp2*"
+      set-variable #l1 0
+      set-variable #l2 1
+      !repeat
+        !force #l1 crosswd-crossref-compile2 #l0
+        !if &not $status
+          set-variable #l2 0
+          set-variable #l0 .crosswd.noword
         !endif
-        forward-line
-    !done
+      !until &equ &inc #l1 1 .crosswd.noword
+      !if #l2
+        find-buffer "*crosswd tmp2*"
+        beginning-of-buffer
+        set-mark
+        end-of-buffer
+        copy-region
+        find-buffer "*cross-word*"
+        insert-string &spr "Cross Reference Solution [%s]\n\n" #l0
+        yank
+        -1 yank
+      !endif
+      find-buffer "*crosswd tmp*"
+    !endif
+    forward-line
+  !done
 !emacro
 0 define-macro crosswd-crossref-reduce
-    !if &not &seq &set #l0 &ind &cat ".crosswd.gotcrossref" @# ""
-        find-buffer &cat "*crosswd " @#
-        set-variable #l1 0
-        !repeat
-            beginning-of-buffer
-            set-variable #l2 &mid #l0 &pinc #l1 1 1
-            set-variable #l2 &ind &cat ".crosswd.crossref" #l2
-            !if &seq #l2 ""
-                set-mark
-                end-of-buffer
-                -1 kill-region
-                !return
-            !endif
-            set-variable #l3 &lget &ind &cat ".crosswd.crossrefpos" @# #l1
-            !while &not &seq @wl ""
-                !if &sin &mid @wl #l3 1 #l2
-                    forward-line
-                !else
-                    1 kill-line
-                    -1 yank
-                !endif
-            !done
-        !until &equ #l1 &len #l0
-    !endif
+  !if &not &seq &set #l0 &ind &cat ".crosswd.gotcrossref" @# ""
+    find-buffer &cat "*crosswd " @#
+    set-variable #l1 0
+    !repeat
+      beginning-of-buffer
+      set-variable #l2 &mid #l0 &pinc #l1 1 1
+      set-variable #l2 &ind &cat ".crosswd.crossref" #l2
+      !if &seq #l2 ""
+        set-mark
+        end-of-buffer
+        -1 kill-region
+        !return
+      !endif
+      set-variable #l3 &lget &ind &cat ".crosswd.crossrefpos" @# #l1
+      !while &not &seq @wl ""
+        !if &sin &mid @wl #l3 1 #l2
+          forward-line
+        !else
+          1 kill-line
+          -1 yank
+        !endif
+      !done
+    !until &equ #l1 &len #l0
+  !endif
 !emacro
 
 0 define-macro crosswd-nocrossref-word-dump
-    find-buffer &cat "*crosswd " @#
-    beginning-of-buffer
-    set-mark
-    end-of-buffer
-    set-variable #l0 &sub $window-line 1
-    copy-region
-    find-buffer "*cross-word*"
-    insert-string &spr "Word %d - %d Match%s\n\n" @# #l0 &cond &equ #l0 1 "" "es"
-    yank
-    -1 yank
+  find-buffer &cat "*crosswd " @#
+  beginning-of-buffer
+  set-mark
+  end-of-buffer
+  set-variable #l0 &sub $window-line 1
+  copy-region
+  find-buffer "*cross-word*"
+  insert-string &spr "Word %d - %d Match%s\n\n" @# #l0 &cond &equ #l0 1 "" "es"
+  yank
+  -1 yank
 !emacro
 
 0 define-macro crosswd-compute
-    !force 0 delete-buffer "*cross-word*"
-    set-variable #l0 0
-    !repeat
-        #l0 crosswd-create-word-list
-    !until &equ &inc #l0 1 .crosswd.noword
-    crosswd-crossref-init
-    set-variable #l0 0
-    !repeat
-        #l0 crosswd-crossref-add
-    !until &equ &inc #l0 1 .crosswd.noword
-    crosswd-crossref-list
-    crosswd-crossref-compile
-    set-variable #l0 0
-    !repeat
-        #l0 crosswd-nocrossref-word-dump
-    !until &equ &inc #l0 1 .crosswd.noword
-    beginning-of-buffer
+  !force 0 delete-buffer "*cross-word*"
+  set-variable #l0 0
+  !repeat
+    #l0 crosswd-create-word-list
+  !until &equ &inc #l0 1 .crosswd.noword
+  crosswd-crossref-init
+  set-variable #l0 0
+  !repeat
+    #l0 crosswd-crossref-add
+  !until &equ &inc #l0 1 .crosswd.noword
+  crosswd-crossref-list
+  crosswd-crossref-compile
+  set-variable #l0 0
+  !repeat
+    #l0 crosswd-nocrossref-word-dump
+  !until &equ &inc #l0 1 .crosswd.noword
+  beginning-of-buffer
 !emacro
 
 0 define-macro crosswd-set-noletter
-    !if &les @# 0
-        set-variable @# &sub &abs @# 1
-        set-variable #l0 &cat ".crosswd.noletter" @#
-        set-variable #l2 &ind #l0
-        set-variable #l1 @ml25 "" #l2
-        ; remove the old word
-        set-variable #l3 &add 100 &mul @# 256
-        !while &pdec #l2 1
-            set-variable #l4 &add #l3 &mul #l2 2
-            osd .osd.crosswdc &add #l4 4   "D"
-            osd .osd.crosswdc &add #l4 5   "D"
-            osd .osd.crosswdc &add #l4 129 "D"
-            osd .osd.crosswdc &add #l4 130 "D"
-        !done
-        !if &les #l1 1
-            set-variable &ind #l0 ""
-        !else
-            set-variable &ind #l0 #l1
-            ; setup the word and cross-ref
-            !while &pdec #l1 1
-                set-variable #l4 &add #l3 &mul #l1 2
-                set-variable &ind &spr ".crosswd.letter%d-%d" @# #l1 " "
-                set-variable &ind &spr ".crosswd.crossref%d-%d" @# #l1 " "
-                osd .osd.crosswdc &add #l4 4   "MdimxRHfh" .scheme.osd-entry " " .osd.crosswdl &spr "crosswd-setup-letter %d %d" @# #l1
-                osd .osd.crosswdc &add #l4 5   "hf" " "
-                osd .osd.crosswdc &add #l4 129 "MdimxRHfh" .scheme.osd-entry " " .osd.crosswdr &spr "crosswd-setup-crossref %d %d" @# #l1
-                osd .osd.crosswdc &add #l4 130 "hf" " "
-            !done
-        !endif
+  !if &les @# 0
+    set-variable @# &sub &abs @# 1
+    set-variable #l0 &cat ".crosswd.noletter" @#
+    set-variable #l2 &ind #l0
+    set-variable #l1 @ml25 "" #l2
+    ; remove the old word
+    set-variable #l3 &add 100 &mul @# 256
+    !while &pdec #l2 1
+      set-variable #l4 &add #l3 &mul #l2 2
+      osd .osd.crosswdc &add #l4 4   "D"
+      osd .osd.crosswdc &add #l4 5   "D"
+      osd .osd.crosswdc &add #l4 129 "D"
+      osd .osd.crosswdc &add #l4 130 "D"
+    !done
+    !if &les #l1 1
+      set-variable &ind #l0 ""
     !else
-        set-variable $result &ind &cat ".crosswd.noletter" &sub @# 1
+      set-variable &ind #l0 #l1
+      ; setup the word and cross-ref
+      !while &pdec #l1 1
+        set-variable #l4 &add #l3 &mul #l1 2
+        set-variable &ind &spr ".crosswd.letter%d-%d" @# #l1 " "
+        set-variable &ind &spr ".crosswd.crossref%d-%d" @# #l1 " "
+        osd .osd.crosswdc &add #l4 4   "MdimxRHfh" .scheme.osd-entry " " .osd.crosswdl &spr "crosswd-setup-letter %d %d" @# #l1
+        osd .osd.crosswdc &add #l4 5   "hf" " "
+        osd .osd.crosswdc &add #l4 129 "MdimxRHfh" .scheme.osd-entry " " .osd.crosswdr &spr "crosswd-setup-crossref %d %d" @# #l1
+        osd .osd.crosswdc &add #l4 130 "hf" " "
+      !done
     !endif
+  !else
+    set-variable $result &ind &cat ".crosswd.noletter" &sub @# 1
+  !endif
 !emacro
 
 0 define-macro crosswd-set-letter
-    !if @#
-        set-variable #l0 &itoa &add 64 @#
-    !else
-        set-variable #l0 " "
-    !endif
-    set-variable &ind &spr ".crosswd.letter%d-%d" .word .letter #l0
-    set-variable #l4 &add &add 104 &mul .word 256 &mul .letter 2
-    osd .osd.crosswdc #l4 "MdimxRHfh" .scheme.osd-entry #l0 .osd.crosswdl &spr "crosswd-setup-letter %d %d" .word .letter
+  !if @#
+    set-variable #l0 &itoa &add 64 @#
+  !else
+    set-variable #l0 " "
+  !endif
+  set-variable &ind &spr ".crosswd.letter%d-%d" .word .letter #l0
+  set-variable #l4 &add &add 104 &mul .word 256 &mul .letter 2
+  osd .osd.crosswdc #l4 "MdimxRHfh" .scheme.osd-entry #l0 .osd.crosswdl &spr "crosswd-setup-letter %d %d" .word .letter
 !emacro
 
 0 define-macro crosswd-setup-letter
-    set-variable .crosswd-set-letter.word   @1
-    set-variable .crosswd-set-letter.letter @2
+  set-variable .crosswd-set-letter.word   @1
+  set-variable .crosswd-set-letter.letter @2
 !emacro
 
 0 define-macro crosswd-set-crossref
-    !if &equ @# -1
-        set-variable #l0 " "
-    !else
-        set-variable #l0 @#
-    !endif
-    set-variable &ind &spr ".crosswd.crossref%d-%d" .word .letter #l0
-    set-variable #l4 &add &add 229 &mul .word 256 &mul .letter 2
-    osd .osd.crosswdc #l4 "MdimxRHfh" .scheme.osd-entry #l0 .osd.crosswdr &spr "crosswd-setup-crossref %d %d" .word .letter
+  !if &equ @# -1
+    set-variable #l0 " "
+  !else
+    set-variable #l0 @#
+  !endif
+  set-variable &ind &spr ".crosswd.crossref%d-%d" .word .letter #l0
+  set-variable #l4 &add &add 229 &mul .word 256 &mul .letter 2
+  osd .osd.crosswdc #l4 "MdimxRHfh" .scheme.osd-entry #l0 .osd.crosswdr &spr "crosswd-setup-crossref %d %d" .word .letter
 !emacro
 
 0 define-macro crosswd-setup-crossref
-    set-variable .crosswd-set-crossref.word   @1
-    set-variable .crosswd-set-crossref.letter @2
+  set-variable .crosswd-set-crossref.word   @1
+  set-variable .crosswd-set-crossref.letter @2
 !emacro
 
 0 define-macro crosswd-set-anagram
-    set-variable #l0 &cat ".crosswd.anagram" &sub &abs @# 1
-    !if &les @# 0
-        set-variable &ind #l0 &sup @ml25 "" &ind #l0
-    !else
-        set-variable $result &ind #l0
-    !endif
+  set-variable #l0 &cat ".crosswd.anagram" &sub &abs @# 1
+  !if &les @# 0
+    set-variable &ind #l0 &sup @ml25 "" &ind #l0
+  !else
+    set-variable $result &ind #l0
+  !endif
 !emacro
 
 0 define-macro crosswd-set-noword
-    !if &les @# 0
-        set-variable .crosswd.noword @ml25 "" .crosswd.noword
-        -1 osd .osd.crosswdc
-        osd .osd.crosswdc 0 "s" 50 30 0 -1
-        !if &les .crosswd.noword 1
-            set-variable .crosswd.noword ""
-            osd .osd.crosswdc 1 ""
-        !else
-            set-variable #l0 0
-            set-variable #l1 100
-            !while &les #l0 .crosswd.noword
-                set-variable &ind &cat ".crosswd.anagram" #l0 ""
-                set-variable &ind &cat ".crosswd.noletter" #l0 ""
-                set-variable #l0 &add #l0 1
-                osd .osd.crosswdc #l1 "" &spr  "Word %d" #l0
-                osd .osd.crosswdc &add #l1 1   "hf" "  Numb. letters "
-                osd .osd.crosswdc &add #l1 2   "ExHf" .scheme.osd-entry "     " #l0 crosswd-set-noletter
-                osd .osd.crosswdc &add #l1 3   "hf" "  Known letters "
-                osd .osd.crosswdc &add #l1 127 ""
-                osd .osd.crosswdc &add #l1 128 "hf" "  Cross-Refer.  "
-                osd .osd.crosswdc &add #l1 252  ""
-                osd .osd.crosswdc &add #l1 253 "hf" "  Anagram       "
-                osd .osd.crosswdc &add #l1 254 "ExHRf" .scheme.osd-entry "                         " #l0 crosswd-set-anagram
-                osd .osd.crosswdc &add #l1 255 ""
-                set-variable  #l1 &add #l1 256
-            !done
-        !endif
+  !if &les @# 0
+    set-variable .crosswd.noword @ml25 "" .crosswd.noword
+    -1 osd .osd.crosswdc
+    osd .osd.crosswdc 0 "s" 50 30 0 -1
+    !if &les .crosswd.noword 1
+      set-variable .crosswd.noword ""
+      osd .osd.crosswdc 1 ""
     !else
-        set-variable $result .crosswd.noword
+      set-variable #l0 0
+      set-variable #l1 100
+      !while &les #l0 .crosswd.noword
+        set-variable &ind &cat ".crosswd.anagram" #l0 ""
+        set-variable &ind &cat ".crosswd.noletter" #l0 ""
+        set-variable #l0 &add #l0 1
+        osd .osd.crosswdc #l1 "" &spr  "Word %d" #l0
+        osd .osd.crosswdc &add #l1 1   "hf" "  Numb. letters "
+        osd .osd.crosswdc &add #l1 2   "ExHf" .scheme.osd-entry "     " #l0 crosswd-set-noletter
+        osd .osd.crosswdc &add #l1 3   "hf" "  Known letters "
+        osd .osd.crosswdc &add #l1 127 ""
+        osd .osd.crosswdc &add #l1 128 "hf" "  Cross-Refer.  "
+        osd .osd.crosswdc &add #l1 252  ""
+        osd .osd.crosswdc &add #l1 253 "hf" "  Anagram       "
+        osd .osd.crosswdc &add #l1 254 "ExHRf" .scheme.osd-entry "                         " #l0 crosswd-set-anagram
+        osd .osd.crosswdc &add #l1 255 ""
+        set-variable  #l1 &add #l1 256
+      !done
     !endif
+  !else
+    set-variable $result .crosswd.noword
+  !endif
 !emacro
 
 osd .osd.crosswdl 0  "b"
@@ -441,7 +441,7 @@ osd .osd.crosswd 50  "IbHt" .scheme.osd-sbar 50 30 .osd.crosswdc
 osd .osd.crosswd 60  ""
 
 define-macro cross-word
-    .osd.crosswd osd
+  .osd.crosswd osd
 !emacro
 set-variable .crosswd.noword ""
 

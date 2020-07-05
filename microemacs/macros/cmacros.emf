@@ -7,168 +7,168 @@
 ; Authors:     Steven Phillips
 ;
 define-macro c-slashify
-    ; check we can edit the buffer first
-    1 buffer-mode "edit" @mna
+  ; check we can edit the buffer first
+  1 buffer-mode "edit" @mna
+  set-variable #l0 $window-line
+  exchange-point-and-mark
+  !if &gre $window-line #l0
     set-variable #l0 $window-line
     exchange-point-and-mark
-    !if &gre $window-line #l0
-        set-variable #l0 $window-line
-        exchange-point-and-mark
+  !endif
+  !while &not &equ $window-line #l0
+    end-of-line
+    !repeat
+      backward-char
+      !if &seq @wc "\\"
+        backward-char
+      !endif
+    !until &not &sin @wc " \t"
+    forward-char
+    !repeat
+      insert-string " "
+    !until &gre $window-acol 76
+    insert-string "\\"
+    !if &not &seq @wc "\n"
+      1 kill-line
     !endif
-    !while &not &equ $window-line #l0
-        end-of-line
-        !repeat
-            backward-char
-            !if &seq @wc "\\"
-                backward-char
-            !endif
-        !until &not &sin @wc " \t"
-        forward-char
-        !repeat
-            insert-string " "
-        !until &gre $window-acol 76
-        insert-string "\\"
-        !if &not &seq @wc "\n"
-            1 kill-line
-        !endif
-        forward-line
-    !done
-    beginning-of-line
+    forward-line
+  !done
+  beginning-of-line
 !emacro
 
 define-macro c-deslashify
-    ; check we can edit the buffer first
-    1 buffer-mode "edit" @mna
+  ; check we can edit the buffer first
+  1 buffer-mode "edit" @mna
+  set-variable #l0 $window-line
+  exchange-point-and-mark
+  !if &gre $window-line #l0
     set-variable #l0 $window-line
     exchange-point-and-mark
-    !if &gre $window-line #l0
-        set-variable #l0 $window-line
-        exchange-point-and-mark
+  !endif
+  !while &not &equ $window-line #l0
+    end-of-line
+    !repeat
+      backward-char
+      !if &seq @wc "\\"
+        backward-char
+      !endif
+    !until &not &sin @wc " \t"
+    forward-char
+    !if &not &seq @wc "\n"
+      1 kill-line
     !endif
-    !while &not &equ $window-line #l0
-        end-of-line
-        !repeat
-            backward-char
-            !if &seq @wc "\\"
-                backward-char
-            !endif
-        !until &not &sin @wc " \t"
-        forward-char
-        !if &not &seq @wc "\n"
-            1 kill-line
-        !endif
-        forward-line
-    !done
-    beginning-of-line
+    forward-line
+  !done
+  beginning-of-line
 !emacro
 
 define-macro c-hash-set-define
-    set-variable #l0 &cat "%cd" @ml "#define name"
-    set-variable #l1 @ml "#define value"
-    set-variable &ind #l0 #l1
+  set-variable #l0 &cat "%cd" @ml "#define name"
+  set-variable #l1 @ml "#define value"
+  set-variable &ind #l0 #l1
 !emacro
 
 define-macro c-hash-unset-define
-    set-variable #l0 &cat "%cd" @ml "#define name"
-    !force unset-variable &ind #l0
+  set-variable #l0 &cat "%cd" @ml "#define name"
+  !force unset-variable &ind #l0
 !emacro
 
 0 define-macro-file calc calc-buffer
 ; #l0 %cd-hide, #l1 %cd-depth, #l2 %cd-neg, #l3 %cd-def, #l4 %cd-varname, #l5 %cd-temp
 define-macro c-hash-eval
-    !if &bmod "narrow"
-        narrow-buffer
-    !endif
-    beginning-of-buffer
-    set-variable #l0 0
-    !repeat
-        !if #l0
-            set-variable $line-scheme .scheme.hide
-            !if &seq &lef @wl 3 "#if"
-                set-variable #l0 &add #l0 1
-            !elif &seq &lef @wl 6 "#endif"
-                set-variable #l0 &sub #l0 1
-            !elif &seq &lef @wl 5 "#else"
-                !if &equ #l0 1
-                    set-variable #l0 0
-                !endif
-            !endif
-            !if &and @? &not #l0
-                set-mark
-                set-variable $window-line #l1
-                0x34 narrow-buffer .scheme.hide &cat &lef @wl 60 " ..."
-                forward-line
-            !endif
-        !else
-            !if &seq &lef @wl 3 "#if"
-                set-variable $line-scheme .scheme.hide
-                beginning-of-line
-                set-variable #l0 &xre &xre @wl "/\\*\\([^*]\\|\\*[^//]\\)*\\(\\*/\\)?" "" "//.*" ""
-                set-variable #l0 &rep #l0 "#ifdef"  "\"ERROR\" != "
-                set-variable #l0 &rep #l0 "#ifndef" "\"ERROR\" == "
-                set-variable #l0 &rep #l0 "#if" ""
-                set-variable #l0 &rep #l0 "defined" "\"ERROR\" != "
-                set-variable #l0 &xrep #l0 "[ \t]\\([_A-Za-z]\\)" " %cd\\1"
-                !force 0 delete-buffer "*calc*"
-                find-buffer "*calc*"
-                insert-string #l0
-                2 calc-buffer
-                -1 find-buffer $buffer-bname
-                set-variable #l0 &cond .calc.result 0 1
-                set-variable #l1 $window-line
-            !elif &seq &lef @wl 5 "#else"
-                set-variable $line-scheme .scheme.hide
-                set-variable #l0 1
-                set-variable #l1 $window-line
-            !elif &seq &lef @wl 6 "#endif"
-                set-variable $line-scheme .scheme.hide
-            !elif &seq &lef @wl 7 "#define"
-                set-variable $line-scheme -1
-                set-variable #l5 &rig @wl 7
-                !while &sin &lef #l5 1 " \t"
-                    set-variable #l5 &rig #l5 1
-                !done
-                set-variable #l6 &len #l5
-                !if &sin " "  #l5
-                    set-variable #l6 &sub &sin " " #l5 1
-                !endif
-                set-variable #l7 &sin "\t" #l5
-                !if &and #l7 &not &gre #l7 #l6
-                    set-variable #l6 &sub #l7 1
-                !endif
-                set-variable #l4 &cat "%cd" &lef #l5 #l6
-                set-variable #l5 &rig #l5 #l6
-                !while &and &not &seq &lef #l5 1 "" &sin &lef #l5 1 " \t"
-                    set-variable #l5 &rig #l5 1
-                !done
-                !if &sin " " #l5
-                    set-variable #l5 &lef #l5 &sub &sin " " #l5 1
-                !endif
-                !if &sin "\t" #l5
-                    set-variable #l5 &lef #l5 &sub &sin "\t" #l5 1
-                !endif
-                set-variable &ind #l4 #l5
-            !elif &xseq @wl "#undef[ \t]+\\(\\w+\\)"
-                !force unset-variable &cat "%cd" @s1
-            !else
-                set-variable $line-scheme -1
-            !endif
+  !if &bmod "narrow"
+    narrow-buffer
+  !endif
+  beginning-of-buffer
+  set-variable #l0 0
+  !repeat
+    !if #l0
+      set-variable $line-scheme .scheme.hide
+      !if &seq &lef @wl 3 "#if"
+        set-variable #l0 &add #l0 1
+      !elif &seq &lef @wl 6 "#endif"
+        set-variable #l0 &sub #l0 1
+      !elif &seq &lef @wl 5 "#else"
+        !if &equ #l0 1
+          set-variable #l0 0
         !endif
-        !force forward-line
-    !until &not $status
-    beginning-of-buffer
+      !endif
+      !if &and @? &not #l0
+        set-mark
+        set-variable $window-line #l1
+        0x34 narrow-buffer .scheme.hide &cat &lef @wl 60 " ..."
+        forward-line
+      !endif
+    !else
+      !if &seq &lef @wl 3 "#if"
+        set-variable $line-scheme .scheme.hide
+        beginning-of-line
+        set-variable #l0 &xre &xre @wl "/\\*\\([^*]\\|\\*[^//]\\)*\\(\\*/\\)?" "" "//.*" ""
+        set-variable #l0 &rep #l0 "#ifdef"  "\"ERROR\" != "
+        set-variable #l0 &rep #l0 "#ifndef" "\"ERROR\" == "
+        set-variable #l0 &rep #l0 "#if" ""
+        set-variable #l0 &rep #l0 "defined" "\"ERROR\" != "
+        set-variable #l0 &xrep #l0 "[ \t]\\([_A-Za-z]\\)" " %cd\\1"
+        !force 0 delete-buffer "*calc*"
+        find-buffer "*calc*"
+        insert-string #l0
+        2 calc-buffer
+        -1 find-buffer $buffer-bname
+        set-variable #l0 &cond .calc.result 0 1
+        set-variable #l1 $window-line
+      !elif &seq &lef @wl 5 "#else"
+        set-variable $line-scheme .scheme.hide
+        set-variable #l0 1
+        set-variable #l1 $window-line
+      !elif &seq &lef @wl 6 "#endif"
+        set-variable $line-scheme .scheme.hide
+      !elif &seq &lef @wl 7 "#define"
+        set-variable $line-scheme -1
+        set-variable #l5 &rig @wl 7
+        !while &sin &lef #l5 1 " \t"
+          set-variable #l5 &rig #l5 1
+        !done
+        set-variable #l6 &len #l5
+        !if &sin " "  #l5
+          set-variable #l6 &sub &sin " " #l5 1
+        !endif
+        set-variable #l7 &sin "\t" #l5
+        !if &and #l7 &not &gre #l7 #l6
+          set-variable #l6 &sub #l7 1
+        !endif
+        set-variable #l4 &cat "%cd" &lef #l5 #l6
+        set-variable #l5 &rig #l5 #l6
+        !while &and &not &seq &lef #l5 1 "" &sin &lef #l5 1 " \t"
+          set-variable #l5 &rig #l5 1
+        !done
+        !if &sin " " #l5
+          set-variable #l5 &lef #l5 &sub &sin " " #l5 1
+        !endif
+        !if &sin "\t" #l5
+          set-variable #l5 &lef #l5 &sub &sin "\t" #l5 1
+        !endif
+        set-variable &ind #l4 #l5
+      !elif &xseq @wl "#undef[ \t]+\\(\\w+\\)"
+        !force unset-variable &cat "%cd" @s1
+      !else
+        set-variable $line-scheme -1
+      !endif
+    !endif
+    !force forward-line
+  !until &not $status
+  beginning-of-buffer
 !emacro
 
 define-macro c-hash-del
-    !if &bmod "narrow"
-        narrow-buffer
-    !endif
-    beginning-of-buffer
-    !repeat
-        set-variable $line-scheme -1
-        !force forward-line
-    !until &not $status
-    beginning-of-buffer
+  !if &bmod "narrow"
+    narrow-buffer
+  !endif
+  beginning-of-buffer
+  !repeat
+    set-variable $line-scheme -1
+    !force forward-line
+  !until &not $status
+  beginning-of-buffer
 !emacro
 
 

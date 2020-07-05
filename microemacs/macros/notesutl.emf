@@ -10,126 +10,126 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro notes-import-skwyrul
-    ; must not be run from within notes
-    !if &equ $frame-id .notes.frame-id
-        notes-close
-    !endif
-    set-variable #l0 @ml01 "Skwyrul index file (skwyrul_l.htm)"
-    !force 0 delete-buffer "*notes-imp*"
-    find-buffer "*notes-imp*"
-    insert-file #l0
-    !if &equ $window-line 1
-        ml-write "[Error: failed to load index file]"
-        !abort
-    !endif
-    beginning-of-buffer
-    set-mark
-    search-buffer "ME" "&nbsp"
-    beginning-of-line
-    -1 kill-region
-    end-of-buffer
-    !force search-buffer "MEb" "!HiddenSubs!"
-    set-variable #l7 $status
-    !if #l7
-        2000 ml-write "[Warning: removing HiddenSubs notes]"
-    !else
-        search-buffer "MEb" "&nbsp"
-        forward-line
-    !endif
-    beginning-of-line
-    set-mark
-    end-of-buffer
-    -1 kill-region
-    beginning-of-buffer
-    !if &not &xseq @wl "&nbsp&nbsp&nbsp<a href=\"skwyrul_r.htm#[^\n\"]+\" TARGET=\"SkwyNote\"><B>\\(.*\\)</B></a>"
-        ml-write "[Error: strange first note line]"
-        !abort
-    !endif
-    set-variable #l1 @s1
-    set-variable #l1 &rep #l1 "\\" "\\\\"
-    set-variable #l1 &rep #l1 "\"" "\\\""
-    set-variable @wl &spr "\"000050\" = \"%s\"" #l1
+  ; must not be run from within notes
+  !if &equ $frame-id .notes.frame-id
+    notes-close
+  !endif
+  set-variable #l0 @ml01 "Skwyrul index file (skwyrul_l.htm)"
+  !force 0 delete-buffer "*notes-imp*"
+  find-buffer "*notes-imp*"
+  insert-file #l0
+  !if &equ $window-line 1
+    ml-write "[Error: failed to load index file]"
+    !abort
+  !endif
+  beginning-of-buffer
+  set-mark
+  search-buffer "ME" "&nbsp"
+  beginning-of-line
+  -1 kill-region
+  end-of-buffer
+  !force search-buffer "MEb" "!HiddenSubs!"
+  set-variable #l7 $status
+  !if #l7
+    2000 ml-write "[Warning: removing HiddenSubs notes]"
+  !else
+    search-buffer "MEb" "&nbsp"
     forward-line
-    set-variable #l1 0
-    set-variable #l8 "|"
-    set-variable #l9 0
-    !while &not &seq @wc ""
-        !if &not &xseq @wl "&nbsp&nbsp&nbsp\\([&nbsp]*\\)<a href=\"skwyrul_r.htm#\\([^\n\"]+\\)\" TARGET=\"SkwyNote\"><B>\\(.*\\)</B></a>"
-            ml-write "[Error: strange note index line]"
-            !abort
-        !endif
-        set-variable #l2 @s2
-        set-variable #l3 @s3
-        set-variable #l4 &div &len @s1 10
-        !if &not &equ #l4 #l1
-            backward-line
-            end-of-line
-            !if &gre #l4 #l1
-                insert-string " {"
-                set-variable #l8 &lset #l8 #l4 0
-            !else
-                !repeat
-                    insert-string &spr "\n%n}" &dec #l1 1 " "
-                !until &equ #l1 #l4
-            !endif
-            beginning-of-line
-            forward-line
-            set-variable #l1 #l4
-        !endif
-        set-variable #l3 &rep #l3 "\\" "\\\\"
-        set-variable #l3 &rep #l3 "\"" "\\\""
-        set-variable #l4 &lget #l8 #l1
-        set-variable #l8 &lset #l8 #l1 &add #l4 1
-        set-variable @wl &spr "%n\"%04x5%d\" = \"%s\"" #l1 " " #l4 #l2 #l3
-        !if &gre #l2 #l9
-            set-variable #l9 #l2
-        !endif
-        forward-line
-    !done
-    !repeat
-        insert-string &spr "%n}\n" &dec #l1 1 " "
-    !until &not #l1
-    insert-string &spr "\"id-next\" = \"%d\"\n" &add #l9 1
-    set-variable #l1 $window-line 
-    set-variable #l0 @ml21 "Skwyrul data file (skwyrul_r.htm)" &rep #l0 "_l.htm" "_r.htm"
-    insert-file #l0
-    !if &equ $window-line #l1
-        ml-write "[Error: failed to load data file]"
-        !abort
+  !endif
+  beginning-of-line
+  set-mark
+  end-of-buffer
+  -1 kill-region
+  beginning-of-buffer
+  !if &not &xseq @wl "&nbsp&nbsp&nbsp<a href=\"skwyrul_r.htm#[^\n\"]+\" TARGET=\"SkwyNote\"><B>\\(.*\\)</B></a>"
+    ml-write "[Error: strange first note line]"
+    !abort
+  !endif
+  set-variable #l1 @s1
+  set-variable #l1 &rep #l1 "\\" "\\\\"
+  set-variable #l1 &rep #l1 "\"" "\\\""
+  set-variable @wl &spr "\"000050\" = \"%s\"" #l1
+  forward-line
+  set-variable #l1 0
+  set-variable #l8 "|"
+  set-variable #l9 0
+  !while &not &seq @wc ""
+    !if &not &xseq @wl "&nbsp&nbsp&nbsp\\([&nbsp]*\\)<a href=\"skwyrul_r.htm#\\([^\n\"]+\\)\" TARGET=\"SkwyNote\"><B>\\(.*\\)</B></a>"
+      ml-write "[Error: strange note index line]"
+      !abort
     !endif
-    !if #l7
-        search-buffer "meb" "^<A NAME=\"UNIQUEPLACEHOLER\"></a>$"
-        beginning-of-line
-        set-mark
-        end-of-buffer
-        -1 kill-region
+    set-variable #l2 @s2
+    set-variable #l3 @s3
+    set-variable #l4 &div &len @s1 10
+    !if &not &equ #l4 #l1
+      backward-line
+      end-of-line
+      !if &gre #l4 #l1
+        insert-string " {"
+        set-variable #l8 &lset #l8 #l4 0
+      !else
+        !repeat
+          insert-string &spr "\n%n}" &dec #l1 1 " "
+        !until &equ #l1 #l4
+      !endif
+      beginning-of-line
+      forward-line
+      set-variable #l1 #l4
     !endif
-    set-variable $window-line #l1
-    set-mark
-    search-buffer "me" "^<A NAME=\"[^\n\"]+\"></a>$"
-    beginning-of-line
+    set-variable #l3 &rep #l3 "\\" "\\\\"
+    set-variable #l3 &rep #l3 "\"" "\\\""
+    set-variable #l4 &lget #l8 #l1
+    set-variable #l8 &lset #l8 #l1 &add #l4 1
+    set-variable @wl &spr "%n\"%04x5%d\" = \"%s\"" #l1 " " #l4 #l2 #l3
+    !if &gre #l2 #l9
+      set-variable #l9 #l2
+    !endif
     forward-line
-    -1 kill-region
-    insert-string "\b\benf\b\bdivider\b\b0\n"
-    search-buffer "me" "^</PRE>$"
-    !repeat
-        beginning-of-line
-        set-mark
-        !force search-buffer "me" "^<A NAME=\"\\([^\n\"]+\\)\"></a>$"
-        !if $status
-            beginning-of-line
-            forward-line
-            -1 kill-region
-            insert-string &spr "\b\benf\b\bdivider\b\b%s\n" @s1
-            search-buffer "me" "^</PRE>$"
-        !endif
-    !until &not $status
+  !done
+  !repeat
+    insert-string &spr "%n}\n" &dec #l1 1 " "
+  !until &not #l1
+  insert-string &spr "\"id-next\" = \"%d\"\n" &add #l9 1
+  set-variable #l1 $window-line 
+  set-variable #l0 @ml21 "Skwyrul data file (skwyrul_r.htm)" &rep #l0 "_l.htm" "_r.htm"
+  insert-file #l0
+  !if &equ $window-line #l1
+    ml-write "[Error: failed to load data file]"
+    !abort
+  !endif
+  !if #l7
+    search-buffer "meb" "^<A NAME=\"UNIQUEPLACEHOLER\"></a>$"
     beginning-of-line
     set-mark
     end-of-buffer
     -1 kill-region
-    insert-string "\b\benf\b\bdivider\b\bEND"
-    beginning-of-buffer
-    insert-string "-!- enf -!-\n"
-    beginning-of-buffer
+  !endif
+  set-variable $window-line #l1
+  set-mark
+  search-buffer "me" "^<A NAME=\"[^\n\"]+\"></a>$"
+  beginning-of-line
+  forward-line
+  -1 kill-region
+  insert-string "\b\benf\b\bdivider\b\b0\n"
+  search-buffer "me" "^</PRE>$"
+  !repeat
+    beginning-of-line
+    set-mark
+    !force search-buffer "me" "^<A NAME=\"\\([^\n\"]+\\)\"></a>$"
+    !if $status
+      beginning-of-line
+      forward-line
+      -1 kill-region
+      insert-string &spr "\b\benf\b\bdivider\b\b%s\n" @s1
+      search-buffer "me" "^</PRE>$"
+    !endif
+  !until &not $status
+  beginning-of-line
+  set-mark
+  end-of-buffer
+  -1 kill-region
+  insert-string "\b\benf\b\bdivider\b\bEND"
+  beginning-of-buffer
+  insert-string "-!- enf -!-\n"
+  beginning-of-buffer
 !emacro
