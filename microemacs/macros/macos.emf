@@ -1,0 +1,18 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2009 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Synopsis:    Setup file for OSF1 boxes
+; Authors:     Steven Phillips
+;
+; Load up common unix stuff
+!force exec-file "unixterm"
+;
+; Compile stuff
+0 add-next-line "*compile*"
+add-next-line "*compile*" "%f:%l:"
+;
+; Diff stuff; FreeBSD uses GNU diff so set this up for all
+; platforms. Nobody is going to change this are they ??
+set-variable %diff-com "diff --context --minimal --ignore-space-change --recursive"
