@@ -426,7 +426,7 @@ define-macro fhook-ipipe
   set-variable $buffer-mask "luh1"
   set-variable $buffer-fhook "fhook-ipipe"
   buffer-bind-create "bo" "C-c C-k" ""  ipipe-kill
-  buffer-bind-create "bo" "C-c C-c" "2" ipipe-kill
+  buffer-bind-create "bo" "C-c C-c" "0" ipipe-kill
   buffer-bind-create "bo" "C-return" "" ipipe-rerun
   buffer-bind-create "bo" "C-j" ""      ipipe-rerun
   !if &seq $buffer-bname "*shell*"
