@@ -453,23 +453,22 @@ meUndo(int f, int n)
             {
                 if(meUndoIsLineSort(nn))
                 {
-                    fprintf(undoFp,"Undo 0x%02x %p %ld %ld:",nn->type,nn->next,
-                            nn->udata.lineSort[0],nn->count) ;
+                    fprintf(undoFp,"Undo 0x%02x %p %d %d:",nn->type,nn->next,nn->udata.lineSort[0],nn->count) ;
                     for(n=0 ; n<nn->count ; n++)
-                        fprintf(undoFp," %ld",nn->udata.lineSort[n+1]) ;
+                        fprintf(undoFp," %d",nn->udata.lineSort[n+1]) ;
                     fprintf(undoFp,"\n") ;
                 }
 #if MEOPT_NARROW
                 else if(meUndoIsNarrow(nn))
                 {
                     meUndoNarrow *nun = (meUndoNarrow *) nn ;
-                    fprintf(undoFp,"Undo 0x%02x %p Nrrw %x %ld %ld %d [%s]\n",nun->type,nun->next,
+                    fprintf(undoFp,"Undo 0x%02x %p Nrrw %x %d %d %d [%s]\n",nun->type,nun->next,
                             nun->name,nun->count,nun->udata.dotp,nun->markupCmd,nun->str) ;
                 }
 #endif
                 else
                 {
-                    fprintf(undoFp,"Undo 0x%02x %p %ld (%ld,%d) [%s]\n",nn->type,nn->next,nn->count,
+                    fprintf(undoFp,"Undo 0x%02x %p %d (%d,%d) [%s]\n",nn->type,nn->next,nn->count,
                             nn->udata.dotp,nn->doto,nn->str) ;
                     if(meUndoIsReplace(nn))
                     {
@@ -535,7 +534,7 @@ meUndo(int f, int n)
                     for(count=0 ; count<cun->count ; eln=meLineGetNext(eln),count++)
                     {
                         list[*lineSort++] = eln ;
-                        eln->prev = (meLine *) count ;
+                        eln->prev = (meLine *) mePtrFromInt(count) ;
                     }
                     for(count=0 ; count<cun->count ; ln=meLineGetNext(ln),count++)
                     {
@@ -614,7 +613,7 @@ meUndo(int f, int n)
             if(cun->type & meUNDO_INSERT)
             {
                 meWindowBackwardChar(frameCur->windowCur,count) ;
-                if((count == 1))
+                if(count == 1)
                     meUndoAddDelChar() ;
                 else
                     meUndoAddDelChars(count) ;

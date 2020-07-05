@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20100830.1545>
+# Last Modified: <20190808.1443>
 #
 ##############################################################################
 
@@ -40,7 +40,8 @@ PLTSRC	=	unixterm.c	dosterm.c	winterm.c	winprint.c	\
 
 PLTHDR	=	winterm.h	wintermr.h
 
-ICOSRC	=	icon_ne.ico	icon_me.ico	me32.bmp	ne32.bmp
+ICOSRC	=	icon_ne.ico	icon_ne_nc.ico	icon_me.ico	icon_me_nc.ico	\
+		me32.bmp	ne32.bmp
 
 MAKEXE	=	build
 MAKSRC	=	build.bat	\

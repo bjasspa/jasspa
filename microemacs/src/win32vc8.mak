@@ -30,8 +30,8 @@
 #
 #	Run "nmake -f win32vc8.mak"            for optimised build produces ./.win32vc8-release-mew/mew32.exe
 #	Run "nmake -f win32vc8.mak BCFG=debug" for debug build produces     ./.win32vc8-debug-mew/mew32.exe
-#	Run "nmake -f win32vc8.mak BENV=c"     for console support          ./.win32vc8-release-mec/mec32.exe
-#	Run "nmake -f win32vc8.mak BTYP=ne"    for ne build produces        ./.win32vc8-release-new/new32.exe
+#	Run "nmake -f win32vc8.mak BTYP=c"     for console support          ./.win32vc8-release-mec/mec32.exe
+#	Run "nmake -f win32vc8.mak BCOR=ne"    for ne build produces        ./.win32vc8-release-new/new32.exe
 #
 #	Run "nmake -f win32vc8.mak clean"      to clean source directory
 #	Run "nmake -f win32vc8.mak spotless"   to clean source directory even more
@@ -47,7 +47,7 @@ A        = .lib
 EXE      = .exe
 
 CC       = cl.exe /nologo
-RC       = rc.exe /nologo
+RC       = rc.exe
 MT       = mt.exe -nologo
 MK       = nmake.exe /NOLOGO
 LD       = link /NOLOGO
@@ -60,10 +60,10 @@ OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..\3rdparty
 
-CCDEFS   = /DWIN32 /D_WIN32 /D_WIN32_WINNT=0x500 /W3 /EHsc /Zi /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /I$(TRDPARTY)\tfs /I$(TRDPARTY)\zlib
-CCFLAGSR = /MD /O2 /GL /DNDEBUG=1
+CCDEFS   = /DWIN32 /D_WIN32 /D_WIN32_WINNT=0x500 /W3 /Zi /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /I$(TRDPARTY)\tfs /I$(TRDPARTY)\zlib
+CCFLAGSR = /MD /O2 /GL /GS- /DNDEBUG=1 /D_HAS_ITERATOR_DEBUGGING=0 /D_SECURE_SCL=0
 CCFLAGSD = /MDd /Od /RTC1 /D_DEBUG
-LDDEFS   = /INCREMENTAL:NO /MACHINE:X86 /MANIFEST
+LDDEFS   = /INCREMENTAL:NO /MANIFEST
 LDFLAGSR = /OPT:REF /OPT:ICF /LTCG
 LDFLAGSD = /DEBUG
 LDLIBS   = wininet.lib shell32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib
@@ -124,7 +124,7 @@ PRGOBJS  = $(OUTDIR)\abbrev.o $(OUTDIR)\basic.o $(OUTDIR)\bind.o $(OUTDIR)\buffe
 	$(CC) $(CCDEFS) $(BCOR_CDF) $(BTYP_CDF) $(CCFLAGS) /Fd"$(OUTDIR)\vc80.pdb" /c $< /Fo"$@"
 
 .rc{$(OUTDIR)}.res:
-	$(RC) $(RCFLAGS) $(BENV_CDF) /fo"$@" $<
+	$(RC) $(RCFLAGS) $(BTYP_CDF) /fo"$@" $<
 
 all: $(PRGLIBS) $(OUTDIR)\$(PRGFILE)
 
@@ -138,13 +138,13 @@ $(PRGOBJS): $(PRGHDRS)
 $(OUTDIR):
 	if not exist $(OUTDIR)\ mkdir $(OUTDIR)
 
-$(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib:
-	cd $(TRDPARTY)\tfs
+$(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib:
+	cd $(TRDPARTY)\zlib
 	$(MK) -f $(BUILDID).mak BCFG=$(BCFG)
 	cd $(MAKEDIR)
 
-$(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib:
-	cd $(TRDPARTY)\zlib
+$(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib:
+	cd $(TRDPARTY)\tfs
 	$(MK) -f $(BUILDID).mak BCFG=$(BCFG)
 	cd $(MAKEDIR)
 

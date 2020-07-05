@@ -260,12 +260,16 @@ int meStdin ;
 #define meATOM_COPY_TEXT        3
 #define meATOM_INCR             4
 #define meATOM_MULTIPLE         5
-#define meATOM_TARGETS          6
-#define meATOM_STRING           7
+#define meATOM_CLIPBOARD        6
+#define meATOM_UTF8_STRING      7
+/* XA_STRING must be next to TARGETS */
+#define meATOM_TARGETS          8
+#define meATOM_STRING           9
 static int TTdefaultPosX, TTdefaultPosY ;
-static Atom meAtoms[8]={0};
-char *meName=ME_FULLNAME ;
-char *meIconName=ME_FULLNAME ;
+static Atom meAtoms[meATOM_TARGETS+1]={0};
+/* could define a static Atom to be the desired clipboard property if CLIPBOARD was ever preferred over PRIMARY */
+char *meName=ME_FULLNAME;
+char *meIconName=ME_FULLNAME;
 
 /* Forward reference the icon assignment */
 static void meSetIconState (Display *display, Window window);
@@ -1199,6 +1203,15 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
             XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, ii, x + mecm.fwidth - 1, ii);
         break;
         
+    case 0x1c:          /* Invalid char - can be generated during utf8 to latin1 X11 clipboard get <+> */
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y + mecm.fhdepth, x + mecm.fhwidth, y);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y + mecm.fhdepth, x + mecm.fhwidth, y + mecm.fdepth - 1);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y + mecm.fhdepth, x + mecm.fwidth -1, y + mecm.fhdepth);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fwidth -1, y + mecm.fhdepth, x + mecm.fhwidth, y);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fwidth -1, y + mecm.fhdepth, x + mecm.fhwidth, y + mecm.fdepth - 1);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fhwidth, y, x + mecm.fhwidth, y + mecm.fdepth - 1);
+        break;
+        
     case 0x1d:          /* Scroll box - horizontal */
         for (ii = (x+1) & ~1; ii < x+mecm.fwidth; ii += 2)
             XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), ii, y, ii, y + mecm.fdepth - 1);
@@ -1694,11 +1707,10 @@ meXEventHandler(void)
     case ButtonPress:
         if((meMouseCfg & meMOUSE_ENBLE) &&
            ((frame = meXEventGetFrame(&event)) != NULL))
-            
         {
             unsigned int   bb ;
             meUShort ss ;
-            if(!frame->flags & meFRAME_NOT_FOCUS)
+            if(frame->flags & meFRAME_NOT_FOCUS)
             {
                 /* if we haven't currently got the input focus, grab it now */
                 XSetInputFocus(mecm.xdisplay,meFrameGetXWindow(frame),RevertToPointerRoot,CurrentTime) ;
@@ -2071,7 +2083,7 @@ special_bound:
             reply.property = None ;
             reply.time = event.xselectionrequest.time ;
             
-            if(event.xselectionrequest.selection == XA_PRIMARY)
+            if((event.xselectionrequest.selection == XA_PRIMARY) || (event.xselectionrequest.selection == meAtoms[meATOM_CLIPBOARD]))
             {
                 if((event.xselectionrequest.target == XA_STRING) && (klhead != NULL))
                 {
@@ -2134,11 +2146,13 @@ special_bound:
             Atom type ;
             int  fmt ;
             
-            if((event.xselection.selection == XA_PRIMARY) &&
+            /* printf("SelectionNotify (%ld %ld) (%ld %ld)\n",event.xselection.selection,XA_PRIMARY,event.xselection.property,meAtoms[meATOM_COPY_TEXT]);*/
+            if(((event.xselection.selection == XA_PRIMARY) || (event.xselection.selection == meAtoms[meATOM_CLIPBOARD])) &&
                (event.xselection.property == meAtoms[meATOM_COPY_TEXT]) &&
                (XGetWindowProperty(mecm.xdisplay,meFrameGetXWindow(frame),meAtoms[meATOM_COPY_TEXT],0,0x1fffffffL,False,AnyPropertyType,
-                                   &type, &fmt, &nitems, &left, &buff) == Success))
+                                   &type,&fmt,&nitems,&left,&buff) == Success))
             {
+                /* printf("SelectionNotify2 (%ld %ld %ld %ld) (%d %ld) %ld [%s]\n",type,meAtoms[meATOM_MULTIPLE],meAtoms[meATOM_INCR],XA_STRING,fmt,nitems,left,(type == XA_STRING) ? buff:"<na>");*/
                 if(type == meAtoms[meATOM_MULTIPLE])
 #ifndef NDEBUG
                     printf("Currently don't support multiple\n")
@@ -2152,7 +2166,7 @@ special_bound:
                     killSave();
                     if((dd = killAddNode(nitems)) != NULL)
                     {
-                        dd[0] = '\0' ;
+                        dd[0] = '\0';
                         thisflag = meCFKILL ;
                         meClipSize = nitems ;
                         meClipBuff = dd ;
@@ -2163,8 +2177,41 @@ special_bound:
                         break ;
                     }
                 }
-                else if((type == XA_STRING) && (fmt == 8) && (nitems > 0))
+                else if((type == XA_STRING) && (fmt > 0) && (nitems == 0) && (left == 0) && (meAtoms[meATOM_UTF8_STRING] != None))
                 {
+                    /* Xquartz returns this when a utf8 clipboard can't be converted to a plain string, request as UTF8 string and break without setting CLIP_RECEIVED */ 
+                    XFree(buff) ;
+                    XConvertSelection(mecm.xdisplay,XA_PRIMARY,meAtoms[meATOM_UTF8_STRING],meAtoms[meATOM_COPY_TEXT],meFrameGetXWindow(frameCur),CurrentTime);
+                    break;
+                }
+                else if(((type == XA_STRING) || (type == meAtoms[meATOM_UTF8_STRING])) && (fmt == 8) && (nitems > 0))
+                {
+                    if(type == meAtoms[meATOM_UTF8_STRING])
+                    {
+                        int ss;
+                        meUByte cc, c2;
+                        ss = nitems = 0;
+                        while((cc=buff[ss++]) != '\0')
+                        {
+                            if(cc < 0xc0)
+                                buff[nitems++] = cc;
+                            else
+                            {
+                                if((c2 = buff[ss++]) == '\0')
+                                    break;
+                                if(cc < 0xc4)
+                                    buff[nitems++] = ((cc & 0x03) << 6) | (c2 & 0x3f);
+                                else
+                                {
+                                    buff[nitems++] = 0x1c;
+                                    if(((cc >= 0xe0) && (buff[ss++] == '\0')) || ((cc >= 0xf0) && (buff[ss++] == '\0')) ||
+                                       ((cc >= 0xf8) && (buff[ss++] == '\0')) || ((cc >= 0xfc) && (buff[ss++] == '\0')))
+                                        break;
+                                }
+                            }
+                        }
+                        buff[nitems] = '\0';
+                    }
                     if((klhead == NULL) || (klhead->kill == NULL) ||
                        (klhead->kill->next != NULL) ||
                        meStrncmp(klhead->kill->data,buff,nitems) ||
@@ -2245,11 +2292,12 @@ special_bound:
                      * if it doesn't exit then carry on as normal
                      * Must ensure we ask the user, not a macro
                      */
-                    int savcle ;
-                    savcle = clexec ;
-                    clexec = meFALSE ;
-                    exitEmacs(1,3) ;
-                    clexec = savcle ;
+                    int savcle;
+                    savcle = clexec;
+                    clexec = meFALSE;
+                    if(!exitEmacs(1,3))
+                        update(meTRUE);
+                    clexec = savcle;
                 }
             }
             else if(((Atom) event.xclient.data.l[0]) == meAtoms[meATOM_WM_SAVE_YOURSELF])
@@ -3240,12 +3288,14 @@ XTERMstart(void)
     meUInt       ww, hh  ;
     char        *ss ;
     
+#ifdef _ME_CONSOLE
     /* Copy the Terminal I/O. We may spawn a terminal in the window later and
      * the termio structure must be initialised. The structure may be
      * uninitialised if we have been launched off the desktop via an open
      * action. */
 #ifdef _USG
     TCAPgetattr (&otermio, 1);
+#endif
 #endif
     
     /* Configure X-Windows */
@@ -3326,17 +3376,23 @@ XTERMstart(void)
     /* Set up the  protocol  defaults  required. We must do this before we map
      * the window. */
     {
-        static char* meAtomNames[7] = {
+        static char* meAtomNames[meATOM_TARGETS+1] = {
             "WM_DELETE_WINDOW",
             "WM_SAVE_YOURSELF",
             "WM_PROTOCOLS",
+#ifdef __OLD_X
             "__COPY_TEXT",
+#else
+            "XSEL_DATA",
+#endif
             "INCR",
             "MULTIPLE",
-            "TARGETS"
+            "CLIPBOARD",
+            "UTF8_STRING",
+            "TARGETS",
         } ;
         int ii ;
-        for(ii=0 ; ii<7 ; ii++)
+        for(ii=0 ; ii<(meATOM_TARGETS+1) ; ii++)
             meAtoms[ii] = XInternAtom(mecm.xdisplay,meAtomNames[ii], meFALSE);
         meAtoms[ii] = XA_STRING ;
     }
@@ -3646,11 +3702,11 @@ XTERMsetBgcol(void)
 void
 meFrameSetWindowSize(meFrame *frame)
 {
-    if(
 #ifdef _ME_CONSOLE
-       !(meSystemCfg & meSYSTEM_CONSOLE) &&
+    if(!(meSystemCfg & meSYSTEM_CONSOLE) && (disableResize == 0))
+#else
+    if(disableResize == 0)
 #endif /* _ME_CONSOLE */
-       (disableResize == 0))
     {
         sizeHints.height = mecm.fdepth*(frame->depth+1) ;
         sizeHints.width  = mecm.fwidth*frame->width ;
@@ -3815,11 +3871,10 @@ TTgetClipboard(void)
          * get the copy text. Take ownership at the end */
         clipState &= ~CLIP_RECEIVED ;
         clipState |= CLIP_RECEIVING ;
-        /* Request for the current Primary string owner to send a
+        /* Request for the current Primary/Clipboard string owner to send a
          * SelectionNotify event to us giving the current string
          */
-        XConvertSelection(mecm.xdisplay,XA_PRIMARY,XA_STRING,meAtoms[meATOM_COPY_TEXT],
-                          meFrameGetXWindow(frameCur),CurrentTime) ;
+        XConvertSelection(mecm.xdisplay,XA_PRIMARY,XA_STRING,meAtoms[meATOM_COPY_TEXT],meFrameGetXWindow(frameCur),CurrentTime) ;
         /* Must do a flush to ensure the request has gone */
         XFlush(mecm.xdisplay) ;
         /* Wait for the returned value, alarmState bit will be set */
@@ -4190,7 +4245,7 @@ TTopenClientServer (void)
         ipipe->noCols = 0 ;
         ipipe->curRow = 0 ;
         ipipe->curRow = bp->dotLineNo ;
-        /* get a popup window for the command output */
+        /* set process terminal size */
         ipipeSetSize(frameCur->windowCur,bp) ;
     }
 }

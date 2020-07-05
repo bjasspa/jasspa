@@ -1631,7 +1631,7 @@ printRegion (int f, int n)
 
     if ((startLineNo=frameCur->windowCur->dotLineNo-frameCur->windowCur->markLineNo) == 0)
         return meTRUE;
-    numLines = abs (startLineNo);
+    numLines = abs((int) startLineNo);
     if (startLineNo < 0)
     {
         startLineNo = frameCur->windowCur->dotLineNo;

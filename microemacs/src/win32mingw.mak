@@ -30,8 +30,8 @@
 #
 #	Run "make -f win32mingw.gmk"            for optimised build produces ./.win32mingw-release-mew/mew32.exe
 #	Run "make -f win32mingw.gmk BCFG=debug" for debug build produces     ./.win32mingw-debug-mew/mew32.exe
-#	Run "make -f win32mingw.gmk BENV=c"     for console support          ./.win32mingw-release-mec/mec32.exe
-#	Run "make -f win32mingw.gmk BTYP=ne"    for ne build produces        ./.win32mingw-release-new/new32.exe
+#	Run "make -f win32mingw.gmk BTYP=c"     for console support          ./.win32mingw-release-mec/mec32.exe
+#	Run "make -f win32mingw.gmk BCOR=ne"    for ne build produces        ./.win32mingw-release-new/new32.exe
 #
 #	Run "make -f win32mingw.gmk clean"      to clean source directory
 #	Run "make -f win32mingw.gmk spotless"   to clean source directory even more
@@ -110,7 +110,7 @@ PRGNAME  = $(BCOR)$(BTYP)32
 PRGFILE  = $(PRGNAME)$(EXE)
 PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
 	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def \
-	   $(BUILDID).gmk
+	   $(BUILDID).mak
 PRGOBJS  = $(OUTDIR)/abbrev.o $(OUTDIR)/basic.o $(OUTDIR)/bind.o $(OUTDIR)/buffer.o $(OUTDIR)/crypt.o $(OUTDIR)/dirlist.o $(OUTDIR)/display.o \
 	   $(OUTDIR)/eval.o $(OUTDIR)/exec.o $(OUTDIR)/file.o $(OUTDIR)/fileio.o $(OUTDIR)/frame.o $(OUTDIR)/hilight.o $(OUTDIR)/history.o $(OUTDIR)/input.o \
 	   $(OUTDIR)/isearch.o $(OUTDIR)/key.o $(OUTDIR)/line.o $(OUTDIR)/macro.o $(OUTDIR)/main.o $(OUTDIR)/narrow.o $(OUTDIR)/next.o $(OUTDIR)/osd.o \
@@ -139,19 +139,19 @@ $(PRGOBJS): $(PRGHDRS)
 $(OUTDIR):
 	[ -d $(OUTDIR) ] || mkdir $(OUTDIR)
 
-$(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A):
-	cd $(TRDPARTY)/tfs && $(MK) -f $(BUILDID).gmk BCFG=$(BCFG)
-
 $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A):
-	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).gmk BCFG=$(BCFG)
+	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
+
+$(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A):
+	cd $(TRDPARTY)/tfs && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
 
 clean:
 	$(RMDIR) $(OUTDIR)
-	cd $(TRDPARTY)/tfs && $(MK) -f $(BUILDID).gmk clean
-	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).gmk clean
+	cd $(TRDPARTY)/tfs && $(MK) -f $(BUILDID).mak clean
+	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak clean
 
 spotless: clean
 	$(RM) *~
 	$(RM) tags
-	cd $(TRDPARTY)/tfs && $(MK) -f $(BUILDID).gmk spotless
-	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).gmk spotless
+	cd $(TRDPARTY)/tfs && $(MK) -f $(BUILDID).mak spotless
+	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak spotless

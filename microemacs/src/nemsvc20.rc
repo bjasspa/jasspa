@@ -39,7 +39,7 @@
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON1               ICON    PRELOAD DISCARDABLE "icon_ne.ico"
+IDI_ICON1               ICON    PRELOAD DISCARDABLE "icon_ne_nc.ico"
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////

@@ -605,8 +605,8 @@ meFrameMakeCur(meFrame *frame, int quiet)
         sgarbf = meTRUE ;                      /* Garbage the screen */
         if(frameOld->mlStatus & (MLSTATUS_RESTORE|MLSTATUS_KEEP))
         {
-            meUByte mlStatus ;
-            meUByte *mlStr ;
+            meUByte mlStatus;
+            meUByte *mlStr;
             
             /* move the current mlstatus over to the new frame, this should
              * usually be zero but in some cases (e.g. notes) the swapping of
@@ -620,7 +620,7 @@ meFrameMakeCur(meFrame *frame, int quiet)
                 mlStatus = (frameOld->mlStatus & ~MLSTATUS_RESTORE) | MLSTATUS_KEEP ;
                 mlStr = frameOld->mlLineStore ;
             }
-            else if(frameOld->mlStatus & MLSTATUS_KEEP)
+            else
             {
                 frame->mlColumn = frameOld->mlColumn ;
                 mlStatus = frameOld->mlStatus ;
@@ -727,4 +727,3 @@ frameNext(int f, int n)
 }
 
 #endif
-

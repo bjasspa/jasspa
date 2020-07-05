@@ -84,12 +84,12 @@ meMode globMode = {
     meModeMask(MDAUTOSV) |
     meModeMask(MDBACKUP) |
 #endif
-    meModeMask(MDCR)     |
-#ifdef _WIN32
     meModeMask(MDLF)     |
+#ifdef _WIN32
+    meModeMask(MDCR)     |
 #endif /* _WIN32 */
 #ifdef _DOS
-    meModeMask(MDLF)     |
+    meModeMask(MDCR)     |
     meModeMask(MDCTRLZ)  |
 #endif /* _DOS */
     meModeMask(MDFENCE)  |

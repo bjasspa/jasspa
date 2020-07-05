@@ -27,46 +27,46 @@
  *     The routines in this file implement commands that work word or a
  *     paragraph at a time. There are all sorts of word mode commands.
  *     If I do any sentence mode commands, they are likely to be put in
- *     this file. 
+ *     this file.
  *
  * Notes:
- * 
+ *
  *     Jon: 99/07/09
  *
  *     I have just added the new Anchor routines in here to preserve the
  *     character position of point and mark on fill paragraph. This was a
  *     fairly quick modification that disturbed as little of the code as
  *     possible, thereby maintaining the integrity of the release.
- *    
+ *
  *     The anchor routines are written ready for export because I think that
  *     they might be useful, although they have not actually been exported yet
  *     because with misuse they will crash editor. So I'm in two minds about
  *     this.
- *    
+ *
  *     The fill paragraph is now in need of a severe overhaul to reduce the
  *     amount of work that it performs. It currently performs a destructive
  *     justification process which is deeply unpleasant. In addition it must
  *     scan through the source copying it multiple times - very un-nice.
- *    
+ *
  *     I have started to prototype a replacement which is not ready yet. This
  *     will overcome all of the above. In addition I want to add a new Flow
  *     mode, this will allow MicroEmacs to act more like a word processor and
  *     throw words during the editing process onto the next line, and then
  *     automatically re-format the remaining part of the paragraph. Obviously
  *     handling left/right/centre correctly.
- *    
+ *
  *     On top of all of that. I want to change the paragraph recognition
  *     markers to be a buffer dependent regexp, thereby allowing the different
  *     paragraph types to be recognised and handled correctly. And finally,
  *     allow for text leaders (i.e. typically programming language comment
  *     delimiters) and correctly handle text wrapping with leader insertion.
- *    
+ *
  *     One could argue that some of the above belongs in ifill-paragraph
  *     (macro wrapper around fill-paragraph). However for smatter flow control
  *     I do not think that this is the case and would like to pursue a generic
  *     method that handles a multitude of cases, given the minimal amount of
  *     setup information in the buffer
- *    
+ *
  *     All of the above is possible, it just takes a little time for some of
  *     these things to come together - a commodity I've not got much of at the
  *     moment.
@@ -96,7 +96,7 @@ backWord(int f, int n)
         while(inWord() != meFALSE)
             if(meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
                 /* We can't move back any more cos we're at the start,
-                 * BUT as we have moved and we are in the buffers first word, 
+                 * BUT as we have moved and we are in the buffers first word,
                  * we should succeed */
                 return meTRUE ;
     }
@@ -134,14 +134,14 @@ int
 upperWord(int f, int n)
 {
     register int    c;
-    
+
     if (n < 0)
         return (meFALSE);
     if((c=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return c ;
     while (n--)
     {
-        while (inWord() == meFALSE) 
+        while (inWord() == meFALSE)
         {
             if(meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
                 return (meFALSE);
@@ -174,14 +174,14 @@ int
 lowerWord(int f, int n)
 {
     register int    c;
-    
+
     if (n < 0)
         return (meFALSE);
     if((c=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return c ;
     while (n--)
     {
-        while (inWord() == meFALSE) 
+        while (inWord() == meFALSE)
         {
             if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
                 return (meFALSE);
@@ -215,7 +215,7 @@ int
 capWord(int f, int n)
 {
     register int    c;
-    
+
     if(n < 0)
         return (meFALSE);
     if((c=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
@@ -270,13 +270,13 @@ forwDelWord(int f, int n)
 {
     meLine  *dotp ;
     meInt    size, lineno ;
-    meUShort doto ;    
-    
+    meUShort doto ;
+
     if(n == 0)
         return meTRUE ;
     if(n < 0)
         return backDelWord(f,-n) ;
-    
+
     if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return meABORT ;
     dotp   = frameCur->windowCur->dotLine;
@@ -322,12 +322,12 @@ int
 backDelWord(int f, int n)
 {
     meInt size;
-    
+
     if(n == 0)
         return meTRUE ;
     if(n < 0)
         return forwDelWord(f,-n) ;
-    
+
     if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return meABORT ;
     if(meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
@@ -356,7 +356,7 @@ backDelWord(int f, int n)
             while(inWord() && (meWindowBackwardChar(frameCur->windowCur, 1) > 0))
                 size++ ;
         } while(--n) ;
-        
+
         if(n == 0)
         {
             if(inWord())
@@ -406,14 +406,14 @@ wrapWord(int f, int n)
 {
     register meUShort cnt, off ;		/* size of word wrapped to next line */
     register meUByte c, last=2 ;		/* charector temporary */
-    
+
     if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return meABORT ;
-    
+
     /* Make sure we are not in no fill mode */
     if (toLower(frameCur->bufferCur->fillmode) == 'n')
         return meTRUE;
-    
+
     /* back up until we aren't in a word,
        make sure there is a break in the line */
     cnt = 0 ;
@@ -432,7 +432,7 @@ wrapWord(int f, int n)
         else
             last = 1 ;
     } while((frameCur->windowCur->dotOffset)-- > 0) ;
-    
+
     if(cnt != 0)
         frameCur->windowCur->dotOffset = cnt ;
     else
@@ -447,7 +447,7 @@ wrapWord(int f, int n)
         cnt = indentInsert() ;
     else
 #endif
-    if(meModeTest(frameCur->bufferCur->mode,MDINDENT))
+        if(meModeTest(frameCur->bufferCur->mode,MDINDENT))
         cnt = winsert() ;
     else
     {
@@ -456,10 +456,10 @@ wrapWord(int f, int n)
         if(cnt > 0)
             meUndoAddInsChars(n) ;
 #endif
-    }    
+    }
     if(meModeTest(frameCur->bufferCur->mode,MDJUST))
         justify(-1,-1,frameCur->bufferCur->fillmode) ;
-    
+
     frameCur->windowCur->dotOffset = meLineGetLength(frameCur->windowCur->dotLine) - off ;
     return cnt ;
 }
@@ -477,12 +477,12 @@ countGaps(void)
     while((c=meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset)) != '\0')
     {
         if((last == ' ') && (c != ' '))
-           ++count ;
+            ++count ;
         last = c;		/* Save last character */
         frameCur->windowCur->dotOffset++;	/* Next character position */
     }
     return count ;		/* Record word */
-    
+
 }	/* End of "goto_gap" */
 
 static char gapDir = 0;                 /* Gap direction */
@@ -494,7 +494,7 @@ getBestGap(void)
     meUByte c;          /* Current character */
     int	score=0, bestscore=0, currscore=0 ;	/* Number of gaps encountered */
     meUShort bestoff, curroff, off ;
-    
+
     last = 'z';				/* Reset word */
     curroff = off = frameCur->windowCur->dotOffset ;
     for(;;)
@@ -506,7 +506,7 @@ getBestGap(void)
                 if(!isWord(last))
                     score -= 10 ;
                 currscore += score ;
-/*                currscore += off & 0x7 ;*/
+                /*                currscore += off & 0x7 ;*/
                 currscore += gapDir ;
                 if(currscore > bestscore)
                 {
@@ -537,7 +537,7 @@ getBestGap(void)
         off++;	                /* Next character position */
     }
     frameCur->windowCur->dotOffset = bestoff ;		/* Record word */
-    
+
 }	/* End of "goto_gap" */
 
 /* justify
@@ -548,14 +548,14 @@ getBestGap(void)
  * Additionally the caller has already formatted the line to the correct
  * length. Justification is performed on the right margin only. (The left
  * margin is assumed to be done).
- * 
+ *
  * leftMargin is a instruction from fillPara() to inform justify where it's
  * left margin is. justify() determines it's own left margin and tabMode if
  * passed a -ve values.
- * 
+ *
  * This is required for the bulleted "* " or "a) " and "ii - " type
  * indentation where a leading space must not be altered.
- * 
+ *
  * Note that on first inspection justify appears to be doing too much work in
  * cleaning up the line. This is true for a fillPara() invocation but it is
  * not true for any other invocation.
@@ -568,20 +568,20 @@ justify(int leftMargin, int leftDoto, meUByte jmode)
     meUByte   cc ;
     int       undoMode;           /* Undo operation */
     int       col ;               /* left indent with tab expansion */
-    
+
     /* Save old context */
     odoto = frameCur->windowCur->dotOffset;
     frameCur->windowCur->dotLine = meLineGetPrev(frameCur->windowCur->dotLine) ;
     (frameCur->windowCur->dotLineNo)-- ;
-    undoMode = (leftMargin < 0) ? 2:0;  /* Compute the undo mode */ 
-    
+    undoMode = (leftMargin < 0) ? 2:0;  /* Compute the undo mode */
+
     /* lowercase the given jmode to remove the auto-detect */
     jmode = toLower(jmode);
-    
+
     /* We are always filling the previous line */
-    len = meLineGetLength(frameCur->windowCur->dotLine) ; 
+    len = meLineGetLength(frameCur->windowCur->dotLine) ;
     ss = len ;
-    
+
     /* Strip any spaces from the right of the string */
     while(len > 0)
     {
@@ -601,44 +601,44 @@ justify(int leftMargin, int leftDoto, meUByte jmode)
     /* If line is empty or left justification is required then do nothing */
     if((len == 0) || (strchr ("bcr", jmode) == NULL))
         goto finished;
-    
+
     if(leftDoto < 0)
     {
-	/* move to the left hand margin */
-	frameCur->windowCur->dotOffset = 0 ;
-	while(((cc = meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset)) != '\0') &&
-	      ((cc == ' ') || (cc == '\t')))
-	    frameCur->windowCur->dotOffset++ ;
-	doto = frameCur->windowCur->dotOffset ;
-	col = getccol() ;
-	if(leftMargin < 0)
-	    leftMargin = col ;
+        /* move to the left hand margin */
+        frameCur->windowCur->dotOffset = 0 ;
+        while(((cc = meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset)) != '\0') &&
+              ((cc == ' ') || (cc == '\t')))
+            frameCur->windowCur->dotOffset++ ;
+        doto = frameCur->windowCur->dotOffset ;
+        col = getccol() ;
+        if(leftMargin < 0)
+            leftMargin = col ;
     }
     else
     {
-	doto = leftDoto ;
-	frameCur->windowCur->dotOffset = doto ;
-	col = leftMargin ;
+        doto = leftDoto ;
+        frameCur->windowCur->dotOffset = doto ;
+        col = leftMargin ;
     }
     /* check for and trash any TABs on the rest of the line */
     while((cc=meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset)) != '\0')
     {
-	if (cc == meCHAR_TAB)
-	{
-	    /* Get expansion width of TAB */ 
-	    int jj = next_tab_pos(getccol(), frameCur->bufferCur->tabWidth);
-	    /* Replace the TAB with equivelent SPACE's */
-	    ldelete (1L,undoMode);
-	    lineInsertChar (jj, ' ');
+        if (cc == meCHAR_TAB)
+        {
+            /* Get expansion width of TAB */
+            int jj = next_tab_pos(getccol(), frameCur->bufferCur->tabWidth);
+            /* Replace the TAB with equivelent SPACE's */
+            ldelete (1L,undoMode);
+            lineInsertChar (jj, ' ');
 #if MEOPT_UNDO
-	    if (undoMode)
-		meUndoAddInsChars(jj) ;
+            if (undoMode)
+                meUndoAddInsChars(jj) ;
 #endif
-	}
-	frameCur->windowCur->dotOffset++ ;
+        }
+        frameCur->windowCur->dotOffset++ ;
     }
     len = meLineGetLength(frameCur->windowCur->dotLine) - doto + leftMargin ;
-    
+
     /* If there is leading white space and we are justifying centre or right
      * then delete the white space. */
     if(jmode != 'b')
@@ -670,11 +670,11 @@ justify(int leftMargin, int leftDoto, meUByte jmode)
     else if(len < frameCur->bufferCur->fillcol)
     {
         int gaps ;			/* The number of gaps in the line */
-        
+
         ss = frameCur->bufferCur->fillcol - len ;
         frameCur->windowCur->dotOffset = doto ;	        /* Save doto position */
         gaps = countGaps() ;	        /* Get number of gaps */
-        
+
         if(gaps == 0)			/* No gaps ?? */
         {
             lineInsertChar(ss, ' ') ;	/* Fill at end */
@@ -686,13 +686,13 @@ justify(int leftMargin, int leftDoto, meUByte jmode)
         else                            /* Start filling the gaps with spaces */
         {
             int incGaps ;
-            
+
             gapDir ^= 1 ;               /* Direction of gaps */
             do
             {
                 frameCur->windowCur->dotOffset = doto ;	/* Save doto position */
                 getBestGap() ;
-                
+
                 incGaps = (ss+gaps-1)/gaps ;
                 lineInsertChar(incGaps, ' ') ;
 #if MEOPT_UNDO
@@ -708,9 +708,9 @@ justify(int leftMargin, int leftDoto, meUByte jmode)
     /* Set the left margin for center and right modes,
      * and change the left margin back to tabs */
     if(col != leftMargin)
-	meLineSetIndent(doto,leftMargin,undoMode) ;
+        meLineSetIndent(doto,leftMargin,undoMode) ;
 finished:
-    
+
     /* Restore context - return the new line length */
     ss = meLineGetLength (frameCur->windowCur->dotLine);
     frameCur->windowCur->dotLine = meLineGetNext(frameCur->windowCur->dotLine) ;
@@ -722,12 +722,12 @@ finished:
 /*
  * fillLookahead
  * Helper for fillPara(). Search forward in the paragraph for any magic
- * paragraph characters which are used for auto indentation. If found 
+ * paragraph characters which are used for auto indentation. If found
  * prompt the user that they have been found and ask for the left-hand
- * fill column. 
- * 
+ * fill column.
+ *
  * A change of lefthand fill column modifies the buffers doto position.
- * 
+ *
  * form is a bit of a hang over which I must come back and sort (Jon Green).
  * TABS are also bogus here !!
  */
@@ -740,14 +740,14 @@ lookahead(meInt fillState)
     int	limit;		                /* Limit */
     char c;                             /* Current character */
     char last_c;                        /* Last character */
-    
+
     /* Nothing to do if there are no paragraph markers */
-    if (fillbullet == NULL)
+    if (fillbullet[0] == '\0')
         return fillState ;
     limit = frameCur->windowCur->dotOffset+fillbulletlen;/* Define the limit of search */
     if (limit > meLineGetLength(frameCur->windowCur->dotLine))
         limit = meLineGetLength (frameCur->windowCur->dotLine);
-    
+
     /* Scan the line for a paragraph starting point. Start from the beginning
        of the line */
     for (ii = 0, last_c = (char) 1; ii < limit; ii++)
@@ -762,25 +762,25 @@ lookahead(meInt fillState)
                 if ((c != ' ') && (c != meCHAR_TAB))
                     break;
             }
-            
+
             /* flag that we will have to prompt the user */
             status = 1 ;
-            
-            /* If we are automatically detecting then try to make a 
+
+            /* If we are automatically detecting then try to make a
              * sensible decision on the paragraph indentation without
              * troubling the user */
             if (fillState & FILL_AUTO)
             {
                 meLine *temp_dotp;      /* Save our current line */
-                
+
                 /* Move to the next line and scan it */
-                temp_dotp = frameCur->windowCur->dotLine;  
+                temp_dotp = frameCur->windowCur->dotLine;
                 frameCur->windowCur->dotLine = meLineGetNext (frameCur->windowCur->dotLine);
                 if (frameCur->windowCur->dotLine != frameCur->bufferCur->baseLine)	/* EOF  ?? */
                 {
                     int jj;
                     int jlen;
-                    
+
                     /* Build up a profile of the spaces on the next line */
                     jlen = meLineGetLength (frameCur->windowCur->dotLine);
                     for (jj = 0; jj < jlen; jj++)
@@ -789,7 +789,7 @@ lookahead(meInt fillState)
                         if ((c != ' ') && (c != meCHAR_TAB))
                             break;
                     }
-                
+
                     /* Only prompt the user if the indent on the next line
                      * does not match the current line expectation. Or the
                      * current line is liable to spill onto the next line
@@ -804,16 +804,16 @@ lookahead(meInt fillState)
                 /* Restore previous position */
                 frameCur->windowCur->dotLine = temp_dotp;
             }
-            
+
             /* If auto detect is disabled or failed then manually prompt the user
              * for the indented position. */
             if(status)
             {
                 short temp_doto;        /* Temporary character position */
-                
+
                 temp_doto = frameCur->windowCur->dotOffset;
                 frameCur->windowCur->dotOffset = ii;
-                
+
                 if(fillState & FILL_INDALL)
                     status = 'y' ;
                 else if(fillState & FILL_INDNVR)
@@ -823,7 +823,7 @@ lookahead(meInt fillState)
                     if((status = mlCharReply((meUByte *)"Indent to <<<<<<<<<< (?/y/n/a/o) ? ",mlCR_QUIT_ON_USER|mlCR_LOWER_CASE,(meUByte *)"ynao",NULL)) == -2)
                     {
                         meUByte scheme=(frameCur->bufferCur->scheme/meSCHEME_STYLES) ;
-            
+
                         /* Force an update of the screen to to ensure that the user
                          * can see the information in the correct location */
                         update (meTRUE);
@@ -867,24 +867,24 @@ lookahead(meInt fillState)
  * in the paragraph. This will assume that the first line. is correctly
  * formatted.
  */
-static char 
+static char
 fillAutoDetect (char mode)
 {
     int doto;                           /* Doto position */
     int len;                            /* lenght of the line */
     int textLen;                        /* Length of the text */
-    
+
     doto = frameCur->windowCur->dotOffset;               /* Save current position */
     len = meLineGetLength (frameCur->windowCur->dotLine);      /* Length of the line */
     textLen = (len - doto);             /* Text length */
     mode = toLower (mode);              /* Align mode to regular operation */
-    
+
     /* Test for centre */
     if (len < frameCur->bufferCur->fillcol)   /* On the right margin */
     {
         int sdiff;                      /* Start difference */
         int ediff;                      /* End difference */
-        
+
         /* Check for balanced line. We expect the start and end of the
          * line to be approximatly balanced. Allow a margin of error of
          * 6 characters */
@@ -895,28 +895,28 @@ fillAutoDetect (char mode)
         if (ediff < 0)                  /* Quick abs !! */
             ediff = -ediff;
         sdiff += ediff;
-        
+
         if ((sdiff == 0) ||             /* We are certain !! */
             ((sdiff < 2) && (textLen < (frameCur->bufferCur->fillcol >> 1))))
             return ('c');               /* We are centred */
     }
-    
+
     /* Test for right aligned text */
     if ((len >= frameCur->bufferCur->fillcol) && (doto > (frameCur->bufferCur->fillcol >> 1)))
         return ('r');                   /* We are right */
-    
+
     /* Check for text on the left-hand edge of line. If it meets our
      * criteria for not filling the whole paragraph then apply 'n' which
      * formats each line separately. */
     if ((doto == 0) && (len <= (frameCur->bufferCur->fillcol >> 1)))
         return ('n');                   /* No justification for left */
-    
+
     return mode ;                       /* Returned modified mode */
-}              
-    
+}
+
 /* Fill the current paragraph according to the current fill column */
 int
-fillPara(int f, int n)	
+fillPara(int f, int n)
 {
     meLine *eopline;		        /* ptr to line just past EOP	*/
     meInt eoplno;		        /* line no of line just past EOP*/
@@ -933,12 +933,12 @@ fillPara(int f, int n)
 #if MEOPT_UNDO
     int paralen ;
 #endif
-    
+
     if (frameCur->bufferCur->fillcol == 0)  /* Fill column set ??*/
         return mlwrite(MWABORT,(meUByte *)"No fill column set");
     if ((c=bufferSetEdit()) <= 0)       /* Check we can change the buffer */
         return c ;
-    
+
     /* A -ve cont indicates that we do not want to be prompted for indentation
      * We also do not prompt if we are right or centre justifying */
     if (n < 0)
@@ -948,13 +948,13 @@ fillPara(int f, int n)
     }
     else
         fillState = FILL_INDENT;        /* Enable indented fill */
-    
+
     /* Sort out the justification mode that we are running in.
      * An upper case justification mode implies an automatic mode
-     * where we detect the current state of the line and apply the 
+     * where we detect the current state of the line and apply the
      * appropriate formatting.
      *
-     * If the One Line mode (o) is operational then fill compleate 
+     * If the One Line mode (o) is operational then fill compleate
      * paragraphs to a single line. Indentation is disabled */
     jmode = frameCur->bufferCur->fillmode;
     if (isUpper(jmode))
@@ -962,14 +962,14 @@ fillPara(int f, int n)
         fillState |= FILL_AUTO;         /* Auto paragraph type detection */
         jmode = toLower(jmode);
         if (jmode == 'o')
-            fillState = (fillState | FILL_LINE | FILL_MARGIN) & ~FILL_INDENT; 
+            fillState = (fillState | FILL_LINE | FILL_MARGIN) & ~FILL_INDENT;
 
     }
     else if (jmode == 'o')
-        fillState = (fillState | FILL_LINE) & ~FILL_INDENT; 
-    
+        fillState = (fillState | FILL_LINE) & ~FILL_INDENT;
+
     /* In none mode then we do not touch the paragraph. */
-    if (jmode == 'n') 
+    if (jmode == 'n')
     {
         /* If there are no arguments then do nothing, otherwise advance the
          * paragraph. */
@@ -977,7 +977,7 @@ fillPara(int f, int n)
             return meTRUE;
         return windowForwardParagraph(meFALSE, n) ;
     }
-    
+
     /* Record if justify mode is enabled. Record in our local context Also
      * knock off indent if disabled. We do not want to be prompting the user. */
     if(meModeTest(frameCur->bufferCur->mode,MDJUST)) /* Justify enabled ?? */
@@ -989,7 +989,7 @@ fillPara(int f, int n)
         jmode = 'l';
         fillState &= ~FILL_INDENT;      /* No - Knock indent off */
     }
-    
+
     /* If fill paragraph is called with no arguments then we must retain the
      * position of dot so that we can preserve the users position after we
      * have filled the paragraph, but only if we are not at the top of the
@@ -1005,14 +1005,14 @@ fillPara(int f, int n)
             {
                 /* Check that this is not a paragraph sepearator line */
                 c = meLineGetChar (frameCur->windowCur->dotLine, ccol);
-                if ((c != meCHAR_TAB) && (c != ' '))	           
+                if ((c != meCHAR_TAB) && (c != ' '))
                 {
                     f = 2;              /* Char exists on line, restore pos */
                     break;
                 }
             }
         }
-        
+
         meAnchorSet(frameCur->bufferCur,meANCHOR_FILL_DOT,
                     frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset,1) ;
         ilength = frameCur->windowCur->dotLineNo ;
@@ -1020,7 +1020,7 @@ fillPara(int f, int n)
     }
     else
         f = -1 ;
-    
+
     /* Fill 'n' paragraphs */
     while (--n >= 0)
     {
@@ -1030,29 +1030,29 @@ fillPara(int f, int n)
         frameCur->windowCur->dotOffset = 0 ;             /* Got start of current line */
         if (windowForwardParagraph(meFALSE, 1) <= 0)
             break;
-        
-	/* record the pointer to the line just past the EOP 
+
+        /* record the pointer to the line just past the EOP
          * and then back top the beginning of the paragraph.
          * doto is at the beginning of the first word */
         eopline = frameCur->windowCur->dotLine ;
         eoplno = frameCur->windowCur->dotLineNo ;
-	windowBackwardParagraph(meFALSE, 1);
-        
+        windowBackwardParagraph(meFALSE, 1);
+
         /* Advance to the first character in the paragraph. */
         while(!inPWord())
             if(meWindowForwardChar(frameCur->windowCur, 1) <= 0)
                 break;
-        
+
         /* Skip non-formatting paragraphs */
-        if ((fillignore != NULL) &&
-            (meStrchr (fillignore, meLineGetChar (frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset)) != NULL))
+        if((fillignore[0] != '\0') &&
+           (meStrchr(fillignore,meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset)) != NULL))
         {
             frameCur->windowCur->dotLine = eopline;    /* Goto the end of the paragraph */
             frameCur->windowCur->dotLineNo = eoplno ;
             frameCur->windowCur->dotOffset = 0;
             continue;			/* Next one */
-	}
-				
+        }
+
 #if MEOPT_EXTENDED
         {
             /* check that this paragraph can be filled */
@@ -1090,7 +1090,7 @@ fillPara(int f, int n)
                 goto noIndent;          /* Reduce to 'none' */
             fillState |= FILL_CENTRE;
             break;
-noIndent:            
+noIndent:
         case 'g':                       /* Guffer mode */
             jmode = 'n';
             /* Drop through */
@@ -1104,22 +1104,22 @@ noIndent:
             fillState |= FILL_LEFT;
             break;
         }
-        
-	fdoto = frameCur->windowCur->dotOffset ;
+
+        fdoto = frameCur->windowCur->dotOffset ;
         /* Get the initial string from the start of the paragraph.
          * lookahead() modifies the current doto value. */
         if (((fillState & (FILL_INDENT|FILL_BOTH|FILL_LEFT)) > FILL_INDENT) &&
             ((fillState=lookahead(fillState)) == -1))
             return meABORT ;
-	
+
         /* if lookahead has found a new left indent position, this position
-	 * must be passed to justify so justify ignores the text to the left
-	 * of this indent point */
-	if(fdoto == frameCur->windowCur->dotOffset)
-	    fdoto = -1 ;
-	else
-	    fdoto = frameCur->windowCur->dotOffset ;
-        
+         * must be passed to justify so justify ignores the text to the left
+         * of this indent point */
+        if(fdoto == frameCur->windowCur->dotOffset)
+            fdoto = -1 ;
+        else
+            fdoto = frameCur->windowCur->dotOffset ;
+
         ilength = frameCur->windowCur->dotOffset;
 #if MEOPT_UNDO
         frameCur->windowCur->dotOffset = 0;
@@ -1128,11 +1128,11 @@ noIndent:
         paralen = 0 ;
 #endif
         /* Get the indentation column, this is the real left indentation position */
-	icol = getccol() ;
-        
-	/* Reset to initial settings.
+        icol = getccol() ;
+
+        /* Reset to initial settings.
          * Modes are:-
-         * 
+         *
          *     ~EOP    - Not at end of paragraph
          *     ~FORCE  - Not a forced paragraph line
          *     ~DOT    - Not a period present
@@ -1140,10 +1140,10 @@ noIndent:
          */
         ccol = icol;
         wordlen = 0;                    /* No word is present */
- 
+
         fillState = ((fillState & ~(FILL_EOP|FILL_FORCE|FILL_DOT)) |
                      (FILL_FIRST));
-        
+
         /* scan through lines, filling words */
         while ((fillState & FILL_EOP) == 0)
         {
@@ -1153,11 +1153,11 @@ noIndent:
                 c = meCHAR_TAB ;
                 if (meLineGetNext(frameCur->windowCur->dotLine) == eopline)
                     fillState |= FILL_EOP;  /* End of paragraph */
-                
+
                 if (fillState & (FILL_CENTRE|FILL_NONE|FILL_RIGHT))
                     fillState |= FILL_FORCE; /* Force paragraph output */
             }
-            
+
             /* if not a separator, just add it in */
             if ((c == ' ') || (c == meCHAR_TAB))
             {
@@ -1167,7 +1167,7 @@ noIndent:
                     frameCur->windowCur->dotOffset -= wordlen ;
                     if(fillState & FILL_SPACE)
                         frameCur->windowCur->dotOffset-- ;
-                    
+
                     /* calculate tantitive new length with word added */
                     newcol = ccol + 1 + wordlen;
                     if (fillState & FILL_DOT)
@@ -1211,7 +1211,7 @@ noIndent:
                         ccol = (int) icol;
                         fillState &= ~FILL_DOT;
                     }
-                    
+
                     /* and add the length of the word in either case */
                     ccol += wordlen;
                     frameCur->windowCur->dotOffset += wordlen;
@@ -1220,7 +1220,7 @@ noIndent:
                     fillState &= ~FILL_SPACE ;
                     wordlen = 0;
                 }
-                
+
                 if (fillState & FILL_FORCE)
                 {
                     if (fillState & FILL_JUSTIFY)
@@ -1271,7 +1271,7 @@ noIndent:
         meUndoAddReplaceEnd(paralen);
 #endif
     }
-    
+
     if(f >= 0)
     {
         /* Restore starting point */
@@ -1288,38 +1288,38 @@ noIndent:
 
 /* Delete n paragraphs starting with the current one. -ve will kill 'n'
  * paragraphs in the backward direction. */
-int	
+int
 killPara(int f, int n)
 {
     int ss ;
     int sep_line = 1;                   /* Paragraph separator line */
-    
+
     /* A zero kill then do not kill anything. */
     if(n == 0)
         return meTRUE ;
-    
+
     /* Check we can change the buffer */
     if(bufferSetEdit() <= 0)
         return meABORT ;
-    
+
     /* Set the mark at the current position. */
     frameCur->windowCur->markLine = frameCur->windowCur->dotLine ;
     frameCur->windowCur->markLineNo = frameCur->windowCur->dotLineNo ;
     frameCur->windowCur->markOffset = frameCur->windowCur->dotOffset ;
-    
+
     /* See if this is a paragraph separator line. If it is then the kill is
      * performed differently. */
     if ((ss = meLineGetLength (frameCur->windowCur->dotLine)) != 0)
     {
         int ii;
-        
+
         for (ii = 0; ii < ss; ii++)
         {
             char cc;
-            
+
             /* Check that this is not a paragraph sepearator line */
             cc = meLineGetChar (frameCur->windowCur->dotLine, ii);
-            if ((cc != meCHAR_TAB) && (cc != ' '))	           
+            if ((cc != meCHAR_TAB) && (cc != ' '))
             {
                 /* Character exists on the line. */
                 sep_line = 0;
@@ -1327,11 +1327,11 @@ killPara(int f, int n)
             }
         }
     }
-               
+
     /* Move to the appropriate paragraph position and delete the region. */
     ss = windowForwardParagraph(meTRUE,n) ;
-    
-    /* If we commenced on a separator line then we do not need to protect the 
+
+    /* If we commenced on a separator line then we do not need to protect the
      * paragraph separator. */
     if (sep_line == 0)
     {
@@ -1352,17 +1352,17 @@ killPara(int f, int n)
             meWindowBackwardChar(frameCur->windowCur, 1);
         }
     }
-    
+
     /* Kill the region containing the paragraphs */
     if(killRegion(meTRUE,1) <= 0)
         return meFALSE ;
-    
+
     return ss ;
 }
 
 /* Count the # of words in the marked region, along with average word sizes,
  * # of chars, etc, and report on them. */
-int	
+int
 countWords(int f, int n)
 {
     register meLine *lp;		/* current line to scan */
@@ -1383,13 +1383,13 @@ countWords(int f, int n)
     lp = region.line ;
     offset = region.offset ;
     size = region.size ;
-    
+
     /* count up things */
     lastword = meFALSE;
     nchars = 0L;
     nwords = 0L;
     nlines = 0;
-    while(size--) 
+    while(size--)
     {
         /* get the current character */
         if((ch = meLineGetChar(lp, offset)) == '\0')
@@ -1398,10 +1398,10 @@ countWords(int f, int n)
             lp = meLineGetNext(lp);
             offset = 0;
             nlines++ ;
-        } 
+        }
         else
             offset++ ;
-        
+
         /* and tabulate it */
         wordflag = isWord(ch) ;
         if((wordflag != meFALSE) && (lastword == meFALSE))

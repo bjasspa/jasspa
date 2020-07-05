@@ -1500,21 +1500,21 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
     meUByte *s, *t ;
 #if MEOPT_EXTENDED_BACKUP
     static int     backupPathFlag=0 ;
-    static meUByte  *backupPath=NULL ;
+    static meUByte *backupPath=NULL ;
     static int     backupSubCount=0 ;
     static meUByte **backupSubFrom=NULL ;
     static meUByte **backupSubTo=NULL ;
     if(!backupPathFlag)
     {
-	if(((s=meGetenv("MEBACKUPPATH")) != NULL) && (meStrlen(s) > 0) &&
-	   ((backupPath=meStrdup(s)) != NULL))
+        if(((s=meGetenv("MEBACKUPPATH")) != NULL) && (meStrlen(s) > 0) &&
+           ((backupPath=meStrdup(s)) != NULL))
         {
             fileNameConvertDirChar(backupPath) ;
-            if((backupPath[0] == DIR_CHAR)
 #ifdef _DRV_CHAR
-               || (isAlpha(backupPath[0]) && (backupPath[1] == _DRV_CHAR))
+            if((backupPath[0] == DIR_CHAR) || (isAlpha(backupPath[0]) && (backupPath[1] == _DRV_CHAR)))
+#else
+            if(backupPath[0] == DIR_CHAR)
 #endif
-               )
                 backupPathFlag = 1 ;
             else
                 backupPathFlag = 2 ;

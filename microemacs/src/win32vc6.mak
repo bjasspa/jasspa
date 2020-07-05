@@ -30,8 +30,8 @@
 #
 #	Run "nmake -f win32vc6.mak"            for optimised build produces ./.win32vc6-release-mew/mew32.exe
 #	Run "nmake -f win32vc6.mak BCFG=debug" for debug build produces     ./.win32vc6-debug-mew/mew32.exe
-#	Run "nmake -f win32vc6.mak BENV=c"     for console support          ./.win32vc6-release-mec/mec32.exe
-#	Run "nmake -f win32vc6.mak BTYP=ne"    for ne build produces        ./.win32vc6-release-new/new32.exe
+#	Run "nmake -f win32vc6.mak BTYP=c"     for console support          ./.win32vc6-release-mec/mec32.exe
+#	Run "nmake -f win32vc6.mak BCOR=ne"    for ne build produces        ./.win32vc6-release-new/new32.exe
 #
 #	Run "nmake -f win32vc6.mak clean"      to clean source directory
 #	Run "nmake -f win32vc6.mak spotless"   to clean source directory even more
@@ -69,7 +69,7 @@ LDFLAGSD = /DEBUG
 LDLIBS   = shell32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib
 ARFLAGSR = /LTCG
 ARFLAGSD =
-RCFLAGS  =
+RCFLAGS  = /d USE_UNCMP_PNG=1
 
 !IF "$(BCFG)" == "debug"
 BOUTDIR  = $(OUTDIRD)
@@ -124,7 +124,7 @@ PRGOBJS  = $(OUTDIR)\abbrev.o $(OUTDIR)\basic.o $(OUTDIR)\bind.o $(OUTDIR)\buffe
 	$(CC) $(CCDEFS) $(BCOR_CDF) $(BTYP_CDF) $(CCFLAGS) /Fd"$(OUTDIR)\vc60.pdb" /c $< /Fo"$@"
 
 .rc{$(OUTDIR)}.res:
-	$(RC) $(RCFLAGS) $(BENV_CDF) /fo"$@" $<
+	$(RC) $(RCFLAGS) $(BTYP_CDF) /fo"$@" $<
 
 all: $(PRGLIBS) $(OUTDIR)\$(PRGFILE)
 
@@ -137,13 +137,13 @@ $(PRGOBJS): $(PRGHDRS)
 $(OUTDIR):
 	if not exist $(OUTDIR)\ mkdir $(OUTDIR)
 
-$(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib:
-	cd $(TRDPARTY)\tfs
+$(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib:
+	cd $(TRDPARTY)\zlib
 	$(MK) -f $(BUILDID).mak BCFG=$(BCFG)
 	cd $(MAKEDIR)
 
-$(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib:
-	cd $(TRDPARTY)\zlib
+$(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib:
+	cd $(TRDPARTY)\tfs
 	$(MK) -f $(BUILDID).mak BCFG=$(BCFG)
 	cd $(MAKEDIR)
 

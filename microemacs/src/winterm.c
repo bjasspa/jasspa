@@ -1334,6 +1334,17 @@ WinSpecialChar (HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fco
         }
         break;
         
+    case 0x1c:          /* Invalid char - can be generated during utf8 to latin1 X11 clipboard get <+> */
+        MoveToEx (hdc, x, y + cm->midY, NULL);
+        LineTo   (hdc, x + cm->midX,  y);
+        LineTo   (hdc, x + cm->sizeX, y + cm->midY) ;
+        LineTo   (hdc, x + cm->midX,  y + cm->sizeY) ;
+        LineTo   (hdc, x, y + cm->midY) ;
+        LineTo   (hdc, x + cm->sizeX, y + cm->midY) ;
+        MoveToEx (hdc, x + cm->midX,  y, NULL);
+        LineTo   (hdc, x + cm->midX,  y + cm->sizeY) ;
+        break;
+
     case 0x1d:          /* Scroll box - horizontal */
         for (ii = (x+1) & ~1; ii < x + cm->sizeX; ii += 2)
         {
@@ -1566,7 +1577,8 @@ meFrameDraw(meFrame *frame)
     HBRUSH bbrush = NULL;               /* Background brush */
     HPEN pen;                           /* Foreground pen */
     HPEN oldpen = NULL;                 /* fist pen */
-    
+    UINT etoOpt;                        /* ExtTextOut options */
+
     fd = meFrameGetWinData(frame) ;
 #define DEBUG_BG 0
 #if DEBUG_BG
@@ -1588,10 +1600,6 @@ meFrameDraw(meFrame *frame)
         return;
     }
     
-#if (meFONT_MAX == 0)
-    /* Change the font and colour space. */
-    SelectObject (ps.hdc, eCellMetrics.fontdef);
-#endif
     if (eCellMetrics.pInfo.hPal != NULL)
     {
         SelectPalette (ps.hdc, eCellMetrics.pInfo.hPal, meFALSE);
@@ -1671,32 +1679,31 @@ meFrameDraw(meFrame *frame)
         
         for (;;)
         {
-	    if(schm != *fschm)
-	    {
-		/* Set up the colour change */
+            if(schm != *fschm)
+            {
+                /* Set up the colour change */
                 meStyle style ;
                 meUByte ff ;
                 
-		schm = *fschm ;
+                schm = *fschm ;
                 style = meSchemeGetStyle(schm) ;
-		ff = (meUByte) meStyleGetFColor(style) ;
-		if (fcol != ff)
-		{
-		    fcol = ff ;
-		    SetTextColor (ps.hdc, eCellMetrics.pInfo.cPal[fcol].cpixel);
-		}
-		ff = (meUByte) meStyleGetBColor(style) ;
+                ff = (meUByte) meStyleGetFColor(style) ;
+                if (fcol != ff)
+                {
+                    fcol = ff ;
+                    SetTextColor (ps.hdc, eCellMetrics.pInfo.cPal[fcol].cpixel);
+                }
+                ff = (meUByte) meStyleGetBColor(style) ;
 #if DEBUG_BG
                 ff = bgcol ;
 #endif
                 if (bcol != ff)
-		{
-		    bcol = ff ;
-		    SetBkColor (ps.hdc, eCellMetrics.pInfo.cPal[bcol].cpixel);
-		}
-#if meFONT_MAX
-                ff = (meUByte) meStyleGetFont(style) ;
+                {
+                    bcol = ff ;
+                    SetBkColor (ps.hdc, eCellMetrics.pInfo.cPal[bcol].cpixel);
+                }
                 
+                ff = (meUByte) meStyleGetFont(style) ;
                 /* If there is a modification on the font then apply it now.
                  * Note that the following looks a little cumbersome and
                  * unecessary, however the compiler will reduce the first pair
@@ -1710,23 +1717,27 @@ meFrameDraw(meFrame *frame)
                 
                 if (font != ff)
                 {
-		    font = ff ;
+                    font = ff ;
                     if(eCellMetrics.fontdef[font] == NULL)
                         WinLoadFont(font) ;
                     /* Change font */
                     SelectObject (ps.hdc, eCellMetrics.fontdef[font]);
+                    /* if this is a different font it could overhang the next char, common if italic (which is why we draw right to left)
+                     * in which case we must not clip. However, if this is the base font then clip the draw to the rectangle to avoid pixel
+                     * overruns caused by windows ClearType */
+                    etoOpt = (font && (eCellMetrics.fontdef[font] != eCellMetrics.fontdef[0])) ? ETO_OPAQUE : ETO_OPAQUE|ETO_CLIPPED;
+                        
                 }
-#endif
-	    }
+            }
             
-	    /* how many characters can we draw until we get a color change or
-	     * reach the end */
-	    tcol = col;
-	    spFlag = 0;
-	    do
-	    {
-		cc = ftext[col] ;
-		if((meSystemCfg & meSYSTEM_FONTFIX) && ((cc & 0xe0) == 0))
+            /* how many characters can we draw until we get a color change or
+             * reach the end */
+            tcol = col;
+            spFlag = 0;
+            do
+            {
+                cc = ftext[col] ;
+                if((meSystemCfg & meSYSTEM_FONTFIX) && ((cc & 0xe0) == 0))
                 {
                     spFlag++ ;
                     cc = ' ' ;
@@ -1734,25 +1745,25 @@ meFrameDraw(meFrame *frame)
                 tbp[col] = cc ;
             } while((--col >= scol) && (*--fschm == schm)) ;
             
-	    /* Output the current text item. Set up the current left margin
+            /* Output the current text item. Set up the current left margin
              * and determine the length of text that we have to output. */
-	    length = tcol - col;
+            length = tcol - col;
             col++;                      /* Move to current position */
-	    rline.left = eCellMetrics.cellColPos [col];
+            rline.left = eCellMetrics.cellColPos [col];
             
-	    /* Output regular text */
-	    ExtTextOut (ps.hdc,
-			eCellMetrics.cellColPos [col], /* Text start position */
-			clientRow,
-			ETO_OPAQUE,     /* Fill background */
-			&rline,         /* Background area */
-			(LPCSTR)tbp+col,/* Text string */
-			length,         /* Length of string */
-			eCellMetrics.cellSpacing);
+            /* Output regular text */
+            ExtTextOut (ps.hdc,
+                        eCellMetrics.cellColPos [col], /* Text start position */
+                        clientRow,
+                        etoOpt,         /* Fill background & may be clip */
+                        &rline,         /* Background area */
+                        (LPCSTR)tbp+col,/* Text string */
+                        length,         /* Length of string */
+                        eCellMetrics.cellSpacing);
             col--;                      /* Restore position */
             
             /* Special characters */
-	    if (spFlag != 0)
+            if (spFlag != 0)
             {
                 /* Correct the pen colours if required. We do this here
                  * because we expect less special characters. We do not want
@@ -1760,23 +1771,23 @@ meFrameDraw(meFrame *frame)
                  * use them. */
                 if (pfcol != fcol)
                 {
-		    HPEN p;
+                    HPEN p;
                     pfcol = fcol;
-		    /* Set up for line drawing */
-		    pen = CreatePen (PS_SOLID, 0, eCellMetrics.pInfo.cPal [fcol].cpixel);
-		    p = SelectObject (ps.hdc, pen);
-		    if (oldpen == NULL)
-			oldpen = p;
-		    else
-			DeleteObject (p);
+                    /* Set up for line drawing */
+                    pen = CreatePen (PS_SOLID, 0, eCellMetrics.pInfo.cPal [fcol].cpixel);
+                    p = SelectObject (ps.hdc, pen);
+                    if (oldpen == NULL)
+                        oldpen = p;
+                    else
+                        DeleteObject (p);
                 }
                 if (pbcol != bcol)
                 {
                     pbcol = bcol;
-		    /* Set up for line drawing */
-		    if (bbrush != NULL)
-			DeleteObject (bbrush);
-		    bbrush = CreateSolidBrush (eCellMetrics.pInfo.cPal [bcol].cpixel);
+                    /* Set up for line drawing */
+                    if (bbrush != NULL)
+                        DeleteObject (bbrush);
+                    bbrush = CreateSolidBrush (eCellMetrics.pInfo.cPal [bcol].cpixel);
                 }
                 /* Render the special characters */
                 do
@@ -1793,12 +1804,12 @@ meFrameDraw(meFrame *frame)
                 while(--spFlag > 0);
             }
             
-	    /* are we at the end?? */
-	    if(scol > col)
-		break ;
+            /* are we at the end?? */
+            if(scol > col)
+                break ;
             
-	    rline.right = rline.left;
-	}
+            rline.right = rline.left;
+        }
     }
     if (drawCursor)
         meFrameDrawCursor(frame,ps.hdc) ;
@@ -3845,7 +3856,6 @@ TTchangeFont (meUByte *fontName, int fontType, int fontWeight,
 {
     HDC   hDC;                          /* Device context */
     HFONT newFont = NULL;               /* The new font */
-    INT   nCharWidth;                   /* The character width */
     TEXTMETRIC textmetric;              /* Text metrics */
     LOGFONT logfont;                    /* Logical font */
     int   status = meTRUE;                /* Status of the invocation */
@@ -3958,16 +3968,33 @@ defaultFont:
     GetTextMetrics(hDC, &textmetric);
     
     /* Build up the cell metrics */
-    nCharWidth  = textmetric.tmAveCharWidth /*+ textmetric.tmInternalLeading*/;
+    /* The tmMaxCharWidth can be larger than tmAveCharWidth even for fixed width fonts due to Windows ClearType,
+     * however we are using ETO_CLIPPED to avoid overrun so ignore the extra width
+     * 
+     * Note: WRT. ME's 'Fonts' (use of bold & italic etc) it may seem reasonable to add in the textmetric.tmOverhang
+     * value if meSCHEME_NOFONT is not set, however this value seems to be always 0 on the base font (reasonable)
+     * and windows fonts seem to fit into one of 2 groups:
+     * a. Properly designed forms for bold & italic etc: For good fixed width fonts the width is unchanged so no
+     *    addition is required, ME simply works.
+     * b. No font form built into the font: For these fonts windows generates them by overstriking and shearing the
+     *    base font, for these auto-generated forms the tmOverhang can be as much as the tmAveCharWidth which would
+     *    make the text unreadable anyway - these fonts must either be used with meSCHEME_NOFONT set or avoided.
+     */
+    eCellMetrics.cell.sizeX = (textmetric.tmAveCharWidth <= 0) ? 1 : textmetric.tmAveCharWidth;
+    if(textmetric.tmPitchAndFamily & TMPF_FIXED_PITCH)
+    {
+        /* however, if this is a proportial font we need to do more if we can. Using the tmMaxCharWidth value
+         * is not a good solution because this can include all the chiness characters which can be twice as wide
+         * as we need as we only use chars 0 to 255. So calc the width of a 'W' and use that instead, this will
+         * most likely look awful but should stop most/all character clipping */
+        SIZE sz;
+        GetTextExtentPoint32(hDC,"W",1,&sz);
+        if((sz.cx > textmetric.tmAveCharWidth) && (sz.cx <= textmetric.tmMaxCharWidth))
+            eCellMetrics.cell.sizeX = sz.cx;
+    }
     
-    /* Get the text metrics for the current font */
-#if 1
-    /* SWP bodge */
-    eCellMetrics.cell.sizeX = nCharWidth ;
-#else
-    eCellMetrics.cell.sizeX = ((textmetric.tmMaxCharWidth <= 0) ? 1
-                                     : textmetric.tmMaxCharWidth /*+ textmetric.tmExternalLeading*/);
-#endif
+    /* Note: We may need to add on textmetric.tmExternalLeading otherwise the following line might be unreadably
+     * close, however so far the value has always been 0 for usable fonts (i.e. fixed fonts) */
     eCellMetrics.cell.sizeY = (textmetric.tmHeight <= 0) ? 1 : textmetric.tmHeight;
     eCellMetrics.cell.midX = eCellMetrics.cell.sizeX / 2;
     eCellMetrics.cell.midY = eCellMetrics.cell.sizeY / 2;
@@ -4162,25 +4189,21 @@ meFrameHideCursor(meFrame *frame)
         {
             RECT rect;                  /* Area of screen to update */
             int startCol = frame->cursorColumn;
-#if meFONT_MAX
+            meFrameLine *flp;
+            
             /* If the cursor preceeeds an italic character then we need to fix
              * the previous character. This is done by ME drawing the previous
              * char but not invalidating the area so that only the overhang into
              * the next char is drawn.
              */
-            meFrameLine *flp;             /* Frame store line pointer */
-            
-            flp = frame->store + frame->cursorRow;
-            if(startCol > 0)
+            if((startCol > 0) &&
+               (meSchemeGetStyle((flp = frame->store+frame->cursorRow)->scheme[startCol-1]) & meSTYLE_ITALIC) &&
+               (flp->text[startCol-1] != ' '))
             {
-                if ((meSchemeGetStyle(flp->scheme[startCol-1]) & meSTYLE_ITALIC) &&
-                    (flp->text[startCol-1] != ' '))
-                {
-                    /* Back up, the previous character will be corrupted. */
-                    startCol-- ;
-                }
+                /* Back up, the previous character will be corrupted. */
+                startCol-- ;
             }
-#endif
+            
             if(meFrameGetWinPaintStartCol(frame)[frame->cursorRow] > startCol)
                 meFrameGetWinPaintStartCol(frame)[frame->cursorRow] = startCol ;
             if(meFrameGetWinPaintEndCol(frame)[frame->cursorRow] <= frame->cursorColumn)
@@ -4237,25 +4260,21 @@ meFrameShowCursor(meFrame *frame)
         {
             RECT rect;                  /* Area of screen to update */
             int startCol = frame->cursorColumn;
-#if meFONT_MAX
+            meFrameLine *flp;
+            
             /* If the cursor preceeeds an italic character then we need to fix
              * the previous character. This is done by ME drawing the previous
              * char but not invalidating the area so that only the overhang into
              * the next char is drawn.
              */
-            meFrameLine *flp;             /* Frame store line pointer */
-            
-            flp = frame->store + frame->cursorRow;
-            if(startCol > 0)
+            if((startCol > 0) && 
+               (meSchemeGetStyle((flp = frame->store+frame->cursorRow)->scheme[startCol-1]) & meSTYLE_ITALIC) &&
+               (flp->text[startCol-1] != ' '))
             {
-                if ((meSchemeGetStyle(flp->scheme[startCol-1]) & meSTYLE_ITALIC) &&
-                    (flp->text[startCol-1] != ' '))
-                {
-                    /* Back up, the previous character will be corrupted. */
-                    startCol-- ;
-                }
+                /* Back up, the previous character will be corrupted. */
+                startCol-- ;
             }
-#endif
+            
             if(meFrameGetWinPaintStartCol(frame)[frame->cursorRow] > startCol)
                 meFrameGetWinPaintStartCol(frame)[frame->cursorRow] = startCol ;
             if(meFrameGetWinPaintEndCol(frame)[frame->cursorRow] <= frame->cursorColumn)
@@ -5902,8 +5921,8 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
     _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) |_CRTDBG_ALLOC_MEM_DF|_CRTDBG_LEAK_CHECK_DF|_CRTDBG_DELAY_FREE_MEM_DF);
 #endif
     
-    /*     if(logfp == NULL)*/
-    /*         logfp = fopen("log","w+") ;*/
+/*         if(logfp == NULL)*/
+/*             logfp = fopen("log","w+") ;*/
     
 #ifdef _ME_WINDOW
     /* Initialise the window data and register window class */
@@ -6462,12 +6481,13 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
                  * If it doesn't exit then carry on as normal
                  * Must ensure we ask the user, not a macro
                  */
-                int savcle ;
-                savcle = clexec ;
-                clexec = meFALSE ;
-                exitEmacs(1,3) ;
-                clexec = savcle ;
-                return meFALSE ;
+                int savcle;
+                savcle = clexec;
+                clexec = meFALSE;
+                if(!exitEmacs(1,3))
+                    update(meTRUE);
+                clexec = savcle;
+                return meFALSE;
             }
             else if (anyChangedBuffer()
 #if MEOPT_SPELL

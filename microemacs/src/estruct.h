@@ -110,7 +110,11 @@ typedef int (*meIFuncSSI)(const meUByte *, const meUByte *, size_t);
 
 /* Handling of special pointer types */
 #define mePtrOffset(p,x)  ((meUByte *)(p) + x)
+#ifdef _64BIT
+#define mePtrFromInt(n)   ((meUByte *)(uintptr_t)(n))
+#else
 #define mePtrFromInt(n)   ((meUByte *)(n))
+#endif
 
 /* meStyle contains color and font information coded into an meInt the
  * following #defines and macros are used to manipulate them.
@@ -913,9 +917,14 @@ typedef struct meKill {
 #define meHilightGetColumnHilight(root)   ((meHilight *) ((root)->rclose))
 #define meHilightSetColumnHilight(root,v) ((root)->rclose = (meUByte *) (v))
 #define meHilightGetFromColumn(root)      ((meInt) ((node)->close))
-#define meHilightSetFromColumn(root,v)    ((node)->close = (meUByte *) (v))
 #define meHilightGetToColumn(root)        ((meInt) ((node)->rtoken))
+#ifdef _64BIT
+#define meHilightSetFromColumn(root,v)    ((node)->close = (meUByte *)(uintptr_t)(v))
+#define meHilightSetToColumn(root,v)      ((node)->rtoken = (meUByte *)(uintptr_t)(v))
+#else
+#define meHilightSetFromColumn(root,v)    ((node)->close = (meUByte *) (v))
 #define meHilightSetToColumn(root,v)      ((node)->rtoken = (meUByte *) (v))
+#endif
 
 /* hilight token flags */
 #define HLTOKEN    0x0001

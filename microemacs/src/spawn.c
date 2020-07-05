@@ -515,7 +515,7 @@ ipipeKillBuf(meIPipe *ipipe, int type)
 
     if(ipipe->pid > 0)
     {
-        if(type == 2)
+        if(type == 0)
         {
 #ifdef _WIN32
             {
@@ -587,12 +587,12 @@ ipipeKillBuf(meIPipe *ipipe, int type)
                 /* if we've succeeded in sending the Ctrl-C keys and the event
                  * then quit now - if they don't work, nothing will */
                 if(success)
-                    return ;
+                    return;
             }
 #endif
             /* send a control-C signal */
             ipipeWriteString(ipipe,1,(meUByte *) "\x03") ;
-            return ;
+            return;
         }
 #ifdef _WIN32
         if(ipipe->pid > 0)
@@ -606,7 +606,10 @@ ipipeKillBuf(meIPipe *ipipe, int type)
         /* Close the process */
         CloseHandle(ipipe->process);
 #else
-        kill(0-ipipe->pid,SIGKILL) ;
+        if(type < 0)
+            kill(0-ipipe->pid,0-type);
+        else
+            kill(ipipe->pid,type);
 #endif
     }
 }
@@ -624,7 +627,11 @@ ipipeKill(int f, int n)
     ipipe = ipipes ;
     while(ipipe->bp != frameCur->bufferCur)
         ipipe = ipipe->next ;
-    ipipeKillBuf(ipipe,n) ;
+#ifndef _WIN32
+    if(f == meFALSE)
+        n = (meSystemCfg & meSYSTEM_TERMSIG) ? -SIGTERM:-SIGKILL;
+#endif
+    ipipeKillBuf(ipipe,n);
     return meTRUE ;
 }
 
@@ -635,7 +642,11 @@ ipipeRemove(meIPipe *ipipe)
     meSigHold() ;
 #endif
     if(ipipe->pid > 0)
-        ipipeKillBuf(ipipe,1) ;
+#ifdef _WIN32
+        ipipeKillBuf(ipipe,1);
+#else
+        ipipeKillBuf(ipipe,(meSystemCfg & meSYSTEM_TERMSIG) ? -SIGTERM:-SIGKILL);
+#endif
 
     if(ipipe == ipipes)
         ipipes = ipipe->next ;
@@ -828,10 +839,7 @@ ipipeRead(meIPipe *ipipe)
     int     na, nb ;
 #endif
 
-    if(meModeTest(bp->mode,MDWRAP))
-        maxOff = ipipe->noCols ;
-    else
-        maxOff = meBUF_SIZE_MAX - 2 ;
+    maxOff = ipipe->noCols ;
 #ifdef _UNIX
     meSigHold() ;
 #if MEOPT_CLIENTSERVER
@@ -1155,11 +1163,18 @@ move_cursor_pos:
                             break ;
                         case 'P':
                             if(!gotN)
-                                na = 1 ;
-                            if(((int) meStrlen(p1)) > na)
-                                meStrcpy(p1,p1+na) ;
+                                na = 1;
+                            ii = na;
+                            while((p1[ii] != '\0') && (--ii >= 0))
+                                ;
+                            if(ii < 0)
+                                *p1 = '\0';
                             else
-                                *p1 = '\0' ;
+                            {
+                                ii = 0;
+                                while((p1[ii] = p1[ii+na]) != 0)
+                                    ii++;
+                            }
                             break ;
                         default:
 cant_handle_this:
@@ -1330,71 +1345,96 @@ ipipeWrite(int f, int n)
     return meTRUE ;
 }
 
-int
+void
 ipipeSetSize(meWindow *wp, meBuffer *bp)
 {
-    meIPipe *ipipe ;
+    meIPipe *ipipe;
+    meShort noRows, noCols;
+    int ii;
 
-    ipipe = ipipes ;
-    while(ipipe->bp != bp)
-        ipipe = ipipe->next ;
-    if(((ipipe->noRows != wp->textDepth) ||
-        (ipipe->noCols != wp->textWidth-1) ) &&
-       (ipipe->pid > 0))
+    ipipe = ipipes;
+    while((ipipe != NULL) && (ipipe->bp != bp))
+        ipipe = ipipe->next;
+    if(ipipe == NULL)
+        return;
+    if(meModeTest(bp->mode,MDWRAP))
     {
-        int ii ;
-        ii = wp->textDepth - ipipe->noRows ;
-        ipipe->noRows = wp->textDepth ;
-        ipipe->noCols = wp->textWidth-1 ;
-        if(ii > 0)
+        noRows = wp->textDepth;
+        noCols = wp->textWidth-1;
+    }
+    else
+    {
+        if((noRows = ipipe->noRows) == 0)
+            noRows = wp->textDepth;
+        else if(ipipe->noCols != 0)
+            return;
+        
+        if((noCols = ipipe->noCols) == 0)
         {
-            if((ipipe->curRow += ii) > bp->lineCount)
-                ipipe->curRow = (meShort) bp->lineCount ;
-        }
-        else if(ipipe->curRow >= ipipe->noRows)
-            ipipe->curRow = ipipe->noRows-1 ;
-        /* Check the window is displaying this buffer before we
-         * mess with the window settings */
-        if((wp->buffer == bp) && meModeTest(bp->mode,MDLOCK))
-        {
-            if (wp->dotLineNo < ipipe->curRow)
-                wp->vertScroll = 0;
+            meUByte *ss;
+            if(((ss=getUsrVar((meUByte *)"ipipe-width")) != NULL) && ((ii=meAtoi(ss)) > 0) && (ii <= meBUF_SIZE_MAX - 2))
+                noCols = ii;
             else
-                wp->vertScroll = wp->dotLineNo-ipipe->curRow ;
-            wp->updateFlags |= WFMOVEL ;
+                noCols = meBUF_SIZE_MAX - 2;
         }
+    }
+    if((ipipe->noRows != noRows) || (ipipe->noCols != noCols))
+    {
+        ii = ((int) noRows) - ((int) ipipe->noRows);
+        ipipe->noRows = noRows;
+        ipipe->noCols = noCols;
+        
+        if(ipipe->pid > 0)
+        {
+            if(ii > 0)
+            {
+                if((ipipe->curRow += ii) > bp->lineCount)
+                    ipipe->curRow = (meShort) bp->lineCount ;
+            }
+            else if(ipipe->curRow >= ipipe->noRows)
+                ipipe->curRow = ipipe->noRows-1 ;
+            /* Check the window is displaying this buffer before we
+             * mess with the window settings */
+            if((wp->buffer == bp) && meModeTest(bp->mode,MDLOCK))
+            {
+                if (wp->dotLineNo < ipipe->curRow)
+                    wp->vertScroll = 0;
+                else
+                    wp->vertScroll = wp->dotLineNo-ipipe->curRow ;
+                wp->updateFlags |= WFMOVEL ;
+            }
 #ifdef _UNIX
 #if ((defined TIOCSWINSZ) || (defined TIOCGWINSZ))
-        {
-            /* BSD-style.  */
-            struct winsize size;
-
-            size.ws_col = ipipe->noCols ;
-            size.ws_row = ipipe->noRows ;
-            size.ws_xpixel = size.ws_ypixel = 0 ;
+            {
+                /* BSD-style.  */
+                struct winsize size;
+                
+                size.ws_col = ipipe->noCols ;
+                size.ws_row = ipipe->noRows ;
+                size.ws_xpixel = size.ws_ypixel = 0 ;
 #ifdef TIOCSWINSZ
-            ioctl(ipipe->outWfd,TIOCSWINSZ,&size) ;
+                ioctl(ipipe->outWfd,TIOCSWINSZ,&size) ;
 #else
-            ioctl(ipipe->outWfd,TIOCGWINSZ,&size) ;
+                ioctl(ipipe->outWfd,TIOCGWINSZ,&size) ;
 #endif
-            kill(ipipe->pid,SIGWINCH) ;
-        }
+                kill(ipipe->pid,SIGWINCH) ;
+            }
 #else
 #ifdef TIOCGSIZE
-        {
-            /* SunOS - style.  */
-            struct ttysize size;
-
-            size.ts_col = ipipe->noCols ;
-            size.ts_lines = ipipe->noRows ;
-            ioctl(ipipe->outWfd,TIOCSSIZE,&size) ;
-            kill(ipipe->pid,SIGWINCH) ;
-        }
+            {
+                /* SunOS - style.  */
+                struct ttysize size;
+                
+                size.ts_col = ipipe->noCols ;
+                size.ts_lines = ipipe->noRows ;
+                ioctl(ipipe->outWfd,TIOCSSIZE,&size) ;
+                kill(ipipe->pid,SIGWINCH) ;
+            }
 #endif /* TIOCGSIZE */
 #endif /* TIOCSWINSZ/TIOCGWINSZ */
 #endif /* _UNIX */
+        }
     }
-    return meTRUE ;
 }
 
 #ifdef _UNIX
@@ -1402,7 +1442,7 @@ ipipeSetSize(meWindow *wp, meBuffer *bp)
  * pty, once we have aquired one then we look for the tty. Return the name of
  * the tty to the caller so that it may be opened. */
 
-#ifdef  _LINUX26
+#if (defined _LINUX26) || (defined _MACOS)
 extern char *ptsname(int) ;
 extern int unlockpt(int) ;
 extern int grantpt(int) ;
@@ -1432,7 +1472,7 @@ allocatePty(meUByte *ptyName)
     }
     return -1 ;
 #else
-#if (defined _SUNOS) || (defined _LINUX26)
+#if (defined _SUNOS) || (defined _LINUX26) || (defined _MACOS)
     int    fd ;
     /* Sun use their own proporiety PTY system. Refer to the AnswerBook
      * documentation for "Pseudo-TTY Drivers" - ptm(7) and pts(7) */
@@ -1528,7 +1568,7 @@ allocatePty(meUByte *ptyName)
         }
     }
     return -1;
-#endif /* _SUNOS or _LINUX26 */
+#endif /* _SUNOS or _LINUX26 or _MACOS */
 #endif /* _IRIX */
 }
 
@@ -1853,11 +1893,6 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     ipipes = ipipe ;
     noIpipes++ ;
 
-#ifdef _UNIX
-    /* Release the signals - we can now cope if the child dies. */
-    meSigRelease ();
-#endif /*_UNIX */
-
     /* Create the output buffer */
     {
         meMode sglobMode ;
@@ -1874,49 +1909,56 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     }
     if((ipipe->bp = bp) == NULL)
     {
+#ifdef _UNIX
+        meSigRelease ();
+#endif /*_UNIX */
         ipipeRemove(ipipe) ;
         return mlwrite(MWABORT,(meUByte *)"[Failed to create %s buffer]",bufName) ;
     }
     /* setup the buffer */
-    if (flags & LAUNCH_BUFIPIPE)
+    if(flags & LAUNCH_BUFIPIPE)
         bp->ipipeFunc = ipipeFunc;
     bp->fileName = meStrdup(path) ;
-    if ((flags & LAUNCH_RAW) == 0)
+    if((flags & LAUNCH_RAW) == 0)
     {
-        meStrcpy(line,"cd ") ;
-        meStrcat(line,path) ;
-        addLineToEob(bp,line) ;
-        addLineToEob(bp,comStr) ;
-        addLineToEob(bp,(meUByte *)"\n") ;
+        meStrcpy(line,"cd ");
+        meStrcat(line,path);
+        addLineToEob(bp,line);
+        addLineToEob(bp,comStr);
+        addLineToEob(bp,(meUByte *)"\n");
     }
-    bp->dotLine = meLineGetPrev(bp->baseLine) ;
-    bp->dotOffset = 0 ;
-    bp->dotLineNo = bp->lineCount-1 ;
-    meAnchorSet(bp,'I',bp->dotLine,bp->dotOffset,1) ;
+    bp->dotLine = meLineGetPrev(bp->baseLine);
+    bp->dotOffset = 0;
+    bp->dotLineNo = bp->lineCount-1;
+    meAnchorSet(bp,'I',bp->dotLine,bp->dotOffset,1);
 
     /* Set up the window dimensions - default to having auto wrap */
     ipipe->flag = 0 ;
-    if ((flags & LAUNCH_RAW) != 0)
+    if((flags & LAUNCH_RAW) != 0)
         ipipe->flag |= meIPIPE_RAW ;
-    ipipe->strRow = 0 ;
-    ipipe->strCol = 0 ;
-    ipipe->noRows = 0 ;
-    ipipe->noCols = frameCur->windowCur->textWidth-1 ;
+    ipipe->strRow = 0;
+    ipipe->strCol = 0;
+    ipipe->noRows = 0;
+    ipipe->noCols = 0;
     ipipe->curRow = (meShort) bp->dotLineNo ;
-    /* get a popup window for the command output */
+    ipipeSetSize(frameCur->windowCur,bp) ;
+#ifdef _UNIX
+    /* Release the signals - we can now cope if the child dies or writes. */
+    meSigRelease ();
+#endif /*_UNIX */
+  
+    if(!(flags & LAUNCH_SILENT))
     {
+        /* get a popup window for the command output */
         meWindow *wp ;
-        if((flags & LAUNCH_SILENT) || ((wp = meWindowPopup(bp->name,0,NULL)) == NULL))
-            wp = frameCur->windowCur ;
-        /* while executing the meWindowPopup function the ipipe could have exited so check */
-        if(ipipes == ipipe)
-        {
-            ipipeSetSize(wp,bp) ;
-            if(bp->ipipeFunc >= 0)
-                /* Give argument of 1 to indicate process has not exited */
-                execBufferFunc(bp,bp->ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),1) ;
-        }
+        if(((wp = meWindowPopup(bp->name,0,NULL)) != NULL) && (ipipes == ipipe))
+            ipipeSetSize(wp,bp);
     }
+    
+    if((bp->ipipeFunc >= 0) && (ipipes == ipipe))
+        /* Give argument of 1 to indicate process has not exited */
+        execBufferFunc(bp,bp->ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),1) ;
+    
     /* reset again incase there was a delay in the meWindowPopup call */
     bp->dotLine = meLineGetPrev(bp->baseLine) ;
     bp->dotOffset = 0 ;

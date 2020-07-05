@@ -242,12 +242,17 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
     case TKREG:
         {
             meUByte cc ;
-            if((cc=*nn) == 'g')
-                regs = meRegHead ;
-            else if(cc == 'p')
-                regs = regs->prev ;
+            if((cc=*nn) != 'l')
+            {
+                if(cc == 'g')
+                    regs = meRegHead ;
+                else if(cc == 'p')
+                    regs = regs->prev ;
+                else
+                    return mlwrite(MWABORT,(meUByte *)"[No such register %s]",vname);
+            }
             cc = nn[1] - '0' ;
-            if(cc >= ('0'+meREGISTER_MAX))
+            if(cc >= meREGISTER_MAX)
                 return mlwrite(MWABORT,(meUByte *)"[No such register %s]",vname);
             meStrcpy(regs->reg[cc],vvalue) ;
             break ;
@@ -1975,10 +1980,12 @@ getval(meUByte *tkn)   /* find the value of a token */
                 rp = meRegCurr ;
             else if(cc == 'p')
                 rp = meRegCurr->prev ;
-            else
+            else if(cc == 'g')
                 rp = meRegHead ;
+            else
+                break;
             cc = tkn[2] - '0' ;
-            if(cc < ('0'+meREGISTER_MAX))
+            if(cc < meREGISTER_MAX)
                 return rp->reg[cc] ;
             break ;
         }
@@ -2257,7 +2264,7 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             return evalResult ;
         }
 #endif
-    case UFABS:        return meItoa(abs(meAtoi(arg1)));
+    case UFABS:        return meItoa(abs((int) meAtoi(arg1)));
     case UFADD:        return meItoa(meAtoi(arg1) + meAtoi(arg2));
     case UFSUB:        return meItoa(meAtoi(arg1) - meAtoi(arg2));
     case UFMUL:        return meItoa(meAtoi(arg1) * meAtoi(arg2));
@@ -3302,11 +3309,11 @@ get_flag:
                     return meLtoa(0) ;
                 
                 /* if it doesnt exist or its an DOS/WIN directory - yes */
-                if((ftype == meFILETYPE_NOTEXIST)
 #if (defined _DOS) || (defined _WIN32)
-                   || (ftype == meFILETYPE_DIRECTORY)
+                if((ftype == meFILETYPE_NOTEXIST) || (ftype == meFILETYPE_DIRECTORY))
+#else
+                if(ftype == meFILETYPE_NOTEXIST)
 #endif
-                   )
                     return meLtoa(1) ;
                 return meLtoa(meStatTestWrite(stats)) ;
                 

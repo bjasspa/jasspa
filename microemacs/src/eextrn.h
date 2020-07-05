@@ -920,7 +920,7 @@ extern	int	pipeCommand(int f, int n);
 extern	int	ipipeCommand(int f, int n) ;
 extern	int	ipipeWrite(int f, int n) ;
 extern  void    ipipeRead(meIPipe *ipipe) ;
-extern  int     ipipeSetSize(meWindow *wp, meBuffer *bp) ;
+extern  void    ipipeSetSize(meWindow *wp, meBuffer *bp) ;
 extern	void    ipipeRemove(meIPipe *ipipe) ;
 #ifdef _UNIX
 extern  void    ipipeCheck(void) ;

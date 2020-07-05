@@ -1634,11 +1634,11 @@ meBufferInsertFile(meBuffer *bp, meUByte *fname, meUInt flags,
 int
 insertFile(int f, int n)
 {
-    meUByte fname[meBUF_SIZE_MAX] ;
-    meStat stats ;
-    meUInt uoffset, loffset ;
-    meInt length=0 ;
-    int s, flags=0 ;
+    meUByte fname[meBUF_SIZE_MAX];
+    meStat stats;
+    meUInt uoffset, loffset=0;
+    meInt length=0;
+    int s, flags=0;
     
     if((s=inputFileName((meUByte *)"Insert file",fname,1)) <= 0)
         return s ;

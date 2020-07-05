@@ -102,9 +102,20 @@ if [ -z "$MAKEFILE" ] ; then
         X11_MAKEINC=/usr/X11R6/include
         X11_MAKELIB=/usr/X11R6/lib
     elif [ $PLATFORM = "Darwin" ] ; then
-        MAKEBAS=darwin
-        X11_MAKEINC=/usr/X11R6/include
-        X11_MAKELIB=/usr/X11R6/lib
+        VERSION=`uname -r | cut -f 1 -d .`
+        if [ $VERSION -gt 18 ] ; then
+            MAKEBAS=macos64
+            X11_MAKEINC=/opt/X11/include
+            X11_MAKELIB=/opt/X11/lib
+        elif [ $VERSION -gt 15 ] ; then
+            MAKEBAS=macos32
+            X11_MAKEINC=/opt/X11/include
+            X11_MAKELIB=/opt/X11/lib
+        else
+            MAKEBAS=darwin
+            X11_MAKEINC=/usr/X11R6/include
+            X11_MAKELIB=/usr/X11R6/lib
+        fi
     elif [ $PLATFORM = "FreeBSD" ] ; then
         MAKEBAS=freebsd
         X11_MAKEINC=/usr/X11R6/include
@@ -171,10 +182,10 @@ if [ -z "$MAKEFILE" ] ; then
     fi
 
     # use cc by default if available
-    if [ -r $MAKEBAS.mak ] ; then
+    if [ -r ${MAKEBAS}cc.mak ] ; then
         # try to detect cc, if found use it in preference
         if [ "`type cc | cut -b 1-5`" = "cc is" ] ; then
-            MAKEFILE=$MAKEBAS.mak
+            MAKEFILE=${MAKEBAS}cc.mak
         fi
         # Special rules for sun, if cc is /usr/ucb then this is a dummy.
         if [ $PLATFORM = "SunOS" ] ; then 
@@ -186,15 +197,15 @@ if [ -z "$MAKEFILE" ] ; then
     fi
     if [ -z "$MAKEFILE" ] ; then
         # failed to find cc, try gcc
-        if [ -r $MAKEBAS.gmk ] ; then
+        if [ -r ${MAKEBAS}gcc.mak ] ; then
             # try to detect gcc, if found use it in preference
             if [ "`type gcc | cut -b 1-6`" = "gcc is" ] ; then
-                MAKEFILE=$MAKEBAS.gmk
+                MAKEFILE=${MAKEBAS}gcc.mak
             fi
         fi
     fi
     if [ -z "$MAKEFILE" ] ; then
-        echo "Error: Failed to find a compiler (cc or gcc) fix PATH or use -m option"
+        echo "Error: Failed to find a supported compiler (cc or gcc) for current platform ($MAKEBAS) fix PATH or use -m option"
         exit 1
     fi
 fi
@@ -264,5 +275,5 @@ if [ -r $MAKEFILE ] ; then
         fi
     fi
 else
-    echo "Error: Failed to find the makefile $MAKEBAS.$MAKEEXT"
+    echo "Error: Failed to find the makefile $MAKEFILE"
 fi

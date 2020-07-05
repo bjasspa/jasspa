@@ -184,6 +184,11 @@
 #define _FREEBSD_BASE  1                /* Uses FreeBSD as base          */
 #endif
 
+#ifdef _MACOS
+#define meSYSTEM_NAME  "macos"          /* Identity name of the system   */
+#define _FREEBSD_BASE  1                /* Uses FreeBSD as base          */
+#endif
+
 #ifdef _FREEBSD_BASE
 #define _UNIX          1                /* This is a UNIX system         */
 #define _USG           1                /* UNIX system V                 */

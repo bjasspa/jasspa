@@ -28,7 +28,7 @@
  *     The format of hilight tokens are as similar to regex as possible.
  *     There is a mis-use of the \{\} intervals to indicate the start
  *     and end of the hilighted part of a token.
- */ 
+ */
 
 #define	__HILIGHTC				/* Name file */
 
@@ -40,7 +40,7 @@
  * HilFunc
  * This function is invoked whenever the source text reaches a defined postion,
  * presently defined at the start and end of the highlight selection blocks.
- * The call back function deals with the change in colour that results. 
+ * The call back function deals with the change in colour that results.
  * */
 struct HILDATA;                         /* Forward reference structure */
 typedef void (*HilFunc)(int, struct HILDATA *);
@@ -65,7 +65,7 @@ typedef struct HILDATA {
     meUShort flag;                      /* Video structure flag */
     meUByte colno;                      /* Color number */
     meUByte tabWidth;                   /* The current tab width */
-} HILDATA;    
+} HILDATA;
 
 #define meHIL_TEST_BACKREF 0x00
 #define meHIL_TEST_SINGLE  0x01
@@ -96,7 +96,7 @@ typedef struct HILDATA {
 
 static meUByte *meHilTestNames[meHIL_TEST_NOCLASS]={
     (meUByte *)"space",(meUByte *)"digit",(meUByte *)"xdigit",(meUByte *)"lower",(meUByte *)"upper",
-    (meUByte *)"alpha",(meUByte *)"alnum",(meUByte *)"sword",(meUByte *)"word",(meUByte *)"any", 
+    (meUByte *)"alpha",(meUByte *)"alnum",(meUByte *)"sword",(meUByte *)"word",(meUByte *)"any",
 } ;
 
 #define meHIL_MODECASE   0x001
@@ -115,7 +115,7 @@ void
 freeToken(meHilight *root)
 {
     meUByte ii, top ;
-    
+
     top = hilListSize(root) ;
     for(ii=0 ; ii<top ; ii++)
         freeToken(root->list[ii]) ;
@@ -131,10 +131,10 @@ static meHilight *
 createHilight(meUByte hilno, meInt size, meUByte *noHils , meHilight ***hTbl)
 {
     meHilight *root ;
-    
+
     if(hilno >= *noHils)
     {
-        if((*hTbl = (meHilight **) 
+        if((*hTbl = (meHilight **)
             meRealloc(*hTbl,(hilno+1)*sizeof(meHilight *))) == NULL)
             return NULL ;
         memset((*hTbl)+(*noHils),0,(hilno+1-(*noHils))*sizeof(meHilight *)) ;
@@ -166,12 +166,12 @@ ListToTable(meHilight *root)
 {
     meUByte pos, ii, size ;
     meUByte cc ;
-    
+
     if(root->listSize < 8)
         return ;
-    
+
     root->table = (meUByte *) meMalloc(TableSize) ;
-    
+
     root->table[0] = root->ordSize ;
     pos  = root->ordSize ;
     size = hilListSize(root) ;
@@ -203,11 +203,11 @@ addTokenNode(meHilight *root, meUByte *token, int flags)
     meHilight *node, *nn ;
     meUByte c1=1, ii, jj, top, spec ;
     int len ;
-    
+
     /* Have we run out of room, is so try to optimize */
     if(!(flags & ADDTOKEN_OPTIM) && (hilListSize(root) == 0xfe))
         hilNodeOptimize(root,flags) ;
-    
+
     if((*token == meCHAR_LEADER) && (*++token != meCHAR_TRAIL_LEADER))
     {
         /* special test */
@@ -233,10 +233,10 @@ addTokenNode(meHilight *root, meUByte *token, int flags)
             {
                 if(flags & ADDTOKEN_DUMMY)
                 {
-                    /* if adding a dummy, the node already exists as a legit, 
+                    /* if adding a dummy, the node already exists as a legit,
                      * the only thinkg to do is correct the ASTTLINE & ASOL flags,
                      * otherwise leave it alone */
-                    node->type &= (~(HLASOL|HLASTTLINE)) | flags ; 
+                    node->type &= (~(HLASOL|HLASTTLINE)) | flags ;
                     return node ;
                 }
                 /* if removing token or readding, this node must
@@ -271,7 +271,7 @@ addTokenNode(meHilight *root, meUByte *token, int flags)
         }
         if(c2 == '\0')
         {
-            node->type &= (~(HLASOL|HLASTTLINE)) | flags ; 
+            node->type &= (~(HLASOL|HLASTTLINE)) | flags ;
             return addTokenNode(node,s1,flags) ;
         }
         if(c2 > c1)
@@ -279,7 +279,7 @@ addTokenNode(meHilight *root, meUByte *token, int flags)
     }
     if(flags & ADDTOKEN_REMOVE)
         return NULL ;
-    
+
     /* ii points to position to insert top must now be the table size */
     /* going to be added to this list, check that we have enough room */
     if(((top=hilListSize(root)) == 0xfe) && !(flags & ADDTOKEN_OPTIM))
@@ -296,7 +296,7 @@ addTokenNode(meHilight *root, meUByte *token, int flags)
     nn->type = ((flags & ADDTOKEN_DUMMY) ?
                 (HLVALID|(flags & (HLASOL|HLASTTLINE))):HLASOL|HLASTTLINE) ;
     meStrcpy(nn->token,token) ;
-    
+
     if(c1 == 0)
     {
         int kk, ll ;
@@ -307,8 +307,10 @@ addTokenNode(meHilight *root, meUByte *token, int flags)
             return NULL ;
         for(jj=0,ll=ii ;  ll<kk ; ll++,jj++)
         {
-            nn->list[jj] = root->list[ll] ;
-            meStrcpy(nn->list[jj]->token,nn->list[jj]->token+len) ;
+            int tx=0;
+            nn->list[jj] = root->list[ll];
+            while((nn->list[jj]->token[tx]=nn->list[jj]->token[tx+len]) != 0)
+                tx++;
             if((nn->list[jj]->type & (HLASOL|HLSOL))  != (HLASOL|HLSOL))
                 nn->type &= ~HLASOL ;
             if((nn->list[jj]->type & (HLASTTLINE|HLSTTLINE))  != (HLASTTLINE|HLSTTLINE))
@@ -331,7 +333,7 @@ addTokenNode(meHilight *root, meUByte *token, int flags)
         (root->ordSize) += jj ;
     else
         (root->listSize) += jj ;
-    
+
     if(root->table == NULL)
         ListToTable(root) ;
     else
@@ -351,7 +353,7 @@ hilNodeOptimize(meHilight *root, int flags)
 {
     int ii, sz, no=0, cc=0, jj=0 ;
     meUByte tok[2] ;
-    
+
     ii = root->ordSize ;
     sz = ii+root->listSize ;
     while(ii < sz)
@@ -387,7 +389,7 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
     {
         meUByte *s1, *dd ;
         meUByte tt, ii=0 ;
-        
+
         *dest++ = meCHAR_LEADER ;
         tt = meHIL_TEST_VALID ;
         if(*ss == '^')
@@ -625,12 +627,12 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
 /* compiles the given token into a string form compatible with the main
  * hilight search engine.
  * The retValues are:
- * 
+ *
  *     retValues[0] : Token length in items
  *     retValues[1] : Token hilight start offset.
  *     retValues[2] : Token hilight end offset.
  *     retValues[3] : Number of groups.
- * 
+ *
  * Returns a pointer to the start of the last item or NULL on failure.
  */
 static meUByte *
@@ -640,7 +642,7 @@ meHiltStringCompile(meUByte *dest, meUByte *token, meUByte changeCase,
     meUByte cc, *dd, *lastDest ;
     meUByte nextGroupNo=0, group=0 ;
     int startOffset=0, endOffset=-1, len=0 ;
-    
+
     while((cc=*token) != '\0')
     {
         if(cc == '\\')
@@ -750,7 +752,7 @@ meHiltStringCompile(meUByte *dest, meUByte *token, meUByte changeCase,
     retValues[1] = startOffset ;
     retValues[2] = endOffset ;
     retValues[3] = nextGroupNo ;
-    
+
     return lastDest ;
 }
 
@@ -759,10 +761,10 @@ meHiltTokenAddSearchString(meHilight *root, meHilight *node, meUByte *token, int
 {
     meUByte buff[meBUF_SIZE_MAX], *dd, *ss, *lastItem ;
     int retValues[4], l1, l2, len ;
-    
+
     dd = buff ;
     ss = token ;
-    /* must remove the start of line '^' as its a zero length item 
+    /* must remove the start of line '^' as its a zero length item
      * implemented in flags */
     if(*ss == '^')
     {
@@ -782,10 +784,10 @@ meHiltTokenAddSearchString(meHilight *root, meHilight *node, meUByte *token, int
     len = retValues[0] ;
     l1 = retValues[1] ;
     l2 = retValues[2] ;
-    
+
     l2 = len - l2 ;
     len -= l1 + l2 ;
-    
+
     if(node == NULL)
     {
         meUByte  sttTst, endTst ;
@@ -801,7 +803,7 @@ meHiltTokenAddSearchString(meHilight *root, meHilight *node, meUByte *token, int
             ss += 3 ;
         }
         /* if the token ends with ".*\\}" then we can
-         * optimize this to HLENDLINE - note as the token includes 
+         * optimize this to HLENDLINE - note as the token includes
          * the .*, a replace should also replace the .* */
         if(!l2 && (len || l1) && (lastItem[0] == meCHAR_LEADER) &&
            (lastItem[1] == (meHIL_TEST_VALID|meHIL_TEST_MATCH_NONE|meHIL_TEST_MATCH_MULTI|meHIL_TEST_ANY)))
@@ -810,7 +812,7 @@ meHiltTokenAddSearchString(meHilight *root, meHilight *node, meUByte *token, int
             len-- ;
             lastItem[0] = '\0' ;
         }
-        
+
         /* setup the start and end Test flag */
         if(flags & HLTOKEN)
         {
@@ -850,7 +852,7 @@ meHiltTokenAddSearchString(meHilight *root, meHilight *node, meUByte *token, int
         dd = ss ;
         while(dd <= lastItem)
         {
-            if((*dd++ == meCHAR_LEADER) && (*dd++ != meCHAR_TRAIL_LEADER) && (dd != ss+2)) 
+            if((*dd++ == meCHAR_LEADER) && (*dd++ != meCHAR_TRAIL_LEADER) && (dd != ss+2))
             {
                 dd[-2] = '\0' ;
                 if(addTokenNode(root,ss,flags|ADDTOKEN_DUMMY) == NULL)
@@ -861,7 +863,7 @@ meHiltTokenAddSearchString(meHilight *root, meHilight *node, meUByte *token, int
         }
         if(((node = addTokenNode(root,ss,flags)) == NULL) || (flags & ADDTOKEN_REMOVE))
             return NULL ;
-        
+
         if(flags & (HLBRANCH|HLBRACKET))
             flags &= ~HLCONTIN ;
         tokenSetType(node,flags) ;
@@ -874,7 +876,7 @@ meHiltTokenAddSearchString(meHilight *root, meHilight *node, meUByte *token, int
     {
         if((dd = meStrdup(buff)) == NULL)
             return NULL ;
-        
+
         node->close = dd ;
         node->clsSttOff = l1 ;
         node->clsEndOff = l2 ;
@@ -889,7 +891,7 @@ meHiltTokenAddReplaceString(meHilight *root, meHilight *node, meUByte *token, in
 {
     meUByte buff[meBUF_SIZE_MAX], *dd, *ss, cc ;
     int len ;
-    
+
     ss = token ;
     dd = buff ;
     len = 0 ;
@@ -917,15 +919,15 @@ meHiltTokenAddReplaceString(meHilight *root, meHilight *node, meUByte *token, in
         len++ ;
     }
     *dd = 0 ;
-    
+
     if((dd = meStrdup(buff)) == NULL)
         return NULL ;
-    
+
     if(mainRepl)
         node->rtoken = dd ;
     else
         node->rclose = dd ;
-    
+
     if(len != node->scheme)
     {
         node->type |= HLRPLCDIFF ;
@@ -943,19 +945,19 @@ hilight(int f, int n)
     meUShort type ;
     meUByte  hilno ;
     int ii ;
-    
+
     if(n == 0)
     {
         if((meGetString((meUByte *)"Hi no",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
-           ((hilno = (meUByte) meAtoi(buf)) == 0) || 
+           ((hilno = (meUByte) meAtoi(buf)) == 0) ||
            (meGetString((meUByte *)"Flags",0,0,buf,meBUF_SIZE_MAX) <= 0))
             return meABORT ;
         type = (meUShort) meAtoi(buf) ;
-        
+
         if((root = createHilight(hilno,0,&noHilights,&hilights)) == NULL)
             return meFALSE ;
-        
-        /* force a complete update next time */ 
+
+        /* force a complete update next time */
         sgarbf = meTRUE ;
         meHilightGetFlags(root) = (meUByte) type ;
         if(type & HFLOOKBLN)
@@ -989,7 +991,7 @@ hilight(int f, int n)
         return meTRUE ;
     }
     n = (n < 0) ? ADDTOKEN_REMOVE:0 ;
-    
+
     if((meGetString((meUByte *)"Hi no",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
        ((hilno = (meUByte) meAtoi(buf)) == 0) ||
        (hilno >= noHilights) ||
@@ -1000,7 +1002,7 @@ hilight(int f, int n)
     if(type & HLCOLUMN)
     {
         meInt fmCol, toCol ;
-        
+
         if((meGetString((meUByte *)"From",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
            ((fmCol = (meUShort) meAtoi(buf)) < 0) ||
            (!(n & ADDTOKEN_REMOVE) &&
@@ -1013,7 +1015,7 @@ hilight(int f, int n)
         {
             if(n & ADDTOKEN_REMOVE)
             {
-                /* free off the column hilight */ 
+                /* free off the column hilight */
                 meHilightSetColumnHilight(root,meHilightGetColumnHilight(node)) ;
                 meFree(node) ;
                 return meTRUE ;
@@ -1034,10 +1036,10 @@ hilight(int f, int n)
         meHilightSetToColumn(node,toCol) ;
         goto get_scheme ;
     }
-    
+
     if(meGetString((meUByte *)"Token",0,0,buf,meBUF_SIZE_MAX) <= 0)
         return meFALSE ;
-    
+
     /* add the token */
     node = meHiltTokenAddSearchString(root,NULL,(meUByte *) buf,(type|n)) ;
     if(n & ADDTOKEN_REMOVE)
@@ -1045,16 +1047,16 @@ hilight(int f, int n)
     if(node == NULL)
         return meFALSE ;
     type = node->type ;
-    
+
     if((type & (HLVALID|HLONELNBT)) != HLVALID)
     {
-        if(((type & HLREPLACE) && 
+        if(((type & HLREPLACE) &&
             ((meGetString((meUByte *)"Replace",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
              (meHiltTokenAddReplaceString(root,node,(meUByte *)buf,1) == NULL))) ||
            ((type & HLBRACKET) &&
             ((meGetString((meUByte *)"Close",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
              (meHiltTokenAddSearchString(root,node,(meUByte *) buf,0) == NULL) ||
-             ((type & HLREPLACE) && 
+             ((type & HLREPLACE) &&
               ((meGetString((meUByte *)"Replace",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
                (meHiltTokenAddReplaceString(root,node,(meUByte *)buf,0) == NULL))) ||
              (meGetString((meUByte *)"Ignore",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
@@ -1062,21 +1064,21 @@ hilight(int f, int n)
            ((type & HLCONTIN) &&
             ((meGetString((meUByte *)"Continue",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
              ((node->close = (meUByte *) meStrdup(buf)) == NULL) ||
-             ((type & HLREPLACE) && 
+             ((type & HLREPLACE) &&
               ((meGetString((meUByte *)"Replace",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
                ((node->rclose = (meUByte *) meStrdup(buf)) == NULL))))) ||
            ((type & HLBRANCH) &&
             ((meGetString((meUByte *)"hilno",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
              ((node->ignore = (meUByte) meAtoi(buf)) > 255))))
             return meFALSE;
-get_scheme:        
-        /* Get the colour index. This uses the root hilight 
+get_scheme:
+        /* Get the colour index. This uses the root hilight
          * colour if not specified. */
         ii = meGetString((meUByte *)"Scheme",0,0,buf,meBUF_SIZE_MAX);
         if (ii < 0)
             return meFALSE ;
-        
-        if (ii > 0) 
+
+        if (ii > 0)
         {
             if ((ii=convertUserScheme(meAtoi(buf),-1)) < 0)
                 return meFALSE ;
@@ -1097,95 +1099,94 @@ do {                                                                         \
     switch(tokTest & meHIL_TEST_MASK)                                        \
     {                                                                        \
     case meHIL_TEST_BACKREF:                                                 \
-	__ts = testStr ;                                                     \
-	ret = (varTable[*testStr++] == ftctcc) ;                             \
-	break ;                                                              \
+        __ts = testStr ;                                                     \
+        ret = (varTable[*testStr++] == ftctcc) ;                             \
+        break ;                                                              \
     case meHIL_TEST_SINGLE:                                                  \
-	__ts = testStr ;                                                     \
-	ret = (*testStr++ == ftctcc) ;                                       \
-	break ;                                                              \
+        __ts = testStr ;                                                     \
+        ret = (*testStr++ == ftctcc) ;                                       \
+        break ;                                                              \
     case meHIL_TEST_CLASS:                                                   \
         {                                                                    \
-	    meUByte rc, nrc ;                                                \
-            \
-	    __ts = testStr ;                                                 \
-	    for(ret=*testStr++ ; ret>0 ; ret--)                              \
+            meUByte rc, nrc ;                                                \
+            __ts = testStr ;                                                 \
+            for(ret=*testStr++ ; ret>0 ; ret--)                              \
             {                                                                \
-		rc=*testStr++ ;                                              \
-		nrc = *testStr ;                                             \
-		if((nrc == '-') && (ret > 1))                                \
+                rc=*testStr++ ;                                              \
+                nrc = *testStr ;                                             \
+                if((nrc == '-') && (ret > 1))                                \
                 {                                                            \
-		    /* range */                                              \
-		    testStr++ ;                                              \
-		    nrc = *testStr++ ;                                       \
-		    ret -= 2 ;                                               \
-		    if((ftctcc >= rc) && (ftctcc <= nrc))                    \
+                    /* range */                                              \
+                    testStr++ ;                                              \
+                    nrc = *testStr++ ;                                       \
+                    ret -= 2 ;                                               \
+                    if((ftctcc >= rc) && (ftctcc <= nrc))                    \
                     {                                                        \
-			testStr += ret - 1 ;                                 \
-			break ;                                              \
-		    }                                                        \
-		}                                                            \
-		/* single char compare */                                    \
-		else if(ftctcc == rc)                                        \
+                        testStr += ret - 1 ;                                 \
+                        break ;                                              \
+                    }                                                        \
+                }                                                            \
+                /* single char compare */                                    \
+                else if(ftctcc == rc)                                        \
                 {                                                            \
-		    testStr += ret - 1 ;                                     \
-		    break ;                                                  \
-		}                                                            \
-	    }                                                                \
-	    break ;                                                          \
-	}                                                                    \
+                    testStr += ret - 1 ;                                     \
+                    break ;                                                  \
+                }                                                            \
+            }                                                                \
+            break ;                                                          \
+        }                                                                    \
     case meHIL_TEST_EOL:                                                     \
-	ret = (ftctcc == meCHAR_NL) ;                                        \
-	break ;                                                              \
+        ret = (ftctcc == meCHAR_NL) ;                                        \
+        break ;                                                              \
     case meHIL_TEST_SPACE:                                                   \
-	ret = isSpace(ftctcc) ;                                              \
-	break ;                                                              \
+        ret = isSpace(ftctcc) ;                                              \
+        break ;                                                              \
     case meHIL_TEST_DIGIT:                                                   \
-	ret = isDigit(ftctcc) ;                                              \
-	break ;                                                              \
+        ret = isDigit(ftctcc) ;                                              \
+        break ;                                                              \
     case meHIL_TEST_XDIGIT:                                                  \
-	ret = isXDigit(ftctcc) ;                                             \
-	break ;                                                              \
+        ret = isXDigit(ftctcc) ;                                             \
+        break ;                                                              \
     case meHIL_TEST_LOWER:                                                   \
-	ret = isLower(ftctcc) ;                                              \
-	break ;                                                              \
+        ret = isLower(ftctcc) ;                                              \
+        break ;                                                              \
     case meHIL_TEST_UPPER:                                                   \
-	ret = isUpper(ftctcc) ;                                              \
-	break ;                                                              \
+        ret = isUpper(ftctcc) ;                                              \
+        break ;                                                              \
     case meHIL_TEST_ALPHA:                                                   \
-	ret = isAlpha(ftctcc) ;                                              \
-	break ;                                                              \
+        ret = isAlpha(ftctcc) ;                                              \
+        break ;                                                              \
     case meHIL_TEST_ALNUM:                                                   \
-	ret = isAlphaNum(ftctcc) ;                                           \
-	break ;                                                              \
+        ret = isAlphaNum(ftctcc) ;                                           \
+        break ;                                                              \
     case meHIL_TEST_SWORD:                                                   \
-	ret = isSpllWord(ftctcc) ;                                           \
-	break ;                                                              \
+        ret = isSpllWord(ftctcc) ;                                           \
+        break ;                                                              \
     case meHIL_TEST_WORD:                                                    \
-	ret = isWord(ftctcc) ;                                               \
-	break ;                                                              \
+        ret = isWord(ftctcc) ;                                               \
+        break ;                                                              \
     case meHIL_TEST_ANY:                                                     \
-	ret = 1 ;                                                            \
-	break ;                                                              \
+        ret = 1 ;                                                            \
+        break ;                                                              \
     }                                                                        \
     if(tokTest & meHIL_TEST_INVERT)                                          \
-	ret = !ret ;                                                         \
+        ret = !ret ;                                                         \
     if(!ret)                                                                 \
     {                                                                        \
-	if(tokTest & meHIL_TEST_MATCH_NONE)                                  \
+        if(tokTest & meHIL_TEST_MATCH_NONE)                                  \
         {                                                                    \
-	    ret = 1 ;                                                        \
-	    srcText-- ;                                                      \
-	}                                                                    \
-	tokTest = 0 ;                                                        \
+            ret = 1 ;                                                        \
+            srcText-- ;                                                      \
+        }                                                                    \
+        tokTest = 0 ;                                                        \
     }                                                                        \
     else if((lastChar=ftctcc) == meCHAR_NL)                                  \
-	tokTest = 0 ;                                                        \
+        tokTest = 0 ;                                                        \
     else if(tokTest & meHIL_TEST_MATCH_MULTI)                                \
     {                                                                        \
-	if((tokTest & meHIL_TEST_MASK) <= meHIL_TEST_CLASS)                  \
-	    testStr = __ts ;                                                 \
-	tokTest |= meHIL_TEST_MATCH_NONE ;                                   \
+        if((tokTest & meHIL_TEST_MASK) <= meHIL_TEST_CLASS)                  \
+            testStr = __ts ;                                                 \
+        tokTest |= meHIL_TEST_MATCH_NONE ;                                   \
     }                                                                        \
 } while(tokTest & meHIL_TEST_MATCH_MULTI)
 
@@ -1232,13 +1233,13 @@ __findTokenSingleCharTest(meUByte cc, meUByte tokTest)
     if(tokTest & meHIL_TEST_INVERT)
         ret = !ret ;
     return ret ;
-}    
+}
 
 #define findTokenSingleCharTest(cc,tokTest)                                  \
 ((tokTest == meHIL_TEST_INVALID) || __findTokenSingleCharTest(cc,tokTest))
 
 static meHilight *
-findToken(meHilight *root, meUByte *text, meUByte mode, 
+findToken(meHilight *root, meUByte *text, meUByte mode,
           meUByte lastChar, meUShort *len)
 {
     meHilight *nn, *node ;
@@ -1246,7 +1247,7 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
     int status;
     int hi, low, mid ;
     meUShort type ;
-    
+
     if(root->table == NULL)
     {
         low = root->ordSize ;
@@ -1334,7 +1335,7 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
                 *len += s1-text ;
                 return node ;
             }
-            if((((type & HLVALID) == 0) || ((type & HLONELNBT) && (mode & meHIL_MODELOOKB))) && 
+            if((((type & HLVALID) == 0) || ((type & HLONELNBT) && (mode & meHIL_MODELOOKB))) &&
                (((mode & meHIL_MODETOEOL) == 0) || (type & HLBRINEOL)) &&
                (((type & HLSTTLINE) == 0) || (mode & meHIL_MODESTTLN)) &&
                (((type & HLSOL) == 0) || (mode & meHIL_MODESTART)) &&
@@ -1350,12 +1351,12 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
     }
     if((hi = root->ordSize) > 0)
     {
-        /* note that findTokenCharTest may not set lstc even if it does 
+        /* note that findTokenCharTest may not set lstc even if it does
          * match as the ? & * may match 0 chars - so theres no last!
          * Therefore initialize to a sensible value */
         meUByte dd, lstc ;
         mid = 0 ;
-        
+
         for( ; mid < hi ; mid++)
         {
             nn = root->list[mid] ;
@@ -1475,7 +1476,7 @@ while(0)
  * This function manages the scheme changes. Each change in scheme results
  * in a call. The changes of scheme are added to the "hd->blkp" structure.
  * In addition the last block node is retained in "hd->hnode" which is the
- * current hilighting scheme. The selection hilighting uses this node to 
+ * current hilighting scheme. The selection hilighting uses this node to
  * switch the selection schemes on an off. The correct state is mainated by
  * this function.
  */
@@ -1483,7 +1484,7 @@ static void
 hilSchemeChange (meHilight *node, HILDATA *hd)
 {
     register meSchemeSet *blkp;
-    
+
     if (hd->noColChng > 0)
     {
         /* Re-allocate a new hilight block - run out of room */
@@ -1525,7 +1526,7 @@ hilCopyReplaceString(int sDstPos, register meUByte *srcText,
     int dstPos = sDstPos ;
     int hoff, dstLen ;
     meUByte cc ;
-    
+
     if((hd->srcOff != 0xffff) && (hd->srcPos+len >= hd->srcOff))
     {
         /* as the source len and destination len could be different, the best
@@ -1579,7 +1580,7 @@ hilCopyString(register int dstPos, register meUByte *srcText,HILDATA *hd)
     if (hd->srcOff != 0xffff)
     {
         meUShort srcPos;
-        
+
         srcPos = hd->srcPos;
         while((cc = *srcText++) != '\0')
         {
@@ -1602,18 +1603,18 @@ hilCopyLenString(register int dstPos, register meUByte *srcText,
                  register int len, HILDATA *hd)
 {
     meUByte cc ;
-    
+
     /* Handle the selection hilighting if enabled. */
     if ((hd->srcOff != 0xffff) && ((hd->srcOff - hd->srcPos) < len))
     {
         meUShort srcPos;
-        
+
         srcPos = hd->srcPos;
         while (--len >= 0)
         {
             if (hd->srcOff <= srcPos)
                 (hd->hfunc)(dstPos, hd);
-            
+
             cc = *srcText++ ;
             __hilCopyChar(dstPos,cc,hd->tabWidth);
             srcPos++;
@@ -1648,7 +1649,7 @@ hilHandleCallback (int dstPos, struct HILDATA *hd)
         hilSchemeChange (hd->hnode, hd); /* New colour node */
         hd->blkp->column = dstPos;       /* New end of this style */
         hd->flag &= ~VFSHBEG;            /* Knock off the background mode */
-        
+
         /* Reprime the callback with the location of the end of hilight */
         if (hd->flag & VFSHEND)
             hd->srcOff = selhilight.eoff;
@@ -1667,7 +1668,7 @@ hilHandleCallback (int dstPos, struct HILDATA *hd)
     }
 }
 
-meUShort 
+meUShort
 hilightLine(meVideoLine *vp1, meUByte mode)
 {
     meUByte *srcText=vp1->line->text ;
@@ -1676,7 +1677,7 @@ hilightLine(meVideoLine *vp1, meUByte mode)
     meUShort len ;
     register int srcWid=vp1->line->length, dstPos=0 ;
     HILDATA hd;
-    
+
     /* Initialise the hilight data structure */
     hd.root = hilights[hilno];          /* Root of the hilighting */
     hd.flag = vp1->flag;                /* Cache the video flag */
@@ -1685,13 +1686,13 @@ hilightLine(meVideoLine *vp1, meUByte mode)
     hd.srcOff = 0xffff;                 /* No callback required */
     hd.blkp = hilBlock + 1;             /* block pointer */
     hd.tabWidth = vp1->wind->buffer->tabWidth;
-    
+
     /* Determine if we are processing a forground or hilighted line.
      * Determined by the current line flag */
     hd.colno = meSCHEME_NORMAL ;
-    if (hd.flag & VFCURRL) 
+    if (hd.flag & VFCURRL)
         hd.colno += meSCHEME_CURRENT ;
-    
+
     /* Determine if we are handling a selection hilighted line.
      * If so then set up the starting background colour in accordance
      * with the start/end/all selection hilighting flags in the video
@@ -1699,12 +1700,12 @@ hilightLine(meVideoLine *vp1, meUByte mode)
     if (hd.flag & VFSHMSK)              /* Selection hilight to be done ? */
     {
         hd.colno += meSCHEME_SELECT ;   /* Assume selection hilight enabled */
-        
+
         if (hd.flag & VFSHALL)          /* Whole line hilighted ?? */
             hd.flag &= ~VFSHMSK;        /* Yes - kill off the flag */
         else
         {
-            /* Check for the beginning of a slection hilight. If it is at the 
+            /* Check for the beginning of a slection hilight. If it is at the
              * beginning of the line then use this as the starting colour. */
             if (hd.flag & VFSHBEG)
             {
@@ -1717,9 +1718,9 @@ hilightLine(meVideoLine *vp1, meUByte mode)
                 else
                     hd.flag &=~VFSHBEG; /* Knock off the begin - found */
             }
-            
-            /* Check for the end of a selection hilight. If it is at the 
-             * beginning of the line then it effectivelly disables the 
+
+            /* Check for the end of a selection hilight. If it is at the
+             * beginning of the line then it effectivelly disables the
              * hilight. */
             if ((hd.flag & VFSHEND) && ((hd.flag & VFSHBEG) == 0))
             {
@@ -1736,7 +1737,7 @@ hilightLine(meVideoLine *vp1, meUByte mode)
             }
         }
     }
-    
+
     mode |= (meHIL_MODESTTLN|meHIL_MODESTART|(meHilightGetFlags(hd.root) & (HFCASE|HFTOKEWS))) ;
     if(vp1->bracket != NULL)
     {
@@ -1745,7 +1746,7 @@ hilightLine(meVideoLine *vp1, meUByte mode)
         goto BracketJump ;
     }
     hilSchemeChange ((hd.cnode = hd.root), &hd);
-    
+
     for(;;)
     {
         node = meHilightGetColumnHilight(hd.root) ;
@@ -1786,7 +1787,7 @@ column_token:
                 hd.srcPos += node->tknSttOff ;
                 len -= node->tknSttOff ;
             }
-            
+
             if(hd.blkp->column == dstPos)
             {
                 hd.blkp->scheme = node->scheme + hd.colno ;
@@ -1802,14 +1803,14 @@ column_token:
                 dstPos = hilCopyReplaceString(dstPos,node->rtoken,len,&hd) ;
             else if(len)
                 dstPos = hilCopyLenString(dstPos,srcText+hd.srcPos,len,&hd) ;
-            
+
             hd.srcPos += len ;
-            
+
 BracketJump:
             if(node->type & HLBRACKET)
             {
                 meUByte ignore, tt=1, *c1, *c2, ss, *s1, *s2, solt ;
-                
+
                 c1 = (meUByte *) node->close ;
                 /* the SOL is a special close bracket code for '^' */
                 if((solt = ((c1[0] == meCHAR_LEADER) && (c1[1] == meHIL_TEST_SOL))))
@@ -1819,7 +1820,7 @@ BracketJump:
                 for( ; ; hd.srcPos++)
                 {
                     if(!solt || (hd.srcPos == 0))
-                    {                       
+                    {
                         c2 = c1 ;
                         s2 = s1 ;
                         while((tt = *c2++) != '\0')
@@ -1827,7 +1828,7 @@ BracketJump:
                             if((tt == meCHAR_LEADER) && ((tt = *c2++) != meCHAR_TRAIL_LEADER))
                             {
                                 meUByte ret, vv ;
-                                
+
                                 vv = *c2++ ;
                                 findTokenCharTest(ret,ss,s2,tt,c2) ;
                                 if(!ret)
@@ -1903,7 +1904,7 @@ BracketJump:
             {
                 char *ss ;
                 int   pos ;
-                
+
                 ss  = (char *) node->close ;
                 len = strlen(ss) ;
                 pos = srcWid ;
@@ -1979,12 +1980,12 @@ advance_char:
             hd.srcPos++ ;
         }
     }
-    
+
     if(hd.blkp->column != dstPos)
         hd.blkp->column = dstPos ;
     node = NULL ;
 hiline_exit:
-    
+
     if((hd.flag & (VFSHBEG|VFSHEND)) == VFSHEND)
     {
         /* must end the selection hilighting */
@@ -1999,7 +2000,7 @@ hiline_exit:
         hilSchemeChange (hd.hnode, &hd);
         hd.blkp->column = dstPos;
     }
-    
+
     if((vp1[0].hilno != hilno) && (meHilightBranchType & HLSNGLLNBT))
     {
         hilno = vp1[0].hilno ;
@@ -2062,7 +2063,7 @@ hilOffsetReplaceString(register meUByte **offPtr, register int dstPos,
 {
     meUByte *off=*offPtr, cc, lastcc='\0' ;
     int            rlen=dstPos, ii, dd=*dstJmp ;
-    
+
     while((cc = *srcText++) != '\0')
     {
         if((cc == meCHAR_LEADER) && ((cc=*srcText++) != meCHAR_TRAIL_LEADER))
@@ -2070,7 +2071,7 @@ hilOffsetReplaceString(register meUByte **offPtr, register int dstPos,
         lastcc = cc ;
         hilOffsetChar(off,dstPos,dd,cc,tw)
           }
-    
+
     rlen = dstPos-rlen ;
     if(len)
     {
@@ -2108,9 +2109,9 @@ hilightCurLineOffsetEval(meWindow *wp)
     meUShort len ;
     register int srcWid=wp->dotLine->length, srcPos=0, dstPos=0 ;
     int dstJmp=0 ;
-    
+
     root = hilights[hilno];          /* Root of the hilighting */
-    
+
     mode = (meHIL_MODESTTLN|meHIL_MODESTART|(meHilightGetFlags(root) & (HFCASE|HFTOKEWS))) ;
     /*    if(vp1->bracket != NULL)*/
     /*    {*/
@@ -2169,12 +2170,12 @@ column_token:
                 hilOffsetLenString(cc,off,dstPos,dstJmp,srcText+srcPos,len,tw) ;
             }
             srcPos += len ;
-            
+
             /*BracketJump:*/
             if(node->type & HLBRACKET)
             {
                 meUByte ignore, tt=1, *c1, ss, *c2, *s1, *s2, solt ;
-                
+
                 c1 = (meUByte *) node->close ;
                 /* the SOL is a special close bracket code for '^' */
                 if((solt = ((c1[0] == meCHAR_LEADER) && (c1[1] == meHIL_TEST_SOL))))
@@ -2184,7 +2185,7 @@ column_token:
                 for( ; ; srcPos++)
                 {
                     if(!solt || (srcPos == 0))
-                    {                       
+                    {
                         c2 = c1 ;
                         s2 = s1 ;
                         while((tt = *c2++) != '\0')
@@ -2192,7 +2193,7 @@ column_token:
                             if((tt == meCHAR_LEADER) && ((tt = *c2++) != meCHAR_TRAIL_LEADER))
                             {
                                 meUByte ret, vv ;
-                                
+
                                 vv = *c2++ ;
                                 findTokenCharTest(ret,ss,s2,tt,c2) ;
                                 if(!ret)
@@ -2238,12 +2239,12 @@ column_token:
                 }
                 if(tt != '\0')
                     goto hiline_exit ;
-                
+
                 len = s2-s1 ;
-                
+
                 if(node->clsEndOff)
                     len -= node->clsEndOff ;
-                
+
                 if(node->type & HLREPLACE)
                 {
                     if(node->clsSttOff)
@@ -2266,7 +2267,7 @@ column_token:
             {
                 char *ss ;
                 int   pos ;
-                
+
                 ss  = (char *) node->close ;
                 len = strlen(ss) ;
                 pos = srcWid ;
@@ -2331,7 +2332,7 @@ hiline_exit:
 #define INDGOTIND     0x0400
 
 #define INDBRACKETOPEN   (0x1000)
-#define INDBRACKETCLOSE  (0x1800)  
+#define INDBRACKETCLOSE  (0x1800)
 #define INDCONTINUE      (0x0800|INDGOTIND)
 #define INDEXCLUSION     (0x2000)
 #define INDFIXED         (INDGOTIND)
@@ -2345,13 +2346,13 @@ hiline_exit:
 #define INDBOTH          (0x8000)
 
 /* Define the integer indent field. The format is:-
- * 
- *     7     6  5 4 3 2.1 0  
+ *
+ *     7     6  5 4 3 2.1 0
  * +------+----+-+-+-+-+-+-+
  * |indent|sign| | | | | | |
  * +------+----+-+-+-+-+-+-+
- * 
- * With an implied decimal point if it is an 'indent' 
+ *
+ * With an implied decimal point if it is an 'indent'
  * size based definition.
  */
 #define INDNUMINDSIZE     0x80          /* indentWidth based indent == 1 */
@@ -2365,13 +2366,13 @@ hiline_exit:
  * and takes a special format defined as follows. The indent field is smaller
  * that the standard indent field using just 7 bits to squeeze the offset into
  * the field.
- * 
+ *
  * >  15     14   13 12 11 10.9 8     7      6    5 4 3 2.1 0
  * > +--+------+----+--+--+--+-+-+-----+------+----+-+-+-+-+-+
  * > | 1|indent|sign|  |  |  | | |SPARE|indent|sign| | | | | |
  * > +--+------+----+--+--+--+-+-+-----+------+----+-+-+-+-+-+
  * >     Current Line Indent            Next Line Indent
- * 
+ *
  * With an implied decimal point if it is an 'indent' size based definition.
  */
 
@@ -2395,7 +2396,7 @@ indentLookBack(meLine *lp, meUByte lindent, meUShort offset)
 {
     meVideoLine vps[2] ;
     meUShort noColChng ;
-    
+
     meAssert(hilights == indents) ;
     vps[0].hilno = lindent ;
     vps[0].wind = frameCur->windowCur ;
@@ -2422,7 +2423,7 @@ hilightLookBack(meWindow *wp)
     meUByte  hilno ;
     meHilight *root, *bracket ;
     int ii, jj ;
-    
+
     bp = wp->buffer ;
     hilno = bp->hilight ;
     root = hilights[hilno] ;
@@ -2431,7 +2432,7 @@ hilightLookBack(meWindow *wp)
     ii = wp->dotLineNo - wp->vertScroll ;
     while(--ii >= 0)
         blp=meLineGetPrev(blp) ;
-    
+
     if(meHilightGetFlags(root) & HFLOOKBSCH)
     {
         meHilight **bhis ;
@@ -2453,7 +2454,7 @@ hilightLookBack(meWindow *wp)
         }
         hilights = bhis ;
     }
-    
+
     if(meHilightGetFlags(root) & HFLOOKBLN)
     {
         ii = 0 ;
@@ -2469,9 +2470,9 @@ hilightLookBack(meWindow *wp)
         if(ii > 0)
         {
             meVideoLine vps[2] ;
-            
+
             /* the flag is used only to set the current line, do the select hilighting
-             * and flag the next line as changed if in a bracket, therefore init to 
+             * and flag the next line as changed if in a bracket, therefore init to
              * 0 and forget about */
             vps[0].wind = wp ;
             vps[0].hilno = hilno ;
@@ -2524,7 +2525,7 @@ int
 meIndentGetIndent(meUByte indent, meUShort bIndentWidth)
 {
     int ind;
-    
+
     /* Get the indent out */
     ind = (int)(indent & INDNUMOFFSETMASK);
     if ((indent & INDNUMINDSIZE) != 0)
@@ -2537,64 +2538,56 @@ meIndentGetIndent(meUByte indent, meUShort bIndentWidth)
 static int
 meGetIndent(meUByte *prompt)
 {
-    meUByte *p, *q, buf[32] ;
-    int ipart, fpart ;                   /* Integer & flag part. */
-    
+    meUByte cc, *p, *q, buf[32] ;
+    int ipart, fpart, dd;                   /* Integer & flag part. */
+
     /* The indent type may be specified in a number of different ways:-
-     * 
+     *
      * -4, 4, 8, ....        This is a character based indent.
-     * t,+t,-t,2t,-2t, ....  indentWidth based indent. 
+     * t,+t,-t,2t,-2t, ....  indentWidth based indent.
      * -2/3t, 3/2t, ...      tagsize vulgar fraction based indent.
      */
     if(meGetString(prompt,0,0,buf,32) <= 0)
         return meABORT ;
-    
+
     /* Get rid of any leading white space. */
-    for (q = buf; (*q == ' ') || (*q == '\t'); q++)
-        ;
+    q = buf;
+    while(((cc=*q) == ' ') || (cc == '\t'))
+        q++;
+    if(cc == '\0')
+        return 0;
     /* Check for a indent offset */
-    if ((p = meStrchr(q, 't')) != NULL)
+    if((p = meStrchr(q,'t')) == NULL)
     {
-        fpart = INDNUMINDSIZE ;
-        p[1] = '\0';                /* Get rid of any training information. */
-        
-        /* Test for special string cases */
-        if ((meStrcmp (q, "t") == 0) || (meStrcmp (q, "+t") == 0))
-            ipart = 1 << INDNUMOFFSETSHIFT;
-        else if (meStrcmp (q, "-t") == 0)
-            ipart = -1 << INDNUMOFFSETSHIFT;
-        else
-        {
-            int fpart;              /* Fractional part */
-            
-            /* Check for a vulgar fraction */
-            *p = '\0';              /* Get rid of 'i' */
-            if ((p = meStrchr(q, '/')) != NULL)
-                *p++ = '\0';        /* Kill off the fraction */
-            ipart = meAtoi(q);      /* Get integer part */
-            
-            /* Get fractional part */
-            if (p == NULL)
-                fpart = 1;
-            else if ((fpart = meAtoi(p)) == 0)
-                fpart = 1;          /* Avoid divide by 0 */
-            
-            ipart = (ipart * (1 << INDNUMOFFSETSHIFT)) / fpart;
-        }
+        if((ipart = meAtoi(buf)) >= 0)
+            return (ipart & INDNUMOFFSETMASK);
+        ipart = -ipart;
+        return (INDNUMNEG | (ipart & INDNUMOFFSETMASK));
     }
-    else
+    /* Test for special cases: t, +t & -t */
+    if((cc == 't') || (((cc == '+') || (cc == '-')) && (q[1] == 't')))
     {
-        fpart = 0 ;
-        ipart = meAtoi(buf);
+        if(cc == '-')
+            return (INDNUMINDSIZE | INDNUMNEG | (1 << INDNUMOFFSETSHIFT));
+        return (INDNUMINDSIZE | (1 << INDNUMOFFSETSHIFT));
     }
-    
-    /* Add the offset */
-    if (ipart < 0)
+    /* Check for a vulgar fraction */
+    *p = '\0';              /* Get rid of 'i' */
+    if((p = meStrchr(q,'/')) != NULL)
+        *p++ = '\0';        /* Kill off the fraction */
+    ipart = meAtoi(q);
+    if(ipart < 0)
     {
-        fpart |= INDNUMNEG;
+        fpart = INDNUMINDSIZE | INDNUMNEG;
         ipart = -ipart;
     }
-    return (fpart | (ipart & INDNUMOFFSETMASK)) ;
+    else
+        fpart = INDNUMINDSIZE ;
+    ipart <<= INDNUMOFFSETSHIFT;
+    /* Get fractional part */
+    if((p != NULL) && (p[0] != '\0') && ((dd = meAtoi(p)) > 0))
+        ipart /= dd;
+    return (fpart | (ipart & INDNUMOFFSETMASK));
 }
 
 int
@@ -2603,8 +2596,8 @@ indent(int f, int n)
 #define noINDTYPES 13
     static meUByte  ctypesChar[meHICMODE_SIZE+2]="sbecxwamu" ;
     static meUByte  typesChar[(noINDTYPES*2)+1]="bcefinostuvwxBCEFINOSTUVWX" ;
-    static meUShort typesFlag[noINDTYPES]= { 
-        INDBRACKETOPEN, INDCONTINUE, INDEXCLUSION, INDFIXED, INDIGNORE, INDNEXTONWARD, 
+    static meUShort typesFlag[noINDTYPES]= {
+        INDBRACKETOPEN, INDCONTINUE, INDEXCLUSION, INDFIXED, INDIGNORE, INDNEXTONWARD,
         INDCURONWARD, INDSINGLE, INDFILETYPE, INDBOTH, INDBOTH, INDFTCURONWARD, INDFTNEXTONWARD } ;
     static meUShort typesType[noINDTYPES]= {
         0x00, 0x00, HLBRACKET, HLENDLINE|HLSTTLINE, HLENDLINE, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -2613,11 +2606,11 @@ indent(int f, int n)
     int itype ;
     meUShort htype ;
     meUByte indno, lindno, buf[meBUF_SIZE_MAX] ;
-    
+
     if(n == 0)
     {
         if((meGetString((meUByte *)"Ind no",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
-           ((indno = (meUByte) meAtoi(buf)) == 0) || 
+           ((indno = (meUByte) meAtoi(buf)) == 0) ||
            (meGetString((meUByte *)"Flags",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
            ((((itype = meAtoi(buf)) & HICMODE) == 0) &&
             (meGetString((meUByte *)"Lines",0,0,buf,meBUF_SIZE_MAX) <= 0)))
@@ -2681,15 +2674,15 @@ indent(int f, int n)
         meStrcpy(resultStr,meItoa(indno)) ;
         return meTRUE ;
     }
-    
+
     n = (n < 0) ? ADDTOKEN_REMOVE:0 ;
-    
+
     if((meGetString((meUByte *)"Ind no",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
        ((indno = (meUByte) meAtoi(buf)) == 0) ||
        (indno >= noIndents) ||
        ((root  = indents[indno]) == NULL))
         return meFALSE ;
-    
+
     if(meIndentGetFlags(root) & HICMODE)
     {
         if((itype = mlCharReply((meUByte *)"Type: ",0,ctypesChar,NULL)) == -1)
@@ -2712,11 +2705,11 @@ indent(int f, int n)
             root->rtoken = meStrdup(buf) ;
         return meTRUE ;
     }
-    
+
     if(((itype = mlCharReply((meUByte *)"Type: ",0,typesChar,NULL)) == -1) ||
        (meGetString((meUByte *)"Token",0,0,buf,meBUF_SIZE_MAX) <= 0))
         return meFALSE ;
-    
+
     itype = (int) (((meUByte *)meStrchr(typesChar,itype)) - typesChar) ;
     if(itype >= noINDTYPES)
     {
@@ -2725,7 +2718,7 @@ indent(int f, int n)
     }
     else
         htype = typesType[itype] ;
-    
+
     /* add the token */
     node = meHiltTokenAddSearchString(root,NULL,(meUByte *) buf,(htype|n)) ;
     if(n & ADDTOKEN_REMOVE)
@@ -2740,9 +2733,9 @@ indent(int f, int n)
     }
     if(node == NULL)
         return meFALSE ;
-    
+
     node->scheme = typesFlag[itype] ;
-    
+
     if(itype == 1)
         meIndentGetFlags(root) |= HIGOTCONT ;
     else if(itype <= 2)
@@ -2777,7 +2770,7 @@ indent(int f, int n)
         if((m = meGetIndent((meUByte *)"Next Indent")) < 0)
             return meFALSE ;
         /* Check for overflow. */
-        if(ind8ToInd7Overflow(n) || ind8ToInd7Overflow(m))            
+        if(ind8ToInd7Overflow(n) || ind8ToInd7Overflow(m))
             return meFALSE ;
         node->scheme = node->scheme & ((meScheme) ~((INDNUM7MASK << 8) | INDNUM7MASK)) ;
         node->scheme |= (ind8ToInd7(n) << 8) | ind8ToInd7(m);
@@ -2804,24 +2797,24 @@ indentLine(int *inComment)
     meUByte *ss, indent, lindent, bdisplayTab, bdisplayNewLine, bdisplaySpace ;
     meLine *lp ;
     int lb, ind, cind, coff ;
-    
+
     indent = frameCur->bufferCur->indent ;
     if(meIndentGetFlags(indents[indent]) & HICMODE)
         return doCindent(indents[indent],inComment) ;
-    
+
     /* change the hilights to the indents, must backup the old value and
      * must also ensure that the hilightLine routine will use a ' ' char,
      * otherwise the show-white-chars functionality will break it */
     bhilights = hilights ;
     bdisplayTab = displayTab ;
     bdisplayNewLine = displayNewLine ;
-    bdisplaySpace = displaySpace ;    
+    bdisplaySpace = displaySpace ;
     displayTab = ' ';
     displayNewLine = ' ';
-    displaySpace = ' ';    
-    
+    displaySpace = ' ';
+
     hilights = indents ;
-    
+
     *inComment = 0 ;
     lindent = 0 ;
     if(meIndentGetFlags(indents[indent]) & HILOOKBSCH)
@@ -2839,17 +2832,17 @@ indentLine(int *inComment)
             }
         }
     }
-    
+
     lp = frameCur->windowCur->dotLine ;
     /* the flag is used only to set the current line, do the select hilighting
-     * and flag the next line as changed if in a bracket, therefore init to 
+     * and flag the next line as changed if in a bracket, therefore init to
      * 0 and forget about */
     vps[0].wind = frameCur->windowCur ;
     vps[0].line = lp ;
     vps[0].hilno = indent ;
     vps[0].bracket = NULL ;
     vps[0].flag = 0 ;
-    
+
     noColChng = hilightLine(vps,0) ;
     blkp = hilBlock + 1 ;
     /*    printf("Got %d colour changes\n",noColChng) ;*/
@@ -2870,7 +2863,7 @@ indentLine(int *inComment)
     else
     {
         int jj, brace=0, contFlag=0, li, aind, lind, nind ;
-        
+
         aind = 0 ;
         for(;;)
         {
@@ -2926,7 +2919,7 @@ indentLine(int *inComment)
                     li += meIndentGetIndent((meUByte) blkp[ii].scheme, frameCur->bufferCur->indentWidth);
                 else if((fnoz == INDCURONWARD) && (li != 0))
                     li += meIndentGetIndent((meUByte) blkp[ii].scheme, frameCur->bufferCur->indentWidth);
-                else if((fnoz == INDSINGLE) && 
+                else if((fnoz == INDSINGLE) &&
                         ((ii == 0) || ((ii == 1) && ((ss-disLineBuff) >= blkp[0].column))))
                     li -= meIndentGetIndent((meUByte) blkp[ii].scheme, frameCur->bufferCur->indentWidth);
                 else if(fnoz == INDBRACKETOPEN)
@@ -2946,7 +2939,7 @@ indentLine(int *inComment)
                 else if ((fnoz & INDBOTH) == INDBOTH)
                 {
                     meUShort scheme = blkp[ii].scheme;
-                    
+
                     /* Process next line */
                     li += meIndentGetIndent((meUByte) ind7ToInd8(scheme), frameCur->bufferCur->indentWidth);
                     /* Process current line */
@@ -2991,13 +2984,13 @@ indentLine(int *inComment)
             break ;
         }
     }
-    
+
     /* restore the hilight setup */
     hilights = bhilights ;
     displayTab = bdisplayTab ;
     displayNewLine = bdisplayNewLine ;
-    displaySpace = bdisplaySpace ;    
-    
+    displaySpace = bdisplaySpace ;
+
     /*    printf("\nIndent line to %d\n\n",ind) ;*/
     /* Always do the doto change so the tab on the left hand edge moves
      * the cursor to the first non-white char
