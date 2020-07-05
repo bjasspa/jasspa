@@ -22,21 +22,23 @@
 ;
 ; Is this macro release compatible with the binary?
 !if &les $version "20081110"
-    5000 ml-write "[Warning: The MicroEmacs executable is not compatible with this macro release]"
+  5000 ml-write "[Warning: The MicroEmacs executable is not compatible with this macro release]"
 !endif
-; If <$user-name>.erf registry file isn't found then this is a new user
-!if &seq &find $user-name ".erf" "ERROR"
-    !force read-registry "/history" "newuser" "cb"
-    0 define-macro-file newuser
-    define-macro start-up
-        !if &seq $buffer-bname "*scratch*"
-            ; Startup for a new user.
-            newuser
-        !endif
-    !emacro
+!if &band @# 2
+  ; This is a reinit via user-setup, no point reloading erf (and if readonly it may be wrong) 
+!elif &seq &find $user-name ".erf" "ERROR"
+  ; If <$user-name>.erf registry file isn't found then this is a new user
+  !force read-registry "/history" "newuser" "cb"
+  0 define-macro-file newuser
+  define-macro start-up
+    !if &seq $buffer-bname "*scratch*"
+      ; Startup for a new user.
+      newuser
+    !endif
+  !emacro
 !else
-    !force read-registry "/history" $user-name "cb"
-    ml-write &cat "Setting up for user " $user-name
+  !force read-registry "/history" $user-name "cb"
+  ml-write &cat "Setting up for user " $user-name
 !endif
 ;
 ; Define extern file macros first
@@ -93,22 +95,22 @@ define-macro-file ftp
 
 ; More useful than execute-file - helps in fixing problems.
 0 define-macro exec-file
-    set-variable .first 1
-    !force @# execute-file @1
-    !if $status
-        !return
+  set-variable .first 1
+  !force @# execute-file @1
+  !if $status
+    !return
+  !endif
+  !if .first
+    !if &seq &set #l0 &find @1 ".emf" "ERROR"
+      ml-write &spr "[Failed to find Macro file %s.emf]" @1
+    !else
+      find-file #l0
+      !force execute-buffer $buffer-bname
+      ml-write &spr "[Error found in Macro file %s, line %d]" #l0 $window-line
     !endif
-    !if .first
-        !if &seq &set #l0 &find @1 ".emf" "ERROR"
-            ml-write &spr "[Failed to find Macro file %s.emf]" @1
-        !else
-            find-file #l0
-            !force execute-buffer $buffer-bname
-            ml-write &spr "[Error found in Macro file %s, line %d]" #l0 $window-line
-        !endif
-        set-variable .first 0
-    !endif
-    !abort
+    set-variable .first 0
+  !endif
+  !abort
 !emacro
 ;
 set-variable %platform &cat $platform &cond &band $system 0x01 "c" ""
@@ -127,8 +129,8 @@ set-variable $cursor-blink &reg &spr "/history/%s/blink" %platform $cursor-blink
 set-variable #l0 &reg &spr "/history/%s/fence" %platform "1"
 &cond &equ #l0 1 1 -1 global-mode "fence"
 !if &gre #l0 1
-    set-variable .display-matching-fence.dmf &lget "|0|37|45|61|" #l0
-    0 global-bind-key display-matching-fence "idle-pick"
+  set-variable .display-matching-fence.dmf &lget "|0|37|45|61|" #l0
+  0 global-bind-key display-matching-fence "idle-pick"
 !endif
 ; key bindings
 0x1 global-bind-key spell-word           "esc $"
@@ -174,19 +176,19 @@ global-bind-key toolbar                  "S-f11"
 global-bind-key expand-abbrev-handle     "esc esc"
 ml-bind-key     tab                      "esc esc"
 !if &reg "/history/clearcase/rep-rcs" "0"
-    0 define-macro-file clearcs cc-coci
-    global-bind-key cc-coci              "C-x C-q"
+  0 define-macro-file clearcs cc-coci
+  global-bind-key cc-coci              "C-x C-q"
 !endif
 ; if using MS friendly key bindings create them now
 !if &reg "/history/mskeys" "0"
-    global-bind-key beginning-of-line    "home"
-    global-bind-key beginning-of-buffer  "C-home"
-    global-bind-key end-of-line          "end"
-    global-bind-key end-of-buffer        "C-end"
+  global-bind-key beginning-of-line    "home"
+  global-bind-key beginning-of-buffer  "C-home"
+  global-bind-key end-of-line          "end"
+  global-bind-key end-of-buffer        "C-end"
 !endif
 ; execute msshift if using MS Shift style region definition
 !if &reg "/history/msshift" "0"
-    !force exec-file "msshift"
+  !force exec-file "msshift"
 !endif
 ;
 ; Setup modes
@@ -197,7 +199,7 @@ ml-bind-key     tab                      "esc esc"
 &cond &reg "/history/undo"   "1" 1 -1 global-mode "undo"
 &cond &gre &set #l0 &reg "/history/autosv" "300" "0" 1 -1 global-mode "autosv"
 !if &gre #l0 "0"
-    set-variable $auto-time #l0
+  set-variable $auto-time #l0
 !endif
 ; Setup variables
 set-variable $quiet         &reg "/history/quiet" "1"
@@ -294,17 +296,18 @@ add-file-hook ".rb"                                           fhook-ruby
 add-file-hook ".r"                                            fhook-r
 add-file-hook ".cfm .cfml .cfc"                               fhook-cfm
 add-file-hook ".iss"                                          fhook-iss
+add-file-hook ".swift"                                        fhook-swift
 ; Add magic hooks
- 1 add-file-hook "^#![ \t]*/.*sh"                fhook-shell  ; UNIX shell files
- 1 add-file-hook "^#![ \t]*/.*perl"              fhook-perl   ; UNIX perl script
- 1 add-file-hook "^#![ \t]*/.*wish"              fhook-tcl    ; tcl, tk & tix files
- 1 add-file-hook "^#![ \t]*/.*awk"               fhook-awk    ; awk scripts
- 1 add-file-hook "^#![ \t]*/.*python"            fhook-python ; Python file
- 1 add-file-hook "^#![ \t]*/.*ruby"              fhook-ruby   ; Ruby shell script
- 1 add-file-hook "^#![ \t]*/.*make"              fhook-make   ; Make script
- 4 add-file-hook "^[ \t]*exec[ \t]*\\(wish\\|tclsh\\)" fhook-tcl ; TCL shell script
- 1 add-file-hook "^#VRML"                        fhook-vrml   ; VRML or wrl files
- 1 add-file-hook "^#Inventor"                    fhook-vrml   ; Use the VRML hook for iv files
+1 add-file-hook "^#![ \t]*/.*sh"                fhook-shell  ; UNIX shell files
+1 add-file-hook "^#![ \t]*/.*perl"              fhook-perl   ; UNIX perl script
+1 add-file-hook "^#![ \t]*/.*wish"              fhook-tcl    ; tcl, tk & tix files
+1 add-file-hook "^#![ \t]*/.*awk"               fhook-awk    ; awk scripts
+1 add-file-hook "^#![ \t]*/.*python"            fhook-python ; Python file
+1 add-file-hook "^#![ \t]*/.*ruby"              fhook-ruby   ; Ruby shell script
+1 add-file-hook "^#![ \t]*/.*make"              fhook-make   ; Make script
+4 add-file-hook "^[ \t]*exec[ \t]*\\(wish\\|tclsh\\)" fhook-tcl ; TCL shell script
+1 add-file-hook "^#VRML"                        fhook-vrml   ; VRML or wrl files
+1 add-file-hook "^#Inventor"                    fhook-vrml   ; Use the VRML hook for iv files
 -2 add-file-hook "This is Info file"             fhook-info   ; GNU info file
 -1 add-file-hook "<\\?xml"                       fhook-xml    ; <?xml version="1.0" standalone="no"?>
 -1 add-file-hook "-[*!]-[ \t]*c.*-[*!]-"         fhook-c      ; -*- C -*-
@@ -349,7 +352,7 @@ osd 0 90 "Mdfsr" " \HHelp "      9
 !force osd -1 &set .osd.menu &reg "/history/main-menu" "1" "1"
 ; Load in the mouse handling routines if required
 !if &band $mouse 0x10
-    !force exec-file "mouse"
+  !force exec-file "mouse"
 !endif
 0 add-next-line "*grep*"
 add-next-line "*grep*" "%f:%l:"
@@ -357,58 +360,58 @@ add-next-line "*grep*" "%f:%l:"
 !force exec-file $platform
 ; execute any emulation file, e.g. Emacs etc
 !if &not &seq &set #l0 &reg "/history/emulate" "" ""
-    set-variable %emulate #l0
-    !force execute-file &cat "me" #l0
+  set-variable %emulate #l0
+  !force execute-file &cat "me" #l0
 !endif
 ; load ftp/http registry file
 !if &seq &set #l0 &reg "/history/url-file" "" ""
 !elif &not &seq &find #l0 ".erf" "ERROR"
-    !force read-registry "/url" #l0 "y"
+  !force read-registry "/url" #l0 "y"
 !endif
 ; execute company setup
 !if &not &seq &set #l0 &reg "/history/company" "" ""
-    !force exec-file #l0
+  !force exec-file #l0
 !endif
 ; excute own setup
 !if &not &seq &set #l0 &reg "/history/setup-file" "" ""
-    !force exec-file #l0
+  !force exec-file #l0
 !endif
 !if &not &exi session
-    !force exec-file session
-    set-variable #l1 &bor &mul 16 &ban @# 1 &con &exi %session-name &con &seq %session-name "" 42 34 62
-    !force #l1 read-session
-    !if &band #l1 12
-        !if &set #l0 &reg &spr "/history/%s/frame-width" %platform "0"
-            change-frame-width #l0
-        !endif
-        !if &set #l0 &reg &spr "/history/%s/frame-depth" %platform "0"
-            change-frame-depth #l0
-        !endif
+  !force exec-file session
+  set-variable #l1 &bor &mul 16 &ban @# 1 &con &exi %session-name &con &seq %session-name "" 42 34 62
+  !force #l1 read-session
+  !if &band #l1 12
+    !if &set #l0 &reg &spr "/history/%s/frame-width" %platform "0"
+      change-frame-width #l0
     !endif
+    !if &set #l0 &reg &spr "/history/%s/frame-depth" %platform "0"
+      change-frame-depth #l0
+    !endif
+  !endif
 !else
-    !force 0 change-scheme
+  !force 0 change-scheme
 !endif
 ; setup the toolbar if not already done by the session
 !if .toolbar.open
 !elif &equ $frame-id .notes.frame-id
 !elif &reg &spr "/history/%s/toolbar" %platform "0"
-    toolbar-open
+  toolbar-open
 !endif
 ;
 4 popup-window
 ; Setup the Client Server
 !if &band $system 0x20000
-    define-macro-file meserver server-input
-    find-buffer "*server*"
-    set-variable :last-line 2
-    set-variable :client-list ":"
-    set-variable $buffer-ipipe server-input
-    beginning-of-buffer
-    goto-alpha-mark  "I"
-    -1 find-buffer "*server*"
+  define-macro-file meserver server-input
+  find-buffer "*server*"
+  set-variable :last-line 2
+  set-variable :client-list ":"
+  set-variable $buffer-ipipe server-input
+  beginning-of-buffer
+  goto-alpha-mark  "I"
+  -1 find-buffer "*server*"
 !endif
 ; chaeck-mail setup - delay the first check by a minute to allow for
 ; initial setup to complete
 !if &reg &spr "/history/%s/mail-check" $platform "0"
-    60000 create-callback mail-check
+  60000 create-callback mail-check
 !endif
