@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# aix5.gmk - Make file for AIX V5 using gcc
+# aix5gcc.mak - Make file for AIX V5 using gcc
 #
 # Copyright (C) 2002-2009 JASSPA (www.jasspa.com)
 #
@@ -24,11 +24,11 @@
 # Created:     Wed Jan 2 2002
 # Synopsis:    Make file for AIX V5 using gcc
 # Notes:
-#	Run "make -f aix5.gmk"      for optimised build produces ./me
-#	Run "make -f aix5.gmk med"  for debug build produces     ./med
+#	Run "make -f aix5gcc.mak"      for optimised build produces ./me
+#	Run "make -f aix5gcc.mak med"  for debug build produces     ./med
 #
-#	Run "make -f aix5.gmk clean"      to clean source directory
-#	Run "make -f aix5.gmk spotless"   to clean source directory even more
+#	Run "make -f aix5gcc.mak clean"      to clean source directory
+#	Run "make -f aix5gcc.mak spotless"   to clean source directory even more
 #
 ##############################################################################
 #

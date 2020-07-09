@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# linux2.gmk - Make file for Linux v2 using gcc
+# linux2gcc.mak - Make file for Linux v2 using gcc
 #
 # Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 #
@@ -24,11 +24,11 @@
 # Created:     Sat Jan 24 1998
 # Synopsis:    Make file for Linux v2 using gcc
 # Notes:
-#	Run "make -f linux2.gmk"      for optimised build produces ./me
-#	Run "make -f linux2.gmk med"  for debug build produces     ./med
+#	Run "make -f linux2gcc.mak"      for optimised build produces ./me
+#	Run "make -f linux2gcc.mak med"  for debug build produces     ./med
 #
-#	Run "make -f linux2.gmk clean"      to clean source directory
-#	Run "make -f linux2.gmk spotless"   to clean source directory even more
+#	Run "make -f linux2gcc.mak clean"      to clean source directory
+#	Run "make -f linux2gcc.mak spotless"   to clean source directory even more
 #
 ##############################################################################
 #

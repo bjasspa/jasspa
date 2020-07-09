@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# linux26.gmk - Make file for Linux v2 Kernel 2.6 using gcc
+# linux26gcc.mak - Make file for Linux v2 Kernel 2.6 using gcc
 #
 # Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 #
@@ -24,11 +24,11 @@
 # Created:     Wed Jul 28 2004
 # Synopsis:    Make file for Linux v2 Kernel 2.6 using gcc
 # Notes:
-#	Run "make -f linux26.gmk"      for optimised build produces ./me
-#	Run "make -f linux26.gmk med"  for debug build produces     ./med
+#	Run "make -f linux26gcc.mak"      for optimised build produces ./me
+#	Run "make -f linux26gcc.mak med"  for debug build produces     ./med
 #
-#	Run "make -f linux26.gmk clean"      to clean source directory
-#	Run "make -f linux26.gmk spotless"   to clean source directory even more
+#	Run "make -f linux26gcc.mak clean"      to clean source directory
+#	Run "make -f linux26gcc.mak spotless"   to clean source directory even more
 #
 ##############################################################################
 #

@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# freebsd.gmk - Make file for FreeBSD using gcc
+# freebsdgcc.mak - Make file for FreeBSD using gcc
 #
 # Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 #
@@ -24,11 +24,11 @@
 # Created:     Sat Jan 24 1998
 # Synopsis:    Make file for FreeBSD using gcc
 # Notes:
-#	Run "make -f freebsd.gmk"      for optimised build produces ./me
-#	Run "make -f freebsd.gmk med"  for debug build produces     ./med
+#	Run "make -f freebsdgcc.mak"      for optimised build produces ./me
+#	Run "make -f freebsdgcc.mak med"  for debug build produces     ./med
 #
-#	Run "make -f freebsd.gmk clean"      to clean source directory
-#	Run "make -f freebsd.gmk spotless"   to clean source directory even more
+#	Run "make -f freebsdgcc.mak clean"      to clean source directory
+#	Run "make -f freebsdgcc.mak spotless"   to clean source directory even more
 #
 ##############################################################################
 #

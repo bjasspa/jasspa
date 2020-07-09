@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# suncsw86.mak - Make file for Sunos 5.8 on x86 ONLY
+# suncsw86cc.mak - Make file for Sunos 5.8 on x86 ONLY
 #
 # Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 #
@@ -24,11 +24,11 @@
 # Created:     Sat Sep 5 12:16:54 2009
 # Synopsis:    Make file for Sunos 5 i386 - Solaris 8 - CSW (www.opencsw.org)
 # Notes:
-#	Run "make -f suncsw86.mak"      for optimised build produces ./me
-#	Run "make -f suncsw86.mak med"  for debug build produces     ./med
+#	Run "make -f suncsw86cc.mak"      for optimised build produces ./me
+#	Run "make -f suncsw86cc.mak med"  for debug build produces     ./med
 #
-#	Run "make -f suncsw86.mak clean"      to clean source directory
-#	Run "make -f suncsw86.mak spotless"   to clean source directory even more
+#	Run "make -f suncsw86cc.mak clean"      to clean source directory
+#	Run "make -f suncsw86cc.mak spotless"   to clean source directory even more
 #
 ##############################################################################
 #

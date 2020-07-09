@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# hpux10.gmk - Make file for HP Hpux v10 using gcc
+# hpux10gcc.mak - Make file for HP Hpux v10 using gcc
 #
 # Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 #
@@ -24,11 +24,11 @@
 # Created:     Sat Jan 24 1998
 # Synopsis:    Make file for HP Hpux v10 using gcc
 # Notes:
-#	Run "make -f hpux10.gmk"      for optimised build produces ./me
-#	Run "make -f hpux10.gmk med"  for debug build produces     ./med
+#	Run "make -f hpux10gcc.mak"      for optimised build produces ./me
+#	Run "make -f hpux10gcc.mak med"  for debug build produces     ./med
 #
-#	Run "make -f hpux10.gmk clean"      to clean source directory
-#	Run "make -f hpux10.gmk spotless"   to clean source directory even more
+#	Run "make -f hpux10gcc.mak clean"      to clean source directory
+#	Run "make -f hpux10gcc.mak spotless"   to clean source directory even more
 #
 ##############################################################################
 #

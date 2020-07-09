@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# openstep.mak - Make file for Openstep 4.2 on NeXT Motorola 040
+# openstepcc.mak - Make file for Openstep 4.2 on NeXT Motorola 040
 #
 # Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 #
@@ -27,11 +27,11 @@
 #       ME's XTerm support has not yet been ported to NeXT so there is no
 #       'Window' builds.
 # 
-#	Run "make -f openstep.mak"      for optimised build produces ./me
-#	Run "make -f openstep.mak med"  for debug build produces     ./med
+#	Run "make -f openstepcc.mak"      for optimised build produces ./me
+#	Run "make -f openstepcc.mak med"  for debug build produces     ./med
 #
-#	Run "make -f openstep.mak clean"      to clean source directory
-#	Run "make -f openstep.mak spotless"   to clean source directory even more
+#	Run "make -f openstepcc.mak clean"      to clean source directory
+#	Run "make -f openstepcc.mak spotless"   to clean source directory even more
 #
 ##############################################################################
 #

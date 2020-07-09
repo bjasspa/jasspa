@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# cygwin.gmk - Make file for Cygnus Cygwin v20.1 using gcc
+# cygwingcc.mak - Make file for Cygnus Cygwin v20.1 using gcc
 #
 # Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 #
@@ -27,11 +27,11 @@
 #       The executable produced does not currently work, for some reason ME
 #       does not receive any keyboard input and must be killed.
 #
-#	Run "make -f cygwin.gmk"      for optimised build produces ./me
-#	Run "make -f cygwin.gmk med"  for debug build produces     ./med
+#	Run "make -f cygwingcc.mak"      for optimised build produces ./me
+#	Run "make -f cygwingcc.mak med"  for debug build produces     ./med
 #
-#	Run "make -f cygwin.gmk clean"      to clean source directory
-#	Run "make -f cygwin.gmk spotless"   to clean source directory even more
+#	Run "make -f cygwingcc.mak clean"      to clean source directory
+#	Run "make -f cygwingcc.mak spotless"   to clean source directory even more
 #
 ##############################################################################
 #

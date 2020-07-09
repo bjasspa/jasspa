@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# irix6.mak - Make file for SGI Irix v6
+# irix6cc.mak - Make file for SGI Irix v6
 #
 # Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 #
@@ -24,11 +24,11 @@
 # Created:     Sat Jan 24 1998
 # Synopsis:    Make file for SGI Irix v6
 # Notes:
-#	Run "make -f irix6.mak"      for optimised build produces ./me
-#	Run "make -f irix6.mak med"  for debug build produces     ./med
+#	Run "make -f irix6cc.mak"      for optimised build produces ./me
+#	Run "make -f irix6cc.mak med"  for debug build produces     ./med
 #
-#	Run "make -f irix6.mak clean"      to clean source directory
-#	Run "make -f irix6.mak spotless"   to clean source directory even more
+#	Run "make -f irix6cc.mak clean"      to clean source directory
+#	Run "make -f irix6cc.mak spotless"   to clean source directory even more
 #
 ##############################################################################
 #

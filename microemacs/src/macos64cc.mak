@@ -95,12 +95,12 @@ ifeq "$(BTYP)" "c"
 BTYP_CDF = -D_ME_CONSOLE -D_CONSOLE
 BTYP_LIB = -ltermcap
 else ifeq "$(BTYP)" "w"
-BTYP_CDF = -D_ME_WINDOW -I/opt/X11/include
-BTYP_LIB = -L/opt/X11/lib -lX11
+BTYP_CDF = $(MAKEWINDEFS) -D_ME_WINDOW -I/opt/X11/include
+BTYP_LIB = $(MAKEWINLIBS) -L/opt/X11/lib -lX11
 else
 BTYP     = cw
-BTYP_CDF = -D_ME_CONSOLE -D_CONSOLE -D_ME_WINDOW -I/opt/X11/include
-BTYP_LIB = -L/opt/X11/lib -lX11 -ltermcap
+BTYP_CDF = $(MAKEWINDEFS) -D_ME_CONSOLE -D_CONSOLE -D_ME_WINDOW -I/opt/X11/include
+BTYP_LIB = $(MAKEWINLIBS) -L/opt/X11/lib -lX11 -ltermcap
 endif
 
 OUTDIR   = $(BOUTDIR)-$(BCOR)$(BTYP)

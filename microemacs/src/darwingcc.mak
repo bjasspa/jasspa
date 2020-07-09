@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# darwin.gmk - Make file for Darwin (Mac OS X) using gcc
+# darwingcc.mak - Make file for Darwin (Mac OS X) using gcc
 #
 # Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 #
@@ -24,11 +24,11 @@
 # Created:     Sat Jan 24 1998
 # Synopsis:    Make file for Darwin using gcc
 # Notes:
-#	Run "make -f darwin.gmk"      for optimised build produces ./me
-#	Run "make -f darwin.gmk med"  for debug build produces     ./med
+#	Run "make -f darwingcc.mak"      for optimised build produces ./me
+#	Run "make -f darwingcc.mak med"  for debug build produces     ./med
 #
-#	Run "make -f darwin.gmk clean"      to clean source directory
-#	Run "make -f darwin.gmk spotless"   to clean source directory even more
+#	Run "make -f darwingcc.mak clean"     to clean source directory
+#	Run "make -f darwingcc.mak spotless"  to clean source directory even more
 #
 ##############################################################################
 #

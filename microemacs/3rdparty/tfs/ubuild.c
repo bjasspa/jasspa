@@ -8,7 +8,7 @@
  *  Author        : $Author: bill $
  *  Created By    : Jon Green
  *  Created       : Wed Oct 21 16:54:05 2009
- *  Last Modified : <100830.1259>
+ *  Last Modified : <200706.1059>
  *
  *  Description
  *
@@ -310,6 +310,7 @@ tfsfpLenv (off_t value)
     return len;
 }
 
+#ifdef _NOT_USED
 /**
  * Writes a file given a name to the archive.
  *
@@ -360,6 +361,7 @@ tfsfpPutfn (tfsfp_t *tfsfp, char *name)
     /* Return the number of bytes we read. */
     return count;
 }
+#endif
 
 /**
  * Writes a file given a name to the archive.
@@ -471,6 +473,7 @@ bufPutv (unsigned char *buf, off_t value)
     return count;
 }
 
+#ifdef _NOT_USED
 /**
  * Write out 'n' bytes of data.
  *
@@ -504,7 +507,9 @@ bufPutn (unsigned char *buf, off_t value, int len)
     /* Return the status */
     return len;
 }
+#endif
 
+#ifdef _NOT_USED
 /**
  * Read in a single byte of data.
  *
@@ -517,6 +522,7 @@ tfsfpGetc (tfsfp_t *tfsfp)
 {
     return fgetc (tfsfp->fp);
 }
+#endif
 
 /**
  * Get a vuimsbf value
@@ -920,9 +926,6 @@ processDirectory (tfsfp_t *tfsfp, tfsNode_t *node, char *basedir)
         TFS_DEBUG (("Processing: %s/%s\n",
                     strnil (basedir), strnil (dp->d_name)));
 
-        /* Ignore any file with a null name. */
-        if (dp->d_name == NULL)
-            continue;
         /* Ignore the current directory */
         if (strcmp (dp->d_name, ".") == 0)
             continue;
@@ -1235,11 +1238,11 @@ nodeCompress (tfsNode_t *node)
         if (zstatus == Z_OK)
         {
             /* Make a decision as to what we are going to return. */
-            TFS_DEBUG (("Compressed file \"%s\" %d=>%d (%d%%)\n",
-                        strnil (node->fsname), ulen, clen, (ulen * 100) / clen));
+            TFS_DEBUG (("Compressed file \"%s\" %ld=>%ld (%ld%%)\n",
+                        strnil(node->fsname), ulen, clen, (ulen * 100) / clen));
             fprintf (stderr,
-                     "Compressed file \"%s\" %d=>%d (%d%%)\n",
-                     strnil (node->fsname), ulen, clen, (ulen * 100) / clen);
+                     "Compressed file \"%s\" %ld=>%ld (%ld%%)\n",
+                     strnil(node->fsname), ulen, clen, (ulen * 100) / clen);
             
             if (((ulen * 100) / clen) > 110)
             {

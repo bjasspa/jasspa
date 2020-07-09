@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# sunos5.mak - Make file for Sunos 5
+# sunos5cc.mak - Make file for Sunos 5
 #
 # Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 #
@@ -24,11 +24,11 @@
 # Created:     Sat Jan 24 1998
 # Synopsis:    Make file for Sunos 5
 # Notes:
-#	Run "make -f sunos5.mak"      for optimised build produces ./me
-#	Run "make -f sunos5.mak med"  for debug build produces     ./med
+#	Run "make -f sunos5cc.mak"      for optimised build produces ./me
+#	Run "make -f sunos5cc.mak med"  for debug build produces     ./med
 #
-#	Run "make -f sunos5.mak clean"      to clean source directory
-#	Run "make -f sunos5.mak spotless"   to clean source directory even more
+#	Run "make -f sunos5cc.mak clean"      to clean source directory
+#	Run "make -f sunos5cc.mak spotless"   to clean source directory even more
 #
 ##############################################################################
 #

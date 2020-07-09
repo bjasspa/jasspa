@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# zaurus.gmk - Make file for Zaurus running Linux v2 using gcc
+# zaurusgcc.mak - Make file for Zaurus running Linux v2 using gcc
 #
 # Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 #
@@ -26,16 +26,16 @@
 # Notes:
 #     If running Zaurus with an X display then use:
 #
-#	Run "make -f zaurus.gmk"      for optimised build produces ./me
-#	Run "make -f zaurus.gmk med"  for debug build produces     ./med
+#	Run "make -f zaurusgcc.mak"      for optimised build produces ./me
+#	Run "make -f zaurusgcc.mak med"  for debug build produces     ./med
 #
 #     Without X only console mode is likely to compile and run, use:
 #
-#	Run "make -f zaurus.gmk mec"        for optimised build produces ./mec
-#	Run "make -f zaurus.gmk medc"       for debug build produces     ./medc
+#	Run "make -f zaurusgcc.mak mec"        for optimised build produces ./mec
+#	Run "make -f zaurusgcc.mak medc"       for debug build produces     ./medc
 #
-#	Run "make -f zaurus.gmk clean"      to clean source directory
-#	Run "make -f zaurus.gmk spotless"   to clean source directory even more
+#	Run "make -f zaurusgcc.mak clean"      to clean source directory
+#	Run "make -f zaurusgcc.mak spotless"   to clean source directory even more
 #
 ##############################################################################
 #

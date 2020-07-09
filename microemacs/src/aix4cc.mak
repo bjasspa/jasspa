@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# aix4.mak - Make file for AIX V4
+# aix4cc.mak - Make file for AIX V4
 #
 # Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 #
@@ -24,11 +24,11 @@
 # Created:     Sat Jan 24 1998
 # Synopsis:    Make file for AIX V4
 # Notes:
-#	Run "make -f aix4.mak"      for optimised build produces ./me
-#	Run "make -f aix4.mak med"  for debug build produces     ./med
+#	Run "make -f aix4cc.mak"      for optimised build produces ./me
+#	Run "make -f aix4cc.mak med"  for debug build produces     ./med
 #
-#	Run "make -f aix4.mak clean"      to clean source directory
-#	Run "make -f aix4.mak spotless"   to clean source directory even more
+#	Run "make -f aix4cc.mak clean"      to clean source directory
+#	Run "make -f aix4cc.mak spotless"   to clean source directory even more
 #
 ##############################################################################
 #

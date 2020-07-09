@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# hpux11.mak - Make file for HP Hpux v11
+# hpux11cc.mak - Make file for HP Hpux v11
 #
 # Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 #
@@ -24,11 +24,11 @@
 # Created:     Sat Jan 24 1998
 # Synopsis:    Make file for HP Hpux v11
 # Notes:
-#	Run "make -f hpux11.mak"      for optimised build produces ./me
-#	Run "make -f hpux11.mak med"  for debug build produces     ./med
+#	Run "make -f hpux11cc.mak"      for optimised build produces ./me
+#	Run "make -f hpux11cc.mak med"  for debug build produces     ./med
 #
-#	Run "make -f hpux11.mak clean"      to clean source directory
-#	Run "make -f hpux11.mak spotless"   to clean source directory even more
+#	Run "make -f hpux11cc.mak clean"      to clean source directory
+#	Run "make -f hpux11cc.mak spotless"   to clean source directory even more
 #
 ##############################################################################
 #

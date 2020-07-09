@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# freebsd.gmk - Make file for OpenBSD using gcc
+# openbsdgcc.mak - Make file for OpenBSD using gcc
 #
 # Copyright (C) 2004-2009 JASSPA (www.jasspa.com)
 #

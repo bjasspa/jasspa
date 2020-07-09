@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# freebsd.mak - Make file for FreeBSD
+# freebsdcc.mak - Make file for FreeBSD
 #
 # Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 #
@@ -24,11 +24,11 @@
 # Created:     Sat Jan 24 1998
 # Synopsis:    Make file for FreeBSD
 # Notes:
-#	Run "make -f freebsd.mak"      for optimised build produces ./me
-#	Run "make -f freebsd.mak med"  for debug build produces     ./med
+#	Run "make -f freebsdcc.mak"      for optimised build produces ./me
+#	Run "make -f freebsdcc.mak med"  for debug build produces     ./med
 #
-#	Run "make -f freebsd.mak clean"      to clean source directory
-#	Run "make -f freebsd.mak spotless"   to clean source directory even more
+#	Run "make -f freebsdcc.mak clean"      to clean source directory
+#	Run "make -f freebsdcc.mak spotless"   to clean source directory even more
 #
 ##############################################################################
 #

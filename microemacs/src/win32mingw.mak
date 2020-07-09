@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# win32mingw.gmk - Make file for Windows using MinGW development kit.
+# win32mingw.mak - Make file for Windows using MinGW development kit.
 #
 # Copyright (C) 2007-2009 JASSPA (www.jasspa.com)
 #
@@ -28,13 +28,13 @@
 #
 #     To build from the command line using make & makefile. 
 #
-#	Run "make -f win32mingw.gmk"            for optimised build produces ./.win32mingw-release-mew/mew32.exe
-#	Run "make -f win32mingw.gmk BCFG=debug" for debug build produces     ./.win32mingw-debug-mew/mew32.exe
-#	Run "make -f win32mingw.gmk BTYP=c"     for console support          ./.win32mingw-release-mec/mec32.exe
-#	Run "make -f win32mingw.gmk BCOR=ne"    for ne build produces        ./.win32mingw-release-new/new32.exe
+#	Run "make -f win32mingw.mak"            for optimised build produces ./.win32mingw-release-mew/mew32.exe
+#	Run "make -f win32mingw.mak BCFG=debug" for debug build produces     ./.win32mingw-debug-mew/mew32.exe
+#	Run "make -f win32mingw.mak BTYP=c"     for console support          ./.win32mingw-release-mec/mec32.exe
+#	Run "make -f win32mingw.mak BCOR=ne"    for ne build produces        ./.win32mingw-release-new/new32.exe
 #
-#	Run "make -f win32mingw.gmk clean"      to clean source directory
-#	Run "make -f win32mingw.gmk spotless"   to clean source directory even more
+#	Run "make -f win32mingw.mak clean"      to clean source directory
+#	Run "make -f win32mingw.mak spotless"   to clean source directory even more
 #
 ##############################################################################
 #

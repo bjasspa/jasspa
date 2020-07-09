@@ -95,20 +95,20 @@ ifeq "$(BTYP)" "c"
 BTYP_CDF = -D_ME_CONSOLE -D_CONSOLE
 BTYP_LIB = -ltermcap
 else ifeq "$(BTYP)" "w"
-BTYP_CDF = -D_ME_WINDOW
-BTYP_LIB = -L/usr/X11R6/lib -lX11
+BTYP_CDF = $(MAKEWINDEFS) -D_ME_WINDOW -I/opt/X11/include
+BTYP_LIB = $(MAKEWINLIBS) -L/opt/X11/lib -lX11
 else
 BTYP     = cw
-BTYP_CDF = -D_ME_CONSOLE -D_CONSOLE -D_ME_WINDOW
-BTYP_LIB = -L/usr/X11R6/lib -lX11 -ltermcap
+BTYP_CDF = $(MAKEWINDEFS) -D_ME_CONSOLE -D_CONSOLE -D_ME_WINDOW -I/opt/X11/include
+BTYP_LIB = $(MAKEWINLIBS) -L/opt/X11/lib -lX11 -ltermcap
 endif
 
 OUTDIR   = $(BOUTDIR)-$(BCOR)$(BTYP)
 PRGNAME  = $(BCOR)$(BTYP)
 PRGFILE  = $(PRGNAME)$(EXE)
 PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
-	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def
-#	   $(BUILDID).mak
+	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def \
+	   $(BUILDID).mak
 PRGOBJS  = $(OUTDIR)/abbrev.o $(OUTDIR)/basic.o $(OUTDIR)/bind.o $(OUTDIR)/buffer.o $(OUTDIR)/crypt.o $(OUTDIR)/dirlist.o $(OUTDIR)/display.o \
 	   $(OUTDIR)/eval.o $(OUTDIR)/exec.o $(OUTDIR)/file.o $(OUTDIR)/fileio.o $(OUTDIR)/frame.o $(OUTDIR)/hilight.o $(OUTDIR)/history.o $(OUTDIR)/input.o \
 	   $(OUTDIR)/isearch.o $(OUTDIR)/key.o $(OUTDIR)/line.o $(OUTDIR)/macro.o $(OUTDIR)/main.o $(OUTDIR)/narrow.o $(OUTDIR)/next.o $(OUTDIR)/osd.o \
