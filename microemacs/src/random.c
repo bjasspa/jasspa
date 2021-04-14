@@ -1255,7 +1255,7 @@ moveToNonWhite(meUByte forwFlag, meUByte *flags, meInt depth)
                              * but findfence moves to the next #e? if it was an #elif
                              * so we must check it is an endif
                              */
-                            frameCur->windowCur->dotOffset = ((size_t) ss - (size_t) lp->text) - 1 ;
+                            frameCur->windowCur->dotOffset = (meUShort) ((size_t) ss - (size_t) lp->text - 1);
                             do {
                                 if(findfence('#',forwFlag,depth) <= 0)
                                     return 0 ;
@@ -1293,7 +1293,7 @@ moveToNonWhite(meUByte forwFlag, meUByte *flags, meInt depth)
                         frameCur->windowCur->dotOffset = meLineGetLength(frameCur->windowCur->dotLine) ;
                         continue ;
                     }
-                    frameCur->windowCur->dotOffset = ((size_t) ss - (size_t) lp->text) - 1 ;
+                    frameCur->windowCur->dotOffset = (meUShort) ((size_t) ss - (size_t) lp->text - 1) ;
                     ch = meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset) ;
                     break ;
                 }
@@ -1352,7 +1352,7 @@ hash_skip:
                              */
                             if((ss[0] == 'e') && (ss[1] == 'l'))
                             {
-                                frameCur->windowCur->dotOffset = ((size_t) ss - (size_t) lp->text) - 1 ;
+                                frameCur->windowCur->dotOffset = (meUShort) ((size_t) ss - (size_t) lp->text - 1);
                                 if(findfence('#',forwFlag,depth) <= 0)
                                     return 0 ;
                             }
@@ -1646,7 +1646,7 @@ findfence(meUByte ch, meUByte forwFlag, meInt depth)
                 if(cc == '#')
                 {
                     frameCur->windowCur->dotLine = lp ;
-                    frameCur->windowCur->dotOffset = ((size_t) ss - (size_t) lp->text) - 1 ;
+                    frameCur->windowCur->dotOffset = (meUShort) ((size_t) ss - (size_t) lp->text - 1);
                     frameCur->windowCur->dotLineNo += ii ;
                     if((ss[0] == 'e') && ((ss[1] == 'l') || (ss[1] == 'n')))
                         break ;
@@ -1685,7 +1685,7 @@ findfence(meUByte ch, meUByte forwFlag, meInt depth)
                 if(cc == '#')
                 {
                     frameCur->windowCur->dotLine = lp ;
-                    frameCur->windowCur->dotOffset = ((size_t) ss - (size_t) lp->text) - 1 ;
+                    frameCur->windowCur->dotOffset = (meUShort) ((size_t) ss - (size_t) lp->text - 1);
                     frameCur->windowCur->dotLineNo -= ii ;
                     if((ss[0] == 'i') && (ss[1] == 'f'))
                         break ;

@@ -98,7 +98,7 @@ meLineShrink(meLine *lp, int newlen)
             meFrameLoopEnd() ;
             lp = nlp ;
         }
-        lp->unused = unused - newlen - meLINE_SIZE ;
+        lp->unused = (meUByte) (unused - newlen - meLINE_SIZE);
     }
     else
         lp->unused = unused ;
@@ -126,7 +126,7 @@ meLineMalloc(int length, int editLine)
     if((lp = malloc(ss)) != NULL)
     {
         lp->length = length ;
-        lp->unused = ss - length - meLINE_SIZE ;
+        lp->unused = (meUByte) (ss - length - meLINE_SIZE);
         lp->text[length] = '\0' ;
         /* Always flag the line as changed, this may seem redundant but some
          * macros can blow aware a buffer and reconstruct an almost identical

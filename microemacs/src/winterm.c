@@ -415,7 +415,9 @@ meMessageGetFrame(HWND hwnd)
 
 #endif
 
+#ifndef _WIN32_WINNT
 int platformId;                         /* Running under NT, 95, or Win32s? */
+#endif
 
 /****************************************************************************
  *
@@ -2191,10 +2193,12 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         if (((compSpecName = meGetenv("COMSPEC")) == NULL) ||
             ((compSpecName = meStrdup(compSpecName)) == NULL))
         {
+#ifndef _WIN32_WINNT
             /* If no COMSPEC setup the default */
             if(platformId != VER_PLATFORM_WIN32_NT)
                 compSpecName = (meUByte *) "command.com";
             else
+#endif
                 compSpecName = (meUByte *) "cmd.exe" ;
         }
         compSpecLen = meStrlen(compSpecName) ;
@@ -2256,7 +2260,9 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
             /* copy in the <shell> /c */
             meStrncpy(dd," /c ",4) ;
             dd += 4 ;
+#ifndef _WIN32_WINNT
             if(platformId == VER_PLATFORM_WIN32_NT)
+#endif
                 *dd++ = '"';
         }
 #endif
@@ -2275,8 +2281,11 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         }
         meStrcpy(dd,ss) ;
         
-        if((platformId == VER_PLATFORM_WIN32_NT) &&
-           ((flags & LAUNCH_NOCOMSPEC) == 0))
+#ifdef _WIN32_WINNT
+        if((flags & LAUNCH_NOCOMSPEC) == 0)
+#else
+        if((platformId == VER_PLATFORM_WIN32_NT) && ((flags & LAUNCH_NOCOMSPEC) == 0))
+#endif
             meStrcat(dd,"\"");
         
         /*        fprintf(fp,"Running [%s]\n",cp) ;*/
@@ -2448,6 +2457,7 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
             meSuInfo.dwFlags |= STARTF_USESTDHANDLES ;
 #endif
         }
+#ifndef _WIN32_WINNT
 #ifndef _WIN32s
         else if(platformId == VER_PLATFORM_WIN32_WINDOWS)
         {
@@ -2472,6 +2482,7 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
             meSuInfo.hStdInput = dumHdl;
             meSuInfo.dwFlags |= STARTF_USESTDHANDLES ;
         }
+#endif
 #endif
     }
 #ifdef _WIN32s
@@ -3217,7 +3228,7 @@ do_keydown:
                 
                 if ((fp = fopen ("c:/me.dump", "a")) != NULL)
                 {
-                    fprintf (fp, "addKeyToBuffer %c - %d(0x%04x)\n",
+                    fprintf (fp, "addKeyToBuffer1 %c - %d(0x%04x)\n",
                              cc & 0xff, cc, cc);
                     fclose (fp);
                 }
@@ -3452,7 +3463,7 @@ do_keydown:
                 
                 if ((fp = fopen ("c:/me.dump", "a")) != NULL)
                 {
-                    fprintf (fp, "addKeyToBuffer %c - %d(0x%04x)\n",
+                    fprintf (fp, "addKeyToBuffer2 %c - %d(0x%04x)\n",
                              cc & 0xff, cc, cc);
                     fclose (fp);
                 }
@@ -3585,7 +3596,7 @@ do_keydown:
             
             if ((fp = fopen ("c:/me.dump", "a")) != NULL)
             {
-                fprintf (fp, "addKeyToBuffer %c - %d(0x%04x)\n",
+                fprintf (fp, "addKeyToBuffer3 %c - %d(0x%04x)\n",
                          cc & 0xff, cc, cc);
                 fclose (fp);
             }
@@ -3604,7 +3615,7 @@ return_spec:
             
             if ((fp = fopen ("c:/me.dump", "a")) != NULL)
             {
-                fprintf (fp, "addKeyToBuffer %c - %d(0x%04x)\n",
+                fprintf (fp, "addKeyToBuffer4 %c - %d(0x%04x)\n",
                          cc & 0xff, cc, cc);
                 fclose (fp);
             }
@@ -4400,6 +4411,7 @@ meGetMessage(MSG *msg, int mode)
                         ipipeRead(ipipe) ;
                         jj = 1 ;
                     }
+#ifndef _WIN32_WINNT
                     else if((platformId != VER_PLATFORM_WIN32_NT) &&
                             /* ipipe->bp->windowCount &&*/
                             (!GetExitCodeProcess(ipipe->process,&doRead) || (doRead != STILL_ACTIVE)))
@@ -4410,6 +4422,7 @@ meGetMessage(MSG *msg, int mode)
                         ipipe->pid = -4 ;
                         pp = ipipe ;
                     }
+#endif
                 }
                 ipipe = pp ;
             }
@@ -5948,6 +5961,14 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
         ttshowState = nCmdShow;
     }
 #endif /* _ME_WINDOW */
+#ifdef _WIN32_WINNT
+#if MEOPT_IPIPES
+    meSYSTEM_MASK |= meSYSTEM_DOSFNAMES|meSYSTEM_IPIPES ;
+    meSystemCfg |= meSYSTEM_IPIPES ;
+#else
+    meSYSTEM_MASK |= meSYSTEM_DOSFNAMES;
+#endif
+#else
     {
         OSVERSIONINFO os;
         
@@ -5964,6 +5985,7 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
 #endif
         }
     }
+#endif
     TTwidthDefault=80 ;
     TTdepthDefault=50 ;
     meSetupUserName() ;

@@ -638,13 +638,13 @@ spellRuleAdd(int f, int n)
             if(((rr = meMalloc(sizeof(meSpellRule))) == NULL) || 
                (meGetString((meUByte *)"Ending",MLNOSPACE,0,buff,meBUF_SIZE_MAX) <= 0) ||
                ((rr->ending = (meUByte *) meStrdup(buff)) == NULL) ||
-               (meGetString((meUByte *)"Remove",MLNOSPACE,0,buff,meBUF_SIZE_MAX) <= 0) ||
+               (meGetString((meUByte *)"Remove",MLNOSPACE,0,buff,255) <= 0) ||
                ((rr->remove = (meUByte *) meStrdup(buff)) == NULL) ||
-               (meGetString((meUByte *)"Append",MLNOSPACE,0,buff,meBUF_SIZE_MAX) <= 0) ||
+               (meGetString((meUByte *)"Append",MLNOSPACE,0,buff,255) <= 0) ||
                ((rr->append = (meUByte *) meStrdup(buff)) == NULL))
                 return meABORT ;
-            rr->removeLen = meStrlen(rr->remove) ;
-            rr->appendLen = meStrlen(rr->append) ;
+            rr->removeLen = (meUByte) meStrlen(rr->remove) ;
+            rr->appendLen = (meUByte) meStrlen(rr->append) ;
             rr->changeLen = rr->appendLen - rr->removeLen ;
             f = 0 ;
             bb = 1 ;

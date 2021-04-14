@@ -586,9 +586,9 @@ yankRectangleKill(struct meKill *pklist, int soff, int notLast)
     }
     if((dd != NULL) && !notLast)
     {
-        frameCur->windowCur->dotLineNo-- ;
+        frameCur->windowCur->dotLineNo--;
         frameCur->windowCur->dotLine = meLineGetPrev(frameCur->windowCur->dotLine);
-        frameCur->windowCur->dotOffset = ((size_t) dd - (size_t) meLineGetText(frameCur->windowCur->dotLine)) ;
+        frameCur->windowCur->dotOffset = (meUShort) ((size_t) dd - (size_t) meLineGetText(frameCur->windowCur->dotLine));
     }
     return meTRUE ;
 }

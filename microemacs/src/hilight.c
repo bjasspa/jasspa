@@ -1906,7 +1906,7 @@ BracketJump:
                 int   pos ;
 
                 ss  = (char *) node->close ;
-                len = strlen(ss) ;
+                len = (meUShort) strlen(ss) ;
                 pos = srcWid ;
                 while((srcText[--pos] == ' ') && (pos > 0))
                     ;
@@ -2269,7 +2269,7 @@ column_token:
                 int   pos ;
 
                 ss  = (char *) node->close ;
-                len = strlen(ss) ;
+                len = (meUShort) strlen(ss) ;
                 pos = srcWid ;
                 while((srcText[--pos] == ' ') && (pos > 0))
                     ;

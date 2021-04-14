@@ -1073,9 +1073,15 @@ ffHttpFileOpen(meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUBy
         ffurlCreateName(ss,fftype,host,port,NULL,NULL,file) ;
     ss += meStrlen(ss) ;
     meStrcpy(ss," HTTP/1.0\r\nConnection: Keep-Alive\r\nHost: ") ;
-    ss += meStrlen(ss) ;
-    meStrcpy(ss,host) ;
-    ss += meStrlen(ss) ;
+    ss += meStrlen(ss);
+    meStrcpy(ss,host);
+    ss += meStrlen(ss);
+    if((port != NULL) && strcmp(port,"80"))
+    {
+        *ss++ = ':';
+        meStrcpy(ss,port);
+        ss += meStrlen(ss);
+    }
     if(user != NULL)
     {
         /* password supplied, encode */
@@ -1849,9 +1855,9 @@ ffgetline(meLine **line)
                         ss = meLineMallocSize(len) ;
                         if((lp = (meLine *) meRealloc(lp,ss)) == NULL)
                             return meABORT ;
-                        text = lp->text + ii ;
-                        lp->unused = ss - len - meLINE_SIZE ;
-                        lp->length = len ;
+                        text = lp->text + ii;
+                        lp->unused = (meUByte) (ss - len - meLINE_SIZE);
+                        lp->length = len;
                     }
                     if(ecc == '\r')
                         ffcur[-1] = '\n' ;
