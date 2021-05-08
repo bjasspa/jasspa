@@ -8,7 +8,7 @@
  *  Author        : $Author: bill $
  *  Created By    : Jon Green
  *  Created       : Wed Oct 21 16:54:05 2009
- *  Last Modified : <200706.1059>
+ *  Last Modified : <210426.0841>
  *
  *  Description
  *
@@ -1052,7 +1052,7 @@ buildDirectory (tfsNode_t *node)
         /* Iterate over all of the children. */
         for (np = node->child; np != NULL; np = np->sibling)
         {
-            int ii;
+            unsigned int ii;
 
             /* Current directory - node */
             pp += bufPutv (pp, np->offset);
