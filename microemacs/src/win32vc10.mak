@@ -60,13 +60,13 @@ OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..\3rdparty
 
-CCDEFS   = /DWIN32 /D_WIN32 /D_WIN32_WINNT=0x500 /W3 /Zi /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /I$(TRDPARTY)\tfs /I$(TRDPARTY)\zlib
+CCDEFS   = /DWIN32 /D_WIN32 /D_WIN32_WINNT=0x500 /W3 /Zi /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /I$(TRDPARTY)\messl /I$(TRDPARTY)\tfs /I$(TRDPARTY)\zlib
 CCFLAGSR = /MD /O2 /GL /GS- /DNDEBUG=1 /D_HAS_ITERATOR_DEBUGGING=0 /D_SECURE_SCL=0
 CCFLAGSD = /MDd /Od /RTC1 /D_DEBUG
 LDDEFS   = /INCREMENTAL:NO /MACHINE:X86 /MANIFEST
 LDFLAGSR = /OPT:REF /OPT:ICF /LTCG
 LDFLAGSD = /DEBUG
-LDLIBS   = wininet.lib shell32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib
+LDLIBS   = crypt32.lib ws2_32.lib shell32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib
 ARFLAGSR = /LTCG
 ARFLAGSD =
 RCFLAGS  =
@@ -86,22 +86,28 @@ ARFLAGS  = $(ARFLAGSR)
 !IF "$(BCOR)" == "ne"
 BCOR_CDF = /D_NANOEMACS
 PRGLIBS  = 
+!ELSE IF "$(BTYP)" == "cs" || "$(BTYP)" == "ws" || "$(BTYP)" == "cws"
+BCOR     = me
+BCOR_CDF = /D_SOCKET /D_MESSL
+PRGLIBS  = $(TRDPARTY)\messl\$(BOUTDIR)\messl.lib $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib $(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib
 !ELSE
 BCOR     = me
 BCOR_CDF = /D_SOCKET
 PRGLIBS  = $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib $(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib
 !ENDIF
 
-!IF "$(BTYP)" == "c"
+!IF "$(BTYP)" == "c" || "$(BTYP)" == "cs"
 BTYP_CDF = /D_ME_CONSOLE /D_CONSOLE
 BTYP_LDF = /SUBSYSTEM:CONSOLE
-!ELSE IF "$(BTYP)" == "cw"
+!ELSE IF "$(BTYP)" == "cw" || "$(BTYP)" == "cws"
 BTYP_CDF = /D_ME_CONSOLE /D_CONSOLE /D_ME_WINDOW
 BTYP_LDF = /SUBSYSTEM:CONSOLE
 !ELSE
-BTYP     = w
 BTYP_CDF = /D_ME_WINDOW
 BTYP_LDF = /SUBSYSTEM:WINDOWS
+!IF "$(BTYP)" != "ws"
+BTYP     = w
+!ENDIF
 !ENDIF
 
 OUTDIR   = $(BOUTDIR)-$(BCOR)$(BTYP)
@@ -145,6 +151,11 @@ $(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib:
 
 $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib:
 	cd $(TRDPARTY)\tfs
+	$(MK) -f $(BUILDID).mak BCFG=$(BCFG)
+	cd $(MAKEDIR)
+
+$(TRDPARTY)\messl\$(BOUTDIR)\messl.lib:
+	cd $(TRDPARTY)\messl
 	$(MK) -f $(BUILDID).mak BCFG=$(BCFG)
 	cd $(MAKEDIR)
 

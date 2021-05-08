@@ -69,19 +69,6 @@
  * Unless you know what you are doing DO NOT MESS with the event mechanism.
  * It might work but it may not be correct.
  */
-#include <string.h>                     /* String functions */
-#include <time.h>                       /* Time definitions */
-
-/* Shell objects for application directory locations. may not
- * work in versions earler than 6.x */
-#ifndef _WIN32s
-#include <shlobj.h>                     /* Shell object */
-#endif
-
-#ifndef WM_MOUSEWHEEL
-#define WM_MOUSEWHEEL (WM_MOUSELAST+1)  // message that will be supported
-                                        // by the OS
-#endif
 
 /* Emacs standard headers */
 #include "emain.h"
@@ -94,6 +81,11 @@
 
 #include <process.h>
 #include <shellapi.h>
+#include <time.h>                       /* Time definitions */
+
+#ifndef WM_MOUSEWHEEL
+#define WM_MOUSEWHEEL (WM_MOUSELAST+1)  // message that will be supported by the OS
+#endif
 
 /*FILE *logfp=NULL ;*/
 
@@ -1989,12 +1981,12 @@ TTgetClipboard(void)
      * been disabled then there's nothing to do */
     if((clipState & (CLIP_OWNER|CLIP_DISABLED)) || (kbdmode == mePLAY) ||
        (meSystemCfg & meSYSTEM_NOCLIPBRD) || !OpenClipboard(baseHwnd))
-        return ;
+        return;
     
     /* Get the data from the clipboard */
-    if ((hmem = GetClipboardData ((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT : CF_TEXT)) != NULL)
+    if((hmem = GetClipboardData ((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT : CF_TEXT)) != NULL)
     {
-        int len, ll ;
+        int len, ll;
         meUByte *tmpbuf;
         
         bufp = GlobalLock (hmem);       /* Lock global buffer */
@@ -2009,23 +2001,23 @@ TTgetClipboard(void)
         
         tp = tmpbuf;                    /* Start of the temporary buffer */
         dd = bufp;                      /* Start of clipboard data */
-        ll = 0 ;
-        while ((cc = *dd++) !='\0')
+        ll = 0;
+        while((cc = *dd++) !='\0')
         {
-            if ((cc == '\r') && (*dd == '\n'))
-                len-- ;
+            if((cc == '\r') && (*dd == '\n'))
+                len--;
             else
             {
                 if(cc == '\n')
-                    ll = 0 ;
-                else if(ll == 0xfff0)
+                    ll = 0;
+                else if(ll == meLINE_ELEN_MAX)
                 {
-                    *tp++ = '\n' ;
-                    len++ ;
-                    ll = 1 ;
+                    *tp++ = '\n';
+                    len++;
+                    ll = 1;
                 }
                 else
-                    ll++ ;
+                    ll++;
                 *tp++ = cc;
             }
         }
@@ -2042,15 +2034,15 @@ TTgetClipboard(void)
         {
             /* Always killSave, don't want to glue them together */
             killSave();
-            if ((dd = killAddNode (len+1)) != NULL)
-                memcpy (dd, tmpbuf, len+1);
-            thisflag = meCFKILL ;
+            if ((dd = killAddNode(len+1)) != NULL)
+                memcpy(dd,tmpbuf,len+1);
+            thisflag = meCFKILL;
         }
-        meFree (tmpbuf);                /* Relinquish temp buffer */
+        meFree(tmpbuf);                /* Relinquish temp buffer */
 do_unlock:
-        GlobalUnlock (hmem);            /* Unlock clipboard data */
+        GlobalUnlock(hmem);            /* Unlock clipboard data */
     }
-    CloseClipboard ();
+    CloseClipboard();
 }
 
 #if MEOPT_SPAWN
@@ -5713,7 +5705,7 @@ meSetupPathsAndUser(void)
         }
 #if MEOPT_TFS
         /* also check for the built-in file system */
-        ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "{TFS}",&gotUserPath) ;
+        ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "tfs://",&gotUserPath) ;
 #endif        
         if(!gotUserPath && (appData != NULL))
         {

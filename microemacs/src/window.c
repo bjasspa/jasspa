@@ -1812,11 +1812,11 @@ meWindowPopup(meUByte *name, int flags, meBuffer **bufferReplaced)
                 wp = NULL ;
                 break ;
             }
-            if((wp->buffer->name[0] == '*')
 #if MEOPT_EXTENDED
-               && ((wp->flags & meWINDOW_LOCK_BUFFER) == 0)
+            if((wp->buffer->name[0] == '*') && ((wp->flags & meWINDOW_LOCK_BUFFER) == 0))
+#else
+            if(wp->buffer->name[0] == '*')
 #endif
-               )
                 break ;
         }
     }

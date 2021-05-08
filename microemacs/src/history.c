@@ -89,36 +89,53 @@ setupHistory(int option, meUByte **numPtr, meUByte ***list)
 
 
 void
-addHistory(int option, meUByte *str)
+addHistory(int option, meUByte *str, int rmv)
 {
     meUByte   *numPtr, numHist ;
     meUByte  **history, *buf ;
-    meInt      ii ;
+    meInt      ii;
 
     numHist = setupHistory(option, &numPtr, &history) ;
     
     for(ii=0 ; ii<numHist ; ii++)
+    {
         if(!meStrcmp(str,history[ii]))
         {
-            buf = history[ii] ;
-            while(--ii >= 0)
-                history[ii+1] = history[ii] ;
-            history[0] = buf ;
-            return ;
+            if(rmv)
+            {
+                meFree(history[ii]);
+                numHist--;
+                *numPtr = numHist;
+                while(ii < numHist)
+                {
+                    history[ii] = history[ii+1] ;
+                    ii++;
+                }
+                history[ii] = NULL;
+            }
+            else
+            {
+                buf = history[ii] ;
+                while(--ii >= 0)
+                    history[ii+1] = history[ii] ;
+                history[0] = buf ;
+            }
+            return;
         }
-    
-    if((buf = meMalloc(meStrlen(str)+1)) == NULL)
-        return ;
-    meStrcpy(buf,str) ;
-    if(numHist == meHISTORY_SIZE)
-        meFree(history[numHist-1]) ;
-    else
-    {
-        numHist++ ;
-        (*numPtr)++ ;
     }
-    for(ii=numHist-1 ; ii>0 ; ii--)
-        history[ii] = history[ii-1] ;
-    history[0] = buf ;
+    if(!rmv && ((buf = meMalloc(meStrlen(str)+1)) != NULL))
+    {
+        meStrcpy(buf,str) ;
+        if(numHist == meHISTORY_SIZE)
+            meFree(history[numHist-1]) ;
+        else
+        {
+            numHist++ ;
+            (*numPtr)++ ;
+        }
+        for(ii=numHist-1 ; ii>0 ; ii--)
+            history[ii] = history[ii-1] ;
+        history[0] = buf;
+    }
 }
 

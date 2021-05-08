@@ -1451,7 +1451,16 @@ mesetup(int argc, char *argv[])
     carg = meREGISTER_MAX ;
     while(--carg >= 0)
         meRegHead->reg[carg][0] = '\0' ;
-
+    
+    /* Init static file io structures */
+    meior.fp = meBadFile;
+    meiow.fp = meBadFile;
+#if MEOPT_SOCKET
+    meior.ccsk = meBadSocket;
+    meior.sock = meBadSocket;
+    meiow.ccsk = meBadSocket;
+    meiow.sock = meBadSocket;
+#endif    
     /* initialize the editor and process the command line arguments */
     initHistory() ;                     /* allocate history space */
     meSetupProgname(argv[0]) ;
@@ -1918,11 +1927,11 @@ missing_arg:
                     bufHistNo = obufHistNo + rarg - carg + 1 ;
                     bp->histNo = bufHistNo ;
                     bp->intFlag |= BIFFILE ;
-                    noFiles++ ;
+                    noFiles++;
 #ifdef _WIN32
-                    meio.rp = GetStdHandle(STD_INPUT_HANDLE) ;
+                    meior.fp = GetStdHandle(STD_INPUT_HANDLE) ;
 #else
-                    meio.rp = stdin ;
+                    meior.fp = stdin ;
 #endif
                     stdinflag = 1 ;
                     goto handle_stdin ;

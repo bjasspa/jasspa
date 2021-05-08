@@ -421,12 +421,12 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         }
         else if(*nn == 'h')
         {
-            int option ;
+            int option;
             if((nn[1] > '0') && (nn[1] <= '4'))
-                option = 1 << (nn[1] - '1') ;
+                option = 1 << (nn[1] - '1');
             else
                 option = 0 ;
-            addHistory(option,vvalue) ;
+            addHistory(option,vvalue,(nn[2] == '-'));
         }
         else
             return mlwrite(MWABORT,(meUByte *)"[Cannot set variable %s]",vname);
@@ -1696,7 +1696,7 @@ gtarg(meUByte *tkn)
                  * value */
                 if(meGetString(NULL,0,0,buff,meBUF_SIZE_MAX) <= 0)
                     return abortm ;
-                addHistory(option,buff) ;
+                addHistory(option,buff,meFALSE) ;
                 defH = 1 ;
             }
             else
@@ -3150,47 +3150,52 @@ get_flag:
                     }
                     else
                     {
+                        v1 = 'L' ;
+                        if(ftype == meFILETYPE_NOTEXIST)
+                            v2 = 'X' ;
+                        else
+                        {
 #ifdef _UNIX
-                        struct tm *tmp;            /* Pointer to time frame. */
-                        if ((tmp = localtime(&stats.stmtime)) != NULL)
-                            sprintf((char *)v7, "%4d%2d%2d%2d%2d%2d",
-                                    tmp->tm_year+1900,tmp->tm_mon+1,tmp->tm_mday,
-                                    tmp->tm_hour,tmp->tm_min,tmp->tm_sec);
+                            struct tm *tmp;            /* Pointer to time frame. */
+                            if ((tmp = localtime(&stats.stmtime)) != NULL)
+                                sprintf((char *)v7, "%4d%2d%2d%2d%2d%2d",
+                                        tmp->tm_year+1900,tmp->tm_mon+1,tmp->tm_mday,
+                                        tmp->tm_hour,tmp->tm_min,tmp->tm_sec);
 #endif
 #ifdef _DOS
-                        if((stats.stmtime & 0x0ffff) != 0x7fff)
-                            sprintf((char *)v7,"%4d%2d%2d%2d%2d%2d",
-                                    (int) ((stats.stmtime >> 25) & 0x007f)+1980,
-                                    (int) ((stats.stmtime >> 21) & 0x000f),
-                                    (int) ((stats.stmtime >> 16) & 0x001f),
-                                    (int) ((stats.stmtime >> 11) & 0x001f),
-                                    (int) ((stats.stmtime >>  5) & 0x003f),
-                                    (int) ((stats.stmtime & 0x001f)  << 1)) ;
+                            if((stats.stmtime & 0x0ffff) != 0x7fff)
+                                sprintf((char *)v7,"%4d%2d%2d%2d%2d%2d",
+                                        (int) ((stats.stmtime >> 25) & 0x007f)+1980,
+                                        (int) ((stats.stmtime >> 21) & 0x000f),
+                                        (int) ((stats.stmtime >> 16) & 0x001f),
+                                        (int) ((stats.stmtime >> 11) & 0x001f),
+                                        (int) ((stats.stmtime >>  5) & 0x003f),
+                                        (int) ((stats.stmtime & 0x001f)  << 1)) ;
 #endif
 #ifdef _WIN32
-                        SYSTEMTIME tmp;
-                        FILETIME ftmp;
-                        
-                        if(FileTimeToLocalFileTime(&stats.stmtime,&ftmp) && FileTimeToSystemTime(&ftmp,&tmp))
-                            sprintf((char *)v7,"%4d%2d%2d%2d%2d%2d",
-                                    tmp.wYear,tmp.wMonth,tmp.wDay,
-                                    tmp.wHour,tmp.wMinute,tmp.wSecond) ;
+                            SYSTEMTIME tmp;
+                            FILETIME ftmp;
+                            
+                            if(FileTimeToLocalFileTime(&stats.stmtime,&ftmp) && FileTimeToSystemTime(&ftmp,&tmp))
+                                sprintf((char *)v7,"%4d%2d%2d%2d%2d%2d",
+                                        tmp.wYear,tmp.wMonth,tmp.wDay,
+                                        tmp.wHour,tmp.wMinute,tmp.wSecond) ;
 #endif
-                        v1 = 'L' ;
-                        if(evalResult[0] != '\0')
-                        {
-                            meStat lstats ;
-                            v2 = 'L' ;
-                            v3 = typeRet[getFileStats(evalResult,0,&lstats,NULL)] ;
-                        }
-                        else
-                            v2 =  typeRet[ftype] ;
-                        if(ftype != meFILETYPE_NOTEXIST)
-                        {
-                            v4 = meFileGetAttributes(arg2) ;
-                            v5 = 1 ;
-                            v51 = stats.stsizeHigh ;
-                            v52 = stats.stsizeLow ;
+                            if(evalResult[0] != '\0')
+                            {
+                                meStat lstats ;
+                                v2 = 'L' ;
+                                v3 = typeRet[getFileStats(evalResult,0,&lstats,NULL)] ;
+                            }
+                            else
+                                v2 =  typeRet[ftype] ;
+                            if(ftype != meFILETYPE_NOTEXIST)
+                            {
+                                v4 = meFileGetAttributes(arg2) ;
+                                v5 = 1 ;
+                                v51 = stats.stsizeHigh ;
+                                v52 = stats.stsizeLow ;
+                            }
                         }
                     }
                     dd = evalResult ;

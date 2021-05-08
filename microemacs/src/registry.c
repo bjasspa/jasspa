@@ -370,12 +370,12 @@ regSave(meRegNode *rnp, meUByte *fname, int mode)
             flags |= meRWFLAG_CRYPT ;
         }
         /* Open the file */
-        if(ffWriteFileOpen(fname,flags,NULL) <= 0)
+        if(ffWriteFileOpen(&meiow,fname,flags,NULL) <= 0)
             return meABORT ;
         
         /* Add a recognition string to the header */
         if(!(mode & meREGMODE_CRYPT))
-            ss = ffWriteFileWrite(12,(meUByte *) ";-!- erf -!-",1) ;
+            ss = ffWriteFileWrite(&meiow,12,(meUByte *) ";-!- erf -!-",1) ;
     }
     else
     {
@@ -424,7 +424,7 @@ regSave(meRegNode *rnp, meUByte *fname, int mode)
             lineCount += ss ;
             charCount += len + 1 ;
         }
-        else if((ss = ffWriteFileWrite(len,buff,1)) <= 0)
+        else if((ss = ffWriteFileWrite(&meiow,len,buff,1)) <= 0)
             break ;
         /* Descend child */
         if (rr->child != NULL)
@@ -464,7 +464,7 @@ regSave(meRegNode *rnp, meUByte *fname, int mode)
                     lineCount += ss ;
                     charCount += len + 1 ;
                 }
-                else if((ss = ffWriteFileWrite(len,buff,1)) <= 0)
+                else if((ss = ffWriteFileWrite(&meiow,len,buff,1)) <= 0)
                     break ;
             }
         }
@@ -472,7 +472,7 @@ regSave(meRegNode *rnp, meUByte *fname, int mode)
     
     if(mode & meREGMODE_FROOT)
     {
-        if(ffWriteFileClose(fname,meRWFLAG_WRITE,NULL) <= 0)
+        if(ffWriteFileClose(&meiow,meRWFLAG_WRITE,NULL) <= 0)
             return meABORT ;
         rnp->mode &= ~meREGMODE_CHANGE;
     }
@@ -734,8 +734,7 @@ regRead(meUByte *rname, meUByte *fname, int mode)
             meCrypt(s1,len+meStrlen(s1+len)+1) ;
             flags |= meRWFLAG_CRYPT ;
         }
-        if((ffReadFile(fn,flags,NULL,&hlp,0,0,0) == meABORT) &&
-           !(mode & meREGMODE_CREATE))
+        if((ffReadFile(&meior,fn,flags|meRWFLAG_READ,NULL,&hlp,0,0,0) == meABORT) && !(mode & meREGMODE_CREATE))
         {
             mlwrite (MWABORT|MWWAIT,(meUByte *)"[Cannot load registry file %s]", fname);
             return NULL ;

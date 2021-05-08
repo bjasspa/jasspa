@@ -2052,6 +2052,7 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
     int gotPipe=0 ;
 #endif
 #ifdef _UNIX
+    FILE *pfp;
     meWAIT_STATUS ws;
     meUByte *cl, *ss ;
     size_t ll ;
@@ -2152,8 +2153,10 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
     /* Must flag to our sigchild handler that we are running a piped command
      * otherwise it will call waitpid with -1 and loose the exit status of
      * this process */
-    alarmState |= meALARM_PIPE_COMMAND ;
-    meio.rp = popen((char *) cl, "r") ;
+    alarmState |= meALARM_PIPE_COMMAND;
+    pfp = popen((char *) cl, "r");
+    /* With no buffer fname swbuffer -> readin -> ffReadFile will assume its pipe and we must set and close meior.fp */
+    meior.fp = pfp;
     if(cd)
         meChdir(curdir) ;
     TTopen();
@@ -2180,7 +2183,7 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
 #ifdef _UNIX
     ret = meBufferInsertFile(bp,NULL,meRWFLAG_SILENT|meRWFLAG_PRESRVFMOD,0,0,0) ;
     /* close the pipe and get exit status */
-    ws = (meWAIT_STATUS) pclose(meio.rp) ;
+    ws = (meWAIT_STATUS) pclose(pfp);
     if(WIFEXITED(ws))
         systemRet = WEXITSTATUS(ws) ;
     else
@@ -2256,7 +2259,7 @@ pipeCommand(int f, int n)
 
 #if MEOPT_EXTENDED
 /*
- * filter a buffer through an external DOS program. This needs to be rewritten
+ * filter a buffer through an external program. This needs to be rewritten
  * under UNIX to use pipes.
  *
  * Bound to ^X #

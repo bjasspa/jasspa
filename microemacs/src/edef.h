@@ -393,17 +393,9 @@ extern meUByte    isWordMask ;
 extern int        screenUpdateDisabledCount ;
 extern meUByte    meCopyright[] ;
 
-/* fileio file pointer */
-#if 0
-#ifdef _WIN32
-extern HANDLE     ffrp;
-extern HANDLE     ffwp;
-#else
-extern FILE      *ffrp;
-extern FILE      *ffwp;
-#endif
-#endif
-extern meIo       meio;                 /* The current I/O operation    */
+/* fileio operation vars */
+extern meIo       meior;                /* The current I/O Read op */
+extern meIo       meiow;                /* The current I/O Write op */
 
 #if MEOPT_OSD
 extern int        osdCol ;              /* The osd current column */
@@ -506,16 +498,8 @@ int       lastIndex = -1 ;              /* The last user executed comm  */
 int       thisCommand = 0 ;             /* The cur. user executed key   */
 int       thisIndex = -1 ;              /* The cur. user executed comm  */
 
-#if 0
-#ifdef _WIN32
-HANDLE    ffrp;                         /* File read pointer, all func. */
-HANDLE    ffwp;                         /* File write pointer, all func.*/
-#else
-FILE     *ffrp;                         /* File read pointer, all func. */
-FILE     *ffwp;                         /* File write pointer, all func.*/
-#endif
-#endif
-meIo      meio;                         /* The current I/O operation    */
+meIo      meior;                        /* The current I/O Read op      */
+meIo      meiow;                        /* The current I/O Write op     */
 meUShort  thiskey ;                     /* the current key              */
 meUByte   hexdigits[] = "0123456789ABCDEF";
 meUInt    cursorBlink = 0;              /* cursor-blink blink time      */

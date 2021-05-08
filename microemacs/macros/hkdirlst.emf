@@ -139,7 +139,7 @@ define-macro fhook-dirlst
       ; No - set this to get a descending Name order
       set-variable .fhook-dirlst.sort "|5|0|"
     !endif
-  !elif &seq &lef $buffer-fname 7 "http://"
+  !elif &lfin "|http://|https:/|" &lef $buffer-fname 7
     ; loading "http://www.jasspa.com/" would call this hook if there's no <html> magic hook as it ends in a '/'
     fhook-html
     !return
@@ -621,6 +621,9 @@ define-macro file-browser-swap-buffers
     !else
       read-file #l0 @mna
     !endif
+    set-variable @h3- &lef $buffer-fname &rsin "/" &lef $buffer-fname -1
+    set-variable @h3- $buffer-fname
+    set-variable @h3 $buffer-fname
     !if &not &seq .fhook-dirlst.mode :dirlst-mode
       ; old buffer with the wrong processing - refresh
       !force 0 delete-buffer $buffer-bname
@@ -1415,11 +1418,20 @@ define-macro dirlst-search
 0 define-macro dirlst-tag-list-copy-file
   set-variable #l0 @1
   set-variable #l1 @2
+  set-variable #l2 @3
   !if &xseq #l1 "\\(.*/\\)?\\.?\\./?"
-  !elif &seq &rig #l1 &sub &len #l1 1 "/"
+  !elif &seq &rig #l1 -1 "/"
+    !if &band .mode 0x40
+      !if &seq &rig #l2 -1 "/"
+        set-variable #l2 &lef #l2 -1
+      !endif
+      !force !force .mode file-op &cat #l0 &lef #l1 -1 #l2 @mna
+      !if $status
+        !return
+      !endif
+    !endif
     set-variable &cat ".find-file.dir" &inc .find-file.dir-count 1 #l1
   !else
-    set-variable #l2 @3
     set-variable #l6 2
 *retry
     !force !force .mode file-op &cat #l0 #l1 #l2 @mna
@@ -1480,10 +1492,6 @@ define-macro dirlst-search
   set-variable #l1 .find-file.file-dir
   set-variable #l9 &cond &band @# 1 "Copy" "Move"
   !if &seq &lef #l0 6 "ftp://"
-    !if &seq &lef #l1 6 "ftp://"
-      ml-write &spr "[%s File Error: Both source and destination cannot be URLs]" #l9
-      !abort
-    !endif
   !elif &not &seq &lef #l0 5 "file:"
     set-variable #l0 &cat "file:" #l0
   !endif
@@ -1492,11 +1500,12 @@ define-macro dirlst-search
     set-variable #l1 &cat "file:" #l1
   !endif
   !if &seq &set #l2 &lget &stat "i" #l0 2 "D"
+    !if &not &seq &rig #l0 -1 "/"
+      set-variable #l0 &cat #l0 "/"
+    !endif
     !if &seq #l0 #l1
       ml-write &spr "[%s File Error: Destination must be a different directory]" #l9
       !abort
-    !elif &not &seq &rig #l0 &sub &len #l0 1 "/"
-      set-variable #l0 &cat #l0 "/"
     !endif
     set-variable #p9 0
   !elif &not &sin #l2 "XR"
@@ -1505,12 +1514,22 @@ define-macro dirlst-search
   !elif &gre .find-file.file-count 1
     ml-write &spr "[%s File Error: Destination must be a directory when copying multiple files]" #l9
     !abort
-  !elif &seq &set #l3 &cat #l1 .find-file.file1 #l0
+  !elif &seq &cat #l1 .find-file.file1 #l0
     ml-write &spr "[%s File Error: Destination file name must be different]" #l9
     !abort
   !else
     set-variable #p9 1
     set-variable #l5 #l0
+  !endif
+  !if &seq #l1 &lef #l0 &set #l3 &len #l1
+    set-variable #l2 .find-file.file-count
+    set-variable #l3 &rig #l0 #l3
+    !repeat
+      !if &seq &set #l4 &ind &cat ".find-file.file" &pdec #l2 1 &lef #l3 &len #l4
+        ml-write &spr "[%s File Error: Destination cannot be within source directory %s]" #l9 #l4
+        !abort
+      !endif
+    !until &les #l2 1
   !endif
   set-variable .dirlst-tag-list-copy-file.mode &cond &band @# 1 0x8d 0x4d
   set-variable .dirlst-tag-list-copy-file.state 0

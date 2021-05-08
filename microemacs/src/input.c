@@ -1087,7 +1087,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
 input_expand:
             if(option & MLFILE)
             {
-                meUByte fname[meBUF_SIZE_MAX], *base ;
+                meUByte ft, fname[meBUF_SIZE_MAX], *base ;
                 
                 pathNameCorrect(buf,PATHNAME_PARTIAL,fname,&base) ;
                 meStrcpy(buf,fname) ;
@@ -1096,27 +1096,32 @@ input_expand:
                  * return the path as xxx/ and base as yyy/ but for completion
                  * we want to list yyy/ so move the base for the case */
                 if(buf[ilen-1] != DIR_CHAR)
-                    *base = '\0' ;
+                    *base = '\0';
+                ft = ffUrlGetType(fname);
+                if(ffUrlTypeIsHttp(ft))
+                    strList = NULL;
+                else
+                {
 #if MEOPT_SOCKET
-                if(isFtpLink(fname) &&
-                   ((curDirList.path == NULL) || meStrcmp(curDirList.path,fname)))
-                {
-                    changed ^= 1 ;
-                    if(!changed)
+                    if(ffUrlTypeIsFtp(ft) && ((curDirList.path == NULL) || meStrcmp(curDirList.path,fname)))
                     {
-                        contstr = compFtpComp ;
-                        break ;
+                        changed ^= 1 ;
+                        if(!changed)
+                        {
+                            contstr = compFtpComp ;
+                            break ;
+                        }
                     }
-                }
 #endif
-                compOff = meStrlen(fname) ;
-                getDirectoryList(fname,&curDirList) ;
-                if(noStrs != curDirList.size)
-                {
-                    changed = 1 ;
-                    noStrs = curDirList.size ;
+                    compOff = meStrlen(fname) ;
+                    getDirectoryList(fname,&curDirList) ;
+                    if(noStrs != curDirList.size)
+                    {
+                        changed = 1 ;
+                        noStrs = curDirList.size ;
+                    }
+                    strList = curDirList.list ;
                 }
-                strList = curDirList.list ;
             }
             if(strList == NULL)
             {
@@ -1822,7 +1827,7 @@ input_addexpand:
             }
             else
                 defaultStr = buf ;
-            addHistory(option,defaultStr) ;
+            addHistory(option,defaultStr,meFALSE);
         }
     }
     

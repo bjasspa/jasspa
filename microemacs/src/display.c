@@ -2986,9 +2986,9 @@ mlwrite(int flags, meUByte *fmt, int arg)
 
 mlwrite_exit:
     if(!(flags & MWABORT))
-        return meTRUE ;
+        return meTRUE;
 
-    return meABORT ;
+    return meABORT;
 }
 
 /* mlerase relegated to here due to its use of mlwrite */

@@ -300,8 +300,8 @@ addPath(meUByte *pathname, int mask)
     DIRNODE *dp, *ndp ;
     meUByte   *p, *q, cc ;
     
-    if(isUrlLink(pathname))
-        return NULL ;
+    if(ffUrlTypeIsNotFile(ffUrlGetType(pathname)))
+        return NULL;
 
     /* Construct the root directory node if it does not already exist */
     if (dirlist == NULL)

@@ -562,7 +562,7 @@ isAddChar:
             srchPat[cpos++] = c;                /* put the char in the buffer*/
             if(cpos >= meBUF_SIZE_MAX)                    /* too many chars in string? */
             {                                   /* Yup.  Complain about it   */
-                addHistory(MLSEARCH, srchPat) ;
+                addHistory(MLSEARCH,srchPat,meFALSE) ;
                 mlwrite(MWABORT,(meUByte *)"[Search string too long!]");
                 goto quit_finish ;
             }
@@ -610,7 +610,7 @@ input_cont:
     
 good_finish:
     if(srchPat[0] != '\0')
-        addHistory(MLSEARCH,srchPat) ;
+        addHistory(MLSEARCH,srchPat,meFALSE);
     lastReplace = 0 ;
     
 bad_finish:

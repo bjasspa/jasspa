@@ -563,7 +563,7 @@ meSetupPathsAndUser(void)
         
 #if MEOPT_TFS
         /* also check for the built-in file system */
-        ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "{TFS}",&gotUserPath) ;
+        ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "tfs://",&gotUserPath) ;
 #endif        
         
         if(!gotUserPath && (homedir != NULL))

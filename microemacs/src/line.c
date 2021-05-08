@@ -273,7 +273,7 @@ lineMakeSpace(int n)
     int     newl ;
     
     lp_old = frameCur->windowCur->dotLine;			/* Current line         */
-    if((newl=(n+((int) meLineGetLength(lp_old)))) > 0x0fff0)
+    if((newl=(n+((int) meLineGetLength(lp_old)))) > meLINE_ELEN_MAX)
     {
         mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Line too long!]") ;
         return NULL ;
@@ -627,7 +627,7 @@ bufferInsertText(meUByte *str, meInt flags)
             ;
         ss-- ;
         len = (((size_t) ss) - ((size_t) str)) ;
-        if(len > 0x0fff0)
+        if(len > meLINE_ELEN_MAX)
         {
             mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Line too long!]") ;
             return tlen ;
@@ -1080,7 +1080,7 @@ mldelete(meInt noChrs, meUByte *kstring)
         int newl ;
         ii = meLineGetLength(elp) - eoff ;
         newl = ii + soff ;
-        if(newl > 0x0fff0)
+        if(newl > meLINE_ELEN_MAX)
             /* this deletion will leave the joined line too long, abort */
             return noChrs ;
         if(meLineGetMaxLength(slp) >= newl)
@@ -1334,7 +1334,7 @@ ldelete(meInt nn, int kflag)
             ret = meTRUE ;
         len = 0 ;
     }
-    else if((((long) frameCur->windowCur->dotOffset) - len) > 0xfff0)
+    else if((((long) frameCur->windowCur->dotOffset) - len) > meLINE_ELEN_MAX)
     {
         /* The last line will be too long - dont remove the last \n and the offset
          * on the last line, i.e. if G is a wanted char and D is a char that should

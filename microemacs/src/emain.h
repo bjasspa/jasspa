@@ -346,8 +346,9 @@
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _CLIENTSERVER  1                /* Client server support         */
 #endif
-/* The next option is commented out as the win32*.mak file define it when required */
+/* The next 2 options are commented out as the win32*.mak files define them when required */
 /*#define _SOCKET     1*/               /* Supports url reading          */
+/*#define _MESSL      1*/               /* Use messl & OpenSSL for https */
 #define _MOUSE         1                /* Mouse supported               */
 #define _CLIPBRD       1                /* Inter window clip board supp  */
 #define _WINDOW        1                /* Windowed, resizing & title    */
@@ -361,6 +362,14 @@
 #endif
 #ifndef _WIN32_FULL_INC
 #define WIN32_LEAN_AND_MEAN
+#endif
+#ifdef _SOCKET
+/* winsock2.h must be included before */
+#if (_MSC_VER != 900)
+#include <winsock2.h>
+#else
+#include <winsock.h>
+#endif
 #endif
 #include <windows.h>                    /* Standard windows API          */
 #ifdef _DRAGNDROP
@@ -452,6 +461,9 @@
 #endif
 #ifdef _SOCKET
 #define MEOPT_SOCKET    1       /* Supports sockets - can read urls      */
+#ifdef _MESSL
+#define MEOPT_SSL       1       /* enable messl for https support        */
+#endif
 #else
 /* DO NOT CHANGE THIS VALUE */
 #define MEOPT_SOCKET    0
@@ -595,6 +607,9 @@ typedef unsigned int   meUInt ;
 #define _DEFAULT_SEARCH_PATH ""
 #endif
 
+#if MEOPT_SSL
+#include <messl.h>        /* meSsl/OpenSSL system defs.     */
+#endif
 #if MEOPT_TFS
 #include <tfs.h>        /* Tack-on file system defs.     */
 #endif

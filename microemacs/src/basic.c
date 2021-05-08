@@ -651,10 +651,14 @@ static meInt  orgLn ;
 void
 meBufferStoreLocation(meLine *lp, meUShort lo, meInt ln)
 {
-    orgLpp = meLineGetPrev(lp) ;
-    orgLnp = meLineGetNext(lp) ;
-    orgLo = lo ;
-    orgLn=ln ;
+    if((orgLpp = meLineGetPrev(lp)) != lp)
+    {
+        orgLnp = meLineGetNext(lp);
+        orgLo = lo;
+        orgLn = ln;
+    }
+    else
+        orgLpp = NULL;
 }
 
 void
@@ -668,47 +672,61 @@ meBufferUpdateLocation(meBuffer *bp, meUInt noLines, meUShort newOff)
     {
         if(wp->buffer == bp)
         {
-            if(meModeTest(wp->buffer->mode,MDLOCK) &&
-               (wp->buffer->intFlag & BIFLOCK))
+            if(orgLpp == NULL)
             {
-                wp->dotLine= bp->dotLine ;
-                wp->dotOffset= bp->dotOffset ;
-                wp->dotLineNo = bp->dotLineNo ;
-            }
-            else if(wp->dotLineNo >= orgLn)
-            {
-                if(wp->dotLineNo == orgLn)
+                wp->dotLine = bp->dotLine;
+                wp->dotOffset = bp->dotOffset;
+                wp->dotLineNo = bp->dotLineNo;
+                if(wp->markLine != NULL)
                 {
-                    if(wp->dotOffset < orgLo)
-                        wp->dotLine = meLineGetNext(orgLpp) ;
+                    wp->markLine = meLineGetNext(bp->baseLine);
+                    wp->markOffset = 0;
+                    wp->markLineNo = 0;
+                }
+            }
+            else
+            {
+                if(meModeTest(wp->buffer->mode,MDLOCK) && (wp->buffer->intFlag & BIFLOCK))
+                {
+                    wp->dotLine = bp->dotLine;
+                    wp->dotOffset = bp->dotOffset;
+                    wp->dotLineNo = bp->dotLineNo;
+                }
+                else if(wp->dotLineNo >= orgLn)
+                {
+                    if(wp->dotLineNo == orgLn)
+                    {
+                        if(wp->dotOffset < orgLo)
+                            wp->dotLine = meLineGetNext(orgLpp);
+                        else
+                        {
+                            wp->dotLine = meLineGetPrev(orgLnp);
+                            wp->dotOffset = wp->dotOffset-orgLo+newOff;
+                            wp->dotLineNo += noLines;
+                        }
+                        if(wp->dotOffset > meLineGetLength(wp->dotLine))
+                            wp->dotOffset = meLineGetLength(wp->dotLine);
+                    }
+                    else
+                        wp->dotLineNo += noLines;
+                }
+                if(wp->markLineNo == orgLn)
+                {
+                    if(wp->markOffset < orgLo)
+                        wp->markLine = meLineGetNext(orgLpp);
                     else
                     {
-                        wp->dotLine = meLineGetPrev(orgLnp) ;
-                        wp->dotOffset = wp->dotOffset-orgLo+newOff ;
-                        wp->dotLineNo += noLines ;
+                        wp->markLine = meLineGetPrev(orgLnp);
+                        wp->markOffset = wp->markOffset-orgLo+newOff;
+                        wp->markLineNo += noLines;
                     }
-                    if(wp->dotOffset > meLineGetLength(wp->dotLine))
-                       wp->dotOffset = meLineGetLength(wp->dotLine) ;
+                    if(wp->markOffset > meLineGetLength(wp->markLine))
+                        wp->markOffset = meLineGetLength(wp->markLine);
                 }
-                else
-                    wp->dotLineNo += noLines ;
+                else if(wp->markLineNo > orgLn)
+                    wp->markLineNo += noLines;
             }
             wp->updateFlags |= WFMOVEL|WFMAIN|WFSBOX ;
-            if(wp->markLineNo == orgLn)
-            {
-                if(wp->markOffset < orgLo)
-                    wp->markLine = meLineGetNext(orgLpp) ;
-                else
-                {
-                    wp->markLine = meLineGetPrev(orgLnp) ;
-                    wp->markOffset = wp->markOffset-orgLo+newOff ;
-                    wp->markLineNo += noLines ;
-                }
-                if(wp->markOffset > meLineGetLength(wp->markLine))
-                    wp->markOffset = meLineGetLength(wp->markLine) ;
-            }
-            else if(wp->markLineNo > orgLn)
-                wp->markLineNo += noLines ;
         }
         wp = wp->next;
     }

@@ -102,6 +102,7 @@
 int
 getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
 {
+    meUByte ft;
     if(lname != NULL)
         *lname = '\0' ;
     /* setup the default stat values */
@@ -117,17 +118,18 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
         stats->stino  = -1 ;
 #endif
     }
-    if(isHttpLink(file))
-        return meFILETYPE_HTTP ;
-    if(isFtpLink(file))
-        return meFILETYPE_FTP ;
+    ft = ffUrlGetType(file);
+    if(ffUrlTypeIsHttp(ft))
+        return meFILETYPE_HTTP;
+    if(ffUrlTypeIsFtp(ft))
+        return meFILETYPE_FTP;
 #ifdef MEOPT_TFS
-    if (isTfsFile(file))
+    if(ffUrlTypeIsTfs(ft))
     {
         tfsstat_t tfs_statbuf;
         int file_type = meFILETYPE_NOTEXIST ;
         
-        if (tfs_stat (tfsdev, (char *)(file+5), &tfs_statbuf) == 0)
+        if(tfs_stat(tfsdev,(char *)(file+5), &tfs_statbuf) == 0)
         {
             if (tfs_statbuf.st_mode == TFS_TYPE_FILE)
                 file_type = meFILETYPE_REGULAR ;
@@ -177,9 +179,9 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
         return file_type;
     }
 #endif
-    if(isUrlFile(file))
+    if(ffUrlTypeIsFile(ft))
         /* skip the file: */
-        file += 5 ;
+        file += 5;
     
 #ifdef _DOS
     {
@@ -262,7 +264,7 @@ gft_directory:
             if(fh == INVALID_HANDLE_VALUE)
             {
                 if((file[len-1] == DIR_CHAR) || ((len == 2) && (file[1] == _DRV_CHAR)))
-                    goto gft_directory ;
+                    goto gft_directory;
                 return meFILETYPE_NOTEXIST ;
             }
             status = fd.dwFileAttributes ;
@@ -435,9 +437,9 @@ fnamecmp(meUByte *f1, meUByte *f2)
     if((f1==NULL) || (f2==NULL))
         return 1 ;
 #ifdef _INSENSE_CASE
-    return meStricmp(f1,f2) ;
+    return meStricmp(f1,f2);
 #else
-    return meStrcmp(f1,f2) ;
+    return meStrcmp(f1,f2);
 #endif
 }
 
@@ -629,9 +631,9 @@ fileLookup(meUByte *fname, meUByte *ext, meUByte flags, meUByte *outName)
         fileNameCorrect(buf,outName,NULL) ;
 #if MEOPT_TFS
         /* Try to determine the file type. */
-        if (isTfsFile(outName))
+        if(ffUrlTypeIsTfs(ffUrlGetType(outName)))
         {
-            if(tfs_type (tfsdev, (char *)(outName+5)) == TFS_TYPE_FILE)
+            if(tfs_type(tfsdev,(char *)(outName+5)) == TFS_TYPE_FILE)
                 return 1;
         }
         else
@@ -996,7 +998,7 @@ getDirectoryInfo(meUByte *fname)
     int noFiles=0;                        /* No files count */
     
 #if MEOPT_TFS
-    if (isTfsFile (fname))
+    if(ffUrlTypeIsTfs(ffUrlGetType(fname)))
     {
         tfsdir_t dirp;
         tfsdirent_t *dp;
@@ -1334,10 +1336,10 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
     free(curHead) ;
     if((flags & meRWFLAG_PRESRVFMOD) == 0)
     {
-        bp->fileFlag = meBFFLAG_DIR ;
-        meModeSet(bp->mode,MDVIEW) ;
-        meModeClear(bp->mode,MDAUTOSV) ;
-        meModeClear(bp->mode,MDUNDO) ;
+        bp->fileFlag = meBFFLAG_DIR;
+        meModeSet(bp->mode,MDVIEW);
+        meModeClear(bp->mode,MDAUTOSV);
+        meModeClear(bp->mode,MDUNDO);
     }
     return meTRUE ;
 }
@@ -1468,7 +1470,7 @@ readin(register meBuffer *bp, meUByte *fname)
              * anything */
             if ((
 #if MEOPT_TFS
-                 (!isTfsFile (fname)) &&
+                 !ffUrlTypeIsTfs(ffUrlGetType(fname)) &&
 #endif
                  (meTestRead (fn))) ||
                 (
@@ -1525,7 +1527,7 @@ readin(register meBuffer *bp, meUByte *fname)
         mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"[Reading %s%s]",fn,
                 meModeTest(bp->mode,MDVIEW) ? " (readonly)" : "");
     }
-    ss = ffReadFile(fn,0,bp,bp->baseLine,0,0,0) ;
+    ss = ffReadFile(&meior,fn,meRWFLAG_READ,bp,bp->baseLine,0,0,0) ;
     
     /*
     ** Set up the modification time field of the buffer structure.
@@ -1586,7 +1588,7 @@ meBufferInsertFile(meBuffer *bp, meUByte *fname, meUInt flags,
     }
     else
 #endif
-        ss = ffReadFile(fname,flags|meRWFLAG_INSERT,bp,lp,uoffset,loffset,length) ;
+        ss = ffReadFile(&meior,fname,flags|meRWFLAG_READ|meRWFLAG_INSERT,bp,lp,uoffset,loffset,length) ;
     nline = bp->lineCount-nline ;
     
     if(ss != meABORT)
@@ -1748,10 +1750,10 @@ findFileSingle(meUByte *fname, int bflag, meInt lineno, meUShort colno)
 #endif
 #ifdef _UNIX
     meStat  stats ;
-    gft = getFileStats(fname,meFINDFILESINGLE_GFS_OPT & (bflag | ~BFND_CREAT),&stats,NULL) ;
+    gft = getFileStats(fname,meFINDFILESINGLE_GFS_OPT & (bflag | ~BFND_CREAT),&stats,NULL);
 #else
     /* Stop getFileStats complaining on gfsERRON_ILLEGAL_NAME if BFND_CREAT not set (error reported elsewhere) */
-    gft = getFileStats(fname,meFINDFILESINGLE_GFS_OPT & (bflag | ~BFND_CREAT),NULL,NULL) ;
+    gft = getFileStats(fname,meFINDFILESINGLE_GFS_OPT & (bflag | ~BFND_CREAT),NULL,NULL);
 #endif
     if((gft == meFILETYPE_NASTY) ||
 #if (MEOPT_DIRLIST == 0)
@@ -1760,21 +1762,20 @@ findFileSingle(meUByte *fname, int bflag, meInt lineno, meUShort colno)
        ((gft == meFILETYPE_NOTEXIST) && !(bflag & BFND_CREAT)))
         return 0 ;
     
-    bflag |= BFND_CREAT ;
+    bflag |= BFND_CREAT;
     
     /* if this is a directory then add the '/' */
     if(gft == meFILETYPE_DIRECTORY)
     {
-        meUByte *ss=fname+meStrlen(fname) ;
+        meUByte *ss=fname+meStrlen(fname);
         if(ss[-1] != DIR_CHAR)
         {
-            ss[0] = DIR_CHAR ;
-            ss[1] = '\0' ;
+            ss[0] = DIR_CHAR;
+            ss[1] = '\0';
         }
     }
 #if MEOPT_SOCKET
-    if((gft != meFILETYPE_FTP) ||
-       ((fnlen = meStrlen(fname)),(fname[fnlen-1] == DIR_CHAR)))
+    if((gft != meFILETYPE_FTP) || ((fnlen = meStrlen(fname)),(fname[fnlen-1] == DIR_CHAR)))
         fnlen = 0 ;
 #endif
     for (bp=bheadp; bp!=NULL; bp=bp->next)
@@ -1788,10 +1789,11 @@ findFileSingle(meUByte *fname, int bflag, meInt lineno, meUShort colno)
                 (bp->stats.stdev == stats.stdev) &&
                 (bp->stats.stino == stats.stino) &&
                 (bp->stats.stsizeHigh == stats.stsizeHigh) &&
-                (bp->stats.stsizeLow == stats.stsizeLow)))
+                (bp->stats.stsizeLow == stats.stsizeLow))
 #else
-               !fnamecmp(bp->fileName,fname))
+               !fnamecmp(bp->fileName,fname)
 #endif
+               )
                 break ;
 #if MEOPT_SOCKET
             /* at this point the type of an ftp file (i.e. reg of dir)
@@ -1806,22 +1808,22 @@ findFileSingle(meUByte *fname, int bflag, meInt lineno, meUShort colno)
     if(bp == NULL)
     {
         bp = bfind(fname,bflag);
-        bp->fileName = meStrdup(fname) ;
-        bp->intFlag |= BIFFILE ;
+        bp->fileName = meStrdup(fname);
+        bp->intFlag |= BIFFILE;
         if(gft == meFILETYPE_DIRECTORY)
         {
             /* if its a directory then add dir flag and remove binary */
-            bp->fileFlag = meBFFLAG_DIR ;
-            meModeClear(bp->mode,MDBINARY) ;
-            meModeClear(bp->mode,MDRBIN) ;
+            bp->fileFlag = meBFFLAG_DIR;
+            meModeClear(bp->mode,MDBINARY);
+            meModeClear(bp->mode,MDRBIN);
         }
         bp->dotLineNo = lineno ;
         bp->dotOffset = colno ;
     }
     else if(!meModeTest(bp->mode,MDNACT))
-        bp->intFlag |= BIFLOAD ;
-    bp->histNo = bufHistNo ;
-    return 1 ;
+        bp->intFlag |= BIFLOAD;
+    bp->histNo = bufHistNo;
+    return 1;
 }
 
 static void
@@ -1870,8 +1872,9 @@ findFileList(meUByte *fname, int bflag, meInt lineno, meUShort colno)
     bufHistNo++ ;
     fileNameCorrect(fname,fileName,&baseName) ;
     
-    if(!isUrlLink(fileName) && fileNameWild(baseName) &&
-       ((isTfsFile(fileName) || meTestRead(fileName))))
+    cc = ffUrlGetType(fileName);
+    if(!ffUrlTypeIsHttpFtp(cc) && fileNameWild(baseName) &&
+       (ffUrlTypeIsTfs(cc) || meTestRead(fileName)))
     {
         /* if the base name has a wild card letter (i.e. *, ? '[')
          * and a file with that exact name does not exist then load
@@ -2027,21 +2030,21 @@ viewFile(int f, int n)	/* visit a file in VIEW mode */
 static int
 writeCheck(meUByte *pathname, int flags, meStat *statp)
 {
-    meUByte dirbuf [meBUF_SIZE_MAX];
-#if MEOPT_SOCKET
-    if(isFtpLink(pathname))
-        return meTRUE ;
-#endif
-    if(isUrlLink(pathname))
-        return mlwrite (MWABORT,(meUByte *)"Cannot write to: %s",pathname);
-    if(isTfsFile(pathname))
-        return mlwrite (MWABORT,(meUByte *)"Cannot write to: %s",pathname);
+    meUByte dirbuf[meBUF_SIZE_MAX], ft=ffUrlGetType(pathname);
     
+    if(ffUrlTypeIsNotFile(ft))
+    {
+#if MEOPT_SOCKET
+        if(ffUrlTypeIsFtpu(ft))
+            return meTRUE;
+#endif
+        return mlwrite(MWABORT,(meUByte *)"Cannot write to: %s",pathname);
+    }
     /* Quick test for read only. */
 #ifdef _UNIX
     /* READ ONLY directory test
        See if we can write to the directory. */
-    getFilePath(pathname,dirbuf) ;
+    getFilePath(pathname,dirbuf);
     if (meTestWrite (dirbuf))
         return mlwrite (MWABORT,(meUByte *)"Read Only Directory: %s", dirbuf);
 #endif
@@ -2064,17 +2067,17 @@ static meUByte *
 writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
 {
     register int s;
-    meStat stats ;
-    meUByte *fn ;
+    meStat stats;
+    meUByte *fn;
     
     if((sfname != NULL) &&
        (((s=getFileStats(dfname,0,NULL,NULL)) == meFILETYPE_DIRECTORY) ||
         ((s == meFILETYPE_FTP) && (dfname[meStrlen(dfname)-1] == DIR_CHAR))))
     {
-        s = meStrlen(dfname) ;
+        s = meStrlen(dfname);
         if(dfname[s-1] != DIR_CHAR)
-            dfname[s++] = DIR_CHAR ;
-        meStrcpy(dfname+s,getFileBaseName(sfname)) ;
+            dfname[s++] = DIR_CHAR;
+        meStrcpy(dfname+s,getFileBaseName(sfname));
     }
     if (((s=getFileStats(dfname,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE|gfsERRON_DIR,&stats,lfname)) != meFILETYPE_REGULAR) && (s != meFILETYPE_NOTEXIST)
 #if MEOPT_SOCKET
@@ -2082,7 +2085,7 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
 #endif
         )
         return NULL ;
-    fn = (lfname[0] == '\0') ? dfname:lfname ;
+    fn = (lfname[0] == '\0') ? dfname:lfname;
     if(flags & meWRITECHECK_CHECK)
     {
         meUByte prompt[meBUF_SIZE_MAX+48];
@@ -2090,16 +2093,16 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
         /* Check for write-out filename problems */
         if(s == meFILETYPE_REGULAR)
         {
-            sprintf((char *)prompt,"%s already exists, overwrite",fn) ;
+            sprintf((char *)prompt,"%s already exists, overwrite",fn);
             if((flags & meWRITECHECK_NOPROMPT) || (mlyesno(prompt) <= 0))
             {
                 ctrlg(meFALSE,1);
-                return NULL ;
+                return NULL;
             }
         }
         /* Quick check on the file write condition */
         if(writeCheck(fn,flags,&stats) <= 0)
-            return NULL ;
+            return NULL;
         
         if(flags & meWRITECHECK_CHECK)
         {
@@ -2107,7 +2110,7 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
              * Check to see if the new filename conflicts with the filenames for any
              * other buffer and produce a warning if so.
              */
-            meBuffer *bp = bheadp ;
+            meBuffer *bp = bheadp;
             
             while(bp != NULL)
             {
@@ -2123,18 +2126,18 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
                    !fnamecmp(bp->fileName,fn))
 #endif
                 {
-                    sprintf((char *)prompt, "Buffer %s is the same file, overwrite",bp->name) ;
+                    sprintf((char *)prompt, "Buffer %s is the same file, overwrite",bp->name);
                     if(mlyesno(prompt) <= 0)
                     {
                         ctrlg(meFALSE,1);
-                        return NULL ;
+                        return NULL;
                     }
                 }
-                bp = bp->next ;
+                bp = bp->next;
             }
         }
     }
-    return fn ;
+    return fn;
 }
 
 #if MEOPT_EXTENDED
@@ -2155,18 +2158,18 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
 int
 fileOp(int f, int n)
 {
-    meUByte sfname[meBUF_SIZE_MAX], dfname[meBUF_SIZE_MAX], lfname[meBUF_SIZE_MAX], *fn=NULL ;
+    meUByte ft, sfname[meBUF_SIZE_MAX], dfname[meBUF_SIZE_MAX], lfname[meBUF_SIZE_MAX], *fn=NULL ;
     int rr=meTRUE, dFlags=0, fileMask=-1 ;
     
     if((n & (meFILEOP_FTPCLOSE|meFILEOP_DELETE|meFILEOP_MOVE|meFILEOP_COPY|meFILEOP_MKDIR|meFILEOP_CHMOD|meFILEOP_TOUCH)) == 0)
         rr = mlwrite(MWABORT,(meUByte *)"[No operation set]") ;
     else if(n & meFILEOP_DELETE)
     {
-        if (inputFileName((meUByte *)"Delete file", sfname,1) <= 0)
+        if(inputFileName((meUByte *)"Delete file",sfname,1) <= 0)
             rr = 0 ;
-        else if (isHttpLink(sfname) || isTfsFile(sfname))
+        else if((ft=ffUrlGetType(sfname)) & (meIOTYPE_SSL|meIOTYPE_TFS|meIOTYPE_HTTP))
             rr = mlwrite(MWABORT,(meUByte *)"[Cannot delete %s]",sfname);
-        else if((n & meFILEOP_CHECK) && !isFtpLink(sfname))
+        else if((n & meFILEOP_CHECK) && !ffUrlTypeIsFtp(ft))
         {
             if(meTestExist(sfname))
             {
@@ -2201,7 +2204,7 @@ fileOp(int f, int n)
             prompt[2] = 'p' ;
             prompt[3] = 'y' ;
         }
-        if((inputFileName(prompt, sfname,1) <= 0) ||
+        if((inputFileName(prompt,sfname,1) <= 0) ||
            (inputFileName((meUByte *)"To", dfname,1) <= 0))
             rr = 0 ;
         else if((fn=writeFileChecks(dfname,sfname,lfname,(n & meFILEOP_WC_MASK))) == NULL)
@@ -2317,13 +2320,13 @@ autowriteout(register meBuffer *bp)
         getFileStats(bp->fileName,0,NULL,lname) ;
         ff = (lname[0] == '\0') ? bp->fileName:lname ;
         if(!createBackupName(fn,ff,'#',1) &&
-           (ffWriteFileOpen(fn,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE,bp) > 0))
+           (ffWriteFileOpen(&meiow,fn,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE,bp) > 0))
         {
             meLine *lp ;
             
             lp = meLineGetNext(bp->baseLine);            /* First line.          */
             while((lp != bp->baseLine) &&
-                  (ffWriteFileWrite(meLineGetLength(lp),meLineGetText(lp),
+                  (ffWriteFileWrite(&meiow,meLineGetLength(lp),meLineGetText(lp),
                                     !(lp->flag & meLINE_NOEOL)) > 0))
             {
                 lp = meLineGetNext(lp) ;
@@ -2333,7 +2336,7 @@ autowriteout(register meBuffer *bp)
                     return ;
                 }
             }
-            if(ffWriteFileClose(fn,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE,bp) > 0)
+            if(ffWriteFileClose(&meiow,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE,bp) > 0)
             {
                 mlerase(MWCLEXEC) ;
                 return ;
@@ -2375,7 +2378,7 @@ writeOut(register meBuffer *bp, meUInt flags, meUByte *fn)
 #if MEOPT_TIMSTMP
     set_timestamp(bp);			/* Perform time stamping */
 #endif
-    if(ffWriteFile(fn,flags,bp) <= 0)
+    if(ffWriteFile(&meiow,fn,flags,bp) <= 0)
         return meFALSE ;
     /* No write error.      */
     /* must be done before buffer is flagged as not changed */
@@ -2646,7 +2649,7 @@ appendBuffer(int f, int n)
         flags = meRWFLAG_OPENEND ;
     if(n & 0x02)
         flags |= meRWFLAG_IGNRNRRW ;
-    return ffWriteFile(fname,flags,frameCur->bufferCur) ;
+    return ffWriteFile(&meiow,fname,flags,frameCur->bufferCur) ;
 }
 
 /*
@@ -2752,11 +2755,10 @@ fileNameSetHome(meUByte *ss)
 void
 pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **baseName)
 {
-    register meUByte *p, *p1 ;
-    meUByte *urls, *urle ;
-    int flag ;
+    meUByte ft, *p, *p1, *urls, *urle;
+    int flag;
 #if (defined _DOS) || (defined _WIN32)
-    meUByte *gwdbuf ;
+    meUByte *gwdbuf;
 #endif
     
     fileNameConvertDirChar(oldName) ;
@@ -2773,25 +2775,25 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
      */
     for(;;)
     {
-        if(isHttpLink(p1))
+        ft = ffUrlGetType(p1);
+        if(ffUrlTypeIsHttp(ft))
         {
             flag = 2 ;
             urls = p1 ;
-            if((p=meStrchr(p1+7,DIR_CHAR)) == NULL)
+            if((p=meStrchr(p1+7+(ft & meIOTYPE_SSL),DIR_CHAR)) == NULL)
                 p = p1 + meStrlen(p1) ;
             p1 = p ;
         }
-        else if(isFtpLink(p1))
+        else if(ffUrlTypeIsFtp(ft))
         {
             flag = 3 ;
             urls = p1 ;
-            if((p=meStrchr(p1+6,DIR_CHAR)) == NULL)
+            if((p=meStrchr(p1+6+(ft & meIOTYPE_SSL),DIR_CHAR)) == NULL)
                 p = p1 + meStrlen(p1) ;
             urle = p ;
             p1 = p ;
         }
-#ifdef MEOPT_TFS
-        else if(isTfsFile(p1))
+        else if(ffUrlTypeIsTfs(ft))
         {
             flag = 3 ;
             urls = p1 ;
@@ -2800,8 +2802,7 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
             urle = p ;
             p1 = p ;
         }
-#endif
-        else if(isUrlFile(p1))
+        else if(ffUrlTypeIsFile(ft))
         {
             flag = 0 ;
             p1 += 5 ;
@@ -3055,18 +3056,14 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
 void
 fileNameCorrect(meUByte *oldName, meUByte *newName, meUByte **baseName)
 {
-    meUByte *bn ;
+    meUByte *bn;
     
     pathNameCorrect(oldName,PATHNAME_COMPLETE,newName,&bn) ;
     if(baseName != NULL)
         *baseName = bn ;
     
-    if(isUrlLink(newName))
+    if(ffUrlTypeIsNotFile(ffUrlGetType(newName)))
         return ;
-#if MEOPT_TFS
-    if(isTfsFile(newName))
-        return ;
-#endif
     
     /* ensure the drive letter is stable, make it lower case */
     if((newName[1] == _DRV_CHAR) && isUpper(newName[0]))
@@ -3100,8 +3097,8 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
 #if MEOPT_REGISTRY
     meUByte upb[meBUF_SIZE_MAX] ;
 #endif
-    meUByte **fls ;
-    int noFiles ;
+    meUByte **fls, ft;
+    int noFiles=0;
 #ifdef _UNIX
     struct stat statbuf;
     meFiletime stmtime ;
@@ -3112,40 +3109,40 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
     HANDLE *handle;
 #endif
     
-    if(isUrlLink(pathName))
+    ft = ffUrlGetType(pathName);
+    if(ffUrlTypeIsNotFile(ft))
     {
         if(dirList->path != NULL)
         {
             if(!meStrcmp(dirList->path,pathName))
-                return ;
-            meNullFree(dirList->path) ;
-            freeFileList(dirList->size,dirList->list) ;
+                return;
+            meFree(dirList->path);
+            freeFileList(dirList->size,dirList->list);
         }
-        dirList->path = NULL ;
+        dirList->path = meStrdup(pathName) ;
         dirList->size = 0 ;
         dirList->list = NULL ;
 #if MEOPT_SOCKET
-        if(pathName[0] == 'f')
+        if(ffUrlTypeIsFtpu(ft))
         {
             meLine hlp, *lp ;
             meUByte *ss ;
             int ii ;
             hlp.next = &hlp ;
             hlp.prev = &hlp ;
-            if(ffReadFile(pathName,meRWFLAG_SILENT,NULL,&hlp,0,0,0) >= 0)
+            if(ffReadFile(&meior,pathName,meRWFLAG_READ|meRWFLAG_SILENT,NULL,&hlp,0,0,0) >= 0)
             {
-                noFiles = 0 ;
+                ii = 0;
                 lp = hlp.next;
                 while(lp != &hlp)
                 {
-                    noFiles++ ;
+                    ii++;
                     lp = lp->next;
                 }
-                if(noFiles &&
-                   ((fls = meMalloc(sizeof(meUByte *) * noFiles)) != NULL) &&
-                   (meRegexComp(&meRegexStrCmp,(meUByte *) "\\([-\\a]+ +\\d+ \\S+\\( +\\S+\\)?\\( +\\d+,\\)? +\\d+\\( +0[xX]\\h+\\)? +\\a\\a\\a +\\d\\d? +\\(\\d\\d\\d\\d\\|\\d\\d?:\\d\\d\\)\\|\\d\\d-\\d\\d-\\d\\d +\\d\\d?\\:\\d\\d[aApP][mM] +\\(\\d+\\|<DIR>\\)\\) +\\(.*\\)",0) == meREGEX_OKAY))
+                if((ii > 0) &&
+                   (meRegexComp(&meRegexStrCmp,(meUByte *) "\\([-\\a]+ +\\d+ \\S+\\( +\\S+\\)?\\( +\\d+,\\)? +\\d+\\( +0[xX]\\h+\\)? +\\a\\a\\a +\\d\\d? +\\(\\d\\d\\d\\d\\|\\d\\d?:\\d\\d\\)\\|\\d\\d-\\d\\d-\\d\\d +\\d\\d?\\:\\d\\d[aApP][mM] +\\(\\d+\\|<DIR>\\)\\) +\\(.*\\)",0) == meREGEX_OKAY) &&
+                   ((fls = meMalloc(ii * sizeof(meUByte *))) != NULL))
                 {
-                    noFiles = 0 ;
                     lp = hlp.next;
                     while (lp != &hlp)
                     {
@@ -3165,24 +3162,82 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                         }
                         lp = lp->next;
                     }
-                    if((lp == &hlp) && noFiles)
+                    if((noFiles == 0) || (lp != &hlp))
                     {
-                        dirList->size = noFiles ;
-                        dirList->list = fls ;
-#ifdef _INSENSE_CASE
-                        sortStrings(noFiles,fls,0,meStridif) ;
-#else
-                        sortStrings(noFiles,fls,0,(meIFuncSS) strcmp) ;
-#endif
+                        while(--noFiles >= 0)
+                            meFree(fls[noFiles]);
+                        meFree(fls);
+                        noFiles = 0;
                     }
-                    else
-                        meFree(fls) ;
                 }
                 meLineLoopFree(&hlp,0) ;
             }
-            dirList->path = meStrdup(pathName) ;
         }
 #endif
+#ifdef MEOPT_TFS
+        if(ffUrlTypeIsTfs(ft))
+        {
+            tfsdir_t dirp;
+            
+            if((dirp = tfs_opendir(tfsdev, (char *)pathName+5)) != NULL)
+            {
+                tfsdirent_t *dirent;
+                meUByte *ff, *bb, fname[meBUF_SIZE_MAX] ;
+                
+                fls = NULL;
+                meStrcpy(fname,pathName) ;
+                bb = fname + meStrlen(fname) ;
+                
+                while((dirent = tfs_readdir(dirp)) != NULL)
+                {
+                    if((((noFiles & 0x0f) == 0) &&
+                        ((fls = meRealloc(fls,sizeof(meUByte *) * (noFiles+16))) == NULL)) ||
+                       ((ff = meMalloc(dirent->len+3)) == NULL))
+                        break ;
+                    fls[noFiles++] = ff ;
+                    meStrncpy(ff,dirent->name,dirent->len) ;
+                    ff[dirent->len] = '\0';
+                    if((ff[0] == '.') && ((ff[1] == '\0') || ((ff[1] == '.') && (ff[2] == '\0'))))
+                    {
+                        ff += (ff[1] == '\0') ? 1:2 ;
+                        *ff++ = DIR_CHAR ;
+                        *ff   = '\0' ;
+                    }
+                    else
+                    {
+                        meStrcpy(bb,ff) ;
+                        if (tfs_type (tfsdev, (char *)fname+5) == TFS_TYPE_DIR)
+                        {
+                            ff += meStrlen(ff) ;
+                            *ff++ = DIR_CHAR ;
+                            *ff   = '\0' ;
+                        }
+                    }
+                }
+                tfs_closedir(dirp);
+                if(dirent != NULL)
+                {
+                    if(fls != NULL)
+                    {
+                        while(--noFiles >= 0)
+                            meFree(fls[noFiles]);
+                        meFree(fls);
+                    }
+                    noFiles = 0;
+                }
+            }
+        }
+#endif  /* MEOPT_TFS */
+        if(noFiles > 0)
+        {
+            dirList->size = noFiles ;
+            dirList->list = fls ;
+#ifdef _INSENSE_CASE
+            sortStrings(noFiles,fls,0,meStridif) ;
+#else
+            sortStrings(noFiles,fls,0,(meIFuncSS) strcmp) ;
+#endif
+        }
         return ;
     }
     
@@ -3193,7 +3248,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         int len ;
         
         if((dirList->path != NULL) && !meStrcmp(dirList->path,"~"))
-            return ;
+            return;
         meStrcpy(upb,homedir) ;
         len = meStrlen(upb) ;
         upb[len-1] = '\0' ;
@@ -3241,14 +3296,13 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
            !dirList->stmtime
 #endif
            )
-            return ;
+            return;
     }
     
     /* free off the old */
     meNullFree(dirList->path) ;
     freeFileList(dirList->size,dirList->list) ;
     fls = NULL ;
-    noFiles = 0 ;
     
 #ifdef _DOS
     if(pathName[0] == '\0')
@@ -3279,7 +3333,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
             }
         }
     }
-    else (!isTfsFile(pathName))
+    else
     {
         struct ffblk fblk ;
         meUByte *ff, *ee, es[4] ;
@@ -3359,7 +3413,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
             }
         }
     }
-    else if (!isTfsFile(pathName))
+    else
     {
         meUByte *ff, *ee, es[4] ;
         
@@ -3410,7 +3464,6 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
     dirList->stmtime.dwLowDateTime = stmtime.dwLowDateTime ;
 #endif
 #ifdef _UNIX
-    if (!isTfsFile(pathName))
     {
         DIR    *dirp ;
         
@@ -3475,59 +3528,6 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         dirList->stmtime = stmtime ;
     }
 #endif  /* _UNIX */
-    
-#ifdef MEOPT_TFS
-    if (isTfsFile(pathName))
-    {
-        tfsdir_t dirp;
-        
-        if((dirp = tfs_opendir(tfsdev, (char *)pathName+5)) != NULL)
-        {
-            tfsdirent_t *dirent;
-            meUByte *ff, *bb, fname[meBUF_SIZE_MAX] ;
-            
-            meStrcpy(fname,pathName) ;
-            bb = fname + meStrlen(fname) ;
-            
-            while((dirent = tfs_readdir(dirp)) != NULL)
-            {
-                if(((noFiles & 0x0f) == 0) &&
-                   ((fls = meRealloc(fls,sizeof(meUByte *) * (noFiles+16))) == NULL))
-                {
-                    noFiles = 0 ;
-                    break ;
-                }
-                if((ff = meMalloc(dirent->len+3)) == NULL)
-                {
-                    fls = NULL ;
-                    noFiles = 0 ;
-                    break ;
-                }
-                fls[noFiles++] = ff ;
-                meStrncpy(ff,dirent->name,dirent->len) ;
-                ff[dirent->len] = '\0';
-                if((ff[0] == '.') && ((ff[1] == '\0') || ((ff[1] == '.') && (ff[2] == '\0'))))
-                {
-                    ff += (ff[1] == '\0') ? 1:2 ;
-                    *ff++ = DIR_CHAR ;
-                    *ff   = '\0' ;
-                }
-                else
-                {
-                    meStrcpy(bb,ff) ;
-                    if (tfs_type (tfsdev, (char *)fname+5) == TFS_TYPE_DIR)
-                    {
-                        ff += meStrlen(ff) ;
-                        *ff++ = DIR_CHAR ;
-                        *ff   = '\0' ;
-                    }
-                }
-            }
-            tfs_closedir(dirp) ;
-        }
-        dirList->stmtime = stmtime ;
-    }
-#endif  /* MEOPT_TFS */
     
 #if MEOPT_REGISTRY
     if(pathName == upb)

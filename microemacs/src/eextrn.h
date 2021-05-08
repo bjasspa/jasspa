@@ -370,6 +370,29 @@ extern  void    fileNameCorrect(meUByte *oldName, meUByte *newName, meUByte **ba
 extern  void    getDirectoryList(meUByte *pathName, meDirList *dirList) ;
 
 /* fileio.c externals */
+#define meBACKUP_CREATE_PATH 0x0001
+extern int      createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag);
+
+#define meIOTYPE_NONE    0
+#define meIOTYPE_SSL     0x0001
+#define meIOTYPE_DIR     0x0002
+#define meIOTYPE_PIPE    0x0004
+#define meIOTYPE_FILE    0x0008
+#define meIOTYPE_TFS     0x0010
+#define meIOTYPE_HTTP    0x0020
+#define meIOTYPE_FTP     0x0040
+/* meIOTYPE_PIPE is returned if url is NULL, meIOTYPE_NONE is returned if url does not start with a known URL, this is interpreted as a standard file name */ 
+extern meUByte  ffUrlGetType(meUByte *url);
+#define ffUrlTypeIsSecure(ft)   ((ft) & meIOTYPE_SSL)
+#define ffUrlTypeIsPipe(ft)     ((ft) & meIOTYPE_PIPE)
+#define ffUrlTypeIsFile(ft)     ((ft) & meIOTYPE_FILE)
+#define ffUrlTypeIsHttp(ft)     ((ft) & meIOTYPE_HTTP)
+#define ffUrlTypeIsFtp(ft)      ((ft) & meIOTYPE_FTP)
+#define ffUrlTypeIsTfs(ft)      ((ft) & meIOTYPE_TFS)
+#define ffUrlTypeIsFtpu(ft)     (((ft) & (meIOTYPE_FTP|meIOTYPE_SSL)) == meIOTYPE_FTP)
+#define ffUrlTypeIsHttpFtp(ft)  ((ft) & (meIOTYPE_HTTP|meIOTYPE_FTP))
+#define ffUrlTypeIsNotFile(ft)  ((ft) & (meIOTYPE_PIPE|meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP))
+
 #define meRWFLAG_SILENT     0x00001
 #define meRWFLAG_READ       0x00002
 #define meRWFLAG_INSERT     0x00004
@@ -392,17 +415,14 @@ extern  void    getDirectoryList(meUByte *pathName, meDirList *dirList) ;
 #define meRWFLAG_PRESRVTS   0x40000
 #define meRWFLAG_PRESRVFMOD 0x80000
 
-extern int      ffReadFile(meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
+extern int      ffReadFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
                            meUInt uoffset, meUInt loffset, meInt length) ;
-#define meBACKUP_CREATE_PATH 0x0001
-extern int      createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag) ;
 
-
-extern int      ffWriteFileOpen(meUByte *fname, meUInt flags, meBuffer *bp) ;
-extern int      ffWriteFileWrite(register int len, 
+extern int      ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp) ;
+extern int      ffWriteFileWrite(meIo *io, register int len, 
                                  register meUByte *buff, int eolFlag) ;
-extern int      ffWriteFileClose(meUByte *fname, meUInt flags, meBuffer *bp) ;
-extern int      ffWriteFile(meUByte *fname, meUInt flags, meBuffer *bp) ;
+extern int      ffWriteFileClose(meIo *io, meUInt flags, meBuffer *bp) ;
+extern int      ffWriteFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp) ;
 #if MEOPT_EXTENDED
 extern int	ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode) ;
 #else
@@ -535,7 +555,7 @@ extern	int	indent(int f, int n);
 /* history.c externals */
 extern  void    initHistory(void) ;
 extern  int     setupHistory(int option, meUByte **numPtr, meUByte ***list) ;
-extern  void    addHistory(int option, meUByte *str) ;
+extern  void    addHistory(int option, meUByte *str, int rmv);
 
 /* isearch.c externals */
 #if MEOPT_ISEARCH
@@ -1440,15 +1460,6 @@ extern int      putenv(const char *s);
 #define meAtoi(s) strtol((char *)(s),(char **)NULL,0)
 #define meAtol(s) (meAtoi(s) != 0)
 #define meLtoa(s) ((s) ? truem:falsem)
-
-/* is url file? test */
-#define isHttpLink(fn) (!strncmp((char *)fn,"http://",7))
-#define isFtpLink(fn)  (!strncmp((char *)fn,"ftp://",6))
-#define isUrlLink(fn)  (isHttpLink(fn) || isFtpLink(fn))
-#define isUrlFile(fn)  (!strncmp((char *)fn,"file:",5))
-
-/* is built-in file system test */
-#define isTfsFile(fn)  ((!strncmp((char *)fn,"tfs://",6)) || (!strncmp((char *)fn,"{TFS}",5)))
 
 /* use this with some care */
 #define meFree(x) free(x)

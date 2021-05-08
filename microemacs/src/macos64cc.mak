@@ -59,7 +59,7 @@ OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
 
-CCDEFS   = -D_MACOS -D_64BIT -m64 -Wall -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib
+CCDEFS   = -D_MACOS -D_64BIT -m64 -Wall -I$(TRDPARTY)/messl -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib
 CCFLAGSR = -O3 -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g
 LDDEFS   = -m64
@@ -85,22 +85,28 @@ endif
 ifeq "$(BCOR)" "ne"
 BCOR_CDF = -D_NANOEMACS
 PRGLIBS  = 
+else ifeq ($(BTYP),$(filter $(BTYP),cs ws cws))
+BCOR     = me
+BCOR_CDF = -D_MESSL -D_SOCKET
+PRGLIBS  = $(TRDPARTY)/messl/$(BOUTDIR)/messl$(A) $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A) $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A)
 else
 BCOR     = me
 BCOR_CDF = -D_SOCKET
 PRGLIBS  = $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A) $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A)
 endif
 
-ifeq "$(BTYP)" "c"
+ifeq ($(BTYP),$(filter $(BTYP),c cs))
 BTYP_CDF = -D_ME_CONSOLE -D_CONSOLE
 BTYP_LIB = -ltermcap
-else ifeq "$(BTYP)" "w"
+else ifeq ($(BTYP),$(filter $(BTYP),w ws))
 BTYP_CDF = $(MAKEWINDEFS) -D_ME_WINDOW -I/opt/X11/include
 BTYP_LIB = $(MAKEWINLIBS) -L/opt/X11/lib -lX11
 else
-BTYP     = cw
 BTYP_CDF = $(MAKEWINDEFS) -D_ME_CONSOLE -D_CONSOLE -D_ME_WINDOW -I/opt/X11/include
 BTYP_LIB = $(MAKEWINLIBS) -L/opt/X11/lib -lX11 -ltermcap
+ifneq ($(BTYP),ws)
+BTYP     = cw
+endif
 endif
 
 OUTDIR   = $(BOUTDIR)-$(BCOR)$(BTYP)
@@ -140,6 +146,11 @@ $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A):
 
 $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A):
 	cd $(TRDPARTY)/tfs && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
+
+ifeq ($(BTYP),$(filter $(BTYP),cs ws cws))
+$(TRDPARTY)/messl/$(BOUTDIR)/messl$(A):
+	cd $(TRDPARTY)/messl && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
+endif
 
 clean:
 	$(RMDIR) $(OUTDIR)

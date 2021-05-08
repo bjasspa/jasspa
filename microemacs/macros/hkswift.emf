@@ -73,6 +73,7 @@ set-variable .fhook-swift.item-list-r2 "Clss \ecB\\2\ecA"
   hilight .hilight.swift 1    "forEach"      .scheme.keyword
   hilight .hilight.swift 1    "func"         .scheme.keyword
   hilight .hilight.swift 1    "goto"         .scheme.keyword
+  hilight .hilight.swift 1    "guard"        .scheme.operator
   hilight .hilight.swift 1    "if"           .scheme.keyword
   hilight .hilight.swift 0x22 "import"       .scheme.prepro
   hilight .hilight.swift 1    "in"           .scheme.keyword
@@ -92,6 +93,7 @@ set-variable .fhook-swift.item-list-r2 "Clss \ecB\\2\ecA"
   hilight .hilight.swift 1    "throw"        .scheme.keyword
   hilight .hilight.swift 1    "throws"       .scheme.keyword
   hilight .hilight.swift 1    "true"         .scheme.constant
+  hilight .hilight.swift 1    "try"          .scheme.operator
   hilight .hilight.swift 1    "var"          .scheme.keyword
   hilight .hilight.swift 1    "while"        .scheme.keyword
   hilight .hilight.swift 1    "Bool"         .scheme.type
@@ -115,10 +117,29 @@ set-variable .fhook-swift.item-list-r2 "Clss \ecB\\2\ecA"
   hilight .hilight.swift 1    "UInt16"       .scheme.type
   hilight .hilight.swift 1    "UInt32"       .scheme.type
   hilight .hilight.swift 1    "UInt64"       .scheme.type
+  ; macOS types
+  hilight .hilight.swift 1    "NSButton"     .scheme.type
+  hilight .hilight.swift 1    "NSImage"      .scheme.type
+  hilight .hilight.swift 1    "NSImageView"  .scheme.type
+  hilight .hilight.swift 1    "NSStackView"  .scheme.type
+  hilight .hilight.swift 1    "NSTextField"  .scheme.type
+  hilight .hilight.swift 1    "NSTextView"   .scheme.type
+  hilight .hilight.swift 1    "NSView"       .scheme.type
+  hilight .hilight.swift 1    "NSViewController" .scheme.type
+  ; iOS types
+  hilight .hilight.swift 1    "UIButton"     .scheme.type
+  hilight .hilight.swift 1    "UIImage"      .scheme.type
+  hilight .hilight.swift 1    "UIImageView"  .scheme.type
+  hilight .hilight.swift 1    "UILabel"      .scheme.type
+  hilight .hilight.swift 1    "UIStackView"  .scheme.type
+  hilight .hilight.swift 1    "UITextField"  .scheme.type
+  hilight .hilight.swift 1    "UITextView"   .scheme.type
+  hilight .hilight.swift 1    "UIView"       .scheme.type
+  hilight .hilight.swift 1    "UIViewController" .scheme.type
   ; Hilight curly braces
   !if &sin "r" .fhook-swift.setup
-    hilight .hilight.swift 1 "{"        .scheme.keyword
-    hilight .hilight.swift 1 "}"        .scheme.keyword
+    hilight .hilight.swift 1 "{"             .scheme.keyword
+    hilight .hilight.swift 1 "}"             .scheme.keyword
   !endif
 !endif
 !if &sin "d" .fhook-swift.setup

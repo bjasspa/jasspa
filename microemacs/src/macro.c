@@ -367,7 +367,7 @@ helpBufferLoad(meBuffer *hbp)
             return mlwrite(MWABORT,(meUByte *)"[Help file \"%s\" is not on-line]",helpFileName);
         /* and read the stuff in */
         meModeClear(hbp->mode,MDVIEW) ;
-        ffReadFile(fname,meRWFLAG_SILENT,hbp,hbp->baseLine,0,0,0) ;
+        ffReadFile(&meior,fname,meRWFLAG_READ|meRWFLAG_SILENT,hbp,hbp->baseLine,0,0,0) ;
         helpBufferReset(hbp) ;
     }
     return meTRUE ;

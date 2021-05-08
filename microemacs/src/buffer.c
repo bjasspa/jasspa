@@ -51,7 +51,7 @@ getBufferName(meUByte *prompt, int opt, int defH, meUByte *buf)
             bp = replacebuffer(frameCur->bufferCur) ;
             defH = 1 ;
         }
-        addHistory(MLBUFFER, bp->name) ;
+        addHistory(MLBUFFER,bp->name,meFALSE) ;
     }
     return meGetString(prompt,opt|MLBUFFERCASE,defH,buf,meBUF_SIZE_MAX) ;
 }
@@ -154,7 +154,7 @@ checkExtent(meUByte *filename, int len, meUByte *sptr, meIFuncSSI cmpFunc)
  * returning the 'f' prefixed name.
  */
 static void
-assignHooks (meBuffer *bp, meUByte *hooknm)
+assignHooks(meBuffer *bp, meUByte *hooknm)
 {
     int fhook;                          /* File hook indentity */
     
@@ -1250,6 +1250,8 @@ addLine(register meLine *ilp, meUByte *text)
         stext = text ;
         while(((cc=*text++) != '\0') && (cc != '\n'))
             len++ ;
+        if((len > 0) && (text[-2] == '\r'))
+            len--;
         if((lp=meLineMalloc(len,0)) == NULL)
             break ;
         lp->text[len] = '\0' ;

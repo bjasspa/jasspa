@@ -1591,7 +1591,7 @@ execFile(meUByte *fname, int f, int n)
     hlp.prev = &hlp ;
     /* use a new buffer to ensure it doesn't mess with any loaded files */
     if(!fileLookup(fname,(meUByte *)".emf",meFL_CHECKDOT|meFL_USESRCHPATH,fn) ||
-       (ffReadFile(fn,meRWFLAG_SILENT,NULL,&hlp,0,0,0) == meABORT))
+       (ffReadFile(&meior,fn,meRWFLAG_READ|meRWFLAG_SILENT,NULL,&hlp,0,0,0) == meABORT))
     {
         if(status)
             return meABORT ;

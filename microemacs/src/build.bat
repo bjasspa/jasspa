@@ -125,10 +125,12 @@ echo     -ne  : for NanoEmacs build (output is ne).
 echo     -S   : Build clean spotless.
 echo     -t {type}
 echo          : Sets build type:
-echo               c  Console support only
-echo               w  Wondow support only (default)
-echo               cw Console and window support
+echo               c   Console support only
+echo               w   Wondow support only (default)
+echo               cw  Console and window support
+echo               cs  Console with ssl (https) support
+echo               ws  Wondow with ssl support
+echo               cws Console, window and ssl support
 echo.
 
 :build_exit
-

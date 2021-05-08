@@ -39,9 +39,12 @@ do
         echo "   -S   : Build clean spotless."
         echo "   -t <type>"
         echo "        : Sets build type:"
-        echo "             c  Console support only (Termcap)"
-        echo "             w  Window support only (XTerm)"
-        echo "             cw Console and window support (default)"
+        echo "             c   Console support only (Termcap)"
+        echo "             w   Window support only (XTerm)"
+        echo "             cw  Console and window support (default)"
+        echo "             cs  Console with ssl (https) support"
+        echo "             ws  Window with ssl support"
+        echo "             cws Console, window and ssl support"
         echo ""
         exit 1
     elif [ $1 = "-C" ] ; then

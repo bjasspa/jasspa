@@ -214,6 +214,8 @@ typedef struct meLine
 } meLine ;
 
 #define meMEMORY_BOUND          8               /* the size memory is rounded up to */
+#define meLINE_ELEN_MAX         0x0fff0         /* maximum length a line can be when editing */
+#define meLINE_LLEN_MAX         0x0ff00         /* maximum length a line can be when loaded */
 #define meLINE_SIZE             ((size_t) (&(((meLine *) 0)->text[1])))
 #define meLineMallocSize(ll)    ((meLINE_SIZE + (meMEMORY_BOUND-1) + (ll)) & ~(meMEMORY_BOUND-1))
 
@@ -459,28 +461,6 @@ typedef struct  meWindow {
     meUShort           vertScrollBarMode;       /* Operating mode of window     */
 #endif
 } meWindow ;
-
-#define ME_IO_NONE          0           /* No file operation. */
-#define ME_IO_FILE          1           /* Regular file system file handle */
-#define ME_IO_SOCKET        2           /* A socket transfer. */
-#define ME_IO_TFS           3           /* A Tack-on file system operation. */
-#define ME_IO_PIPE          4           /* A pipe operation. */
-
-/* Define a file pointer type. */
-typedef struct meIo {
-    meUInt type;                        /* Currently operation in progress */
-    
-#ifdef _WIN32
-    HANDLE    rp;                       /* File read pointer, all func. */
-    HANDLE    wp;                       /* File write pointer, all func.*/
-#else
-    FILE     *rp;                       /* File read pointer, all func. */
-    FILE     *wp;                       /* File write pointer, all func.*/
-#endif
-#ifdef MEOPT_TFS
-    tfsfile_t tfsp;                     /* The tack-on file system handle */
-#endif
-} meIo;
 
 /* SWP 2002-01-09 - Windows file timestamps use 2 longs, a dwHigh and a dwLow
  *                  to count the 100 nanosecs since 1601-01-01 (why???)
@@ -790,10 +770,8 @@ typedef struct  meBuffer {
 
 
 #define meBFFLAG_DIR     0x01
-#define meBFFLAG_FTP     0x02
-#define meBFFLAG_HTTP    0x04
-#define meBFFLAG_BINARY  0x08
-#define meBFFLAG_LTDIFF  0x10
+#define meBFFLAG_BINARY  0x02
+#define meBFFLAG_LTDIFF  0x04
 
 
 #define BIFBLOW    0x01                         /* Buffer is to be blown away (bclear)  */
@@ -1381,3 +1359,78 @@ struct s_DragAndDrop
     meUByte fname[1];                   /* Filename */
 };
 #endif
+
+#define meIOFLAG_NOTSET  0x0001
+#define meIOFLAG_BINARY  meBFFLAG_BINARY
+#define meIOFLAG_LTDIFF  meBFFLAG_LTDIFF
+#define meIOFLAG_CR      0x0020
+#define meIOFLAG_LF      0x0040
+#define meIOFLAG_CTRLZ   0x0080
+#define meIOFLAG_BINMOD  0x0100
+#define meIOFLAG_RBNMOD  0x0200
+#define meIOFLAG_CRYPT   0x0400
+#define meIOFLAG_NEWFILE 0x0800
+#define meIOFLAG_ERROR   0x1000
+
+#define meIOURLF_WARNING        0x01
+#define meIOURLF_SHOW_DETAILS   0x02
+#define meIOURLF_VERBOSE        0x04
+#define meIOURLF_IGN_CRT_ERR    0x08
+#define meIOURLF_SHOW_PROGRESS  0x10
+#define meIOURLF_CLOSE_PROGRESS 0x20
+#define meIOURLF_SHOW_CONSOLE   0x40
+
+#ifdef _WIN32
+#define meBadFile          INVALID_HANDLE_VALUE
+#define meFileGetError()   GetLastError()
+#if MEOPT_SOCKET
+#define meSOCKET           SOCKET
+#define meBadSocket        INVALID_SOCKET
+#define meSocketIsBad(ss)  ((ss) == meBadSocket)
+#endif
+#else
+#include <sys/socket.h>
+#include <netinet/in.h>
+#define meBadFile          NULL
+#define meFileGetError()   (errno)
+#if MEOPT_SOCKET
+#define meSOCKET           int
+#define meBadSocket        -1
+#define meSocketIsBad(ss)  ((ss) < 0)
+#endif
+#endif
+#define meFileIsBad(ss)    ((ss) == meBadFile)
+
+/* Define a file pointer type. */
+typedef struct meIo {
+    meUByte    type;                    /* Flags detailing type of file */
+#if MEOPT_SOCKET
+    meUByte    urlFlags;                /* Flags used if file is a URL */
+#endif
+    meUShort   flags;                   /* Flags detailing content of file */
+    meUInt     offset;
+#ifdef _WIN32
+    HANDLE     fp;                      /* File or pipe read/write pointer, all func. */
+#else
+    FILE      *fp;                      /* File or pipe read/write pointer, all func. */
+#endif
+    int        read;
+    int        remain;
+#if MEOPT_SOCKET
+    meSOCKET   ccsk;                    /* FTP control channel socket */
+    meSOCKET   sock;                    /* HTTP/FTP data channel socket */
+    struct sockaddr_in sockAddr;
+    meUByte   *sockUrl;                /* Current open socket addr (for reuse) */
+    meUByte   *sockHome;
+    meRegNode *passwdReg;
+    meBuffer  *urlBp;
+    int        startTime;
+    int        length;
+#ifdef MEOPT_SSL
+    meSslFile  sslp;                    /* meSsl/OpenSSL file handle */
+#endif
+#endif
+#ifdef MEOPT_TFS
+    tfsfile_t tfsp;                     /* The tack-on file system handle */
+#endif
+} meIo;
