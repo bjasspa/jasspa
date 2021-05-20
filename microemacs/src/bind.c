@@ -582,22 +582,14 @@ setCharMask(int f, int n)
 
 #if MEOPT_CMDHASH
 meUInt
-cmdHashFunc (register meUByte *cmdName)
+cmdHashFunc(register meUByte *cmdName)
 {
-    meUInt ii = 0;
-    meUInt jj;
-    meUByte cc;
-    
+    /* Bernstein: hash = (hash*33)+key[i] */
+    register meUInt hash=0;
+    register meUByte cc;
     while ((cc = *cmdName++) != '\0')
-    {
-        ii = (ii << 4) + cc;
-        if ((jj = ii & 0xf0000000) != 0)
-        {
-            ii ^= (jj >> 24);
-            ii ^= jj;
-        }
-    }
-    return ii % cmdHashSize ;
+        hash = (hash << 5) + hash + cc;
+    return hash;
 }
 #endif
      
@@ -612,10 +604,12 @@ decode_fncname(register meUByte *fname, int silent)
 #if MEOPT_CMDHASH
     meUInt key ;
     
-    key = cmdHashFunc(fname) ;
-    for (cmd=cmdHash[key] ; cmd != NULL; cmd = cmd->hnext)
-        if (meStrcmp (fname, cmd->name) == 0)
+    key = cmdHashFunc(fname);
+    for (cmd=cmdHash[key&(cmdHashSize-1)] ; cmd != NULL; cmd = cmd->hnext)
+    {
+        if((cmd->hash == key) && !meStrcmp(fname,cmd->name))
             return cmd->id ;
+    }
 #else
     int ii ;
     cmd = cmdHead;

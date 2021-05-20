@@ -181,12 +181,31 @@ meVariable *
 SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue, register meVarList *varList)
 {
     /* set a user variable */
-    meVariable *vptr, *vp ;
-    int ii, jj ;
+    meVariable *vp, *vptr = (meVariable *) varList;
+#if MEOPT_CMDHASH
+    meUInt hash = cmdHashFunc(vname) ;
+    int ii;
     
-    vptr = (meVariable *) varList ;
-    ii = varList->count ;
-    /* scan the list looking for the user var name */
+    /* scan the list looking for the hash & then the var name */
+    while(((vp = vptr->next) != NULL) && (vp->hash <= hash))
+    {
+        if(vp->hash == hash)
+        {
+            if((ii = meStrcmp(vname,vp->name)) == 0)
+            {
+                /* found it, replace value */
+                meStrrep(&vp->value,vvalue) ;
+                return vp ;
+            }
+            if(ii < 0)
+                break;
+        }
+        vptr = vp;
+    }
+#else
+    int ii = varList->count, jj;
+    
+    /* scan the list looking for the var name */
     while(ii)
     {
         meUByte *s1, *s2, cc ;
@@ -213,13 +232,14 @@ SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue, register meVarList *varList)
             vptr = vp ;
         }
     }
+#endif
     
     /* Not found so create a new one */
     if((vp = (meVariable *) meMalloc(sizeof(meVariable)+meStrlen(vname))) != NULL)
     {
         meStrcpy(vp->name,vname) ;
 #if MEOPT_CMDHASH
-        vp->hash = cmdHashFunc(vname) ;
+        vp->hash = hash;
 #endif
         vp->next = vptr->next ;
         vptr->next = vp ;
@@ -1428,10 +1448,10 @@ hook_jump:
 meUByte *
 getUsrLclCmdVar(meUByte *vname, register meVarList *varList)
 {
-    meByte *s1, *s2, ss ;
 #if MEOPT_CMDHASH
-    meVariable *vp ;
-    meUInt hash ;
+    meVariable *vp;
+    meUInt hash;
+    int ii;
     
     hash = cmdHashFunc(vname) ;
     vp = varList->head ;
@@ -1439,17 +1459,17 @@ getUsrLclCmdVar(meUByte *vname, register meVarList *varList)
     {
         if(vp->hash == hash)
         {
-            s1 = (meByte *) vp->name ;
-            s2 = (meByte *) vname ;
-            for( ; ((ss=*s1++) == *s2) ; s2++)
-                if(ss == 0)
-                    return(vp->value);
-            if(ss > *s2)
-                break ;
+            if((ii=meStrcmp(vname,vp->name)) == 0)
+                return vp->value;
+            if(ii < 0)
+                break;
         }
+        else if(vp->hash > hash)
+            break;
         vp = vp->next ;
     }
 #else
+    meByte *s1, *s2, ss;
     meVariable *vptr, *vp ;
     int ii, jj ;
     
@@ -1484,28 +1504,44 @@ getUsrLclCmdVar(meUByte *vname, register meVarList *varList)
 static meUByte *
 getMacroArg(int index)
 {
-    meRegister *crp ;
-    meUByte *oldestr, *ss ;
+    meRegister *crp;
+    meUByte *oldestr, *ss;
     
     /* move the register pointer to the parent as any # reference
      * will be w.r.t the parent
      */
-    crp = meRegCurr ;
+    crp = meRegCurr;
     if((ss=crp->execstr) == NULL)
-        return NULL ;
+        return NULL;
     oldestr = execstr ;
-    execstr = ss ;
     meRegCurr = crp->prev ;
     if(alarmState & meALARM_VARIABLE)
         gmaLocalRegPtr = meRegCurr ;
-    for( ; index>0 ; index--)
+    if(index == 1)
     {
-        execstr = token(execstr, evalResult) ;
-        ss = getval(evalResult) ;
+        execstr = token(ss,evalResult);
+        ss = getval(evalResult);
+        crp->nextArg = 1;
     }
-    execstr   = oldestr ;
-    meRegCurr = crp ;
-    return ss ;
+    else
+    {
+        if(crp->nextArg < index)
+        {
+            index -= crp->nextArg;
+            crp->nextArg += index;
+            ss = crp->nextArgStr;
+        }
+        execstr = ss ;
+        do
+        {
+            execstr = token(execstr,evalResult);
+            ss = getval(evalResult);
+        } while(--index > 0);
+    }
+    crp->nextArgStr = execstr;
+    execstr = oldestr;
+    meRegCurr = crp;
+    return ss;
 }
 
 
@@ -1971,7 +2007,7 @@ getval(meUByte *tkn)   /* find the value of a token */
         
     case TKREG:
         if(alarmState & meALARM_VARIABLE)
-            return tkn ;
+            return tkn;
         {
             meRegister *rp ;
             meUByte cc ;
@@ -1987,7 +2023,7 @@ getval(meUByte *tkn)   /* find the value of a token */
             cc = tkn[2] - '0' ;
             if(cc < meREGISTER_MAX)
                 return rp->reg[cc] ;
-            break ;
+            return abortm ;
         }
         
 #if MEOPT_EXTENDED
@@ -1997,11 +2033,11 @@ getval(meUByte *tkn)   /* find the value of a token */
         return getUsrVar(tkn+1) ;
         
     case TKLVR:
+        if(alarmState & meALARM_VARIABLE)
+            return tkn ;
         {
             meUByte *ss, *tt ;
             meBuffer *bp ;
-            if(alarmState & meALARM_VARIABLE)
-                return tkn ;
             tt = tkn+1 ;
             if((ss=meStrrchr(tt,':')) != NULL)
             {
@@ -2019,10 +2055,10 @@ getval(meUByte *tkn)   /* find the value of a token */
         }
         
     case TKCVR:
+        if(alarmState & meALARM_VARIABLE)
+            return tkn;
         {
             meUByte *ss, *tt ;
-            if(alarmState & meALARM_VARIABLE)
-                return tkn ;
             tt = tkn+1 ;
             if((ss=meStrrchr(tt,'.')) != NULL)
             {
@@ -2030,24 +2066,24 @@ getval(meUByte *tkn)   /* find the value of a token */
                 *ss = '\0' ;
                 ii = decode_fncname(tt,1) ;
                 *ss++ = '.' ;
-                if(ii < 0)
-                    /* not a command - error */
-                    return errorm ;
-                return getUsrLclCmdVar(ss,&(cmdTable[ii]->varList)) ;
+                if(ii >= 0)
+                    return getUsrLclCmdVar(ss,&(cmdTable[ii]->varList)) ;
+                /* not a command - error */
+                return errorm ;
             }
-            if(meRegCurr->varList == NULL)
-                return abortm ;
-            return getUsrLclCmdVar(tt,meRegCurr->varList) ;
+            if(meRegCurr->varList != NULL)
+                return getUsrLclCmdVar(tt,meRegCurr->varList) ;
+            return abortm ;
         }
 #endif
     case TKENV:
         if(alarmState & meALARM_VARIABLE)
             return tkn ;
         return gtenv(tkn+1) ;
-        
+
     case TKFUN:
         return gtfun(tkn+1) ;
-        
+    
     case TKSTR:
         tkn++ ;
     case TKCMD:

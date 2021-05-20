@@ -551,12 +551,15 @@ typedef struct meCommand {
 #if MEOPT_CMDHASH
     struct meCommand  *hnext ;                  /* next command in hash table   */
 #endif
+    meUByte           *name ;                   /* name of command              */
+    meIFuncII          func ;                   /* function name is bound to    */
 #if MEOPT_EXTENDED
     meVarList          varList ;                /* command variables list       */
 #endif
-    meUByte           *name ;                   /* name of command              */
+#if MEOPT_CMDHASH
+    meUInt             hash ;                   /* next command in hash table   */
+#endif
     int                id ;                     /* command id number            */
-    meIFuncII          func ;                   /* function name is bound to    */
 } meCommand ;
 
 typedef struct meMacro {
@@ -564,12 +567,15 @@ typedef struct meMacro {
 #if MEOPT_CMDHASH
     meCommand         *hnext ;                  /* next command in hash table   */
 #endif
+    meUByte           *name ;                   /* name of macro                */
+    meLine            *hlp ;                    /* Head line of macro           */
 #if MEOPT_EXTENDED
     meVarList          varList ;                /* command variables list       */
 #endif
-    meUByte           *name ;                   /* name of macro                */
+#if MEOPT_CMDHASH
+    meUInt             hash ;                   /* next command in hash table   */
+#endif
     int                id ;                     /* command id number            */
-    meLine            *hlp ;                    /* Head line of macro           */
 #if MEOPT_EXTENDED
     meUByte           *fname ;                  /* file name for file-macros    */
 #endif
@@ -1250,16 +1256,18 @@ typedef struct meUndoNarrow {
  */
 #define meREGISTER_MAX 10
 typedef struct meRegister {
-    struct meRegister *prev ;
+    struct meRegister *prev;
 #if MEOPT_EXTENDED
-    meVarList         *varList ;
+    meVarList         *varList;
 #endif
-    meUByte           *commandName ;
-    meUByte           *execstr ;
-    int                f ;
-    int                n ;
-    meUByte            force ;
-    meUByte            depth ;
+    meUByte           *commandName;
+    meUByte           *execstr;
+    meUByte           *nextArgStr;
+    int                f;
+    int                n;
+    meUByte            force;
+    meUByte            depth;
+    meUByte            nextArg;
     meUByte            reg[meREGISTER_MAX][meBUF_SIZE_MAX] ;
 } meRegister ;
 

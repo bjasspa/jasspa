@@ -524,7 +524,36 @@ exitEmacs(int f, int n)
 {
     int s, ec=0 ;
     char buff[128] ;
-
+    
+#if 0
+    // TODO - temp timing stuff
+    {
+        LARGE_INTEGER frq,tckb, tcke;
+        double ttm;
+        QueryPerformanceCounter(&tcke);
+        
+        for(s=0 ; s < 1000000 ; s++)
+            QueryPerformanceCounter(&tckb);
+        ttm = ((double) (tckb.QuadPart-tcke.QuadPart))/s;
+        QueryPerformanceFrequency(&frq);
+        s = cntGtarg + cntGtreg + cntGtuvr + cntGtbvr + cntGtcvr + cntGtenv + cntGtfun + cntGtlit;
+        sprintf(resultStr,"Tcks: %g, getval(%d,%g) (gtarg(%d,%g) getreg(%d,%g), getuvr(%d,%g), getbvr(%d,%g), getcvr(%d,%g), gtenv(%d,%g), gtfun(%d,%g), getlit(%d,%g)), meGetString(%d,%g-%g), token(%d,%g)",
+                (((double)(tcke.QuadPart-tckStart)-(ttm*(s+cntToken+3*cntGtStr)))/(double)frq.QuadPart),
+                s,(((double)(tckGtarg+tckGtreg+tckGtuvr+tckGtbvr+tckGtcvr+tckGtenv+tckGtfun+tckGtlit)-(ttm*s))/(double)frq.QuadPart),
+                cntGtarg,(((double)tckGtarg-(ttm*cntGtarg))/(double)frq.QuadPart),
+                cntGtreg,(((double)tckGtreg-(ttm*cntGtreg))/(double)frq.QuadPart),
+                cntGtuvr,(((double)tckGtuvr-(ttm*cntGtuvr))/(double)frq.QuadPart),
+                cntGtbvr,(((double)tckGtbvr-(ttm*cntGtbvr))/(double)frq.QuadPart),
+                cntGtcvr,(((double)tckGtcvr-(ttm*cntGtcvr))/(double)frq.QuadPart),
+                cntGtenv,(((double)tckGtenv-(ttm*cntGtenv))/(double)frq.QuadPart),
+                cntGtfun,(((double)tckGtfun-(ttm*cntGtfun))/(double)frq.QuadPart),
+                cntGtlit,(((double)tckGtlit-(ttm*cntGtlit))/(double)frq.QuadPart),
+                cntGtStr,(((double)tckGtStr-(7*ttm*cntGtStr))/(double)frq.QuadPart),(((double)tckGSGtval-(3*ttm*cntGtStr))/(double)frq.QuadPart),
+                cntToken,(((double)tckToken-(ttm*cntToken))/(double)frq.QuadPart)
+                );
+        mlwrite(MWABORT|MWSTDERRWRT,resultStr);
+    }
+#endif
 #if MEOPT_EXTENDED
     /* Set the exit code */
     if(n & 0x04)
@@ -1371,6 +1400,16 @@ mesetup(int argc, char *argv[])
     meUByte  *clientMessage=NULL ;
     int     userClientServer=0 ;
 #endif
+#if 0
+    // TODO - temp timing stuff
+    LARGE_INTEGER tcks;
+    if(!QueryPerformanceCounter(&tcks))
+    {
+        mlwrite(MWABORT,"Counter failed!!!");
+        meExit(1);
+    }
+    tckStart = tcks.QuadPart;
+#endif
     startTime = (meInt) time(NULL) ;
     
     /* asserts to check that the defines are consistent */
@@ -1432,25 +1471,26 @@ mesetup(int argc, char *argv[])
     signal (SIGALRM, sigAlarm);
 #endif /* _POSIX_SIGNALS */
 #endif /* _UNIX */
-    count_key_table() ;
+    count_key_table();
 
     /* Init the registers - Make the head registers point back to themselves so that
      * accessing #p? gets #g? and not a core-dump */
     if((meRegHead = meMalloc(sizeof(meRegister))) == NULL)
-        exit(1) ;
-    meRegHead->prev = meRegHead ;
-    meRegHead->commandName = NULL ;
-    meRegHead->execstr = NULL ;
+        exit(1);
+    meRegHead->prev = meRegHead;
+    meRegHead->commandName = NULL;
+    meRegHead->execstr = NULL;
 #if MEOPT_EXTENDED
-    meRegHead->varList = NULL ;
+    meRegHead->varList = NULL;
 #endif
-    meRegHead->force = 0 ;
-    meRegHead->depth = 0 ;
-    meRegCurr = meRegHead ;
+    meRegHead->force = 0;
+    meRegHead->depth = 0;
+    meRegHead->nextArg = 0xff;
+    meRegCurr = meRegHead;
     /* Initialise the head as this is dumped in list-variables */
-    carg = meREGISTER_MAX ;
+    carg = meREGISTER_MAX;
     while(--carg >= 0)
-        meRegHead->reg[carg][0] = '\0' ;
+        meRegHead->reg[carg][0] = '\0';
     
     /* Init static file io structures */
     meior.fp = meBadFile;

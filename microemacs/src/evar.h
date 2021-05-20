@@ -102,7 +102,7 @@ meUByte *envars[] =
 
 int funcHashs[] =
 {
-    0x000000,
+    0x0000000,
 #include	"evar.def"
     0x1000000
 };

@@ -417,14 +417,19 @@ fnctest(void)
     for (ii=0; ii < CK_MAX; ii++)
     {
         key = cmdHashFunc(getCommandName(ii)) ;
-        cmd = cmdHash[key] ;
+        cmd = cmdHash[key&(cmdHashSize-1)] ;
         while((cmd != NULL) && (cmd != cmdTable[ii]))
             cmd = cmd->hnext ;
         if(cmd == NULL)
         {
             count++;
-            mlwrite(MWWAIT,(meUByte *) "cmdHash Error: [%s] should be in position %d", 
-                    getCommandName(ii),key) ;
+            mlwrite(MWSTDERRWRT,(meUByte *) "cmdTbl Error: [%s] should be in position %d",getCommandName(ii),(key&(cmdHashSize-1)));
+        }
+        else if(cmd->hash != key)
+        {
+            count++;
+            sprintf(resultStr,"cmdHash Error: [%s] hash should be 0x%08x",getCommandName(ii),key);
+            mlwrite(MWSTDERRWRT,resultStr);
         }
     }
 #endif
@@ -436,7 +441,7 @@ fnctest(void)
         if(meStrcmp(cmd->anext->name,cmd->name) < 0)
         {
             count++;
-            mlwrite(MWWAIT,(meUByte *) "cmdHead Error: [%s] should be before [%s]", 
+            mlwrite(MWSTDERRWRT,(meUByte *) "cmdHead Error: [%s] should be before [%s]", 
                     cmd->anext->name,cmd->name) ;
         }
         cmd = cmd->anext ;
@@ -450,7 +455,7 @@ fnctest(void)
         {
             count++;
             meGetStringFromKey(ktp->code,outseq);
-            mlwrite(MWWAIT,(meUByte *) "[%s] key out of place",outseq);
+            mlwrite(MWSTDERRWRT,(meUByte *) "[%s] key out of place",outseq);
         }
     }
     /* now check the user funcs */
@@ -462,12 +467,12 @@ fnctest(void)
         if((ii = funcOffst[ii]) == 0)
         {
             count++;
-            mlwrite(MWWAIT,(meUByte *) "funcLookup Error: Offset for function [%s] is zero",funcNames[ix]);
+            mlwrite(MWSTDERRWRT,(meUByte *) "funcLookup Error: Offset for function [%s] is zero",funcNames[ix]);
         }
         else if((funcHashs[ii] & 0x0ff0000) != jj)
         {
             count++;
-            mlwrite(MWWAIT,(meUByte *) "funcLookup Error: Offset for function [%s] is wrong, points to %s",funcNames[ix],funcNames[ii]);
+            mlwrite(MWSTDERRWRT,(meUByte *) "funcLookup Error: Offset for function [%s] is wrong, points to %s",funcNames[ix],funcNames[ii]);
         }
         else
         {
@@ -481,7 +486,7 @@ fnctest(void)
                     if(fn != jj)
                     {
                         count++;
-                        mlwrite(MWWAIT,(meUByte *) "funcLookup Error: Failed to ffind function [%s], hash 0x%h",funcNames[ix],jj);
+                        mlwrite(MWSTDERRWRT,(meUByte *) "funcLookup Error: Failed to ffind function [%s], hash 0x%h",funcNames[ix],jj);
                     }
                 }
                 else
@@ -491,14 +496,14 @@ fnctest(void)
                     if(fn != jj)
                     {
                         count++;
-                        mlwrite(MWWAIT,(meUByte *) "funcLookup Error: Failed to bfind function [%s], hash 0x%h",funcNames[ix],jj);
+                        mlwrite(MWSTDERRWRT,(meUByte *) "funcLookup Error: Failed to bfind function [%s], hash 0x%h",funcNames[ix],jj);
                     }
                 }
             }
         }
     }
     if(count)
-        mlwrite(MWWAIT,(meUByte *) "!test: %d Error(s) Detected",count);
+        mlwrite(MWSTDERRWRT,(meUByte *) "!test: %d Error(s) Detected",count);
     return (count);
 }
 #endif
@@ -1193,9 +1198,9 @@ dobuf_exit:
 static int
 donbuf(meLine *hlp, meVarList *varList, meUByte *commandName, int f, int n)
 {
-    meRegister  rp ;
-    meUByte oldcle ;
-    int oldexec, status ;
+    meRegister rp;
+    meUByte oldcle;
+    int oldexec, status;
     
     if(meRegCurr->depth >= meMACRO_DEPTH_MAX)
     {
@@ -1206,17 +1211,18 @@ donbuf(meLine *hlp, meVarList *varList, meUByte *commandName, int f, int n)
     }
     /* save the arguments */
     oldcle = clexec;
-    oldexec = execlevel ;
+    oldexec = execlevel;
     /* Setup these argument and move the register stack */
-    rp.prev = meRegCurr ;
-    rp.commandName = commandName ;
-    rp.execstr = execstr ;
+    rp.prev = meRegCurr;
+    rp.commandName = commandName;
+    rp.execstr = execstr;
 #if MEOPT_EXTENDED
-    rp.varList = varList ;
+    rp.varList = varList;
 #endif
-    rp.f = f ;
-    rp.n = n ;
-    rp.depth = meRegCurr->depth + 1 ;
+    rp.f = f;
+    rp.n = n;
+    rp.nextArg = 0xff;
+    rp.depth = meRegCurr->depth + 1;
     meRegCurr = &rp ;
     
     status = dobuf(hlp) ;

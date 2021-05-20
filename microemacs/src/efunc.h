@@ -29,7 +29,7 @@
  *     the command effects things like the display and region etc.
  *     A hash table is also created & initialized which is used for rapid
  *     command-name -> function lookups.
- * 
+ *
  * Notes:
  *     Adding a new command requires:
  *       * Adding external declaration to eextern.h
@@ -40,11 +40,11 @@
  *       * Adding the command to the built in hash table (see below & 6th)
  *     To check this has been done correctly set KEY_TEST to 1 in exec.c
  *     and execute the !test macro directive.
- * 
+ *
  *     The generated list of commands MUST be alphabetically ordered.
  */
 
-#define DEFFUNC(s,t,f,r,n,h)  r,
+#define DEFFUNC(s,t,k,f,r,n,h)  r,
 
 enum
 {
@@ -61,7 +61,7 @@ extern meCommand **cmdTable;                /* command table                */
 extern meCommand  *cmdHead;                 /* command alpha list head      */
 extern meUByte commandFlag[] ;          /* selection hilight cmd flags  */
 #if MEOPT_CMDHASH
-#define cmdHashSize 511
+#define cmdHashSize 1024
 extern meCommand  *cmdHash[cmdHashSize];    /* command hash lookup table    */
 #endif
 
@@ -96,9 +96,9 @@ extern meCommand  *cmdHash[cmdHashSize];    /* command hash lookup table    */
 
 #define CMDTABLEINITSIZE (((CK_MAX>>5)+1)<<5)
 
-#define DEFFUNC(s,t,f,r,n,h)  t,
+#define DEFFUNC(s,t,k,f,r,n,h)  t,
 
-meUByte commandFlag[] = 
+meUByte commandFlag[] =
 {
 #include        "efunc.def"
 };
@@ -106,19 +106,19 @@ meUByte commandFlag[] =
 
 #if MEOPT_EXTENDED
 #if MEOPT_CMDHASH
-#define DEFFUNC(s,t,f,r,n,h)          {(meCommand *) n, (meCommand *) h, { (meVariable *) 0, 0}, (meUByte *)s, r, f} ,
+#define DEFFUNC(s,t,k,f,r,n,h)          {(meCommand *) n, (meCommand *) h, (meUByte *)s, f, { (meVariable *) 0, 0}, k, r},
 #else
-#define DEFFUNC(s,t,f,r,n,h)          {(meCommand *) n, { (meVariable *) 0, 0}, (meUByte *)s, r, f} ,
+#define DEFFUNC(s,t,k,f,r,n,h)          {(meCommand *) n, (meUByte *)s, f, { (meVariable *) 0, 0}, r},
 #endif
 #else
 #if MEOPT_CMDHASH
-#define DEFFUNC(s,t,f,r,n,h)          {(meCommand *) n, (meCommand *) h, (meUByte *)s, r, f} ,
+#define DEFFUNC(s,t,k,f,r,n,h)          {(meCommand *) n, (meCommand *) h, (meUByte *)s, f, k, r},
 #else
-#define DEFFUNC(s,t,f,r,n,h)          {(meCommand *) n, (meUByte *)s, r, f} ,
+#define DEFFUNC(s,t,k,f,r,n,h)          {(meCommand *) n, (meUByte *)s, f, r},
 #endif
 #endif
 
-meCommand __cmdArray[CK_MAX] = 
+meCommand __cmdArray[CK_MAX] =
 {
 #include        "efunc.def"
 };
@@ -126,9 +126,9 @@ meCommand __cmdArray[CK_MAX] =
 
 int cmdTableSize = CK_MAX ;
 
-#define DEFFUNC(s,t,f,r,n,h)          &__cmdArray[r],
+#define DEFFUNC(s,t,k,f,r,n,h)          &__cmdArray[r],
 
-meCommand *__cmdTable[CMDTABLEINITSIZE] = 
+meCommand *__cmdTable[CMDTABLEINITSIZE] =
 {
 #include        "efunc.def"
     NULL
@@ -143,113 +143,112 @@ meCommand **cmdTable = __cmdTable ;
 meCommand  *cmdHead = &__cmdArray[0] ;
 
 #if MEOPT_CMDHASH
-meCommand  *cmdHash[cmdHashSize] = 
+meCommand  *cmdHash[cmdHashSize] =
 {
-    NULL,                       NULL,                       NULL,                       NULL,                       NULL,
-    NULL,                       NULL,                       NULL,                       NULL,                       NULL,
-    &__cmdArray[CK_SWNDV],      NULL,                       NULL,                       NULL,                       &__cmdArray[CK_GOBOP],
-    NULL,                       &__cmdArray[CK_DELFRAME],   &__cmdArray[CK_DELWND],     NULL,                       NULL,
-    &__cmdArray[CK_FNDFIL],     NULL,                       NULL,                       NULL,                       NULL,
-    NULL,                       &__cmdArray[CK_BAKSRCH],    NULL,                       &__cmdArray[CK_SAVREGY],    NULL,
-    NULL,                       NULL,                       NULL,                       NULL,                       NULL,
-    NULL,                       &__cmdArray[CK_INSMAC],     NULL,                       &__cmdArray[CK_UNVARG],     NULL,
-    NULL,                       NULL,                       NULL,                       &__cmdArray[CK_SVDICTS],    NULL,
-    &__cmdArray[CK_SAVSBUF],    NULL,                       &__cmdArray[CK_EXENCMD],    &__cmdArray[CK_INSTAB],     NULL,
-    NULL,                       NULL,                       NULL,                       NULL,                       &__cmdArray[CK_DELWBAK],
-    &__cmdArray[CK_REDREGY],    &__cmdArray[CK_HIWRD],      &__cmdArray[CK_GOFNC],      NULL,                       NULL,
-    NULL,                       NULL,                       NULL,                       &__cmdArray[CK_SUSPEND],    &__cmdArray[CK_WDWWDTH],
-    NULL,                       &__cmdArray[CK_BUFMOD],     &__cmdArray[CK_INSFLNM],    NULL,                       NULL,
-    &__cmdArray[CK_BAKCHR],     NULL,                       NULL,                       &__cmdArray[CK_YANK],       NULL,
-    &__cmdArray[CK_BUFPOS],     NULL,                       NULL,                       &__cmdArray[CK_ONLYWND],    &__cmdArray[CK_REDFILE],
-    &__cmdArray[CK_PRTBUF],     &__cmdArray[CK_SWNDH],      &__cmdArray[CK_CRTCLBK],    &__cmdArray[CK_APPBUF],     NULL,
-    NULL,                       &__cmdArray[CK_IPIPWRT],    NULL,                       &__cmdArray[CK_GOTOPOS],    &__cmdArray[CK_SETMRK],
-    NULL,                       &__cmdArray[CK_SAVBUF],     &__cmdArray[CK_ABTCMD],     NULL,                       NULL,
-    &__cmdArray[CK_FNDTAG],     NULL,                       NULL,                       NULL,                       NULL,
-    NULL,                       &__cmdArray[CK_DELBLK],     NULL,                       NULL,                       NULL,
-    NULL,                       NULL,                       &__cmdArray[CK_LOWWRD],     &__cmdArray[CK_SSWM],       NULL,
-    &__cmdArray[CK_WRPWRD],     &__cmdArray[CK_ENDMAC],     &__cmdArray[CK_SHOWCUR],    NULL,                       NULL,
-    &__cmdArray[CK_DELBAK],     NULL,                       NULL,                       &__cmdArray[CK_TRNLINE],    &__cmdArray[CK_STRREP],
-    NULL,                       NULL,                       NULL,                       NULL,                       &__cmdArray[CK_DEFFMAC],
-    NULL,                       NULL,                       &__cmdArray[CK_CHGFONT],    NULL,                       &__cmdArray[CK_NEWLIN],
-    NULL,                       NULL,                       &__cmdArray[CK_FILEOP],     NULL,                       NULL,
-    NULL,                       NULL,                       NULL,                       NULL,                       NULL,
-    &__cmdArray[CK_UPDATE],     NULL,                       NULL,                       NULL,                       NULL,
-    &__cmdArray[CK_WDWDPTH],    &__cmdArray[CK_DELSBUF],    &__cmdArray[CK_UNDO],       NULL,                       NULL,
-    NULL,                       NULL,                       NULL,                       NULL,                       NULL,
-    NULL,                       NULL,                       NULL,                       NULL,                       NULL,
-    &__cmdArray[CK_GOBOL],      &__cmdArray[CK_DELFOR],     NULL,                       &__cmdArray[CK_TRNSKEY],    &__cmdArray[CK_NAMBUF],
-    NULL,                       NULL,                       NULL,                       NULL,                       &__cmdArray[CK_ABOUT],
-    &__cmdArray[CK_LCLBIND],    &__cmdArray[CK_REYANK],     NULL,                       NULL,                       NULL,
-    &__cmdArray[CK_DOTAB],      &__cmdArray[CK_GOEOP],      &__cmdArray[CK_BAKLIN],     &__cmdArray[CK_BISRCH],     &__cmdArray[CK_SETCRY],
-    NULL,                       &__cmdArray[CK_BAKWND],     &__cmdArray[CK_WRTMSG],     NULL,                       NULL,
-    &__cmdArray[CK_PKSCRN],     &__cmdArray[CK_GOEOL],      NULL,                       NULL,                       NULL,
-    &__cmdArray[CK_DELTAB],     &__cmdArray[CK_OSDBIND],    NULL,                       NULL,                       &__cmdArray[CK_WRTBUF],
-    NULL,                       NULL,                       &__cmdArray[CK_LCLUNBD],    NULL,                       &__cmdArray[CK_DELDICT],
-    NULL,                       &__cmdArray[CK_BINDKEY],    &__cmdArray[CK_FILTBUF],    NULL,                       NULL,
-    NULL,                       NULL,                       &__cmdArray[CK_OSD],        NULL,                       NULL,
-    &__cmdArray[CK_FORLIN],     NULL,                       NULL,                       &__cmdArray[CK_HILIGHT],    &__cmdArray[CK_SORTLNS],
-    NULL,                       NULL,                       NULL,                       &__cmdArray[CK_KILRECT],    NULL,
-    &__cmdArray[CK_KILREG],     NULL,                       NULL,                       NULL,                       NULL,
-    NULL,                       NULL,                       &__cmdArray[CK_SETPOS],     NULL,                       NULL,
-    &__cmdArray[CK_DEFHELP],    NULL,                       NULL,                       NULL,                       &__cmdArray[CK_FLHOOK],
-    NULL,                       NULL,                       NULL,                       NULL,                       NULL,
-    &__cmdArray[CK_PRTCOL],     &__cmdArray[CK_UNSET],      &__cmdArray[CK_SCLPRV],     NULL,                       NULL,
-    &__cmdArray[CK_BAKWRD],     NULL,                       NULL,                       NULL,                       NULL,
-    NULL,                       NULL,                       &__cmdArray[CK_BUFABBREV],  NULL,                       NULL,
-    NULL,                       &__cmdArray[CK_FORSRCH],    NULL,                       NULL,                       NULL,
-    NULL,                       &__cmdArray[CK_EXECMD],     NULL,                       NULL,                       NULL,
-    &__cmdArray[CK_ADDCOLSCHM], NULL,                       NULL,                       NULL,                       NULL,
-    NULL,                       NULL,                       &__cmdArray[CK_MOVUWND],    NULL,                       &__cmdArray[CK_GOBOF],
-    NULL,                       &__cmdArray[CK_USEBUF],     &__cmdArray[CK_GLOBMOD],    NULL,                       NULL,
-    NULL,                       NULL,                       NULL,                       NULL,                       NULL,
-    NULL,                       NULL,                       NULL,                       &__cmdArray[CK_MOVLWND],    &__cmdArray[CK_YANKRECT],
-    &__cmdArray[CK_RCASHI],     NULL,                       &__cmdArray[CK_NRRWBUF],    NULL,                       NULL,
-    &__cmdArray[CK_DESCVAR],    &__cmdArray[CK_MCRQURY],    NULL,                       NULL,                       &__cmdArray[CK_NBUFMOD],
-    NULL,                       &__cmdArray[CK_SFNDBUF],    NULL,                       NULL,                       NULL,
-    &__cmdArray[CK_KILEOL],     &__cmdArray[CK_SETVAR],     NULL,                       NULL,                       NULL,
-    &__cmdArray[CK_FORCHR],     NULL,                       NULL,                       NULL,                       &__cmdArray[CK_HELPCOM],
-    NULL,                       &__cmdArray[CK_ADDRULE],    NULL,                       NULL,                       &__cmdArray[CK_CTOMOUSE],
-    &__cmdArray[CK_SPWCLI],     NULL,                       NULL,                       NULL,                       &__cmdArray[CK_DIRTREE],
-    &__cmdArray[CK_PREFIX],     NULL,                       NULL,                       NULL,                       NULL,
-    NULL,                       &__cmdArray[CK_SCLNXT],     NULL,                       NULL,                       &__cmdArray[CK_SRCHBUF],
-    NULL,                       &__cmdArray[CK_SHOWSEL],    NULL,                       NULL,                       NULL,
-    &__cmdArray[CK_HUNBAK],     &__cmdArray[CK_SWPMRK],     NULL,                       NULL,                       NULL,
-    NULL,                       &__cmdArray[CK_IPIPKLL],    &__cmdArray[CK_CMPBUF],     NULL,                       &__cmdArray[CK_PPPWND],
-    &__cmdArray[CK_GOAMRK],     &__cmdArray[CK_ADDDICT],    NULL,                       NULL,                       &__cmdArray[CK_HUNFOR],
-    NULL,                       NULL,                       NULL,                       NULL,                       &__cmdArray[CK_DELREGY],
-    NULL,                       NULL,                       NULL,                       NULL,                       NULL,
-    NULL,                       NULL,                       &__cmdArray[CK_GOEOF],      NULL,                       NULL,
-    NULL,                       NULL,                       NULL,                       NULL,                       NULL,
-    NULL,                       &__cmdArray[CK_MOVDWND],    NULL,                       NULL,                       NULL,
-    &__cmdArray[CK_EXEMAC],     &__cmdArray[CK_LSTBUF],     NULL,                       NULL,                       &__cmdArray[CK_SPLLWRD],
-    NULL,                       NULL,                       &__cmdArray[CK_CMDWAIT],    &__cmdArray[CK_SYSTEM],     &__cmdArray[CK_NXTWND],
-    NULL,                       NULL,                       NULL,                       NULL,                       NULL,
-    NULL,                       NULL,                       &__cmdArray[CK_QUOTE],      NULL,                       NULL,
-    NULL,                       &__cmdArray[CK_QEXIT],      NULL,                       NULL,                       NULL,
-    NULL,                       &__cmdArray[CK_INSSPC],     NULL,                       &__cmdArray[CK_PRTRGN],     NULL,
-    NULL,                       NULL,                       NULL,                       NULL,                       NULL,
-    NULL,                       NULL,                       &__cmdArray[CK_LSTCOM],     &__cmdArray[CK_DELFWRD],    NULL,
-    NULL,                       &__cmdArray[CK_PIPCMD],     &__cmdArray[CK_QREP],       &__cmdArray[CK_HELP],       NULL,
-    NULL,                       NULL,                       &__cmdArray[CK_MRKREGY],    &__cmdArray[CK_RCASLOW],    NULL,
-    &__cmdArray[CK_EXESTR],     NULL,                       NULL,                       NULL,                       NULL,
-    &__cmdArray[CK_CPYREG],     &__cmdArray[CK_ADDCOL],     &__cmdArray[CK_NAMMAC],     NULL,                       NULL,
-    &__cmdArray[CK_OPNLIN],     NULL,                       NULL,                       NULL,                       &__cmdArray[CK_DELBUF],
-    NULL,                       NULL,                       &__cmdArray[CK_MOVRWND],    NULL,                       NULL,
-    NULL,                       NULL,                       NULL,                       NULL,                       NULL,
-    &__cmdArray[CK_INSSTR],     NULL,                       &__cmdArray[CK_EXABBREV],   NULL,                       &__cmdArray[CK_EXEBUF],
-    NULL,                       NULL,                       &__cmdArray[CK_DEFMAC],     &__cmdArray[CK_MLBIND],     &__cmdArray[CK_FRMDPTH],
-    &__cmdArray[CK_ADNXTLN],    NULL,                       NULL,                       NULL,                       &__cmdArray[CK_CHGFIL],
-    NULL,                       NULL,                       NULL,                       &__cmdArray[CK_VIWFIL],     &__cmdArray[CK_CRTFRAME],
-    NULL,                       NULL,                       &__cmdArray[CK_RESIZEALL],  NULL,                       NULL,
-    &__cmdArray[CK_VOIDFUNC],   NULL,                       NULL,                       &__cmdArray[CK_FORWRD],     NULL,
-    NULL,                       NULL,                       NULL,                       NULL,                       NULL,
-    &__cmdArray[CK_APROPS],     NULL,                       NULL,                       &__cmdArray[CK_SETAMRK],    NULL,
-    &__cmdArray[CK_EXIT],       &__cmdArray[CK_STCHRMK],    NULL,                       &__cmdArray[CK_DESCKEY],    NULL,
-    &__cmdArray[CK_IPIPCMD],    NULL,                       &__cmdArray[CK_FISRCH],     &__cmdArray[CK_OSDUNBD],    &__cmdArray[CK_SFNDFIL],
-    NULL,                       &__cmdArray[CK_INSFIL],     NULL,                       NULL,                       NULL,
-    NULL
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_VIWFIL],   NULL,                     
+NULL,                     &__cmdArray[CK_HUNBAK],   NULL,                     NULL,                     &__cmdArray[CK_INSSPC],   NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     &__cmdArray[CK_SAVREGY],  NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_LOWWRD],   &__cmdArray[CK_HELPVAR],  NULL,                     
+NULL,                     &__cmdArray[CK_GOFNC],    NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_MOVLWND],  
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_BAKSRCH],  NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_BUFMOD],   NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     &__cmdArray[CK_SWNDV],    NULL,                     NULL,                     &__cmdArray[CK_SPLLWRD],  NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     &__cmdArray[CK_FNDREGY],  NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_BAKLIN],   NULL,                     NULL,                     &__cmdArray[CK_NXTFRAME], 
+NULL,                     &__cmdArray[CK_DELREGY],  NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_SFNDFIL],  NULL,                     &__cmdArray[CK_MOVUWND],  
+NULL,                     &__cmdArray[CK_QREP],     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_EXIT],     NULL,                     &__cmdArray[CK_NEWLIN],   NULL,                     &__cmdArray[CK_FLHOOK],   NULL,                     
+NULL,                     NULL,                     &__cmdArray[CK_FORSRCH],  NULL,                     &__cmdArray[CK_ONLYWND],  &__cmdArray[CK_GOTOPOS],  NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     &__cmdArray[CK_REDREGY],  NULL,                     &__cmdArray[CK_QEXIT],    NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_APROPS],   NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     &__cmdArray[CK_LSTBUF],   NULL,                     &__cmdArray[CK_SUSPEND],  NULL,                     &__cmdArray[CK_MOVRWND],  NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     &__cmdArray[CK_FISRCH],   NULL,                     NULL,                     &__cmdArray[CK_SYSTEM],   NULL,                     NULL,                     &__cmdArray[CK_SSWM],     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_SORTLNS],  &__cmdArray[CK_MRKREGY],  
+NULL,                     NULL,                     &__cmdArray[CK_PRTBUF],   NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_DELBUF],   NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_GOAMRK],   NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_CHGFONT],  NULL,                     NULL,                     &__cmdArray[CK_SWNDH],    NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_ENDMAC],   NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     &__cmdArray[CK_ADDRULE],  NULL,                     &__cmdArray[CK_KILREG],   NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_GOBOP],    NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_SVDICTS],  &__cmdArray[CK_YANK],     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_ADDCOLSCHM],                               
+NULL,                     &__cmdArray[CK_QUOTE],    NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_FORWRD],   &__cmdArray[CK_CMPBUF],   NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_OSDUNBD],  NULL,                     NULL,                     
+&__cmdArray[CK_CPYREG],   NULL,                     &__cmdArray[CK_KILRECT],  NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     &__cmdArray[CK_GOEOP],    NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_PRTRGN],   NULL,                     
+NULL,                     NULL,                     &__cmdArray[CK_INSFIL],   NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_USEBUF],   NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_EXENCMD],  &__cmdArray[CK_SCLPRV],   NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_SPWCLI],   &__cmdArray[CK_INSSTR],   NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     &__cmdArray[CK_GOEOF],    NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+&__cmdArray[CK_DIRTREE],  NULL,                     NULL,                     &__cmdArray[CK_YANKRECT], &__cmdArray[CK_SAVBUF],   NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     &__cmdArray[CK_EXABBREV], NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     &__cmdArray[CK_REDFILE],  NULL,                     &__cmdArray[CK_BISRCH],   NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_UNDO],     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_APPBUF],   &__cmdArray[CK_FORCHR],   &__cmdArray[CK_CMDWAIT],  NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     &__cmdArray[CK_DELBLK],   NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     &__cmdArray[CK_ABOUT],    &__cmdArray[CK_DESCBIN],  NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+&__cmdArray[CK_LSTREGY],  NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_EXECMD],   NULL,                     NULL,                     NULL,                     
+&__cmdArray[CK_FILEOP],   NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_MOVDWND],  NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_SRCHBUF],  NULL,                     NULL,                     
+NULL,                     &__cmdArray[CK_KILEOL],   NULL,                     NULL,                     &__cmdArray[CK_SETMRK],   NULL,                     &__cmdArray[CK_OSDBIND],  &__cmdArray[CK_TRNLINE],  NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_INSFLNM],  &__cmdArray[CK_BINDKEY],  NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+&__cmdArray[CK_NAMMAC],   NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_QUIT],     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_SETPOS],   NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_DELFWRD],  &__cmdArray[CK_RECENT],   NULL,                     NULL,                     NULL,                     
+NULL,                     &__cmdArray[CK_GLOBABBREV],                               NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+&__cmdArray[CK_RCASHI],   NULL,                     NULL,                     NULL,                     &__cmdArray[CK_DEFMAC],   NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+&__cmdArray[CK_EXEBUF],   NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_STRREP],   NULL,                     NULL,                     &__cmdArray[CK_WRPWRD],   
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+&__cmdArray[CK_DELSBUF],  NULL,                     &__cmdArray[CK_UPDATE],   NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_DOTAB],    
+NULL,                     &__cmdArray[CK_MLBIND],   NULL,                     &__cmdArray[CK_NAMBUF],   &__cmdArray[CK_MLUNBD],   &__cmdArray[CK_CTOMOUSE], NULL,                     NULL,                     NULL,                     &__cmdArray[CK_CHGFIL],   
+NULL,                     NULL,                     NULL,                     &__cmdArray[CK_HELPITM],  NULL,                     NULL,                     &__cmdArray[CK_GOBOL],    NULL,                     &__cmdArray[CK_FILPAR],   NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+&__cmdArray[CK_DELDICT],  NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_PIPCMD],   
+NULL,                     NULL,                     NULL,                     &__cmdArray[CK_RCASLOW],  &__cmdArray[CK_TRNSKEY],  NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_KILPAR],   &__cmdArray[CK_RESIZEALL],NULL,                     &__cmdArray[CK_SHOWSEL],  NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_SETCRY],   NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     &__cmdArray[CK_DEFHELP],  NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+&__cmdArray[CK_BAKWRD],   &__cmdArray[CK_HILIGHT],  NULL,                     NULL,                     NULL,                     &__cmdArray[CK_FILTBUF],  NULL,                     NULL,                     NULL,                     &__cmdArray[CK_WRTMSG],   
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_DEFFMAC],  NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     &__cmdArray[CK_SETVAR],   &__cmdArray[CK_FRMDPTH],  NULL,                     &__cmdArray[CK_UNSET],    NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_FRMWDTH],  NULL,                     &__cmdArray[CK_WDWDPTH],  &__cmdArray[CK_FNDFIL],   NULL,                     
+NULL,                     NULL,                     &__cmdArray[CK_VOIDFUNC], &__cmdArray[CK_BUFPOS],   NULL,                     NULL,                     NULL,                     &__cmdArray[CK_EXESTR],   &__cmdArray[CK_WDWWDTH],  NULL,                     
+&__cmdArray[CK_GOBOF],    NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     &__cmdArray[CK_SCLNXT],   &__cmdArray[CK_NXTBUF],   NULL,                     NULL,                     NULL,                     &__cmdArray[CK_FORLIN],   NULL,                     &__cmdArray[CK_ADDDICT],  NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_OPNLIN],   NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_HIWRD],    NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     &__cmdArray[CK_GOLIN],    &__cmdArray[CK_CAPWRD],   NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_ADDCOL],   
+NULL,                     &__cmdArray[CK_SETAMRK],  NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_NBUFMOD],  NULL,                     
+NULL,                     NULL,                     NULL,                     &__cmdArray[CK_GLOBMOD],  NULL,                     NULL,                     &__cmdArray[CK_BUFABBREV],NULL,                     &__cmdArray[CK_IPIPCMD],  NULL,                     
+&__cmdArray[CK_BAKCHR],   &__cmdArray[CK_BGNMAC],   NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_SFNDBUF],  NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     &__cmdArray[CK_EXEFIL],   &__cmdArray[CK_HUNFOR],   &__cmdArray[CK_LSTVAR],   NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+&__cmdArray[CK_WRTBUF],   NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_DESCKEY],  NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     &__cmdArray[CK_TRNCHR],   NULL,                     NULL,                     &__cmdArray[CK_NRRWBUF],  NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+&__cmdArray[CK_OSD],      NULL,                     NULL,                     &__cmdArray[CK_HELP],     &__cmdArray[CK_ADNXTLN],  NULL,                     NULL,                     NULL,                     &__cmdArray[CK_GOEOL],    NULL,                     
+&__cmdArray[CK_IPIPKLL],  NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_PPPWND],   
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     &__cmdArray[CK_IPIPWRT],  NULL,                     NULL,                     &__cmdArray[CK_SETREGY],  &__cmdArray[CK_MCRQURY],  NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     &__cmdArray[CK_LCLBIND],  NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+&__cmdArray[CK_INDENT],   NULL,                     NULL,                     &__cmdArray[CK_WRDCNT],   NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_REYANK],   NULL,                     
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     NULL,                     &__cmdArray[CK_INSTAB],   NULL,                     &__cmdArray[CK_LSTCOM],   NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     &__cmdArray[CK_BAKWND],   NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+&__cmdArray[CK_FNDTAG],   NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_SWPMRK],   NULL,                     
+NULL,                     &__cmdArray[CK_HELPCOM],  NULL,                     NULL,                     &__cmdArray[CK_DELWND],   NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_LCLUNBD],  
+NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_DELTAB],   NULL,                     NULL,                     NULL,                     NULL,                     
+NULL,                     NULL,                     &__cmdArray[CK_DELBAK],   &__cmdArray[CK_DELFRAME], &__cmdArray[CK_SHOWCUR],  NULL,                     NULL,                     &__cmdArray[CK_PRTSCHM],  &__cmdArray[CK_STCHRMK],  NULL,                     
+NULL,                     NULL,                     &__cmdArray[CK_UBNDKEY],  NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
+&__cmdArray[CK_PKSCRN],   NULL,                     NULL,                     NULL,
 } ;
 #endif
 
 #endif
-

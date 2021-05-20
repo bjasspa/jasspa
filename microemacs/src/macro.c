@@ -226,11 +226,12 @@ createMacro(meUByte *name)
         {
             meUInt key ;
             
-            mac->hnext = NULL ;
-            key = cmdHashFunc(name) ;
-            cmd = &(cmdHash[key]) ;
+            mac->hnext = NULL;
+            key = cmdHashFunc(name);
+            mac->hash = key;
+            cmd = &(cmdHash[key&(cmdHashSize-1)]);
             while(*cmd != NULL)
-                cmd = &((*cmd)->hnext) ;
+                cmd = &((*cmd)->hnext);
             *cmd = (meCommand *) mac ;
         }
 #endif
