@@ -183,9 +183,10 @@ SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue, register meVarList *varList)
     /* set a user variable */
     meVariable *vp, *vptr = (meVariable *) varList;
 #if MEOPT_CMDHASH
-    meUInt hash = cmdHashFunc(vname) ;
+    meUInt hash;
     int ii;
     
+    meStringHash(vname,hash);
     /* scan the list looking for the hash & then the var name */
     while(((vp = vptr->next) != NULL) && (vp->hash <= hash))
     {
@@ -1453,7 +1454,7 @@ getUsrLclCmdVar(meUByte *vname, register meVarList *varList)
     meUInt hash;
     int ii;
     
-    hash = cmdHashFunc(vname) ;
+    meStringHash(vname,hash);
     vp = varList->head ;
     while(vp != NULL)
     {

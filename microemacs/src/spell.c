@@ -44,12 +44,8 @@
 #define SP_REG_ROOT  "/history/spell"   /* Root of spell in registry */
 #define SP_REGI_SAVE "autosave"         /* Registry item - autosave */
 
+#define TBLMINSIZE 128
 #define TBLINCSIZE 512
-#define NOTBLSIZES 11
-
-meUInt tableSizes[NOTBLSIZES+1] = {
-    211, 419, 811, 1601, 3203, 4801, 6421, 8419, 10831, 13001, 16103, 20011
-} ;
 
 /* Regex special rules are stored in rule slot [0], so rule '!' in [1] etc so rule '}' in ['}'-'!'+1] & there are '}'-'!'+2 rules */ 
 #define SPELLRULE_FIRST '!'
@@ -85,49 +81,49 @@ typedef meUByte meDictAddr[3];
 #define meSCORE_MAX     60
 
 typedef struct {
-    meDictAddr    next ;
-    meUByte wordLen ;     
-    meUByte flagLen ;     
-    meUByte data[1] ;
-} meDictWord ;
+    meDictAddr  next;
+    meUByte     wordLen;     
+    meUByte     flagLen;     
+    meUByte     data[1];
+} meDictWord;
 
 typedef struct {
-    meDictAddr next ;
-    meUByte    wordLen ;     
-    meUByte    flagLen ;     
-    meUByte data[meWORD_SIZE_MAX+meWORD_SIZE_MAX] ;
-} meDictAddWord ;
+    meDictAddr  next;
+    meUByte     wordLen;     
+    meUByte     flagLen;     
+    meUByte     data[meWORD_SIZE_MAX+meWORD_SIZE_MAX];
+} meDictAddWord;
 
 #define meDICTWORD_SIZE  ((int)(&((meDictWord *)0)->data))
 
 typedef struct meDictionary {
-    meUByte   flags ;
-    meUByte  *fname ;
-    meUInt  noWords ;
-    meUInt  tableSize ;
-    meUInt  dSize ;
-    meUInt  dUsed ;
-    meDictAddr *table ;
-    struct meDictionary *next ;
-} meDictionary ;
+    meUByte     flags;
+    meUByte    *fname;
+    meUInt      noWords;
+    meUInt      tableSize;
+    meUInt      dSize;
+    meUInt      dUsed;
+    meDictAddr *table;
+    struct meDictionary *next;
+} meDictionary;
 
-typedef meUByte meWORDBUF[meWORD_SIZE_MAX] ;
-static int           longestPrefixChange ;
-static int           longestSuffixRemove ;
-static meDictionary *dictHead ;
-static meDictionary *dictIgnr ;
-static meDictWord   *wordCurr ;
-static int           caseFlags ;
-static int           hyphenCheck ;
-static int           maxScore ;
+typedef meUByte meWORDBUF[meWORD_SIZE_MAX];
+static int           longestPrefixChange;
+static int           longestSuffixRemove;
+static meDictionary *dictHead;
+static meDictionary *dictIgnr;
+static meDictWord   *wordCurr;
+static int           caseFlags;
+static int           hyphenCheck;
+static int           maxScore;
 
 /* find-words static variables */
 static meUByte *sfwCurMask ;
-static meDictionary  *sfwCurDict ;
-static meUInt         sfwCurIndx ;
-static meDictWord    *sfwCurWord ;
-static meSpellRule   *sfwPreRule ;
-static meSpellRule   *sfwSufRule ;
+static meDictionary  *sfwCurDict;
+static meUInt         sfwCurIndx;
+static meDictWord    *sfwCurWord;
+static meSpellRule   *sfwPreRule;
+static meSpellRule   *sfwSufRule;
 
 #define SPELL_ERROR           0x80
 
@@ -152,36 +148,24 @@ static meSpellRule   *sfwSufRule ;
 #define meWordSetFlagLen(wd,len) (wd->flagLen = meWordGetErrorFlag(wd) | len)
 #define meWordGetFlag(wd)        (wd->data+meWordGetWordLen(wd))
 
-
-static meUInt
-meSpellHashFunc(meUInt tableSize, meUByte *word, int len)
-{
-    register meUInt h=0, g ;
-    register meUByte c ;
-    
-    while(--len >= 0)
-    {
-        c = *word++ ;
-        h = (h << 4) + c ;
-        if((g=h & 0xf0000000) != 0)
-        {
-            h ^= (g >> 24) ;
-            h ^= g ;
-        }
-    }
-    return (h % tableSize) ;
-}
-
+#define meSpellHashFunc(tsz,str,len,hsh)                                     \
+do {                                                                         \
+    register meUInt hh=0;                                                    \
+    register int ll=len;                                                     \
+    while(--ll >= 0)                                                         \
+        hh = (hh << 5) + hh + str[ll];                                       \
+    hsh = (hh & (tsz-1));                                                    \
+} while(0)
 
 static meDictWord *
 meDictionaryLookupWord(meDictionary *dict, meUByte *word, int len)
 {
-    meUInt  n, off ;
-    meDictWord    *ent ;
-    int            s, ll ;
+    meDictWord *ent;
+    meUInt n, off;
+    int s, ll;
     
-    n = meSpellHashFunc(dict->tableSize,word,len) ;
-    off = meEntryGetAddr(dict->table[n]) ;
+    meSpellHashFunc(dict->tableSize,word,len,n);
+    off = meEntryGetAddr(dict->table[n]);
     
     while(off != 0)
     {
@@ -264,9 +248,9 @@ meDictionaryAddWord(meDictionary *dict, meDictWord *wrd)
     memcpy(meWordGetWord(nent),word,wlen) ;
     memcpy(meWordGetFlag(nent),meWordGetFlag(wrd),flen) ;
     
-    lent = NULL ;
-    n = meSpellHashFunc(dict->tableSize,word,wlen) ;
-    off  = meEntryGetAddr(dict->table[n]) ;
+    lent = NULL;
+    meSpellHashFunc(dict->tableSize,word,wlen,n);
+    off = meEntryGetAddr(dict->table[n]);
     while(off != 0)
     {
         ent = (meDictWord *) mePtrOffset(dict->table,off) ;
@@ -293,18 +277,17 @@ meDictionaryAddWord(meDictionary *dict, meDictWord *wrd)
 static void
 meDictionaryRehash(meDictionary *dict)
 {
-    meDictWord     *ent ;
-    meDictAddr     *table, *tbl ;
-    meUInt  tableSize, oldtableSize, ii, 
-                   dUsed, dSize, noWords, off ;
+    meDictWord *ent;
+    meDictAddr *table, *tbl;
+    meUInt tableSize, oldtableSize, ii, dUsed, dSize, noWords, off;
     
     oldtableSize = dict->tableSize ;
-    noWords = dict->noWords >> 2 ;
-    for(ii=0 ; ii<NOTBLSIZES ; ii++)
-        if(tableSizes[ii] > noWords)
-            break ;
-    if((tableSize = tableSizes[ii]) == oldtableSize)
-        return ;
+    noWords = dict->noWords >> 3;
+    tableSize = TBLMINSIZE;
+    while(tableSize <= noWords)
+        tableSize <<= 1;
+    if(tableSize == oldtableSize)
+        return;
     dUsed = sizeof(meDictAddr)*tableSize ;
     dSize = dict->dUsed+dUsed ;
     
@@ -405,8 +388,8 @@ meSpellInitDictionaries(void)
         meDictAddr    *table ;
         meUInt  dSize, dUsed ;
         
-        dUsed = sizeof(meDictAddr)*tableSizes[0] ;
-        dSize = dUsed + TBLINCSIZE ;
+        dUsed = sizeof(meDictAddr)*TBLMINSIZE;
+        dSize = dUsed + TBLINCSIZE;
         if(((dictIgnr = (meDictionary *) meMalloc(sizeof(meDictionary))) == NULL) ||
            ((table = (meDictAddr *) meMalloc(dSize)) == NULL))
             return meFALSE ;
@@ -415,7 +398,7 @@ meSpellInitDictionaries(void)
         dictIgnr->dUsed = dUsed ;
         dictIgnr->table = table ;
         dictIgnr->noWords = 0 ;
-        dictIgnr->tableSize = tableSizes[0] ;
+        dictIgnr->tableSize = TBLMINSIZE;
         dictIgnr->flags = DTACTIVE ;
         dictIgnr->fname = NULL ;
         dictIgnr->next = NULL ;
@@ -462,20 +445,20 @@ meDictionaryFind(int flag)
     dictHead = dict ;
     if(!found || (flag & 4))
     {
-        meDictAddr        *table ;
-        meUInt   tableSize, dSize, dUsed ;
-        tableSize = tableSizes[0] ;
-        dUsed = sizeof(meDictAddr)*tableSize ;
-        dSize = dUsed + TBLINCSIZE ;
+        meDictAddr *table;
+        meUInt tableSize, dSize, dUsed;
+        tableSize = TBLMINSIZE;
+        dUsed = sizeof(meDictAddr)*tableSize;
+        dSize = dUsed + TBLINCSIZE;
         if((table = (meDictAddr *) meMalloc(dSize)) == NULL)
-            return NULL ;
-        memset(table,0,dUsed) ;
-        dict->dSize = dSize ;
-        dict->dUsed = dUsed ;
-        dict->table = table ;
-        dict->noWords = 0 ;
-        dict->tableSize = tableSize ;
-        dict->flags = (DTACTIVE | DTCREATE) ;
+            return NULL;
+        memset(table,0,dUsed);
+        dict->dSize = dSize;
+        dict->dUsed = dUsed;
+        dict->table = table;
+        dict->noWords = 0;
+        dict->tableSize = tableSize;
+        dict->flags = (DTACTIVE | DTCREATE);
     }
     return dict ;
 }

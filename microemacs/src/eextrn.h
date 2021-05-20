@@ -73,7 +73,16 @@ extern	void	meBufferStoreLocation(meLine *lp, meUShort lo, meInt ln) ;
 extern	void	meBufferUpdateLocation(meBuffer *bp, meUInt noLines, meUShort newOff) ;
 
 /* bind.c externals */
-extern  meUInt  cmdHashFunc(register meUByte *cmdName) ;
+/* General string hash based on djb2 hash by Bernstein (hash = (hash*33)+key[i]) */
+#define meStringHash(str,hsh)                                                \
+do {                                                                         \
+    register meUInt hh=0;                                                    \
+    register meUByte cc, *ss=str;                                            \
+    while((cc = *ss++) != '\0')                                              \
+        hh = (hh << 5) + hh + cc;                                            \
+    hsh = hh;                                                                \
+} while(0)
+
 extern  meUShort  meGetKeyFromString(meUByte **tp) ;
 extern  meUShort  meGetKey(int flag) ;
 extern  int     meGetStringFromChar(meUShort cc, meUByte *d) ;

@@ -580,20 +580,6 @@ setCharMask(int f, int n)
 }
 #endif
 
-#if MEOPT_CMDHASH
-meUInt
-cmdHashFunc(register meUByte *cmdName)
-{
-    /* Bernstein: hash = (hash*33)+key[i] */
-    register meUInt hash=0;
-    register meUByte cc;
-    while ((cc = *cmdName++) != '\0')
-        hash = (hash << 5) + hash + cc;
-    return hash;
-}
-#endif
-     
-
 /* match fname to a function in the names table
    and return index into table or -1 if none	
    fname;	name to attempt to match */
@@ -604,7 +590,7 @@ decode_fncname(register meUByte *fname, int silent)
 #if MEOPT_CMDHASH
     meUInt key ;
     
-    key = cmdHashFunc(fname);
+    meStringHash(fname,key);
     for (cmd=cmdHash[key&(cmdHashSize-1)] ; cmd != NULL; cmd = cmd->hnext)
     {
         if((cmd->hash == key) && !meStrcmp(fname,cmd->name))

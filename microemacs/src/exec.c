@@ -416,7 +416,7 @@ fnctest(void)
     /* test the command hash table */
     for (ii=0; ii < CK_MAX; ii++)
     {
-        key = cmdHashFunc(getCommandName(ii)) ;
+        meStringHash(getCommandName(ii),key);
         cmd = cmdHash[key&(cmdHashSize-1)] ;
         while((cmd != NULL) && (cmd != cmdTable[ii]))
             cmd = cmd->hnext ;

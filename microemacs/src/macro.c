@@ -227,7 +227,7 @@ createMacro(meUByte *name)
             meUInt key ;
             
             mac->hnext = NULL;
-            key = cmdHashFunc(name);
+            meStringHash(name,key);
             mac->hash = key;
             cmd = &(cmdHash[key&(cmdHashSize-1)]);
             while(*cmd != NULL)
