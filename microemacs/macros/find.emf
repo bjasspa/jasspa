@@ -35,7 +35,7 @@
   set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
   
   !if &and &sin "h" .fhook-find.setup &band .hilight.flags 0x02
-    !if &not &exist .hilight.find
+    !if &not &exist .hilight.grepn
       set-variable .hilight.find &pinc .hilight.next 1
       set-variable .hilight.grep &pinc .hilight.next 1
       set-variable .hilight.grepn &pinc .hilight.next 1
@@ -383,11 +383,15 @@
         !if &len &lget #p7 5
           33 find-buffer &lget #p7 5
           !if &band $system 0x1000000
-            beginning-of-buffer
-            !if &not &seq @wc ""
-              -1 ml-write @wl
-              forward-line
-              !jump -3
+            !if &sin "q" #l9
+              end-of-buffer
+            !else
+              beginning-of-buffer
+              !if &not &seq @wc ""
+                -1 ml-write @wl
+                forward-line
+                !jump -3
+              !endif
             !endif
             set-mark
             beginning-of-buffer
@@ -426,7 +430,7 @@
     set-variable #p0 &trl &rig #p0 #l1
     set-variable #l2 &lget #p9 1
     !while &len &set #l3 &lef #l0 1
-      !if &sin #l3 "uxgprdfmibl234@-aoecC"
+      !if &sin #l3 "uxgpqrdfmibl234@-aoecC"
         set-variable #l2 &cat #l2 #l3
       !elif &sin #l3 "UXGPRDFMIBL"
         set-variable #l2 &rep #l2 &slo #l3 ""
@@ -986,10 +990,14 @@ define-macro replace-string-in-files
   !if &band $system 0x1000000
     beginning-of-buffer
     set-mark
-    !while &not &seq @wc ""
-      -1 ml-write @wl
-      forward-line
-    !done
+    !if &sin "q" &lget #l9 1
+      end-of-buffer
+    !else
+      !while &not &seq @wc ""
+        -1 ml-write @wl
+        forward-line
+      !done
+    !endif
     -1 kill-region
   !elif &exist .hilight.find
     set-variable $buffer-hilight .hilight.find
@@ -1012,11 +1020,13 @@ define-macro replace-string-in-files
   !endif
   insert-string &set #l0 &cat #l0 " ***]"
   !if &band $system 0x1000000
-    beginning-of-buffer
-    !while &not &seq @wc ""
-      -1 ml-write @wl
-      forward-line
-    !done
+    !if &not &sin "q" &lget #l9 1
+      beginning-of-buffer
+      !while &not &seq @wc ""
+        -1 ml-write @wl
+        forward-line
+      !done
+    !endif
   !else
     set-variable $window-line 3
     ml-write #l0
