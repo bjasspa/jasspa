@@ -1525,7 +1525,8 @@ define-macro dirlst-search
     set-variable #l2 .find-file.file-count
     set-variable #l3 &rig #l0 #l3
     !repeat
-      !if &seq &set #l4 &ind &cat ".find-file.file" &pdec #l2 1 &lef #l3 &len #l4
+      !if &not &seq "/" &rig &set #l4 &ind &cat ".find-file.file" &pdec #l2 1 -1
+      !elif &seq #l4 &lef #l3 &len #l4
         ml-write &spr "[%s File Error: Destination cannot be within source directory %s]" #l9 #l4
         !abort
       !endif
