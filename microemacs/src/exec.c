@@ -655,6 +655,11 @@ try_again:
                                 status = DRGOTO ;
                         }
                     }
+                    else if(c1 == 'i')
+                    {
+                        if((c2 == 'i') && (c3 == 'f'))
+                            status = DRIIF ;
+                    }
                     else if(c1 == 'j')
                     {
                         if((c2 == 'u') && (c3 == 'm'))
@@ -746,8 +751,8 @@ elif_jump:
                 if(!meAtol(tkn))
                 {
                     /* if DRTGOTO or DRTJUMP and the test failed, we dont
-                     * need the argument */
-                    dirType &= ~DRFLAG_ARG ;
+                     * need the argument and if DRIIF we don't want the switch */
+                    dirType &= ~(DRFLAG_ARG|DRFLAG_SWITCH) ;
                     execlevel += (dirType & DRFLAG_AMSKEXECLVL) ;
                     status |= DRTESTFAIL ;
                 }
@@ -775,27 +780,9 @@ elif_jump:
             if(!(dirType & DRFLAG_SWITCH))
                 return status ;
             
-            
-            /* DRTEST, DRFORCE, DRNMACRO, DRABORT, DRBELL, DRRETURN */
+            /* DRTEST, DRFORCE, DRNMACRO, DRABORT, DRBELL, DRIIF, DRRETURN */
             switch(status)
             {
-#if KEY_TEST
-            case DRTEST:
-                /* Test directive. */
-                return ((fnctest() == 0));
-#endif
-            case DREMACRO:
-                return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unexpected !emacro]");
-            case DRFORCE:
-                (meRegCurr->force)++ ;
-                while((cc == ' ') || (cc == '\t'))
-                    cc = *++execstr;
-                goto try_again;
-            case DRNMACRO:
-                nmacro = meTRUE;
-                while((cc == ' ') || (cc == '\t'))
-                    cc = *++execstr;
-                goto try_again;
             case DRABORT:
                 if(f)
                     TTdoBell(n) ;
@@ -803,10 +790,31 @@ elif_jump:
             case DRBELL:
                 TTdoBell(n) ;
                 return meTRUE ;
+            case DREMACRO:
+                return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unexpected !emacro]");
+            case DRFORCE:
+                (meRegCurr->force)++ ;
+                while((cc == ' ') || (cc == '\t'))
+                    cc = *++execstr;
+                goto try_again;
+            case DRIIF:
+                while(((cc=*execstr) == ' ') || (cc == '\t'))
+                    execstr++;
+                goto try_again;
+            case DRNMACRO:
+                nmacro = meTRUE;
+                while((cc == ' ') || (cc == '\t'))
+                    cc = *++execstr;
+                goto try_again;
             case DRRETURN:
                 /* Stop the debugger kicking in on a !return, a macro doing !return 0 is okay */
                 meRegCurr->force = 1 ;
                 return (n) ? DRRETURN:meFALSE ;
+#if KEY_TEST
+            case DRTEST:
+                /* Test directive. */
+                return ((fnctest() == 0));
+#endif
             }
         }
         
