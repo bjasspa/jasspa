@@ -1248,7 +1248,30 @@ ffSUrlFileOpen(meIo *io, meUByte *host, meUByte *port, meUByte *user, meUByte *p
         return meFALSE;
     }
     if(ii == 0)
-        return ffUrlFileOpen(io,buff,user,pass,rwflag,NULL) ;
+    {
+        /* printf("Got Location: [%s]\n",ss) ;*/
+        /* if this starts with http:// https:// etc. then start again */
+        meUByte cc = ffUrlGetType(buff);
+        if(ffUrlTypeIsHttpFtp(cc))
+        {
+            io->type = cc;
+            return ffUrlFileOpen(io,buff,user,pass,rwflag,NULL);
+        }
+        if((buff[0] != '/') && ((s1 = meStrrchr(file,'/')) != NULL))
+        {
+            meStrcpy(ffbuf,buff);
+            ii = s1 + 1 - file;
+            memcpy(buff,file,ii);
+            meStrcpy(buff+ii,ffbuf);
+        }
+        if(!meStrcmp(buff,file))
+        {
+            if(rwflag & meRWFLAG_SILENT)
+                return meABORT;
+            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Redirection loop to %s]",buff);
+        }
+        return ffHttpFileOpen(io,host,port,user,pass,buff,rwflag);
+    }
     io->length = io->sslp.length;
     return meTRUE ;
 }
