@@ -69,7 +69,7 @@ set-variable .fhook-pls.fold-mopen "1"
   hilight .hilight.pls 0x22 "rem"            .scheme.comment
   ;
   ; Goto label
-  hilight .hilight.pls 20 "<<" ">>"          .scheme.link
+  hilight .hilight.pls 20 "<<" ">>" ""       .scheme.link
   ;
   ; Operators
   ;
