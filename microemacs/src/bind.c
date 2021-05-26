@@ -60,13 +60,13 @@ meGetKeyFromString(meUByte **tp)
     {
         if(!isSpace(dd))
         {
-            meUByte *s1=ss ;
-            int skey ;
+            meUByte *s1=ss;
+            int skey;
             
             while(((dd=*s1) != '\0') && (dd != ' '))
                 s1++ ;
             *s1 = '\0' ;
-            skey = biChopFindString(ss-2,specKeyNames,SKEY_MAX) ;
+            biChopFindString(ss-2,specKeyNames,SKEY_MAX,skey);
             *s1 = dd ;
             
             if(skey >= 0)

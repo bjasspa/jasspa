@@ -525,35 +525,6 @@ exitEmacs(int f, int n)
     int s, ec=0 ;
     char buff[128] ;
     
-#if 0
-    // TODO - temp timing stuff
-    {
-        LARGE_INTEGER frq,tckb, tcke;
-        double ttm;
-        QueryPerformanceCounter(&tcke);
-        
-        for(s=0 ; s < 1000000 ; s++)
-            QueryPerformanceCounter(&tckb);
-        ttm = ((double) (tckb.QuadPart-tcke.QuadPart))/s;
-        QueryPerformanceFrequency(&frq);
-        s = cntGtarg + cntGtreg + cntGtuvr + cntGtbvr + cntGtcvr + cntGtenv + cntGtfun + cntGtlit;
-        sprintf(resultStr,"Tcks: %g, getval(%d,%g) (gtarg(%d,%g) getreg(%d,%g), getuvr(%d,%g), getbvr(%d,%g), getcvr(%d,%g), gtenv(%d,%g), gtfun(%d,%g), getlit(%d,%g)), meGetString(%d,%g-%g), token(%d,%g)",
-                (((double)(tcke.QuadPart-tckStart)-(ttm*(s+cntToken+3*cntGtStr)))/(double)frq.QuadPart),
-                s,(((double)(tckGtarg+tckGtreg+tckGtuvr+tckGtbvr+tckGtcvr+tckGtenv+tckGtfun+tckGtlit)-(ttm*s))/(double)frq.QuadPart),
-                cntGtarg,(((double)tckGtarg-(ttm*cntGtarg))/(double)frq.QuadPart),
-                cntGtreg,(((double)tckGtreg-(ttm*cntGtreg))/(double)frq.QuadPart),
-                cntGtuvr,(((double)tckGtuvr-(ttm*cntGtuvr))/(double)frq.QuadPart),
-                cntGtbvr,(((double)tckGtbvr-(ttm*cntGtbvr))/(double)frq.QuadPart),
-                cntGtcvr,(((double)tckGtcvr-(ttm*cntGtcvr))/(double)frq.QuadPart),
-                cntGtenv,(((double)tckGtenv-(ttm*cntGtenv))/(double)frq.QuadPart),
-                cntGtfun,(((double)tckGtfun-(ttm*cntGtfun))/(double)frq.QuadPart),
-                cntGtlit,(((double)tckGtlit-(ttm*cntGtlit))/(double)frq.QuadPart),
-                cntGtStr,(((double)tckGtStr-(7*ttm*cntGtStr))/(double)frq.QuadPart),(((double)tckGSGtval-(3*ttm*cntGtStr))/(double)frq.QuadPart),
-                cntToken,(((double)tckToken-(ttm*cntToken))/(double)frq.QuadPart)
-                );
-        mlwrite(MWABORT|MWSTDERRWRT,resultStr);
-    }
-#endif
 #if MEOPT_EXTENDED
     /* Set the exit code */
     if(n & 0x04)
@@ -1399,16 +1370,6 @@ mesetup(int argc, char *argv[])
 #if MEOPT_CLIENTSERVER
     meUByte  *clientMessage=NULL ;
     int     userClientServer=0 ;
-#endif
-#if 0
-    // TODO - temp timing stuff
-    LARGE_INTEGER tcks;
-    if(!QueryPerformanceCounter(&tcks))
-    {
-        mlwrite(MWABORT,"Counter failed!!!");
-        meExit(1);
-    }
-    tckStart = tcks.QuadPart;
 #endif
     startTime = (meInt) time(NULL) ;
     

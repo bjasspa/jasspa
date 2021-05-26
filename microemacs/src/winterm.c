@@ -3508,21 +3508,19 @@ do_keydown:
             }
 #endif
 #ifdef _ME_WINDOW
-            /* Distinguish between the Number Pad and standard enter */
-#if 0
-            cc = ((lParam & 0x01000000) ? SKEY_kp_enter : SKEY_return) ;
-            goto return_spec;
-#else
             /* Look at the scan code to determine if this is a C-m or a
              * <return>. The scan code for 'M' is 0x32; the scan code for
              * <RETURN> is 0x1c. If this is a C-m then simply drop through,
              * wParam should be 0x1d which is C-m. */
+        case 0x0a:
+            /* Found on Win10 C-return now uses C-j (0x0a) as the wParam
+             * (which is a reserved value); the scan code for return is still
+             * given as 0x1c where as a C-j has a code of 0x24. */
             if ((lParam & 0xff0000) == (0x1c<<16))
             {
                 cc = SKEY_return; /* Return */
                 goto return_spec;
             }
-#endif
 #endif
         }
         cc = wParam;

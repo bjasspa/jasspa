@@ -61,24 +61,6 @@
 
 int relJumpTo ;
 
-int
-biChopFindString(register meUByte *ss, register meUByte **tbl, register int size)
-{
-    register int lo=0,hi=size,mid,cd;
-    
-    do {
-        mid = (lo + hi) >> 1;
-        if((cd=meStrcmp(tbl[mid],ss)) == 0)
-            return mid;
-        if(cd > 0)
-            hi = mid;
-        else
-            lo = mid + 1;
-    } while(lo < hi);
-    
-    return -1 ;
-}
-
 /* token:       chop a token off a string
  * return a pointer past the token
  *

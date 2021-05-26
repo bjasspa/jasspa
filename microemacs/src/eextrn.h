@@ -282,9 +282,25 @@ extern	int	unsetVariable(int f, int n);
 #endif
 
 /* exec.c externals */
+#define biChopFindString(str,tbl,tblSz,retIx)                                \
+do {                                                                         \
+    register int ll=0,mm,hh=tblSz,cd;                                        \
+    retIx = -1;                                                              \
+    do {                                                                     \
+        mm = (ll + hh) >> 1;                                                 \
+        if((cd=meStrcmp(tbl[mm],str)) == 0)                                  \
+        {                                                                    \
+            retIx = mm;                                                      \
+            break;                                                           \
+        }                                                                    \
+        if(cd > 0)                                                           \
+            hh = mm;                                                         \
+        else                                                                 \
+            ll = mm + 1;                                                     \
+    } while(ll < hh);                                                        \
+} while(0)
 extern	int	mePushRegisters(int flags);
 extern	int	mePopRegisters(int flags);
-extern  int     biChopFindString(register meUByte *ss, register meUByte **tbl, register int size) ;
 extern	int	execFunc(int index, int f, int n) ;
 extern  void    execFuncHidden(int keyCode, int index, meUInt arg) ;
 #define meEBF_ARG_GIVEN   0x01

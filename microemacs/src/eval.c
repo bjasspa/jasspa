@@ -456,7 +456,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         
     case TKENV:
         /* set an environment variable */
-        status = biChopFindString(nn,envars,NEVARS) ;
+        biChopFindString(nn,envars,NEVARS,status);
         switch(status)
         {
         case EVAUTOTIME:
@@ -1147,14 +1147,13 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
 static meUByte *
 gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
 {
-    int ii ;
-    register meUByte *ret ;
+    int ii;
+    register meUByte *ret;
 #if MEOPT_EXTENDED
-    register meNamesList *mv ;
+    register meNamesList *mv;
 #endif
     
-    /* scan the list, looking for the referenced name */
-    ii = biChopFindString(vname,envars,NEVARS) ;
+    biChopFindString(vname,envars,NEVARS,ii);
     switch(ii)
     {
         /* Fetch the appropriate value */

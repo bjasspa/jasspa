@@ -818,10 +818,3 @@ struct s_DragAndDrop *dadHead = NULL;   /* Drag and drop list           */
 tfs_t tfsdev = NULL;                    /* Built-in File system mount point. */
 #endif
 #endif
-
-#if 0
-    // TODO - temp timing stuff
-__int64 tckStart;
-__int64 tckGtarg, tckGtreg, tckGtuvr, tckGtbvr, tckGtcvr, tckGtenv, tckGtfun, tckGtlit, tckGtStr, tckGSGtval, tckToken;
-int cntGtarg, cntGtreg, cntGtuvr, cntGtbvr, cntGtcvr, cntGtenv, cntGtfun, cntGtlit, cntGtStr, cntGtStr, cntToken;
-#endif
