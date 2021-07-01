@@ -26,8 +26,11 @@ OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
 OPENSSLP = /usr/local/opt/openssl@1.1
+OPENSSLL = libssl.1.1.dylib
+OPENSSLC = libcrypto.1.1.dylib
 
-CCDEFS   = -D_OSX -m64 -Wall -I$(OPENSSLP)/include
+CCDEFS   = -D_OSX -m64 -Wall -I$(OPENSSLP)/include -D_OPENSSLLNM=$(OPENSSLL) -D_OPENSSLCNM=$(OPENSSLC)
+
 CCFLAGSR = -O3 -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g
 LDDEFS   = -m64

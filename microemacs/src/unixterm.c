@@ -2439,10 +2439,15 @@ TCAPstart(void)
     /* default to use fonts - usually supports reverse */
     meSystemCfg &= ~meSYSTEM_RGBCOLOR ;
     meSystemCfg |= (meSYSTEM_CONSOLE|meSYSTEM_FONTS) ;
-    if((tv_stype = meGetenv("TERM")) == NULL)
+    if(((tv_stype = meGetenv("TERM")) == NULL) || (tv_stype[0] == '\0'))
     {
-        puts("Environment variable TERM not defined");
-        meExit(1);
+        if(!(meSystemCfg & meSYSTEM_PIPEDMODE))
+        {
+            puts("Environment variable TERM not defined");
+            meExit(1);
+        }
+        /* if piped we only need the very basics */
+        tv_stype = "vt100";
     }
     
     if((tgetent(tcbuf, tv_stype)) != 1)

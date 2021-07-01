@@ -18,6 +18,8 @@
 #else
 #define MESSLFunc(f) f
 #endif
+#define MESSL_STRINGQUT(str) #str
+#define MESSL_STRINGIFY(str) MESSL_STRINGQUT(str)
 
 #include "messl.h"
 #include <ctype.h>
@@ -551,13 +553,13 @@ meSslInit(meUByte *buff)
     if(logFlags & meSSL_LOG_VERBOSE)
         logFunc((meUByte *) "About to get OpenSSL functions",logData);
 #ifdef _WIN32
-    libHandle = LoadLibrary("libcrypto-1_1");
+    libHandle = LoadLibrary(MESSL_STRINGIFY(_OPENSSLCNM));
 #else
-    libHandle = dlopen("libcrypto.1.1.dylib",RTLD_LOCAL|RTLD_LAZY);
+    libHandle = dlopen(MESSL_STRINGIFY(_OPENSSLCNM),RTLD_LOCAL|RTLD_LAZY);
 #endif
     if(libHandle == NULL)
     {
-        snprintf((char *) buff,meSSL_BUFF_SIZE,"meSSL Error: Failed to load libcrypto library - OpenSSL installed? (%d)",meSslGetError());
+        snprintf((char *) buff,meSSL_BUFF_SIZE,"meSSL Error: Failed to load " MESSL_STRINGIFY(_OPENSSLCNM) " library - OpenSSL installed? (%d)",meSslGetError());
         if(logFunc != NULL)
             logFunc(buff,logData);
         return -1;
@@ -612,13 +614,13 @@ meSslInit(meUByte *buff)
     }
           
 #ifdef _WIN32
-    libHandle = LoadLibrary("libssl-1_1");
+    libHandle = LoadLibrary(MESSL_STRINGIFY(_OPENSSLLNM));
 #else
-    libHandle = dlopen("libssl.1.1.dylib",RTLD_LOCAL|RTLD_LAZY);
+    libHandle = dlopen(MESSL_STRINGIFY(_OPENSSLLNM),RTLD_LOCAL|RTLD_LAZY);
 #endif
     if(libHandle == NULL)
     {
-        snprintf((char *) buff,meSSL_BUFF_SIZE,"meSSL Error: Failed to load libssl library - OpenSSL installed? (%d)",meSslGetError());
+        snprintf((char *) buff,meSSL_BUFF_SIZE,"meSSL Error: Failed to load " MESSL_STRINGIFY(_OPENSSLLNM) " library - OpenSSL installed? (%d)",meSslGetError());
         if(logFunc != NULL)
             logFunc(buff,logData);
         return -3;

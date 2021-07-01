@@ -2143,7 +2143,7 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
 #endif
             return rr ;
         }
-        /* cannot return here, must do ffrsetup */
+        return meTRUE ;
 #else
         return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[No url support in this version]") ;
 #endif
@@ -2159,9 +2159,6 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
                 mlwrite(MWCLEXEC,(meUByte *)"[%s: No such TFS file]",fname);
             return -2 ;
         }
-#ifdef _UNIX
-        meSigHold() ;
-#endif
 #else
         return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[No tfs support in this version]") ;
 #endif
@@ -2192,7 +2189,9 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
             return -2 ;
         }
     }
-    
+#ifdef _UNIX
+    meSigHold() ;
+#endif
     return meTRUE ;
 }
 
