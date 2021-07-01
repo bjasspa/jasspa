@@ -1165,6 +1165,13 @@ ffHttpFileOpen(meIo *io, meUByte *host, meUByte *port, meUByte *user, meUByte *p
             {
                 /* printf("Got Location: [%s]\n",ss) ;*/
                 ffCloseSockets(io,0);
+                io->redirect++;
+                if(io->redirect > 5)
+                {
+                    if(rwflag & meRWFLAG_SILENT)
+                        return meABORT;
+                    return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[To many redirections - see console]");
+                }
                 /* if this starts with http:// https:// etc. then start again */
                 cc = ffUrlGetType(ss);
                 if(ffUrlTypeIsHttpFtp(cc))
@@ -1249,9 +1256,17 @@ ffSUrlFileOpen(meIo *io, meUByte *host, meUByte *port, meUByte *user, meUByte *p
     }
     if(ii == 0)
     {
+        meUByte cc;
         /* printf("Got Location: [%s]\n",ss) ;*/
         /* if this starts with http:// https:// etc. then start again */
-        meUByte cc = ffUrlGetType(buff);
+        io->redirect++;
+        if(io->redirect > 5)
+        {
+            if(rwflag & meRWFLAG_SILENT)
+                return meABORT;
+            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[To many redirections - see console]");
+        }
+        cc = ffUrlGetType(buff);
         if(ffUrlTypeIsHttpFtp(cc))
         {
             io->type = cc;
@@ -2117,6 +2132,7 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
 #if MEOPT_SOCKET
         int rr ;
 #ifdef _UNIX
+        io->redirect = 0;
         /* must stop any signals or the connection will fail */
         meSigHold() ;
 #endif
@@ -2434,6 +2450,7 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
     else if(ffUrlTypeIsHttpFtp(io->type))
     {
 #if MEOPT_SOCKET
+        io->redirect = 0;
         if(io->type & (meIOTYPE_SSL|meIOTYPE_HTTP))
             return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[Cannot write to urls of this type]");
 #ifdef _UNIX
@@ -2465,7 +2482,12 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
     }
     else
     {
+#ifdef _WIN32
+        meUInt fa = meFileGetAttributes(fname);
+        if(fa == INVALID_FILE_ATTRIBUTES)
+#else
         if(meTestExist(fname))
+#endif
             io->flags |= meIOFLAG_NEWFILE;
         else if(flags & meRWFLAG_BACKUP)
         {
@@ -2584,10 +2606,12 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
         {
             /* if backing up as well the file is already effectively deleted */
 #ifdef _WIN32
-            if(meTestWrite(fname))
+            if(fa & (FILE_ATTRIBUTE_READONLY|FILE_ATTRIBUTE_HIDDEN|FILE_ATTRIBUTE_SYSTEM))
                 meFileSetAttributes(fname,FILE_ATTRIBUTE_NORMAL);
-#endif
+            if(fa & FILE_ATTRIBUTE_DIRECTORY)
+#else
             if(!meTestDir(fname))
+#endif
             {
                 io->type |= meIOTYPE_DIR;
 #ifdef _WIN32
@@ -2637,15 +2661,13 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
                 create = OPEN_ALWAYS ;
             else
                 create = CREATE_ALWAYS ;
-
-            /* cannot write to a readonly file */
-            if(!(io->flags & meIOFLAG_NEWFILE) && meTestWrite(fname))
+            
+            /* Cannot write to a readonly file, and cannot write to hidden or system file if attribs dont include these flag */
+            if(!(io->flags & meIOFLAG_NEWFILE) && (fa & (FILE_ATTRIBUTE_READONLY|FILE_ATTRIBUTE_HIDDEN|FILE_ATTRIBUTE_SYSTEM)))
                 meFileSetAttributes(fname,FILE_ATTRIBUTE_NORMAL) ;
 
-            /* Windows must open the file with the correct permissions to support the
-             * compress attribute
-             */
-            if((io->fp=CreateFile((const char *) fname,GENERIC_WRITE,FILE_SHARE_READ,NULL,create,
+            /* Windows must open the file with the correct permissions to support the compress attribute */
+            if((io->fp=CreateFile((const char *) fname,GENERIC_READ|GENERIC_WRITE,FILE_SHARE_READ,NULL,create,
                                    ((bp == NULL) ? meUmask:bp->stats.stmode),
                                    NULL)) == INVALID_HANDLE_VALUE)
             {

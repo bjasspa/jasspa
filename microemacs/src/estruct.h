@@ -1428,6 +1428,7 @@ typedef struct meIo {
     meSOCKET   ccsk;                    /* FTP control channel socket */
     meSOCKET   sock;                    /* HTTP/FTP data channel socket */
     struct sockaddr_in sockAddr;
+    meUByte    redirect;               /* Number of redirections - avoids spin */
     meUByte   *sockUrl;                /* Current open socket addr (for reuse) */
     meUByte   *sockHome;
     meRegNode *passwdReg;
