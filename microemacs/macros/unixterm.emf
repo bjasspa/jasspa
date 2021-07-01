@@ -14,14 +14,10 @@ add-file-hook ".C" fhook-cpp
 !emacro
 !if &band $system 0x01
   ; Not using X
-  !if &not &band $system 0x02
-    ; no color - change the window chars so osd is more usable
-    set-variable $window-chars &spr "%s=x*[>]<%s" &lef $window-chars 47 &rig $window-chars 54
-  !endif
+  ; if no color - change the window chars so osd is more usable
+  !iif &not &band $system 0x02  set-variable $window-chars &spr "%s=x*[>]<%s" &lef $window-chars 47 &rig $window-chars 54
 !else
-  !if &not &seq &set #l0 &reg &spr "/history/%s/font" $platform "" ""
-    change-font #l0
-  !endif
+  !iif &not &seq &set #l0 &reg &spr "/history/%s/font" $platform "" ""  change-font #l0
 !endif
 ;
 ; setup the next-error stuff including grep and compiling

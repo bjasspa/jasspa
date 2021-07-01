@@ -14,11 +14,10 @@ define-macro save-all
   @# save-some-buffers @mna
   &bor 2 @# save-registry @mna
   &bor 2 @# save-dictionary @mna
-  !if &not @?
+  !if @?
+  !elif &not &seq "tfs://" &lef $user-path 6
     set-variable #l0 @mc5 "Save session (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-    !if &iseq #l0 "y"
-      0 save-session
-    !endif
+    !iif &iseq #l0 "y"  0 save-session
   !endif
   ml-write "[Save all complete]"
 !emacro
@@ -31,14 +30,10 @@ define-macro open-line
 define-macro encase
   0 show-region
   set-variable #l0 &equ &band $result 5 5
-  !if &not &exi .s
-    set-variable .s @ml00 "Starting text"
-  !endif
+  !iif &not &exi .s  set-variable .s @ml00 "Starting text"
   !if &not &exi .e
     set-variable .e @ml00 "Ending text"
-    !if &not #l0
-      !return
-    !endif
+    !iif &not #l0  !return
   !endif
   ; is a region is hilighted
   !if &not #l0
@@ -46,9 +41,7 @@ define-macro encase
     set-variable .e @ml10 "Ending text" .e
     !return
   !endif
-  !if &not &band $result 2
-    3 show-region
-  !endif
+  !iif &not &band $result 2  3 show-region
   ; Find start/end of region.
   -2 show-region
   set-variable #l0 $window-line
@@ -104,9 +97,7 @@ define-macro number-items
 
 define-macro time
   !force set-variable #l2 @1
-  !if &not $status
-    set-variable #l2 @ml00 "Time command"
-  !endif
+  !iif &not $status  set-variable #l2 @ml00 "Time command"
   set-variable #l0 $time
   !force execute-line #l2
   set-variable #l1 $time
@@ -135,7 +126,7 @@ define-macro display-whitespaces
 ; Steve Philips - mailed to Jasspa group on 28th Sept 2004.
 ; Writes a region to a file. If invoked from another macro then a string
 ; paramter specifies the name of the file to write, if the name is not
-; specified then the user is prompted for the name. 
+; specified then the user is prompted for the name.
 define-macro write-region
   copy-region
   set-variable #l0 $buffer-fname
@@ -154,7 +145,7 @@ define-macro write-region
     !force delete-buffer $buffer-bname
     goto-position "\x88"
     !abort
-  !endif        
+  !endif
   delete-buffer $buffer-bname
   goto-position "\x88"
 !emacro
@@ -163,9 +154,7 @@ define-macro execute-region
   set-alpha-mark "a"
   3 narrow-buffer
   !force !force !force execute-buffer $buffer-bname
-  !if &set #l0 &not $status
-    set-alpha-mark "a"
-  !endif
+  !iif &set #l0 &not $status  set-alpha-mark "a"
   end-of-buffer
   2 narrow-buffer
   goto-alpha-mark "a"

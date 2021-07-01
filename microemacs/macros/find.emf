@@ -7,9 +7,7 @@
 ; Synopsis:    ME based find and grep commands
 ; Authors:     Steven Phillips
 ;
-!if &not &exi dirlst-sort-list
-  0 exec-file "hkdirlst"
-!endif
+!iif &not &exi dirlst-sort-list  0 exec-file "hkdirlst"
 
 !if &not &band $system 0x1000000
   define-macro fhook-find
@@ -23,7 +21,7 @@
   set-variable .fhook-find.command-kbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-kbind 1 "" 2 "" 3 "" 4 "" 5 "C-return" 6 "C-j" 4
   set-variable .fhook-find.command-desc  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-desc  1 "" 2 "" 3 "" 4 "" 5 "Rerun \HFind" 6 "" 4
   set-variable .fhook-find.refresh "find-refresh"
-  
+
   define-macro fhook-grep
   !emacro
   set-variable .fhook-grep.setup &reg "/history/fhook/find" "ghop"
@@ -33,7 +31,7 @@
   set-variable .fhook-grep.command-nbind "||||"
   set-variable .fhook-grep.command-kbind "|return|C-return|C-j|"
   set-variable .fhook-grep.command-desc  "|Goto \HMatch|\HRerun Grep||"
-  
+
   !if &and &sin "h" .fhook-find.setup &band .hilight.flags 0x02
     !if &not &exist .hilight.grepn
       set-variable .hilight.find &pinc .hilight.next 1
@@ -60,7 +58,7 @@
     hilight .hilight.grepn 0 ":" .scheme.no1
     hilight .hilight.grepn 0x80 "[0-9]\\{:" .hilight.grep .scheme.no1
   !endif
-  
+
   0 define-macro return-get-next-line
     !force backward-line
     get-next-line
@@ -152,13 +150,11 @@
       !else
         !force search-buffer #p7 #p4
       !endif
-      !if $status
-        set-variable #p6 &add #p6 1
-      !endif
+      !iif $status  set-variable #p6 &add #p6 1
     !until &not $status
     !if #p6
       33 find-buffer "*grep*"
-      insert-string &spr "%s%s%s: Binary file has %d match%s" #p1 &ind &cat ".find-proc.base" #p0 #p2 #p6 &con &equ #p6 1 "" "es" 
+      insert-string &spr "%s%s%s: Binary file has %d match%s" #p1 &ind &cat ".find-proc.base" #p0 #p2 #p6 &con &equ #p6 1 "" "es"
       insert-newline
       find-buffer #l0
     !endif
@@ -197,19 +193,15 @@
           -1 yank
         !endif
       !endif
-      !if &exi :page-0
-        set-variable #l5 &add #l5 :line-offset
-      !endif
+      !iif &exi :page-0  set-variable #l5 &add #l5 :line-offset
       33 find-buffer "*grep*"
-      insert-string &spr "%s%s%s:%d:%s" #p1 &ind &cat ".find-proc.base" #p0 #p2 #l5 #l6 
+      insert-string &spr "%s%s%s:%d:%s" #p1 &ind &cat ".find-proc.base" #p0 #p2 #l5 #l6
       insert-newline
       set-variable #p6 &add #p6 1
       find-buffer #l0
       !if &sin "e" #p9
         goto-alpha-mark "\x82"
-        !if &not &len #l6
-          forward-char
-        !endif
+        !iif &not &len #l6  forward-char
       !else
         set-variable $window-line &add 1 #l1
       !endif
@@ -218,7 +210,7 @@
 !emacro
 
 ; #p7 = '|<matches>|<files>|<dirs>|<activity>|<output-buffer-name>|' list
-; #p8 = start path, #p9 = find options, @1 = sub path 
+; #p8 = start path, #p9 = find options, @1 = sub path
 0 define-macro find-proc
   set-variable #l1 &ind &cat ".find-file.file" @#
   set-variable #l9 &lget #p9 1
@@ -283,15 +275,11 @@
               set-variable #l3 &lget "|0|-1|1|" &isin #l3 "dyn"
             !endif
           !endif
-          !if &les #l3 0
-            !force reread-file
-          !endif
+          !iif &les #l3 0  !force reread-file
         !endif
         !if &not #l3
-          !if &not &band @# 2
-            set-variable #l5 &stat i &cat #l8 #l2
-          !endif
-          ; check the file size, if larger then 100Mb dont bother unless - 
+          !iif &not &band @# 2  set-variable #l5 &stat i &cat #l8 #l2
+          ; check the file size, if larger then 100Mb dont bother unless -
           !if &not &or &lget #l5 5 &gre &lget #l5 6 0x6400000
             !force 0 delete-buffer "*find-tmp*"
             33 find-buffer "*find-tmp*"
@@ -316,7 +304,7 @@
               insert-string &spr "%s%s%s: Error - %s" #l1 &ind &cat ".find-proc.base" #l0 #l2 #l3
               insert-newline
             !elif &sin "!" #l9
-              execute-line &spr "-1 %s %s%s \"%s\"" &lget #p9 8 #l8 #l2 #l3 
+              execute-line &spr "-1 %s %s%s \"%s\"" &lget #p9 8 #l8 #l2 #l3
             !else
               find-buffer "*find*"
               insert-string &spr "[**** Error: %s %s%s%s ****]" #l3 #l1 &ind &cat ".find-proc.base" #l0 #l2
@@ -336,30 +324,22 @@
         !if &sin "w" #l9
           !if &exi :page-0
             !force page-file-search-buffer #l7 #l4
-            !if &not $status
-              !cont
-            !endif
+            !iif &not $status  !cont
             page-file-beginning-of-buffer
           !else
             !force search-buffer #l7 #l4
-            !if &not $status
-              !cont
-            !endif
+            !iif &not $status  !cont
             beginning-of-buffer
           !endif
         !endif
         !if &sin "W" #l9
           !if &exi :page-0
             !force page-file-search-buffer #l7 &lget #p9 3
-            !if $status
-              !cont
-            !endif
+            !iif $status  !cont
             page-file-beginning-of-buffer
           !else
             !force search-buffer #l7 &lget #p9 3
-            !if $status
-              !cont
-            !endif
+            !iif $status  !cont
             beginning-of-buffer
           !endif
         !endif
@@ -376,9 +356,7 @@
         set-variable #l6 0
         find-proc-grep
       !endif
-      !if &band @# 1
-        !force goto-alpha-mark "\x81"
-      !endif
+      !iif &band @# 1  !force goto-alpha-mark "\x81"
       !if #l6
         !if &len &lget #p7 5
           33 find-buffer &lget #p7 5
@@ -405,7 +383,7 @@
     !done
   !until &equ #l0 .mask-count
   !if &sin "r" #l9
-    ; add sub directories to the todo list 
+    ; add sub directories to the todo list
     set-variable #l3 .find-file.file-count
     set-variable $file-names &spr "%s%s.*/" #p8 #l1
     !while &len &set #l2 $file-names
@@ -421,7 +399,7 @@
   !endif
 !emacro
 
-; #p0 = 'comm-line', #p9 = find options 
+; #p0 = 'comm-line', #p9 = find options
 0 define-macro find-proc-option
   !if &not &set #l1 &sin " " #p0
     set-variable #p0 ""
@@ -453,9 +431,7 @@
           set-variable #l5 &xrep #l5 "\\\\\\(.\\)" "\\1"
         !endif
         !if &sin #l3 "sS"
-          !if &iseq &rig #l5 -1 "k"
-            set-variable #l5 &mul #l5 1024
-          !endif
+          !iif &iseq &rig #l5 -1 "k"  set-variable #l5 &mul #l5 1024
         !elif &sin #l3 "tT"
           !if &xseq #l5 "\\(\\d+\\)\\(\\.\\(\\d+\\)\\(\\.\\(\\d+\\)\\(\\.\\(\\d+\\)\\)?\\)?\\)?"
             ; calc the offset in seconds and set/get $time to get the YYYYMMDDhhmmss form
@@ -480,9 +456,7 @@
         set-variable #p9 &lset #p9 &add #l4 1 #l5
         set-variable #l2 &cat #l2 #l3
       !elif &seq #l3 "&"
-        !if &not &band $system 0x1000000
-          set-variable #l2 &cat #l2 "&"
-        !endif
+        !iif &not &band $system 0x1000000  set-variable #l2 &cat #l2 "&"
       !else
         ml-write &spr "[Unknown -%s option]" #l3
         !abort
@@ -493,7 +467,7 @@
   !endif
 !emacro
 
-; #p0 = 'comm-line', #p9 = find options 
+; #p0 = 'comm-line', #p9 = find options
 0 define-macro find-proc-file-mask
   set-variable #l0 #p0
   set-variable #l3 0
@@ -564,13 +538,13 @@
   set-variable .find-proc.mask-count #l3
 !emacro
 
-; @1 = 'initial find options' @2 = 'comm-line', [@3 = from-dir] returns #p7 = init counters, #p8 = from-dir #p9 = find options 
+; @1 = 'initial find options' @2 = 'comm-line', [@3 = from-dir] returns #p7 = init counters, #p8 = from-dir #p9 = find options
 ; @#: 0x01 = search string required
 0 define-macro find-options
   set-variable #l9 @1
   set-variable #l0 @2
   !while &seq "-" &lef &set #l0 &trl #l0 1
-    find-proc-option 
+    find-proc-option
     !tjump &sin "-" &lget #l9 1 2
   !done
   !if &band @# 1
@@ -614,9 +588,7 @@
   !repeat
     !force set-variable #l2 &ind &cat "@" &pinc #l1 1
     !if $status
-      !if &seq $platform "win32"
-        set-variable #l2 &rep #l2 "%" "%%"
-      !endif
+      !iif &seq $platform "win32"  set-variable #l2 &rep #l2 "%" "%%"
       set-variable #l0 &spr "%s \"%s\"" #l0 &xrep #l2 "[\\\\\"]" "\\\\\\0"
     !endif
   !until &not $status
@@ -626,9 +598,7 @@
 define-macro grep
   set-variable #l1 &con &band @# 0x10 "" &reg "/history/grep-com" ""
   !force set-variable #l5 @1
-  !if &not $status
-    set-variable #l5 @ml00 &cat "Grep " #l1
-  !endif
+  !iif &not $status  set-variable #l5 @ml00 &cat "Grep " #l1
   set-variable #l6 &trl &spr "%s %s" #l1 #l5
   3 find-options "\bf\b\b\b\b\b\b\b\b" #l6 @2
   !if &sin "&" &lget #l9 1
@@ -664,9 +634,7 @@ define-macro grep
   33 find-buffer "*grep*"
   insert-newline
   set-variable #l0 &spr "[**** found %d match%s in %d file%s" &lget #l7 1 &cond &equ &lget #l7 1 1 "" "es" &lget #l7 2 &cond &equ &lget #l7 2 1 "" "s"
-  !if &lget #l7 3
-    set-variable #l0 &spr "%s and %d director%s" #l0 &lget #l7 3 &cond &equ &lget #l7 3 1 "y" "ies"
-  !endif
+  !iif &lget #l7 3  set-variable #l0 &spr "%s and %d director%s" #l0 &lget #l7 3 &cond &equ &lget #l7 3 1 "y" "ies"
   !if &set #l3 &gre #l3 .find-file.file-count
     set-variable $line-scheme .scheme.no1
   !else
@@ -712,9 +680,7 @@ define-macro grep-rerun
 define-macro find
   set-variable #l1 &con &band @# 0x10 "" &reg "/history/find-com" ""
   !force set-variable #l5 @1
-  !if &not $status
-    set-variable #l5 @ml00 &cat "Find " #l1
-  !endif
+  !iif &not $status  set-variable #l5 @ml00 &cat "Find " #l1
   set-variable #l6 &spr "%s %s" #l1 #l5
   0 find-options "\b|rdf\b\b\b\b\b\b\b\b" #l6 @2
   !if &sin "&" &lget #l9 1
@@ -755,9 +721,7 @@ define-macro find
     buffer-bind-create "bio" "4" "4" dirlst-sort-list
   !endif
   set-variable :fmpf &len #l0
-  !if &sin "&" &lget #l9 1
-    !return
-  !endif
+  !iif &sin "&" &lget #l9 1  !return
   insert-string &cat #l0 "Name  <Order by Extension>\n"
   !if &band $system 0x1000000
     beginning-of-buffer
@@ -777,12 +741,8 @@ define-macro find
   33 find-buffer "*find*"
   insert-newline
   set-variable #l0 "[**** found"
-  !if &sin "f" &lget #l9 1
-    set-variable #l0 &spr "%s %d file%s%s" #l0 &lget #l7 2 &cond &equ &lget #l7 2 1 "" "s" &con &sin "d" &lget #l9 1 " and" ""
-  !endif
-  !if &sin "d" &lget #l9 1
-    set-variable #l0 &spr "%s %d director%s" #l0 &lget #l7 3 &cond &equ &lget #l7 3 1 "y" "ies"
-  !endif
+  !iif &sin "f" &lget #l9 1  set-variable #l0 &spr "%s %d file%s%s" #l0 &lget #l7 2 &cond &equ &lget #l7 2 1 "" "s" &con &sin "d" &lget #l9 1 " and" ""
+  !iif &sin "d" &lget #l9 1  set-variable #l0 &spr "%s %d director%s" #l0 &lget #l7 3 &cond &equ &lget #l7 3 1 "y" "ies"
   !if &not &set #l3 &gre #l3 .find-file.file-count
     set-variable $line-scheme .scheme.error
     set-variable #l0 &cat #l0 " - ABORTED"
@@ -909,9 +869,9 @@ define-macro find-rerun
       set-variable #l6 $buffer-bname
       33 find-buffer "*replace*"
       !if #l3
-        insert-string &spr "%s%s%s: %d replacement%s" #p1 &ind &cat ".find-proc.base" #p0 #p2 &lget #l2 1 &con &equ &lget #l2 1 1 "" "s" 
+        insert-string &spr "%s%s%s: %d replacement%s" #p1 &ind &cat ".find-proc.base" #p0 #p2 &lget #l2 1 &con &equ &lget #l2 1 1 "" "s"
       !else
-        insert-string &spr "%s%s%s (%s): %d replacement%s" #p1 &ind &cat ".find-proc.base" #p0 #p2 #l6 &lget #l2 1 &con &equ &lget #l2 1 1 "" "s" 
+        insert-string &spr "%s%s%s (%s): %d replacement%s" #p1 &ind &cat ".find-proc.base" #p0 #p2 #l6 &lget #l2 1 &con &equ &lget #l2 1 1 "" "s"
       !endif
       insert-newline
       find-buffer #l6
@@ -951,7 +911,7 @@ define-macro replace-string-in-files
   !endif
   set-variable #l6  &spr "%s %s" #l4 #l0
   set-variable .rsif-callback.n @#
-  set-variable .rsif-callback.f #l1    
+  set-variable .rsif-callback.f #l1
   set-variable .rsif-callback.t #l2
   set-variable .rsif-callback.l 0
   0 find-options "\b|@!fb\b\b\b\b\b\b\brsif-callback\b" #l6 @4
@@ -975,9 +935,7 @@ define-macro replace-string-in-files
     !endif
     @# find-proc-spawn "*replace*" "replace-string-in-files" #l1 #l2 #l0 #l8
     popup-window "*replace*"
-    !if &exist .hilight.find
-      set-variable $buffer-hilight .hilight.find
-    !endif
+    !iif &exist .hilight.find  set-variable $buffer-hilight .hilight.find
     !return
   !endif
   set-variable #l7 &lset #l7 5 "*replace*"

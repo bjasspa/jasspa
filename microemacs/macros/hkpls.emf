@@ -31,12 +31,8 @@ define-macro fhook-pls
   ; -!- pls; tabwidth:<digit>; -!-
   ;
   !if &not &seq #l1 ""
-    !if &xseq #l9 ".*tabsize[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;].*"
-      set-variable $buffer-indent-width @s1
-    !endif
-    !if &xseq #l9 ".*tabwidth[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;].*"
-      set-variable $buffer-tab-width @s1
-    !endif
+    !iif &xseq #l9 ".*tabsize[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;].*"  set-variable $buffer-indent-width @s1
+    !iif &xseq #l9 ".*tabwidth[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;].*"  set-variable $buffer-tab-width @s1
   !endif
 !emacro
 
@@ -55,9 +51,7 @@ set-variable .fhook-pls.fold-close "^[eE][nN][dD]"
 set-variable .fhook-pls.fold-mopen "1"
 
 !if &and &sin "h" .fhook-pls.setup &band .hilight.flags 0x02
-  !if &not &exist .hilight.pls
-    set-variable .hilight.pls &pinc .hilight.next 1
-  !endif
+  !iif &not &exist .hilight.pls  set-variable .hilight.pls &pinc .hilight.next 1
   0 hilight .hilight.pls 3 50                $global-scheme
   hilight .hilight.pls 4 "<[[:alpha:]]" ">" "" .scheme.keyword
   hilight .hilight.pls 4 "'" "'" ""          .scheme.string

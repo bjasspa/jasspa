@@ -21,9 +21,7 @@
 ; Authors:     Steven Phillips & Jon Green
 ;
 ; Is this macro release compatible with the binary?
-!if &les $version "20081110"
-  5000 ml-write "[Warning: The MicroEmacs executable is not compatible with this macro release]"
-!endif
+!iif &les $version "20081110"  5000 ml-write "[Warning: The MicroEmacs executable is not compatible with this macro release]"
 !if &band @# 2
   ; This is a reinit via user-setup, no point reloading erf (and if readonly it may be wrong) 
 !elif &seq &find $user-name ".erf" "ERROR"
@@ -97,9 +95,7 @@ define-macro-file ftp
 0 define-macro exec-file
   set-variable .first 1
   !force @# execute-file @1
-  !if $status
-    !return
-  !endif
+  !iif $status  !return
   !if .first
     !if &seq &set #l0 &find @1 ".emf" "ERROR"
       ml-write &spr "[Failed to find Macro file %s.emf]" @1
@@ -187,9 +183,7 @@ ml-bind-key     tab                      "esc esc"
   global-bind-key end-of-buffer        "C-end"
 !endif
 ; execute msshift if using MS Shift style region definition
-!if &reg "/history/msshift" "0"
-  !force exec-file "msshift"
-!endif
+!iif &reg "/history/msshift" "0"  !force exec-file "msshift"
 ;
 ; Setup modes
 &cond &reg "/history/backup" "1" 1 -1 global-mode "backup"
@@ -198,9 +192,7 @@ ml-bind-key     tab                      "esc esc"
 &cond &reg "/history/tab"    "1" 1 -1 global-mode "tab"
 &cond &reg "/history/undo"   "1" 1 -1 global-mode "undo"
 &cond &gre &set #l0 &reg "/history/autosv" "300" "0" 1 -1 global-mode "autosv"
-!if &gre #l0 "0"
-  set-variable $auto-time #l0
-!endif
+!iif &gre #l0 "0"  set-variable $auto-time #l0
 ; Setup variables
 set-variable $quiet         &reg "/history/quiet" "1"
 set-variable $mode-line     "%s%r%u%k %b %l - %h:%m %Y/%M/%D (%e) - (%f) "
@@ -351,9 +343,7 @@ osd 0 80 "Mdfsh" " \HWindow  "   8
 osd 0 90 "Mdfsr" " \HHelp "      9
 !force osd -1 &set .osd.menu &reg "/history/main-menu" "1" "1"
 ; Load in the mouse handling routines if required
-!if &band $mouse 0x10
-  !force exec-file "mouse"
-!endif
+!iif &band $mouse 0x10  !force exec-file "mouse"
 0 add-next-line "*grep*"
 add-next-line "*grep*" "%f:%l:"
 ; load in the platform specific stuff if found
@@ -369,24 +359,16 @@ add-next-line "*grep*" "%f:%l:"
   !force read-registry "/url" #l0 "y"
 !endif
 ; execute company setup
-!if &not &seq &set #l0 &reg "/history/company" "" ""
-  !force exec-file #l0
-!endif
+!iif &not &seq &set #l0 &reg "/history/company" "" ""  !force exec-file #l0
 ; excute own setup
-!if &not &seq &set #l0 &reg "/history/setup-file" "" ""
-  !force exec-file #l0
-!endif
+!iif &not &seq &set #l0 &reg "/history/setup-file" "" ""  !force exec-file #l0
 !if &not &exi session
   !force exec-file session
   set-variable #l1 &bor &mul 16 &ban @# 1 &con &exi %session-name &con &seq %session-name "" 42 34 62
   !force #l1 read-session
   !if &band #l1 12
-    !if &set #l0 &reg &spr "/history/%s/frame-width" %platform "0"
-      change-frame-width #l0
-    !endif
-    !if &set #l0 &reg &spr "/history/%s/frame-depth" %platform "0"
-      change-frame-depth #l0
-    !endif
+    !iif &set #l0 &reg &spr "/history/%s/frame-width" %platform "0"  change-frame-width #l0
+    !iif &set #l0 &reg &spr "/history/%s/frame-depth" %platform "0"  change-frame-depth #l0
   !endif
 !else
   !force 0 change-scheme
@@ -412,6 +394,4 @@ add-next-line "*grep*" "%f:%l:"
 !endif
 ; chaeck-mail setup - delay the first check by a minute to allow for
 ; initial setup to complete
-!if &reg &spr "/history/%s/mail-check" $platform "0"
-  60000 create-callback mail-check
-!endif
+!iif &reg &spr "/history/%s/mail-check" $platform "0"  60000 create-callback mail-check

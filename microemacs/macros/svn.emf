@@ -7,12 +7,8 @@
 ; Synopsis:    Subversion support macros for MicroEmacs
 ; Authors:     Steven Phillips
 ;
-!if &not &exi dirlst-sort-list
-  0 exec-file "hkdirlst"
-!endif
-!if &not &exi %diff-com
-  0 exec-file "tools"
-!endif
+!iif &not &exi dirlst-sort-list  0 exec-file "hkdirlst"
+!iif &not &exi %diff-com  0 exec-file "tools"
 !if &not &exi .osd.svn-osd
   set-variable .osd.svn-osd &pinc .osd.next 1
   set-variable .osd.svn-hlp &pinc .osd.next 1
@@ -38,9 +34,7 @@
   set-variable .fhook-dirlst.modefunc-cmd &lins .fhook-dirlst.modefunc-cmd -1 "svn-full-reread"
 !endif
 !if &band .hilight.flags 0x02
-  !if &not &exi .hilight.diff
-    !force execute-file "hkdiff"
-  !endif
+  !iif &not &exi .hilight.diff  !force execute-file "hkdiff"
   !if &not &exist .hilight.svn-con
     set-variable .hilight.svn-con &pinc .hilight.next 1
     set-variable .hilight.svn-status &pinc .hilight.next 1
@@ -66,12 +60,12 @@
   hilight .hilight.svn-status 0x102 "[ *]R.......\\*" .scheme.hlred
   hilight .hilight.svn-status 0x102 "[ *] M......\\*" .scheme.hlred
   hilight .hilight.svn-status 0x102 "[ *]  ......\\*" .scheme.prepro
-  
+
   0 hilight .hilight.svn-con 2 100 $global-scheme
   hilight .hilight.svn-con 0x102 "\\[\\*\\*\\*\\* SVN [^ ]+ completed successfully" .scheme.no1
   hilight .hilight.svn-con 0x102 "\\[\\*\\*\\*\\* SVN Server [^ ]+ completed successfully" .scheme.no1
   hilight .hilight.svn-con 0x102 "\\[\\*\\*\\*\\* SVN" .scheme.error
-  
+
   ; fix the *files* buffer hilighting for svn additions
   hilight .hilight.dirlst 0x112 " dA"       .scheme.no2
   hilight .hilight.dirlst 0x112 " -A"       .scheme.no2
@@ -124,12 +118,8 @@ set-variable .svn.cdefs15 "||"
 set-variable .svn.ccount  15
 
 set-variable .svn.com &reg &spr "/history/%s/svn/com" $platform "svn"
-!if &sin " " .svn.com
-  set-variable .svn.com &spr "\"%s\"" .svn.com
-!endif
-!if &not &seq "" &set #l9 &trb &reg &spr "/history/%s/svn/garg" $platform "--non-interactive"
-  set-variable .svn.com &cat &cat .svn.com " " #l9
-!endif
+!iif &sin " " .svn.com  set-variable .svn.com &spr "\"%s\"" .svn.com
+!iif &not &seq "" &set #l9 &trb &reg &spr "/history/%s/svn/garg" $platform "--non-interactive"  set-variable .svn.com &cat &cat .svn.com " " #l9
 set-variable .svn.def-rep-url &reg &spr "/history/%s/svn/def-rep-url" $platform ""
 set-variable .svn.browse-mode &reg "/history/svn/browse-mode" "0"
 set-variable #l9 .svn.ccount
@@ -148,9 +138,7 @@ set-variable #l9 .svn.ccount
 !until &not &dec #l9 1
 
 0 define-macro svn-dirlst-detect
-  !if &not &seq &stat "t" &cat $buffer-fname ".svn/." "D"
-    !abort
-  !endif
+  !iif &not &seq &stat "t" &cat $buffer-fname ".svn/." "D"  !abort
 !emacro
 0 define-macro svn-full-reread
   set-variable #l0 .svn.browse-mode
@@ -189,9 +177,7 @@ set-variable #l9 .svn.ccount
     !while &not &seq @wl ""
       set-variable #l7 "-"
       set-variable #l3 &rig @wl :fmpf
-      !if &set #l4 &sin " -> " #l3
-        set-variable #l3 &lef #l3 &sub #l4 1
-      !endif
+      !iif &set #l4 &sin " -> " #l3  set-variable #l3 &lef #l3 &sub #l4 1
       !if &seq &rig #l3 &set #l4 &sub &len #l3 1 "/"
         !if &seq #l3 "./"
           !goto rmv-line
@@ -256,7 +242,7 @@ set-variable #l9 .svn.ccount
 ;; Some useful macros ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 0 define-macro svn-get-base-url
-  set-variable .svn.crep-url "" 
+  set-variable .svn.crep-url ""
   ; see if given file is already in an SVN checkout area, if so get the URL
   set-variable #l1 @1
   set-variable $file-names &cat &lef #l1 &rsi "/" #l1 ".*/"
@@ -272,15 +258,13 @@ set-variable #l9 .svn.ccount
   set-variable #l3 &lef #l3 -1
   ml-write &cat #l2 #l3
   !force 0x46 pipe-shell-command &spr "%s info %s" .svn.com #l3 "*svn-gburl*"
-  !if &not $status
-    !abort
-  !endif
+  !iif &not $status  !abort
   find-buffer "*svn-gburl*"
   beginning-of-buffer
   !force search-buffer "me" "^URL: +\\(.*\\)"
   !if $status
     set-variable #l4 @s1
-    set-variable .svn.crep-url &con &seq &cat "/" #l3 &rig #l4 &sub -1 &len #l3  &lef #l4 &neg &len #l3  &cat #l4 "/"  
+    set-variable .svn.crep-url &con &seq &cat "/" #l3 &rig #l4 &sub -1 &len #l3  &lef #l4 &neg &len #l3  &cat #l4 "/"
   !endif
   delete-buffer "*svn-gburl*"
   goto-position "\x82"
@@ -291,16 +275,12 @@ set-variable #l9 .svn.ccount
 0 define-macro svn-osd-init-comment
   set-variable .svn.ccomment ""
   set-variable .svn.ccominit ""
-  !if &exi &cat ".svn.ccomment" @#
-    set-variable .svn.ccomment &ind &cat ".svn.ccomment" @#
-  !endif
+  !iif &exi &cat ".svn.ccomment" @#  set-variable .svn.ccomment &ind &cat ".svn.ccomment" @#
   !if &seq "" &set #l0 &reg &spr "/history/svn/%d_C" @# ""
   !elif &not &seq "ERROR" &set #l0 &find #l0 ""
     !force 0 find-file #l0
     !if $status
-      !if &not &seq .svn.ccomment ""
-        set-variable @h0 .svn.ccomment
-      !endif
+      !iif &not &seq .svn.ccomment ""  set-variable @h0 .svn.ccomment
       beginning-of-buffer
       set-mark
       end-of-buffer
@@ -326,7 +306,7 @@ set-variable #l9 .svn.ccount
     set-variable #l0 0
     set-variable #l1 ""
     !while &les &pinc #l0 1 .find-file.file-count
-      set-variable #l1 &spr "%s%s\n" #l1 &ind &cat ".find-file.file" #l0 
+      set-variable #l1 &spr "%s%s\n" #l1 &ind &cat ".find-file.file" #l0
     !done
     set-variable .svn.cignrmsk #l1
   !elif &not &exi .svn.cignrmsk
@@ -341,7 +321,7 @@ set-variable #l9 .svn.ccount
   !endif
 !emacro
 0 define-macro svn-osd-rep-url
-  !if &not &len &set #l1 .svn.crep-url 
+  !if &not &len &set #l1 .svn.crep-url
     set-variable #l1 .svn.def-rep-url
   !elif &gre @# 0
   !elif &len .svn.def-rep-url
@@ -395,9 +375,7 @@ set-variable #l9 .svn.ccount
   set-position "\x82"
   !if &exi .svn.lock
     osd-xdialog &cat "Subversion - " &lget .svn.cnames @# &spr "    SVN %s command currently in progress!    " &lget .svn.cnames .svn.lock 2 "  \HIgnore  " "  \HAbort  "
-    !if &not &equ $result 1
-      !abort
-    !endif
+    !iif &not &equ $result 1  !abort
   !endif
   set-variable #l9 &lget .svn.cflags @#
   set-variable .values &ind &cat ".svn.cvalues" @#
@@ -421,9 +399,7 @@ set-variable #l9 .svn.ccount
     !if &sin "S" #l9
       !if &bmod "edit"
         set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-        !if &iseq #l0 "y"
-          save-buffer @mna
-        !endif
+        !iif &iseq #l0 "y"  save-buffer @mna
       !endif
     !endif
     set-variable .find-file.file-count 1
@@ -443,9 +419,7 @@ set-variable #l9 .svn.ccount
       !abort
     !endif
   !endif
-  !if &sin "^" #l9
-    !return
-  !endif
+  !iif &sin "^" #l9  !return
   -1 osd .osd.svn-osd
   osd .osd.svn-osd 0 ""
   set-variable #l0 0
@@ -593,17 +567,11 @@ set-variable #l9 .svn.ccount
   osd .osd.svn-osd 2030 "BtcfH"  .scheme.osd-ebtt " \HCancel " 0 void
   osd .osd.svn-osd 0 "batcDIHs" 9 3 47 4 -1 -1 2020 #l3 .scheme.osd-title &cat "Subversion " &lget .svn.cnames @#
   !force !force .osd.svn-osd osd
-  !if &not $status
-    !abort
-  !endif
+  !iif &not $status  !abort
   !if &sin "C" #l9
-    !if &seq .svn.ccominit .svn.ccomment
-      set-variable .svn.ccomment ""
-    !endif
+    !iif &seq .svn.ccominit .svn.ccomment  set-variable .svn.ccomment ""
     set-variable .svn.ccomquot &rep &rep &trb .svn.ccomment "\\" "\\\\" "\"" "\\\""
-    !if &seq &rig $SHELL -3 "csh"
-      set-variable .svn.ccomquot &rep .svn.ccomquot "\n" "\\\n"
-    !endif
+    !iif &seq &rig $SHELL -3 "csh"  set-variable .svn.ccomquot &rep .svn.ccomquot "\n" "\\\n"
   !endif
   set-variable &ind &cat ".svn.cvalues" @# .values
 !emacro
@@ -650,9 +618,7 @@ set-variable #l9 .svn.ccount
           set-variable $window-line 1
           end-of-line
           set-variable .dcount &add .dcount 1
-          !if &band @# 16
-            !continue
-          !endif
+          !iif &band @# 16  !continue
         !endif
       !elif &and &band @# 1 &sin " " #l4
         set-variable #l4 &rep &rep #l4 "\\" "\\\\" "\"" "\\\""
@@ -728,29 +694,21 @@ set-variable #l9 .svn.ccount
     change-buffer-name #l1
     find-buffer "*svn-console-safe*"
     change-buffer-name "*svn-console*"
-    !if .toolbar.open
-      set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
-    !endif
+    !iif .toolbar.open  set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
     end-of-buffer
     -1 buffer-mode "view"
-    !if &gre $window-line 1
-      insert-newline
-    !endif
+    !iif &gre $window-line 1  insert-newline
     yank
     -1 yank
     backward-line
     -1 buffer-mode "edit"
     1 buffer-mode "view"
-    !if &exi .hilight.svn-con
-      set-variable $buffer-hilight .hilight.svn-con
-    !endif
+    !iif &exi .hilight.svn-con  set-variable $buffer-hilight .hilight.svn-con
     find-buffer #l1
   !else
     beginning-of-line
   !endif
-  !if &exi &cat "svn-exec-complete" :lock
-    !force execute-named-command &cat "svn-exec-complete" :lock
-  !endif
+  !iif &exi &cat "svn-exec-complete" :lock  !force execute-named-command &cat "svn-exec-complete" :lock
 !emacro
 
 0 define-macro svn-exec-ipipe
@@ -764,9 +722,7 @@ set-variable #l9 .svn.ccount
   !else
     set-variable #l0 &con @# 0 2
   !endif
-  !if &exi &cat "svn-exec-ipipe" :lock
-    !force #l0 execute-named-command &cat "svn-exec-ipipe" :lock
-  !endif
+  !iif &exi &cat "svn-exec-ipipe" :lock  !force #l0 execute-named-command &cat "svn-exec-ipipe" :lock
   !if &not @#
     !force set-variable $buffer-mode-line $mode-line
     svn-exec-complete
@@ -784,9 +740,7 @@ set-variable #l9 .svn.ccount
     !abort
   !elif &lfin "|abort-command|delete-buffer|ipipe-kill|" @cc
     !force !force set-variable #l0 @mc5 "Abort svn command (?/y/n) ? " "nNyY" "(Y)es, (N)o ? "
-    !if &and &iseq #l0 "y" .svn-exec.wait
-      !force ipipe-kill
-    !endif
+    !iif &and &iseq #l0 "y" .svn-exec.wait  !force ipipe-kill
   !elif &lfin "|kill-region|" @cc
     !force ipipe-kill
     set-variable .svn-exec.wait 0
@@ -798,11 +752,11 @@ set-variable #l9 .svn.ccount
   set-variable .svn.lock @#
   set-variable #l1 @1
   set-variable #l2 @2
-  ml-write &spr "[SVN %s: Processing...]" &lget .svn.cnames @# 
+  ml-write &spr "[SVN %s: Processing...]" &lget .svn.cnames @#
   !if &set #l9 &sin "*" &lget .svn.cflags @#
     set-variable #l0 "*svn-console*"
   !else
-    set-variable #l0 &spr "*svn-%s*" &slo &lget .svn.cnames @# 
+    set-variable #l0 &spr "*svn-%s*" &slo &lget .svn.cnames @#
   !endif
   !force 0 popup-window #l0
   !if &not $status
@@ -815,16 +769,12 @@ set-variable #l9 .svn.ccount
     !if &not &seq $buffer-bname #l0
       1 goto-position "\x82"
       delete-other-windows
-      !if &set #l3 &sin "w" &lget .svn.cflags @#
-        set-variable #l3 &lget &ind &cat ".svn.cvalues" @# #l3
-      !endif
+      !iif &set #l3 &sin "w" &lget .svn.cflags @#  set-variable #l3 &lget &ind &cat ".svn.cvalues" @# #l3
       !if #l3
         set-position "\x82"
       !else
         !force 2 split-window-vertically
-        !if #l9
-          !force change-window-depth 15
-        !endif
+        !iif #l9  !force change-window-depth 15
         previous-window
         set-position "\x82"
         next-window
@@ -847,9 +797,7 @@ set-variable #l9 .svn.ccount
   set-variable .wait &sin "!" &lget .svn.cflags @#
   !force !force !force 0x386 ipipe-shell-command "*svn-cmdline*" #l0 svn-exec-ipipe
   set-variable #l2 $status
-  !if &band #l1 1
-    !force 0 delete-buffer "*svn-cmdline*"
-  !endif
+  !iif &band #l1 1  !force 0 delete-buffer "*svn-cmdline*"
   find-buffer #l0
   !if &not #l2
     1 goto-position "\x82"
@@ -872,9 +820,9 @@ set-variable #l9 .svn.ccount
       !if &not &exi .exit
         ml-write "[SVN Error: svn exit status not set]"
       !elif &equ .exit -9999
-        ml-write &spr "[SVN Warning: %s operation terminated]" &lget .svn.cnames @# 
+        ml-write &spr "[SVN Warning: %s operation terminated]" &lget .svn.cnames @#
       !elif &equ .exit -9998
-        ml-write &spr "[SVN Warning: %s operation exited with unknow status]" &lget .svn.cnames @# 
+        ml-write &spr "[SVN Warning: %s operation exited with unknow status]" &lget .svn.cnames @#
       !else
         ml-write &spr "[SVN Warning: svn exited with code %d]" .exit
       !endif
@@ -1016,23 +964,19 @@ define-macro svn-delete
 ;; SVN Diff ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 0 define-macro svn-exec-ipipe7
-  !if &band @# 1
-    set-variable $buffer-hilight .hilight.diff
-  !endif
+  !iif &band @# 1  set-variable $buffer-hilight .hilight.diff
 !emacro
 0 define-macro svn-exec-complete7
   set-variable $buffer-hilight .hilight.diff
   end-of-buffer
   backward-line
-  !if &seq &lef @wl 9 "[**** SVN"
-    set-variable $line-scheme &con &sin "completed successfully" @wl .scheme.no1 .scheme.error
-  !endif
+  !iif &seq &lef @wl 9 "[**** SVN"  set-variable $line-scheme &con &sin "completed successfully" @wl .scheme.no1 .scheme.error
 !emacro
 define-macro svn-diff
   7 svn-osd
   set-variable #l2 &spr "%s diff %s%s" .svn.com &con &lget .svn.cvalues7 2 "" "--depth=immediates " &con &lget .svn.cvalues7 5 "-r PREV " ""
   !if &lget .svn.cvalues7 3
-    !if &xse &set #l0 %diff-com "\\( *\\(\"[^\"]+\"\\|[^\" ][^ ]*\\)\\) .*" 
+    !if &xse &set #l0 %diff-com "\\( *\\(\"[^\"]+\"\\|[^\" ][^ ]*\\)\\) .*"
       set-variable #l1 &len @s1
       set-variable #l3 &rig #l0 #l1
       set-variable #l0 &lef #l0 #l1
@@ -1044,9 +988,7 @@ define-macro svn-diff
       set-variable #l3 &trb #l3
     !endif
     set-variable #l2 &spr "%s--diff-cmd %s " #l2 &trb #l0
-    !if &len #l3
-      set-variable #l2 &spr "%s-x \"%s\" " #l2 #l3
-    !endif
+    !iif &len #l3  set-variable #l2 &spr "%s-x \"%s\" " #l2 #l3
   !elif &lget .svn.cvalues7 4
     set-variable #l2 &cat #l2 "-x -w "
   !endif
@@ -1062,9 +1004,7 @@ define-macro svn-ignore
     osd-dialog "Subversion - Ignore" "    A file mask list must be given!    " "  \HAbort  "
     !abort
   !endif
-  !if &seq &rig $SHELL -3 "csh"
-    set-variable #l3 &rep #l3 "\n" "\\\n"
-  !endif
+  !iif &seq &rig $SHELL -3 "csh"  set-variable #l3 &rep #l3 "\n" "\\\n"
   set-variable #l2 &spr "%s propset svn:ignore \"%s\" " .svn.com #l3
   6 svn-get-file-list 0 1 #l2
   15 svn-exec 3 $buffer-fname
@@ -1146,9 +1086,7 @@ set-variable .svn-resolve.av "|base|working|mine-full|theirs-full|"
     set-variable :svn-last 5
   !endif
   goto-alpha-mark "I"
-  !if &equ $window-line :svn-last
-    !return
-  !endif
+  !iif &equ $window-line :svn-last  !return
   -1 buffer-mode "view"
   1 buffer-mode "edit" "y"
   set-variable #l0 $window-line
@@ -1165,7 +1103,7 @@ set-variable .svn-resolve.av "|base|working|mine-full|theirs-full|"
       &len @s1 forward-delete-char
       -1 yank
       backward-delete-char
-      insert-string &con &seq @s2 "to" " -> " " <- " 
+      insert-string &con &seq @s2 "to" " -> " " <- "
       beginning-of-line
       set-variable #l0 &sub #l0 1
     !elif &sin @wc " ACDIMRX?!~"
@@ -1180,9 +1118,7 @@ set-variable .svn-resolve.av "|base|working|mine-full|theirs-full|"
   1 buffer-mode "view"
   -1 buffer-mode "edit"
   set-variable :svn-last $window-line
-  !if &band @# 2
-    dirlst-sort-list
-  !endif
+  !iif &band @# 2  dirlst-sort-list
 !emacro
 
 0 define-macro svn-exec-complete10
@@ -1201,9 +1137,7 @@ set-variable .svn-resolve.av "|base|working|mine-full|theirs-full|"
   -1 buffer-mode "edit"
   set-variable #l4 $window-id
   !repeat
-    !if &seq $buffer-bname "*svn-status*"
-      beginning-of-buffer
-    !endif
+    !iif &seq $buffer-bname "*svn-status*"  beginning-of-buffer
     3 next-window
   !until &equ $window-id #l4
   ml-write "[SVN Status: Complete]"
@@ -1493,9 +1427,7 @@ set-variable .svn-setup-page.order "|1|2|3|4|5|6|7|9|10|12|13|14|15|11|8|"
 osd .osd.svn-tlc 0 "sS" .scheme.osd-child 12 12 -1 -1
 set-variable #l9 .svn.ccount
 !repeat
-  !if &not &seq "" &set #l8 &lget .svn-setup-page.order #l9
-    osd .osd.svn-tlc #l8 "RxBd" &lget .svn.cnames #l9 #l9 svn-setup-page
-  !endif
+  !iif &not &seq "" &set #l8 &lget .svn-setup-page.order #l9  osd .osd.svn-tlc #l8 "RxBd" &lget .svn.cnames #l9 #l9 svn-setup-page
 !until &not &dec #l9 1
 
 osd .osd.svn-tll 0 "s" 17 16 -1 -1
@@ -1643,4 +1575,4 @@ osd .osd.svn-hlp 26 ""  "  !  Lost     - local item has been deleted"
 osd .osd.svn-hlp 26 ""  "  ~  obstruct - obstructed versioned item"
 osd .osd.svn-hlp 91 ""
 osd .osd.svn-hlp 92 ""
-osd .osd.svn-hlp 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
+osd .osd.svn-hlp 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void
