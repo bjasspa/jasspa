@@ -3406,7 +3406,10 @@ unsetVariable(int f, int n)     /* Delete a variable */
 {
     register meVarList  *varList ;      /* User variable pointer */
     register meVariable *vptr, *prev;   /* User variable pointer */
-    register int   vnum;                /* ordinal number of var refrenced */
+    register int vnum;                  /* ordinal number of var refrenced */
+#if MEOPT_CMDHASH
+    meUInt hash;
+#endif
     meRegister *regs ;
     meUByte var[meSBUF_SIZE_MAX] ;                 /* name of variable to fetch */
     meUByte *vv ;
@@ -3421,17 +3424,17 @@ unsetVariable(int f, int n)     /* Delete a variable */
     regs = gmaLocalRegPtr ;
     alarmState &= ~meALARM_VARIABLE ;
     if(vnum <= 0)
-        return vnum ;
+        return vnum;
     
     /* Check the legality and find the var */
     vv = var+1 ;
-    vnum = getMacroTypeS(var) ; 
+    vnum = getMacroTypeS(var); 
     if(vnum == TKVAR) 
-        varList = &usrVarList ;
+        varList = &usrVarList;
     else if(vnum == TKLVR)
     {        
-        meUByte *ss ;
-        meBuffer *bp ;
+        meUByte *ss;
+        meBuffer *bp;
         
         if((ss=meStrrchr(vv,':')) != NULL)
         {
@@ -3471,6 +3474,30 @@ unsetVariable(int f, int n)     /* Delete a variable */
     /*---   Check for existing legal user variable */
     prev = NULL ;
     vptr = varList->head ;
+#if MEOPT_CMDHASH
+    meStringHash(vv,hash);
+    while((vptr != NULL) && (vptr->hash <= hash))
+    {
+        if(vptr->hash == hash)
+        {
+            if((vnum = meStrcmp(vv,vptr->name)) == 0)
+            {
+                /* found it, link out the variable and free it */
+                if(prev == NULL)
+                    varList->head = vptr->next;
+                else
+                    prev->next = vptr->next;
+                meNullFree(vptr->value);
+                meFree(vptr);
+                return meTRUE;
+            }
+            if(vnum < 0)
+                break;
+        }
+        prev = vptr ;
+        vptr = vptr->next ;
+    }
+#else
     while(vptr != NULL)
     {
         if(!(vnum=meStrcmp(vptr->name,vv)))
@@ -3490,7 +3517,7 @@ unsetVariable(int f, int n)     /* Delete a variable */
         prev = vptr ;
         vptr = vptr->next ;
     }
-    
+#endif
     /* If its not legal....bitch */
     return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No such variable]") ;
 }
@@ -3600,12 +3627,48 @@ listVariables (int f, int n)
         buf[1] = (int)('0') + ii;
         showVariable(bp,'#',buf,meRegHead->reg[ii]);
     }
-    addLineToEob(bp,(meUByte *)"\nBuffer variables:\n") ;
-    tv = frameCur->bufferCur->varList.head ;
-    while(tv != NULL)
+    if(n & 1)
     {
-        showVariable(bp, ':', tv->name,tv->value);
-        tv = tv->next ;
+        addLineToEob(bp,(meUByte *)"\nBuffer variables:\n");
+        tv = frameCur->bufferCur->varList.head;
+        while(tv != NULL)
+        {
+            showVariable(bp,':',tv->name,tv->value);
+            tv = tv->next;
+        }
+    }
+    else
+    {
+        meBuffer *bb = bheadp;
+        meCommand *cc = cmdHead;
+        while(bb != NULL)
+        {
+            if((tv = bb->varList.head) != NULL)
+            {
+                sprintf(buf,"\nBuffer variables: %s\n",bb->name);
+                addLineToEob(bp,buf);
+                while(tv != NULL)
+                {
+                    showVariable(bp,':',tv->name,tv->value);
+                    tv = tv->next;
+                }
+            }
+            bb = bb->next ;
+        }
+        while(cc != NULL)
+        {
+            if((tv = cc->varList.head) != NULL)
+            {
+                sprintf(buf,"\nCommand variables: %s\n",cc->name);
+                addLineToEob(bp,buf);
+                while(tv != NULL)
+                {
+                    showVariable(bp,':',tv->name,tv->value);
+                    tv = tv->next;
+                }
+            }
+            cc = cc->anext ;
+        }
     }
     
     addLineToEob(bp,(meUByte *)"\nSystem variables:\n");

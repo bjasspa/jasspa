@@ -1505,7 +1505,7 @@ executeBuffer(int f, int n)
 {
     register meBuffer *bp;                /* ptr to buffer to execute */
     register int s;                     /* status return */
-    meVarList varList={NULL,0} ;
+    meVarList varList={NULL,0};
     meUByte  bufn[meBUF_SIZE_MAX];                /* name of buffer to execute */
     meInt  ln ;
     
@@ -1570,7 +1570,7 @@ executeBuffer(int f, int n)
 int
 execFile(meUByte *fname, int f, int n)
 {
-    meVarList     varList={NULL,0} ;
+    meVarList     varList={NULL,0};
     meUByte       fn[meBUF_SIZE_MAX] ;
     meLine        hlp ;
     register int  status=0 ;
