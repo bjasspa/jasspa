@@ -2327,8 +2327,6 @@ ffReadFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
     lp2->prev = lp0;
     lp0->next = lp2;
 
-    ffReadFileClose(io,flags) ;
-
 #if MEOPT_SOCKET
     /* loading an ftp or http file can lead to a file name change, free
      * off the old one now that we don't need it any more */
@@ -2375,6 +2373,7 @@ ffReadFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
         }
         sprintf((char *)resultStr,"|0x%x|0x%x|0x%x|0x%x|",io->offset,el,uoffset,eu) ;
     }
+    ffReadFileClose(io,flags) ;
     return ss ;
 }
 
