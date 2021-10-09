@@ -678,7 +678,7 @@ ipipeRemove(meIPipe *ipipe)
             SetEvent(ipipe->threadContinue) ;
             if(WaitForSingleObject(ipipe->thread,200) != WAIT_OBJECT_0)
                 TerminateThread(ipipe->thread,0) ;
-	}
+        }
 #ifndef USE_BEGINTHREAD
         CloseHandle (ipipe->thread);
 #endif
@@ -1357,26 +1357,35 @@ ipipeSetSize(meWindow *wp, meBuffer *bp)
         ipipe = ipipe->next;
     if(ipipe == NULL)
         return;
-    if(meModeTest(bp->mode,MDWRAP))
+    noRows = wp->textDepth;
+    noCols = wp->textWidth;
+    if(bp->windowCount > 1)
     {
-        noRows = wp->textDepth;
-        noCols = wp->textWidth-1;
-    }
-    else
-    {
-        if((noRows = ipipe->noRows) == 0)
-            noRows = wp->textDepth;
-        else if(ipipe->noCols != 0)
-            return;
-        
-        if((noCols = ipipe->noCols) == 0)
+        /* buffer is displayed in more than one window, we need to be careful to avoid them fighting */
+        meWindow *ww;
+        meFrameLoopBegin();
+        ww = loopFrame->windowList;
+        while(ww != NULL)
         {
-            meUByte *ss;
-            if(((ss=getUsrVar((meUByte *)"ipipe-width")) != NULL) && ((ii=meAtoi(ss)) > 0) && (ii <= meBUF_SIZE_MAX - 2))
-                noCols = ii;
-            else
-                noCols = meBUF_SIZE_MAX - 2;
+            /* If the window position matches the buffer then re-center */
+            if(ww->buffer == bp)
+            {
+                if(ww->textDepth > noRows)
+                    noRows = ww->textDepth;
+                if(ww->textWidth > noCols)
+                    noCols = ww->textWidth;
+            }
+            ww = ww->next;
         }
+        meFrameLoopEnd();
+    }
+    if(meModeTest(bp->mode,MDWRAP))
+        noCols = noCols-1;
+    else if((noCols = ipipe->noCols) == 0)
+    {
+        meUByte *ss;
+        if(((ss=getUsrVar((meUByte *)"ipipe-width")) == NULL) || ((noCols=((meShort) meAtoi(ss))) <= 0) || (noCols > meBUF_SIZE_MAX - 2))
+            noCols = meBUF_SIZE_MAX - 2;
     }
     if((ipipe->noRows != noRows) || (ipipe->noCols != noCols))
     {
@@ -1716,12 +1725,17 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
         ******************************************************************/
         char *args[4];		/* command line send to shell */
         meUByte *ss ;
-
+        
+        /* close parent side */
+        close(fds[0]);
+        if(outFds[1] != fds[0])
+            close(outFds[1]);
+        
         /* Dissassociate the new process from the controlling terminal */
 #if (defined _BSD) && (defined TIOCNOTTY)
         /* Under BSD then we allocate a dummy tty and then immediatly shut it.
          * This has the desired effect of dissassociating the terminal */
-        if (ptyFp >= 0)
+        if(ptyFp >= 0)
         {
             /* Under BSD 4.2 then we have to break the tty off. We make a
              * dummy call to open a tty and then immediately close it. This
@@ -1729,35 +1743,35 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
              * to use it !! */
             int tempFp;
 
-            if ((tempFp = open ("/dev/tty", O_RDWR, 0)) >= 0)
+            if((tempFp = open ("/dev/tty", O_RDWR, 0)) >= 0)
             {
-                ioctl (tempFp, TIOCNOTTY);
-                close (tempFp);
+                ioctl(tempFp, TIOCNOTTY);
+                close(tempFp);
             }
         }
         
         /* Put the process into parent group 0. Note that setsid() does the
          * same job under SVR4. */
-        setpgrp (0,0);                  /* BSD */
+        setpgrp(0,0);                  /* BSD */
 #else
         /* Under POSIX.1 environments then simply use setsid() to
          * dissassociate from the terminal. This will also sort out the group
          * ID's groups. */
-        setsid ();                      /* Disassociate terminal */
+        setsid();                      /* Disassociate terminal */
 
         /* Assign the parent group. Old System V has a setpgrp() with no
          * arguments. Newer programs should use setgpid() instead. It's
          * debatable if we actually need this because setsid() might do it,
          * however no harm will come from re-assigning the parent group. */
 #ifdef _SVID   
-        setpgrp ();                     /* Old System V */
+        setpgrp();                     /* Old System V */
 #else
-        setpgid (0,0);                  /* Newer UNIX systems */
+        setpgid(0,0);                  /* Newer UNIX systems */
 #endif        
         /* Not sure what the hell this does, why is it here ?? */
 #if (defined TIOCSCTTY) && ((defined _LINUX_BASE) || (defined _FREEBSD_BASE))
         if((ptyFp >= 0) && (outFds[0] >= 0))
-            ioctl (outFds[0],TIOCSCTTY,0);
+            ioctl(outFds[0],TIOCSCTTY,0);
 #endif
 #endif
         /* On BSD systems then we should try and use the new Barkley line
@@ -1765,11 +1779,11 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
          * we will get some problems with the shell. For simple pipes we do
          * not need to bother. */
 #if (defined _BSD) && (defined NTTYDISC) && (defined TIOCSETD)
-        if ((ptyFp >= 0) && (outFds[0] >= 0))
+        if((ptyFp >= 0) && (outFds[0] >= 0))
         {
             /* Use new line discipline.  */
             int ldisc = NTTYDISC;
-            ioctl (outFds[0], TIOCSETD, &ldisc);
+            ioctl(outFds[0], TIOCSETD, &ldisc);
         }
 #endif /* defined (NTTYDISC) && defined (TIOCSETD) */
 
@@ -1829,69 +1843,73 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
 #endif /* _SUNOS */
 
         /* Close the existing stdin/out/err */
-        close (0);
-        close (1);
-        close (2);
+        close(0);
+        close(1);
+        close(2);
 
         /* Duplicate the new descriptors on stdin/out/err */
-        dup2 (outFds[0],0);
-        dup2 (fds[1],1);
-        dup2 (fds[1],2);                /* stdout => stderr */
+        dup2(outFds[0],0);
+        dup2(fds[1],1);
+        dup2(fds[1],2);                /* stdout => stderr */
 
         /* Dispose of the descriptors */
-        close (outFds[0]) ;
-        close (fds[1]) ;
+        close(outFds[0]);
+        close(fds[1]);
 
         /* Fix up the line disciplines */
-        childSetupTty() ;
+        childSetupTty();
 
         /* Set up the arguments for the pipe */
         if((ss=getUsrVar((meUByte *)"ipipe-term")) != NULL)
             mePutenv(meStrdup(ss)) ;
         
-        ss = getShellCmd() ;
-        args[0] = (char *) ss ;
+        ss = getShellCmd();
+        args[0] = (char *) ss;
         if(meStrcmp(ss,comStr))
         {
-            args[1] = "-c" ;
-            args[2] = (char *) comStr ;
-            args[3] = NULL ;
+            args[1] = "-c";
+            args[2] = (char *) comStr;
+            args[3] = NULL;
         }
         else
-            args[1] = NULL ;
+            args[1] = NULL;
 
 #ifndef _NOPUTENV
-        execv(args[0],args) ;
+        execv(args[0],args);
 #else
         /* We need to push the environment variable, however in order to do
          * this then we need to supply the absolute pathname of the
          * executable. Search the $PATH for the executable. */
-        if (meEnviron != NULL)
+        if(meEnviron != NULL)
         {
             char buf[meBUF_SIZE_MAX];
 
-            if (executableLookup (args[0], buf))
+            if (executableLookup(args[0],buf))
                 args[0] = buf;
-            execve (args[0], args, meEnviron) ;
+            execve(args[0],args,meEnviron);
         }
         else
             execv(args[0],args) ;
 #endif
         exit(1) ;                       /* Should never get here unless we fail */
     }
-    ipipe->pid = pid ;
-    ipipe->exitCode = 0 ;
-    ipipe->rfd = fds[0] ;
-    ipipe->outWfd = outFds[1] ;
+    /* close child side */
+    close(fds[1]);
+    if(outFds[0] != fds[1])
+        close(outFds[0]);
+    ipipe->pid = pid;
+    ipipe->exitCode = 0;
+    ipipe->rfd = fds[0];
+    ipipe->outWfd = outFds[1];
 #endif /* _WIN32 */
     
     if(cd)
-        meChdir(curdir) ;
+        meChdir(curdir);
     
     /* Link in the ipipe */
-    ipipe->next = ipipes ;
-    ipipes = ipipe ;
-    noIpipes++ ;
+    ipipe->next = ipipes;
+    ipipes = ipipe;
+    noIpipes++;
 
     /* Create the output buffer */
     {

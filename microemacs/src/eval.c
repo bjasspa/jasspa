@@ -178,13 +178,13 @@ meItoa(int i)
 
 
 meVariable *
-SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue, register meVarList *varList)
+SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue, meVariable **varList)
 {
-    /* set a user variable */
-    meVariable *vp, *vptr = (meVariable *) varList;
+    /* varList is a pointer to the head var address, type cast to a variable - works as first member is next */
+    register meVariable *vp, *vptr = (meVariable *) varList;
+    register int ii;
 #if MEOPT_CMDHASH
-    meUInt hash;
-    int ii;
+    register meUInt hash;
     
     meStringHash(vname,hash);
     /* scan the list looking for the hash & then the var name */
@@ -204,34 +204,17 @@ SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue, register meVarList *varList)
         vptr = vp;
     }
 #else
-    int ii = varList->count, jj;
-    
-    /* scan the list looking for the var name */
-    while(ii)
+    while((vp = vptr->next) != NULL)
     {
-        meUByte *s1, *s2, cc ;
-        
-        jj = (ii>>1)+1 ;
-        vp = vptr ;
-        while(--jj >= 0)
-            vp = vp->next ;
-        
-        s1 = vp->name ;
-        s2 = vname ;
-        for( ; ((cc=*s1++) == *s2) ; s2++)
-            if(cc == 0)
-            {
-                /* found it, replace value */
-                meStrrep(&vp->value,vvalue) ;
-                return vp ;
-            }
-        if(cc > *s2)
-            ii = ii>>1 ;
-        else
+        if((ii = meStrcmp(vname,vp->name)) == 0)
         {
-            ii -= (ii>>1) + 1 ;
-            vptr = vp ;
+            /* found it, replace value */
+            meStrrep(&vp->value,vvalue) ;
+            return vp ;
         }
+        if(ii < 0)
+            break;
+        vptr = vp;
     }
 #endif
     
@@ -242,10 +225,9 @@ SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue, register meVarList *varList)
 #if MEOPT_CMDHASH
         vp->hash = hash;
 #endif
-        vp->next = vptr->next ;
-        vptr->next = vp ;
-        varList->count++ ;
-        vp->value = meStrdup(vvalue) ;
+        vp->next = vptr->next;
+        vp->value = meStrdup(vvalue);
+        vptr->next = vp;
     }
     return vp ;
 }
@@ -305,7 +287,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         }
     case TKCVR:
         {
-            meVarList *varList ;
+            meVariable **varList ;
             meUByte *ss ;
             if((ss=meStrrchr(nn,'.')) != NULL)
             {
@@ -1446,15 +1428,13 @@ hook_jump:
 /* look up a user var's value */
 /* vname - name of user variable to fetch */
 meUByte *
-getUsrLclCmdVar(meUByte *vname, register meVarList *varList)
+getUsrLclCmdVar(meUByte *vname, register meVariable *vp)
 {
+    register int ii;
 #if MEOPT_CMDHASH
-    meVariable *vp;
     meUInt hash;
-    int ii;
     
     meStringHash(vname,hash);
-    vp = varList->head ;
     while(vp != NULL)
     {
         if(vp->hash == hash)
@@ -1469,32 +1449,14 @@ getUsrLclCmdVar(meUByte *vname, register meVarList *varList)
         vp = vp->next ;
     }
 #else
-    meByte *s1, *s2, ss;
-    meVariable *vptr, *vp ;
-    int ii, jj ;
-    
-    vptr = varList->head ;
-    ii = varList->count ;
     /* scan the list looking for the user var name */
-    while(ii)
+    while(vp != NULL)
     {
-        jj = ii>>1 ;
-        vp = vptr ;
-        while(--jj >= 0)
-            vp = vp->next ;
-        
-        s1 = (meByte *) vp->name ;
-        s2 = (meByte *) vname ;
-        for( ; ((ss=*s1++) == *s2) ; s2++)
-            if(ss == 0)
-                return(vp->value);
-        if(ss > *s2)
-            ii = ii>>1 ;
-        else
-        {
-            ii -= (ii>>1) + 1 ;
-            vptr = vp->next ;
-        }
+        if((ii=meStrcmp(vname,vp->name)) == 0)
+            return vp->value;
+        if(ii < 0)
+            break;
+        vp = vp->next ;
     }
 #endif
     return errorm ;     /* return errorm on a bad reference */
@@ -2051,7 +2013,7 @@ getval(meUByte *tkn)   /* find the value of a token */
             }
             else
                 bp = frameCur->bufferCur ;
-            return getUsrLclCmdVar(tt,&(bp->varList)) ;
+            return getUsrLclCmdVar(tt,bp->varList) ;
         }
         
     case TKCVR:
@@ -2067,12 +2029,12 @@ getval(meUByte *tkn)   /* find the value of a token */
                 ii = decode_fncname(tt,1) ;
                 *ss++ = '.' ;
                 if(ii >= 0)
-                    return getUsrLclCmdVar(ss,&(cmdTable[ii]->varList)) ;
+                    return getUsrLclCmdVar(ss,cmdTable[ii]->varList) ;
                 /* not a command - error */
                 return errorm ;
             }
             if(meRegCurr->varList != NULL)
-                return getUsrLclCmdVar(tt,meRegCurr->varList) ;
+                return getUsrLclCmdVar(tt,*(meRegCurr->varList)) ;
             return abortm ;
         }
 #endif
@@ -3404,9 +3366,8 @@ get_flag:
 int
 unsetVariable(int f, int n)     /* Delete a variable */
 {
-    register meVarList  *varList ;      /* User variable pointer */
-    register meVariable *vptr, *prev;   /* User variable pointer */
-    register int vnum;                  /* ordinal number of var refrenced */
+    register meVariable *vptr, *vp;   /* User variable pointers */
+    register int vnum;                /* ordinal number of var refrenced */
 #if MEOPT_CMDHASH
     meUInt hash;
 #endif
@@ -3430,7 +3391,7 @@ unsetVariable(int f, int n)     /* Delete a variable */
     vv = var+1 ;
     vnum = getMacroTypeS(var); 
     if(vnum == TKVAR) 
-        varList = &usrVarList;
+        vptr = (meVariable *) &usrVarList;
     else if(vnum == TKLVR)
     {        
         meUByte *ss;
@@ -3448,7 +3409,7 @@ unsetVariable(int f, int n)     /* Delete a variable */
         }
         else
             bp = frameCur->bufferCur ;
-        varList = &(bp->varList) ;
+        vptr = (meVariable *) &(bp->varList) ;
     }
     else if(vnum == TKCVR)
     {
@@ -3462,60 +3423,50 @@ unsetVariable(int f, int n)     /* Delete a variable */
             *ss++ = '.' ;
             if(idx < 0)
                 return mlwrite(MWABORT,(meUByte *)"[No such variable]");
-            varList = &(cmdTable[idx]->varList) ;
+            vptr = (meVariable *) &(cmdTable[idx]->varList) ;
             vv = ss ;
         }
-        else if((varList = regs->varList) == NULL)
+        else if((vptr = (meVariable *) regs->varList) == NULL)
             return mlwrite(MWABORT,(meUByte *)"[No such variable]");
     }
     else
         return mlwrite(MWABORT,(meUByte *)"[User variable required]");
     
-    /*---   Check for existing legal user variable */
-    prev = NULL ;
-    vptr = varList->head ;
 #if MEOPT_CMDHASH
     meStringHash(vv,hash);
-    while((vptr != NULL) && (vptr->hash <= hash))
+    while(((vp = vptr->next) != NULL) && (vp->hash <= hash))
     {
-        if(vptr->hash == hash)
+        if(vp->hash == hash)
         {
-            if((vnum = meStrcmp(vv,vptr->name)) == 0)
+            if((vnum = meStrcmp(vv,vp->name)) == 0)
             {
                 /* found it, link out the variable and free it */
-                if(prev == NULL)
-                    varList->head = vptr->next;
-                else
-                    prev->next = vptr->next;
-                meNullFree(vptr->value);
-                meFree(vptr);
+                vptr->next = vp->next;
+                meNullFree(vp->value);
+                meFree(vp);
                 return meTRUE;
             }
             if(vnum < 0)
                 break;
         }
-        prev = vptr ;
-        vptr = vptr->next ;
+        vptr = vp ;
+        vp = vp->next ;
     }
 #else
-    while(vptr != NULL)
+    while((vp = vptr->next) != NULL)
     {
-        if(!(vnum=meStrcmp(vptr->name,vv)))
+        if((vnum = meStrcmp(vv,vp->name)) == 0)
         {
-            /* link out the variable to unset and free it */
-            if(prev == NULL)
-                varList->head = vptr->next ;
-            else
-                prev->next = vptr->next ;
-            varList->count-- ;
-            meNullFree(vptr->value) ;
-            meFree(vptr) ;
-            return meTRUE ;           /* True exit */
+            /* found it, link out the variable and free it */
+            vptr->next = vp->next;
+            meNullFree(vp->value);
+            meFree(vp);
+            return meTRUE;
         }
-        if(vnum > 0)
-            break ;
-        prev = vptr ;
-        vptr = vptr->next ;
+        if(vnum < 0)
+            break;
+        vptr = vp ;
+        vp = vp->next ;
     }
 #endif
     /* If its not legal....bitch */
@@ -3630,7 +3581,7 @@ listVariables (int f, int n)
     if(n & 1)
     {
         addLineToEob(bp,(meUByte *)"\nBuffer variables:\n");
-        tv = frameCur->bufferCur->varList.head;
+        tv = frameCur->bufferCur->varList;
         while(tv != NULL)
         {
             showVariable(bp,':',tv->name,tv->value);
@@ -3643,9 +3594,9 @@ listVariables (int f, int n)
         meCommand *cc = cmdHead;
         while(bb != NULL)
         {
-            if((tv = bb->varList.head) != NULL)
+            if((tv = bb->varList) != NULL)
             {
-                sprintf(buf,"\nBuffer variables: %s\n",bb->name);
+                sprintf((char *)buf,"\nBuffer variables: %s\n",bb->name);
                 addLineToEob(bp,buf);
                 while(tv != NULL)
                 {
@@ -3657,13 +3608,13 @@ listVariables (int f, int n)
         }
         while(cc != NULL)
         {
-            if((tv = cc->varList.head) != NULL)
+            if((tv = cc->varList) != NULL)
             {
-                sprintf(buf,"\nCommand variables: %s\n",cc->name);
+                sprintf((char *)buf,"\nCommand variables: %s\n",cc->name);
                 addLineToEob(bp,buf);
                 while(tv != NULL)
                 {
-                    showVariable(bp,':',tv->name,tv->value);
+                    showVariable(bp,'.',tv->name,tv->value);
                     tv = tv->next;
                 }
             }
@@ -3676,7 +3627,7 @@ listVariables (int f, int n)
         showVariable(bp,'$',envars[ii],gtenv(envars[ii]));
     
     addLineToEob(bp,(meUByte *)"\nGlobal variables:\n");
-    for (tv=usrVarList.head ; tv != NULL ; tv = tv->next)
+    for (tv=usrVarList ; tv != NULL ; tv = tv->next)
         showVariable(bp,'%',tv->name,tv->value);
     
     bp->dotLine = meLineGetNext(bp->baseLine);

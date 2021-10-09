@@ -1186,7 +1186,7 @@ dobuf_exit:
 
 
 static int
-donbuf(meLine *hlp, meVarList *varList, meUByte *commandName, int f, int n)
+donbuf(meLine *hlp, meVariable **varList, meUByte *commandName, int f, int n)
 {
     meRegister rp;
     meUByte oldcle;
@@ -1385,7 +1385,7 @@ execFuncHidden(int keyCode, int index, meUInt arg)
         ff = meRegHead->force ;
         meRegHead->force = 1 ;
         if((execFunc(ii,f,n) > 0) ||
-           ((ss=getUsrLclCmdVar((meUByte *)"status",&(cmdTable[ii]->varList))) == errorm) || meAtoi(ss))
+           ((ss=getUsrLclCmdVar((meUByte *)"status",cmdTable[ii]->varList)) == errorm) || meAtoi(ss))
             index = -1 ;
         meRegHead->force = ff ;
     }
@@ -1505,7 +1505,7 @@ executeBuffer(int f, int n)
 {
     register meBuffer *bp;                /* ptr to buffer to execute */
     register int s;                     /* status return */
-    meVarList varList={NULL,0};
+    meVariable *varList=NULL;
     meUByte  bufn[meBUF_SIZE_MAX];                /* name of buffer to execute */
     meInt  ln ;
     
@@ -1548,16 +1548,12 @@ executeBuffer(int f, int n)
         }
     }
     /* free off any command variables */
-    if(varList.head != NULL)
+    while(varList != NULL)
     {
-        meVariable *cv=varList.head, *ncv ;
-        while(cv != NULL)
-        {
-            ncv = cv->next ;
-            meNullFree(cv->value) ;
-            free(cv) ;
-            cv = ncv ;
-        }
+        meVariable *nv=varList->next;
+        meNullFree(varList->value);
+        free(varList) ;
+        varList = nv ;
     }
     return s ;
 }
@@ -1570,7 +1566,7 @@ executeBuffer(int f, int n)
 int
 execFile(meUByte *fname, int f, int n)
 {
-    meVarList     varList={NULL,0};
+    meVariable   *varList=NULL;
     meUByte       fn[meBUF_SIZE_MAX] ;
     meLine        hlp ;
     register int  status=0 ;
@@ -1599,16 +1595,12 @@ execFile(meUByte *fname, int f, int n)
         macroPrintError(0,&hlp,fn) ;
     meLineLoopFree(&hlp,0) ;
     /* free off any command variables */
-    if(varList.head != NULL)
+    while(varList != NULL)
     {
-        meVariable *cv=varList.head, *ncv ;
-        while(cv != NULL)
-        {
-            ncv = cv->next ;
-            meNullFree(cv->value) ;
-            free(cv) ;
-            cv = ncv ;
-        }
+        meVariable *nv=varList->next;
+        meNullFree(varList->value);
+        free(varList) ;
+        varList = nv ;
     }
     
     return status ;

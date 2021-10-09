@@ -3990,7 +3990,7 @@ TTwaitForChar(void)
 }
 
 void
-TTsleep(int  msec, int  intable, meVarList *waitVarList)
+TTsleep(int  msec, int  intable, meVariable **waitVarList)
 {
     meUByte *ss ;
     int sgarbfOld ;
@@ -4006,20 +4006,21 @@ TTsleep(int  msec, int  intable, meVarList *waitVarList)
     else
         return ;
     
-    sgarbfOld = sgarbf ;
-    sgarbf = meFALSE ;
+    sgarbfOld = sgarbf;
     do
     {
         handleTimerExpired() ;
         if(intable && TTahead())
             break ;
         if((waitVarList != NULL) &&
-           (((ss=getUsrLclCmdVar((meUByte *)"wait",waitVarList)) == errorm) || !meAtoi(ss)))
+           (((ss=getUsrLclCmdVar((meUByte *)"wait",*waitVarList)) == errorm) || !meAtoi(ss)))
             break ;
-        waitForEvent(1) ;
-    } while(!isTimerExpired(SLEEP_TIMER_ID)) ;
-    timerKill(SLEEP_TIMER_ID) ;             /* Kill off the timer */
-    sgarbf = sgarbfOld ;
+        sgarbfOld |= sgarbf;
+        sgarbf = meFALSE;
+        waitForEvent(1);
+    } while(!isTimerExpired(SLEEP_TIMER_ID));
+    timerKill(SLEEP_TIMER_ID);             /* Kill off the timer */
+    sgarbf |= sgarbfOld;
 }
 
 #if MEOPT_TYPEAH

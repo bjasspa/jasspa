@@ -106,9 +106,9 @@ meUByte commandFlag[] =
 
 #if MEOPT_EXTENDED
 #if MEOPT_CMDHASH
-#define DEFFUNC(s,t,k,f,r,n,h)          {(meCommand *) n, (meCommand *) h, (meUByte *)s, f, { (meVariable *) 0, 0}, k, r},
+#define DEFFUNC(s,t,k,f,r,n,h)          {(meCommand *) n, (meCommand *) h, (meUByte *)s, f, (meVariable *) 0, k, r},
 #else
-#define DEFFUNC(s,t,k,f,r,n,h)          {(meCommand *) n, (meUByte *)s, f, { (meVariable *) 0, 0}, r},
+#define DEFFUNC(s,t,k,f,r,n,h)          {(meCommand *) n, (meUByte *)s, f, (meVariable *) 0, r},
 #endif
 #else
 #if MEOPT_CMDHASH

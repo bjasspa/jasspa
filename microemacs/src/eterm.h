@@ -90,7 +90,7 @@ extern meUShort   TTgetc(void) ;
 extern void       TThandleBlink(int initFlag) ;
 extern void       TTmove(int r, int c) ;
 extern void       TTwaitForChar(void) ;
-extern void       TTsleep(int msec, int intable, meVarList *waitVarList) ;
+extern void       TTsleep(int msec, int intable, meVariable **waitVarList) ;
 #if MEOPT_TYPEAH
 extern int        TTahead(void) ;
 #endif

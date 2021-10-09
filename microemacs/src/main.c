@@ -306,7 +306,7 @@ execute(register int c, register int f, register int n)
         ff = meRegHead->force ;
         meRegHead->force = 1 ;
         if(((cmdstatus = (execFunc(ii,f,n) > 0))) ||
-           ((ss=getUsrLclCmdVar((meUByte *)"status",&(cmdTable[ii]->varList))) == errorm) || meAtoi(ss))
+           ((ss=getUsrLclCmdVar((meUByte *)"status",cmdTable[ii]->varList)) == errorm) || meAtoi(ss))
         {
             meRegHead->force = ff ;
             return cmdstatus ;
@@ -2102,10 +2102,10 @@ _meAssert (char *file, int line)
 int
 commandWait(int f, int n)
 {
-    meVarList *varList=NULL ;
-    meUByte clexecSv ;
-    int execlevelSv ;
-    meUByte *ss ;
+    meVariable **varList;
+    meUByte clexecSv;
+    int execlevelSv;
+    meUByte *ss;
 
     if(f && n)
     {
@@ -2119,9 +2119,9 @@ commandWait(int f, int n)
         return meTRUE ;
     }
     if((meRegCurr->commandName == NULL) ||
-       ((f=decode_fncname(meRegCurr->commandName,1)) < 0) ||
-       ((varList = &(cmdTable[f]->varList)) == NULL))
+       ((f=decode_fncname(meRegCurr->commandName,1)) < 0))
         return meTRUE ;
+    varList = &(cmdTable[f]->varList);
 
     if(n == 0)
     {
@@ -2139,7 +2139,7 @@ commandWait(int f, int n)
              * will be true and the screen will never be refreshed - test with gdiff */
             update(meFALSE);
             TTsleep(-1,1,varList) ;
-            if(((ss=getUsrLclCmdVar((meUByte *)"wait",varList)) == errorm) || !meAtoi(ss))
+            if(((ss=getUsrLclCmdVar((meUByte *)"wait",*varList)) == errorm) || !meAtoi(ss))
                 break ;
             doOneKey() ;
             if(TTbreakFlag)
@@ -2150,7 +2150,7 @@ commandWait(int f, int n)
                 TTbreakFlag = 0 ;
             }
         } while((varList != NULL) &&
-                ((ss=getUsrLclCmdVar((meUByte *)"wait",varList)) != errorm) && meAtoi(ss)) ;
+                ((ss=getUsrLclCmdVar((meUByte *)"wait",*varList)) != errorm) && meAtoi(ss)) ;
         clexec = clexecSv ;
         execlevel = execlevelSv ;
     }

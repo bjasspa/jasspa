@@ -3097,7 +3097,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
 #if MEOPT_REGISTRY
     meUByte upb[meBUF_SIZE_MAX] ;
 #endif
-    meUByte **fls, ft;
+    meUByte **fls=NULL, ft;
     int noFiles=0;
 #ifdef _UNIX
     struct stat statbuf;
@@ -3184,7 +3184,6 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                 tfsdirent_t *dirent;
                 meUByte *ff, *bb, fname[meBUF_SIZE_MAX] ;
                 
-                fls = NULL;
                 meStrcpy(fname,pathName) ;
                 bb = fname + meStrlen(fname) ;
                 
@@ -3302,7 +3301,6 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
     /* free off the old */
     meNullFree(dirList->path) ;
     freeFileList(dirList->size,dirList->list) ;
-    fls = NULL ;
     
 #ifdef _DOS
     if(pathName[0] == '\0')

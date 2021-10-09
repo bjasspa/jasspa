@@ -530,7 +530,7 @@ typedef struct meAbbrev {
 /* structure to hold user variables and their definitions */
 typedef struct meVariable
 {
-    struct meVariable *next;                    /* Next pointer, MUST BE FIRST as with meVarList head */
+    struct meVariable *next;                    /* Next pointer, MUST BE FIRST  */
     meUByte           *value;                   /* value (string)               */
 #if MEOPT_CMDHASH
     meUInt             hash;                    /* name hash for rapid search   */
@@ -538,11 +538,6 @@ typedef struct meVariable
     meUByte            name[1];                 /* name of user variable        */
 } meVariable;
 
-typedef struct meVarList
-{
-    struct meVariable *head;                    /* Head pointer, MUST BE FIRST as with meVariable next */
-    int                count;
-} meVarList ;
 
 /* structure for the name binding table */
 
@@ -554,7 +549,7 @@ typedef struct meCommand {
     meUByte           *name ;                   /* name of command              */
     meIFuncII          func ;                   /* function name is bound to    */
 #if MEOPT_EXTENDED
-    meVarList          varList ;                /* command variables list       */
+    meVariable        *varList ;                /* command variables list       */
 #endif
 #if MEOPT_CMDHASH
     meUInt             hash ;                   /* next command in hash table   */
@@ -570,7 +565,7 @@ typedef struct meMacro {
     meUByte           *name ;                   /* name of macro                */
     meLine            *hlp ;                    /* Head line of macro           */
 #if MEOPT_EXTENDED
-    meVarList          varList ;                /* command variables list       */
+    meVariable        *varList ;                /* command variables list       */
 #endif
 #if MEOPT_CMDHASH
     meUInt             hash ;                   /* next command in hash table   */
@@ -691,39 +686,39 @@ typedef struct meNarrow {
  * have not been read in yet. These get read in at "use buffer" time.
  */
 typedef struct  meBuffer {
-    struct  meBuffer  *next ;                   /* Link to next struct meBuffer */
+    struct  meBuffer  *next;                    /* Link to next struct meBuffer */
 #if MEOPT_ABBREV
-    meAbbrev          *abbrevFile ;             /* Abreviation file             */
+    meAbbrev          *abbrevFile;              /* Abreviation file             */
 #endif
-    meAnchor          *anchorList ;             /* pointer to the mark list     */
+    meAnchor          *anchorList;              /* pointer to the mark list     */
 #if MEOPT_LOCALBIND
-    struct meBind     *bindList ;               /* pointer to local bindings    */
+    struct meBind     *bindList;                /* pointer to local bindings    */
 #endif
 #if MEOPT_NARROW
-    meNarrow          *narrow ;                 /* pointer to narrow structures */
+    meNarrow          *narrow;                  /* pointer to narrow structures */
 #endif
 #if MEOPT_EXTENDED
-    meVarList          varList ;                /* User local buffer variables  */
+    meVariable        *varList;                 /* User local buffer variables  */
 #endif
-    meStat             stats ;                  /* file stats - inc. mod time   */
+    meStat             stats;                   /* file stats - inc. mod time   */
     meLine            *dotLine;                 /* Link to "." meLine structure */
     meLine            *markLine;                /* The same as the above two,   */
     meLine            *baseLine;                /* Link to the header meLine    */
-    meUByte           *fileName ;               /* File name                    */
-    meUByte           *name ;                   /* Buffer name                  */
+    meUByte           *fileName;                /* File name                    */
+    meUByte           *name;                    /* Buffer name                  */
 #if MEOPT_EXTENDED
-    meUByte           *modeLineStr ;            /* buffer mode-line format      */
+    meUByte           *modeLineStr;             /* buffer mode-line format      */
 #endif
 #if MEOPT_CRYPT
     meUByte           *cryptKey;                /* current encrypted key        */
 #endif
 #if MEOPT_UNDO
-    struct meUndoNode *undoHead ;               /* First undo node              */
-    struct meUndoNode *undoTail ;               /* Last undo node               */
-    meUInt             undoContFlag ;           /* Was the last undo this com'd?*/ 
+    struct meUndoNode *undoHead;                /* First undo node              */
+    struct meUndoNode *undoTail;                /* Last undo node               */
+    meUInt             undoContFlag;            /* Was the last undo this com'd?*/ 
 #endif
     meInt              autoTime;                /* auto-save time for file      */
-    meInt              vertScroll ;             /* Windows top line number      */
+    meInt              vertScroll;              /* Windows top line number      */
     meInt              dotLineNo;               /* current line number          */
     meInt              markLineNo;              /* current mark line number     */
     meInt              lineCount;               /* end line number              */
@@ -1258,7 +1253,7 @@ typedef struct meUndoNarrow {
 typedef struct meRegister {
     struct meRegister *prev;
 #if MEOPT_EXTENDED
-    meVarList         *varList;
+    meVariable       **varList;
 #endif
     meUByte           *commandName;
     meUByte           *execstr;

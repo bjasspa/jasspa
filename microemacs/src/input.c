@@ -675,17 +675,28 @@ createBuffList(meUByte ***listPtr, int noHidden)
 int
 createVarList(meUByte ***listPtr)
 {
-    int     ii, nn ;
-    meUByte  **list ;
+    int ii ;
+    meUByte **list ;
 #if MEOPT_EXTENDED
-    meVariable *vptr;     	/* User variable pointer */
-
-    nn = NEVARS + usrVarList.count + frameCur->bufferCur->varList.count ;
-#else
-    nn = NEVARS ;
+    meVariable *vp;     	/* User variable pointer */
 #endif
     
-    if((list = (meUByte **) meMalloc(sizeof(meUByte *) * nn)) == NULL)
+    ii = NEVARS ;
+#if MEOPT_EXTENDED
+    vp = usrVarList;
+    while(vp != NULL)
+    {
+        ii++;
+        vp = vp->next;
+    }
+    vp = frameCur->bufferCur->varList;
+    while(vp != NULL)
+    {
+        ii++;
+        vp = vp->next;
+    }
+#endif    
+    if((list = (meUByte **) meMalloc(sizeof(meUByte *) * ii)) == NULL)
         return 0 ;
     *listPtr = list ;
     
@@ -697,19 +708,25 @@ createVarList(meUByte ***listPtr)
         meStrcpy(list[ii]+1,envars[ii]) ;
     }
 #if MEOPT_EXTENDED
-    for(vptr=usrVarList.head ; vptr != NULL ; vptr = vptr->next,ii++)
+    vp = usrVarList;
+    while(vp != NULL)
     {
-        if((list[ii] = meMalloc(meStrlen(vptr->name)+2)) == NULL)
+        if((list[ii] = meMalloc(meStrlen(vp->name)+2)) == NULL)
             return 0 ;
-        list[ii][0] = '%' ;
-        meStrcpy(list[ii]+1,vptr->name) ;
+        list[ii][0] = '%';
+        meStrcpy(list[ii]+1,vp->name);
+        ii++;
+        vp = vp->next;
     }
-    for(vptr=frameCur->bufferCur->varList.head ; vptr != NULL ; vptr = vptr->next,ii++)
+    vp = frameCur->bufferCur->varList;
+    while(vp != NULL)
     {
-        if((list[ii] = meMalloc(meStrlen(vptr->name)+2)) == NULL)
+        if((list[ii] = meMalloc(meStrlen(vp->name)+2)) == NULL)
             return 0 ;
-        list[ii][0] = ':' ;
-        meStrcpy(list[ii]+1,vptr->name) ;
+        list[ii][0] = ':';
+        meStrcpy(list[ii]+1,vp->name);
+        ii++;
+        vp = vp->next;
     }
 #endif
     return ii ;

@@ -935,10 +935,10 @@ bclear(register meBuffer *bp)
 #endif
 #if MEOPT_EXTENDED
     /* Clean out the local buffer variables */
-    if (bp->varList.head != NULL)
+    if (bp->varList != NULL)
     {
         meVariable *bv, *tv;
-        bv = bp->varList.head ;
+        bv = bp->varList;
         do
         {
             tv = bv;
@@ -946,8 +946,7 @@ bclear(register meBuffer *bp)
             meNullFree(tv->value) ;
             free(tv) ;
         } while (bv != NULL);
-        bp->varList.head = NULL ;
-        bp->varList.count = 0 ;
+        bp->varList = NULL ;
     }
 #endif
     mk = bp->anchorList;

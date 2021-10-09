@@ -306,22 +306,22 @@ extern meUByte    BmainN[];
 extern meUByte    BhelpN[];
 
 #if MEOPT_EXTENDED
-extern meVarList  usrVarList ;          /* user variables list          */
-extern meUByte   *fileIgnore ;
-extern meUByte   *frameTitle ;          /* String used in frame title   */
+extern meVariable *usrVarList;          /* user variables list          */
+extern meUByte   *fileIgnore;
+extern meUByte   *frameTitle;           /* String used in frame title   */
 #endif
 
-extern meUByte   *meUserName ;
-extern meUByte   *meUserPath ;
+extern meUByte   *meUserName;
+extern meUByte   *meUserPath;
 
 #if MEOPT_FILENEXT
-extern meUByte   *flNextFileTemp ;
-extern meUByte   *flNextLineTemp ;
+extern meUByte   *flNextFileTemp;
+extern meUByte   *flNextLineTemp;
 
-extern meUByte    noNextLine ;
-extern meUByte  **nextName ;
-extern meUByte   *nextLineCnt ;
-extern meUByte ***nextLineStr ;
+extern meUByte    noNextLine;
+extern meUByte  **nextName;
+extern meUByte   *nextLineCnt;
+extern meUByte ***nextLineStr;
 #endif
 
 #if MEOPT_RCS
@@ -735,22 +735,22 @@ meUByte   BserverN[] = "*server*" ;
 #endif
 
 #if MEOPT_EXTENDED
-meVarList usrVarList={NULL,0} ;         /* user variables list          */
-meUByte  *fileIgnore=NULL ;
-meUByte  *frameTitle=NULL ;             /* String used in frame title   */
+meVariable *usrVarList=NULL;            /* user variables list          */
+meUByte  *fileIgnore=NULL;
+meUByte  *frameTitle=NULL;              /* String used in frame title   */
 #endif
 
-meUByte  *meUserName=NULL ;
-meUByte  *meUserPath=NULL ;
+meUByte  *meUserName=NULL;
+meUByte  *meUserPath=NULL;
 
 #if MEOPT_FILENEXT
-meUByte  *flNextFileTemp=NULL ;
-meUByte  *flNextLineTemp=NULL ;
+meUByte  *flNextFileTemp=NULL;
+meUByte  *flNextLineTemp=NULL;
 
-meUByte    noNextLine=0 ;
-meUByte  **nextName=NULL ;
-meUByte   *nextLineCnt=NULL ;
-meUByte ***nextLineStr=NULL ;
+meUByte    noNextLine=0;
+meUByte  **nextName=NULL;
+meUByte   *nextLineCnt=NULL;
+meUByte ***nextLineStr=NULL;
 #endif
 
 #if MEOPT_RCS

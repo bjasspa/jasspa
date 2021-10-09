@@ -225,7 +225,7 @@ BEGIN
         BEGIN
             VALUE "Comments", ME_COMPANY_NAME "'s " ME_NANOEMACS_FULLNAME " Win32 Build.\0"
             VALUE "CompanyName", ME_COMPANY_NAME "\0"
-            VALUE "FileDescription", ME_NANOEMACS_SHORTNAME "32\0"
+            VALUE "FileDescription", ME_NANOEMACS_FULLNAME " Editor\0"
             VALUE "FileVersion", meVERSION_CODE "\0"
             VALUE "InternalName", ME_NANOEMACS_SHORTNAME meYEAR "\0"
             VALUE "LegalCopyright", "Copyright © 1988-" meCENTURY meYEAR "\0"

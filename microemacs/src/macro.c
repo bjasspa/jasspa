@@ -209,8 +209,7 @@ createMacro(meUByte *name)
         }
         mac->id = cmdTableSize ;
 #if MEOPT_EXTENDED
-        mac->varList.head = NULL ;
-        mac->varList.count = 0 ;
+        mac->varList = NULL ;
         mac->fname = NULL ;
         mac->callback = -1 ;
 #endif

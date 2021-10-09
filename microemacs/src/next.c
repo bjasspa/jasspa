@@ -225,7 +225,7 @@ getNextLine(int f,int n)
                         return meFALSE ;
                     nextFile = var->value ;
                 }
-                else if((nextFile = getUsrLclCmdVar((meUByte *)"next-file",&(bp->varList))) == errorm)
+                else if((nextFile = getUsrLclCmdVar((meUByte *)"next-file",bp->varList)) == errorm)
                     return mlwrite(MWABORT,(meUByte *)"[No File name]") ;
                 else
                     ii = meStrlen(nextFile) ;

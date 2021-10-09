@@ -263,10 +263,10 @@ extern  int     mlwrite(int flags, meUByte *fmt, ...) ;
 #define meRSTRCMP_USEMAIN    0x10
 extern  int     regexStrCmp(meUByte *str, meUByte *reg, int flags) ;
 extern	meUByte *gtfun(meUByte *fname);
-extern  meUByte *getUsrLclCmdVar(meUByte *vname, register meVarList *varList) ;
-#define getUsrVar(vname) getUsrLclCmdVar(vname,&usrVarList)
+extern  meUByte *getUsrLclCmdVar(meUByte *vname, register meVariable *varList);
+#define getUsrVar(vname) getUsrLclCmdVar(vname,usrVarList)
 extern	meVariable *SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue,
-                                    register meVarList *varList) ;
+                                    register meVariable **varList) ;
 extern	int	setVar(meUByte *vname, meUByte *vvalue, meRegister *regs) ;
 extern	int	setVariable(int f, int n);
 extern	meUByte *meItoa(int i);

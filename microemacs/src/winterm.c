@@ -5210,7 +5210,7 @@ TTaheadFlush (void)
  * is no type-ahead data.
  */
 void
-TTsleep (int msec, int intable, meVarList *waitVarList)
+TTsleep (int msec, int intable, meVariable **waitVarList)
 {
     meUByte *ss ;
     
@@ -5244,7 +5244,7 @@ TTsleep (int msec, int intable, meVarList *waitVarList)
         handleTimerExpired() ;
         
         if((waitVarList != NULL) &&
-           (((ss=getUsrLclCmdVar((meUByte *)"wait",waitVarList)) == errorm) || !meAtoi(ss)))
+           (((ss=getUsrLclCmdVar((meUByte *)"wait",*waitVarList)) == errorm) || !meAtoi(ss)))
             break ;
         
         /* Suspend until there is another message to process. */

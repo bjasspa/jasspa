@@ -897,7 +897,7 @@ TTaddColor(meColor index, meUByte r, meUByte g, meUByte b)
 }
 
 void
-TTsleep(int msec, int intable, meVarList *waitVarList)
+TTsleep(int msec, int intable, meVariable **waitVarList)
 {
     meUByte *ss ;
     
@@ -918,7 +918,7 @@ TTsleep(int msec, int intable, meVarList *waitVarList)
         if(TTahead() && intable)                    /* Interruptable ?? */
             break ;
         if((waitVarList != NULL) &&
-           (((ss=getUsrLclCmdVar((meUByte *)"wait",waitVarList)) == errorm) || !meAtoi(ss)))
+           (((ss=getUsrLclCmdVar((meUByte *)"wait",*waitVarList)) == errorm) || !meAtoi(ss)))
             break ;
     } while(!isTimerExpired(SLEEP_TIMER_ID)) ;
     timerKill(SLEEP_TIMER_ID) ;             /* Kill off the timer */

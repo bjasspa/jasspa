@@ -1259,6 +1259,7 @@ ffSUrlFileOpen(meIo *io, meUByte *host, meUByte *port, meUByte *user, meUByte *p
         meUByte cc;
         /* printf("Got Location: [%s]\n",ss) ;*/
         /* if this starts with http:// https:// etc. then start again */
+        meSslClose(&(io->sslp),0);
         io->redirect++;
         if(io->redirect > 5)
         {
@@ -1285,7 +1286,7 @@ ffSUrlFileOpen(meIo *io, meUByte *host, meUByte *port, meUByte *user, meUByte *p
                 return meABORT;
             return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Redirection loop to %s]",buff);
         }
-        return ffHttpFileOpen(io,host,port,user,pass,buff,rwflag);
+        return ffSUrlFileOpen(io,host,port,user,pass,buff,rwflag);
     }
     io->length = io->sslp.length;
     return meTRUE ;
@@ -1309,6 +1310,8 @@ ffUrlFileSetupFlags(meIo *io, meUInt rwflag)
     io->urlFlags = 0;
     if((ss = getUsrVar(ffUrlFlagsVName[ti])) == errorm)
         ss = (meUByte *) "c";
+    if(meStrchr(ss,'i') != NULL)
+        io->urlFlags |= meIOURLF_IGN_CRT_ERR;
     if((meStrchr(ss,'c') != NULL) &&
        ((io->urlBp=bfind(ffUrlConsoleBName[ti],BFND_CREAT)) != NULL))
     {
@@ -1316,8 +1319,6 @@ ffUrlFileSetupFlags(meIo *io, meUInt rwflag)
         /* must not show the console if inserting a file as the destination buffer will be displayed and unstable */
         if(meStrchr(ss,'d') != NULL)
             io->urlFlags |= meIOURLF_SHOW_DETAILS;
-        if(meStrchr(ss,'i') != NULL)
-            io->urlFlags |= meIOURLF_IGN_CRT_ERR;
         if(meStrchr(ss,'p') != NULL)
             io->urlFlags |= meIOURLF_SHOW_PROGRESS;
         if((meStrchr(ss,'s') != NULL) && !(rwflag & meRWFLAG_INSERT))
