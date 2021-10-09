@@ -31,8 +31,6 @@
 #include <openssl/conf.h>
 #include <openssl/engine.h>
 
-#if meSSL_USE_DLL
-
 #ifdef _WIN32
 #define meSslLibGetFunc    GetProcAddress
 #define meSslGetError      GetLastError
@@ -53,6 +51,8 @@
 #define meSocketClose      close
 #define meBadSocket        -1
 #endif
+
+#if meSSL_USE_DLL
 
 typedef BIO *(*meSSLF_BIO_new)(const BIO_METHOD *type);
 typedef int (*meSSLF_BIO_free)(BIO *a);
@@ -482,6 +482,7 @@ meSslInitSystemCaCert(SSL_CTX *sslCtx, char *rbuff)
     X509 *x509;
     X509_STORE *store;
     char buf[128];
+    int ii=1;
     
     if((store = MESSLFunc(SSL_CTX_get_cert_store)(sslCtx)) == NULL)
     {
@@ -489,45 +490,48 @@ meSslInitSystemCaCert(SSL_CTX *sslCtx, char *rbuff)
             logFunc((meUByte *) "OpenSSL: Failed to get SSL_CTX cert store",logData);
         return;
     }
-
-    if((hStore = CertOpenSystemStore(0,"Root")) == 0)
-    {
-        if(logFlags & meSSL_LOG_WARNING)
-            logFunc((meUByte *) "OpenSSL: Failed to open Root system cert store",logData);
-        return;
-    }
-
-    while((cCntx = CertEnumCertificatesInStore(hStore,cCntx)) != NULL)
-    {
-        //uncomment the line below if you want to see the certificates as pop ups
-        //CryptUIDlgViewContext(CERT_STORE_CERTIFICATE_CONTEXT,cCntx,NULL,NULL,0,NULL);
-        ce = cCntx->pbCertEncoded;
-        x509 = MESSLFunc(d2i_X509)(NULL,&ce,cCntx->cbCertEncoded);
-        if (x509)
+    
+    do {
+        // The Root store holds the main root CAs and the CA store holds any intermediate CAs - bail out if we can't open the Root
+        if((hStore = CertOpenSystemStore(0,(ii) ? "Root":"CA")) == 0)
         {
-            MESSLFunc(X509_NAME_oneline)(MESSLFunc(X509_get_subject_name)(x509),buf,sizeof(buf));
-            if(MESSLFunc(X509_STORE_add_cert)(store,x509) == 1)
+            if(logFlags & meSSL_LOG_WARNING)
+                logFunc((meUByte *) "OpenSSL: Failed to open Root system cert store",logData);
+            return;
+        }
+
+        while((cCntx = CertEnumCertificatesInStore(hStore,cCntx)) != NULL)
+        {
+            //uncomment the line below if you want to see the certificates as pop ups
+            //CryptUIDlgViewContext(CERT_STORE_CERTIFICATE_CONTEXT,cCntx,NULL,NULL,0,NULL);
+            ce = cCntx->pbCertEncoded;
+            x509 = MESSLFunc(d2i_X509)(NULL,&ce,cCntx->cbCertEncoded);
+            if (x509)
             {
-                if(logFlags & meSSL_LOG_VERBOSE)
+                MESSLFunc(X509_NAME_oneline)(MESSLFunc(X509_get_subject_name)(x509),buf,sizeof(buf));
+                if(MESSLFunc(X509_STORE_add_cert)(store,x509) == 1)
                 {
-                    snprintf(rbuff,meSSL_BUFF_SIZE,"OpenSSL: Loaded & added Windows Root certificate for: subject='%s'",buf);
+                    if(logFlags & meSSL_LOG_VERBOSE)
+                    {
+                        snprintf(rbuff,meSSL_BUFF_SIZE,"OpenSSL: Loaded & added Windows Root certificate for: subject='%s'",buf);
+                        logFunc(rbuff,logData);
+                    }
+                }
+                else if(logFlags & meSSL_LOG_WARNING)
+                {
+                    snprintf(rbuff,meSSL_BUFF_SIZE,"OpenSSL: Loaded but failed to added Windows Root certificate for: subject='%s'",buf);
                     logFunc(rbuff,logData);
                 }
+                MESSLFunc(X509_free)(x509);
             }
             else if(logFlags & meSSL_LOG_WARNING)
             {
-                snprintf(rbuff,meSSL_BUFF_SIZE,"OpenSSL: Loaded but failed to added Windows Root certificate for: subject='%s'",buf);
+                snprintf(rbuff,meSSL_BUFF_SIZE,"OpenSSL: Failed to generate x509 for Windows Root certificate",logData);
                 logFunc(rbuff,logData);
             }
-            MESSLFunc(X509_free)(x509);
         }
-        else if(logFlags & meSSL_LOG_WARNING)
-        {
-            snprintf(rbuff,meSSL_BUFF_SIZE,"OpenSSL: Failed to generate x509 for Windows Root certificate",logData);
-            logFunc(rbuff,logData);
-        }
-    }
-    CertCloseStore(hStore,0);
+        CertCloseStore(hStore,0);
+    } while(--ii >= 0);
 }
 #endif          
 
@@ -686,7 +690,6 @@ meSslInit(meUByte *buff)
     // load windows system ca certs
     meSslInitSystemCaCert(meSslCtx,buff);
 #endif
-    
 #ifdef X509_V_FLAG_PARTIAL_CHAIN
     /* Set X509_V_FLAG_PARTIAL_CHAIN to allow the client to anchor trust in
      * a non-self-signed certificate. This defies RFC 4158 (Path Building)
@@ -1088,6 +1091,7 @@ meSslOpen(meSslFile *sFp, meUByte *host, meInt port, meUByte *user, meUByte *pas
     
     sFp->sck = meBadSocket;
     sFp->ssl = NULL;
+    sFp->length = -1;
     if((meSslCtx == NULL) && ((ret = meSslInit(rbuff)) < 0))
         return ret;
     MESSLFunc(ERR_clear_error)();
@@ -1333,14 +1337,15 @@ meSslOpen(meSslFile *sFp, meUByte *host, meInt port, meUByte *user, meUByte *pas
     /* must read header getting now ditch the header, read up to the first blank line */
     if(logFlags & meSSL_LOG_HEADERS)
         logFunc((meUByte *) "meSSL Response header:",logData);
-    sFp->length = -1;
+    err = 1;
     while(meSslReadLine(sFp,buff) > 0)
     {
         if(logFlags & meSSL_LOG_HEADERS)
             logFunc(buff,logData);
         if(buff[0] == '\0')
-            return 1;
-        if(!strncmp((char *) buff,"Content-Length:",15))
+            return err;
+        if(((buff[0] == 'C') && !strncmp((char *) buff+1,"ontent-Length:",14)) ||
+           ((buff[0] == 'c') && !strncmp((char *) buff+1,"ontent-length:",14)))
             sFp->length = atoi((char *) buff+15) ;
         else if(((buff[0] == 'L') || (buff[0] == 'l')) && !strncmp((char *) buff+1,"ocation:",8))
         {
@@ -1352,14 +1357,13 @@ meSslOpen(meSslFile *sFp, meUByte *host, meInt port, meUByte *user, meUByte *pas
             if(*ss != '\0')
             {
                 strcpy((char *) rbuff,(char *) ss);
-                /* note: probably should carry on reading to get updated cookies etc. */
-                return 0;
+                /* note: carry on reading to validate the rest of the header and get updated cookies etc. */
+                err = 0;
             }
         }
     }
-    /* TODO: Return error? */
     sFp->length = 0;
-    return 1;
+    return err;
 }
 
 int

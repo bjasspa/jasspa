@@ -28,12 +28,12 @@
 #
 #     To build from the command line using nmake & makefile. 
 #
-#	Run "nmake -f win32vc10.mak"            for optimised build produces ./.win32vc10-release-mew/mew32.exe
-#	Run "nmake -f win32vc10.mak BCFG=debug" for debug build produces     ./.win32vc10-debug-mew/mew32.exe
-#	Run "nmake -f win32vc10.mak BCOR=ne"    for ne build produces        ./.win32vc10-release-new/new32.exe
+#	Run "nmake -f win32vc15.mak"            for optimised build produces ./.win32vc15-release-mew/mew32.exe
+#	Run "nmake -f win32vc15.mak BCFG=debug" for debug build produces     ./.win32vc15-debug-mew/mew32.exe
+#	Run "nmake -f win32vc15.mak BCOR=ne"    for ne build produces        ./.win32vc15-release-new/new32.exe
 #
-#	Run "nmake -f win32vc10.mak clean"      to clean source directory
-#	Run "nmake -f win32vc10.mak spotless"   to clean source directory even more
+#	Run "nmake -f win32vc15.mak clean"      to clean source directory
+#	Run "nmake -f win32vc15.mak spotless"   to clean source directory even more
 #
 # See https://wiki.openssl.org/index.php/Binaries for OpenSSL download
 #
@@ -54,7 +54,7 @@ AR       = lib /NOLOGO
 RM       = del /F /Q
 RMDIR    = rd /S /Q
 
-BUILDID  = win32vc10
+BUILDID  = win32vc15
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
@@ -99,7 +99,7 @@ SYSLIBS  = crypt32.lib ws2_32.lib
 .SUFFIXES: .c .o .rc .res
 
 .c{$(OUTDIR)}.o:
-	$(CC) $(CCDEFS) $(BCOR_CDF) $(BTYP_CDF) $(CCFLAGS) /Fd"$(OUTDIR)\vc100.pdb" /c $< /Fo"$@"
+	$(CC) $(CCDEFS) $(BCOR_CDF) $(BTYP_CDF) $(CCFLAGS) /Fd"$(OUTDIR)\vc150.pdb" /c $< /Fo"$@"
 
 all: $(PRGLIBS) $(OUTDIR)\$(LIBFILE) $(OUTDIR)\$(PRGFILE)
 

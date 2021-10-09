@@ -17,11 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 #ifdef _WIN32
-#if (_MSC_VER != 900)
 #include <winsock2.h>
-#else
-#include <winsock.h>
-#endif
 #define meSOCKET   SOCKET
 #else
 #define meSOCKET   int

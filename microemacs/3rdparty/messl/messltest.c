@@ -19,6 +19,8 @@
  * reproduced,  translated,  or  reduced to any  electronic  medium or machine
  * readable form without prior written consent from Maxinity Software Ltd.
  *
+ * .win32vc10-debug/messltest.exe 7 www.google.com "" "" "" "/"
+ * 
  ****************************************************************************/
 
 #include "messl.h"
@@ -27,6 +29,7 @@ void
 meSslTestPrint(meUByte *buff,void *data)
 {
     printf("LOG: %s\n",buff);
+    fflush(stdout);
 }
 int
 main(int argc, char *argv[])
