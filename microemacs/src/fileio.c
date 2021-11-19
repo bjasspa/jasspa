@@ -472,6 +472,7 @@ ffOpenConnectUrlSocket(meIo *io, meUByte *host, meUByte *port)
         return meBadSocket ;
     }
     ii = 1 ;
+    // TODO - use of SO_REUSEADDR is bad and unwarrented I think 
     meSocketSetOpt(ss,SOL_SOCKET,SO_REUSEADDR,(char *) &ii,sizeof(int)) ;
     if(meSocketConnect(ss,(struct sockaddr *) &(io->sockAddr),sizeof(struct sockaddr_in)) != 0)
     {
