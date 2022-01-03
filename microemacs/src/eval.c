@@ -3551,6 +3551,34 @@ showVariable(meBuffer *bp, meUByte prefix, meUByte *name, meUByte *value)
     addLineToEob(bp,buf);
 }
 
+static void
+showVarList(meBuffer *bp, meUByte prefix, meVariable *varList)
+{
+    meVariable *tv, *nv;
+    meUByte *vl=NULL, *vn;
+    
+    /* bit inefficient varList ordering but doesn't matter as this is a seldom used interactive function */
+    for(;;)
+    {
+        vn = NULL;
+        tv = varList;
+        while(tv != NULL)
+        {
+            if(((vn == NULL) || (strcmp(tv->name,vn) < 0)) &&
+               ((vl == NULL) || (strcmp(vl,tv->name) < 0)))
+            {
+                nv = tv;
+                vn = tv->name;
+            }
+            tv = tv->next;
+        }
+        if(vn == NULL)
+            return;
+        showVariable(bp,prefix,nv->name,nv->value);
+        vl = nv->name;
+    }
+}
+
 /*
  * listVariables
  * List ALL of the variables held in the system.
@@ -3581,12 +3609,8 @@ listVariables (int f, int n)
     if(n & 1)
     {
         addLineToEob(bp,(meUByte *)"\nBuffer variables:\n");
-        tv = frameCur->bufferCur->varList;
-        while(tv != NULL)
-        {
-            showVariable(bp,':',tv->name,tv->value);
-            tv = tv->next;
-        }
+        if((tv = frameCur->bufferCur->varList) != NULL)
+            showVarList(bp,':',tv);
     }
     else
     {
@@ -3598,11 +3622,7 @@ listVariables (int f, int n)
             {
                 sprintf((char *)buf,"\nBuffer variables: %s\n",bb->name);
                 addLineToEob(bp,buf);
-                while(tv != NULL)
-                {
-                    showVariable(bp,':',tv->name,tv->value);
-                    tv = tv->next;
-                }
+                showVarList(bp,':',tv);
             }
             bb = bb->next ;
         }
@@ -3612,11 +3632,7 @@ listVariables (int f, int n)
             {
                 sprintf((char *)buf,"\nCommand variables: %s\n",cc->name);
                 addLineToEob(bp,buf);
-                while(tv != NULL)
-                {
-                    showVariable(bp,'.',tv->name,tv->value);
-                    tv = tv->next;
-                }
+                showVarList(bp,'.',tv);
             }
             cc = cc->anext ;
         }
@@ -3627,8 +3643,8 @@ listVariables (int f, int n)
         showVariable(bp,'$',envars[ii],gtenv(envars[ii]));
     
     addLineToEob(bp,(meUByte *)"\nGlobal variables:\n");
-    for (tv=usrVarList ; tv != NULL ; tv = tv->next)
-        showVariable(bp,'%',tv->name,tv->value);
+    if((tv = usrVarList) != NULL)
+        showVarList(bp,'%',tv);
     
     bp->dotLine = meLineGetNext(bp->baseLine);
     bp->dotOffset = 0 ;
