@@ -22,6 +22,7 @@ set-variable .fhook-phps.name "PHP Script"
 set-variable .fhook-phps.setup &reg "/history/fhook/phps" "bdfghinopxl"
 set-variable .fhook-phps.setup-mask "abdefghikmnoptuxl#"
 set-variable .fhook-phps.comment "|//||/|// | //|r|"
+set-variable .fhook-phps.tags "phptags"
 set-variable .fhook-phps.indent-width 2
 
 ; Setup collapse
@@ -31,8 +32,8 @@ set-variable .fhook-phps.collapse-mclose "1"
 set-variable .fhook-phps.collapse-mnext "-1"
 
 ; setup item-list
-set-variable .fhook-phps.item-list-s1 "^[ \t]*function[ \t]+\\(\\w[1-9A-Za-z_']*\\)"
-set-variable .fhook-phps.item-list-r1 "Func \ecB\\1\ecA"
+set-variable .fhook-phps.item-list-s1 "^[ \t]*\\(public[ \t]+\\|private[ \t]+\\)?function[ \t]+\\(\\w[1-9A-Za-z_']*\\)"
+set-variable .fhook-phps.item-list-r1 "Func \ecB\\2\ecA"
 
 ; Set up menu items for C++ mode.
 set-variable .fhook-phps.setup-flags   "|l|"
@@ -124,6 +125,8 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
     hilight .hilight.phps 0 "^\\s*\\{sub\\s+\\w[1-9A-Za-z_']*" .scheme.function
   !endif
   ; Labels
+  
+  hilight .hilight.phps 1    "PHP_[A-Z_]+"       .scheme.prepro
   hilight .hilight.phps 1    "STDIN"             .scheme.prepro
   hilight .hilight.phps 1    "STDOUT"            .scheme.prepro
   hilight .hilight.phps 1    "STDERR"            .scheme.prepro
@@ -134,6 +137,9 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
   hilight .hilight.phps 1    "__METHOD__"        .scheme.prepro
   hilight .hilight.phps 0    "^__...__"          .scheme.prepro
   hilight .hilight.phps 0    "^__....__"         .scheme.prepro
+  hilight .hilight.phps 1    "false"             .scheme.constant
+  hilight .hilight.phps 1    "null"              .scheme.constant
+  hilight .hilight.phps 1    "true"              .scheme.constant
   hilight .hilight.phps 0    "^\\s*\\{\\w*:"     .scheme.link
   ; Variables.
   hilight .hilight.phps 4    "\\$" "\\}\\W" ""   .scheme.variable
@@ -150,7 +156,6 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
   ; hash parser for better visibility of the keys
   hilight .hilight.phps 1 "'[a-zA-Z0-9_]+' +=>"  .scheme.header
   ; Separators
-  hilight .hilight.phps 0    "->"                .scheme.operator
   hilight .hilight.phps 1    ">"                 .scheme.operator
   hilight .hilight.phps 1    ">="                .scheme.operator
   hilight .hilight.phps 1    "<"                 .scheme.operator
@@ -163,11 +168,16 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
   hilight .hilight.phps 0    ">>"                .scheme.operator
   hilight .hilight.phps 0    "<<"                .scheme.operator
   hilight .hilight.phps 0    "!="                .scheme.operator
+  hilight .hilight.phps 0    "!=="               .scheme.operator
   hilight .hilight.phps 0    "=="                .scheme.operator
+  hilight .hilight.phps 0    "==="               .scheme.operator
   hilight .hilight.phps 1    "and"               .scheme.operator
-  hilight .hilight.phps 1    "or"                .scheme.operator
-  hilight .hilight.phps 1    "xor"               .scheme.operator
   hilight .hilight.phps 1    "defined"           .scheme.operator
+  hilight .hilight.phps 1    "or"                .scheme.operator
+  hilight .hilight.phps 1    "parent"            .scheme.operator
+  hilight .hilight.phps 1    "self"              .scheme.operator
+  hilight .hilight.phps 1    "\\$this"           .scheme.operator
+  hilight .hilight.phps 1    "xor"               .scheme.operator
   hilight .hilight.phps 1    "undef"             .scheme.operator
   
   hilight .hilight.phps 0x804 "`" "`" "\\"       .scheme.prepro
@@ -214,6 +224,8 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
   hilight .hilight.phps 1    "print"             .scheme.keyword
   hilight .hilight.phps 1    "printf"            .scheme.keyword
   hilight .hilight.phps 1    "print_r"           .scheme.keyword
+  hilight .hilight.phps 1    "private"           .scheme.operator
+  hilight .hilight.phps 1    "public"            .scheme.operator
   hilight .hilight.phps 1    "require"           .scheme.keyword
   hilight .hilight.phps 1    "require_once"      .scheme.keyword
   hilight .hilight.phps 1    "return"            .scheme.keyword

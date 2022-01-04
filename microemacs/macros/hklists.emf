@@ -32,6 +32,7 @@ set-variable .fhook-lists.command-desc  "|\HGet Help on Item|"
   !endif
   0 hilight  .hilight.lists 0x000                         $global-scheme
   hilight .hilight.lists 0x102 "Buffer"                   .scheme.header
+  hilight .hilight.lists 0x102 "Command"                  .scheme.header
   hilight .hilight.lists 0x102 "Global"                   .scheme.header
   hilight .hilight.lists 0x102 "Ml"                       .scheme.header
   hilight .hilight.lists 0x102 "Register"                 .scheme.header
@@ -42,6 +43,7 @@ set-variable .fhook-lists.command-desc  "|\HGet Help on Item|"
   hilight .hilight.lists 0x004 "%\\w" "\\}\\s" ""         .scheme.no1
   hilight .hilight.lists 0x004 ":\\w" "\\}\\s" ""         .scheme.no1
   hilight .hilight.lists 0x004 "#\\w" "\\}\\s" ""         .scheme.no1
+  hilight .hilight.lists 0x004 "\\.\\m" "\\}\\s" ""       .scheme.no1
 !endif
 
 define-macro-file hkehf ehf-process-link ehf-find-help

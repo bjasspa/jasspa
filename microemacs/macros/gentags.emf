@@ -47,7 +47,7 @@
   !if &not &seq .generate-tags-file.tfile "tags"
     set-variable #l1 &spr "%s \"-t%s\"" #l1 .generate-tags-file.tfile
   !endif
-  !force exec-me #l1
+  !force &con &sin "d" .generate-tags-file.flags 3 1 pipe-me #l1
   !force delete-buffer "*generate-tags-file tmp*"
   goto-position "\x81"
 !emacro

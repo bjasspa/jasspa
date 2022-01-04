@@ -63,8 +63,6 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
     hilight .hilight.tcl 0x20 "namespace\\s+eval\\s+[-A-Za-z:_!][-0-9A-Z:a-z_.'!]*" .scheme.function
     hilight .hilight.tcl 0x20 "\\w+\\s+proc\\s+[-A-Za-z:_!][-0-9A-Z:a-z_.'!]*" .scheme.function
     hilight .hilight.tcl 0x20 "\\w+\\s+instproc\\s+[-A-Za-z:_!][-0-9A-Z:a-z_.'!]*" .scheme.function
-  !endif
-  !if &band .hilight.flags 0x04
     hilight .hilight.tcl 0 "^\\s*\\{proc\\s+\\w+" .scheme.function
   !endif
   ;

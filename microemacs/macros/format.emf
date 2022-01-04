@@ -65,7 +65,6 @@ define-macro clean
 ; Insert a normal none c-mode/indent tab (still effected by tab mode)
 define-macro normal-tab
   ; Remember we have set indent
-  set-variable #l0 &bmod cmode
   set-variable #l1 $buffer-indent
   set-variable $buffer-indent 0
   !force !force @# tab

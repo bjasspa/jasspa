@@ -181,7 +181,6 @@ set-variable .fhook-java.item-list-r2 "Clss \ecB\\2\ecA"
 !endif
 !if &sin "d" .fhook-java.setup
   !if &sin "l" .fhook-java.setup
-    set-variable $debug 2
     ; TODO: With improvements to native C indenter to support C++ & Java, not sure if this is required 
     ; Alternative java indentation scheme to handle more
     ; situations. We also define a "java comment" indentation scheme,

@@ -40,8 +40,20 @@
   set-variable #l3 &reg &spr "/history/%s/font-depth" $platform "0"
   1 change-font #l0 .change-font.type #l1 #l2 #l3
 !endif
-0 define-macro exec-me
-  ipipe-shell-command &spr "\"%s\" %s" $progname @1 @mna
+0 define-macro pipe-me
+  !if &not &exi .mcmd
+    !if &seq "R" &stat "t" &set #l2 &cat &set #l1 &lef &set #l0 $progname &rsin "/" #l0 "mecw32.exe"
+      set-variable #l0 #l2
+    !elif &seq "R" &stat "t" &set #l2 &cat #l1 "mec32.exe"
+      set-variable #l0 #l2
+    !elif &not &seq "ERROR" &set #l2 &which "mecw32.exe"
+      set-variable #l0 #l2
+    !elif &not &seq "ERROR" &set #l2 &which "mec32.exe"
+      set-variable #l0 #l2
+    !endif
+    set-variable .mcmd &spr "%s%s" &con &sin " " #l0 &spr "\"%s\"" #l0 #l0 &con &sin "/mecw" #l0 " -n" "" 
+  !endif
+  ipipe-shell-command &spr "%s %s %s" .mcmd &con &ban @# 2 "-P" "-p" @1 @mna
 !emacro
 ; Add A-f4 as an exit binding
 global-bind-key save-buffers-exit-emacs "A-f4"

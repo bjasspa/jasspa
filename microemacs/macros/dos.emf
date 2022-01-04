@@ -6,7 +6,7 @@
 ; Synopsis:    Setup file for MS-DOS boxes
 ; Authors:     Steven Phillips
 ;
-0 define-macro exec-me
+0 define-macro pipe-me
   pipe-shell-command &spr "%s %s" $progname @1 @mna
 !emacro
 ; Setup the screen resolution

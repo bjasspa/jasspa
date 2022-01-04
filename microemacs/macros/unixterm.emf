@@ -9,8 +9,8 @@
 define-macro-file hkman man
 define-macro-file hkipipe ishell gdb dbx perldb
 add-file-hook ".C" fhook-cpp
-0 define-macro exec-me
-  ipipe-shell-command &spr "\"%s\" %s" $progname @1 @mna
+0 define-macro pipe-me
+  ipipe-shell-command &spr "\"%s\" -n %s %s" $progname &con &ban @# 2 "-P" "-p" @1 @mna
 !emacro
 !if &band $system 0x01
   ; Not using X

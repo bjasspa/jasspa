@@ -300,6 +300,7 @@ set-variable .fhook-sql.comment-2 "|rem|||rem |||"
   hilight .hilight.sql 1 "session"           .scheme.keyword
   hilight .hilight.sql 1 "session_user"      .scheme.keyword
   hilight .hilight.sql 1 "set"               .scheme.operator
+  hilight .hilight.sql 1 "unsigned"          .scheme.type
   hilight .hilight.sql 1 "similar"           .scheme.keyword
   hilight .hilight.sql 1 "size"              .scheme.keyword
   hilight .hilight.sql 1 "smallint"          .scheme.type

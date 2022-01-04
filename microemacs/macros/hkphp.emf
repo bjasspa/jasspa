@@ -22,6 +22,7 @@ set-variable .fhook-php.command-name  "|"
 set-variable .fhook-php.command-nbind "|"
 set-variable .fhook-php.command-kbind "|"
 set-variable .fhook-php.command-desc  "|"
+set-variable .fhook-php.tags "phptags"
 set-variable .fhook-php.indent-width  2
 
 ; load in php script & the html core
