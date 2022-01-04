@@ -1,231 +1,343 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1998-2009 JASSPA (www.jasspa.com)
+; Copyright (C) 1998-2021 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Wed Jan 21 1998
-; Synopsis:    calc - Simple message line integer calculator
+; Synopsis:    calc - floating point/integer/boolean calculator
 ; Authors:     Steven Phillips
 ;
-; Notes:
-;    This is used by hkbinary to calc the move forward amount
-;    It is also used by c-hash-eval to evaluate a #if value
-;    A question hangs over whether this is the best implementation,
-;    who cares? It works (I think).
+; Operator precedence: ( ), ~ ! + - (unary prefix, +- handled as part of number), * / %, + -, << >>, < > <= >=, == !=, &, ^, |, &&, ||
 ;
-0 define-macro calc-order-command
-  end-of-buffer
-  !force search-backward @1
-  !while $status
-    !if $window-col
-      set-variable #l3 @wc
-      forward-delete-char
-      insert-newline
-      backward-line
-      insert-string #l3
-      insert-newline
-      forward-line
-    !endif
-    !force search-backward @1
-  !done
-!emacro
-
-0 define-macro calc-order-unary
-  beginning-of-buffer
-  !force search-forward @1
-  !while $status
-    backward-char
-    !if $window-col
-      ; this is 0~ remove the 0
-      backward-delete-char
-      forward-char
-      insert-newline
+0 define-macro calc-intl
+  ; Function aborts on error setting .calc.er to (index,err-msg) or funtion returns setting #p9 to (flags,number,remain-str)
+  ; Each element in list is a operator order, each element is a sublist containing (operator,index,flags,value)
+  set-variable #l8 "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+  set-variable #l1 @1
+*mlpt
+  set-variable #l2 .calc.flg
+  !if &set #l0 &sin &set #l3 &lef &set #l1 &trl #l1 1 "~!"
+    ; will 'incorrectly' get into here if empty string, but will fail to get number next 
+    set-variable #l3 &lef &set #l1 &trl &rig #l1 1 1
+    set-variable #l8 &lset #l8 1 &spr "\g%d\g%d\g0\g\g" &sub &mul #l0 16 15 &len #l1
+  !endif
+  !if &seq #l3 ""
+    set-variable .calc.er &spr "\b%d\bNumber expected\b" &len #l1
+    !abort
+  !elif &seq #l3 "("
+    calc-brkt &rig #l1 1
+    set-variable #l2 &lget #l9 1
+    set-variable #l3 &lget #l9 2
+    set-variable #l1 &lget #l9 3
+  !elif &xseq #l1 "\\([-+]?\\(0x\\h+\\|0[0-7]+\\|0b[01]+\\)\\)\\(.*\\)"
+    set-variable #l1 @s3
+    ; must convert non-decimal numbers to decimal in case they are used in a fp op
+    ; Note however this conversion could adversely affect string comparisons
+    !if &seq &lef @s2 2 "0b"
+      set-variable #l3 0
+      set-variable #l4 &rig @s2 2
+      !repeat
+        set-variable #l3 &add &mul #l3 2 &lef #l4 1
+      !until &seq "" &set #l4 &rig #l4 1
+      !iif &seq &lef @s1 1 "-"  set-variable #l3 &sub 0 #l3
     !else
-      ; The dummy 0 has been split by a bracket,
-      ; it must be next as its the highest priority
-      forward-line
-      !if &not &seq @wl "0"
-        ml-write "Unary operator gone wrong!!"
-        !abort
-      !endif
-      1 kill-line
+      set-variable #l3 &add @s1 0
     !endif
-    !force search-forward @1
-  !done
-!emacro
-
-0 define-macro calc-order-brackets
-  beginning-of-buffer
-  !force search-forward "("
-  !while $status
-    set-mark
-    backward-char
-    !force goto-matching-fence
+  !elif &xseq #l1 "\\([-+]?\\(\\d*\\.\\)?\\d+\\([Ee][+-]?\\d+\\)?\\)\\(.*\\)"
+    set-variable #l1 @s4
+    set-variable #l3 @s1
+    !if &len &cat @s2 @s3
+      set-variable #l2 &bor #l2 2
+    !elif &seq &lef #l1 1 "."
+      set-variable #l1 &rig #l1 1
+      set-variable #l2 &bor #l2 2
+    !endif
+  !elif &xseq #l1 "\\(\"\\([^\\\\]\\|\\\\.\\)*\"\\)\\(.*\\)"
+    set-variable #l1 @s3
+    !force !force execute-line &spr "set-variable #l3 %s" @s1
     !if &not $status
-      ml-write "[Mis-matched brackets]"
+      set-variable .calc.er &spr "\b%d\bInvalid string value\b" &len #l1
       !abort
     !endif
-    kill-region
-    !force 0 delete-buffer &cat $buffer-bname "*"
-    find-buffer &cat $buffer-bname "*"
-    1 buffer-mode "hide"
-    1 buffer-mode "magic"
-    yank
-    -1 yank
-    @# calc-do-calc
-    find-buffer &lef $buffer-bname &sub &len $buffer-bname 1
-    backward-delete-char
-    forward-delete-char
-    insert-string #l3
-    !force search-forward "("
-  !done
-!emacro
-
-0 define-macro calc-do-calc
-  ; Resolve the contents of any brackets first
-  @# calc-order-brackets
-  ; Now start from the lowest order (sub) upwards
-  calc-order-command "\xa0"
-  calc-order-command "\xa1"
-  calc-order-command "\xa2"
-  calc-order-command "\xa3"
-  calc-order-command "\xa4"
-  calc-order-command "&"
-  calc-order-command "|"
-  calc-order-command "[-+]"
-  calc-order-command "[%/*]"
-  ; Now sort out the unary operators
-  calc-order-unary "!"
-  calc-order-unary "~"
-  ; Now replace all the commands with emacs commands
-  beginning-of-buffer
-  replace-string "&" "&ban"
-  beginning-of-buffer
-  replace-string "|" "&bor"
-  beginning-of-buffer
-  replace-string "\xa4" "&bxo"
-  beginning-of-buffer
-  !if &band @# 2
-    replace-string "\xa3" "&not &seq"
-    beginning-of-buffer
-    replace-string "\xa2" "&seq"
-  !else
-    replace-string "\xa3" "&not &equ"
-    beginning-of-buffer
-    replace-string "\xa2" "&equ"
-  !endif
-  beginning-of-buffer
-  replace-string "\xa1" "&or"
-  beginning-of-buffer
-  replace-string "\xa0" "&and"
-  beginning-of-buffer
-  replace-string "!" "&not"
-  beginning-of-buffer
-  replace-string "~" "&bno"
-  beginning-of-buffer
-  replace-string "/" "&div"
-  beginning-of-buffer
-  replace-string "%" "&mod"
-  beginning-of-buffer
-  replace-string "*" "&mul"
-  beginning-of-buffer
-  replace-string "+" "&add"
-  beginning-of-buffer
-  replace-string "-" "&sub"
-  ; substitute the memory recall
-  beginning-of-buffer
-  replace-string "^LR$" .calc.result
-  ; change back the -ve numbers & % user variables
-  beginning-of-buffer
-  replace-string "^\\xa9" "-"
-  beginning-of-buffer
-  replace-string "^\\xaa" "%"
-  ; go to the end and glue all the lines together
-  end-of-buffer
-  backward-line
-  !force 65535 delete-indentation
-  ; insert the assignment and execute the buffer
-  insert-string "set-variable #p3 "
-  execute-line @wl
-!emacro
-
-0 define-macro calc-buffer
-  beginning-of-buffer
-  set-variable #l2 @wl
-  !if &seq @wc "x"
-    set-variable #l5 16
-    forward-delete-char
-  !elif &seq @wc "d"
-    set-variable #l5 10
-    forward-delete-char
-  !elif &seq @wc "o"
-    set-variable #l5 8
-    forward-delete-char
-  !elif &seq @wc "b"
-    set-variable #l5 2
-    forward-delete-char
-  !else
-    set-variable #l5 10
-  !endif    
-  ; first of all remove all white spaces
-  beginning-of-buffer
-  replace-string "[ \t]" ""
-  ; Now make any unary operator look like a binary (for ease with brackets)
-  beginning-of-buffer
-  replace-string "!" "0!"
-  beginning-of-buffer
-  replace-string "~" "0~"
-  ; Now change any -ve numbers '-' to \xa9 so we don't get confused
-  beginning-of-buffer
-  replace-string "^-" "\xa9"
-  beginning-of-buffer
-  replace-string "\\([(=~!^|&%*/+-]\\)-" "\\1\xa9"
-  ; Now change any %var user variable % to \xaa so we don't get confused with mod
-  beginning-of-buffer
-  replace-string "^%" "\xaa"
-  beginning-of-buffer
-  replace-string "\\([(=~!^|&%*/+-]\\)%" "\\1\xaa"
-  ; Now change any multi-letter & '^' commands to a single usable letter
-  beginning-of-buffer
-  replace-string "&&" "\xa0"
-  beginning-of-buffer
-  replace-string "||" "\xa1"
-  beginning-of-buffer
-  replace-string "==" "\xa2"
-  beginning-of-buffer
-  replace-string "0!=" "\xa3"
-  beginning-of-buffer
-  replace-string "\\^" "\xa4"
-  ; Now sort out all the bodmas stuff
-  ; brackets first
-  @# calc-do-calc
-  ; adding zero seems pointless but it solve a bug of calc'ing "0x10" without the
-  ; + 0 the answer is left as 0x10 as its never numerically calculate
-  set-variable #l3 &add #l3 0
-  !if &not &equ #l5 10
-    !if #l3
-      set-variable #l4 ""
-      !while #l3
-        set-variable #l4 &cat &mid "0123456789abcdef" &mod #l3 #l5 1 #l4
-        set-variable #l3 &div #l3 #l5
-      !done
-      set-variable #l3 #l4
+    set-variable #l2 &bor #l2 4
+  !elif &xseq #l1 "\\(\\([$%.]\\)\\([-\\m_]+\\2\\)?[-\\m_]+\\)\\>\\(.*\\)"
+    set-variable #l1 @s4
+    set-variable #l3 @s1
+    set-variable #l3 &ind #l3
+    !if &xseq #l3 "[-+]?\\(0x\\h+\\|0[0-7]+\\)"
+      set-variable #l3 &add #l3 0
+    !elif &xseq #l3 "[-+]?\\(\\d*\\.\\)?\\d+\\([Ee][+-]?\\d+\\)?"
+      !iif &len &cat @s1 @s2  set-variable #l2 &bor #l2 2
     !else
-      set-variable #l3 "0"
+      set-variable #l2 &bor #l2 4
     !endif
-    !if &equ #l5 16
-      set-variable #l3 &cat "0x" #l3
-    !elif &equ #l5 8
-      set-variable #l3 &cat "00" #l3
+  !elif &xseq #l1 "[Aa][Nn][Ss]\\>\\(.*\\)"
+    set-variable #l1 @s1
+    !if &not &exi .calc.answer
+      set-variable .calc.er &spr "\b%d\bno last answer\b" &len #l1
+      !abort
     !endif
-    !if &seq "-" &lef %calcResult 1
-      set-variable #l3 &cat "-" #l3
+    set-variable #l3 .calc.answer
+    set-variable #l2 &bor #l2 .calc.ansflg
+  !else
+    set-variable .calc.er &spr "\b%d\bNumber expected\b" &len #l1
+    !abort
+  !endif
+  !if &not &xseq #l1 " *\\([<>=!]=\\|<<\\|>>\\|&&\\|||\\|[-+*/%<>&^|]\\)\\(.*\\)"
+    set-variable #l4 15
+  !else
+    set-variable #l4 &lget .calc.opf &lfin .calc.ops @s1
+    set-variable #l1 @s2
+  !endif
+  set-variable #l5 &band #l4 15
+  set-variable #l0 1
+  !repeat
+    !if &len &set #l6 &lget #l8 #l0
+      set-variable #l7 &lget #l6 1
+      !if &band 2 &set #l2 &bor &lget #l6 3 #l2
+        !if &not &equ #l2 2 
+          set-variable .calc.er &spr "\b%d\bInvalid mix of floating point and boolean\b" &lget #l6 2
+          !abort
+        !elif &equ #l7 2
+          set-variable #l3 &fmul &lget #l6 4 #l3
+        !elif &equ #l7 18
+          !if &seq "" &rep &rep &rep &rep &rep #l3 "0" "" "." "" "-" "" "+" "" "e" ""
+            set-variable .calc.er &spr "\b%d\bDivide by zero\b" &lget #l6 2
+            !abort
+          !endif
+          set-variable #l3 &fdiv &lget #l6 4 #l3
+        !elif &equ #l7 3
+          set-variable #l3 &fadd &lget #l6 4 #l3
+        !elif &equ #l7 19
+          set-variable #l3 &fsub &lget #l6 4 #l3
+        !elif &equ #l7 5
+          set-variable #l3 &seq "-" &lef &fsub &lget #l6 4 #l3 1
+          set-variable #l2 1
+        !elif &equ #l7 21
+          set-variable #l3 &seq "-" &lef &fsub #l3 &lget #l6 4 1
+          set-variable #l2 1
+        !elif &equ #l7 37
+          set-variable #l3 &not &seq "-" &lef &fsub #l3 &lget #l6 4 1
+          set-variable #l2 1
+        !elif &equ #l7 53
+          set-variable #l3 &not &seq "-" &lef &fsub &lget #l6 4 #l3 1
+          set-variable #l2 1
+        !elif &equ #l7 6
+          set-variable #l3 &seq "" &rep &rep &rep &rep &rep &fsub &lget #l6 4 #l3 "0" "" "." "" "-" "" "+" "" "e" ""
+          set-variable #l2 1
+        !elif &equ #l7 22
+          set-variable #l3 &not &seq "" &rep &rep &rep &rep &rep &fsub &lget #l6 4 #l3 "0" "" "." "" "-" "" "+" "" "e" ""
+          set-variable #l2 1
+        !else
+          set-variable .calc.er &spr "\b%d\bOperator does not support floating point numbers\b" &lget #l6 2
+          !abort
+        !endif
+        !if &sin "#INF" #l3
+          set-variable .calc.er &spr "\b%d\bNumber overflow\b" &lget #l6 2
+          !abort
+        !endif
+        ; # end of fp
+      !elif &band 4 #l2
+        !if &equ #l7 3
+          set-variable #l3 &cat &lget #l6 4 #l3
+        !elif &equ #l7 5
+          set-variable #l3 &sles &lget #l6 4 #l3
+          set-variable #l2 1
+        !elif &equ #l7 21
+          set-variable #l3 &sgre &lget #l6 4 #l3
+          set-variable #l2 1
+        !elif &equ #l7 37
+          set-variable #l3 &not &sgre &lget #l6 4 #l3
+          set-variable #l2 1
+        !elif &equ #l7 53
+          set-variable #l3 &not &sles &lget #l6 4 #l3
+          set-variable #l2 1
+        !elif &equ #l7 6
+          set-variable #l3 &sequ &lget #l6 4 #l3
+          set-variable #l2 1
+        !elif &equ #l7 22
+          set-variable #l3 &not &sequ &lget #l6 4 #l3
+          set-variable #l2 1
+        !else
+          set-variable .calc.er &spr "\b%d\bOperator does not support string values\b" &lget #l6 2
+          !abort
+        !endif
+        ; # end of string
+      !elif &equ #l7 17
+        set-variable #l3 &not #l3
+        set-variable #l2 1
+      !elif &equ #l7 5
+        set-variable #l3 &les &lget #l6 4 #l3
+        set-variable #l2 1
+      !elif &equ #l7 21
+        set-variable #l3 &gre &lget #l6 4 #l3
+        set-variable #l2 1
+      !elif &equ #l7 37
+        set-variable #l3 &not &gre &lget #l6 4 #l3
+        set-variable #l2 1
+      !elif &equ #l7 53
+        set-variable #l3 &not &les &lget #l6 4 #l3
+        set-variable #l2 1
+      !elif &equ #l7 6
+        set-variable #l3 &equ &lget #l6 4 #l3
+        set-variable #l2 1
+      !elif &equ #l7 22
+        set-variable #l3 &not &equ &lget #l6 4 #l3
+        set-variable #l2 1
+      !elif &equ #l7 10
+        set-variable #l3 &and &lget #l6 4 #l3
+        set-variable #l2 1
+      !elif &equ #l7 11
+        set-variable #l3 &or &lget #l6 4 #l3
+        set-variable #l2 1
+      !elif &equ 1 #l2
+        set-variable .calc.er &spr "\b%d\bOperator does not support booleans\b" &lget #l6 2
+        !abort
+      !elif &equ #l7 1
+        set-variable #l3 &bnot #l3
+      !elif &equ #l7 2
+        set-variable #l3 &mul &lget #l6 4 #l3
+      !elif &equ #l7 18
+        !if &equ #l3 0
+          set-variable .calc.er &spr "\b%d\bDivide by zero\b" &lget #l6 2
+          !abort
+        !endif
+        set-variable #l3 &div &lget #l6 4 #l3
+      !elif &equ #l7 34
+        !if &equ #l3 0
+          set-variable .calc.er &spr "\b%d\bDivide by zero\b" &lget #l6 2
+          !abort
+        !endif
+        set-variable #l3 &mod &lget #l6 4 #l3
+      !elif &equ #l7 3
+        set-variable #l3 &add &lget #l6 4 #l3
+      !elif &equ #l7 19
+        set-variable #l3 &sub &lget #l6 4 #l3
+      !elif &equ #l7 20
+        set-variable #l7 &sub 0 #l3
+        !jump 3
+      !elif &equ #l7 4
+        set-variable #l7 #l3
+        set-variable #l3 &lget #l6 4
+        !if &les #l7 0
+          set-variable #l3 &div #l3 2
+          !tjump &les &inc #l7 1 0 -1
+        !elif &gre #l7 0
+          set-variable #l3 &mul #l3 2
+          !tjump &gre &dec #l7 1 0 -1
+        !endif
+      !elif &equ #l7 7
+        set-variable #l3 &band &lget #l6 4 #l3
+      !elif &equ #l7 8
+        set-variable #l3 &bxor &lget #l6 4 #l3
+      !elif &equ #l7 9
+        set-variable #l3 &bor &lget #l6 4 #l3
+      !endif          
+      set-variable #l8 &lset #l8 #l0 ""
+    !endif
+  !until &gre &inc #l0 1 #l5
+  !if &equ #l5 15
+    set-variable #p9 &spr "\b%s\b%s\b%s\b" #l2 #l3 #l1
+    !return
+  !endif
+  ;1000 ml-write &spr "Got operator: %d" #l4
+  set-variable #l8 &lset #l8 #l5 &spr "\g%d\g%s\g%s\g%s\g" #l4 &len #l1 #l2 #l3
+  !goto mlpt
+!emacro
+
+0 define-macro calc-brkt
+  set-variable #l0 @1
+  calc-intl #l0
+  !if &not &seq ")" &lef &set #l1 &trl &lget #l9 3 1
+    !if &seq #l1 ""
+      set-variable .calc.er &spr "\b%d\bUnmatched open bracket\b" &len #l0
+    !elif &sin #l1 ".-+0123456789"
+      set-variable .calc.er &spr "\b%d\bOperator expected\b" &sub #l2 #l4
+    !else
+      set-variable .calc.er &spr "\b%d\bInvalid character\b" &len #l1
+    !endif
+    !abort
+  !endif
+  set-variable #p9 &lset #l9 3 &rig #l1 1
+!emacro
+
+define-macro calc-op
+  !force set-variable #l0 @1
+  !if &not $status
+    set-variable #l0 @ml "Enter sum"
+  !endif
+  set-variable .calc.flg 0
+  set-variable .calc.er "\b-1\bUnexpected error\b"
+  set-variable #l2 &len &set #l1 &set .calc.sum &trb &xrep #l0 "\\s" " "
+  !if &seq &set #l3 &lef #l1 1 "f"
+    set-variable .calc.flg 2
+    set-variable #l1 &trl &rig #l1 1
+  !elif &sin #l3 "bodx"
+    set-variable #l1 &trl &rig #l1 1
+  !else
+    set-variable #l3 ""
+  !endif
+  !if &seq #l1 ""
+    set-variable .calc.result &spr "\b%d\bNo sum given\b" #l2
+    !abort
+  !endif
+  !force calc-intl #l1
+  !if &not $status
+    set-variable .calc.result &spr "\b%d\b%s\b" &sub #l2 &lget .calc.er 1 &lget .calc.er 2
+    !abort
+  !elif &set #l4 &len &lget #l9 3
+    !if &sin &lef &trl &lget #l9 3 1 ".-+0123456789"
+      set-variable .calc.result &spr "\b%d\bOperator expected\b" &sub #l2 #l4
+    !else
+      set-variable .calc.result &spr "\b%d\bInvalid character\b" &sub #l2 #l4
+    !endif
+    !abort
+  !elif &band &set #l6 &lget #l9 1 4
+    set-variable .calc.result &spr "\b%d\bA string cannot be calculated\b" #l2
+    !abort
+  !elif &band #l6 2
+    !if &and &len #l3 &not &seq #l3 "f"  
+      set-variable .calc.result &spr "\b%d\bCannot output floating point number in integer format (%s)\b" #l2 #l3
+      !abort
+    !elif &sin "#INF" &set #l5 &trb &spr "%.10g" &lget #l9 2
+      set-variable .calc.result &spr "\b%d\bNumber overflow\b" #l2
+      !abort
+    !endif
+    set-variable .calc.result &set .calc.answer &xrep #l5 "e\\+?\\(-\\)?0*" "e\\1" 
+  !elif &seq #l3 "d"
+    set-variable .calc.result &set .calc.answer &spr "%d" &lget #l9 2
+  !elif &seq #l3 "x"
+    set-variable .calc.result &set .calc.answer &spr "0x%x" &lget #l9 2
+  !elif &seq #l3 "b"
+    set-variable #l4 &spr "%x" &lget #l9 2
+    set-variable #l5 ""
+    !repeat
+      set-variable #l5 &cat #l5 &lget "|0000|0001|0010|0011|0100|0101|0110|0111|1000|1001|1010|1011|1100|1101|1110|1111|" &add 1 &cat "0x0" &lef #l4 1
+    !until &seq "" &set #l4 &rig #l4 1
+    set-variable .calc.result &set .calc.answer &cat &con &les &len #l5 32 "0b00" "0b" #l5
+  !elif &seq #l3 "o"
+    set-variable .calc.result &set .calc.answer &spr "%s0%o" &con &les &lget #l9 2 0 "-" "" &abs &lget #l9 2
+  !elif &band #l6 1
+    set-variable .calc.result &spr "%s (%d)" &con &set .calc.answer &lget #l9 2 "True" "False" &lget #l9 2
+  !else
+    set-variable #l4 &spr "%d" &lget #l9 2
+    set-variable .calc.flg 2
+    !force calc-intl #l1
+    !if &not $status
+      set-variable #l5 #l4
+    !elif &len &lget #l9 3
+      set-variable #l5 #l4
+    !elif &sin "#INF" &set #l5 &trb &spr "%.10g" &lget #l9 2
+      set-variable .calc.result &spr "\b%d\bNumber overflow\b" #l2
+      !abort
+    !end
+    !if &not &seq #l4 &set .calc.answer &xrep #l5 "e\\+?\\(-\\)?0*" "e\\1" 
+      set-variable .calc.result &spr "%s (%s)" #l5 #l4
+    !else
+      set-variable .calc.result .calc.answer
     !endif
   !endif
-  set-variable .calc.result #l3
-  !if &band @# 1
-    ml-write &cat #l2 &cat " = " #l3
-  !endif
+  set-variable .calc.ansflg #l6
 !emacro
 
 define-macro calc
@@ -233,20 +345,16 @@ define-macro calc
   !if &not $status
     set-variable #l0 @ml "Enter sum"
   !endif
-  set-position "\x81"
-  !force 0 delete-buffer "*calc*"
-  find-buffer "*calc*"
-  1 buffer-mode "hide"
-  1 buffer-mode "magic"
-  insert-string #l0
-  @# calc-buffer
-  !force goto-position "\x81"
-!emacro
-define-macro calc-insert
-  !force set-variable #l0 @1
+  !force calc-op #l0
   !if &not $status
-    set-variable #l0 @ml "Enter sum"
+    ml-write &spr "[ERROR: %s <^> %s: %s]" &lef .calc.sum &lget .calc.result 1 &rig .calc.sum &lget .calc.result 1 &lget .calc.result 2
+    !abort
   !endif
-  calc #l0
-  insert-string .calc.result
+  !iif &band @# 2  insert-string .calc.answer
+  ml-write &spr "%s = %s" .calc.sum .calc.result
+!emacro
+set-variable .calc.ops " ~ ! * / % + - << >> < > <= >= == != & ^ | && || "
+set-variable .calc.opf " 1 17 2 18 34 3 19 4 20 5 21 37 53 6 22 7 8 9 10 11 "
+define-macro calc-insert
+  3 calc
 !emacro

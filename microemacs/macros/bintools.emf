@@ -132,7 +132,7 @@ define-macro bin-move-backward
     set-variable #l5 @ml "Move backward by"
   !endif
   calc #l5
-  set-variable #l5 .calc.result
+  set-variable #l5 .calc.answer
   !if &bmo "binary"
     set-variable #l5 &sub #l5 &lget #l9 3
     &div &add #l5 15 16 backward-line
@@ -170,7 +170,7 @@ define-macro bin-move-forward
     set-variable #l5 @ml "Move forward by"
   !endif
   calc #l5
-  set-variable #l5 .calc.result
+  set-variable #l5 .calc.answer
   !if &bmo "binary"
     set-variable #l5 &add #l5 &lget #l9 3
     &div #l5 16 forward-line

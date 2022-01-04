@@ -358,6 +358,6 @@ set-variable .fhook-yacc.item-list-r2 "Func \ecB\\6\ecA"
 !endif
 
 ; setup useful C fuctions to auto-load cmacros
-define-macro-file cmacros c-slashify c-deslashify c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
+define-macro-file cmacros c-slashify c-deslashify c-hash-eval c-hash-define c-hash-undef c-hash-undo
 
 buffer-init-fhook "yacc"

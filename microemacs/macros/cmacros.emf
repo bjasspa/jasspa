@@ -62,18 +62,17 @@ define-macro c-deslashify
   beginning-of-line
 !emacro
 
-define-macro c-hash-set-define
-  set-variable #l0 &cat "%cd" @ml "#define name"
+define-macro c-hash-define
+  set-variable #l0 &cat "%chd-" @ml "#define name"
   set-variable #l1 @ml "#define value"
   set-variable &ind #l0 #l1
 !emacro
 
-define-macro c-hash-unset-define
-  set-variable #l0 &cat "%cd" @ml "#define name"
+define-macro c-hash-undef
+  set-variable #l0 &cat "%chd-" @ml "#undef name"
   !force unset-variable &ind #l0
 !emacro
 
-0 define-macro-file calc calc-buffer
 ; #l0 %cd-hide, #l1 %cd-depth, #l2 %cd-neg, #l3 %cd-def, #l4 %cd-varname, #l5 %cd-temp
 define-macro c-hash-eval
   !if &bmod "narrow"
@@ -108,13 +107,14 @@ define-macro c-hash-eval
         set-variable #l0 &rep #l0 "#ifndef" "\"ERROR\" == "
         set-variable #l0 &rep #l0 "#if" ""
         set-variable #l0 &rep #l0 "defined" "\"ERROR\" != "
-        set-variable #l0 &xrep #l0 "[ \t]\\([_A-Za-z]\\)" " %cd\\1"
-        !force 0 delete-buffer "*calc*"
-        find-buffer "*calc*"
-        insert-string #l0
-        2 calc-buffer
-        -1 find-buffer $buffer-bname
-        set-variable #l0 &cond .calc.result 0 1
+        set-variable #l0 &xrep #l0 "\\([ \t(]\\)\\([_A-Za-z]\\)" "\\1%chd-\\2"
+        !force calc-op #l0
+        !if $status
+          set-variable #l0 &cond .calc.answer 0 1
+        !else
+          set-variable #l0 0
+          set-variable $line-scheme .scheme.error
+        !endif
         set-variable #l1 $window-line
       !elif &seq &lef @wl 5 "#else"
         set-variable $line-scheme .scheme.hide
@@ -136,7 +136,7 @@ define-macro c-hash-eval
         !if &and #l7 &not &gre #l7 #l6
           set-variable #l6 &sub #l7 1
         !endif
-        set-variable #l4 &cat "%cd" &lef #l5 #l6
+        set-variable #l4 &cat "%chd-" &lef #l5 #l6
         set-variable #l5 &rig #l5 #l6
         !while &and &not &seq &lef #l5 1 "" &sin &lef #l5 1 " \t"
           set-variable #l5 &rig #l5 1
@@ -149,7 +149,7 @@ define-macro c-hash-eval
         !endif
         set-variable &ind #l4 #l5
       !elif &xseq @wl "#undef[ \t]+\\(\\w+\\)"
-        !force unset-variable &cat "%cd" @s1
+        !force unset-variable &cat "%chd-" @s1
       !else
         set-variable $line-scheme -1
       !endif
@@ -159,7 +159,7 @@ define-macro c-hash-eval
   beginning-of-buffer
 !emacro
 
-define-macro c-hash-del
+define-macro c-hash-undo
   !if &bmod "narrow"
     narrow-buffer
   !endif
@@ -171,4 +171,9 @@ define-macro c-hash-del
   beginning-of-buffer
 !emacro
 
-
+define-macro c-hash-reset
+  set-variable $variable-names "%chd-.*"
+  !while &not &seq &set #l1 $variable-names ""
+    !force unset-variable &ind #l1
+  !done
+!emacro

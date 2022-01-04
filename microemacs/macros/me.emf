@@ -21,7 +21,9 @@
 ; Authors:     Steven Phillips & Jon Green
 ;
 ; Is this macro release compatible with the binary?
-!iif &les $version "20081110"  5000 ml-write "[Warning: The MicroEmacs executable is not compatible with this macro release]"
+!if &les $version "20210801"
+  5000 ml-write "[Warning: The MicroEmacs executable is not compatible with this macro release]"
+!endif
 !if &band @# 2
   ; This is a reinit via user-setup, no point reloading erf (and if readonly it may be wrong) 
 !elif &seq &find $user-name ".erf" "ERROR"
@@ -71,13 +73,13 @@ define-macro-file fileopen osd-file-open osd-get-file
 define-macro-file spellaut auto-spell auto-spell-menu
 define-macro-file hkinfo info info-on info-goto-link
 define-macro-file pagefile page-file page-bfile
+define-macro-file calc calc-op calc calc-insert
 define-macro-file zfile find-zfile zfile-setup
 define-macro-file gentags generate-tags-file
 define-macro-file dmf display-matching-fence
 define-macro-file etfinsrt insert-template
 define-macro-file xfind xfind xgrep rgrep
 define-macro-file schemosd scheme-editor
-define-macro-file calc calc calc-insert
 define-macro-file mouseosd context-menu
 define-macro-file printstp print-setup
 define-macro-file abbrlist abbrev-list
@@ -245,7 +247,7 @@ add-file-hook ".java .jav"                                    fhook-java
 add-file-hook ".jsp"                                          fhook-jsp
 add-file-hook ".js"                                           fhook-js
 add-file-hook ".pl .pm"                                       fhook-perl
-add-file-hook ".php .inc .php3 .php4 .phtml"                  fhook-php
+add-file-hook ".php .php3 .php4 .php5 .phtml .inc"            fhook-php
 add-file-hook ".phps"                                         fhook-phps
 add-file-hook ".cmd .bat .btm"                                fhook-dos
 add-file-hook ".tcl .tk"                                      fhook-tcl

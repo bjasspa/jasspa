@@ -188,8 +188,6 @@ define-macro mail-merge-popup
   find-buffer #l7
 !emacro
 
-define-macro-file calc calc-buffer
-
 0 define-macro mail-merge-find-end
   set-variable #l0 1
   !repeat
@@ -247,15 +245,19 @@ define-macro-file calc calc-buffer
         ml-write "[Bad if statement]"
         !abort
       !endif
-      !force 2 calc-buffer
+      beginning-of-buffer
+      set-mark
+      end-of-buffer
+      copy-region
+      set-variable #l1 @y
+      -1 yank
+      !force 0 delete-buffer $buffer-bname
+      find-buffer #l0
+      !force calc-op #l1
       !if &not $status
-        !force 0 delete-buffer $buffer-bname
-        find-buffer #l0
         ml-write "[Bad if statement]"
         !abort
       !endif
-      !force 0 delete-buffer $buffer-bname
-      find-buffer #l0
       forward-delete-char
       forward-delete-char
       set-mark
@@ -265,7 +267,7 @@ define-macro-file calc calc-buffer
         ml-write "[Bad if statement]"
         !abort
       !endif
-      !if .calc.result
+      !if .calc.answer
         !if &seq @wc "{"
           forward-delete-char
           forward-delete-char

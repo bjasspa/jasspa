@@ -71,7 +71,7 @@ set-variable .fhook-c.comment-12 "|//||/|// | //||"
 
 ; Commands
 set-variable .fhook-c.command-flag  "|t|th|th|th|t|t|t|t|t|t|"
-set-variable .fhook-c.command-name  "|c-to-cpp-convert||c-slashify|c-deslashify||c-hash-set-define|c-hash-unset-define|c-hash-eval|c-hash-eval|c-hash-del|"
+set-variable .fhook-c.command-name  "|c-to-cpp-convert||c-slashify|c-deslashify||c-hash-define|c-hash-undef|c-hash-eval|c-hash-eval|c-hash-undo|"
 set-variable .fhook-c.command-nbind "|||||||||1||"
 set-variable .fhook-c.command-kbind "|||||||||||"
 set-variable .fhook-c.command-desc  "|Convert to C\H++||Slashify region|Deslashify region||\HSet #define|\HUnset #define|Evaluate \H#'s|Evaluate #'s use \HNarrow|\HRemove # evaluation|"
@@ -517,7 +517,7 @@ set-variable .fhook-c.item-list-r6 "Clss \ecB\\1\ecA"
 !endif
 ;
 ; setup useful C fuctions to auto-load cmacros
-define-macro-file cmacros c-slashify c-deslashify c-hash-eval c-hash-set-define c-hash-unset-define c-hash-del
+define-macro-file cmacros c-slashify c-deslashify c-hash-eval c-hash-define c-hash-undef c-hash-undo
 define-macro-file hkcpp fhook-cpp
 ;
 ;
