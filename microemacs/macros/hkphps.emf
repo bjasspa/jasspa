@@ -89,8 +89,9 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
 !endif
 
 !if &and &sin "h" .fhook-phps.setup &band .hilight.flags 0x02 
-  !if &not &exist .hilight.phpsS
+  !if &not &exist .hilight.phpsD
     set-variable .hilight.phpsS &pinc .hilight.next 1
+    set-variable .hilight.phpsD &pinc .hilight.next 1
     set-variable .hilight.phpsV &pinc .hilight.next 1
   !endif
   ; php file highlighting
@@ -101,8 +102,8 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
   hilight .hilight.phps 0 "\\\\'"                $global-scheme 
   hilight .hilight.phps 0 "\\\\`"                $global-scheme 
   hilight .hilight.phps 0 "\\\\\""               $global-scheme 
-  hilight .hilight.phps 4 "'" "'" "\\"           .scheme.string
-  hilight .hilight.phps 0x80 "\"" .hilight.phpsS .scheme.string
+  hilight .hilight.phps 0x80 "\'" .hilight.phpsS .scheme.string
+  hilight .hilight.phps 0x80 "\"" .hilight.phpsD .scheme.string
   hilight .hilight.phps 0    "\\W\\{/[^/]*\\}$"  $global-scheme 
   hilight .hilight.phps 20 "/\\*\\s*[tT][oO][dD][oO]" "*/" "" .scheme.error
   hilight .hilight.phps 20   "/\\*" "*/" ""      .scheme.comment
@@ -190,6 +191,7 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
   hilight .hilight.phps 1    "break"             .scheme.keyword
   hilight .hilight.phps 1    "case"              .scheme.keyword
   hilight .hilight.phps 1    "cfunction"         .scheme.keyword
+  hilight .hilight.phps 1    "chr"               .scheme.function
   hilight .hilight.phps 1    "class"             .scheme.keyword
   hilight .hilight.phps 1    "const"             .scheme.keyword
   hilight .hilight.phps 1    "continue"          .scheme.keyword
@@ -214,13 +216,17 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
   hilight .hilight.phps 1    "foreach"           .scheme.keyword
   hilight .hilight.phps 1    "function"          .scheme.keyword
   hilight .hilight.phps 1    "global"            .scheme.keyword
+  hilight .hilight.phps 1    "htmlspecialchars"  .scheme.function
   hilight .hilight.phps 1    "if"                .scheme.keyword
   hilight .hilight.phps 1    "include"           .scheme.keyword
   hilight .hilight.phps 1    "include_once"      .scheme.keyword
-  hilight .hilight.phps 1    "isset"             .scheme.keyword
+  hilight .hilight.phps 1    "is_numeric"        .scheme.function
+  hilight .hilight.phps 1    "is_null"           .scheme.function
+  hilight .hilight.phps 1    "isset"             .scheme.function
   hilight .hilight.phps 1    "list"              .scheme.keyword
   hilight .hilight.phps 1    "new"               .scheme.keyword
   hilight .hilight.phps 1    "old_function"      .scheme.keyword
+  hilight .hilight.phps 1    "ord"               .scheme.function
   hilight .hilight.phps 1    "print"             .scheme.keyword
   hilight .hilight.phps 1    "printf"            .scheme.keyword
   hilight .hilight.phps 1    "print_r"           .scheme.keyword
@@ -230,8 +236,13 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
   hilight .hilight.phps 1    "require_once"      .scheme.keyword
   hilight .hilight.phps 1    "return"            .scheme.keyword
   hilight .hilight.phps 1    "static"            .scheme.keyword
+  hilight .hilight.phps 1    "strlen"            .scheme.function
+  hilight .hilight.phps 1    "strpos"            .scheme.function
+  hilight .hilight.phps 1    "strstr"            .scheme.function
+  hilight .hilight.phps 1    "substr"            .scheme.function
   hilight .hilight.phps 1    "switch"            .scheme.keyword
   hilight .hilight.phps 1    "unset"             .scheme.keyword
+  hilight .hilight.phps 1    "urlencode"         .scheme.function
   hilight .hilight.phps 1    "use"               .scheme.keyword
   hilight .hilight.phps 1    "var"               .scheme.keyword
   hilight .hilight.phps 1    "while"             .scheme.keyword
@@ -472,18 +483,24 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
     hilight .hilight.phps 1 "-[[:digit:]]+"      .scheme.constant
     hilight .hilight.phps 1 "0[xX][[:xdigit:]]+" .scheme.constant
   !endif
-  ; String hilighting
+  ; Single quote string hilighting
   0 hilight .hilight.phpsS 0                     .scheme.string
-  hilight .hilight.phpsS 0    "\\\\."            .scheme.string
-  hilight .hilight.phpsS 4   "@" "\\}\\W" ""     .scheme.variable
-  hilight .hilight.phpsS 4   "\\$" "\\}\\W" ""   .scheme.variable
-  hilight .hilight.phpsS 4   "\\${" "}" ""       .scheme.variable
-  hilight .hilight.phpsS 4   "\\$(" ")" ""       .scheme.variable
-  hilight .hilight.phpsS 0x80 "\"" .hilight.phps .scheme.string
+  hilight .hilight.phpsS 0    "\\\\'"            .scheme.string
+  hilight .hilight.phpsS 0    "\\\\\\\\"         .scheme.string
+  hilight .hilight.phpsS 0    "\\\\."            .scheme.error
+  hilight .hilight.phpsS 0x80 "\'" .hilight.phps .scheme.string
+  ; Double quote string hilighting
+  0 hilight .hilight.phpsD 0                     .scheme.string
+  hilight .hilight.phpsD 0    "\\\\."            .scheme.string
+  hilight .hilight.phpsD 4    "@" "\\}\\W" ""    .scheme.variable
+  hilight .hilight.phpsD 4    "\\$" "\\}\\W" ""  .scheme.variable
+  hilight .hilight.phpsD 4    "\\${" "}" ""      .scheme.variable
+  hilight .hilight.phpsD 4    "\\$(" ")" ""      .scheme.variable
+  hilight .hilight.phpsD 0x80 "\"" .hilight.phps .scheme.string
   ; the next tag fixes hilighting problems caused by strings spanning
   ; multiple lines by resetting the hilight on the next blank line during
   ; the look-back. 
-  hilight .hilight.phpsS 0xa80 "^\\s*\\{$" .hilight.phps $global-scheme
+  hilight .hilight.phpsD 0xa80 "^\\s*\\{$" .hilight.phps $global-scheme
   ; Shell variable hilighting
   0 hilight .hilight.phpsV 0                     .scheme.variable
   hilight .hilight.phpsV 0   ":-"                $global-scheme
