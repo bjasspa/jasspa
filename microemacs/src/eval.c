@@ -3564,8 +3564,8 @@ showVarList(meBuffer *bp, meUByte prefix, meVariable *varList)
         tv = varList;
         while(tv != NULL)
         {
-            if(((vn == NULL) || (strcmp(tv->name,vn) < 0)) &&
-               ((vl == NULL) || (strcmp(vl,tv->name) < 0)))
+            if(((vn == NULL) || (meStrcmp(tv->name,vn) < 0)) &&
+               ((vl == NULL) || (meStrcmp(vl,tv->name) < 0)))
             {
                 nv = tv;
                 vn = tv->name;

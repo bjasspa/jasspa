@@ -41,8 +41,8 @@
 meUShort
 meGetKeyFromString(meUByte **tp)
 {
-    meUByte *ss=*tp, cc, dd ;
-    meUShort ii=0 ;
+    meUByte *ss=*tp, cc, dd;
+    meUShort ii=0;
     
     for(;;)
     {

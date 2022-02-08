@@ -365,10 +365,10 @@
 #endif
 #ifdef _SOCKET
 /* winsock2.h must be included before */
-#if (_MSC_VER != 900)
-#include <winsock2.h>
-#else
+#if (defined _MSC_VER) && (_MSC_VER <= 900)
 #include <winsock.h>
+#else
+#include <winsock2.h>
 #endif
 #endif
 #include <windows.h>                    /* Standard windows API          */

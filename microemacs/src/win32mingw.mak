@@ -28,13 +28,13 @@
 #
 #     To build from the command line using make & makefile. 
 #
-#	Run "make -f win32mingw.mak"            for optimised build produces ./.win32mingw-release-mew/mew32.exe
-#	Run "make -f win32mingw.mak BCFG=debug" for debug build produces     ./.win32mingw-debug-mew/mew32.exe
-#	Run "make -f win32mingw.mak BTYP=c"     for console support          ./.win32mingw-release-mec/mec32.exe
-#	Run "make -f win32mingw.mak BCOR=ne"    for ne build produces        ./.win32mingw-release-new/new32.exe
+#	Run "mingw32-make -f win32mingw.mak"            for optimised build produces ./.win32mingw-release-mew/mew32.exe
+#	Run "mingw32-make -f win32mingw.mak BCFG=debug" for debug build produces     ./.win32mingw-debug-mew/mew32.exe
+#	Run "mingw32-make -f win32mingw.mak BTYP=c"     for console support          ./.win32mingw-release-mec/mec32.exe
+#	Run "mingw32-make -f win32mingw.mak BCOR=ne"    for ne build produces        ./.win32mingw-release-new/new32.exe
 #
-#	Run "make -f win32mingw.mak clean"      to clean source directory
-#	Run "make -f win32mingw.mak spotless"   to clean source directory even more
+#	Run "mingw32-make -f win32mingw.mak clean"      to clean source directory
+#	Run "mingw32-make -f win32mingw.mak spotless"   to clean source directory even more
 #
 ##############################################################################
 #
@@ -48,7 +48,7 @@ EXE      = .exe
 
 CC       = gcc
 RC       = windres
-MK       = make
+MK       = mingw32-make
 LD       = $(CC)
 STRIP    = strip
 AR       = ar
@@ -60,13 +60,13 @@ OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
 
-CCDEFS   = -D_MINGW -Wall -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib
+CCDEFS   = -D_MINGW -Wall -I$(TRDPARTY)/messl -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib
 CCFLAGSR = -O3 -m32 -mfpmath=sse -Ofast -flto -march=native -funroll-loops -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g -pg
 LDDEFS   = 
 LDFLAGSR = -O3 -m32 -mfpmath=sse -Ofast -flto -march=native -funroll-loops
 LDFLAGSD = -g -pg
-LDLIBS   = -lshell32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32
+LDLIBSB  = -lshell32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32
 ARFLAGSR = rcs
 ARFLAGSD = rcs
 RCFLAGS  = --input-format rc --output-format coff -D_MINGW
@@ -87,22 +87,32 @@ endif
 ifeq "$(BCOR)" "ne"
 BCOR_CDF = -D_NANOEMACS
 PRGLIBS  = 
+LDLIBS   = $(LDLIBSB)
 else
 BCOR     = me
+ifeq "$(BTYP)" "$(patsubst %s,%,$(BTYP))"
 BCOR_CDF = -D_SOCKET
 PRGLIBS  = $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A) $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A)
+LDLIBS   = -lws2_32 $(LDLIBSB)
+else
+BCOR_CDF = -D_SOCKET -D_MESSL
+PRGLIBS  = $(TRDPARTY)/messl/$(BOUTDIR)/messl$(A) $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A) $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A)
+LDLIBS   = -lcrypt32 -lws2_32 $(LDLIBSB)
+endif
 endif
 
-ifeq "$(BTYP)" "c"
-BTYP_CDF = -D_ME_CONSOLE -D_CONSOLE
-BTYP_LDF = -Wl,-subsystem,console
-else ifeq "$(BTYP)" "cw"
+ifneq "$(BTYP)" "$(patsubst cw%,%,$(BTYP))"
 BTYP_CDF = -D_ME_CONSOLE -D_CONSOLE -D_ME_WINDOW
 BTYP_LDF = -Wl,-subsystem,console
+else ifneq "$(BTYP)" "$(patsubst c%,%,$(BTYP))"
+BTYP_CDF = -D_ME_CONSOLE -D_CONSOLE
+BTYP_LDF = -Wl,-subsystem,console
 else
-BTYP     = w
 BTYP_CDF = -D_ME_WINDOW
 BTYP_LDF = -Wl,-subsystem,windows
+ifneq "$(BTYP)" "ws"
+BTYP     = w
+endif
 endif
 
 OUTDIR   = $(BOUTDIR)-$(BCOR)$(BTYP)
@@ -144,6 +154,9 @@ $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A):
 
 $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A):
 	cd $(TRDPARTY)/tfs && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
+
+$(TRDPARTY)/messl/$(BOUTDIR)/messl$(A):
+	cd $(TRDPARTY)/messl && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
 
 clean:
 	$(RMDIR) $(OUTDIR)

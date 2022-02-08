@@ -194,6 +194,8 @@ typedef struct
 
 CellMetrics eCellMetrics;               /* Cell metrics */
 RECT   ttRect;                          /* Area of screen to update */
+static int ttshowState;                 /* Show state of the window */
+static HBRUSH ttBrush = NULL;           /* Current background brush */
 #endif /* _ME_WINDOW */
 
 #if MEOPT_CLIENTSERVER
@@ -240,10 +242,8 @@ WinKillToClipboard (void);
 static int ttfcol = meCOLOR_FDEFAULT;   /* Foregound colour */
 static int ttbcol = meCOLOR_BDEFAULT;   /* Background colour */
 static meUShort ttmodif = 0;            /* Modified keyboard state */
-static int ttshowState;                 /* Show state of the window */
 HANDLE ttInstance;                      /* Instance of the application */
 static DWORD ttThreadId = 0;            /* Current thread identity */
-static HBRUSH ttBrush = NULL;           /* Current background brush */
 
 /* Font type settings */
 LOGFONT ttlogfont={0};                  /* Current logical font */
@@ -5890,12 +5890,6 @@ PURPOSE: calls initialization function, processes message loop
 int
 main (int argc, char *argv[])
 {
-    HMODULE hInstance, hPrevInstance;
-    int nCmdShow = 1;
-    
-    hInstance = GetModuleHandle (NULL);
-    hPrevInstance = NULL;	/* Can we do something more safe here? */
-    
 #else
 /****************************************************************************
    
@@ -5928,9 +5922,15 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
 /*             logfp = fopen("log","w+") ;*/
     
 #ifdef _ME_WINDOW
-    /* Initialise the window data and register window class */
+#ifdef _ME_CONSOLE
+    /* Can we do something more safe here for Console+Window version? */
+    {
+        HMODULE hInstance = GetModuleHandle(NULL);
+#else
     if (!hPrevInstance)
     {
+#endif
+        /* Initialise the window data and register window class */
         WNDCLASS  wc;
         
         wc.style = 0;
@@ -5948,7 +5948,11 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmd
             return (meFALSE);
         
         ttInstance =  hInstance;
+#ifdef _ME_CONSOLE
+        ttshowState = 1;
+#else
         ttshowState = nCmdShow;
+#endif
     }
 #endif /* _ME_WINDOW */
 #ifdef _WIN32_WINNT

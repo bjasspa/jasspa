@@ -127,46 +127,62 @@ getNextLine(int f,int n)
     meInt   curLine=-1 ;
     meBuffer *bp=NULL, *tbp ;
     
-    for(ii=0 ; ii<noNextLine ; ii++)
+    tbp = frameCur->bufferCur;
+    ii = noNextLine;
+    while(--ii >= 0)
     {
         ll = meStrlen(nextName[ii]);
-	tbp = bheadp;
-	while(tbp != NULL)
-	{
 #ifdef _INSENSE_CASE
-	    if((rr=meStrnicmp(tbp->name,nextName[ii],ll)) == 0)
+        if(meStrnicmp(tbp->name,nextName[ii],ll) == 0)
 #else
-	    if((rr=meStrncmp(tbp->name,nextName[ii],ll)) == 0)
+        if(meStrncmp(tbp->name,nextName[ii],ll) == 0)
 #endif
-	    {
-                if(tbp == frameCur->bufferCur)
-                {
-                    bp = tbp;
-                    no = ii;
-                    break;
-                }
-                if((n & 0x01) && 
-                   ((bp == NULL) || (bp->windowCount < tbp->windowCount) ||
-                    ((bp->windowCount == tbp->windowCount) && (bp->histNo < tbp->histNo))))
-                {
-                    bp = tbp ;
-                    no = ii ;
-                }
-            }
-            else if(rr > 0)
-                break;
-	    tbp = tbp->next;
-        }
-        if(bp == frameCur->bufferCur)
+        {
+            bp = tbp;
+            no = ii;
             break;
+        }
     }
     if(bp == NULL)
-        return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No next buffer found]") ;
+    {    
+        if((n & 0x02) == 0)
+        {
+            ii = noNextLine;
+            while(--ii >= 0)
+            {
+                ll = meStrlen(nextName[ii]);
+                tbp = bheadp;
+                while(tbp != NULL)
+                {
+#ifdef _INSENSE_CASE
+                    if((rr=meStrnicmp(tbp->name,nextName[ii],ll)) == 0)
+#else
+                    if((rr=meStrncmp(tbp->name,nextName[ii],ll)) == 0)
+#endif
+                    {
+                        if((bp == NULL) || (bp->windowCount < tbp->windowCount) ||
+                           ((bp->windowCount == tbp->windowCount) && (bp->histNo < tbp->histNo)))
+                        {
+                            bp = tbp ;
+                            no = ii ;
+                        }
+                    }
+                    else if(rr > 0)
+                        break;
+                    tbp = tbp->next;
+                }
+            }
+        }
+        if(bp == NULL)
+            return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No next buffer found]") ;
+        if(n & 0x01)
+            meWindowPopup(bp->name,WPOP_MKCURR,NULL);
+        if(swbuffer(frameCur->windowCur,bp) <= 0)
+            return meFALSE ;
+    }
     if((noNextLines = nextLineCnt[no]) == 0)
         return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No lines for next buffer %s]",bp->name) ;
     nextLines = nextLineStr[no] ;
-    
-    meWindowPopup(bp->name,WPOP_MKCURR,NULL) ;
 
     if((frameCur->windowCur->dotLine == bp->baseLine) ||
        ((frameCur->windowCur->dotLine == meLineGetPrev(bp->baseLine)) &&
@@ -231,10 +247,10 @@ getNextLine(int f,int n)
                     ii = meStrlen(nextFile) ;
                 SetUsrLclCmdVar((meUByte *)"next-line",meItoa(curLine),&(bp->varList)) ;
                 
-                if((n & 0x01) == 0)
+                if(n & 0x04)
                     return meTRUE ;
                     
-                if(meWindowPopup(NULL,WPOP_MKCURR,NULL) == NULL)
+                if((n & 0x01) && (meWindowPopup(NULL,WPOP_MKCURR,NULL) == NULL))
                     return meFALSE ;
                 if((nextFile[0] == '*') && (nextFile[ii-1] == '*'))
                 {

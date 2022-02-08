@@ -1187,7 +1187,7 @@ getDirectoryInfo(meUByte *fname)
                 curFile->mtime.dwLowDateTime  = fd.ftLastWriteTime.dwLowDateTime ;
                 curFile->mtime.dwHighDateTime = fd.ftLastWriteTime.dwHighDateTime ;
                 /* construct attribute string */
-                meStrncpy(curFile->attrib,"-rwx",4) ;
+                memcpy(curFile->attrib,"-rwx",4) ;
                 if(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
                 {
                     curFile->attrib[0] = 'd' ;

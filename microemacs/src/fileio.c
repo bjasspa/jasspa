@@ -252,7 +252,7 @@ ffUrlGetType(meUByte *url)
 #include <io.h>
 typedef void (*meATEXIT)(void);
 
-#define SHUT_RDWR            SD_BOTH
+#define SHUT_RDWR        SD_BOTH
 
 #define meSocketGetError WSAGetLastError
 #define meSocketOpen     socket

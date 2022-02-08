@@ -2783,7 +2783,7 @@ cmpBuffers(int f, int n)
     if(wp == NULL)
         return mlwrite(MWABORT,(meUByte *)"[Not enough windows to compare]") ;
     
-    if (n == 0)
+    if(n == 0)
     {
         /* Exact match - white space is matched. */
         for(;;)
@@ -2815,17 +2815,21 @@ cmpBuffers(int f, int n)
             
             wp = swp ;
             cc = meWindowGetChar(wp);
-            if (isSpace (cc))
+            if((n & 1) && isSpace(cc))
                 cc = ' ';
             
             /* Check the current character */
             while((wp = wp->next) != NULL)
             {
-                if(((wp->flags & meWINDOW_NO_CMP) == 0) &&
-                   ((tmpc = meWindowGetChar(wp)) != cc))
+                if(((wp->flags & meWINDOW_NO_CMP) == 0) && ((tmpc = meWindowGetChar(wp)) != cc))
                 {
-                    if ((cc != ' ') || !isSpace(tmpc))
-                        return meFALSE ;
+                    if(cc == ' ')
+                    {
+                        if(((n & 1) == 0) || !isSpace(tmpc))
+                            return meFALSE;
+                    }
+                    else if(((n & 2) == 0) || (toLower(cc) != toLower(tmpc)))
+                        return meFALSE;
                 }
             }
             
@@ -2833,7 +2837,7 @@ cmpBuffers(int f, int n)
              * in the buffer. if the current character is a space then advance
              * to the next non-white character in the buffer. */
             wp = swp ;
-            if (((moreData = meWindowForwardChar(wp,1)) > 0) && (cc == ' '))
+            if(((moreData = meWindowForwardChar(wp,1)) > 0) && (cc == ' ') && (n & 1))
             {
                 do
                 {
@@ -2849,7 +2853,7 @@ cmpBuffers(int f, int n)
             {
                 if((wp->flags & meWINDOW_NO_CMP) == 0)
                 {
-                    if(((winData = meWindowForwardChar(wp,1)) > 0) && (cc == ' '))
+                    if(((winData = meWindowForwardChar(wp,1)) > 0) && (cc == ' ') && (n & 1))
                     {
                         do
                         {

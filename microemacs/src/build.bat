@@ -59,6 +59,7 @@ if NOT "%PATH:Microsoft Visual Studio\2017=%." == "%PATH%." set MAKEFILE=win32vc
 if NOT "%PATH:Microsoft Visual Studio 10.0=%." == "%PATH%." set MAKEFILE=win32vc10.mak & goto build_got_makefile
 if NOT "%PATH:Microsoft Visual Studio 9.0=%." == "%PATH%." set MAKEFILE=win32vc9.mak & goto build_got_makefile
 if NOT "%PATH:Microsoft Visual Studio 8.0=%." == "%PATH%." set MAKEFILE=win32vc8.mak & goto build_got_makefile
+if NOT "%PATH:\mingw=%." == "%PATH%." set MAKEFILE=win32mingw.mak & goto build_got_makefile
 if NOT "%VS150COMNTOOLS%." == "." set MAKEFILE=win32vc15.mak & goto build_got_makefile
 if NOT "%VS100COMNTOOLS%." == "." set MAKEFILE=win32vc10.mak & goto build_got_makefile
 if NOT "%VS90COMNTOOLS%." == "." set MAKEFILE=win32vc9.mak & goto build_got_makefile
@@ -75,7 +76,7 @@ goto :build_exit
 :build_got_makefile
 
 set MAKE=make
-if "%MAKEFILE%" == "win32mingw.gmk" set MAKE=mingw32-make
+if "%MAKEFILE:~0,10%" == "win32mingw" set MAKE=mingw32-make
 if "%MAKEFILE:~0,7%" == "win32vc" set MAKE=nmake
 
 if "%LOGFILE%." == "." goto build_applog
@@ -116,7 +117,7 @@ echo     -la {logfile}
 echo          : Append the compile log to the given file
 echo     -m {makefile}
 echo            Sets the makefile to use where {makefile} can be:-
-echo              win32mingw.gmk  Win32 build using MinGW GNU GCC
+echo              win32mingw.mak  Win32 build using MinGW GNU GCC
 echo              win32vc6.mak  Win32 build using MS VC version 6 (or 98)
 echo              win32vc8.mak  Win32 build using MS VC version 8 (or 2005)
 echo              win32vc9.mak  Win32 build using MS VC version 9 (or 2008)

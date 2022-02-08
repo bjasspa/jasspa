@@ -597,8 +597,8 @@ ipipeKillBuf(meIPipe *ipipe, int type)
 #ifdef _WIN32
         if(ipipe->pid > 0)
         {
-            if(ipipeKillProcessTree(ipipe->processId) <= 0)
-                /* cannot terminate the tree - we can only Terminate this one */
+            if((type >= 0) || (ipipeKillProcessTree(ipipe->processId) <= 0))
+                /* kill only parent or cannot traverse process tree - so only Terminate this one */
                 TerminateProcess(ipipe->process,999) ;
             /* On windows theres no child signal, so flag as killed */
             ipipe->pid = -5 ;
@@ -627,8 +627,11 @@ ipipeKill(int f, int n)
     ipipe = ipipes ;
     while(ipipe->bp != frameCur->bufferCur)
         ipipe = ipipe->next ;
-#ifndef _WIN32
     if(f == meFALSE)
+        /* Use -ve arg by default to kill the whole group/tree */
+#ifdef _WIN32
+        n = -1;
+#else
         n = (meSystemCfg & meSYSTEM_TERMSIG) ? -SIGTERM:-SIGKILL;
 #endif
     ipipeKillBuf(ipipe,n);
