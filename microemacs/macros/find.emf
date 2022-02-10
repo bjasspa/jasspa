@@ -408,7 +408,7 @@
     set-variable #p0 &trl &rig #p0 #l1
     set-variable #l2 &lget #p9 1
     !while &len &set #l3 &lef #l0 1
-      !if &sin #l3 "uxgpqrdfmibl234@-aoecC"
+      !if &sin #l3 "uxgprdfmibl234@-aoecCq"
         set-variable #l2 &cat #l2 #l3
       !elif &sin #l3 "UXGPRDFMIBL"
         set-variable #l2 &rep #l2 &slo #l3 ""

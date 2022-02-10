@@ -48,7 +48,7 @@ add-file-hook "*compile* *grep*" fhook-ipipe
   !endif
   set-variable $window-line &sub :compile-last 1
   !repeat
-    !force 0 get-next-line
+    !force 6 get-next-line
     !if &not $status
       set-variable $window-line #l0
     !elif &les $window-line #l0

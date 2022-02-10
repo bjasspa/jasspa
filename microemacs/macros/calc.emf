@@ -52,7 +52,7 @@
       set-variable #l1 &rig #l1 1
       set-variable #l2 &bor #l2 2
     !endif
-  !elif &xseq #l1 "\\(\"\\([^\\\\]\\|\\\\.\\)*\"\\)\\(.*\\)"
+  !elif &xseq #l1 "\\(\"\\([^\\\\\"]\\|\\\\.\\)*\"\\)\\(.*\\)"
     set-variable #l1 @s3
     !force !force execute-line &spr "set-variable #l3 %s" @s1
     !if &not $status
@@ -296,10 +296,17 @@ define-macro calc-op
     set-variable .calc.result &spr "\b%d\bA string cannot be calculated\b" #l2
     !abort
   !elif &band #l6 2
-    !if &and &len #l3 &not &seq #l3 "f"  
+    !if &seq #l3 ""
+      set-variable #l8 #l9
+      ; calc 12/3+4.2 will incorrectly return 8.2 because the first div was done as integer - force whole calc to be fp 
+      set-variable .calc.flg 2
+      !force calc-intl #l1
+      !iif &not $status  set-variable #l9 #l8
+    !elif &not &seq #l3 "f"  
       set-variable .calc.result &spr "\b%d\bCannot output floating point number in integer format (%s)\b" #l2 #l3
       !abort
-    !elif &sin "#INF" &set #l5 &trb &spr "%.10g" &lget #l9 2
+    !endif
+    !if &sin "#INF" &set #l5 &trb &spr "%.10g" &lget #l9 2
       set-variable .calc.result &spr "\b%d\bNumber overflow\b" #l2
       !abort
     !endif
@@ -351,10 +358,10 @@ define-macro calc
     !abort
   !endif
   !iif &band @# 2  insert-string .calc.answer
-  ml-write &spr "%s = %s" .calc.sum .calc.result
+  !iif &band @# 1  ml-write &spr "%s = %s" .calc.sum .calc.result
 !emacro
 set-variable .calc.ops " ~ ! * / % + - << >> < > <= >= == != & ^ | && || "
 set-variable .calc.opf " 1 17 2 18 34 3 19 4 20 5 21 37 53 6 22 7 8 9 10 11 "
 define-macro calc-insert
-  3 calc
+  &bor 2 @# calc @1
 !emacro
