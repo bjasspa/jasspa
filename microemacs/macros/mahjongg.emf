@@ -867,7 +867,7 @@ define-macro Mahjongg
     ;
     ; +----+----+----+----+
     ; | ** | ** | ** | ** |
-    ; |SUM |WIN |AUT |SPR | 1 off each = 4
+    ; |SUM |WIN |AUT |SPR | 1 of each = 4
     ; | MER| TER| UMN| ING|
     ; | ** | ** | ** | ** |
     ; +----+----+----+----+
@@ -877,7 +877,7 @@ define-macro Mahjongg
     set-variable :mjg-tile-r3 &cat :mjg-tile-r3 " **  **  **  ** "
     ; +----+----+----+----+
     ; |P  @|O  @|B  @|C  @|
-    ; | L  | R  | B  | H  | 1 off each = 4
+    ; | L  | R  | B  | H  | 1 of each = 4
     ; |  U |  C |  O |  R |
     ; |@  M|@  H|@  O|@  Y|
     ; +----+----+----+----+
@@ -887,7 +887,7 @@ define-macro Mahjongg
     set-variable :mjg-tile-r3 &cat :mjg-tile-r3 "@  M@  H@  B@  Y"
     ; +----+----+----+----+----+----+----+----+----+
     ; |   9| oo8|oo 7|   6|   5|   4|   3|   2| o 1|
-    ; |ooo | oo |  o | oo |o o |o o |o   | o  |oOo | 4 off each = 36
+    ; |ooo | oo |  o | oo |o o |o o |o   | o  |oOo | 4 of each = 36
     ; |ooo | oo | oo | oo | o  |    | o  |    |oOo |
     ; |ooo | oo | oo | oo |o o |o o |  o | o  | o  |
     ; +----+----+----+----+----+----+----+----+----+
@@ -898,7 +898,7 @@ define-macro Mahjongg
     ; +----+----+----+----+----+----+----+----+----+
     ; |   9|\8 /|   7|   6| 5  |   4|   3|   2|   1|
     ; |!!! | !! | !  |! ! |! ! |! ! |    | !  | \o |
-    ; |!!! | !! |!!! |! ! | !  |    | !  |    | /@@|  4 off each = 36
+    ; |!!! | !! |!!! |! ! | !  |    | !  |    | /@@|  4 of each = 36
     ; |!!! |/  \|!!! |! ! |! ! |! ! |! ! | !  |  /\|
     ; +----+----+----+----+----+----+----+----+----+
     set-variable :mjg-tile-r0 &cat :mjg-tile-r0 "   9\\  /   7   6   5   4   3   2   1"
@@ -907,7 +907,7 @@ define-macro Mahjongg
     set-variable :mjg-tile-r3 &cat :mjg-tile-r3 "!!! /  \\!!! ! ! ! ! ! ! ! !  !    /\\"
     ; +----+----+----+----+----+----+----+----+----+
     ; | # 9|   8|   7| o 6|/~5 |   4| ~3 |  2 |   1|
-    ; |/@\ |~|~ |~~  |--- | #~ |CD  |~~  | ~  |~~~ |  4 off each = 36
+    ; |/@\ |~|~ |~~  |--- | #~ |CD  |~~  | ~  |~~~ |  4 of each = 36
     ; | #  | ~  | #  | %  | ## | @  | #  |~~~ | $  |
     ; |/ } |##  |/ } |oOo |<#> |<#\ |/ } | #  |/#D |
     ; +----+----+----+----+----+----+----+----+----+
@@ -918,7 +918,7 @@ define-macro Mahjongg
     ; +----+----+----+
     ; |+-+B|   C|   F|
     ; || | |o|o |/#\ |
-    ; || | | |  |### | 4 off each = 12
+    ; || | | |  |### | 4 of each = 12
     ; |+-+ | |  |### |
     ; +----+----+----+
     set-variable :mjg-tile-r0 &cat :mjg-tile-r0 &sprint "%s%2s%s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1 "   C   F"
@@ -928,7 +928,7 @@ define-macro Mahjongg
     ; +----+----+----+----+
     ; |   N|   E|   S|   W|
     ; || | ||-- ||-- || | |
-    ; ||/| ||-  |+-+ ||^| | 4 off each = 16
+    ; ||/| ||-  |+-+ ||^| | 4 of each = 16
     ; || | ||-- |--| |/ \ |
     ; +----+----+----+----+
     set-variable :mjg-tile-r0 &cat :mjg-tile-r0 "   N   E   S   W"

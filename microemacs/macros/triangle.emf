@@ -266,9 +266,7 @@
   ; Shuffle the pack.
   ;
   1 ml-write "Dealing cards ....."
-  !if &not &seq $buffer-bname "*triangle*"
-    find-buffer "*triangle*"
-  !endif
+  find-buffer "*triangle*"
   -1 buffer-mode "indent"
   -1 buffer-mode "view"
   ; Kill the buffer off
