@@ -109,16 +109,10 @@
         html-add-newline
         !return
       !endif
-      !if &not #g0
-        ml-write &cat "Processing " &mid "|/-\\" &mod $window-line 4 1
-      !endif
+      !iif &band @# 1  ml-write &cat "Processing " &mid "|/-\\" &mod $window-line 4 1
       backward-delete-char
-      !if &not &band #l5 0x20
-        !jump 7
-      !endif
-      !if &not &band #l5 0x40
-        html-add-newline
-      !endif
+      !tjump &not &band #l5 0x20  4
+      !iif &not &band #l5 0x40  html-add-newline
     !elif &sin @wc "\t "
       forward-delete-char
       !if &band #l5 0x24
@@ -143,7 +137,7 @@
         set-variable #l7 $window-col
         set-variable #l5 &band #l5 0xfffb
       !endif
-      !jump -46
+      !jump -40
     !elif &seq @wc "&"
       set-variable #l3 &rig @wl $window-col
       !if &iseq &lef #l3 6 "&NBSP;"
@@ -281,10 +275,8 @@
         kill-region
         set-variable #l3 @y
         -1 yank
-        !if &sin "<" #l3
-          !jump -6
-        !endif
-        !if #g0
+        !tjump &sin "<" #l3  -5
+        !if &band @# 2
           !if &seq &lef #l3 8 "!-- Me: "
             !if &band #l5 2
               html-add-newline

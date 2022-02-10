@@ -541,7 +541,6 @@ define-macro ishell
   set-variable #l1 $buffer-bname
   goto-alpha-mark "I"
   beginning-of-line
-  set-variable #g4 #l1
   !force &sub -1 &sub $window-line :last-line search-backward "\CZ\CZ"
   !if $status
     debug-reset-line
@@ -721,7 +720,6 @@ define-macro dbx
   set-variable #l1 $buffer-bname
   goto-alpha-mark "I"
   beginning-of-line
-  set-variable #g4 #l1
   !force &sub -1 &sub $window-line :last-line search-backward "^\\w+::[\\w:]*(\\([^)]+\\):\\([0-9]+\\)):"
   !if $status
     set-variable #l2 @s1

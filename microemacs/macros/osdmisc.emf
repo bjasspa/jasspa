@@ -551,12 +551,8 @@ define-macro osd-search
       !force -3 show-region
       !force  3 show-region
       !force -1 show-region
-      !if &gre #g0 -1
-        !if &not #g1
-          osd .osd.sar-rpr 90 "BcfxHt" .scheme.osd-ebtt " \HUndo Last   "  3 osd-search-replace
-        !endif
-        set-variable #g0 &add #g0 1
-        set-variable #g1 #g0
+      !if &gre .undo -1
+        !iif &equ 2 &set .undo &add 2 &band .undo &bnot 1  osd .osd.sar-rpr 90 "BcfxHt" .scheme.osd-ebtt " \HUndo Last   "  3 osd-search-replace
       !endif
     !endif
     ; now search for the next
@@ -565,11 +561,11 @@ define-macro osd-search
     replace-string .osd-search.search .osd-search.replace
     !abort
   !elif &equ @# 3
-    !if &not &equ #g0 #g1
+    !if &band 1 .undo
       set-variable @cl undo
     !endif
     undo
-    !if &not &dec #g1 1
+    !if &equ 1 &set .undo &sub &bor .undo 1 2
       osd .osd.sar-rpr 90 "BcfH" .scheme.osd-dbtt " Undo Last   "
     !endif
     ; now use the search to find this undone occurance
@@ -859,8 +855,7 @@ osd .osd.sar  10 "It" .osd.sar-nb
   !if $status
     set-variable .osd-search.search #l9
   !endif
-  set-variable #g0 &cond &bmod "undo" 0 -1
-  set-variable #g1 0
+  set-variable .osd-search-replace.undo &cond &bmod "undo" 0 -1
   ; work out a window-line to recenter on for good visibility
   set-variable #l0 &sub $window-mode-line &div $window-depth 2
   set-variable #l1 &div $window-depth 3

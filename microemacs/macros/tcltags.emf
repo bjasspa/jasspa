@@ -39,8 +39,8 @@ set-char-mask "3" "$."
 define-macro tcltags-add-file
   set-variable $buffer-mask "luh13"
   set-variable #l2 $buffer-fname
-  !if &seq &lef #l2 #g1 #g2
-    set-variable #l2 &rig #l2 #g1
+  !if &seq &lef #l2 %tag-plen %tag-path
+    set-variable #l2 &rig #l2 %tag-plen
   !endif
   ml-write &spr "[Parsing file %s]" #l2
   1 buffer-mode "magic"
@@ -125,8 +125,7 @@ define-macro tcltags
   set-variable %tag-bname $buffer-bname 
   -1 buffer-mode "view"
   !force 0 delete-buffer "*scratch*"
-  set-variable #g1 &rsin "/" $buffer-fname
-  set-variable #g2 &lef $buffer-fname #g1
+  set-variable %tag-path &lef $buffer-fname &set %tag-plen &rsin "/" $buffer-fname
   !if &not &sin "a" %tag-option
     beginning-of-buffer
     set-mark

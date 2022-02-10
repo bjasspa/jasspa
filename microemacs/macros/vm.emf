@@ -1126,7 +1126,6 @@ define-macro-file htmltool html-to-ehf
       -1 yank
       set-variable $buffer-fill-col &sub $window-width 2
       beginning-of-buffer
-      set-variable #g0 0
       !force html-to-ehf
       beginning-of-buffer
       set-mark

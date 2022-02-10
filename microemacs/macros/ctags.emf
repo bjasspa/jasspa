@@ -211,8 +211,8 @@ set-char-mask "1" ":~"
   ; ensure : is considered part of a word for c++
   set-variable $buffer-mask "luh1"
   set-variable #l9 $buffer-fname
-  !if &seq &lef #l9 #g1 #g2
-    set-variable #l9 &rig #l9 #g1
+  !if &seq &lef #l9 %tag-plen %tag-path
+    set-variable #l9 &rig #l9 %tag-plen
   !endif
   ml-write &spr "[Parsing file %s]" #l9
   ; the hooks may not be loaded, must setup the indent (for fence matching) & magic mode
@@ -441,8 +441,7 @@ define-macro ctags
   set-variable %tag-bname $buffer-bname 
   -1 buffer-mode "view"
   !force 0 delete-buffer "*scratch*"
-  set-variable #g1 &rsin "/" $buffer-fname
-  set-variable #g2 &lef $buffer-fname #g1
+  set-variable %tag-path &lef $buffer-fname &set %tag-plen &rsin "/" $buffer-fname
   !if &not &sin "a" %tag-option
     beginning-of-buffer
     set-mark

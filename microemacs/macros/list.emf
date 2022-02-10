@@ -311,20 +311,3 @@ define-macro find-print
     ml-write &spr "[Find complete, %d matche(s)]" &sub $window-line 1
   !endif
 !emacro
-
-;set-variable .list.foo-0 &lset .list.foo-0 1 "1"
-;set-variable .list.foo-0 &lset .list.foo-0 3 "fred"
-set-variable #g0 "|A|B|C|"
-set-variable #g1 &lins #g0 6 6
-set-variable #g1 &lins #g1 1 1
-set-variable #g1 &lins #g1 0 0
-set-variable #g1 &lins #g1 -1 -1
-set-variable #g1 &ldel #g1 1
-set-variable #g2 &lfin #g1 "Z"
-
-;!force list-remove "foo"
-;list-create "foo"
-;set-variable #l0 1000
-;!while &dec #l0 1
-;    list-ins "foo" &mod $random &sub 1000 #l0 &cat "fred-" #l0
-;!done

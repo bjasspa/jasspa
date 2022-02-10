@@ -29,23 +29,23 @@
   !while 1
     set-variable #p9 &add #p9 1
     set-mark
-    !if &seq @wc #g2
+    !if &seq @wc .org.dlmt
       !repeat 
         forward-char
-        search-forward &cat "\\" #g2
-      !until &not &seq @wc #g2
+        search-forward &cat "\\" .org.dlmt
+      !until &not &seq @wc .org.dlmt
     !else
-      search-forward &spr "[%s%s]" #g1 #g0
+      search-forward &spr "[%s%s]" .org.efld .org.erec
       backward-char
     !endif
     !if .org.aimp-header
       copy-region
       set-variable #l3 @y
       -1 yank
-      !if &seq &lef #l3 1 #g2
+      !if &seq &lef #l3 1 .org.dlmt
         set-variable #l3 &mid #l3 1 &sub &len #l3 2
-        set-variable #l4 &spr "%s%s" #g2 #g2
-        set-variable #l3 &rep #l3 #l4 #g2
+        set-variable #l4 &spr "%s%s" .org.dlmt .org.dlmt
+        set-variable #l3 &rep #l3 #l4 .org.dlmt
       !endif
       !if &seq #l3 ""
         set-variable #l3 #p9
@@ -54,7 +54,7 @@
       set-variable #l3 #p9
     !endif
     set-variable #p8 &spr "%s%s\b" #p8 #l3
-    !if &seq @wc #g0
+    !if &seq @wc .org.erec
       !return
     !endif
     forward-char
@@ -66,13 +66,13 @@
   !while 1
     set-variable #p9 &add #p9 1
     set-mark
-    !if &seq @wc #g2
+    !if &seq @wc .org.dlmt
       !repeat 
         forward-char
-        search-forward &cat "\\" #g2
-      !until &not &seq @wc #g2
+        search-forward &cat "\\" .org.dlmt
+      !until &not &seq @wc .org.dlmt
     !else
-      search-forward &spr "[%s%s]" #g1 #g0
+      search-forward &spr "[%s%s]" .org.efld .org.erec
       backward-char
     !endif
     !if &set #l1 &lget .org.imp-field-map #p9
@@ -80,10 +80,10 @@
       set-variable #l3 @y
       -1 yank
       !if &not &seq #l3 ""
-        !if &seq &lef #l3 1 #g2
+        !if &seq &lef #l3 1 .org.dlmt
           set-variable #l3 &mid #l3 1 &sub &len #l3 2
-          set-variable #l4 &spr "%s%s" #g2 #g2
-          set-variable #l3 &rep #l3 #l4 #g2
+          set-variable #l4 &spr "%s%s" .org.dlmt .org.dlmt
+          set-variable #l3 &rep #l3 #l4 .org.dlmt
         !endif
         set-variable #l4 &cat "/org/tmp/" &lget .org.addr-reg #l1
         set-variable #l5 &reg #l4 ""
@@ -98,7 +98,7 @@
         set-registry #l4 #l5
       !endif
     !endif
-    !if &seq @wc #g0
+    !if &seq @wc .org.erec
       forward-char
       !return
     !endif
@@ -261,9 +261,9 @@ osd .osd.org-aieo 160 "BcfH"   .scheme.osd-ebtt "  \HOk  "  1 void
 
 0 define-macro org-aie-setdelimit
   set-variable #l0 @1
-  set-variable #g0 &rep &rep &ind &spr ".org.%s-endrec"  #l0 "\\n" "\n" "\\t" "\t"
-  set-variable #g1 &rep &rep &ind &spr ".org.%s-endfld"  #l0 "\\n" "\n" "\\t" "\t"
-  set-variable #g2 &rep &rep &ind &spr ".org.%s-delimit" #l0 "\\n" "\n" "\\t" "\t"
+  set-variable .org.erec &rep &rep &ind &spr ".org.%s-endrec"  #l0 "\\n" "\n" "\\t" "\t"
+  set-variable .org.efld &rep &rep &ind &spr ".org.%s-endfld"  #l0 "\\n" "\n" "\\t" "\t"
+  set-variable .org.dlmt &rep &rep &ind &spr ".org.%s-delimit" #l0 "\\n" "\n" "\\t" "\t"
 !emacro
 
 osd .osd.org-aimp  0  "batcHDs" 9 3 62 26 -1 -1 640 .scheme.osd-title "Import Address Database"
@@ -583,16 +583,16 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " \HCancel  "   f void
         !if &and &gre .org.aexp-addrfld 1 &seq &rig #l4 5 "Address"
           set-variable #l5 1
           !repeat
-            insert-string &spr "%s%s%s%d%s" #g1 #g2 #l4 #l5 #g2
+            insert-string &spr "%s%s%s%d%s" .org.efld .org.dlmt #l4 #l5 .org.dlmt
           !until &equ &pinc #l5 1 .org.aexp-addrfld
         !else
           !if &gre #l3 1
-            insert-string #g1
+            insert-string .org.efld
           !endif
-          insert-string &spr "%s%s%s" #g2 #l4 #g2
+          insert-string &spr "%s%s%s" .org.dlmt #l4 .org.dlmt
         !endif
       !done
-      insert-string #g0
+      insert-string .org.erec
     !endif
     set-variable #l2 0
     set-variable .org.addr "0"
@@ -605,26 +605,26 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " \HCancel  "   f void
           set-variable #l3 0
           !while &not &seq &set #l4 &lget .org.addr-reg &inc #l3 1 ""
             !if &equ #l3 1
-              insert-string &spr "%s%d%s" #g2 .org.addr #g2
+              insert-string &spr "%s%d%s" .org.dlmt .org.addr .org.dlmt
             !else
               set-variable #l5 &reg &spr "/org/addr/%d/%s" .org.addr #l4 ""
-              !if &seq #g2 ""
-                set-variable #l5 &rep #l5 #g1 .org.aexp-seperator
+              !if &seq .org.dlmt ""
+                set-variable #l5 &rep #l5 .org.efld .org.aexp-seperator
               !else
-                set-variable #l5 &rep #l5 #g2 &cat #g2 #g2
+                set-variable #l5 &rep #l5 .org.dlmt &cat .org.dlmt .org.dlmt
               !endif
               !if &and &gre .org.aexp-addrfld 1 &seq &rig #l4 5 "addr"
                 ; Given the user has asked for the addr to be split into 'n' fields,
                 ; replace the first 'n-1' \n's with field separators
-                set-variable #l6 &spr "%s%s%s" #g2 #g1 #g2
+                set-variable #l6 &spr "%s%s%s" .org.dlmt .org.efld .org.dlmt
                 &sub .org.aexp-addrfld 1 var-str-sub #l5 "\n" #l6
                 set-variable #l5 &spr "%s%n" #l5 &sub .org.aexp-addrfld &add .var-str-sub.count 1 #l6
               !endif
-              set-variable #l5 &rep #l5 #g0 .org.aexp-endrec
-              insert-string &spr "%s%s%s%s" #g1 #g2 #l5 #g2
+              set-variable #l5 &rep #l5 .org.erec .org.aexp-endrec
+              insert-string &spr "%s%s%s%s" .org.efld .org.dlmt #l5 .org.dlmt
             !endif
           !done
-          insert-string #g0
+          insert-string .org.erec
         !endif
       !endif
     !until &seq .org.addr "*"

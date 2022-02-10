@@ -336,8 +336,8 @@ set-variable .spell.check-wordo ""
   !if &seq .spell.check-word $result
     1 spell-check-replace
     ; We must abort to get out of osd back into the spell control
-    ; macro so set #g3 to 1 to show that this wasnt a real abort
-    set-variable #g3 1
+    ; macro so set .spell.cont to 1 to show that this wasnt a real abort
+    set-variable .spell.cont 1
     !abort
   !else
     set-variable .spell.check-word $result
@@ -409,7 +409,7 @@ set-variable .spell.check-wordo ""
 !emacro
 
 0 define-macro spell-check-undo
-  !if &not &dec #g0 1
+  !if &not &dec .spell.undo 1
     osd .osd.spell-chkr 87 "BcfSH" .scheme.osd-dbtt " Undo Last   "
   !endif
   set-variable #l1 1
@@ -426,24 +426,24 @@ set-variable .spell.check-wordo ""
   0 spell
   !if &seq #l0 "A"
     ; an auto fix, dec the counter and loop back
-    set-variable #g1 &dec #g1 1
+    set-variable .spell.acnt &dec .spell.acnt 1
     set-variable #l1 &add #l1 1
   !elif &seq #l0 "U"
     ; an undo, loop back
     set-variable #l1 &add #l1 2
   !elif &seq #l0 "D"
     ; Double word deletion - ensure the check is enabled
-    set-variable #g5 &dec #g5 1
-    set-variable #g4 0x82
+    set-variable .spell.dcnt &dec .spell.dcnt 1
+    set-variable .spell.n 0x82
   !elif &seq #l0 "N"
     ; Double word ignore - ensure the check is enabled
-    set-variable #g4 0x82
+    set-variable .spell.n 0x82
   !elif &seq #l0 "S"
     ; a manual replace
-    set-variable #g2 &dec #g2 1
+    set-variable .spell.rcnt &dec .spell.rcnt 1
   !elif &seq #l0 "R"
     ; an manual replace with auto fix, dec the counter and remove auto fix
-    set-variable #g2 &dec #g2 1
+    set-variable .spell.rcnt &dec .spell.rcnt 1
     ; check to make sure nothing has gone wrong
     !if &seq "A" &lef $result 1
       0x208 spell
@@ -481,7 +481,7 @@ set-variable .spell.check-wordo ""
     !endif
     -1 buffer-mode view
   !endif
-  !if &gre #g0 -1
+  !if &gre .spell.undo -1
     -2 undo
     ; insert the delete/ignore flag and delete it again
     ; this ensures the cursor position after an undo and a correct undo
@@ -501,7 +501,7 @@ set-variable .spell.check-wordo ""
     !endif
     ; don't inc the undo count for auto corrections
     !if &not &equ @# 3
-      !if &not &pinc #g0 1
+      !if &not &pinc .spell.undo 1
         osd .osd.spell-chkr 87 "BcfHt" .scheme.osd-ebtt " \HUndo Last   " f spell-check-undo
       !endif
     !endif
@@ -514,21 +514,21 @@ set-variable .spell.check-wordo ""
   -2 show-region
   !if &equ @# 4
     ; Double word deletion
-    set-variable #g5 &add 1 #g5
+    set-variable .spell.dcnt &add 1 .spell.dcnt
     set-variable #l1 "D"
     set-variable .spell.check-word ""
   !elif &equ @# 3
     ; auto replacement
-    set-variable #g1 &add 1 #g1
+    set-variable .spell.acnt &add 1 .spell.acnt
     set-variable #l1 "A"
   !elif &equ @# 2
     ; manual replacement adding an auto replace
     0x1d spell .spell.check-wordo .spell.check-word
-    set-variable #g2 &add 1 #g2
+    set-variable .spell.rcnt &add 1 .spell.rcnt
     set-variable #l1 "R"
   !else
     ; manual replacement only
-    set-variable #g2 &add 1 #g2
+    set-variable .spell.rcnt &add 1 .spell.rcnt
     set-variable #l1 "S"
   !endif
   @# spell-check-insertflag #l1
@@ -563,7 +563,7 @@ set-variable .spell.check-wordo ""
   !while 1
     #l9 forward-char
     set-variable #l9 0
-    #g4 spell
+    .spell.n spell
     !if &seq $result "F"
       ; Finised
       ml-write "[All done]"
@@ -601,7 +601,7 @@ set-variable .spell.check-wordo ""
       osd .osd.spell-chkr 10 "BHcfS"  .scheme.osd-dbtt " Replace     "
       osd .osd.spell-chkr 20 "BHcft"  .scheme.osd-ebtt " \HDelete 2nd  " 4 spell-check-replace
       osd .osd.spell-chkr 40 "BHcft"  .scheme.osd-ebtt " \HIgnore      " 4 spell-check-ignore
-      osd .osd.spell-chkr 50 "BHcfti" .scheme.osd-ebtt " Disable Ch\Hk " f "set-variable #g4 2"
+      osd .osd.spell-chkr 50 "BHcfti" .scheme.osd-ebtt " Disable Ch\Hk " f "set-variable .spell.n 2"
       osd .osd.spell-chkr 60 "BHcfS"  .scheme.osd-dbtt " Add         "
       -1 osd .osd.spell-guess
       osd .osd.spell-guess 0 "sS" .scheme.osd-child 22 9 -1 -1
@@ -616,9 +616,9 @@ set-variable .spell.check-wordo ""
       osd .osd.spell-chkr 50 "BHcft"  .scheme.osd-ebtt " I\Hgnore All  " 2 spell-check-ignore
       osd .osd.spell-chkr 60 "BHcfit" .scheme.osd-ebtt " \HAdd         " f "5 spell .spell.check-word \"\""
       !if &not #l0
-        !if #g3
+        !if .spell.cont
           ; not a real abort, just had to get out of osd
-          set-variable #g3 0
+          set-variable .spell.cont 0
         !else
           !abort
         !endif
@@ -634,9 +634,9 @@ set-variable .spell.check-wordo ""
       spell-check-set-guess
       !force -4 osd
       !if &not $status
-        !if #g3
+        !if .spell.cont
           ; not a real abort, just had to get out of osd
-          set-variable #g3 0
+          set-variable .spell.cont 0
         !else
           ; 1000 ml-write "osd aborted"
           !abort
@@ -702,7 +702,7 @@ set-variable .spell.check-wordo ""
     !force spell-edit-word .spell.check-word
     0x01 spell .spell.check-wordo
     !if &not &seq &lef $result 1 "E"
-      set-variable #g3 1
+      set-variable .spell.cont 1
       !abort
     !endif
   !endif
@@ -770,19 +770,18 @@ define-macro spell-buffer
   ; check that spell is setup okay - this fails if not
   1 spell "-"
   ; Undo last available
-  set-variable #g0 &cond &bmod "undo" 0 -1
-  set-variable #g7 0
+  set-variable .spell.undo &cond &bmod "undo" 0 -1
   ; auto replace count
-  set-variable #g1 0
+  set-variable .spell.acnt 0
   ; manual replace count
-  set-variable #g2 0
-  ; A real quit flag
-  set-variable #g3 0
+  set-variable .spell.rcnt 0
+  ; A continue flag (not real quit)
+  set-variable .spell.cont 0
   ; Spell call arguement, used to disable delete double
-  set-variable #g4 0x82
+  set-variable .spell.n 0x82
   ; double delete count
-  set-variable #g5 0
-  set-variable #g6 &bmod "edit"
+  set-variable .spell.dcnt 0
+  set-variable #l1 &bmod "edit"
   set-variable .spell.check-word ""
   -1 osd .osd.spell-guess
   osd .osd.spell-guess 0 "sS" .scheme.osd-child 20 10 -1 -1
@@ -798,8 +797,8 @@ define-macro spell-buffer
   !force !force .osd.spell-check osd
   !force -1 show-region
   1 show-cursor
-  ml-write &spr "[%d Manual and %d Auto corrections made%s]" #g2 #g1 &cond #g5 &spr " & %d double deletions" #g5 ""
-  !if &and &not #g6 &not &add &add #g2 #g1 #g5
+  ml-write &spr "[%d Manual and %d Auto corrections made%s]" .spell.rcnt .spell.acnt &cond .spell.dcnt &spr " & %d double deletions" .spell.dcnt ""
+  !if &and &not #l1 &not &add &add .spell.rcnt .spell.acnt .spell.dcnt
     -1 buffer-mode "edit"
   !endif
   set-variable @cc spell-buffer
@@ -841,7 +840,7 @@ define-macro spell-word
     ml-write &cat &rig $result 1 " not a word"
     set-variable $window-col #l0 
   !else
-    set-variable #g0 -1
+    set-variable .spell.undo -1
     set-variable .spell.check-word &rig $result 1
     set-variable .spell.check-wordo .spell.check-word
     osd .osd.spell-check 0 "batcH" 9 3 .scheme.osd-title "Spelling Check Word"
