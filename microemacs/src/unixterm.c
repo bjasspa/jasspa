@@ -4198,7 +4198,7 @@ TTopenClientServer (void)
             meCSSock = -1 ;
             return ;
         }
-        meUnlink(cssa.sun_path) ;
+        meUnlinkNT(cssa.sun_path) ;
         if((bind(meCSSock,(struct sockaddr *)&cssa,ii) < 0) ||
            (listen(meCSSock,20) < 0))
         {
@@ -4281,7 +4281,7 @@ TTkillClientServer(void)
         else
             close(meCSSock) ;
         sprintf(fname,"/tmp/mesrv%d",(int) meUid) ;
-        meUnlink(fname) ;
+        meUnlinkNT(fname) ;
         meSystemCfg &= ~meSYSTEM_CLNTSRVR ;
         meCSSock = -1 ;
     }

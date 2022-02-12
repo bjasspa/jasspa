@@ -1192,6 +1192,7 @@ extern void gettimeofday (struct meTimeval *tp, struct meTimezone *tz);
 #define meChdir(dir)        chdir((const char *)(dir))
 #define meRename(src,dst)   (MoveFile((const char *)(src),(const char *)(dst))==meFALSE)
 #define meUnlink(fn)        (DeleteFile((const char *)(fn))==meFALSE)
+#define meUnlinkNT(fn)      DeleteFile((const char *)(fn))
 /* Doesn't exist if function returns -1 */
 #define meTestExist(fn)     (((int) GetFileAttributes((const char *) (fn))) < 0)
 /* Can't read if doesn't exist or its a directory */
@@ -1346,6 +1347,9 @@ extern int meGidInGidList(gid_t gid) ;
 #endif
 #ifndef meUnlink
 #define meUnlink(fn) unlink((char *)(fn))
+#endif
+#ifndef meUnlinkNT
+#define meUnlinkNT meUnlink
 #endif
 #ifndef meChdir
 #define meChdir(fn) chdir((char *)(fn))

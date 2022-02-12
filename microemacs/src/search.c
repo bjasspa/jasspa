@@ -712,7 +712,7 @@ replaces(int kind, int ff, int nn)
     register int i;		/* loop index */
     register int slength;	/* Length of search string */
     register int rlength;	/* length of replace string */
-    meUByte        rpat[meBUF_SIZE_MAX];	/* replacement pattern		*/
+    meUByte      rpat[meBUF_SIZE_MAX];	/* replacement pattern		*/
     int	         numsub;	/* number of substitutions */
     int	         nummatch;	/* number of found matches */
     int	         status;	/* success flag on pattern inputs */
@@ -1133,7 +1133,8 @@ replaces(int kind, int ff, int nn)
         }	/* End of 'switch' on state_mc */
     }   /* End of 'for' */
     
-    /*---	And report the results. */
+    /*--- And report the results. crop rpat to ensure resultStr is not overrun */
+    rpat[meBUF_SIZE_MAX-16] = '\0';
     cc = 0xff ;
     while((meStrchr(rpat,cc) != NULL) && --cc)
         ;

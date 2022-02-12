@@ -67,9 +67,6 @@ enum	{
     NDERIV			/* Number of derivatives */
 } ;	
 
-#define DRTESTFAIL   0x80
-#define DRUNTILF     (DRUNTIL|DRTESTFAIL)
-
 #undef	DEFVAR
 #undef	DEFFUN
 #undef	DEFDER
@@ -148,6 +145,10 @@ meUByte funcTypes[] =
 #define DRFLAG_OPTARG      0x080
 #define DRFLAG_NARG        0x100
 #define DRFLAG_JUMP        0x200
+
+#define DRTESTFAIL   DRFLAG_OPTARG
+#define DRUNTILF     (DRUNTIL|DRTESTFAIL)
+#define DRLOOPMAX    6
 
 #define	DEFVAR(s,v)
 #define	DEFFUN(v,s,h,t)

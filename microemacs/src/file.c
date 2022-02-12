@@ -2158,7 +2158,7 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
 int
 fileOp(int f, int n)
 {
-    meUByte ft, sfname[meBUF_SIZE_MAX], dfname[meBUF_SIZE_MAX], lfname[meBUF_SIZE_MAX], *fn=NULL ;
+    meUByte ft, sfname[meBUF_SIZE_MAX], dfname[meBUF_SIZE_MAX], lfname[meBUF_SIZE_MAX+22], *fn=NULL ;
     int rr=meTRUE, dFlags=0, fileMask=-1 ;
     
     if((n & (meFILEOP_FTPCLOSE|meFILEOP_DELETE|meFILEOP_MOVE|meFILEOP_COPY|meFILEOP_MKDIR|meFILEOP_CHMOD|meFILEOP_TOUCH)) == 0)
@@ -2355,10 +2355,9 @@ autowriteremove(register meBuffer *bp)
     meUByte fn[meBUF_SIZE_MAX] ;
     
     if((autoTime > 0) && bufferNeedSaving(bp) &&
-       !createBackupName(fn,bp->fileName,'#',0) &&
-       !meTestExist(fn))
+       !createBackupName(fn,bp->fileName,'#',0) && !meTestExist(fn))
         /* get rid of any tempory file */
-        meUnlink(fn) ;
+        meUnlinkNT(fn);
     bp->autoTime = -1 ;
 }
 

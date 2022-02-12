@@ -147,7 +147,7 @@ $(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
 $(PRGOBJS): $(PRGHDRS)
 
 $(OUTDIR):
-	[ -d $(OUTDIR) ] || mkdir $(OUTDIR)
+	if not exist $(OUTDIR)\ mkdir $(OUTDIR)
 
 $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A):
 	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)

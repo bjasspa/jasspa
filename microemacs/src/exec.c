@@ -39,27 +39,7 @@
 #include "evers.h"
 
 
-#define DRTESTFAIL   0x80
-
-#define DRUNTILF     (DRUNTIL|DRTESTFAIL)
-
-#define DRRCONTIN    0x60
-#define DRRDONE      0x61
-#define DRRELIF      0xc8
-#define DRRELSE      0xc9
-#define DRRENDIF     0x08
-#define DRRGOTO      0x62
-#define DRRIF        0x38
-#define DRRREPEAT    0x20
-#define DRRRETURN    0x05
-#define DRRUNTIL     0x31
-#define DRRUNTILF    0xb3
-#define DRRWHILE     0x37
-#define DRRWHILEF    0xb9
-
-#define DRRJUMP      0x80
-
-int relJumpTo ;
+int relJumpTo;
 
 /* token:       chop a token off a string
  * return a pointer past the token
@@ -708,15 +688,17 @@ try_again:
             else if(c1 > 'b')
             {
                 if((c2 == 'o') && (c3 == 'n'))
-                    status = (c1 == 'c') ? DRCONTIN:DRDONE ;
+                    status = (c1 == 'c') ? DRCONTIN:DRDONE;
             }
             else if(c1 == 'b')
             {
-                if((c2 == 'e') && (c3 == 'l'))
-                    status = DRBELL ;
+                if((c2 == 'r') && (c3 == 'e'))
+                    status = DRBREAK;
+                else if((c2 == 'e') && (c3 == 'l'))
+                    status = DRBELL;
             }
             else if((c1 == 'a') && (c2 == 'b') && (c3 == 'o'))
-                status = DRABORT ;
+                status = DRABORT;
             
             if(status < 0)
                 return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown directive %s]",cline);
@@ -914,16 +896,14 @@ dobuf(meLine *hlp)
     meUByte *tline;               /* Temp line */
     int status;                   /* status return */
     meLine *lp;                   /* pointer to line to execute */
-    meLine *wlp;                  /* line to while */
-    meLine *rlp;                  /* line to repeat */
+    meLine *lpStk[DRLOOPMAX];     /* pointers to first line of loop */
+    meUByte lpCnt=0;
     
     clexec = meTRUE;              /* in cline execution */
     execstr = NULL ;
     execlevel = 0;                /* Reset execution level */
     
     /* starting at the beginning of the buffer */
-    wlp = NULL;
-    rlp = NULL;
     lp = hlp->next;
     while (lp != hlp)
     {
@@ -1055,60 +1035,77 @@ loop_round:
                         }
                         glp = glp->next;
                     }
-                    
-                    if (status == DRRGOTO)
+                    /* Beware: This relies on DRGOTO and DRTGOTO not being meTRUE */
+                    if(status != meTRUE)
                         status = mlwrite(MWABORT|MWWAIT,(meUByte *)"No such label");
                     break;
                 }
             case DRREPEAT:                      /* REPEAT */
-                if (rlp == NULL)
+                if(lpCnt >= DRLOOPMAX)
+                    status = mlwrite(MWABORT|MWWAIT,(meUByte *)"[Too many nested loops]");
+                else
                 {
-                    rlp = lp;               /* Save line */
+                    lpStk[lpCnt++] = lp;               /* Save line */
                     status = meTRUE;
                 }
-                else
-                    status = mlwrite(MWABORT|MWWAIT,(meUByte *)"Nested Repeat");
                 break;
             case DRUNTIL:                       /* meTRUE UNTIL */
-                if (rlp != NULL)
+                if(lpCnt)
                 {
-                    rlp = NULL;
+                    lpCnt--;
                     status = meTRUE;
                 }
                 else
-                    status = mlwrite(MWABORT|MWWAIT,(meUByte *)"No repeat set");
+                    status = mlwrite(MWABORT|MWWAIT,(meUByte *)"[Start of loop missing]");
                 break;  
             case DRUNTILF:                      /* meFALSE UNTIL */
-                if (rlp != NULL)
+                if(lpCnt)
                 {
-                    lp = rlp;               /* Back to 'repeat' */
+                    lpCnt--;
+                    lp = lpStk[lpCnt];
+                    continue;
+                }
+                else
+                    status = mlwrite(MWABORT|MWWAIT,(meUByte *)"[Start of loop missing]");
+                break; 
+            case DRCONTIN:
+                if(lpCnt)
+                {
+                    lpCnt--;
+                    lp = lpStk[lpCnt];
+                    continue;
+                }
+                status = mlwrite(MWABORT|MWWAIT,(meUByte *)"[Start of loop missing]");
+                break;
+                
+            case DRBREAK:
+                if(lpCnt)
+                {
+                    lpCnt--;
+                    execlevel += 2;
                     status = meTRUE;
                 }
                 else
-                    status = mlwrite(MWABORT|MWWAIT,(meUByte *)"No repeat set");
-                break; 
-            case DRCONTIN:
-                if (wlp != NULL)
-                {
-                    lp = wlp;
-                    continue;
-                }
-                status = mlwrite(MWABORT|MWWAIT,(meUByte *)"No while");
+                    status = mlwrite(MWABORT|MWWAIT,(meUByte *)"[Start of loop missing]");
                 break;
-                
             case DRDONE:        
-                if (wlp != NULL)
+                if(lpCnt)
                 {
-                    lp = wlp;
-                    wlp = NULL;
+                    lpCnt--;
+                    lp = lpStk[lpCnt];
                     continue;
                 }
-                status = mlwrite(MWABORT|MWWAIT,(meUByte *)"No while");
+                status = mlwrite(MWABORT|MWWAIT,(meUByte *)"[Start of loop missing]");
                 break;
                 
             case DRWHILE:                       
-                wlp = lp;
-                status = meTRUE;
+                if(lpCnt >= DRLOOPMAX)
+                    status = mlwrite(MWABORT|MWWAIT,(meUByte *)"[Too many nested loops]");
+                else
+                {
+                    lpStk[lpCnt++] = lp;               /* Save line */
+                    status = meTRUE;
+                }
                 break;
                 
             case DRJUMP:

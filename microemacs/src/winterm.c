@@ -573,7 +573,7 @@ TTopenClientServer(void)
         ipipe->bp = bp ;
         /* setup the response file and server buffer */
         {
-            meUByte buff[meBUF_SIZE_MAX] ;
+            meUByte buff[meBUF_SIZE_MAX+20] ;
             
             ii = sprintf((char *)buff,"%d\n",(int) baseHwnd) ;
             WriteFile(clientHandle,buff,ii,(DWORD *)&ii,NULL) ;
