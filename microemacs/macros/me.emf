@@ -330,6 +330,7 @@ add-file-hook ".swift"                                        fhook-swift
 -1 add-file-hook "-!-[ \t]*asmx86.*-!-"          fhook-asmx86 ; -!- asmx86 -!-
 -1 add-file-hook "-!-[ \t]*text.*-!-"            fhook-txt    ; -!- text -!-
 -1 add-file-hook "-!-[ \t]*msvb.*-!-"            fhook-vb     ; -!- msvb -!-
+-1 add-file-hook "-!-[ \t]*swift.*-!-"           fhook-swift  ; -!- swift -!-
 -1 add-file-hook "^diff "                        fhook-diff   ; diff -Naur file.c ...
 
 ; Initialize the top menu line
