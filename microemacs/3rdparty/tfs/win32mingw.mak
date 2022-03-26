@@ -15,7 +15,7 @@ EXE      = .exe
 
 CC       = gcc
 RC       = windres
-MK       = make
+MK       = mingw32-make
 LD       = $(CC)
 STRIP    = strip
 AR       = ar
@@ -51,12 +51,12 @@ endif
 
 LIBNAME  = tfs
 LIBFILE  = $(LIBNAME)$(A)
-LIBHDRS  = tfs.h $(BUILDID).gmk
+LIBHDRS  = tfs.h $(BUILDID).mak
 LIBOBJS  = $(OUTDIR)/tfs.o
 
 PRGNAME  = tfs
 PRGFILE  = $(PRGNAME)$(EXE)
-PRGHDRS  = tfs.h tfsutil.h $(BUILDID).gmk
+PRGHDRS  = tfs.h tfsutil.h $(BUILDID).mak
 PRGOBJS  = $(OUTDIR)/tfsutil.o $(OUTDIR)/tfs.o $(OUTDIR)/uappend.o $(OUTDIR)/ubuild.o $(OUTDIR)/ucopy.o \
 	   $(OUTDIR)/ucreate.o $(OUTDIR)/uinfo.o $(OUTDIR)/ulist.o $(OUTDIR)/ustrip.o $(OUTDIR)/utest.o \
 	   $(OUTDIR)/uxdir.o $(OUTDIR)/uxfile.o
@@ -82,10 +82,10 @@ $(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
 $(PRGOBJS): $(PRGHDRS)
 
 $(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A):
-	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).gmk BCFG=$(BCFG)
+	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
 
 $(OUTDIR):
-	[ -d $(OUTDIR) ] || mkdir $(OUTDIR)
+	if not exist $(OUTDIR)\ mkdir $(OUTDIR)
 
 clean:
 	$(RMDIR) $(OUTDIRD)

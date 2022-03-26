@@ -15,7 +15,7 @@ EXE      = .exe
 
 CC       = gcc
 RC       = windres
-MK       = make
+MK       = mingw32-make
 LD       = $(CC)
 STRIP    = strip
 AR       = ar
@@ -52,7 +52,7 @@ endif
 LIBNAME  = zlib
 LIBFILE  = $(LIBNAME)$(A)
 LIBHDRS  = zutil.h zlib.h zconf.in.h zconf.h trees.h inftrees.h inflate.h \
-	   inffixed.h inffast.h deflate.h crc32.h $(BUILDID).gmk
+	   inffixed.h inffast.h deflate.h crc32.h $(BUILDID).mak
 LIBOBJS  = $(OUTDIR)/adler32.o $(OUTDIR)/compress.o $(OUTDIR)/crc32.o $(OUTDIR)/gzio.o $(OUTDIR)/uncompr.o \
 	   $(OUTDIR)/deflate.o $(OUTDIR)/trees.o $(OUTDIR)/zutil.o $(OUTDIR)/inflate.o $(OUTDIR)/infback.o \
 	   $(OUTDIR)/inftrees.o $(OUTDIR)/inffast.o
@@ -71,7 +71,7 @@ $(OUTDIR)/$(LIBFILE): $(OUTDIR) $(LIBOBJS)
 $(LIBOBJS): $(LIBHDRS)
 
 $(OUTDIR):
-	[ -d $(OUTDIR) ] || mkdir $(OUTDIR)
+	if not exist $(OUTDIR)\ mkdir $(OUTDIR)
 
 clean:
 	$(RMDIR) $(OUTDIRD)

@@ -514,20 +514,20 @@ meSslInitSystemCaCert(SSL_CTX *sslCtx, char *rbuff)
                     if(logFlags & meSSL_LOG_VERBOSE)
                     {
                         snprintf(rbuff,meSSL_BUFF_SIZE,"OpenSSL: Loaded & added Windows Root certificate for: subject='%s'",buf);
-                        logFunc(rbuff,logData);
+                        logFunc((meUByte *) rbuff,logData);
                     }
                 }
                 else if(logFlags & meSSL_LOG_WARNING)
                 {
                     snprintf(rbuff,meSSL_BUFF_SIZE,"OpenSSL: Loaded but failed to added Windows Root certificate for: subject='%s'",buf);
-                    logFunc(rbuff,logData);
+                    logFunc((meUByte *) rbuff,logData);
                 }
                 MESSLFunc(X509_free)(x509);
             }
             else if(logFlags & meSSL_LOG_WARNING)
             {
-                snprintf(rbuff,meSSL_BUFF_SIZE,"OpenSSL: Failed to generate x509 for Windows Root certificate",logData);
-                logFunc(rbuff,logData);
+                snprintf(rbuff,meSSL_BUFF_SIZE,"OpenSSL: Failed to generate x509 for Windows Root certificate");
+                logFunc((meUByte *) rbuff,logData);
             }
         }
         CertCloseStore(hStore,0);
@@ -688,7 +688,7 @@ meSslInit(meUByte *buff)
     MESSLFunc(SSL_CTX_load_verify_locations)(meSslCtx, NULL,NULL);
 #ifdef _WIN32
     // load windows system ca certs
-    meSslInitSystemCaCert(meSslCtx,buff);
+    meSslInitSystemCaCert(meSslCtx,(char *) buff);
 #endif
 #ifdef X509_V_FLAG_PARTIAL_CHAIN
     /* Set X509_V_FLAG_PARTIAL_CHAIN to allow the client to anchor trust in

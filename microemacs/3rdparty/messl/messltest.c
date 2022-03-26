@@ -19,7 +19,7 @@
  * reproduced,  translated,  or  reduced to any  electronic  medium or machine
  * readable form without prior written consent from Maxinity Software Ltd.
  *
- * .win32vc10-debug/messltest.exe 7 www.google.com "" "" "" "/"
+ *   messltest.exe 7 www.google.com "" "" "" "/"
  * 
  ****************************************************************************/
 
@@ -50,7 +50,7 @@ main(int argc, char *argv[])
 #ifdef _WIN32
     if(WSAStartup(MAKEWORD(1,1),&wsaData))
     {
-        printf("meSslTest Error: Call to WSAStartup failed (%d)\n",GetLastError());
+        printf("meSslTest Error: Call to WSAStartup failed (%d)\n",(int) GetLastError());
         return 2;
     }
 #endif

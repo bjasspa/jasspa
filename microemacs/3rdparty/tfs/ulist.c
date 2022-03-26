@@ -8,7 +8,7 @@
  *  Author        : $Author: bill $
  *  Created By    : Jon Green
  *  Created       : Sat Nov 7 21:02:27 2009
- *  Last Modified : <100829.0210>
+ *  Last Modified : <220115.1137>
  *
  *  Description   : Module lists the archive
  *
@@ -64,8 +64,6 @@ list_dir (tfs_t tfs, char *path)
 
         while ((dirent = tfs_readdir (dirp)) != NULL)
         {
-            off_t size = 0;
-            off_t offset = 0;
             char type = '?';
             
             /* Skip the current directory. */
@@ -86,8 +84,6 @@ list_dir (tfs_t tfs, char *path)
                     type = 'f';
                 else if (statbuf.st_mode == TFS_TYPE_DIR)
                     type = 'd';
-                size = statbuf.st_size;
-                offset = statbuf.st_bno;
             }
             printf ("%c %s\n", type, pathbuf);
             
