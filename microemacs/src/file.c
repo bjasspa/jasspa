@@ -1563,67 +1563,67 @@ int
 meBufferInsertFile(meBuffer *bp, meUByte *fname, meUInt flags,
                    meUInt uoffset, meUInt loffset, meInt length)
 {
-    register meWindow *wp ;
-    register meLine   *lp ;
-    register int     ss ;
-    register long    nline ;
+    register meWindow *wp;
+    register meLine *lp;
+    register int ss;
+    register long nline;
     
-    meModeSet(bp->mode,MDEDIT) ;              /* we have changed	*/
+    meModeSet(bp->mode,MDEDIT);              /* we have changed	*/
     
 #if MEOPT_CRYPT
     if(resetkey(bp) <= 0)
-        return meFALSE ;
+        return meFALSE;
 #endif
     if(!(flags & meRWFLAG_SILENT))
         mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"[Inserting file]");
     
-    nline = bp->lineCount ;
-    lp = bp->dotLine ;
+    nline = bp->lineCount;
+    lp = bp->dotLine;
 #if MEOPT_DIRLIST
     if(flags & meRWFLAG_MKDIR)
     {
         /* slight miss-use of this flag to inform this function that a dir
          * listing is to be inserted */
-        ss = readDirectory(fname,bp,lp,flags|meRWFLAG_INSERT) ;
+        ss = readDirectory(fname,bp,lp,flags|meRWFLAG_INSERT);
     }
     else
 #endif
-        ss = ffReadFile(&meior,fname,flags|meRWFLAG_READ|meRWFLAG_INSERT,bp,lp,uoffset,loffset,length) ;
-    nline = bp->lineCount-nline ;
+        ss = ffReadFile(&meior,fname,flags|meRWFLAG_READ|meRWFLAG_INSERT,bp,lp,uoffset,loffset,length);
+    nline = bp->lineCount-nline;
     
     if(ss != meABORT)
     {
-        ss = meTRUE ;
+        ss = meTRUE;
         if(!(flags & meRWFLAG_SILENT))
-            mlwrite(MWCLEXEC,(meUByte *)"[inserted %d line%s]",nline,(nline==1) ? "":"s") ;
+            mlwrite(MWCLEXEC,(meUByte *)"[inserted %d line%s]",nline,(nline==1) ? "":"s");
     }
-    meFrameLoopBegin() ;
-    for (wp=loopFrame->windowList; wp!=NULL; wp=wp->next)
+    meFrameLoopBegin();
+    for(wp=loopFrame->windowList; wp!=NULL; wp=wp->next)
     {
-        if (wp->buffer == bp)
+        if(wp->buffer == bp)
         {
             if(wp->dotLineNo >= bp->dotLineNo)
-                wp->dotLineNo += nline ;
+                wp->dotLineNo += nline;
             if(wp->markLineNo >= bp->dotLineNo)
-                wp->markLineNo += nline ;
-            wp->updateFlags |= WFMAIN|WFMOVEL ;
+                wp->markLineNo += nline;
+            wp->updateFlags |= WFMAIN|WFMOVEL;
         }
     }
-    meFrameLoopEnd() ;
+    meFrameLoopEnd();
 #if MEOPT_UNDO
     if((bp == frameCur->bufferCur) && meModeTest(bp->mode,MDUNDO))
     {
-        int ii = 0 ;
-        frameCur->windowCur->dotOffset = 0 ;
+        int ii = 0;
+        frameCur->windowCur->dotOffset = 0;
         while(nline--)
         {
-            lp = meLineGetPrev(lp) ;
-            ii += meLineGetLength(lp) + 1 ;
+            lp = meLineGetPrev(lp);
+            ii += meLineGetLength(lp) + 1;
         }
-        meUndoAddInsChars(ii) ;
+        meUndoAddInsChars(ii);
     }
 #endif
-    return ss ;
+    return ss;
 }
 
 /*
@@ -3245,8 +3245,6 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         meUByte *ss ;
         int len ;
         
-        if((dirList->path != NULL) && !meStrcmp(dirList->path,"~"))
-            return;
         meStrcpy(upb,homedir) ;
         len = meStrlen(upb) ;
         upb[len-1] = '\0' ;
@@ -3258,9 +3256,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         else
             upb[len-1] = DIR_CHAR ;
         pathName = upb ;
-        meFiletimeInit(stmtime) ;
     }
-    else
 #endif
     {
 #ifdef _UNIX
@@ -3270,9 +3266,81 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
             meFiletimeInit(stmtime) ;
 #endif
 #ifdef _WIN32
+        meUByte *ss;
         int len ;
         
-        meFiletimeInit(stmtime) ;
+        if((pathName[0] == DIR_CHAR) && (pathName[1] == DIR_CHAR) &&
+           (((ss=meStrchr(pathName+2,DIR_CHAR)) == NULL) ||
+            (meStrchr(ss+1,DIR_CHAR) == NULL)))
+        {
+            if(dirList->path != NULL)
+            {
+                if(!meStrcmp(dirList->path,pathName) && ((ss == NULL) || (dirList->size > 0)))
+                    return;
+                meFree(dirList->path);
+                freeFileList(dirList->size,dirList->list);
+            }
+            dirList->path = meStrdup(pathName);
+            dirList->size = 0;
+            dirList->list = NULL;
+#if MEOPT_EXTENDED
+            if(ss != NULL)
+            {
+                extern meUByte ffbuf[];
+                NETRESOURCE nr, *rr;
+                HANDLE eh;
+                
+                pathName[0] = '\\';
+                pathName[1] = '\\';
+                *ss = '\0';
+                memset(&nr,0,sizeof(NETRESOURCE));
+                nr.dwType = RESOURCETYPE_DISK;
+                nr.lpRemoteName = (char *) pathName;
+                if(WNetOpenEnum(RESOURCE_GLOBALNET,RESOURCETYPE_ANY,0,&nr,&eh) == NO_ERROR)
+                {
+                    DWORD fc=-1, bs=meFIOBUFSIZ;
+                    if((WNetEnumResource(eh,&fc,ffbuf,&bs) == NO_ERROR) && (fc > 0) &&
+                       ((fls = meMalloc(sizeof(meUByte *) * fc)) != NULL))
+                    {
+                        int ll,ii=1+(int)(ss-pathName);
+                        *ss = '\\';
+                        len = meStrlen(pathName);
+                        // May need to ignore if rr[bs].dwType == RESOURCETYPE_PRINT (2), but RESOURCETYPE_ANY (0) could be a disk (1) too
+                        rr = (NETRESOURCE *) ffbuf;
+                        for(bs=0; bs<fc; bs++)
+                        {
+                            if(!meStrncmp(rr[bs].lpRemoteName,pathName,len) &&
+                               ((fls[noFiles] = meMalloc((ll=strlen(rr[bs].lpRemoteName+ii))+2)) != NULL))
+                            {
+                                memcpy(fls[noFiles],rr[bs].lpRemoteName+ii,ll);
+                                fls[noFiles][ll] = DIR_CHAR;
+                                fls[noFiles][ll+1] = '\0';
+                                noFiles++;
+                            }
+                        }
+                        if(noFiles > 0)
+                        {
+                            dirList->size = noFiles ;
+                            dirList->list = fls ;
+#ifdef _INSENSE_CASE
+                            sortStrings(noFiles,fls,0,meStridif) ;
+#else
+                            sortStrings(noFiles,fls,0,(meIFuncSS) strcmp) ;
+#endif
+                        }
+                        else
+                            meFree(fls);
+                    }
+                    WNetCloseEnum(eh);
+                }
+                pathName[0] = DIR_CHAR;
+                pathName[1] = DIR_CHAR;
+                *ss = DIR_CHAR;
+            }
+#endif
+            return;
+        }       
+        meFiletimeInit(stmtime);
         if(((len = meStrlen(pathName)) > 0) && (pathName[len-1] == DIR_CHAR))
         {
             pathName[len-1] = '\0';

@@ -1956,9 +1956,16 @@ getCoffset(meHilight *indentDef, int onBrace, int *inComment)
         switch((cc=moveToNonWhite(0,&mtnwFlag,0)))
         {
         case 0:
-            if(brakCont < 0)
-                return -brakCont ;
-            return 0 ;
+            if(!(meIndentGetFlags(indentDef)&HICINDTPLV))
+            {
+                if(brakCont < 0)
+                    return -brakCont ;
+                return 0;
+            }
+            if(!gotsome)
+                normCont &= ~1;
+            indent = 1;
+            break ;
             
         case ')':
             cc = '(' ;
@@ -1969,149 +1976,145 @@ getCoffset(meHilight *indentDef, int onBrace, int *inComment)
         case '}':
             cc = '{' ;
 find_bracket_fence:
+            if((ii=findfence(cc,0,0)) <= 0)
+                return -1;
+            if(ii == 2)
             {
-                if((ii=findfence(cc,0,0)) <= 0)
-                    return 0 ;
-                if(ii == 2)
-                {
-                    /* in a comment */
-                    *inComment = 1 ;
-                    return getccol() ;
-                }
-                if(cc == '{')
-                {
-                    ii = getccol() ;
-                    if((ii == 0) || (ii < meIndentGetBraceIndent(indentDef)))
-                    {
-                        if(brakCont < 0)
-                            return -brakCont ;
-                        return 0 ;
-                    }
-                    if(!gotsome)
-                        normCont = 0 ;
-                }
-                break ;
+                /* in a comment */
+                *inComment = 1 ;
+                return getccol() ;
             }
-        case '{':
+            if(cc == '{')
             {
-                lp = frameCur->windowCur->dotLine ;
-                lno = frameCur->windowCur->dotLineNo ;
-                off = frameCur->windowCur->dotOffset ;
-                if((cc=moveToNonWhite(0,&mtnwFlag,0)) != 0)
+                ii = getccol() ;
+                if((ii == 0) || (ii < meIndentGetBraceIndent(indentDef)))
                 {
-                    if(cc == ')')
+                    if(brakCont < 0)
+                        return -brakCont ;
+                    return 0 ;
+                }
+                if(!gotsome)
+                    normCont &= ~1;
+            }
+            break ;
+        case '{':
+            lp = frameCur->windowCur->dotLine ;
+            lno = frameCur->windowCur->dotLineNo ;
+            off = frameCur->windowCur->dotOffset ;
+            if((cc=moveToNonWhite(0,&mtnwFlag,0)) != 0)
+            {
+                if(cc == ')')
+                {
+                    meLine *tlp=frameCur->windowCur->dotLine;
+                    if((ii=findfence('(',0,0)) <= 0)
+                        return -1;
+                    if(ii == 2)
                     {
-                        int foundFence=-999 ;
-                        if(frameCur->windowCur->dotLine == lp)
-                        {
-                            if((foundFence=findfence('(',0,0)) == 1)
-                            {
-                                lp  = frameCur->windowCur->dotLine ;
-                                lno = frameCur->windowCur->dotLineNo ;
-                                off = frameCur->windowCur->dotOffset ;
-                            }
-                        }
-                        if(!brakCont)
-                        {
-                            /* have we found a switch? */
-                            if(foundFence == -999) 
-                                foundFence = findfence('(',0,0) ;
-                            if((foundFence == 1) &&
-                               (moveToNonWhite(0,&mtnwFlag,0) != 0) &&
-                               prevCToken((meUByte *)"switch",6))
-                                indent = -1 ;
-                        }
+                        /* in a comment */
+                        *inComment = 1 ;
+                        return getccol() ;
                     }
-                    else if(cc == '=')
+                    if(tlp == lp)
                     {
-                        normCont = 0 ;
+                        lp  = frameCur->windowCur->dotLine ;
+                        lno = frameCur->windowCur->dotLineNo ;
+                        off = frameCur->windowCur->dotOffset ;
                     }
-                    else if((cc == 'm') && (frameCur->windowCur->dotOffset >= 3) &&
-                            !meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset-3,"enum",4))
+                    if(moveToNonWhite(0,&mtnwFlag,0) != 0)
                     {
-                        indent = 3 ;
-                        normCont = 0 ;
+                        if(!brakCont && prevCToken((meUByte *)"switch",6))
+                            /* we found a switch */
+                            indent = -1;
+                        else if(normCont && prevCToken((meUByte *)"function",8))
+                            normCont = 3;
                     }
+                }
+                else if(cc == '=')
+                    normCont &= ~1;
+                else if((cc == 'm') && (frameCur->windowCur->dotOffset >= 3) &&
+                        !meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset-3,"enum",4))
+                {
+                    indent = 3;
+                    normCont &= ~1;
+                }
+                else
+                {
+                    frameCur->windowCur->dotOffset = 0 ;
+                    if((cc = gotoFrstNonWhite()) == 'e')
+                    {
+                        if(!meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"extern \"C\"",10))
+                            indent = 2 ;
+                    }
+                    else if((cc == 't') &&
+                            !meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"typedef",7) &&
+                            ((frameCur->windowCur->dotOffset+=7),((cc = gotoFrstNonWhite()) == 'e')) &&
+                            !meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"enum",4))
+                    {
+                        indent = 3;
+                        normCont &= ~1;
+                    }
+                    else if((cc == 'n') &&
+                            !meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"namespace",9))
+                        indent = 2 ;
+                    else if(!brakCont)
+                        blp = frameCur->windowCur->dotLine ;
+                    if(indent)
+                        off = frameCur->windowCur->dotOffset ;
+                }
+            }
+            frameCur->windowCur->dotLine = lp ;
+            frameCur->windowCur->dotLineNo = lno ;
+            frameCur->windowCur->dotOffset = 0 ;
+            cc = gotoFrstNonWhite() ;
+            ii = getccol() ;
+            if(!gotsome && (normCont & 1))
+                normCont = 0;
+            if(!brakCont)
+            {
+                if(indent == 2)
+                    brakCont = ii;
+                else
+                {
+                    /* special cases, if the '{' is on left hand side
+                     * indent lines by statement unless we are indenting
+                     * the closing '}' in which case return 0 */
+                    if(ii != 0)
+                        brakCont = ii + meIndentGetBraceStatementIndent(indentDef) ;
+                    else if(onBrace > 0)
+                        brakCont = 0 ;
                     else
                     {
-                        frameCur->windowCur->dotOffset = 0 ;
-                        if((cc = gotoFrstNonWhite()) == 'e')
+                        brakCont = meIndentGetStatementIndent(indentDef) ;
+                        if(!onBrace && (blp != NULL))
                         {
-                            if(!meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"extern \"C\"",10))
-                                indent = 2 ;
-                        }
-                        else if((cc == 't') &&
-                                !meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"typedef",7) &&
-                                ((frameCur->windowCur->dotOffset+=7),((cc = gotoFrstNonWhite()) == 'e')) &&
-                                !meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"enum",4))
-                        {
-                            indent = 3 ;
-                            normCont = 0 ;
-                        }
-                        else if((cc == 'n') &&
-                                !meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"namespace",9))
-                            indent = 2 ;
-                        else if(!brakCont)
-                            blp = frameCur->windowCur->dotLine ;
-                        if(indent)
-                            off = frameCur->windowCur->dotOffset ;
-                    }
-                }
-                frameCur->windowCur->dotLine = lp ;
-                frameCur->windowCur->dotLineNo = lno ;
-                frameCur->windowCur->dotOffset = 0 ;
-                cc = gotoFrstNonWhite() ;
-                ii = getccol() ;
-                if(!gotsome)
-                    normCont = 0 ;
-                
-                if(!brakCont)
-                {
-                    if(indent == 2)
-                        brakCont = ii ;
-		    else
-		    {
-                        /* special cases, if the '{' is on left hand side
-                         * indent lines by statement unless we are indenting
-                         * the closing '}' in which case return 0 */
-                        if(ii != 0)
-                            brakCont = ii + meIndentGetBraceStatementIndent(indentDef) ;
-                        else if(onBrace > 0)
-                            brakCont = 0 ;
-                        else
-                        {
-                            brakCont = meIndentGetStatementIndent(indentDef) ;
-                            if(!onBrace && (blp != NULL))
+                            meUByte *ss = blp->text ;
+                            while(((ss = meStrstr(ss,"class")) != NULL) && 
+                                  (!isSpace(ss[5]) || ((ss != blp->text) && !isSpace(ss[-1]))))
+                                ss += 5 ;
+                            if(ss != NULL)
                             {
-                                meUByte *ss = blp->text ;
-                                while(((ss = meStrstr(ss,"class")) != NULL) && 
-                                      (!isSpace(ss[5]) || ((ss != blp->text) && !isSpace(ss[-1]))))
-                                    ss += 5 ;
-                                if(ss != NULL)
-                                {
-                                    brakCont = 0-brakCont ;
-                                    indent = 1 ;
-                                    break ;
-                                }
+                                brakCont = 0-brakCont ;
+                                indent = 1 ;
+                                break ;
                             }
                         }
-                        if(!onBrace && indent == -1)
-                            brakCont += meIndentGetSwitchIndent(indentDef) ;
-                        
-                        if(brakCont < 0)
-                            brakCont = 0 ;
-		    }
-                    blp = frameCur->windowCur->dotLine ;
+                    }
+                    if(!onBrace && indent == -1)
+                        brakCont += meIndentGetSwitchIndent(indentDef) ;
+                    
+                    if(brakCont < 0)
+                        brakCont = 0 ;
                 }
-                else if((blp == lp) && (brakCont > 0))
-                    brakCont += meIndentGetStatementIndent(indentDef) ;
-                frameCur->windowCur->dotOffset = off ;
-                if(ii <= meIndentGetBraceIndent(indentDef))
-                    indent = 1 ;
-		else if(indent < 0)
-                    indent = 0 ;
-                break ;
+                blp = frameCur->windowCur->dotLine ;
             }
+            else if((blp == lp) && (brakCont > 0))
+                brakCont += meIndentGetStatementIndent(indentDef) ;
+            frameCur->windowCur->dotOffset = off ;
+            if(ii <= meIndentGetBraceIndent(indentDef))
+                indent = 1 ;
+            else if(indent < 0)
+                indent = 0 ;
+            break ;
         case '#':
             if((mtnwFlag == MTNW_KNOWN) && (frameCur->windowCur->dotOffset == 0))
                 indent = 1 ;
@@ -2162,14 +2165,14 @@ find_bracket_fence:
         case ';' :
         case ':' :
             if(!gotsome)
-                normCont = 0 ;
+                normCont &= ~1;
             break ;
         case '\'':
         case '"' :
             /* only return if findQuoteFence returns meFALSE, returns
              * -1 if we could be in a comment */
             if(findQuoteFence(cc,mtnwFlag,0) == meFALSE)
-                return 0 ;
+                return -1;
             break ;
         default:
             if(onBrace > 1)
@@ -2184,10 +2187,10 @@ find_bracket_fence:
                 }
                 else if(cc == 'i')
                 {
-                    if(((frameCur->windowCur->dotOffset == 0) || isSpace(meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset-1))) &&
-                       !meStrncmp(frameCur->windowCur->dotLine->text+frameCur->windowCur->dotOffset,"if",2) &&
-                       (isSpace(meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset+2)) ||
-                        (meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset+2) == '(')) &&
+                    if(((frameCur->windowCur->dotOffset == 0) || isSpace(meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset-1))) &&
+                       (frameCur->windowCur->dotLine->text[frameCur->windowCur->dotOffset+1] == 'f') &&
+                       (isSpace(meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset+2)) ||
+                        (meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset+2) == '(')) &&
                        (--onBrace == 1))
                     {
                         lp = frameCur->windowCur->dotLine ;
@@ -2212,20 +2215,21 @@ find_bracket_fence:
         if(!gotsome)
         {
             if((cc == '=') && onBrace < 0)
-                normCont = 0 ;
+                normCont &= ~1;
             gotsome = 1 ;
         }
     }
+    
     if(brakCont < 0)
         return -brakCont ;
     if(normCont)
     {
-        frameCur->windowCur->dotLine =	oldlp ;
-        frameCur->windowCur->dotOffset = 0 ;
+        frameCur->windowCur->dotLine =	oldlp;
+        frameCur->windowCur->dotOffset = 0;
         if(moveToNonWhite(0,&mtnwFlag,0) == ')')
         {
             if(findfence('(',0,0) <= 0)
-                return 0 ;
+                return -1;
             moveToNonWhite(0,&mtnwFlag,0) ;
             if(prevCToken((meUByte *)"if",2))
             {
@@ -2259,7 +2263,7 @@ find_bracket_fence:
         {
             if(onBrace < 0)
                 brakCont += meIndentGetStatementIndent(indentDef) ;
-            else if(brakCont)
+            else if(brakCont || (meIndentGetFlags(indentDef)&HICINDTPLV))
                 brakCont += meIndentGetContinueIndent(indentDef) ;
         }
         else
@@ -2351,15 +2355,15 @@ doCindent(meHilight *indentDef, int *inComment)
             if(cc == ':')
             {
                 cc = meLineGetChar(frameCur->windowCur->dotLine,++ii) ;
-                if(isSpace(cc))
-                    ind = 0 ;
+                if(isSpace(cc) && ((addInd = meIndentGetLabelIndent(indentDef)) < -65535))
+                    ind = 0;
             }
         }
     }
     else if(cc == '#')
     {
-        *inComment = 0 ;
-        ind = 0 ;
+        *inComment = 0;
+        ind = 0;
     }
     else if(cc == '*')
     {
@@ -2437,11 +2441,13 @@ use_contcomm:
                 (meLineGetChar(frameCur->windowCur->dotLine,
                                frameCur->windowCur->dotOffset+1) == ii))
             {
-                /* Matched our position with the current position, use this as
-                 * the indent. */
-                addInd = curInd - getCoffset(indentDef,onBrace,inComment);
+                /* Matched our position with the current position, use this as the indent. */
+                if((ii = getCoffset(indentDef,onBrace,inComment)) < 0)
+                    ii = 0;
+                addInd = curInd - ii;
                 if (addInd < 0)
-                    addInd = 0;         /* Correct bad return ! */
+                    /* Correct bad return ! */
+                    addInd = 0;
             }
         }
         frameCur->windowCur->dotLine = oldlp ;
@@ -2473,11 +2479,11 @@ use_contcomm:
     }
     if(ind)
     {
-        ind = getCoffset(indentDef,onBrace,inComment) ;
+        ii = getCoffset(indentDef,onBrace,inComment) ;
+        ind = (ii < 0) ? 0:ii;
         if(*inComment)
             ind += comInd ;
-        else if(((onBrace < 0) && (ind == 0)) ||
-                ((ind += addInd) < 0))
+        else if(((onBrace < 0) && (ii < 0)) || ((ind += addInd) < 0))
             ind = 0 ;
     }
     
@@ -2485,7 +2491,16 @@ use_contcomm:
     frameCur->windowCur->dotLineNo = lineno ;
     frameCur->windowCur->dotOffset = curPos ;
     if(curInd == ind)
-        return meTRUE ;
+        return meTRUE;
+#if MEOPT_EXTENDED
+    if(((ii=meIndentGetChangeFunc(indentDef)) > 0) && (execFuncHidden(0,ii,ind-0x80000000) <= 0))
+    {
+        meUByte *vv;
+        if(((vv=getUsrLclCmdVar((meUByte *)"indent",cmdTable[ii]->varList)) != errorm) &&
+           (((ind=meAtoi(vv)) < 0) || (ind == curInd)))
+            return meTRUE;
+    }
+#endif
     return meLineSetIndent(curOff,ind,1) ;
 }
 

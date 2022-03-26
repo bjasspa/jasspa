@@ -302,7 +302,7 @@ do {                                                                         \
 extern	int	mePushRegisters(int flags);
 extern	int	mePopRegisters(int flags);
 extern	int	execFunc(int index, int f, int n) ;
-extern  void    execFuncHidden(int keyCode, int index, meUInt arg) ;
+extern  int     execFuncHidden(int keyCode, int index, meUInt arg) ;
 #define meEBF_ARG_GIVEN   0x01
 #define meEBF_HIDDEN      0x02
 #define meEBF_USE_B_DOT   0x04
@@ -441,7 +441,8 @@ extern meUByte  ffUrlGetType(meUByte *url);
 #define meRWFLAG_PRESRVFMOD 0x80000
 
 extern int      ffReadFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
-                           meUInt uoffset, meUInt loffset, meInt length) ;
+                           meUInt uoffset, meUInt loffset, meInt length);
+extern int      ffReadFileToBuffer(meUByte *sfname, meUByte *buff, meInt buffLen);
 
 extern int      ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp) ;
 extern int      ffWriteFileWrite(meIo *io, register int len, 
@@ -948,7 +949,8 @@ extern void mkTempCommName(meUByte *filename, meUByte *basename) ;
 #define LAUNCH_BUFIPIPE      0x00080      /* Ipipe function provided   */
 #define LAUNCH_BUFCMDLINE    0x00100      /* cmd to run is 1st line of buf */
 #define LAUNCH_NO_WRAP       0x00200      /* Run without wrap mode     */
-#define LAUNCH_USER_FLAGS    0x002FE      /* User flags bitmask        */
+#define LAUNCH_TO_VAR        0x00400      /* Output pipe to variable   */
+#define LAUNCH_USER_FLAGS    0x006FE      /* User flags bitmask (no 0x100) */
 #define LAUNCH_SHELL         0x01000
 #define LAUNCH_SYSTEM        0x02000
 #define LAUNCH_FILTER        0x04000
@@ -959,7 +961,7 @@ extern	int	meShell(int f, int n);
 extern	int	doShellCommand(meUByte *cmdstr, int flags) ;
 extern	int	meShellCommand(int f, int n);
 extern  int     doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, 
-                              int ipipe, int silent) ;
+                              int ipipe, int silent, meRegister *regs) ;
 extern	int	pipeCommand(int f, int n);
 #if MEOPT_IPIPES
 extern	int	ipipeCommand(int f, int n) ;
@@ -1175,12 +1177,6 @@ struct meTimezone
 
 extern void gettimeofday (struct meTimeval *tp, struct meTimezone *tz);
 
-#else
-#define meTimeval  timeval
-#define meTimezone timezone
-#endif
-
-#ifdef _WIN32
 /* The current win32 rename() function does not cope with long filenames
  * Use the Win32 definition - note that these functions have an oposite
  * boolean sense that the ANSI 'C' definitions, explicitly test to convert
@@ -1208,7 +1204,14 @@ extern int meTestExecutable(meUByte *fileName) ;
 #define meFileGetAttributes(fn) GetFileAttributes((const char *) (fn))
 #define meFileSetAttributes(fn,attr) SetFileAttributes((const char *) (fn),attr)
 extern void WinShutdown (void);
+/* Note: to get any output from gprof change ExitProcess() -> exit() */
 #define meExit(status)      (WinShutdown(), ExitProcess(status))
+
+#else
+
+#define meTimeval  timeval
+#define meTimezone timezone
+
 #endif
 
 #ifdef _DOS

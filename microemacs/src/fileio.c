@@ -183,19 +183,13 @@ meUByte charMaskFlags[]="luhs1234dpPwaAMLUk";
 
 meUByte *charKeyboardMap=NULL;
 
-/* File read/write buffer size  */
-#if MEOPT_LARGEBUF
-#define meFIOBUFSIZ 32768
-#else
-#define meFIOBUFSIZ 2048
-#endif
 #define meBINARY_BPL       16   /* bytes per line */
 #define meRBIN_BPL        256   /* bytes per line */
 
-static meInt     ffread;
-static meInt     ffremain;
-static meUByte  *ffcur;
-static meUByte   ffbuf[meFIOBUFSIZ+1];
+static meInt ffread;
+static meInt ffremain;
+static meUByte *ffcur;
+meUByte ffbuf[meFIOBUFSIZ+1];
 
 meUByte
 ffUrlGetType(meUByte *url)
@@ -2377,6 +2371,27 @@ ffReadFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
     }
     ffReadFileClose(io,flags) ;
     return ss ;
+}
+
+int
+ffReadFileToBuffer(meUByte *sfname, meUByte *buff, meInt buffLen)
+{
+    int rr;
+    buff[0] = '\0';
+    meior.type = ffUrlGetType(sfname);
+    meAssert((meior.type & meIOTYPE_FILE) == 0);
+    if((rr=ffReadFileOpen(&meior,sfname,meRWFLAG_READ|meRWFLAG_SILENT,NULL)) <= 0)
+        return rr ;
+    if(((rr=ffgetBuf(&meior)) >= 0) && (ffremain > 0))
+    {
+    
+        if(ffremain >= buffLen)
+            ffremain = buffLen-1;
+        memcpy(buff,ffcur,ffremain);
+        buff[ffremain] = '\0';
+    }
+    ffReadFileClose(&meior,meRWFLAG_READ|meRWFLAG_SILENT);
+    return (rr < 0) ? meABORT:meTRUE;
 }
 
 static int

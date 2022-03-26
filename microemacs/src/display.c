@@ -337,7 +337,7 @@ showRegion(int f, int n)
         selhilight.dotLineNo = frameCur->windowCur->dotLineNo;      /* Current mark line number */
         break ;
 
-   default:
+    default:
         return meABORT ;
     }
     meBufferAddModeToWindows(selhilight.bp, WFSELHIL);
@@ -1392,7 +1392,7 @@ updateModeLine(meWindow *wp)
     }
 
     lineLen = wp->textWidth ;              /* Max length of line. Only need to
-                                             * evaluate this many characters */
+                                            * evaluate this many characters */
     wp->modeLine->length = lineLen ;
 
     if (wp == frameCur->windowCur)                        /* mark the current buffer */
@@ -1886,10 +1886,10 @@ updateScrollBar (meWindow *wp)
 #ifdef _WIN32
 #ifdef _ME_WINDOW
 #ifdef _ME_CONSOLE
-        if (!(meSystemCfg & meSYSTEM_CONSOLE))
+    if (!(meSystemCfg & meSYSTEM_CONSOLE))
 #endif /* _ME_CONSOLE */
-            /* Apply the invalid area */
-            TTapplyArea () ;
+        /* Apply the invalid area */
+        TTapplyArea () ;
 #endif /* _ME_WINDOW */
 #endif /* _WIN32 */
 }
@@ -2175,7 +2175,7 @@ screenUpdate(int f, int n)
     /* If we are in osd then update the osd menus */
     if((osdDisplayHd != NULL)
 #if MEOPT_MWFRAME
-        && (frameCur == fc)
+       && (frameCur == fc)
 #endif
        )
         osdRestoreAll(force) ;

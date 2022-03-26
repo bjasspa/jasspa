@@ -96,7 +96,7 @@ meNamesList varbNames={1,0,NULL,NULL,0} ;
  * may occur which could (probably will) change the value of gmaLocalRegPtr
  * so the value must be cached as soon as the variable to be set is obtained.
  */
-static meRegister *gmaLocalRegPtr=NULL ;
+meRegister *gmaLocalRegPtr=NULL ;
 
 #if MEOPT_MAGIC
 meRegex meRegexStrCmp ;

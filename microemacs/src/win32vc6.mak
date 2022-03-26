@@ -66,7 +66,7 @@ CCFLAGSD = /MDd /Od /Zi /GZ /D_DEBUG
 LDDEFS   = /INCREMENTAL:NO
 LDFLAGSR = /OPT:REF /OPT:ICF
 LDFLAGSD = /DEBUG
-LDLIBS   = shell32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib
+LDLIBSB  = shell32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib
 ARFLAGSR = /LTCG
 ARFLAGSD =
 RCFLAGS  = /d USE_UNCMP_PNG=1
@@ -86,10 +86,12 @@ ARFLAGS  = $(ARFLAGSR)
 !IF "$(BCOR)" == "ne"
 BCOR_CDF = /D_NANOEMACS
 PRGLIBS  = 
+LDLIBS   = $(LDLIBSB)
 !ELSE
 BCOR     = me
 BCOR_CDF = /D_SOCKET
 PRGLIBS  = $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib $(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib
+LDLIBS   = wsock32.lib $(LDLIBSB)
 !ENDIF
 
 !IF "$(BTYP)" == "c"

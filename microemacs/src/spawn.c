@@ -646,7 +646,7 @@ ipipeRemove(meIPipe *ipipe)
 #endif
     if(ipipe->pid > 0)
 #ifdef _WIN32
-        ipipeKillBuf(ipipe,1);
+        ipipeKillBuf(ipipe,-1);
 #else
         ipipeKillBuf(ipipe,(meSystemCfg & meSYSTEM_TERMSIG) ? -SIGTERM:-SIGKILL);
 #endif
@@ -1661,7 +1661,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
             /* returns meABORT when trying to IPIPE a DOS app on win95 (it
              * doesn't work) Try doPipe instead and maintain the same
              * environment as the macros may rely on callbacks etc. */
-            return doPipeCommand(comStr,path,bufName,ipipeFunc,flags) ;
+            return doPipeCommand(comStr,path,bufName,ipipeFunc,(flags&~LAUNCH_TO_VAR),NULL) ;
         return meFALSE;
     }
 #else
@@ -2061,7 +2061,7 @@ anyActiveIpipe(void)
  * Bound to ^X @
  */
 int
-doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, int flags)
+doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, int flags, meRegister *regs)
 {
     register meBuffer *bp;	/* pointer to buffer to zot */
     meUByte buff[meBUF_SIZE_MAX+3] ;
@@ -2082,9 +2082,11 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
 
     mkTempCommName(filnam,(meUByte *) COMMAND_FILE) ;
 #endif
-
+    
     /* get rid of the output buffer if it exists and create new */
-    if((bp=bfind(bufName,BFND_CREAT|BFND_CLEAR)) == NULL)
+    if(flags & LAUNCH_TO_VAR)
+        flags = (flags & ~LAUNCH_BUFIPIPE) | LAUNCH_RAW;
+    else if((bp=bfind(bufName,BFND_CREAT|BFND_CLEAR)) == NULL)
         return meFALSE ;
     cd = (meStrcmp(path,curdir) && (meChdir(path) != -1)) ;
 
@@ -2184,7 +2186,7 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
     TTflush();
     meFree(cl) ;
 #endif
-    if ((flags & LAUNCH_RAW) == 0)
+    if((flags & LAUNCH_RAW) == 0)
     {
         meStrcpy(buff,"cd ") ;
         meStrcpy(buff+3,path) ;
@@ -2193,7 +2195,7 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
         addLineToEob(bp,(meUByte *)"") ;
     }
     /* If this is an ipipe launch then call the callback. */
-    if ((flags & LAUNCH_BUFIPIPE) && (ipipeFunc >= 0))
+    if((flags & LAUNCH_BUFIPIPE) && (ipipeFunc >= 0))
     {
 #if MEOPT_IPIPES
         bp->ipipeFunc = ipipeFunc;
@@ -2202,7 +2204,10 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
     }
     /* and read the stuff in */
 #ifdef _UNIX
-    ret = meBufferInsertFile(bp,NULL,meRWFLAG_SILENT|meRWFLAG_PRESRVFMOD,0,0,0) ;
+    if(flags & LAUNCH_TO_VAR)
+        ret = ffReadFileToBuffer(NULL,buff,meBUF_SIZE_MAX);
+    else
+        ret = meBufferInsertFile(bp,NULL,meRWFLAG_SILENT|meRWFLAG_PRESRVFMOD,0,0,0) ;
     /* close the pipe and get exit status */
     ws = (meWAIT_STATUS) pclose(pfp);
     if(WIFEXITED(ws))
@@ -2211,29 +2216,40 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
         systemRet = -1 ;
     alarmState &= ~meALARM_PIPE_COMMAND ;
 #else
-    ret = meBufferInsertFile(bp,filnam,meRWFLAG_SILENT|meRWFLAG_PRESRVFMOD,0,0,0) ;
+    if(flags & LAUNCH_TO_VAR)
+        ret = ffReadFileToBuffer(filnam,buff,meBUF_SIZE_MAX);
+    else
+        ret = meBufferInsertFile(bp,filnam,meRWFLAG_SILENT|meRWFLAG_PRESRVFMOD,0,0,0) ;
     /* and get rid of the temporary file */
     meUnlinkNT(filnam);
 #endif
     
-    /* give it the path as a filename */
-    bp->fileName = meStrdup(path) ;
-    /* make this window in VIEW mode, update all mode lines */
-    meModeClear(bp->mode,MDEDIT) ;
-    meModeSet(bp->mode,MDVIEW) ;
-    bp->dotLine = meLineGetNext(bp->baseLine) ;
-    bp->dotLineNo = 0 ;
-    resetBufferWindows(bp) ;
+    if(flags & LAUNCH_TO_VAR)
+    {
+        if(ret > 0)
+            ret = setVar(bufName,buff,regs);
+    }
+    else
+    {
+        /* give it the path as a filename */
+        bp->fileName = meStrdup(path);
+        /* make this window in VIEW mode, update all mode lines */
+        meModeClear(bp->mode,MDEDIT);
+        meModeSet(bp->mode,MDVIEW) ;
+        bp->dotLine = meLineGetNext(bp->baseLine) ;
+        bp->dotLineNo = 0 ;
+        resetBufferWindows(bp) ;
 
-    if((flags & LAUNCH_SILENT) == 0)
-        meWindowPopup(bp->name,WPOP_MKCURR,NULL) ;
+        if((flags & LAUNCH_SILENT) == 0)
+            meWindowPopup(bp->name,WPOP_MKCURR,NULL) ;
 
-    /* Issue the callback if required. */
+        /* Issue the callback if required. */
 #if MEOPT_IPIPES
-    ipipeFunc = bp->ipipeFunc;
-    if ((flags & LAUNCH_BUFIPIPE) && (ipipeFunc >= 0))
-        execBufferFunc(bp,ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),0) ;
+        ipipeFunc = bp->ipipeFunc;
+        if ((flags & LAUNCH_BUFIPIPE) && (ipipeFunc >= 0))
+            execBufferFunc(bp,ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),0) ;
 #endif 
+    }
     meStrcpy(resultStr,meItoa(systemRet)) ;
     return ret ;
 }
@@ -2247,9 +2263,10 @@ pipeCommand(int f, int n)
 {
     register int ss ;
     meBuffer *bp ;
-    meUByte lbuf[meBUF_SIZE_MAX], *cl ; /* command line send to shell */
-    meUByte nbuf[meBUF_SIZE_MAX], *bn ;	/* buffer name */
-    meUByte pbuf[meBUF_SIZE_MAX] ;
+    meUByte lbuf[meBUF_SIZE_MAX], *cl; /* command line send to shell */
+    meUByte nbuf[meBUF_SIZE_MAX], *bn;	/* buffer name */
+    meUByte pbuf[meBUF_SIZE_MAX];
+    meRegister *regs=NULL;
 
     /* get the command to pipe in */
     if((ss=meGetString((meUByte *)"Pipe", 0, 0, lbuf, meBUF_SIZE_MAX)) <= 0)
@@ -2263,7 +2280,21 @@ pipeCommand(int f, int n)
     else
         cl = lbuf ;
     
-    if((n & LAUNCH_BUFFERNM) == 0)
+    if(n & LAUNCH_TO_VAR)
+    {
+        /* prompt for and get the variable name */
+        /* horrid global variable, see notes at definition */
+        extern meRegister *gmaLocalRegPtr;
+        gmaLocalRegPtr = meRegCurr ;
+        alarmState |= meALARM_VARIABLE;
+        ss = meGetString((meUByte *)"Variable",MLVARBL,0,nbuf,meSBUF_SIZE_MAX);
+        alarmState &= ~meALARM_VARIABLE;
+        regs = gmaLocalRegPtr ;
+        if(ss <= 0)
+            return ss ;
+        bn = nbuf ;
+    }
+    else if((n & LAUNCH_BUFFERNM) == 0)
     {
         /* prompt for and get the new buffer name */
         if((ss = getBufferName((meUByte *)"Buffer", 0, 0, nbuf)) <= 0)
@@ -2275,7 +2306,7 @@ pipeCommand(int f, int n)
 
     getFilePath(frameCur->bufferCur->fileName,pbuf) ;
 
-    return doPipeCommand(cl,pbuf,bn,-1,(n & LAUNCH_USER_FLAGS)) ;
+    return doPipeCommand(cl,pbuf,bn,-1,(n & LAUNCH_USER_FLAGS),regs) ;
 }
 
 #if MEOPT_EXTENDED

@@ -1341,63 +1341,64 @@ execFunc(int index, int f, int n)
 /* Execute the given command, but in a hidden way, i.e.
  * the 'key' is not recorded
  */
-void
+int
 execFuncHidden(int keyCode, int index, meUInt arg)
 {
     meUByte tf, lf, cs;
-    int f, n, tc, ti, lc, li, sv ;
+    int f, n, tc, ti, lc, li, sv;
 #if MEOPT_EXTENDED
-    int ii ;
+    int ii;
 #endif
     
-    cs = cmdstatus ;
-    lc = lastCommand ;
-    li = lastIndex ;
-    lf = lastflag ;
-    tc = thisCommand ;
-    ti = thisIndex ;
-    tf = thisflag ;
+    cs = cmdstatus;
+    lc = lastCommand;
+    li = lastIndex;
+    lf = lastflag;
+    tc = thisCommand;
+    ti = thisIndex;
+    tf = thisflag;
     if((sv=(alarmState & meALARM_VARIABLE)))
-        alarmState &= ~meALARM_VARIABLE ;
-    lastCommand = tc ;
-    lastIndex = ti ;
-    thisCommand = keyCode ;
-    thisIndex = index ;
+        alarmState &= ~meALARM_VARIABLE;
+    lastCommand = tc;
+    lastIndex = ti;
+    thisCommand = keyCode;
+    thisIndex = index;
     if(arg != 0)
     {
-        f = 1 ;
-        n = (int) (arg + 0x80000000) ;
+        f = 1;
+        n = (int) (arg + 0x80000000);
     }
     else
     {
-        f = 0 ;
-        n = 1 ;
+        f = 0;
+        n = 1;
     }
 #if MEOPT_EXTENDED
-    if((ii=frameCur->bufferCur->inputFunc) >= 0)
+    if(keyCode && ((ii=frameCur->bufferCur->inputFunc) >= 0))
     {
-        meUByte *ss, ff ;
+        meUByte *ss, ff;
         /* set a force value for the execution as the macro is allowed to
          * fail and we don't want to kick in the macro debugging */
-        ff = meRegHead->force ;
-        meRegHead->force = 1 ;
+        ff = meRegHead->force;
+        meRegHead->force = 1;
         if((execFunc(ii,f,n) > 0) ||
            ((ss=getUsrLclCmdVar((meUByte *)"status",cmdTable[ii]->varList)) == errorm) || meAtoi(ss))
-            index = -1 ;
-        meRegHead->force = ff ;
+            index = -1;
+        meRegHead->force = ff;
     }
     if(index >= 0)
 #endif
-        execFunc(index,f,n);
+        index = execFunc(index,f,n);
     if(sv)
-        alarmState |= meALARM_VARIABLE ;
+        alarmState |= meALARM_VARIABLE;
     thisflag = tf;
-    thisIndex = ti ;
-    thisCommand = tc ;
+    thisIndex = ti;
+    thisCommand = tc;
     lastflag = lf;
-    lastIndex = li ;
-    lastCommand = lc ;
-    cmdstatus = cs ;
+    lastIndex = li;
+    lastCommand = lc;
+    cmdstatus = cs;
+    return index;
 }
 
 int

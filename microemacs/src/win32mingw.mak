@@ -93,11 +93,11 @@ BCOR     = me
 ifeq "$(BTYP)" "$(patsubst %s,%,$(BTYP))"
 BCOR_CDF = -D_SOCKET
 PRGLIBS  = $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A) $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A)
-LDLIBS   = -lws2_32 $(LDLIBSB)
+LDLIBS   = -lws2_32 -lmpr $(LDLIBSB)
 else
 BCOR_CDF = -D_SOCKET -D_MESSL
 PRGLIBS  = $(TRDPARTY)/messl/$(BOUTDIR)/messl$(A) $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A) $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A)
-LDLIBS   = -lcrypt32 -lws2_32 $(LDLIBSB)
+LDLIBS   = -lcrypt32 -lws2_32 -lmpr $(LDLIBSB)
 endif
 endif
 

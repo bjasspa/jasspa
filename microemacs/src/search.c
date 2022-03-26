@@ -718,16 +718,15 @@ replaces(int kind, int ff, int nn)
     int	         status;	/* success flag on pattern inputs */
     int	         nlflag;	/* last char of search string a <NL>? */
     int	         nlrepl;	/* was a replace done on the last line? */
-    meLine	*lastline = 0;	/* position of last replace and */
+    meLine	*lastline=0;	/* position of last replace and */
     int	         lastoff;       /* offset (for 'u' query option) */
     meInt        lastlno;       /* line no (for 'u' query option) */
-    int	onemore =meFALSE;		/* only do one more replace */
-    int	ilength = 0;		/* Last insert length */
-    int	state_mc;		/* State machine */
-    
-    int 	cc;		/* input char for query */
-    meUByte	tmpc;		/* temporary character */
-    meUByte	tpat[meBUF_SIZE_MAX];	/* temporary to hold search pattern */
+    int	         onemore=meFALSE;  /* only do one more replace */
+    int	         ilength=0;	/* Last insert length */
+    int	         state_mc;	/* State machine */
+    int 	 cc;		/* input char for query */
+    meUByte	 tmpc;		/* temporary character */
+    meUByte	 tpat[meBUF_SIZE_MAX];	/* temporary to hold search pattern */
     
     /* Determine if we are  in the correct viewing  mode, and if the number
        of repetitions is correct. */
@@ -749,9 +748,9 @@ replaces(int kind, int ff, int nn)
       versitility.  Hence we should be able to add what we like at a later
       date.  */
 
-    for (state_mc = SL_GETSEARCH; state_mc != SL_EXIT; /* NULL */)
+    for(state_mc = SL_GETSEARCH; state_mc != SL_EXIT; /* NULL */)
     {
-        switch (state_mc)
+        switch(state_mc)
         {
             /*
              * Ask the user for the text of a pattern.
@@ -761,7 +760,7 @@ replaces(int kind, int ff, int nn)
             if ((status = readpattern
                  ((kind == meFALSE ? (meUByte *)"Replace":(meUByte *)"Query replace"), 
                   1+lastReplace)) <= 0)
-		return status ;		/* Aborted out - Exit */
+		return status;		/* Aborted out - Exit */
             
             slength = meStrlen (srchPat);	/* Get length of search string */
             
@@ -775,31 +774,30 @@ replaces(int kind, int ff, int nn)
             state_mc = SL_GETREPLACE;	/* Move to next state */
             break;
             
-        case SL_GETREPLACE :	/* Ask for replacement string */
-        case SL_EDITREPLACE :	/* Edit replacement string */
+        case SL_GETREPLACE:	/* Ask for replacement string */
+        case SL_EDITREPLACE:	/* Edit replacement string */
             
-            meStrcpy(tpat,"Replace [") ;
-            i = expandexp(-1,srchPat, meBUF_SIZE_MAX-17, 9, tpat, -1, NULL, 0) ;
+            meStrcpy(tpat,"Replace [");
+            i = expandexp(-1,srchPat, meBUF_SIZE_MAX-17, 9, tpat, -1, NULL, 0);
             meStrcpy(tpat+i,"] with");
             
             if ((status=meGetString(tpat,MLSEARCH,0,rpat,meBUF_SIZE_MAX)) <= 0)
             {
-                lastReplace = 0 ;
-                return status ;
+                lastReplace = 0;
+                return status;
             }	/* End of 'if' */
             
             rlength = meStrlen(rpat);	/* Get length of replace string. */
             
             if (kind)	  	/* Build query replace question string.  */
             {
-                tpat[i+6] = ' ' ;
-                tpat[i+7] = '[' ;
-                i = expandexp(-1,rpat, meBUF_SIZE_MAX-i-13, i+8, tpat, -1, NULL, 0) ;
-                meStrcpy(tpat+i,((i+30) < frameCur->width) ? "] (?/y/n/a/e/l/u) ? ":"] ? ") ;
+                tpat[i+6] = ' ';
+                tpat[i+7] = '[';
+                i = expandexp(-1,rpat, meBUF_SIZE_MAX-i-13, i+8, tpat, -1, NULL, 0);
+                meStrcpy(tpat+i,((i+30) < frameCur->width) ? "] (?/y/n/a/e/l/u) ? ":"] ? ");
             }            
-            state_mc = (state_mc == SL_GETREPLACE) ?
-                SL_FIRSTREPLACE : SL_NEXTREPLACE;
-            lastReplace = 1 ;
+            state_mc = (state_mc == SL_GETREPLACE) ? SL_FIRSTREPLACE:SL_NEXTREPLACE;
+            lastReplace = 1;
             break;
             
         case SL_FIRSTREPLACE:		/* Do the first replacement */
@@ -816,8 +814,7 @@ replaces(int kind, int ff, int nn)
         case  SL_NEXTREPLACE:		/* Next replcaement condition */
             
             if (!((nn < 0 || nn > nummatch) &&
-                  (nlflag == meFALSE || nlrepl == meFALSE) &&
-                  onemore == meFALSE))
+                  ((nlflag == meFALSE) || (nlrepl == meFALSE)) && (onemore == meFALSE)))
             {
                 /*---	Exit condition has been met */
                 
@@ -874,30 +871,30 @@ replaces(int kind, int ff, int nn)
             {
                 meUByte srchPatStore[meBUF_SIZE_MAX];	/* replacement pattern		*/
 #if MEOPT_MAGIC
-                meRegexGroup groupStore[10] ;
-                int ii, srchLastMagicStore ;
+                meRegexGroup groupStore[10];
+                int ii, srchLastMagicStore;
                 
                 if((srchLastMagicStore = srchLastMagic) != 0)
                 {
-                    ii = mereRegex.groupNo + 1 ;
+                    ii = mereRegex.groupNo + 1;
                     if(ii > 10)
-                        ii = 10 ;
-                    memcpy(groupStore,mereRegex.group,ii*sizeof(meRegexGroup)) ;
+                        ii = 10;
+                    memcpy(groupStore,mereRegex.group,ii*sizeof(meRegexGroup));
                 }
 #endif
-                meStrcpy(srchPatStore,srchPat) ;
+                meStrcpy(srchPatStore,srchPat);
                 cc = mlCharReply(tpat,mlCR_LOWER_CASE|mlCR_UPDATE_ON_USER|mlCR_CURSOR_IN_MAIN,(meUByte *)"y na!elu",
                                  (meUByte *)"(Y)es, (N)o, Yes to (a)ll, (E)dit replace, (L)ast, (U)ndo, (C-g)Abort ? ");
-                meStrcpy(srchPat,srchPatStore) ;
+                meStrcpy(srchPat,srchPatStore);
 #if MEOPT_MAGIC
                 if((srchLastMagic = srchLastMagicStore) != 0)
                 {
-                    mere_compile_pattern(srchPat) ;
-                    memcpy(mereRegex.group,groupStore,ii*sizeof(meRegexGroup)) ;
+                    mere_compile_pattern(srchPat);
+                    memcpy(mereRegex.group,groupStore,ii*sizeof(meRegexGroup));
                 }
 #endif
             }            
-            switch (cc)			/* And respond appropriately. */
+            switch(cc)			/* And respond appropriately. */
             {
             case -1:
                 return ctrlg(meFALSE,1);
@@ -928,7 +925,7 @@ replaces(int kind, int ff, int nn)
 		break;
 
             case 'u':	/* undo last and re-prompt */
-                if (lastline == NULL)
+                if(lastline == NULL)
                 {   /* Restore old position. */
                     TTbell();		/* There is nothing to undo. */
                     break;
@@ -982,25 +979,29 @@ replaces(int kind, int ff, int nn)
             else
 #endif
                 i = slength + frameCur->windowCur->dotOffset ;
-            i += frameCur->windowCur->dotOffset ;
-            if(i > meLineGetLength(frameCur->windowCur->dotLine))
+            i += frameCur->windowCur->dotOffset;
             {
-                meLine *lp ;
-                lp = frameCur->windowCur->dotLine ;
-                for(;;)
+                meLine *lp = frameCur->windowCur->dotLine;
+                if(i > meLineGetLength(lp))
                 {
-                    if(meLineGetFlag(lp) & meLINE_PROTECT)
-                        return mlwrite(MWABORT,(meUByte *)"[Protected line in matched string!]") ;
+                    for(;;)
+                    {
+                        if(meLineGetFlag(lp) & meLINE_PROTECT)
+                            return mlwrite(MWABORT,(meUByte *)"[Protected line in matched string!]") ;
 #if MEOPT_NARROW
-                    if((lp != frameCur->windowCur->dotLine) &&
-                       (meLineGetFlag(lp) & meLINE_ANCHOR_NARROW))
-                        return mlwrite(MWABORT,(meUByte *)"[Narrow in matched string!]") ;
+                        if((lp != frameCur->windowCur->dotLine) &&
+                           (meLineGetFlag(lp) & meLINE_ANCHOR_NARROW))
+                            return mlwrite(MWABORT,(meUByte *)"[Narrow in matched string!]") ;
 #endif
-                    i -= meLineGetLength(lp) + 1 ;
-                    if(i < 0)
-                        break ;
-                    lp = meLineGetNext(lp) ;
+                        i -= meLineGetLength(lp) + 1 ;
+                        if(i < 0)
+                            break;
+                        lp = meLineGetNext(lp) ;
+                    }
                 }
+                if(lp == frameCur->bufferCur->baseLine)
+                    /* current match includes the buffer's last line, this must be the last replace or ME could spin (e.g. rep '\n' -> 'a\n') */
+                    onemore = meABORT;
             }
 #endif
 #if MEOPT_MAGIC
@@ -1138,7 +1139,7 @@ replaces(int kind, int ff, int nn)
     cc = 0xff ;
     while((meStrchr(rpat,cc) != NULL) && --cc)
         ;
-    sprintf((char *)resultStr,"%c%d%c%c%c%s%c",cc,numsub,cc,((!kind) ? 'a':((onemore) ? 'l':'q')),cc,rpat,cc) ;
+    sprintf((char *)resultStr,"%c%d%c%c%c%s%c",cc,numsub,cc,((!kind) ? 'a':((onemore == meTRUE) ? 'l':'q')),cc,rpat,cc) ;
 
     return mlwrite(((nn < 0) || (numsub == nn)) ? MWCLEXEC:(MWABORT|MWCLEXEC),(meUByte *)"%d substitutions", numsub);
 }	/* End of 'replaces' */

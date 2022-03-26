@@ -1106,9 +1106,21 @@ input_expand:
             {
                 meUByte ft, fname[meBUF_SIZE_MAX], *base ;
                 
-                pathNameCorrect(buf,PATHNAME_PARTIAL,fname,&base) ;
-                meStrcpy(buf,fname) ;
-                ipos = ilen = meStrlen(buf) ;
+                pathNameCorrect(buf,PATHNAME_PARTIAL,fname,&base);
+                ipos = meStrlen(fname);
+                if((fname[0] == DIR_CHAR) && (fname[1] == DIR_CHAR) && (base == fname+2) && (buf[ilen-1] != '/') && (buf[ilen-1] != '\\'))
+                {
+                    /* don't try to expand '//xxx' as we can't get a list of remote servers */
+                    if(fname[ipos-1] == DIR_CHAR)
+                        fname[--ipos] = '\0';
+                    meStrcpy(buf,fname);
+                    ilen = ipos;
+                    contstr = compNoExp ;
+                    TTbell();
+                    break;
+                }
+                meStrcpy(buf,fname);
+                ilen = ipos;
                 /* if current buff is xxx/yyy/ then pathNameCorrect will
                  * return the path as xxx/ and base as yyy/ but for completion
                  * we want to list yyy/ so move the base for the case */

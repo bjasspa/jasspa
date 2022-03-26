@@ -60,10 +60,10 @@ OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
 
 CCDEFS   = -D_MACOS -D_64BIT -m64 -Wall -I$(TRDPARTY)/messl -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib
-CCFLAGSR = -O3 -DNDEBUG=1 -Wno-uninitialized
+CCFLAGSR = -O3 -mfpmath=sse -Ofast -flto -march=native -funroll-loops -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g
 LDDEFS   = -m64
-LDFLAGSR = -O3
+LDFLAGSR = -O3 -mfpmath=sse -Ofast -flto -march=native -funroll-loops
 LDFLAGSD = -g
 LDLIBS   = 
 ARFLAGSR = rcs

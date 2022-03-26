@@ -91,12 +91,12 @@ LDLIBS   = $(LDLIBSB)
 BCOR     = me
 BCOR_CDF = /D_SOCKET /D_MESSL
 PRGLIBS  = $(TRDPARTY)\messl\$(BOUTDIR)\messl.lib $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib $(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib
-LDLIBS   = crypt32.lib ws2_32.lib $(LDLIBSB)
+LDLIBS   = crypt32.lib ws2_32.lib mpr.lib $(LDLIBSB)
 !ELSE
 BCOR     = me
 BCOR_CDF = /D_SOCKET
 PRGLIBS  = $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib $(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib
-LDLIBS   = ws2_32.lib $(LDLIBSB)
+LDLIBS   = ws2_32.lib mpr.lib $(LDLIBSB)
 !ENDIF
 
 !IF "$(BTYP)" == "c" || "$(BTYP)" == "cs"

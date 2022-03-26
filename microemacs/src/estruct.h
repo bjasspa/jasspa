@@ -38,8 +38,10 @@
 #define meSBUF_SIZE_MAX       128               /* # of bytes, string buffers   */
 #if MEOPT_LARGEBUF
 #define meBUF_SIZE_MAX        2048              /* size of various inputs & vars*/
+#define meFIOBUFSIZ           32768             /* size of buffer for file I/O  */ 
 #else
 #define meBUF_SIZE_MAX        1024              /* smaller size                 */
+#define meFIOBUFSIZ           4096
 #endif
 #define meTOKENBUF_SIZE_MAX   meBUF_SIZE_MAX+4  /* meBUF_SIZE_MAX + an overrun safe area*/
 #define meMLDISP_SIZE_MAX     meBUF_SIZE_MAX+20 /* meBUF_SIZE_MAX + completion label*/
@@ -931,10 +933,11 @@ typedef struct meKill {
 #define HILOOKBSCH 0x02   /* this indent has a lookback indent scheme */
 #define HICMODE    0x04   /* this indent uses the built in cmode      */
 #define HIGFBELL   0x08   /* Ring bell if gotoFence fails             */
+#define HICINDTPLV 0x10   /* C-mode indent top level (outside braces) */
 /* internal indent flags */
 #define HIGOTCONT  0x80
 
-#define meHICMODE_SIZE 8
+#define meHICMODE_SIZE 9
 #define meIndentGetFlags(ind)                meHilightGetFlags(ind)
 #define meIndentGetLookBackLines(ind)        meHilightGetLookBackLines(ind)
 #define meIndentSetLookBackLines(ind,v)      meHilightSetLookBackLines(ind,v)
@@ -946,8 +949,15 @@ typedef struct meKill {
 #define meIndentGetContinueMax(ind)          meIndentGetIndent(ind->token[4],frameCur->bufferCur->indentWidth)
 #define meIndentGetSwitchIndent(ind)         meIndentGetIndent(ind->token[5],frameCur->bufferCur->indentWidth)
 #define meIndentGetCaseIndent(ind)           meIndentGetIndent(ind->token[6],frameCur->bufferCur->indentWidth)
-#define meIndentGetCommentMargin(ind)        meIndentGetIndent(ind->token[7],frameCur->bufferCur->indentWidth)
+#define meIndentGetLabelIndent(ind)          meIndentGetIndent(ind->token[7],frameCur->bufferCur->indentWidth)
+#define meIndentGetCommentMargin(ind)        meIndentGetIndent(ind->token[8],frameCur->bufferCur->indentWidth)
 #define meIndentGetCommentContinue(ind)      ((ind)->rtoken)
+#define meIndentGetChangeFunc(ind)           ((meInt) ((ind)->rclose))
+#ifdef _64BIT
+#define meIndentSetChangeFunc(ind,v)         ((ind)->rclose = (meUByte *)(uintptr_t)(v))
+#else
+#define meIndentSetChangeFunc(ind,v)         ((ind)->rclose = (meUByte *) (v))
+#endif
 
 typedef struct meHilight {
     struct meHilight **list ;

@@ -1312,7 +1312,7 @@ wordTestSuffixRule(meUByte *wd, int wlen, meSpellRule *rr)
     
     if(((len=rr->endingLen) != 0) &&
        ((len > wlen) || (regexStrCmp(wd+wlen-len,rr->ending,meRSTRCMP_WHOLE) <= 0)))
-       return 0 ;
+        return 0 ;
     return 1 ;
 }
 
@@ -1490,11 +1490,9 @@ wordGuessAddToList(meUByte *word, int curScr,
 }
 
 static int
-wordGuessAddSuffixRulesToList(meUByte *sword, int slen,
-                           meUByte *bword, int blen,
-                           meUByte *flags, int noflags,
-                           meWORDBUF *words, int *scores, 
-                           int bscore, int pflags)
+wordGuessAddSuffixRulesToList(meUByte *sword, int slen, meUByte *bword, int blen,
+                              meUByte *flags, int noflags, meWORDBUF *words,
+                              int *scores, int bscore, int pflags)
 {
     meSpellRule   *rr ;
     meUByte *nwd, *lend=NULL ;
@@ -1564,7 +1562,7 @@ wordGuessScoreSuffixRules(meUByte *word, int olen)
                 jj = rr->appendLen ;
                 if((jj < olen) &&
                    ((scr = wordGuessCalcScore(word+olen-jj,jj,
-                                             rr->append,jj,1)) < maxScore))
+                                              rr->append,jj,1)) < maxScore))
                 {
                     rr->rule = scr ;
                     if(scr < rscr)
@@ -1681,7 +1679,7 @@ wordGuessGetList(meUByte *word, int olen, meWORDBUF *words)
                              * true if the user aborted */
                             if(((curScr+bsufScr) < scores[meGUESS_MAX-1]) &&
                                wordGuessAddSuffixRulesToList(word,olen,wb,wlen,flags,noflags,words,
-                                                          scores,curScr,RULE_SUFFIX))
+                                                             scores,curScr,RULE_SUFFIX))
                                 return -1 ;
                             if((curScr = wordGuessCalcScore(word,olen,wb,wlen,0)) < scores[meGUESS_MAX-1])
                                 wordGuessAddToList(wb,curScr,words,scores) ;
@@ -1717,7 +1715,7 @@ wordGuessGetList(meUByte *word, int olen, meWORDBUF *words)
                                                     if(flags[f2++] == SPELLRULE_SEP)
                                                         f1 = f2 ;
                                                 if(wordGuessAddSuffixRulesToList(word,olen,ww,nlen,flags+f1,noflags-f1,
-                                                                              words,scores,curScr,RULE_SUFFIX|RULE_MIXABLE))
+                                                                                 words,scores,curScr,RULE_SUFFIX|RULE_MIXABLE))
                                                     return -1 ;
                                             }
                                             if((curScr = wordGuessCalcScore(word,olen,ww,nlen,0)) < scores[meGUESS_MAX-1])
@@ -1896,7 +1894,7 @@ spellWord(int f, int n)
         {
             cc = meLineGetChar(frameCur->windowCur->dotLine,soff) ;
             if((soff==0) || isSpllWord(cc))
-                    break ;
+                break ;
         }
         if(!isSpllWord(cc))
             return meFALSE ;

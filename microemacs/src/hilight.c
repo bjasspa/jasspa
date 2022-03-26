@@ -33,6 +33,7 @@
 #define	__HILIGHTC				/* Name file */
 
 #include "emain.h"
+#include "efunc.h"
 
 #if MEOPT_HILIGHT
 
@@ -144,11 +145,16 @@ createHilight(meUByte hilno, meInt size, meUByte *noHils , meHilight ***hTbl)
     {
         if((root=(*hTbl)[hilno]) != NULL)
         {
-            meHilight *hn ;
-            while((hn = meHilightGetColumnHilight(root)) != NULL)
+            if(*hTbl == indents)
+                meIndentSetChangeFunc(root,NULL);
+            else
             {
-                meHilightSetColumnHilight(root,meHilightGetColumnHilight(hn)) ;
-                meFree(hn) ;
+                meHilight *hn ;
+                while((hn = meHilightGetColumnHilight(root)) != NULL)
+                {
+                    meHilightSetColumnHilight(root,meHilightGetColumnHilight(hn)) ;
+                    meFree(hn) ;
+                }
             }
             root->close = NULL ;
             freeToken(root) ;
@@ -2529,7 +2535,10 @@ meIndentGetIndent(meUByte indent, meUShort bIndentWidth)
     /* Get the indent out */
     ind = (int)(indent & INDNUMOFFSETMASK);
     if ((indent & INDNUMINDSIZE) != 0)
-        ind = (bIndentWidth * ind) / (1 << INDNUMOFFSETSHIFT);
+        ind = (bIndentWidth * ind) >> INDNUMOFFSETSHIFT;
+    else if(indent == (INDNUMNEG|INDNUMOFFSETMASK))
+        /* special value to get an absolute indent of 0 return large neg number */
+        return -65536;
     if ((indent & INDNUMNEG) != 0)
         ind = -ind;
     return ind;
@@ -2594,7 +2603,7 @@ int
 indent(int f, int n)
 {
 #define noINDTYPES 13
-    static meUByte  ctypesChar[meHICMODE_SIZE+2]="sbecxwamu" ;
+    static meUByte  ctypesChar[meHICMODE_SIZE+2]="sbecxwalmu" ;
     static meUByte  typesChar[(noINDTYPES*2)+1]="bcefinostuvwxBCEFINOSTUVWX" ;
     static meUShort typesFlag[noINDTYPES]= {
         INDBRACKETOPEN, INDCONTINUE, INDEXCLUSION, INDFIXED, INDIGNORE, INDNEXTONWARD,
@@ -2629,7 +2638,8 @@ indent(int f, int n)
             root->token[4] = (meUByte) 0x00 ;
             root->token[5] = (meUByte) 0x00 ;
             root->token[6] = (meUByte) 0xc4 ;
-            root->token[7] = (meUByte) 0x41 ;
+            root->token[7] = (meUByte) (INDNUMNEG|INDNUMOFFSETMASK) ;
+            root->token[8] = (meUByte) 0x41 ;
         }
         else
         {
@@ -2674,14 +2684,23 @@ indent(int f, int n)
         meStrcpy(resultStr,meItoa(indno)) ;
         return meTRUE ;
     }
-
-    n = (n < 0) ? ADDTOKEN_REMOVE:0 ;
-
+    
     if((meGetString((meUByte *)"Ind no",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
        ((indno = (meUByte) meAtoi(buf)) == 0) ||
        (indno >= noIndents) ||
        ((root  = indents[indno]) == NULL))
-        return meFALSE ;
+        return meFALSE;
+    
+    if(n == 3)
+    {
+        if((meGetString((meUByte *)"Change macro",MLCOMMAND,0,buf,meBUF_SIZE_MAX) <= 0) ||
+           (buf[0] == '\0') || ((n=decode_fncname(buf,0)) < 0))
+            n = 0;
+        meIndentSetChangeFunc(root,n);
+        return meTRUE ;
+    }
+
+    n = (n < 0) ? ADDTOKEN_REMOVE:0 ;
 
     if(meIndentGetFlags(root) & HICMODE)
     {
@@ -2696,13 +2715,14 @@ indent(int f, int n)
         }
         else if(meGetString((meUByte *)"Com Cont",0,0,buf,meBUF_SIZE_MAX) <= 0)
             return meFALSE ;
-        else if(buf[0] == '\0')
-        {
-            meNullFree(root->rtoken) ;
-            root->rtoken = NULL ;
-        }
         else
-            root->rtoken = meStrdup(buf) ;
+        {
+            meNullFree(root->rtoken);
+            if(buf[0] == '\0')
+                root->rtoken = NULL ;
+            else
+                root->rtoken = meStrdup(buf) ;
+        }
         return meTRUE ;
     }
 
@@ -2992,43 +3012,26 @@ indentLine(int *inComment)
     displaySpace = bdisplaySpace ;
 
     /*    printf("\nIndent line to %d\n\n",ind) ;*/
-    /* Always do the doto change so the tab on the left hand edge moves
-     * the cursor to the first non-white char
-     */
-    if((coff = getccol()-cind) < 0)
-        coff = 0 ;
-    coff += ind ;
+    ss = frameCur->windowCur->dotLine->text ;
+    while((*ss == ' ') || (*ss == '\t'))
+        ss++ ;
+    coff = ss - frameCur->windowCur->dotLine->text ;
+    /* change the current position to the indent position if to the left */
+    if(frameCur->windowCur->dotOffset < coff)
+        frameCur->windowCur->dotOffset = coff;
     /* Now change the indent if required */
-    if(cind != ind)
+    if(cind == ind)
+        return meTRUE;
+#if MEOPT_EXTENDED
+    if(((ii=meIndentGetChangeFunc(indents[frameCur->bufferCur->indent])) > 0) && (execFuncHidden(0,ii,ind-0x80000000) <= 0))
     {
-        register int rr ;
-        if((rr=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
-            return rr ;
-        frameCur->windowCur->dotOffset = 0 ;
-        ss = frameCur->windowCur->dotLine->text ;
-        while((*ss == ' ') || (*ss == '\t'))
-            ss++ ;
-        cind = ss - frameCur->windowCur->dotLine->text ;
-        ldelete(cind,6) ;
-        if(meModeTest(frameCur->bufferCur->mode,MDTAB))
-            rr = 0 ;
-        else
-        {
-            rr = ind / frameCur->bufferCur->tabWidth ;
-            ind -= rr * frameCur->bufferCur->tabWidth ;
-            lineInsertChar(rr,'\t') ;
-        }
-        lineInsertChar(ind,' ') ;
-#if MEOPT_UNDO
-        if(meModeTest(frameCur->bufferCur->mode,MDUNDO))
-        {
-            frameCur->bufferCur->undoHead->doto = ind+rr ;
-            meUndoAddReplaceEnd(ind+rr) ;
-        }
-#endif
+        meUByte *vv;
+        if(((vv=getUsrLclCmdVar((meUByte *)"indent",cmdTable[ii]->varList)) != errorm) &&
+           (((ind=meAtoi(vv)) < 0) || (ind == cind)))
+            return meTRUE;
     }
-    setccol(coff) ;
-    return meTRUE ;
+#endif
+    return meLineSetIndent(coff,ind,1);
 }
 
 #endif /* MEOPT_HILIGHT */

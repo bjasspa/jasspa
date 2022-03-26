@@ -365,7 +365,7 @@
 #endif
 #ifdef _SOCKET
 /* winsock2.h must be included before */
-#if (defined _MSC_VER) && (_MSC_VER <= 900)
+#if (defined _MSC_VER) && (_MSC_VER < 1300)
 #include <winsock.h>
 #else
 #include <winsock2.h>
