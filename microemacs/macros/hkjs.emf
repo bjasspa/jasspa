@@ -35,6 +35,7 @@ set-variable .fhook-js.item-list-r3 "Meth \ecB\\1\ecA"
 
 !if &not &exist .hilight.js
   set-variable .hilight.js &pinc .hilight.next 1
+  set-variable .hilight.jse &pinc .hilight.next 1
 !endif
 !if &and &sin "h" .fhook-js.setup &band .hilight.flags 0x02 
   ; High-light js Mode
@@ -229,17 +230,22 @@ set-variable .fhook-js.item-list-r3 "Meth \ecB\\1\ecA"
   set-variable .hilight.javascript .hilight.js
 !endif
 !if &sin "d" .fhook-js.setup
-  ; create a simple indentation rule for javascript - real java files use the built in C indentation
-  0 indent .hilight.js 1 20
-  indent .hilight.js n "{"  t
-  indent .hilight.js o "}" -t
-  indent .hilight.js e "\"" "\"" "\\"
-  indent .hilight.js e "\'" "\'" "\\"
-  indent .hilight.js b "\\[" "]"
-  indent .hilight.js b "(" ")"
-  indent .hilight.js b "/\\*" "\\*/"
-  indent .hilight.js i "//"  
-  set-variable .indent.javascript .hilight.js
+  ; use the built in C indenter for js files
+  0 indent .hilight.js 28
+  indent .hilight.js "l" 0
+  indent .hilight.js "u" " * "
+  indent .hilight.js "x" 5t
+  ; create a simple indentation scheme for javascript embeded in html based files
+  0 indent .hilight.jse 1 20
+  indent .hilight.jse n "{"  t
+  indent .hilight.jse o "}" -t
+  indent .hilight.jse e "\"" "\"" "\\"
+  indent .hilight.jse e "\'" "\'" "\\"
+  indent .hilight.jse b "\\[" "]"
+  indent .hilight.jse b "(" ")"
+  indent .hilight.jse b "/\\*" "\\*/"
+  indent .hilight.jse i "//"  
+  set-variable .indent.javascript .hilight.jse
 !endif
 
 buffer-init-fhook "js"

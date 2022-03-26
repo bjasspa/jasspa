@@ -467,7 +467,7 @@ define-macro file-browser-swap-buffers
   !elif &sin " <- " #l0
     set-variable #l0 &lef #l0 &sub &sin " <- " #l0 1
   !endif
-  !if &seq &mid @wl 1 1 "d"
+  !if &set #l1 &seq &mid @wl 1 1 "d"
     !if &not &band @# 2
       !iif &band @# 1  ml-write &spr "[%s Error: Operation not supported on directories]" @1
       !abort
@@ -477,10 +477,9 @@ define-macro file-browser-swap-buffers
         !abort
       !endif
     !endif
-    set-variable .find-file.file-dcount 1
   !endif
   set-variable .find-file.file-count 1
-  set-variable .find-file.file-dcount &seq &mid @wl 1 1 "d"
+  set-variable .find-file.file-dcount #l1
   set-variable .find-file.file-dir $buffer-fname
   set-variable .find-file.file1 #l0
   !if &band @# 8

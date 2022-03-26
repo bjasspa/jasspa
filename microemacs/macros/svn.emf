@@ -98,8 +98,8 @@ set-variable .fhook-svn-status.command-kbind &rig &lset &lset &lset &lset &lset 
 set-variable .fhook-svn-status.command-desc  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-desc  1 "" 2 "" 3 "Help on Subversion Status" 4 "Open Subversion menu" 5 "Rerun svn-status" 6 "" 2
 set-variable .fhook-svn-status.refresh "svn-status-refresh"
 
-set-variable .svn.cnames  "|Add|Blame|Checkout|Commit|Copy|Delete|Diff|Log|Move|Status|Update|Server Copy|Server Move|Resolve|Ignore|"
-set-variable .svn.cflags  "|RIS*!|Vhs|UR$|CRS*!|NPrS*!|KrS*!|ZRxWpwS|Vs|NPrS*!|ZRAIuwS|ZRMS*|nCPs*!|nCPs*!|ZRaS*|Zi|"
+set-variable .svn.cnames  "|Add|Blame|Checkout|Commit|Copy|Delete|Diff|Log|Move|Status|Update|Server Copy|Server Move|Resolve|Ignore|Info|"
+set-variable .svn.cflags  "|RIS*!|Vhs|UR$|CRS*!|NPrS*!|KrS*!|ZRxWpwS|Vs|NPrS*!|ZRAIuwS|ZRMS*|nCPs*!|nCPs*!|ZRaS*|iD!|sD^!|"
 set-variable .svn.cdefs1  "|1|0|0|"
 set-variable .svn.cdefs2  "|0|0|"
 set-variable .svn.cdefs3  "||1|0|"
@@ -115,7 +115,8 @@ set-variable .svn.cdefs12 "|||1|"
 set-variable .svn.cdefs13 "|||1|"
 set-variable .svn.cdefs14 "|0|0|2|"
 set-variable .svn.cdefs15 "||"
-set-variable .svn.ccount  15
+set-variable .svn.cdefs16 "|"
+set-variable .svn.ccount  16
 
 set-variable .svn.com &reg &spr "/history/%s/svn/com" $platform "svn"
 !iif &sin " " .svn.com  set-variable .svn.com &spr "\"%s\"" .svn.com
@@ -302,15 +303,27 @@ set-variable #l9 .svn.ccount
   !endif
 !emacro
 0 define-macro svn-osd-init-ignore-mask
-  !if .find-file.file-count
-    set-variable #l0 0
-    set-variable #l1 ""
-    !while &les &pinc #l0 1 .find-file.file-count
-      set-variable #l1 &spr "%s%s\n" #l1 &ind &cat ".find-file.file" #l0
-    !done
-    set-variable .svn.cignrmsk #l1
-  !elif &not &exi .svn.cignrmsk
+  !if &sub &set #l1 .find-file.file-count 1
+  !elif &not &seq &rig $buffer-fname -1 "/"
+  !elif &seq &cat .find-file.file-dir .find-file.file1 $buffer-fname
+    set-variable .find-file.file-dir $buffer-fname
+    set-variable .find-file.file-count &set #l1 0
+  !endif
+  0x404 pipe-shell-command &spr "%s propget svn:ignore \"%s\"" .svn.com .find-file.file-dir #l2
+  !if &not $status
     set-variable .svn.cignrmsk ""
+  !else
+    set-variable #g0 #l2
+    set-variable #l2 &spr "\n%s\n\n" &rep &trb #l2 "\r\n" "\n"
+    set-variable #g1 #l2
+    !if #l1
+      set-variable #l0 0
+      !while &les &pinc #l0 1 #l1
+        !iif &not &lfin #l2 &set #l3 &ind &cat ".find-file.file" #l0  set-variable #l2 &spr "%s%s\n" #l2 #l3
+      !done
+    !endif
+    set-variable #g2 #l2
+    set-variable .svn.cignrmsk &cat &trb #l2 "\n"
   !endif
 !emacro
 0 define-macro svn-osd-meim
@@ -403,17 +416,27 @@ set-variable #l9 .svn.ccount
       !endif
     !endif
     set-variable .find-file.file-count 1
-    set-variable .find-file.file-dcount 0
-    set-variable .find-file.file-dir &lef $buffer-fname &set #l0 &rsin "/" $buffer-fname
+    set-variable .find-file.file-dcount &con &seq &rig $buffer-fname -1 "/" 1 0
+    set-variable .find-file.file-dir &lef $buffer-fname &set #l0 &rsin "/" &lef $buffer-fname -1
     set-variable .find-file.file1 &rig $buffer-fname #l0
   !endif
   !if &sin "$" #l9
   !elif &sin "s" #l9
-    !if &not &equ .find-file.file-count 1
-      osd-dialog &cat "Subversion - " &lget .svn.cnames @# "    This tool can only opperate on one specific file at a time!    " "  \HAbort  "
-      !abort
+    !if &not &set #l1 &equ .find-file.file-count 1
+      !if &not &sin "D" #l9
+      !elif .find-file.file-count
+      !elif &set #l1 &exi :fmpf
+        set-variable .find-file.file-count 1
+        set-variable .find-file.file-dcount 1
+        set-variable .find-file.file-dir &lef $buffer-fname &set #l0 &rsin "/" &lef $buffer-fname -1
+        set-variable .find-file.file1 &rig $buffer-fname #l0
+      !endif
+      !if &not #l1
+        osd-dialog &cat "Subversion - " &lget .svn.cnames @# "    This tool can only opperate on one specific file at a time!    " "  \HAbort  "
+        !abort
+      !endif
     !endif
-  !elif &not &sin "Z" #l9
+  !elif &not &or &sin "Z" #l9 &sin "D" #l9
     !if &not .find-file.file-count
       osd-dialog &cat "Subversion - " &lget .svn.cnames @# "    This tool can only opperate on selected files!    " "  \HAbort  "
       !abort
@@ -425,7 +448,7 @@ set-variable #l9 .svn.ccount
   set-variable #l0 0
   set-variable #l3 0
   !while &not &seq "" &set #l1 &mid #l9 &pinc #l0 1 1
-    !if &not &sin #l1 "Ss*!$"
+    !if &not &sin #l1 "DSs*!$"
       set-variable #l2 &mul #l0 100
       osd .osd.svn-osd &inc #l2 1 ""
       !if &seq #l1 "A"
@@ -1000,14 +1023,39 @@ define-macro svn-diff
 
 define-macro svn-ignore
   15 svn-osd
-  !if &seq "" &set #l3 &rep &rep &trb .svn.cignrmsk "\\" "\\\\" "\"" "\\\""
+  !if &seq "" &set #l3 &rep &rep &rep &trb .svn.cignrmsk "\n\n" "\n" "\\" "\\\\" "\"" "\\\""
     osd-dialog "Subversion - Ignore" "    A file mask list must be given!    " "  \HAbort  "
     !abort
   !endif
   !iif &seq &rig $SHELL -3 "csh"  set-variable #l3 &rep #l3 "\n" "\\\n"
-  set-variable #l2 &spr "%s propset svn:ignore \"%s\" " .svn.com #l3
-  6 svn-get-file-list 0 1 #l2
-  15 svn-exec 3 $buffer-fname
+  4 pipe-shell-command &spr "%s propset svn:ignore \"%s\" \"%s\"" .svn.com #l3 .find-file.file-dir "*svn-ignore*"
+!emacro
+
+;; SVN Info ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro svn-info
+  16 svn-osd
+  set-variable #l2 &spr "%s proplist -v " .svn.com
+  7 svn-get-file-list 0 0 #l2
+  !force 16 svn-exec 0 .find-file.file-dir
+  !force unset-variable .svn.lock
+  !if $status
+    find-buffer "*svn-cmdline*"
+    0x404 pipe-shell-command &rep @wl " proplist -v " " info " #l1
+    popup-window "*svn-info*"
+    set-variable $window-line 2
+    insert-newline
+    set-variable @wl &spr "Info on '%s':" .find-file.file1
+    forward-line
+    insert-string "  "
+    insert-string &xrep &trb #l1 "\r?\n" "\n  "
+    insert-newline
+    set-variable $window-line 1
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+  !endif
+  !force 0 delete-buffer "*svn-cmdline*"
+  1 goto-position "\x82"
 !emacro
 
 ;; SVN Log ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

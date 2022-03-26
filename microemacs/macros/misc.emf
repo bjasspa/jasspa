@@ -63,6 +63,30 @@ define-macro encase
   insert-string .e
 !emacro
 
+define-macro get-next-indent-change
+  !if &not $buffer-indent
+    ml-write "[ERROR: buffer does not have an indent scheme]"
+    !abort
+  !endif
+  !if &seq @wc ""
+    beginning-of-buffer
+  !else
+    forward-line
+  !endif
+  set-variable #l2 &con &band @# 1 "" " "
+  !while &not &seq @wc ""
+    !if &not &seq #l2 &trr &set #l1 @wl
+      beginning-of-line
+      tab @mna
+      !if &not &seq #l1 @wl
+        ml-write &spr "[Indent changed on line %d]" $window-line
+        !return
+      !endif
+    !endif
+    forward-line
+  !done
+!emacro
+
 define-macro check-line-length
   !repeat
     end-of-line
