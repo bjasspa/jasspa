@@ -250,7 +250,8 @@
         !endif
       !endif
       set-variable #p7 &lset #p7 4 &add 1 &lget #p7 4
-      !if &band $system 0x1000000
+      !if &sin "Q" #l9
+      !elif &band $system 0x1000000
         ml-write &spr "Searching %d %s%s" &lget #p7 1 #l8 #l2
       !else
         ml-write &spr "Searching %d %n" &lget #p7 1 &mod &lget #p7 4 40 "."
@@ -360,12 +361,13 @@
       !if #l6
         !if &len &lget #p7 5
           33 find-buffer &lget #p7 5
-          !if &band $system 0x1000000
+          !if &sin "Q" #l9
+          !elif &band $system 0x1000000
             !if &sin "q" #l9
               end-of-buffer
             !else
               beginning-of-buffer
-              !if &not &seq @wc ""
+              !if &not &seq @wl ""
                 -1 ml-write @wl
                 forward-line
                 !jump -3
@@ -408,7 +410,7 @@
     set-variable #p0 &trl &rig #p0 #l1
     set-variable #l2 &lget #p9 1
     !while &len &set #l3 &lef #l0 1
-      !if &sin #l3 "uxgprdfmibl234@-aoecCq"
+      !if &sin #l3 "uxgprdfmibl234@-aoecCqQ"
         set-variable #l2 &cat #l2 #l3
       !elif &sin #l3 "UXGPRDFMIBL"
         set-variable #l2 &rep #l2 &slo #l3 ""
@@ -421,10 +423,10 @@
           set-variable #l5 &lef #p0 &sub #l1 1
           set-variable #p0 &trl &rig #p0 #l1
         !elif &not &xse #p0 "\"\\(\\(\\\\.\\|[^\\\\\"]\\)*\\)\"\\s+\\(.*\\)"
-          ml-write "[Badly quoted parameter]"
+          -1 ml-write "[Badly quoted parameter]"
           !abort
         !elif &seq &set #l5 @s1 ""
-          ml-write "[Invalid empty parameter]"
+          -1 ml-write "[Invalid empty parameter]"
           !abort
         !else
           set-variable #p0 &trl @s3
@@ -449,7 +451,7 @@
           !elif &xseq #l5 "\\(\\d\\d\\)[-/]\\(\\d\\d\\)[-/]\\(\\d\\d\\)\\( \\(\\d\\d\\):\\(\\d\\d\\)\\(:\\(\\d\\d\\)\\)?\\)?"
             set-variable #l5 &spr "%s%s%2d%2d%2d%2d%2d" &lef $time 2 @s1 &mod &cat "100" @s2 100 &mod &cat "100" @s3 100 &mod &cat "100" @s5 100 &mod &cat "100" @s6 100 &mod &cat "100" @s8 100
           !else
-            ml-write &spr "[Malformed -%s time parameter]" #l3
+            -1 ml-write &spr "[Malformed -%s time parameter]" #l3
             !abort
           !endif
         !endif
@@ -458,7 +460,7 @@
       !elif &seq #l3 "&"
         !iif &not &band $system 0x1000000  set-variable #l2 &cat #l2 "&"
       !else
-        ml-write &spr "[Unknown -%s option]" #l3
+        -1 ml-write &spr "[Unknown -%s option]" #l3
         !abort
       !endif
       set-variable #l0 &rig #l0 1
@@ -474,7 +476,7 @@
   set-variable #l9 &lget #p9 1
   !if &sin "f" #l9
   !elif &not &sin "d" #l9
-    ml-write "[Cannot use -F and -D together]"
+    -1 ml-write "[Cannot use -F and -D together]"
     !abort
   !endif
   !while &len &set #l0 &trl #l0
@@ -483,13 +485,13 @@
       set-variable #l4 &lef #l0 &sub #l1 1
       set-variable #l0 &rig #l0 #l1
     !elif &not &xse #l0 "\"\\(\\(\\\\.\\|[^\\\\\"]\\)*\\)\"\\s+\\(.*\\)"
-      ml-write "[Badly quoted file mask]"
+      -1 ml-write "[Badly quoted file mask]"
       !abort
     !elif &len &set #l4 @s1
       set-variable #l0 &trb @s3
       set-variable #l4 &xrep #l4 "\\\\\\(.\\)" "\\1"
     !else
-      ml-write "[Invalid empty quoted file mask]"
+      -1 ml-write "[Invalid empty quoted file mask]"
       !abort
     !endif
     set-variable #l5 ""
@@ -532,7 +534,7 @@
     !done
   !endif
   !if &not #l3
-    ml-write "[No file mask given]"
+    -1 ml-write "[No file mask given]"
     !abort
   !endif
   set-variable .find-proc.mask-count #l3
@@ -549,7 +551,7 @@
   !done
   !if &band @# 1
     !if &seq "" &trl #l0
-      ml-write "[No search string given]"
+      -1 ml-write "[No search string given]"
       !abort
     !endif
     set-variable #l0 &cat "-w " #l0
@@ -614,9 +616,9 @@ define-macro grep
   !force 0 delete-buffer "*grep*"
   find-buffer "*grep*"
   set-variable $buffer-fname #l8
-  insert-string &spr "Directory:  %s\nGrep: %s" #l8 #l6
-  2 insert-newline
-  !if &band $system 0x1000000
+  insert-string &spr "Directory:  %s\nGrep: %s\n\n" #l8 #l6
+  !if &sin "Q" &lget #l9 1
+  !elif &band $system 0x1000000
     beginning-of-buffer
     set-mark
     !while &not &seq @wc ""
@@ -642,7 +644,9 @@ define-macro grep
     set-variable #l0 &cat #l0 " - ABORTED"
   !endif
   insert-string &set #l0 &cat #l0 " ****]"
-  !if &band $system 0x1000000
+  !if &sin "Q" &lget #l9 1
+    set-variable $window-line 3
+  !elif &band $system 0x1000000
     beginning-of-buffer
     !while &not &seq @wc ""
       -1 ml-write @wl
@@ -723,7 +727,8 @@ define-macro find
   set-variable :fmpf &len #l0
   !iif &sin "&" &lget #l9 1  !return
   insert-string &cat #l0 "Name  <Order by Extension>\n"
-  !if &band $system 0x1000000
+  !if &sin "Q" &lget #l9 1
+  !elif &band $system 0x1000000
     beginning-of-buffer
     set-mark
     !while &not &seq @wc ""
@@ -748,7 +753,9 @@ define-macro find
     set-variable #l0 &cat #l0 " - ABORTED"
   !endif
   insert-string &set #l0 &cat #l0 " ****]"
-  !if &band $system 0x1000000
+  !if &sin "Q" &lget #l9 1
+    set-variable $window-line 5
+  !elif &band $system 0x1000000
     beginning-of-buffer
     !while &not &seq @wc ""
       -1 ml-write @wl
@@ -945,7 +952,8 @@ define-macro replace-string-in-files
   set-variable $buffer-fname #l8
   insert-string &spr "Directory:  %s\nReplace string: %s %s %s" #l8 #l1 #l2 #l0
   2 insert-newline
-  !if &band $system 0x1000000
+  !if &sin "Q" #l9
+  !elif &band $system 0x1000000
     beginning-of-buffer
     set-mark
     !if &sin "q" &lget #l9 1
@@ -977,7 +985,9 @@ define-macro replace-string-in-files
     set-variable #l0 &cat #l0 " - ABORTED"
   !endif
   insert-string &set #l0 &cat #l0 " ***]"
-  !if &band $system 0x1000000
+  !if &sin "Q" #l9
+    set-variable $window-line 3
+  !elif &band $system 0x1000000
     !if &not &sin "q" &lget #l9 1
       beginning-of-buffer
       !while &not &seq @wc ""
