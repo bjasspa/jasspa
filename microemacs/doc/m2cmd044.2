@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd044.2,v 2.6 2009-08-29 17:13:09 jon Exp $
+.Id $Id: m2cmd044.2,v 2.6 2022/03/28 18:37:12 jon Exp $
 .Im MicroEmacs command|buffer|macro
 .so me.tni
 .TH execute-buffer 2
@@ -18,9 +18,11 @@ execute-line \- Execute a script line from the command line
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 .B execute-buffer
 "\fIbuffer-name\fR"
 .br
+.I n
 .B execute-line
 ["\fIcommand-line\fR"]
 .ad
@@ -30,9 +32,24 @@ executes script lines in the named buffer  \fIbuffer-name\fR. If the buffer is
 off screen and an error  occurs  during  execution,  the cursor is left on the
 line causing the error.
 .PP
+If numeric argument \fIn\fR is given to \fBexecute-buffer\fP then macro argument
+.Ht @? 4
+will be set to 1 and
+.Ht @# 4
+to \fIn\fR,  otherwise  \fB@?\fR and \fB@#\fR will be set to 0 and 1 respectively.  These variables can be used by the
+macro code during the execution of the buffer.
+.PP
 .B execute-line
-executes a in script line  entered from the command  line.  Typically  this is
-used in macros.
+executes a in script line  entered from the command  line,  typically  this command is used in macros. If bit 2 of the
+given  numeric  argument  \fBn\fR  is set  then  the  command  returns  an  error if there is more  text  given in the
+command-line than is executed, for example
+.Me $emf-scheme
+.CS
+3 execute-line "set-variable #g0 1 2"
+.CE
+.Me $ehf-scheme
+Will throw an error as \fC" 2"\fP is not used, this can be useful in tracking down macro errors. Note the \fB@?\fR and
+\fB@#\fR macro argument variables are also set.
 .SH "SEE ALSO"
 .na
 .Ht execute-file 2 ,

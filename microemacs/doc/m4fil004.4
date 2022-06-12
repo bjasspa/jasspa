@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil004.4,v 2.6 2009-08-29 17:14:01 jon Exp $
+.Id $Id: m4fil004.4,v 2.6 2022/01/06 15:10:43 jon Exp $
 .Im MicroEmacs macro;function;string
 .so me.tni
 .TH &sprintf 4
@@ -46,21 +46,37 @@ The command determines the interpretation of the next argument \fIarg\fR which
 are specified as follows:
 .RS
 .IP "\fBd\fR (Decimal integer)"
-Expects  a  single  numeric  argument  \fIarg\fR  which is  inserted  into the
-\fIformat\fR  string as decimal text string. If \fIn\fR is specified  then the
-inserted text string is fixed to \fIn\fR character in length.
+Expects a single numeric argument \fIarg\fR which is inserted into the \fIformat\fR  string as decimal text string. If
+\fIn\fR is  specified  then the inserted  text string is fixed to \fIn\fR  character in length, if \fIn\fR is prefixed
+with a 0 then the number is padded with zeros otherwise spaces are used.
+.LP
+\fBe\fR (floating point number - scientific)
+.\"
+.LP
+\fBf\fR (floating point number)
+.\"
+.IP "\fBg\fR (floating point number - shorter of \fBe\fR or \fBf\fR)"
+Expects a single numeric argument \fIarg\fR which is inserted into the \fIformat\fR string as a floating point number string. If
+\fIn\fR  is  specified  it  must  be of  the  form  [min-width][.<precision>]  where  either  the  [min-width]  or the
+[.<precision>] can be omitted.
 .IP "\fBn\fR (Repeat String)"
 Expects two arguments  \fIarg\fR, the first is a numeric  argument  giving the
 number of times to insert the given string (the second  argument).  If \fIn\fR
 is  specified  then the string is  inserted  \fIn\fR *  \fInumeric-argument\fR
 times.
+.IP "\fBo\fR (Octal integer)"
+Expects a single numeric argument \fIarg\fR which is inserted into the \fIformat\fR string as an octal text string. If
+\fIn\fR is  specified  then the inserted  text string is fixed to \fIn\fR  character in length, if \fIn\fR is prefixed
+with a 0 then the number is padded with zeros otherwise spaces are used.
 .IP "\fBs\fR (String)"
 Expects a single argument  \fIarg\fR which is a string to be inserted into the
 key. If \fIn\fR is given then it is inserted\fIn\fR times.
 .IP "\fBx\fR (Hexadecimal integer)"
-Expects a single numeric argument  \fIarg\fR which is inserted into the format
-string as hexadecimal  text string. If \fIn\fR is given then the inserted text
-string will be fixed to \fIn\fR character in length.
+Expects a single numeric  argument  \fIarg\fR which is inserted into the format string as hexadecimal  text string. If
+\fIn\fR is given then the  inserted  text string will be fixed to \fIn\fR  character in length, if \fIn\fR is prefixed
+with a 0 then the number is padded with zeros otherwise spaces are used.
+.IP "\fBX\fR (Hexadecimal integer)"
+Same as \fBx\fR only using uppercase letters.
 .IP "\fB%\fR"
 Inserts a single '%', \fIn\fR has no effect.
 .LP

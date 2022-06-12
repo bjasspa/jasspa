@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd058.2,v 2.6 2009-08-29 17:13:09 jon Exp $
+.Id $Id: m2cmd058.2,v 2.6 2022/01/22 17:22:35 jon Exp $
 .Im MicroEmacs command|shell
 .ds C0 "(\fB\*(cX`\fR)\ \&
 .so me.tni
@@ -14,6 +14,7 @@ get-next-line \- Find the next command line
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 \fBget-next-line\fR \*(C0
 .ad
 .SH DESCRIPTION
@@ -33,6 +34,21 @@ If the buffer was not found then the next  buffer set is searched  for, and if
 found then the next expression from the cursor is  automatically  located. The
 command  fails  if none of the  buffers  exist,  or the end of the  buffer  is
 reached.
+.PP
+The argument \fIn\fR  can be used to change the default  behavior of get-next-line
+described above, \fIn\fR is a bit based flag where:-
+.IP \fB0x01\fR
+Use  popup-window to display the buffer containing the next location in a different window (default) when this
+flag is not given the window  containing the 'next' command output, or the current window if the 'next' command output
+is not currently displayed.
+.IP \fB0x02\fR
+When set The command returns an error if the current buffer is not a 'next' command buffer, this effectively force the
+command to only get the next line in the current buffer. This flag is used by
+.Hl "ipipe output processing macros" $buffer-ipipe 5
+to highlight error lines in the current buffer.
+.IP \fB0x04\fR
+When set the command does not open the  file/buffer  containing the next location,  leaving the 'next' command buffer
+current with the cursor at the next line.
 .SH "SEE ALSO"
 .na
 .Ht $file-template 5 ,

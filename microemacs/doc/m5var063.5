@@ -3,23 +3,41 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var063.5,v 2.6 2009-08-29 17:14:15 jon Exp $
+.Id $Id: m5var063.5,v 2.6 2022/01/22 17:34:09 jon Exp $
 .Im MicroEmacs variable|macrodevelop
 .so me.tni
-.TH .calc.result 5
+.TH .calc.answer 5
+.XI .calc.answer - "Last successful calc answer"
 .XI .calc.result - "Last calc calculation result"
 .SH NAME
+.br
+.Me "|.calc.answer"
+\&.calc.answer \- Last successful calc answer
+.br
+.Me "|.calc.result"
 \&.calc.result \- Last calc calculation result
 .Me $a
 .SH SYNOPSIS
-\fB.calc.result\fR \fIinteger\fR
+.na
+\fB.calc.result\fR \fInumber\fR
+.br
+\fB.calc.result\fR \fIstring\fR
+.ad
 .SH DESCRIPTION
+.B .calc.answer
+is used to store the answer of the last successful calculation made by
+.Ht calc 3 .
+When defined the value will always be a number, but its format could be floating  point, or a binary, octal,  decimal
+or hex integer depending on the output format requested in the sum.
+.PP
+The "\fIAns\fR" (Answer) in the next  calculation is substituted with this value.
+.PP
 .B .calc.result
 is used to store the result of the last calculation made by
 .Ht calc 3 .
-.PP
-The "\fILR\fR" (Last Result) in the next  calculation is substituted with this
-value.
+This can be the same as \fB.calc.answer\fR,  a hybrid form of "\fB<floating-point> (<integer>)\fR" values when floating point and integer maths produce different
+answers and the required  format is not  specified, or, if there is an error in the calculation string a \*(mS list with the first
+element being the character offset to the point of error and the second element is an error message.
 .SH "SEE ALSO"
 .na
 .Ht calc 3 .

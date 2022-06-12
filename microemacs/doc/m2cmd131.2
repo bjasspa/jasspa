@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd131.2,v 2.10 2009-08-29 17:13:25 jon Exp $
+.Id $Id: m2cmd131.2,v 2.10 2022/02/13 18:59:30 jon Exp $
 .Im MicroEmacs command|shell
 .so me.tni
 .TH shell-command 2
@@ -22,7 +22,7 @@ shell-command \- Perform an operating system command
 performs an operating system call with the given \fIstring\fR as its argument.
 The command only fails if the shell-command call returns \-1. The
 .Ht $result 5
-variable is set the return value and can be used to test the result.
+variable is set the return or exit-code of the shell command and can be used to test the result.
 .PP
 The  argument  \fIn\fR  can be used to  change  the  default  behavior  of the
 shell-command, \fIn\fR is a bit based flag where:-

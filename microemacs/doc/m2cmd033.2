@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Jul 25 00:00:27 1998
 .\"
-.Id $Id: m2cmd033.2,v 2.16 2009-08-29 17:13:09 jon Exp $
+.Id $Id: m2cmd033.2,v 2.16 2022/03/24 20:45:17 jon Exp $
 .Im MicroEmacs command|indent|scuts
 .so me.tni
 .TH indent 2
@@ -43,75 +43,89 @@ indent \- Manage the auto-indentation methods
 "\|\fItoken\fR\|"
 "\|\fIindent\fR\|"
 "\|\fIindent-scheme\fR\|"
+.sp
+.B indent
+"\|\fIind-no\fR\|"
+"\fBc-type\fR"
+"\|\fIindent\fR\|"
+.br
+.B indent
+"\|\fIind-no\fR\|"
+"\fBu\fR"
+"\|\fIcomment-cont\fR\|"
+.sp
+.I 2
+.B indent
+.sp
+.I 3
+.B indent
+"\|\fIind-no\fR\|"
+"\|\fIchange-macro\fR\|"
 .ad
 .SH DESCRIPTION
-The \fBindent\fR  command creates and manages the auto-indenting  methods, the
-process of creating a new indentation method is best described in
+The  \fBindent\fR  command creates and manages the  auto-indenting  methods, the process of creating a new indentation
+method is best described in
 .Hl "File Language Templates" languageTemplates 2 .
-The  command  takes  various  forms as defined by the  arguments.  Each of the
-argument configurations is defined as follows:-
+The  command  takes  various  forms as defined by the  arguments.
+.PP
+In the following  sections an \fIindent\fR  length can take one of two forms, it can either be an absolute number in the
+range of +/-63,  note  however  that a value of -63 has  special  meaning  as it forces a relative  indent  level to 0
+(no indent). Alternatively an indent can be expressed as multiples of the buffer's tab size followed by the letter \fCt\fP, see the
+many example below.
+.PP
+Each of the argument configurations is defined as follows:-
 .SS "Indentation Method Creation"
 .na
 .I 0
 .B indent
 "\|\fIind-no\fR\|"
 "\|\fIflags\fR\|"
-"\|\fIlook-back\fR\|"
+[ "\|\fIlook-back\fR\|" ]
 [ "\|\fIindent-scheme\fR\|" ]
 .ad
 .PP
-With an argument of \fC0\fR,  \fBindent\fR  creates a new  indentation  method
-with the integer handle  \fIind-no\fR. The indentation method is assigned to a
-buffer by setting
+With an argument of \fC0\fR,  \fBindent\fR  creates a new indentation method with the integer handle \fIind-no\fR. The
+indentation method is assigned to a buffer by setting
 .Ht $buffer-indent 5
 to \fIind-no\fR. \fIind-no\fR cannot be 0 as setting
 .B $buffer-indent
-to zero disables indentation.
-If the indentation method with the same \fIind-no\fR already exists, then the
-existing method is deleted and a new method may be created.
+to zero disables  indentation. If the indentation method with the same \fIind-no\fR  already exists, then the existing
+method is deleted and a new method may be created.
 .PP
 .I flags
 Sets the indent bit flags where:-
 .IP \fC0x01\fR
-Indent  method is case  insensitive.  Note that  \fBindent\fR  tokens  must be
-specified in lower case.
+Indent method is case insensitive. Note that \fBindent\fR tokens must be specified in lower case.
 .IP \fC0x02\fR
-Defines a \fBfast  look-back\fR  indentation  scheme to be used in conjunction
-with the  current  indentation  scheme. The fast  look-back  scheme is used to
-identify a change in the  current  buffer's  indent  scheme, for  example  the
-starting  of  embedded  script in html. The  \fIindent-scheme\fR  argument  is
-required  when  this  flag bit is set and  identifies  the  handle  of the fast
-look-back  indentation  scheme to be used.
+Defines a \fBfast  look-back\fR  indentation scheme to be used in conjunction with the current indentation scheme. The
+fast look-back  scheme is used to identify a change in the current buffer's indent scheme, for example the starting of
+embedded  script in html. The  \fIindent-scheme\fR  argument is required when this flag bit is set and  identifies the
+handle of the fast look-back indentation scheme to be used.
 .IP
-This feature is only used when indent is required to support  multiple complex
-indentation  schemes within a single file, for example  indentation of scripts
-within html, asp or php pages etc. When defined the given  \fIindent-scheme\fR
-must also be defined using \fBindent\fR, the scheme's \fIlook-back\fR argument
-is  typically  set to look  back a long way to  ensure  correctness,  i.e. 500
-lines, but it should therefore contain few tokens to maintain performance.
+This feature is only used when indent is required to support  multiple  complex  indentation  schemes  within a single
+file, for example indentation of scripts within html, asp or php pages etc. When defined the given \fIindent-scheme\fR
+must also be defined using  \fBindent\fR, the scheme's  \fIlook-back\fR  argument is typically set to look back a long
+way to ensure correctness, i.e. 500 lines, but it should therefore contain few tokens to maintain performance.
 .IP \fC0x04\fR
-Defines C mode of  indentation.  C styling  is built  into the  editor  and is
-enabled  through the  \fBindent\fR  command. The C form is  discussed  in more
-detail in the next section.
+Defines C mode of indentation. C styling is built into the editor and is enabled through the \fBindent\fR command. The
+C form is discussed in more detail in the next section.
 .IP \fC0x08\fR
 Ring the bell if
 .Ht goto-matching-fence 2
 fails.
 .IP \fC0x10\fR
-Comment  continuation  mode. This is only valid when C mode is defined  and is
-defined further in the next section.
+Indent top level code, i.e. code  outside  braces;  this is only valid when C mode is defined.  Code can only exist in
+functions for most  pre-compiled  languages  such as C, so a naked \fCif\fR  statement is misplaced and indented to 0,
+whereas other languages such as Javascript can have code anywhere in the file, set this flag for these languages.
 .LP
 .I look-back
-specifies the maximum  number of lines, prior to the current line,  considered
-when calculating the indentation of a line, i.e. if there are  \fIlook-back\fR
-number of lines  between the line to be indented  and the  previous  non-blank
-line then the current indentation is lost.
+specifies the maximum number of lines, prior to the current line,  considered  when  calculating  the indentation of a
+line, i.e. if there are  \fIlook-back\fR  number of lines  between the line to be indented and the previous  non-blank
+line then the current indentation is lost. This is only valid when C mode is not defined.
 .PP
-If \fIlook-back\fR is set to 0 then the indentation is effectively disabled as
-the  current  indentation  can  never be found.  The  maximum  value  has been
-increase as of January 2004 from 255 to an integer (large  number), a value of
-10 is  typically  sufficient  for a normal  indent  scheme  and 500 for a fast
-look-back scheme.
+If  \fIlook-back\fR is set to 0 then the indentation is effectively  disabled as the current  indentation can never be
+found. The maximum value has been increase as of January 2004 from 255 to an integer (large  number), a value of 10 is
+typically sufficient for a normal indent scheme and 500 for a fast look-back scheme.
 .SS "C Indentation"
 .na
 .I 0
@@ -153,6 +167,11 @@ look-back scheme.
 "\|\fIind-no\fR\|"
 .C a
 "\|\fIcase\fR\|"
+.br
+.B indent
+"\|\fIind-no\fR\|"
+.C l
+"\|\fIlabel\fR\|"
 .br
 .B indent
 "\|\fIind-no\fR\|"
@@ -388,6 +407,30 @@ default:                default:
   case = -t            case = -t
 .CE 0
 .RE
+.TP 
+\fBindent\fR "\|\fIind-no\fR\|" "\|\fCl\fR" "\|\fIlabel\fR" (=-63)
+.\"
+The  additional  indent  to be  applied  to a line that  starts  with a  \fBlabel\fR  statement,  a value of -63 (most
+negative  number) is  interpreted  as an infinitely  large negative  number to ensure the indent ends up being 0. In C
+labels are typically left aligned so that they standout so the \fIlabel\fR indent is set to -63, giving the following:-  
+.ne 2
+.RS
+.CS
+        norm-code;
+label:
+        norm-code;
+.CE 0
+.RE
+.IP
+However, in javascript labels can be used more diversely so tend not to be indented, i.e. \fIindent\fR set to 0:-
+.ne 2
+.RS
+.CS
+        norm-code;
+        label:
+        norm-code;
+.CE 0
+.RE
 .TP
 \fBindent\fR "\|\fIind-no\fR\|" "\|\fCm\fR" "\|\fImargin\fR" (=-1)
 .\"
@@ -431,14 +474,11 @@ In summary:
 .TP
 \fBindent\fR "\|\fIind-no\fR\|" "\|\fCu\fR" "\|\fIcomcont\fR" ("\fC * \fR")
 .\"
-This argument is only  specified if  \fIflags\fR  bit  \fC0x10\fR is set.
-This defines the string which is inserted  when a new line is started while in
-a comment. The string is only inserted if the cursor is at the end of the line
-when the
+This defines the string which is inserted  when a new line is started  while in a comment. The string is only inserted
+if the cursor is at the end of the line when the
 .Ht newline 2
-command is given. For  example, for the default  settings, if a  \fBnewline\fR
-was  entered at the end of the first  line, the second  line would  initialize
-to:-
+command is given. For example, for the default  settings, if a \fBnewline\fR was entered at the end of the first line,
+the second line would initialize to:-
 .ne 3
 .RS
 .CS
@@ -535,20 +575,16 @@ parameter may be defined in \fC<user>.emf\fR.
 [ "\|\fIindent-scheme\fR\|" ]
 .ad
 .PP
-With the default argument of \fC1\fR,  \fBindent\fR creates a new rule for the
-indentation  method  \fIind-no\fR  which must have previously been defined and
-initialized.
+With the default argument of \fC1\fR,  \fBindent\fR  creates a new rule for the indentation method  \fIind-no\fR which
+must have  previously  been  defined  and  initialized.  An  argument  of \fC-1\fR  will  remove the given  token from
+indentation method \fIind-no\fR.
 .PP
-The  indentation of a line in a buffer, which is using an indentation  method,
-is  affected  by the token  types  matched  on the line  (\fItype\fR  \fCf\fR,
-\fCo\fR,  \fCs\fR)  and  the  current  indentation  (if  line  is not of  type
-\fCf\fR).
+The indentation of a line in a buffer, which is using an indentation method, is affected by the token types matched on
+the line (\fItype\fR \fCf\fR, \fCo\fR, \fCs\fR) and the current indentation (if line is not of type \fCf\fR).
 .PP
-The  current  indentation  is  determined  by  searching  the  previous  lines
-(look-back) for the indentation of the last indented line. This may not simply
-be the  indentation  of the last  non-blank  line, the  exact  indentation  is
-determined  by searching for tokens in the line and assessing  their effect on
-the indentation of the current line.
+The current  indentation  is determined by searching the previous  lines  (look-back) for the  indentation of the last
+indented line. This may not simply be the indentation of the last non-blank line, the exact  indentation is determined
+by searching for tokens in the line and assessing their effect on the indentation of the current line.
 .PP
 The format of the regex valid in the "\fItoken\fR" and "\fIclose\fR" arguments
 are the same as at used by hilight token creation, see
@@ -872,6 +908,34 @@ the next line onwards (similar to \fCn\fR), a \fItype\fR of \fCv\fR indents
 both the current line and next time onwards (similar to \fCu\fR).
 .IP
 Refer the the \fItype\fR\|=\fCt\fR for an example of indentation switching.
+.SS "Get Current Indentation Scheme"
+.na
+.I 2
+.B indent
+.ad
+.PP
+With an argument of \fC2\fR, \fBindent\fR sets the
+.Ht $result 5
+variable  to the indent  scheme  used for the  current  location,   this can be used for files that  support  multiple
+formats in the same file, such as HTML which can have section of Javascript embedded within it, to identify  the major mode of the
+current cursor position.
+.SS "Set Indent Change Callback Macro"
+.na
+.I 3
+.B indent
+"\|\fIind-no\fR\|"
+"\|\fIchange-macro\fR\|"
+.ad
+.PP
+With an argument of \fC3\fR,  \fBindent\fR  sets the indent change  callback  macro for the given indent  scheme. This
+macro is called  whenever the \*(mS  indenter is about to change the  indentation  of a line. The macro is called with
+the current  cursor set to the line whose indent is to change with a numeric  argument of the new indent level. If the
+macro sets its
+.Hl "command variable" set-variable 2
+\fB.change-macro.indent\fR
+to a valid indent level and
+.Hl aborts !abort 4
+rather that return, the line will be indented to the value of \fB.indent\fR instead. 
 .SH EXAMPLE
 Examples  of  indentation  method  creations  can  be  found  in  macro  files
 \fChkemf.emf\fR,  \fChktcl.emf\fR and  \fChkvrml.emf\fR. The following example

@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20091003.1731>
+# Last Modified: <20220612.1923>
 #
 ##############################################################################
 
@@ -248,7 +248,7 @@ VAR5_080=	$(DOCDIR)m5var080.5 $(DOCDIR)m5var081.5 $(DOCDIR)m5var082.5\
 		$(DOCDIR)m5var086.5 $(DOCDIR)m5var087.5 $(DOCDIR)m5var088.5\
 		$(DOCDIR)m5var089.5
 VAR5_090=	$(DOCDIR)m5var090.5 $(DOCDIR)m5var091.5 $(DOCDIR)m5var092.5 \
-		$(DOCDIR)m5var093.5
+		$(DOCDIR)m5var093.5 $(DOCDIR)m5var094.5
 #
 FIL8_000=	$(DOCDIR)m8fil000.8 $(DOCDIR)m8fil001.8 $(DOCDIR)m8fil002.8\
 		$(DOCDIR)m8fil003.8 $(DOCDIR)m8fil004.8 $(DOCDIR)m8fil005.8\
@@ -491,17 +491,17 @@ clean::
 $(MEHTMZIP): me.hts
 	$(RMDIR) htm
 	$(MKDIR) htm
-	$(MKDIR) htm/me
-	cd htm; $(HTS2HTML) -l .htm ../me.hts
-	cd htm; $(ZIP) -r mehtm me.htm me
-	$(CP) htm/mehtm.zip $@
+	$(MKDIR) htm$(pc)me
+	cd htm$(sc) $(HTS2HTML) -l .htm ..$(pc)me.hts
+	cd htm$(sc) $(ZIP) -r mehtm me.htm me
+	$(CP) htm$(pc)mehtm.zip $@
 	$(RMDIR) htm
 # Microsoft project file.
 me.hhp:	me.hts
 	$(RMDIR) htm
 	$(MKDIR) htm
-	$(MKDIR) htm/me
-	cd htm; $(HTS2HTML) -l .htm ../me.hts
+	$(MKDIR) htm$(pc)me
+	cd htm$(sc) $(HTS2HTML) -l .htm ..$(pc)me.hts
 	echo "[OPTIONS]" > me.hhp
 	echo "Compatibility=1.1 or later" >> me.hhp
 	echo "Compiled file=me.chm" >> me.hhp
@@ -511,7 +511,7 @@ me.hhp:	me.hts
 	echo "Title=JASSPA MicroEmacs Help" >> me.hhp
 	echo "" >> me.hhp
 	echo "[FILES]" >> me.hhp
-	(cd htm; find . -type f -print |  sed -e "s/^\\.\\///g" -e "s/\\//\\\\/g" >> ../me.hhp)
+	(cd htm$(sc) find . -type f -print |  sed -e "s/^\\.\\///g" -e "s/\\//\\\\/g" >> ../me.hhp)
 	echo "" >> me.hhp
 	echo "[INFOTYPES]" >> me.hhp
 	$(RMDIR) htm
@@ -523,11 +523,11 @@ clean::
 $(MEHTMLTGZ): me.hts
 	$(RMDIR) html
 	$(MKDIR) html
-	$(MKDIR) html/me
-	cd html; $(HTS2HTML) -l .html ../me.hts
-	cd html; $(TAR) cvf mehtml.tar me.html me
-	cd html; $(GZIP) mehtml.tar
-	$(CP) html/mehtml.tar.gz $@
+	$(MKDIR) html$(pc)me
+	cd html$(sc) $(HTS2HTML) -l .html ..$(pc)me.hts
+	cd html$(sc) $(TAR) cvf mehtml.tar me.html me
+	cd html$(sc) $(GZIP) mehtml.tar
+	$(CP) html$(pc)mehtml.tar.gz $@
 	$(RMDIR) html
 clean::
 	$(RMDIR) html
@@ -624,13 +624,13 @@ clean::
 me.ehf: meehf.hts
 	$(RMDIR) ehf
 	$(MKDIR) ehf
-	$(MKDIR) ehf/me
-	$(RM) ehf/me/*.htm
-	$(RM) ehf/me/me.ehf
-	cd ehf; $(HTS2HTML) -l .htm ../meehf.hts
-	$(CP) ehf/me.htm ehf/me/1.htm
-	cd ehf/me; $(ME) -n "@ehftools" *.htm
-	$(CP) ehf/me/me.ehf .
+	$(MKDIR) ehf$(pc)me
+	$(RM) ehf$(pc)me$(pc)*.htm
+	$(RM) ehf$(pc)me$(pc)me.ehf
+	cd ehf$(sc) $(HTS2HTML) -l .htm ..$(pc)meehf.hts
+	$(CP) ehf$(pc)me.htm ehf$(pc)me$(pc)1.htm
+	cd ehf$(pc)me$(sc) $(ME) -n "@ehftools" *.htm
+	$(CP) ehf$(pc)me$(pc)me.ehf .
 	$(RMDIR) ehf
 clean::
 	$(RMDIR) ehf

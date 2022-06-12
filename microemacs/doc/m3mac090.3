@@ -3,7 +3,7 @@
 .\" Copyright (c) 2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac090.3,v 2.1 2009-08-29 17:16:55 jon Exp $
+.Id $Id: m3mac090.3,v 2.1 2022/02/05 14:51:30 jon Exp $
 .Im MicroEmacs command|search
 .so me.tni
 .TH replace-string-in-files 3
@@ -14,28 +14,31 @@ replace-string-in-files \- Search and replace strings across files
 .Me $a
 .SH SYNOPSIS
 .na
-.Me "|replace-string-in-files"
 .B replace-string-in-files
 "\|\fIfrom-pattern\fR\|"
 "\|\fIto-pattern\fR\|"
-\fIfind-options\fR
-"\fIfile-mask\fR" ["\|\fIfile-mask\fR\|"...]
+.br
+.RS
+"[\fIfind-options\fR] <\fIfile-mask\fR> [\fIfile-mask\fR] ..."
 ["\|\fIstarting-path\fR\|"]
+.br
+.RE
 .sp
-.Me "|query-replace-string-in-files"
 .B query-replace-string-in-files
 "\|\fIfrom-pattern\fR\|"
 "\|\fIto-pattern\fR\|"
-\fIfind-options\fR
-"\fIfile-mask\fR" ["\|\fIfile-mask\fR\|"...]
+.br
+.RS
+"[\fIfind-options\fR] <\fIfile-mask\fR> [\fIfile-mask\fR] ..."
 ["\|\fIstarting-path\fR\|"]
+.br
+.RE
 .ad
 .SH DESCRIPTION
 .B replace-string-in-files
-performs a search for a  \fIfrom-pattern\fR  and and  replaces the string with
-\fIto-pattern\fR  in all  files  that  match  \fIfile-mask\fR  in the  current
-directory  (or from  \fIstarting-path\fR\|)  using  built in \*(mE  constructs
-rather than relying on any external executables such as
+performs a search for a  \fIfrom-pattern\fR  and  replaces  the string with  \fIto-pattern\fR  in all files that match
+\fIfile-mask\fR  in the current  directory (or from  \fIstarting-path\fR\|)  using built in \*(mS commands rather than
+relying on any external executables such as
 .Hr grep 1 .
 .PP
 .B query-replace-string-in-files
@@ -43,29 +46,26 @@ is identical to
 .B replace-string-in-files
 except the user is prompted to accept each potential replacement.
 .IP "\fIfind-options\fR"
-Defines the \fIoptions\fR  that are specified on the command line, the default
-options may also be defined with the
+Defines the \fIoptions\fR that are given to the underlying call to the
+.Ht grep 3
+command, the default options may also be defined with the
 .Ht find-setup 3
 command  invoked from the command line or from the the  \fBTools\fR  menu. The
 \fIfind-options\fR are defined as follows:
 .RS
-.IP \fB-2\fR
-List the file and directory attributes in the output (directory list sort key)
-.IP \fB-3\fR
-List file and directory size in the output.
-.IP \fB-4\fR
-List file and directory modified time in the output.
+.BP "--"
+Last option, the following string must be the first \fIfile-mask\fR which may start with a '-'.
 .BP "-a"
-Re-read all out of date buffers,  prevents a manual prompt,  equivalent of Yes
-to all. This is the inverse of \fB-o\fR
+Re-read all out of date buffers, prevents a manual prompt, equivalent of Yes to all. This is the inverse of \fB-o\fR
 .BP "-b"
 Ignore binary files.
 .BP "-B"
-Do not ignore binary files.
-.BP "-f"
-List/search files.
-.BP "-F"
-Do not list/search files.
+Do not ignore binary files (not advisable as this is a text based search and replace operation).
+.BP "-c"
+Command return the number of matchs found/replaced rather than the default, which is simply 0 for one or more matches or
+1 if no matches were found/replaced.
+.BP "-C"
+Command returns 0 (non-error for command-line tool) regardless of if it finds any matches.
 .BP "-g"
 File masks are regex (i.e. .*\.emf)
 .BP "-G"
@@ -89,6 +89,8 @@ of No to all. This is the inverse of \fB-a\fR.
 Starting path specified
 .BP "-P"
 Starting path not specified
+.BP "-q"
+Enables quiet mode for reduced print-out.
 .BP "-r"
 Recurse into sub-directories
 .BP "-R"
@@ -104,11 +106,9 @@ File size specified bytes.
 \fB-S\fR \fI<number>\fR\|\fBk\fR
 .\"
 File size specified in Kilobytes.
-.LP
-\fB-s\fR \fI<size>\fR
-.\"
-File size greater than; supported size formats are the same as \fB-S\fR.
 .RE
+.IP "\fB-s\fR \fI<size>\fR"
+File size greater than; supported size formats are the same as \fB-S\fR.
 .IP "\fB-T\fR \fI<time>\fR"
 Modification time - older than, the following time formats are supported:
 .RS
@@ -146,6 +146,8 @@ When used with \fB-U\fR,  files are limited in size 100Mb  otherwise they will
 not be searched.
 .IP "\fB-w\fR \fI<search-pattern>\fR"
 File must contain a string matching the given \fIsearch-pattern\fR.
+.IP "\fB-W\fR \fI<search-pattern>\fR"
+File must not contain a string matching the given \fIsearch-pattern\fR.
 .BP "-x"
 Use \*(mE
 .Ht $file-ignore 5
@@ -153,12 +155,15 @@ to exclude unimportant files
 .BP "-X"
 Do not use \*(mE
 .Ht $file-ignore 5 .
+.BP "-&"
+Launch command using a separate process, this stops the current  MicroEmacs hanging during the replace process which can
+be useful for time consuming searches, not supported by \fBquery-replace-string-in-files\fR.
 .RE
 .IP "\fIfile-mask\fR"
 The files to search for e.g. \fB*.txt\fR
 .IP "\fIstarting-path\fR"
-The directory  location  where the search should  commence. The default is the
-location of the current buffer.
+Specifies the directory  location where the search should  commence when the \fB-p\fP option is used, the default when
+\fB-p\fP is omitted is the location of the current buffer.
 .SH NOTES
 .BS
 The  location of the find  options in the 3rd  argument  may seem odd, but the
@@ -187,6 +192,10 @@ i.e. this  option  can still be used to filter  the files to operate  on.
 both the \fI<from-pattern>\fR and the \fI<search-pattern>\fR must be a regular
 expression pattern.
 .BE 0
+.PP
+The other options of the underlying
+.Ht find 3
+command are allowed but provide no benefit to these commands.
 .SH "SEE ALSO"
 .na
 .Hr find 1 ,

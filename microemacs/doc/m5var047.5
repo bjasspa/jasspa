@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var047.5,v 2.10 2009-08-29 17:14:15 jon Exp $
+.Id $Id: m5var047.5,v 2.10 2009/08/29 17:14:15 jon Exp $
 .Im MicroEmacs variable|hilight|macrodevelop
 .so me.tni
 .TH $system 5
@@ -217,6 +217,10 @@ line (see
 This bit can be used by macros to determine how to function, see
 .Ht filetype 3f 
 for an example of its use.
+.IP \fB0x2000000\fR
+When  this  bit is set
+.Ht ipipe-kill 2
+uses \fCSIGTERM\fR, rather than \fCSIGKILL\fR, by default to terminal the process (\s-1UNIX\s0 platforms only).
 .SH EXAMPLE
 The follow  example  works out the  current  buffer's  backup  file name using
 \fB$system\fR to determine the naming system being used by \*(mS:-

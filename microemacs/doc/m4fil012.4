@@ -3,44 +3,98 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil012.4,v 2.7 2009-08-29 17:14:03 jon Exp $
-.Im MicroEmacs macro;directive|miscellaneousOperators
+.Id $Id: m4fil012.4,v 2.6 2022/06/12 19:22:39 bill Exp $
+.Im MicroEmacs macro;function;numeric
 .so me.tni
-.TH !repeat 4
-.XI !repeat - "Conditional loop (post testing)"
-.XI !until - "Test a conditional loop"
+.TH &fabs 4
+.XI &fabs - "Absolute value of a floating point number"
+.XI &fadd - "Floating point add two numbers"
+.XI &fsub - "Floating point subtract two numbers"
+.XI &fmultiply - "Floating point multiply two numbers"
+.XI &fdivide - "Floating point division of two numbers"
+.XI &fsqrt - "Floating point suqare root of a number"
 .SH NAME
-!repeat, !until \- Conditional loop (post testing)
+&fabs, &fadd, &fsub, &fmul, &fdiv, &fsqrt \- Floating point macro operators
 .SH SYNOPSIS
 .na
-.nf
-\fB!repeat\fR
-.RS
-\&... loop body ...
-.RE
-\fB!until\fR \fIcondition\fR
-.fi
+.B &fabs
+.I num
+.br
+.B &fadd
+.I num1
+.I num2
+.br
+.B &fsub
+.I num1
+.I num2
+.br
+.B &fmul
+.I num1
+.I num2
+.br
+.B &fdiv
+.I num1
+.I num2
+.br
+.B &fsqrt
+.I num
 .ad
 .SH DESCRIPTION
-Th \fB!repeat\fR command operates in a  similar fashion to
-.Hl "!while/!done" !while 4
-except the  condition is tested at the end. Control  finishes if the condition
-is met. As with the
-.Ht !while 4
-there is no nesting of multiple \fB!repeat\fR statements.
-.SH EXAMPLE
-For example, the following macro segment fills to the fill column with spaces.
+The floating point numeric  operators  operate on  variables  or literals  (strings in the form of numbers) to perform
+floating point computations,  returning double precision floating point numbers in scientific format. The contents of
+the variables are  interpreted  as floating point numbers with a 15 digits of precision and a range of +/-1.7e308.
+.PP
+The operators may all be abbreviated to their three letter abbreviation  (i.e.
+\fB&fmultiply\fR  may be  expressed  as  \fB&fmu\fR).  In all  cases  the first
+argument is completely evaluated before the second argument.
+.IP "\fB&fabs\fR \fInum\fR"
+Returns the absolute  value of  \fInum\fR  i.e. if  \fInum\fR is positive it
+returns \fInum\fR, else -\fInum\fR
+.IP "\fB&fadd\fR \fInum1\fR \fInum2\fR"
+Addition  of  two  numbers   \fInum1\fR  and  \fInum2\fR.  i.e.  \fInum1\fR  +
+\fInum2\fR
+.IP "\fB&fsub\fR \fInum1\fR \fInum2\fR"
+Subtract  the  second  number   \fInum2\fR  from  the  first  \fInum1\fR  i.e.
+\fInum1\fR \- \fInum2\fR.
+.IP "\fB&fmul\fR \fInum1\fR \fInum2\fR"
+(Signed)  Multiply  \fInum1\fR by  \fInum2\fR.  i.e.  \fInum1\fR * \fInum2\fR.
+.IP "\fB&fdiv\fR \fInum1\fR \fInum2\fR"
+Divide the first number  \fInum1\fR by the second  \fInum2\fR.  i.e. \fInum1\fR / \fInum2\fR.  Note that  \fC1.#INF\fP
+is returned if \fInum2\fR is 0.
+.IP "\fB&fsqrt\fR \fInum\fR"
+Calculates the square root of \fInum\fR. Note that  \fC-1.#INF\fP is returned if \fInum\fR is less than 0.
+.LP
+Expression  evaluation  is prefix.  Operators  may be nested  using a pre-fix
+ordering,  there is no concept of brackets  (in-fix  notation). The expression
+\fC(2 * 3) + 4\fR is expressed as:-
 .Me $emf-scheme
 .CS
-!repeat
-    insert-string " "
-!until &equal $curcol $buffer-fill-col
+&fadd &fmul 2 3 4
+.CE
+.Me $ehf-scheme
+conversely \fC2 * (3 + 4)\fR is expressed as:-
+.Me $emf-scheme
+.CS
+&fmul 2 &fadd 3 4
+.CE
+.Me $ehf-scheme
+The number \fC123.4\fR can also be expressed as \fC1.234e2\fR and \fC0.001234\fR as \fC1.234e-3\fR.
+.SH EXAMPLE
+Add multiply a number by pi and print in a readable form:-
+.Me $emf-scheme
+.CS
+ml-write &spr "%.10g" &fmul %num1 3.141592654
 .CE 0
 .Me $ehf-scheme
+.SH NOTES
+To format the results of these functions in a more usable form use commands '%f' and '%g' of the
+.Ht &sprintf 4
+function.
 .SH "SEE ALSO"
 .na
-.Ht !if 4 ,
-.Ht !goto 4 ,
-.Ht !repeat 4 .
+.Hl "Variable Functions" Functions - ,
+.Ht &add 4 ,
+.Ht &sprintf 4 .
 .ad
 .FH
+

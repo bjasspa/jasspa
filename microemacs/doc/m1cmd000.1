@@ -5,7 +5,7 @@
 .\"
 .\" Created By: Jon Green
 .\"
-.Id $Id: m1cmd000.1,v 2.20 2009-08-29 17:13:08 jon Exp $
+.Id $Id: m1cmd000.1,v 2.20 2022/01/07 12:06:34 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH me 1
@@ -25,6 +25,7 @@ me - \*(mE text editor
 [\|\fB\-b\fR\ \|\fIfile\fR\|]
 [\|\fB\-B\fR\|]
 [\|\fB\-c\fR\|[\|\fIsessionName\fR\|]]
+[\|\fB\-f\fR\|]
 [\|\fB\-h\fR\|]
 [\|\fB\-i\fR\|]
 [\|\fB\-k\fR[\|\fIkey\fR\|]\ \|\fIfile\fR\|]
@@ -106,7 +107,8 @@ output is written  \fIstdout\fR.  Following is a simple  example which changes
 This can be used in the following manner:
 .CS
         me "@testpipe.emf" < foo.a > foo.b
-.CE 
+.CE 0
+.IP
 See \fB\-p\fR for disabling user interaction and the help page for command
 .Ht ml-write 2
 for a further example.
@@ -156,6 +158,10 @@ is not restored. The default \fIsessionName\fR is the login name
 .Ht $MENAME 5 . 
 .IP \fB\-h\fR
 Show the help page (does not start the editor).
+.IP \fB\-f\fR
+Stop processing command-line arguments, instead set a
+.Hl .about.arg# .about.arg1 5
+variable for all following arguments. 
 .IP \fB\-i\fR
 \s-1MS-DOS\s0  versions of  \fB\*(mE\fR  only. Insert the contents of the
 current screen into the \fB*scratch*\fR buffer

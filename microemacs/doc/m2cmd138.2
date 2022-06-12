@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jun 22 21:35:58 1998
 .\"
-.Id $Id: m2cmd138.2,v 2.6 2009-08-29 17:13:25 jon Exp $
+.Id $Id: m2cmd138.2,v 2.6 2009/08/29 17:13:25 jon Exp $
 .Im MicroEmacs command|spell
 .so me.tni
 .TH add-spell-rule 2
@@ -60,8 +60,8 @@ with any suffix  rule which can be used with a prefix  rule (e.g.  argument of
 .PD 1
 .IP
 "\fIrule-letter\fR"
-is any character in the range \fCA\fR-\fCz\fR except '\fC_\fR', all rules of
-the given letter must be a prefix rule of the same type (i.e. same argument).
+is any character in the range \fC!\fR-\fC}\fR (0x21 to 0x7d), all rules of
+the given letter must be a prefix rule and of the same type (i.e. same argument \fBn\fR).
 The start of a base word must match the given "\fIbase-ending\fR" regular
 expression string for the rule to be applied, the "\fIremove\fR" string must
 be empty for a prefix and the "\fIderiv-ending\fR" is the prefix string.
@@ -84,9 +84,9 @@ used with a prefix rule. An argument of 2 indicates it can be matched with any
 prefix rule which can be used with a suffix rule (i.e. argument of \-2).
 .PD 1
 .IP
-"\fIrule-letter\fR"  is any character in the range  \fCA\fR-\fCz\fR, all rules
-of the  given  letter  must be a  suffix  rule of the  same  type  (i.e.  same
-argument).  The end of a base  word must  match the given  "\fIbase-ending\fR"
+"\fIrule-letter\fR"  is any character in the range  \fC!\fR-\fC}\fR (0x21 to 0x7d), all rules
+of the  given  letter  must be a  suffix  rule and of the  same  type  (i.e.  same
+argument \fBn\fR).  The end of a base  word must  match the given  "\fIbase-ending\fR"
 regular  expression  string  for the rule to be  applied,  the  "\fIremove\fR"
 string  must be a fixed  string  and the  "\fIderiv-ending\fR"  must also be a
 fixed string which is appended to the base-word after  "\fIremove\fR" has been

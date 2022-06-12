@@ -3,19 +3,26 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac000.3,v 2.7 2009-08-29 17:13:41 jon Exp $
+.Id $Id: m3mac000.3,v 2.7 2009/08/29 17:13:41 jon Exp $
 .Im MicroEmacs command|shell
 .so me.tni
 .TH compile 3
 .XI compile - "Start a compilation process"
+.XI recompile - "Rerun compilation process"
 .SH NAME
+.Me "|compile"
 compile \- Start a compilation process
+.Me "|recompile"
+recompile - Rerun compilation process
 .Me $a
 .SH SYNOPSIS
 .na
 .I n
 .B compile 
+["\fIauto-touch-file\fR"]
 "\fIcompile-command\fR"
+.br
+.B recompile
 .ad
 .SH DESCRIPTION
 .B compile
@@ -32,24 +39,36 @@ the command
 Before the compile command is executed
 .Ht save-some-buffers 2
 is executed to allow the user to ensure that all  relevant  buffers are saved.
-If an argument is given to compile then it is passed on to this command, so if
-an argument of 0 is given, all buffers are automatically saved.
 .PP
-By default  the output  lines in the window  wrap,  wrapping  may be  disabled
-during compilations by redefining the wrap mode as follows. Create the file 
-\fCmyipipe.emf\fR to redefine the behavior and add the following lines:-
-.Me $emf-scheme
-.CS
-; Macro to redefine the wrapping behavior of the *compile* buffer
-0 define-macro my-fhook-ipipe
-    !if &seq $buffer-bname "*compile*"
-        -1 buffer-mode "wrap"
-    !endif
-!emacro
-.CE 0
-.Me $ehf-scheme
+Compile uses command 
+.Ht ipipe-shell-command 2
+to launch the given system \fIcompile-command\fR. By default the output lines in the window 
+are wrapped at 2046 characters as a balance between reliably searching for
+errors and usability. See flag \fB0x02\fR below or help on 
+.Ht ipipe-shell-command 2
+for details on how to change this behaviour.
+.PP
+The  argument  \fIn\fR  can  be  used  to  change  the  default  behavior  of
+compile described above, \fIn\fR is a bit based flag where:-
+.IP \fB0x01\fR
+Enables the user prompt before saving buffers, if this flag is
+not supplied then all modified visible buffers will be written.
+.IP \fB0x02\fR
+When set the compile output lines will be wrapped at the width of the current window.
+.IP \fB0x04\fR
+When set the previous \fIcompile-command\fR is automatically used for this compile.
+.IP \fB0x08\fR
+When set the previous compile location (path) is automatically used for this compile.
+.IP \fB0x10\fR
+When set the compile prompts for an \fIauto-touch-file\fR,  when set to a file name this file is automatically touched
+(modification  timestamp updated without changing the files content) on this and any subsequent  compiles. The feature
+is disabled if set to an empty string.
+.PP
+.B recompile
+reruns the previous compile process, it is implemented by executing  compile with flags 0x04 and 0x08, the other flags
+of compile can also be passed to this command.
 .SH NOTES
-\fBcompile\fR is a macro defined in \fCtools.emf\fR.
+\fBcompile\fR and \fBrecompile\fR are macros defined in \fCtools.emf\fR.
 .SH "SEE ALSO"
 .na
 .Ht add-next-line 2 ,

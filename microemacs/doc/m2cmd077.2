@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd077.2,v 2.12 2009-08-29 17:13:11 jon Exp $
+.Id $Id: m2cmd077.2,v 2.12 2022/03/24 20:37:08 jon Exp $
 .Im MicroEmacs command|shell
 .ds C0 "(\fB\*e backslash\fR)\ \&
 .so me.tni
@@ -114,16 +114,22 @@ writes a string \fIstring\fR to an open ipipe, \fIn\fR times.
 terminates an open ipipe and is automatically invoked when the ipipe buffer is
 deleted using
 .Ht delete-buffer 2
-or when \*(mS is exited. The  numeric  argument  \fIn\fR may be used to change
-the signal generated, where \fIn\fR takes the following values:
-.IP \fB1\fR
-Sends  a  Terminate  process  signal,  literally  a  \fCSIGKILL\fR  signal  on
-\s-1UNIX\s0 or a \fCWM_CLOSE\fR  on Windows. This is the default signal and is
-typically bound to \fC\*cc \*ck\fR.
-.IP \fB2\fR
-Sends an interrupt signal, writes a \fICtrl-C\fR to the \fI<stdin>\fR  pipe on
-\s-1UNIX\s0  or sends  \fICtrl-C\fR  key events on Windows.  This is typically
-bound to \fC\*cc \*cc\fR.
+or when  \*(mS is  exited.  The  numeric  argument  \fIn\fR  may be used to  change  the way in which the  process  is
+terminated,  if a 0 argument is given an interrupt  signal (kill request or nice-kill) is sent, writing a \fICtrl-C\fR
+to the  \fI<stdin>\fR  pipe on \s-1UNIX\s0 or sending  \fICtrl-C\fR  key events on Windows. This is typically bound to
+\fC\*cc \*cc\fR and is likely to fail, particularly on Windows, as the signal can be ignored.
+.PP
+On \s-1UNIX\s0 platforms, if a +ve argument is given then only the top level process is set a kill signal of the given
+value, e.g. the process  would be  terminated  with a core dump if a value of \fC3\fR was given. If a -ve  argument is
+given the process and all its children, in the same process group, will be sent a 0-n kill signal. When no argument is
+given the default used is either -9, -SIGKILL, or -15, -SIGTERM, depending on the setting of bit 0x2000000 of 
+.Ht $system 5 .
+.PP
+On Windows, if no argument or a -ve argument is given  \fBipipe-kill\fR  terminates  the process and all  non-detached
+sub-processes, whereas a +ve only terminates the top level process.
+.PP
+.B ipipe-kill
+with no argument is typically bound to \fC\*cc \*ck\fR.
 .SH NOTES
 On  \s-1UNIX\s0  platforms  the  \s-1TERM\s0  environment  variable of the new
 process  may be set by  setting  the user  variable  \fB%ipipe-term\fR  to the

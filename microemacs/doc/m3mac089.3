@@ -3,7 +3,7 @@
 .\" Copyright (c) 2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac089.3,v 2.1 2009-08-29 17:16:55 jon Exp $
+.Id $Id: m3mac089.3,v 2.1 2022/03/03 10:27:32 jon Exp $
 .Im MicroEmacs command|search
 .so me.tni
 .TH grep 3
@@ -13,11 +13,8 @@ grep \- Search a file for a pattern
 .Me $a
 .SH SYNOPSIS
 .na
-.Me "|grep"
 .B grep
-["\|\fIgrep-options\fR\|"]
-\fIsearch-pattern\fR
-"\fIfile-mask\fR" ["\|\fIfile-mask\fR\|"...]
+"[\fIgrep-options\fR] <\fIsearch-pattern\fR> [\fIfile-mask\fR] [\fIfile-mask\fR ...]"
 ["\|\fIstarting-path\fR\|"]
 .ad
 .SH DESCRIPTION
@@ -42,6 +39,8 @@ options may also be defined with the
 command  invoked from the command line or from the the  \fBTools\fR  menu. The
 \fIgrep-options\fR are defined as follows:
 .RS 
+.BP "--"
+Last option, the following string must be the \fIsearch-pattern\fR which may start with a '-'.
 .BP "-a"
 Re-read all out of date buffers,  prevents a manual prompt,  equivalent of Yes
 to all. This is the inverse of \fB-o\fR
@@ -49,10 +48,17 @@ to all. This is the inverse of \fB-o\fR
 Ignore binary files.
 .BP "-B"
 Do not ignore binary files.
+.BP "-c"
+Command return the number of matchs found rather than the default, which is simply 0 for one or more matches or
+1 if no matches were found.
+.BP "-C"
+Command returns 0 (non-error for command-line tool) regardless of if it finds any matches.
 .BP "-d"
 List directories or grep in directory listings.
 .BP "-D"
 Do not list directories or grep in directory listings.
+.BP "-e"
+Only include the matching string in the \fC*grep*\fR output buffer.
 .BP "-f"
 List/search files.
 .BP "-F"
@@ -80,6 +86,8 @@ of No to all. This is the inverse of \fB-a\fR.
 Starting path specified
 .BP "-P"
 Starting path not specified
+.BP "-q"
+Enables quiet mode for reduced print-out.
 .BP "-r"
 Recurse into sub-directories
 .BP "-R"
@@ -95,11 +103,9 @@ File size specified bytes.
 \fB-S\fR \fI<number>\fR\|\fBk\fR
 .\"
 File size specified in Kilobytes.
-.LP
-\fB-s\fR \fI<size>\fR 
-.\"
-File size greater than; supported size formats are the same as \fB-S\fR.
 .RE
+.IP "\fB-s\fR \fI<size>\fR"
+File size greater than; supported size formats are the same as \fB-S\fR.
 .IP "\fB-T\fR \fI<time>\fR"
 Modification time - older than, the following time formats are supported:
 .RS
@@ -130,24 +136,33 @@ Note that \fB-T 1\fR is not the same as \fB-T 1.0\fR, except at midnight.
 Modification  time - newer than or equal,  supported time formats are the same
 as \fB-T\fR.
 .BP "-u"
-When used with \fB-w\fR, allows the file size limit of 100Mb to be disabled and
-strings are searched in files of any size.
+Removes the default file size limit of 100Mb allowing files of any size to be search. Note that \*(mS uses
+.Ht page-file 3
+on files larger than 100Mb to avoid using too much memory.
 .BP "-U"
-When used with \fB-U\fR,  files are limited in size 100Mb  otherwise they will
-not be searched.
+Enforces the 100Mb file size limit.
 .BP "-x"
-Use \*(mE 
+Use \*(mS
 .Ht $file-ignore 5
 to exclude unimportant files
 .BP "-X"
-Do not use \*(mE 
+Do not use \*(mS 
 .Ht $file-ignore 5 .
+.BP "-&"
+Launch grep using a separate process, this stops the current  MicroEmacs hanging during the grep process which can
+be useful for time consuming searches.
 .RE
+.IP "\fIsearch-pattern\fR"
+The search pattern to look for.
 .IP "\fIfile-mask\fR"
-The files to search for e.g. \fB*.txt\fR
+The files to search for e.g.  \fB*.txt\fR, if no file mask is given then  \fBgrep\fR  attempts to get a file list from
+the current buffer, this could either be a \fC*grep*\fR output buffer, in which case each file listed will be selected
+for the next grep, or some kind of file listing  (this could be a loaded  directory,  an output from  \fBfind\fR  or a
+source  revision  control  system  such as cvs or svn) in which case the files to be searched  must be selected  (line
+starts with a "\fC*\fR".  
 .IP "\fIstarting-path\fR"
-The directory  location  where the search should  commence. The default is the
-location of the current buffer.
+The directory  location  where the search should  commence when the \fB-p\fR option is used. The default when \fB-p\fR
+is omitted is the location of the current buffer.
 .PP
 .B find-setup 
 invokes a dialogue and allows the default  \fIfile-options\fR  to be specified
@@ -174,6 +189,10 @@ It may be advantageous to enable the \fB-l\fR option default using
 .\"should  as this is more  logical  behaviour  and  much  more  important  for
 .\"commands like replace-strings-in-files.   
 .BE 0
+.PP
+The other options of the underlying
+.Ht find 3
+command are allowed but provide no benefit to these commands.
 .SH "SEE ALSO"
 .na
 .Ht %xgrep-com 5 ,

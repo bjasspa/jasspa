@@ -3,7 +3,7 @@
 .\" Copyright (c) 1988-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd022.2,v 2.7 2009-08-29 17:13:08 jon Exp $
+.Id $Id: m2cmd022.2,v 2.7 2009/08/29 17:13:08 jon Exp $
 .Im MicroEmacs command|region
 .ds C0 "(\fB\*ew\fR)\ \&
 .so me.tni
@@ -30,13 +30,14 @@ If the last command also entered text into the kill buffer (or the
 variable  is set to one of  these  commands)  the  \fBcopy-region\fR  text  is
 appended to the last kill.
 .PP
-The numeric argument \fIn\fR determines how the copy operates when a 
-narrow region, defined by 
+The numeric argument \fIn\fR determines how the copy operates when a narrow region, defined by 
 .Ht narrow-buffer 2 ,
-is encountered. The default operation, when the number argument is \fC1\fR, is
-to copy all of the text contained within the narrowed region. When the numeric
-argument is \fC0\fR then narrowed  region is NOT copied and the text is copied
-as it appears in the buffer. 
+is  encountered.  The default  operation,  when the number  argument is \fC1\fR, is to copy all of the text  contained
+within the narrowed  region. When the numeric  argument is \fC0\fR then narrowed  region is NOT copied and the text is
+copied as it appears in the buffer.
+.PP
+If a negative  argument is given, the current  current region is not copied, instead the current kill buffer is copied
+to the system clipboard (Windows only).
 .SH USAGE
 To copy text from one place to another, using the  \fBcopy-region\fR  command,
 the following operations are performed:

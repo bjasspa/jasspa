@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd045.2,v 2.6 2009-08-29 17:13:09 jon Exp $
+.Id $Id: m2cmd045.2,v 2.6 2022/03/28 18:30:13 jon Exp $
 .Im MicroEmacs command|macro
 .ds C0 "(\fB\*e/\fR)\ \&
 .so me.tni
@@ -20,17 +20,24 @@ execute-file \- Execute script lines from a file
 .ad
 .SH DESCRIPTION
 .B execute-file
-executes script lines from the given  \fIfile\fR  \fIn\fR times in succession,
-this is the normal way to execute a \*(mE  script. The  command  prompts for a
-file name, and will then search for  <\fIfile\fR>[.emf] in the search path. If
-the file is found then the file is loaded and the buffer is  executed  \fIn\fR
-times.
+executes script lines from the given  \fIfile\fR in succession,  this is the normal way to execute a \*(mE script. The
+command prompts for a file name, and will then search for  <\fIfile\fR>[.emf] in the search path. If the file is found
+then the file is loaded and the buffer is executed \fIn\fR times.
+.PP
+If numeric argument \fIn\fR is given then macro argument variable
+.Ht @? 4
+will be set to 1 and
+.Ht @# 4
+to \fIn\fR,  otherwise  \fB@?\fR and \fB@#\fR will be set to 0 and 1 respectively.  These variables can be used by the
+macro code during the execution of the file.
 .SH "SEE ALSO"
 .na
 .Ht execute-buffer 2 ,
 .Ht execute-line 2 ,
 .Ht execute-named-command 2 ,
-.Ht execute-string 2 .
+.Ht execute-string 2 ,
+.Ht @? 4 ,
+.Ht @# 4 .
 .ad
 .rm C0
 .FH

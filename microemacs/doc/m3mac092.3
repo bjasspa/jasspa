@@ -3,7 +3,7 @@
 .\" Copyright (c) 2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac092.3,v 2.1 2009-09-03 22:10:29 jon Exp $
+.Id $Id: m3mac092.3,v 2.1 2009/09/03 22:10:29 jon Exp $
 .Im MicroEmacs scuts
 .so me.tni
 .TH number-items 3
@@ -14,7 +14,7 @@ number-items \- Renumber a vertical list of items
 .SH SYNOPSIS
 .na
 .Me "|number-items"
-.B number-items
+\fIn\fR \fBnumber-items\fR
 \fIstart-number\fR
 \fIchar-width\fR
 \fInum-lines\fR
@@ -32,6 +32,9 @@ The width of the number  space i.e. 1-10 is a width of 2, 89-101 is a width of
 3.
 .IP \fInum-lines\fR
 The number of lines to re-number, including the current line.
+.PP
+If a numeric  argument of \fC0\fR is given the  inserted  numbers are all  prefixed  with 0's to ensure each is at
+least \fIchar-width\fR characters long.
 .SH EXAMPLE
 The following code fragment shows how a list is renumbered.
 .CS

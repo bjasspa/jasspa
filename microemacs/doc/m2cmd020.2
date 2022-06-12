@@ -3,7 +3,7 @@
 .\" Copyright (c) 1988-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd020.2,v 2.6 2009-08-29 17:13:08 jon Exp $
+.Id $Id: m2cmd020.2,v 2.6 2022/02/05 14:45:11 jon Exp $
 .Im MicroEmacs command|window|comparison
 .so me.tni
 .TH compare-windows 2
@@ -25,23 +25,31 @@ compare-windows-exact \- Compare buffer windows, with whitespace.
 .ad
 .SH DESCRIPTION
 .B compare-windows
-compares the textural  content of  \s-1ALL\s0  the current  windows from their
-current cursor  position. These commands are generally used to locate the next
-difference in the windows  displayed. Returns \fCTRUE\fR if the buffers of the
-windows  do not  differ  from  the  current  position  to the end of the  file
-(inclusive), else returns \fCFALSE\fR setting the cursor of each buffer to the
-first point of difference.
+compares the textural content of \s-1ALL\s0 the current windows from their current cursor position. These commands are
+generally  used to locate the next  difference  in the windows  displayed.  Returns  \fCTRUE\fR  if the buffers of the
+windows do not differ from the current position to the end of the file (inclusive), else returns  \fCFALSE\fR  setting
+the cursor of each buffer to the first point of difference.
 .PP
-The default mode of operation ignores  white-space, a numeric argument \fIn\fR
-of zero (0) then an exact white-space match is performed.
+The  argument  \fIn\fR can be used to change the  default  behavior  of  compare-windows,  \fIn\fP is a bit based flag
+where:-
+.IP \fB0x01\fR
+When enabled the compare operation ignores white-space differences, when clear an exact white-space match is performed.
+.IP \fB0x02\fR
+When enabled the compare operation is case-insensitive, when clear an exact letter match is performed.
 .PP
+When omitted a case-sensitive compare which ignores white-space differences is performed.
+.PP 
 .B compare-windows-exact
-is a macro  short  cut for  \fI0  compare-windows\fR,  forcing  a white  space
-comparison.
+is a macro short cut for \fI0 compare-windows\fR, forcing an exact white-space & letter-case comparison.
+.SH NOTES
+A window can be excluded from \fBcompare-windows\fR by setting bit \fC0x08\fR of its
+.Ht $window-flags 5
+variable.
 .SH "SEE ALSO"
 .na
 .Ht diff 3 ,
 .Ht diff-changes 3 ,
-.Ht gdiff 3 .
+.Ht gdiff 3 ,
+.Ht $window-flags 5 .
 .ad
 .FH

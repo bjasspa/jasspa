@@ -1,0 +1,55 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m5var063.5,v 2.6 2022/01/22 17:23:26 jon Exp $
+.Im MicroEmacs variable|macrodevelop
+.so me.tni
+.TH .about.argc 5
+.XI .about.argc - "Command line argument count"
+.XI .about.arg0 - "First command line option"
+.XI .about.arg1 - "Second command line option"
+.XI .about.arg2 - "Third command line option"
+.SH NAME
+\&.about.argc, .about.arg0, .about.arg1, ... .about.arg# \- Command line argument support variables
+.Me $a
+.SH SYNOPSIS
+.nf
+.na
+\fB.about.argc\fR \fIinteger\fR \- Command line argument count
+\fB.about.arg0\fR \fIstring\fR \- First command line option
+\fB.about.arg1\fR \fIstring\fR \- Second command line option
+\fB.about.arg2\fR \fIstring\fR \- Third command line option
+\&...
+\fB.about.arg#\fR \fIstring\fR \- Last command line option (# = .about.argc-1)
+.fi
+.ad
+.SH DESCRIPTION
+These  command  line  variables  are only set if the \fB-f\fR  command  line option is used and they only  reflect the
+options given after this option. For example, if MicroEmacs was launched as follows:
+.RS
+.IP
+me -p -n @example.emf -f opt0 opt1 opt2 opt3
+.RE
+.PP
+Then \fB.about.argc\fR would be set to \fC4\fR,  \fB.about.arg0\fR to "\fCopt0\fR",  \fB.about.arg1\fR to "\fCopt1\fR"
+etc. up to \fB.about.arg3\fR. Variable \fB.about.arg4\fR would not be set.
+.PP
+If the \fB-f\fR option is not given then \fB.about.argc\fR and all \fB.about.arg#\fR variables remain unset.  
+.SH EXAMPLE
+The following example shows how MicroEmacs can be run as find or grep using the single \fIcfind.emf\fR start-up file:
+.RS
+.IP
+me -p -n @cfind.emf find *.emf
+.IP
+me -p -n @cfind.emf grep -rmi "search-string" *.emf
+.RE
+.PP
+The  \fIcfind.emf\fR  macro uses  \fB.about.arg0\fR,  which will be  "\fCfind\fR"  or  "\fCgrep\fR",  to determine the
+required functionality and how to interpret the subsequent options.
+.SH "SEE ALSO"
+.na
+.Ht me 1 .
+.ad
+.FH

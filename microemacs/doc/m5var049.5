@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Wed Jan 26 00:47:52 2000
 .\"
-.Id $Id: m5var049.5,v 2.6 2009-08-29 17:14:15 jon Exp $
+.Id $Id: m5var049.5,v 2.6 2022/01/17 10:50:29 jon Exp $
 .Im MicroEmacs variable|file
 .so me.tni
 .TH %ftp-flags 5
@@ -17,12 +17,12 @@
 %ftp-flags \- "Configure the FTP console"
 .br
 .Me "|%http-flags"
-%http-flags \- "Configure the HTTP console"
+%http-flags \- "Configure HTTP and HTTPS support"
 .Me $a
 .SH SYNOPSIS
-\fB%ftp-flags\fR "[\fCc\fR|\fCs\fR|\fCp\fR]" ; Default is undefined.
+\fB%ftp-flags\fR "[\fCc\fR|\fCd\fR|\fCp\fR|\fCs\fR]" ; Default is undefined.
 .br
-\fB%http-flags\fR "[\fCc\fR|\fCs\fR|\fCp\fR]" ; Default is undefined.
+\fB%http-flags\fR "[\fCc\fR|\fCd\fR|\fCi\fR|\fCp\fR|\fCs\fR|\fCv\fR|\fCw\fR]" ; Default is undefined.
 .SH DESCRIPTION
 The \fB%ftp-flags\fR and \fB%http-flags\fR  modify the behavior of the editor
 during FTP and HTTP file transfers, respectively.
@@ -38,12 +38,20 @@ flags are defined as follows:-
 Create a console buffer (\fC*ftp-console*\fR for ftp, \fC*http-console*\fR for
 http) into which the FTP/HTTP command  interactions with the remote server are
 logged.
-.IP \fBs\fR
-Show the console  whenever a FTP/HTTP  operation is performed.  The console is
-popped into the display pane and shows the current interaction status.
+.IP \fBd\fR
+Show details of commands executed and returned headers.
+.IP \fBi\fR
+HTTPS only, ignore certificate errors, useful when trying to load pages from a self-signed site.
 .IP \fBp\fR
 Show the download  progress within the console window ('\fC#\fR' for every 2Kb
 downloaded)
+.IP \fBs\fR
+Show the console  whenever a FTP/HTTP  operation is performed.  The console is
+popped into the display pane and shows the current interaction status.
+.IP \fBv\fR
+HTTPS only, show verbose information such as certificate details.
+.IP \fBw\fR
+HTTPS only, show warnings of potential issues with the secure socket support layer.
 .LP
 Typically the following flags are enabled in the \fIuser\fR.emf file:-
 .Me $emf-scheme

@@ -3,38 +3,38 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac017.3,v 2.6 2009-08-29 17:13:42 jon Exp $
+.Id $Id: m3mac017.3,v 2.6 2009/08/29 17:13:42 jon Exp $
 .Im MicroEmacs command
 .so me.tni
 .TH c-hash-eval 3
 .XI c-hash-eval - "Evaluate C/C++ #defines"
-.XI c-hash-del - "Remove C/C++ #define evaluation"
-.XI c-hash-set-define - "Set a C/C++ #define"
-.XI c-hash-unset-define - "Unset a C/C++ #define"
+.XI c-hash-undo - "Remove C/C++ #define evaluation"
+.XI c-hash-define - "Set a C/C++ #define"
+.XI c-hash-undef - "Unset a C/C++ #define"
 .SH NAME
 .Me "|c-hash-eval"
 c-hash-eval \- Evaluate C/C++ #defines
 .br
-.Me "|c-hash-del"
-c-hash-del \- Remove C/C++ #define evaluation
+.Me "|c-hash-undo"
+c-hash-undo \- Remove C/C++ #define evaluation
 .br
-.Me "|c-hash-set-define"
-c-hash-set-define \- Set a C/C++ #define
+.Me "|c-hash-define"
+c-hash-define \- Set a C/C++ #define
 .br
-.Me "|c-hash-unset-define"
-c-hash-unset-define \- Unset a C/C++ #define
+.Me "|c-hash-undef"
+c-hash-undef \- Unset a C/C++ #define
 .Me $a
 .SH SYNOPSIS
 .na
 .I n
 \fBc-hash-eval\fR
 .br
-\fBc-hash-del\fR
+\fBc-hash-undo\fR
 .br
-\fBc-hash-set-define\fR
+\fBc-hash-define\fR
 "\fIvariable\fR" "\fIvalue\fR"
 .br
-\fBc-hash-unset-define\fR
+\fBc-hash-undef\fR
 "\fIvariable\fR"
 .ad
 .SH DESCRIPTION
@@ -50,8 +50,8 @@ been 'hashed' out. \fBc-hash-eval\fR evaluates the following '#' lines:-
 .fi
 .PP
 For    \fC#define\fRs    \fBc-hash-eval\fR    creates    a   user    variable
-"\fC%cd<variable>\fR",  setting  it to the value  found.  For  \fC#ifdef\fR  a
-simple check for the existence of variable  "\fC%cd<variable>\fR"  is made. If
+"\fC%chd-<variable>\fR",  setting  it to the value  found.  For  \fC#ifdef\fR  a
+simple check for the existence of variable  "\fC%chd-<variable>\fR"  is made. If
 defined  then code  between  the  \fC#ifdef\fR  and  either its  matching
 \fC#else\fR or  \fC#endif\fR is displayed and code between the \fC#else\fR and
 \fC#endif\fR is hidden. If it is not defined then the reverse happens.
@@ -66,14 +66,14 @@ to a color similar to the  back-ground. If an argument is given to the command
 the code is also narrowed out using
 .Ht narrow-buffer 2 .
 .PP
-\fBc-hash-del\fR  undoes the effect of  \fBc-hash-eval\fR  by  restores  hidden
+\fBc-hash-undo\fR  undoes the effect of  \fBc-hash-eval\fR  by  restores  hidden
 code.
 .PP
-\fBc-hash-set-define\fR and  \fBc-hash-unset-define\fR can be used to manually
+\fBc-hash-define\fR and  \fBc-hash-undef\fR can be used to manually
 set and unset \fC#define\fR variables. 
 .SH NOTES
-\fBc-hash-eval\fR,      \fBc-hash-del\fR,      \fBc-hash-set-define\fR     and
-\fBc-hash-unset-define\fR are macros defined in \fCcmacros.emf\fR.
+\fBc-hash-eval\fR,      \fBc-hash-undo\fR,      \fBc-hash-define\fR     and
+\fBc-hash-undef\fR are macros defined in \fCcmacros.emf\fR.
 .PP
 Executing  \fBc-hash-eval\fR  in a project header file (h file) which contains
 all used  \fC#define\fR  definitions will set up all  \fC#define\fR  variables

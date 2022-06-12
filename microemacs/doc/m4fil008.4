@@ -3,14 +3,15 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil008.4,v 2.7 2009-08-29 17:14:03 jon Exp $
+.Id $Id: m4fil008.4,v 2.7 2009/08/29 17:14:03 jon Exp $
 .Im MicroEmacs macro;directive|miscellaneousOperators
 .so me.tni
 .TH !if 4
 .XI !if - "Conditional test statement"
-.XI !else - "Conditional alternative statement"
 .XI !elif - "Conditional test statement, continuation"
+.XI !else - "Conditional alternative statement"
 .XI !endif - "Conditional test termination"
+.XI !iif - "In-line conditional test and body"
 .SH NAME
 !if, !elif, !else, !endif \- Conditional statements
 .SH SYNOPSIS
@@ -32,6 +33,8 @@
 ]
 \fB!endif\fR
 .fi
+.sp
+\fB!iif\fR \fIcondition\fR \fIbody\fR
 .ad
 .SH DESCRIPTION
 The conditional directives allow statements to be executed only if a condition
@@ -63,7 +66,10 @@ directives that alter the execution of the macro are handled  correctly within
 the \fB!if\fR statement (e.g.
 .Hl !goto !goto 4 ,
 .Hl !return !return 4
-etc.
+etc).
+.PP
+\fB!iif\fR provides an optimal way to write an \fB!if\fR statement with exactly one \fIbody\fR line and no \fB!elif\fR
+or \fB!else\fR statements.
 .SH EXAMPLE
 The  following  macro  segment  creates the
 portion of a text  file automatically.  (yes believe  me, this will be
@@ -92,8 +98,17 @@ easier to understand then that last explanation....)
         newline
     !endif
 !endif
+.CE
+.Me $ehf-scheme
+The first \fB!if\fR statement in the above example can be optimised to:- 
+.Me $emf-scheme
+.CS
+!iif &sequal %curplace "timespace vortex"  insert-string "First, rematerialize\\n"
 .CE 0
 .Me $ehf-scheme
+.SH NOTES
+There is a convention in \fB\*(mE\fR macro code of using 2 spaces to separate the \fIcondition\fR  from the \fIbody\fR
+of an \fB!iif\fR statement making it easier to locate the start of the \fIbody\fR.
 .SH "SEE ALSO"
 .na
 .Hl "Variable Fuctions" Functions - ,

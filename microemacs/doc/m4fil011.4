@@ -3,45 +3,54 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil011.4,v 2.7 2009-08-29 17:14:03 jon Exp $
+.Id $Id: m4fil011.4,v 2.7 2022/06/12 19:05:26 jon Exp $
 .Im MicroEmacs macro;directive|miscellaneousOperators
 .so me.tni
 .TH !while 4
-.XI !while - "Conditional loop"
-.XI !continue - "Restart a conditional loop"
-.XI !done - "End a conditional loop"
+.XI !while - "Conditional loop start"
+.XI !repeat - "Unconditional loop start"
+.XI !break - "Exit loop"
+.XI !continue - "Restart loop"
+.XI !done - "Unconditional loop end"
+.XI !until - "Conditional loop end"
 .SH NAME
-!while, !continue, !done \- Conditional loop
+!while, !repeat, !break, !continue, !done, !until \- loop
 .SH SYNOPSIS
 .na
 .nf
-\fB!while\fR \fIcondition\fR
+< \fB!while\fR \fIcondition\fR | \fB!repeat\fR >
 .RS
 \&... loop body ...
-[\fB!continue\fR]
+[ \fB!continue\fR | \fB!break\fR ]
 .RE
-\fB!done\fR
+\&... loop body ...
+< \fB!done\fR | \fB!until\fR \fIcondition\fR >
 .fi
 .ad
 .SH DESCRIPTION
-The  \fB!while\fR  directive  allows  statements  only  to  be  executed  if a
-\fIcondition\fR  specified in the  directive is met. Every line  following the
-\fB!while\fR  directive,  until  the  first  \fB!done\fR  directive,  is  only
-executed if the expression following the \fB!while\fR directive evaluates to a
-\fCTRUE\fR value.
+The six loop  directives can be mixed and matched as required, a loop must have one of the start loop directive and an
+end loop directive; it can optionally have as many \fB!break\fR and \fB!continue\fR directives as needed.
+.PP
+The \fB!repeat\fR  directive always executes the loop contents; whereas the \fB!while\fR  directive allows  statements
+within the loop to be executed only if the given  \fIcondition\fR  is \fCTRUE\fR, if the condition is \fCFALSE\fR then
+execution  is  continued on the line after the loop end  statement  (\fB!done\fR  or  \fB!until\fR).
+.PP
+The  \fB!done\fR directive always returns control back to the loop start directive  (\fB!while\fR or \fB!repeat\fR  statement), whereas
+\fB!until\fR only loops back to the start if the given \fIcondition\fR is \fCFALSE\fR, exiting the loop otherwise.
 .PP
 A \fB!continue\fR may be used in the loop, this immediately returns control to
-the \fB!while\fR statement and skips the rest of the section.
+the loop start line (\fB!while\fR or \fB!repeat\fR statement), skipping the rest of the loop content and end statement
+(including any \fB!until\fR condition). A \fB!break\fR can be used to exit a loop, execution resumes on the line after
+the end loop statement.
 .PP
-.B "!while statement may  not be  nested." 
-That is, only one \fB!while\fR statement may be outstanding at a time, a
-.Ht !repeat 4 
-statement  may be used  within  the  \fB!while\fR  to create an inner  loop if
-required. Alternatively the
+Up to six loops can be nested  within a single  function/executed  buffer at any one time. If more are required then a
+sub function could be defined and called or the
 .Ht !goto 4 
-used in conjunction with the
+and
+.Ht !jump 4 
+directives could be used in conjunction with the
 .Ht !if 4
-statement may be used to construct loops.
+statement to construct loops.
 .SH EXAMPLE
 For example, the following macro segment fills to the fill column with spaces.
 .Me $emf-scheme
@@ -50,15 +59,31 @@ For example, the following macro segment fills to the fill column with spaces.
     insert-string " "
     !if &equal %example "1"     ; Silly to show continue
         !continue               ; Goto !while
+    !elif &equal %example "2"   ; Silly to show continue
+        !break                  ; Goto line after !done
     !endif
-    ml-write "You wont see me if %example = 1"
+    ml-write "You wont see me if %example = 1 or 2"
 !done
+ml-write "LoopA has exited"
+
+set-variable #l1 10
+!repeat
+    10 ml-write &spr "LoopB: %d" #l1
+!until &les &dec #l1 1 1
+100 ml-write &spr "LoopB end: #l1 should = 0 : %d" #l1
+
+set-variable #l1 10
+!repeat
+  10 ml-write &spr "LoopC: %d" #l1
+  !iif &les &dec #l1 1 1 !break
+!done
+100 ml-write &spr "LoopC end: #l1 should = 0 : %d" #l1
 .CE 0
 .Me $ehf-scheme
 .SH "SEE ALSO"
 .na
 .Ht !if 4 ,
 .Ht !goto 4 ,
-.Ht !repeat 4 .
+.Ht !jump 4 .
 .ad
 .FH

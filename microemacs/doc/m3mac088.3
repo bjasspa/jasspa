@@ -3,7 +3,7 @@
 .\" Copyright (c) 2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac088.3,v 2.1 2009-08-29 17:16:55 jon Exp $
+.Id $Id: m3mac088.3,v 2.1 2022/01/06 15:12:26 jon Exp $
 .Im MicroEmacs command|search
 .so me.tni
 .TH find 3
@@ -43,6 +43,8 @@ options may also be defined with the
 command  invoked from the command line or from the the  \fBTools\fR  menu. The
 \fIfind-options\fR are defined as follows:
 .RS 
+.BP "--"
+Last option, the following string must be the first \fIfile-mask\fR which may start with a '-'.
 .IP \fB-2\fR
 List the file and directory attributes in the output (directory list sort key)
 .IP \fB-3\fR
@@ -56,6 +58,11 @@ to all. This is the inverse of \fB-o\fR
 Ignore binary files.
 .BP "-B"
 Do not ignore binary files.
+.BP "-c"
+Command return the number of matchs found/replaced rather than the default, which is simply 0 for 1 or more matches or
+1 if no matches were found/replaced.
+.BP "-C"
+Command returns 0 (non-error for command-line tool) regardless of if it finds any matches.
 .BP "-d"
 List directories or grep in directory listings.
 .BP "-D"
@@ -84,9 +91,11 @@ Search pattern is not a regular expression.
 Do not re-read all out of date buffers,  prevents a manual prompt,  equivalent
 of No to all. This is the inverse of \fB-a\fR.
 .BP "-p"
-Starting path specified
+Starting path specified.
 .BP "-P"
-Starting path not specified
+Starting path not specified.
+.BP "-q"
+Enables quiet mode for reduced print-out.
 .BP "-r"
 Recurse into sub-directories
 .BP "-R"
@@ -102,11 +111,9 @@ File size specified bytes.
 \fB-S\fR \fI<number>\fR\|\fBk\fR
 .\"
 File size specified in Kilobytes.
-.LP
-\fB-s\fR \fI<size>\fR 
-.\"
-File size greater than; supported size formats are the same as \fB-S\fR.
 .RE
+.IP "\fB-s\fR \fI<size>\fR"
+File size greater than; supported size formats are the same as \fB-S\fR.
 .IP "\fB-T\fR \fI<time>\fR"
 Modification time - older than, the following time formats are supported:
 .RS
@@ -144,6 +151,8 @@ When used with \fB-U\fR,  files are limited in size 100Mb  otherwise they will
 not be searched.
 .IP "\fB-w\fR \fI<search-pattern>\fR"
 File must contain a string matching the given \fIsearch-pattern\fR.
+.IP "\fB-W\fR \fI<search-pattern>\fR"
+File must not contain a string matching the given \fIsearch-pattern\fR.
 .BP "-x"
 Use \*(mE 
 .Ht $file-ignore 5
@@ -151,6 +160,9 @@ to exclude unimportant files
 .BP "-X"
 Do not use \*(mE 
 .Ht $file-ignore 5 .
+.BP "-&"
+Launch find using a separate process, this stops the current  MicroEmacs hanging during the find process which can
+be useful for time consuming searches.
 .RE
 .IP "\fIfile-mask\fR"
 The files to search for e.g. \fB*.txt\fR

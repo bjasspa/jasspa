@@ -3,7 +3,7 @@
 .\" Copyright (c) 1988-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd007.2,v 2.8 2009-08-29 17:13:08 jon Exp $
+.Id $Id: m2cmd007.2,v 2.8 2009/08/29 17:13:08 jon Exp $
 .Im MicroEmacs command|shell
 .so me.tni
 .TH add-next-line 2
@@ -52,6 +52,9 @@ This tells \*(mS to reinitialize the type by freeing off any strings currently
 stored,  note  that  the  "\fIstring\fR"  argument  is not used in this  case.
 Resetting the next-line type safe guards against duplicate strings being added
 to it, a common problem if \*(mS is reinitialized.
+.PP
+Note that "\fIbuffer-name\fR" should be considered a prefix, so if set to "\fC*grep*\fR"
+any buffer whose name starts \fC*grep*\fR, such as "\fC*grep*2\fR" will match.
 .PP
 Following is a typical output from grep:
 .CS

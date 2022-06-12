@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil005.4,v 2.6 2009-08-29 17:14:02 jon Exp $
+.Id $Id: m4fil005.4,v 2.6 2009/08/29 17:14:02 jon Exp $
 .Im MicroEmacs macro;function;miscellaneous
 .so me.tni
 .TH &atoi 4
@@ -79,9 +79,10 @@ takes  the  resulting  string,  and then  uses it as a  variable  name. i.e. a
 variable  may  reference  another  variable  which  contains  the  data  to be
 referenced. Abbreviated command is \fB&ind\fR.
 .IP "\fB&exist\fR \fIstr\fR"
-Tests  for  the  existance  of  \fIstr\fR   which  may  be  a  variable  or  a
-command/macro  name,  returning  \fCTRUE\fR  if the  variable or command  does
-currently exist. Abbreviated command is \fB&exi\fR.
+Tests  for  the  existance  of  \fIstr\fR   which  may  be  a  buffer, variable  or  a
+command/macro  name,  returning  \fCTRUE\fR  if the  buffer, variable or command  does
+currently  exist. Note that when  testing for the  existence of a buffer the buffer name must be encased in ':'s, e.g.
+"\fC:*scratch*:\fR" to distinguish it from a check command/macro name. Abbreviated command is \fB&exi\fR.
 .SH EXAMPLE
 The \fB&exi\fR function is etremely useful in initializing, for example:
 .Me $emf-scheme

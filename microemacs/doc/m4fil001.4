@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil001.4,v 2.6 2009-08-29 17:14:01 jon Exp $
+.Id $Id: m4fil001.4,v 2.6 2009/08/29 17:14:01 jon Exp $
 .Im MicroEmacs macro;function;numeric
 .so me.tni
 .TH &abs 4
@@ -87,11 +87,12 @@ Subtract  the  second  number   \fInum2\fR  from  the  first  \fInum1\fR  i.e.
 \fB&mul\fR is the three letter abbreviation.
 .IP "\fB&div\fR \fInum1\fR \fInum2\fR"
 Divide the first number  \fInum1\fR by the second  \fInum2\fR,  returning  the
-integer  result. i.e. \fInum1\fR / \fInum2\fR.  \fB&div\fR is the three letter
-abbreviation.
+integer  result. i.e. \fInum1\fR / \fInum2\fR. Note that an error will
+be thrown if \fInum2\fR is 0.
 .IP "\fB&mod\fR \fInum1\fR \fInum2\fR"
 Divide the first number  \fInum1\fR by the second  \fInum2\fR,  returning  the
-integer remainder. i.e. \fInum1\fR % \fInum2\fR. 
+integer remainder. i.e. \fInum1\fR % \fInum2\fR. Note that an error will
+be thrown if \fInum2\fR is 0. 
 .IP "\fB&negate\fR \fInum\fR"
 Negate the integer (multiply by \-1) i.e. \-\fInum\fR. \fB&neg\fR is the three
 letter abbreviation.

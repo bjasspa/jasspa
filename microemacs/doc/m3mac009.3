@@ -3,72 +3,116 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac009.3,v 2.6 2009-08-29 17:13:41 jon Exp $
+.Id $Id: m3mac009.3,v 2.6 2022/01/22 17:51:21 jon Exp $
 .Im MicroEmacs command
 .so me.tni
 .TH calc 3
-.XI calc - "Integer calculator"
+.XI calc - "Calculator"
+.XI calc-insert - "Calculator with answer insertion"
+.XI calc-op - "Low level calculator command"
 .SH NAME
-calc \- Integer calculator
+.br
+.Me "|calc"
+calc \- Calculator
+.br
+.Me "|calc-insert"
+calc-insert \- Calculator with answer insertion
+.br
+.Me "|calc-op"
+calc-op \- Low level calculator command
 .Me $a
 .SH SYNOPSIS
 .na
-.I n
-\fBcalc\fR
+.B calc
+"\fIstring\fR"
+.br
+.B calc-insert
+"\fIstring\fR"
+.br
+.B calc-op
 "\fIstring\fR"
 .ad
 .SH DESCRIPTION
 .B calc
-can perform simple integer based calculations given by "\fIstring\fR", where the
+can  perform  floating  point,  simple  integer  and  logic  based  calculations  given by  "\fIstring\fR",  where the
 "\fIstring\fR" takes the following form:-
 .CS
 "[b]<s>"
 .CE
-Where '\fIb\fR' is an optional letter setting the required output base which can be one of the following:
+Where '\fIb\fR' is an optional letter setting the required output base/format which can be one of the following:
 .IP
 .nf
+\fCf   \fR - Floating point
 \fCb   \fR - Binary
 \fCo   \fR - Octal
 \fCd   \fR - Decimal
 \fCx   \fR - Hexadecimal
 .fi
 .PP
-Default  when  omitted  is  '\fId\fR'  (decimal).  "\fIs\fR"  is the sum to be
-calculated,  which  should  be  bodmas in form.  Following  is a list of valid
-symbols.
+Default when omitted is a hybrid of '\fIf\fR'  (floating  point) and '\fId\fR'  (decimal)  whereby the  calculation is
+performed using both floating point and integer maths and if the results differ then both are returned (floating point
+first  with  integer in  brackets  after).  "\fIs\fR"  is the sum to be  calculated,  which  typically  takes the form
+of a number followed by 1 or more operator & number pairs.
+.PP
+\fBCalc\fR supports numbers in the following formats:
 .IP
 .nf
-\fC(..)\fR - Parentheses (contents calculated first)
-\fC!   \fR - Logical not
-\fC&&  \fR - Logical and
-\fC||  \fR - Logical or
-\fC==  \fR - Logical equals
-\fC!=  \fR - Logical not equals
-\fC~   \fR - Bitwise not
-\fC&   \fR - Bitwise and
-\fC|   \fR - Bitwise or
-\fC^   \fR - Bitwise xor
-\fC/   \fR - Divide
-\fC*   \fR - Multiply
-\fC%   \fR - Modulus
-\fC+   \fR - Addition
-\fC-   \fR - Subtraction
-\fC0xNN\fR - Hexadecimal number
-\fC0NN \fR - Octal number
-\fCLR  \fR - Last calculation recall
+\fC0b##\fR - Binary number where # can be 0-1
+\fC0## \fR - Octal number where # can be 0-7
+\fC##  \fR - Decimal number where # can be 0-9, note it should not be prefixed with a 0
+\fC0x##\fR - Hexadecimal number where # can be 0-9, A-F or a-f
+\fC#.# \fR - Floating point number where # can be 0-9
+\fC#e# \fR - Floating point number with exponent where # can be 0-9
+\fC#.#e#\fR - Floating point number with exponent where # can be 0-9
+\fCAns \fR - Last calculation answer (case insensitive)
+\fC$xxx\fR - \*(mS system variable
+\fC%xxx\fR - \*(mS global variable
+\fC.xxx\fR - \*(mS command variable
+\fC"xx"\fR - String value (for logical evaluations)
 .fi
 .PP
-Any  \*(mS  variables  can be  used  in the  calculation.  The  result  of the
-calculation is stored in
-.Ht .calc.result 5 .
+Following is a list of supported operators in order of precedence (which is in compliance with the C programming language):
+.IP
+.nf
+\fC(..) \fR - Parentheses (contents calculated first)
+\fC~ !  \fR - Bitwise-not, Logical-not (number prefix)
+\fC+ -  \fR - Positive/Negative number (number prefix)
+\fC* / %\fR - Multiply, Divide, Modulus
+\fC+ -  \fR - Addition, Subtraction
+\fC<< >>\fR - Bitwise rotate left/right
+\fC< > <= >=\fR - Logical Less-than, Greater-than, Less-or-equal, Greater-or-equal
+\fC== !=\fR - Logical Equals, Not-equals
+\fC&   \fR - Bitwise and
+\fC^   \fR - Bitwise xor
+\fC|   \fR - Bitwise or
+\fC&&  \fR - Logical and
+\fC||  \fR - Logical or
+.fi
+.PP
+The answer of the last successful calculation is stored in
+.Ht .calc.answer 5 ,
+"\fCAns\fR" in the following sum is replaced with this value. 
+The result  of the each calculation is stored in
+.Ht .calc.result 5 ,
+this can be the same as \fB.calc.answer\fR,  the hybrid values when floating point and integer maths produce different
+answers and the required  format is not  specified, or, if there is an error in the string a \*(mS list with the first
+element being the character offset and the second being the error message.
+.PP 
 The argument \fIn\fR is a bitwise flag where:
 .IP \fB0x01\fR
 Print out the result on the message-line.
 .IP \fB0x02\fR
-Use string comparisons for == and != comparisons. This has the
-advantage of being able to calc "Foo" == "Bar" etc.
+Insert the answer into the current buffer at the current location.
 .PP
 When omitted the default argument is 1.
+.PP
+\fBcalc-insert\fP  is a simple macro for executing  \fBcalc\fR with flag 2 set of the numerical argument so the answer
+is inserted.
+.PP
+\fBcalc-op\fP  is the low-level  macro used by \fBcalc\fR to perform the  calculation, it is similar to executing calc
+with a numeric  argument of 0 except that even errors are not printed to the  message-line.  This macro can be used by
+other macros to silently perform any computation, retrieve the result from variable
+.Ht .calc.answer 5 .
 .SH EXAMPLE
 To calculate the number of hours in a year:
 .CS
@@ -76,13 +120,24 @@ calc "365*24"
 .CE
 To then calculate the number of seconds in the year:
 .CS
-calc "LR*60*60"
+calc "Ans*60*60"
 .CE 0
 .SH NOTES
 .B calc
 is a macro defined in \fCcalc.emf\fR.
+.PP
+The command  throws an error if an operator is given an  incompatible  argument,  for example a floating  point number
+cannot be  directly  given to a bitwise or boolean  logic  operator  such as \fB>>\fR or \fB||\fR, it can be given to a
+comparison operator, such as \fB>=\fR, the result of which is an integer boolean value (1 or 0) which can then be used
+by logical operators.
+.PP
+.B calc-op
+is used by
+.Ht c-hash-eval 3
+to evaluate the state of any \fC#if\fP and \fC#ifdef\fP lines. 
 .SH "SEE ALSO"
 .na
+.Ht .calc.answer 5 ,
 .Ht .calc.result 5 .
 .ad
 .FH
