@@ -186,9 +186,9 @@ meUByte *charKeyboardMap=NULL;
 #define meBINARY_BPL       16   /* bytes per line */
 #define meRBIN_BPL        256   /* bytes per line */
 
-static meInt ffread;
-static meInt ffremain;
-static meUByte *ffcur;
+meInt ffread;
+meInt ffremain;
+meUByte *ffcur;
 meUByte ffbuf[meFIOBUFSIZ+1];
 
 meUByte
@@ -1772,7 +1772,7 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
     return 0 ;
 }
 
-static int
+int
 ffgetBuf(meIo *io)
 {
 #ifdef MEOPT_TFS
@@ -2097,7 +2097,7 @@ ffgetline(meIo *io, meLine **line)
     return meTRUE ;
 }
 
-static int
+int
 ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
 {
     io->flags = meIOFLAG_NOTSET;
@@ -2192,7 +2192,7 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
 }
 
 /* close the read file handle, Ignore any close error */
-static void
+void
 ffReadFileClose(meIo *io, meUInt flags)
 {
     /* Windows pipeCommand comes in as a pipe because the source file

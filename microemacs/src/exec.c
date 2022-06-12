@@ -1656,23 +1656,23 @@ lineExec (int f, int n, meUByte *cmdstr)
     
     /* save the arguments */
     oldcle = clexec;
-    oldexec = execlevel ;
+    oldexec = execlevel;
     oldestr = execstr;
-    oldF = meRegCurr->f ;
-    oldN = meRegCurr->n ;
-    oldForce = meRegCurr->force ;
+    oldF = meRegCurr->f;
+    oldN = meRegCurr->n;
+    oldForce = meRegCurr->force;
     /* store the execute-line's !force count on the prev registry if greater,
      * the docmd resets the force count so a !force !force execute-line "..."
      * effectively loses the !force's during the execution which can allow the
      * debugger to kick in unexpectedly */
     if((prevForce=meRegCurr->prev->force) < oldForce)
-        meRegCurr->prev->force = oldForce ;
+        meRegCurr->prev->force = oldForce;
     
     clexec = meTRUE;                      /* in cline execution */
-    execstr = NULL ;
+    execstr = NULL;
     execlevel = 0;                      /* Reset execution level */
-    meRegCurr->f = f ;
-    meRegCurr->n = n ;
+    meRegCurr->f = f;
+    meRegCurr->n = n;
     
     status = docmd(cmdstr,tkn) ;
     if((n & 0x2) && (status == meTRUE) && (execstr != NULL) && (execstr[0] != '\0'))
@@ -1680,7 +1680,7 @@ lineExec (int f, int n, meUByte *cmdstr)
         meUByte cc ;
         /* eat leading spaces */
         while(((cc=*execstr) == ' ') || (cc == '\t'))
-            execstr++ ;
+            execstr++;
         /* dump comments, empties and labels here */
         if(cc != '\0')
             status = mlwrite(MWABORT|MWWAIT,(meUByte *)"[Extra text at end of line: %s]",execstr);

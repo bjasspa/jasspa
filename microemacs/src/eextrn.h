@@ -418,6 +418,13 @@ extern meUByte  ffUrlGetType(meUByte *url);
 #define ffUrlTypeIsHttpFtp(ft)  ((ft) & (meIOTYPE_HTTP|meIOTYPE_FTP))
 #define ffUrlTypeIsNotFile(ft)  ((ft) & (meIOTYPE_PIPE|meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP))
 
+/* the following internal functions can be used to replace standard fopen/fread to read files from anywhere including tfs - use with extreme care */
+extern meInt ffremain;
+extern meUByte ffbuf[];
+int ffgetBuf(meIo *io);
+int ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp);
+void ffReadFileClose(meIo *io, meUInt flags);
+
 #define meRWFLAG_SILENT     0x00001
 #define meRWFLAG_READ       0x00002
 #define meRWFLAG_INSERT     0x00004

@@ -315,46 +315,59 @@ meDictionaryRehash(meDictionary *dict)
     free(tbl) ;
 }
 
-            
+#define meDICT_HDR_SZ (2+3+3)
+
 static int
 meDictionaryLoad(meDictionary *dict)
 {
-    FILE           *fp ;
-    meDictAddr     *table, info[2] ;
-    meUInt   dSize, dUsed ;
+    unsigned char *td;
+    meUInt dSize, dUsed;
+    meStat stats;
+    int rr;
     
-    if((fp = fopen((char *)dict->fname,"rb")) == NULL)
-        return mlwrite(MWABORT,(meUByte *)"Failed to open dictionary [%s]",dict->fname) ;
-    fseek(fp,0,SEEK_END) ;
-    dUsed = ftell(fp) ;
-    fseek(fp,0,SEEK_SET) ;
-    if((fgetc(fp) != 0xED) || (fgetc(fp) != 0xF1))
-        return mlwrite(MWABORT,(meUByte *)"[%s does not have correct id string]",dict->fname) ;
-    fread(info,sizeof(meDictAddr),2,fp) ;
-    dUsed -= ftell(fp) ;
-    dSize = dUsed + TBLINCSIZE ;
-    
-#ifdef BUILD_INSURE_VERSIONS
-    table = (meDictAddr *) meMalloc(10) ;
-#endif
-    if ((table = (meDictAddr *) meMalloc(dSize)) == NULL)
-        return meFALSE ;
-    dict->table = table ;
-    dict->dUsed = dUsed ;
-    dict->dSize = dSize ;
-    dict->noWords = meEntryGetAddr(info[0]) ;
-    dict->tableSize = meEntryGetAddr(info[1]) ;
-    if((dSize = fread(table,1,dUsed,fp)) != dUsed)
+    /* use internal fileio functions to support loading TFS dictionaries */
+    if((dict->fname == NULL) || (getFileStats(dict->fname,0,&stats,NULL) != meFILETYPE_REGULAR) ||
+       (stats.stsizeHigh != 0) || (stats.stsizeLow < meDICT_HDR_SZ) ||
+       (((meior.type = ffUrlGetType(dict->fname)) & meIOTYPE_FILE) != 0) ||
+       (ffReadFileOpen(&meior,dict->fname,meRWFLAG_READ|meRWFLAG_NODIRLIST|meRWFLAG_SILENT,NULL) <= 0))
+        return mlwrite(MWABORT,(meUByte *)"Failed to open dictionary [%s]",dict->fname);
+    dUsed = stats.stsizeLow - meDICT_HDR_SZ;
+    dSize = dUsed + TBLINCSIZE;
+       
+    if((ffgetBuf(&meior) < 0) || (ffremain < meDICT_HDR_SZ) ||
+       (ffbuf[0] != 0xED) || (ffbuf[1] != 0xF1))
+        rr = mlwrite(MWABORT,(meUByte *)"[%s does not have correct id string]",dict->fname);
+    else if((td = (unsigned char *) meMalloc(dSize)) == NULL)
+        rr = meFALSE ;
+    else
     {
-        free(table) ;
-        return mlwrite(MWABORT,(meUByte *)"failed to read dictionary %s",dict->fname) ;
+        dict->dUsed = dUsed;
+        dict->dSize = dSize;
+        dict->noWords = meEntryGetAddr((ffbuf+2));
+        dict->tableSize = meEntryGetAddr((ffbuf+5));
+        dUsed = ffremain-meDICT_HDR_SZ;
+        memcpy(td,ffbuf+meDICT_HDR_SZ,dUsed);
+        while(((rr=ffgetBuf(&meior)) > 0) && (ffremain > 0))
+        {
+            memcpy(td+dUsed,ffbuf,ffremain);
+            dUsed += ffremain;
+        }
+        if(rr < 0)
+        {
+            free(td);
+            rr = mlwrite(MWABORT,(meUByte *)"failed to read dictionary %s",dict->fname);
+        }
+        else
+        {
+            dict->table = (meDictAddr *) td;
+            dict->flags |= DTACTIVE;
+            meDictionaryRehash(dict);
+            rr = meTRUE;
+        }
     }
-    fclose(fp) ;
+    ffReadFileClose(&meior,meRWFLAG_READ|meRWFLAG_SILENT);
     
-    dict->flags |= DTACTIVE ;
-    meDictionaryRehash(dict) ;
-    
-    return meTRUE ;
+    return rr;
 }
 
 
