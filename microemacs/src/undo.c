@@ -540,11 +540,11 @@ meUndo(int f, int n)
                     {
                         if(undoInfo != NULL)
                         {
-                            dddd = (meInt) list[count]->prev ;
-                            *undoInfo++ = dddd ;
+                            dddd = meIntFromPtr(list[count]->prev);
+                            *undoInfo++ = dddd;
                         }
-                        ln->next = list[count] ;
-                        list[count]->prev = ln ;
+                        ln->next = list[count];
+                        list[count]->prev = ln;
                     }
                     ln->next = eln ;
                     eln->prev = ln ;

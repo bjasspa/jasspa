@@ -651,7 +651,7 @@ exitEmacs(int f, int n)
             bp = nbp ;
         }
 #if MEOPT_SOCKET
-        ffFileOp(NULL,NULL,meRWFLAG_NOCONSOLE|meRWFLAG_FTPCLOSE,-1) ;
+        ffFileOp(NULL,NULL,meRWFLAG_NOCONSOLE|meRWFLAG_SOCKCLOSE,-1) ;
 #endif
         TTend();
 

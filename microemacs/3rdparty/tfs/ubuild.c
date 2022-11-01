@@ -8,7 +8,7 @@
  *  Author        : $Author: bill $
  *  Created By    : Jon Green
  *  Created       : Wed Oct 21 16:54:05 2009
- *  Last Modified : <210426.0841>
+ *  Last Modified : <221027.1212>
  *
  *  Description
  *
@@ -1739,7 +1739,11 @@ tfs_build (int options, FILE *fp, char *dirname)
     /* Process the directory. */
     if ((root != NULL) && (root->child != NULL))
     {
-        status = processDirectory (&tfsfp, root->child, dirname);
+        if((status = processDirectory (&tfsfp, root->child, dirname)) != 0)
+        {
+            fprintf (stderr, "Error: processDirectory return %d for: %s\n",status,dirname);
+            return (-3);
+        }
         /* Calculate the offset size estimate */
         tfsfp.offset_bytes = tfsfpLenv (tfsfp.offset << 1);
         TFS_DEBUG (("Size estimate = %d @ %d bytes\n",

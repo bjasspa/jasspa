@@ -60,7 +60,7 @@ OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..\3rdparty
 
-CCDEFS   = /DWIN32 /D_WIN32 /D_WIN32_WINNT=0x500 /W3 /Zi /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /I$(TRDPARTY)\messl /I$(TRDPARTY)\tfs /I$(TRDPARTY)\zlib
+CCDEFS   = /DWIN32 /D_WIN32 /D_WIN32_WINNT=0x500 /W3 /Zi /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /I$(TRDPARTY)\mesock /I$(TRDPARTY)\tfs /I$(TRDPARTY)\zlib
 CCFLAGSR = /MD /O2 /GL /GS- /DNDEBUG=1 /D_HAS_ITERATOR_DEBUGGING=0 /D_SECURE_SCL=0
 CCFLAGSD = /MDd /Od /RTC1 /D_DEBUG
 LDDEFS   = /INCREMENTAL:NO /MACHINE:X86 /MANIFEST
@@ -87,30 +87,23 @@ ARFLAGS  = $(ARFLAGSR)
 BCOR_CDF = /D_NANOEMACS
 PRGLIBS  = 
 LDLIBS   = $(LDLIBSB)
-!ELSE IF "$(BTYP)" == "cs" || "$(BTYP)" == "ws" || "$(BTYP)" == "cws"
-BCOR     = me
-BCOR_CDF = /D_SOCKET /D_MESSL
-PRGLIBS  = $(TRDPARTY)\messl\$(BOUTDIR)\messl.lib $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib $(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib
-LDLIBS   = crypt32.lib ws2_32.lib mpr.lib $(LDLIBSB)
 !ELSE
 BCOR     = me
 BCOR_CDF = /D_SOCKET
-PRGLIBS  = $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib $(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib
-LDLIBS   = ws2_32.lib mpr.lib $(LDLIBSB)
+PRGLIBS  = $(TRDPARTY)\mesock\$(BOUTDIR)\mesock.lib $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib $(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib
+LDLIBS   = crypt32.lib ws2_32.lib mpr.lib $(LDLIBSB)
 !ENDIF
 
-!IF "$(BTYP)" == "c" || "$(BTYP)" == "cs"
+!IF "$(BTYP)" == "c"
 BTYP_CDF = /D_ME_CONSOLE /D_CONSOLE
 BTYP_LDF = /SUBSYSTEM:CONSOLE
-!ELSE IF "$(BTYP)" == "cw" || "$(BTYP)" == "cws"
+!ELSE IF "$(BTYP)" == "cw"
 BTYP_CDF = /D_ME_CONSOLE /D_CONSOLE /D_ME_WINDOW
 BTYP_LDF = /SUBSYSTEM:CONSOLE
 !ELSE
 BTYP_CDF = /D_ME_WINDOW
 BTYP_LDF = /SUBSYSTEM:WINDOWS
-!IF "$(BTYP)" != "ws"
 BTYP     = w
-!ENDIF
 !ENDIF
 
 OUTDIR   = $(BOUTDIR)-$(BCOR)$(BTYP)
@@ -157,13 +150,16 @@ $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib:
 	$(MK) -f $(BUILDID).mak BCFG=$(BCFG)
 	cd $(MAKEDIR)
 
-$(TRDPARTY)\messl\$(BOUTDIR)\messl.lib:
-	cd $(TRDPARTY)\messl
+$(TRDPARTY)\mesock\$(BOUTDIR)\mesock.lib:
+	cd $(TRDPARTY)\mesock
 	$(MK) -f $(BUILDID).mak BCFG=$(BCFG)
 	cd $(MAKEDIR)
 
 clean:
 	if exist $(OUTDIR)\ $(RMDIR) $(OUTDIR)
+	cd $(TRDPARTY)\mesock
+	$(MK) -f $(BUILDID).mak clean
+	cd $(MAKEDIR)
 	cd $(TRDPARTY)\tfs
 	$(MK) -f $(BUILDID).mak clean
 	cd $(MAKEDIR)
@@ -174,6 +170,9 @@ clean:
 spotless: clean
 	$(RM) *~
 	$(RM) tags
+	cd $(TRDPARTY)\mesock
+	$(MK) -f $(BUILDID).mak spotless
+	cd $(MAKEDIR)
 	cd $(TRDPARTY)\tfs
 	$(MK) -f $(BUILDID).mak spotless
 	cd $(MAKEDIR)

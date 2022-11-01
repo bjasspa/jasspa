@@ -167,7 +167,7 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
                 stats->stmtime = tfs_statbuf.st_utc_mtime;
 #endif
 #ifdef _UNIX
-                stats->stdev = (int) tfsdev;
+                stats->stdev = meIntFromPtr(tfsdev);
                 stats->stino = (meUInt) tfs_statbuf.st_bno;
                 stats->stmode |= S_IRGRP|S_IROTH|S_IRUSR;
                 if (file_type == meFILETYPE_REGULAR)
@@ -2295,7 +2295,7 @@ fileOp(int f, int n)
         if(n & meFILEOP_BACKUP)
             dFlags |= meRWFLAG_BACKUP ;
         if(n & meFILEOP_FTPCLOSE)
-            dFlags |= meRWFLAG_FTPCLOSE ;
+            dFlags |= meRWFLAG_SOCKCLOSE ;
         if((rr = ffFileOp(sfname,fn,dFlags,fileMask)) > 0)
             return meTRUE ;
     }

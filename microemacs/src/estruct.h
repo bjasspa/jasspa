@@ -38,7 +38,7 @@
 #define meSBUF_SIZE_MAX       128               /* # of bytes, string buffers   */
 #if MEOPT_LARGEBUF
 #define meBUF_SIZE_MAX        2048              /* size of various inputs & vars*/
-#define meFIOBUFSIZ           32768             /* size of buffer for file I/O  */ 
+#define meFIOBUFSIZ           65536             /* size of buffer for file I/O  */ 
 #else
 #define meBUF_SIZE_MAX        1024              /* smaller size                 */
 #define meFIOBUFSIZ           4096
@@ -113,8 +113,10 @@ typedef int (*meIFuncSSI)(const meUByte *, const meUByte *, size_t);
 /* Handling of special pointer types */
 #define mePtrOffset(p,x)  ((meUByte *)(p) + x)
 #ifdef _64BIT
-#define mePtrFromInt(n)   ((meUByte *)(uintptr_t)(n))
+#define meIntFromPtr(n)   ((meInt)(intptr_t)(n))
+#define mePtrFromInt(n)   ((meUByte *)(intptr_t)(n))
 #else
+#define meIntFromPtr(n)   ((meInt)(n))
 #define mePtrFromInt(n)   ((meUByte *)(n))
 #endif
 
@@ -897,15 +899,10 @@ typedef struct meKill {
 #define meHilightGetLookBackScheme(root)  ((root)->tknSttOff)
 #define meHilightGetColumnHilight(root)   ((meHilight *) ((root)->rclose))
 #define meHilightSetColumnHilight(root,v) ((root)->rclose = (meUByte *) (v))
-#define meHilightGetFromColumn(root)      ((meInt) ((node)->close))
-#define meHilightGetToColumn(root)        ((meInt) ((node)->rtoken))
-#ifdef _64BIT
-#define meHilightSetFromColumn(root,v)    ((node)->close = (meUByte *)(uintptr_t)(v))
-#define meHilightSetToColumn(root,v)      ((node)->rtoken = (meUByte *)(uintptr_t)(v))
-#else
-#define meHilightSetFromColumn(root,v)    ((node)->close = (meUByte *) (v))
-#define meHilightSetToColumn(root,v)      ((node)->rtoken = (meUByte *) (v))
-#endif
+#define meHilightGetFromColumn(root)      meIntFromPtr((node)->close)
+#define meHilightSetFromColumn(root,v)    ((node)->close = mePtrFromInt(v))
+#define meHilightGetToColumn(root)        meIntFromPtr((node)->rtoken)
+#define meHilightSetToColumn(root,v)      ((node)->rtoken = mePtrFromInt(v))
 
 /* hilight token flags */
 #define HLTOKEN    0x0001
@@ -952,12 +949,8 @@ typedef struct meKill {
 #define meIndentGetLabelIndent(ind)          meIndentGetIndent(ind->token[7],frameCur->bufferCur->indentWidth)
 #define meIndentGetCommentMargin(ind)        meIndentGetIndent(ind->token[8],frameCur->bufferCur->indentWidth)
 #define meIndentGetCommentContinue(ind)      ((ind)->rtoken)
-#define meIndentGetChangeFunc(ind)           ((meInt) ((ind)->rclose))
-#ifdef _64BIT
-#define meIndentSetChangeFunc(ind,v)         ((ind)->rclose = (meUByte *)(uintptr_t)(v))
-#else
-#define meIndentSetChangeFunc(ind,v)         ((ind)->rclose = (meUByte *) (v))
-#endif
+#define meIndentGetChangeFunc(ind)           meIntFromPtr((ind)->rclose)
+#define meIndentSetChangeFunc(ind,v)         ((ind)->rclose = mePtrFromInt(v))
 
 typedef struct meHilight {
     struct meHilight **list ;
@@ -1433,18 +1426,16 @@ typedef struct meIo {
     meSOCKET   ccsk;                    /* FTP control channel socket */
     meSOCKET   sock;                    /* HTTP/FTP data channel socket */
     struct sockaddr_in sockAddr;
-    meUByte    redirect;               /* Number of redirections - avoids spin */
-    meUByte   *sockUrl;                /* Current open socket addr (for reuse) */
+    meUByte    redirect;                /* Number of redirections - avoids spin */
+    meUByte   *sockUrl;                 /* Current open socket addr (for reuse) */
     meUByte   *sockHome;
     meRegNode *passwdReg;
     meBuffer  *urlBp;
     int        startTime;
     int        length;
-#ifdef MEOPT_SSL
-    meSslFile  sslp;                    /* meSsl/OpenSSL file handle */
-#endif
+    meSockFile sslp;                    /* meSsl/OpenSSL file handle */
 #endif
 #ifdef MEOPT_TFS
-    tfsfile_t tfsp;                     /* The tack-on file system handle */
+    tfsfile_t  tfsp;                    /* The tack-on file system handle */
 #endif
 } meIo;

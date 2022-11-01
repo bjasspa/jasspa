@@ -6,8 +6,6 @@
 OPTIONS=
 LOGFILE=
 LOGFILEA=
-MECORE=
-METYPE=
 MEDEBUG=
 MAKEFILE=
 MAKECDEFS=
@@ -33,19 +31,7 @@ do
         echo "   -m <makefile>"
         echo "        : Sets the makefile to use where <makefile> can be"
         echo "            aix4.mak, freebsd.mak, freebsd.gmk etc."
-        echo "   -ne  : for NanoEmacs build (output is ne)."
-        echo "   -p <search-path>"
-        echo "        : Sets the default system search path to <search-path>,"
-        echo "          default is "'"'"/usr/local/microemacs"'"'
         echo "   -S   : Build clean spotless."
-        echo "   -t <type>"
-        echo "        : Sets build type:"
-        echo "             c   Console support only (Termcap)"
-        echo "             w   Window support only (XTerm)"
-        echo "             cw  Console and window support (default)"
-        echo "             cs  Console with ssl (https) support"
-        echo "             ws  Window with ssl support"
-        echo "             cws Console, window and ssl support"
         echo ""
         exit 1
     elif [ $1 = "-C" ] ; then
@@ -68,20 +54,8 @@ do
     elif [ $1 = "-m" ] ; then
         shift
         MAKEFILE=$1
-    elif [ $1 = "-ne" ] ; then
-        MECORE=" BCOR=ne"
-    elif [ $1 = "-p" ] ; then
-        shift
-        if [ -n "$MAKECDEFS" ] ; then
-            MAKECDEFS="$MAKECDEFS -D_SEARCH_PATH=\\"'"'"$1\\"'"'
-        else
-            MAKECDEFS="-D_SEARCH_PATH=\\"'"'"$1\\"'"'
-        fi
     elif [ $1 = "-S" ] ; then
         OPTIONS=" spotless"
-    elif [ $1 = "-t" ] ; then
-        shift
-        METYPE=" BTYP=$1"
     else
         echo "Error: Unkown option $1, run build -h for help"
         echo ""
@@ -116,7 +90,7 @@ if [ -z "$MAKEFILE" ] ; then
             elif [ -d "/opt/homebrew/opt/openssl" ] ; then
                 SSL_MAKEPTH=" OPENSSLP=/opt/homebrew/opt/openssl"
             elif [ -d "/usr/local/opt/openssl@1.1" ] ; then
-                SSL_MAKEPTH=" OPENSSLP=/usr/local/opt/openssl@1.1"
+                SSL_MAKEPTH=" OPENSSLP=/usr/local/opt/openssl@1.1zz"
             fi
         elif [ $VERSION -gt 15 ] ; then
             MAKEBAS=macos32
@@ -158,13 +132,10 @@ if [ -z "$MAKEFILE" ] ; then
         else
             KERNEL_MAJOR=`uname -r | cut -c 1-1`
             KERNEL_MINOR=`uname -r | cut -c 3-3`
-            if [ -r linux${KERNEL_MAJOR}${KERNEL_MINOR}gcc.mak ] ; then
-                MAKEBAS="linux$KERNEL_MAJOR$KERNEL_MINOR"
-            elif [ -r linux${KERNEL_MAJOR}gcc.mak ] ; then
-                MAKEBAS="linux$KERNEL_MAJOR"
-            else
+            MAKEBAS="linux$KERNEL_MAJOR$KERNEL_MINOR"
+            if [ ! -r $MAKEBAS.gmk ] ; then
                 MAKEBAS="linux2"
-            fi
+            fi                
         fi
         X11_MAKELIB=/usr/X11R6/lib
     elif [ `echo $PLATFORM | sed -e "s/^MINGW32_NT.*/MINGW32_NT/"` = "MINGW32_NT" ] ; then
@@ -224,56 +195,7 @@ if [ -z "$MAKEFILE" ] ; then
     fi
 fi
 
-if [ "$MAKEFILE" = "win32mingw.gmk" ] ; then
-    # No X11 required as this uses native windows
-    X11_INCLUDE=
-elif [ -z "$OPTIONS" ] ; then
-    # Check for an X11 install.
-    if [ "$METYPE" = "c" ] ; then
-        X11_INCLUDE=
-    elif [ -z "$X11_INCLUDE" ] ; then
-        if [ -r $X11_MAKEINC/X11/Intrinsic.h ] ; then
-            X11_INCLUDE=$X11_MAKEINC
-        elif [ -r /usr/include/X11/Intrinsic.h ] ; then
-            X11_INCLUDE=/usr/include
-        else
-            echo "No X-11 support found, forcing terminal only."
-            X11_INCLUDE=
-            METYPE=" BTYP=c"
-        fi
-    fi
-    if [ -n "$X11_INCLUDE" ] ; then
-        MAKEWINDEFS=
-        MAKEWINLIBS=
-        if [ "$X11_INCLUDE" != "/usr/include" ] ; then
-            if [ "$X11_INCLUDE" != "$X11_MAKEINC" ] ; then
-                MAKEWINDEFS="-I$X11_INCLUDE"
-            fi
-        fi
-        if [ -n "$X11_LIBRARY" ] ; then
-            if [ "$X11_LIBRARY" != "$X11_MAKELIB" ] ; then
-                MAKEWINLIBS="-L$X11_LIBRARY"
-            fi
-        fi
-        if [ -z "$XPM_INCLUDE" ] ; then
-            XPM_INCLUDE="$X11_INCLUDE"
-        fi
-        if [ -r $XPM_INCLUDE/X11/xpm.h ] ; then
-            MAKEWINDEFS="-D_XPM $MAKEWINDEFS"
-            if [ ! "$XPM_INCLUDE" = "$X11_INCLUDE" ] ; then
-                MAKEWINDEFS="$MAKEWINDEFS -I$XPM_INCLUDE"
-            fi
-            if [ -n "$XPM_LIBRARY" ] ; then
-                if [ ! "$XPM_LIBRARY" = "$X11_MAKELIB" ] ; then
-                    MAKEWINLIBS="$MAKEWINLIBS -L$XPM_LIBRARY"
-                fi
-            fi
-            MAKEWINLIBS="$MAKEWINLIBS -lXpm"
-        fi
-        export MAKEWINDEFS MAKEWINLIBS
-    fi
-fi
-OPTIONS="$MECORE$MEDEBUG$METYPE$OPTIONS$SSL_MAKEPTH"
+OPTIONS="$MEDEBUG$OPTIONS$SSL_MAKEPTH"
 MAKECDEFS="MAKECDEFS=$MAKECDEFS"
 if [ -r $MAKEFILE ] ; then
     if [ -n "$LOGFILE" ] ; then

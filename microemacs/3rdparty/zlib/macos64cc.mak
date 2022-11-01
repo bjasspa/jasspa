@@ -26,15 +26,14 @@ OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
 
-CCDEFS   = -D_OSX -m64 -Wall
-CCFLAGSR = -O3 -DNDEBUG=1 -Wno-uninitialized
+CCDEFS   = -D_MACOS -D_64BIT -m64 -Wall
+CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g
 LDDEFS   = -m64
-LDFLAGSR = -O3
+LDFLAGSR = -O3 -flto
 LDFLAGSD = -g
 ARFLAGSR = rcs
 ARFLAGSD = rcs
-RCFLAGS  =
 
 ifeq "$(BCFG)" "debug"
 OUTDIR   = $(OUTDIRD)

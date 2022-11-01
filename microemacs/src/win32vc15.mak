@@ -87,30 +87,23 @@ ARFLAGS  = $(ARFLAGSR)
 BCOR_CDF = /D_NANOEMACS
 PRGLIBS  = 
 LDLIBS   = $(LDLIBSB)
-!ELSE IF "$(BTYP)" == "cs" || "$(BTYP)" == "ws" || "$(BTYP)" == "cws"
-BCOR     = me
-BCOR_CDF = /D_SOCKET /D_MESSL
-PRGLIBS  = $(TRDPARTY)\messl\$(BOUTDIR)\messl.lib $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib $(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib
-LDLIBS   = crypt32.lib ws2_32.lib mpr.lib $(LDLIBSB)
 !ELSE
 BCOR     = me
 BCOR_CDF = /D_SOCKET
-PRGLIBS  = $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib $(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib
-LDLIBS   = ws2_32.lib mpr.lib $(LDLIBSB)
+PRGLIBS  = $(TRDPARTY)\messl\$(BOUTDIR)\messl.lib $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib $(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib
+LDLIBS   = crypt32.lib ws2_32.lib mpr.lib $(LDLIBSB)
 !ENDIF
 
-!IF "$(BTYP)" == "c" || "$(BTYP)" == "cs"
+!IF "$(BTYP)" == "c"
 BTYP_CDF = /D_ME_CONSOLE /D_CONSOLE
 BTYP_LDF = /SUBSYSTEM:CONSOLE
-!ELSE IF "$(BTYP)" == "cw" || "$(BTYP)" == "cws"
+!ELSE IF "$(BTYP)" == "cw"
 BTYP_CDF = /D_ME_CONSOLE /D_CONSOLE /D_ME_WINDOW
 BTYP_LDF = /SUBSYSTEM:CONSOLE
 !ELSE
 BTYP_CDF = /D_ME_WINDOW
 BTYP_LDF = /SUBSYSTEM:WINDOWS
-!IF "$(BTYP)" != "ws"
 BTYP     = w
-!ENDIF
 !ENDIF
 
 OUTDIR   = $(BOUTDIR)-$(BCOR)$(BTYP)

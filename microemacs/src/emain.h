@@ -346,9 +346,8 @@
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _CLIENTSERVER  1                /* Client server support         */
 #endif
-/* The next 2 options are commented out as the win32*.mak files define them when required */
+/* The next option is commented out as the win32*.mak files define them when required */
 /*#define _SOCKET     1*/               /* Supports url reading          */
-/*#define _MESSL      1*/               /* Use messl & OpenSSL for https */
 #define _MOUSE         1                /* Mouse supported               */
 #define _CLIPBRD       1                /* Inter window clip board supp  */
 #define _WINDOW        1                /* Windowed, resizing & title    */
@@ -461,9 +460,6 @@
 #endif
 #ifdef _SOCKET
 #define MEOPT_SOCKET    1       /* Supports sockets - can read urls      */
-#ifdef _MESSL
-#define MEOPT_SSL       1       /* enable messl for https support        */
-#endif
 #else
 /* DO NOT CHANGE THIS VALUE */
 #define MEOPT_SOCKET    0
@@ -607,8 +603,8 @@ typedef unsigned int   meUInt ;
 #define _DEFAULT_SEARCH_PATH ""
 #endif
 
-#if MEOPT_SSL
-#include <messl.h>        /* meSsl/OpenSSL system defs.     */
+#if MEOPT_SOCKET
+#include <mesock.h>     /* Use meSock for http(s).       */
 #endif
 #if MEOPT_TFS
 #include <tfs.h>        /* Tack-on file system defs.     */

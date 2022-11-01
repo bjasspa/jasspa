@@ -93,7 +93,7 @@ meUByte charMaskTbl1[256] =
     0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A,
     0x0A,
 #endif
-          0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
+    0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
     0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
     0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
     0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
@@ -284,10 +284,13 @@ typedef void (*meATEXIT)(void);
 
 #endif
 
-#define meSOCKET_TIMEOUT 240000
+#define meSOCKET_FTP_TIMEOUT  240000
+#define meSOCKET_HTTP_TIMEOUT  60000
+#define meSBUF_SIZE  (((meSOCK_BUFF_SIZE) > (meBUF_SIZE_MAX)) ? (meSOCK_BUFF_SIZE) : (meBUF_SIZE_MAX))
 
 static meUByte *ffUrlFlagsVName[2]={(meUByte *)"http-flags",(meUByte *)"ftp-flags"} ;
 static meUByte *ffUrlConsoleBName[2]={(meUByte *)"*http-console*",(meUByte *)"*ftp-console*"} ;
+static meCookie ffUrlCookie;
 
 #ifndef INADDR_NONE
 /* This may not be defined, particularly suns */
@@ -299,46 +302,6 @@ static meUByte *ffUrlConsoleBName[2]={(meUByte *)"*http-console*",(meUByte *)"*f
 #define ftpPOS_COMPLETE  2
 #define ftpPOS_INTERMED  3
 
-static void
-strBase64Encode3(meUByte *dd, meUByte c1, meUByte c2, meUByte c3)
-{
-    static meUByte base64Table[]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/" ;
-    dd[0] = base64Table[(c1 >> 2)] ;
-    dd[1] = base64Table[((c1 << 4) & 0x30) | ((c2 >> 4) & 0x0f)] ;
-    dd[2] = base64Table[((c2 << 2) & 0x3c) | ((c3 >> 6) & 0x03)] ;
-    dd[3] = base64Table[(c3 & 0x3f)] ;
-}
-
-static meUByte *
-strBase64Encode(meUByte *dd, meUByte *ss)
-{
-    meUByte c1, c2, c3 ;
-
-    while((c1=*ss++) != '\0')
-    {
-        if((c2=*ss++) == '\0')
-        {
-            c3 = '\0' ;
-            strBase64Encode3(dd,c1,c2,c3) ;
-            dd += 2 ;
-            *dd++ = '=' ;
-            *dd++ = '=' ;
-            break ;
-        }
-        else if((c3=*ss++) == '\0')
-        {
-            strBase64Encode3(dd,c1,c2,c3) ;
-            dd += 3 ;
-            *dd++ = '=' ;
-            break ;
-        }
-        strBase64Encode3(dd,c1,c2,c3) ;
-        dd += 4 ;
-    }
-    *dd = '\0' ;
-    return dd ;
-}
-
 /* `hostname' can be of any form described in inet_addr(3);
  * `port' can be a service name, a port number, or NULL to have the
  * OS choose a port (this is probably only useful for servers);
@@ -349,10 +312,10 @@ make_inet_addr(meIo *io, meUByte *hostname, meUByte *port, meUByte *proto)
 {
     struct hostent *hp ;
     struct servent *sp ;
-
+    
     memset(&(io->sockAddr),0,sizeof(struct sockaddr_in)) ;
     io->sockAddr.sin_family = AF_INET ;
-
+    
     if ((sp = meGetservbyname((char *)port,(char *)proto)) != NULL)
     {
         io->sockAddr.sin_port = sp->s_port;
@@ -374,7 +337,7 @@ make_inet_addr(meIo *io, meUByte *hostname, meUByte *port, meUByte *proto)
         memcpy(&(io->sockAddr.sin_addr),hp->h_addr,hp->h_length) ;
     else
         return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unknown host %s]", hostname) ;
-
+    
     return meTRUE ;
 }
 
@@ -400,7 +363,7 @@ ffUrlConsoleAddText(meIo *io, meUByte *str, int flags)
         meLine *olp, *nlp;
         meUByte buff[meBUF_SIZE_MAX], cc;
         int ii, ll;
-
+        
         olp = io->urlBp->dotLine ;
         ll = ii = io->urlBp->dotOffset ;
         meStrncpy(buff,meLineGetText(olp),ii) ;
@@ -413,7 +376,7 @@ ffUrlConsoleAddText(meIo *io, meUByte *str, int flags)
         olp->next->prev = nlp ;
         if(olp->flag & meLINE_ANCHOR)
             meLineResetAnchors(meLINEANCHOR_ALWAYS|meLINEANCHOR_RETAIN,io->urlBp,
-                              olp,nlp,0,0) ;
+                               olp,nlp,0,0) ;
         meFree(olp) ;
     }
     else
@@ -431,7 +394,7 @@ ffUrlConsoleAddText(meIo *io, meUByte *str, int flags)
         io->urlBp->dotLineNo = io->urlBp->lineCount;
     }
     meBufferUpdateLocation(io->urlBp,io->urlBp->lineCount-lc,io->urlBp->dotOffset);
-
+    
     if(!(flags & 0x04))
     {
         if(io->urlFlags & meIOURLF_SHOW_CONSOLE)
@@ -445,40 +408,36 @@ ffUrlConsoleAddText(meIo *io, meUByte *str, int flags)
 static meSOCKET
 ffOpenConnectUrlSocket(meIo *io, meUByte *host, meUByte *port)
 {
-    meUByte buff[meBUF_SIZE_MAX] ;
-    meSOCKET ss ;
-    int ii ;
-
+    meUByte buff[meBUF_SIZE_MAX];
+    meSOCKET ss;
+    
     sprintf((char *)buff,"[Connecting to %s:%s]",host,port);
     if(io->urlBp != NULL)
-        ffUrlConsoleAddText(io,buff,0) ;
+        ffUrlConsoleAddText(io,buff,0);
     mlwrite(MWCURSOR|MWSPEC,buff);
-
+    
     if(!make_inet_addr(io,host,port,(meUByte *)"tcp"))
-        return meBadSocket ;
-
+        return meBadSocket;
+    
     if((ss=meSocketOpen(AF_INET,SOCK_STREAM,IPPROTO_TCP)) < 0)
     {
-        sprintf((char *)buff,"[Failed to open socket - %d]",meSocketGetError()) ;
+        sprintf((char *)buff,"[Failed to open socket - Error %d]",meSocketGetError());
         if(io->urlBp != NULL)
-            ffUrlConsoleAddText(io,buff,0) ;
-        mlwrite(MWABORT|MWPAUSE|MWSPEC,buff) ;
-        return meBadSocket ;
+            ffUrlConsoleAddText(io,buff,0);
+        mlwrite(MWABORT|MWPAUSE|MWSPEC,buff);
+        return meBadSocket;
     }
-    ii = 1 ;
-    // TODO - use of SO_REUSEADDR is bad and unwarrented I think 
-    meSocketSetOpt(ss,SOL_SOCKET,SO_REUSEADDR,(char *) &ii,sizeof(int)) ;
     if(meSocketConnect(ss,(struct sockaddr *) &(io->sockAddr),sizeof(struct sockaddr_in)) != 0)
     {
-        meSocketClose(ss) ;
-        sprintf((char *)buff,"[Failed to connect to %s:%s - %d]",host,port,meSocketGetError()) ;
+        meSocketClose(ss);
+        sprintf((char *)buff,"[Failed to connect to %s:%s - Error %d]",host,port,meSocketGetError());
         if(io->urlBp != NULL)
-            ffUrlConsoleAddText(io,buff,0) ;
-        mlwrite(MWABORT|MWPAUSE|MWSPEC,buff) ;
-        return meBadSocket ;
+            ffUrlConsoleAddText(io,buff,0);
+        mlwrite(MWABORT|MWPAUSE|MWSPEC,buff);
+        return meBadSocket;
     }
-
-    return ss ;
+    
+    return ss;
 }
 
 static int
@@ -489,7 +448,7 @@ ffReadSocketLine(meIo *io,meSOCKET ss, meUByte *buff)
     {
         if(meSocketRead(ss,(char *) dd,1,0) <= 0)
         {
-            sprintf((char *)buff,"[Failed to read line - %d]",meSocketGetError()) ;
+            sprintf((char *)buff,"[Failed to read line - Error %d]",meSocketGetError()) ;
             if(io->urlBp != NULL)
                 ffUrlConsoleAddText(io,buff,0) ;
             return mlwrite(MWABORT|MWPAUSE|MWSPEC,buff) ;
@@ -509,13 +468,13 @@ static int
 ftpReadReply(meIo *io)
 {
     int ret ;
-
+    
     ffremain = 0 ;
     if(ffReadSocketLine(io,io->ccsk,resultStr) <= 0)
         return meFALSE ;
     if(meStrlen(resultStr) < 4)
         return ftpERROR ;
-
+    
     ret = resultStr[0] - '0' ;
     if(resultStr[3] == '-')
     {
@@ -540,7 +499,7 @@ ftpCommand(meIo *io, int flags, char *fmt, ...)
 {
     va_list ap;
     int ii ;
-
+    
     va_start(ap,fmt);
     vsprintf((char *)ffbuf,fmt,ap);
     va_end(ap);
@@ -557,7 +516,7 @@ ftpCommand(meIo *io, int flags, char *fmt, ...)
     ffbuf[ii]   = '\0' ;
     if(meSocketWrite(io->ccsk,(char *)ffbuf,ii,0) <= 0)
     {
-        sprintf((char *)ffbuf,"[Failed to send command - %d]",meSocketGetError()) ;
+        sprintf((char *)ffbuf,"[Failed to send command - Error %d]",meSocketGetError()) ;
         if(io->urlBp != NULL)
             ffUrlConsoleAddText(io,ffbuf,0) ;
         mlwrite(MWABORT|MWPAUSE|MWSPEC,ffbuf) ;
@@ -569,22 +528,25 @@ ftpCommand(meIo *io, int flags, char *fmt, ...)
 }
 
 static void
-ffCloseSockets(meIo *io, int logoff)
+ffCloseSockets(meIo *io, int flags)
 {
-    timerClearExpired(SOCKET_TIMER_ID) ;
-#if MEOPT_SSL
-    if(ffUrlTypeIsSecure(io->type))
-        meSslClose(&(io->sslp),1);
-    else
-#endif
+    int setTm=0;
+    
+    if(!meSocketIsBad(io->sock))
     {
-        if(!meSocketIsBad(io->sock))
+        if((flags & 1) || (io->sockUrl == NULL))
         {
             meSocketShutdown(io->sock,SHUT_RDWR);
             meSocketClose(io->sock) ;
             io->sock = meBadSocket ;
+        
         }
-        if(logoff && !meSocketIsBad(io->ccsk))
+        else
+            setTm = meSOCKET_FTP_TIMEOUT;
+    }
+    if(!meSocketIsBad(io->ccsk))
+    {
+        if((flags & 2) || (io->sockUrl == NULL))
         {
             ftpCommand(io,1,"QUIT") ;
             meSocketShutdown(io->ccsk,SHUT_RDWR);
@@ -595,8 +557,14 @@ ffCloseSockets(meIo *io, int logoff)
             if(meNullFree(io->sockHome))
                 io->sockHome = NULL ;
         }
+        else
+            setTm = meSOCKET_FTP_TIMEOUT;
     }
-    ffremain = 0 ;
+    if(meSockFileIsInUse(&(io->sslp)) && meSockClose(&(io->sslp),(flags & 1)))
+        setTm = meSOCKET_HTTP_TIMEOUT;
+    if(setTm)
+        timerSet(SOCKET_TIMER_ID,-1,setTm);
+    ffremain = 0;
 }
 
 static int
@@ -606,7 +574,7 @@ ftpLogin(meIo *io, meUByte *user, meUByte *pass)
     /* get the initial message */
     if(ftpReadReply(io) != ftpPOS_COMPLETE)
         return meFALSE ;
-
+    
     ii = ftpCommand(io,0,"USER %s",user) ;
     if(ii == ftpPOS_INTERMED)
         ii = ftpCommand(io,0,"PASS %s", pass) ;
@@ -628,7 +596,7 @@ ftpGetDataChannel(meIo *io)
     meUByte *aac, *ppc ;
     int aai[4], ppi[2] ;
     meUByte *ss ;
-
+    
     if(ftpCommand(io,0,"PASV") != ftpPOS_COMPLETE)
         return meABORT ;
     if(((ss=meStrchr(resultStr,'(')) == NULL) ||
@@ -647,21 +615,21 @@ ftpGetDataChannel(meIo *io)
     aac[3] = (meUByte) aai[3] ;
     ppc[0] = (meUByte) ppi[0] ;
     ppc[1] = (meUByte) ppi[1] ;
-
+    
     if(meSocketIsBad(io->sock = meSocketOpen(AF_INET, SOCK_STREAM, IPPROTO_TCP)))
     {
-        sprintf((char *)resultStr,"[Failed to open data channel - %d]",meSocketGetError()) ;
+        sprintf((char *)resultStr,"[Failed to open data channel - Error %d]",meSocketGetError()) ;
         if(io->urlBp != NULL)
             ffUrlConsoleAddText(io,resultStr,0) ;
         return mlwrite(MWABORT|MWPAUSE|MWSPEC,resultStr) ;
     }
-
+    
     aai[0] = 1 ;
     meSocketSetOpt(io->sock,SOL_SOCKET,SO_REUSEADDR,(char *) aai,sizeof(int)) ;
-
+    
     if(meSocketConnect(io->sock,(struct sockaddr *) &(io->sockAddr),sizeof(struct sockaddr_in)) < 0)
     {
-        sprintf((char *)resultStr,"[Failed to connect data channel - %d]",meSocketGetError()) ;
+        sprintf((char *)resultStr,"[Failed to connect data channel - Error %d]",meSocketGetError()) ;
         if(io->urlBp != NULL)
             ffUrlConsoleAddText(io,resultStr,0) ;
         return mlwrite(MWABORT|MWPAUSE|MWSPEC,resultStr) ;
@@ -674,29 +642,26 @@ ffUrlGetInfo(meIo *io, meUByte **host, meUByte **port, meUByte **user, meUByte *
 {
     meRegNode *root, *reg ;
     meUByte *ss ;
-
-    if (((root = regFind (NULL,(meUByte *)"/url")) == NULL) &&
-        ((root = regSet (NULL,(meUByte *)"/url", NULL)) == NULL))
+    
+    if(((root = regFind(NULL,(meUByte *)"/url")) == NULL) && ((root = regSet(NULL,(meUByte *)"/url",NULL)) == NULL))
         return meFALSE ;
     ss = (meUByte *) ((ffUrlTypeIsFtp(io->type)) ? "ftp":"http") ;
-    if (((reg = regFind (root, ss)) == NULL) &&
-        ((reg = regSet (root, ss, NULL)) == NULL))
+    if(((reg = regFind(root,ss)) == NULL) && ((reg = regSet(root,ss,NULL)) == NULL))
         return meFALSE ;
-    if (((root = regFind (reg, *host)) == NULL) &&
-        ((root = regSet (reg, *host, NULL)) == NULL))
+    if(((root = regFind(reg,*host)) == NULL) && ((root = regSet(reg,*host,NULL)) == NULL))
         return meFALSE ;
-
-    reg = regFind (root,(meUByte *)"user") ;
-    if (*user != NULL)
+    
+    reg = regFind(root,(meUByte *)"user") ;
+    if(*user != NULL)
     {
         if((*pass == NULL) && (reg != NULL) && !meStrcmp(regGetValue(reg),*user) &&
-           ((reg = regFind (root,(meUByte *)"pass")) != NULL))
+           ((reg = regFind(root,(meUByte *)"pass")) != NULL))
             *pass = regGetValue(reg) ;
     }
     else if(reg != NULL)
     {
         *user = regGetValue(reg) ;
-        if((reg = regFind (root,(meUByte *)"pass")) != NULL)
+        if((reg = regFind(root,(meUByte *)"pass")) != NULL)
             *pass = regGetValue(reg) ;
     }
     io->passwdReg = NULL ;
@@ -707,29 +672,29 @@ ffUrlGetInfo(meIo *io, meUByte **host, meUByte **port, meUByte **user, meUByte *
             meUByte buff[meSBUF_SIZE_MAX] ;
             /* Always get the password from the user even when running a macro.
              * This is important for &stat which may trigger a password request */
-            meStrcpy(buff,*user) ;
-            meStrcat(buff,"@") ;
-            meStrcat(buff,*host) ;
+            meStrcpy(buff,*user);
+            meStrcat(buff,"@");
+            meStrcat(buff,*host);
             meStrcat(buff," password") ;
             if((meGetStringFromUser(buff, MLNOHIST|MLHIDEVAL, 0, buff, meSBUF_SIZE_MAX) <= 0) ||
                ((io->passwdReg = regSet(root,(meUByte *)"pass",buff)) == NULL) ||
                ((regGetValue(io->passwdReg) == NULL) && ((io->passwdReg->value = meStrdup(buff)) == NULL)))
-                return meFALSE ;
-            io->passwdReg->mode |= meREGMODE_INTERNAL ;
-            *pass = regGetValue(io->passwdReg) ;
+                return meFALSE;
+            io->passwdReg->mode |= meREGMODE_INTERNAL;
+            *pass = regGetValue(io->passwdReg);
         }
         else if(((reg = regFind(root,(meUByte *)"pass")) == NULL) || meStrcmp(regGetValue(reg),*pass))
-            regSet(root,(meUByte *)"pass",*pass) ;
+            regSet(root,(meUByte *)"pass",*pass);
         if(((reg = regFind(root,(meUByte *)"user")) == NULL) || meStrcmp(regGetValue(reg),*user))
-            regSet(root,(meUByte *)"user",*user) ;
+            regSet(root,(meUByte *)"user",*user);
     }
-    if ((reg = regFind (root,(meUByte *)"host")) != NULL)
-        *host = regGetValue(reg) ;
-    reg = regFind (root,(meUByte *)"port") ;
+    if ((reg = regFind(root,(meUByte *)"host")) != NULL)
+        *host = regGetValue(reg);
+    reg = regFind(root,(meUByte *)"port");
     if (*port != NULL)
     {
         if((reg == NULL) || meStrcmp(regGetValue(reg),*port))
-            regSet(root,(meUByte *)"port",*port) ;
+            regSet(root,(meUByte *)"port",*port);
     }
     else if(reg != NULL)
         *port = regGetValue(reg) ;
@@ -786,21 +751,21 @@ ffUrlCreateName(meUByte *buff, meUShort type, meUByte *host, meUByte *port, meUB
     }
 }
 
-static int ffUrlFileOpen(meIo *io, meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag, meBuffer *bp);
+static int ffUrlFileOpen(meIo *io, meUInt rwflag, meUByte *urlName, meUByte *user, meUByte *pass, meBuffer *bp);
 
 int
 ffFtpFileOpen(meIo *io, meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByte *file, meUInt rwflag)
 {
     meUByte buff[meBUF_SIZE_MAX], lbuff[meBUF_SIZE_MAX+32], *ss ;
     int dirlist, ll ;
-
+    
     /* are we currently connected to this site?? */
     ffUrlCreateName(buff,io->type,host,port,user,NULL,NULL) ;
     if((io->sockUrl == NULL) || meStrcmp(buff,io->sockUrl))
     {
         /* if we're already logged on somewhere else kill the connection */
-        ffCloseSockets(io,1) ;
-
+        ffCloseSockets(io,3) ;
+        
         if(port == NULL)
             port = (meUByte *)"21" ;
         if(user == NULL)
@@ -809,18 +774,18 @@ ffFtpFileOpen(meIo *io, meUByte *host, meUByte *port, meUByte *user, meUByte *pa
             user = (meUByte *)"ftp" ;
             pass = (meUByte *)"guest" ;
         }
-
+        
         if(meSocketIsBad(io->ccsk=ffOpenConnectUrlSocket(io,host,port)))
             return meFALSE ;
-
+        
         if(ftpLogin(io,user,pass) <= 0)
         {
-            ffCloseSockets(io,1) ;
+            ffCloseSockets(io,3) ;
             return meFALSE ;
         }
         if(ftpCommand(io,0,"TYPE I") != ftpPOS_COMPLETE)
         {
-            ffCloseSockets(io,1) ;
+            ffCloseSockets(io,3) ;
             return meFALSE ;
         }
         io->sockUrl = meStrdup(buff) ;
@@ -835,7 +800,7 @@ ffFtpFileOpen(meIo *io, meUByte *host, meUByte *port, meUByte *user, meUByte *pa
             io->sockHome = meStrdup(ss+1) ;
         }
     }
-
+    
     if((file[1] == '~') && (file[2] == '/'))
     {
         if(io->sockHome != NULL)
@@ -849,7 +814,7 @@ ffFtpFileOpen(meIo *io, meUByte *host, meUByte *port, meUByte *user, meUByte *pa
         meStrcpy(buff+ll,file+2) ;
         file = buff ;
     }
-
+    
     if(rwflag & meRWFLAG_WRITE)
         ss = (meUByte *) "writing" ;
     else if(rwflag & meRWFLAG_READ)
@@ -868,7 +833,7 @@ ffFtpFileOpen(meIo *io, meUByte *host, meUByte *port, meUByte *user, meUByte *pa
     {
         /* try to back-up the existing file - no error checking! */
         meUByte filename[meBUF_SIZE_MAX] ;
-
+        
         if(createBackupName(filename,file,'~',1) ||
            ((ftpCommand(io,0,"RNFR %s",file) == ftpPOS_INTERMED) &&
             (ftpCommand(io,0,"RNTO %s",filename) != ftpPOS_COMPLETE) &&
@@ -944,7 +909,7 @@ ffFtpFileOpen(meIo *io, meUByte *host, meUByte *port, meUByte *user, meUByte *pa
     }
     if(!(rwflag & (meRWFLAG_WRITE|meRWFLAG_READ)))
         return meTRUE ;
-
+    
     ll = meStrlen(file) ;
     if(rwflag & meRWFLAG_FTPNLST)
         dirlist = -1 ;
@@ -952,16 +917,16 @@ ffFtpFileOpen(meIo *io, meUByte *host, meUByte *port, meUByte *user, meUByte *pa
         dirlist = 1 ;
     else
         dirlist = 0 ;
-
+    
     /* send the read command */
     for(;;)
     {
         if(dirlist && (ftpCommand(io,0,"CWD %s",file) != ftpPOS_COMPLETE))
             break;
-
+        
         if(ftpGetDataChannel(io) <= 0)
             break;
-
+        
         if(rwflag & meRWFLAG_WRITE)
             ftpCommand(io,1,"STOR %s",file);
         else if(rwflag & meRWFLAG_FTPNLST)
@@ -970,7 +935,7 @@ ffFtpFileOpen(meIo *io, meUByte *host, meUByte *port, meUByte *user, meUByte *pa
             ftpCommand(io,1,"LIST");
         else
             ftpCommand(io,1,"RETR %s",file);
-
+        
         /* find out if all's well */
         if(ftpReadReply(io) == ftpPOS_PRELIMIN)
         {
@@ -980,224 +945,15 @@ ffFtpFileOpen(meIo *io, meUByte *host, meUByte *port, meUByte *user, meUByte *pa
         }
         if((rwflag & (meRWFLAG_WRITE|meRWFLAG_NODIRLIST)) || (dirlist > 0))
             break;
-        ffCloseSockets(io,0) ;
+        ffCloseSockets(io,1) ;
         dirlist = 1 ;
     }
-    ffCloseSockets(io,0) ;
+    ffCloseSockets(io,1) ;
     if(!(rwflag & meRWFLAG_SILENT))
         mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Failed to %s file]",(rwflag & meRWFLAG_WRITE) ? "write":"read");
     return (rwflag & meRWFLAG_WRITE) ? -3:-2 ;
 }
 
-static int
-ffHttpFileOpen(meIo *io, meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByte *file, meUInt rwflag)
-{
-    meUByte pfb[meBUF_SIZE_MAX], buff[meBUF_SIZE_MAX+meBUF_SIZE_MAX], *thost, *tport, *ss, *s1, *pfn, cc ;
-    meInt pfs;
-    FILE *pfp=NULL;
-
-    if(((ss = getUsrVar((meUByte *)"http-post-file")) != errorm) && (*ss != '\0'))
-    {
-        SetUsrLclCmdVar((meUByte *) "http-post-file",(meUByte *) "",&usrVarList) ;
-        if((pfp=fopen((char *)ss,"rb")) == NULL)
-            return meFALSE ;
-        pfn = ss;
-    }
-    if ((ss = getUsrVar((meUByte *)"http-proxy-addr")) != errorm)
-    {
-        thost = ss ;
-        tport = getUsrVar((meUByte *)"http-proxy-port") ;
-    }
-    else
-    {
-        thost = host ;
-        tport = port ;
-    }
-
-    if(tport == NULL)
-        tport = (meUByte *)"80" ;
-
-    /* if we're already logged on somewhere else kill the connection */
-    ffCloseSockets(io,0) ;
-    if(meSocketIsBad(io->sock=ffOpenConnectUrlSocket(io,thost,tport)))
-    {
-        if(pfp != NULL)
-            fclose(pfp);
-        return meFALSE ;
-    }
-    sprintf((char *)buff,"[Connected, reading %s]",file);
-    if(io->urlBp != NULL)
-        ffUrlConsoleAddText(io,buff,0) ;
-    mlwrite(MWCURSOR|MWSPEC,buff);
-    
-    ss = buff;
-    if(pfp != NULL)
-    {
-        /* send POST message to http */
-        meStrcpy(ss,"POST ") ;
-        ss += 5;
-    }
-    else
-    {
-        /* send GET message to http */
-        meStrcpy(ss,"GET ") ;
-        ss += 4;
-    }
-    if(thost == host)
-        meStrcpy(ss,file) ;
-    else
-        ffUrlCreateName(ss,io->type,host,port,NULL,NULL,file) ;
-    ss += meStrlen(ss) ;
-    meStrcpy(ss," HTTP/1.0\r\nConnection: Keep-Alive\r\nHost: ") ;
-    ss += meStrlen(ss);
-    meStrcpy(ss,host);
-    ss += meStrlen(ss);
-    if((port != NULL) && meStrcmp(port,"80"))
-    {
-        *ss++ = ':';
-        meStrcpy(ss,port);
-        ss += meStrlen(ss);
-    }
-    if(user != NULL)
-    {
-        /* password supplied, encode */
-        meUByte tbuff[meBUF_SIZE_MAX] ;
-        meStrcpy(ss,"\r\nAuthorization: Basic ") ;
-        ss += 23 ;
-        meStrcpy(tbuff,user) ;
-        meStrcat(tbuff,":") ;
-        meStrcat(tbuff,pass) ;
-        ss = strBase64Encode(ss,tbuff) ;
-    }
-    if(pfp != NULL)
-    {
-        meInt ii, ll;
-        meUByte *s2 ;
-        fseek(pfp,0,SEEK_END);
-        ii = ftell(pfp) ;
-        fseek(pfp,0,SEEK_SET) ;
-        if((s1 = meStrrchr(pfn,'/')) == NULL)
-            s1 = pfn;
-        if((s2 = meStrrchr(s1,'\\')) == NULL)
-            s2 = s1;
-        pfs = sprintf((char *) pfb,"\r\n----5Iz6dTINmxNFw6S42Ryf98IBXX1NCe%x",(meUInt) clock());
-        ll = sprintf((char *) pfb+pfs,"\r\nContent-Disposition: form-data; name=\"file\"; filename=\"%s\"\r\nContent-Type: application/octet-stream\r\n\r\n",s2);
-        ss += sprintf((char *) ss,"\r\nContent-Length: %d",pfs-2+ll+ii+pfs+4);
-    }
-    if((s1 = getUsrVar((meUByte *)"http-cookies")) != errorm)
-    {
-        meStrcpy(ss,"\r\nCookie: ") ;
-        ss += 10 ;
-        meStrcpy(ss,s1) ;
-        ss += meStrlen(ss) ;
-    }
-    meStrcpy(ss,"\r\n\r\n") ;
-    if(io->urlFlags & meIOURLF_SHOW_DETAILS)
-    {
-        meUByte *s2 ;
-        ss = s2 = buff ;
-        while((cc=*s2++) != '\0')
-        {
-            if(cc == '\r')
-            {
-                s2[-1] = '\0' ;
-                ffUrlConsoleAddText(io,ss,0) ;
-                s2[-1] = '\r' ;
-                ss = ++s2 ;
-            }
-        }
-        resetBufferWindows(io->urlBp) ;
-        if(io->urlFlags & meIOURLF_SHOW_CONSOLE)
-            screenUpdate(meTRUE,2-sgarbf) ;
-    }
-    if(meSocketWrite(io->sock,(char *)buff,meStrlen(buff),0) <= 0)
-    {
-        ffCloseSockets(io,0) ;
-        if(pfp != NULL)
-            fclose(pfp);
-        return meFALSE ;
-    }
-    if(pfp != NULL)
-    {
-        meInt ii;
-        if(meSocketWrite(io->sock,(char *)pfb+2,meStrlen(pfb+2),0) <= 0)
-        {
-            ffCloseSockets(io,0) ;
-            fclose(pfp);
-            return meFALSE ;
-        }
-        while(((ii=fread(ffbuf,1,meFIOBUFSIZ,pfp)) > 0) &&
-              (meSocketWrite(io->sock,(char *)ffbuf,ii,0) > 0))
-            ;
-        fclose(pfp);
-        if(ii != 0)
-            return meFALSE ;
-        meStrcpy(pfb+pfs,"--\r\n");
-        if(meSocketWrite(io->sock,(char *)pfb,pfs+4,0) <= 0)
-        {
-            ffCloseSockets(io,0) ;
-            return meFALSE ;
-        }
-    }
-
-    /* must now ditch the header, read up to the first blank line */
-    while(ffReadSocketLine(io,io->sock,buff) > 0)
-    {
-        if(buff[0] == '\0')
-        {
-            ffread = ffremain ;
-            return meTRUE ;
-        }
-        if(!meStrncmp(buff,"Content-Length:",15))
-            io->length = meAtoi(buff+15) ;
-        else if(((buff[0] == 'L') || (buff[0] == 'l')) && !meStrncmp(buff+1,"ocation:",8))
-        {
-            /* The requested file is not here, its at the given location */
-            ss = buff+9 ;
-            while(((cc=*ss) == ' ') || (cc == '\t'))
-                ss++ ;
-            if(*ss != '\0')
-            {
-                /* printf("Got Location: [%s]\n",ss) ;*/
-                ffCloseSockets(io,0);
-                io->redirect++;
-                if(io->redirect > 5)
-                {
-                    if(rwflag & meRWFLAG_SILENT)
-                        return meABORT;
-                    return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[To many redirections - see console]");
-                }
-                /* if this starts with http:// https:// etc. then start again */
-                cc = ffUrlGetType(ss);
-                if(ffUrlTypeIsHttpFtp(cc))
-                {
-                    io->type = cc;
-                    return ffUrlFileOpen(io,ss,user,pass,rwflag,NULL);
-                }
-                if((ss[0] != '/') && ((s1 = meStrrchr(file,'/')) != NULL))
-                {
-                    pfs = s1 + 1 - file;
-                    memcpy(pfb,file,pfs);
-                    meStrcpy(pfb+pfs,ss);
-                    ss = pfb;
-                }
-                if(!meStrcmp(ss,file))
-                {
-                    if(rwflag & meRWFLAG_SILENT)
-                        return meABORT;
-                    return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Redirection loop to %s]",ss);
-                }
-                return ffHttpFileOpen(io,host,port,user,pass,ss,rwflag);
-            }
-        }
-    }
-    ffCloseSockets(io,0);
-    if(rwflag & meRWFLAG_SILENT)
-        return meABORT;
-    return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to read header of %s]",ss);
-}
-
-#if MEOPT_SSL
 static void
 ffSUrlLogger(meUByte *txt, void *iop)
 {
@@ -1207,45 +963,70 @@ ffSUrlLogger(meUByte *txt, void *iop)
 }
 
 static int
-ffSUrlFileOpen(meIo *io, meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByte *file, meUInt rwflag)
+ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meInt fdLen, meUByte *frmData, meUByte *postFName, meBuffer *bp)
 {
-    meUByte buff[meSSL_BUFF_SIZE], *s1, *s2;
+    meUByte buff[meSBUF_SIZE], urlBuff[meBUF_SIZE_MAX], *hst, *prt, *usr, *psw, *ups=NULL, *fl, *dd, cc, flags;
     meInt ii;
     
-    if(ffUrlTypeIsFtp(io->type))
-        return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Error - FTPS not yet supported]");
-    if(meSslSetup((io->urlFlags & (meIOURLF_WARNING|meIOURLF_SHOW_DETAILS|meIOURLF_VERBOSE|meIOURLF_IGN_CRT_ERR)),(io->urlBp != NULL) ? ffSUrlLogger:NULL,io,buff) < 0)
+    fl = url + 7;
+    flags = (io->urlFlags & (meIOURLF_WARNING|meIOURLF_SHOW_DETAILS|meIOURLF_VERBOSE|meIOURLF_IGN_CRT_ERR))|meSOCK_REUSE;
+    if(ffUrlTypeIsSecure(io->type))
     {
-        mlwrite(MWABORT|MWPAUSE,(meUByte *) "[%s]",buff);
-        return meFALSE;
+        flags |= meSOCK_USE_HTTPS;
+        fl++;
     }
-
-    if(((s1 = getUsrVar((meUByte *)"http-proxy-addr")) != errorm) && (*s1 != '\0'))
+    usr = psw = prt = NULL ;
+    hst = dd = urlBuff;
+    while(((cc=*fl++) != '\0') && (cc != '/'))
+    {
+        if(cc == ':')
+        {
+            *dd++ = '\0';
+            prt = dd;
+        }
+        else if(cc == '@')
+        {
+            *dd++ = '\0';
+            usr = hst;
+            if((psw = prt) != NULL)
+                ups = fl-(dd-psw)-1;
+            hst = dd;
+            prt = NULL;
+        }
+        else
+            *dd++ = cc;
+    }
+    fl--;
+    if(cc == '\0')
+    {
+        fl[0] = '/';
+        fl[1] = '\0';
+    }
+    *dd = '\0';
+    if((prt == NULL) || (prt[0] == '\0'))
     {
         ii = 0;
-        if((s2 = getUsrVar((meUByte *)"http-proxy-port")) != errorm)
-            ii = meAtoi(s2);
-        meSslSetProxy(s1,ii);
+        prt = (meUByte *) ((flags & meSOCK_USE_HTTPS) ? "443":"80");
     }
     else
-        meSslSetProxy(NULL,0);
-    if(((s1 = getUsrVar((meUByte *)"http-cookies")) == errorm) || (*s1 == '\0'))
-        s1 = NULL;
-    if(((s2 = getUsrVar((meUByte *)"http-post-file")) == errorm) || (*s2 == '\0'))
-        s2 = NULL;
-    else
-        SetUsrLclCmdVar((meUByte *)"http-post-file",(meUByte *) "",&usrVarList) ;
-
-    sprintf((char *)buff,"[Connecting to %s:%s]",host,((port == NULL) ? "443":(char *)port));
-    if(io->urlBp != NULL)
-        ffUrlConsoleAddText(io,buff,0) ;
-    mlwrite(MWCURSOR|MWSPEC,buff);
+        ii = atoi((char *) prt);
+        
+    if(ffUrlGetInfo(io,&hst,&prt,&usr,&psw) <= 0)
+        return meFALSE;
     
-    if((ii = meSslOpen(&(io->sslp),host,((port == NULL) || (port[0] == '\0')) ? 0:atoi((char *)port),user,pass,file,s1,s2,rwflag,buff)) < 0)
+    if(!(rwflag & meRWFLAG_SILENT) || (io->urlBp != NULL))
     {
-        sprintf((char *)buff,"[Failed to connect to %s:%s - %d]",host,((port == NULL) ? "443":(char *)port),ii) ;
+        sprintf((char *)buff,"[Connecting to %s:%s]",hst,prt);
         if(io->urlBp != NULL)
             ffUrlConsoleAddText(io,buff,0) ;
+        if(!(rwflag & meRWFLAG_SILENT))
+            mlwrite(MWCURSOR|MWSPEC,buff);
+    }    
+    if((ii = meSockHttpOpen(&(io->sslp),flags,hst,ii,usr,psw,fl,cookie,fdLen,frmData,postFName,buff)) < 0)
+    {
+        sprintf((char *)buff,"[Failed to connect to %s:%s - Error %d]",hst,prt,ii);
+        if(io->urlBp != NULL)
+            ffUrlConsoleAddText(io,buff,0);
         mlwrite(MWABORT|MWPAUSE|MWSPEC,buff);
         return meFALSE;
     }
@@ -1254,7 +1035,8 @@ ffSUrlFileOpen(meIo *io, meUByte *host, meUByte *port, meUByte *user, meUByte *p
         meUByte cc;
         /* printf("Got Location: [%s]\n",ss) ;*/
         /* if this starts with http:// https:// etc. then start again */
-        meSslClose(&(io->sslp),0);
+        meSockClose(&(io->sslp),0);
+        /* TODO flag to not redirect */
         io->redirect++;
         if(io->redirect > 5)
         {
@@ -1263,36 +1045,56 @@ ffSUrlFileOpen(meIo *io, meUByte *host, meUByte *port, meUByte *user, meUByte *p
             return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[To many redirections - see console]");
         }
         cc = ffUrlGetType(buff);
-        if(ffUrlTypeIsHttpFtp(cc))
+        if(cc & meIOTYPE_HTTP)
         {
+            if((cookie != NULL) && (((dd = meStrstr(buff,hst)) == NULL) || (((cc=dd[-1]) != '/') && (cc != '@'))))
+                cookie = NULL;
             io->type = cc;
-            return ffUrlFileOpen(io,buff,user,pass,rwflag,NULL);
+            dd = buff;
         }
-        if((buff[0] != '/') && ((s1 = meStrrchr(file,'/')) != NULL))
+        else if(cc != meIOTYPE_NONE)
         {
-            meStrcpy(ffbuf,buff);
-            ii = s1 + 1 - file;
-            memcpy(buff,file,ii);
-            meStrcpy(buff+ii,ffbuf);
+            if(rwflag & meRWFLAG_SILENT)
+                return meABORT;
+            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Redirection to an unsupported file type - %s]",buff);
         }
-        if(!meStrcmp(buff,file))
+        else
+        {
+            if(buff[0] != '/')
+            {
+                if((dd = meStrrchr(fl,'/')) != NULL)
+                    fl = dd;
+                fl++;
+            }
+            ii = fl-url;
+            memcpy(urlBuff,url,ii);
+            meStrcpy(urlBuff+ii,buff);
+            dd = urlBuff;
+        }
+        if(!meStrcmp(url,dd) && ((io->redirect > 1) || ((fdLen == 0) && (postFName == NULL))))
         {
             if(rwflag & meRWFLAG_SILENT)
                 return meABORT;
             return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Redirection loop to %s]",buff);
         }
-        return ffSUrlFileOpen(io,host,port,user,pass,buff,rwflag);
+        return ffHttpFileOpen(io,rwflag,dd,cookie,0,NULL,NULL,bp);
     }
     io->length = io->sslp.length;
+    if(((rwflag & (meRWFLAG_READ|meRWFLAG_INSERT)) == meRWFLAG_READ) && (bp != NULL))
+    {
+        if(ups != NULL)
+        {
+            ii = ups-url;
+            memcpy(buff,url,ii);
+            meStrcpy(buff+ii,meStrchr(ups,'@'));
+            url = buff;
+        }
+        if(fnamecmp(url,bp->fileName) && ((dd=meStrdup(url)) != NULL))
+            /* the original fname is freed in ffReadFile */
+            bp->fileName = dd;
+    }
     return meTRUE ;
 }
-#else
-static int
-ffSUrlFileOpen(meIo *io, meUByte *host, meUByte *port, meUByte *user, meUByte *pass, meUByte *file, meUInt rwflag)
-{
-    return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Error - HTTPS & FTPS not yet supported]");
-}
-#endif
 
 static void
 ffUrlFileSetupFlags(meIo *io, meUInt rwflag)
@@ -1305,7 +1107,7 @@ ffUrlFileSetupFlags(meIo *io, meUInt rwflag)
     io->urlFlags = 0;
     if((ss = getUsrVar(ffUrlFlagsVName[ti])) == errorm)
         ss = (meUByte *) "c";
-    if(meStrchr(ss,'i') != NULL)
+    else if(meStrchr(ss,'i') != NULL)
         io->urlFlags |= meIOURLF_IGN_CRT_ERR;
     if((meStrchr(ss,'c') != NULL) &&
        ((io->urlBp=bfind(ffUrlConsoleBName[ti],BFND_CREAT)) != NULL))
@@ -1330,18 +1132,16 @@ ffUrlFileSetupFlags(meIo *io, meUInt rwflag)
 }
 
 static int
-ffUrlFileOpen(meIo *io, meUByte *urlName, meUByte *user, meUByte *pass, meUInt rwflag, meBuffer *bp)
+ffUrlFileOpen(meIo *io, meUInt rwflag, meUByte *url, meUByte *user, meUByte *pass, meBuffer *bp)
 {
 #ifdef _WIN32
     static int init=0 ;
 #endif
-    meUByte buff[meBUF_SIZE_MAX+32], sockAddr[meBUF_SIZE_MAX], *host, *port, *ss, *dd, *ee, *uu, cc ;
     int ii ;
     
     io->fp = meBadFile;
     io->length = -1;
-    ffUrlFileSetupFlags(io,rwflag) ;
-    
+    ffUrlFileSetupFlags(io,rwflag);
 #ifdef _WIN32
     if(!init)
     {
@@ -1353,109 +1153,138 @@ ffUrlFileOpen(meIo *io, meUByte *urlName, meUByte *user, meUByte *pass, meUInt r
         init = 1 ;
     }
 #endif
-
-    ss = urlName + ((ffUrlTypeIsFtp(io->type)) ? 6:7);
-    if(ffUrlTypeIsSecure(io->type))
-        ss++;
-    dd = buff ;
-    ee = sockAddr ;
-    uu = port = NULL ;
-    host = dd ;
-    while(((cc=*ss++) != '\0') && (cc != DIR_CHAR))
-    {
-        *dd++ = cc ;
-        *ee++ = cc ;
-        if(cc == ':')
-            port = dd ;
-        else if(cc == '@')
-        {
-            uu = buff ;
-            host = dd ;
-            port = NULL ;
-        }
-    }
-    *dd = '\0' ;
-    *ee = '\0' ;
-    ss-- ;
-
-    if(port != NULL)
-        port[-1] = '\0' ;
-    if(uu != NULL)
-    {
-        host[-1] = '\0' ;
-        user = uu ;
-        if((pass = meStrchr(uu,':')) != NULL)
-            *pass++ = '\0' ;
-    }
-
-    if(ffUrlGetInfo(io,&host,&port,&user,&pass) <= 0)
-        return meFALSE ;
-
-    if(ss[0] == '\0')
-        ss = (meUByte *) "/" ;
+    
     /* is it a http: or ftp: */
-    if(ffUrlTypeIsSecure(io->type))
-        ii = ffSUrlFileOpen(io,host,port,user,pass,ss,rwflag) ;
-    else if(ffUrlTypeIsFtp(io->type))
-        ii = ffFtpFileOpen(io,host,port,user,pass,ss,rwflag) ;
-    else
-        ii = ffHttpFileOpen(io,host,port,user,pass,ss,rwflag) ;
-
-    if(ii > 0)
+    if(ffUrlTypeIsFtp(io->type))
     {
-        if((rwflag & meRWFLAG_READ) && (bp != NULL))
+        meUByte buff[meBUF_SIZE_MAX+128], sockAddr[meBUF_SIZE_MAX], *host, *port, *ss, *dd, *ee, *uu, cc ;
+        ss = url + ((ffUrlTypeIsSecure(io->type)) ? 7:6);
+        dd = buff ;
+        ee = sockAddr ;
+        uu = port = NULL ;
+        host = dd ;
+        while(((cc=*ss++) != '\0') && (cc != '/'))
         {
-            meUByte *ff, buff[meBUF_SIZE_MAX+128] ;
-            if(ffUrlTypeIsHttp(io->type))
+            *dd++ = cc ;
+            *ee++ = cc ;
+            if(cc == ':')
+                port = dd ;
+            else if(cc == '@')
             {
-                if(!(rwflag & meRWFLAG_INSERT))
-                {
-                    ffUrlCreateName(buff,io->type,host,port,user,NULL,ss) ;
-                    if(fnamecmp(buff,bp->fileName) && ((ff=meStrdup(buff)) != NULL))
-                        /* the original fname is freed in ffReadFile */
-                        bp->fileName = ff ;
-                }
-            }
-            else if(io->type & meIOTYPE_DIR)
-            {
-                /* for an ftp dir 2 things must be done:
-                 * 1) If the file name does not end in a '/' then add one and correct the buffer name
-                 * 2) Add the top Directory Listing line
-                 */
-                int ll ;
-                meStrcpy(buff,"Directory listing of: ") ;
-                if(rwflag & meRWFLAG_INSERT)
-                    meStrcpy(buff+22,urlName) ;
-                else
-                {
-                    meStrcpy(buff+22,bp->fileName) ;
-                    ll = meStrlen(buff) ;
-                    if(buff[ll-1] != DIR_CHAR)
-                    {
-                        buff[ll] = DIR_CHAR ;
-                        buff[ll+1] = '\0' ;
-                        /* the original fname is free'd in ffReadFile */
-                        bp->fileName = NULL ;
-                        resetBufferNames(bp,buff+22) ;
-                    }
-                }
-                addLineToEob(bp,buff) ;
+                uu = buff ;
+                host = dd ;
+                port = NULL ;
             }
         }
-        if((rwflag & (meRWFLAG_READ|meRWFLAG_WRITE)) && (io->urlBp != NULL))
+        *dd = '\0' ;
+        *ee = '\0' ;
+        ss-- ;
+        
+        if(port != NULL)
+            port[-1] = '\0' ;
+        if(uu != NULL)
         {
-            struct meTimeval tp ;
-            if(io->urlFlags & meIOURLF_SHOW_PROGRESS)
+            host[-1] = '\0' ;
+            user = uu ;
+            if((pass = meStrchr(uu,':')) != NULL)
+                *pass++ = '\0' ;
+        }
+        
+        if(ffUrlGetInfo(io,&host,&port,&user,&pass) <= 0)
+            return meFALSE ;
+        if(ss[0] == '\0')
+            ss = (meUByte *) "/" ;
+        if(((ii = ffFtpFileOpen(io,host,port,user,pass,ss,rwflag)) > 0) && (bp != NULL) && (io->type & meIOTYPE_DIR))
+        {
+            /* for an ftp dir 2 things must be done:
+             * 1) If the file name does not end in a '/' then add one and correct the buffer name
+             * 2) Add the top Directory Listing line
+             */
+            int ll ;
+            meStrcpy(buff,"Directory listing of: ") ;
+            if(rwflag & meRWFLAG_INSERT)
+                meStrcpy(buff+22,url) ;
+            else
             {
-                ffUrlConsoleAddText(io,(meUByte *)"[Progress: ",0x02);
-                io->urlFlags |= meIOURLF_CLOSE_PROGRESS;
+                meStrcpy(buff+22,bp->fileName) ;
+                ll = meStrlen(buff) ;
+                if(buff[ll-1] != DIR_CHAR)
+                {
+                    buff[ll] = DIR_CHAR ;
+                    buff[ll+1] = '\0' ;
+                    /* the original fname is free'd in ffReadFile */
+                    bp->fileName = NULL ;
+                    resetBufferNames(bp,buff+22) ;
+                }
             }
-            gettimeofday(&tp,NULL);
-            io->startTime = (tp.tv_sec * 1000) + (tp.tv_usec/1000);
+            addLineToEob(bp,buff) ;
         }
     }
     else
+    {
+        meCookie *cookie;
+        meUByte *s1, *s2, *cv;
+        meInt s1l;
+        meSockSetup((io->urlBp != NULL) ? ffSUrlLogger:NULL,io,20000,60000,meFIOBUFSIZ,ffbuf);
+        if(((s1 = getUsrVar((meUByte *)"http-proxy-addr")) != errorm) && (*s1 != '\0'))
+        {
+            ii = 0;
+            if((s2 = getUsrVar((meUByte *)"http-proxy-port")) != errorm)
+                ii = meAtoi(s2);
+            meSockSetProxy(s1,ii);
+        }
+        else
+            meSockSetProxy(NULL,0);
+        if((cv = getUsrVar((meUByte *)"http-cookies")) == errorm)
+            cookie = NULL;
+        else
+        {
+            cookie = &ffUrlCookie;
+            if(ffUrlCookie.value != cv)
+            {
+                ffUrlCookie.value = cv;
+                ffUrlCookie.buffLen = meStrlen(cv);
+            }
+        }
+        if(((s1 = getUsrVar((meUByte *)"http-post-data")) == errorm) || ((s1l=meStrlen(s1)) == 0))
+        {
+            s1 = NULL;
+            s1l = 0;
+        }
+        else
+            SetUsrLclCmdVar((meUByte *)"http-post-data",(meUByte *) "",&usrVarList);
+        if(((s2 = getUsrVar((meUByte *)"http-post-file")) == errorm) || (*s2 == '\0'))
+            s2 = NULL;
+        else
+            SetUsrLclCmdVar((meUByte *)"http-post-file",(meUByte *) "",&usrVarList);
+        ii = ffHttpFileOpen(io,rwflag,url,cookie,s1l,s1,s2,bp);
+        if((cookie != NULL) && (ffUrlCookie.value != cv))
+        {
+            register meVariable *vp=usrVarList;
+            while(vp != NULL)
+            {
+                if(vp->value == cv)
+                {
+                    vp->value = ffUrlCookie.value;
+                    break;
+                }
+                vp = vp->next;
+            }
+        }
+    }
+    if(ii <= 0)
         io->urlBp = NULL ;
+    else if((rwflag & (meRWFLAG_READ|meRWFLAG_WRITE)) && (io->urlBp != NULL))
+    {
+        struct meTimeval tp ;
+        if(io->urlFlags & meIOURLF_SHOW_PROGRESS)
+        {
+            ffUrlConsoleAddText(io,(meUByte *)"[Progress: ",0x02);
+            io->urlFlags |= meIOURLF_CLOSE_PROGRESS;
+        }
+        gettimeofday(&tp,NULL);
+        io->startTime = (tp.tv_sec * 1000) + (tp.tv_usec/1000);
+    }
     return ii ;
 }
 
@@ -1511,10 +1340,7 @@ ffUrlFileClose(meIo *io, meUInt rwflag)
             io->urlBp = NULL ;
         }
     }
-    if(io->sockUrl == NULL)
-        ffCloseSockets(io,1) ;
-    else
-        timerSet(SOCKET_TIMER_ID,-1,meSOCKET_TIMEOUT) ;
+    ffCloseSockets(io,0);
     return meTRUE ;
 }
 
@@ -1605,7 +1431,7 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
         {
             meUByte cc, dd ;
             int ii ;
-
+            
             while((dd=*s++) != '\0')
             {
                 if(dd == 's')
@@ -1656,7 +1482,7 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
     else
 #endif
 #if MEOPT_EXTENDED_BACKUP
-    if((backupPathFlag > 0) && !ffUrlTypeIsHttpFtp(ft))
+        if((backupPathFlag > 0) && !ffUrlTypeIsHttpFtp(ft))
     {
         if(backupPathFlag == 1)
         {
@@ -1710,7 +1536,7 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
     else
 #endif
         meStrcpy(filename,fn) ;
-
+    
 #ifdef _UNIX
     if((backl == '~') && ((meSystemCfg & (meSYSTEM_DOSFNAMES|meSYSTEM_HIDEBCKUP)) == meSYSTEM_HIDEBCKUP))
     {
@@ -1800,11 +1626,9 @@ ffgetBuf(meIo *io)
             return meFALSE;
         else if(ffremain > meFIOBUFSIZ)
             ffremain = meFIOBUFSIZ;
-#if MEOPT_SSL
-        if(ffUrlTypeIsSecure(io->type))
-            ffremain = meSslRead(&(io->sslp),ffremain,ffbuf);
+        if(ffUrlTypeIsHttp(io->type))
+            ffremain = meSockRead(&(io->sslp),ffremain,ffbuf,0);
         else
-#endif
             ffremain = meSocketRead(io->sock,(char *) ffbuf,ffremain,0);
         if(ffremain <= 0)
         {
@@ -1865,7 +1689,7 @@ ffgetline(meIo *io, meLine **line)
     meUByte *text, *endp, *lle=NULL;
     meUByte cc, cs, ecc=0;
     int len=0, newl, ii;
-
+    
     do {
         if(ffremain <= 0)
         {
@@ -1925,9 +1749,9 @@ ffgetline(meIo *io, meLine **line)
                         io->flags |= meIOFLAG_BINARY;
                     else
                         newl++;
-
+                
                 ffremain -= ((size_t) ffcur) - ((size_t) endp) ;
-
+                
                 if(newl)
                 {
                     if(len == 0)
@@ -1980,17 +1804,17 @@ ffgetline(meIo *io, meLine **line)
                 ecc = 0 ;
         }
     } while(ffremain < 0) ;
-
+    
     if(io->flags & (meIOFLAG_BINMOD|meIOFLAG_RBNMOD))
     {
         if(len == 0)
             return meFALSE ;
-
+        
         if(io->flags & meIOFLAG_BINMOD)
         {
             meUInt cpos ;
             meUByte cc ;
-
+            
             text = lp->text ;
             newl = meBINARY_BPL ;
             while(--newl >= 0)
@@ -2022,7 +1846,7 @@ ffgetline(meIo *io, meLine **line)
             }
             text[8] = ':' ;
             text[9] = ' ' ;
-
+            
             text[(meBINARY_BPL*3)+10] = ' ' ;
             text[(meBINARY_BPL*3)+11] = '|' ;
             text[(meBINARY_BPL*3)+12] = ' ' ;
@@ -2032,7 +1856,7 @@ ffgetline(meIo *io, meLine **line)
         else
         {
             meUByte cc ;
-
+            
             text = lp->text ;
             lp->length = len*2 ;
             text[len*2] = '\0' ;
@@ -2093,7 +1917,7 @@ ffgetline(meIo *io, meLine **line)
             io->flags |= meIOFLAG_LTDIFF;
     }
     *line = lp ;
-
+    
     return meTRUE ;
 }
 
@@ -2121,18 +1945,18 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
             io->flags = meIOFLAG_CRYPT;
 #endif
     }
-
+    
     /* If meIOTYPE_PIPE the fp handle must be already set, if file type should be NONE as any file: prefix should have been removed by now */
     if(ffUrlTypeIsHttpFtp(io->type))
     {
 #if MEOPT_SOCKET
         int rr ;
-#ifdef _UNIX
         io->redirect = 0;
+#ifdef _UNIX
         /* must stop any signals or the connection will fail */
         meSigHold() ;
 #endif
-        if((rr=ffUrlFileOpen(io,fname,NULL,NULL,flags,bp)) <= 0)
+        if((rr=ffUrlFileOpen(io,flags,fname,NULL,NULL,bp)) <= 0)
         {
 #ifdef _UNIX
             meSigRelease() ;
@@ -2246,7 +2070,7 @@ ffReadFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
     io->type = ffUrlGetType(fname);
     if(ffReadFileOpen(io,fname,flags,bp) <= 0)
         return meABORT ;
-
+    
     io->offset = 0 ;
     if(length != 0)
     {
@@ -2300,7 +2124,7 @@ ffReadFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
 #endif
 #endif
     }
-
+    
     nline = 0;
     lp2 = hlp ;	        /* line after  insert */
     lp0 = lp2->prev ;	/* line before insert */
@@ -2322,7 +2146,7 @@ ffReadFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
     /* complete the link */
     lp2->prev = lp0;
     lp0->next = lp2;
-
+    
 #if MEOPT_SOCKET
     /* loading an ftp or http file can lead to a file name change, free
      * off the old one now that we don't need it any more */
@@ -2384,7 +2208,7 @@ ffReadFileToBuffer(meUByte *sfname, meUByte *buff, meInt buffLen)
         return rr ;
     if(((rr=ffgetBuf(&meior)) >= 0) && (ffremain > 0))
     {
-    
+        
         if(ffremain >= buffLen)
             ffremain = buffLen-1;
         memcpy(buff,ffcur,ffremain);
@@ -2407,7 +2231,7 @@ ffputBuf(meIo *io)
         if(((int) meSocketWrite(io->sock,(char *) ffbuf,ffremain,0)) != ffremain)
         {
             io->flags |= meIOFLAG_ERROR;
-            return mlwrite(MWABORT,(meUByte *)"[Send failed - %d]",meSocketGetError()) ;
+            return mlwrite(MWABORT,(meUByte *)"[Send failed - Error %d]",meSocketGetError()) ;
         }
         else if(io->urlFlags & meIOURLF_CLOSE_PROGRESS)
             ffUrlConsoleAddText(io,(meUByte *)"#",(meLineGetLength(io->urlBp->dotLine) >= frameCur->width - 2) ? 0x02:0x03) ;
@@ -2420,13 +2244,13 @@ ffputBuf(meIo *io)
         if((WriteFile(io->fp,ffbuf,ffremain,(DWORD *)&written,NULL) == 0) || (written != ffremain))
         {
             io->flags |= meIOFLAG_ERROR;
-            return mlwrite(MWABORT,(meUByte *)"[Write failed - %d]",meFileGetError());
+            return mlwrite(MWABORT,(meUByte *)"[Write failed - Error %d]",meFileGetError());
         }
 #else
         if(((int) fwrite(ffbuf,1,ffremain,io->fp)) != ffremain)
         {
             io->flags |= meIOFLAG_ERROR;
-            return mlwrite(MWABORT,(meUByte *)"[Write failed - %d]",meFileGetError());
+            return mlwrite(MWABORT,(meUByte *)"[Write failed - Error %d]",meFileGetError());
         }
 #endif
     }
@@ -2472,7 +2296,7 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
         /* must stop any signals or the connection will fail */
         meSigHold() ;
 #endif
-        if((ii=ffUrlFileOpen(io,fname,NULL,NULL,(flags & (meRWFLAG_WRITE|meRWFLAG_BACKUP|meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_STAT|meRWFLAG_SILENT)),bp)) <= 0)
+        if((ii=ffUrlFileOpen(io,(flags & (meRWFLAG_WRITE|meRWFLAG_BACKUP|meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_STAT|meRWFLAG_SILENT)),fname,NULL,NULL,bp)) <= 0)
         {
 #ifdef _UNIX
             meSigRelease() ;
@@ -2680,11 +2504,11 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
             /* Cannot write to a readonly file, and cannot write to hidden or system file if attribs dont include these flag */
             if(!(io->flags & meIOFLAG_NEWFILE) && (fa & (FILE_ATTRIBUTE_READONLY|FILE_ATTRIBUTE_HIDDEN|FILE_ATTRIBUTE_SYSTEM)))
                 meFileSetAttributes(fname,FILE_ATTRIBUTE_NORMAL) ;
-
+            
             /* Windows must open the file with the correct permissions to support the compress attribute */
             if((io->fp=CreateFile((const char *) fname,GENERIC_READ|GENERIC_WRITE,FILE_SHARE_READ,NULL,create,
-                                   ((bp == NULL) ? meUmask:bp->stats.stmode),
-                                   NULL)) == INVALID_HANDLE_VALUE)
+                                  ((bp == NULL) ? meUmask:bp->stats.stmode),
+                                  NULL)) == INVALID_HANDLE_VALUE)
             {
                 mlwrite(MWABORT,(meUByte *)"[Cannot open file \"%s\" for writing - %d]",fname,GetLastError());
                 return -3 ;
@@ -2750,7 +2574,7 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
             io->flags |= meIOFLAG_CRYPT;
 #endif
     }
-
+    
 #if (defined _DOS)
     /* the directory time stamps on dos are not updated so the best
      * we can do is flag that the dirLists are out of date when WE
@@ -2773,7 +2597,7 @@ int
 ffWriteFileWrite(meIo *io, int len, meUByte *buff, int eolFlag)
 {
     meUByte cc, dd ;
-
+    
     if(io->flags & (meIOFLAG_BINMOD|meIOFLAG_RBNMOD))
     {
         if(io->flags & meIOFLAG_BINMOD)
@@ -2835,7 +2659,7 @@ int
 ffWriteFileClose(meIo *io, meUInt flags, meBuffer *bp)
 {
     int ret ;
-
+    
     /* add a ^Z at the end of the file if needed */
     ret = meABORT ;
     if(!(io->flags & meIOFLAG_ERROR))
@@ -2845,7 +2669,7 @@ ffWriteFileClose(meIo *io, meUInt flags, meBuffer *bp)
         if(ffputBuf(io) >= 0)
             ret = meTRUE ;
     }
-
+    
 #if MEOPT_SOCKET
     if(ffUrlTypeIsHttpFtp(io->type))
     {
@@ -2872,7 +2696,7 @@ ffWriteFileClose(meIo *io, meUInt flags, meBuffer *bp)
         meSigRelease() ;
 #endif
     }
-
+    
 #if MEOPT_NARROW
     if((bp != NULL) && (bp->narrow != NULL) && !(flags & meRWFLAG_IGNRNRRW))
         meBufferCollapseNarrowAll(bp) ;
@@ -2888,7 +2712,7 @@ ffWriteFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
     {
         register meLine *lp ;
         long noLines ;
-
+        
         /* store the number of lines now cos the close may narrow the buffer and the number of
          * lines will be wrong */
         noLines = bp->lineCount+1 ;
@@ -2924,7 +2748,7 @@ int
 ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
 {
     int rr=meTRUE, r1 ;
-
+    
     /* By now sfname & dfname should have had a 'file:' URL prefix removed */
     meior.type = ffUrlGetType(sfname);
     meAssert((meior.type & meIOTYPE_FILE) == 0);
@@ -3015,7 +2839,7 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
         FILETIME creationTime, lastAccessTime, lastWriteTime ;
 #endif
         int presTimeStamp ;
-
+        
         if((rr=ffReadFileOpen(&meior,sfname,meRWFLAG_READ|(dFlags & (meRWFLAG_NODIRLIST|meRWFLAG_SILENT)),NULL)) <= 0)
             return rr ;
         if((rr=ffWriteFileOpen(&meiow,dfname,meRWFLAG_WRITE|(dFlags & (meRWFLAG_BACKUP|meRWFLAG_SILENT)),NULL)) <= 0)
@@ -3063,29 +2887,30 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
         rr = ffWriteFileOpen(&meior,sfname,dFlags & (meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_STAT|meRWFLAG_BACKUP|meRWFLAG_SILENT),NULL) ;
     }
 #if MEOPT_SOCKET
-    /* TODO - Can a http/https socket be reused? Regardless of whether content-length sent, can we simply send the next request? And is this reliable?
-     * If so may improve performance by removing the overhead of opening the connection (particularly for https) in which case it may be better to
-     * look at sockUrl so https? can keep open and extend FTPCLOSE to include HTTP. */
-    if((rr > 0) && (dFlags & meRWFLAG_FTPCLOSE) && (!meSocketIsBad(meior.ccsk) || !meSocketIsBad(meiow.ccsk)))
+    if((rr > 0) && (dFlags & meRWFLAG_SOCKCLOSE))
     {
-#ifdef _UNIX
-        meSigHold() ;
-#endif
-        if(!meSocketIsBad(meior.ccsk))
+        timerClearExpired(SOCKET_TIMER_ID);
+        if(meSockFileIsInUse(&(meior.sslp)) || !meSocketIsBad(meior.ccsk) || !meSocketIsBad(meiow.ccsk))
         {
-            if(!(dFlags & meRWFLAG_NOCONSOLE))
-                ffUrlFileSetupFlags(&meior,dFlags);
-            ffCloseSockets(&meior,1);
-        }
-        if(!meSocketIsBad(meiow.ccsk))
-        {
-            if(!(dFlags & meRWFLAG_NOCONSOLE))
-                ffUrlFileSetupFlags(&meiow,dFlags);
-            ffCloseSockets(&meiow,1);
-        }
 #ifdef _UNIX
-        meSigRelease() ;
+            meSigHold();
 #endif
+            if(meSockFileIsInUse(&(meior.sslp)) || !meSocketIsBad(meior.ccsk))
+            {
+                if(!(dFlags & meRWFLAG_NOCONSOLE))
+                    ffUrlFileSetupFlags(&meior,dFlags);
+                ffCloseSockets(&meior,3);
+            }
+            if(!meSocketIsBad(meiow.ccsk))
+            {
+                if(!(dFlags & meRWFLAG_NOCONSOLE))
+                    ffUrlFileSetupFlags(&meiow,dFlags);
+                ffCloseSockets(&meiow,3);
+            }
+#ifdef _UNIX
+            meSigRelease();
+#endif
+        }
     }
 #endif
     return rr ;
