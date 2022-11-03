@@ -93,7 +93,7 @@ add-color-scheme .scheme.gdfrej .col0 .col1 .col2 .col3 .col0 .col4 .col2 .col4 
 add-color-scheme .scheme.gdfrejpad .col0 .col1 .col2 .col3 .col0 .col4 .col2 .col4 0 8 1 9 0 8 1 9
 ; Games
 add-color-scheme .scheme.cardback .col0 .col1 .col2 .col3 .col0 .col4 .col2 .col4 0 8 1 9 0 8 1 9
-add-color-scheme .scheme.cardfore .col0 .col1 .col2 .col3 .col0 .col4 .col2 .col4 0 8 1 9 0 8 1 9
+add-color-scheme .scheme.cardfore .col1 .col2 .col11 .col2 .col9 .col7 .col5 .col9 0 8 1 9 0 8 1 9
 add-color-scheme .scheme.mjg1 .col0 .col1 .col2 .col3 .col0 .col4 .col2 .col4 0 8 1 9 0 8 1 9
 add-color-scheme .scheme.mjg2 .col0 .col1 .col2 .col3 .col0 .col4 .col2 .col4 0 8 1 9 0 8 1 9
 add-color-scheme .scheme.mi1 .col0 .col1 .col2 .col3 .col0 .col4 .col2 .col4 0 8 1 9 0 8 1 9

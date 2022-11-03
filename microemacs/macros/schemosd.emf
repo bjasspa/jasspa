@@ -887,12 +887,12 @@ define-macro scheme-editor
   set-variable .schm-osd.redraw &cbind "redraw"
   !force set-variable #l0 @1
   !if $status
+  !elif &and &not @# &not &seq &set #l0 .schm-osd.fname "ERROR"
+  !elif &seq &set #l0 .change-scheme.current "ERROR"
+    !iif &seq &set #l0 .schm-osd.fname "ERROR"  set-variable #l0 "schemed"
+  !endif
+  !if &not &seq .schm-osd.fname #l0
     set-variable .schm-osd.fname #l0
-    0 schm-osd-load-fname
-  !elif &seq .schm-osd.fname "ERROR"
-    !if &seq &set .schm-osd.fname .change-scheme.current "ERROR"
-      set-variable .schm-osd.fname "schemed"
-    !endif
     0 schm-osd-load-fname
   !endif
   .osd.schm osd

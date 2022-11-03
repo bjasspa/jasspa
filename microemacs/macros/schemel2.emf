@@ -127,7 +127,7 @@ add-color-scheme .scheme.gdfselpad .col1 .col22 .col2 .col22 .col38 .col1 .col38
 add-color-scheme .scheme.gdfrej .col1 .col18 .col2 .col18 .col20 .col1 .col20 .col2 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.gdfrejpad .col1 .col18 .col2 .col18 .col18 .col1 .col18 .col2 0 8 0 8 0 8 0 8
 ; Games
-add-color-scheme .scheme.cardback .col17 .col1 .col5 .col1 .col5 .col1 .col17 .col1 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.cardback .col7 .col1 .col5 .col1 .col5 .col1 .col24 .col1 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.cardfore .col17 .col5 .col18 .col5 .col23 .col13 .col24 .col16 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.mjg1 .col5 .col1 .col1 .col1 .col17 .col24 .col17 .col21 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.mjg2 .col17 .col22 .col17 .col23 .col17 .col13 .col17 .col5 0 8 0 8 0 8 0 8

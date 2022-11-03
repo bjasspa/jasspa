@@ -98,8 +98,8 @@ set-variable .fhook-svn-status.command-kbind &rig &lset &lset &lset &lset &lset 
 set-variable .fhook-svn-status.command-desc  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-desc  1 "" 2 "" 3 "Help on Subversion Status" 4 "Open Subversion menu" 5 "Rerun svn-status" 6 "" 2
 set-variable .fhook-svn-status.refresh "svn-status-refresh"
 
-set-variable .svn.cnames  "|Add|Blame|Checkout|Commit|Copy|Delete|Diff|Log|Move|Status|Update|Server Copy|Server Move|Resolve|Ignore|Info|"
-set-variable .svn.cflags  "|RIS*!|Vhs|UR$|CRS*!|NPrS*!|KrS*!|ZRxWpwS|Vs|NPrS*!|ZRAIuwS|ZRMS*|nCPs*!|nCPs*!|ZRaS*|iD!|sD^!|"
+set-variable .svn.cnames  "|Add|Blame|Checkout|Commit|Copy|Delete|Diff|Log|Move|Status|Update|Server Copy|Server Move|Resolve|Ignore|Info|XDiff|"
+set-variable .svn.cflags  "|RIS*!|Vhs|UR$|CRS*!|NPrS*!|KrS*!|ZRxWpwS|Vs|NPrS*!|ZRAIuwS|ZRMS*|nCPs*!|nCPs*!|ZRaS*|iD!|sD^!|ZtS|"
 set-variable .svn.cdefs1  "|1|0|0|"
 set-variable .svn.cdefs2  "|0|0|"
 set-variable .svn.cdefs3  "||1|0|"
@@ -116,7 +116,8 @@ set-variable .svn.cdefs13 "|||1|"
 set-variable .svn.cdefs14 "|0|0|2|"
 set-variable .svn.cdefs15 "||"
 set-variable .svn.cdefs16 "|"
-set-variable .svn.ccount  16
+set-variable .svn.cdefs17 "|0|1|"
+set-variable .svn.ccount  17
 
 set-variable .svn.com &reg &spr "/history/%s/svn/com" $platform "svn"
 !iif &sin " " .svn.com  set-variable .svn.com &spr "\"%s\"" .svn.com
@@ -533,6 +534,10 @@ set-variable #l9 .svn.ccount
         osd .osd.svn-osd &inc #l2 1 "fh" "    "
         osd .osd.svn-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Refresh directory \Hlisting" #l0 svn-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
+      !elif &seq #l1 "t"
+        osd .osd.svn-osd &inc #l2 1 "fh" "    "
+        osd .osd.svn-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use new \Htab option for multiple files    " #l0 svn-osd-cbc
+        set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "U"
         !force svn-get-base-url $buffer-fname
         osd .osd.svn-osd &inc #l2 1 "Sf" "    Repository \HURL:" &add #l2 2
@@ -644,8 +649,7 @@ set-variable #l9 .svn.ccount
           !iif &band @# 16  !continue
         !endif
       !elif &and &band @# 1 &sin " " #l4
-        set-variable #l4 &rep &rep #l4 "\\" "\\\\" "\"" "\\\""
-        set-variable #l4 &cat &cat "\"" #l4 "\""
+        set-variable #l4 &cat &cat "\"" &rep &rep #l4 "\\" "\\\\" "\"" "\\\"" "\""
       !endif
       -1 insert-string &cat "\b" #l4
     !done
@@ -1335,6 +1339,49 @@ define-macro svn-server-move
   !endif
   goto-position "\x82"
   13 svn-exec 3 $buffer-fname
+!emacro
+
+;; SVN XDiff ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro svn-xdiff
+  !if &not &exi %svn-xdiff-com
+    ml-write "[ERROR: svn-xdiff not configured - set %svn-xdiff-com first]"
+    !abort
+  !endif
+  17 svn-osd
+  0 svn-get-file-list 0 &lget .svn.cvalues17 1
+  set-variable #l0 $buffer-bname
+  !iif &not &seq &rig &set #l1 $buffer-fname -1 "/"  set-variable #l1 &lef #l1 &rsin "/" #l1
+  find-buffer "*svn-cmdline*"
+  beginning-of-buffer
+  forward-delete-char
+  end-of-line
+  backward-delete-char
+  beginning-of-line
+  replace-string "\b" "\n"
+  beginning-of-buffer
+  set-variable #l3 0
+  !while &not &seq @wc ""
+    !if &not &seq &set #l2 @wl ""
+      find-buffer #l0
+      !iif &sin " " &set #l4 &cat #l1 #l2  set-variable #l4 &cat &cat "\"" &rep &rep #l4 "\\" "\\\\" "\"" "\\\"" "\""
+      !if &not &exi %svn-xdiff-nto
+        set-variable #l5 %svn-xdiff-com
+      !elif &not #l3
+        set-variable #l5 &rep %svn-xdiff-com %svn-xdiff-nto ""
+      !elif &equ #l3 1
+        set-variable #l5 %svn-xdiff-com
+        ; give the xdiff tool a chance to get running
+        1000 command-wait
+      !endif
+      ml-write &cat "Exec: " &rep #l5 "%f" #l4
+      0 shell-command &rep #l5 "%f" #l4
+      set-variable #l3 &add #l3 1
+      find-buffer "*svn-cmdline*"
+    !endif
+    forward-line
+  !done
+  find-buffer #l0
 !emacro
 
 ;; SVN Setup dialog ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

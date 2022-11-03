@@ -60,9 +60,9 @@ define-macro-file rect string-rectangle space-rectangle copy-rectangle yank-rect
 define-macro-file majormod buffer-major-mode major-mode-setup major-mode-help major-mode-tool
 define-macro-file find find grep replace-string-in-files query-replace-string-in-files
 define-macro-file hkdirlst file-browser file-browser-close file-browser-swap-buffers
+define-macro-file games cross-word Brag Metris Patience Triangle Mahjongg Match-It
 define-macro-file charsutl charset-change charset-iso-to-user charset-user-to-iso
 define-macro-file toolbar toolbar toolbar-close toolbar-open toolbar-mode-line
-define-macro-file games cross-word Metris Patience Triangle Mahjongg Match-It
 define-macro-file spell spell-word spell-buffer spell-edit-word find-word
 define-macro-file narrow narrow-search-forward narrow-search-backward
 define-macro-file notes notes notes-file notes-instant notes-context

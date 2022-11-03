@@ -543,6 +543,7 @@ set-variable #l1 0
 ; MENU #21 - GAMES sub-menu
 ;
 osd 21 0   b
+osd 21 5   ""  "\HBrag"       f Brag
 osd 21 10  ""  "\HCross-Word" f cross-word
 osd 21 20  ""  "\HMahjongg"   f Mahjongg
 osd 21 30  ""  "Match-\HIt"   f Match-It

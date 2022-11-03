@@ -1,0 +1,1225 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2022 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     2022-08-13 15:27:07
+; Synopsis:    9 card brag game
+; Authors:     Steve
+;
+;  Best:   (9C,9S,9D) (AH,AC,AD) (KD,KH,KS)
+;  Worst:  (2S,2H,5D) (JS,9C,3D) (JC,8S,6H)
+;
+0 define-macro bragSetGetIdx 
+  set-variable #l4 &ban 15 &set #l1 &atoi &set #l0 @1
+  set-variable #l5 &ban 15 &set #l2 &atoi &mid #l0 1 1
+  set-variable #l6 &ban 15 &set #l3 &atoi &rig #l0 -1
+  !if &gre #l5 #l4
+    set-variable #l0 #l1
+    set-variable #l4 &ban 15 &set #l1 #l2
+    set-variable #l5 &ban 15 &set #l2 #l0
+  !endif
+  !if &gre #l6 #l4
+    set-variable #l0 #l1
+    set-variable #l4 &ban 15 &set #l1 #l3
+    set-variable #l6 &ban 15 &set #l3 #l0
+  !endif
+  !if &gre #l6 #l5
+    set-variable #l0 #l2
+    set-variable #l5 &ban 15 &set #l2 #l3
+    set-variable #l6 &ban 15 &set #l3 #l0
+  !endif
+  !if &equ #l4 #l5
+    !if &equ #l5 #l6
+      !if &equ #l5 7
+        set-variable @2 722
+      !elif &gre #l5 7
+        set-variable @2 &add 709 #l4
+      !else
+        set-variable @2 &add 710 #l4
+      !endif
+    !else
+      set-variable @2 &add &add 265 &mul #l4 12 #l6
+    !endif
+  !elif &equ #l5 #l6
+    set-variable @2 &add &add 264 &mul #l5 12 #l4
+  !else
+    !iif &set #l0 &equ &ban 112 #l1 &ban 112 #l2  set-variable #l0 &equ &ban 112 #l1 &ban 112 #l3
+    !if &and &equ #l4 &add #l5 1 &equ #l4 &add #l6 2
+      !if #l0
+        set-variable @2 &add 698 #l6
+      !else
+        set-variable @2 &add 686 #l6
+      !endif
+    !elif &and &and &equ #l4 12 &equ #l5 1 &equ #l6 0
+      !if #l0
+        set-variable @2 709
+      !else
+        set-variable @2 697
+      !endif
+    !elif #l0
+      set-variable @2 &add &add &add 421 &lget .Brag.highSetOff &add #l4 1 &lget .Brag.triangNo #l5 #l6 
+    !else
+      set-variable @2 &add &add &lget .Brag.highSetOff &add #l4 1 &lget .Brag.triangNo #l5 #l6 
+    !endif
+  !endif
+!emacro
+
+0 define-macro bragSetGetData 
+  set-variable #l4 &ban 15 &set #l1 &atoi &set #l0 @1
+  set-variable #l5 &ban 15 &set #l2 &atoi &mid #l0 1 1
+  set-variable #l6 &ban 15 &set #l3 &atoi &rig #l0 -1
+  !if &gre #l5 #l4
+    set-variable #l0 #l1
+    set-variable #l4 &ban 15 &set #l1 #l2
+    set-variable #l5 &ban 15 &set #l2 #l0
+  !endif
+  !if &gre #l6 #l4
+    set-variable #l0 #l1
+    set-variable #l4 &ban 15 &set #l1 #l3
+    set-variable #l6 &ban 15 &set #l3 #l0
+  !endif
+  !if &gre #l6 #l5
+    set-variable #l0 #l2
+    set-variable #l5 &ban 15 &set #l2 #l3
+    set-variable #l6 &ban 15 &set #l3 #l0
+  !endif
+  !if &equ #l4 #l5
+    !if &equ #l5 #l6
+      !if &equ #l5 7
+        set-variable @2 722
+      !elif &gre #l5 7
+        set-variable @2 &add 709 #l4
+      !else
+        set-variable @2 &add 710 #l4
+      !endif
+      set-variable @3 &spr "%s%s%sPrial of %ss" &itoa #l1 &itoa #l2 &itoa #l3 &lget .Brag.cardNumberNames &add #l4 1
+    !else
+      set-variable @2 &add &add 265 &mul #l4 12 #l6
+      set-variable @3 &spr "%s%s%sPair of %ss" &itoa #l1 &itoa #l2 &itoa #l3 &lget .Brag.cardNumberNames &add #l4 1
+    !endif
+  !elif &equ #l5 #l6
+    set-variable @2 &add &add 264 &mul #l5 12 #l4
+    set-variable @3 &spr "%s%s%sPair of %ss" &itoa #l2 &itoa #l3 &itoa #l1 &lget .Brag.cardNumberNames &add #l5 1
+  !else
+    !iif &set #l0 &equ &ban 112 #l1 &ban 112 #l2  set-variable #l0 &equ &ban 112 #l1 &ban 112 #l3
+    !if &and &equ #l4 &add #l5 1 &equ #l4 &add #l6 2
+      set-variable @2 &add &con #l0 698 686 #l6
+      !if &equ #l4 12
+        set-variable @3 &spr "%s%s%sA-K-Q%s" &itoa #l1 &itoa #l2 &itoa #l3 &con #l0 " Straight" ""
+      !else
+        set-variable @3 &spr "%s%s%s%s-%s-%s%s" &itoa #l3 &itoa #l2 &itoa #l1 &lget .Brag.cardNumberNames &add #l6 1 &lget .Brag.cardNumberNames &add #l5 1 &lget .Brag.cardNumberNames &add #l4 1 &con #l0 " Straight" ""
+      !endif
+    !elif &and &and &equ #l4 12 &equ #l5 1 &equ #l6 0
+      !if #l0
+        set-variable @2 709
+        set-variable @3 &spr "%s%s%sOne-Two-Three Straight" &itoa #l1 &itoa #l3 &itoa #l2
+      !else
+        set-variable @2 697
+        set-variable @3 &spr "%s%s%sOne-Two-Three" &itoa #l1 &itoa #l3 &itoa #l2
+      !endif
+    !elif #l0
+      set-variable @2 &add &add &add 421 &lget .Brag.highSetOff &add #l4 1 &lget .Brag.triangNo #l5 #l6 
+      set-variable @3 &spr "%s%s%s%s flush" &itoa #l1 &itoa #l2 &itoa #l3 &lget .Brag.cardNumberNames &add #l4 1
+    !else
+      set-variable @2 &add &add &lget .Brag.highSetOff &add #l4 1 &lget .Brag.triangNo #l5 #l6 
+      set-variable @3 &spr "%s%s%s%s high" &itoa #l1 &itoa #l2 &itoa #l3 &lget .Brag.cardNumberNames &add #l4 1
+    !endif
+  !endif
+!emacro
+
+0 define-macro bragHandOrder
+  set-variable #l0 @1
+  bragSetGetData &lef #l0 3 #l4 #l1
+  bragSetGetData &mid #l0 3 3 #l5 #l2
+  bragSetGetData &rig #l0 -3 #l6 #l3
+ ; insert-string &spr "  %s > (%s%s,%s%s,%s%s)\n" #l0 #l1 #l4 #l2 #l5 #l3 #l6
+  !if &gre #l5 #l4
+    set-variable #l7 #l1
+    set-variable #l1 #l2
+    set-variable #l2 #l7
+    set-variable #l7 #l4
+    set-variable #l4 #l5
+    set-variable #l5 #l7
+  !endif
+  !if &gre #l6 #l4
+    set-variable #l7 #l1
+    set-variable #l1 #l3
+    set-variable #l3 #l7
+    set-variable #l7 #l4
+    set-variable #l4 #l6
+    set-variable #l6 #l7
+  !endif
+  !if &gre #l6 #l5
+    set-variable #l7 #l2
+    set-variable #l2 #l3
+    set-variable #l3 #l7
+    set-variable #l7 #l5
+    set-variable #l5 #l6
+    set-variable #l6 #l7
+  !endif
+  set-variable @2 &cat &cat &lef #l1 3 &lef #l2 3 &lef #l3 3
+  set-variable @3 &spr "~%s~%s~%s~%s~%s~%s~" #l4 #l5 #l6 &rig #l1 3 &rig #l2 3 &rig #l3 3
+!emacro
+
+0 define-macro bragHandInfoAddProbs
+  set-variable #l9 @1
+  set-variable #l4 &mid &ind &cat ".Brag.s1" &div &set #l1 &lget #l9 1 250 &mul 8 &mod #l1 250 8
+  set-variable #l5 &mid &ind &cat ".Brag.s2" &div &set #l2 &lget #l9 2 250 &mul 8 &mod #l2 250 8
+  set-variable #l6 &mid &ind &cat ".Brag.s3" &div &set #l3 &lget #l9 3 250 &mul 8 &mod #l3 250 8
+  !iif &les #l1 710  set-variable #l1 &add #l1 1
+  !iif &les #l2 710  set-variable #l2 &add #l2 1
+  !iif &les #l3 710  set-variable #l3 &add #l3 1
+  set-variable #l1 &fmul &mid &ind &cat ".Brag.s1" &div #l1 250 &mul 8 &mod #l1 250 8 0.00000001
+  set-variable #l2 &fmul &mid &ind &cat ".Brag.s2" &div #l2 250 &mul 8 &mod #l2 250 8 0.00000001
+  set-variable #l3 &fmul &mid &ind &cat ".Brag.s3" &div #l3 250 &mul 8 &mod #l3 250 8 0.00000001
+  set-variable @1 &spr "%s%.0f~%.0f~" #l9 &fmul &fmul &fmul #l4 #l5 #l6 0.000000000000001 &fmul &fadd #l1 &fmul &fsub 1 #l1 &fadd #l2 &fmul &fsub 1 #l2 #l3 1000000000
+!emacro
+
+0 define-macro bragHandScore
+  bragSetGetIdx &lef &set #l0 @1 3 #l1
+  bragSetGetIdx &mid #l0 3 3 #l4
+  bragSetGetIdx &rig #l0 -3 #l5
+  ;  insert-string &spr "%s\n" #l0
+  ;  insert-string &spr "  |%s|%s|%s|%s|\n" #l0 #l1 #l2 #l3
+  !if &gre #l1 #l4
+    !if &gre #l1 #l5
+      !if &gre #l4 #l5
+        set-variable #l2 #l4
+        set-variable #l3 #l5
+      !else
+        set-variable #l2 #l5
+        set-variable #l3 #l4
+      !endif
+    !else
+      set-variable #l2 #l1
+      set-variable #l3 #l4
+      set-variable #l1 #l5
+    !endif
+  !elif &gre #l5 #l4
+    set-variable #l2 #l4
+    set-variable #l3 #l1
+    set-variable #l1 #l5
+  !elif &gre #l1 #l5
+    set-variable #l2 #l1
+    set-variable #l3 #l5
+    set-variable #l1 #l4
+  !else
+    set-variable #l2 #l5
+    set-variable #l3 #l1
+    set-variable #l1 #l4
+  !endif
+  set-variable #l4 &mid &ind &cat ".Brag.s1" &div #l1 250 &mul 8 &mod #l1 250 8
+  set-variable #l5 &mid &ind &cat ".Brag.s2" &div #l2 250 &mul 8 &mod #l2 250 8
+  set-variable #l6 &mid &ind &cat ".Brag.s3" &div #l3 250 &mul 8 &mod #l3 250 8
+  !iif &les #l1 710  set-variable #l1 &add #l1 1
+  !iif &les #l2 710  set-variable #l2 &add #l2 1
+  !iif &les #l3 710  set-variable #l3 &add #l3 1
+  set-variable #l1 &fmul &mid &ind &cat ".Brag.s1" &div #l1 250 &mul 8 &mod #l1 250 8 0.00000001
+  set-variable #l2 &fmul &mid &ind &cat ".Brag.s2" &div #l2 250 &mul 8 &mod #l2 250 8 0.00000001
+  set-variable #l3 &fmul &mid &ind &cat ".Brag.s3" &div #l3 250 &mul 8 &mod #l3 250 8 0.00000001
+  set-variable #l7 &spr "%.0f" &fmul &fmul &fmul #l4 #l5 #l6 0.000000000000001
+  set-variable #l8 &spr "%.0f" &fmul &fadd #l1 &fmul &fsub 1 #l1 &fadd #l2 &fmul &fsub 1 #l2 #l3 1000000000
+; insert-string &spr "  |%s|%s|%s|%s|%s|%s|%s|%s|%s|\n" #l0 #l1 #l2 #l3 #l4 #l5 #l6 #l7 #l8
+  !iif &gre #l7 &lget #p9 2  set-variable #p9 &lset &lset &lset &lset #p9 2 #l7 6 #l0 10 #l7 14 #l8
+  !iif &gre #l8 &lget #p9 3  set-variable #p9 &lset &lset &lset &lset #p9 3 #l8 7 #l0 11 #l7 15 #l8
+  set-variable #l1 &add &add #l6 #l4 #l5
+  !iif &gre #l1 &lget #p9 4  set-variable #p9 &lset &lset &lset &lset #p9 4 #l1 8 #l0 12 #l7 16 #l8
+  set-variable #l1 &add #l7 #l8
+  !iif &gre #l1 &lget #p9 1  set-variable #p9 &lset &lset &lset &lset #p9 1 #l1 5 #l0 9 #l7 13 #l8
+!emacro
+
+
+0 define-macro bragHandSort
+; set-variable .bn $buffer-bname
+; !force 0 delete-buffer "*brg-tmp*"
+; find-buffer "*brg-tmp*"
+  set-variable #l1 &set #l8 @1
+  set-variable #l9 "|0|0|0|0|||||||||||||"
+  set-variable #l4 6
+  !repeat
+    set-variable #l5 #l4
+    !repeat
+      bragHandScore #l1
+      set-variable #l6 2
+      !repeat
+        set-variable #l7 #l6
+        !repeat
+          set-variable #l1 &rep &rep &rep #l1 &set #l0 &mid #l1 5 1 "\b" &set #l8 &mid #l1 &sub 8 #l7 1 #l0 "\b" #l8
+          bragHandScore #l1
+        !until &les &dec #l7 1 0
+        set-variable #l1 &rep &rep &rep #l1 &set #l0 &mid #l1 4 1 "\b" &set #l8 &mid #l1 &sub 8 #l6 1 #l0 "\b" #l8
+        bragHandScore #l1
+      !until &les &dec #l6 1 0
+      set-variable #l1 &rep #l1 &set #l0 &mid #l1 4 2 ""
+      set-variable #l1 &cat &cat &cat &lef #l1 6 &rig #l0 -1 &lef #l0 1 &rig #l1 -1
+      !iif &les &dec #l5 1 0  !break
+      set-variable #l1 &rep &rep &rep #l1 &set #l0 &mid #l1 2 1 "\b" &set #l8 &mid #l1 &sub 8 #l5 1 #l0 "\b" #l8
+    !done
+    !iif &les &dec #l4 1 0  !break
+    set-variable #l1 &rep &rep &rep #l1 &set #l0 &mid #l1 1 1 "\b" &set #l8 &mid #l1 &sub 8 #l4 1 #l0 "\b" #l8
+  !done
+; find-buffer .bn
+  set-variable #l3 &add &add &con &seq &set #l4 &lget #l9 5 &lget #l9 6 1 0 &con &seq #l4 &lget #l9 7 2 0 &con &seq #l4 &lget #l9 8 4 0
+  !if &equ #l3 7
+    set-variable #l9 &cat #l9 "7|All-rounder|"
+  !elif &equ #l3 4
+    set-variable #l9 &cat #l9 "4|Balanced|" 
+  !elif &band #l3 4
+    set-variable #l9 &spr "%s%s|Balanced %s|" #l9 #l3 &con &band #l3 1 "attack" "defence"
+  !elif &equ #l3 3
+    set-variable #l9 &cat #l9 "3|Defensive attack|"
+  !elif &equ #l3 2
+    set-variable #l9 &cat #l9 "2|All-out defence|"
+  !elif &equ #l3 1
+    set-variable #l9 &cat #l9 "1|All-out attack|" 
+  !else
+    set-variable #l9 &cat &cat #l9 #l2 "|Statistically best|" 
+  !endif
+  bragHandOrder #l4 #l5 #l6
+  set-variable @2 &spr "|%s%s%s|" #l5 #l9 #l6
+!emacro
+
+0 define-macro bragDrawCard
+  set-variable #l1 @1
+  set-variable #l2 @2
+  set-variable #l3 @3
+  !if &gre #l1 31
+    set-variable #l4 &mid .nlb &band #l1 15 1
+    set-variable #l5 &mid .slb &band #l1 112 5
+    set-variable #l7 &con &sin &set #l6 &lef #l5 1 "CS" 3 35
+    #l7 screen-poke &inc #l2 1 #l3 .scheme.cardfore .top
+    #l7 screen-poke &inc #l2 1 #l3 .scheme.cardfore .clr
+    #l7 screen-poke #l2 &add 1 #l3 .scheme.cardfore &spr "%s %s" #l4 #l5
+    #l7 screen-poke &inc #l2 1 #l3 .scheme.cardfore .clr
+    #l7 screen-poke #l2 &add 1 #l3 .scheme.cardfore #l6
+    #l7 screen-poke &inc #l2 1 #l3 .scheme.cardfore .clr
+    #l7 screen-poke #l2 &add 4 #l3 .scheme.cardfore #l4
+    #l7 screen-poke &inc #l2 1 #l3 .scheme.cardfore .clr
+    #l7 screen-poke #l2 &add 1 #l3 .scheme.cardfore &sprint "      %s" #l6
+    #l7 screen-poke &inc #l2 1 #l3 .scheme.cardfore .clr
+    #l7 screen-poke #l2 &add 1 #l3 .scheme.cardfore &sprint "%s %s" #l5 #l4
+    #l7 screen-poke &inc #l2 1 #l3 .scheme.cardfore .bot
+  !elif &not #l1
+    3 screen-poke &inc #l2 1 #l3 .scheme.cardback .non
+    3 screen-poke &inc #l2 1 #l3 .scheme.cardback .non
+    3 screen-poke &inc #l2 1 #l3 .scheme.cardback .non
+    3 screen-poke &inc #l2 1 #l3 .scheme.cardback .non
+    3 screen-poke &inc #l2 1 #l3 .scheme.cardback .non
+    3 screen-poke &inc #l2 1 #l3 .scheme.cardback .non
+    3 screen-poke &inc #l2 1 #l3 .scheme.cardback .non
+  !elif &equ #l1 1
+    99 screen-poke &inc #l2 1 #l3 .scheme.cardfore .top
+    99 screen-poke &inc #l2 1 #l3 .scheme.cardfore .bk1
+    99 screen-poke &inc #l2 1 #l3 .scheme.cardfore .bk2
+    99 screen-poke &inc #l2 1 #l3 .scheme.cardfore .bk1
+    99 screen-poke &inc #l2 1 #l3 .scheme.cardfore .bk2
+    99 screen-poke &inc #l2 1 #l3 .scheme.cardfore .bk1
+    99 screen-poke &inc #l2 1 #l3 .scheme.cardfore .bot
+  !else
+    3 screen-poke &inc #l2 1 #l3 .scheme.cardback .top
+    3 screen-poke &inc #l2 1 #l3 .scheme.cardback .hl1
+    3 screen-poke &inc #l2 1 #l3 .scheme.cardback .hl2
+    3 screen-poke &inc #l2 1 #l3 .scheme.cardback .hl3
+    3 screen-poke &inc #l2 1 #l3 .scheme.cardback .hl2
+    3 screen-poke &inc #l2 1 #l3 .scheme.cardback .hl1
+    3 screen-poke &inc #l2 1 #l3 .scheme.cardback .bot
+  !endif
+!emacro
+set-variable .bragDrawCard.top &spr "%s%7s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+set-variable .bragDrawCard.bot &spr "%s%7s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+set-variable .bragDrawCard.clr &spr "%s%7s%s" &lef $box-chars 1 " " &lef $box-chars 1
+set-variable .bragDrawCard.hl1 &spr "%s X   X %s" &lef $box-chars 1 &lef $box-chars 1
+set-variable .bragDrawCard.hl2 &spr "%s  X X  %s" &lef $box-chars 1 &lef $box-chars 1
+set-variable .bragDrawCard.hl3 &spr "%s   X   %s" &lef $box-chars 1 &lef $box-chars 1
+set-variable .bragDrawCard.bk1 &spr "%s+X+X+X+%s" &lef $box-chars 1 &lef $box-chars 1
+set-variable .bragDrawCard.bk2 &spr "%sX+X+X+X%s" &lef $box-chars 1 &lef $box-chars 1
+set-variable .bragDrawCard.non "         "
+set-variable .bragDrawCard.nlb "23456789TJQKA"
+set-variable .bragDrawCard.slb "                                Heart           Club            Dimnd           Spade"
+
+0 define-macro bragShuffle
+  set-variable #l9 $buffer-bname
+  !force 0 delete-buffer "*brg-tmp*"
+  set-variable #l1 &set #l2 &set #l3 &set #l4 ""
+  set-variable #l0 12
+  !repeat
+    set-variable #l1 &cat #l1 &itoa &add 32 #l0
+    set-variable #l2 &cat #l2 &itoa &add 48 #l0
+    set-variable #l3 &cat #l3 &itoa &add 64 #l0
+    set-variable #l4 &cat #l4 &itoa &add 80 #l0
+  !until &les &dec #l0 1 0
+  set-variable #l1 &cat &cat &cat #l1 #l2 #l3 #l4
+  set-variable #l2 10
+  !repeat
+    find-buffer "*brg-tmp*"
+    set-variable #l0 51
+    !repeat
+      insert-string &spr "%s%s\n" &mid #l1 #l0 1 $random
+    !until &les &dec #l0 1 0
+    set-mark
+    beginning-of-buffer
+    1 sort-lines
+    set-variable #l1 ""
+    !repeat
+      backward-line
+      set-variable #l1 &cat @wc #l1
+    !until &equ $window-line 1
+    !force 0 delete-buffer "*brg-tmp*"
+  !until &les &dec #l2 1 0
+  find-buffer #l9
+  set-variable @1 #l1
+!emacro
+
+0 define-macro bragCardsOrder
+  set-variable #l1 @1
+  set-variable #l2 ""
+  !if &band @# 2
+    !repeat
+      set-variable #l3 &lef #l1 1
+      set-variable #l4 0
+      !while &len &set #l5 &mid #l1 &inc #l4 1 1
+        !iif &sle #l5 #l3  set-variable #l3 #l5
+      !done
+      set-variable #l2 &cat #l2 #l3
+    !until &seq "" &set #l1 &rep #l1 #l3 ""
+  !else
+    !repeat
+      set-variable #l3 &lef #l1 1
+      set-variable #l4 0
+      !while &len &set #l5 &mid #l1 &inc #l4 1 1
+        !if &les &set #l6 &sub &band &atoi #l3 15 &band &atoi #l5 15 0
+        !elif #l6
+          set-variable #l3 #l5
+        !elif &sles #l5 #l3
+          set-variable #l3 #l5
+        !endif
+      !done
+      set-variable #l2 &cat #l2 #l3
+    !until &seq "" &set #l1 &rep #l1 #l3 ""
+    !if &not @#
+      set-variable #l4 0
+      !while &equ 12 &band 15 &atoi &rig #l2 &sub #l4 1
+        set-variable #l4 &sub #l4 1
+      !done
+      !iif #l4  set-variable #l2 &cat &rig #l2 #l4 &lef #l2 #l4
+    !endif
+  !endif
+  set-variable @2 #l2
+!emacro
+
+0 define-macro brag-deal
+  set-variable #l1 ""
+  set-variable #l2 ""
+  set-variable #l4 -1
+  !repeat
+    set-variable #l1 &cat #l1 &mid .Brag.deck &inc #l4 1 1
+    set-variable #l2 &cat #l2 &mid .Brag.deck &inc #l4 1 1
+  !until &equ #l4 17
+  !if &band 1 &inc .Brag.chno 1
+    ml-write "[Computer dealing...]"
+    set-variable .Brag.h1 #l1
+    set-variable .Brag.h2 #l2
+  !else
+    ml-write "[Your dealing - let me help...]"
+    set-variable .Brag.h1 #l2
+    set-variable .Brag.h2 #l1
+  !endif
+  set-variable .Brag.h1s "\b\b\b\b\b\b"
+  set-variable .Brag.stt 0
+!emacro
+
+0 define-macro brag-gen-tricky
+  set-variable #l0 52
+  !repeat
+    !if &gre &inc #l0 1 42
+      bragShuffle .Brag.deck
+      set-variable #l0 0
+    !endif
+    ; TODO fix
+    bragHandSort &mid .Brag.deck #l0 9 #l1
+    !tgoto &not &or &or &or &or &seq &lget #l1 1 &lget #l1 7 &seq &lget #l1 1 &lget #l1 9 &seq &lget #l1 7 &lget #l1 8 &seq &lget #l1 7 &lget #l1 9 &seq &lget #l1 8 &lget #l1 9 done
+  !done
+*done
+  set-variable .Brag.deck &cat &rig .Brag.deck #l0 &lef .Brag.deck #l0
+  set-variable .Brag.h1 &lef .Brag.deck 9
+  set-variable .Brag.h2 &mid .Brag.deck 9 9
+  set-variable .Brag.h1s "\b\b\b\b\b\b"
+  set-variable .Brag.stt 0
+!emacro  
+
+0 define-macro brag-help
+  !force help-command "Brag"
+  !if $status
+    delete-window
+  !endif
+!emacro
+0 define-macro bhook-brag
+  ; Turn off the cursor & menu
+  -1 show-cursor                                
+  !force osd -1 0
+  ; Disable the scroll bars and toolbar.
+  set-variable :scroll-bar $scroll-bar
+  set-variable $scroll-bar 0
+!emacro
+0 define-macro ehook-brag
+  ; Turn on the cursor & restore menu, scroll bars and toolbar
+  1 show-cursor
+  set-variable $scroll-bar :scroll-bar
+  !force osd -1 1
+!emacro
+
+0 define-macro brag-hand-input
+  !force set-variable #l0 @1
+  !iif &not $status  set-variable #l0 ""
+  set-variable #l9 "Enter hand (x to exit)"
+  !repeat
+    !force !force !force set-variable #l1 @ml20 #l9 #l0
+    !if &not $status
+      ml-write ""
+      !return
+    !endif
+    !if &seq &rep &set #l0 &rep &rep &rep &rep &sup #l1 " " "" "," "" "(" "" ")" "" "X" "" ""
+      ml-write ""
+      !return
+    !endif
+    set-variable #l1 ""
+    set-variable #l4 #l0
+    !while &len #l4
+      !iif &les &set #l3 &lfi .Brag.cardNumberChars &lef #l4 1 1  !break  
+      set-variable #l4 &rig #l4 1
+      !iif &les &set #l2 &lfi .Brag.cardSuitChars &lef #l4 1 2  !break
+      set-variable #l4 &rig #l4 1
+      set-variable #l1 &cat #l1 &itoa &add &mul #l2 16 &sub #l3 1
+    !done
+    !if &len #l4
+      set-variable #l9 &spr "Invalid hand input for card %d" &add 1 &div &sub &len #l0 &len #l4 2
+      set-variable #l3 0
+    !elif &les &set #l3 &len #l1 9
+      set-variable #l9 &spr "Only %d cards given, 9 required" &len #l1
+    !else &gre #l3 9
+      set-variable #l9 &spr "%d cards given, only 9 required" &len #l1
+    !endif
+  !until &equ #l3 9
+  set-variable .Brag.hm #l1
+  bragHandOrder #l1 .Brag.hmo .Brag.hmi
+  bragHandInfoAddProbs .Brag.hmi
+  bragHandSort #l1 .Brag.hmd
+  set-variable .Brag.stt &add .Brag.stt 30
+!emacro
+
+0 define-macro brag-command
+  !if &not @#
+  !elif &equ @# 26
+    !force delete-buffer "*Brag*"
+  !elif &equ @# 29
+    brag-gen-tricky
+    4 brag-draw
+  !elif &equ @# 30
+    brag-hand-input
+    1 brag-draw
+  !elif &equ @# 25
+    set-variable .Brag.stt &add .Brag.stt 10
+    1 brag-draw
+  !elif &equ @# 24
+    !if &not .Brag.stt
+      !if &sin "\b" .Brag.h1s
+        ; TODO may need to make this more visible
+        ml-write "[You must sort your hand first!]"
+        !return
+      !endif
+      set-variable #l2 &cat .Brag.h1s &rep &rep &rep &rep &rep &rep .Brag.h1 &lef .Brag.h1s 1 "" &mid .Brag.h1s 1 1 "" &mid .Brag.h1s 2 1 "" &mid .Brag.h1s 3 1 "" &mid .Brag.h1s 4 1 "" &rig .Brag.h1s -1 ""
+      bragHandOrder #l2 .Brag.h1 .Brag.h1i
+      bragHandSort .Brag.h1 .Brag.h1d
+      set-variable .Brag.h1c &lget .Brag.h1d 20
+      bragHandSort .Brag.h2 .Brag.h2d
+      set-variable .Brag.h2 &lget .Brag.h2d 1
+      set-variable .Brag.h2i &lget .Brag.h2d 20
+      set-variable #l4 4
+      !if &gre &lget .Brag.h1i 1 &lget .Brag.h2i 1
+        !if &and &gre &lget .Brag.h1i 2 &lget .Brag.h2i 2 &gre &lget .Brag.h1i 3 &lget .Brag.h2i 3
+          set-variable .Brag.ciw1 &add .Brag.ciw1 1
+          set-variable .Brag.hiw1 &add .Brag.hiw1 1
+          !force set-registry "/history/brag/iw1" .Brag.hiw1
+        !endif
+      !elif &les &lget .Brag.h1i 1 &lget .Brag.h2i 1
+        !if &and &les &lget .Brag.h1i 2 &lget .Brag.h2i 2 &les &lget .Brag.h1i 3 &lget .Brag.h2i 3
+          set-variable .Brag.ciw2 &add .Brag.ciw2 1
+          set-variable .Brag.hiw2 &add .Brag.hiw2 1
+          !force set-registry "/history/brag/iw2" .Brag.hiw2
+        !endif
+      !endif
+      !if &gre &lget .Brag.h1c 1 &lget .Brag.h2i 1
+        !if &and &gre &lget .Brag.h1c 2 &lget .Brag.h2i 2 &gre &lget .Brag.h1c 3 &lget .Brag.h2i 3
+          set-variable .Brag.ccw1 &add .Brag.ccw1 1
+          set-variable .Brag.hcw1 &add .Brag.hcw1 1
+          !force set-registry "/history/brag/cw1" .Brag.hcw1
+        !endif
+      !elif &les &lget .Brag.h1c 1 &lget .Brag.h2i 1
+        !if &and &les &lget .Brag.h1c 2 &lget .Brag.h2i 2 &les &lget .Brag.h1c 3 &lget .Brag.h2i 3
+          set-variable .Brag.ccw2 &add .Brag.ccw2 1
+          set-variable .Brag.hcw2 &add .Brag.hcw2 1
+          !force set-registry "/history/brag/cw2" .Brag.hcw2
+        !endif
+      !endif
+      set-variable .Brag.hhno &add .Brag.hhno 1
+      !force set-registry "/history/brag/hno" .Brag.hhno
+      !force mark-registry "/history" "u"
+      set-variable .Brag.stt 1
+    !elif &gre .Brag.stt 10
+      set-variable .Brag.stt &mod .Brag.stt 10
+    !elif &gre &inc .Brag.stt 1 3
+      set-variable .Brag.stt 0
+      ; Check if there was a prial played
+      !if &or &gre &lget .Brag.h1i 1 709 &gre &lget .Brag.h2i 1 709
+        100 ml-write "[Prial played - shuffling...]"
+        bragShuffle .Brag.deck
+      !else
+        set-variable #l1 &con &band 1 .Brag.chno &cat .Brag.h1 .Brag.h2 &cat .Brag.h2 .Brag.h1
+        set-variable .Brag.deck &cat &rig .Brag.deck 18 #l1
+      !endif
+      brag-deal
+    !endif
+    1 brag-draw
+  !elif .Brag.stt
+    !if &equ @# 20
+      !if &equ .Brag.stt 4
+        set-variable .Brag.stt 5
+        1 brag-draw
+      !endif
+    !elif &equ @# 22
+      !if &gre .Brag.stt 19
+        set-variable #l3 &con &les .Brag.stt 30 .Brag.h1 .Brag.hm
+        set-variable #l4 ""
+        set-variable #l5 8
+        !repeat
+          set-variable #l4 &spr "%s%s%s" &lget .Brag.cardNumberChars &add 1 &mod &set #l6 &atoi &mid #l3 #l5 1 16 &lget .Brag.cardSuitChars &div #l6 16 #l4
+          !iif &not &mod #l5 3  set-variable #l4 &cat " " #l4
+        !until &les &dec #l5 1 0
+        set-variable @y &trl #l4
+        ml-write &cat "Hand copied to clipboard: " @y
+      !endif
+    !elif &equ @# 23
+      !if &gre .Brag.stt 2
+        set-variable .Brag.stt &add .Brag.stt 20
+        1 brag-draw
+      !endif
+    !endif
+  !elif &les @# 10
+    !if &not &set #l2 &sin "\b" .Brag.h1s
+    !elif &not &sin &set #l3 &mid .Brag.h1 &sub @# 1 1 .Brag.h1s
+      set-variable .Brag.h1s &cat &cat &lef .Brag.h1s &sub #l2 1 #l3 &rig .Brag.h1s #l2
+      bragDrawCard 0 3 &mul @# 10
+      bragDrawCard &atoi #l3 13 &add 5 &add &mul 10 #l2 &mul 10 &div &sub #l2 1 3
+      1 screen-poke 1 1 .scheme.cardback " "
+    !endif
+  !elif &les @# 20
+    !if &not &seq "\b" &set #l2 &mid .Brag.h1s &set #l3 &sub @# 11 1
+      set-variable .Brag.h1s &rep .Brag.h1s #l2 "\b"
+      bragDrawCard 0 13 &add 5 &add &mul 10 &inc #l3 1 &mul 10 &div &sub #l3 1 3
+      bragDrawCard &atoi #l2 3 &mul &sin #l2 .Brag.h1 10
+      1 screen-poke 1 1 .scheme.cardback " "
+    !endif
+  !elif &equ @# 21
+    bragCardsOrder .Brag.h1 #l2
+    set-variable .Brag.h1 #l2
+    4 brag-draw
+  !elif &equ @# 22
+    0 bragCardsOrder .Brag.h1 #l2
+    set-variable .Brag.h1 #l2
+    4 brag-draw
+  !elif &equ @# 23
+    2 bragCardsOrder .Brag.h1 #l2
+    set-variable .Brag.h1 #l2
+    4 brag-draw
+  !endif
+!emacro
+
+0 define-macro brag-mouse-where
+  set-variable #l9 0
+  set-variable #g0 $mouse-x
+  set-variable #g1 $mouse-y
+  !if &les #g0 110
+    !if &gre #g1 10
+      !if &gre #g1 20
+      !elif &gre #g1 12
+        !if &equ &mod &set #l2 &sub #g0 5 10 9
+          set-variable @1 #l9
+          !return
+        !elif &and &set #l2 &div #l2 10 &les #l2 4
+          set-variable #l9 &add 10 #l2
+        !elif &and &gre #l2 4 &les #l2 8
+          set-variable #l9 &add 9 #l2
+        !endif
+      !endif
+    !elif &gre #g1 2
+      !if &equ &mod #g0 10 9
+      !elif &and &set #l2 &div #g0 10 &les #l2 10
+        set-variable #l9 #l2
+      !endif
+    !endif
+  !elif &les #g0 124
+    !if &mod #g1 4
+      set-variable #l9 &add 20 &div #g1 4
+    !endif
+  !endif
+  set-variable @1 #l9
+!emacro
+0 define-macro brag-mouse-pick-left
+  brag-mouse-where #l1
+  set-variable .Brag.mdl #l1
+!emacro
+0 define-macro brag-mouse-drop-left
+  brag-mouse-where #l1
+  !iif &not &sub #l1 .Brag.mdl  #l1 brag-command
+!emacro
+
+0 define-macro brag-draw-unveil
+  set-variable #l2 &con &gre .Brag.stt 4 &lget .Brag.h1d 1 .Brag.h1
+  set-variable #l3 &con &gre .Brag.stt 4 .Brag.h1c .Brag.h1i
+  set-variable #l4 0
+  !repeat
+    bragDrawCard &atoi &mid #l2 #l4 1 13 &add 35 &mul #l4 10
+    bragDrawCard &atoi &mid .Brag.h2 #l4 1 31 &add 35 &mul #l4 10
+  !until &equ &inc #l4 1 3
+  67 screen-poke 22 &add 35 &div &sub 30 &len &lget #l3 4 2 .scheme.cardback &lget #l3 4
+  67 screen-poke 30 &add 35 &div &sub 30 &len &lget .Brag.h2i 4 2 .scheme.cardback &lget .Brag.h2i 4
+  set-variable #l5 4
+  !if &gre &lget #l3 1 &lget .Brag.h2i 1
+    set-variable #l5 &inc #l5 1
+    67 screen-poke 17 30 .scheme.cardback "WIN"
+    67 screen-poke 17 66 .scheme.cardback "WIN"
+    67 screen-poke 35 30 .scheme.cardback "DOH"
+    67 screen-poke 35 66 .scheme.cardback "DOH"
+  !elif &les &lget #l3 1 &lget .Brag.h2i 1
+    set-variable #l5 &dec #l5 1
+    67 screen-poke 17 30 .scheme.cardback "DOH"
+    67 screen-poke 17 66 .scheme.cardback "DOH"
+    67 screen-poke 35 30 .scheme.cardback "WIN"
+    67 screen-poke 35 66 .scheme.cardback "WIN"
+  !endif
+  !if &gre .Brag.stt 1
+    !repeat
+      bragDrawCard &atoi &mid #l2 #l4 1  3 &sub &mul #l4 10 20
+      bragDrawCard &atoi &mid .Brag.h2 #l4 1 41 &sub &mul #l4 10 20
+    !until &equ &inc #l4 1 6
+    67 screen-poke 12 &add 10 &div &sub 30 &len &lget #l3 5 2 .scheme.cardback &lget #l3 5
+    67 screen-poke 40 &add 10 &div &sub 30 &len &lget .Brag.h2i 5 2 .scheme.cardback &lget .Brag.h2i 5
+    !if &gre &lget #l3 2 &lget .Brag.h2i 2
+      set-variable #l5 &inc #l5 1
+      67 screen-poke  7  5 .scheme.cardback "WIN"
+      67 screen-poke  7 41 .scheme.cardback "WIN"
+      67 screen-poke 45  5 .scheme.cardback "DOH"
+      67 screen-poke 45 41 .scheme.cardback "DOH"
+    !elif &les &lget #l3 2 &lget .Brag.h2i 2
+      set-variable #l5 &dec #l5 1
+      67 screen-poke  7  5 .scheme.cardback "DOH"
+      67 screen-poke  7 41 .scheme.cardback "DOH"
+      67 screen-poke 45  5 .scheme.cardback "WIN"
+      67 screen-poke 45 41 .scheme.cardback "WIN"
+    !endif
+  !else
+    !repeat
+      bragDrawCard 1  3 &sub &mul #l4 10 20
+      bragDrawCard 1 41 &sub &mul #l4 10 20
+    !until &equ &inc #l4 1 6
+  !endif
+  !if &gre .Brag.stt 2
+    !repeat
+      bragDrawCard &atoi &mid #l2 #l4 1  3 &mul #l4 10
+      bragDrawCard &atoi &mid .Brag.h2 #l4 1 41 &mul #l4 10
+    !until &equ &inc #l4 1 9
+    67 screen-poke 12 &add 60 &div &sub 30 &len &lget #l3 6 2 .scheme.cardback &lget #l3 6
+    67 screen-poke 40 &add 60 &div &sub 30 &len &lget .Brag.h2i 6 2 .scheme.cardback &lget .Brag.h2i 6
+    !if &gre &lget #l3 3 &lget .Brag.h2i 3
+      set-variable #l5 &inc #l5 1
+      67 screen-poke  7 55 .scheme.cardback "WIN"
+      67 screen-poke  7 91 .scheme.cardback "WIN"
+      !if &and &les .Brag.stt 5 &equ #l5 7
+        67 screen-poke 45 55 .scheme.cardback "POO"
+        67 screen-poke 45 91 .scheme.cardback "POO"
+        99 screen-poke 24 40 .scheme.cardfore &spr "%s%17s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+        99 screen-poke 25 40 .scheme.cardfore &spr "%s *************** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 26 40 .scheme.cardfore &spr "%s **  You Won  ** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 27 40 .scheme.cardfore &spr "%s *************** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 28 40 .scheme.cardfore &spr "%s%17s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+      !else
+        67 screen-poke 45 55 .scheme.cardback "DOH"
+        67 screen-poke 45 91 .scheme.cardback "DOH"
+      !endif
+    !elif &les &lget #l3 3 &lget .Brag.h2i 3
+      set-variable #l5 &dec #l5 1
+      67 screen-poke 45 55 .scheme.cardback "WIN"
+      67 screen-poke 45 91 .scheme.cardback "WIN"
+      !if &and &les .Brag.stt 5 &equ #l5 1
+        67 screen-poke  7 55 .scheme.cardback "POO"
+        67 screen-poke  7 91 .scheme.cardback "POO"
+        99 screen-poke 24 40 .scheme.cardfore &spr "%s%17s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+        99 screen-poke 25 40 .scheme.cardfore &spr "%s *************** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 26 40 .scheme.cardfore &spr "%s ** You Lost! ** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 27 40 .scheme.cardfore &spr "%s *************** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 28 40 .scheme.cardfore &spr "%s%17s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+      !else
+        67 screen-poke  7 55 .scheme.cardback "DOH"
+        67 screen-poke  7 91 .scheme.cardback "DOH"
+      !endif
+    !endif
+    67 screen-poke 50 5 .scheme.cardback &spr "Computer played: %s" &lget .Brag.h2d 19
+    67 screen-poke 13 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    67 screen-poke 14 110 .scheme.cardback &spr "%s   Details   %s" &lef $box-chars 1 &lef $box-chars 1
+    99 screen-poke 14 114 .scheme.cardback "D"
+    67 screen-poke 15 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+    !if &gre .Brag.stt 4
+      67 screen-poke  2 5 .scheme.cardback "Showing hand sorted by computer."
+    !elif &seq .Brag.h1i .Brag.h1c
+      67 screen-poke  2 5 .scheme.cardback "Computer would have played the hand the same."
+    !else
+      set-variable .Brag.stt 4
+      set-variable #l4 4
+      !if &gre &lget .Brag.h1c 1 &lget .Brag.h2i 1
+        set-variable #l4 &inc #l4 1
+      !elif &les &lget .Brag.h1c 1 &lget .Brag.h2i 1
+        set-variable #l4 &dec #l4 1
+      !endif
+      !if &gre &lget .Brag.h1c 2 &lget .Brag.h2i 2
+        set-variable #l4 &inc #l4 1
+      !elif &les &lget .Brag.h1c 2 &lget .Brag.h2i 2
+        set-variable #l4 &dec #l4 1
+      !endif
+      !if &gre &lget .Brag.h1c 3 &lget .Brag.h2i 3
+        set-variable #l4 &inc #l4 1
+      !elif &les &lget .Brag.h1c 3 &lget .Brag.h2i 3
+        set-variable #l4 &dec #l4 1
+      !endif
+      !if &gre #l4 #l5
+        set-variable #l3 &con &equ #l4 7 " and would have WON!" " and would have improved the outcome."
+      !elif &les #l4 #l5
+        set-variable #l3 &con &equ #l4 1 " and would have LOST!" " and would have had a worse outcome."
+      !else
+        set-variable #l3 ", the outcome would have been the same."
+      !endif
+      67 screen-poke  2 5 .scheme.cardback &spr "Computer would have played differently (%s)%s" &lget .Brag.h1d 19 #l3
+      67 screen-poke  1 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+      67 screen-poke  2 110 .scheme.cardback &spr "%s   Show Me   %s" &lef $box-chars 1 &lef $box-chars 1
+      99 screen-poke  2 119 .scheme.cardback "M"
+      67 screen-poke  3 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+    !endif
+  !else
+    !repeat
+      bragDrawCard 1  3 &mul #l4 10
+      bragDrawCard 1 41 &mul #l4 10
+    !until &equ &inc #l4 1 9
+  !endif
+!emacro
+0 define-macro brag-draw-details
+  !if &les .Brag.stt 30
+    67 screen-poke 2 2 .scheme.cardback &spr "Computer hand - played:  %s" &lget .Brag.h2d 19
+    set-variable #l1 .Brag.h2
+    !iif &seq &lget .Brag.h1i 7 ""  bragHandInfoAddProbs .Brag.h1i
+    set-variable #l2 .Brag.h1
+    set-variable #l5 .Brag.h1i
+    67 screen-poke 14 2 .scheme.cardback &spr "You played  -  Prb  Win: %.4f   Lose: %.4f" &fmul &lget #l5 7 0.000000001 &fsub 1 &fmul &lget #l5 8 0.000000001
+    set-variable #l0 .Brag.h1d
+    set-variable #l4 .Brag.h1c
+  !else
+    67 screen-poke 2 2 .scheme.cardback "Hand entered:"
+    set-variable #l1 .Brag.hm
+    set-variable #l2 .Brag.hmo
+    set-variable #l5 .Brag.hmi
+    67 screen-poke 14 2 .scheme.cardback &spr "Hand played as entered  -  Prb  Win: %.4f   Lose: %.4f" &fmul &lget #l5 7 0.000000001 &fsub 1 &fmul &lget #l5 8 0.000000001
+    set-variable #l0 .Brag.hmd
+    set-variable #l4 &lget .Brag.hmd 20
+  !endif
+  set-variable #l3 &lget #l0 1
+  67 screen-poke 25 2 .scheme.cardback &spr "Computer would have played:  %s  -  Prb  Win: %.4f   Lose: %.4f" &lget #l0 19 &fmul &lget #l0 10 0.000000001 &fsub 1 &fmul &lget #l0 14 0.000000001
+  set-variable #l7 0
+  set-variable #l8 5
+  !repeat
+    bragDrawCard &atoi &mid #l1 #l7 1  3 #l8
+    bragDrawCard &atoi &mid #l2 #l7 1 15 #l8
+    bragDrawCard &atoi &mid #l3 #l7 1 26 #l8
+    set-variable #l8 &add &add #l8 10 &con &mod &add #l7 1 3 0 5
+  !until &equ &inc #l7 1 9
+  !if &les .Brag.stt 30
+    !if &gre &lget .Brag.h1i 1 &lget .Brag.h2i 1
+      67 screen-poke 19  3 .scheme.cardback "W"
+      67 screen-poke 19 35 .scheme.cardback "W"
+    !elif &les &lget .Brag.h1i 1 &lget .Brag.h2i 1
+      67 screen-poke 19  3 .scheme.cardback "L"
+      67 screen-poke 19 35 .scheme.cardback "L"
+    !endif
+    !if &gre &lget .Brag.h1i 2 &lget .Brag.h2i 2
+      67 screen-poke 19 38 .scheme.cardback "W"
+      67 screen-poke 19 70 .scheme.cardback "W"
+    !elif &les &lget .Brag.h1i 2 &lget .Brag.h2i 2
+      67 screen-poke 19 38 .scheme.cardback "L"
+      67 screen-poke 19 70 .scheme.cardback "L"
+    !endif
+    !if &gre &lget .Brag.h1i 3 &lget .Brag.h2i 3
+      67 screen-poke 19 73 .scheme.cardback "W"
+      67 screen-poke 19 105 .scheme.cardback "W"
+    !elif &les &lget .Brag.h1i 3 &lget .Brag.h2i 3
+      67 screen-poke 19 73 .scheme.cardback "L"
+      67 screen-poke 19 105 .scheme.cardback "L"
+    !endif
+    !if &gre &lget .Brag.h1c 1 &lget .Brag.h2i 1
+      67 screen-poke 29  3 .scheme.cardback "W"
+      67 screen-poke 29 35 .scheme.cardback "W"
+    !elif &les &lget .Brag.h1c 1 &lget .Brag.h2i 1
+      67 screen-poke 29  3 .scheme.cardback "L"
+      67 screen-poke 29 35 .scheme.cardback "L"
+    !endif
+    !if &gre &lget .Brag.h1c 2 &lget .Brag.h2i 2
+      67 screen-poke 29 38 .scheme.cardback "W"
+      67 screen-poke 29 70 .scheme.cardback "W"
+    !elif &les &lget .Brag.h1c 2 &lget .Brag.h2i 2
+      67 screen-poke 29 38 .scheme.cardback "L"
+      67 screen-poke 29 70 .scheme.cardback "L"
+    !endif
+    !if &gre &lget .Brag.h1c 3 &lget .Brag.h2i 3
+      67 screen-poke 29 73 .scheme.cardback "W"
+      67 screen-poke 29 105 .scheme.cardback "W"
+    !elif &les &lget .Brag.h1c 3 &lget .Brag.h2i 3
+      67 screen-poke 29 73 .scheme.cardback "L"
+      67 screen-poke 29 105 .scheme.cardback "L"
+    !endif
+    67 screen-poke 11 &add 5 &div &sub 30 &len &lget .Brag.h2i 4 2 .scheme.cardback &lget .Brag.h2i 4
+    67 screen-poke 11 &add 40 &div &sub 30 &len &lget .Brag.h2i 5 2 .scheme.cardback &lget .Brag.h2i 5
+    67 screen-poke 11 &add 75 &div &sub 30 &len &lget .Brag.h2i 6 2 .scheme.cardback &lget .Brag.h2i 6
+  !endif
+  67 screen-poke 23 &add 5 &div &sub 30 &len &lget #l5 4 2 .scheme.cardback &lget #l5 4
+  67 screen-poke 23 &add 40 &div &sub 30 &len &lget #l5 5 2 .scheme.cardback &lget #l5 5
+  67 screen-poke 23 &add 75 &div &sub 30 &len &lget #l5 6 2 .scheme.cardback &lget #l5 6
+  67 screen-poke 34 &add 5 &div &sub 30 &len &lget #l4 4 2 .scheme.cardback &lget #l4 4
+  67 screen-poke 34 &add 40 &div &sub 30 &len &lget #l4 5 2 .scheme.cardback &lget #l4 5
+  67 screen-poke 34 &add 75 &div &sub 30 &len &lget #l4 6 2 .scheme.cardback &lget #l4 6
+  set-variable #l9 26
+  set-variable #l1 &lget #l0 18
+  !if &not &band 1 #l1
+    set-variable #l9 &add #l9 11
+    set-variable #l2 &lget #l0 7
+    set-variable #l3 ""
+    !if &seq #l2 &lget #l0 9
+      set-variable #l3 ": Balanced attack"
+      set-variable #l1 &bor #l1 4
+    !endif
+    !if &seq #l2 &lget #l0 8
+      set-variable #l3 ": Defensive attack"
+      set-variable #l1 &bor #l1 2
+    !endif
+    67 screen-poke &sub #l9 1 2 .scheme.cardback &spr "Best attacking%s  -  Prb  Win: %.4f   Lose: %.4f" #l3 &fmul &lget #l0 11 0.000000001 &fsub 1 &fmul &lget #l0 15 0.000000001
+    bragHandOrder #l2 #l3 #l4
+    set-variable #l7 0
+    set-variable #l8 5
+    !repeat
+      bragDrawCard &atoi &mid #l3 #l7 1 #l9 #l8
+      set-variable #l8 &add &add #l8 10 &con &mod &add #l7 1 3 0 5
+    !until &equ &inc #l7 1 9
+    67 screen-poke &add #l9 8 &add 5 &div &sub 30 &len &lget #l4 4 2 .scheme.cardback &lget #l4 4
+    67 screen-poke &add #l9 8 &add 40 &div &sub 30 &len &lget #l4 5 2 .scheme.cardback &lget #l4 5
+    67 screen-poke &add #l9 8 &add 75 &div &sub 30 &len &lget #l4 6 2 .scheme.cardback &lget #l4 6
+    !if &les .Brag.stt 30
+      !if &gre &lget #l4 1 &lget .Brag.h2i 1
+        67 screen-poke &add #l9 4  3 .scheme.cardback "W"
+        67 screen-poke &add #l9 4 35 .scheme.cardback "W"
+      !elif &les &lget #l4 1 &lget .Brag.h2i 1
+        67 screen-poke &add #l9 4  3 .scheme.cardback "L"
+        67 screen-poke &add #l9 4 35 .scheme.cardback "L"
+      !endif
+      !if &gre &lget #l4 2 &lget .Brag.h2i 2
+        67 screen-poke &add #l9 4 38 .scheme.cardback "W"
+        67 screen-poke &add #l9 4 70 .scheme.cardback "W"
+      !elif &les &lget #l4 2 &lget .Brag.h2i 2
+        67 screen-poke &add #l9 4 38 .scheme.cardback "L"
+        67 screen-poke &add #l9 4 70 .scheme.cardback "L"
+      !endif
+      !if &gre &lget #l4 3 &lget .Brag.h2i 3
+        67 screen-poke &add #l9 4 73 .scheme.cardback "W"
+        67 screen-poke &add #l9 4 105 .scheme.cardback "W"
+      !elif &les &lget #l4 3 &lget .Brag.h2i 3
+        67 screen-poke &add #l9 4 73 .scheme.cardback "L"
+        67 screen-poke &add #l9 4 105 .scheme.cardback "L"
+      !endif
+    !endif 
+  !endif
+  !if &not &band 2 #l1
+    set-variable #l9 &add #l9 11
+    set-variable #l2 &lget #l0 8
+    set-variable #l3 ""
+    !if &seq #l2 &lget #l0 9
+      set-variable #l3 ": Balanced defence"
+      set-variable #l1 &bor #l1 4
+    !endif
+    67 screen-poke &sub #l9 1 2 .scheme.cardback &spr "Best defensive%s  -  Prb  Win: %.4f   Lose: %.4f" #l3 &fmul &lget #l0 12 0.000000001 &fsub 1 &fmul &lget #l0 16 0.000000001
+    bragHandOrder #l2 #l3 #l4
+    set-variable #l7 0
+    set-variable #l8 5
+    !repeat
+      bragDrawCard &atoi &mid #l3 #l7 1 #l9 #l8
+      set-variable #l8 &add &add #l8 10 &con &mod &add #l7 1 3 0 5
+    !until &equ &inc #l7 1 9
+    67 screen-poke &add #l9 8 &add 5 &div &sub 30 &len &lget #l4 4 2 .scheme.cardback &lget #l4 4
+    67 screen-poke &add #l9 8 &add 40 &div &sub 30 &len &lget #l4 5 2 .scheme.cardback &lget #l4 5
+    67 screen-poke &add #l9 8 &add 75 &div &sub 30 &len &lget #l4 6 2 .scheme.cardback &lget #l4 6
+    !if &les .Brag.stt 30
+      !if &gre &lget #l4 1 &lget .Brag.h2i 1
+        67 screen-poke &add #l9 4  3 .scheme.cardback "W"
+        67 screen-poke &add #l9 4 35 .scheme.cardback "W"
+      !elif &les &lget #l4 1 &lget .Brag.h2i 1
+        67 screen-poke &add #l9 4  3 .scheme.cardback "L"
+        67 screen-poke &add #l9 4 35 .scheme.cardback "L"
+      !endif
+      !if &gre &lget #l4 2 &lget .Brag.h2i 2
+        67 screen-poke &add #l9 4 38 .scheme.cardback "W"
+        67 screen-poke &add #l9 4 70 .scheme.cardback "W"
+      !elif &les &lget #l4 2 &lget .Brag.h2i 2
+        67 screen-poke &add #l9 4 38 .scheme.cardback "L"
+        67 screen-poke &add #l9 4 70 .scheme.cardback "L"
+      !endif
+      !if &gre &lget #l4 3 &lget .Brag.h2i 3
+        67 screen-poke &add #l9 4 73 .scheme.cardback "W"
+        67 screen-poke &add #l9 4 105 .scheme.cardback "W"
+      !elif &les &lget #l4 3 &lget .Brag.h2i 3
+        67 screen-poke &add #l9 4 73 .scheme.cardback "L"
+        67 screen-poke &add #l9 4 105 .scheme.cardback "L"
+      !endif
+    !endif 
+  !endif
+  !if &not &band 4 #l1
+    set-variable #l9 &add #l9 11
+    set-variable #l2 &lget #l0 9
+    bragHandOrder #l2 #l3 #l4
+    67 screen-poke &sub #l9 1 2 .scheme.cardback &spr "Best balanced  -  Prb  Win: %.4f   Lose: %.4f" &fmul &lget #l0 13 0.000000001 &fsub 1 &fmul &lget #l0 17 0.000000001
+    set-variable #l7 0
+    set-variable #l8 5
+    !repeat
+      bragDrawCard &atoi &mid #l3 #l7 1 #l9 #l8
+      set-variable #l8 &add &add #l8 10 &con &mod &add #l7 1 3 0 5
+    !until &equ &inc #l7 1 9
+    67 screen-poke &add #l9 8 &add 5 &div &sub 30 &len &lget #l4 4 2 .scheme.cardback &lget #l4 4
+    67 screen-poke &add #l9 8 &add 40 &div &sub 30 &len &lget #l4 5 2 .scheme.cardback &lget #l4 5
+    67 screen-poke &add #l9 8 &add 75 &div &sub 30 &len &lget #l4 6 2 .scheme.cardback &lget #l4 6
+    !if &les .Brag.stt 30
+      !if &gre &lget #l4 1 &lget .Brag.h2i 1
+        67 screen-poke &add #l9 4  3 .scheme.cardback "W"
+        67 screen-poke &add #l9 4 35 .scheme.cardback "W"
+      !elif &les &lget #l4 1 &lget .Brag.h2i 1
+        67 screen-poke &add #l9 4  3 .scheme.cardback "L"
+        67 screen-poke &add #l9 4 35 .scheme.cardback "L"
+      !endif
+      !if &gre &lget #l4 2 &lget .Brag.h2i 2
+        67 screen-poke &add #l9 4 38 .scheme.cardback "W"
+        67 screen-poke &add #l9 4 70 .scheme.cardback "W"
+      !elif &les &lget #l4 2 &lget .Brag.h2i 2
+        67 screen-poke &add #l9 4 38 .scheme.cardback "L"
+        67 screen-poke &add #l9 4 70 .scheme.cardback "L"
+      !endif
+      !if &gre &lget #l4 3 &lget .Brag.h2i 3
+        67 screen-poke &add #l9 4 73 .scheme.cardback "W"
+        67 screen-poke &add #l9 4 105 .scheme.cardback "W"
+      !elif &les &lget #l4 3 &lget .Brag.h2i 3
+        67 screen-poke &add #l9 4 73 .scheme.cardback "L"
+        67 screen-poke &add #l9 4 105 .scheme.cardback "L"
+      !endif
+    !endif 
+  !endif
+!emacro
+0 define-macro brag-draw-stats
+  67 screen-poke  2 10 .scheme.cardback "Brag Statistics"
+  67 screen-poke  3 10 .scheme.cardback "==============="
+  67 screen-poke  5 10 .scheme.cardback "This Session:"
+  !if &not &set #l0 &sub .Brag.ciw1 .Brag.ciw2
+    set-variable #l1 "Level"
+  !elif &gre #l0 0
+    set-variable #l1 &spr "%d up" #l0
+  !else
+    set-variable #l1 &spr "%d down" &abs #l0
+  !endif
+  67 screen-poke  7 14 .scheme.cardback &spr "Hands:  %6d  -  %s" .Brag.chno #l1
+  67 screen-poke  9 14 .scheme.cardback &spr "Wins:   %6d" .Brag.ciw1
+  67 screen-poke 10 14 .scheme.cardback &spr "Losses: %6d" .Brag.ciw2
+  67 screen-poke 13 14 .scheme.cardback "Computer would have:"
+  67 screen-poke 15 18 .scheme.cardback &spr "Wins:   %6d" .Brag.ccw1
+  67 screen-poke 16 18 .scheme.cardback &spr "Losses: %6d" .Brag.ccw2
+  !if &equ #l0 &set #l1 &sub .Brag.ccw1 .Brag.ccw2
+    67 screen-poke 18 18 .scheme.cardback "Honours even - well played!"
+  !elif &gre #l1 #l0
+    67 screen-poke 18 18 .scheme.cardback &spr "Beating you by %d - could do better!" &sub #l1 #l0
+  !else
+    67 screen-poke 18 18 .scheme.cardback &spr "You are %d up - I bow to the Grand Master!!" &sub #l0 #l1
+  !endif
+  !if &gre .Brag.hhno .Brag.chno
+    67 screen-poke 21 10 .scheme.cardback "All time:"
+    !if &not &set #l0 &sub .Brag.hiw1 .Brag.hiw2
+      set-variable #l1 "Level"
+    !elif &gre #l0 0
+      set-variable #l1 &spr "%d up" #l0
+    !else
+      set-variable #l1 &spr "%d down" &abs #l0
+    !endif
+    67 screen-poke 23 14 .scheme.cardback &spr "Hands:  %6d  -  %s" .Brag.hhno #l1
+    67 screen-poke 25 14 .scheme.cardback &spr "Wins:   %6d" .Brag.hiw1
+    67 screen-poke 26 14 .scheme.cardback &spr "Losses: %6d" .Brag.hiw2
+    67 screen-poke 29 14 .scheme.cardback "Computer would have:"
+    67 screen-poke 31 18 .scheme.cardback &spr "Wins:   %6d" .Brag.hcw1
+    67 screen-poke 32 18 .scheme.cardback &spr "Losses: %6d" .Brag.hcw2
+    !if &equ #l0 &set #l1 &sub .Brag.hcw1 .Brag.hcw2
+      67 screen-poke 34 18 .scheme.cardback "Honours even - well played!"
+    !elif &gre #l1 #l0
+      67 screen-poke 34 18 .scheme.cardback &spr "Beating you by %d - could do better!" &sub #l1 #l0
+    !else
+      67 screen-poke 34 18 .scheme.cardback &spr "You are %d up - I bow to the Grand Master!!" &sub #l0 #l1
+    !endif
+  !endif
+!emacro
+
+0 define-macro brag-draw
+  !if &not &seq $buffer-bname "*Brag*"
+    find-buffer "*Brag*"
+  !elif &equ @# 4
+    set-variable @# 0
+  !elif &sub @# 1
+    !return
+  !endif
+  ml-write &cat "brag-draw " @#
+  !iif @#  screen-update
+  67 screen-poke 17 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  67 screen-poke 18 110 .scheme.cardback &spr "%s  Continue   %s" &lef $box-chars 1 &lef $box-chars 1
+  99 screen-poke 18 113 .scheme.cardback "C"
+  67 screen-poke 19 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  67 screen-poke 25 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  67 screen-poke 26 110 .scheme.cardback &spr "%s    Exit     %s" &lef $box-chars 1 &lef $box-chars 1
+  99 screen-poke 26 116 .scheme.cardback "x"
+  67 screen-poke 27 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  !if &gre .Brag.stt 19
+    67 screen-poke  9 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    67 screen-poke 10 110 .scheme.cardback &spr "%s  Copy Hand  %s" &lef $box-chars 1 &lef $box-chars 1
+    67 screen-poke 11 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+    brag-draw-details    
+  !elif &gre .Brag.stt 9
+    brag-draw-stats
+  !elif .Brag.stt
+    brag-draw-unveil    
+  !else
+    3 screen-poke   2 14 .scheme.cardback "1         2         3         4         5         6         7         8         9"
+    3 screen-poke  22 19 .scheme.cardback "Q         W         E                   R         T         Y"
+    67 screen-poke  5 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    67 screen-poke  6 110 .scheme.cardback &spr "%sSort Ace High%s" &lef $box-chars 1 &lef $box-chars 1
+    99 screen-poke  6 116 .scheme.cardback "A"
+    67 screen-poke  7 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+    67 screen-poke  9 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    67 screen-poke 10 110 .scheme.cardback &spr "%sSort Ace Low %s" &lef $box-chars 1 &lef $box-chars 1
+    99 screen-poke 10 111 .scheme.cardback "Z"
+    67 screen-poke 11 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+    67 screen-poke 13 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    67 screen-poke 14 110 .scheme.cardback &spr "%sSort By Suit %s" &lef $box-chars 1 &lef $box-chars 1
+    99 screen-poke 14 119 .scheme.cardback "S"
+    67 screen-poke 15 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+    67 screen-poke 21 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    67 screen-poke 22 110 .scheme.cardback &spr "%s Statistics  %s" &lef $box-chars 1 &lef $box-chars 1
+    99 screen-poke 22 116 .scheme.cardback "i"
+    67 screen-poke 23 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+    67 screen-poke 37 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    67 screen-poke 38 110 .scheme.cardback &spr "%s Tricky Hand %s" &lef $box-chars 1 &lef $box-chars 1
+    67 screen-poke 39 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+    67 screen-poke 41 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    67 screen-poke 42 110 .scheme.cardback &spr "%s Enter Hand  %s" &lef $box-chars 1 &lef $box-chars 1
+    67 screen-poke 43 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+    set-variable #l4 0
+    !repeat
+      !if &set #l6 &sin &set #l5 &mid .Brag.h1 #l4 1 .Brag.h1s 
+        bragDrawCard &atoi #l5 13 &add 5 &add &mul 10 #l6 &mul 10 &div &sub #l6 1 3
+        !iif &not @# bragDrawCard 0 3 &add 10 &mul #l4 10
+      !else
+        bragDrawCard &atoi #l5 3 &add 10 &mul #l4 10
+      !endif
+      bragDrawCard 1 41 &add 10 &mul #l4 10
+    !until &equ &inc #l4 1 9
+  !endif
+  67 screen-poke 30 110 .scheme.cardback &spr "Hands: %d" .Brag.chno
+  65 screen-poke 32 110 .scheme.cardback &spr "Score: %d - %d" .Brag.ciw1 .Brag.ciw2
+!emacro
+  
+define-macro Brag
+  delete-other-windows
+  find-buffer "*Brag*"
+  !if &not &seq $buffer-bhook "bhook-brag"
+    set-variable $buffer-scheme .scheme.cardback
+    buffer-bind-key brag-mouse-pick-left "mouse-pick-1"
+    buffer-bind-key brag-mouse-drop-left "mouse-drop-1"
+    buffer-bind-key void "mouse-pick-2"
+    buffer-bind-key void "mouse-drop-2"
+    buffer-bind-key void "mouse-pick-3"
+    buffer-bind-key void "mouse-drop-3"
+    buffer-bind-create "bo" "esc h" "" brag-help
+    1 buffer-bind-key brag-command "1"
+    2 buffer-bind-key brag-command "2"
+    3 buffer-bind-key brag-command "3"
+    4 buffer-bind-key brag-command "4"
+    5 buffer-bind-key brag-command "5"
+    6 buffer-bind-key brag-command "6"
+    7 buffer-bind-key brag-command "7"
+    8 buffer-bind-key brag-command "8"
+    9 buffer-bind-key brag-command "9"
+    11 buffer-bind-key brag-command "q"
+    12 buffer-bind-key brag-command "w"
+    13 buffer-bind-key brag-command "e"
+    14 buffer-bind-key brag-command "r"
+    15 buffer-bind-key brag-command "t"
+    16 buffer-bind-key brag-command "y"
+    20 buffer-bind-key brag-command "m"
+    21 buffer-bind-key brag-command "a"
+    22 buffer-bind-key brag-command "z"
+    23 buffer-bind-key brag-command "s"
+    23 buffer-bind-key brag-command "d"
+    24 buffer-bind-key brag-command "c"
+    25 buffer-bind-key brag-command "i"
+    26 buffer-bind-key brag-command "x"
+    1 buffer-bind-key brag-draw "C-l"
+    buffer-bind-key brag-draw "redraw"
+    set-variable $buffer-bhook bhook-brag
+    set-variable $buffer-ehook ehook-brag
+    set-variable $random 0
+    bhook-brag
+  !endif
+  !iif &seq .Brag.deck ""  bragShuffle .Brag.deck
+  !iif &seq .Brag.h1 ""  brag-deal
+  1 brag-draw
+!emacro
+; sent AS2S3S AC8C5D QSJS9D
+; TODO beef up 'computer would have played' if score diff is large
+; TODO Input hand to use GUI
+; TODO Improve messages on stats page
+; TODO Use toasts rather than ml-write
+; TODO support 4 of a kind
+; TODO You played to check what type (best defence etc) and not reprint if not main computer way - 'Different' otherwise
+!iif &exi .Brag.s10  !return
+set-variable .Brag.s10 "       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9      58      78      78      88      88      88     176     185     185     185     244     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     362     410     518     538     538     596     655     655     655    1105    1262    1272    1272    1272    1555    1751    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771"
+set-variable .Brag.s11 "    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    2851    7685   12061   14822   16084   16427   16427   16427   16427   16427   16427   16427   17474   18932   26085   31482   33400   33742   33742   33742   33742   33742   33742   33742   39778   41651   49457   62107   68092   69470   69470   69470   69470   69470   69470   69470   85997   93361  101713  110500  121990  126610  128331  129129  129284  129284  129284  129284  148563  164875  179162  188627  197134  207371  212325  214772  215435  215435  215435  215435  250531  270267  295951  308129  316732  324494  333851  338575  339977  339977  339977  339977  391782  422705  450480  473511  484114  491894  498720  506300  508610  508610  508610  508610  577926  623519  660033  683387  702739  712148  718908  723406  726867  726867  726867  726867  818284  878342  925529  955305  974200  989585  996930 1001322 1002916 1002916 1002916 1002916 1116345 1192909 1251715 1289926 1313034 1326935 1337162 1340436 1342012 1342012 1342012 1342012 1472076 1560812 1624203 1665505 1691538 1706089 1713867 1718326 1718326 1718326 1718326 1718326 1859748 1959524 2029316 2074278 2102505 2119399 2128177 2131912 2133313 2133313 2133313 2133313 2228735 2312263 2381904 2428408 2458692 2477004 2487031 2491276 2492517 2492517 2492517 2492517 2528183 2571441 2600421 2634851 2667759 2699215 2729084 2753019 2797319 2825180 2865564 2890384 2921683 2948189 2973519 3002535 3029180 3070223 3095897 3147027 3183453 3213162 3247938 3281533 3306904 3335542 3363455 3385325 3411238 3438809 3467718 3511277 3539836 3586812 3620125 3646968 3692273 3736132 3773919 3801632 3837466 3867451 3902847 3927214 3954882 3983430 4007869 4031309 4057140 4084307 4118665 4169476 4202169 4257394 4295851 4328999 4374916 4418689 4456086 4483637 4535804 4578936 4630109 4670623 4700274 4740978 4774726 4809189 4846642 4871733 4901000 4932917 4959938 4987796 5012538 5039696 5068554 5108479"
+set-variable .Brag.s12 " 5169491 5209704 5275118 5321730 5361595 5416951 5469961 5515392 5551166 5604993 5649398 5701614 5742723 5772879 5832979 5883840 5936273 5992536 6036060 6068302 6114196 6153099 6193522 6231573 6326059 6420024 6497501 6610630 6698629 6779043 6880297 6975269 7062690 7140827 7209013 7266222 7329062 7378874 7418036 7482712 7537978 7591898 7650312 7695752 7729819 7801383 7863637 7925751 7984759 8047946 8096591 8133448 8190349 8239456 8288155 8334824 8378635 8425918 8457817 8494821 8541132 8581199 8623187 8663520 8701833 8735054 8772004 8810930 8886859 8978397 9041553 9144143 9220003 9281897 9371345 9458308 9529019 9586332 9676873 9755186 9840783 9909067 99630421005362910133116102104651029372910357931104098181049937310578096106554061072950610807805108692851091678511020151111111181120136211288912113709161145918811527628115796851166877311745568118232131189790411967960120338541210423912152726122075111228670812355185124148671247490212532204125872111263610212687908127405331274053312855088129321001303051113095027131774971326338213345360134390971350612313597179136719881378841913871869139397901403260514109859142170011431994714400476144666851456068714639343147491671484378714944527150238211508818715185023152661801537966415478195155719121567199415749931158108821592098116014289161439051625784816366888164712061658125516665971167359521682402216897979169998541708822417172975172535131732955017409514174665031752791917634924177260181784937017956819180600541815962018254485183392161842884618518676205240262314644626206391295616203328181937442216420665754722840252550353582995366456701473749442746730597560129576567848775278657847699279411241803295228122345682084782829482478376414885990496871801058839572689609000908177129202012193214129943773589552861596650163977716699877015599999999"
+set-variable .Brag.s20 "       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0    5111    5111    5111    5113    5113    5113    5113    5113    5113    5113    5113    5113    5113    5113    5113    5113    5113    5113    5113    5113   20195   34684   39202   39656   39656   39656   39656   39656   39656   39656   39656   39656   39656   39656   39656   39656   39656   39656   39656   39656   39656   39656   39656   39656   39656   39656   39656   65807   94796  109131  120937  130173  134136  136739  137463  137463  137463  138121  138317  138414  138414  138414  138414  138414  138414  138414  138414  138414  138512  138561  138561  138561  180291  222721  251398  280916  302148  316722  333717  346338  357082  362232  368461  372681  374589  374589  374589  376145  376292  376292  376292  376292  376292  376489  376548  376548  376548  376548  376548  376548  377722  378113  378329  378387  378397  378397  378397  378397  378524  378622  378691  378710  378710  378710  378710  378710  455025  513087  542056  591712  621241  637027  682719  722080  741073  760952  802355  833730  862560  878991  886067  902556  914111  921358  924701  924840  924840  929105  930970  931831  932080  932139  932139  932139  935400  936351  936805  936805  936805  936805  936805  936805  941943  944111  945068  945499  945636  945636  945636  945636  945636  949980  952231  953503  954090  954237  954237  954237  954237  954237  954237 1030955 1076381 1136730 1166393 1187962 1236271 1285001 1307878 1317779 1363579 1406778 1451688 1468011 1475628 1517303 1554709 1590331 1618639 1627923 1633894 1667870 1698651 1721511 1734981 1741711 1741711 1741711 1757587 1770319 1778972 1782635 1783794 1783794 1783794 1783794 1799467 1811415 1818620 1821942 1823209 1823906 1823906 1823906 1823906 1843895 1860300 1870932 1876652"
+set-variable .Brag.s21 " 1881525 1885660 1887353 1887353 1887353 1887353 1893828 1899195 1903234 1905809 1906641 1906837 1906837 1906837 1906837 1906837 1978734 2106848 2274105 2413756 2526220 2610050 2659226 2676744 2680170 2680244 2680244 2680244 2794438 2882533 2992987 3134188 3239963 3324883 3386222 3419161 3435154 3441882 3442268 3442291 3629221 3746428 3850376 3990617 4156458 4280968 4373579 4435614 4475568 4498734 4510752 4512145 4729278 4888953 5046784 5164276 5316992 5470526 5580811 5657701 5711542 5744517 5761463 5763806 5955008 6154407 6367822 6540931 6669604 6825847 6966511 7059451 7125463 7167595 7190648 7194996 7405588 7572391 7830713 8075555 8258593 8391111 8546205 8664905 8743484 8791988 8820374 8827661 9062315 9253863 9470224 97758691002233510200932103272141045746110555643106141991064737010657357109036211111616511351196115978831192573612159429123290861243852212544095126159281265843812671465129380531316426013417652136884421396761314277256144744111461801114701544147791591483443514852227151318771538454415662152159472011623681216497843167619241690197816997232170544501711813617139451174319391769455917976942182702691857184018835852190454471923168819322249193844431941441819437048197662722005396120357565206672392098646121288901215331372171936621866432219403412197578621994845222544702247540922752965229960482321139123396197235406132364001423710681237667142378125523791875239311442409765324224743243720552451484624658090247934162490660425098571252319362541707925537045256797202581069725938018260754542619980326379826265021182672908226894966270330692720544827373560274990192763286827772006278877522801932228150278282792002846444428598083288095062896439829091394293035102951509229692903298249613000123130159264303370513045825930588591307328463086125330983465311108393123853031370968315656903170555931926656320866863222788332429343326285473279599032918066331379423333750833565863337420763387373034060307342264683439610334571616346917443482073134972721351094633524836635369937354987293562597435757434"
+set-variable .Brag.s22 "35956201361015593632914836497259366447623685414537062834372374113737464837583431377731183798840938153614382750643850154038708943389236983914751639320025394492553963793239809951399856154014808440465079407857204106760141439790417520834205230042410982427624434309917843397158436242064383198644065191442443504438989144615793448231774503453445255465454296094555796945793633460151454624376946462553466928414687339047010639472131314739907747588688477676344793983248117009482430504837703748539514486871744883994848984109491230114924636949377287495055604967712349903011500745695033175150530766507018835094571551189543513963265156175251810835520407705229840852501825526664685291781853150034533902375363962953836348539982805424386554473602547117495493828455175960553644105550655155766754560082965626451356509229567463995699432157189860573401945756142657766442579847605819373458394070585858875878134458920201590674275925489259425964595769775973612359889006600357676016633160304943604411406044114060671756608530326107429761239338614242926162873161840071620589256222154162433738626326206289743563099540632635536347818263678300639263996417342664368705645297936473898764936693651812986540542365637695658239986597809666185133663807626662811966854573670676746729118067471932676048916781968768022306682761166851292268737465689524236917348969349788694927096967098169839029700438857023580970420039705961807076276170933623710602817119288771380073715571847176988971967512721583267234653772528092726889817286344673030975759697227920216482559236856780598863980791123363932521629502938896387910975579479829043899124610992028929927434999342365994058509946464799518438995670529961018999648760996818009971040199788508998267669986125399891205999171359993942199958220999732869998479999992591999975019999999999999999"
+set-variable .Brag.s30 "       0  136968  307509  413881  544431  662193  783052  898381  993411 1138639 1235333 1358149 1447655 1539670 1635011 1725897 1820633 1920915 2051935 2135349 2263484 2360131 2435776 2548045 2646639 2721866 2829172 2942579 3024971 3114866 3239838 3346893 3492581 3589614 3715221 3808017 3874107 3999983 4111832 4201209 4285887 4413653 4518199 4634632 4733283 4864606 4998615 5101844 5194461 5298277 5437418 5538385 5689504 5794287 5927104 6023869 6106894 6229454 6339029 6426164 6493043 6630043 6739839 6870469 6965333 7055585 7202575 7316272 7434913 7570410 7675483 7808422 7952657 8067751 8195712 8299742 8409817 8529393 8673257 8833593 8937862 9081915 9185185 9275749 9411664 9530322 9626170 9705363 9845189 995301610076920101613021023023710391280105145331064217110777302108744481096344511122918112470461136854411468217117374671205446612365922126670351291606713148529134158221366623413942320142579761445461814608433147726681489708615014452152150961536911115523488156786891580885915906113161229101629778916472187166373951681729616953556170829661729668017472458176505191781596517986135181509181829450818497674186926271885118619018222191718121932096119440893195619121971961419928580201643292034362020601046207867592094344321177923213974722157228321709741219510032215355222371008225352002268787422934353231407052334019923536103237056602386012824113527243282432453809924728240249309992510539625250352255230692575392725988368262042922641074826628538268371602704178827301654275310572777751127998625282154892843293928667418288973922919616429453234296833882986185830053279302462543042858830581430307721313103485331034853313128983153527431796198319840273217767932405800326220343282284532972200332044953340372733653860338441653399757734241486344550153469004334918190351030053527418635515631357309253597187236175405363710643655193436718860369563233717044937411449376107973777627637962886381422123828894138528132387471133900863639236574394214863959887939804923400078494019307340435917406637324092929641165804"
+set-variable .Brag.s31 "41360964415541764175305241973395421745184242423942702472429672654327845343563387438134014406930644331452445711014486468545236201454459034570332146003167462764794655798146864928471989064755852647939280483725204888337849284889495948894982251750056297503089515054134350789868510662085135728351654986519843545239695752754324531247275343687653671783539163895419393354454987547352005503585055345831556710315607831656490343568266085716631057507548577492175800507558297288585748235886505359162685594755535986191360203110605089536081790961193252615161516176021262021095623247826260691962885604631814336353861263851938641532336443032964779474651310206544490365693004659634756626639166534320668055856713483367432483677319416800555268320579686538666899424769296743695469926981346370100407703532267064923070922509712126097148087271785986720782727240122372729290730163317325817973503944737662217403961374285538745658757482368275117071753997107568527675995257763048327657309476791734770197147730866377534547778029397804567478321343785869727885431279118781794048687969346779933664801382308038328980617042808855778112378381382990816289688187707082119134823577748261303382855055830512028325683883432112837240488398176884258356845142168477032185025357852728028551113585755488859870238616542086367715866141838683318587075133872902098749426787695879878878408806637288233318883962708854847888716881887844658885675888923363889920388905858489128229891923298925249089325154893907328946097789521952895851298964703889710284897727408983408089903030899615679003254290096550901575939022338090287280903460599040297290465354905206599058158690638039906959259076049790818788908842409094293090995600910603109112326491182960912364529129736091355616914158539146775691519432915767929163045991681417917342539178466191837849918980729195217392013191920675199211954592178521922360209229016492334881923939849245026392508113925598979260743192662921927152409276844892820319928663439291205292963023930110379305924493101876931480529319237993235922"
+set-variable .Brag.s32 "93289310933368399339066993438572934843359353612893586752936342859367651493727827937764229382656993871207939089669395995494008362940571689410454294148534941888209423604294280915943261359436932194453672945376879461627894705816947868019486629894949055950268939510517495176676952204519526199195304536953424689537754595420113954604559550072095540161955767799560765995649155956887539572853995766432958046079584053795873282959115759594796395984875960197609605435896089407961205289615158096185908962180419625038596281190963113799633884496369264963982749643092596468800965029929654093796574814966076079664324496678428967122879674212796777146968106019684547896876962969060579694011396972546970055069703773397067642970955929712832697159676971913189722112497251504972801719730409797335834973661789739724897426622974554939748487897512798975381439756720397594930976234199765038997676673977029889772964597753205977768869780326197827841978510069787416397897166979195959793950597962048979836229798362298007417980308989805521698077610980993339812111398145144981672609818616598209153982317439825450198275531982947709831712798338977983601509838168198401724984203839844170898462726984828679850266698522495985413579855907198579544985995279861861898637624986558919867441298692529987069649872673398745962987640789878232998800102988175479883528098852571988682369888625698903701989199449893629698952294989678559898354398999116990128079902717299045044990623669907830799094326991098019912523999140645991538819916902799183644993629519951355099654610997614359983960499895021999335799995830699973189999852089999217999997044999973859999769499997980999982399999847099998677999988619999902399999165999992939999940499999617999997129999979199999853999999029999993999999965999999829999999399999998999999999999999999999999"
+set-variable .Brag.cardSuitChars "|?|H|C|D|S|"
+set-variable .Brag.cardNumberChars "|2|3|4|5|6|7|8|9|T|J|Q|K|A|"
+set-variable .Brag.cardNumberNames "|Two|Three|Four|Five|Six|Seven|Eight|Nine|Ten|Jack|Queen|King|Ace|"
+set-variable .Brag.triangNo "|0|1|3|6|10|15|21|28|36|45|55|66|78|91|105|120|"
+set-variable .Brag.highSetOff "|0|0|0|0|2|7|16|30|50|77|102|146|200|265|"
+set-variable .Brag.deck ""
+set-variable .Brag.chno 0
+set-variable .Brag.ciw1 0
+set-variable .Brag.ciw2 0
+set-variable .Brag.ccw1 0
+set-variable .Brag.ccw2 0
+set-variable .Brag.hhno &reg "/history/brag/hno" "0"
+set-variable .Brag.hiw1 &reg "/history/brag/iw1" "0"
+set-variable .Brag.hiw2 &reg "/history/brag/iw2" "0"
+set-variable .Brag.hcw1 &reg "/history/brag/cw1" "0"
+set-variable .Brag.hcw2 &reg "/history/brag/cw2" "0"
+set-variable .Brag.h1 ""
+set-variable .Brag.h2 ""
+set-variable .Brag.mdl 0
+set-variable .Brag.stt 0

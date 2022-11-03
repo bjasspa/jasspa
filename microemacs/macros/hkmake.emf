@@ -30,6 +30,9 @@ set-variable .fhook-make.comment "|#||#|# | #|r|"
   hilight .hilight.make 0  "/\\*\\."         $global-scheme
   hilight .hilight.make 2  "#"               .scheme.comment
   hilight .hilight.make 4  "\\$(" ")" ""     .scheme.variable
+  hilight .hilight.make 4  "\\$(info" ")" "" .scheme.type
+  hilight .hilight.make 4  "\\$(warning" ")" "" .scheme.type
+  hilight .hilight.make 4  "\\$(error" ")" "" .scheme.error
   hilight .hilight.make 1  "\\$O"            .scheme.variable
   hilight .hilight.make 1  "\\$T"            .scheme.variable
   hilight .hilight.make 0  "\\.SUFFIXES"     .scheme.keyword
@@ -47,6 +50,7 @@ set-variable .fhook-make.comment "|#||#|# | #|r|"
   hilight .hilight.make 0x23 "!IF"           .scheme.prepro
   hilight .hilight.make 0x23 "!ELSE"         .scheme.prepro
   hilight .hilight.make 0x23 "!ENDIF"        .scheme.prepro
+  hilight .hilight.make 0x23 "!MESSAGE"      .scheme.type
   ; gmake IFs
   hilight .hilight.make 0x23 "ifeq"          .scheme.prepro
   hilight .hilight.make 0x23 "else"          .scheme.prepro
