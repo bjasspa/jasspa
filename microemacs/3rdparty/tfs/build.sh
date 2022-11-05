@@ -124,10 +124,13 @@ if [ -z "$MAKEFILE" ] ; then
         else
             KERNEL_MAJOR=`uname -r | cut -c 1-1`
             KERNEL_MINOR=`uname -r | cut -c 3-3`
-            MAKEBAS="linux$KERNEL_MAJOR$KERNEL_MINOR"
-            if [ ! -r $MAKEBAS.gmk ] ; then
+            if [ -r linux${KERNEL_MAJOR}${KERNEL_MINOR}gcc.mak ] ; then
+                MAKEBAS="linux$KERNEL_MAJOR$KERNEL_MINOR"
+            elif [ -r linux${KERNEL_MAJOR}gcc.mak ] ; then
+                MAKEBAS="linux$KERNEL_MAJOR"
+            else
                 MAKEBAS="linux2"
-            fi                
+            fi
         fi
         X11_MAKELIB=/usr/X11R6/lib
     elif [ `echo $PLATFORM | sed -e "s/^MINGW32_NT.*/MINGW32_NT/"` = "MINGW32_NT" ] ; then
