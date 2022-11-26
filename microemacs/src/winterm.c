@@ -3882,7 +3882,7 @@ TTchangeFont (meUByte *fontName, int fontType, int fontWeight,
             chooseFont.lStructSize = sizeof (CHOOSEFONT);
             chooseFont.hwndOwner = baseHwnd;
             chooseFont.lpLogFont = &logfont;
-            chooseFont.Flags = CF_FIXEDPITCHONLY|CF_SCREENFONTS;
+            chooseFont.Flags = (fontType & 1) ? CF_SCREENFONTS:(CF_FIXEDPITCHONLY|CF_SCREENFONTS);
             
             /* This stupid Microsoft system, why is the CHOOSEFONT structure
              * size not sizeof (CHOOSEFONT). Typical Microsoft !! */
@@ -3892,7 +3892,7 @@ TTchangeFont (meUByte *fontName, int fontType, int fontWeight,
             /* Save the values in $result */
             sprintf((char *) resultStr,"%1d%4d%4d%4d%s",(int) (logfont.lfWeight/100),(int) logfont.lfWidth,
                     (int) logfont.lfHeight,logfont.lfCharSet,logfont.lfFaceName) ;
-            if (fontType < -2)
+            if (fontType <= -4)
                 /* if a -ve argument was past to changeFont then don't set the font */
                 return meTRUE ;
             
@@ -3984,13 +3984,13 @@ defaultFont:
     eCellMetrics.cell.sizeX = (textmetric.tmAveCharWidth <= 0) ? 1 : textmetric.tmAveCharWidth;
     if(textmetric.tmPitchAndFamily & TMPF_FIXED_PITCH)
     {
-        /* however, if this is a proportial font we need to do more if we can. Using the tmMaxCharWidth value
-         * is not a good solution because this can include all the chiness characters which can be twice as wide
-         * as we need as we only use chars 0 to 255. So calc the width of a 'W' and use that instead, this will
-         * most likely look awful but should stop most/all character clipping */
+        /* however, if this is a proportial font we need to do more if we can. Using the tmMaxCharWidth value is not
+         * a good solution because this can include all the chiness characters which can be twice as wide as we need
+         * as we only use chars 0 to 255, the average can also be more then width of all 0 - 255. So calc the width
+         * of a 'W' and use that instead, this will most likely look awful but should stop most/all character clipping */
         SIZE sz;
         GetTextExtentPoint32(hDC,"W",1,&sz);
-        if((sz.cx > textmetric.tmAveCharWidth) && (sz.cx <= textmetric.tmMaxCharWidth))
+        if((sz.cx > 0) && (sz.cx <= textmetric.tmMaxCharWidth))
             eCellMetrics.cell.sizeX = sz.cx;
     }
     
@@ -4118,7 +4118,7 @@ changeFont(int f, int n)
     
 #ifdef _ME_WINDOW
     /* Call up the dialog if no argument is supplied */
-    if (!f || (n < 0))
+    if (!f || (n <= 0))
         status = TTchangeFont (NULL, n-3, 0, 0, 0);
     else
     {

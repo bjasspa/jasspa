@@ -693,7 +693,8 @@ try_again:
             else if(c1 == 'b')
             {
                 if((c2 == 'r') && (c3 == 'e'))
-                    status = DRBREAK;
+                    /* Stop DRBREAK effecting exec if execlevel != 0 */
+                    status = (execlevel == 0) ? DRBREAK:DRABORT;
                 else if((c2 == 'e') && (c3 == 'l'))
                     status = DRBELL;
             }
@@ -1081,7 +1082,9 @@ loop_round:
             case DRBREAK:
                 if(lpCnt)
                 {
+                    /* Nested if blocks make it difficult to find the loop end, use !cont code to get to start then treat as a failed !while */
                     lpCnt--;
+                    lp = lpStk[lpCnt]->next;
                     execlevel += 2;
                     status = meTRUE;
                 }
