@@ -74,19 +74,24 @@ LIBFILE  = $(LIBNAME)$(A)
 LIBHDRS  = mesock.h $(BUILDID).mak
 LIBOBJS  = $(OUTDIR)/mesock.o
 
-PRGNAME  = mehttptest
-PRGFILE  = $(PRGNAME)$(EXE)
 PRGHDRS  = mesock.h $(BUILDID).mak
-PRGOBJS  = $(OUTDIR)/mehttptest.o
 PRGLIBS  = $(OUTDIR)/mesock$(A) $(OPENSSLLIBS)
 SYSLIBS  = -lcrypt32 -lws2_32
+
+PRGNAME1 = mehttptest
+PRGFILE1 = $(PRGNAME1)$(EXE)
+PRGOBJS1 = $(OUTDIR)/mehttptest.o
+
+PRGNAME2 = meftptest
+PRGFILE2 = $(PRGNAME2)$(EXE)
+PRGOBJS2 = $(OUTDIR)/meftptest.o
 
 .SUFFIXES: .c .o
 
 $(OUTDIR)/%.o : %.c
 	$(CC) $(CCDEFS) $(CCFLAGS) -c -o $@ $<
 
-all: $(PRGLIBS) $(OUTDIR)/$(LIBFILE) $(OUTDIR)/$(PRGFILE)
+all: $(PRGLIBS) $(OUTDIR)/$(LIBFILE) $(OUTDIR)/$(PRGFILE1) $(OUTDIR)/$(PRGFILE2)
 
 $(OUTDIR)/$(LIBFILE): $(OUTDIR) $(LIBOBJS)
 	$(RM) $@
@@ -94,11 +99,17 @@ $(OUTDIR)/$(LIBFILE): $(OUTDIR) $(LIBOBJS)
 
 $(LIBOBJS): $(LIBHDRS)
 
-$(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
+$(OUTDIR)/$(PRGFILE1): $(OUTDIR) $(PRGOBJS1) $(PRGLIBS)
 	$(RM) $@
-	$(LD) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS) $(SYSLIBS)
+	$(LD) $(LDFLAGS) -o $@ $(PRGOBJS1) $(PRGLIBS) $(SYSLIBS)
 
-$(PRGOBJS): $(PRGHDRS)
+$(PRGOBJS1): $(PRGHDRS)
+
+$(OUTDIR)/$(PRGFILE2): $(OUTDIR) $(PRGOBJS2) $(PRGLIBS)
+	$(RM) $@
+	$(LD) $(LDFLAGS) -o $@ $(PRGOBJS2) $(PRGLIBS) $(SYSLIBS)
+
+$(PRGOBJS2): $(PRGHDRS)
 
 $(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A):
 	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)

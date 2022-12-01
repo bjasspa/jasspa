@@ -23,12 +23,12 @@
 
 #include "mesock.h"
 
-static meUByte ioBuff[meSOCK_BUFF_SIZE];
+static meUByte ioBuff[meSOCK_IOBUF_MIN];
 
 void
-meHttpTestPrint(meUByte *buff,void *data)
+meHttpTestPrint(meUByte type,meUByte *buff,void *data)
 {
-    printf("LOG: %s\n",buff);
+    printf("LOG %d: %s\n",type,buff);
 }
 int
 main(int argc, char *argv[])
@@ -42,9 +42,9 @@ main(int argc, char *argv[])
     meInt port;
     int flgs, rr, ii, ret;
     
-    if((argc < 8) || ((host = (meUByte *) argv[3])[0] == '\0') || ((file = (meUByte *) argv[7])[0] == '\0'))
+    if((argc < 7) || ((host = (meUByte *) argv[2])[0] == '\0') || ((file = (meUByte *) argv[6])[0] == '\0'))
     {
-        printf("meHttpTest Error - Usage:\n  %s [not-used] <flg> <host> [port] [user] [pass] <file> [cookies] [form-data] [submit-fname] [file2]\n",argv[0]);
+        printf("meHttpTest Error - Usage:\n  %s <flg> <host> [port] [user] [pass] <file> [cookies] [form-data] [submit-fname] [file2]\n",argv[0]);
         return 1;
     }
 #ifdef _WIN32
@@ -55,15 +55,16 @@ main(int argc, char *argv[])
     }
 #endif
     //meHttpSetup(meHttpTestPrint,NULL,0,0);
-    meSockSetup(meHttpTestPrint,NULL,20000,60000,meSOCK_BUFF_SIZE,ioBuff);
-    flgs = (argv[2][0] != '\0') ? atoi(argv[2]):0;
-    port = (argv[4][0] != '\0') ? atoi(argv[4]):0;
-    user = (argv[5][0] != '\0') ? (meUByte *) argv[5]:NULL;
-    pass = (argv[6][0] != '\0') ? (meUByte *) argv[6]:NULL;
-    cook.value = ((argc > 8) && (argv[8][0] != '\0')) ? (meUByte *) argv[8]:NULL;
+    meSockSetup(meHttpTestPrint,NULL,20000,60000,meSOCK_IOBUF_MIN,ioBuff);
+    meSockFileInit(&sFp);
+    flgs = (argv[1][0] != '\0') ? atoi(argv[1]):0;
+    port = (argv[3][0] != '\0') ? atoi(argv[3]):0;
+    user = (argv[4][0] != '\0') ? (meUByte *) argv[4]:NULL;
+    pass = (argv[5][0] != '\0') ? (meUByte *) argv[5]:NULL;
+    cook.value = ((argc > 7) && (argv[7][0] != '\0')) ? (meUByte *) argv[7]:NULL;
     cook.buffLen = -1;
-    frdt = ((argc > 9) && (argv[9][0] != '\0')) ? (meUByte *) argv[9]:NULL;
-    pfnm = ((argc > 10) && (argv[10][0] != '\0')) ? (meUByte *) argv[10]:NULL;
+    frdt = ((argc > 8) && (argv[8][0] != '\0')) ? (meUByte *) argv[8]:NULL;
+    pfnm = ((argc > 9) && (argv[9][0] != '\0')) ? (meUByte *) argv[9]:NULL;
 
     if((ret = meSockHttpOpen(&sFp,flgs,host,port,user,pass,file,&cook,(frdt == NULL) ? 0:strlen((char *) frdt),frdt,pfnm,buff)) < 0)
     {
@@ -102,11 +103,11 @@ main(int argc, char *argv[])
             break;
         }
     }
-    if((rr == 0) && (argc > 11) && (argv[11][0] != '\0'))
+    if((rr == 0) && (argc > 10) && (argv[10][0] != '\0'))
     {
         printf("About to close 0... %d\n",rr);
         meSockClose(&sFp,0);
-        if((ret = meSockHttpOpen(&sFp,flgs,host,port,user,pass,(meUByte *) argv[11],&cook,0,NULL,NULL,buff)) < 0)
+        if((ret = meSockHttpOpen(&sFp,flgs,host,port,user,pass,(meUByte *) argv[10],&cook,0,NULL,NULL,buff)) < 0)
         {
             printf("meHttpOpen2 returned error %d: %s\n",ret,buff);
             return 14;

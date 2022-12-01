@@ -76,19 +76,24 @@ LIBFILE  = $(LIBNAME)$(A)
 LIBHDRS  = mesock.h $(BUILDID).mak
 LIBOBJS  = $(OUTDIR)\mesock.o
 
-PRGNAME  = mehttptest
-PRGFILE  = $(PRGNAME)$(EXE)
 PRGHDRS  = mesock.h $(BUILDID).mak
-PRGOBJS  = $(OUTDIR)\mehttptest.o
 PRGLIBS  = $(OUTDIR)\mesock$(A) $(OPENSSLLIBS)
 SYSLIBS  = crypt32.lib ws2_32.lib
+
+PRGNAME1 = mehttptest
+PRGFILE1 = $(PRGNAME1)$(EXE)
+PRGOBJS1 = $(OUTDIR)\mehttptest.o
+
+PRGNAME2 = meftptest
+PRGFILE2 = $(PRGNAME2)$(EXE)
+PRGOBJS2 = $(OUTDIR)\meftptest.o
 
 .SUFFIXES: .c .o .rc .res
 
 .c{$(OUTDIR)}.o:
 	$(CC) $(CCDEFS) $(BCOR_CDF) $(BTYP_CDF) $(CCFLAGS) /Fd"$(OUTDIR)\vc150.pdb" /c $< /Fo"$@"
 
-all: $(PRGLIBS) $(OUTDIR)\$(LIBFILE) $(OUTDIR)\$(PRGFILE)
+all: $(PRGLIBS) $(OUTDIR)\$(LIBFILE) $(OUTDIR)\$(PRGFILE1) $(OUTDIR)\$(PRGFILE2)
 
 $(OUTDIR)\$(LIBFILE): $(OUTDIR) $(LIBOBJS)
 	$(RM) $@
@@ -96,12 +101,19 @@ $(OUTDIR)\$(LIBFILE): $(OUTDIR) $(LIBOBJS)
 
 $(LIBOBJS): $(LIBHDRS)
 
-$(OUTDIR)\$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
+$(OUTDIR)\$(PRGFILE1): $(OUTDIR) $(PRGOBJS1) $(PRGLIBS)
 	$(RM) $@
-	$(LD) $(LDDEFS) $(LDFLAGS) /PDB:"$(OUTDIR)\$(PRGNAME).pdb" /MANIFESTFILE:"$@.intermediate.manifest" /OUT:"$@" $(PRGOBJS) $(PRGLIBS) $(SYSLIBS)
+	$(LD) $(LDDEFS) $(LDFLAGS) /PDB:"$(OUTDIR)\$(PRGNAME).pdb" /MANIFESTFILE:"$@.intermediate.manifest" /OUT:"$@" $(PRGOBJS1) $(PRGLIBS) $(SYSLIBS)
 	$(MT) -outputresource:"$@;#2" -manifest $@.intermediate.manifest
 
-$(PRGOBJS): $(PRGHDRS)
+$(PRGOBJS1): $(PRGHDRS)
+
+$(OUTDIR)\$(PRGFILE2): $(OUTDIR) $(PRGOBJS2) $(PRGLIBS)
+	$(RM) $@
+	$(LD) $(LDDEFS) $(LDFLAGS) /PDB:"$(OUTDIR)\$(PRGNAME).pdb" /MANIFESTFILE:"$@.intermediate.manifest" /OUT:"$@" $(PRGOBJS2) $(PRGLIBS) $(SYSLIBS)
+	$(MT) -outputresource:"$@;#2" -manifest $@.intermediate.manifest
+
+$(PRGOBJS2): $(PRGHDRS)
 
 $(OUTDIR):
 	if not exist $(OUTDIR)\ mkdir $(OUTDIR)

@@ -1,23 +1,12 @@
-# -!- makefile -!-
+##############################################################################
 #
-# JASSPA MicroEmacs - www.jasspa.com
-# win32vc10.mak - Make file for Windows using Microsoft MSVC v10.0 development kit.
-#
-# Copyright (C) 2007-2022 JASSPA (www.jasspa.com)
-#
-# This program is free software; you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by the Free
-# Software Foundation; either version 2 of the License, or (at your option)
-# any later version.
-#
-# This program is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-# more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with this program; if not, write to the Free Software Foundation, Inc.,
-# 675 Mass Ave, Cambridge, MA 02139, USA.
+#  Copyright (c) 2009 Jasspa.
+# 
+#  All Rights Reserved.
+# 
+#  This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
+#  reproduced,  translated,  or  reduced to any  electronic  medium or machine
+#  readable form without prior written consent from Maxexam Ltd.
 #
 ##############################################################################
 
@@ -72,18 +61,23 @@ LIBFILE  = $(LIBNAME)$(A)
 LIBHDRS  = mesock.h $(BUILDID).mak
 LIBOBJS  = $(OUTDIR)/mesock.o
 
-PRGNAME  = mehttptest
-PRGFILE  = $(PRGNAME)$(EXE)
 PRGHDRS  = mesock.h $(BUILDID).mak
-PRGOBJS  = $(OUTDIR)/mehttptest.o
 PRGLIBS  = $(OUTDIR)/mesock$(A)
+
+PRGNAME1 = mehttptest
+PRGFILE1 = $(PRGNAME1)$(EXE)
+PRGOBJS1 = $(OUTDIR)/mehttptest.o
+
+PRGNAME2 = meftptest
+PRGFILE2 = $(PRGNAME2)$(EXE)
+PRGOBJS2 = $(OUTDIR)/meftptest.o
 
 .SUFFIXES: .c .o
 
 $(OUTDIR)/%.o : %.c
 	$(CC) $(CCDEFS) $(CCFLAGS) -c -o $@ $<
 
-all: $(PRGLIBS) $(OUTDIR)/$(LIBFILE) $(OUTDIR)/$(PRGFILE)
+all: $(PRGLIBS) $(OUTDIR)/$(LIBFILE) $(OUTDIR)/$(PRGFILE1) $(OUTDIR)/$(PRGFILE2)
 
 $(OUTDIR)/$(LIBFILE): $(OUTDIR) $(LIBOBJS)
 	$(RM) $@
@@ -91,11 +85,17 @@ $(OUTDIR)/$(LIBFILE): $(OUTDIR) $(LIBOBJS)
 
 $(LIBOBJS): $(LIBHDRS)
 
-$(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
+$(OUTDIR)/$(PRGFILE1): $(OUTDIR) $(PRGOBJS1) $(PRGLIBS)
 	$(RM) $@
-	$(LD) $(LDDEFS) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS)
+	$(LD) $(LDDEFS) $(LDFLAGS) -o $@ $(PRGOBJS1) $(PRGLIBS)
 
-$(PRGOBJS): $(PRGHDRS)
+$(PRGOBJS1): $(PRGHDRS)
+
+$(OUTDIR)/$(PRGFILE2): $(OUTDIR) $(PRGOBJS2) $(PRGLIBS)
+	$(RM) $@
+	$(LD) $(LDDEFS) $(LDFLAGS) -o $@ $(PRGOBJS2) $(PRGLIBS)
+
+$(PRGOBJS2): $(PRGHDRS)
 
 $(OUTDIR):
 	[ -d $(OUTDIR) ] || mkdir $(OUTDIR)

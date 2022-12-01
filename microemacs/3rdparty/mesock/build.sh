@@ -90,7 +90,7 @@ if [ -z "$MAKEFILE" ] ; then
             elif [ -d "/opt/homebrew/opt/openssl" ] ; then
                 SSL_MAKEPTH=" OPENSSLP=/opt/homebrew/opt/openssl"
             elif [ -d "/usr/local/opt/openssl@1.1" ] ; then
-                SSL_MAKEPTH=" OPENSSLP=/usr/local/opt/openssl@1.1zz"
+                SSL_MAKEPTH=" OPENSSLP=/usr/local/opt/openssl@1.1"
             fi
         elif [ $VERSION -gt 15 ] ; then
             MAKEBAS=macos32
