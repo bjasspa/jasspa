@@ -1425,8 +1425,42 @@ hook_jump:
     return ret ;
 }
 
-/* look up a user var's value */
-/* vname - name of user variable to fetch */
+/* look up a variable in the given list and return a pointer to the variable */
+meVariable *
+getUsrLclCmdVarP(meUByte *vname, register meVariable *vp)
+{
+    register int ii;
+#if MEOPT_CMDHASH
+    meUInt hash;
+    
+    meStringHash(vname,hash);
+    while(vp != NULL)
+    {
+        if(vp->hash == hash)
+        {
+            if((ii=meStrcmp(vname,vp->name)) == 0)
+                return vp;
+            if(ii < 0)
+                break;
+        }
+        else if(vp->hash > hash)
+            break;
+        vp = vp->next ;
+    }
+#else
+    /* scan the list looking for the user var name */
+    while(vp != NULL)
+    {
+        if((ii=meStrcmp(vname,vp->name)) == 0)
+            return vp;
+        if(ii < 0)
+            break;
+        vp = vp->next ;
+    }
+#endif
+    return NULL;
+}
+/* look up a variable in the given list and return the value */
 meUByte *
 getUsrLclCmdVar(meUByte *vname, register meVariable *vp)
 {

@@ -591,29 +591,29 @@ exitEmacs(int f, int n)
 
 #ifdef _CLIPBRD
         /* don't mess with the system clipboard from this point - could be a problem for a shut-down macro */
-        clipState |= CLIP_DISABLED ;
+        clipState |= CLIP_DISABLED;
 #endif
         /* If bit 0x08 is set then create autosaves for any changed buffers,
          * otherwise remove any autosaves */
-        bp = bheadp ;
-        while (bp != NULL)
+        bp = bheadp;
+        while(bp != NULL)
         {
             if(bufferNeedSaving(bp))
             {
                 if (n & 0x08)
-                    autowriteout(bp) ;
+                    autowriteout(bp);
                 else
-                    autowriteremove(bp) ;
+                    autowriteremove(bp);
             }
             bp = bp->next;            /* on to the next buffer */
         }
 #if MEOPT_CALLBACK
         {
             /* call the shut-down command if its bound */
-            meUInt arg ;
-            int index ;
+            meUInt arg;
+            int index;
             if((index = decode_key(ME_SPECIAL|SKEY_shut_down,&arg)) >= 0)
-                execFunc(index,1,n) ;
+                execFunc(index,1,n);
         }
 #endif
 #if MEOPT_CLIENTSERVER
@@ -622,7 +622,7 @@ exitEmacs(int f, int n)
          * the following ipipeRemove only does half a job and
          * TTkillClientServer will be very confused if called after
          */
-        TTkillClientServer() ;
+        TTkillClientServer();
 #endif
         /* go round removing all the active ipipes,
          * execute any dhooks set on active buffers
@@ -630,28 +630,28 @@ exitEmacs(int f, int n)
          */
 #if MEOPT_IPIPES
         while(ipipes != NULL)
-            ipipeRemove(ipipes) ;
+            ipipeRemove(ipipes);
 #endif
 #if MEOPT_FILEHOOK
         /* execute ehooks for all current buffers */
-        meFrameLoopBegin() ;
+        meFrameLoopBegin();
         if(loopFrame->bufferCur->ehook >= 0)
             execBufferFunc(loopFrame->bufferCur,loopFrame->bufferCur->ehook,0,1) ;
-        meFrameLoopEnd() ;
+        meFrameLoopEnd();
 #endif
         /* For all buffers remove the autosave and execute the dhook */
         bp = bheadp ;
         while(bp != NULL)
         {
-            nbp = bp->next ;
+            nbp = bp->next;
 #if MEOPT_FILEHOOK
             if(!meModeTest(bp->mode,MDNACT) && (bp->dhook >= 0))
-                execBufferFunc(bp,bp->dhook,0,1) ;     /* Execute the delete hook */
+                execBufferFunc(bp,bp->dhook,0,1);     /* Execute the delete hook */
 #endif
-            bp = nbp ;
+            bp = nbp;
         }
 #if MEOPT_SOCKET
-        ffFileOp(NULL,NULL,meRWFLAG_NOCONSOLE|meRWFLAG_SOCKCLOSE,-1) ;
+        ffFileOp(NULL,NULL,meRWFLAG_SILENT|meRWFLAG_NOCONSOLE|meRWFLAG_SOCKCLOSE,-1);
 #endif
         TTend();
 
@@ -1456,12 +1456,6 @@ mesetup(int argc, char *argv[])
     /* Init static file io structures */
     meior.fp = meBadFile;
     meiow.fp = meBadFile;
-#if MEOPT_SOCKET
-    meior.ccsk = meBadSocket;
-    meior.sock = meBadSocket;
-    meiow.ccsk = meBadSocket;
-    meiow.sock = meBadSocket;
-#endif    
     /* initialize the editor and process the command line arguments */
     initHistory() ;                     /* allocate history space */
     meSetupProgname(argv[0]) ;

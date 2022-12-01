@@ -263,6 +263,7 @@ extern  int     mlwrite(int flags, meUByte *fmt, ...) ;
 #define meRSTRCMP_USEMAIN    0x10
 extern  int     regexStrCmp(meUByte *str, meUByte *reg, int flags) ;
 extern	meUByte *gtfun(meUByte *fname);
+extern	meVariable *getUsrLclCmdVarP(meUByte *vname, register meVariable *varList);
 extern  meUByte *getUsrLclCmdVar(meUByte *vname, register meVariable *varList);
 #define getUsrVar(vname) getUsrLclCmdVar(vname,usrVarList)
 extern	meVariable *SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue,
@@ -406,17 +407,20 @@ extern int      createBackupName(meUByte *filename, meUByte *fn, meUByte backl, 
 #define meIOTYPE_TFS     0x0010
 #define meIOTYPE_HTTP    0x0020
 #define meIOTYPE_FTP     0x0040
+#define meIOTYPE_FTPE    0x0080
 /* meIOTYPE_PIPE is returned if url is NULL, meIOTYPE_NONE is returned if url does not start with a known URL, this is interpreted as a standard file name */ 
 extern meUByte  ffUrlGetType(meUByte *url);
 #define ffUrlTypeIsSecure(ft)   ((ft) & meIOTYPE_SSL)
 #define ffUrlTypeIsPipe(ft)     ((ft) & meIOTYPE_PIPE)
 #define ffUrlTypeIsFile(ft)     ((ft) & meIOTYPE_FILE)
 #define ffUrlTypeIsHttp(ft)     ((ft) & meIOTYPE_HTTP)
-#define ffUrlTypeIsFtp(ft)      ((ft) & meIOTYPE_FTP)
+#define ffUrlTypeIsFtp(ft)      ((ft) & (meIOTYPE_FTP|meIOTYPE_FTPE))
 #define ffUrlTypeIsTfs(ft)      ((ft) & meIOTYPE_TFS)
+#define ffUrlTypeIsFtpe(ft)     ((ft) & meIOTYPE_FTPE)
+#define ffUrlTypeIsFtps(ft)     (((ft) & (meIOTYPE_FTP|meIOTYPE_SSL)) == (meIOTYPE_FTP|meIOTYPE_SSL))
 #define ffUrlTypeIsFtpu(ft)     (((ft) & (meIOTYPE_FTP|meIOTYPE_SSL)) == meIOTYPE_FTP)
-#define ffUrlTypeIsHttpFtp(ft)  ((ft) & (meIOTYPE_HTTP|meIOTYPE_FTP))
-#define ffUrlTypeIsNotFile(ft)  ((ft) & (meIOTYPE_PIPE|meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP))
+#define ffUrlTypeIsHttpFtp(ft)  ((ft) & (meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE))
+#define ffUrlTypeIsNotFile(ft)  ((ft) & (meIOTYPE_PIPE|meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE))
 
 /* the following internal functions can be used to replace standard fopen/fread to read files from anywhere including tfs - use with extreme care */
 extern meInt ffremain;
@@ -439,7 +443,6 @@ void ffReadFileClose(meIo *io, meUInt flags);
 /* following used in ffFileOp to remove files & create a dir etc */
 #define meRWFLAG_DELETE     0x00800
 #define meRWFLAG_MKDIR      0x01000
-#define meRWFLAG_FTPCLOSE   0x02000
 #define meRWFLAG_SOCKCLOSE  0x02000
 #define meRWFLAG_NOCONSOLE  0x04000
 #define meRWFLAG_FTPNLST    0x08000

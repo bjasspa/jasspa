@@ -415,7 +415,7 @@ timerSet(int id, meInt tim, meInt offset)
 
 
 int
-_timerKill (int id)
+_timerKill(int id)
 {
     /* Kill off the old timer */
     if(isTimerSet(id))
@@ -427,7 +427,7 @@ _timerKill (int id)
         
 #ifdef _MULTI_TIMER
         {
-            meKillMultiTimer(id) ;
+            meKillMultiTimer(id);
         }
 #endif
 #if (defined _CONST_TIMER) || (defined _SINGLE_TIMER)
@@ -441,13 +441,11 @@ _timerKill (int id)
                 if(timers == NULL)
                 {
                     /* No other timer - kill the timer */
-                    meKillSingleTimer() ;
+                    meKillSingleTimer();
                 }
                 else if(timers->abstime > tbp->abstime)
-                    /* Must change the timer to the next timer which is
-                     * a different time
-                     */
-                    timerCheck(0) ;
+                    /* Must change the timer to the next timer which is a different time */
+                    timerCheck(0);
 #endif
             }
             else
@@ -465,30 +463,29 @@ _timerKill (int id)
         }
 #endif            
     }
-    return (meTimerState[id] = meTimerState[id] & ~(TIMER_SET|TIMER_EXPIRED)) ;
+    return (meTimerState[id] = meTimerState[id] & ~(TIMER_SET|TIMER_EXPIRED));
 }
 
 void
 handleTimerExpired(void)
 {
 #if MEOPT_MWFRAME
-    extern int commandDepth ;
+    extern int commandDepth;
     
     /* if the user has changed the window focus using the OS
      * and this is the top level then change frames */
-    if((frameFocus != NULL) && (frameFocus != frameCur) &&
-       (commandDepth == 0))
+    if((frameFocus != NULL) && (frameFocus != frameCur) && (commandDepth == 0))
     {
         if(frameCur->mlLine->length > 0)
         {
             /* erase the ml line of old current frame */
-            frameCur->mlLine->text[0] = '\0' ;
-            frameCur->mlLine->length = 0 ;
-            frameCur->mlLine->flag |= meLINE_CHANGED ;
+            frameCur->mlLine->text[0] = '\0';
+            frameCur->mlLine->length = 0;
+            frameCur->mlLine->flag |= meLINE_CHANGED;
         }
-        mlerase(MWCLEXEC) ;
-        frameCur = frameFocus ;
-        frameFocus = NULL ;
+        mlerase(MWCLEXEC);
+        frameCur = frameFocus;
+        frameFocus = NULL;
     }
 #endif
     
@@ -502,7 +499,7 @@ handleTimerExpired(void)
         TThandleBlink(0);               /* Initiate a cursor blink */
 #if MEOPT_SOCKET
     if(isTimerExpired(SOCKET_TIMER_ID)) /* socket connection time-out */
-        ffFileOp(NULL,NULL,meRWFLAG_SOCKCLOSE|meRWFLAG_SILENT,-1) ;
+        ffFileOp(NULL,NULL,meRWFLAG_SOCKCLOSE|meRWFLAG_SILENT,-1);
 #endif
 }
 

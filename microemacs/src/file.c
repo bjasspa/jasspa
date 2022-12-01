@@ -2035,7 +2035,7 @@ writeCheck(meUByte *pathname, int flags, meStat *statp)
     if(ffUrlTypeIsNotFile(ft))
     {
 #if MEOPT_SOCKET
-        if(ffUrlTypeIsFtpu(ft))
+        if(ffUrlTypeIsFtp(ft))
             return meTRUE;
 #endif
         return mlwrite(MWABORT,(meUByte *)"Cannot write to: %s",pathname);
@@ -2293,9 +2293,9 @@ fileOp(int f, int n)
     if(rr > 0)
     {
         if(n & meFILEOP_BACKUP)
-            dFlags |= meRWFLAG_BACKUP ;
+            dFlags |= meRWFLAG_BACKUP;
         if(n & meFILEOP_FTPCLOSE)
-            dFlags |= meRWFLAG_SOCKCLOSE ;
+            dFlags |= meRWFLAG_SOCKCLOSE;
         if((rr = ffFileOp(sfname,fn,dFlags,fileMask)) > 0)
             return meTRUE ;
     }
@@ -2787,7 +2787,7 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
         {
             flag = 3 ;
             urls = p1 ;
-            if((p=meStrchr(p1+6+(ft & meIOTYPE_SSL),DIR_CHAR)) == NULL)
+            if((p=meStrchr(p1+6+(((ft & (meIOTYPE_SSL|meIOTYPE_FTPE))) ? 1:0),DIR_CHAR)) == NULL)
                 p = p1 + meStrlen(p1) ;
             urle = p ;
             p1 = p ;
@@ -3122,7 +3122,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         dirList->size = 0 ;
         dirList->list = NULL ;
 #if MEOPT_SOCKET
-        if(ffUrlTypeIsFtpu(ft))
+        if(ffUrlTypeIsFtp(ft))
         {
             meLine hlp, *lp ;
             meUByte *ss ;

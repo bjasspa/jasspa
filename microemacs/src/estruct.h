@@ -1378,14 +1378,6 @@ struct s_DragAndDrop
 #define meIOFLAG_NEWFILE 0x0800
 #define meIOFLAG_ERROR   0x1000
 
-#define meIOURLF_WARNING        0x01
-#define meIOURLF_SHOW_DETAILS   0x02
-#define meIOURLF_VERBOSE        0x04
-#define meIOURLF_IGN_CRT_ERR    0x08
-#define meIOURLF_SHOW_PROGRESS  0x10
-#define meIOURLF_CLOSE_PROGRESS 0x20
-#define meIOURLF_SHOW_CONSOLE   0x40
-
 #ifdef _WIN32
 #define meBadFile          INVALID_HANDLE_VALUE
 #define meFileGetError()   GetLastError()
@@ -1411,7 +1403,7 @@ struct s_DragAndDrop
 typedef struct meIo {
     meUByte    type;                    /* Flags detailing type of file */
 #if MEOPT_SOCKET
-    meUByte    urlFlags;                /* Flags used if file is a URL */
+    meUShort   urlFlags;                /* Flags used if file is a URL */
 #endif
     meUShort   flags;                   /* Flags detailing content of file */
     meUInt     offset;
@@ -1423,12 +1415,7 @@ typedef struct meIo {
     int        read;
     int        remain;
 #if MEOPT_SOCKET
-    meSOCKET   ccsk;                    /* FTP control channel socket */
-    meSOCKET   sock;                    /* HTTP/FTP data channel socket */
-    struct sockaddr_in sockAddr;
     meUByte    redirect;                /* Number of redirections - avoids spin */
-    meUByte   *sockUrl;                 /* Current open socket addr (for reuse) */
-    meUByte   *sockHome;
     meRegNode *passwdReg;
     meBuffer  *urlBp;
     int        startTime;
