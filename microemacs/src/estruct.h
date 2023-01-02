@@ -1381,21 +1381,9 @@ struct s_DragAndDrop
 #ifdef _WIN32
 #define meBadFile          INVALID_HANDLE_VALUE
 #define meFileGetError()   GetLastError()
-#if MEOPT_SOCKET
-#define meSOCKET           SOCKET
-#define meBadSocket        INVALID_SOCKET
-#define meSocketIsBad(ss)  ((ss) == meBadSocket)
-#endif
 #else
-#include <sys/socket.h>
-#include <netinet/in.h>
 #define meBadFile          NULL
 #define meFileGetError()   (errno)
-#if MEOPT_SOCKET
-#define meSOCKET           int
-#define meBadSocket        -1
-#define meSocketIsBad(ss)  ((ss) < 0)
-#endif
 #endif
 #define meFileIsBad(ss)    ((ss) == meBadFile)
 

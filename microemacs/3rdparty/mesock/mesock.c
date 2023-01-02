@@ -49,6 +49,7 @@
 #define meInet_addr        inet_addr
 #define meHtons            htons
 #define snprintf           sprintf_s          
+static int WSAinit=0;
 #else
 #include <errno.h>
 #include <unistd.h>
@@ -895,33 +896,32 @@ meSockCheckCertificate(meSockFile *sFp, const char *sniHost, meUByte *rbuff)
     {
         if(severityLbl != NULL)
         {
-            char *issuer = meSockGetRfc2253FormattedName(OPENSSLFunc(X509_get_issuer_name)(cert));
-            snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock %s: Cannot verify %s's certificate, issued by %s:",severityLbl,sniHost,issuer);
-            free(issuer);
-            logFunc(logType,rbuff,logData);
+            char *dd, *issuer = meSockGetRfc2253FormattedName(OPENSSLFunc(X509_get_issuer_name)(cert));
             /* Try to print more user-friendly (and translated) messages for
                the frequent verification errors.  */
             switch (vresult)
             {
             case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY:
-                logFunc(logType,(meUByte *) "  Unable to locally verify the issuer's authority",logData);
+                dd = "Unable to locally verify the issuer's authority";
                 break;
             case X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN:
             case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
-                logFunc(logType,(meUByte *) "  Self-signed certificate encountered",logData);
+                dd = "Self-signed certificate encountered";
                 break;
             case X509_V_ERR_CERT_NOT_YET_VALID:
-                logFunc(logType,(meUByte *) "  Issued certificate not yet valid",logData);
+                dd = "Issued certificate not yet valid";
                 break;
             case X509_V_ERR_CERT_HAS_EXPIRED:
-                logFunc(logType,(meUByte *) "  Issued certificate has expired",logData);
+                dd = "Issued certificate has expired";
                 break;
             default:
                 /* For the less frequent error strings, simply provide the OpenSSL error message. */
-                /* TODO - this erases the prefered return string */
-                snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"  %s", OPENSSLFunc(X509_verify_cert_error_string)(vresult));
-                logFunc(logType,rbuff,logData);
+                if((dd = (char *) OPENSSLFunc(X509_verify_cert_error_string)(vresult)) == NULL)
+                    dd = "Unknown";
             }
+            snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock %s: Cannot verify %s's certificate, issued by %s:  %s",severityLbl,sniHost,issuer,dd);
+            free(issuer);
+            logFunc(logType,rbuff,logData);
         }
         ret = 0;
         /* Fall through, so that the user is warned about *all* issues
@@ -1092,9 +1092,13 @@ meSockReadLine(meSockFile *sFp, meUByte *buff)
             }
 #if MEOPT_OPENSSL
             if(sFp->flags & meSOCK_USE_SSL)
+            {
+                if((err == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL))
+                    sFp->flags &= ~meSOCK_SHUTDOWN;
                 meSockGetSSLErrors(sFp->flags,buff);
+            }
 #endif
-            sFp->flags &= ~meSOCK_REUSE;
+            sFp->flags |= meSOCK_CLOSE;
             return -1;
         }
         if((cc=*dd) == '\n')
@@ -1116,6 +1120,16 @@ meSockSetup(meSockLogger logger,void *data, int toSnd, int toRcv, int ioBfSz, me
     timeoutRcv = toRcv;
     ioBuff = ioBf;
     ioBuffSz = ioBfSz;
+#ifdef _WIN32
+    if(!WSAinit)
+    {
+        WSADATA wsaData;
+        if(!WSAStartup(MAKEWORD(1,1),&wsaData))
+            WSAinit = 1;
+        else if(logFunc != NULL)
+            logFunc(meSOCK_LOG_ERROR,(meUByte *) "meSock Error: WSAStartup failed",logData);
+    }
+#endif
 }
 
 void
@@ -1141,7 +1155,7 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
                meInt fdLen, meUByte *frmData, meUByte *postFName, meUByte *rbuff)
 {
     meUByte *ss;
-    meInt pfs, ret, err;
+    meInt pfs, ret, err, ll;
     FILE *pfp=NULL;
     meSOCKET sck;
 #if MEOPT_OPENSSL
@@ -1150,17 +1164,42 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
 
     if(logFunc == NULL)
         flags &= ~(meSOCK_LOG_STATUS|meSOCK_LOG_ERROR|meSOCK_LOG_WARNING|meSOCK_LOG_DETAILS|meSOCK_LOG_VERBOSE);
-    flags = (flags & ~meSOCK_CTRL_INUSE) | meSOCK_INUSE;
+    flags = (flags & meSOCK_PUBLIC_MASK) | meSOCK_INUSE;
     
-    if(meSockIsInUse(sFp) && (!meSockFileCanReuse(sFp) || (sFp->cprt != port) || (sFp->length < 0) || ((sck=sFp->sck) == meBadSocket) || 
-                                  ((sFp->flags & (meSOCK_USE_SSL|meSOCK_CTRL_INUSE)) != (flags & (meSOCK_USE_SSL|meSOCK_CTRL_INUSE))) ||
-                                  strcmp((char *) sFp->chst,(char *) host) ||
-                                  strcmp((char *) sFp->cusr,((user == NULL) ? "":(char *) user))))
-        meSockClose(sFp,1);
-    sFp->length = -1;
     if(meSockIsInUse(sFp))
     {
-        sFp->flags = flags;
+        if((sFp->flags & meSOCK_CLOSE) || (sFp->cprt != port) || (sFp->length < 0) || ((sck=sFp->sck) == meBadSocket) || 
+           ((sFp->flags & (meSOCK_USE_SSL|meSOCK_CTRL_INUSE)) != (flags & (meSOCK_USE_SSL|meSOCK_CTRL_INUSE))) ||
+           strcmp((char *) sFp->chst,(char *) host) ||
+           strcmp((char *) sFp->cusr,((user == NULL) ? "":(char *) user)))
+            meSockClose(sFp,1);
+#ifdef _WIN32
+        else
+        {
+            /* On windows writing to a sever shutdown (half-open) socket does not fail so poll to see if there is anything to read.
+             * This works because when the server sends a FIN an attempt to read will succeed with a length of 0 indicating the end, if there
+             * actually is something to read we still want to close the socket as things must have gone horribly out of sync!
+             * On UNIX this test does not appear to work, however the initial send fails with an EPIPE error - see below. */ 
+            fd_set rfds;
+            TIMEVAL tv;
+            tv.tv_sec = 0;
+            tv.tv_usec = 0;
+            FD_ZERO(&rfds);
+            FD_SET(sck,&rfds);
+            if((select(1,&rfds,NULL,NULL,&tv) == 1) && FD_ISSET(sck,&rfds))
+            {
+                if(sFp->flags & meSOCK_LOG_DETAILS)
+                    logFunc(meSOCK_LOG_DETAILS,(meUByte *) "meSock Info: Closing connection as server shutdown",logData);
+                meSockClose(sFp,1);
+            }
+        }
+#endif
+    }
+    sFp->length = -1;
+    sFp->chnkLen = 0;
+    if(meSockIsInUse(sFp))
+    {
+        sFp->flags = (sFp->flags & meSOCK_CTRL_SHUTDOWN) | flags;
 #if MEOPT_OPENSSL
         ssl = sFp->ssl;
 #else
@@ -1369,6 +1408,7 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
                 meSockClose(sFp,1);
                 return -18;
             }
+            sFp->flags |= meSOCK_SHUTDOWN;
         }
         else
 #endif
@@ -1438,10 +1478,22 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
         else
             ss += sprintf((char *) ss,"://%s%s",host,file);
     }
-    /* TODO send close if not REUSE? */
-    ss += sprintf((char *) ss," HTTP/1.0\r\nConnection: keep-alive\r\nHost: %s",host);
+    strcpy((char *) ss," HTTP/1.1\r\nHost: ") ;
+    ss += 17;
+    strcpy((char *) ss,(char *) host) ;
+    ss += strlen((char *) ss) ;
     if(port)
         ss += sprintf((char *) ss,":%d",port);
+    if(sFp->flags & meSOCK_CLOSE)
+    {
+        strcpy((char *) ss,"\r\nConnection: close");
+        ss += 19;
+    }
+    else
+    {
+        strcpy((char *) ss,"\r\nConnection: keep-alive");
+        ss += 24;
+    }
     if(user != NULL)
     {
         /* password supplied, encode */
@@ -1453,7 +1505,7 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
     }
     if(pfp != NULL)
     {
-        meInt ii, ll;
+        meInt ii;
         meUByte *s1, *s2 ;
         fseek(pfp,0,SEEK_END);
         ii = ftell(pfp) ;
@@ -1490,66 +1542,91 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
         logFunc(meSOCK_LOG_DETAILS,ioBuff,logData);
     }
     strcpy((char *) ss,"\r\n\r\n");
-    ss += 4;
-    // TODO better handle write return
-#if MEOPT_OPENSSL
-    if(flags & meSOCK_USE_SSL)
-        ret = OPENSSLFunc(SSL_write)(ssl,ioBuff,(int) (ss-ioBuff));
-    else
-#endif
-        ret = meSocketWrite(sck,(char *) ioBuff,(int) (ss-ioBuff),0);
-    
-    if(ret <= 0)
+    ll = ss+4-ioBuff;
+    ss = ioBuff;
+    for(;;)
     {
 #if MEOPT_OPENSSL
         if(flags & meSOCK_USE_SSL)
-            err = OPENSSLFunc(SSL_get_error)(ssl,ret);
+            ret = OPENSSLFunc(SSL_write)(ssl,ss,ll);
         else
 #endif
-            err = meSocketGetError();
-        if(sFp->flags & meSOCK_LOG_ERROR)
+            ret = meSocketWrite(sck,(char *) ss,ll,0);
+        if(ret <= 0)
         {
-            snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: HTTP header write error %d,%d",ret,err);
-            logFunc(meSOCK_LOG_ERROR,rbuff,logData);
-        }
 #if MEOPT_OPENSSL
-        if(flags & meSOCK_USE_SSL)
-        {
-            meSockGetSSLErrors(sFp->flags,rbuff);
-            /* err == 6 means the server issued an SSL_shutdown. */
-            if(err == 6)
-                sFp->flags |= meSOCK_SHUTDOWN;
-        }
+            if(flags & meSOCK_USE_SSL)
+            {
+                if(((err = OPENSSLFunc(SSL_get_error)(ssl,ret)) == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL))
+                    sFp->flags &= ~meSOCK_SHUTDOWN;
+#ifndef _WIN32
+                if((err == SSL_ERROR_SYSCALL) && (meSocketGetError() == EPIPE))
+                    err = EPIPE;
+                else if(err == EPIPE)
+                    /* this should never be the case as EPIPE == 32 and highest ssl err is 11, but better safe */
+                    err = -1;
 #endif
-        meSockClose(sFp,1);
-        if(pfp != NULL)
-            fclose(pfp);
-        return -20;
+            }
+            else
+#endif
+                err = meSocketGetError();
+#ifndef _WIN32
+            if(err == EPIPE)
+            {
+                if(sFp->flags & meSOCK_LOG_DETAILS)
+                    logFunc(meSOCK_LOG_DETAILS,(meUByte *) "meSock Info: Closing connection as server shutdown",logData);
+                meSockClose(sFp,1);
+                return meSockHttpOpen(sFp,flags,host,port,user,pass,file,cookie,fdLen,frmData,postFName,rbuff);
+            }
+#endif
+            if(sFp->flags & meSOCK_LOG_ERROR)
+            {
+                snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: HTTP header write error %d,%d",ret,err);
+                logFunc(meSOCK_LOG_ERROR,rbuff,logData);
+            }
+#if MEOPT_OPENSSL
+            if(flags & meSOCK_USE_SSL)
+                meSockGetSSLErrors(sFp->flags,rbuff);
+#endif
+            meSockClose(sFp,1);
+            if(pfp != NULL)
+                fclose(pfp);
+            return -20;
+        }
+        if((ll -= ret) <= 0)
+            break;
+        ss += ret;
     }
     if(pfp != NULL)
     {
-        meInt ii;
-        // TODO better handle write return
+        ss = rbuff+2;
+        ll = strlen((char *) ss);
+        for(;;)
+        {
 #if MEOPT_OPENSSL
-        if(flags & meSOCK_USE_SSL)
-            ret = OPENSSLFunc(SSL_write)(ssl,rbuff+2,strlen((char *) rbuff+2));
-        else
+            if(flags & meSOCK_USE_SSL)
+                ret = OPENSSLFunc(SSL_write)(ssl,ss,ll);
+            else
 #endif
-            ret = meSocketWrite(sck,(char *) (rbuff+2),strlen((char *) rbuff+2),0);
+                ret = meSocketWrite(sck,(char *) ss,ll,0);
+            if((ret <= 0) || ((ll -= ret) <= 0))
+                break;
+            ss += ret;
+        }
         if(ret > 0)
         {
-            while((ii=fread(ioBuff,1,ioBuffSz,pfp)) > 0)
+            while((ll=fread(ioBuff,1,ioBuffSz,pfp)) > 0)
             {
                 ss = ioBuff;
                 for(;;)
                 {
 #if MEOPT_OPENSSL
                     if(flags & meSOCK_USE_SSL)
-                        ret = OPENSSLFunc(SSL_write)(ssl,ss,ii);
+                        ret = OPENSSLFunc(SSL_write)(ssl,ss,ll);
                     else
 #endif
-                        ret = meSocketWrite(sck,(char *) ss,ii,0);
-                    if((ret <= 0) || ((ii -= ret) <= 0))
+                        ret = meSocketWrite(sck,(char *) ss,ll,0);
+                    if((ret <= 0) || ((ll -= ret) <= 0))
                         break;
                     ss += ret;
                 }
@@ -1572,7 +1649,10 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
         {
 #if MEOPT_OPENSSL
             if(flags & meSOCK_USE_SSL)
-                err = OPENSSLFunc(SSL_get_error)(ssl,ret);
+            {
+                if(((err = OPENSSLFunc(SSL_get_error)(ssl,ret)) == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL))
+                    sFp->flags &= ~meSOCK_SHUTDOWN;
+            }
             else
 #endif
                 err = meSocketGetError();
@@ -1583,12 +1663,7 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
             }
 #if MEOPT_OPENSSL
             if(flags & meSOCK_USE_SSL)
-            {
                 meSockGetSSLErrors(sFp->flags,rbuff);
-                /* err == 6 means the server issued an SSL_shutdown. */
-                if(err == 6)
-                    sFp->flags |= meSOCK_SHUTDOWN;
-            }
 #endif
             meSockClose(sFp,1);
             return -22;
@@ -1608,7 +1683,10 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
             {
 #if MEOPT_OPENSSL
                 if(flags & meSOCK_USE_SSL)
-                    err = OPENSSLFunc(SSL_get_error)(ssl,ret);
+                {
+                    if(((err = OPENSSLFunc(SSL_get_error)(ssl,ret)) == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL))
+                        sFp->flags &= ~meSOCK_SHUTDOWN;
+                }
                 else
 #endif
                     err = meSocketGetError();
@@ -1619,12 +1697,7 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
                 }
 #if MEOPT_OPENSSL
                 if(flags & meSOCK_USE_SSL)
-                {
                     meSockGetSSLErrors(sFp->flags,rbuff);
-                    /* err == 6 means the server issued an SSL_shutdown. */
-                    if(err == 6)
-                        sFp->flags |= meSOCK_SHUTDOWN;
-                }
 #endif
                 meSockClose(sFp,1);
                 return -23;
@@ -1637,15 +1710,32 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
     /* must read header getting now ditch the header, read up to the first blank line */
     if(sFp->flags & meSOCK_LOG_DETAILS)
         logFunc(meSOCK_LOG_DETAILS,(meUByte *) "HTTP Response header:",logData);
-    sFp->flags |= meSOCK_SHUTDOWN;
     err = 1;
-    while(meSockReadLine(sFp,ioBuff) > 0)
+    for(;;)
     {
+        meUByte cc;
+        if(meSockReadLine(sFp,ioBuff) < 0)
+        {
+            err = -25;
+            break;
+        }
         if(sFp->flags & meSOCK_LOG_DETAILS)
             logFunc(meSOCK_LOG_DETAILS,ioBuff,logData);
         if(ioBuff[0] == '\0')
+        {
+            if((sFp->flags & meSOCK_CHUNKED) && (sFp->length >= 0))
+            {
+                if(sFp->flags & meSOCK_LOG_ERROR)
+                {
+                    snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: Invalid response, length set for chunked: %d",sFp->length);
+                    logFunc(meSOCK_LOG_ERROR,rbuff,logData);
+                }
+                err = -27;
+                break;
+            }
             return err;
-        if(((ioBuff[0]|0x20) == 'c') && ((ioBuff[1]|0x20) == 'o') && ((ioBuff[2]|0x20) == 'n'))
+        }
+        if(((cc=(ioBuff[0]|0x20)) == 'c') && ((ioBuff[1]|0x20) == 'o') && ((ioBuff[2]|0x20) == 'n'))
         {
             if(((ioBuff[3]|0x20) == 't') && ((ioBuff[4]|0x20) == 'e') && ((ioBuff[5]|0x20) == 'n') && ((ioBuff[6]|0x20) == 't') && (ioBuff[7] == '-') && ((ioBuff[8]|0x20) == 'l') &&
                ((ioBuff[9]|0x20) == 'e') && ((ioBuff[10]|0x20) == 'n') && ((ioBuff[11]|0x20) == 'g') && ((ioBuff[12]|0x20) == 't') && ((ioBuff[13]|0x20) == 'h') && (ioBuff[14] == ':'))
@@ -1653,20 +1743,18 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
             else if(((ioBuff[3]|0x20) == 'n') && ((ioBuff[4]|0x20) == 'e') && ((ioBuff[5]|0x20) == 'c') && ((ioBuff[6]|0x20) == 't') && ((ioBuff[7]|0x20) == 'i') && 
                     ((ioBuff[9]|0x20) == 'o') && ((ioBuff[10]|0x20) == 'n') && (ioBuff[11] == ':'))
             {
-                char cc;
                 ss = ioBuff+12 ;
-                while(((cc=*ss) == ' ') || (cc == '\t'))
-                    ss++;
+                while(((cc=*ss++) == ' ') || (cc == '\t'))
+                    ;
                 if((cc|0x20) == 'c')
                     /* Connection: close */
-                    sFp->flags &= ~meSOCK_REUSE;
+                    sFp->flags |= meSOCK_CLOSE;
             }
         }
-        else if(((ioBuff[0]|0x20) == 'l') && ((ioBuff[1]|0x20) == 'o') && ((ioBuff[2]|0x20) == 'c') && ((ioBuff[3]|0x20) == 'a') && ((ioBuff[4]|0x20) == 't') &&
+        else if((cc == 'l') && ((ioBuff[1]|0x20) == 'o') && ((ioBuff[2]|0x20) == 'c') && ((ioBuff[3]|0x20) == 'a') && ((ioBuff[4]|0x20) == 't') &&
                 ((ioBuff[5]|0x20) == 'i') && ((ioBuff[6]|0x20) == 'o') && ((ioBuff[7]|0x20) == 'n') && (ioBuff[8] == ':'))
         {
             /* The requested file is not here, its at the given location */
-            char cc;
             ss = ioBuff+9 ;
             while(((cc=*ss) == ' ') || (cc == '\t'))
                 ss++;
@@ -1677,11 +1765,37 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
                 err = 0;
             }
         }
-        else if((cookie != NULL) && ((ioBuff[0]|0x20) == 's') && ((ioBuff[1]|0x20) == 'e') && ((ioBuff[2]|0x20) == 't') && (ioBuff[3] == '-') && ((ioBuff[4]|0x20) == 'c') && 
+        else if((cc == 't') && ((ioBuff[1]|0x20) == 'r') && ((ioBuff[2]|0x20) == 'a') && ((ioBuff[3]|0x20) == 'n') && ((ioBuff[4]|0x20) == 's') &&
+                ((ioBuff[5]|0x20) == 'f') && ((ioBuff[6]|0x20) == 'e') && ((ioBuff[7]|0x20) == 'r') && (ioBuff[8] == '-') && ((ioBuff[9]|0x20) == 'e') &&
+                ((ioBuff[10]|0x20) == 'n') && ((ioBuff[11]|0x20) == 'c') && ((ioBuff[12]|0x20) == 'o') && ((ioBuff[13]|0x20) == 'd') && ((ioBuff[14]|0x20) == 'i') &&
+                ((ioBuff[15]|0x20) == 'n') && ((ioBuff[16]|0x20) == 'g') && (ioBuff[17] == ':'))
+        {
+            ss = ioBuff+18;
+            while(((cc=*ss++) == ' ') || (cc == '\t'))
+                ;
+            if((cc == 'c') && ((ss[0]|0x20) == 'h') && ((ss[1]|0x20) == 'u') && ((ss[2]|0x20) == 'n') && ((ss[3]|0x20) == 'k') && ((ss[4]|0x20) == 'e') && ((ss[5]|0x20) == 'd'))
+            {
+                sFp->flags |= meSOCK_CHUNKED;
+                sFp->chnkLen = -1;
+                ss += 6;
+                while(((cc=*ss++) == ' ') || (cc == '\t'))
+                    ;
+            }
+            if(cc != '\0')
+            {
+                if(sFp->flags & meSOCK_LOG_ERROR)
+                {
+                    snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: Unsupported transfer encoding: %s",ss-1);
+                    logFunc(meSOCK_LOG_ERROR,rbuff,logData);
+                }
+                err = -26;
+                break;
+            }
+        }
+        else if((cookie != NULL) && (cc == 's') && ((ioBuff[1]|0x20) == 'e') && ((ioBuff[2]|0x20) == 't') && (ioBuff[3] == '-') && ((ioBuff[4]|0x20) == 'c') && 
                 ((ioBuff[5]|0x20) == 'o') && ((ioBuff[6]|0x20) == 'o') && ((ioBuff[7]|0x20) == 'k') && ((ioBuff[8]|0x20) == 'i') && ((ioBuff[9]|0x20) == 'e') && (ioBuff[10] == ':'))
         {
-            meUByte *vv, *ee, *dd, *de, cc;
-            int ll;
+            meUByte *vv, *ee, *dd, *de;
             ss = ioBuff+11;
             while(((cc=*ss) == ' ') || (cc == '\t'))
                 ss++;
@@ -1768,6 +1882,7 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
             }
         }
     }
+    meSockClose(sFp,1);
     sFp->length = 0;
     return err;
 }
@@ -1791,8 +1906,7 @@ meSockControlReadLine(meSockFile *sFp, meUByte *buff)
 #if MEOPT_OPENSSL
             if(sFp->flags & meSOCK_USE_SSL)
             {
-                err = OPENSSLFunc(SSL_get_error)(sFp->ctrlSsl,ret);
-                if((err == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL))
+                if(((err = OPENSSLFunc(SSL_get_error)(sFp->ctrlSsl,ret)) == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL))
                     sFp->flags &= ~meSOCK_CTRL_SHUTDOWN;
             }
             else
@@ -1876,8 +1990,7 @@ meSockFtpCommand(meSockFile *sFp, meUByte *rbuff, char *fmt, ...)
 #if MEOPT_OPENSSL
         if(sFp->flags & meSOCK_USE_SSL)
         {
-            ii = OPENSSLFunc(SSL_get_error)(sFp->ctrlSsl,ret);
-            if((ii == SSL_ERROR_SYSCALL) || (ii == SSL_ERROR_SSL))
+            if(((ii=OPENSSLFunc(SSL_get_error)(sFp->ctrlSsl,ret)) == SSL_ERROR_SYSCALL) || (ii == SSL_ERROR_SSL))
                 sFp->flags &= ~meSOCK_CTRL_SHUTDOWN;
         }
         else
@@ -1890,12 +2003,7 @@ meSockFtpCommand(meSockFile *sFp, meUByte *rbuff, char *fmt, ...)
         }
 #if MEOPT_OPENSSL
         if(sFp->flags & meSOCK_USE_SSL)
-        {
             meSockGetSSLErrors(sFp->flags,rbuff);
-            /* err == 6 means the server issued an SSL_shutdown. */
-            if(ii == 6)
-                sFp->flags |= meSOCK_CTRL_SHUTDOWN;
-        }
 #endif
         sFp->flags |= meSOCK_CTRL_NO_QUIT;
         meSockClose(sFp,1);
@@ -2049,19 +2157,20 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
     
     if(logFunc == NULL)
         flags &= ~(meSOCK_LOG_STATUS|meSOCK_LOG_WARNING|meSOCK_LOG_DETAILS|meSOCK_LOG_VERBOSE);
-    flags = (flags & ~(meSOCK_REUSE|meSOCK_INUSE)) | meSOCK_CTRL_INUSE;
+    flags = (flags & meSOCK_PUBLIC_MASK) | meSOCK_CTRL_INUSE|meSOCK_CLOSE;
     if(!port)
         port = (flags & meSOCK_USE_SSL) ? 990:21;
     
     if(meSockIsInUse(sFp) && ((sFp->cprt != port) || (sFp->length != -2) || ((sck=sFp->ctrlSck) == meBadSocket) || 
-                              ((sFp->flags & (meSOCK_INUSE|meSOCK_CTRL_INUSE)) != (flags & (meSOCK_INUSE|meSOCK_CTRL_INUSE))) ||
+                              ((sFp->flags & (meSOCK_INUSE|meSOCK_CTRL_INUSE)) != meSOCK_CTRL_INUSE) ||
                               (!(flags & meSOCK_EXPLICIT_SSL) && ((sFp->flags & meSOCK_USE_SSL) != (flags & meSOCK_USE_SSL))) ||
                               strcmp((char *) sFp->chst,(char *) host) || strcmp((char *) sFp->cusr,((user == NULL) ? "":(char *) user))))
         meSockClose(sFp,1);
     sFp->length = -2;
+    sFp->chnkLen = 0;
     if(meSockIsInUse(sFp))
     {
-        sFp->flags = (sFp->flags & (meSOCK_USE_SSL|meSOCK_EXPLICIT_SSL)) | (flags & ~(meSOCK_USE_SSL|meSOCK_EXPLICIT_SSL));
+        sFp->flags = (sFp->flags & (meSOCK_USE_SSL|meSOCK_EXPLICIT_SSL|meSOCK_CTRL_SHUTDOWN)) | (flags & ~(meSOCK_USE_SSL|meSOCK_EXPLICIT_SSL));
 #if MEOPT_OPENSSL
         ssl = sFp->ctrlSsl;
 #else
@@ -2245,6 +2354,7 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
                 meSockClose(sFp,1);
                 return -18;
             }
+            sFp->flags |= meSOCK_CTRL_SHUTDOWN;
         }
         else
 #endif
@@ -2253,7 +2363,6 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
             snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"FTP control connected on socket %x",sck);
             logFunc(meSOCK_LOG_DETAILS,rbuff,logData);
         }
-        sFp->flags |= meSOCK_CTRL_SHUTDOWN;
         /* get the initial message */
         if(meSockFtpReadReply(sFp,rbuff) != ftpPOS_COMPLETE)
         {
@@ -2323,7 +2432,7 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
                     meSockClose(sFp,1);
                     return -18;
                 }
-                sFp->flags |= meSOCK_EXPLICIT_SSL;
+                sFp->flags |= meSOCK_EXPLICIT_SSL|meSOCK_CTRL_SHUTDOWN;
                 meSockFtpCommand(sFp,rbuff,"PBSZ 0");
                 if(meSockFtpCommand(sFp,rbuff,"PROT P") == ftpPOS_COMPLETE)
                     sFp->flags |= meSOCK_USE_SSL;
@@ -2396,10 +2505,138 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
 int
 meSockRead(meSockFile *sFp, int sz, meUByte *buff, int offs)
 {
-    int err,ret;
+    meInt ll, err=0, ret;
     
+    if((ll=sFp->chnkLen))
+    {
+        if(ll == -1)
+        {
+            meInt ii=0;
+            meUByte ba[4], bb;
+            ll = 0;
+            for(;;)
+            {
 #if MEOPT_OPENSSL
-    if(sFp->flags & meSOCK_USE_SSL)
+                if(sFp->flags & meSOCK_USE_SSL)
+                    ret = OPENSSLFunc(SSL_read)(sFp->ssl,ba,1);
+                else
+#endif
+                    ret = meSocketRead(sFp->sck,(char *) ba,1,0);
+                if(ret <= 0)
+                {
+#if MEOPT_OPENSSL
+                    if(sFp->flags & meSOCK_USE_SSL)
+                        err = OPENSSLFunc(SSL_get_error)(sFp->ssl,ret);
+                    else
+#endif
+                        err = meSocketGetError();
+                    ll = -3;
+                    break;
+                }
+                if((bb = ba[0]) == '\n')
+                {
+                    if(ii == 0)
+                        ll = -6;
+                    break;
+                }
+                else if(ii >= 0)
+                {
+                    if((bb == ';') || (bb == '\r'))
+                    {
+                        if(ii == 0)
+                        {
+                            ll = -5;
+                            break;
+                        }
+                        ii = -2;
+                    }
+                    else if((bb >= '0') && (bb <= '9'))
+                        ll = (ll << 4) | (bb - '0');
+                    else if((bb >= 'A') && (bb <= 'F'))
+                        ll = (ll << 4) | (bb - 'A' + 10);
+                    else if((bb >= 'a') && (bb <= 'f'))
+                        ll = (ll << 4) | (bb - 'a' + 10);
+                    else
+                    {
+                        ll = -4;
+                        break;
+                    }
+                    if(++ii > 7)
+                    {
+                        ll = -7;
+                        break;
+                    }
+                }
+            }
+        }
+        if(ll > 0)
+        {
+            if(sz > ll)
+                sz = ll;
+#if MEOPT_OPENSSL
+            if(sFp->flags & meSOCK_USE_SSL)
+                ret = OPENSSLFunc(SSL_read)(sFp->ssl,buff+offs,sz);
+            else
+#endif
+                ret = meSocketRead(sFp->sck,(char *) (buff+offs),sz,0);
+            if(ret <= 0)
+            {
+#if MEOPT_OPENSSL
+                if(sFp->flags & meSOCK_USE_SSL)
+                    err = OPENSSLFunc(SSL_get_error)(sFp->ssl,ret);
+                else
+#endif
+                    err = meSocketGetError();
+                ret = -1;
+            }
+            else if(ret < ll)
+            {
+                sFp->chnkLen = ll-ret;
+                return ret;
+            }
+        }
+        else
+            ret = ll;
+        
+        if(ret >= 0)
+        {
+            /* must read the chunk terminator */
+            meUByte ba[4];
+#if MEOPT_OPENSSL
+            if(sFp->flags & meSOCK_USE_SSL)
+                ll = OPENSSLFunc(SSL_read)(sFp->ssl,ba,2);
+            else
+#endif
+                ll = meSocketRead(sFp->sck,(char *) ba,2,0);
+            if(ll <= 0)
+            {
+#if MEOPT_OPENSSL
+                if(sFp->flags & meSOCK_USE_SSL)
+                    err = OPENSSLFunc(SSL_get_error)(sFp->ssl,ret);
+                else
+#endif
+                    err = meSocketGetError();
+                ret = -8;
+            }                    
+            else if((ll != 2) || (ba[0] != '\r') || (ba[1] != '\n'))
+                ret = -9;
+            else if(ret)
+            {
+                sFp->chnkLen = -1;
+                return ret;
+            }
+            else
+            {
+                if(sFp->flags & meSOCK_LOG_VERBOSE)
+                    logFunc(meSOCK_LOG_VERBOSE,(meUByte *) "meSock Verbose: Got data stream end",logData);
+                sFp->length = 0;
+                sFp->chnkLen = -2; 
+                return 0;
+            }
+        }
+    }
+#if MEOPT_OPENSSL
+    else if(sFp->flags & meSOCK_USE_SSL)
     {
         if((ret = OPENSSLFunc(SSL_read)(sFp->ssl,buff+offs,sz)) > 0)
             return ret;
@@ -2412,11 +2649,9 @@ meSockRead(meSockFile *sFp, int sz, meUByte *buff, int offs)
             sFp->length = -2;
             return 0;
         }
-        if((err == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL))
-            sFp->flags &= ~meSOCK_SHUTDOWN;
     }
-    else
 #endif
+    else
     {
         if((ret = meSocketRead(sFp->sck,(char *) (buff+offs),sz,0)) > 0)
             return ret;
@@ -2432,14 +2667,18 @@ meSockRead(meSockFile *sFp, int sz, meUByte *buff, int offs)
     }
     if(sFp->flags & meSOCK_LOG_ERROR)
     {
-        snprintf((char *) buff,meSOCK_BUFF_SIZE,"meSock Error: Read failure - %d,%d",ret,err);
+        snprintf((char *) buff,meSOCK_BUFF_SIZE,"meSock Error: Read failure - %d,%d,%d",ll,ret,err);
         logFunc(meSOCK_LOG_ERROR,buff,logData);
     }
 #if MEOPT_OPENSSL
     if(sFp->flags & meSOCK_USE_SSL)
+    {
+        if((err == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL))
+            sFp->flags &= ~meSOCK_SHUTDOWN;
         meSockGetSSLErrors(sFp->flags,buff);
+    }
 #endif
-    sFp->flags &= ~meSOCK_REUSE;
+    sFp->flags |= meSOCK_CLOSE;
     return -1;
 }
 
@@ -2459,8 +2698,7 @@ meSockWrite(meSockFile *sFp, int sz, meUByte *buff, int offs)
                 return 1;
             offs += ret;
         }
-        err = OPENSSLFunc(SSL_get_error)(sFp->ssl,ret);
-        if((err == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL))
+        if(((err=OPENSSLFunc(SSL_get_error)(sFp->ssl,ret)) == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL))
             sFp->flags &= ~meSOCK_SHUTDOWN;
     }
     else
@@ -2485,7 +2723,7 @@ meSockWrite(meSockFile *sFp, int sz, meUByte *buff, int offs)
     if(sFp->flags & meSOCK_USE_SSL)
         meSockGetSSLErrors(sFp->flags,buff);
 #endif
-    sFp->flags &= ~meSOCK_REUSE;
+    sFp->flags |= meSOCK_CLOSE;
     return -1;
 }
 
@@ -2504,8 +2742,8 @@ meSockClose(meSockFile *sFp, int force)
                 int err = OPENSSLFunc(SSL_shutdown)(sFp->ssl);
                 if(err < 0)
                 {
-                    if(sFp->flags & meSOCK_LOG_ERROR)
-                        logFunc(meSOCK_LOG_ERROR,(meUByte *) "meSock Error: Failed to shutdown SSL",logData);
+                    if(sFp->flags & meSOCK_LOG_WARNING)
+                        logFunc(meSOCK_LOG_ERROR,(meUByte *) "meSock Warning: Failed to shutdown SSL",logData);
                 }
                 else if((err == 1) && (sFp->flags & meSOCK_LOG_VERBOSE))
                     logFunc(meSOCK_LOG_VERBOSE,(meUByte *) "meSock Verbose: SSL client exited gracefully",logData);
@@ -2523,7 +2761,7 @@ meSockClose(meSockFile *sFp, int force)
         {
             if(!force)
             {
-                sFp->flags &= ~meSOCK_INUSE;
+                sFp->flags &= ~(meSOCK_INUSE|meSOCK_SHUTDOWN);
                 sFp->length = -2;
                 return 1;
             }
@@ -2577,6 +2815,13 @@ meSockEnd()
     {
         OPENSSLFunc(SSL_CTX_free)(meSockCtx);
         meSockCtx = NULL;
+    }
+#endif
+#ifdef _WIN32
+    if(WSAinit)
+    {
+        WSACleanup();
+        WSAinit = 0;
     }
 #endif
 }

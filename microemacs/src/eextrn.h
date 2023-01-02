@@ -444,7 +444,7 @@ void ffReadFileClose(meIo *io, meUInt flags);
 #define meRWFLAG_DELETE     0x00800
 #define meRWFLAG_MKDIR      0x01000
 #define meRWFLAG_SOCKCLOSE  0x02000
-#define meRWFLAG_NOCONSOLE  0x04000
+#define meRWFLAG_ATEXIT     0x04000
 #define meRWFLAG_FTPNLST    0x08000
 #define meRWFLAG_NODIRLIST  0x10000
 #define meRWFLAG_STAT       0x20000

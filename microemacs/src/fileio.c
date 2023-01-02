@@ -34,6 +34,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef _UNIX
+#include <sys/time.h>
 #include <utime.h>
 #endif
 #endif
@@ -189,7 +190,7 @@ meUByte *charKeyboardMap=NULL;
 meInt ffread;
 meInt ffremain;
 meUByte *ffcur;
-meUByte ffbuf[meFIOBUFSIZ+1];
+meUByte ffbuf[meFIOBUFSIZ+4];
 
 meUByte
 ffUrlGetType(meUByte *url)
@@ -244,52 +245,11 @@ ffUrlGetType(meUByte *url)
 #include <stdarg.h>
 #include <time.h>
 
-#ifdef _WIN32
-#include <io.h>
-typedef void (*meATEXIT)(void);
-
-#define SHUT_RDWR        SD_BOTH
-
-#define meSocketGetError WSAGetLastError
-#define meSocketOpen     socket
-#define meSocketConnect  connect
-#define meSocketClose    closesocket
-#define meSocketSetOpt   setsockopt
-#define meSocketRead     recv
-#define meSocketWrite    send
-#define meSocketShutdown shutdown
-#define meGetservbyname  getservbyname
-#define meGethostbyname  gethostbyname
-#define meInet_addr      inet_addr
-#define meHtons          htons
-
-#else
-
-#include <sys/time.h>
-#include <ctype.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <sys/un.h>
-#define meSocketGetError()   (errno)
-
-#define meSocketOpen     socket
-#define meSocketConnect  connect
-#define meSocketClose    close
-#define meSocketSetOpt   setsockopt
-#define meSocketRead     recv
-#define meSocketWrite    send
-#define meSocketShutdown shutdown
-#define meGetservbyname  getservbyname
-#define meGethostbyname  gethostbyname
-#define meInet_addr      inet_addr
-#define meHtons          htons
-
-#endif
-
-#define meSOCKET_TIMEOUT      60000
+#define meSOCKET_TIMEOUT      115000
 #define meSOCK_SHOW_STATUS    meSOCK_INUSE
 #define meSOCK_SHOW_CONSOLE   meSOCK_SHUTDOWN
 #define meSOCK_SHOW_PROGRESS  meSOCK_CTRL_INUSE
+#define meSOCK_REDIR_HALT     meSOCK_CTRL_NO_QUIT
 #define meSBUF_SIZE  (((meSOCK_BUFF_SIZE) > (meBUF_SIZE_MAX)) ? (meSOCK_BUFF_SIZE) : (meBUF_SIZE_MAX))
 
 static meUByte *ffUrlFlagsVName[2]={(meUByte *)"http-flags",(meUByte *)"ftp-flags"} ;
@@ -473,19 +433,30 @@ ffFtpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
     hst = dd = urlBuff;
     while(((cc=*fl++) != '\0') && (cc != '/'))
     {
-        if(cc == ':')
+        if(cc == '@')
         {
             *dd++ = '\0';
-            prt = dd;
-        }
-        else if(cc == '@')
-        {
-            *dd++ = '\0';
-            usr = hst;
-            if((psw = prt) != NULL)
-                ups = fl-(dd-psw)-1;
+            if(usr != NULL)
+            {
+                /* already had an '@' which can't be part of URL so assume part of password or user name if no ':' encountered */
+                hst[-1] = '@';
+                if((psw == NULL) && ((psw = prt) != NULL))
+                    ups = fl-(dd-psw)-1;
+            }
+            else
+            {
+                usr = hst;
+                if((psw = prt) != NULL)
+                    ups = fl-(dd-psw)-1;
+            }
             hst = dd;
             prt = NULL;
+        }
+        else if((cc == ':') && (prt == NULL))
+        {
+            /* if prt != NULL then this is probably part of the password */
+            *dd++ = '\0';
+            prt = dd;
         }
         else
             *dd++ = cc;
@@ -710,7 +681,7 @@ ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meInt fd
     meInt ii;
     
     fl = url + 7;
-    flags = (io->urlFlags & meSOCK_PUBLIC_MASK)|meSOCK_REUSE;
+    flags = (io->urlFlags & meSOCK_PUBLIC_MASK);
     if(ffUrlTypeIsSecure(io->type))
     {
         flags |= meSOCK_USE_SSL;
@@ -720,19 +691,30 @@ ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meInt fd
     hst = dd = urlBuff;
     while(((cc=*fl++) != '\0') && (cc != '/'))
     {
-        if(cc == ':')
+        if(cc == '@')
         {
             *dd++ = '\0';
-            prt = dd;
-        }
-        else if(cc == '@')
-        {
-            *dd++ = '\0';
-            usr = hst;
-            if((psw = prt) != NULL)
-                ups = fl-(dd-psw)-1;
+            if(usr != NULL)
+            {
+                /* already had an '@' which can't be part of URL so assume part of password or user name if no ':' encountered */
+                hst[-1] = '@';
+                if((psw == NULL) && ((psw = prt) != NULL))
+                    ups = fl-(dd-psw)-1;
+            }
+            else
+            {
+                usr = hst;
+                if((psw = prt) != NULL)
+                    ups = fl-(dd-psw)-1;
+            }
             hst = dd;
             prt = NULL;
+        }
+        else if((cc == ':') && (prt == NULL))
+        {
+            /* if prt != NULL then this is probably part of the password */
+            *dd++ = '\0';
+            prt = dd;
         }
         else
             *dd++ = cc;
@@ -764,13 +746,12 @@ ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meInt fd
         /* printf("Got Location: [%s]\n",ss) ;*/
         /* if this starts with http:// https:// etc. then start again */
         meSockClose(&(io->sslp),0);
-        /* TODO flag to not redirect */
         io->redirect++;
-        if(io->redirect > 5)
+        if((io->redirect > 5) || (io->urlFlags & meSOCK_REDIR_HALT))
         {
             if(rwflag & meRWFLAG_SILENT)
                 return meABORT;
-            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[To many redirections - see console]");
+            return mlwrite(MWABORT|MWPAUSE,(meUByte *) ((io->urlFlags & meSOCK_REDIR_HALT) ? "[Following redirections disabled - see console]":"[To many redirections - see console]"));
         }
         cc = ffUrlGetType(buff);
         if(cc & meIOTYPE_HTTP)
@@ -838,8 +819,15 @@ ffUrlFileSetupFlags(meIo *io, meUInt rwflag)
     io->urlFlags = 0;
     if((ss = getUsrVar(ffUrlFlagsVName[ti])) == errorm)
         ss = ffUrlFlagsVDef[ti];
-    else if(meStrchr(ss,'i') != NULL)
-        io->urlFlags |= meSOCK_IGN_CRT_ERR;
+    else
+    {
+        if(meStrchr(ss,'i') != NULL)
+            io->urlFlags |= meSOCK_IGN_CRT_ERR;
+        if(meStrchr(ss,'h') != NULL)
+            io->urlFlags |= meSOCK_REDIR_HALT;
+    }
+    if(meStrchr(ss,'C') != NULL)
+        io->urlFlags |= meSOCK_CLOSE;
     if(!(rwflag & meRWFLAG_SILENT))
         io->urlFlags |= meSOCK_LOG_STATUS|meSOCK_LOG_ERROR|meSOCK_SHOW_STATUS;
     if((meStrchr(ss,'c') != NULL) &&
@@ -868,27 +856,13 @@ ffUrlFileSetupFlags(meIo *io, meUInt rwflag)
 static int
 ffUrlFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
 {
-#ifdef _WIN32
-    static int init=0 ;
-#endif
     int ii ;
     
     io->fp = meBadFile;
     io->length = -1;
     ffUrlFileSetupFlags(io,rwflag);
-#ifdef _WIN32
-    if(!init)
-    {
-        WSADATA wsaData;
-        
-        if(WSAStartup(MAKEWORD(1,1),&wsaData))
-            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to initialise sockets]") ;
-        atexit((meATEXIT) WSACleanup) ;
-        init = 1 ;
-    }
-#endif
     
-    meSockSetup((io->urlFlags & (meSOCK_LOG_STATUS|meSOCK_LOG_ERROR)) ? ffSUrlLogger:NULL,io,20000,60000,meFIOBUFSIZ,ffbuf);
+    meSockSetup((io->urlFlags & (meSOCK_LOG_STATUS|meSOCK_LOG_ERROR)) ? ffSUrlLogger:NULL,io,20000,3600000,meFIOBUFSIZ,ffbuf);
     
     /* is it a http: or ftp: */
     if(ffUrlTypeIsFtp(io->type))
@@ -2554,7 +2528,7 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
 #ifdef _UNIX
             meSigHold();
 #endif
-            if(dFlags & meRWFLAG_NOCONSOLE)
+            if(dFlags & meRWFLAG_ATEXIT)
             {
                 meior.urlBp = NULL;
                 meiow.urlBp = NULL;
@@ -2565,6 +2539,8 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
             meSigRelease();
 #endif
         }
+        if(dFlags & meRWFLAG_ATEXIT)
+            meSockEnd();
     }
 #endif
     return rr ;

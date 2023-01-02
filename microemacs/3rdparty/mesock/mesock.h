@@ -61,6 +61,7 @@ typedef struct meSockFile {
     void *ctrlSsl;
     meInt cprt;
     meInt length;
+    meInt chnkLen;
     meSOCKET sck;
     meSOCKET ctrlSck;
 } meSockFile;
@@ -73,7 +74,7 @@ typedef struct meSockFile {
 #define meSOCK_IGN_CRT_ERR   0x0020
 #define meSOCK_USE_SSL       0x0040
 #define meSOCK_EXPLICIT_SSL  0x0080
-#define meSOCK_REUSE         0x0100
+#define meSOCK_CLOSE         0x0100
 #define meSOCK_PUBLIC_MASK   0x01ff
 /* Following are for internal use */
 #define meSOCK_INUSE         0x0200
@@ -81,12 +82,13 @@ typedef struct meSockFile {
 #define meSOCK_CTRL_INUSE    0x0800
 #define meSOCK_CTRL_NO_QUIT  0x1000
 #define meSOCK_CTRL_SHUTDOWN 0x2000
+#define meSOCK_CHUNKED       0x1000
 
 #define meSockFileInit(sFp) ((sFp)->flags = 0)
 #define meSockIsInUse(sFp)  ((sFp)->flags != 0)
 #define meSockIsFtp(sFp)    ((sFp)->flags & meSOCK_CTRL_INUSE)
 #define meSockDataIsInUse(sFp) ((sFp)->flags & meSOCK_INUSE)
-#define meSockFileCanReuse(sFp) ((sFp)->flags & meSOCK_REUSE)
+#define meSockFileCanReuse(sFp) (((sFp)->flags & meSOCK_CLOSE) == 0)
 #define meSockControlIsInUse(sFp) ((sFp)->flags & meSOCK_CTRL_INUSE)
 
 void

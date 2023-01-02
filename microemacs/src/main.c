@@ -651,7 +651,7 @@ exitEmacs(int f, int n)
             bp = nbp;
         }
 #if MEOPT_SOCKET
-        ffFileOp(NULL,NULL,meRWFLAG_SILENT|meRWFLAG_NOCONSOLE|meRWFLAG_SOCKCLOSE,-1);
+        ffFileOp(NULL,NULL,meRWFLAG_SOCKCLOSE|meRWFLAG_SILENT|meRWFLAG_ATEXIT,-1);
 #endif
         TTend();
 
@@ -1406,30 +1406,34 @@ mesetup(int argc, char *argv[])
     /* setup alarm process for timers */
 #ifdef _POSIX_SIGNALS
     {
-        struct sigaction sa ;
+        struct sigaction sa;
 
-        sigemptyset(&meSigHoldMask) ;
+        sigemptyset(&meSigHoldMask);
         sigaddset(&meSigHoldMask,SIGCHLD);
         sigaddset(&meSigHoldMask,SIGALRM);
-        meSigRelease() ;
+        meSigRelease();
 
-        sigemptyset(&sa.sa_mask) ;
+        sigemptyset(&sa.sa_mask);
         sa.sa_flags=0;
-        sa.sa_handler=sigAlarm ;
-        sigaction(SIGALRM,&sa,NULL) ;
-        /* sigset(SIGALRM,sigAlarm);*/
+        sa.sa_handler=sigAlarm;
+        sigaction(SIGALRM,&sa,NULL);
         /* setup child process exit capture for ipipe */
-        sa.sa_handler=sigchild ;
-        sigaction(SIGCHLD,&sa,NULL) ;
-        /* sigset(SIGCHLD,sigchild);*/
+        sa.sa_handler=sigchild;
+        sigaction(SIGCHLD,&sa,NULL);
+        /* socket comms keep-alive can trigger a SIGPIPE if server has shutdown and user attempts another read within meSOCKET_TIMEOUT - ignore as we handle via returned error */
+        sa.sa_handler=SIG_IGN;
+        sigaction(SIGPIPE,&sa,NULL);
     }
 #else /* _POSIX_SIGNALS */
 #ifdef _BSD_SIGNALS
     /* Set up the hold mask */
-    meSigHoldMask = sigmask (SIGCHLD) | sigmask (SIGALRM);
+    meSigHoldMask = sigmask(SIGCHLD) | sigmask(SIGALRM);
 #endif /* _BSD_SIGNALS */
-    signal (SIGCHLD, sigchild);
-    signal (SIGALRM, sigAlarm);
+    signal(SIGALRM,sigAlarm);
+    /* setup child process exit capture for ipipe */
+    signal(SIGCHLD,sigchild);
+    /* socket comms keep-alive can trigger a SIGPIPE if server has shutdown and user attempts another read within meSOCKET_TIMEOUT - ignore as we handle via returned error */
+    signal(SIGPIPE,SIG_IGN);
 #endif /* _POSIX_SIGNALS */
 #endif /* _UNIX */
     count_key_table();
