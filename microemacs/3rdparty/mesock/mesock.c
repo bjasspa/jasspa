@@ -53,6 +53,7 @@ static int WSAinit=0;
 #else
 #include <errno.h>
 #include <unistd.h>
+#include <stdarg.h>
 #include <dlfcn.h>
 #include <netinet/in.h>
 #include <netdb.h>
@@ -1084,7 +1085,7 @@ meSockReadLine(meSockFile *sFp, meUByte *buff)
                 err = OPENSSLFunc(SSL_get_error)(sFp->ssl,ret);
             else
 #endif
-                err = meSocketGetError();
+                err = (ret == 0) ? 0:meSocketGetError();
             if(sFp->flags & meSOCK_LOG_ERROR)
             {
                 snprintf((char *) buff,meSOCK_BUFF_SIZE,"meSock Error: Failed to read line - %d,%d",ret,err);
@@ -1911,7 +1912,7 @@ meSockControlReadLine(meSockFile *sFp, meUByte *buff)
             }
             else
 #endif
-                err = meSocketGetError();
+                err = (ret == 0) ? 0:meSocketGetError();
             if(sFp->flags & meSOCK_LOG_ERROR)
             {
                 snprintf((char *) buff,meSOCK_BUFF_SIZE,"meSock Error: Failed to read FTP control reply - %d,%d",ret,err);
@@ -2178,7 +2179,7 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
     else if(flags & (meSOCK_USE_SSL|meSOCK_EXPLICIT_SSL))
     {
         if(sFp->flags & meSOCK_LOG_ERROR)
-            logFunc((meUByte *) "meSock Error: FTPS not supported in this build",logData);
+            logFunc(meSOCK_LOG_ERROR,(meUByte *) "meSock Error: FTPS not supported in this build",logData);
         return -24;
 #endif
     }
@@ -2529,7 +2530,7 @@ meSockRead(meSockFile *sFp, int sz, meUByte *buff, int offs)
                         err = OPENSSLFunc(SSL_get_error)(sFp->ssl,ret);
                     else
 #endif
-                        err = meSocketGetError();
+                        err = (ret == 0) ? 0:meSocketGetError();
                     ll = -3;
                     break;
                 }
@@ -2586,7 +2587,7 @@ meSockRead(meSockFile *sFp, int sz, meUByte *buff, int offs)
                     err = OPENSSLFunc(SSL_get_error)(sFp->ssl,ret);
                 else
 #endif
-                    err = meSocketGetError();
+                    err = (ret == 0) ? 0:meSocketGetError();
                 ret = -1;
             }
             else if(ret < ll)
@@ -2615,7 +2616,7 @@ meSockRead(meSockFile *sFp, int sz, meUByte *buff, int offs)
                     err = OPENSSLFunc(SSL_get_error)(sFp->ssl,ret);
                 else
 #endif
-                    err = meSocketGetError();
+                    err = (ret == 0) ? 0:meSocketGetError();
                 ret = -8;
             }                    
             else if((ll != 2) || (ba[0] != '\r') || (ba[1] != '\n'))
@@ -2655,8 +2656,9 @@ meSockRead(meSockFile *sFp, int sz, meUByte *buff, int offs)
     {
         if((ret = meSocketRead(sFp->sck,(char *) (buff+offs),sz,0)) > 0)
             return ret;
-        err = meSocketGetError();
-        if((sFp->length == -1) && (ret == 0) && (err == 0))
+        if(ret < 0)
+            err = meSocketGetError();
+        else if(sFp->length == -1)
         {
             /* Conent-lenth not returned and we've likely hit the correct end of the data - return 0 */ 
             if(sFp->flags & meSOCK_LOG_VERBOSE)
@@ -2664,6 +2666,8 @@ meSockRead(meSockFile *sFp, int sz, meUByte *buff, int offs)
             sFp->length = -2;
             return 0;
         }
+        else
+            err = 0;
     }
     if(sFp->flags & meSOCK_LOG_ERROR)
     {
