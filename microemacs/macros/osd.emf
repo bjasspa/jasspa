@@ -545,6 +545,7 @@ set-variable #l1 0
 osd 21 0   b
 osd 21 5   ""  "\HBrag"       f Brag
 osd 21 10  ""  "\HCross-Word" f cross-word
+osd 21 20  ""  "\HFahtzee"    f Fahtzee
 osd 21 20  ""  "\HMahjongg"   f Mahjongg
 osd 21 30  ""  "Match-\HIt"   f Match-It
 osd 21 40  ""  "M\Hetris"     f Metris

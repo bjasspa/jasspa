@@ -15,6 +15,10 @@ define-macro cross-word
   execute-file crosswd
   cross-word
 !emacro
+define-macro Fahtzee
+  execute-file fahtzee
+  Fahtzee
+!emacro
 define-macro Mahjongg
   execute-file mahjongg
   Mahjongg
@@ -35,4 +39,3 @@ define-macro Triangle
   execute-file triangle
   Triangle
 !emacro
-

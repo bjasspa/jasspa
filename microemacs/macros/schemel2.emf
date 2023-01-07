@@ -14,7 +14,7 @@ add-color &set .col4 4 60 60 60
 add-color &set .col5 5 235 230 225
 add-color &set .col6 6 255 250 245
 add-color &set .col7 7 100 100 100
-add-color &set .col8 8 255 50 50
+add-color &set .col8 8 255 70 70
 add-color &set .col9 9 229 182 165
 add-color &set .col10 10 255 165 0
 add-color &set .col11 11 85 90 85
@@ -83,7 +83,7 @@ add-color-scheme .scheme.constant .col10 .col1 .col10 .col2 .col37 .col0 .col37 
 add-color-scheme .scheme.comment .col27 .col1 .col27 .col2 .col27 .col0 .col27 .col5 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.string .col9 .col1 .col9 .col2 .col36 .col0 .col36 .col5 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.quote .col9 .col1 .col9 .col2 .col40 .col0 .col40 .col5 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.error .col8 .col1 .col8 .col2 .col8 .col0 .col8 .col5 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.error .col8 .col1 .col21 .col2 .col8 .col0 .col8 .col5 0 8 0 8 0 8 0 8
 ; Formatted Text
 add-color-scheme .scheme.header .col22 .col1 .col22 .col2 .col38 .col0 .col38 .col5 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.link .col28 .col1 .col28 .col2 .col33 .col0 .col33 .col5 16 24 16 24 16 24 16 24
