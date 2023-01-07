@@ -46,7 +46,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <200620.1226>
+;         > Modified:     <230107.1501>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -117,6 +117,7 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
   hilight .hilight.doc 0 "http:[-@~_a-zA-Z#%?&=\\.:\\/0-9]+"  .scheme.link
   hilight .hilight.doc 0 "https:[-@~_a-zA-Z#%?&=\\.:\\/0-9]+" .scheme.link
   hilight .hilight.doc 0 "ftp:[-_a-zA-Z@%.:\\/0-9]+"          .scheme.link
+  hilight .hilight.doc 0 "ftps:[-_a-zA-Z@%.:\\/0-9]+"         .scheme.link
   hilight .hilight.doc 0 "mailto:[-_a-zA-Z@%.:\\/0-9]+"       .scheme.link
   hilight .hilight.doc 0 "news:[-_a-zA-Z@%.:\\\\/@0-9]+"      .scheme.link 
   ; @ block

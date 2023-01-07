@@ -88,7 +88,7 @@ define-macro ftp-connect
   !if &seq $buffer-fname ""
     set-variable #l0 ""
     set-variable #l1 ""
-  !elif &seq &lef $buffer-fname 6 "ftp://"
+  !elif &lfin "|ftp://|ftps:/|ftpe:/|" &lef $buffer-fname 6
     set-variable #l0 ""
     set-variable #l1 &lef $buffer-fname &rsin "/" $buffer-fname
   !else
@@ -344,6 +344,8 @@ define-macro ftp-connect
     !endif
     !if &seq &lef #l1 6 "ftp://"
       set-variable #l1 &rig #l1 6
+    !elif &lfin "|ftps://|ftpe://|" &lef #l1 7
+      set-variable #l1 &rig #l1 7
     !endif
     set-variable #l8 17
     set-variable #l7 "\b\b\b\b\b\b"

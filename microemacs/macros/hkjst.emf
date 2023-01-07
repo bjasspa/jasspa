@@ -205,6 +205,7 @@ set-variable .fhook-jst.item-list-r4 "H4  \ecB\\1\ecA"
   hilight .hilight.jst 0 "http:[-@~_a-zA-Z#%?&=\\.:\\/0-9]+"  .scheme.link
   hilight .hilight.jst 0 "https:[-@~_a-zA-Z#%?&=\\.:\\/0-9]+" .scheme.link
   hilight .hilight.jst 0 "ftp:[-@~_a-zA-Z#%\\.:\\/0-9]+"      .scheme.link
+  hilight .hilight.jst 0 "ftps:[-@~_a-zA-Z#%\\.:\\/0-9]+"     .scheme.link
   hilight .hilight.jst 0 "mailto:[-@~_a-zA-Z#%\\.:\\/0-9]+"   .scheme.link
   hilight .hilight.jst 0 "news:[-@~_a-zA-Z#%\\.:\\/0-9]+"     .scheme.link 
   ; Style schemes

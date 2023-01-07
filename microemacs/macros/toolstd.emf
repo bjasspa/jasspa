@@ -76,10 +76,8 @@
     ; no file name
   !elif &seq &lef .toolbar-redraw.bn 1 "*"
     ; A '*' buffer like *grep* - ingore the 'file'
-  !elif &seq &lef #l0 6 "ftp://"
-    ; a ftp file, &stat 'm' & 's' does not work on these files
-  !elif &seq &lef #l0 7 "http://"
-    ; a http file, &stat 'm' & 's' does not work on these files
+  !elif &lfin "|http:/|ftp://|ftps:/|ftpe:/|" &lef #l0 6
+    ; a http or ftp file, &stat 'm' & 's' do not work on these files
   !elif &or &not &len &lget :buffer-info 2 &band @# 0x013
     set-variable #l1 &stat "m" $buffer-fname
     set-variable #l1 &spr "%d-%02d-%02d" &lef #l1 4 &mid #l1 7 2 &mid #l1 9 2
@@ -371,7 +369,7 @@
   set-position "\x86"
   find-buffer "*directory*"
   !if &seq $buffer-fname ""
-    !if &lfind "|http:/|ftp://|" &lef #l0 6
+    !if &lfin "|http:/|ftp://|ftps:/|ftpe:/|" &lef #l0 6
       set-variable #l0 &stat "a" "."
     !elif &seq "" &set #l0 &lef #l0 &rsin "/" #l0
       set-variable #l0 &stat "a" "."

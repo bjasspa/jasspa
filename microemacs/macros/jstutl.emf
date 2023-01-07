@@ -774,7 +774,7 @@
   set-variable .jst-to-neutral-tag.bcol ""
   set-variable .jst-insert-neutral-toc.ano 0
   !repeat
-    !force search-buffer "me" "\\([\"*/_@`,]\\)\\1\\|\\(https?\\|ftp\\|mailto\\|news\\)[-@~_a-zA-Z#%\\.:\\/0-9]+\\|&\\[\\(.[^]\\s]*]\\)?\\|^[ \t]*\n[ \t]*\\S"
+    !force search-buffer "me" "\\([\"*/_@`,]\\)\\1\\|\\(https?\\|ftps?\\|mailto\\|news\\)[-@~_a-zA-Z#%\\.:\\/0-9]+\\|&\\[\\(.[^]\\s]*]\\)?\\|^[ \t]*\n[ \t]*\\S"
     !if $status
       !if &not &seq @s1 ""
         ; double letter font styling
