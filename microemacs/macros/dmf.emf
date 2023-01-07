@@ -22,9 +22,11 @@
 ;  if arg of 0 given the use value of variable .<fhook>.dmf if defined or
 ;  .display-matching-fence.dmf
 define-macro display-matching-fence
-  ; must preserve the show-region status
+  ; must preserve the show-region status & $result
+  set-variable #l1 $result
   0 show-region
   set-variable #l9 &band $result 0x07
+  set-variable $result #l1
   !if @#
   !elif &exi &set #l8 &spr ".%s.dmf" $buffer-fhook
     set-variable @# &ind #l8
