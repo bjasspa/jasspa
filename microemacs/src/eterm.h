@@ -264,19 +264,22 @@ typedef struct
 
 typedef struct
 {
-    Display  *xdisplay ;                /* the x display */
+    Display  *xdisplay;                 /* the x display */
     Font      fontId;                   /* Font X id */
-    int       fwidth ;                  /* Font width in pixels */
-    int       fdepth ;                  /* Font depth in pixels */
-    int       fhwidth ;                 /* Font half width in pixels */
-    int       fhdepth ;                 /* Font half depth in pixels */
-    int       fadepth ;                 /* Font up-arrow depth in pixels */
-    int       ascent ;                  /* Font ascent */
-    int       descent ;                 /* Font descent */
-    int       underline ;               /* The underline position */
+    int       fwidth;                   /* Font width in pixels */
+    int       fdepth;                   /* Font depth in pixels */
+    int       fhwidth;                  /* Font half width in pixels */
+    int       fhdepth;                  /* Font half depth in pixels */
+    int       fadepth;                  /* Font up-arrow depth in pixels */
+    int       ascent;                   /* Font ascent */
+    int       descent;                  /* Font descent */
+    int       underline;                /* The underline position */
     meUByte  *fontName;                 /* The current Font name */
+    meUByte  *fontPartF;                /* pointers to parts in fontname - First */
+    meUByte  *fontPartW;                /* pointers to parts in fontname - Weight */
+    meUByte  *fontPartS;                /* pointers to parts in fontname - Slant */
+    meUByte  *fontPartR;                /* pointers to parts in fontname - Rest */
     Font      fontTbl[meFONT_MAX];      /* table of font X ids for diff styles */
-    meUByte  *fontPart[meFONT_MAX];     /* pointers to parts in fontname */
     meUByte   fontFlag[meFONT_MAX];     /* Font loaded ? */
 } meCellMetrics;                        /* The character cell metrics */
 

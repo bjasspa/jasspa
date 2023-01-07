@@ -247,6 +247,7 @@ static DWORD ttThreadId = 0;            /* Current thread identity */
 
 /* Font type settings */
 LOGFONT ttlogfont={0};                  /* Current logical font */
+static meUByte ttPitchFam=0;
 
 #if MEOPT_MOUSE
 /* Local definitions for mouse handling code */
@@ -870,7 +871,7 @@ meGetConsoleMessage(MSG *msg, int mode)
         
         hmem = WinKillToClipboard ();
         EmptyClipboard();
-        SetClipboardData(((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT : CF_TEXT), hmem);
+        SetClipboardData(((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT:CF_TEXT), hmem);
         CloseClipboard();
         
         clipState &= ~CLIP_OWNER;
@@ -1516,16 +1517,16 @@ WinLoadFont(int font)
     {
         /* Construct the new font from the logical font information */
         if(font & meFONT_BOLD)
-            ttlogfont.lfWeight = FW_BOLD ;
+            ttlogfont.lfWeight = FW_BOLD;
         else if(font & meFONT_LIGHT)
-            ttlogfont.lfWeight = FW_EXTRALIGHT ;
+            ttlogfont.lfWeight = FW_EXTRALIGHT;
         else
-            ttlogfont.lfWeight = FW_NORMAL ;
-        ttlogfont.lfItalic    = (font & meFONT_ITALIC)    ? meTRUE : meFALSE;
-        ttlogfont.lfUnderline = (font & meFONT_UNDERLINE) ? meTRUE : meFALSE;
+            ttlogfont.lfWeight = FW_NORMAL;
+        ttlogfont.lfItalic    = (font & meFONT_ITALIC)    ? meTRUE:meFALSE;
+        ttlogfont.lfUnderline = (font & meFONT_UNDERLINE) ? meTRUE:meFALSE;
         
         /* Create the font - use the existing font if it exists */
-        if ((eCellMetrics.fontdef[font] = CreateFontIndirect (&ttlogfont)) == NULL)
+        if ((eCellMetrics.fontdef[font] = CreateFontIndirect(&ttlogfont)) == NULL)
             eCellMetrics.fontdef[font] = eCellMetrics.fontdef[0];
     }
 }
@@ -1984,7 +1985,7 @@ TTgetClipboard(void)
         return;
     
     /* Get the data from the clipboard */
-    if((hmem = GetClipboardData ((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT : CF_TEXT)) != NULL)
+    if((hmem = GetClipboardData((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT:CF_TEXT)) != NULL)
     {
         int len, ll;
         meUByte *tmpbuf;
@@ -3847,188 +3848,190 @@ TTaddColor(meColor index, meUByte r, meUByte g, meUByte b)
 #ifdef _ME_WINDOW
 /*
  * TTchangeFont
- * Change the current font setting. Re-compute the cell metrics for the
- * client area and change to the new font. If the font cannot be found
- * then default to the default OEM font.
+ * 
+ * Change the current font setting. Re-compute the cell metrics for the client area and change to
+ * the new font. If the font cannot be found then default to the default OEM font. 
+ * Arg n is a bitwise flag defined as:
+ *  01  Input new font details
+ *  02  Don't apply font
+ *  04  Don't set $result
+ *  08  List all fonts (not just fixed width)
+ *  10  Use dialog
+ * $result format = "|Pitch&Tech|CharSet|Weight|SizeX|SizeY|ReqX|ReqY|FontName|"
  */
 static int
-TTchangeFont (meUByte *fontName, int fontType, int fontWeight,
-              int fontHeight, int fontWidth)
+TTchangeFont(int n, int fontType, meUByte *fontName, int fontWeight, int fontHeight, int fontWidth)
 {
-    HDC   hDC;                          /* Device context */
-    HFONT newFont = NULL;               /* The new font */
+    HDC hDC;                            /* Device context */
+    HFONT oldFont=NULL, newFont=NULL;   /* The new font */
     TEXTMETRIC textmetric;              /* Text metrics */
     LOGFONT logfont;                    /* Logical font */
-    int   status = meTRUE;                /* Status of the invocation */
+    int mode, szX, szY;
     
     hDC = GetDC(baseHwnd);
-    SetMapMode (hDC, MM_TEXT);
-    SetMapperFlags (hDC, 1);            /* Allow interpolation */
+    SetMapMode(hDC,MM_TEXT);
+    SetMapperFlags(hDC,1);              /* Allow interpolation */
     
-    /* Reset the default logical font */
-    memset (&logfont, 0, sizeof (LOGFONT));
-    logfont.lfWeight = FW_DONTCARE;
-    logfont.lfClipPrecision = CLIP_DEFAULT_PRECIS;
-    logfont.lfQuality = DRAFT_QUALITY;
-    logfont.lfPitchAndFamily = FIXED_PITCH|FF_DONTCARE;
-    
-    if (fontType != -1)
+    if(n & 0x01)
     {
-        if (fontType <= -2)
+        /* Reset the default logical font */
+        memset(&logfont,0,sizeof(LOGFONT));
+        logfont.lfCharSet = fontType;
+        logfont.lfWeight = FW_DONTCARE;
+        logfont.lfClipPrecision = CLIP_DEFAULT_PRECIS;
+        logfont.lfQuality = DRAFT_QUALITY;
+        logfont.lfPitchAndFamily = FIXED_PITCH|FF_DONTCARE;
+    
+        if(n & 0x10)
         {
             CHOOSEFONT chooseFont;
             
-            memset (&chooseFont, 0, sizeof (CHOOSEFONT));
-            chooseFont.lStructSize = sizeof (CHOOSEFONT);
+            memset(&chooseFont,0,sizeof(CHOOSEFONT));
+            chooseFont.lStructSize = sizeof(CHOOSEFONT);
             chooseFont.hwndOwner = baseHwnd;
             chooseFont.lpLogFont = &logfont;
-            chooseFont.Flags = (fontType & 1) ? CF_SCREENFONTS:(CF_FIXEDPITCHONLY|CF_SCREENFONTS);
+            chooseFont.Flags = (n & 0x08) ? CF_SCREENFONTS:(CF_FIXEDPITCHONLY|CF_SCREENFONTS);
             
             /* This stupid Microsoft system, why is the CHOOSEFONT structure
              * size not sizeof (CHOOSEFONT). Typical Microsoft !! */
-            if (ChooseFont (&chooseFont) == 0)
+            mode = ChooseFont(&chooseFont);
+            /* give current frame the focus again */
+            SetFocus(meFrameGetWinHandle(frameCur));
+            if(mode == 0)
                 /* SWP - if the user cancelled just return false leaving the font alone */
                 return meFALSE ;
-            /* Save the values in $result */
-            sprintf((char *) resultStr,"%1d%4d%4d%4d%s",(int) (logfont.lfWeight/100),(int) logfont.lfWidth,
-                    (int) logfont.lfHeight,logfont.lfCharSet,logfont.lfFaceName) ;
-            if (fontType <= -4)
-                /* if a -ve argument was past to changeFont then don't set the font */
-                return meTRUE ;
-            
-            /* SWP - we dont want italic as the main font */
+            /* We never want italic as the main font */
             logfont.lfItalic = 0;
+            mode = 2;
         }
-        else if ((fontType >= 0) &&
-                 (fontName != NULL) && (fontName[0] != '\0') &&
-                 (!((fontHeight == 0) && (fontWidth == 0))))
+        else if((fontName != NULL) && (fontName[0] != '\0'))
         {
-            /* Determine the weight on the font */
-            switch (fontWeight)
-            {
-            case 0: logfont.lfWeight = FW_DONTCARE;   break;
-            case 1: logfont.lfWeight = FW_THIN;       break;
-            case 2: logfont.lfWeight = FW_EXTRALIGHT; break;
-            case 3: logfont.lfWeight = FW_LIGHT;      break;
-            case 4: logfont.lfWeight = FW_NORMAL;     break;
-            case 5: logfont.lfWeight = FW_MEDIUM;     break;
-            case 6: logfont.lfWeight = FW_SEMIBOLD;   break;
-            case 7: logfont.lfWeight = FW_BOLD;       break;
-            case 8: logfont.lfWeight = FW_EXTRABOLD;  break;
-            case 9: logfont.lfWeight = FW_HEAVY;      break;
-            default:logfont.lfWeight = FW_DONTCARE;   break;
-            };
-            
-            /* Determine the type of the font */
-            logfont.lfCharSet = fontType;
-            logfont.lfHeight = fontHeight;    /* Height */
-            logfont.lfWidth = fontWidth;      /* Width */
-            meStrncpy (logfont.lfFaceName, fontName,  sizeof (logfont.lfFaceName));
+            logfont.lfWeight = fontWeight * 100;
+            logfont.lfHeight = fontHeight;
+            logfont.lfWidth = fontWidth;
+            meStrncpy(logfont.lfFaceName,fontName,sizeof(logfont.lfFaceName));
+            mode = 1;
         }
         else
-        {
-            /* The font has some horrible attributes. Use a default font */
-            goto defaultFont;           /* Do not create a new font */
-        }
-        
+            /* set to default font for fontType */
+            mode = 0;
         /* Create the new font */
-        if ((newFont = CreateFontIndirect (&logfont)) == NULL)
-            status = meFALSE;
+        if(!mode)
+            newFont = GetStockObject((fontType == OEM_CHARSET) ? OEM_FIXED_FONT:ANSI_FIXED_FONT);
+        else if((newFont = CreateFontIndirect(&logfont)) == NULL)
+            return meFALSE;
+        
+        oldFont = (HFONT) SelectObject(hDC,newFont);
+        GetTextMetrics(hDC,&textmetric);
+        /* Build up the cell metrics */
+        /* The tmMaxCharWidth can be larger than tmAveCharWidth even for fixed width fonts due to Windows ClearType,
+         * however we are using ETO_CLIPPED to avoid overrun so ignore the extra width
+         * 
+         * Note: WRT. ME's 'Fonts' (use of bold & italic etc) it may seem reasonable to add in the textmetric.tmOverhang
+         * value if meSCHEME_NOFONT is not set, however this value seems to be always 0 on the base font (reasonable)
+         * and windows fonts seem to fit into one of 2 groups:
+         * a. Properly designed forms for bold & italic etc: For good fixed width fonts the width is unchanged so no
+         *    addition is required, ME simply works.
+         * b. No font form built into the font: For these fonts windows generates them by overstriking and shearing the
+         *    base font, for these auto-generated forms the tmOverhang can be as much as the tmAveCharWidth which would
+         *    make the text unreadable anyway - these fonts must either be used with meSCHEME_NOFONT set or avoided.
+         */
+        szX = (textmetric.tmAveCharWidth <= 0) ? 1:textmetric.tmAveCharWidth;
+        if(textmetric.tmPitchAndFamily & TMPF_FIXED_PITCH)
+        {
+            /* however, if this is a proportial font we need to do more if we can. Using the tmMaxCharWidth value is not
+             * a good solution because this can include all the chiness characters which can be twice as wide as we need
+             * as we only use chars 0 to 255, the average can also be more then width of all 0 - 255. So calc the width
+             * of a 'W' and use that instead, this will most likely look awful but should stop most/all character clipping */
+            SIZE sz;
+            GetTextExtentPoint32(hDC,"W",1,&sz);
+            if((sz.cx > 0) && (sz.cx <= textmetric.tmMaxCharWidth))
+                szX = sz.cx;
+        }
+        /* Note: We may need to add on textmetric.tmExternalLeading otherwise the following line might be unreadably
+         * close, however so far the value has always been 0 for usable fonts (i.e. fixed fonts) */
+        szY = (textmetric.tmHeight <= 0) ? 1 : textmetric.tmHeight;
     }
     else
-        fontType = ttlogfont.lfCharSet ;
-    
-    /* Get the default font */
-defaultFont:
-    if (newFont == NULL)
     {
-        newFont = GetStockObject ((fontType == OEM_CHARSET) ? OEM_FIXED_FONT : ANSI_FIXED_FONT);
-        logfont.lfCharSet = fontType ;
+        /* cannot get here first time round due to init in TTstart so ttlogfont is initialised */
+        memcpy(&logfont,&ttlogfont,sizeof(LOGFONT));
+        szX = eCellMetrics.cell.sizeX;
+        szY = eCellMetrics.cell.sizeY;
+        textmetric.tmPitchAndFamily = ttPitchFam;
+        mode = -1;
+    }
+    
+    if((n & 0x04) == 0)
+    {
+        /* Save the values in $result */
+        sprintf((char *) resultStr,"|%c|%d|%d|%d|%d|%d|%d|%s|",'0'+(textmetric.tmPitchAndFamily&7),logfont.lfCharSet,
+                (int) (logfont.lfWeight/100),szX,szY,(int) logfont.lfWidth,(int) logfont.lfHeight,logfont.lfFaceName);
+    }
+    if((n & 0x02) || (mode < 0))
+    {
+        /* Don't apply the font so restore old font and get out */
+        if(oldFont != NULL)
+            SelectObject(hDC,oldFont);
+        return meTRUE ;
     }
     
     /* Delete the exisiting font */
-    if (eCellMetrics.fontdef[0] != NULL)
+    if(eCellMetrics.fontdef[0] != NULL)
     {
         int ii ;
         /* Iterate over the font face table and locate duplicated fonts */
-        for (ii = 1; ii < meFONT_MAX; ii++)
+        for(ii = 1; ii < meFONT_MAX; ii++)
         {
-            if ((eCellMetrics.fontdef[ii] != NULL) &&
-                (eCellMetrics.fontdef[ii] != eCellMetrics.fontdef[0]))
-            {
+            if((eCellMetrics.fontdef[ii] != NULL) && (eCellMetrics.fontdef[ii] != eCellMetrics.fontdef[0]))
                 /* Delete the font container */
                 DeleteObject (eCellMetrics.fontdef[ii]);
-            }
             eCellMetrics.fontdef [ii] = NULL;
         }
         DeleteObject (eCellMetrics.fontdef[0]);
     }
     
+    ttPitchFam = textmetric.tmPitchAndFamily;
     eCellMetrics.fontdef[0] = newFont;
-    SelectObject (hDC, eCellMetrics.fontdef[0]);
-    GetTextMetrics(hDC, &textmetric);
     
     /* Build up the cell metrics */
-    /* The tmMaxCharWidth can be larger than tmAveCharWidth even for fixed width fonts due to Windows ClearType,
-     * however we are using ETO_CLIPPED to avoid overrun so ignore the extra width
-     * 
-     * Note: WRT. ME's 'Fonts' (use of bold & italic etc) it may seem reasonable to add in the textmetric.tmOverhang
-     * value if meSCHEME_NOFONT is not set, however this value seems to be always 0 on the base font (reasonable)
-     * and windows fonts seem to fit into one of 2 groups:
-     * a. Properly designed forms for bold & italic etc: For good fixed width fonts the width is unchanged so no
-     *    addition is required, ME simply works.
-     * b. No font form built into the font: For these fonts windows generates them by overstriking and shearing the
-     *    base font, for these auto-generated forms the tmOverhang can be as much as the tmAveCharWidth which would
-     *    make the text unreadable anyway - these fonts must either be used with meSCHEME_NOFONT set or avoided.
-     */
-    eCellMetrics.cell.sizeX = (textmetric.tmAveCharWidth <= 0) ? 1 : textmetric.tmAveCharWidth;
-    if(textmetric.tmPitchAndFamily & TMPF_FIXED_PITCH)
-    {
-        /* however, if this is a proportial font we need to do more if we can. Using the tmMaxCharWidth value is not
-         * a good solution because this can include all the chiness characters which can be twice as wide as we need
-         * as we only use chars 0 to 255, the average can also be more then width of all 0 - 255. So calc the width
-         * of a 'W' and use that instead, this will most likely look awful but should stop most/all character clipping */
-        SIZE sz;
-        GetTextExtentPoint32(hDC,"W",1,&sz);
-        if((sz.cx > 0) && (sz.cx <= textmetric.tmMaxCharWidth))
-            eCellMetrics.cell.sizeX = sz.cx;
-    }
-    
-    /* Note: We may need to add on textmetric.tmExternalLeading otherwise the following line might be unreadably
-     * close, however so far the value has always been 0 for usable fonts (i.e. fixed fonts) */
-    eCellMetrics.cell.sizeY = (textmetric.tmHeight <= 0) ? 1 : textmetric.tmHeight;
-    eCellMetrics.cell.midX = eCellMetrics.cell.sizeX / 2;
-    eCellMetrics.cell.midY = eCellMetrics.cell.sizeY / 2;
+    eCellMetrics.cell.sizeX = szX;
+    eCellMetrics.cell.sizeY = szY;
+    eCellMetrics.cell.midX = szX / 2;
+    eCellMetrics.cell.midY = szY / 2;
     
     /* Store logfont into the ttlogfont for font style and language char set changes  */
-    memcpy(&ttlogfont, &logfont, sizeof (LOGFONT));
-    GetTextFace (hDC, sizeof (ttlogfont.lfFaceName), ttlogfont.lfFaceName);
-    ttlogfont.lfHeight = eCellMetrics.cell.sizeY;
-    ttlogfont.lfWidth = eCellMetrics.cell.sizeX;
+    memcpy(&ttlogfont,&logfont,sizeof(LOGFONT));
+    GetTextFace(hDC,sizeof(ttlogfont.lfFaceName),ttlogfont.lfFaceName);
     
     /* Release the window */
-    ReleaseDC(baseHwnd, hDC);
+    ReleaseDC(baseHwnd,hDC);
     
-    meFrameLoopBegin() ;
+    meFrameLoopBegin();
     
-    meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN) ;
+    meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN);
     
 #if (MEOPT_FRAME == 0)
     if(loopFrame != NULL)
 #endif
-        meFrameSetWindowSize(loopFrame) ;
+        meFrameSetWindowSize(loopFrame);
     
-    meFrameLoopEnd() ;
+    meFrameLoopEnd();
     
-    return (status);
+    return meTRUE;
 }
 #endif /* _ME_WINDOW */
 
 /* changeFont
  * Change the size of the font.
  *
- * change-font <name> <charSet> <weight> <width> <height>
+ * change-font <charSet> <name> <weight> <width> <height>
  *
+ *
+ * <charSet> - The type of character set required.
+ *
+ *             0 = OEM (or bitmapped)
+ *             1 = ANSI (True Type etc).
  *
  * <font>    - The name of the font. Max of 32  characters.  Select Fixed mono
  *             fonts only. Proportional  fonts may be specified but the cursor
@@ -4039,11 +4042,6 @@ defaultFont:
  *
  *             Note that  "Courier  New" is not  actually a fixed mono font as
  *             might be expected.
- *
- * <charSet> - The type of character set required.
- *
- *             0 = OEM (or bitmapped)
- *             1 = ANSI (True Type etc).
  *
  * <weight>  - The weight of the font. The values are defined as:-
  *
@@ -4098,59 +4096,56 @@ Max font name is 32 chars */
 int
 changeFont(int f, int n)
 {
+    int  fontType;                      /* Type of font 0=ANSI,255=OEM etc */
 #ifdef _ME_WINDOW
-    int  status;                        /* Status of invocation */
-#endif
+    meUByte fontName[FONTBUFSIZ];       /* Input font name buffer */
+    int  fontWeight;                    /* Weight of font (0-9) */
+    int  fontHeight;                    /* Height of font */
+    int  fontWidth;                     /* Width of font */
     
+    if(!f)
+        n = 0x11;
+#endif
 #ifdef _ME_CONSOLE
-    /* Ignore this function for console mode */
 #ifdef _ME_WINDOW
-    if (meSystemCfg & meSYSTEM_CONSOLE)
+    if(!(meSystemCfg & meSYSTEM_CONSOLE))
 #endif /* _ME_WINDOW */
     {
-        meUByte buff[FONTBUFSIZ] ;            /* Input buffer */
-        if(meGetString((meUByte *) "Font Type [ANSI=0,OEM=255]", 0, 0, buff, FONTBUFSIZ) <= 0)
-            return meFALSE ;
-        ttlogfont.lfCharSet = (meUByte) meAtoi(buff) ;
-        return meTRUE ;
-    }
-#endif
-    
-#ifdef _ME_WINDOW
-    /* Call up the dialog if no argument is supplied */
-    if (!f || (n <= 0))
-        status = TTchangeFont (NULL, n-3, 0, 0, 0);
-    else
-    {
-        meUByte fontName[FONTBUFSIZ] ;        /* Input font name buffer */
-        meUByte buff[FONTBUFSIZ] ;            /* Input buffer */
-        int  fontType;                      /* Type of font 0=ANSI,255=OEM etc */
-        int  fontWeight;                    /* Weight of font (0-9) */
-        int  fontHeight;                    /* Height of font */
-        int  fontWidth;                     /* Width of font */
-        
-        /* Get the name of the font. If it is specified as default then
-         * do not collect the remaining arguments */
-        if (meGetString((meUByte *) "Font Name ['' for default]", 0, 0, fontName, FONTBUFSIZ) == meABORT)
-            return (meFALSE);
-        if (fontName[0] == '\0')
-            status = TTchangeFont (NULL, -1, 0, 0, 0);
-        else if ((meGetString((meUByte *) "Font Type [ANSI=0,OEM=255]", 0, 0, buff, FONTBUFSIZ) > 0) &&
-                 ((fontType = meAtoi(buff)),
-                  (meGetString((meUByte *) "Font Weight [1-9; 0=don't care]", 0, 0, buff, FONTBUFSIZ) > 0)) &&
-                 ((fontWeight = meAtoi(buff)),
-                  (meGetString((meUByte *) "Font Width", 0, 0, buff, FONTBUFSIZ) > 0)) &&
-                 ((fontWidth = meAtoi(buff)),
-                  (meGetString((meUByte *) "Font Height", 0, 0, buff, FONTBUFSIZ) > 0)))
+        if(n & 0x01)
         {
-            fontHeight = meAtoi (buff);
-            status = TTchangeFont (fontName, fontType,
-                                   fontWeight, fontHeight, fontWidth);
+            meUByte buff[FONTBUFSIZ] ;            /* Input buffer */
+            if((meGetString((meUByte *) "Font Type [ANSI=0,OEM=255]", 0, 0, buff, FONTBUFSIZ) <= 0) ||
+               ((fontType = meAtoi(buff)) < 0) || (fontType > 255))
+                return meFALSE;
+            if((n & 0x02) == 0)
+                ttlogfont.lfCharSet = (meUByte) fontType;
         }
         else
-            status = meFALSE;
+            fontType = ttlogfont.lfCharSet;
+        if((n & 0x04) == 0)
+            sprintf((char *) resultStr,"||%d|||||||",fontType);
+        return meTRUE;
     }
-    return status;
+#endif
+        
+#ifdef _ME_WINDOW
+    if((n & 0x11) == 1)
+    {
+        meUByte buff[FONTBUFSIZ];
+        
+        if((meGetString((meUByte *) "Font Type [ANSI=0,OEM=255]", 0, 0, buff, FONTBUFSIZ) <= 0) ||
+           ((fontType = meAtoi(buff)) < 0) || (fontType > 255) ||
+           (meGetString((meUByte *) "Font Name ['' for default]", 0, 0, fontName, FONTBUFSIZ) == meABORT) ||
+           ((fontName[0] != '\0') &&
+            ((meGetString((meUByte *) "Font Weight [1-9; 0=don't care]", 0, 0, buff, FONTBUFSIZ) <= 0) ||
+             ((fontWeight = meAtoi(buff)) < 0) || (fontWeight > 9) ||
+             (meGetString((meUByte *) "Font Width", 0, 0, buff, FONTBUFSIZ) <= 0) ||
+             ((fontWidth = meAtoi(buff)) < 0) ||
+             (meGetString((meUByte *) "Font Height", 0, 0, buff, FONTBUFSIZ) <= 0))))
+            return meFALSE;
+        fontHeight = meAtoi(buff);
+    }
+    return TTchangeFont(n,fontType,fontName,fontWeight,fontHeight,fontWidth);
 #endif /* _ME_WINDOW */
 }
 #undef FONTBUFSIZ
@@ -4782,7 +4777,7 @@ meFrameTermInit(meFrame *frame, meFrame *sibling)
  * when it creates the Window and determines the initial text metrics.
  */
 int
-TTstart (void)
+TTstart(void)
 {
 #ifdef _ME_CONSOLE
 #ifdef _ME_WINDOW
@@ -4889,41 +4884,41 @@ TTstart (void)
         ttlogfont.lfCharSet = 255 ;
     }
 #ifdef _ME_WINDOW
-else
+    else
 #endif /* _ME_WINDOW */
 #endif /* _ME_CONSOLE */
 #ifdef _ME_WINDOW
-{
+    {
 #ifdef _ME_CONSOLE
-    /* If in window mode, then bin the console we were given */
-    FreeConsole ();
+        /* If in window mode, then bin the console we were given */
+        FreeConsole ();
 #endif /* _ME_CONSOLE */
     
-    baseHwnd = CreateWindow ("MicroEmacsClass",
-                             ME_FULLNAME " " meVERSION,
-                             WS_DISABLED,
-                             CW_USEDEFAULT,CW_USEDEFAULT,
-                             CW_USEDEFAULT,CW_USEDEFAULT,
-                             NULL,
-                             NULL,
-                             ttInstance,
-                             NULL);
-    
-    if(!baseHwnd)
-        return meFALSE ;
-    TTchangeFont(NULL, -1, 0, 0, 0);
-}
+        baseHwnd = CreateWindow ("MicroEmacsClass",
+                                 ME_FULLNAME " " meVERSION,
+                                 WS_DISABLED,
+                                 CW_USEDEFAULT,CW_USEDEFAULT,
+                                 CW_USEDEFAULT,CW_USEDEFAULT,
+                                 NULL,
+                                 NULL,
+                                 ttInstance,
+                                 NULL);
+        
+        if(!baseHwnd)
+            return meFALSE ;
+        TTchangeFont(5,0,NULL,0,0,0);
+    }
 #endif /* _ME_WINDOW */
 
-/* Create the default colours */
-/* Construct the palette. Add two colours; black and white. */
-TTaddColor (meCOLOR_FDEFAULT,255, 255, 255);  /* White */
-TTaddColor (meCOLOR_BDEFAULT,  0,   0,   0);  /* Black */
-TTcolour (meCOLOR_FDEFAULT,meCOLOR_BDEFAULT);  /* Default colours - none created yet */
+    /* Create the default colours */
+    /* Construct the palette. Add two colours; black and white. */
+    TTaddColor(meCOLOR_FDEFAULT,255, 255, 255);   /* White */
+    TTaddColor(meCOLOR_BDEFAULT,  0,   0,   0);   /* Black */
+    TTcolour(meCOLOR_FDEFAULT,meCOLOR_BDEFAULT);  /* Default colours - none created yet */
 
-/* To be continued in meFrameTermInit after the display memory
- * has been initialised */
-return meTRUE ;
+    /* To be continued in meFrameTermInit after the display memory
+     * has been initialised */
+    return meTRUE ;
 }
 
 /*

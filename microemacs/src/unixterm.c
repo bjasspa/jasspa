@@ -880,7 +880,7 @@ __XTERMfontGetId(meUByte font)
         XFontStruct *fontQ ;
         char *weight;
         char *slant;
-        char buf [meBUF_SIZE_MAX];              /* Local name buffer */
+        char buf[meBUF_SIZE_MAX];              /* Local name buffer */
         
         /* Process the bold field. If the X font specifier (weight) is
          * medium or undefined and this is a bold field identifier then
@@ -890,7 +890,7 @@ __XTERMfontGetId(meUByte font)
         else if(fontNU & meFONT_LIGHT)
             weight = "light";
         else
-            weight = (char *)mecm.fontPart [2];
+            weight = (char *) mecm.fontPartW;
         
         /* Process the italic field. If the X font specified (slant) is r
          * or undefined and this is a italic field identifier then specify
@@ -898,15 +898,10 @@ __XTERMfontGetId(meUByte font)
         if(fontNU & meFONT_ITALIC)
             slant = "o";
         else
-            slant = (char *)mecm.fontPart [3];
+            slant = (char *) mecm.fontPartS;
         
         /* Construct the new font name */
-        sprintf (buf, "-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s-%s",
-                 mecm.fontPart [0],  mecm.fontPart [1],  weight,
-                 slant,              mecm.fontPart [4],  mecm.fontPart [5],
-                 mecm.fontPart [6],  mecm.fontPart [7],  mecm.fontPart [8],
-                 mecm.fontPart [9],  mecm.fontPart [10], mecm.fontPart [11],
-                 mecm.fontPart [12], mecm.fontPart [13]);
+        sprintf(buf,"%s-%s-%s-%s",mecm.fontPartF,weight,slant,mecm.fontPartR);
         
         if((fontQ=XLoadQueryFont(mecm.xdisplay,buf)) == NULL)
             mecm.fontTbl[fontNU] = mecm.fontTbl[0] ;
@@ -950,7 +945,7 @@ meFrameXTermSetScheme(meFrame *frame, meScheme scheme)
         meFrameGetXGCValues(frame).background = colTable[cc] ;
         valueMask |= GCBackground ;
     }
-    if(mecm.fontName != NULL)
+    if(mecm.fontPartF != NULL)
     {
         cc = meStyleGetFont(meSchemeGetStyle(scheme)) ;
         if(meSchemeTestNoFont(scheme))
@@ -1218,23 +1213,23 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
         break;
         
     case 0x1e:          /* Cursor Arrows / Up */
-        points [0].x = x - 1 ;
-        points [0].y = y + mecm.fdepth - 1 ;
-        points [1].x = mecm.fhwidth + (mecm.fwidth & 0x01) ;
-        points [1].y = -mecm.fadepth ;
-        points [2].x = mecm.fhwidth + 1 ;
-        points [2].y = mecm.fadepth ;
-        XFillPolygon(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), points, 3, Convex, CoordModePrevious) ;
+        points [0].x = x - 1;
+        points [0].y = y + mecm.fdepth - 1;
+        points [1].x = mecm.fhwidth + (mecm.fwidth & 0x01);
+        points [1].y = -mecm.fadepth;
+        points [2].x = mecm.fhwidth + 1;
+        points [2].y = mecm.fadepth;
+        XFillPolygon(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), points, 3, Convex, CoordModePrevious);
         break;
         
     case 0x1f:          /* Cursor Arrows / Down */
-        points [0].x = x - 1 ;
-        points [0].y = y + 1 ;
-        points [1].x = mecm.fhwidth + (mecm.fwidth & 0x01) ;
-        points [1].y = mecm.fadepth ;
-        points [2].x = mecm.fhwidth + 1 ;
-        points [2].y = -mecm.fadepth ;
-        XFillPolygon(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), points, 3, Convex, CoordModePrevious) ;
+        points [0].x = x - 1;
+        points [0].y = y + 1;
+        points [1].x = mecm.fhwidth + (mecm.fwidth & 0x01);
+        points [1].y = mecm.fadepth;
+        points [2].x = mecm.fhwidth + 1;
+        points [2].y = -mecm.fadepth;
+        XFillPolygon(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), points, 3, Convex, CoordModePrevious);
         break;
     }
 }
@@ -3032,84 +3027,122 @@ TTinitMouse(void)
 #ifdef _ME_WINDOW
 #ifdef _XTERM
 
-/* XTERMsetFont; Determine the font that we shall use. Use the base
- * string provided by the user (or system) and determine if there
- * are any derivatives of the font */
+/* XTERMsetFont; Determine the font that we shall use. Use the base string provided by the user (or
+ * system) and determine if there are any derivatives of the font.
+ * Arg n is a bitwise flag defined as:
+ *  01  Input new font details
+ *  02  Don't apply font
+ *  04  Don't set $result
+ * $result format = "||||SizeX|SizeY|||FontName|"
+ */
 static int
-XTERMsetFont(char *fontName)
+XTERMsetFont(int n, char *fontName)
 {
-    int ii;
-    XFontStruct *font ;
+    XFontStruct *font;
+    char fontBuf[64];
+    meUByte *fp;
+    int ii, jj;
     
-    if (fontName != NULL)
+    if((n & 0x01) == 0)
     {
-        /* Load the basic font into the server, fail if we cannot find it. */
-        if((font=XLoadQueryFont(mecm.xdisplay,fontName)) == NULL)
-            return meFALSE ;
+        /* cannot get here first time round due to init in XTERMstart so mecm is initialised */
+        if((n & 0x04) == 0)
+            sprintf((char *) resultStr,"||||%d|%d|||%s|",mecm.fwidth,mecm.fdepth,(mecm.fontName == NULL) ? "":(char *) mecm.fontName);
+        return meTRUE;
     }
-    else
+    if((fontName == NULL) || (fontName[0] == '\0'))
     {
         /* No font has been specified. Attempt to find a font that we know
          * might exist. We provide a few alternatives to fall back on as this
          * was an issue with Fedora. Only search for mono or character
          * upright fonts. */
-        char *altFonts[] =
-        {
-            "-*-clean-medium-r-*-*-*-130-*-*-*-*-iso8859-1",
-            "-*-clean-medium-r-*-*-*-130-*-*-*-*-iso8859-*",
-            "-*-fixed-medium-r-*-*-*-120-*-*-*-*-iso8859-*",
-            "-*-*-medium-r-*-*-*-*-*-*-c-*-iso8859-*",
-            "-*-*-medium-r-*-*-*-*-*-*-m-*-iso8859-*",
-            "-*-*-regular-r-*-*-*-*-*-*-c-*-iso8859-*",
-            "-*-*-regular-r-*-*-*-*-*-*-m-*-iso8859-*",
-            "-*-*-medium-r-*-*-*-*-*-*-c-*-*-*",
-            "-*-*-medium-r-*-*-*-*-*-*-m-*-*-*",
-            "-*-*-regular-r-*-*-*-*-*-*-c-*-*-*",
-            "-*-*-regular-r-*-*-*-*-*-*-m-*-*-*",
-            NULL
-        };
-        char **p = altFonts;
+        char *defFmly[3] = {"fixed","clean","*"};
+        char *defWght[2] = {"medium","regular"};
+        char *defRgst[3] = {"iso8859","*"};
+        int kk, ll;
         
-        /* There is no font specified, iterate over the fonts to find
-         * something we can load as default unstead of failing. */
-        do
+        fontName = fontBuf;
+        for(ll=0 ; ll<2 ; ll++)
         {
-            /* Advance the font and bail out if we cannot load anyting. */
-            if ((fontName = *p++) == NULL)
-                return meFALSE ;
-            /* Load the font into the server. We will drop out of the loop if the  */
-            font = XLoadQueryFont(mecm.xdisplay,fontName);
+            for(ii=0 ; ii<3 ; ii++)
+            {
+                for(kk=14 ; kk>11 ; kk--)
+                {
+                    for(jj=0 ; jj<2 ; jj--)
+                    {
+                        sprintf(fontBuf,"-*-%s-%s-r-*-*-*-%d0-*-*-*-*-%s-*",defFmly[ii],defWght[jj],kk,defRgst[ll]);
+                        /* Load the font into the server. We will drop out of the loop if the  */
+                        font = XLoadQueryFont(mecm.xdisplay,fontBuf);
+                        if(font != NULL)
+                            break;
+                    }
+                    if(font != NULL)
+                        break;
+                }
+                if(font != NULL)
+                    break;
+                for(kk=0 ; kk<2 ; kk++)
+                {
+                    for(jj=0 ; jj<2 ; jj--)
+                    {
+                        sprintf(fontBuf,"-*-%s-%s-r-*-*-*-*-*-*-%c-*-%s-*",defFmly[ii],defWght[jj],(kk) ? 'm':'c',defRgst[ll]);
+                        /* Load the font into the server. We will drop out of the loop if the  */
+                        font = XLoadQueryFont(mecm.xdisplay,fontBuf);
+                        if(font != NULL)
+                            break;
+                    }
+                    if(font != NULL)
+                        break;
+                }
+                if(font != NULL)
+                    break;
+            }
+            if(font != NULL)
+                break;
         }
-        while (font == NULL);
     }
+    else
+        /* Load the basic font into the server, fail if we cannot find it. */
+        font = XLoadQueryFont(mecm.xdisplay,fontName);
     
-    /* Make sure that the font is legal and we do not get a divide by zero
-     * error through zero width characters. */
-    if ((font->ascent + font->descent == 0) ||
-        (font->max_bounds.width == 0))
+    if(font == NULL)
+        return meFALSE;
+        
+    /* Make sure that the font is legal and we do not get a divide by zero error through zero width characters. */
+    if(((ii=font->max_bounds.width) <= 0) || ((jj=font->ascent + font->descent) <= 0))
     {
-        XUnloadFont (mecm.xdisplay, font->fid);
+        XUnloadFont(mecm.xdisplay,font->fid);
         return meFALSE;
     }
+    if((n & 0x04) == 0)
+        /* Save the values in $result */
+        sprintf((char *) resultStr,"||||%d|%d|||%s|",font->max_bounds.width,ii,fontName);
+    if((n & 0x02) || (ii == 0) || (jj == 0))
+    {
+        /* Don't apply the font so free and get out */
+        XUnloadFont(mecm.xdisplay,font->fid);
+        return meTRUE;
+    }
+    
     
     /* Font is acceptable - continue to load. */
-    mecm.ascent    = font->ascent ;
-    mecm.descent   = font->descent ;
-    mecm.fdepth    = mecm.ascent + font->descent ;
-    mecm.fwidth    = font->max_bounds.width ;
-    mecm.fhdepth   = mecm.fdepth >> 1 ;
-    mecm.fhwidth   = mecm.fwidth >> 1 ;
-    mecm.underline = mecm.fdepth - mecm.ascent - 1;
+    mecm.ascent  = font->ascent;
+    mecm.descent = font->descent;
+    mecm.fwidth  = ii;
+    mecm.fdepth  = jj;
+    mecm.fhwidth = ii >> 1;
+    mecm.fhdepth = jj >> 1;
+    mecm.underline = jj - mecm.ascent - 1;
     
-    if((mecm.fadepth = mecm.fwidth+1) > mecm.fdepth)
-        mecm.fadepth = mecm.fdepth ;
+    if((mecm.fadepth = ii+1) > jj)
+        mecm.fadepth = jj;
     
-    sizeHints.height_inc = mecm.fdepth ;
-    sizeHints.width_inc  = mecm.fwidth ;
-    sizeHints.min_height = mecm.fdepth*4 ;
-    sizeHints.min_width  = mecm.fwidth*10 ;
-    sizeHints.base_height = mecm.fdepth ;
-    sizeHints.base_width  = mecm.fwidth ;
+    sizeHints.width_inc  = ii;
+    sizeHints.height_inc = jj;
+    sizeHints.min_width  = ii*10 ;
+    sizeHints.min_height = jj*4;
+    sizeHints.base_width  = ii;
+    sizeHints.base_height = jj;
     
     /* Clean up the font table for the existing font. Unload all of the
      * previously loaded fonts */
@@ -3130,32 +3163,30 @@ XTERMsetFont(char *fontName)
     
     if(mecm.fontName != NULL)
         free(mecm.fontName) ;
-    
-    if((meSystemCfg & meSYSTEM_FONTS) &&
-       ((mecm.fontName=meStrdup((meUByte *) fontName)) != NULL))
+    mecm.fontName = meStrdup((meUByte *) fontName);
+    if(mecm.fontPartF != NULL)
     {
-        meUByte cc, *p = mecm.fontName ;
-        
-        /* Break up the font. This must be the full X-Window font definition, we
-         * do not understand the X-Windows wildcards and aliases. Lifes too short
-         * to sit down and address these now !! */
-        for (ii = 0 ; (ii < 14) ; ii++)
-        {
-            if (*p != '-')
-                break;
-            *p++ = '\0' ;
-            mecm.fontPart[ii] = p ;
-            while (((cc = *p) != '\0') && (cc != '-'))
-                p++;
-        }
-        if ((ii != 14) || (*p != '\0'))
-        {
-            free(mecm.fontName) ;
-            mecm.fontName = NULL ;
-        }
+        free(mecm.fontPartF);
+        mecm.fontPartF = NULL;
     }
-    else
-        mecm.fontName = NULL ;
+    if((meSystemCfg & meSYSTEM_FONTS) && (fontName[0] == '-') && ((fp = meStrdup((meUByte *) fontName)) != NULL))
+    {
+        meUByte *wp, *sp, *rp;
+        
+        if(((wp = meStrchr(fp+1,'-')) != NULL) && ((wp = meStrchr(wp+1,'-')) != NULL) &&
+           ((sp = meStrchr(wp+1,'-')) != NULL) && ((rp = meStrchr(sp+1,'-')) != NULL))
+        {
+            *wp++ = '\0';
+            *sp++ = '\0';
+            *rp++ = '\0';
+            mecm.fontPartF = fp;
+            mecm.fontPartW = wp;
+            mecm.fontPartS = sp;
+            mecm.fontPartR = rp;
+        }
+        else
+            free(fp);
+    }
     
     return meTRUE;
 }
@@ -3342,8 +3373,7 @@ XTERMstart(void)
         ss = NULL ;
     
     /* Load the font into the system */
-    if((XTERMsetFont(ss) == meFALSE) &&
-       ((ss == NULL) || (XTERMsetFont(NULL) == meFALSE)))
+    if((XTERMsetFont(5,ss) == meFALSE) && ((ss == NULL) || (XTERMsetFont(5,NULL) == meFALSE)))
         return meFALSE ;
     
     /* Set the default geometry, then look for an override */
@@ -3498,7 +3528,7 @@ meFrameXTermShowCursor(meFrame *frame)
                 meFrameGetXGCValues(frame).background = colTable[cursorColor] ;
                 valueMask |= GCBackground ;
             }
-            if(mecm.fontName != NULL)
+            if(mecm.fontPartF != NULL)
             {
                 ff = meStyleGetFont(meSchemeGetStyle(schm)) ;
                 if(meSchemeTestNoFont(schm))
@@ -3543,55 +3573,56 @@ meFrameXTermShowCursor(meFrame *frame)
 int
 changeFont(int f, int n)
 {
-    meUByte        buff[meBUF_SIZE_MAX] ;            /* Input buffer */
+    meUByte buff[meBUF_SIZE_MAX] ;            /* Input buffer */
     
     if(meSystemCfg & meSYSTEM_CONSOLE)
         /* change-font not supported on termcap */
         return notAvailable(f,n) ;
-    
-    /* Get the name of the font. If it is specified as default then
-     * do not collect the remaining arguments */
-    if(meGetString((meUByte *)"Font Name", 0, 0, buff, meBUF_SIZE_MAX) == meABORT)
-        return meFALSE ;
-    
-    /* Change the font */
-    if(XTERMsetFont ((char *)buff) == meFALSE)
-        return meFALSE ;
-    
-    /* Set up the arguments for a resize operation. Because the
-     * font has changed then we need to define the new window
-     * base size, minimum size and increment size.
-     */
-    meFrameLoopBegin() ;
-    
-    meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN) ;
-    
-    meFrameSetWindowSize(loopFrame) ;
-    
-    /* Make the current font invalid and force a complete redraw */
-    meFrameSetXGCFont(loopFrame,0) ;
-    meFrameSetXGCFontId(loopFrame,mecm.fontId) ;
-    meFrameGetXGCValues(loopFrame).font = mecm.fontId ;
-    XChangeGC(mecm.xdisplay,meFrameGetXGC(loopFrame),GCFont,&meFrameGetXGCValues(loopFrame)) ;
-    
-    /* In order for us to change the hints for a font change then the
-     * X-Window has to be un-mapped. Therefore on a font change unmap the
-     * window, the hints size is then changed when we receive the MapNotify
-     * event and the X-Window may be re-mapped. Unmap the window ready to
-     * change the size hints for the font. Note that the hint values are the
-     * same irrespective of the number of windows. */
-    if (meFrameGetXMapState(loopFrame) == meXMAP_MAP)
+    if(n & 1)
     {
-        /* Tell the Unmap event that this is a font change mapping and then
-         * unmap the window. */
-        meFrameSetXMapState(loopFrame, meXMAP_FONT);
-        XUnmapWindow (mecm.xdisplay, meFrameGetXWindow(loopFrame));
+        /* Get the name of the font. If it is specified as default then
+         * do not collect the remaining arguments */
+        if(meGetString((meUByte *)"Font Name", 0, 0, buff, meBUF_SIZE_MAX) == meABORT)
+            return meFALSE ;
     }
+    /* Change the font */
+    if(XTERMsetFont(n,(char *) buff) == meFALSE)
+        return meFALSE ;
+    if((n & 3) == 1)
+    {
+        /* Set up the arguments for a resize operation. Because the font has changed then we need to
+         * define the new window base size, minimum size and increment size.
+         */
+        meFrameLoopBegin() ;
     
-    meFrameLoopEnd() ;
+        meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN) ;
+        
+        meFrameSetWindowSize(loopFrame) ;
+        
+        /* Make the current font invalid and force a complete redraw */
+        meFrameSetXGCFont(loopFrame,0) ;
+        meFrameSetXGCFontId(loopFrame,mecm.fontId) ;
+        meFrameGetXGCValues(loopFrame).font = mecm.fontId ;
+        XChangeGC(mecm.xdisplay,meFrameGetXGC(loopFrame),GCFont,&meFrameGetXGCValues(loopFrame)) ;
+        
+        /* In order for us to change the hints for a font change then the
+         * X-Window has to be un-mapped. Therefore on a font change unmap the
+         * window, the hints size is then changed when we receive the MapNotify
+         * event and the X-Window may be re-mapped. Unmap the window ready to
+         * change the size hints for the font. Note that the hint values are the
+         * same irrespective of the number of windows. */
+        if (meFrameGetXMapState(loopFrame) == meXMAP_MAP)
+        {
+            /* Tell the Unmap event that this is a font change mapping and then
+             * unmap the window. */
+            meFrameSetXMapState(loopFrame, meXMAP_FONT);
+            XUnmapWindow (mecm.xdisplay, meFrameGetXWindow(loopFrame));
+        }
     
-    sgarbf = meTRUE;
+        meFrameLoopEnd() ;
     
+        sgarbf = meTRUE;
+    }
     return meTRUE ;
 }
 

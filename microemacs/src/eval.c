@@ -3627,7 +3627,8 @@ listVariables (int f, int n)
     meUByte   buf[meBUF_SIZE_MAX] ;
     int     ii ;
     
-    if((wp = meWindowPopup(BvariablesN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR),NULL)) == NULL)
+    /* don't execute hooks here as they can change variable values */
+    if((wp = meWindowPopup(BvariablesN,(BFND_CREAT|BFND_CLEAR|BFND_NOHOOK|WPOP_USESTR),NULL)) == NULL)
         return meFALSE ;
     bp = wp->buffer ;
     
@@ -3683,10 +3684,11 @@ listVariables (int f, int n)
     bp->dotLine = meLineGetNext(bp->baseLine);
     bp->dotOffset = 0 ;
     bp->dotLineNo = 0 ;
-    meModeClear(bp->mode,MDEDIT) ;    /* don't flag this as a change */
-    meModeSet(bp->mode,MDVIEW) ;      /* put this buffer view mode */
-    resetBufferWindows(bp) ;            /* Update the window */
-    mlerase(MWCLEXEC);                  /* clear the mode line */
+    meModeClear(bp->mode,MDEDIT);     /* don't flag this as a change */
+    meModeSet(bp->mode,MDVIEW);       /* put this buffer view mode */
+    resetBufferWindows(bp);           /* Update the window */
+    setBufferContext(bp);             /* execute hook now (if any) */
+    mlerase(MWCLEXEC);                /* clear the mode line */
     return meTRUE ;
 }
 #endif
