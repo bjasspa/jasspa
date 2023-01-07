@@ -38,7 +38,32 @@
   set-variable #l1 &reg &spr "/history/%s/font-weight" $platform "0"
   set-variable #l2 &reg &spr "/history/%s/font-width" $platform "0"
   set-variable #l3 &reg &spr "/history/%s/font-depth" $platform "0"
-  1 change-font #l0 .change-font.type #l1 #l2 #l3
+  1 change-font .change-font.type #l0 #l1 #l2 #l3
+  set-variable .change-font.ofnt $result
+  define-macro change-font-size
+    !if &not @#
+      set-variable .change-font.sz-dpth &lget .change-font.ofnt 5
+      5 change-font &lget .change-font.ofnt 2 &lget .change-font.ofnt 8 &lget .change-font.ofnt 3 &lget .change-font.ofnt 6 &lget .change-font.ofnt 7
+      ml-write "[Text Zoom reset]"
+    !elif &les &set #l0 &add .change-font.sz-dpth @# 5
+      ml-write "[Text too small]"
+      !abort
+    !else
+      set-variable .change-font.sz-dpth #l0
+      5 change-font &lget .change-font.ofnt 2 .change-font.sz-font &lget .change-font.ofnt 3 0 .change-font.sz-dpth
+      ml-write &spr "[Text Zoom: %d%%]" &div &mul #l0 100 &lget .change-font.ofnt 5
+    !endif
+  !emacro
+  set-variable .change-font.sz-dpth &lget .change-font.ofnt 5
+  !if &exi .change-font.sz-font
+  !elif &band 6 &lget .change-font.ofnt 1
+    set-variable .change-font.sz-font &lget .change-font.ofnt 8
+  !else
+    set-variable .change-font.sz-font "Lucida Console"
+  !endif
+  1 global-bind-key change-font-size "C-+"
+  0 global-bind-key change-font-size "C-="
+  -1 global-bind-key change-font-size "C--"
 !endif
 0 define-macro pipe-me
   !if &not &exi .mcmd
