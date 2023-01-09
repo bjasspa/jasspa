@@ -1,0 +1,46 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m5var013.5,v 2.6 2023/01/07 18:55:15 jon Exp $
+.Im MicroEmacs variable|file
+.so me.tni
+.TH %http-cookies 5
+.XI %http-cookies - "Set HTTP request cookies"
+.SH NAME
+%http-cookies \- Set HTTP request cookies
+.Me $a
+.SH SYNOPSIS
+\fB%http-cookies\fR "\fIcookie=value; ...\fR"; Default is undefined
+.SH DESCRIPTION
+If the \fB%http-cookies\fR variable is set all HTTP file loading requests,
+using commands like
+.Ht find-file 2 ,
+are sent with a \fBCookie:\fR request header (if not an empty string) and all response \fBSet-Cookie:\fR header values
+will be merged into the current value, i.e. if the named cookie already exists in the \fB%http-cookies\fR variable its
+value will be updated.
+.PP
+If the variable is not defined then no \fBCookie:\fR request header is sent and all response \fBSet-Cookie:\fR headers
+are ignored.
+.SH NOTES
+The variable should take the form of "<name1>=<value1>; <name2>=<value2>; ...; <name#>=<value#>" with no trailing ';',
+names and values should be URL encoded.
+.PP
+As with variables like
+@wl 4 ,
+the returned value can be longer than the maximum length of a user defined  variable so care is needed if manipulating
+its value using macro code.
+.PP
+\*(mS cookie support is minimal, it does not support  domains,  expires, paths etc. it is up to the user or supporting
+macros to implement any additional features required.
+.SH "SEE ALSO"
+.na
+.Ht %http-flags 5 ,
+.Ht %http-post-data 5 ,
+.Ht %http-post-file 5 ,
+.Ht %http-proxy-addr 5 ,
+.Ht find-file 2 ,
+.Ht ftp 3 .
+.ad
+.FH

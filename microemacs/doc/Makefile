@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20220612.1923>
+# Last Modified: <20230102.1500>
 #
 ##############################################################################
 
@@ -212,9 +212,8 @@ VAR5_000=	$(DOCDIR)m5var000.5 $(DOCDIR)m5var001.5 $(DOCDIR)m5var002.5\
 		$(DOCDIR)m5var006.5 $(DOCDIR)m5var007.5 $(DOCDIR)m5var008.5\
 		$(DOCDIR)m5var009.5
 VAR5_010=	$(DOCDIR)m5var010.5 $(DOCDIR)m5var011.5 $(DOCDIR)m5var012.5\
+		$(DOCDIR)m5var013.5 $(DOCDIR)m5var014.5\
 		$(DOCDIR)m5var019.5
-# TODO: deleted $c-brace(5) - $(DOCDIR)m5var013.5
-# TODO: deleted $c-case(5), $c-switch - $(DOCDIR)m5var014.5
 # TODO: deleted $c-contcomm - $(DOCDIR)m5var015.5
 # TODO: deleted $c-margin - $(DOCDIR)m5var016.5
 # TODO: deleted $c-statement(5) - $(DOCDIR)m5var017.5

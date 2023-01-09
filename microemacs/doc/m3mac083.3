@@ -6,7 +6,7 @@
 .\"  Object Name   : m3mac083.3
 .\"  Created By    : Jon Green
 .\"
-.Id $Id: m3mac083.3,v 2.3 2009/08/29 17:13:59 jon Exp $
+.Id $Id: m3mac083.3,v 2.3 2023/01/02 15:11:36 jon Exp $
 .Im MicroEmacs shell|comparison
 .so me.tni
 .TH xdiff 3
@@ -32,6 +32,8 @@ X-Windows "\fCxdiff -wb %lf %rf\fR" when using \fBxdiff\fR from
 .sp
 MS-Windows "\fCbc2.exe %lf %rf /title1=%lt /title2=%rt\fR"
 when using \fBBeyond Compare\fR.
+.sp
+All "\fCmeld %lf -L %lt %rf -L %rt\fR" when using \fBMeld\fR.
 .ad
 .SH DESCRIPTION
 .B xdiff
@@ -54,18 +56,28 @@ as follows:
 The absolute file name of the left-hand file, \fIleftVersion\fR.
 .IP \fB%rf\fR
 The absolute file name of the right-hand file, \fIrightVersion\fR.
-.IP \fB%ln\fR
-The base name of the left-hand file, \fIleftVersion\fR.
-.IP \fB%rn\fR
-The base name of the left-hand file, \fIleftVersion\fR.
+.IP \fB%lt\fR
+The title to use for the left-hand file, \fIleftVersion\fR.
+.IP \fB%rt\fR
+The title to use for the right-hand file, \fIrightVersion\fR.
 .LP
 The 
 .B %xdiff-com
 variable  should  include  the  appropriate  command to invoke the  difference
 utility and use \fB%\fR place  holders for the  arguments.  \*(mS will fill in
 the \fB%\fR arguments with their correct values on invocation. 
-.BP "UNIX"
-\s-1UNIX\s0 environments may use 
+.PP
+.Hr Meld 1
+is a free graphical file compare available on Gnome capable UNIX systems, Windows and macOS, the variable command line may be defined as:
+.LP
+.RS
+.Me $emf-scheme
+.CS 0
+set-variable %xdiff-com "meld %lf -L %lt %rf -L %rt"
+.CE
+.Me $ehf-scheme
+.RE
+Unix environments may use 
 .Hr xdiff 1
 which is available from 
 .BR http://reality.sgiweb.org/rudy/xdiff/ .
@@ -80,9 +92,8 @@ set-variable %xdiff-com "xdiff -wb %lf %rf"
 .RE
 The \fB-wb\fR options will ignore while space and trailing blanks.
 .ne 5
-.BP "Microsoft Windows"
-Microsoft  Windows  environments may use something like \fBBeyond  Compare\fR.
-The variable command line may be defined as:
+Microsoft Windows  environments may use something like \fBBeyond  Compare\fR. The variable command line may be defined
+as:
 .LP
 .RS
 .Me $emf-scheme
@@ -99,6 +110,7 @@ utility of the same name
 .Hr xdiff 1
 .SH "SEE ALSO"
 .na
+.Hr Meld 1 ,
 .Ht compare-windows 2 ,
 .Ht compile 3 ,
 .Hr diff 1 ,

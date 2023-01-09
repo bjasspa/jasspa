@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Wed Jan 26 00:47:52 2000
 .\"
-.Id $Id: m5var049.5,v 2.6 2022/01/17 10:50:29 jon Exp $
+.Id $Id: m5var049.5,v 2.6 2023/01/02 14:16:51 jon Exp $
 .Im MicroEmacs variable|file
 .so me.tni
 .TH %ftp-flags 5
@@ -20,62 +20,70 @@
 %http-flags \- "Configure HTTP and HTTPS support"
 .Me $a
 .SH SYNOPSIS
-\fB%ftp-flags\fR "[\fCc\fR|\fCd\fR|\fCp\fR|\fCs\fR]" ; Default is undefined.
+\fB%ftp-flags\fR "[\fCc\fR|\fCd\fR|\fCi\fR|\fCp\fR|\fCs\fR]" ; Default when undefined is "\fCci\fR".
 .br
-\fB%http-flags\fR "[\fCc\fR|\fCd\fR|\fCi\fR|\fCp\fR|\fCs\fR|\fCv\fR|\fCw\fR]" ; Default is undefined.
+\fB%http-flags\fR "[\fCC\fR|\fCc\fR|\fCd\fR|\fCh\fR|\fCi\fR|\fCp\fR|\fCs\fR|\fCv\fR|\fCw\fR]" ; Default when undefined is "\fCc\fR".
 .SH DESCRIPTION
-The \fB%ftp-flags\fR and \fB%http-flags\fR  modify the behavior of the editor
-during FTP and HTTP file transfers, respectively.
-(see
+The  \fB%ftp-flags\fR  and  \fB%http-flags\fR  modify the behavior of the editor  during FTP and HTTP file  transfers,
+respectively. (see
 .Ht ftp 3
 and
 .Ht find-file 2 ).
 .PP
-By default, the flags are disabled, the facilities  outlined below are enabled
-by setting the  variable in the user  configuration.  The flag values for both
-flags are defined as follows:-
+By default, the flags are  disabled,  the  facilities  outlined  below are enabled by setting the variable in the user
+configuration. The flag values for both flags are defined as follows:-
+.IP \fBC\fR
+HTTP(S) only: close socket after every request. When this flag is not given \*(mS sends \fCkeep-alive\fR so the socket
+connection may be reused.
 .IP \fBc\fR
-Create a console buffer (\fC*ftp-console*\fR for ftp, \fC*http-console*\fR for
-http) into which the FTP/HTTP command  interactions with the remote server are
-logged.
+Create a console buffer  (\fC*ftp-console*\fR for ftp,  \fC*http-console*\fR for http) into which the FTP/HTTP command
+interactions with the remote server are logged.
 .IP \fBd\fR
 Show details of commands executed and returned headers.
+.IP \fBh\fR
+HTTP(S) only: halt on a redirection. When this flag is not given \*(mS will automatically  follow up to 5 redirections
+(\fCLocation:\fR in the response header), note that a 
+.Ht %http-post-file 5
+or 
+.Ht http-post-data 5
+is only sent on the initial request.  
 .IP \fBi\fR
-HTTPS only, ignore certificate errors, useful when trying to load pages from a self-signed site.
+FTPS, FTPE & HTTPS only: ignore certificate errors, useful when trying to load pages from a self-signed site.
 .IP \fBp\fR
 Show the download  progress within the console window ('\fC#\fR' for every 2Kb
 downloaded)
 .IP \fBs\fR
-Show the console  whenever a FTP/HTTP  operation is performed.  The console is
-popped into the display pane and shows the current interaction status.
+Show the console whenever a FTP/HTTP operation is performed. The console is popped into the display pane and shows the
+current interaction status.
 .IP \fBv\fR
-HTTPS only, show verbose information such as certificate details.
+FTPS, FTPE & HTTPS only: show verbose information such as certificate details.
 .IP \fBw\fR
-HTTPS only, show warnings of potential issues with the secure socket support layer.
+FTPS, FTPE & HTTPS only: show warnings of potential issues with the secure socket support layer.
 .LP
 Typically the following flags are enabled in the \fIuser\fR.emf file:-
 .Me $emf-scheme
 .CS
-set-variable %ftp-flags "csp"
+set-variable %ftp-flags "cisp"
 set-variable %http-flags "csp"
 .CE
 .Me $ehf-scheme
-Once familiar with this facility the console pop-up becomes  inconvenient  and
-the flags are typically reduced to:-
+Once familiar with this facility the console pop-up becomes inconvenient and the flags are typically reduced to:-
 .Me $emf-scheme
 .CS
-set-variable %ftp-flags "cp"
-set-variable %http-flags "cp"
+set-variable %ftp-flags "ci"
+set-variable %http-flags "c"
 .CE
 .Me $ehf-scheme
-This disables the pop-up feature of the console. Enabling the limited flag set
-allows some post mortem  debugging to be performed if anything goes wrong. The
-console buffers are manually selected when these flags are set.
+This disables the pop-up feature of the console. Enabling the limited flag set allows some post mortem debugging to be
+performed if anything goes wrong. The console buffers are manually selected when these flags are set.
 .SH NOTES
 Note that ftp and http facilities are available on \s-1UNIX\s0 by default, but
 must be compiled in for Windows versions.
 .SH "SEE ALSO"
 .na
+.Ht %http-cookies 5 ,
+.Ht %http-post-data 5 ,
+.Ht %http-post-file 5 ,
 .Ht %http-proxy-addr 5 ,
 .Ht find-file 2 ,
 .Ht ftp 3 .

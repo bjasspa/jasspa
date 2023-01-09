@@ -2,6 +2,16 @@
 #
 # Get the platform name
 #
+_UNIXOS:=$(shell echo `uname`)
+
+ifeq "$(_UNIXOS)" "`uname`"
+
+UNAME=mingw
+pc=\$(strip)
+sc=& 
+
+else
+
 _UNAME:=$(shell echo `uname | tr '[A-Z]' '[a-z]'`)
 #
 # For cygwin then get rid of the install base we do not need it.
@@ -12,3 +22,8 @@ UNAME=$(__UNAME)
 # Find out the compiler.
 #
 WHICHCC:=$(shell echo `which cc`)
+
+pc=/
+sc=; 
+
+endif

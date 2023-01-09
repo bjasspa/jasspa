@@ -1,0 +1,47 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m5var013.5,v 2.6 2023/01/02 15:00:06 jon Exp $
+.Im MicroEmacs variable|file
+.so me.tni
+.TH %http-post-data 5
+.XI %http-post-data - "Set HTTP request form data"
+.XI %http-post-file - "Set HTTP request file to submit"
+.SH NAME
+.Me "|%http-post-data"
+%http-post-data \- Set HTTP request form data
+.br
+.Me "|%http-post-file"
+%http-post-file \- Set HTTP request file to submit
+.Me $a
+.SH SYNOPSIS
+\fB%http-post-data\fR "\fIname=value&...\fR"; Default is undefined
+.br
+\fB%http-post-file\fR "\fIfile-name\fR"; Default is undefined
+.SH DESCRIPTION
+If either of these variables are defined the next HTTP file loading request,
+using a command like
+.Ht find-file 2 ,
+will be changed from a \fBGET\fR to a \fBPOST\fR,  submitting  the required data in the first request. The variable at
+this point is
+.Hl unset unset-variable 2
+so that if the request leads to a redirect, the data is only submitted on the first request.
+.PP
+When   \fB%http-post-data\fR   variable  is  set  to  a  non-empty   string  its  value  is   submitted  as  a  simple
+URL encoded form data.
+.PP
+When  \fB%http-post-file\fR  variable is set to a non-empty  string its value must be set to the  absolute  path of an
+existing local file that is to be submitted as a multi-part form submission.
+.PP 
+Both variables cannot be used at the same time. 
+.SH "SEE ALSO"
+.na
+.Ht %http-flags 5 ,
+.Ht %http-cookies 5 ,
+.Ht %http-proxy-addr 5 ,
+.Ht find-file 2 ,
+.Ht ftp 3 .
+.ad
+.FH

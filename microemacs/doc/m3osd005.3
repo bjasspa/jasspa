@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Feb 1 20:28:17 1999
 .\"
-.Id $Id: m3osd005.3,v 2.7 2009/08/29 17:14:00 jon Exp $
+.Id $Id: m3osd005.3,v 2.7 2022/11/03 17:21:00 jon Exp $
 .Im MicroEmacs command|osd|hilight
 .so me.tni
 .TH scheme-editor 3
@@ -16,7 +16,9 @@ scheme-editor \- Color Scheme Editor
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 .B scheme-editor
+[ "\fIscheme-file-name\fR" ]
 .ad
 .SH DESCRIPTION
 \fBscheme-editor\fR  is a color and font scheme  editor that provides a dialog
@@ -29,6 +31,9 @@ they are typically  stored in the  \fCmacros\fR  directory and are executed as
 macro files at start up or when  printing.  The  standard  screen  schemes are
 called       \fCscheme\fR\|\fIX\fR\|\fC.emf\fR      and      printer      ones
 \fCprint\fR\|\fIX\fR\|\fC.emf\fR.
+.PP
+If the  \fIscheme-file-name\fR  is not explicitly  given then the scheme  currently  being used will be edited (or the
+previously edited scheme if a numeric argument of \fC0\fR is given).
 .PP
 The   \fBscheme-editor\fR  is  displayed  within  a  single  dialog  box,  tab
 selections at the top of the dialog box enable  \fBcolor\fR  and  \fBscheme\fR
