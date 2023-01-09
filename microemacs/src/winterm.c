@@ -1030,7 +1030,7 @@ meGetConsoleMessage(MSG *msg, int mode)
          * the current window size and change the screen size to that.
          */
         CONSOLE_SCREEN_BUFFER_INFO Console;
-        COORD size ;
+        COORD size;
         
         GetConsoleScreenBufferInfo(hOutput, &Console);
         /* this should be the window size, not the buffer size
@@ -1041,11 +1041,9 @@ meGetConsoleMessage(MSG *msg, int mode)
 #if MEOPT_EXTENDED
         if((alarmState & meALARM_PIPED) == 0)
 #endif
-            SetConsoleScreenBufferSize(hOutput, size);
-        
-        /* Tell micro-emacs about it */
-        frameCur->width = size.X ;
-        frameCur->depth = size.Y-1 ;
+            SetConsoleScreenBufferSize(hOutput,size);
+        meFrameChangeWidth(frameCur,size.X) ;
+        meFrameChangeDepth(frameCur,size.Y) ;
         meFrameSetWindowSize(frameCur) ;
     }
     else if (ir.EventType == FOCUS_EVENT)
@@ -4108,7 +4106,7 @@ changeFont(int f, int n)
 #endif
 #ifdef _ME_CONSOLE
 #ifdef _ME_WINDOW
-    if(!(meSystemCfg & meSYSTEM_CONSOLE))
+    if(meSystemCfg & meSYSTEM_CONSOLE)
 #endif /* _ME_WINDOW */
     {
         if(n & 0x01)
@@ -4787,7 +4785,6 @@ TTstart(void)
 #endif /* _ME_WINDOW */
     {
         CONSOLE_SCREEN_BUFFER_INFO Console;
-        CONSOLE_CURSOR_INFO CursorInfo;
         COORD coord ;
         
         /* console can't support fonts and only has XANSI */
@@ -4867,10 +4864,6 @@ TTstart(void)
         /* Set emergency quit handler routine */
         SetConsoleCtrlHandler (ConsoleHandlerRoutine, meTRUE);
         
-        /* Hide the cursor - this does not seem to work on win98!! */
-        GetConsoleCursorInfo (hOutput, &CursorInfo);
-        CursorInfo.bVisible = meFALSE;
-        SetConsoleCursorInfo (hOutput, &CursorInfo);
 #if MEOPT_EXTENDED
         if(!(alarmState & meALARM_PIPED))
 #endif
@@ -5370,6 +5363,7 @@ meFrameSetWindowSize(meFrame *frame)
     if (meSystemCfg & meSYSTEM_CONSOLE)
 #endif /* _ME_CONSOLE */
     {
+        CONSOLE_CURSOR_INFO CursorInfo;
         if((width*depth) > ciScreenSize)
         {
             if (ciScreenBuffer != NULL)
@@ -5377,6 +5371,10 @@ meFrameSetWindowSize(meFrame *frame)
             ciScreenBuffer = (CHAR_INFO *) meMalloc(sizeof (CHAR_INFO) * width * depth);
             memset ((void *)ciScreenBuffer, 0, sizeof (CHAR_INFO) * width * depth);
         }
+        /* Hide/rehide the cursor (resize window seems to make it visible again) */
+        GetConsoleCursorInfo(hOutput,&CursorInfo);
+        CursorInfo.bVisible = meFALSE;
+        SetConsoleCursorInfo(hOutput,&CursorInfo);
     }
 #ifdef _ME_WINDOW
     else

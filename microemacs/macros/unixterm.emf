@@ -18,6 +18,40 @@ add-file-hook ".C" fhook-cpp
   !iif &not &band $system 0x02  set-variable $window-chars &spr "%s=x*[>]<%s" &lef $window-chars 47 &rig $window-chars 54
 !else
   !iif &not &seq &set #l0 &reg &spr "/history/%s/font" $platform "" ""  change-font #l0
+  define-macro change-font-size
+    !if &not @#
+      set-variable .change-font.sz-dpth &lget .change-font.ofnt 5
+      5 change-font &lget .change-font.ofnt 8
+      ml-write "[Text Zoom reset]"
+    !elif &seq .change-font.sz-font ""
+      ml-write "[Current font name cannot be broken down]"
+      !abort
+    !elif &les &set #l0 &add .change-font.sz-dpth @# 5
+      ml-write "[Text too small]"
+      !abort
+    !else
+      set-variable .change-font.sz-dpth #l0
+      set-variable #g1 &spr .change-font.sz-font #l0
+      !force change-font &spr .change-font.sz-font #l0
+      !if $status
+        ml-write &spr "[Text Zoom: %d%%]" &div &mul #l0 100 &lget .change-font.ofnt 5
+      !else
+        ml-write &spr "[Current font not available at size %d]" #l0
+        !endif
+    !endif
+  !emacro
+  2 change-font
+  set-variable .change-font.ofnt $result
+  set-variable .change-font.sz-dpth &lget .change-font.ofnt 5
+  !if &exi .change-font.sz-font
+  !elif &xse &lget .change-font.ofnt 8 "\\(-[^-]*-[^-]*-[^-]*-[^-]*-\\)[^-]*-[^-]*-[^-]*-[^-]*-[^-]*\\(-[^-]*-\\)[^-]*\\(-.*\\)"
+    set-variable .change-font.sz-font &spr "%s*-*-%%d-*-*%s*%s" @s1 @s2 @s3
+  !else
+    set-variable .change-font.sz-font ""
+  !endif
+  1 global-bind-key change-font-size "C-+"
+  0 global-bind-key change-font-size "C-="
+  -1 global-bind-key change-font-size "C--"
 !endif
 ;
 ; setup the next-error stuff including grep and compiling
