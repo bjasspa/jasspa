@@ -3853,8 +3853,8 @@ TTaddColor(meColor index, meUByte r, meUByte g, meUByte b)
  *  01  Input new font details
  *  02  Don't apply font
  *  04  Don't set $result
- *  08  List all fonts (not just fixed width)
- *  10  Use dialog
+ *  08  Use dialog to select font
+ *  10  List all fonts in dialog, not just fixed width
  * $result format = "|Pitch&Tech|CharSet|Weight|SizeX|SizeY|ReqX|ReqY|FontName|"
  */
 static int
@@ -3880,7 +3880,7 @@ TTchangeFont(int n, int fontType, meUByte *fontName, int fontWeight, int fontHei
         logfont.lfQuality = DRAFT_QUALITY;
         logfont.lfPitchAndFamily = FIXED_PITCH|FF_DONTCARE;
     
-        if(n & 0x10)
+        if(n & 0x08)
         {
             CHOOSEFONT chooseFont;
             
@@ -3888,7 +3888,7 @@ TTchangeFont(int n, int fontType, meUByte *fontName, int fontWeight, int fontHei
             chooseFont.lStructSize = sizeof(CHOOSEFONT);
             chooseFont.hwndOwner = baseHwnd;
             chooseFont.lpLogFont = &logfont;
-            chooseFont.Flags = (n & 0x08) ? CF_SCREENFONTS:(CF_FIXEDPITCHONLY|CF_SCREENFONTS);
+            chooseFont.Flags = (n & 0x10) ? CF_SCREENFONTS:(CF_FIXEDPITCHONLY|CF_SCREENFONTS);
             
             /* This stupid Microsoft system, why is the CHOOSEFONT structure
              * size not sizeof (CHOOSEFONT). Typical Microsoft !! */
@@ -4102,7 +4102,7 @@ changeFont(int f, int n)
     int  fontWidth;                     /* Width of font */
     
     if(!f)
-        n = 0x11;
+        n = 0x09;
 #endif
 #ifdef _ME_CONSOLE
 #ifdef _ME_WINDOW
@@ -4127,7 +4127,7 @@ changeFont(int f, int n)
 #endif
         
 #ifdef _ME_WINDOW
-    if((n & 0x11) == 1)
+    if((n & 0x09) == 1)
     {
         meUByte buff[FONTBUFSIZ];
         

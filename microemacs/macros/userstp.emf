@@ -405,7 +405,7 @@ set-variable .user-set-mouse.A ""
 ; The platform menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 !if &and &seq $platform "win32" &not &band $system 0x01
   0 define-macro user-set-winfont
-    !force 19 change-font
+    !force 11 change-font
     !if $status
       set-registry &spr "/history/%s/font" %platform &lget $result 8
       set-registry &spr "/history/%s/font-weight" %platform &lget $result 3
