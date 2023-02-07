@@ -33,7 +33,12 @@ AR       = ar
 RM       = rm -f
 RMDIR    = rm -rf
 
-BUILDID  = win32mingw
+TOOLKIT  = win32mingw
+ifeq "$(BPRF)" "1"
+BUILDID  = $(TOOLKIT)p
+else
+BUILDID  = $(TOOLKIT)
+endif
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
@@ -69,12 +74,21 @@ LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
 endif
 
+ifeq "$(BPRF)" "1"
+CCPROF = -D_ME_PROFILE -pg -no-pie
+LDPROF = -pg -no-pie
+STRIP  = - echo No strip - profile 
+else
+CCPROF = 
+LDPROF = 
+endif
+
 LIBNAME  = mesock
 LIBFILE  = $(LIBNAME)$(A)
-LIBHDRS  = mesock.h $(BUILDID).mak
+LIBHDRS  = mesock.h $(TOOLKIT).mak
 LIBOBJS  = $(OUTDIR)/mesock.o
 
-PRGHDRS  = mesock.h $(BUILDID).mak
+PRGHDRS  = mesock.h $(TOOLKIT).mak
 PRGLIBS  = $(OUTDIR)/mesock$(A) $(OPENSSLLIBS)
 SYSLIBS  = -lcrypt32 -lws2_32
 
@@ -89,7 +103,7 @@ PRGOBJS2 = $(OUTDIR)/meftptest.o
 .SUFFIXES: .c .o
 
 $(OUTDIR)/%.o : %.c
-	$(CC) $(CCDEFS) $(CCFLAGS) -c -o $@ $<
+	$(CC) $(CCDEFS) $(CCPROF) $(CCFLAGS) -c -o $@ $<
 
 all: $(PRGLIBS) $(OUTDIR)/$(LIBFILE) $(OUTDIR)/$(PRGFILE1) $(OUTDIR)/$(PRGFILE2)
 
@@ -101,18 +115,15 @@ $(LIBOBJS): $(LIBHDRS)
 
 $(OUTDIR)/$(PRGFILE1): $(OUTDIR) $(PRGOBJS1) $(PRGLIBS)
 	$(RM) $@
-	$(LD) $(LDFLAGS) -o $@ $(PRGOBJS1) $(PRGLIBS) $(SYSLIBS)
+	$(LD) $(LDFLAGS) $(LDPROF) -o $@ $(PRGOBJS1) $(PRGLIBS) $(SYSLIBS)
 
 $(PRGOBJS1): $(PRGHDRS)
 
 $(OUTDIR)/$(PRGFILE2): $(OUTDIR) $(PRGOBJS2) $(PRGLIBS)
 	$(RM) $@
-	$(LD) $(LDFLAGS) -o $@ $(PRGOBJS2) $(PRGLIBS) $(SYSLIBS)
+	$(LD) $(LDFLAGS) $(LDPROF) -o $@ $(PRGOBJS2) $(PRGLIBS) $(SYSLIBS)
 
 $(PRGOBJS2): $(PRGHDRS)
-
-$(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A):
-	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
 
 $(OUTDIR):
 	if not exist $(OUTDIR)\ mkdir $(OUTDIR)

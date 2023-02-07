@@ -1,9 +1,9 @@
 /* -*- C -*- ****************************************************************
  *
  * Copyright (c) 2020 Maxinity Software Ltd (www.maxinity.co.uk).
- * 
+ *
  * All Rights Reserved.
- * 
+ *
  * This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
  * reproduced,  translated,  or  reduced to any  electronic  medium or machine
  * readable form without prior written consent from Maxinity Software Ltd.
@@ -48,7 +48,8 @@
 #define meGethostbyname    gethostbyname
 #define meInet_addr        inet_addr
 #define meHtons            htons
-#define snprintf           sprintf_s          
+#define meClock            GetTickCount
+#define snprintf           sprintf_s
 static int WSAinit=0;
 #else
 #include <errno.h>
@@ -75,6 +76,7 @@ static int WSAinit=0;
 #define meGethostbyname    gethostbyname
 #define meInet_addr        inet_addr
 #define meHtons            htons
+#define meClock            clock
 #endif
 
 #if MEOPT_OPENSSL
@@ -310,10 +312,10 @@ static int
 meSockInitPrng(meUShort logFlags, meUByte *buff)
 {
     const char *random_file;
-    
+
     if(OPENSSLFunc(RAND_status)())
         return 0;
-    
+
     /* Get the random file name using RAND_file_name. */
     buff[0] = '\0';
     if(((random_file = OPENSSLFunc(RAND_file_name)((char *) buff,meSOCK_BUFF_SIZE)) != NULL) && (random_file[0] != '\0'))
@@ -342,15 +344,15 @@ meSockIsValidIp4Address(const char *str, const char *end)
     int saw_digit = 0;
     int octets = 0;
     int val = 0;
-    
+
     while (str < end)
     {
         int ch = *str++;
-        
+
         if (ch >= '0' && ch <= '9')
         {
             val = val * 10 + (ch - '0');
-            
+
             if (val > 255)
                 return 0;
             if (!saw_digit)
@@ -372,7 +374,7 @@ meSockIsValidIp4Address(const char *str, const char *end)
     }
     if (octets < 4)
         return 0;
-    
+
     return 1;
 }
 
@@ -386,19 +388,19 @@ meSockIsValidIp6Address(const char *str, const char *end)
         ns_in6addrsz = 16,
         ns_int16sz   = 2
     };
-    
+
     const char *curtok;
     int tp;
     const char *colonp;
     int saw_xdigit;
     unsigned int val;
-    
+
     tp = 0;
     colonp = NULL;
-    
+
     if (str == end)
         return 0;
-    
+
     /* Leading :: requires some special handling. */
     if (*str == ':')
     {
@@ -406,15 +408,15 @@ meSockIsValidIp6Address(const char *str, const char *end)
         if (str == end || *str != ':')
             return 0;
     }
-    
+
     curtok = str;
     saw_xdigit = 0;
     val = 0;
-    
+
     while (str < end)
     {
         int ch = *str++;
-        
+
         /* if ch is a number, add it to val. */
         if (c_isxdigit (ch))
         {
@@ -425,7 +427,7 @@ meSockIsValidIp6Address(const char *str, const char *end)
             saw_xdigit = 1;
             continue;
         }
-        
+
         /* if ch is a colon ... */
         if (ch == ':')
         {
@@ -446,7 +448,7 @@ meSockIsValidIp6Address(const char *str, const char *end)
             val = 0;
             continue;
         }
-        
+
         /* if ch is a dot ... */
         if (ch == '.' && (tp <= ns_in6addrsz - ns_inaddrsz)
             && meSockIsValidIp4Address(curtok, end) == 1)
@@ -455,27 +457,27 @@ meSockIsValidIp6Address(const char *str, const char *end)
             saw_xdigit = 0;
             break;
         }
-        
+
         return 0;
     }
-    
+
     if (saw_xdigit)
     {
         if (tp > ns_in6addrsz - ns_int16sz)
             return 0;
         tp += ns_int16sz;
     }
-    
+
     if (colonp != NULL)
     {
         if (tp == ns_in6addrsz)
             return 0;
         tp = ns_in6addrsz;
     }
-    
+
     if (tp != ns_in6addrsz)
         return 0;
-    
+
     return 1;
 }
 #endif
@@ -484,7 +486,7 @@ int
 meSockIsValidIpAddress(const char *name)
 {
     const char *endp;
-    
+
     endp = name + strlen(name);
     if(meSockIsValidIp4Address(name,endp))
         return 1;
@@ -520,7 +522,7 @@ meSockInitSystemCaCert(SSL_CTX *sslCtx, meUShort logFlags, char *rbuff)
     X509_STORE *store;
     char buf[128];
     int ii=1;
-    
+
     if((store = OPENSSLFunc(SSL_CTX_get_cert_store)(sslCtx)) == NULL)
     {
         if(logFlags & meSOCK_LOG_WARNING)
@@ -536,7 +538,7 @@ meSockInitSystemCaCert(SSL_CTX *sslCtx, meUShort logFlags, char *rbuff)
                 logFunc(meSOCK_LOG_WARNING,(meUByte *) "OpenSSL: Failed to open Root system cert store",logData);
             return;
         }
-        
+
         while((cCntx = CertEnumCertificatesInStore(hStore,cCntx)) != NULL)
         {
             //uncomment the line below if you want to see the certificates as pop ups
@@ -562,34 +564,31 @@ meSockInitSystemCaCert(SSL_CTX *sslCtx, meUShort logFlags, char *rbuff)
                 OPENSSLFunc(X509_free)(x509);
             }
             else if(logFlags & meSOCK_LOG_WARNING)
-            {
-                snprintf(rbuff,meSOCK_BUFF_SIZE,"OpenSSL: Failed to generate x509 for Windows Root certificate",logData);
-                logFunc(meSOCK_LOG_WARNING,(meUByte *) rbuff,logData);
-            }
+                logFunc(meSOCK_LOG_WARNING,(meUByte *) "OpenSSL: Failed to generate x509 for Windows Root certificate",logData);
         }
         CertCloseStore(hStore,0);
     } while(--ii >= 0);
 }
-#endif          
+#endif
 
 int
 meSockInit(meUShort logFlags, meUByte *buff)
 {
 #if meSOCK_USE_DLL
 #ifdef _WIN32
-    HINSTANCE libHandle ; 
+    HINSTANCE libHandle ;
 #else
-    void *libHandle ; 
+    void *libHandle ;
 #endif
-#endif          
+#endif
     SSL_METHOD const *meth;
 #ifdef X509_V_FLAG_PARTIAL_CHAIN
     X509_VERIFY_PARAM *param;
-#endif          
+#endif
     if(meSockCtx != NULL)
         /* The SSL has already been initialized. */
         return 1;
-    
+
 #if meSOCK_USE_DLL
     if(logFlags & meSOCK_LOG_VERBOSE)
         logFunc(meSOCK_LOG_VERBOSE,(meUByte *) "About to get OpenSSL functions",logData);
@@ -657,7 +656,7 @@ meSockInit(meUShort logFlags, meUByte *buff)
         }
         return -2;
     }
-          
+
 #ifdef _WIN32
     libHandle = LoadLibrary(MESOCK_STRINGIFY(_OPENSSLLNM));
 #else
@@ -705,19 +704,19 @@ meSockInit(meUShort logFlags, meUByte *buff)
         }
         return -4;
     }
-#endif        
-       
+#endif
+
     /* Init the PRNG.  If that fails, bail out.  */
     if(meSockInitPrng(logFlags,buff) < 0)
         return -7;
-    
+
     OPENSSLFunc(OPENSSL_load_builtin_modules)();
 #ifndef OPENSSL_NO_ENGINE
     OPENSSLFunc(ENGINE_load_builtin_engines)();
 #endif
     OPENSSLFunc(CONF_modules_load_file)(NULL,NULL,CONF_MFLAGS_DEFAULT_SECTION|CONF_MFLAGS_IGNORE_MISSING_FILE);
     OPENSSLFunc(OPENSSL_init_ssl)(0, NULL);
-    
+
     meth = OPENSSLFunc(TLS_client_method)();
     meSockCtx = OPENSSLFunc(SSL_CTX_new)(meth);
     if(!meSockCtx)
@@ -727,14 +726,14 @@ meSockInit(meUShort logFlags, meUByte *buff)
         meSockGetSSLErrors(logFlags,buff);
         return -8;
     }
-    
+
     OPENSSLFunc(SSL_CTX_set_default_verify_paths)(meSockCtx);
     OPENSSLFunc(SSL_CTX_load_verify_locations)(meSockCtx, NULL,NULL);
 #ifdef _WIN32
     // load windows system ca certs
     meSockInitSystemCaCert(meSockCtx,logFlags,(char *) buff);
 #endif
-    
+
 #ifdef X509_V_FLAG_PARTIAL_CHAIN
     /* Set X509_V_FLAG_PARTIAL_CHAIN to allow the client to anchor trust in
      * a non-self-signed certificate. This defies RFC 4158 (Path Building)
@@ -768,16 +767,16 @@ meSockInit(meUShort logFlags, meUByte *buff)
         /* We continue on error */
     }
 #endif
-    
+
     /* SSL_VERIFY_NONE instructs OpenSSL not to abort SSL_connect if the certificate is invalid. We
      * verify the certificate separately in meSockCheckCertificate, which provides much better
      * diagnostics than examining the error stack after a failed SSL_connect. */
     OPENSSLFunc(SSL_CTX_set_verify)(meSockCtx, SSL_VERIFY_NONE, NULL);
-    
-    
+
+
     /* The OpenSSL library can handle renegotiations automatically, so tell it to do so. */
     OPENSSLFunc(SSL_CTX_ctrl)(meSockCtx,SSL_CTRL_MODE,SSL_MODE_AUTO_RETRY,NULL);
-    
+
     return 0;
 }
 
@@ -786,13 +785,13 @@ meSockInit(meUShort logFlags, meUByte *buff)
 /* Return true is STRING (case-insensitively) matches PATTERN, false otherwise. The recognized
  * wildcard character is "*", which matches any character in STRING except ".". Any number of the
  * "*" wildcard may be present in the pattern.
- * 
+ *
  * This is used to match of hosts as indicated in rfc2818:
- * 
+ *
  *      Names may contain the wildcard character * which is considered to match any single domain
  *      name component or component fragment. E.g., *.a.com matches foo.a.com but not bar.foo.a.com.
  *      f*.com matches foo.com but not bar.com [or foo.bar.com].
- * 
+ *
  * If the pattern contain no wildcards, pattern_match(a, b) is equivalent to !strcasecmp(a, b).
  */
 
@@ -830,10 +829,10 @@ meSockGetRfc2253FormattedName(X509_NAME *name)
     int len;
     char *out=NULL;
     BIO* b;
-    
+
     if((b = OPENSSLFunc(BIO_new)(OPENSSLFunc(BIO_s_mem)())))
     {
-        if((OPENSSLFunc(X509_NAME_print_ex)(b,name,0,XN_FLAG_RFC2253) >= 0) && 
+        if((OPENSSLFunc(X509_NAME_print_ex)(b,name,0,XN_FLAG_RFC2253) >= 0) &&
            ((len = (int) OPENSSLFunc(BIO_number_written)(b)) > 0))
         {
             out = malloc(len+1);
@@ -842,7 +841,7 @@ meSockGetRfc2253FormattedName(X509_NAME *name)
         }
         OPENSSLFunc(BIO_free)(b);
     }
-    
+
     return (out == NULL) ? strdup(""):out;
 }
 
@@ -880,7 +879,7 @@ meSockCheckCertificate(meSockFile *sFp, const char *sniHost, meUByte *rbuff)
         }
         return (sFp->flags & meSOCK_IGN_CRT_ERR) ? 1:0;
     }
-    
+
     if(sFp->flags & meSOCK_LOG_VERBOSE)
     {
         char *subject = meSockGetRfc2253FormattedName(OPENSSLFunc(X509_get_subject_name)(cert));
@@ -890,7 +889,7 @@ meSockCheckCertificate(meSockFile *sFp, const char *sniHost, meUByte *rbuff)
         free(subject);
         free(issuer);
     }
-    
+
     ret = 1;
     vresult = OPENSSLFunc(SSL_get_verify_result)(sFp->ssl);
     if (vresult != X509_V_OK)
@@ -928,13 +927,13 @@ meSockCheckCertificate(meSockFile *sFp, const char *sniHost, meUByte *rbuff)
         /* Fall through, so that the user is warned about *all* issues
            with the cert (important with --no-check-certificate.)  */
     }
-    
+
     /* Check that HOST matches the common name in the certificate. The following remains to be
      * done:
-     * 
+     *
      * - When matching against common names, it should loop over all common names and choose the
      *   most specific one, i.e. the last one, not the first one, which the current code picks.
-     * 
+     *
      * - Ensure that ASN1 strings from the certificate are encoded as UTF-8 which can be
      *   meaningfully compared to HOST.
      */
@@ -944,7 +943,7 @@ meSockCheckCertificate(meSockFile *sFp, const char *sniHost, meUByte *rbuff)
         /* Do we want to check for dNSNames or ipAddresses (see RFC 2818)?
          * Signal it by host_in_octet_string. */
         ASN1_OCTET_STRING *host_in_octet_string = OPENSSLFunc(a2i_IPADDRESS)(sniHost);
-        
+
         int numaltnames = OPENSSLFunc(sk_GENERAL_NAME_num)(subjectAltNames);
         int ii;
         for(ii=0; ii<numaltnames; ii++)
@@ -968,10 +967,10 @@ meSockCheckCertificate(meSockFile *sFp, const char *sniHost, meUByte *rbuff)
                     /* dNSName should be IA5String (i.e. ASCII), however who does trust CA? Convert
                      * it into UTF-8 for sure. */
                     unsigned char *name_in_utf8 = NULL;
-                    
+
                     /* Check for dNSName */
                     alt_name_checked = 1;
-                    
+
                     if (0 <= OPENSSLFunc(ASN1_STRING_to_UTF8)(&name_in_utf8, name->d.dNSName))
                     {
                         /* Compare and check for NULL attack in ASN1_STRING */
@@ -989,7 +988,7 @@ meSockCheckCertificate(meSockFile *sFp, const char *sniHost, meUByte *rbuff)
         OPENSSLFunc(sk_GENERAL_NAME_pop_free)(subjectAltNames,OPENSSLFunc(GENERAL_NAME_free));
         if(host_in_octet_string)
             OPENSSLFunc(ASN1_OCTET_STRING_free)(host_in_octet_string);
-        
+
         if((alt_name_checked == 1) && (ii >= numaltnames))
         {
             if(severityLbl != NULL)
@@ -1000,14 +999,14 @@ meSockCheckCertificate(meSockFile *sFp, const char *sniHost, meUByte *rbuff)
             ret = 0;
         }
     }
-    
+
     if (alt_name_checked == 0)
     {
         /* Test commomName */
         X509_NAME *xname = OPENSSLFunc(X509_get_subject_name)(cert);
         common_name[0] = '\0';
         OPENSSLFunc(X509_NAME_get_text_by_NID)(xname,NID_commonName,common_name,sizeof(common_name));
-        
+
         if (!meSockPatternMatch(common_name,sniHost))
         {
             if(severityLbl != NULL)
@@ -1022,13 +1021,13 @@ meSockCheckCertificate(meSockFile *sFp, const char *sniHost, meUByte *rbuff)
             /* We now determine the length of the ASN1 string. If it differs from common_name's
              * length, then there is a \0 before the string terminates. This can be an instance of a
              * null-prefix attack.
-             * 
+             *
              * https://www.blackhat.com/html/bh-usa-09/bh-usa-09-archives.html#Marlinspike
              */
             int ii=-1, jj;
             X509_NAME_ENTRY *xentry;
             ASN1_STRING *sdata;
-            
+
             if(xname)
             {
                 for (;;)
@@ -1039,7 +1038,7 @@ meSockCheckCertificate(meSockFile *sFp, const char *sniHost, meUByte *rbuff)
                     ii = jj;
                 }
             }
-            
+
             xentry = OPENSSLFunc(X509_NAME_get_entry)(xname,ii);
             sdata = OPENSSLFunc(X509_NAME_ENTRY_get_data)(xentry);
             if (strlen(common_name) != (size_t) OPENSSLFunc(ASN1_STRING_length)(sdata))
@@ -1053,14 +1052,14 @@ meSockCheckCertificate(meSockFile *sFp, const char *sniHost, meUByte *rbuff)
             }
         }
     }
-    
+
     if(ret && (sFp->flags & meSOCK_LOG_VERBOSE))
     {
         snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Verbose: X509 certificate successfully verified and matches host %s",sniHost);
         logFunc(meSOCK_LOG_VERBOSE,rbuff,logData);
     }
     OPENSSLFunc(X509_free)(cert);
-    
+
     return (sFp->flags & meSOCK_IGN_CRT_ERR) ? 1:ret;
 }
 #endif
@@ -1152,7 +1151,7 @@ meSockSetProxy(meUByte *host, meInt port)
 }
 
 int
-meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByte *user, meUByte *pass, meUByte *file, meCookie *cookie, 
+meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByte *user, meUByte *pass, meUByte *file, meCookie *cookie,
                meInt fdLen, meUByte *frmData, meUByte *postFName, meUByte *rbuff)
 {
     meUByte *ss;
@@ -1166,10 +1165,10 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
     if(logFunc == NULL)
         flags &= ~(meSOCK_LOG_STATUS|meSOCK_LOG_ERROR|meSOCK_LOG_WARNING|meSOCK_LOG_DETAILS|meSOCK_LOG_VERBOSE);
     flags = (flags & meSOCK_PUBLIC_MASK) | meSOCK_INUSE;
-    
+
     if(meSockIsInUse(sFp))
     {
-        if((sFp->flags & meSOCK_CLOSE) || (sFp->cprt != port) || (sFp->length < 0) || ((sck=sFp->sck) == meBadSocket) || 
+        if((sFp->flags & meSOCK_CLOSE) || (sFp->cprt != port) || (sFp->length < 0) || ((sck=sFp->sck) == meBadSocket) ||
            ((sFp->flags & (meSOCK_USE_SSL|meSOCK_CTRL_INUSE)) != (flags & (meSOCK_USE_SSL|meSOCK_CTRL_INUSE))) ||
            strcmp((char *) sFp->chst,(char *) host) ||
            strcmp((char *) sFp->cusr,((user == NULL) ? "":(char *) user)))
@@ -1180,7 +1179,7 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
             /* On windows writing to a sever shutdown (half-open) socket does not fail so poll to see if there is anything to read.
              * This works because when the server sends a FIN an attempt to read will succeed with a length of 0 indicating the end, if there
              * actually is something to read we still want to close the socket as things must have gone horribly out of sync!
-             * On UNIX this test does not appear to work, however the initial send fails with an EPIPE error - see below. */ 
+             * On UNIX this test does not appear to work, however the initial send fails with an EPIPE error - see below. */
             fd_set rfds;
             TIMEVAL tv;
             tv.tv_sec = 0;
@@ -1218,25 +1217,25 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
         struct hostent *hp;
         meUByte *thost;
         meInt tport;
-    
+
         sFp->home = NULL;
-        sFp->flags = flags;
         sFp->sck = meBadSocket;
         sFp->ctrlSck = meBadSocket;
 #if MEOPT_OPENSSL
         sFp->ssl = NULL;
         sFp->ctrlSsl = NULL;
+        ssl = NULL;
 #endif
         sFp->cprt = -1;
         if(ioBuffSz < meSOCK_IOBUF_MIN)
         {
-            if(sFp->flags & meSOCK_LOG_ERROR)
+            if(flags & meSOCK_LOG_ERROR)
                 logFunc(meSOCK_LOG_ERROR,(meUByte *) "meSock Error: Setup not called with IO buffer",logData);
             return -10;
         }
         if((fdLen > 0) && (postFName != NULL))
         {
-            if(sFp->flags & meSOCK_LOG_ERROR)
+            if(flags & meSOCK_LOG_ERROR)
                 logFunc(meSOCK_LOG_ERROR,(meUByte *) "meSock Error: Cannot use http form data and post file at the same time",logData);
             return -21;
         }
@@ -1248,7 +1247,7 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
             OPENSSLFunc(ERR_clear_error)();
         }
 #endif
-        if(sFp->flags & meSOCK_LOG_STATUS)
+        if(flags & meSOCK_LOG_STATUS)
         {
             snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"Connecting to %s:%d",host,(port) ? port:((flags & meSOCK_USE_SSL) ? 443:80));
             logFunc(meSOCK_LOG_STATUS,rbuff,logData);
@@ -1263,12 +1262,12 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
             thost = host ;
             tport = port ;
         }
-        
+
         if(((hp = gethostbyname((char *) thost)) == NULL) ||
            (hp->h_length > ((int) sizeof(struct in_addr))) ||
            (hp->h_addrtype != AF_INET))
         {
-            if(sFp->flags & meSOCK_LOG_ERROR)
+            if(flags & meSOCK_LOG_ERROR)
             {
                 snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: Failed to get host [%s] %d",thost,(hp == NULL) ? meSocketGetError():-1);
                 logFunc(meSOCK_LOG_ERROR,rbuff,logData);
@@ -1284,18 +1283,16 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
             sa.sin_port=htons(443);
         else
             sa.sin_port=htons(80);
-        
+
 #if MEOPT_OPENSSL
         if(flags & meSOCK_USE_SSL)
         {
             if((ssl=OPENSSLFunc(SSL_new)(meSockCtx)) == NULL)
             {
-                if(sFp->flags & meSOCK_LOG_ERROR)
+                if(flags & meSOCK_LOG_ERROR)
                     logFunc(meSOCK_LOG_ERROR,(meUByte *) "meSockHttp Error: Failed to create new SSL",logData);
                 return -12;
             }
-            sFp->ssl = ssl;
-            
             meSockHostnameGetSni((char *) thost,(char *) ioBuff);
             if(!meSockIsValidIpAddress((char *) ioBuff))
             {
@@ -1304,29 +1301,33 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
                 if(rc == 0)
                 {
                     OPENSSLFunc(SSL_free)(ssl);
-                    if(sFp->flags & meSOCK_LOG_ERROR)
+                    if(flags & meSOCK_LOG_ERROR)
                         logFunc(meSOCK_LOG_ERROR,(meUByte *) "meSock Error: Failed to set TLS server-name indication",logData);
                     return -13;
                 }
             }
         }
 #endif
-        
+
         if((sck=meSocketOpen(AF_INET,SOCK_STREAM,IPPROTO_TCP)) == meBadSocket)
         {
-            if(sFp->flags & meSOCK_LOG_ERROR)
+            if(flags & meSOCK_LOG_ERROR)
                 logFunc(meSOCK_LOG_ERROR,(meUByte *) "meSock Error: Failed to create socket",logData);
 #if MEOPT_OPENSSL
             if(flags & meSOCK_USE_SSL)
                 OPENSSLFunc(SSL_free)(ssl);
 #endif
             return -14;
-        }  
+        }
         sFp->sck = sck;
+#if MEOPT_OPENSSL
+        sFp->ssl = ssl;
+#endif
+        sFp->flags = flags;
         if(timeoutSnd > 0)
         {
             /* using setsockopt to set the send timeout to given millisecs, alternatively use select(0,fd_set,NULL,NULL,struct timeval) */
-            struct timeval to;      
+            struct timeval to;
             to.tv_sec = timeoutSnd;
             to.tv_usec = 0;
             if((ret=setsockopt(sck,SOL_SOCKET,SO_SNDTIMEO,(char *) &to,sizeof(to))) < 0)
@@ -1340,7 +1341,7 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
         }
         if(timeoutRcv > 0)
         {
-            struct timeval to;      
+            struct timeval to;
             to.tv_sec = timeoutRcv;
             to.tv_usec = 0;
             if((ret=setsockopt(sck,SOL_SOCKET,SO_RCVTIMEO,(char *) &to,sizeof(to))) < 0)
@@ -1352,7 +1353,7 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
                 }
             }
         }
-        
+
 #if MEOPT_OPENSSL
         /*Bind the socket to the SSL structure*/
         if((flags & meSOCK_USE_SSL) && ((ret = OPENSSLFunc(SSL_set_fd)(ssl,sck)) < 1))
@@ -1379,7 +1380,7 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
             meSockClose(sFp,1);
             return -16;
         }
-        
+
 #if MEOPT_OPENSSL
         if(flags & meSOCK_USE_SSL)
         {
@@ -1396,7 +1397,7 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
                 meSockClose(sFp,1);
                 return -17;
             }
-            
+
             /*Print out connection details*/
             if(sFp->flags & meSOCK_LOG_DETAILS)
             {
@@ -1422,7 +1423,7 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
         strcpy((char *) sFp->chst,(char *) host);
         sFp->cusr[0] = '\0';
     }
-    
+
     if(sFp->flags & meSOCK_LOG_STATUS)
     {
         memcpy(rbuff,"Connected - downloading ",24);
@@ -1515,7 +1516,7 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
             s1 = postFName;
         if((s2 = (meUByte *) strrchr((char *) s1,'\\')) == NULL)
             s2 = s1;
-        pfs = sprintf((char *) rbuff,"\r\n----5Iz6dTINmxNFw6S42Ryf98IBXX1NCe%x",(meUInt) clock());
+        pfs = sprintf((char *) rbuff,"\r\n----5Iz6dTINmxNFw6S42Ryf98IBXX1NCe%x",(meUInt) meClock());
         ll = sprintf((char *) rbuff+pfs,"\r\nContent-Disposition: form-data; name=\"file\"; filename=\"%s\"\r\nContent-Type: application/octet-stream\r\n\r\n",s2);
         ss += sprintf((char *) ss,"\r\nContent-Length: %d",pfs-2+ll+ii+pfs+4);
     }
@@ -1741,7 +1742,7 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
             if(((ioBuff[3]|0x20) == 't') && ((ioBuff[4]|0x20) == 'e') && ((ioBuff[5]|0x20) == 'n') && ((ioBuff[6]|0x20) == 't') && (ioBuff[7] == '-') && ((ioBuff[8]|0x20) == 'l') &&
                ((ioBuff[9]|0x20) == 'e') && ((ioBuff[10]|0x20) == 'n') && ((ioBuff[11]|0x20) == 'g') && ((ioBuff[12]|0x20) == 't') && ((ioBuff[13]|0x20) == 'h') && (ioBuff[14] == ':'))
                 sFp->length = atoi((char *) ioBuff+15) ;
-            else if(((ioBuff[3]|0x20) == 'n') && ((ioBuff[4]|0x20) == 'e') && ((ioBuff[5]|0x20) == 'c') && ((ioBuff[6]|0x20) == 't') && ((ioBuff[7]|0x20) == 'i') && 
+            else if(((ioBuff[3]|0x20) == 'n') && ((ioBuff[4]|0x20) == 'e') && ((ioBuff[5]|0x20) == 'c') && ((ioBuff[6]|0x20) == 't') && ((ioBuff[7]|0x20) == 'i') &&
                     ((ioBuff[9]|0x20) == 'o') && ((ioBuff[10]|0x20) == 'n') && (ioBuff[11] == ':'))
             {
                 ss = ioBuff+12 ;
@@ -1793,7 +1794,7 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
                 break;
             }
         }
-        else if((cookie != NULL) && (cc == 's') && ((ioBuff[1]|0x20) == 'e') && ((ioBuff[2]|0x20) == 't') && (ioBuff[3] == '-') && ((ioBuff[4]|0x20) == 'c') && 
+        else if((cookie != NULL) && (cc == 's') && ((ioBuff[1]|0x20) == 'e') && ((ioBuff[2]|0x20) == 't') && (ioBuff[3] == '-') && ((ioBuff[4]|0x20) == 'c') &&
                 ((ioBuff[5]|0x20) == 'o') && ((ioBuff[6]|0x20) == 'o') && ((ioBuff[7]|0x20) == 'k') && ((ioBuff[8]|0x20) == 'i') && ((ioBuff[9]|0x20) == 'e') && (ioBuff[10] == ':'))
         {
             meUByte *vv, *ee, *dd, *de;
@@ -1822,7 +1823,7 @@ meSockHttpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUBy
                             }
                             else
                                 *dd = '\0';
-                        }  
+                        }
                         *vv = cc;
                         de = cookie->value;
                     }
@@ -1893,7 +1894,7 @@ meSockControlReadLine(meSockFile *sFp, meUByte *buff)
 {
     meUByte *dd=buff, cc ;
     meInt ret, err, ll=meSOCK_BUFF_SIZE;
-    
+
     for(;;)
     {
 #if MEOPT_OPENSSL
@@ -1937,12 +1938,12 @@ meInt
 meSockFtpReadReply(meSockFile *sFp, meUByte *buff)
 {
     meInt ret ;
-    
+
     if(sFp->flags & meSOCK_LOG_VERBOSE)
         logFunc(meSOCK_LOG_VERBOSE,(meUByte *) "FTP Reply:",logData);
     if(meSockControlReadLine(sFp,buff) < 4)
         return ftpERROR;
-    
+
     ret = buff[0] - '0' ;
     if(buff[3] == '-')
     {
@@ -1966,7 +1967,7 @@ meSockFtpCommand(meSockFile *sFp, meUByte *rbuff, char *fmt, ...)
 {
     va_list ap;
     meInt ii, ret;
-    
+
     va_start(ap,fmt);
     ii = vsnprintf((char *) rbuff,meSOCK_BUFF_SIZE,fmt,ap);
     va_end(ap);
@@ -2019,18 +2020,18 @@ meSockFtpGetDataChannel(meSockFile *sFp, meUByte *buff)
     struct sockaddr_in sa;
     int aai[4], ppi[2];
     meUByte *ss;
-    
+
     if(((sFp->flags & meSOCK_INUSE) != 0) || (sFp->length != -2))
     {
         if(sFp->flags & meSOCK_LOG_ERROR)
             logFunc(meSOCK_LOG_ERROR,(meUByte *) "meSock Error: FTP data channel already created",logData);
         return ftpERROR;
     }
-    
+
     sFp->flags |= meSOCK_INUSE;
     if(meSockFtpCommand(sFp,buff,"PASV") != ftpPOS_COMPLETE)
         return ftpERROR;
-    
+
     if(((ss=(meUByte *) strchr((char *) buff,'(')) == NULL) || (sscanf((char *) ss,"(%d,%d,%d,%d,%d,%d)",aai,aai+1,aai+2,aai+3,ppi,ppi+1) != 6))
     {
         if(sFp->flags & meSOCK_LOG_ERROR)
@@ -2047,7 +2048,7 @@ meSockFtpGetDataChannel(meSockFile *sFp, meUByte *buff)
     ss = (meUByte *)&(sa.sin_port);
     ss[0] = (meUByte) ppi[0] ;
     ss[1] = (meUByte) ppi[1] ;
-    
+
     /* only open and connect the plain socket at this stage, all SSL setup must be done after the sending of the command */
     if((sFp->sck = meSocketOpen(AF_INET,SOCK_STREAM,IPPROTO_TCP)) == meBadSocket)
     {
@@ -2155,14 +2156,14 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
 #if MEOPT_OPENSSL
     SSL *ssl;
 #endif
-    
+
     if(logFunc == NULL)
         flags &= ~(meSOCK_LOG_STATUS|meSOCK_LOG_WARNING|meSOCK_LOG_DETAILS|meSOCK_LOG_VERBOSE);
     flags = (flags & meSOCK_PUBLIC_MASK) | meSOCK_CTRL_INUSE|meSOCK_CLOSE;
     if(!port)
         port = (flags & meSOCK_USE_SSL) ? 990:21;
-    
-    if(meSockIsInUse(sFp) && ((sFp->cprt != port) || (sFp->length != -2) || ((sck=sFp->ctrlSck) == meBadSocket) || 
+
+    if(meSockIsInUse(sFp) && ((sFp->cprt != port) || (sFp->length != -2) || ((sck=sFp->ctrlSck) == meBadSocket) ||
                               ((sFp->flags & (meSOCK_INUSE|meSOCK_CTRL_INUSE)) != meSOCK_CTRL_INUSE) ||
                               (!(flags & meSOCK_EXPLICIT_SSL) && ((sFp->flags & meSOCK_USE_SSL) != (flags & meSOCK_USE_SSL))) ||
                               strcmp((char *) sFp->chst,(char *) host) || strcmp((char *) sFp->cusr,((user == NULL) ? "":(char *) user))))
@@ -2187,9 +2188,8 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
     {
         struct sockaddr_in sa;
         struct hostent *hp;
-    
+
         sFp->home = NULL;
-        sFp->flags = (flags & ~meSOCK_EXPLICIT_SSL);
         sFp->sck = meBadSocket;
         sFp->ctrlSck = meBadSocket;
 #if MEOPT_OPENSSL
@@ -2199,7 +2199,7 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
         sFp->cprt = -1;
         if(ioBuffSz < meSOCK_IOBUF_MIN)
         {
-            if(sFp->flags & meSOCK_LOG_ERROR)
+            if(flags & meSOCK_LOG_ERROR)
                 logFunc(meSOCK_LOG_ERROR,(meUByte *) "meSock Error: Setup not called with IO buffer",logData);
             return -10;
         }
@@ -2211,7 +2211,7 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
             OPENSSLFunc(ERR_clear_error)();
         }
 #endif
-        if(sFp->flags & meSOCK_LOG_STATUS)
+        if(flags & meSOCK_LOG_STATUS)
         {
             snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"Connecting to %s:%d",host,port);
             logFunc(meSOCK_LOG_STATUS,rbuff,logData);
@@ -2220,7 +2220,7 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
            (hp->h_length > ((int) sizeof(struct in_addr))) ||
            (hp->h_addrtype != AF_INET))
         {
-            if(sFp->flags & meSOCK_LOG_ERROR)
+            if(flags & meSOCK_LOG_ERROR)
             {
                 snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: Failed to get host [%s] - error %d",host,(hp == NULL) ? meSocketGetError():-1);
                 logFunc(meSOCK_LOG_ERROR,rbuff,logData);
@@ -2231,18 +2231,18 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
         sa.sin_family = AF_INET;
         memcpy(&sa.sin_addr.s_addr,hp->h_addr,hp->h_length);
         sa.sin_port = htons(port);
-        
+
 #if MEOPT_OPENSSL
         if(flags & meSOCK_USE_SSL)
         {
             if((ssl=OPENSSLFunc(SSL_new)(meSockCtx)) == NULL)
             {
-                if(sFp->flags & meSOCK_LOG_ERROR)
+                if(flags & meSOCK_LOG_ERROR)
                     logFunc(meSOCK_LOG_ERROR,(meUByte *) "meSock Error: Failed to created new control SSL",logData);
                 return -12;
             }
             sFp->ctrlSsl = ssl;
-            
+
             meSockHostnameGetSni((char *) host,(char *) ioBuff);
             if(!meSockIsValidIpAddress((char *) ioBuff))
             {
@@ -2251,7 +2251,7 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
                 if(rc == 0)
                 {
                     OPENSSLFunc(SSL_free)(ssl);
-                    if(sFp->flags & meSOCK_LOG_ERROR)
+                    if(flags & meSOCK_LOG_ERROR)
                         logFunc(meSOCK_LOG_ERROR,(meUByte *) "meSock Error: Failed to set control TLS server-name indication",logData);
                     return -13;
                 }
@@ -2260,18 +2260,18 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
 #endif
         if((sck=meSocketOpen(AF_INET,SOCK_STREAM,IPPROTO_TCP)) == meBadSocket)
         {
-            if(sFp->flags & meSOCK_LOG_ERROR)
+            if(flags & meSOCK_LOG_ERROR)
                 logFunc(meSOCK_LOG_ERROR,(meUByte *) "meSock Error: Failed to create control socket",logData);
 #if MEOPT_OPENSSL
             if(flags & meSOCK_USE_SSL)
                 OPENSSLFunc(SSL_free)(ssl);
 #endif
             return -14;
-        }  
+        }
         if(timeoutSnd > 0)
         {
             /* using setsockopt to set the send timeout to given millisecs, alternatively use select(0,fd_set,NULL,NULL,struct timeval) */
-            struct timeval to;      
+            struct timeval to;
             to.tv_sec = timeoutSnd;
             to.tv_usec = 0;
             if((ret=setsockopt(sck,SOL_SOCKET,SO_SNDTIMEO,(char *) &to,sizeof(to))) < 0)
@@ -2285,7 +2285,7 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
         }
         if(timeoutRcv > 0)
         {
-            struct timeval to;      
+            struct timeval to;
             to.tv_sec = timeoutRcv;
             to.tv_usec = 0;
             if((ret=setsockopt(sck,SOL_SOCKET,SO_RCVTIMEO,(char *) &to,sizeof(to))) < 0)
@@ -2298,18 +2298,19 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
             }
         }
         sFp->ctrlSck = sck;
-        
+        sFp->flags = (flags & ~meSOCK_EXPLICIT_SSL);
+
 #if MEOPT_OPENSSL
         /*Bind the socket to the SSL structure*/
         if((flags & meSOCK_USE_SSL) && ((ret = OPENSSLFunc(SSL_set_fd)(ssl,sck)) < 1))
         {
             err = OPENSSLFunc(SSL_get_error)(ssl,ret);
-            if(sFp->flags & meSOCK_LOG_ERROR)
+            if(flags & meSOCK_LOG_ERROR)
             {
                 snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: Failed to set control SSL fd - error %d,%d",ret,err);
                 logFunc(meSOCK_LOG_ERROR,rbuff,logData);
             }
-            meSockGetSSLErrors(sFp->flags,rbuff);
+            meSockGetSSLErrors(flags,rbuff);
             meSockClose(sFp,1);
             return -15;
         }
@@ -2325,7 +2326,7 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
             meSockClose(sFp,1);
             return -16;
         }
-        
+
 #if MEOPT_OPENSSL
         if(flags & meSOCK_USE_SSL)
         {
@@ -2342,7 +2343,7 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
                 meSockClose(sFp,1);
                 return -17;
             }
-            
+
             /*Print out connection details*/
             if(flags & meSOCK_LOG_DETAILS)
             {
@@ -2382,7 +2383,7 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
                     return -12;
                 }
                 sFp->ctrlSsl = ssl;
-                
+
                 meSockHostnameGetSni((char *) host,(char *) ioBuff);
                 if(!meSockIsValidIpAddress((char *) ioBuff))
                 {
@@ -2471,7 +2472,7 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
         }
         else if((pass != NULL) && (logFunc != NULL))
             logFunc(meSOCK_LOG_WARNING,(meUByte *) "meSock Warning: User password not required",logData);
-            
+
         if(meSockFtpCommand(sFp,rbuff,"TYPE I") != ftpPOS_COMPLETE)
         {
             if(sFp->flags & meSOCK_LOG_ERROR)
@@ -2507,7 +2508,7 @@ int
 meSockRead(meSockFile *sFp, int sz, meUByte *buff, int offs)
 {
     meInt ll, err=0, ret;
-    
+
     if((ll=sFp->chnkLen))
     {
         if(ll == -1)
@@ -2598,7 +2599,7 @@ meSockRead(meSockFile *sFp, int sz, meUByte *buff, int offs)
         }
         else
             ret = ll;
-        
+
         if(ret >= 0)
         {
             /* must read the chunk terminator */
@@ -2618,7 +2619,7 @@ meSockRead(meSockFile *sFp, int sz, meUByte *buff, int offs)
 #endif
                     err = (ret == 0) ? 0:meSocketGetError();
                 ret = -8;
-            }                    
+            }
             else if((ll != 2) || (ba[0] != '\r') || (ba[1] != '\n'))
                 ret = -9;
             else if(ret)
@@ -2631,7 +2632,7 @@ meSockRead(meSockFile *sFp, int sz, meUByte *buff, int offs)
                 if(sFp->flags & meSOCK_LOG_VERBOSE)
                     logFunc(meSOCK_LOG_VERBOSE,(meUByte *) "meSock Verbose: Got data stream end",logData);
                 sFp->length = 0;
-                sFp->chnkLen = -2; 
+                sFp->chnkLen = -2;
                 return 0;
             }
         }
@@ -2644,7 +2645,7 @@ meSockRead(meSockFile *sFp, int sz, meUByte *buff, int offs)
         err = OPENSSLFunc(SSL_get_error)(sFp->ssl,ret);
         if((sFp->length == -1) && (err == SSL_ERROR_ZERO_RETURN))
         {
-            /* Conent-lenth not returned and we've likely hit the correct end of the data - return 0 */ 
+            /* Conent-lenth not returned and we've likely hit the correct end of the data - return 0 */
             if(sFp->flags & meSOCK_LOG_VERBOSE)
                 logFunc(meSOCK_LOG_VERBOSE,(meUByte *) "meSock Verbose: Got data stream end",logData);
             sFp->length = -2;
@@ -2660,7 +2661,7 @@ meSockRead(meSockFile *sFp, int sz, meUByte *buff, int offs)
             err = meSocketGetError();
         else if(sFp->length == -1)
         {
-            /* Conent-lenth not returned and we've likely hit the correct end of the data - return 0 */ 
+            /* Conent-lenth not returned and we've likely hit the correct end of the data - return 0 */
             if(sFp->flags & meSOCK_LOG_VERBOSE)
                 logFunc(meSOCK_LOG_VERBOSE,(meUByte *) "meSock Verbose: Got data stream end",logData);
             sFp->length = -2;
@@ -2690,7 +2691,7 @@ int
 meSockWrite(meSockFile *sFp, int sz, meUByte *buff, int offs)
 {
     int err,ret;
-    
+
 #if MEOPT_OPENSSL
     if(sFp->flags & meSOCK_USE_SSL)
     {

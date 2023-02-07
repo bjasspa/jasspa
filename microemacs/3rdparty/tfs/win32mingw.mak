@@ -1,12 +1,23 @@
 ##############################################################################
 #
-#  Copyright (c) 2009 Maxexam Ltd.
-# 
-#  All Rights Reserved.
-# 
-#  This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
-#  reproduced,  translated,  or  reduced to any  electronic  medium or machine
-#  readable form without prior written consent from Maxexam Ltd.
+## JASSPA MicroEmacs - www.jasspa.com
+# win32mingw.mak - Make file for Windows using MinGW development kit.
+#
+# Copyright (C) 2007-2022 JASSPA (www.jasspa.com)
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 2 of the License, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 675 Mass Ave, Cambridge, MA 02139, USA.
 #
 ##############################################################################
 
@@ -22,7 +33,12 @@ AR       = ar
 RM       = rm -f
 RMDIR    = rm -rf
 
-BUILDID  = win32mingw
+TOOLKIT  = win32mingw
+ifeq "$(BPRF)" "1"
+BUILDID  = $(TOOLKIT)p
+else
+BUILDID  = $(TOOLKIT)
+endif
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
@@ -49,14 +65,23 @@ LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
 endif
 
+ifeq "$(BPRF)" "1"
+CCPROF = -D_ME_PROFILE -pg -no-pie
+LDPROF = -pg -no-pie
+STRIP  = - echo No strip - profile 
+else
+CCPROF = 
+LDPROF = 
+endif
+
 LIBNAME  = tfs
 LIBFILE  = $(LIBNAME)$(A)
-LIBHDRS  = tfs.h $(BUILDID).mak
+LIBHDRS  = tfs.h $(TOOLKIT).mak
 LIBOBJS  = $(OUTDIR)/tfs.o
 
 PRGNAME  = tfs
 PRGFILE  = $(PRGNAME)$(EXE)
-PRGHDRS  = tfs.h tfsutil.h $(BUILDID).mak
+PRGHDRS  = tfs.h tfsutil.h $(TOOLKIT).mak
 PRGOBJS  = $(OUTDIR)/tfsutil.o $(OUTDIR)/tfs.o $(OUTDIR)/uappend.o $(OUTDIR)/ubuild.o $(OUTDIR)/ucopy.o \
 	   $(OUTDIR)/ucreate.o $(OUTDIR)/uinfo.o $(OUTDIR)/ulist.o $(OUTDIR)/ustrip.o $(OUTDIR)/utest.o \
 	   $(OUTDIR)/uxdir.o $(OUTDIR)/uxfile.o
@@ -65,7 +90,7 @@ PRGLIBS  = $(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A)
 .SUFFIXES: .c .o
 
 $(OUTDIR)/%.o : %.c
-	$(CC) $(CCDEFS) $(CCFLAGS) -c -o $@ $<
+	$(CC) $(CCDEFS) $(CCPROF) $(CCFLAGS) -c -o $@ $<
 
 all: $(PRGLIBS) $(OUTDIR)/$(LIBFILE) $(OUTDIR)/$(PRGFILE)
 
@@ -77,12 +102,12 @@ $(LIBOBJS): $(LIBHDRS)
 
 $(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(RM) $@
-	$(LD) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS)
+	$(LD) $(LDFLAGS) $(LDPROF) -o $@ $(PRGOBJS) $(PRGLIBS)
 
 $(PRGOBJS): $(PRGHDRS)
 
 $(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A):
-	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
+	cd $(TRDPARTY)/zlib && $(MK) -f $(TOOLKIT).mak BCFG=$(BCFG) BPRF=$(BPRF)
 
 $(OUTDIR):
 	if not exist $(OUTDIR)\ mkdir $(OUTDIR)

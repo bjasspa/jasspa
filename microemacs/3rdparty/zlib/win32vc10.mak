@@ -22,15 +22,24 @@ AR       = lib /NOLOGO
 RM       = del /F /Q
 RMDIR    = rd /S /Q
 
-BUILDID  = win32vc10
+TOOLKIT  = win32vc10
+!IF "$(LSTT)" == "1"
+BUILDID  = $(TOOLKIT)s
+CCLSTT   = /MT
+LDLSTT   = /NODEFAULTLIB:msvcrt.lib
+!ELSE
+BUILDID  = $(TOOLKIT)
+CCLSTT   = /MD
+LDLSTT   = 
+!ENDIF
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
 
-CCDEFS   = /DWIN32 /D_WIN32 /D_WIN32_WINNT=0x500 /W3 /Zi /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE
-CCFLAGSR = /MD /O2 /GL /GS- /DNDEBUG=1 /D_HAS_ITERATOR_DEBUGGING=0 /D_SECURE_SCL=0
-CCFLAGSD = /MDd /Od /RTC1 /D_DEBUG
-LDDEFS   = /SUBSYSTEM:CONSOLE /INCREMENTAL:NO /MACHINE:X86 /MANIFEST
+CCDEFS   = /DWIN32 /D_WIN32 /D_WIN32_WINNT=0x0600 /W3 /Zi /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE
+CCFLAGSR = $(CCLSTT) /O2 /GL /GR- /GS- /DNDEBUG=1 /D_HAS_ITERATOR_DEBUGGING=0 /D_SECURE_SCL=0
+CCFLAGSD = $(CCLSTT)d /Od /RTC1 /D_DEBUG
+LDDEFS   = /SUBSYSTEM:CONSOLE /INCREMENTAL:NO /MACHINE:X86 /MANIFEST $(LDLSTT)
 LDFLAGSR = /OPT:REF /OPT:ICF /LTCG
 LDFLAGSD = /DEBUG
 ARFLAGSR = /LTCG
@@ -52,7 +61,7 @@ ARFLAGS  = $(ARFLAGSR)
 LIBNAME  = zlib 
 LIBFILE  = $(LIBNAME)$(A)
 LIBHDRS  = zutil.h zlib.h zconf.in.h zconf.h trees.h inftrees.h inflate.h \
-	   inffixed.h inffast.h deflate.h crc32.h $(BUILDID).mak
+	   inffixed.h inffast.h deflate.h crc32.h $(TOOLKIT).mak
 LIBOBJS  = $(OUTDIR)\adler32.o $(OUTDIR)\compress.o $(OUTDIR)\crc32.o $(OUTDIR)\gzio.o $(OUTDIR)\uncompr.o \
 	   $(OUTDIR)\deflate.o $(OUTDIR)\trees.o $(OUTDIR)\zutil.o $(OUTDIR)\inflate.o $(OUTDIR)\infback.o \
 	   $(OUTDIR)\inftrees.o $(OUTDIR)\inffast.o

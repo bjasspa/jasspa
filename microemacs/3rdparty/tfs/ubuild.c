@@ -8,7 +8,7 @@
  *  Author        : $Author: bill $
  *  Created By    : Jon Green
  *  Created       : Wed Oct 21 16:54:05 2009
- *  Last Modified : <221027.1212>
+ *  Last Modified : <230114.1056>
  *
  *  Description
  *
@@ -845,7 +845,7 @@ processDirectory (tfsfp_t *tfsfp, tfsNode_t *node, char *basedir)
         strcpy (pe, fd.cFileName);
 
         /* Find the basic attributes of the file. */
-        TFS_DEBUG (("stat: %s = %d\n", pathname, fd.dwFileAttributes));
+        TFS_DEBUG (("stat: %s = %d\n",pathname,(int) fd.dwFileAttributes));
 
         /* Find the type */
         if(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
@@ -1238,11 +1238,11 @@ nodeCompress (tfsNode_t *node)
         if (zstatus == Z_OK)
         {
             /* Make a decision as to what we are going to return. */
-            TFS_DEBUG (("Compressed file \"%s\" %ld=>%ld (%ld%%)\n",
-                        strnil(node->fsname), ulen, clen, (ulen * 100) / clen));
+            TFS_DEBUG (("Compressed file \"%s\" %d=>%d (%d%%)\n",
+                        strnil(node->fsname),(int) ulen,(int) clen,(int) ((ulen * 100)/clen)));
             fprintf (stderr,
-                     "Compressed file \"%s\" %ld=>%ld (%ld%%)\n",
-                     strnil(node->fsname), ulen, clen, (ulen * 100) / clen);
+                     "Compressed file \"%s\" %d=>%d (%d%%)\n",
+                     strnil(node->fsname),(int) ulen,(int) clen,(int) ((ulen * 100) / clen));
             
             if (((ulen * 100) / clen) > 110)
             {
