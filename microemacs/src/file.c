@@ -35,7 +35,6 @@
 #include "efunc.h"
 #include "esearch.h"
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
-#include <errno.h>
 #include <limits.h>                     /* Constant limit definitions */
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -54,7 +53,6 @@
 #ifdef _DOS
 #include <sys/file.h>
 #include <dir.h>
-#include <errno.h>
 #include <pc.h>
 #include <dos.h>
 
@@ -99,10 +97,19 @@
 #define _ROOT_DIR_LEN  1                /* '/' */
 #endif
 
+#ifdef _UNIX
+int
+meFileTestDir(meUByte *fname)
+{
+    struct stat statbuf;
+    return ((stat((char *)fname,&statbuf) != 0) || !S_ISDIR(statbuf.st_mode));
+}
+#endif
+
 int
 getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
 {
-    meUByte ft;
+    register int ft;
     if(lname != NULL)
         *lname = '\0' ;
     /* setup the default stat values */
@@ -119,64 +126,69 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
 #endif
     }
     ft = ffUrlGetType(file);
-    if(ffUrlTypeIsHttp(ft))
-        return meFILETYPE_HTTP;
-    if(ffUrlTypeIsFtp(ft))
-        return meFILETYPE_FTP;
+    if(ffUrlTypeIsHttpFtp(ft))
+        return ft;
 #ifdef MEOPT_TFS
     if(ffUrlTypeIsTfs(ft))
     {
         tfsstat_t tfs_statbuf;
-        int file_type = meFILETYPE_NOTEXIST ;
-        
-        if(tfs_stat(tfsdev,(char *)(file+5), &tfs_statbuf) == 0)
+        if(tfs_stat(tfsdev,(char *)(file+5),&tfs_statbuf) != 0)
         {
-            if (tfs_statbuf.st_mode == TFS_TYPE_FILE)
-                file_type = meFILETYPE_REGULAR ;
-            else if (tfs_statbuf.st_mode == TFS_TYPE_DIR)
+            if(file[meStrlen(file)-1] == DIR_CHAR)
             {
                 if(flag & gfsERRON_DIR)
                     mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s directory]", file) ;
-                file_type = meFILETYPE_DIRECTORY ;
+                ft |= meIOTYPE_DIRECTORY;
             }
-            if (stats != NULL)
-            {
-                /* Get the file size. */
-                stats->stsizeLow = (meUInt) tfs_statbuf.st_size ;
-                /* Set the permissions. */
-                stats->stmode = 0;
-                if (file_type == meFILETYPE_DIRECTORY)
-                {
-#ifdef _DOS
-                    stats->stmode = FA_DIR;
-#endif
-#ifdef _WIN32
-                    stats->stmode = FILE_ATTRIBUTE_DIRECTORY;
-#endif
-#ifdef _UNIX
-                    stats->stmode = S_IXUSR|S_IXGRP|S_IXOTH|0040000;
-#endif
-                }
-#ifdef _WIN32
-                stats->stmode |= FILE_ATTRIBUTE_READONLY;
-                /* Convert the time to Windows format */
-                stats->stmtime = tfs_statbuf.st_utc_mtime ;
-#endif
-#ifdef _DOS
-                stats->stmode |= FA_RDONLY;
-                stats->stmtime = tfs_statbuf.st_utc_mtime;
-#endif
-#ifdef _UNIX
-                stats->stdev = meIntFromPtr(tfsdev);
-                stats->stino = (meUInt) tfs_statbuf.st_bno;
-                stats->stmode |= S_IRGRP|S_IROTH|S_IRUSR;
-                if (file_type == meFILETYPE_REGULAR)
-                    stats->stmode |= 0100000;
-                stats->stmtime = tfs_statbuf.st_utc_mtime;
-#endif
-            }
+            return (ft|meIOTYPE_NOTEXIST);
         }
-        return file_type;
+        if(tfs_statbuf.st_mode == TFS_TYPE_FILE)
+            ft |= meIOTYPE_REGULAR;
+        else if(tfs_statbuf.st_mode == TFS_TYPE_DIR)
+        {
+            if(flag & gfsERRON_DIR)
+                mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s directory]", file) ;
+            ft |= meIOTYPE_DIRECTORY;
+        }
+        else
+            ft |= meIOTYPE_NASTY;
+        if(stats != NULL)
+        {
+            /* Get the file size. */
+            stats->stsizeLow = (meUInt) tfs_statbuf.st_size ;
+            /* Set the permissions. */
+            stats->stmode = 0;
+            if(ft & meIOTYPE_DIRECTORY)
+            {
+#ifdef _DOS
+                stats->stmode = FA_DIR;
+#endif
+#ifdef _WIN32
+                stats->stmode = FILE_ATTRIBUTE_DIRECTORY;
+#endif
+#ifdef _UNIX
+                stats->stmode = S_IXUSR|S_IXGRP|S_IXOTH|0040000;
+#endif
+            }
+#ifdef _WIN32
+            stats->stmode |= FILE_ATTRIBUTE_READONLY;
+            /* Convert the time to Windows format */
+            stats->stmtime = tfs_statbuf.st_utc_mtime ;
+#endif
+#ifdef _DOS
+            stats->stmode |= FA_RDONLY;
+            stats->stmtime = tfs_statbuf.st_utc_mtime;
+#endif
+#ifdef _UNIX
+            stats->stdev = meIntFromPtr(tfsdev);
+            stats->stino = (meUInt) tfs_statbuf.st_bno;
+            stats->stmode |= S_IRGRP|S_IROTH|S_IRUSR;
+            if(ft & meIOTYPE_REGULAR)
+                stats->stmode |= 0100000;
+            stats->stmtime = tfs_statbuf.st_utc_mtime;
+#endif
+        }
+        return ft;
     }
 #endif
     if(ffUrlTypeIsFile(ft))
@@ -188,20 +200,19 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
         int ii ;
         
         if(((ii = meStrlen(file)) == 0) ||
-           (strchr(file,'*') != NULL) ||
-           (strchr(file,'?') != NULL))
+           (strchr(file,'*') != NULL) || (strchr(file,'?') != NULL))
         {
             if(flag & gfsERRON_ILLEGAL_NAME)
                 mlwrite(MWABORT|MWPAUSE,"[%s illegal name]", file);
-            return meFILETYPE_NOTEXIST ;
+            return (ft|meIOTYPE_NOTEXIST);
         }
         if((file[ii-1] == DIR_CHAR) || ((ii == 2) && (file[1] == _DRV_CHAR)))
-            goto gft_directory ;
+            goto gft_directory;
         
 #ifdef __DJGPP2__
         ii = meFileGetAttributes(file) ;
         if(ii < 0)
-            return meFILETYPE_NOTEXIST ;
+            return (ft|meIOTYPE_NOTEXIST);
 #else
         {
             union REGS reg ;                /* cpu register for use of DOS calls */
@@ -210,7 +221,7 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
             intdos(&reg, &reg);
             
             if(reg.x.cflag)
-                return meFILETYPE_NOTEXIST ;
+                return (ft|meIOTYPE_NOTEXIST);
             ii = reg.x.cx ;
         }
 #endif
@@ -229,9 +240,9 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
 gft_directory:
             if(flag & gfsERRON_DIR)
                 mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s directory]", file) ;
-            return meFILETYPE_DIRECTORY ;
+            return (ft|meIOTYPE_DIRECTORY);
         }
-        return meFILETYPE_REGULAR ;
+        return (ft|meIOTYPE_REGULAR);
     }
 #else
 #ifdef _WIN32
@@ -239,52 +250,67 @@ gft_directory:
         DWORD status;
         int   len ;
         
-        if(((len = meStrlen(file)) == 0) ||
-           (meStrchr(file,'*') != NULL) || (meStrchr(file,'?') != NULL))
+        if(((len = meStrlen(file)) == 0) || (meStrchr(file,'*') != NULL) || (meStrchr(file,'?') != NULL))
         {
             if(flag & gfsERRON_ILLEGAL_NAME)
                 mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s illegal name]", file);
-            return meFILETYPE_NOTEXIST ;
+            return (ft|meIOTYPE_NOTEXIST);
         }
         if(stats != NULL)
         {
-            HANDLE          *fh ;
-            WIN32_FIND_DATA  fd ;
+            HANDLE *fh;
+            WIN32_FIND_DATA fd;
             
             if(file[len-1] == DIR_CHAR)
             {
-                meUByte fn[meBUF_SIZE_MAX] ;
-                meStrcpy(fn,file) ;
-                fn[len] = '.' ;
-                fn[len+1] = '\0' ;
-                fh = FindFirstFile((const char *) fn,&fd) ;
+                meUByte fn[meBUF_SIZE_MAX];
+                meStrcpy(fn,file);
+                fn[len] = '.';
+                fn[len+1] = '\0';
+                fh = FindFirstFile((const char *) fn,&fd);
             }
             else
-                fh = FindFirstFile((const char *) file,&fd) ;
+                fh = FindFirstFile((const char *) file,&fd);
             if(fh == INVALID_HANDLE_VALUE)
             {
+                ft |= meIOTYPE_NOTEXIST;
                 if((file[len-1] == DIR_CHAR) || ((len == 2) && (file[1] == _DRV_CHAR)))
                     goto gft_directory;
-                return meFILETYPE_NOTEXIST ;
+                return ft;
             }
-            status = fd.dwFileAttributes ;
-            stats->stsizeHigh = fd.nFileSizeHigh ;
-            stats->stsizeLow = fd.nFileSizeLow ;
-            stats->stmtime.dwHighDateTime = fd.ftLastWriteTime.dwHighDateTime ;
-            stats->stmtime.dwLowDateTime = fd.ftLastWriteTime.dwLowDateTime ;
-            FindClose(fh) ;
-            stats->stmode = (meUShort) status | FILE_ATTRIBUTE_ARCHIVE ;
+            status = fd.dwFileAttributes;
+            stats->stsizeHigh = fd.nFileSizeHigh;
+            stats->stsizeLow = fd.nFileSizeLow;
+            stats->stmtime.dwHighDateTime = fd.ftLastWriteTime.dwHighDateTime;
+            stats->stmtime.dwLowDateTime = fd.ftLastWriteTime.dwLowDateTime;
+            FindClose(fh);
+            stats->stmode = (meUShort) status | FILE_ATTRIBUTE_ARCHIVE;
         }
-        else if((file[len-1] == DIR_CHAR) || ((len == 2) && (file[1] == _DRV_CHAR)))
-            goto gft_directory ;
-        else if((status = GetFileAttributes((const char *) file)) == 0xFFFFFFFF)
-            return meFILETYPE_NOTEXIST ;
-        if (status & FILE_ATTRIBUTE_DIRECTORY)
+        else if((file[1] == _DRV_CHAR) && ((len == 2) || ((len == 3) && (file[2] == DIR_CHAR))))
+            goto gft_directory;
+        else if(file[len-1] == DIR_CHAR)
+        {
+            file[len-1] = '\0';
+            status = GetFileAttributes((const char *) file);
+            file[len-1] = DIR_CHAR;
+            if(status == 0xFFFFFFFF)
+            {
+                ft |= meIOTYPE_NOTEXIST;
+                goto gft_directory;
+            }
+        }
+        else
+        {
+            status = GetFileAttributes((const char *) file);
+            if(status == 0xFFFFFFFF)
+                return (ft|meIOTYPE_NOTEXIST);
+        }
+        if(status & FILE_ATTRIBUTE_DIRECTORY)
         {
 gft_directory:
             if(flag & gfsERRON_DIR)
                 mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s directory]", file);
-            return meFILETYPE_DIRECTORY ;
+            return (ft|meIOTYPE_DIRECTORY);
         }
         /* FILE_ATTRIBUTE_ARCHIVE
          * The file or directory is an archive file or directory.
@@ -306,7 +332,7 @@ gft_directory:
          * FILE_ATTRIBUTE_NORMAL
          * The file or directory has no other attributes set.
          * This attribute is valid only if used alone. */
-        return meFILETYPE_REGULAR ;
+        return (ft|meIOTYPE_REGULAR);
     }
 #else
 #ifdef _UNIX
@@ -316,11 +342,11 @@ gft_directory:
         
         if((lname == NULL) && (stats == NULL))
         {
-            if(stat((char *)file, &statbuf) != 0)
-                return meFILETYPE_NOTEXIST ;
+            if(stat((char *)file,&statbuf) != 0)
+                return (ft|meIOTYPE_NOTEXIST);
         }
         else if(lstat((char *)file, &statbuf) != 0)
-            return meFILETYPE_NOTEXIST ;
+            return (ft|meIOTYPE_NOTEXIST);
         else if(S_ISLNK(statbuf.st_mode))
         {
             meUByte lbuf[meBUF_SIZE_MAX], buf[meBUF_SIZE_MAX], *ss ;
@@ -339,7 +365,7 @@ gft_directory:
                 {
                     if(flag & gfsERRON_BAD_FILE)
                         mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s symbolic link problems]", file);
-                    return meFILETYPE_NASTY ;
+                    return (ft|meIOTYPE_NASTY);
                 }
                 buf[jj] = '\0' ;
                 if((buf[0] == DIR_CHAR) || ((ss=meStrrchr(lbuf,DIR_CHAR)) == NULL))
@@ -373,7 +399,7 @@ gft_directory:
                     mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s dangling symbolic link]",lbuf);
                 if(stats != NULL)
                     stats->stmtime = stmtime ;
-                return meFILETYPE_NOTEXIST ;
+                return (ft|meIOTYPE_NOTEXIST);
             }
         }
         
@@ -396,14 +422,12 @@ gft_directory:
                 stats->stmtime= stmtime ;
         }
         if(S_ISREG(statbuf.st_mode))
-        {
-            return meFILETYPE_REGULAR ;
-        }
+            return (ft|meIOTYPE_REGULAR);
         if(S_ISDIR(statbuf.st_mode))
         {
             if(flag & gfsERRON_DIR)
                 mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s directory]", file);
-            return meFILETYPE_DIRECTORY ;
+            return (ft|meIOTYPE_DIRECTORY);
         }
         if(flag & gfsERRON_BAD_FILE)
         {
@@ -422,10 +446,10 @@ gft_directory:
             else
                 mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s not a regular file]", file);
         }
-        return meFILETYPE_NASTY ;
+        return (ft|meIOTYPE_NASTY);
     }
 #else
-    return meFILETYPE_REGULAR ;
+    return (ft|meIOTYPE_REGULAR);
 #endif /* _UNIX */
 #endif /* _WIN32 */
 #endif /* _DOS */
@@ -450,26 +474,26 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int *gotU
     /* Common sub-directories of JASSPAs MicroEmacs */
     static meUByte *subdirs[] =
     {
-        (meUByte *) "",                 /* Include the root directory first */
         (meUByte *) "company",          /* Company wide files */
         (meUByte *) "macros",           /* Standard distribution macros */
         (meUByte *) "spelling",         /* Spelling dictionaries */
+        (meUByte *) "",                 /* Include the root directory last */
         NULL
     } ;
-    meUByte *pp, *ss, base_name[meBUF_SIZE_MAX] ;
-    int ii, ll ;
+    meUByte *pp, *ss, base_name[meBUF_SIZE_MAX];
+    int ii, ll;
     
     /* Iterate over all of the paths */
     while(*path_base != '\0')
     {
         /* Construct the base name */
-        pp = base_name ;
+        pp = base_name;
         while((*pp = *path_base) != '\0')
         {
             path_base++ ;
             if (*pp == mePATH_CHAR)
             {
-                *pp = '\0' ;
+                *pp = '\0';
                 break;
             }
             pp++;
@@ -479,35 +503,35 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int *gotU
         if((ll = meStrlen(base_name)) < _ROOT_DIR_LEN)
             continue;
         if(base_name[ll-1] == DIR_CHAR)
-            ll-- ;
+            ll--;
         
         /* check for base_name/$user-name first */
         if(meUserName != NULL)
         {
-            base_name[ll] = DIR_CHAR ;
-            meStrcpy(base_name+ll+1,meUserName) ;
-            if(getFileStats(base_name,0,NULL,NULL) == meFILETYPE_DIRECTORY)
+            base_name[ll] = DIR_CHAR;
+            meStrcpy(base_name+ll+1,meUserName);
+            if(getFileStats(base_name,0,NULL,NULL) & meIOTYPE_DIRECTORY)
             {
                 /* it exists, add it to the front if we haven't got a user
                  * path yet or to the end otherwise */
-                ii = meStrlen(base_name) ;
+                ii = meStrlen(base_name);
                 if(*gotUserPath <= 0)
                 {
                     *gotUserPath = 1 ;
                     if(index)
                     {
-                        base_name[ii++] = mePATH_CHAR ;
-                        meStrcpy(base_name+ii,path_name) ;
+                        base_name[ii++] = mePATH_CHAR;
+                        meStrcpy(base_name+ii,path_name);
                     }
-                    meStrcpy(path_name,base_name) ;
+                    meStrcpy(path_name,base_name);
                 }
                 else
                 {
                     if(index)
-                        path_name[index++] = mePATH_CHAR ;
-                    meStrcpy(path_name+index,base_name) ;
+                        path_name[index++] = mePATH_CHAR;
+                    meStrcpy(path_name+index,base_name);
                 }
-                index += ii ;
+                index += ii;
             }
         }
         
@@ -520,8 +544,8 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int *gotU
         {
             if(*ss != '\0')
             {
-                base_name[ll] = DIR_CHAR ;
-                meStrcpy(base_name+ll+1,ss) ;
+                base_name[ll] = DIR_CHAR;
+                meStrcpy(base_name+ll+1,ss);
             }
             else
                 base_name[ll] = '\0' ;
@@ -529,13 +553,13 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int *gotU
             /* Test the directory for existance, if it does not exist
              * then do not add it as we do not want to search any
              * directory unecessarily. */
-            if(getFileStats(base_name,0,NULL,NULL) == meFILETYPE_DIRECTORY)
+            if(getFileStats(base_name,0,NULL,NULL) & meIOTYPE_DIRECTORY)
             {
                 /* it exists, add it */
                 if(index)
-                    path_name[index++] = mePATH_CHAR ;
-                meStrcpy(path_name+index,base_name) ;
-                index += meStrlen(base_name) ;
+                    path_name[index++] = mePATH_CHAR;
+                meStrcpy(path_name+index,base_name);
+                index += meStrlen(base_name);
             }
             else if(*ss == '\0')
                 /* if the root dir does not exist there's no point continuing */
@@ -551,56 +575,85 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int *gotU
  */
 
 int
-fileLookup(meUByte *fname, meUByte *ext, meUByte flags, meUByte *outName)
+fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte *outName)
 {
     register meUByte *path;  /* environmental PATH variable */
     register meUByte *sp;    /* pointer into path spec */
-    register int   ii;     /* index */
-    meUByte nname[meBUF_SIZE_MAX] ;
-    meUByte buf[meBUF_SIZE_MAX] ;
+    register int ii, jj, fl;
+    meUByte buf[meBUF_SIZE_MAX];
     
-    if(ext != NULL)
+    if(extCnt)
     {
-        if((sp=meStrrchr(fname,DIR_CHAR)) == NULL)
-            sp = fname ;
-        /* Jon 990608 - If the extension is the same then we do not
-         * concatinate it, otherwise we do !!. Compare the complete extension
-         * with the end of the string, allowing double extensions to be
-         * handled properly. */
-        if (((ii = meStrlen (sp) - meStrlen(ext)) < 0) ||
+        fl = meStrlen(fname);
+        jj = extCnt;
+        while(--jj >= 0)
+            if(((ii=fl - meStrlen(extLst[jj])) >= 0) &&
 #ifdef _INSENSE_CASE
-            meStricmp(&sp[ii], ext)
+               !meStricmp(fname+ii,extLst[jj])
 #else
-            meStrcmp(&sp[ii], ext)
+               !meStrcmp(fname+ii,extLst[jj])
 #endif
-            )
-        {
-            meStrcpy(nname,fname) ;
-            meStrcat(nname,ext);
-            fname = nname ;
-        }
+               )
+            {
+                extCnt = 0;
+                break;
+            }
     }
     if(flags & meFL_CHECKDOT)
     {
-        fileNameCorrect(fname,outName,NULL) ;
-#ifdef _UNIX
-        if(flags & meFL_EXEC)
+        fileNameCorrect(fname,outName,NULL);
+        if(extCnt)
         {
-            if(!meTestExec(outName) &&
-               (getFileStats(outName,0,NULL,NULL) == meFILETYPE_REGULAR))
+            ii = meStrlen(outName);
+            for(jj=0 ; jj<extCnt ; jj++)
+            {
+                if((extLst[jj][0] == DIR_CHAR) && (outName[ii-1] == DIR_CHAR))
+                   meStrcpy(outName+ii,&(extLst[jj][1]));
+                else
+                   meStrcpy(outName+ii,extLst[jj]);
+#if MEOPT_TFS
+                if(ffUrlTypeIsTfs(ffUrlGetType(outName)))
+                {
+                    if(tfs_type(tfsdev,(char *)(outName+5)) == TFS_TYPE_FILE)
+                        return 1;
+                }
+                else
+#endif
+#ifdef _UNIX
+                if(flags & meFL_EXEC)
+                {
+                    if(!meTestExec(outName) && (getFileStats(outName,0,NULL,NULL) & meIOTYPE_REGULAR))
+                        return 1 ;
+                }
+                else
+#endif
+                    if(!meTestExist(outName))
+                    return 1 ;
+            }
+        }
+#if MEOPT_TFS
+        else if(ffUrlTypeIsTfs(ffUrlGetType(outName)))
+        {
+            if(tfs_type(tfsdev,(char *)(outName+5)) == TFS_TYPE_FILE)
+                return 1;
+        }
+#endif
+#ifdef _UNIX
+        else if(flags & meFL_EXEC)
+        {
+            if(!meTestExec(outName) && (getFileStats(outName,0,NULL,NULL) & meIOTYPE_REGULAR))
                 return 1 ;
         }
-        else
 #endif
-            if(!meTestExist(outName))
+        else if(!meTestExist(outName))
             return 1 ;
     }
     if(flags & meFL_USEPATH)
-        path = meGetenv("PATH") ;
+        path = meGetenv("PATH");
     else if(flags & meFL_USESRCHPATH)
-        path = searchPath ;
+        path = searchPath;
     else
-        return 0 ;
+        return 0;
     while((path != NULL) && (*path != '\0'))
     {
         /* build next possible file spec */
@@ -608,7 +661,7 @@ fileLookup(meUByte *fname, meUByte *ext, meUByte flags, meUByte *outName)
         if((path = meStrchr(path,mePATH_CHAR)) != NULL)
         {
             ii = path++ - sp ;
-            meStrncpy(buf,sp,ii) ;
+            memcpy(buf,sp,ii) ;
         }
         else
         {
@@ -616,80 +669,98 @@ fileLookup(meUByte *fname, meUByte *ext, meUByte flags, meUByte *outName)
             ii = meStrlen(buf) ;
         }
         /* Check for zero length path */
-        if (ii <= 0)
-            continue;
-        /* Add a directory separator if missing */
-#ifdef _CONVDIR_CHAR
-        if ((buf[ii-1] != DIR_CHAR) && (buf[ii-1] != _CONVDIR_CHAR))
-#else
-        if (buf[ii-1] != DIR_CHAR)
-#endif
-            buf[ii++] = DIR_CHAR ;
-        meStrcpy(buf+ii,fname) ;               /* Concatinate the name */
-        
-        /* and try it out */
-        fileNameCorrect(buf,outName,NULL) ;
-#if MEOPT_TFS
-        /* Try to determine the file type. */
-        if(ffUrlTypeIsTfs(ffUrlGetType(outName)))
+        if(ii)
         {
-            if(tfs_type(tfsdev,(char *)(outName+5)) == TFS_TYPE_FILE)
-                return 1;
-        }
-        else
+            /* Add a directory separator if missing */
+#ifdef _CONVDIR_CHAR
+            if ((buf[ii-1] != DIR_CHAR) && (buf[ii-1] != _CONVDIR_CHAR))
+#else
+            if (buf[ii-1] != DIR_CHAR)
+#endif
+                buf[ii++] = DIR_CHAR;
+            meStrcpy(buf+ii,fname);
+            /* and try it out */
+            //fileNameCorrect(buf,outName,NULL) ;
+            if(extCnt)
+            {
+                ii += fl;
+                for(jj=0 ; jj<extCnt ; jj++)
+                {
+                    meStrcpy(buf+ii,extLst[jj]);
+#if MEOPT_TFS
+                    if(ffUrlTypeIsTfs(ffUrlGetType(buf)))
+                    {
+                        if(tfs_type(tfsdev,(char *)(buf+5)) == TFS_TYPE_FILE)
+                        {
+                            fileNameCorrect(buf,outName,NULL);
+                            return 1;
+                        }
+                    }
+                    else
 #endif
 #ifdef _UNIX
-            if(flags & meFL_EXEC)
-        {
-            if(!meTestExec(outName) &&
-               (getFileStats(outName,0,NULL,NULL) == meFILETYPE_REGULAR))
-                return 1 ;
-        }
-        else
+                        if(flags & meFL_EXEC)
+                    {
+                        if(!meTestExec(buf) && (getFileStats(buf,0,NULL,NULL) & meIOTYPE_REGULAR))
+                        {
+                            fileNameCorrect(buf,outName,NULL);
+                            return 1;
+                        }
+                    }
+                    else
 #endif
-            if(!meTestExist(outName))
-            return 1 ;
+                        if(!meTestExist(buf))
+                    {
+                        fileNameCorrect(buf,outName,NULL);
+                        return 1;
+                    }
+                }
+            }
+#if MEOPT_TFS
+            else if(ffUrlTypeIsTfs(ffUrlGetType(buf)))
+            {
+                if(tfs_type(tfsdev,(char *)(buf+5)) == TFS_TYPE_FILE)
+                {
+                    fileNameCorrect(buf,outName,NULL);
+                    return 1;
+                }
+            }
+#endif
+#ifdef _UNIX
+            else if(flags & meFL_EXEC)
+            {
+                if(!meTestExec(buf) && (getFileStats(buf,0,NULL,NULL) & meIOTYPE_REGULAR))
+                {
+                    fileNameCorrect(buf,outName,NULL);
+                    return 1;
+                }
+            }
+#endif
+            else if(!meTestExist(buf))
+            {
+                fileNameCorrect(buf,outName,NULL);
+                return 1;
+            }
+        }
     }
-    return 0 ; /* no such luck */
+    return 0; /* no such luck */
 }
 
 int
 executableLookup(meUByte *fname, meUByte *outName)
 {
 #if (defined _WIN32) || (defined _DOS)
-    meUByte *ss ;
-    int ll=meStrlen(fname) ;
-    int ii ;
-    
-    if(ll > 4)
-    {
-        ss = fname+ll-4 ;
-        ii = noExecExtensions ;
-        while(--ii >= 0)
-#ifdef _INSENSE_CASE
-            if(!meStrnicmp(ss,execExtensions[ii],4))
-#else
-            if(!meStrncmp(ss,execExtensions[ii],4))
-#endif
-            {
-                if(fileLookup(fname,NULL,meFL_CHECKDOT|meFL_USEPATH,outName))
-                    return ii+1 ;
-                return 0 ;
-            }
-    }
-    ii=noExecExtensions ;
-    while(--ii >= 0)
-        if(fileLookup(fname,execExtensions[ii],meFL_CHECKDOT|meFL_USEPATH,outName))
-            return ii+1 ;
+    if(fileLookup(fname,extExecCnt,extExecLst,meFL_CHECKDOT|meFL_USEPATH,outName))
+        return 1;
 #endif
 #ifdef _UNIX
     meUByte flags ;
     
-    flags = (meStrchr(fname,DIR_CHAR) != NULL) ? meFL_CHECKDOT|meFL_EXEC:meFL_USEPATH|meFL_EXEC ;
-    if(fileLookup(fname,NULL,flags,outName))
-        return 1 ;
+    flags = (meStrchr(fname,DIR_CHAR) != NULL) ? meFL_CHECKDOT|meFL_EXEC:meFL_USEPATH|meFL_EXEC;
+    if(fileLookup(fname,0,NULL,flags,outName))
+        return 1;
 #endif
-    return 0 ;
+    return 0;
 }
 
 int
@@ -908,12 +979,12 @@ meTestExecutable(meUByte *fileName)
     {
         meUByte *ee ;
         ee = fileName+ii-4 ;
-        ii = noExecExtensions ;
+        ii = extExecCnt;
         while(--ii >= 0)
 #ifdef _INSENSE_CASE
-            if(!meStrnicmp(ee,execExtensions[ii],4))
+            if(!meStrnicmp(ee,extExecLst[ii],4))
 #else
-            if(!meStrncmp(ee,execExtensions[ii],4))
+            if(!meStrncmp(ee,extExecLst[ii],4))
 #endif
                 return 1 ;
     }
@@ -1386,30 +1457,29 @@ readin(register meBuffer *bp, meUByte *fname)
 #if MEOPT_EXTENDED
         meUInt ui ;
 #endif
-        meStat stats ;
-        int ft ;
-        if((ft=getFileStats(fn,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE,&(bp->stats),lfn)) == meFILETYPE_HTTP)
-            meModeSet(bp->mode,MDVIEW) ;
-        else if(ft != meFILETYPE_FTP)
+        meStat stats;
+        int ft, aft;
+        if((ft=getFileStats(fn,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE,&(bp->stats),lfn)) & meIOTYPE_HTTP)
+            meModeSet(bp->mode,MDVIEW);
+        else if((ft & (meIOTYPE_FTP|meIOTYPE_FTPE)) == 0)
         {
-            if(ft == meFILETYPE_NASTY)
+            if(ft & meIOTYPE_NASTY)
                 goto error_end ;
             if(lfn[0] != '\0')
                 /* something was found, don't want to do RCS on this,
                  * the link may be dangling which returns 3 */
                 fn = lfn ;
 #if MEOPT_RCS
-            else if((ft == meFILETYPE_NOTEXIST) &&       /* file not found */
-                    (rcsFilePresent(fn) > 0))
+            else if((ft & meIOTYPE_NOTEXIST) && ((ft & (meIOTYPE_DIRECTORY|meIOTYPE_TFS)) == 0) && (rcsFilePresent(fn) > 0))
             {
                 if(doRcsCommand(fn,rcsCoStr) <= 0)
                     goto error_end ;
-                if((ft=getFileStats(fn,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE,&(bp->stats),lfn)) == meFILETYPE_NASTY)
+                if((ft=getFileStats(fn,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE,&(bp->stats),lfn)) & meIOTYPE_NASTY)
                     goto error_end ;
             }
 #endif
             if((autoTime > 0) && !createBackupName(afn,fn,'#',0) &&
-               (getFileStats(afn,0,&stats,NULL) == meFILETYPE_REGULAR) &&
+               ((aft=getFileStats(afn,0,&stats,NULL)) & meIOTYPE_REGULAR) &&
                meFiletimeIsModified(stats.stmtime,bp->stats.stmtime))
             {
                 meUByte prompt[200] ;
@@ -1418,40 +1488,45 @@ readin(register meBuffer *bp, meUByte *fname)
                 sprintf((char *)prompt,"Recover newer %s",tt) ;
                 if(mlyesno(prompt) > 0)
                 {
-                    fn = afn ;
-                    ft = meFILETYPE_REGULAR ;
+                    fn = afn;
+                    ft = aft;
                     memcpy(&bp->stats,&stats,sizeof(meStat)) ;
                 }
             }
-            if(ft == meFILETYPE_DIRECTORY)
+            if(ft & meIOTYPE_DIRECTORY)
             {
 #if MEOPT_DIRLIST
+                if(ft & meIOTYPE_NOTEXIST)
+                {
+                    mlwrite(MWABORT,(meUByte *)"[Directory does not exist: %s]",fn);
+                    goto error_end;
+                }
                 if(readDirectory(fn,bp,bp->baseLine,0) <= 0)
-                    goto error_end ;
+                    goto error_end;
                 ss = meTRUE ;
                 goto newfile_end;
 #else
-                goto error_end ;
+                mlwrite(MWABORT,(meUByte *)"[Directory listing not enabled]");
+                goto error_end;
 #endif
             }
-            if(ft == meFILETYPE_NOTEXIST)
-            {   /* File not found.      */
+            if(ft & meIOTYPE_NOTEXIST)
+            {
                 meUByte dirbuf [meBUF_SIZE_MAX];
                 
                 /* See if we can write to the directory. */
-                getFilePath (fn, dirbuf);
-                if((getFileStats(dirbuf,0,NULL,NULL) != meFILETYPE_DIRECTORY)
+                getFilePath(fn,dirbuf);
+                if(((getFileStats(dirbuf,0,NULL,NULL) & (meIOTYPE_NOTEXIST|meIOTYPE_DIRECTORY)) != meIOTYPE_DIRECTORY)
 #ifdef _UNIX
                    || meTestWrite(dirbuf)
 #endif
                    )
                 {
                     /* READ ONLY DIR */
-                    mlwrite(MWPAUSE,(meUByte *)"%s: %s", dirbuf, sys_errlist[errno]);
-                    /* Zap the filename - it is invalid.
-                       We only want a buffer */
+                    mlwrite(MWPAUSE,(meUByte *)"[Cannot write to directory: %s]",dirbuf);
+                    /* Zap the filename - it is invalid, we only want a buffer */
                     mlwrite (0,(meUByte *)"[New buffer %s]", getFileBaseName(fname));
-                    meNullFree(bp->fileName) ;
+                    meNullFree(bp->fileName);
                     bp->fileName = NULL;
                     ss = meABORT;
                 }
@@ -1480,13 +1555,8 @@ readin(register meBuffer *bp, meUByte *fname)
                  (!meStatTestRead(bp->stats))))
             {
                 /* We are not allowed to read the file */
-#if ((defined _UNIX) || (defined _DOS))
-                mlwrite(MWABORT,(meUByte *)"[%s: %s]", fn, sys_errlist[errno]) ;
-#else
-                mlwrite(MWABORT,(meUByte *)"[cannot read: %s]", fn) ;
-#endif
-                /* Zap the filename - it is invalid.
-                   We only want a buffer */
+                mlwrite(MWABORT,(meUByte *)"[Cannot read file %s]",fn);
+                /* Zap the filename - it is invalid. we only want a buffer */
                 meNullFree(bp->fileName) ;
                 bp->fileName = NULL;
                 /* its not linked to a file so change the flag */
@@ -1627,11 +1697,8 @@ meBufferInsertFile(meBuffer *bp, meUByte *fname, meUInt flags,
 }
 
 /*
- * Insert a file into the current
- * buffer. This is really easy; all you do it
- * find the name of the file, and call the standard
- * "insert a file into the current buffer" code.
- * Bound to "C-X C-I".
+ * Insert a file into the current buffer. This is really easy; all you do is find the name of the
+ * file, and call the standard "insert a file into the current buffer" code. Bound to "C-X C-I".
  */
 int
 insertFile(int f, int n)
@@ -1645,13 +1712,22 @@ insertFile(int f, int n)
     if((s=inputFileName((meUByte *)"Insert file",fname,1)) <= 0)
         return s ;
     /* Allow existing or url files if not doing a partial insert */
-    if(((s=getFileStats(fname,meFINDFILESINGLE_GFS_OPT,&stats,NULL)) != meFILETYPE_REGULAR) &&
-       ((n & 4) || ((s != meFILETYPE_HTTP) && (s != meFILETYPE_FTP)
+    if((s = getFileStats(fname,meFINDFILESINGLE_GFS_OPT,&stats,NULL)) & meIOTYPE_NOTEXIST)
+        return mlwrite(MWABORT,(meUByte *)"[Given file does not exist]");
+    if((s & (meIOTYPE_REGULAR
 #if MEOPT_DIRLIST
-                    && (s != meFILETYPE_DIRECTORY)
+             |meIOTYPE_DIRECTORY
 #endif
-                    )))
-        return meABORT ;
+#if MEOPT_TFS
+             |meIOTYPE_TFS
+#endif
+#if MEOPT_SOCKET
+             |meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE
+#endif
+             )) == 0)
+        return mlwrite(MWABORT,(meUByte *)"[Given file type not supported]");
+    if((n & 4) && (((s & meIOTYPE_REGULAR) == 0) || (s & meIOTYPE_TFS)))
+        return mlwrite(MWABORT,(meUByte *)"[Partial insert not supported for given file type]");
 #if MEOPT_EXTENDED
     if((fileSizePrompt > 0) && ((n & 4) == 0) && ((uoffset=(stats.stsizeHigh << 12) | (stats.stsizeLow >> 20)) > fileSizePrompt))
     {
@@ -1664,10 +1740,11 @@ insertFile(int f, int n)
     }
 #endif
 #if MEOPT_DIRLIST
-    if(s == meFILETYPE_DIRECTORY)
-        flags |= meRWFLAG_MKDIR ;
+    if(s & meIOTYPE_DIRECTORY)
+        flags |= meRWFLAG_MKDIR;
 #endif
-    if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
+    /* Check we can change the buffer */
+    if((s=bufferSetEdit()) <= 0)
         return s ;
     /* set mark to previous line so it doesnt get moved down */
     frameCur->windowCur->markLine = meLineGetPrev(frameCur->windowCur->dotLine) ;
@@ -1696,7 +1773,7 @@ insertFile(int f, int n)
     }
     
     if(((s = meBufferInsertFile(frameCur->bufferCur,fname,flags,uoffset,loffset,length)) > 0) && (n & 2))
-        getFileStats(fname,meFINDFILESINGLE_GFS_OPT,&(frameCur->bufferCur->stats),NULL) ;
+        meStatCopy(&(frameCur->bufferCur->stats),&stats);
     
     /* move the mark down 1 line into the correct place */
     frameCur->windowCur->markLine = meLineGetNext(frameCur->windowCur->markLine);
@@ -1755,17 +1832,24 @@ findFileSingle(meUByte *fname, int bflag, meInt lineno, meUShort colno)
     /* Stop getFileStats complaining on gfsERRON_ILLEGAL_NAME if BFND_CREAT not set (error reported elsewhere) */
     gft = getFileStats(fname,meFINDFILESINGLE_GFS_OPT & (bflag | ~BFND_CREAT),NULL,NULL);
 #endif
-    if((gft == meFILETYPE_NASTY) ||
+    if((gft & (meIOTYPE_NASTY
 #if (MEOPT_DIRLIST == 0)
-       (gft == meFILETYPE_DIRECTORY) ||
+                |meIOTYPE_DIRECTORY
 #endif
-       ((gft == meFILETYPE_NOTEXIST) && !(bflag & BFND_CREAT)))
+#if (MEOPT_TFS == 0)
+                |meIOTYPE_TFS
+#endif
+#if (MEOPT_SOCKET == 0)
+                |meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE
+#endif
+                )) ||
+       ((gft & meIOTYPE_NOTEXIST) && !(bflag & BFND_CREAT)))
         return 0 ;
     
     bflag |= BFND_CREAT;
     
     /* if this is a directory then add the '/' */
-    if(gft == meFILETYPE_DIRECTORY)
+    if(gft & meIOTYPE_DIRECTORY)
     {
         meUByte *ss=fname+meStrlen(fname);
         if(ss[-1] != DIR_CHAR)
@@ -1775,10 +1859,10 @@ findFileSingle(meUByte *fname, int bflag, meInt lineno, meUShort colno)
         }
     }
 #if MEOPT_SOCKET
-    if((gft != meFILETYPE_FTP) || ((fnlen = meStrlen(fname)),(fname[fnlen-1] == DIR_CHAR)))
+    if((gft & (meIOTYPE_FTP|meIOTYPE_FTPE)) || ((fnlen = meStrlen(fname)),(fname[fnlen-1] == DIR_CHAR)))
         fnlen = 0 ;
 #endif
-    for (bp=bheadp; bp!=NULL; bp=bp->next)
+    for(bp=bheadp; bp!=NULL; bp=bp->next)
     {
         if((bp->fileName != NULL) && (bp->name != NULL) && (bp->name[0] != '*'))
         {
@@ -1810,7 +1894,7 @@ findFileSingle(meUByte *fname, int bflag, meInt lineno, meUShort colno)
         bp = bfind(fname,bflag);
         bp->fileName = meStrdup(fname);
         bp->intFlag |= BIFFILE;
-        if(gft == meFILETYPE_DIRECTORY)
+        if(gft & meIOTYPE_DIRECTORY)
         {
             /* if its a directory then add dir flag and remove binary */
             bp->fileFlag = meBFFLAG_DIR;
@@ -2071,27 +2155,27 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
     meUByte *fn;
     
     if((sfname != NULL) &&
-       (((s=getFileStats(dfname,0,NULL,NULL)) == meFILETYPE_DIRECTORY) ||
-        ((s == meFILETYPE_FTP) && (dfname[meStrlen(dfname)-1] == DIR_CHAR))))
+       (((s=getFileStats(dfname,0,NULL,NULL)) & meIOTYPE_DIRECTORY) ||
+        ((s & (meIOTYPE_FTP|meIOTYPE_FTPE)) && (dfname[meStrlen(dfname)-1] == DIR_CHAR))))
     {
         s = meStrlen(dfname);
         if(dfname[s-1] != DIR_CHAR)
             dfname[s++] = DIR_CHAR;
         meStrcpy(dfname+s,getFileBaseName(sfname));
     }
-    if (((s=getFileStats(dfname,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE|gfsERRON_DIR,&stats,lfname)) != meFILETYPE_REGULAR) && (s != meFILETYPE_NOTEXIST)
+    if(((s=getFileStats(dfname,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE|gfsERRON_DIR,&stats,lfname)) & (meIOTYPE_REGULAR|meIOTYPE_NOTEXIST
 #if MEOPT_SOCKET
-        && (s != meFILETYPE_FTP)
+                                                                                                       |meIOTYPE_FTP|meIOTYPE_FTPE
 #endif
-        )
-        return NULL ;
+                                                                                                       )) == 0)
+        return NULL;
     fn = (lfname[0] == '\0') ? dfname:lfname;
     if(flags & meWRITECHECK_CHECK)
     {
         meUByte prompt[meBUF_SIZE_MAX+48];
         
         /* Check for write-out filename problems */
-        if(s == meFILETYPE_REGULAR)
+        if(s & meIOTYPE_REGULAR)
         {
             sprintf((char *)prompt,"%s already exists, overwrite",fn);
             if((flags & meWRITECHECK_NOPROMPT) || (mlyesno(prompt) <= 0))
@@ -2159,7 +2243,7 @@ int
 fileOp(int f, int n)
 {
     meUByte ft, sfname[meBUF_SIZE_MAX], dfname[meBUF_SIZE_MAX], lfname[meBUF_SIZE_MAX+22], *fn=NULL ;
-    int rr=meTRUE, dFlags=0, fileMask=-1 ;
+    int ii, rr=meTRUE, dFlags=0, fileMask=-1 ;
     
     if((n & (meFILEOP_FTPCLOSE|meFILEOP_DELETE|meFILEOP_MOVE|meFILEOP_COPY|meFILEOP_MKDIR|meFILEOP_CHMOD|meFILEOP_TOUCH)) == 0)
         rr = mlwrite(MWABORT,(meUByte *)"[No operation set]") ;
@@ -2186,64 +2270,61 @@ fileOp(int f, int n)
                 }
             }
         }
-        dFlags = meRWFLAG_DELETE ;
+        dFlags = meRWFLAG_DELETE;
     }
     else if(n & (meFILEOP_MOVE|meFILEOP_COPY))
     {
-        static meUByte prompt[]="Copy file" ;
+        static meUByte prompt[]="Copy file";
         if(n & meFILEOP_MOVE)
         {
-            prompt[0] = 'M' ;
-            prompt[2] = 'v' ;
-            prompt[3] = 'e' ;
-            dFlags = meRWFLAG_DELETE ;
+            prompt[0] = 'M';
+            prompt[2] = 'v';
+            prompt[3] = 'e';
+            dFlags = meRWFLAG_DELETE;
         }
         else
         {
-            prompt[0] = 'C' ;
-            prompt[2] = 'p' ;
-            prompt[3] = 'y' ;
+            prompt[0] = 'C';
+            prompt[2] = 'p';
+            prompt[3] = 'y';
         }
-        if((inputFileName(prompt,sfname,1) <= 0) ||
-           (inputFileName((meUByte *)"To", dfname,1) <= 0))
-            rr = 0 ;
+        if((inputFileName(prompt,sfname,1) <= 0) || (inputFileName((meUByte *)"To", dfname,1) <= 0))
+            rr = 0;
         else if((fn=writeFileChecks(dfname,sfname,lfname,(n & meFILEOP_WC_MASK))) == NULL)
-            rr = -6 ;
+            rr = -6;
         else
-            fileMask = meFileGetAttributes(sfname) ;
-        dFlags |= meRWFLAG_NODIRLIST ;
+            fileMask = meFileGetAttributes(sfname);
+        dFlags |= meRWFLAG_NODIRLIST;
         if(n & meFILEOP_PRESRVTS)
-            dFlags |= meRWFLAG_PRESRVTS ;
+            dFlags |= meRWFLAG_PRESRVTS;
     }
     else if(n & meFILEOP_MKDIR)
     {
-        int s ;
-        if (inputFileName((meUByte *)"Create dir", sfname,1) <= 0)
-            rr = 0 ;
+        if (inputFileName((meUByte *)"Create dir",sfname,1) <= 0)
+            rr = 0;
         /* check that nothing of that name currently exists */
-        else if (((s=getFileStats(sfname,0,NULL,NULL)) != meFILETYPE_NOTEXIST)
+        else if((getFileStats(sfname,0,NULL,NULL) & (meIOTYPE_NOTEXIST
 #if MEOPT_SOCKET
-                 && (s != meFILETYPE_FTP)
+                                                     |meIOTYPE_FTP|meIOTYPE_FTPE
 #endif
-                 )
+                                                     )) == 0)
         {
             mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[%s already exists]",sfname);
-            rr = -7 ;
+            rr = -7;
         }
         else
-            dFlags = meRWFLAG_MKDIR ;
+            dFlags = meRWFLAG_MKDIR;
     }
     else if(n & (meFILEOP_CHMOD|meFILEOP_TOUCH))
     {
-        int s ;
-        if((inputFileName((meUByte *) ((n & meFILEOP_CHMOD) ? "Chmod":"Touch"), sfname,1) <= 0) ||
+        if((inputFileName((meUByte *) ((n & meFILEOP_CHMOD) ? "Chmod":"Touch"),sfname,1) <= 0) ||
            (meGetString((meUByte *)"To",0,0,dfname,meBUF_SIZE_MAX) <= 0))
-            rr = 0 ;
+            rr = 0;
         /* check that nothing of that name currently exists */
-        else if(((s=getFileStats(sfname,0,NULL,NULL)) != meFILETYPE_REGULAR) &&
-                (s != meFILETYPE_DIRECTORY))
+        else if((((ii=getFileStats(sfname,0,NULL,NULL)) & (meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE)) != 0) ||
+                ((ii & (meIOTYPE_REGULAR|meIOTYPE_DIRECTORY)) == 0))
         {
-            mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[%s not a file or directory]",sfname);
+            mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[%s not a local file or directory]",sfname);
             rr = -6 ;
         }
         else if(n & meFILEOP_CHMOD)
@@ -2261,8 +2342,8 @@ fileOp(int f, int n)
 #endif
 #ifdef _WIN32
             HANDLE fp ;
-            FILETIME ft ;
-            SYSTEMTIME st ;
+            FILETIME ftm;
+            SYSTEMTIME st;
             if((fp=CreateFile((const char *) sfname,GENERIC_READ|GENERIC_WRITE,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,
                               FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
             {
@@ -2272,18 +2353,18 @@ fileOp(int f, int n)
             else
             {
                 GetSystemTime(&st) ;
-                SystemTimeToFileTime(&st,&ft) ;
+                SystemTimeToFileTime(&st,&ftm) ;
                 rr = meAtoi(dfname) ;
                 if(rr != 0)
                 {
                     ULARGE_INTEGER uli ;
-                    uli.LowPart = ft.dwLowDateTime ;
-                    uli.HighPart = ft.dwHighDateTime ;
+                    uli.LowPart = ftm.dwLowDateTime ;
+                    uli.HighPart = ftm.dwHighDateTime ;
                     uli.QuadPart += ((ULONGLONG) rr) * 10000000 ;
-                    ft.dwLowDateTime = uli.LowPart ;
-                    ft.dwHighDateTime = uli.HighPart ;
+                    ftm.dwLowDateTime = uli.LowPart ;
+                    ftm.dwHighDateTime = uli.HighPart ;
                 }
-                f = SetFileTime(fp,NULL,NULL,&ft) ;
+                f = SetFileTime(fp,NULL,NULL,&ftm) ;
                 CloseHandle(fp) ;
             }
 #endif
@@ -2299,8 +2380,8 @@ fileOp(int f, int n)
         if((rr = ffFileOp(sfname,fn,dFlags,fileMask)) > 0)
             return meTRUE ;
     }
-    resultStr[0] = '0' - rr ;
-    resultStr[1] = '\0' ;
+    resultStr[0] = '0' - rr;
+    resultStr[1] = '\0';
     return meABORT ;
 }
 #endif
@@ -2311,14 +2392,18 @@ fileOp(int f, int n)
 void
 autowriteout(register meBuffer *bp)
 {
-    meUByte fn[meBUF_SIZE_MAX], lname[meBUF_SIZE_MAX], *ff ;
+    meUByte fn[meBUF_SIZE_MAX], *ff;
     
     bp->autoTime = -1 ;
     
-    if(bp->fileName != NULL)
+    if((ff=bp->fileName) != NULL)
     {
-        getFileStats(bp->fileName,0,NULL,lname) ;
-        ff = (lname[0] == '\0') ? bp->fileName:lname ;
+#ifdef _UNIX
+        meUByte lname[meBUF_SIZE_MAX];
+        getFileStats(ff,0,NULL,lname);
+        if(lname[0] != '\0')
+            ff = lname;
+#endif
         if(!createBackupName(fn,ff,'#',1) &&
            (ffWriteFileOpen(&meiow,fn,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE,bp) > 0))
         {
@@ -2421,7 +2506,7 @@ writeOut(register meBuffer *bp, meUInt flags, meUByte *fn)
 #endif
 #endif
         /* Read in the new stats */
-        getFileStats(fn,0,&bp->stats,NULL) ;
+        getFileStats(fn,0,&bp->stats,NULL);
         /* Change the view status back to the file's permissions.
          * For root we let the super user do as they wish so no
          * read protection is added. */
@@ -2448,22 +2533,22 @@ static meUByte fileHasInLnEn[]="File had inconsistent line endings which will be
 static int
 writeout(register meBuffer *bp, int flags)
 {
-    meUByte lname[meBUF_SIZE_MAX], *fn ;
+    meUByte lname[meBUF_SIZE_MAX], *fn;
     
     if(!meStrcmp(bp->name,"*stdin*"))
-        fn = NULL ;
+        fn = NULL;
     else if((bp->name[0] == '*') || (bp->fileName == NULL))
         return mlwrite(MWABORT,(meUByte *)"[No file name set for buffer %s]",bp->name);
     else
     {
-        meStat stats ;
+        meStat stats;
         /*
          * Check that the file has not been modified since it was read it in. This
          * is a bit of a problem since the info we require is hidden in a buffer
          * structure which may not necessarily be the current buffer. If it is not
          * in the current buffer then dont bother to look for it.
          */
-        getFileStats(bp->fileName,0,&stats,lname) ;
+        getFileStats(bp->fileName,0,&stats,lname);
         if(flags & 1)
         {
             if(meFiletimeIsModified(stats.stmtime,bp->stats.stmtime))
@@ -2480,13 +2565,13 @@ writeout(register meBuffer *bp, int flags)
                 bp->fileFlag &= ~(meBFFLAG_BINARY|meBFFLAG_LTDIFF) ;
             }
         }
-        fn = (lname[0] == '\0') ? bp->fileName:lname ;
+        fn = (lname[0] == '\0') ? bp->fileName:lname;
         /* Quick check on the file write condition */
         if(writeCheck(fn,flags,&stats) <= 0)
             return meABORT;
     }
     
-    return writeOut(bp,((flags & 0x02) ? meRWFLAG_IGNRNRRW:0),fn) ;
+    return writeOut(bp,((flags & 0x02) ? meRWFLAG_IGNRNRRW:0),fn);
 }
 
 void
@@ -2516,7 +2601,7 @@ resetBufferNames(meBuffer *bp, meUByte *fname)
 int
 writeBuffer(int f, int n)
 {
-    meUByte fname[meBUF_SIZE_MAX], lname[meBUF_SIZE_MAX], *fn ;
+    meUByte fname[meBUF_SIZE_MAX], lname[meBUF_SIZE_MAX], *fn;
     
     if(inputFileName((meUByte *)"Write file",fname,1) <= 0)
         return meABORT ;
@@ -2622,20 +2707,20 @@ int
 appendBuffer(int f, int n)
 {
     register meUInt flags ;
-    register int ss ;
+    register int ft;
     meUByte fname[meBUF_SIZE_MAX], lname[meBUF_SIZE_MAX], *fn ;
     
     if(inputFileName((meUByte *)"Append to file",fname,1) <= 0)
         return meABORT ;
-    
-    if(((ss=getFileStats(fname,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE|gfsERRON_DIR,NULL,lname)) != meFILETYPE_REGULAR) && (ss != meFILETYPE_NOTEXIST))
-        return meABORT ;
+    if(((ft=getFileStats(fname,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE|gfsERRON_DIR,NULL,lname)) & (meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE)) ||
+       ((ft & (meIOTYPE_REGULAR|meIOTYPE_NOTEXIST)) == 0))
+        return mlwrite(MWABORT,(meUByte *)"[Unsupported file type to append to]");
     fn = (lname[0] == '\0') ? fname:lname ;
-    if(ss == meFILETYPE_NOTEXIST)
+    if(ft & meIOTYPE_NOTEXIST)
     {
         if(n & 0x01)
         {
-            meUByte prompt[meBUF_SIZE_MAX];
+            meUByte prompt[meBUF_SIZE_MAX+24];
             sprintf((char *)prompt, "%s does not exist, create",fn) ;
             if(mlyesno(prompt) <= 0)
                 return ctrlg(meFALSE,1);
@@ -2663,17 +2748,17 @@ appendBuffer(int f, int n)
 int
 changeFileName(int f, int n)
 {
-    register int s, ft ;
+    register int s;
     meUByte fname[meBUF_SIZE_MAX], lname[meBUF_SIZE_MAX], *fn ;
     
-    if ((s=inputFileName((meUByte *)"New file name",fname,1)) == meABORT)
-        return s ;
+    if((s=inputFileName((meUByte *)"New file name",fname,1)) == meABORT)
+        return s;
     
-    if(((ft=getFileStats(fname,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE|gfsERRON_DIR,NULL,lname)) != meFILETYPE_REGULAR) && (ft != meFILETYPE_NOTEXIST)
+    if((getFileStats(fname,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE|gfsERRON_DIR,NULL,lname) & (meIOTYPE_REGULAR|meIOTYPE_NOTEXIST
 #if MEOPT_SOCKET
-       && (ft != meFILETYPE_FTP)
+                                                                                               |meIOTYPE_FTP|meIOTYPE_FTPE
 #endif
-       )
+                                                                                               )) == 0)
         return meABORT ;
     fn = (lname[0] == '\0') ? fname:lname ;
     meNullFree(frameCur->bufferCur->fileName) ;

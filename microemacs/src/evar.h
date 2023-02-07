@@ -77,9 +77,9 @@ enum	{
 
 /**	list of recognized environment variables	*/
 
-#define	DEFVAR(s,v)	(meUByte *) s,
 #define	DEFFUN(v,s,h,t)
 #define	DEFDER(v,s,t)
+#define	DEFVAR(s,v)	(meUByte *) s,
 
 meUByte *envars[] =
 {
@@ -88,14 +88,12 @@ meUByte *envars[] =
 };
 
 #undef	DEFVAR
-#undef	DEFFUN
-#undef	DEFDER
+#define	DEFVAR(s,v)
 
 /**	list of recognized user function names	*/
 
-#define	DEFVAR(s,v)
+#undef	DEFFUN
 #define	DEFFUN(v,s,h,t)	h,
-#define	DEFDER(v,s,t)
 
 int funcHashs[] =
 {
@@ -112,15 +110,9 @@ meUByte funcOffst[26] = {
 #endif
 };
 
-#undef	DEFVAR
-#undef	DEFFUN
-#undef	DEFDER
-
 /**	list of recognized user function types	*/
-
-#define	DEFVAR(s,v)
+#undef	DEFFUN
 #define	DEFFUN(v,s,h,t)	t,
-#define	DEFDER(v,s,t)
 
 meUByte funcTypes[] =
 {
@@ -128,9 +120,18 @@ meUByte funcTypes[] =
 #include	"evar.def"
 };
 
-#undef	DEFVAR
 #undef	DEFFUN
-#undef	DEFDER
+#define	DEFFUN(v,s,h,t)	(meUByte *) s,
+
+meUByte *funcNames[] =
+{
+    NULL,
+#include	"evar.def"
+    NULL
+};
+
+#undef	DEFFUN
+#define	DEFFUN(v,s,h,t)
 
 /**	list of user directive types	*/
 #define DRFLAG_ASGLEXECLVL 0x001
@@ -148,10 +149,10 @@ meUByte funcTypes[] =
 
 #define DRTESTFAIL   DRFLAG_OPTARG
 #define DRUNTILF     (DRUNTIL|DRTESTFAIL)
+#define DRWHILEF     (DRWHILE|DRTESTFAIL)
 #define DRLOOPMAX    6
 
-#define	DEFVAR(s,v)
-#define	DEFFUN(v,s,h,t)
+#undef	DEFDER
 #define	DEFDER(v,s,t)	t,
 
 int dirTypes[] =
@@ -162,22 +163,5 @@ int dirTypes[] =
 #undef	DEFVAR
 #undef	DEFFUN
 #undef	DEFDER
-
-#if KEY_TEST
-#define	DEFVAR(s,v)
-#define	DEFFUN(v,s,h,t)	(meUByte *) s,
-#define	DEFDER(v,s,t)
-
-meUByte *funcNames[] =
-{
-    NULL,
-#include	"evar.def"
-    NULL
-};
-
-#undef	DEFVAR
-#undef	DEFFUN
-#undef	DEFDER
-#endif
 
 #endif /* maindef */

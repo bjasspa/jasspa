@@ -491,29 +491,32 @@ getcwcol(void)
     meUByte *off ;
     int ii, col=0 ;
     
-    windCurLineOffsetEval(frameCur->windowCur) ;
-    
-    off = frameCur->windowCur->dotCharOffset->text ;
-    ii = frameCur->windowCur->dotOffset ;
-    while(--ii >= 0)
-        col += *off++ ;
+    if((ii = frameCur->windowCur->dotOffset) > 0)
+    {
+        windCurLineOffsetEval(frameCur->windowCur) ;
+        off = frameCur->windowCur->dotCharOffset->text ;
+        do {
+            col += *off++;
+        } while(--ii > 0);
+    }
     return col ;
 }
 int
 setcwcol(int col)
 {
-    meUByte *off ;
-    int ii, jj ;
+    meUByte *off;
+    int ii=0, jj;
     
-    windCurLineOffsetEval(frameCur->windowCur) ;
-    
-    off = frameCur->windowCur->dotCharOffset->text ;
-    ii = 0 ;
-    jj = frameCur->windowCur->dotLine->length ;
-    while((ii < jj) && (col > 0))
-        col -= off[ii++] ;
-    frameCur->windowCur->dotOffset = ii ;
-    return ((col) ? meFALSE:meTRUE) ;
+    if((col > 0) && ((jj = frameCur->windowCur->dotLine->length) > 0))
+    {
+        windCurLineOffsetEval(frameCur->windowCur);
+        off = frameCur->windowCur->dotCharOffset->text;
+        do {
+            col -= off[ii++] ;
+        } while((ii < jj) && (col > 0));
+    }
+    frameCur->windowCur->dotOffset = ii;
+    return ((col) ? meFALSE:meTRUE);
 }
 
 /* transpose-character. Twiddle the two characters on either side of dot. If
@@ -2552,62 +2555,81 @@ meAnchorGet(meBuffer *bp, meInt name)
         if(p->name == name)
         {
             /* found the mark - do the buisness */
-            meLine *lp ;
+            register meLine *plp=p->line, *blp;
+            register meInt bln;
 #if MEOPT_NARROW
 try_again:
 #endif
-            lp = bp->baseLine ;
-            bp->dotLine = p->line ;
-            if((bp->dotOffset = p->offs) > meLineGetLength(p->line))
-                bp->dotOffset = meLineGetLength(p->line) ;
-            bp->dotLineNo = bp->lineCount ;
-            do {
-                if(lp == bp->dotLine)
-                    return meTRUE ;
-                lp = meLineGetPrev(lp) ;
-            } while ((--bp->dotLineNo) >= 0) ;
-            
+            blp = bp->baseLine;
+            if((bp->dotOffset = p->offs) > meLineGetLength(plp))
+                bp->dotOffset = meLineGetLength(plp);
+            bln = bp->lineCount;
+            if(p->frwd)
+            {
+                do {
+                    if((blp = meLineGetNext(blp)) == plp)
+                    {
+                        bp->dotLine = blp;
+                        bp->dotLineNo = bp->lineCount-bln;
+                        p->frwd = (bln > bp->dotLineNo);
+                        return meTRUE;
+                    }
+                } while(--bln >= 0);
+            }
+            else
+            {
+                do {
+                    if(blp == plp)
+                    {
+                        bp->dotLine = blp;
+                        bp->dotLineNo = bln;
+                        p->frwd = (bln < (bp->lineCount>>1));
+                        return meTRUE;
+                    }
+                    blp = meLineGetPrev(blp);
+                } while(--bln >= 0);
+            }            
             /* Okay, we failed to find the mark so only chance now is
              * the mark is in a narrow
              */
 #if MEOPT_NARROW
             {
-                meNarrow *nrrw ;
+                meNarrow *nrrw;
                 
-                nrrw=frameCur->bufferCur->narrow ;
+                nrrw=frameCur->bufferCur->narrow;
                 while(nrrw != NULL)
                 {
-                    lp = nrrw->slp ;
+                    blp = nrrw->slp;
                     for (;;)
                     {
-                        if(lp == bp->dotLine)
+                        if(blp == plp)
                         {
                             /* We've found the mark in this narrow, remove the
                              * narrow and try again */
-                            meBufferRemoveNarrow(bp,nrrw,NULL,0) ;
-                            goto try_again ;
+                            meBufferRemoveNarrow(bp,nrrw,NULL,0);
+                            goto try_again;
                         }
-                        if(lp == nrrw->elp)
+                        if(blp == nrrw->elp)
                             break ;
-                        lp = meLineGetNext(lp) ;
+                        blp = meLineGetNext(blp);
                     }
-                    nrrw = nrrw->next ;
+                    nrrw = nrrw->next;
                 }
             }
 #endif
+            break;
         }
         p = p->next;
     }
     /* Failed to find mark - set to the end of file */
-    bp->dotLineNo = bp->lineCount ;
-    bp->dotLine = bp->baseLine ;
-    bp->dotOffset = 0 ;
-    return meFALSE ;
+    bp->dotLineNo = bp->lineCount;
+    bp->dotLine = bp->baseLine;
+    bp->dotOffset = 0;
+    return meFALSE;
 }
 
 int
-meAnchorSet(meBuffer *bp, meInt name, 
-            meLine *lp, meUShort off, int silent)
+meAnchorSet(meBuffer *bp, meInt name, meLine *lp, meInt lineNo, meUShort off, int silent)
 {
     meAnchor *p = bp->anchorList;
     
@@ -2642,9 +2664,10 @@ meAnchorSet(meBuffer *bp, meInt name,
         if(!silent)
             mlwrite(MWCLEXEC,(meUByte *)"[overwriting existing mark]");
     }    
-    p->name = name ;
-    p->line = lp ;
-    p->offs = off ;
+    p->name = name;
+    p->line = lp;
+    p->offs = off;
+    p->frwd = (lineNo < (bp->lineCount>>1));
     /* mark the line as having an anchor */
     lp->flag |= meAnchorGetLineFlag(p) ;
     return meTRUE ;
@@ -2666,7 +2689,7 @@ setAlphaMark(int f, int n)
     if(cc < 0)
         return ctrlg(meFALSE,1) ;
     
-    return meAnchorSet(frameCur->bufferCur,cc,frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset,0) ;
+    return meAnchorSet(frameCur->bufferCur,cc,frameCur->windowCur->dotLine,frameCur->windowCur->dotLineNo,frameCur->windowCur->dotOffset,0) ;
 }
 
 int

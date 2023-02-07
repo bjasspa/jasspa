@@ -30,14 +30,11 @@
 
 #define __EXECC                 /* Define program name */
 
-#define KEY_TEST 0
-
 #include "emain.h"
 #include "efunc.h"
 #include "eskeys.h"
 #include "evar.h"
 #include "evers.h"
-
 
 int relJumpTo;
 
@@ -52,17 +49,41 @@ meUByte *
 token(meUByte *src, meUByte *tok)
 {
     register meUByte cc, *ss, *dd, *tokEnd ;
-    meUShort key ;
+    meUShort key;
     
-    ss = src ;
-    dd = tok ;
+    ss = src;
+    dd = tok;
+#if MEOPT_BYTECOMP
+    if((cc=*ss++) & BCLEAD)
+    {
+        if((cc & BCSTRF) == 0)
+        {
+            /* 2 byte code 0xFTII - F = 0x80; T = TKENV,TKFUN,TKDIR; 0xII = index  */
+            *dd++ = cc;
+            *dd++ = *ss++;
+            *dd = '\0';
+        }
+        else
+        {
+            /* lengthed-str, 0xFLSSSS... 0xFLLLSSSS... F = 0xC0; L = 0 to 0x1F length; or F = 0xE0; L = 0x20 to 0x0FFF;  SSS.. = String */ 
+            int len = (cc & BCSLLM);
+            if(cc & BCSTRT)
+                len = (len << 7) | (*ss++ - '0');
+            memcpy(dd,ss,len);
+            dd[len] = '\0';
+            ss += len;
+        }
+        return ss;
+    }
+#endif    
+    if((cc == ' ') || (cc == '\t'))
+    {
+        /*---       First scan past any whitespace in the source string */
+        while(((cc = *ss++) == ' ') || (cc == '\t'))
+            ;
+    }
     /* note tokEnd is set to tok+bSize-5 to leave room for a special key and a terminating \0 */
     tokEnd = dd + meTOKENBUF_SIZE_MAX-5 ;
-    
-    /*---       First scan past any whitespace in the source string */
-    
-    while(((cc = *ss++) == ' ') || (cc == '\t'))
-        ;
     
     /*---       Scan through the source string */
     if(cc == '"')
@@ -273,11 +294,85 @@ meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
     /* if we are not interactive, go get it! */
     if(clexec == meTRUE)
     {
-        meUByte buff[meTOKENBUF_SIZE_MAX], *res, *ss, cc ;
+        meUByte buff[meTOKENBUF_SIZE_MAX], *res, *ss, cc;
         
         /* grab token and advance past */
         ss = execstr ;
-        execstr = token(ss, buff);
+#if MEOPT_BYTECOMP
+        if((cc=*ss) & BCLEAD)
+        {
+            res = ss+1;
+            if(cc & BCSTRF)
+            {
+                /* lengthed-str, 0xFLSSSS... 0xFLLLSSSS... F = 0xC0; L = 0 to 0x1F length; or F = 0xE0; L = 0x20 to 0x0FFF;  SSS.. = String */ 
+                int len = (cc & BCSLLM);
+                if(cc & BCSTRT)
+                    len = (len << 7) | (*res++ - '0');
+                execstr = res+len;
+                switch(getMacroType(*res))
+                {
+                case TKSTR:
+                    len--;
+                    res++;
+                case TKCMD:
+                case TKLIT:
+                    ss = buffer ;
+                    if(option & MLMACNORT)
+                    {
+                        while((*ss))
+                        {
+                            ss++ ;
+                            size-- ;
+                        }
+                    }
+                    if(len >= size)
+                        len = size-1;
+                    memcpy(ss,res,len);
+                    ss[len] = '\0';
+                    if(!(option & MLFFZERO))
+                    {
+                        while((cc=*ss++) != '\0')
+                        {
+                            if(cc == meCHAR_LEADER)
+                            {
+                                res = ss;
+                                if(*ss++ != meCHAR_TRAIL_LEADER)
+                                    res[-1] = '\0';
+                                else
+                                {
+                                    while((cc=*ss++) != '\0')
+                                    {
+                                        if((cc == meCHAR_LEADER) && (*ss++ != meCHAR_TRAIL_LEADER))
+                                            break;
+                                        *res++ = cc;
+                                    }
+                                    *res = '\0' ;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    return meTRUE ;
+                }
+                memcpy(buff,res,len);
+                buff[len] = '\0';
+            }
+            else
+            {
+                execstr += 2;
+                if(cc == BCFUN)
+                {
+                    res = gtfun((*res)-'0',NULL);
+                    goto chk_cpy_res;
+                }
+                buff[0] = cc;
+                buff[1] = *res;
+                buff[2] = '\0';
+            }
+        }
+        else
+#endif
+            execstr = token(ss,buff);
         
         if((buff[0] == '@') && (buff[1] == 'm') && (buff[2] == 'x'))
         {
@@ -299,6 +394,9 @@ meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
         {
             /* evaluate it */
             res = getval(buff) ;
+#if MEOPT_BYTECOMP
+chk_cpy_res:
+#endif
             if(res != (meUByte *) abortm)
             {
                 ss = buffer ;
@@ -464,9 +562,9 @@ fnctest(void)
             }
         }
     }
-    if(count)
-        mlwrite(MWSTDERRWRT,(meUByte *) "!test: %d Error(s) Detected",count);
-    return (count);
+    if(!count)
+        return meTRUE;
+    return mlwrite(MWABORT|MWSTDERRWRT,(meUByte *) "!test: %d Error(s) Detected",count);
 }
 #endif
 
@@ -492,7 +590,28 @@ domstore(meUByte *cline)
         lpStoreBp->lineCount++ ;
         return meTRUE ;
     }
-    cc = *cline ;
+    cc = *cline;
+#if MEOPT_BYTECOMP
+    if(cc & BCLEAD)
+    {
+        if((cc == BCDIR) && (cline[1] == ('0'+DREMACRO)) && !execlevel--)
+        {
+            mcStore = meFALSE;
+            lpStore = NULL;
+            execlevel = 0 ;
+            return meTRUE ;
+        }
+        ss = cline+1;
+        if((cc == (BCLEAD|BCSTRF|1)) && isDigit(*ss))
+        {
+            cc = *++ss;
+            ss++;
+        }
+        if((cc == (BCLEAD|BCSTRF|12)) && !memcmp(ss,getCommandName(CK_DEFMAC),12))
+            execlevel++ ;
+        return addLine(lpStore,cline) ;
+    }
+#endif
     /* eat leading spaces */
     while((cc == ' ') || (cc == '\t'))
         cc = *++cline ;
@@ -517,7 +636,7 @@ domstore(meUByte *cline)
         while((cc == ' ') || (cc == '\t'))
             cc = *++ss ;
     }
-    if((cc == 'd') && !meStrncmp(ss, getCommandName(CK_DEFMAC),12) &&
+    if((cc == 'd') && !meStrncmp(ss,getCommandName(CK_DEFMAC),12) &&
        (((cc=ss[12]) == ' ') || (cc == '\t') || (cc == ';') || (cc == '\0')))
         execlevel++ ;
     return addLine(lpStore,cline) ;
@@ -551,314 +670,458 @@ domstore(meUByte *cline)
 static int
 docmd(meUByte *cline, register meUByte *tkn)
 {
-    int  f ;           /* default argument flag */
-    int  n ;           /* numeric repeat value */
-    meUByte cc ;         /* Character */
-    int  status ;      /* return status of function */
-    int  nmacro ;      /* run as it not a macro? */
-    
-    cc = *cline ;
-    /* eat leading spaces */
-    while((cc == ' ') || (cc == '\t'))
-        cc = *++cline ;
-    
-    /* dump comments, empties and labels here */
-    if((cc == ';') || (cc == '\0') || (cc == '*'))
-        return meTRUE ;
+    register int ii;   /* index to function to execute */
+    int f;             /* default argument flag */
+    int n;             /* numeric repeat value */
+    meUByte cc,dd;     /* Character */
+    int  status;       /* return status of function */
+    int  nmacro;       /* run as it not a macro? */
     
     nmacro = meFALSE;
     execstr = cline;    /* and set this one as current */
     meRegCurr->force = 0 ;
-    
-    /* process argument */
+        
+    cc = *execstr;
 try_again:
-    if((status=getMacroType(cc)) == TKDIR)
+#if MEOPT_BYTECOMP
+    if(cc & BCLEAD)
     {
-        /* SWP 2003-12-22 Used to use the biChopFindString to look the
-         * derivative up in a name table, but after profiling found this to be
-         * the second biggest consumer of cpu and the function was 3rd (token
-         * was the worst at 42%, the call to look-up the derivative was second
-         * taking over 9% and docmd took 7%).
-         * 
-         * By changing this to an optimised set of if statements embedded in
-         * docmd the time usage in my tests dropped from 4.52 sec to 2.73, i.e.
-         * 40% time saving.
-         * 
-         * So yes this does look horrid but its fast!
-         */
-        int dirType ;
-        meUByte c1, c2, c3;
-        
-        if(((c1 = *++execstr) <= ' ') || ((c2 = *++execstr) <= ' ') || ((c3 = *++execstr) <= ' '))
+        /* byte compiled line */
+        execstr++;
+        if(cc == BCDIR)
         {
-            if((c1 != 'i') || (c2 != 'f') || (c3 > ' '))
-                return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown directive %s]",cline);
-            status = DRIF ;
+            int dirType;
+            status = (*execstr++)-'0';
+            dirType = dirTypes[status];
+            if(execlevel == 0)
+            {
+bcelif_jump:
+                if(dirType & DRFLAG_TEST)
+                {
+                    if(macarg(tkn) <= 0)
+                        return meFALSE;
+                    if(!meAtol(tkn))
+                    {
+                        /* if DRTGOTO or DRTJUMP and the test failed, we dont
+                         * need the argument and if DRIIF we don't want the switch */
+                        dirType &= ~(DRFLAG_ARG|DRFLAG_SWITCH);
+                        execlevel += (dirType & DRFLAG_AMSKEXECLVL);
+                        status |= DRTESTFAIL;
+                    }
+                }
+                else if(dirType & DRFLAG_ASGLEXECLVL)
+                    /* DRELIF DRELSE */
+                    execlevel += 2 ;
+                if(dirType & DRFLAG_ARG)
+                {
+                    if(meGetString(NULL,MLNOHIST|MLFFZERO|MLEXECNOUSER,0,tkn,meBUF_SIZE_MAX) <= 0)
+                    {
+                        if(!(dirType & DRFLAG_OPTARG))
+                            return meFALSE;
+                        f = meFALSE;
+                        n = 1;
+                    }
+                    else if(dirType & DRFLAG_NARG)
+                    {
+                        f = meTRUE;
+                        n = meAtoi(tkn);
+                        if(dirType & DRFLAG_JUMP)
+                            relJumpTo = n;
+                    }
+                }
+                if(!(dirType & DRFLAG_SWITCH))
+                    return status;
+                
+                /* DRFORCE, DRNMACRO, DRABORT, DRBELL, DRIIF, DRRETURN */
+                switch(status)
+                {
+                case DRABORT:
+                    if(f)
+                        TTdoBell(n);
+                    return meFALSE;
+                case DRBELL:
+                    TTdoBell(n);
+                    return meTRUE;
+                case DREMACRO:
+                    return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unexpected !emacro]");
+                case DRFORCE:
+                    (meRegCurr->force)++;
+                    cc = *execstr;
+                    goto try_again;
+                case DRIIF:
+                    cc = *execstr;
+                    goto try_again;
+                case DRNMACRO:
+                    nmacro = meTRUE;
+                    cc = *execstr;
+                    goto try_again;
+                case DRRETURN:
+                    /* Stop the debugger kicking in on a !return, a macro doing !return 0 is okay */
+                    meRegCurr->force = 1;
+                    return (n) ? DRRETURN:meFALSE;
+                }
+            }
+            if(dirType & DRFLAG_SMSKEXECLVL)
+            {
+                if(execlevel == 1)
+                {
+                    execlevel = 0 ;
+                    if(status == DRELIF)
+                    {
+                        dirType = DRFLAG_ASGLEXECLVL|DRFLAG_TEST;
+                        goto bcelif_jump;
+                    }
+                }
+                else if(dirType & DRFLAG_SDBLEXECLVL)
+                    execlevel -= 2;
+            }
+            else if(dirType & DRFLAG_AMSKEXECLVL)
+                execlevel += 2;
+            return meTRUE;
         }
-        else
-        {
-            while((cc=*++execstr) > ' ')
-                ;
-            status = -1 ;
-            if(c1 > 'e')
-            {
-                if(c1 < 'r')
-                {
-                    if(c1 < 'i')
-                    {
-                        if(c1 == 'f')
-                        {
-                            if((c2 == 'o') && (c3 == 'r'))
-                                status = DRFORCE ;
-                        }
-                        else if(c1 == 'g')
-                        {
-                            if((c2 == 'o') && (c3 == 't'))
-                                status = DRGOTO ;
-                        }
-                    }
-                    else if(c1 == 'i')
-                    {
-                        if((c2 == 'i') && (c3 == 'f'))
-                            status = DRIIF ;
-                    }
-                    else if(c1 == 'j')
-                    {
-                        if((c2 == 'u') && (c3 == 'm'))
-                            status = DRJUMP ;
-                    }
-                    else if(c1 == 'n')
-                    {
-                        if((c2 == 'm') && (c3 == 'a'))
-                            status = DRNMACRO ;
-                    }
-                }
-                else if(c1 == 'r')
-                {
-                    if(c2 == 'e')
-                    {
-                        if(c3 == 'p')
-                            status = DRREPEAT ;
-                        else if(c3 == 't')
-                            status = DRRETURN ;
-                    }
-                }
-                else if(c1 > 't')
-                {
-                    if(c1 == 'u')
-                    {
-                        if((c2 == 'n') && (c3 == 't'))
-                            status = DRUNTIL ;
-                    }
-                    else if(c1 == 'w')
-                    {
-                        if((c2 == 'h') && (c3 == 'i'))
-                            status = DRWHILE ;
-                    }
-                }
-                else if(c1 == 't')
-                {
-                    if((c2 == 'g') && (c3 == 'o'))
-                        status = DRTGOTO ;
-                    if((c2 == 'j') && (c3 == 'u'))
-                        status = DRTJUMP ;
-#if KEY_TEST
-                    else if((c2 == 'e') && (c3 == 's'))
-                        status = DRTEST ;
-#endif
-                }
-            }
-            else if(c1 == 'e')
-            {
-                if(c2 > 'l')
-                {
-                    if((c2 == 'n') && (c3 == 'd'))
-                        status = DRENDIF ;
-                    else if((c2 == 'm') && (c3 == 'a'))
-                        status = DREMACRO ;
-                }
-                else if(c2 == 'l')
-                {
-                    if(c3 == 'i')
-                        status = DRELIF ;
-                    else if(c3 == 's')
-                        status = DRELSE ;
-                }
-            }
-            else if(c1 > 'b')
-            {
-                if((c2 == 'o') && (c3 == 'n'))
-                    status = (c1 == 'c') ? DRCONTIN:DRDONE;
-            }
-            else if(c1 == 'b')
-            {
-                if((c2 == 'r') && (c3 == 'e'))
-                    /* Stop DRBREAK effecting exec if execlevel != 0 */
-                    status = (execlevel == 0) ? DRBREAK:DRABORT;
-                else if((c2 == 'e') && (c3 == 'l'))
-                    status = DRBELL;
-            }
-            else if((c1 == 'a') && (c2 == 'b') && (c3 == 'o'))
-                status = DRABORT;
-            
-            if(status < 0)
-                return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown directive %s]",cline);
-        }        
-        dirType = dirTypes[status] ;
-        
-        if(execlevel == 0)
-        {
-elif_jump:
-            if(dirType & DRFLAG_TEST)
-            {
-                if(macarg(tkn) <= 0)
-                    return meFALSE ;
-                if(!meAtol(tkn))
-                {
-                    /* if DRTGOTO or DRTJUMP and the test failed, we dont
-                     * need the argument and if DRIIF we don't want the switch */
-                    dirType &= ~(DRFLAG_ARG|DRFLAG_SWITCH) ;
-                    execlevel += (dirType & DRFLAG_AMSKEXECLVL) ;
-                    status |= DRTESTFAIL ;
-                }
-            }
-            else if(dirType & DRFLAG_ASGLEXECLVL)
-                /* DRELIF DRELSE */
-                execlevel += 2 ;
-            if(dirType & DRFLAG_ARG)
-            {
-                if(meGetString(NULL,MLNOHIST|MLFFZERO|MLEXECNOUSER,0,tkn,meBUF_SIZE_MAX) <= 0)
-                {
-                    if(!(dirType & DRFLAG_OPTARG))
-                        return meFALSE ;
-                    f = meFALSE;
-                    n = 1 ;
-                }
-                else if(dirType & DRFLAG_NARG)
-                {
-                    f = meTRUE;
-                    n = meAtoi(tkn) ;
-                    if(dirType & DRFLAG_JUMP)
-                        relJumpTo = n ;
-                }
-            }
-            if(!(dirType & DRFLAG_SWITCH))
-                return status ;
-            
-            /* DRTEST, DRFORCE, DRNMACRO, DRABORT, DRBELL, DRIIF, DRRETURN */
-            switch(status)
-            {
-            case DRABORT:
-                if(f)
-                    TTdoBell(n) ;
-                return meFALSE ;
-            case DRBELL:
-                TTdoBell(n) ;
-                return meTRUE ;
-            case DREMACRO:
-                return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unexpected !emacro]");
-            case DRFORCE:
-                (meRegCurr->force)++ ;
-                while((cc == ' ') || (cc == '\t'))
-                    cc = *++execstr;
-                goto try_again;
-            case DRIIF:
-                while(((cc=*execstr) == ' ') || (cc == '\t'))
-                    execstr++;
-                goto try_again;
-            case DRNMACRO:
-                nmacro = meTRUE;
-                while((cc == ' ') || (cc == '\t'))
-                    cc = *++execstr;
-                goto try_again;
-            case DRRETURN:
-                /* Stop the debugger kicking in on a !return, a macro doing !return 0 is okay */
-                meRegCurr->force = 1 ;
-                return (n) ? DRRETURN:meFALSE ;
-#if KEY_TEST
-            case DRTEST:
-                /* Test directive. */
-                return ((fnctest() == 0));
-#endif
-            }
-        }
-        
-        if(dirType & DRFLAG_SMSKEXECLVL)
-        {
-            if(execlevel == 1)
-            {
-                execlevel = 0 ;
-                if(status == DRELIF)
-                {
-                    dirType = DRFLAG_ASGLEXECLVL|DRFLAG_TEST ;
-                    goto elif_jump ;
-                }
-            }
-            else if(dirType & DRFLAG_SDBLEXECLVL)
-                execlevel -= 2 ;
-        }
-        else if(dirType & DRFLAG_AMSKEXECLVL)
-            execlevel += 2 ;
-        
-        return meTRUE ;
-    }
-    /* if not a directive and execlevel > 0 ignore it */
-    if(execlevel)
-        return meTRUE ;
-    
-    /* first set up the default command values */
-    f = meFALSE;
-    n = 1;
-    execstr = token(execstr,tkn);
-    if(status != TKCMD)
-    {
-        meUByte *tmp ;
-        
-        if((tmp = getval(tkn)) == abortm)
-            return meFALSE ;
-        n = meAtoi(tmp) ;
-        f = meTRUE;
-        
-        execstr = token(execstr, tkn);
-        if(getMacroTypeS(tkn) != TKCMD)
-            return meFALSE ;
-    }
-    
-    {
-        register int idx ; /* index to function to execute */
-        
+        /* if not a directive and execlevel > 0 ignore it */
         if(execlevel)
             return meTRUE ;
         
-        /* and match the token to see if it exists */
-        if ((idx = decode_fncname(tkn,0)) < 0)
-            return meFALSE ;
-        if(nmacro)
-            clexec = meFALSE ;
-        cmdstatus = (execFunc(idx,f,n) > 0) ;       /* call the function */
-        clexec = meTRUE ;
-        if(cmdstatus)
-            status = meTRUE ;
-        else if(TTbreakFlag)
+        /* This must now be either be a. &func ... <cmd>; b. ## <cmd>; c. <var> <cmd>; d. <cmd> - the &func, ## & <cmd> will all be compiled (1st byte > 0x7f) */
+        f = meFALSE;
+        n = 1;
+        if(cc == BCFUN)
         {
-            if(meRegCurr->force > 1)
+            meUByte *ns;
+            if((ns = gtfun((*execstr++)-'0',NULL)) == abortm)
+                return meFALSE;
+            n = meAtoi(ns);
+            f = meTRUE;
+            cc = *execstr++;
+            if((cc & (BCLEAD|BCSTRF)) == (BCLEAD|BCSTRF))
             {
-                /* A double !force - macro says \CG is okay, 
-                 * remove all input (must remove the \CG) and rest flag
-                 */
-                TTinflush() ;
-                TTbreakFlag = 0 ;
-                status = meTRUE ;
+                ii = (cc & BCSLLM);
+                if(cc & BCSTRT)
+                    ii = (ii << 7) | (*execstr++ - '0');
+                dd = getMacroType(execstr[0]);
+            }
+        }
+        else if((cc & (BCLEAD|BCSTRF)) == (BCLEAD|BCSTRF))
+        {
+            ii = (cc & BCSLLM);
+            if(cc & BCSTRT)
+                ii = (ii << 7) | (*execstr++ - '0');
+            if((dd = getMacroType(execstr[0])) != TKCMD)
+            {
+                meUByte *vv;
+                memcpy(tkn,execstr,ii);
+                tkn[ii] = '\0';
+                execstr += ii;
+                if(dd == TKLIT)
+                    n = meAtoi(tkn);
+                else if((vv = getval(tkn)) == abortm)
+                    return meFALSE;
+                else
+                    n = meAtoi(vv);
+                f = meTRUE;
+                cc = *execstr++;
+                if((cc & (BCLEAD|BCSTRF)) == (BCLEAD|BCSTRF))
+                {
+                    ii = (cc & BCSLLM);
+                    if(cc & BCSTRT)
+                        ii = (ii << 7) | (*execstr++ - '0');
+                    dd = getMacroType(execstr[0]);
+                }
+            }
+        }
+        if(((cc & (BCLEAD|BCSTRF)) != (BCLEAD|BCSTRF)) || (dd != TKCMD))
+            /* not a command */
+            return meFALSE;
+        memcpy(tkn,execstr,ii);
+        tkn[ii] = '\0';
+        execstr += ii;
+    }
+    else
+#endif
+    {
+        /* eat leading spaces */
+        while((cc == ' ') || (cc == '\t'))
+            cc = *++execstr;
+        
+        /* dump comments, empties and labels here */
+        if((cc == ';') || (cc == '\0') || (cc == '*'))
+            return meTRUE ;
+        
+        /* process argument */
+        if((status=getMacroType(cc)) == TKDIR)
+        {
+            /* SWP 2003-12-22 Used to use the biChopFindString to look the
+             * derivative up in a name table, but after profiling found this to be
+             * the second biggest consumer of cpu and the function was 3rd (token
+             * was the worst at 42%, the call to look-up the derivative was second
+             * taking over 9% and docmd took 7%).
+             * 
+             * By changing this to an optimised set of if statements embedded in
+             * docmd the time usage in my tests dropped from 4.52 sec to 2.73, i.e.
+             * 40% time saving.
+             * 
+             * So yes this does look horrid but its fast!
+             */
+            int dirType ;
+            meUByte c1, c2, c3;
+            
+            if(((c1 = *++execstr) <= ' ') || ((c2 = *++execstr) <= ' ') || ((c3 = *++execstr) <= ' '))
+            {
+                if((c1 != 'i') || (c2 != 'f') || (c3 > ' '))
+                    return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown directive %s]",cline);
+                status = DRIF ;
             }
             else
-                status = meFALSE ;
+            {
+                while((cc=*++execstr) > ' ')
+                    ;
+                status = -1 ;
+                if(c1 > 'e')
+                {
+                    if(c1 < 'r')
+                    {
+                        if(c1 < 'i')
+                        {
+                            if(c1 == 'f')
+                            {
+                                if((c2 == 'o') && (c3 == 'r'))
+                                    status = DRFORCE ;
+                            }
+                            else if(c1 == 'g')
+                            {
+                                if((c2 == 'o') && (c3 == 't'))
+                                    status = DRGOTO ;
+                            }
+                        }
+                        else if(c1 == 'i')
+                        {
+                            if((c2 == 'i') && (c3 == 'f'))
+                                status = DRIIF ;
+                        }
+                        else if(c1 == 'j')
+                        {
+                            if((c2 == 'u') && (c3 == 'm'))
+                                status = DRJUMP ;
+                        }
+                        else if(c1 == 'n')
+                        {
+                            if((c2 == 'm') && (c3 == 'a'))
+                                status = DRNMACRO ;
+                        }
+                    }
+                    else if(c1 == 'r')
+                    {
+                        if(c2 == 'e')
+                        {
+                            if(c3 == 'p')
+                                status = DRREPEAT ;
+                            else if(c3 == 't')
+                                status = DRRETURN ;
+                        }
+                    }
+                    else if(c1 > 't')
+                    {
+                        if(c1 == 'u')
+                        {
+                            if((c2 == 'n') && (c3 == 't'))
+                                status = DRUNTIL ;
+                        }
+                        else if(c1 == 'w')
+                        {
+                            if((c2 == 'h') && (c3 == 'i'))
+                                status = DRWHILE ;
+                        }
+                    }
+                    else if(c1 == 't')
+                    {
+                        if((c2 == 'g') && (c3 == 'o'))
+                            status = DRTGOTO ;
+                        if((c2 == 'j') && (c3 == 'u'))
+                            status = DRTJUMP ;
+                    }
+                }
+                else if(c1 == 'e')
+                {
+                    if(c2 > 'l')
+                    {
+                        if((c2 == 'n') && (c3 == 'd'))
+                            status = DRENDIF ;
+                        else if((c2 == 'm') && (c3 == 'a'))
+                            status = DREMACRO ;
+                    }
+                    else if(c2 == 'l')
+                    {
+                        if(c3 == 'i')
+                            status = DRELIF ;
+                        else if(c3 == 's')
+                            status = DRELSE ;
+                    }
+                }
+                else if(c1 > 'b')
+                {
+                    if((c2 == 'o') && (c3 == 'n'))
+                        status = (c1 == 'c') ? DRCONTIN:DRDONE;
+                }
+                else if(c1 == 'b')
+                {
+                    if((c2 == 'r') && (c3 == 'e'))
+                        /* Stop DRBREAK effecting exec if execlevel != 0 */
+                        status = (execlevel == 0) ? DRBREAK:DRABORT;
+                    else if((c2 == 'e') && (c3 == 'l'))
+                        status = DRBELL;
+                }
+                else if((c1 == 'a') && (c2 == 'b') && (c3 == 'o'))
+                    status = DRABORT;
+                
+                if(status < 0)
+                    return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown directive %s]",cline);
+            }        
+            dirType = dirTypes[status] ;
+            
+            if(execlevel == 0)
+            {
+elif_jump:
+                if(dirType & DRFLAG_TEST)
+                {
+                    if(macarg(tkn) <= 0)
+                        return meFALSE ;
+                    if(!meAtol(tkn))
+                    {
+                        /* if DRTGOTO or DRTJUMP and the test failed, we dont
+                         * need the argument and if DRIIF we don't want the switch */
+                        dirType &= ~(DRFLAG_ARG|DRFLAG_SWITCH) ;
+                        execlevel += (dirType & DRFLAG_AMSKEXECLVL) ;
+                        status |= DRTESTFAIL ;
+                    }
+                }
+                else if(dirType & DRFLAG_ASGLEXECLVL)
+                    /* DRELIF DRELSE */
+                    execlevel += 2 ;
+                if(dirType & DRFLAG_ARG)
+                {
+                    if(meGetString(NULL,MLNOHIST|MLFFZERO|MLEXECNOUSER,0,tkn,meBUF_SIZE_MAX) <= 0)
+                    {
+                        if(!(dirType & DRFLAG_OPTARG))
+                            return meFALSE ;
+                        f = meFALSE;
+                        n = 1 ;
+                    }
+                    else if(dirType & DRFLAG_NARG)
+                    {
+                        f = meTRUE;
+                        n = meAtoi(tkn) ;
+                        if(dirType & DRFLAG_JUMP)
+                            relJumpTo = n ;
+                    }
+                }
+                if(!(dirType & DRFLAG_SWITCH))
+                    return status ;
+                
+                /* DRFORCE, DRNMACRO, DRABORT, DRBELL, DRIIF, DRRETURN */
+                switch(status)
+                {
+                case DRABORT:
+                    if(f)
+                        TTdoBell(n) ;
+                    return meFALSE ;
+                case DRBELL:
+                    TTdoBell(n) ;
+                    return meTRUE ;
+                case DREMACRO:
+                    return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unexpected !emacro]");
+                case DRFORCE:
+                    (meRegCurr->force)++ ;
+                    while((cc == ' ') || (cc == '\t'))
+                        cc = *++execstr;
+                    goto try_again;
+                case DRIIF:
+                    while(((cc=*execstr) == ' ') || (cc == '\t'))
+                        execstr++;
+                    goto try_again;
+                case DRNMACRO:
+                    nmacro = meTRUE;
+                    while((cc == ' ') || (cc == '\t'))
+                        cc = *++execstr;
+                    goto try_again;
+                case DRRETURN:
+                    /* Stop the debugger kicking in on a !return, a macro doing !return 0 is okay */
+                    meRegCurr->force = 1 ;
+                    return (n) ? DRRETURN:meFALSE ;
+                }
+            }
+            
+            if(dirType & DRFLAG_SMSKEXECLVL)
+            {
+                if(execlevel == 1)
+                {
+                    execlevel = 0 ;
+                    if(status == DRELIF)
+                    {
+                        dirType = DRFLAG_ASGLEXECLVL|DRFLAG_TEST ;
+                        goto elif_jump ;
+                    }
+                }
+                else if(dirType & DRFLAG_SDBLEXECLVL)
+                    execlevel -= 2 ;
+            }
+            else if(dirType & DRFLAG_AMSKEXECLVL)
+                execlevel += 2 ;
+            
+            return meTRUE ;
         }
-        else if(meRegCurr->force)
+        /* if not a directive and execlevel > 0 ignore it */
+        if(execlevel)
+            return meTRUE ;
+        
+        /* get the current token and if not a CMD then treat as numeric arg n */
+        execstr = token(execstr,tkn);
+        if(status != TKCMD)
+        {
+            meUByte *tmp ;
+            if((tmp = getval(tkn)) == abortm)
+                return meFALSE;
+            n = meAtoi(tmp) ;
+            f = meTRUE;
+            execstr = token(execstr,tkn);
+            if(getMacroType(tkn[0]) != TKCMD)
+                return meFALSE;
+        }
+        else
+        {
+            f = meFALSE;
+            n = 1;
+        }
+    }
+    
+    /* and match the token to see if it exists */
+    if ((ii = decode_fncname(tkn,0)) < 0)
+        return meFALSE ;
+    if(nmacro)
+        clexec = meFALSE ;
+    cmdstatus = (execFunc(ii,f,n) > 0) ;       /* call the function */
+    clexec = meTRUE ;
+    if(cmdstatus)
+        status = meTRUE ;
+    else if(TTbreakFlag)
+    {
+        if(meRegCurr->force > 1)
+        {
+            /* A double !force - macro says \CG is okay, 
+             * remove all input (must remove the \CG) and rest flag
+             */
+            TTinflush() ;
+            TTbreakFlag = 0 ;
             status = meTRUE ;
+        }
         else
             status = meFALSE ;
-        return status ;
     }
+    else if(meRegCurr->force)
+        status = meTRUE ;
+    else
+        status = meFALSE ;
+    return status ;
 }
 
 /*      dobuf:  execute the contents of the buffer pointed to
@@ -897,12 +1160,14 @@ dobuf(meLine *hlp)
     meUByte *tline;               /* Temp line */
     int status;                   /* status return */
     meLine *lp;                   /* pointer to line to execute */
-    meLine *lpStk[DRLOOPMAX];     /* pointers to first line of loop */
+    meLine *lpFStk[DRLOOPMAX];    /* pointers to first line of loop */
+    meLine *lpLStk[DRLOOPMAX];    /* pointers to last line of loop */
     meUByte lpCnt=0;
     
     clexec = meTRUE;              /* in cline execution */
     execstr = NULL ;
     execlevel = 0;                /* Reset execution level */
+    lpFStk[0] = NULL;
     
     /* starting at the beginning of the buffer */
     lp = hlp->next;
@@ -1024,11 +1289,10 @@ loop_round:
                     
                     linlen = meStrlen(tkn) ;
                     glp = hlp->next;
-                    while (glp != hlp)
+                    while(glp != hlp)
                     {
-                        if (*glp->text == '*' &&
-                            (meStrncmp(glp->text+1,tkn,linlen) == 0) &&
-                            isSpace(glp->text[linlen+1]))
+                        if(*glp->text == '*' && (meStrncmp(glp->text+1,tkn,linlen) == 0) &&
+                           isSpace(glp->text[linlen+1]))
                         {
                             lp = glp;
                             status = meTRUE;
@@ -1036,9 +1300,8 @@ loop_round:
                         }
                         glp = glp->next;
                     }
-                    /* Beware: This relies on DRGOTO and DRTGOTO not being meTRUE */
                     if(status != meTRUE)
-                        status = mlwrite(MWABORT|MWWAIT,(meUByte *)"No such label");
+                        status = mlwrite(MWABORT|MWWAIT,(meUByte *)"[No such label]");
                     break;
                 }
             case DRREPEAT:                      /* REPEAT */
@@ -1046,7 +1309,15 @@ loop_round:
                     status = mlwrite(MWABORT|MWWAIT,(meUByte *)"[Too many nested loops]");
                 else
                 {
-                    lpStk[lpCnt++] = lp;               /* Save line */
+                    if(lpFStk[lpCnt] != lp)
+                    {
+                        /* Save first line and reset end line */
+                        lpFStk[lpCnt] = lp;
+                        lpLStk[lpCnt++] = NULL;
+                        lpFStk[lpCnt] = NULL;
+                    }
+                    else
+                        lpCnt++;
                     status = meTRUE;
                 }
                 break;
@@ -1063,7 +1334,9 @@ loop_round:
                 if(lpCnt)
                 {
                     lpCnt--;
-                    lp = lpStk[lpCnt];
+                    /* looping, save last line */
+                    lpLStk[lpCnt] = lp;
+                    lp = lpFStk[lpCnt];
                     continue;
                 }
                 else
@@ -1073,7 +1346,7 @@ loop_round:
                 if(lpCnt)
                 {
                     lpCnt--;
-                    lp = lpStk[lpCnt];
+                    lp = lpFStk[lpCnt];
                     continue;
                 }
                 status = mlwrite(MWABORT|MWWAIT,(meUByte *)"[Start of loop missing]");
@@ -1082,20 +1355,28 @@ loop_round:
             case DRBREAK:
                 if(lpCnt)
                 {
-                    /* Nested if blocks make it difficult to find the loop end, use !cont code to get to start then treat as a failed !while */
                     lpCnt--;
-                    lp = lpStk[lpCnt]->next;
-                    execlevel += 2;
+                    if(lpLStk[lpCnt] != NULL)
+                        lp = lpLStk[lpCnt];
+                    else
+                    {
+                        /* Nested if blocks make it difficult to find the loop end, use !cont code to get to start then treat as a failed !while */
+                        lp = lpFStk[lpCnt];
+                        execlevel += 2;
+                    }
                     status = meTRUE;
                 }
                 else
                     status = mlwrite(MWABORT|MWWAIT,(meUByte *)"[Start of loop missing]");
                 break;
+            
             case DRDONE:        
                 if(lpCnt)
                 {
                     lpCnt--;
-                    lp = lpStk[lpCnt];
+                    /* looping, save last line */
+                    lpLStk[lpCnt] = lp;
+                    lp = lpFStk[lpCnt];
                     continue;
                 }
                 status = mlwrite(MWABORT|MWWAIT,(meUByte *)"[Start of loop missing]");
@@ -1106,9 +1387,26 @@ loop_round:
                     status = mlwrite(MWABORT|MWWAIT,(meUByte *)"[Too many nested loops]");
                 else
                 {
-                    lpStk[lpCnt++] = lp;               /* Save line */
+                    if(lpFStk[lpCnt] != lp)
+                    {
+                        /* Save first line and reset end line */
+                        lpFStk[lpCnt] = lp;
+                        lpLStk[lpCnt++] = NULL;
+                        lpFStk[lpCnt] = NULL;
+                    }
+                    else
+                        lpCnt++;
                     status = meTRUE;
                 }
+                break;
+            
+            case DRWHILEF:
+                if((lpLStk[lpCnt] != NULL) && (lpFStk[lpCnt] == lp)) 
+                {
+                    lp = lpLStk[lpCnt];
+                    execlevel -= 2;
+                }
+                status = meTRUE;
                 break;
                 
             case DRJUMP:
@@ -1122,10 +1420,10 @@ loop_round:
                 continue;
                 
             case DRRETURN:      /* if it is a !RETURN directive...do so */
-                status = meTRUE ;
-                goto dobuf_exit ;
+                status = meTRUE;
+                goto dobuf_exit;
             default:
-                status = meTRUE ;
+                status = meTRUE;
                 
             }
         }
@@ -1165,7 +1463,7 @@ loop_round:
         lp = lp->next;
     }
     if(mcStore)
-        mlwrite(MWABORT|MWWAIT,(meUByte *)"[Missing !emacro termination]");
+        mlwrite(MWABORT|MWWAIT,(meUByte *)"[Missing !e%s termination]",(mcStore == 2) ? "help":"macro");
     else
         status = meTRUE ;
     
@@ -1188,38 +1486,45 @@ dobuf_exit:
 static int
 donbuf(meLine *hlp, meVariable **varList, meUByte *commandName, int f, int n)
 {
-    meRegister rp;
+    register meRegister *rp;
     meUByte oldcle;
     int oldexec, status;
     
-    if(meRegCurr->depth >= meMACRO_DEPTH_MAX)
+    if((rp=meRegCurr->next) == NULL)
     {
-        /* macro recursion gone too deep, bail out.
-         * attempt to force the break out by pretending C-g was pressed */
-        TTbreakFlag = 1 ;
-        return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Macro recursion gone too deep]") ;
+        if(meRegCurr->depth >= meMACRO_DEPTH_MAX)
+        {
+            /* macro recursion gone too deep, bail out.
+             * attempt to force the break out by pretending C-g was pressed */
+            TTbreakFlag = 1 ;
+            return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Macro recursion gone too deep]") ;
+        }
+        if((rp = meMalloc(sizeof(meRegister))) == NULL)
+            return meABORT;
+        meRegCurr->next = rp;
+        rp->depth = meRegCurr->depth + 1;
+        rp->prev = meRegCurr;
+        rp->next = NULL;
     }
     /* save the arguments */
     oldcle = clexec;
     oldexec = execlevel;
     /* Setup these argument and move the register stack */
-    rp.prev = meRegCurr;
-    rp.commandName = commandName;
-    rp.execstr = execstr;
+    rp->commandName = commandName;
+    rp->execstr = execstr;
 #if MEOPT_EXTENDED
-    rp.varList = varList;
+    rp->varList = varList;
 #endif
-    rp.f = f;
-    rp.n = n;
-    rp.nextArg = 0xff;
-    rp.depth = meRegCurr->depth + 1;
-    meRegCurr = &rp ;
+    rp->f = f;
+    rp->n = n;
+    rp->nextArg = 0xff;
+    meRegCurr = rp;
     
     status = dobuf(hlp) ;
     
     /* restore old arguments & stack */
-    meRegCurr = rp.prev ;
-    execstr = rp.execstr ;
+    meRegCurr = rp->prev ;
+    execstr = rp->execstr ;
     execlevel = oldexec ;
     clexec = oldcle;
     
@@ -1228,7 +1533,7 @@ donbuf(meLine *hlp, meVariable **varList, meUByte *commandName, int f, int n)
 }
 
 int
-execFunc(int index, int f, int n)
+execFunc(register int index, int f, int n)
 {
     register int status;
     
@@ -1270,16 +1575,16 @@ execFunc(int index, int f, int n)
                             (selhilight.markLineNo != frameCur->windowCur->markLineNo)))
                         {
                             selhilight.flags |= SELHIL_CHANGED ;
-                            selhilight.markOffset = frameCur->windowCur->markOffset;   /* Current mark offset */
-                            selhilight.markLineNo = frameCur->windowCur->markLineNo;    /* Current mark line number */
+                            selhilight.markOffset = frameCur->windowCur->markOffset;
+                            selhilight.markLineNo = frameCur->windowCur->markLineNo;
                         }
                         if(isComSelSetDot(index) &&
                            ((selhilight.dotOffset != frameCur->windowCur->dotOffset) ||
                             (selhilight.dotLineNo != frameCur->windowCur->dotLineNo)))
                         {
                             selhilight.flags |= SELHIL_CHANGED ;
-                            selhilight.dotOffset = frameCur->windowCur->dotOffset;   /* Current mark offset */
-                            selhilight.dotLineNo = frameCur->windowCur->dotLineNo;    /* Current mark line number */
+                            selhilight.dotOffset = frameCur->windowCur->dotOffset;
+                            selhilight.dotLineNo = frameCur->windowCur->dotLineNo;
                         }
                         if(isComSelSetFix(index))
                         {
@@ -1290,7 +1595,12 @@ execFunc(int index, int f, int n)
                         if(isComSelStop(index))
                             selhilight.flags &= ~SELHIL_ACTIVE ;
                         if(selhilight.flags & SELHIL_CHANGED)
-                            meBufferAddModeToWindows(selhilight.bp, WFSELHIL);
+                        {
+                            if(selhilight.bp->windowCount > 1)
+                                meBufferAddModeToWindows(selhilight.bp, WFSELHIL);
+                            else
+                                frameCur->windowCur->updateFlags |= WFSELHIL;
+                        }
                     }
                 }
             }
@@ -1300,13 +1610,14 @@ execFunc(int index, int f, int n)
     }
     else
     {
-        meMacro *mac = getMacro(index) ;
+        register meMacro *mac = getMacro(index) ;
 #if MEOPT_EXTENDED
-        meUByte firstExec ;                    /* set if this is first */
-        meLine *hlp ;
+        register meLine *hlp ;
         
         hlp = mac->hlp ;
-        if(!(hlp->flag & meMACRO_EXEC))
+        if(hlp->flag & meMACRO_EXEC)
+            status = donbuf(hlp,&mac->varList,mac->name,f,n) ;
+        else
         {
             if(hlp->flag & meMACRO_FILE)
             {
@@ -1318,20 +1629,12 @@ execFunc(int index, int f, int n)
                 if(hlp->flag & meMACRO_FILE)
                     return mlwrite(MWABORT,(meUByte *)"[file-macro %s not defined]",mac->name);
             }
-            hlp->flag |= meMACRO_EXEC ;
-            firstExec = 1 ;
-        }
-        else
-            firstExec = 0 ;
-        
-        status = donbuf(hlp,&mac->varList,mac->name,f,n) ;
-        
-        if(firstExec)
-        {
+            hlp->flag |= meMACRO_EXEC;
+            status = donbuf(hlp,&mac->varList,mac->name,f,n);
             if(mac->hlp != hlp)
                 meLineLoopFree(hlp,1) ;
             else
-                hlp->flag &= ~meMACRO_EXEC ;
+                hlp->flag &= ~meMACRO_EXEC;
         }
 #else
         status = donbuf(mac->hlp,NULL,mac->name,f,n) ;
@@ -1424,48 +1727,48 @@ execBufferFunc(meBuffer *bp, int index, int flags, int n)
         if(bp == frameCur->bufferCur)
         {
             /* drop an anchor and return back to it after */
-            meAnchorSet(frameCur->bufferCur,meANCHOR_EXEC_BUFFER,frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset,1) ;
-            frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine ;
-            frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset ;
-            frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo ;
+            meAnchorSet(frameCur->bufferCur,meANCHOR_EXEC_BUFFER,frameCur->windowCur->dotLine,frameCur->windowCur->dotLineNo,frameCur->windowCur->dotOffset,1);
+            frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine;
+            frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset;
+            frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo;
         }
     }
     if(bp != frameCur->bufferCur)
     {
         /* swap this buffer into the current window, execute the function
          * and then swap back out */
-        register meBuffer *tbp = frameCur->bufferCur ;
+        register meBuffer *tbp = frameCur->bufferCur;
         meUInt flag;
-        meInt vertScroll ;
+        meInt vertScroll;
         
-        storeWindBSet(tbp,frameCur->windowCur) ;
-        flag = frameCur->windowCur->updateFlags ;
-        vertScroll = frameCur->windowCur->vertScroll ;
+        storeWindBSet(tbp,frameCur->windowCur);
+        flag = frameCur->windowCur->updateFlags;
+        vertScroll = frameCur->windowCur->vertScroll;
         
-        tbp->windowCount-- ;
-        frameCur->bufferCur = frameCur->windowCur->buffer = bp ;
-        restoreWindBSet(frameCur->windowCur,bp) ;
+        tbp->windowCount--;
+        frameCur->bufferCur = frameCur->windowCur->buffer = bp;
+        restoreWindBSet(frameCur->windowCur,bp);
 #if MEOPT_EXTENDED
-        isWordMask = bp->isWordMask ;
+        isWordMask = bp->isWordMask;
 #endif
-        bp->windowCount++ ;
+        bp->windowCount++;
         
-        ret = execFunc(index,(flags & meEBF_ARG_GIVEN),n) ;
+        ret = execFunc(index,(flags & meEBF_ARG_GIVEN),n);
         
-        frameCur->bufferCur->windowCount-- ;
-        storeWindBSet(frameCur->bufferCur,frameCur->windowCur) ;
-        frameCur->bufferCur = frameCur->windowCur->buffer = tbp ;
-        tbp->windowCount++ ;
-        frameCur->windowCur->vertScroll = vertScroll ;
+        frameCur->bufferCur->windowCount--;
+        storeWindBSet(frameCur->bufferCur,frameCur->windowCur);
+        frameCur->bufferCur = frameCur->windowCur->buffer = tbp;
+        tbp->windowCount++;
+        frameCur->windowCur->vertScroll = vertScroll;
         /* force a check on update, just incase the Func has done something behind our back */
-        frameCur->windowCur->updateFlags |= (flag|WFMOVEL|WFMAIN) ;
-        restoreWindBSet(frameCur->windowCur,tbp) ;
+        frameCur->windowCur->updateFlags |= (flag|WFMOVEL|WFMAIN);
+        restoreWindBSet(frameCur->windowCur,tbp);
 #if MEOPT_EXTENDED
-        isWordMask = tbp->isWordMask ;
+        isWordMask = tbp->isWordMask;
 #endif
     }
     else
-        ret = execFunc(index,(flags & meEBF_ARG_GIVEN),n) ;
+        ret = execFunc(index,(flags & meEBF_ARG_GIVEN),n);
     if(flags & meEBF_USE_B_DOT)
     {
         if(bp == frameCur->bufferCur)
@@ -1583,7 +1886,7 @@ execFile(meUByte *fname, int f, int n)
     hlp.next = &hlp ;
     hlp.prev = &hlp ;
     /* use a new buffer to ensure it doesn't mess with any loaded files */
-    if(!fileLookup(fname,(meUByte *)".emf",meFL_CHECKDOT|meFL_USESRCHPATH,fn) ||
+    if(!fileLookup(fname,extMacroCnt,extMacroLst,meFL_CHECKDOT|meFL_USESRCHPATH,fn) ||
        (ffReadFile(&meior,fn,meRWFLAG_READ|meRWFLAG_SILENT,NULL,&hlp,0,0,0) == meABORT))
     {
         if(status)
@@ -1664,10 +1967,9 @@ lineExec (int f, int n, meUByte *cmdstr)
     oldF = meRegCurr->f;
     oldN = meRegCurr->n;
     oldForce = meRegCurr->force;
-    /* store the execute-line's !force count on the prev registry if greater,
-     * the docmd resets the force count so a !force !force execute-line "..."
-     * effectively loses the !force's during the execution which can allow the
-     * debugger to kick in unexpectedly */
+    /* store the execute-line's !force count on the prev registry if greater, the docmd resets the
+     * force count so a !force !force execute-line "..." effectively loses the !force's during the
+     * execution which can allow the debugger to kick in unexpectedly */
     if((prevForce=meRegCurr->prev->force) < oldForce)
         meRegCurr->prev->force = oldForce;
     

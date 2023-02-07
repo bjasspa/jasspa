@@ -326,10 +326,9 @@ meDictionaryLoad(meDictionary *dict)
     int rr;
     
     /* use internal fileio functions to support loading TFS dictionaries */
-    if((dict->fname == NULL) || (getFileStats(dict->fname,0,&stats,NULL) != meFILETYPE_REGULAR) ||
+    if((dict->fname == NULL) || (((rr = getFileStats(dict->fname,0,&stats,NULL)) & meIOTYPE_REGULAR) == 0) ||
        (stats.stsizeHigh != 0) || (stats.stsizeLow < meDICT_HDR_SZ) ||
-       (((meior.type = ffUrlGetType(dict->fname)) & meIOTYPE_FILE) != 0) ||
-       (ffReadFileOpen(&meior,dict->fname,meRWFLAG_READ|meRWFLAG_NODIRLIST|meRWFLAG_SILENT,NULL) <= 0))
+       ((meior.type = (rr & 0x7f)),(ffReadFileOpen(&meior,dict->fname,meRWFLAG_READ|meRWFLAG_NODIRLIST|meRWFLAG_SILENT,NULL) <= 0)))
         return mlwrite(MWABORT,(meUByte *)"Failed to open dictionary [%s]",dict->fname);
     dUsed = stats.stsizeLow - meDICT_HDR_SZ;
     dSize = dUsed + TBLINCSIZE;
@@ -429,7 +428,7 @@ meDictionaryFind(int flag)
     if(meGetString((meUByte *)"Dictionary name",MLFILECASE,0,tmp,meBUF_SIZE_MAX) <= 0)
         return meFALSE ;
     
-    if(!fileLookup(tmp,(meUByte *)".edf",meFL_CHECKDOT|meFL_USESRCHPATH,fname))
+    if(!fileLookup(tmp,extDictCnt,extDictLst,meFL_CHECKDOT|meFL_USESRCHPATH,fname))
     {
         meStrcpy(fname,tmp) ;
         found = 0 ;

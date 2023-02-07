@@ -431,19 +431,19 @@ windowGotoAbsLine(meInt line)
          * currently narrowed out), drop an alpha mark.
          */
         if(rr > 0)
-            rr = meAnchorSet(frameCur->bufferCur,meANCHOR_ABS_LINE,frameCur->windowCur->dotLine,0,1) ;
-        meBufferCollapseNarrowAll(frameCur->bufferCur) ;
+            rr = meAnchorSet(frameCur->bufferCur,meANCHOR_ABS_LINE,frameCur->windowCur->dotLine,frameCur->windowCur->dotLineNo,0,1);
+        meBufferCollapseNarrowAll(frameCur->bufferCur);
         if(rr > 0) 
         {
             if((rr = meAnchorGet(frameCur->bufferCur,meANCHOR_ABS_LINE)) > 0)
             {
                 /* do the buisness */
-                frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine ;
-                frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset ;
-                frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo ;
-                frameCur->windowCur->updateFlags |= WFMOVEL ;
+                frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine;
+                frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset;
+                frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo;
+                frameCur->windowCur->updateFlags |= WFMOVEL;
             }
-            meAnchorDelete(frameCur->bufferCur,meANCHOR_ABS_LINE) ;
+            meAnchorDelete(frameCur->bufferCur,meANCHOR_ABS_LINE);
         }
     }
 #endif

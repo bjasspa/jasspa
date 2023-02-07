@@ -467,6 +467,9 @@
 #ifdef _METFS
 #define MEOPT_TFS       1       /* enable the tack-on file system        */
 #endif
+#if MEOPT_EXTENDED
+#define MEOPT_BYTECOMP  1       /* enable macro byte-compile, requires extended */
+#endif
 
 /* the name used on about etc           */
 #define ME_FULLNAME  ME_MICROEMACS_FULLNAME
@@ -551,7 +554,6 @@
 #include <stdio.h>                      /* Always need this              */
 #include <stdlib.h>                     /* Usually need this             */
 #include <string.h>                     /* Usually need this             */
-#include <errno.h>                      /* Need errno and sys_errlist    */
 
 #ifdef _ME_WIN32_FULL_DEBUG
 #define _CRTDBG_MAP_ALLOC
@@ -586,6 +588,9 @@
 #include <unistd.h>
 #endif
 
+#ifndef _WIN32
+#include <errno.h>                      /* Need errno and sys_errlist    */
+#endif
 #ifdef _meDEF_SYS_ERRLIST
 extern const char *sys_errlist[];
 #endif
@@ -609,6 +614,9 @@ typedef unsigned int   meUInt ;
 #if MEOPT_TFS
 #include <tfs.h>        /* Tack-on file system defs.     */
 #endif
+
+#define KEY_TEST 0      /* Enable '0 about' self-test    */
+
 #include "emode.h"      /* Mode enum, type & var defs    */
 #include "estruct.h"    /* Type structure definitions    */
 #include "edef.h"       /* Global variable definitions   */

@@ -98,7 +98,7 @@ meBufferCreateNarrow(meBuffer *bp, meLine *slp, meLine *elp, meInt sln, meInt el
             markupCmd = 0 ;
     }
     nrrw->markupCmd = markupCmd ;
-    if(meAnchorSet(bp,name,elp,(meUShort) (((name & meNARROW_TYPE_MASK) == meNARROW_TYPE_TO_BOTTOM) ? 1:0),1) <= 0)
+    if(meAnchorSet(bp,name,elp,sln,(meUShort) (((name & meNARROW_TYPE_MASK) == meNARROW_TYPE_TO_BOTTOM) ? 1:0),1) <= 0)
     {
         meFree(nrrw) ;
         return NULL ;

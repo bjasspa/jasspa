@@ -36,7 +36,6 @@
 #include "eskeys.h"
 
 #include <assert.h>
-#include <errno.h>
 #include <fcntl.h>
 #include <pwd.h>
 #include <time.h>
@@ -428,7 +427,7 @@ meSetupProgname(char *progname)
      * provides a system call to get the absolute path then we use that (i.e.
      * the /proc file system, where the system does not then we fall back to
      * looking for the executable from the program name. */
-    if(((ii = execFilename (progname, (char *) evalResult, sizeof (evalResult))) == 0) &&
+    if(((ii = execFilename(progname, (char *) evalResult,sizeof(evalResult))) == 0) &&
        ((ii = executableLookup((meUByte *) progname,evalResult)) == 0))
     {
         /* Some shells, specifically zsh, will execute from the current
@@ -438,8 +437,7 @@ meSetupProgname(char *progname)
          * directory unless it is specifically on the $PATH hence the
          * additional test here. */
         if (meStrrchr(progname,DIR_CHAR) == NULL)
-            ii = fileLookup((meUByte *)progname,NULL,
-                            meFL_CHECKDOT|meFL_EXEC,evalResult);
+            ii = fileLookup((meUByte *)progname,0,NULL,meFL_CHECKDOT|meFL_EXEC,evalResult);
     }
     if (ii != 0)
         meProgName = meStrdup(evalResult) ;
@@ -4272,7 +4270,7 @@ TTopenClientServer (void)
             bp->dotLine = meLineGetPrev(bp->baseLine) ;
             bp->dotOffset = 0 ;
             bp->dotLineNo = bp->lineCount-1 ;
-            meAnchorSet(bp,'I',bp->dotLine,bp->dotOffset,1) ;
+            meAnchorSet(bp,'I',bp->dotLine,bp->dotLineNo,bp->dotOffset,1) ;
         }
         /* Set up the window dimensions - default to having auto wrap */
         ipipe->flag = 0 ;
@@ -4787,7 +4785,7 @@ xdndClientMessage (XEvent *xevent, meFrame *frame)
         xdndReset (&dnd);
         dnd.dragger_window = XDND_ENTER_SOURCE_WIN (xevent);
         dnd.dropper_window = xevent->xany.window;
-        /* TODO: Ckeck the types */
+        /* TODO: Check the types */
         dnd.dragging_version = XDND_ENTER_VERSION (xevent);
         dnd.stage = XDND_DROP_STAGE_ENTERED;
         processed = 1;

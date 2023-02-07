@@ -37,7 +37,7 @@
 #include "emain.h"
 
 #define	maindef		/* Make main defintions - cannot define this at the top
-                         * because all the main defs are needed to init edef's vars */
+* because all the main defs are needed to init edef's vars */
 
 #include "efunc.h"	/* function declarations and name table	*/
 #include "eskeys.h"     /* Special key names - Must include before edef.h & ebind.h */
@@ -137,22 +137,22 @@ static void
 meInit(meUByte *bname)
 {
     meBuffer *bp;
-
+    
     if (TTstart() == meFALSE)             /* Started ?? */
         meExit(1) ;
-
+    
     /* add 2 to hilBlockS to allow for a double trunc-scheme change
      * Note: ME is not yet 'initialised' so any meMalloc failure will
      * lead to exit in mlwrite so we don't need to check */
     styleTable = meMalloc(2*meSCHEME_STYLES*sizeof(meStyle)) ;
     hilBlock = meMalloc((hilBlockS+2)*sizeof(meSchemeSet)) ;
     disLineBuff = meMalloc((disLineSize+32)*sizeof(meUByte)) ;
-
+    
     memcpy(styleTable,defaultScheme,2*meSCHEME_STYLES*sizeof(meStyle));
     /* Set the fore and back colours */
     TTaddColor(meCOLOR_FDEFAULT,255,255,255) ;
     TTaddColor(meCOLOR_BDEFAULT,0,0,0) ;
-
+    
     /* Create the frame - make sure that we do not access the screen during
      * the re-size */
     screenUpdateDisabledCount++;
@@ -162,7 +162,7 @@ meInit(meUByte *bname)
     frameList = frameCur ;
 #endif
     screenUpdateDisabledCount--;
-
+    
     if(((bp = bfind(bname,BFND_CREAT)) == NULL) ||
        (meFrameInitWindow(frameCur,bp) <= 0))
         meExit(1);
@@ -180,7 +180,7 @@ insertChar(register int c, register int n)
 {
     /*---    If we are  in overwrite mode,  not at eol,  and next char is
        not a tab or we are at a tab stop, delete a char forword */
-
+    
     if(meModeTest(frameCur->bufferCur->mode,MDOVER))
     {
         int index, ii=n ;
@@ -257,7 +257,7 @@ execute(register int c, register int f, register int n)
         static meUShort lastcc=0 ;
         meUInt arg ;
         meUShort mask, kk, ccx=lastcc ^ c ;
-
+        
         lastcc = c ;
         for(mask=ME_SHIFT ; mask != ME_SPECIAL ; mask<<=1)
         {
@@ -273,7 +273,7 @@ execute(register int c, register int f, register int n)
         }
     }
 #endif
-
+    
 #if MEOPT_UNDO
     if(kbdmode != mePLAY)
         undoContFlag++ ;
@@ -281,7 +281,7 @@ execute(register int c, register int f, register int n)
     lastCommand = thisCommand ;
     lastIndex = thisIndex ;
     thisCommand = c ;
-
+    
     if(((index = decode_key((meUShort) c,&arg)) >= 0) && (arg != 0))
     {
         f = 1 ;
@@ -339,22 +339,22 @@ execute(register int c, register int f, register int n)
 #endif
         return mlwrite(MWABORT,(meUByte *)"[Key not bound \"%s\"]", outseq); /* complain */
     }
-
+    
     if (n <= 0)            /* Fenceposts.          */
     {
         lastflag = 0;
         return (cmdstatus = ((n<0) ? meFALSE : meTRUE));
     }
     thisflag = 0;          /* For the future.      */
-
+    
     if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return (cmdstatus = meFALSE) ;
-
+    
 #if MEOPT_WORDPRO
     /* If a space was  typed, fill column is  defined, the argument is non-
      * negative, wrap mode is enabled, and we are now past fill column, and
      * we are not read-only, perform word wrap. */
-
+    
     if(meModeTest(frameCur->bufferCur->mode,MDWRAP) &&
        ((c == ' ') || (meStrchr(filleos,c) != NULL)) &&
        (frameCur->bufferCur->fillcol > 0) && (n >= 0) &&
@@ -362,11 +362,11 @@ execute(register int c, register int f, register int n)
        !meModeTest(frameCur->bufferCur->mode,MDVIEW))
         wrapWord(meFALSE, 1);
 #endif
-
+    
     /* insert the required number of chars */
     if(insertChar(c,n) <= 0)
         return (cmdstatus = meFALSE) ;
-
+    
 #if MEOPT_HILIGHT
     if(frameCur->bufferCur->indent && (meHilightGetFlags(indents[frameCur->bufferCur->indent]) & HIGFBELL))
     {
@@ -434,7 +434,7 @@ addModesList(meBuffer *bp, register meUByte *buf, meUByte *name, meMode mode,
              int res)
 {
     register int ii, nlen, len, ll ;
-
+    
     meStrcpy(buf,name) ;
     len = nlen = meStrlen(name) ;
     for (ii = 0; ii < MDNUMMODES; ii++)	/* add in the mode flags */
@@ -476,12 +476,17 @@ meAbout(int f, int n)
     meInt   predlines ;		/* # lines preceding point */
     meUByte buf[meBUF_SIZE_MAX] ;
     int     ii ;
-
+    
+#if KEY_TEST
+    if(n == 0)
+        return fnctest();
+#endif
+    
     if((wp = meWindowPopup(BaboutN,BFND_CREAT|BFND_CLEAR|WPOP_USESTR,NULL)) == NULL)
         return meFALSE ;
     bp = wp->buffer ;
-
-     /* definitions in evers.h */
+    
+    /* definitions in evers.h */
     addLineToEob(bp,(meUByte *)ME_FULLNAME " " meVERSION " - Date " meCENTURY meDATE " - " meSYSTEM_NAME "\n\nGlobal Status:") ;
     tbp = bheadp ;
     ii = 0 ;
@@ -498,12 +503,12 @@ meAbout(int f, int n)
     sprintf((char *)buf,"  File name : %s",
             (frameCur->bufferCur->fileName == NULL) ? (meUByte *)"":frameCur->bufferCur->fileName) ;
     addLineToEob(bp,buf) ;
-
+    
     getBufferInfo(&numlines,&predlines,&numchars,&predchars) ;
     sprintf((char *)buf,"  Lines     : Total %6d, Current %6d\n  Characters: Total %6d, Current %6d",
             numlines,predlines,numchars,predchars) ;
     addLineToEob(bp,buf) ;
-
+    
     addModesLists(bp,buf,frameCur->bufferCur->mode) ;
     addLineToEob(bp,meCopyright) ;
     bp->dotLine = meLineGetNext(bp->baseLine);
@@ -536,8 +541,8 @@ exitEmacs(int f, int n)
     else
 #endif
         if(n & 0x20)
-            ec = 1 ;
-
+        ec = 1 ;
+    
     /* (Un)conditionally save buffers, dictionary and registry files */
     if((n & 0x02) &&
        ((saveSomeBuffers(f,(n & 0x01)) <= 0)
@@ -588,7 +593,7 @@ exitEmacs(int f, int n)
     if(s > 0)
     {
         meBuffer *bp, *nbp ;
-
+        
 #ifdef _CLIPBRD
         /* don't mess with the system clipboard from this point - could be a problem for a shut-down macro */
         clipState |= CLIP_DISABLED;
@@ -654,7 +659,7 @@ exitEmacs(int f, int n)
         ffFileOp(NULL,NULL,meRWFLAG_SOCKCLOSE|meRWFLAG_SILENT|meRWFLAG_ATEXIT,-1);
 #endif
         TTend();
-
+        
 #ifdef _ME_CONSOLE
 #ifdef _TCAP
         if(!(alarmState & (meALARM_PIPED|meALARM_DIE))
@@ -665,7 +670,7 @@ exitEmacs(int f, int n)
             TCAPputc('\n');
 #endif /* _TCAP */
 #endif /* _ME_CONSOLE */
-
+        
 #ifdef _ME_FREE_ALL_MEMORY
         {
             /* free of everything we can */
@@ -687,7 +692,7 @@ exitEmacs(int f, int n)
             meKillNode   *next, *kill ;
             meAbbrev     *abrev ;
             int           ii, jj ;
-
+            
             /* remove all but a simple *scratch* */
             bc = bheadp ;
             while(bc != NULL)
@@ -698,7 +703,7 @@ exitEmacs(int f, int n)
                 bc = bn ;
             }
             addFileHook(meTRUE,0) ;
-
+            
             dictionaryDelete(1,6) ;
             spellRuleAdd(1,0) ;
             dirFreeMemory() ;
@@ -707,7 +712,7 @@ exitEmacs(int f, int n)
             regFreeMemory() ;
             srchFreeMemory() ;
             TTfreeTranslateKey() ;
-
+            
             meNullFree(mlBinds) ;
             meFree(hilBlock) ;
 #ifdef _XTERM
@@ -718,7 +723,7 @@ exitEmacs(int f, int n)
             meNullFree(homedir) ;
             meNullFree(curdir) ;
             meNullFree(frameTitle) ;
-
+            
             for(ii=0 ; ii<numStrHist ; ii++)
                 free(strHist[ii]) ;
             for(ii=0 ; ii<numBuffHist ; ii++)
@@ -730,7 +735,7 @@ exitEmacs(int f, int n)
             for(ii=0 ; ii<numSrchHist ; ii++)
                 free(srchHist[ii]) ;
             free(strHist) ;
-
+            
             while(klhead != NULL)
             {
                 thiskl = klhead ;
@@ -792,24 +797,24 @@ exitEmacs(int f, int n)
                 meNullFree(modeLineStr) ;
             meNullFree(flNextFileTemp) ;
             meNullFree(flNextLineTemp) ;
-
+            
             meNullFree(meUserName) ;
             meNullFree(meUserPath) ;
-
+            
             meNullFree(rcsFile) ;
             meNullFree(rcsCiStr) ;
             meNullFree(rcsCiFStr) ;
             meNullFree(rcsCoStr) ;
             meNullFree(rcsCoUStr) ;
             meNullFree(rcsUeStr) ;
-
+            
             {
                 extern meNamesList buffNames ;
                 extern meDirList   fileNames ;
                 extern meNamesList commNames ;
                 extern meNamesList modeNames ;
                 extern meNamesList varbNames ;
-
+                
                 meNullFree(curDirList.path) ;
                 freeFileList(curDirList.size,curDirList.list) ;
                 meNullFree(fileNames.mask) ;
@@ -824,7 +829,7 @@ exitEmacs(int f, int n)
                     freeFileList(varbNames.size,varbNames.list) ;
                 meNullFree(varbNames.mask) ;
             }
-
+            
             if(noNextLine > 0)
             {
                 for(ii=0 ; ii<noNextLine ; ii++)
@@ -867,7 +872,7 @@ exitEmacs(int f, int n)
             }
 #endif
             meNullFree (fileIgnore) ;
-
+            
             while(aheadp != NULL)
             {
                 abrev = aheadp ;
@@ -876,7 +881,7 @@ exitEmacs(int f, int n)
                 meFree(abrev) ;
             }
             meFree(styleTable) ;
-
+            
             fc = frameList ;
             while(fc != NULL)
             {
@@ -893,7 +898,7 @@ exitEmacs(int f, int n)
 #ifdef _ME_WIN32_FULL_DEBUG
         {
             _CrtMemState ss ;
-
+            
             _CrtMemCheckpoint( &ss );
             _CrtMemDumpStatistics(&ss) ;
             _CrtCheckMemory() ;
@@ -903,7 +908,7 @@ exitEmacs(int f, int n)
         meExit(ec);
     }
     mlerase(MWCLEXEC);
-
+    
     return s ;
 }
 
@@ -1008,12 +1013,12 @@ static void
 sigchild(SIGNAL_PROTOTYPE)
 {
     meWAIT_STATUS status ;              /* Status return from waitpid() */
-
+    
 #if MEOPT_IPIPES
     if(noIpipes != 0)
     {
         meIPipe *ipipe ;
-
+        
         ipipe = ipipes ;
         while(ipipe != NULL)
         {
@@ -1039,7 +1044,7 @@ sigchild(SIGNAL_PROTOTYPE)
     /* clear up any zoombie children if we are not running a piped command */
     if((alarmState & meALARM_PIPE_COMMAND) == 0)
         meWaitpid(-1,&status,WNOHANG) ;
-
+    
     /* Reload the signal handler. Note that the child is a special case where
      * the signal is reset at the end of the handler as opposed to the head of
      * the handler. For the POSIX or BSD signals this is not required. */
@@ -1058,7 +1063,7 @@ meDie(void)
      * being torn down. Our main purpose is to preserve the session
      * information and history. */
     alarmState = meALARM_DIE ;
-
+    
     return exitEmacs(1,0x28) ;
 }
 #endif
@@ -1069,7 +1074,7 @@ autoSaveHandler(void)
     struct meTimeval tp ;
     register meBuffer *bp ;
     register meInt tim, next=0x7fffffff ;
-
+    
     gettimeofday(&tp,NULL) ;
     tim = ((tp.tv_sec-startTime)*1000) + (tp.tv_usec/1000) ;
     bp  = bheadp;
@@ -1119,9 +1124,9 @@ doOneKey(void)
     register int    n;
     register int    mflag;
     int     basec;              /* c stripped of meta character   */
-
+    
     update(meFALSE);                          /* Fix up the screen    */
-
+    
     /*
      * If we are not playing or recording a macro. This is the ONLY place
      * where we may get an idle key back from the input stream. Set the kdb
@@ -1132,15 +1137,15 @@ doOneKey(void)
      */
     if (kbdmode == meSTOP)
         kbdmode = meIDLE;             /* In an idle state  */
-
+    
     c = meGetKeyFromUser(meFALSE, 1, meGETKEY_COMMAND);     /* Get a key */
-
+    
     if (frameCur->mlStatus & MLSTATUS_CLEAR)
         mlerase(MWCLEXEC) ;
-
+    
     f = meFALSE;
     n = 1;
-
+    
     /* do ME_PREFIX1-# processing if needed */
     basec = c & ~ME_PREFIX1 ;        /* strip meta char off if there */
     if((c & ME_PREFIX1) && (((basec >= '0') && (basec <= '9')) || (basec == '`') || (basec == '-')))
@@ -1172,7 +1177,7 @@ doOneKey(void)
         }
         n *= mflag;    /* figure in the sign */
     }
-
+    
     /* do ^U repeat argument processing */
     if(c == reptc)
     {                           /* ^U, start argument   */
@@ -1214,7 +1219,7 @@ doOneKey(void)
             n *= mflag;    /* figure in the sign */
         }
     }
-
+    
     if(f == meTRUE)        /* Zap count from cmd line ? */
         mlerase(MWCLEXEC);
     commandDepth++ ;
@@ -1235,7 +1240,7 @@ mesetupInsertResourceString(char *ss, int argi, int oargc, char **oargv[])
             ss++ ;
         if(cc == '\0')
             break ;
-                    
+        
         if((nargc & 0x0f) == 0)
         {
             /* Construct larger argv container */
@@ -1322,8 +1327,8 @@ mesetupInsertResourceFile(char *fname, int iarg, int oargc, char **oargv[])
     }
     fclose(fp) ;
     buff[len] = '\0' ;
-/*    rr = dpgCalloc(1,sizeof(dpgResourceFile)) ;*/
-
+    /*    rr = dpgCalloc(1,sizeof(dpgResourceFile)) ;*/
+    
     return mesetupInsertResourceString(buff,iarg,oargc,oargv) ;
 }
 
@@ -1388,7 +1393,7 @@ mesetup(int argc, char *argv[])
     meXUmask = umask(0);
     umask(meXUmask);
     meXUmask = (meXUmask & (S_IROTH|S_IWOTH|S_IXOTH|S_IRGRP|S_IWGRP|S_IXGRP|S_IRUSR|S_IWUSR|S_IXUSR)) ^
-              (S_IROTH|S_IWOTH|S_IXOTH|S_IRGRP|S_IWGRP|S_IXGRP|S_IRUSR|S_IWUSR|S_IXUSR) ; /* 00666 */
+          (S_IROTH|S_IWOTH|S_IXOTH|S_IRGRP|S_IWGRP|S_IXGRP|S_IRUSR|S_IWUSR|S_IXUSR) ; /* 00666 */
     meUmask = meXUmask & (S_IROTH|S_IWOTH|S_IRGRP|S_IWGRP|S_IRUSR|S_IWUSR) ;
     meUid = getuid();
     meGid = getgid();
@@ -1407,12 +1412,12 @@ mesetup(int argc, char *argv[])
 #ifdef _POSIX_SIGNALS
     {
         struct sigaction sa;
-
+        
         sigemptyset(&meSigHoldMask);
         sigaddset(&meSigHoldMask,SIGCHLD);
         sigaddset(&meSigHoldMask,SIGALRM);
         meSigRelease();
-
+        
         sigemptyset(&sa.sa_mask);
         sa.sa_flags=0;
         sa.sa_handler=sigAlarm;
@@ -1437,10 +1442,11 @@ mesetup(int argc, char *argv[])
 #endif /* _POSIX_SIGNALS */
 #endif /* _UNIX */
     count_key_table();
-
+    
     /* Init the registers - Make the head registers point back to themselves so that
-     * accessing #p? gets #g? and not a core-dump */
-    if((meRegHead = meMalloc(sizeof(meRegister))) == NULL)
+     * accessing #p? gets #g? and not a core-dump. Setting up ME typically takes a
+     * depth of 6, might as well do that right now */
+    if((meRegHead = meMalloc(6*sizeof(meRegister))) == NULL)
         exit(1);
     meRegHead->prev = meRegHead;
     meRegHead->commandName = NULL;
@@ -1449,13 +1455,29 @@ mesetup(int argc, char *argv[])
     meRegHead->varList = NULL;
 #endif
     meRegHead->force = 0;
-    meRegHead->depth = 0;
     meRegHead->nextArg = 0xff;
-    meRegCurr = meRegHead;
     /* Initialise the head as this is dumped in list-variables */
     carg = meREGISTER_MAX;
     while(--carg >= 0)
         meRegHead->reg[carg][0] = '\0';
+    meRegCurr = meRegHead;
+    meRegHead->depth = 0;
+    meRegHead[0].next = &(meRegHead[1]);
+    meRegHead[1].depth = 1;
+    meRegHead[1].prev = &(meRegHead[0]);
+    meRegHead[1].next = &(meRegHead[2]);
+    meRegHead[2].depth = 2;
+    meRegHead[2].prev = &(meRegHead[1]);
+    meRegHead[2].next = &(meRegHead[3]);
+    meRegHead[3].depth = 3;
+    meRegHead[3].prev = &(meRegHead[2]);
+    meRegHead[3].next = &(meRegHead[4]);
+    meRegHead[4].depth = 4;
+    meRegHead[4].prev = &(meRegHead[3]);
+    meRegHead[4].next = &(meRegHead[5]);
+    meRegHead[5].depth = 5;
+    meRegHead[5].prev = &(meRegHead[4]);
+    meRegHead[5].next = NULL;
     
     /* Init static file io structures */
     meior.fp = meBadFile;
@@ -1481,11 +1503,11 @@ mesetup(int argc, char *argv[])
             case 'a':
                 meModeToggle(globMode,MDAUTOSV) ;
                 break ;
-
+                
             case 'B':
                 meModeToggle(globMode,MDBACKUP) ;
                 break ;
-
+                
 #if MEOPT_EXTENDED
             case 0:      /* -  get input from stdin */
                 noFiles = 1 ;
@@ -1542,7 +1564,7 @@ missing_arg:
                     argv[rarg++] = argv[++carg] ;
                 }
                 break ;
-
+                
 #if MEOPT_CLIENTSERVER
             case 'm':    /* -m send a client server message */
                 userClientServer |= 1 ;
@@ -1579,11 +1601,11 @@ missing_arg:
             case 'r':
                 meModeToggle(globMode,MDVIEW) ;
                 break ;
-
-            /* Reverse the video, simply exchange the forward and reverse
-             * schemes with each other. Note that this affects the internal
-             * default scheme only and is over-ridden by any other schemes
-             * that are installed. */
+                
+                /* Reverse the video, simply exchange the forward and reverse
+                 * schemes with each other. Note that this affects the internal
+                 * default scheme only and is over-ridden by any other schemes
+                 * that are installed. */
             case 'R':
                 {
                     int ii;
@@ -1598,7 +1620,7 @@ missing_arg:
                     cursorColor = (meColor) meStyleGetFColor(defaultScheme[meSCHEME_NORMAL]);
                 }
                 break;
-
+                
             case 's':    /* -s for initial search string */
                 argv[rarg++] = argv[carg] ;
                 if(argv[carg][2] == '\0')
@@ -1608,7 +1630,7 @@ missing_arg:
                     argv[rarg++] = argv[++carg] ;
                 }
                 break;
-
+                
             case 'u':    /* -u for setting the user name */
                 {
                     char *un ;
@@ -1623,13 +1645,13 @@ missing_arg:
                     meStrrep(&meUserName,(meUByte *) un) ;
                     break;
                 }
-
-             case 'V':
+                
+            case 'V':
                 sprintf((char *)evalResult,"%s %s - Date %s%s - %s\n",
                         ME_FULLNAME, meVERSION, meCENTURY, meDATE, meSYSTEM_NAME) ;
                 mePrintMessage(evalResult) ;
                 meExit(0) ;
-
+                
             case 'v':
                 {
                     char *ss, *tt, cc ;
@@ -1647,7 +1669,7 @@ missing_arg:
                         mePrintMessage(evalResult) ;
                         meExit(1) ;
                     }
-
+                    
                     if(((cc=getMacroTypeS(ss)) != TKREG) && (cc != TKVAR) &&
                        (cc != TKCVR) && (cc != TKENV))
                     {
@@ -1675,7 +1697,7 @@ missing_arg:
                 sigcatch = 0 ;
                 break;
 #endif
-
+                
             default:
                 {
                     sprintf((char *)evalResult,"%s Error: Unknown option %s\nOption -h gives further help\n",argv[0],argv[carg]) ;
@@ -1701,7 +1723,7 @@ missing_arg:
     }
     /* Set up the path information. */
     meSetupPathsAndUser() ;
-
+    
 #if MEOPT_CLIENTSERVER
     if(userClientServer && TTconnectClientServer())
     {
@@ -1711,7 +1733,7 @@ missing_arg:
         meUByte  buff[meBUF_SIZE_MAX+32] ;
         int      nn ;
         char    *ss ;
-
+        
         for(carg=1 ; carg < rarg ; carg++)
         {
             /* if its a switch, process it */
@@ -1815,9 +1837,9 @@ missing_arg:
         meExit(1) ;
     }
 #endif
-
+    
     meInit(BmainN);           /* Buffers, windows.    */
-
+    
 #ifdef _DOS
     if(dumpScreen)
     {
@@ -1827,7 +1849,7 @@ missing_arg:
         carg++ ;
     }
 #endif
-
+    
 #ifdef _UNIX
     /*
      * Catch nasty signals when running under UNIX unless the -x option appeared on the command line.
@@ -1847,7 +1869,7 @@ missing_arg:
     {
 #ifdef _POSIX_SIGNALS
         struct sigaction sa ;
-
+        
         sigemptyset(&sa.sa_mask) ;
         sa.sa_flags=0;
         sa.sa_handler=sigeat ;
@@ -1865,13 +1887,13 @@ missing_arg:
 #endif /* _POSIX_SIGNALS */
     }
 #endif /* _UNIX */
-  
+    
     mlerase(0);                /* Delete command line */
     /* disable screen updates to reduce the flickering and startup time */
     screenUpdateDisabledCount = -9999 ;
     /* run me.emf unless an @... arg was given in which case run that */
     execFile(file,meTRUE,noFiles) ;
-
+    
     /* initalize *scratch* colors & modes to global defaults & check for a hook */
     if((mainbp=bfind(BmainN,0)) != NULL)
     {
@@ -1898,7 +1920,7 @@ missing_arg:
     /* allow interaction with the clipboard now that me has initialized */
     clipState &= ~CLIP_DISABLED ;
 #endif
-
+    
     {
         meUByte  *searchStr=NULL, *cryptStr=NULL ;
         int       binflag=0 ;         /* load next file as a binary file*/
@@ -1907,7 +1929,7 @@ missing_arg:
         char     *ss ;
         int       stdinflag=0 ;
         int       obufHistNo ;
-
+        
         obufHistNo = bufHistNo ;
         noFiles = 0 ;
         /* scan through the command line and get the files to edit */
@@ -2026,7 +2048,7 @@ handle_stdin:
         }
         bufHistNo = obufHistNo + rarg ;
     }
-
+    
     if(noFiles > 0)
     {
         if((bp = replacebuffer(NULL)) != mainbp)
@@ -2041,15 +2063,15 @@ handle_stdin:
             }
         }
     }
-
+    
     /* setup to process commands */
     lastflag = 0;                       /* Fake last flags.     */
-
+    
     /* Set the screen for a redraw at this point cos its after the
      * startup which can screw things up
      */
     sgarbf = meTRUE;			 /* Erase-page clears */
-
+    
     carg = decode_fncname((meUByte *)"start-up",1) ;
     if(carg >= 0)
         execFunc(carg,meFALSE,1) ;
@@ -2069,13 +2091,13 @@ _meAssert (char *file, int line)
 {
     meUByte buf[meBUF_SIZE_MAX];                  /* String buffer */
     meUByte cc;                           /* Character input */
-
+    
     /* Put out the string */
     sprintf ((char *) buf,
              "!! ASSERT FAILED %s:%d !! - <S>ave. <Q>uit. <C>ontinue",
              file, line);
     mlwrite (MWABORT, buf);
-
+    
     TTinflush ();                       /* Flush the input buffer */
     for (;;)
     {
@@ -2104,7 +2126,7 @@ commandWait(int f, int n)
     meUByte clexecSv;
     int execlevelSv;
     meUByte *ss;
-
+    
     if(f && n)
     {
         f = clexec ;
@@ -2120,7 +2142,7 @@ commandWait(int f, int n)
        ((f=decode_fncname(meRegCurr->commandName,1)) < 0))
         return meTRUE ;
     varList = &(cmdTable[f]->varList);
-
+    
     if(n == 0)
     {
         TTsleep(-1,0,varList) ;
@@ -2171,7 +2193,7 @@ main(int argc, char *argv[])
                 selhilight.flags &= ~SELHIL_ACTIVE ;
             TTbreakFlag = 0 ;
         }
-
+        
 #ifdef _DRAGNDROP
         /* if drag and drop is enabled then process the drag and drop
          * files now. Note we make the invocation here as we
@@ -2197,7 +2219,7 @@ main(int argc, char *argv[])
                 /* Change to the correct frame */
                 meFrameMakeCur(dadp->frame, 1);
 #endif
-
+                
 #if MEOPT_MOUSE
                 /* Re-position the mouse */
                 mouse_X = clientToCol (dadp->mouse_x);
@@ -2206,7 +2228,7 @@ main(int argc, char *argv[])
                     mouse_X = frameCur->width;
                 if (mouse_Y > frameCur->depth)
                     mouse_Y = frameCur->depth;
-
+                
                 /* Find the window with the mouse */
                 setCursorToMouse (meFALSE, 0);
 #endif
@@ -2215,20 +2237,20 @@ main(int argc, char *argv[])
                 if(frameCur->windowCur->flags & meWINDOW_LOCK_BUFFER)
                     meWindowPopup(NULL,WPOP_MKCURR|WPOP_USESTR,NULL) ;
 #endif
-
+                
                 /* Find the file into buffer */
                 findSwapFileList (dadp->fname,BFND_CREAT|BFND_MKNAM,0,0);
-
+                
                 /* Destruct the list */
                 dadHead = dadp->next;
                 meFree (dadp);
             }
-
+            
 #if MEOPT_FRAME
             /* Restore the starting frame */
             meFrameMakeCur (startFrame, 1);
 #endif
-
+            
             /* Display a message indicating last trasaction */
             mlwrite (0,(meUByte *) "Drag and Drop transaction completed");
         }

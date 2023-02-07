@@ -150,6 +150,23 @@ extern  meUInt  meSystemCfg;            /* ME system config variable    */
 extern  meUInt meSYSTEM_MASK;           /* ME system mask - dependant on win32 flavour */
 #endif
 
+#define extRegCnt 1
+extern meUByte *extRegLst[extRegCnt];
+#define extDictCnt 1
+extern meUByte *extDictLst[extDictCnt];
+#define extAbrevCnt 1
+extern meUByte *extAbrevLst[extAbrevCnt];
+#if MEOPT_BYTECOMP
+#define extMacroCnt 2
+#else
+#define extMacroCnt 1
+#endif
+extern meUByte *extMacroLst[extMacroCnt];
+#if (defined _WIN32) || (defined _DOS)
+#define extExecCnt 4
+extern meUByte *extExecLst[extExecCnt];
+#endif
+
 /* the $mouse variables always exist so the C variables must */
 #define meMOUSE_NOBUTTONS   0x0000f     /* # mouse buttons              */
 #define meMOUSE_ENBLE       0x00010     /* mouse is enabled             */
@@ -271,7 +288,8 @@ extern  meUByte   displaySpace;         /* space ' ' display character */
 extern  meUByte  *envars[];             /* list of recognized env. vars */
 extern  meUByte  *derNames[];           /* name list of directives      */
 extern  meUByte   derTypes[];           /* type list of directives      */
-extern  meUByte   funcTypes[];          /* type list of user funcs      */
+extern  meUByte  *funcNames[];          /* name list of functions       */
+extern  meUByte   funcTypes[];          /* type list of functions       */
 extern  meUByte   funcOffst[];          /* func offset into list based on 1st letter */
 extern  int       funcHashs[];          /* user func letters as int hash*/
 extern  meKillNode *kbufp;              /* current kill buffer chunk pointer */
@@ -623,6 +641,18 @@ meUInt    meSYSTEM_MASK=                /* ME system mask - dependant on win32 f
  |meSYSTEM_CLNTSRVR
 #endif
  ) ;
+#endif
+
+meUByte *extRegLst[extRegCnt] = {(meUByte *) ".erf"};
+meUByte *extDictLst[extDictCnt] = {(meUByte *) ".edf"};
+meUByte *extAbrevLst[extAbrevCnt] = {(meUByte *) ".eaf"};
+#if MEOPT_BYTECOMP
+meUByte *extMacroLst[extMacroCnt] = {(meUByte *) ".emb",(meUByte *) ".emf"};
+#else
+meUByte *extMacroLst[extMacroCnt] = {(meUByte *) ".emf"};
+#endif
+#if (defined _WIN32) || (defined _DOS)
+meUByte *extExecLst[extExecCnt] = {(meUByte *) ".com",(meUByte *) ".exe",(meUByte *) ".bat",(meUByte *) ".cmd"};
 #endif
 
 #if MEOPT_MOUSE

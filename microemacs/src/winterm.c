@@ -584,7 +584,7 @@ TTopenClientServer(void)
             bp->dotLine = meLineGetPrev(bp->baseLine) ;
             bp->dotOffset = 0 ;
             bp->dotLineNo = bp->lineCount-1 ;
-            meAnchorSet(bp,'I',bp->dotLine,bp->dotOffset,1) ;
+            meAnchorSet(bp,'I',bp->dotLine,bp->dotLineNo,bp->dotOffset,1) ;
         }
         /* Set up the window dimensions - default to having auto wrap */
         ipipe->flag = 0 ;

@@ -1260,16 +1260,16 @@ handle_namesvar:
              *       ME interprets numbers of the form 0## as octagon based numbers
              *       so in september the number is 09 which is illegal etc.
              */
-            sprintf ((char *)evalResult, "%4d%3d%2d%2d%1d%2d%2d%2d%3d",
-                     time_ptr->tm_year+1900,/* Year - 2000 should be ok !! */
-                     time_ptr->tm_yday,     /* Year day */
-                     time_ptr->tm_mon+1,    /* Month */
-                     time_ptr->tm_mday,     /* Day of the month */
-                     time_ptr->tm_wday,     /* Day of the week */
-                     time_ptr->tm_hour,     /* Hours */
-                     time_ptr->tm_min,      /* Minutes */
-                     time_ptr->tm_sec,      /* Seconds */
-                     (int) (tp.tv_usec/1000));/* Milliseconds */
+            sprintf((char *) evalResult, "%4d%3d%2d%2d%1d%2d%2d%2d%3d",
+                    time_ptr->tm_year+1900,  /* Year - 2000 should be ok !! */
+                    time_ptr->tm_yday,       /* Year day */
+                    time_ptr->tm_mon+1,      /* Month */
+                    time_ptr->tm_mday,       /* Day of the month */
+                    time_ptr->tm_wday,       /* Day of the week */
+                    time_ptr->tm_hour,       /* Hours */
+                    time_ptr->tm_min,        /* Minutes */
+                    time_ptr->tm_sec,        /* Seconds */
+                    (int) (tp.tv_usec/1000));/* Milliseconds */
             return evalResult;
         }
     case EVRANDOM:      return meItoa(rand());
@@ -1996,7 +1996,16 @@ gtarg(meUByte *tkn)
 meUByte *
 getval(meUByte *tkn)   /* find the value of a token */
 {
-    switch (getMacroTypeS(tkn)) 
+    meUByte cc=*tkn;
+#if MEOPT_BYTECOMP
+    if(cc & BCLEAD)
+    {
+        if(cc == BCFUN)
+            return gtfun((tkn[1])-'0',NULL);
+        return abortm ;
+    }
+#endif
+    switch (getMacroType(cc)) 
     {
     case TKARG:
         return gtarg(tkn) ;
@@ -2027,7 +2036,22 @@ getval(meUByte *tkn)   /* find the value of a token */
         if(alarmState & meALARM_VARIABLE)
             return tkn ;
         return getUsrVar(tkn+1) ;
+#endif
+    case TKENV:
+        if(alarmState & meALARM_VARIABLE)
+            return tkn;
+        return gtenv(tkn+1);
+
+    case TKFUN:
+        return gtfun(-1,tkn+1);
+    
+    case TKSTR:
+        tkn++ ;
+    case TKCMD:
+    case TKLIT:
+        return tkn ;
         
+#if MEOPT_EXTENDED
     case TKLVR:
         if(alarmState & meALARM_VARIABLE)
             return tkn ;
@@ -2054,7 +2078,7 @@ getval(meUByte *tkn)   /* find the value of a token */
         if(alarmState & meALARM_VARIABLE)
             return tkn;
         {
-            meUByte *ss, *tt ;
+            register meUByte *ss, *tt ;
             tt = tkn+1 ;
             if((ss=meStrrchr(tt,'.')) != NULL)
             {
@@ -2072,19 +2096,6 @@ getval(meUByte *tkn)   /* find the value of a token */
             return abortm ;
         }
 #endif
-    case TKENV:
-        if(alarmState & meALARM_VARIABLE)
-            return tkn ;
-        return gtenv(tkn+1) ;
-
-    case TKFUN:
-        return gtfun(tkn+1) ;
-    
-    case TKSTR:
-        tkn++ ;
-    case TKCMD:
-    case TKLIT:
-        return tkn ;
     }
     /* If here then it is either TKDIR, TKLBL or TKNUL. Doesn't matter which
      * cause something has gone wrong and we return abortm
@@ -2123,7 +2134,7 @@ meGetDayOfYear(meInt year, meInt month, meInt day)
 #endif
 
 meUByte *
-gtfun(meUByte *fname)  /* evaluate a function given name of function */
+gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of function */
 {
 #if MEOPT_EXTENDED
     meRegister *regs ;     /* pointer to relevant regs if setting var */
@@ -2132,34 +2143,35 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
     meUByte arg2[meBUF_SIZE_MAX];      /* value of second argument */
     meUByte arg3[meBUF_SIZE_MAX];      /* value of third argument */
     meUByte *varVal;
-    int ii, fnum=-1;
-    
-    if(((ii = fname[0] - 'a') >= 0) && (ii < 26) && ((ii = funcOffst[ii]) != 0))
-    {
-        int fn, fnam = (((int) fname[0]) << 16) | (((int) fname[1]) << 8) | ((int) fname[2]) ;
-        if((fn=funcHashs[ii]) == fnam)
-            fnum = ii;
-        else if(fn < fnam)
-        {
-            while((fn=funcHashs[++ii]) < fnam)
-                ;
-            if(fn == fnam)
-                fnum = ii;
-        }
-        else
-        {
-            while((fn=funcHashs[--ii]) > fnam)
-                ;
-            if(fn == fnam)
-                fnum = ii;
-        }
-    }
+    int ii;
     if(fnum < 0)
     {
-        mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown function &%s]",fname);
-        return abortm ;
+        if(((ii = fname[0] - 'a') >= 0) && (ii < 26) && ((ii = funcOffst[ii]) != 0))
+        {
+            int fn, fnam = (((int) fname[0]) << 16) | (((int) fname[1]) << 8) | ((int) fname[2]) ;
+            if((fn=funcHashs[ii]) == fnam)
+                fnum = ii;
+            else if(fn < fnam)
+            {
+                while((fn=funcHashs[++ii]) < fnam)
+                    ;
+                if(fn == fnam)
+                    fnum = ii;
+            }
+            else
+            {
+                while((fn=funcHashs[--ii]) > fnam)
+                    ;
+                if(fn == fnam)
+                    fnum = ii;
+            }
+        }
+        if(fnum < 0)
+        {
+            mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown function &%s]",fname);
+            return abortm;
+        }
     }
-    
 #if MEOPT_EXTENDED
     if((fnum == UFCBIND) || (fnum == UFNBIND))
     {
@@ -2179,18 +2191,18 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
 #endif
     /* retrieve the arguments */
     {
-        meUByte alarmStateStr=alarmState ;
-        int ii ;
+        meUByte alarmStateStr=alarmState;
+        int ii;
         
 #if MEOPT_EXTENDED
         if(funcTypes[fnum] & FUN_SETVAR)
         {
             /* horrid global variable, see notes at definition */
-            gmaLocalRegPtr = meRegCurr ;
-            alarmState |= meALARM_VARIABLE ;
-            ii = macarg(arg1) ;
-            alarmState &= ~meALARM_VARIABLE ;
-            regs = gmaLocalRegPtr ;
+            gmaLocalRegPtr = meRegCurr;
+            alarmState |= meALARM_VARIABLE;
+            ii = macarg(arg1);
+            alarmState &= ~meALARM_VARIABLE;
+            regs = gmaLocalRegPtr;
             if((ii > 0) && (funcTypes[fnum] & FUN_GETVAR) &&
                ((varVal = getval(arg1)) == abortm))
                 ii = meFALSE ;
@@ -2204,10 +2216,13 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
         if((ii <= 0) ||
            ((funcTypes[fnum] & FUN_ARG2) &&
             ((macarg(arg2) <= 0) ||
-             ((funcTypes[fnum] & FUN_ARG3) &&
-              (macarg(arg3) <= 0)))))
+             ((funcTypes[fnum] & FUN_ARG3) && (macarg(arg3) <= 0)))))
         {
-            mlwrite(MWABORT|MWWAIT,(meUByte *)"[Failed to get argument for function &%s]",fname);
+            if(meRegCurr->commandName != NULL)
+                sprintf((char *) arg3," in macro %s",meRegCurr->commandName);
+            else
+                arg3[0] = '\0';
+            mlwrite(MWABORT|MWWAIT,(meUByte *)"[Failed to get argument for function &%s%s]",funcNames[fnum],arg3);
             return abortm ;
         }
         alarmState = alarmStateStr ;
@@ -2825,7 +2840,27 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
         }
     case UFFIND:
         {
-            if(!fileLookup(arg1,arg2,meFL_CHECKDOT|meFL_USESRCHPATH,evalResult))
+            meUByte *el[10];
+            int ec;
+            if(arg2[0] == '\0')
+                ec = 0;
+            else if(arg2[0] == '|')
+            {
+                meUByte *e1=arg2+1,*e2;
+                ec = 0;
+                while((e2 = meStrchr(e1,'|')) != NULL)
+                {
+                    el[ec++] = e1;
+                    *e2++ = '\0';
+                    e1 = e2;
+                }
+            }
+            else
+            {
+                ec = 1;
+                el[0] = arg2;
+            }
+            if(!fileLookup(arg1,ec,el,meFL_CHECKDOT|meFL_USESRCHPATH,evalResult))
                 return errorm ;
             return evalResult ;
         }
@@ -2998,14 +3033,14 @@ gtfun(meUByte *fname)  /* evaluate a function given name of function */
             meUByte *p;                            /* Temp char pointer */
             meUByte  c;                            /* Current char */
             meUByte *s = arg1;                     /* String pointer */
-            int   count, nn, index=0 ;          /* Count of repeat */
+            int   count, nn, index=0 ;             /* Count of repeat */
             meUByte alarmStateStr=alarmState ;
             
             alarmState &= ~meALARM_VARIABLE ;
             
-            while ((c = *s++) != '\0') 
+            while((c = *s++) != '\0') 
             {
-                if (c == '%')                   /* Check for control */
+                if(c == '%')                       /* Check for control */
                 {
                     p = s-1 ;
                     count = 1 ;
@@ -3086,18 +3121,9 @@ get_flag:
         }
     case UFSTAT:
         {
-            static meUByte typeRet[] = "NRDXHF" ;
-            meStat stats ;
-            int    ftype ;
-            /*
-             * 0 -> N - If file is nasty
-             * 1 -> R - If file is regular
-             * 2 -> D - If file is a directory
-             * 3 -> X - If file doesn't exist
-             * 4 -> H - If file is a HTTP url
-             * 5 -> F - If file is a FTP url
-             */
-            ftype = getFileStats(arg2,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE,&stats,evalResult) ;
+            meStat stats;
+            int ftype = getFileStats(arg2,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE,
+                                     (arg1[0] == 't') ? NULL:&stats,(arg1[0] == 't') ? NULL:evalResult);
             switch(arg1[0])
             {
             case 'a':
@@ -3105,7 +3131,7 @@ get_flag:
                 if(*evalResult == '\0')
                     fileNameCorrect(arg2,evalResult,NULL) ;
                 /* if its a directory check there's an ending '/' */
-                if(ftype == meFILETYPE_DIRECTORY)
+                if(ftype & meIOTYPE_DIRECTORY)
                 {
                     meUByte *ss=evalResult+meStrlen(evalResult) ;
                     if(ss[-1] != DIR_CHAR)
@@ -3149,26 +3175,26 @@ get_flag:
                      *     large files
                      *   - The file modification time will be the 7th value (n.y.i.)
                      */ 
-                    meUByte v1, v2, v3='\0', v5=0, *dd, v7[16] ;
-                    meUInt v51, v52 ;
-                    int v4=-1 ;
+                    meUByte v1, v2, v3='\0', v5=0, *dd, v7[32];
+                    meUInt v51, v52;
+                    int v4=-1;
                     
-                    v7[0] = '\0' ;
-                    if(ftype == meFILETYPE_HTTP)
-                        v1 = v2 = 'H' ;
-                    else if(ftype == meFILETYPE_FTP)
+                    v7[0] = '\0';
+                    if(ftype & meIOTYPE_HTTP)
+                        v1 = v2 = 'H';
+                    else if(ftype & (meIOTYPE_FTP|meIOTYPE_FTPE))
                     {
-                        v1 = 'F' ;
+                        v1 = 'F';
                         if(ffFileOp(arg2,NULL,meRWFLAG_STAT|meRWFLAG_SILENT,-1) > 0)
                         {
-                            v2 = evalResult[0] ;
-                            dd = evalResult + 1 ;
+                            v2 = evalResult[0];
+                            dd = evalResult+1;
                             if(*dd != '|')
                             {
-                                v5 = 1 ;
-                                v51 = 0 ;
-                                v52 = meAtoi(dd) ;
-                                dd = meStrchr(dd,'|') ;
+                                v5 = 1;
+                                v51 = 0;
+                                v52 = meAtoi(dd);
+                                dd = meStrchr(dd,'|');
                             }
                             dd++ ;
                             if(*dd != '\0')
@@ -3178,22 +3204,19 @@ get_flag:
                             }
                         }
                         else
-                            v2 = 'N' ;
+                            v2 = 'N';
                     }
                     else
                     {
-                        v1 = 'L' ;
-                        if(ftype == meFILETYPE_NOTEXIST)
-                            v2 = 'X' ;
+#ifdef MEOPT_TFS
+                        v1 = (ftype & meIOTYPE_TFS) ? 'T':'L';
+#else
+                        v1 = 'L';
+#endif
+                        if(ftype & meIOTYPE_NOTEXIST)
+                            v2 = 'X';
                         else
                         {
-#ifdef _UNIX
-                            struct tm *tmp;            /* Pointer to time frame. */
-                            if ((tmp = localtime(&stats.stmtime)) != NULL)
-                                sprintf((char *)v7, "%4d%2d%2d%2d%2d%2d",
-                                        tmp->tm_year+1900,tmp->tm_mon+1,tmp->tm_mday,
-                                        tmp->tm_hour,tmp->tm_min,tmp->tm_sec);
-#endif
 #ifdef _DOS
                             if((stats.stmtime & 0x0ffff) != 0x7fff)
                                 sprintf((char *)v7,"%4d%2d%2d%2d%2d%2d",
@@ -3202,7 +3225,7 @@ get_flag:
                                         (int) ((stats.stmtime >> 16) & 0x001f),
                                         (int) ((stats.stmtime >> 11) & 0x001f),
                                         (int) ((stats.stmtime >>  5) & 0x003f),
-                                        (int) ((stats.stmtime & 0x001f)  << 1)) ;
+                                        (int) ((stats.stmtime & 0x001f)  << 1));
 #endif
 #ifdef _WIN32
                             SYSTEMTIME tmp;
@@ -3211,24 +3234,33 @@ get_flag:
                             if(FileTimeToLocalFileTime(&stats.stmtime,&ftmp) && FileTimeToSystemTime(&ftmp,&tmp))
                                 sprintf((char *)v7,"%4d%2d%2d%2d%2d%2d",
                                         tmp.wYear,tmp.wMonth,tmp.wDay,
-                                        tmp.wHour,tmp.wMinute,tmp.wSecond) ;
+                                        tmp.wHour,tmp.wMinute,tmp.wSecond);
 #endif
-                            if(evalResult[0] != '\0')
-                            {
-                                meStat lstats ;
-                                v2 = 'L' ;
-                                v3 = typeRet[getFileStats(evalResult,0,&lstats,NULL)] ;
-                            }
+#ifdef _UNIX
+                            struct tm *tmp;            /* Pointer to time frame. */
+                            if((tmp = localtime(&stats.stmtime)) != NULL)
+                                sprintf((char *)v7, "%4d%2d%2d%2d%2d%2d",
+                                        tmp->tm_year+1900,tmp->tm_mon+1,tmp->tm_mday,
+                                        tmp->tm_hour,tmp->tm_min,tmp->tm_sec);
+#endif
+                            if(ftype & meIOTYPE_NASTY)
+                                v2 = 'N';
                             else
-                                v2 =  typeRet[ftype] ;
-                            if(ftype != meFILETYPE_NOTEXIST)
                             {
-                                v4 = meFileGetAttributes(arg2) ;
-                                v5 = 1 ;
-                                v51 = stats.stsizeHigh ;
-                                v52 = stats.stsizeLow ;
+                                v2 = (ftype & meIOTYPE_DIRECTORY) ? 'D':'R';
+                                v4 = meFileGetAttributes(arg2);
+                                v5 = 1;
+                                v51 = stats.stsizeHigh;
+                                v52 = stats.stsizeLow;
                             }
                         }
+#ifdef _UNIX
+                        if(evalResult[0] != '\0')
+                        {
+                            v3 = v2;
+                            v2 = 'L';
+                        }
+#endif
                     }
                     dd = evalResult ;
                     *dd++ = '\b' ;
@@ -3306,26 +3338,26 @@ get_flag:
             case 'r':
                 /* File read permission */
                 /* If its a nasty or it doesn't exist - no */
-                if((ftype == meFILETYPE_NASTY) || (ftype == meFILETYPE_NOTEXIST))
-                    return meLtoa(0) ;
+                if(ftype & (meIOTYPE_NASTY|meIOTYPE_NOTEXIST))
+                    return meLtoa(0);
                 /* If its a url then do we support url ? */
-                if((ftype == meFILETYPE_HTTP) || (ftype == meFILETYPE_FTP))
+                if(ftype & (meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE))
 #if MEOPT_SOCKET
-                    return meLtoa(1) ;
+                    return meLtoa(1);
 #else
-                    return meLtoa(0) ;
+                    return meLtoa(0);
 #endif
                 /* If its a DOS/WIN directory - yes */
 #if (defined _DOS) || (defined _WIN32)
-                if(ftype == meFILETYPE_DIRECTORY)
-                    return meLtoa(1) ;
+                if(ftype & meIOTYPE_DIRECTORY)
+                    return meLtoa(1);
 #endif
                 /* normal test */
-                return meLtoa(meStatTestRead(stats)) ;
+                return meLtoa(meStatTestRead(stats));
                 
             case 's':
                 /* File size - return -1 if not a regular file */
-                if(ftype != meFILETYPE_REGULAR)
+                if((ftype & meIOTYPE_REGULAR) == 0)
                     ftype = -1 ;
                 else if((stats.stsizeHigh > 0) || (stats.stsizeLow & 0x80000000))
                     ftype = 0x7fffffff ;
@@ -3333,49 +3365,50 @@ get_flag:
                     ftype = stats.stsizeLow ;
                 break ;
             case 't':
-                /* File type - use look up table, see first comment */
-                evalResult[0] = typeRet[ftype] ;
-                evalResult[1] = '\0' ;
-                return evalResult ;
+                if(ftype & (meIOTYPE_REGULAR|meIOTYPE_DIRECTORY))
+                    evalResult[0] = (ftype & meIOTYPE_REGULAR) ? 'R':'D';
+                else if(ftype & (meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE))
+                    evalResult[0] = (ftype & meIOTYPE_HTTP) ? 'H':'F';
+                else
+                    evalResult[0] = (ftype & meIOTYPE_NOTEXIST) ? 'X':'N';
+                evalResult[1] = '\0';
+                return evalResult;
                 
             case 'w':
-                /* File write permission */
-                /* If nasty or url - no */
-                if((ftype == meFILETYPE_NASTY) || (ftype == meFILETYPE_HTTP) ||
-                   (ftype == meFILETYPE_FTP))
-                    return meLtoa(0) ;
+                /* File write permission - If nasty or url - no */
+                if(ftype & (meIOTYPE_NASTY|meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE))
+                    return meLtoa(0);
                 
                 /* if it doesnt exist or its an DOS/WIN directory - yes */
 #if (defined _DOS) || (defined _WIN32)
-                if((ftype == meFILETYPE_NOTEXIST) || (ftype == meFILETYPE_DIRECTORY))
+                if(ftype & (meIOTYPE_NOTEXIST|meIOTYPE_DIRECTORY))
 #else
-                if(ftype == meFILETYPE_NOTEXIST)
+                if(ftype & meIOTYPE_NOTEXIST)
 #endif
-                    return meLtoa(1) ;
-                return meLtoa(meStatTestWrite(stats)) ;
+                    return meLtoa(1);
+                return meLtoa(meStatTestWrite(stats));
                 
             case 'x':
                 /* File execute permission */
                 /* If nasty or doesnt exist, or url then no */
-                if((ftype == meFILETYPE_NASTY) || (ftype == meFILETYPE_NOTEXIST) ||
-                   (ftype == meFILETYPE_HTTP) || (ftype == meFILETYPE_FTP))
-                    return meLtoa(0) ;
+                if(ftype & (meIOTYPE_NASTY|meIOTYPE_NOTEXIST|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE))
+                    return meLtoa(0);
 #if (defined _DOS) || (defined _WIN32)
                 /* If directory, simulate unix style execute flag and return yes */
-                if(ftype == meFILETYPE_DIRECTORY)
-                    return meLtoa(1) ;
+                if(ftype & meIOTYPE_DIRECTORY)
+                    return meLtoa(1);
                 /* Must test for .exe, .com, .bat, .btm extensions etc */
-                return meLtoa(meTestExecutable(arg2)) ;
+                return meLtoa(meTestExecutable(arg2));
 #else
                 /* Test the unix execute flag */
                 return meLtoa((((stats.stuid == meUid) && (stats.stmode & S_IXUSR)) ||
                                ((stats.stgid == meGid) && (stats.stmode & S_IXGRP)) ||
-                               (stats.stmode & S_IXOTH))) ;
+                               (stats.stmode & S_IXOTH)));
 #endif
             default:
-                return abortm ;
+                return abortm;
             }                
-            return meItoa(ftype) ;
+            return meItoa(ftype);
         }
     case UFBSTAT:
         {
@@ -3619,18 +3652,18 @@ showVarList(meBuffer *bp, meUByte prefix, meVariable *varList)
  */
 
 int
-listVariables (int f, int n)
+listVariables(int f, int n)
 {
-    meVariable *tv ;
-    meWindow *wp ;
-    meBuffer *bp ;
-    meUByte   buf[meBUF_SIZE_MAX] ;
-    int     ii ;
+    meVariable *tv;
+    meWindow *wp;
+    meBuffer *bp;
+    meUByte   buf[meBUF_SIZE_MAX];
+    int       ii;
     
     /* don't execute hooks here as they can change variable values */
     if((wp = meWindowPopup(BvariablesN,(BFND_CREAT|BFND_CLEAR|BFND_NOHOOK|WPOP_USESTR),NULL)) == NULL)
-        return meFALSE ;
-    bp = wp->buffer ;
+        return meFALSE;
+    bp = wp->buffer;
     
     addLineToEob(bp,(meUByte *)"Register variables:\n");
     
@@ -3659,7 +3692,7 @@ listVariables (int f, int n)
                 addLineToEob(bp,buf);
                 showVarList(bp,':',tv);
             }
-            bb = bb->next ;
+            bb = bb->next;
         }
         while(cc != NULL)
         {
@@ -3669,7 +3702,7 @@ listVariables (int f, int n)
                 addLineToEob(bp,buf);
                 showVarList(bp,'.',tv);
             }
-            cc = cc->anext ;
+            cc = cc->anext;
         }
     }
     
@@ -3682,13 +3715,13 @@ listVariables (int f, int n)
         showVarList(bp,'%',tv);
     
     bp->dotLine = meLineGetNext(bp->baseLine);
-    bp->dotOffset = 0 ;
-    bp->dotLineNo = 0 ;
+    bp->dotOffset = 0;
+    bp->dotLineNo = 0;
     meModeClear(bp->mode,MDEDIT);     /* don't flag this as a change */
     meModeSet(bp->mode,MDVIEW);       /* put this buffer view mode */
     resetBufferWindows(bp);           /* Update the window */
     setBufferContext(bp);             /* execute hook now (if any) */
     mlerase(MWCLEXEC);                /* clear the mode line */
-    return meTRUE ;
+    return meTRUE;
 }
 #endif

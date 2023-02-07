@@ -94,7 +94,7 @@ meUByte charMaskTbl1[256] =
     0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A,
     0x0A,
 #endif
-    0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
+          0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
     0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
     0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
     0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
@@ -250,7 +250,7 @@ ffUrlGetType(meUByte *url)
 #define meSOCK_SHOW_CONSOLE   meSOCK_SHUTDOWN
 #define meSOCK_SHOW_PROGRESS  meSOCK_CTRL_INUSE
 #define meSOCK_REDIR_HALT     meSOCK_CTRL_NO_QUIT
-#define meSBUF_SIZE  (((meSOCK_BUFF_SIZE) > (meBUF_SIZE_MAX)) ? (meSOCK_BUFF_SIZE) : (meBUF_SIZE_MAX))
+#define meBUF_SOCK_SIZE_MAX   (((meSOCK_BUFF_SIZE) > (meBUF_SIZE_MAX)) ? (meSOCK_BUFF_SIZE) : (meBUF_SIZE_MAX))
 
 static meUByte *ffUrlFlagsVName[2]={(meUByte *)"http-flags",(meUByte *)"ftp-flags"} ;
 static meUByte *ffUrlFlagsVDef[2]={(meUByte *)"c",(meUByte *)"ci"} ;
@@ -418,7 +418,7 @@ ffSUrlLogger(meUByte type,meUByte *txt, void *iop)
 int
 ffFtpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
 {
-    meUByte buff[meSBUF_SIZE], urlBuff[meBUF_SIZE_MAX], *hst, *prt, *usr, *psw, *ups=NULL, *fl, *dd, cc;
+    meUByte buff[meBUF_SOCK_SIZE_MAX+32], urlBuff[meBUF_SIZE_MAX], *hst, *prt, *usr, *psw, *ups=NULL, *fl, *dd, cc;
     meUShort flags;
     meInt ii, dirlist;
     
@@ -676,7 +676,7 @@ ffFtpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
 static int
 ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meInt fdLen, meUByte *frmData, meUByte *postFName, meBuffer *bp)
 {
-    meUByte buff[meSBUF_SIZE], urlBuff[meBUF_SIZE_MAX], *hst, *prt, *usr, *psw, *ups=NULL, *fl, *dd, cc;
+    meUByte buff[meBUF_SOCK_SIZE_MAX], urlBuff[meBUF_SIZE_MAX], *hst, *prt, *usr, *psw, *ups=NULL, *fl, *dd, cc;
     meUShort flags;
     meInt ii;
     
@@ -934,7 +934,7 @@ ffUrlFileClose(meIo *io, meUInt rwflag)
 {
     if(rwflag & (meRWFLAG_READ|meRWFLAG_WRITE))
     {
-        meUByte buff[meSBUF_SIZE];
+        meUByte buff[meBUF_SOCK_SIZE_MAX];
         if(ffUrlTypeIsFtp(io->type))
         {
             /* close data channel */
@@ -1238,8 +1238,7 @@ ffgetBuf(meIo *io)
     {
         if((ffremain = tfs_fread(ffbuf,1,meFIOBUFSIZ,io->tfsp)) <= 0)
         {
-            /* if(ferror(io->fp))*/
-            /* return mlwrite(MWABORT,(meUByte *)"[File read error %d]",errno); */
+            /* TODO - this does not handle errors, just assumed to work */
             return meFALSE;
         }
     }
@@ -2030,8 +2029,7 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
                             sprintf((char *)filename+ll,"%d~",ii) ;
                             if(meRename(filename,filename2) && (ffFileOp(filename,filename2,meRWFLAG_DELETE,-1) <= 0))
                             {
-                                mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s (%d - %s)]",
-                                        filename2,errno,sys_errlist[errno]) ;
+                                mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s (%d)]",filename2,errno,meFileGetError()) ;
                                 if(meUnlink(filename))
                                 {
                                     mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to remove backup file %s]", filename) ;
@@ -2045,8 +2043,7 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
                 if(!meTestExist(filename) && meUnlink(filename))
                     mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to remove backup file %s]", filename) ;
                 else if(meRename(filenameOld,filename) && (ffFileOp(filenameOld,filename,meRWFLAG_DELETE,-1) <= 0))
-                    mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s (%d - %s)]",
-                            filename,errno,sys_errlist[errno]) ;
+                    mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s (%d)]",filename,errno,meFileGetError());
                 else if(bp != NULL)
                 {
                     meUShort ss;
@@ -2405,7 +2402,7 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
 #if MEOPT_SOCKET
         else if(ffUrlTypeIsFtp(meior.type) && (meior.type == meiow.type))
         {
-            meUByte cc, *fn, fnb[meBUF_SIZE_MAX], buff[meSBUF_SIZE];
+            meUByte cc, *fn, fnb[meBUF_SIZE_MAX], buff[meBUF_SOCK_SIZE_MAX];
             int ll;
             
             ll = 6;

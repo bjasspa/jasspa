@@ -517,7 +517,8 @@ typedef struct {
     ino_t              stino ;                  /* Files Inode number           */
 #endif
     meUShort           stmode ;                 /* file mode flags              */
-} meStat ;
+} meStat;
+#define meStatCopy(dd,ss) memcpy(dd,ss,sizeof(meStat))
 
 /*
  * meAbbrev
@@ -529,7 +530,7 @@ typedef struct meAbbrev {
     meLine             hlp ;                    /* head line                    */
     meUByte            loaded ;                 /* modification time of file    */
     meUByte            fname[1] ;               /* Users abrev file name        */
-} meAbbrev ;
+} meAbbrev;
 
 /* structure to hold user variables and their definitions */
 typedef struct meVariable
@@ -593,10 +594,11 @@ typedef struct meMacro {
  * by anchorList in the buffer structure.
  */
 typedef struct meAnchor {
-    struct meAnchor   *next ;                   /* pointer to next anchor       */
-    meLine            *line ;                   /* pointer to anchor line       */
-    meInt              name ;                   /* anchor name                  */
-    meUShort           offs ;                   /* anchor line offset           */
+    struct meAnchor   *next;                    /* pointer to next anchor       */
+    meLine            *line;                    /* pointer to anchor line       */
+    meInt              name;                    /* anchor name                  */
+    meUShort           offs;                    /* anchor line offset           */
+    meUByte            frwd;                    /* anchor likely near top half  */
 } meAnchor;
 
 #define meANCHOR_TYPE_MASK     0xff000000
@@ -771,7 +773,7 @@ typedef struct  meBuffer {
 #endif
     meUByte            tabWidth;                /* Virtual tab size             */
     meUByte            indentWidth;             /* Real tab size                */
-} meBuffer ;
+} meBuffer;
 
 
 #define meBFFLAG_DIR     0x01
@@ -1255,6 +1257,7 @@ typedef struct meUndoNarrow {
 #define meREGISTER_MAX 10
 typedef struct meRegister {
     struct meRegister *prev;
+    struct meRegister *next;
 #if MEOPT_EXTENDED
     meVariable       **varList;
 #endif

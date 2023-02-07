@@ -55,16 +55,25 @@ AR       = lib /NOLOGO
 RM       = del /F /Q
 RMDIR    = rd /S /Q
 
-BUILDID  = win32vc15
+TOOLKIT  = win32vc15
+!IF "$(LSTT)" == "1"
+BUILDID  = $(TOOLKIT)s
+CCLSTT   = /MT
+LDLSTT   = /NODEFAULTLIB:msvcrt.lib
+!ELSE
+BUILDID  = $(TOOLKIT)
+CCLSTT   = /MD
+LDLSTT   = 
+!ENDIF
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..\3rdparty
 
-CCDEFS   = /DWIN32 /D_WIN32 /D_WIN32_WINNT=0x500 /W3 /Zi /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /I$(TRDPARTY)\messl /I$(TRDPARTY)\tfs /I$(TRDPARTY)\zlib
-CCFLAGSR = /MD /O2 /GL /GS- /DNDEBUG=1 /D_HAS_ITERATOR_DEBUGGING=0 /D_SECURE_SCL=0
-CCFLAGSD = /MDd /Od /RTC1 /D_DEBUG
-LDDEFS   = /INCREMENTAL:NO /MACHINE:X86 /MANIFEST
-LDFLAGSR = /OPT:REF /OPT:ICF /LTCG
+CCDEFS   = /DWIN32 /D_WIN32 /D_WIN32_WINNT=0x0600 /W3 /Zi /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /I$(TRDPARTY)\mesock /I$(TRDPARTY)\tfs /I$(TRDPARTY)\zlib
+CCFLAGSR = $(CCLSTT) /O2 /GL /GR- /GS- /DNDEBUG=1 /D_HAS_ITERATOR_DEBUGGING=0 /D_SECURE_SCL=0
+CCFLAGSD = $(CCLSTT)d /Od /RTC1 /D_DEBUG
+LDDEFS   = /INCREMENTAL:NO /MACHINE:X86 /MANIFEST $(LDLSTT)
+LDFLAGSR = /OPT:REF /OPT:ICF=3 /LTCG
 LDFLAGSD = /DEBUG
 LDLIBSB  = shell32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib
 ARFLAGSR = /LTCG
@@ -90,7 +99,7 @@ LDLIBS   = $(LDLIBSB)
 !ELSE
 BCOR     = me
 BCOR_CDF = /D_SOCKET
-PRGLIBS  = $(TRDPARTY)\messl\$(BOUTDIR)\messl.lib $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib $(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib
+PRGLIBS  = $(TRDPARTY)\mesock\$(BOUTDIR)\mesock.lib $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib $(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib
 LDLIBS   = crypt32.lib ws2_32.lib mpr.lib $(LDLIBSB)
 !ENDIF
 
@@ -110,8 +119,8 @@ OUTDIR   = $(BOUTDIR)-$(BCOR)$(BTYP)
 PRGNAME  = $(BCOR)$(BTYP)32
 PRGFILE  = $(PRGNAME)$(EXE)
 PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
-	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def \
-	   $(BUILDID).mak
+	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def 
+#	   $(TOOLKIT).mak
 PRGOBJS  = $(OUTDIR)\abbrev.o $(OUTDIR)\basic.o $(OUTDIR)\bind.o $(OUTDIR)\buffer.o $(OUTDIR)\crypt.o $(OUTDIR)\dirlist.o $(OUTDIR)\display.o \
 	   $(OUTDIR)\eval.o $(OUTDIR)\exec.o $(OUTDIR)\file.o $(OUTDIR)\fileio.o $(OUTDIR)\frame.o $(OUTDIR)\hilight.o $(OUTDIR)\history.o $(OUTDIR)\input.o \
 	   $(OUTDIR)\isearch.o $(OUTDIR)\key.o $(OUTDIR)\line.o $(OUTDIR)\macro.o $(OUTDIR)\main.o $(OUTDIR)\narrow.o $(OUTDIR)\next.o $(OUTDIR)\osd.o \
@@ -130,7 +139,7 @@ PRGOBJS  = $(OUTDIR)\abbrev.o $(OUTDIR)\basic.o $(OUTDIR)\bind.o $(OUTDIR)\buffe
 
 all: $(PRGLIBS) $(OUTDIR)\$(PRGFILE)
 
-$(OUTDIR)\$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
+$(OUTDIR)\$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS) $(TOOLKIT).mak
 	$(RM) $@
 	$(LD) $(LDDEFS) $(BTYP_LDF) $(LDFLAGS) /PDB:"$(OUTDIR)\$(PRGNAME).pdb" /MANIFESTFILE:"$@.intermediate.manifest" /OUT:"$@" $(PRGOBJS) $(PRGLIBS) $(LDLIBS)
 	$(MT) -outputresource:"$@;#2" -manifest $@.intermediate.manifest
@@ -142,34 +151,40 @@ $(OUTDIR):
 
 $(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib:
 	cd $(TRDPARTY)\zlib
-	$(MK) -f $(BUILDID).mak BCFG=$(BCFG)
+	$(MK) -f $(TOOLKIT).mak BCFG=$(BCFG) LSTT=$(LSTT)
 	cd $(MAKEDIR)
 
 $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib:
 	cd $(TRDPARTY)\tfs
-	$(MK) -f $(BUILDID).mak BCFG=$(BCFG)
+	$(MK) -f $(TOOLKIT).mak BCFG=$(BCFG) LSTT=$(LSTT)
 	cd $(MAKEDIR)
 
-$(TRDPARTY)\messl\$(BOUTDIR)\messl.lib:
-	cd $(TRDPARTY)\messl
-	$(MK) -f $(BUILDID).mak BCFG=$(BCFG)
+$(TRDPARTY)\mesock\$(BOUTDIR)\mesock.lib:
+	cd $(TRDPARTY)\mesock
+	$(MK) -f $(TOOLKIT).mak BCFG=$(BCFG) LSTT=$(LSTT)
 	cd $(MAKEDIR)
 
 clean:
 	if exist $(OUTDIR)\ $(RMDIR) $(OUTDIR)
+	cd $(TRDPARTY)\mesock
+	$(MK) -f $(TOOLKIT).mak clean BCFG=$(BCFG) LSTT=$(LSTT)
+	cd $(MAKEDIR)
 	cd $(TRDPARTY)\tfs
-	$(MK) -f $(BUILDID).mak clean
+	$(MK) -f $(TOOLKIT).mak clean BCFG=$(BCFG) LSTT=$(LSTT)
 	cd $(MAKEDIR)
 	cd $(TRDPARTY)\zlib
-	$(MK) -f $(BUILDID).mak clean
+	$(MK) -f $(TOOLKIT).mak clean BCFG=$(BCFG) LSTT=$(LSTT)
 	cd $(MAKEDIR)
 
 spotless: clean
 	$(RM) *~
 	$(RM) tags
+	cd $(TRDPARTY)\mesock
+	$(MK) -f $(TOOLKIT).mak spotless BCFG=$(BCFG) LSTT=$(LSTT)
+	cd $(MAKEDIR)
 	cd $(TRDPARTY)\tfs
-	$(MK) -f $(BUILDID).mak spotless
+	$(MK) -f $(TOOLKIT).mak spotless BCFG=$(BCFG) LSTT=$(LSTT)
 	cd $(MAKEDIR)
 	cd $(TRDPARTY)\zlib
-	$(MK) -f $(BUILDID).mak spotless
+	$(MK) -f $(TOOLKIT).mak spotless BCFG=$(BCFG) LSTT=$(LSTT)
 	cd $(MAKEDIR)

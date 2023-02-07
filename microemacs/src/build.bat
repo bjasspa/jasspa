@@ -8,6 +8,8 @@ set LOGFILE=
 set LOGFILEA=
 set MECORE=
 set MEDEBUG=
+set MELSTT=
+set MEPROF=
 set METYPE=
 set MAKEFILE=
 :build_option
@@ -17,8 +19,10 @@ if "%1" == "-d"    set  MEDEBUG= BCFG=debug
 if "%1" == "-h"    goto build_help
 if "%1" == "-l"    goto build_logf
 if "%1" == "-la"   goto build_logfa
+if "%1" == "-LS"   set  MELSTT= LSTT=1
 if "%1" == "-m"    goto build_mkfl
 if "%1" == "-ne"   set  MECORE= BCOR=ne
+if "%1" == "-p"    set  MEPROF= BPRF=1
 if "%1" == "-S"    set  OPTIONS= spotless
 if "%1" == "-t"    goto build_type
 shift
@@ -50,7 +54,7 @@ goto build_option
 
 :build_cont
 
-set OPTIONS=%MECORE%%MEDEBUG%%METYPE%%OPTIONS%
+set OPTIONS=%MECORE%%MEDEBUG%%METYPE%%MEPROF%%MELSTT%%OPTIONS%
 
 if NOT "%MAKEFILE%." == "." goto build_got_makefile
 
@@ -115,6 +119,7 @@ echo     -l {logfile}
 echo          : Set the compile log file
 echo     -la {logfile}
 echo          : Append the compile log to the given file
+echo     -LS  : Link with static libraries to reduce dynamic runtime dependents (MSVC)
 echo     -m {makefile}
 echo            Sets the makefile to use where {makefile} can be:-
 echo              win32mingw.mak  Win32 build using MinGW GNU GCC
@@ -123,6 +128,7 @@ echo              win32vc8.mak  Win32 build using MS VC version 8 (or 2005)
 echo              win32vc9.mak  Win32 build using MS VC version 9 (or 2008)
 echo              win32vc10.mak  Win32 build using MS VC version 10 (or 2010)
 echo     -ne  : for NanoEmacs build (output is ne).
+echo     -p   : Build with profiling instructions (MinGW)
 echo     -S   : Build clean spotless.
 echo     -t {type}
 echo          : Sets build type:

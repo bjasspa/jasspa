@@ -2672,8 +2672,8 @@ positionSet(int f, int n)		/* save ptr to current window */
         pos->buffer = frameCur->bufferCur ;
     if(n & mePOS_LINEMRK)
     {
-        if(meAnchorSet(frameCur->bufferCur,meANCHOR_POSITION_DOT|pos->anchor,
-                       frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset,1) <= 0)
+        if(meAnchorSet(frameCur->bufferCur,meANCHOR_POSITION_DOT|pos->anchor,frameCur->windowCur->dotLine,
+                       frameCur->windowCur->dotLineNo,frameCur->windowCur->dotOffset,1) <= 0)
         {
             pos->flags = 0 ;
             return meABORT ;
@@ -2685,8 +2685,8 @@ positionSet(int f, int n)		/* save ptr to current window */
         pos->dotOffset = frameCur->windowCur->dotOffset ;
     if(n & mePOS_MLINEMRK)
     {
-        if(meAnchorSet(frameCur->bufferCur,meANCHOR_POSITION_MARK|pos->anchor,
-                       frameCur->windowCur->markLine,frameCur->windowCur->markOffset,1) <= 0)
+        if(meAnchorSet(frameCur->bufferCur,meANCHOR_POSITION_MARK|pos->anchor,frameCur->windowCur->markLine,
+                       frameCur->windowCur->markLineNo,frameCur->windowCur->markOffset,1) <= 0)
         {
             pos->flags = 0 ;
             return meABORT ;

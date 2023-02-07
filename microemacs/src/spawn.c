@@ -1293,7 +1293,7 @@ cant_handle_this:
     meSigRelease() ;
 #endif
     
-    meAnchorSet(bp,'I',bp->dotLine,bp->dotOffset,1) ;
+    meAnchorSet(bp,'I',bp->dotLine,bp->dotLineNo,bp->dotOffset,1);
     if(bp->ipipeFunc >= 0)
         /* If the process has ended the argument will be 0, else 1 */
         execBufferFunc(bp,bp->ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),(ii >= 0)) ;
@@ -1887,7 +1887,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
         {
             char buf[meBUF_SIZE_MAX];
 
-            if (executableLookup(args[0],buf))
+            if(executableLookup(args[0],buf))
                 args[0] = buf;
             execve(args[0],args,meEnviron);
         }
@@ -1951,7 +1951,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     bp->dotLine = meLineGetPrev(bp->baseLine);
     bp->dotOffset = 0;
     bp->dotLineNo = bp->lineCount-1;
-    meAnchorSet(bp,'I',bp->dotLine,bp->dotOffset,1);
+    meAnchorSet(bp,'I',bp->dotLine,bp->dotLineNo,bp->dotOffset,1);
 
     /* Set up the window dimensions - default to having auto wrap */
     ipipe->flag = 0 ;

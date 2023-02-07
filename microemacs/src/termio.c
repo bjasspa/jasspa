@@ -43,11 +43,6 @@
 #include <stdarg.h>		/* Variable Arguments */
 #endif
 
-#if (defined _WIN32) || (defined _DOS)
-/* executable extension list, in reverse order of dos priority */
-meUByte *execExtensions[noExecExtensions] = {(meUByte *) ".cmd",(meUByte *) ".bat",(meUByte *) ".exe",(meUByte *) ".com"} ;
-#endif
-
 /* SpecialChars; This is an array of special characters, below 32 used for
  * rendering boxes, lines etc. The following table provides a conversion
  * between those characters */

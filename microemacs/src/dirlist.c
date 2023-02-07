@@ -38,7 +38,6 @@
 
 #include	<time.h>
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
-#include	<errno.h>
 #include        <limits.h>                     /* Constant limit definitions */
 #include	<sys/types.h>
 #include	<sys/stat.h>
@@ -323,7 +322,7 @@ addPath(meUByte *pathname, int mask)
         /* see if the path already exists */
         if((ndp = dirFindNode(dp,p)) == NULL)
         {
-            if(getFileStats(pathname,0,NULL,NULL) != meFILETYPE_DIRECTORY)
+            if(meTestDir(pathname))
             {
                 *q = cc ;
                 return NULL ;

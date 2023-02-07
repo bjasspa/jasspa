@@ -55,17 +55,22 @@ AR       = ar
 RM       = rm -f
 RMDIR    = rm -r -f
 
-BUILDID  = win32mingw
+TOOLKIT  = win32mingw
+ifeq "$(BPRF)" "1"
+BUILDID  = $(TOOLKIT)p
+else
+BUILDID  = $(TOOLKIT)
+endif
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
 
 CCDEFS   = -D_MINGW -Wall -I$(TRDPARTY)/mesock -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib
 CCFLAGSR = -O3 -m32 -mfpmath=sse -Ofast -flto -march=native -funroll-loops -DNDEBUG=1 -Wno-uninitialized
-CCFLAGSD = -g -pg
+CCFLAGSD = -g -D_DEBUG
 LDDEFS   = 
 LDFLAGSR = -O3 -m32 -mfpmath=sse -Ofast -flto -march=native -funroll-loops
-LDFLAGSD = -g -pg
+LDFLAGSD = -g
 LDLIBSB  = -lshell32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32
 ARFLAGSR = rcs
 ARFLAGSD = rcs
@@ -95,6 +100,15 @@ PRGLIBS  = $(TRDPARTY)/mesock/$(BOUTDIR)/mesock$(A) $(TRDPARTY)/tfs/$(BOUTDIR)/t
 LDLIBS   = -lcrypt32 -lws2_32 -lmpr $(LDLIBSB)
 endif
 
+ifeq "$(BPRF)" "1"
+CCPROF = -D_ME_PROFILE -pg -no-pie
+LDPROF = -pg -no-pie
+STRIP  = - echo No strip - profile 
+else
+CCPROF = 
+LDPROF = 
+endif
+
 ifeq "$(BTYP)" "cw"
 BTYP_CDF = -D_ME_CONSOLE -D_CONSOLE -D_ME_WINDOW
 BTYP_LDF = -Wl,-subsystem,console
@@ -112,7 +126,7 @@ PRGNAME  = $(BCOR)$(BTYP)32
 PRGFILE  = $(PRGNAME)$(EXE)
 PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
 	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def \
-	   $(BUILDID).mak
+	   $(TOOLKIT).mak
 PRGOBJS  = $(OUTDIR)/abbrev.o $(OUTDIR)/basic.o $(OUTDIR)/bind.o $(OUTDIR)/buffer.o $(OUTDIR)/crypt.o $(OUTDIR)/dirlist.o $(OUTDIR)/display.o \
 	   $(OUTDIR)/eval.o $(OUTDIR)/exec.o $(OUTDIR)/file.o $(OUTDIR)/fileio.o $(OUTDIR)/frame.o $(OUTDIR)/hilight.o $(OUTDIR)/history.o $(OUTDIR)/input.o \
 	   $(OUTDIR)/isearch.o $(OUTDIR)/key.o $(OUTDIR)/line.o $(OUTDIR)/macro.o $(OUTDIR)/main.o $(OUTDIR)/narrow.o $(OUTDIR)/next.o $(OUTDIR)/osd.o \
@@ -124,7 +138,7 @@ PRGOBJS  = $(OUTDIR)/abbrev.o $(OUTDIR)/basic.o $(OUTDIR)/bind.o $(OUTDIR)/buffe
 .SUFFIXES: .c .o .rc .coff
 
 $(OUTDIR)/%.o : %.c
-	$(CC) $(CCDEFS) $(BCOR_CDF) $(BTYP_CDF) $(CCFLAGS) -c -o $@ $<
+	$(CC) $(CCDEFS) $(CCPROF) $(BCOR_CDF) $(BTYP_CDF) $(CCFLAGS) -c -o $@ $<
 
 $(OUTDIR)/%.coff : %.rc
 	$(RC) $(RCFLAGS) -o $@ -i $<
@@ -133,7 +147,7 @@ all: $(PRGLIBS) $(OUTDIR)/$(PRGFILE)
 
 $(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(RM) $@
-	$(LD) $(LDDEFS) $(BTYP_LDF) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS) $(LDLIBS)
+	$(LD) $(LDDEFS) $(LDPROF) $(BTYP_LDF) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS) $(LDLIBS)
 	$(STRIP) $@
 
 $(PRGOBJS): $(PRGHDRS)
@@ -142,23 +156,23 @@ $(OUTDIR):
 	if not exist $(OUTDIR)\ mkdir $(OUTDIR)
 
 $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A):
-	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
+	cd $(TRDPARTY)/zlib && $(MK) -f $(TOOLKIT).mak BCFG=$(BCFG) BPRF=$(BPRF)
 
 $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A):
-	cd $(TRDPARTY)/tfs && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
+	cd $(TRDPARTY)/tfs && $(MK) -f $(TOOLKIT).mak BCFG=$(BCFG) BPRF=$(BPRF)
 
 $(TRDPARTY)/mesock/$(BOUTDIR)/mesock$(A):
-	cd $(TRDPARTY)/mesock && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
+	cd $(TRDPARTY)/mesock && $(MK) -f $(TOOLKIT).mak BCFG=$(BCFG) BPRF=$(BPRF)
 
 clean:
 	$(RMDIR) $(OUTDIR)
-	cd $(TRDPARTY)/mesock && $(MK) -f $(BUILDID).mak clean
-	cd $(TRDPARTY)/tfs && $(MK) -f $(BUILDID).mak clean
-	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak clean
+	cd $(TRDPARTY)/mesock && $(MK) -f $(TOOLKIT).mak clean BCFG=$(BCFG) BPRF=$(BPRF)
+	cd $(TRDPARTY)/tfs && $(MK) -f $(TOOLKIT).mak clean BCFG=$(BCFG) BPRF=$(BPRF)
+	cd $(TRDPARTY)/zlib && $(MK) -f $(TOOLKIT).mak clean BCFG=$(BCFG) BPRF=$(BPRF)
 
 spotless: clean
 	$(RM) *~
 	$(RM) tags
-	cd $(TRDPARTY)/mesock && $(MK) -f $(BUILDID).mak spotless
-	cd $(TRDPARTY)/tfs && $(MK) -f $(BUILDID).mak spotless
-	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak spotless
+	cd $(TRDPARTY)/mesock && $(MK) -f $(TOOLKIT).mak spotless BCFG=$(BCFG) BPRF=$(BPRF)
+	cd $(TRDPARTY)/tfs && $(MK) -f $(TOOLKIT).mak spotless BCFG=$(BCFG) BPRF=$(BPRF)
+	cd $(TRDPARTY)/zlib && $(MK) -f $(TOOLKIT).mak spotless BCFG=$(BCFG) BPRF=$(BPRF)

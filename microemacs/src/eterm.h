@@ -385,10 +385,6 @@ extern void TTsendClientServer(meUByte *) ;
 #define	_MULTI_NOID_TIMER 1             /* Multi timer but no ids */
 #endif
 #define	TIMER_MIN    1                  /* The minimum timer allowed */
-/* executable extension list, in reverse order of dos priority - Must have the end NULL
- * included 4dos's btm files for completeness */
-#define noExecExtensions 4
-extern meUByte *execExtensions[noExecExtensions] ;
 
 extern meUInt *colTable ;
 extern HWND baseHwnd ;                  /* This is the base hidden window handle */
@@ -535,10 +531,6 @@ extern int  WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte 
 
 #define	_CONST_TIMER 1		        /* Constantly checked timer */
 #define	TIMER_MIN    0		        /* The minimum timer allowed */
-/* executable extension list, in reverse order of dos priority - Must have the end NULL
- * included 4dos's btm files for completeness */
-#define noExecExtensions 4
-extern meUByte *execExtensions[noExecExtensions] ;
 
 extern meUByte *colTable ;
 

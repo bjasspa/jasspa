@@ -348,8 +348,7 @@ showRegion(int f, int n)
 void
 windCurLineOffsetEval(meWindow *wp)
 {
-    if((wp->dotCharOffset->next == wp->dotLine) &&
-       !(wp->dotLine->flag & meLINE_CHANGED))
+    if((wp->dotCharOffset->next == wp->dotLine) && !(wp->dotLine->flag & meLINE_CHANGED))
         return ;
     if(wp->dotLine->length > meLineGetMaxLength(wp->dotCharOffset))
     {

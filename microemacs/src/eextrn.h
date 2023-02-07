@@ -262,7 +262,7 @@ extern  int     mlwrite(int flags, meUByte *fmt, ...) ;
 #define meRSTRCMP_WHOLE      (meRSTRCMP_BEGBUFF|meRSTRCMP_ENDBUFF|meRSTRCMP_MATCHWHOLE)
 #define meRSTRCMP_USEMAIN    0x10
 extern  int     regexStrCmp(meUByte *str, meUByte *reg, int flags) ;
-extern	meUByte *gtfun(meUByte *fname);
+extern	meUByte *gtfun(register int fnum, meUByte *fname);
 extern	meVariable *getUsrLclCmdVarP(meUByte *vname, register meVariable *varList);
 extern  meUByte *getUsrLclCmdVar(meUByte *vname, register meVariable *varList);
 #define getUsrVar(vname) getUsrLclCmdVar(vname,usrVarList)
@@ -321,15 +321,12 @@ extern	int	executeNamedCommand(int f, int n);
 extern	int	executeLine(int f, int n);
 extern	int	executeBuffer(int f, int n);
 extern	int	executeFile(int f, int n);
+#if KEY_TEST
+extern  int     fnctest(void);
+#endif
 
 /* file.c externals */
 extern  int fnamecmp(meUByte *f1, meUByte *f2) ;
-#define meFILETYPE_NASTY      0
-#define meFILETYPE_REGULAR    1
-#define meFILETYPE_DIRECTORY  2
-#define meFILETYPE_NOTEXIST   3
-#define meFILETYPE_HTTP       4
-#define meFILETYPE_FTP        5
 #define gfsERRON_ILLEGAL_NAME 1
 #define gfsERRON_BAD_FILE     2
 #define gfsERRON_DIR          4
@@ -340,8 +337,8 @@ extern  int mePathAddSearchPath(int index, meUByte *path_name,
 #define meFL_USESRCHPATH 0x02
 #define meFL_USEPATH     0x04
 #define meFL_EXEC        0x08
-extern	int fileLookup(meUByte *fname, meUByte *ext, meUByte flags, meUByte *outName) ;
-extern	int executableLookup(meUByte *fname, meUByte *outName) ;
+extern	int fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte *outName);
+extern	int executableLookup(meUByte *fname, meUByte *outName);
 extern  int bufferOutOfDate(meBuffer *bp) ;
 extern	meUByte *gwd(meUByte drive);
 extern  meUByte *getFileBaseName(meUByte *fname) ;
@@ -399,15 +396,23 @@ extern  void    getDirectoryList(meUByte *pathName, meDirList *dirList) ;
 #define meBACKUP_CREATE_PATH 0x0001
 extern int      createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag);
 
-#define meIOTYPE_NONE    0
-#define meIOTYPE_SSL     0x0001
-#define meIOTYPE_DIR     0x0002
-#define meIOTYPE_PIPE    0x0004
-#define meIOTYPE_FILE    0x0008
-#define meIOTYPE_TFS     0x0010
-#define meIOTYPE_HTTP    0x0020
-#define meIOTYPE_FTP     0x0040
-#define meIOTYPE_FTPE    0x0080
+/* following IOTYPEs are purely based on the file names URL prefix */
+#define meIOTYPE_NONE      0
+#define meIOTYPE_SSL       0x0001
+#define meIOTYPE_PIPE      0x0002
+#define meIOTYPE_FILE      0x0004
+#define meIOTYPE_TFS       0x0008
+#define meIOTYPE_HTTP      0x0010
+#define meIOTYPE_FTP       0x0020
+#define meIOTYPE_FTPE      0x0040
+/* the following is only used in fileio to ensure meBFFLAG_DIR is added */
+#define meIOTYPE_DIR       0x0080
+/* the following are added to the URL type by getFileStats */ 
+#define meIOTYPE_NASTY     0x0100
+#define meIOTYPE_NOTEXIST  0x0200
+#define meIOTYPE_REGULAR   0x0400
+#define meIOTYPE_DIRECTORY 0x0800
+
 /* meIOTYPE_PIPE is returned if url is NULL, meIOTYPE_NONE is returned if url does not start with a known URL, this is interpreted as a standard file name */ 
 extern meUByte  ffUrlGetType(meUByte *url);
 #define ffUrlTypeIsSecure(ft)   ((ft) & meIOTYPE_SSL)
@@ -841,10 +846,9 @@ extern	int	indentInsert(void) ;
 extern  int	winsert(void) ;
 #endif
 
-extern  int     meAnchorSet(meBuffer *bp, meInt name,
-                            meLine *lp, meUShort off, int silent) ;
-extern  int     meAnchorGet(meBuffer *bp, meInt name) ;
-extern  int     meAnchorDelete(meBuffer *bp, meInt name) ;
+extern  int     meAnchorSet(meBuffer *bp, meInt name, meLine *lp, meInt lineNo, meUShort off, int silent);
+extern  int     meAnchorGet(meBuffer *bp, meInt name);
+extern  int     meAnchorDelete(meBuffer *bp, meInt name);
 extern	int	setAlphaMark(int f, int n);
 extern	int	gotoAlphaMark(int f, int n);
 extern  int     insFileName(int f, int n) ;
@@ -1215,8 +1219,12 @@ extern int meTestExecutable(meUByte *fileName) ;
 #define meFileGetAttributes(fn) GetFileAttributes((const char *) (fn))
 #define meFileSetAttributes(fn,attr) SetFileAttributes((const char *) (fn),attr)
 extern void WinShutdown (void);
+#if (defined _MINGW) && (defined _ME_PROFILE)
 /* Note: to get any output from gprof change ExitProcess() -> exit() */
+#define meExit(status)      (WinShutdown(), exit(status))
+#else
 #define meExit(status)      (WinShutdown(), ExitProcess(status))
+#endif
 
 #else
 
@@ -1381,13 +1389,14 @@ extern int meGidInGidList(gid_t gid) ;
 #define meTestExec(fn) access((char *)(fn),X_OK)
 #endif
 #ifndef meTestDir
-#define meTestDir(fn) (getFileStats(fn,0,NULL,NULL) != meFILETYPE_DIRECTORY)
+extern int meFileTestDir(meUByte *fname);
+#define meTestDir(fn) meFileTestDir(fn)
 #endif
 #ifndef meFileSetAttributes
 #define meFileSetAttributes(fn,attr) chmod((char *)(fn),attr)
 #endif
 #ifndef meExit
-extern void exit(int i) ;
+extern void exit(int i);
 #if MEOPT_CLIENTSERVER
 /* Close & delete the client file */
 #define meExit(n) (TTkillClientServer(),exit(n))
@@ -1499,6 +1508,18 @@ extern int      putenv(const char *s);
 #define TKCMD	0x0A			/* command name 		*/
 #define TKLVR	0x0B			/* Local variable 		*/
 #define TKCVR	0x0C			/* Command variable 		*/
+
+#if MEOPT_BYTECOMP
+
+#define BCLEAD  0x80
+#define BCSTRF  0x40
+#define BCSTRT  0x20
+#define BCSLLM  0x1f
+
+#define BCDIR   (BCLEAD|TKDIR)
+#define BCFUN   (BCLEAD|TKFUN)
+
+#endif
 
 #define meAtoi(s) strtol((char *)(s),(char **)NULL,0)
 #define meAtol(s) (meAtoi(s) != 0)

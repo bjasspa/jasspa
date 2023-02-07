@@ -1013,8 +1013,8 @@ fillPara(int f, int n)
             }
         }
 
-        meAnchorSet(frameCur->bufferCur,meANCHOR_FILL_DOT,
-                    frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset,1) ;
+        meAnchorSet(frameCur->bufferCur,meANCHOR_FILL_DOT,frameCur->windowCur->dotLine,
+                    frameCur->windowCur->dotLineNo,frameCur->windowCur->dotOffset,1);
         ilength = frameCur->windowCur->dotLineNo ;
         icol = frameCur->windowCur->dotOffset ;
     }
