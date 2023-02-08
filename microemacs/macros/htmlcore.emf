@@ -32,12 +32,8 @@ set-variable &ind &cat #l9 ".item-list-r3" "H3   \ecB\\2\ecA"
 set-variable &ind &cat #l9 ".item-list-s4" "<[hH][4-9]>\\([\t ]*<[^>]*>\\)*[\t ]*\\([^<]+\\)"
 set-variable &ind &cat #l9 ".item-list-r4" "H4+  \ecB\\2\ecA"
 
-!if &not &exist fhook-vb
-  !force exec-file "hkvb"
-!endif
-!if &not &exist fhook-js
-  !force exec-file "hkjs"
-!endif
+!iif &not &exist fhook-vb  execute-file "hkvb"
+!iif &not &exist fhook-js  execute-file "hkjs"
 
 !if &not &exist &ind &cat ".hilight." #l0
   set-variable &ind &cat ".hilight." #l0 &pinc .hilight.next 1
@@ -323,34 +319,22 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
 0 define-macro &cat "chook-" #l0
   !force 2 indent
   !if &equ $result .indent.vbscript
-    !if &seq :chook "vb"
-      !return
-    !endif
+    !iif &seq :chook "vb"  !return
     set-variable :chook "vb"
   !elif &equ $result .indent.javascript
-    !if &seq :chook "js"
-      !return
-    !endif
+    !iif &seq :chook "js"  !return
     set-variable :chook "js"
   !elif &equ $result .indent.java
-    !if &seq :chook "java"
-      !return
-    !endif
+    !iif &seq :chook "java"  !return
     set-variable :chook "java"
   !elif &equ $result .indent.phpscript
-    !if &seq :chook "phps"
-      !return
-    !endif
+    !iif &seq :chook "phps"  !return
     set-variable :chook "phps"
   !elif &equ $result .indent.cfmscript
-    !if &seq :chook "cfms"
-      !return
-    !endif
+    !iif &seq :chook "cfms"  !return
     set-variable :chook "cfms"
   !elif &equ $result .indent.luascript
-    !if &seq :chook "lua"
-      !return
-    !endif
+    !iif &seq :chook "lua"  !return
     set-variable :chook "lua"
   !elif &exi :chook
     unset-variable :chook
@@ -371,6 +355,4 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
   !endif
 !emacro
 
-!if &not &exist html-spell-word
-  !force exec-file "htmlutil"
-!endif
+!iif &not &exist html-spell-word  execute-file "htmlutil"

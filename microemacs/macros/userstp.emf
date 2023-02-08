@@ -26,13 +26,13 @@ set-variable %vscroll-names "|Default, Half screen|Smooth, Single line|"
 set-variable %scrollb-names "|Disabled|Narrow, no splitter|Narrow with splitter|Wide, no splitter|Wide with splitter|"
 set-variable %scrollb-value "|0|0x13e|0x1be|0x13f|0x1bf|"
 ; Get a list of display char sets
-0 exec-file "charset"
+0 execute-file "charset"
 ; Get a list of keyboards
-0 exec-file "keyboard"
+0 execute-file "keyboard"
 ; Get a list of languages
-0 exec-file "language"
+0 execute-file "language"
 ; Get a list of schemes
-0 exec-file "schemes"
+0 execute-file "schemes"
 ; Implemented Emulation modes
 set-variable %emulate-names "|<No Emulation>|GNU Emacs|CUA (Windows Style)|MicroEmacs v3.8|NEdit v5|"
 set-variable %emulate-value "||emacs|cua|me3_8|nedit|"
@@ -221,7 +221,7 @@ set-variable %user-misc-cmd  "|alias-path-setup|cc-setup|cvs-setup|mail-setup|fi
     ; close notes otherwise we break the notes frame
     !force notes-close
   !endif
-  3 exec-file "me"
+  3 execute-file "me"
   !if &exi .spell.language
     ; make sure spelling is setup otherwise auto-spell will fail
     spell-rules-init

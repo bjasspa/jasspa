@@ -25,9 +25,7 @@ set-variable .fhook-sgml.command-desc  "|Forward Tag|Backward Tag|||Goto Matchin
 set-variable .fhook-sgml.indent-width 2
 set-variable .fhook-sgml.exact -1
 
-!if &not &exist xml-forward-tag
-  !force exec-file "xmlutil"
-!endif
+!iif &not &exist xml-forward-tag  execute-file "xmlutil"
 
 !if &and &sin "h" .fhook-sgml.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.sgml

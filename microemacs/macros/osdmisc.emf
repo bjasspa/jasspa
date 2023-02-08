@@ -112,9 +112,7 @@ define-macro insert-symbol
     set-variable #l2 1
     !while &not &seq "" &set #l1 &lget .major-mode.list &inc #l0 1
       osd .osd.tmp 1 "" #l1 #l0 buffer-setup-ms
-      !if &seq #l1 &rig $buffer-fhook 6
-        set-variable #l2 #l0
-      !endif
+      !iif &seq #l1 &rig $buffer-fhook 6  set-variable #l2 #l0
     !done
     osd .osd.tmp 0 "AsfI" 16 20 -1 -1 #l2
     ml-write &spr "[Default set to %d]" #l2
@@ -139,9 +137,7 @@ set-variable .buffer-setup-fmode.name "|Unknown|Auto/Both|Auto/Center|Auto/Left|
 
 0 define-macro buffer-setup-exec
   !if &gre &abs @# 128
-    !if &gre @# 0
-      !return &bmod &slo &trb $result
-    !endif
+    !iif &gre @# 0  !return &bmod &slo &trb $result
     0 buffer-mode &slo &trb $result
   !elif &equ @# 5
     !return $buffer-hilight
@@ -208,9 +204,7 @@ set-variable #l0 0
     osd .osd.buffstp &add 302 &mul #l0 3 "fh"  "  "
   !endif
 !done
-!if &mod &sub #l0 1 4
-  osd .osd.buffstp 500 "f"  "  "
-!endif
+!iif &mod &sub #l0 1 4  osd .osd.buffstp 500 "f"  "  "
 osd .osd.buffstp 501 ""
 osd .osd.buffstp 510 "BtcfHh" .scheme.osd-ebtt " \HOkay "  f void
 define-macro buffer-setup
@@ -264,9 +258,7 @@ set-variable .osd.ftagd 16
       set-variable #l1 #l2
     !endif
   !until &not $status
-  !if &not #l0
-    osd .osd.ftagc 1 ""
-  !endif
+  !iif &not #l0  osd .osd.ftagc 1 ""
   -1 find-buffer $buffer-bname
   goto-position "\x81"
 !emacro
@@ -336,9 +328,7 @@ set-variable .osd.ftagd 16
     !endif
     forward-line
   !done
-  !if &not #l0
-    osd .osd.ftagc 1 ""
-  !endif
+  !iif &not #l0  osd .osd.ftagc 1 ""
   -1 find-buffer $buffer-bname
   goto-position "\x81"
   0 ml-write
@@ -348,21 +338,13 @@ set-variable .osd.ftagd 16
   set-variable #l0 &sub &lef $result 4 &add 18 &band $scroll-bar 0x01
   set-variable #l1 &sub &mid $result 4 4 9
   !if &les #l0 26
-    !if &les #l1 3
-      !abort
-    !endif
+    !iif &les #l1 3  !abort
     set-variable #l0 26
   !endif
-  !if &les #l1 3
-    set-variable #l1 3
-  !endif
+  !iif &les #l1 3  set-variable #l1 3
   ; change the width
-  !if &band $scroll-bar 0x01
-    set-variable #l0 &sub #l0 1
-  !endif
-  !if &band $scroll-bar 0x40
-    set-variable #l1 &sub #l1 1
-  !endif
+  !iif &band $scroll-bar 0x01  set-variable #l0 &sub #l0 1
+  !iif &band $scroll-bar 0x40  set-variable #l1 &sub #l1 1
   set-variable .osd.ftagw #l0
   set-variable .osd.ftagd #l1
   osd .osd.ftagc 0 "fsS" .scheme.osd-child #l0 #l1 0 -1
@@ -404,9 +386,7 @@ osd .osd.ftag 60  "" " "
     set-variable .osd.tag-cur &mid @wl #l1 &sub $window-col #l1
     set-variable $window-col #l0
     !force 3 find-tag .osd.tag-cur
-    !if $status
-      !return
-    !endif
+    !iif $status  !return
   !else
     set-variable .osd.tag-cur ""
   !endif
@@ -509,15 +489,11 @@ define-macro osd-search
   !if .status
     set-variable #l0 &cat "Found on line " $window-line
     osd .osd.sar-rpr 50  "BcfxHt" .scheme.osd-ebtt " \HReplace     "  1 osd-search-replace
-    !if &gre @# 0
-      -2 show-region
-    !endif
+    !iif &gre @# 0  -2 show-region
   !else
     osd .osd.sar-rpr 50  "BcfH" .scheme.osd-dbtt " Replace     "
     set-variable #l0 "Not found!"
-    !if &gre @# 1
-      backward-char
-    !endif
+    !iif &gre @# 1  backward-char
   !endif
   osd .osd.sar-srl 70 "c" #l0
   osd .osd.sar-rpl 70 "c" #l0
@@ -534,9 +510,7 @@ define-macro osd-search
   !endif
   !if &bmod "view"
     osd-xdialog "Replace" "Buffer in view mode, remove?" 1 "  \HYes  " "  \HNo  "
-    !if &equ $result 2
-      !abort
-    !endif
+    !iif &equ $result 2  !abort
     -1 buffer-mode view
   !endif
   !if &equ @# 1
@@ -551,9 +525,7 @@ define-macro osd-search
       !force -3 show-region
       !force  3 show-region
       !force -1 show-region
-      !if &gre .undo -1
-        !iif &equ 2 &set .undo &add 2 &band .undo &bnot 1  osd .osd.sar-rpr 90 "BcfxHt" .scheme.osd-ebtt " \HUndo Last   "  3 osd-search-replace
-      !endif
+      !iif &gre .undo -1  !iif &equ 2 &set .undo &add 2 &band .undo &bnot 1  osd .osd.sar-rpr 90 "BcfxHt" .scheme.osd-ebtt " \HUndo Last   "  3 osd-search-replace
     !endif
     ; now search for the next
     3 osd-search-search
@@ -561,13 +533,9 @@ define-macro osd-search
     replace-string .osd-search.search .osd-search.replace
     !abort
   !elif &equ @# 3
-    !if &band 1 .undo
-      set-variable @cl undo
-    !endif
+    !iif &band 1 .undo  set-variable @cl undo
     undo
-    !if &equ 1 &set .undo &sub &bor .undo 1 2
-      osd .osd.sar-rpr 90 "BcfH" .scheme.osd-dbtt " Undo Last   "
-    !endif
+    !iif &equ 1 &set .undo &sub &bor .undo 1 2  osd .osd.sar-rpr 90 "BcfH" .scheme.osd-dbtt " Undo Last   "
     ; now use the search to find this undone occurance
     2 osd-search-search
   !endif
@@ -580,9 +548,7 @@ define-macro osd-search
     beginning-of-buffer
     !repeat 
       ; Protect folded lines.
-      !if &not &or &equ $line-scheme .scheme.fold-close &equ $line-scheme .scheme.fold-open
-        set-variable $line-scheme -1
-      !endif
+      !iif &not &or &equ $line-scheme .scheme.fold-close &equ $line-scheme .scheme.fold-open  set-variable $line-scheme -1
       !force forward-line
     !until &not $status
     goto-position "\x81"
@@ -605,9 +571,7 @@ define-macro osd-search
         set-variable #l0 $status
         !if #l0 
           ; Protect folded lines.
-          !if &not &or &equ $line-scheme .scheme.fold-close &equ $line-scheme .scheme.fold-open
-            set-variable $line-scheme #l8
-          !endif
+          !iif &not &or &equ $line-scheme .scheme.fold-close &equ $line-scheme .scheme.fold-open  set-variable $line-scheme #l8
           set-variable #l2 &add #l2 1
         !endif
       !until &not #l0
@@ -621,9 +585,7 @@ define-macro osd-search
         set-variable #l0 $status
         !if #l0 
           ; Protect folded lines.
-          !if &not &or &equ $line-scheme .scheme.fold-close &equ $line-scheme .scheme.fold-open
-            set-variable $line-scheme #l8
-          !endif
+          !iif &not &or &equ $line-scheme .scheme.fold-close &equ $line-scheme .scheme.fold-open  set-variable $line-scheme #l8
           set-variable #l2 &add #l2 1
         !endif
       !until &not #l0
@@ -634,9 +596,7 @@ define-macro osd-search
       @# osd-search-search
       !if .osd-search-search.status
         ; Protect folded lines.
-        !if &not &or &equ $line-scheme .scheme.fold-close &equ $line-scheme .scheme.fold-open
-          set-variable $line-scheme #l8
-        !endif
+        !iif &not &or &equ $line-scheme .scheme.fold-close &equ $line-scheme .scheme.fold-open  set-variable $line-scheme #l8
       !endif
     !endif
   !endif
@@ -646,9 +606,7 @@ define-macro osd-search
 0 define-macro search-get-region-text
   0 show-region
   !if &equ &band $result 5 5
-    !if &not &band $result 2
-      3 show-region
-    !endif
+    !iif &not &band $result 2  3 show-region
     set-position "\x81"
     -2 show-region
     set-variable #l0 $window-line
@@ -657,9 +615,7 @@ define-macro osd-search
     set-variable #l2 &sub $window-col #l1
     !if &and &equ #l0 $window-line #l2
       set-variable #p9 &mid @wl &cond &gre #l2 0 #l1 $window-col &abs #l2
-      !if &bmod "magic"
-        str-to-regex #p9
-      !endif
+      !iif &bmod "magic"  str-to-regex #p9
       !if &not @#
         goto-position "\x81"
       !elif &gre $window-col #l1
@@ -671,9 +627,7 @@ define-macro osd-search
     !force  3 show-region
     !force -1 show-region
     goto-position "\x81"
-    !if @#
-      2 screen-update
-    !endif
+    !iif @#  2 screen-update
   !endif
   !abort
 !emacro
@@ -681,9 +635,7 @@ define-macro osd-search
 0 define-macro hilight-region-text
   0 show-region
   !if &equ &band $result 5 5
-    !if &not &band $result 2
-      3 show-region
-    !endif
+    !iif &not &band $result 2  3 show-region
     set-position "\x81"
     -2 show-region
     set-variable #l1 $window-line
@@ -852,9 +804,7 @@ osd .osd.sar  10 "It" .osd.sar-nb
 0 define-macro osd-search
   ; if some text is hilighted, use that as the search string
   !force search-get-region-text
-  !if $status
-    set-variable .osd-search.search #l9
-  !endif
+  !iif $status  set-variable .osd-search.search #l9
   set-variable .osd-search-replace.undo &cond &bmod "undo" 0 -1
   ; work out a window-line to recenter on for good visibility
   set-variable #l0 &sub $window-mode-line &div $window-depth 2
@@ -863,22 +813,16 @@ osd .osd.sar  10 "It" .osd.sar-nb
     ; place in bottom third of window
     set-variable .osd-search.recenter &sub $window-depth #l1
     set-variable #l0 &sub &sub &sub $window-mode-line #l1 #l1 15
-    !if &les #l0 0
-      set-variable #l0 0
-    !endif
+    !iif &les #l0 0  set-variable #l0 0
   !else
     ; place in top third of window
     set-variable .osd-search.recenter #l1
     set-variable #l0 &sub $window-mode-line #l1
-    !if &gre &add #l0 15 $frame-depth
-      set-variable #l0 &sub $frame-depth 15
-    !endif
+    !iif &gre &add #l0 15 $frame-depth  set-variable #l0 &sub $frame-depth 15
   !endif
   osd .osd.sar 0 "batcDIHs" 6 #l0 53 15 -1 -1 10 10 .scheme.osd-title "Search and Replace"
   osd .osd.sar-rpr 90 "BcfH" .scheme.osd-dbtt " Undo Last   "
-  !if &or &les &dec @# 1 0 &gre @# 2
-    set-variable @# 0
-  !endif
+  !iif &or &les &dec @# 1 0 &gre @# 2  set-variable @# 0
   osd .osd.sar-nb 100 "It" &add .osd.sar-src @#
   .osd-search.recenter recenter
   !force -1 osd-search-set-state
@@ -898,9 +842,7 @@ define-macro line-scheme
     ; immediately before search-get-region-text destroys the region
     ; information. Returns TRUE if a region has been hilighted.
     !force @# hilight-region-text
-    !if $status
-      !return
-    !endif
+    !iif $status  !return
     ; @# is a scheme number (1 == remove), if text is hilighted
     ; the search all buffer for it and hilight, else just do current line
     !force 0 search-get-region-text
@@ -1016,31 +958,30 @@ osd .osd.gline 11 "BcfH"   .scheme.osd-ebtt " \HClose "   1 void
 
 ; alarm - Create a simple alarm
 define-macro alarm
-  set-variable .no &add .no 1
-  set-variable #l0 &cat ".alarm.a" .no
   !force set-variable #l2 @3
   !if &not $status
-    set-variable &ind #l0 @ml "Message"
+    set-variable #l0 @ml "Message"
     set-variable #l1 @ml "Hours"
     set-variable #l2 @ml "Minutes"
   !else
-    set-variable &ind #l0 @1
+    set-variable #l0 @1
     set-variable #l1 @2
   !endif
+  set-variable #l3 &cat "alarm-a" &inc .no 1
   set-variable #l1 &mul 60000 &add &mul 60 #l1 #l2
-  0 define-macro #l0
+  0 define-macro #l3
     !bell
-    set-variable #l0 &add &len &ind @0 10
-    osd .osd.alarm 0 "bat" 9 3
+    osd .osd.alarm 0 "batcH" 9 3 .scheme.osd-title "ALARM"
     osd .osd.alarm 1 ""
-    osd .osd.alarm 2 "c" "ALARM"
-    osd .osd.alarm 3 ""
-    osd .osd.alarm 4 "" &ind @0
+    osd .osd.alarm 2 ""
+    osd .osd.alarm 3 "" .m
+    osd .osd.alarm 4 ""
     osd .osd.alarm 5 ""
-    osd .osd.alarm 6 "Bcf" " OK " f void
+    osd .osd.alarm 6 "BcfH" .scheme.osd-ebtt " \HOK " f void
     .osd.alarm osd
   !emacro
-  #l1 create-callback #l0
+  set-variable &ind &spr ".%s.m" #l3 &spr "  %s  " #l0
+  #l1 create-callback #l3
 !emacro
 set-variable .alarm.no 0
 
@@ -1120,9 +1061,7 @@ define-macro browse-wrap-change
       &cond &lget .mode 2 1 -1 buffer-mode "view" 
     !endif
   !endif
-  !if &band @# 0x20
-    set-variable .browse.wrap #l1
-  !endif
+  !iif &band @# 0x20  set-variable .browse.wrap #l1
 !emacro
 
 define-macro browse
@@ -1130,9 +1069,7 @@ define-macro browse
   set-variable $scroll 3
   0x4 browse-wrap-change
   !repeat
-    !if .wrap
-      browse-wrap-window-lines
-    !endif
+    !iif .wrap  browse-wrap-window-lines
     2 screen-update
     ml-write "** BROWSE MODE, C-g to quit. RETURN/SPACE - down, BACKSPACE - up, w - toggle wrap mode, / - search **"
     !force !force set-variable #l0 @cgk
@@ -1247,9 +1184,7 @@ set-variable .browse.wrap 0
       osd .osd.alias-pathc #l0 "x" &spr " %s %s%n %s%n" &cond &equ #l0 .alias-path-setup.cur "*" " " #l1 &sub 11 &len #l1 " " #l2 &sub 30 &len #l2 " " #l0 alias-path-set-flds
     !endif
   !until &not $status
-  !if &not &set .alias-path-setup.count &sub #l0 1
-    osd .osd.alias-pathc 1 ""
-  !endif
+  !iif &not &set .alias-path-setup.count &sub #l0 1  osd .osd.alias-pathc 1 ""
 !emacro
 
 0 define-macro alias-path-setup-com
@@ -1257,9 +1192,7 @@ set-variable .browse.wrap 0
     !force find-registry "/history/alias-path" &sub &set #l0 .alias-path-setup.cur 1
     !if $status
       delete-registry &cat "/history/alias-path/" $result
-      !if &equ #l0 &pdec .alias-path-setup.count 1
-        set-variable #l0 &sub #l0 1
-      !endif
+      !iif &equ #l0 &pdec .alias-path-setup.count 1  set-variable #l0 &sub #l0 1
     !endif
     #l0 alias-path-set-flds
   !else
@@ -1281,9 +1214,7 @@ set-variable .browse.wrap 0
         ml-write "[ERROR: Failed to get current alias]" 
         !return
       !endif
-      !if &not &seq .alias-path-setup.alias &set #l0 $result
-        2 set-registry &cat "/history/alias-path/" #l0 .alias-path-setup.alias
-      !endif
+      !iif &not &seq .alias-path-setup.alias &set #l0 $result  2 set-registry &cat "/history/alias-path/" #l0 .alias-path-setup.alias
     !endif
     set-registry &cat "/history/alias-path/" .alias-path-setup.alias .alias-path-setup.path
     set-variable #l0 0
@@ -1372,7 +1303,7 @@ define-macro alias-path-setup
 !emacro
 
 0 define-macro file-type-set
-  !if   &equ &abs @# 3
+  !if &equ &abs @# 3
     set-variable #l0 ".file-type-com.idx"
   !elif &equ &abs @# 2
     set-variable #l0 ".file-type-com.mask"
@@ -1391,7 +1322,7 @@ define-macro alias-path-setup
 0 define-macro file-type-com
   set-variable #l4 &reg "/history/file-type" "\b"
   set-variable #l5 &reg "/history/file-mask" "\b"
-  !if   &equ @# 3
+  !if &equ @# 3
     ; delete the entry
     !if &not .idx
       ml-write "[No entry selected]" 
@@ -1432,9 +1363,7 @@ define-macro alias-path-setup
   set-registry "/history/file-type" #l4
   set-registry "/history/file-mask" #l5
   !if &seq &lget #l4 .idx ""
-    !if &seq &lget #l4 &dec .idx 1 ""
-      set-variable .idx 0
-    !endif
+    !iif &seq &lget #l4 &dec .idx 1 ""  set-variable .idx 0
   !endif
   file-type-create
   .idx file-type-set-fields
@@ -1535,15 +1464,11 @@ define-macro file-tool-menu
         !endif
       !endif
     !done
-    !if &not #l4
-      osd @# &inc #l4 1 "" "<no tool matched>"
-    !endif
+    !iif &not #l4  osd @# &inc #l4 1 "" "<no tool matched>"
   !endif
   osd @# &inc #l4 1 "-"
   osd @# &inc #l4 1 "" "File Tools Setup" f file-tool-setup
-  !if &not @?
-    .osd.tmp osd
-  !endif
+  !iif &not @?  .osd.tmp osd
 !emacro
 ;
 ; file-tool setup gui ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1569,12 +1494,8 @@ define-macro file-tool-menu
     osd .osd.file-tool 40 "fh" &spr "  %2d  " .file-tool-setup.cur
     osd .osd.file-tool 620 "BfhxHt" .scheme.osd-ebtt " \HModify " 2 file-tool-setup-com
     osd .osd.file-tool 630 "BfhxHt" .scheme.osd-ebtt " \HDelete " 3 file-tool-setup-com
-    !if &gre @# 1
-      osd .osd.file-tool 30 "fhxt" #l8 4 file-tool-setup-com
-    !endif
-    !if &les @# .file-tool-setup.count
-      osd .osd.file-tool 95 "fhxt" #l9 5 file-tool-setup-com
-    !endif
+    !iif &gre @# 1  osd .osd.file-tool 30 "fhxt" #l8 4 file-tool-setup-com
+    !iif &les @# .file-tool-setup.count  osd .osd.file-tool 95 "fhxt" #l9 5 file-tool-setup-com
   !else
     osd .osd.file-tool 40 "fh" "   ?  "
     osd .osd.file-tool 620 "BfhH" .scheme.osd-dbtt " Modify "
@@ -1624,16 +1545,12 @@ define-macro file-tool-menu
     set-variable #l1 &reg &cat #l1 "/mask" ""
     osd .osd.file-toolc #l0 "x" &spr "%s%s%s%n%s %s%n" #l5 &cond &equ #l0 .file-tool-setup.cur "**" "  " #l2 &sub 24 &len #l2 " " #l4 #l1 &sub 32 &len #l1 " " #l0 file-tool-set-flds
   !done
-  !if &not &set .file-tool-setup.count &dec #l0 1
-    osd .osd.file-toolc 1 ""
-  !endif
+  !iif &not &set .file-tool-setup.count &dec #l0 1  osd .osd.file-toolc 1 ""
 !emacro
 
 0 define-macro file-tool-set-run
   set-variable #l0 &bor &band .file-tool-setup.flag &bnot 0xe0 &lget .file-tool-setup-run.msk @#
-  !if &band #l0 0x40 
-    set-variable #l0 &band #l0 &bnot 0x400
-  !endif
+  !iif &band #l0 0x40  set-variable #l0 &band #l0 &bnot 0x400
   set-variable .file-tool-setup.flag #l0
   -1 file-tool-set-flds
 !emacro
@@ -1672,9 +1589,7 @@ set-variable .file-tool-setup-pre.msk "|0|1|3|4|12|"
 
 0 define-macro file-tool-set-post
   set-variable #l0 &bor &band .file-tool-setup.flag &bnot 0x0400 &lget .file-tool-setup-post.msk @#
-  !if &band #l0 0x400 
-    set-variable #l0 &band #l0 &bnot 0x40
-  !endif
+  !iif &band #l0 0x400  set-variable #l0 &band #l0 &bnot 0x40
   set-variable .file-tool-setup.flag #l0
 !emacro
 0 define-macro file-tool-setup-post
@@ -1700,9 +1615,7 @@ set-variable .file-tool-setup-post.msk "|0|1024|"
     !while &les &pinc #l0 1 .file-tool-setup.count
       2 set-registry &cat #l1 #l0 &sub #l0 1
     !done
-    !if &equ &set #l0 .file-tool-setup.cur &pdec .file-tool-setup.count 1
-      set-variable #l0 &sub #l0 1
-    !endif
+    !iif &equ &set #l0 .file-tool-setup.cur &pdec .file-tool-setup.count 1  set-variable #l0 &sub #l0 1
     #l0 file-tool-set-flds
   !elif &gre @# 3
     ; 4 = up, 5 = down
@@ -1722,17 +1635,13 @@ set-variable .file-tool-setup-post.msk "|0|1024|"
       ml-write "[Command field is empty]" 
       !return
     !endif
-    !if &equ @# 1
-      set-variable .file-tool-setup.cur &inc .file-tool-setup.count 1
-    !endif
+    !iif &equ @# 1  set-variable .file-tool-setup.cur &inc .file-tool-setup.count 1
     set-registry &set #l1 &spr "/history/%s/file-tool/%d" $platform .file-tool-setup.cur .file-tool-setup.name
     set-registry &cat #l1 "/mask" .file-tool-setup.mask
     set-registry &cat #l1 "/cmd"  .file-tool-setup.cmd
     set-registry &cat #l1 "/flag" .file-tool-setup.flag
     set-registry &cat #l1 "/bname" .file-tool-setup.bname
-    !if &equ @# 1
-      .file-tool-setup.cur file-tool-set-flds
-    !endif
+    !iif &equ @# 1  .file-tool-setup.cur file-tool-set-flds
   !endif
   file-tool-create
 !emacro
@@ -1838,18 +1747,12 @@ define-macro file-tool-setup
   set-variable #l0 &reg #l2 0x1a
   !if &les @# 0
     !if &band &set #l1 &abs @# 0x80
-      !if &band #l0 0x40
-        !return
-      !endif
+      !iif &band #l0 0x40  !return
     !endif
     set-variable #l0 &bxor #l0 #l1
-    !if &band #l0 0x40
-      set-variable #l0 &band #l0 0xff7f
-    !endif
+    !iif &band #l0 0x40  set-variable #l0 &band #l0 0xff7f
     set-registry #l2 #l0
-    !if &band #l1 0x50
-      .shell-tool-setup.cur shell-tool-set-cur
-    !endif
+    !iif &band #l1 0x50  .shell-tool-setup.cur shell-tool-set-cur
   !elif &not &band #l0 @#
     !abort
   !endif
@@ -1895,18 +1798,14 @@ define-macro shell-tool-setup
     set-variable #l1 &reg &spr "/history/%s/tool/%d/name" $platform #l0 ""
     set-variable #l2 &spr "\H%d %s%n" #l0 #l1 &sub 19 &len #l1 " "
     osd .osd.shell-tool &add 100 &mul #l0 10 "Rfhxc" #l2 #l0 shell-tool-set-cur
-    !if &band #l0 0x01
-      osd .osd.shell-tool &add 101 &mul #l0 10 "f" ""
-    !endif
+    !iif &band #l0 0x01  osd .osd.shell-tool &add 101 &mul #l0 10 "f" ""
   !until &equ &inc #l0 1 10
   0 shell-tool-set-cur
   !force !force .osd.shell-tool osd
   !if $status
-    !if &band @# 1
-      save-registry "/history" ""
-    !endif
+    !iif &band @# 1  save-registry "/history" ""
     ; reset the Advanced menu
-    exec-file "osd"
+    execute-file osd
   !elif &band @# 1
     !force read-registry "/history" $user-name "cbr"
   !endif
@@ -1956,6 +1855,6 @@ define-macro find-setup
     !else
       !force read-registry "/history" $user-name "cbr"
     !endif
-    exec-file "cvs"
+    execute-file cvs
   !endif
 !emacro

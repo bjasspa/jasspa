@@ -7,12 +7,8 @@
 ; Synopsis:    ClearCase support macros for MicroEmacs
 ; Authors:     Steven Phillips
 ;
-!if &not &exi dirlst-sort-list
-  0 exec-file "hkdirlst"
-!endif
-!if &not &exi %diff-com
-  0 exec-file "tools"
-!endif
+!iif &not &exi dirlst-sort-list 0  execute-file "hkdirlst"
+!iif &not &exi %diff-com  0 execute-file "tools"
 !if &not &exi .osd.ccosd
   set-variable .osd.ccosd  &pinc .osd.next 1
   set-variable .osd.ccstp  &pinc .osd.next 1
@@ -541,21 +537,23 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
 0 define-macro clearcase
   !if .toolbar.open
     !force toolbar-make-tool-visible "*cc-console*"
-    !tjump &not $status 2
-  !else
-    1 set-position "\x81"
-    !force 0 popup-window "*cc-console*"
-    !if &not $status
-      delete-other-windows
-      2 split-window-vertically
-      change-window-depth 15
-      find-buffer "*cc-console*"
-      -1 buffer-mode "view"
-      buffer-bind-create "bio" "f10" "" file-browser-close
-      3 previous-window
-    !else
-      goto-position "\x81"
+    !if $status
+      &bor @# 2 file-browser
+      !return
     !endif
+  !endif
+  1 set-position "\x81"
+  !force 0 popup-window "*cc-console*"
+  !if &not $status
+    delete-other-windows
+    2 split-window-vertically
+    change-window-depth 15
+    find-buffer "*cc-console*"
+    -1 buffer-mode "view"
+    buffer-bind-create "bio" "f10" "" file-browser-close
+    3 previous-window
+  !else
+    goto-position "\x81"
   !endif
   &bor @# 2 file-browser
 !emacro
@@ -766,8 +764,9 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
   !endif
   end-of-buffer
   set-mark
-  backward-line
-  !tjump &seq &trb @wl "" -1
+  !repeat
+    backward-line
+  !until &not &seq &trb @wl ""
   !if &seq @wl "[TERMINATED]"
     set-variable .cc-cleartool.exit -9999
     set-variable #l0 "was terminated"
@@ -1485,8 +1484,7 @@ define-macro cc-diff
       -1 yank
     !endif
     find-buffer "*cc-diff*"
-    !tjump &not #l8 2
-    find-buffer "*cc-cmdline*"
+    !iif #l8  find-buffer "*cc-cmdline*"
     beginning-of-buffer
     set-mark
     forward-line
@@ -2116,7 +2114,7 @@ define-macro cc-setup
     !else
       !force read-registry "/history" $user-name "cbr"
     !endif
-    exec-file "clearcs"
+    execute-file "clearcs"
   !endif
 !emacro
 

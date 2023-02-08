@@ -25,7 +25,7 @@ set-variable .fhook-asp.command-desc  "|"
 set-variable .fhook-asp.indent-width 2
 
 ; load in the html core
-!force execute-file "htmlcore" "asp" 
+execute-file "htmlcore" "asp" 
 
 !if &not &sin "html-insert" .fhook-vb.command-name
   set-variable .fhook-vb.command-flag  &cat .fhook-vb.command-flag  "thb|thb|"

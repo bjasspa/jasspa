@@ -783,8 +783,9 @@ define-macro file-browser-swap-buffers
   !endif
   set-variable #l3 &lget .fhook-dirlst.col-name @#
   end-of-buffer
-  backward-line
-  !tjump &not &sin @wc " *" -1
+  !repeat
+    backward-line
+  !until &sin @wc " *"
   set-variable #l7 &add $window-line 1
   4 goto-line
   set-variable #l4 &sub &sin #l3 @wl 1
@@ -1176,8 +1177,9 @@ define-macro dirlst-search
       0 buffer-mode "backup"
       0 buffer-mode "time"
       !repeat
-        insert-string &spr "%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x" $random $random $random $random $random $random $random $random $random $random $random $random $random $random $random $random
-        !tjump &les $window-col 2040 -1
+        !repeat
+          insert-string &spr "%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x" $random $random $random $random $random $random $random $random $random $random $random $random $random $random $random $random
+        !until &gre $window-col 2039
         set-variable #l4 &sub #l4 &div &add $window-col 1 2
         insert-string &con &band $window-col 1 "f\n" "\n"
       !until &les #l4 1
@@ -2078,6 +2080,6 @@ osd .osd.dirlst 90  "M" "File \HSelection"      .osd.dirlsts
 set-variable .toolbar-file-list-create.filter 1
 
 !iif &reg "/history/clearcase/en-strt" "0"  cc-init
-!iif &reg "/history/cvs/en-strt" "0"  !force exec-file "cvs"
-!iif &reg "/history/svn/en-strt" "0"  !force exec-file "svn"
+!iif &reg "/history/cvs/en-strt" "0"  execute-file "cvs"
+!iif &reg "/history/svn/en-strt" "0"  execute-file "svn"
 buffer-init-fhook "dirlst"

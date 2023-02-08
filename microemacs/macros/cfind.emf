@@ -43,27 +43,9 @@ set-variable $kept-versions &reg &spr "/history/%s/kept-vers" $platform "0"
 
 0 define-macro-file buffinit buffer-init buffer-init-fhook buffer-bind-create fhook-default
 0 define-macro-file utils frame-handle ascii-time var-str-sub str-to-regex filemask-to-regex copy-registry create-file-path
-0 define-macro exec-file
-  set-variable .first 1
-  !force @# execute-file @1
-  !if $status
-    !return
-  !endif
-  !if .first
-    !if &seq &set #l0 &find @1 ".emf" "ERROR"
-      ml-write &spr "[Failed to find Macro file %s.emf]" @1
-    !else
-      find-file #l0
-      !force execute-buffer $buffer-bname
-      ml-write &spr "[Error found in Macro file %s, line %d]" #l0 $window-line
-    !endif
-    set-variable .first 0
-  !endif
-  !abort
-!emacro
 set-variable .osd.tmp 40
 set-variable .osd.next &cond &exi .osd.next .osd.next &add .osd.tmp 1
-0 exec-file "find"
+0 execute-file "find"
 
 define-macro start-up
   set-variable $buffer-fname &stat a "."

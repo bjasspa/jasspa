@@ -111,8 +111,7 @@ set-variable .fhook-blist.command-desc  "|Switch to Buffer & Only Window||Switch
   set-variable #l0 &mid @wl 11 &sub &sin &mid @wl 10 1 &rig @wl 11 1
   set-variable #l1 ""
   !if &not &exi &spr ":%s:" #l0
-    !tjump &les @# 3 2
-    forward-line
+    !iif &not &les @# 3  forward-line
     ml-write &spr "[Buffer no longer exists - %s]" #l0
     !abort
   !elif &equ @# 1

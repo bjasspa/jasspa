@@ -342,7 +342,7 @@ osd .osd.prtstp 120 "BtHhfr"  .scheme.osd-ebtt " \HClose "  1 void
 osd .osd.prtstp 125 "f" "  "
 
 define-macro print-setup
-  !force exec-file "print"
+  execute-file "print"
   !if &not &reg "/print/setup" "0"
     ; attempt to fix the print registry
     0 ml-write
@@ -352,7 +352,7 @@ define-macro print-setup
     set-registry &spr "/print-history/%s/scheme" $platform "printd"
     set-registry &spr "/print-history/%s/page-size" $platform "Default"
     set-registry &spr "/print-history/%s/char-size" $platform "Default"
-    !force exec-file "print"
+    execute-file "print"
   !endif
   ; make print.erf a user reg file
   set-registry "/print-history" &cat $user-path "myprint.erf"
@@ -365,5 +365,5 @@ define-macro print-setup
 !emacro
 
 ; load the list of available printer drivers and schemes
-!force exec-file "printers"
+execute-file "printers"
 

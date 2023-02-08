@@ -80,17 +80,16 @@ define-macro emftags-add-file
       !if $status
         set-variable #l0 $window-line
         !force 2 forward-word
-        !if &not $status
-        !elif &not &equ #l0 $window-line
-          backward-word
+        !if $status
+          !iif &not &equ #l0 $window-line  backward-word
         !endif
         backward-word
-        emftags-add-tag
-        !force 2 forward-word
-        !if &equ #l0 $window-line
+        !repeat
+          emftags-add-tag
+          !force 2 forward-word
+          !iif &sub #l0 $window-line  !break
           backward-word
-          !jump -4
-        !endif
+        !done
         beginning-of-line
       !endif
     !until &not $status

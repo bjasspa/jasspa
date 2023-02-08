@@ -400,10 +400,9 @@
     !if &set #l1 &sin " " &rep #l2 "\t" " "
       set-variable #l2 &lef #l2 &sub #l1 1
       &len #l2 forward-char
-      !if &sin @wc " \t"
+      !while &sin @wc " \t"
         forward-char
-        !jump -2
-      !endif
+      !done
     !else
       beginning-of-line
       forward-line
@@ -466,12 +465,10 @@
       !endif
     !endif
     set-variable #l7 .item-count
-    !if #l7
-      !if &not &les &lget .item-ind #l7 #l8
-        set-variable #l7 &sub #l7 1
-        !jump -3
-      !endif
-    !endif
+    !while #l7
+      !iif &les &lget .item-ind #l7 #l8  !break
+      set-variable #l7 &sub #l7 1
+    !done
     backward-line
     !if &not &seq "" &trr @wl
       set-variable #p9 "Expected blank line before paragraph"
@@ -507,7 +504,7 @@
             !if &equ #l6 &mul &lget .tbl-row #l7 &lget .tbl-col #l7
               insert-string "\bcT"
               set-variable .tbl-count &sub #l7 1
-              !jump -10
+              !jump -9
             !endif
           !endif
         !endif

@@ -8,7 +8,7 @@
 ; Authors:     Jon Green
 ;
 ; Load up common unix stuff (colors, templates, grep, RCS, mail)
-!force exec-file "unixterm"
+execute-file "unixterm"
 ; no vt100-nam on linux, this may cause problems in an ishell
 set-variable %ipipe-term "TERM=vt100"
 ;--- COMSHELL
@@ -42,7 +42,7 @@ define-macro cygwin
     ; See if bash exists.
   !elif &seq "R" &stat "t" &cat %cygwin-path "/bin/bash.exe"
     ; Load the macro file and execute the cygwin session.
-    !force exec-file "hkcygwin"
+    execute-file "hkcygwin"
     !if $status
       cygwin
     !endif

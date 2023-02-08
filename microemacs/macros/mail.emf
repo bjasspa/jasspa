@@ -399,14 +399,12 @@ define-macro mail
     !elif &set #l2 &sin "(" #l3
       set-variable #l3 &lef #l3 &sub #l2 1
     !endif
-    !if &set #l2 &sin " " #l3
+    !while &set #l2 &sin " " #l3
       set-variable #l3 &cat &lef #l3 &sub #l2 1 &rig #l3 #l2
-      !jump -2
-    !endif
-    !if &set #l2 &sin "\t" #l3
+    !done
+    !while &set #l2 &sin "\t" #l3
       set-variable #l3 &cat &lef #l3 &sub #l2 1 &rig #l3 #l2
-      !jump -2
-    !endif
+    !done
     !if &not &seq #l3 ""
       !if &not &seq #p9 ""
         set-variable #p9 &spr "%s,%s" #p9 #l3

@@ -3,7 +3,7 @@
 ;  Author        : $Author$
 ;  Created By    : Steven Phillips
 ;  Created       : Wed Feb 9 18:31:42 2000
-;  Last Modified : <221211.1802>
+;  Last Modified : <230203.0926>
 ;
 ;  Description
 ;
@@ -73,9 +73,7 @@ set-variable .Fahtzee.dices "|\n  X|   X\n\n X|   X\n  X\n X| X X\n\n X X| X X\n
 
 0 define-macro fahtzee-undo
   set-variable .Fahtzee.curp &lget .Fahtzee.undo 2
-  !if &not &equ .Fahtzee.visp .Fahtzee.curp
-    .Fahtzee.curp fahtzee-set-player
-  !endif
+  !iif &not &equ .Fahtzee.visp .Fahtzee.curp  .Fahtzee.curp fahtzee-set-player
   set-variable .Fahtzee.dice &lget .Fahtzee.undo 1
   set-variable .Fahtzee.throw &lget .Fahtzee.undo 3
   set-registry &cat .Fahtzee.visr &cat "box" .Fahtzee.curg &lget .Fahtzee.undo 4
@@ -229,9 +227,7 @@ set-variable .Fahtzee.dices "|\n  X|   X\n\n X|   X\n  X\n X| X X\n\n X X| X X\n
 0 define-macro fahtzee-dice-turn
   set-variable #l0 6
   !repeat
-    !if &not &lget .Fahtzee.held #l0
-      set-variable .Fahtzee.dice &lset .Fahtzee.dice #l0 &add &mod $random 6 1
-    !endif
+    !iif &not &lget .Fahtzee.held #l0  set-variable .Fahtzee.dice &lset .Fahtzee.dice #l0 &add &mod $random 6 1
   !until &not &dec #l0 1
 !emacro
 
@@ -247,24 +243,16 @@ set-variable .Fahtzee.dices "|\n  X|   X\n\n X|   X\n  X\n X| X X\n\n X X| X X\n
 !emacro
 
 0 define-macro fahtzee-throw
-  !if &or &not .Fahtzee.throw &gre .Fahtzee.throw 3
-    !return
-  !endif
-  !if &equ .Fahtzee.curg 7
-    fahtzee-abort
-  !endif
+  !iif &or &not .Fahtzee.throw &gre .Fahtzee.throw 3  !return
+  !iif &equ .Fahtzee.curg 7  fahtzee-abort
   osd .osd.fahtzee 630 "BxhcfH" .scheme.osd-dbtt " Undo "
-  !if &not &equ .Fahtzee.visp .Fahtzee.curp
-    .Fahtzee.curp fahtzee-set-player
-  !endif
+  !iif &not &equ .Fahtzee.visp .Fahtzee.curp  .Fahtzee.curp fahtzee-set-player
   fahtzee-dice-shake
   !repeat
     set-variable #l0 @cgk
   !until &not &seq #l0 "mouse-move"
-  !if &seq &lef #l0 10  "mouse-pick"
-    ; get the drop!
-    set-variable #l0 @cgk
-  !endif
+  ; if pick then get the drop!
+  !iif &seq &lef #l0 10 "mouse-pick"  set-variable #l0 @cgk
   -1 create-callback fahtzee-dice-shake
   !if &and &exi .fixed &seq #l0 "f"
     set-variable .Fahtzee.dice .fixed
@@ -347,9 +335,7 @@ set-variable .fahtzee-throw.fixed "|5|5|5|5|5|"
     !if &gre .Fahtzee.throw 1
       set-variable #l0 &add .Fahtzee.curg 10
       !repeat
-        !if &seq &reg &cat .Fahtzee.visr #l0 "" ""
-          osd .osd.fahtzeec #l0 "ExGfh" "     " #l0 fahtzee-entry
-        !endif
+        !iif &seq &reg &cat .Fahtzee.visr #l0 "" ""  osd .osd.fahtzeec #l0 "ExGfh" "     " #l0 fahtzee-entry
       !until &gre &inc #l0 10 190    
     !endif
   !endif

@@ -85,12 +85,8 @@
 ;       toggle the fold state.
 ;
 0 define-macro collapse-get-vars
-  !if &exi &set #l1 &cat  "chook-" &set #l0 &rig $buffer-fhook 6
-    !force execute-named-command #l1
-  !endif
-  !if &exi :chook
-    set-variable #l0 :chook
-  !endif
+  !iif &exi &set #l1 &cat "chook-" &set #l0 &rig $buffer-fhook 6  !force execute-named-command #l1
+  !iif &exi :chook  set-variable #l0 :chook
   set-variable #l1 &spr ".fhook-%s." #l0
   set-variable #p9 &ind &cat #l1 "collapse-open"
   set-variable #p8 &ind &cat #l1 "collapse-close"
@@ -126,9 +122,7 @@ define-macro collapse-current
     !abort
   !endif
   set-variable #l2 " ..."
-  !if &les #l7 0
-    set-variable #l2 &cat &cat " " &lef &trb @s0 15 #l2
-  !endif
+  !iif &les #l7 0  set-variable #l2 &cat &cat " " &lef &trb @s0 15 #l2
   #l7 forward-line
   set-variable #l1 $window-line
   end-of-line
@@ -139,9 +133,7 @@ define-macro collapse-current
     ml-write "[Collapse close not found]"
     !abort
   !endif
-  !if &gre #l6 0
-    set-variable #l2 &cat #l2 &cat " "  &lef &trb @s0 15
-  !endif
+  !iif &gre #l6 0  set-variable #l2 &cat #l2 &cat " "  &lef &trb @s0 15
   #l6 forward-line
   set-mark
   set-variable $window-line #l1
@@ -154,26 +146,20 @@ define-macro collapse-all
   set-variable #l0 &sub $window-line $window-y-scroll
   set-alpha-mark "\x81"
   ; Must remove all narrows regardless
-  !if &bmod "narrow"
-    !force 1 narrow-buffer
-  !endif
+  !iif &bmod "narrow"  !force 1 narrow-buffer
   !if &set :collapsed &not :collapsed
     beginning-of-buffer
     !force search-buffer #l4 #l9
     !while $status
       set-variable #l2 " ..."
-      !if &les #l7 0
-        set-variable #l2 &cat &cat " " &lef &trb @s0 15 #l2
-      !endif
+      !iif &les #l7 0  set-variable #l2 &cat &cat " " &lef &trb @s0 15 #l2
       #l7 forward-line
       set-variable #l1 &lef @wl 128
       end-of-line
       set-mark
       !force search-buffer #l4 #l8
       !if $status
-        !if &gre #l6 0
-          set-variable #l2 &cat #l2 &cat " "  &lef &trb @s0 15
-        !endif
+        !iif &gre #l6 0  set-variable #l2 &cat #l2 &cat " "  &lef &trb @s0 15
         #l6 forward-line
         0x34 narrow-buffer .scheme.fold-close &cat #l1 #l2
         #l5 forward-line
@@ -236,9 +222,7 @@ define-macro end-of-function
 
 define-macro goto-function-line
   collapse-get-vars
-  !if &not @?
-    set-variable @# @ml "Goto function line"
-  !endif
+  !iif &not @?  set-variable @# @ml "Goto function line"
   beginning-of-function
   &sub @# #l7 forward-line
 !emacro

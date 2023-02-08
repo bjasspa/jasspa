@@ -7,7 +7,7 @@
 ; Authors:     Steven Phillips
 ;
 ; Load up common unix stuff
-!force exec-file "unixterm"
+execute-file "unixterm"
 ;
 ; Compile stuff
 0 add-next-line "*compile*"

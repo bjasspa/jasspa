@@ -7,7 +7,7 @@
 ; Authors:     Jon Green & Steven Phillips
 ;
 ; Load up common unix stuff
-!force exec-file "unixterm"
+execute-file "unixterm"
 ; redefine the main menu due to screen width problems
 osd 0  5   "D"
 osd 0  10  "Mdfsh" " \HFile "   1

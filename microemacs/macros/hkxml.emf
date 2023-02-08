@@ -34,15 +34,9 @@ set-variable .fhook-xml.command-desc  "|Forward Tag|Backward Tag|||Goto Matching
 set-variable .fhook-xml.indent-width 2
 set-variable .fhook-xml.exact -1
 
-!if &not &exist fhook-vb
-  !force exec-file "hkvb"
-!endif
-!if &not &exist fhook-js
-  !force exec-file "hkjs"
-!endif
-!if &not &exist xml-forward-tag
-  !force exec-file "xmlutil"
-!endif
+!iif &not &exist fhook-vb  execute-file "hkvb"
+!iif &not &exist fhook-js  execute-file "hkjs"
+!iif &not &exist xml-forward-tag  execute-file "xmlutil"
 
 !if &not &exist .hilight.xml
   set-variable .hilight.xml   &pinc .hilight.next 1

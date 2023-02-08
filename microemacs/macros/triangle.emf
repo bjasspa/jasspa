@@ -76,11 +76,9 @@
       1 screen-poke #g2 #g3 .scheme.cardback :tri-card-bot
     !endif
   !elif &seq :tri-char "%"
-    1 screen-poke #g2 #g3 .scheme.cardback :tri-card-none
-    set-variable #g2 &add #g2 1
-    !if &less #g2 &sub $frame-depth 2
-      !jump -3
-    !endif
+    !repeat
+      1 screen-poke #g2 #g3 .scheme.cardback :tri-card-none
+    !until &gre &inc #g2 1 &sub $frame-depth 3
   !elif &seq :tri-char "#"
     97 screen-poke #g2 #g3 .scheme.cardfore :tri-card-top
     set-variable #g2 &add #g2 1
@@ -343,16 +341,14 @@
     !if &equ 0 :tri-num                 ; Moving card an ace ??
       set-variable &ind #g1 :tri-char  ; Move card.
       !return
-    !else
-      ml-write &sprint "Error: Must move Ace to home position [Card = %s. Num = %d]" :tri-char :tri-num
     !endif
+    ml-write &sprint "Error: Must move Ace to home position [Card = %s. Num = %d]" :tri-char :tri-num
   !else
     !if &equ &sub &atoi :tri-char 1 &atoi &lef &ind #g1 1
       set-variable &ind #g1 &cat :tri-char &ind #g1 ; Move card.
       !return
-    !else
-      ml-write &sprint "Error: Invalid move to home position [Card = %s. Num = %d]" :tri-char :tri-num
     !endif
+    ml-write &sprint "Error: Invalid move to home position [Card = %s. Num = %d]" :tri-char :tri-num
   !endif
   !abort
 !emacro
@@ -744,5 +740,5 @@ define-macro Triangle
     set-variable $buffer-ehook ehook-triangle
     bhook-triangle
   !endif
-  tri-deal                        ; Deal
+  tri-deal
 !emacro

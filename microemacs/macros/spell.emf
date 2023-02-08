@@ -659,14 +659,14 @@ set-variable .spell.check-wordo ""
   !if @#
     set-variable #l1 $result
     set-registry "/history/language" #l1
-    !force exec-file "language"
+    execute-file "language"
     !force spell-rules-init
     !if $status
       set-variable #l0 #l1
     !else
       ; language not available swap back!
       set-registry "/history/language" #l0
-      !force exec-file "language"
+      execute-file "language"
       !force spell-rules-init
     !endif
     add-spell-rule "#" &mul .spell.gscore 30
@@ -716,7 +716,7 @@ osd .osd.spell-check 10 "Iht" .osd.spell-chkl
 osd .osd.spell-check 20 "It"  .osd.spell-chkr
 
 ; Get a list of languages
-0 exec-file "language"
+0 execute-file "language"
 -1 osd .osd.spell-chkg
 osd .osd.spell-chkg 0 "Abs" 14 0 0 0
 set-variable #l0 0

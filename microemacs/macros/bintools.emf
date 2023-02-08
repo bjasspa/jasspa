@@ -375,11 +375,13 @@ define-macro bin-yank
     #l1 bin-yank-to-hex
   !endif
   !if &bmo "rbin"
-    bin-hex-yank-rbin-insert
-    !tjump &dec @# 1 -1
+    !repeat
+      bin-hex-yank-rbin-insert
+    !until &not &dec @# 1
   !else
-    bin-hex-yank-bin-insert
-    !tjump &dec @# 1 -1
+    !repeat
+      bin-hex-yank-bin-insert
+    !until &not &dec @# 1
   !endif
   !if &les #l1 2
     -1 yank

@@ -672,31 +672,33 @@ define-macro gdiff
             forward-line
             set-alpha-mark "o"
           !elif &seq @wc "+"
-            find-buffer .bnold
-            insert-newline
-            backward-line
-            set-variable $line-scheme .scheme.gdfpad
-            forward-line
-            find-buffer .bnnew
-            set-variable $line-scheme .scheme.gdfadd
-            forward-line
-            find-buffer .bndiff
-            forward-line
-            !tjump @wc "+" -10
+            !repeat
+              find-buffer .bnold
+              insert-newline
+              backward-line
+              set-variable $line-scheme .scheme.gdfpad
+              forward-line
+              find-buffer .bnnew
+              set-variable $line-scheme .scheme.gdfadd
+              forward-line
+              find-buffer .bndiff
+              forward-line
+            !until &not &seq @wc "+"
             set-alpha-mark "n"
             goto-alpha-mark "o"
           !elif &seq @wc "-"
-            find-buffer .bnold
-            insert-newline
-            backward-line
-            set-variable $line-scheme .scheme.gdfpad
-            forward-line
-            find-buffer .bnnew
-            set-variable $line-scheme .scheme.gdfadd
-            forward-line
-            find-buffer .bndiff
-            forward-line
-            !tjump @wc "-" -10
+            !repeat
+              find-buffer .bnold
+              insert-newline
+              backward-line
+              set-variable $line-scheme .scheme.gdfpad
+              forward-line
+              find-buffer .bnnew
+              set-variable $line-scheme .scheme.gdfadd
+              forward-line
+              find-buffer .bndiff
+              forward-line
+            !until &not &seq @wc "-"
             set-alpha-mark "n"
             goto-alpha-mark "o"
           !else
@@ -710,17 +712,18 @@ define-macro gdiff
             !abort
           !endif
           goto-alpha-mark "o"
-          find-buffer .bnnew
-          insert-newline
-          backward-line
-          set-variable $line-scheme .scheme.gdfpad
-          forward-line
-          find-buffer .bnold
-          set-variable $line-scheme .scheme.gdfadd
-          forward-line
-          find-buffer .bndiff
-          forward-line
-          !tjump @wc "+" -10
+          !repeat
+            find-buffer .bnnew
+            insert-newline
+            backward-line
+            set-variable $line-scheme .scheme.gdfpad
+            forward-line
+            find-buffer .bnold
+            set-variable $line-scheme .scheme.gdfadd
+            forward-line
+            find-buffer .bndiff
+            forward-line
+          !until &not &seq @wc "+"
           set-alpha-mark "o"
         !elif &seq @wc "-"
           goto-alpha-mark "n"
@@ -732,17 +735,18 @@ define-macro gdiff
             !endif
           !endif
           goto-alpha-mark "o"
-          find-buffer .bnnew
-          insert-newline
-          backward-line
-          set-variable $line-scheme .scheme.gdfpad
-          forward-line
-          find-buffer .bnold
-          set-variable $line-scheme .scheme.gdfadd
-          forward-line
-          find-buffer .bndiff
-          forward-line
-          !tjump @wc "-" -10
+          !repeat
+            find-buffer .bnnew
+            insert-newline
+            backward-line
+            set-variable $line-scheme .scheme.gdfpad
+            forward-line
+            find-buffer .bnold
+            set-variable $line-scheme .scheme.gdfadd
+            forward-line
+            find-buffer .bndiff
+            forward-line
+          !until &not &seq @wc "-"
           set-alpha-mark "o"
         !elif &seq @wc "!"
           goto-alpha-mark "n"

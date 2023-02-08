@@ -6,9 +6,7 @@
 ; Synopsis:    View Mail - Mail handling system
 ; Authors:     Steven Phillips
 ;
-!if &seq .hilight.mail "ERROR"
-  execute-file "mail"
-!endif
+!iif &seq .hilight.mail "ERROR"  execute-file "mail"
 !if &seq .hilight.vm "ERROR"
   set-variable .hilight.vm &pinc .hilight.next 1
   set-variable .hilight.vmhl &pinc .hilight.next 1
@@ -61,9 +59,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
   set-variable %vm-curmtot &cat "%vmt" %vm-curbuf
   set-variable %vm-curmcur &cat "%vmc" %vm-curbuf
   set-variable %vm-curmpos &cat "%vmp" %vm-curbuf
-  !if &gre $window-line &ind %vm-curmtot
-    set-variable $window-line &ind %vm-curmtot
-  !endif
+  !iif &gre $window-line &ind %vm-curmtot  set-variable $window-line &ind %vm-curmtot
   !if &not &equ &ind %vm-curmcur $window-line
     set-variable #l0 $window-line
     set-variable &ind %vm-curmcur #l0
@@ -99,9 +95,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
       set-variable #l7 &cat #l7 @wc
       forward-delete-char
       insert-string &itoa #l7
-      !if &seq &itoa #l7 "\n"
-        set-variable @# &add @# 1
-      !endif
+      !iif &seq &itoa #l7 "\n"  set-variable @# &add @# 1
     !endif
     !force &sub $window-line @# search-forward "="
   !done
@@ -190,9 +184,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
       str-to-regex #l2
       set-variable #l2 &cat "^--" #l2
       !force &sub $window-line @# search-forward #l2
-      !if &not $status
-        set-variable $window-line @#
-      !endif
+      !iif &not $status  set-variable $window-line @#
       !while &not &equ $window-line @#
         set-variable #l3 $window-line
         forward-char
@@ -253,9 +245,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
     set-variable @# &add @# 1
     @# vm-init-mail-section &cond &sin "R" #l9 "RM" "M"
     set-variable @# $window-line
-    !if &not &sin "M" #l9
-      set-variable #l9 &cat #l9 "B"
-    !endif
+    !iif &not &sin "M" #l9  set-variable #l9 &cat #l9 "B"
     set-variable #l2 "Include Message"
   !else
     ; unknown or plain text section
@@ -283,9 +273,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
         insert-string "--------------MicroEmacs-Boundary\nMicroEmacs-Info: text\n\n"
         backward-line
         set-variable @# &add @# 6
-        !if &not &sin "M" #l9
-          set-variable #l9 &cat #l9 "B"
-        !endif
+        !iif &not &sin "M" #l9  set-variable #l9 &cat #l9 "B"
         !force &sub $window-line @# search-forward "^begin [0-7][0-7][0-7] "
       !endif
     !done
@@ -357,9 +345,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
     !else
       &sub 32 $window-col insert-space
     !endif
-    !if &not &seq &set #l4 %vm-subject ""
-      set-variable #l4 &rep &rig #l4 9 "\n" ""
-    !endif
+    !iif &not &seq &set #l4 %vm-subject ""  set-variable #l4 &rep &rig #l4 9 "\n" ""
     !if &seq &mid %vm-date 12 1 " "
       insert-string &spr "0%s %s %s\n" &mid %vm-date 11 5 &mid %vm-date 19 2 #l4
     !else
@@ -467,10 +453,9 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
     !while $status
       beginning-of-line
       set-mark
-      forward-line
-      !if &sin @wc " \t"
-        !jump -2
-      !endif
+      !repeat
+        forward-line
+      !until &not &sin @wc " \t"
       copy-region
       set-variable &ind #l5 &cat &ind #l5 @y
       -1 yank
@@ -605,9 +590,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
   !while $status
     beginning-of-line
     forward-line
-    !if &seq &lef @wl 11 "MicroEmacs:"
-      insert-string "--"
-    !endif
+    !iif &seq &lef @wl 11 "MicroEmacs:"  insert-string "--"
     !force search-forward "^from [!-z]* +[MTWFS][ouehra][neduitn] [JFMAJSOND][aepuico][nbrynlgptvc] +[0-9]+ [0-2][0-9]:[0-5][0-9]:[0-5][0-9]"
   !done
   ; Now remove any other MicroEmacs string
@@ -620,9 +603,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
     set-variable #l1 $window-line
     forward-char
     !force search-forward "^from [!-z]* +[MTWFS][ouehra][neduitn] [JFMAJSOND][aepuico][nbrynlgptvc] +[0-9]+ [0-2][0-9]:[0-5][0-9]:[0-5][0-9]"
-    !if &not $status
-      end-of-buffer
-    !endif
+    !iif &not $status  end-of-buffer
     set-variable #l2 $window-line
     set-variable $window-line #l0
     forward-line
@@ -883,7 +864,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
   set-variable #p9 ""
   set-variable #p8 ""
   !while &not &seq @wc "\n"
-    !if   &seq &lef @wl 5 "From:"
+    !if &seq &lef @wl 5 "From:"
       set-variable #p9 &trl &rig @wl 5
     !elif &seq &lef @wl 8 "Subject:"
       set-variable #p8 &trl &rig @wl 8
@@ -944,14 +925,10 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
 0 define-macro vm-get-who
   !if &sin "(" #p9
     set-variable #p9 &rig #p9 &sin "(" #p9
-    !if &sin ")" #p9
-      set-variable #p9 &lef #p9 &sub &sin ")" #p9 1
-    !endif
+    !iif &sin ")" #p9  set-variable #p9 &lef #p9 &sub &sin ")" #p9 1
   !elif &sin "\"" #p9
     set-variable #p9 &rig #p9 &sin "\"" #p9
-    !if &sin "\"" #p9
-      set-variable #p9 &lef #p9 &sub &sin "\"" #p9 1
-    !endif
+    !iif &sin "\"" #p9  set-variable #p9 &lef #p9 &sub &sin "\"" #p9 1
   !elif &sin "<" #p9
     set-variable #p9 &lef #p9 &sub &sin "<" #p9 1
   !endif
@@ -1042,9 +1019,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
     set-variable #l2 0
     !repeat
       end-of-line
-      !if &gre $window-acol #l2
-        set-variable #l2 $window-acol
-      !endif
+      !iif &gre $window-acol #l2  set-variable #l2 $window-acol
       !force -2 search-forward "^[ \CI]*[^ \CI\CJ>]"
     !until &not $status
     !if &gre #l2 #l0
@@ -1100,9 +1075,7 @@ define-macro-file htmltool html-to-ehf
     beginning-of-line
     set-variable #l2 $window-line
     !force search-forward "^MicroEmacs-Info: "
-    !if $status
-      !force search-backward "^--"
-    !endif
+    !iif $status  !force search-backward "^--"
     !if &not $status
       find-buffer %vm-curbuf
       ml-write "[Insert end marker not found in mail box - Try fixing]"
@@ -1189,9 +1162,7 @@ define-macro-file htmltool html-to-ehf
   beginning-of-line
   set-variable #l2 $window-line
   !force search-forward "^MicroEmacs-Info: "
-  !if $status
-    !force search-backward "^--"
-  !endif
+  !iif $status  !force search-backward "^--"
   !if &not $status
     find-buffer %vm-curbuf
     ml-write "[Insert end marker not found in mail box - Try fixing]"
@@ -1226,17 +1197,13 @@ define-macro-file htmltool html-to-ehf
   set-variable #l3 @ml01 &spr "Extract Insert to (%s)" #l4
   !if &seq &set #l5 &stat "t" #l3 "D"
     ; given a directory name
-    !if &not &seq &rig #l3 &sub &len #l3 1 "/"
-      set-variable #l3 &cat #l3 "/"
-    !endif
+    !iif &not &seq &rig #l3 &sub &len #l3 1 "/"  set-variable #l3 &cat #l3 "/"
     set-variable #l3 &cat #l3 #l4
     set-variable #l5 &stat "t" #l3
   !endif
   !if &seq #l5 "R"
     set-variable #l6 @mc5 &spr "Over-write file %s (?/y/n) ? " #l3 "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-    !if &iseq #l6 "n"
-      !return
-    !endif
+    !iif &iseq #l6 "n"  !return
   !elif &not &seq #l5 "X"
     ml-write "[Illegal file name given]"
     !abort
@@ -1337,9 +1304,7 @@ define-macro-file htmltool html-to-ehf
     beginning-of-line
     set-variable #l2 $window-line
     !force search-forward "^MicroEmacs-Info: "
-    !if $status
-      !force search-backward "^--"
-    !endif
+    !iif $status  !force search-backward "^--"
     !if &not $status
       find-buffer %vm-curbuf
       ml-write "[Insert end marker not found in mail box - Try fixing]"
@@ -1465,9 +1430,7 @@ osd .osd.vm-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void
   vm-setup-list
   set-variable #l1 &lget "|.osd.vm-help osd|vm-del-windows|scroll-down|void|vm-expand-html|0 vm-expand-html|vm-Archive-box|vm-archive-box|vm-cut-all-data|0 vm-extract-data|vm-delete-mail|vm-delete-box|vm-format-mess|vm-fix-box|vm-get-mail|mail|vm-show-next|vm-show-prev|vm-reply|vm-Reply|vm-save-box|vm-Save-box|vm-undo-mail|vm-visit-box|vm-extract-data|vm-forward|vm-show-prev|vm-show-next|scroll-up|scroll-down|" #l0
   execute-line #l1
-  !if &lget  "|1|0|1|0|1|1|1|1|1|1|1|0|1|1|1|0|1|1|0|0|1|1|1|1|1|0|1|1|1|1|" #l0
-    popup-window &cat %vm-curbuf "-list"
-  !endif
+  !iif &lget "|1|0|1|0|1|1|1|1|1|1|1|0|1|1|1|0|1|1|0|0|1|1|1|1|1|0|1|1|1|1|" #l0  popup-window &cat %vm-curbuf "-list"
 !emacro
 
 0 define-macro vm-list-mouse
@@ -1537,7 +1500,7 @@ osd .osd.vm-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void
   set-variable #l4 &reg &cat .mail-filter.reg "field" "\b"
   set-variable #l5 &reg &cat .mail-filter.reg "match" "\b"
   set-variable #l6 &reg &cat .mail-filter.reg "box"   "\b"
-  !if   &equ @# 3
+  !if &equ @# 3
     ; delete the entry
     !if &not .mail-filter.cur
       ml-write "[No entry selected]" 
@@ -1697,10 +1660,8 @@ osd .osd.mails 625 "fh" "         "
 osd .osd.mails 630 "BcfH"   .scheme.osd-ebtt " \HClose "   f void
 
 define-macro mail-setup
-  !if &band @# 1
-    ; reread the setup if not run from user-setup
-    !force read-registry "/history" $user-name "cbr"
-  !endif
+  ; reread the setup if not run from user-setup
+  !iif &band @# 1  !force read-registry "/history" $user-name "cbr"
   !force !force .osd.mails osd
   !if &not &band @# 1
   !elif $status

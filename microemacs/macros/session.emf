@@ -149,8 +149,9 @@ set-variable .session.kill 1
   set-variable #l2 0
   !repeat
     set-variable #l3 19
-    insert-string &spr "\b%d\b%s\b\n" #l2 &ind &spr "@h%d" #l2 #l3
-    !tjump &pdec #l3 1 -1
+    !repeat
+      insert-string &spr "\b%d\b%s\b\n" #l2 &ind &spr "@h%d" #l2 #l3
+    !until &not &pdec #l3 1
   !until &equ &inc #l2 1 5
   insert-string &cat #l9 "\b\bbuff\b\b\n"
   goto-position "\x88"
@@ -528,13 +529,10 @@ define-macro read-session
               !force 2 change-buffer-name &lget #l3 1
               set-variable #l1 0
               set-variable $mode-names ".*"
-              !if &not &seq &set #l2 $mode-names ""
-                !if &not &lfind "|edit|lock|nact|narrow|pipe|" #l2
-                  !force &con &sin &mid $mode-chars #l1 1 #l6 1 -1 buffer-mode #l2
-                !endif
+              !while &not &seq &set #l2 $mode-names ""
+                !iif &not &lfind "|edit|lock|nact|narrow|pipe|" #l2  !force &con &sin &mid $mode-chars #l1 1 #l6 1 -1 buffer-mode #l2
                 set-variable #l1 &add #l1 1
-                !jump -5
-              !endif
+              !done
               !force set-variable $window-mark-line &lget #l3 7
               !force set-variable $window-mark-col &lget #l3 8
               !force set-variable $window-line &lget #l3 5
@@ -547,20 +545,16 @@ define-macro read-session
               !force 2 change-buffer-name &lget #l3 1
               set-variable #l1 0
               set-variable $mode-names ".*"
-              !if &not &seq &set #l2 $mode-names ""
-                !if &not &lfind "|binary|edit|lock|nact|narrow|pipe|rbin|" #l2
-                  !force &con &sin &mid $mode-chars #l1 1 #l6 1 -1 buffer-mode #l2
-                !endif
+              !while &not &seq &set #l2 $mode-names ""
+                !iif &not &lfind "|binary|edit|lock|nact|narrow|pipe|rbin|" #l2  !force &con &sin &mid $mode-chars #l1 1 #l6 1 -1 buffer-mode #l2
                 set-variable #l1 &add #l1 1
-                !jump -5
-              !endif
+              !done
               set-variable #l1 0
-              !if &not &seq &set #l2 &lget #l4 &inc #l1 1 ""
+              !while &not &seq &set #l2 &lget #l4 &inc #l1 1 ""
                 !force set-variable $window-aline &lget #l4 &inc #l1 1
                 !force set-variable $window-col &lget #l4 &inc #l1 1
                 set-alpha-mark #l2
-                !jump -4
-              !endif
+              !done
               !if &lget #l3 7
                 !force set-variable $window-aline &lget #l3 7
                 !force set-variable $window-col &lget #l3 8

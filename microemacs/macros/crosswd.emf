@@ -134,9 +134,10 @@ define-macro crosswd-create-word-list
         exchange-point-and-mark
         end-of-line
         set-variable #l3 #l4
-        insert-string #l5
-        forward-line
-        !tjump &dec #l3 1 -2
+        !repeat
+          insert-string #l5
+          forward-line
+        !until &not &dec #l3 1
       !done
     !endif
   !until &equ &inc #l1 1 10

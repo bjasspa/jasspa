@@ -71,9 +71,7 @@
     !endif
     set-variable #l1 &spr "%s %s" #l8 #l1
   !endif        
-  !if &band 0x20000 #l9
-    set-variable #l1 &spr "%s (%s)" #l1 .toolbar-redraw.bn
-  !endif        
+  !iif &band 0x20000 #l9  set-variable #l1 &spr "%s (%s)" #l1 .toolbar-redraw.bn
   !if &band 0x40000 #l9
     !if &not &seq $buffer-fname ""
       set-variable #l4 &sub #l0 &add &len #l1 3
@@ -93,12 +91,8 @@
 
 0 define-macro toolbar-redraw-tools
   set-variable #l6 &band @# 0x003
-  !if &band @# 0x004
-    set-variable #l6 &bor #l6 0x10000
-  !endif
-  !if &band @# 0x008
-    set-variable #l6 &bor #l6 0x60000
-  !endif
+  !iif &band @# 0x004  set-variable #l6 &bor #l6 0x10000
+  !iif &band @# 0x008  set-variable #l6 &bor #l6 0x60000
   set-variable #l5 $system
   set-variable $system &bor $system 0x800000
   set-position "\x84"
@@ -110,9 +104,7 @@
       !repeat
         !if &equ $window-id #l3
           set-variable #l7 @#
-          !if &not &seq $buffer-bname &lget .toolbar.tool-buff #l1
-            find-buffer &lget .toolbar.tool-buff #l1
-          !endif
+          !iif &not &seq $buffer-bname &lget .toolbar.tool-buff #l1  find-buffer &lget .toolbar.tool-buff #l1
           !if &not &exi :tool-width
             ; this buffer has not been used by the toolbar before,
             ; install dummy mouse handler to avoid modifying problems
@@ -127,9 +119,7 @@
             1 goto-position "\x84"
             !force !force #l7 execute-named-command &lget .toolbar.tool-cmd #l1
             !force &cond &band #l2 0x100000 0xdf 1 goto-position "\x85"
-            !if &band #l2 0x200000
-              beginning-of-buffer
-            !endif
+            !iif &band #l2 0x200000  beginning-of-buffer
           !endif
           !if &or &sub :tool-width $window-width &band #l2 #l6
             ; the width of the tool window has changed - update modeline
@@ -138,9 +128,7 @@
           set-variable #l4 ""
         !else
           3 next-window
-          !if &equ $window-id #l4
-            set-variable #l4 ""
-          !endif
+          !iif &equ $window-id #l4  set-variable #l4 ""
         !endif
       !until &seq #l4 ""
     !endif
@@ -163,9 +151,7 @@
     @# screen-update
     !return
   !elif &seq @cl "recenter"
-    !if &exi &set #l0 &cat  "chook-" &rig $buffer-fhook 6
-      !force execute-named-command #l0
-    !endif
+    !iif &exi &set #l0 &cat "chook-" &rig $buffer-fhook 6  !force execute-named-command #l0
     set-variable .bc &bor .bc 0x080
   !elif &les @# 1
     @# screen-update
@@ -227,14 +213,12 @@
   !if &band &lget .toolbar.tool-flag #l0 0x400
     ; tool is hidden - find the one currently shown
     set-variable #l1 #l0
-    !if &band &lget .toolbar.tool-flag #l1 0x800
+    !while &band &lget .toolbar.tool-flag #l1 0x800
       set-variable #l1 &sub #l1 1
-      !jump -2
-    !endif
-    !if &band &lget .toolbar.tool-flag #l1 0x400
+    !done
+    !while &band &lget .toolbar.tool-flag #l1 0x400
       set-variable #l1 &add #l1 1
-      !jump -2
-    !endif
+    !done
     ; make tool #l0 visible, making #l1 invisible
     set-position "\x84"
     popup-window &lget .toolbar.tool-buff #l1
@@ -257,9 +241,7 @@
         !return
       !elif &band &lget .toolbar.tool-flag #l1 0x200
         !if &not &band &lget .toolbar.tool-flag &set #l2 #l1 0x800
-          !if &band &lget .toolbar.tool-flag &inc #l2 1 0x800
-            !jump -1
-          !endif
+          !tjump &band &lget .toolbar.tool-flag &inc #l2 1 0x800 0
         !endif
         set-variable #l2 &sub #l2 1
         !goto page-tool
@@ -271,9 +253,7 @@
       !elif &band &lget .toolbar.tool-flag #l1 0x200
         set-variable #l2 &add #l1 1
         !if &not &band &lget .toolbar.tool-flag #l2 0x800
-          !if &band &lget .toolbar.tool-flag &dec #l2 1 0x800
-            !jump -1
-          !endif
+          !tjump &band &lget .toolbar.tool-flag &dec #l2 1 0x800 0
         !endif
 *page-tool
         set-variable .toolbar.tool-flag &lset .toolbar.tool-flag #l1 &bxor &lget .toolbar.tool-flag #l1 0x400
@@ -337,14 +317,10 @@ define-macro toolbar-open
   set-variable #l0 0
   !while &not &seq "" &set #l1 &lget .toolbar.tool-flag &inc #l0 1
     set-variable #l2 &xrep &lget .toolbar.tool-cmd #l0 "^[ \t]*[0-9]*[ \t]*\\([A-Za-z]\\w*\\)\\([ \t].*\\)?" "\\1"
-    !if &not &exi &ind #l2
-      0 define-macro-file &lget .toolbar.tool-file #l0 #l2
-    !endif
+    !iif &not &exi &ind #l2  0 define-macro-file &lget .toolbar.tool-file #l0 #l2
     !if &set #l2 &lfind .toolbar.conv &band #l1 0xf000
       set-variable .toolbar.flag &lset .toolbar.flag #l2 &add &lget .toolbar.flag #l2 1
-      !if &not &band #l1 0x400
-        set-variable #l9 &lset #l9 #l2 &add &lget #l9 #l2 &lget .toolbar.tool-size #l0
-      !endif
+      !iif &not &band #l1 0x400  set-variable #l9 &lset #l9 #l2 &add &lget #l9 #l2 &lget .toolbar.tool-size #l0
     !endif
   !done
   set-variable .toolbar.tool-wid "|"
@@ -400,9 +376,7 @@ define-macro toolbar-open
   !done
   ; fill in any missing window ids (hidden tools)
   !while &gre &dec #l0 1 0
-    !if &seq &lget .toolbar.tool-wid #l0 ""
-      set-variable .toolbar.tool-wid &lset .toolbar.tool-wid #l0 &lget .toolbar.tool-wid &add #l0 1
-    !endif
+    !iif &seq &lget .toolbar.tool-wid #l0 ""  set-variable .toolbar.tool-wid &lset .toolbar.tool-wid #l0 &lget .toolbar.tool-wid &add #l0 1
   !done
   5 next-window
   set-variable .toolbar-redraw.bn "\CH"
@@ -430,9 +404,7 @@ define-macro toolbar-close
 !emacro
 
 define-macro toolbar
-  !if &not @?
-    set-variable @# &bxor .toolbar.open 1
-  !endif
+  !iif &not @?  set-variable @# &bxor .toolbar.open 1
   !if @#
     toolbar-open
   !else
@@ -440,5 +412,3 @@ define-macro toolbar
   !endif
 !emacro
 set-variable .toolbar.conv "|4096|8192|16384|32768|"
-
-

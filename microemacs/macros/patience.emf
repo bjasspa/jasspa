@@ -37,9 +37,7 @@
   ;
   ; Make sure we have ((red & black) | (black & red))
   ;
-  !if &not &or &and &les #g8 26 &gre #g9 25 &and &les #g9 26 &gre #g8 25
-    !abort
-  !endif
+  !iif &not &or &and &les #g8 26 &gre #g9 25 &and &les #g9 26 &gre #g8 25   !abort
   ;
   ; Make sure that the value is one less than each other.
   ;
@@ -79,11 +77,9 @@
       1 screen-poke #g2 #g3 .scheme.cardback :pat-card-bot
     !endif
   !elif &seq :pat-char "%"
-    1 screen-poke #g2 #g3 .scheme.cardback :pat-card-none
-    set-variable #g2 &add #g2 1
-    !if &less #g2 &sub $frame-depth 2
-      !jump -3
-    !endif
+    !repeat
+      1 screen-poke #g2 #g3 .scheme.cardback :pat-card-none
+    !until &gre &inc #g2 1 &sub $frame-depth 3
   !elif &seq :pat-char "#"
     97 screen-poke #g2 #g3 .scheme.cardfore :pat-card-top
     set-variable #g2 &add #g2 1
@@ -258,13 +254,9 @@
   ; Draw the next set of cards
   ;
   set-variable #g0 &len :pat-dealup
-  !if &gre #g0 3
-    set-variable #g0 3
-  !endif
+  !iif &gre #g0 3  set-variable #g0 3
   !repeat
-    !if &gre #g0 0
-      set-variable :pat-char &mid :pat-dealup &sub #g0 1 1
-    !endif
+    !iif &gre #g0 0  set-variable :pat-char &mid :pat-dealup &sub #g0 1 1
     pat-draw-card :pat-char :pat-row :pat-col 1
     set-variable #g0 &sub #g0 1
     set-variable :pat-col &add :pat-col 3
@@ -294,9 +286,7 @@
 !emacro
 
 0 define-macro pat-draw
-  !if &not &equ @# 1
-    !return
-  !endif
+  !iif &not &equ @# 1   !return
   delete-other-windows
   screen-update
   set-variable #g9 1
@@ -383,9 +373,7 @@
   set-variable #g0 :pat-dealdn
   set-variable #g1 :pat-dealup
   !if &equ &len #g0 0
-    !if &equ &len #g1 0
-      !return
-    !endif
+    !iif &equ &len #g1 0   !return
     ; Turn pack
     set-variable #g0 #g1
     set-variable #g1 ""
@@ -413,16 +401,14 @@
     !if &equ 0 :pat-num                 ; Moving card an ace ??
       set-variable &ind #g1 :pat-char  ; Move card.
       !return
-    !else
-      ml-write &sprint "Error: Must move Ace to home position [Card = %s. Num = %d]" :pat-char :pat-num
     !endif
+    ml-write &sprint "Error: Must move Ace to home position [Card = %s. Num = %d]" :pat-char :pat-num
   !else
     !if &equ &sub &atoi :pat-char 1 &atoi &lef &ind #g1 1
       set-variable &ind #g1 &cat :pat-char &ind #g1 ; Move card.
       !return
-    !else
-      ml-write &sprint "Error: Invalid move to home position [Card = %s. Num = %d]" :pat-char :pat-num
     !endif
+    ml-write &sprint "Error: Invalid move to home position [Card = %s. Num = %d]" :pat-char :pat-num
   !endif
   !abort
 !emacro
@@ -539,9 +525,7 @@
           !endif
         !endif
       !else
-        !if &seq :pat-inchr :pat-outchr
-          set-variable :pat-outchr "c"
-        !endif
+        !iif &seq :pat-inchr :pat-outchr  set-variable :pat-outchr "c"
         !if &equ 1 &len #g7
           set-variable #g8 #g7
         !else
@@ -598,9 +582,7 @@
 ;
 0 define-macro pat-help
   !force help-command "Patience"
-  !if $status
-    delete-window
-  !endif
+  !iif $status  delete-window
 !emacro
 
 0 define-macro pat-mouse-where
@@ -635,9 +617,7 @@
     ;
     !if &mod #g0 :pat-card-width
       set-variable :pat-mouse-chr &add 1 &div #g0 :pat-card-width
-      !if &les :pat-mouse-chr 8
-        !return
-      !endif
+      !iif &les :pat-mouse-chr 8   !return
     !endif
   !endif
   set-variable :pat-mouse-chr "#"
@@ -701,9 +681,7 @@
   !if .Patience.toolbar
     ; note - we cannot open/close the toolbar directly as this changes the window layout which must not be done in an bhook
     -1 create-callback toolbar-open
-    !if .toolbar.open
-      1 create-callback toolbar-close
-    !endif
+    !iif .toolbar.open  1 create-callback toolbar-close
   !endif
 !emacro
 ;
@@ -718,9 +696,7 @@
   !if .Patience.toolbar
     ; note - we cannot open/close the toolbar directly as this changes the window layout which must not be done in an ehook
     -1 create-callback toolbar-close
-    !if &not .toolbar.open
-      1 create-callback toolbar-open
-    !endif
+    !iif &not .toolbar.open  1 create-callback toolbar-open
   !endif
 !emacro
 
@@ -815,5 +791,5 @@ define-macro Patience
     set-variable $buffer-ehook ehook-patience
     bhook-patience
   !endif
-  pat-deal                        ; Deal
+  pat-deal
 !emacro

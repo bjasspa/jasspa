@@ -20,7 +20,7 @@ define-macro change-scheme
     !force set-variable #l0 @1
     !if &not $status
       !if &not &exi .scheme.scheme-names
-        0 exec-file "schemes"
+        0 execute-file "schemes"
       !endif
       !if &set #l0 &lfind .scheme.scheme-files .current
         set-variable #l0 @ml19 "Color Scheme" &lget .scheme.scheme-names #l0 .scheme.scheme-names
@@ -33,7 +33,7 @@ define-macro change-scheme
     !endif
   !endif
   ; Execute the required color scheme creator macro file:
-  !force -1 exec-file #l0
+  !force -1 execute-file #l0
   set-variable .current #l0
 !emacro
 ; The LAST color is set by .scheme.next below.

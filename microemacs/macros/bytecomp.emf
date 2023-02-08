@@ -1,0 +1,164 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2023 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     2023-01-25 12:31:40
+; Synopsis:    MicroEmacs macro buffer compiler
+; Authors:     bill
+;
+define-macro bc-buffer
+  beginning-of-buffer
+  !repeat
+    !force search-buffer "em" "^[\t ]*;"
+    !if $status
+      beginning-of-line
+      set-mark
+      forward-line
+      -1 kill-region
+    !endif
+  !until &not $status
+  beginning-of-buffer
+  replace-string "^[^\t \n]" " \\0"
+  beginning-of-buffer
+  replace-string "^[\t ]+\\*" "*"
+  beginning-of-buffer 
+  !repeat
+    !force search-buffer "em" "\\([\t ]+\\)\\([^\t \n]+\\|$\\)"
+    !if &not $status
+    !elif &seq &set #l1 &lef &set #l2 @s2 1 ""
+      &len @s1 backward-delete-char
+    !elif &seq #l1 "\""
+      -2 show-region
+      &len @s1 forward-delete-char
+      set-mark
+      set-variable #l3 $window-col
+      !force goto-matching-fence
+      !if &not $status
+        ml-write &spr "[ERROR: Failed to find end of string: %s]" $buffer-fname
+        !abort
+      !endif
+      forward-char
+      !if &les &set #l3 &sub $window-col #l3 2000
+        copy-region
+        execute-line &spr "set-variable #l4 %s" @y
+        !if &sin "\r" #l4
+        !elif &sin "\n" #l4
+        !elif &sin "\H" #l4
+        !elif &sin "\}" #l4
+        !elif &sin "\{" #l4
+        !elif &sin "\s" #l4
+        !else
+          #l3 backward-delete-char
+          !if &les &set #l3 &add 1 &len #l4 0x20
+            insert-string &itoa &add 0xc0 #l3 
+          !else
+            insert-string &cat &itoa &add 0xe0 &div #l3 0x080 &itoa &add 48 &band #l3 0x7f 
+          !endif
+          set-variable #l5 $window-col
+          insert-string "\""
+          insert-string #l4
+          !if &sub #l3 &sub $window-col #l5
+            ml-write &spr "[ERROR: String insert length incorrect: %s]"  $buffer-fname
+            !abort
+          !endif
+        !endif
+      !endif
+    !elif &seq #l1 "&"
+      !if &not &set #l3 &lfin "|abs|add|and|ato|ban|bmo|bno|bor|bst|bxo|cat|cbi|con|dec|div|equ|exi|fab|fad|fdi|fin|fmu|fsq|fsu|gmo|gre|inc|ind|inw|ire|ise|isi|ito|kbi|lde|lef|len|les|lfi|lge|lin|lse|mid|mod|mul|nbi|nbm|neg|not|opt|or|pde|pin|reg|rep|rig|ris|rsi|seq|set|sgr|sin|sle|slo|spr|sta|sub|sup|trb|trl|trr|whi|xir|xis|xre|xse|" &mid #l2 1 3
+        ml-write &spr "[ERROR: Unknown function (&%s): %s]" #l2 $buffer-fname
+        !abort
+      !endif
+      &len #l2 backward-delete-char
+      &len @s1 backward-delete-char
+      insert-string &cat "\x85" &itoa &add 48 #l3 
+    !elif &seq #l1 "!"
+      !if &not &set #l3 &lfin "|abo|bel|bre|con|don|eli|els|ema|end|for|got|if|iif|jum|nma|rep|ret|tgo|tju|unt|whi|" &mid #l2 1 3
+        ml-write &spr "[ERROR: Unknown directive (!%s): %s]" #l2 $buffer-fname
+        !abort
+      !endif
+      &len #l2 backward-delete-char
+      &len @s1 backward-delete-char
+      insert-string &cat "\x86" &itoa &add 47 #l3 
+    !elif &seq #l1 ";"
+      -2 show-region
+      set-mark
+      end-of-line
+      -1 kill-region
+    !else
+      !if &gre &set #l3 &len #l2 1024
+        ml-write &spr "[ERROR: Unexpectedly long unquoted string (%d): %s]" #l3 $buffer-fname
+        !abort
+      !endif
+      -2 show-region
+      &len @s1 forward-delete-char
+      !if &les #l3 0x20
+        insert-string &itoa &add 0xc0 #l3 
+      !else
+        insert-string &cat &itoa &add 0xe0 &div #l3 0x080 &itoa &add 48 &band #l3 0x7f 
+      !endif
+      #l3 forward-char
+    !endif
+  !until &not $status
+  beginning-of-buffer
+  replace-string "^\n\n?\n?\n?" ""
+  beginning-of-buffer
+!emacro      
+
+define-macro bc-file
+  set-variable #l2 $buffer-bname
+  !force set-variable #l0 @1
+  !iif &not $status  set-variable #l0 @ml01 "Byte-compile file"
+  !if &seq #l0 ""
+    !abort
+  !elif &not &seq "R" &stat t &set #l1 &stat a #l0
+    ml-write "[ERROR: Only macro files supported]"
+    !abort
+  !elif &not &seq ".emf" &rig #l1 -4
+    ml-write "[ERROR: Only macro files supported]"
+    !abort
+  !endif
+  !force 0 delete-buffer "*bcompile*"
+  !force 2 find-buffer #l1
+  !if $status
+    set-alpha-mark "\x81"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    copy-region
+    goto-alpha-mark "\x81"
+    find-buffer "*bcompile*"
+    -1 buffer-mode "undo"
+    yank
+    -1 yank
+  !else
+    find-buffer "*bcompile*"
+    -1 buffer-mode "undo"
+    insert-file #l1
+  !endif
+  set-variable $buffer-fname &cat &lef #l1 -1 "b"
+  bc-buffer
+  -1 buffer-mode "backup"
+  -1 buffer-mode "cr"
+  !force 0 write-buffer &cat &lef #l1 -1 "b"
+  !force 0 delete-buffer $buffer-bname
+  find-buffer #l2
+!emacro
+
+define-macro bc-files
+  delete-other-windows
+  !force set-variable #l0 @1
+  !iif &not $status  set-variable #l0 @ml01 "Byte-compile files or dir"
+  !if &seq "D" &set #l2 &stat t &set #l1 &stat a #l0
+    set-variable #l1 &cat #l1 "*.emf"
+  !elif &and &seq "X" #l2 &not &seq ".emf" &rig #l1 -4
+    ml-write "[ERROR: Only macro files supported, given file mask must end in '/' or '.emf']"
+    !abort
+  !endif
+  filemask-to-regex #l1
+  set-variable $file-names #l1
+  set-variable #l3 $result
+  !while &len &set #l2 $file-names
+    bc-file &cat #l3 #l2    
+  !done
+!emacro

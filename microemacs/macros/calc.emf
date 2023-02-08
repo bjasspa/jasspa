@@ -220,11 +220,13 @@
         set-variable #l7 #l3
         set-variable #l3 &lget #l6 4
         !if &les #l7 0
-          set-variable #l3 &div #l3 2
-          !tjump &les &inc #l7 1 0 -1
+          !repeat
+            set-variable #l3 &div #l3 2
+          !until &not &les &inc #l7 1 0
         !elif &gre #l7 0
-          set-variable #l3 &mul #l3 2
-          !tjump &gre &dec #l7 1 0 -1
+          !repeat
+            set-variable #l3 &mul #l3 2
+          !until &not &gre &dec #l7 1 0
         !endif
       !elif &equ #l7 7
         set-variable #l3 &band &lget #l6 4 #l3

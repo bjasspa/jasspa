@@ -108,12 +108,10 @@ define-macro number-items
     insert-string &spr #l4 &pinc #l1 1
     set-variable #l5 &sub $window-col #l5
     set-variable #l6 #l5
-    !if &pdec #l5 1
-      !if &not &seq @wc "\n"
-        forward-delete-char
-        !jump -3
-      !endif
-    !endif
+    !while &pdec #l5 1
+      !iif &seq @wc "\n"  !break
+      forward-delete-char
+    !done
     #l6 backward-char
     forward-line
   !done

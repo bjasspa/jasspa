@@ -71,12 +71,11 @@ add-file-hook "*compile* *grep*" fhook-ipipe
           insert-string "\n->"
           0 reyank
           -1 yank
-          set-variable $line-scheme #l1
-          !force set-variable $window-acol &sub $window-width 1
-          !if $status
-            insert-string "\\\n->"
-            !jump -4
-          !endif
+          !repeat
+            set-variable $line-scheme #l1
+            !force set-variable $window-acol &sub $window-width 1
+            !iif $status  insert-string "\\\n->"
+          !until &not $status
           set-variable #l0 &add #l0 &sub $window-line #l2
         !endif
       !endif
@@ -462,13 +461,9 @@ define-macro reread-all
 
 define-macro save-kbd-macro
   !force set-variable #l1 @1
-  !if &not $status
-    set-variable #l1 @ml "Save macro as command name"
-  !endif
+  !iif &not $status  set-variable #l1 @ml "Save macro as command name"
   name-kbd-macro #l1
-  !if &seq &set #l2 &find $user-name ".emf" "ERROR"
-    set-variable #l2 &spr "%s%s.emf" $user-path $user-name
-  !endif
+  !iif &seq &set #l2 &find $user-name ".emf" "ERROR"  set-variable #l2 &spr "%s%s.emf" $user-path $user-name
   set-variable #l3 $buffer-bname
   !force find-file #l2
   !if &not $status

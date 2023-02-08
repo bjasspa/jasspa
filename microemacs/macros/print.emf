@@ -62,7 +62,7 @@
   ; load the print scheme
   !if &not &seq &set #l1 &reg "/print/scheme" "printd" #l9
     ;500 ml-write &spr "[Loading print scheme %s]" #l1
-    !force exec-file #l1
+    execute-file #l1
   !endif
   
   ; set /print and /print/setup to reflect this config

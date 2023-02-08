@@ -25,10 +25,8 @@ set-variable .fhook-lhtml.command-desc  "|"
 set-variable .fhook-lhtml.indent-width 2
 
 ; load in lua script & the html core
-!if &not &exist fhook-lua
-  !force exec-file "hklua"
-!endif
-!force execute-file "htmlcore" "lhtml" 
+!iif &not &exist fhook-lua  execute-file "hklua"
+execute-file "htmlcore" "lhtml" 
 
 ; add the <?lua ?> lua script support
 !if &and &sin "h" .fhook-lhtml.setup &band .hilight.flags 0x02 

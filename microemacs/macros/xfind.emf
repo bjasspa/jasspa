@@ -36,9 +36,7 @@ define-macro xgrep
   !endif
 !emacro
 define-macro rgrep
-  !if &not &exi %xfind-com
-    exec-file "find"
-  !endif
+  !iif &not &exi %xfind-com  execute-file "find"
   !force set-variable #l2 @3
   !if &not $status
     set-variable #l0 @ml00 "RGrep for"

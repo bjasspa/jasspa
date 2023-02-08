@@ -7,7 +7,7 @@
 ; Authors:     Jon Green
 ;
 ; Load up common unix stuff
-!force exec-file "unixterm"
+execute-file "unixterm"
 ; no vt100-nam on linux, this may cause problems in an ishell
 set-variable %ipipe-term "TERM=vt100"
 ;

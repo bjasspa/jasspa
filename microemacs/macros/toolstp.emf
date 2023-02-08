@@ -54,14 +54,11 @@
         set-variable .toolbar.size &lset .toolbar.size #l2 &cond &band 1 #l2 $window-width $window-depth
         ; must store the window size for all paged tools
         set-variable #l4 #l0
-        !if &band #l1 0x800
+        !while &band #l1 0x800
           set-variable #l1 &lget .toolbar.tool-flag &dec #l4 1
-          !jump -2
-        !endif
+        !done
         set-variable .toolbar.tool-size &lset .toolbar.tool-size #l4 #l3
-        !if &band &lget .toolbar.tool-flag &inc #l4 1 0x800
-          !jump -2
-        !endif
+        !tjump &band &lget .toolbar.tool-flag &inc #l4 1 0x800 -1
       !endif
     !done
     ; don't need to reset the toolbar
@@ -72,14 +69,11 @@
       set-variable #l1 &bxor 0x100 &lget .toolbar.tool-flag #l0
       set-variable #l2 &lfind .toolbar.conv &band #l1 0xf000
       set-variable $window-flags &cond &band #l1 0x100 0x11ff &sub 0x11fe &band #l2 1
-      !if &band #l1 0x800
+      !while &band #l1 0x800
         set-variable #l1 &lget .toolbar.tool-flag &dec #l0 1
-        !jump -2
-      !endif
+      !done
       set-variable .toolbar.tool-flag &lset .toolbar.tool-flag #l0 &bxor 0x100 &lget .toolbar.tool-flag #l0
-      !if &band &lget .toolbar.tool-flag &inc #l0 1 0x800
-        !jump -2
-      !endif
+      !tjump &band &lget .toolbar.tool-flag &inc #l0 1 0x800 -1
     !endif
     ; don't need to reset the toolbar
     set-variable #l9 0
@@ -274,5 +268,5 @@ osd .osd.toolbar 50 ""  "\HStore Current State" 5 toolbar-setup-cmd
 !emacro
 
 ; load the list of available toolbar tools
-!force exec-file "toollist"
+!force execute-file "toollist"
 

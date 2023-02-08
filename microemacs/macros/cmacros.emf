@@ -19,18 +19,14 @@ define-macro c-slashify
     end-of-line
     !repeat
       backward-char
-      !if &seq @wc "\\"
-        backward-char
-      !endif
+      !iif &seq @wc "\\"  backward-char
     !until &not &sin @wc " \t"
     forward-char
     !repeat
       insert-string " "
     !until &gre $window-acol 76
     insert-string "\\"
-    !if &not &seq @wc "\n"
-      1 kill-line
-    !endif
+    !iif &not &seq @wc "\n"  1 kill-line
     forward-line
   !done
   beginning-of-line
@@ -49,14 +45,10 @@ define-macro c-deslashify
     end-of-line
     !repeat
       backward-char
-      !if &seq @wc "\\"
-        backward-char
-      !endif
+      !iif &seq @wc "\\"  backward-char
     !until &not &sin @wc " \t"
     forward-char
-    !if &not &seq @wc "\n"
-      1 kill-line
-    !endif
+    !iif &not &seq @wc "\n"  1 kill-line
     forward-line
   !done
   beginning-of-line
@@ -75,9 +67,7 @@ define-macro c-hash-undef
 
 ; #l0 %cd-hide, #l1 %cd-depth, #l2 %cd-neg, #l3 %cd-def, #l4 %cd-varname, #l5 %cd-temp
 define-macro c-hash-eval
-  !if &bmod "narrow"
-    narrow-buffer
-  !endif
+  !iif &bmod "narrow"  narrow-buffer
   beginning-of-buffer
   set-variable #l0 0
   !repeat
@@ -88,9 +78,7 @@ define-macro c-hash-eval
       !elif &seq &lef @wl 6 "#endif"
         set-variable #l0 &sub #l0 1
       !elif &seq &lef @wl 5 "#else"
-        !if &equ #l0 1
-          set-variable #l0 0
-        !endif
+        !iif &equ #l0 1  set-variable #l0 0
       !endif
       !if &and @? &not #l0
         set-mark
@@ -129,24 +117,16 @@ define-macro c-hash-eval
           set-variable #l5 &rig #l5 1
         !done
         set-variable #l6 &len #l5
-        !if &sin " "  #l5
-          set-variable #l6 &sub &sin " " #l5 1
-        !endif
+        !iif &sin " " #l5  set-variable #l6 &sub &sin " " #l5 1
         set-variable #l7 &sin "\t" #l5
-        !if &and #l7 &not &gre #l7 #l6
-          set-variable #l6 &sub #l7 1
-        !endif
+        !iif &and #l7 &not &gre #l7 #l6  set-variable #l6 &sub #l7 1
         set-variable #l4 &cat "%chd-" &lef #l5 #l6
         set-variable #l5 &rig #l5 #l6
         !while &and &not &seq &lef #l5 1 "" &sin &lef #l5 1 " \t"
           set-variable #l5 &rig #l5 1
         !done
-        !if &sin " " #l5
-          set-variable #l5 &lef #l5 &sub &sin " " #l5 1
-        !endif
-        !if &sin "\t" #l5
-          set-variable #l5 &lef #l5 &sub &sin "\t" #l5 1
-        !endif
+        !iif &sin " " #l5  set-variable #l5 &lef #l5 &sub &sin " " #l5 1
+        !iif &sin "\t" #l5  set-variable #l5 &lef #l5 &sub &sin "\t" #l5 1
         set-variable &ind #l4 #l5
       !elif &xseq @wl "#undef[ \t]+\\(\\w+\\)"
         !force unset-variable &cat "%chd-" @s1
@@ -160,9 +140,7 @@ define-macro c-hash-eval
 !emacro
 
 define-macro c-hash-undo
-  !if &bmod "narrow"
-    narrow-buffer
-  !endif
+  !iif &bmod "narrow"  narrow-buffer
   beginning-of-buffer
   !repeat
     set-variable $line-scheme -1

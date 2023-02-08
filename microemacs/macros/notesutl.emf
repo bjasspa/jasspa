@@ -1,13 +1,271 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2005-2009 JASSPA (www.jasspa.com)
+; Copyright (C) 2011 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
-; Created:     Tue Jan 11 2005
-; Synopsis:    Hierarchical notes file import utils
-; Authors:     Steven Phillips
+; Created:     2011-06-15 11:04:40
+; Synopsis:    
+; Authors:     $Author: jon $
+; Last Modified: <230203.1126> 
 ;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro inote-to-file
+  !if &not &xseq @wl " *\"\\h\\h\\h\\h\\h\\(\\d+\\)\".* \\d? ?= \"\\(.*\\)\" ?{?"
+    !abort
+  !endif
+  set-variable #l0 $buffer-bname
+  set-variable #l1 $window-line
+  set-variable #l2 @s1
+  execute-line &spr "set-variable #l3 \"%s\"" @s2
+  search-buffer "me" &spr "^\b\benf\b\bdivider\b\b%s$" #l2
+  forward-char
+  set-mark
+  backward-char
+  search-buffer "me" &spr "^\b\benf\b\bdivider\b\b"
+  beginning-of-line
+  copy-region
+  !force 0 delete-buffer "*inu-tmp*"
+  find-buffer "*inu-tmp*"
+  yank
+  -1 yank
+  set-variable #l3 &xrep #l3 "[\\/:*?\"<>|]" "_"
+  write-buffer &spr "%s%s.txt" @1 #l3
+  !force 0 delete-buffer $buffer-bname
+  find-buffer #l0
+  set-variable $window-line #l1
+!emacro
+
+0 define-macro notes-to-files
+  notes-get-frame
+  notes-swap-window
+  !if &not &seq $buffer-bname .notes.current
+    ml-write &spr "[Error: Not in the current notes buffer \"%s\"]" .notes.current
+    !abort
+  !endif
+  !force set-variable #l0 @1
+  !if &not $status
+    set-variable #l0 @ml01 "Output path"
+  !endif
+  !if &not &seq "D" &stat t &set #l0 &stat a #l0 
+    ml-write &spr "[Error: Given ouput path \"%s\" is not a directory]" #l0
+    !abort
+  !endif
+  !force narrow-buffer
+  set-variable #l1 0
+  set-variable $window-line 2
+  !repeat
+    !force inote-to-file #l0
+    !if $status
+      set-variable #l1 &add #l1 1
+      !force forward-line
+    !endif
+  !until &not $status
+  notes-swap-window
+  notes-create-display
+  ml-write &spr "[Write complete: %d files written to %s]" #l1 #l0
+!emacro
+
+0 define-macro inote-to-eView
+  set-variable #l0 $buffer-bname
+  set-variable #l1 $window-line
+  set-variable #l2 @1
+  set-variable #l3 @2
+  set-variable #l4 @3
+  set-variable #l5 @4
+  search-buffer "me" &spr "^\b\benf\b\bdivider\b\b%s$" #l4
+  forward-char
+  set-mark
+  backward-char
+  search-buffer "me" &spr "^\b\benf\b\bdivider\b\b"
+  beginning-of-line
+  copy-region
+  !force 0 delete-buffer "*inu-tmp*"
+  find-buffer "*inu-tmp*"
+  insert-string &spr "%6d:%2d:%s\n" #l4 #l3 #l5
+  yank
+  -1 yank
+  backward-char
+  !while &seq @wl ""
+    backward-delete-char
+  !done
+  0 write-buffer &spr "%sn%d_%d" #l2 @# #l4
+  !force 0 delete-buffer $buffer-bname
+  find-buffer "*inu-idx*"
+  insert-string &spr "%6d:%2d:%s\n" #l4 #l3 #l5
+  find-buffer #l0
+  set-variable $window-line #l1
+!emacro
+
+define-macro notes-to-eView
+  notes-get-frame
+  notes-swap-window
+  !if &not &seq $buffer-bname .notes.current
+    ml-write &spr "[Error: Not in the current notes buffer \"%s\"]" .notes.current
+    !abort
+  !endif
+  !force set-variable #l9 @1
+  !if &not $status
+    set-variable #l9 @ml "Index number"
+  !endif
+  !if &or &les #l9 1 &gre #l9 5
+    ml-write &spr "[Error: Index out of range (1-5)]"
+    !abort
+  !endif
+  !force set-variable #l0 @2
+  !if &not $status
+    set-variable #l0 @ml01 "Output path"
+  !endif
+  !if &not &seq "D" &stat t &set #l0 &stat a #l0 
+    ml-write &spr "[Error: Given ouput path \"%s\" is not a directory]" #l0
+    !abort
+  !endif
+  !force narrow-buffer
+  !force 0 delete-buffer "*inu-idx*"
+  set-variable #l2 0
+  set-variable #l3 0
+  set-variable $window-line 2
+  !repeat
+    !if &seq &trb @wl "}"
+    !elif &seq &lef @wl 9 "\"id-next\""
+      set-variable #l2 1
+    !elif &xse @wl "\\( *\\)\"\\h\\h\\h\\h\\h\\(\\d+\\)\" \\d? ?= \"\\(.*\\)\".* ?{?"
+      set-variable #l4 &len @s1
+      set-variable #l5 @s2
+      execute-line &spr "set-variable #l6 \"%s\"" @s3
+      !force #l9 inote-to-eView #l0 #l4 #l5 #l6
+      !if &not $status
+        1000 ml-write &spr "[Error: Failed to convert note: %s (%s)]" #l5 #l6
+      !else
+        set-variable #l3 &add #l3 1
+      !endif
+    !else
+      1000 ml-write &spr "[Error: Unexpedited line: %s ]" @wl
+    !endif
+    forward-line
+  !until #l2
+  notes-swap-window
+  notes-create-display
+  ml-write &spr "[Write complete: %d files written to %s]" #l3 #l0
+!emacro
+
+0 define-macro inote-single-to-multi
+  set-variable #l0 $buffer-bname
+  set-variable #l1 $window-line
+  set-variable #l2 @1
+  set-variable #l4 @2
+  set-variable #l5 @3
+  search-buffer "me" &spr "^\b\benf\b\bdivider\b\b%s$" #l4
+  forward-char
+  !if &seq &lef @wl 11 "\b\benf-info\b"
+    set-variable #l7 @wl
+    forward-line
+  !else
+    set-variable #l7 "\b"
+  !endif
+  set-mark
+  backward-char
+  search-buffer "me" &spr "^\b\benf\b\bdivider\b\b"
+  beginning-of-line
+  copy-region
+  !force 0 delete-buffer "*inu-tmp*"
+  find-buffer "*inu-tmp*"
+  yank
+  -1 yank
+  backward-line
+  !while &xseq @wl "\\s*"
+    !if &equ $window-line 1
+      !force 0 delete-buffer $buffer-bname
+      find-buffer #l0
+      set-variable $window-line #l1
+      !return
+    !endif
+    backward-line
+  !done
+  forward-line
+  set-mark
+  end-of-buffer
+  -1 kill-region
+  beginning-of-buffer
+  insert-string &spr "\bENF\b%s\b%s\b%s\b\b\b\n" &lget #l7 3 &lget #l7 4 &lget #l7 5
+  !if &len #p9
+    1 buffer-mode "crypt"
+  !endif
+  0 write-buffer &cat #l2 #l4 #p9
+  !force 0 delete-buffer $buffer-bname
+  find-buffer #l0
+  set-variable $window-line #l1
+!emacro
+
+define-macro notes-single-to-multi
+  notes-get-frame
+  notes-swap-window
+  !if &not &seq $buffer-bname .notes.current
+    ml-write &spr "[Error: Not in the current notes buffer \"%s\"]" .notes.current
+    !abort
+  !endif
+  !force set-variable #l0 @1
+  !if &not $status
+    set-variable #l0 @ml01 "Output path"
+  !endif
+  !if &seq "/" &rig &set #l0 &stat a #l0 -1
+    set-variable #l0 &lef #l0 -1
+  !endif
+  !if &not &seq "D" &stat t &set #l1 &lef #l0 &rsin "/" #l0 
+    ml-write &spr "[Error: Parent \"%s\" of given ouput path is not a directory]" #l1
+    !abort
+  !elif &seq "X" &set #l2 &stat t #l0
+    0x100 file-op #l0
+  !elif &not &seq "D" #l2
+    ml-write &spr "[Error: Given ouput path \"%s\" is not a directory]" #l0
+    !abort
+  !endif
+  set-variable #l0 &cat #l0 "/"
+  !if &bmod "crypt"
+    !force set-variable #l9 @ml88 "Password for output"
+  !else
+    set-variable #l9 ""
+  !endif
+  !force narrow-buffer
+  set-variable #l2 0
+  set-variable #l3 0
+  set-variable $window-line 2
+  !repeat
+    !if &seq &trb @wl "}"
+    !elif &seq &lef @wl 9 "\"id-next\""
+      set-variable #l2 1
+    !elif &xse @wl " *\"\\h\\h\\h\\h\\h\\(\\d+\\)\" \\d? ?= \"\\(.*\\)\".* ?{?"
+      set-variable #l5 @s1
+      execute-line &spr "set-variable #l6 \"%s\"" @s2
+      !force inote-single-to-multi #l0 #l5 #l6
+      !if &not $status
+        1000 ml-write &spr "[Error: Failed to convert note: %s (%s)]" #l5 #l6
+      !else
+        set-variable #l3 &add #l3 1
+      !endif
+    !else
+      1000 ml-write &spr "[Error: Unexpedited line: %s ]" @wl
+    !endif
+    forward-line
+  !until #l2
+  beginning-of-line
+  set-mark
+  beginning-of-buffer
+  copy-region
+  !force 0 delete-buffer "*inu-tmp*"
+  find-buffer "*inu-tmp*"
+  yank
+  -1 yank
+  insert-string "\"z-type\" = \"1\""
+  !if &len #l9
+    1 buffer-mode "crypt"
+  !endif
+  0 write-buffer &cat #l0 "idx" #l9
+  !force 0 delete-buffer $buffer-bname
+  find-buffer .notes.current
+  notes-swap-window
+  notes-create-display
+  ml-write &spr "[Write complete: %d files written to %s]" #l3 #l0
+!emacro
 
 define-macro notes-import-skwyrul
   ; must not be run from within notes

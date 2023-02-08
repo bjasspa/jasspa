@@ -7,7 +7,7 @@
 ; Synopsis:    ME based find and grep commands
 ; Authors:     Steven Phillips
 ;
-!iif &not &exi dirlst-sort-list  0 exec-file "hkdirlst"
+!iif &not &exi dirlst-sort-list  0 execute-file "hkdirlst"
 
 !if &not &band $system 0x1000000
   define-macro fhook-find
@@ -367,11 +367,10 @@
               end-of-buffer
             !else
               beginning-of-buffer
-              !if &not &seq @wl ""
+              !while &not &seq @wl ""
                 -1 ml-write @wl
                 forward-line
-                !jump -3
-              !endif
+              !done
             !endif
             set-mark
             beginning-of-buffer
@@ -547,8 +546,7 @@
   set-variable #l0 @2
   !while &seq "-" &lef &set #l0 &trl #l0 1
     find-proc-option
-    !tjump &sin "-" &lget #l9 1 2
-  !done
+  !until &sin "-" &lget #l9 1
   !if &band @# 1
     !if &seq "" &trl #l0
       -1 ml-write "[No search string given]"
@@ -630,8 +628,7 @@ define-macro grep
   set-variable #l3 0
   !while &les &pinc #l3 1 .find-file.file-count
     !force !force !force #l3 find-proc
-    !tjump &not $status 2
-  !done
+  !until &not $status
   !force 0 delete-buffer "*find-tmp*"
   33 find-buffer "*grep*"
   insert-newline
@@ -740,8 +737,7 @@ define-macro find
   set-variable #l3 0
   !while &les &pinc #l3 1 .find-file.file-count
     !force !force !force #l3 find-proc
-    !tjump &not $status 2
-  !done
+  !until &not $status
   !force 0 delete-buffer "*find-tmp*"
   33 find-buffer "*find*"
   insert-newline
@@ -971,8 +967,7 @@ define-macro replace-string-in-files
   set-variable #l3 0
   !while &les &pinc #l3 1 .find-file.file-count
     !force !force !force #l3 find-proc
-    !tjump &not $status 2
-  !done
+  !until &not $status
   !force 0 delete-buffer "*find-tmp*"
   33 find-buffer "*replace*"
   insert-newline

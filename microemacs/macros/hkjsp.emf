@@ -24,10 +24,8 @@ set-variable .fhook-jsp.command-kbind "|"
 set-variable .fhook-jsp.command-desc  "|"
 
 ; load in Java & the html core
-!if &not &exist fhook-java
-  !force exec-file "hkjava"
-!endif
-!force execute-file "htmlcore" "jsp" 
+!iif &not &exist fhook-java  execute-file "hkjava"
+execute-file "htmlcore" "jsp" 
 
 ; add the <% %> java script support
 !if &and &sin "h" .fhook-jsp.setup &band .hilight.flags 0x02 

@@ -66,12 +66,11 @@ define-macro describe-word-find
   !while $status
     set-variable #l2 &rep &rep @s1 "\n" " " "\t" " "
     set-variable #l3 ""
-    !if &gre &len #l2 60
+    !while &gre &len #l2 60
       set-variable #l4 &lef #l2 &rsin " " &lef #l2 60
       set-variable #l2 &cat "    " &rig #l2 &len #l4
       set-variable #l3 &spr "%s%s\n" #l3 #l4
-      !jump -4
-    !endif
+    !done
     set-variable #l3 &spr "%s%s\n" #l3 #l2
     osd .osd.wordc &inc .describe-word.descn 1 "xu" #l3 f describe-word-pick
     set-variable &ind &cat ".describe-word.desc" .describe-word.descn #l3
@@ -134,17 +133,17 @@ define-macro describe-word-find
   set-variable #l1 $mouse-x
   !if &inw @fs #l0 #l1
     set-variable #l2 @fs #l0 #l1
-    set-variable #l1 &sub #l1 1
-    !if &inw @fs #l0 #l1
+    !repeat
+      set-variable #l1 &sub #l1 1
+      !iif &not &inw @fs #l0 #l1  !break
       set-variable #l2 &cat @fs #l0 #l1 #l2
-      !jump -3
-    !endif
+    !done
     set-variable #l1 $mouse-x
-    set-variable #l1 &add #l1 1
-    !if &inw @fs #l0 #l1
+    !repeat
+      set-variable #l1 &add #l1 1
+      !iif &not &inw @fs #l0 #l1  !break
       set-variable #l2 &cat #l2 @fs #l0 #l1
-      !jump -3
-    !endif
+    !done
     set-variable .describe-word.word #l2
     describe-word-lup
   !endif

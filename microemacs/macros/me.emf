@@ -21,7 +21,7 @@
 ; Authors:     Steven Phillips & Jon Green
 ;
 ; Is this macro release compatible with the binary?
-!if &les $version "20210801"
+!if &les $version "20230101"
   5000 ml-write "[Warning: The MicroEmacs executable is not compatible with this macro release]"
 !endif
 !if &band @# 2
@@ -93,24 +93,6 @@ define-macro-file gdiff
 define-macro-file draw
 define-macro-file ftp
 
-; More useful than execute-file - helps in fixing problems.
-0 define-macro exec-file
-  set-variable .first 1
-  !force @# execute-file @1
-  !iif $status  !return
-  !if .first
-    !if &seq &set #l0 &find @1 ".emf" "ERROR"
-      ml-write &spr "[Failed to find Macro file %s.emf]" @1
-    !else
-      find-file #l0
-      !force execute-buffer $buffer-bname
-      ml-write &spr "[Error found in Macro file %s, line %d]" #l0 $window-line
-    !endif
-    set-variable .first 0
-  !endif
-  !abort
-!emacro
-;
 set-variable %platform &cat $platform &cond &band $system 0x01 "c" ""
 set-variable $system &bor &band $system &bnot 0x30f000 &band 0x30f000 &reg "/history/system" 0x007000
 set-variable $system &bor &band $system &bnot 0x0e0414 &band 0x0e0414 &reg &spr "/history/%s/system" %platform 0x040010
@@ -119,10 +101,10 @@ set-variable $scroll &reg &spr "/history/%s/scroll" %platform $scroll
 set-variable $show-modes &reg "/history/show-modes" $show-modes
 set-variable $cursor-blink &reg &spr "/history/%s/blink" %platform $cursor-blink
 ; setup the display scheme, char set, keyboard and language
-!force exec-file "scheme"
-!force exec-file "charset"
-!force exec-file "keyboard"
-!force exec-file "language"
+execute-file "scheme"
+execute-file "charset"
+execute-file "keyboard"
+execute-file "language"
 ; setup the displaying of fences
 set-variable #l0 &reg &spr "/history/%s/fence" %platform "1"
 &cond &equ #l0 1 1 -1 global-mode "fence"
@@ -185,7 +167,7 @@ ml-bind-key     tab                      "esc esc"
   global-bind-key end-of-buffer        "C-end"
 !endif
 ; execute msshift if using MS Shift style region definition
-!iif &reg "/history/msshift" "0"  !force exec-file "msshift"
+!iif &reg "/history/msshift" "0"  execute-file "msshift"
 ;
 ; Setup modes
 &cond &reg "/history/backup" "1" 1 -1 global-mode "backup"
@@ -346,11 +328,11 @@ osd 0 80 "Mdfsh" " \HWindow  "   8
 osd 0 90 "Mdfsr" " \HHelp "      9
 !force osd -1 &set .osd.menu &reg "/history/main-menu" "1" "1"
 ; Load in the mouse handling routines if required
-!iif &band $mouse 0x10  !force exec-file "mouse"
+!iif &band $mouse 0x10  execute-file "mouse"
 0 add-next-line "*grep*"
 add-next-line "*grep*" "%f:%l:"
 ; load in the platform specific stuff if found
-!force exec-file $platform
+execute-file $platform
 ; execute any emulation file, e.g. Emacs etc
 !if &not &seq &set #l0 &reg "/history/emulate" "" ""
   set-variable %emulate #l0
@@ -362,11 +344,11 @@ add-next-line "*grep*" "%f:%l:"
   !force read-registry "/url" #l0 "y"
 !endif
 ; execute company setup
-!iif &not &seq &set #l0 &reg "/history/company" "" ""  !force exec-file #l0
+!iif &not &seq &set #l0 &reg "/history/company" "" ""  execute-file #l0
 ; excute own setup
-!iif &not &seq &set #l0 &reg "/history/setup-file" "" ""  !force exec-file #l0
+!iif &not &seq &set #l0 &reg "/history/setup-file" "" ""  execute-file #l0
 !if &not &exi session
-  !force exec-file session
+  execute-file session
   set-variable #l1 &bor &mul 16 &ban @# 1 &con &exi %session-name &con &seq %session-name "" 42 34 62
   !force #l1 read-session
   !if &band #l1 12

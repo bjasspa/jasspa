@@ -26,10 +26,8 @@ set-variable .fhook-php.tags "phptags"
 set-variable .fhook-php.indent-width  2
 
 ; load in php script & the html core
-!if &not &exist fhook-phps
-  !force exec-file "hkphps"
-!endif
-!force execute-file "htmlcore" "php" 
+!iif &not &exist fhook-phps  execute-file "hkphps"
+execute-file "htmlcore" "php" 
 
 ; add php functions to item-list
 set-variable .fhook-php.item-list-s5 "^[ \t]*function[ \t]+\\(\\w[1-9A-Za-z_']*\\)"

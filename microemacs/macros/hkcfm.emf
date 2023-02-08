@@ -25,10 +25,8 @@ set-variable .fhook-cfm.command-desc  "|"
 set-variable .fhook-cfm.indent-width  2
 
 ; load in cfm script & the html core
-!if &not &exist fhook-cfms
-  !force exec-file "hkcfms"
-!endif
-!force execute-file "htmlcore" "cfm"
+!iif &not &exist fhook-cfms  execute-file "hkcfms"
+execute-file "htmlcore" "cfm"
 
 ; add cfm functions to item-list
 set-variable .fhook-cfm.item-list-s5 "^[ \t]*function[ \t]+\\(\\w[1-9A-Za-z_']*\\)"

@@ -108,10 +108,8 @@
         !endif
       !endif
     !endif
-    !if &inw @wc
-      forward-word
-    !endif
-    !tjump &not &les $window-col #l1 4
+    !iif &inw @wc  forward-word
+    !iif &not &les $window-col #l1 !break
     forward-char
     !tjump &not &inw @wc -2
   !until 0

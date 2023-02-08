@@ -64,9 +64,7 @@
   ; Get the number of the tile and convert into
   ; a tile position.
   ; A quick check to make sure we are in range.
-  !if &or &les @# 0 &gre @# 134
-    !return             ; Out of range.
-  !endif
+  !iif &or &les @# 0 &gre @# 134  !return
   
   ; Compute the special cases
   !if &gre @# 119
@@ -200,9 +198,7 @@
   ; Get the number of the tile and convert into
   ; a tile position.
   ; A quick check to make sure we are in range.
-  !if &or &les @# 0 &gre @# 134
-    !return             ; Out of range.
-  !endif
+  !iif &or &les @# 0 &gre @# 134  !return
   
   ; Get the adjacenty information
   @# mjg-adjacent     ; Get the adjacency list.
@@ -301,9 +297,7 @@
   !else
     set-variable #g1 &mid #g7 7 1     ; Use a cross.
   !endif
-  !if &not &seq #g1 ""
-    :mjg-cpf screen-poke #g8 &sub #g9 1 :mjg-cps #g1
-  !endif
+  !iif &not &seq #g1 ""  :mjg-cpf screen-poke #g8 &sub #g9 1 :mjg-cps #g1
   
   ; Compute the North side wall and put the pixel edge.
   !if &not &les #g3 #g6                 ; if (C >= N) render edge.
@@ -326,9 +320,7 @@
   !else
     set-variable #g1 &mid #g7 7 1     ; Use a cross.
   !endif
-  !if &not &seq #g1 ""
-    :mjg-cpf screen-poke #g8 &add #g9 4 :mjg-cps #g1
-  !endif
+  !iif &not &seq #g1 ""  :mjg-cpf screen-poke #g8 &add #g9 4 :mjg-cps #g1
   
   ; Compute the East side wall and put the pixel edge.
   !if &not &les #g3 #g4                 ; if (C >= E) render edge.
@@ -354,9 +346,7 @@
   !else
     set-variable #g1 &mid #g7 7 1     ; Use a cross.
   !endif
-  !if &not &seq #g1 ""
-    :mjg-cpf screen-poke &add #g8 5 &add #g9 4 :mjg-cps #g1
-  !endif
+  !iif &not &seq #g1 ""  :mjg-cpf screen-poke &add #g8 5 &add #g9 4 :mjg-cps #g1
   
   ; Compute the South side wall and put the pixel edge.
   !if &not &les #g3 #g6                 ; if (C >= S) render edge.
@@ -379,9 +369,7 @@
   !else
     set-variable #g1 &mid #g7 7 1     ; Use a cross.
   !endif
-  !if &not &seq #g1 ""
-    :mjg-cpf screen-poke &add #g8 5 &sub #g9 1 :mjg-cps #g1
-  !endif
+  !iif &not &seq #g1 ""  :mjg-cpf screen-poke &add #g8 5 &sub #g9 1 :mjg-cps #g1
   
 *fill-centre
   ; Fill in the centre with data
@@ -543,9 +531,7 @@
 ; Draw all of the mahjong tiles.
 ;
 0 define-macro mjg-draw
-  !if &not &equ @# 1
-    !return
-  !endif
+  !iif &not &equ @# 1  !return
   delete-other-windows
   screen-update
   ; Work out origin of the x axis
@@ -604,21 +590,13 @@
     ; Redraw the specials
     
     ; Check West
-    !if &not &seq &mid :mjg-tiles 600 1 "\xfe"
-      120 mjg-draw-tile
-    !endif
+    !iif &not &seq &mid :mjg-tiles 600 1 "\xfe"  120 mjg-draw-tile
     ; Check centre
-    !if &not &seq &mid :mjg-tiles 639 1 "\xfe"
-      127 mjg-draw-tile
-    !endif
+    !iif &not &seq &mid :mjg-tiles 639 1 "\xfe"  127 mjg-draw-tile
     ; Check East 1
-    !if &not &seq &mid :mjg-tiles 665 1 "\xfe"
-      133 mjg-draw-tile
-    !endif
+    !iif &not &seq &mid :mjg-tiles 665 1 "\xfe"  133 mjg-draw-tile
     ; Check East 2
-    !if &not &seq &mid :mjg-tiles 670 1 "\xfe"
-      134 mjg-draw-tile
-    !endif
+    !iif &not &seq &mid :mjg-tiles 670 1 "\xfe"  134 mjg-draw-tile
   !endif
 !emacro
 ;
@@ -679,9 +657,7 @@
 ;
 0 define-macro mjg-help
   !force help-command "Mahjongg"
-  !if $status
-    delete-window
-  !endif
+  !iif $status  delete-window
 !emacro
 ; mjg-mouse
 ; Turn the mouse position and click into a selection action.
@@ -799,7 +775,7 @@
 ; mjg-uselect
 ; Unselect the currently selected tile.
 0 define-macro mjg-uselect
-  !if &not &equ  :mjg-sel-tile-id 255
+  !if &sub :mjg-sel-tile-id 255
     set-variable #g9 :mjg-sel-tile-id    ; Remember the selected tile
     set-variable :mjg-sel-tile-id 255   ; Unselect the current tile
     #g9 mjg-draw-tile                    ; Unselect the tile.
@@ -818,9 +794,7 @@
   !if .Mahjongg.toolbar
     ; note - we cannot open/close the toolbar directly as this changes the window layout which must not be done in an bhook
     -1 create-callback toolbar-open
-    !if .toolbar.open
-      1 create-callback toolbar-close
-    !endif
+    !iif .toolbar.open  1 create-callback toolbar-close
   !endif
 !emacro
 ;
@@ -835,9 +809,7 @@
   !if .Mahjongg.toolbar
     ; note - we cannot open/close the toolbar directly as this changes the window layout which must not be done in an ehook
     -1 create-callback toolbar-close
-    !if &not .toolbar.open
-      1 create-callback toolbar-open
-    !endif
+    !iif &not .toolbar.open  1 create-callback toolbar-open
   !endif
 !emacro
 

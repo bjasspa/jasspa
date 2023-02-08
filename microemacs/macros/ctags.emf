@@ -197,12 +197,12 @@ set-char-mask "1" ":~"
       !else
         forward-char
       !endif
-      ctags-move-to-next "[,;(]"
-      !if &seq @s0 "("
+      !repeat
+        ctags-move-to-next "[,;(]"
+        !iif &not &seq @s0 "("  !break
         backward-char
         goto-matching-fence
-        !jump -4
-      !endif
+      !done
     !endif
   !until 0
 !emacro
@@ -238,8 +238,11 @@ set-char-mask "1" ":~"
         !if &seq @s0 ";"
           forward-char
         !elif &seq @s0 "]"
-          goto-matching-fence
-          !jump -3
+          !force goto-matching-fence
+          !if $status
+            forward-char
+            !goto add-variable
+          !endif
         !elif &not &seq @s0 "}"
           !if &not &seq &lef &trl @wl 6 "extern"
             ctags-add-tag
@@ -304,15 +307,13 @@ set-char-mask "1" ":~"
         set-variable #l2 $window-line
         set-alpha-mark "t"
         set-variable $window-line #l1
-        !if &less $window-line #l2
+        !while &less $window-line #l2
           !force &sub $window-line #l2 search-forward "^\\s*#\\s*define\\>"
-          !if $status
-            ctags-add-tag
-            beginning-of-line
-            forward-line
-            !jump -6
-          !endif
-        !endif
+          !iif &not $status  !break
+          ctags-add-tag
+          beginning-of-line
+          forward-line
+        !done
         goto-alpha-mark "t"
       !endif
     !elif &seq @s0 "{"

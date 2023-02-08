@@ -230,13 +230,12 @@ define-macro item-list-create
         #l4 goto-line
         -1 replace-string #l0 #l5
       !endif
-      !if &gre $window-line #l4
+      !while &gre $window-line #l4
         backward-line
         end-of-line
         insert-space
         forward-delete-char
-        !jump -5
-      !endif
+      !done
       end-of-line
       insert-newline
       backward-line

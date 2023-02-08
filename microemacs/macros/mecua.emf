@@ -277,4 +277,4 @@ set-variable #l0 0
 !done
 
 ; redo the mouse
-!force exec-file "mouse"
+execute-file "mouse"

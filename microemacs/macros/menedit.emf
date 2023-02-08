@@ -109,7 +109,7 @@ global-bind-key execute-kbd-macro "C-k"
 set-variable .buffer-bind-key.map-from "|C-c C-c|C-c C-d|"
 set-variable .buffer-bind-key.map-to   "|C-b|C-u|"
 ; always want msshift
-!force exec-file msshift
+execute-file msshift
 ; redo the mouse
-!force exec-file "mouse"
+execute-file mouse
 

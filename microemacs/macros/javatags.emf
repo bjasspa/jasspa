@@ -140,12 +140,12 @@ set-char-mask "1" ":_~"
       backward-char
       backward-word
       javatags-add-tag
-      javatags-move-to-next "[,;(]"
-      !if &seq @s0 "("
+      !repeat
+        javatags-move-to-next "[,;(]"
+        !iif &not &seq @s0 "("  !break
         backward-char
         goto-matching-fence
-        !jump -4
-      !endif
+      !done
     !endif
   !until 0
 !emacro
@@ -181,8 +181,11 @@ set-char-mask "1" ":_~"
         !if &seq @s0 ";"
           forward-char
         !elif &seq @s0 "]"
-          goto-matching-fence
-          !jump -3
+          !force goto-matching-fence
+          !if $status
+            forward-char
+            !goto add-variable
+          !endif
         !elif &not &seq @s0 "}"
           !if &not &seq &lef &trl @wl 6 "extern"
             javatags-add-tag
@@ -237,15 +240,13 @@ set-char-mask "1" ":_~"
         set-variable #l2 $window-line
         set-alpha-mark "t"
         set-variable $window-line #l1
-        !if &less $window-line #l2
+        !while &less $window-line #l2
           !force &sub $window-line #l2 search-forward "^\\s*#\\s*define\\>"
-          !if $status
-            javatags-add-tag
-            beginning-of-line
-            forward-line
-            !jump -6
-          !endif
-        !endif
+          !iif &not $status  !break
+          javatags-add-tag
+          beginning-of-line
+          forward-line
+        !done
         goto-alpha-mark "t"
       !endif
     !elif &seq @s0 "{"

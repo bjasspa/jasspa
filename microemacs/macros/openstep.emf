@@ -8,7 +8,7 @@
 ; Authors:     Jon Green
 ;
 ; Load up common unix stuff
-!force exec-file "unixterm"
+execute-file "unixterm"
 ; no vt100-nam on openstep.
 set-variable %ipipe-term "TERM=vt100"
 ;

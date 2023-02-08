@@ -655,15 +655,14 @@ define-macro html-create-table
       set-variable #l4 $window-line
     !endif
     set-variable #l3 #l0
-    !if &gre &pdec #l3 1 0
+    !while &gre &pdec #l3 1 0
       !if $buffer-indent
         tab
       !else
         &add #l2 4 insert-space
       !endif
       insert-string "<td></td>\n"
-      !jump -7
-    !endif
+    !done
     !if $buffer-indent
       insert-string "</tr>"
       newline

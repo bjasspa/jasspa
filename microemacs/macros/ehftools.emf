@@ -161,10 +161,9 @@ define-macro ehf-process-all
     ehf-process-buffer
     beginning-of-buffer
     set-mark
-    !if &seq @wc "#"
+    !while &seq @wc "#"
       forward-line
-      !jump -2
-    !endif
+    !done
     copy-region
     next-window
     beginning-of-buffer

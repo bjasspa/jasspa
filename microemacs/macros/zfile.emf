@@ -352,11 +352,11 @@ define-macro find-zfile
   set-variable #l2 &rig #l0 &rsin "/" #l0
   set-variable #l3  #l2
   set-variable #l4 0
-  set-variable $buffer-names &cat "[*]" #l3
-  !if &not &seq $buffer-names ""
+  !repeat
+    set-variable $buffer-names &cat "[*]" #l3
+    !iif &seq $buffer-names ""  !break
     set-variable #l3 &spr "%s<%d>" #l2 &inc #l4 1
-    !jump -3
-  !endif
+  !done
   set-variable #l3 &cat "*" #l3
   ; pop-up buffer and set the file name so the execution only needs the base name
   find-buffer #l3

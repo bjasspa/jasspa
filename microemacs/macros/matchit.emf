@@ -81,9 +81,7 @@
   ; Fill in the centre with data
   set-variable #g2 #g1
   mi-get-corner-char
-  !if &not &equ &band #g1 0x12 0x02
-    3 screen-poke #g8 &add #g9 1 #g5 &spr "%4s" &rig #g7 10
-  !endif
+  !iif &not &equ &band #g1 0x12 0x02  3 screen-poke #g8 &add #g9 1 #g5 &spr "%4s" &rig #g7 10
   set-variable #g9 &add #g9 5
   set-variable #g2 &div #g1 2
   mi-get-corner-char
@@ -98,9 +96,7 @@
   !endif
   set-variable #g2 &div #g1 16
   mi-get-corner-char
-  !if &not &equ &band #g1 0x90 0x80
-    3 screen-poke #g8 &sub #g9 4 #g5 &spr "%4s" &rig #g7 10
-  !endif
+  !iif &not &equ &band #g1 0x90 0x80  3 screen-poke #g8 &sub #g9 4 #g5 &spr "%4s" &rig #g7 10
   set-variable #g9 &sub #g9 5
   set-variable #g2 &div #g1 8
   mi-get-corner-char
@@ -274,16 +270,14 @@
       !endif
       0 write-buffer $buffer-fname
       change-buffer-name "*mi"
-      !jump 4
+      !break
     !endif
     !force forward-line
   !until &equ &inc #l0 1 11
   -1 find-buffer $buffer-bname
   find-buffer "*match-it*"
   mi-main-menu
-  !if &les #l0 11
-    ml-write &spr "You are in position %d with %d" #l0 #l1
-  !endif
+  !iif &les #l0 11  ml-write &spr "You are in position %d with %d" #l0 #l1
 !emacro
 
 0 define-macro mi-level-end2
@@ -432,20 +426,14 @@
   set-variable #l9 #g3
   !if &gre #l9 0
     set-variable #l8 &add #l8 18
-    !if &dec #l9 1
-      !if &not &seq &mid :mi-tiles #l8 1 "\xfe"
-        !abort
-      !endif
-      !jump -5
-    !endif
+    !while &dec #l9 1
+      !iif &not &seq &mid :mi-tiles &pinc #l8 18 1 "\xfe"  !abort
+    !done
   !elif &les #l9 0
     set-variable #l8 &sub #l8 18
-    !if &inc #l9 1
-      !if &not &seq &mid :mi-tiles #l8 1 "\xfe"
-        !abort
-      !endif
-      !jump -5
-    !endif
+    !while &inc #l9 1
+      !iif &not &seq &mid :mi-tiles &pdec #l8 18 1 "\xfe"  !abort
+    !done
   !endif
   ; second arg is horizontal move
   set-variable #l9 #g2
@@ -468,16 +456,14 @@
   set-variable #l9 #g2
   !if &gre #l9 0
     set-variable #l8 &add #l8 1
-    !if &dec #l9 1
-      !iif &not &seq &mid :mi-tiles #l8 1 "\xfe"  !abort
-      !jump -3
-    !endif
+    !while &dec #l9 1
+      !iif &not &seq &mid :mi-tiles &pinc #l8 1 1 "\xfe"  !abort
+    !done
   !elif &les #l9 0
     set-variable #l8 &sub #l8 1
-    !if &inc #l9 1
-      !iif &not &seq &mid :mi-tiles #l8 1 "\xfe"  !abort
-      !jump -3
-    !endif
+    !while &inc #l9 1
+      !iif &not &seq &mid :mi-tiles &pdec #l8 1 1 "\xfe"  !abort
+    !done
   !endif
   ; second arg is horizontal move
   set-variable #l9 #g3
@@ -618,13 +604,9 @@
           set-variable :mi-new-int :mi-internal
         !endif
         set-variable #g7 &sub &add &abs #g0 &abs #g1 1
-        !if &les #g2 0
-          set-variable #g7 &sub #g7 &mul #g2 2
-        !endif
-        !if &or &gre :mi-new-int &lef #g6 2 &and &equ :mi-new-int &lef #g6 2 &les #g7 &mid #g6 2 2
-          set-variable #g6 &spr "%2d%2d%3d%3d%3d0  " :mi-new-int #g7 &sub #g0 #g2 #g1 #g2
-        !endif
-        !jump 4
+        !iif &les #g2 0  set-variable #g7 &sub #g7 &mul #g2 2
+        !iif &or &gre :mi-new-int &lef #g6 2 &and &equ :mi-new-int &lef #g6 2 &les #g7 &mid #g6 2 2  set-variable #g6 &spr "%2d%2d%3d%3d%3d0  " :mi-new-int #g7 &sub #g0 #g2 #g1 #g2
+        !break
       !endif
       set-variable #g7 &add #g7 1
     !done
@@ -641,13 +623,9 @@
           set-variable :mi-new-int &band :mi-internal 13
         !endif
         set-variable #g7 &sub &add &abs #g0 &abs #g1 1
-        !if &gre #g2 0
-          set-variable #g7 &add #g7 &mul #g2 2
-        !endif
-        !if &or &gre :mi-new-int &lef #g6 2 &and &equ :mi-new-int &lef #g6 2 &les #g7 &mid #g6 2 2
-          set-variable #g6 &spr "%2d%2d%3d%3d%3d0  " :mi-new-int #g7 &sub #g0 #g2 #g1 #g2
-        !endif
-        !jump 4
+        !iif &gre #g2 0  set-variable #g7 &add #g7 &mul #g2 2
+        !iif &or &gre :mi-new-int &lef #g6 2 &and &equ :mi-new-int &lef #g6 2 &les #g7 &mid #g6 2 2  set-variable #g6 &spr "%2d%2d%3d%3d%3d0  " :mi-new-int #g7 &sub #g0 #g2 #g1 #g2
+        !break
       !endif
       set-variable #g7 &sub #g7 1
     !done
@@ -674,13 +652,9 @@
           set-variable :mi-new-int :mi-internal
         !endif
         set-variable #g7 &sub &add &abs #g0 &abs #g1 1
-        !if &les #g3 0
-          set-variable #g7 &sub #g7 &mul #g3 2
-        !endif
-        !if &or &gre :mi-new-int &lef #g6 2 &and &equ :mi-new-int &lef #g6 2 &les #g7 &mid #g6 2 2
-          set-variable #g6 &spr "%2d%2d0  %3d%3d%d" :mi-new-int #g7 &sub #g1 #g3 #g0 #g3
-        !endif
-        !jump 4
+        !iif &les #g3 0  set-variable #g7 &sub #g7 &mul #g3 2
+        !iif &or &gre :mi-new-int &lef #g6 2 &and &equ :mi-new-int &lef #g6 2 &les #g7 &mid #g6 2 2  set-variable #g6 &spr "%2d%2d0  %3d%3d%d" :mi-new-int #g7 &sub #g1 #g3 #g0 #g3
+        !break
       !endif
       set-variable #g7 &add #g7 18
     !done
@@ -697,13 +671,9 @@
           set-variable :mi-new-int :mi-internal
         !endif
         set-variable #g7 &sub &add &abs #g0 &abs #g1 1
-        !if &gre #g3 0
-          set-variable #g7 &add #g7 &mul #g3 2
-        !endif
-        !if &or &gre :mi-new-int &lef #g6 2 &and &equ :mi-new-int &lef #g6 2 &les #g7 &mid #g6 2 2
-          set-variable #g6 &spr "%2d%2d0  %3d%3d%d" :mi-new-int #g7 &sub #g1 #g3 #g0 #g3
-        !endif
-        !jump 4
+        !iif &gre #g3 0  set-variable #g7 &add #g7 &mul #g3 2
+        !iif &or &gre :mi-new-int &lef #g6 2 &and &equ :mi-new-int &lef #g6 2 &les #g7 &mid #g6 2 2  set-variable #g6 &spr "%2d%2d0  %3d%3d%d" :mi-new-int #g7 &sub #g1 #g3 #g0 #g3
+        !break
       !endif
       set-variable #g7 &sub #g7 18
     !done
@@ -715,9 +685,7 @@
       !return
     !endif
   !endif
-  !if &gre &lef #g6 2 -1
-    !return
-  !endif
+  !iif &gre &lef #g6 2 -1  !return
   !abort
 !emacro
 
@@ -728,15 +696,11 @@
     !if &not &seq &set #g3 &mid :mi-tiles #g5 1 "\xfe"
       !if &equ @# &set #g3 &sub &atoi #g3 1 
         !force mi-test-path
-        !if $status
-          !return
-        !endif
+        !iif $status  !return
       !elif &les @# 8
         !if &equ &div @# 4 &div #g3 4
           !force mi-test-path
-          !if $status
-            !return
-          !endif
+          !iif $status  !return
         !endif
       !endif
     !endif
@@ -753,9 +717,7 @@
       set-variable #g2 &sub &atoi &mid :mi-tiles #g4 1 1
       set-variable #g5 &add #g4 1
       !force #g2 mi-find-removable-pair-from
-      !if $status
-        !return
-      !endif
+      !iif $status  !return
     !endif
     set-variable #g4 &add #g4 1
   !done
@@ -763,9 +725,7 @@
 !emacro
 
 0 define-macro mi-game-help
-  !if &not &equ :mi-status 1
-    !abort
-  !endif
+  !iif &sub :mi-status 1  !abort
   !if &not :mi-helps
     ml-write "No more helps!!"
     !abort
@@ -785,9 +745,7 @@
   set-variable :mi-game-help #g4
   ; draw the path, then remove it and the tiles
   set-variable :mi-internal &lef #g6 2
-  !if &not &seq &mid :mi-tiles #g4 1 &mid :mi-tiles #g5 1
-    set-variable :mi-pedigree 0
-  !endif
+  !iif &not &seq &mid :mi-tiles #g4 1 &mid :mi-tiles #g5 1  set-variable :mi-pedigree 0
   1 mi-draw-path
   0 mi-draw-path
   set-variable :mi-sel-tile-id 254
@@ -797,9 +755,7 @@
   #g4 mi-draw-tile
   mi-draw-menu
   ml-write "I found one!"
-  !if &not &dec :mi-togo 2
-    0 mi-level-end
-  !endif
+  !iif &not &dec :mi-togo 2  0 mi-level-end
 !emacro
 
 
@@ -859,9 +815,7 @@
   !if $status
     ; draw the path, then remove it and the tiles
     set-variable :mi-internal &lef #g6 2
-    !if &not &seq &mid :mi-tiles #g4 1 &mid :mi-tiles #g5 1
-      set-variable :mi-pedigree 0
-    !endif
+    !iif &not &seq &mid :mi-tiles #g4 1 &mid :mi-tiles #g5 1  set-variable :mi-pedigree 0
     set-variable :mi-score &add :mi-score 2
     1 mi-draw-path
     0 mi-draw-path
@@ -871,9 +825,7 @@
     #g5 mi-draw-tile
     #g4 mi-draw-tile
     mi-draw-score
-    !if &not &dec :mi-togo 2
-      0 mi-level-end
-    !endif
+    !iif &not &dec :mi-togo 2  0 mi-level-end
   !else
     set-variable :mi-score &sub :mi-score 4
     mi-draw-score
@@ -897,9 +849,7 @@
     set-variable #l2 &add &mul &div #l1 5 18 &div #l0 5
     #l2 mi-new-pos
   !elif &equ :mi-status 2
-    !if &and &and &gre $mouse-x &add :mi-x0 35 &les $mouse-x &add :mi-x0 53 &and &gre $mouse-y 4 &les $mouse-y 9
-      mi-level-end2
-    !endif
+    !iif &and &and &gre $mouse-x &add :mi-x0 35 &les $mouse-x &add :mi-x0 53 &and &gre $mouse-y 4 &les $mouse-y 9  mi-level-end2
   !elif &equ :mi-status 3
     mi-deal
   !endif
@@ -942,9 +892,7 @@
       !if &equ #l1 #l3
         #l4 mi-hilight-tile #l2
       !elif &les #l1 8
-        !if &equ &div #l1 4 &div #l3 4
-          #l4 mi-hilight-tile #l2
-        !endif
+        !iif &equ &div #l1 4 &div #l3 4  #l4 mi-hilight-tile #l2
       !endif
     !endif
     set-variable #l4 &add #l4 1
@@ -952,7 +900,7 @@
 !emacro
 
 0 define-macro mi-prmouse
-  !iif &not &equ :mi-status 1  !abort
+  !iif &sub :mi-status 1  !abort
   !if &equ :mi-sel-tile-id 254
     set-variable #l0 &sub $mouse-x :mi-x0
     set-variable #l1 &sub $mouse-y :mi-y0
@@ -971,7 +919,7 @@
 !emacro
 
 0 define-macro mi-drmouse
-  !iif &not &equ :mi-status 1  !abort
+  !iif &sub :mi-status 1  !abort
   !if :mi-right-help
     :mi-right-help mi-show-tiles 0
     set-variable :mi-right-help 0
@@ -981,8 +929,8 @@
 ; mi-uselect
 ; Unselect the currently selected tile.
 0 define-macro mi-uselect
-  !iif &not &equ :mi-status 1 !abort
-  !if &not &equ  :mi-sel-tile-id 254
+  !iif &sub :mi-status 1  !abort
+  !if &sub :mi-sel-tile-id 254
     ; Remember the selected tile
     set-variable #l9 :mi-sel-tile-id
     ; Unselect the current tile
@@ -1125,9 +1073,7 @@ define-macro Match-It
   ; Set the screen size
   !iif &les $frame-depth 45  change-frame-depth 45
   !iif &les $frame-width 90  change-frame-width 90
-  !if &equ :mi-status 4
-    mi-main-menu
-  !endif
+  !iif &equ :mi-status 4  mi-main-menu
   ;    mi-new-game
 !emacro
 ;

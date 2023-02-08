@@ -7,9 +7,7 @@
 ; Synopsis:    File-browser extensions to support ftp
 ; Authors:     Steven Phillips
 ;
-!if &not &exi dirlst-sort-list
-  0 exec-file "hkdirlst"
-!endif
+!iif &not &exi dirlst-sort-list  0 execute-file "hkdirlst"
 
 define-macro ftp
   !if &band $window-flags 0x1000

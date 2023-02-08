@@ -585,14 +585,12 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
       !if &exi &cat ".schm-osd.schm-" #l2
         insert-string &cat "add-color-scheme " #l3
         set-variable #l3 1
-        insert-string &spr " .col%d" &lget &ind &cat ".schm-osd.schm-" #l2 #l3
-        !if &les &pinc #l3 1 8
-          !jump -2
-        !endif
-        insert-string &spr " %d" &lget &ind &cat ".schm-osd.schm-" #l2 #l3
-        !if &les &pinc #l3 1 16
-          !jump -2
-        !endif
+        !repeat
+          insert-string &spr " .col%d" &lget &ind &cat ".schm-osd.schm-" #l2 #l3
+        !until &not &les &pinc #l3 1 8
+        !repeat
+          insert-string &spr " %d" &lget &ind &cat ".schm-osd.schm-" #l2 #l3
+        !until &not &les &pinc #l3 1 8
         insert-string "\n"
       !endif
     !done
