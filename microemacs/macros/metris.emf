@@ -424,10 +424,10 @@ define-macro Metris
     -1 show-cursor
     !force osd -1 0                         ; Turn off the menu.
     set-variable :met-menu $status
+    set-variable $random ""
   !endif
   beginning-of-buffer
   delete-other-windows
-  set-variable $random 0        ; Set it so we get a new seed
   screen-update
   set-variable :met-score 0
   met-print-hiscore

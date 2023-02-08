@@ -14,7 +14,8 @@ define-macro 00000
 execute-file "me"
 execute-file "vm"
 execute-file "userstp"
-
+set-variable $random ""
+set-variable .00000.ic 100000
 define-macro zzzzz
 !emacro
 
@@ -39,118 +40,118 @@ define-macro zzzzz
 ; Register get & set:
 define-macro vartest1g
   set-variable #l2 ""
-  set-variable #l0 10000
+  set-variable #l0 .00000.ic
   !while &dec #l0 1
     set-variable #l1 #l2
   !done
 !emacro
 define-macro vartest1s
   set-variable #l2 ""
-  set-variable #l0 10000
+  set-variable #l0 .00000.ic
   !while &dec #l0 1
     set-variable #l1 ""
   !done
 !emacro
 ; First user-variable:
 define-macro vartest2g
-  set-variable #l0 10000
+  set-variable #l0 .00000.ic
   !while &dec #l0 1
     set-variable #l1 %0000000000
   !done
 !emacro
 define-macro vartest2s
-  set-variable #l0 10000
+  set-variable #l0 .00000.ic
   !while &dec #l0 1
     set-variable %0000000000 ""
   !done
 !emacro
 ; Last user-variable
 define-macro vartest3g
-  set-variable #l0 10000
+  set-variable #l0 .00000.ic
   !while &dec #l0 1
     set-variable #l1 %zzzzzzzzzz
   !done
 !emacro
 define-macro vartest3s
-  set-variable #l0 10000
+  set-variable #l0 .00000.ic
   !while &dec #l0 1
     set-variable %zzzzzzzzzz ""
   !done
 !emacro
 ; First command first variable:
 define-macro vartest4g
-  set-variable #l0 10000
+  set-variable #l0 .00000.ic
   !while &dec #l0 1
     set-variable #l1 .00000.00000
   !done
 !emacro
 define-macro vartest4s
-  set-variable #l0 10000
+  set-variable #l0 .00000.ic
   !while &dec #l0 1
     set-variable .00000.00000 ""
   !done
 !emacro
 ; First command last variable:
 define-macro vartest5g
-  set-variable #l0 10000
+  set-variable #l0 .00000.ic
   !while &dec #l0 1
     set-variable #l1 .00000.zzzzz
   !done
 !emacro
 define-macro vartest5s
-  set-variable #l0 10000
+  set-variable #l0 .00000.ic
   !while &dec #l0 1
     set-variable .00000.zzzzz ""
   !done
 !emacro
 ; Last command first variable:
 define-macro vartest6g
-  set-variable #l0 10000
+  set-variable #l0 .00000.ic
   !while &dec #l0 1
     set-variable #l1 .zzzzz.00000
   !done
 !emacro
 define-macro vartest6s
-  set-variable #l0 10000
+  set-variable #l0 .00000.ic
   !while &dec #l0 1
     set-variable .zzzzz.00000 ""
   !done
 !emacro
 ; Last command last variable:
 define-macro vartest7g
-  set-variable #l0 10000
+  set-variable #l0 .00000.ic
   !while &dec #l0 1
     set-variable #l1 .zzzzz.zzzzz
   !done
 !emacro
 define-macro vartest7s
-  set-variable #l0 10000
+  set-variable #l0 .00000.ic
   !while &dec #l0 1
     set-variable .zzzzz.zzzzz ""
   !done
 !emacro
 ; First local variable
 define-macro vartest8g
-  set-variable #l0 10000
+  set-variable #l0 .00000.ic
   !while &dec #l0 1
     set-variable #l1 :0000000000
   !done
 !emacro
 define-macro vartest8s
-  set-variable #l0 10000
+  set-variable #l0 .00000.ic
   !while &dec #l0 1
     set-variable :0000000000 ""
   !done
 !emacro
 ; Last local variable
 define-macro vartest9g
-  set-variable #l0 10000
+  set-variable #l0 .00000.ic
   !while &dec #l0 1
     set-variable #l1 :zzzzzzzzzz
   !done
 !emacro
 define-macro vartest9s
-  set-variable #l0 10000
+  set-variable #l0 .00000.ic
   !while &dec #l0 1
     set-variable :zzzzzzzzzz ""
   !done
@@ -172,7 +173,7 @@ define-macro start-up
     !done
     insert-string &spr "Test%d:  %5d    %5d\n" #l0 #l2 #l3
   !until &equ 10 &inc #l0 1
-  quick-exit
+;  quick-exit
 !emacro
 
 define-macro disptest

@@ -3,7 +3,7 @@
 ;  Author        : $Author$
 ;  Created By    : Steven Phillips
 ;  Created       : Wed Feb 9 18:31:42 2000
-;  Last Modified : <230203.0926>
+;  Last Modified : <230208.1043>
 ;
 ;  Description
 ;
@@ -471,4 +471,5 @@ set-variable #l0 10
 
 osd-bind-key .osd.fahtzee void "mouse-pick-3"
 osd-bind-key .osd.fahtzee fahtzee-throw "mouse-drop-3"
+set-variable $random ""
 

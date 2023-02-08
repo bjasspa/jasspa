@@ -648,7 +648,6 @@
 ;
 define-macro Triangle
   set-variable .toolbar &cond &exi .toolbar .toolbar .toolbar.open
-  set-variable $random 0        ; Set it so we get a new seed
   find-buffer "*triangle*"
   !if &not &seq $buffer-bhook "bhook-triangle"
     set-variable :tri-pack "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -738,6 +737,7 @@ define-macro Triangle
     buffer-bind-key tri-draw "redraw"
     set-variable $buffer-bhook bhook-triangle
     set-variable $buffer-ehook ehook-triangle
+    set-variable $random ""
     bhook-triangle
   !endif
   tri-deal

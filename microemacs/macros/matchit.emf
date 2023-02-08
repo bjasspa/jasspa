@@ -1046,8 +1046,6 @@ define-macro mi-main-menu
 
 define-macro Match-It
   set-variable .toolbar &cond &exi .toolbar .toolbar .toolbar.open
-  ; Set it so we get a new seed
-  set-variable $random 0
   find-buffer "*match-it*"
   !if &not &seq $buffer-bhook "bhook-match-it"
     set-variable :mi-x0 0
@@ -1068,6 +1066,8 @@ define-macro Match-It
     buffer-bind-key mi-drmouse "mouse-drop-3"
     set-variable $buffer-bhook bhook-match-it
     set-variable $buffer-ehook ehook-match-it
+    ; Set $random so we get a new random seed
+    set-variable $random ""
     bhook-match-it
   !endif
   ; Set the screen size

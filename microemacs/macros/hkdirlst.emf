@@ -1170,7 +1170,7 @@ define-macro dirlst-search
     !elif &gre &set #l4 &stat "s" &cat #l1 #l3 0
       ; trash the file first - this is not in any way full proof but is better than nothing
       set-position "\x84"
-      set-variable $random 0
+      set-variable $random ""
       !force 0 delete-buffer "**trash-file-temp"
       find-buffer "**trash-file-temp"
       1 buffer-mode "rbin"

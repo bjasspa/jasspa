@@ -815,7 +815,6 @@
 
 define-macro Mahjongg
   set-variable .toolbar &cond &exi .toolbar .toolbar .toolbar.open
-  set-variable $random 0        ; Set it so we get a new seed
   find-buffer "*mahjongg*"
   !if &not &seq $buffer-bhook "bhook-mahjongg"
     ;
@@ -939,6 +938,8 @@ define-macro Mahjongg
     buffer-bind-key void        "mouse-drop-3"
     set-variable $buffer-bhook bhook-mahjongg
     set-variable $buffer-ehook ehook-mahjongg
+    ; Set it so we get a new random seed
+    set-variable $random ""
     bhook-mahjongg
   !endif
   mjg-deal

@@ -702,7 +702,6 @@
 
 define-macro Patience
   set-variable .toolbar &cond &exi .toolbar .toolbar .toolbar.open
-  set-variable $random 0        ; Set it so we get a new seed
   find-buffer "*patience*"
   !if &not &seq $buffer-bhook "bhook-patience"
     set-variable :pat-pack "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -789,6 +788,8 @@ define-macro Patience
     1 buffer-bind-key pat-draw "C-l"         ; Redraw screen
     set-variable $buffer-bhook bhook-patience
     set-variable $buffer-ehook ehook-patience
+    ; Set $random so we get a new random seed
+    set-variable $random ""
     bhook-patience
   !endif
   pat-deal

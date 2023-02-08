@@ -1179,7 +1179,7 @@ define-macro Brag
     buffer-bind-key brag-draw "redraw"
     set-variable $buffer-bhook bhook-brag
     set-variable $buffer-ehook ehook-brag
-    set-variable $random 0
+    set-variable $random ""
     bhook-brag
   !endif
   !iif &seq .Brag.deck ""  bragShuffle .Brag.deck
