@@ -125,8 +125,8 @@ set_timestamp(meBuffer *bp)
 
         /* Found it, so fill in the slots */
         
-        clock = time(0);				/* Get system time */
-        time_ptr = (struct tm *) localtime (&clock);	/* Get time frame */
+        clock = time(NULL);				/* Get system time */
+        time_ptr = (struct tm *) localtime(&clock);	/* Get time frame */
         
         values[0] = time_ptr->tm_year+1900 ;
         values[1] = time_ptr->tm_mon+1 ;

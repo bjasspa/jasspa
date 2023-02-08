@@ -177,6 +177,68 @@ meItoa(int i)
 }
 
 
+#if MEOPT_EXTENDED
+
+/*  Written in 2018 by David Blackman and Sebastiano Vigna (vigna@acm.org)
+
+   To the extent possible under law, the author has dedicated all copyright
+   and related and neighboring rights to this software to the public domain
+   worldwide. This software is distributed without any warranty.
+   
+   See <http://creativecommons.org/publicdomain/zero/1.0/>.
+
+   This is xoshiro128** 1.1, one of our 32-bit all-purpose, rock-solid
+   generators. It has excellent speed, a state size (128 bits) that is
+   large enough for mild parallelism, and it passes all tests we are aware
+   of.
+
+   The state must be seeded so that it is not everywhere zero. */
+
+/* Init as if user called &set $random 1 */
+static meUInt rndS[4] = { 0x5e2d1772,0x14e498f0,0xd20ea1fd,0xb382f339 };
+
+/* a splitMix32 PRNG is used to init the 4 uint state of xoshiro128** */
+static meUInt
+splitMix32(void)
+{
+  meUInt ii = (rndS[3] += 0x9e3779b9);
+  ii ^= ii >> 16;
+  ii *= 0x21f0aaad;
+  ii ^= ii >> 15;
+  ii *= 0x735a2d97;
+  ii ^= ii >> 15;
+  return ii;
+}
+
+static void
+xoshiro128Seed(meUInt ss)
+{
+    rndS[3] = ss;
+    rndS[0] = splitMix32();
+    rndS[1] = splitMix32();
+    rndS[2] = splitMix32();
+    rndS[3] = splitMix32();
+}
+
+#define xoshiro128Rotl(xx,kk) (((xx) << (kk)) | ((xx) >> (32 - (kk))))
+
+static meUInt
+xoshiro128Next(void)
+{
+    register meUInt rr=rndS[1] * 5, tt=rndS[1] << 9;
+    rr = xoshiro128Rotl(rr,7) * 9;
+
+    rndS[2] ^= rndS[0];
+    rndS[3] ^= rndS[1];
+    rndS[1] ^= rndS[2];
+    rndS[0] ^= rndS[3];
+    rndS[2] ^= tt;
+    rndS[3] = xoshiro128Rotl(rndS[3],11);
+
+    return rr;
+}
+#endif
+
 meVariable *
 SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue, meVariable **varList)
 {
@@ -606,10 +668,16 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
 #endif
 #if MEOPT_EXTENDED
         case EVTIME:
-            timeOffset = meAtoi(vvalue) ;
+            timeOffset = meAtoi(vvalue);
             break;
         case EVRANDOM:
-            srand((unsigned int) time(NULL)) ;
+            xoshiro128Seed((vvalue[0] != '\0') ? ((unsigned int) meAtoi(vvalue)):
+#ifdef _WIN32
+                           ((unsigned int) GetTickCount())
+#else
+                           ((unsigned int) time(NULL))
+#endif
+                           );
             break ;
 #endif
         case EVFRMDPTH:
@@ -1272,7 +1340,7 @@ handle_namesvar:
                     (int) (tp.tv_usec/1000));/* Milliseconds */
             return evalResult;
         }
-    case EVRANDOM:      return meItoa(rand());
+    case EVRANDOM:      return meItoa((xoshiro128Next() >> 8));
 #endif
     case EVFRMDPTH:     return meItoa(frameCur->depth + 1);
 #if MEOPT_EXTENDED

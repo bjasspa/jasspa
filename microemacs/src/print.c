@@ -1354,8 +1354,8 @@ printSection (meWindow *wp, long sLineNo, long numLines, meLine *sLine, meLine *
         return meTRUE ;
         
     /* Get the clock out and initialise */
-    clock = time (0);	                 /* Get system time */
-    printer.ptime = localtime (&clock);  /* Get time frame */
+    clock = time(NULL);                 /* Get system time */
+    printer.ptime = localtime(&clock);  /* Get time frame */
     printer.pLineNo = sLineNo;
     printer.pPageNo = 0;
     printer.pNoLines = 0;

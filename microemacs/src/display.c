@@ -1399,8 +1399,8 @@ updateModeLine(meWindow *wp)
     else
         lchar = windowChars [WCMLIWSEP];    /* Typically '-' */
 
-    clock = time(0);	                    /* Get system time */
-    time_ptr = (struct tm *) localtime (&clock);	/* Get time frame */
+    clock = time(NULL);                     /* Get system time */
+    time_ptr = (struct tm *) localtime(&clock);	/* Get time frame */
     cp = wp->modeLine->text ;
     while((lineLen > 0) && ((cc = *ml++) != '\0'))
     {
