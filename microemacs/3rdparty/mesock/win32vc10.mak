@@ -33,7 +33,7 @@ AR       = lib /NOLOGO
 RM       = del /F /Q
 RMDIR    = rd /S /Q
 
-TOOLKIT  = win32vc15
+TOOLKIT  = win32vc10
 !IF "$(LSTT)" == "1"
 BUILDID  = $(TOOLKIT)s
 CCLSTT   = /MT
