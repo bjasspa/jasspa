@@ -1067,7 +1067,7 @@ define-macro Match-It
     set-variable $buffer-bhook bhook-match-it
     set-variable $buffer-ehook ehook-match-it
     ; Set $random so we get a new random seed
-    set-variable $random ""
+    set-variable $random 0
     bhook-match-it
   !endif
   ; Set the screen size

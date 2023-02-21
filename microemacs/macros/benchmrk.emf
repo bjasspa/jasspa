@@ -14,7 +14,7 @@ define-macro 00000
 execute-file "me"
 execute-file "vm"
 execute-file "userstp"
-set-variable $random ""
+set-variable $random 0
 set-variable .00000.ic 100000
 define-macro zzzzz
 !emacro

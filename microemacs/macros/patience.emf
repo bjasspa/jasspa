@@ -789,7 +789,7 @@ define-macro Patience
     set-variable $buffer-bhook bhook-patience
     set-variable $buffer-ehook ehook-patience
     ; Set $random so we get a new random seed
-    set-variable $random ""
+    set-variable $random 0
     bhook-patience
   !endif
   pat-deal
