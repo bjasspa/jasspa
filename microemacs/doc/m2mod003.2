@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2mod003.2,v 2.7 2009/08/29 17:13:40 jon Exp $
+.Id $Id: m2mod003.2,v 2.7 2023/02/21 11:12:28 jon Exp $
 .Im MicroEmacs modes
 .so me.tni
 .TH crypt 2m
@@ -16,29 +16,29 @@ crypt \- Encrypted file mode
 \fBY\fR \- mode line letter.
 .SH DESCRIPTION
 .B crypt
-mode  enables  encrypted  files to be loaded and saved for security  purposes.
-The key can be set at any time using the command
+mode enables  encrypted  files to be loaded and saved for security  purposes. The key can be set at any time using the
+command
 .Ht set-encryption-key 2 .
 Warning, take care if setting this as a global mode, it can have side-effects.
 .PP
-The  encryption  algorithm  is a Beaufort  Cipher with a variant  key. This is
-reasonably  difficult to decrypt. When you write out text, if \fCcrypt\fR mode
-is active and there is no encryption key, \*(mE will ask:
+The  encryption  algorithm  uses AES in a  chained  block  form and 256 bit key, at time of  writing  this  should  be
+considered  as secure as the  password  used. When you write out text, if  \fCcrypt\fR  mode is active and there is no
+encryption key, \*(mS will ask:
 .IP
-.C "Encryption String:"
+.C "<file-name> password:"
 .LP
-Type in a word or  phrase of at least  five and up to 128  characters  for the
-encryption  to use. If you look at the file which is then written out, all the
-printable characters have been scrambled. To read such a file later, use
+Type in a word or phrase of at least five and up to 128  characters for the encryption to use. If you look at the file
+which is then written out, it should be indistinguishable to random data, also if you save the file again, without any
+changes to the unencrypted data, the content be completely different. To read such a file later, use
 .Ht find-cfile 3
-to load  \fIciphertext\fR  files, you will be asked the  encryption key before
-the file is read.
+to load \fIciphertext\fR files, you will be asked for the password before the file is read.
 .SH "SEE ALSO"
 .na
 .Hl "Operating Modes" Modes - ,
 .Ht buffer-mode 2 ,
 .Ht find-cfile 3 ,
 .Ht global-mode 2 ,
-.Ht set-encryption-key 2 .
+.Ht set-encryption-key 2 ,
+.Hr AES 2 .
 .ad
 .FH

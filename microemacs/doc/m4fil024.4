@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil024.4,v 2.8 2009/08/29 17:14:14 jon Exp $
+.Id $Id: m4fil024.4,v 2.8 2023/02/05 15:58:44 jon Exp $
 .Im MicroEmacs macro;function;miscellaneous
 .so me.tni
 .TH &find 4
@@ -41,9 +41,11 @@ the  \s-1FULL\s0  path name of the file is  returned to the caller,  otherwise
 .IP "\fI<basename>\fR"
 The base name of the file, excluding any extension.
 .IP "\fI<extension>\fR"
-The  extension  of the file name, this must be  specified  with the  extension
-delimiter,  typically dot  ('\fC.\fR'). A \fCNULL\fR  string (e.g. '\fC""\fR')
-may be specified if no extension is required.
+The  extension of the file name, this must be specified  with the extension  delimiter,  typically dot  ('\fC.\fR'). A
+\fCNULL\fR  string (e.g.  '\fC""\fR')  may be specified if no extension is required.  \fB<extension>\fR  can also be a
+'\fB|\fR' character separated list of extensions, see
+.Ht &lset 4
+for more information on \*(mS list format and functions.
 .PP
 .B &which
 searches  for the given  executable  program  \fI<progname>\fR  on the  system
@@ -56,8 +58,7 @@ and
 .Ht find-file 2 
 within macro scripts, and is used to locate user specific files.
 .SH EXAMPLE
-The following  example uses  \fB&find\fR to locate the uses 'C' template file.
-Given           a           \fB$search-path\fR            setting           of
+The following  example uses  \fB&find\fR to locate the uses 'C' template file. Given a  \fB$search-path\fR  setting of
 \fC/usr/bob/emacs:/usr/local/microemacs\fR:-
 .Me $emf-scheme
 .CS

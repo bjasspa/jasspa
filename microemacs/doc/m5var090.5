@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var090.5,v 2.2 2009/08/29 17:14:33 jon Exp $
+.Id $Id: m5var090.5,v 2.2 2023/01/30 16:42:53 jon Exp $
 .Im MicroEmacs variable|file
 .so me.tni
 .TH $MEINSTALLPATH 5
@@ -52,17 +52,15 @@ and
 the macro search path and user macro directory respectively.
 .PP
 .B $MEINSTALLPATH
-is an environment  variable that overrides any internally  defined search path
-for \*(mS system macros and defines the root  directory(s)  of the  MicroEmacs
-system macros. The presence of the environment variable affects 
+is an environment  variable that overrides any internally  defined search path for \*(mS system macros and defines the
+base directory(s) of the MicroEmacs system macros. The presence of the environment variable affects 
 .Ht $search-path 5 .
 .PP
 The environment variable 
 .B $MEINSTALLPATH 
 is ignored if 
 .B $MEPATH 
-is defined. The search path is always included after any 
-user path defined by 
+is defined. The search path is always included after any userpath defined by
 .Ht $user-name 5 .
 .PP
 .B $MEUSERPATH
@@ -108,9 +106,6 @@ Directories  are  specified  as  \fIsearching\fR  if  a  search  operation  is
 performed. The following sub-directories of a base directory are 
 searched for the existence of subdirectories:
 .IP
-.I .
-\- root directory.
-.br
 .Hl $user-name $user-name 5 
 \- private user directory.
 .br
@@ -122,6 +117,9 @@ searched for the existence of subdirectories:
 .br
 .I spelling
 \- spelling dictionaries.
+.br
+.I .
+\- base directory.
 .LP
 \*(mS   performs  a  searching   operation  on  some   directories  to  locate
 information.  Generally,  if the  directory  exists then it is included in the

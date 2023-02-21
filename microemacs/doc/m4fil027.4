@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil027.4,v 2.10 2009/08/29 17:14:14 jon Exp $
+.Id $Id: m4fil027.4,v 2.10 2023/02/02 01:23:52 jon Exp $
 .Im MicroEmacs macro;function;miscellaneous
 .so me.tni
 .TH &stat 4
@@ -21,9 +21,8 @@
 returns  the  specified  \fI<stat>\fR  on the  given  \fI<filename>\fR.  Valid
 \fI<stat>\fR values are:-
 .IP \fBa\fR
-Returns the absolute file name, corrects  relative  paths and symbolic  links,
-i.e. on  \s-1UNIX\s0  if the  filename is a symbolic  link it returns the file
-name the link points to (recursive), otherwise returns the file name.
+Returns the absolute file name, corrects  relative paths and symbolic  links, i.e. on \s-1UNIX\s0 if the filename is a
+symbolic link it returns the file name the link points to (recursive), otherwise returns the file name.
 .IP \fBd\fR
 Returns the file's  modification time stamp as an integer, larger values indicate a later time.
 .IP \fBi\fR
@@ -36,7 +35,8 @@ File  location, which will be one of the following:
 .CS
     F   File is an ftp URL file (see note).
     H   File is a http URL link (see note).
-    L   File is a local file.
+    L   File is a local file (may be prefixed with 'file:').
+    T   File is a tfs file (tfs://...).
 .CE 0
 .IP 2
 File type, which will be one of the following:
@@ -57,7 +57,6 @@ Symbolic  file type, which will be the empty string unless the file type above
 is '\fCL\fR' in which case it will be one of the following:
 .CS
     D   File is a directory.
-    L   File is a symbolic link (UNIX).
     N   File is an untouchable system file.
     R   File is a regular file.
     X   File does not exist.
@@ -91,13 +90,25 @@ Returns the type of the file, where values returned are
     F   File is an ftp URL file (see note).
     N   File is an untouchable system file.
 .CE 0
-.IP
-Note that a URL type is determined  from the file name, e.g.  http://...,  and
-its existence is not verified.
 .IP \fBw\fR
-Returns a non-zero value if the user has permission to write to the given file.
+Returns a non-zero  value if the user has permission to write to the given file. Note that \fC0\fR is simply  returned
+for ftp URLs whereas the user may have write permission depending on the server and login credentials supplied.
 .IP \fBx\fR
 Returns a non-zero value if the user has permission to execute the given file.
+.SH NOTES
+The URL type is determined  from the start of the file name, e.g.  http://...,  and
+its existence is never verified if a http, nor for an ftp URL except for an \fBi\fR stat.
+.PP
+The following URL types are supported depending on the build of \*(mS:
+.CS
+    file:     Local file.
+    ftp://    Standard ftp URL (default port 21).
+    ftpe://   Explicit secure ftp (default port 21).
+    ftps://   Implicit secure ftp (default port 990).
+    http://   Standard http URL (default port 80).
+    https://  Secure http URL (default port 443).
+    tfs://    Tacked-on file system URL.
+.CE 0
 .SH EXAMPLE
 The  following  example is a macro which, given a file name, uses  \fB&stat\fR
 to check that file file is regular:

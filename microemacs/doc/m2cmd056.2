@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd056.2,v 2.11 2022/01/17 10:28:41 jon Exp $
+.Id $Id: m2cmd056.2,v 2.11 2023/02/21 11:57:14 jon Exp $
 .Im MicroEmacs command|file
 .ds C0 "(\fB\*(cX\*cf\fR)\ \&
 .so me.tni
@@ -130,23 +130,32 @@ runtime, if they are not available the function returns an error. The
 variable can be used to alter the behaviour, in particular the '\fBi\fR' flag which can be used to ignore  certificate
 errors.
 .SS "FTP support"
-\*(mS  supports ftp file  loading, this is identical to http except the prefix
-\fCftp://\fR is used as opposed to  \fChttp://\fR.  The user name and password
-defaults to  \fIguest\fR in the absence of both these fields. If the user name
-is supplied but not the password the password  will be prompted  for; this can
-be useful as the password  will not be stored or written to the history  file.
-Connection is by default on port 21.
+\*(mS  supports  ftp file  loading,  this is  identical to http except the prefix  \fCftp://\fR  is used as opposed to
+\fChttp://\fR. The user name and password defaults to \fIanonymous\fR  and  "\fIftp@example.com\fR"  in the absence of
+both these  fields. If the user name is supplied but not the password the password  will be prompted  for; this can be
+useful as the password will not be stored or written to the history file. Connection is by default on port 21.
 .CS
 find-file "ftp://<me>:<password>@members.xoom.com/jasspa/index.html"
 .CE
 See also 
 .Ht ftp 3 .
 .PP
-The progress of the FTP  transfer, and the FTP commands  issued, may be viewed
-in the \fC*ftp-console*\fR  buffer. This is popped up depending on the setting
-of the
+The progress of the FTP transfer, and the FTP commands issued, may be viewed in the  \fC*ftp-console*\fR  buffer. This
+is popped up depending on the setting of the
 .Ht %ftp-flags 5 
 variable.
+.SS "Secure FTP support"
+There are two standards for secure FTP, explicit and implicit.
+.PP
+Explicit ftp typically  uses the default port 21 and the initial  connection is established  without  encryption,  the
+client then  explicitly  requests  secure  comms,  hopefully  before the user name and password are  submitted.  \*(mS
+supports  explicit  ftp by using a  non-standard  \fCftpe://\fR  URL prefix,  this  allows an  explicit  ftp URL to be
+distinguish  from an open ftp request. Note that the ftp server may refuse the request to make the connection  secure,
+this is not considered a failure by \*(mS so the \fB*ftp-console*\fR should be checked if secure comms is required.
+.PP
+Like \fBHTTPS\fR, implicit ftp requires a secure connect to be established up front, by default it uses port 990. \*(mS
+supports  implicit  ftp by using the  standard  \fCftps://\fR  URL prefix (not to be confused  with sftp which is used
+to denote file transfer through an ssh connection).
 .SH NOTES
 The  base  name  part  (i.e.  not the  path) of  \fCfile-name\fR  can  contain
 wild-card characters compatible with most file systems, namely:-

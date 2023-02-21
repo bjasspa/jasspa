@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd158.2,v 2.12 2009/09/02 22:51:30 jon Exp $
+.Id $Id: m2cmd158.2,v 2.12 2023/02/21 12:07:15 jon Exp $
 .Im MicroEmacs command|file|macrodevelop
 .so me.tni
 .TH file-op 2
@@ -74,11 +74,9 @@ the error return codes in the notes section below.
 .IP \fB0x80\fR
 When this bit is set then the files time stamp is preserved.
 .SH NOTES
-\fBhttp\fR  files are not  supported  except as the source file when  copying.
-\fBftp\fR files are fully supported with the restriction  that the from and to
-files  cannot  both be url (http or ftp) files. The one  exception  to this is
-when  moving a file on the same ftp site in which case ME will  attempt to use
-an ftp rename command.
+\fBhttp\fR and \fBhttps\fR files are not supported except as the source file when copying.  \fBftp\fR,  \fBftpe\fR and
+\fBftps\fR  files  are  fully  supported,  however  note that if moving a file from and to the same ftp site \*mS will
+attempt to use an ftp rename command, if this fails try moving the file locally and then move if back to the ftp site.
 .PP
 The command is used by
 .Ht file-browser 3
@@ -104,8 +102,7 @@ Failure due to a file or directory deletion error.
 .IP \fB6\fR
 Failure due to file write checks, i.e. file already exists etc.
 .IP \fB7\fR
-Failure due to directory  creation  checks, i.e. the directory or file already
-exists.
+Failure due to directory creation checks, i.e. the directory or file already exists.
 .IP \fB8\fR
 Failure due to file delete checks, i.e. file is read only.
 .IP \fB9\fR

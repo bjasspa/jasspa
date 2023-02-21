@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd077.2,v 2.12 2022/03/24 20:37:08 jon Exp $
+.Id $Id: m2cmd077.2,v 2.12 2023/02/21 16:37:01 jon Exp $
 .Im MicroEmacs command|shell
 .ds C0 "(\fB\*e backslash\fR)\ \&
 .so me.tni
@@ -100,7 +100,9 @@ limit. When a multiple-line  command-line is required, a negative argument can
 be given to
 .Ht insert-string 2 .
 .IP \fB0x200\fR
-When set prevents the lines from wrapping.
+When set forces
+.Ht wrap 2m
+mode off minimising line wrapping.
 .PP
 Many other macro commands (see
 .Ht compile 3 ,
@@ -156,7 +158,10 @@ is enabled. Modes
 .Ht lock 2m
 and
 .Ht wrap 2m
-effect the output behavior of an \fBipipe-shell-command\fR.
+effect  the  output  behavior  of an  \fBipipe-shell-command\fR.  When  \fBwrap\fR  mode is  enabled  text  output  is
+automatically  wrapped at the width of the current  window, when  disabled (see arg \fBn\fR bits 0x40 and 0x200) lines
+will only wrap at (\fCmaximum length of a \*(mS variable - 2\fR), currently 2046, so that the ipipe command can safely
+process the output. This length can be controlled by the \fB%ipipe-width\fR user variable.
 .SH EXAMPLE
 The following example is the
 .Ht xgrep 3

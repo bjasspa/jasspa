@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20230102.1500>
+# Last Modified: <20230214.1005>
 #
 ##############################################################################
 
@@ -85,9 +85,8 @@ CMD2_090=	$(DOCDIR)m2cmd090.2 $(DOCDIR)m2cmd091.2 $(DOCDIR)m2cmd092.2\
 		$(DOCDIR)m2cmd099.2
 CMD2_100=	$(DOCDIR)m2cmd100.2 $(DOCDIR)m2cmd101.2 $(DOCDIR)m2cmd102.2\
 		$(DOCDIR)m2cmd103.2 $(DOCDIR)m2cmd104.2 $(DOCDIR)m2cmd105.2\
-		$(DOCDIR)m2cmd106.2 $(DOCDIR)m2cmd108.2\
+		$(DOCDIR)m2cmd106.2 $(DOCDIR)m2cmd107.2 $(DOCDIR)m2cmd108.2\
 		$(DOCDIR)m2cmd109.2
-# TODO: $(DOCDIR)m2cmd107.2 - This is spare
 CMD2_110=	$(DOCDIR)m2cmd110.2 $(DOCDIR)m2cmd111.2 $(DOCDIR)m2cmd112.2\
 		$(DOCDIR)m2cmd113.2 $(DOCDIR)m2cmd114.2 $(DOCDIR)m2cmd115.2\
 		$(DOCDIR)m2cmd116.2 $(DOCDIR)m2cmd117.2 $(DOCDIR)m2cmd118.2\
@@ -448,7 +447,7 @@ var5_010.sm:	$(VAR5_010)
 	$(SUPERMAN) -o $@ $(VAR5_010)
 var5_020.sm:	$(VAR5_020)
 	$(SUPERMAN) -o $@ $(VAR5_020)
-var5_030.sm:	$(VAR5_020)
+var5_030.sm:	$(VAR5_030)
 	$(SUPERMAN) -o $@ $(VAR5_030)
 var5_040.sm:	$(VAR5_040)
 	$(SUPERMAN) -o $@ $(VAR5_040)
