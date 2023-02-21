@@ -1,0 +1,81 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m2cmd124.2,v 2.6 2023/02/21 11:29:52 jon Exp $
+.Im MicroEmacs command|transposition
+.so me.tni
+.TH generate-hash 2
+.XI generate-hash - "Generate SHA256 or HMAC-SHA256 hash"
+.SH NAME
+generate-hash \- Generate SHA256 or HMAC-SHA256 hash
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B generate-hash [ "\fIkey\fR" ] [ "\fIdata\fR" ]
+.ad
+.SH DESCRIPTION
+.B generate-hash
+computes  the SHA256 hash value of the current  buffer's  content, as if it were written to file in its current  state
+(i.e. the binary, line and file termination modes are taken into consideration). The hash is then turned into a hex string and
+the
+.Ht $result 5
+variable is set to the resultant 64 byte string.
+.PP
+The numeric  argument  \fIn\fR is used to modify the default  behavior of the  command,  where the bits are defined as
+follows:
+.IP \fB0x03\fR
+The  first 2 bits  are  used to set the  mode, if both  bits  are  clear  (i.e. 0) then the user is  prompted  for the
+\fIdata\fR test string and the hash is calculated for this. If set to 1 then the hash of the whole buffer as a file is calculated,
+and if set to 2 the hash for the current region is calculated.
+.IP \fB0x04\fR
+When set a HMAC-SHA256 hash is calculated instead, the user will be prompted for the \fIkey\fR.
+.SH EXAMPLE
+To calculate the hash of a string use:
+.RS
+.Me $emf-scheme
+.CS
+0 generate-hash "Hello world"
+.CE 0
+.Me $ehf-scheme
+.RE
+.PP
+After executing the hash value will be stored in \fB$result\fR. To calculate a HMAC-SHA256 of a string use:
+.RS
+.Me $emf-scheme
+.CS
+4 generate-hash "TheKey" "Hello world"
+.CE 0
+.Me $ehf-scheme
+.RE
+.SH NOTES
+When using an argument of 0 the data must be a plain text string  which means it cannot  contain a byte of value 0. If
+the hash of binary data is required then create a temporary buffer, enable
+.Ht rbin 2m
+mode, insert the data as a hex string and then call  \fBgenerate-hash\fR  with no argument to  calculate  the buffer's
+hash.
+.PP
+When calculating the hash of a region, if
+.Ht binary 2m
+or
+.Ht rbin 2m
+modes are  enabled  then the whole of the  region's  first line is always  included  and the whole of the last line is
+included  if the  region's  end point  column is greater  than 0. If neither of these modes are enabled  then the line
+termination modes are taken into account but the
+.Ht ctrlz 2m 
+end of file mode isn't.  
+.SH "SEE ALSO"
+.na
+.Ht $result 5 ,
+.Ht binary 2m ,
+.Ht rbin 2m ,
+.Ht cr 2m ,
+.Ht lf 2m ,
+.Ht ctrlz 2m ,
+.Ht buffer-mode 2 ,
+.Hr SHA256 2 ,
+.Hr HMAC-SHA256 2 .
+.ad
+.FH
