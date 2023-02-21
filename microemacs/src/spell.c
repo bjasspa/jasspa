@@ -333,7 +333,7 @@ meDictionaryLoad(meDictionary *dict)
     dUsed = stats.stsizeLow - meDICT_HDR_SZ;
     dSize = dUsed + TBLINCSIZE;
        
-    if((ffgetBuf(&meior) < 0) || (ffremain < meDICT_HDR_SZ) ||
+    if((ffgetBuf(&meior,0,meFIOBUFSIZ) < 0) || (ffremain < meDICT_HDR_SZ) ||
        (ffbuf[0] != 0xED) || (ffbuf[1] != 0xF1))
         rr = mlwrite(MWABORT,(meUByte *)"[%s does not have correct id string]",dict->fname);
     else if((td = (unsigned char *) meMalloc(dSize)) == NULL)
@@ -346,7 +346,7 @@ meDictionaryLoad(meDictionary *dict)
         dict->tableSize = meEntryGetAddr((ffbuf+5));
         dUsed = ffremain-meDICT_HDR_SZ;
         memcpy(td,ffbuf+meDICT_HDR_SZ,dUsed);
-        while(((rr=ffgetBuf(&meior)) > 0) && (ffremain > 0))
+        while(((rr=ffgetBuf(&meior,0,meFIOBUFSIZ)) > 0) && (ffremain > 0))
         {
             memcpy(td+dUsed,ffbuf,ffremain);
             dUsed += ffremain;

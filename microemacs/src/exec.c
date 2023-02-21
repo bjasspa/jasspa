@@ -51,10 +51,11 @@ token(meUByte *src, meUByte *tok)
     register meUByte cc, *ss, *dd, *tokEnd ;
     meUShort key;
     
-    ss = src;
     dd = tok;
+    ss = src;
+    cc = *ss++;
 #if MEOPT_BYTECOMP
-    if((cc=*ss++) & BCLEAD)
+    if(cc & BCLEAD)
     {
         if((cc & BCSTRF) == 0)
         {
@@ -461,8 +462,8 @@ macarg(meUByte *tok)               /* get a macro line argument */
 /*---   Little function to test the  alphabetic state of the table.  Invoked
    via "!test" primative.  */
 
-int
-fnctest(void)
+void
+fnctest(meBuffer *bp)
 {
     meBind *ktp;                       /* Keyboard character array */
     meCommand *cmd;                    /* Names pointer */
@@ -472,24 +473,26 @@ fnctest(void)
     meUByte outseq[12];
     int count=0,ix,ii,jj,fn;                 /* Counter of errors */
     
+    addLineToEob(bp,(meUByte *) "");
 #if MEOPT_CMDHASH
     /* test the command hash table */
     for (ii=0; ii < CK_MAX; ii++)
     {
         meStringHash(getCommandName(ii),key);
-        cmd = cmdHash[key&(cmdHashSize-1)] ;
+        cmd = cmdHash[key&(cmdHashSize-1)];
         while((cmd != NULL) && (cmd != cmdTable[ii]))
-            cmd = cmd->hnext ;
+            cmd = cmd->hnext;
         if(cmd == NULL)
         {
             count++;
-            mlwrite(MWSTDERRWRT,(meUByte *) "cmdTbl Error: [%s] should be in position %d",getCommandName(ii),(key&(cmdHashSize-1)));
+            sprintf((char *) resultStr,"cmdTbl Error: [%s] should be in position %d",getCommandName(ii),(key&(cmdHashSize-1)));
+            addLineToEob(bp,resultStr);
         }
         else if(cmd->hash != key)
         {
             count++;
-            sprintf(resultStr,"cmdHash Error: [%s] hash should be 0x%08x",getCommandName(ii),key);
-            mlwrite(MWSTDERRWRT,resultStr);
+            sprintf((char *) resultStr,"cmdHash Error: [%s] hash should be 0x%08x",getCommandName(ii),key);
+            addLineToEob(bp,resultStr);
         }
     }
 #endif
@@ -501,10 +504,10 @@ fnctest(void)
         if(meStrcmp(cmd->anext->name,cmd->name) < 0)
         {
             count++;
-            mlwrite(MWSTDERRWRT,(meUByte *) "cmdHead Error: [%s] should be before [%s]", 
-                    cmd->anext->name,cmd->name) ;
+            sprintf((char *) resultStr,"cmdHead Error: [%s] should be before [%s]",cmd->anext->name,cmd->name) ;
+            addLineToEob(bp,resultStr);
         }
-        cmd = cmd->anext ;
+        cmd = cmd->anext;
     }
     /* Scan through the key table looking for the character code.  If found
      * then return the index into the names table.  */
@@ -515,7 +518,8 @@ fnctest(void)
         {
             count++;
             meGetStringFromKey(ktp->code,outseq);
-            mlwrite(MWSTDERRWRT,(meUByte *) "[%s] key out of place",outseq);
+            sprintf((char *) resultStr,"[%s] key out of place",outseq);
+            addLineToEob(bp,resultStr);
         }
     }
     /* now check the user funcs */
@@ -527,12 +531,14 @@ fnctest(void)
         if((ii = funcOffst[ii]) == 0)
         {
             count++;
-            mlwrite(MWSTDERRWRT,(meUByte *) "funcLookup Error: Offset for function [%s] is zero",funcNames[ix]);
+            sprintf((char *) resultStr,"funcLookup Error: Offset for function [%s] is zero",funcNames[ix]);
+            addLineToEob(bp,resultStr);
         }
         else if((funcHashs[ii] & 0x0ff0000) != jj)
         {
             count++;
-            mlwrite(MWSTDERRWRT,(meUByte *) "funcLookup Error: Offset for function [%s] is wrong, points to %s",funcNames[ix],funcNames[ii]);
+            sprintf((char *) resultStr,"funcLookup Error: Offset for function [%s] is wrong, points to %s",funcNames[ix],funcNames[ii]);
+            addLineToEob(bp,resultStr);
         }
         else
         {
@@ -546,7 +552,8 @@ fnctest(void)
                     if(fn != jj)
                     {
                         count++;
-                        mlwrite(MWSTDERRWRT,(meUByte *) "funcLookup Error: Failed to ffind function [%s], hash 0x%h",funcNames[ix],jj);
+                        sprintf((char *) resultStr,"funcLookup Error: Failed to ffind function [%s], hash 0x%x",funcNames[ix],jj);
+                        addLineToEob(bp,resultStr);
                     }
                 }
                 else
@@ -556,15 +563,15 @@ fnctest(void)
                     if(fn != jj)
                     {
                         count++;
-                        mlwrite(MWSTDERRWRT,(meUByte *) "funcLookup Error: Failed to bfind function [%s], hash 0x%h",funcNames[ix],jj);
+                        sprintf((char *) resultStr,"funcLookup Error: Failed to bfind function [%s], hash 0x%x",funcNames[ix],jj);
+                        addLineToEob(bp,resultStr);
                     }
                 }
             }
         }
     }
-    if(!count)
-        return meTRUE;
-    return mlwrite(MWABORT|MWSTDERRWRT,(meUByte *) "!test: %d Error(s) Detected",count);
+    sprintf((char *) resultStr,"\nTest result: %d Error(s) Detected",count);
+    addLineToEob(bp,resultStr);
 }
 #endif
 
@@ -673,7 +680,7 @@ docmd(meUByte *cline, register meUByte *tkn)
     register int ii;   /* index to function to execute */
     int f;             /* default argument flag */
     int n;             /* numeric repeat value */
-    meUByte cc,dd;     /* Character */
+    meUByte cc;        /* Character */
     int  status;       /* return status of function */
     int  nmacro;       /* run as it not a macro? */
     
@@ -686,6 +693,7 @@ try_again:
 #if MEOPT_BYTECOMP
     if(cc & BCLEAD)
     {
+        meUByte dd;
         /* byte compiled line */
         execstr++;
         if(cc == BCDIR)
@@ -760,6 +768,12 @@ bcelif_jump:
                     meRegCurr->force = 1;
                     return (n) ? DRRETURN:meFALSE;
                 }
+            }
+            else if(status == DRBREAK)
+            {
+                /* Stop DRBREAK effecting exec if execlevel != 0 */
+                status = DRABORT;
+                dirType = dirTypes[DRABORT];
             }
             if(dirType & DRFLAG_SMSKEXECLVL)
             {

@@ -190,7 +190,8 @@ meUByte *charKeyboardMap=NULL;
 meInt ffread;
 meInt ffremain;
 meUByte *ffcur;
-meUByte ffbuf[meFIOBUFSIZ+4];
+/* must add at least 4 to meFIOBUFSIZ, but EOF padding for crypt may require upto a block */
+meUByte ffbuf[meFIOBUFSIZ+meCRYPT_BLK_SIZE];
 
 meUByte
 ffUrlGetType(meUByte *url)
@@ -1231,12 +1232,12 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
 }
 
 int
-ffgetBuf(meIo *io)
+ffgetBuf(meIo *io,int offset, int len)
 {
 #ifdef MEOPT_TFS
     if(ffUrlTypeIsTfs(io->type))
     {
-        if((ffremain = tfs_fread(ffbuf,1,meFIOBUFSIZ,io->tfsp)) <= 0)
+        if((ffremain = tfs_fread(ffbuf+offset,1,len,io->tfsp)) <= 0)
         {
             /* TODO - this does not handle errors, just assumed to work */
             return meFALSE;
@@ -1255,9 +1256,9 @@ ffgetBuf(meIo *io)
         }
         else if((ffremain = io->length-ffread) <= 0)
             return meFALSE;
-        else if(ffremain > meFIOBUFSIZ)
-            ffremain = meFIOBUFSIZ;
-        ffremain = meSockRead(&(io->sslp),ffremain,ffbuf,0);
+        if(ffremain > len)
+            ffremain = len;
+        ffremain = meSockRead(&(io->sslp),ffremain,ffbuf+offset,0);
         if(ffremain <= 0)
         {
             if(io->length != -1)
@@ -1272,7 +1273,7 @@ ffgetBuf(meIo *io)
 #endif
 #ifdef _WIN32
     {
-        if(ReadFile(io->fp,ffbuf,meFIOBUFSIZ,(DWORD *)&ffremain,NULL) == 0)
+        if(ReadFile(io->fp,ffbuf+offset,len,(DWORD *)&ffremain,NULL) == 0)
         {
             ffremain = 0;
             if((io->fp != GetStdHandle(STD_INPUT_HANDLE)) || (GetLastError() != ERROR_BROKEN_PIPE))
@@ -1283,7 +1284,7 @@ ffgetBuf(meIo *io)
     }
 #else
     {
-        if((ffremain = fread(ffbuf,1,meFIOBUFSIZ,io->fp)) <= 0)
+        if((ffremain = fread(ffbuf+offset,1,len,io->fp)) <= 0)
         {
             if(ferror(io->fp))
                 return mlwrite(MWABORT,(meUByte *)"[File read error %d]",errno);
@@ -1291,11 +1292,6 @@ ffgetBuf(meIo *io)
         }
     }
 #endif
-#if MEOPT_CRYPT
-    if(io->flags & meIOFLAG_CRYPT)
-        meCrypt(ffbuf,ffremain);
-#endif
-    ffbuf[ffremain]='\n';
     ffread += ffremain;
     return meTRUE ;
 }
@@ -1321,20 +1317,58 @@ ffgetline(meIo *io, meLine **line)
     do {
         if(ffremain <= 0)
         {
-            if(ffgetBuf(io) < 0)
-                return meABORT ;
-            ffcur = ffbuf ;
+            ffcur = ffbuf;
+#if MEOPT_CRYPT
+            if(io->flags & meIOFLAG_CRYPT)
+            {
+                if(cryCtx.blk[5])
+                    ffremain = 0;
+                else
+                {
+                    /* always read 1 byte more than a block so we know when we hit the end of file */
+                    ii=(2*meCRYPT_BLK_SIZE)+1;
+                    ffbuf[2*meCRYPT_BLK_SIZE] = (meUByte) cryCtx.blk[4];
+                    do {
+                        if(ffgetBuf(io,ii,meFIOBUFSIZ-(2*meCRYPT_BLK_SIZE)+1-ii) < 0)
+                            return meABORT;
+                        if(ffremain <= 0)
+                        {
+                            /* no more to read, must sort out padding after decrypt */
+                            cryCtx.blk[5] = 1;
+                            break;
+                        }
+                    } while((ii += ffremain) <= meFIOBUFSIZ);
+                    if(ii > meFIOBUFSIZ)
+                    {
+                        meAssert(ii == meFIOBUFSIZ+1);
+                        cryCtx.blk[4] = ffbuf[meFIOBUFSIZ];
+                        ii--;
+                    }
+                    else if((ii & (meCRYPT_BLK_SIZE-1)) != 0)
+                        return mlwrite(MWABORT,(meUByte *)"[File block read error %d]",ii);
+                    ffremain = ii-(2*meCRYPT_BLK_SIZE);
+                    meDecrypt(ffbuf,ffremain);
+                    if(cryCtx.blk[5])
+                        /* remove padding */
+                        ffremain -= ffbuf[ffremain-1];
+                }
+            }
+            else
+#endif
+                if(ffgetBuf(io,0,meFIOBUFSIZ) < 0)
+                return meABORT;
             if(ffremain <= 0)
             {
                 if(ecc)
                 {
-                    ffremain = 0 ;
-                    *ffcur = '\0' ;
+                    ffremain = 0;
+                    *ffcur = '\0';
                 }
                 else
-                    ffremain = -1 ;
-                break ;
+                    ffremain = -1;
+                break;
             }
+            ffbuf[ffremain]='\n';
         }
         if(io->flags & (meIOFLAG_BINMOD|meIOFLAG_RBNMOD))
         {
@@ -1378,38 +1412,38 @@ ffgetline(meIo *io, meLine **line)
                     else
                         newl++;
                 
-                ffremain -= ((size_t) ffcur) - ((size_t) endp) ;
+                ffremain -= ((size_t) ffcur) - ((size_t) endp);
                 
                 if(newl)
                 {
                     if(len == 0)
                     {
-                        len = newl ;
+                        len = newl;
                         if((lp = (meLine *) meLineMalloc(len,0)) == NULL)
-                            return meABORT ;
-                        text = lp->text ;
+                            return meABORT;
+                        text = lp->text;
                     }
                     else
                     {
-                        size_t ss ;
-                        ii = len ;
-                        len += newl ;
-                        ss = meLineMallocSize(len) ;
+                        size_t ss;
+                        ii = len;
+                        len += newl;
+                        ss = meLineMallocSize(len);
                         if((lp = (meLine *) meRealloc(lp,ss)) == NULL)
-                            return meABORT ;
+                            return meABORT;
                         text = lp->text + ii;
                         lp->unused = (meUByte) (ss - len - meLINE_SIZE);
                         lp->length = len;
                     }
                     if(ecc == '\r')
-                        ffcur[-1] = '\n' ;
+                        ffcur[-1] = '\n';
                     while((cc = *endp++) != '\n')
                         if(cc != '\0')
-                            *text++ = cc ;
-                    *text = '\0' ;
+                            *text++ = cc;
+                    *text = '\0';
                 }
                 else if((len == 0) && ((lp = (meLine *) meLineMalloc(0,0)) == NULL))
-                    return meABORT ;
+                    return meABORT;
                 if(lle != NULL)
                 {
                     *lle = cs;
@@ -1426,83 +1460,83 @@ ffgetline(meIo *io, meLine **line)
             {
                 if((ffremain == 0) && (ecc == '\r'))
                     /* the cr is the last char in the buffer, we cannot check if the next char is a '\r' so must get more */
-                    ffremain = -1 ;
+                    ffremain = -1;
             }
             else
-                ecc = 0 ;
+                ecc = 0;
         }
-    } while(ffremain < 0) ;
+    } while(ffremain < 0);
     
     if(io->flags & (meIOFLAG_BINMOD|meIOFLAG_RBNMOD))
     {
         if(len == 0)
-            return meFALSE ;
+            return meFALSE;
         
         if(io->flags & meIOFLAG_BINMOD)
         {
-            meUInt cpos ;
-            meUByte cc ;
+            meUInt cpos;
+            meUByte cc;
             
-            text = lp->text ;
-            newl = meBINARY_BPL ;
+            text = lp->text;
+            newl = meBINARY_BPL;
             while(--newl >= 0)
             {
                 if(newl < len)
                 {
-                    cc = text[newl] ;
-                    text[(newl*3)+10] = hexdigits[cc >> 4] ;
-                    text[(newl*3)+11] = hexdigits[cc & 0x0f] ;
-                    text[(newl*3)+12] = ' ' ;
+                    cc = text[newl];
+                    text[(newl*3)+10] = hexdigits[cc >> 4];
+                    text[(newl*3)+11] = hexdigits[cc & 0x0f];
+                    text[(newl*3)+12] = ' ';
                     if(!isDisplayable(cc))
-                        cc = '.' ;
+                        cc = '.';
                 }
                 else
                 {
-                    text[(newl*3)+10] = ' ' ;
-                    text[(newl*3)+11] = ' ' ;
-                    text[(newl*3)+12] = ' ' ;
-                    cc = ' ' ;
+                    text[(newl*3)+10] = ' ';
+                    text[(newl*3)+11] = ' ';
+                    text[(newl*3)+12] = ' ';
+                    cc = ' ';
                 }
-                text[newl+(meBINARY_BPL*3)+14] = cc ;
+                text[newl+(meBINARY_BPL*3)+14] = cc;
             }
-            cpos = io->offset + (meUInt) ((ffread - ffremain - 1) & ~((meInt) (meBINARY_BPL-1))) ;
+            cpos = io->offset + (meUInt) ((ffread - ffremain - 1) & ~((meInt) (meBINARY_BPL-1)));
             newl=8 ;
             while(--newl >= 0)
             {
-                text[newl] = hexdigits[cpos&0x0f] ;
-                cpos >>= 4 ;
+                text[newl] = hexdigits[cpos&0x0f];
+                cpos >>= 4;
             }
-            text[8] = ':' ;
-            text[9] = ' ' ;
+            text[8] = ':';
+            text[9] = ' ';
             
-            text[(meBINARY_BPL*3)+10] = ' ' ;
-            text[(meBINARY_BPL*3)+11] = '|' ;
-            text[(meBINARY_BPL*3)+12] = ' ' ;
-            text[(meBINARY_BPL*3)+13] = ' ' ;
-            text[(meBINARY_BPL*4)+14] = '\0' ;
+            text[(meBINARY_BPL*3)+10] = ' ';
+            text[(meBINARY_BPL*3)+11] = '|';
+            text[(meBINARY_BPL*3)+12] = ' ';
+            text[(meBINARY_BPL*3)+13] = ' ';
+            text[(meBINARY_BPL*4)+14] = '\0';
         }
         else
         {
-            meUByte cc ;
+            meUByte cc;
             
-            text = lp->text ;
-            lp->length = len*2 ;
-            text[len*2] = '\0' ;
+            text = lp->text;
+            lp->length = len*2;
+            text[len*2] = '\0';
             while(--len >= 0)
             {
                 cc = text[len] ;
-                text[(len*2)]   = hexdigits[cc >> 4] ;
-                text[(len*2)+1] = hexdigits[cc & 0x0f] ;
+                text[(len*2)]   = hexdigits[cc >> 4];
+                text[(len*2)+1] = hexdigits[cc & 0x0f];
             }
         }
-        *line = lp ;
-        return meTRUE ;
+        *line = lp;
+        return meTRUE;
     }
     if(ffremain < 0)
     {
         /* had to break */
         if(len == 0)
-            return meFALSE ;
+            return meFALSE;
         if((len == 1) && (lp->text[0] == 26))
         {
             io->flags |= meIOFLAG_CTRLZ;
@@ -1522,7 +1556,7 @@ ffgetline(meIo *io, meLine **line)
     else
     {
         /* If we ended in '\r' check for a '\n' */
-        meAssert((ecc == '\n') || (ecc == '\r')) ;
+        meAssert((ecc == '\n') || (ecc == '\r'));
         if(ecc == '\r')
         {
             if(*ffcur == '\n')
@@ -1531,8 +1565,8 @@ ffgetline(meIo *io, meLine **line)
                     io->flags = (io->flags & ~meIOFLAG_NOTSET) | (meIOFLAG_CR|meIOFLAG_LF);
                 else if((io->flags & (meIOFLAG_CR|meIOFLAG_LF)) != (meIOFLAG_CR|meIOFLAG_LF))
                     io->flags |= meIOFLAG_LTDIFF;
-                ffremain-- ;
-                ffcur++ ;
+                ffremain--;
+                ffcur++;
             }
             else if(io->flags & meIOFLAG_NOTSET)
                 io->flags = (io->flags & ~meIOFLAG_NOTSET) | meIOFLAG_CR;
@@ -1544,17 +1578,15 @@ ffgetline(meIo *io, meLine **line)
         else if((io->flags & (meIOFLAG_CR|meIOFLAG_LF)) != meIOFLAG_LF)
             io->flags |= meIOFLAG_LTDIFF;
     }
-    *line = lp ;
+    *line = lp;
     
-    return meTRUE ;
+    return meTRUE;
 }
 
 int
 ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
 {
     io->flags = meIOFLAG_NOTSET;
-    ffremain = 0;
-    ffread = 0;
     if(bp != NULL)
     {
         if(meModeTest(bp->mode,MDBINARY))
@@ -1563,27 +1595,20 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
             io->flags = meIOFLAG_RBNMOD;
 #if MEOPT_CRYPT
         if(meModeTest(bp->mode,MDCRYPT))
-            io->flags = meIOFLAG_CRYPT;
-#endif
-    }
-    else
-    {
-#if MEOPT_CRYPT
-        if(flags & meRWFLAG_CRYPT)
-            io->flags = meIOFLAG_CRYPT;
+            flags |= meRWFLAG_CRYPT;
 #endif
     }
     
+#ifdef _UNIX
+    /* must stop any signals or a socket connection may fail or a read */
+    meSigHold();
+#endif
     /* If meIOTYPE_PIPE the fp handle must be already set, if file type should be NONE as any file: prefix should have been removed by now */
     if(ffUrlTypeIsHttpFtp(io->type))
     {
 #if MEOPT_SOCKET
         int rr ;
         io->redirect = 0;
-#ifdef _UNIX
-        /* must stop any signals or the connection will fail */
-        meSigHold() ;
-#endif
         if((rr=ffUrlFileOpen(io,flags,fname,bp)) <= 0)
         {
 #ifdef _UNIX
@@ -1591,8 +1616,10 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
 #endif
             return rr ;
         }
-        return meTRUE ;
 #else
+#ifdef _UNIX
+        meSigRelease() ;
+#endif
         return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[No url support in this version]") ;
 #endif
     }
@@ -1605,9 +1632,15 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
             if(!(flags & meRWFLAG_SILENT))
                 /* File not found.      */
                 mlwrite(MWCLEXEC,(meUByte *)"[%s: No such TFS file]",fname);
+#ifdef _UNIX
+            meSigRelease() ;
+#endif
             return -2 ;
         }
 #else
+#ifdef _UNIX
+        meSigRelease() ;
+#endif
         return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[No tfs support in this version]") ;
 #endif
     }
@@ -1634,13 +1667,36 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
             if(!(flags & meRWFLAG_SILENT))
                 /* File not found.      */
                 mlwrite(MWCLEXEC,(meUByte *)"[%s: No such file]", fname);
+#ifdef _UNIX
+            meSigRelease() ;
+#endif
             return -2 ;
         }
     }
-#ifdef _UNIX
-    meSigHold() ;
+#if MEOPT_CRYPT
+    if(flags & meRWFLAG_CRYPT)
+    {
+        int ii=0, ll;
+        do {
+            ffgetBuf(io,ii,meCRYPT_BLK_SIZE-ii);
+            ii += ffremain;
+        } while(ii < meCRYPT_BLK_SIZE);
+        memcpy(cryCtx.blk,ffbuf,meCRYPT_BLK_SIZE);
+        ll = ((cryCtx.blk[1] >> 17) & 0x00f) + 1;
+        ii = 0;
+        do
+        {
+            ffgetBuf(io,ii,ll-ii);
+            ii += ffremain;
+        } while(ii < ll);
+        cryCtx.blk[4] = ffbuf[ll-1];
+        cryCtx.blk[5] = 0;
+        io->flags = meIOFLAG_CRYPT;
+    }
 #endif
-    return meTRUE ;
+    ffremain = 0;
+    ffread = 0;
+    return meTRUE;
 }
 
 /* close the read file handle, Ignore any close error */
@@ -1834,7 +1890,7 @@ ffReadFileToBuffer(meUByte *sfname, meUByte *buff, meInt buffLen)
     meAssert((meior.type & meIOTYPE_FILE) == 0);
     if((rr=ffReadFileOpen(&meior,sfname,meRWFLAG_READ|meRWFLAG_SILENT,NULL)) <= 0)
         return rr ;
-    if(((rr=ffgetBuf(&meior)) >= 0) && (ffremain > 0))
+    if(((rr=ffgetBuf(&meior,0,meFIOBUFSIZ)) >= 0) && (ffremain > 0))
     {
         
         if(ffremain >= buffLen)
@@ -1851,7 +1907,7 @@ ffputBuf(meIo *io)
 {
 #if MEOPT_CRYPT
     if(io->flags & meIOFLAG_CRYPT)
-        meCrypt(ffbuf,ffremain);
+        meEncrypt(ffbuf,ffremain);
 #endif
 #if MEOPT_SOCKET
     if(ffUrlTypeIsFtp(io->type))
@@ -1882,8 +1938,8 @@ ffputBuf(meIo *io)
         }
 #endif
     }
-    ffremain = 0 ;
-    return 0 ;
+    ffremain = 0;
+    return 0;
 }
 
 #define ffputc(io,c)                                                         \
@@ -1892,16 +1948,13 @@ ffputBuf(meIo *io)
 int
 ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
 {
-    int ii ;
+    int ii;
     
     io->flags = 0;
-    if(bp != NULL)
-    {
 #if MEOPT_CRYPT
-        if(resetkey(bp) <= 0)
-            return meFALSE ;
+    if((bp != NULL) && meModeTest(bp->mode,MDCRYPT) && (meCryptBufferInit(bp) <= 0))
+        return meFALSE;
 #endif
-    }
     io->type = ffUrlGetType(fname);
     if(ffUrlTypeIsPipe(io->type))
     {
@@ -2181,7 +2234,7 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
         }
 #if MEOPT_CRYPT
         if(meModeTest(bp->mode,MDCRYPT))
-            io->flags |= meIOFLAG_CRYPT;
+            flags |= meRWFLAG_CRYPT;
 #endif
 #if MEOPT_NARROW
         if((bp->narrow != NULL) && !(flags & meRWFLAG_IGNRNRRW))
@@ -2193,14 +2246,8 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
 #endif
     }
     else
-    {
         io->flags = meIOFLAG_CR;
-#if MEOPT_CRYPT
-        if(flags & meRWFLAG_CRYPT)
-            io->flags |= meIOFLAG_CRYPT;
-#endif
-    }
-    
+
 #if (defined _DOS)
     /* the directory time stamps on dos are not updated so the best
      * we can do is flag that the dirLists are out of date when WE
@@ -2214,6 +2261,18 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
         fileNames.stmtime = 1 ;
 #endif
         curDirList.stmtime = 1 ;
+    }
+#endif
+#if MEOPT_CRYPT
+    if(flags & meRWFLAG_CRYPT)
+    {
+        /* create random junk to start the file which must not be encypted
+         * so must do this before setting the crypt flag */
+        ffremain = meCRYPT_BLK_SIZE + ((cryCtx.blk[1] >> 17) & 0x00f);
+        memcpy(ffbuf,cryCtx.blk,ffremain);
+        if(ffputBuf(io))
+            return meABORT;
+        io->flags |= meIOFLAG_CRYPT;
     }
 #endif
     return meTRUE ;
@@ -2265,11 +2324,19 @@ ffWriteFileWrite(meIo *io, int len, meUByte *buff, int eolFlag)
     }
     else
     {
-        while(--len >= 0)
+        if((ffremain+len) < meFIOBUFSIZ)
         {
-            cc=*buff++ ;
-            if(ffputc(io,cc))
-                return meABORT ;
+            memcpy(ffbuf+ffremain,buff,len);
+            ffremain += len;
+        }
+        else
+        {
+            while(--len >= 0)
+            {
+                cc=*buff++ ;
+                if(ffputc(io,cc))
+                    return meABORT ;
+            }
         }
         if(eolFlag)
         {
@@ -2288,10 +2355,18 @@ ffWriteFileClose(meIo *io, meUInt flags, meBuffer *bp)
     
     /* add a ^Z at the end of the file if needed */
     ret = meABORT;
-    if(!(io->flags & meIOFLAG_ERROR))
+    if(!(io->flags & meIOFLAG_ERROR) && (!(io->flags & meIOFLAG_CTRLZ) || !ffputc(io,26)))
     {
-        if(io->flags & meIOFLAG_CTRLZ)
-            ffputc(io,26);
+#if MEOPT_CRYPT
+        /* Add padding to cope with all file lengths - this code relies on meCRYPT_BLK_SIZE being a power of 2 */
+        meAssert(meCRYPT_BLK_SIZE == 16);
+        if(io->flags & meIOFLAG_CRYPT)
+        {
+            int ps=meCRYPT_BLK_SIZE-(ffremain&(meCRYPT_BLK_SIZE-1));
+            memset(ffbuf+ffremain,ps,ps);
+            ffremain += ps;
+        }
+#endif
         if((ffremain == 0) || (ffputBuf(io) >= 0))
             ret = meTRUE;
     }
@@ -2491,7 +2566,7 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
             presTimeStamp = GetFileTime(meior.fp,&creationTime,&lastAccessTime,&lastWriteTime) ;
 #endif
         }
-        while(((r1=ffgetBuf(&meior)) > 0) && (ffremain > 0) && (ffputBuf(&meiow) >= 0))
+        while(((r1=ffgetBuf(&meior,0,meFIOBUFSIZ)) > 0) && (ffremain > 0) && (ffputBuf(&meiow) >= 0))
             ;
         ffReadFileClose(&meior,meRWFLAG_READ|(dFlags & meRWFLAG_SILENT)) ;
         ffremain = 0 ;

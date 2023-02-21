@@ -596,12 +596,14 @@ extern const char *sys_errlist[];
 #endif
 
 /* Standard Types */
-typedef   signed char  meByte ;
-typedef unsigned char  meUByte ;
-typedef   signed short meShort ;
-typedef unsigned short meUShort ;
-typedef   signed int   meInt ;
-typedef unsigned int   meUInt ;
+typedef   signed char  meByte;
+typedef unsigned char  meUByte;
+typedef   signed short meShort;
+typedef unsigned short meUShort;
+typedef   signed int   meInt;
+typedef unsigned int   meUInt;
+typedef   signed long long meLong;
+typedef unsigned long long meULong;
 
 /* Fix any default search path */
 #ifndef _DEFAULT_SEARCH_PATH
@@ -615,7 +617,7 @@ typedef unsigned int   meUInt ;
 #include <tfs.h>        /* Tack-on file system defs.     */
 #endif
 
-#define KEY_TEST 0      /* Enable '0 about' self-test    */
+#define KEY_TEST 0      /* Enable 'about' self-test      */
 
 #include "emode.h"      /* Mode enum, type & var defs    */
 #include "estruct.h"    /* Type structure definitions    */

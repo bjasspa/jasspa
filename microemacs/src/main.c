@@ -477,11 +477,6 @@ meAbout(int f, int n)
     meUByte buf[meBUF_SIZE_MAX] ;
     int     ii ;
     
-#if KEY_TEST
-    if(n == 0)
-        return fnctest();
-#endif
-    
     if((wp = meWindowPopup(BaboutN,BFND_CREAT|BFND_CLEAR|WPOP_USESTR,NULL)) == NULL)
         return meFALSE ;
     bp = wp->buffer ;
@@ -511,6 +506,9 @@ meAbout(int f, int n)
     
     addModesLists(bp,buf,frameCur->bufferCur->mode) ;
     addLineToEob(bp,meCopyright) ;
+#if KEY_TEST
+    fnctest(bp);
+#endif
     bp->dotLine = meLineGetNext(bp->baseLine);
     bp->dotOffset = 0 ;
     bp->dotLineNo = 0 ;
@@ -2011,7 +2009,7 @@ handle_stdin:
                         {
 #if MEOPT_CRYPT
                             if(cryptStr != NULL)
-                                setBufferCryptKey(bp,cryptStr) ;
+                                meCryptBufferSetKey(bp,cryptStr) ;
 #endif
                             if((searchStr != NULL) || stdinflag)
                             {

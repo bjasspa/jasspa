@@ -175,6 +175,9 @@ DEFFUNC ("forward-line",                0xc8, 0xffc6deea, windowForwardLine,    
 DEFFUNC ("forward-paragraph",           0xc8, 0x68983938, windowForwardParagraph,CK_GOEOP, &__cmdArray[CK_GOEOP+1], 0)
 #endif
 DEFFUNC ("forward-word",                0xc8, 0xffcd011e, forwWord,             CK_FORWRD, &__cmdArray[CK_FORWRD+1], 0)
+#if MEOPT_CMDHASH || MEOPT_EXTENDED
+DEFFUNC ("generate-hash",               0x04, 0x5a035abc, generateHash,         CK_GENHASH, &__cmdArray[CK_GENHASH+1], 0)
+#endif
 #if MEOPT_CMDHASH || MEOPT_FILENEXT
 DEFFUNC ("get-next-line",               0x42, 0xcdde11e1, getNextLine,          CK_FLNEXT, &__cmdArray[CK_FLNEXT+1], 0)
 #endif

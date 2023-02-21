@@ -106,7 +106,6 @@
 /* Ini-file reference */
 #ifndef _NANOEMACS
 #define ME_INI_FILE    "ME32.INI"       /* Name of the ini file */
-#endif
 
 /* Define the default search sections in the .ini file */
 static char *iniSections [] =
@@ -115,6 +114,8 @@ static char *iniSections [] =
     "Defaults",                             /* [Defaults] */
     NULL
 };
+#endif
+
 /* store the meinstallpath found in the ini file */
 static meUByte *meInstallPath=NULL ;
 HWND baseHwnd = meHWndNull;                 /* Handle to base hidden window */
@@ -247,7 +248,9 @@ static DWORD ttThreadId = 0;            /* Current thread identity */
 
 /* Font type settings */
 LOGFONT ttlogfont={0};                  /* Current logical font */
+#ifdef _ME_WINDOW
 static meUByte ttPitchFam=0;
+#endif
 
 #if MEOPT_MOUSE
 /* Local definitions for mouse handling code */
@@ -3911,8 +3914,12 @@ TTchangeFont(int n, int fontType, meUByte *fontName, int fontWeight, int fontHei
             mode = 1;
         }
         else
+        {
             /* set to default font for fontType */
+            logfont.lfHeight = 0;
+            logfont.lfWidth = 0;
             mode = 0;
+        }
         /* Create the new font */
         if(!mode)
             newFont = GetStockObject((fontType == OEM_CHARSET) ? OEM_FIXED_FONT:ANSI_FIXED_FONT);
@@ -4001,7 +4008,11 @@ TTchangeFont(int n, int fontType, meUByte *fontName, int fontWeight, int fontHei
     /* Store logfont into the ttlogfont for font style and language char set changes  */
     memcpy(&ttlogfont,&logfont,sizeof(LOGFONT));
     GetTextFace(hDC,sizeof(ttlogfont.lfFaceName),ttlogfont.lfFaceName);
-    
+    if(ttlogfont.lfHeight <= 0)
+    {
+        ttlogfont.lfHeight = eCellMetrics.cell.sizeY;
+        ttlogfont.lfWidth = eCellMetrics.cell.sizeX;
+    }
     /* Release the window */
     ReleaseDC(baseHwnd,hDC);
     
@@ -4094,12 +4105,12 @@ Max font name is 32 chars */
 int
 changeFont(int f, int n)
 {
-    int  fontType;                      /* Type of font 0=ANSI,255=OEM etc */
+    int  fontType=0;                      /* Type of font 0=ANSI,255=OEM etc */
 #ifdef _ME_WINDOW
     meUByte fontName[FONTBUFSIZ];       /* Input font name buffer */
-    int  fontWeight;                    /* Weight of font (0-9) */
-    int  fontHeight;                    /* Height of font */
-    int  fontWidth;                     /* Width of font */
+    int  fontWeight=0;                  /* Weight of font (0-9) */
+    int  fontHeight=0;                  /* Height of font */
+    int  fontWidth=0;                   /* Width of font */
     
     if(!f)
         n = 0x09;
@@ -4127,6 +4138,7 @@ changeFont(int f, int n)
 #endif
         
 #ifdef _ME_WINDOW
+    fontName[0] = '\0';
     if((n & 0x09) == 1)
     {
         meUByte buff[FONTBUFSIZ];
@@ -6285,7 +6297,8 @@ MainWndProc (HWND hWnd, UINT message, UINT wParam, LONG lParam)
         TTinitMouse() ;
 #endif
         /* still must do some work if mouse is disabled */
-        meCursors[meCURSOR_DEFAULT] = meCursors[meCURSOR_ARROW] = LoadCursor (NULL,IDC_ARROW) ;
+        meCursors[meCURSOR_DEFAULT] = LoadCursor(NULL,IDC_ARROW);
+        meCursors[meCURSOR_ARROW] = meCursors[meCURSOR_DEFAULT];
         mouseShow() ;
 #ifdef _DRAGNDROP
         /* Enable drag and drop handling */

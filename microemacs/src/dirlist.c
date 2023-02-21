@@ -308,11 +308,16 @@ addPath(meUByte *pathname, int mask)
 #if DEBUG
         fp = fopen ("me.out", "wb");
 #endif
-        dirlist = dirConstructNode ((meUByte *)"Desktop ", DIR_UNREAL|DIR_UNKNOWN);
+#ifdef _DRV_CHAR
+        dirlist = dirConstructNode ((meUByte *)"Drives ", DIR_UNREAL|DIR_UNKNOWN);
+#else
+        dirlist = dirConstructNode ((meUByte *)"/", DIR_UNREAL|DIR_UNKNOWN);
+#endif
     }
-
-    dp = dirlist ;
-    p = pathname ;
+    dp = dirlist;
+    if((pathname[0] == '\0') || ((pathname[0] == DIR_CHAR) && (pathname[1] == '\0')))
+        return dp;
+    p = pathname+1;
     for(; (q=meStrchr(p,DIR_CHAR)) != NULL ; dp = ndp, p = q)
     {
         cc = *++q ;
@@ -439,25 +444,23 @@ evalNode(register DIRNODE *dnode, meUByte *pathname, int flags)
 #endif
 #ifdef _WIN32
             /* Under Windows get the list of drives and add to the directory list. */
-            meUByte drvname [] = "X:/";
-            int   curDrive;
+            meUByte drvname[] = "X:/";
+            DWORD ad, dwMask;
             
             /* Get the drives */
-            curDrive = _getdrive();
-            for (ii = 1; ii <= 26; ii++)    /* Drives are a-z (1-26) */
+            ad = GetLogicalDrives();
+            for(ii=1, dwMask=1 ; ii <= 26; ii++, dwMask <<= 1)
             {
-                if((ii == 1) || (_chdrive (ii) == 0)) /* Drive exists ?? */
+                if(ad & dwMask) /* Drive exists ?? */
                 {
                     /* Yes - add to the drive list */
-                    drvname [0] = ii + 'a' - 1;
+                    drvname[0] = ii + 'A' - 1;
                     if((dn=dirFindNode(dnode,drvname)) == NULL)
-                        dirLinkNode (dnode,dirConstructNode(drvname,DIR_UNKNOWN));
+                        dirLinkNode(dnode,dirConstructNode(drvname,DIR_UNKNOWN));
                     else
-                        dn->mask &= ~DIR_GONE ;
+                        dn->mask &= ~DIR_GONE;
                 }
             }
-            /* Restore the previous drive */
-            _chdrive (curDrive);
 #endif
 #ifdef _DOS
             /* Same under dos */
@@ -620,9 +623,11 @@ meFindDirLine(DIRNODE *dnode, meUByte *fname, long *itemNo)
         /* See if we have a hit */
         if(*itemNo <= 0)
         {
+#ifdef _DRV_CHAR
             if(dnode == dirlist)
-                fname[0] = '\0' ;
+                fname[0] = '\0';
             else
+#endif
                 meStrcpy(fname,dnode->dname) ;
             return dnode ;
         }
@@ -636,9 +641,11 @@ meFindDirLine(DIRNODE *dnode, meUByte *fname, long *itemNo)
             DIRNODE *cdn ;
             int      len ;
             
+#ifdef _DRV_CHAR
             if(dnode == dirlist)
-                len = 0 ;
+                len = 0;
             else
+#endif
                 len = meStrlen(dnode->dname) ;
             if(dn != dnode)
             {

@@ -357,17 +357,22 @@ regSave(meRegNode *rnp, meUByte *fname, int mode)
             flags |= meRWFLAG_BACKUP ;
         if(mode & meREGMODE_CRYPT)
         {
-            meUByte s1[meBUF_SIZE_MAX], *s2 ;
-            int len ;
-            meCrypt(NULL,0);
-            meStrcpy(s1,getFileBaseName(fname)) ;
-            len = meStrlen(s1) + 1 ;
-            meCrypt(s1,len) ;
-            if((s2=meUserName) == NULL)
-                s2 = (meUByte *) "" ;
-            meStrcpy(s1+len,s2) ;
-            meCrypt(s1,len+meStrlen(s1+len)+1) ;
-            flags |= meRWFLAG_CRYPT ;
+            meUInt key[meCRYPT_KEY_SIZE];
+            meUByte s1[meBUF_SIZE_MAX];
+            int len;
+            
+            meStrcpy(s1,getFileBaseName(fname));
+            len = meStrlen(s1) + 1;
+            if(meUserName == NULL)
+                s1[len++] = '\0';
+            else
+            {
+                meStrcpy(s1+len,meUserName);
+                len += meStrlen(meUserName)+1;
+            }
+            meCryptKeyEncode(key,s1,len);
+            meCryptInit(key);
+            flags |= meRWFLAG_CRYPT;
         }
         /* Open the file */
         if(ffWriteFileOpen(&meiow,fname,flags,NULL) <= 0)
@@ -722,16 +727,21 @@ regRead(meUByte *rname, meUByte *fname, int mode)
         hlp.prev = &hlp ;
         if(mode & meREGMODE_CRYPT)
         {
-            meUByte s1[meBUF_SIZE_MAX], *s2 ;
+            meUInt key[meCRYPT_KEY_SIZE];
+            meUByte s1[meBUF_SIZE_MAX];
             int len ;
-            meCrypt(NULL,0);
-            meStrcpy(s1,getFileBaseName(fn)) ;
-            len = meStrlen(s1) + 1 ;
-            meCrypt(s1,len) ;
-            if((s2=meUserName) == NULL)
-                s2 = (meUByte *) "" ;
-            meStrcpy(s1+len,s2) ;
-            meCrypt(s1,len+meStrlen(s1+len)+1) ;
+            
+            meStrcpy(s1,getFileBaseName(fn));
+            len = meStrlen(s1) + 1;
+            if(meUserName == NULL)
+                s1[len++] = '\0';
+            else
+            {
+                meStrcpy(s1+len,meUserName);
+                len += meStrlen(meUserName)+1;
+            }
+            meCryptKeyEncode(key,s1,len);
+            meCryptInit(key);
             flags |= meRWFLAG_CRYPT ;
         }
         if((ffReadFile(&meior,fn,flags|meRWFLAG_READ,NULL,&hlp,0,0,0) == meABORT) && !(mode & meREGMODE_CREATE))

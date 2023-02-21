@@ -267,15 +267,41 @@ gft_directory:
                 meStrcpy(fn,file);
                 fn[len] = '.';
                 fn[len+1] = '\0';
-                fh = FindFirstFile((const char *) fn,&fd);
+                if((fh = FindFirstFile((const char *) fn,&fd)) == INVALID_HANDLE_VALUE)
+                {
+                    if((file[1] == _DRV_CHAR) && ((len == 2) || ((len == 3) && (file[2] == DIR_CHAR))))
+                    {
+                        if((GetLogicalDrives() & (1 << ((file[0] | 0x20) - 'a'))) == 0)
+                            ft |= meIOTYPE_NOTEXIST;
+                        goto gft_directory;
+                    }
+                    else if((file[0] == DIR_CHAR) && (file[1] == DIR_CHAR))
+                    {
+                        /* shared paths can be funny about access to '.' (e.g. it could be top level drive), test any */
+                        fn[len] = '*';
+                        fh = FindFirstFile((const char *) fn,&fd);
+                        if(fh == INVALID_HANDLE_VALUE)
+                        {
+                            ft |= meIOTYPE_NOTEXIST;
+                            goto gft_directory;
+                        }
+                        else if((fd.cFileName[0] != '.') || (fd.cFileName[1] != '\0'))
+                        {
+                            /* findFirst not returned '.' so can't get stats, but it does exist */
+                            FindClose(fh);
+                            goto gft_directory;
+                        }
+                    }
+                    else
+                    {
+                        ft |= meIOTYPE_NOTEXIST;
+                        goto gft_directory;
+                    }
+                }
             }
-            else
-                fh = FindFirstFile((const char *) file,&fd);
-            if(fh == INVALID_HANDLE_VALUE)
+            else if((fh = FindFirstFile((const char *) file,&fd)) == INVALID_HANDLE_VALUE)
             {
                 ft |= meIOTYPE_NOTEXIST;
-                if((file[len-1] == DIR_CHAR) || ((len == 2) && (file[1] == _DRV_CHAR)))
-                    goto gft_directory;
                 return ft;
             }
             status = fd.dwFileAttributes;
@@ -808,8 +834,8 @@ gwd(meUByte drive)
         int curDrive;
         
         curDrive = _getdrive ();
-        drive = toLower (drive) - 'a' + 1;
-        if ((drive == curDrive) || (_chdrive (drive) != 0))
+        drive = toUpper(drive) - 'A' + 1;
+        if ((drive == curDrive) || (_chdrive(drive) != 0))
             drive = 0;             /* Failed drive change or same drive */
         else
             drive = curDrive;      /* Save to restore */
@@ -948,27 +974,6 @@ inputFileName(meUByte *prompt, meUByte *fn, int corFlag)
     return s ;
 }
 
-#if MEOPT_CRYPT
-int
-resetkey(meBuffer *bp) /* reset the encryption key if needed */
-{
-    /* if we are in crypt mode */
-    if(meModeTest(bp->mode,MDCRYPT))
-    {
-        if((bp->cryptKey == NULL) &&
-           (setBufferCryptKey(bp,NULL) <= 0))
-            return meFALSE ;
-        
-        /* check crypt is still enabled (user may have removed the key) and set up the key to be used! */
-        if(meModeTest(bp->mode,MDCRYPT))
-        {
-            meCrypt(NULL, 0);
-            meCrypt(bp->cryptKey, meStrlen(bp->cryptKey));
-        }
-    }
-    return meTRUE ;
-}
-#endif
 
 #if (defined _WIN32) || (defined _DOS)
 int
@@ -1444,8 +1449,8 @@ readin(register meBuffer *bp, meUByte *fname)
     meUByte lfn[meBUF_SIZE_MAX], afn[meBUF_SIZE_MAX], *fn=fname ;
     
 #if MEOPT_CRYPT
-    if(resetkey(bp) <= 0)
-        return meABORT ;
+    if(meCryptBufferInit(bp) <= 0)
+        return meABORT;
 #endif
     if(bp->fileName != fname)
     {
@@ -1641,7 +1646,7 @@ meBufferInsertFile(meBuffer *bp, meUByte *fname, meUInt flags,
     meModeSet(bp->mode,MDEDIT);              /* we have changed	*/
     
 #if MEOPT_CRYPT
-    if(resetkey(bp) <= 0)
+    if(meCryptBufferInit(bp) <= 0)
         return meFALSE;
 #endif
     if(!(flags & meRWFLAG_SILENT))
@@ -3150,8 +3155,8 @@ fileNameCorrect(meUByte *oldName, meUByte *newName, meUByte **baseName)
         return ;
     
     /* ensure the drive letter is stable, make it lower case */
-    if((newName[1] == _DRV_CHAR) && isUpper(newName[0]))
-        newName[0] = toLower(newName[0]) ;
+    if((newName[1] == _DRV_CHAR) && isLower(newName[0]))
+        newName[0] = (newName[0] ^ 0x20);
     
     if(!fileNameWild(bn))
     {
@@ -3535,17 +3540,17 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
 #ifdef _WIN32
     if(pathName[0] == '\0')
     {
-        meUByte *ff ;
-        int ii ;
-        DWORD  dwAvailableDrives, dwMask;
+        meUByte *ff;
+        int ii;
+        DWORD ad, dwMask;
         
         /* Get the drives */
-        dwAvailableDrives = GetLogicalDrives ();
+        ad = GetLogicalDrives();
         
         /* Drives are a-z (bit positions 0-25) */
-        for (ii = 1, dwMask = 1; ii <= 26; ii++, dwMask <<= 1)
+        for(ii=1, dwMask=1 ; ii <= 26; ii++, dwMask <<= 1)
         {
-            if((ii == 1) || (dwAvailableDrives & dwMask)) /* Drive exists ?? */
+            if(ad & dwMask) /* Drive exists ?? */
             {
                 /* Yes - add to the drive list */
                 if(((fls = meRealloc(fls,sizeof(meUByte *) * (noFiles+1))) == NULL) ||
@@ -3555,11 +3560,11 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                     noFiles = 0 ;
                     break ;
                 }
-                fls[noFiles++] = ff ;
-                *ff++ = ii + 'a' - 1;
-                *ff++ = _DRV_CHAR ;
-                *ff++ = DIR_CHAR ;
-                *ff   = '\0' ;
+                fls[noFiles++] = ff;
+                *ff++ = ii + 'A' - 1;
+                *ff++ = _DRV_CHAR;
+                *ff++ = DIR_CHAR;
+                *ff   = '\0';
             }
         }
     }

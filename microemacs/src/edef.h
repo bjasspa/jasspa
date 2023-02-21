@@ -323,6 +323,10 @@ extern meUByte    BstdinN[];
 extern meUByte    BmainN[];
 extern meUByte    BhelpN[];
 
+#if MEOPT_CRYPT
+extern meCryptContext cryCtx;
+#endif
+
 #if MEOPT_EXTENDED
 extern meVariable *usrVarList;          /* user variables list          */
 extern meUByte   *fileIgnore;
@@ -764,6 +768,9 @@ meUByte   BregistryN[] = "*registry*" ;
 meUByte   BserverN[] = "*server*" ;
 #endif
 
+#if MEOPT_CRYPT
+meCryptContext cryCtx;
+#endif
 #if MEOPT_EXTENDED
 meVariable *usrVarList=NULL;            /* user variables list          */
 meUByte  *fileIgnore=NULL;

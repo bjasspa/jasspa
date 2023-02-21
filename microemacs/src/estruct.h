@@ -123,7 +123,7 @@ typedef int (*meIFuncSSI)(const meUByte *, const meUByte *, size_t);
 /* meStyle contains color and font information coded into an meInt the
  * following #defines and macros are used to manipulate them.
  */
-typedef meUByte   meColor ;
+typedef meUByte meColor;
 #define meCOLOR_FDEFAULT 0
 #define meCOLOR_BDEFAULT 1
 #define meCOLOR_INVALID  0xff
@@ -131,7 +131,7 @@ typedef meUByte   meColor ;
 #define meBColorCheck(x)   (((x)>=noColors)       ? meCOLOR_BDEFAULT : (x))
 
 
-typedef meUInt  meStyle ;
+typedef meUInt  meStyle;
 #define meSTYLE_NDEFAULT  0x00000100
 #define meSTYLE_RDEFAULT  0x00080001
 
@@ -716,7 +716,7 @@ typedef struct  meBuffer {
     meUByte           *modeLineStr;             /* buffer mode-line format      */
 #endif
 #if MEOPT_CRYPT
-    meUByte           *cryptKey;                /* current encrypted key        */
+    meUInt            *cryptKey;                /* current encrypted key        */
 #endif
 #if MEOPT_UNDO
     struct meUndoNode *undoHead;                /* First undo node              */
@@ -1249,6 +1249,18 @@ typedef struct meUndoNarrow {
 #define meUndoIsSetEdit(uu)  (((uu)->type & meUNDO_SPECIAL_MASK) == (meUNDO_SPECIAL|meUNDO_SET_EDIT))
 #define meUndoIsNarrow(uu)   (((uu)->type & meUNDO_SPECIAL_MASK) == (meUNDO_SPECIAL|meUNDO_NARROW))
 #define meUndoIsLineSort(uu) (((uu)->type & meUNDO_SPECIAL_MASK) == (meUNDO_SPECIAL|meUNDO_LINE_SORT))
+#endif
+
+#define meCRYPT_KEY_SIZE 8
+#define meCRYPT_BLK_SIZE 16
+#if MEOPT_CRYPT
+typedef struct
+{
+    meUInt blk[8];      /* last blk ecryption round keys */
+    meUInt erk[64];     /* encryption round keys */
+    meUInt drk[64];     /* decryption round keys */
+    int nr;             /* number of rounds */
+} meCryptContext;
 #endif
 
 /* The variable register (#0 - #9) uses a linked structure

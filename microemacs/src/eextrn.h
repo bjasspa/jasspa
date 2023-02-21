@@ -169,13 +169,20 @@ extern	int	bclear(meBuffer *bp);
 extern  int     getBufferInfo(meInt *,meInt *,meInt *,meInt *) ;
 
 /* crypt.c externals */
+#if MEOPT_EXTENDED
+extern	void    xoshiro128Seed(meUInt ss);
+extern	meUInt  xoshiro128Next(void);
+#endif
 #if MEOPT_CRYPT
-extern  int	setBufferCryptKey(meBuffer *bp, meUByte *key) ;
+extern  void    meCryptKeyEncode(meUInt *enc,meUByte *key, int len);
+extern  int	meCryptBufferSetKey(meBuffer *bp, meUByte *key);
+extern	void    meCryptInit(meUInt *key);
+extern	int     meCryptBufferInit(meBuffer *bp);
+extern	void    meEncrypt(register meUByte *bptr, register meUInt len);
+extern	void    meDecrypt(register meUByte *bptr, register meUInt len);
 extern	int	setCryptKey(int f, int n);
-extern	int	meCrypt(meUByte *bptr, meUInt len);
 #else
 #define setCryptKey notAvailable
-#define meCrypt notAvailable
 #endif
 
 /* dirlist.c externals */
@@ -322,7 +329,7 @@ extern	int	executeLine(int f, int n);
 extern	int	executeBuffer(int f, int n);
 extern	int	executeFile(int f, int n);
 #if KEY_TEST
-extern  int     fnctest(void);
+extern  void    fnctest(meBuffer *bp);
 #endif
 
 /* file.c externals */
@@ -353,9 +360,6 @@ extern	int findFile(int f, int n);
 extern	int readFile(int f, int n);
 extern	int viewFile(int f, int n);
 extern  void freeFileList(int noStr, meUByte **files) ;
-#if MEOPT_CRYPT
-extern	int	resetkey(meBuffer *bp);
-#endif
 extern	int	readin(meBuffer *, meUByte *fname);
 extern	void    makename(meUByte *bname, meUByte *fname);
 extern  void    autowriteout(register meBuffer *bp) ;
@@ -430,7 +434,7 @@ extern meUByte  ffUrlGetType(meUByte *url);
 /* the following internal functions can be used to replace standard fopen/fread to read files from anywhere including tfs - use with extreme care */
 extern meInt ffremain;
 extern meUByte ffbuf[];
-int ffgetBuf(meIo *io);
+int ffgetBuf(meIo *io,int offset, int len);
 int ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp);
 void ffReadFileClose(meIo *io, meUInt flags);
 
@@ -514,6 +518,31 @@ if( cond ) break
 
 #endif
 
+/* hash.c externals */
+#if MEOPT_EXTENDED
+extern	int	generateHash(int f, int n);
+#endif
+
+/* hilight.c externals */
+extern	void	mlerase(int flag);
+#if MEOPT_HILIGHT
+extern	int	hilight(int f, int n);
+extern  void    hilightCurLineOffsetEval(meWindow *wp) ;
+extern  int     indentLine(int *inComment) ;
+extern  meUShort hilightLine(meVideoLine *vp1, meUByte mode) ;
+extern  void    hilightLookBack(meWindow *) ;
+extern	int	meIndentGetIndent(meUByte indent, meUShort bIndentWidth) ;
+extern	int	indent(int f, int n);
+#else
+#define hilight notAvailable
+#define indent notAvailable
+#endif
+
+/* history.c externals */
+extern  void    initHistory(void) ;
+extern  int     setupHistory(int option, meUByte **numPtr, meUByte ***list) ;
+extern  void    addHistory(int option, meUByte *str, int rmv);
+
 /* input.c externals */
 #define mlCR_LOWER_CASE     0x01
 #define mlCR_QUIT_ON_USER   0x02
@@ -578,26 +607,6 @@ extern  int     createVarList(meUByte ***listPtr) ;
 extern meUByte **mlgsStrList ;
 extern int mlgsStrListSize ;
 extern int meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int nbuf) ;
-
-/* hilight.c externals */
-extern	void	mlerase(int flag);
-#if MEOPT_HILIGHT
-extern	int	hilight(int f, int n);
-extern  void    hilightCurLineOffsetEval(meWindow *wp) ;
-extern  int     indentLine(int *inComment) ;
-extern  meUShort hilightLine(meVideoLine *vp1, meUByte mode) ;
-extern  void    hilightLookBack(meWindow *) ;
-extern	int	meIndentGetIndent(meUByte indent, meUShort bIndentWidth) ;
-extern	int	indent(int f, int n);
-#else
-#define hilight notAvailable
-#define indent notAvailable
-#endif
-
-/* history.c externals */
-extern  void    initHistory(void) ;
-extern  int     setupHistory(int option, meUByte **numPtr, meUByte ***list) ;
-extern  void    addHistory(int option, meUByte *str, int rmv);
 
 /* isearch.c externals */
 #if MEOPT_ISEARCH
