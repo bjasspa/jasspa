@@ -55,7 +55,7 @@ AR       = lib /NOLOGO
 RM       = del /F /Q
 RMDIR    = rd /S /Q
 
-TOOLKIT  = win32vc15
+TOOLKIT  = win32vc16
 !IF "$(LSTT)" == "1"
 BUILDID  = $(TOOLKIT)s
 CCLSTT   = /MT
@@ -132,7 +132,7 @@ PRGOBJS  = $(OUTDIR)\abbrev.o $(OUTDIR)\basic.o $(OUTDIR)\bind.o $(OUTDIR)\buffe
 .SUFFIXES: .c .o .rc .res
 
 .c{$(OUTDIR)}.o:
-	$(CC) $(CCDEFS) $(BCOR_CDF) $(BTYP_CDF) $(CCFLAGS) /Fd"$(OUTDIR)\vc150.pdb" /c $< /Fo"$@"
+	$(CC) $(CCDEFS) $(BCOR_CDF) $(BTYP_CDF) $(CCFLAGS) /Fd"$(OUTDIR)\vc160.pdb" /c $< /Fo"$@"
 
 .rc{$(OUTDIR)}.res:
 	$(RC) $(RCFLAGS) $(BTYP_CDF) /fo"$@" $<

@@ -445,28 +445,28 @@ meFrameInitWindow(meFrame *frame, meBuffer *buffer)
        ((off= meLineMalloc(frame->widthMax,0)) == NULL))
         return meFALSE ;
     
-    frame->bufferCur   = buffer ;              /* Make this current    */
-    frame->windowList  = wp ;
-    frame->windowCur   = wp ;
-    frame->windowCount = 1 ;
-    memset(wp,0,sizeof(meWindow)) ;
+    frame->bufferCur = buffer;              /* Make this current    */
+    frame->windowList = wp;
+    frame->windowCur = wp;
+    frame->windowCount = 1;
+    memset(wp,0,sizeof(meWindow));
     /* Window # columns & rows */
     wp->width = frame->width;
     wp->depth = frame->depth;
-    wp->modeLine = lp ;
-    off->next = NULL ;
-    wp->dotCharOffset= off ;
-    wp->buffer = buffer ;
-    wp->dotLine = buffer->baseLine ;
+    wp->modeLine = lp;
+    off->next = NULL;
+    wp->dotCharOffset = off;
+    wp->buffer = buffer;
+    wp->dotLine = buffer->baseLine;
     wp->updateFlags = WFMODE|WFRESIZE|WFSBAR;
 #if MEOPT_EXTENDED
-    wp->id = ++nextWindowId ;
+    wp->id = ++nextWindowId;
 #endif
     /* Flag buffer as displayed. */
-    buffer->windowCount++ ;
-    meWindowFixTextSize(wp) ;
-    meVideoAttach(&(frame->video), wp) ;
-    return meTRUE ;
+    buffer->windowCount++;
+    meWindowFixTextSize(wp);
+    meVideoAttach(&(frame->video), wp);
+    return meTRUE;
 }
 
 #if MEOPT_FRAME ||  (defined _ME_FREE_ALL_MEMORY)

@@ -1165,6 +1165,9 @@ getDirectoryInfo(meUByte *fname)
                         /* replace with other */
                         sbuf.st_mode |= ((sbuf.st_mode & 00007) << 6)  ;
                 }
+#ifdef DT_LNK
+                if(dp->d_type == DT_LNK)
+#endif
                 {
                     /* Check if its a symbolic link */
                     meUByte link[1024];
@@ -3664,7 +3667,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                     *ff++ = DIR_CHAR ;
                     *ff   = '\0' ;
                 }
-                else if(dp->d_type == DT_UNKNOWN)
+                else if((dp->d_type == DT_UNKNOWN) || (dp->d_type == DT_LNK))
 #else
                 else
 #endif

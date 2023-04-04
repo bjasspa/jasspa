@@ -202,7 +202,7 @@ extern	int	addColorScheme(int f, int n);
 #endif
 extern  int     convertUserScheme(int n, int defaultScheme);
 extern  meUByte assessModeLine(meUByte *ml) ;
-extern  void    windCurLineOffsetEval(meWindow *wp) ;
+extern  meUByte *windCurLineOffsetEval(meWindow *wp);
 extern  void    reframe(meWindow *wp) ;
 extern  void    updCursor(register meWindow *wp) ;
 extern  int     renderLine(meUByte *s, int len, int wid, meBuffer *bp);
@@ -553,6 +553,7 @@ extern  void    addHistory(int option, meUByte *str, int rmv);
 extern	int     mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr) ;
 extern	int	mlyesno(meUByte *prompt);
 extern	void	mlDisp(meUByte *prompt, meUByte *buf, meUByte *cont, int cpos) ;
+extern	int     isFileIgnored(meUByte *fileName);
 extern	int	getexecCommand(void);
 #define meGETKEY_SILENT     0x01
 #define meGETKEY_SINGLE     0x02

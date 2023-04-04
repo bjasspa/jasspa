@@ -259,38 +259,53 @@ descKey(int f, int n)	/* describe the command for a certain key */
     static   meUByte  dskyPrompt[]="Show binding: " ;
     register meUShort cc;	/* command character to describe */
     register meUByte *ptr; 	/* string pointer to scan output strings */
-    register int    found;	/* matched command flag */
-    meUInt          arg ;	/* argument */
+    register int      found;	/* matched command flag */
+    meUInt            arg;	/* argument */
     meUByte           outseq[40];	/* output buffer for command sequence */
-    meUByte           argStr[20];	/* argument string */
+    meUShort bc;
+    char mb;
     
     /* prompt the user to type us a key to describe */
-    mlwrite(MWCURSOR,dskyPrompt);
+    if(n & 1)
+        mlwrite(MWCURSOR,dskyPrompt);
     
     /* get the command sequence to describe */
     if((cc = meGetKey(meGETKEY_SILENT)) == 0)	/* get a silent command sequence */
-        return ctrlg(0,1) ;
+        return ctrlg(0,1);
     
     /* change it to something we can print as well */
-    meGetStringFromKey(cc, outseq);
+    meGetStringFromKey(cc,outseq);
     
     /* find the right function */
+#if MEOPT_LOCALBIND
+    mb = useMlBinds;
+    bc = frameCur->bufferCur->bindCount;
+    if(n & 2)
+        useMlBinds = 1;
+    else if(n & 4)
+        frameCur->bufferCur->bindCount = 0;
+#endif
     if ((found = decode_key(cc,&arg)) < 0)
     {
-        ptr = notBound ;
-        argStr[0] = 0 ;
+        resultStr[0] = '\0';
+        ptr = notBound;
     }
     else
     {
-        ptr = getCommandName(found) ;
+        ptr = getCommandName(found);
         if(arg)
-            sprintf((char *) argStr,"%d ",(int) (arg + 0x80000000)) ;
-        else
-            argStr[0] = 0 ;
+            arg = sprintf((char *) resultStr,"%d ",(int) (arg + 0x80000000));
+        meStrcpy(resultStr+arg,ptr);
+        ptr = resultStr;
     }
+#if MEOPT_LOCALBIND
+    useMlBinds = mb;
+    frameCur->bufferCur->bindCount = bc;
+#endif
 
-    /* output the resultant string */
-    mlwrite(MWCURSOR,(meUByte *)"%s\"%s\" %s%s",dskyPrompt,outseq,argStr,ptr);
+    if(n & 1)
+        /* output the resultant string */
+        mlwrite(MWCURSOR,(meUByte *)"%s\"%s\" %s",dskyPrompt,outseq,ptr);
     
     return meTRUE ;
 }

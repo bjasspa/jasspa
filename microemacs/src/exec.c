@@ -1751,15 +1751,15 @@ execBufferFunc(meBuffer *bp, int index, int flags, int n)
     {
         /* swap this buffer into the current window, execute the function
          * and then swap back out */
-        register meBuffer *tbp = frameCur->bufferCur;
+        meBuffer *cbp = frameCur->bufferCur;
         meUInt flag;
         meInt vertScroll;
         
-        storeWindBSet(tbp,frameCur->windowCur);
+        storeWindBSet(cbp,frameCur->windowCur);
         flag = frameCur->windowCur->updateFlags;
         vertScroll = frameCur->windowCur->vertScroll;
         
-        tbp->windowCount--;
+        cbp->windowCount--;
         frameCur->bufferCur = frameCur->windowCur->buffer = bp;
         restoreWindBSet(frameCur->windowCur,bp);
 #if MEOPT_EXTENDED
@@ -1769,17 +1769,29 @@ execBufferFunc(meBuffer *bp, int index, int flags, int n)
         
         ret = execFunc(index,(flags & meEBF_ARG_GIVEN),n);
         
-        frameCur->bufferCur->windowCount--;
-        storeWindBSet(frameCur->bufferCur,frameCur->windowCur);
-        frameCur->bufferCur = frameCur->windowCur->buffer = tbp;
-        tbp->windowCount++;
-        frameCur->windowCur->vertScroll = vertScroll;
-        /* force a check on update, just incase the Func has done something behind our back */
-        frameCur->windowCur->updateFlags |= (flag|WFMOVEL|WFMAIN);
-        restoreWindBSet(frameCur->windowCur,tbp);
+        if(frameCur->bufferCur != cbp)
+        {
+            /* the func could have done some really whacky things like delete the buffer that was being displayed.
+             * If it has avoid crashing by checking the buffer is still a buffer! */
+            register meBuffer *tbp = bheadp;
+            do {
+                if(tbp == cbp)
+                {
+                    frameCur->bufferCur->windowCount--;
+                    storeWindBSet(frameCur->bufferCur,frameCur->windowCur);
+                    frameCur->bufferCur = frameCur->windowCur->buffer = tbp;
+                    tbp->windowCount++;
+                    frameCur->windowCur->vertScroll = vertScroll;
+                    /* force a check on update, just incase the Func has done something behind our back */
+                    frameCur->windowCur->updateFlags |= (flag|WFMOVEL|WFMAIN);
+                    restoreWindBSet(frameCur->windowCur,tbp);
 #if MEOPT_EXTENDED
-        isWordMask = tbp->isWordMask;
+                    isWordMask = tbp->isWordMask;
 #endif
+                    break;
+                }
+            } while((tbp=tbp->next) != NULL);
+        }
     }
     else
         ret = execFunc(index,(flags & meEBF_ARG_GIVEN),n);

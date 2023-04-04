@@ -861,24 +861,24 @@ exitEmacs(int f, int n)
                 {
                     if(indents[ii] != NULL)
                     {
-                        indents[ii]->close = NULL ;
-                        indents[ii]->rtoken = NULL ;
-                        freeToken(indents[ii]) ;
+                        indents[ii]->close = NULL;
+                        indents[ii]->rtoken = NULL;
+                        freeToken(indents[ii]);
                     }
                 }
-                meFree(indents) ;
+                meFree(indents);
             }
 #endif
-            meNullFree (fileIgnore) ;
+            meNullFree(fileIgnore);
             
             while(aheadp != NULL)
             {
-                abrev = aheadp ;
-                aheadp = abrev->next ;
-                meLineLoopFree(&(abrev->hlp),0) ;
-                meFree(abrev) ;
+                abrev = aheadp;
+                aheadp = abrev->next;
+                meLineLoopFree(&(abrev->hlp),0);
+                meFree(abrev);
             }
-            meFree(styleTable) ;
+            meFree(styleTable);
             
             fc = frameList ;
             while(fc != NULL)

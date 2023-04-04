@@ -554,7 +554,7 @@ mlDisp(meUByte *prompt, meUByte *buf, meUByte *cont, int cpos)
 
 
 #if MEOPT_EXTENDED
-static int
+int
 isFileIgnored(meUByte *fileName)
 {
     meUByte *fi, cc ;
@@ -569,7 +569,12 @@ isFileIgnored(meUByte *fileName)
             while(((cc=fi[fil]) != ' ') && (cc != '\0'))
                 fil++ ;
             if((fil <= len) &&
-               !curCmpIFunc(fileName+len-fil,fi,fil))
+#ifdef _INSENSE_CASE
+               !meStrnicmp(fileName+len-fil,fi,fil)
+#else
+               !meStrncmp(fileName+len-fil,fi,fil)
+#endif
+               )
                 return meTRUE ;
             fi += fil ;
             if(*fi++ == '\0')

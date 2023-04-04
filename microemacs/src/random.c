@@ -488,31 +488,27 @@ setccol(int pos)
 int
 getcwcol(void)
 {
-    meUByte *off ;
-    int ii, col=0 ;
+    int ii, col=0;
     
     if((ii = frameCur->windowCur->dotOffset) > 0)
     {
-        windCurLineOffsetEval(frameCur->windowCur) ;
-        off = frameCur->windowCur->dotCharOffset->text ;
+        register meUByte *off = windCurLineOffsetEval(frameCur->windowCur);
         do {
             col += *off++;
         } while(--ii > 0);
     }
-    return col ;
+    return col;
 }
 int
 setcwcol(int col)
 {
-    meUByte *off;
     int ii=0, jj;
     
     if((col > 0) && ((jj = frameCur->windowCur->dotLine->length) > 0))
     {
-        windCurLineOffsetEval(frameCur->windowCur);
-        off = frameCur->windowCur->dotCharOffset->text;
+        register meUByte *off = windCurLineOffsetEval(frameCur->windowCur);
         do {
-            col -= off[ii++] ;
+            col -= off[ii++];
         } while((ii < jj) && (col > 0));
     }
     frameCur->windowCur->dotOffset = ii;

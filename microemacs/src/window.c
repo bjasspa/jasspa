@@ -740,36 +740,35 @@ windowScrollRight (int f, int n)
     if (n != 0)
     {
         int scroll, ii, jj, doto ;
-        unsigned char *off ;
-        windCurLineOffsetEval(frameCur->windowCur) ;
+        unsigned char *off;
+        off = windCurLineOffsetEval(frameCur->windowCur);
         /* try to scroll the current line by n */
-        jj = meLineGetLength(frameCur->windowCur->dotLine) ;
+        jj = meLineGetLength(frameCur->windowCur->dotLine);
         if((scrollFlag & 0x0f) > 2)
-            scroll = frameCur->windowCur->horzScrollRest ;
+            scroll = frameCur->windowCur->horzScrollRest;
         else if(jj == 0)
-            return meTRUE ;
+            return meTRUE;
         else
-            scroll = frameCur->windowCur->horzScroll ;
+            scroll = frameCur->windowCur->horzScroll;
         if((scroll == 0) && (n < 0))
-            return meTRUE ;
+            return meTRUE;
         if((scroll += n) < 0)
-            scroll = 0 ;
-        ii = scroll ;
-        doto = 0 ;
-        off = frameCur->windowCur->dotCharOffset->text ;
+            scroll = 0;
+        ii = scroll;
+        doto = 0;
         while((++doto) < jj)
         {
-            ii -= *off++ ;
+            ii -= *off++;
             if(ii < 0)
-                break ;
+                break;
         }
         if(ii > 0)
         {
-            scroll -= ii ;
-            jj = 0 ;
+            scroll -= ii;
+            jj = 0;
         }
         else
-            jj = -ii ;
+            jj = -ii;
         if(frameCur->windowCur->horzScroll != scroll)
         {
             frameCur->windowCur->horzScroll = scroll ;

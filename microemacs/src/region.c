@@ -398,11 +398,10 @@ killRectangle(int f, int n)
         meUByte *off, cc ;
         int lspc=0, ii, jj, kk, ll ;
         
-        windCurLineOffsetEval(frameCur->windowCur) ;
-        off = frameCur->windowCur->dotCharOffset->text ;
-        coff = 0 ;
-        ii = 0 ;
-        kk = frameCur->windowCur->dotLine->length ;
+        off = windCurLineOffsetEval(frameCur->windowCur);
+        coff = 0;
+        ii = 0;
+        kk = frameCur->windowCur->dotLine->length;
         while(ii < kk)
         {
             if(coff == soff)
@@ -520,12 +519,11 @@ yankRectangleKill(struct meKill *pklist, int soff, int notLast)
             while(((cc = *ss) != '\0') && (cc != meCHAR_NL))
                 ss++ ;
             ii = (size_t) ss - (size_t) tt ;
-            windCurLineOffsetEval(frameCur->windowCur) ;
-            off = frameCur->windowCur->dotCharOffset->text ;
+            off = windCurLineOffsetEval(frameCur->windowCur);
             ldel = lsspc = lespc = 0 ;
             coff = 0 ;
             jj = 0 ;
-            kk = frameCur->windowCur->dotLine->length ;
+            kk = frameCur->windowCur->dotLine->length;
             while(jj < kk)
             {
                 if(coff == soff)

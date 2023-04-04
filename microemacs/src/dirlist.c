@@ -55,6 +55,11 @@
 #include <dos.h>
 #endif
 #endif
+#ifdef _UNIX
+#define DIR_HAS_SLINK 1
+#else
+#define DIR_HAS_SLINK 0
+#endif
 
 #define DEBUG 0
 #if DEBUG
@@ -65,6 +70,8 @@ FILE *fp = NULL;
 #define DIR_UNKNOWN           0x02      /* Node is not known */
 #define DIR_HIDDEN            0x04      /* Node is hidden */
 #define DIR_GONE              0x08      /* Node has gone */
+#define DIR_IGNORE            0x10      /* Node is ignored/filtered */
+#define DIR_FILTERED          0x20      /* Only set on dirlist, stores if filtered */
 
 #define LDO_GETPATH           0x01      /* Get path from the user */
 #define LDO_SELECT            0x02      /* Select node */
@@ -74,21 +81,24 @@ FILE *fp = NULL;
 #define LDO_TOGGLE            0x20      /* Toggle Open/Close state */
 #define LDO_FORCE             0x40      /* Force re-evaluation */
 #define LDO_RECURSE           0x80      /* Recursive evaluation */
+#define LDO_FILTER_OFF        0x100     /* Set filter mode off */
+#define LDO_FILTER_ON         0x200     /* Set filter mode on 0x300 = toggle */
 
 typedef struct DIRNODE {
     struct DIRNODE *parent;             /* Pointer to the parent (previous level) */
     struct DIRNODE *next;               /* Pointer to sibling (same level) */
+    struct DIRNODE *child;              /* Pointer to the child (next level) */
+#if DIR_HAS_SLINK
     struct DIRNODE *lnext;              /* Pointer to link next */
     struct DIRNODE *lhead;              /* Pointer to link head */
-    struct DIRNODE *child;              /* Pointer to the child (next level) */
-    meShort  mask;                        /* Status mask */
-    meUByte *lname;                       /* Symbolic link name - not nice here
-                                         * will fold into the dname soonest */
-    meUByte  dname[1];                    /* Name of the directory */
+    meUByte *lname;                     /* Symbolic link name - not nice here, will fold into the dname soonest */
+#endif
+    meShort  mask;                      /* Status mask */
+    meUByte  dname[1];                  /* Name of the directory */
 } DIRNODE;
 
-static DIRNODE  *dirlist;                /* Directory list root */
-static meLine     *curDirLine;             /* Current dir node */
+static DIRNODE *dirlist;                /* Directory list root */
+static meLine  *curDirLine;             /* Current dir node */
 
 
 /*
@@ -96,20 +106,26 @@ static meLine     *curDirLine;             /* Current dir node */
  * Construct a new node.
  */
 static DIRNODE *
-dirConstructNode (meUByte *name, int mask)
+dirConstructNode(meUByte *name, int mask)
 {
     DIRNODE *dnode;
-
-    if((dnode = (DIRNODE *) meMalloc(sizeof(DIRNODE) + meStrlen(name))) != NULL)
+    int ll = meStrlen(name);
+    if((dnode = (DIRNODE *) meMalloc(((size_t) (((DIRNODE *) ((size_t) 0))->dname)) + 1 + ll)) != NULL)
     {
         dnode->mask = mask;
         dnode->next = NULL;
+        dnode->child = NULL;
+#if DIR_HAS_SLINK
         dnode->lhead = NULL;
         dnode->lnext = NULL;
-        dnode->child = NULL;
         dnode->lname = NULL;
+#endif
         dnode->parent = NULL;
-        meStrcpy (dnode->dname, name);
+        meStrcpy(dnode->dname,name);
+#if MEOPT_EXTENDED
+        if((fileIgnore != NULL) && isFileIgnored(dnode->dname))
+            dnode->mask |= DIR_IGNORE;
+#endif
     }
     return (dnode);
 }
@@ -121,8 +137,9 @@ dirConstructNode (meUByte *name, int mask)
 static void
 dirDestructNode(DIRNODE *dnode)
 {
+#if DIR_HAS_SLINK
     DIRNODE *dn, *ndn ;
-    if(dnode->lname)
+    if(dnode->lname != NULL)
     {
         if((dn = dnode->child) != NULL)
         {
@@ -140,15 +157,16 @@ dirDestructNode(DIRNODE *dnode)
     }
     if(dnode->lhead != NULL)
     {
-        dn = dnode->lhead ;
+        dn = dnode->lhead;
         while(dn != NULL)
         {
-            ndn = dn->lnext ;
-            dn->child = NULL ;
-            dn->lnext = NULL ;
+            ndn = dn->lnext;
+            dn->child = NULL;
+            dn->lnext = NULL;
             dn = ndn ;
         }
     }
+#endif
     meFree(dnode);
 }
 
@@ -163,10 +181,14 @@ dirDeleteTree(DIRNODE *root)
     DIRNODE *dt;                        /* Temporary node */
 
     /* Recursively iterate over the children and delete */
-    for (dnode = root->child; dnode != NULL; /* NULL */)
+    for(dnode = root->child; dnode != NULL; /* NULL */)
     {
-        if((dnode->child != NULL) && (dnode->lname == NULL))
-            dirDeleteTree (dnode);
+        if((dnode->child != NULL)
+#if DIR_HAS_SLINK
+           && (dnode->lname == NULL)
+#endif
+           )
+            dirDeleteTree(dnode);
         dt = dnode;                     /* Remember node to delete */
         dnode = dnode->next ;           /* Point to next node */
         dirDestructNode(dt) ;           /* Delete the node */
@@ -187,7 +209,9 @@ dirDeleteNode(DIRNODE *dnode)
     if ((dnode == NULL) || (dnode == dirlist))
         return;
     
+#if DIR_HAS_SLINK
     if(dnode->lname == NULL)
+#endif
         /* not a link so kill it */
         dirDeleteTree(dnode);                 /* Delete any children */
     /* Delete the node itself */
@@ -290,8 +314,10 @@ dirLinkNode (DIRNODE *root, DIRNODE *dnode)
  * NOTE: on unix symbolic links are coped with and the path also added,
  *       so function can be recursive.
  */
+#if DIR_HAS_SLINK
 static DIRNODE *
 addLinkPath(DIRNODE *dnode, meUByte *pathname) ;
+#endif
 
 static DIRNODE *
 addPath(meUByte *pathname, int mask)
@@ -309,21 +335,27 @@ addPath(meUByte *pathname, int mask)
         fp = fopen ("me.out", "wb");
 #endif
 #ifdef _DRV_CHAR
-        dirlist = dirConstructNode ((meUByte *)"Drives ", DIR_UNREAL|DIR_UNKNOWN);
+        dirlist = dirConstructNode((meUByte *)"Drives ",DIR_UNREAL|DIR_UNKNOWN|DIR_FILTERED);
 #else
-        dirlist = dirConstructNode ((meUByte *)"/", DIR_UNREAL|DIR_UNKNOWN);
+        dirlist = dirConstructNode((meUByte *)"/",DIR_UNREAL|DIR_UNKNOWN|DIR_FILTERED);
 #endif
     }
     dp = dirlist;
     if((pathname[0] == '\0') || ((pathname[0] == DIR_CHAR) && (pathname[1] == '\0')))
         return dp;
+#ifdef _DRV_CHAR
+    p = pathname;
+#else
     p = pathname+1;
+#endif
     for(; (q=meStrchr(p,DIR_CHAR)) != NULL ; dp = ndp, p = q)
     {
         cc = *++q ;
         *q = '\0' ;
+#if DIR_HAS_SLINK
         while(dp->lname != NULL)
             dp = dp->child ;
+#endif
         /* see if the path already exists */
         if((ndp = dirFindNode(dp,p)) == NULL)
         {
@@ -333,7 +365,7 @@ addPath(meUByte *pathname, int mask)
                 return NULL ;
             }            
             /* Create the new node - this is a directory */
-            ndp = dirLinkNode(dp, dirConstructNode(p,DIR_UNKNOWN|mask));
+            ndp = dirLinkNode(dp,dirConstructNode(p,DIR_UNKNOWN|mask));
             
 #ifdef _UNIX
             /* Check if its a symbolic link */
@@ -348,15 +380,15 @@ addPath(meUByte *pathname, int mask)
 #if DEBUG
                     fprintf (fp, "[%s is a LINK]\n", pathname);
 #endif
-                    lbuf [ii] = DIR_CHAR ;
-                    lbuf [ii+1] = '\0' ;
-                    ndp->lname = meStrdup (lbuf);
+                    lbuf[ii] = DIR_CHAR ;
+                    lbuf[ii+1] = '\0' ;
+                    ndp->lname = meStrdup(lbuf);
                 }
                 q[-1] = DIR_CHAR ;
             }
 #endif
         }
-#ifdef _UNIX
+#if DIR_HAS_SLINK
         if(ndp->lname != NULL)
         {
             if((dp = ndp->child) == NULL)
@@ -375,6 +407,7 @@ addPath(meUByte *pathname, int mask)
     return dp ;
 }
 
+#if DIR_HAS_SLINK
 static DIRNODE *
 addLinkPath(DIRNODE *dnode, meUByte *pathname)
 {
@@ -401,6 +434,7 @@ addLinkPath(DIRNODE *dnode, meUByte *pathname)
     dp->lhead = dnode ;
     return dp ;
 }
+#endif
 
 
 static int
@@ -409,6 +443,7 @@ evalNode(register DIRNODE *dnode, meUByte *pathname, int flags)
     int     ii;                             /* Local loop counter */
     int     len;                            /* Length of the pathname */
 
+#if DIR_HAS_SLINK
     while(dnode->lname != NULL)
     {
         if((dnode->child == NULL) &&
@@ -417,6 +452,7 @@ evalNode(register DIRNODE *dnode, meUByte *pathname, int flags)
             return meTRUE ;
         dnode = dnode->child ;
     }
+#endif
     if((dnode->mask & DIR_UNKNOWN) || (flags & LDO_FORCE))
     {
         DIRNODE *dn, *ndn ;
@@ -434,14 +470,6 @@ evalNode(register DIRNODE *dnode, meUByte *pathname, int flags)
         len = meStrlen(pathname) ;
         if(len == 0)
         {
-#ifdef _UNIX
-            /* Under unix we just have to add the root '/' to the tree if its not
-             * already there */
-            if((dn=dirFindNode(dnode,(meUByte *)"/")) == NULL)
-                dirLinkNode(dnode,dirConstructNode((meUByte *)"/",DIR_UNKNOWN));
-            else
-                dn->mask &= ~DIR_GONE ;
-#endif
 #ifdef _WIN32
             /* Under Windows get the list of drives and add to the directory list. */
             meUByte drvname[] = "X:/";
@@ -521,36 +549,36 @@ evalNode(register DIRNODE *dnode, meUByte *pathname, int flags)
                             /* Check if its a symbolic link - readlink does not like the
                              * trailing '/' so don't copy it
                              */
-                            meStrncpy(ss,fn,flen) ;
-                            ss[flen] = '\0' ;
+                            meStrncpy(ss,fn,flen);
+                            ss[flen] = '\0';
                             if ((ii=readlink((char *)pathname,(char *)lbuf,1024)) > 0)
                             {
 #if DEBUG
-                                fprintf (fp, "[%s is a LINK]\n",pathname);
+                                fprintf(fp,"[%s is a LINK]\n",pathname);
 #endif
-                                lbuf [ii] = DIR_CHAR ;
-                                lbuf [ii+1] = '\0';
+                                lbuf[ii] = DIR_CHAR;
+                                lbuf[ii+1] = '\0';
                                 dn->lname = meStrdup(lbuf);
                             }
 #endif
                         }
                         else
-                            dn->mask &= ~DIR_GONE ;
+                            dn->mask &= ~DIR_GONE;
                     }
                 }
 #if DEBUG
-                fprintf (fp, "evalNode: Past Dir =%s\n", fn);
+                fprintf(fp,"evalNode: Past Dir =%s\n", fn);
 #endif
             }
-            *ss = '\0' ;
+            *ss = '\0';
         }
-        dn = dnode->child ;
+        dn = dnode->child;
         while(dn != NULL)
         {
-            ndn = dn->next ;
+            ndn = dn->next;
             if(dn->mask & DIR_GONE)
-                dirDeleteNode(dn) ;
-            dn = ndn ;
+                dirDeleteNode(dn);
+            dn = ndn;
         }
         /*
          * This node is now known, but flag it as hidden, as the call to
@@ -597,12 +625,14 @@ setHiddenFlag(DIRNODE *dnode, int flags)
     {
         DIRNODE  *dtemp, *dhead;
         
+#if DIR_HAS_SLINK
         /* skip the links */
         while(dnode->lname != NULL)
         {
             if((dnode = dnode->child) == NULL)
                 return ;
         }
+#endif
         dhead = dtemp = dnode->child ;
         dnode->child = NULL ;
         while(dtemp != NULL)
@@ -620,47 +650,52 @@ meFindDirLine(DIRNODE *dnode, meUByte *fname, long *itemNo)
     DIRNODE *dn, *ndn ;
     do
     {
-        /* See if we have a hit */
-        if(*itemNo <= 0)
+        if(!(dnode->mask & DIR_IGNORE) || !(dirlist->mask & DIR_FILTERED))
         {
-#ifdef _DRV_CHAR
-            if(dnode == dirlist)
-                fname[0] = '\0';
-            else
-#endif
-                meStrcpy(fname,dnode->dname) ;
-            return dnode ;
-        }
-        *itemNo = (*itemNo) - 1 ;
-        /* Move to the next node */
-        dn = dnode ;
-        while((dn->lname != NULL) && (dn->child != NULL))
-            dn = dn->child ;
-        if((dn->child != NULL) && ((dnode->mask & DIR_HIDDEN) == 0))
-        {
-            DIRNODE *cdn ;
-            int      len ;
-            
-#ifdef _DRV_CHAR
-            if(dnode == dirlist)
-                len = 0;
-            else
-#endif
-                len = meStrlen(dnode->dname) ;
-            if(dn != dnode)
+            /* See if we have a hit */
+            if(*itemNo <= 0)
             {
-                ndn = dnode->child ;
-                dnode->child = NULL ;
-                cdn = meFindDirLine(dn->child,fname+len,itemNo) ;
-                dnode->child = ndn ;
+#ifdef _DRV_CHAR
+                if(dnode == dirlist)
+                    fname[0] = '\0';
+                else
+#endif
+                    meStrcpy(fname,dnode->dname) ;
+                return dnode ;
             }
-            else
-                cdn = meFindDirLine(dnode->child,fname+len,itemNo) ;
-            if(cdn != NULL)
+            *itemNo = (*itemNo) - 1 ;
+            /* Move to the next node */
+            dn = dnode ;
+#if DIR_HAS_SLINK
+            while((dn->lname != NULL) && (dn->child != NULL))
+                dn = dn->child ;
+#endif
+            if((dn->child != NULL) && ((dnode->mask & DIR_HIDDEN) == 0))
             {
-                if(len > 0)
-                    meStrncpy(fname,dnode->dname,len) ;
-                return cdn ;
+                DIRNODE *cdn ;
+                int      len ;
+                
+#ifdef _DRV_CHAR
+                if(dnode == dirlist)
+                    len = 0;
+                else
+#endif
+                    len = meStrlen(dnode->dname) ;
+                if(dn != dnode)
+                {
+                    ndn = dnode->child ;
+                    dnode->child = NULL ;
+                    cdn = meFindDirLine(dn->child,fname+len,itemNo) ;
+                    dnode->child = ndn ;
+                }
+                else
+                    cdn = meFindDirLine(dnode->child,fname+len,itemNo) ;
+                if(cdn != NULL)
+                {
+                    if(len > 0)
+                        meStrncpy(fname,dnode->dname,len) ;
+                    return cdn ;
+                }
             }
         }
         dnode = dnode->next;     /* Advance to next next */
@@ -693,45 +728,54 @@ dirDrawDirectory(meBuffer *bp, DIRNODE *dnode, int iLen, meUByte *iStr, meUByte 
     
     while(dnode != NULL)
     {
-        dn = dnode ;
-        while((dn->lname != NULL) && (dn->child != NULL))
-            dn = dn->child ;
-        
-        if((len = iLen) != 0)
-            /* Add continuation bars if we are at a child level */
-            meStrncpy(buf,iStr,iLen);
-        
-        if (dnode->next == NULL)
-            buf[len++] = boxChars[BCNE] ;
-        else
-            buf[len++] = boxChars[BCNES] ;
-        
-        /* Add the open/close state of the current node */
-        if(dn->mask & DIR_UNKNOWN)
-            buf[len++] = '?';
-        else if(dn->child == NULL)
-            buf[len++] = boxChars[BCEW];
-        else
-            buf[len++] = (dnode->mask & DIR_HIDDEN)  ? '+' : '-';
-        buf [len++] = ' ';
-        
-        /* Add the filename */
-        flen = meStrlen(dnode->dname) ;
-        meStrncpy(buf+len,dnode->dname,flen) ;
-        len += flen ;
-        if(flen > 1)
-            len-- ;
-        if(dnode->lname != NULL)
-            len += sprintf((char *)buf+len, " -> %s", dnode->lname);
-        fn = NULL ;
-        if(fname != NULL)
+        if(!(dnode->mask & DIR_IGNORE) || !(dirlist->mask & DIR_FILTERED))
         {
+            dn = dnode;
+#if DIR_HAS_SLINK
+            while((dn->lname != NULL) && (dn->child != NULL))
+                dn = dn->child ;
+#endif
+            
+            if((len = iLen) != 0)
+                /* Add continuation bars if we are at a child level */
+                meStrncpy(buf,iStr,iLen);
+            
+            if (dnode->next == NULL)
+                buf[len++] = boxChars[BCNE] ;
+            else
+                buf[len++] = boxChars[BCNES] ;
+            
+            /* Add the open/close state of the current node */
+            if(dn->mask & DIR_UNKNOWN)
+                buf[len++] = '?';
+            else if(dn->child == NULL)
+                buf[len++] = boxChars[BCEW];
+            else
+                buf[len++] = (dnode->mask & DIR_HIDDEN)  ? '+' : '-';
+            buf [len++] = ' ';
+            
+            /* Add the filename */
+            flen = meStrlen(dnode->dname) ;
+            meStrncpy(buf+len,dnode->dname,flen) ;
+            len += flen ;
+            if(flen > 1)
+                len-- ;
+#if DIR_HAS_SLINK
+            if(dnode->lname != NULL)
+                len += sprintf((char *)buf+len," -> %s", dnode->lname);
+#endif
+            fn = NULL ;
             if(iLen == 0)
             {
-                if(fname[0] != '\0')
-                    fn = fname ;
+                if(dirlist->mask & DIR_FILTERED)
+                {
+                    memcpy(buf+len," (Filtered)",11);
+                    len += 11;
+                }
+                if((fname != NULL) && (fname[0] != '\0'))
+                    fn = fname;
             }
-            else if(!meStrncmp(fname,dnode->dname,flen))
+            else if((fname != NULL) && !meStrncmp(fname,dnode->dname,flen))
             {
                 if(fname[flen] == '\0')
                 {
@@ -739,27 +783,27 @@ dirDrawDirectory(meBuffer *bp, DIRNODE *dnode, int iLen, meUByte *iStr, meUByte 
                     curDirLine = meLineGetPrev(bp->dotLine) ;
                 }
                 else
-                    fn = fname+flen ;
+                    fn = fname+flen;
             }
-        }
-        buf [len] = '\0';
-        /*        printf("%s\n",buf) ;*/
-        addLineToEob(bp,buf);
-        
-        if ((dn->child != NULL) && ((dnode->mask & DIR_HIDDEN) == 0))
-        {
-            /* Add a bar for the level depending on whether there is
-             * a next present */
-            iStr[iLen] = (dnode->next != NULL) ? boxChars[BCNS] : ' ' ;
-            if(dn != dnode)
+            buf[len] = '\0';
+            /*        printf("%s\n",buf) ;*/
+            addLineToEob(bp,buf);
+            
+            if ((dn->child != NULL) && ((dnode->mask & DIR_HIDDEN) == 0))
             {
-                ndn = dnode->child ;
-                dnode->child = NULL ;
-                dirDrawDirectory(bp,dn->child,iLen+1,iStr,fn) ;
-                dnode->child = ndn ;
+                /* Add a bar for the level depending on whether there is
+                 * a next present */
+                iStr[iLen] = (dnode->next != NULL) ? boxChars[BCNS] : ' ' ;
+                if(dn != dnode)
+                {
+                    ndn = dnode->child ;
+                    dnode->child = NULL ;
+                    dirDrawDirectory(bp,dn->child,iLen+1,iStr,fn) ;
+                    dnode->child = ndn ;
+                }
+                else
+                    dirDrawDirectory(bp,dnode->child,iLen+1,iStr,fn) ;
             }
-            else
-                dirDrawDirectory(bp,dnode->child,iLen+1,iStr,fn) ;
         }
         dnode = dnode->next;     /* Advance to next next */
     }
@@ -782,11 +826,9 @@ dirDrawDir(meUByte *fname, int n)
         return ;
     bp = wp->buffer ;                   /* Point to the buffer */
     
-    if(n & LDO_SELECT)
-    {
-        if(fnamecmp(bp->fileName,fname))
-            meStrrep(&bp->fileName,fname) ;
-    }
+    if((n & LDO_SELECT) && fnamecmp(bp->fileName,fname))
+        meStrrep(&bp->fileName,fname);
+    
     curDirLine = NULL ;
     dirDrawDirectory(bp,dirlist,0,iStr,bp->fileName) ;
     bp->dotLine = meLineGetNext(bp->baseLine);
@@ -828,8 +870,10 @@ directoryTree(int f, int n)
             return meABORT ;
     }
     dn = dnode ;
+#if DIR_HAS_SLINK
     while((dn->lname != NULL) && (dn->child != NULL))
         dn = dn->child ;
+#endif
     
     /* If the users has asked for a toggle then work out
      * whether this is an open or close */
@@ -844,13 +888,23 @@ directoryTree(int f, int n)
      * effectively hidden
      */
     if((n & LDO_EVAL) && (n & LDO_OPEN) &&
-       ((dn->mask & DIR_UNKNOWN) || (n & LDO_FORCE)))
-        evalNode(dnode,buf,n) ;
+       ((dn->mask & DIR_UNKNOWN) || (n & (LDO_RECURSE|LDO_FORCE))))
+        evalNode(dnode,buf,n);
     
     if(n & (LDO_OPEN|LDO_CLOSE|LDO_RECURSE)) 
-        setHiddenFlag(dnode,n) ;
+        setHiddenFlag(dnode,n);
+    if(n & LDO_FILTER_OFF)
+    {
+        if(n & LDO_FILTER_ON)
+            /* toggle the current filter mode */
+            dirlist->mask ^= DIR_FILTERED;
+        else
+            dirlist->mask &= ~DIR_FILTERED;
+    }
+    else if(n & LDO_FILTER_ON)
+        dirlist->mask |= DIR_FILTERED;
     
-    dirDrawDir(buf,n) ;
+    dirDrawDir(buf,n);
     return meTRUE ;
 }
 

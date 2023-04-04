@@ -345,23 +345,23 @@ showRegion(int f, int n)
 }
 #endif
 
-void
+meUByte *
 windCurLineOffsetEval(meWindow *wp)
 {
     if((wp->dotCharOffset->next == wp->dotLine) && !(wp->dotLine->flag & meLINE_CHANGED))
-        return ;
+        return wp->dotCharOffset->text;
     if(wp->dotLine->length > meLineGetMaxLength(wp->dotCharOffset))
     {
-        meFree(wp->dotCharOffset) ;
-        wp->dotCharOffset = meLineMalloc(wp->dotLine->length,0) ;
+        meFree(wp->dotCharOffset);
+        wp->dotCharOffset = meLineMalloc(wp->dotLine->length,0);
     }
     /* store dotp as the last line done */
-    wp->dotCharOffset->next = wp->dotLine ;
+    wp->dotCharOffset->next = wp->dotLine;
 #if MEOPT_COLOR
 #if MEOPT_HILIGHT
     if((wp->buffer->hilight != 0) &&
        (meHilightGetFlags(hilights[wp->buffer->hilight]) & HFRPLCDIFF))
-        hilightCurLineOffsetEval(wp) ;
+        hilightCurLineOffsetEval(wp);
     else
 #endif
 #endif
@@ -369,31 +369,32 @@ windCurLineOffsetEval(meWindow *wp)
         register meUByte cc, *ss, *off ;
         register int pos, ii ;
 
-        ss = wp->dotLine->text ;
-        off = wp->dotCharOffset->text ;
-        pos = 0 ;
+        ss = wp->dotLine->text;
+        off = wp->dotCharOffset->text;
+        pos = 0;
 #ifndef NDEBUG
         if(wp->dotLine->text[wp->dotLine->length] != '\0')
         {
-            _meAssert(__FILE__,__LINE__) ;
-            wp->dotLine->text[wp->dotLine->length] = '\0' ;
+            _meAssert(__FILE__,__LINE__);
+            wp->dotLine->text[wp->dotLine->length] = '\0';
         }
 #endif
         while((cc=*ss++) != 0)
         {
             if(isDisplayable(cc))
-                ii = 1 ;
+                ii = 1;
             else if(cc == meCHAR_TAB)
                 ii = get_tab_pos(pos,wp->buffer->tabWidth) + 1;
             else if (cc < 0x20)
-                ii = 2 ;
+                ii = 2;
             else
-                ii = 4 ;
-            *off++ = (meUByte) ii ;
-            pos += ii ;
+                ii = 4;
+            *off++ = (meUByte) ii;
+            pos += ii;
         }
-        *off = 0 ;
+        *off = 0;
     }
+    return wp->dotCharOffset->text;
 }
 
 void
@@ -420,19 +421,18 @@ updCursor(register meWindow *wp)
     }
     else
     {
-        register meUByte *off ;
+        register meUByte *off;
         int leftMargin;                 /* Base left margin position (scrolled) */
 
-        windCurLineOffsetEval(wp) ;
-        jj = 0 ;
-        ii = wp->dotOffset ;
-        off = wp->dotCharOffset->text ;
+        off = windCurLineOffsetEval(wp);
+        jj = 0;
+        ii = wp->dotOffset;
         while(ii--)
-            jj += *off++ ;
+            jj += *off++;
 
         /* jj - is the character offset of the cursor on the screen */
         if((scrollFlag & 0x0f) == 3)
-            leftMargin = wp->horzScrollRest ;
+            leftMargin = wp->horzScrollRest;
         else
             leftMargin = wp->horzScroll;
 
