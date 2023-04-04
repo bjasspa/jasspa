@@ -26,7 +26,10 @@ define-macro open-line
   @# insert-newline
   @# backward-char
 !emacro
-
+define-macro set-title
+  !force set-variable $frame-title @1
+  !iif &not $status  set-variable $frame-title @ml20 "Frame title" &con &seq $frame-title "ERROR" "" $frame-title
+!emacro
 define-macro encase
   0 show-region
   set-variable #l0 &equ &band $result 5 5

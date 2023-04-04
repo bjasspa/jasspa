@@ -71,4 +71,10 @@ define-macro rbin-forward-word
   forward-char
 !emacro       
 
+; try to bind these globally if key is not already bound as these can be used in any buffer
+0 describe-key "A-C-y"
+!iif &seq $result ""  global-bind-key bin-yank "A-C-y"
+0 describe-key "esc A-y"
+!iif &seq $result ""  global-bind-key bin-copy-region "esc A-w"
+
 buffer-init-fhook "rbin"

@@ -45,7 +45,7 @@ define-macro change-scheme
   ; defined.
   ; Define the last color as a default color of white, the next macro
   ; to define a new color will trash this one !!
-  add-color-scheme &set .scheme.next 74 0 1 0 1 1 0 1 0
+  add-color-scheme &set .scheme.next 77 0 1 0 1 1 0 1 0
   set-variable .hilight.next 1
 !endif
 ; Hilight flags: 0x01=Reformating enabled, 0x2=hilighting enabled, 0x4=function name hilighting, 0x8=constants hilighting
@@ -174,10 +174,10 @@ set-variable .scheme.bold       59
 set-variable .scheme.italic     60
 set-variable .scheme.under      61
 set-variable .scheme.bold-italic 62
-set-variable .scheme.bold-under  63
+set-variable .scheme.bold-under 63
 set-variable .scheme.italic-under 64
 set-variable .scheme.bold-italic-under 65
-; .scheme.spell-error -- Auto spell check erroneous word hilight scheme - 
+; .scheme.spell-error -- Auto spell check erroneous word hilight scheme -
 ;    hilight in ME as important but ignore when printing.
 set-variable .scheme.spell-error 66
 ;
@@ -198,8 +198,13 @@ set-variable .scheme.gdfselpad  71
 set-variable .scheme.gdfrej     72
 ; .scheme.gdfrejpad -- For rejected padded lines
 set-variable .scheme.gdfrejpad  73
+; .scheme.chg -- more readabled scheme for neutral changes
+set-variable .scheme.chg        74
+; .scheme.add -- more readabled scheme for positive changes
+set-variable .scheme.add        75
+; .scheme.chg -- more readabled scheme for negative changes
+set-variable .scheme.rmv        76
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;>>> NOTICE: Add your last color above this line and then go back and      <<<;
 ;>>>         change the .scheme.next variable to your "lastColorNumber+1". <<<;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-

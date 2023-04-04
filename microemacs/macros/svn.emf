@@ -41,16 +41,16 @@
   !endif
   set-variable .hilight.svn-blm &pinc .hilight.next 1
   0 hilight .hilight.svn-status 2 100      $global-scheme
-  hilight .hilight.svn-status 0x102 "[ *]A" .scheme.no2
+  hilight .hilight.svn-status 0x102 "[ *]A" .scheme.add
   hilight .hilight.svn-status 0x102 "[ *]C" .scheme.hlred
-  hilight .hilight.svn-status 0x102 "[ *]D" .scheme.no1
+  hilight .hilight.svn-status 0x102 "[ *]D" .scheme.rmv
   hilight .hilight.svn-status 0x102 "[ *]I" .scheme.hide
-  hilight .hilight.svn-status 0x102 "[ *]M" .scheme.no2
-  hilight .hilight.svn-status 0x102 "[ *]R" .scheme.type
-  hilight .hilight.svn-status 0x102 "[ *]X" .scheme.prepro
+  hilight .hilight.svn-status 0x102 "[ *]M" .scheme.chg
+  hilight .hilight.svn-status 0x102 "[ *]R" .scheme.prepro
+  hilight .hilight.svn-status 0x102 "[ *]X" .scheme.hlred
   hilight .hilight.svn-status 0x102 "[ *]!" .scheme.no1
   hilight .hilight.svn-status 0x102 "[ *]~" .scheme.hlred
-  hilight .hilight.svn-status 0x102 "[ *] M" .scheme.no2
+  hilight .hilight.svn-status 0x102 "[ *] M" .scheme.chg
   hilight .hilight.svn-status 0x102 "[ *] C" .scheme.hlred
   hilight .hilight.svn-status 0x102 " Flags  " .scheme.header
   hilight .hilight.svn-status 0x102 "\\[\\*\\*\\*\\* SVN [^ ]+ completed successfully" .scheme.no1
@@ -67,20 +67,21 @@
   hilight .hilight.svn-con 0x102 "\\[\\*\\*\\*\\* SVN" .scheme.error
 
   ; fix the *files* buffer hilighting for svn additions
-  hilight .hilight.dirlst 0x112 " dA"       .scheme.no2
-  hilight .hilight.dirlst 0x112 " -A"       .scheme.no2
+  hilight .hilight.dirlst 0x112 " dA"       .scheme.add
+  hilight .hilight.dirlst 0x112 " -A"       .scheme.add
   hilight .hilight.dirlst 0x112 " dC"       .scheme.hlred
   hilight .hilight.dirlst 0x112 " -C"       .scheme.hlred
-  hilight .hilight.dirlst 0x112 " dD"       .scheme.no1
-  hilight .hilight.dirlst 0x112 " -D"       .scheme.no1
+  hilight .hilight.dirlst 0x112 " dD"       .scheme.rmv
+  hilight .hilight.dirlst 0x112 " -D"       .scheme.rmv
   hilight .hilight.dirlst 0x112 " dI"       .scheme.hide
   hilight .hilight.dirlst 0x112 " -I"       .scheme.hide
-  hilight .hilight.dirlst 0x112 " dM"       .scheme.no2
-  hilight .hilight.dirlst 0x112 " -M"       .scheme.no2
+  hilight .hilight.dirlst 0x112 " dM"       .scheme.chg
+  hilight .hilight.dirlst 0x112 " -M"       .scheme.chg
   hilight .hilight.dirlst 0x112 " dR"       .scheme.prepro
   hilight .hilight.dirlst 0x112 " -R"       .scheme.prepro
-  hilight .hilight.dirlst 0x112 " dU"       .scheme.prepro
-  hilight .hilight.dirlst 0x112 " -U"       .scheme.prepro
+  hilight .hilight.dirlst 0x112 " dX"       .scheme.hlred
+  hilight .hilight.dirlst 0x112 " d\\?"     .scheme.type
+  hilight .hilight.dirlst 0x112 " -\\?"     .scheme.type
   hilight .hilight.dirlst 0x112 " d!"       .scheme.no1
   hilight .hilight.dirlst 0x112 " -!"       .scheme.no1
   hilight .hilight.dirlst 0x112 " d~"       .scheme.hlred
@@ -140,11 +141,17 @@ set-variable #l9 .svn.ccount
 !until &not &dec #l9 1
 
 0 define-macro svn-dirlst-detect
-  !iif &not &seq &stat "t" &cat $buffer-fname ".svn/." "D"  !abort
+  !iif &seq .ld &lef &set #l0 $buffer-fname &len .ld  !return
+  !repeat
+    !iif &seq &stat "t" &cat #l0 ".svn/." "D"  !break
+    !iif &gre 5 &set #l1 &rsin "/" &lef #l0 -1  !abort
+    set-variable #l0 &lef #l0 #l1
+  !done
+  set-variable .ld #l0
 !emacro
 0 define-macro svn-full-reread
   set-variable #l0 .svn.browse-mode
-  set-variable .svn.browse-mode 1
+  set-variable .svn.browse-mode 0
   !force !force dirlst-refresh
   set-variable .svn.browse-mode #l0
 !emacro
@@ -153,7 +160,7 @@ set-variable #l9 .svn.ccount
     ml-write "[SVN: processing directory...]"
     set-position "\x83"
     set-variable #l1 $buffer-bname
-    0x46 pipe-shell-command &spr "%s status -v %s%s--depth=immediates ." .svn.com &con .svn.browse-mode "-u " "" &con &lget .fhook-dirlst.mode 2 "" "--no-ignore " "*svn-temp*"
+    0x46 pipe-shell-command &spr "%s status -v %s%s--depth=immediates ." .svn.com &con .svn.browse-mode "" "-u " &con &lget .fhook-dirlst.mode 2 "" "--no-ignore " "*svn-temp*"
     find-buffer "*svn-temp*"
     beginning-of-buffer
     !if &seq &lef @wl 4 "svn:"
@@ -170,7 +177,7 @@ set-variable #l9 .svn.ccount
     end-of-line
     -1 buffer-mode "view"
     1 buffer-mode "edit" @mna
-    insert-string &spr " (SVN:%s - %sFiltered)" &con .svn.browse-mode "Full" "Quick" &con &lget .fhook-dirlst.mode 2 "" "Not-"
+    insert-string &spr " (SVN:%s - %sFiltered)" &con .svn.browse-mode "Quick" "Full" &con &lget .fhook-dirlst.mode 2 "" "Not-"
     4 goto-line
     6 forward-char
     insert-string " Work Rev Comt Rev Comt Author "
@@ -199,7 +206,7 @@ set-variable #l9 .svn.ccount
       !force search-buffer "me" &spr "^.\\{41\\}%s$" #l3
       !if $status
         set-variable #l7 &lef @wl 1
-        set-variable #l7 &con &seq #l7 " " &con .svn.browse-mode "-" "Q" #l7
+        set-variable #l7 &con &seq #l7 " " &con .svn.browse-mode "Q" "-" #l7
         set-variable #l8 &mid @wl 9 30
         find-buffer #l1
         2 forward-char
@@ -236,6 +243,7 @@ set-variable #l9 .svn.ccount
     0 file-browser-filter
   !endif
   buffer-bind-create "bio" "C-delete" "" svn-delete
+  buffer-bind-create "bio" "C-f5"   "" svn-full-reread
   buffer-bind-create "bio" "S-f5" "" svn-status
   buffer-bind-create "b"   "esc f5" "" svn-diff
   buffer-bind-create "bio" "k" "" svn-context-menu
@@ -1457,7 +1465,7 @@ define-macro svn-xdiff
   set-variable #l0 0
   set-variable #l4 &mul @# 0x1000
   !while &not &seq "" &set #l1 &mid #l9 &pinc #l0 1 1
-    !if &not &sin #l1 "NnSsUv*!$"
+    !if &not &sin #l1 "aDiNnSsUv^*!$"
       set-variable #l2 &mul #l0 100
       osd #l8 &inc #l2 1 ""
       !if &seq #l1 "A"
@@ -1482,12 +1490,18 @@ define-macro svn-xdiff
       !elif &seq #l1 "P"
         osd #l8 &inc #l2 1 "fh" "    "
         osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Create \Hintermediate directories" &bor #l4 #l0 svn-setup-cbc
+      !elif &seq #l1 "p"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Diff against \Hprevious version" &bor #l4 #l0 svn-setup-cbc
       !elif &seq #l1 "R"
         osd #l8 &inc #l2 1 "fh" "    "
         osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecurse into sub-directories" &bor #l4 #l0 svn-setup-cbc
       !elif &seq #l1 "r"
         osd #l8 &inc #l2 1 "fh" "    "
         osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Refresh directory \Hlisting" &bor #l4 #l0 svn-setup-cbc
+      !elif &seq #l1 "t"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use new \Htab option for multiple files" &bor #l4 #l0 svn-setup-cbc
       !elif &seq #l1 "u"
         osd #l8 &inc #l2 1 "fh" "    "
         osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Get o\Hut-of-date info from server" &bor #l4 #l0 svn-setup-cbc
@@ -1500,9 +1514,6 @@ define-macro svn-xdiff
       !elif &seq #l1 "w"
         osd #l8 &inc #l2 1 "fh" "    "
         osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use \Hsingle window" &bor #l4 #l0 svn-setup-cbc
-      !elif &seq #l1 "p"
-        osd #l8 &inc #l2 1 "fh" "    "
-        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Diff against \Hprevious version" &bor #l4 #l0 svn-setup-cbc
       !elif &seq #l1 "x"
         osd #l8 &inc #l2 1 "fh" "    "
         osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use \HME diff tool" &bor #l4 #l0 svn-setup-cbc
@@ -1516,7 +1527,7 @@ define-macro svn-xdiff
   !done
 !emacro
 set-variable .svn-setup-page.cur 1
-set-variable .svn-setup-page.order "|1|2|3|4|5|6|7|9|10|12|13|14|15|11|8|"
+set-variable .svn-setup-page.order "|1|2|3|4|5|6|7|10|11|13|14|16|17|12|8|9|15|"
 
 -1 osd .osd.svn-tlc
 osd .osd.svn-tlc 0 "sS" .scheme.osd-child 12 12 -1 -1
@@ -1583,19 +1594,19 @@ define-macro svn-setup
 
 define-macro svn
   !if .toolbar.open
-    !force toolbar-make-tool-visible "*cvs-console*"
+    !force toolbar-make-tool-visible "*svn-console*"
     !if $status
       &bor @# 2 file-browser
       !return
     !endif
   !endif
   1 set-position "\x81"
-  !force 0 popup-window "*cvs-console*"
+  !force 0 popup-window "*svn-console*"
   !if &not $status
     delete-other-windows
     2 split-window-vertically
     change-window-depth 15
-    find-buffer "*cvs-console*"
+    find-buffer "*svn-console*"
     buffer-bind-create "bio" "f10" "" file-browser-close
     3 previous-window
   !else
@@ -1630,29 +1641,29 @@ define-macro svn
   osd @# 10 "" "\HUpdate files"      f svn-update
   osd @# 30 "" "\HDiff files"        f svn-diff
   osd @# 20 "" "\HCommit files"      f svn-commit
-  osd @# 40 "" "Item \HLog"          f svn-log
-  osd @# 50 "" "Item \HBlame"        f svn-blame
+  osd @# 100 "-"
+  osd @# 160 "" "Clear S\HVN console" f svn-clear-console
+  osd @# 170 "" "SVN Setup"           f svn-setup
   !if :tag-count
     osd @# 55 "" "\HCopy items"      f svn-copy
     osd @# 60 "" "\HMove items"      f svn-move
     osd @# 70 "" "\HAdd items"       f svn-add
     osd @# 80 "" "Delete items"      f svn-delete
+    osd @# 120 "" "\HResolve conflicts" f svn-resolve
   !else
     osd @# 55 "" "Copy items"
     osd @# 60 "" "Move items"
     osd @# 70 "" "Add items"
     osd @# 80 "" "Delete items"
-  !endif
-  osd @# 100 "-"
-  !if &equ :tag-count 1
-    osd @# 110 "" "\HGraphical diff"
-    osd @# 120 "" "\HResolve conflicts"
-  !else
-    osd @# 110 "" "Graphical diff"
     osd @# 120 "" "Resolve conflicts"
   !endif
-  osd @# 160 "" "Clear S\HVN console" f svn-clear-console
-  osd @# 170 "" "SVN Setup"           f svn-setup
+  !if &equ :tag-count 1
+    osd @# 40 "" "Item \HLog"          f svn-log
+    osd @# 50 "" "Item \HBlame"        f svn-blame
+  !else
+    osd @# 40 "" "Item Log"
+    osd @# 50 "" "Item Blame"
+  !endif
 !emacro
 
 ;; SVN status help dialog ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

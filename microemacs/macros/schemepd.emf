@@ -102,4 +102,3 @@ add-color-scheme .scheme.mi3 .col0 .col1 .col2 .col3 .col0 .col4 .col2 .col4 0 8
 add-color-scheme .scheme.met-back .col0 .col1 .col2 .col3 .col0 .col4 .col2 .col4 0 8 1 9 0 8 1 9
 add-color-scheme .scheme.met-fore1 .col0 .col1 .col2 .col3 .col0 .col4 .col2 .col4 0 8 1 9 0 8 1 9
 add-color-scheme .scheme.met-fore2 .col0 .col1 .col2 .col3 .col0 .col4 .col2 .col4 0 8 1 9 0 8 1 9
-

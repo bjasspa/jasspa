@@ -82,9 +82,9 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	schemebh.emf	schemed.emf	schemegb.emf	schemege.emf	\
 	schemegg.emf	schemego.emf	schemej.emf	schemelm.emf	\
 	schemel.emf	schemel2.emf	schemelj.emf	schememd.emf	\
-	schememw.emf	schemepd.emf	schemepl.emf	schemes.emf	\
-	schemesf.emf	schemetb.emf	schemetw.emf	schemevi.emf	\
-	schemosd.emf	\
+	schememw.emf	schememx.emf	schemepd.emf	schemepl.emf	\
+	schemes.emf	schemesf.emf	schemetb.emf	schemetw.emf	\
+	schemevi.emf	schemosd.emf	\
 	search.emf	session.emf	sessnstp.emf	spell.emf	\
 	spellaut.emf	spellutl.emf	ssaver.emf	sunos.emf	\
 	svn.emf		\

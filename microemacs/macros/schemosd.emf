@@ -30,8 +30,8 @@ set-variable .schm-osd.fname "ERROR"
 
 ; Set up the standard schemes for the text, mode line message line, scroll bar and osd.
 set-variable .schm-osd.sectn  "|Standard|OSD|Programming Langs|Formatted Text|Directory Listings|Line Schemes|Graphical Diff|Games|"
-set-variable .schm-osd.sectn1 "|Text|Message Line|Mode Line|Scroll Bar|Truncation|Matching Fence|General 1|General 2|"
-set-variable .schm-osd.sectv1 "|$global-scheme|$ml-scheme|$mode-line-scheme|$scroll-bar-scheme|$trunc-scheme|.scheme.dmf|.scheme.no1|.scheme.no2|"
+set-variable .schm-osd.sectn1 "|Text|Message Line|Mode Line|Scroll Bar|Truncation|Matching Fence|General 1|General 2|Neutral change|Positive change|Negative change|"
+set-variable .schm-osd.sectv1 "|$global-scheme|$ml-scheme|$mode-line-scheme|$scroll-bar-scheme|$trunc-scheme|.scheme.dmf|.scheme.no1|.scheme.no2|.scheme.chg|.scheme.add|.scheme.rmv|"
 set-variable .schm-osd.sectn2 "|Main|Entry|Enabled Button|Disabled Button|Title|Child|Scroll Bar|"
 set-variable .schm-osd.sectv2 "|$osd-scheme|.scheme.osd-entry|.scheme.osd-ebtt|.scheme.osd-dbtt|.scheme.osd-title|.scheme.osd-child|.scheme.osd-sbar|"
 set-variable .schm-osd.sectn3 "|Pre-Processor Lines|Function Names|Keywords|Types|Operators|Variables|Constants|Comments|Strings|Quotes|Errors|"
@@ -590,7 +590,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
         !until &not &les &pinc #l3 1 8
         !repeat
           insert-string &spr " %d" &lget &ind &cat ".schm-osd.schm-" #l2 #l3
-        !until &not &les &pinc #l3 1 8
+        !until &not &les &pinc #l3 1 16
         insert-string "\n"
       !endif
     !done

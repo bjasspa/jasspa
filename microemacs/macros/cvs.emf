@@ -71,12 +71,12 @@ set-variable #l0 0
 !endif
 !if &band .hilight.flags 0x02
   0 hilight .hilight.cvs-state 2 100      $global-scheme
-  hilight .hilight.cvs-state 0x102 "[ *]A" .scheme.no2
+  hilight .hilight.cvs-state 0x102 "[ *]A" .scheme.add
   hilight .hilight.cvs-state 0x102 "[ *]C" .scheme.hlred
   hilight .hilight.cvs-state 0x102 "[ *]L" .scheme.no1
-  hilight .hilight.cvs-state 0x102 "[ *]M" .scheme.no2
+  hilight .hilight.cvs-state 0x102 "[ *]M" .scheme.chg
   hilight .hilight.cvs-state 0x102 "[ *]P" .scheme.prepro
-  hilight .hilight.cvs-state 0x102 "[ *]R" .scheme.no1
+  hilight .hilight.cvs-state 0x102 "[ *]R" .scheme.rmv
   hilight .hilight.cvs-state 0x102 "[ *]U" .scheme.prepro
   hilight .hilight.cvs-state 0x102 " Attr Name" .scheme.header
   hilight .hilight.cvs-state 0x102 "\\[\\*\\*\\*\\* CVS exited with code 0" .scheme.no1
@@ -92,12 +92,12 @@ set-variable #l0 0
   
   ; fix the *files* buffer hilighting for cvs additions
   hilight .hilight.dirlst 0x012 "[0-9][0-9]:[0-9][0-9] [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9] \\{" .scheme.file
-  hilight .hilight.dirlst 0x112 " dA"       .scheme.no2
-  hilight .hilight.dirlst 0x112 " -A"       .scheme.no2
+  hilight .hilight.dirlst 0x112 " dA"       .scheme.add
+  hilight .hilight.dirlst 0x112 " -A"       .scheme.add
   hilight .hilight.dirlst 0x112 " dL"       .scheme.no1
-  hilight .hilight.dirlst 0x112 " -R"       .scheme.no1
+  hilight .hilight.dirlst 0x112 " -R"       .scheme.rmv
   hilight .hilight.dirlst 0x112 " -L"       .scheme.no1
-  hilight .hilight.dirlst 0x112 " -M"       .scheme.no2
+  hilight .hilight.dirlst 0x112 " -M"       .scheme.chg
   hilight .hilight.dirlst 0x112 " -C"       .scheme.hlred
   hilight .hilight.dirlst 0x112 " -U"       .scheme.prepro
 !endif

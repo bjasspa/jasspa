@@ -401,7 +401,7 @@
     !return
   !elif &equ #g0 1
     set-variable #g2 &ind #g1
-    !while TRUE
+    !while &not &seq #g2 ""
       set-variable :tri-char &lef #g2 1
       tri-decode-char :tri-char
       !if &equ :tri-num 12            ; King ??
@@ -549,9 +549,7 @@
     ;
     !if &mod #g0 :tri-card-width
       set-variable :tri-mouse-chr &add 1 &div #g0 :tri-card-width
-      !if &les :tri-mouse-chr 8
-        !return
-      !endif
+      !iif &les :tri-mouse-chr 8  !return
     !endif
   !endif
   set-variable :tri-mouse-chr "#"
@@ -584,6 +582,49 @@
   set-variable :tri-outchr :tri-mouse-chr
   tri-move
 !emacro
+
+0 define-macro tri-mouse-pick-right
+  tri-mouse-where
+  set-variable :tri-inchr :tri-mouse-chr
+!emacro
+
+0 define-macro tri-mouse-drop-right
+  tri-mouse-where
+  !iif &not &equ :tri-inchr :tri-mouse-chr !return
+  !iif &or &les :tri-mouse-chr 1 &gre :tri-mouse-chr 7  !return
+  !if &not &seq "" &set #l0 &lef &ind &spr ":tri-col%dup" :tri-mouse-chr 1
+    tri-decode-char #l0
+    !if &not :tri-num
+      ml-write &spr "Move A %s to home" &trr :tri-type
+    !else
+      set-variable #l2 &itoa &sub &atoi #l0 1
+      !if &seq #l2 &lef &ind &cat ":tri-hom" :tri-suit 1
+        ml-write &spr "Move %s %s to home" :tri-dig &trr :tri-type
+      !else
+        set-variable #l6 &mid "A23456789TJQK" &sub :tri-num 1 1 1
+        set-variable #l3 7
+        !repeat
+          !iif &sin #l2 &set #l4 &ind &spr ":tri-col%ddn" #l3  !break
+          !iif &sin #l2 &set #l5 &ind &spr ":tri-col%dup" #l3  !break
+        !until &not &dec #l3 1
+        !if &not #l3
+          ml-write &spr "ERROR: failed to find %s %s - %s" #l6 :tri-type #l2
+        !elif &sin #l2 #l4
+          ml-write &spr "%s %s not available" #l6 &trr :tri-type
+        !elif &equ :tri-mouse-chr #l3
+          ml-write &spr "%s %s is in the same column" #l6 &trr :tri-type #l3
+        !else
+          ml-write &spr "%s %s can be moved from column %d" #l6 &trr :tri-type #l3
+        !endif
+      !endif
+    !endif
+  !elif &not &seq "" &ind &spr ":tri-col%ddn" :tri-mouse-chr
+    ml-write &spr "Turn card"
+  !else
+    ml-write &spr "Find king"
+  !endif
+!emacro
+
 ;
 ; tri-help - Help information
 0 define-macro tri-help
@@ -718,8 +759,8 @@ define-macro Triangle
     buffer-bind-key tri-mouse-drop-left "mouse-drop-1"
     buffer-bind-key void "mouse-pick-2"
     buffer-bind-key void "mouse-drop-2"
-    buffer-bind-key void "mouse-pick-3"
-    buffer-bind-key void "mouse-drop-3"
+    buffer-bind-key tri-mouse-pick-right "mouse-pick-3"
+    buffer-bind-key tri-mouse-drop-right "mouse-drop-3"
     
     buffer-bind-create "bo" "esc h" "" tri-help
     buffer-bind-create "bo" "C-c C-c" "" tri-deal

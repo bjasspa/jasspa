@@ -34,7 +34,7 @@ define-macro fhook-binary
 set-variable .fhook-binary.setup &reg "/history/fhook/binary" "ghop"
 set-variable .fhook-binary.setup-mask "aeghkmopu"
 set-variable .fhook-binary.command-flag  "|thbio|th|thbo|thbo|thbo|thbo|th|th|th|th|thbio|thbio|"
-set-variable .fhook-binary.command-name  "|binary-swap-section||bin-move-backward|bin-move-forward|bin-search-forward|bin-hex-search-forward||bin-insert-string|bin-insert-hex-string||bin-copy-region|bin-yank|"
+set-variable .fhook-binary.command-name  "|bin-swap-section||bin-move-backward|bin-move-forward|bin-search-forward|bin-hex-search-forward||bin-insert-string|bin-insert-hex-string||bin-copy-region|bin-yank|"
 set-variable .fhook-binary.command-nbind "|||||||||||||"
 set-variable .fhook-binary.command-kbind "|tab||S-up|S-down|C-x s|esc s|||||A-C-w|A-C-y|"
 set-variable .fhook-binary.command-desc  "|S\Hwap section||Move \Hbackward|Move \Hforward|\HSearch forward (txt)|Search forward (he\Hx)||\HInsert string|Insert \Hhex string||Binary \Hcopy region|Binary \Hyank|"
@@ -48,7 +48,7 @@ set-variable .fhook-binary.command-desc  "|S\Hwap section||Move \Hbackward|Move 
   hilight .hilight.binary 0x400 58 78 .scheme.no1
 !endif
 
-define-macro binary-swap-section
+define-macro bin-swap-section
   !if &gre $window-col 9
     !if &les $window-col 62
       set-variable $window-col &add 62 &div &sub $window-col 10 3
@@ -57,5 +57,11 @@ define-macro binary-swap-section
     !endif
   !endif
 !emacro
+
+; try to bind these globally if key is not already bound as these can be used in any buffer
+0 describe-key "A-C-y"
+!iif &seq $result ""  global-bind-key bin-yank "A-C-y"
+0 describe-key "esc A-y"
+!iif &seq $result ""  global-bind-key bin-copy-region "esc A-w"
 
 buffer-init-fhook "binary"

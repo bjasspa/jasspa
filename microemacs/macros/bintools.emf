@@ -63,7 +63,7 @@ define-macro bin-hex-to-txt
   set-variable $result #l4
 !emacro
 
-0 define-macro binary-get-line-info 
+0 define-macro bin-get-line-info 
   !if &seq &trb @wl ""
     !if &not @?
       set-variable #p9 "||||"
@@ -104,7 +104,7 @@ define-macro bin-hex-to-txt
   !endif
 !emacro
 
-0 define-macro binary-set-line
+0 define-macro bin-set-line
   set-variable #l1 @1
   set-variable #l2 @2
   ibin-hex-to-dis-txt #l2
@@ -115,7 +115,7 @@ define-macro bin-hex-to-txt
 
 define-macro bin-move-backward
   !if &bmo "binary"
-    !force &set #l1 $window-col binary-get-line-info
+    !force &set #l1 $window-col bin-get-line-info
     !if &not $status
       ml-write "[ERROR: Bad cursor position or badly formatted line]"
       !abort
@@ -153,7 +153,7 @@ define-macro bin-move-backward
 
 define-macro bin-move-forward
   !if &bmo "binary"
-    !force &set #l1 $window-col binary-get-line-info
+    !force &set #l1 $window-col bin-get-line-info
     !if &not $status
       ml-write "[ERROR: Bad cursor position or badly formatted line]"
       !abort
@@ -191,7 +191,7 @@ define-macro bin-move-forward
 
 define-macro bin-yank-to-hex
   set-position "\x82"
-  set-variable #l1 &cat &con &bmo "cr" "0D" "" &con &bmo "lf" "0A" ""
+  set-variable #l1 &cat &con &gmo "cr" "0D" "" &con &gmo "lf" "0A" ""
   !force 0 delete-buffer "*bin-tmp*"
   find-buffer "*bin-tmp*"
   yank
@@ -254,7 +254,7 @@ define-macro bin-hex-yank-rbin-insert
   goto-alpha-mark "\x81"
 !emacro
 define-macro bin-hex-yank-bin-insert
-  !force $window-col binary-get-line-info
+  !force $window-col bin-get-line-info
   !if &not $status
     ml-write "[ERROR: Bad cursor position or badly formatted line]"
     !abort
@@ -291,12 +291,12 @@ define-macro bin-hex-yank-bin-insert
         insert-newline
         backward-char
       !endif
-      binary-set-line #l0 @wl
+      bin-set-line #l0 @wl
       set-variable #l0 "????????"
       forward-line
     !elif &les &sub $window-eline $window-line 2
       !if $window-col
-        binary-set-line #l0 @wl
+        bin-set-line #l0 @wl
       !endif
       forward-line
     !else
@@ -330,78 +330,21 @@ define-macro bin-hex-yank-bin-insert
         &sub 62 #l2 backward-char
       !endif
       !if &les #l1 60
-        binary-swap-section
+        bin-swap-section
       !endif
     !endif
   !endif
   -1 yank
   !return #l0
 !emacro
-
-define-macro bin-yank
-  !if &les @# 1
-    @# yank
-    !return
-  !elif &seq @y ""
-    @# yank
-    !return
-  !elif &bmo "rbin"
-    !if &band &set #l9 $window-col 1
-      ml-write "[ERROR: Bad cursor position, currently in the middle of a character]"
-      !abort
-    !endif
-  !elif &bmo "binary"
-    !force $window-col binary-get-line-info
-    !if &not $status
-      ml-write "[ERROR: Bad cursor position or badly formatted line]"
-      !abort
-    !endif
-  !else
-    ml-write "[ERROR: bin-yank only supported in binary or rbin buffers]"
-    !abort
-  !endif
-  !if &xseq @y "\\h\\h\\(\\h\\h\\|\n\\)*"
-    set-variable #l1 2
-  !elif &xseq &trb @y "\\h\\h\\( \\h\\h\\)+"
-    set-variable #l1 1
-  !elif &xseq @y "\\([?\\h]\\{8\\}:\\)? ?\\h\\h\\( \\h\\h\\)* +|  .\\{1,16\\}\n\\([?\\h]\\{8\\}:\\( \\h\\h\\)+ +|  .\\{1,16\\}\n\\)*\\([?\\h]\\{8\\}:\\( \\h\\h\\)+ ?\\)?"
-    set-variable #l1 1
-  !elif &xseq @y "\\([?\\h]\\{8\\}:\\)? ?\\h\\h\\( \\h\\h\\)* +|  .\\{1,16\\}\n\\([?\\h]\\{8\\}:\\( \\h\\h\\)+ +|  .\\{1,16\\}\n\\)\\{11\\}[\x01-\xff]*"
-    set-variable #l1 1
-  !else
-    set-variable #l1 0
-  !endif
-  !if &les #l1 2
-    #l1 bin-yank-to-hex
-  !endif
-  !if &bmo "rbin"
-    !repeat
-      bin-hex-yank-rbin-insert
-    !until &not &dec @# 1
-  !else
-    !repeat
-      bin-hex-yank-bin-insert
-    !until &not &dec @# 1
-  !endif
-  !if &les #l1 2
-    -1 yank
-  !endif
-!emacro
-
-define-macro bin-copy-region
-  !if &set #l3 &bmo "binary"
-  !elif &not &bmo "rbin"
-    ml-write "[ERROR: bin-copy-region only supported in binary or rbin buffers]"
-    !abort
-  !endif
-  @# copy-region
+0 define-macro ibin-copy-region
   set-position "\x82"
   !force 0 delete-buffer "*bin-tmp*"
   find-buffer "*bin-tmp*"
   yank
   insert-newline
   beginning-of-buffer
-  !if #l3
+  !if &equ @1 1
     replace-string "^[\\h?]\\{8\\}: *" ""
     beginning-of-buffer
     replace-string "|.*$" ""
@@ -442,8 +385,76 @@ define-macro bin-copy-region
   copy-region
   !force 0 delete-buffer "*bin-tmp*"
   goto-position "\x82"
-  !if &set #l4 &sub #l4 #l5
-    ml-write &spr "[WARNING: Binary data contained %d characters that cannot be represented in a normal text buffer]" #l4
+  set-variable $result &sub #l4 #l5
+!emacro
+
+define-macro bin-yank
+  !if &les @# 1
+    @# yank
+    !return
+  !elif &seq @y ""
+    @# yank
+    !return
+  !endif
+  !if &xseq @y "\\h\\h\\(\\h\\h\\|\n\\)*"
+    set-variable #l1 2
+  !elif &xseq &trb @y "\\h\\h\\( \\h\\h\\)+"
+    set-variable #l1 1
+  !elif &xseq @y "\\([?\\h]\\{8\\}:\\)? ?\\h\\h\\( \\h\\h\\)* +|  .\\{1,16\\}\n\\([?\\h]\\{8\\}:\\( \\h\\h\\)+ +|  .\\{1,16\\}\n\\)*\\([?\\h]\\{8\\}:\\( \\h\\h\\)+ ?\\)?"
+    set-variable #l1 1
+  !elif &xseq @y "\\([?\\h]\\{8\\}:\\)? ?\\h\\h\\( \\h\\h\\)* +|  .\\{1,16\\}\n\\([?\\h]\\{8\\}:\\( \\h\\h\\)+ +|  .\\{1,16\\}\n\\)\\{11\\}[\x01-\xff]*"
+    set-variable #l1 1
+  !else
+    set-variable #l1 0
+  !endif
+  !if &bmo "rbin"
+    !if &band &set #l9 $window-col 1
+      ml-write "[ERROR: Bad cursor position, currently in the middle of a byte]"
+      !abort
+    !endif
+  !elif &bmo "binary"
+    !force $window-col bin-get-line-info
+    !if &not $status
+      ml-write "[ERROR: Bad cursor position or badly formatted line]"
+      !abort
+    !endif
+  !else
+    !if #l1
+      ibin-copy-region #l1
+      set-variable #l2 $result
+    !endif
+    @# yank
+    !if #l1
+      -1 yank
+      !iif #l2  ml-write &spr "[WARNING: Binary data contained %d characters that cannot be represented in a normal text buffer]" #l2
+    !endif
+    !return
+  !endif
+  !iif &les #l1 2  #l1 bin-yank-to-hex
+  !if &bmo "rbin"
+    !repeat
+      bin-hex-yank-rbin-insert
+    !until &not &dec @# 1
+  !else
+    !repeat
+      bin-hex-yank-bin-insert
+    !until &not &dec @# 1
+  !endif
+  !iif &les #l1 2  -1 yank
+!emacro
+
+define-macro bin-copy-region
+  set-variable #l1 0
+  !if &les @# 0
+  !elif &bmo "binary"
+    set-variable #l1 1
+  !elif &bmo "rbin"
+    set-variable #l1 2
+  !endif
+  @# copy-region
+  !if #l1
+    ibin-copy-region #l1
+    !iif $result  ml-write &spr "[WARNING: Binary data contained %d characters that cannot be represented in a normal text buffer]" $result
   !endif
 !emacro
 
@@ -464,7 +475,7 @@ define-macro bin-insert-hex-string
     ml-write "[ERROR: Invalid hex string given, half byte given]"
     !abort
   !elif &bmo "binary"
-    !force $window-col binary-get-line-info
+    !force $window-col bin-get-line-info
     !if &not $status
       ml-write "[ERROR: Bad cursor position or badly formatted line]"
       !abort
@@ -476,7 +487,7 @@ define-macro bin-insert-hex-string
     set-variable #l3 &len #l5
     set-variable #l6 $window-line
     !while &gre #l3 0
-      binary-set-line #l0 &lef #l5 32
+      bin-set-line #l0 &lef #l5 32
       set-variable #l0 "????????"
       !if &gre &dec #l3 32 0
         end-of-line
@@ -485,7 +496,7 @@ define-macro bin-insert-hex-string
       !endif
     !done
     set-variable $window-line #l6
-    binary-move-forward &add &lget #l9 3 &div #l2 2
+    bin-move-forward &add &lget #l9 3 &div #l2 2
   !else
     !if &band $window-col 1
       ml-write "[ERROR: Bad cursor position, currently in the middle of a character]"

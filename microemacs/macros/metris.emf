@@ -111,22 +111,22 @@ set-variable %met-level   6
 !emacro
 
 0 define-macro met-drwdown
-  !iif &seq &lef :met-p1 1 "X"    :met-cpf screen-poke &sub :met-curd 1      :met-curw   :met-cps " "
+  !iif &seq &lef :met-p1 1 "X"  :met-cpf screen-poke &sub :met-curd 1 :met-curw :met-cps " "
   !iif &seq &mid :met-p1 1 1 "X"  :met-cpf screen-poke &sub :met-curd 1 &add :met-curw 1 :met-cps " "
-  !iif &seq &rig :met-p1 2 "X"    :met-cpf screen-poke &sub :met-curd 1 &add :met-curw 2 :met-cps " "
+  !iif &seq &rig :met-p1 2 "X"  :met-cpf screen-poke &sub :met-curd 1 &add :met-curw 2 :met-cps " "
   !if &not &seq :met-p1 :met-p2
-    !iif &not &seq &lef :met-p2 1   &lef :met-p1 1 1  :met-cpf screen-poke :met-curd      :met-curw :met-cps &lef :met-p1 1 
+    !iif &not &seq &lef :met-p2 1 &lef :met-p1 1  :met-cpf screen-poke :met-curd :met-curw :met-cps &lef :met-p1 1 
     !iif &not &seq &mid :met-p2 1 1 &mid :met-p1 1 1  :met-cpf screen-poke :met-curd &add :met-curw 1 :met-cps &mid :met-p1 1 1
-    !iif &not &seq &rig :met-p2 2   &rig :met-p1 2    :met-cpf screen-poke :met-curd &add :met-curw 2 :met-cps &rig :met-p1 2
+    !iif &not &seq &rig :met-p2 2 &rig :met-p1 2  :met-cpf screen-poke :met-curd &add :met-curw 2 :met-cps &rig :met-p1 2
   !endif
   !if &not &seq :met-p2 :met-p3
-    !iif &not &seq &lef :met-p3 1   &lef :met-p2 1    :met-cpf screen-poke &add :met-curd 1      :met-curw :met-cps &lef :met-p2 1 
+    !iif &not &seq &lef :met-p3 1 &lef :met-p2 1  :met-cpf screen-poke &add :met-curd 1 :met-curw :met-cps &lef :met-p2 1 
     !iif &not &seq &mid :met-p3 1 1 &mid :met-p2 1 1  :met-cpf screen-poke &add :met-curd 1 &add :met-curw 1 :met-cps &mid :met-p2 1 1
-    !iif &not &seq &rig :met-p3 2   &rig :met-p2 2    :met-cpf screen-poke &add :met-curd 1 &add :met-curw 2 :met-cps &rig :met-p2 2
+    !iif &not &seq &rig :met-p3 2 &rig :met-p2 2  :met-cpf screen-poke &add :met-curd 1 &add :met-curw 2 :met-cps &rig :met-p2 2
   !endif
-  !iif &seq &lef :met-p3 1 "X"    :met-cpf screen-poke &add :met-curd 2      :met-curw   :met-cps "X"
+  !iif &seq &lef :met-p3 1 "X"  :met-cpf screen-poke &add :met-curd 2 :met-curw :met-cps "X"
   !iif &seq &mid :met-p3 1 1 "X"  :met-cpf screen-poke &add :met-curd 2 &add :met-curw 1 :met-cps "X"
-  !iif &seq &rig :met-p3 2 "X"    :met-cpf screen-poke &add :met-curd 2 &add :met-curw 2 :met-cps "X"
+  !iif &seq &rig :met-p3 2 "X"  :met-cpf screen-poke &add :met-curd 2 &add :met-curw 2 :met-cps "X"
 !emacro
 
 

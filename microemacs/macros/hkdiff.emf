@@ -48,19 +48,22 @@ set-variable .fhook-diff.item-list-r4 "Add/Del \ecB\\1\ecA"
 !if &and &sin "h" .fhook-diff.setup &band .hilight.flags 0x02
   0 hilight .hilight.diff 0                 $global-scheme
   ; Gnu diff utility, uses --context
-  hilight .hilight.diff 0x102 "!"           .scheme.no1
-  hilight .hilight.diff 0x102 "+"           .scheme.no1
-  hilight .hilight.diff 0x102 "-"           .scheme.no1
+  hilight .hilight.diff 0x102 "!"           .scheme.chg
+  hilight .hilight.diff 0x102 "-"           .scheme.rmv
+  hilight .hilight.diff 0x102 "+"           .scheme.add
   ; Regular diff utility. May be a bit too colored !!
-  hilight .hilight.diff 0x102 "<"           .scheme.no2
-  hilight .hilight.diff 0x102 ">"           .scheme.prepro
+  hilight .hilight.diff 0x102 "<"           .scheme.rmv
+  hilight .hilight.diff 0x102 ">"           .scheme.add
   ; Patch files GNU diff -Naur old new > file.patch
   hilight .hilight.diff 0x102 "diff"        .scheme.function
-  hilight .hilight.diff 0x102 "@@"          .scheme.keyword
+  hilight .hilight.diff 0x102 "@@"          .scheme.variable
   ; Common
-  hilight .hilight.diff 0x102 "*\\*\\*\\*"  .scheme.keyword
-  hilight .hilight.diff 0x102 "*\\*\\*"     .scheme.no2
-  hilight .hilight.diff 0x102 "--- "        .scheme.prepro
+  hilight .hilight.diff 0x102 "=\\=\\=\\="  .scheme.hide
+  hilight .hilight.diff 0x102 "*\\*\\*\\*"  .scheme.hide
+  hilight .hilight.diff 0x102 "*\\*\\* "    .scheme.no2
+  hilight .hilight.diff 0x102 "+\\+\\+ "    .scheme.no2
+  hilight .hilight.diff 0x102 "---$"        .scheme.hide
+  hilight .hilight.diff 0x102 "--- "        .scheme.no1
   hilight .hilight.diff 0x102 "Only"        .scheme.comment
   hilight .hilight.diff 0x102 "Files"       .scheme.comment
 !endif

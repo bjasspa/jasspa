@@ -20,11 +20,11 @@ define-macro fhook-dirtre
 set-variable .fhook-dirtre.name "Directory Tree"
 set-variable .fhook-dirtre.setup &reg "/history/fhook/dirtre" "ghmop"
 set-variable .fhook-dirtre.setup-mask "aeghop"
-set-variable .fhook-dirtre.command-flag  "|thbio|thbio|th|thbio|thbio|bio|bio|thbio|bio|bio|thbio|thbio|bio|"
-set-variable .fhook-dirtre.command-name  "|file-browser-swap-buffers|file-browser-close||dirtre-select-directory|directory-tree|directory-tree|directory-tree|directory-tree|directory-tree|directory-tree|dirtre-select-directory|dirtre-select-directory|dirtre-select-directory|"
-set-variable .fhook-dirtre.command-nbind "||||0x02|0x4e|0x4e|0x4e|0x12|0x12|0x12|0x66|0xa6|0xa6|"
-set-variable .fhook-dirtre.command-kbind "|tab|f10||space|o|O|+|c|C|-|return|C-return|C-j|"
-set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|Close File \HBrowser||\HSelect Directory|\HOpen Directory|||\HClose Directory|||Open/Close \HDirectory|\HRecursively Open/Close Directory||"
+set-variable .fhook-dirtre.command-flag  "|thbio|thbio|thbio|th|thbio|thbio|bio|bio|thbio|bio|bio|thbio|thbio|bio|"
+set-variable .fhook-dirtre.command-name  "|file-browser-swap-buffers|file-browser-close|dirtre-toggle-filter||dirtre-select-directory|directory-tree|directory-tree|directory-tree|directory-tree|directory-tree|directory-tree|dirtre-select-directory|dirtre-select-directory|dirtre-select-directory|"
+set-variable .fhook-dirtre.command-nbind "|||||0x02|0x4e|0x4e|0x4e|0x12|0x12|0x12|0x66|0xa6|0xa6|"
+set-variable .fhook-dirtre.command-kbind "|tab|f10|f||space|o|O|+|c|C|-|return|C-return|C-j|"
+set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|Close File \HBrowser|Toggle \HFilter||\HSelect Directory|\HOpen Directory|||\HClose Directory|||Open/Close \HDirectory|\HRecursively Open/Close Directory||"
 
 !if &and &sin "h" .fhook-dirtre.setup &band .hilight.flags 0x02 
   !if &not &exist .hilight.dirtre
@@ -53,6 +53,9 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|Close File \HB
   hilight .hilight.dirtre 0x002 " \\{-> " .scheme.dir-slink
 !endif
 
+0 define-macro dirtre-toggle-filter
+  0x303 directory-tree $buffer-fname
+!emacro  
 ;
 ; dirtre-select-directory
 ; Note that we assume that we are in the *directory* window - no checks are
@@ -64,14 +67,11 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|Close File \HB
   set-variable #l2 $window-line    ; Save the line number
   set-variable #l3 $window-y-scroll
   @# directory-tree
-  !if &band $window-flags 0x1000
-    1 buffer-mode "hide"
-  !endif
+  !iif &band $window-flags 0x1000  1 buffer-mode "hide"
   set-variable $window-line #l2
   set-variable $window-y-scroll #l3
-  !if &not &band @# 2              ; Making the directory current ??
-    !return                      ; No - do not update the *files* window
-  !endif
+  ; If not making the directory current do not update the *files* window
+  !iif &not &band @# 2  !return
   ; Render the *files* information.
   set-variable #l0 $buffer-fname
   1 set-position "\x81"
@@ -104,9 +104,7 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|Close File \HB
   !force -1 search-forward &cat &cat "[-?+" &rig $box-chars 10 "] "
   !if &not $status
     set-variable $window-col #l0
-    !if &band $window-flags 0x1000
-      1 goto-position "\x82"
-    !endif
+    !iif &band $window-flags 0x1000  1 goto-position "\x82"
     !return
   !endif
   set-variable #l1 $window-col
@@ -117,22 +115,16 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|Close File \HB
   ; if '+', '-' or '?' tag position.
   !if &equ &sub #l1 2 #l0
     &cond @? @# 0x66 directory-tree
-    !if &band $window-flags 0x1000
-      1 buffer-mode "hide"
-    !endif
+    !iif &band $window-flags 0x1000  1 buffer-mode "hide"
     set-variable #l4 0
   !elif &les #l0 #l1
     ; hit char between the name and '+'/'-'
-    !if &band $window-flags 0x1000
-      1 goto-position "\x82"
-    !endif
+    !iif &band $window-flags 0x1000  1 goto-position "\x82"
     !return
   !else
     ; hit the name, just select it
     0x02 directory-tree
-    !if &band $window-flags 0x1000
-      1 buffer-mode "hide"
-    !endif
+    !iif &band $window-flags 0x1000  1 buffer-mode "hide"
     set-variable #l4 1
   !endif
   ; Reframe the *directory* window:
@@ -141,9 +133,7 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|Close File \HB
   set-variable $window-y-scroll #l3
   set-variable #l0 $buffer-fname
   ; if this is a toolbar dir-tree go back to the original window - return now so popup of *files* works okay
-  !if &band $window-flags 0x1000
-    1 goto-position "\x82"
-  !endif
+  !iif &band $window-flags 0x1000  1 goto-position "\x82"
   !if #l4
     ; If selected the name then setup the echo in the *files* directory.
     1 set-position "\x81"
@@ -166,9 +156,7 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|Close File \HB
     goto-position "\x81"
   !endif
   ; if this is a toolbar dir-tree go back to the original window
-  !if &band $window-flags 0x1000
-    1 goto-position "\x82"
-  !endif
+  !iif &band $window-flags 0x1000  1 goto-position "\x82"
 !emacro
 
 0 define-macro dirtre-mouse-drop-3

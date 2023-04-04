@@ -49,8 +49,8 @@
 0 define-macro-file utils frame-handle ascii-time var-str-sub str-to-regex filemask-to-regex copy-registry create-file-path
 define-macro-file format clean sort-lines-ignore-case normal-tab tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph indent-increase indent-decrease
 define-macro-file clearcs cc-state cc-update cc-checkout cc-checkin cc-add cc-diff cc-uncheckout cc-annotate cc-describe cc-delete cc-move cc-merge cc-vtree cc-explorer cc-add-view cc-setup
+define-macro-file misc save-all set-title encase open-line get-next-indent-change check-line-length number-items time compare-windows-exact display-whitespaces write-region execute-region
 define-macro-file cvs cvs cvs-setup cvs-add cvs-annotate cvs-checkout cvs-commit cvs-diff cvs-gdiff cvs-log cvs-remove cvs-resolve-conflicts cvs-state cvs-status cvs-tag cvs-update
-define-macro-file misc save-all encase open-line get-next-indent-change check-line-length number-items time compare-windows-exact display-whitespaces write-region execute-region
 define-macro-file svn svn svn-setup svn-add svn-blame svn-checkout svn-commit svn-copy svn-delete svn-diff svn-ignore svn-info svn-log svn-move svn-status svn-update
 define-macro-file osdmisc insert-symbol buffer-setup alarm browse alias-path-setup file-type-setup file-tool-setup file-tool-menu shell-tool-setup find-setup
 define-macro-file tools compile which diff rdiff xdiff diff-changes execute-tool uniq find-bfile find-cfile reread-file reread-all save-kbd-macro
