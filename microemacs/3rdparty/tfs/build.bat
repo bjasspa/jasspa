@@ -48,11 +48,13 @@ set OPTIONS=%MEDEBUG%%MEPROF%%MELSTT%%OPTIONS%
 
 if NOT "%MAKEFILE%." == "." goto build_got_makefile
 
+if NOT "%PATH:Microsoft Visual Studio\2019=%." == "%PATH%." set MAKEFILE=win32vc16.mak & goto build_got_makefile
 if NOT "%PATH:Microsoft Visual Studio\2017=%." == "%PATH%." set MAKEFILE=win32vc15.mak & goto build_got_makefile
 if NOT "%PATH:Microsoft Visual Studio 10.0=%." == "%PATH%." set MAKEFILE=win32vc10.mak & goto build_got_makefile
 if NOT "%PATH:Microsoft Visual Studio 9.0=%." == "%PATH%." set MAKEFILE=win32vc9.mak & goto build_got_makefile
 if NOT "%PATH:Microsoft Visual Studio 8.0=%." == "%PATH%." set MAKEFILE=win32vc8.mak & goto build_got_makefile
 if NOT "%PATH:\mingw=%." == "%PATH%." set MAKEFILE=win32mingw.mak & goto build_got_makefile
+if NOT "%VS160COMNTOOLS%." == "." set MAKEFILE=win32vc16.mak & goto build_got_makefile
 if NOT "%VS150COMNTOOLS%." == "." set MAKEFILE=win32vc15.mak & goto build_got_makefile
 if NOT "%VS100COMNTOOLS%." == "." set MAKEFILE=win32vc10.mak & goto build_got_makefile
 if NOT "%VS90COMNTOOLS%." == "." set MAKEFILE=win32vc9.mak & goto build_got_makefile
