@@ -36,149 +36,90 @@
 ##############################################################################
 #
 # Installation Directory
-INSTDIR		= c:\emacs
+INSTALL  = copy
+INSTDIR	 = c:\emacs
 INSTPROGFLAGS	= 
 #
 # Local Definitions
-CP            = copy
-RM            = del
-CC            = gcc
-LD            = $(CC)
-STRIP         =	strip
-COFF          = coff2exe
-INSTALL       =	copy
-CDEBUG        =	-g -Wall
-COPTIMISE     =	-O2 -DNDEBUG=1 -Wall -Wno-uninitialized
-CDEFS         = -D_DOS -D__DJGPP2__ -I.
-CONSOLE_DEFS  = -D_ME_CONSOLE
-NANOEMACS_DEFS= -D_NANOEMACS
-LDDEBUG       =
-LDOPTIMISE    =	
-LDFLAGS       = 
-LIBS          = -lpc 
-CONSOLE_LIBS  =
+CP       = copy
+CC       = gcc
+LD       = $(CC)
+MK       = make
+STRIP    = strip
+COFF     = coff2exe
+RM       = del
+RMDIR    = deltree /Y
+
+BUILDID  = dosdj2
+OUTDIRR  = $(BUILDID)_r
+OUTDIRD  = $(BUILDID)_d
+TRDPARTY = ../3rdparty
+
+CCDEFS   = -D_DOS -D__DJGPP2__ -I. 
+CCFLAGSR = -O2 -DNDEBUG=1 -Wall -Wno-uninitialized
+CCFLAGSD = -g -Wall
+LDDEFS   = 
+LDFLAGSR = -O2
+LDFLAGSD = -g
+LDLIBS   = -lpc
+
+ifeq "$(BCFG)" "debug"
+BOUTDIR  = $(OUTDIRD)
+CCFLAGS  = $(CCFLAGSD)
+LDFLAGS  = $(LDFLAGSD)
+STRIP    = - echo No strip - debug 
+else
+BOUTDIR  = $(OUTDIRR)
+CCFLAGS  = $(CCFLAGSR)
+LDFLAGS  = $(LDFLAGSR)
+endif
+
+ifeq "$(BCOR)" "ne"
+BCOR_CDF = -D_NANOEMACS
+PRGLIBS  = 
+else
+BCOR     = me
+BCOR_CDF = 
+PRGLIBS  = 
+endif
+
 #
 # Rules
-.SUFFIXES: .c .oc .on .odc .odn
-
-.c.oc:
-	$(CC) $(COPTIMISE) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
-
-.c.on:
-	$(CC) $(COPTIMISE) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
-
-# Debug Builds
-.c.odc:	
-	$(CC) $(CDEBUG) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
-
-.c.odn:	
-	$(CC) $(CDEBUG) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
+OUTDIR   = $(BOUTDIR).$(BCOR)
+PRGNAME  = $(BCOR)$(BTYP)
+PRGFILE  = $(PRGNAME)$(EXE)
+PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
+	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def \
+	   $(BUILDID).mak
+PRGOBJS  = $(OUTDIR)/abbrev.o $(OUTDIR)/basic.o $(OUTDIR)/bind.o $(OUTDIR)/buffer.o $(OUTDIR)/crypt.o $(OUTDIR)/dirlist.o $(OUTDIR)/display.o \
+	   $(OUTDIR)/eval.o $(OUTDIR)/exec.o $(OUTDIR)/file.o $(OUTDIR)/fileio.o $(OUTDIR)/frame.o $(OUTDIR)/hash.o $(OUTDIR)/hilight.o $(OUTDIR)/history.o \
+	   $(OUTDIR)/input.o $(OUTDIR)/isearch.o $(OUTDIR)/key.o $(OUTDIR)/line.o $(OUTDIR)/macro.o $(OUTDIR)/main.o $(OUTDIR)/narrow.o $(OUTDIR)/next.o \
+	   $(OUTDIR)/osd.o $(OUTDIR)/print.o $(OUTDIR)/random.o $(OUTDIR)/regex.o $(OUTDIR)/region.o $(OUTDIR)/registry.o $(OUTDIR)/search.o $(OUTDIR)/spawn.o \
+	   $(OUTDIR)/spell.o $(OUTDIR)/tag.o $(OUTDIR)/termio.o $(OUTDIR)/time.o $(OUTDIR)/undo.o $(OUTDIR)/window.o $(OUTDIR)/word.o \
+	   $(OUTDIR)/dosterm.o
 #
-# Source files
-STDHDR	= ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h \
-	  esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
-	  ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def
-STDSRC	= abbrev.c basic.c bind.c buffer.c crypt.c dirlist.c display.c \
-	  eval.c exec.c file.c fileio.c frame.c hilight.c history.c input.c \
-	  isearch.c key.c line.c macro.c main.c narrow.c next.c osd.c \
-	  print.c random.c regex.c region.c registry.c search.c spawn.c \
-	  spell.c tag.c termio.c time.c undo.c window.c word.c
+# Rules
+.SUFFIXES: .c .o
 
-PLTHDR  = 
-PLTSRC  = dosterm.c
+$(OUTDIR)/%.o : %.c
+	$(CC) $(CCDEFS) $(BCOR_CDF) $(CCFLAGS) -c -o $@ $<
 
-HEADERS = $(STDHDR) $(PLTHDR)
-SRC     = $(STDSRC) $(PLTSRC)
-#
-# Object files
-OBJ_C    = $(SRC:.c=.oc)
-OBJ_N    = $(SRC:.c=.on)
 
-# Debug Builds
-OBJ_DC   = $(SRC:.c=.odc)
-OBJ_DN   = $(SRC:.c=.odn)
-#
-# Targets
-all: me
+all: $(PRGLIBS) $(OUTDIR)/$(PRGFILE)
 
-install: me
-	$(INSTALL) $(INSTPROGFLAGS) me $(INSTDIR)
-	@echo "install done"
+$(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
+	$(RM) $@
+	$(LD) $(LDDEFS) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS) $(BTYP_LIB) $(LDLIBS)
+	$(STRIP) $@
+
+$(PRGOBJS): $(PRGHDRS)
+
+$(OUTDIR):
+	if not exist $(OUTDIR)\ md $(OUTDIR)
 
 clean:
-	$(RM) me.exe
-	$(RM) mec.exe
-	$(RM) mec.386
-	$(RM) ne.exe
-	$(RM) nec.exe
-	$(RM) nec.386
-	$(RM) med.exe
-	$(RM) medc.exe
-	$(RM) medc.386
-	$(RM) ned.exe
-	$(RM) nedc.exe
-	$(RM) nedc.386
-	$(RM) *.oc
-	$(RM) *.on
-	$(RM) *.odc
-	$(RM) *.odn
+	$(RMDIR) $(OUTDIR)
 
 spotless: clean
-	$(RM) tags
 	$(RM) *~
-
-mec: mec.exe
-mec.exe: $(OBJ_C)
-	$(RM) mec.386
-	$(RM) mec.exe
-	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o mec.386 $(OBJ_C) $(CONSOLE_LIBS) $(LIBS)
-	$(STRIP) mec.386
-	$(COFF) mec.386
-
-me: me.exe
-me.exe:	mec.exe
-	$(CP) mec.exe $@
-
-nec:	nec.exe
-nec.exe: $(OBJ_N)
-	$(RM) nec.386
-	$(RM) nec.exe
-	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o nec.386 $(OBJ_N) $(CONSOLE_LIBS) $(LIBS)
-	$(STRIP) nec.386
-	$(COFF) nec.386
-
-ne: ne.exe
-ne.exe:	nec.exe
-	$(CP) nec.exe $@
-
-medc: medc.exe
-medc.exe: $(OBJ_DC)
-	$(RM) medc.386
-	$(RM) medc.exe
-	$(LD) $(LDFLAGS) $(LDDEBUG) -o medc.386 $(OBJ_DC) $(CONSOLE_LIBS) $(LIBS)
-	$(COFF) medc.386
-
-med: med.exe
-med.exe: medc.exe
-	$(CP) medc.exe $@
-
-nedc: nedc.exe
-nedc.exe: $(OBJ_DN)
-	$(RM) nedc.386
-	$(RM) nedc.exe
-	$(LD) $(LDFLAGS) $(LDDEBUG) -o nedc.386 $(OBJ_DN) $(CONSOLE_LIBS) $(LIBS)
-	$(STRIP) nedc.386
-	$(COFF) nedc.386
-
-ned: ned.exe
-ned.exe: nedc.exe
-	$(CP) nedc.exe $@
-#
-# Dependancies
-$(OBJ_C): $(HEADERS)
-$(OBJ_N): $(HEADERS)
-
-# Debug Builds
-$(OBJ_DC): $(HEADERS)
-$(OBJ_DN): $(HEADERS)
-
+	$(RM) tags

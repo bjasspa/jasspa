@@ -200,10 +200,10 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
         int ii ;
         
         if(((ii = meStrlen(file)) == 0) ||
-           (strchr(file,'*') != NULL) || (strchr(file,'?') != NULL))
+           (strchr((char *) file,'*') != NULL) || (strchr((char *) file,'?') != NULL))
         {
             if(flag & gfsERRON_ILLEGAL_NAME)
-                mlwrite(MWABORT|MWPAUSE,"[%s illegal name]", file);
+                mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s illegal name]", file);
             return (ft|meIOTYPE_NOTEXIST);
         }
         if((file[ii-1] == DIR_CHAR) || ((ii == 2) && (file[1] == _DRV_CHAR)))
@@ -229,7 +229,7 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
         {
             struct ffblk fblk ;
             stats->stmode = ii | meFILE_ATTRIB_ARCHIVE ;
-            if(!findfirst(file, &fblk, FA_RDONLY|FA_HIDDEN|FA_SYSTEM|FA_DIREC))
+            if(!findfirst((char *) file,&fblk,FA_RDONLY|FA_HIDDEN|FA_SYSTEM|FA_DIREC))
             {
                 stats->stmtime = (((meUInt) fblk.ff_ftime) & 0x0ffff) | (((meUInt) fblk.ff_fdate) << 16) ;
                 stats->stsizeLow = fblk.ff_fsize ;
@@ -872,7 +872,7 @@ gwd(meUByte drive)
             curDrive = 0;
     }
     
-    if(getcwd(dir,meBUF_SIZE_MAX) == NULL)
+    if(getcwd((char *) dir,meBUF_SIZE_MAX) == NULL)
         dir[0] = '\0' ;
     if(curDrive != 0)
         /* change the drive back */
@@ -1200,7 +1200,7 @@ getDirectoryInfo(meUByte *fname)
         }
 #endif
 #ifdef _DOS
-        static meUByte *searchString = "*.*";
+        static meUByte *searchString = (meUByte *) "*.*";
         struct ffblk fblk ;
         meUByte *ff ;
         int done ;
@@ -1210,14 +1210,14 @@ getDirectoryInfo(meUByte *fname)
         meStrcpy(bfname,fname) ;
         fn = bfname+meStrlen(bfname) ;
         meStrcpy(fn,searchString) ;
-        done = findfirst(bfname,&fblk,FA_RDONLY|FA_HIDDEN|FA_SYSTEM|FA_DIREC) ;
+        done = findfirst((char *) bfname,&fblk,FA_RDONLY|FA_HIDDEN|FA_SYSTEM|FA_DIREC) ;
         while(!done)
         {
             if(((noFiles & 0x0f) == 0) &&
                ((curHead = (FILENODE *) meRealloc(curHead,sizeof(FILENODE)*(noFiles+16))) == NULL))
                 return NULL ;
             curFile = &(curHead[noFiles++]) ;
-            if((ff = meStrdup(fblk.ff_name)) == NULL)
+            if((ff = meStrdup((meUByte *) fblk.ff_name)) == NULL)
                 return NULL ;
             makestrlow(ff) ;
             curFile->fname = ff ;
@@ -1227,7 +1227,7 @@ getDirectoryInfo(meUByte *fname)
             curFile->mtime = (((meUInt) fblk.ff_ftime) & 0x0ffff) | (((meUInt) fblk.ff_fdate) << 16) ;
             /* construct attribute string */
             if(fblk.ff_attrib & FA_DIREC)
-                meStrncpy(curFile->attrib,"drwx",4) ;
+                memcpy(curFile->attrib,"drwx",4) ;
             else
             {
                 curFile->attrib[0] = '-' ;
@@ -1378,7 +1378,7 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
 #endif
 #ifdef _DOS
             if((fnode->mtime & 0x0ffff) != 0x7fff)
-            len += sprintf(buf+len, "%4d/%02d/%02d %02d:%02d:%02d ",
+            len += sprintf((char *)buf+len, "%4d/%02d/%02d %02d:%02d:%02d ",
                            (int) ((fnode->mtime >> 25) & 0x007f)+1980,
                            (int) ((fnode->mtime >> 21) & 0x000f),
                            (int) ((fnode->mtime >> 16) & 0x001f),
@@ -1490,10 +1490,12 @@ readin(register meBuffer *bp, meUByte *fname)
                ((aft=getFileStats(afn,0,&stats,NULL)) & meIOTYPE_REGULAR) &&
                meFiletimeIsModified(stats.stmtime,bp->stats.stmtime))
             {
-                meUByte prompt[200] ;
-                meUByte *tt ;
-                tt = getFileBaseName(afn) ;
-                sprintf((char *)prompt,"Recover newer %s",tt) ;
+                meUByte prompt[200];
+                meUByte *tt;
+                tt = getFileBaseName(afn);
+                memcpy(prompt,"Recover newer ",14);
+                meStrncpy(prompt+14,tt,200-14-1);
+                prompt[199] = '\0';
                 if(mlyesno(prompt) > 0)
                 {
                     fn = afn;
@@ -1574,12 +1576,13 @@ readin(register meBuffer *bp, meUByte *fname)
 #if MEOPT_EXTENDED
             if((fileSizePrompt > 0) && ((ui=(bp->stats.stsizeHigh << 12) | (bp->stats.stsizeLow >> 20)) > fileSizePrompt))
             {
-                meUByte prompt[200] ;
-                meUByte *tt ;
-                tt = getFileBaseName(fn) ;
-                sprintf((char *)prompt,"File %s is %dMb, continue",tt,ui) ;
+                meUByte prompt[200];
+                memcpy(prompt,"File ",5);
+                meStrncpy(prompt+5,getFileBaseName(fn),200-5-25);
+                prompt[200-25] = '\0';
+                sprintf((char *) (prompt+meStrlen(prompt))," is %dMb, continue",ui);
                 if(mlyesno(prompt) <= 0)
-                    goto error_end ;
+                    goto error_end;
             }
 #endif
 #ifdef _WIN32
@@ -1740,9 +1743,10 @@ insertFile(int f, int n)
     if((fileSizePrompt > 0) && ((n & 4) == 0) && ((uoffset=(stats.stsizeHigh << 12) | (stats.stsizeLow >> 20)) > fileSizePrompt))
     {
         meUByte prompt[200] ;
-        meUByte *tt ;
-        tt = getFileBaseName(fname) ;
-        sprintf((char *)prompt,"File %s is %dMb, continue",tt,uoffset) ;
+        memcpy(prompt,"File ",5);
+        meStrncpy(prompt+5,getFileBaseName(fname),200-5-25);
+        prompt[200-25] = '\0';
+        sprintf((char *) (prompt+meStrlen(prompt))," is %dMb, continue",uoffset);
         if(mlyesno(prompt) <= 0)
             return meABORT ;
     }
@@ -2795,7 +2799,7 @@ _meChdir(meUByte *path)
     register int s ;
     int len ;
     
-    len = strlen (path)-1 ;
+    len = meStrlen(path)-1 ;
     
 #ifndef __DJGPP2__
     if((len > 1) && (path[1] == _DRV_CHAR))
@@ -2811,7 +2815,7 @@ _meChdir(meUByte *path)
         path[len] = '\0' ;
     else
         len = -1 ;
-    s = chdir(path) ;
+    s = chdir((char *) path) ;
     if(len > 0)
         path[len] = DIR_CHAR ;
     return s ;
@@ -3499,7 +3503,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         
         /* append the *.* - Note that this function assumes the pathName has a '/' and
          * its an array with 3 extra char larger than the string size */
-        ee = pathName + strlen(pathName) ;
+        ee = pathName + meStrlen(pathName) ;
         ee[0] = '*' ;
         es[1] = ee[1] ;
         ee[1] = '.' ;
@@ -3507,7 +3511,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         ee[2] = '*' ;
         es[3] = ee[3] ;
         ee[3] = '\0' ;
-        done = findfirst(pathName,&fblk,FA_RDONLY|FA_HIDDEN|FA_SYSTEM|FA_DIREC) ;
+        done = findfirst((char *)pathName,&fblk,FA_RDONLY|FA_HIDDEN|FA_SYSTEM|FA_DIREC) ;
         ee[0] = '\0' ;
         ee[1] = es[1] ;
         ee[2] = es[2] ;
@@ -3527,11 +3531,11 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                 break ;
             }
             fls[noFiles++] = ff ;
-            strcpy(ff,fblk.ff_name) ;
+            meStrcpy(ff,fblk.ff_name) ;
             makestrlow(ff) ;
             if(fblk.ff_attrib & FA_DIREC)
             {
-                ff += strlen(ff) ;
+                ff += meStrlen(ff) ;
                 *ff++ = DIR_CHAR ;
                 *ff   = '\0' ;
             }

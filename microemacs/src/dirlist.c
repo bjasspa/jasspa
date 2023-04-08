@@ -36,21 +36,20 @@
 
 #if MEOPT_DIRLIST
 
-#include	<time.h>
+#include <time.h>
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
-#include        <limits.h>                     /* Constant limit definitions */
-#include	<sys/types.h>
-#include	<sys/stat.h>
+#include <limits.h>                     /* Constant limit definitions */
+#include <sys/types.h>
+#include <sys/stat.h>
 #ifdef _WIN32
-#include        <direct.h>                     /* Directory entries */
+#include <direct.h>
 #else
 #ifdef _DIRENT
-#include	<dirent.h>
+#include <dirent.h>
 #else
-#include	<sys/dir.h>
+#include <sys/dir.h>
 #endif
 #endif
-#include	<time.h>
 #ifdef _DOS
 #include <dos.h>
 #endif
@@ -755,16 +754,10 @@ dirDrawDirectory(meBuffer *bp, DIRNODE *dnode, int iLen, meUByte *iStr, meUByte 
             buf [len++] = ' ';
             
             /* Add the filename */
-            flen = meStrlen(dnode->dname) ;
-            meStrncpy(buf+len,dnode->dname,flen) ;
-            len += flen ;
-            if(flen > 1)
-                len-- ;
-#if DIR_HAS_SLINK
-            if(dnode->lname != NULL)
-                len += sprintf((char *)buf+len," -> %s", dnode->lname);
-#endif
-            fn = NULL ;
+            flen = meStrlen(dnode->dname);
+            memcpy(buf+len,dnode->dname,flen);
+            len += flen;
+            fn = NULL;
             if(iLen == 0)
             {
                 if(dirlist->mask & DIR_FILTERED)
@@ -772,18 +765,31 @@ dirDrawDirectory(meBuffer *bp, DIRNODE *dnode, int iLen, meUByte *iStr, meUByte 
                     memcpy(buf+len," (Filtered)",11);
                     len += 11;
                 }
+#ifdef _DRV_CHAR
                 if((fname != NULL) && (fname[0] != '\0'))
                     fn = fname;
+#else
+                if((fname != NULL) && (fname[0] == '/') && (fname[1] != '\0'))
+                    fn = fname+1;
+#endif
             }
-            else if((fname != NULL) && !meStrncmp(fname,dnode->dname,flen))
+            else
             {
-                if(fname[flen] == '\0')
+                if((fname != NULL) && !meStrncmp(fname,dnode->dname,flen))
                 {
-                    buf[0] = '*';
-                    curDirLine = meLineGetPrev(bp->dotLine) ;
+                    if(fname[flen] == '\0')
+                    {
+                        buf[0] = '*';
+                        curDirLine = meLineGetPrev(bp->dotLine) ;
+                    }
+                    else
+                        fn = fname+flen;
                 }
-                else
-                    fn = fname+flen;
+                len--;
+#if DIR_HAS_SLINK
+                if(dnode->lname != NULL)
+                    len += sprintf((char *)buf+len," -> %s", dnode->lname);
+#endif
             }
             buf[len] = '\0';
             /*        printf("%s\n",buf) ;*/

@@ -43,9 +43,6 @@ do
         echo "             c   Console support only (Termcap)"
         echo "             w   Window support only (XTerm)"
         echo "             cw  Console and window support (default)"
-        echo "             cs  Console with ssl (https) support"
-        echo "             ws  Window with ssl support"
-        echo "             cws Console, window and ssl support"
         echo ""
         exit 1
     elif [ $1 = "-C" ] ; then
@@ -111,13 +108,6 @@ if [ -z "$MAKEFILE" ] ; then
             MAKEBAS=macos64
             X11_MAKEINC=/opt/X11/include
             X11_MAKELIB=/opt/X11/lib
-            if [ -d "/opt/homebrew/opt/openssl@1.1" ] ; then
-                SSL_MAKEPTH=" OPENSSLP=/opt/homebrew/opt/openssl@1.1"
-            elif [ -d "/opt/homebrew/opt/openssl" ] ; then
-                SSL_MAKEPTH=" OPENSSLP=/opt/homebrew/opt/openssl"
-            elif [ -d "/usr/local/opt/openssl@1.1" ] ; then
-                SSL_MAKEPTH=" OPENSSLP=/usr/local/opt/openssl@1.1"
-            fi
         elif [ $VERSION -gt 15 ] ; then
             MAKEBAS=macos32
             X11_MAKEINC=/opt/X11/include
@@ -156,17 +146,14 @@ if [ -z "$MAKEFILE" ] ; then
         if [ $MACHINE = "arm" ] ; then
             MAKEBAS=zaurus
         else
-            KERNEL_MAJOR=`uname -r | cut -c 1-1`
-            KERNEL_MINOR=`uname -r | cut -c 3-3`
-            if [ -r linux${KERNEL_MAJOR}${KERNEL_MINOR}gcc.mak ] ; then
-                MAKEBAS="linux$KERNEL_MAJOR$KERNEL_MINOR"
-            elif [ -r linux${KERNEL_MAJOR}gcc.mak ] ; then
-                MAKEBAS="linux$KERNEL_MAJOR"
-            else
-                MAKEBAS="linux2"
-            fi
+            MAKEBAS="linux32"
         fi
-        X11_MAKELIB=/usr/X11R6/lib
+        if [ -f "/usr/X11R6/lib/libX11.a" ] ; then
+           X11_MAKELIB=/usr/X11R6/lib
+        fi
+        if [ -f "/usr/lib/x86_64-linux-gnu/libX11.a" ] ; then
+           X11_MAKELIB=/usr/lib/x86_64-linux-gnu
+        fi
     elif [ `echo $PLATFORM | sed -e "s/^MINGW32_NT.*/MINGW32_NT/"` = "MINGW32_NT" ] ; then
         MAKEBAS=win32mingw
     elif [ $PLATFORM = "OpenBSD" ] ; then

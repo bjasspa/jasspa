@@ -32,6 +32,7 @@
 #include "emain.h"
 
 #ifdef _UNIX
+#include <errno.h>
 #include <fcntl.h>                      /* This should not be required for POSIX !! */
 #include <sys/wait.h>
 #include <sys/stat.h>
@@ -129,9 +130,9 @@ __mkTempName (meUByte *buf, meUByte *name, meUByte *ext)
 #if (defined _DOS) || (defined _WIN32)
             /* the C drive is more reliable than ./ as ./ could be on a CD-Rom etc, but in recent
              * versions of windows c:\ is readonly so look around for a temp folder */
-            if(!meTestDir("c:\\tmp\\"))
+            if(!meTestDir((meUByte *) "c:\\tmp\\"))
                 tmpDir = (meUByte *) "c:\\tmp\\" ;
-            else if(!meTestDir("c:\\temp\\"))
+            else if(!meTestDir((meUByte *) "c:\\temp\\"))
                 tmpDir = (meUByte *) "c:\\temp\\" ;
 #if (defined _WIN32)
             else if(((pp = (meUByte *) meGetenv ("USERPROFILE")) != NULL) && !meTestDir(pp))
@@ -258,10 +259,10 @@ meShell(int f, int n)
         case 0:
             /* we want the children to die on interrupt */
             execlp("xterm", "xterm", "-sl", "200", "-sb", NULL);
-            mlwrite(MWABORT,(meUByte *)"exec failed, %s", sys_errlist[errno]);
+            mlwrite(MWABORT,(meUByte *)"exec failed, %s", strerror(errno));
             meExit(127);
         case -1:
-            ss = mlwrite(MWABORT,(meUByte *)"exec failed, %s", sys_errlist[errno]);
+            ss = mlwrite(MWABORT,(meUByte *)"exec failed, %s", strerror(errno));
         default:
             ss = meTRUE ;
         }
@@ -334,7 +335,7 @@ doShellCommand(meUByte *cmdstr, int flags)
     if(cmdline != cmdstr)
         meFree(cmdline) ;
 #else
-    systemRet = system(cmdstr) ;
+    systemRet = system((char *) cmdstr);
 #ifdef _DOS
     /* dos is naughty with modes, a system call could call a progam that
      * changes the screen stuff under our feet and not restore the current
@@ -345,7 +346,7 @@ doShellCommand(meUByte *cmdstr, int flags)
      */
     TTopen() ;
 #endif
-    ss = (systemRet < 0) ? meFALSE:meTRUE ;
+    ss = (systemRet < 0) ? meFALSE:meTRUE;
 #endif
 #endif
 
@@ -1450,21 +1451,39 @@ ipipeSetSize(meWindow *wp, meBuffer *bp)
 }
 
 #ifdef _UNIX
-/* allocatePty; Allocate a pty. We use the old BSD method of searching for a
- * pty, once we have aquired one then we look for the tty. Return the name of
- * the tty to the caller so that it may be opened. */
 
-#if (defined _LINUX26) || (defined _MACOS)
-extern char *ptsname(int) ;
-extern int unlockpt(int) ;
-extern int grantpt(int) ;
-#endif /* _LINUX26 */
+#ifdef _PTY_MASTER
+/* In POSIX.1 standard open /dev/ptmx to get a new PTY, could use the posix_openpt function instead */
+/* documentation for "Pseudo-TTY Drivers" - ptm(7) and pts(7) */
+int grantpt(int fd);
+int unlockpt(int fd);
+char *ptsname(int fd);
 
 static int
 allocatePty(meUByte *ptyName)
 {
+    int fd;
+    char *ss;
+    if(((fd = open("/dev/ptmx", O_RDWR)) >= 0) &&  /* open master */
+       (grantpt(fd) >= 0) &&                       /* change permission of slave */
+       (unlockpt(fd) >= 0) &&                      /* unlock slave */
+       ((ss=ptsname(fd)) != NULL))                 /* Get slave full path name */        
+    {
+        meStrcpy(ptyName,ss);
+/*        printf("PTY success [%s]\n",ptyName);*/
+        return fd;
+    }
+    return -1;
+}
+#else
+/* allocatePty; Allocate a pty. We use the old BSD method of searching for a
+ * pty, once we have aquired one then we look for the tty. Return the name of
+ * the tty to the caller so that it may be opened. */
+static int
+allocatePty(meUByte *ptyName)
+{
+    int fd;
 #ifdef _IRIX
-    int    fd ;
     struct stat stb ;
     /* struct sigaction ocstat, cstat;*/
     char * name;
@@ -1482,79 +1501,39 @@ allocatePty(meUByte *ptyName)
         meStrcpy (ptyName, name);
         return fd ;
     }
-    return -1 ;
 #else
-#if (defined _SUNOS) || (defined _LINUX26) || (defined _MACOS)
-    int    fd ;
-    /* Sun use their own proporiety PTY system. Refer to the AnswerBook
-     * documentation for "Pseudo-TTY Drivers" - ptm(7) and pts(7) */
-    fd = open("/dev/ptmx", O_RDWR); /* open master */
-    grantpt(fd);                    /* change permission of slave */
-    unlockpt(fd);                   /* unlock slave */
-    meStrcpy (ptyName,ptsname(fd)); /* Slave name */        
-    return fd;
-#else
-    int    fd ;
-    struct stat stb ;
-    register int c, ii ;
-
+    register int c, ii;
+    struct stat stb;
     /* Some systems name their pseudoterminals so that there are gaps in
        the usual sequence - for example, on HP9000/S700 systems, there
        are no pseudoterminals with names ending in 'f'.  So we wait for
        three failures in a row before deciding that we've reached the
        end of the ptys.  */
-    int failed_count = 0;
-
+    int failed_count=0;
     for (c ='p' ; c <= 'z' ; c++)
     {
         for (ii=0 ; ii<16 ; ii++)
         {
 #ifdef _HPUX
-            sprintf((char *)ptyName,"/dev/ptym/pty%c%x", c, ii);
+            sprintf((char *)ptyName,"/dev/ptym/pty%c%x",c,ii);
 #else
             sprintf((char *)ptyName,"/dev/pty%c%x",c,ii);
 #endif
-/*            printf("Im trying [%s]\n",ptyName) ;*/
             if(stat((char *)ptyName,&stb) < 0)
             {
                 /* Cannot open PTY */
-/*                printf("Failed\n") ;*/
+/*                printf("PTY not exist [%s]\n",ptyName);*/
                 failed_count++;
                 if (failed_count >= 3)
-                    return -1 ;
+                    return -1;
             }
             else
             {
                 /* Found a potential pty */
                 failed_count = 0;
-                fd = open((char *)ptyName,O_RDWR,0) ;
+                fd = open((char *)ptyName,O_RDWR,0);
                 if(fd >= 0)
                 {
-#if 0
-                    /* Jon: POSIX - this is what we should be doing */
-                    /* Set up the permissions of the slave */
-                    if (grantpt (fd) < 0)
-                    {
-                        close (fd);
-                        continue;
-                    }
-                    /* Unlock the slave */
-                    if (unlockpt(fd) < 0)
-                    {
-                        close (fd);
-                        continue;
-                    }
-                    else
-                    {
-                        char *p;
-                        if ((p = ptsname (fd)) == NULL)
-                        {
-                            close (fd);
-                            continue;
-                        }
-                        meStrcpy (ptyName, p);
-                    }
-#endif
                     /* check to make certain that both sides are available
                        this avoids a nasty yet stupid bug in rlogins */
 #ifdef _HPUX
@@ -1566,23 +1545,23 @@ allocatePty(meUByte *ptyName)
                     if(access((char *)ptyName,W_OK|R_OK) != 0)
                     {
                         /* tty in use, close down the pty and try the next one */
-                        close (fd);
+                        close(fd);
                         continue;
                     }
-                    /* setupPty(fd) ;*/
-                    return fd ;
+/*                    printf("PTY success [%s]\n",ptyName);*/
+                    return fd;
                 }
                 else
                 {
-                    /* printf("Couldn't open\n") ;*/
+/*                    printf("PTY open failed [%s] %d\n",ptyName,errno);*/
                 }
             }
         }
     }
-    return -1;
-#endif /* _SUNOS or _LINUX26 or _MACOS */
 #endif /* _IRIX */
+    return -1;
 }
+#endif /* _PTY_MASTER */
 
 
 /* childSetupTty; Restore the correct terminal settings on the child tty
@@ -2123,11 +2102,11 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
         *dd++ = '>' ;
         if(pipeStderr > 0)
             *dd++ = '&' ;
-        strcpy(dd,filnam);
+        meStrcpy(dd,filnam);
     }
     if((flags & LAUNCH_SILENT) == 0)
         mlerase(MWERASE|MWCURSOR);
-    systemRet = system(cl) ;
+    systemRet = system((char *) cl) ;
     if(cd)
         meChdir(curdir) ;
     /* Call TTopen as we can't guarantee whats happend to the terminal */
@@ -2353,12 +2332,12 @@ meFilter(int f, int n)
     }
 
 #ifdef _DOS
-    strcat(line," <");
-    strcat(line, filnam1);
-    strcat(line," >");
-    strcat(line, filnam2);
+    meStrcat(line," <");
+    meStrcat(line, filnam1);
+    meStrcat(line," >");
+    meStrcat(line, filnam2);
     mlerase(MWERASE|MWCURSOR);
-    system(line);
+    system((char *) line);
     sgarbf = meTRUE;
     s = meTRUE;
 #endif
@@ -2379,11 +2358,10 @@ meFilter(int f, int n)
     errno = 0;			/* clear errno before call */
     if((exitstatus = system((char *)line)) != 0)
     {
-        if(errno)
-            mlwrite(MWCURSOR|MWWAIT,(meUByte *)"exit status %d ", exitstatus);
+        if(errno == 0)
+            mlwrite(MWCURSOR|MWWAIT,(meUByte *)"exit status %d",exitstatus);
         else
-            mlwrite(MWCURSOR|MWWAIT,(meUByte *)"exit status %d, errno %d ",
-                    exitstatus, errno);
+            mlwrite(MWCURSOR|MWWAIT,(meUByte *)"exit status %d, errno %d",exitstatus,errno);
     }
     TTopen();
     sgarbf = meTRUE;

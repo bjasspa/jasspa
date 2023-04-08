@@ -1395,10 +1395,8 @@ struct s_DragAndDrop
 
 #ifdef _WIN32
 #define meBadFile          INVALID_HANDLE_VALUE
-#define meFileGetError()   GetLastError()
 #else
 #define meBadFile          NULL
-#define meFileGetError()   (errno)
 #endif
 #define meFileIsBad(ss)    ((ss) == meBadFile)
 

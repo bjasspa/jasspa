@@ -33,6 +33,8 @@
 
 #if MEOPT_EXTENDED
 
+#include <time.h>
+
 /*  Written in 2018 by David Blackman and Sebastiano Vigna (vigna@acm.org)
 
    To the extent possible under law, the author has dedicated all copyright

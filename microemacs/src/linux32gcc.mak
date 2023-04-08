@@ -48,12 +48,12 @@ AR       = ar
 RM       = rm -f
 RMDIR    = rm -r -f
 
-BUILDID  = linux5gcc
+BUILDID  = linux32gcc
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
 
-CCDEFS   = -D_LINUX -D_LINUX5 -D_64BIT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I. -I$(TRDPARTY)/mesock -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib
+CCDEFS   = -D_LINUX -D_64BIT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I. -I$(TRDPARTY)/mesock -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wall -Wno-uninitialized -Wno-unused-result
 CCFLAGSD = -g -Wall
 LDDEFS   = 
@@ -94,10 +94,10 @@ endif
 # accomplish this try to compile test.c and see if it can link termcap. For
 # Linux 2.6 then preference would appear to be "ncurses" rather than "termcap".
 #
-test = $(shell echo "\#include <stdio.h>" > _t.c ; echo "main() { printf(\"HW\n\"); }" >> _t.c ; $(LD) $(LDFLAGS) -o /dev/null -lncurses _t.c 2>&1 ; rm -f _t.c)
+test = $(shell echo "#include <stdio.h>" > _t.c ; echo "int main() { printf(\"Test\"); return 0; }" >> _t.c ; $(LD) $(LDFLAGS) -o /dev/null -lncurses _t.c 2>&1 ; rm -f _t.c)
 ifneq "$(strip $(test))" ""
+$(warning WARNING: No ncurses, defaulting to termcap.)
 CONSOLE_LIBS  = -ltermcap
-#CONSOLE_LIBS  = -lncurses
 else
 CONSOLE_LIBS  = -lncurses
 endif

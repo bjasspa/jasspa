@@ -107,7 +107,6 @@
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _DRAGNDROP     1                /* Drag and drop supported.      */
 #define _METFS         1                /* Use the tack-on file system   */
-#define _meDEF_SYS_ERRLIST              /* errno.h not def sys_errlist   */
 #define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
 #endif
 
@@ -149,9 +148,9 @@
 #define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
+#define _PTY_MASTER    1                /* Open /dev/ptmx to get PTY     */
 #define _DRAGNDROP     1                /* Drag and drop supported.      */
 #define _METFS         1                /* Use the tack-on file system   */
-#define _meDEF_SYS_ERRLIST              /* errno.h not def sys_errlist   */
 
 /* Search path for CSW Sun build. */
 #ifdef _CSW
@@ -186,6 +185,7 @@
 
 #ifdef _MACOS
 #define meSYSTEM_NAME  "macos"          /* Identity name of the system   */
+#define _PTY_MASTER    1                /* Open /dev/ptmx to get PTY     */
 #define _FREEBSD_BASE  1                /* Uses FreeBSD as base          */
 #endif
 
@@ -223,9 +223,6 @@
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _DRAGNDROP     1                /* Drag and drop supported.      */
-#ifdef _AIX4
-#define _meDEF_SYS_ERRLIST              /* errno.h doesnt def sys_errlist*/
-#endif
 #define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
 #endif
 
@@ -234,6 +231,7 @@
  *************************************************************************/
 #ifdef _LINUX
 #define meSYSTEM_NAME  "linux"          /* Identity name of the system   */
+#define _PTY_MASTER    1                /* Open /dev/ptmx to get PTY     */
 #define _LINUX_BASE    1                /* Uses Linux as base            */
 #endif
 
@@ -280,8 +278,6 @@
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _METFS         1                /* Use the tack-on file system   */
 #define _DEFAULT_SEARCH_PATH "/usr/share/jasspa:/usr/local/jasspa:/usr/local/share/jasspa"
-/* Under cygwin sys_errlist is defined slightly differently - redefine   */
-#define sys_errlist _sys_errlist        /* sys_errlist specially defined */
 #endif /* _CYGWIN */
 
 /*************************************************************************
@@ -318,6 +314,7 @@
 #define _MOUSE         1                /* Mouse supported               */
 #define _DRV_CHAR     ':'               /* drive divide letter, C:\dos   */
 #define _CONVDIR_CHAR '\\'              /* Filename convert '\\' => '/'  */
+#include <unistd.h>
 #endif /* _DOS */
 
 /*************************************************************************
@@ -586,13 +583,6 @@
 #include <sys/fcntl.h>                  /* Required for access(2) types  */
 #include <sys/types.h>                  /* Required for seclect(2) types */
 #include <unistd.h>
-#endif
-
-#ifndef _WIN32
-#include <errno.h>                      /* Need errno and sys_errlist    */
-#endif
-#ifdef _meDEF_SYS_ERRLIST
-extern const char *sys_errlist[];
 #endif
 
 /* Standard Types */

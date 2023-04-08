@@ -31,6 +31,7 @@
 #include "eskeys.h"
 
 #include <dos.h>
+#include <io.h>
 #include <sys/time.h>
 #include <pc.h>
 
@@ -105,7 +106,7 @@ meSetupProgname(char *progname)
         mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Failed to get cwd\n") ;
     
     /* setup the $progname make it an absolute path. */
-    if(executableLookup(progname,evalResult))
+    if(executableLookup((meUByte *) progname,evalResult))
         meProgName = meStrdup(evalResult) ;
     else
     {
@@ -126,14 +127,14 @@ meSetupPathsAndUser(void)
     
     if(meUserName == NULL)
     {
-        if(((ss = meGetenv ("MENAME")) == NULL) || (ss[0] == '\0'))
-            ss = "user" ;
+        if(((ss = meGetenv("MENAME")) == NULL) || (ss[0] == '\0'))
+            ss = (meUByte *) "user" ;
         meUserName = meStrdup(ss) ;
     }
     
     /* get the users home directory, user path and search path */
     if(((ss = meGetenv("HOME")) == NULL) || (ss[0] == '\0'))
-        ss = "c:/" ;
+        ss = (meUByte *) "c:/" ;
     fileNameSetHome(ss) ;
 
     if(((ss = meGetenv ("MEUSERPATH")) != NULL) && (ss[0] != '\0'))
@@ -271,7 +272,7 @@ meInt
 meFileGetAttributes(meUByte *fname)
 {
 #ifdef __DJGPP2__
-    return _chmod(fname,0,0) ;
+    return _chmod((char *) fname,0,0) ;
 #else
     union REGS reg ;		/* cpu register for use of DOS calls */
     meUByte fn[meBUF_SIZE_MAX] ;
@@ -301,7 +302,7 @@ void
 _meFileSetAttributes(meUByte *fn, meUShort attr)
 {
 #ifdef __DJGPP2__
-    _chmod(fn,1,attr) ;
+    _chmod((char *) fn,1,attr) ;
 #else
     union REGS reg ;		/* cpu register for use of DOS calls */
 
@@ -524,8 +525,8 @@ TTwaitForChar(void)
             rg.x.ax = 0x0003 ;
             int86(0x33, &rg, &rg) ;
             but = rg.x.bx & MOUSE_STATE_BUTTONS ;
-            col = rg.x.cx>>3 ;
-            row = rg.x.dx>>3 ;
+            col = (rg.x.cx & 0x0ffff)>>3 ;
+            row = (rg.x.dx & 0x0ffff)>>3 ;
             
             /* Check for mouse state changes */
             if(((mouseState ^ but) & MOUSE_STATE_BUTTONS) || 
@@ -727,18 +728,18 @@ ibmChangeSRes(void)
         /* set mouse hor range */
         rg.x.ax = 0x0007 ;
         rg.x.cx = 0x0000 ;
-        rg.x.dx = (frameCur->width-1) << 3 ;
+        rg.x.dx = (((frameCur == NULL) ? TTwidthDefault:frameCur->width)-1) << 3 ;
         int86(0x33, &rg, &rg) ;
         /* set mouse vert range */
         rg.x.ax = 0x0008 ;
         rg.x.cx = 0x0000 ;
-        rg.x.dx = (frameCur->depth) << 3 ;
+        rg.x.dx = ((frameCur == NULL) ? TTdepthDefault:frameCur->depth) << 3 ;
         int86(0x33, &rg, &rg) ;
         /* get the current status */
         rg.x.ax = 0x0003 ;
         int86(0x33, &rg, &rg) ;
-        mouse_X = rg.x.cx>>3 ;
-        mouse_Y = rg.x.dx>>3 ;
+        mouse_X = (rg.x.cx & 0x0ffff)>>3 ;
+        mouse_Y = (rg.x.dx & 0x0ffff)>>3 ;
         mouseState |= (rg.x.bx & MOUSE_STATE_BUTTONS) ;
     }
 #endif
@@ -799,11 +800,11 @@ TTopen(void)
     rg.h.ah = 0x33;		/* control-break check dos call */
     rg.h.al = 1;		/* set the current state */
     rg.h.dl = 0;		/* set it OFF */
-    intdos(&rg, &rg);	        /* go for it! */
+    intdos(&rg,&rg);	        /* go for it! */
 
-    ibmChangeSRes() ;
+    ibmChangeSRes();
 
-    return meTRUE ;
+    return meTRUE;
 }
 
 int
@@ -851,13 +852,13 @@ TTclose(void)
 int
 changeFont(int f, int n)
 {
-    char buf[meSBUF_SIZE_MAX] ;
+    meUByte buf[meSBUF_SIZE_MAX] ;
     int  mode ;
 
-    if(meGetString("Res mode",0,0,buf,meSBUF_SIZE_MAX) <= 0)
+    if(meGetString((meUByte *) "Res mode",0,0,buf,meSBUF_SIZE_MAX) <= 0)
         return meFALSE ;
     mode = meAtoi(buf) ;
-    if(meGetString("Res special",0,0,buf,meSBUF_SIZE_MAX) <= 0)
+    if(meGetString((meUByte *) "Res special",0,0,buf,meSBUF_SIZE_MAX) <= 0)
         return meFALSE ;
     dosResMode = mode ;
     dosResSpecial = meAtoi(buf) ;

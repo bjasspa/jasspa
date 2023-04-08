@@ -29,8 +29,14 @@
 
 #include "emain.h"
 
-#if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
+#ifdef _WIN32
+#define meFileGetError()   GetLastError()
+#else
 #include <errno.h>
+#define meFileGetError()   (errno)
+#endif
+
+#if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef _UNIX
@@ -1277,7 +1283,7 @@ ffgetBuf(meIo *io,int offset, int len)
         {
             ffremain = 0;
             if((io->fp != GetStdHandle(STD_INPUT_HANDLE)) || (GetLastError() != ERROR_BROKEN_PIPE))
-                return mlwrite(MWABORT,(meUByte *)"[File read error %d]",GetLastError());
+                return mlwrite(MWABORT,(meUByte *)"[File read error %d]",meFileGetError());
         }
         if(ffremain <= 0)
             return meFALSE;
@@ -1287,7 +1293,7 @@ ffgetBuf(meIo *io,int offset, int len)
         if((ffremain = fread(ffbuf+offset,1,len,io->fp)) <= 0)
         {
             if(ferror(io->fp))
-                return mlwrite(MWABORT,(meUByte *)"[File read error %d]",errno);
+                return mlwrite(MWABORT,(meUByte *)"[File read error %d]",meFileGetError());
             return meFALSE;
         }
     }
@@ -2082,7 +2088,7 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
                             sprintf((char *)filename+ll,"%d~",ii) ;
                             if(meRename(filename,filename2) && (ffFileOp(filename,filename2,meRWFLAG_DELETE,-1) <= 0))
                             {
-                                mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s (%d)]",filename2,errno,meFileGetError()) ;
+                                mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s (%d)]",filename2,meFileGetError()) ;
                                 if(meUnlink(filename))
                                 {
                                     mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to remove backup file %s]", filename) ;
@@ -2096,7 +2102,7 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
                 if(!meTestExist(filename) && meUnlink(filename))
                     mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to remove backup file %s]", filename) ;
                 else if(meRename(filenameOld,filename) && (ffFileOp(filenameOld,filename,meRWFLAG_DELETE,-1) <= 0))
-                    mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s (%d)]",filename,errno,meFileGetError());
+                    mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s (%d)]",filename,meFileGetError());
                 else if(bp != NULL)
                 {
                     meUShort ss;
@@ -2136,9 +2142,11 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
                 ii = (RemoveDirectory((const char *)fname) == 0);
 #else
                 ii = rmdir((char *) fname);
+#ifdef _UNIX
                 if(ii && (errno == ENOTDIR))
                     /* this happens when its a symbolic link */
                     ii = meUnlink(fname);
+#endif
 #endif
             }
             else

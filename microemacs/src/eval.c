@@ -2820,18 +2820,18 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
                 } while(--index > 0) ;
             }
             index = (int) (s1 - arg1) ;
-            meStrncpy(evalResult,arg1,index) ;
-            ii = meStrlen(arg3) ;
+            memcpy(evalResult,arg1,index);
+            ii = meStrlen(arg3);
             if(ii+index < meBUF_SIZE_MAX)
             {
-                meStrncpy(evalResult+index,arg3,ii) ;
+                memcpy(evalResult+index,arg3,ii);
                 index += ii ;
                 if(fnum == UFLINS)
                     s2 = s1-1 ;
                 ii = meStrlen(s2) ;
                 if(ii+index < meBUF_SIZE_MAX)
                 {
-                    meStrcpy(evalResult+index,s2) ;
+                    memcpy(evalResult+index,s2,ii);
                     index += ii ;
                 }
             }

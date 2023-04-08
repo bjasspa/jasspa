@@ -129,6 +129,8 @@ echo              win32vc6.mak  Win32 build using MS VC version 6 (or 98)
 echo              win32vc8.mak  Win32 build using MS VC version 8 (or 2005)
 echo              win32vc9.mak  Win32 build using MS VC version 9 (or 2008)
 echo              win32vc10.mak  Win32 build using MS VC version 10 (or 2010)
+echo              win32vc15.mak  Win32 build using MS VC version 15 (or 2017)
+echo              win32vc16.mak  Win32 build using MS VC version 16 (or 2019)
 echo     -ne  : for NanoEmacs build (output is ne).
 echo     -p   : Build with profiling instructions (MinGW)
 echo     -S   : Build clean spotless.
@@ -137,9 +139,6 @@ echo          : Sets build type:
 echo               c   Console support only
 echo               w   Wondow support only (default)
 echo               cw  Console and window support
-echo               cs  Console with ssl (https) support
-echo               ws  Wondow with ssl support
-echo               cws Console, window and ssl support
 echo.
 
 :build_exit
