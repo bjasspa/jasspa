@@ -32,12 +32,12 @@ AR       = ar
 RM       = rm -f
 RMDIR    = rm -rf
 
-BUILDID  = linux5gcc
+BUILDID  = linux32gcc
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
 
-CCDEFS   = -D_LINUX -D_LINUX5 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I$(TRDPARTY)/zlib
+CCDEFS   = -D_LINUX -D_LINUX5 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I.
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wall -Wno-uninitialized
 CCFLAGSD = -g -Wall
 LDDEFS   = 
@@ -58,40 +58,26 @@ LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
 endif
 
-LIBNAME  = tfs
+LIBNAME  = zlib
 LIBFILE  = $(LIBNAME)$(A)
-LIBHDRS  = tfs.h $(BUILDID).mak
-LIBOBJS  = $(OUTDIR)/tfs.o
-
-PRGNAME  = tfs
-PRGFILE  = $(PRGNAME)$(EXE)
-PRGHDRS  = tfs.h tfsutil.h $(BUILDID).mak
-PRGOBJS  = $(OUTDIR)/tfsutil.o $(OUTDIR)/tfs.o $(OUTDIR)/uappend.o $(OUTDIR)/ubuild.o $(OUTDIR)/ucopy.o \
-	   $(OUTDIR)/ucreate.o $(OUTDIR)/uinfo.o $(OUTDIR)/ulist.o $(OUTDIR)/ustrip.o $(OUTDIR)/utest.o \
-	   $(OUTDIR)/uxdir.o $(OUTDIR)/uxfile.o
-PRGLIBS  = $(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A)
+LIBHDRS  = zutil.h zlib.h zconf.in.h zconf.h trees.h inftrees.h inflate.h \
+	   inffixed.h inffast.h deflate.h crc32.h $(BUILDID).mak
+LIBOBJS  = $(OUTDIR)/adler32.o $(OUTDIR)/compress.o $(OUTDIR)/crc32.o $(OUTDIR)/gzio.o $(OUTDIR)/uncompr.o \
+	   $(OUTDIR)/deflate.o $(OUTDIR)/trees.o $(OUTDIR)/zutil.o $(OUTDIR)/inflate.o $(OUTDIR)/infback.o \
+	   $(OUTDIR)/inftrees.o $(OUTDIR)/inffast.o
 
 .SUFFIXES: .c .o
 
 $(OUTDIR)/%.o : %.c
 	$(CC) $(CCDEFS) $(CCFLAGS) -c -o $@ $<
 
-all: $(PRGLIBS) $(OUTDIR)/$(LIBFILE) $(OUTDIR)/$(PRGFILE)
+all: $(OUTDIR)/$(LIBFILE)
 
 $(OUTDIR)/$(LIBFILE): $(OUTDIR) $(LIBOBJS)
 	$(RM) $@
 	$(AR) $(ARFLAGS) $@ $(LIBOBJS)
 
 $(LIBOBJS): $(LIBHDRS)
-
-$(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
-	$(RM) $@
-	$(LD) $(LDDEFS) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS)
-
-$(PRGOBJS): $(PRGHDRS)
-
-$(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A):
-	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
 
 $(OUTDIR):
 	[ -d $(OUTDIR) ] || mkdir $(OUTDIR)

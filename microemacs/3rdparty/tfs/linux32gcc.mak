@@ -32,20 +32,12 @@ AR       = ar
 RM       = rm -f
 RMDIR    = rm -rf
 
-BUILDID  = linux5gcc
+BUILDID  = linux32gcc
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
-ifeq "$(OPENSSLP)" ""
-OPENSSLP = /usr/local/opt/openssl
-endif
-ifeq "$(wildcard $(OPENSSLP)/include/.)" ""
-$(warning WARNING: No OpenSSL support found, https support will be disabled.)
-else
-OPENSSLDEFS = -DMEOPT_OPENSSL=1 -I$(OPENSSLP)/include -D_OPENSSLLNM=libssl.1.1.dylib -D_OPENSSLCNM=libcrypto.1.1.dylib
-endif
 
-CCDEFS   = -D_LINUX -D_LINUX5 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I. $(OPENSSLDEFS)
+CCDEFS   = -D_LINUX -D_LINUX5 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I$(TRDPARTY)/zlib
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wall -Wno-uninitialized
 CCFLAGSD = -g -Wall
 LDDEFS   = 
@@ -66,16 +58,18 @@ LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
 endif
 
-LIBNAME  = mesock
+LIBNAME  = tfs
 LIBFILE  = $(LIBNAME)$(A)
-LIBHDRS  = mesock.h $(BUILDID).mak
-LIBOBJS  = $(OUTDIR)/mesock.o
+LIBHDRS  = tfs.h $(BUILDID).mak
+LIBOBJS  = $(OUTDIR)/tfs.o
 
-PRGNAME  = mehttptest
+PRGNAME  = tfs
 PRGFILE  = $(PRGNAME)$(EXE)
-PRGHDRS  = mesock.h $(BUILDID).mak
-PRGOBJS  = $(OUTDIR)/mehttptest.o
-PRGLIBS  = $(OUTDIR)/mesock$(A)
+PRGHDRS  = tfs.h tfsutil.h $(BUILDID).mak
+PRGOBJS  = $(OUTDIR)/tfsutil.o $(OUTDIR)/tfs.o $(OUTDIR)/uappend.o $(OUTDIR)/ubuild.o $(OUTDIR)/ucopy.o \
+	   $(OUTDIR)/ucreate.o $(OUTDIR)/uinfo.o $(OUTDIR)/ulist.o $(OUTDIR)/ustrip.o $(OUTDIR)/utest.o \
+	   $(OUTDIR)/uxdir.o $(OUTDIR)/uxfile.o
+PRGLIBS  = $(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A)
 
 .SUFFIXES: .c .o
 
@@ -95,6 +89,9 @@ $(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(LD) $(LDDEFS) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS)
 
 $(PRGOBJS): $(PRGHDRS)
+
+$(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A):
+	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
 
 $(OUTDIR):
 	[ -d $(OUTDIR) ] || mkdir $(OUTDIR)

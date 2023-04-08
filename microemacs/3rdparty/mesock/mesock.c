@@ -684,7 +684,6 @@ meSockInit(meUShort logFlags, meUByte *buff)
        ((sslF_SSL_free = (meSOCKF_SSL_free) meSockLibGetFunc(libHandle,"SSL_free")) == NULL) ||
        ((sslF_SSL_get_current_cipher = (meSOCKF_SSL_get_current_cipher) meSockLibGetFunc(libHandle,"SSL_get_current_cipher")) == NULL) ||
        ((sslF_SSL_get_error = (meSOCKF_SSL_get_error) meSockLibGetFunc(libHandle,"SSL_get_error")) == NULL) ||
-       ((sslF_SSL_get_peer_certificate = (meSOCKF_SSL_get_peer_certificate) meSockLibGetFunc(libHandle,"SSL_get_peer_certificate")) == NULL) ||
        ((sslF_SSL_get_verify_result = (meSOCKF_SSL_get_verify_result) meSockLibGetFunc(libHandle,"SSL_get_verify_result")) == NULL) ||
        ((sslF_SSL_get_version = (meSOCKF_SSL_get_version) meSockLibGetFunc(libHandle,"SSL_get_version")) == NULL) ||
        ((sslF_SSL_new = (meSOCKF_SSL_new) meSockLibGetFunc(libHandle,"SSL_new")) == NULL) ||
@@ -695,6 +694,8 @@ meSockInit(meUShort logFlags, meUByte *buff)
        ((sslF_SSL_get_session = (meSOCKF_SSL_get_session) meSockLibGetFunc(libHandle,"SSL_get_session")) == NULL) ||
        ((sslF_SSL_set_session = (meSOCKF_SSL_set_session) meSockLibGetFunc(libHandle,"SSL_set_session")) == NULL) ||
        ((sslF_TLS_client_method = (meSOCKF_TLS_client_method) meSockLibGetFunc(libHandle,"TLS_client_method")) == NULL) ||
+       (((sslF_SSL_get_peer_certificate = (meSOCKF_SSL_get_peer_certificate) meSockLibGetFunc(libHandle,"SSL_get1_peer_certificate")) == NULL) &&
+        ((sslF_SSL_get_peer_certificate = (meSOCKF_SSL_get_peer_certificate) meSockLibGetFunc(libHandle,"SSL_get_peer_certificate")) == NULL)) ||
        0)
     {
         if(logFlags & meSOCK_LOG_ERROR)

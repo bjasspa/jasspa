@@ -32,12 +32,23 @@ AR       = ar
 RM       = rm -f
 RMDIR    = rm -rf
 
-BUILDID  = linux5gcc
+BUILDID  = linux32gcc
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
+ifneq "$(OPENSSLP)" ""
+else ifneq "$(wildcard /usr/include/openssl/ssl.h)" ""
+OPENSSLP = /usr/include
+else ifneq "$(wildcard /usr/local/opt/openssl/include/openssl/ssl.h)" ""
+OPENSSLP = /usr/local/opt/openssl
+endif
+ifeq "$(OPENSSLP)" ""
+$(warning WARNING: No OpenSSL support found, https support will be disabled.)
+else
+OPENSSLDEFS = -DMEOPT_OPENSSL=1 -I$(OPENSSLP)/include -D_OPENSSLLNM=libssl$(OPENSSLV).so -D_OPENSSLCNM=libcrypto$(OPENSSLV).so
+endif
 
-CCDEFS   = -D_LINUX -D_LINUX5 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I.
+CCDEFS   = -D_LINUX -D_LINUX5 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I. $(OPENSSLDEFS)
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wall -Wno-uninitialized
 CCFLAGSD = -g -Wall
 LDDEFS   = 
@@ -58,26 +69,35 @@ LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
 endif
 
-LIBNAME  = zlib
+LIBNAME  = mesock
 LIBFILE  = $(LIBNAME)$(A)
-LIBHDRS  = zutil.h zlib.h zconf.in.h zconf.h trees.h inftrees.h inflate.h \
-	   inffixed.h inffast.h deflate.h crc32.h $(BUILDID).mak
-LIBOBJS  = $(OUTDIR)/adler32.o $(OUTDIR)/compress.o $(OUTDIR)/crc32.o $(OUTDIR)/gzio.o $(OUTDIR)/uncompr.o \
-	   $(OUTDIR)/deflate.o $(OUTDIR)/trees.o $(OUTDIR)/zutil.o $(OUTDIR)/inflate.o $(OUTDIR)/infback.o \
-	   $(OUTDIR)/inftrees.o $(OUTDIR)/inffast.o
+LIBHDRS  = mesock.h $(BUILDID).mak
+LIBOBJS  = $(OUTDIR)/mesock.o
+
+PRGNAME  = mehttptest
+PRGFILE  = $(PRGNAME)$(EXE)
+PRGHDRS  = mesock.h $(BUILDID).mak
+PRGOBJS  = $(OUTDIR)/mehttptest.o
+PRGLIBS  = $(OUTDIR)/mesock$(A)
 
 .SUFFIXES: .c .o
 
 $(OUTDIR)/%.o : %.c
 	$(CC) $(CCDEFS) $(CCFLAGS) -c -o $@ $<
 
-all: $(OUTDIR)/$(LIBFILE)
+all: $(PRGLIBS) $(OUTDIR)/$(LIBFILE) $(OUTDIR)/$(PRGFILE)
 
 $(OUTDIR)/$(LIBFILE): $(OUTDIR) $(LIBOBJS)
 	$(RM) $@
 	$(AR) $(ARFLAGS) $@ $(LIBOBJS)
 
 $(LIBOBJS): $(LIBHDRS)
+
+$(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
+	$(RM) $@
+	$(LD) $(LDDEFS) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS)
+
+$(PRGOBJS): $(PRGHDRS)
 
 $(OUTDIR):
 	[ -d $(OUTDIR) ] || mkdir $(OUTDIR)

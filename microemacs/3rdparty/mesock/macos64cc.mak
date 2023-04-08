@@ -25,13 +25,33 @@ BUILDID  = macos64cc
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
-ifeq "$(OPENSSLP)" ""
+# If the program ends up trying to load the default system ssl libraries it is likely to trigger a runtime '<prg> is loading libcrypto in an unsafe way' abort!!
+# Avoid this by trying to use a versioned library, i.e. libssl.3.dylib as this will lead to a relatively safe 'lib not found' (no crash)
+# But better still set the DYLD_FALLBACK_LIBRARY_PATH appropriately!
+ifneq "$(OPENSSLP)" ""
+else ifneq "$(wildcard /usr/local/opt/openssl@3/include/openssl/ssl.h)" ""
+OPENSSLP = /usr/local/opt/openssl@3
+OPENSSLV = .3
+else ifneq "$(wildcard /opt/homebrew/opt/openssl@3/include/openssl/ssl.h)" ""
+OPENSSLP = /opt/homebrew/opt/openssl@3
+OPENSSLV = .3
+else ifneq "$(wildcard /usr/local/opt/openssl@1.1/include/openssl/ssl.h)" ""
+OPENSSLP = /usr/local/opt/openssl@1.1
+OPENSSLV = .1.1
+else ifneq "$(wildcard /opt/homebrew/opt/openssl@1.1/include/openssl/ssl.h)" ""
+OPENSSLP = /opt/homebrew/opt/openssl@1.1
+OPENSSLV = .1.1
+else ifneq "$(wildcard /usr/local/opt/openssl/include/openssl/ssl.h)" ""
 OPENSSLP = /usr/local/opt/openssl
+else ifneq "$(wildcard /opt/homebrew/opt/openssl/include/openssl/ssl.h)" ""
+OPENSSLP = /opt/homebrew/opt/openssl
+else ifneq "$(wildcard /usr/include/openssl/ssl.h)" ""
+OPENSSLP = /usr/include
 endif
-ifeq "$(wildcard $(OPENSSLP)/include/.)" ""
+ifeq "$(OPENSSLP)" ""
 $(warning WARNING: No OpenSSL support found, https support will be disabled.)
 else
-OPENSSLDEFS = -DMEOPT_OPENSSL=1 -I$(OPENSSLP)/include -D_OPENSSLLNM=libssl.1.1.dylib -D_OPENSSLCNM=libcrypto.1.1.dylib
+OPENSSLDEFS = -DMEOPT_OPENSSL=1 -I$(OPENSSLP)/include -D_OPENSSLLNM=libssl$(OPENSSLV).dylib -D_OPENSSLCNM=libcrypto$(OPENSSLV).dylib
 endif
 
 CCDEFS   = -D_MACOS -D_64BIT -m64 -Wall $(OPENSSLDEFS)

@@ -42,6 +42,7 @@ main(int argc, char *argv[])
     meInt port;
     int flgs, rr, ii, ret;
     
+    // mehttptest 95 www.bbc.co.uk 443 "" "" "/"
     if((argc < 7) || ((host = (meUByte *) argv[2])[0] == '\0') || ((file = (meUByte *) argv[6])[0] == '\0'))
     {
         printf("meHttpTest Error - Usage:\n  %s <flg> <host> [port] [user] [pass] <file> [cookies] [form-data] [submit-fname] [file2]\n",argv[0]);
@@ -65,7 +66,7 @@ main(int argc, char *argv[])
     cook.buffLen = -1;
     frdt = ((argc > 8) && (argv[8][0] != '\0')) ? (meUByte *) argv[8]:NULL;
     pfnm = ((argc > 9) && (argv[9][0] != '\0')) ? (meUByte *) argv[9]:NULL;
-
+    
     if((ret = meSockHttpOpen(&sFp,flgs,host,port,user,pass,file,&cook,(frdt == NULL) ? 0:strlen((char *) frdt),frdt,pfnm,buff)) < 0)
     {
         printf("meHttpOpen returned error %d: %s\n",ret,buff);
