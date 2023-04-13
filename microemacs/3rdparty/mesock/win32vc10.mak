@@ -47,15 +47,23 @@ OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
 
-!IF "$(OPENSSLP)" == ""
+!IF "$(OPENSSLP)" != ""
+!ELSEIF EXISTS($(TRDPARTY)\openssl-3.1\x86\include\openssl\ssl.h)
+OPENSSLP = $(TRDPARTY)\openssl-3.1\x86
+OPENSSLV = -3_1
+!ELSEIF EXISTS($(TRDPARTY)\openssl-3\x86\include\openssl\ssl.h)
+OPENSSLP = $(TRDPARTY)\openssl-3\x86
+OPENSSLV = -3
+!ELSEIF EXISTS($(TRDPARTY)\openssl-1.1\x86\include\openssl\ssl.h)
 OPENSSLP = $(TRDPARTY)\openssl-1.1\x86
+OPENSSLV = -1_1
 !ENDIF
-!IF EXISTS($(OPENSSLP)\include)
-OPENSSLDEFS = /DMEOPT_OPENSSL=1 /I$(OPENSSLP)\include /D_OPENSSLLNM=libssl-1_1 /D_OPENSSLCNM=libcrypto-1_1
-OPENSSLLIBS = $(OPENSSLP)\lib\libssl.lib $(OPENSSLP)\lib\libcrypto.lib
-!ELSE
+!IF "$(OPENSSLP)" == ""
 !MESSAGE WARNING: No OpenSSL support found, https support will be disabled.
 !MESSAGE
+!ELSE
+OPENSSLDEFS = /DMEOPT_OPENSSL=1 /I$(OPENSSLP)\include /D_OPENSSLLNM=libssl$(OPENSSLV) /D_OPENSSLCNM=libcrypto$(OPENSSLV)
+OPENSSLLIBS = $(OPENSSLP)\lib\libssl.lib $(OPENSSLP)\lib\libcrypto.lib
 !ENDIF
 
 CCDEFS   = /DWIN32 /D_WIN32 /D_WIN32_WINNT=0x0600 /W3 /Zi /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE $(OPENSSLDEFS)
