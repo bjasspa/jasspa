@@ -683,7 +683,14 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
     while((path != NULL) && (*path != '\0'))
     {
         /* build next possible file spec */
-        sp = path ;
+        sp = path;
+#if MEOPT_TFS
+#if mePATH_CHAR == ':'
+        /* Special case: if the path starts with tfs: the assume its a tfs path rather than just 'tfs' */
+        if((path[0] == 't') && (path[1] == 'f') && (path[2] == 's') && (path[3] == ':'))
+            path += 4;
+#endif
+#endif
         if((path = meStrchr(path,mePATH_CHAR)) != NULL)
         {
             ii = path++ - sp ;

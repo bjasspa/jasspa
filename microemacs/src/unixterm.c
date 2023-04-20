@@ -260,12 +260,13 @@ int meStdin ;
 #define meATOM_INCR             4
 #define meATOM_MULTIPLE         5
 #define meATOM_CLIPBOARD        6
-#define meATOM_UTF8_STRING      7
-/* XA_STRING must be next to TARGETS */
-#define meATOM_TARGETS          8
+/* All the clipboard target atoms must follow the TARGETS atom */
+#define meATOM_TARGETS          7
+#define meATOM_UTF8_STRING      8
 #define meATOM_STRING           9
+#define meTARGET_ATOM_COUNT     3
 static int TTdefaultPosX, TTdefaultPosY ;
-static Atom meAtoms[meATOM_TARGETS+1]={0};
+static Atom meAtoms[meATOM_STRING]={0};
 /* could define a static Atom to be the desired clipboard property if CLIPBOARD was ever preferred over PRIMARY */
 char *meName=ME_FULLNAME;
 char *meIconName=ME_FULLNAME;
@@ -488,20 +489,23 @@ meSetupPathsAndUser(void)
     
     /* If no name yet then set to default 'user'. */
     if(meUserName == NULL)
-        meUserName = meStrdup((meUByte *) "user") ;
+        meUserName = meStrdup((meUByte *) "user");
     
     /* get the users home directory, user path and search path */
     if((homedir == NULL) &&
        (((ss = meGetenv("HOME")) != NULL) && (ss[0] != '\0')))
-        fileNameSetHome(ss) ;
+        fileNameSetHome(ss);
     
-    if(((ss = meGetenv ("MEUSERPATH")) != NULL) && (ss[0] != '\0'))
-        meUserPath = meStrdup(ss) ;
+    if(((ss = meGetenv("MEUSERPATH")) != NULL) && (ss[0] != '\0'))
+        meUserPath = meStrdup(ss);
     
-    if(((ss = meGetenv ("MEPATH")) != NULL) && (ss[0] != '\0'))
+    if((searchPath == NULL) &&
+       ((ss = meGetenv("MEPATH")) != NULL) && (ss[0] != '\0'))
+        searchPath = meStrdup(ss);
+    
+    if(searchPath != NULL)
     {
         /* explicit path set by the user, don't need to look at anything else */
-        searchPath = meStrdup(ss) ;
         /* we just need to add the $user-path to the front */
         if(meUserPath != NULL)
         {
@@ -826,24 +830,23 @@ TCAPgetWinSize(void)
         else
             TTnewWid = frameCur->width ;
         
-	/* Get the number of lines on the screen */
+        /* Get the number of lines on the screen */
         if((ii=tgetnum(tcaptab[TCAPlines].capKey)) != -1)
             TTnewHig = ii ;
         else
-	{
+        {
             TTnewHig = frameCur->depth + 1 ;
-	    /* return now to avoid a potential window size decrease if the
+            /* return now to avoid a potential window size decrease if the
              * below scroll glitch is true */
-	    return ;
-	}
+            return ;
+        }
     }
     
     /* If there is a new line glitch and we have automargins then it is
      * dangerous for us to use the last line as we cause a scroll that we
      * cannot easily correct. If this is the case then reduce the number of
      * lines by 1. */
-    if ((tcaptab[TCAPam].code.value != 0) &&
-        (tcaptab[TCAPxenl].code.value == 0) &&
+    if ((tcaptab[TCAPam].code.value != 0) && (tcaptab[TCAPxenl].code.value == 0) &&
         (TTaMarginsDisabled == 0))
         TTnewHig-- ;
 }
@@ -1453,6 +1456,8 @@ meXEventHandler(void)
         /* The window has been un-mapped. */
         if((frame = meXEventGetFrame(&event)) != NULL)
         {
+#if 0
+            /* Search for meXMAP_FONT to find comment on why disabled */
             int state = meFrameGetXMapState(frame);
             
             /* Only handle the Font mapping state, when flagged with a font
@@ -1464,11 +1469,15 @@ meXEventHandler(void)
                  * note that we do not check the error return because there
                  * is not actually anything that we can do if the hints
                  * cannot be set. */
+                sizeHints.base_width = sizeHints.width = mecm.fwidth*frame->width;
+                sizeHints.base_height = sizeHints.height = mecm.fdepth*(frame->depth+1);
                 XSetWMNormalHints(mecm.xdisplay,meFrameGetXWindow(frame),&sizeHints) ;
+                meFrameSetWindowSize(frame);
                 /* Now that the hints have been changed then the window may
                  * be re-mapped to display it again. */
                 XMapWindow(mecm.xdisplay,meFrameGetXWindow(frame)) ;
             }
+#endif
             /* Ensure that the frame state is unmapped, we do not want to
              * apply any further font changes. */
             meFrameSetXMapState(frame,meXMAP_UNMAP) ;
@@ -1480,13 +1489,13 @@ meXEventHandler(void)
          * draw_text and draw_graphics */
         if((frame = meXEventGetFrame(&event)) != NULL)
         {
-            /* Get the width and heigth back and setup the frame->depthMax etc */
+            /* Get the width and height back and setup the frame->depthMax etc */
             int ww, hh, sizeSet ;
             
             /* Make sure that there are no other pending ConfigureNotify
              * events, if there are then find the last one */
 #if 0
-            /* Although advised causes a pasued startup */
+            /* Although advised causes a paused startup */
             {
                 XEvent nextEvent;
                 
@@ -1506,7 +1515,11 @@ meXEventHandler(void)
             sizeHints.width  = event.xconfigure.width ;
             hh = event.xconfigure.height / mecm.fdepth ;
             ww = event.xconfigure.width / mecm.fwidth ;
-            /*            printf("Got event2 Config %d %d\n",hh,ww) ;*/
+#if 0
+            printf("Got Config Notify %d,%d %d x %d, %d + %d (%d %d)\n",sizeHints.x,sizeHints.y,
+                   sizeHints.width,sizeHints.height,sizeHints.width_inc,sizeHints.height_inc,ww,hh);
+#endif            
+            
             /*        printf("Got configure event! (%d,%d)\n",frame->width,frame->depth) ;*/
             /* Disable the window resize until BOTH width and height changes
              * have been established. Both LINUX and SUN suffer from severe
@@ -1527,13 +1540,12 @@ meXEventHandler(void)
             }
             disableResize = 0;            /* Re-enable the resize */
             
-            /* Change the size of the window now that both sizes have been
-             * established. Only perform the resize if there is something to
-             * change */
-            if ((hh != frame->depth+1) || (ww != frame->width))
-                meFrameSetWindowSize(frame) ;
+            /* Change the size of the window now that both sizes have been established.
+             * Only perform the resize if there is something to change */
+            if((hh != frame->depth+1) || (ww != frame->width))
+                meFrameSetWindowSize(frame);
             if(sizeSet && !screenUpdateDisabledCount)
-                screenUpdate(meTRUE,2-sgarbf) ;
+                screenUpdate(meTRUE,2-sgarbf);
         }
         break;
     case Expose:
@@ -2055,7 +2067,7 @@ special_bound:
 #ifdef _CLIPBRD
     case SelectionClear:
         if((meXEventGetFrame(&event) != NULL) &&
-           (event.xselection.selection == XA_PRIMARY))
+           ((event.xselection.selection == XA_PRIMARY) || (event.xselection.selection == meAtoms[meATOM_CLIPBOARD])))
             clipState &= ~CLIP_OWNER ;
         break ;
         
@@ -2063,9 +2075,11 @@ special_bound:
         {
             XSelectionEvent reply;
             
-            /* printf("Got SelectionRequest %d, Target = %d %s, string %d\n",*/
-            /*        event.xselectionrequest.requestor, event.xselectionrequest.target,*/
-            /*        XGetAtomName(mecm.xdisplay, event.xselectionrequest.target),XA_STRING) ;*/
+#if 0
+            printf("Got SelectionRequest %ld, Selection = %s %ld (%ld %ld), Target = %s %ld (%ld %ld %ld)\n",event.xselectionrequest.requestor,
+                   XGetAtomName(mecm.xdisplay,event.xselectionrequest.selection),event.xselectionrequest.selection,XA_PRIMARY,meAtoms[meATOM_CLIPBOARD],
+                   XGetAtomName(mecm.xdisplay,event.xselectionrequest.target),event.xselectionrequest.target,meAtoms[meATOM_TARGETS],XA_STRING,meAtoms[meATOM_UTF8_STRING]);
+#endif
             reply.type = SelectionNotify;
             reply.serial = 1;
             reply.send_event = 1;
@@ -2078,7 +2092,7 @@ special_bound:
             
             if((event.xselectionrequest.selection == XA_PRIMARY) || (event.xselectionrequest.selection == meAtoms[meATOM_CLIPBOARD]))
             {
-                if((event.xselectionrequest.target == XA_STRING) && (klhead != NULL))
+                if(((event.xselectionrequest.target == XA_STRING) || (event.xselectionrequest.target == meAtoms[meATOM_UTF8_STRING])) && (klhead != NULL))
                 {
                     static meUByte *data=NULL ;
                     static int dataLen=0 ;
@@ -2090,33 +2104,58 @@ special_bound:
                     killp = klhead->kill;
                     while(killp != NULL)
                     {
-                        len += meStrlen(killp->data) ;
+                        if(event.xselectionrequest.type == XA_STRING)
+                            len += meStrlen(killp->data);
+                        else
+                        {
+                            /* TODO SSP should have a CP to UNICODE for chars 0x80 - 0xff, for now convert all to replace char (U+fffd, UTF8: \xEF\xBF\xBD) */
+                            ss = killp->data;
+                            while((cc=*ss++) != '\0')
+                                len += (cc & 0x80) ? 3:1;
+                        }
                         killp = killp->next;
                     }
-                    if((meSystemCfg & meSYSTEM_NOEMPTYANK) && (len == 0))
-                        len++ ;
-                    if((dataLen <= len) &&
-                       ((ss = meMalloc(len+1)) != NULL))
+                    if((dataLen <= len) && ((dd = meMalloc(len+33)) != NULL))
                     {
-                        meNullFree(data) ;
-                        data = ss ;
-                        dataLen = len+1 ;
+                        meNullFree(data);
+                        data = dd;
+                        dataLen = len+32;
                     }
                     if(dataLen > len)
                     {
-                        ss = data ;
+                        dd = data;
                         killp = klhead->kill;
                         while(killp != NULL)
                         {
-                            dd = killp->data ;
-                            while((cc = *dd++))
-                                *ss++ = cc ;
-                            killp = killp->next ;
+                            ss = killp->data;
+                            if(event.xselectionrequest.type == XA_STRING)
+                            {
+                                while((cc = *ss++))
+                                    *dd++ = cc;
+                            }
+                            else
+                            {
+                                while((cc = *ss++))
+                                {
+                                    if(cc & 0x80)
+                                    {
+                                        *dd++ = 0xEF;
+                                        *dd++ = 0xBF;
+                                        *dd++ = 0xBD;
+                                    }
+                                    else
+                                        *dd++ = cc;
+                                }
+                            }
+                            killp = killp->next;
                         }
-                        if((meSystemCfg & meSYSTEM_NOEMPTYANK) && (ss == data))
-                            *ss++ = ' ' ;
-                        *ss = '\0' ;
-                        reply.property = event.xselectionrequest.property ;
+                        if((meSystemCfg & meSYSTEM_NOEMPTYANK) && (len == 0))
+                        {
+                            *dd++ = ' ';
+                            len++;
+                        }
+                        *dd = '\0';
+                        reply.property = event.xselectionrequest.property;
                         XChangeProperty(mecm.xdisplay,reply.requestor,reply.property,reply.target,
                                         8,PropModeReplace,data,len);
                     }
@@ -2125,7 +2164,7 @@ special_bound:
                 {
                     reply.property = event.xselectionrequest.property ;
                     XChangeProperty(mecm.xdisplay,reply.requestor,reply.property,reply.target,
-                                    32,PropModeReplace,(unsigned char *) (meAtoms+meATOM_TARGETS),2);
+                                    32,PropModeReplace,(unsigned char *) (meAtoms+meATOM_TARGETS),meTARGET_ATOM_COUNT);
                 }
             }
             XSendEvent(mecm.xdisplay,reply.requestor,False,0,(XEvent *) &reply) ;
@@ -2139,7 +2178,12 @@ special_bound:
             Atom type ;
             int  fmt ;
             
-            /* printf("SelectionNotify (%ld %ld) (%ld %ld)\n",event.xselection.selection,XA_PRIMARY,event.xselection.property,meAtoms[meATOM_COPY_TEXT]);*/
+#if 0
+             printf("Got SelectionNotify %ld, Property = %s %ld (%ld), Selection = %s %ld (%ld %ld), Target = %s %ld (%ld %ld %ld)\n",event.xselection.requestor,
+                    XGetAtomName(mecm.xdisplay,event.xselection.property),event.xselection.property,meAtoms[meATOM_COPY_TEXT],
+                    XGetAtomName(mecm.xdisplay,event.xselection.selection),event.xselection.selection,XA_PRIMARY,meAtoms[meATOM_CLIPBOARD],
+                    XGetAtomName(mecm.xdisplay,event.xselection.target),event.xselection.target,meAtoms[meATOM_TARGETS],XA_STRING,meAtoms[meATOM_UTF8_STRING]);
+#endif
             if(((event.xselection.selection == XA_PRIMARY) || (event.xselection.selection == meAtoms[meATOM_CLIPBOARD])) &&
                (event.xselection.property == meAtoms[meATOM_COPY_TEXT]) &&
                (XGetWindowProperty(mecm.xdisplay,meFrameGetXWindow(frame),meAtoms[meATOM_COPY_TEXT],0,0x1fffffffL,False,AnyPropertyType,
@@ -2179,7 +2223,7 @@ special_bound:
                 }
                 else if(((type == XA_STRING) || (type == meAtoms[meATOM_UTF8_STRING])) && (fmt == 8) && (nitems > 0))
                 {
-                    if(type == meAtoms[meATOM_UTF8_STRING])
+                    if(type != XA_STRING)
                     {
                         int ss;
                         meUByte cc, c2;
@@ -3137,10 +3181,10 @@ XTERMsetFont(int n, char *fontName)
     
     sizeHints.width_inc  = ii;
     sizeHints.height_inc = jj;
-    sizeHints.min_width  = ii*10 ;
+    sizeHints.min_width  = ii*10;
     sizeHints.min_height = jj*4;
-    sizeHints.base_width  = ii;
-    sizeHints.base_height = jj;
+    sizeHints.base_width = TTwidthDefault*ii;
+    sizeHints.base_height = TTdepthDefault*jj;
     
     /* Clean up the font table for the existing font. Unload all of the
      * previously loaded fonts */
@@ -3346,12 +3390,12 @@ XTERMstart(void)
     }
     
     meStdin = ConnectionNumber(mecm.xdisplay);
-    xscreen = DefaultScreen(mecm.xdisplay) ;
-    xcmap   = DefaultColormap(mecm.xdisplay,xscreen) ;
+    xscreen = DefaultScreen(mecm.xdisplay);
+    xcmap   = DefaultColormap(mecm.xdisplay,xscreen);
     
-    sizeHints.flags = PSize | PResizeInc | PMinSize | PBaseSize ;
-    sizeHints.max_height = DisplayHeight(mecm.xdisplay,xscreen) ;
-    sizeHints.max_width  = DisplayWidth(mecm.xdisplay,xscreen) ;
+    sizeHints.flags = PSize | PResizeInc | PMinSize | PBaseSize;
+    sizeHints.max_height = DisplayHeight(mecm.xdisplay,xscreen);
+    sizeHints.max_width = DisplayWidth(mecm.xdisplay,xscreen);
     
     XrmInitialize ();
     xdefs = XResourceManagerString(mecm.xdisplay);
@@ -3360,8 +3404,8 @@ XTERMstart(void)
     else
     {
         char buff[1048] ;
-        meStrcpy(buff,(homedir != NULL) ? homedir:(meUByte *)"./") ;
-        meStrcat(buff,".Xdefaults") ;
+        meStrcpy(buff,(homedir != NULL) ? homedir:(meUByte *)"./");
+        meStrcat(buff,".Xdefaults");
         rdb = XrmGetFileDatabase(buff);
     }
     if(XrmGetResource(rdb,"MicroEmacs.font","MicroEmacs.Font",&retType,&retVal) &&
@@ -3375,29 +3419,33 @@ XTERMstart(void)
         return meFALSE ;
     
     /* Set the default geometry, then look for an override */
-    ww = 80 ;
-    hh = 50 ;
-    xx = 0 ;
-    yy = 0 ;
+    ww = 80;
+    hh = 50;
+    xx = 0;
+    yy = 0;
     if(XrmGetResource(rdb,"MicroEmacs.geometry","MicroEmacs.Geometry",&retType,&retVal) &&
        !strcmp(retType,"String"))
     {
         int tw, th ;
-        sizeHints.flags = USSize | PResizeInc | PMinSize | PBaseSize ;
+        sizeHints.flags = USSize | PResizeInc | PMinSize | PBaseSize;
         if(sscanf(retVal.addr,"%dx%d%d%d",&tw,&th,&xx,&yy) > 2)
-            sizeHints.flags |= USPosition ;
-        ww = (meUInt) tw ;
-        hh = (meUInt) th ;
+            sizeHints.flags |= USPosition;
+        ww = (meUInt) tw;
+        hh = (meUInt) th;
     }
-    else
-        sizeHints.flags = PSize | PResizeInc | PMinSize | PBaseSize ;
     
-    if((ww*mecm.fwidth) > ((meUInt) sizeHints.max_width))
-        ww = sizeHints.max_width / mecm.fwidth ;
-    if((hh*mecm.fdepth) > ((meUInt) sizeHints.max_height))
-        hh = sizeHints.max_height / mecm.fdepth ;
-    TTdepthDefault = hh ;
-    TTwidthDefault = ww ;
+    if((sizeHints.base_width = ww*mecm.fwidth) > ((meUInt) sizeHints.max_width))
+    {
+        ww = sizeHints.max_width / mecm.fwidth;
+        sizeHints.base_width = ww*mecm.fwidth;
+    }
+    if((sizeHints.base_height = hh*mecm.fdepth) > ((meUInt) sizeHints.max_height))
+    {
+        hh = sizeHints.max_height / mecm.fdepth;
+        sizeHints.base_height = hh*mecm.fdepth;
+    }
+    TTdepthDefault = hh;
+    TTwidthDefault = ww;
     
     if(xx < 0)
         xx = sizeHints.max_width + xx - (ww * mecm.fwidth) ;
@@ -3409,7 +3457,7 @@ XTERMstart(void)
     /* Set up the  protocol  defaults  required. We must do this before we map
      * the window. */
     {
-        static char* meAtomNames[meATOM_TARGETS+1] = {
+        static char* meAtomNames[meATOM_STRING] = {
             "WM_DELETE_WINDOW",
             "WM_SAVE_YOURSELF",
             "WM_PROTOCOLS",
@@ -3421,17 +3469,17 @@ XTERMstart(void)
             "INCR",
             "MULTIPLE",
             "CLIPBOARD",
-            "UTF8_STRING",
             "TARGETS",
-        } ;
-        int ii ;
-        for(ii=0 ; ii<(meATOM_TARGETS+1) ; ii++)
-            meAtoms[ii] = XInternAtom(mecm.xdisplay,meAtomNames[ii], meFALSE);
-        meAtoms[ii] = XA_STRING ;
+            "UTF8_STRING",
+        };
+        int ii;
+        for(ii=0 ; ii<meATOM_STRING ; ii++)
+            meAtoms[ii] = XInternAtom(mecm.xdisplay,meAtomNames[ii],meFALSE);
+        meAtoms[ii] = XA_STRING;
     }
     
     /* Initialise XDND */
-    xdndInitialize (mecm.xdisplay);
+    xdndInitialize(mecm.xdisplay);
     
     if(XrmGetResource(rdb,"MicroEmacs.name","MicroEmacs.Name",&retType,&retVal) &&
        !strcmp(retType,"String") &&
@@ -3591,33 +3639,49 @@ changeFont(int f, int n)
         /* Set up the arguments for a resize operation. Because the font has changed then we need to
          * define the new window base size, minimum size and increment size.
          */
-        meFrameLoopBegin() ;
+        meFrameLoopBegin();
     
-        meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN) ;
-        
-        meFrameSetWindowSize(loopFrame) ;
+        meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN);
         
         /* Make the current font invalid and force a complete redraw */
-        meFrameSetXGCFont(loopFrame,0) ;
-        meFrameSetXGCFontId(loopFrame,mecm.fontId) ;
-        meFrameGetXGCValues(loopFrame).font = mecm.fontId ;
-        XChangeGC(mecm.xdisplay,meFrameGetXGC(loopFrame),GCFont,&meFrameGetXGCValues(loopFrame)) ;
+        meFrameSetXGCFont(loopFrame,0);
+        meFrameSetXGCFontId(loopFrame,mecm.fontId);
+        meFrameGetXGCValues(loopFrame).font = mecm.fontId;
+        XChangeGC(mecm.xdisplay,meFrameGetXGC(loopFrame),GCFont,&meFrameGetXGCValues(loopFrame));
         
+        /* The old sizeHints will restrict the window size based on the w/h_inc which may exclude our new desired size.
+         * So set the new hints first and then the window size */
+#if 0
+        /* Steve 2023-04-18: Found that calling XSetWMNormalHints on mapped windows works fine on macOS with XQuartz.
+         * Also can't find any docs suggesting XSetWMNormalHints can only be called on an Unmapped window, may be this
+         * was the case but doesn't seem to be any more */
         /* In order for us to change the hints for a font change then the
          * X-Window has to be un-mapped. Therefore on a font change unmap the
          * window, the hints size is then changed when we receive the MapNotify
          * event and the X-Window may be re-mapped. Unmap the window ready to
          * change the size hints for the font. Note that the hint values are the
          * same irrespective of the number of windows. */
-        if (meFrameGetXMapState(loopFrame) == meXMAP_MAP)
+        if(meFrameGetXMapState(loopFrame) == meXMAP_MAP)
         {
             /* Tell the Unmap event that this is a font change mapping and then
              * unmap the window. */
-            meFrameSetXMapState(loopFrame, meXMAP_FONT);
-            XUnmapWindow (mecm.xdisplay, meFrameGetXWindow(loopFrame));
+            meFrameSetXMapState(loopFrame,meXMAP_FONT);
+            XUnmapWindow(mecm.xdisplay,meFrameGetXWindow(loopFrame));
+        }
+        else
+#endif
+        {
+            sizeHints.base_width = sizeHints.width = mecm.fwidth*loopFrame->width;
+            sizeHints.base_height = sizeHints.height = mecm.fdepth*(loopFrame->depth+1);
+#if 0
+            printf("Font Change: %d,%d %d x %d, %d + %d (%d %d)\n",sizeHints.x,sizeHints.y,sizeHints.width,sizeHints.height,
+                   sizeHints.width_inc,sizeHints.height_inc,loopFrame->width,loopFrame->depth+1);
+#endif
+            XSetWMNormalHints(mecm.xdisplay,meFrameGetXWindow(loopFrame),&sizeHints);
+            meFrameSetWindowSize(loopFrame);
         }
     
-        meFrameLoopEnd() ;
+        meFrameLoopEnd();
     
         sgarbf = meTRUE;
     }
@@ -3742,10 +3806,12 @@ meFrameSetWindowSize(meFrame *frame)
     if(disableResize == 0)
 #endif /* _ME_CONSOLE */
     {
-        sizeHints.height = mecm.fdepth*(frame->depth+1) ;
-        sizeHints.width  = mecm.fwidth*frame->width ;
-        /*printf("meFrameSetWindowSize::" __FILE__ ":%d: XResizeWindow\n", __LINE__);*/
-        XResizeWindow(mecm.xdisplay,meFrameGetXWindow(frame),sizeHints.width,sizeHints.height) ;
+        sizeHints.base_width = sizeHints.width = mecm.fwidth*frame->width;
+        sizeHints.base_height = sizeHints.height = mecm.fdepth*(frame->depth+1);
+#if 0
+        printf("meFrameSetWindowSize Resize %d %d\n",sizeHints.width,sizeHints.height);
+#endif
+        XResizeWindow(mecm.xdisplay,meFrameGetXWindow(frame),sizeHints.width,sizeHints.height);
     }
 }
 
@@ -3887,9 +3953,14 @@ TTsetClipboard(int cpData)
     if(!(meSystemCfg & (meSYSTEM_CONSOLE|meSYSTEM_NOCLIPBRD)) &&
        !(clipState & (CLIP_OWNER|CLIP_RECEIVING|CLIP_DISABLED)) && (kbdmode != mePLAY))
     {
-        XSetSelectionOwner(mecm.xdisplay,XA_PRIMARY,meFrameGetXWindow(frameCur),CurrentTime) ;
-        if(XGetSelectionOwner(mecm.xdisplay,XA_PRIMARY) == meFrameGetXWindow(frameCur))
-            clipState |= CLIP_OWNER ;
+#if 0
+        printf("Setting selection owner\n");
+#endif
+        XSetSelectionOwner(mecm.xdisplay,XA_PRIMARY,meFrameGetXWindow(frameCur),CurrentTime);
+        XSetSelectionOwner(mecm.xdisplay,meAtoms[meATOM_CLIPBOARD],meFrameGetXWindow(frameCur),CurrentTime);
+        if((XGetSelectionOwner(mecm.xdisplay,XA_PRIMARY) == meFrameGetXWindow(frameCur)) ||
+           (XGetSelectionOwner(mecm.xdisplay,meAtoms[meATOM_CLIPBOARD]) == meFrameGetXWindow(frameCur)))
+            clipState |= CLIP_OWNER;
     }
 }
 
@@ -3906,8 +3977,7 @@ TTgetClipboard(void)
         clipState &= ~CLIP_RECEIVED ;
         clipState |= CLIP_RECEIVING ;
         /* Request for the current Primary/Clipboard string owner to send a
-         * SelectionNotify event to us giving the current string
-         */
+         * SelectionNotify event to us giving the current string */
         XConvertSelection(mecm.xdisplay,XA_PRIMARY,XA_STRING,meAtoms[meATOM_COPY_TEXT],meFrameGetXWindow(frameCur),CurrentTime) ;
         /* Must do a flush to ensure the request has gone */
         XFlush(mecm.xdisplay) ;

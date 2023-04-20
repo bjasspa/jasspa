@@ -128,22 +128,25 @@ meSetupPathsAndUser(void)
     if(meUserName == NULL)
     {
         if(((ss = meGetenv("MENAME")) == NULL) || (ss[0] == '\0'))
-            ss = (meUByte *) "user" ;
-        meUserName = meStrdup(ss) ;
+            ss = (meUByte *) "user";
+        meUserName = meStrdup(ss);
     }
     
     /* get the users home directory, user path and search path */
     if(((ss = meGetenv("HOME")) == NULL) || (ss[0] == '\0'))
-        ss = (meUByte *) "c:/" ;
-    fileNameSetHome(ss) ;
+        ss = (meUByte *) "c:/";
+    fileNameSetHome(ss);
 
-    if(((ss = meGetenv ("MEUSERPATH")) != NULL) && (ss[0] != '\0'))
-        meUserPath = meStrdup(ss) ;
+    if(((ss = meGetenv("MEUSERPATH")) != NULL) && (ss[0] != '\0'))
+        meUserPath = meStrdup(ss);
     
-    if(((ss = meGetenv("MEPATH")) != NULL) && (ss[0] != '\0'))
+    if((searchPath == NULL) &&
+       ((ss = meGetenv("MEPATH")) != NULL) && (ss[0] != '\0'))
+        searchPath = meStrdup(ss);
+        
+    if(searchPath != NULL)
     {
         /* explicit path set by the user, don't need to look at anything else */
-        searchPath = meStrdup(ss) ;
         /* we just need to add the $user-path to the front */
         if(meUserPath != NULL)
         {

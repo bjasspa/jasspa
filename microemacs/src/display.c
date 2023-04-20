@@ -2773,7 +2773,13 @@ mlwrite(int flags, meUByte *fmt, int arg)
         meExit(1) ;
     }
     if((alarmState & meALARM_PIPED_QUIET) && ((flags & MWSTDALLWRT) == 0))
-        goto mlwrite_exit ;
+    {
+        if((flags & MWWAIT) == 0)
+            goto mlwrite_exit;
+        /* MWWAIT is used for a serious issue which means the pipe process has almost certainly gone wrong.
+         * Force the printout to stderr and don't wait */
+        flags |= MWSTDERRWRT;
+    }
     if(clexec && (flags & MWCLEXEC))
     {
         meRegister *rr ;
@@ -2967,17 +2973,16 @@ mlwrite(int flags, meUByte *fmt, int arg)
         /* Change the value of frameCur->mlStatus to MLSTATUS_KEEP cos we want to keep
          * the string till we get a key
          */
-        meUByte scheme=(globScheme/meSCHEME_STYLES), oldMlStatus = frameCur->mlStatus, oldkbdmode=kbdmode ;
-        pokeScreen(POKE_NOMARK+0x10,frameCur->depth,frameCur->width-9,&scheme,
-                   (meUByte *) "<ANY KEY>") ;
-        vp1->endp = frameCur->width ;
-        frameCur->mlStatus = MLSTATUS_KEEP ;
+        meUByte scheme=(globScheme/meSCHEME_STYLES), oldMlStatus=frameCur->mlStatus, oldkbdmode=kbdmode;
+        pokeScreen(POKE_NOMARK+0x10,frameCur->depth,frameCur->width-9,&scheme,(meUByte *) "<ANY KEY>");
+        vp1->endp = frameCur->width;
+        frameCur->mlStatus = MLSTATUS_KEEP;
         /* avoid any recursive call to an idle macro */
-        kbdmode = meSTOP ;
-        TTgetc() ;
-        kbdmode = oldkbdmode ;
-        frameCur->mlStatus = oldMlStatus ;
-        mlerase(0) ;
+        kbdmode = meSTOP;
+        TTgetc();
+        kbdmode = oldkbdmode;
+        frameCur->mlStatus = oldMlStatus;
+        mlerase(0);
     }
     if(!(flags & MWCURSOR))
         resetCursor();
