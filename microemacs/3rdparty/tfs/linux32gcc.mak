@@ -94,7 +94,7 @@ $(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A):
 	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
 
 $(OUTDIR):
-	[ -d $(OUTDIR) ] || mkdir $(OUTDIR)
+	-mkdir $(OUTDIR)
 
 clean:
 	$(RMDIR) $(OUTDIRD)

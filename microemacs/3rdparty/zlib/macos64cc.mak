@@ -69,7 +69,7 @@ $(OUTDIR)/$(LIBFILE): $(OUTDIR) $(LIBOBJS)
 $(LIBOBJS): $(LIBHDRS)
 
 $(OUTDIR):
-	[ -d $(OUTDIR) ] || mkdir $(OUTDIR)
+	-mkdir $(OUTDIR)
 
 clean:
 	$(RMDIR) $(OUTDIRD)

@@ -42,13 +42,21 @@ endif
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
-ifeq "$(OPENSSLP)" ""
+ifneq "$(OPENSSLP)" ""
+else ifneq "$(wildcard $(TRDPARTY)/openssl-3.1/x86/include/openssl/ssl.h)" ""
+OPENSSLP = $(TRDPARTY)/openssl-3.1/x86
+OPENSSLV = -3_1
+else ifneq "$(wildcard $(TRDPARTY)/openssl-3/x86/include/openssl/ssl.h)" ""
+OPENSSLP = $(TRDPARTY)/openssl-3/x86
+OPENSSLV = -3
+else ifneq "$(wildcard $(TRDPARTY)/openssl-1.1/x86/include/openssl/ssl.h)" ""
 OPENSSLP = $(TRDPARTY)/openssl-1.1/x86
+OPENSSLV = -1_1
 endif
-ifeq "$(wildcard $(OPENSSLP)/include/.)" ""
+ifeq "$(OPENSSLP)" ""
 $(warning WARNING: No OpenSSL support found, https support will be disabled.)
 else
-OPENSSLDEFS = -DMEOPT_OPENSSL=1 -I$(OPENSSLP)/include -D_OPENSSLLNM=libssl-1_1 -D_OPENSSLCNM=libcrypto-1_1
+OPENSSLDEFS = -DMEOPT_OPENSSL=1 -I$(OPENSSLP)/include -D_OPENSSLLNM=libssl$(OPENSSLV) -D_OPENSSLCNM=libcrypto$(OPENSSLV)
 OPENSSLLIBS = $(OPENSSLP)/lib/libssl.lib $(OPENSSLP)/lib/libcrypto.lib
 endif
 
@@ -126,7 +134,7 @@ $(OUTDIR)/$(PRGFILE2): $(OUTDIR) $(PRGOBJS2) $(PRGLIBS)
 $(PRGOBJS2): $(PRGHDRS)
 
 $(OUTDIR):
-	if not exist $(OUTDIR)\ mkdir $(OUTDIR)
+	-mkdir $(OUTDIR)
 
 clean:
 	$(RMDIR) $(OUTDIRD)

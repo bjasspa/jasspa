@@ -110,7 +110,7 @@ $(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A):
 	cd $(TRDPARTY)/zlib && $(MK) -f $(TOOLKIT).mak BCFG=$(BCFG) BPRF=$(BPRF)
 
 $(OUTDIR):
-	if not exist $(OUTDIR)\ mkdir $(OUTDIR)
+	-mkdir $(OUTDIR)
 
 clean:
 	$(RMDIR) $(OUTDIRD)

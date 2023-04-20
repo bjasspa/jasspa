@@ -106,6 +106,7 @@ typedef int (*meSOCKF_SSL_CTX_load_verify_locations)(SSL_CTX *ctx, const char *C
 typedef SSL_CTX *(*meSOCKF_SSL_CTX_new)(const SSL_METHOD *meth);
 typedef int (*meSOCKF_SSL_CTX_set1_param)(SSL_CTX *ctx, X509_VERIFY_PARAM *vpm);
 typedef int (*meSOCKF_SSL_CTX_set_default_verify_paths)(SSL_CTX *ctx);
+typedef uint64_t (*meSOCKF_SSL_CTX_set_options)(SSL_CTX *ctx,uint64_t opts);
 typedef void (*meSOCKF_SSL_CTX_set_verify)(SSL_CTX *ctx, int mode, SSL_verify_cb callback);
 typedef int (*meSOCKF_SSL_connect)(SSL *ssl);
 typedef long (*meSOCKF_SSL_ctrl)(SSL *ssl, int cmd, long larg, void *parg);
@@ -189,6 +190,7 @@ meSOCKF_SSL_CTX_load_verify_locations sslF_SSL_CTX_load_verify_locations;
 meSOCKF_SSL_CTX_new sslF_SSL_CTX_new;
 meSOCKF_SSL_CTX_set1_param sslF_SSL_CTX_set1_param;
 meSOCKF_SSL_CTX_set_default_verify_paths sslF_SSL_CTX_set_default_verify_paths;
+meSOCKF_SSL_CTX_set_options sslF_SSL_CTX_set_options;
 meSOCKF_SSL_CTX_set_verify sslF_SSL_CTX_set_verify;
 meSOCKF_SSL_connect sslF_SSL_connect;
 meSOCKF_SSL_ctrl sslF_SSL_ctrl;
@@ -678,6 +680,7 @@ meSockInit(meUShort logFlags, meUByte *buff)
        ((sslF_SSL_CTX_new = (meSOCKF_SSL_CTX_new) meSockLibGetFunc(libHandle,"SSL_CTX_new")) == NULL) ||
        ((sslF_SSL_CTX_set1_param = (meSOCKF_SSL_CTX_set1_param) meSockLibGetFunc(libHandle,"SSL_CTX_set1_param")) == NULL) ||
        ((sslF_SSL_CTX_set_default_verify_paths = (meSOCKF_SSL_CTX_set_default_verify_paths) meSockLibGetFunc(libHandle,"SSL_CTX_set_default_verify_paths")) == NULL) ||
+       ((sslF_SSL_CTX_set_options = (meSOCKF_SSL_CTX_set_options) meSockLibGetFunc(libHandle,"SSL_CTX_set_options")) == NULL) ||
        ((sslF_SSL_CTX_set_verify = (meSOCKF_SSL_CTX_set_verify) meSockLibGetFunc(libHandle,"SSL_CTX_set_verify")) == NULL) ||
        ((sslF_SSL_connect = (meSOCKF_SSL_connect) meSockLibGetFunc(libHandle,"SSL_connect")) == NULL) ||
        ((sslF_SSL_ctrl = (meSOCKF_SSL_ctrl) meSockLibGetFunc(libHandle,"SSL_ctrl")) == NULL) ||
@@ -778,6 +781,10 @@ meSockInit(meUShort logFlags, meUByte *buff)
     /* The OpenSSL library can handle renegotiations automatically, so tell it to do so. */
     OPENSSLFunc(SSL_CTX_ctrl)(meSockCtx,SSL_CTRL_MODE,SSL_MODE_AUTO_RETRY,NULL);
 
+#ifdef SSL_OP_IGNORE_UNEXPECTED_EOF
+    /* IIS can still send non-chunked responses without a content-length, this triggers an EOF error in v3+ so ignore for now, could turn into an option */
+    OPENSSLFunc(SSL_CTX_set_options)(meSockCtx,SSL_OP_IGNORE_UNEXPECTED_EOF);
+#endif    
     return 0;
 }
 
@@ -2439,16 +2446,19 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
                 meSockFtpCommand(sFp,rbuff,"PBSZ 0");
                 if(meSockFtpCommand(sFp,rbuff,"PROT P") == ftpPOS_COMPLETE)
                     sFp->flags |= meSOCK_USE_SSL;
-                else if(sFp->flags & meSOCK_LOG_ERROR)
+                else if(logFunc != NULL)
+                    /* Always report this warning as this could be a security issue */
                     logFunc(meSOCK_LOG_WARNING,(meUByte *) "meSockFtp Warning: Server refused data protection",logData);
             }
             else
 #endif
             {
-                if(sFp->flags & meSOCK_LOG_ERROR)
 #if MEOPT_OPENSSL
+                if(logFunc != NULL)
+                    /* Always report this warning as this could be a security issue */
                     logFunc(meSOCK_LOG_WARNING,(meUByte *) "meSock Warning: Server does not support explicit TLS",logData);
 #else
+                if(sFp->flags & meSOCK_LOG_ERROR)
                     logFunc(meSOCK_LOG_ERROR,(meUByte *) "meSock Error: FTP SSL not supported in this build",logData);
 #endif
                 sFp->flags &= ~meSOCK_EXPLICIT_SSL;
@@ -2472,6 +2482,7 @@ meSockFtpOpen(meSockFile *sFp, meUShort flags, meUByte *host, meInt port, meUByt
             return -32;
         }
         else if((pass != NULL) && (logFunc != NULL))
+            /* Always report this warning as it could be a security breach */
             logFunc(meSOCK_LOG_WARNING,(meUByte *) "meSock Warning: User password not required",logData);
 
         if(meSockFtpCommand(sFp,rbuff,"TYPE I") != ftpPOS_COMPLETE)
@@ -2749,10 +2760,11 @@ meSockClose(meSockFile *sFp, int force)
                 if(err < 0)
                 {
                     if(sFp->flags & meSOCK_LOG_WARNING)
-                        logFunc(meSOCK_LOG_ERROR,(meUByte *) "meSock Warning: Failed to shutdown SSL",logData);
+                        logFunc(meSOCK_LOG_WARNING,(meUByte *) "meSock Warning: SSL shutdown failed",logData);
                 }
-                else if((err == 1) && (sFp->flags & meSOCK_LOG_VERBOSE))
-                    logFunc(meSOCK_LOG_VERBOSE,(meUByte *) "meSock Verbose: SSL client exited gracefully",logData);
+                /* do not need to call SSL_shutdown again if err == 0 as we are closing the socket */
+                else if(sFp->flags & meSOCK_LOG_VERBOSE)
+                    logFunc(meSOCK_LOG_VERBOSE,(meUByte *) ((err == 1) ? "meSock Debug: SSL connection fully closed":"meSock Debug: SSL connection closing"),logData);
             }
             OPENSSLFunc(SSL_free)(sFp->ssl);
             sFp->ssl = NULL;
@@ -2786,11 +2798,12 @@ meSockClose(meSockFile *sFp, int force)
                     int err = OPENSSLFunc(SSL_shutdown)(sFp->ctrlSsl);
                     if(err < 0)
                     {
-                        if(sFp->flags & meSOCK_LOG_ERROR)
-                            logFunc(meSOCK_LOG_ERROR,(meUByte *) "meSock Error: Failed to shutdown control SSL",logData);
+                        if(sFp->flags & meSOCK_LOG_WARNING)
+                            logFunc(meSOCK_LOG_WARNING,(meUByte *) "meSock Warning: Control SSL shutdown failed",logData);
                     }
-                    else if((err == 1) && (sFp->flags & meSOCK_LOG_VERBOSE))
-                        logFunc(meSOCK_LOG_VERBOSE,(meUByte *) "meSock Verbose: SSL client exited gracefully",logData);
+                    /* do not need to call SSL_shutdown again if err == 0 as we are closing the socket */
+                    else if(sFp->flags & meSOCK_LOG_VERBOSE)
+                        logFunc(meSOCK_LOG_VERBOSE,(meUByte *) ((err == 1) ? "meSock Debug: Control SSL connection fully closed":"meSock Debug: Control SSL connection closing"),logData);
                 }
                 OPENSSLFunc(SSL_free)(sFp->ctrlSsl);
                 sFp->ctrlSsl = NULL;

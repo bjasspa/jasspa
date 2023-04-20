@@ -153,7 +153,7 @@ $(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
 $(PRGOBJS): $(PRGHDRS)
 
 $(OUTDIR):
-	if not exist $(OUTDIR)\ mkdir $(OUTDIR)
+	-mkdir $(OUTDIR)
 
 $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A):
 	cd $(TRDPARTY)/zlib && $(MK) -f $(TOOLKIT).mak BCFG=$(BCFG) BPRF=$(BPRF)

@@ -85,7 +85,7 @@ $(OUTDIR)/$(LIBFILE): $(OUTDIR) $(LIBOBJS)
 $(LIBOBJS): $(LIBHDRS)
 
 $(OUTDIR):
-	if not exist $(OUTDIR)\ mkdir $(OUTDIR)
+	-mkdir $(OUTDIR)
 
 clean:
 	$(RMDIR) $(OUTDIRD)

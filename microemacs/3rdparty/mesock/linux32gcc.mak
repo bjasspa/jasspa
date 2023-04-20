@@ -100,7 +100,7 @@ $(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
 $(PRGOBJS): $(PRGHDRS)
 
 $(OUTDIR):
-	[ -d $(OUTDIR) ] || mkdir $(OUTDIR)
+	-mkdir $(OUTDIR)
 
 clean:
 	$(RMDIR) $(OUTDIRD)
