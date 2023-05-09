@@ -301,10 +301,11 @@ meSockGetSSLErrors(meUShort logFlags, meUByte *buff)
     if(logFlags & meSOCK_LOG_WARNING)
     {
         unsigned long err;
-        int bi = 0;
         while((err = OPENSSLFunc(ERR_get_error)()) != 0)
-            bi += snprintf((char *) buff+bi,meSOCK_BUFF_SIZE - bi,"\n  OpenSSL: %s",OPENSSLFunc(ERR_error_string)(err,NULL));
-        logFunc(meSOCK_LOG_WARNING,buff,logData);
+        {
+            snprintf((char *) buff,meSOCK_BUFF_SIZE,"  OpenSSL: %s",OPENSSLFunc(ERR_error_string)(err,NULL));
+            logFunc(meSOCK_LOG_WARNING,buff,logData);
+        }
     }
     else
         OPENSSLFunc(ERR_clear_error)();
