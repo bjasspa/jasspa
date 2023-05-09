@@ -146,7 +146,7 @@ createHilight(meUByte hilno, meInt size, meUByte *noHils , meHilight ***hTbl)
         if((root=(*hTbl)[hilno]) != NULL)
         {
             if(*hTbl == indents)
-                meIndentSetChangeFunc(root,NULL);
+                meIndentSetChangeFunc(root,0);
             else
             {
                 meHilight *hn ;
@@ -1755,7 +1755,7 @@ hilightLine(meVideoLine *vp1, meUByte mode)
 
     for(;;)
     {
-        node = meHilightGetColumnHilight(hd.root) ;
+        node = meHilightGetColumnHilight(hd.root);
         while(node != NULL)
         {
             if(meHilightGetFromColumn(node) == hd.srcPos)
@@ -1767,13 +1767,13 @@ hilightLine(meVideoLine *vp1, meUByte mode)
             }
             else if(meHilightGetFromColumn(node) > hd.srcPos)
                 break ;
-            node = meHilightGetColumnHilight(node) ;
+            node = meHilightGetColumnHilight(node);
         }
         if((node = findToken(hd.root,srcText+hd.srcPos,mode,cc,&len)) != NULL)
         {
 column_token:
             if(node->tknEndOff)
-                len -= node->tknEndOff ;
+                len -= node->tknEndOff;
             if(len == 0)
             {
                 /* the match string was 0 in length we will not move forward.
@@ -1782,16 +1782,16 @@ column_token:
                  * First time around set a flag to say we're here, next time
                  * around do something about it */
                 if(mode & meHIL_MODEMOVE)
-                    goto advance_char ;
-                mode |= meHIL_MODEMOVE ;
+                    goto advance_char;
+                mode |= meHIL_MODEMOVE;
             }
             else
-                mode &= ~meHIL_MODEMOVE ;
+                mode &= ~meHIL_MODEMOVE;
             if(node->tknSttOff)
             {
-                dstPos = hilCopyLenString(dstPos,srcText+hd.srcPos,node->tknSttOff,&hd) ;
-                hd.srcPos += node->tknSttOff ;
-                len -= node->tknSttOff ;
+                dstPos = hilCopyLenString(dstPos,srcText+hd.srcPos,node->tknSttOff,&hd);
+                hd.srcPos += node->tknSttOff;
+                len -= node->tknSttOff;
             }
 
             if(hd.blkp->column == dstPos)

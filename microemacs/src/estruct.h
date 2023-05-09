@@ -951,8 +951,8 @@ typedef struct meKill {
 #define meIndentGetLabelIndent(ind)          meIndentGetIndent(ind->token[7],frameCur->bufferCur->indentWidth)
 #define meIndentGetCommentMargin(ind)        meIndentGetIndent(ind->token[8],frameCur->bufferCur->indentWidth)
 #define meIndentGetCommentContinue(ind)      ((ind)->rtoken)
-#define meIndentGetChangeFunc(ind)           meIntFromPtr((ind)->rclose)
-#define meIndentSetChangeFunc(ind,v)         ((ind)->rclose = mePtrFromInt(v))
+#define meIndentGetChangeFunc(ind)           ((ind)->scheme)
+#define meIndentSetChangeFunc(ind,v)         ((ind)->scheme = (meScheme) (v))
 
 typedef struct meHilight {
     struct meHilight **list ;
