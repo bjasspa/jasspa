@@ -49,10 +49,12 @@ set-variable .fhook-make.comment "|#||#|# | #|r|"
   ; nmake IFs
   hilight .hilight.make 0x23 "!IF"           .scheme.prepro
   hilight .hilight.make 0x23 "!ELSE"         .scheme.prepro
+  hilight .hilight.make 0x23 "!ELSEIF"       .scheme.prepro
   hilight .hilight.make 0x23 "!ENDIF"        .scheme.prepro
   hilight .hilight.make 0x23 "!MESSAGE"      .scheme.type
   ; gmake IFs
   hilight .hilight.make 0x23 "ifeq"          .scheme.prepro
+  hilight .hilight.make 0x23 "ifneq"         .scheme.prepro
   hilight .hilight.make 0x23 "else"          .scheme.prepro
   hilight .hilight.make 0x23 "endif"         .scheme.prepro
 !endif

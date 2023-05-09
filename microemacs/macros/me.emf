@@ -217,7 +217,7 @@ add-file-hook "Makefile makefile .mak .mk .gmk"               fhook-make
 add-file-hook "Imakefile imakefile"                           fhook-imake
 add-file-hook "smb.conf"                                      fhook-samba
 add-file-hook "httpd.conf"                                    fhook-apache
-add-file-hook ".sh .ksh .csh .login .cshrc .profile .tcshrc"  fhook-shell
+add-file-hook ".sh .ksh .csh .login .bashrc .cshrc .tcshrc .zshrc .profile" fhook-shell
 add-file-hook ".ini .hpj .reg .rgy"                           fhook-ini
 add-file-hook ".htm .html .htp .hts"                          fhook-html
 add-file-hook ".lhtm .lhtml"                                  fhook-lhtml
@@ -254,6 +254,7 @@ add-file-hook ".py"                                           fhook-python
 add-file-hook ".scm .sch"                                     fhook-scheme
 add-file-hook ".mp .mf"                                       fhook-meta
 add-file-hook ".m4"                                           fhook-m4
+add-file-hook ".md .tmd"                                      fhook-md
 add-file-hook ".texi"                                         fhook-texi
 add-file-hook ".idl"                                          fhook-idl
 add-file-hook ".info dir"                                     fhook-info
@@ -269,7 +270,8 @@ add-file-hook ".au3"                                          fhook-au3
 add-file-hook ".mod"                                          fhook-mod2
 add-file-hook ".dot"                                          fhook-dot
 add-file-hook ".rb"                                           fhook-ruby
-add-file-hook ".r"                                            fhook-r
+add-file-hook ".rd .Rd"                                       fhook-rd
+add-file-hook ".r .R .Rtk"                                    fhook-r
 add-file-hook ".cfm .cfml .cfc"                               fhook-cfm
 add-file-hook ".iss"                                          fhook-iss
 add-file-hook ".swift"                                        fhook-swift

@@ -1,0 +1,76 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2009 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Oct 7 2022
+; Authors:     Detlef Groth
+; Synopsis:    R-doc file hook (https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Rd-format)
+; 
+define-macro fhook-rd
+  @# buffer-init "rd"
+  buffer-init-hooks
+!emacro
+
+; buffer-init variables
+set-variable .fhook-rd.name "Rd"
+set-variable .fhook-rd.setup &reg "/history/fhook/rd" "bfghinopx"
+set-variable .fhook-rd.setup-mask "abefghijkmnpstuwx"
+set-variable .fhook-rd.comment "|%||%|% | %||"
+
+!if &sin "f" .fhook-rd.setup
+  ; setup rd file collapse
+  set-variable .fhook-rd.collapse-open  "^\\\\\\l+{[ \t]*$"
+  set-variable .fhook-rd.collapse-close "^}"
+  set-variable .fhook-rd.collapse-mclose "1"
+  set-variable .fhook-rd.collapse-mnext "-1"
+!endif
+
+!if &and &sin "h" .fhook-rd.setup &band .hilight.flags 0x02
+  !iif &not &exi .hilight.rd  set-variable .hilight.rd &pinc .hilight.next 1
+  0 hilight .hilight.rd 0                 .scheme.text
+  hilight .hilight.rd 2 "%"               .scheme.comment
+  hilight .hilight.rd 4 "\"" "\"" "\\"    .scheme.string
+  hilight .hilight.rd 0 "\\\\[^{]*"       .scheme.keyword   
+!endif
+
+; rd-spell-word; modify the spelling rules so that the speller does not complain about commands.
+; Taken from hklatex.emf
+0 define-macro rd-spell-word
+  ; simply skip any word starting with a \
+  -2 show-region
+  !force backward-char
+  !if &seq @wc "\\"
+    2 show-region
+    set-variable .spell.check-word ""
+    !return
+  !elif &seq @wc "-"
+    !if &xse &mid @wl &sub $window-col 2 3 "\\w\\\\-"
+      forward-char
+      !while &xse &lef @wl $window-col ".*\\w+\\(\\\\-\\|[-.']\\)"
+        backward-char
+        backward-word
+      !done
+      search-buffer "em" "\\w+\\(\\(\\\\-\\|[-.']\\)\\w+\\)+"
+      set-variable .spell.check-word &rep @s0 "\\-" ""
+      !return
+    !endif
+  !endif
+  2 show-region
+  !if &seq @wc "\\"
+    !force forward-char
+    !if &seq @wc "-"
+      !force forward-char
+      !if &inw @wc
+        -2 show-region
+        search-buffer "em" "\\(\\w*\\)\\\\-\\(\\w*\\)"
+        set-variable .spell.check-word &cat @s1 @s2
+        !return
+      !endif
+    !endif
+  !endif
+  2 show-region
+  !abort
+!emacro
+
+buffer-init-fhook "rd"

@@ -777,7 +777,7 @@ define-macro tex2nr
 define-macro-file hkman aman
 
 !if &sin "x" .fhook-nroff.setup
-  ; only define the b & e hooks if time mode is enabled
+  ; only define the b & e hooks if time stamping is enabled
   0 define-macro bhook-nroff
     set-variable .timestamp $timestamp
     set-variable $timestamp "%Y/%M/%D %h:%m:%s"
