@@ -1164,11 +1164,18 @@ mlWrite(int f, int n)
         return status ;
     else
     {
-        status = MWSPEC ;
+        status = MWSPEC;
+        if((n == -3) || (n == -4))
+        {
+            if(alarmState & meALARM_PIPED)
+                n += 2;
+            else
+                n = 1;
+        }
         if(n == -1)
-            status |= MWSTDOUTWRT ;
+            status |= MWSTDOUTWRT;
         else if(n == -2)
-            status |= MWSTDERRWRT ;
+            status |= MWSTDERRWRT;
         mlwrite(status,buf);
         
         if((f == meTRUE) && (n > 0))
