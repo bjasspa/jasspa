@@ -180,8 +180,7 @@ copyRegion(int f, int n)
         }
     }
 #endif
-    if(lastflag != meCFKILL)                /* Kill type command.   */
-        killSave();
+    killInit(lastflag == meCFKILL);
     if(left == 0)
     {
         thisflag = meCFKILL ;
@@ -388,8 +387,7 @@ killRectangle(int f, int n)
     size = (elno - slno + 1) * (llen + 1) ;
     
     /* sort out the kill buffer */
-    if((lastflag != meCFKILL) && (thisflag != meCFKILL))
-        killSave();
+    killInit((lastflag == meCFKILL) || (thisflag == meCFKILL));
     if((kstr = killAddNode(size)) == NULL)
         return meFALSE ;
     thisflag = meCFKILL;

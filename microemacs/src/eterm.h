@@ -325,6 +325,7 @@ extern void meFrameRepositionWindow(meFrame *frame, int resize) ;
 #endif
 
 #ifdef _CLIPBRD
+extern void TTinitClipboard(void);
 extern void TTgetClipboard(void);
 extern void TTsetClipboard(int cpData);
 #endif

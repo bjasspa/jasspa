@@ -415,8 +415,8 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             meRegCurr->n = meAtoi(vvalue) ;
         else if(*nn == 'y')
         {
-            int len = meStrlen(vvalue) ;
-            killSave() ;
+            int len = meStrlen(vvalue);
+            killInit(0);
             if((nn = killAddNode(len)) == NULL)
                 return meABORT ;
             memcpy(nn,vvalue,len) ;
@@ -544,9 +544,12 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                     displaySpace = ' ';    
                 }
 #ifdef _XTERM
-                /* on unix, if using x-window then can't set ANSI || XANSI bits */
+                /* on unix, if using x-window then can't set ANSI || XANSI bits, and update clipboard settings */
                 if(!(meSystemCfg & meSYSTEM_CONSOLE))
-                    meSystemCfg &= ~(meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR) ;
+                {
+                    meSystemCfg &= ~(meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR);
+                    TTinitClipboard();
+                }
 #endif
 #if MEOPT_CLIENTSERVER
                 /* open or close the client server files */

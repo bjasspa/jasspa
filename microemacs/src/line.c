@@ -806,82 +806,82 @@ bufferInsertNewline(int f, int n)
 }
 
 /*
- * Save the current kill context. This involves making a new klist element and
- * putting it at the head of the klists (ie make khead point at it).
- *
- * The next kill will go into khead->kill, the previous kill can be accessed
- * via khead->k_next->kill
- *
- * The routine is made slightly more complicated because the number of elements
- * in the klist is kept to meKILL_MAX (defined in edef.h). Every time we enter this
- * routine we have to count the number of elements in the list and throw away
- * (ie free) the excess ones.
- *
- * Return meTRUE, except when we cannot malloc enough space for the new klist
- * element.
+ * Inf not continue kill then save the current kill context. This involves making a new klist
+ * element and putting it at the head of the klists (ie make khead point at it).
+ * 
+ * The next kill will go into khead->kill, the previous kill can be accessed via khead->k_next->kill
+ * 
+ * The routine is made slightly more complicated because the number of elements in the klist is kept
+ * to meKILL_MAX (defined in edef.h). Every time we enter this routine we have to count the number
+ * of elements in the list and throw away (ie free) the excess ones.
+ * 
+ * Always call TTsetClipboard to ensure ME has the clipboard ownership.
+ * 
+ * Return meTRUE, except when we cannot malloc enough space for the new klist element.
  */
 int
-killSave(void)
+killInit(int contKill)
 {
-    meShort count=0 ;
-    meKill *thiskl, *lastkl ;/* pointer to last klist element */
-    
-    /*
-     * see if klhead points to anything, if not then our job is easy,
-     * we setup klhead and make currkill point to the kill buffer that
-     * klhead points to.
-     */
-    thiskl = klhead ;
-    /*
-     * There is at least one element in the klist. Count the total number
-     * of elements and if over meKILL_MAX, delete the oldest kill.
-     */
-    while(thiskl != NULL)
+    if(!contKill)
     {
-        if(count++ == meKILL_MAX)
-            break ;
-        lastkl = thiskl;
-        thiskl = thiskl->next;
-    }
-    if(thiskl != NULL)
-    {
-        meKillNode *next, *kill ;
+        meShort count=0 ;
+        meKill *thiskl, *lastkl; /* pointer to last klist element */
+        
         /*
-         * One element too many. Free the kill buffer(s) associated
-         * with this klist, and finally the klist itself.
+         * see if klhead points to anything, if not then our job is easy,
+         * we setup klhead and make currkill point to the kill buffer that
+         * klhead points to.
          */
-        kill = thiskl->kill ;
-        while(kill != NULL)
+        thiskl = klhead;
+        /*
+         * There is at least one element in the klist. Count the total number
+         * of elements and if over meKILL_MAX, delete the oldest kill.
+         */
+        while(thiskl != NULL)
         {
-            next = kill->next;
-            meFree(kill);
-            kill = next;
+            if(count++ == meKILL_MAX)
+                break;
+            lastkl = thiskl;
+            thiskl = thiskl->next;
         }
-        meFree(thiskl) ;
+        if(thiskl != NULL)
+        {
+            meKillNode *next, *kill;
+            /*
+             * One element too many. Free the kill buffer(s) associated
+             * with this klist, and finally the klist itself.
+             */
+            kill = thiskl->kill;
+            while(kill != NULL)
+            {
+                next = kill->next;
+                meFree(kill);
+                kill = next;
+            }
+            meFree(thiskl);
+            /*
+             * Now make sure that the previous element in the list does
+             * not point to the thing that we have freed.
+             */
+            lastkl->next = (meKill*) NULL;
+            reyankLastYank = NULL;
+        }
+        
         /*
-         * Now make sure that the previous element in the list does
-         * not point to the thing that we have freed.
+         * There was a klhead. malloc a new klist element and wire it in to
+         * the head of the list.
          */
-        lastkl->next = (meKill*) NULL;
-        reyankLastYank = NULL ;
+        if((thiskl = (meKill *) meMalloc(sizeof(meKill))) == NULL)
+            return meFALSE;
+        thiskl->next = klhead;
+        klhead = thiskl;
+        thiskl->kill = NULL;
+        currkill = &(thiskl->kill);
     }
-    
-    /*
-     * There was a klhead. malloc a new klist element and wire it in to
-     * the head of the list.
-     */
-    if((thiskl = (meKill *) meMalloc(sizeof(meKill))) == NULL)
-        return meFALSE ;
-    thiskl->next = klhead ;
-    klhead = thiskl ;
-    thiskl->kill = NULL ;
-    currkill = &(thiskl->kill) ;
-    
 #ifdef _CLIPBRD
     TTsetClipboard(0);
 #endif
-    
-    return meTRUE ;
+    return meTRUE;
 }
 
 /* Add a new kill block of size count to the current kill.
@@ -1389,26 +1389,25 @@ ldelete(meInt nn, int kflag)
     }
 #endif
     if(kflag & 1)
-    {   /* Kill?                */
-        if((lastflag != meCFKILL) && (thisflag != meCFKILL))
-            killSave();
+    {
+        killInit((lastflag == meCFKILL) || (thisflag == meCFKILL));
         if((kstring = killAddNode(nn)) == NULL)
-            return meFALSE ;
+            return meFALSE;
         thisflag = meCFKILL;
     }
     else
-        kstring = NULL ;
+        kstring = NULL;
 #if MEOPT_UNDO
     if(kflag & 2)
     {
         if(!(kflag & 4) && (nn == 1))
-            meUndoAddDelChar() ;
+            meUndoAddDelChar();
         else
-            meUndoAddDelChars(nn) ;
+            meUndoAddDelChars(nn);
     }
 #endif
-    mldelete(nn,kstring) ;
-    return ret ;
+    mldelete(nn,kstring);
+    return ret;
 }
 
 /*

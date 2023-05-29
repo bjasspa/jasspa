@@ -254,17 +254,41 @@ meShell(int f, int n)
 #ifdef _XTERM
     if(!(meSystemCfg & meSYSTEM_CONSOLE))
     {
-        switch(fork())
+        char *termPrg[] = {
+#ifdef _LINUX
+            "gnome-terminal",NULL,
+            "konsole",NULL,
+#endif
+#ifdef _MACOS
+            "open","-n","-a","Terminal",NULL,
+#endif
+            "xterm",NULL,
+            NULL
+        };
+        int ii=0;
+        char *pp;
+        while(((pp=termPrg[ii]) != NULL) && !executableLookup((meUByte *) pp,evalResult))
         {
-        case 0:
-            /* we want the children to die on interrupt */
-            execlp("xterm", "xterm", "-sl", "200", "-sb", NULL);
-            mlwrite(MWABORT,(meUByte *)"exec failed, %s", strerror(errno));
-            meExit(127);
-        case -1:
-            ss = mlwrite(MWABORT,(meUByte *)"exec failed, %s", strerror(errno));
-        default:
-            ss = meTRUE ;
+            while(termPrg[++ii] != NULL)
+                ;
+            ii++;
+        }
+        if(pp == NULL)
+            ss = mlwrite(MWABORT,(meUByte *)"[Failed to find terminal program]");
+        else
+        {
+            switch(fork())
+            {
+            case 0:
+                /* we want the children to die on interrupt */
+                execvp(pp,&(termPrg[ii]));
+                fprintf(stderr,"exec of [%s] failed, %s\n",pp,strerror(errno));
+                _exit(0);
+            case -1:
+                ss = mlwrite(MWABORT,(meUByte *)"exec failed, %s", strerror(errno));
+            default:
+                ss = meTRUE ;
+            }
         }
     }
     else
@@ -2409,11 +2433,11 @@ suspendEmacs(int f, int n)		/* suspend MicroEMACS and wait to wake up */
         return meFALSE ;
 
     TTclose();				/* stty to old settings */
-    kill(getpid(), SIGTSTP);
+    kill(getpid(),SIGTSTP);
     TTopen();
     sgarbf = meTRUE;
 
-    return meTRUE ;
+    return meTRUE;
 }
 #endif
 #endif

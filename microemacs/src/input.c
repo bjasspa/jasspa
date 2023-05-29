@@ -434,8 +434,7 @@ mlForwardDelete(meUByte *buf,int curPos, int curLen, int delLen, int flags)
         dd = buf + curPos ;
         if(flags & 2)
         {
-            if((mlInputFlags & mlINPUT_LAST_KILL) == 0)
-                killSave() ;
+            killInit(mlInputFlags & mlINPUT_LAST_KILL);
             if((ss = killAddNode(delLen)) != NULL)
             {
                 memcpy(ss,dd,delLen) ;

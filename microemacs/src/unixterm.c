@@ -267,7 +267,8 @@ int meStdin ;
 #define meTARGET_ATOM_COUNT     3
 static int TTdefaultPosX, TTdefaultPosY ;
 static Atom meAtoms[meATOM_STRING]={0};
-/* could define a static Atom to be the desired clipboard property if CLIPBOARD was ever preferred over PRIMARY */
+static Atom clipboardA=0;
+static Atom clipboardB=0;
 char *meName=ME_FULLNAME;
 char *meIconName=ME_FULLNAME;
 
@@ -2066,19 +2067,21 @@ special_bound:
         }
 #ifdef _CLIPBRD
     case SelectionClear:
+#if 0
+        printf("Got SelectionClear %ld, Selection = %s %ld\n",event.xselection.requestor,(event.xselection.selection) ? XGetAtomName(mecm.xdisplay,event.xselection.selection):"<0>",event.xselection.selection);
+#endif
         if((meXEventGetFrame(&event) != NULL) &&
-           ((event.xselection.selection == XA_PRIMARY) || (event.xselection.selection == meAtoms[meATOM_CLIPBOARD])))
+           ((event.xselection.selection == clipboardA) || (event.xselection.selection == clipboardB)))
             clipState &= ~CLIP_OWNER ;
         break ;
         
     case SelectionRequest:
         {
             XSelectionEvent reply;
-            
 #if 0
             printf("Got SelectionRequest %ld, Selection = %s %ld (%ld %ld), Target = %s %ld (%ld %ld %ld)\n",event.xselectionrequest.requestor,
-                   XGetAtomName(mecm.xdisplay,event.xselectionrequest.selection),event.xselectionrequest.selection,XA_PRIMARY,meAtoms[meATOM_CLIPBOARD],
-                   XGetAtomName(mecm.xdisplay,event.xselectionrequest.target),event.xselectionrequest.target,meAtoms[meATOM_TARGETS],XA_STRING,meAtoms[meATOM_UTF8_STRING]);
+                   (event.xselectionrequest.selection) ? XGetAtomName(mecm.xdisplay,event.xselectionrequest.selection):"<0>",event.xselectionrequest.selection,XA_PRIMARY,meAtoms[meATOM_CLIPBOARD],
+                   (event.xselectionrequest.target) ? XGetAtomName(mecm.xdisplay,event.xselectionrequest.target):"<0>",event.xselectionrequest.target,meAtoms[meATOM_TARGETS],XA_STRING,meAtoms[meATOM_UTF8_STRING]);
 #endif
             reply.type = SelectionNotify;
             reply.serial = 1;
@@ -2086,11 +2089,11 @@ special_bound:
             reply.display = mecm.xdisplay;
             reply.requestor = event.xselectionrequest.requestor ;
             reply.selection = event.xselectionrequest.selection ;
-            reply.target = event.xselectionrequest.target ;
-            reply.property = None ;
-            reply.time = event.xselectionrequest.time ;
+            reply.target = event.xselectionrequest.target;
+            reply.property = None;
+            reply.time = event.xselectionrequest.time;
             
-            if((event.xselectionrequest.selection == XA_PRIMARY) || (event.xselectionrequest.selection == meAtoms[meATOM_CLIPBOARD]))
+            if((event.xselectionrequest.selection == clipboardA) || (event.xselectionrequest.selection == clipboardB))
             {
                 if(((event.xselectionrequest.target == XA_STRING) || (event.xselectionrequest.target == meAtoms[meATOM_UTF8_STRING])) && (klhead != NULL))
                 {
@@ -2163,7 +2166,7 @@ special_bound:
                 else if(event.xselectionrequest.target == meAtoms[meATOM_TARGETS])
                 {
                     reply.property = event.xselectionrequest.property ;
-                    XChangeProperty(mecm.xdisplay,reply.requestor,reply.property,reply.target,
+                    XChangeProperty(mecm.xdisplay,reply.requestor,reply.property,XA_ATOM,
                                     32,PropModeReplace,(unsigned char *) (meAtoms+meATOM_TARGETS),meTARGET_ATOM_COUNT);
                 }
             }
@@ -2180,16 +2183,15 @@ special_bound:
             
 #if 0
              printf("Got SelectionNotify %ld, Property = %s %ld (%ld), Selection = %s %ld (%ld %ld), Target = %s %ld (%ld %ld %ld)\n",event.xselection.requestor,
-                    XGetAtomName(mecm.xdisplay,event.xselection.property),event.xselection.property,meAtoms[meATOM_COPY_TEXT],
-                    XGetAtomName(mecm.xdisplay,event.xselection.selection),event.xselection.selection,XA_PRIMARY,meAtoms[meATOM_CLIPBOARD],
-                    XGetAtomName(mecm.xdisplay,event.xselection.target),event.xselection.target,meAtoms[meATOM_TARGETS],XA_STRING,meAtoms[meATOM_UTF8_STRING]);
+                    (event.xselection.property) ? XGetAtomName(mecm.xdisplay,event.xselection.property):"<0>",event.xselection.property,meAtoms[meATOM_COPY_TEXT],
+                    (event.xselection.selection) ? XGetAtomName(mecm.xdisplay,event.xselection.selection):"<0>",event.xselection.selection,XA_PRIMARY,meAtoms[meATOM_CLIPBOARD],
+                    (event.xselection.target) ? XGetAtomName(mecm.xdisplay,event.xselection.target):"<0>",event.xselection.target,meAtoms[meATOM_TARGETS],XA_STRING,meAtoms[meATOM_UTF8_STRING]);
 #endif
-            if(((event.xselection.selection == XA_PRIMARY) || (event.xselection.selection == meAtoms[meATOM_CLIPBOARD])) &&
-               (event.xselection.property == meAtoms[meATOM_COPY_TEXT]) &&
+            if((event.xselection.selection == clipboardA) && (event.xselection.property == meAtoms[meATOM_COPY_TEXT]) &&
                (XGetWindowProperty(mecm.xdisplay,meFrameGetXWindow(frame),meAtoms[meATOM_COPY_TEXT],0,0x1fffffffL,False,AnyPropertyType,
                                    &type,&fmt,&nitems,&left,&buff) == Success))
             {
-                /* printf("SelectionNotify2 (%ld %ld %ld %ld) (%d %ld) %ld [%s]\n",type,meAtoms[meATOM_MULTIPLE],meAtoms[meATOM_INCR],XA_STRING,fmt,nitems,left,(type == XA_STRING) ? buff:"<na>");*/
+                /* printf("SelectionNotify2 (%ld %ld %ld %ld) (%d %ld) %ld [%s]\n",type,meAtoms[meATOM_MULTIPLE],meAtoms[meATOM_INCR],XA_STRING,fmt,nitems,left,(type == XA_STRING) ? ((char *)buff):"<na>");*/
                 if(type == meAtoms[meATOM_MULTIPLE])
 #ifndef NDEBUG
                     printf("Currently don't support multiple\n")
@@ -2199,8 +2201,8 @@ special_bound:
                 {
                     nitems = ((long *) buff)[0] ;
                     XFree(buff) ;
-                    /* always killSave, don't want to glue 'em together */
-                    killSave();
+                    /* always new kill, don't want to glue 'em together */
+                    killInit(0);
                     if((dd = killAddNode(nitems)) != NULL)
                     {
                         dd[0] = '\0';
@@ -2217,8 +2219,8 @@ special_bound:
                 else if((type == XA_STRING) && (fmt > 0) && (nitems == 0) && (left == 0) && (meAtoms[meATOM_UTF8_STRING] != None))
                 {
                     /* Xquartz returns this when a utf8 clipboard can't be converted to a plain string, request as UTF8 string and break without setting CLIP_RECEIVED */ 
-                    XFree(buff) ;
-                    XConvertSelection(mecm.xdisplay,XA_PRIMARY,meAtoms[meATOM_UTF8_STRING],meAtoms[meATOM_COPY_TEXT],meFrameGetXWindow(frameCur),CurrentTime);
+                    XFree(buff);
+                    XConvertSelection(mecm.xdisplay,clipboardA,meAtoms[meATOM_UTF8_STRING],meAtoms[meATOM_COPY_TEXT],meFrameGetXWindow(frameCur),CurrentTime);
                     break;
                 }
                 else if(((type == XA_STRING) || (type == meAtoms[meATOM_UTF8_STRING])) && (fmt == 8) && (nitems > 0))
@@ -2254,8 +2256,8 @@ special_bound:
                        meStrncmp(klhead->kill->data,buff,nitems) ||
                        (klhead->kill->data[nitems] != '\0'))
                     {
-                        /* always killSave, don't want to glue 'em together */
-                        killSave();
+                        /* always new kill, don't want to glue 'em together */
+                        killInit(0);
                         if((dd = killAddNode(nitems)) != NULL)
                         {
                             meStrncpy(dd,buff,nitems) ;
@@ -2495,7 +2497,10 @@ TCAPstart(void)
     }
     /* Initialise the termcap strings */
     p = tcapbuf;
-    for (ii = 0; ii < TCAPmax; ii++)
+    ii = TCAPmax-1;
+    if(meSystemCfg & meSYSTEM_NOALTSBUF)
+        ii -= 2;
+    do
     {
         if (tcaptab[ii].type == TERMCAP_BOOLN)
             tcaptab[ii].code.value = tgetflag (tcaptab[ii].capKey);
@@ -2508,7 +2513,7 @@ TCAPstart(void)
                 (tcaptab[ii].code.str[0] == '\0'))
                 tcaptab[ii].code.str = NULL;
         }
-    }
+    } while(--ii >= 0);
     
     /* Make sure that there was sufficient buffer space to process the strings */
     if (p >= &tcapbuf[TCAPSLEN])
@@ -2687,6 +2692,9 @@ TCAPopen(void)
     }
 #endif /*  NTTYDISC/TIOCSETD */
     
+    if((tcaptab[TCAPasbe].code.str != NULL) && (tcaptab[TCAPasbd].code.str != NULL))
+        putpad(tcaptab[TCAPasbe].code.str);
+
     /* If automatic margins are enabled then try to disable them */
     if ((tcaptab[TCAPam].code.value) &&
         (tcaptab[TCAPrmam].code.str != NULL) &&
@@ -2734,6 +2742,9 @@ TCAPclose(void)
         }
         TTaMarginsDisabled = 0;
     }
+    if(tcaptab[TCAPasbd].code.str != NULL)
+        putpad(tcaptab[TCAPasbd].code.str);
+    fflush(stdout); // Flush output, required if using alt-screen-buff
     
     /* Restore the terminal modes */
 #ifdef _USG
@@ -3476,6 +3487,9 @@ XTERMstart(void)
         for(ii=0 ; ii<meATOM_STRING ; ii++)
             meAtoms[ii] = XInternAtom(mecm.xdisplay,meAtomNames[ii],meFALSE);
         meAtoms[ii] = XA_STRING;
+#ifdef _CLIPBRD
+        TTinitClipboard();
+#endif
     }
     
     /* Initialise XDND */
@@ -3948,6 +3962,18 @@ meFrameSetWindowTitle(meFrame *frame, meUByte *str)
 
 #ifdef _CLIPBRD
 void
+TTinitClipboard(void)
+{
+    if(meSystemCfg & meSYSTEM_NOCLIPBRD)
+        clipboardA = clipboardB = 0;
+    else
+    {
+        clipboardA = (meSystemCfg & meSYSTEM_CLP_GPRMY) ? XA_PRIMARY:meAtoms[meATOM_CLIPBOARD];
+        clipboardB = (meSystemCfg & meSYSTEM_CLP_SBOTH) ? ((meSystemCfg & meSYSTEM_CLP_GPRMY) ? meAtoms[meATOM_CLIPBOARD]:XA_PRIMARY):0;
+    }
+}
+
+void
 TTsetClipboard(int cpData)
 {
     if(!(meSystemCfg & (meSYSTEM_CONSOLE|meSYSTEM_NOCLIPBRD)) &&
@@ -3956,10 +3982,11 @@ TTsetClipboard(int cpData)
 #if 0
         printf("Setting selection owner\n");
 #endif
-        XSetSelectionOwner(mecm.xdisplay,XA_PRIMARY,meFrameGetXWindow(frameCur),CurrentTime);
-        XSetSelectionOwner(mecm.xdisplay,meAtoms[meATOM_CLIPBOARD],meFrameGetXWindow(frameCur),CurrentTime);
-        if((XGetSelectionOwner(mecm.xdisplay,XA_PRIMARY) == meFrameGetXWindow(frameCur)) ||
-           (XGetSelectionOwner(mecm.xdisplay,meAtoms[meATOM_CLIPBOARD]) == meFrameGetXWindow(frameCur)))
+        XSetSelectionOwner(mecm.xdisplay,clipboardA,meFrameGetXWindow(frameCur),CurrentTime);
+        if(meSystemCfg & meSYSTEM_CLP_SBOTH)
+            XSetSelectionOwner(mecm.xdisplay,clipboardB,meFrameGetXWindow(frameCur),CurrentTime);
+        if((XGetSelectionOwner(mecm.xdisplay,clipboardA) == meFrameGetXWindow(frameCur)) ||
+           ((meSystemCfg & meSYSTEM_CLP_SBOTH) && (XGetSelectionOwner(mecm.xdisplay,clipboardB) == meFrameGetXWindow(frameCur))))
             clipState |= CLIP_OWNER;
     }
 }
@@ -3972,13 +3999,13 @@ TTgetClipboard(void)
     {
         /* Add the CLIP_RECEIVING flag. This is really important if increment
          * copy texts are being used. If they are and this flag is set after receiving
-         * the initial size, the killSave then take ownership of the block and so we never
+         * the initial size, the killInit then take ownership of the block and so we never
          * get the copy text. Take ownership at the end */
         clipState &= ~CLIP_RECEIVED ;
         clipState |= CLIP_RECEIVING ;
         /* Request for the current Primary/Clipboard string owner to send a
          * SelectionNotify event to us giving the current string */
-        XConvertSelection(mecm.xdisplay,XA_PRIMARY,XA_STRING,meAtoms[meATOM_COPY_TEXT],meFrameGetXWindow(frameCur),CurrentTime) ;
+        XConvertSelection(mecm.xdisplay,clipboardA,XA_STRING,meAtoms[meATOM_COPY_TEXT],meFrameGetXWindow(frameCur),CurrentTime) ;
         /* Must do a flush to ensure the request has gone */
         XFlush(mecm.xdisplay) ;
         /* Wait for the returned value, alarmState bit will be set */

@@ -2034,8 +2034,8 @@ TTgetClipboard(void)
             (klhead->kill->next != NULL) ||
             (meStrcmp (klhead->kill->data,tmpbuf)))
         {
-            /* Always killSave, don't want to glue them together */
-            killSave();
+            /* Always new kill, don't want to glue them together */
+            killInit(0);
             if ((dd = killAddNode(len+1)) != NULL)
                 memcpy(dd,tmpbuf,len+1);
             thisflag = meCFKILL;

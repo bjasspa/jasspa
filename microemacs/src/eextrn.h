@@ -650,7 +650,7 @@ extern	int	bufferInsertString(int f, int n);
 extern	int	bufferInsertNewline(int f, int n);
 extern	int	mldelete(meInt n, meUByte *kstring);
 extern	int	ldelete(meInt n, int kflag);
-extern	int	killSave(void);
+extern	int	killInit(int contKill);
 extern	meUByte *killAddNode(meInt count);
 extern	int	yankfrom(struct meKill *pklist);
 extern	int	yank(int f, int n);
