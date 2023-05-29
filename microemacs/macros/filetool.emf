@@ -193,7 +193,7 @@
       set-variable #l4 &bxor #l4 1 
       set-variable #l7 @3
       !tjump &not &band @# 0x100 2
-      set-variable #l4 &bor #l4 2 
+      set-variable #l4 &bor #l4 2
       !if &band @# 0x40
         !force !force #l4 ipipe-shell-command "*file-tool-temp*" #l7
       !else
@@ -297,4 +297,3 @@
   !endif
   !abort
 !emacro
-

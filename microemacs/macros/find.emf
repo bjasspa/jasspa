@@ -368,7 +368,7 @@
             !else
               beginning-of-buffer
               !while &not &seq @wl ""
-                -1 ml-write @wl
+                -3 ml-write @wl
                 forward-line
               !done
             !endif
@@ -422,10 +422,10 @@
           set-variable #l5 &lef #p0 &sub #l1 1
           set-variable #p0 &trl &rig #p0 #l1
         !elif &not &xse #p0 "\"\\(\\(\\\\.\\|[^\\\\\"]\\)*\\)\"\\s+\\(.*\\)"
-          -1 ml-write "[Badly quoted parameter]"
+          -4 ml-write "[Badly quoted parameter]"
           !abort
         !elif &seq &set #l5 @s1 ""
-          -1 ml-write "[Invalid empty parameter]"
+          -4 ml-write "[Invalid empty parameter]"
           !abort
         !else
           set-variable #p0 &trl @s3
@@ -450,7 +450,7 @@
           !elif &xseq #l5 "\\(\\d\\d\\)[-/]\\(\\d\\d\\)[-/]\\(\\d\\d\\)\\( \\(\\d\\d\\):\\(\\d\\d\\)\\(:\\(\\d\\d\\)\\)?\\)?"
             set-variable #l5 &spr "%s%s%2d%2d%2d%2d%2d" &lef $time 2 @s1 &mod &cat "100" @s2 100 &mod &cat "100" @s3 100 &mod &cat "100" @s5 100 &mod &cat "100" @s6 100 &mod &cat "100" @s8 100
           !else
-            -1 ml-write &spr "[Malformed -%s time parameter]" #l3
+            -4 ml-write &spr "[Malformed -%s time parameter]" #l3
             !abort
           !endif
         !endif
@@ -459,7 +459,7 @@
       !elif &seq #l3 "&"
         !iif &not &band $system 0x1000000  set-variable #l2 &cat #l2 "&"
       !else
-        -1 ml-write &spr "[Unknown -%s option]" #l3
+        -4 ml-write &spr "[Unknown -%s option]" #l3
         !abort
       !endif
       set-variable #l0 &rig #l0 1
@@ -475,7 +475,7 @@
   set-variable #l9 &lget #p9 1
   !if &sin "f" #l9
   !elif &not &sin "d" #l9
-    -1 ml-write "[Cannot use -F and -D together]"
+    -4 ml-write "[Cannot use -F and -D together]"
     !abort
   !endif
   !while &len &set #l0 &trl #l0
@@ -484,13 +484,13 @@
       set-variable #l4 &lef #l0 &sub #l1 1
       set-variable #l0 &rig #l0 #l1
     !elif &not &xse #l0 "\"\\(\\(\\\\.\\|[^\\\\\"]\\)*\\)\"\\s+\\(.*\\)"
-      -1 ml-write "[Badly quoted file mask]"
+      -4 ml-write "[Badly quoted file mask]"
       !abort
     !elif &len &set #l4 @s1
       set-variable #l0 &trb @s3
       set-variable #l4 &xrep #l4 "\\\\\\(.\\)" "\\1"
     !else
-      -1 ml-write "[Invalid empty quoted file mask]"
+      -4 ml-write "[Invalid empty quoted file mask]"
       !abort
     !endif
     set-variable #l5 ""
@@ -533,7 +533,7 @@
     !done
   !endif
   !if &not #l3
-    -1 ml-write "[No file mask given]"
+    -4 ml-write "[No file mask given]"
     !abort
   !endif
   set-variable .find-proc.mask-count #l3
@@ -549,7 +549,7 @@
   !until &sin "-" &lget #l9 1
   !if &band @# 1
     !if &seq "" &trl #l0
-      -1 ml-write "[No search string given]"
+      -4 ml-write "[No search string given]"
       !abort
     !endif
     set-variable #l0 &cat "-w " #l0
@@ -620,7 +620,7 @@ define-macro grep
     beginning-of-buffer
     set-mark
     !while &not &seq @wc ""
-      -1 ml-write @wl
+      -3 ml-write @wl
       forward-line
     !done
     -1 kill-region
@@ -646,7 +646,7 @@ define-macro grep
   !elif &band $system 0x1000000
     beginning-of-buffer
     !while &not &seq @wc ""
-      -1 ml-write @wl
+      -3 ml-write @wl
       forward-line
     !done
   !else
@@ -729,7 +729,7 @@ define-macro find
     beginning-of-buffer
     set-mark
     !while &not &seq @wc ""
-      -1 ml-write @wl
+      -3 ml-write @wl
       forward-line
     !done
     -1 kill-region
@@ -754,7 +754,7 @@ define-macro find
   !elif &band $system 0x1000000
     beginning-of-buffer
     !while &not &seq @wc ""
-      -1 ml-write @wl
+      -3 ml-write @wl
       forward-line
     !done
   !else
@@ -956,7 +956,7 @@ define-macro replace-string-in-files
       end-of-buffer
     !else
       !while &not &seq @wc ""
-        -1 ml-write @wl
+        -3 ml-write @wl
         forward-line
       !done
     !endif
@@ -986,7 +986,7 @@ define-macro replace-string-in-files
     !if &not &sin "q" &lget #l9 1
       beginning-of-buffer
       !while &not &seq @wc ""
-        -1 ml-write @wl
+        -3 ml-write @wl
         forward-line
       !done
     !endif
