@@ -108,6 +108,7 @@ set-variable .fhook-sql.comment-2 "|rem|||rem |||"
   hilight .hilight.sql 1 "cycle"             .scheme.keyword
   hilight .hilight.sql 1 "data"              .scheme.keyword
   hilight .hilight.sql 1 "date"              .scheme.keyword
+  hilight .hilight.sql 1 "datepart"          .scheme.function
   hilight .hilight.sql 1 "datetime"          .scheme.type
   hilight .hilight.sql 1 "day"               .scheme.keyword
   hilight .hilight.sql 1 "deallocate"        .scheme.keyword
@@ -146,7 +147,7 @@ set-variable .fhook-sql.comment-2 "|rem|||rem |||"
   hilight .hilight.sql 1 "external"          .scheme.keyword
   hilight .hilight.sql 1 "extract"           .scheme.keyword
   hilight .hilight.sql 1 "factor"            .scheme.keyword
-  hilight .hilight.sql 1 "false"             .scheme.keyword
+  hilight .hilight.sql 1 "false"             .scheme.constant
   hilight .hilight.sql 1 "fetch"             .scheme.keyword
   hilight .hilight.sql 1 "first"             .scheme.keyword
   hilight .hilight.sql 1 "float"             .scheme.type
@@ -344,7 +345,7 @@ set-variable .fhook-sql.comment-2 "|rem|||rem |||"
   hilight .hilight.sql 1 "translation"       .scheme.keyword
   hilight .hilight.sql 1 "trigger"           .scheme.keyword
   hilight .hilight.sql 1 "trim"              .scheme.keyword
-  hilight .hilight.sql 1 "true"              .scheme.operator
+  hilight .hilight.sql 1 "true"              .scheme.constant
   hilight .hilight.sql 1 "type"              .scheme.keyword
   hilight .hilight.sql 1 "under"             .scheme.keyword
   hilight .hilight.sql 1 "union"             .scheme.operator

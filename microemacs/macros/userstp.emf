@@ -125,7 +125,7 @@ set-variable %user-misc-cmd  "|alias-path-setup|cc-setup|cvs-setup|mail-setup|fi
   !else
     set-variable #l2 &spr "/history/%s/system" %platform
   !endif
-  set-variable #l1 $system 
+  set-variable #l1 $system
   set-variable #l0 &reg #l2 #l1
   !if &les @# 0
     set-variable @# &abs @#
@@ -403,7 +403,10 @@ set-variable .user-set-mouse.C ""
 set-variable .user-set-mouse.A ""
 
 ; The platform menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-!if &and &seq $platform "win32" &not &band $system 0x01
+!if &band $system 0x01
+!elif &seq $platform "win32" 
+  set-variable %clpbd-names "|No interaction|Interact with clipboard|"
+  set-variable %clpbd-val "|8388608|0|"
   0 define-macro user-set-winfont
     !force 11 change-font
     !if $status
@@ -419,6 +422,9 @@ set-variable .user-set-mouse.A ""
       set-registry &spr "/history/%s/char-set" %platform &lget %charset-value #l0
     !endif
   !emacro
+!else
+  set-variable %clpbd-names "|No interaction|Interact with Clipboard only|Interact with Primary only|Get Clipboard set both|Get Primary set both|"
+  set-variable %clpbd-val "|8388608|0|67108864|134217728|201326592|"
 !endif
 
 0 define-macro user-setup-charset-set
@@ -435,6 +441,25 @@ set-variable .user-set-mouse.A ""
     !done
   !else
     set-variable $result &lget %charset-names &lfind %charset-value &reg &spr "/history/%s/char-set" %platform &lget %charset-value 1
+  !endif
+!emacro
+
+0 define-macro user-setup-clipboard-set
+  set-variable #l0 &spr "/history/%s/system" %platform
+  set-variable #l1 &reg #l0 $system
+  set-registry #l0 &bor &band #l1 &bnot 0xc800000 &lget %clpbd-val @#
+!emacro
+
+0 define-macro user-setup-clipboard
+  !if &les @# 0
+    -1 osd .osd.tmp
+    osd .osd.tmp 0 "bs" 33 0 0 0
+    set-variable #l0 0
+    !while &not &seq "" &set #l1 &lget %clpbd-names &inc #l0 1
+      osd .osd.tmp #l0 "" #l1 #l0 user-setup-clipboard-set
+    !done
+  !else
+    set-variable $result &lget %clpbd-names &lfind %clpbd-val &band 0xc800000 &reg &spr "/history/%s/system" %platform $system
   !endif
 !emacro
 
@@ -626,6 +651,9 @@ osd .osd.user-plat 821 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 820
     osd .osd.user-plat 350 "BtfxHR" .scheme.osd-ebtt " Choose Font.. " f user-set-winfont
     osd .osd.user-plat 420 "fh" "       "
     osd .osd.user-plat 430 "Ctfxp" &cat .osd.checkbox-chars "\} Capture Alt Space" 0x40000 user-set-system
+    osd .osd.user-plat 650 "Sfh" "  \HSystem Clipboard:  " 660
+    osd .osd.user-plat 660 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.tmp user-setup-clipboard
+    osd .osd.user-plat 661 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 661
   !endif
 !else
   ; unix system
@@ -646,6 +674,9 @@ osd .osd.user-plat 821 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 820
     osd .osd.user-plat 330 "Ctfxph" &cat .osd.checkbox-chars "\} \HExtend Char Set" 2 user-set-cpfcheckbox
     osd .osd.user-plat 340 "fh" "         "
     osd .osd.user-plat 350 "Ctfxp" &cat .osd.checkbox-chars "\} Use \HFonts" 0x10 user-set-system
+    osd .osd.user-plat 650 "Sfh" "  \HSystem Clipboard:  " 660
+    osd .osd.user-plat 660 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.tmp user-setup-clipboard
+    osd .osd.user-plat 661 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 661
   !endif
 !endif
 
