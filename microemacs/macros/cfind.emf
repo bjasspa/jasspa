@@ -25,13 +25,13 @@
 ;    mecw32 -n -p @cfind.emf -f grep -i searchStr *.txt
 ;
 !if &not &exi .about.arg0
-  -1 ml-write "Error: Find command not set"
+  -2 ml-write "Error: Find command not set"
   0 exit-emacs
 !elif &seq .about.arg1 "ERROR"
-  -1 ml-write &spr "Error: Arguments for the %s command not given" .about.arg0
+  -2 ml-write &spr "Error: Arguments for the %s command not given" .about.arg0
   0 exit-emacs
 !elif &seq &find $user-name ".erf" "ERROR"
-  -1 ml-write &spr "Error: Failed to find ME registry for \"%s\"" $user-name
+  -2 ml-write &spr "Error: Failed to find ME registry for \"%s\"" $user-name
   0 exit-emacs
 !endif
 !force read-registry "/history" $user-name "c"

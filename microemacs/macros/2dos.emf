@@ -23,7 +23,7 @@ define-macro start-up
       set-variable #l0 "Binary, skip"
     !else
       set-variable #l3 &add &add &bmod "cr" &mul &bmod "lf" 2 &mul &bmod "ctrlz" 4
-      set-variable #l0 &trr &mid "Strange0Unix    Mac     Windows Strange4Strange5Strange6Dos" &mul #l3 8 8
+      set-variable #l0 &trr &mid "Strange0Mac     Unix    Windows Strange4Strange5Strange6Dos" &mul #l3 8 8
       !if &band $buffer-fmod 0x100000
         set-variable #l0 &cat #l0 " (bad), fix"
         set-variable #l2 1
