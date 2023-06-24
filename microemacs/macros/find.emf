@@ -100,20 +100,10 @@
   !if &sin "2" #p9
     set-variable #l4 &lget #p5 4
     set-variable #l0 &cat " " &cond &seq &rig #p2 -1 "/" "d" "f"
-    !if &seq $platform "dos"
-      set-variable #l1 "|32|4|2|1|"
-      set-variable #l2 "|a|s|h|r|"
-    !elif &seq $platform "win32"
-      set-variable #l1 "|2048|256|128|32|4|2|1|"
-      set-variable #l2 "|c|t|n|a|s|h|r|"
-    !else
-      set-variable #l0 &cat #l0 &cond &seq &lget #p5 2 "L" "l" "-"
-      set-variable #l1 "|256|128|64|32|16|8|4|2|1|"
-      set-variable #l2 "|r|w|x|r|w|x|r|w|x|"
-    !endif
+    !iif .ln  set-variable #l0 &cat #l0 &cond &seq &lget #p5 2 "L" "l" "-"
     set-variable #l5 0
-    !while &len &lget #l1 &inc #l5 1
-      set-variable #l0 &cat #l0 &cond &band #l4 &lget #l1 #l5 &lget #l2 #l5 "-"
+    !while &len &lget .ab &inc #l5 1
+      set-variable #l0 &cat #l0 &cond &band #l4 &lget .ab #l5 &lget .al #l5 "-"
     !done
     set-variable #l0 &cat #l0 " "
   !else
@@ -140,6 +130,17 @@
   insert-newline
   find-buffer #l3
 !emacro
+!if &seq $platform "dos"
+  set-variable .find-proc-find.ab "|32|4|2|1|"
+  set-variable .find-proc-find.al "|a|s|h|r|"
+!elif &seq $platform "win32"
+  set-variable .find-proc-find.ab "|2048|256|128|32|4|2|1|"
+  set-variable .find-proc-find.al "|c|t|n|a|s|h|r|"
+!else
+  set-variable .find-proc-find.ln 1
+  set-variable .find-proc-find.ab "|256|128|64|32|16|8|4|2|1|"
+  set-variable .find-proc-find.al "|r|w|x|r|w|x|r|w|x|"
+!endif
 
 0 define-macro find-proc-grep
   set-variable #l0 $buffer-bname
@@ -375,8 +376,9 @@
             set-mark
             beginning-of-buffer
             -1 kill-region
-          !else
+          !elif &sub .suTim &mid $time -5 2
             screen-update
+            set-variable .suTim &mid $time -5 2
           !endif
         !endif
         set-variable #p7 &lset #p7 1 &add #l6 &lget #p7 1
@@ -575,6 +577,7 @@
   set-variable .find-file.file1 ""
   set-variable #p7 "|0|0|0|0||"
   set-variable #p9 #l9
+  set-variable .find-proc.suTim -1
 !emacro
 
 0 define-macro find-proc-spawn
