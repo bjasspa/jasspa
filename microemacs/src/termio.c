@@ -259,7 +259,7 @@ timerCheck(meInt tim)
             /* Set a new timer interval */
             meSetSingleTimer(tim) ;
 #endif
-            break ;
+            break;
         }
     }
     while((tbp = ntbp) != NULL);
@@ -347,7 +347,7 @@ timerSet(int id, meInt tim, meInt offset)
                     if(p->next == tbp)
                     {
                         p->next = tbp->next;
-                        break ;
+                        break;
                     }
                     p = p->next ;
                 }
@@ -657,7 +657,7 @@ translateKeyAdd(meTRANSKEY *tcapKeys, int count,int time, meUShort *key, meUShor
         
         for(ii=0 ; ii<tcapKeys->count ; ii++)
             if(tcapKeys->child[ii].key == cc)
-                break ;
+                break;
         if(ii == tcapKeys->count)
         {
             tcapKeys->child = meRealloc(tcapKeys->child,(ii+1)*sizeof(meTRANSKEY)) ;
@@ -687,7 +687,7 @@ keyListToShorts(meUShort *sl, meUByte *kl)
             if((dd=*kl) == '\0')
                 return ii ;
             if(!isSpace(dd))
-                break ;
+                break;
         }
         if((sl[ii++] = meGetKeyFromString(&kl))==0)
             return meABORT ;
@@ -828,7 +828,7 @@ TTgetc(void)
                     TTsleep(tt->time,1,NULL) ;
                     TTnoKeys += keyNo ;
                     if(keyNo == TTnoKeys)
-                        break ;
+                        break;
                 }
                 keyNo++ ;
                 if(!nextKeyIdx)
@@ -868,11 +868,11 @@ TTgetc(void)
                             TTlastKeyIdx = ii ;
                         }
                         ii = 0 ;
-                        break ;
+                        break;
                     }
                 }
                 if(ii == tt->count)
-                    break ;
+                    break;
             }
         }
     } while(!TTnoKeys) ;
@@ -1015,7 +1015,7 @@ TTallKeysFlush(void)
             nidx = TTnextKeyIdx - 1 ;
         cc = (TTkeyBuf[nidx] & (ME_SPECIAL|0x0ff)) ;
         if((cc < (ME_SPECIAL|SKEY_mouse_move)) || (cc > (ME_SPECIAL|SKEY_mouse_move_5)))
-            break ;
+            break;
         TTnextKeyIdx = nidx ;
         TTnoKeys-- ;
     }
@@ -1042,209 +1042,272 @@ char *
 meTParm(char *str, meInt arg)
 #endif
 {
-    static char *tbuff=NULL ;
-    static meInt tbuffLen=0 ;
-    meInt stack[10], ii, stackDep=0, len=0 ;
-    char cc, *ss ;
+    static char *tbuff=NULL;
+    static meInt tbuffLen=0;
+    meInt stack[10], pInc=0, ii, stackDep=0, len=0;
+    char cc, *ss;
     
+    /* See man terminfo for docs on Parameterized Strings format.
+     * Currently does not support: %l (strlen(pop) - stack only supports ints)
+     *   %P? & %g? set and get static and dynamic vars 
+     *   %i is incomplete, inc's all parameters
+     */
     for(;;)
     {
         if(len >= tbuffLen)
         {
-            tbuff = meRealloc(tbuff,tbuffLen+32) ;
+            tbuff = meRealloc(tbuff,tbuffLen+32);
             if(tbuff == NULL)
             {
-                tbuffLen = 0 ;
-                return (char *) "" ;
+                tbuffLen = 0;
+                return (char *) "";
             }
-            tbuffLen += 16 ;
+            tbuffLen += 16;
         }
         if((cc=*str++) == '\0')
-            break ;
+            break;
         else if(cc == '%')
         {
             switch((cc=*str++))
             {
                 /* miscellaneous codes */
             case '\0':
-                str-- ;
-                break ;
+                str--;
+                break;
             case '%':
-                tbuff[len++] = '%' ;
-                break ;
+                tbuff[len++] = '%';
+                break;
                 
                 /* codes which push values to the stack */
             case '\'':
                 if((cc=*str++) != '\0')
                 {
-                    stack[stackDep++] = (meInt) cc ;
+                    stack[stackDep++] = (meInt) cc;
                     if(*str++ != '\'')
-                        str-- ;
+                        str--;
                 }
                 else
-                    str-- ;
-                break ;
+                    str--;
+                break;
             case '{':
-                ii = 0 ;
+                ii = 0;
                 while((cc=*str++),isDigit(cc))
-                    ii = (ii * 10) + (cc - '0') ;
+                    ii = (ii * 10) + (cc - '0');
                 /* minimal error handling */
                 if(cc != '}')
-                    str-- ;
-                stack[stackDep++] = ii ;
-                break ;
+                    str--;
+                stack[stackDep++] = ii;
+                break;
             case 'p':
                 /* get the nth parameter */
                 {
 #ifdef _STDARG
                     va_list ap;
-                    int pno ;
+                    int pno;
                     va_start(ap,str);
-                    pno = *str++ - '0' ;
+                    pno = *str++ - '0';
                     do {
-                        ii = va_arg(ap, meInt) ;
-                    } while(--pno > 0) ;
+                        ii = va_arg(ap,meInt);
+                    } while(--pno > 0);
                     va_end (ap);
 #else
                     register meInt *ap;
                     ap = &arg;
-                    ii = ap[*str++ - '1'] ;
+                    ii = ap[*str++ - '1'];
 #endif
-                    stack[stackDep++] = ii ;
-                    break ;
+                    /* Note - docs state %i should only effect the first 2 parameters, but not seen it used by anything with more than 2 */ 
+                    stack[stackDep++] = ii+pInc;
+                    break;
                 }
                 
                 /* codes which operate on values in the stack */
             case '+':
                 if(stackDep > 1)
                 {
-                    stackDep-- ;
-                    stack[stackDep-1] = stack[stackDep-1] + stack[stackDep] ;
+                    stackDep--;
+                    stack[stackDep-1] = stack[stackDep-1] + stack[stackDep];
                 }
-                break ;
+                break;
             case '-':
                 if(stackDep > 1)
                 {
-                    stackDep-- ;
-                    stack[stackDep-1] = stack[stackDep-1] - stack[stackDep] ;
+                    stackDep--;
+                    stack[stackDep-1] = stack[stackDep-1] - stack[stackDep];
                 }
-                break ;
+                break;
             case '*':
                 if(stackDep > 1)
                 {
-                    stackDep-- ;
-                    stack[stackDep-1] = stack[stackDep-1] * stack[stackDep] ;
+                    stackDep--;
+                    stack[stackDep-1] = stack[stackDep-1] * stack[stackDep];
                 }
-                break ;
+                break;
             case '/':
                 if(stackDep > 1)
                 {
-                    stackDep-- ;
-                    stack[stackDep-1] = stack[stackDep-1] / stack[stackDep] ;
+                    stackDep--;
+                    stack[stackDep-1] = stack[stackDep-1] / stack[stackDep];
                 }
-                break ;
+                break;
             case 'm':
                 if(stackDep > 1)
                 {
-                    stackDep-- ;
-                    stack[stackDep-1] = stack[stackDep-1] % stack[stackDep] ;
+                    stackDep--;
+                    stack[stackDep-1] = stack[stackDep-1] % stack[stackDep];
                 }
-                break ;
+                break;
             case '&':
                 if(stackDep > 1)
                 {
-                    stackDep-- ;
-                    stack[stackDep-1] = stack[stackDep-1] & stack[stackDep] ;
+                    stackDep--;
+                    stack[stackDep-1] = stack[stackDep-1] & stack[stackDep];
                 }
-                break ;
+                break;
             case '|':
                 if(stackDep > 1)
                 {
-                    stackDep-- ;
-                    stack[stackDep-1] = stack[stackDep-1] | stack[stackDep] ;
+                    stackDep--;
+                    stack[stackDep-1] = stack[stackDep-1] | stack[stackDep];
                 }
-                break ;
+                break;
             case '^':
                 if(stackDep > 1)
                 {
-                    stackDep-- ;
-                    stack[stackDep-1] = stack[stackDep-1] ^ stack[stackDep] ;
+                    stackDep--;
+                    stack[stackDep-1] = stack[stackDep-1] ^ stack[stackDep];
                 }
-                break ;
+                break;
             case '=':
                 if(stackDep > 1)
                 {
-                    stackDep-- ;
-                    stack[stackDep-1] = stack[stackDep-1] == stack[stackDep] ;
+                    stackDep--;
+                    stack[stackDep-1] = stack[stackDep-1] == stack[stackDep];
                 }
-                break ;
+                break;
             case '>':
                 if(stackDep > 1)
                 {
-                    stackDep-- ;
-                    stack[stackDep-1] = stack[stackDep-1] > stack[stackDep] ;
+                    stackDep--;
+                    stack[stackDep-1] = stack[stackDep-1] > stack[stackDep];
                 }
-                break ;
+                break;
             case '<':
                 if(stackDep > 1)
                 {
-                    stackDep-- ;
-                    stack[stackDep-1] = stack[stackDep-1] < stack[stackDep] ;
+                    stackDep--;
+                    stack[stackDep-1] = stack[stackDep-1] < stack[stackDep];
                 }
-                break ;
+                break;
             case 'A':
                 if(stackDep > 1)
                 {
-                    stackDep-- ;
-                    stack[stackDep-1] = stack[stackDep-1] && stack[stackDep] ;
+                    stackDep--;
+                    stack[stackDep-1] = stack[stackDep-1] && stack[stackDep];
                 }
-                break ;
+                break;
             case 'O':
                 if(stackDep > 1)
                 {
-                    stackDep-- ;
-                    stack[stackDep-1] = stack[stackDep-1] || stack[stackDep] ;
+                    stackDep--;
+                    stack[stackDep-1] = stack[stackDep-1] || stack[stackDep];
                 }
-                break ;
+                break;
             case '!':
                 if(stackDep > 0)
-                    stack[stackDep-1] = !stack[stackDep-1] ;
-                break ;
+                    stack[stackDep-1] = !stack[stackDep-1];
+                break;
             case '~':
                 if(stackDep > 0)
-                    stack[stackDep-1] = ~stack[stackDep-1] ;
-                break ;
+                    stack[stackDep-1] = ~stack[stackDep-1];
+                break;
+            case 'i':
+                pInc++;
+                break;
             
-                /* codes which pop a value from the stackand add it to the output */
+            case '?':
+                /* Start of IF statement %?<test>%t<then>%e<else>%; */
+                /* Currently parsing so ignore this here */
+                break;
+            case 't':
+                /* Then of IF - Currently parsing so run test and just to else if false */
+                if(stackDep > 0)
+                {
+                    stackDep--;
+                    if(!stack[stackDep])
+                    {
+                        /* test false - skip to matching %e or %; */
+                        ii = 0;
+                        while((cc=*str++) != 0) 
+                        {
+                            if(cc == '%')
+                            {
+                                if((cc=*str++) == 0) 
+                                    break;
+                                if((cc == 'e') || (cc == ';'))
+                                {
+                                    if(--ii < 0)
+                                        break;
+                                }
+                                else if(cc == '?')
+                                    ii++;
+                            }
+                        }
+                    }
+                }
+                break;
+            case 'e':
+                /* Else of IF Currently parsing so %t was true - skip else */
+                ii = 0;
+                while((cc=*str++) != 0) 
+                {
+                    if(cc == '%')
+                    {
+                        if((cc=*str++) == 0) 
+                            break;
+                        if(cc == ';')
+                        {
+                            if(--ii < 0)
+                                break;
+                        }
+                        else if(cc == '?')
+                            ii++;
+                    }
+                }
+                break;
+            case ';':
+                /* End of IF - Currently parsing so ignore this here */
+                break;
+
+                /* codes which pop a value from the stack and add it to the output */
             case 'c':
                 if(stackDep > 0)
                 {
-                    stackDep-- ;
-                    tbuff[len++] = (char) stack[stackDep] ;
+                    stackDep--;
+                    tbuff[len++] = (char) stack[stackDep];
                 }
-                break ;
+                break;
             case ':': case '0': case '1': case '2': case '3': case '4':
             case '5': case '6': case '7': case '8': case '9':
-                ss = str-2 ;
+                ss = str-2;
                 do
-                    cc = *str++ ;
+                    cc = *str++;
                 while((cc != '\0') && (cc != 'd') && (cc != 'o') && (cc != 's') &&
-                      (cc != 'x') && (cc != 'X')) ;
+                      (cc != 'x') && (cc != 'X'));
                 if(cc == '\0')
-                    break ;
-                goto arg_print ;
+                    break;
+                goto arg_print;
             case 'd':
             case 'o':
             case 's':
             case 'x':
             case 'X':
-                ss = str-2 ;
+                ss = str-2;
 arg_print:
                 if(cc == 's')
                     /* don't handle string args so change to 'd' */
-                    str[-1] = 'd' ;
-                cc = *str ;
-                *str = '\0' ;
+                    str[-1] = 'd';
+                cc = *str;
+                *str = '\0';
                 if(!stackDep)
                 {
                     /* an argument has not been loaded into the stack yet -
@@ -1253,24 +1316,24 @@ arg_print:
 #ifdef _STDARG
                     va_list ap;
                     va_start(ap,str);
-                    stack[0] = va_arg(ap, meInt) ;
+                    stack[0] = va_arg(ap, meInt);
                     va_end (ap);
 #else
-                    stack[0] = ((meInt *)&arg)[0] ;
+                    stack[0] = ((meInt *)&arg)[0];
 #endif
                 }
                 else
-                    stackDep-- ;
-                sprintf(tbuff+len,ss,stack[stackDep]) ;
-                len += strlen(tbuff+len) ;
-                *str = cc ;
-                break ;
+                    stackDep--;
+                sprintf(tbuff+len,ss,stack[stackDep]);
+                len += strlen(tbuff+len);
+                *str = cc;
+                break;
             }
         }
         else
-            tbuff[len++] = cc ;
+            tbuff[len++] = cc;
     }
-    tbuff[len] = '\0' ;
-    return tbuff ;
+    tbuff[len] = '\0';
+    return tbuff;
 }
 #endif

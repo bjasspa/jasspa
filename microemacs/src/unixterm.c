@@ -102,16 +102,18 @@ meUInt *colTable=NULL ;
 #ifdef _ME_CONSOLE
 #ifdef _TCAP
 /**************************************************************************
- * TERMCAP Definitions                                                     *
+ * TERMCAP Definitions                                                    *
  **************************************************************************/
-#ifndef _CYGWIN
-/* Termcap prototyes - really we should include the appropriate header */
-extern int      tgetnum(char *);
-extern int      tgetent(char *,char *);
-extern char *   tgetstr(char *,char **);
-extern int      tputs(char *,int, int (*)(int));
-extern int      tgetflag(char *);
-#endif /* _CYGWIN */
+#include <term.h>
+#ifdef _USE_NCURSES
+#define meTCAPgetflag tigetflag
+#define meTCAPgetnum tigetnum
+#define meTCAPgetstr(a,b) tigetstr(a)
+#else
+#define meTCAPgetflag tgetflag
+#define meTCAPgetnum tgetnum
+#define meTCAPgetstr tgetstr
+#endif
 #ifdef _USETPARM
 extern char *   tparm(const char *, ...);
 #define meTCAPParm tparm
@@ -131,7 +133,11 @@ extern char *   tparm(const char *, ...);
  * termcap */
 struct TCAPkey
 {
+#ifdef _USE_NCURSES
+    char capKey[8];                     /* Terminfo capname keys need up to 6+1 */
+#else
     char capKey[3];                     /* Termcap key (really only need 2) */
+#endif
     char type;                          /* Type of variable */
     union
     {
@@ -143,9 +149,15 @@ struct TCAPkey
 /* Define the TERMCAP entry table from the definition file */
 struct TCAPkey tcaptab [] =
 {
-#define TCAP_BOOLN(var,c1,c2,c3)  {{c1,c2,c3},TERMCAP_BOOLN,{0}},
-#define TCAP_DIGIT(var,c1,c2,c3)  {{c1,c2,c3},TERMCAP_DIGIT,{0}},
-#define TCAP_STRING(var,c1,c2,c3) {{c1,c2,c3},TERMCAP_STRING,{0}},
+#ifdef _USE_NCURSES
+#define TCAP_BOOLN(var,tis,tcs)  {tis,TERMCAP_BOOLN,{0}},
+#define TCAP_DIGIT(var,tis,tcs)  {tis,TERMCAP_DIGIT,{0}},
+#define TCAP_STRING(var,tis,tcs) {tis,TERMCAP_STRING,{0}},
+#else
+#define TCAP_BOOLN(var,tis,tcs)  {tcs,TERMCAP_BOOLN,{0}},
+#define TCAP_DIGIT(var,tis,tcs)  {tcs,TERMCAP_DIGIT,{0}},
+#define TCAP_STRING(var,tis,tcs) {tcs,TERMCAP_STRING,{0}},
+#endif
 #include "etermcap.def"
 #undef TCAP_BOOLN
 #undef TCAP_DIGIT
@@ -156,9 +168,9 @@ struct TCAPkey tcaptab [] =
 /* Define the TERMCAP index entries */
 enum
 {
-#define TCAP_BOOLN(var,c1,c2,c3)  var,
-#define TCAP_DIGIT(var,c1,c2,c3)  var,
-#define TCAP_STRING(var,c1,c2,c3) var,
+#define TCAP_BOOLN(var,tis,tcs)  var,
+#define TCAP_DIGIT(var,tis,tcs)  var,
+#define TCAP_STRING(var,tis,tcs) var,
 #include "etermcap.def"
 #undef TCAP_BOOLN
 #undef TCAP_DIGIT
@@ -170,23 +182,36 @@ enum
 unsigned  short  TTnewWid, TTnewHig  ;
 static    int    TTcursorVisible = 1;   /* Cursor is visible */
 static    int    TTaMarginsDisabled = 0;/* Automatic margins disabled */
+#ifndef _USE_NCURSES
 static    char   tcapbuf[TCAPSLEN];
-
+#endif
 /**************************************************************************
  * Special termcal color definitions                                       *
  **************************************************************************/
 #if MEOPT_COLOR
-#define tcapNumColors 8
-static meUByte tcapColors[tcapNumColors*3] =
+#define tcapColorSysCnt 16
+#define tcapColorGryOff 232
+#define tcapColorGryCnt 24
+static meUByte tcapColorSys[tcapColorSysCnt*3] =
 {
+    /* first 8 are the darker variants */
     0,    0,  0,                        /* Black */
-    200,  0,  0,                        /* Red */
-    0,  200,  0,                        /* Green */
-    200,200,  0,                        /* Yellow */
-    0,    0,200,                        /* Blue */
-    200,  0,200,                        /* Magenta */
-    0,  200,200,                        /* Cyan */
-    200,200,200,                        /* White */
+    128,  0,  0,                        /* Red */
+    0,  128,  0,                        /* Green */
+    128,128,  0,                        /* Yellow */
+    0,    0,128,                        /* Blue */
+    128,  0,128,                        /* Magenta */
+    0,  128,128,                        /* Cyan */
+    192,192,192,                        /* White */
+    /* second 8 are the lighter variants */
+    128,128,128,                        /* Black */
+    255,  0,  0,                        /* Red */
+    0,  255,  0,                        /* Green */
+    255,255,  0,                        /* Yellow */
+    0,    0,255,                        /* Blue */
+    255,  0,255,                        /* Magenta */
+    0,  255,255,                        /* Cyan */
+    255,255,255,                        /* White */
 } ;
 
 /* Set up the default ANSI colors. Many Termcap entries omit these when they
@@ -203,7 +228,12 @@ static char BCOLSTR[] =
 { 27, 91, 52, 65, 109, 0 } ;   /* AB - ESC[4Am */
 #endif /* MEOPT_COLOR */
 
-#define	DEFSKEY(s,i,d,t) i,
+#ifdef _USE_NCURSES
+#define	DEFSKEY(s,i,c,d,t) i,
+#else
+#define	DEFSKEY(s,i,c,d,t) c,
+#endif
+#define	DEFSSKEY(t,i,c)
 
 static char *tcapSpecKeyStrs[]=
 {
@@ -211,13 +241,48 @@ static char *tcapSpecKeyStrs[]=
 };
 #undef	DEFSKEY
 
-#define	DEFSKEY(s,i,d,t) (meUByte *) d,
+#define	DEFSKEY(s,i,c,d,t) (meUByte *) d,
 
 static meUByte *tcapSpecKeyDefs[]=
 {
 #include	"eskeys.def"
 };
 #undef	DEFSKEY
+#undef	DEFSSKEY
+
+#define	DEFSKEY(s,i,c,d,t)
+#define	DEFSSKEY(t,i,c) (meUByte) t,
+
+meUByte tcapSpecSKeyIdxs[] =
+{
+#include	"eskeys.def"
+    0
+};
+
+#undef	DEFSSKEY
+
+#ifdef _USE_NCURSES
+#define	DEFSSKEY(t,i,c) i,
+static char tcapSpecSKeyStrs[][8]=
+#else
+#define	DEFSSKEY(t,i,c) c,
+static char tcapSpecSKeyStrs[][3]=
+#endif
+{
+#include	"eskeys.def"
+};
+
+#undef	DEFSKEY
+#undef	DEFSSKEY
+
+#ifdef _USE_NCURSES
+#define tcapSpecSKeyMod1st '3'
+#define tcapSpecSKeyModCnt 6
+meUShort tcapSpecSKeyModMsk[tcapSpecSKeyModCnt] = {
+    ME_ALT, ME_SHIFT|ME_ALT, ME_CONTROL, ME_SHIFT|ME_CONTROL,
+    ME_ALT|ME_CONTROL, ME_SHIFT|ME_CONTROL|ME_ALT
+};
+#endif
 
 #endif /* _TCAP */
 #endif /* _ME_CONSOLE */
@@ -826,13 +891,13 @@ TCAPgetWinSize(void)
         int  ii ;
         
         /* Get the number of columns on the screen */
-        if((ii=tgetnum(tcaptab[TCAPcols].capKey)) != -1)
+        if((ii=meTCAPgetnum(tcaptab[TCAPcols].capKey)) > 0)
             TTnewWid = ii ;
         else
             TTnewWid = frameCur->width ;
         
         /* Get the number of lines on the screen */
-        if((ii=tgetnum(tcaptab[TCAPlines].capKey)) != -1)
+        if((ii=meTCAPgetnum(tcaptab[TCAPlines].capKey)) > 0)
             TTnewHig = ii ;
         else
         {
@@ -847,7 +912,7 @@ TCAPgetWinSize(void)
      * dangerous for us to use the last line as we cause a scroll that we
      * cannot easily correct. If this is the case then reduce the number of
      * lines by 1. */
-    if ((tcaptab[TCAPam].code.value != 0) && (tcaptab[TCAPxenl].code.value == 0) &&
+    if ((tcaptab[TCAPam].code.value > 0) && (tcaptab[TCAPxenl].code.value == 0) &&
         (TTaMarginsDisabled == 0))
         TTnewHig-- ;
 }
@@ -2464,11 +2529,18 @@ TCAPgetattr (meTermio p, int isX)
 int
 TCAPstart(void)
 {
-    char *p ;
+#ifndef _USE_NCURSES
+    /* Initialise the termcap strings */
+    char *p = tcapbuf;
+#else
+    char *dd;
+    int jj;
+#endif
+    char *ss;
     char tcbuf[4096];                   /* Jon 2001/12/15 increase for cygwin terminal */
     char *tv_stype;
     char err_str[72];
-    int  ii ;
+    int  ii;
     
     /* Get the attributes from the system */
 #ifdef _USG
@@ -2489,56 +2561,57 @@ TCAPstart(void)
         tv_stype = "vt100";
     }
     
-    if((tgetent(tcbuf, tv_stype)) != 1)
+    if((tgetent(tcbuf,tv_stype)) != 1)
     {
         sprintf(err_str, "Unknown terminal type [%s]", tv_stype);
         puts(err_str);
         meExit(1);
     }
-    /* Initialise the termcap strings */
-    p = tcapbuf;
     ii = TCAPmax-1;
     if(meSystemCfg & meSYSTEM_NOALTSBUF)
         ii -= 2;
     do
     {
         if (tcaptab[ii].type == TERMCAP_BOOLN)
-            tcaptab[ii].code.value = tgetflag (tcaptab[ii].capKey);
+            tcaptab[ii].code.value = meTCAPgetflag(tcaptab[ii].capKey);
         else if (tcaptab[ii].type == TERMCAP_DIGIT)
-            tcaptab[ii].code.value = tgetnum (tcaptab[ii].capKey);
+            tcaptab[ii].code.value = meTCAPgetnum(tcaptab[ii].capKey);
         else
         {
-            tcaptab[ii].code.str = tgetstr(tcaptab[ii].capKey, &p);
-            if ((tcaptab[ii].code.str == NULL) ||
-                (tcaptab[ii].code.str[0] == '\0'))
-                tcaptab[ii].code.str = NULL;
+            ss = meTCAPgetstr(tcaptab[ii].capKey,&p);
+            if((ss != NULL) && (ss != (char *)-1) && (ss[0] != '\0'))
+                tcaptab[ii].code.str = ss;
         }
     } while(--ii >= 0);
     
+#ifndef _USE_NCURSES
     /* Make sure that there was sufficient buffer space to process the strings */
     if (p >= &tcapbuf[TCAPSLEN])
     {
-        sprintf(err_str, "%s termcap longer than %d characters",
-                tv_stype, TCAPSLEN);
+        sprintf(err_str,"%s termcap longer than %d characters",tv_stype,TCAPSLEN);
         puts(err_str);
         meExit(1);
     }
+#endif
     
-    /* Sort out the visibility flags. We must have both set or both NULL */
-    if (tcaptab[TCAPcivis].code.str == NULL)
-        tcaptab[TCAPcnorm].code.str = NULL;
-    else if (tcaptab[TCAPcnorm].code.str == NULL)
+    /* Sort out the cursor visibility & keypad transmit modes. We must have both 
+       so set TCAPcivis & TCAPsmkx to NULL if pair is NULL and alway test these */
+    if(tcaptab[TCAPcnorm].code.str == NULL)
         tcaptab[TCAPcivis].code.str = NULL;
+    if(tcaptab[TCAPrmkx].code.str == NULL)
+        tcaptab[TCAPsmkx].code.str = NULL;
+    if(tcaptab[TCAPasbd].code.str == NULL)
+        tcaptab[TCAPasbe].code.str = NULL;
     
-    /* Determine if there is a mechanism to enable and disable the automatic
-     * margins. If there is then disable them now */
-    if (tcaptab[TCAPam].code.value == 1)
+    /* Determine if there is a mechanism to enable and disable the automatic margins.
+     * If there is then disable them now */
+    if(tcaptab[TCAPam].code.value > 0)
     {
         /* Try to disable the margins */
-        if (tcaptab[TCAPsmam].code.str != NULL)
+        if(tcaptab[TCAPsmam].code.str != NULL)
         {
-            putpad (tcaptab[TCAPsmam].code.str);
-            tcaptab[TCAPam].code.value = tgetnum (tcaptab[TCAPam].capKey);
+            putpad(tcaptab[TCAPsmam].code.str);
+            tcaptab[TCAPam].code.value = meTCAPgetflag(tcaptab[TCAPam].capKey);
             TTaMarginsDisabled = 1;
         }
     }
@@ -2547,48 +2620,90 @@ TCAPstart(void)
     TTwidthDefault = TTnewWid ;
     
     /* We rely on Clear and Move <x><y>, make sure that these exist */
-    if ((tcaptab[TCAPclear].code.str == NULL) ||
-        (tcaptab[TCAPcup].code.str == NULL))
+    if((tcaptab[TCAPclear].code.str == NULL) || (tcaptab[TCAPcup].code.str == NULL))
     {
         sprintf(err_str, "%s termcap lacks %s or %s entry",
                 tv_stype,tcaptab[TCAPclear].capKey, tcaptab[TCAPcup].capKey);
         puts(err_str);
         meExit(1);
     }
-    
+#if MEOPT_COLOR
+    if(tcaptab[TCAPcolors].code.value < 8)
+        meSystemCfg &= ~(meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR);
+    else if((meSystemCfg & meSYSTEM_ANSICOLOR) && (tcaptab[TCAPcolors].code.value > 8))
+        meSystemCfg |= meSYSTEM_XANSICOLOR;
+#endif
     /* Try and setup some of the standard keys like the cursor keys */
     {
-        char buf[20] ;
-        meUShort ii, sl[20] ;
+#ifndef _USE_NCURSES
+        char buf[20];
+#endif
+        meUShort ii, sl[20];
         
         for(ii=0 ; ii<SKEY_MAX ; ii++)
         {
-            if(tcapSpecKeyDefs[ii] != NULL)
-                translateKeyAdd(&TTtransKey,charListToShorts(sl,tcapSpecKeyDefs[ii]),
-                                TTtransKey.time,sl,ME_SPECIAL|ii) ;
-        }
-        for(ii=0 ; ii<SKEY_MAX ; ii++)
-        {
-            p = buf ;
-            if((tcapSpecKeyStrs[ii] != NULL) && ((p=tgetstr(tcapSpecKeyStrs[ii], &p)) != NULL))
-                translateKeyAdd(&TTtransKey,charListToShorts(sl,(meUByte *) p),
-                                TTtransKey.time,sl,(ii|ME_SPECIAL)) ;
+#ifndef _USE_NCURSES
+            p = buf;
+#endif
+            if((tcapSpecKeyStrs[ii] != NULL) && ((ss=meTCAPgetstr(tcapSpecKeyStrs[ii],&p)) != NULL) &&
+               (ss != (char *)-1) && (ss[0] != '\0'))
+                translateKeyAdd(&TTtransKey,charListToShorts(sl,(meUByte *) ss),
+                                TTtransKey.time,sl,(ii|ME_SPECIAL));
             else
                 tcapSpecKeyStrs[ii] = NULL ;
         }
-        /* KEY_PPAGE, sent by previous-page key */
-        if((tcapSpecKeyStrs[SKEY_page_up] == NULL) && ((p=tgetstr("kP", &p)) != NULL))
+        /* page_up/down tries key-p/npage (kpp/kP & knp/kN) first, if this fails try key_previous/next */
+#ifdef _USE_NCURSES
+#define SKEY_pup_alt "kprv"
+#define SKEY_pdw_alt "knxt"
+#else
+#define SKEY_pup_alt "%8"
+#define SKEY_pdw_alt "%5"
+#endif
+        if((tcapSpecKeyStrs[SKEY_page_up] == NULL) && ((ss=meTCAPgetstr(SKEY_pup_alt,&p)) != NULL) &&
+           (ss != (char *)-1) && (ss[0] != '\0'))
         {
-            tcapSpecKeyStrs[SKEY_page_up] = "kP" ;
-            translateKeyAdd(&TTtransKey,charListToShorts(sl,(meUByte *) p),
-                            TTtransKey.time,sl,(SKEY_page_up|ME_SPECIAL)) ;
+            tcapSpecKeyStrs[SKEY_page_up] = SKEY_pup_alt;
+            translateKeyAdd(&TTtransKey,charListToShorts(sl,(meUByte *) ss),TTtransKey.time,sl,(SKEY_page_up|ME_SPECIAL)) ;
         }
-        /* KEY_NPAGE, sent by next-page key */
-        if((tcapSpecKeyStrs[SKEY_page_down] == NULL) && ((p=tgetstr("kN", &p)) != NULL))
+        if((tcapSpecKeyStrs[SKEY_page_down] == NULL) && ((ss=meTCAPgetstr(SKEY_pdw_alt,&p)) != NULL) &&
+           (ss != (char *)-1) && (ss[0] != '\0'))
         {
-            tcapSpecKeyStrs[SKEY_page_down] = "kN" ;
-            translateKeyAdd(&TTtransKey,charListToShorts(sl,(meUByte *) p),
-                            TTtransKey.time,sl,(SKEY_page_down|ME_SPECIAL)) ;
+            tcapSpecKeyStrs[SKEY_page_down] = SKEY_pdw_alt;
+            translateKeyAdd(&TTtransKey,charListToShorts(sl,(meUByte *) ss),TTtransKey.time,sl,(SKEY_page_down|ME_SPECIAL)) ;
+        }
+        for(ii=0 ; ii<SKEY_MAX ; ii++)
+        {
+            if((tcapSpecKeyStrs[ii] == NULL) && (tcapSpecKeyDefs[ii] != NULL))
+                translateKeyAdd(&TTtransKey,charListToShorts(sl,tcapSpecKeyDefs[ii]),
+                                TTtransKey.time,sl,ME_SPECIAL|ii) ;
+        }
+        ii = 0;
+        while(tcapSpecSKeyIdxs[ii])
+        {
+#ifndef _USE_NCURSES
+            p = buf;
+#endif
+            if(((ss=meTCAPgetstr(tcapSpecSKeyStrs[ii],&p)) != NULL) &&
+               (ss != (char *)-1) && (ss[0] != '\0'))
+                translateKeyAdd(&TTtransKey,charListToShorts(sl,(meUByte *) ss),
+                                TTtransKey.time,sl,(tcapSpecSKeyIdxs[ii]|ME_SHIFT|ME_SPECIAL));
+#ifdef _USE_NCURSES
+            /* under ncurses a number can be appended to the capname for modifier codes */
+            dd = tcapSpecSKeyStrs[ii];
+            dd += strlen(dd);
+            dd[1] = '\0';
+            jj = tcapSpecSKeyModCnt-1;
+            do {
+                dd[0] = tcapSpecSKeyMod1st+jj;
+                if(((ss=meTCAPgetstr(tcapSpecSKeyStrs[ii],&p)) != NULL) &&
+                   (ss != (char *)-1) && (ss[0] != '\0'))
+                    translateKeyAdd(&TTtransKey,charListToShorts(sl,(meUByte *) ss),
+                                    TTtransKey.time,sl,(tcapSpecSKeyIdxs[ii]|tcapSpecSKeyModMsk[jj]|ME_SPECIAL));
+            } while(--jj >= 0);
+            dd[0] = '\0';
+#endif
+            ii++;
         }
     }
     /* Switch off the vertical window scroll bar */
@@ -2634,16 +2749,16 @@ TCAPopen(void)
     ntermio.c_cc[VTIME] = 0 ;
     /*    ntermio.c_cc[VINTR] = 7 ;*/
 #ifdef _TERMIOS
-    tcsetattr (meStdin, TCSAFLUSH, &ntermio);
+    tcsetattr(meStdin, TCSAFLUSH, &ntermio);
 #else
-    ioctl(0, TCSETA, &ntermio); /* and activate them */
+    ioctl(0,TCSETA,&ntermio); /* and activate them */
 #endif
 #endif /* _USG */
     
 #ifdef _BSD
     /* Set up the TTY states */
-    gtty (0, &osgttyb);
-    memcpy (&nsgttyb,  &osgttyb,  sizeof (struct sgttyb)) ;
+    gtty(0, &osgttyb);
+    memcpy(&nsgttyb,  &osgttyb,  sizeof (struct sgttyb)) ;
 #ifdef _BSD_CBREAK
     /* Use CBREAK rather than raw mode */
     nsgttyb.sg_flags &= ~(ECHO|CRMOD) ;
@@ -2652,23 +2767,23 @@ TCAPopen(void)
     nsgttyb.sg_flags &= ~(ECHO|CRMOD) ;
     nsgttyb.sg_flags |= RAW ;
 #endif
-    stty (0, &nsgttyb);
+    stty(0, &nsgttyb);
     
     /* Set up the line disciplines */
 #ifdef _BSD_CBREAK
-    ioctl (0, TIOCGETC, &otchars) ;
-    memcpy (&ntchars,  &otchars,  sizeof (struct tchars)) ;
+    ioctl(0, TIOCGETC, &otchars) ;
+    memcpy(&ntchars,  &otchars,  sizeof (struct tchars)) ;
     ntchars.t_intrc  = -1 /*07*/;       /* Interrupt character ^G */
     ntchars.t_quitc  = -1 ;             /* Quit - disabled - disabled */
     ntchars.t_startc = -1 /*021*/;      /* Start character ^Q - disabled */
     ntchars.t_stopc  = -1 /*023*/;      /* Stop character ^S - disabled */
     ntchars.t_eofc   = -1 ;             /* End of file ^D - disabled */
     ntchars.t_brkc   = -1 ;             /* End of line - diabled */
-    ioctl (0, TIOCSETC, &ntchars) ;
+    ioctl(0, TIOCSETC, &ntchars) ;
 #endif
     
     /* Set up the local line disciplines special */
-    ioctl (0, TIOCGLTC, &oltchars) ;
+    ioctl(0, TIOCGLTC, &oltchars) ;
     memcpy (&nltchars, &oltchars, sizeof (struct ltchars)) ;
     nltchars.t_suspc  = -1 ;            /* Disable the lot */
     nltchars.t_dsuspc = -1 ;
@@ -2676,12 +2791,12 @@ TCAPopen(void)
     nltchars.t_flushc = -1 ;
     nltchars.t_werasc = -1 ;
     nltchars.t_lnextc = -1 ;
-    ioctl (0, TIOCSLTC, &nltchars) ;
+    ioctl(0, TIOCSLTC, &nltchars) ;
     
     /* Set up the type ahead buffer. There are some inconsistancies here on
      * various systems so it is better simply to define a default output
      * buffer size. */
-    setbuffer (stdout, termOutBuf, sizeof (termOutBuf));
+    setbuffer(stdout, termOutBuf, sizeof (termOutBuf));
 #endif /* _BSD */
     
 #if (defined NTTYDISC) && (defined TIOCSETD)
@@ -2692,17 +2807,21 @@ TCAPopen(void)
     }
 #endif /*  NTTYDISC/TIOCSETD */
     
-    if((tcaptab[TCAPasbe].code.str != NULL) && (tcaptab[TCAPasbd].code.str != NULL))
+    /* if have both smkx & rmkx then enter 'application mode' as the termcap/
+     * ncurses keypad key sequences are much more likely to be correct */
+    if(tcaptab[TCAPsmkx].code.str != NULL)
+        putpad(tcaptab[TCAPsmkx].code.str);
+    /* if have both asbe & asbd then enable alt-screen-buffer */
+    if(tcaptab[TCAPasbe].code.str != NULL)
         putpad(tcaptab[TCAPasbe].code.str);
 
     /* If automatic margins are enabled then try to disable them */
-    if ((tcaptab[TCAPam].code.value) &&
-        (tcaptab[TCAPrmam].code.str != NULL) &&
+    if ((tcaptab[TCAPam].code.value > 0) && (tcaptab[TCAPrmam].code.str != NULL) &&
         (TTaMarginsDisabled == 0))
     {
         /* Automatic margins are enabled - disable */
-        tputs(tcaptab[TCAPrmam].code.str,1,putchar) ;
-        tcaptab[TCAPam].code.value = tgetnum(tcaptab[TCAPam].capKey);
+        tputs(tcaptab[TCAPrmam].code.str,1,putchar);
+        tcaptab[TCAPam].code.value = meTCAPgetflag(tcaptab[TCAPam].capKey);
         TTaMarginsDisabled = 1;
     }
     
@@ -2738,12 +2857,14 @@ TCAPclose(void)
         if (tcaptab[TCAPsmam].code.str != NULL)
         {
             putpad(tcaptab[TCAPsmam].code.str);
-            tcaptab[TCAPam].code.value = tgetnum (tcaptab[TCAPam].capKey);
+            tcaptab[TCAPam].code.value = meTCAPgetflag(tcaptab[TCAPam].capKey);
         }
         TTaMarginsDisabled = 0;
     }
-    if(tcaptab[TCAPasbd].code.str != NULL)
+    if(tcaptab[TCAPasbe].code.str != NULL)
         putpad(tcaptab[TCAPasbd].code.str);
+    if(tcaptab[TCAPsmkx].code.str != NULL)
+        putpad(tcaptab[TCAPrmkx].code.str);
     fflush(stdout); // Flush output, required if using alt-screen-buff
     
     /* Restore the terminal modes */
@@ -2773,7 +2894,7 @@ TCAPhideCur(void)
     {
         if (TTcursorVisible != 0)
         {
-            putpad (tcaptab[TCAPcivis].code.str);
+            putpad(tcaptab[TCAPcivis].code.str);
             TTcursorVisible = 0;
         }
     }
@@ -2790,9 +2911,9 @@ TCAPshowCur(void)
     if((frameCur->cursorRow <= frameCur->depth) && (frameCur->cursorColumn < frameCur->width))
     {
         /* Make sure that the cursor is visible */
-        if ((TTcursorVisible == 0) && (tcaptab[TCAPcnorm].code.str != NULL))
+        if ((TTcursorVisible == 0) && (tcaptab[TCAPcivis].code.str != NULL))
         {
-            putpad (tcaptab[TCAPcnorm].code.str);
+            putpad(tcaptab[TCAPcnorm].code.str);
             TTcursorVisible = 1;
         }
         TCAPmove(frameCur->cursorRow,frameCur->cursorColumn) ;
@@ -2818,66 +2939,119 @@ TCAPshowCur(void)
 int
 TCAPaddColor(meUByte index, meUByte r, meUByte g, meUByte b)
 {
-    meUByte *ss ;
-    int ii, jj, idif, jdif ;
-    
-    jdif = 256*256*3 ;                  /* Smallest least squares. */
-    ss = tcapColors ;
+    meUByte *ss;
+    int ci, li=0, ii, jj, kk, cdif, idif, jdif, kdif, ldif;
     
     /* To find the nearest color then use a least squares method. This
      * produces a better approximation than a straight forward color
      * differencing algorithm as it takes into account the variance. */
-    for(ii=0 ; ii<tcapNumColors ; ii++)
+    ldif = 256*256*3;                  /* Largest least squares. */
+    kk = tcaptab[TCAPcolors].code.value;
+    if((ci = kk) > tcapColorSysCnt)
+        ci = tcapColorSysCnt;
+    ss = tcapColorSys;
+    for(ii=0 ; ii<ci ; ii++)
     {
-        int delta;
-        
-        delta = r - *ss++;
-        idif  = (delta * delta) ;
-        delta = g - *ss++;
-        idif += (delta * delta) ;
-        delta = b - *ss++ ;
-        idif += (delta * delta) ;
-        if(idif < jdif)
+        cdif = r - *ss++;
+        idif = (cdif * cdif);
+        cdif = g - *ss++;
+        idif += (cdif * cdif);
+        cdif = b - *ss++;
+        idif += (cdif * cdif);
+        if(idif < ldif)
         {
-            jdif = idif ;
-            jj = ii ;
+            ldif = idif;
+            li = ii;
+        }
+    }
+    if((ldif > 0) && ((ci = kk) > tcapColorGryOff))
+    {
+        if(ci > meCOLOR_INVALID)
+            ci = meCOLOR_INVALID;
+        ci -= tcapColorGryOff+1;
+        ii = (10 * ci) + 8;
+        do {
+            cdif = r - ii;
+            idif  = (cdif * cdif);
+            cdif = g - ii;
+            idif += (cdif * cdif);
+            cdif = b - ii;
+            idif += (cdif * cdif);
+            if(idif < ldif)
+            {
+                ldif = idif;
+                li = ci+tcapColorGryOff;
+            }
+            ii -= 10;
+        } while(--ci >= 0);
+        ci = tcapColorGryOff;
+    }
+    if((ldif > 0) && (kk >= tcapColorGryOff))
+    {
+        ci = tcapColorSysCnt;
+        for(ii=0 ; ii<256 ; ii+=40)
+        {
+            cdif = r - ii;
+            idif = (cdif * cdif);
+            for(jj=0 ; jj<256 ; jj+=40)
+            {
+                cdif = g - jj;
+                jdif = idif + (cdif * cdif);
+                for(kk=0 ; kk<256 ; kk+=40)
+                {
+                    cdif = b - kk;
+                    kdif = jdif + (cdif * cdif);
+                    if(kdif < ldif)
+                    {
+                        ldif = kdif;
+                        li = ci;
+                    }
+                    ci++;
+                    if(!kk)
+                        kk += 55;
+                }
+                if(!jj)
+                    jj += 55;
+            }
+            if(!ii)
+                ii += 55;
         }
     }
     
     if(noColors <= index)
     {
-        colTable = (meUInt *) meRealloc(colTable,(index+1)*sizeof(meUInt)) ;
-        memset(colTable+noColors,0, (index-noColors+1)*sizeof(meUInt)) ;
-        noColors = index+1 ;
+        colTable = (meUInt *) meRealloc(colTable,(index+1)*sizeof(meUInt));
+        memset(colTable+noColors,0, (index-noColors+1)*sizeof(meUInt));
+        noColors = index+1;
     }
-    colTable[index] = jj ;
+    colTable[index] = li;
     
-    return meTRUE ;
+    return meTRUE;
 }
 
 #endif
 
-static meUByte oschemeFcol=meCOLOR_INVALID ;
-static meUByte oschemeBcol=meCOLOR_INVALID ;
-static meUByte oschemeFont=0 ;
-static meUByte oschemeFntr=0 ;
+static meUByte oschemeFcol=meCOLOR_INVALID;
+static meUByte oschemeBcol=meCOLOR_INVALID;
+static meUByte oschemeFont=0;
+static meUByte oschemeFntr=0;
 
 void
 TCAPschemeSet(meScheme scheme)
 {
-    meStyle nstyle ;
+    meStyle nstyle;
     
-    nstyle = meSchemeGetStyle(scheme) ;
+    nstyle = meSchemeGetStyle(scheme);
     
     /* Termcap fonts */
 #ifdef _TCAPFONT
     if(meSystemCfg & meSYSTEM_FONTS)
     {
-        meUByte font ;
+        meUByte font;
         
-        font = meStyleGetFont(nstyle) ;
+        font = meStyleGetFont(nstyle);
         if(meSchemeTestNoFont(scheme))
-            font &= ~(meFONT_BOLD|meFONT_ITALIC|meFONT_UNDERLINE) ;
+            font &= ~(meFONT_BOLD|meFONT_ITALIC|meFONT_UNDERLINE);
         
         if(oschemeFont != font)
         {
@@ -2893,14 +3067,14 @@ TCAPschemeSet(meScheme scheme)
                 if ((oschemeFont & (meFONT_BOLD|meFONT_REVERSE|meFONT_LIGHT)) &&
                     (tcaptab[TCAPsgr0].code.str != NULL))
                     putpad (tcaptab[TCAPsgr0].code.str);
-                oschemeFcol = meCOLOR_INVALID ;
-                oschemeBcol = meCOLOR_INVALID ;
-                oschemeFntr = 0 ;
+                oschemeFcol = meCOLOR_INVALID;
+                oschemeBcol = meCOLOR_INVALID;
+                oschemeFntr = 0;
             }
             oschemeFont = font;
             if (font & meFONT_MASK)
             {
-                oschemeFntr = 1 ;
+                oschemeFntr = 1;
                 /* Apply the modes */
                 if ((font & meFONT_BOLD) && (tcaptab[TCAPbold].code.str != NULL))
                     putpad(tcaptab[TCAPbold].code.str);
@@ -2921,28 +3095,28 @@ TCAPschemeSet(meScheme scheme)
 #if MEOPT_COLOR
     if(meSystemCfg & meSYSTEM_ANSICOLOR)
     {
-        meUByte col ;
+        meUByte col;
         
         /* Foreground color */
-        col = colTable[meStyleGetFColor(nstyle)] ;
+        col = colTable[meStyleGetFColor(nstyle)];
         if(oschemeFcol != col)
         {
-            if (tcaptab[TCAPsetaf].code.str != NULL)
+            if(tcaptab[TCAPsetaf].code.str != NULL)
             {
                 /* Have a termcap entry for color ?? */
-                putpad (meTCAPParm(tcaptab[TCAPsetaf].code.str, col));
+                putpad(meTCAPParm(tcaptab[TCAPsetaf].code.str, col));
             }
             else
             {
                 /* Try our ANSI color */
                 FCOLSTR[3]= (col & 0x07) + 48;
-                putpad (FCOLSTR);
+                putpad(FCOLSTR);
             }
-            oschemeFcol = col ;
+            oschemeFcol = col;
         }
         
         /* Background color */
-        col = colTable[meStyleGetBColor(nstyle)] ;
+        col = colTable[meStyleGetBColor(nstyle)];
         if(oschemeBcol != col)
         {
             if (tcaptab[TCAPsetab].code.str != NULL)
@@ -2952,10 +3126,10 @@ TCAPschemeSet(meScheme scheme)
             }
             else
             {
-                BCOLSTR[3]=(col & 0x07) + 48 ;
-                putpad (BCOLSTR);
+                BCOLSTR[3]=(col & 0x07) + 48;
+                putpad(BCOLSTR);
             }
-            oschemeBcol = col ;
+            oschemeBcol = col;
         }
     }
 #endif /* MEOPT_COLOR */
@@ -2970,13 +3144,13 @@ TCAPschemeReset(void)
         /* Remove the old font attributes. We cannot guarantee the state of
          * some attributes so it is best to turn all off and start again, */
         if ((oschemeFont & meFONT_ITALIC) && (tcaptab[TCAPritm].code.str != NULL))
-            putpad (tcaptab[TCAPritm].code.str);
+            putpad(tcaptab[TCAPritm].code.str);
         if ((oschemeFont & meFONT_UNDERLINE) && (tcaptab[TCAPrmul].code.str != NULL))
-            putpad (tcaptab[TCAPrmul].code.str);
+            putpad(tcaptab[TCAPrmul].code.str);
         if ((oschemeFont & (meFONT_BOLD|meFONT_REVERSE|meFONT_LIGHT)) &&
             (tcaptab[TCAPsgr0].code.str != NULL))
-            putpad (tcaptab[TCAPsgr0].code.str);
-        oschemeFntr = 0 ;
+            putpad(tcaptab[TCAPsgr0].code.str);
+        oschemeFntr = 0;
     }
 #endif
     
@@ -2987,16 +3161,16 @@ TCAPschemeReset(void)
         {
             /* Disable the color mode */
             if (tcaptab[TCAPsgr0].code.str != NULL)
-                putpad (tcaptab[TCAPsgr0].code.str);
+                putpad(tcaptab[TCAPsgr0].code.str);
             else
-                putpad (RCOLSTR);
+                putpad(RCOLSTR);
         }
     }
 #endif
     /* Reset the fonts regardless of the mode */
-    oschemeFont = 0 ;
-    oschemeFcol = meCOLOR_INVALID ;
-    oschemeBcol = meCOLOR_INVALID ;
+    oschemeFont = 0;
+    oschemeFcol = meCOLOR_INVALID;
+    oschemeBcol = meCOLOR_INVALID;
 }
 
 void
@@ -3008,7 +3182,11 @@ TCAPmove(int row, int col)
      * case then we need to reset out modes, move and then re-apply. The API
      * would be better served with a TCAPmoveScheme() where we could set the
      * next scheme at the same time. Keep this for a rainy day !! */
-    tputs(tgoto(tcaptab[TCAPcup].code.str,col,row),1,putchar);
+#ifdef _USETPARM
+    putpad(tgoto(tcaptab[TCAPcup].code.str,col,row));
+#else
+    putpad(meTParm(tcaptab[TCAPcup].code.str,row,col));
+#endif
 }
 
 #endif /* _TCAP */
@@ -3026,7 +3204,7 @@ TTinitMouse(void)
 #ifdef _ME_WINDOW
     if(meSystemCfg & meSYSTEM_CONSOLE)
 #endif /* _ME_WINDOW */
-        meMouseCfg &= ~meMOUSE_ENBLE ;
+        meMouseCfg &= ~meMOUSE_ENBLE;
 #ifdef _ME_WINDOW
     else
 #endif /* _ME_WINDOW */
@@ -3035,40 +3213,40 @@ TTinitMouse(void)
         if(meMouseCfg & meMOUSE_ENBLE)
     {
 #ifdef _XTERM
-        static meUByte  meCurCursor=0 ;
-        static Cursor meCursors[meCURSOR_COUNT]={0,0,0,0,0,0,0} ;
+        static meUByte  meCurCursor=0;
+        static Cursor meCursors[meCURSOR_COUNT]={0,0,0,0,0,0,0};
         static meUByte  meCursorChar[meCURSOR_COUNT]={
-            0,XC_arrow,XC_xterm,XC_crosshair,XC_hand2,XC_watch,XC_pirate} ;
-        meUByte cc ;
-        int b1, b2, b3 ;
+            0,XC_arrow,XC_xterm,XC_crosshair,XC_hand2,XC_watch,XC_pirate};
+        meUByte cc;
+        int b1, b2, b3;
         
         if(meMouseCfg & meMOUSE_SWAPBUTTONS)
-            b1 = 3, b3 = 1 ;
+            b1 = 3, b3 = 1;
         else
-            b1 = 1, b3 = 3 ;
+            b1 = 1, b3 = 3;
         if((meMouseCfg & meMOUSE_NOBUTTONS) > 2)
-            b2 = 2 ;
+            b2 = 2;
         else
-            b2 = b3 ;
-        mouseKeys[1] = b1 ;
-        mouseKeys[2] = b2 ;
-        mouseKeys[3] = b3 ;
+            b2 = b3;
+        mouseKeys[1] = b1;
+        mouseKeys[2] = b2;
+        mouseKeys[3] = b3;
         
-        cc = (meUByte) ((meMouseCfg & meMOUSE_ICON) >> 16) ;
+        cc = (meUByte) ((meMouseCfg & meMOUSE_ICON) >> 16);
         if(cc >= meCURSOR_COUNT)
-            cc = 0 ;
+            cc = 0;
         if(cc != meCurCursor)
         {
             if(meCurCursor)
             {
-                XUndefineCursor(mecm.xdisplay,meFrameGetXWindow(frameCur)) ;
-                meCurCursor = 0 ;
+                XUndefineCursor(mecm.xdisplay,meFrameGetXWindow(frameCur));
+                meCurCursor = 0;
             }
             if(cc && ((meCursors[cc] != 0) ||
                       ((meCursors[cc] = XCreateFontCursor(mecm.xdisplay,meCursorChar[cc])) != 0)))
             {
-                XDefineCursor(mecm.xdisplay,meFrameGetXWindow(frameCur),meCursors[cc]) ;
-                meCurCursor = cc ;
+                XDefineCursor(mecm.xdisplay,meFrameGetXWindow(frameCur),meCursors[cc]);
+                meCurCursor = cc;
             }
         }
 #endif /* _XTERM */
@@ -3705,103 +3883,103 @@ changeFont(int f, int n)
 int
 XTERMaddColor(meColor index, meUByte r, meUByte g, meUByte b)
 {
-    XColor col ;
+    XColor col;
     
     if(noColors <= index)
     {
-        colTable = meRealloc(colTable,(index+1)*sizeof(meUInt)) ;
-        memset(colTable+noColors,0,(index-noColors+1)*sizeof(meUInt)) ;
-        noColors = index+1 ;
+        colTable = meRealloc(colTable,(index+1)*sizeof(meUInt));
+        memset(colTable+noColors,0,(index-noColors+1)*sizeof(meUInt));
+        noColors = index+1;
     }
-    col.red   = ((meUShort) r) << 8 ;
-    col.green = ((meUShort) g) << 8 ;
-    col.blue  = ((meUShort) b) << 8 ;
+    col.red   = ((meUShort) r) << 8;
+    col.green = ((meUShort) g) << 8;
+    col.blue  = ((meUShort) b) << 8;
     if(!XAllocColor(mecm.xdisplay,xcmap,&col))
     {
-        static int noCells=-1 ;
-        static meUByte *cells=NULL ;
-        meUByte *ss ;
+        static int noCells=-1;
+        static meUByte *cells=NULL;
+        meUByte *ss;
         int ii, diff;
-        int bDiff= 256*256*3 ;          /* Smallest least squares. */
+        int bDiff= 256*256*3;          /* Smallest least squares. */
         
         if(noCells < 0)
         {
-            /* printf("Warning: Failed to allocate colors, looking up closest\n") ;*/
+            /* printf("Warning: Failed to allocate colors, looking up closest\n");*/
             if(((noCells = DisplayCells(mecm.xdisplay,xscreen)) > 0) &&
                ((cells = meMalloc(noCells*3*sizeof(meUByte))) != NULL))
             {
-                ii = noCells ;
-                ss = cells ;
+                ii = noCells;
+                ss = cells;
                 for(ii=0 ; ii<noCells ; ii++)
                 {
-                    col.pixel = ii ;
-                    XQueryColor(mecm.xdisplay,xcmap,&col) ;
-                    *ss++ = (col.red   >> 8) ;
-                    *ss++ = (col.green >> 8) ;
-                    *ss++ = (col.blue  >> 8) ;
+                    col.pixel = ii;
+                    XQueryColor(mecm.xdisplay,xcmap,&col);
+                    *ss++ = (col.red   >> 8);
+                    *ss++ = (col.green >> 8);
+                    *ss++ = (col.blue  >> 8);
                 }
             }
         }
-        col.pixel = BlackPixel(mecm.xdisplay,xscreen) ;
+        col.pixel = BlackPixel(mecm.xdisplay,xscreen);
         /* To find the nearest color then use a least squares method. This
          * produces a better approximation than a straight forward color
          * differencing algorithm as it takes into account the variance. */
         if(cells != NULL)
         {
-            ii = noCells ;
-            ss = cells ;
+            ii = noCells;
+            ss = cells;
             for(ii=0 ; ii<noCells ; ii++)
             {
-                int delta;
+                int cdif;
                 
-                delta = ((int) *ss++) - ((int) r) ;
-                diff  = (delta * delta) ;
-                delta = ((int) *ss++) - ((int) g) ;
-                diff += (delta * delta) ;
-                delta = ((int) *ss++) - ((int) b) ;
-                diff += (delta * delta) ;
+                cdif = ((int) *ss++) - ((int) r);
+                diff = (cdif * cdif);
+                cdif = ((int) *ss++) - ((int) g);
+                diff += (cdif * cdif);
+                cdif = ((int) *ss++) - ((int) b);
+                diff += (cdif * cdif);
                 if(diff < bDiff)
                 {
-                    bDiff = diff ;
-                    col.pixel = ii ;
+                    bDiff = diff;
+                    col.pixel = ii;
                 }
             }
         }
-        XQueryColor(mecm.xdisplay,xcmap,&col) ;
+        XQueryColor(mecm.xdisplay,xcmap,&col);
         if(!XAllocColor(mecm.xdisplay,xcmap,&col))
-            printf("Warning: Failed to allocate closest color\n") ;
+            printf("Warning: Failed to allocate closest color\n");
         
     }
-    colTable[index] = col.pixel ;
+    colTable[index] = col.pixel;
     
     /* the default colors are created before the first frame is so check there is a frame */
     if(frameCur != NULL)
     {
-        meFrameLoopBegin() ;
+        meFrameLoopBegin();
         
-        meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN) ;
+        meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN);
         
         if(meFrameGetXGCFCol(loopFrame) == index)
-            meFrameSetXGCFCol(loopFrame,meCOLOR_INVALID) ;
+            meFrameSetXGCFCol(loopFrame,meCOLOR_INVALID);
         if(meFrameGetXGCBCol(loopFrame) == index)
-            meFrameSetXGCBCol(loopFrame,meCOLOR_INVALID) ;
+            meFrameSetXGCBCol(loopFrame,meCOLOR_INVALID);
         
-        meFrameLoopEnd() ;
+        meFrameLoopEnd();
     }
-    return meTRUE ;
+    return meTRUE;
 }
 
 void
 XTERMsetBgcol(void)
 {
-    meFrameLoopBegin() ;
+    meFrameLoopBegin();
     
-    meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN) ;
+    meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN);
     
     /* change the background */
     XSetWindowBackground(mecm.xdisplay,meFrameGetXWindow(loopFrame),colTable[meStyleGetBColor(meSchemeGetStyle(globScheme))]);
     
-    meFrameLoopEnd() ;
+    meFrameLoopEnd();
 }
 
 /*
@@ -3838,8 +4016,8 @@ meFrameRepositionWindow(meFrame *frame, int resize)
     if(!(meSystemCfg & meSYSTEM_CONSOLE))
 #endif /* _ME_CONSOLE */
     {
-        int xx, yy, wbs, tbs ;
-        unsigned int ww, hh ;
+        int xx, yy, wbs, tbs;
+        unsigned int ww, hh;
         XWindowAttributes xwa;
         Status status;
         
@@ -3890,41 +4068,41 @@ meFrameRepositionWindow(meFrame *frame, int resize)
         
         /* Get the size information */
         /* TODO: The sizeHints is horribly overloaded and needs to be moved into meFrame */
-        xx = sizeHints.x ;
-        yy = sizeHints.y ;
-        ww = sizeHints.width ;
-        hh = sizeHints.height ;
+        xx = sizeHints.x;
+        yy = sizeHints.y;
+        ww = sizeHints.width;
+        hh = sizeHints.height;
         
         if((xx + ww) > sizeHints.max_width)
             xx = sizeHints.max_width - ww;
         if(xx < 0)
-            xx = 0 ;
+            xx = 0;
         
         if((yy + hh) > sizeHints.max_height)
             yy = sizeHints.max_height - hh;
         if(yy < 0)
-            yy = 0 ;
+            yy = 0;
         
         if(resize && (((xx + ww + wbs + wbs) > sizeHints.max_width) || 
                       ((yy + hh + tbs + wbs) > sizeHints.max_height)))
         {
-            sizeHints.x = xx ;
-            sizeHints.y = yy ;
+            sizeHints.x = xx;
+            sizeHints.y = yy;
             if((xx + ww + wbs + wbs) > sizeHints.max_width)
                 ww = sizeHints.max_width - xx - wbs - wbs;
             if((yy + hh + tbs + wbs) > sizeHints.max_height)
                 hh = sizeHints.max_height - yy - wbs - tbs;
             /* printf("meFrameRepositionWindow::" __FILE__ ":%d: XMoveResizeWindow\n", __LINE__);*/
             XMoveResizeWindow(mecm.xdisplay,meFrameGetXWindow(frame),
-                              sizeHints.x,sizeHints.y,ww,hh) ;
+                              sizeHints.x,sizeHints.y,ww,hh);
         }
         else if((xx != sizeHints.x) || (yy != sizeHints.y))
         {
-            sizeHints.x = xx ;
-            sizeHints.y = yy ;
+            sizeHints.x = xx;
+            sizeHints.y = yy;
             /* printf("meFrameRepositionWindow::" __FILE__ ":%d: XMoveWindow\n", __LINE__);*/
             XMoveWindow(mecm.xdisplay,meFrameGetXWindow(frame),
-                        sizeHints.x-wbs,sizeHints.y-tbs) ;
+                        sizeHints.x-wbs,sizeHints.y-tbs);
         }
     }
 #endif /* _ME_WINDOW */
@@ -3942,20 +4120,20 @@ meFrameSetWindowTitle(meFrame *frame, meUByte *str)
     if(!(meSystemCfg & meSYSTEM_CONSOLE))
 #endif /* _ME_CONSOLE */
     {
-        char buf[meBUF_SIZE_MAX], *ss ;
+        char buf[meBUF_SIZE_MAX], *ss;
         
 #if MEOPT_EXTENDED
         if(frameTitle != NULL)
-            meStrcpy(buf,frameTitle) ;
+            meStrcpy(buf,frameTitle);
         else
 #endif
             meStrcpy(buf,meName);
         if(str != NULL)
         {
-            meStrcat(buf,": ") ;
-            meStrcat(buf,str) ;
+            meStrcat(buf,": ");
+            meStrcat(buf,str);
         }
-        ss = buf ;
+        ss = buf;
         XStoreName(mecm.xdisplay,meFrameGetXWindow(frame),ss);
     }
 }
@@ -4001,19 +4179,19 @@ TTgetClipboard(void)
          * copy texts are being used. If they are and this flag is set after receiving
          * the initial size, the killInit then take ownership of the block and so we never
          * get the copy text. Take ownership at the end */
-        clipState &= ~CLIP_RECEIVED ;
-        clipState |= CLIP_RECEIVING ;
+        clipState &= ~CLIP_RECEIVED;
+        clipState |= CLIP_RECEIVING;
         /* Request for the current Primary/Clipboard string owner to send a
          * SelectionNotify event to us giving the current string */
-        XConvertSelection(mecm.xdisplay,clipboardA,XA_STRING,meAtoms[meATOM_COPY_TEXT],meFrameGetXWindow(frameCur),CurrentTime) ;
+        XConvertSelection(mecm.xdisplay,clipboardA,XA_STRING,meAtoms[meATOM_COPY_TEXT],meFrameGetXWindow(frameCur),CurrentTime);
         /* Must do a flush to ensure the request has gone */
-        XFlush(mecm.xdisplay) ;
+        XFlush(mecm.xdisplay);
         /* Wait for the returned value, alarmState bit will be set */
         while(!TTahead() && !(clipState & CLIP_RECEIVED))
-            waitForEvent(0) ;
-        clipState &= ~(CLIP_RECEIVING|CLIP_RECEIVED) ;
+            waitForEvent(0);
+        clipState &= ~(CLIP_RECEIVING|CLIP_RECEIVED);
         /* reset the increment clip size to zero (just incase there was an interuption) */
-        meClipSize=0 ;
+        meClipSize=0;
         TTsetClipboard(0);
     }
 }
@@ -4029,8 +4207,8 @@ int
 TTstart(void)
 {
     if((meSystemCfg & meSYSTEM_CONSOLE) || (meGetenv("DISPLAY") == NULL))
-        return TCAPstart() ;
-    return XTERMstart() ;
+        return TCAPstart();
+    return XTERMstart();
 }
 #endif /* _ME_CONSOLE */
 #endif /* _ME_WINDOW */
@@ -4045,15 +4223,15 @@ TTwaitForChar(void)
      */
     if(!isTimerSet(MOUSE_TIMER_ID) && (mouseState != 0))
     {
-        meUShort mc ;
-        meUInt arg ;
-        mc = ME_SPECIAL | mouseKeyState | (SKEY_mouse_time+mouseKeys[mouseButtonGetPick()]) ;
+        meUShort mc;
+        meUInt arg;
+        mc = ME_SPECIAL | mouseKeyState | (SKEY_mouse_time+mouseKeys[mouseButtonGetPick()]);
         /* mouse-time bound ?? */
         if((!TTallKeys && (decode_key(mc,&arg) != -1)) || (TTallKeys & 0x2))
         {
             /* Start a timer and move to timed state 1 */
             /* Start a new timer to clock in at 'delay' intervals */
-            /* printf("Setting mouse timer for delay %d\n",delayTime) ;*/
+            /* printf("Setting mouse timer for delay %d\n",delayTime);*/
             timerSet(MOUSE_TIMER_ID,-1,delayTime);
         }
     }
@@ -4062,7 +4240,7 @@ TTwaitForChar(void)
     /* IDLE TIME: Check the idle time events */
     if(kbdmode == meIDLE)
         /* Check the idle event */
-        doIdlePickEvent() ;
+        doIdlePickEvent();
 #endif
     for(;;)
     {
@@ -4089,13 +4267,13 @@ TTwaitForChar(void)
          * the key can be proccessed by TTahead and then you sit and wait
          * in TCAPwait
          */
-        handleTimerExpired() ;
+        handleTimerExpired();
         if(TTahead())
-            break ;
+            break;
         if(sgarbf == meTRUE)
         {
-            update(meFALSE) ;
-            mlerase(MWCLEXEC) ;
+            update(meFALSE);
+            mlerase(MWCLEXEC);
         }
 #if MEOPT_MWFRAME
         /* if the user has changed the window focus using the OS
@@ -4103,44 +4281,44 @@ TTwaitForChar(void)
          * then give a warning */
         if((frameFocus != NULL) && (frameFocus != frameCur))
         {
-            meUByte scheme=(globScheme/meSCHEME_STYLES) ;
-            meFrame *fc=frameCur ;
-            frameCur = frameFocus ;
+            meUByte scheme=(globScheme/meSCHEME_STYLES);
+            meFrame *fc=frameCur;
+            frameCur = frameFocus;
             pokeScreen(0x10,frameCur->depth,(frameCur->width >> 1)-5,&scheme,
-                       (meUByte *) "[NOT FOCUS]") ;
-            frameCur = fc ;
+                       (meUByte *) "[NOT FOCUS]");
+            frameCur = fc;
         }
 #endif
-        waitForEvent(0) ;
+        waitForEvent(0);
     }
 }
 
 void
 TTsleep(int  msec, int  intable, meVariable **waitVarList)
 {
-    meUByte *ss ;
-    int sgarbfOld ;
+    meUByte *ss;
+    int sgarbfOld;
     
     if(intable && ((kbdmode == mePLAY) || (clexec == meTRUE)))
-        return ;
+        return;
     
     if(msec >= 0)
         /* Don't actually need the abs time as this will remain the next alarm */
         timerSet(SLEEP_TIMER_ID,-1,msec);
     else if(waitVarList != NULL)
-        timerKill(SLEEP_TIMER_ID) ;             /* Kill off the timer */
+        timerKill(SLEEP_TIMER_ID);             /* Kill off the timer */
     else
-        return ;
+        return;
     
     sgarbfOld = sgarbf;
     do
     {
-        handleTimerExpired() ;
+        handleTimerExpired();
         if(intable && TTahead())
-            break ;
+            break;
         if((waitVarList != NULL) &&
            (((ss=getUsrLclCmdVar((meUByte *)"wait",*waitVarList)) == errorm) || !meAtoi(ss)))
-            break ;
+            break;
         sgarbfOld |= sgarbf;
         sgarbf = meFALSE;
         waitForEvent(1);
@@ -4159,12 +4337,12 @@ TTahead(void)
 #endif /* _ME_CONSOLE */
     {
 #ifdef _XTERM
-        int ii ;
+        int ii;
         while((ii=XPending(mecm.xdisplay)))
         {
             do
-                meXEventHandler() ;
-            while(--ii > 0) ;
+                meXEventHandler();
+            while(--ii > 0);
         }
         /* don't process the timers if we have a key waiting!
          * This is because the timers can generate a lot of timer
@@ -4172,27 +4350,27 @@ TTahead(void)
          * By not processing, we leave them there until we need them.
          */
         if(TTnoKeys)
-            return TTnoKeys ;
+            return TTnoKeys;
         
 #if MEOPT_MOUSE
         /* If an alarm hCheck the mouse */
         if(isTimerExpired(MOUSE_TIMER_ID))
         {
-            meUShort mc ;
-            meUInt arg ;
+            meUShort mc;
+            meUInt arg;
             
-            timerClearExpired(MOUSE_TIMER_ID) ;
+            timerClearExpired(MOUSE_TIMER_ID);
             mc = ME_SPECIAL | mouseKeyState |
-                  (SKEY_mouse_time+mouseKeys[mouseButtonGetPick()]) ;
+                  (SKEY_mouse_time+mouseKeys[mouseButtonGetPick()]);
             /* mouse-time bound ?? */
             if((!TTallKeys && (decode_key(mc,&arg) != -1)) || (TTallKeys & 0x2))
             {
                 /* Timer has expired and timer still bound. Report the key. */
                 /* Push the generated keycode into the buffer */
-                addKeyToBufferOnce(mc) ;
+                addKeyToBufferOnce(mc);
                 /* Set the new timer and state */
                 /* Start a new timer to clock in at 'repeat' intervals */
-                /* printf("Setting mouse timer for repeat %d\n",repeatTime) ;*/
+                /* printf("Setting mouse timer for repeat %d\n",repeatTime);*/
                 timerSet(MOUSE_TIMER_ID,-1,repeatTime);
             }
         }
@@ -4217,7 +4395,7 @@ TTahead(void)
          * buffer to store them. */
         while(TTnoKeys != KEYBUFSIZ)
         {
-            meUByte cc ;
+            meUByte cc;
 #ifdef _USEPOLL
             int status;                 /* Status of the input check */
             
@@ -4247,7 +4425,7 @@ TTahead(void)
                 if (cc == '\0')
                     addKeyToBuffer (ME_CONTROL|' ');
                 else
-                    addKeyToBuffer(cc) ;
+                    addKeyToBuffer(cc);
             }
         }
         
@@ -4255,10 +4433,10 @@ TTahead(void)
         {
             frameChangeWidth(meTRUE,TTnewWid-frameCur->width);     /* Change width */
             frameChangeDepth(meTRUE,TTnewHig-(frameCur->depth+1)); /* Change depth */
-            alarmState &= ~meALARM_WINSIZE ;
+            alarmState &= ~meALARM_WINSIZE;
         }
         if(TTnoKeys)
-            return TTnoKeys ;
+            return TTnoKeys;
     }
 #endif /* _ME_CONSOLE */
 #if MEOPT_CALLBACK
@@ -4269,18 +4447,18 @@ TTahead(void)
         if((index=decode_key(ME_SPECIAL|SKEY_idle_time,&arg)) != -1)
         {
             /* Execute the idle-time key */
-            execFuncHidden(ME_SPECIAL|SKEY_idle_time,index,arg) ;
+            execFuncHidden(ME_SPECIAL|SKEY_idle_time,index,arg);
             
             /* Now set the timer for the next */
             timerSet(IDLE_TIMER_ID,-1,idleTime);
         }
         else if(decode_key(ME_SPECIAL|SKEY_idle_drop,&arg) != -1)
-            meTimerState[IDLE_TIMER_ID] = IDLE_STATE_DROP ;
+            meTimerState[IDLE_TIMER_ID] = IDLE_STATE_DROP;
         else
-            meTimerState[IDLE_TIMER_ID] = 0 ;
+            meTimerState[IDLE_TIMER_ID] = 0;
     }
 #endif
-    return TTnoKeys ;
+    return TTnoKeys;
 }
 #endif /* MEOPT_TYPEAH */
 
@@ -4292,24 +4470,24 @@ TTahead(void)
 #include <sys/un.h>
 #include <netinet/in.h>
 
-int meCSSock=-1 ;
-int meCCSSock=-1 ;
+int meCSSock=-1;
+int meCCSSock=-1;
 void
 TTopenClientServer (void)
 {
     /* If the server has not been created then create it now */
     if(meCSSock == -1)
     {
-        struct sockaddr_un cssa ;
-        meIPipe *ipipe ;
-        meBuffer *bp ;
-        meMode sglobMode ;
-        int ii ;
+        struct sockaddr_un cssa;
+        meIPipe *ipipe;
+        meBuffer *bp;
+        meMode sglobMode;
+        int ii;
         
         if((meCSSock=socket(AF_UNIX,SOCK_STREAM, 0)) < 0)
         {
-            meSystemCfg &= ~meSYSTEM_CLNTSRVR ;
-            return ;
+            meSystemCfg &= ~meSYSTEM_CLNTSRVR;
+            return;
         }
         ii = sprintf(cssa.sun_path,"/tmp/mesrv%d",(int) meUid);
         ii += sizeof(cssa.sun_family);
@@ -4319,66 +4497,66 @@ TTopenClientServer (void)
            (connect(meCSSock,(struct sockaddr *)&cssa,ii) >= 0))
         {
             /* theres another me acting as a server, quit! */
-            meSystemCfg &= ~meSYSTEM_CLNTSRVR ;
-            close(meCSSock) ;
-            meCSSock = -1 ;
-            return ;
+            meSystemCfg &= ~meSYSTEM_CLNTSRVR;
+            close(meCSSock);
+            meCSSock = -1;
+            return;
         }
-        meUnlinkNT(cssa.sun_path) ;
+        meUnlinkNT(cssa.sun_path);
         if((bind(meCSSock,(struct sockaddr *)&cssa,ii) < 0) ||
            (listen(meCSSock,20) < 0))
         {
-            meSystemCfg &= ~meSYSTEM_CLNTSRVR ;
-            close(meCSSock) ;
-            meCSSock = -1 ;
-            return ;
+            meSystemCfg &= ~meSYSTEM_CLNTSRVR;
+            close(meCSSock);
+            meCSSock = -1;
+            return;
         }
         /* Change socket permissions so only the user can send commands */
         meFileSetAttributes((char *) cssa.sun_path,0700);
         /* Create the ipipe buffer */
-        meModeCopy(sglobMode,globMode) ;
-        meModeSet(globMode,MDPIPE) ;
-        meModeSet(globMode,MDLOCK) ;
-        meModeSet(globMode,MDHIDE) ;
-        meModeClear(globMode,MDWRAP) ;
-        meModeClear(globMode,MDUNDO) ;
+        meModeCopy(sglobMode,globMode);
+        meModeSet(globMode,MDPIPE);
+        meModeSet(globMode,MDLOCK);
+        meModeSet(globMode,MDHIDE);
+        meModeClear(globMode,MDWRAP);
+        meModeClear(globMode,MDUNDO);
         if(((bp=bfind(BserverN,BFND_CREAT)) == NULL) ||
            ((ipipe = meMalloc(sizeof(meIPipe))) == NULL))
         {
-            meSystemCfg &= ~meSYSTEM_CLNTSRVR ;
-            close(meCSSock) ;
-            meCSSock = -1 ;
-            return ;
+            meSystemCfg &= ~meSYSTEM_CLNTSRVR;
+            close(meCSSock);
+            meCSSock = -1;
+            return;
         }
-        meModeCopy(globMode,sglobMode) ;
-        bp->intFlag |= BIFNODEL ;
-        ipipe->next = ipipes ;
-        ipipe->pid = 0 ;
-        ipipe->rfd = meCSSock ;
-        ipipe->outWfd = meCSSock ;
-        ipipes = ipipe ;
-        noIpipes++ ;
-        ipipe->bp = bp ;
+        meModeCopy(globMode,sglobMode);
+        bp->intFlag |= BIFNODEL;
+        ipipe->next = ipipes;
+        ipipe->pid = 0;
+        ipipe->rfd = meCSSock;
+        ipipe->outWfd = meCSSock;
+        ipipes = ipipe;
+        noIpipes++;
+        ipipe->bp = bp;
         /* setup the buffer */
         {
-            meUByte buff[meBUF_SIZE_MAX] ;
-            sprintf((char *)buff,"Client Server: /tmp/mesrv%d\n\n",(int) meUid) ;
-            addLineToEob(bp,buff) ;              /* Add string */
-            bp->dotLine = meLineGetPrev(bp->baseLine) ;
-            bp->dotOffset = 0 ;
-            bp->dotLineNo = bp->lineCount-1 ;
-            meAnchorSet(bp,'I',bp->dotLine,bp->dotLineNo,bp->dotOffset,1) ;
+            meUByte buff[meBUF_SIZE_MAX];
+            sprintf((char *)buff,"Client Server: /tmp/mesrv%d\n\n",(int) meUid);
+            addLineToEob(bp,buff);              /* Add string */
+            bp->dotLine = meLineGetPrev(bp->baseLine);
+            bp->dotOffset = 0;
+            bp->dotLineNo = bp->lineCount-1;
+            meAnchorSet(bp,'I',bp->dotLine,bp->dotLineNo,bp->dotOffset,1);
         }
         /* Set up the window dimensions - default to having auto wrap */
-        ipipe->flag = 0 ;
-        ipipe->strRow = 0 ;
-        ipipe->strCol = 0 ;
-        ipipe->noRows = 0 ;
-        ipipe->noCols = 0 ;
-        ipipe->curRow = 0 ;
-        ipipe->curRow = bp->dotLineNo ;
+        ipipe->flag = 0;
+        ipipe->strRow = 0;
+        ipipe->strCol = 0;
+        ipipe->noRows = 0;
+        ipipe->noCols = 0;
+        ipipe->curRow = 0;
+        ipipe->curRow = bp->dotLineNo;
         /* set process terminal size */
-        ipipeSetSize(frameCur->windowCur,bp) ;
+        ipipeSetSize(frameCur->windowCur,bp);
     }
 }
 
@@ -4388,38 +4566,38 @@ TTkillClientServer(void)
     /* Close & delete the client file */
     if(meCSSock != -1)
     {
-        meIPipe *ipipe ;
-        char fname[meBUF_SIZE_MAX] ;
+        meIPipe *ipipe;
+        char fname[meBUF_SIZE_MAX];
         
         /* get the ipipe node */
-        ipipe = ipipes ;
+        ipipe = ipipes;
         while(ipipe != NULL)
         {
             if(ipipe->pid == 0)
-                break ;
-            ipipe = ipipe->next ;
+                break;
+            ipipe = ipipe->next;
         }
         if(ipipe != NULL)
         {
-            ipipe->bp->intFlag |= BIFBLOW ;
-            zotbuf(ipipe->bp,1) ;
+            ipipe->bp->intFlag |= BIFBLOW;
+            zotbuf(ipipe->bp,1);
         }
         else
-            close(meCSSock) ;
-        sprintf(fname,"/tmp/mesrv%d",(int) meUid) ;
-        meUnlinkNT(fname) ;
-        meSystemCfg &= ~meSYSTEM_CLNTSRVR ;
-        meCSSock = -1 ;
+            close(meCSSock);
+        sprintf(fname,"/tmp/mesrv%d",(int) meUid);
+        meUnlinkNT(fname);
+        meSystemCfg &= ~meSYSTEM_CLNTSRVR;
+        meCSSock = -1;
     }
     if(meCCSSock != -1)
     {
-        close(meCSSock) ;
-        meCCSSock = -1 ;
+        close(meCSSock);
+        meCCSSock = -1;
     }
 }
 
 int
-TTconnectClientServer (void)
+TTconnectClientServer(void)
 {
     /* If the server has not been connected then create it now */
     if(meCCSSock == -1)
@@ -5209,6 +5387,10 @@ xdndSelectionNotify (XEvent *xevent, meFrame *frame)
  ***************************************************************************/
 
 #ifdef _XPM
+#ifdef lines
+/* term.h can define lines which breaks inclusion of xpm.h */
+#undef	lines
+#endif
 /* Use a colour icon */
 #include <X11/xpm.h>        /* Xpm support for colored icon          */
 

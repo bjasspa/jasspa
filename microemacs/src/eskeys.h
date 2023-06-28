@@ -31,7 +31,8 @@
 #ifndef __ESKEYS_H__
 #define __ESKEYS_H__
 
-#define	DEFSKEY(s,i,d,t) t,
+#define	DEFSKEY(s,i,c,d,t) t,
+#define	DEFSSKEY(t,i,c)
 
 enum
 {
@@ -45,7 +46,7 @@ extern meUByte *specKeyNames[] ;
 
 #ifdef	maindef
 
-#define	DEFSKEY(s,i,d,t) (meUByte *) s,
+#define	DEFSKEY(s,i,c,d,t) (meUByte *) s,
 
 meUByte *specKeyNames[]=
 {
@@ -54,6 +55,8 @@ meUByte *specKeyNames[]=
 #undef	DEFSKEY
 
 #endif /* maindef */
+
+#undef	DEFSSKEY
 
 #endif /* __ESKEYS_H__ */
 

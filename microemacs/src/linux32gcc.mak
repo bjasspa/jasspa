@@ -90,9 +90,7 @@ else
 WINDOW_LIBS = $(MAKEWINLIBS) -L/usr/X11R6/lib -lX11
 endif
 #
-# figure out if termcap is avaiable or if ncurses should be tried to
-# accomplish this try to compile test.c and see if it can link termcap. For
-# Linux 2.6 then preference would appear to be "ncurses" rather than "termcap".
+# Preference now is to use "ncurses" rather than "termcap", figure out if ncurses is avaiable or if we must fall back to termcap.
 #
 test = $(shell echo "#include <stdio.h>" > _t.c ; echo "int main() { printf(\"Test\"); return 0; }" >> _t.c ; $(LD) $(LDFLAGS) -o /dev/null -lncurses _t.c 2>&1 ; rm -f _t.c)
 ifneq "$(strip $(test))" ""
@@ -100,17 +98,18 @@ $(warning WARNING: No ncurses, defaulting to termcap.)
 CONSOLE_LIBS  = -ltermcap
 else
 CONSOLE_LIBS  = -lncurses
+CONSOLE_DEFS  = -D_USE_NCURSES
 endif
 
 ifeq "$(BTYP)" "c"
-BTYP_CDF = -D_ME_CONSOLE
+BTYP_CDF = $(CONSOLE_DEFS) -D_ME_CONSOLE
 BTYP_LIB = $(CONSOLE_LIBS)
 else ifeq "$(BTYP)" "w"
 BTYP_CDF = $(MAKEWINDEFS) -D_ME_WINDOW -I/opt/X11/include
 BTYP_LIB = $(WINDOW_LIBS)
 else
-BTYP_CDF = $(MAKEWINDEFS) -D_ME_CONSOLE -D_ME_WINDOW -I/opt/X11/include
-BTYP_LIB = $(WINDOW_LIBS) $(CONSOLE_LIBS)
+BTYP_CDF = $(CONSOLE_DEFS) $(MAKEWINDEFS) -D_ME_CONSOLE -D_ME_WINDOW -I/opt/X11/include
+BTYP_LIB = $(CONSOLE_LIBS) $(WINDOW_LIBS)
 BTYP     = cw
 endif
 

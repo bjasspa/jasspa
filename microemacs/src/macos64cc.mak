@@ -91,15 +91,27 @@ BCOR_CDF = -D_SOCKET
 PRGLIBS  = $(TRDPARTY)/mesock/$(BOUTDIR)/mesock$(A) $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A) $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A)
 endif
 
+#
+# Preference now is to use "ncurses" rather than "termcap", figure out if ncurses is avaiable or if we must fall back to termcap.
+#
+test = $(shell echo "\#include <stdio.h>" > _t.c ; echo "int main() { printf(\"Test\"); return 0; }" >> _t.c ; $(LD) $(LDFLAGS) -o _t.out -lncurses _t.c 2>&1 ; rm -f _t.c _t.out)
+ifneq "$(strip $(test))" ""
+$(warning WARNING: No ncurses, defaulting to termcap.)
+CONSOLE_LIBS  = -ltermcap
+else
+CONSOLE_LIBS  = -lncurses
+CONSOLE_DEFS  = -D_USE_NCURSES
+endif
+
 ifeq "$(BTYP)" "c"
-BTYP_CDF = -D_ME_CONSOLE -D_CONSOLE
-BTYP_LIB = -ltermcap
+BTYP_CDF = $(CONSOLE_DEFS) -D_ME_CONSOLE -D_CONSOLE
+BTYP_LIB = $(CONSOLE_LIBS)
 else ifeq "$(BTYP)" "w"
 BTYP_CDF = $(MAKEWINDEFS) -D_ME_WINDOW -I/opt/X11/include
 BTYP_LIB = $(MAKEWINLIBS) -L/opt/X11/lib -lX11
 else
-BTYP_CDF = $(MAKEWINDEFS) -D_ME_CONSOLE -D_CONSOLE -D_ME_WINDOW -I/opt/X11/include
-BTYP_LIB = $(MAKEWINLIBS) -L/opt/X11/lib -lX11 -ltermcap
+BTYP_CDF = $(CONSOLE_DEFS) $(MAKEWINDEFS) -D_ME_CONSOLE -D_CONSOLE -D_ME_WINDOW -I/opt/X11/include
+BTYP_LIB = $(CONSOLE_LIBS) $(MAKEWINLIBS) -L/opt/X11/lib -lX11
 BTYP     = cw
 endif
 

@@ -173,12 +173,6 @@ extern void sigAlarm(SIGNAL_PROTOTYPE) ;
 /* Additional UNIX externals */
 extern char  *CM, *CL ;
 
-#ifndef _CYGWIN
-/* Following are functions used by termcap & an xterm */
-extern	int   tputs(char *, int, int (*)(int)) ;
-extern	char *tgoto(char *, int, int ) ;
-#endif
-
 #define TTNbell()      (putchar(meCHAR_BELL),fflush(stdout))
 #define TTdieTest()    if(alarmState & meALARM_DIE) meDie()
 #define TTbreakTest(x) ((--TTbreakCnt == 0) &&                         \
@@ -190,6 +184,7 @@ extern void TTinitMouse(void);
 
 #ifdef _ME_CONSOLE
 #ifdef _TCAP
+#include <term.h>
 
 /* Following are termcap function */
 extern int TCAPstart(void) ;

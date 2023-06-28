@@ -3151,7 +3151,7 @@ addColorScheme(int f, int n)
         /* if color is used then reverse font is done using color
          * so remove this font. If not using color then set the
          * color to the defaults */
-        if(meSystemCfg &  (meSYSTEM_RGBCOLOR|meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR))
+        if(meSystemCfg & (meSYSTEM_RGBCOLOR|meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR))
             font &= ~meFONT_REVERSE ;
         else
         {

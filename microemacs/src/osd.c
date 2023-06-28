@@ -4322,12 +4322,12 @@ osdDisplaySelectFirstLetter(int cc, osdDISPLAY *md)
 static int
 osdDisplayTabMove(osdDISPLAY *md, int dir, int mustSel)
 {
-    int tab, tt, btt, bii, ii=md->curContext, loopItem=-1 ;
+    int tbItm, tt, btt, bii, ii=md->curContext, loopItem=-1 ;
     
     if(mustSel || (ii < 0))
-        tab = -1 ;
+        tbItm = -1 ;
     else
-        tab = md->context[ii].menu->item ;
+        tbItm = md->context[ii].menu->item ;
     
 try_again:
     /* loop through the contexts find the closest match
@@ -4336,14 +4336,14 @@ try_again:
     {
         /* only allow tab to select the current tab-page item, ignore the other pages */
         if((md->context[ii].menu->flags & MF_TAB) &&
-           ((tt=md->context[ii].menu->item) != tab) &&
+           ((tt=md->context[ii].menu->item) != tbItm) &&
            (((md->context[ii].menu->flags & MF_NBPAGE) == 0) ||
             (md->context[ii].menu->argc == md->context[md->nbpContext].menu->argc)))
         {
             if(dir)
-                tt -= tab ;
+                tt -= tbItm ;
             else
-                tt = tab - tt ;
+                tt = tbItm - tt ;
             if((bii < 0) || 
                ((tt  > 0) && ((btt < 0) || (tt < btt))) ||
                ((btt < 0) && (tt < btt)))
@@ -4403,7 +4403,7 @@ try_again:
                     loopItem = bii ;
                 else if(loopItem == bii)
                     return 0 ;
-                tab = md->context[bii].menu->item ;
+                tbItm = md->context[bii].menu->item ;
                 goto try_again ;
             }
         }
