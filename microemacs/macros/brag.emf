@@ -1145,12 +1145,12 @@ define-macro Brag
   find-buffer "*Brag*"
   !if &not &seq $buffer-bhook "bhook-brag"
     set-variable $buffer-scheme .scheme.cardback
-    buffer-bind-key brag-mouse-pick-left "mouse-pick-1"
-    buffer-bind-key brag-mouse-drop-left "mouse-drop-1"
-    buffer-bind-key void "mouse-pick-2"
-    buffer-bind-key void "mouse-drop-2"
-    buffer-bind-key void "mouse-pick-3"
-    buffer-bind-key void "mouse-drop-3"
+    !force buffer-bind-key brag-mouse-pick-left "mouse-pick-1"
+    !force buffer-bind-key brag-mouse-drop-left "mouse-drop-1"
+    !force buffer-bind-key void "mouse-pick-2"
+    !force buffer-bind-key void "mouse-drop-2"
+    !force buffer-bind-key void "mouse-pick-3"
+    !force buffer-bind-key void "mouse-drop-3"
     buffer-bind-create "bo" "esc h" "" brag-help
     1 buffer-bind-key brag-command "1"
     2 buffer-bind-key brag-command "2"

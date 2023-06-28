@@ -194,17 +194,20 @@
   set-variable :tri-row 0
   set-variable :tri-col &add 1 &mul 3 :tri-card-width
   ; Draw frames for the menu options.
-  65 screen-poke &add :tri-row  1 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-  65 screen-poke &add :tri-row  2 &add :tri-x0 72 .scheme.cardback &sprint "%sDeal%s" &lef $box-chars 1 &lef $box-chars 1
-  65 screen-poke &add :tri-row  3 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  67 screen-poke &add :tri-row  1 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  67 screen-poke &add :tri-row  2 &add :tri-x0 72 .scheme.cardback &sprint "%sDeal%s" &lef $box-chars 1 &lef $box-chars 1
+  99 screen-poke &add :tri-row  2 &add :tri-x0 73 .scheme.cardback "D"
+  67 screen-poke &add :tri-row  3 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
   
-  65 screen-poke &add :tri-row  4 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-  65 screen-poke &add :tri-row  5 &add :tri-x0 72 .scheme.cardback &sprint "%sQuit%s" &lef $box-chars 1 &lef $box-chars 1
-  65 screen-poke &add :tri-row  6 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  67 screen-poke &add :tri-row  4 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  67 screen-poke &add :tri-row  5 &add :tri-x0 72 .scheme.cardback &sprint "%sExit%s" &lef $box-chars 1 &lef $box-chars 1
+  99 screen-poke &add :tri-row  5 &add :tri-x0 74 .scheme.cardback "x"
+  67 screen-poke &add :tri-row  6 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
   
-  65 screen-poke &add :tri-row  7 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-  65 screen-poke &add :tri-row  8 &add :tri-x0 72 .scheme.cardback &sprint "%sHelp%s" &lef $box-chars 1 &lef $box-chars 1
-  65 screen-poke &add :tri-row  9 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  67 screen-poke &add :tri-row  7 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  67 screen-poke &add :tri-row  8 &add :tri-x0 72 .scheme.cardback &sprint "%sHelp%s" &lef $box-chars 1 &lef $box-chars 1
+  99 screen-poke &add :tri-row  8 &add :tri-x0 73 .scheme.cardback "H"
+  67 screen-poke &add :tri-row  9 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
   ; Record the card positions
   set-variable :tri-colhomemin :tri-col
   set-variable :tri-colhomemax &add :tri-col &mul 4 :tri-card-width
@@ -522,6 +525,42 @@
   ;    tri-draw
 !emacro
 
+0 define-macro tri-tip
+  !if &or &les @# 1 &gre @# 7
+    ml-write &spr "Tip error: Bad column number %s" @#
+  !elif &not &seq "" &set #l0 &lef &ind &spr ":tri-col%dup" @# 1
+    tri-decode-char #l0
+    !if &not :tri-num
+      ml-write &spr "Move A %s to home" &trr :tri-type
+    !else
+      set-variable #l2 &itoa &sub &atoi #l0 1
+      !if &seq #l2 &lef &ind &cat ":tri-hom" :tri-suit 1
+        ml-write &spr "Move %s %s to home" :tri-dig &trr :tri-type
+      !else
+        set-variable #l6 &mid "A23456789TJQK" &sub :tri-num 1 1 1
+        set-variable #l3 7
+        !repeat
+          !iif &sin #l2 &set #l4 &ind &spr ":tri-col%ddn" #l3  !break
+          !iif &sin #l2 &set #l5 &ind &spr ":tri-col%dup" #l3  !break
+        !until &not &dec #l3 1
+        !if &not #l3
+          ml-write &spr "ERROR: failed to find %s %s - %s" #l6 :tri-type #l2
+        !elif &sin #l2 #l4
+          ml-write &spr "%s %s not available" #l6 &trr :tri-type
+        !elif &equ @# #l3
+          ml-write &spr "%s %s is in the same column" #l6 &trr :tri-type #l3
+        !else
+          ml-write &spr "%s %s can be moved from column %d" #l6 &trr :tri-type #l3
+        !endif
+      !endif
+    !endif
+  !elif &not &seq "" &ind &spr ":tri-col%ddn" @#
+    ml-write &spr "Turn card"
+  !else
+    ml-write &spr "Find king"
+  !endif
+!emacro
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ; Pick up the keyboard input
@@ -571,7 +610,7 @@
     !if &equ #g1 2       ; Deal new game.
       tri-deal
     !elif &equ #g1 5     ; Quit game
-      tri-quit
+      tri-exit
     !elif &equ #g1 8     ; Help on triangle.
       tri-help
     !endif
@@ -591,38 +630,7 @@
 0 define-macro tri-mouse-drop-right
   tri-mouse-where
   !iif &not &equ :tri-inchr :tri-mouse-chr !return
-  !iif &or &les :tri-mouse-chr 1 &gre :tri-mouse-chr 7  !return
-  !if &not &seq "" &set #l0 &lef &ind &spr ":tri-col%dup" :tri-mouse-chr 1
-    tri-decode-char #l0
-    !if &not :tri-num
-      ml-write &spr "Move A %s to home" &trr :tri-type
-    !else
-      set-variable #l2 &itoa &sub &atoi #l0 1
-      !if &seq #l2 &lef &ind &cat ":tri-hom" :tri-suit 1
-        ml-write &spr "Move %s %s to home" :tri-dig &trr :tri-type
-      !else
-        set-variable #l6 &mid "A23456789TJQK" &sub :tri-num 1 1 1
-        set-variable #l3 7
-        !repeat
-          !iif &sin #l2 &set #l4 &ind &spr ":tri-col%ddn" #l3  !break
-          !iif &sin #l2 &set #l5 &ind &spr ":tri-col%dup" #l3  !break
-        !until &not &dec #l3 1
-        !if &not #l3
-          ml-write &spr "ERROR: failed to find %s %s - %s" #l6 :tri-type #l2
-        !elif &sin #l2 #l4
-          ml-write &spr "%s %s not available" #l6 &trr :tri-type
-        !elif &equ :tri-mouse-chr #l3
-          ml-write &spr "%s %s is in the same column" #l6 &trr :tri-type #l3
-        !else
-          ml-write &spr "%s %s can be moved from column %d" #l6 &trr :tri-type #l3
-        !endif
-      !endif
-    !endif
-  !elif &not &seq "" &ind &spr ":tri-col%ddn" :tri-mouse-chr
-    ml-write &spr "Turn card"
-  !else
-    ml-write &spr "Find king"
-  !endif
+  :tri-inchr tri-tip
 !emacro
 
 ;
@@ -633,7 +641,7 @@
     delete-window
   !endif
 !emacro
-0 define-macro tri-quit
+0 define-macro tri-exit
   !force delete-buffer "*triangle*"
 !emacro
 0 define-macro tri-key
@@ -755,16 +763,18 @@ define-macro Triangle
     set-variable :tri-card-lab  "HeartDimndClub Spade"
     set-variable :tri-label-home "hdcs"
     set-variable $buffer-scheme .scheme.cardback
-    buffer-bind-key tri-mouse-pick-left "mouse-pick-1"
-    buffer-bind-key tri-mouse-drop-left "mouse-drop-1"
-    buffer-bind-key void "mouse-pick-2"
-    buffer-bind-key void "mouse-drop-2"
-    buffer-bind-key tri-mouse-pick-right "mouse-pick-3"
-    buffer-bind-key tri-mouse-drop-right "mouse-drop-3"
+    !force buffer-bind-key tri-mouse-pick-left "mouse-pick-1"
+    !force buffer-bind-key tri-mouse-drop-left "mouse-drop-1"
+    !force buffer-bind-key void "mouse-pick-2"
+    !force buffer-bind-key void "mouse-drop-2"
+    !force buffer-bind-key tri-mouse-pick-right "mouse-pick-3"
+    !force buffer-bind-key tri-mouse-drop-right "mouse-drop-3"
     
     buffer-bind-create "bo" "esc h" "" tri-help
     buffer-bind-create "bo" "C-c C-c" "" tri-deal
-    buffer-bind-key tri-help "backspace"
+    buffer-bind-key tri-deal "d"
+    buffer-bind-key tri-exit "x"
+    buffer-bind-key tri-help "h"
     0 buffer-bind-key tri-key "return"  ; Home
     1 buffer-bind-key tri-key "1"       ; Column 1
     2 buffer-bind-key tri-key "2"       ; Column 2
@@ -773,7 +783,14 @@ define-macro Triangle
     5 buffer-bind-key tri-key "5"
     6 buffer-bind-key tri-key "6"
     7 buffer-bind-key tri-key "7"
-    buffer-bind-key tri-quit  "q"
+    1 buffer-bind-key tri-tip "q"
+    2 buffer-bind-key tri-tip "w"
+    3 buffer-bind-key tri-tip "e"
+    4 buffer-bind-key tri-tip "r"
+    5 buffer-bind-key tri-tip "t"
+    6 buffer-bind-key tri-tip "y"
+    7 buffer-bind-key tri-tip "u"
+    
     1 buffer-bind-key tri-draw "C-l"  ; Redraw the screen
     buffer-bind-key tri-draw "redraw"
     set-variable $buffer-bhook bhook-triangle
