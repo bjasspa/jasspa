@@ -6,7 +6,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd000.3,v 2.23 2009/10/03 16:35:40 jon Exp $
+.Id $Id: m3osd000.3,v 2.23 2023/05/30 11:00:36 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH user-setup 3
@@ -348,6 +348,11 @@ Sets a list  extensions of files to be ignored in file  completion, e.g. \*(mS
 backup files (\fC~\fR). This indirectly sets the
 .Ht $file-ignore 5
 variable.
+.IP "\fCSystem Clipboard\fR"
+Sets the required  interaction with the external system clipboard; this sets bits \fB0x800000\fR,  \fB0x4000000\fR and
+\fB0x8000000\fR of the 
+.Ht $system 5
+variable.
 .IP "\fCCursor Blink Rate\fR"
 Sets the cursor  blink  period in  millisecond.  The first  entry box sets the
 cursor visible time, a setting of zero disables  blinking. The second box sets
@@ -421,6 +426,8 @@ See \fBPlatform UNIX Setup\fR above.
 .IP "\fC# Backups\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCIgnore Files\fR"
+See \fBPlatform UNIX Setup\fR above.
+.IP "\fCSystem Clipboard\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCCursor Blink Rate\fR"
 See \fBPlatform UNIX Setup\fR above.

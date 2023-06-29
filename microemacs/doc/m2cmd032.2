@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd032.2,v 2.8 2009/08/29 17:13:09 jon Exp $
+.Id $Id: m2cmd032.2,v 2.8 2023/03/07 20:07:26 jon Exp $
 .Im MicroEmacs command|macrodevelop|file
 .so me.tni
 .TH directory-tree 2
@@ -18,52 +18,46 @@ directory-tree \- Draw the file directory tree
 ["\fIdirectory\fR"]
 .ad
 .SH DESCRIPTION
-\fBdirectory-tree\fR  creates  or  manipulates  a  view  of the  file  systems
-directory  structure.  The  command  is quite  complex to use  directly  so is
-largely used but macros such as
+\fBdirectory-tree\fR  creates or  manipulates  a view of the file systems  directory  structure.  The command is quite
+complex to use directly so is largely used by macros such as
 .Ht file-browser 3 .
 .PP
-The argument \fIn\fR is a bit based flag which is used to control the command,
-where the bits have the following meaning:-
+The  argument  \fIn\fR is a bit based flag which is used to control  the  command,  where the bits have the  following
+meaning:-
 .IP \fB0x01\fR
-If  set,  the  focal   directory   of  the   command   is  set  by  the  given
-"\fIdirectory\fR"  argument.  Otherwise  the  argument is not required and the
-command must be executed  within the  "\fI*directory*\fR"  buffer; the current
-line sets the focal directory.
+If set, the focal directory of the command is set by the given  "\fIdirectory\fR"  argument. Otherwise the argument is
+not required and the command must be executed within the  "\fI*directory*\fR"  buffer; the current line sets the focal
+directory.
 .IP \fB0x02\fR
-Specifies that the current line in resultant "\fI*directory*\fR" window should
-be set to the focal  directory.  If this bit is not set then the current  line
-will be the last selected  directory, or if none have been selected, the first
+Specifies that the current line in resultant  "\fI*directory*\fR" window should be set to the focal directory. If this
+bit is not set then the current line will be the last  selected  directory,  or if none have been  selected, the first
 line in the buffer.
 .IP \fB0x04\fR
-Specifies that any evaluations  required during the commands  operation should
-be performed. Without this flag an open operation on a directory which has not
-previously  been  evaluated  will not be perform an evaluation and the results
+Specifies that any evaluations  required during the commands  operation should be performed. Without this flag an open
+operation on a directory  which has not  previously  been  evaluated will not be perform an evaluation and the results
 will likely be incomplete.
 .IP \fB0x08\fR
-Specifies that the current focal  directory  should be opened. This means that
-sub-directories  within the current focal  directory will also be drawn in the
-directory tree.
+Specifies that the current focal directory should be opened. This means that sub-directories  within the current focal
+directory will also be drawn in the directory tree.
 .IP \fB0x10\fR
-Specifies that the current focal  directory  should be closed. This means that
-sub-directories  within the current focal  directory  will not be drawn in the
-directory tree.
+Specifies that the current focal directory should be closed. This means that sub-directories  within the current focal
+directory will not be drawn in the directory tree.
 .IP \fB0x20\fR
-Specifies  that the current  focal  directory's  open state should be toggled.
-This means that if the  sub-directories  are currently hidden they will now be
-drawn and vice-versa.
+Specifies that the current focal directory's open state should be toggled. This means that if the  sub-directories are
+currently hidden they will now be drawn and vice-versa.
 .IP \fB0x40\fR
-When  specified  any  directory  opened  will be  re-evaluated,  ensuring  the
-accuracy of the information.
+When specified any directory opened will be re-evaluated, ensuring the accuracy of the information.
 .IP \fB0x80\fR
-Enables a recursive  behavior,  for example if this flag was specified  with
-the open then not only will the focal  directory  be  opened,  but all of it's
-children,  and their  children  etc. Note that if the  Evaluation  flag is not
+Enables a  recursive  behavior,  for  example  if this flag was  specified  with the open then not only will the focal
+directory  be opened,  but all of it's  children,  and their  children  etc. Note that if the  Evaluation  flag is not
 specified then only the already evaluated directories can be opened.
+.IP "\fB0x100\fR & \fB0x200\fR"
+If both bits  \fB0x100\fR  and \fB0x200\fR are set then the current filter mode is toggled; if only bit \fB0x100\fR is
+set then the filter mode is disabled (not  filtered), if only bit  \fB0x200\fR is set then the filter mode is enabled,
+and if neither is set then the filter mode is left unchanged.
 .PP
-directory-tree  creates a new buffer  "\fI*directory*\fR"  and draws the known
-directory  tree. Every drawn  directory is preceded by a character flag giving
-the user an indication of the directory state, where:
+directory-tree  creates a new buffer  "\fI*directory*\fR" and draws the known directory tree. Every drawn directory is
+preceded by a character flag giving the user an indication of the directory state, where:
 .IP \fB?\fR
 Directory has not been evaluated.
 .IP \fB-\fR
@@ -71,13 +65,16 @@ Directory has been evaluated and is visible.
 .IP \fB+\fR
 Directory has been evaluated but is currently hidden.
 .PP
-Directories  which have been  evaluated  and found to have no children 
-use the '-'
+Directories which have been evaluated and found to have no children use the '-'
 .Ht $box-chars 5
 instead of a '-' character.
 .PP
-On UNIX platforms, if a directory is a symbolic link to another directory, the
-link name is given after the directory name.
+On UNIX platforms, if a directory is a symbolic link to another  directory, the link name is given after the directory
+name.
+.PP
+If the filter mode is enabled, default, then only directories which do not match a
+.Ht file-ignore 5
+postfix are listed. All non-hidden directories are listed when the filter mode is disabled.
 .SH EXAMPLE
 The best example of the use of directory-tree is
 .Ht file-browser 3
@@ -85,6 +82,7 @@ which can be found in hkdirlst.emf.
 .SH "SEE ALSO"
 .na
 .Ht file-browser 3 ,
+.Ht $file-ignore 5 ,
 .Ht $box-chars 5 .
 .ad
 .FH

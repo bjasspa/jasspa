@@ -6,7 +6,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Fri Aug 7 07:32:59 1998
 .\"
-.Id $Id: m3mac027.3,v 2.10 2009/08/29 18:13:22 jon Exp $
+.Id $Id: m3mac027.3,v 2.10 2023/03/08 10:51:16 jon Exp $
 .Im MicroEmacs command|file|essential
 .ds C0 "(\fB\*(fA\fR)\ \&
 .so me.tni
@@ -28,26 +28,33 @@ file-browser-swap-buffers \- Swap between file-browser windows
 \fBfile-browser-swap-buffers\fR
 .ad
 .SH DESCRIPTION
-\fBfile-browser\fR  can be used to browse  around the file  system. When first
-executed \fBfile-browser\fR creates 2 buffers, "\fC*directory*\fR"  displaying
-the directory  structure and "\fC*files*\fR"  listing the files in the current
-directory  with  information on each file.  \fBfile-browser\fR  displays these
-buffers side by side, splitting the current window  horizontally  if required.
-\fBfile-browser\fR  uses a single  window only when  invoked  with a numerical
-argument \fIn\fR of zero (0). 
+\fBfile-browser\fR  can be used to browse  around the file system. When first  executed  \fBfile-browser\fR  creates 2
+buffers,  "\fC*directory*\fR"  displaying the directory structure and "\fC*files*\fR" listing the files in the current
+directory with information on each file. \fBfile-browser\fR displays these buffers side by side, splitting the current
+window horizontally if required.
 .PP
-Once open the user can browse  through the system using the following  keys in
-the \fC*directory*\fR buffer, use \fBesc-h\fR for help within the buffer:
+The numeric  argument  \fIn\fR is used to modify the default  behavior of the  command,  where the bits are defined as
+follows:
+.IP \fB0x01\fR
+When not set \fBfile-browser\fR only creates a single "\fC*files*\fR" window.
+.IP \fB0x02\fR
+When set  \fBfile-browser\fR  will  attempt to  identify if the current  directory  is being  managed by a source code
+revision system (such as
+.Ht cvs 3
+or
+.Ht svn 3 )
+and if so modifies the directory  listing to include  addition  revision  information.  Note that the control system's
+support macros must already be loaded, this can typically be done by enabling the relevant 'support on start-up' option.
+.PP
+Once open the user can browse  through  the system  using the  following  keys in the  \fC*directory*\fR  buffer,  use
+\fBesc-h\fR for help within the buffer:
 .IP \fCspace\fR
-Selects the  directory  on the current  line and  up-dates  the  \fC*files*\fR
-buffer  with  the  information  on this  directory.  This  can also be done by
-clicking the left mouse button on the directory name.
+Selects  the  directory  on the current  line and  up-dates  the  \fC*files*\fR  buffer with the  information  on this
+directory. This can also be done by clicking the left mouse button on the directory name.
 .IP \fCreturn\fR
-Selects the directory on the current line, if open (sub-directories displayed)
-then closes it or if closed it is opened. The \fC*files*\fR buffer is up-dated
-with the  information on the directory.  This can also be done by clicking the
-left  mouse  button on the  '\fC+\fR'  or  '\fC-\fR'  symbol  just  before the
-directory name.
+Selects the  directory  on the current  line, if open  (sub-directories  displayed)  then closes it or if closed it is
+opened. The \fC*files*\fR  buffer is up-dated with the information on the directory. This can also be done by clicking
+the left mouse button on the '\fC+\fR' or '\fC-\fR' symbol just before the directory name.
 .IP \fCC-return\fR
 As with \fCreturn\fR expect  sub-directories are recursively opened or closed,
 note that this could take some time on large file  systems.  This can also be
@@ -167,7 +174,10 @@ key to file operation mapping.
 .Ht file-tool-setup 3 ,
 .Ht find-file 2 ,
 .Ht find-zfile 3 ,
-.Ht shell-command 2 .
+.Ht shell-command 2 ,
+.Ht cc-setup 3 ,
+.Ht cvs-setup 3 ,
+.Ht svn-setup 3 .
 .ad
 .rm C0
 .FH

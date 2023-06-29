@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20230214.1005>
+# Last Modified: <20230411.2245>
 #
 ##############################################################################
 
@@ -173,7 +173,9 @@ MAC3_080=	$(DOCDIR)m3mac080.3 $(DOCDIR)m3mac081.3 $(DOCDIR)m3mac082.3\
 		$(DOCDIR)m3mac083.3 $(DOCDIR)m3mac084.3 $(DOCDIR)m3mac085.3\
 		$(DOCDIR)m3mac086.3 $(DOCDIR)m3mac087.3 $(DOCDIR)m3mac088.3\
 		$(DOCDIR)m3mac089.3
-MAC3_090=	$(DOCDIR)m3mac090.3 $(DOCDIR)m3mac091.3 $(DOCDIR)m3mac092.3
+MAC3_090=	$(DOCDIR)m3mac090.3 $(DOCDIR)m3mac091.3 $(DOCDIR)m3mac092.3\
+		$(DOCDIR)m3mac093.3 $(DOCDIR)m3mac094.3
+# TODO: doc change-font-size
 #
 OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd003.3 $(DOCDIR)m3osd004.3 $(DOCDIR)m3osd005.3\

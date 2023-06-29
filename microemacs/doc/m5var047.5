@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var047.5,v 2.10 2009/08/29 17:14:15 jon Exp $
+.Id $Id: m5var047.5,v 2.10 2023/05/30 10:59:13 jon Exp $
 .Im MicroEmacs variable|hilight|macrodevelop
 .so me.tni
 .TH $system 5
@@ -221,6 +221,17 @@ for an example of its use.
 When  this  bit is set
 .Ht ipipe-kill 2
 uses \fCSIGTERM\fR, rather than \fCSIGKILL\fR, by default to terminal the process (\s-1UNIX\s0 platforms only).
+.IP \fB0x4000000\fR
+When this bit is set on a \s-1UNIX\s0 X-Windows system \*(mS will retrieve and sync the kill-buffer with the X-Windows
+Primary selection buffer rather than the Clipboard  selection. Note that this bit is ignore if the use of the external
+clipboard is disabled, see bit \fB0x800000\fR.
+.IP \fB0x8000000\fR
+When this bit is set on a \s-1UNIX\s0  X-Windows  system \*(mS will set both the  X-Windows  Primary and the Clipboard
+selection buffers when the kill-buffer is changed. When not set only one buffer is set depending on the setting of bit
+\fB0x4000000\fR.  Note  that  this  bit  is  ignore  if  the  use of the  external  clipboard  is  disabled,  see  bit
+\fB0x800000\fR.
+.IP \fB0x10000000\fR
+When  this  bit is set the use of the alternative screen buffer is disabled, see command-line \fB-A\fR option.
 .SH EXAMPLE
 The follow  example  works out the  current  buffer's  backup  file name using
 \fB$system\fR to determine the naming system being used by \*(mS:-

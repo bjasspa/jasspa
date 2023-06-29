@@ -5,7 +5,7 @@
 .\"
 .\" Created By: Jon Green
 .\"
-.Id $Id: m1cmd000.1,v 2.20 2022/01/07 12:06:34 jon Exp $
+.Id $Id: m1cmd000.1,v 2.20 2023/06/24 13:59:48 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH me 1
@@ -22,6 +22,7 @@ me - \*(mE text editor
 [\|\fB@\fR\|\fIstartupFile\fR\|]
 [\|\fB\-\fR\|]
 [\|\fB\-a\fR\|]
+[\|\fB\-A\fR\|]
 [\|\fB\-b\fR\ \|\fIfile\fR\|]
 [\|\fB\-B\fR\|]
 [\|\fB\-c\fR\|[\|\fIsessionName\fR\|]]
@@ -49,17 +50,17 @@ me - \*(mE text editor
 .B "\*(mE"
 is a cut  down  version  of the  \s-1EMACS\s0  text  editor,  based on  Danial
 Lawrences \*(mS.
-.B "\*(mE"
+.B "\*(mS"
 is a tool for creating and changing documents,  programs, and other text files.
 It is both  relatively  easy for the novice to use, but also very  powerful in
-the hands of an expert. \*(mE can be extensively customized for the needs
+the hands of an expert. \*(mS can be extensively customized for the needs
 of the individual user.
 .PP
-.B "\*(mE"
+.B "\*(mS"
 allows  multiple  files to be edited at the same time. The screen may be split
 into  different  windows and  screens,  and text may be moved  freely from one
 window on any screen to the next. Depending on the type of file being edited,
-.B "\*(mE"
+.B "\*(mS"
 can change how it behaves to make editing simple. Editing standard text files,
 program files and word processing documents are all possible at the same time.
 .PP
@@ -70,7 +71,7 @@ easy case controlling, and automatic word counts.
 .PP
 For complex and repetitive  editing tasks editing macros can be written. These
 macros  allow  the user a great  degree  of  flexibility  in  determining  how
-\fB\*(mE\fR  behaves.  Also, any and all the  commands can be used by any
+\fB\*(mS\fR  behaves.  Also, any and all the  commands can be used by any
 key stroke by changing, or re-binding, what commands various keys invoke.
 .PP
 Special  features  are also  available to perform a diverse set of  operations
@@ -79,7 +80,7 @@ de-tabbing  lines, executing  operating  system commands and filtering of text
 through other programs.
 .PP
 The command line options to
-.B "\*(mE"
+.B "\*(mS"
 are defined as follows:-
 .IP "\fB@\fR\|\fIstartFile\fR"
 Initialize  \*(mE using  \fIstartFile\fR\|[\fB.emf\fR].  The default when
@@ -120,6 +121,9 @@ mode.
 \fBNote:\fR  that \*(nS  disables  auto save mode by default and \*(mS enables
 auto save mode by default.  The  behavior of \fB-a\fR is  therefore  different
 between the two editors. 
+.IP \fB\-A\fR
+When running in a \s-1UNIX\s0  console this option disabled the use of the alternative screen buffer. By default \*(mS
+will restore the console text when suspended or exited if the terminal supports the alternative screen buffer feature.
 .IP \fB\-b\fR
 Load next file as a binary file (binary editor mode, uses
 .Ht binary 2m

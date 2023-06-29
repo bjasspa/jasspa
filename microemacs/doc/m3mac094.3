@@ -1,0 +1,67 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac025.3,v 2.7 2023/03/09 21:52:04 jon Exp $
+.Im MicroEmacs command|region|insert
+.ds C0 "(\fB\*e\*aw\fR)\ \&
+.ds C1 "(\fB\*a\*cy\fR)\ \&
+.so me.tni
+.TH bin-copy-region 3
+.XI bin-copy-region - "Binary supporting copy region"
+.XI bin-yank - "Binary supporting kill buffer insert"
+.SH NAME
+.Me "|bin-copy-region"
+bin-copy-region \- Binary supporting copy region
+.br
+.Me "|bin-yank"
+bin-yank \- Binary supporting kill buffer insert
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+\fBbin-copy-region\fR \*(C0
+.br
+.I n
+\fBbin-yank\fR \*(C1
+.ad
+.SH DESCRIPTION
+The \fBbin-copy-region\fR command operates the same as the
+.Ht copy-region 2
+command except it adds the region as a hex strings, 2 hex characters per byte of data. If the current buffer has
+.Ht binary 2m
+or
+.Ht rbin 2m
+mode enabled then the hex bytes of the  underlying  binary file are extracted  from the region,  whereas if neither of
+these modes are enabled the region text is converted into a hex string (respecting end of line termination  modes). As
+this command works with the current buffer modes, identifying the type of data being added is not an issue. 
+.PP
+The \fBbin-yank\fR command operates the same as the
+.Ht yank 2
+command except it inserts the kill buffer in the most  appropriate  way considering the format of the data in the kill
+buffer and the modes of the current buffer. If the kill buffer  contains a hex string or binary mode  compatible  data
+then the kill buffer is deemed to contain  binary data,  otherwise it is considered  plain text. If the current buffer
+has  \fBbinary\fR  or  \fBrbin\fR  mode  enabled  then the kill  buffer  is  inserted  as  binary  data in the form of
+appropriately formatted hex strings, otherwise the data is converted to text if needed and inserted.
+.PP
+As the source of the kill buffer data is unknown  \fBbin-yank\fR can misidentify the format, for example  '\fCdead\fR'
+is both a 4 letter  word and a 2 byte hex string.  Priority is given to the hex string so if it is used in  conjuction
+with \fBbin-copy-region\fR the result should always be correct.
+.SH NOTES
+These commands and their global bindings are only defined when the first binary file is loaded.
+.PP
+When inserting binary data into a non-binary  buffer bytes may be lost as they cannot be represented in a text buffer,
+for  example  the null  character  ('\fC\0\fR')  cannot be  inserted  as it is a string  termination  character  so is
+discarded. \fBbin-yank\fR will report how many characters had to be discarded.
+.SH "SEE ALSO"
+.na
+.Ht copy-region 2 ,
+.Ht yank 2 ,
+.Ht $buffer-indent 5 .
+.Ht binary 2m,
+.Ht rbin 2m.
+.ad
+.rm C0
+.rm C1
+.FH

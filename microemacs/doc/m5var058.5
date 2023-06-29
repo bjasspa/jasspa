@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var058.5,v 2.6 2009/08/29 17:14:15 jon Exp $
+.Id $Id: m5var058.5,v 2.6 2023/03/07 16:52:58 jon Exp $
 .Im MicroEmacs variable|file
 .so me.tni
 .TH $file-ignore 5
@@ -15,13 +15,16 @@ $file-ignore \- File extensions to ignore
 \fB$file-ignore\fR "\fIstring\fR"; Default is ""
 .SH DESCRIPTION
 .B $file-ignore
-specifies a space  separated list of file endings which the file completion is
-to ignore.  This is used by any  function  which  prompts  the user for a file
-name, such as
+specifies a space  separated list of file endings which the file completion is to ignore. This is used by any function
+which prompts the user for a file name, such as
 .Ht find-file 2 .
-A file ending in this case is \s-1NOT\s0  the  extension  but the last \fIn\fR
-characters  where \fIn\fR is the number of characters in the specified  ignore
-file.
+A file ending in this case is \s-1NOT\s0 the extension but the last \fIn\fR  characters where \fIn\fR is the number of
+characters in the specified ignore file.
+.PP
+The  variable  can be used to ignore  directories  by making the last  character of the postfix a '\fC/\fR'  directory
+character, see examples below. The variable can also affect the directories listed by the
+.Ht directory-tree 2
+command. 
 .SH EXAMPLE
 To ignore all files which have the extension "\fCo\fR", using:
 .Me $emf-scheme
@@ -64,6 +67,7 @@ and  "\fCfoo.c\fR"  cannot  be  ignored;  completing  with  "\fCfoo.\fR"  will
 however complete to "\fCfoo.c\fR".
 .SH "SEE ALSO"
 .na
-.Ht find-file 2 .
+.Ht find-file 2 ,
+.Ht directory-tree 2 .
 .ad
 .FH

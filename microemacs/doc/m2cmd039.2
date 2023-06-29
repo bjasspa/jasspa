@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd039.2,v 2.6 2009/08/29 17:13:09 jon Exp $
+.Id $Id: m2cmd039.2,v 2.6 2023/03/01 13:34:46 jon Exp $
 .Im MicroEmacs command|bind|help
 .ds C0 "(\fB\*(cX?\fR)\ \&
 .so me.tni
@@ -14,22 +14,33 @@ describe-key \- Report keyboard key name and binding
 .Me $a
 .SH SYNOPSIS
 .na
-\fBdescribe-key\fR \*(C0
+\fIn\fR \fBdescribe-key\fR "\fIkey\fR" \*(C0
 .ad
 .SH DESCRIPTION
 .B describe-key
-allows a key to be typed and it will  report the name of the command  bound to
-that key (if any) and the  internal  key-code.  This  command  is useful  when
-trying to locate the identity of keyboard keys for binding.
-.SH NOTES
-.B describe-key
-is also bound to \fB\*(cHk\fR.
+allows  a key to be typed  and it will  report  the name of the  command  bound to that key (if any) and the  internal
+key-code. This command is useful when trying to locate the identity of keyboard keys for binding. The
+.Ht $result 5
+variable is set to the bound command or an empty string if the key is not bound.
+.PP
+The  numeric  argument  \fIn\fR is used to modify the default  behavior of the
+command, where the bits are defined as follows:
+.IP \fB0x01\fR
+When this bit is not set all messages to the message-line are suppressed enabling it to be used in macro
+code as a way of determining if a key is currently bound.
+.IP \fB0x02\fR
+If this bit is set then message-line bindings are included in the lookup rather than buffer bindings.
+.IP \fB0x04\fR
+If this bit is set then current buffer bindings are not included in the key lookup.
 .SH "SEE ALSO"
 .na
 .Ht command-apropos 2 ,
 .Ht global-bind-key 2 ,
+.Ht buffer-bind-key 2 ,
+.Ht ml-bind-key 2 ,
 .Ht describe-bindings 2 ,
-.Ht describe-variable 2 .
+.Ht describe-variable 2 ,
+.Ht $result 5 .
 .ad
 .rm C0
 .FH

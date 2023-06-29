@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd034.2,v 2.8 2009/08/29 17:13:09 jon Exp $
+.Id $Id: m2cmd034.2,v 2.8 2023/03/01 13:36:35 jon Exp $
 .Im MicroEmacs command|delete|essential
 .ds C0 "(\fB\*cd\fR)\ \&
 .ds C1 "(\fB\*(bS\fR)\ \&
@@ -29,40 +29,34 @@ backward-delete-char \- Delete previous character at the cursor position
 .ad
 .SH DESCRIPTION
 .B forward-delete-char
-deletes the next \fIn\fR  characters from the current cursor  position. If the
-cursor  is at the end of a line, the next  line is joined  onto the end of the
-current line. If a numeric argument is given the character(s) are added to the
-kill buffer, otherwise the kill buffer remains unaltered.
+deletes the next \fIn\fR  characters from the current cursor position. If the cursor is at the end of a line, the next
+line is joined onto the end of the current line. If a numeric argument is given the character(s) are added to the kill
+buffer, otherwise the kill buffer remains unaltered.
 .PP
 .B backward-delete-char
-deletes  the next  \fIn\fR  characters  immediately  to the left of the cursor
-(e.g. more  conventionally  backspace). If the cursor is at the beginning of a
-line,  this  joins the  current  line to the end of the  previous  line. If an
-argument is given then the  character  is added to the kill buffer,  otherwise
-the kill buffer remains unaltered.
+deletes the next \fIn\fR characters immediately to the left of the cursor (e.g. more conventionally backspace). If the
+cursor is at the  beginning of a line, this joins the current line to the end of the previous  line. If an argument is
+given then the character is added to the kill buffer, otherwise the kill buffer remains unaltered.
 .PP
-Where the  numeric  argument  is \fC0\fR the command has no effect. A negative
-argument changes the direction.
+Where the numeric argument is \fC0\fR the command has no effect. A negative argument changes the direction.
 .SH NOTES
 .B forward-delete-char
-is also bound to  \fB\*(dE\fR and  \fB\*s\*(dE\fR.
+is also bound to \fB\*(dE\fR and \fB\*s\*(dE\fR.
 .PP
 .B backward-delete-char
 is also bound to \fB\*s\*(bS\fR.
 .SH HISTORY
 As of December 2004 the mode
 .Hr letter 2m 
-which controlled whether the deleted character is added to the kill buffer was
-removed.  Letter mode used to be disabled by default, the  behavior of the old
-letter mode, when enabled, may be achieved through the key bindings:-
+which  controlled  whether  the  deleted  character  is added to the kill buffer was  removed.  Letter mode used to be
+disabled by default, the behavior of the old letter mode, when enabled, may be achieved through the key bindings:-
 .Me $emf-scheme
 .CS
 1 global-bind-key backward-delete-char "backspace"
 1 global-bind-key forward-delete-char "delete"
 .CE
 .Me $ehf-scheme
-The use of the  numeric  argument  of 1 in the global  binding has the has the
-same effect as the existing
+The use of the numeric argument of 1 in the global binding has the same effect as the existing
 .Hr letter 2m 
 mode (when enabled).
 .SH "SEE ALSO"

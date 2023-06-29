@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd145.2,v 2.12 2009/08/29 17:13:25 jon Exp $
+.Id $Id: m2cmd145.2,v 2.12 2023/06/24 13:58:11 jon Exp $
 .Im MicroEmacs command|message
 .so me.tni
 .TH ml-write 2
@@ -31,30 +31,33 @@ The default form, writes a \fImessage\fR to the command line with no delay.
 Displays the \fImessage\fR on the message line and waits \fIn\fR  milliseconds
 before proceeding with the next command.
 .IP \fC0\fR
-the \fImessage\fR  argument is not required and the command clears the message
-line. This may be used to clear any previous  message from the last command(s)
-in a script and is equivalent to the old \*(mS command \fBml-clear\fR.
+the  \fImessage\fR  argument is not  required and the command  clears the message  line. This may be used to clear any
+previous message from the last command(s) in a script and is equivalent to the old \*(mS command \fBml-clear\fR.
 .\"The previous message is restored. As an  example,  a
 .\"callback macro may interrupt the user while using the message-line (entering a
 .\"file name or searching a buffer etc.), executing \fC2\  ml-write\fR at the end
 .\"of the callback macro ensures that the  message-line is restored.
 .IP \fC\-1\fR
-Writes  the   \fImessage\fR   to   \fIstandard   out\fR.  A  carriage   return
-(\fC'\\n'\fR) is automatically added to the end of the \fImessage\fR to create
-a line on the given stream.
+If running in piped mode (see command-line  option \fB-p\fR) the \fImessage\fR is written to \fIstandard  error\fR as
+per  \fC-3\fR  below,  otherwise  it is written to the message  line as normal. This allows the same macro code to run
+correctly in both environments.
 .IP \fC\-2\fR
-Writes the    \fImessage\fR   to   \fIstandard   error\fR,  the  behaviour  is
-the same as standard output (\fC\-1\fR option)
+If running in piped mode the  \fImessage\fR  is written to \fIstandard  error\fR as per \fC-4\fR below,  otherwise it
+is written to the message line as normal.
+.IP \fC\-3\fR
+Writes the \fImessage\fR to \fIstandard out\fR. A carriage return  (\fC'\\n'\fR) is automatically  added to the end of
+the \fImessage\fR to create a line on the given stream.
+.IP \fC\-4\fR
+Writes the \fImessage\fR to \fIstandard error\fR, the behaviour is the same as standard output (\fC\-3\fR option)
 .SH NOTES
 .\"A call to \fBml-write\fR  from a callback macro can erase a message line which
 .\"is currently being used (to enter a buffer name say). A call to
 .\"".C "2 ml-clear"
 .\"restores the previous message-line.
 .\".PP
-If the argument  value is not \fC\-1\fR or \fC\-2\fR  calls to  \fBml-write\fR
-are ignored in standard \*(mS piped mode (command-line  option \fB-p\fR). They
-are  printed  to   \fIstandard   error\fR   when  debug  piped  mode  is  used
-(command-line  option \fB-P\fR, see
+If the argument  value is not \fC\-1\fR,  \fC\-2\fR,  \fC\-3\fR or \fC\-4\fR  calls to  \fBml-write\fR  are ignored in
+standard \*(mS piped mode  (command-line  option \fB-p\fR). They are printed to \fIstandard  error\fR when debug piped
+mode is used (command-line option \fB-P\fR, see
 .Ht me 1 ),
 making the debugging and maintenance of macro based piped processing easier.
 .PP
