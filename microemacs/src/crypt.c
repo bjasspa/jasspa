@@ -1001,7 +1001,12 @@ meCryptBufferSetKey(meBuffer *bp, meUByte *key)
     }
     if((ll = meStrlen(key)) == 0)
     {
-        meModeClear(bp->mode,MDCRYPT);
+        if(meModeTest(bp->mode,MDCRYPT))
+        {
+            meModeClear(bp->mode,MDCRYPT);
+            if(!meModeTest(bp->mode,MDNACT))
+                meModeSet(bp->mode,MDEDIT);
+        }
         if(bp->cryptKey != NULL)
         {
             meFree(bp->cryptKey);
@@ -1013,6 +1018,8 @@ meCryptBufferSetKey(meBuffer *bp, meUByte *key)
     else
     {
         meModeSet(bp->mode,MDCRYPT);
+        if(!meModeTest(bp->mode,MDNACT))
+            meModeSet(bp->mode,MDEDIT);
         /* and protect it */
         meCryptKeyEncode(bp->cryptKey,key,ll);
     }

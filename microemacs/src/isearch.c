@@ -41,16 +41,16 @@
 
 #if MEOPT_ISEARCH
 
-static meUByte isHeadStr[12]="f-isearch: " ;
+static meUByte isHeadStr[12]="f-isearch: ";
 static meUByte *statusStr[5]={
     (meUByte *)" [LOST]",(meUByte *)" [FOUND]",(meUByte *)" [INCOMPLETE]",(meUByte *)" [REGEX ERROR]",(meUByte *)" [SEARCHING]"
-} ;
+};
 
 static meInt
 isearchGotoEnd(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNERPOS *histPos)
 {
     if(histLen[histNo] == 0)
-        return meTRUE ;
+        return meTRUE;
 #if MEOPT_IPIPES
     /* due to the dynamic nature of an active ipipe buffer, things have to
      * be done differently */
@@ -59,38 +59,38 @@ isearchGotoEnd(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNERP
         meLine *tmpline;
         int   tmpoff;
         meInt tmplno;
-        meByte cc ;
-        tmpline = frameCur->windowCur->dotLine ;       /* Store the current position*/
-        tmpoff  = frameCur->windowCur->dotOffset ;       /* incase its not found      */
-        tmplno  = frameCur->windowCur->dotLineNo ;
+        meByte cc;
+        tmpline = frameCur->windowCur->dotLine;      /* Store the current position*/
+        tmpoff = frameCur->windowCur->dotOffset;     /* incase its not found      */
+        tmplno = frameCur->windowCur->dotLineNo;
         if(flags & ISCANNER_BACKW)
-            meWindowForwardChar(frameCur->windowCur, 1) ;
-        cc = patrn[histLen[histNo]] ;
-        patrn[histLen[histNo]] = '\0' ;
+            meWindowForwardChar(frameCur->windowCur, 1);
+        cc = patrn[histLen[histNo]];
+        patrn[histLen[histNo]] = '\0';
         if(iscanner(patrn, 0,flags,histPos+histNo+1) <= 0)
         {
-            patrn[histLen[histNo]] = cc ;
-            frameCur->windowCur->dotLine  = tmpline;       /* Reset the position */
-            frameCur->windowCur->dotOffset  = tmpoff;
+            patrn[histLen[histNo]] = cc;
+            frameCur->windowCur->dotLine = tmpline;       /* Reset the position */
+            frameCur->windowCur->dotOffset = tmpoff;
             frameCur->windowCur->dotLineNo = tmplno;
-            return meFALSE ;
+            return meFALSE;
         }
-        patrn[histLen[histNo]] = cc ;
+        patrn[histLen[histNo]] = cc;
     }
     else
 #endif
     {
-        frameCur->windowCur->dotLine  = histPos[histNo].endline ;
-        frameCur->windowCur->dotOffset  = histPos[histNo].endoffset ;
-        frameCur->windowCur->dotLineNo = histPos[histNo].endline_no ;
+        frameCur->windowCur->dotLine = histPos[histNo].endline;
+        frameCur->windowCur->dotOffset = histPos[histNo].endoffset;
+        frameCur->windowCur->dotLineNo = histPos[histNo].endline_no;
     }
-    return meTRUE ;
+    return meTRUE;
 }
 static meInt
 isearchGotoStart(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNERPOS *histPos)
 {
     if(histLen[histNo] == 0)
-        return meTRUE ;
+        return meTRUE;
 #if MEOPT_IPIPES
     /* due to the dynamic nature of an active ipipe buffer, things have to
      * be done differently */
@@ -99,32 +99,32 @@ isearchGotoStart(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNE
         meLine *tmpline;
         int   tmpoff;
         long  tmplno;
-        meUByte cc ;
-        tmpline = frameCur->windowCur->dotLine ;       /* Store the current position*/
-        tmpoff  = frameCur->windowCur->dotOffset ;       /* incase its not found      */
-        tmplno  = frameCur->windowCur->dotLineNo ;
+        meUByte cc;
+        tmpline = frameCur->windowCur->dotLine;      /* Store the current position*/
+        tmpoff = frameCur->windowCur->dotOffset;     /* incase its not found      */
+        tmplno = frameCur->windowCur->dotLineNo;
         if(!(flags & ISCANNER_BACKW))
-            meWindowForwardChar(frameCur->windowCur, 1) ;
-        cc = patrn[histLen[histNo]] ;
-        patrn[histLen[histNo]] = '\0' ;
+            meWindowForwardChar(frameCur->windowCur, 1);
+        cc = patrn[histLen[histNo]];
+        patrn[histLen[histNo]] = '\0';
         if(iscanner(patrn,0,(flags ^ (ISCANNER_BACKW|ISCANNER_PTBEG)),histPos+histNo+1) <= 0)
         {
-            patrn[histLen[histNo]] = cc ;
-            frameCur->windowCur->dotLine  = tmpline;       /* Reset the position */
-            frameCur->windowCur->dotOffset  = tmpoff;
+            patrn[histLen[histNo]] = cc;
+            frameCur->windowCur->dotLine = tmpline;       /* Reset the position */
+            frameCur->windowCur->dotOffset = tmpoff;
             frameCur->windowCur->dotLineNo = tmplno;
-            return meFALSE ;
+            return meFALSE;
         }
-        patrn[histLen[histNo]] = cc ;
+        patrn[histLen[histNo]] = cc;
     }
     else
 #endif
     {
-        frameCur->windowCur->dotLine  = histPos[histNo].startline ;
-        frameCur->windowCur->dotOffset  = histPos[histNo].startoff ;
-        frameCur->windowCur->dotLineNo = histPos[histNo].startline_no ;
+        frameCur->windowCur->dotLine = histPos[histNo].startline;
+        frameCur->windowCur->dotOffset = histPos[histNo].startoff;
+        frameCur->windowCur->dotLineNo = histPos[histNo].startline_no;
     }
-    return meTRUE ;
+    return meTRUE;
 }
 
 /*
@@ -143,33 +143,33 @@ scanmore(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNERPOS *hi
     
     /* Must flag as seaching, even if current status is meABORT
      * cos if the char is a ']' then the search may continue */
-    mlDisp(isHeadStr,patrn,statusStr[4],-1) ;
+    mlDisp(isHeadStr,patrn,statusStr[4],-1);
     if(flags & ISCANNER_SCANMR)
     {
-        isearchGotoStart(patrn,flags,histNo,histLen,histPos) ;
+        isearchGotoStart(patrn,flags,histNo,histLen,histPos);
         if(flags & ISCANNER_BACKW)      /* reverse search? */
-            meWindowForwardChar(frameCur->windowCur, 1) ;
+            meWindowForwardChar(frameCur->windowCur,1);
     }
     /* iscanner can return:
      *  -2 - regex class error
      *  -1 - regex error
      *   0 - Failed to find
      *   1 - found */
-    sts = iscanner(patrn, 0,flags,histPos+histNo+1) ;
+    sts = iscanner(patrn,0,flags,histPos+histNo+1);
     
     if(sts <= 0)
     {
-        memcpy(histPos+histNo+1,histPos+histNo,sizeof(SCANNERPOS)) ;
+        memcpy(histPos+histNo+1,histPos+histNo,sizeof(SCANNERPOS));
         if(sts < 0)
-            sts += 4 ;
+            sts += 4;
         
         if(flags & ISCANNER_SCANMR)
-            isearchGotoEnd(patrn,flags,histNo,histLen,histPos) ;
+            isearchGotoEnd(patrn,flags,histNo,histLen,histPos);
         
         if(!TTbreakFlag && (sts == meFALSE))
-            sts |= 0x10 ;
+            sts |= 0x10;
     }
-    return sts ;
+    return sts;
 }
 
 #if MEOPT_LOCALBIND
@@ -180,21 +180,20 @@ scanmore(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNERPOS *hi
 
 #define mlisDisp(pat,status)                                                 \
 do {                                                                         \
-    mlDisp(isHeadStr,pat,statusStr[(status & 0x3)],-1) ;                     \
-    frameCur->mlStatus=MLSTATUS_KEEP ;                                       \
+    mlDisp(isHeadStr,pat,statusStr[(status & 0x3)],-1);                      \
+    frameCur->mlStatus=MLSTATUS_KEEP;                                        \
     if(status & 0x10)                                                        \
     {                                                                        \
-        TTbell() ; /* Feep if search fails       */                          \
+        TTbell();  /* Feep if search fails       */                          \
         if(kbmd == mePLAY)                                                   \
         {                                                                    \
-            frameCur->mlStatus = MLSTATUS_CLEAR ;                            \
-            restoreUseMlBinds() ;                                            \
-            mlerase(MWCLEXEC) ;                                              \
-            return meFALSE ;                                                 \
+            frameCur->mlStatus = MLSTATUS_CLEAR;                             \
+            restoreUseMlBinds();                                             \
+            return meFALSE;                                                  \
         }                                                                    \
-        status &= 0x0f ;                                                     \
+        status &= 0x0f;                                                      \
     }                                                                        \
-    mwResetCursor() ;                                                        \
+    mwResetCursor();                                                         \
     TTflush();                                                               \
 } while(0)
 /*
@@ -233,42 +232,38 @@ isearch(int flags)
     meLine       *tmpline;      /* Tempory storage for wrap searching*/
     int           tmpoff;
     meInt         tmplno;
-    SCANNERPOS    histPos[HISTBUFSIZ] ;
-    meShort       histLen[HISTBUFSIZ] ;
-    meUByte       histStt[HISTBUFSIZ], kbmd=kbdmode ;
-    meShort       histNo=0 ;
+    SCANNERPOS    histPos[HISTBUFSIZ];
+    meShort       histLen[HISTBUFSIZ];
+    meUByte       histStt[HISTBUFSIZ], kbmd=kbdmode;
+    meShort       histNo=0;
 #if MEOPT_LOCALBIND
     /* Initialize starting conditions */
-    meUByte         oldUseMlBinds = useMlBinds ;
-    useMlBinds = 1 ;                 /* Use the ml-bind-key's             */
+    meUByte         oldUseMlBinds = useMlBinds;
+    useMlBinds = 1;             /* Use the ml-bind-key's             */
 #endif    
     
     /* Use search's srchPat array so that the hunt functions will work */
-    srchPat[0]  = '\0' ;
-    histPos[0].startline = 
-              histPos[0].endline = frameCur->windowCur->dotLine;       /* Save the current line pointer     */
-    histPos[0].startoff  = 
-              histPos[0].endoffset = frameCur->windowCur->dotOffset;     /* Save the current line pointer     */
-    histPos[0].startline_no = 
-              histPos[0].endline_no = frameCur->windowCur->dotLineNo;   /* Save the current line pointer     */
-    histLen[0]  = 0 ;                                   /* Save the current offset */
-    histStt[0]  = meTRUE ;
+    srchPat[0] = '\0';
+    histPos[0].startline = histPos[0].endline = frameCur->windowCur->dotLine;       /* Save the current line pointer     */
+    histPos[0].startoff = histPos[0].endoffset = frameCur->windowCur->dotOffset;     /* Save the current line pointer     */
+    histPos[0].startline_no = histPos[0].endline_no = frameCur->windowCur->dotLineNo;   /* Save the current line pointer     */
+    histLen[0] = 0;                                   /* Save the current offset */
+    histStt[0] = meTRUE;
     
     /* ask the user for the text of a pattern */
-    isHeadStr[9] = '\0' ;
-    mlwrite(MWCURSOR,(meUByte *)"%s (default [%s]): ",isHeadStr,
-            (numSrchHist==0) ? (meUByte *)"":srchHist[0]) ;
+    isHeadStr[9] = '\0';
+    mlwrite(MWCURSOR,(meUByte *)"%s (default [%s]): ",isHeadStr,(numSrchHist==0) ? (meUByte *)"":srchHist[0]);
     /* switch on the status so we save it */
-    frameCur->mlStatus = MLSTATUS_KEEP|MLSTATUS_POSML ;
+    frameCur->mlStatus = MLSTATUS_KEEP|MLSTATUS_POSML;
     if(meModeTest(frameCur->bufferCur->mode,MDMAGIC))
-        flags |= ISCANNER_MAGIC ;
+        flags |= ISCANNER_MAGIC;
     if(meModeTest(frameCur->bufferCur->mode,MDEXACT))
-        flags |= ISCANNER_EXACT ;
+        flags |= ISCANNER_EXACT;
 #if MEOPT_IPIPES
     /* due to the dynamic nature of an active ipipe buffer, things have to
      * be done differently */
     if(meModeTest(frameCur->bufferCur->mode,MDPIPE))
-        flags |= ISCANNER_PIPE ;
+        flags |= ISCANNER_PIPE;
 #endif    
         
     /*
@@ -282,11 +277,11 @@ get_another_key:
     switch(decode_key((meUShort) c,&arg))
     {
     case CK_NEWLIN:                     /* ^M : New line. do other search */
-        restoreUseMlBinds() ;
+        restoreUseMlBinds();
         if(flags & ISCANNER_BACKW)
-            return searchBack(meFALSE, 1) ;
+            return searchBack(meFALSE,1);
         else
-            return searchForw(meFALSE, 1) ;
+            return searchForw(meFALSE,1);
 
     case CK_FORLIN:   /* C-n - next match in complete list */
     case CK_BAKLIN:   /* C-p - previous match in complete list */
@@ -298,41 +293,41 @@ get_another_key:
     case CK_GOBOF:
 #endif
     case CK_YANK:     /* C-y - yank the contents of the kill buffer */
-        meGetKeyFirst = c ;
-        if ((status = meGetString(isHeadStr, MLSEARCH|MLISEARCH, 0, srchPat, meBUF_SIZE_MAX)) <= 0)
+        meGetKeyFirst = c;
+        if((status = meGetString(isHeadStr,MLSEARCH|MLISEARCH,0,srchPat,meBUF_SIZE_MAX)) <= 0)
         {
-            restoreUseMlBinds() ;
-            return status ;
+            restoreUseMlBinds();
+            return status;
         }
-        isHeadStr[9] = ':' ;
+        isHeadStr[9] = ':';
         if(meGetKeyFirst < 0)
         {
-            status = scanmore(srchPat,flags,0,histLen,histPos) ;  /* do 1 search     */
-            mlisDisp(srchPat,status) ;
-            frameCur->mlStatus = MLSTATUS_CLEAR ;
-            restoreUseMlBinds() ;
-            return (status == meTRUE) ;
+            status = scanmore(srchPat,flags,0,histLen,histPos);  /* do 1 search     */
+            mlisDisp(srchPat,status);
+            frameCur->mlStatus = MLSTATUS_CLEAR;
+            restoreUseMlBinds();
+            return (status == meTRUE);
         }
-        c = meGetKeyFirst ;
-        meGetKeyFirst = -1 ;
-        break ;
+        c = meGetKeyFirst;
+        meGetKeyFirst = -1;
+        break;
 
     case CK_FISRCH:
     case CK_FORSRCH:
     case CK_BISRCH:
     case CK_BAKSRCH:
         if(numSrchHist)
-            meStrcpy(srchPat,srchHist[0]) ;
-        break ;
+            meStrcpy(srchPat,srchHist[0]);
+        break;
     case CK_VOIDFUNC:
         /* could be a pick on a mouse and we want the drop - so try again */
-        goto get_another_key ;
+        goto get_another_key;
     }
     
-    cpos = meStrlen(srchPat)  ;
-    isHeadStr[9] = ':' ;
+    cpos = meStrlen(srchPat);
+    isHeadStr[9] = ':';
     status = meTRUE;                        /* Assume everything's cool   */
-    mlisDisp(srchPat,status) ;
+    mlisDisp(srchPat,status);
     /* Top of the per character loop */
 
     for(;;)
@@ -344,45 +339,45 @@ get_another_key:
             if(!(flags & ISCANNER_PIPE))
 #endif    
             {
-                frameCur->windowCur->dotLine  = histPos[0].endline ;
-                frameCur->windowCur->dotOffset  = histPos[0].endoffset ;
-                frameCur->windowCur->dotLineNo = histPos[0].endline_no ;
+                frameCur->windowCur->dotLine = histPos[0].endline;
+                frameCur->windowCur->dotOffset = histPos[0].endoffset;
+                frameCur->windowCur->dotLineNo = histPos[0].endline_no;
                 frameCur->windowCur->updateFlags |= WFMOVEL;       /* Say that we've moved      */
             }
-            goto bad_finish ;                   /* Finish processing */
+            goto bad_finish;                    /* Finish processing */
 
         case CK_BISRCH:
         case CK_BAKSRCH:                        /* If backward search        */
-            tmpoff = ISCANNER_BACKW ;           /*  go forward               */
-            isHeadStr[0] = 'b' ;
-            goto find_next ;
+            tmpoff = ISCANNER_BACKW;            /*  go forward               */
+            isHeadStr[0] = 'b';
+            goto find_next;
 
         case CK_FISRCH:
         case CK_FORSRCH:                        /* If forward search         */
-            isHeadStr[0] = 'f' ;
+            isHeadStr[0] = 'f';
             tmpoff = 0;                         /* go forward                */
 find_next:
             if(status >= 2)
             {
-                TTbell() ;
-                break ;
+                TTbell();
+                break;
             }
             if((flags & ISCANNER_BACKW) != tmpoff)
             {
-                flags ^= ISCANNER_BACKW|ISCANNER_PTBEG ;
+                flags ^= ISCANNER_BACKW|ISCANNER_PTBEG;
                 if(status == meFALSE)
-                    status = meTRUE ;
+                    status = meTRUE;
             }
-            tmpline = frameCur->windowCur->dotLine ;       /* Store the current position*/
-            tmpoff  = frameCur->windowCur->dotOffset ;       /* incase its not found      */
-            tmplno  = frameCur->windowCur->dotLineNo ;
+            tmpline = frameCur->windowCur->dotLine;       /* Store the current position*/
+            tmpoff = frameCur->windowCur->dotOffset;      /* incase its not found      */
+            tmplno = frameCur->windowCur->dotLineNo;
             /* The status cannot be meABORT, only meFALSE or meTRUE */
             if(!status)                         /* if already lost goto start*/
             {
                 if(flags & ISCANNER_BACKW)      /* if backward               */
-                    c = windowGotoEob(0,1) ;          /* and move to the bottom    */
+                    c = windowGotoEob(0,1);          /* and move to the bottom    */
                 else
-                    c = windowGotoBob(0,1) ;          /* and move to the top       */
+                    c = windowGotoBob(0,1);          /* and move to the top       */
             }
             else if((histPos[histNo].startoff == histPos[histNo].endoffset) &&
                     (histPos[histNo].startline_no == histPos[histNo].endline_no))
@@ -390,93 +385,94 @@ find_next:
                 /* the search string has matched a zero length string, e.g. "^"
                  * so move the cursor position one character */ 
                 if(flags & ISCANNER_BACKW)      /* if backward               */
-                    c = meWindowBackwardChar(frameCur->windowCur,1) ;
+                    c = meWindowBackwardChar(frameCur->windowCur,1);
                 else
-                    c = meWindowForwardChar(frameCur->windowCur,1) ;
+                    c = meWindowForwardChar(frameCur->windowCur,1);
             }
             else
-                c = meTRUE ;
-            if((c > 0) &&
-               ((c=scanmore(srchPat,flags,histNo,histLen,histPos)) != meTRUE)) /* Start the search again    */
+                c = meTRUE;
+            if(c <= 0)
+                c = (TTbreakFlag) ? 0:0x10;
+            else if((c=scanmore(srchPat,flags,histNo,histLen,histPos)) != meTRUE) /* Start the search again    */
             {
                 if(TTbreakFlag)
                 {
-                    c = 0 ;
-                    goto bad_finish ;           /* Finish processing */
+                    c = 0;
+                    goto bad_finish;           /* Finish processing */
                 }
-                frameCur->windowCur->dotLine  = tmpline;   /* Reset the position        */
-                frameCur->windowCur->dotOffset  = tmpoff;
+                frameCur->windowCur->dotLine = tmpline;   /* Reset the position        */
+                frameCur->windowCur->dotOffset = tmpoff;
                 frameCur->windowCur->dotLineNo = tmplno;
             }
-            status = c ;
-            histNo++ ;
-            histLen[histNo] = cpos ;            /* Save the current srchPat len */
-            histStt[histNo] = (meUByte) status ;/* Save the current status   */
-            break ;                             /* Go continue with the srch */
+            status = c;
+            histNo++;
+            histLen[histNo] = cpos;             /* Save the current srchPat len */
+            histStt[histNo] = (meUByte) status; /* Save the current status   */
+            break;                              /* Go continue with the srch */
 
         case CK_QUOTE:                          /* ^Q - quote next character */
             if((c = quoteKeyToChar(meGetKey(meGETKEY_SILENT|meGETKEY_SINGLE))) < 0)
             {
-                TTbell() ;
-                break ;
+                TTbell();
+                break;
             }
-            goto isAddChar ;
+            goto isAddChar;
 
         case CK_NEWLIN:                         /* ^M : New line. */
-            c = 0 ;
-            goto good_finish ;                  /* Finish processing */
+            c = 0;
+            goto good_finish;                   /* Finish processing */
 
         case CK_KILREG:                         /* ^W : Kill the whole line? */
             if(status == meTRUE)
             {
-                int tt ;
+                int tt;
                 
                 if(flags & ISCANNER_BACKW)
-                    isearchGotoEnd(srchPat,flags,histNo,histLen,histPos) ;
+                    isearchGotoEnd(srchPat,flags,histNo,histLen,histPos);
                 
                 /* use function from word.c  */
-                tt = (inWord()==0) ;
+                tt = (inWord()==0);
                 while(((inWord()==0)==tt) && (cpos < meBUF_SIZE_MAX))    
                 {
                     if(meLineGetLength(frameCur->windowCur->dotLine) == frameCur->windowCur->dotOffset)
-                        c = meCHAR_NL ;
+                        c = meCHAR_NL;
                     else
                         c = meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset);
                     if(meModeTest(frameCur->bufferCur->mode,MDMAGIC) &&
                        ((c == '[') || (c == '.') || (c == '+') || (c == '*') || (c == '^') || (c == '$') || (c == '?') || (c == '\\')))
-                        srchPat[cpos++] = '\\' ;
-                    srchPat[cpos++] = c ;
+                        srchPat[cpos++] = '\\';
+                    srchPat[cpos++] = c;
                     if(meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
-                        break ;
+                        break;
                 }
                 srchPat[cpos] = 0;              /* null terminate the buffer */
-                memcpy(histPos+histNo+1,histPos+histNo,sizeof(SCANNERPOS)) ;
-                histNo++ ;
-                histStt[histNo] = meTRUE ;
-                histLen[histNo] = cpos ;        /* Save the current srchPat len */
-                histPos[histNo].endline = frameCur->windowCur->dotLine ;
-                histPos[histNo].endoffset = frameCur->windowCur->dotOffset ;
-                histPos[histNo].endline_no = frameCur->windowCur->dotLineNo ;
+                memcpy(histPos+histNo+1,histPos+histNo,sizeof(SCANNERPOS));
+                histNo++;
+                histStt[histNo] = meTRUE;
+                histLen[histNo] = cpos;         /* Save the current srchPat len */
+                histPos[histNo].endline = frameCur->windowCur->dotLine;
+                histPos[histNo].endoffset = frameCur->windowCur->dotOffset;
+                histPos[histNo].endline_no = frameCur->windowCur->dotLineNo;
                 
                 if(flags & ISCANNER_BACKW)
-                    isearchGotoStart(srchPat,flags,histNo,histLen,histPos) ;
-                goto is_redraw ;
+                    isearchGotoStart(srchPat,flags,histNo,histLen,histPos);
+                goto is_redraw;
             }
-            break ;
+            break;
         case CK_RECENT:                         /* ^L : Redraw the screen    */
             sgarbf = meTRUE;
-            update(meTRUE) ;
+            update(meTRUE);
             mlerase(0);
-            goto is_redraw ;
+            goto is_redraw;
             
         case CK_DELBAK:                         /* ^H : backwards delete.    */
             if((--histNo) < 0)
             {
-                c = 0 ;
-                goto bad_finish ;               /* Finish processing */
+                c = 0;
+                goto bad_finish;                /* Finish processing */
             }
-            cpos   = histLen[histNo] ;
-            status = histStt[histNo] ;
+            cpos = histLen[histNo];
+            status = histStt[histNo];
 #if MEOPT_IPIPES
             /* due to the dynamic nature of an active ipipe buffer, things have to
              * be done differently */
@@ -488,17 +484,17 @@ find_next:
                     if((histPos[histNo].endline == histPos[histNo+1].startline) &&
                        (histPos[histNo].endoffset == histPos[histNo+1].startoff))
                     {
-                        flags ^= ISCANNER_BACKW|ISCANNER_PTBEG ;
-                        isearchGotoEnd(srchPat,flags,histNo,histLen,histPos) ;
+                        flags ^= ISCANNER_BACKW|ISCANNER_PTBEG;
+                        isearchGotoEnd(srchPat,flags,histNo,histLen,histPos);
                     }
                     else
                     {
                         if(histStt[histNo+1] == meTRUE)
                         {
-                            isearchGotoStart(srchPat,flags,histNo,histLen,histPos+1) ;
+                            isearchGotoStart(srchPat,flags,histNo,histLen,histPos+1);
                             if(histStt[histNo] == meTRUE)
-                                iscanner(srchPat,0,(flags ^ (ISCANNER_BACKW|ISCANNER_PTBEG)),&(histPos[histNo])) ;
-                            isearchGotoEnd(srchPat,flags,histNo,histLen,histPos) ;
+                                iscanner(srchPat,0,(flags ^ (ISCANNER_BACKW|ISCANNER_PTBEG)),&(histPos[histNo]));
+                            isearchGotoEnd(srchPat,flags,histNo,histLen,histPos);
                         }
                     }
                         
@@ -507,23 +503,23 @@ find_next:
                 {
                     if(histStt[histNo+1] == meTRUE)
                     {
-                        isearchGotoStart(srchPat,flags,histNo,histLen,histPos+1) ;
-                        srchPat[cpos] = 0 ;
+                        isearchGotoStart(srchPat,flags,histNo,histLen,histPos+1);
+                        srchPat[cpos] = 0;
                         if(((frameCur->windowCur->dotLine != histPos[histNo].startline) ||
                             (frameCur->windowCur->dotOffset != histPos[histNo].startoff)) && (histStt[histNo] == meTRUE))
-                            iscanner(srchPat,0,(flags ^ (ISCANNER_BACKW|ISCANNER_PTBEG)),&(histPos[histNo])) ;
-                        isearchGotoEnd(srchPat,flags,histNo,histLen,histPos) ;
+                            iscanner(srchPat,0,(flags ^ (ISCANNER_BACKW|ISCANNER_PTBEG)),&(histPos[histNo]));
+                        isearchGotoEnd(srchPat,flags,histNo,histLen,histPos);
                     }
                 }
             }
             else
 #endif
             {
-                frameCur->windowCur->dotLine  = histPos[histNo].endline ;
-                frameCur->windowCur->dotOffset  = histPos[histNo].endoffset ;
-                frameCur->windowCur->dotLineNo = histPos[histNo].endline_no ;
+                frameCur->windowCur->dotLine = histPos[histNo].endline;
+                frameCur->windowCur->dotOffset = histPos[histNo].endoffset;
+                frameCur->windowCur->dotLineNo = histPos[histNo].endline_no;
             }
-            srchPat[cpos] = 0 ;
+            srchPat[cpos] = 0;
             frameCur->windowCur->updateFlags |= WFMOVEL;           /* Say that we've moved      */
 is_redraw:
 #if MEOPT_IPIPES
@@ -531,21 +527,21 @@ is_redraw:
              * be done differently */
             if(flags & ISCANNER_PIPE)
             {
-                isearchGotoStart(srchPat,flags,histNo,histLen,histPos) ;
-                histPos[histNo].startline = frameCur->windowCur->dotLine ;
-                histPos[histNo].startoff = frameCur->windowCur->dotOffset ;
-                histPos[histNo].startline_no = frameCur->windowCur->dotLineNo ;
-                isearchGotoEnd(srchPat,flags,histNo,histLen,histPos) ;
-                histPos[histNo].endline = frameCur->windowCur->dotLine ;
-                histPos[histNo].endoffset = frameCur->windowCur->dotOffset ;
-                histPos[histNo].endline_no = frameCur->windowCur->dotLineNo ;
+                isearchGotoStart(srchPat,flags,histNo,histLen,histPos);
+                histPos[histNo].startline = frameCur->windowCur->dotLine;
+                histPos[histNo].startoff = frameCur->windowCur->dotOffset;
+                histPos[histNo].startline_no = frameCur->windowCur->dotLineNo;
+                isearchGotoEnd(srchPat,flags,histNo,histLen,histPos);
+                histPos[histNo].endline = frameCur->windowCur->dotLine;
+                histPos[histNo].endoffset = frameCur->windowCur->dotOffset;
+                histPos[histNo].endline_no = frameCur->windowCur->dotLineNo;
             }
 #endif
             setShowRegion(frameCur->bufferCur,
                           histPos[histNo].startline_no,histPos[histNo].startoff,
-                          histPos[histNo].endline_no,histPos[histNo].endoffset) ;
+                          histPos[histNo].endline_no,histPos[histNo].endoffset);
             meBufferAddModeToWindows(frameCur->bufferCur, WFSELHIL);
-            break ;
+            break;
             
         default:                                /* All other chars           */
             if((c < 0x20) || (c > 0xff))        /* Is it printable?          */
@@ -554,94 +550,93 @@ is_redraw:
                 /* must ignore [SCA]-pick and [SCA]-drop */
                 if(((c & ~(ME_SHIFT|ME_CONTROL|ME_ALT)) == (ME_SPECIAL|SKEY_pick)) ||
                    ((c & ~(ME_SHIFT|ME_CONTROL|ME_ALT)) == (ME_SPECIAL|SKEY_drop)))
-                    goto input_cont ;           /* Ignore this one, get another */
+                    goto input_cont;            /* Ignore this one, get another */
 #endif
-                goto good_finish ;              /* Nope. - Finish processing */
+                goto good_finish;               /* Nope. - Finish processing */
             }
 isAddChar:
             srchPat[cpos++] = c;                /* put the char in the buffer*/
             if(cpos >= meBUF_SIZE_MAX)                    /* too many chars in string? */
             {                                   /* Yup.  Complain about it   */
-                addHistory(MLSEARCH,srchPat,meFALSE) ;
+                addHistory(MLSEARCH,srchPat,meFALSE);
                 mlwrite(MWABORT,(meUByte *)"[Search string too long!]");
-                goto quit_finish ;
+                goto quit_finish;
             }
             srchPat[cpos] = 0;                  /* null terminate the buffer */
             if(status != meFALSE)               /* If not lost last time     */
             {
                 /*  or find the next match   */
-                status = scanmore(srchPat,flags|ISCANNER_SCANMR,histNo,histLen,histPos) ;
+                status = scanmore(srchPat,flags|ISCANNER_SCANMR,histNo,histLen,histPos);
                 if(TTbreakFlag)
-                    goto quit_finish ;          /* Finish processing */
+                    goto quit_finish;           /* Finish processing */
             }
             else
-                memcpy(histPos+histNo+1,histPos+histNo,sizeof(SCANNERPOS)) ;
-            histNo++ ;
-            histLen[histNo] = cpos ;            /* Save the current srchPat len */
-            histStt[histNo] = (meUByte) status ;/* Save the current status   */
-            break ;
+                memcpy(histPos+histNo+1,histPos+histNo,sizeof(SCANNERPOS));
+            histNo++;
+            histLen[histNo] = cpos;             /* Save the current srchPat len */
+            histStt[histNo] = (meUByte) status; /* Save the current status   */
+            break;
         }  /* Switch */
         if(histNo == HISTBUFSIZ-1)
         {
             /* history is full to bust, best thing to do is ditch the first
              * half and thus make it half full.
              */
-            memcpy(histPos,histPos+(HISTBUFSIZ-(HISTBUFSIZ/2)),(HISTBUFSIZ/2)*sizeof(SCANNERPOS)) ;
-            memcpy(histLen,histLen+(HISTBUFSIZ-(HISTBUFSIZ/2)),(HISTBUFSIZ/2)*sizeof(meShort)) ;
-            memcpy(histStt,histStt+(HISTBUFSIZ-(HISTBUFSIZ/2)),(HISTBUFSIZ/2)*sizeof(meUByte)) ;
-            histNo = (HISTBUFSIZ/2) - 1 ;
+            memcpy(histPos,histPos+(HISTBUFSIZ-(HISTBUFSIZ/2)),(HISTBUFSIZ/2)*sizeof(SCANNERPOS));
+            memcpy(histLen,histLen+(HISTBUFSIZ-(HISTBUFSIZ/2)),(HISTBUFSIZ/2)*sizeof(meShort));
+            memcpy(histStt,histStt+(HISTBUFSIZ-(HISTBUFSIZ/2)),(HISTBUFSIZ/2)*sizeof(meUByte));
+            histNo = (HISTBUFSIZ/2) - 1;
         }
-        update(meFALSE) ;
-        mlisDisp(srchPat,status) ;
+        update(meFALSE);
+        mlisDisp(srchPat,status);
 #if MEOPT_CALLBACK
 input_cont:
 #endif
         if((status == meFALSE) && (flags & ISCANNER_EOBQUIT))
         {
             if(flags & ISCANNER_BACKW)      /* if backward               */
-                c = windowGotoBob(0,1) ;          /* and move to the top       */
+                c = windowGotoBob(0,1);          /* and move to the top       */
             else
-                c = windowGotoEob(0,1) ;          /* and move to the bottom    */
-            c = 0 ;
-            break ;
+                c = windowGotoEob(0,1);          /* and move to the bottom    */
+            c = 0;
+            break;
         }
-        c = meGetKey(meGETKEY_SILENT|meGETKEY_COMMAND) ;
+        c = meGetKey(meGETKEY_SILENT|meGETKEY_COMMAND);
     }
     
 good_finish:
     if(srchPat[0] != '\0')
         addHistory(MLSEARCH,srchPat,meFALSE);
-    lastReplace = 0 ;
+    lastReplace = 0;
     
 bad_finish:
-    frameCur->mlStatus = MLSTATUS_CLEAR ;
-    restoreUseMlBinds() ;
-    mlerase(MWCLEXEC) ;
+    frameCur->mlStatus = MLSTATUS_CLEAR;
+    restoreUseMlBinds();
+    mlerase(MWCLEXEC);
     if(c == 0)
-        return meTRUE ;
+        return meTRUE;
 #if MEOPT_MWFRAME
     /* Check the focus has not changed before we execute the extra command, if
      * it has then change focus */
     {
-        extern int commandDepth ;
+        extern int commandDepth;
     
         /* if the user has changed the window focus using the OS
          * and this is the top level then change frames */
-        if((frameFocus != NULL) && (frameFocus != frameCur) &&
-           (commandDepth == 1))
+        if((frameFocus != NULL) && (frameFocus != frameCur) && (commandDepth == 1))
         {
-            frameCur = frameFocus ;
-            frameFocus = NULL ;
+            frameCur = frameFocus;
+            frameFocus = NULL;
         }
     }
 #endif
     lastflag = 0;                                 /* Fake last flags.     */
-    return execute(c,meFALSE,1) ;                 /* Execute last command. */
+    return execute(c,meFALSE,1);                 /* Execute last command. */
 
 quit_finish:
-    frameCur->mlStatus = MLSTATUS_CLEAR ;
-    restoreUseMlBinds() ;
-    return meFALSE ;
+    frameCur->mlStatus = MLSTATUS_CLEAR;
+    restoreUseMlBinds();
+    return meFALSE;
 }
 
 
@@ -652,12 +647,12 @@ quit_finish:
 int
 isearchBack(int f, int n)
 {
-    isHeadStr[0] = 'b' ;
+    isHeadStr[0] = 'b';
     /* Call ISearch backwards */
-    f = ISCANNER_QUIET|ISCANNER_BACKW|ISCANNER_PTBEG ;
+    f = ISCANNER_QUIET|ISCANNER_BACKW|ISCANNER_PTBEG;
     if(n == 0)
-        f |= ISCANNER_EOBQUIT ;
-    return isearch(f) ;
+        f |= ISCANNER_EOBQUIT;
+    return isearch(f);
 }
 
 /* Again, but for the forward direction */
@@ -665,12 +660,12 @@ isearchBack(int f, int n)
 int
 isearchForw(int f, int n)
 {
-    isHeadStr[0] = 'f' ;
+    isHeadStr[0] = 'f';
     /* Call ISearch forwards */
-    f = ISCANNER_QUIET ;
+    f = ISCANNER_QUIET;
     if(n == 0)
-        f |= ISCANNER_EOBQUIT ;
-    return isearch(f) ;
+        f |= ISCANNER_EOBQUIT;
+    return isearch(f);
 }
 
 #endif

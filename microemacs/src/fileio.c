@@ -1697,7 +1697,7 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
         } while(ii < ll);
         cryCtx.blk[4] = ffbuf[ll-1];
         cryCtx.blk[5] = 0;
-        io->flags = meIOFLAG_CRYPT;
+        io->flags |= meIOFLAG_CRYPT;
     }
 #endif
     ffremain = 0;

@@ -41,9 +41,9 @@
 int
 windowGotoBol(int f, int n)
 {
-    frameCur->windowCur->dotOffset  = 0;
-    frameCur->windowCur->updateFlags |= WFMOVEC ;
-    return (meTRUE);
+    frameCur->windowCur->dotOffset = 0;
+    frameCur->windowCur->updateFlags |= WFMOVEC;
+    return meTRUE;
 }
 /*
  * Move the cursor to the end of the current line. Trivial. No errors.
@@ -51,9 +51,9 @@ windowGotoBol(int f, int n)
 int
 windowGotoEol(int f, int n)
 {
-    frameCur->windowCur->dotOffset  = meLineGetLength(frameCur->windowCur->dotLine);
-    frameCur->windowCur->updateFlags |= WFMOVEC ;
-    return (meTRUE);
+    frameCur->windowCur->dotOffset = meLineGetLength(frameCur->windowCur->dotLine);
+    frameCur->windowCur->updateFlags |= WFMOVEC;
+    return meTRUE;
 }
 
 int
@@ -73,47 +73,47 @@ meWindowBackwardChar(register meWindow *wp, register int n)
 {
     register meLine   *lp;
     
-    while (n--)
+    while(n--)
     {
         if(wp->dotOffset == 0)
         {
-            if ((lp=meLineGetPrev(wp->dotLine)) == wp->buffer->baseLine)
-                return meFALSE ;
-            wp->dotLineNo-- ;
+            if((lp=meLineGetPrev(wp->dotLine)) == wp->buffer->baseLine)
+                return meFALSE;
+            wp->dotLineNo--;
             wp->dotLine = lp;
             wp->dotOffset = meLineGetLength(lp);
-            wp->updateFlags |= WFMOVEL ;
+            wp->updateFlags |= WFMOVEL;
         }
         else
         {
-            wp->dotOffset-- ;
-            wp->updateFlags |= WFMOVEC ;
+            wp->dotOffset--;
+            wp->updateFlags |= WFMOVEC;
         }
     }
-    return meTRUE ;
+    return meTRUE;
 }
 
 int
 meWindowForwardChar(register meWindow *wp, register int n)
 {
-    while (n--)
+    while(n--)
     {
         if(wp->dotOffset == meLineGetLength(wp->dotLine))
         {
-            if (wp->dotLine == wp->buffer->baseLine)
-                return (meFALSE);
-            wp->dotLineNo++ ;
+            if(wp->dotLine == wp->buffer->baseLine)
+                return meFALSE;
+            wp->dotLineNo++;
             wp->dotLine = meLineGetNext(wp->dotLine);
             wp->dotOffset = 0;
-            wp->updateFlags |= WFMOVEL ;
+            wp->updateFlags |= WFMOVEL;
         } 
         else
         {
             wp->dotOffset++;
-            wp->updateFlags |= WFMOVEC ;
+            wp->updateFlags |= WFMOVEC;
         }
     }
-    return meTRUE ;
+    return meTRUE;
 }
 
 /*
@@ -125,11 +125,11 @@ meWindowForwardChar(register meWindow *wp, register int n)
 int
 windowBackwardChar(int f, register int n)
 {
-    if (n < 0)
-        return (windowForwardChar(f, -n));
+    if(n < 0)
+        return windowForwardChar(f,-n);
     if(meWindowBackwardChar(frameCur->windowCur,n) <= 0)
-        return meErrorBob() ;
-    return meTRUE ;
+        return meErrorBob();
+    return meTRUE;
 }
 
 /*
@@ -141,26 +141,26 @@ windowBackwardChar(int f, register int n)
 int
 windowForwardChar(int f, register int n)
 {
-    if (n < 0)
-        return (windowBackwardChar(f, -n));
+    if(n < 0)
+        return windowBackwardChar(f,-n);
     if(meWindowForwardChar(frameCur->windowCur,n) <= 0)
-        return meErrorEob() ;
-    return meTRUE ;
+        return meErrorEob();
+    return meTRUE;
 }
 
 
 meUByte
 meWindowGetChar(meWindow *wp)
 {
-    register meUByte cc ;
+    register meUByte cc;
     
-    if (wp->buffer->baseLine == wp->dotLine)
+    if(wp->buffer->baseLine == wp->dotLine)
         cc = '\0';
-    else if (wp->dotOffset >= wp->dotLine->length)
-        cc = meCHAR_NL ;
+    else if(wp->dotOffset >= wp->dotLine->length)
+        cc = meCHAR_NL;
     else
         cc = wp->dotLine->text[wp->dotOffset];
-    return cc ;
+    return cc;
 }
 
 
@@ -177,7 +177,7 @@ windowForwardLine(int f, int n)
     register long  dln;
     
     if(n < 0)
-        return windowBackwardLine(f,-n) ;
+        return windowBackwardLine(f,-n);
 
     /* if the last command was not a line move,
        reset the goal column */
@@ -185,35 +185,35 @@ windowForwardLine(int f, int n)
         curgoal = getcwcol();
     
     /* and move the point up */
-    dln = frameCur->windowCur->dotLineNo ;
+    dln = frameCur->windowCur->dotLineNo;
     if(dln+n > frameCur->bufferCur->lineCount)
     {
         if(dln != frameCur->bufferCur->lineCount)
         {
-            frameCur->windowCur->dotLine = frameCur->bufferCur->baseLine ;
-            frameCur->windowCur->dotLineNo= frameCur->bufferCur->lineCount ;
-            frameCur->windowCur->dotOffset = 0 ;
+            frameCur->windowCur->dotLine = frameCur->bufferCur->baseLine;
+            frameCur->windowCur->dotLineNo = frameCur->bufferCur->lineCount;
+            frameCur->windowCur->dotOffset = 0;
             frameCur->windowCur->updateFlags |= WFMOVEL;
         }
-        return meErrorEob() ;
+        return meErrorEob();
     }
     /* reseting the current position */
-    frameCur->windowCur->dotLineNo = dln + n ;
-    dlp = frameCur->windowCur->dotLine ;
+    frameCur->windowCur->dotLineNo = dln + n;
+    dlp = frameCur->windowCur->dotLine;
     while(n--)
         dlp = meLineGetNext(dlp);
-    frameCur->windowCur->dotLine = dlp ;
-    setcwcol(curgoal) ;
-    frameCur->windowCur->updateFlags |= WFMOVEL ;
+    frameCur->windowCur->dotLine = dlp;
+    setcwcol(curgoal);
+    frameCur->windowCur->updateFlags |= WFMOVEL;
     if((scrollFlag & 0x10) && (frameCur->windowCur->vertScroll <= (frameCur->windowCur->dotLineNo-frameCur->windowCur->textDepth)))
     {
         /* do the smooth scroll here */
-        frameCur->windowCur->vertScroll = frameCur->windowCur->dotLineNo - frameCur->windowCur->textDepth + 1 ;
-        frameCur->windowCur->updateFlags |= (WFREDRAW|WFSBOX) ;
+        frameCur->windowCur->vertScroll = frameCur->windowCur->dotLineNo - frameCur->windowCur->textDepth + 1;
+        frameCur->windowCur->updateFlags |= (WFREDRAW|WFSBOX);
     }
     /* flag this command as a line move */
     thisflag = meCFCPCN;
-    return meTRUE ;
+    return meTRUE;
 }
 
 /*
@@ -228,12 +228,12 @@ windowBackwardLine(int f, int n)
     register meLine *dlp;
     register long  dln;
 
-    if (n < 0)
-        return (windowForwardLine(f, -n));
+    if(n < 0)
+        return windowForwardLine(f,-n);
     
     /* if the last command was not a line move,
        reset the goal column */
-    if ((lastflag&meCFCPCN) == 0)
+    if((lastflag&meCFCPCN) == 0)
         curgoal = getcwcol();
 
     /* and move the point up */
@@ -242,31 +242,31 @@ windowBackwardLine(int f, int n)
     {
         if(dln)
         {
-            dlp = meLineGetNext(frameCur->bufferCur->baseLine) ;
-            frameCur->windowCur->dotLine = dlp ;
-            frameCur->windowCur->dotLineNo= 0 ;
-            setcwcol(curgoal) ;
-            frameCur->windowCur->updateFlags |= WFMOVEL ;
+            dlp = meLineGetNext(frameCur->bufferCur->baseLine);
+            frameCur->windowCur->dotLine = dlp;
+            frameCur->windowCur->dotLineNo = 0;
+            setcwcol(curgoal);
+            frameCur->windowCur->updateFlags |= WFMOVEL;
         }
-        return meErrorBob() ;
+        return meErrorBob();
     }
     /* reseting the current position */
-    frameCur->windowCur->dotLineNo = dln - n ;
+    frameCur->windowCur->dotLineNo = dln - n;
     dlp = frameCur->windowCur->dotLine;
     while(n--)
         dlp = meLineGetPrev(dlp);
-    frameCur->windowCur->dotLine = dlp ;
-    setcwcol(curgoal) ;
-    frameCur->windowCur->updateFlags |= WFMOVEL ;
+    frameCur->windowCur->dotLine = dlp;
+    setcwcol(curgoal);
+    frameCur->windowCur->updateFlags |= WFMOVEL;
     if((scrollFlag & 0x10) && (frameCur->windowCur->vertScroll > frameCur->windowCur->dotLineNo))
     {
         /* do the smooth scroll here */
-        frameCur->windowCur->vertScroll = frameCur->windowCur->dotLineNo ;
-        frameCur->windowCur->updateFlags |= (WFREDRAW|WFSBOX) ;
+        frameCur->windowCur->vertScroll = frameCur->windowCur->dotLineNo;
+        frameCur->windowCur->updateFlags |= (WFREDRAW|WFSBOX);
     }
     /* flag this command as a line move */
     thisflag = meCFCPCN;
-    return meTRUE ;
+    return meTRUE;
 }
 
 /* move to a particular line. argument (n) must be a positive integer for this
@@ -277,18 +277,18 @@ windowGotoLine(int f, int n)
 {
     register int status;	/* status return */
     meUByte arg[meSBUF_SIZE_MAX];	        /* buffer to hold argument */
-    meInt nlno ;
+    meInt nlno;
     
     /* get an argument if one doesnt exist */
-    if ((f == meFALSE) || (n == 0))
+    if((f == meFALSE) || (n == 0))
     {
-        if ((status = meGetString((meUByte *)"Goto line", 0, 0, arg, meSBUF_SIZE_MAX)) <= 0) 
+        if((status = meGetString((meUByte *)"Goto line", 0, 0, arg, meSBUF_SIZE_MAX)) <= 0) 
             return(status);
         
         /*---	Skip white space */
         
-        for (n = 0; (arg[n] == '\t' || arg[n] == ' ') && arg[n] != '\0'; n++)
-            /* NULL */ ;
+        for(n = 0; ((arg[n] == '\t') || (arg[n] == ' ')) && (arg[n] != '\0'); n++)
+            /* NULL */;
         
         /*---	Record if it is a displacement */
         
@@ -299,63 +299,63 @@ windowGotoLine(int f, int n)
          * the default must be absolution (previously undefined as status was
          * left uninitialised.
          */
-        if (status)			/* Displacement ?? */
+        if(status)			/* Displacement ?? */
         {
 #if MEOPT_NARROW
-            if (f != meFALSE)
-                nlno += windowGotoAbsLine(-1) ;
+            if(f != meFALSE)
+                nlno += windowGotoAbsLine(-1);
             else
 #endif
-                nlno += frameCur->windowCur->dotLineNo ;
-            nlno++ ;
+                nlno += frameCur->windowCur->dotLineNo;
+            nlno++;
         }
         if(nlno <= 0)
         {
-            windowGotoBob(meFALSE,1) ;
-            return meErrorBob() ;
+            windowGotoBob(meFALSE,1);
+            return meErrorBob();
         }
 #if MEOPT_NARROW
-        if (f != meFALSE)
-            return windowGotoAbsLine(nlno) ;
+        if(f != meFALSE)
+            return windowGotoAbsLine(nlno);
 #endif
     }
     else
-        nlno = n ;
+        nlno = n;
     
     /*--- This is an absolute jump. Go to zero & move */
 
-    if (nlno < 1)		/* if a bogus argument...then leave */
-        return(meFALSE);
+    if(nlno < 1)		/* if a bogus argument...then leave */
+        return meFALSE;
     
     /* always reset offset to the left hand edge */
-    curgoal = 0 ;
-    frameCur->windowCur->dotOffset = 0 ;
+    curgoal = 0;
+    frameCur->windowCur->dotOffset = 0;
     if(nlno < (frameCur->windowCur->dotLineNo-nlno))
     {
         /* first, we go to the start of the buffer */
-        frameCur->windowCur->dotLine  = meLineGetNext(frameCur->bufferCur->baseLine);
+        frameCur->windowCur->dotLine = meLineGetNext(frameCur->bufferCur->baseLine);
         frameCur->windowCur->dotLineNo = 0;
-        frameCur->windowCur->updateFlags |= WFMOVEL ;
+        frameCur->windowCur->updateFlags |= WFMOVEL;
     }
     else if((frameCur->bufferCur->lineCount-nlno) < (nlno-frameCur->windowCur->dotLineNo))
     {
         /* first, we go to the end of the buffer */
-        frameCur->windowCur->dotLine  = frameCur->bufferCur->baseLine ;
-        frameCur->windowCur->dotLineNo = frameCur->bufferCur->lineCount ;
-        frameCur->windowCur->updateFlags |= WFMOVEL ;
+        frameCur->windowCur->dotLine = frameCur->bufferCur->baseLine;
+        frameCur->windowCur->dotLineNo = frameCur->bufferCur->lineCount;
+        frameCur->windowCur->updateFlags |= WFMOVEL;
     }
-    nlno -= frameCur->windowCur->dotLineNo ;
+    nlno -= frameCur->windowCur->dotLineNo;
     /* force the $scroll variable to no smooth so if the line is off the screen
      * the reframe will center the line */
     {
-        meUByte sscrollFlag ; 
+        meUByte sscrollFlag; 
         
-        sscrollFlag = scrollFlag ;
-        scrollFlag = 0 ;
-        n =  windowForwardLine(f, nlno-1) ;
-        scrollFlag = sscrollFlag ;
+        sscrollFlag = scrollFlag;
+        scrollFlag = 0;
+        n =  windowForwardLine(f,nlno-1);
+        scrollFlag = sscrollFlag;
     }
-    return n ;
+    return n;
 }
 
 #if MEOPT_EXTENDED || MEOPT_NARROW
@@ -366,63 +366,63 @@ windowGotoLine(int f, int n)
 int	
 windowGotoAbsLine(meInt line)
 {
-    meLine *lp ;
-    int rr ;
+    meLine *lp;
+    int rr;
     
     if(line == 0)		/* if a bogus argument...then leave */
-        return meFALSE ;
+        return meFALSE;
 #if MEOPT_NARROW
     if(frameCur->bufferCur->narrow != NULL)
         /* There are narrows - first unnarrow buffer */
-        meBufferExpandNarrowAll(frameCur->bufferCur) ;
+        meBufferExpandNarrowAll(frameCur->bufferCur);
 #endif
     if(line < 0)
     {
-        rr = frameCur->windowCur->dotLineNo ;
+        rr = frameCur->windowCur->dotLineNo;
 #if MEOPT_EXTENDED
         if(frameCur->windowCur->dotLine->flag & meLINE_MARKUP)
-            rr = -1 ;
+            rr = -1;
         else
         {
-            lp = meLineGetNext(frameCur->bufferCur->baseLine) ;
+            lp = meLineGetNext(frameCur->bufferCur->baseLine);
             while(lp != frameCur->windowCur->dotLine)
             {
                 if(lp->flag & meLINE_MARKUP)
-                    rr-- ;
-                lp = meLineGetNext(lp) ;
+                    rr--;
+                lp = meLineGetNext(lp);
             }
         }
 #endif
 #if MEOPT_NARROW
         if(frameCur->bufferCur->narrow != NULL)
-            meBufferCollapseNarrowAll(frameCur->bufferCur) ;
+            meBufferCollapseNarrowAll(frameCur->bufferCur);
 #endif
-        return rr ;
+        return rr;
     }
     /* now move to the required line */
     if(line > frameCur->bufferCur->lineCount)
     {
-        frameCur->windowCur->dotLine = frameCur->bufferCur->baseLine ;
-        frameCur->windowCur->dotLineNo = frameCur->bufferCur->lineCount ;
-        rr = (line == frameCur->bufferCur->lineCount) ;
+        frameCur->windowCur->dotLine = frameCur->bufferCur->baseLine;
+        frameCur->windowCur->dotLineNo = frameCur->bufferCur->lineCount;
+        rr = (line == frameCur->bufferCur->lineCount);
     }
     else
     {
-        frameCur->windowCur->dotLineNo = 0 ;
-        lp = meLineGetNext(frameCur->bufferCur->baseLine) ;
+        frameCur->windowCur->dotLineNo = 0;
+        lp = meLineGetNext(frameCur->bufferCur->baseLine);
         while(((lp->flag & meLINE_MARKUP) || (--line > 0)) &&
               (lp != frameCur->bufferCur->baseLine))
         {
-            lp = meLineGetNext(lp) ;
-            frameCur->windowCur->dotLineNo++ ;
+            lp = meLineGetNext(lp);
+            frameCur->windowCur->dotLineNo++;
         }
-        frameCur->windowCur->dotLine = lp ;
-        rr = (line == 0) ;
+        frameCur->windowCur->dotLine = lp;
+        rr = (line == 0);
     }
     /* set column to left hand edge and reset the goal column */
-    frameCur->windowCur->dotOffset = 0 ;
-    curgoal = 0 ;
-    frameCur->windowCur->updateFlags |= WFMOVEL ;
+    frameCur->windowCur->dotOffset = 0;
+    curgoal = 0;
+    frameCur->windowCur->updateFlags |= WFMOVEL;
     
 #if MEOPT_NARROW
     if(frameCur->bufferCur->narrow != NULL)
@@ -447,7 +447,7 @@ windowGotoAbsLine(meInt line)
         }
     }
 #endif
-    return rr ;
+    return rr;
 }
 #endif
 
@@ -460,11 +460,11 @@ windowGotoAbsLine(meInt line)
 int
 windowGotoBob(int f, int n)
 {
-    frameCur->windowCur->dotLine  = meLineGetNext(frameCur->bufferCur->baseLine);
-    frameCur->windowCur->dotOffset  = 0;
+    frameCur->windowCur->dotLine = meLineGetNext(frameCur->bufferCur->baseLine);
+    frameCur->windowCur->dotOffset = 0;
     frameCur->windowCur->dotLineNo = 0;
-    frameCur->windowCur->updateFlags |= WFMOVEL ;
-    return (meTRUE);
+    frameCur->windowCur->updateFlags |= WFMOVEL;
+    return meTRUE;
 }
 
 /*
@@ -475,11 +475,11 @@ windowGotoBob(int f, int n)
 int
 windowGotoEob(int f, int n)
 {
-    frameCur->windowCur->dotLine  = frameCur->bufferCur->baseLine;
-    frameCur->windowCur->dotOffset  = 0;
+    frameCur->windowCur->dotLine = frameCur->bufferCur->baseLine;
+    frameCur->windowCur->dotOffset = 0;
     frameCur->windowCur->dotLineNo = frameCur->bufferCur->lineCount;
-    frameCur->windowCur->updateFlags |= WFMOVEL ;
-    return (meTRUE);
+    frameCur->windowCur->updateFlags |= WFMOVEL;
+    return meTRUE;
 }
 
 #if	MEOPT_WORDPRO
@@ -496,17 +496,17 @@ windowBackwardParagraph(int f, int n)
     int	         line_len;	/* Length of the line */
     char	 c;		/* Temporary character */
     
-    if (n < 0)	/* the other way...*/
-        return(windowForwardParagraph(f, -n));
+    if(n < 0)	/* the other way...*/
+        return windowForwardParagraph(f,-n);
     
-    while (n-- > 0)
+    while(n-- > 0)
     {	/* for each one asked for */
         
         /* first scan back until we are in a word */
         do
             if(meWindowBackwardChar(frameCur->windowCur, 1) <= 0)
-                return meErrorBob() ;
-        while(!inPWord()) ;
+                return meErrorBob();
+        while(!inPWord());
         
         frameCur->windowCur->dotOffset = 0;	/* and go to the B-O-Line */
         
@@ -515,31 +515,31 @@ windowBackwardParagraph(int f, int n)
         
         do {
             suc = meTRUE;	/* Reset sucess flag */
-            if (meLineGetPrev(frameCur->windowCur->dotLine) == frameCur->bufferCur->baseLine)	/* SOF  ?? */
+            if(meLineGetPrev(frameCur->windowCur->dotLine) == frameCur->bufferCur->baseLine)	/* SOF  ?? */
                 break;		/* Exit */
-            if ((line_len = meLineGetLength (frameCur->windowCur->dotLine)) == 0)
+            if((line_len = meLineGetLength(frameCur->windowCur->dotLine)) == 0)
                 break;		/* Exit */
-            for (i = 0; i < line_len ; i++)
+            for(i = 0; i < line_len ; i++)
             {
-                c = meLineGetChar (frameCur->windowCur->dotLine, i);	/* Get character */
-                if (c != meCHAR_TAB && c != ' ')	/* Character on line ?? */
+                c = meLineGetChar(frameCur->windowCur->dotLine, i);	/* Get character */
+                if((c != meCHAR_TAB) && (c != ' '))	/* Character on line ?? */
                 {
                     /*---	Yes - prvious line. Exit loop */
                     
                     frameCur->windowCur->dotLine = meLineGetPrev(frameCur->windowCur->dotLine);
-                    frameCur->windowCur->dotLineNo-- ;
+                    frameCur->windowCur->dotLineNo--;
                     suc = meFALSE;
                     break;
                 }
             }	/* End of 'for' */
         }
-        while (suc <= 0);
+        while(suc <= 0);
         
         /* and then leave the cursor at the start of the line. */
         frameCur->windowCur->dotOffset = 0;        
     }
-    frameCur->windowCur->updateFlags |= WFMOVEL ;	/* force screen update */
-    return meTRUE ;
+    frameCur->windowCur->updateFlags |= WFMOVEL;	/* force screen update */
+    return meTRUE;
 }
 
 /* go forword to the end of the current paragraph here we look for a <NL><NL>
@@ -554,50 +554,50 @@ windowForwardParagraph(int f, int n)
     int	         line_len;	/* Length of the line */
     char	 c;		/* Temporary character */
     
-    if (n < 0)	/* the other way...*/
-        return (windowBackwardParagraph(f, -n));
+    if(n < 0)	/* the other way...*/
+        return windowBackwardParagraph(f,-n);
 
-    frameCur->windowCur->updateFlags |= WFMOVEL ;	/* force screen update */
-    while (n-- > 0) 
+    frameCur->windowCur->updateFlags |= WFMOVEL;	/* force screen update */
+    while(n-- > 0) 
     {	/* for each one asked for */
 
         /*---	First scan forward until we are in a word */
         while(!inPWord())
             if(meWindowForwardChar(frameCur->windowCur, 1) <= 0)
-                return meErrorEob() ;
+                return meErrorEob();
         
         frameCur->windowCur->dotOffset = 0;	/* and go to the B-O-Line */
-        if (suc)		/* of next line if not at EOF */
+        if(suc)		/* of next line if not at EOF */
         {
             frameCur->windowCur->dotLine = meLineGetNext(frameCur->windowCur->dotLine);
-            frameCur->windowCur->dotLineNo++ ;
+            frameCur->windowCur->dotLineNo++;
         }
         /* and scan forword until we hit a <NL><NL> or <NL><TAB>
            or a <NL><SPACE>					*/
         do {
             suc = meTRUE;	/* Reset sucess flag */
-            if (frameCur->windowCur->dotLine == frameCur->bufferCur->baseLine)	/* EOF  ?? */
+            if(frameCur->windowCur->dotLine == frameCur->bufferCur->baseLine)	/* EOF  ?? */
                 break;		/* Exit */
-            if ((line_len = meLineGetLength (frameCur->windowCur->dotLine)) == 0)
+            if((line_len = meLineGetLength(frameCur->windowCur->dotLine)) == 0)
                 break;		/* Exit */
-            for (i = 0; i < line_len ; i++)
+            for(i = 0; i < line_len ; i++)
             {
-                c = meLineGetChar (frameCur->windowCur->dotLine, i);	/* Get character */
-                if (c != meCHAR_TAB && c != ' ')	/* Character on line ?? */
+                c = meLineGetChar(frameCur->windowCur->dotLine, i);	/* Get character */
+                if((c != meCHAR_TAB) && (c != ' '))	/* Character on line ?? */
                 {
                     /*---	Goto the next line. Break ot of loop. */
                     frameCur->windowCur->dotLine = meLineGetNext(frameCur->windowCur->dotLine);
-                    frameCur->windowCur->dotLineNo++ ;
+                    frameCur->windowCur->dotLineNo++;
                     suc = meFALSE;
                     break;
                 }
             }	/* End of 'for' */
-        } while (suc <= 0);
+        } while(suc <= 0);
         
         /* Leave the cursor at the start of the line. */
         frameCur->windowCur->dotOffset = 0;
     }
-    return(meTRUE);
+    return meTRUE;
 }
 #endif
 
@@ -623,30 +623,30 @@ windowSetMark(int f, int n)
 int
 windowSwapDotAndMark(int f, int n)
 {
-    meLine   *odotp ;
-    meUShort  odoto ;
-    meInt     lineno ;
+    meLine   *odotp;
+    meUShort  odoto;
+    meInt     lineno;
 
-    if (frameCur->windowCur->markLine == NULL)
-        return noMarkSet() ;
+    if(frameCur->windowCur->markLine == NULL)
+        return noMarkSet();
     odotp = frameCur->windowCur->dotLine;
     odoto = frameCur->windowCur->dotOffset;
-    lineno = frameCur->windowCur->dotLineNo ;
-    frameCur->windowCur->dotLine  = frameCur->windowCur->markLine;
-    frameCur->windowCur->dotOffset  = frameCur->windowCur->markOffset;
+    lineno = frameCur->windowCur->dotLineNo;
+    frameCur->windowCur->dotLine = frameCur->windowCur->markLine;
+    frameCur->windowCur->dotOffset = frameCur->windowCur->markOffset;
     frameCur->windowCur->dotLineNo = frameCur->windowCur->markLineNo;
     frameCur->windowCur->markLine = odotp;
     frameCur->windowCur->markOffset = odoto;
     frameCur->windowCur->markLineNo = lineno;
-    frameCur->windowCur->updateFlags |= WFMOVEL ;
-    return (meTRUE);
+    frameCur->windowCur->updateFlags |= WFMOVEL;
+    return meTRUE;
 }
 
 #if MEOPT_IPIPES || MEOPT_SOCKET
 
-static meLine  *orgLpp, *orgLnp ;
-static meUShort orgLo ;
-static meInt  orgLn ;
+static meLine  *orgLpp, *orgLnp;
+static meUShort orgLo;
+static meInt  orgLn;
 
 void
 meBufferStoreLocation(meLine *lp, meUShort lo, meInt ln)
@@ -664,9 +664,9 @@ meBufferStoreLocation(meLine *lp, meUShort lo, meInt ln)
 void
 meBufferUpdateLocation(meBuffer *bp, meUInt noLines, meUShort newOff)
 {
-    meWindow *wp ;
+    meWindow *wp;
     
-    meFrameLoopBegin() ;
+    meFrameLoopBegin();
     wp = loopFrame->windowList;
     while(wp != NULL)
     {
@@ -726,11 +726,11 @@ meBufferUpdateLocation(meBuffer *bp, meUInt noLines, meUShort newOff)
                 else if(wp->markLineNo > orgLn)
                     wp->markLineNo += noLines;
             }
-            wp->updateFlags |= WFMOVEL|WFMAIN|WFSBOX ;
+            wp->updateFlags |= WFMOVEL|WFMAIN|WFSBOX;
         }
         wp = wp->next;
     }
-    meFrameLoopEnd() ;
+    meFrameLoopEnd();
 }
 
 #endif
