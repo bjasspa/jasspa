@@ -73,10 +73,12 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
   indent #l1 n "<" 1/2t
   indent #l1 n ">" -1/2t
   ;indent #l1 b "<" ">"
-  indent #l1 n "<html>" t
-  indent #l1 o "</html>" -t
+  indent #l1 s "<html>" 0
+  indent #l1 s "</html>" 0
   indent #l1 n "<head" 3/2t
   indent #l1 o "</head>" -t
+  indent #l1 n "<body" 3/2t
+  indent #l1 o "</body>" -t
   indent #l1 n "<ul" 3/2t
   indent #l1 o "</ul>" -t
   indent #l1 n "<ol" 3/2t

@@ -24,7 +24,8 @@
 ;
 ;    mecw32 -n -p @cfind.emf -f grep -i searchStr *.txt
 ;
-!if &not &exi .about.arg0
+!if &les @# 0
+!elif &not &exi .about.arg0
   -2 ml-write "Error: Find command not set"
   0 exit-emacs
 !elif &seq .about.arg1 "ERROR"
@@ -34,6 +35,7 @@
   -2 ml-write &spr "Error: Failed to find ME registry for \"%s\"" $user-name
   0 exit-emacs
 !endif
+  
 !force read-registry "/history" $user-name "c"
 set-variable $kept-versions &reg &spr "/history/%s/kept-vers" $platform "0"
 ; This check allows the ME '-v $file-ignore=...' command-line option to be used to define required value   
@@ -49,23 +51,12 @@ set-variable .osd.next &cond &exi .osd.next .osd.next &add .osd.tmp 1
 
 define-macro start-up
   set-variable $buffer-fname &stat a "."
-  set-variable #l2 ""
-  set-variable #l0 0
-  !while &exi &set #l1 &cat ".about.arg" &inc #l0 1
-    ml-write &spr "Got [%s] [%s]" #l1 &ind #l1
-    !if &sin " " &set #l3 &ind #l1
-      set-variable #l2 &spr "%s \"%s\"" #l2 &rep &rep #l3 "\\" "\\\\" "\"" "\\\""
-    !else
-      set-variable #l2 &spr "%s %s" #l2 #l3
-    !endif
-  !done
-  ml-write &cat "From dir: " $buffer-fname
-  ml-write &spr "Exec: %s [%s]" .about.arg0 #l2
-  !if 0
-  !elif &exi .about.argn
-    !force .about.argn execute-named-command .about.arg0 #l2 "."
+  ml-write &spr "Exec: [%s] [%s] [%s] [%s] [%s] [%s]" .about.arg0 .about.arg1 .about.arg2 .about.arg3 .about.arg4 .about.arg5
+  ml-write &cat "Find from dir: " $buffer-fname
+  !if &exi .about.argn
+    .about.argn execute-named-command .about.arg0 .about.arg1 .about.arg2 .about.arg3 .about.arg4 .about.arg5
   !else
-    !force execute-named-command .about.arg0 #l2 "."
+    execute-named-command .about.arg0 .about.arg1 .about.arg2 .about.arg3 .about.arg4 .about.arg5
   !endif
   set-variable #l9 $result
   4 exit-emacs #l9

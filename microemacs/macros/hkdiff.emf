@@ -61,9 +61,9 @@ set-variable .fhook-diff.item-list-r4 "Add/Del \ecB\\1\ecA"
   hilight .hilight.diff 0x102 "=\\=\\=\\="  .scheme.hide
   hilight .hilight.diff 0x102 "*\\*\\*\\*"  .scheme.hide
   hilight .hilight.diff 0x102 "*\\*\\* "    .scheme.no2
-  hilight .hilight.diff 0x102 "+\\+\\+ "    .scheme.no2
+  hilight .hilight.diff 0x112 "+\\+\\+ "    .scheme.no2
   hilight .hilight.diff 0x102 "---$"        .scheme.hide
-  hilight .hilight.diff 0x102 "--- "        .scheme.no1
+  hilight .hilight.diff 0x112 "--- "        .scheme.no1
   hilight .hilight.diff 0x102 "Only"        .scheme.comment
   hilight .hilight.diff 0x102 "Files"       .scheme.comment
 !endif

@@ -543,14 +543,14 @@ set-variable #l1 0
 ; MENU #21 - GAMES sub-menu
 ;
 osd 21 0   b
-osd 21 5   ""  "\HBrag"       f Brag
-osd 21 10  ""  "\HCross-Word" f cross-word
-osd 21 20  ""  "\HFahtzee"    f Fahtzee
-osd 21 20  ""  "\HMahjongg"   f Mahjongg
-osd 21 30  ""  "Match-\HIt"   f Match-It
-osd 21 40  ""  "M\Hetris"     f Metris
-osd 21 50  ""  "\HPatience"   f Patience
-osd 21 60  ""  "\HTriangle"   f Triangle
+osd 21 10  ""  "\HBrag"       f Brag
+osd 21 20  ""  "\HCross-Word" f cross-word
+osd 21 30  ""  "\HFahtzee"    f Fahtzee
+osd 21 40  ""  "\HMahjongg"   f Mahjongg
+osd 21 50  ""  "Match-\HIt"   f Match-It
+osd 21 60  ""  "M\Hetris"     f Metris
+osd 21 70  ""  "\HPatience"   f Patience
+osd 21 80  ""  "\HTriangle"   f Triangle
 ;
 ; n osd-xdialog "title" "prompt" default [x-pos y-pos] "But1" "but2" ...
 ;
