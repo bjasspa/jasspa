@@ -87,6 +87,7 @@ define-macro-file fattrib file-attrib
 define-macro-file organize organizer
 define-macro-file userstp user-setup
 define-macro-file word describe-word
+define-macro-file hksql sql-format
 define-macro-file vm vm mail-setup
 define-macro-file watch
 define-macro-file gdiff

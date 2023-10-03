@@ -383,4 +383,157 @@ set-variable .fhook-sql.comment-2 "|rem|||rem |||"
   !endif
 !endif
 
+0 define-macro sql-format-line
+  set-variable #l9 $buffer-bname
+  set-variable #l0 #p0
+  set-variable #l1 &add #p1 4
+  !repeat
+    !while &gre &len @wl #l0
+      set-variable #l2 0
+      set-variable #l3 0
+      set-variable #l4 0
+      beginning-of-line
+      !repeat
+        !iif &seq @wc "\n"  !break
+        !if &seq @wc " "
+          !if &gre $window-col &add #l1 10
+            !iif &gre $window-col &add 10 #l3  set-variable #l3 $window-col
+            forward-char
+            !if &isin @wc "DFGILRSUW"
+              !iif &xise &mid @wl $window-col 10 "\\(DELETE\\|FROM\\|GROUP\\|INSERT\\|INNER\\|LEFT\\|RIGHT\\|SELECT\\|UNION\\|UPDATE\\|WHERE\\) .*"  set-variable #l2 $window-col
+            !else
+              backward-char
+            !endif
+          !endif
+        !elif &seq @wc ","
+          set-variable #l3 $window-col
+        !elif &seq @wc "("
+          set-variable #l5 $window-col
+          forward-char
+          set-mark
+          backward-char
+          !force goto-matching-fence
+          !if &not $status
+          !elif &les &sub $window-col #l5 &sub #l0 &add #l1 4
+            !iif &or &not #l4 &les $window-col #l0  set-variable #l4 $window-col
+          !else
+            kill-region
+            !force 0 delete-buffer &cat "*sqltmp" #l1
+            find-buffer &cat "*sqltmp" #l1
+            yank
+            -1 yank
+            beginning-of-buffer
+            !iif &not &xise &lef @wl 10 "\\(DELETE\\|INSERT\\|SELECT\\|UPDATE\\) .*"  insert-string "    "
+            insert-string &spr "%n" #l1 " "
+            sql-format-line
+            set-mark
+            beginning-of-buffer
+            kill-region
+            !force 0 delete-buffer $buffer-bname
+            find-buffer #l9
+            insert-string "\n"
+            yank
+            -1 yank
+            insert-string &spr "%n" #l1 " "
+            backward-line
+            set-variable #l4 &set #l3 &set #l2 0
+            !break
+          !endif
+        !endif
+        forward-char
+      !until &and &add &add #l2 #l3 #l4 &gre $window-col #l0
+      !if #l2
+        set-variable $window-col #l2
+        backward-delete-char
+        insert-string &spr "\n%n" #p1 " "
+      !elif #l3
+        set-variable $window-col #l3
+        !if &seq @wc ","
+          forward-char
+          insert-string &spr "\n%n" #l1 " "
+        !elif &seq @wc " "
+          insert-string &spr "\n%n" &sub #l1 1 " "
+        !else
+          1000 ml-write "[SQL ERROR: something went wrong (3)]"
+          !abort
+        !endif
+      !elif #l4
+        set-variable $window-col #l4
+        !if &seq @wc ")"
+          forward-char
+          insert-string &spr "\n%n" &add #l1 4 " "
+        !else
+          1000 ml-write "[SQL ERROR: something went wrong (4)]"
+          !abort
+        !endif
+      !else
+        forward-line
+      !endif
+    !done
+    !force forward-line
+  !until &seq @wl ""
+!emacro
+
+define-macro sql-format
+  set-variable #l1 0
+  !while &exi &spr ":*sql-format-%d*:" &inc #l1 1
+  !done
+  popup-window &spr "*sql-format-%d*" #l1
+  !if &band @# 1
+    yank
+  !else
+    !force set-variable #l1 @1
+    !iif &not $status  set-variable #l1 @ml "SQL string"
+    insert-string #l1
+  !endif
+  1 buffer-mode "magic"
+  beginning-of-buffer
+  set-variable #l9 0
+  !repeat
+    !force 1 replace-string "'\\(\\([^']\\|''\\)*\\)'" &cat "'\x01" &inc #l9 1
+    !iif &not $status  !break
+    !if &gre &set #l2 &len @s1 2000
+      ml-write "[SQL Error: String value too long, max length 2000]"
+      !abort
+    !endif
+    set-variable &ind &cat ":a" #l9 @s1
+    !iif &gre &set #l3 &sub #l2 2 0  insert-string &spr "%n" #l3 "X"
+    insert-string "\x02'"
+  !done
+  beginning-of-buffer
+  !force replace-string "\n" " "
+  beginning-of-buffer
+  !force replace-string "\t" " "
+  beginning-of-buffer
+  !force replace-string "  +" " "
+  beginning-of-buffer
+  !force replace-string " \\([,;)]\\)" "\\1"
+  beginning-of-buffer
+  !force replace-string "\\([,;(]\\) " "\\1"
+  beginning-of-buffer
+  !force replace-string " +$" ""
+  beginning-of-buffer
+  !if &band @# 2
+    !force replace-string ";[; ]*" ";"
+  !else
+    !force replace-string ";[; ]*" ";\n"
+    beginning-of-buffer
+    set-variable #l0 100
+    set-variable #l1 0
+    sql-format-line
+  !endif
+  set-variable #l1 0
+  !while &gre #l9 &inc #l1 1
+    beginning-of-buffer
+    1 replace-string &spr "\x01%sX*\x02" #l1 ""
+    insert-string &ind &spr ":%s:a%s" $buffer-bname #l1
+  !done
+  beginning-of-buffer
+  !force fhook-sql
+  set-mark
+  end-of-buffer
+  copy-region
+  beginning-of-buffer
+!emacro
+
 buffer-init-fhook "sql"

@@ -992,7 +992,9 @@ define-macro svn-add
     buffer-bind-key svn-blame-cmd "return"
     buffer-bind-key svn-blame-cmd "space"
     set-variable :mouse-word-select "svn-blame-cmd"
+    -1 buffer-mode "edit"
   !endif
+  1 buffer-mode "view"
   beginning-of-buffer
   set-variable $buffer-hilight .hilight.svn-blm
 !emacro
@@ -1142,6 +1144,8 @@ define-macro svn-commit
   set-mark
   backward-line
   -1 kill-region
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"
   buffer-bind-key svn-log-cmd "return"
   buffer-bind-key svn-log-cmd "space"
   set-variable :mouse-word-select "svn-log-cmd"

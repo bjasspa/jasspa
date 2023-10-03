@@ -54,33 +54,33 @@ define-macro fhook-dirlst
           set-variable #l3 "00:00"
         !endif
         !if &set #l1 &lfi "|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|" &slo @s6
-          set-variable #l2 &spr "%s/%02d/%02d" #l2 #l1 @s7
+          set-variable #l2 &spr "%s-%02d-%02d" #l2 #l1 @s7
         !else
           set-variable #l2 &spr "%s  %s %2d" &rig -2 #l2 @s6 @s7
         !endif
         set-variable @wl &spr "%s %s %n%s:00 %s" #l0 #l2 &sub 5 &len #l3 "0" #l3 @s9
-      !elif &xseq @wl "\\(\\d\\d\\)-\\(\\d\\d\\)-\\(\\d\\d\\) +\\(\\d\\d\\):\\(\\d\\d\\)\\([aApP][mM]\\) +\\(\\d+\\|<DIR>\\) +\\(.*\\)$"
-        !if &seq @s7 "<DIR>"
+      !elif &xseq @wl "\\(\\d\\d-\\d\\d\\)-\\(\\d\\d\\) +\\(\\d\\d\\):\\(\\d\\d\\)\\([aApP][mM]\\) +\\(\\d+\\|<DIR>\\) +\\(.*\\)$"
+        !if &seq @s6 "<DIR>"
           set-variable #l2 "d---------"
           set-variable #l0 0
           set-variable #l1 " "
         !else
           set-variable #l2 "----------"
-          !if &gre &len &set #l0 @s7 7
+          !if &gre &len &set #l0 @s6 7
             set-variable #l0 &div #l0 1024
             set-variable #l1 "K"
           !else
             set-variable #l1 " "
           !endif
         !endif
-        !iif &gre &set #l3 &cat "20" @s3 2070  set-variable #l3 &cat "19" @s3
-        set-variable #l4 &sub &cat "1" @s4 100
-        !if &ise @s6 "pm"
+        !iif &gre &set #l3 &cat "20" @s2 2070  set-variable #l3 &cat "19" @s2
+        set-variable #l4 &sub &cat "1" @s3 100
+        !if &ise @s5 "pm"
           !iif &les #l4 12  set-variable #l4 &add #l4 12
         !elif &equ #l4 12
           set-variable #l4 0
         !endif
-        set-variable @wl &spr "%s -        -        %7d%s %s/%s/%s %02d:%s:00 %s" #l2 #l0 #l1 #l3 @s1 @s2 #l4 @s5 @s8
+        set-variable @wl &spr "%s -        -        %7d%s %s-%s %02d:%s:00 %s" #l2 #l0 #l1 #l3 @s1 #l4 @s4 @s7
       !endif
       forward-line
     !done

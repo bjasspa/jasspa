@@ -121,9 +121,9 @@
   !if &sin "4" #p9
     set-variable #l1 &lget #p5 7
     !if &les &len #l1 14
-      set-variable #l0 &cat  #l0 "----/--/-- --:--:-- "
+      set-variable #l0 &cat  #l0 "XXXX-XX-XX XX:XX:XX "
     !else
-      set-variable #l0 &spr "%s%s/%02d/%02d %02d:%02d:%02d " #l0 &lef #l1 4 &mid #l1 4 2 &mid #l1 6 2 &mid #l1 8 2 &mid #l1 10 2 &mid #l1 12 2
+      set-variable #l0 &spr "%s%s-%02d-%02d %02d:%02d:%02d " #l0 &lef #l1 4 &mid #l1 4 2 &mid #l1 6 2 &mid #l1 8 2 &mid #l1 10 2 &mid #l1 12 2
     !endif
   !endif
   insert-string &spr "%s%s%s%s" #l0 #p1 &ind &cat ".find-proc.base" #p0 #p2

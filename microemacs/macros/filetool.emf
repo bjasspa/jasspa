@@ -44,14 +44,8 @@
   !endif
   set-variable #l0 &rep &rep &rep &rep &rep @1 "%%" "\bA" "%\"" "\bE" "%[" "\bB" "%|" "\bC" "%]" "\bD"
   set-variable #l2 &rep &rep &rep &rep .p "%" "\bA" "[" "\bB" "|" "\bC" "]" "\bD"
-  set-variable #l0 &rep #l0 "%p" #l2
-  !if &band $system 0x100
-    set-variable #l2 &rep #l2 "/" "\\"
-  !endif
-  set-variable #l0 &rep #l0 "%P" #l2
-  !if &seq &rig #l1 -1 "/"
-    set-variable #l1 &lef #l1 -1
-  !endif
+  set-variable #l0 &rep &rep #l0 "%p" #l2 "%P" &rep #l2 "/" .osp
+  !iif &seq &rig #l1 -1 "/"  set-variable #l1 &lef #l1 -1
   !if &gre &set #l4 &rsin "." #l1 1
     set-variable #l2 &lef #l1 &sub #l4 1
     set-variable #l3 &rig #l1 &sub #l4 1
@@ -67,7 +61,7 @@
       !abort
     !endif
     set-variable #l4 &spr "\r%s\r" &rep &lef #l4 &sub #l5 1 "|" "\r"
-    set-variable #l6 &rep &rep &rep #l4 "%f" #l1 "%b" #l2 "%e" #l3
+    set-variable #l6 &rep &rep &rep &rep #l4 "%f" #l1 "%F" &rep #l1 "/" .osp "%b" #l2 "%e" #l3
     set-variable #l6 &rep &rep &rep &rep #l6 "\bA" "%" "\bB" "[" "\bC" "|" "\bD" "]"
     set-variable #l5 &spr "set-variable #l6 @ml%s%s \"%s\" \"%s\"" &con &seq &lget #l6 3 "" 0 1 &lget #l6 1 &lget #l6 2 &lget #l6 3
     execute-line #l5
@@ -87,7 +81,7 @@
       !endif
       set-variable #l0 &rep &rep #l0 "%*[" "" "]" ""
     !endif
-    set-variable #l0 &rep &rep &rep #l0 "%f" #l1 "%b" #l2 "%e" #l3
+    set-variable #l0 &rep &rep &rep &rep #l0 "%f" #l1 "%F" &rep #l1 "/" .osp "%b" #l2 "%e" #l3
     set-variable #l0 &rep &rep &rep &rep #l0 "\bA" "%" "\bB" "[" "\bC" "|" "\bD" "]"
     !while &set #l4 &sin "\bE" #l0
       !if &not &set #l5 &sin "\bE" &rig #l0 &add #l4 1
@@ -109,7 +103,7 @@
       set-variable #l4 &cond &band @# 0x200 0x25 5
       !tjump &not &band @# 0x4000 3
       set-variable #l4 &bxor #l4 1 
-      set-variable #l7 &rep &rep &rep @3 "%f" #l1 "%b" #l2 "%e" #l3
+      set-variable #l7 &rep &rep &rep &rep @3 "%f" #l1 "%F" &rep #l1 "/" .osp "%b" #l2 "%e" #l3
       !tjump &not &band @# 0x100 2
       set-variable #l4 &bor #l4 2 
       !if &band @# 0x40
@@ -138,7 +132,7 @@
       !if &seq &rig #l1 -1 "/"
         set-variable #l1 &lef #l1 -1
       !endif
-      set-variable #l2 &rep #l4 "%f" #l1
+      set-variable #l2 &rep &rep #l4 "%f" #l1 "%F" &rep #l1 "/" .osp
       !if &gre &set #l3 &rsin "." #l1 1
         set-variable #l2 &rep &rep #l2 "%b" &lef #l1 &sub #l3 1 "%e" &rig #l1 &sub #l3 1
       !else
@@ -210,12 +204,13 @@
   !force 0 delete-buffer "*file-tool-temp*"
   !return #l1
 !emacro
+set-variable .file-tool-run.osp &con &band $system 0x100 "\\" "/"
 
 0 define-macro file-tool-exec
   !if &set #l1 &les @# 0
     set-variable @# &abs @#
   !elif .find-file.file-count
-  !elif &or &or &sin "%f" #l0 &sin "%b" #l0 &sin "%e" #l0
+  !elif &or &or &or &sin "%f" &sin "%F" #l0 &sin "%b" #l0 &sin "%e" #l0
     ml-write "[Error: No files selected]"
     !abort
   !endif
