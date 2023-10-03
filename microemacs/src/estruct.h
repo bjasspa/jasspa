@@ -477,6 +477,7 @@ typedef FILETIME meFiletime ;
 
 /* initialize to a recognizable duff value */
 #define meFiletimeInit(t1)            ((t1).dwHighDateTime = (t1).dwLowDateTime = -1)
+#define meFiletimeIsSet(t1)            (((t1).dwHighDateTime != -1) || ((t1).dwLowDateTime != -1))
 
 /* return meTRUE if t1 == t2 */
 #define meFiletimeIsSame(t1,t2)                 \
@@ -489,13 +490,14 @@ typedef FILETIME meFiletime ;
 
 #else
 #ifdef _UNIX
-typedef time_t meFiletime ;
+typedef meTime meFiletime;
 #else
-typedef meInt meFiletime ;
+typedef meUInt meFiletime;
 #endif
 
 /* initialize to a recognizable duff value */
-#define meFiletimeInit(t1)            ((t1) = -1)
+#define meFiletimeInit(t1)            ((t1) = 0)
+#define meFiletimeIsSet(t1)           ((t1) != 0)
 
 /* return meTRUE if t1 == t2 */
 #define meFiletimeIsSame(t1,t2)       ((t1) == (t2))
@@ -563,24 +565,24 @@ typedef struct meCommand {
 } meCommand ;
 
 typedef struct meMacro {
-    meCommand         *anext ;                  /* alphabetically next command  */
+    meCommand         *anext;                   /* alphabetically next command  */
 #if MEOPT_CMDHASH
-    meCommand         *hnext ;                  /* next command in hash table   */
+    meCommand         *hnext;                   /* next command in hash table   */
 #endif
-    meUByte           *name ;                   /* name of macro                */
-    meLine            *hlp ;                    /* Head line of macro           */
+    meUByte           *name;                    /* name of macro                */
+    meLine            *hlp;                     /* Head line of macro           */
 #if MEOPT_EXTENDED
-    meVariable        *varList ;                /* command variables list       */
+    meVariable        *varList;                 /* command variables list       */
 #endif
 #if MEOPT_CMDHASH
-    meUInt             hash ;                   /* next command in hash table   */
+    meUInt             hash;                    /* next command in hash table   */
 #endif
-    int                id ;                     /* command id number            */
+    int                id;                      /* command id number            */
 #if MEOPT_EXTENDED
-    meUByte           *fname ;                  /* file name for file-macros    */
+    meUByte           *fname;                   /* file name for file-macros    */
 #endif
 #if MEOPT_CALLBACK
-    meInt              callback ;               /* callback time for macro      */
+    meTime             callback;                /* callback time for macro      */
 #endif
 } meMacro ;
 
@@ -723,7 +725,7 @@ typedef struct  meBuffer {
     struct meUndoNode *undoTail;                /* Last undo node               */
     meUInt             undoContFlag;            /* Was the last undo this com'd?*/ 
 #endif
-    meInt              autoTime;                /* auto-save time for file      */
+    meTime             autoTime;                /* auto-save time for file      */
     meInt              vertScroll;              /* Windows top line number      */
     meInt              dotLineNo;               /* current line number          */
     meInt              markLineNo;              /* current mark line number     */
@@ -1381,6 +1383,56 @@ struct s_DragAndDrop
 };
 #endif
 
+#if MEOPT_SOCKET
+
+#ifdef _WIN32
+#define meSOCKET   SOCKET
+#else
+#define meSOCKET   int
+#endif
+
+#define meSOCK_BUFF_SIZE 2048
+#define meSOCK_USER_SIZE 126
+#define meSOCK_HOST_SIZE 256
+
+#define meSOCKOPT_LOG_STATUS    0x0001
+#define meSOCKOPT_LOG_ERROR     0x0002
+#define meSOCKOPT_LOG_WARNING   0x0004
+#define meSOCKOPT_LOG_DETAILS   0x0008
+#define meSOCKOPT_LOG_VERBOSE   0x0010
+#define meSOCKOPT_SHOW_STATUS   0x0020
+#define meSOCKOPT_SHOW_CONSOLE  0x0040
+#define meSOCKOPT_SHOW_PROGRESS 0x0080
+#define meSOCKOPT_IGN_CRT_ERR   0x0100
+#define meSOCKOPT_REDIR_HALT    0x0200
+#define meSOCKOPT_CLOSE         0x1000
+
+#define meSOCKFLG_USE_SSL       0x0001
+#define meSOCKFLG_EXPLICIT_SSL  0x0002
+#define meSOCKFLG_OPEN_MASK     0x000f
+
+#define meSOCKFLG_INUSE         0x0010
+#define meSOCKFLG_SHUTDOWN      0x0020
+#define meSOCKFLG_CTRL_INUSE    0x0040
+#define meSOCKFLG_CTRL_NO_QUIT  0x0080
+#define meSOCKFLG_CTRL_SHUTDOWN 0x0100
+#define meSOCKFLG_CHUNKED       0x0400
+#define meSOCKFLG_CLOSE         meSOCKOPT_CLOSE
+
+#define ftpERROR        -1
+#define ftpPOS_PRELIMIN  1
+#define ftpPOS_COMPLETE  2
+#define ftpPOS_INTERMED  3
+
+typedef void (*meSockLogger)(meUByte type,meUByte *txt,void *data);
+
+typedef struct meCookie {
+    meUByte *value;
+    meInt buffLen;
+} meCookie;
+
+#endif
+
 #define meIOFLAG_NOTSET  0x0001
 #define meIOFLAG_BINARY  meBFFLAG_BINARY
 #define meIOFLAG_LTDIFF  meBFFLAG_LTDIFF
@@ -1404,7 +1456,7 @@ struct s_DragAndDrop
 typedef struct meIo {
     meUByte    type;                    /* Flags detailing type of file */
 #if MEOPT_SOCKET
-    meUShort   urlFlags;                /* Flags used if file is a URL */
+    meUByte    redirect;                /* Number of redirections - avoids spin */
 #endif
     meUShort   flags;                   /* Flags detailing content of file */
     meUInt     offset;
@@ -1416,12 +1468,23 @@ typedef struct meIo {
     int        read;
     int        remain;
 #if MEOPT_SOCKET
-    meUByte    redirect;                /* Number of redirections - avoids spin */
     meRegNode *passwdReg;
     meBuffer  *urlBp;
-    int        startTime;
-    int        length;
-    meSockFile sslp;                    /* meSsl/OpenSSL file handle */
+    time_t     startTime;
+    int        length;                  /* TODO - potentially merge with urlLen */
+
+    meUShort   urlOpts;                 /* Option flags such as logging etc */
+    meUShort   urlFlags;                /* Flags store connection type & state */
+    meInt      urlPrt;
+    meUByte    urlHst[meSOCK_HOST_SIZE];
+    meUByte    urlUsr[meSOCK_USER_SIZE];
+    meUByte   *urlHome;
+    void      *ssl;
+    void      *ctrlSsl;
+    meSOCKET   sck;
+    meSOCKET   ctrlSck;
+    meInt      urlLen;
+    meInt      chkLen;
 #endif
 #ifdef MEOPT_TFS
     tfsfile_t  tfsp;                    /* The tack-on file system handle */

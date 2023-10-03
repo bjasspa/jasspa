@@ -30,12 +30,34 @@
 #define	__CRYPTC		/* Define file */
 
 #include "emain.h"
-
-#if MEOPT_EXTENDED
-
 #include <time.h>
 
-/*  Written in 2018 by David Blackman and Sebastiano Vigna (vigna@acm.org)
+/* Init as if user called &set $random 1 */
+static meUInt rndS[4] = { 0,0,0,0 };
+
+/* a splitMix32 PRNG is used to init the 4 uint state of xoshiro128++ */
+void
+xoshiro128Seed()
+{
+    meUInt sd, vv;
+    int ii=3; 
+    
+#ifdef _WIN32
+    sd = ((meUInt) GetTickCount()) ^ (((meUInt) GetCurrentProcessId()) << 12);
+#else
+    sd = ((meUInt) time(NULL)) ^ (((meUInt) getpid()) << 12);
+#endif
+    do {
+        vv = (sd += 0x9e3779b9);
+        vv ^= vv >> 16;
+        vv *= 0x21f0aaad;
+        vv ^= vv >> 15;
+        vv *= 0x735a2d97;
+        rndS[ii] = vv ^ (vv >> 15);
+    } while(--ii >= 0);
+}
+
+/*  Written in 2019 by David Blackman and Sebastiano Vigna (vigna@acm.org)
 
    To the extent possible under law, the author has dedicated all copyright
    and related and neighboring rights to this software to the public domain
@@ -43,53 +65,20 @@
    
    See <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-   This is xoshiro128** 1.1, one of our 32-bit all-purpose, rock-solid
+   This is xoshiro128++ 1.0, one of our 32-bit all-purpose, rock-solid
    generators. It has excellent speed, a state size (128 bits) that is
    large enough for mild parallelism, and it passes all tests we are aware
    of.
 
    The state must be seeded so that it is not everywhere zero. */
 
-/* Init as if user called &set $random 1 */
-static meUInt rndS[4] = { 0x5e2d1772,0x14e498f0,0xd20ea1fd,0xb382f339 };
-
-/* a splitMix32 PRNG is used to init the 4 uint state of xoshiro128** */
-static meUInt
-splitMix32(void)
-{
-  meUInt ii = (rndS[3] += 0x9e3779b9);
-  ii ^= ii >> 16;
-  ii *= 0x21f0aaad;
-  ii ^= ii >> 15;
-  ii *= 0x735a2d97;
-  ii ^= ii >> 15;
-  return ii;
-}
-
-void
-xoshiro128Seed(meUInt ss)
-{
-    if(ss)
-        rndS[3] = ss;
-    else
-#ifdef _WIN32
-        rndS[3] = ((meUInt) GetTickCount());
-#else
-        rndS[3] = ((meUInt) time(NULL));
-#endif
-    rndS[0] = splitMix32();
-    rndS[1] = splitMix32();
-    rndS[2] = splitMix32();
-    rndS[3] = splitMix32();
-}
-
 #define xoshiro128Rotl(xx,kk) (((xx) << (kk)) | ((xx) >> (32 - (kk))))
 
 meUInt
 xoshiro128Next(void)
 {
-    register meUInt rr=rndS[1] * 5, tt=rndS[1] << 9;
-    rr = xoshiro128Rotl(rr,7) * 9;
+    register meUInt rr=rndS[0] + rndS[3], tt=rndS[1] << 9;
+    rr = xoshiro128Rotl(rr,7) + rndS[0];
 
     rndS[2] ^= rndS[0];
     rndS[3] ^= rndS[1];
@@ -100,7 +89,111 @@ xoshiro128Next(void)
 
     return rr;
 }
+
+
+/*
+ * Create a file name within the temp folder, name can be given or random one generated.
+ * On windows & dos concatinate the $TEMP variable with the filename to create the new
+ * temporary file name,  under unix file in /tmp/
+ */
+void
+mkTempName(meUByte *buf, meUByte *name, meUByte *ext)
+{
+    meUByte *pp;
+    int ii,jj,kk,rr;
+#ifndef _UNIX
+#ifdef _CONVDIR_CHAR
+#define PIPEDIR_CHAR _CONVDIR_CHAR
+#else
+#define PIPEDIR_CHAR DIR_CHAR
 #endif
+    static meUByte *tmpDir=NULL;
+
+    if(tmpDir == NULL)
+    {
+        /* Get location of the temporary directory from the environment $TEMP */
+        if((((pp = (meUByte *) meGetenv ("TMP")) == NULL) || meTestDir(pp)) &&
+           (((pp = (meUByte *) meGetenv ("TEMP")) == NULL) || meTestDir(pp)))
+        {
+            pp = NULL;
+#if (defined _DOS) || (defined _WIN32)
+            /* the C drive is more reliable than ./ as ./ could be on a CD-Rom etc, but in recent
+             * versions of windows c:\ is readonly so look around for a temp folder */
+            if(!meTestDir((meUByte *) "c:\\tmp\\"))
+                tmpDir = (meUByte *) "c:\\tmp\\";
+            else if(!meTestDir((meUByte *) "c:\\temp\\"))
+                tmpDir = (meUByte *) "c:\\temp\\";
+#if (defined _WIN32)
+            else if(((pp = (meUByte *) meGetenv("LOCALAPPDATA")) != NULL) && !meTestDir(pp))
+            {
+                ii = meStrlen(pp);
+                memcpy(buf,pp,ii);
+                pp = buf;
+                if(buf[ii-1] != PIPEDIR_CHAR)
+                    buf[ii++] = PIPEDIR_CHAR;
+                meStrcpy(buf+ii,"Temp");
+                if(meTestDir(buf))
+                    buf[ii] = '\0';
+            }
+#endif
+#endif
+        }
+        if(tmpDir == NULL)
+        {
+            if((pp != NULL) && ((ii = meStrlen(pp)) > 0) && ((tmpDir = meMalloc(ii+2)) != NULL))
+            {
+                memcpy(tmpDir,pp,ii);
+                if(tmpDir[ii-1] != PIPEDIR_CHAR)
+                    tmpDir[ii++] = PIPEDIR_CHAR;
+                tmpDir[ii] = '\0';
+            }
+            else 
+#if (defined _DOS) || (defined _WIN32)
+                tmpDir = (meUByte *) "c:\\";
+#else
+                tmpDir = (meUByte *) "./";
+#endif
+        }
+    }
+#endif
+    
+    if(ext == NULL)
+        ext = (meUByte *) "";
+
+    if(name != NULL)
+#ifdef _UNIX
+        sprintf((char *)buf,"/tmp/me%s%s",name,ext);
+#else
+        sprintf((char *)buf,"%sme%s%s",tmpDir,name,ext);
+#endif
+    else
+    {
+        if(rndS[0] == 0)
+            xoshiro128Seed();
+#ifdef _UNIX
+        memcpy(buf,"/tmp/meXXXXXX",13);
+        strcpy((char *) buf+13,(char *) ext);
+        pp = buf+7;
+#else
+        ii = sprintf((char *) buf,"%smeXXXXXX",tmpDir);
+        strcpy((char *) buf+ii,(char *) ext);
+        pp = buf+ii-6;
+#endif
+        for(ii=0 ; ii<999 ; ii++)
+        {
+            rr = xoshiro128Next();
+            jj = 5;
+            do {
+                kk = rr & 0x1f;
+                pp[jj] = (meUByte) (kk + ((kk > 25) ? 48-25:97));
+                rr >>= 5;
+            } while(--jj >= 0);
+            if(meTestExist(buf))
+                break;
+        }
+    }
+}
+
 
 #if MEOPT_CRYPT
 /*
@@ -1036,18 +1129,16 @@ setCryptKey(int f, int n)	/* reset encryption key of current buffer */
 void
 meCryptInit(meUInt *key)
 {
-    meUInt rndSs[4];
     int ii;
     /* return can only be error if nbits is not 128,192 or 256 */
     meAssert((meCRYPT_KEY_SIZE*4*8) == 256);
     aes_set_key(&cryCtx,(meUByte *) key,meCRYPT_KEY_SIZE*4*8);
-    memcpy(rndSs,rndS,4*4);
-    xoshiro128Seed(0);
+    if(rndS[0] == 0)
+        xoshiro128Seed();
     ii = 7;
     do {
         cryCtx.blk[ii] ^= xoshiro128Next();
     } while(--ii >= 0);
-    memcpy(rndS,rndSs,4*4);
 }
 
 int

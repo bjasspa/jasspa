@@ -487,13 +487,14 @@ meAbout(int f, int n)
     bp = wp->buffer ;
     
     /* definitions in evers.h */
-    addLineToEob(bp,(meUByte *)ME_FULLNAME " " meVERSION " - Date " meCENTURY meDATE " - " meSYSTEM_NAME "\n\nGlobal Status:") ;
-    tbp = bheadp ;
+    addLineToEob(bp,(meUByte *) meVERSION_INFO);
+    addLineToEob(bp,(meUByte *) "\nGlobal Status:");
+    tbp = bheadp;
     ii = 0 ;
     while(tbp != NULL)
     {
         ii++ ;
-        tbp = tbp->next ;
+        tbp = tbp->next;
     }
     sprintf((char *)buf,"  # buffers : %d", ii) ;
     addLineToEob(bp,buf) ;
@@ -1065,9 +1066,9 @@ meDie(void)
      * we are in a DIE state to prevent any output on the display which is
      * being torn down. Our main purpose is to preserve the session
      * information and history. */
-    alarmState = meALARM_DIE ;
+    alarmState = meALARM_DIE;
     
-    return exitEmacs(1,0x28) ;
+    return exitEmacs(1,0x28);
 }
 #endif
 
@@ -1076,10 +1077,10 @@ autoSaveHandler(void)
 {
     struct meTimeval tp ;
     register meBuffer *bp ;
-    register meInt tim, next=0x7fffffff ;
+    register meTime tim, next=0x7fffffff;
     
     gettimeofday(&tp,NULL) ;
-    tim = ((tp.tv_sec-startTime)*1000) + (tp.tv_usec/1000) ;
+    tim = ((tp.tv_sec-startTime)*1000) + (tp.tv_usec/1000);
     bp  = bheadp;
     while (bp != NULL)
     {
@@ -1093,7 +1094,7 @@ autoSaveHandler(void)
         bp = bp->next ;
     }
     if(next != 0x7fffffff)
-        timerSet(AUTOS_TIMER_ID,next,next-tim) ;
+        timerSet(AUTOS_TIMER_ID,next,(meInt) (next-tim)) ;
     else
         timerClearExpired(AUTOS_TIMER_ID) ;
     if(tim & 0x40000000)
@@ -1379,7 +1380,7 @@ mesetup(int argc, char *argv[])
     meUByte  *clientMessage=NULL ;
     int     userClientServer=0 ;
 #endif
-    startTime = (meInt) time(NULL);
+    startTime = time(NULL);
     
     /* asserts to check that the defines are consistent */
     assert(argv[0] != NULL) ;
@@ -1657,9 +1658,7 @@ missing_arg:
                 }
                 
             case 'V':
-                sprintf((char *)evalResult,"%s %s - Date %s%s - %s\n",
-                        ME_FULLNAME, meVERSION, meCENTURY, meDATE, meSYSTEM_NAME) ;
-                mePrintMessage(evalResult) ;
+                mePrintMessage(meVERSION_INFO) ;
                 meExit(0) ;
                 
             case 'v':
@@ -2108,20 +2107,18 @@ handle_stdin:
 void
 _meAssert (char *file, int line)
 {
-    meUByte buf[meBUF_SIZE_MAX];                  /* String buffer */
-    meUByte cc;                           /* Character input */
+    meUByte buf[meBUF_SIZE_MAX];        /* String buffer */
+    meUByte cc;                         /* Character input */
     
     /* Put out the string */
-    sprintf ((char *) buf,
-             "!! ASSERT FAILED %s:%d !! - <S>ave. <Q>uit. <C>ontinue",
-             file, line);
-    mlwrite (MWABORT, buf);
+    sprintf((char *) buf,"!! ASSERT FAILED %s:%d !! - <S>ave. <Q>uit. <C>ontinue",file,line);
+    mlwrite(MWABORT,buf);
     
-    TTinflush ();                       /* Flush the input buffer */
-    for (;;)
+    TTinflush();                        /* Flush the input buffer */
+    for(;;)
     {
-        cc = (meUByte) TTgetc() ;         /* Get character from keyboard */
-        if (cc == 'S')
+        cc = (meUByte) TTgetc();        /* Get character from keyboard */
+        if(cc == 'S')
         {
             /* Try and perform an emergency save for the user - no guarantees
              * here I am afraid - we may be totally screwed at this point in
@@ -2129,9 +2126,9 @@ _meAssert (char *file, int line)
             alarmState = meALARM_DIE ;
             exitEmacs(1,0x28) ;
         }
-        else if (cc == 'Q')
-            meExit (1);                 /* Die the death */
-        else if (cc == 'C')
+        else if(cc == 'Q')
+            meExit(1);                  /* Die the death */
+        else if(cc == 'C')
             break;                      /* Let the sucker go !! */
     }
 }

@@ -398,18 +398,17 @@ execFilename (char *argname, char *execpath, int execlen)
     pid_t pid;
     
     /* Get the PID */
-    if ((pid = getpid ()) >= 0)
+    if((pid = getpid()) >= 0)
     {
         struct stat statbuf;
-        char buf [meBUF_SIZE_MAX];
+        char buf[meBUF_SIZE_MAX];
         int n;
         
         /* Create the pathname of the executable in the /proc file system and
          * read in the link. */
-        sprintf (buf, "/proc/%d/path/a.out", pid);
-        if ((lstat(buf, &statbuf) != 0) &&
-            (S_ISLNK(statbuf.st_mode)) &&
-            ((n = readlink (buf, execpath, execlen)) > 0))
+        sprintf(buf,"/proc/%d/path/a.out", pid);
+        if((lstat(buf,&statbuf) != 0) && (S_ISLNK(statbuf.st_mode)) &&
+            ((n = readlink (buf,execpath,execlen)) > 0))
         {
             execpath [n] = '\0';
             status = 1;
@@ -419,18 +418,17 @@ execFilename (char *argname, char *execpath, int execlen)
     pid_t pid;
     
     /* Get the PID */
-    if ((pid = getpid ()) >= 0)
+    if ((pid = getpid()) >= 0)
     {
         struct stat statbuf;
-        char buf [meBUF_SIZE_MAX];
+        char buf[meBUF_SIZE_MAX];
         int n;
         
         /* Create the pathname of the executable in the /proc file system and
          * read in the link. */
-        sprintf (buf, "/proc/%d/exe", pid);
-        if ((lstat(buf, &statbuf) != 0) &&
-            (S_ISLNK(statbuf.st_mode)) &&
-            ((n = readlink (buf, execpath, execlen)) > 0))
+        sprintf(buf,"/proc/%d/exe",pid);
+        if ((lstat(buf,&statbuf) != 0) && (S_ISLNK(statbuf.st_mode)) &&
+            ((n = readlink(buf,execpath,execlen)) > 0))
         {
             execpath [n] = '\0';
             status = 1;
@@ -442,15 +440,15 @@ execFilename (char *argname, char *execpath, int execlen)
     pid_t pid;
     
     /* Get the PID */
-    if ((pid = getpid ()) >= 0)
+    if((pid = getpid()) >= 0)
     {
         struct pst_status pst;
         
         pst.pst_pid = -1;
-        if (pstat_getproc (&pst, sizeof (pst), 0, pid) > 0)
+        if (pstat_getproc(&pst,sizeof(pst),0,pid) > 0)
         {
             /* Get the name of the file. */
-            if ((n = pstat_getpathname (execpath, execlen, &pst.pst_fid_text)) > 0)
+            if((n = pstat_getpathname(execpath,execlen,&pst.pst_fid_text)) > 0)
                 status = 1;
         }
     }
@@ -4641,25 +4639,9 @@ TTsendClientServer(meUByte *line)
 /**************************************************************************
  * MISCELEANEOUS FUNCTIONS                                                 *
  **************************************************************************/
-#ifdef _NOSTRDUP
-/* strdup; String duplication is not supported on some earlier platforms
- * provide one if it does not exits. Typically absent on earlier BSD4.2
- * platforms. */
-char *
-strdup (const char *s)
-{
-    char *p;
-    
-    if ((p = (char *) meMalloc ((meStrlen (s)) + 1)) != NULL)
-        meStrcpy (p, s);
-    return (p);
-}
-
-#endif
-
 #ifdef _NOPUTENV
 int
-putenv (const char *string)
+putenv(const char *string)
 {
     char **p;                           /* Temp environment ptr */
     int len;                            /* Length of the string */

@@ -601,7 +601,7 @@ enum
 typedef struct TIMERBLOCK
 {
     struct TIMERBLOCK *next;            /* Next block to be scheduled */
-    meUInt   abstime;                   /* Absolute time */
+    meTime   abstime;                   /* Absolute time */
     meUByte  id;                        /* Identity of timer */
 } TIMERBLOCK;
 
@@ -617,7 +617,7 @@ typedef struct TIMERBLOCK
 #define timerClearExpired(id) (meTimerState[(id)] = meTimerState[(id)] & ~TIMER_EXPIRED)
 
 extern meUByte     meTimerState[] ;     /* State of the timers, set or expired */
-extern meInt       meTimerTime[] ;      /* Absolute time of the timers */
+extern meTime      meTimerTime[] ;      /* Absolute time of the timers */
 extern TIMERBLOCK *timers ;             /* Head of timer list             */
 
 /*
@@ -633,18 +633,18 @@ extern TIMERBLOCK *timers ;             /* Head of timer list             */
  *              is not needed.
  * offset - offset from the current time to alarm.
  */
-extern void timerSet (int id, meInt tim, meInt offset) ;
-extern int  _timerKill (int id) ;
+extern void timerSet(int id, meTime tim, meInt offset) ;
+extern int  _timerKill(int id) ;
 #define timerKill(id) (isTimerSet(id)?_timerKill(id):timerClearExpired(id))
 extern void handleTimerExpired(void) ;
-extern void adjustStartTime(meInt tim) ;
+extern void adjustStartTime(meTime tim);
 
 #ifdef _MULTI_NOID_TIMER
 extern void timerAlarm(int id) ;
 #endif
 
 #if (defined _CONST_TIMER) || (defined _SINGLE_TIMER)
-extern void timerCheck(meInt tim) ;
+extern void timerCheck(meTime tim);
 #endif
 
 /* flag used when idle-drop needs to be called */

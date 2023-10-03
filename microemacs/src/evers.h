@@ -30,30 +30,40 @@
  *
  * Notes:
  *     The definitions have been moved out of estruct.h, because, if you change
- *     them and you have written your makefile properly, everything gets recompiled
- *     whereas putting them here only makes "make" recompile display.c
- * 
+ *     them and you have written your makefile properly, everything gets recompiled.
+ *     
  *     The history was removed from this file as CVS and the help pages are used
  *     instead.
  */
+#define QUOTE_DEFINE(a) #a
+#define DEF_GET_STR(a) QUOTE_DEFINE(a)
 
-/* THESE MAY ONLY BE MODIFIED BY JASSPA THEY REPRESENT THE CURRENT 
- * RELEASE OF THE BUILD AND ARE USED AS A REFERENCE POINT WHEN
- * PROBLEMS OCCUR. THESE VALUES ARE NOT INTENDED TO REPRESENT 
- * THE BUILD DATE OF THE SOFTWARE AND MUST NOT BE MODIFIED AS SUCH */
-#define meCENTURY       "20"          /* Current century. Y2 complient :-) */
-#define meYEAR          "23"          /* Current year */
-#define meMONTH         "01"          /* Current month */
-#define meDAY           "01"          /* Day of the month */
+/* The values of meCENTURY meYEAR, meMONTH, meDAY definitions have been moved to
+ * evers.mak so they can be included and used by makefiles */
+
+#define meCENTURY DEF_GET_STR(meVER_CN)
+#define meYEAR    DEF_GET_STR(meVER_YR)
+#if meVER_MN < 10
+#define meMONTH   "0" DEF_GET_STR(meVER_MN)
+#else
+#define meMONTH   DEF_GET_STR(meVER_MN)
+#endif
+#if meVER_DY < 10
+#define meDAY     "0" DEF_GET_STR(meVER_DY)
+#else
+#define meDAY     DEF_GET_STR(meVER_DY)
+#endif
 
 /* Version information - Date of build */
-#define	meDATE          meYEAR "/" meMONTH "/" meDAY 
+#define	meDATE          meYEAR "-" meMONTH "-" meDAY 
 /* Version information - Major version number is the year of build */
 #define	meVERSION       meYEAR 
 /* Version information - Minor version number is the month of build */
 #define meVERSION_MINOR meMONTH
 /* Version information - Version as a numeric date code */
 #define meVERSION_CODE  meCENTURY meYEAR meMONTH meDAY 
+/* Version information - String as shown in about & -V */
+#define meVERSION_INFO  ME_FULLNAME " " meVERSION " - Date " meCENTURY meDATE " - " meSYSTEM_NAME "\n"
 
 /* The program names - these values are also used in the rc files */
 #define ME_MICROEMACS_FULLNAME  "MicroEmacs"

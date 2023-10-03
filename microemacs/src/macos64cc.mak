@@ -54,12 +54,14 @@ AR       = ar
 RM       = rm -f
 RMDIR    = rm -r -f
 
+include evers.mak
+
 BUILDID  = macos64cc
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
 
-CCDEFS   = -D_MACOS -D_64BIT -m64 -Wall -I$(TRDPARTY)/mesock -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib
+CCDEFS   = -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY) -D_MACOS -D_64BIT -m64 -Wall -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g
 LDDEFS   = -m64
@@ -83,12 +85,41 @@ ARFLAGS  = $(ARFLAGSR)
 endif
 
 ifeq "$(BCOR)" "ne"
+
 BCOR_CDF = -D_NANOEMACS
 PRGLIBS  = 
+
 else
+
+ifneq "$(OPENSSLP)" ""
+else ifneq "$(wildcard /usr/local/opt/openssl@3/include/openssl/ssl.h)" ""
+OPENSSLP = /usr/local/opt/openssl@3
+OPENSSLV = .3
+else ifneq "$(wildcard /opt/homebrew/opt/openssl@3/include/openssl/ssl.h)" ""
+OPENSSLP = /opt/homebrew/opt/openssl@3
+OPENSSLV = .3
+else ifneq "$(wildcard /usr/local/opt/openssl@1.1/include/openssl/ssl.h)" ""
+OPENSSLP = /usr/local/opt/openssl@1.1
+OPENSSLV = .1.1
+else ifneq "$(wildcard /opt/homebrew/opt/openssl@1.1/include/openssl/ssl.h)" ""
+OPENSSLP = /opt/homebrew/opt/openssl@1.1
+OPENSSLV = .1.1
+else ifneq "$(wildcard /usr/local/opt/openssl/include/openssl/ssl.h)" ""
+OPENSSLP = /usr/local/opt/openssl
+else ifneq "$(wildcard /opt/homebrew/opt/openssl/include/openssl/ssl.h)" ""
+OPENSSLP = /opt/homebrew/opt/openssl
+else ifneq "$(wildcard /usr/include/openssl/ssl.h)" ""
+OPENSSLP = /usr/include
+endif
+ifeq "$(OPENSSLP)" ""
+$(warning WARNING: No OpenSSL support found, https support will be disabled.)
+else
+OPENSSLDEFS = -DMEOPT_OPENSSL=1 -I$(OPENSSLP)/include -D_OPENSSLLNM=libssl$(OPENSSLV).dylib -D_OPENSSLCNM=libcrypto$(OPENSSLV).dylib
+endif
 BCOR     = me
-BCOR_CDF = -D_SOCKET
-PRGLIBS  = $(TRDPARTY)/mesock/$(BOUTDIR)/mesock$(A) $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A) $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A)
+BCOR_CDF = -D_SOCKET $(OPENSSLDEFS)
+PRGLIBS  = $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A) $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A)
+
 endif
 
 #
@@ -120,12 +151,12 @@ PRGNAME  = $(BCOR)$(BTYP)
 PRGFILE  = $(PRGNAME)$(EXE)
 PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
 	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def \
-	   $(BUILDID).mak
+	   $(BUILDID).mak evers.mak
 PRGOBJS  = $(OUTDIR)/abbrev.o $(OUTDIR)/basic.o $(OUTDIR)/bind.o $(OUTDIR)/buffer.o $(OUTDIR)/crypt.o $(OUTDIR)/dirlist.o $(OUTDIR)/display.o \
 	   $(OUTDIR)/eval.o $(OUTDIR)/exec.o $(OUTDIR)/file.o $(OUTDIR)/fileio.o $(OUTDIR)/frame.o $(OUTDIR)/hash.o $(OUTDIR)/hilight.o $(OUTDIR)/history.o \
 	   $(OUTDIR)/input.o $(OUTDIR)/isearch.o $(OUTDIR)/key.o $(OUTDIR)/line.o $(OUTDIR)/macro.o $(OUTDIR)/main.o $(OUTDIR)/narrow.o $(OUTDIR)/next.o \
-	   $(OUTDIR)/osd.o $(OUTDIR)/print.o $(OUTDIR)/random.o $(OUTDIR)/regex.o $(OUTDIR)/region.o $(OUTDIR)/registry.o $(OUTDIR)/search.o $(OUTDIR)/spawn.o \
-	   $(OUTDIR)/spell.o $(OUTDIR)/tag.o $(OUTDIR)/termio.o $(OUTDIR)/time.o $(OUTDIR)/undo.o $(OUTDIR)/window.o $(OUTDIR)/word.o \
+	   $(OUTDIR)/osd.o $(OUTDIR)/print.o $(OUTDIR)/random.o $(OUTDIR)/regex.o $(OUTDIR)/region.o $(OUTDIR)/registry.o $(OUTDIR)/search.o $(OUTDIR)/sock.o \
+	   $(OUTDIR)/spawn.o $(OUTDIR)/spell.o $(OUTDIR)/tag.o $(OUTDIR)/termio.o $(OUTDIR)/time.o $(OUTDIR)/undo.o $(OUTDIR)/window.o $(OUTDIR)/word.o \
 	   $(OUTDIR)/unixterm.o
 #
 # Rules
@@ -153,18 +184,13 @@ $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A):
 $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A):
 	cd $(TRDPARTY)/tfs && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
 
-$(TRDPARTY)/mesock/$(BOUTDIR)/mesock$(A):
-	cd $(TRDPARTY)/mesock && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
-
 clean:
 	$(RMDIR) $(OUTDIR)
-	cd $(TRDPARTY)/mesock && $(MK) -f $(BUILDID).mak clean
 	cd $(TRDPARTY)/tfs && $(MK) -f $(BUILDID).mak clean
 	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak clean
 
 spotless: clean
 	$(RM) *~
 	$(RM) tags
-	cd $(TRDPARTY)/mesock && $(MK) -f $(BUILDID).mak spotless
 	cd $(TRDPARTY)/tfs && $(MK) -f $(BUILDID).mak spotless
 	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak spotless

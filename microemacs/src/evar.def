@@ -193,8 +193,11 @@ DEFVAR ("timestamp",           EVTIMSTMP)       /* Time stamp string */
 #if MEOPT_COLOR
 DEFVAR ("trunc-scheme",        EVTRNCSCHM)      /* Truncate colour  */
 #endif
-DEFVAR ("user-name",           EVUSERNAME)       /* User name */
-DEFVAR ("user-path",           EVUSERPATH)       /* User path - place to save files */
+#if MEOPT_EXTENDED
+DEFVAR ("unix-time",           EVUNIXTIME)      /* Current unix epoch time */
+#endif
+DEFVAR ("user-name",           EVUSERNAME)      /* User name */
+DEFVAR ("user-path",           EVUSERPATH)      /* User path - place to save files */
 #if MEOPT_EXTENDED
 DEFVAR ("variable-names",      EVVNAMES)        /* variable names access variable */
 #endif

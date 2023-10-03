@@ -220,8 +220,7 @@ bufferSetEdit(void)
         struct   meTimeval tp ;
         
         gettimeofday(&tp,NULL) ;
-        frameCur->bufferCur->autoTime = ((tp.tv_sec-startTime+autoTime)*1000) +
-              (tp.tv_usec/1000) ;
+        frameCur->bufferCur->autoTime = (int) (((tp.tv_sec-startTime+autoTime)*1000) + (tp.tv_usec/1000));
         if(!isTimerExpired(AUTOS_TIMER_ID) &&
            (!isTimerSet(AUTOS_TIMER_ID) || 
             (meTimerTime[AUTOS_TIMER_ID] > frameCur->bufferCur->autoTime)))

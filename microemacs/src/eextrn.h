@@ -169,10 +169,7 @@ extern	int	bclear(meBuffer *bp);
 extern  int     getBufferInfo(meInt *,meInt *,meInt *,meInt *) ;
 
 /* crypt.c externals */
-#if MEOPT_EXTENDED
-extern	void    xoshiro128Seed(meUInt ss);
-extern	meUInt  xoshiro128Next(void);
-#endif
+extern  void    mkTempName(meUByte *buf, meUByte *name, meUByte *ext);
 #if MEOPT_CRYPT
 extern  void    meCryptKeyEncode(meUInt *enc,meUByte *key, int len);
 extern  int	meCryptBufferSetKey(meBuffer *bp, meUByte *key);
@@ -418,7 +415,8 @@ extern int      createBackupName(meUByte *filename, meUByte *fn, meUByte backl, 
 #define meIOTYPE_DIRECTORY 0x0800
 
 /* meIOTYPE_PIPE is returned if url is NULL, meIOTYPE_NONE is returned if url does not start with a known URL, this is interpreted as a standard file name */ 
-extern meUByte  ffUrlGetType(meUByte *url);
+extern meUByte ffUrlGetType(meUByte *url);
+extern void ffSUrlLogger(meIo *io, meUByte type, meUByte *txt);
 #define ffUrlTypeIsSecure(ft)   ((ft) & meIOTYPE_SSL)
 #define ffUrlTypeIsPipe(ft)     ((ft) & meIOTYPE_PIPE)
 #define ffUrlTypeIsFile(ft)     ((ft) & meIOTYPE_FILE)
@@ -945,23 +943,46 @@ extern	int	replaceStr(int f, int n);
 extern	int	queryReplaceStr(int f, int n);
 extern	int	searchBuffer(int f, int n);
 
-/* spawn.c externals */
-#ifdef _UNIX
-extern  void    __mkTempName(meUByte *buf, meUByte *name);
-#define mkTempName(bb,nn,ee) __mkTempName((bb),(nn))
-#else
-extern  void    __mkTempName(meUByte *buf, meUByte *name, meUByte *ext);
-#define mkTempName(bb,nn,ee) __mkTempName((meUByte *)(bb),(meUByte *)(nn),(meUByte *)(ee))
-#endif
-#ifdef _WIN32
-extern void mkTempCommName(meUByte *filename, meUByte *basename) ;
-#else
-#define mkTempCommName(filename,basename) mkTempName(filename,basename,NULL)
-#endif
-#if MEOPT_SPAWN
+/* sock.c externals */
+#if MEOPT_SOCKET
 
-#define COMMAND_FILE         "stdout.~~~"
-#define DUMMY_STDIN_FILE     "stdin.~~~" 
+#define meSockFileInit(io) ((io)->urlFlags = 0)
+#define meSockIsInUse(io)  ((io)->urlFlags != 0)
+#define meSockIsFtp(io)    ((io)->urlFlags & meSOCKFLG_CTRL_INUSE)
+#define meSockDataIsInUse(io) ((io)->urlFlags & meSOCKFLG_INUSE)
+#define meSockControlIsInUse(io) ((io)->urlFlags & meSOCKFLG_CTRL_INUSE)
+
+int
+meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *user, meUByte *pass, meUByte *file, meCookie *cookie, 
+               meInt fdLen, meUByte *frmData, meUByte *postFName, meUByte *rbuff);
+
+
+int
+meSockFtpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *user, meUByte *pass, meUByte *rbuff);
+meInt
+meSockFtpCommand(meIo *io, meUByte *rbuff, char *fmt, ...);
+meInt
+meSockFtpReadReply(meIo *io, meUByte *buff);
+meInt
+meSockFtpGetDataChannel(meIo *io, meUByte *buff);
+meInt
+meSockFtpConnectData(meIo *io, meUByte *buff);
+
+
+int
+meSockRead(meIo *io, int sz, meUByte *rbuff, int rOffset);
+int
+meSockWrite(meIo *io, int sz, meUByte *wbuff, int wOffset);
+int
+meSockClose(meIo *io, int force);
+
+void
+meSockEnd();
+
+#endif
+
+/* spawn.c externals */
+#if MEOPT_SPAWN
 
 #define LAUNCH_BUFFERNM      0x00001      /* Use *command* buffer      */
 #define LAUNCH_WAIT          0x00001      /* shell-com wait -> LAUNCH_NOWAIT */
@@ -1007,8 +1028,6 @@ extern  int     anyActiveIpipe(void) ;
 #endif
 
 #if MEOPT_EXTENDED
-#define FILTER_IN_FILE    "fltinp.~~~"
-#define FILTER_OUT_FILE   "fltout.~~~"
 extern	int	meFilter(int f, int n);
 #ifdef _UNIX
 extern	int	suspendEmacs(int f, int n);
@@ -1190,7 +1209,7 @@ extern	int	countWords(int f, int n);
 
 struct meTimeval
 {
-    int tv_sec;                         /* Time in seconds */
+    meTime tv_sec;                      /* Time in seconds from unix epoch */
     int tv_usec;                        /* Time in milliseconds */
 };
 
@@ -1210,7 +1229,7 @@ extern void gettimeofday (struct meTimeval *tp, struct meTimezone *tz);
  * Why the hell we need these functions and the ANSI 'C' functions are not
  * valid is beyond belief - typical bloody Microsoft !!
  */
-#define meChdir(dir)        chdir((const char *)(dir))
+#define meChdir(dir)        _chdir((const char *)(dir))
 #define meRename(src,dst)   (MoveFile((const char *)(src),(const char *)(dst))==meFALSE)
 #define meUnlink(fn)        (DeleteFile((const char *)(fn))==meFALSE)
 #define meUnlinkNT(fn)      DeleteFile((const char *)(fn))
@@ -1235,11 +1254,13 @@ extern void WinShutdown (void);
 #else
 #define meExit(status)      (WinShutdown(), ExitProcess(status))
 #endif
+#define mePutenv(s1)        _putenv((char *)(s1))
 
 #else
 
-#define meTimeval  timeval
-#define meTimezone timezone
+#define mePutenv(s1)        putenv((char *)(s1))
+#define meTimeval           timeval
+#define meTimezone          timezone
 
 #endif
 
@@ -1425,7 +1446,6 @@ extern int      putenv(const char *s);
 #else
 #define meGetenv(s1)        ((void *) getenv((const char *)(s1)))
 #endif
-#define mePutenv(s1)        (putenv((char *)(s1)))
 #define meStrlen(s1)        strlen((const char *)(s1))
 #define meStrcmp(s1,s2)     strcmp((const char *)(s1),(const char *)(s2))
 #define meStrncmp(s1,s2,n)  strncmp((const char *)(s1),(const char *)(s2),(n))

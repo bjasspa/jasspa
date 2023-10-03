@@ -55,6 +55,8 @@ AR       = ar
 RM       = rm -f
 RMDIR    = rm -r -f
 
+include evers.mak
+
 TOOLKIT  = win32mingw
 ifeq "$(BPRF)" "1"
 BUILDID  = $(TOOLKIT)p
@@ -65,7 +67,7 @@ OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
 
-CCDEFS   = -D_MINGW -Wall -I$(TRDPARTY)/mesock -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib
+CCDEFS   = -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY) -D_MINGW -Wall -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib
 CCFLAGSR = -O3 -m32 -mfpmath=sse -Ofast -flto -march=native -funroll-loops -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g -D_DEBUG
 LDDEFS   = 
@@ -74,7 +76,7 @@ LDFLAGSD = -g
 LDLIBSB  = -lshell32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32
 ARFLAGSR = rcs
 ARFLAGSD = rcs
-RCFLAGS  = --input-format rc --output-format coff -D_MINGW
+RCFLAGS  = --input-format rc --output-format coff -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY) -D_MINGW
 
 ifeq "$(BCFG)" "debug"
 BOUTDIR  = $(OUTDIRD)
@@ -90,14 +92,35 @@ ARFLAGS  = $(ARFLAGSR)
 endif
 
 ifeq "$(BCOR)" "ne"
+
 BCOR_CDF = -D_NANOEMACS
 PRGLIBS  = 
 LDLIBS   = $(LDLIBSB)
+
 else
+
+ifneq "$(OPENSSLP)" ""
+else ifneq "$(wildcard $(TRDPARTY)/openssl-3.1/x86/include/openssl/ssl.h)" ""
+OPENSSLP = $(TRDPARTY)/openssl-3.1/x86
+OPENSSLV = -3_1
+else ifneq "$(wildcard $(TRDPARTY)/openssl-3/x86/include/openssl/ssl.h)" ""
+OPENSSLP = $(TRDPARTY)/openssl-3/x86
+OPENSSLV = -3
+else ifneq "$(wildcard $(TRDPARTY)/openssl-1.1/x86/include/openssl/ssl.h)" ""
+OPENSSLP = $(TRDPARTY)/openssl-1.1/x86
+OPENSSLV = -1_1
+endif
+ifeq "$(OPENSSLP)" ""
+$(warning WARNING: No OpenSSL support found, https support will be disabled.)
+else
+OPENSSLDEFS = -DMEOPT_OPENSSL=1 -I$(OPENSSLP)/include -D_OPENSSLLNM=libssl$(OPENSSLV) -D_OPENSSLCNM=libcrypto$(OPENSSLV)
+OPENSSLLIBS = $(OPENSSLP)/lib/libssl.lib $(OPENSSLP)/lib/libcrypto.lib -lcrypt32
+endif
 BCOR     = me
-BCOR_CDF = -D_SOCKET
-PRGLIBS  = $(TRDPARTY)/mesock/$(BOUTDIR)/mesock$(A) $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A) $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A)
-LDLIBS   = -lcrypt32 -lws2_32 -lmpr $(LDLIBSB)
+BCOR_CDF = -D_SOCKET $(OPENSSLDEFS)
+PRGLIBS  = $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A) $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A)
+LDLIBS   = $(OPENSSLLIBS) -lws2_32 -lmpr $(LDLIBSB)
+
 endif
 
 ifeq "$(BPRF)" "1"
@@ -126,12 +149,12 @@ PRGNAME  = $(BCOR)$(BTYP)32
 PRGFILE  = $(PRGNAME)$(EXE)
 PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
 	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def \
-	   $(TOOLKIT).mak
+	   $(TOOLKIT).mak evers.mak
 PRGOBJS  = $(OUTDIR)/abbrev.o $(OUTDIR)/basic.o $(OUTDIR)/bind.o $(OUTDIR)/buffer.o $(OUTDIR)/crypt.o $(OUTDIR)/dirlist.o $(OUTDIR)/display.o \
 	   $(OUTDIR)/eval.o $(OUTDIR)/exec.o $(OUTDIR)/file.o $(OUTDIR)/fileio.o $(OUTDIR)/frame.o $(OUTDIR)/hash.o $(OUTDIR)/hilight.o $(OUTDIR)/history.o \
 	   $(OUTDIR)/input.o $(OUTDIR)/isearch.o $(OUTDIR)/key.o $(OUTDIR)/line.o $(OUTDIR)/macro.o $(OUTDIR)/main.o $(OUTDIR)/narrow.o $(OUTDIR)/next.o \
-	   $(OUTDIR)/osd.o $(OUTDIR)/print.o $(OUTDIR)/random.o $(OUTDIR)/regex.o $(OUTDIR)/region.o $(OUTDIR)/registry.o $(OUTDIR)/search.o $(OUTDIR)/spawn.o \
-	   $(OUTDIR)/spell.o $(OUTDIR)/tag.o $(OUTDIR)/termio.o $(OUTDIR)/time.o $(OUTDIR)/undo.o $(OUTDIR)/window.o $(OUTDIR)/word.o \
+	   $(OUTDIR)/osd.o $(OUTDIR)/print.o $(OUTDIR)/random.o $(OUTDIR)/regex.o $(OUTDIR)/region.o $(OUTDIR)/registry.o $(OUTDIR)/search.o $(OUTDIR)/sock.o \
+	   $(OUTDIR)/spawn.o $(OUTDIR)/spell.o $(OUTDIR)/tag.o $(OUTDIR)/termio.o $(OUTDIR)/time.o $(OUTDIR)/undo.o $(OUTDIR)/window.o $(OUTDIR)/word.o \
 	   $(OUTDIR)/winterm.o $(OUTDIR)/winprint.o $(OUTDIR)/$(BCOR).coff
 #
 # Rules
@@ -161,18 +184,13 @@ $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A):
 $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A):
 	cd $(TRDPARTY)/tfs && $(MK) -f $(TOOLKIT).mak BCFG=$(BCFG) BPRF=$(BPRF)
 
-$(TRDPARTY)/mesock/$(BOUTDIR)/mesock$(A):
-	cd $(TRDPARTY)/mesock && $(MK) -f $(TOOLKIT).mak BCFG=$(BCFG) BPRF=$(BPRF)
-
 clean:
 	$(RMDIR) $(OUTDIR)
-	cd $(TRDPARTY)/mesock && $(MK) -f $(TOOLKIT).mak clean BCFG=$(BCFG) BPRF=$(BPRF)
 	cd $(TRDPARTY)/tfs && $(MK) -f $(TOOLKIT).mak clean BCFG=$(BCFG) BPRF=$(BPRF)
 	cd $(TRDPARTY)/zlib && $(MK) -f $(TOOLKIT).mak clean BCFG=$(BCFG) BPRF=$(BPRF)
 
 spotless: clean
 	$(RM) *~
 	$(RM) tags
-	cd $(TRDPARTY)/mesock && $(MK) -f $(TOOLKIT).mak spotless BCFG=$(BCFG) BPRF=$(BPRF)
 	cd $(TRDPARTY)/tfs && $(MK) -f $(TOOLKIT).mak spotless BCFG=$(BCFG) BPRF=$(BPRF)
 	cd $(TRDPARTY)/zlib && $(MK) -f $(TOOLKIT).mak spotless BCFG=$(BCFG) BPRF=$(BPRF)

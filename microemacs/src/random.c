@@ -58,22 +58,31 @@ meRealloc(void *r, size_t s)
 }
 
 void *
-meStrdup(const meUByte *s)
+meStrdup(const meUByte *ss)
 {
-    void *r ;
-    if((r = strdup((const char *) s)) == NULL)
-        mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Warning! Malloc failure") ;
-    return r ;
+    size_t ll = strlen((char *) ss) + 1;
+    void *rr;
+    if((rr = malloc(ll)) == NULL)
+        mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Warning! Malloc failure");
+    else
+        memcpy(rr,ss,ll);
+    return rr;
 }
 #endif
 
 void
-meStrrep(meUByte **d, const meUByte *s)
+meStrrep(meUByte **dd, const meUByte *ss)
 {
-    if(*d != NULL)
-        free(*d) ;
-    if((*d = (meUByte *) strdup((const char *) s)) == NULL)
-        mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Warning! Malloc failure") ;
+    size_t ll;
+    void *rr;
+    if(*dd != NULL)
+        free(*dd);
+    ll = strlen((char *) ss) + 1;
+    if((rr = malloc(ll)) == NULL)
+        mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Warning! Malloc failure");
+    else
+        memcpy(rr,ss,ll);
+    *dd = (meUByte *) rr;
 }
 
 /* case insensitive str compare
@@ -2941,7 +2950,7 @@ callBackHandler(void)
 {
     struct meTimeval tp ;
     register meMacro *mac ;
-    register meInt tim, next=0x7fffffff ;
+    register time_t tim, next=0x7fffffff ;
     register int ii ;
     
     gettimeofday(&tp,NULL) ;
@@ -2997,7 +3006,7 @@ callBackHandler(void)
             next = mac->callback ;
     }
     if(next != 0x7fffffff)
-        timerSet(CALLB_TIMER_ID,next,next-tim) ;
+        timerSet(CALLB_TIMER_ID,next,(meInt) (next-tim)) ;
     else
         timerClearExpired(CALLB_TIMER_ID) ;
     if(tim & 0x40000000)

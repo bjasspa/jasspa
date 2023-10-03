@@ -294,7 +294,6 @@
 #define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
 #define _SOCKET        1                /* Supports url reading          */
 #define _IPIPES        1                /* platform supports Inc. pipes  */
-#define _NOSTRDUP      1                /* No strdup                     */
 #define _NOPUTENV      1                /* No putenv support             */
 
 /* NeXT provides us with libc.h this includes all of the API definitions for
@@ -594,15 +593,13 @@ typedef   signed int   meInt;
 typedef unsigned int   meUInt;
 typedef   signed long long meLong;
 typedef unsigned long long meULong;
+typedef   time_t       meTime;
 
 /* Fix any default search path */
 #ifndef _DEFAULT_SEARCH_PATH
 #define _DEFAULT_SEARCH_PATH ""
 #endif
 
-#if MEOPT_SOCKET
-#include <mesock.h>     /* Use meSock for http(s).       */
-#endif
 #if MEOPT_TFS
 #include <tfs.h>        /* Tack-on file system defs.     */
 #endif

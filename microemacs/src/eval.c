@@ -69,6 +69,53 @@ meDirList  fileNames={1,0,NULL,NULL,0,NULL,0} ;
 meNamesList commNames={1,0,NULL,NULL,0} ;
 meNamesList modeNames={0,MDNUMMODES,modeName,NULL,0} ;
 meNamesList varbNames={1,0,NULL,NULL,0} ;
+
+/* Init as if user called &set $random 1 */
+static meUInt meRndS[4] = { 0x5e2d1772,0x14e498f0,0xd20ea1fd,0xb382f339 };
+
+/* splitMix32 & xoshiro128++ PRNGs - see crypt.c for details, dup'd here as
+ * user can set and control state which is not good for crypt use. */
+void
+meXoshiro128Seed(meUInt ss)
+{
+    meUInt sd, vv;
+    int ii=3; 
+    
+    if(ss)
+        sd = ss;
+    else
+#ifdef _WIN32
+        sd = ((meUInt) GetTickCount()) ^ (((meUInt) GetCurrentProcessId()) << 12);
+#else
+        sd = ((meUInt) time(NULL)) ^ (((meUInt) getpid()) << 12);
+#endif
+    do {
+        vv = (sd += 0x9e3779b9);
+        vv ^= vv >> 16;
+        vv *= 0x21f0aaad;
+        vv ^= vv >> 15;
+        vv *= 0x735a2d97;
+        meRndS[ii] = vv ^ (vv >> 15);
+    } while(--ii >= 0);
+}
+
+#define meXoshiro128Rotl(xx,kk) (((xx) << (kk)) | ((xx) >> (32 - (kk))))
+
+meUInt
+meXoshiro128Next(void)
+{
+    register meUInt rr=meRndS[0] + meRndS[3], tt=meRndS[1] << 9;
+    rr = meXoshiro128Rotl(rr,7) + meRndS[0];
+
+    meRndS[2] ^= meRndS[0];
+    meRndS[3] ^= meRndS[1];
+    meRndS[1] ^= meRndS[2];
+    meRndS[0] ^= meRndS[3];
+    meRndS[2] ^= tt;
+    meRndS[3] = meXoshiro128Rotl(meRndS[3],11);
+
+    return rr;
+}
 #endif
 
 /* The following horrid global variable solves a horrid problem, consider:
@@ -612,7 +659,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             timeOffset = meAtoi(vvalue);
             break;
         case EVRANDOM:
-            xoshiro128Seed((meUInt) meAtoi(vvalue));
+            meXoshiro128Seed((meUInt) meAtoi(vvalue));
             break ;
 #endif
         case EVFRMDPTH:
@@ -1205,10 +1252,10 @@ handle_namesvar:
             if(regexStrCmp(ss,mv->mask,(mv->exact) ? meRSTRCMP_WHOLE:meRSTRCMP_ICASE|meRSTRCMP_WHOLE))
                 return ss ;
         }
-        return emptym ;
+        return emptym;
     case EVTEMPNAME:
-        mkTempName (evalResult, NULL,NULL);
-        return evalResult ;
+        mkTempName(evalResult,NULL,NULL);
+        return evalResult;
 #endif
     case EVVERSION:
         return (meUByte *) meVERSION_CODE ;
@@ -1263,7 +1310,7 @@ handle_namesvar:
              *       ME interprets numbers of the form 0## as octagon based numbers
              *       so in september the number is 09 which is illegal etc.
              */
-            sprintf((char *) evalResult, "%4d%3d%2d%2d%1d%2d%2d%2d%3d",
+            sprintf((char *) evalResult,"%4d%3d%2d%2d%1d%2d%2d%2d%3d",
                     time_ptr->tm_year+1900,  /* Year - 2000 should be ok !! */
                     time_ptr->tm_yday,       /* Year day */
                     time_ptr->tm_mon+1,      /* Month */
@@ -1275,7 +1322,11 @@ handle_namesvar:
                     (int) (tp.tv_usec/1000));/* Milliseconds */
             return evalResult;
         }
-    case EVRANDOM:      return meItoa((xoshiro128Next() >> 8));
+    case EVUNIXTIME:
+        sprintf((char *) evalResult,"%d",(unsigned int) time(NULL));
+        return evalResult;
+        
+    case EVRANDOM:      return meItoa((meXoshiro128Next() >> 8));
 #endif
     case EVFRMDPTH:     return meItoa(frameCur->depth + 1);
 #if MEOPT_EXTENDED
@@ -3147,23 +3198,24 @@ get_flag:
                 
             case 'd':
                 /* file date stamp to int */
-#ifdef _WIN32
-                /* returns true if file time is the initialize value */
-                if((stats.stmtime.dwHighDateTime == -1) && (stats.stmtime.dwLowDateTime = -1))
-                    ftype = -1;
-                else
+                if(meFiletimeIsSet(stats.stmtime))
                 {
-                    /* Convert the file time into standard unix epoch time, this will fail in 2038 */
+#ifdef _WIN32
+                    /* Convert the file time into standard unix epoch time */
                     ULARGE_INTEGER uli;
                     uli.LowPart = stats.stmtime.dwLowDateTime;
                     uli.HighPart = stats.stmtime.dwHighDateTime;
-                    uli.QuadPart /= 10000000;
-                    uli.QuadPart -= 11644473600;
-                    ftype = uli.LowPart;
-                }
+                    sprintf((char *)evalResult,"%llu",((uli.QuadPart / 10000000) - 11644473600));
 #else
-                ftype = stats.stmtime;
+#ifdef _UNIX
+                    sprintf((char *)evalResult,"%ld",stats.stmtime);
+#else
+                    sprintf((char *)evalResult,"%u",stats.stmtime);
 #endif
+#endif
+                    return evalResult;
+                }
+                ftype = -1;
                 break ;
                 
             case 'i':

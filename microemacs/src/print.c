@@ -1380,9 +1380,9 @@ printSection (meWindow *wp, long sLineNo, long numLines, meLine *sLine, meLine *
     case PDEST_COMLINE:
     case PDEST_FILE:
         if ((printer.param [mePS_FILE].p == NULL) || (*printer.param [mePS_FILE].p == '\0'))
-            mkTempName (fname, NULL, "prt");
+            mkTempName(fname,NULL,(meUByte *)"prt");
         else
-            meStrcpy (fname,printer.param [mePS_FILE].p);
+            meStrcpy(fname,printer.param[mePS_FILE].p);
 
         /* Endevour to open the file */
         if ((fp = fopen ((char *)fname, "wb")) == NULL)

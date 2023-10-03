@@ -1377,7 +1377,7 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
         
 #ifdef _UNIX
         if ((tmp = localtime(&fnode->mtime)) != NULL)
-            len += sprintf((char *)buf+len, "%4d/%02d/%02d %02d:%02d:%02d ",
+            len += sprintf((char *)buf+len, "%4d-%02d-%02d %02d:%02d:%02d ",
                            tmp->tm_year+1900, tmp->tm_mon+1, tmp->tm_mday,
                            tmp->tm_hour, tmp->tm_min, tmp->tm_sec);
         
@@ -1385,7 +1385,7 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
 #endif
 #ifdef _DOS
             if((fnode->mtime & 0x0ffff) != 0x7fff)
-            len += sprintf((char *)buf+len, "%4d/%02d/%02d %02d:%02d:%02d ",
+            len += sprintf((char *)buf+len, "%4d-%02d-%02d %02d:%02d:%02d ",
                            (int) ((fnode->mtime >> 25) & 0x007f)+1980,
                            (int) ((fnode->mtime >> 21) & 0x000f),
                            (int) ((fnode->mtime >> 16) & 0x001f),
@@ -1397,11 +1397,11 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
 #ifdef _WIN32
             if(FileTimeToLocalFileTime(&fnode->mtime,&ftmp) &&
                FileTimeToSystemTime(&ftmp,&tmp))
-            len += sprintf((char *)buf+len, "%4d/%02d/%02d %02d:%02d:%02d ",
+            len += sprintf((char *)buf+len, "%4d-%02d-%02d %02d:%02d:%02d ",
                            tmp.wYear,tmp.wMonth,tmp.wDay,tmp.wHour,tmp.wMinute,tmp.wSecond) ;
         else
 #endif
-            len += sprintf((char *)buf+len, "--/--/-- --:--:-- ") ;
+            len += sprintf((char *)buf+len, "XXXX-XX-XX XX:XX:XX ") ;
         
         len += sprintf ((char *)buf+len, "%s", fnode->fname);
         if(fnode->attrib[0] == 'd')
@@ -2864,9 +2864,9 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
     meUByte *gwdbuf;
 #endif
     
-    fileNameConvertDirChar(oldName) ;
-    flag = 0 ;
-    p = p1 = oldName ;
+    fileNameConvertDirChar(oldName);
+    flag = 0;
+    p = p1 = oldName;
     /* search for
      * 1) set to root,  xxxx/http:// -> http://  (for urls)
      * 2) set to root,  xxxx/ftp://  -> ftp://   (for urls)
@@ -2881,264 +2881,270 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
         ft = ffUrlGetType(p1);
         if(ffUrlTypeIsHttp(ft))
         {
-            flag = 2 ;
-            urls = p1 ;
-            if((p=meStrchr(p1+7+(ft & meIOTYPE_SSL),DIR_CHAR)) == NULL)
-                p = p1 + meStrlen(p1) ;
-            p1 = p ;
+            flag = 2;
+            urls = p1;
+            if((p=meStrchr((urle=p1+7+(ft & meIOTYPE_SSL)),DIR_CHAR)) == NULL)
+                break;
+            p1 = p;
         }
         else if(ffUrlTypeIsFtp(ft))
         {
             flag = 3 ;
             urls = p1 ;
-            if((p=meStrchr(p1+6+(((ft & (meIOTYPE_SSL|meIOTYPE_FTPE))) ? 1:0),DIR_CHAR)) == NULL)
-                p = p1 + meStrlen(p1) ;
-            urle = p ;
-            p1 = p ;
+            if((p=meStrchr((urle=p1+6+(((ft & (meIOTYPE_SSL|meIOTYPE_FTPE))) ? 1:0)),DIR_CHAR)) == NULL)
+                break;
+            urle = p;
+            p1 = p;
         }
         else if(ffUrlTypeIsTfs(ft))
         {
-            flag = 3 ;
-            urls = p1 ;
-            if((p=meStrchr(p1+5,DIR_CHAR)) == NULL)
-                p = p1 + meStrlen(p1) ;
-            urle = p ;
-            p1 = p ;
+            flag = 3;
+            urls = p1;
+            if((p=meStrchr(p1+6,DIR_CHAR)) == NULL)
+                p = p1 + meStrlen(p1);
+            urle = p;
+            p1 = p;
         }
         else if(ffUrlTypeIsFile(ft))
         {
-            flag = 0 ;
-            p1 += 5 ;
-            p = p1 ;
+            flag = 0;
+            p1 += 5;
+            p = p1;
             /* loop here as if at the start of the file name, this
              * is so it handles "file:ftp://..." correctly */
-            continue ;
+            continue;
         }
-        else if(flag != 2)
+        else if(flag == 2)
+            p = p1;
+        /* note that ftp://... names are still processed, ftp://.../xxx//yyy -> ftp://.../yyy etc */
+        else if(p1[0] == DIR_CHAR)
         {
-            /* note that ftp://... names are still processed, ftp://.../xxx//yyy -> ftp://.../yyy etc */
-            if(p1[0] == DIR_CHAR)
-            {
 #ifndef _UNIX
-                if(p1[1] == DIR_CHAR)
-                {
-                    /* Got a xxxx///yyyyy -> //yyyyy must not optimise further */
-                    flag = 1 ;
-                    while(p1[2] == DIR_CHAR)
-                        p1++ ;
-                    urls = p1 ;
-                    if((p=meStrchr(p1+2,DIR_CHAR)) == NULL)
-                        p = p1 + meStrlen(p1) ;
-                    urle = p ;
-                    p1 = p ;
-                }
-                else
-#endif
-                    /* Got a xxxx//yyyyy -> /yyyyy */
-                    p = p1 ;
-            }
-            else if(p1[0] == '~')
+            if(p1[1] == DIR_CHAR)
             {
-                /* Got a home, xxx/~/yyy -> ~/yyy, xxx/~yyy  -> ~yyy, ftp://.../xxx/~/yyy -> ftp://.../~/yyy */
-                if(flag == 3)
-                {
-                    if(p1[1] == '/')
-                    {
-                        /* for ftp ~/ only, allow ftp://.../~/../../../yyy */
-                        p = p1-1 ;
-                        while(!meStrncmp(p1+2,"../",3))
-                            p1 = p1+3 ;
-                    }
-                }
-                else
-                    p = p1 ;
+                /* Got a xxxx///yyyyy -> //yyyyy must not optimise further */
+                flag = 1 ;
+                while(p1[2] == DIR_CHAR)
+                    p1++ ;
+                urls = p1 ;
+                if((p=meStrchr(p1+2,DIR_CHAR)) == NULL)
+                    p = p1 + meStrlen(p1);
+                urle = p;
+                p1 = p;
             }
-#ifdef _DRV_CHAR
-            else if(isAlpha(p1[0]) && (p1[1] == _DRV_CHAR))
-            {
-                /* got a Drive, xxxx/z:yyyyy -> z:yyyyy - remove ftp:// or //yyyy/... */
-                flag = 0 ;
-                p = p1 ;
-            }
+            else
 #endif
+                /* Got a xxxx//yyyyy -> /yyyyy */
+                p = p1;
         }
-        if((p1=meStrchr(p1,DIR_CHAR)) == NULL)
-            break ;
-        p1++ ;
+        else if(p1[0] == '~')
+        {
+            /* Got a home, xxx/~/yyy -> ~/yyy, xxx/~yyy  -> ~yyy, ftp://.../xxx/~/yyy -> ftp://.../~/yyy */
+            if(flag == 3)
+            {
+                if(p1[1] == '/')
+                {
+                    /* for ftp ~/ only, allow ftp://.../~/../../../yyy */
+                    p = p1-1 ;
+                    while(!meStrncmp(p1+2,"../",3))
+                        p1 = p1+3 ;
+                }
+            }
+            else
+                p = p1;
+        }
+#ifdef _DRV_CHAR
+        else if(isAlpha(p1[0]) && (p1[1] == _DRV_CHAR))
+        {
+            /* got a Drive, xxxx/z:yyyyy -> z:yyyyy - remove ftp:// or //yyyy/... */
+            flag = 0;
+            p = p1;
+        }
+#endif
+        if(((p1=meStrchr(p1,DIR_CHAR)) == NULL) || (*++p1 == '\0'))
+            break;
     }
     
     p1 = newName ;
-    if(flag == 2)
-        meStrcpy(p1,urls) ;
-    else
+    if((flag == 2) || (p == NULL))
     {
-        if(flag)
+        meStrcpy(p1,urls);
+        if(p == NULL)
         {
-            int ll= (size_t) urle - (size_t) urls ;
-            meStrncpy(p1,urls,ll) ;
-            p1 += ll ;
+            /* http://xxx -> http://xxx/ */
+            p = p1 + meStrlen(p1);
+            *p++ = DIR_CHAR;
+            *p = '\0';
+            if(baseName != NULL)
+                *baseName = p1 + (urle-urls);
         }
-        urle = p1 ;
-        if(p[0] == '\0')
+        else if(baseName != NULL)
+            *baseName = p1 + (p-urls);
+        return;
+    }
+    if(flag)
+    {
+        int ll = (size_t) urle - (size_t) urls;
+        meStrncpy(p1,urls,ll);
+        p1 += ll;
+    }
+    urle = p1;
+    if(p[0] == '\0')
+    {
+        *p1++ = DIR_CHAR;
+        *p1 = '\0';
+    }
+    else if((flag == 0) && (p[0] == '~'))
+    {
+        p++;
         {
-            *p1++ = DIR_CHAR ;
-            *p1 = '\0' ;
-        }
-        else if((flag == 0) && (p[0] == '~'))
-        {
-            p++ ;
-            {
 #if MEOPT_REGISTRY
-                meRegNode *reg=NULL ;
-                meUByte *pe ;
-                int ll ;
-                
-                if((nameType == PATHNAME_PARTIAL) && (meStrchr(p,DIR_CHAR) == NULL))
-                {
-                    /* special case when user is entering a file name and uses complete with 'xxxx/~yy' */
-                    *p1++ = '~' ;
-                    meStrcpy(p1,p) ;
-                    if(baseName != NULL)
-                        *baseName = p1 ;
-                    return ;
-                }
-                if((p[0] != '\0') && (p[0] != DIR_CHAR) && ((reg = regFind(NULL,(meUByte *)"history/alias-path")) != NULL) &&
-                   ((reg = regGetChild(reg)) != NULL))
-                {
-                    /* look for an alias/abbrev path */
-                    if((pe = meStrchr(p,DIR_CHAR)) == NULL)
-                        ll = meStrlen(p) ;
-                    else
-                        ll = (int) (((size_t) pe) - ((size_t) (p))) ;
-                    
-                    while((reg != NULL) && (((int) meStrlen(reg->name) != ll) || meStrncmp(p,reg->name,ll)))
-                        reg = regGetNext(reg) ;
-                }
-                if(reg != NULL)
-                {
-                    if(reg->value != NULL)
-                    {
-                        meStrcpy(p1,reg->value) ;
-                        p1 += meStrlen(p1) - 1 ;
-                        if(p1[0] != DIR_CHAR)
-                            p1++ ;
-                    }
-                    p += ll ;
-                }
-                else
-#endif
-                    if(homedir != NULL)
-                {
-                    meStrcpy(p1,homedir) ;
-                    p1 += meStrlen(p1) - 1 ;
-                    if((p[0] != '\0') && (p[0] != DIR_CHAR))
-                    {
-                        *p1++ = DIR_CHAR ;
-                        *p1++ = '.' ;
-                        *p1++ = '.' ;
-                        *p1++ = DIR_CHAR ;
-                    }
-                }
-                else
-                    p-- ;
+            meRegNode *reg=NULL ;
+            meUByte *pe ;
+            int ll ;
+            
+            if((nameType == PATHNAME_PARTIAL) && (meStrchr(p,DIR_CHAR) == NULL))
+            {
+                /* special case when user is entering a file name and uses complete with 'xxxx/~yy' */
+                *p1++ = '~' ;
                 meStrcpy(p1,p) ;
+                if(baseName != NULL)
+                    *baseName = p1 ;
+                return ;
             }
-        }
-	else if(flag)
-            meStrcpy(p1,p) ;
-#ifdef _DRV_CHAR
-        /* case for /xxxx... */
-        else if(p[0] == DIR_CHAR)
-        {
-            if((p != oldName) && (oldName[1] == _DRV_CHAR))
-                /* file name was D:xxxxxx//yyyyyy, convert to D:/yyyyyy */
-                p1[0] = oldName[0] ;
-            else
-                /* file name is /yyyyyy, convert to D:/yyyyyy */
-                p1[0] = curdir[0] ;
-            p1[1] = _DRV_CHAR ;
-            meStrcpy(p1+2,p) ;
-        }
-        /* case for xxxx... */
-        else if(p[1] != _DRV_CHAR)
-#else
-        /* case for xxxx... */
-        else if(p[0] != DIR_CHAR)
-#endif
-        {
-            meStrcpy(p1,curdir) ;
-            meStrcat(p1,p) ;
-        }
-#ifdef _DRV_CHAR
-        /* case for D:xxxxxx */
-        else if((p[1] == _DRV_CHAR) && (p[2] != DIR_CHAR) &&
-                ((gwdbuf = gwd(p[0])) != NULL))
-        {
-            meStrcpy(p1,gwdbuf) ;
-            meStrcat(p1,p+2) ;
-            meFree(gwdbuf) ;
-        }
-#endif
-        else
-            meStrcpy(p1,p) ;
-    }
-    if(flag != 2)
-    {
-        p = NULL ;
-        p1 = urle ;
-        if((flag == 3) && !meStrncmp(p1,"/~/",3))
-        {
-            /* for ftp ~/ only, allow ftp://xxx/~/../../../yyy */
-            p1 += 2 ;
-            while(!meStrncmp(p1+1,"../",3))
-                p1 = p1+3 ;
-        }
-        while((p1=meStrchr(p1,DIR_CHAR)) != NULL)
-        {
-            if((p1[1] == '.') && (p1[2] == '.') &&         /* got /../YYYY */
-               ((p1[3] == DIR_CHAR) || ((nameType == PATHNAME_COMPLETE) && (p1[3] == '\0'))))
+            if((p[0] != '\0') && (p[0] != DIR_CHAR) && ((reg = regFind(NULL,(meUByte *)"history/alias-path")) != NULL) &&
+               ((reg = regGetChild(reg)) != NULL))
             {
-                if(p == NULL)        /* got /../YYYY */
-                {
-#ifdef _DRV_CHAR
-                    /* check for X:/../YYYY */
-                    if(urle[1] == _DRV_CHAR)
-                        p = urle+2 ;
-                    else
-#endif
-                        p = urle ;
-                }
-                /* else got /XXX/../YYYY */
-                
-                p1 += 3 ;
-                while((*p++ = *p1++) != '\0')
-                    ;
-                p = NULL ;
-                p1 = urle ;
-            }
-            else if((p1[1] == '.') &&                      /* got /./YYYY */
-                    ((p1[2] == DIR_CHAR) || ((nameType == PATHNAME_COMPLETE) && (p1[2] == '\0'))))
-            {
-                meUByte *tt ;
-                tt = p1+2 ;
-                while((*p1++ = *tt++) != '\0')
-                    ;
-                if(p == NULL)
-                    p1 = urle ;
+                /* look for an alias/abbrev path */
+                if((pe = meStrchr(p,DIR_CHAR)) == NULL)
+                    ll = meStrlen(p) ;
                 else
-                    p1 = p ;
+                    ll = (int) (((size_t) pe) - ((size_t) (p))) ;
+                
+                while((reg != NULL) && (((int) meStrlen(reg->name) != ll) || meStrncmp(p,reg->name,ll)))
+                    reg = regGetNext(reg) ;
+            }
+            if(reg != NULL)
+            {
+                if(reg->value != NULL)
+                {
+                    meStrcpy(p1,reg->value) ;
+                    p1 += meStrlen(p1) - 1 ;
+                    if(p1[0] != DIR_CHAR)
+                        p1++ ;
+                }
+                p += ll ;
             }
             else
-            {
-                p = p1 ;
-                p1++ ;
-            }
-        }
-#ifdef _SINGLE_CASE
-        if(flag == 0)
-            makestrlow(newName) ;
 #endif
+                if(homedir != NULL)
+            {
+                meStrcpy(p1,homedir) ;
+                p1 += meStrlen(p1) - 1 ;
+                if((p[0] != '\0') && (p[0] != DIR_CHAR))
+                {
+                    *p1++ = DIR_CHAR ;
+                    *p1++ = '.' ;
+                    *p1++ = '.' ;
+                    *p1++ = DIR_CHAR ;
+                }
+            }
+            else
+                p-- ;
+            meStrcpy(p1,p) ;
+        }
     }
+    else if(flag)
+        meStrcpy(p1,p) ;
+#ifdef _DRV_CHAR
+    /* case for /xxxx... */
+    else if(p[0] == DIR_CHAR)
+    {
+        if((p != oldName) && (oldName[1] == _DRV_CHAR))
+            /* file name was D:xxxxxx//yyyyyy, convert to D:/yyyyyy */
+            p1[0] = oldName[0] ;
+        else
+            /* file name is /yyyyyy, convert to D:/yyyyyy */
+            p1[0] = curdir[0] ;
+        p1[1] = _DRV_CHAR ;
+        meStrcpy(p1+2,p) ;
+    }
+    /* case for xxxx... */
+    else if(p[1] != _DRV_CHAR)
+#else
+    /* case for xxxx... */
+    else if(p[0] != DIR_CHAR)
+#endif
+    {
+        meStrcpy(p1,curdir) ;
+        meStrcat(p1,p) ;
+    }
+#ifdef _DRV_CHAR
+    /* case for D:xxxxxx */
+    else if((p[1] == _DRV_CHAR) && (p[2] != DIR_CHAR) &&
+            ((gwdbuf = gwd(p[0])) != NULL))
+    {
+        meStrcpy(p1,gwdbuf) ;
+        meStrcat(p1,p+2) ;
+        meFree(gwdbuf) ;
+    }
+#endif
+    else
+        meStrcpy(p1,p) ;
+    p = NULL ;
+    p1 = urle ;
+    if((flag == 3) && !meStrncmp(p1,"/~/",3))
+    {
+        /* for ftp ~/ only, allow ftp://xxx/~/../../../yyy */
+        p1 += 2 ;
+        while(!meStrncmp(p1+1,"../",3))
+            p1 = p1+3 ;
+    }
+    while((p1=meStrchr(p1,DIR_CHAR)) != NULL)
+    {
+        if((p1[1] == '.') && (p1[2] == '.') &&         /* got /../YYYY */
+           ((p1[3] == DIR_CHAR) || ((nameType == PATHNAME_COMPLETE) && (p1[3] == '\0'))))
+        {
+            if(p == NULL)        /* got /../YYYY */
+            {
+#ifdef _DRV_CHAR
+                /* check for X:/../YYYY */
+                if(urle[1] == _DRV_CHAR)
+                    p = urle+2 ;
+                else
+#endif
+                    p = urle ;
+            }
+            /* else got /XXX/../YYYY */
+            
+            p1 += 3 ;
+            while((*p++ = *p1++) != '\0')
+                ;
+            p = NULL ;
+            p1 = urle ;
+        }
+        else if((p1[1] == '.') &&                      /* got /./YYYY */
+                ((p1[2] == DIR_CHAR) || ((nameType == PATHNAME_COMPLETE) && (p1[2] == '\0'))))
+        {
+            meUByte *tt ;
+            tt = p1+2 ;
+            while((*p1++ = *tt++) != '\0')
+                ;
+            if(p == NULL)
+                p1 = urle ;
+            else
+                p1 = p ;
+        }
+        else
+        {
+            p = p1 ;
+            p1++ ;
+        }
+    }
+#ifdef _SINGLE_CASE
+    if(flag == 0)
+        makestrlow(newName) ;
+#endif
     if(baseName != NULL)
     {
         meUByte cc ;

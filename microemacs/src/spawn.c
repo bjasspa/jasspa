@@ -79,122 +79,6 @@
 #include <process.h>
 #endif
 
-
-/*
- * Create a temporary name for any command spawn files. On windows & dos
- * concatinate the $TEMP variable with the filename to create the new
- * temporary file name.
- *
- * Under unix create /tmp/me<pid><name>
- * Otherwise create $TEMP/<name>
- * On non-unix systems an extension can be passed in, see macro def in
- * eextrn.h
- */
-#ifdef _UNIX
-void
-__mkTempName (meUByte *buf, meUByte *name)
-{
-    /* Under UNIX use the process id in order to create the temporary file
-     * for this session of me
-     */
-    if(name != NULL)
-        sprintf((char *)buf, "/tmp/me%d%s",(int) getpid(),name);
-    else
-    {
-        strcpy((char *)buf, "/tmp/meXXXXXX") ;
-        mktemp((char *)buf) ;
-    }
-}
-
-#else
-
-void
-__mkTempName (meUByte *buf, meUByte *name, meUByte *ext)
-{
-#ifdef _CONVDIR_CHAR
-#define PIPEDIR_CHAR _CONVDIR_CHAR
-#else
-#define PIPEDIR_CHAR DIR_CHAR
-#endif
-    static meUByte *tmpDir=NULL ;
-    meUByte *pp ;
-    int ii ;
-
-    if(tmpDir == NULL)
-    {
-        /* Get location of the temporary directory from the environment $TEMP */
-        if((((pp = (meUByte *) meGetenv ("TMP")) == NULL) || meTestDir(pp)) &&
-           (((pp = (meUByte *) meGetenv ("TEMP")) == NULL) || meTestDir(pp)))
-        {
-            pp = NULL ;
-#if (defined _DOS) || (defined _WIN32)
-            /* the C drive is more reliable than ./ as ./ could be on a CD-Rom etc, but in recent
-             * versions of windows c:\ is readonly so look around for a temp folder */
-            if(!meTestDir((meUByte *) "c:\\tmp\\"))
-                tmpDir = (meUByte *) "c:\\tmp\\" ;
-            else if(!meTestDir((meUByte *) "c:\\temp\\"))
-                tmpDir = (meUByte *) "c:\\temp\\" ;
-#if (defined _WIN32)
-            else if(((pp = (meUByte *) meGetenv ("USERPROFILE")) != NULL) && !meTestDir(pp))
-            {
-                ii = meStrlen(pp) ;
-                memcpy(buf,pp,ii) ;
-                if(buf[ii-1] != PIPEDIR_CHAR)
-                    buf[ii++] = PIPEDIR_CHAR ;
-                meStrcpy(buf+ii,"Local Settings\\Temp") ;
-                if(!meTestDir(buf))
-                    pp = buf ;
-            }
-            else if(((pp = (meUByte *) meGetenv ("WINDIR")) != NULL) && !meTestDir(pp))
-            {
-                ii = meStrlen(pp) ;
-                memcpy(buf,pp,ii) ;
-                if(buf[ii-1] != PIPEDIR_CHAR)
-                    buf[ii++] = PIPEDIR_CHAR ;
-                meStrcpy(buf+ii,"Temp") ;
-                if(!meTestDir(buf))
-                    pp = buf ;
-            }
-#endif
-#endif
-        }
-        if(tmpDir == NULL)
-        {
-            if((pp != NULL) && ((ii = meStrlen(pp)) > 0) && ((tmpDir = meMalloc(ii+2)) != NULL))
-            {
-                meStrcpy(tmpDir,pp) ;
-                if(tmpDir[ii-1] != PIPEDIR_CHAR)
-                {
-                    tmpDir[ii++] = PIPEDIR_CHAR ;
-                    tmpDir[ii]   = '\0' ;
-                }
-            }
-            else 
-#if (defined _DOS) || (defined _WIN32)
-                tmpDir = (meUByte *) "c:\\" ;
-#else
-                tmpDir = (meUByte *) "./" ;
-#endif
-        }
-    }
-    if(ext == NULL)
-        ext = (meUByte *) "" ;
-
-    if(name != NULL)
-        sprintf((char *)buf, "%sme%s%s",tmpDir,name,ext) ;
-    else
-    {
-        for(ii=0 ; ii<999 ; ii++)
-        {
-            sprintf((char *)buf, "%smetmp%d%s",tmpDir,ii,ext) ;
-            if(meTestExist(buf))
-                break ;
-        }
-
-    }
-}
-#endif
-
 #if MEOPT_SPAWN
 
 #ifdef _UNIX
@@ -2083,7 +1967,7 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
 #else
     meUByte filnam[meBUF_SIZE_MAX] ;
 
-    mkTempCommName(filnam,(meUByte *) COMMAND_FILE) ;
+    mkTempName(filnam,NULL,NULL);
 #endif
     
     /* get rid of the output buffer if it exists and create new */
@@ -2333,25 +2217,25 @@ meFilter(int f, int n)
     meUByte filnam2[meBUF_SIZE_MAX];
 
     /* Construct the filter names */
-    mkTempName (filnam1,(meUByte *)FILTER_IN_FILE,NULL);
-    mkTempName (filnam2,(meUByte *)FILTER_OUT_FILE,NULL);
+    mkTempName(filnam1,NULL,NULL);
+    mkTempName(filnam2,NULL,NULL);
 
     /* get the filter name and its args */
-    if ((s=meGetString((meUByte *)"Filter", 0, 0, line, meBUF_SIZE_MAX)) <= 0)
-        return s ;
+    if((s=meGetString((meUByte *)"Filter",0,0,line,meBUF_SIZE_MAX)) <= 0)
+        return s;
 
     if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
-        return s ;
+        return s;
 
     /* setup the proper file names */
     bp = frameCur->bufferCur;
-    tmpnam = bp->fileName ;	/* save the original name */
-    bp->fileName = NULL ;	/* set it to NULL         */
+    tmpnam = bp->fileName;	/* save the original name */
+    bp->fileName = NULL;	/* set it to NULL         */
 
     /* write it out, checking for errors */
     if(writeOut(bp,meRWFLAG_SILENT,filnam1) <= 0)
     {
-        bp->fileName = tmpnam ;
+        bp->fileName = tmpnam;
         return mlwrite(MWABORT,(meUByte *)"[Cannot write filter file]");
     }
 
@@ -2376,9 +2260,9 @@ meFilter(int f, int n)
 #ifdef _UNIX
     TTclose();			/* stty to old modes	*/
     meStrcat(line," <");
-    meStrcat(line, filnam1);
+    meStrcat(line,filnam1);
     meStrcat(line," >");
-    meStrcat(line, filnam2);
+    meStrcat(line,filnam2);
     errno = 0;			/* clear errno before call */
     if((exitstatus = system((char *)line)) != 0)
     {
@@ -2401,7 +2285,7 @@ meFilter(int f, int n)
             s = meFALSE ;
     }
     /* reset file name */
-    bp->fileName = tmpnam ;
+    bp->fileName = tmpnam;
     /* and get rid of the temporary file */
     meUnlinkNT(filnam1);
     meUnlinkNT(filnam2);
@@ -2409,9 +2293,9 @@ meFilter(int f, int n)
     if(s <= 0)
         mlwrite(0,(meUByte *)"[Execution failed]");
     else
-        meModeSet(bp->mode,MDEDIT) ;		/* flag it as changed */
+        meModeSet(bp->mode,MDEDIT);		/* flag it as changed */
 
-    return s ;
+    return s;
 }
 #endif
 

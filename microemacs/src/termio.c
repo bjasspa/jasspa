@@ -127,13 +127,13 @@ TTbell(void)
     TTdoBell(1) ;
 }
 
-meUByte meTimerState[NUM_TIMERS]={0} ;/* State of the timers, set or expired */
-meInt meTimerTime[NUM_TIMERS]={0} ; /* Absolute time of the timers */
+meUByte meTimerState[NUM_TIMERS]={0}; /* State of the timers, set or expired */
+meTime meTimerTime[NUM_TIMERS]={0};   /* Absolute time of the timers */
 
 #ifdef _MULTI_TIMER
 
 #ifdef _WIN32
-static INT meTimerId[NUM_TIMERS]={0} ;      /* Windows timer handles          */
+static INT meTimerId[NUM_TIMERS]={0}; /* Windows timer handles          */
 #define meSetMultiTimer(id,tim)  (meTimerId[id]=SetTimer(baseHwnd,id,tim,(TIMERPROC)(LPVOID)NULL))
 #define meKillMultiTimer(id)                                                 \
 do {                                                                         \
@@ -217,7 +217,7 @@ TIMERBLOCK *timers = NULL ;                 /* Head of timer list             */
  */
 
 void
-timerCheck(meInt tim)
+timerCheck(meTime tim)
 {
     TIMERBLOCK *tbp;                    /* Current timer block */
     TIMERBLOCK *ntbp;                   /* Next timer block */
@@ -282,7 +282,7 @@ timerCheck(meInt tim)
  * offset - offset from the current time to alarm.
  */
 void
-timerSet(int id, meInt tim, meInt offset)
+timerSet(int id, meTime tim, meInt offset)
 {
 #if (defined _CONST_TIMER) || (defined _SINGLE_TIMER)
     TIMERBLOCK *tbp;
@@ -499,10 +499,11 @@ handleTimerExpired(void)
 }
 
 void
-adjustStartTime(meInt tim)
+adjustStartTime(meTime tim)
 {
     meBuffer *bp ;
-    meInt ii, mstim=tim*1000 ;
+    meTime mstim=tim*1000 ;
+    meInt ii;
 #if MEOPT_CALLBACK
     meMacro *mac ;
 #endif

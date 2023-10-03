@@ -55,21 +55,32 @@ AR       = lib /NOLOGO
 RM       = del /F /Q
 RMDIR    = rd /S /Q
 
-BUILDID  = win32vc10
+include evers.mak
+
+TOOLKIT  = win32vc10
+!IF "$(LSTT)" == "1"
+BUILDID  = $(TOOLKIT)s
+CCLSTT   = /MT
+LDLSTT   = /NODEFAULTLIB:msvcrt.lib
+!ELSE
+BUILDID  = $(TOOLKIT)
+CCLSTT   = /MD
+LDLSTT   = 
+!ENDIF
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..\3rdparty
 
-CCDEFS   = /DWIN32 /D_WIN32 /D_WIN32_WINNT=0x0600 /W3 /Zi /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /I$(TRDPARTY)\mesock /I$(TRDPARTY)\tfs /I$(TRDPARTY)\zlib
-CCFLAGSR = /MD /O2 /GL /GR- /GS- /DNDEBUG=1 /D_HAS_ITERATOR_DEBUGGING=0 /D_SECURE_SCL=0
-CCFLAGSD = /MDd /Od /RTC1 /D_DEBUG
-LDDEFS   = /INCREMENTAL:NO /MACHINE:X86 /MANIFEST
+CCDEFS   = /DmeVER_CN=$(meVER_CN) /DmeVER_YR=$(meVER_YR) /DmeVER_MN=$(meVER_MN) /DmeVER_DY=$(meVER_DY) /DWIN32 /D_WIN32 /D_WIN32_WINNT=0x0600 /W3 /Zi /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /I$(TRDPARTY)\tfs /I$(TRDPARTY)\zlib
+CCFLAGSR = $(CCLSTT) /O2 /GL /GR- /GS- /DNDEBUG=1 /D_HAS_ITERATOR_DEBUGGING=0 /D_SECURE_SCL=0
+CCFLAGSD = $(CCLSTT)d /Od /RTC1 /D_DEBUG
+LDDEFS   = /INCREMENTAL:NO /MACHINE:X86 /MANIFEST $(LDLSTT)
 LDFLAGSR = /OPT:REF /OPT:ICF=3 /LTCG
 LDFLAGSD = /DEBUG
 LDLIBSB  = shell32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib
 ARFLAGSR = /LTCG
 ARFLAGSD =
-RCFLAGS  =
+RCFLAGS  = /DmeVER_CN=$(meVER_CN) /DmeVER_YR=$(meVER_YR) /DmeVER_MN=$(meVER_MN) /DmeVER_DY=$(meVER_DY)
 
 !IF "$(BCFG)" == "debug"
 BOUTDIR  = $(OUTDIRD)
@@ -84,14 +95,36 @@ ARFLAGS  = $(ARFLAGSR)
 !ENDIF
 
 !IF "$(BCOR)" == "ne"
+
 BCOR_CDF = /D_NANOEMACS
 PRGLIBS  = 
 LDLIBS   = $(LDLIBSB)
+
 !ELSE
+
+!IF "$(OPENSSLP)" != ""
+!ELSEIF EXISTS($(TRDPARTY)\openssl-3.1\x86\include\openssl\ssl.h)
+OPENSSLP = $(TRDPARTY)\openssl-3.1\x86
+OPENSSLV = -3_1
+!ELSEIF EXISTS($(TRDPARTY)\openssl-3\x86\include\openssl\ssl.h)
+OPENSSLP = $(TRDPARTY)\openssl-3\x86
+OPENSSLV = -3
+!ELSEIF EXISTS($(TRDPARTY)\openssl-1.1\x86\include\openssl\ssl.h)
+OPENSSLP = $(TRDPARTY)\openssl-1.1\x86
+OPENSSLV = -1_1
+!ENDIF
+!IF "$(OPENSSLP)" == ""
+!MESSAGE WARNING: No OpenSSL support found, https support will be disabled.
+!MESSAGE
+!ELSE
+OPENSSLDEFS = /DMEOPT_OPENSSL=1 /I$(OPENSSLP)\include /D_OPENSSLLNM=libssl$(OPENSSLV) /D_OPENSSLCNM=libcrypto$(OPENSSLV)
+OPENSSLLIBS = $(OPENSSLP)\lib\libssl.lib $(OPENSSLP)\lib\libcrypto.lib crypt32.lib
+!ENDIF
 BCOR     = me
-BCOR_CDF = /D_SOCKET
-PRGLIBS  = $(TRDPARTY)\mesock\$(BOUTDIR)\mesock.lib $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib $(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib
-LDLIBS   = crypt32.lib ws2_32.lib mpr.lib $(LDLIBSB)
+BCOR_CDF = /D_SOCKET $(OPENSSLDEFS)
+PRGLIBS  = $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib $(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib
+LDLIBS   = $(OPENSSLLIBS) ws2_32.lib mpr.lib $(LDLIBSB)
+
 !ENDIF
 
 !IF "$(BTYP)" == "c"
@@ -111,12 +144,12 @@ PRGNAME  = $(BCOR)$(BTYP)32
 PRGFILE  = $(PRGNAME)$(EXE)
 PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
 	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def \
-	   $(BUILDID).mak
+	   $(TOOLKIT).mak evers.mak
 PRGOBJS  = $(OUTDIR)\abbrev.o $(OUTDIR)\basic.o $(OUTDIR)\bind.o $(OUTDIR)\buffer.o $(OUTDIR)\crypt.o $(OUTDIR)\dirlist.o $(OUTDIR)\display.o \
 	   $(OUTDIR)\eval.o $(OUTDIR)\exec.o $(OUTDIR)\file.o $(OUTDIR)\fileio.o $(OUTDIR)\frame.o $(OUTDIR)\hash.o $(OUTDIR)\hilight.o $(OUTDIR)\history.o \
 	   $(OUTDIR)\input.o $(OUTDIR)\isearch.o $(OUTDIR)\key.o $(OUTDIR)\line.o $(OUTDIR)\macro.o $(OUTDIR)\main.o $(OUTDIR)\narrow.o $(OUTDIR)\next.o \
-	   $(OUTDIR)\osd.o $(OUTDIR)\print.o $(OUTDIR)\random.o $(OUTDIR)\regex.o $(OUTDIR)\region.o $(OUTDIR)\registry.o $(OUTDIR)\search.o $(OUTDIR)\spawn.o \
-	   $(OUTDIR)\spell.o $(OUTDIR)\tag.o $(OUTDIR)\termio.o $(OUTDIR)\time.o $(OUTDIR)\undo.o $(OUTDIR)\window.o $(OUTDIR)\word.o \
+	   $(OUTDIR)\osd.o $(OUTDIR)\print.o $(OUTDIR)\random.o $(OUTDIR)\regex.o $(OUTDIR)\region.o $(OUTDIR)\registry.o $(OUTDIR)\search.o $(OUTDIR)\sock.o \
+	   $(OUTDIR)\spawn.o $(OUTDIR)\spell.o $(OUTDIR)\tag.o $(OUTDIR)\termio.o $(OUTDIR)\time.o $(OUTDIR)\undo.o $(OUTDIR)\window.o $(OUTDIR)\word.o \
 	   $(OUTDIR)\winterm.o $(OUTDIR)\winprint.o $(OUTDIR)\$(BCOR).res
 #
 # Rules
@@ -130,10 +163,12 @@ PRGOBJS  = $(OUTDIR)\abbrev.o $(OUTDIR)\basic.o $(OUTDIR)\bind.o $(OUTDIR)\buffe
 
 all: $(PRGLIBS) $(OUTDIR)\$(PRGFILE)
 
-$(OUTDIR)\$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
+$(OUTDIR)\$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS) $(TOOLKIT).mak
 	$(RM) $@
-	$(LD) $(LDDEFS) $(BTYP_LDF) $(LDFLAGS) /PDB:"$(OUTDIR)\$(PRGNAME).pdb" /MANIFESTFILE:"$@.intermediate.manifest" /OUT:"$@" $(PRGOBJS) $(PRGLIBS) $(LDLIBS)
-	$(MT) -outputresource:"$@;#2" -manifest $@.intermediate.manifest
+	$(LD) $(LDDEFS) $(BTYP_LDF) $(LDFLAGS) /PDB:"$(OUTDIR)\$(PRGNAME).pdb" /OUT:"$@" $(PRGOBJS) $(PRGLIBS) $(LDLIBS)
+	(echo ^<?xml version="1.0" encoding="UTF-8" standalone="yes"?^> & echo ^<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"^> & echo ^<assemblyIdentity version="$(meVER_YR).$(meVER_MN).$(meVER_DY).0" processorArchitecture="X86" name="mecw32.exe" type="win32"/^> & echo ^<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"^> & echo ^<security^> & echo ^<requestedPrivileges^> & echo ^<requestedExecutionLevel level="asInvoker" uiAccess="false"/^> & echo ^</requestedPrivileges^> & echo ^</security^> & echo ^</trustInfo^> & echo ^</assembly^>) > $@.manifest
+	$(MT) -manifest $@.manifest -validate_manifest
+	$(MT) -outputresource:"$@;#1" -manifest $@.manifest
 
 $(PRGOBJS): $(PRGHDRS)
 
@@ -142,40 +177,29 @@ $(OUTDIR):
 
 $(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib:
 	cd $(TRDPARTY)\zlib
-	$(MK) -f $(BUILDID).mak BCFG=$(BCFG)
+	$(MK) -f $(TOOLKIT).mak BCFG=$(BCFG) LSTT=$(LSTT)
 	cd $(MAKEDIR)
 
 $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib:
 	cd $(TRDPARTY)\tfs
-	$(MK) -f $(BUILDID).mak BCFG=$(BCFG)
-	cd $(MAKEDIR)
-
-$(TRDPARTY)\mesock\$(BOUTDIR)\mesock.lib:
-	cd $(TRDPARTY)\mesock
-	$(MK) -f $(BUILDID).mak BCFG=$(BCFG)
+	$(MK) -f $(TOOLKIT).mak BCFG=$(BCFG) LSTT=$(LSTT)
 	cd $(MAKEDIR)
 
 clean:
 	if exist $(OUTDIR)\ $(RMDIR) $(OUTDIR)
-	cd $(TRDPARTY)\mesock
-	$(MK) -f $(BUILDID).mak clean
-	cd $(MAKEDIR)
 	cd $(TRDPARTY)\tfs
-	$(MK) -f $(BUILDID).mak clean
+	$(MK) -f $(TOOLKIT).mak clean BCFG=$(BCFG) LSTT=$(LSTT)
 	cd $(MAKEDIR)
 	cd $(TRDPARTY)\zlib
-	$(MK) -f $(BUILDID).mak clean
+	$(MK) -f $(TOOLKIT).mak clean BCFG=$(BCFG) LSTT=$(LSTT)
 	cd $(MAKEDIR)
 
 spotless: clean
 	$(RM) *~
 	$(RM) tags
-	cd $(TRDPARTY)\mesock
-	$(MK) -f $(BUILDID).mak spotless
-	cd $(MAKEDIR)
 	cd $(TRDPARTY)\tfs
-	$(MK) -f $(BUILDID).mak spotless
+	$(MK) -f $(TOOLKIT).mak spotless BCFG=$(BCFG) LSTT=$(LSTT)
 	cd $(MAKEDIR)
 	cd $(TRDPARTY)\zlib
-	$(MK) -f $(BUILDID).mak spotless
+	$(MK) -f $(TOOLKIT).mak spotless BCFG=$(BCFG) LSTT=$(LSTT)
 	cd $(MAKEDIR)

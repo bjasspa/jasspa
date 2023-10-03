@@ -486,13 +486,13 @@ void
 gettimeofday (struct meTimeval *tp, struct meTimezone *tz)
 {
     SYSTEMTIME stime;
-    UNREFERENCED_PARAMETER (tz);
+    UNREFERENCED_PARAMETER(tz);
     
     /* Get the second resolution time */
-    tp->tv_sec = (int) time(NULL) ;
+    tp->tv_sec = time(NULL);
     
     /* Get the microsecond time */
-    GetLocalTime(&stime) ;
+    GetLocalTime(&stime);
     tp->tv_usec = (long)(stime.wMilliseconds * 1000);
 }
 
@@ -506,88 +506,78 @@ void
 TTopenClientServer(void)
 {
     /* If the server has not been created then create it now */
-    if (serverHandle == INVALID_HANDLE_VALUE)
+    if(serverHandle == INVALID_HANDLE_VALUE)
     {
-        meIPipe *ipipe ;
-        meBuffer *bp ;
-        meMode sglobMode ;
-        meUByte fname [meBUF_SIZE_MAX];
-        meInt ii ;
+        meIPipe *ipipe;
+        meBuffer *bp;
+        meMode sglobMode;
+        meUByte fname[meBUF_SIZE_MAX];
+        meInt ii;
         
         /* create the response file name */
-        mkTempName(fname,meUserName,".rsp");
+        mkTempName(fname,meUserName,(meUByte *) ".rsp");
         
         /* Open the response file for read/write, if this fails we are not the server, another ME is */
-        if ((clientHandle = CreateFile ((LPCSTR) fname,
-                                        GENERIC_WRITE,
-                                        FILE_SHARE_READ,
-                                        NULL,
-                                        CREATE_ALWAYS,
-                                        FILE_ATTRIBUTE_NORMAL,
-                                        NULL)) == INVALID_HANDLE_VALUE)
+        if((clientHandle = CreateFile((LPCSTR) fname,GENERIC_WRITE,FILE_SHARE_READ,NULL,CREATE_ALWAYS,
+                                      FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
         {
             meSystemCfg &= ~meSYSTEM_CLNTSRVR ;
             return ;
         }
         /* Open command file for read/write */
-        mkTempName(fname,meUserName,".cmd");
-        if ((serverHandle = CreateFile ((LPCSTR) fname,
-                                        GENERIC_READ,
-                                        FILE_SHARE_READ|FILE_SHARE_WRITE,
-                                        NULL,
-                                        CREATE_ALWAYS,
-                                        FILE_ATTRIBUTE_NORMAL,
-                                        NULL)) == INVALID_HANDLE_VALUE)
+        mkTempName(fname,meUserName,(meUByte *) ".cmd");
+        if((serverHandle = CreateFile((LPCSTR) fname,GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,
+                                      CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
         {
             CloseHandle (clientHandle);
             clientHandle = INVALID_HANDLE_VALUE;
-            meSystemCfg &= ~meSYSTEM_CLNTSRVR ;
-            return ;
+            meSystemCfg &= ~meSYSTEM_CLNTSRVR;
+            return;
         }
         /* Create the ipipe buffer */
-        meModeCopy(sglobMode,globMode) ;
-        meModeSet(globMode,MDPIPE) ;
-        meModeSet(globMode,MDLOCK) ;
-        meModeSet(globMode,MDHIDE) ;
-        meModeClear(globMode,MDWRAP) ;
-        meModeClear(globMode,MDUNDO) ;
+        meModeCopy(sglobMode,globMode);
+        meModeSet(globMode,MDPIPE);
+        meModeSet(globMode,MDLOCK);
+        meModeSet(globMode,MDHIDE);
+        meModeClear(globMode,MDWRAP);
+        meModeClear(globMode,MDUNDO);
         if(((bp=bfind((meUByte *) "*server*",BFND_CREAT)) == NULL) ||
            ((ipipe = meMalloc(sizeof(meIPipe))) == NULL))
         {
             CloseHandle (clientHandle);
             CloseHandle (serverHandle);
             clientHandle = INVALID_HANDLE_VALUE;
-            serverHandle = INVALID_HANDLE_VALUE ;
-            meSystemCfg &= ~meSYSTEM_CLNTSRVR ;
-            return ;
+            serverHandle = INVALID_HANDLE_VALUE;
+            meSystemCfg &= ~meSYSTEM_CLNTSRVR;
+            return;
         }
-        meModeCopy(globMode,sglobMode) ;
-        bp->intFlag |= BIFNODEL ;
-        ipipe->next = ipipes ;
-        ipipe->pid = 0 ;
-        ipipe->rfd = serverHandle ;
-        ipipe->outWfd = clientHandle ;
-        ipipe->process = 0 ;
-        ipipe->processId = 0 ;
-        ipipe->thread = NULL ;
-        ipipe->childActive = NULL ;
-        ipipe->threadContinue = NULL ;
-        ipipes = ipipe ;
-        noIpipes++ ;
-        ipipe->bp = bp ;
+        meModeCopy(globMode,sglobMode);
+        bp->intFlag |= BIFNODEL;
+        ipipe->next = ipipes;
+        ipipe->pid = 0;
+        ipipe->rfd = serverHandle;
+        ipipe->outWfd = clientHandle;
+        ipipe->process = 0;
+        ipipe->processId = 0;
+        ipipe->thread = NULL;
+        ipipe->childActive = NULL;
+        ipipe->threadContinue = NULL;
+        ipipes = ipipe;
+        noIpipes++;
+        ipipe->bp = bp;
         /* setup the response file and server buffer */
         {
-            meUByte buff[meBUF_SIZE_MAX+20] ;
+            meUByte buff[meBUF_SIZE_MAX+20];
             
-            ii = sprintf((char *)buff,"%d\n",(int) baseHwnd) ;
-            WriteFile(clientHandle,buff,ii,(DWORD *)&ii,NULL) ;
+            ii = sprintf((char *)buff,"%d\n",(int) baseHwnd);
+            WriteFile(clientHandle,buff,ii,(DWORD *)&ii,NULL);
             
-            sprintf((char *)buff,"Client Server: %s\n\n",fname) ;
-            addLineToEob(bp,buff) ;     /* Add string */
-            bp->dotLine = meLineGetPrev(bp->baseLine) ;
-            bp->dotOffset = 0 ;
-            bp->dotLineNo = bp->lineCount-1 ;
-            meAnchorSet(bp,'I',bp->dotLine,bp->dotLineNo,bp->dotOffset,1) ;
+            sprintf((char *)buff,"Client Server: %s\n\n",fname);
+            addLineToEob(bp,buff);     /* Add string */
+            bp->dotLine = meLineGetPrev(bp->baseLine);
+            bp->dotOffset = 0;
+            bp->dotLineNo = bp->lineCount-1;
+            meAnchorSet(bp,'I',bp->dotLine,bp->dotLineNo,bp->dotOffset,1);
         }
         /* Set up the window dimensions - default to having auto wrap */
         ipipe->flag = 0 ;
@@ -652,10 +642,10 @@ TTkillClientServer (void)
         meSystemCfg &= ~meSYSTEM_CLNTSRVR ;
         
         /* remove the command and response files */
-        mkTempName(fname, meUserName, ".cmd");
-        DeleteFile((char*) fname);
-        mkTempName(fname, meUserName, ".rsp");
-        DeleteFile((char*) fname);
+        mkTempName(fname,meUserName,(meUByte *) ".cmd");
+        DeleteFile((char *) fname);
+        mkTempName(fname,meUserName,(meUByte *) ".rsp");
+        DeleteFile((char *) fname);
     }
     if (connectHandle != INVALID_HANDLE_VALUE)
     {
@@ -676,7 +666,7 @@ TTconnectClientServer (void)
         
         /* Create the file name, if the file exists, or deleting it
          * succeeds then there is no server, fail */
-        mkTempName (fname, meUserName, ".cmd");
+        mkTempName(fname,meUserName,(meUByte *) ".cmd");
         if(meTestExist(fname) || DeleteFile((LPCSTR) fname))
             return 0 ;
         if ((connectHandle = CreateFile((LPCSTR) fname, GENERIC_WRITE, FILE_SHARE_READ, NULL,
@@ -686,7 +676,7 @@ TTconnectClientServer (void)
         SetFilePointer (connectHandle,0,NULL,FILE_END);
         
         /* Try opening the response file and get the base window handle value */
-        mkTempName (fname, meUserName, ".rsp");
+        mkTempName(fname,meUserName,(meUByte *) ".rsp");
         if ((hndl = CreateFile((LPCSTR) fname, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE, NULL,
                                OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL)) != INVALID_HANDLE_VALUE)
         {
@@ -886,9 +876,9 @@ meGetConsoleMessage(MSG *msg, int mode)
         /* if ReadConsoleInput fails we have lost the console input
          * and as the user is waiting on this bomb out */
         if(!mode)
-            meDie() ;
-        hInput = INVALID_HANDLE_VALUE ;
-        return meFALSE ;
+            meDie();
+        hInput = INVALID_HANDLE_VALUE;
+        return meFALSE;
     }
     /* Let the proper event handler field this event */
     if (ir.EventType == KEY_EVENT)
@@ -2047,31 +2037,6 @@ do_unlock:
     CloseClipboard();
 }
 
-#if MEOPT_SPAWN
-void
-mkTempCommName(meUByte *filename, meUByte *basename)
-{
-    HANDLE hdl ;
-    meUByte *ss ;
-    int ii ;
-    
-    mkTempName(filename,basename,NULL) ;
-    ss = filename+meStrlen(filename) - 3 ;
-    for(ii=0 ; ii<999 ; ii++)
-    {
-        if(meTestExist(filename))
-            break ;
-        else if ((hdl = CreateFile((LPCSTR) filename,GENERIC_READ,FILE_SHARE_READ,NULL,
-                                   OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) != INVALID_HANDLE_VALUE)
-        {
-            CloseHandle(hdl);
-            break ;
-        }
-        sprintf((char *) ss,"%d~",ii) ;
-    }
-}
-#endif /* MEOPT_SPAWN */
-
 #if MEOPT_IPIPES
 #ifdef USE_BEGINTHREAD
 void
@@ -2231,8 +2196,8 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         if((outFile == NULL) && ((flags & (LAUNCH_SYSTEM|LAUNCH_FILTER|LAUNCH_IPIPE)) == 0))
         {
             /* Create the output file */
-            mkTempCommName(pipeOutFile,(meUByte *) COMMAND_FILE) ;
-            outFile = pipeOutFile ;
+            mkTempName(pipeOutFile,NULL,NULL);
+            outFile = pipeOutFile;
         }
 #ifdef _WIN32s
         status = strlen(ss) + strlen(outFile) + 16 ;
@@ -2425,63 +2390,62 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
                 /* Create a dummy input file to stop the process from locking up.
                  *
                  * Construct the dummy input file */
-                mkTempName (dummyInFile, DUMMY_STDIN_FILE,NULL);
+                mkTempName(dummyInFile,NULL,NULL);
                 
                 if ((dumHdl = CreateFile((const char *) dummyInFile,GENERIC_WRITE,FILE_SHARE_WRITE,NULL,
                                          CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) != INVALID_HANDLE_VALUE)
                     CloseHandle (dumHdl);
                 
                 /* Re-open the file for reading */
-                if ((dumHdl = CreateFile((const char *) dummyInFile,GENERIC_READ,FILE_SHARE_READ,&sbuts,
+                if((dumHdl = CreateFile((const char *) dummyInFile,GENERIC_READ,FILE_SHARE_READ,&sbuts,
                                          OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
                 {
-                    DeleteFile((const char *) dummyInFile) ;
-                    CloseHandle(meSuInfo.hStdOutput) ;
-                    meFree(cmdLine) ;
+                    DeleteFile((const char *) dummyInFile);
+                    CloseHandle(meSuInfo.hStdOutput);
+                    meFree(cmdLine);
                     return meFALSE;
                 }
                 meSuInfo.hStdInput = dumHdl;
                 /* Duplicate stdout => stderr, don't really care if this fails */
-                DuplicateHandle (GetCurrentProcess (), meSuInfo.hStdOutput,
-                                 GetCurrentProcess (), &meSuInfo.hStdError,0,meTRUE,
-                                 DUPLICATE_SAME_ACCESS) ;
+                DuplicateHandle(GetCurrentProcess(),meSuInfo.hStdOutput,
+                                GetCurrentProcess(),&meSuInfo.hStdError,0,meTRUE,
+                                DUPLICATE_SAME_ACCESS);
 #endif
             }
 #ifndef _WIN32s
-            meSuInfo.dwFlags |= STARTF_USESTDHANDLES ;
+            meSuInfo.dwFlags |= STARTF_USESTDHANDLES;
 #endif
         }
 #ifndef _WIN32_WINNT
 #ifndef _WIN32s
         else if(platformId == VER_PLATFORM_WIN32_WINDOWS)
         {
-            /* For some reason Win98 shell-command start-up path is incorrect
-             * unless a dummy input file is used, no idea why but doing the
-             * following (taken from above) works! */
-            mkTempName (dummyInFile, DUMMY_STDIN_FILE,NULL);
+            /* For some reason Win98 shell-command start-up path is incorrect unless a dummy input
+             * file is used, no idea why but doing the following (taken from above) works! */
+            mkTempName(dummyInFile,NULL,NULL);
             
-            if ((dumHdl = CreateFile((const char *) dummyInFile,GENERIC_WRITE,FILE_SHARE_WRITE,NULL,
-                                     CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) != INVALID_HANDLE_VALUE)
+            if((dumHdl = CreateFile((const char *) dummyInFile,GENERIC_WRITE,FILE_SHARE_WRITE,NULL,
+                                    CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) != INVALID_HANDLE_VALUE)
                 CloseHandle (dumHdl);
             
             /* Re-open the file for reading */
-            if ((dumHdl = CreateFile((const char *) dummyInFile,GENERIC_READ,FILE_SHARE_READ,NULL,
+            if((dumHdl = CreateFile((const char *) dummyInFile,GENERIC_READ,FILE_SHARE_READ,NULL,
                                      OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
             {
-                DeleteFile((const char *) dummyInFile) ;
-                CloseHandle(meSuInfo.hStdOutput) ;
-                meFree(cmdLine) ;
+                DeleteFile((const char *) dummyInFile);
+                CloseHandle(meSuInfo.hStdOutput);
+                meFree(cmdLine);
                 return meFALSE;
             }
             meSuInfo.hStdInput = dumHdl;
-            meSuInfo.dwFlags |= STARTF_USESTDHANDLES ;
+            meSuInfo.dwFlags |= STARTF_USESTDHANDLES;
         }
 #endif
 #endif
     }
 #ifdef _WIN32s
     if((cmdLine == NULL) || (flags & LAUNCH_NOCOMSPEC))
-        status = SynchSpawn(cp, /*SW_HIDE*/SW_SHOWNORMAL);
+        status = SynchSpawn(cp,/*SW_HIDE*/SW_SHOWNORMAL);
     else
     {
         meUByte buff[1024];
@@ -2491,23 +2455,23 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         _getcwd(buff,1024);
         
         /* Create a BAT file to hold the command */
-        mkTempName(dummyInFile,NULL, ".bat");
+        mkTempName(dummyInFile,NULL,".bat");
         
-        if ((fp = fopen (dummyInFile, "w")) != NULL)
+        if((fp = fopen(dummyInFile, "w")) != NULL)
         {
             /* Change drive */
-            fprintf (fp, "%c:\n", buff[0]);
+            fprintf(fp,"%c:\n",buff[0]);
             /* Change directory */
-            fprintf (fp, "cd %s\n", buff);
+            fprintf(fp,"cd %s\n",buff);
             /* Do the command */
-            fprintf (fp, "%s\n", cp);
-            fclose (fp);
+            fprintf(fp,"%s\n",cp);
+            fclose(fp);
             
-            strcpy(buff,compSpecName) ;
-            strcat(buff," /c ") ;
+            strcpy(buff,compSpecName);
+            strcat(buff," /c ");
             strcat(buff,dummyInFile);
             
-            status = SynchSpawn(buff, /*SW_HIDE*/SW_SHOWNORMAL);
+            status = SynchSpawn(buff,/*SW_HIDE*/SW_SHOWNORMAL);
         }
         else
             status = 0;
@@ -2517,18 +2481,12 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         status = meFALSE;
 #else /* ! _WIN32s */
     /* start the process and get a handle on it */
-    if(CreateProcess (NULL,
-                      (char *) cp,
-                      NULL,
-                      NULL,
+    if(CreateProcess (NULL,(char *) cp,NULL,NULL,
                       ((flags & (LAUNCH_SHELL|LAUNCH_NOWAIT)) ? meFALSE:meTRUE),
                       ((flags & LAUNCH_DETACHED) ? DETACHED_PROCESS : CREATE_NEW_CONSOLE),
-                      NULL,
-                      NULL,
-                      &meSuInfo,
-                      &mePInfo))
+                      NULL,NULL,&meSuInfo,&mePInfo))
     {
-        status = meTRUE ;
+        status = meTRUE;
         CloseHandle(mePInfo.hThread);
         /* Ipipes need the process handle and we dont wait for it */
         if((flags & LAUNCH_IPIPE) == 0)
@@ -2537,36 +2495,36 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
             if((flags & (LAUNCH_SHELL|LAUNCH_NOWAIT)) == 0)
             {
                 /* Wait for filter, system and pipe process to end */
-                for (;;)
+                for(;;)
                 {
                     DWORD procStatus;
                     
-                    procStatus = WaitForSingleObject (mePInfo.hProcess, 200);
-                    if (procStatus == WAIT_TIMEOUT)
+                    procStatus = WaitForSingleObject(mePInfo.hProcess,200);
+                    if(procStatus == WAIT_TIMEOUT)
                     {
-                        if (TTahead() && (TTbreakFlag != 0))
+                        if(TTahead() && (TTbreakFlag != 0))
                             status = meTRUE;
                         else
                             continue;
                     }
-                    else if (procStatus == WAIT_FAILED)
+                    else if(procStatus == WAIT_FAILED)
                         status = meFALSE;
                     else
                         status = meTRUE;
                     /* If we're interested in the result, get it */
                     if(sysRet != NULL)
-                        GetExitCodeProcess(mePInfo.hProcess, (LPDWORD) sysRet) ;
+                        GetExitCodeProcess(mePInfo.hProcess,(LPDWORD) sysRet);
                     break;
                 }
             }
             /* Close the process */
-            CloseHandle (mePInfo.hProcess);
+            CloseHandle(mePInfo.hProcess);
         }
     }
     else
     {
-        mlwrite(0,(meUByte *)"[Failed to run \"%s\"]",cp) ;
-        status = meFALSE ;
+        mlwrite(0,(meUByte *)"[Failed to run \"%s\"]",cp);
+        status = meFALSE;
     }
     /* Close the file handles */
     if(meSuInfo.hStdInput != INVALID_HANDLE_VALUE)
@@ -2587,11 +2545,11 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         }
         else
         {
-            ipipe->pid = 1 ;
-            ipipe->rfd = outHdl ;
-            ipipe->outWfd = inHdl ;
-            ipipe->process = mePInfo.hProcess ;
-            ipipe->processId = mePInfo.dwProcessId ;
+            ipipe->pid = 1;
+            ipipe->rfd = outHdl;
+            ipipe->outWfd = inHdl;
+            ipipe->process = mePInfo.hProcess;
+            ipipe->processId = mePInfo.dwProcessId;
             
             /* attempt to create a new thread to wait for activity,
              * this is because windows pipes are crap and doing a Wait on
@@ -2603,24 +2561,24 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
              * MsgWait and then after its Set do a SingleWait on each reset
              * those that are set.
              */
-            ipipe->childActive = NULL ;
-            ipipe->threadContinue = NULL ;
+            ipipe->childActive = NULL;
+            ipipe->threadContinue = NULL;
 #ifdef USE_BEGINTHREAD
             {
-                unsigned long thread ;
+                unsigned long thread;
                 if(((ipipe->childActive=CreateEvent(NULL, meTRUE, meFALSE, NULL)) != 0) &&
                    ((ipipe->threadContinue=CreateEvent(NULL, meFALSE, meFALSE, NULL)) != 0) &&
                    ((thread=_beginthread(childActiveThread,0,ipipe)) != -1))
-                    ipipe->thread = (HANDLE) thread ;
+                    ipipe->thread = (HANDLE) thread;
                 else
-                    ipipe->thread = NULL ;
+                    ipipe->thread = NULL;
             }
 #else
             if(((ipipe->childActive=CreateEvent(NULL, meTRUE, meFALSE, NULL)) != 0) &&
                ((ipipe->threadContinue=CreateEvent(NULL, meFALSE, meFALSE, NULL)) != 0))
-                ipipe->thread = CreateThread(NULL,0,childActiveThread,ipipe,0,&(ipipe->threadId)) ;
+                ipipe->thread = CreateThread(NULL,0,childActiveThread,ipipe,0,&(ipipe->threadId));
             else
-                ipipe->thread = NULL ;
+                ipipe->thread = NULL;
 #endif
         }
     }
@@ -2629,10 +2587,10 @@ WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         if(flags & LAUNCH_PIPE)
     {
         /* Delete the dummy stdin file if there is one. */
-        DeleteFile((const char *) dummyInFile) ;
+        DeleteFile((const char *) dummyInFile);
     }
-    meNullFree(cmdLine) ;
-    return status ;
+    meNullFree(cmdLine);
+    return status;
 }
 #endif /* MEOPT_SPAWN */
 
@@ -4358,7 +4316,7 @@ meGetMessage(MSG *msg, int mode)
             if((hTable = meMalloc(hTableSize*sizeof(HANDLE))) == NULL)
             {
                 /* if this fails we really are in big trouble, time to get out! */
-                meDie() ;
+                meDie();
             }
         }
         for(;;)
@@ -4438,7 +4396,7 @@ meGetMessage(MSG *msg, int mode)
                     hTable[ii++] = hInput ;
                 else if(!mode)
                     /* stdin has gone and we're only interested in user input - exit */
-                    meDie() ;
+                    meDie();
             }
 #endif
 #if MEOPT_IPIPES
@@ -4477,7 +4435,7 @@ meGetMessage(MSG *msg, int mode)
 #ifdef _ME_WINDOW
                 if((jj < 0) || (jj >= ii))
                 /* User activity, go get it! */
-                break ;
+                break;
 #endif /* _ME_WINDOW */
         }
     }
@@ -4487,8 +4445,8 @@ meGetMessage(MSG *msg, int mode)
                   meHWndNull,       /* handle of window */
                   0,                /* first message */
                   0) <= 0)          /* last message */
-        meDie() ;
-    return meTRUE ;
+        meDie();
+    return meTRUE;
 }
 
 /*
@@ -4793,15 +4751,15 @@ TTstart(void)
 #ifdef _ME_WINDOW
     if (meSystemCfg & meSYSTEM_CONSOLE)
 #else
-    meSystemCfg |= meSYSTEM_CONSOLE ;
+    meSystemCfg |= meSYSTEM_CONSOLE;
 #endif /* _ME_WINDOW */
     {
         CONSOLE_SCREEN_BUFFER_INFO Console;
-        COORD coord ;
+        COORD coord;
         
         /* console can't support fonts and only has XANSI */
-        meSYSTEM_MASK &= ~meSYSTEM_FONTS ;
-        meSystemCfg = (meSystemCfg & ~(meSYSTEM_FONTS|meSYSTEM_RGBCOLOR)) | (meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR) ;
+        meSYSTEM_MASK &= ~meSYSTEM_FONTS;
+        meSystemCfg = (meSystemCfg & ~(meSYSTEM_FONTS|meSYSTEM_RGBCOLOR)) | (meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR);
         
         /* This will allocate a console if started from
          * the windows NT program manager. */
@@ -4821,8 +4779,8 @@ TTstart(void)
         /* get a ptr to the output screen buffer */
         if(GetConsoleScreenBufferInfo(hOutput,&Console))
         {
-            OldConsoleSize.X = Console.dwSize.X ;
-            OldConsoleSize.Y = Console.dwSize.Y ;
+            OldConsoleSize.X = Console.dwSize.X;
+            OldConsoleSize.Y = Console.dwSize.Y;
             
             /* let MicroEMACS know our starting screen size */
             /* this should be the window size, not the buffer size
@@ -4867,14 +4825,14 @@ TTstart(void)
 #endif
         
         /* save the original console mode to restore on exit */
-        GetConsoleMode(hInput, &OldConsoleMode);
+        GetConsoleMode(hInput,&OldConsoleMode);
         
         /* and reset this to what MicroEMACS needs */
         ConsoleMode = ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT;
-        SetConsoleMode(hInput, ConsoleMode);
+        SetConsoleMode(hInput,ConsoleMode);
         
         /* Set emergency quit handler routine */
-        SetConsoleCtrlHandler (ConsoleHandlerRoutine, meTRUE);
+        SetConsoleCtrlHandler(ConsoleHandlerRoutine, meTRUE);
         
 #if MEOPT_EXTENDED
         if(!(alarmState & meALARM_PIPED))

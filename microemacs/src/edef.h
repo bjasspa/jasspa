@@ -232,7 +232,7 @@ extern int       noIpipes ;             /* count of all the cur pipes   */
 #define meALARM_PIPE_COMMAND 0x40
 
 extern  meUByte   alarmState;           /* Auto-save alarm time         */
-extern  meInt     startTime;            /* me start time. used as offset*/
+extern  meTime    startTime;            /* me start time. used as offset*/
 extern  meInt     meGetKeyFirst;        /* initial command, set by respawn() */
 extern  meLine   *lpStore;              /* line off which to store macro*/
 extern  meBuffer *lpStoreBp ;           /* help is stored in a buffer   */
@@ -609,7 +609,7 @@ meUByte   windowChars[WCLEN+1] =        /* Set of window characters     */
 meUByte   displayTab=' ';               /* tab \t display character     */
 meUByte   displayNewLine=' ';           /* new-line \n display character*/
 meUByte   displaySpace=' ';             /* space ' ' display character  */
-meInt     startTime;                    /* me start time used as offset */
+meTime    startTime;                    /* me start time used as offset */
 meInt	  meGetKeyFirst=-1;             /* Push input key               */
 meUByte   thisflag;                     /* Flags, this command          */
 meUByte   lastflag;                     /* Flags, last command          */

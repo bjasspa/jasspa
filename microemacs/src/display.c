@@ -1366,7 +1366,7 @@ assessModeLine(meUByte *ml)
 static void
 updateModeLine(meWindow *wp)
 {
-    time_t          clock;		    /* Time in machine format. */
+    meTime          clock;		    /* Time in machine format. */
     struct tm	   *time_ptr;	            /* Pointer to time frame. */
     register meUByte *ml, *cp, *ss ;
     register meUByte  cc, lchar ;
@@ -2769,8 +2769,8 @@ mlwrite(int flags, meUByte *fmt, int arg)
     {
         /* an mlwrite at this stage is fatal - usually a malloc failure,
          * print message and exit */
-        mePrintMessage(fmt) ;
-        meExit(1) ;
+        mePrintMessage(fmt);
+        meExit(1);
     }
     if((alarmState & meALARM_PIPED_QUIET) && ((flags & MWSTDALLWRT) == 0))
     {
