@@ -144,7 +144,7 @@ meShell(int f, int n)
             "konsole",NULL,
 #endif
 #ifdef _MACOS
-            "open","-n","-a","Terminal",NULL,
+            "open","-a","Terminal","$P",NULL,
 #endif
             "xterm",NULL,
             NULL
@@ -161,6 +161,18 @@ meShell(int f, int n)
             ss = mlwrite(MWABORT,(meUByte *)"[Failed to find terminal program]");
         else
         {
+#ifdef _MACOS
+            int jj;
+            char *vv;
+            jj = ii;
+            while((termPrg[++jj] != NULL) && ((termPrg[jj][0] != '$') || (termPrg[jj][1] != 'P')))
+                ;
+            if(termPrg[jj] != NULL)
+            {
+                vv = termPrg[jj];
+                termPrg[jj] = (char *) path;
+            }
+#endif
             switch(fork())
             {
             case 0:
@@ -171,8 +183,12 @@ meShell(int f, int n)
             case -1:
                 ss = mlwrite(MWABORT,(meUByte *)"exec failed, %s", strerror(errno));
             default:
-                ss = meTRUE ;
+                ss = meTRUE;
             }
+#ifdef _MACOS
+            if(termPrg[jj] != NULL)
+                termPrg[jj] = vv;
+#endif
         }
     }
     else

@@ -3012,7 +3012,7 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
                     *baseName = p1 ;
                 return ;
             }
-            if((p[0] != '\0') && (p[0] != DIR_CHAR) && ((reg = regFind(NULL,(meUByte *)"history/alias-path")) != NULL) &&
+            if((p[0] != '\0') && (p[0] != DIR_CHAR) && ((reg = regFind(NULL,(meUByte *)"history/" meSYSTEM_NAME "/alias-path")) != NULL) &&
                ((reg = regGetChild(reg)) != NULL))
             {
                 /* look for an alias/abbrev path */
@@ -3712,7 +3712,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         int len ;
         
         /* add the alias/abbrev paths to the list */
-        if(((reg = regFind(NULL,(meUByte *)"history/alias-path")) != NULL) &&
+        if(((reg = regFind(NULL,(meUByte *)"history/" meSYSTEM_NAME "/alias-path")) != NULL) &&
            ((reg = regGetChild(reg)) != NULL))
         {
             do
