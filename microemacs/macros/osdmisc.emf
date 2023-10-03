@@ -1145,10 +1145,10 @@ set-variable .browse.wrap 0
 
 0 define-macro alias-path-set-flds
   !if &set .alias-path-setup.cur @#
-    !force find-registry "/history/alias-path" &sub @# 1
+    !force find-registry &spr "/history/%s/alias-path" $platform &sub @# 1
     !if $status
       set-variable .alias-path-setup.alias $result
-      set-variable .alias-path-setup.path &reg &cat "/history/alias-path/" $result "" 
+      set-variable .alias-path-setup.path &reg &spr "/history/%s/alias-path/%s" $platform $result "" 
       osd .osd.alias-path 620 "BfhxHt" .scheme.osd-ebtt " \HModify " 2 alias-path-setup-com
       osd .osd.alias-path 630 "BfhxHt" .scheme.osd-ebtt " \HDelete " 3 alias-path-setup-com
       !return
@@ -1177,10 +1177,10 @@ set-variable .browse.wrap 0
   osd .osd.alias-pathc 0 "sS" .scheme.osd-child 56 10 -1 -1 alias-path-create
   set-variable #l0 0
   !repeat
-    !force find-registry "/history/alias-path" &pinc #l0 1
+    !force find-registry &spr "/history/%s/alias-path" $platform &pinc #l0 1
     !if $status
       set-variable #l1 $result
-      set-variable #l2 &reg &cat "/history/alias-path/" #l1 ""
+      set-variable #l2 &reg &spr "/history/%s/alias-path/%s" $platform #l1 ""
       osd .osd.alias-pathc #l0 "x" &spr " %s %s%n %s%n" &cond &equ #l0 .alias-path-setup.cur "*" " " #l1 &sub 11 &len #l1 " " #l2 &sub 30 &len #l2 " " #l0 alias-path-set-flds
     !endif
   !until &not $status
@@ -1189,9 +1189,9 @@ set-variable .browse.wrap 0
 
 0 define-macro alias-path-setup-com
   !if &equ @# 3
-    !force find-registry "/history/alias-path" &sub &set #l0 .alias-path-setup.cur 1
+    !force find-registry &spr "/history/%s/alias-path" $platform &sub &set #l0 .alias-path-setup.cur 1
     !if $status
-      delete-registry &cat "/history/alias-path/" $result
+      delete-registry &spr "/history/%s/alias-path/%s" $platform $result
       !iif &equ #l0 &pdec .alias-path-setup.count 1  set-variable #l0 &sub #l0 1
     !endif
     #l0 alias-path-set-flds
@@ -1204,22 +1204,22 @@ set-variable .browse.wrap 0
       !return
     !endif
     !if &equ @# 1
-      !if &not &seq "" &reg &cat "/history/alias-path/" .alias-path-setup.alias ""
+      !if &not &seq "" &reg &spr "/history/%s/alias-path/%s" $platform .alias-path-setup.alias ""
         ml-write &spr "[Alias \"%s\" already exists]" .alias-path-setup.alias
         !return
       !endif
     !else
-      !force find-registry "/history/alias-path" &sub .alias-path-setup.cur 1
+      !force find-registry &spr "/history/%s/alias-path" $platform &sub .alias-path-setup.cur 1
       !if &not $status
         ml-write "[ERROR: Failed to get current alias]" 
         !return
       !endif
-      !iif &not &seq .alias-path-setup.alias &set #l0 $result  2 set-registry &cat "/history/alias-path/" #l0 .alias-path-setup.alias
+      !iif &not &seq .alias-path-setup.alias &set #l0 $result  2 set-registry &spr "/history/%s/alias-path/%s" $platform #l0 .alias-path-setup.alias
     !endif
-    set-registry &cat "/history/alias-path/" .alias-path-setup.alias .alias-path-setup.path
+    set-registry &spr "/history/%s/alias-path/%s" $platform .alias-path-setup.alias .alias-path-setup.path
     set-variable #l0 0
     !repeat
-      !force find-registry "/history/alias-path" &pinc #l0 1
+      !force find-registry &spr "/history/%s/alias-path" $platform &pinc #l0 1
       !if &not $status
         set-variable .alias-path-setup.cur 0
         set-variable #l0 0

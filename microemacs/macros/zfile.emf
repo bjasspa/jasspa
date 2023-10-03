@@ -142,6 +142,8 @@ define-macro find-zfile
   !endif
   beginning-of-buffer
   insert-string &spr "ZFile-%s: %s\n%s\n\n%s\n" &reg #l9 "NID" #l0 #l6 &set #l2 &reg &cat #l9 "/header" ""
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"
   beginning-of-buffer
   1 buffer-init "zfile"
   set-variable :fmpf &reg &cat #l9 "/fmpf" &sin " Name" #l2
@@ -300,6 +302,27 @@ define-macro zfile-find-file
       !force &con &band 1 @# 1 3 file-tool-exec-default &cat #l1 #l2
       ; give command 20sec to start and read file before we delete it - can be interrupted by user
       !iif &set #l0 $status -20000 command-wait
+    !elif &set #l0 &band 2 @#
+      !if &not &xse &set #l4 &cat #l1 #l2 ".*\\s.*"
+      !elif &band $system 0x100
+        set-variable #l4 &spr "\"%s\"" #l4
+      !else
+        set-variable #l4 &spr "\"%s\"" &rep &rep #l4 "\\" "\\\\" "\"" "\\\""
+      !endif
+      ; launch system open tool and don't wait, however if we immediate continue we will delete the tmp file
+      ; before the system app has loaded, so throw in a long interruptable wait and hope!
+      !if &seq $platform "win32"
+        !force !force 0x20 shell-command &rep #l4 "/" "\\"
+        -20000 command-wait
+      !elif &seq $platform "macos"
+        !force !force 0x24 shell-command &cat "open " #l4
+        -20000 command-wait
+      !elif &seq $platform "linux"
+        !force !force 0x24 shell-command &cat "xdg-open " #l4
+        -20000 command-wait
+      !else
+        set-variable #l0 0
+      !endif
     !endif
     !if &not #l0
       &add 1 &div &band @# 40 4 find-file &cat #l1 #l2
