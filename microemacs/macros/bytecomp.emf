@@ -109,14 +109,21 @@ define-macro bc-file
   set-variable #l2 $buffer-bname
   !force set-variable #l0 @1
   !iif &not $status  set-variable #l0 @ml01 "Byte-compile file"
-  !if &seq #l0 ""
-    !abort
-  !elif &not &seq "R" &stat t &set #l1 &stat a #l0
+  !iif &seq #l0 ""  !abort
+  !if &not &seq "R" &stat t &set #l1 &stat a #l0
     ml-write "[ERROR: Only macro files supported]"
     !abort
   !elif &not &seq ".emf" &rig #l1 -4
     ml-write "[ERROR: Only macro files supported]"
     !abort
+  !endif
+  !if &band @# 1
+    set-variable #l3 &cat &lef #l1 -1 "b"
+  !else
+    !force set-variable #l3 @2
+    !iif &not $status  set-variable #l3 @ml01 "Output file"
+    !iif &seq #l3 ""  !abort
+    !iif &seq #l3 #l0  !abort
   !endif
   !force 0 delete-buffer "*bcompile*"
   !force 2 find-buffer #l1
@@ -140,7 +147,7 @@ define-macro bc-file
   bc-buffer
   -1 buffer-mode "backup"
   -1 buffer-mode "cr"
-  !force 0 write-buffer &cat &lef #l1 -1 "b"
+  !force 0 write-buffer #l3
   !force 0 delete-buffer $buffer-bname
   find-buffer #l2
 !emacro
