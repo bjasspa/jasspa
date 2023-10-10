@@ -2900,9 +2900,8 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
         {
             flag = 3;
             urls = p1;
-            if((p=meStrchr(p1+6,DIR_CHAR)) == NULL)
-                p = p1 + meStrlen(p1);
-            urle = p;
+            /* continue at the 2nd '/' so path tfs://x: -> x: */
+            urle = p = p1+5;
             p1 = p;
         }
         else if(ffUrlTypeIsFile(ft))
@@ -2985,7 +2984,7 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
     if(flag)
     {
         int ll = (size_t) urle - (size_t) urls;
-        meStrncpy(p1,urls,ll);
+        memcpy(p1,urls,ll);
         p1 += ll;
     }
     urle = p1;
