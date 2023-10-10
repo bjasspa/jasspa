@@ -1,0 +1,39 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2023 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     2023-07-01 15:32:44
+; Authors:     bill
+; Synopsis:    ME single executable boot-strap
+;
+; Notes:       If it exists add .about.userpath first to search path so user can copy new & override files into directory
+;              .about.userpath will have a trailing '/' if the path exists, otherwise it wont
+;
+!if &set .about.hasssn &seq "D" &stat t &set .about.userpath &stat a &stat a &cat &con &seq $platform "win32" $APPDATA "~/.config" "/jasspa" 
+  set-variable $search-path &spr "%s%s%s" .about.userpath &con &band $system 0x200 ";" ":" $search-path
+  !iif &set .about.hasssn &seq "R" &stat t &spr "%s%s.emf" .about.userpath $user-name  set-variable $user-path .about.userpath
+!endif
+execute-file "me"
+!iif .about.hasssn  !return
+
+define-macro init-session
+  set-position "\x81"
+  !iif &seq "X" &stat "t" .about.userpath  !force 0x100 file-op .about.userpath
+  !if &not &seq "D" &stat t &set .about.userpath &stat a .about.userpath
+    ml-write &spr "[Error: Cannot create config path: %s]" .about.userpath
+    !abort
+  !endif
+  !if &seq "X" &stat "t" &set #l0 &spr "%s%s.emf" &set $user-path .about.userpath $user-name
+    !force 0 delete-buffer "*mes-tmp*"
+    find-buffer "*mes-tmp*"
+    insert-file "tfs://meuser.emf"
+    !force write-buffer #l0
+    !iif &not $status  ml-write &spr "[Error: Cannot write to file %s]" #l0
+    !force delete-buffer $buffer-bname
+  !endif
+  set-variable .session.update 1
+  0 update-session
+  goto-position "\x81"
+!emacro
+!iif &seq $buffer-bname "*scratch*" ml-write &spr "[Run init-session to create session in: %s]" .about.userpath

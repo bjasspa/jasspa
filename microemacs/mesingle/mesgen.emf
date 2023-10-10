@@ -1,0 +1,186 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2023 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     2023-10-07 22:40:53
+; Synopsis:    
+; Authors:     $Author: jon $
+; Last Modified: <231010.2240> 
+;
+;set-variable $debug 8
+set-variable %mes-opts ""
+set-variable #l0 0
+!while &exi &cat ".about.arg" #l0
+  set-variable #l1 &ind &cat ".about.arg" &pinc #l0 1
+  !if &not &seq &lef #l1 1 "-"
+    -1 ml-write &cat "Error: Bad command-line option: " #l1
+    4 exit-emacs 1
+  !elif &sin "h" #l1
+    -1 ml-write "Usage: mesgen [options]"
+    -1 ml-write ""
+    -1 ml-write "Where options can be:"
+    -1 ml-write "  -C   : Clean"
+    -1 ml-write "  -S   : Spotless"
+    -1 ml-write "  -V   : Increase verbosity level"
+    -1 ml-write "  -d   : Disable byte-compile of emf macro files"
+    -1 ml-write "  -o <file>"
+    -1 ml-write "       : Output file name"
+    -1 ml-write "  -p <file>"
+    -1 ml-write "       : MicroEmacs program/executable file"
+    4 exit-emacs 1
+  !endif
+  set-variable %mes-opts &cat %mes-opts &rig #l1 1
+  !if &sin "o" #l1
+    set-variable %mes-outn &ind &cat ".about.arg" &pinc #l0 1
+  !elif &sin "p" #l1
+    set-variable %mes-prog &ind &cat ".about.arg" &pinc #l0 1
+  !endif
+!done
+set-variable %mes-verb &sub &len %mes-opts &len &rep %mes-opts "V" ""
+!iif &sin "S" %mes-opts  set-variable %mes-opts &cat %mes-opts "C"
+
+!iif &not &sin "d" %mes-opts  execute-file "bytecomp"
+
+define-macro mesingle-gen
+  set-variable #l0 @1
+  !iif &not &sin "o" %mes-opts  set-variable %mes-outn &spr "me-%s%s" $platform &con &band $system 0x200 ".exe" ""
+  !if &sin "C" %mes-opts
+    !if &seq "X" &stat "t" &cat #l0 "me"
+      -2 ml-write &spr "mesgen Info: Nothing to do, work dirctory %sme does not exist" #l0
+      !return
+    !endif
+    set-variable $file-names &cat #l0 "me/.*"
+    set-variable #l3 $result
+    !while &not &seq &set #l4 $file-names ""
+      !if &seq #l4 "./"
+      !elif &not &seq #l4 "../"
+        !iif %mes-verb  -2 ml-write &spr "mesgen: Removing file %s%s" #l3 #l4
+        !force 0x20 file-op &cat #l3 #l4
+        !iif &not $status  -2 ml-write &spr "mesgen Error: failed to remove file %s%s" #l3 #l4
+      !endif
+    !done
+    !iif %mes-verb  -2 ml-write &spr "mesgen: Removing directory %s%s" #l3
+    !force 0x20 file-op #l3
+    !if &not $status
+      -2 ml-write &spr "mesgen Error: Failed to remove work dirctory %s" #l3
+      !abort
+    !endif
+    -2 ml-write &spr "mesgen Info: Work dirctory %s removed" #l3
+    !if &sin "S" %mes-opts
+      !iif %mes-verb  -2 ml-write &spr "mesgen: Removing output %s%s" %mes-outn
+      !force 0x20 file-op &cat #l0 %mes-outn
+    !endif
+    !return
+  !endif
+  !if &seq &set #l1 &whi &cat #l0 "tfs" "ERROR"
+    !if &seq &set #l1 &whi "tfs" "ERROR"
+      -2 ml-write "mesgen Error: failed to locate tfs executable"
+      !abort
+    !endif
+  !endif
+  !if &not &sin "p" %mes-opts
+    -2 ml-write "mesgen Error: MicroEmacs executable not given via option -p"
+    !abort
+  !elif &seq &set #l2 &whi &cat #l0 %mes-prog "ERROR"
+    !if &seq &set #l2 &whi %mes-prog "ERROR"
+      -2 ml-write &spr "mesgen Error: failed to locate MicroEmacs executable %s" %mes-prog
+      !abort
+    !endif
+  !endif
+  !if &not &seq "D" &stat "t" &cat #l0 "me"
+    !force 0x100 file-op &cat #l0 "me"
+    !if &not $status
+      -2 ml-write &spr "mesgen Error: Failed to create work dirctory %s" #l3
+      !abort
+    !endif
+  !endif
+  set-variable #l3 &cat #l0 "me/"
+  set-variable #l8 0
+  !while &not &seq "" &set #l9 &lget "|../macros/|meuser/|" &inc #l8 1
+    ; Always disable byte-comp of emf files in the meuser directory
+    !iif &seq #l9 "meuser/"  set-variable %mes-opts &cat %mes-opts "d"
+    set-variable #l9 &stat "a" &cat #l0 #l9
+    !iif %mes-verb  -2 ml-write &spr "mesgen: Processing %s" #l9
+    !if &not &seq "R" &stat "t" &set #l4 &cat #l9 "filelist.mak"
+      -2 ml-write &spr "mesgen Error: Failed to locate %sfilelist.mak" #l9
+      !abort
+    !endif
+    !force 0 delete-buffer "*mesml*"
+    find-buffer "*mesml*"
+    insert-file #l4
+    beginning-of-buffer
+    1 buffer-mode "magic"
+    replace-string "\\\\[ \t]*\n" ""
+    beginning-of-buffer
+    !while &not &seq @wc ""
+      !if &seq "#" &lef @wl 1
+      !elif &xse &lef @wl 10 "\\(\\(\\m+\\)[ \t]*=\\).*"
+        set-variable #l4 @s2
+        !iif %mes-verb  -2 ml-write &spr "mesgen:  Line %s" #l4
+        set-variable #l5 $window-line
+        set-variable $window-col &len @s1
+        !repeat
+          !force search-buffer "me" "[\\m._@]+"
+          !iif &not $status  !break
+          !iif &sub #l5 $window-line  !break
+          !iif %mes-verb  -2 ml-write &spr "mesgen:   File %s" @s0
+          !if &seq ".emf" &rig &set #l6 @s0 -4
+            set-variable #l7 &cat &lef #l6 -1 "b"
+            !if &sin "d" %mes-opts
+              !if &seq "R" &stat "t" &cat #l3 &rep #l6 ".emf" ".emb" 
+                !iif &gre %mes-verb 1  -2 ml-write &spr "mesgen:     Removing %s%s" #l3 #l7
+                !force 0x20 file-op &cat #l3 #l7
+              !endif
+              !if &not &seq "R" &stat "t" &cat #l3 #l6
+                !iif &gre %mes-verb 1  -2 ml-write &spr "mesgen:     Coping %s%s" #l9 #l6
+                !force 0x80 file-op &cat #l9 #l6 &cat #l3 #l6
+                !if &not $status
+                  -2 ml-write &spr "mesgen Error: Failed to copy file to [%s%s]" #l3 #l6
+                  !abort
+                !endif
+              !endif
+            !else
+              !if &seq "R" &stat "t" &cat #l3 #l6
+                !iif &gre %mes-verb 1  -2 ml-write &spr "mesgen:     Removing %s%s" #l3 #l6
+                !force 0x20 file-op &cat #l3 #l6
+              !endif
+              !if &not &seq "R" &stat "t" &cat #l3 #l7
+                !iif &gre %mes-verb 1  -2 ml-write &spr "mesgen:     Compiling %s%s -> %s" #l9 #l6 #l7
+                !force 0 bc-file &cat #l9 #l6 &cat #l3 #l7
+                !if &not $status
+                  -2 ml-write &spr "mesgen Error: Failed to byte-compile macro file [%s%s] to [%s%s]" #l9 #l6 #l3 #l7
+                  !abort
+                !endif
+              !endif
+            !endif
+          !elif &not &seq "R" &stat "t" &cat #l3 #l6
+            !iif &gre %mes-verb 1  -2 ml-write &spr "mesgen:     Coping %s%s" #l9 #l6
+            !force 0x80 file-op &cat #l9 #l6 &cat #l3 #l6
+            !if &not $status
+              -2 ml-write &spr "mesgen Error: Failed to copy file to [%s%s]" #l3 #l6
+              !abort
+            !endif
+          !endif
+        !done
+        set-variable $window-line #l5
+      !endif
+      forward-line
+    !done
+  !done
+  ml-write &cat "Lauching:  " &set #l3 &spr "%s -o %s -a %s me" #l1 %mes-outn #l2
+  !force 5 shell-command #l3
+  !if &not $status
+    -2 ml-write &spr "mesgen Error: Failed to launch tfs: %s" #l3
+    !abort
+  !elif $result
+    -2 ml-write &spr "mesgen Error: tfs returned error %d" $result
+    !abort
+  !endif
+!emacro
+
+define-macro start-up
+  set-variable #l0 &stat "a" "."
+  !force !force mesingle-gen #l0
+  4 exit-emacs &not $status
+!emacro
