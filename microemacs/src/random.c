@@ -33,10 +33,6 @@
 
 #if (defined _UNIX) || (defined _DOS)
 #include <sys/types.h>
-#include <time.h>
-#ifndef _WIN32
-#include <sys/time.h>
-#endif
 #endif
 
 #ifndef _ME_USE_STD_MALLOC

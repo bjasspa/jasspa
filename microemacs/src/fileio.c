@@ -40,7 +40,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef _UNIX
-#include <sys/time.h>
 #include <utime.h>
 #endif
 #endif
@@ -250,7 +249,6 @@ ffUrlGetType(meUByte *url)
 #if MEOPT_SOCKET
 
 #include <stdarg.h>
-#include <time.h>
 
 #define meSOCKET_TIMEOUT      115000
 #define meBUF_SOCK_SIZE_MAX   (((meSOCK_BUFF_SIZE) > (meBUF_SIZE_MAX)) ? (meSOCK_BUFF_SIZE) : (meBUF_SIZE_MAX))

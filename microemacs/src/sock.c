@@ -33,7 +33,6 @@
 #define MESOCK_STRINGQUT(str) #str
 #define MESOCK_STRINGIFY(str) MESOCK_STRINGQUT(str)
 
-#include <time.h>
 #include <ctype.h>
 #if MEOPT_OPENSSL
 #include <openssl/ssl.h>
@@ -71,7 +70,6 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-#include <sys/time.h>
 #include <sys/un.h>
 #define meBadSocket        -1
 #define meSockLibGetFunc   dlsym

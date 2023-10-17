@@ -169,6 +169,8 @@ extern	int	bclear(meBuffer *bp);
 extern  int     getBufferInfo(meInt *,meInt *,meInt *,meInt *) ;
 
 /* crypt.c externals */
+extern  void    meXoshiro128Seed(void);
+extern  meUInt  meXoshiro128Next(void);
 extern  void    mkTempName(meUByte *buf, meUByte *name, meUByte *ext);
 #if MEOPT_CRYPT
 extern  void    meCryptKeyEncode(meUInt *enc,meUByte *key, int len);
@@ -537,7 +539,7 @@ extern	int	indent(int f, int n);
 #endif
 
 /* history.c externals */
-extern  void    initHistory(void) ;
+extern  void    initHistory(void);
 extern  int     setupHistory(int option, meUByte **numPtr, meUByte ***list) ;
 extern  void    addHistory(int option, meUByte *str, int rmv);
 
@@ -1257,6 +1259,8 @@ extern void WinShutdown (void);
 #define mePutenv(s1)        _putenv((char *)(s1))
 
 #else
+
+#include <sys/time.h>
 
 #define mePutenv(s1)        putenv((char *)(s1))
 #define meTimeval           timeval

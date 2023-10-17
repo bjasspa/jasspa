@@ -47,7 +47,6 @@
 #include <sys/dir.h>
 #endif
 #endif
-#include <time.h>
 #endif
 
 #ifdef _DOS

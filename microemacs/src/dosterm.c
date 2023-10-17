@@ -32,7 +32,6 @@
 
 #include <dos.h>
 #include <io.h>
-#include <sys/time.h>
 #include <pc.h>
 
 #if MEOPT_MOUSE

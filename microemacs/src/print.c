@@ -34,7 +34,6 @@
 
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
 #include <sys/types.h>
-#include <time.h>
 #endif
 #include "eprint.h"
 

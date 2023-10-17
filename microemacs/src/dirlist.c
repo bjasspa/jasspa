@@ -36,7 +36,6 @@
 
 #if MEOPT_DIRLIST
 
-#include <time.h>
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
 #include <limits.h>                     /* Constant limit definitions */
 #include <sys/types.h>

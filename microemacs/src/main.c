@@ -48,10 +48,6 @@
 
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
 #include <sys/types.h>
-#include <time.h>
-#ifndef _WIN32
-#include <sys/time.h>
-#endif
 #ifdef _UNIX
 #include <fcntl.h>
 #include <sys/wait.h>

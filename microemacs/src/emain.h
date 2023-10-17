@@ -547,9 +547,10 @@
 /*************************************************************************
  * ALL: Standard microemacs includes                                     *
  *************************************************************************/
-#include <stdio.h>                      /* Always need this              */
-#include <stdlib.h>                     /* Usually need this             */
-#include <string.h>                     /* Usually need this             */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 #ifdef _ME_WIN32_FULL_DEBUG
 #define _CRTDBG_MAP_ALLOC

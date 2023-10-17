@@ -37,12 +37,8 @@
 
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
 #include <sys/types.h>
-#include <time.h>
 #ifdef _UNIX
 #include <sys/stat.h>
-#endif
-#ifndef _WIN32
-#include <sys/time.h>
 #endif
 #endif
 
@@ -70,52 +66,6 @@ meNamesList commNames={1,0,NULL,NULL,0} ;
 meNamesList modeNames={0,MDNUMMODES,modeName,NULL,0} ;
 meNamesList varbNames={1,0,NULL,NULL,0} ;
 
-/* Init as if user called &set $random 1 */
-static meUInt meRndS[4] = { 0x5e2d1772,0x14e498f0,0xd20ea1fd,0xb382f339 };
-
-/* splitMix32 & xoshiro128++ PRNGs - see crypt.c for details, dup'd here as
- * user can set and control state which is not good for crypt use. */
-void
-meXoshiro128Seed(meUInt ss)
-{
-    meUInt sd, vv;
-    int ii=3; 
-    
-    if(ss)
-        sd = ss;
-    else
-#ifdef _WIN32
-        sd = ((meUInt) GetTickCount()) ^ (((meUInt) GetCurrentProcessId()) << 12);
-#else
-        sd = ((meUInt) time(NULL)) ^ (((meUInt) getpid()) << 12);
-#endif
-    do {
-        vv = (sd += 0x9e3779b9);
-        vv ^= vv >> 16;
-        vv *= 0x21f0aaad;
-        vv ^= vv >> 15;
-        vv *= 0x735a2d97;
-        meRndS[ii] = vv ^ (vv >> 15);
-    } while(--ii >= 0);
-}
-
-#define meXoshiro128Rotl(xx,kk) (((xx) << (kk)) | ((xx) >> (32 - (kk))))
-
-meUInt
-meXoshiro128Next(void)
-{
-    register meUInt rr=meRndS[0] + meRndS[3], tt=meRndS[1] << 9;
-    rr = meXoshiro128Rotl(rr,7) + meRndS[0];
-
-    meRndS[2] ^= meRndS[0];
-    meRndS[3] ^= meRndS[1];
-    meRndS[1] ^= meRndS[2];
-    meRndS[0] ^= meRndS[3];
-    meRndS[2] ^= tt;
-    meRndS[3] = meXoshiro128Rotl(meRndS[3],11);
-
-    return rr;
-}
 #endif
 
 /* The following horrid global variable solves a horrid problem, consider:
@@ -658,9 +608,6 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         case EVTIME:
             timeOffset = meAtoi(vvalue);
             break;
-        case EVRANDOM:
-            meXoshiro128Seed((meUInt) meAtoi(vvalue));
-            break ;
 #endif
         case EVFRMDPTH:
             return frameChangeDepth(meTRUE,meAtoi(vvalue)-(frameCur->depth+1));
@@ -1326,7 +1273,10 @@ handle_namesvar:
         sprintf((char *) evalResult,"%d",(unsigned int) time(NULL));
         return evalResult;
         
-    case EVRANDOM:      return meItoa((meXoshiro128Next() >> 8));
+    case EVRANDOM:
+        if(meRndSeed[0] == 0)
+            meXoshiro128Seed();
+        return meItoa((meXoshiro128Next() >> 8));
 #endif
     case EVFRMDPTH:     return meItoa(frameCur->depth + 1);
 #if MEOPT_EXTENDED
@@ -3176,14 +3126,16 @@ get_flag:
     case UFSTAT:
         {
             meStat stats;
-            int ftype = getFileStats(arg2,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE,
+            int ftype;
+            fileNameCorrect(arg2,arg3,NULL);
+            ftype = getFileStats(arg3,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE,
                                      (arg1[0] == 't') ? NULL:&stats,(arg1[0] == 't') ? NULL:evalResult);
             switch(arg1[0])
             {
             case 'a':
                 /* absolute name - check for symbolic link */
-                if(*evalResult == '\0')
-                    fileNameCorrect(arg2,evalResult,NULL) ;
+                if(evalResult[0] == '\0')
+                    meStrcpy(evalResult,arg3);
                 /* if its a directory check there's an ending '/' */
                 if(ftype & meIOTYPE_DIRECTORY)
                 {
@@ -3240,7 +3192,7 @@ get_flag:
                     else if(ftype & (meIOTYPE_FTP|meIOTYPE_FTPE))
                     {
                         v1 = 'F';
-                        if(ffFileOp(arg2,NULL,meRWFLAG_STAT|meRWFLAG_SILENT,-1) > 0)
+                        if(ffFileOp(arg3,NULL,meRWFLAG_STAT|meRWFLAG_SILENT,-1) > 0)
                         {
                             v2 = evalResult[0];
                             dd = evalResult+1;
@@ -3303,7 +3255,7 @@ get_flag:
                             else
                             {
                                 v2 = (ftype & meIOTYPE_DIRECTORY) ? 'D':'R';
-                                v4 = meFileGetAttributes(arg2);
+                                v4 = meFileGetAttributes(arg3);
                                 v5 = 1;
                                 v51 = stats.stsizeHigh;
                                 v52 = stats.stsizeLow;
@@ -3453,7 +3405,7 @@ get_flag:
                 if(ftype & meIOTYPE_DIRECTORY)
                     return meLtoa(1);
                 /* Must test for .exe, .com, .bat, .btm extensions etc */
-                return meLtoa(meTestExecutable(arg2));
+                return meLtoa(meTestExecutable(arg3));
 #else
                 /* Test the unix execute flag */
                 return meLtoa((((stats.stuid == meUid) && (stats.stmode & S_IXUSR)) ||

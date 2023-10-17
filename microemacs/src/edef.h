@@ -326,6 +326,7 @@ extern meUByte    BstdinN[];
 extern meUByte    BmainN[];
 extern meUByte    BhelpN[];
 
+extern meUInt     meRndSeed[];
 #if MEOPT_CRYPT
 extern meCryptContext cryCtx;
 #endif
@@ -771,6 +772,7 @@ meUByte   BregistryN[] = "*registry*" ;
 meUByte   BserverN[] = "*server*" ;
 #endif
 
+meUInt    meRndSeed[4] = { 0,0,0,0 };
 #if MEOPT_CRYPT
 meCryptContext cryCtx;
 #endif

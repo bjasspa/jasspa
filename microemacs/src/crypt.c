@@ -30,14 +30,12 @@
 #define	__CRYPTC		/* Define file */
 
 #include "emain.h"
-#include <time.h>
 
 /* Init as if user called &set $random 1 */
-static meUInt rndS[4] = { 0,0,0,0 };
 
 /* a splitMix32 PRNG is used to init the 4 uint state of xoshiro128++ */
 void
-xoshiro128Seed()
+meXoshiro128Seed(void)
 {
     meUInt sd, vv;
     int ii=3; 
@@ -53,7 +51,7 @@ xoshiro128Seed()
         vv *= 0x21f0aaad;
         vv ^= vv >> 15;
         vv *= 0x735a2d97;
-        rndS[ii] = vv ^ (vv >> 15);
+        meRndSeed[ii] = vv ^ (vv >> 15);
     } while(--ii >= 0);
 }
 
@@ -75,17 +73,17 @@ xoshiro128Seed()
 #define xoshiro128Rotl(xx,kk) (((xx) << (kk)) | ((xx) >> (32 - (kk))))
 
 meUInt
-xoshiro128Next(void)
+meXoshiro128Next(void)
 {
-    register meUInt rr=rndS[0] + rndS[3], tt=rndS[1] << 9;
-    rr = xoshiro128Rotl(rr,7) + rndS[0];
+    register meUInt rr=meRndSeed[0] + meRndSeed[3], tt=meRndSeed[1] << 9;
+    rr = xoshiro128Rotl(rr,7) + meRndSeed[0];
 
-    rndS[2] ^= rndS[0];
-    rndS[3] ^= rndS[1];
-    rndS[1] ^= rndS[2];
-    rndS[0] ^= rndS[3];
-    rndS[2] ^= tt;
-    rndS[3] = xoshiro128Rotl(rndS[3],11);
+    meRndSeed[2] ^= meRndSeed[0];
+    meRndSeed[3] ^= meRndSeed[1];
+    meRndSeed[1] ^= meRndSeed[2];
+    meRndSeed[0] ^= meRndSeed[3];
+    meRndSeed[2] ^= tt;
+    meRndSeed[3] = xoshiro128Rotl(meRndSeed[3],11);
 
     return rr;
 }
@@ -168,8 +166,8 @@ mkTempName(meUByte *buf, meUByte *name, meUByte *ext)
 #endif
     else
     {
-        if(rndS[0] == 0)
-            xoshiro128Seed();
+        if(meRndSeed[0] == 0)
+            meXoshiro128Seed();
 #ifdef _UNIX
         memcpy(buf,"/tmp/meXXXXXX",13);
         strcpy((char *) buf+13,(char *) ext);
@@ -181,7 +179,7 @@ mkTempName(meUByte *buf, meUByte *name, meUByte *ext)
 #endif
         for(ii=0 ; ii<999 ; ii++)
         {
-            rr = xoshiro128Next();
+            rr = meXoshiro128Next();
             jj = 5;
             do {
                 kk = rr & 0x1f;
@@ -1066,13 +1064,13 @@ meCryptKeyEncode(meUInt *enc,meUByte *key, int len)
                 ii = 0;
         }
     }
-    memcpy(rndSs,rndS,4*4);
-    memcpy(rndS,enc,4*4);
+    memcpy(rndSs,meRndSeed,4*4);
+    memcpy(meRndSeed,enc,4*4);
     ii = 7;
     do {
-        enc[ii] ^= xoshiro128Next();
+        enc[ii] ^= meXoshiro128Next();
     } while(--ii >= 0);
-    memcpy(rndS,rndSs,4*4);
+    memcpy(meRndSeed,rndSs,4*4);
 }
 
 int
@@ -1133,11 +1131,11 @@ meCryptInit(meUInt *key)
     /* return can only be error if nbits is not 128,192 or 256 */
     meAssert((meCRYPT_KEY_SIZE*4*8) == 256);
     aes_set_key(&cryCtx,(meUByte *) key,meCRYPT_KEY_SIZE*4*8);
-    if(rndS[0] == 0)
-        xoshiro128Seed();
+    if(meRndSeed[0] == 0)
+        meXoshiro128Seed();
     ii = 7;
     do {
-        cryCtx.blk[ii] ^= xoshiro128Next();
+        cryCtx.blk[ii] ^= meXoshiro128Next();
     } while(--ii >= 0);
 }
 

@@ -34,10 +34,6 @@
 #include "emain.h"
 #include "eskeys.h"
 #include "efunc.h"
-#ifndef _WIN32
-#include <time.h>
-#include <sys/time.h>
-#endif
 
 #ifdef _STDARG
 #include <stdarg.h>		/* Variable Arguments */

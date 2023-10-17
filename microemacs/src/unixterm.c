@@ -38,9 +38,7 @@
 #include <assert.h>
 #include <fcntl.h>
 #include <pwd.h>
-#include <time.h>
 #include <sys/stat.h>
-#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/ioctl.h>
@@ -654,8 +652,17 @@ meSetupPathsAndUser(void)
         {
             /* no user path yet, take the first path from the search-path, this
              * should be a sensible directory to use */
-            if((ss = meStrchr(searchPath,mePATH_CHAR)) != NULL)
-                *ss = '\0' ;
+            ss = searchPath;
+#if MEOPT_TFS
+#if mePATH_CHAR == ':'
+            /* Special case: if the path starts with tfs: the assume its a tfs path rather than just 'tfs' */
+            /* This is not a good path for the user-path, but this is likely to be a mesingle exe with no session so no files should be written */
+            if((ss[0] == 't') && (ss[1] == 'f') && (ss[2] == 's') && (ss[3] == ':'))
+                ss += 4;
+#endif
+#endif
+            if((ss = meStrchr(ss,mePATH_CHAR)) != NULL)
+                *ss = '\0';
             meUserPath = meStrdup(searchPath) ;
             if(ss != NULL)
                 *ss = mePATH_CHAR ;
