@@ -81,7 +81,6 @@
 
 #include <process.h>
 #include <shellapi.h>
-#include <time.h>                       /* Time definitions */
 
 #ifndef WM_MOUSEWHEEL
 #define WM_MOUSEWHEEL (WM_MOUSELAST+1)  // message that will be supported by the OS
@@ -4826,9 +4825,10 @@ TTstart(void)
         
         /* save the original console mode to restore on exit */
         GetConsoleMode(hInput,&OldConsoleMode);
+        OldConsoleMode |= ENABLE_EXTENDED_FLAGS;
         
-        /* and reset this to what MicroEMACS needs */
-        ConsoleMode = ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT;
+        /* and reset this to what MicroEMACS needs, note no ENABLE_QUICK_EDIT_MODE which requires ENABLE_EXTENDED_FLAGS to set/clear */
+        ConsoleMode = ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT | ENABLE_EXTENDED_FLAGS;
         SetConsoleMode(hInput,ConsoleMode);
         
         /* Set emergency quit handler routine */

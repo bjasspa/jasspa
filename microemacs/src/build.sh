@@ -11,7 +11,6 @@ METYPE=
 MEDEBUG=
 MAKEFILE=
 MAKECDEFS=
-SSL_MAKEPTH=
 X11_MAKEINC=/usr/include
 X11_MAKELIB=
 
@@ -211,9 +210,23 @@ if [ -z "$MAKEFILE" ] ; then
     fi
 fi
 
-if [ "$MAKEFILE" = "win32mingw.gmk" ] ; then
+MAKE=make
+if [ "$MAKEFILE" = "win32mingw.mak" ] ; then
     # No X11 required as this uses native windows
     X11_INCLUDE=
+    MAKE=mingw32-make
+    if [ "`type windres | cut -b 1-10`" = "windres is" ] ; then
+      # Using native tools
+      :
+    elif [ "`type i686-w64-mingw32-windres | cut -b 1-27`" = "i686-w64-mingw32-windres is" ] ; then
+      # Using a cross compiler
+      OPTIONS=" CC=i686-w64-mingw32-gcc RC=i686-w64-mingw32-windres$OPTIONS"
+      if [ -z "$INCLUDE" ] ; then
+        OPTIONS=" RCOPTS=-I$INCLUDE$OPTIONS"
+      fi
+    else
+      echo "Failed to find windres!"
+    fi
 elif [ -z "$OPTIONS" ] ; then
     # Check for an X11 install.
     if [ "$METYPE" = "c" ] ; then
@@ -260,19 +273,19 @@ elif [ -z "$OPTIONS" ] ; then
         export MAKEWINDEFS MAKEWINLIBS
     fi
 fi
-OPTIONS="$MECORE$MEDEBUG$METYPE$OPTIONS$SSL_MAKEPTH"
+OPTIONS="$MECORE$MEDEBUG$METYPE$OPTIONS"
 MAKECDEFS="MAKECDEFS=$MAKECDEFS"
 if [ -r $MAKEFILE ] ; then
     if [ -n "$LOGFILE" ] ; then
-        echo "make -f $MAKEFILE $OPTIONS \"$MAKECDEFS\"" > $LOGFILE 2>&1
-        make -f $MAKEFILE $OPTIONS "$MAKECDEFS" > $LOGFILE 2>&1
+        echo "$MAKE -f $MAKEFILE $OPTIONS \"$MAKECDEFS\"" > $LOGFILE 2>&1
+        $MAKE -f $MAKEFILE $OPTIONS "$MAKECDEFS" > $LOGFILE 2>&1
     else
         if [ -n "$LOGFILEA" ] ; then
-            echo "make -f $MAKEFILE $OPTIONS \"$MAKECDEFS\"" >> $LOGFILEA 2>&1
-            make -f $MAKEFILE $OPTIONS "$MAKECDEFS" >> $LOGFILEA 2>&1
+            echo "$MAKE -f $MAKEFILE $OPTIONS \"$MAKECDEFS\"" >> $LOGFILEA 2>&1
+            $MAKE -f $MAKEFILE $OPTIONS "$MAKECDEFS" >> $LOGFILEA 2>&1
         else
-            echo "make -f $MAKEFILE $OPTIONS \"$MAKECDEFS\""
-            make -f $MAKEFILE $OPTIONS "$MAKECDEFS"
+            echo "$MAKE -f $MAKEFILE $OPTIONS \"$MAKECDEFS\""
+            $MAKE -f $MAKEFILE $OPTIONS "$MAKECDEFS"
         fi
     fi
 else
