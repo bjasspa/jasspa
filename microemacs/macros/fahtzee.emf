@@ -1,17 +1,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
-;  Author        : $Author$
 ;  Created By    : Steven Phillips
 ;  Created       : Wed Feb 9 18:31:42 2000
-;  Last Modified : <230219.1819>
-;
-;  Description
+;  Description   : Silly game
 ;
 ;  Notes
 ;
-;  History
-;
-;  Copyright (c) 2000 Logica.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 !if &not &exi .osd.fahtzee
@@ -471,5 +465,4 @@ set-variable #l0 10
 
 osd-bind-key .osd.fahtzee void "mouse-pick-3"
 osd-bind-key .osd.fahtzee fahtzee-throw "mouse-drop-3"
-set-variable $random 0
 

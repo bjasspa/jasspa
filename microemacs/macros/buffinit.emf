@@ -241,7 +241,7 @@ define-macro-file collapse collapse-current collapse-all beginning-of-function e
     !endif
   !endif
   !iif &seq &set #l1 &ind &spr ".fhook-%s.name" #l9 "ERROR"  set-variable #l1 &cat &sup &lef #l9 1 &rig #l9 1
-  ml-write &spr "[%s file hook loaded]" #l1
+  !iif @#  ml-write &spr "[%s file hook loaded]" #l1
   ; load in user extensions if found
   !force execute-file &cat "my" #l9
 !emacro
@@ -274,4 +274,4 @@ define-macro fhook-default
 set-variable .fhook-default.setup &reg "/history/fhook/default" "gix"
 set-variable .fhook-default.setup-mask "aegikmtux"
 
-buffer-init-fhook "default"
+0 buffer-init-fhook "default"

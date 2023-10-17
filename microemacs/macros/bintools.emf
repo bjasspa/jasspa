@@ -455,6 +455,8 @@ define-macro bin-copy-region
   !if #l1
     ibin-copy-region #l1
     !iif $result  ml-write &spr "[WARNING: Binary data contained %d characters that cannot be represented in a normal text buffer]" $result
+  !else
+    0 bin-yank-to-hex
   !endif
 !emacro
 

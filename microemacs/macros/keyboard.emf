@@ -41,8 +41,24 @@ set-variable #l0 &reg "/history/keyboard" ""
     translate-key "C-# C-\\" "C-#"
   !endif
 !elif &seq #l0 "Deutsch"
-  !if &seq $platform "win32"
-    ; Thanks to Detlef Groth
+  ; Thanks to Detlef Groth
+  !if &not &seq $platform "win32"
+  !elif &band $system 0x01
+    translate-key "A-C-{" "{"
+    translate-key "A-C-}" "}"
+    translate-key "A-C-[" "["
+    translate-key "A-C-]" "]"
+    translate-key "A-C-~" "~"
+    translate-key "A-C-@" "@"
+    ; following can be used to get euro working on CP1252, but warning - non-standard char
+    ;translate-key "A-C-\x80" "\x80" 
+    translate-key "C-\"" "C-space"
+    translate-key "A-C-\xE6" "\xB5"
+    translate-key "A-C-\\" "\\"
+    translate-key "A-C-|" "|"
+    translate-key "A-C-\xFD" "\xFD"
+    translate-key "A-C-\xFC" "\xFC"
+  !else  
     translate-key "A-C-7 A-C-{" "\x7b"
     translate-key "A-C-9 A-C-]" "\x5d"
     translate-key "A-C-0 A-C-}" "\x7d"

@@ -795,7 +795,6 @@ define-macro Triangle
     buffer-bind-key tri-draw "redraw"
     set-variable $buffer-bhook bhook-triangle
     set-variable $buffer-ehook ehook-triangle
-    set-variable $random 0
     bhook-triangle
   !endif
   tri-deal

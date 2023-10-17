@@ -1066,8 +1066,6 @@ define-macro Match-It
     buffer-bind-key mi-drmouse "mouse-drop-3"
     set-variable $buffer-bhook bhook-match-it
     set-variable $buffer-ehook ehook-match-it
-    ; Set $random so we get a new random seed
-    set-variable $random 0
     bhook-match-it
   !endif
   ; Set the screen size

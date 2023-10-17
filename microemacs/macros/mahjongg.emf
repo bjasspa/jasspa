@@ -939,7 +939,6 @@ define-macro Mahjongg
     set-variable $buffer-bhook bhook-mahjongg
     set-variable $buffer-ehook ehook-mahjongg
     ; Set it so we get a new random seed
-    set-variable $random 0
     bhook-mahjongg
   !endif
   mjg-deal

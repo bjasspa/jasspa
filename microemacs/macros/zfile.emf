@@ -460,7 +460,7 @@ define-macro zfile-setup
   set-registry &spr "/history/%s/zfl/1/line-r2" $platform " D\\2 \\3  \\1 \\4/"
   set-registry &spr "/history/%s/zfl/1/line-s3" $platform "^\\(\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d\\) D\\([.\\u]\\{4\\}\\) \\( \\{12\\}\\) [ \\d]\\{12\\}  \\(.+\\)$"
   set-registry &spr "/history/%s/zfl/1/line-r3" $platform " D\\2            -  \\1 \\4/"
-  set-registry &spr "/history/%s/zfl/1/line-s4" $platform "^\\( \\{19\\}\\) \\([.][.\\u]\\{4\\}\\) \\( *\\d+\\) [ \\d]\\{12\\}  \\(.+\\)$"
+  set-registry &spr "/history/%s/zfl/1/line-s4" $platform "^\\( \\{19\\}\\) \\([.][.\\u]\\{4\\}\\) \\([ \\d]\\{12\\}\\) [ \\d]\\{12\\}  \\(.+\\)$"
   set-registry &spr "/history/%s/zfl/1/line-r4" $platform " \\2 \\3  XXXX-XX-XX XX:XX:XX \\4"
   set-registry &spr "/history/%s/zfl/1/rplc-bckslsh" $platform "1"
   set-registry &spr "/history/%s/zfl/1/smry-bot-s" $platform "^\\(\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d\\) +\\(\\d+\\) +\\(\\d+\\) +\\(.+\\)$"
