@@ -18,13 +18,10 @@ $random \- Generate a random number
 .SH DESCRIPTION
 The
 .B $random
-variable  returns a unique random number in the range 0 - \fIn\fR on reference
-to the variable.
+variable returns a random number in the range 0 - 16777215 (0x0ffffff) on reference to the variable.
 .PP
-The random number  generator should first be seeded, by setting the variable. If \fB$random\fR is set to a non-zero number then
-a  fixed/repeatable  sequence of random  numbers will be generated,  each initial seed value will generate a different
-sequence. If  \fB$random\fR  is set to zero  (\fC0\fR) a random seed is used so an unknowable  sequence of
-random numbers will be generated.
+The random number  generator  does not need seeding first as this is handled by \*(mS, any attempt to set the variable
+will result in an error.
 .PP
 The range of the random  number  generator is fixed across all systems. The value is typically  capped to the required
 range using the
@@ -32,18 +29,12 @@ range using the
 arithmetic  operator,  but  note  that  this  creates  a slight  biasing  if  16777216  is not a  multiple  of the cap
 (there is a bias towards numbers less than the remainder, but this is generally ignorable).
 .SH NOTES
-\*(mS uses algorithm xoshiro128** to generate 32 bit random numbers and then rotated right 8 bits to discard the least
+\*(mS uses algorithm xoshiro128++ to generate 32 bit random numbers and then rotated right 8 bits to discard the least
 significant byte and avoid negative numbers.
 .PP
 This should not be considered a cryptographically secure generator.
 .SH EXAMPLE
-The variable may be assigned to generate a new seed as follows:-
-.Me $emf-scheme
-.CS
-set-variable $random 0        ; Set it so we get a new random sequence
-.CE
-.Me $ehf-scheme
-The returned value is used with the \fB&mod\fR operator to limit the value to a desired range:-
+In the following example, the returned value is used with the \fB&mod\fR operator to limit the value to a desired range:-
 .Me $emf-scheme
 .CS
 set-variable %random0to9 &mod $random 10

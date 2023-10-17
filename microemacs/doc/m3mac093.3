@@ -33,7 +33,7 @@
 .Me "|svn"
 svn \- \*(mS SVN interface
 .br
-.Me "|%svn-com"
+.Me "|svn-setup"
 svn-setup \- \*(mS SVN interface setup
 .br
 .Me "|svn-add"
@@ -243,7 +243,6 @@ The  \fBsvn-xdiff\fR  command launches an external diff application to display  
 first by setting the \fB%svn-xdiff-com\fR to an appropriate command-line, e.g. '\fCMeld -n %f\fR'. See
 .Ht %xdiff-com 5
 for more information.
-.PP
 .SS Setup
 .B svn-setup
 provides a dialog interface to configure the \*(mS SVN interface if required. On a typical system installation then it
@@ -278,7 +277,7 @@ state of the file has not been ascertained. The full SVN  information  can be  o
 command \fBsvn-full-reread\fR, typically bound to \fCC-f5\fR.
 .IP "\fCTools\fR"
 In this tab each sub-command can be selected a their default option settings changed as required.
-.RE 0
+.RE
 .SH NOTES
 \fBsvn\fR and sub-commands are macros defined in file \fCsvn.emf\fR.
 .PP

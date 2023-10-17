@@ -8,16 +8,21 @@
 .so me.tni
 .TH $time 5
 .XI $time - "The current system time"
+.XI $unix-time - "The current UNIX epoch time"
 .SH NAME
 $time \- The current system time
 .Me $a
 .SH SYNOPSIS
-.B $time
-"\fIstring\fR" 
+.Me "|$time"
+\fB$time\fR "\fIstring\fR" 
+.br
+.Me "|$MEPATH"
+\fB$unix-time\fR \fIinteger\fR" 
+.Me $a
 .SH DESCRIPTION
 .B $time
-is a constantly changing variable which is set to the current system time. The
-format of \fB$time\fR is "\fCYYYYCCCMMDDWhhmmssSSS\fR", where:-
+is a  constantly  changing  variable  which  is  set  to the  current  system  time.  The  format  of  \fB$time\fR  is
+"\fCYYYYCCCMMDDWhhmmssSSS\fR", where:-
 .IP \fBYYYY\fR
 The current year (full 4 digits so should be millennium bug free).
 .IP \fBCCC\fR
@@ -37,8 +42,8 @@ The second (0-59).
 .IP \fBSSS\fR
 The millisecond (0-999).
 .PP
-\fB$time\fR  can be set to an integer value which is a time offset in seconds,
-for example if the following was executed;-
+\fB$time\fR  can be set to an integer  value  which is a time  offset in seconds,  for  example if the  following  was
+executed;-
 .Me $emf-scheme
 .CS
 set-variable $time "3600"
@@ -47,6 +52,10 @@ set-variable $time "0"
 .CE
 .Me $ehf-scheme
 The written time would one hour ahead of the system time.
+.PP
+.B $unix-time
+is also a constantly  changing  integer, its value is a count of the number of seconds since 1970-01-01  00:00:00 UTC,
+otherwise known as the \s-1UNIX\s0 epoch time. This variable cannot be set.
 .SH EXAMPLE
 The following macro times the time taken to execute a user command:-
 .Me $emf-scheme
