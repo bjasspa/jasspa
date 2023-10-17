@@ -1,0 +1,50 @@
+# -*- Makefile -*-
+# Make rules for Cygwin
+#
+# Windows definitions for things.
+#
+# Remove unconditionally + copy
+RM	= del /F /Q
+CP	= copy
+MV	= move
+#
+# Directory stuff
+#
+MKDIR	= mkdir
+RMDIR	= - rd /S /Q
+CD	= cd
+#
+# Archives - always full compression.
+#
+TAR	= tar
+ZIP	= zip -9
+UNZIP	= unzip -q -o
+GZIP	= gzip -9
+GUNZIP	= gunzip
+CAT	= cat
+SED	= sed
+#
+# Install
+#
+INSTALL		= install
+INSTALL_FIL	= $(INSTALL) -m 0666
+INSTALL_DIR	= $(INSTALL) -m 0755
+INSTALL_EXE	= $(INSTALL) -m 0777
+#
+# Use microemacs for conversions.
+#
+ME      = mecw32 -p
+DOS2UNIX= $(ME) -n "@dos2unix"
+UNIX2DOS= $(ME) -n "@unix2dos"
+#
+# Host specific definitions
+# 
+TARGETDIR   =   $(UNAME)
+#
+# Set up the compiler Compiler
+#
+include $(TOPDIR)/etc/makeinc.gcc
+#
+# Platform specific defines.
+#
+CPP_PLATDEFS=   -D_MINGW -D_WIN32
