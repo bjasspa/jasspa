@@ -1,6 +1,6 @@
 #____________________________________________________________________________
 #
-# Last Edited <040207.1604>
+# Last Edited <231205.1334>
 #
 # Nroff tools makefile.
 #____________________________________________________________________________
@@ -35,15 +35,14 @@ ALLEXES	=	$(RTFEXES) $(HTMEXES) $(MANEXES) $(TOLEXES) \
 # Dependencies
 #____________________________________________________________________________
 #
-#$(ALLEXES)::	
 .SUFFIXES:	.o .c
 %.o:%.c
 	$(CC) $(CFLAGS) -c $< 
-%:%.o
-	$(CC) $(CFLAGS) -o $* $*.$O $(LDFLAGS) $(CLIBS) $(LOCALLIBS) $(SYSLIBS)
-%:%.c
+%$(EXE):%.o
+	$(CC) $(CFLAGS) -o $* $< $(LDFLAGS) $(CLIBS) $(LOCALLIBS) $(SYSLIBS)
+%$(EXE):%.c
 	$(CC) $(CFLAGS) -c $< 
-	$(CC) $(CFLAGS) -o $* $*.$O $(LDFLAGS) $(CLIBS) $(LOCALLIBS) $(SYSLIBS)
+	$(CC) $(CFLAGS) -o $* $< $(LDFLAGS) $(CLIBS) $(LOCALLIBS) $(SYSLIBS)
 	
 all::		$(ALLEXES)
 
@@ -64,9 +63,7 @@ ntags.$O:	$(UTILS_H)
 superman.$O:	$(UTILS_H)
 nrar.$O:	$(UTILS_H)
 hts2html.$O:	$(UTILS_H)
-#$(ALLEXES) :	%: %.o
-#	$(CC) $(CFLAGS) -o $@ $@.$O $(LDFLAGS) $(CLIBS) $(LOCALLIBS) $(SYSLIBS)
-$(ALLEXES):	$(INSTLIBDIR)/libutils.$A libnroff.$A
+$(ALLEXES):	libnroff.$A $(INSTLIBDIR)/libutils.$A
 
 nroff.bat: nroff.bsh
 	cp nroff.bsh nroff.bat
@@ -96,13 +93,13 @@ LIBOBJ	=	$(LIBSRC:.c=.$O)
 libnroff.$A:	$(LIBOBJ)
 		$(RM) $@
 		$(AR) $(ARFLAGS) $@ $(LIBOBJ)
+
 #____________________________________________________________________________
 #
 # Install the files.
 #____________________________________________________________________________
 #
-install::	$(ALLEXES)
-		$(MKDIR) $(INSTBINDIR)
+install::	$(INSTBINDIR) $(ALLEXES)
 		$(INSTALL_EXE) $(RTFEXES) $(INSTBINDIR)
 		$(INSTALL_EXE) $(TEXEXES) $(INSTBINDIR)
 		$(INSTALL_EXE) $(HTMEXES) $(INSTBINDIR)
@@ -118,3 +115,6 @@ clean::
 spotless:: clean
 	$(RM) *~
 	$(RM) tags
+
+$(INSTBINDIR):
+	$(MKDIR) $(INSTBINDIR)

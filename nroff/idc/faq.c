@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.2 $
  *  Date          : $Date: 2004-02-07 19:29:48 $
  *  Author        : $Author: jon $
- *  Last Modified : <040207.1924>
+ *  Last Modified : <231205.1243>
  *
  *  Description	
  *
@@ -34,8 +34,6 @@
  * readable form without prior written consent from Jon Green.
  *
  ****************************************************************************/
-
-static const char rcsid[] = "@(#) : $Id: faq.c,v 1.2 2004-02-07 19:29:48 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>

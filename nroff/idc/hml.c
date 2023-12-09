@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.2 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040207.1926>
+ *  Last Modified : <231205.1243>
  *
  *  Description	
  *
@@ -43,8 +43,6 @@
 
 #include "hmldrv.h"
 #include <utils.h>
-
-static const char rcsid[] = "@(#) : $Id: hml.c,v 1.2 2004-02-07 19:29:49 jon Exp $";
 
 /*
  * Version 1.0.0 - 03/11/95 - JG

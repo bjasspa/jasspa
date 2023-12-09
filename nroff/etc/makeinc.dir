@@ -1,7 +1,7 @@
 # -!- Makefile -!-
 # Directory
 #
-RELDIR	=	$(TOPDIR)/release
+RELDIR	=	$(TOPDIR)$(pc)release
 #
 # Base directory names
 # 
@@ -11,6 +11,6 @@ INCDIR		= include
 #
 # Install directory names
 # 
-INSTINCDIR=	$(TOPDIR)/$(INCDIR)
-INSTBINDIR=	$(TOPDIR)/$(BINDIR)/$(TARGETDIR)
-INSTLIBDIR=	$(TOPDIR)/lib/$(TARGETDIR)
+INSTINCDIR=	$(TOPDIR)$(pc)$(INCDIR)
+INSTBINDIR=	$(TOPDIR)$(pc)$(BINDIR)$(pc)$(TARGETDIR)
+INSTLIBDIR=	$(TOPDIR)$(pc)lib$(pc)$(TARGETDIR)

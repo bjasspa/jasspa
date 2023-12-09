@@ -12,7 +12,7 @@
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sat Feb 7 15:01:38 2004
-#  Last Modified : <040207.1929>
+#  Last Modified : <231205.1140>
 #
 #  Description
 #
@@ -36,13 +36,13 @@ TOPDIR  = .
 include $(TOPDIR)/etc/makeinc
 
 install all spotless clean::
-	cd utils;    $(MAKE) $@
-	cd nroff;    $(MAKE) $@
-	cd idc;      $(MAKE) $@
-	cd nroffdoc; $(MAKE) $@
+	cd utils$(sc)    $(MAKE) $@
+	cd nroff$(sc)    $(MAKE) $@
+	cd idc$(sc)      $(MAKE) $@
+	cd nroffdoc$(sc) $(MAKE) $@
 
 clean spotless::
-	cd etc; $(MAKE) $@
+	cd etc$(sc) $(MAKE) $@
 
 spotless::
 	$(RMDIR) $(BINDIR)

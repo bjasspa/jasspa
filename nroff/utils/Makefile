@@ -1,6 +1,6 @@
 #____________________________________________________________________________
 #
-# Last Edited <040207.1516>
+# Last Edited <231205.1247>
 #
 # Utilties makefile.
 #____________________________________________________________________________
@@ -25,9 +25,13 @@ utils.$O:	$(HEADERS)
 getfiles.$O:	$(HEADERS)
 dir.$O:		$(HEADERS)
 
-install:: libutils.$A $(HEADERS)
+$(INSTINCDIR):
 	$(MKDIR) $(INSTINCDIR)
+
+$(INSTLIBDIR):
 	$(MKDIR) $(INSTLIBDIR)
+
+install:: $(INSTINCDIR) $(INSTLIBDIR) libutils.$A $(HEADERS)
 	$(INSTALL_FIL) $(HEADERS) $(INSTINCDIR)
 	$(INSTALL_FIL) libutils.$A $(INSTLIBDIR)
 

@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.2 $
  *  Date          : $Date: 2004-01-06 00:52:20 $
  *  Author        : $Author: jon $
- *  Last Modified : <040104.0022>
+ *  Last Modified : <231205.1311>
  *
  *  Description
  *
@@ -165,7 +165,9 @@ char
     t_name      *head;
     int         file_cnt;
     char        **table;
+#ifndef _WIN32
     const int   attribute = 0;
+#endif
     char        *fname;
     char        buffer [1024];
     int         status;
@@ -274,11 +276,10 @@ char
     table = (char **) malloc (sizeof (char *) * (count+2));
     table [count] = (char *) 0;
     for (tail = head, i = 1; i <= count; i++, tail = tail->next) {
-        int j;
         char *p;
 
         table [i] = tail->str;
-        for (j = 0, p = table[i]; *p != 0; p++) {
+        for (p = table[i]; *p != 0; p++) {
             if (isupper (*p))
                 *p = tolower (*p);
         }

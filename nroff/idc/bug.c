@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.1 $
  *  Date          : $Date: 2000-10-21 14:31:21 $
  *  Author        : $Author: jon $
- *  Last Modified : <990831.2346>
+ *  Last Modified : <231205.1243>
  *
  *  Description	
  *
@@ -31,8 +31,6 @@
  * readable form without prior written consent from Jon Green.
  *
  ****************************************************************************/
-
-static const char rcsid[] = "@(#) : $Id: bug.c,v 1.1 2000-10-21 14:31:21 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>

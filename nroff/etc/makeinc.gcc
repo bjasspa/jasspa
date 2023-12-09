@@ -29,5 +29,4 @@ YFLAGS		=	-d
 # File Extensions
 O   = o
 A   = a
-EXE =
 I   = -I

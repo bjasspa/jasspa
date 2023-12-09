@@ -2,9 +2,7 @@
 #
 # Get the platform name
 #
-_UNIXOS:=$(shell echo `uname`)
-
-ifeq "$(_UNIXOS)" "`uname`"
+ifeq ($(OS),Windows_NT)
 
 UNAME=mingw
 pc=\$(strip)
@@ -22,8 +20,5 @@ UNAME=$(__UNAME)
 # Find out the compiler.
 #
 WHICHCC:=$(shell echo `which cc`)
-
-pc=/
-sc=; 
 
 endif

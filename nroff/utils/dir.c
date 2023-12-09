@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.3 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040207.1923>
+ *  Last Modified : <231205.1254>
  *
  *  Description     These utilities manipulate filenames.
  *
@@ -29,8 +29,6 @@
  * readable form without prior written consent from Jon Green.
  *
  ****************************************************************************/
-
-static const char rcsid[] = "@(#) : $Id: dir.c,v 1.3 2004-02-07 19:29:49 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>

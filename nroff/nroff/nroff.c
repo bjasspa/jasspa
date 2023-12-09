@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.3 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040207.1913>
+ *  Last Modified : <231205.1334>
  *
  *  Description
  *
@@ -145,8 +145,6 @@ static KeyType keyTab [] = {
 };
 
 /* Local memory definitions */
-
-static const char rcsid[] = "@(#) : $Id: nroff.c,v 1.3 2004-02-07 19:29:49 jon Exp $";
 
 static dsRecord *dsHead = NULL;
 static char *instr;                     /* Instruction buffer */
@@ -1107,10 +1105,10 @@ Id_func (void)
                isdigit ((int)(s[1])) &&
                isdigit ((int)(s[2])) &&
                isdigit ((int)(s[3])) &&
-               s[4] == '/' &&
+               ((s[4] == '/') || (s[4] == '-')) &&
                isdigit ((int)(s[5])) &&
                isdigit ((int)(s[6])) &&
-               s[7] == '/' &&
+               ((s[7] == '/') || (s[7] == '-')) &&
                isdigit ((int)(s[8])) &&
                isdigit ((int)(s[9])) &&
                s[10] == '\0'))
@@ -2424,10 +2422,7 @@ comment_func (void)
     else if ((strncmp (instr, "ERROR", 5) == 0) ||
              (strncmp (instr, "WARNING", 7) == 0))
     {
-        char *f;
-
         s = getFirstParam (&instr);
-        f = instr;
         if (strcmp (s, "ERROR") == 0)
             uError ("In-line [%s]\n", (instr == NULL) ? "UNDEFINED" : instr);
         else if (strcmp (s, "WARNING") == 0)

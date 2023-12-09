@@ -3,6 +3,7 @@
 #
 # Windows definitions for things.
 #
+EXE     = .exe
 # Remove unconditionally + copy
 RM	= del /F /Q
 CP	= copy
@@ -10,7 +11,7 @@ MV	= move
 #
 # Directory stuff
 #
-MKDIR	= mkdir
+MKDIR	= - mkdir
 RMDIR	= - rd /S /Q
 CD	= cd
 #
@@ -26,10 +27,10 @@ SED	= sed
 #
 # Install
 #
-INSTALL		= install
-INSTALL_FIL	= $(INSTALL) -m 0666
-INSTALL_DIR	= $(INSTALL) -m 0755
-INSTALL_EXE	= $(INSTALL) -m 0777
+INSTALL		= $(TOPDIR)\etc\wcp.bat
+INSTALL_FIL	= $(INSTALL)
+INSTALL_DIR	= $(INSTALL)
+INSTALL_EXE	= $(INSTALL)
 #
 # Use microemacs for conversions.
 #

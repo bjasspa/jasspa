@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.4 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040207.1900>
+ *  Last Modified : <231205.1159>
  *
  *  Description	
  *
@@ -402,7 +402,6 @@ void catmanCloseFile (FILE *fp)
 
 void catmanEntry (char *entryName, char *section)
 {
-    CManList    *cml;
     char        *name;
 
     dbprintf (("catmanEntry (%s, %s)\n", entryName, section));
@@ -416,7 +415,7 @@ void catmanEntry (char *entryName, char *section)
         name = bufNStr (name, section);
     }
     assert (cfileHead != NULL);
-    cml = AddCManList (name, cfileHead, CMAN_SORT|CMAN_LOWER);
+    AddCManList (name, cfileHead, CMAN_SORT|CMAN_LOWER);
     dbprintf (("catmanEntry DONE: (%s, %s)\n", entryName, section));
     bufFree (name);
 }

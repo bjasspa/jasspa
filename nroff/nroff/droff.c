@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.3 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040207.1916>
+ *  Last Modified : <231205.1202>
  *
  *  Description
  *
@@ -790,11 +790,9 @@ static void
 nrHt_func (char *name, char *section, char *concat,
            char *module, char *file, int type)
 {
-    int     fmode;
     char    *buf;
 
     buf = NULL;
-    fmode = mode;
     if (name != NULL) {
         buf = bufChr (buf, BOLD_CHAR);
         buf = bufStr (buf, name);
@@ -823,11 +821,9 @@ static void
 nrHh_func (char *text, char *name, char *section,
            char *concat, char *module, char *file, int type)
 {
-    int     fmode;
     char    *buf;
 
     buf = NULL;
-    fmode = mode;
     if (text != NULL) {
         buf = bufStr (buf, text);
     }
@@ -847,11 +843,9 @@ nrHr_func (char *name, char *section, char *concat)
 static void
 nrHg_func (char *name, char *concat)
 {
-    int     fmode;
     char    *buf;
 
     buf = NULL;
-    fmode = mode;
     if (name != NULL) {
         buf = bufChr (buf, ITALIC_CHAR);
         buf = bufStr (buf, name);

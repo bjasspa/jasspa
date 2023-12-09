@@ -12,7 +12,7 @@
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sat Oct 21 14:08:08 2000
-#  Last Modified : <040207.1607>
+#  Last Modified : <231205.1249>
 #
 #  Description	
 #
@@ -55,6 +55,9 @@ all::		$(EXES)
 $(EXES):	$(OBJS) $(INSTLIBDIR)/libutils.$(A)
 		$(CC) -o $@ $(LDFLAGS) $(OBJS) $(LOCALLIBS) $(CLIBS) $(SYSLIBS)
 
+$(INSTBINDIR):
+		$(MKDIR) $(INSTBINDIR)
+
 clean::
 		$(RM) $(EXES)
 		$(RM) *.$O
@@ -64,8 +67,7 @@ spotless:	clean
 		$(RM) *~
 		$(RM) tags
 
-install::	$(EXES)
-		$(MKDIR) $(INSTBINDIR)
+install::	$(INSTBINDIR) $(EXES)
 		$(INSTALL_EXE) $(EXES) $(INSTBINDIR)
 
 idc.$O:		idc.h

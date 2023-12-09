@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.2 $
  *  Date          : $Date: 2004-01-06 00:53:51 $
  *  Author        : $Author: jon $
- *  Last Modified : <040104.0039>
+ *  Last Modified : <231205.1419>
  *
  *  Description
  *
@@ -110,7 +110,5 @@ typedef struct {
     int co_font;                        /* Copyright font type */
     int co_size;                        /* Copyright font size */
 } fontType;
-
-extern fontType *rtfFont;
 
 #endif

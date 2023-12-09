@@ -1,5 +1,10 @@
 # -*- Makefile -*-
 #
+# Define path and multiple command separater chars for unix (mingw must change these)
+pc=/
+sc=; 
+EXE=
+#
 # Determine make version
 # gmake defines MAKE_VERSION use this to determine the make tool
 _FOOBAR=	AaBbCc

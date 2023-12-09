@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.1 $
  *  Date          : $Date: 2000-10-21 14:31:23 $
  *  Author        : $Author: jon $
- *  Last Modified : <990831.2209>
+ *  Last Modified : <231205.1255>
  *
  *  Description
  *
@@ -31,8 +31,6 @@
  * readable form without prior written consent from Jon Green.
  *
  ****************************************************************************/
-
-static const char rcsid[] = "@(#) : $Id: line.c,v 1.1 2000-10-21 14:31:23 jon Exp $";
 
 /* Include Files */
 
@@ -921,10 +919,8 @@ blkAccumulator_lfunc (void)
 static void
 blkAccumulator_func (void)
 {
-    char *s;
-
     uDebug (1, ("blkAccumulator_func [%s].\n", instr));
-    s = strAccumulate (instr, ACCUM_RESTART);
+    strAccumulate (instr, ACCUM_RESTART);
     lineFunc = blkAccumulator_lfunc;
 }
 

@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.3 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040207.1917>
+ *  Last Modified : <231205.1207>
  *
  *  Description
  *
@@ -172,7 +172,11 @@ processDirectory (char *buffer)
             if (S_IFDIR & sbuf.st_mode)
                 return;
         }
+#ifdef _WIN32
+        if (mkdir((const char *)pname) < 0)
+#else
         if (mkdir (pname, 0777) < 0)
+#endif
             uFatal ("Cannot construct sub-directory [%s]\n", pname);
         uVerbose (1, "Constructing directory [%s]\n", pname);
 

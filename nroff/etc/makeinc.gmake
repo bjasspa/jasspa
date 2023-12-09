@@ -2,12 +2,21 @@
 #
 # Get the platform name
 #
+ifeq ($(OS),Windows_NT)
+
+UNAME=mingw
+pc=\$(strip)
+sc=& 
+
+else
+
 _UNAME:=$(shell echo `uname | tr '[A-Z]' '[a-z]'`)
 #
 # For cygwin then get rid of the install base we do not need it.
 __UNAME=$(_UNAME:cygwin%=cygwin)
 #
 UNAME=$(__UNAME)
+endif
 #
 # Find out the compiler.
 #

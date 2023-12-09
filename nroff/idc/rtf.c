@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.2 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040207.1927>
+ *  Last Modified : <231205.1256>
  *
  *  Description	
  *
@@ -34,8 +34,6 @@
  * readable form without prior written consent from Jon Green.
  *
  ****************************************************************************/
-
-static const char rcsid[] = "@(#) : $Id: rtf.c,v 1.2 2004-02-07 19:29:49 jon Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -442,9 +440,7 @@ rtfBullet (char *format, ...)
 static void
 rtfTitle (int level, char *format, ...)
 {
-    static int level2level [] = {1, 2};
     va_list ap;
-    int i;
     char buffer [1024];
 
     va_start (ap, format);
@@ -452,9 +448,7 @@ rtfTitle (int level, char *format, ...)
     va_end (ap);
 
     if (level < 0)
-        i = (level = -level);
-    else
-        i = level2level [level];
+        level = -level;
     
     if (level == 1)
     {

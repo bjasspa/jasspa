@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.4 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040207.1909>
+ *  Last Modified : <231205.1208>
  *
  *  Description
  *
@@ -475,9 +475,8 @@ nrTSdata (char *line)
     DataRowItem *ri;
     DataLine *l;
     char *item;
-    char c;                             /* Local character pointer */
 
-    c = *line++;
+    line++;
     r = dataRowConstruct ();            /* Construct a new row */
 
     /* Check for horizontal line */
