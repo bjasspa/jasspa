@@ -113,11 +113,14 @@ set-variable #l0 &reg &spr "/history/%s/fence" %platform "1"
   set-variable .display-matching-fence.dmf &lget "|0|37|45|61|" #l0
   0 global-bind-key display-matching-fence "idle-pick"
 !endif
-; key bindings
+; key bindings - all prefixes first in case an emulation is in use 
+1 global-bind-key prefix                 "esc"
+2 global-bind-key prefix                 "C-x"
+3 global-bind-key prefix                 "C-h"
+4 global-bind-key prefix                 "C-c"
 0x1 global-bind-key spell-word           "esc $"
 global-bind-key frame-handle             "C-x 5"
 global-bind-key find-zfile               "C-x 7"
-4 global-bind-key prefix                 "C-c"
 global-bind-key set-position             "C-c C-a"
 global-bind-key goto-position            "C-c a"
 global-bind-key grep                     "C-c g"
@@ -255,7 +258,7 @@ add-file-hook ".py"                                           fhook-python
 add-file-hook ".scm .sch"                                     fhook-scheme
 add-file-hook ".mp .mf"                                       fhook-meta
 add-file-hook ".m4"                                           fhook-m4
-add-file-hook ".md .tmd"                                      fhook-md
+add-file-hook ".md .tmd .Rmd .rmd"                            fhook-md
 add-file-hook ".texi"                                         fhook-texi
 add-file-hook ".idl"                                          fhook-idl
 add-file-hook ".info dir"                                     fhook-info

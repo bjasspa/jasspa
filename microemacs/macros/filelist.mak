@@ -111,7 +111,7 @@ ETFS=	asmx86.etf	asn1.etf	au3.etf		\
 	newcomp.etf	newuser.etf	nroff.etf	\
 	pascal.etf	perl.etf	pls.etf		psf.etf		\
 	python.etf	\
-	rd.etf		ruby.etf	rul.etf		\
+	rd.etf		rmd.etf		ruby.etf	rul.etf		\
 	spec.etf	\
 	tcl.etf		\
 	vhdl.etf	\

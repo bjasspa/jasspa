@@ -8,7 +8,8 @@
 ; Synopsis:   Markdown file hook (https://www.markdownguide.org/)
 ;
 define-macro fhook-md
-  @# buffer-init "md"
+  set-variable #l0 &con &isin ".rmd" $buffer-bname "rmd" "md"
+  @# buffer-init "md" #l0
   buffer-init-hooks
 !emacro
 
@@ -26,7 +27,7 @@ set-variable .fhook-md.item-list-r2 "H2 \ecB\\1\ecA"
 set-variable .fhook-md.item-list-s3 "^## \\(\[^<\]\.+\\)"
 set-variable .fhook-md.item-list-r3 "H2 \ecB\\1\ecA"
 
-!if &sin "f" .fhook-latex.setup
+!if &sin "f" .fhook-md.setup
   ; setup emf collapsing
   set-variable .fhook-md.collapse-open  "^\\(# \\|## \\|---\\)"
   set-variable .fhook-md.collapse-close "^\\(# \\|## \\|---\\)"
@@ -51,6 +52,7 @@ set-variable .fhook-md.item-list-r3 "H2 \ecB\\1\ecA"
   ; Allow inserts into the markdown mode. You may add to the inserts in your mymd.emf file
   0 define-macro md-add-file-support
     set-variable #l0 @1
+    set-variable #l1 @2
     ; Force the hilighting mode to load if not already loaded.
     !if &not &exi &cat ".hilight." #l0
       !force execute-file &cat "hk" #l0
@@ -58,26 +60,27 @@ set-variable .fhook-md.item-list-r3 "H2 \ecB\\1\ecA"
     !endif
     ; If the hilighting mode is loaded then modify it.
     !if &sin "h" &ind &spr ".fhook-%s.setup" #l0 &band .hilight.flags 0x02 
-      hilight .hilight.md 0x180 &spr "```{%s}" #l0 &ind &cat ".hilight." #l0 .scheme.hide
-      hilight .hilight.md 0x180 &spr "```{\\.%s}" #l0 &ind &cat ".hilight." #l0 .scheme.hide
-      hilight .hilight.md 0x180 &spr "```{%s[, ][^}]+}" #l0 &ind &cat ".hilight." #l0 .scheme.hide
-      hilight .hilight.md 0x180 &spr "```{\\.%s[, ][^}]+}" #l0 &ind &cat ".hilight." #l0 .scheme.hide
+      hilight .hilight.md 0x180 &spr "```{%s}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
+      hilight .hilight.md 0x180 &spr "```{\\.%s}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
+      hilight .hilight.md 0x180 &spr "```{%s[, ][^}]+}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
+      hilight .hilight.md 0x180 &spr "```{\\.%s[, ][^}]+}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
       hilight &ind &cat ".hilight." #l0 0x180 "```" .hilight.md .scheme.hide
     !else
-      hilight .hilight.md 0x104 &spr "```{%s}" #l0 "```" "" .scheme.quote
-      hilight .hilight.md 0x104 &spr "```{\\.%s}" #l0 "```" "" .scheme.quote
-      hilight .hilight.md 0x104 &spr "```{%s[, ][^}]+}" #l0 "```" "" .scheme.quote
-      hilight .hilight.md 0x104 &spr "```{\\.%s[, ][^}]+}" #l0 "```" "" .scheme.quote
+      hilight .hilight.md 0x104 &spr "```{%s}" #l1 "```" "" .scheme.quote
+      hilight .hilight.md 0x104 &spr "```{\\.%s}" #l1 "```" "" .scheme.quote
+      hilight .hilight.md 0x104 &spr "```{%s[, ][^}]+}" #l1 "```" "" .scheme.quote
+      hilight .hilight.md 0x104 &spr "```{\\.%s[, ][^}]+}" #l1 "```" "" .scheme.quote
     !endif
   !emacro
-  md-add-file-support "tcl"
-  md-add-file-support "r"
-  md-add-file-support "dot"
-  md-add-file-support "python"
-  md-add-file-support "sql"
+  md-add-file-support "tcl" "tcl"
+  md-add-file-support "r" "r"
+  md-add-file-support "dot" "dot"
+  md-add-file-support "python" "python"
+  md-add-file-support "python" "py"
+  md-add-file-support "sql" "sql"
 !endif
 
-!if &sin "x" .fhook-nroff.setup
+!if &sin "x" .fhook-md.setup
   ; only define the b & e hooks if time stamping is enabled
   0 define-macro bhook-md
     set-variable .timestamp $timestamp

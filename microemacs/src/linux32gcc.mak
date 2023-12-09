@@ -61,7 +61,7 @@ CCFLAGSD = -g -Wall
 LDDEFS   = 
 LDFLAGSR = -O3 -flto
 LDFLAGSD = -g
-LDLIBS   = -lm
+LDLIBS   = -lm -ldl
 
 ifeq "$(BCFG)" "debug"
 BOUTDIR  = $(OUTDIRD)
@@ -109,7 +109,9 @@ endif
 #
 # Preference now is to use "ncurses" rather than "termcap", figure out if ncurses is avaiable or if we must fall back to termcap.
 #
-test = $(shell echo "#include <stdio.h>" > _t.c ; echo "int main() { printf(\"Test\"); return 0; }" >> _t.c ; $(LD) $(LDFLAGS) -o /dev/null -lncurses _t.c 2>&1 ; rm -f _t.c)
+test = $(shell echo "#include <stdio.h>" > _t.c)
+test = $(shell echo "int main() { printf(\"Test\"); return 0; }" >> _t.c)
+test = $($(LD) $(LDFLAGS) -o /dev/null -lncurses _t.c 2>&1 ; rm -f _t.c)
 ifneq "$(strip $(test))" ""
 $(warning WARNING: No ncurses, defaulting to termcap.)
 CONSOLE_LIBS  = -ltermcap
