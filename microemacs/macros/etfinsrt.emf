@@ -7,84 +7,82 @@
 ; Synopsis:    Finds, inserts & edits the magic variables in a template file.
 ; Authors:     Jon Green & Steven Phillips
 ;
-; Usage:
-;      etfinsrt "<etf-name>"
-;      n insert-templete "<template-name>"
+; Usage:       n insert-template [ "<template-name>" ]
 ;
-; The <etf-name> is typically the fhook label, i.e. emf or c etc, the template
-; file <etf-name>.etf is found and inserted. insert-template uses the $buffer-fhook
-; name. etfinsrt always inserts the first template in the etf file, whereas
-; insert-template inserts the n'th template or prompts the user if n is not given.
-0 define-macro etfinsrt-i
+; The <template-name> is typically the fhook label, i.e. emf or c etc, the template file <template-name>.etf is found and inserted.
+;
+;  0 insert-template  : Inserts the default template for the current file hook (<fhook-label>.etf)
+;  # insert-template  : Inserts the template matching #_<name>.etf with the user's $user-path/<fhook-label>/ directory (# can be prefixed with '0's)
+;  insert-template "<template-name> : Inserts the given template, first checking for $user-path/<fhook-label>/<template-name>.etf, then using &find
+;  0 insert-template "<template-name> : Same except only &find is used to locate it (used by system to insert the main hook template)
+;  insert-template    : Prompt user to select template from list made up of the default and any templates in $user-path/<fhook-label>/, if only one found it is automatically inserted.
+;
+
+define-macro insert-template
+  !force set-variable #l4 @1
+  !if &seq "" &set #l0 &rig $buffer-fhook 6
+    ml-write "[Error: Invalid $buffer-fhook]"
+    !abort
+  !elif $status
+    set-variable #l2 &con &seq ".etf" &rig #l4 -4 &lef #l4 -4 #l4
+    !iif @#  set-variable @# &seq "R" &stat t &set #l1 &spr "%s%s/%s.etf" $user-path #l0 #l2
+    !if @#
+    !elif &seq "ERROR" &set #l1 &find #l2 ".etf"
+      ml-write &spr "[Error: Failed to locate template file: %s.etf]" #l2
+      !abort
+    !endif
+  !elif &not @?
+    set-variable $file-names &spr "%s%s/.*\.etf" $user-path #l0
+    set-variable #l2 $result
+    set-variable #l3 "|"
+    !while &len &set #l5 $file-names
+      set-variable #l3 &lins #l3 -1 &rep &lef #l5 -4 "_" " "
+    !done
+    set-variable #l6 0
+    !if &lfin #l3 #l0
+    !elif &set #l6 &seq "R" &stat t &set #l1 &spr "%s%s.etf" $user-path #l2
+      set-variable #l3 &lins #l3 0 &cat "0 " #l0
+    !endif
+    !if #l2 "|"
+      ml-write &spr "[Error: No %s templates found]" &ind &spr ".fhook-%s.name"
+      !abort
+    !elif &seq "" &lget #l3 2
+      set-variable #l4 &lget #l3 1
+    !else
+      set-variable #l4 @ml09 "Select template to insert" #l3
+    !endif
+    !iif &not &and #l6 &seq #l4 &cat "0 " #l0  set-variable #l1 &spr "%s%s.etf" #l2 &rep #l4 " " "_"
+  !elif @#
+    set-variable $file-names &spr "%s%s/0*%d_.+\\.etf" $user-path #l0 @#
+    !if &seq "" &set #l1 $file-names
+      ml-write &spr "[Error: %s template %d not found in: %s%s/]" &ind &spr ".fhook-%s.name" #l0 @# $user-path #l0
+      !abort
+    !endif
+    set-variable #l1 &cat $result #l1
+  !elif &seq "ERROR" &set #l1 &find #l0 ".etf"
+    ml-write &spr "[Error: %s default template not found]" &ind &spr ".fhook-%s.name" #l0
+    !abort
+  !endif
+  ; Remember if new buffer & current magic mode then add it if not set
+  set-variable #l3 &sub $window-eline 1
+  set-variable #l0 &bmod magic
   ; Insert the template file
   set-variable #l8 $window-line
-  !force insert-file &find @1 ".etf"
+  !force insert-file #l1
   !if &not $status
     ; Warn and return if the template file was not located.
-    ml-write &spr "[Could not find template file %s.etf]" @1
+    ml-write &spr "[Could not insert template file: %s]" #l1
     !return
   !endif
   set-variable #l7 &sub #l8 $window-line
-  ; Remember current magic mode then add it if not set
-  set-variable #l0 &bmod magic
   1 buffer-mode "magic"
-  ; handle a template file containing multiple templates
   set-variable $window-line #l8
-  !if &xseq @wl "\\$TEMPLATES\\(\\$.+\\$\\)"
-    set-variable #l1 @s1
-    !if @?
-      !if &seq &set #l2 &lget #l1 @# ""
-        set-variable #l2 &lget #l1 1
-      !endif
-    !else
-      !if &seq &set #l2 &ind &spr ".fhook-%s.template" &rig $buffer-fhook 6 "ERROR"
-        set-variable #l2 &lget #l1 1
-      !endif
-      !force !force set-variable #l2 @ml19 "Use Template:" #l2 #l1
-      !if &not $status
-        set-variable #l2 &lget #l1 1
-      !elif &not &lfind #l1 #l2
-        set-variable #l2 &lget #l1 1
-      !else
-        set-variable &ind &spr ".fhook-%s.template" &rig $buffer-fhook 6 #l2
-      !endif
-    !endif
-    set-mark
-    forward-line
-    -1 kill-region
-    set-variable #l7 &add #l7 1
-    !force #l7 search-forward "^\\$TEMPLATE_START\\$\\(.*\\)\\$"
-    !while $status
-      set-variable #l1 &seq @s1 #l2
-      beginning-of-line
-      set-mark
-      forward-line
-      -1 kill-region
-      set-variable #l7 &add #l7 1
-      !force #l7 search-forward "^\\$TEMPLATE_END\\$\\(.*\\)\\$"
-      !if &not $status
-        ml-write "[Error - missing $TEMPLATE_END$]"
-        !abort
-      !endif
-      beginning-of-line
-      !if #l1
-        set-mark
-      !endif
-      forward-line
-      set-variable #l7 &add #l7 $window-line
-      -1 kill-region
-      set-variable #l7 &sub #l7 $window-line
-      !force #l7 search-forward "^\\$TEMPLATE_START\\$\\(.*\\)\\$"
-    !done
-  !endif
   ; Change the user name $USER_NAME$.
   set-variable #l1 &reg "/history/user-name" "<unknown>"
   set-variable $window-line #l8
   !force #l7 replace-string "\\$USER_NAME\\$" #l1
   ; Change to the company name $COMPANY_NAME$.
-  !if &not &seq %company-name "ERROR"
-    set-variable #l1 %company-name
-  !endif
+  !iif &not &seq %company-name "ERROR"  set-variable #l1 %company-name
   set-variable $window-line #l8
   !force #l7 replace-string "\\$COMPANY_NAME\\$" #l1
   ; Change the year $YEAR$
@@ -121,17 +119,5 @@
   !endif
   ; Reset magic mode if we added it, flag buffer as unedited and goto end
   &cond #l0 1 -1 buffer-mode "magic"
-  -1 buffer-mode "edit"
-!emacro
-
-0 define-macro etfinsrt
-  1 etfinsrt-i @1
-!emacro
-
-define-macro insert-template
-  !if @?
-    @# etfinsrt-i &rig $buffer-fhook 6
-  !else
-    etfinsrt-i &rig $buffer-fhook 6
-  !endif
+  &cond #l3 1 -1 buffer-mode "edit"
 !emacro
