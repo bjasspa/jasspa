@@ -3139,14 +3139,14 @@ get_flag:
                 /* if its a directory check there's an ending '/' */
                 if(ftype & meIOTYPE_DIRECTORY)
                 {
-                    meUByte *ss=evalResult+meStrlen(evalResult) ;
+                    meUByte *ss=evalResult+meStrlen(evalResult);
                     if(ss[-1] != DIR_CHAR)
                     {
-                        ss[0] = DIR_CHAR ;
-                        ss[1] = '\0' ;
+                        ss[0] = DIR_CHAR;
+                        ss[1] = '\0';
                     }
                 }
-                return evalResult ;
+                return evalResult;
                 
             case 'd':
                 /* file date stamp to int */

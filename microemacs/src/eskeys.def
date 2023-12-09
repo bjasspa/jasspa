@@ -26,6 +26,9 @@
  * Description:
  *     Included by eskeys.def to create an ordered list of extended (special)
  *     key names.
+ * 
+ *     Use 'showkey -a' in terminal to get char sequence of keys
+ *     Use 'infocmp -a -1' in terminal to print termcap/terminfo info
  */
 
 DEFSKEY ("",             NULL,    NULL, NULL,      SKEY_error ) /* Don't want a key with value 0x00 */

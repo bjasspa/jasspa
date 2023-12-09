@@ -108,26 +108,45 @@ set-variable .fhook-svn-status.command-kbind &rig &lset &lset &lset &lset &lset 
 set-variable .fhook-svn-status.command-desc  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-desc  1 "" 2 "" 3 "Help on Subversion Status" 4 "Open Subversion menu" 5 "Rerun svn-status" 6 "" 2
 set-variable .fhook-svn-status.refresh "svn-status-refresh"
 
+; * = Console, ! = wait, $ = no file select
 set-variable .svn.cnames  "|Add|Blame|Checkout|Commit|Copy|Delete|Diff|Log|Move|Status|Update|Server Copy|Server Move|Resolve|Ignore|Info|XDiff|Commit Log|"
 set-variable .svn.cflags  "|RIS*!|Vhpvs|UR$|CRS*!|NPrS*!|KrS*!|ZRxWwpvS|ZVpf|NPrS*!|ZRAIuwS|ZRMS*|nCPs*!|nCPs*!|ZRaS*|iD!|sD^!|ZtS|pv$|"
+; 1 Add - flags: RIS*!
 set-variable .svn.cdefs1  "|1|0|"
-set-variable .svn.cdefs2  "|0|0|1|2|"
+; 2 Blame - flags: Vhpvs
+set-variable .svn.cdefs2  "|0|0|1|3|"
+; 3 Checkout - flags: UR$
 set-variable .svn.cdefs3  "||1|0|"
+; 4 Commit - flags: CRS*!
 set-variable .svn.cdefs4  "||1|0|"
+; 5 Copy - flags: NPrS*!
 set-variable .svn.cdefs5  "||1|0|"
+; 6 Delete - flags: KrS*!
 set-variable .svn.cdefs6  "|0|0|"
-set-variable .svn.cdefs7  "|0|1|0|1|0|1|2|"
+; 7 Diff - flags: ZRxWwpvS
+set-variable .svn.cdefs7  "|0|1|0|1|0|1|3|"
+; 8 Log - flags: ZVpf
 set-variable .svn.cdefs8  "|0|0|1|"
+; 9 Move - flags: NPrS*!
 set-variable .svn.cdefs9  "||1|0|"
+; 10 Status - flags: ZRAIuwS
 set-variable .svn.cdefs10 "|1|1|0|0|1|0|"
+; 11 Update - flags: ZRMS*
 set-variable .svn.cdefs11 "|1|1|0|"
+; 12 Server Copy - flags: nCPs*!
 set-variable .svn.cdefs12 "|||1|"
+; 13 Server Move - flags: nCPs*!
 set-variable .svn.cdefs13 "|||1|"
+; 14 Resolve - flags: ZRaS*
 set-variable .svn.cdefs14 "|0|0|2|"
+; 15 Ignore - flags: iD!
 set-variable .svn.cdefs15 "||"
+; 16 Info - flags: sD^!
 set-variable .svn.cdefs16 "|"
+; 17 XDiff - flags: ZtS
 set-variable .svn.cdefs17 "|0|1|"
-set-variable .svn.cdefs18 "|1|5|"
+; 18 Commit Log - flags: pv$
+set-variable .svn.cdefs18 "|1|6|"
 set-variable .svn.ccount  18
 
 set-variable .svn.com &reg &spr "/history/%s/svn/com" $platform "svn"
@@ -412,8 +431,8 @@ set-variable .svn.cfver ""
 0 define-macro svn-revision-op
   !if &les @# 0
     -1 osd .osd.tmp
-    osd .osd.tmp 0 "bs" 13 0 0 0
-    set-variable #l1 0
+    osd .osd.tmp 0 "bs" 15 0 0 0
+    set-variable #l1 .si
     !while &not &seq "" &set #l2 &lget .lbl &inc #l1 1
       osd .osd.tmp #l1 "" #l2 #l1 svn-revision-ops
     !done
@@ -421,7 +440,7 @@ set-variable .svn.cfver ""
     set-variable $result &rep &lget .lbl &lget .svn-osd.values .svn-osd.o-v "\H" ""
   !endif
 !emacro
-set-variable .svn-revision-op.lbl "|\HHead|\HBase|\HCommitted|\HPrevious|\HSpecific|"
+set-variable .svn-revision-op.lbl "|Base \Hto Head|\HHead|\HBase|\HCommitted|\HPrevious|\HSpecific|"
 0 define-macro svn-revision-ops
   set-variable .svn-osd.values &lset .svn-osd.values .svn-osd.o-v @#
 !emacro
@@ -520,7 +539,7 @@ set-variable .svn-revision-op.lbl "|\HHead|\HBase|\HCommitted|\HPrevious|\HSpeci
         set-variable .o-a #l0
       !elif &seq #l1 "C"
         osd .osd.svn-osd &inc #l2 1 "Sfh" "    Co\Hmment:    " &add #l2 2
-        @# svn-osd-init-comment #l4
+        @# svn-osd-init-comment
         osd .osd.svn-osd &inc #l2 1 "fh" "      "
         osd .osd.svn-osd &inc #l2 1 "EtNxHfhz" .scheme.osd-entry 60 10 "" f svn-osd-mec
         set-variable #l3 #l2
@@ -626,12 +645,13 @@ set-variable .svn-revision-op.lbl "|\HHead|\HBase|\HCommitted|\HPrevious|\HSpeci
         osd .osd.svn-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use \Hsingle window" #l0 svn-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "v"
-        osd .osd.svn-osd &inc #l2 1 "Sfh" &spr "    %s revisio\Hn:  " &lget .svn.cnames @# &add #l2 1
-        osd .osd.svn-osd &inc #l2 1 "OtxmsfhHR" .scheme.osd-entry "###########" .osd.tmp svn-revision-op
+        set-variable .svn-revision-op.si &con &seq &set #l4 &lget .svn.cnames @# "Diff" 0 1
+        osd .osd.svn-osd &inc #l2 1 "Sfh" &spr "    %s revisio\Hn:  " #l4 &add #l2 1
+        osd .osd.svn-osd &inc #l2 1 "OtxmsfhHR" .scheme.osd-entry "#############" .osd.tmp svn-revision-op
         osd .osd.svn-osd &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
         osd .osd.svn-osd &inc #l2 1 ""
-        osd .osd.svn-osd &inc #l2 1 "Sfh" "           Number:  " &add #l2 1
-        osd .osd.svn-osd &inc #l2 1 "EtxHfz" .scheme.osd-entry 12 1 "" #l0 svn-osd-fver
+        osd .osd.svn-osd &inc #l2 1 "Sfh" &spr "      %n Number:  " &len #l4 " " &add #l2 1
+        osd .osd.svn-osd &inc #l2 1 "EtxHfz" .scheme.osd-entry 14 1 "" #l0 svn-osd-fver
         set-variable #l3 &con #l3 #l3 #l2
         set-variable .o-v #l0
       !elif &seq #l1 "x"
@@ -913,7 +933,7 @@ set-variable .svn-revision-op.lbl "|\HHead|\HBase|\HCommitted|\HPrevious|\HSpeci
       !elif &equ .exit -9999
         ml-write &spr "[SVN Warning: %s operation terminated]" &lget .svn.cnames @#
       !elif &equ .exit -9998
-        ml-write &spr "[SVN Warning: %s operation exited with unknow status]" &lget .svn.cnames @#
+        ml-write &spr "[SVN Warning: %s operation exited with unknown status]" &lget .svn.cnames @#
       !else
         ml-write &spr "[SVN Warning: svn exited with code %d]" .exit
       !endif
@@ -1012,7 +1032,7 @@ define-macro svn-add
 define-macro svn-blame
   2 svn-osd
   !if &les &lget .svn.cvalues2 4 5
-    set-variable #l3 &lget "|HEAD|BASE|COMMITTED|PREV|" &lget .svn.cvalues2 4
+    set-variable #l3 &lget "|HEAD|HEAD|BASE|COMMITTED|PREV|" &lget .svn.cvalues2 4
   !elif &les &set #l3 .svn.cfver 1
     osd-dialog "Subversion - Blame" "    The specific revision number must be given!    " "  \HAbort  "
     !abort
@@ -1156,18 +1176,24 @@ define-macro svn-commit
       ml-write "[ERROR: Not in log show/hide button]"
       !abort
     !elif &seq #l2 "Show"
+      -1 buffer-mode "view"
       set-variable @wl &rep @wl "[Show]" "[Hide]"
       set-variable #l1 $window-line
       forward-line
       !force 2 narrow-buffer
+      -1 buffer-mode "edit"
+      1 buffer-mode "view"
       goto-line #l1
     !elif &seq #l2 "Hide"
+      -1 buffer-mode "view"
       set-variable @wl &rep @wl "[Hide]" "[Show]"
       set-variable #l1 $window-line
       forward-line
       set-mark
       !force search-buffer "Me" "\n------------------------------------------------------------------------\n"
       !iif $status  !force 4 narrow-buffer
+      -1 buffer-mode "edit"
+      1 buffer-mode "view"
       goto-line #l1
     !else
       ml-write "[ERROR: Unexpected log button]"
@@ -1202,7 +1228,7 @@ define-macro svn-commit
 define-macro svn-commit-log
   18 svn-osd
   !if &les &lget .svn.cvalues18 2 5
-    set-variable #l3 &lget "|HEAD|BASE|COMMITTED|PREV|" &lget .svn.cvalues18 2
+    set-variable #l3 &lget "|HEAD|HEAD|BASE|COMMITTED|PREV|" &lget .svn.cvalues18 2
   !elif &les &set #l3 .svn.cfver 1
     osd-dialog "Subversion - Commit Log" "    The specific revision number must be given!    " "  \HAbort  "
     !abort
@@ -1405,7 +1431,7 @@ define-macro svn-delete
 define-macro svn-diff
   7 svn-osd
   !if &les &lget .svn.cvalues7 7 5
-    set-variable #l3 &lget "|HEAD|BASE|COMMITTED|PREV|" &lget .svn.cvalues7 7
+    set-variable #l3 &lget "|BASE:HEAD|HEAD|BASE|COMMITTED|PREV|" &lget .svn.cvalues7 7
   !elif &les &set #l3 .svn.cfver 1
     osd-dialog "Subversion - Diff" "    The specific revision number must be given!    " "  \HAbort  "
     !abort

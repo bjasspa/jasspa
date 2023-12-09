@@ -27,14 +27,13 @@ password-to-phonic \- Convert a password to phonic string
 .na
 .I n
 .B generate-password
-"\fIvariable\fR"
 .br
 .I n
 .B generate-password 
-"\fIvariable\fR" "\fIflags\fR"
+"\fIflags\fR"
 .br
 .B generate-password 
-"\fIvariable\fR" "\fIlength\fR" "\fIflags\fR"
+"\fIlength\fR" "\fIflags\fR"
 .sp
 .I n
 .B insert-password 
@@ -49,27 +48,29 @@ The password  commands are typically used by a system  administrator to generate
 unambiguously describe a password.
 .PP
 .B generate-password
-is a low level  macro for setting the given  "\fIvariable\fR"  to a new  password  meeting the  criteria  defined by
-combinations of argument \fIn\fR and passed arguments "\fIlength\fR" and "\fIflags\fR".
+is a low level  macro for setting the
+.Ht $result 5
+variable to a new password meeting the criteria defined by combinations of argument \fIn\fR and optionally passed
+arguments "\fIlength\fR" and "\fIflags\fR".
 .PP
-If argument  \fIn\fR is given then the lower byte (0x0ff) defines the password  length,  otherwise the  "\fIlength\fR"
+If argument \fIn\fR is given then the lower byte (0x0ff) defines the password length, otherwise the "\fIlength\fR"
 must be given. The maximum length of the password is 255 bytes.
 .PP
-If the argument  \fIn\fR is given and its value is greater than 255 then the bits above 255 are used to determine  the
+If the argument \fIn\fR is given and its value is greater than 255 then the bits above 255 are used to determine the
 flags, see list below. Otherwise the \fIflags\fR must get given and are defined as follows:
 .IP \fBw\fR
 Generate a random word(s) based password, the given length is used to define the total number of letters to be used by
-one or more words selected  randomly using the spelling  dictionaries. If flag \fBu\fR is also given then the first or
-last letter of each word may randomly be turned to uppercase, if flag \fB!\fR  and/or \fBb\fR are given then each word
-will be separated by a 'special'  character (see flags below)  otherwise  each word is separated by a '-' for clarity.
-Finally if flag \fBd\fR is given then a random two digit number is appended to the  password.  This can be specified by
+one or more words selected randomly using the spelling dictionaries. If flag \fBu\fR is also given then the first or
+last letter of each word may randomly be turned to uppercase, if flag \fB!\fR and/or \fBb\fR are given then each word
+will be separated by a 'special' character (see flags below) otherwise each word is separated by a '-' for clarity.
+Finally if flag \fBd\fR is given then a random two digit number is appended to the password. This can be specified by
 bit 0x0100 in argument \fBn\fR. 
 .IP \fBh\fR
 Generate a random password using hexadecimal characters, i.e. 0-9 and a-f. If the \fBu\fR flag is given then uppercase
-letters  are used  instead.  No other  flag apart from  \fBN\fR  can be used. This can be  specified  by bit 0x0200 in
+letters are used instead. No other flag apart from \fBN\fR can be used. This can be specified by bit 0x0200 in
 argument \fBn\fR. 
 .IP \fBd\fR
-The 10 digit  characters, 0-9, are added to the character class used when not generating a word or hex based password.
+The 10 digit characters, 0-9, are added to the character class used when not generating a word or hex based password.
 This can be specified by bit 0x0400 in argument \fBn\fR. 
 .IP \fBl\fR
 The 26 lowercase letters, a-z, are added to the character class used when not generating a word or hex based password.
@@ -78,38 +79,37 @@ This can be specified by bit 0x0800 in argument \fBn\fR.
 The 26 uppercase letters, A-Z, are added to the character class used when not generating a word or hex based password.
 This can be specified by bit 0x1000 in argument \fBn\fR. 
 .IP \fB!\fR
-24 'special'  characters are added to the character class used when not generating a word or hex based password, these
-characters  include !, $, % & ... but not  brackets or white  spaces. This can be  specified by bit 0x2000 in argument
+24 'special' characters are added to the character class used when not generating a word or hex based password, these
+characters include !, $, % & ... but not brackets or white spaces. This can be specified by bit 0x2000 in argument
 \fBn\fR. 
 .IP \fBb\fR
-8 bracket  characters ([, ], {, }, (, ), <, >) are added to the character class used when not generating a word or hex
+8 bracket characters ([, ], {, }, (, ), <, >) are added to the character class used when not generating a word or hex
 based password. This can be specified by bit 0x4000 in argument \fBn\fR. 
 .IP \fBs\fR
 The space character is added to the character class used when not generating a word or hex based password. This can be
 specified by bit 0x8000 in argument \fBn\fR. 
 .IP \fBe\fR
-When the \fBe\fR flag is given then at least one character  from each of the main  requested  character  classes, i.e.
-digits, lowercase  letters, uppercase letters and specials, must be present in the generated  password, if not another
+When the \fBe\fR flag is given then at least one character from each of the main requested character classes, i.e.
+digits, lowercase letters, uppercase letters and specials, must be present in the generated password, if not another
 password is generated until it does. This can be specified by bit 0x10000 in argument \fBn\fR. 
 .IP \fBN\fR
 When given, flag \fBN\fR does not update the user's last or default password criteria, this flag can be used by macros
-to avoid affecting the user experience. This can be specified by
-bit 0x20000 in argument \fBn\fR.
+to avoid affecting the user experience. This can be specified by bit 0x20000 in argument \fBn\fR.
 .PP
 .B insert-password
-uses  \fBgenerate-password\fR to generates a new random password and insert it into the current buffer with the phonic form.
-The  \fIlength\fR  and  \fIflags\fR  arguments  are the same as  \fBgenerate-password\fR,  see  above,  however  argument  \fBn\fR can be used
-to modify the default behavior of the command, where the bits are defined as follows:
+uses \fBgenerate-password\fR to generates a new random password and insert it into the current buffer with the phonic
+form. The \fIlength\fR and \fIflags\fR arguments are the same as \fBgenerate-password\fR, see above, however argument
+\fBn\fR can be used to modify the default behavior of the command, where the bits are defined as follows:
 .IP \fB0x01\fR
-When set the user is prompted  for the  \fIlength\fR  and the  \fIflags\fR,  however  when not set the default or last
+When set the user is prompted for the \fIlength\fR and the \fIflags\fR, however when not set the default or last
 values will be reused.
 .IP \fB0x02\fR
-When set the phonic form will not be inserted,  however when not set a phonic form will be inserted in brackets  after
+When set the phonic form will not be inserted, however when not set a phonic form will be inserted in brackets after
 the password if the password is not word of hex based and contains something other than digits.
 .PP
 .B password-to-phonic
 converts a string of characters to the phonic alphabet, the command requires a single argument \fIpassword\fR which is
-converted to a phonic  string. The command  \fBpassword-to-phonic\fR  "\fIy5Ck\fR"  inserts the phonic string into the
+converted to a phonic string. The command \fBpassword-to-phonic\fR "\fIy5Ck\fR" inserts the phonic string into the
 buffer:
 .CS
 yankee - Five - CHARLIE - kilo
@@ -117,16 +117,17 @@ yankee - Five - CHARLIE - kilo
 .SH NOTES
 The password commands are macros defined in \fCpassword.emf\fR.
 .PP
-generate-password  can be used to generate a large  random  number  sequence by reducing the  character  class to just
+generate-password can be used to generate a large random number sequence by reducing the character class to just
 \fBd\fR, for example:
 .CS
 insert-password 30 "d"
 .CE
-Will  insert a 30 digit  random  sequence.  Similarly  the \fBh\fR  flag can be used  instead to create a random  byte
+Will insert a 30 digit random sequence. Similarly the \fBh\fR flag can be used instead to create a random byte
 sequence in hex format.
 .SH "SEE ALSO"
 .na
 .Ht $random 5 ,
+.Ht $result 5 ,
 .Ht insert-string 2 .
 .ad
 .FH

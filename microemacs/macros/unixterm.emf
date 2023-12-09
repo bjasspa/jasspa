@@ -26,18 +26,25 @@ add-file-hook ".C" fhook-cpp
     !elif &seq .change-font.sz-font ""
       ml-write "[Current font name cannot be broken down]"
       !abort
-    !elif &les &set #l0 &add .change-font.sz-dpth @# 5
-      ml-write "[Text too small]"
-      !abort
     !else
-      set-variable .change-font.sz-dpth #l0
-      set-variable #g1 &spr .change-font.sz-font #l0
-      !force change-font &spr .change-font.sz-font #l0
-      !if $status
-        ml-write &spr "[Text Zoom: %d%%]" &div &mul #l0 100 &lget .change-font.ofnt 5
-      !else
-        ml-write &spr "[Current font not available at size %d]" #l0
+      ; try up to five times to increase/decrease font actual size (given in $result)
+      2 change-font      
+      set-variable #l2 &lget $result 5
+      set-variable #l3 5
+      !repeat
+        !if &les &set #l0 &add .change-font.sz-dpth @# 5
+          ml-write "[Text too small]"
+          !abort
         !endif
+        set-variable .change-font.sz-dpth #l0
+        !force change-font &spr .change-font.sz-font #l0
+        !if &not $status
+        !elif &sub &lget $result 5 #l2
+          ml-write &spr "[Text Zoom: %d%%]" &div &mul #l0 100 &lget .change-font.ofnt 5
+          !return
+        !endif
+      !until &not &dec #l3 1
+      ml-write &spr "[Current font not available at size %d]" #l0
     !endif
   !emacro
   2 change-font

@@ -36,10 +36,13 @@ is used to return the results of several commands:
 .Ht find-registry 2 
 \fB$result\fR is used to return the name of a registry child node given the parent and index from the user.
 .TP
-.Ht generate-hash 2 
+.Ht generate-hash 2
 \fB$result\fR is set to the generated hash string.
 .TP
-.Ht goto-alpha-mark 2 
+.Ht generate-password 3
+\fB$result\fR is set to the generated password.
+.TP
+.Ht goto-alpha-mark 2
 \fB$result\fR is set to the list of all alpha marks in the current buffer when an argument of \fC0\fR is given.
 .TP
 .Ht indent 2 
@@ -51,12 +54,12 @@ is used to return the results of several commands:
 .Ht replace-string 2
 .Ht query-replace-string 2
 .IP
-\fB$result\fR is used to return the number of substitutions,  the final replace mode ('a' for all, 'l' for last or 'q'
+\fB$result\fR is used to return the number of substitutions, the final replace mode ('a' for all, 'l' for last or 'q'
 for query) and the replace with string in a list.
 .TP
 .Ht osd 2 
 .IP
-\fB$result\fR  is used to give  and  return  information  to osd item  commands,  information  depends  on the type of
+\fB$result\fR is used to give and return information to osd item commands, information depends on the type of
 \fBosd\fR item.
 .TP
 .Ht osd-dialog 3
@@ -70,7 +73,7 @@ for query) and the replace with string in a list.
 .TP
 .Ht shell-command 2 
 .IP
-\fB$result\fR  is set to the exit status of the \fBsystem\fR  call. The combination of  \fBshell-command\fR  calls and
+\fB$result\fR is set to the exit status of the \fBsystem\fR call. The combination of \fBshell-command\fR calls and
 return value checking can be used in a variety of ways, for example, to test the existence of a file:
 .Me $emf-scheme
 .CS
@@ -91,7 +94,7 @@ shell-command &cat "test -f " %filename
 .TP
 .Ht spell 2
 .IP
-\fB$result\fR  is used to return  information  on the current word, the  information  depends on the argument given to
+\fB$result\fR is used to return information on the current word, the information depends on the argument given to
 \fBspell\fR.
 .TP
 .Ht @mx 4
@@ -107,9 +110,8 @@ For more information see the help pages on referenced commands and variables.
 The current value of \fB$result\fR is lost on the next command call which uses
 it. As a call to
 .Ht create-callback 2
-can cause the  execution of a macro to interrupt  another which is waiting for
-user input, the value of  \fB$result\fR  should be copied before  getting user
-input.
+can cause the execution of a macro to interrupt another which is waiting for user input, the value of \fB$result\fR
+should be copied before getting user input.
 .SH "SEE ALSO"
 .na
 .Ht buffer-info 2 ,
@@ -129,6 +131,7 @@ input.
 .Ht shell-command 2 ,
 .Ht show-region 2 ,
 .Ht spell 2 ,
+.Ht generate-password 3 ,
 .Ht @mx 4 ,
 .Ht $file-names 5 ,
 .Ht $status 5 .
