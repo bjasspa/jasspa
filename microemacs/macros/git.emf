@@ -1106,6 +1106,31 @@ define-macro git-checkout
   !endif
 !emacro
 
+;; GIT file browser ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro git
+  !if .toolbar.open
+    !force toolbar-make-tool-visible "*git-console*"
+    !if $status
+      &bor @# 2 file-browser
+      !return
+    !endif
+  !endif
+  1 set-position "\x81"
+  !force 0 popup-window "*git-console*"
+  !if &not $status
+    delete-other-windows
+    2 split-window-vertically
+    change-window-depth 15
+    find-buffer "*git-console*"
+    buffer-bind-create "bio" "f10" "" file-browser-close
+    3 previous-window
+  !else
+    goto-position "\x81"
+  !endif
+  &bor @# 2 file-browser
+!emacro
+
 ;; GIT directory list/status context menu ;;;;;;;;;;;;;;;;;;
 
 0 define-macro git-clear-console
