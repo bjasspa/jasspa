@@ -1,0 +1,38 @@
+name: Binaries Ubuntu Linux
+
+on:
+  workflow_dispatch:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+
+    steps:
+    - uses: actions/checkout@v3
+     
+    - name: make me binary
+      run: |
+        sudo apt install build-essential mingw-w64 gcc-mingw-w64-i686 
+        sudo apt install libz-mingw-w64 libz-mingw-w64-dev
+        sudo apt install desktop-file-utils
+        cd microemacs/src 
+        bash build.sh
+        bash build.sh -t c        
+        pwd
+        cd ../../
+        mkdir binaries-Linux-x86_64
+        cp microemacs/src/.linux32gcc-release-mecw/mecw binaries-Linux-x86_64/
+        cp microemacs/src/.linux32gcc-release-mec/mec binaries-Linux-x86_64/  
+        export PATH=`pwd`/microemacs/src/.linux32gcc-release-mec/:$PATH
+        export PATH=`pwd`/microemacs/3rdparty/tfs/.linux32gcc-release/:$PATH
+        cd microemacs/mesingle
+        bash mesgen.sh -d -p ../src/.linux32gcc-release-mecw/mecw -o ../../binaries-Linux-x86_64/mecw-ubuntu-20.bin
+        cd ../..
+    - name: Upload Artifact GitHub Action Linux64
+      uses: actions/upload-artifact@v3
+      with: 
+        name: binaries-Linux-x86_64
+        path: binaries-Linux-x86_64
+    
