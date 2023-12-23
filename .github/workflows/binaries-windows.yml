@@ -1,4 +1,4 @@
-name: Binaries Windows
+name: Binaries Windows Crossbuild (not working yet)
 
 on:
   workflow_dispatch:
