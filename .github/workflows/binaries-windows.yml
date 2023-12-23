@@ -1,0 +1,51 @@
+name: Binaries Windows
+
+on:
+  workflow_dispatch:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: make me binary
+      run: |
+        sudo apt install build-essential mingw-w64 gcc-mingw-w64-i686 
+        sudo apt install libz-mingw-w64 libz-mingw-w64-dev
+        sudo apt install desktop-file-utils
+    - name: make me Windows binaries
+      run: |
+        cd microemacs/src
+        bash build.sh -t c
+        cd ../3rdparty/zlib
+        make -f win32mingw.mak CC=i686-w64-mingw32-gcc
+        cd ../tfs
+        make -f win32mingw.mak CC=i686-w64-mingw32-gcc
+        cd ../../src
+        make -f win32mingw.mak CC=i686-w64-mingw32-gcc RC=i686-w64-mingw32-windres
+        make -f win32mingw.mak CC=i686-w64-mingw32-gcc RC=i686-w64-mingw32-windres BTYP=c
+        cd ../../
+        mkdir binaries-Windows-32/
+        cd microemacs
+        tar cfvz macros.tar.gz macros/*
+        cp macros.tar.gz ../binaries-Windows-32/
+        cd ..
+        cp microemacs/3rdparty/tfs/.win32mingw-release/tfs.exe binaries-Windows-32/
+        cp microemacs/src/.win32mingw-release-mew/mew32.exe binaries-Windows-32/
+        cp microemacs/src/.win32mingw-release-mec/mec32.exe binaries-Windows-32/
+        cp /usr/i686-w64-mingw32/lib/zlib1.dll binaries-Windows-32/
+        cp /usr/lib/gcc/i686-w64-mingw32/9.3-win32/libssp-0.dll binaries-Windows-32/
+        export PATH=`pwd`/microemacs/src/.linux32gcc-release-mec/:$PATH
+        export PATH=`pwd`/microemacs/3rdparty/tfs/.linux32gcc-release/:$PATH
+        cd microemacs/mesingle
+        bash mesgen.sh -d -p ../src/.win32mingw-release-mew/mew32.exe -o ../../binaries-Windows-32/mew32-windows-tfs.exe
+        bash mesgen.sh -d -p ../src/.win32mingw-release-mec/mec32.exe -o ../../binaries-Windows-32/mec32-windows-tfs.exe
+    - name: Upload Artifact GitHub Action Windows
+      uses: actions/upload-artifact@v3
+      with:
+        name: binaries-Windows-32
+        path: binaries-Windows-32
+    
