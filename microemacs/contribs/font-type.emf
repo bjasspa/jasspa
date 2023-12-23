@@ -1,0 +1,66 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author$
+;  Created By    : groth
+;  Created       : Tue Nov 7 10:11:28 2023
+;  Last Modified : <231109.0949>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 2023 groth.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro change-font-type
+  !force set-variable #l0 .change-font.sz-fonts
+  !if &seq #l0 "ERROR"
+    ; defaults
+    set-variable .change-font.sz-fonts "|courier-medium|courier-bold|lucidatypewriter-medium|lucidatypewriter-bold|"
+  !endif
+  !force set-variable .font @1
+  !if &not $status
+    ; interactive selection from defaults and previously used fonts
+    set-variable .font @ml19 "Select font: " "courier" .change-font.sz-fonts 
+  !endif
+  ; old syntax ? fontname size-list size
+  !force set-variable .size @3
+  !if &not $status
+    ; new syntax optional second argument size
+    !force set-variable .size @2
+  !endif
+  !if &not $status
+    ; if no size given defaults to 17 which is quite solid
+    !force set-variable .size 17
+  !endif
+  ; indicator -medium or -bold already there
+  !if &less &sin "-" .font 1
+    ; no, defaults to medium
+    set-variable .font &cat .font "-medium"
+  !endif
+  ; create the font
+  set-variable #l0 &spr "-*-%s-r-*-*-%d-*-*-*-*-*-iso8859-*" .font .size
+  !force change-font #l0
+  !if $status
+    ; ok worked create new font for resizing with %d inside for size
+    set-variable .change-font.sz-font &spr "-*-%s-r-*-*-%%d-*-*-*-*-*-iso8859-*" .font
+    ; update size
+    set-variable .change-font.sz-size .size
+    !if &not &lfind .change-font.sz-fonts .font
+      set-variable .change-font.sz-fonts &linsert .change-font.sz-fonts -1 .font
+    !endif
+    200 ml-write &cat "current font: " #l0
+  !else
+    200 ml-write &spr "font is not available: %s" #l0
+  !endif
+!emacro
+
+; 1 global-bind-key change-font-type "C-h +"
+; 0 global-bind-key change-font-type-size "C-h ="
+; -1 global-bind-key change-font-type-size "C-h -"
+unset-variable .change-font.sz-fonts
+change-font-type "ubuntu mono" 25
+
