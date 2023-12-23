@@ -23,7 +23,7 @@ jobs:
         pwd
         cd ../../
         mkdir binaries-Linux-x86_64
-        cp microemacs/3rdparty/tfs/tfs binaries-Linux-x86_64/
+        cp microemacs/3rdparty/tfs/.linux32gcc-release/tfs binaries-Linux-x86_64/
         cp microemacs/src/.linux32gcc-release-mecw/mecw binaries-Linux-x86_64/
         cp microemacs/src/.linux32gcc-release-mec/mec binaries-Linux-x86_64/  
         export PATH=`pwd`/microemacs/src/.linux32gcc-release-mec/:$PATH
