@@ -24,8 +24,8 @@ jobs:
         mkdir binaries-Linux-x86_64
         cd microemacs
         tar cfvz macros.tar.gz macros/*
-        cd ..
         cp macros.tar.gz ../binaries-Linux-x86_64
+        cd ..
         cp microemacs/3rdparty/tfs/.linux32gcc-release/tfs binaries-Linux-x86_64/
         cp microemacs/src/.linux32gcc-release-mecw/mecw binaries-Linux-x86_64/
         cp microemacs/src/.linux32gcc-release-mec/mec binaries-Linux-x86_64/  
