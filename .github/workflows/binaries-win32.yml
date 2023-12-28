@@ -1,0 +1,48 @@
+name: Binaries Windows Server (not working)
+
+on:
+  workflow_dispatch:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+
+    steps:
+    - name: Checkout code
+      id: checkout-code
+      uses: actions/checkout@v3
+
+    - name: Info1 Visual Studio
+      shell: pwsh
+      run: |
+        echo ls        
+        ls
+        echo Get-VSSetupInstance
+        get-command Get-VSSetupInstance
+        Get-VSSetupInstance
+        
+    - name: Find Visual Studio
+      shell: pwsh
+      run: |
+        $installationPath = Get-VSSetupInstance `
+          | Select-VSSetupInstance -Require Microsoft.VisualStudio.Workload.NativeDesktop -Latest `
+          | Select-Object -ExpandProperty InstallationPath
+        Write-Output "VSDEVCMD=${installationPath}\Common7\Tools\VsDevCmd.bat" `
+          | Out-File -FilePath "${Env:GITHUB_ENV}" -Append
+        cat "${Env:GITHUB_ENV}"
+        
+    - name: compile mew
+      shell: pwsh
+      run: |
+        & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
+          | % { , ($_ -Split '=', 2) } `
+          | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
+        cd microemacs/src
+        .\build.bat -t w
+        
+
+        
+        
+    
