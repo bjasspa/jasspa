@@ -45,6 +45,14 @@ jobs:
         cd microemacs\src
         echo ::.\build.bat -t w
         .\build.bat -t w
+    
+    - name: compile mecw
+      shell: cmd
+      run: |
+        "%VSDEVCMD%" -arch=x86
+        set
+        cd microemacs\src
+        .\build.bat -t cw
         
 
         
