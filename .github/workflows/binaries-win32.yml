@@ -35,15 +35,15 @@ jobs:
     - name: compile mew
       shell: cmd
       run: |
-        echo set
+        echo ::set
         set
-        echo ${Env:VSDEVCMD} -arch=x86
-        ${Env:VSDEVCMD} -arch=x86
-        echo set
+        echo ::"%VSDEVCMD%" -arch=x86
+        "%VSDEVCMD%" -arch=x86
+        echo ::set
         set
-        echo cd microemacs\src
+        echo ::cd microemacs\src
         cd microemacs\src
-        echo .\build.bat -t w
+        echo ::.\build.bat -t w
         .\build.bat -t w
         
 
