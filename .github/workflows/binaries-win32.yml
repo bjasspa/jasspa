@@ -1,4 +1,4 @@
-name: Binaries Windows Server (not working)
+name: Binaries Win32 (VC)
 
 on:
   workflow_dispatch:
@@ -20,7 +20,6 @@ jobs:
         echo ls        
         ls
         echo Get-VSSetupInstance
-        get-command Get-VSSetupInstance
         Get-VSSetupInstance
         
     - name: Find Visual Studio
@@ -34,12 +33,17 @@ jobs:
         cat "${Env:GITHUB_ENV}"
         
     - name: compile mew
-      shell: pwsh
+      shell: cmd
       run: |
-        & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
-          | % { , ($_ -Split '=', 2) } `
-          | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
-        cd microemacs/src
+        echo set
+        set
+        echo ${Env:VSDEVCMD} -arch=x86
+        ${Env:VSDEVCMD} -arch=x86
+        echo set
+        set
+        echo cd microemacs\src
+        cd microemacs\src
+        echo .\build.bat -t w
         .\build.bat -t w
         
 
