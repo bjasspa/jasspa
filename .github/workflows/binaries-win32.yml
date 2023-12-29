@@ -1,4 +1,4 @@
-name: Binaries Win32 (VC)
+name: Binaries Win32 (VS)
 
 on:
   workflow_dispatch:
@@ -10,15 +10,7 @@ jobs:
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
     steps:
-    - name: Info1 Visual Studio
-      shell: pwsh
-      run: |
-        echo ls        
-        ls
-        echo Get-VSSetupInstance
-        Get-VSSetupInstance
-        
-    - name: Find Visual Studio
+    - name: Find VS
       shell: pwsh
       run: |
         $installationPath = Get-VSSetupInstance `
@@ -28,20 +20,17 @@ jobs:
           | Out-File -FilePath "${Env:GITHUB_ENV}" -Append
         cat "${Env:GITHUB_ENV}"
         
+    - name: Checkout code
+      uses: actions/checkout@v3
+
     - name: Compile mew
       shell: pwsh
       run: |
         & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
           | % { , ($_ -Split '=', 2) } `
           | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
-        echo evn
-        dir env:
-        echo which nmake
-        get-command nmake
-        echo test nmake
-        nmake /?
-        echo cat VsDevCmd
-        cat "${Env:VSDEVCMD}"
+        cd .\microemacs\src\
+        .\build -t w
 
         
         
