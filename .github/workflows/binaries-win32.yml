@@ -29,9 +29,8 @@ jobs:
         & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
           | % { , ($_ -Split '=', 2) } `
           | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
-        cd .\microemacs\src\
-        .\build -t w
-
+        .\build.bat -t w
+      working-directory: ./microemacs/src
         
         
     
