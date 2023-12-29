@@ -4,9 +4,8 @@
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     2023-10-07 22:40:53
-; Synopsis:    
-; Authors:     $Author: jon $
-; Last Modified: <231010.2240> 
+; Synopsis:    Generate single self-contained me executable
+; Authors:     Steven Phillips
 ;
 ;set-variable $debug 8
 set-variable %mes-opts ""
@@ -40,7 +39,12 @@ set-variable #l0 0
 set-variable %mes-verb &sub &len %mes-opts &len &rep %mes-opts "V" ""
 !iif &sin "S" %mes-opts  set-variable %mes-opts &cat %mes-opts "C"
 
-!iif &not &sin "d" %mes-opts  execute-file "bytecomp"
+!if &sin "d" %mes-opts
+!elif &seq "R" &stat "t" &set #l2 &stat "a" &cat &lef $buffer-fname &rsin "/" $buffer-fname "../macros/bytecomp.emf"
+  execute-file #l2
+!else
+  execute-file "bytecomp"
+!endif
 
 define-macro mesingle-gen
   set-variable #l0 @1
