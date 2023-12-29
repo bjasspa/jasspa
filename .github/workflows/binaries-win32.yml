@@ -29,7 +29,7 @@ jobs:
         & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
           | % { , ($_ -Split '=', 2) } `
           | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
-        .\build.bat -t w
+        nmake -f win32vc16.mak BTYP=w
       working-directory: ./microemacs/src
         
         
