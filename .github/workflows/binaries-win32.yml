@@ -64,7 +64,7 @@ jobs:
     - name: Create mes
       shell: pwsh
       run: |
-        ..\src\.win32vc16-release-mecw\mecw32.exe -p -n "@mesgen" -f -p ..\src\.win32vc16s-release-mew\mew32.exe -o ../../binaries-win32/mes-win32.exe
+        ..\src\.win32vc16-release-mecw\mecw32.exe -p -n "@mesgen" -f -p ..\src\.win32vc16s-release-mew\mew32.exe -o ../../binaries-win32/mes-win32.exe -t ..\3rdparty\tfs\.win32vc16-release\tfs.exe
       working-directory: ./microemacs/mesingle
 
     - name: Upload Packages

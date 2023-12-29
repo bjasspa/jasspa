@@ -9,6 +9,7 @@
 ;
 ;set-variable $debug 8
 set-variable %mes-opts ""
+set-variable %mes-tfs "tfs"
 set-variable #l0 0
 !while &exi &cat ".about.arg" #l0
   set-variable #l1 &ind &cat ".about.arg" &pinc #l0 1
@@ -27,6 +28,8 @@ set-variable #l0 0
     -1 ml-write "       : Output file name"
     -1 ml-write "  -p <file>"
     -1 ml-write "       : MicroEmacs program/executable file"
+    -1 ml-write "  -t <file>"
+    -1 ml-write "       : TFS executable - must run on current platform"
     4 exit-emacs 1
   !endif
   set-variable %mes-opts &cat %mes-opts &rig #l1 1
@@ -34,6 +37,8 @@ set-variable #l0 0
     set-variable %mes-outn &ind &cat ".about.arg" &pinc #l0 1
   !elif &sin "p" #l1
     set-variable %mes-prog &ind &cat ".about.arg" &pinc #l0 1
+  !elif &sin "t" #l1
+    set-variable %mes-tfs &ind &cat ".about.arg" &pinc #l0 1
   !endif
 !done
 set-variable %mes-verb &sub &len %mes-opts &len &rep %mes-opts "V" ""
@@ -78,7 +83,7 @@ define-macro mesingle-gen
     !return
   !endif
   !if &seq &set #l1 &whi &cat #l0 "tfs" "ERROR"
-    !if &seq &set #l1 &whi "tfs" "ERROR"
+    !if &seq &set #l1 &whi %mes-tfs "ERROR"
       -2 ml-write "mesgen Error: failed to locate tfs executable"
       !abort
     !endif
