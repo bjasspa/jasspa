@@ -34,6 +34,7 @@
 !if &band .hilight.flags 0x02
   !iif &not &exi .hilight.diff  !force execute-file "hkdiff"
   hilight .hilight.diff 0x100 "commit \\h+" .scheme.no2
+  hilight .hilight.diff 0 " \\{\\[Prev]$" $mode-line-scheme
   hilight .hilight.diff 20 " \\{\\[Diff-" "]" "" $mode-line-scheme
   !if &not &exist .hilight.git-status
     set-variable .hilight.git-status &pinc .hilight.next 1
@@ -50,16 +51,21 @@
   hilight .hilight.git-status 0x102 "[ *]  M"   .scheme.chg
   hilight .hilight.git-status 0x102 "[ *] !!"   .scheme.hide
   hilight .hilight.git-status 0x102 " Flags  "  .scheme.no1
+  hilight .hilight.git-status 0x102 "\\[\\*\\*\\*\\* Git [^ ]+ completed successfully" .scheme.no1
+  hilight .hilight.git-status 0x102 "\\[\\*\\*\\*\\* Git" .scheme.error
   
   0 hilight .hilight.git-log 0 $global-scheme
   hilight .hilight.git-log 0x100 "\\[Hide]" $mode-line-scheme
   hilight .hilight.git-log 0x100 "\\[Show]" $mode-line-scheme
-  hilight .hilight.git-log 0x1  "\\[Diff]$" $mode-line-scheme
+  hilight .hilight.git-log 0 " \\{\\[Diff]$" $mode-line-scheme
+  hilight .hilight.git-log 0 " \\{\\[Prev]$" $mode-line-scheme
   hilight .hilight.git-log 0x100 "commit \\h+" .scheme.no2
   hilight .hilight.git-log 0x100 "    commit \\h+" .scheme.no2
   hilight .hilight.git-log 0x102 "A\t"  .scheme.add
   hilight .hilight.git-log 0x102 "D\t"  .scheme.rmv
   hilight .hilight.git-log 0x102 "M\t"  .scheme.chg
+  hilight .hilight.git-log 0x102 "\\[\\*\\*\\*\\* Git [^ ]+ completed successfully" .scheme.no1
+  hilight .hilight.git-log 0x102 "\\[\\*\\*\\*\\* Git" .scheme.error
   
   ; fix the *files* buffer hilighting for git additions
   ; todo
@@ -1010,6 +1016,43 @@ define-macro git-log
 ;; GIT Show ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 0 define-macro git-show-process
+  beginning-of-buffer
+  !force search-buffer "me" "^commit \\(\\h+\\)$"
+  !iif &not $status  !return
+  set-variable :ch @s1
+  insert-string "    [Prev]"
+  !if &equ $buffer-hilight .hilight.diff
+    git-exec-complete7
+  !else
+    buffer-bind-key git-show-cmd "return"
+    buffer-bind-key git-show-cmd "space"
+    set-variable :mouse-word-select "git-log-cmd"
+  !endif
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"
+!emacro
+0 define-macro git-show-cmd
+  !if &not &exi :ch
+    ml-write "[ERROR: Show buffer has not been processed]"
+    !abort
+  !elif &xseq @wl "^[AMR]\t\\(.+\\)$"
+    ; TODO ssp need to set location to the root dir (option of @# to git-diff-file)
+    set-variable #l2 @s1
+    git-diff-file #l2 &spr "%s~1..%s" :ch :ch
+  !elif &xseq @wl "^\\(commit \\h+ *\\)\\(\\[Prev]\\)?$"
+    set-position "\x82"
+    set-variable #l1 :ch
+    !if &les $window-col &len @s1
+      set-variable #l9 &lget .git.cvals 6
+      set-variable .git.cvals &lset .git.cvals 6 &lset #l9 2 &bxo &lget #l9 2 1 
+    !else
+      set-variable #l1 &cat #l1 "~1"
+    !endif
+    git-show-commit #l1
+  !else
+    ml-write "[ERROR: Invalid log line]"
+    !abort
+  !endif
 !emacro
 0 define-macro git-exec-complete6
   set-variable #l9 &lget .git.cvals 6
@@ -1018,17 +1061,19 @@ define-macro git-log
   beginning-of-buffer
 !emacro
 0 define-macro git-show-commit
+  !force git-dirlst-detect
   set-variable #l2 @1
   !iif &not &lget &set #l9 &lget .git.cvals 6 2  set-variable #l2 &cat "--name-status " #l2
   !iif &lget #l9 3  set-variable #l2 &cat "-w " #l2
   set-variable #l2 &spr "%s show --date=iso %s" .git.com #l2
   7 git-get-file-list 1 0 #l2
   6 git-exec 3 $buffer-fname
-;  popup-window "*git-show*"
-;  set-variable :fn #l8
-;  beginning-of-buffer
+  popup-window "*git-show*"
+  set-variable $buffer-fname .git-dirlst-detect.ld
+  beginning-of-buffer
 !emacro
 define-macro git-show
+  !force git-dirlst-detect
   6 git-osd
   !if &les &lget &set #l9 .git-osd.values 1 5
     set-variable #l3 &rep &rep &lget "|#REP#/#BRC#|#REP#/#BRC#|@|@~1|" &lget #l9 1 "#REP#" .git.rep "#BRC#" .git.brc
@@ -1039,6 +1084,9 @@ define-macro git-show
   set-variable #l2 &spr "%s show --date=iso %s%s%s" .git.com &con &lget #l9 2 "" "--name-status " &con &lget #l9 3 "-w " "" #l3
   7 git-get-file-list 1 0 #l2
   6 git-exec 3 $buffer-fname
+  popup-window "*git-show*"
+  set-variable $buffer-fname .git-dirlst-detect.ld
+  beginning-of-buffer
 !emacro
 
 ;; GIT Diff ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1048,41 +1096,17 @@ define-macro git-show
 !emacro
 0 define-macro git-exec-complete7
   set-variable $buffer-hilight .hilight.diff
-  !if &lget &lget .git.cvals 7 6
+  !if &lget &lget .git.cvals 7 4
     beginning-of-buffer
-    !if &les $window-eline 7
-      forward-line
-      !if &xseq @wl ".* diff -r \\(\\d+\\)\\(:\\d+\\)? \\(-\\l \\)*\\(.*\\)"
-        set-variable #l2 &rig @s2 1
-        beginning-of-line
-        forward-line
-        insert-string "\nIndex: "
-        insert-string &set #l1 @s4
-        insert-string "\n===================================================================\n"
-        insert-string &spr "--- %s\t(revision %s)  [Diff-Prev]  [Diff-Prev-%s]\n" #l1 @s1 &con &len #l2 #l2 "Working"
-        insert-string &spr "+++ %s\t(%s\n" #l1 &con &len #l2 &cat &cat "revision " #l2 ")  [Diff-Next]  [Diff-Working]" "working copy)"
+    !repeat
+      !force search-buffer "me" "^diff .*\nindex \\h+\\.\\.\\h+ \\d+\n--- a/.*\n\\+\\+\\+ b/.*"
+      !if $status
+        insert-string "  [Diff-Next]"
+        backward-line
+        end-of-line
+        insert-string "  [Diff-Prev]"
       !endif
-    !else
-      !repeat
-        !force search-buffer "me" "^=+\n--- \\([^\n(]+\\)\t(\\([^)\n]+\\))\n\\+\\+\\+ \\([^\n(]+\\)\t(\\([^)\n]+\\))$"
-        !if $status
-          !if &seq @s4 "working copy"
-            set-variable #l1 "Working"
-          !elif &seq &lef @s4 9 "revision "
-            set-variable #l1 &rig @s4 9
-            insert-string "  [Diff-Next]  [Diff-Working]"
-          !else
-            set-variable #l1 ""
-          !endif
-          !if &not &seq @s2 "nonexistent"
-            backward-line
-            end-of-line
-            insert-string "  [Diff-Prev]"
-            !iif &len #l1  insert-string &spr "  [Diff-Prev-%s]" #l1
-          !endif
-        !endif
-      !until &not $status
-    !endif
+    !until &not $status
   !endif
   end-of-buffer
   backward-line
@@ -1094,20 +1118,27 @@ define-macro git-show
   set-variable :mouse-word-select "git-diff-cmd"
 !emacro
 0 define-macro git-diff-file
+  set-position "\x82"
   !iif &sin " " &set #l9 &set #l8 @1  set-variable #l9 &spr "\"%s\"" #l9
   set-variable #l2 @2
   !if &lget &lget .git.cvals 7 2  set-variable #l2 &cat "-w " #l2
   set-variable #l2 &spr "%s diff %s %s" .git.com #l2 #l9
   7 git-get-file-list 1 0 #l2
+  set-variable #g3 $buffer-bname
+  set-variable #g4 $buffer-fname
   7 git-exec 1 $buffer-fname
   popup-window "*git-diff*"
   set-variable :fn #l8
   beginning-of-buffer
 !emacro
 0 define-macro git-diff-cmd
-  !if &not &xseq @wl "^\\(---\\|\\+\\+\\+\\) \\([^\n(]+\\)\t(\\([^)\n]+\\))\\(  \\[[-\\m]+\\]\\)+$" &lef @wl 4
-    ml-write "[ERROR: Invalid diff line]"
-    !abort
+  !if &not &xseq @wl "^\\(---\\|\\+\\+\\+\\) \\([^\n]+\\)\\(  \\[[-\\m]+\\]\\)+$" &lef @wl 4
+    !if &not &seq $buffer-bname "*git-show*"
+      ml-write "[ERROR: Invalid diff line]"
+      !abort
+    !endif
+    git-show-cmd
+    !return
   !elif &or &sin @wc " \n" &not &seq "[Diff-" &lef &set #l0 &rig @wl &rsin " " &lef @wl $window-col 6
     ml-write "[ERROR: Not in diff command]"
     !abort
