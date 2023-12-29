@@ -10,10 +10,6 @@ jobs:
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
     steps:
-    - name: Checkout code
-      id: checkout-code
-      uses: actions/checkout@v3
-
     - name: Info1 Visual Studio
       shell: pwsh
       run: |
@@ -32,28 +28,20 @@ jobs:
           | Out-File -FilePath "${Env:GITHUB_ENV}" -Append
         cat "${Env:GITHUB_ENV}"
         
-    - name: compile mew
-      shell: cmd
+    - name: Compile mew
+      shell: pwsh
       run: |
-        echo ::set
-        set
-        echo ::"%VSDEVCMD%" -arch=x86
-        "%VSDEVCMD%" -arch=x86
-        echo ::set
-        set
-        echo ::cd microemacs\src
-        cd microemacs\src
-        echo ::.\build.bat -t w
-        .\build.bat -t w
-    
-    - name: compile mecw
-      shell: cmd
-      run: |
-        "%VSDEVCMD%" -arch=x86
-        set
-        cd microemacs\src
-        .\build.bat -t cw
-        
+        & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
+          | % { , ($_ -Split '=', 2) } `
+          | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
+        echo evn
+        dir env:
+        echo which nmake
+        get-command nmake
+        echo test nmake
+        nmake /?
+        echo cat VsDevCmd
+        cat "${Env:VSDEVCMD}"
 
         
         
