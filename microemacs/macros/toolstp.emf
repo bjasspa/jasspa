@@ -149,7 +149,7 @@
       !endif
     !endif
   !endif
-  !force read-registry "/history" $user-name "cbr"
+  2 reread-settings
   !if &equ @# 5
     set-registry "/history/toolbar/size" .toolbar.size
   !endif

@@ -173,10 +173,8 @@ set-variable .major-mode-setup-fmode.name "|Unknown|Default|Auto/Both|Auto/Cente
   !endif
 !emacro
 define-macro major-mode-setup
-  !if &band @# 1
-    ; reread the setup if not run from user-setup
-    !force read-registry "/history" $user-name "cbr"
-  !endif
+  ; reread the setup if not run from user-setup
+  !iif &band @# 1  reread-settings
   !if &seq &set .mask &cat "bn" &ind &spr ".%s.setup-mask" $buffer-fhook "bnERROR"
     !bell
     ml-write "[major-mode-setup not supported by current buffer's major mode]"

@@ -472,7 +472,7 @@ define-macro ftp-connect
 !emacro
 
 0 define-macro ftp-make-default
-  !force read-registry "/history" $user-name "cbr"
+  reread-settings
   !if &seq .ftp.url-file ""
     delete-registry "/history/url-file"
   !else

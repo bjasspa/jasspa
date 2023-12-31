@@ -892,7 +892,7 @@ define-macro user-setup
     !endif
     !if .save-err
     !elif &not &seq &find $user-name ".erf" "ERROR"
-      !force read-registry "/history" $user-name "cbr"
+      reread-settings
     !endif
     user-setup-backups
     set-variable .loop 0
@@ -901,6 +901,6 @@ define-macro user-setup
   !if .save-err
     ml-write "[Cannot save user registry file - setup changes will not persist]"
   !elif &not &seq &find $user-name ".erf" "ERROR"
-    !force read-registry "/history" $user-name "cbr"
+    0 reread-settings
   !endif
 !emacro

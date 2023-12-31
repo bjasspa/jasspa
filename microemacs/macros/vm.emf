@@ -1661,12 +1661,12 @@ osd .osd.mails 630 "BcfH"   .scheme.osd-ebtt " \HClose "   f void
 
 define-macro mail-setup
   ; reread the setup if not run from user-setup
-  !iif &band @# 1  !force read-registry "/history" $user-name "cbr"
+  !iif &band @# 1  reread-settings
   !force !force .osd.mails osd
   !if &not &band @# 1
   !elif $status
     save-registry "/history" ""
   !else
-    !force read-registry "/history" $user-name "cbr"
+    0 reread-settings
   !endif
 !emacro

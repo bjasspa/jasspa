@@ -1758,16 +1758,14 @@ osd .osd.cvsstp 2010 ""
 osd .osd.cvsstp 2020 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
 
 define-macro cvs-setup
-  !if &band @# 1
-    ; reread the setup if not run from user-setup
-    !force read-registry "/history" $user-name "cbr"
-  !endif
+  ; reread the setup if not run from user-setup
+  !iif &band @# 1  reread-settings
   !force !force .osd.cvsstp osd
   !if &band @# 1
     !if $status
       save-registry "/history" ""
     !else
-      !force read-registry "/history" $user-name "cbr"
+      0 reread-settings
     !endif
     execute-file "cvs"
   !endif

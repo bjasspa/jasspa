@@ -132,3 +132,16 @@ set-variable .frame-handle.cmd "|delete-frame|create-frame|create-frame|next-fra
     !endif
   !done
 !emacro
+
+0 define-macro reread-settings
+  !force read-registry "/history" $user-name "cbr"
+  !if &not &sin "tfs://" &set #l0 &reg "/history" ""
+  !elif &not &sin "tfs://" $user-path
+    set-registry "/history" &rep #l0 "tfs://" $user-path
+  !elif &band @# 2
+    ml-write "[Error: Cannot save settings - run init-session first]"
+    !abort
+  !elif &band @# 1
+    ml-write "[Warning: Cannot save settings - run init-session first to make permanent changes]"
+  !endif
+!emacro
