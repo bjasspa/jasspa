@@ -40,7 +40,7 @@
     set-variable .hilight.git-status &pinc .hilight.next 1
     set-variable .hilight.git-log &pinc .hilight.next 1
   !endif
-
+  
   0 hilight .hilight.git-status 0 $global-scheme
   hilight .hilight.git-status 0x102 "[ *]\\u  " .scheme.prepro
   hilight .hilight.git-status 0x102 "[ *]\\u"   .scheme.hlred
@@ -48,6 +48,7 @@
   hilight .hilight.git-status 0x102 "[ *] A "   .scheme.add
   hilight .hilight.git-status 0x102 "[ *] AM"   .scheme.add
   hilight .hilight.git-status 0x102 "[ *]  D"   .scheme.rmv
+  hilight .hilight.git-status 0x102 "[ *] MM"   .scheme.chg
   hilight .hilight.git-status 0x102 "[ *]  M"   .scheme.chg
   hilight .hilight.git-status 0x102 "[ *] !!"   .scheme.hide
   hilight .hilight.git-status 0x102 " Flags  "  .scheme.no1
@@ -120,8 +121,8 @@ set-variable .git.cflags &lins .git.cflags -1 "IuwSD!@"
 set-variable .git.cdefs  &lins .git.cdefs  -1 "|0|1|0|"
 ; Command 5 - Log
 set-variable .git.cnames &lins .git.cnames -1 "Log"
-set-variable .git.cflags &lins .git.cflags -1 "Zpf"
-set-variable .git.cdefs  &lins .git.cdefs  -1 "|0|1|"
+set-variable .git.cflags &lins .git.cflags -1 "fZlFp"
+set-variable .git.cdefs  &lins .git.cdefs  -1 "||0|1|1|1|"
 ; Command 6 - Show
 set-variable .git.cnames &lins .git.cnames -1 "Show"
 set-variable .git.cflags &lins .git.cflags -1 "vdWwp$"
@@ -129,7 +130,7 @@ set-variable .git.cdefs  &lins .git.cdefs  -1 "|3|0|1|0|1|"
 ; Command 7 - Diff
 set-variable .git.cnames &lins .git.cnames -1 "Diff"
 set-variable .git.cflags &lins .git.cflags -1 "ZWwpvS@"
-set-variable .git.cdefs  &lins .git.cdefs  -1 "|0|1|0|1|3|"
+set-variable .git.cdefs  &lins .git.cdefs  -1 "|0|1|0|1|5|"
 ; Command 8 - Add
 set-variable .git.cnames &lins .git.cnames -1 "Add"
 set-variable .git.cflags &lins .git.cflags -1 "IS*!"
@@ -151,7 +152,6 @@ set-variable .git.cnames &lins .git.cnames -1 "Checkout"
 set-variable .git.cflags &lins .git.cflags -1 "rS*!"
 set-variable .git.cdefs  &lins .git.cdefs  -1 "|0|0|"
 ; Command ?? - Blame
-;git --no-pager show --date=iso --name-status @~2
 
 set-variable .git.ccount  15
 set-variable .git.cstrv1  ""
@@ -320,18 +320,20 @@ set-variable #l9 .git.ccount
   !endif
 !emacro
 0 define-macro git-revision-op
+  set-variable #l0 &ind &cat ".lbl" .si
   !if &les @# 0
     -1 osd .osd.tmp
     osd .osd.tmp 0 "bs" 15 0 0 0
-    set-variable #l1 .si
-    !while &not &seq "" &set #l2 &lget .lbl &inc #l1 1
+    set-variable #l1 0
+    !while &not &seq "" &set #l2 &lget #l0 &inc #l1 1
       osd .osd.tmp #l1 "" #l2 #l1 git-revision-ops
     !done
   !else
-    set-variable $result &rep &lget .lbl &lget .git-osd.values .git-osd.o-v "\H" ""
+    set-variable $result &rep &lget #l0 &lget .git-osd.values .git-osd.o-v "\H" ""
   !endif
 !emacro
-set-variable .git-revision-op.lbl "|Index \Hto Master|\HMaster|\HIndex|\HPrevious|\HSpecific|"
+set-variable .git-revision-op.lbl6 "|\HMaster|\HHead|\HPrevious to head|\HSpecific commit|"
+set-variable .git-revision-op.lbl7 "|Head \Hto Master|\HMaster to Local|Head to Inde\Hx|\HHead to Local|\HIndex to Local|\HPrevious to Head|\HSpecific commit|Specific \Hrange|"
 0 define-macro git-revision-ops
   set-variable .git-osd.values &lset .git-osd.values .git-osd.o-v @#
 !emacro
@@ -406,9 +408,7 @@ set-variable .git-revision-op.lbl "|Index \Hto Master|\HMaster|\HIndex|\HPreviou
     !if &not &sin #l1 "DSs*!$@"
       set-variable #l2 &mul #l0 100
       osd .osd.git-osd &inc #l2 1 ""
-      !if &seq #l1 "A"
-        ; TODO
-      !elif &seq #l1 "B"
+      !if &seq #l1 "B"
         osd .osd.git-osd &inc #l2 1 "Sfh" "    \HBranch:     " &add #l2 1
         osd .osd.git-osd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 40 1 "" 1 git-osd-gstr
         osd .osd.git-osd &inc #l2 1 "f"  "    "
@@ -421,12 +421,18 @@ set-variable .git-revision-op.lbl "|Index \Hto Master|\HMaster|\HIndex|\HPreviou
       !elif &seq #l1 "d"
         osd .osd.git-osd &inc #l2 1 "fh" "    "
         osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Include \Hdiff of changes" #l0 git-osd-cbc
+      !elif &seq #l1 "F"
+        osd .osd.git-osd &inc #l2 1 "fh" "    "
+        osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Full file list for each commit" #l0 git-osd-cbc
       !elif &seq #l1 "f"
         osd .osd.git-osd &inc #l2 1 "Sfh" &spr "    \HFilter (regex):  " &add #l2 1
         osd .osd.git-osd &inc #l2 1 "EtxHfz" .scheme.osd-entry 20 1 "" 4 git-osd-gstr
       !elif &seq #l1 "I"
         osd .osd.git-osd &inc #l2 1 "fh" "    "
         osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HInclude ignored files" #l0 git-osd-cbc
+      !elif &seq #l1 "l"
+        osd .osd.git-osd &inc #l2 1 "fh" "    "
+        osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HInclude list of affected files" #l0 git-osd-cbc
       !elif &seq #l1 "N"
         !if &equ .find-file.file-count 1
           osd .osd.git-osd &inc #l2 1 "Sf" "    \HDestination Name or Directory:" &add #l2 2
@@ -456,8 +462,8 @@ set-variable .git-revision-op.lbl "|Index \Hto Master|\HMaster|\HIndex|\HPreviou
         osd .osd.git-osd &inc #l2 1 "fh" "    "
         osd .osd.git-osd &inc #l2 1 "Cptfx" &spr "%s\} List unintegrated changes from %s    " .osd.checkbox-chars .git.rep #l0 git-osd-cbc
       !elif &seq #l1 "v"
-        set-variable .git-revision-op.si &con &seq &set #l4 &lget .git.cnames @# "Diff" 0 1
-        osd .osd.git-osd &inc #l2 1 "Sfh" &spr "    %s revisio\Hn:  " #l4 &add #l2 1
+        set-variable .git-revision-op.si @#
+        osd .osd.git-osd &inc #l2 1 "Sfh" &spr "    %s revisio\Hn:  " &set #l4 &lget .git.cnames @# &add #l2 1
         osd .osd.git-osd &inc #l2 1 "OtxmsfhHR" .scheme.osd-entry "#################" .osd.tmp git-revision-op
         osd .osd.git-osd &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
         osd .osd.git-osd &inc #l2 1 ""
@@ -852,7 +858,7 @@ define-macro git-push
     find-buffer #l0
     2 goto-line
     end-of-line
-    insert-string &cat " & " .git-status.uc
+    insert-string &cat " && " .git-status.uc
   !endif
   1 buffer-mode "view"
   -1 buffer-mode "edit"
@@ -940,6 +946,7 @@ define-macro git-status
       !endif
     !until &not $status
   !endif
+*single
   -1 buffer-mode "edit"
   1 buffer-mode "view"
   buffer-bind-key git-log-cmd "return"
@@ -985,11 +992,18 @@ define-macro git-status
     set-variable #l1 @s1
     !if &and &len @s2 &gre $window-col &sub &len @wl 7
       set-variable $window-line 2
-      set-variable #l2 &rig @wl &add 11 &rsin " --date=iso " @wl
-      git-diff-file #l2 &spr "%s~..%s" #l1 #l1
+      set-variable #l2 &rig @wl &add 14 &rsin " --date=iso -- " @wl
+      0 git-diff-file #l2 &spr "%s~..%s" #l1 #l1
     !else
       git-show-commit #l1
     !endif
+  !elif &xseq @wl "^[AMR]\t\\(.+\\)$"
+    set-variable #l2 @s1
+    set-position "\x82"
+    search-buffer "meb" "^ *commit \\(\\h+\\)[ \n]"
+    set-variable #l3 @s1
+    goto-position "\x82"
+    git-diff-file #l2 &spr "%s~..%s" #l3 #l3
   !else
     ml-write "[ERROR: Invalid log line]"
     !abort
@@ -997,7 +1011,7 @@ define-macro git-status
 !emacro
 0 define-macro git-exec-complete5
   set-variable $buffer-hilight &con .git-exec.exit 0 .hilight.git-log
-  !iif &lget &lget .git.cvals 5 2  git-log-process
+  !iif &lget &lget .git.cvals 5 5  git-log-process
   beginning-of-buffer
 !emacro
 define-macro git-log
@@ -1008,8 +1022,8 @@ define-macro git-log
   !else
     set-variable #l2 &spr "--grep %s " #l2
   !endif
-  set-variable #l2 &spr "%s log %s--date=iso " .git.com #l2
-  7 git-get-file-list 0 &lget .git-osd.values 1 #l2
+  set-variable #l2 &spr "%s log %s%s%s--date=iso -- " .git.com #l2 &con &lget &set #l0 .git-osd.values 3 "--name-status " "" &con &lget #l0 4 "--full-diff " ""
+  7 git-get-file-list 0 &lget #l0 2 #l2
   5 git-exec 3 $buffer-fname
 !emacro
 
@@ -1026,7 +1040,7 @@ define-macro git-log
   !else
     buffer-bind-key git-show-cmd "return"
     buffer-bind-key git-show-cmd "space"
-    set-variable :mouse-word-select "git-log-cmd"
+    set-variable :mouse-word-select "git-show-cmd"
   !endif
   -1 buffer-mode "edit"
   1 buffer-mode "view"
@@ -1036,9 +1050,8 @@ define-macro git-log
     ml-write "[ERROR: Show buffer has not been processed]"
     !abort
   !elif &xseq @wl "^[AMR]\t\\(.+\\)$"
-    ; TODO ssp need to set location to the root dir (option of @# to git-diff-file)
     set-variable #l2 @s1
-    git-diff-file #l2 &spr "%s~1..%s" :ch :ch
+    git-diff-file #l2 &spr "%s~..%s" :ch :ch
   !elif &xseq @wl "^\\(commit \\h+ *\\)\\(\\[Prev]\\)?$"
     set-position "\x82"
     set-variable #l1 :ch
@@ -1046,13 +1059,17 @@ define-macro git-log
       set-variable #l9 &lget .git.cvals 6
       set-variable .git.cvals &lset .git.cvals 6 &lset #l9 2 &bxo &lget #l9 2 1 
     !else
-      set-variable #l1 &cat #l1 "~1"
+      set-variable #l1 &cat #l1 "~"
     !endif
     git-show-commit #l1
   !else
     ml-write "[ERROR: Invalid log line]"
     !abort
   !endif
+  popup-window "*git-show*"
+  !force git-dirlst-detect
+  set-variable $buffer-fname .git-dirlst-detect.ld
+  beginning-of-buffer
 !emacro
 0 define-macro git-exec-complete6
   set-variable #l9 &lget .git.cvals 6
@@ -1061,32 +1078,24 @@ define-macro git-log
   beginning-of-buffer
 !emacro
 0 define-macro git-show-commit
-  !force git-dirlst-detect
   set-variable #l2 @1
   !iif &not &lget &set #l9 &lget .git.cvals 6 2  set-variable #l2 &cat "--name-status " #l2
   !iif &lget #l9 3  set-variable #l2 &cat "-w " #l2
   set-variable #l2 &spr "%s show --date=iso %s" .git.com #l2
   7 git-get-file-list 1 0 #l2
   6 git-exec 3 $buffer-fname
-  popup-window "*git-show*"
-  set-variable $buffer-fname .git-dirlst-detect.ld
-  beginning-of-buffer
 !emacro
 define-macro git-show
-  !force git-dirlst-detect
   6 git-osd
-  !if &les &lget &set #l9 .git-osd.values 1 5
-    set-variable #l3 &rep &rep &lget "|#REP#/#BRC#|#REP#/#BRC#|@|@~1|" &lget #l9 1 "#REP#" .git.rep "#BRC#" .git.brc
+  !if &les &lget &set #l9 .git-osd.values 1 4
+    set-variable #l3 &rep &rep &lget "|#REP#/#BRC#|@|@~|" &lget #l9 1 "#REP#" .git.rep "#BRC#" .git.brc
   !elif &seq "" &set #l3 &trl .git.cstrv2
     osd-dialog "Git - Show" "    The specific commit must be given!    " "  \HAbort  "
     !abort
   !endif
-  set-variable #l2 &spr "%s show --date=iso %s%s%s" .git.com &con &lget #l9 2 "" "--name-status " &con &lget #l9 3 "-w " "" #l3
+  set-variable #l2 &spr "%s show %s%s--date=iso %s" .git.com &con &lget #l9 2 "" "--name-status " &con &lget #l9 3 "-w " "" #l3
   7 git-get-file-list 1 0 #l2
   6 git-exec 3 $buffer-fname
-  popup-window "*git-show*"
-  set-variable $buffer-fname .git-dirlst-detect.ld
-  beginning-of-buffer
 !emacro
 
 ;; GIT Diff ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1121,18 +1130,24 @@ define-macro git-show
   set-position "\x82"
   !iif &sin " " &set #l9 &set #l8 @1  set-variable #l9 &spr "\"%s\"" #l9
   set-variable #l2 @2
-  !if &lget &lget .git.cvals 7 2  set-variable #l2 &cat "-w " #l2
-  set-variable #l2 &spr "%s diff %s %s" .git.com #l2 #l9
+  !iif &lget &lget .git.cvals 7 2  set-variable #l2 &cat "-w " #l2
+  !if &band @# 1
+    !force git-dirlst-detect
+    !iif &sin " " &set #l3 .git-dirlst-detect.ld  set-variable #l3 &spr "\"%s\"" #l3
+    set-variable #l3 &cat " -C " #l3
+  !else
+    set-variable #l3 ""
+  !endif
+  set-variable #l2 &spr "%s%s diff %s -- %s" .git.com #l3 #l2 #l9
   7 git-get-file-list 1 0 #l2
-  set-variable #g3 $buffer-bname
-  set-variable #g4 $buffer-fname
   7 git-exec 1 $buffer-fname
   popup-window "*git-diff*"
-  set-variable :fn #l8
   beginning-of-buffer
 !emacro
+
+; to get full blob hash: &spr "%s -C %s rev-parse --verify %s" .git.com #l3 #l7 #l0
 0 define-macro git-diff-cmd
-  !if &not &xseq @wl "^\\(---\\|\\+\\+\\+\\) \\([^\n]+\\)\\(  \\[[-\\m]+\\]\\)+$" &lef @wl 4
+  !if &not &xseq @wl "^\\(---\\|\\+\\+\\+\\) \\([ab]\\)/\\([^\n]+\\)\\(  \\[[-\\m]+\\]\\)+$" &lef @wl 4
     !if &not &seq $buffer-bname "*git-show*"
       ml-write "[ERROR: Invalid diff line]"
       !abort
@@ -1143,73 +1158,91 @@ define-macro git-show
     ml-write "[ERROR: Not in diff command]"
     !abort
   !endif
-  set-variable #l9 &con &exi :fn :fn @s2
-  set-variable #l2 @s3
   !iif &set #l3 &sin " " #l0  set-variable #l0 &lef #l0 &sub #l3 1
+  set-variable #l9 @s3 
+  ; Note: Cannot use the simple <commit>~#..<commit> as ~# refers to the actual previous commit, not the last commit the file was changed in
+  ; So we must get the current diff's commit hashes, if doing a Diff-prev then hash of (a) and then we can use <com>~..<com>
+  ; If doing Diff-next then we need hash of (b) but then must work out the hash of the next commit
+  ; If already diff'ing a single file then we can look at the command-line for the current hash, but if not a hash or this is a show diff then
+  ; we must use the blob hashs in the index line to work out the current commit hash!
   set-position "\x82"
-  !if &not &seq &lef #l2 9 "revision "
-    ml-write &spr "[ERROR: Unexpected revision for diff: %s]" #l2
+  &con &set #l8 &seq @s2 "a" 1 2 backward-line
+  !if &not &xseq @wl "^index \\(\\h+\\)\\.\\.\\(\\h+\\) \\d+$"
+    ml-write &spr "[ERROR: Unexpected index line for diff: %s]" @wl
     !abort
-  !elif &seq &lef #l0 10 "[Diff-Prev"
-    !if &not &seq &lef #l2 9 "revision "
-      ml-write &spr "[ERROR: Unexpected revision for diff-prev: %s]" #l2
-      !abort
-    !endif
-    4 pipe-shell-command &spr "%s log -l 3 -r %s:1 \"%s\"" .git.com &add 1 &set #l4 &rig #l2 9 #l9 "*git-tmp*"
-    !force search-buffer "me" &spr "^r%s | " #l4
-    !if &not $status
-      !force search-buffer "me" &spr "^r%s | " &add #l4 1
-      !if $status
-        !force search-buffer "me" &spr "^r\\(\\d+\\) | "
-        !if $status
-          set-variable #l4 @s1
-        !else
-          set-variable #l4 &add #l4 1
-        !endif
-      !endif
-    !endif
-    !force search-buffer "me" &spr "^r\\(\\d+\\) | "
-    !if $status
-      set-variable #l5 @s1
-    !elif &les #l4 2
-      goto-position "\x82"
-      !force delete-buffer "*git-tmp*"
-      ml-write &spr "[ERROR: Cannot diff previous - r%s is the first committed version of %s]" #l4 #l9
-      !abort
-    !else
-      set-variable #l5 &sub #l4 1
-    !endif
-    !if &seq #l0 "[Diff-Prev]"
-      set-variable #l5 &spr "%s:%s" #l5 #l4
-    !elif &xseq #l0 "\\[Diff-Prev-\\(\\d+\\)\\]"
-      set-variable #l5 &spr "%s:%s" #l5 @s1
-    !endif
-    goto-position "\x82"
-    !force delete-buffer "*git-tmp*"
-  !elif &seq #l0 "[Diff-Working]"
-    set-variable #l5 &rig #l2 9
-  !else
-    4 pipe-shell-command &spr "%s log -l 1 -r %s:HEAD \"%s\"" .git.com &add 1 &set #l4 &rig #l2 9 #l9 "*git-tmp*"
-    !force search-buffer "me" &spr "^r\\(\\d+\\) | "
-    !if &not $status
-      goto-position "\x82"
-      !force delete-buffer "*git-tmp*"
-      ml-write &spr "[ERROR: Cannot diff next - r%s is the latest (committed) version of %s]" #l4 #l9
-      !abort
-    !endif
-    set-variable #l5 &spr "%s:%s" #l4 @s1
-    goto-position "\x82"
-    !force delete-buffer "*git-tmp*"
   !endif
-  git-diff-file #l9 #l5
+  set-variable #l7 &con #l8 @s1 @s2
+  set-variable $window-line 2
+  !if &set #l1 &xseq @wl ".* show --date=iso.* \\(\\h\\h\\h\\h+\\)"
+    set-variable #l2 @s1
+    set-variable #l1 &con #l8 2 1
+  !elif &xseq @wl ".* diff.* \\([^\\s]+\\)\\.\\.\\([^\\s]+\\) -- .*"
+    set-variable #l2 &con #l8 @s1 @s2
+    set-variable #l3 &con #l8 @s2 @s1
+    !if &set #l1 &xse #l2 "\\h\\h\\h\\h+"
+    !elif &xse &set #l2 #l3 "\\h\\h\\h\\h+"
+      set-variable #l1 2
+    !endif
+  !endif
+  goto-position "\x82"
+  !force git-dirlst-detect
+  !iif &sin " " &set #l3 .git-dirlst-detect.ld  set-variable #l3 &spr "\"%s\"" #l3
+;ml-write &spr "[%s] %s [%s] [%s]" #l7 #l1 #l2 #l3
+  !force 0x46 pipe-shell-command &spr "%s -C %s log --pretty=format:%%H:%%T %s" .git.com #l3 #l9 "*git-tmp1*"
+  find-buffer "*git-tmp1*"
+  !if #l1
+    !force search-buffer "me" &cat "^" #l2
+    !if &not $status
+      goto-position "\x82"
+      !force 0 delete-buffer "*git-tmp1*"
+      ml-write &spr "[ERROR: Failed to find commit hash in file log: %s %s]" #l2 #l9
+      !abort
+    !endif
+  !else
+    ; can't use the previous command to get a usable starting hash, we must use the blob hash
+    ; TODO git ls-tree -r <tree-hash> 
+    set-variable #l5 ""
+    ml-write &spr "[ERROR: Not yet implemented, need to find blob hash: %s]" #l7
+    !abort
+  !endif
+  !force &con #l8 &sub 1 #l1 #l1 backward-line
+  !if &not $status
+    set-variable #l5 ""
+  !elif &len &set #l5 &lef @wl &sub &sin ":" @wl 1
+    forward-line
+    !iif &seq "" &set #l4 &lef @wl &sub &sin ":" @wl 1  set-variable #l4 &cat #l5 "~"
+  !endif
+  goto-position "\x82"
+  !force 0 delete-buffer "*git-tmp1*"
+  !if &seq #l5 ""
+    ml-write &spr "[ERROR: Current commit is the %s for file: %s]" &con #l8 "first" "latest" #l9
+    !abort
+  !endif
+  git-diff-file #l9 &spr "%s..%s" #l4 #l5
 !emacro
 define-macro git-diff
   7 git-osd
-  !if &les &lget &set #l9 .git-osd.values 5 5
-    set-variable #l3 &rep &rep &lget "|..#REP#/#BRC#|#REP#/#BRC#||PREV|" &lget #l9 5 "#REP#" .git.rep "#BRC#" .git.brc
+  !if &les &set #l0 &lget &set #l9 .git-osd.values 5 6
+    set-variable #l3 &rep &rep &lget "|@..#REP#/#BRC#|#REP#/#BRC#|--cached|@||PREV|" &lget #l9 5 "#REP#" .git.rep "#BRC#" .git.brc
+  !elif &equ #l0 6
+    !if &les .find-file.file-count 1
+      set-variable #l3 "@~..@"
+    !elif &gre .find-file.file-count 1
+      osd-dialog "Git - Diff" "    Previous to Head can only be used on\n    the current directory or single file!    " "  \HAbort  "
+      !abort
+    !else
+      !force 0x404 pipe-shell-command &spr "%s log -1 --pretty=format:%%h -- %s" .git.com .find-file.file1 #l3
+      !if &or &not $status &not &xse #l3 "\\h+"
+        ml-write &spr "[ERROR: Failed to get last commit hash for: %s - %s]" .find-file.file1 #l3
+        !abort
+      !endif
+      set-variable #l3 &spr "%s~..%s" #l3 #l3
+    !endif
   !elif &seq "" &set #l3 &trl .git.cstrv2
-    osd-dialog "Git - Diff" "    The specific commit must be given!    " "  \HAbort  "
+    osd-dialog "Git - Diff" "    The specific commit/range must be given!    " "  \HAbort  "
     !abort
+  !elif &equ #l0 7
+    set-variable #l3 &spr "%s~..%s" #l3 #l3
   !endif
   set-variable #l2 &spr "%s diff %s%s -- " .git.com &con &lget #l9 2 "-w " "" #l3
   7 git-get-file-list 0 &lget #l9 1 #l2
@@ -1346,20 +1379,20 @@ define-macro git
   !endif
   osd @# 1  "" "Current \HStatus"    f git-status
   osd @# 5  "" "Check\Hout files"    f git-checkout
-; osd @# 10 "" "\HUpdate files"      f git-update
+  ; osd @# 10 "" "\HUpdate files"      f git-update
   osd @# 30 "" "\HDiff files"        f git-diff
   osd @# 20 "" "\HCommit files"      f git-commit
   osd @# 100 "-"
   osd @# 160 "" "Clear \HGit console" f git-clear-console
   osd @# 170 "" "Git Setup"           f git-setup
   !if :tag-count
-;    osd @# 55 "" "\HCopy items"      f git-copy
+    ;    osd @# 55 "" "\HCopy items"      f git-copy
     osd @# 60 "" "\HMove items"      f git-move
     osd @# 70 "" "\HAdd items"       f git-add
     osd @# 80 "" "Remove items"      f git-remove
     osd @# 120 "" "\HResolve conflicts" f git-resolve
   !else
-;    osd @# 55 "" "Copy items"
+    ;    osd @# 55 "" "Copy items"
     osd @# 60 "" "Move items"
     osd @# 70 "" "Add items"
     osd @# 80 "" "Remove items"
