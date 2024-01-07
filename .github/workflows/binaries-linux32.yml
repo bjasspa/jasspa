@@ -1,0 +1,59 @@
+name: Binaries Ubuntu Linux
+
+on:
+  workflow_dispatch:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+     
+    - name: Compile nroff tools
+      run: |
+        gmake
+      working-directory: ./nroff
+
+    - name: Compile mec
+      run: |
+        ./build.sh -t c
+      working-directory: ./microemacs/src
+
+    - name: Generate docs
+      run: |
+        export PATH=`pwd`/microemacs/src/.linux32gcc-release-mec:`pwd`/nroff/bin/linux:$PATH
+        cd ./microemacs/doc
+        gmake me.ehf
+
+    - name: Create packages
+      run: |
+        mkdir binaries-linux32
+        cd ./microemacs/src
+        cp ./.linux32gcc-release-mec/mec ../../binaries-linux32/
+        cp ./.linux32gcc-release-mew/mew ../../binaries-linux32/
+        cd ../../binaries-linux32/
+        zip linux32-bin mec mew
+        rm mec mew
+        cd ../microemacs/doc
+        cp me.ehf ../../binaries-linux32/
+        
+    - name: Create mesc
+      run: |
+        ../src/.linux32gcc-release-mec/mec -p "@mesgen" -f -p ../src/.linux32gcc-release-mec/mec -t ../3rdparty/tfs/.linux32gcc-release/tfs -o ../../binaries-linux32/mesc-linux32
+      working-directory: ./microemacs/mesingle
+
+    - name: Create mesw
+      run: |
+        ../src/.linux32gcc-release-mec/mec -p "@mesgen" -f -p ../src/.linux32gcc-release-mew/mew -t ../3rdparty/tfs/.linux32gcc-release/tfs -o ../../binaries-linux32/mesw-linux32
+      working-directory: ./microemacs/mesingle
+
+    - name: Upload Artifact GitHub Action Linux64
+      uses: actions/upload-artifact@v3
+      with: 
+        name: binaries-linux32
+        path: binaries-linux32
+    
