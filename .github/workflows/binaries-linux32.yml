@@ -23,6 +23,11 @@ jobs:
         ./build.sh -t c
       working-directory: ./microemacs/src
 
+    - name: Compile mew
+      run: |
+        ./build.sh -t w
+      working-directory: ./microemacs/src
+
     - name: Generate docs
       run: |
         export PATH=`pwd`/microemacs/src/.linux32gcc-release-mec:`pwd`/nroff/bin/linux:$PATH
