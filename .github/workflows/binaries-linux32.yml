@@ -1,4 +1,4 @@
-name: Binaries Ubuntu Linux
+name: Binaries Linux (Ubuntu)
 
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ jobs:
      
     - name: Compile nroff tools
       run: |
-        gmake
+        make
       working-directory: ./nroff
 
     - name: Compile mec
@@ -27,7 +27,7 @@ jobs:
       run: |
         export PATH=`pwd`/microemacs/src/.linux32gcc-release-mec:`pwd`/nroff/bin/linux:$PATH
         cd ./microemacs/doc
-        gmake me.ehf
+        make me.ehf
 
     - name: Create packages
       run: |
