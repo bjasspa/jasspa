@@ -32,6 +32,6 @@ INSTALL_EXE	= $(INSTALL) -m 0777
 #
 # Use microemacs for conversions.
 #
-ME      = me
-DOS2UNIX= $(ME) -n "@dos2unix"
-UNIX2DOS= $(ME) -n "@unix2dos"
+ME      = mec
+DOS2UNIX= $(ME) -p "@dos2unix"
+UNIX2DOS= $(ME) -p "@unix2dos"
