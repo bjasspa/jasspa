@@ -397,11 +397,11 @@ This version of Windows does not have a \fIinstall\fR directory as '95/'98 and
 it is expected that the  \fCMS-DOS\fR  version will coexist. No \fIInstall\fR
 \fIShield\fR  installation  is  provided.  Install  in a  directory  structure
 similar to  \fCMS-DOS\fR.  Install  the helper \s-1DLL\s0  \fBmethnk16.dll\fR  in the
-\fCC:\\WINDOWS\\SHELL\fR directory. Create a
-.Ht me32.ini 8
-file in the \fCC:\\WINDOWS\fR  directory to identify the location of the \*(mE
-components, this much the same as the '95/'98 file, change the directory paths
-to suite the install base.
+\fCC:\\WINDOWS\\SHELL\fR directory.
+.PP
+If the macros are placed in a non-standard directory location then the environment variable
+.Ht MEINSTALLPATH 5
+to define the root jasspa tree.
 .PP
 .B "Support Status:"
 .br
@@ -532,10 +532,6 @@ installation   configuration. The private directory identified by \*(mS is
 .Ht $user-path 5
 this location may be changed by defining the environment variable
 .Ht $MEUSERPATH 5 .
-.PP
-Microsoft Windows users may use the
-.Ht me32.ini 8
-file to define \*(mS configuration path and name information.
 .SS "User Profile Files"
 Files contained in the user profiles typically include:-
 .PP

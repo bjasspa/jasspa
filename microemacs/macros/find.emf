@@ -581,12 +581,7 @@
 !emacro
 
 0 define-macro find-proc-spawn
-  !if &seq $platform "win32"
-    set-variable #l0 "mecw32"
-  !else
-    set-variable #l0 "me"
-  !endif
-  set-variable #l0 &spr "%s -n -p @cfind -v.about.argn=%d -f %s"  #l0 @# @2
+  set-variable #l0 &spr "mec -n -p @cfind -v.about.argn=%d -f %s" @# @2
   set-variable #l1 3
   !repeat
     !force set-variable #l2 &ind &cat "@" &pinc #l1 1

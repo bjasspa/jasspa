@@ -227,7 +227,7 @@ BEGIN
             VALUE "FileVersion", meVERSION_CODE "\0"
             VALUE "InternalName", ME_NANOEMACS_SHORTNAME meYEAR "\0"
             VALUE "LegalCopyright", "Copyright © 1988-" meCENTURY meYEAR "\0"
-            VALUE "OriginalFilename", ME_NANOEMACS_SHORTNAME "32.exe\0"
+            VALUE "OriginalFilename", ME_NANOEMACS_SHORTNAME ".exe\0"
             VALUE "ProductName", ME_COMPANY_NAME " " ME_NANOEMACS_SHORTNAME meYEAR "\0"
             VALUE "ProductVersion", meVERSION_CODE "\0"
         END

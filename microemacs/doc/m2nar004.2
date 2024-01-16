@@ -35,12 +35,6 @@ or
 respectively
 This  invokes the  debugger  and follows the  debugging  process in the editor
 window, automatically opening the source files as the debugger calls for them.
-.SS "Microsoft Developer Studio"
-In the Microsoft windows environment, the
-.Ht memsdev 1
-DLL may be attached to the
-.B "Microsoft Developer Studio"
-to enable \*(mE to be used in place of the in-built editor.
 .SS "File Searching"
 File searching is performed using
 .Hr grep 1
@@ -94,15 +88,7 @@ This is typically  used to inject new files into the editor to be presented to
 the user.
 .PP
 The  \fIClient-Server\fR  interface is available in both the  \s-1UNIX\s0  and
-Microsoft  Windows  environments.  This  mechanism  is  used in the  Microsoft
-windows environment by the
-.Ht memsdev 1
-DLL to attach the
-.B "Microsoft Developer Studio"
-to  \*(mE.  This may be used  with  similar  effects  within  the  \s-1UNIX\s0
-environments from the X-Window managers desktop in addition to other utilities
-such as
-.Hr TkDesk 1 .
+Microsoft  Windows  environments.
 .SS "Command Line Filer"
 \*(mS may be invoked as a command filter in it's own right, macro scripts have
 been developed to perform a 
@@ -120,7 +106,6 @@ conversion operation, generate tags files etc. See
 .Ht gdb 3 ,
 .Ht grep 3 ,
 .Ht ishell 3 ,
-.Ht memsdev 1 ,
 .br
 .Hl Client-Server Client-Server 2 ,
 .Hl "Command Line Filters" filters - .

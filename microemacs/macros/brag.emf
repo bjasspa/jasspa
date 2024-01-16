@@ -280,6 +280,25 @@
   set-variable @2 &spr "|%s%s%s|" #l5 #l9 #l6
 !emacro
 
+0 define-macro bragToastRmv
+  set-variable #l1 &spr "%n" .bragToast.len " "
+  3 screen-poke 24 4 .scheme.cardback #l1
+  3 screen-poke 25 4 .scheme.cardback #l1
+  3 screen-poke 26 4 .scheme.cardback #l1
+  3 screen-poke 27 4 .scheme.cardback #l1
+  3 screen-poke 28 4 .scheme.cardback #l1
+!emacro
+  
+0 define-macro bragToast
+  set-variable .len &add 6 &set #l2 &len &set #l1 @1
+  99 screen-poke 24 4 .scheme.cardfore &spr "%s%n%s" &mid $box-chars 1 1 &add #l2 4 &rig $box-chars 10 &mid $box-chars 2 1
+  99 screen-poke 25 4 .scheme.cardfore &spr "%s%s%n%s%s" &lef $box-chars 1 &mid $box-chars 1 1 &add #l2 2 &rig $box-chars 10 &mid $box-chars 2 1 &lef $box-chars 1
+  99 screen-poke 26 4 .scheme.cardfore &spr "%n %s %n" 2 &lef $box-chars 1 #l1 2 &lef $box-chars 1
+  99 screen-poke 27 4 .scheme.cardfore &spr "%s%s%n%s%s" &lef $box-chars 1 &mid $box-chars 3 1 &add #l2 2 &rig $box-chars 10 &mid $box-chars 4 1 &lef $box-chars 1
+  99 screen-poke 28 4 .scheme.cardfore &spr "%s%n%s" &mid $box-chars 3 1 &add #l2 4 &rig $box-chars 10 &mid $box-chars 4 1
+  @# create-callback bragToastRmv
+!emacro
+
 0 define-macro bragDrawCard
   set-variable #l1 @1
   set-variable #l2 @2
@@ -417,11 +436,9 @@ set-variable .bragDrawCard.slb "                                Heart           
     set-variable #l2 &cat #l2 &mid .Brag.deck &inc #l4 1 1
   !until &equ #l4 17
   !if &band 1 &inc .Brag.chno 1
-    ml-write "[Computer dealing...]"
     set-variable .Brag.h1 #l1
     set-variable .Brag.h2 #l2
   !else
-    ml-write "[Your dealing - let me help...]"
     set-variable .Brag.h1 #l2
     set-variable .Brag.h2 #l1
   !endif
@@ -522,10 +539,10 @@ set-variable .bragDrawCard.slb "                                Heart           
     set-variable .Brag.stt &add .Brag.stt 10
     1 brag-draw
   !elif &equ @# 24
+    set-variable #l9 1
     !if &not .Brag.stt
       !if &sin "\b" .Brag.h1s
-        ; TODO may need to make this more visible
-        ml-write "[You must sort your hand first!]"
+        2000 bragToast "You must sort your hand first!"
         !return
       !endif
       set-variable #l2 &cat .Brag.h1s &rep &rep &rep &rep &rep &rep .Brag.h1 &lef .Brag.h1s 1 "" &mid .Brag.h1s 1 1 "" &mid .Brag.h1s 2 1 "" &mid .Brag.h1s 3 1 "" &mid .Brag.h1s 4 1 "" &rig .Brag.h1s -1 ""
@@ -572,15 +589,16 @@ set-variable .bragDrawCard.slb "                                Heart           
       set-variable .Brag.stt 0
       ; Check if there was a prial played
       !if &or &gre &lget .Brag.h1i 1 709 &gre &lget .Brag.h2i 1 709
-        100 ml-write "[Prial played - shuffling...]"
+        set-variable #l9 &bor #l9 16
         bragShuffle .Brag.deck
       !else
         set-variable #l1 &con &band 1 .Brag.chno &cat .Brag.h1 .Brag.h2 &cat .Brag.h2 .Brag.h1
         set-variable .Brag.deck &cat &rig .Brag.deck 18 #l1
       !endif
       brag-deal
+      set-variable #l9 &bor #l9 &add 32 &mul &band .Brag.chno 1 64
     !endif
-    1 brag-draw
+    #l9 brag-draw
   !elif .Brag.stt
     !if &equ @# 20
       !if &equ .Brag.stt 4
@@ -597,7 +615,7 @@ set-variable .bragDrawCard.slb "                                Heart           
           !iif &not &mod #l5 3  set-variable #l4 &cat " " #l4
         !until &les &dec #l5 1 0
         set-variable @y &trl #l4
-        ml-write &cat "Hand copied to clipboard: " @y
+        2000 bragToast &cat "Hand copied to clipboard: " @y
       !endif
     !elif &equ @# 23
       !if &gre .Brag.stt 2
@@ -771,7 +789,7 @@ set-variable .bragDrawCard.slb "                                Heart           
     67 screen-poke 15 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
     !if &gre .Brag.stt 4
       67 screen-poke  2 5 .scheme.cardback "Showing hand sorted by computer."
-    !elif &seq .Brag.h1i .Brag.h1c
+    !elif &seq &lef .Brag.h1i 13 &lef .Brag.h1c 13
       67 screen-poke  2 5 .scheme.cardback "Computer would have played the hand the same."
     !else
       set-variable .Brag.stt 4
@@ -803,6 +821,17 @@ set-variable .bragDrawCard.slb "                                Heart           
       67 screen-poke  2 110 .scheme.cardback &spr "%s   Show Me   %s" &lef $box-chars 1 &lef $box-chars 1
       99 screen-poke  2 119 .scheme.cardback "M"
       67 screen-poke  3 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+      !iif &seq &lget .Brag.h1i 7 ""  bragHandInfoAddProbs .Brag.h1i
+      set-variable #l3 &add &sub &lget .Brag.h1d 10 &lget .Brag.h1i 7 &sub &lget .Brag.h1d 14 &lget .Brag.h1i 8
+      ;67 screen-poke  26 1 .scheme.cardback &spr "%s: %.4f" #l3 &fmul #l3 0.000000001
+      !if &gre #l3 50000000
+        99 screen-poke 13 88 .scheme.cardfore &spr "%s%18s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+        99 screen-poke 14 88 .scheme.cardfore &spr "%s **************** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 15 88 .scheme.cardfore &spr "%s ** You missed ** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 16 88 .scheme.cardfore &spr "%s **  a trick!  ** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 17 88 .scheme.cardfore &spr "%s **************** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 18 88 .scheme.cardfore &spr "%s%18s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+      !endif
     !endif
   !else
     !repeat
@@ -818,9 +847,19 @@ set-variable .bragDrawCard.slb "                                Heart           
     !iif &seq &lget .Brag.h1i 7 ""  bragHandInfoAddProbs .Brag.h1i
     set-variable #l2 .Brag.h1
     set-variable #l5 .Brag.h1i
-    67 screen-poke 14 2 .scheme.cardback &spr "You played  -  Prb  Win: %.4f   Lose: %.4f" &fmul &lget #l5 7 0.000000001 &fsub 1 &fmul &lget #l5 8 0.000000001
     set-variable #l0 .Brag.h1d
     set-variable #l4 .Brag.h1c
+    set-variable #l3 &add &sub &lget #l0 10 &lget #l5 7 &sub &lget #l0 14 &lget #l5 8
+    !if &les #l3 0
+      set-variable #l3 &spr "%.4f better" &fmul &abs #l3 0.000000001
+    !elif &gre #l3 0
+      set-variable #l3 &spr "%.4f worse" &fmul #l3 0.000000001
+    !elif &seq &lef #l5 13 &lef #l4 13
+      set-variable #l3 "same hand"
+    !else
+      set-variable #l3 "same odds"
+    !endif
+    67 screen-poke 14 2 .scheme.cardback &spr "You played  -  Prb  Win: %.4f   Lose: %.4f   (%s)" &fmul &lget #l5 7 0.000000001 &fsub 1 &fmul &lget #l5 8 0.000000001 #l3
   !else
     67 screen-poke 2 2 .scheme.cardback "Hand entered:"
     set-variable #l1 .Brag.hm
@@ -1078,10 +1117,10 @@ set-variable .bragDrawCard.slb "                                Heart           
     find-buffer "*Brag*"
   !elif &equ @# 4
     set-variable @# 0
-  !elif &sub @# 1
+  !elif &not &band 1 @#
     !return
   !endif
-  ml-write &cat "brag-draw " @#
+  ;ml-write &cat "brag-draw " @#
   !iif @#  screen-update
   67 screen-poke 17 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
   67 screen-poke 18 110 .scheme.cardback &spr "%s  Continue   %s" &lef $box-chars 1 &lef $box-chars 1
@@ -1138,6 +1177,11 @@ set-variable .bragDrawCard.slb "                                Heart           
   !endif
   67 screen-poke 30 110 .scheme.cardback &spr "Hands: %d" .Brag.chno
   65 screen-poke 32 110 .scheme.cardback &spr "Score: %d - %d" .Brag.ciw1 .Brag.ciw2
+  !if &band @# 48
+    set-variable #l0 &con &band @# 16 "Prial played - shuffling... " ""
+    !iif &band @# 32  set-variable #l0 &cat #l0 &con &band @# 64 "Computer deal" "Your deal"
+    &con &band @# 16 2000 1000 bragToast #l0
+  !endif
 !emacro
   
 define-macro Brag
@@ -1186,7 +1230,6 @@ define-macro Brag
   1 brag-draw
 !emacro
 ; sent AS2S3S AC8C5D QSJS9D
-; TODO beef up 'computer would have played' if score diff is large
 ; TODO Input hand to use GUI
 ; TODO Improve messages on stats page
 ; TODO Use toasts rather than ml-write

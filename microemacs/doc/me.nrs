@@ -5042,9 +5042,7 @@ Detlef Groth.
 .BU
 [040206] Added template support for XML. Thanks to Dr. Detlef Groth.
 .BU
-[040204]  Re-worked  Microsoft  Windows
-.Ht me32.ini 8
-file specification. Order revised and lookup simplified.
+[040204] Re-worked Microsoft Windows me32.ini file specification. Order revised and lookup simplified.
 .BU
 [040203]  "\fIuser-setup\fR"  changed  name to  "\fIRebind  Home  Keys\fR" for
 re-binding  of  \fChome\fR  and  \fCend\fR  keys to start/end of line. Removed
@@ -5104,10 +5102,7 @@ The Microsoft  Windows system defined  application  path will be used for user
 configuration   files.  This  is  applicable   for  roaming  users  where  the
 application directory is stored on a server.
 .BU "-"
-The use of the
-.Ht me32.ini 8
-file  on  MicroSoft  Windows  environments  is  not  required,  but  is  still
-supported.
+The use of the me32.ini file on MicroSoft Windows environments is not required, but is still supported.
 .BU "-"
 The \s-1UNIX\s0 path searching is improved.  \fC/usr/local/microemacs\fR  will
 be  depreciated  and replaced with  \fC/usr/local/jasspa\fR  in addition other

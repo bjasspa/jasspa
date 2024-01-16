@@ -337,10 +337,10 @@ INSTALLATION
      it is expected  that the  MS-DOS version  will coexist.  No Install Shield
      installation is  provided.  Install in  a  directory structure  similar to
      MS-DOS.  Install  the  helper  DLL  methnk16.dll  in  the C:\WINDOWS\SHELL
-     directory. Create  a  me32.ini(8)  file  in  the  C:\WINDOWS  directory to
-     identify the  location of  the MicroEmacs  2009 components,  this much the
-     same as the '95/'98 file, change  the directory paths to suite the install
-     base. 
+     directory. 
+
+     If the macros  are placed  in a  non-standard directory  location then the
+     environment variable MEINSTALLPATH(5) to define the root jasspa tree. 
 
      Support Status: 
      The win32s release has not been  used with vengeance, although no specific
@@ -447,9 +447,6 @@ ORGANIZING A LOCAL USER PROFILE
      is $user-path(5) this location may  be changed by defining the environment
      variable $MEUSERPATH(5). 
 
-     Microsoft Windows users may use  the me32.ini(8) file to define MicroEmacs
-     configuration path and name information. 
-
   User Profile Files 
      Files contained in the user profiles typically include:- 
 
@@ -475,6 +472,78 @@ SEE ALSO
      $user-name(5), $user-path(5), $MEINSTALLPATH(5), $MENAME(5), $MENAME(5),
      $MEPATH(5), $MEUSERPATH(5), Company Profiles, File Hooks, File Language
      Templates, User Profiles. 
+
+COMPANY PROFILES 
+     This section describes how  a company profile  should be incorporated into
+     MicroEmacs  2009.  A  company  profile  defines  a  set  of  extensions to
+     MicroEmacs which  encapsulate settings  which are  used on  a company wide
+     basis. This  type  of configuration  is  typically used  with  a networked
+     (shared) installation. The company profile would typically include:- 
+
+       *  Name of the company. 
+       *  Standard header files including company copyright statements. 
+       *  Standard file layouts 
+       *  Company defined language extensions. 
+
+  Location Of The Company Information 
+     It is suggested that  all of the company  extensions applied to MicroEmacs
+     2009 are  performed in  a  separate directory  location which  shadows the
+     MicroEmacs standard macro file directory.  This enables the original files
+     to be sourced if a  user does not want to  include the company files. This
+     method  also  allows  MicroEmacs  to  be  updated  in  the  future, whilst
+     retaining the company files. 
+
+     The company  files  are  generally  placed  in  the  company sub-directory
+     described in the installation notes. 
+
+  Content Of The Company Information 
+
+     Company macro file 
+          The company  file  is  typically  called by  the  company  name (i.e.
+          jasspa.emf) create a new company file. The file includes your company
+          name and hook functions for any new file types that have been defined
+          for the company, an example company  file for Jasspa might be defined
+          as:- 
+
+            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+            ; 
+            ;  Author        : Jasspa 
+            ;  Created       : Thu Jul 24 09:44:49 1997 
+            ;  Last Modified : <220105.2244> 
+            ; 
+            ;  Description     Extensions for Jasspa 
+            ; 
+            ;  Notes 
+            ; 
+            ;  History 
+            ; 
+            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+            ; Define the name of the company. 
+            set-variable %company-name "Jasspa" 
+            ; Add Jasspa specific file hooks 
+            ; Make-up foo file hook 
+            add-file-hook ".foo"    fhook-foo 
+            1 add-file-hook "-!-[ \t]*foobar.*-!-" fhook-foo ; -!- foobar -!- 
+            ; Override the make with localised build command 
+            set-variable %compile-com "build" 
+
+          The file contains  company specific  file hooks  and the  name of the
+          company. 
+
+     Other Company Files 
+          Files defined on  behalf of the  company are included  in the company
+          directory. These would include:- 
+
+            *  Template header files etf(8). 
+            *  Hook file  definitions (hkXXX.emf)  for company  specific files,
+               see add-file-hook(2). 
+            *  Extensions to  the  standard  hook  definitions  (myXXX.emf) for
+               company specific language extensions to the standard hook files.
+               See File Hooks and File Language Templates. 
+
+SEE ALSO 
+     $MEINSTALLPATH(5), $MENAME(5), $MEPATH(5), File Hooks, File Language
+     Templates, Installation, user-setup(3), User Profiles. 
 
 USER PROFILES 
      This section  describes how  a  user profile  should be  incorporated into
@@ -521,8 +590,7 @@ USER PROFILES
           Microsoft windows environments  may, or may  not, have login enabled.
           If login is enabled then $user-name(5) is set to the login user name.
           The login name may be  overridden by setting the environment variable
-          $MENAME(5) this may  be performed  in the environment  or through the
-          me32.ini(8) file. 
+          $MENAME(5). 
 
   Shared Platforms 
      Platforms may share the same set of configuration files. Consider a system
@@ -568,9 +636,7 @@ USER PROFILES
 
           The user data  area $user-path(5) may  be modified by  creating a new
           directory and  setting  the  environment  variable  $MEUSERPATH(5) to
-          point to this new directory location.  The location be specified by a
-          meuserpath entry  in  the me32.ini(8)  file  rather than  setting the
-          environment variable $MEUSERPATH(5). 
+          point to this new directory location. 
 
   Creating Your Profile 
      On starting MicroEmacs for the first  time then the user is guided through
@@ -709,78 +775,6 @@ EXAMPLE
 
 SEE ALSO 
      user-setup(3), $search-path(5), $user-name(5), $user-path(5),
-     $MEINSTALLPATH(5), $MENAME(5), $MEPATH(5), $MEUSERPATH(5), me32.ini(8),
-     Company Profiles, File Hooks, File Language Templates, Installation. 
-
-COMPANY PROFILES 
-     This section describes how  a company profile  should be incorporated into
-     MicroEmacs  2009.  A  company  profile  defines  a  set  of  extensions to
-     MicroEmacs which  encapsulate settings  which are  used on  a company wide
-     basis. This  type  of configuration  is  typically used  with  a networked
-     (shared) installation. The company profile would typically include:- 
-
-       *  Name of the company. 
-       *  Standard header files including company copyright statements. 
-       *  Standard file layouts 
-       *  Company defined language extensions. 
-
-  Location Of The Company Information 
-     It is suggested that  all of the company  extensions applied to MicroEmacs
-     2009 are  performed in  a  separate directory  location which  shadows the
-     MicroEmacs standard macro file directory.  This enables the original files
-     to be sourced if a  user does not want to  include the company files. This
-     method  also  allows  MicroEmacs  to  be  updated  in  the  future, whilst
-     retaining the company files. 
-
-     The company  files  are  generally  placed  in  the  company sub-directory
-     described in the installation notes. 
-
-  Content Of The Company Information 
-
-     Company macro file 
-          The company  file  is  typically  called by  the  company  name (i.e.
-          jasspa.emf) create a new company file. The file includes your company
-          name and hook functions for any new file types that have been defined
-          for the company, an example company  file for Jasspa might be defined
-          as:- 
-
-            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-            ; 
-            ;  Author        : Jasspa 
-            ;  Created       : Thu Jul 24 09:44:49 1997 
-            ;  Last Modified : <090829.1633> 
-            ; 
-            ;  Description     Extensions for Jasspa 
-            ; 
-            ;  Notes 
-            ; 
-            ;  History 
-            ; 
-            ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-            ; Define the name of the company. 
-            set-variable %company-name "Jasspa" 
-            ; Add Jasspa specific file hooks 
-            ; Make-up foo file hook 
-            add-file-hook ".foo"    fhook-foo 
-            1 add-file-hook "-!-[ \t]*foobar.*-!-" fhook-foo ; -!- foobar -!- 
-            ; Override the make with localised build command 
-            set-variable %compile-com "build" 
-
-          The file contains  company specific  file hooks  and the  name of the
-          company. 
-
-     Other Company Files 
-          Files defined on  behalf of the  company are included  in the company
-          directory. These would include:- 
-
-            *  Template header files etf(8). 
-            *  Hook file  definitions (hkXXX.emf)  for company  specific files,
-               see add-file-hook(2). 
-            *  Extensions to  the  standard  hook  definitions  (myXXX.emf) for
-               company specific language extensions to the standard hook files.
-               See File Hooks and File Language Templates. 
-
-SEE ALSO 
-     $MEINSTALLPATH(5), $MENAME(5), $MEPATH(5), File Hooks, File Language
-     Templates, Installation, user-setup(3), User Profiles. 
+     $MEINSTALLPATH(5), $MENAME(5), $MEPATH(5), $MEUSERPATH(5), Company
+     Profiles, File Hooks, File Language Templates, Installation. 
 

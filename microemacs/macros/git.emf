@@ -47,7 +47,8 @@
   hilight .hilight.git-status 0x102 "[ *] \\u"  .scheme.hlred
   hilight .hilight.git-status 0x102 "[ *] A "   .scheme.add
   hilight .hilight.git-status 0x102 "[ *] AM"   .scheme.add
-  hilight .hilight.git-status 0x102 "[ *]  D"   .scheme.rmv
+  hilight .hilight.git-status 0x102 "[ *] D "   .scheme.rmv
+  hilight .hilight.git-status 0x102 "[ *] R "   .scheme.chg
   hilight .hilight.git-status 0x102 "[ *] MM"   .scheme.chg
   hilight .hilight.git-status 0x102 "[ *]  M"   .scheme.chg
   hilight .hilight.git-status 0x102 "[ *] !!"   .scheme.hide

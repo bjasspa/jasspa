@@ -20,9 +20,9 @@
 ;
 ; Examples:
 ;
-;    mecw32 -n -p @cfind.emf -f find -rxD *file-mask*
+;    mec -p @cfind.emf -f find -rxD *file-mask*
 ;
-;    mecw32 -n -p @cfind.emf -f grep -i searchStr *.txt
+;    mec -p @cfind.emf -f grep -i searchStr *.txt
 ;
 !if &les @# 0
 !elif &not &exi .about.arg0

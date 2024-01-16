@@ -67,16 +67,19 @@
 !endif
 0 define-macro pipe-me
   !if &not &exi .mcmd
-    !if &seq "R" &stat "t" &set #l2 &cat &set #l1 &lef &set #l0 $progname &rsin "/" #l0 "mecw32.exe"
+    !if &seq "mec" &mid &set #l0 $progname &set #l3 &rsin "/" #l0 3
+    !elif &seq "R" &stat "t" &set #l2 &cat &set #l1 &lef #l0 #l3 "mec.exe"
       set-variable #l0 #l2
-    !elif &seq "R" &stat "t" &set #l2 &cat #l1 "mec32.exe"
+    !elif &seq "R" &stat "t" &set #l2 &cat #l1 "mecw.exe"
       set-variable #l0 #l2
-    !elif &not &seq "ERROR" &set #l2 &which "mecw32.exe"
+    !elif &not &seq "ERROR" &set #l2 &which "mec.exe"
       set-variable #l0 #l2
-    !elif &not &seq "ERROR" &set #l2 &which "mec32.exe"
+    !elif &not &seq "ERROR" &set #l2 &which "mecw.exe"
       set-variable #l0 #l2
     !endif
-    set-variable .mcmd &spr "%s%s" &con &sin " " #l0 &spr "\"%s\"" #l0 #l0 &con &sin "/mecw" #l0 " -n" "" 
+    !iif &sin " " #l0  set-variable #l0 &spr "\"%s\"" #l0
+    !iif &sin "/mecw" #l0  set-variable #l0 &cat #l0 " -n"
+    set-variable .mcmd #l0
   !endif
   ipipe-shell-command &spr "%s %s %s" .mcmd &con &ban @# 2 "-P" "-p" @1 @mna
 !emacro

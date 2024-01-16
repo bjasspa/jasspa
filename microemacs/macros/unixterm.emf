@@ -10,7 +10,22 @@ define-macro-file hkman man
 define-macro-file hkipipe ishell gdb dbx perldb
 add-file-hook ".C" fhook-cpp
 0 define-macro pipe-me
-  ipipe-shell-command &spr "\"%s\" -n %s %s" $progname &con &ban @# 2 "-P" "-p" @1 @mna
+  !if &not &exi .mcmd
+    !if &seq "mec" &mid &set #l0 $progname &set #l3 &rsin "/" #l0 3
+    !elif &seq "R" &stat "t" &set #l2 &cat &set #l1 &lef #l0 #l3 "mec"
+      set-variable #l0 #l2
+    !elif &seq "R" &stat "t" &set #l2 &cat #l1 "mecw"
+      set-variable #l0 #l2
+    !elif &not &seq "ERROR" &set #l2 &which "mec"
+      set-variable #l0 #l2
+    !elif &not &seq "ERROR" &set #l2 &which "mecw"
+      set-variable #l0 #l2
+    !endif
+    !iif &sin " " #l0  set-variable #l0 &spr "\"%s\"" #l0
+    !iif &sin "/mecw" #l0  set-variable #l0 &cat #l0 " -n"
+    set-variable .mcmd #l0
+  !endif
+  ipipe-shell-command &spr "%s %s %s" .mcmd &con &ban @# 2 "-P" "-p" @1 @mna
 !emacro
 !if &band $system 0x01
   ; Not using X

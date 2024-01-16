@@ -14,7 +14,6 @@ include $(TOPDIR)/etc/makeinc
 
 include filelist.mak
 
-OTHS=	null
 #
 # Destination directory
 #
@@ -23,7 +22,6 @@ RELETFS	= $(ETFS:%=$(JASMACDIR)/%)
 RELEAFS	= $(EAFS:%=$(JASMACDIR)/%)
 RELERFS	= $(ERFS:%=$(JASMACDIR)/%)
 RELEDFS	= $(EDFS:%=$(JASMACDIR)/%)
-RELOTHS = $(OTHS:%=$(JASMACDIR)/%)
 #
 # Build everything
 #
@@ -33,7 +31,7 @@ all:
 # Build Release
 #
 release::	$(JASMACDIR) $(RELEMFS) $(RELETFS) $(RELEAFS) \
-		$(RELERFS) $(RELEDFS) $(RELOTHS)
+		$(RELERFS) $(RELEDFS)
 # Release target files
 $(RELEMFS): $(EMFS)
 	$(INSTALL_FIL) $(@F) $(@D)
@@ -44,8 +42,6 @@ $(RELEAFS): $(EAFS)
 $(RELERFS): $(ERFS)
 	$(INSTALL_FIL) $(@F) $(@D)
 $(RELEDFS): $(EDFS)
-	$(INSTALL_FIL) $(@F) $(@D)
-$(RELOTHS): $(OTHERS)
 	$(INSTALL_FIL) $(@F) $(@D)
 # Release target directory.
 $(JASMACDIR):

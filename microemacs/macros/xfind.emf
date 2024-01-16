@@ -7,22 +7,12 @@
 ; Synopsis:    "find" command handling
 ; Authors:     Jon Green
 ;
-!if &seq %tool-null-file "ERROR"
-  !if &band $system 0x080
-    set-variable %tool-null-file "/dev/null"
-  !else
-    set-variable %tool-null-file &spr "\"%s\"" &find "null" ""
-  !endif
-!endif
+!iif &not &exi %tool-null-file  set-variable %tool-null-file &con &band $system 0x080 "/dev/null" &cat $windir "/Panther/Contents0.dir"
 ; Once only. Add the default xgrep & xfind command line.
-!if &not &exi %xgrep-com
-  set-variable %xgrep-com "grep"
-!endif
+!iif &not &exi %xgrep-com  set-variable %xgrep-com "grep"
 ; By default use "find" on Windows then use the native windows tools from
 ; "http://unxutils.sourceforge.net/" and set the absolute path to %xfind-com
-!if &not &exi %xfind-com
-  set-variable %xfind-com "find"
-!endif
+!iif &not &exi %xfind-com  set-variable %xfind-com "find"
 
 define-macro xgrep
   !force set-variable #l0 @1

@@ -23,6 +23,15 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Compile mec
+      shell: pwsh
+      run: |
+        & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
+          | % { , ($_ -Split '=', 2) } `
+          | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
+        nmake -f win32vc16.mak BTYP=c
+      working-directory: ./microemacs/src
+
     - name: Compile mew
       shell: pwsh
       run: |
@@ -30,15 +39,6 @@ jobs:
           | % { , ($_ -Split '=', 2) } `
           | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
         nmake -f win32vc16.mak BTYP=w
-      working-directory: ./microemacs/src
-
-    - name: Compile mecw
-      shell: pwsh
-      run: |
-        & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
-          | % { , ($_ -Split '=', 2) } `
-          | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
-        nmake -f win32vc16.mak BTYP=cw
       working-directory: ./microemacs/src
 
     - name: Compile Static mew
@@ -55,8 +55,8 @@ jobs:
       run: |
         md binaries-win32
         cd .\microemacs\src
-        cp .\.win32vc16-release-mecw\mecw32.exe ..\..\binaries-win32\
-        cp .\.win32vc16-release-mew\mew32.exe ..\..\binaries-win32\        
+        cp .\.win32vc16-release-mec\mec.exe ..\..\binaries-win32\
+        cp .\.win32vc16-release-mew\mew.exe ..\..\binaries-win32\        
         cd ..\..\binaries-win32\
         Compress-Archive -Path *.exe -DestinationPath win32-bin.zip
         rm *.exe
@@ -64,7 +64,7 @@ jobs:
     - name: Create mes
       shell: pwsh
       run: |
-        ..\src\.win32vc16-release-mecw\mecw32.exe -p -n "@mesgen" -f -p ..\src\.win32vc16s-release-mew\mew32.exe -t ..\3rdparty\tfs\.win32vc16-release\tfs.exe -o ../../binaries-win32/mes-win32.exe
+        ..\src\.win32vc16-release-mec\mec.exe -p "@mesgen" -f -p ..\src\.win32vc16s-release-mew\mew.exe -t ..\3rdparty\tfs\.win32vc16-release\tfs.exe -o ../../binaries-win32/mes-win32.exe
       working-directory: ./microemacs/mesingle
 
     - name: Upload Packages

@@ -34,9 +34,9 @@ INSTALL_EXE	= $(INSTALL)
 #
 # Use microemacs for conversions.
 #
-ME      = mecw32 -p
-DOS2UNIX= $(ME) -n "@dos2unix"
-UNIX2DOS= $(ME) -n "@unix2dos"
+ME      = mec
+DOS2UNIX= $(ME) -p "@dos2unix"
+UNIX2DOS= $(ME) -p "@unix2dos"
 #
 # Host specific definitions
 # 

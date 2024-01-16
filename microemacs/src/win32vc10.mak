@@ -28,10 +28,10 @@
 #
 #     To build from the command line using nmake & makefile. 
 #
-#	Run "nmake -f win32vc10.mak"            for optimised build produces ./.win32vc10-release-mew/mew32.exe
-#	Run "nmake -f win32vc10.mak BCFG=debug" for debug build produces     ./.win32vc10-debug-mew/mew32.exe
-#	Run "nmake -f win32vc10.mak BTYP=c"     for console support          ./.win32vc10-release-mec/mec32.exe
-#	Run "nmake -f win32vc10.mak BCOR=ne"    for ne build produces        ./.win32vc10-release-new/new32.exe
+#	Run "nmake -f win32vc10.mak"            for optimised build produces ./.win32vc10-release-mew/mew.exe
+#	Run "nmake -f win32vc10.mak BCFG=debug" for debug build produces     ./.win32vc10-debug-mew/mew.exe
+#	Run "nmake -f win32vc10.mak BTYP=c"     for console support          ./.win32vc10-release-mec/mec.exe
+#	Run "nmake -f win32vc10.mak BCOR=ne"    for ne build produces        ./.win32vc10-release-new/new.exe
 #
 #	Run "nmake -f win32vc10.mak clean"      to clean source directory
 #	Run "nmake -f win32vc10.mak spotless"   to clean source directory even more
@@ -140,7 +140,7 @@ BTYP     = w
 !ENDIF
 
 OUTDIR   = $(BOUTDIR)-$(BCOR)$(BTYP)
-PRGNAME  = $(BCOR)$(BTYP)32
+PRGNAME  = $(BCOR)$(BTYP)
 PRGFILE  = $(PRGNAME)$(EXE)
 PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
 	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def \
@@ -166,7 +166,7 @@ all: $(PRGLIBS) $(OUTDIR)\$(PRGFILE)
 $(OUTDIR)\$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS) $(TOOLKIT).mak
 	$(RM) $@
 	$(LD) $(LDDEFS) $(BTYP_LDF) $(LDFLAGS) /PDB:"$(OUTDIR)\$(PRGNAME).pdb" /OUT:"$@" $(PRGOBJS) $(PRGLIBS) $(LDLIBS)
-	(echo ^<?xml version="1.0" encoding="UTF-8" standalone="yes"?^> & echo ^<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"^> & echo ^<assemblyIdentity version="$(meVER_YR).$(meVER_MN).$(meVER_DY).0" processorArchitecture="X86" name="mecw32.exe" type="win32"/^> & echo ^<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"^> & echo ^<security^> & echo ^<requestedPrivileges^> & echo ^<requestedExecutionLevel level="asInvoker" uiAccess="false"/^> & echo ^</requestedPrivileges^> & echo ^</security^> & echo ^</trustInfo^> & echo ^</assembly^>) > $@.manifest
+	(echo ^<?xml version="1.0" encoding="UTF-8" standalone="yes"?^> & echo ^<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"^> & echo ^<assemblyIdentity version="$(meVER_YR).$(meVER_MN).$(meVER_DY).0" processorArchitecture="X86" name="$(PRGNAME).exe" type="win32"/^> & echo ^<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"^> & echo ^<security^> & echo ^<requestedPrivileges^> & echo ^<requestedExecutionLevel level="asInvoker" uiAccess="false"/^> & echo ^</requestedPrivileges^> & echo ^</security^> & echo ^</trustInfo^> & echo ^</assembly^>) > $@.manifest
 	$(MT) -manifest $@.manifest -validate_manifest
 	$(MT) -outputresource:"$@;#1" -manifest $@.manifest
 

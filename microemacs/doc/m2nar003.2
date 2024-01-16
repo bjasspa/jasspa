@@ -64,10 +64,7 @@ is enabled then
 .Ht $user-name 5
 is set to the login user name. The login name may be overridden by setting the
 environment variable
-.Ht $MENAME 5
-this may be performed in the environment or through the
-.Ht me32.ini 8
-file.
+.Ht $MENAME 5 .
 .SS "Shared Platforms"
 Platforms  may share the same set of  configuration  files.  Consider a system
 which may boot under  \s-1MS-DOS\s0,  Windows '98, NT and Linux. Provided that
@@ -113,11 +110,10 @@ SET MEUSERPATH=c:\\jasspa\\fred
 .CE 0
 .RE
 .BP "Windows"
-In  Microsoft  Windows  environment  using  Explorer  4.0 or later then a user
-application  data directory  exists  (\fC$APPDATA\fR)  and \*(mS will create a
-directory  \fCjasspa\fR  in this  directory  location to hold private data. If
-there is no such  data  area  then all user  configuration  is  stored  in the
-executable directory location (or a sub-directory called
+In Microsoft Windows environment using Explorer 4.0 or later then a user application data directory exists
+(\fC$APPDATA\fR) and \*(mS will create a directory \fCjasspa\fR in this directory location to hold private data. If
+there is no such data area then all user configuration is stored in the executable directory location (or a
+sub-directory called
 .Ht $user-name 5 ).
 .IP
 The user data area
@@ -125,11 +121,7 @@ The user data area
 may be  modified  by  creating a new  directory  and  setting the  environment
 variable
 .Ht $MEUSERPATH 5
-to point to this new directory location. The location be specified by a
-\fBmeuserpath\fR entry in the
-.Ht me32.ini 8
-file rather than setting the environment variable
-.Ht $MEUSERPATH 5 .
+to point to this new directory location.
 .SS "Creating Your Profile"
 On  starting  \*(mS for the  first  time then the user is guided  through  the
 configuration file setup to create any local configuration  files. Once set up
@@ -284,7 +276,6 @@ ml-write "Configured to Jon's requirements"
 .Ht $MENAME 5 ,
 .Ht $MEPATH 5 ,
 .Ht $MEUSERPATH 5 ,
-.Ht me32.ini 8 ,
 .Hl "Company Profiles" companyProfiles 2 ,
 .Hl "File Hooks" fileHooks 2 ,
 .Hl "File Language Templates" languageTemplates 2 ,

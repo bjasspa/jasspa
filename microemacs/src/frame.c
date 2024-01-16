@@ -41,7 +41,7 @@ int
 meFrameEnlargeVideo(meFrame *frame, int rows)
 {
     meVideo *vvptr;                      /* Pointer to the video blocks */
-    meVideoLine  *vs;                         /* Video store line */
+    meVideoLine  *vs;                    /* Video store line */
 
     for (vvptr = &frame->video; vvptr != NULL; vvptr = vvptr->next)
     {
@@ -65,18 +65,18 @@ meFrameChangeWidth(meFrame *frame, int ww)
 {
     /* ensure the value is in range */
     if(ww < 8)
-        ww = 8 ;
+        ww = 8;
     else if(ww > 400)
-        ww = 400 ;
+        ww = 400;
     
     /* Already this size ?? Nothing to do */
     if(frame->width == ww)
         return meTRUE;
     
-    meFrameLoopBegin() ;
+    meFrameLoopBegin();
     
     /* only process frames which use the same screen window */
-    meFrameLoopContinue(loopFrame->mainId != frame->mainId) ;
+    meFrameLoopContinue(loopFrame->mainId != frame->mainId);
     
     /* Only process if the window size is different from the current
      * window size. If we got here that is true, */
@@ -84,24 +84,24 @@ meFrameChangeWidth(meFrame *frame, int ww)
     {
         /* Must extend the length of loopFrame->mlLine, loopFrame->mlLineStore, and all window
          * mode lines */
-        meWindow *wp ;                /* Temporary window pointer */
+        meWindow *wp;                 /* Temporary window pointer */
         meFrameLine *flp;             /* Frame line pointer */
         meFrameLine fl;               /* Temporary frame line */
         int ii, jj;                   /* Local loop counters */
-        meLine *ml ;
-        meUByte *mls ;
+        meLine *ml;
+        meUByte *mls;
 
         if(((ml = meLineMalloc(ww,0)) == NULL) ||
            ((mls = meMalloc(ww+1)) == NULL))
-            return meFALSE ;
+            return meFALSE;
             
         /* Fix up the frame store by growing the lines. Do a safe
          * grow where by we can recover if a malloc fails. */
         for (flp = loopFrame->store, ii = 0; ii < loopFrame->depthMax; ii++, flp++)
         {
             if ((fl.scheme = meMalloc(ww*(sizeof(meUByte)+sizeof(meStyle)))) == NULL)
-                return meFALSE ;
-            fl.text = (meUByte *) (fl.scheme+ww) ;
+                return meFALSE;
+            fl.text = (meUByte *) (fl.scheme+ww);
             
             /* Data structures allocated. Copy accross the new screen
              * information and pad endings with valid data. Strictly we
@@ -110,11 +110,11 @@ meFrameChangeWidth(meFrame *frame, int ww)
              * infrequent operation and time is not critical here */
             memcpy(fl.text, flp->text, sizeof(meUByte) * loopFrame->widthMax);
             memcpy(fl.scheme, flp->scheme, sizeof(meScheme) * loopFrame->widthMax);
-            jj = ww ;
+            jj = ww;
             while(--jj >= loopFrame->widthMax)
             {
-                fl.text[jj] = ' ' ;
-                fl.scheme[jj] = globScheme ;
+                fl.text[jj] = ' ';
+                fl.scheme[jj] = globScheme;
             }                
             /* Free off old data and copy in new */
             meFree (flp->scheme);
@@ -122,50 +122,50 @@ meFrameChangeWidth(meFrame *frame, int ww)
             flp->scheme = fl.scheme;
         }
         /* Fix up the window structures */
-        memcpy(ml,loopFrame->mlLine,meLINE_SIZE+loopFrame->mlLine->length) ;
+        memcpy(ml,loopFrame->mlLine,meLINE_SIZE+loopFrame->mlLine->length);
         if(loopFrame->mlStatus & MLSTATUS_KEEP)
         {
             meStrcpy(mls,loopFrame->mlLine->text);
-            loopFrame->mlColumnStore = loopFrame->mlColumn ;
-            loopFrame->mlStatus = (loopFrame->mlStatus & ~MLSTATUS_KEEP) | MLSTATUS_RESTORE ;
+            loopFrame->mlColumnStore = loopFrame->mlColumn;
+            loopFrame->mlStatus = (loopFrame->mlStatus & ~MLSTATUS_KEEP) | MLSTATUS_RESTORE;
         }
         else if(loopFrame->mlStatus & MLSTATUS_RESTORE)
-            meStrcpy(mls,loopFrame->mlLineStore) ;
+            meStrcpy(mls,loopFrame->mlLineStore);
         
-        free(loopFrame->mlLine) ;
-        free(loopFrame->mlLineStore) ;
-        loopFrame->video.lineArray[loopFrame->depth].line = (loopFrame->mlLine = ml) ;
-        loopFrame->mlLineStore = mls ;
+        free(loopFrame->mlLine);
+        free(loopFrame->mlLineStore);
+        loopFrame->video.lineArray[loopFrame->depth].line = (loopFrame->mlLine = ml);
+        loopFrame->mlLineStore = mls;
         
-        wp = loopFrame->windowList ;
+        wp = loopFrame->windowList;
         while(wp != NULL)
         {
             if((ml = meLineMalloc(ww,0)) == NULL)
-                return meFALSE ;
-            memcpy(ml,wp->modeLine,meLINE_SIZE+wp->modeLine->length) ;
-            free(wp->modeLine) ;
-            wp->modeLine = ml ;
-            wp = wp->next ;
+                return meFALSE;
+            memcpy(ml,wp->modeLine,meLINE_SIZE+wp->modeLine->length);
+            free(wp->modeLine);
+            wp->modeLine = ml;
+            wp = wp->next;
         }
-        loopFrame->widthMax = ww ;
+        loopFrame->widthMax = ww;
     }
 
-    loopFrame->width = ww ;
+    loopFrame->width = ww;
     
     /* Fix up the windows */
 #if MEOPT_FRAME
     {
-        meFrame *fc=frameCur ;
-        frameCur = loopFrame ;
+        meFrame *fc=frameCur;
+        frameCur = loopFrame;
         meFrameResizeWindows(frameCur,meFRAMERESIZEWIN_WIDTH);
-        frameCur = fc ;
+        frameCur = fc;
     }
 #else
     meFrameResizeWindows(frameCur,meFRAMERESIZEWIN_WIDTH);
 #endif
     
-    meFrameLoopEnd() ;
-    return meTRUE ;
+    meFrameLoopEnd();
+    return meTRUE;
 }
 
 
@@ -174,29 +174,29 @@ meFrameChangeDepth(meFrame *frame, int dd)
 {
     /* ensure the value is in range */
     if(dd < 4)
-        dd = 4 ;
+        dd = 4;
     else if(dd > 400)
-        dd = 400 ;
+        dd = 400;
         
     /* Already this size ?? Nothing to do */
     if((frame->depth+1) == dd)
         return meTRUE;
     
-    meFrameLoopBegin() ;
+    meFrameLoopBegin();
     
     /* only process frames which use the same screen window */
-    meFrameLoopContinue(loopFrame->mainId != frame->mainId) ;
+    meFrameLoopContinue(loopFrame->mainId != frame->mainId);
     
     /* Only process if the window size is different from the current
      * window size. If we got here that is true. 
      * Go and get some more screen space */
-    if (dd > loopFrame->depthMax)
+    if(dd > loopFrame->depthMax)
     {
         meFrameLine *flp;             /* Temporary frame line */
         int ii, jj;                 /* Local loop counter */
         
-        if (meFrameEnlargeVideo(loopFrame,dd) == meFALSE)
-            return meFALSE ;
+        if(meFrameEnlargeVideo(loopFrame,dd) == meFALSE)
+            return meFALSE;
             
         /* Grow the Frame store depthwise do this safely so that 
          * we do not cause a crash at the video end. 
@@ -204,38 +204,38 @@ meFrameChangeDepth(meFrame *frame, int dd)
          * Grow the frame store first. Reallocate and then
          * copy across the old information. 
          */
-        if ((flp = (meFrameLine *) meMalloc (sizeof (meFrameLine) * dd)) == NULL)
-            return meFALSE ;
+        if((flp = (meFrameLine *) meMalloc(sizeof(meFrameLine) * dd)) == NULL)
+            return meFALSE;
         
-        memcpy (flp, loopFrame->store, sizeof (meFrameLine) * loopFrame->depthMax);
-        meFree (loopFrame->store);        /* Free off old store */
+        memcpy(flp, loopFrame->store, sizeof(meFrameLine) * loopFrame->depthMax);
+        meFree(loopFrame->store);        /* Free off old store */
         loopFrame->store = flp;           /* Re-assign */
         
         /* Allocate a new set of lines for the remainder of the space */
-        for (flp += loopFrame->depthMax, ii = loopFrame->depthMax; ii < dd; ii++, flp++)
+        for (flp += loopFrame->depthMax, ii = loopFrame->depthMax ; ii < dd ; ii++, flp++)
         {
             if ((flp->scheme = meMalloc(loopFrame->widthMax*(sizeof(meUByte)+sizeof(meScheme)))) == NULL)
-                return meFALSE ;
+                return meFALSE;
             
-            flp->text = (meUByte *) (flp->scheme+loopFrame->widthMax) ;
+            flp->text = (meUByte *) (flp->scheme+loopFrame->widthMax);
             /* Initialise the data to something valid */
-            jj = loopFrame->widthMax ;
+            jj = loopFrame->widthMax;
             while(--jj >= 0)
             {
-                flp->text[jj] = ' ' ;
-                flp->scheme[jj] = globScheme ;
+                flp->text[jj] = ' ';
+                flp->scheme[jj] = globScheme;
             }
         }
-        loopFrame->depthMax = dd ;
+        loopFrame->depthMax = dd;
     }
 
     /* Fix up the message line by binding to the new video frame */
-    loopFrame->video.lineArray[loopFrame->depth].flag = 0 ;    /* Decouple the old one */
-    loopFrame->video.lineArray[loopFrame->depth].line = NULL ;
+    loopFrame->video.lineArray[loopFrame->depth].flag = 0;    /* Decouple the old one */
+    loopFrame->video.lineArray[loopFrame->depth].line = NULL;
     loopFrame->video.lineArray[dd-1].flag = VFMESSL;    /* Bind in new message line */
-    loopFrame->video.lineArray[dd-1].line = loopFrame->mlLine ;
+    loopFrame->video.lineArray[dd-1].line = loopFrame->mlLine;
     loopFrame->video.lineArray[dd-1].endp = loopFrame->width;
-    loopFrame->depth = dd-1 ;                       /* Set up global number of rows */
+    loopFrame->depth = dd-1;                       /* Set up global number of rows */
 
 #if MEOPT_OSD
     if (loopFrame->menuDepth > 0)
@@ -245,18 +245,18 @@ meFrameChangeDepth(meFrame *frame, int dd)
     /* Fix up the windows */
 #if MEOPT_FRAME
     {
-        meFrame *fc=frameCur ;
-        frameCur = loopFrame ;
+        meFrame *fc=frameCur;
+        frameCur = loopFrame;
         meFrameResizeWindows(frameCur,meFRAMERESIZEWIN_DEPTH);
-        frameCur = fc ;
+        frameCur = fc;
     }
 #else
     meFrameResizeWindows(frameCur,meFRAMERESIZEWIN_DEPTH);
 #endif
     
-    meFrameLoopEnd() ;
+    meFrameLoopEnd();
 
-    return meTRUE ;
+    return meTRUE;
 }
 
 /*
@@ -268,28 +268,28 @@ int
 frameChangeWidth(int f, int n)
 {
     /* if no argument is given then prompt for the new width */
-    if (f == meFALSE)
+    if(f == meFALSE)
     {
-        meUByte buff[meSBUF_SIZE_MAX] ;
+        meUByte buff[meSBUF_SIZE_MAX];
         
-        if (meGetString((meUByte *)"New width", 0, 0, buff, meSBUF_SIZE_MAX) <= 0) 
-            return meFALSE ;
-        n = meAtoi(buff) ;
+        if(meGetString((meUByte *)"New width", 0, 0, buff, meSBUF_SIZE_MAX) <= 0) 
+            return meFALSE;
+        n = meAtoi(buff);
     }
     else
         /* n is a delta, add this to the current width to get the new width */
-        n = frameCur->width + n ;
+        n = frameCur->width + n;
     
-    if ((n < 8) || (n > 400))           /* In range ?? */
+    if((n < 8) || (n > 400))            /* In range ?? */
         return mlwrite(MWABORT,(meUByte *)"Screen width %d out of range", n);
-    if (n == frameCur->width)                    /* Already this size ?? */
+    if(n == frameCur->width)                    /* Already this size ?? */
         return meTRUE;
     
     if(meFrameChangeWidth(frameCur,n) <= 0)
-        return meFALSE ;
+        return meFALSE;
 
 #ifdef _WINDOW
-    meFrameSetWindowSize(frameCur) ;    /* Change the size of the window */
+    meFrameSetWindowSize(frameCur);     /* Change the size of the window */
 #endif
     return(meTRUE);
 }
@@ -304,27 +304,27 @@ frameChangeDepth(int f, int n)
     /* if no argument is given then prompt for the new depth */
     if (f == meFALSE)
     {
-        meUByte buff[meSBUF_SIZE_MAX] ;
+        meUByte buff[meSBUF_SIZE_MAX];
         
         if (meGetString((meUByte *)"New depth", 0, 0, buff, meSBUF_SIZE_MAX) <= 0) 
-            return meFALSE ;
-        n = meAtoi(buff) ;
+            return meFALSE;
+        n = meAtoi(buff);
     }
     else
         /* n is a delta, add this to the current width to get the new width */
-        n = frameCur->depth + 1 + n ;
+        n = frameCur->depth + 1 + n;
     if ((n < 4) || (n > 400))           /* Argument in range ?? */
         return mlwrite(MWABORT,(meUByte *)"[Screen depth %d out of range]", n);
     if (n == (frameCur->depth+1))
-        return meTRUE;                    /* Already the right size */
+        return meTRUE;                  /* Already the right size */
     
     if(meFrameChangeDepth(frameCur,n) <= 0)
-        return meFALSE ;
+        return meFALSE;
     
 #ifdef _WINDOW
-    meFrameSetWindowSize(frameCur) ;    /* Change the size of the window */
+    meFrameSetWindowSize(frameCur);     /* Change the size of the window */
 #endif
-    return meTRUE ;
+    return meTRUE;
 }
 
 /* initialize a frame, mallocing required video and framestore space.
@@ -333,74 +333,74 @@ frameChangeDepth(int f, int n)
 meFrame *
 meFrameInit(meFrame *sibling)
 {
-    meFrame *frame ;
-    meFrameLine *flp;                     /* Frame store line pointer */
-    int ii, jj ;                        /* Local loop counters */
+    meFrame *frame;
+    meFrameLine *flp;                   /* Frame store line pointer */
+    int ii, jj;                         /* Local loop counters */
     
     /* add 2 to hilBlockS to allow for a double trunc-scheme change */
     if((frame = meMalloc(sizeof(meFrame))) == NULL)
-        return NULL ;
-    memset(frame,0,sizeof(meFrame)) ;
+        return NULL;
+    memset(frame,0,sizeof(meFrame));
     
 #if MEOPT_FRAME
     if(sibling != NULL)
     {
-        frame->mainId = sibling->mainId ;
-        frame->width = sibling->width ;
-        frame->depth = sibling->depth ;
-        frame->widthMax = sibling->widthMax ;
-        frame->depthMax = sibling->depthMax ;
+        frame->mainId = sibling->mainId;
+        frame->width = sibling->width;
+        frame->depth = sibling->depth;
+        frame->widthMax = sibling->widthMax;
+        frame->depthMax = sibling->depthMax;
     }
     else
 #else
-    meAssert(sibling == NULL) ;
+    meAssert(sibling == NULL);
 #endif
     {
-        frame->mainId = 0 ;
+        frame->mainId = 0;
 #if MEOPT_FRAME
         {
-            meFrame *ff = frameList ;
+            meFrame *ff = frameList;
             while(ff != NULL)
             {
                 if(ff->mainId == frame->mainId)
                 {
                     if(frame->mainId == 255)
                     {
-                        free(frame) ;
-                        return NULL ;
+                        free(frame);
+                        return NULL;
                     }
-                    frame->mainId++ ;
-                    ff = frameList ;
+                    frame->mainId++;
+                    ff = frameList;
                 }
-                ff = ff->next ;
+                ff = ff->next;
             }
         }
 #endif
-        frame->width = TTwidthDefault ;
-        frame->depth = TTdepthDefault-1 ;
-        frame->widthMax = TTwidthDefault ;
-        frame->depthMax = TTdepthDefault ;
+        frame->width = TTwidthDefault;
+        frame->depth = TTdepthDefault-1;
+        frame->widthMax = TTwidthDefault;
+        frame->depthMax = TTdepthDefault;
     }
     if(meFrameTermInit(frame,sibling) <= 0)
-        return NULL ;
+        return NULL;
     
     if(((frame->video.lineArray = meMalloc(frame->depthMax * sizeof(meVideoLine))) == NULL) ||
        ((frame->mlLine = meLineMalloc(frame->widthMax,0)) == NULL) ||
        ((frame->mlLineStore = meMalloc(frame->widthMax+1)) == NULL))
-        return NULL ;
+        return NULL;
 
     /* Initialise the virtual video structure. */
-    memset(frame->video.lineArray,0,frame->depthMax*sizeof(meVideoLine)) ;
-    frame->video.lineArray[frame->depth].flag = VFMESSL ;
-    frame->video.lineArray[frame->depth].line = frame->mlLine ;
+    memset(frame->video.lineArray,0,frame->depthMax*sizeof(meVideoLine));
+    frame->video.lineArray[frame->depth].flag = VFMESSL;
+    frame->video.lineArray[frame->depth].line = frame->mlLine;
     /* Reset the video list block */
     frame->video.next = NULL;                 /* No next block */
     frame->video.window = NULL;               /* No windows attached */
 
-    memset(frame->mlLine->text,'\0',frame->widthMax) ;
+    memset(frame->mlLine->text,'\0',frame->widthMax);
     frame->mlLineStore[0] = '\0';
 #if MEOPT_EXTENDED
-    frame->id = ++nextFrameId ;
+    frame->id = ++nextFrameId;
 #endif
 
     /* Frame Store storage
@@ -411,21 +411,21 @@ meFrameInit(meFrame *sibling)
      * Allocate lines in the frame store to hold the video information.
      */
     if((frame->store = meMalloc(sizeof(meFrameLine) * frame->depthMax)) == NULL)
-        return NULL ;
+        return NULL;
     for (flp = frame->store, ii = 0; ii < frame->depthMax; ii++, flp++)
     {
         if ((flp->scheme = meMalloc(frame->widthMax*(sizeof(meUByte)+sizeof(meStyle)))) == NULL)
-            return NULL ;
-        flp->text = (meUByte *) (flp->scheme+frame->widthMax) ;
+            return NULL;
+        flp->text = (meUByte *) (flp->scheme+frame->widthMax);
         /* Fill with data */
-        jj = frame->widthMax ;
+        jj = frame->widthMax;
         while(--jj >= 0)
         {
-            flp->text[jj] = ' ' ;
-            flp->scheme[jj] = meSCHEME_NDEFAULT ;
+            flp->text[jj] = ' ';
+            flp->scheme[jj] = meSCHEME_NDEFAULT;
         }
     }
-    return frame ;
+    return frame;
 }
 
 /* meFrameInitWindow
@@ -443,7 +443,7 @@ meFrameInitWindow(meFrame *frame, meBuffer *buffer)
     if(((wp = meMalloc(sizeof(meWindow))) == NULL) ||
        ((lp = meLineMalloc(frame->widthMax,0)) == NULL) ||
        ((off= meLineMalloc(frame->widthMax,0)) == NULL))
-        return meFALSE ;
+        return meFALSE;
     
     frame->bufferCur = buffer;              /* Make this current    */
     frame->windowList = wp;
@@ -473,45 +473,45 @@ meFrameInitWindow(meFrame *frame, meBuffer *buffer)
 void
 meFrameFree(meFrame *frame)
 {
-    meFrame     *ff ;
-    meFrameLine *flp ;
-    meWindow    *wp ;
+    meFrame     *ff;
+    meFrameLine *flp;
+    meWindow    *wp;
     meVideo    *vvptr;
-    int        ii ;
+    int        ii;
     
     /* take frame out of the list */
     if(frame == frameList)
-        frameList = frame->next ;
+        frameList = frame->next;
     else
     {
-        ff = frameList ;
+        ff = frameList;
         while(ff->next != frame)
-            ff = ff->next ;
-        ff->next = frame->next ;
+            ff = ff->next;
+        ff->next = frame->next;
     }
 #if MEOPT_MWFRAME
     if(frameFocus == frame)
-        frameFocus = NULL ;
+        frameFocus = NULL;
 #endif
     
     /* try to find a sibling of this frame */
-    ff = frameList ;
+    ff = frameList;
     while((ff != NULL) && (ff->mainId != frame->mainId))
-        ff = ff->next ;
+        ff = ff->next;
     
-    meFrameTermFree(frame,ff) ;
+    meFrameTermFree(frame,ff);
     
     while (frame->windowList != NULL)
     {
-        wp = frame->windowList ;
-        frame->windowList = wp->next ;
+        wp = frame->windowList;
+        frame->windowList = wp->next;
         if(--wp->buffer->windowCount == 0)
         {
-            storeWindBSet(wp->buffer,wp) ;
-            wp->buffer->histNo = bufHistNo ;
+            storeWindBSet(wp->buffer,wp);
+            wp->buffer->histNo = bufHistNo;
         }
-        meFree(wp->modeLine) ;
-        meFree(wp->dotCharOffset) ;
+        meFree(wp->modeLine);
+        meFree(wp->dotCharOffset);
         meFree(wp);
     }
     /* Destruct all virtual video blocks */
@@ -523,11 +523,11 @@ meFrameFree(meFrame *frame)
     }
     meFree(frame->video.lineArray);
     for(flp=frame->store,ii=0; ii<frame->depthMax; ii++, flp++)
-        meFree(flp->scheme) ;
-    meFree(frame->mlLine) ;
-    meFree(frame->mlLineStore) ;
-    meFree(frame->store) ;
-    meFree(frame) ;
+        meFree(flp->scheme);
+    meFree(frame->mlLine);
+    meFree(frame->mlLineStore);
+    meFree(frame->store);
+    meFree(frame);
 }
 #endif
 
@@ -539,39 +539,39 @@ meFrameDelete(meFrame *frame, int flags)
      * internal (sibling) replacement frame as if one exists then the window
      * must not be deleted */
     if((flags & 1) && (frame == frameCur))
-        frameNext(meTRUE,1) ;
+        frameNext(meTRUE,1);
     if((frame == frameCur) ||
        (((flags & 1) == 0) && (frame->mainId == frameCur->mainId)))
     {
         if(flags & 2)
-            frameNext(meTRUE,2) ;
+            frameNext(meTRUE,2);
         if(frame->mainId == frameCur->mainId)
         {
             /* no replacement could be found! */
             if((flags & 4) == 0)
-                mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Last frame]") ;
-            return meABORT ;
+                mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Last frame]");
+            return meABORT;
         }
     }
     
     if(frame->mainId != frameCur->mainId)
     {
-        meFrame *nf ;
-        meUByte mainId=frame->mainId ;
+        meFrame *nf;
+        meUByte mainId=frame->mainId;
         
-        frame = frameList ;
+        frame = frameList;
         while(frame != NULL)
         {
-            nf = frame->next ;
+            nf = frame->next;
             if(frame->mainId == mainId)
-                meFrameFree(frame) ;
-            frame = nf ;
+                meFrameFree(frame);
+            frame = nf;
         }
     }
     else
-        meFrameFree(frame) ;
+        meFrameFree(frame);
     
-    return meTRUE ;
+    return meTRUE;
 }
 
 /*
@@ -587,22 +587,22 @@ meFrameMakeCur(meFrame *frame, int quiet)
 {
     if(frame != frameCur)
     {
-        meFrame *frameOld=frameCur ;
+        meFrame *frameOld=frameCur;
         
         /* if frame is not the current frame in this window then make it */
         if(frame->flags & meFRAME_HIDDEN)
         {
-            meFrame *ff ;
-            ff = frameList ;
+            meFrame *ff;
+            ff = frameList;
             while((ff->mainId != frame->mainId) ||
                   (ff->flags & meFRAME_HIDDEN))
-                ff = ff->next ;
+                ff = ff->next;
             frame->flags = (frame->flags & ~(meFRAME_HIDDEN|meFRAME_NOT_FOCUS)) |
-                      (ff->flags & meFRAME_NOT_FOCUS) ;
-            ff->flags |= meFRAME_HIDDEN ;
+                      (ff->flags & meFRAME_NOT_FOCUS);
+            ff->flags |= meFRAME_HIDDEN;
         }            
-        frameCur = frame ;
-        sgarbf = meTRUE ;                      /* Garbage the screen */
+        frameCur = frame;
+        sgarbf = meTRUE;                      /* Garbage the screen */
         if(frameOld->mlStatus & (MLSTATUS_RESTORE|MLSTATUS_KEEP))
         {
             meUByte mlStatus;
@@ -616,34 +616,34 @@ meFrameMakeCur(meFrame *frame, int quiet)
              * at all possible */
             if(frameOld->mlStatus & MLSTATUS_RESTORE)
             {
-                frame->mlColumn = frameOld->mlColumnStore ;
-                mlStatus = (frameOld->mlStatus & ~MLSTATUS_RESTORE) | MLSTATUS_KEEP ;
-                mlStr = frameOld->mlLineStore ;
+                frame->mlColumn = frameOld->mlColumnStore;
+                mlStatus = (frameOld->mlStatus & ~MLSTATUS_RESTORE) | MLSTATUS_KEEP;
+                mlStr = frameOld->mlLineStore;
             }
             else
             {
-                frame->mlColumn = frameOld->mlColumn ;
-                mlStatus = frameOld->mlStatus ;
-                mlStr = frameOld->mlLine->text ;
+                frame->mlColumn = frameOld->mlColumn;
+                mlStatus = frameOld->mlStatus;
+                mlStr = frameOld->mlLine->text;
             }
-            frame->mlStatus = 0 ;
-            mlwrite(((mlStatus & MLSTATUS_POSML) ? MWSPEC|MWUSEMLCOL|MWCURSOR:MWSPEC),mlStr) ;
-            frame->mlStatus = mlStatus ;
+            frame->mlStatus = 0;
+            mlwrite(((mlStatus & MLSTATUS_POSML) ? MWSPEC|MWUSEMLCOL|MWCURSOR:MWSPEC),mlStr);
+            frame->mlStatus = mlStatus;
         }
-        frameOld->mlStatus = 0 ;
+        frameOld->mlStatus = 0;
         if(frameOld->mlLine->length > 0)
         {
             /* erase the ml line of old current frame */
-            frameOld->mlLine->text[0] = '\0' ;
-            frameOld->mlLine->length = 0 ;
-            frameOld->mlLine->flag |= meLINE_CHANGED ;
+            frameOld->mlLine->text[0] = '\0';
+            frameOld->mlLine->length = 0;
+            frameOld->mlLine->flag |= meLINE_CHANGED;
         }
 #if MEOPT_MWFRAME
         if(frame->mainId == frameOld->mainId)
-            frameFocus = frame ;
+            frameFocus = frame;
         else if(!quiet)
             /* A quiet operation will not change the terminal to perform the swap */
-            meFrameTermMakeCur(frame) ;
+            meFrameTermMakeCur(frame);
 #endif
     }
 }
@@ -651,79 +651,79 @@ meFrameMakeCur(meFrame *frame, int quiet)
 int
 frameCreate(int f, int n)
 {
-    meFrame *frame, *sf ;
-    int menuDepth ;
+    meFrame *frame, *sf;
+    int menuDepth;
     
 #if MEOPT_MWFRAME
     if(!f || (n & 2))
-        sf = NULL ;
+        sf = NULL;
     else if(n & 1)
-        sf = frameCur ;
+        sf = frameCur;
     else
-        return ctrlg(0,1) ;
+        return ctrlg(0,1);
 #else
     if((n & 1) == 0)
-        return ctrlg(0,1) ;
-    sf = frameCur ;
+        return ctrlg(0,1);
+    sf = frameCur;
 #endif
     
     /* these functions cannot use meMalloc as they are used to init ME,
      * so if they fail we must warn of the malloc failure */
     if(((frame = meFrameInit(sf)) == NULL) ||
        (meFrameInitWindow(frame,frameCur->bufferCur) <= 0))
-        return mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"[Failed to create new frame]") ;
+        return mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"[Failed to create new frame]");
 #if MEOPT_MWFRAME
     if(sf != NULL)
 #endif
-        frame->flags |= meFRAME_HIDDEN ;
-    menuDepth = frameCur->menuDepth ;
-    frame->next = frameCur->next ;
-    restoreWindWSet(frame->windowCur,frameCur->windowCur) ;
-    frameCur->next = frame ;
-    meFrameMakeCur(frame, 0) ;
+        frame->flags |= meFRAME_HIDDEN;
+    menuDepth = frameCur->menuDepth;
+    frame->next = frameCur->next;
+    restoreWindWSet(frame->windowCur,frameCur->windowCur);
+    frameCur->next = frame;
+    meFrameMakeCur(frame, 0);
     if(menuDepth)
-        frameSetupMenuLine(menuDepth) ;
+        frameSetupMenuLine(menuDepth);
     sgarbf = meTRUE;                      /* Garbage the screen */
     
-    return meTRUE ;
+    return meTRUE;
 }
 
 int
 frameDelete(int f, int n)
 {
     if(f == meFALSE)
-        n = 3 ;
-    return meFrameDelete(frameCur,n) ;
+        n = 3;
+    return meFrameDelete(frameCur,n);
 }
 
 int
 frameNext(int f, int n)
 {
-    meFrame *frame=frameCur ;
+    meFrame *frame=frameCur;
     
     if(f == meFALSE)
-        n = 2 ;
+        n = 2;
     
     for(;;)
     {
         if((frame = frame->next) == NULL)
-            frame = frameList ;
+            frame = frameList;
         if(frame == frameCur)
         {
             if(f)
-                return meTRUE ;
+                return meTRUE;
             /* failed to find an external, try again */
-            f = 1 ;
-            n = 1 ;
+            f = 1;
+            n = 1;
         }
         else if(((n & 0x03) == 3) ||
                 ((n & 0x01) && (frame->mainId == frameCur->mainId)) ||
                 ((n & 0x02) && (frame->mainId != frameCur->mainId) &&
                  ((frame->flags & meFRAME_HIDDEN) == 0)))
-            break ;
+            break;
     }
-    meFrameMakeCur(frame, 0) ;
-    return meTRUE ;
+    meFrameMakeCur(frame,0);
+    return meTRUE;
 }
 
 #endif

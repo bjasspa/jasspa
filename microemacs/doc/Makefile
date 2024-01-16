@@ -40,7 +40,7 @@ RTFS	=	me.rtf me.hpj logo.bmp me.hhp
 MEHTMZIP=	jasspa-mehtm-20$(MEYY)$(MEMM)$(MEDD).zip
 MEHTMLTGZ=	jasspa-mehtml-20$(MEYY)$(MEMM)$(MEDD).tar.gz
 #
-MAN1	=	$(DOCDIR)m1cmd000.1 $(DOCDIR)m1cmd001.1 $(DOCDIR)m1cmd002.1
+MAN1	=	$(DOCDIR)m1cmd000.1 $(DOCDIR)m1cmd002.1
 #
 CMD2_000=	$(DOCDIR)m2cmd000.2 $(DOCDIR)m2cmd001.2 $(DOCDIR)m2cmd002.2\
 		$(DOCDIR)m2cmd003.2 $(DOCDIR)m2cmd004.2 $(DOCDIR)m2cmd005.2\
@@ -251,7 +251,7 @@ VAR5_090=	$(DOCDIR)m5var090.5 $(DOCDIR)m5var091.5 $(DOCDIR)m5var092.5 \
 #
 FIL8_000=	$(DOCDIR)m8fil000.8 $(DOCDIR)m8fil001.8 $(DOCDIR)m8fil002.8\
 		$(DOCDIR)m8fil003.8 $(DOCDIR)m8fil004.8 $(DOCDIR)m8fil005.8\
-		$(DOCDIR)m8fil006.8 $(DOCDIR)m8fil007.8 $(DOCDIR)m8fil008.8
+		$(DOCDIR)m8fil007.8 $(DOCDIR)m8fil008.8
 #
 TYP9_000=	$(DOCDIR)m9typ000.9 $(DOCDIR)m9typ001.9 $(DOCDIR)m9typ002.9\
 		$(DOCDIR)m9typ003.9 $(DOCDIR)m9typ004.9 $(DOCDIR)m9typ005.9\

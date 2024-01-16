@@ -1257,14 +1257,14 @@ mesetupInsertResourceString(char *ss, int argi, int oargc, char **oargv[])
         {
             argv[argi + nargc++] = ss ;
 #ifdef _WIN32
-            /* if the next argument does not start with a '-' (an Com-line option)
+            /* if the next argument does not start with a '-' (a Com-line option)
              * and the rest of the line makes up the name of an existing file then
              * add the rest of the line as the last arg and quit. Why? Windows
              * stupidity of course! With Explorer extension associativity a user
-             * should specify to open .foo files with [me32 "%1"] so the file name
-             * is correctly quoted. But windows being windows allows [me32] so when
+             * should specify to open .foo files with [me "%1"] so the file name
+             * is correctly quoted. But windows being windows allows [me] so when
              * the user double clicks on c:\program files\fred.foo the command line
-             * is [me32 c:\program files\fred.foo] - nuff said. */
+             * is [me c:\program files\fred.foo] - nuff said. */
             if((cc != '-') && !meTestRead(ss))
                 break ;
 #endif

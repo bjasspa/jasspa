@@ -625,49 +625,6 @@ as follows:-
 .\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 .rm Qu
 .rm Qn
-.ds Qu "me32.ini - Where does it go, how do I know it's being processed ??
-.ds Qn 23
-.NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"
-.XI faq\*(Qn 0f "\*(Qu"
-.ne 10
-.SH "QUESTION (\*(Qn)"
-\*(Qu
-.SH ANSWER
-Question posed as:-
-.CS
-> 1)  Am I right in assuming that for NT the file me32.ini goes
->     into  %windir%, i.e. into c:\winnt ?
-.CE
-Yes, this is where the other .ini files are.
-.CS
-> 2)  How do I know me32.ini is being processed?  Creating one,
->     as described in the readme.txt file doesn't seem to have
->     any visible effect.
-.CE
-From within the editor, if you show the variable
-.Ht $MEPATH 5 ,
-then it should echo the paths that you have defined in the me32.ini file.
-.CS
-esc-x describe-variable
-$MEPATH
-.CE
-See:
-.Ht me32.ini 8 ,
-.Hl "Installation Information" Installation 1 ,
-.Hl "Setting Up A User Profile" UserProfiles 2 .
-.CS
-> 3) What does the "fontfile" statement do ?
-.CE
-For releases after May 1999 then the  \fIfontfile\fR  statement may be omitted
-as typically \fBLucida Console\fR or \fBCourier New\fR is used. If you want to
-use  the  fixed  OEM  fonts   then   \fIfontfile\fR   should  be   defined  as
-\fBapp860.fon\fR  (or local language  equivalent),  this forces the font to be
-loaded as a resource, prior to use.
-.PP
-.Hl "[FAQ Index]" faq - .
-.\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-.rm Qu
-.rm Qn
 .ds Qu "Windows - Where is app850.fon ?
 .ds Qn 24
 .NH faq\*(Qn page "FAQ(\*(Qn) \- \*(Qu"

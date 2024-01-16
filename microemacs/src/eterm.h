@@ -63,52 +63,52 @@
 
 /* Standard key input definitions, found in termio.c */
 typedef struct meTRANSKEY {
-    int      count ;
-    int      time ;
-    meUShort key ;
-    meUShort map ;
-    struct meTRANSKEY *child ;
-} meTRANSKEY ;
+    int      count;
+    int      time;
+    meUShort key;
+    meUShort map;
+    struct meTRANSKEY *child;
+} meTRANSKEY;
 
 #define KEYBUFSIZ      128              /* Length of keyboard buffer    */
 #define TTBREAKCNT     100              /* Initial ttbreakCnt value     */
 #define TTSPECCHARS    32               /* End of the special chars     */
 
-extern meTRANSKEY TTtransKey ;          /* A translated key             */
-extern meUShort   TTwidthDefault ;      /* Default no. of cols per frame*/
-extern meUShort   TTdepthDefault ;      /* Default no. of rows per frame*/
-extern meUShort   TTkeyBuf[KEYBUFSIZ] ; /* Key beuffer/pending keys     */
-extern meUByte ttSpeChars [TTSPECCHARS];/* Special characters           */
-extern meUByte    TTnextKeyIdx ;        /* Circular buffer index        */
-extern meUByte    TTlastKeyIdx ;        /* Key buffer - last index.     */
-extern meUByte    TTnoKeys ;            /* Number of keys in buffer     */
-extern meUByte    TTbreakFlag ;         /* Break outstanding on input   */
-extern meUByte    TTbreakCnt ;          /* Number breaks outsanding     */
+extern meTRANSKEY TTtransKey;           /* A translated key             */
+extern meUShort   TTwidthDefault;       /* Default no. of cols per frame*/
+extern meUShort   TTdepthDefault;       /* Default no. of rows per frame*/
+extern meUShort   TTkeyBuf[KEYBUFSIZ];  /* Key beuffer/pending keys     */
+extern meUByte  ttSpeChars[TTSPECCHARS];/* Special characters           */
+extern meUByte    TTnextKeyIdx;         /* Circular buffer index        */
+extern meUByte    TTlastKeyIdx;         /* Key buffer - last index.     */
+extern meUByte    TTnoKeys;             /* Number of keys in buffer     */
+extern meUByte    TTbreakFlag;          /* Break outstanding on input   */
+extern meUByte    TTbreakCnt;           /* Number breaks outsanding     */
 extern meUByte    TTallKeys;            /* Report all keys              */
 
-extern meUShort   TTgetc(void) ;
-extern void       TThandleBlink(int initFlag) ;
-extern void       TTmove(int r, int c) ;
-extern void       TTwaitForChar(void) ;
-extern void       TTsleep(int msec, int intable, meVariable **waitVarList) ;
+extern meUShort   TTgetc(void);
+extern void       TThandleBlink(int initFlag);
+extern void       TTmove(int r, int c);
+extern void       TTwaitForChar(void);
+extern void       TTsleep(int msec, int intable, meVariable **waitVarList);
 #if MEOPT_TYPEAH
-extern int        TTahead(void) ;
+extern int        TTahead(void);
 #endif
 #define TTinflush()   (TTahead(),TTlastKeyIdx=TTnextKeyIdx,TTnoKeys=0)
-extern void       addKeyToBuffer(meUShort cc) ;
-extern void       addKeyToBufferOnce(meUShort cc) ;
+extern void       addKeyToBuffer(meUShort cc);
+extern void       addKeyToBufferOnce(meUShort cc);
 #if MEOPT_MOUSE
-extern void       TTallKeysFlush(void) ;
+extern void       TTallKeysFlush(void);
 #else
 #define TTallKeysFlush() /* Nothing */
 #endif
 #if MEOPT_CALLBACK
-extern void       doIdlePickEvent(void) ;
+extern void       doIdlePickEvent(void);
 #endif
-extern void       setAlarm(meInt absTime, meInt offTime) ;
+extern void       setAlarm(meInt absTime, meInt offTime);
 
-extern void       meSetupProgname(char *progname) ;
-extern void       meSetupPathsAndUser(void) ;
+extern void       meSetupProgname(char *progname);
+extern void       meSetupPathsAndUser(void);
 
 #ifdef _UNIX
 
@@ -149,10 +149,10 @@ do {                       \
 #ifdef _BSD_43
 #define signal(x,y)        \
 do {                       \
-    struct sigvec sa ;     \
-    sa.sv_mask = 0 ;       \
-    sa.sv_flags = 0 ;      \
-    sa.sv_handler = y ;    \
+    struct sigvec sa;      \
+    sa.sv_mask = 0;        \
+    sa.sv_flags = 0;       \
+    sa.sv_handler = y;     \
     sigvec (x, &sa, NULL); \
 } while (0)
 #endif /* _BSD_43 */
@@ -166,12 +166,12 @@ do {                       \
 #endif /* _POSIX_SIGNALS */
 
 /* Timer definitions */
-extern void sigAlarm(SIGNAL_PROTOTYPE) ;
+extern void sigAlarm(SIGNAL_PROTOTYPE);
 #define	_SINGLE_TIMER 1		/* Only one itimer available  */
 #define	TIMER_MIN     10	/* Only one itimer available  */
 
 /* Additional UNIX externals */
-extern char  *CM, *CL ;
+extern char  *CM, *CL;
 
 #define TTNbell()      (putchar(meCHAR_BELL),fflush(stdout))
 #define TTdieTest()    if(alarmState & meALARM_DIE) meDie()
@@ -187,20 +187,20 @@ extern void TTinitMouse(void);
 #include <term.h>
 
 /* Following are termcap function */
-extern int TCAPstart(void) ;
-extern int TCAPopen(void) ;
-extern int TCAPclose(void) ;
+extern int TCAPstart(void);
+extern int TCAPopen(void);
+extern int TCAPclose(void);
 extern void TCAPmove(int row, int col);
 #define TCAPputc(c)    putchar(c)
 #define TCAPflush()    fflush(stdout)
-extern void TCAPhideCur(void) ;
-extern void TCAPshowCur(void) ;
-extern void TCAPhandleBlink(void) ;
+extern void TCAPhideCur(void);
+extern void TCAPshowCur(void);
+extern void TCAPhandleBlink(void);
 
 #if MEOPT_COLOR
-extern int  TCAPaddColor(meColor index, meUByte r, meUByte g, meUByte b) ;
-extern void TCAPschemeSet(meScheme scheme) ;
-extern void TCAPschemeReset(void) ;
+extern int  TCAPaddColor(meColor index, meUByte r, meUByte g, meUByte b);
+extern void TCAPschemeSet(meScheme scheme);
+extern void TCAPschemeReset(void);
 #endif
 
 #endif /* _TCAP */
@@ -229,15 +229,15 @@ extern void TCAPschemeReset(void) ;
 
 typedef struct
 {
-    Window    xwindow ;                 /* the x window */
-    GC        xgc ;                     /* the x draw style */
+    Window    xwindow;                  /* the x window */
+    GC        xgc;                      /* the x draw style */
     XGCValues xgcv;                     /* X colour values */
     meUByte   fcol;                     /* Foreground color */
     meUByte   bcol;                     /* Background color */
     meUByte   font;                     /* Font style */
     Font      fontId;                   /* Font X id */
     int       xmap;                     /* Frame is mapped */
-} meFrameData ;
+} meFrameData;
 
 #define meFrameGetXWindow(ff)     (((meFrameData *) ff->termData)->xwindow)
 #define meFrameGetXGC(ff)         (((meFrameData *) ff->termData)->xgc)
@@ -278,7 +278,7 @@ typedef struct
     meUByte   fontFlag[meFONT_MAX];     /* Font loaded ? */
 } meCellMetrics;                        /* The character cell metrics */
 
-extern meCellMetrics mecm ;
+extern meCellMetrics mecm;
 
 /* Set of macros to interchange pixel and character spaces coordinates */
 #define colToClient(x)    (mecm.fwidth*(x))                /* Convert column char => pixel */
@@ -287,15 +287,15 @@ extern meCellMetrics mecm ;
 #define clientToRow(y)    ((y)/mecm.fdepth)                /* Convert row pixel => char */
 #define clientToCol(x)    ((x)/mecm.fwidth)                /* Convert column pixel => char */
 
-extern int  meFrameXTermInit(meFrame *frame, meFrame *sibling) ;
-extern void meFrameXTermFree(meFrame *frame, meFrame *sibling) ;
-extern void meFrameXTermMakeCur(meFrame *frame) ;
-extern void meFrameXTermHideCursor(meFrame *frame) ;
-extern void meFrameXTermShowCursor(meFrame *frame) ;
-extern void meFrameXTermSetScheme(meFrame *frame,meScheme scheme) ;
-extern void meFrameXTermDraw(meFrame *frame, int srow, int scol, int erow, int ecol) ;
-extern void meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc) ;
-#define     meFrameXTermDrawString(frame,col,row,str,len)                            \
+extern int  meFrameXTermInit(meFrame *frame, meFrame *sibling);
+extern void meFrameXTermFree(meFrame *frame, meFrame *sibling);
+extern void meFrameXTermMakeCur(meFrame *frame);
+extern void meFrameXTermHideCursor(meFrame *frame);
+extern void meFrameXTermShowCursor(meFrame *frame);
+extern void meFrameXTermSetScheme(meFrame *frame,meScheme scheme);
+extern void meFrameXTermDraw(meFrame *frame, int srow, int scol, int erow, int ecol);
+extern void meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc);
+#define meFrameXTermDrawString(frame,col,row,str,len)                              \
 do {                                                                               \
     XDrawImageString(mecm.xdisplay,meFrameGetXWindow(frame),                       \
                      meFrameGetXGC(frame),(col),(row),(char *)(str),(len));        \
@@ -304,19 +304,18 @@ do {                                                                            
                   meFrameGetXGC(frame),(col),(row)+mecm.underline,                 \
                   (col)+colToClient(len)-1,(row)+mecm.underline);                  \
 } while(0)
-#define XTERMstringDraw(col,row,str,len) meFrameXTermDrawString(frameCur,col,row,str,len)                                           \                                          \
 
 extern int  XTERMstart(void);
-extern void XTERMmove(int r, int c) ;
-extern void XTERMclear(void) ;
-extern int  XTERMaddColor(meColor index, meUByte r, meUByte g, meUByte b) ;
-extern void XTERMsetBgcol(void) ;
+extern void XTERMmove(int r, int c);
+extern void XTERMclear(void);
+extern int  XTERMaddColor(meColor index, meUByte r, meUByte g, meUByte b);
+extern void XTERMsetBgcol(void);
 
 /* Some extra function, only available to xterms */
-extern void meFrameSetWindowTitle(meFrame *frame, meUByte *str) ;
-extern void meFrameSetWindowSize(meFrame *frame) ;
+extern void meFrameSetWindowTitle(meFrame *frame, meUByte *str);
+extern void meFrameSetWindowSize(meFrame *frame);
 #if MEOPT_EXTENDED
-extern void meFrameRepositionWindow(meFrame *frame, int resize) ;
+extern void meFrameRepositionWindow(meFrame *frame, int resize);
 #endif
 
 #ifdef _CLIPBRD
@@ -328,7 +327,7 @@ extern void TTsetClipboard(int cpData);
 #ifdef _ME_CONSOLE
 
 /* If both console and window must test which one should be used */
-extern int  TTstart(void) ;
+extern int  TTstart(void);
 #define TTend()               ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPclose():0)
 #define TTopen()              ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPopen():0)
 #define TTclose()             ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPclose():0)
@@ -361,10 +360,10 @@ extern int  TTstart(void) ;
 #endif /* _ME_WINDOW */
 
 #if MEOPT_CLIENTSERVER
-extern void TTopenClientServer(void) ;
-extern void TTkillClientServer(void) ;
-extern int  TTconnectClientServer(void) ;
-extern void TTsendClientServer(meUByte *) ;
+extern void TTopenClientServer(void);
+extern void TTkillClientServer(void);
+extern int  TTconnectClientServer(void);
+extern void TTsendClientServer(meUByte *);
 #endif
 
 #endif /* _UNIX */
@@ -382,23 +381,23 @@ extern void TTsendClientServer(meUByte *) ;
 #endif
 #define	TIMER_MIN    1                  /* The minimum timer allowed */
 
-extern meUInt *colTable ;
-extern HWND baseHwnd ;                  /* This is the base hidden window handle */
+extern meUInt *colTable;
+extern HWND baseHwnd;                   /* This is the base hidden window handle */
 
-extern int TTstart(void) ;
-extern int TTopen(void) ;
+extern int TTstart(void);
+extern int TTopen(void);
 #define TTclose()
 
 #ifdef _ME_CONSOLE
-extern BOOL ConsolePaint(void) ;
-extern void ConsoleDrawString(meUByte *s, WORD wAttribute, int x, int y, int len) ;
+extern BOOL ConsolePaint(void);
+extern void ConsoleDrawString(meUByte *s, WORD wAttribute, int x, int y, int len);
 #define TTcolorSet(f,b) ((f) | ((b) << 4))
 #define TTschemeSet(scheme) \
 TTcolorSet(colTable[meStyleGetFColor(meSchemeGetStyle(scheme))], \
            colTable[meStyleGetBColor(meSchemeGetStyle(scheme))])
 
 
-extern int TTend(void) ;
+extern int TTend(void);
 
 #ifdef _ME_WINDOW
 
@@ -425,9 +424,9 @@ extern int TTend(void) ;
 
 #ifdef _ME_WINDOW
 
-extern RECT ttRect ;                    /* Area of screen to update */
-extern int fdepth, fwidth ;
-extern int ascent ;
+extern RECT ttRect;                     /* Area of screen to update */
+extern int fdepth, fwidth;
+extern int ascent;
 
 typedef struct
 {
@@ -438,7 +437,7 @@ typedef struct
     int      paintDepth;                /* Screen paint depth */
     meShort *paintStartCol;             /* Screen paint start col */
     meShort *paintEndCol;               /* Screen paint end col */
-} meFrameData ;
+} meFrameData;
 
 #define meFrameGetWinHandle(ff)         (((meFrameData *) (ff)->termData)->hwnd)
 #define meFrameGetWinCanvas(ff)         (((meFrameData *) (ff)->termData)->canvas)
@@ -448,7 +447,7 @@ typedef struct
 #define meFrameGetWinPaintStartCol(ff)  (((meFrameData *) (ff)->termData)->paintStartCol)
 #define meFrameGetWinPaintEndCol(ff)    (((meFrameData *) (ff)->termData)->paintEndCol)
 
-extern void TTputs(int row, int col, int len) ;
+extern void TTputs(int row, int col, int len);
 
 /* init the rect to invalid big areas, they are LONGS so this is okay */
 #define TTinitArea()        (ttRect.left=0xfffff,ttRect.right=-1,ttRect.top=0xfffff,ttRect.bottom=-1)
@@ -459,19 +458,19 @@ extern void TTputs(int row, int col, int len) ;
 #define TTaddArea(r,c,h,w)                                                   \
 do {                                                                         \
     if(ttRect.left > (c))                                                    \
-        ttRect.left = (c) ;                                                  \
+        ttRect.left = (c);                                                   \
     if(ttRect.right < (c)+(w))                                               \
-        ttRect.right = (c)+(w) ;                                             \
+        ttRect.right = (c)+(w);                                              \
     if(ttRect.top > (r))                                                     \
-        ttRect.top = (r) ;                                                   \
+        ttRect.top = (r);                                                    \
     if(ttRect.bottom < (r)+(h))                                              \
-        ttRect.bottom = (r)+(h) ;                                            \
+        ttRect.bottom = (r)+(h);                                             \
 } while(0)
 
-extern void TTapplyArea (void) ;
+extern void TTapplyArea (void);
 
-extern void meFrameTermFree(meFrame *frame, meFrame *sibling) ;
-extern void meFrameTermMakeCur(meFrame *frame) ;
+extern void meFrameTermFree(meFrame *frame, meFrame *sibling);
+extern void meFrameTermMakeCur(meFrame *frame);
 #else
 
 #define meFrameTermFree(frame,sibling)
@@ -479,14 +478,14 @@ extern void meFrameTermMakeCur(meFrame *frame) ;
 
 #endif /* _ME_WINDOW */
 
-extern int  meFrameTermInit(meFrame *frame, meFrame *sibling) ;
-extern void meFrameSetWindowTitle(meFrame *frame, meUByte *str) ;
-extern void meFrameSetWindowSize(meFrame *frame) ;
+extern int  meFrameTermInit(meFrame *frame, meFrame *sibling);
+extern void meFrameSetWindowTitle(meFrame *frame, meUByte *str);
+extern void meFrameSetWindowSize(meFrame *frame);
 #if MEOPT_EXTENDED
-extern void meFrameRepositionWindow(meFrame *frame, int resize) ;
+extern void meFrameRepositionWindow(meFrame *frame, int resize);
 #endif
-extern void meFrameShowCursor(meFrame *frame) ;
-extern void meFrameHideCursor(meFrame *frame) ;
+extern void meFrameShowCursor(meFrame *frame);
+extern void meFrameHideCursor(meFrame *frame);
 
 #define TTshowCur() meFrameShowCursor(frameCur)
 #define TThideCur() meFrameHideCursor(frameCur)
@@ -499,11 +498,11 @@ extern void TTsetClipboard(int cpData);
 
 #if MEOPT_CLIENTSERVER
 extern int  ttServerToRead;
-extern void TTopenClientServer(void) ;
-extern void TTkillClientServer(void) ;
-extern int  TTcheckClientServer(void) ;
-extern int  TTconnectClientServer(void) ;
-extern void TTsendClientServer(meUByte *) ;
+extern void TTopenClientServer(void);
+extern void TTkillClientServer(void);
+extern int  TTcheckClientServer(void);
+extern int  TTconnectClientServer(void);
+extern void TTsendClientServer(meUByte *);
 #endif
 
 extern int TTaheadFlush(void);
@@ -528,26 +527,26 @@ extern int  WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte 
 #define	_CONST_TIMER 1		        /* Constantly checked timer */
 #define	TIMER_MIN    0		        /* The minimum timer allowed */
 
-extern meUByte *colTable ;
+extern meUByte *colTable;
 
-extern int  TTstart(void) ;
+extern int  TTstart(void);
 #define TTend()   TTclose()
-extern int  TTopen(void) ;
-extern int  TTclose(void) ;
+extern int  TTopen(void);
+extern int  TTclose(void);
 #define meFrameTermInit(f,s) meTRUE
 #define meFrameTermFree(f,s)
 #define meFrameTermMakeCur(f)
 
 #define TTflush()
-extern void TThideCur(void) ;
-extern void TTshowCur(void) ;
+extern void TThideCur(void);
+extern void TTshowCur(void);
 extern int  bdos(int func, unsigned dx, unsigned al);
 #define TTNbell()   bdos(6,meCHAR_BELL, 0);
 
 #define TTdieTest()
 #define TTbreakTest(x) ((TTbreakCnt-- ==  0) && (TTbreakCnt=TTBREAKCNT,TTahead(),TTbreakFlag))
 
-extern meUByte Cattr ;
+extern meUByte Cattr;
 
 extern int TTaddColor(meColor index, meUByte r, meUByte g, meUByte b);
 #define TTsetBgcol()
@@ -559,7 +558,7 @@ TTcolorSet(colTable[meStyleGetFColor(meSchemeGetStyle(scheme))], \
 #endif /* _DOS */
 
 #if MEOPT_MOUSE
-void TTinitMouse(void) ;
+void TTinitMouse(void);
 #define meCURSOR_DEFAULT   0
 #define meCURSOR_ARROW     1
 #define meCURSOR_IBEAM     2
@@ -590,7 +589,7 @@ enum
     SOCKET_TIMER_ID,                    /* socket connection time-out     */
 #endif
     NUM_TIMERS                          /* Number of timers               */
-} ;
+};
 
 #define TIMER_SET      0x01             /* Timer is active                */
 #define TIMER_EXPIRED  0x02             /* Timer has expired              */
@@ -616,9 +615,9 @@ typedef struct TIMERBLOCK
 
 #define timerClearExpired(id) (meTimerState[(id)] = meTimerState[(id)] & ~TIMER_EXPIRED)
 
-extern meUByte     meTimerState[] ;     /* State of the timers, set or expired */
-extern meTime      meTimerTime[] ;      /* Absolute time of the timers */
-extern TIMERBLOCK *timers ;             /* Head of timer list             */
+extern meUByte     meTimerState[];      /* State of the timers, set or expired */
+extern meTime      meTimerTime[];       /* Absolute time of the timers */
+extern TIMERBLOCK *timers;              /* Head of timer list             */
 
 /*
  * timerSet
@@ -633,14 +632,14 @@ extern TIMERBLOCK *timers ;             /* Head of timer list             */
  *              is not needed.
  * offset - offset from the current time to alarm.
  */
-extern void timerSet(int id, meTime tim, meInt offset) ;
-extern int  _timerKill(int id) ;
+extern void timerSet(int id, meTime tim, meInt offset);
+extern int  _timerKill(int id);
 #define timerKill(id) (isTimerSet(id)?_timerKill(id):timerClearExpired(id))
-extern void handleTimerExpired(void) ;
+extern void handleTimerExpired(void);
 extern void adjustStartTime(meTime tim);
 
 #ifdef _MULTI_NOID_TIMER
-extern void timerAlarm(int id) ;
+extern void timerAlarm(int id);
 #endif
 
 #if (defined _CONST_TIMER) || (defined _SINGLE_TIMER)

@@ -122,13 +122,8 @@ Where the user is using a different  command shell (i.e. 4-DOS), then problems
 may  arise if this is an old  16-bit  executable.  The shell  that  MicroEmacs
 executes may be overridden by setting the environment variable
 .BR $ME_ISHELL .
-This is typically set in the
-.Ht me32.ini 8
-file i.e.
-.CS
-[username]
-ME_ISHELL=c:\\windows\\command.com
-.CE 0
+This is typically set in the user or company setup macro file, see
+.Ht user-setup 3 .
 .SS "Bugs"
 .IP "\fBWinOldAp\fR"
 .B Winoldap
@@ -156,6 +151,6 @@ shell.
 .na
 .Ht ipipe-shell-command 2 ,
 .Ht cygwin 3 ,
-.Ht me32.ini 8 .
+.Ht user-setup 3 .
 .ad
 .FH
