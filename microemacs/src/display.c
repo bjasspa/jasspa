@@ -2025,35 +2025,35 @@ screenUpdate(int f, int n)
 #endif
     if(n <= 0)
     {
-        screenUpdateDisabledCount = n ;
-        return meTRUE ;
+        screenUpdateDisabledCount = n;
+        return meTRUE;
     }
     if(n == 3)
     {
         /* only update the screen enough to get the $window vars correct */
         if(frameCur->windowCur->bufferLast != frameCur->bufferCur)
         {
-            frameCur->windowCur->bufferLast = frameCur->bufferCur ;
-            frameCur->windowCur->updateFlags |= WFMODE|WFREDRAW|WFMOVEL|WFSBOX ;
+            frameCur->windowCur->bufferLast = frameCur->bufferCur;
+            frameCur->windowCur->updateFlags |= WFMODE|WFREDRAW|WFMOVEL|WFSBOX;
         }
         /* if top of window is the last line and there's more than
          * one, force refame and draw */
         if((frameCur->windowCur->vertScroll == frameCur->bufferCur->lineCount) && frameCur->windowCur->vertScroll)
-            frameCur->windowCur->updateFlags |= WFFORCE ;
+            frameCur->windowCur->updateFlags |= WFFORCE;
 
         /* if the window has changed, service it */
         if(frameCur->windowCur->updateFlags & (WFMOVEL|WFFORCE))
-            reframe(frameCur->windowCur) ;	        /* check the framing */
+            reframe(frameCur->windowCur);     /* check the framing */
 
         if(frameCur->windowCur->updateFlags & (WFREDRAW|WFRESIZE|WFSELHIL|WFSELDRAWN))
-            shilightWindow(frameCur->windowCur);         /* Update selection hilight */
+            shilightWindow(frameCur->windowCur); /* Update selection hilight */
 
         /* check the horizontal scroll and cursor position */
-        updCursor(frameCur->windowCur) ;
-        return meTRUE ;
+        updCursor(frameCur->windowCur);
+        return meTRUE;
     }
 
-    force = (n == 1) ;
+    force = (n == 1);
 
 #if MEOPT_MWFRAME
     fc = frameCur ;
@@ -2085,6 +2085,8 @@ screenUpdate(int f, int n)
         frameCur->pokeRowMin = frameCur->depth;
         frameCur->pokeRowMax = 0;
         frameCur->pokeFlag = 0;
+        /* reset garbled status */
+        sgarbf = meFALSE;
     }
     else
     {
@@ -2095,54 +2097,54 @@ screenUpdate(int f, int n)
 #endif
            )
             /* else we must store any osd dialogs */
-            osdStoreAll() ;
+            osdStoreAll();
 #endif
         /* if the screen has been poked then fix it */
-        if (frameCur->pokeFlag)                      /* Screen been poked ??           */
-            pokeUpdate();                   /* Yes - determine screen changes */
+        if (frameCur->pokeFlag)               /* Screen been poked ??           */
+            pokeUpdate();                     /* Yes - determine screen changes */
     }
 
     /* Does the title bar need updating? */
 #ifdef _WINDOW
     if(force || (frameCur->bufferCur->name != frameCur->titleBufferName))
     {
-        frameCur->titleBufferName = frameCur->bufferCur->name ;
-        meFrameSetWindowTitle(frameCur,frameCur->bufferCur->name) ;
+        frameCur->titleBufferName = frameCur->bufferCur->name;
+        meFrameSetWindowTitle(frameCur,frameCur->bufferCur->name);
     }
 #endif
 #if MEOPT_OSD
     /* Does the menu line need updating? if so do it! */
     if((frameCur->menuDepth > 0) && (frameCur->video.lineArray[0].flag & VFCHNGD))
-        osdMainMenuUpdate(force) ;
+        osdMainMenuUpdate(force);
 #endif
     /* update any windows that need refreshing */
     for (wp = frameCur->windowList; wp != NULL; wp = wp->next)
     {
         if(force)
         {
-            wp->bufferLast = wp->buffer ;
-            wp->updateFlags |= WFUPGAR ;
+            wp->bufferLast = wp->buffer;
+            wp->updateFlags |= WFUPGAR;
         }
         else if(wp->bufferLast != wp->buffer)
         {
-            wp->bufferLast = wp->buffer ;
+            wp->bufferLast = wp->buffer;
             wp->updateFlags |= WFMODE|WFREDRAW|WFMOVEL|WFSBOX ;
         }
         /* if top of window is the last line and there's more than
          * one, force refame and draw */
         if((wp->vertScroll == wp->buffer->lineCount) && wp->vertScroll)
-            wp->updateFlags |= WFFORCE ;
+            wp->updateFlags |= WFFORCE;
 
         /* if the window has changed, service it */
         if(wp->updateFlags & (WFMOVEL|WFFORCE))
-            reframe(wp) ;	        /* check the framing */
+            reframe(wp);                      /* check the framing */
 
         if(wp->updateFlags & (WFREDRAW|WFRESIZE|WFSELHIL|WFSELDRAWN))
-            shilightWindow(wp);         /* Update selection hilight */
+            shilightWindow(wp);               /* Update selection hilight */
 
         /* check the horizontal scroll and cursor position */
         if(wp == frameCur->windowCur)
-            updCursor(wp) ;
+            updCursor(wp);
 
         if(wp->updateFlags & ~(WFSELDRAWN|WFLOOKBK))
         {
@@ -2152,13 +2154,13 @@ screenUpdate(int f, int n)
                 meWindowFixScrollBox(wp);     /* Fix the scroll bars */
 #endif
             if(wp->updateFlags & ~(WFMODE|WFSBAR|WFLOOKBK))
-                updateWindow(wp) ;          /* Update the window */
-            updateModeLine(wp);	    /* Update mode line */
+                updateWindow(wp);             /* Update the window */
+            updateModeLine(wp);	              /* Update mode line */
 #if MEOPT_SCROLL
             if(wp->updateFlags & WFSBAR)
-                updateScrollBar(wp);        /* Update scroll bar  */
+                updateScrollBar(wp);          /* Update scroll bar  */
 #endif
-            wp->updateFlags &= WFSELDRAWN ;
+            wp->updateFlags &= WFSELDRAWN;
         }
         wp->windowRecenter = 0;
     }
@@ -2166,8 +2168,8 @@ screenUpdate(int f, int n)
     /* If forced then sort out the message-line as well */
     if(frameCur->video.lineArray[frameCur->depth].flag & VFCHNGD)
     {
-        updateline(frameCur->depth,frameCur->video.lineArray+frameCur->depth,NULL) ;
-        frameCur->video.lineArray[frameCur->depth].flag &= ~VFCHNGD ;
+        updateline(frameCur->depth,frameCur->video.lineArray+frameCur->depth,NULL);
+        frameCur->video.lineArray[frameCur->depth].flag &= ~VFCHNGD;
     }
 #if MEOPT_OSD
     /* If we are in osd then update the osd menus */
@@ -2176,16 +2178,16 @@ screenUpdate(int f, int n)
        && (frameCur == fc)
 #endif
        )
-        osdRestoreAll(force) ;
+        osdRestoreAll(force);
 #endif
     /* update the cursor and flush the buffers */
-    resetCursor() ;
+    resetCursor();
 
     TTflush();
 
 #if MEOPT_MWFRAME
     }
-    frameCur = fc ;
+    frameCur = fc;
 #else
     /* else required to keep the auto-indent right */
 #endif
@@ -2194,22 +2196,22 @@ screenUpdate(int f, int n)
     for(fc=frameList ; fc!=NULL ; fc=fc->next)
     {
         if(fc->flags & meFRAME_HIDDEN)
-            continue ;
-        wp = fc->windowList ;
+            continue;
+        wp = fc->windowList;
 #else
-    wp = frameCur->windowList ;
+    wp = frameCur->windowList;
 #endif
 
     /* Now rest all the window line meLINE_CHANGED flags */
     do
     {
-        meLine *flp, *blp ;
-        meLineFlag flag ;
-        int ii, jj ;
+        meLine *flp, *blp;
+        meLineFlag flag;
+        int ii, jj;
 
-        ii = (wp->dotLineNo - wp->vertScroll) ;
-        jj = (wp->textDepth - ii) ;
-        blp = flp = wp->dotLine ;
+        ii = (wp->dotLineNo - wp->vertScroll);
+        jj = (wp->textDepth - ii);
+        blp = flp = wp->dotLine;
         while(--ii >= 0)
         {
             blp = meLineGetPrev(blp) ;
@@ -2222,7 +2224,7 @@ screenUpdate(int f, int n)
                 flp->flag = (flag & ~meLINE_CHANGED) ;
             flp = meLineGetNext(flp) ;
         }
-    } while((wp = wp->next) != NULL) ;
+    } while((wp = wp->next) != NULL);
 
 #if MEOPT_MWFRAME
     }
@@ -2230,7 +2232,7 @@ screenUpdate(int f, int n)
     /* else required to keep the auto-indent right */
 #endif
 
-    return(meTRUE);
+    return meTRUE;
 }
 
 int
@@ -2243,24 +2245,22 @@ update(int flag)    /* force=meTRUE update past type ahead? */
 
     if((alarmState & meALARM_PIPED) ||
        (!(flag & 0x01) && ((kbdmode == mePLAY) || clexec || TTahead())))
-        return meTRUE ;
+        return meTRUE;
 
     if(screenUpdateDisabledCount)
-    {
-        screenUpdateDisabledCount++ ;
-        return meTRUE ;
-    }
-
+        screenUpdateDisabledCount++;
 #if MEOPT_CALLBACK
-    if((index = decode_key(ME_SPECIAL|SKEY_redraw,&arg)) >= 0)
-        execFuncHidden(ME_SPECIAL|SKEY_redraw,index,0x80000002-sgarbf) ;
-    else
+    else if((index = decode_key(ME_SPECIAL|SKEY_redraw,&arg)) >= 0)
+    {
+        execFuncHidden(ME_SPECIAL|SKEY_redraw,index,0x80000002-sgarbf);
+        /* reset garbled status - it is the macro responsibility to take care of this flag */
+        sgarbf = meFALSE;
+    }
 #endif
-        screenUpdate(1,2-sgarbf) ;
-    /* reset garbled status */
-    sgarbf = meFALSE ;
+    else
+        screenUpdate(1,2-sgarbf);
 
-    return meTRUE ;
+    return meTRUE;
 }
 
 /*

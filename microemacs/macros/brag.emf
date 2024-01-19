@@ -292,9 +292,9 @@
 0 define-macro bragToast
   set-variable .len &add 6 &set #l2 &len &set #l1 @1
   99 screen-poke 24 4 .scheme.cardfore &spr "%s%n%s" &mid $box-chars 1 1 &add #l2 4 &rig $box-chars 10 &mid $box-chars 2 1
-  99 screen-poke 25 4 .scheme.cardfore &spr "%s%s%n%s%s" &lef $box-chars 1 &mid $box-chars 1 1 &add #l2 2 &rig $box-chars 10 &mid $box-chars 2 1 &lef $box-chars 1
-  99 screen-poke 26 4 .scheme.cardfore &spr "%n %s %n" 2 &lef $box-chars 1 #l1 2 &lef $box-chars 1
-  99 screen-poke 27 4 .scheme.cardfore &spr "%s%s%n%s%s" &lef $box-chars 1 &mid $box-chars 3 1 &add #l2 2 &rig $box-chars 10 &mid $box-chars 4 1 &lef $box-chars 1
+  99 screen-poke 25 4 .scheme.cardfore &spr "%s  %n  %s" &lef $box-chars 1 #l2 " " &lef $box-chars 1
+  99 screen-poke 26 4 .scheme.cardfore &spr "%s  %s  %s" &lef $box-chars 1 #l1 &lef $box-chars 1
+  99 screen-poke 27 4 .scheme.cardfore &spr "%s  %n  %s" &lef $box-chars 1 #l2 " " &lef $box-chars 1
   99 screen-poke 28 4 .scheme.cardfore &spr "%s%n%s" &mid $box-chars 3 1 &add #l2 4 &rig $box-chars 10 &mid $box-chars 4 1
   @# create-callback bragToastRmv
 !emacro
@@ -589,8 +589,8 @@ set-variable .bragDrawCard.slb "                                Heart           
       set-variable .Brag.stt 0
       ; Check if there was a prial played
       !if &or &gre &lget .Brag.h1i 1 709 &gre &lget .Brag.h2i 1 709
-        set-variable #l9 &bor #l9 16
         bragShuffle .Brag.deck
+        set-variable #l9 &bor #l9 16
       !else
         set-variable #l1 &con &band 1 .Brag.chno &cat .Brag.h1 .Brag.h2 &cat .Brag.h2 .Brag.h1
         set-variable .Brag.deck &cat &rig .Brag.deck 18 #l1
@@ -655,13 +655,13 @@ set-variable .bragDrawCard.slb "                                Heart           
 
 0 define-macro brag-mouse-where
   set-variable #l9 0
-  set-variable #g0 $mouse-x
-  set-variable #g1 $mouse-y
-  !if &les #g0 110
-    !if &gre #g1 10
-      !if &gre #g1 20
-      !elif &gre #g1 12
-        !if &equ &mod &set #l2 &sub #g0 5 10 9
+  set-variable #l0 $mouse-x
+  set-variable #l1 $mouse-y
+  !if &les #l0 110
+    !if &gre #l1 10
+      !if &gre #l1 20
+      !elif &gre #l1 12
+        !if &equ &mod &set #l2 &sub #l0 5 10 9
           set-variable @1 #l9
           !return
         !elif &and &set #l2 &div #l2 10 &les #l2 4
@@ -670,15 +670,15 @@ set-variable .bragDrawCard.slb "                                Heart           
           set-variable #l9 &add 9 #l2
         !endif
       !endif
-    !elif &gre #g1 2
-      !if &equ &mod #g0 10 9
-      !elif &and &set #l2 &div #g0 10 &les #l2 10
+    !elif &gre #l1 2
+      !if &equ &mod #l0 10 9
+      !elif &and &set #l2 &div #l0 10 &les #l2 10
         set-variable #l9 #l2
       !endif
     !endif
-  !elif &les #g0 124
-    !if &mod #g1 4
-      set-variable #l9 &add 20 &div #g1 4
+  !elif &les #l0 124
+    !if &mod #l1 4
+      set-variable #l9 &add 20 &div #l1 4
     !endif
   !endif
   set-variable @1 #l9

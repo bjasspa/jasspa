@@ -412,9 +412,9 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
      * have executed the ehook and dhook so do do this now. */
     if((wp == frameCur->windowCur) && !reload && (frameCur->bufferCur->ehook >= 0))
     {
-        execBufferFunc(frameCur->bufferCur,frameCur->bufferCur->ehook,0,1) ;
+        execBufferFunc(frameCur->bufferCur,frameCur->bufferCur->ehook,0,1);
         if(wp->buffer != tbp)
-            return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Error: Buffer ehook has altered windows]") ;
+            return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Error: Buffer ehook has altered windows]");
     }
 #endif
     tbp->histNo = ++bufHistNo ;
@@ -427,10 +427,10 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
     }
     
     /* Switch. reset any scroll */
-    wp->buffer = bp ;
-    wp->horzScrollRest = 0 ;
-    wp->horzScroll = 0 ;
-    wp->updateFlags |= WFMODE|WFMAIN|WFSBOX ;
+    wp->buffer = bp;
+    wp->horzScrollRest = 0;
+    wp->horzScroll = 0;
+    wp->updateFlags |= WFMODE|WFMAIN|WFSBOX;
     
     if(wp == frameCur->windowCur)
     {
@@ -438,7 +438,7 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
 #if MEOPT_EXTENDED
         if(isWordMask != frameCur->bufferCur->isWordMask)
         {
-            isWordMask = frameCur->bufferCur->isWordMask ;
+            isWordMask = frameCur->bufferCur->isWordMask;
 #if MEOPT_MAGIC
             mereRegexClassChanged() ;
 #endif
@@ -478,56 +478,56 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
                 if(dotCol > meLineGetLength(frameCur->windowCur->dotLine))
                     frameCur->windowCur->dotOffset = meLineGetLength(frameCur->windowCur->dotLine) ;
                 else
-                    frameCur->windowCur->dotOffset = dotCol ;
+                    frameCur->windowCur->dotOffset = dotCol;
             }
         }
         /* on a reload reset all other windows displaying this buffer to the tob */
         if(reload && (bp->windowCount > 1))
         {
-            meFrameLoopBegin() ;
+            meFrameLoopBegin();
             twp = loopFrame->windowList;
             while(twp != NULL)
             {
                 if((twp != wp) && (twp->buffer == bp)) 
-                    restoreWindWSet(twp,wp) ;
+                    restoreWindWSet(twp,wp);
                 twp = twp->next;
             }
-            meFrameLoopEnd() ;
+            meFrameLoopEnd();
         }
     }
     else if(bp != tbp)
     {
-        meFrameLoopBegin() ;
+        meFrameLoopBegin();
         twp = loopFrame->windowList;                            /* Look for old.        */
         while (twp != NULL)
         {
             if (twp!=wp && twp->buffer==bp) 
             {
-                restoreWindWSet(wp,twp) ;
+                restoreWindWSet(wp,twp);
                 break;
             }
             twp = twp->next;
         }
-        meFrameLoopBreak(twp!=NULL) ;
+        meFrameLoopBreak(twp!=NULL);
         meFrameLoopEnd() ;
     }
 #if MEOPT_IPIPES
     if(meModeTest(bp->mode,MDPIPE) &&
        ((wp == frameCur->windowCur) || (bp->windowCount == 1)))
-        ipipeSetSize(wp,bp) ;
+        ipipeSetSize(wp,bp);
 #endif        
 #if MEOPT_FILEHOOK
     if((wp == frameCur->windowCur) && (frameCur->bufferCur->bhook >= 0))
-        execBufferFunc(frameCur->bufferCur,frameCur->bufferCur->bhook,0,1) ;
+        execBufferFunc(frameCur->bufferCur,frameCur->bufferCur->bhook,0,1);
 #endif        
     
     if((bp->intFlag & (BIFLOAD|BIFNACT)) == BIFLOAD)
     {
-        bp->intFlag &= ~BIFLOAD ;
+        bp->intFlag &= ~BIFLOAD;
         if(bufferOutOfDate(bp))
         {
-            update(meTRUE) ;
-            dotLineNo = wp->dotLineNo ;
+            update(meTRUE);
+            dotLineNo = wp->dotLineNo;
             if(((bp->fileFlag & meBFFLAG_DIR) || (mlyesno((meUByte *)"File changed on disk, reload") > 0)) &&
                (bclear(bp) > 0))
             {
@@ -536,9 +536,9 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
                  */
                 /* SWP 7/7/98 - If the file did not exist to start with, i.e. new file,
                  * and now it does then we need to set the BIFFILE flag */
-                bp->intFlag |= BIFFILE ;
-                bp->dotLineNo = dotLineNo+1 ;
-                return swbuffer(wp,bp) ;
+                bp->intFlag |= BIFFILE;
+                bp->dotLineNo = dotLineNo+1;
+                return swbuffer(wp,bp);
             }
         }
         else
@@ -610,13 +610,13 @@ findBuffer(int f, int n)
 {
     meBuffer *bp, *cbp;
     meUByte bufn[meBUF_SIZE_MAX];
-    meInt chistNo ;
+    meInt chistNo;
     int s;
     
     if((s = getBufferName((meUByte *)"Find buffer",0,2,bufn)) <= 0)
-        return s ;
+        return s;
     if(n < 0)
-        n = (n < -1) ? 24:8 ;
+        n = (n < -1) ? 24:8;
 #if MEOPT_EXTENDED
     if(n & 2)
     {
@@ -637,32 +637,32 @@ findBuffer(int f, int n)
         {
             if(((n & 5) != 5) ||
                ((bp = bfind(bufn,BFND_CREAT)) == NULL))
-                return meFALSE ;
-            meModeSet(bp->mode,MDNACT) ;
-            bp->fileName = meStrdup(bufn) ;
-            bp->intFlag |= BIFFILE ;
+                return meFALSE;
+            meModeSet(bp->mode,MDNACT);
+            bp->fileName = meStrdup(bufn);
+            bp->intFlag |= BIFFILE;
         }
     }
     else
 #endif
     {
         if(n & 1)
-            f = BFND_CREAT ;
+            f = BFND_CREAT;
         else
-            f = 0 ;
+            f = 0;
         if((bp = bfind(bufn,f)) == NULL)
             return meFALSE ;
     }
     if(n & 8)
-        return HideBuffer(bp,(n & 16) ? 1:0) ;
+        return HideBuffer(bp,(n & 16) ? 1:0);
     if((n & 4) && meModeTest(bp->mode,MDNACT))
-        bp->intFlag |= BIFNACT ;
+        bp->intFlag |= BIFNACT;
     if(n & 32)
-        chistNo = (cbp = frameCur->bufferCur)->histNo ;
-    s = swbuffer(frameCur->windowCur, bp) ;
+        chistNo = (cbp = frameCur->bufferCur)->histNo;
+    s = swbuffer(frameCur->windowCur,bp);
     if(n & 32)
-        cbp->histNo = chistNo ;
-    return s ;
+        cbp->histNo = chistNo;
+    return s;
 }
 
 #if MEOPT_EXTENDED
