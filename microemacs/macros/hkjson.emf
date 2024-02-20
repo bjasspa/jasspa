@@ -1,0 +1,145 @@
+
+0 define-macro json-parse-value
+  !while &sin @wc "\n\t "
+    !if &seq @wc ""
+      ml-write "[JSON parse error: Missing value]"
+      !abort
+    !endif
+    forward-char
+  !done
+  set-variable #l0 @1
+  set-mark
+  !if &seq @wc "\""
+    forward-char
+    !force search-buffer "me" "\\([^\"\\\\]\\|\\\\.\\)*\""
+    !if &not $status
+      ml-write "[JSON parse error: String format error]"
+      !abort
+    !endif
+    backward-char
+    copy-region
+    set-registry #l0 @y
+    -1 yank
+    forward-char
+    !return
+  !elif &seq @wc "["
+    forward-char
+    set-variable #l1 0
+    set-variable #l9 0
+    !repeat
+      3 json-parse-value &spr "%s/%s" #l0 #l1
+      !if &equ #l9 1
+        ml-write "[JSON parse error: Expected value before array ',']"
+        !abort
+      !elif &equ #l9 2
+        !break
+      !endif
+      set-variable #l1 &add #l1 1
+      3 json-parse-value &spr "%s/%s" #l0 #l1
+      !if &not #l9
+        ml-write "[JSON parse error: Expected array ',' or ']']"
+        !abort
+      !elif &equ #l9 2
+        !break
+      !endif
+      set-variable #l2 1
+      set-variable #l9 0
+    !done
+    set-registry #l0 &cat "[" #l1
+    !return
+  !elif &seq @wc "{"
+    forward-char
+    set-variable #l1 0
+    set-variable #l9 0
+    !repeat
+      json-parse-pair #l0
+      !iif &equ #l9 2  !break
+      !if &equ #l9 1
+        ml-write "[JSON parse error: Expected name-value pair before ',' separator]"
+        !abort
+      !endif
+      set-variable #l1 &add #l1 1
+      json-parse-pair #l0
+      !iif &equ #l9 2  !break
+      !if &not #l9
+        ml-write "[JSON parse error: Expected ',' separator between name-value pairs]"
+        !abort
+      !endif
+    !done
+    set-registry #l0 &cat "{" #l1
+    !return
+  !elif &sin @wc "-0123456789."
+    !repeat
+      forward-char
+    !until &not &sin @wc "-0123456789.eE"
+    copy-region
+    set-registry #l0 &cat "#" @y
+    -1 yank
+    !return
+  !elif &set #l1 &sin @wc "fnt"
+    set-variable #l2 &lget "|false|null|true|" #l1
+    set-variable #l3 0
+    !repeat
+      forward-char
+      !if &seq "" &set #l4 &mid #l2 &inc #l3 1 1
+        set-registry #l0 &lget "|b0|n|b1|" #l1
+        !return
+      !endif
+    !until &not &seq @wc #l4
+  !elif &and &band @# 2 &sin @wc ",]"
+    set-variable #p9 &sin @wc ",]"
+    forward-char
+    !return
+  !endif
+  exchange-point-and-mark
+  ml-write &spr "[JSON parse error: Unexpected value "%s..."]" &lef #l1 5
+  !abort
+!emacro
+
+0 define-macro json-parse-pair
+  !while &sin @wc "\n\t "
+    !if &seq @wc ""
+      ml-write "[JSON parse error: Missing name or '}']"
+      !abort
+    !endif
+    forward-char
+  !done
+  !if &set #p9 &sin @wc ",}"
+    forward-char
+    !return
+  !elif &not &seq @wc "\""
+    ml-write "[JSON parse error: Expectd value name]"
+    !abort
+  !endif
+  set-mark
+  forward-char
+  !force search-buffer "me" "\\([^\"\\\\]\\|\\\\.\\)*\""
+  !if &not $status
+    ml-write "[JSON parse error: Name string format error]"
+    !abort
+  !endif
+  copy-region
+  execute-line &cat "set-variable #l1 " @y
+  -1 yank
+  !while &sin @wc "\n\t "
+    !if &seq @wc ""
+      ml-write "[JSON parse error: Missing name or '}']"
+      !abort
+    !endif
+    forward-char
+  !done
+  !if &not &seq @wc ":"
+    ml-write "[JSON parse error: Expectd name value ':' separator]"
+    !abort
+  !endif
+  forward-char
+  set-variable #l0 &spr "%s/%s" @1 #l1
+  json-parse-value #l0
+!emacro
+  
+define-macro json-parse
+  !force set-variable #l0 @1
+  !iif &not $status  set-variable #l0 @ml10 "Registry entry" "/json/test"
+  !force delete-registry #l0
+  json-parse-value #l0
+!emacro
