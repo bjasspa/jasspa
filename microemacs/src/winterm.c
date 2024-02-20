@@ -1911,14 +1911,15 @@ TTsetClipboard(int cpData)
 {
     HANDLE hmem=NULL;
     /* We aquire the clipboard and flush it under the following conditions;
-     * "We do NOT own it" or "Clipboard is stale". The clipboard becomes stale
+     * "We do NOT own it" or "Clipboard is stale", we have a kill buffer and we
+     * have current windows focus. The clipboard becomes stale
      * when we own it but another application has aquired our clipboard data.
      * In this case we need to reset the clipboard so that the application may
      * aquire our next data block that has changed. */
     if((!(clipState & CLIP_OWNER) || (clipState & CLIP_STALE) || cpData) &&
        !(clipState & CLIP_DISABLED) && !(meSystemCfg & meSYSTEM_NOCLIPBRD) &&
-       ((kbdmode != mePLAY) || cpData) && ((cpData == 0) || ((hmem = WinKillToClipboard()) != NULL)) &&
-       OpenClipboard(baseHwnd))
+       ((kbdmode != mePLAY) || cpData) && !(frameCur->flags & meFRAME_NOT_FOCUS) &&
+       ((cpData == 0) || ((hmem = WinKillToClipboard()) != NULL)) && OpenClipboard(baseHwnd))
     {
         if(clipState & CLIP_OWNER)
             /* if we are currently the owner of the clipboard, the call to EmptyClipboard
@@ -1944,9 +1945,9 @@ TTgetClipboard(void)
     meUByte cc;                           /* Local character buffer */
     meUByte *dd, *tp;                     /* Pointers to the data areas */
     
-    /* Check the standard clipboard status, if owner or it has
+    /* Check the standard clipboard status, if owner or not got focus or it has
      * been disabled then there's nothing to do */
-    if((clipState & (CLIP_OWNER|CLIP_DISABLED)) || (kbdmode == mePLAY) ||
+    if((clipState & (CLIP_OWNER|CLIP_DISABLED)) || (kbdmode == mePLAY) || (frameCur->flags & meFRAME_NOT_FOCUS) ||
        (meSystemCfg & meSYSTEM_NOCLIPBRD) || !OpenClipboard(baseHwnd))
         return;
     

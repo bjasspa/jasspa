@@ -4160,7 +4160,8 @@ void
 TTsetClipboard(int cpData)
 {
     if(!(meSystemCfg & (meSYSTEM_CONSOLE|meSYSTEM_NOCLIPBRD)) &&
-       !(clipState & (CLIP_OWNER|CLIP_RECEIVING|CLIP_DISABLED)) && (kbdmode != mePLAY))
+       !(clipState & (CLIP_OWNER|CLIP_RECEIVING|CLIP_DISABLED)) && (kbdmode != mePLAY) &&
+       !(frameCur->flags & meFRAME_NOT_FOCUS))
     {
 #if 0
         printf("Setting selection owner\n");
@@ -4178,8 +4179,9 @@ void
 TTgetClipboard(void)
 {
     if(!(meSystemCfg & (meSYSTEM_CONSOLE|meSYSTEM_NOCLIPBRD)) &&
-       !(clipState & (CLIP_OWNER|CLIP_DISABLED)) && (kbdmode != mePLAY))
-    {
+       !(clipState & (CLIP_OWNER|CLIP_DISABLED)) && (kbdmode != mePLAY) &&
+       !(frameCur->flags & meFRAME_NOT_FOCUS))
+   {
         /* Add the CLIP_RECEIVING flag. This is really important if increment
          * copy texts are being used. If they are and this flag is set after receiving
          * the initial size, the killInit then take ownership of the block and so we never

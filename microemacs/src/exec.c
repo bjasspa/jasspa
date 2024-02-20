@@ -1270,8 +1270,8 @@ loop_round:
         {
             mcStore = meFALSE;
             lpStore = NULL;
-            execlevel = 0 ;
-            status = ctrlg(meFALSE,1) ;
+            execlevel = 0;
+            status = ctrlg(meFALSE,1);
         }
         else
         {

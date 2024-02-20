@@ -38,48 +38,50 @@
 #if MEOPT_MAGIC
 
 #define meREGEXCLASS_SIZE 32
-typedef unsigned char meRegexClass[meREGEXCLASS_SIZE] ;
-typedef unsigned char meRegexDouble[2] ;
+typedef unsigned char meRegexClass[meREGEXCLASS_SIZE];
+typedef unsigned char meRegexDouble[2];
 
 typedef struct meRegexItem {
     /* linked list of all malloced items */
-    struct meRegexItem *lnext ;   /* next item in the global list */
+    struct meRegexItem *lnext;    /* next item in the global list */
     /* current regex item linkage */
-    struct meRegexItem *next ;    /* next item in the regex */
-    struct meRegexItem *child ;   /* Groups sub-expression list */
-    struct meRegexItem *alt ;     /* Group alternative sub expression */
-    int matchMin ;                /* minimum number of matches */
-    int matchMax ;                /* maximum number of matches */
+    struct meRegexItem *next;     /* next item in the regex */
+    struct meRegexItem *child;    /* Groups sub-expression list */
+    struct meRegexItem *alt;      /* Group alternative sub expression */
+    int matchMin;                 /* minimum number of matches */
+    int matchMax;                 /* maximum number of matches */
     union {
-        unsigned char cc ;        /* character data */
-        meRegexDouble dd ;        /* double character data */
-        int group ;               /* group number */
-        meRegexClass cclass ;     /* Class bit mask */
-    } data ;
-    unsigned char type ;          /* item type */
-} meRegexItem ;    
+        unsigned char cc;         /* character data */
+        meRegexDouble dd;         /* double character data */
+        int group;                /* group number */
+        meRegexClass cclass;      /* Class bit mask */
+    } data;
+    unsigned char type;           /* item type */
+} meRegexItem;     
 
 typedef struct {
-    int start ;
-    int end ;
-} meRegexGroup ;
+    int start;
+    int end;
+    int regexStart;
+} meRegexGroup;
 
 typedef struct meRegex {
     /* Public elements */
-    unsigned char *regex ;        /* the regex string */
-    int groupNo ;                 /* the number of groups in regex */
-    int newlNo ;                  /* the number of \n char found */
-    int flags ;                   /* compile + okay flag - set to 0 to force recompile */
-    meRegexGroup *group ;         /* the group start and end offsets */
+    unsigned char *regex;         /* the regex string */
+    int regexLen;                 /* the length of the regex string */
+    int groupNo;                  /* the number of groups in regex */
+    int newlNo;                   /* the number of \n char found */
+    int flags;                    /* compile + okay flag - set to 0 to force recompile */
+    meRegexGroup *group;          /* the group start and end offsets */
     
     /* Private elements */
-    int regexSz ;                 /* malloced size of regex string */
-    int groupSz ;                 /* malloced size of group array */
-    meRegexItem  *lhead ;         /* link list of all malloced items */
-    meRegexItem  *lnext ;         /* the next free item */
-    meRegexItem  *head ;          /* pointer to the regex first item */
-    meRegexClass  start ;         /* first character class bit mask */
-} meRegex ;
+    int regexSz;                  /* malloced size of regex string */
+    int groupSz;                  /* malloced size of group array */
+    meRegexItem  *lhead;          /* link list of all malloced items */
+    meRegexItem  *lnext;          /* the next free item */
+    meRegexItem  *head;           /* pointer to the regex first item */
+    meRegexClass  start;          /* first character class bit mask */
+} meRegex;
 
 /* meRegexComp return values */
 #define meREGEX_OKAY               0
@@ -125,8 +127,8 @@ meRegexMatch(meRegex *regex, unsigned char *string, int len,
              int offsetS, int offsetE, int flags) ;
 
 extern char    *meRegexCompErrors[] ;
-extern meRegex  mereRegex ;         /* meRegex used by main search */
-extern meRegex  meRegexStrCmp ;     /* meRegex used by meRegexStrCmp if main is not used  */
+extern meRegex  mereRegex;          /* meRegex used by main search */
+extern meRegex  meRegexStrCmp;      /* meRegex used by meRegexStrCmp if main is not used  */
 extern int      mereNewlBufSz ;
 extern meUByte *mereNewlBuf ;
 
@@ -137,6 +139,7 @@ extern int      srchLastMagic;      /* last search was a magic        */
 
 #define mereRegexInvalidate()   (mereRegex.flags = 0)
 #define mereRegexClassChanged() (mereRegex.flags |= meREGEX_CLASSCHANGE)
+#define mereRegexGroupRegexStart(n) (mereRegex.group[(n)].regexStart)
 #define mereRegexGroupStart(n)  (mereRegex.group[(n)].start)
 #define mereRegexGroupEnd(n)    (mereRegex.group[(n)].end)
 #define mereRegexGroupNo()      (mereRegex.groupNo)
@@ -163,8 +166,8 @@ extern int iscanner (meUByte *apat, int n, int flags, SCANNERPOS *sp);
 /* search arrays and variables, defined in search.c, but exported
  * here so others can access them.
  */ 
-extern meUByte  srchPat[] ;             /* current search string          */
-extern meUByte  srchRPat[] ;            /* reverse current search string  */
+extern meUByte  srchPat[];              /* current search string          */
+extern meUByte  srchRPat[];             /* reverse current search string  */
 /* the following variables store info on the last match - for @s# support     */
 extern int      srchLastState;          /* status of last search          */
 extern meUByte *srchLastMatch;          /* pointer to the last match string */
