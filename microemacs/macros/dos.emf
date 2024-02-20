@@ -36,7 +36,6 @@ set-variable %xgrep-com "grep /n"
 ; These definitions are for dos grep & djgpp gcc compiler
 add-next-line "*grep*" "%f: %l:"
 0 add-next-line "*compile*"
-add-next-line "*compile*" "%f(%l): Error"
-add-next-line "*compile*" "%f(%l): Warn"
-add-next-line "*compile*" "%f:%l:"
+add-next-line "*compile*" "^ *%f(%l): \\(Error\\|Warn\\)"
+add-next-line "*compile*" "^ *%f:%l:\\(\\d+:\\)? \\(fatal error\\|error\\|warning\\)"
 

@@ -646,7 +646,7 @@ set-variable .svn-revision-op.lbl "|Base \Hto Head|\HHead|\HBase|\HCommitted|\HP
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "v"
         set-variable .svn-revision-op.si &con &seq &set #l4 &lget .svn.cnames @# "Diff" 0 1
-        osd .osd.svn-osd &inc #l2 1 "Sfh" &spr "    %s revisio\Hn:  " #l4 &add #l2 1
+        osd .osd.svn-osd &inc #l2 1 "Sfh" &spr "    %s re\Hvision:  " #l4 &add #l2 1
         osd .osd.svn-osd &inc #l2 1 "OtxmsfhHR" .scheme.osd-entry "#############" .osd.tmp svn-revision-op
         osd .osd.svn-osd &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
         osd .osd.svn-osd &inc #l2 1 ""
@@ -1430,7 +1430,7 @@ define-macro svn-delete
 !emacro
 define-macro svn-diff
   7 svn-osd
-  !if &les &lget .svn.cvalues7 7 5
+  !if &les &lget .svn.cvalues7 7 6
     set-variable #l3 &lget "|BASE:HEAD|HEAD|BASE|COMMITTED|PREV|" &lget .svn.cvalues7 7
   !elif &les &set #l3 .svn.cfver 1
     osd-dialog "Subversion - Diff" "    The specific revision number must be given!    " "  \HAbort  "

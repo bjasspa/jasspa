@@ -50,7 +50,7 @@ add-color-scheme .scheme.chg .col10 .col0 .col10 .col1 .col0 .col2 .col1 .col3 0
 add-color-scheme .scheme.add .col6 .col0 .col6 .col1 .col0 .col2 .col1 .col3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.rmv .col15 .col0 .col15 .col1 .col0 .col2 .col1 .col3 0 8 0 8 0 8 0 8
 ; OSD
-add-color-scheme $osd-scheme .col2 .col0 .col2 .col26 .col2 .col1 .col25 .col1 8 0 24 16 0 8 16 24
+add-color-scheme $osd-scheme .col2 .col0 .col2 .col22 .col2 .col1 .col25 .col1 8 0 24 16 0 8 16 24
 add-color-scheme .scheme.osd-entry .col2 .col0 .col25 .col0 .col1 .col3 .col1 .col13 0 8 0 8 8 0 8 0
 add-color-scheme .scheme.osd-ebtt .col17 .col0 .col25 .col0 .col1 .col17 .col1 .col25 0 8 16 24 8 0 24 16
 add-color-scheme .scheme.osd-dbtt .col12 .col0 .col26 .col0 .col1 .col12 .col1 .col26 0 8 0 8 8 0 8 0

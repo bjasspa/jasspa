@@ -9,8 +9,6 @@
 ;
 ; Load up common unix stuff (colors, templates, grep, RCS, mail)
 execute-file "unixterm"
-; no vt100-nam on linux, this may cause problems in an ishell
-set-variable %ipipe-term "TERM=vt100"
 ;--- COMSHELL
 ; As command.com's prompt echoing is broken ishell is useless without
 ; the following 2 variables which enable ME's command-line support
@@ -52,12 +50,7 @@ define-macro cygwin
   !endif
 !emacro
 ; Define the info path for cygwin.
-!if &not &exi $INFOPATH
-  set-variable $INFOPATH "/usr/share/info"
-!endif
-; Compile stuff
-0 add-next-line "*compile*"
-add-next-line "*compile*" "%f:%l:"
+!iif &not &exi $INFOPATH  set-variable $INFOPATH "/usr/share/info"
 ;
 ; Diff stuff; Cygwin uses GNU diff so set this up for all Cygwin
 ; platforms. Nobody is going to change this are they ??
@@ -66,6 +59,4 @@ set-variable %diff-com "diff --context --minimal --ignore-space-change --recursi
 ;
 ; Set up the info path
 ;
-!if &not &exi $INFOPATH
-  set-variable $INFOPATH "/usr/info"
-!endif
+!iif &not &exi $INFOPATH  set-variable $INFOPATH "/usr/info"

@@ -8,10 +8,8 @@
 ;
 ; Load up common unix stuff
 execute-file "unixterm"
-;
-; Compile stuff
-0 add-next-line "*compile*"
-add-next-line "*compile*" "%f:%l:"
+; macOS has vt100-nam term
+set-variable %ipipe-term "TERM=vt100-nam"
 ;
 ; Diff stuff; FreeBSD uses GNU diff so set this up for all
 ; platforms. Nobody is going to change this are they ??

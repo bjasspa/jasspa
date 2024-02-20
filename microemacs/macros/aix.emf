@@ -9,9 +9,6 @@
 ; Load up common unix stuff
 execute-file "unixterm"
 ;
-; Compile stuff
-0 add-next-line "*compile*"
+; AIX Compile stuff
 add-next-line "*compile*" "\"%f\", line %l"
-; gcc compiler
-add-next-line "*compile*" "%f:%l:"
 

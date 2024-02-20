@@ -34,13 +34,6 @@ osd 0  90  "Mdfsr" " \HHelp "     9
 !if &not &set #l0 &reg &spr "/history/%s/frame-depth" %platform "0"
   change-frame-depth 28
 !endif
-
-; no vt100-nam on linux, this may cause problems in an ishell
-set-variable %ipipe-term "TERM=vt100"
-;
-; Compile stuff
-0 add-next-line "*compile*"
-add-next-line "*compile*" "%f:%l:"
 ;
 ; Diff stuff; LINUX uses GNU diff so set this up for all LINUX
 ; platforms. Nobody is going to change this are they ??

@@ -76,11 +76,15 @@ add-file-hook ".C" fhook-cpp
   -1 global-bind-key change-font-size "C--"
 !endif
 ;
-; setup the next-error stuff including grep and compiling
+; Setup ipipe terminal, vt100-nam is preferred but not supported on all so init to basic vt100
+set-variable %ipipe-term "TERM=vt100"
 ;
-set-variable $line-template "[0-9]+"
+; setup the next-error stuff including grep and compiling
 set-variable $file-template "[!-9;-z~]+"
-set-variable %ipipe-term "TERM=vt100-nam"
+set-variable $line-template "[0-9]+"
+; Compile - Add support for GNU gcc & Java style errors and warning
+0 add-next-line "*compile*"
+add-next-line "*compile*" "^ *\\(\\[\\m+\\] \\)?%f:%l:\\(\\d+:\\)? \\(fatal error\\|error\\|warning\\)"
 ; Grep stuff
 set-variable %xgrep-com "grep -n"
 ; RCS stuff

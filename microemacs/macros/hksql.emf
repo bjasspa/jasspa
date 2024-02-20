@@ -383,7 +383,7 @@ set-variable .fhook-sql.comment-2 "|rem|||rem |||"
   !endif
 !endif
 
-0 define-macro sql-format-line
+0 define-macro sql-format-line2
   set-variable #l9 $buffer-bname
   set-variable #l0 #p0
   set-variable #l1 &add #p1 4
@@ -399,8 +399,8 @@ set-variable .fhook-sql.comment-2 "|rem|||rem |||"
           !if &gre $window-col &add #l1 10
             !iif &gre $window-col &add 10 #l3  set-variable #l3 $window-col
             forward-char
-            !if &isin @wc "DFGILRSUW"
-              !iif &xise &mid @wl $window-col 10 "\\(DELETE\\|FROM\\|GROUP\\|INSERT\\|INNER\\|LEFT\\|RIGHT\\|SELECT\\|UNION\\|UPDATE\\|WHERE\\) .*"  set-variable #l2 $window-col
+            !if &isin @wc "DFGILORSUW"
+              !iif &xise &mid @wl $window-col 10 "\\(DELETE\\|FROM\\|GROUP\\|INSERT\\|INNER\\|LEFT\\|RIGHT\\|FULL\\|SELECT\\|UPDATE\\|WHERE\\|ORDER\\) .*"  set-variable #l2 $window-col
             !else
               backward-char
             !endif
@@ -425,7 +425,7 @@ set-variable .fhook-sql.comment-2 "|rem|||rem |||"
             beginning-of-buffer
             !iif &not &xise &lef @wl 10 "\\(DELETE\\|INSERT\\|SELECT\\|UPDATE\\) .*"  insert-string "    "
             insert-string &spr "%n" #l1 " "
-            sql-format-line
+            0 sql-format-line2
             set-mark
             beginning-of-buffer
             kill-region
@@ -471,7 +471,42 @@ set-variable .fhook-sql.comment-2 "|rem|||rem |||"
       !endif
     !done
     !force forward-line
+    !iif @#  !return
   !until &seq @wl ""
+!emacro
+
+0 define-macro sql-format-line1
+  set-variable #l0 $window-line
+  set-variable #l1 &sub &len @wl &len &trl @wl
+  !repeat
+    !force search-buffer "mE" "\\((\\|\\<\\(DELETE\\( FROM\\)?\\|FROM\\|GROUP\\|INSERT\\|INNER\\|LEFT\\|RIGHT\\|FULL\\|SELECT\\|UPDATE\\|WHERE\\|ORDER\\) \\)"
+    !iif &not $status  !return
+    !if &sub #l0 $window-line
+      set-variable $window-line #l0
+      !return
+    !elif &seq &set #l2 @s1 "("
+      backward-char
+      !force goto-matching-fence
+      !iif &not $status  !return
+      !if &sub #l0 $window-line
+        set-variable $window-line #l0
+        !return
+      !endif
+    !else
+      &len #l2 backward-char
+      !if &not &seq &trr &lef @wl $window-col ""
+        backward-char
+        !if &seq @wc " "
+          forward-delete-char
+        !else
+          forward-char
+        !endif
+        insert-string &spr "\n%n" #l1 " "
+        set-variable #l0 &add #l0 1
+      !endif
+      &len #l2 forward-char
+    !endif
+  !done
 !emacro
 
 define-macro sql-format
@@ -487,6 +522,7 @@ define-macro sql-format
     insert-string #l1
   !endif
   1 buffer-mode "magic"
+  -1 buffer-mode "exact"
   beginning-of-buffer
   set-variable #l9 0
   !repeat
@@ -516,11 +552,55 @@ define-macro sql-format
   !if &band @# 2
     !force replace-string ";[; ]*" ";"
   !else
-    !force replace-string ";[; ]*" ";\n"
+    !force replace-string ";[; ]*" ";\n\n"
     beginning-of-buffer
-    set-variable #l0 100
-    set-variable #l1 0
-    sql-format-line
+    !repeat
+      !force search-buffer "mE" "\\<WITH [\\m]+ AS ?("
+      !iif &not $status  !break
+      !repeat
+        insert-string "\n  "
+        4 backward-char
+        goto-matching-fence
+        open-line
+        forward-char
+        !iif &not &xseq @wl "), ?\\([\\m]+ AS ?(\\).*"  !break
+        2 forward-char
+        open-line
+        forward-char
+        !iif &seq @wc " "  forward-delete-char
+        &len @s1 forward-char
+      !done
+      forward-char
+      open-line
+      forward-char
+      !iif &seq @wc " "  forward-delete-char
+    !done
+    set-variable #l0 120
+    ; first trivial formating is to put all unions on their own line
+    beginning-of-buffer
+    !repeat
+      !if &gre &set #l1 &len @wl #l0
+        set-variable #l1 &sub #l1 &len &trl @wl
+        set-variable #l2 $window-line
+        -1 replace-string " \\(UNION\\( ALL\\)?\\) " &spr "\n%n\\1\n%n" #l1 " " #l1 " "
+        ; if there was a UNION move the ORDER BY, which operated on the combined recordset onto its own line
+        !iif &gre $window-line #l2  -1 replace-string " \\(ORDER BY\\) " &spr "\n%n\\1 " #l1 " "
+      !endif
+      !force forward-line
+    !until &seq @wc ""
+    ; second is to spit on any non-bracketed priority tags
+    beginning-of-buffer
+    !repeat
+      !if &gre &len @wl #l0
+        sql-format-line1
+      !endif
+      !force forward-line
+    !until &seq @wc ""
+    beginning-of-buffer
+    !repeat
+      set-variable #l1 &sub &len @wl &len &trl @wl
+      1 sql-format-line2
+    !until &seq @wc ""
   !endif
   set-variable #l1 0
   !while &gre #l9 &inc #l1 1
