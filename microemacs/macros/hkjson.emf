@@ -1,3 +1,66 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1997-2009 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+; 
+; Synopsis: JavaScript Object Notation file hook.
+; Authors:  Steven Phillips
+; 
+; Notes:    Basic hilight and indentation rules, hook
+;           also has a json-parse while load json data
+;           into a given ME registry node
+; 
+; To use json-parse move cursor to the start of the json data, this should be a value (such as a '[' for array, '{'
+; for object etc) then execute json-parse giving it the path to the required reg node. Cursor is moved to the end of
+; the value or point of first error.
+;
+; First char of reg value is the type rest is either array size, no. name-value pairs in object or the value.
+;
+define-macro fhook-json
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "json"
+  buffer-init-hooks
+!emacro
+
+; buffer-init variables
+set-variable .fhook-json.name "JSON"
+set-variable .fhook-json.setup &reg "/history/fhook/json" "ghiop"
+set-variable .fhook-json.setup-mask "adeghikmoptu"
+set-variable .fhook-json.command-flag  "|th|th|"
+set-variable .fhook-json.command-name  "|json-parse||"
+set-variable .fhook-json.command-nbind "|||"
+set-variable .fhook-json.command-kbind "|||"
+set-variable .fhook-json.command-desc  "|JSON \Hparse||"
+
+!if &and &sin "h" .fhook-json.setup &band .hilight.flags 0x02 
+  !if &not &exist .hilight.json
+    set-variable .hilight.json &pinc .hilight.next 1
+  !endif
+  0 hilight .hilight.json 0                $global-scheme
+  hilight .hilight.json 4 "\"" "\"" "\\"   .scheme.string
+  hilight .hilight.json 1 "\"\\w+\"\\}:"   .scheme.keyword
+  hilight .hilight.json 1 "\"\\w+\" +\\}:" .scheme.keyword
+  hilight .hilight.json 1 "false"          .scheme.constant
+  hilight .hilight.json 1 "null"           .scheme.constant
+  hilight .hilight.json 1 "true"           .scheme.constant
+  !if &band .hilight.flags 0x08
+    ; hilight constants, e.g. numbers
+    hilight .hilight.json 1 "\\d+"         .scheme.constant
+    hilight .hilight.json 1 "-\\d+"        .scheme.constant
+    hilight .hilight.json 1 "\\d+\\.\\d+"  .scheme.constant
+    hilight .hilight.json 1 "-\\d+\\.\\d+" .scheme.constant
+  !endif
+!endif
+!if &sin "d" .fhook-json.setup
+  0 indent  .hilight.json 0 10
+  indent .hilight.json n "{" t
+  indent .hilight.json o "}" -t
+  indent .hilight.json n "\\[" t
+  indent .hilight.json o "]" -t
+  indent .hilight.json e "\"" "\"" "\\"
+!endif
+
+buffer-init-fhook "json"
 
 0 define-macro json-parse-value
   !while &sin @wc "\n\t "

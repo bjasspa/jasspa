@@ -233,6 +233,7 @@ add-file-hook ".asp"                                          fhook-asp
 add-file-hook ".java .jav"                                    fhook-java
 add-file-hook ".jsp"                                          fhook-jsp
 add-file-hook ".js"                                           fhook-js
+add-file-hook ".json"                                         fhook-json
 add-file-hook ".pl .pm"                                       fhook-perl
 add-file-hook ".php .php3 .php4 .php5 .phtml .inc"            fhook-php
 add-file-hook ".phps"                                         fhook-phps
