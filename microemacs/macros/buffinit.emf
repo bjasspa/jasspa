@@ -107,7 +107,8 @@ define-macro-file collapse collapse-current collapse-all beginning-of-function e
   !if &not @#
     !if &sin "n" #l0
       !force set-variable #l1 @2
-      !force 0 insert-template &cond $status #l1 #l8
+      !iif &not $status  set-variable #l1 #l8
+      !force 0 insert-template #l1
     !endif
   !endif
   !if &set #l1 &reg &spr "/history/fhook/%s-tab-width" #l8 "0"
