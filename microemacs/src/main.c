@@ -1490,11 +1490,16 @@ mesetup(int argc, char *argv[])
     if((tfsdev = tfs_mount((char *)meProgName,TFS_CHECK_HEAD)) != NULL)
         argc = mesetupInsertTsfResource(argc,&argv) ;
 #endif
+    printf("HERE: %d sl: %lx\n",__LINE__,(size_t)&meSigLevel);
+    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)&ipipes);
+    printf("HERE: %d nip:%lx\n",__LINE__,(size_t)&noIpipes);
+    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     /* scan through the command line and get all global options */
     carg = rarg = 1 ;
     for( ; carg < argc; ++carg)
     {
+    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
         /* if its a switch, process it */
         if (argv[carg][0] == '-')
         {
@@ -1726,8 +1731,10 @@ missing_arg:
             noFiles = 1 ;
         }
     }
+    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     /* Set up the path information. */
     meSetupPathsAndUser() ;
+    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
 #if MEOPT_CLIENTSERVER
     if(userClientServer && TTconnectClientServer())
@@ -1842,11 +1849,11 @@ missing_arg:
         meExit(1) ;
     }
 #endif
+    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
-    printf("HERE: %d\n",__LINE__);
     meInit(BmainN);           /* Buffers, windows.    */
     
-    printf("HERE: %d\n",__LINE__);
+    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
 #ifdef _DOS
     if(dumpScreen)
     {
@@ -1874,7 +1881,7 @@ missing_arg:
      */
     if(sigcatch)
     {
-    printf("HERE: %d\n",__LINE__);
+    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
 #ifdef _POSIX_SIGNALS
         struct sigaction sa ;
         
@@ -1895,16 +1902,16 @@ missing_arg:
 #endif /* _POSIX_SIGNALS */
     }
 #endif /* _UNIX */
-    printf("HERE: %d\n",__LINE__);
+    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     mlerase(0);                /* Delete command line */
-    printf("HERE: %d\n",__LINE__);
+    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     /* disable screen updates to reduce the flickering and startup time */
     screenUpdateDisabledCount = -9999 ;
-    printf("HERE: %d\n",__LINE__);
+    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     /* run me.emf unless an @... arg was given in which case run that */
     execFile(file,meTRUE,noFiles) ;
-    printf("HERE: %d\n",__LINE__);
+    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     /* initalize *scratch* colors & modes to global defaults & check for a hook */
     if((mainbp=bfind(BmainN,0)) != NULL)
@@ -1920,7 +1927,6 @@ missing_arg:
          * buffer is preferable */
         mainbp->histNo = -1 ;
     }
-    printf("HERE: %d\n",__LINE__);
     printf("HERE: %d %lx\n",__LINE__,(size_t)ipipes);
 #if MEOPT_COLOR
 #if MEOPT_CLIENTSERVER
