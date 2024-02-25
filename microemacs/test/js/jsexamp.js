@@ -1,7 +1,4 @@
 function someCode()
-
 {
-
-alert("Hey!");
-
+  alert("Hey!");
 }

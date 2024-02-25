@@ -2865,9 +2865,9 @@ indentLine(int *inComment)
 
     noColChng = hilightLine(vps,0) ;
     blkp = hilBlock + 1 ;
-    /*    printf("Got %d colour changes\n",noColChng) ;*/
-    /*    for(ii=0 ; ii<noColChng ; ii++)*/
-    /*        printf("Colour change %d is to 0x%x at column %d\n",ii,hilCol[ii].scheme,hilCol[ii].column) ;*/
+    /* printf("Got %d colour changes\n",noColChng) ;*/
+    /* for(ii=0 ; ii<noColChng ; ii++)*/
+    /*   printf("  Colour change %d is to 0x%x at column %d\n",ii,blkp[ii].scheme,blkp[ii].column) ;*/
     ss = disLineBuff ;
     ss[blkp[noColChng-1].column] = '\0' ;
     while(*ss == ' ')
@@ -2882,7 +2882,8 @@ indentLine(int *inComment)
         ind = meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
     else
     {
-        int jj, brace=0, contFlag=0, li, aind, lind, nind ;
+        int jj, brace=0, contFlag=0, li, aind, lind, nind, plib=0;
+        meUShort flgs;
 
         aind = 0 ;
         for(;;)
@@ -2897,6 +2898,7 @@ indentLine(int *inComment)
                 break ;
             fnoz = blkp[ii].scheme ;
         }
+        /* printf("Current line broke at %d: %d\n",ii,aind);*/
         jj = (int) meHilightGetLookBackLines(indents[indent]) ;
         for(ind=0 ; (--jj >=0) ; )
         {
@@ -2931,45 +2933,50 @@ indentLine(int *inComment)
                 ss++ ;
             if(*ss == '\0')
                 continue ;
-            /*            printf("Got prev line breakdown %d colour changes ind %d\n",noColChng,ind) ;*/
+            /* printf("Got prev line breakdown %d colour changes ind %d\n",noColChng,ind);*/
             for(li=0,ii=0 ; ii<noColChng ; ii++)
             {
-                fnoz = (blkp[ii].scheme & 0xff00) ;
-                if(fnoz == INDNEXTONWARD)
-                    li += meIndentGetIndent((meUByte) blkp[ii].scheme, frameCur->bufferCur->indentWidth);
-                else if((fnoz == INDCURONWARD) && (li != 0))
-                    li += meIndentGetIndent((meUByte) blkp[ii].scheme, frameCur->bufferCur->indentWidth);
-                else if((fnoz == INDSINGLE) &&
-                        ((ii == 0) || ((ii == 1) && ((ss-disLineBuff) >= blkp[0].column))))
-                    li -= meIndentGetIndent((meUByte) blkp[ii].scheme, frameCur->bufferCur->indentWidth);
-                else if(fnoz == INDBRACKETOPEN)
+                if((fnoz = blkp[ii].scheme) != 0)
                 {
-                    if(brace >= 0)
-                        blkp[brace].column = blkp[ii].column ;
-                    brace++ ;
-                }
-                else if(fnoz == INDBRACKETCLOSE)
-                    brace-- ;
-                else if(fnoz == INDCONTINUE)
-                {
-                    contFlag |= 0x03 ;
-                    if(!(contFlag & 0x04))
-                        li += meIndentGetIndent((meUByte) blkp[ii].scheme, frameCur->bufferCur->indentWidth);
-                }
-                else if ((fnoz & INDBOTH) == INDBOTH)
-                {
-                    meUShort scheme = blkp[ii].scheme;
-
-                    /* Process next line */
-                    li += meIndentGetIndent((meUByte) ind7ToInd8(scheme), frameCur->bufferCur->indentWidth);
-                    /* Process current line */
-                    if ((ii != 0) && ((ii != 1) || ((ss-disLineBuff) < blkp[0].column)))
+                    if(!plib && !(fnoz & INDBOTH) && (!(fnoz & INDINDCURLINE) || ((fnoz != blkp[0].scheme) && ((ss-disLineBuff) < blkp[0].column))))
+                        plib = 1;
+                    if((flgs = (fnoz & 0xff00)) != 0)
                     {
-                        scheme >>= 8;
-                        li += meIndentGetIndent((meUByte) ind7ToInd8(scheme), frameCur->bufferCur->indentWidth);
+                        if(flgs == INDNEXTONWARD)
+                            li += meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
+                        else if((flgs == INDCURONWARD) && (plib > 0))
+                            li += meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
+                        else if((flgs == INDSINGLE) &&
+                                ((ii == 0) || ((ii == 1) && ((ss-disLineBuff) >= blkp[0].column))))
+                            li -= meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
+                        else if(flgs == INDBRACKETOPEN)
+                        {
+                            if(brace >= 0)
+                                blkp[brace].column = blkp[ii].column ;
+                            brace++ ;
+                        }
+                        else if(flgs == INDBRACKETCLOSE)
+                            brace-- ;
+                        else if(flgs == INDCONTINUE)
+                        {
+                            contFlag |= 0x03;
+                            if(!(contFlag & 0x04))
+                                li += meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
+                        }
+                        else if(flgs & INDBOTH)
+                        {
+                            /* Process next line */
+                            li += meIndentGetIndent((meUByte) ind7ToInd8(fnoz), frameCur->bufferCur->indentWidth);
+                            /* Process current line */
+                            if ((ii != 0) && ((ii != 1) || ((ss-disLineBuff) < blkp[0].column)))
+                            {
+                                fnoz >>= 8;
+                                li += meIndentGetIndent((meUByte) ind7ToInd8(fnoz), frameCur->bufferCur->indentWidth);
+                            }
+                        }
                     }
                 }
-                /*                printf("Colour change %d is to 0x%x at column %d, ind %d\n",ii,blkp[ii].scheme,blkp[ii].column,ind+li) ;*/
+                /* printf("  Colour change %d is to 0x%x at column %d, ind %d (%d)\n",ii,blkp[ii].scheme,blkp[ii].column,ind+li,plib);*/
             }
             ind += li ;
             if(brace < 0)

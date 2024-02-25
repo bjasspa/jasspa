@@ -24,28 +24,28 @@
  * to name of the target file
  */
 function process(xslname, xmlname, to, progid) {
-    // WScript.Echo("xsl:" + xslname + " xmlname:" + xmlname + " to:" + to);
-    var xmldoc = new ActiveXObject(progid);
-    var xsldoc = new ActiveXObject(progid);		
-    xmldoc.async = false;
-    xsldoc.async = false;
-    xmldoc.validateOnParse = false;
-    xsldoc.validateOnParse = false;
-    xmldoc.load(xmlname);
-    xsldoc.load(xslname);			
-    var out = new ActiveXObject("Scripting.FileSystemObject");
-    var o = out.CreateTextFile(to, true, false)
-    if((xmldoc.parseError.errorCode == 0) && (xsldoc.parseError.errorCode == 0)) {
-	var str = xmldoc.transformNode(xsldoc);
-	str = str.replace('<?xml version="1.0" encoding="UTF-16"?>', "");
-	var a0 = /\u00A0/g;	// For Opera
-	var lt = /&lt;/g;
-	var gt = /&gt;/g;
-	var amp = /&amp;#/g;
-	str = str.replace(a0, "&nbsp;").replace(lt, "<").replace(gt, ">").replace(amp, "&#");
-	o.write(str);
-    }
-    o.close();
+  // WScript.Echo("xsl:" + xslname + " xmlname:" + xmlname + " to:" + to);
+  var xmldoc = new ActiveXObject(progid);
+  var xsldoc = new ActiveXObject(progid);		
+  xmldoc.async = false;
+  xsldoc.async = false;
+  xmldoc.validateOnParse = false;
+  xsldoc.validateOnParse = false;
+  xmldoc.load(xmlname);
+  xsldoc.load(xslname);			
+  var out = new ActiveXObject("Scripting.FileSystemObject");
+  var o = out.CreateTextFile(to, true, false);
+  if((xmldoc.parseError.errorCode == 0) && (xsldoc.parseError.errorCode == 0)) {
+    var str = xmldoc.transformNode(xsldoc);
+    str = str.replace('<?xml version="1.0" encoding="UTF-16"?>', "");
+    var a0 = /\u00A0/g;	// For Opera
+    var lt = /&lt;/g;
+    var gt = /&gt;/g;
+    var amp = /&amp;#/g;
+    str = str.replace(a0, "&nbsp;").replace(lt, "<").replace(gt, ">").replace(amp, "&#");
+    o.write(str);
+  }
+  o.close();
 }
 /*
  * WSH script.
@@ -60,63 +60,63 @@ var xslfile = null;
 var todir = null;
 var argsNamed = WScript.Arguments.Named;
 if (argsNamed.Exists("xsl"))
-    xslfile = argsNamed.Item("xsl");
+  xslfile = argsNamed.Item("xsl");
 else
-    xslfile = WScript.CurrentDirectory + "\\form-jsp.xsl";
+  xslfile = WScript.CurrentDirectory + "\\form-jsp.xsl";
 var bKey = null;
 var progid = null;
 var WshShell = WScript.CreateObject ("WScript.Shell");
 try {
-    bKey = WshShell.RegRead("HKEY_CLASSES_ROOT\\Msxml2.DOMDocument.4.0\\");
+  bKey = WshShell.RegRead("HKEY_CLASSES_ROOT\\Msxml2.DOMDocument.4.0\\");
 }
 catch(e) {}
 if (bKey == null) {
-    try {
-        bKey = WshShell.RegRead("HKEY_CLASSES_ROOT\\Msxml2.DOMDocument.3.0\\");
-    }
-    catch(e) {}
-    if (bKey != null)
-        progid = "Msxml2.DOMDocument.3.0";
+  try {
+    bKey = WshShell.RegRead("HKEY_CLASSES_ROOT\\Msxml2.DOMDocument.3.0\\");
+  }
+  catch(e) {}
+  if (bKey != null)
+    progid = "Msxml2.DOMDocument.3.0";
 } else
-    progid = "Msxml2.DOMDocument.4.0";
+  progid = "Msxml2.DOMDocument.4.0";
 if (progid == null)
-    WScript.Echo("You must install MSXML 3 or MSXML 4");
+  WScript.Echo("You must install MSXML 3 or MSXML 4");
 else {
-if (argsNamed.Exists("dir")) {
+  if (argsNamed.Exists("dir")) {
     var fso = new ActiveXObject("Scripting.FileSystemObject");
     var xmldir = argsNamed.Item("dir");
     if (fso.FolderExists(xmldir)) {
-        if (argsNamed.Exists("toDir"))
-            todir = argsNamed.Item("toDir");
-        else
-            toDir = xmldir;
-        var fold = fso.GetFolder(xmldir);
-        var files = new Enumerator(fold.Files);
-        for (; !files.atEnd(); files.moveNext()) {
-            var n = files.item().Name;
-            var l = n.length - "-jspF.xml".length;
-            var s = n.substring(0, l);
-            if (n.substring(l) == "-jspF.xml")
-                process(xslfile, xmldir + "\\" + n, todir + "\\" + s + ".jsp", progid);
-        }
+      if (argsNamed.Exists("toDir"))
+        todir = argsNamed.Item("toDir");
+      else
+        toDir = xmldir;
+      var fold = fso.GetFolder(xmldir);
+      var files = new Enumerator(fold.Files);
+      for (; !files.atEnd(); files.moveNext()) {
+        var n = files.item().Name;
+        var l = n.length - "-jspF.xml".length;
+        var s = n.substring(0, l);
+        if (n.substring(l) == "-jspF.xml")
+          process(xslfile, xmldir + "\\" + n, todir + "\\" + s + ".jsp", progid);
+      }
     }
-} else {
+  } else {
     if (argsNamed.Exists("file")) {
     	var xmlname = argsNamed.Item("file");
     	if (argsNamed.Exists("toFile"))
-            process(xslfile, xmlname, argsNamed.Item("toFile"), progid);
+        process(xslfile, xmlname, argsNamed.Item("toFile"), progid);
     	else {
-    	    if (argsNamed.Exists("toDir")) {
-                toDir = argsNamed.Item("toDir");
-    	        var pos = xmlname.lastIndexOf("\\");
-    	        var f1 = xmlname.substring(pos);
-                process(xslfile, xmlname, toDir + f1.replace("-jspF.xml", ".jsp"), progid);
-    	    } else
-                process(xslfile, xmlname, xmlname.replace("-jspF.xml", ".jsp"), progid);
-        }
+        if (argsNamed.Exists("toDir")) {
+          toDir = argsNamed.Item("toDir");
+          var pos = xmlname.lastIndexOf("\\");
+          var f1 = xmlname.substring(pos);
+          process(xslfile, xmlname, toDir + f1.replace("-jspF.xml", ".jsp"), progid);
+        } else
+          process(xslfile, xmlname, xmlname.replace("-jspF.xml", ".jsp"), progid);
+      }
     } else
-        WScript.Echo(
-            "Usage: form-jsp.js /dir:source-directory|/file:file [/toDir:target-directory|"
-            + "/toFile:target-file] [/xsl:xsl-file]");
-}    
+      WScript.Echo(
+                "Usage: form-jsp.js /dir:source-directory|/file:file [/toDir:target-directory|"
+                + "/toFile:target-file] [/xsl:xsl-file]");
+  }    
 }

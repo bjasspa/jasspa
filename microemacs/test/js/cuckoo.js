@@ -77,254 +77,254 @@
 // to check version in code which you want to work on future
 // versions.
 
-    // convert all characters to lowercase to simplify testing
-    var agt=navigator.userAgent.toLowerCase();
+// convert all characters to lowercase to simplify testing
+var agt=navigator.userAgent.toLowerCase();
 
-    // *** BROWSER VERSION ***
-    // Note: On IE5, these return 4, so use is_ie5up to detect IE5.
-    var is_major = parseInt(navigator.appVersion);
-    var is_minor = parseFloat(navigator.appVersion);
+// *** BROWSER VERSION ***
+// Note: On IE5, these return 4, so use is_ie5up to detect IE5.
+var is_major = parseInt(navigator.appVersion);
+var is_minor = parseFloat(navigator.appVersion);
 
-    // Note: Opera and WebTV spoof Navigator.  We do strict client detection.
-    // If you want to allow spoofing, take out the tests for opera and webtv.
-    var is_nav  = ((agt.indexOf('mozilla')!=-1) && (agt.indexOf('spoofer')==-1)
-                && (agt.indexOf('compatible') == -1) && (agt.indexOf('opera')==-1)
-                && (agt.indexOf('webtv')==-1) && (agt.indexOf('hotjava')==-1));
-    var is_nav2 = (is_nav && (is_major == 2));
-    var is_nav3 = (is_nav && (is_major == 3));
-    var is_nav4 = (is_nav && (is_major == 4));
-    var is_nav4up = (is_nav && (is_major >= 4));
-    var is_navonly      = (is_nav && ((agt.indexOf(";nav") != -1) ||
-                          (agt.indexOf("; nav") != -1)) );
-    var is_nav6 = (is_nav && (is_major == 5));
-    var is_nav6up = (is_nav && (is_major >= 5));
-    var is_gecko = (agt.indexOf('gecko') != -1);
+// Note: Opera and WebTV spoof Navigator.  We do strict client detection.
+// If you want to allow spoofing, take out the tests for opera and webtv.
+var is_nav  = ((agt.indexOf('mozilla')!=-1) && (agt.indexOf('spoofer')==-1)
+          && (agt.indexOf('compatible') == -1) && (agt.indexOf('opera')==-1)
+          && (agt.indexOf('webtv')==-1) && (agt.indexOf('hotjava')==-1));
+var is_nav2 = (is_nav && (is_major == 2));
+var is_nav3 = (is_nav && (is_major == 3));
+var is_nav4 = (is_nav && (is_major == 4));
+var is_nav4up = (is_nav && (is_major >= 4));
+var is_navonly      = (is_nav && ((agt.indexOf(";nav") != -1) ||
+          (agt.indexOf("; nav") != -1)) );
+var is_nav6 = (is_nav && (is_major == 5));
+var is_nav6up = (is_nav && (is_major >= 5));
+var is_gecko = (agt.indexOf('gecko') != -1);
 
 
-    var is_ie     = ((agt.indexOf("msie") != -1) && (agt.indexOf("opera") == -1));
-    var is_ie3    = (is_ie && (is_major < 4));
-    var is_ie4    = (is_ie && (is_major == 4) && (agt.indexOf("msie 4")!=-1) );
-    var is_ie4up  = (is_ie && (is_major >= 4));
-    var is_ie5    = (is_ie && (is_major == 4) && (agt.indexOf("msie 5.0")!=-1) );
-    var is_ie5_5  = (is_ie && (is_major == 4) && (agt.indexOf("msie 5.5") !=-1));
-    var is_ie5up  = (is_ie && !is_ie3 && !is_ie4);
-    var is_ie5_5up =(is_ie && !is_ie3 && !is_ie4 && !is_ie5);
-    var is_ie6    = (is_ie && (is_major == 4) && (agt.indexOf("msie 6.")!=-1) );
-    var is_ie6up  = (is_ie && !is_ie3 && !is_ie4 && !is_ie5 && !is_ie5_5);
+var is_ie     = ((agt.indexOf("msie") != -1) && (agt.indexOf("opera") == -1));
+var is_ie3    = (is_ie && (is_major < 4));
+var is_ie4    = (is_ie && (is_major == 4) && (agt.indexOf("msie 4")!=-1) );
+var is_ie4up  = (is_ie && (is_major >= 4));
+var is_ie5    = (is_ie && (is_major == 4) && (agt.indexOf("msie 5.0")!=-1) );
+var is_ie5_5  = (is_ie && (is_major == 4) && (agt.indexOf("msie 5.5") !=-1));
+var is_ie5up  = (is_ie && !is_ie3 && !is_ie4);
+var is_ie5_5up =(is_ie && !is_ie3 && !is_ie4 && !is_ie5);
+var is_ie6    = (is_ie && (is_major == 4) && (agt.indexOf("msie 6.")!=-1) );
+var is_ie6up  = (is_ie && !is_ie3 && !is_ie4 && !is_ie5 && !is_ie5_5);
 
-    // KNOWN BUG: On AOL4, returns false if IE3 is embedded browser
-    // or if this is the first browser window opened.  Thus the
-    // variables is_aol, is_aol3, and is_aol4 aren't 100% reliable.
-    var is_aol   = (agt.indexOf("aol") != -1);
-    var is_aol3  = (is_aol && is_ie3);
-    var is_aol4  = (is_aol && is_ie4);
-    var is_aol5  = (agt.indexOf("aol 5") != -1);
-    var is_aol6  = (agt.indexOf("aol 6") != -1);
+// KNOWN BUG: On AOL4, returns false if IE3 is embedded browser
+// or if this is the first browser window opened.  Thus the
+// variables is_aol, is_aol3, and is_aol4 aren't 100% reliable.
+var is_aol   = (agt.indexOf("aol") != -1);
+var is_aol3  = (is_aol && is_ie3);
+var is_aol4  = (is_aol && is_ie4);
+var is_aol5  = (agt.indexOf("aol 5") != -1);
+var is_aol6  = (agt.indexOf("aol 6") != -1);
 
-    var is_opera = (agt.indexOf("opera") != -1);
-    var is_opera2 = (agt.indexOf("opera 2") != -1 || agt.indexOf("opera/2") != -1);
-    var is_opera3 = (agt.indexOf("opera 3") != -1 || agt.indexOf("opera/3") != -1);
-    var is_opera4 = (agt.indexOf("opera 4") != -1 || agt.indexOf("opera/4") != -1);
-    var is_opera5 = (agt.indexOf("opera 5") != -1 || agt.indexOf("opera/5") != -1);
-    var is_opera5up = (is_opera && !is_opera2 && !is_opera3 && !is_opera4);
+var is_opera = (agt.indexOf("opera") != -1);
+var is_opera2 = (agt.indexOf("opera 2") != -1 || agt.indexOf("opera/2") != -1);
+var is_opera3 = (agt.indexOf("opera 3") != -1 || agt.indexOf("opera/3") != -1);
+var is_opera4 = (agt.indexOf("opera 4") != -1 || agt.indexOf("opera/4") != -1);
+var is_opera5 = (agt.indexOf("opera 5") != -1 || agt.indexOf("opera/5") != -1);
+var is_opera5up = (is_opera && !is_opera2 && !is_opera3 && !is_opera4);
 
-    var is_webtv = (agt.indexOf("webtv") != -1); 
+var is_webtv = (agt.indexOf("webtv") != -1); 
 
-    var is_TVNavigator = ((agt.indexOf("navio") != -1) || (agt.indexOf("navio_aoltv") != -1)); 
-    var is_AOLTV = is_TVNavigator;
+var is_TVNavigator = ((agt.indexOf("navio") != -1) || (agt.indexOf("navio_aoltv") != -1)); 
+var is_AOLTV = is_TVNavigator;
 
-    var is_hotjava = (agt.indexOf("hotjava") != -1);
-    var is_hotjava3 = (is_hotjava && (is_major == 3));
-    var is_hotjava3up = (is_hotjava && (is_major >= 3));
+var is_hotjava = (agt.indexOf("hotjava") != -1);
+var is_hotjava3 = (is_hotjava && (is_major == 3));
+var is_hotjava3up = (is_hotjava && (is_major >= 3));
 
-    // *** JAVASCRIPT VERSION CHECK ***
-    var is_js;
-    if (is_nav2 || is_ie3) is_js = 1.0;
-    else if (is_nav3) is_js = 1.1;
-    else if (is_opera5up) is_js = 1.3;
-    else if (is_opera) is_js = 1.1;
-    else if ((is_nav4 && (is_minor <= 4.05)) || is_ie4) is_js = 1.2;
-    else if ((is_nav4 && (is_minor > 4.05)) || is_ie5) is_js = 1.3;
-    else if (is_hotjava3up) is_js = 1.4;
-    else if (is_nav6 || is_gecko) is_js = 1.5;
-    // NOTE: In the future, update this code when newer versions of JS
-    // are released. For now, we try to provide some upward compatibility
-    // so that future versions of Nav and IE will show they are at
-    // *least* JS 1.x capable. Always check for JS version compatibility
-    // with > or >=.
-    else if (is_nav6up) is_js = 1.5;
-    // NOTE: ie5up on mac is 1.4
-    else if (is_ie5up) is_js = 1.3
+// *** JAVASCRIPT VERSION CHECK ***
+var is_js;
+if (is_nav2 || is_ie3) is_js = 1.0;
+else if (is_nav3) is_js = 1.1;
+else if (is_opera5up) is_js = 1.3;
+else if (is_opera) is_js = 1.1;
+else if ((is_nav4 && (is_minor <= 4.05)) || is_ie4) is_js = 1.2;
+else if ((is_nav4 && (is_minor > 4.05)) || is_ie5) is_js = 1.3;
+else if (is_hotjava3up) is_js = 1.4;
+else if (is_nav6 || is_gecko) is_js = 1.5;
+// NOTE: In the future, update this code when newer versions of JS
+// are released. For now, we try to provide some upward compatibility
+// so that future versions of Nav and IE will show they are at
+// *least* JS 1.x capable. Always check for JS version compatibility
+// with > or >=.
+else if (is_nav6up) is_js = 1.5;
+// NOTE: ie5up on mac is 1.4
+else if (is_ie5up) is_js = 1.3;
 
-    // HACK: no idea for other browsers; always check for JS version with > or >=
-    else is_js = 0.0;
+// HACK: no idea for other browsers; always check for JS version with > or >=
+else is_js = 0.0;
 
-    // *** PLATFORM ***
-    var is_win   = ( (agt.indexOf("win")!=-1) || (agt.indexOf("16bit")!=-1) );
-    // NOTE: On Opera 3.0, the userAgent string includes "Windows 95/NT4" on all
-    //        Win32, so you can't distinguish between Win95 and WinNT.
-    var is_win95 = ((agt.indexOf("win95")!=-1) || (agt.indexOf("windows 95")!=-1));
+// *** PLATFORM ***
+var is_win   = ( (agt.indexOf("win")!=-1) || (agt.indexOf("16bit")!=-1) );
+// NOTE: On Opera 3.0, the userAgent string includes "Windows 95/NT4" on all
+//        Win32, so you can't distinguish between Win95 and WinNT.
+var is_win95 = ((agt.indexOf("win95")!=-1) || (agt.indexOf("windows 95")!=-1));
 
-    // is this a 16 bit compiled version?
-    var is_win16 = ((agt.indexOf("win16")!=-1) || 
-               (agt.indexOf("16bit")!=-1) || (agt.indexOf("windows 3.1")!=-1) || 
-               (agt.indexOf("windows 16-bit")!=-1) );  
+// is this a 16 bit compiled version?
+var is_win16 = ((agt.indexOf("win16")!=-1) || 
+          (agt.indexOf("16bit")!=-1) || (agt.indexOf("windows 3.1")!=-1) || 
+          (agt.indexOf("windows 16-bit")!=-1) );  
 
-    var is_win31 = ((agt.indexOf("windows 3.1")!=-1) || (agt.indexOf("win16")!=-1) ||
-                    (agt.indexOf("windows 16-bit")!=-1));
+var is_win31 = ((agt.indexOf("windows 3.1")!=-1) || (agt.indexOf("win16")!=-1) ||
+          (agt.indexOf("windows 16-bit")!=-1));
 
-    var is_winme = ((agt.indexOf("win 9x 4.90")!=-1));
-    var is_win2k = ((agt.indexOf("windows nt 5.0")!=-1));
+var is_winme = ((agt.indexOf("win 9x 4.90")!=-1));
+var is_win2k = ((agt.indexOf("windows nt 5.0")!=-1));
 
-    // NOTE: Reliable detection of Win98 may not be possible. It appears that:
-    //       - On Nav 4.x and before you'll get plain "Windows" in userAgent.
-    //       - On Mercury client, the 32-bit version will return "Win98", but
-    //         the 16-bit version running on Win98 will still return "Win95".
-    var is_win98 = ((agt.indexOf("win98")!=-1) || (agt.indexOf("windows 98")!=-1));
-    var is_winnt = ((agt.indexOf("winnt")!=-1) || (agt.indexOf("windows nt")!=-1));
-    var is_win32 = (is_win95 || is_winnt || is_win98 || 
-                    ((is_major >= 4) && (navigator.platform == "Win32")) ||
-                    (agt.indexOf("win32")!=-1) || (agt.indexOf("32bit")!=-1));
+// NOTE: Reliable detection of Win98 may not be possible. It appears that:
+//       - On Nav 4.x and before you'll get plain "Windows" in userAgent.
+//       - On Mercury client, the 32-bit version will return "Win98", but
+//         the 16-bit version running on Win98 will still return "Win95".
+var is_win98 = ((agt.indexOf("win98")!=-1) || (agt.indexOf("windows 98")!=-1));
+var is_winnt = ((agt.indexOf("winnt")!=-1) || (agt.indexOf("windows nt")!=-1));
+var is_win32 = (is_win95 || is_winnt || is_win98 || 
+          ((is_major >= 4) && (navigator.platform == "Win32")) ||
+          (agt.indexOf("win32")!=-1) || (agt.indexOf("32bit")!=-1));
 
-    var is_os2   = ((agt.indexOf("os/2")!=-1) || 
-                    (navigator.appVersion.indexOf("OS/2")!=-1) ||   
-                    (agt.indexOf("ibm-webexplorer")!=-1));
+var is_os2   = ((agt.indexOf("os/2")!=-1) || 
+          (navigator.appVersion.indexOf("OS/2")!=-1) ||   
+          (agt.indexOf("ibm-webexplorer")!=-1));
 
-    var is_mac    = (agt.indexOf("mac")!=-1);
-    // hack ie5 js version for mac
-    if (is_mac && is_ie5up) is_js = 1.4;
-    var is_mac68k = (is_mac && ((agt.indexOf("68k")!=-1) || 
-                               (agt.indexOf("68000")!=-1)));
-    var is_macppc = (is_mac && ((agt.indexOf("ppc")!=-1) || 
-                                (agt.indexOf("powerpc")!=-1)));
+var is_mac    = (agt.indexOf("mac")!=-1);
+// hack ie5 js version for mac
+if (is_mac && is_ie5up) is_js = 1.4;
+var is_mac68k = (is_mac && ((agt.indexOf("68k")!=-1) || 
+          (agt.indexOf("68000")!=-1)));
+var is_macppc = (is_mac && ((agt.indexOf("ppc")!=-1) || 
+          (agt.indexOf("powerpc")!=-1)));
 
-    var is_sun   = (agt.indexOf("sunos")!=-1);
-    var is_sun4  = (agt.indexOf("sunos 4")!=-1);
-    var is_sun5  = (agt.indexOf("sunos 5")!=-1);
-    var is_suni86= (is_sun && (agt.indexOf("i86")!=-1));
-    var is_irix  = (agt.indexOf("irix") !=-1);    // SGI
-    var is_irix5 = (agt.indexOf("irix 5") !=-1);
-    var is_irix6 = ((agt.indexOf("irix 6") !=-1) || (agt.indexOf("irix6") !=-1));
-    var is_hpux  = (agt.indexOf("hp-ux")!=-1);
-    var is_hpux9 = (is_hpux && (agt.indexOf("09.")!=-1));
-    var is_hpux10= (is_hpux && (agt.indexOf("10.")!=-1));
-    var is_aix   = (agt.indexOf("aix") !=-1);      // IBM
-    var is_aix1  = (agt.indexOf("aix 1") !=-1);    
-    var is_aix2  = (agt.indexOf("aix 2") !=-1);    
-    var is_aix3  = (agt.indexOf("aix 3") !=-1);    
-    var is_aix4  = (agt.indexOf("aix 4") !=-1);    
-    var is_linux = (agt.indexOf("inux")!=-1);
-    var is_sco   = (agt.indexOf("sco")!=-1) || (agt.indexOf("unix_sv")!=-1);
-    var is_unixware = (agt.indexOf("unix_system_v")!=-1); 
-    var is_mpras    = (agt.indexOf("ncr")!=-1); 
-    var is_reliant  = (agt.indexOf("reliantunix")!=-1);
-    var is_dec   = ((agt.indexOf("dec")!=-1) || (agt.indexOf("osf1")!=-1) || 
-           (agt.indexOf("dec_alpha")!=-1) || (agt.indexOf("alphaserver")!=-1) || 
-           (agt.indexOf("ultrix")!=-1) || (agt.indexOf("alphastation")!=-1)); 
-    var is_sinix = (agt.indexOf("sinix")!=-1);
-    var is_freebsd = (agt.indexOf("freebsd")!=-1);
-    var is_bsd = (agt.indexOf("bsd")!=-1);
-    var is_unix  = ((agt.indexOf("x11")!=-1) || is_sun || is_irix || is_hpux || 
-                 is_sco ||is_unixware || is_mpras || is_reliant || 
-                 is_dec || is_sinix || is_aix || is_linux || is_bsd || is_freebsd);
+var is_sun   = (agt.indexOf("sunos")!=-1);
+var is_sun4  = (agt.indexOf("sunos 4")!=-1);
+var is_sun5  = (agt.indexOf("sunos 5")!=-1);
+var is_suni86= (is_sun && (agt.indexOf("i86")!=-1));
+var is_irix  = (agt.indexOf("irix") !=-1);    // SGI
+var is_irix5 = (agt.indexOf("irix 5") !=-1);
+var is_irix6 = ((agt.indexOf("irix 6") !=-1) || (agt.indexOf("irix6") !=-1));
+var is_hpux  = (agt.indexOf("hp-ux")!=-1);
+var is_hpux9 = (is_hpux && (agt.indexOf("09.")!=-1));
+var is_hpux10= (is_hpux && (agt.indexOf("10.")!=-1));
+var is_aix   = (agt.indexOf("aix") !=-1);      // IBM
+var is_aix1  = (agt.indexOf("aix 1") !=-1);    
+var is_aix2  = (agt.indexOf("aix 2") !=-1);    
+var is_aix3  = (agt.indexOf("aix 3") !=-1);    
+var is_aix4  = (agt.indexOf("aix 4") !=-1);    
+var is_linux = (agt.indexOf("inux")!=-1);
+var is_sco   = (agt.indexOf("sco")!=-1) || (agt.indexOf("unix_sv")!=-1);
+var is_unixware = (agt.indexOf("unix_system_v")!=-1); 
+var is_mpras    = (agt.indexOf("ncr")!=-1); 
+var is_reliant  = (agt.indexOf("reliantunix")!=-1);
+var is_dec   = ((agt.indexOf("dec")!=-1) || (agt.indexOf("osf1")!=-1) || 
+          (agt.indexOf("dec_alpha")!=-1) || (agt.indexOf("alphaserver")!=-1) || 
+          (agt.indexOf("ultrix")!=-1) || (agt.indexOf("alphastation")!=-1)); 
+var is_sinix = (agt.indexOf("sinix")!=-1);
+var is_freebsd = (agt.indexOf("freebsd")!=-1);
+var is_bsd = (agt.indexOf("bsd")!=-1);
+var is_unix  = ((agt.indexOf("x11")!=-1) || is_sun || is_irix || is_hpux || 
+          is_sco ||is_unixware || is_mpras || is_reliant || 
+          is_dec || is_sinix || is_aix || is_linux || is_bsd || is_freebsd);
 
-    var is_vms   = ((agt.indexOf("vax")!=-1) || (agt.indexOf("openvms")!=-1));
+var is_vms   = ((agt.indexOf("vax")!=-1) || (agt.indexOf("openvms")!=-1));
 /* End of http://www.mozilla.org/docs/web-developer/sniffer/browser_type.html */
 /** Shows the tooltip. */
 function showtip(current, e, num) {
-    if (is_opera)
-        return;		// dynamic update not supported in Opera
-    current.title = ""  // Otherwise you see both the tooltip and the title
-    if (document.layers) { // Netscape 4.0+
-        theString = "<DIV CLASS='ttip'>" + format(tip[num]) + "</DIV>";
-        document.tooltip.document.write(theString);
-        document.tooltip.document.close();
-        document.tooltip.left = e.pageX + 14;
-        document.tooltip.top = e.pageY + 4;
-        document.tooltip.visibility = "show";
-    } else
+  if (is_opera)
+    return;		// dynamic update not supported in Opera
+  current.title = "";  // Otherwise you see both the tooltip and the title
+  if (document.layers) { // Netscape 4.0+
+    theString = "<DIV CLASS='ttip'>" + format(tip[num]) + "</DIV>";
+    document.tooltip.document.write(theString);
+    document.tooltip.document.close();
+    document.tooltip.left = e.pageX + 14;
+    document.tooltip.top = e.pageY + 4;
+    document.tooltip.visibility = "show";
+  } else
     if (document.getElementById) { // Netscape 6.0+, Internet Explorer 5.0+
-        var elm = document.getElementById("tooltip");
-        var elml = current;
-        elm.innerHTML = format(tip[num]);
-        if (is_gecko) {
-            elm.style.top = elml.offsetTop + elml.offsetHeight;
-            elm.style.left = elml.offsetLeft + elml.offsetWidth + 10;
-        } else {
-            var h = 0
-            var w = 0
-            var elm2 = elml.parentNode;
-            while (elm2 != null) {
-                if (elm2.nodeType == 1) {
-                    if (elm2.tagName == "TD") {
-                        h += elm2.offsetTop;
-                        w += elm2.offsetLeft;
-                    }
-                    if (elm2.tagName == "TABLE") {
-                        h += elm2.offsetTop;
-                        w += elm2.offsetLeft;
-                    }
-                }
-                elm2 = elm2.parentNode;
+      var elm = document.getElementById("tooltip");
+      var elml = current;
+      elm.innerHTML = format(tip[num]);
+      if (is_gecko) {
+        elm.style.top = elml.offsetTop + elml.offsetHeight;
+        elm.style.left = elml.offsetLeft + elml.offsetWidth + 10;
+      } else {
+        var h = 0;
+        var w = 0;
+        var elm2 = elml.parentNode;
+        while (elm2 != null) {
+          if (elm2.nodeType == 1) {
+            if (elm2.tagName == "TD") {
+              h += elm2.offsetTop;
+              w += elm2.offsetLeft;
             }
-            elm.style.top = elml.offsetTop + elml.offsetHeight + h;
-            elm.style.left = elml.offsetLeft + elml.offsetWidth + w + 10;
+            if (elm2.tagName == "TABLE") {
+              h += elm2.offsetTop;
+              w += elm2.offsetLeft;
+            }
+          }
+          elm2 = elm2.parentNode;
         }
-        elm.style.height = elml.style.height;
-        elm.style.visibility = "visible";
+        elm.style.top = elml.offsetTop + elml.offsetHeight + h;
+        elm.style.left = elml.offsetLeft + elml.offsetWidth + w + 10;
+      }
+      elm.style.height = elml.style.height;
+      elm.style.visibility = "visible";
     } else
-    if (document.all) {
+      if (document.all) {
         var elm = document.all["tooltip"];
         elm.innerHTML = format(tip[num]);
         elm.style.top = elml.offsetTop + elml.offsetHeight;
         elm.style.left = elml.offsetLeft + elml.offsetWidth + 10;
         elm.style.height = elml.style.height;
         elm.style.visibility = "visible";
-    }
+      }
 }
 /** Formats the tooltip for display. */
 function format(st) {
-    var str = new String(st);
-    str = str.replace("&lt;", "<").replace("&gt;", ">");
-    return str.replace("!@", "&lt;").replace("@!", "&gt;");
+  var str = new String(st);
+  str = str.replace("&lt;", "<").replace("&gt;", ">");
+  return str.replace("!@", "&lt;").replace("@!", "&gt;");
 }
 /** Hides the tooltip. */
 function hidetip() {
-    if (is_opera)
-        return;
-    if (document.layers) // Netscape 4.0+
-        document.tooltip.visibility = "hidden"
-    else
+  if (is_opera)
+    return;
+  if (document.layers) // Netscape 4.0+
+    document.tooltip.visibility = "hidden";
+  else
     if (document.getElementById) { // Netscape 6.0+ and Internet Explorer 5.0+
-        var elm = document.getElementById("tooltip");
-        elm.style.visibility = "hidden";
+      var elm = document.getElementById("tooltip");
+      elm.style.visibility = "hidden";
     } else
-    if (document.all) {
+      if (document.all) {
         var elm = document.all["tooltip"];
         elm.style.visibility = "hidden";
-    }
+      }
 }
 /** Helper function for document scripts. */
 function checkParms(form, func) {
-    var elts = form.getElementsByTagName('input');
-    for (var i = 0; i < elts.length; ++i) {
-    	switch (elts[i].type) {
-    	    case "radio":
-                if (elts[i].checked)
-                    eval(func + "_" + elts[i].name + "('" + elts[i].value + "')");
-                break;
-    	    case "checkbox":
-                if (elts[i].checked)
-                    eval(func + "_" + elts[i].name + "('" + elts[i].value + "')");
-                break;
-    	    case "text":
-                eval(func + "_" + elts[i].name + "('" + elts[i].value + "')");
-                break;
-    	}
+  var elts = form.getElementsByTagName('input');
+  for (var i = 0; i < elts.length; ++i) {
+    switch (elts[i].type) {
+    case "radio":
+      if (elts[i].checked)
+        eval(func + "_" + elts[i].name + "('" + elts[i].value + "')");
+      break;
+    case "checkbox":
+      if (elts[i].checked)
+        eval(func + "_" + elts[i].name + "('" + elts[i].value + "')");
+      break;
+    case "text":
+      eval(func + "_" + elts[i].name + "('" + elts[i].value + "')");
+      break;
     }
-    elts = form.getElementsByTagName('select');
-    for (var i = 0; i < elts.length; ++i) {
-    	var val = elts[i].options[elts[i].selectedIndex].value;
-    	eval(func + "_" + elts[i].name + "('" + val + "')");
-    }
+  }
+  elts = form.getElementsByTagName('select');
+  for (var i = 0; i < elts.length; ++i) {
+    var val = elts[i].options[elts[i].selectedIndex].value;
+    eval(func + "_" + elts[i].name + "('" + val + "')");
+  }
 }
