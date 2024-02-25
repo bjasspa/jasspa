@@ -756,23 +756,31 @@ waitForEvent(int mode)
     printf("WAIT: %d\n",__LINE__);
 #if MEOPT_IPIPES
         ipipeEvent = 0 ;
-        ipipe = ipipes ;
+    printf("WAIT: %d %lx\n",__LINE__,(size_t)ipipes);
+        ipipe = ipipes;
+    printf("WAIT: %d %lx\n",__LINE__,(size_t)ipipe);
         while(ipipe != NULL)
         {
+    printf("WAIT: %d %lx\n",__LINE__,(size_t)ipipe);
             pp = ipipe->next ;
+    printf("WAIT: %d %lx\n",__LINE__,(size_t)pp);
             if(ipipe->pid < 0)
             {
+    printf("WAIT: %d\n",__LINE__);
                 ipipeRead(ipipe) ;
                 ipipeEvent = 1 ;
             }
             else
             {
+    printf("WAIT: %d\n",__LINE__);
                 FD_SET(ipipe->rfd, &select_set);
                 if(ipipe->rfd > pfd)
                     pfd = ipipe->rfd ;
             }
+    printf("WAIT: %d\n",__LINE__);
             ipipe = pp ;
         }
+    printf("WAIT: %d\n",__LINE__);
         if(ipipeEvent && mode)
             return ;
 #endif

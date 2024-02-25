@@ -1921,11 +1921,16 @@ missing_arg:
         mainbp->histNo = -1 ;
     }
     printf("HERE: %d\n",__LINE__);
+    printf("HERE: %d %lx\n",__LINE__,(size_t)ipipes);
 #if MEOPT_COLOR
 #if MEOPT_CLIENTSERVER
     /* also initialize the client server color scheme */
     if((ipipes != NULL) && (ipipes->pid == 0))
+    {
+    printf("HERE: %d %lx\n",__LINE__,(size_t)ipipes);
+    printf("HERE: %d %lx\n",__LINE__,(size_t)(ipipes->bp));
         ipipes->bp->scheme = globScheme;
+    }
 #endif
 #endif
     printf("HERE: %d\n",__LINE__);
