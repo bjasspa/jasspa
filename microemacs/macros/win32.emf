@@ -38,7 +38,7 @@
   set-variable #l1 &reg &spr "/history/%s/font-weight" $platform "0"
   set-variable #l2 &reg &spr "/history/%s/font-width" $platform "0"
   set-variable #l3 &reg &spr "/history/%s/font-depth" $platform "0"
-  1 change-font .change-font.type #l0 #l1 #l2 #l3
+  !force 1 change-font .change-font.type #l0 #l1 #l2 #l3
   set-variable .change-font.ofnt $result
   define-macro change-font-size
     !if &not @#
