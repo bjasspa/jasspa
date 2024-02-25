@@ -139,6 +139,7 @@ meInit(meUByte *bname)
 {
     meBuffer *bp;
     
+    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     if (TTstart() == meFALSE)             /* Started ?? */
         meExit(1) ;
     

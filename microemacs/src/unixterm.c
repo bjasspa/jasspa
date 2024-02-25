@@ -3584,6 +3584,7 @@ XTERMstart(void)
     meUInt       ww, hh  ;
     char        *ss ;
     
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
 #ifdef _ME_CONSOLE
     /* Copy the Terminal I/O. We may spawn a terminal in the window later and
      * the termio structure must be initialised. The structure may be
@@ -3594,6 +3595,7 @@ XTERMstart(void)
 #endif
 #endif
     
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     /* Configure X-Windows */
     XSetLocaleModifiers ("");
     {
@@ -3606,35 +3608,50 @@ XTERMstart(void)
             exit(1) ;
         }
     }
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     meStdin = ConnectionNumber(mecm.xdisplay);
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     xscreen = DefaultScreen(mecm.xdisplay);
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     xcmap   = DefaultColormap(mecm.xdisplay,xscreen);
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     sizeHints.flags = PSize | PResizeInc | PMinSize | PBaseSize;
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     sizeHints.max_height = DisplayHeight(mecm.xdisplay,xscreen);
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     sizeHints.max_width = DisplayWidth(mecm.xdisplay,xscreen);
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     XrmInitialize ();
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     xdefs = XResourceManagerString(mecm.xdisplay);
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     if (xdefs != NULL)
         rdb = XrmGetStringDatabase (xdefs);
     else
     {
         char buff[1048] ;
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
         meStrcpy(buff,(homedir != NULL) ? homedir:(meUByte *)"./");
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
         meStrcat(buff,".Xdefaults");
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
         rdb = XrmGetFileDatabase(buff);
     }
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     if(XrmGetResource(rdb,"MicroEmacs.font","MicroEmacs.Font",&retType,&retVal) &&
        !strcmp(retType,"String"))
         ss = retVal.addr ;
     else
         ss = NULL ;
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     /* Load the font into the system */
     if((XTERMsetFont(5,ss) == meFALSE) && ((ss == NULL) || (XTERMsetFont(5,NULL) == meFALSE)))
         return meFALSE ;
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     /* Set the default geometry, then look for an override */
     ww = 80;
@@ -3651,17 +3668,20 @@ XTERMstart(void)
         ww = (meUInt) tw;
         hh = (meUInt) th;
     }
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     if((sizeHints.base_width = ww*mecm.fwidth) > ((meUInt) sizeHints.max_width))
     {
         ww = sizeHints.max_width / mecm.fwidth;
         sizeHints.base_width = ww*mecm.fwidth;
     }
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     if((sizeHints.base_height = hh*mecm.fdepth) > ((meUInt) sizeHints.max_height))
     {
         hh = sizeHints.max_height / mecm.fdepth;
         sizeHints.base_height = hh*mecm.fdepth;
     }
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     TTdepthDefault = hh;
     TTwidthDefault = ww;
     
@@ -3672,6 +3692,7 @@ XTERMstart(void)
     TTdefaultPosX = xx ;
     TTdefaultPosY = yy ;
     
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     /* Set up the  protocol  defaults  required. We must do this before we map
      * the window. */
     {
@@ -3698,24 +3719,30 @@ XTERMstart(void)
         TTinitClipboard();
 #endif
     }
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     /* Initialise XDND */
     xdndInitialize(mecm.xdisplay);
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     if(XrmGetResource(rdb,"MicroEmacs.name","MicroEmacs.Name",&retType,&retVal) &&
        !strcmp(retType,"String") &&
        ((ss = meStrdup((meUByte *) retVal.addr)) != NULL))
         meName = ss ;
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     if(XrmGetResource(rdb,"MicroEmacs.iconname","MicroEmacs.IconName",&retType,&retVal) &&
        !strcmp(retType,"String") && ((ss = meStrdup((meUByte *) retVal.addr)) != NULL))
         meIconName = ss ;
     
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     /* Free off the resource database */
     XrmDestroyDatabase(rdb) ;
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     if((firstFrameData = XTERMcreateWindow(TTwidthDefault,TTdepthDefault)) == NULL)
         return meFALSE ;
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
 #ifdef _ME_CONSOLE
 #ifdef _TCAP
@@ -3730,6 +3757,7 @@ XTERMstart(void)
     tcaptab[TCAPcup].code.str = "" ;
 #endif /* _TCAP */
 #endif /* _ME_CONSOLE */
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     return meTRUE ;
 }
