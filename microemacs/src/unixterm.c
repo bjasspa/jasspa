@@ -328,8 +328,8 @@ int meStdin ;
 #define meATOM_UTF8_STRING      8
 #define meATOM_STRING           9
 #define meTARGET_ATOM_COUNT     3
-static int TTdefaultPosX, TTdefaultPosY ;
-static Atom meAtoms[meATOM_STRING]={0};
+static int TTdefaultPosX, TTdefaultPosY;
+static Atom meAtoms[meATOM_STRING+1]={0};
 static Atom clipboardA=0;
 static Atom clipboardB=0;
 char *meName=ME_FULLNAME;
@@ -725,11 +725,9 @@ waitForEvent(int mode)
     fd_set select_set;
     int pfd ;
     
-    printf("WAIT: %d\n",__LINE__);
     /* While no input keys and ipipe or alarm signals. */
     for(;;)
     {
-    printf("WAIT: %d\n",__LINE__);
         if(TTahead() ||
 #ifdef _CLIPBRD
            (clipState & CLIP_RECEIVED) ||
@@ -744,53 +742,37 @@ waitForEvent(int mode)
 #endif
            (sgarbf == meTRUE))
             break ;
-    printf("WAIT: %d\n",__LINE__);
         
         TTdieTest() ;
-    printf("WAIT: %d\n",__LINE__);
         FD_ZERO(&select_set);
-    printf("WAIT: %d\n",__LINE__);
         FD_SET(meStdin, &select_set);
-    printf("WAIT: %d\n",__LINE__);
         pfd = meStdin ;
-    printf("WAIT: %d\n",__LINE__);
 #if MEOPT_IPIPES
         ipipeEvent = 0 ;
-    printf("WAIT: %d %lx\n",__LINE__,(size_t)ipipes);
         ipipe = ipipes;
-    printf("WAIT: %d %lx\n",__LINE__,(size_t)ipipe);
         while(ipipe != NULL)
         {
-    printf("WAIT: %d %lx\n",__LINE__,(size_t)ipipe);
             pp = ipipe->next ;
-    printf("WAIT: %d %lx\n",__LINE__,(size_t)pp);
             if(ipipe->pid < 0)
             {
-    printf("WAIT: %d\n",__LINE__);
                 ipipeRead(ipipe) ;
                 ipipeEvent = 1 ;
             }
             else
             {
-    printf("WAIT: %d\n",__LINE__);
                 FD_SET(ipipe->rfd, &select_set);
                 if(ipipe->rfd > pfd)
                     pfd = ipipe->rfd ;
             }
-    printf("WAIT: %d\n",__LINE__);
             ipipe = pp ;
         }
-    printf("WAIT: %d\n",__LINE__);
         if(ipipeEvent && mode)
             return ;
 #endif
-    printf("WAIT: %d\n",__LINE__);
         pfd++ ;
-    printf("WAIT: %d\n",__LINE__);
         if(select(pfd,&select_set,NULL,NULL,NULL) >= 0)
         {
             int ii;
-    printf("WAIT: %d\n",__LINE__);
 #if MEOPT_IPIPES
             ipipe = ipipes ;
             while(ipipe != NULL)
@@ -809,7 +791,6 @@ waitForEvent(int mode)
             if(ipipeEvent && mode)
                 return ;
 #endif
-    printf("WAIT: %d\n",__LINE__);
             if(FD_ISSET(meStdin,&select_set))
             {
                 /* this is a check to see if we've lost stdin,
@@ -817,7 +798,6 @@ waitForEvent(int mode)
                  * This is common when the X-window is destroyed using
                  * the window manager.
                  */
-    printf("WAIT: %d\n",__LINE__);
 #ifdef _USEPOLL
                 struct pollfd pfds [1];
                 
@@ -844,7 +824,6 @@ waitForEvent(int mode)
                 ii = ioctl(meStdin, FIORDCHK,0);
 #endif /* FIONREAD */
 #endif /* _USEPOLL */
-    printf("WAIT: %d\n",__LINE__);
                 if(!ii)
                 {
                     /* BEGIN: 2013-05-26 */
@@ -883,14 +862,11 @@ waitForEvent(int mode)
                 else
                     lost = 0 ;
             }
-    printf("WAIT: %d\n",__LINE__);
         }
         else
             /* Premeture exit - probably a signal for an alarm */
             break;
-    printf("WAIT: %d\n",__LINE__);
     }
-    printf("WAIT: %d\n",__LINE__);
 }
 
 #ifdef _ME_CONSOLE
@@ -3584,7 +3560,6 @@ XTERMstart(void)
     meUInt       ww, hh  ;
     char        *ss ;
     
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
 #ifdef _ME_CONSOLE
     /* Copy the Terminal I/O. We may spawn a terminal in the window later and
      * the termio structure must be initialised. The structure may be
@@ -3595,7 +3570,6 @@ XTERMstart(void)
 #endif
 #endif
     
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     /* Configure X-Windows */
     XSetLocaleModifiers ("");
     {
@@ -3608,50 +3582,35 @@ XTERMstart(void)
             exit(1) ;
         }
     }
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     meStdin = ConnectionNumber(mecm.xdisplay);
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     xscreen = DefaultScreen(mecm.xdisplay);
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     xcmap   = DefaultColormap(mecm.xdisplay,xscreen);
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     sizeHints.flags = PSize | PResizeInc | PMinSize | PBaseSize;
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     sizeHints.max_height = DisplayHeight(mecm.xdisplay,xscreen);
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     sizeHints.max_width = DisplayWidth(mecm.xdisplay,xscreen);
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     XrmInitialize ();
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     xdefs = XResourceManagerString(mecm.xdisplay);
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     if (xdefs != NULL)
         rdb = XrmGetStringDatabase (xdefs);
     else
     {
         char buff[1048] ;
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
         meStrcpy(buff,(homedir != NULL) ? homedir:(meUByte *)"./");
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
         meStrcat(buff,".Xdefaults");
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
         rdb = XrmGetFileDatabase(buff);
     }
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     if(XrmGetResource(rdb,"MicroEmacs.font","MicroEmacs.Font",&retType,&retVal) &&
        !strcmp(retType,"String"))
         ss = retVal.addr ;
     else
         ss = NULL ;
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     /* Load the font into the system */
     if((XTERMsetFont(5,ss) == meFALSE) && ((ss == NULL) || (XTERMsetFont(5,NULL) == meFALSE)))
         return meFALSE ;
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     /* Set the default geometry, then look for an override */
     ww = 80;
@@ -3668,20 +3627,17 @@ XTERMstart(void)
         ww = (meUInt) tw;
         hh = (meUInt) th;
     }
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     if((sizeHints.base_width = ww*mecm.fwidth) > ((meUInt) sizeHints.max_width))
     {
         ww = sizeHints.max_width / mecm.fwidth;
         sizeHints.base_width = ww*mecm.fwidth;
     }
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     if((sizeHints.base_height = hh*mecm.fdepth) > ((meUInt) sizeHints.max_height))
     {
         hh = sizeHints.max_height / mecm.fdepth;
         sizeHints.base_height = hh*mecm.fdepth;
     }
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     TTdepthDefault = hh;
     TTwidthDefault = ww;
     
@@ -3692,9 +3648,6 @@ XTERMstart(void)
     TTdefaultPosX = xx ;
     TTdefaultPosY = yy ;
     
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
-    printf("HERE: %d at: %lx\n",__LINE__,(size_t)&(meAtoms[meATOM_STRING]));
-    printf("HERE: %d at: %lx\n",__LINE__,XA_STRING);
     /* Set up the  protocol  defaults  required. We must do this before we map
      * the window. */
     {
@@ -3714,41 +3667,31 @@ XTERMstart(void)
             "UTF8_STRING",
         };
         int ii;
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
         for(ii=0 ; ii<meATOM_STRING ; ii++)
             meAtoms[ii] = XInternAtom(mecm.xdisplay,meAtomNames[ii],meFALSE);
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
         meAtoms[ii] = XA_STRING;
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
 #ifdef _CLIPBRD
         TTinitClipboard();
 #endif
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     }
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     /* Initialise XDND */
     xdndInitialize(mecm.xdisplay);
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     if(XrmGetResource(rdb,"MicroEmacs.name","MicroEmacs.Name",&retType,&retVal) &&
        !strcmp(retType,"String") &&
        ((ss = meStrdup((meUByte *) retVal.addr)) != NULL))
         meName = ss ;
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     if(XrmGetResource(rdb,"MicroEmacs.iconname","MicroEmacs.IconName",&retType,&retVal) &&
        !strcmp(retType,"String") && ((ss = meStrdup((meUByte *) retVal.addr)) != NULL))
         meIconName = ss ;
     
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     /* Free off the resource database */
     XrmDestroyDatabase(rdb) ;
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     if((firstFrameData = XTERMcreateWindow(TTwidthDefault,TTdepthDefault)) == NULL)
         return meFALSE ;
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
 #ifdef _ME_CONSOLE
 #ifdef _TCAP
@@ -3763,7 +3706,6 @@ XTERMstart(void)
     tcaptab[TCAPcup].code.str = "" ;
 #endif /* _TCAP */
 #endif /* _ME_CONSOLE */
-    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     return meTRUE ;
 }
@@ -4205,17 +4147,13 @@ meFrameSetWindowTitle(meFrame *frame, meUByte *str)
 void
 TTinitClipboard(void)
 {
-    printf("ICLP: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     if(meSystemCfg & meSYSTEM_NOCLIPBRD)
         clipboardA = clipboardB = 0;
     else
     {
-    printf("ICLP: %d ip: %lx\n",__LINE__,(size_t)ipipes);
         clipboardA = (meSystemCfg & meSYSTEM_CLP_GPRMY) ? XA_PRIMARY:meAtoms[meATOM_CLIPBOARD];
-    printf("ICLP: %d ip: %lx\n",__LINE__,(size_t)ipipes);
         clipboardB = (meSystemCfg & meSYSTEM_CLP_SBOTH) ? ((meSystemCfg & meSYSTEM_CLP_GPRMY) ? meAtoms[meATOM_CLIPBOARD]:XA_PRIMARY):0;
     }
-    printf("ICLP: %d ip: %lx\n",__LINE__,(size_t)ipipes);
 }
 
 void

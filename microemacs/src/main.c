@@ -139,48 +139,35 @@ meInit(meUByte *bname)
 {
     meBuffer *bp;
     
-    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     if (TTstart() == meFALSE)             /* Started ?? */
         meExit(1) ;
     
     /* add 2 to hilBlockS to allow for a double trunc-scheme change
      * Note: ME is not yet 'initialised' so any meMalloc failure will
      * lead to exit in mlwrite so we don't need to check */
-    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     styleTable = meMalloc(2*meSCHEME_STYLES*sizeof(meStyle)) ;
     hilBlock = meMalloc((hilBlockS+2)*sizeof(meSchemeSet)) ;
     disLineBuff = meMalloc((disLineSize+32)*sizeof(meUByte)) ;
     
-    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     memcpy(styleTable,defaultScheme,2*meSCHEME_STYLES*sizeof(meStyle));
-    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     /* Set the fore and back colours */
     TTaddColor(meCOLOR_FDEFAULT,255,255,255) ;
-    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     TTaddColor(meCOLOR_BDEFAULT,0,0,0) ;
-    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     /* Create the frame - make sure that we do not access the screen during
      * the re-size */
-    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     screenUpdateDisabledCount++;
-    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     if((frameCur=meFrameInit(NULL)) == NULL)
         meExit(1) ;
-    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
 #if MEOPT_FRAME
     frameList = frameCur ;
 #endif
-    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     screenUpdateDisabledCount--;
-    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     if(((bp = bfind(bname,BFND_CREAT)) == NULL) ||
        (meFrameInitWindow(frameCur,bp) <= 0))
         meExit(1);
-    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     alarmState |= meALARM_INITIALIZED ;
-    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
 }
 
 /*
@@ -1503,16 +1490,11 @@ mesetup(int argc, char *argv[])
     if((tfsdev = tfs_mount((char *)meProgName,TFS_CHECK_HEAD)) != NULL)
         argc = mesetupInsertTsfResource(argc,&argv) ;
 #endif
-    printf("HERE: %d sl: %lx\n",__LINE__,(size_t)&meSigLevel);
-    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)&ipipes);
-    printf("HERE: %d nip:%lx\n",__LINE__,(size_t)&noIpipes);
-    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     /* scan through the command line and get all global options */
     carg = rarg = 1 ;
     for( ; carg < argc; ++carg)
     {
-    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
         /* if its a switch, process it */
         if (argv[carg][0] == '-')
         {
@@ -1744,10 +1726,8 @@ missing_arg:
             noFiles = 1 ;
         }
     }
-    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     /* Set up the path information. */
     meSetupPathsAndUser() ;
-    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
 #if MEOPT_CLIENTSERVER
     if(userClientServer && TTconnectClientServer())
@@ -1862,11 +1842,9 @@ missing_arg:
         meExit(1) ;
     }
 #endif
-    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     meInit(BmainN);           /* Buffers, windows.    */
     
-    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
 #ifdef _DOS
     if(dumpScreen)
     {
@@ -1894,7 +1872,6 @@ missing_arg:
      */
     if(sigcatch)
     {
-    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
 #ifdef _POSIX_SIGNALS
         struct sigaction sa ;
         
@@ -1915,16 +1892,12 @@ missing_arg:
 #endif /* _POSIX_SIGNALS */
     }
 #endif /* _UNIX */
-    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     mlerase(0);                /* Delete command line */
-    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     /* disable screen updates to reduce the flickering and startup time */
     screenUpdateDisabledCount = -9999 ;
-    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     /* run me.emf unless an @... arg was given in which case run that */
     execFile(file,meTRUE,noFiles) ;
-    printf("HERE: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     /* initalize *scratch* colors & modes to global defaults & check for a hook */
     if((mainbp=bfind(BmainN,0)) != NULL)
@@ -1940,25 +1913,18 @@ missing_arg:
          * buffer is preferable */
         mainbp->histNo = -1 ;
     }
-    printf("HERE: %d %lx\n",__LINE__,(size_t)ipipes);
 #if MEOPT_COLOR
 #if MEOPT_CLIENTSERVER
     /* also initialize the client server color scheme */
     if((ipipes != NULL) && (ipipes->pid == 0))
-    {
-    printf("HERE: %d %lx\n",__LINE__,(size_t)ipipes);
-    printf("HERE: %d %lx\n",__LINE__,(size_t)(ipipes->bp));
         ipipes->bp->scheme = globScheme;
-    }
 #endif
 #endif
-    printf("HERE: %d\n",__LINE__);
     screenUpdateDisabledCount = 0 ;
 #ifdef _CLIPBRD
     /* allow interaction with the clipboard now that me has initialized */
     clipState &= ~CLIP_DISABLED ;
 #endif
-    printf("HERE: %d\n",__LINE__);
     
     {
         meUByte  *searchStr=NULL, *cryptStr=NULL ;
@@ -1974,7 +1940,6 @@ missing_arg:
         /* scan through the command line and get the files to edit */
         for(carg=1 ; carg < rarg ; carg++)
         {
-    printf("HERE: %d\n",__LINE__);
             /* if its a switch, process it */
             if(argv[carg][0] == '-')
             {
@@ -2088,7 +2053,6 @@ handle_stdin:
         }
         bufHistNo = obufHistNo + rarg ;
     }
-    printf("HERE: %d\n",__LINE__);
     
     if(noFiles > 0)
     {
@@ -2104,7 +2068,6 @@ handle_stdin:
             }
         }
     }
-    printf("HERE: %d\n",__LINE__);
     
     /* setup to process commands */
     lastflag = 0;                       /* Fake last flags.     */
@@ -2113,13 +2076,10 @@ handle_stdin:
      * startup which can screw things up
      */
     sgarbf = meTRUE;			 /* Erase-page clears */
-    printf("HERE: %d\n",__LINE__);
     
     carg = decode_fncname((meUByte *)"start-up",1) ;
-    printf("HERE: %d\n",__LINE__);
     if(carg >= 0)
         execFunc(carg,meFALSE,1);
-    printf("HERE: %d\n",__LINE__);
 #if MEOPT_EXTENDED
     if(alarmState & meALARM_PIPED)
     {
@@ -2129,7 +2089,6 @@ handle_stdin:
         exitEmacs(1,0x30);
     }
 #endif
-    printf("HERE: %d\n",__LINE__);
 }
 
 #ifndef NDEBUG

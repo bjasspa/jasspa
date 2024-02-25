@@ -72,7 +72,6 @@ else
 BOUTDIR  = $(OUTDIRR)
 CCFLAGS  = $(CCFLAGSR)
 LDFLAGS  = $(LDFLAGSR)
-STRIP    = - echo No strip - debugging crash 
 endif
 
 ifeq "$(BCOR)" "ne"
