@@ -145,29 +145,41 @@ meInit(meUByte *bname)
     /* add 2 to hilBlockS to allow for a double trunc-scheme change
      * Note: ME is not yet 'initialised' so any meMalloc failure will
      * lead to exit in mlwrite so we don't need to check */
+    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     styleTable = meMalloc(2*meSCHEME_STYLES*sizeof(meStyle)) ;
     hilBlock = meMalloc((hilBlockS+2)*sizeof(meSchemeSet)) ;
     disLineBuff = meMalloc((disLineSize+32)*sizeof(meUByte)) ;
     
+    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     memcpy(styleTable,defaultScheme,2*meSCHEME_STYLES*sizeof(meStyle));
+    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     /* Set the fore and back colours */
     TTaddColor(meCOLOR_FDEFAULT,255,255,255) ;
+    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     TTaddColor(meCOLOR_BDEFAULT,0,0,0) ;
+    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     /* Create the frame - make sure that we do not access the screen during
      * the re-size */
+    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     screenUpdateDisabledCount++;
+    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     if((frameCur=meFrameInit(NULL)) == NULL)
         meExit(1) ;
+    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
 #if MEOPT_FRAME
     frameList = frameCur ;
 #endif
+    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     screenUpdateDisabledCount--;
+    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
     if(((bp = bfind(bname,BFND_CREAT)) == NULL) ||
        (meFrameInitWindow(frameCur,bp) <= 0))
         meExit(1);
+    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     alarmState |= meALARM_INITIALIZED ;
+    printf("INIT: %d ip: %lx\n",__LINE__,(size_t)ipipes);
 }
 
 /*
