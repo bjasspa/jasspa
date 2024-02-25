@@ -26,6 +26,7 @@ jobs:
     - name: Compile mew
       run: |
         ./build.sh -t w
+        ./build.sh -d -t w
       working-directory: ./microemacs/src
 
     - name: Generate docs
@@ -41,6 +42,7 @@ jobs:
         cd ./microemacs/src
         cp ./.linux32gcc-release-mec/mec ../../binaries-linux32/
         cp ./.linux32gcc-release-mew/mew ../../binaries-linux32/
+        cp ./.linux32gcc-debug-mew/mew ../../binaries-linux32/mewd
         cd ../../binaries-linux32/
         zip linux32-bin mec mew
         rm mec mew
