@@ -3693,6 +3693,8 @@ XTERMstart(void)
     TTdefaultPosY = yy ;
     
     printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
+    printf("HERE: %d at: %lx\n",__LINE__,(size_t)&(meAtoms[meATOM_STRING]));
+    printf("HERE: %d at: %lx\n",__LINE__,XA_STRING);
     /* Set up the  protocol  defaults  required. We must do this before we map
      * the window. */
     {
@@ -3712,12 +3714,16 @@ XTERMstart(void)
             "UTF8_STRING",
         };
         int ii;
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
         for(ii=0 ; ii<meATOM_STRING ; ii++)
             meAtoms[ii] = XInternAtom(mecm.xdisplay,meAtomNames[ii],meFALSE);
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
         meAtoms[ii] = XA_STRING;
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
 #ifdef _CLIPBRD
         TTinitClipboard();
 #endif
+    printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     }
     printf("XTRM: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     
@@ -4199,13 +4205,17 @@ meFrameSetWindowTitle(meFrame *frame, meUByte *str)
 void
 TTinitClipboard(void)
 {
+    printf("ICLP: %d ip: %lx\n",__LINE__,(size_t)ipipes);
     if(meSystemCfg & meSYSTEM_NOCLIPBRD)
         clipboardA = clipboardB = 0;
     else
     {
+    printf("ICLP: %d ip: %lx\n",__LINE__,(size_t)ipipes);
         clipboardA = (meSystemCfg & meSYSTEM_CLP_GPRMY) ? XA_PRIMARY:meAtoms[meATOM_CLIPBOARD];
+    printf("ICLP: %d ip: %lx\n",__LINE__,(size_t)ipipes);
         clipboardB = (meSystemCfg & meSYSTEM_CLP_SBOTH) ? ((meSystemCfg & meSYSTEM_CLP_GPRMY) ? meAtoms[meATOM_CLIPBOARD]:XA_PRIMARY):0;
     }
+    printf("ICLP: %d ip: %lx\n",__LINE__,(size_t)ipipes);
 }
 
 void
