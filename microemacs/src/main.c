@@ -1843,8 +1843,10 @@ missing_arg:
     }
 #endif
     
+    printf("HERE: %d\n",__LINE__);
     meInit(BmainN);           /* Buffers, windows.    */
     
+    printf("HERE: %d\n",__LINE__);
 #ifdef _DOS
     if(dumpScreen)
     {
@@ -1872,6 +1874,7 @@ missing_arg:
      */
     if(sigcatch)
     {
+    printf("HERE: %d\n",__LINE__);
 #ifdef _POSIX_SIGNALS
         struct sigaction sa ;
         
@@ -1892,12 +1895,16 @@ missing_arg:
 #endif /* _POSIX_SIGNALS */
     }
 #endif /* _UNIX */
+    printf("HERE: %d\n",__LINE__);
     
     mlerase(0);                /* Delete command line */
+    printf("HERE: %d\n",__LINE__);
     /* disable screen updates to reduce the flickering and startup time */
     screenUpdateDisabledCount = -9999 ;
+    printf("HERE: %d\n",__LINE__);
     /* run me.emf unless an @... arg was given in which case run that */
     execFile(file,meTRUE,noFiles) ;
+    printf("HERE: %d\n",__LINE__);
     
     /* initalize *scratch* colors & modes to global defaults & check for a hook */
     if((mainbp=bfind(BmainN,0)) != NULL)
@@ -1913,6 +1920,7 @@ missing_arg:
          * buffer is preferable */
         mainbp->histNo = -1 ;
     }
+    printf("HERE: %d\n",__LINE__);
 #if MEOPT_COLOR
 #if MEOPT_CLIENTSERVER
     /* also initialize the client server color scheme */
