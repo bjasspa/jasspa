@@ -1928,11 +1928,13 @@ missing_arg:
         ipipes->bp->scheme = globScheme;
 #endif
 #endif
+    printf("HERE: %d\n",__LINE__);
     screenUpdateDisabledCount = 0 ;
 #ifdef _CLIPBRD
     /* allow interaction with the clipboard now that me has initialized */
     clipState &= ~CLIP_DISABLED ;
 #endif
+    printf("HERE: %d\n",__LINE__);
     
     {
         meUByte  *searchStr=NULL, *cryptStr=NULL ;
@@ -1948,6 +1950,7 @@ missing_arg:
         /* scan through the command line and get the files to edit */
         for(carg=1 ; carg < rarg ; carg++)
         {
+    printf("HERE: %d\n",__LINE__);
             /* if its a switch, process it */
             if(argv[carg][0] == '-')
             {
@@ -2061,6 +2064,7 @@ handle_stdin:
         }
         bufHistNo = obufHistNo + rarg ;
     }
+    printf("HERE: %d\n",__LINE__);
     
     if(noFiles > 0)
     {
@@ -2076,6 +2080,7 @@ handle_stdin:
             }
         }
     }
+    printf("HERE: %d\n",__LINE__);
     
     /* setup to process commands */
     lastflag = 0;                       /* Fake last flags.     */
@@ -2084,10 +2089,13 @@ handle_stdin:
      * startup which can screw things up
      */
     sgarbf = meTRUE;			 /* Erase-page clears */
+    printf("HERE: %d\n",__LINE__);
     
     carg = decode_fncname((meUByte *)"start-up",1) ;
+    printf("HERE: %d\n",__LINE__);
     if(carg >= 0)
         execFunc(carg,meFALSE,1);
+    printf("HERE: %d\n",__LINE__);
 #if MEOPT_EXTENDED
     if(alarmState & meALARM_PIPED)
     {
@@ -2097,6 +2105,7 @@ handle_stdin:
         exitEmacs(1,0x30);
     }
 #endif
+    printf("HERE: %d\n",__LINE__);
 }
 
 #ifndef NDEBUG

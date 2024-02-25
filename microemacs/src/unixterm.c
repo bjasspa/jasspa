@@ -725,9 +725,11 @@ waitForEvent(int mode)
     fd_set select_set;
     int pfd ;
     
+    printf("WAIT: %d\n",__LINE__);
     /* While no input keys and ipipe or alarm signals. */
     for(;;)
     {
+    printf("WAIT: %d\n",__LINE__);
         if(TTahead() ||
 #ifdef _CLIPBRD
            (clipState & CLIP_RECEIVED) ||
@@ -742,11 +744,16 @@ waitForEvent(int mode)
 #endif
            (sgarbf == meTRUE))
             break ;
+    printf("WAIT: %d\n",__LINE__);
         
         TTdieTest() ;
+    printf("WAIT: %d\n",__LINE__);
         FD_ZERO(&select_set);
+    printf("WAIT: %d\n",__LINE__);
         FD_SET(meStdin, &select_set);
+    printf("WAIT: %d\n",__LINE__);
         pfd = meStdin ;
+    printf("WAIT: %d\n",__LINE__);
 #if MEOPT_IPIPES
         ipipeEvent = 0 ;
         ipipe = ipipes ;
@@ -769,10 +776,13 @@ waitForEvent(int mode)
         if(ipipeEvent && mode)
             return ;
 #endif
+    printf("WAIT: %d\n",__LINE__);
         pfd++ ;
+    printf("WAIT: %d\n",__LINE__);
         if(select(pfd,&select_set,NULL,NULL,NULL) >= 0)
         {
             int ii;
+    printf("WAIT: %d\n",__LINE__);
 #if MEOPT_IPIPES
             ipipe = ipipes ;
             while(ipipe != NULL)
@@ -791,6 +801,7 @@ waitForEvent(int mode)
             if(ipipeEvent && mode)
                 return ;
 #endif
+    printf("WAIT: %d\n",__LINE__);
             if(FD_ISSET(meStdin,&select_set))
             {
                 /* this is a check to see if we've lost stdin,
@@ -798,6 +809,7 @@ waitForEvent(int mode)
                  * This is common when the X-window is destroyed using
                  * the window manager.
                  */
+    printf("WAIT: %d\n",__LINE__);
 #ifdef _USEPOLL
                 struct pollfd pfds [1];
                 
@@ -824,6 +836,7 @@ waitForEvent(int mode)
                 ii = ioctl(meStdin, FIORDCHK,0);
 #endif /* FIONREAD */
 #endif /* _USEPOLL */
+    printf("WAIT: %d\n",__LINE__);
                 if(!ii)
                 {
                     /* BEGIN: 2013-05-26 */
@@ -862,11 +875,14 @@ waitForEvent(int mode)
                 else
                     lost = 0 ;
             }
+    printf("WAIT: %d\n",__LINE__);
         }
         else
             /* Premeture exit - probably a signal for an alarm */
             break;
+    printf("WAIT: %d\n",__LINE__);
     }
+    printf("WAIT: %d\n",__LINE__);
 }
 
 #ifdef _ME_CONSOLE
