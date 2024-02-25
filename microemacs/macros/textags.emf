@@ -23,6 +23,8 @@ set-variable %tag-option   ""
 set-variable %tag-file     "tags"
 set-variable %tag-filemask ":*.tex:*.bib:"
 set-variable %tag-ignore   ":SCCS/:CVS/:.svn/:"
+; set $auto-time to 0 to stop issues with any existing <file># files
+set-variable $auto-time 0
 
 set-variable #l0 0
 !while &exi &cat ".about.arg" #l0
