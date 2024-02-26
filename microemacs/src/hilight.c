@@ -2882,9 +2882,10 @@ indentLine(int *inComment)
         ind = meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
     else
     {
-        int jj, brace=0, contFlag=0, li, aind, lind, nind, plib=0;
+        int jj, brace=0, contFlag=0, li, aind, lind, nind;
         meUShort flgs;
-
+        meUByte plib=0;
+        
         aind = 0 ;
         for(;;)
         {
@@ -2944,7 +2945,7 @@ indentLine(int *inComment)
                     {
                         if(flgs == INDNEXTONWARD)
                             li += meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
-                        else if((flgs == INDCURONWARD) && (plib > 0))
+                        else if((flgs == INDCURONWARD) && plib)
                             li += meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
                         else if((flgs == INDSINGLE) &&
                                 ((ii == 0) || ((ii == 1) && ((ss-disLineBuff) >= blkp[0].column))))
