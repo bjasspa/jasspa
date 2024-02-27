@@ -2865,9 +2865,9 @@ indentLine(int *inComment)
 
     noColChng = hilightLine(vps,0) ;
     blkp = hilBlock + 1 ;
-    /* printf("Got %d colour changes\n",noColChng) ;*/
+    /* printf("Got %d colour changes\n",noColChng);*/
     /* for(ii=0 ; ii<noColChng ; ii++)*/
-    /*   printf("  Colour change %d is to 0x%x at column %d\n",ii,blkp[ii].scheme,blkp[ii].column) ;*/
+    /*   printf("  CColour change %d is to 0x%x at column %d\n",ii,blkp[ii].scheme,blkp[ii].column);*/
     ss = disLineBuff ;
     ss[blkp[noColChng-1].column] = '\0' ;
     while(*ss == ' ')
@@ -2944,9 +2944,15 @@ indentLine(int *inComment)
                     if((flgs = (fnoz & 0xff00)) != 0)
                     {
                         if(flgs == INDNEXTONWARD)
-                            li += meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
+                        {
+                            int kk = meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
+                            if(plib)
+                                aind += kk;
+                            else
+                                li += kk;
+                        }
                         else if((flgs == INDCURONWARD) && plib)
-                            li += meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
+                            aind += meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
                         else if((flgs == INDSINGLE) &&
                                 ((ii == 0) || ((ii == 1) && ((ss-disLineBuff) >= blkp[0].column))))
                             li -= meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
@@ -2977,9 +2983,8 @@ indentLine(int *inComment)
                         }
                     }
                 }
-                /* printf("  Colour change %d is to 0x%x at column %d, ind %d (%d)\n",ii,blkp[ii].scheme,blkp[ii].column,ind+li,plib);*/
+                /* printf("  PColour change %d is to 0x%x at column %d, ind %d (%d,%d)\n",ii,blkp[ii].scheme,blkp[ii].column,ind+li,plib,aind);*/
             }
-            ind += li ;
             if(brace < 0)
             {
                 if((contFlag == 0) && (meIndentGetFlags(indents[indent]) & HIGOTCONT))
@@ -2987,6 +2992,7 @@ indentLine(int *inComment)
                 nind = ind = 0 ;
                 continue ;
             }
+            ind += li ;
             if((contFlag & 0x03) == 0x02)
                 ind = lind ;
             else if(brace)

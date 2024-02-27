@@ -3447,7 +3447,7 @@ XTERMcreateWindow(meUShort width, meUShort depth)
     
     /* Set the class hint correctly - Thanks to Jeremy Cowgar */
     classHint = XAllocClassHint();
-    classHint->res_name = "microemacs";
+    classHint->res_name = "MicroEmacs";
     classHint->res_class = "MicroEmacs";
     XSetClassHint(mecm.xdisplay, frameData->xwindow, classHint);
     XFree(classHint);
