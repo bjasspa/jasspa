@@ -2810,15 +2810,17 @@ indent(int f, int n)
 int
 indentLine(int *inComment)
 {
+    meWindow *wp = frameCur->windowCur;
+    meBuffer *bp = wp->buffer;
     meSchemeSet *blkp;
-    meHilight **bhilights ;
-    meVideoLine vps[2] ;
-    meUShort noColChng, fnoz, ii ;
-    meUByte *ss, indent, lindent, bdisplayTab, bdisplayNewLine, bdisplaySpace ;
-    meLine *lp ;
-    int lb, ind, cind, coff ;
+    meHilight **bhilights;
+    meVideoLine vps[2];
+    meUShort noColChng, fnoz, ii;
+    meUByte *ss, indent, lindent, bdisplayTab, bdisplayNewLine, bdisplaySpace;
+    meLine *lp;
+    int lb, ind, cind, coff;
 
-    indent = frameCur->bufferCur->indent ;
+    indent = bp->indent ;
     if(meIndentGetFlags(indents[indent]) & HICMODE)
         return doCindent(indents[indent],inComment) ;
 
@@ -2840,9 +2842,9 @@ indentLine(int *inComment)
     if(meIndentGetFlags(indents[indent]) & HILOOKBSCH)
     {
         lindent = meIndentGetLookBackScheme(indents[indent]) ;
-        lp = frameCur->windowCur->dotLine ;
+        lp = wp->dotLine ;
         lb = meHilightGetLookBackLines(indents[lindent]) ;
-        while((--lb >= 0) && ((lp = meLineGetPrev(lp)) != frameCur->bufferCur->baseLine))
+        while((--lb >= 0) && ((lp = meLineGetPrev(lp)) != bp->baseLine))
         {
             if((coff = indentLookBack(lp,lindent,0xffff)) >= 0)
             {
@@ -2853,11 +2855,11 @@ indentLine(int *inComment)
         }
     }
 
-    lp = frameCur->windowCur->dotLine ;
+    lp = wp->dotLine ;
     /* the flag is used only to set the current line, do the select hilighting
      * and flag the next line as changed if in a bracket, therefore init to
      * 0 and forget about */
-    vps[0].wind = frameCur->windowCur ;
+    vps[0].wind = wp ;
     vps[0].line = lp ;
     vps[0].hilno = indent ;
     vps[0].bracket = NULL ;
@@ -2879,7 +2881,7 @@ indentLine(int *inComment)
         ii = 0 ;
     fnoz = blkp[ii].scheme ;
     if((fnoz & 0xff00) == INDFIXED)
-        ind = meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
+        ind = meIndentGetIndent((meUByte) fnoz, bp->indentWidth);
     else
     {
         int jj, brace=0, contFlag=0, li, aind, lind, nind;
@@ -2890,9 +2892,9 @@ indentLine(int *inComment)
         for(;;)
         {
             if (fnoz & INDBOTH)
-                aind += meIndentGetIndent((meUByte) ind7ToInd8(fnoz>>8), frameCur->bufferCur->indentWidth);
+                aind += meIndentGetIndent((meUByte) ind7ToInd8(fnoz>>8), bp->indentWidth);
             else if((fnoz & INDINDCURLINE) && ((fnoz == blkp[0].scheme) || (cind >= blkp[0].column)))
-                aind += meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
+                aind += meIndentGetIndent((meUByte) fnoz, bp->indentWidth);
             else if(fnoz != 0)
                 break ;
             if(++ii >= noColChng)
@@ -2903,15 +2905,15 @@ indentLine(int *inComment)
         jj = (int) meHilightGetLookBackLines(indents[indent]) ;
         for(ind=0 ; (--jj >=0) ; )
         {
-            if((lp = meLineGetPrev(lp)) == frameCur->bufferCur->baseLine)
+            if((lp = meLineGetPrev(lp)) == bp->baseLine)
                 break ;
             vps[0].line = lp ;
             if((lindent != 0) && (indentLookBack(lp,lindent,0xffff) >= 0))
             {
                 /* theres a file type change on this line, look back to what its changed from */
-                indent = frameCur->bufferCur->indent ;
+                indent = bp->indent ;
                 lb = meHilightGetLookBackLines(indents[lindent]) ;
-                while((--lb >= 0) && ((lp = meLineGetPrev(lp)) != frameCur->bufferCur->baseLine))
+                while((--lb >= 0) && ((lp = meLineGetPrev(lp)) != bp->baseLine))
                 {
                     if((coff = indentLookBack(lp,lindent,0xffff)) >= 0)
                     {
@@ -2945,17 +2947,17 @@ indentLine(int *inComment)
                     {
                         if(flgs == INDNEXTONWARD)
                         {
-                            int kk = meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
+                            int kk = meIndentGetIndent((meUByte) fnoz, bp->indentWidth);
                             if(plib)
                                 aind += kk;
                             else
                                 li += kk;
                         }
                         else if((flgs == INDCURONWARD) && plib)
-                            aind += meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
+                            aind += meIndentGetIndent((meUByte) fnoz, bp->indentWidth);
                         else if((flgs == INDSINGLE) &&
                                 ((ii == 0) || ((ii == 1) && ((ss-disLineBuff) >= blkp[0].column))))
-                            li -= meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
+                            li -= meIndentGetIndent((meUByte) fnoz, bp->indentWidth);
                         else if(flgs == INDBRACKETOPEN)
                         {
                             if(brace >= 0)
@@ -2968,17 +2970,17 @@ indentLine(int *inComment)
                         {
                             contFlag |= 0x03;
                             if(!(contFlag & 0x04))
-                                li += meIndentGetIndent((meUByte) fnoz, frameCur->bufferCur->indentWidth);
+                                li += meIndentGetIndent((meUByte) fnoz, bp->indentWidth);
                         }
                         else if(flgs & INDBOTH)
                         {
                             /* Process next line */
-                            li += meIndentGetIndent((meUByte) ind7ToInd8(fnoz), frameCur->bufferCur->indentWidth);
+                            li += meIndentGetIndent((meUByte) ind7ToInd8(fnoz), bp->indentWidth);
                             /* Process current line */
                             if ((ii != 0) && ((ii != 1) || ((ss-disLineBuff) < blkp[0].column)))
                             {
                                 fnoz >>= 8;
-                                li += meIndentGetIndent((meUByte) ind7ToInd8(fnoz), frameCur->bufferCur->indentWidth);
+                                li += meIndentGetIndent((meUByte) ind7ToInd8(fnoz), bp->indentWidth);
                             }
                         }
                     }
@@ -3026,18 +3028,18 @@ indentLine(int *inComment)
     displaySpace = bdisplaySpace ;
 
     /*    printf("\nIndent line to %d\n\n",ind) ;*/
-    ss = frameCur->windowCur->dotLine->text ;
+    ss = wp->dotLine->text ;
     while((*ss == ' ') || (*ss == '\t'))
         ss++ ;
-    coff = ss - frameCur->windowCur->dotLine->text ;
+    coff = ss - wp->dotLine->text ;
     /* change the current position to the indent position if to the left */
-    if(frameCur->windowCur->dotOffset < coff)
-        frameCur->windowCur->dotOffset = coff;
+    if(wp->dotOffset < coff)
+        wp->dotOffset = coff;
     /* Now change the indent if required */
     if(cind == ind)
         return meTRUE;
 #if MEOPT_EXTENDED
-    if(((ii=meIndentGetChangeFunc(indents[frameCur->bufferCur->indent])) > 0) && (execFuncHidden(0,ii,ind-0x80000000) <= 0))
+    if(((ii=meIndentGetChangeFunc(indents[bp->indent])) > 0) && (execFuncHidden(0,ii,ind-0x80000000) <= 0))
     {
         meUByte *vv;
         if(((vv=getUsrLclCmdVar((meUByte *)"indent",cmdTable[ii]->varList)) != errorm) &&

@@ -1197,32 +1197,32 @@ listRegistry (int f, int n)
         bn = BregistryN ;
     
     /* Find the buffer and vapour the old one */
-    if((wp = meWindowPopup(bn,BFND_CREAT|BFND_CLEAR|WPOP_USESTR,NULL)) == NULL)
+    if((wp = meWindowPopup(NULL,bn,BFND_CREAT|BFND_CLEAR|WPOP_USESTR,NULL)) == NULL)
         return meFALSE;
-    bp = wp->buffer ;                   /* Point to the buffer */
+    bp = wp->buffer;                   /* Point to the buffer */
 
     /* Recurse the children of the node and write to file */
     do
     {
         /* get the current node's first drawn child */
-        cnp = rnp->child ;
+        cnp = rnp->child;
         while((cnp != NULL) && (cnp->mode & meREGMODE_INVISIBLE))
-            cnp = cnp->next ;
+            cnp = cnp->next;
 
         /* get the current node's next drawn sibling */
-        nnp = rnp->next ;
+        nnp = rnp->next;
         while((nnp != NULL) && (nnp->mode & meREGMODE_INVISIBLE))
-            nnp = nnp->next ;
+            nnp = nnp->next;
 
         /* Add continuation bars if we are at a child level */
         if((len = level) != 0)
-            meStrncpy (buf, vstrbuf, len);
+            meStrncpy(buf,vstrbuf,len);
         
         /* Add connection bars for siblings */
         if(level && (nnp != NULL))
-            buf [len++] = boxChars[BCNES] ;
+            buf[len++] = boxChars[BCNES] ;
         else
-            buf [len++] = boxChars[BCNE];
+            buf[len++] = boxChars[BCNE];
         
         /* Add continuation barss for children */
         if (rnp->mode & meREGMODE_INTERNAL)
@@ -1256,31 +1256,31 @@ listRegistry (int f, int n)
         /* Descend child */
         if((cnp != NULL) && !(rnp->mode & (meREGMODE_HIDDEN|meREGMODE_INTERNAL)))
         {
-            vstrbuf[level] = (level && (nnp != NULL)) ? boxChars[BCNS] : ' ' ;
+            vstrbuf[level] = (level && (nnp != NULL)) ? boxChars[BCNS] : ' ';
             level++;
-            rnp = cnp ;
-            continue ;
+            rnp = cnp;
+            continue;
         }
         
         /* Ascend the tree */
         while((nnp == NULL) && (--level >= 0) && ((rnp = rnp->parent) != NULL))
         {
             /* Move to next drawn sibling */
-            nnp = rnp->next ;
+            nnp = rnp->next;
             while((nnp != NULL) && (nnp->mode & meREGMODE_INVISIBLE))
-                nnp = nnp->next ;
+                nnp = nnp->next;
         }
         rnp = nnp ;
-    } while((level > 0) && (rnp != NULL)) ;
+    } while((level > 0) && (rnp != NULL));
 
     /* Set up the buffer for display */
     bp->dotLine = meLineGetNext(bp->baseLine);
-    bp->dotOffset = 0 ;
-    bp->dotLineNo = 0 ;
-    meModeSet(bp->mode,MDVIEW) ;
-    meModeClear(bp->mode,MDAUTOSV) ;
-    meModeClear(bp->mode,MDUNDO) ;
-    resetBufferWindows(bp) ;
+    bp->dotOffset = 0;
+    bp->dotLineNo = 0;
+    meModeSet(bp->mode,MDVIEW);
+    meModeClear(bp->mode,MDAUTOSV);
+    meModeClear(bp->mode,MDUNDO);
+    resetBufferWindows(bp);
     return meTRUE;
 }
 

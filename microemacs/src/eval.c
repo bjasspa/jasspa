@@ -629,7 +629,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             return setcwcol(meAtoi(vvalue));
 #if MEOPT_EXTENDED
         case EVABSLINE:
-            return windowGotoAbsLine(meAtoi(vvalue));
+            return meWindowGotoAbsLine(frameCur->windowCur,meAtoi(vvalue));
         case EVWMRKCOL:
             if((status=meAtoi(vvalue)) < 0)
             {
@@ -665,7 +665,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 odotp = frameCur->windowCur->dotLine ;
                 lineno = frameCur->windowCur->dotLineNo ;
                 odoto = frameCur->windowCur->dotOffset ;
-                if((status = windowGotoLine(meTRUE,status)) > 0)
+                if((status = meWindowGotoLine(frameCur->windowCur,status)) > 0)
                 {
                     frameCur->windowCur->markLine = frameCur->windowCur->dotLine ;
                     frameCur->windowCur->markLineNo = frameCur->windowCur->dotLineNo ;
@@ -699,7 +699,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 frameCur->windowCur->dotLineNo = status ;
                 return meTRUE ;
             }
-            return windowGotoLine(meTRUE,status) ;
+            return meWindowGotoLine(frameCur->windowCur,status) ;
         case EVWINCHRS:
             {
                 meUByte cc ;
@@ -1287,7 +1287,7 @@ handle_namesvar:
     case EVCURCOL:      return meItoa(frameCur->windowCur->dotOffset);
     case EVCURLINE:     return meItoa(frameCur->windowCur->dotLineNo+1);
 #if MEOPT_EXTENDED
-    case EVABSLINE:     return meItoa(windowGotoAbsLine(-1)+1);
+    case EVABSLINE:     return meItoa(meWindowGotoAbsLine(frameCur->windowCur,-1)+1);
     case EVEOBLINE:     return meItoa(frameCur->bufferCur->lineCount+1);
     case EVWMRKCOL:     return meItoa(frameCur->windowCur->markOffset);
     case EVWMRKLINE:    return meItoa((frameCur->windowCur->markLine == NULL) ? 0:frameCur->windowCur->markLineNo+1);
@@ -3668,7 +3668,7 @@ listVariables(int f, int n)
     int       ii;
     
     /* don't execute hooks here as they can change variable values */
-    if((wp = meWindowPopup(BvariablesN,(BFND_CREAT|BFND_CLEAR|BFND_NOHOOK|WPOP_USESTR),NULL)) == NULL)
+    if((wp = meWindowPopup(NULL,BvariablesN,(BFND_CREAT|BFND_CLEAR|BFND_NOHOOK|WPOP_USESTR),NULL)) == NULL)
         return meFALSE;
     bp = wp->buffer;
     

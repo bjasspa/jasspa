@@ -149,8 +149,9 @@ getNextLine(int f,int n)
     meUByte  *nextFile=NULL;
     meInt   curLine=-1;
     meBuffer *bp=NULL, *tbp;
+    meWindow *cwp=frameCur->windowCur;
     
-    tbp = frameCur->bufferCur;
+    tbp = cwp->buffer;
     ii = noNextLine;
     while(--ii >= 0)
     {
@@ -199,33 +200,33 @@ getNextLine(int f,int n)
         if(bp == NULL)
             return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No next buffer found]");
         if(n & 0x01)
-            meWindowPopup(bp->name,WPOP_MKCURR,NULL);
-        if(swbuffer(frameCur->windowCur,bp) <= 0)
+            cwp = meWindowPopup(bp,NULL,WPOP_MKCURR,NULL);
+        else if(swbuffer(cwp,bp) <= 0)
             return meFALSE;
     }
     if((noNextLines = nextLineCnt[no]) == 0)
         return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No lines for next buffer %s]",bp->name);
     nextLines = nextLineStr[no];
 
-    if((frameCur->windowCur->dotLine == bp->baseLine) ||
-       ((frameCur->windowCur->dotLine == meLineGetPrev(bp->baseLine)) &&
-        (frameCur->windowCur->dotOffset == meLineGetLength(frameCur->windowCur->dotLine))))
+    if((cwp->dotLine == bp->baseLine) ||
+       ((cwp->dotLine == meLineGetPrev(bp->baseLine)) &&
+        (cwp->dotOffset == meLineGetLength(cwp->dotLine))))
     {
-        frameCur->windowCur->dotLine = meLineGetNext(bp->baseLine);
-        frameCur->windowCur->dotOffset = 0;
-        frameCur->windowCur->dotLineNo = 0;
+        cwp->dotLine = meLineGetNext(bp->baseLine);
+        cwp->dotOffset = 0;
+        cwp->dotLineNo = 0;
     }
-    while((frameCur->windowCur->dotLineNo)++,
-          (frameCur->windowCur->dotLine = meLineGetNext(frameCur->windowCur->dotLine)) != bp->baseLine)
+    while((cwp->dotLineNo)++,
+          (cwp->dotLine = meLineGetNext(cwp->dotLine)) != bp->baseLine)
     {
         ii = noNextLines;
         while(--ii >= 0)
         {
-            frameCur->windowCur->dotOffset = 0;
+            cwp->dotOffset = 0;
             if((rr=flNextFind(nextLines[ii],&nextFile,&curLine)) == meABORT)
             {
-                frameCur->windowCur->dotOffset = 0;
-                frameCur->windowCur->updateFlags |= WFMOVEL;
+                cwp->dotOffset = 0;
+                cwp->updateFlags |= WFMOVEL;
                 return meABORT;
             }
             if(rr == 2)
@@ -234,8 +235,8 @@ getNextLine(int f,int n)
             else if(rr == 1)
             {
                 /* matched a line */
-                frameCur->windowCur->dotOffset = 0;
-                frameCur->windowCur->updateFlags |= WFMOVEL;
+                cwp->dotOffset = 0;
+                cwp->updateFlags |= WFMOVEL;
                 if(nextFile != NULL)
                 {
                     meUByte fname[meBUF_SIZE_MAX], *value;
@@ -273,7 +274,7 @@ getNextLine(int f,int n)
                 if(n & 0x04)
                     return meTRUE;
                     
-                if((n & 0x01) && (meWindowPopup(NULL,WPOP_MKCURR,NULL) == NULL))
+                if((n & 0x01) && ((cwp=meWindowPopup(NULL,NULL,WPOP_MKCURR,NULL)) == NULL))
                     return meFALSE;
                 if((nextFile[0] == '*') && (nextFile[ii-1] == '*'))
                 {
@@ -286,7 +287,7 @@ getNextLine(int f,int n)
                         return meFALSE;
                     }
                     nextFile[ii-1] = '*';
-                    if(swbuffer(frameCur->windowCur,bp) <= 0)
+                    if(swbuffer(cwp,bp) <= 0)
                         return meFALSE;
                 }
                 else if(findSwapFileList(nextFile,(BFND_CREAT|BFND_MKNAM),0,0) <= 0)
@@ -297,13 +298,17 @@ getNextLine(int f,int n)
                  * was and its read only, the findSwapFileList will succeed (new buffer)
                  * BUT the file name will be null! catch this and just use the buffer name */ 
                 mlwrite(0,(meUByte *)"File %s, line %d",
-                        (frameCur->bufferCur->fileName == NULL) ? frameCur->bufferCur->name:frameCur->bufferCur->fileName,curLine);
-                return windowGotoAbsLine(curLine);
+                        (cwp->buffer->fileName == NULL) ? cwp->buffer->name:cwp->buffer->fileName,curLine);
+#if MEOPT_NARROW
+                if(cwp->buffer->narrow != NULL)
+                    return meWindowGotoAbsLine(cwp,curLine);
+#endif
+                return meWindowGotoLine(cwp,curLine);
             }
         }
     }
-    frameCur->windowCur->dotOffset = 0;
-    frameCur->windowCur->updateFlags |= WFMOVEL;
+    cwp->dotOffset = 0;
+    cwp->updateFlags |= WFMOVEL;
     return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No more lines found]");
 }
 

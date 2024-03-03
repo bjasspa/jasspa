@@ -1741,10 +1741,10 @@ execBufferFunc(meBuffer *bp, int index, int flags, int n)
         if(bp == frameCur->bufferCur)
         {
             /* drop an anchor and return back to it after */
-            meAnchorSet(frameCur->bufferCur,meANCHOR_EXEC_BUFFER,frameCur->windowCur->dotLine,frameCur->windowCur->dotLineNo,frameCur->windowCur->dotOffset,1);
-            frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine;
-            frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset;
-            frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo;
+            meAnchorSet(bp,meANCHOR_EXEC_BUFFER,frameCur->windowCur->dotLine,frameCur->windowCur->dotLineNo,frameCur->windowCur->dotOffset,1);
+            frameCur->windowCur->dotLine = bp->dotLine;
+            frameCur->windowCur->dotOffset = bp->dotOffset;
+            frameCur->windowCur->dotLineNo = bp->dotLineNo;
         }
     }
     if(bp != frameCur->bufferCur)
@@ -1800,14 +1800,14 @@ execBufferFunc(meBuffer *bp, int index, int flags, int n)
         if(bp == frameCur->bufferCur)
         {
             /* return back to the anchor */
-            if(meAnchorGet(frameCur->bufferCur,meANCHOR_EXEC_BUFFER) > 0)
+            if(meAnchorGet(bp,meANCHOR_EXEC_BUFFER) > 0)
             {
-                frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine ;
-                frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset ;
-                frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo ;
+                frameCur->windowCur->dotLine = bp->dotLine ;
+                frameCur->windowCur->dotOffset = bp->dotOffset ;
+                frameCur->windowCur->dotLineNo = bp->dotLineNo ;
                 frameCur->windowCur->updateFlags |= WFMOVEL ;
             }
-            meAnchorDelete(frameCur->bufferCur,meANCHOR_EXEC_BUFFER) ;
+            meAnchorDelete(bp,meANCHOR_EXEC_BUFFER) ;
         }
         selhilight.bp = NULL ;
         selhilight.flags = 0 ;

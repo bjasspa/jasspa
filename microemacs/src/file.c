@@ -2076,11 +2076,11 @@ nextWndFindFile(int f, int n)
     meUByte fname[meBUF_SIZE_MAX];	/* file user wishes to find */
     
     if(inputFileName((meUByte *)"Find file",fname,0) <= 0)
-        return meABORT ;
-    if(meWindowPopup(NULL,WPOP_MKCURR,NULL) == NULL)
-        return meFALSE ;
-    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN|BFND_NOHOOK)) | BFND_MKNAM ;
-    return findSwapFileList(fname,n,0,0) ;
+        return meABORT;
+    if(meWindowPopup(NULL,NULL,WPOP_MKCURR,NULL) == NULL)
+        return meFALSE;
+    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN|BFND_NOHOOK)) | BFND_MKNAM;
+    return findSwapFileList(fname,n,0,0);
 }
 #endif
 
@@ -2619,28 +2619,29 @@ resetBufferNames(meBuffer *bp, meUByte *fname)
 int
 writeBuffer(int f, int n)
 {
+    register meBuffer *bp;
     meUByte fname[meBUF_SIZE_MAX], lname[meBUF_SIZE_MAX], *fn;
     
     if(inputFileName((meUByte *)"Write file",fname,1) <= 0)
         return meABORT ;
     
-    if(frameCur->bufferCur->fileName != NULL)
-        fn = frameCur->bufferCur->fileName ;
-    else if(frameCur->bufferCur->name[0] != '*')
-        fn = frameCur->bufferCur->name ;
+    if((bp=frameCur->bufferCur)->fileName != NULL)
+        fn = bp->fileName ;
+    else if(bp->name[0] != '*')
+        fn = bp->name ;
     else
         fn = NULL ;
     
-    if((n & 0x01) && (frameCur->bufferCur->fileFlag & (meBFFLAG_BINARY|meBFFLAG_LTDIFF)) &&
-       (mlyesno((frameCur->bufferCur->fileFlag & meBFFLAG_BINARY) ? fileHasBinary:fileHasInLnEn) <= 0))
+    if((n & 0x01) && (bp->fileFlag & (meBFFLAG_BINARY|meBFFLAG_LTDIFF)) &&
+       (mlyesno((bp->fileFlag & meBFFLAG_BINARY) ? fileHasBinary:fileHasInLnEn) <= 0))
         return ctrlg(meFALSE,1);
     if((fn=writeFileChecks(fname,fn,lname,(n & 0x01)|meWRITECHECK_BUFFER)) == NULL)
         return meABORT ;
     
-    if(!writeOut(frameCur->bufferCur,((n & 0x02) ? meRWFLAG_IGNRNRRW:0),fn))
+    if(!writeOut(bp,((n & 0x02) ? meRWFLAG_IGNRNRRW:0),fn))
         return meFALSE ;
     
-    resetBufferNames(frameCur->bufferCur,fname) ;
+    resetBufferNames(bp,fname) ;
     frameAddModeToWindows(WFMODE) ; /* and update ALL mode lines */
     
     return meTRUE ;
@@ -2664,8 +2665,8 @@ saveBuffer(int f, int n)
      * so this must be tested before meTestExist, BUT the file name can be
      * NULL and still be saved, e.g. the buffer name is *stdin* - so be careful */
     if((n & 0x01) && (frameCur->bufferCur->fileName != NULL) &&  /* Are we Checking ?? */
-       (meTestExist (frameCur->bufferCur->fileName) == 0) &&     /* Does file actually exist ? */
-       !meModeTest(frameCur->bufferCur->mode,MDEDIT))         /* Have we edited buffer ? */
+       (meTestExist(frameCur->bufferCur->fileName) == 0) &&      /* Does file actually exist ? */
+       !meModeTest(frameCur->bufferCur->mode,MDEDIT))            /* Have we edited buffer ? */
         /* Return, no changes.  */
         return mlwrite(0,(meUByte *)"[No changes made]") ;
     if((s=writeout(frameCur->bufferCur,n)) > 0)

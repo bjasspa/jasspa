@@ -5828,7 +5828,7 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdS
 #if MEOPT_EXTENDED
                 /* if the current window is locked to a buffer find another */
                 if(frameCur->windowCur->flags & meWINDOW_LOCK_BUFFER)
-                    meWindowPopup(NULL,WPOP_MKCURR|WPOP_USESTR,NULL);
+                    meWindowPopup(NULL,NULL,WPOP_MKCURR|WPOP_USESTR,NULL);
 #endif
                 
                 /* Find the file into buffer */

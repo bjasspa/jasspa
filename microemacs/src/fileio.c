@@ -841,12 +841,12 @@ ffUrlFileSetupFlags(meIo *io, meUInt rwflag)
             io->urlOpts |= meSOCKOPT_LOG_VERBOSE;
         if(meStrchr(ss,'w') != NULL)
             io->urlOpts |= meSOCKOPT_LOG_WARNING;
-        meModeClear(io->urlBp->mode,MDUNDO) ;
+        meModeClear(io->urlBp->mode,MDUNDO);
         if(io->urlBp->lineCount)
-            ffUrlConsoleAddText(io,(meUByte *)"",0x04) ;
+            ffUrlConsoleAddText(io,(meUByte *)"",0x04);
         /* must not show the console if inserting a file as the destination buffer will be displayed and unstable */
         if((io->urlOpts & meSOCKOPT_SHOW_CONSOLE) && !(rwflag & meRWFLAG_SILENT))
-            meWindowPopup(ffUrlConsoleBName[ti],0,NULL) ;
+            meWindowPopup(NULL,ffUrlConsoleBName[ti],0,NULL);
     }
 }
 

@@ -406,13 +406,13 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
         }
 #endif
     }
-    tbp = wp->buffer ;
+    tbp = wp->buffer;
 #if MEOPT_FILEHOOK
     /* If this is an out-of-date reload find-file, the call to bclear will
      * have executed the ehook and dhook so do do this now. */
-    if((wp == frameCur->windowCur) && !reload && (frameCur->bufferCur->ehook >= 0))
+    if((wp == frameCur->windowCur) && !reload && (tbp->ehook >= 0))
     {
-        execBufferFunc(frameCur->bufferCur,frameCur->bufferCur->ehook,0,1);
+        execBufferFunc(tbp,tbp->ehook,0,1);
         if(wp->buffer != tbp)
             return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Error: Buffer ehook has altered windows]");
     }
@@ -436,9 +436,9 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
     {
         frameCur->bufferCur = bp;
 #if MEOPT_EXTENDED
-        if(isWordMask != frameCur->bufferCur->isWordMask)
+        if(isWordMask != bp->isWordMask)
         {
-            isWordMask = frameCur->bufferCur->isWordMask;
+            isWordMask = bp->isWordMask;
 #if MEOPT_MAGIC
             mereRegexClassChanged() ;
 #endif
@@ -448,8 +448,8 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
     if((bp->windowCount++ == 0) || reload)
     {
         /* First use.           */
-        restoreWindBSet(wp,bp) ;
-        if(meModeTest(frameCur->bufferCur->mode,MDPIPE))
+        restoreWindBSet(wp,bp);
+        if(meModeTest(bp->mode,MDPIPE))
         {
             /* if its a piped command we can't rely on the bp markp being correct,
              * reset */
@@ -461,24 +461,24 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
         {
             if(markLineNo > 0)
             {
-                windowGotoLine(meTRUE,markLineNo) ;
-                frameCur->windowCur->markLine = frameCur->windowCur->dotLine;
-                frameCur->windowCur->markLineNo = frameCur->windowCur->dotLineNo;
+                meWindowGotoLine(wp,markLineNo);
+                wp->markLine = wp->dotLine;
+                wp->markLineNo = wp->dotLineNo;
                 if(markCol > 0)
                 {
-                    if(markCol > meLineGetLength(frameCur->windowCur->markLine))
-                        frameCur->windowCur->markOffset = meLineGetLength(frameCur->windowCur->markLine) ;
+                    if(markCol > meLineGetLength(wp->markLine))
+                        wp->markOffset = meLineGetLength(wp->markLine);
                     else
-                        frameCur->windowCur->markOffset = markCol ;
+                        wp->markOffset = markCol;
                 }
             }
-            windowGotoLine(meTRUE,dotLineNo) ;
+            meWindowGotoLine(wp,dotLineNo);
             if(dotCol > 0)
             {
-                if(dotCol > meLineGetLength(frameCur->windowCur->dotLine))
-                    frameCur->windowCur->dotOffset = meLineGetLength(frameCur->windowCur->dotLine) ;
+                if(dotCol > meLineGetLength(wp->dotLine))
+                    wp->dotOffset = meLineGetLength(wp->dotLine);
                 else
-                    frameCur->windowCur->dotOffset = dotCol;
+                    wp->dotOffset = dotCol;
             }
         }
         /* on a reload reset all other windows displaying this buffer to the tob */
@@ -517,8 +517,8 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
         ipipeSetSize(wp,bp);
 #endif        
 #if MEOPT_FILEHOOK
-    if((wp == frameCur->windowCur) && (frameCur->bufferCur->bhook >= 0))
-        execBufferFunc(frameCur->bufferCur,frameCur->bufferCur->bhook,0,1);
+    if((wp == frameCur->windowCur) && (bp->bhook >= 0))
+        execBufferFunc(bp,bp->bhook,0,1);
 #endif        
     
     if((bp->intFlag & (BIFLOAD|BIFNACT)) == BIFLOAD)
@@ -528,8 +528,7 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
         {
             update(meTRUE);
             dotLineNo = wp->dotLineNo;
-            if(((bp->fileFlag & meBFFLAG_DIR) || (mlyesno((meUByte *)"File changed on disk, reload") > 0)) &&
-               (bclear(bp) > 0))
+            if(((bp->fileFlag & meBFFLAG_DIR) || (mlyesno((meUByte *)"File changed on disk, reload") > 0)) && (bclear(bp) > 0))
             {
                 /* achieve cheekily by calling itself as the bclear make it inactive,
                  * This ensures the re-evaluation of the hooks etc.
@@ -578,22 +577,22 @@ HideBuffer(meBuffer *bp, int forceAll)
                              * the buffer hooks are correctly setup and
                              * executed */
 #if MEOPT_FILEHOOK
-                            setBufferContext(bp) ;
+                            setBufferContext(bp);
 #endif
                             return meFALSE ;
                         }
                         
-                        if(swbuffer(wp, bp1) <= 0)
-                            return meFALSE ;
+                        if(swbuffer(wp,bp1) <= 0)
+                            return meFALSE;
                     }
                 }
             }
 #if MEOPT_FRAME
         }
-        frameCur = fc ;
+        frameCur = fc;
 #endif
     }
-    bp->histNo = 0 ;
+    bp->histNo = 0;
     
     return meTRUE ;
 }
@@ -682,10 +681,9 @@ nextWndFindBuf(int f, int n)
     if((s = getBufferName((meUByte *)"Use buffer", 0, 2, bufn)) <= 0)
         return(s);
     if(n)
-        n = BFND_CREAT ;
-    if((meWindowPopup(NULL,WPOP_MKCURR,NULL) == NULL) ||
-       ((bp=bfind(bufn,n)) == NULL))
-        return meFALSE ;
+        n = BFND_CREAT;
+    if((meWindowPopup(NULL,NULL,WPOP_MKCURR,NULL) == NULL) || ((bp=bfind(bufn,n)) == NULL))
+        return meFALSE;
     return swbuffer(frameCur->windowCur, bp) ;
 }
 #endif
@@ -1442,16 +1440,16 @@ listBuffers (int f, int n)
     meBuffer *bp ;
     
     if((bp=bfind(BbuffersN,BFND_CREAT|BFND_CLEAR)) == NULL)
-        return mlwrite(MWABORT,(meUByte *)"[Failed to create blist]") ;
-    makelist(bp,n) ;
+        return mlwrite(MWABORT,(meUByte *)"[Failed to create blist]");
+    makelist(bp,n);
     
     bp->dotLine = meLineGetNext(bp->baseLine);
-    bp->dotOffset = 0 ;
-    bp->dotLineNo = 0 ;
+    bp->dotOffset = 0;
+    bp->dotLineNo = 0;
     
-    resetBufferWindows(bp) ;
-    meWindowPopup(bp->name,WPOP_USESTR,NULL) ;
-    return meTRUE ;
+    resetBufferWindows(bp);
+    meWindowPopup(bp,NULL,WPOP_USESTR,NULL);
+    return meTRUE;
 }
 
 /*
@@ -1717,18 +1715,18 @@ adjustMode(meBuffer *bp, int nn)  /* change the editor mode status */
         {
             if(bp != frameCur->bufferCur)
             {
-                register meBuffer *tbp = frameCur->bufferCur ;
+                register meBuffer *tbp = frameCur->bufferCur;
                 
-                storeWindBSet(tbp,frameCur->windowCur) ;
-                swbuffer(frameCur->windowCur,bp) ;
+                storeWindBSet(tbp,frameCur->windowCur);
+                swbuffer(frameCur->windowCur,bp);
                 
-                nn = bufferSetEdit() ;
+                nn = bufferSetEdit();
                 
-                swbuffer(frameCur->windowCur,tbp) ;
-                restoreWindBSet(frameCur->windowCur,tbp) ;
+                swbuffer(frameCur->windowCur,tbp);
+                restoreWindBSet(frameCur->windowCur,tbp);
             }
             else
-                nn = bufferSetEdit() ;
+                nn = bufferSetEdit();
             
             if(nn <= 0)
                 return nn ;

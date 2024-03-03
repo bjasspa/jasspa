@@ -745,53 +745,53 @@ int
 translateKey(int f, int n)
 {
     static meUByte tnkyPrompt[]="translate-tcap-key code" ;
-    meUShort c_from[20], c_to[20] ;
-    meUByte buf[128] ;
-    int ii ;
+    meUShort c_from[20], c_to[20];
+    meUByte buf[128];
+    int ii;
     
 #if MEOPT_EXTENDED
     if(n == 0)
     {
-        meWindow *wp ;
-        meBuffer *bp ;
+        meWindow *wp;
+        meBuffer *bp;
     
-        if((wp = meWindowPopup(BtranskeyN,BFND_CREAT|BFND_CLEAR|WPOP_USESTR,NULL)) == NULL)
-            return meFALSE ;
-        bp = wp->buffer ;
+        if((wp = meWindowPopup(NULL,BtranskeyN,BFND_CREAT|BFND_CLEAR|WPOP_USESTR,NULL)) == NULL)
+            return meFALSE;
+        bp = wp->buffer;
         
-        translateKeyShow(&TTtransKey,bp,buf,0) ;
+        translateKeyShow(&TTtransKey,bp,buf,0);
         bp->dotLine = meLineGetNext(bp->baseLine);
-        bp->dotOffset = 0 ;
-        bp->dotLineNo = 0 ;
-        meModeClear(bp->mode,MDEDIT) ;    /* don't flag this as a change */
-        meModeSet(bp->mode,MDVIEW) ;      /* put this buffer view mode */
-        resetBufferWindows(bp) ;            /* Update the window */
-        mlerase(MWCLEXEC);	                /* clear the mode line */
+        bp->dotOffset = 0;
+        bp->dotLineNo = 0;
+        meModeClear(bp->mode,MDEDIT);    /* don't flag this as a change */
+        meModeSet(bp->mode,MDVIEW);      /* put this buffer view mode */
+        resetBufferWindows(bp);          /* Update the window */
+        mlerase(MWCLEXEC);	         /* clear the mode line */
     }
     else
 #endif
     {
-        meStrcpy(tnkyPrompt+19,"code") ;
+        meStrcpy(tnkyPrompt+19,"code");
         if((meGetString(tnkyPrompt,0,0,buf,128) <= 0) ||
            ((ii=keyListToShorts(c_from,buf)) <= 0))
-            return meFALSE ;
+            return meFALSE;
 
         if(n == -1)
-            c_to[0] = ME_INVALID_KEY ;
+            c_to[0] = ME_INVALID_KEY;
         else
         {
             if(f == meFALSE)
-                n = TTtransKey.time ;
-            meStrcpy(tnkyPrompt+19,"to") ;
+                n = TTtransKey.time;
+            meStrcpy(tnkyPrompt+19,"to");
             if((meGetString(tnkyPrompt,0,0,buf,128) <= 0) ||
                ((f=keyListToShorts(c_to,buf)) < 0))
-                return meFALSE ;
+                return meFALSE;
             if(f == 0)
-                c_to[0] = ME_DELETE_KEY ;
+                c_to[0] = ME_DELETE_KEY;
         }
-        translateKeyAdd(&TTtransKey,ii,n,c_from,*c_to) ;
+        translateKeyAdd(&TTtransKey,ii,n,c_from,*c_to);
     }
-    return meTRUE ;
+    return meTRUE;
 }
 
 meUShort

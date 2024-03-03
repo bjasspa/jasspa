@@ -971,7 +971,7 @@ buildlist(int n, meUByte *mstring)
     char      op_char;		/* Output character */
     
     /* and get a buffer for it */
-    if((wp = meWindowPopup(BcommandsN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR),NULL)) == NULL)
+    if((wp = meWindowPopup(NULL,BcommandsN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR),NULL)) == NULL)
         return mlwrite(MWABORT,(meUByte *)"[Failed to create list]") ;
     bp = wp->buffer ;
     
@@ -1098,7 +1098,7 @@ descBindings (int f, int n)
     int     ii ;
     meBind *ktp;
     
-    if((wp = meWindowPopup(BbindingsN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR),NULL)) == NULL)
+    if((wp = meWindowPopup(NULL,BbindingsN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR),NULL)) == NULL)
         return meFALSE ;
     bp = wp->buffer ;
     

@@ -1265,7 +1265,7 @@ noIndent:
                     fillState |= FILL_SPACE ;
                 }
                 else if(!(fillState & FILL_EOP))
-+                    ldelete(1L,0);
+                    ldelete(1L,0);
             }
             else
             {

@@ -457,30 +457,30 @@ try_again:
             mlwrite(MWABORT,(meUByte *)"[Can't find help on %s%s]",item,sect);
         return meABORT ;
     }
-    if((wp = meWindowPopup(BhelpN,BFND_CREAT|BFND_CLEAR|WPOP_USESTR,NULL)) == NULL)
-        return meFALSE ;
+    if((wp = meWindowPopup(NULL,BhelpN,BFND_CREAT|BFND_CLEAR|WPOP_USESTR,NULL)) == NULL)
+        return meFALSE;
     if((sectLen == 0) && (lp->text[2] != ' '))
     {
-        ss = sect ;
-        *ss++ = '(' ;
-        *ss++ = lp->text[2] ;
+        ss = sect;
+        *ss++ = '(';
+        *ss++ = lp->text[2];
         if(lp->text[3] != ' ')
-            *ss++ = lp->text[3] ;
-        *ss++ = ')' ;
-        *ss = '\0' ;
+            *ss++ = lp->text[3];
+        *ss++ = ')';
+        *ss = '\0';
     }
     
-    bp = wp->buffer ;
+    bp = wp->buffer;
     /* Add the header */
     {
-        meUByte buff[meBUF_SIZE_MAX] ;
-        sprintf((char *)buff,"\033cD%s%s\033cA",lp->text+4,sect) ;
-        addLineToEob(bp,buff) ;
-        addLineToEob(bp,(meUByte *)"\n\033lsMicroEmacs\033lm[Home]\033le \033lsCommand G\033lm[Commands]\033le \033lsVariable \033lm[Variables]\033le \033lsMacro Lan\033lm[Macro-Dev]\033le \033lsGlobal G\033lm[Glossary]\033le") ;
-        memset(buff,boxChars[BCEW],78) ;
-        buff[78] = '\n' ;
-        buff[79] = '\0' ;
-        addLineToEob(bp,buff) ;
+        meUByte buff[meBUF_SIZE_MAX];
+        sprintf((char *)buff,"\033cD%s%s\033cA",lp->text+4,sect);
+        addLineToEob(bp,buff);
+        addLineToEob(bp,(meUByte *)"\n\033lsMicroEmacs\033lm[Home]\033le \033lsCommand G\033lm[Commands]\033le \033lsVariable \033lm[Variables]\033le \033lsMacro Lan\033lm[Macro-Dev]\033le \033lsGlobal G\033lm[Glossary]\033le");
+        memset(buff,boxChars[BCEW],78);
+        buff[78] = '\n';
+        buff[79] = '\0';
+        addLineToEob(bp,buff);
     }
     while(((lp=meLineGetNext(lp)) != elp) && (lp->text[0] == '!'))
         ;

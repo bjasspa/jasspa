@@ -469,55 +469,55 @@ meUByte meCopyright[]="Copyright (C) 1988-" meCENTURY meYEAR " " ME_COMPANY_NAME
 int
 meAbout(int f, int n)
 {
-    meWindow *wp ;
-    meBuffer *bp, *tbp ;
-    meInt   numchars ;		/* # of chars in file */
-    meInt   numlines ;		/* # of lines in file */
-    meInt   predchars ;		/* # chars preceding point */
-    meInt   predlines ;		/* # lines preceding point */
-    meUByte buf[meBUF_SIZE_MAX] ;
-    int     ii ;
+    meWindow *wp;
+    meBuffer *bp, *tbp;
+    meInt   numchars;		/* # of chars in file */
+    meInt   numlines;		/* # of lines in file */
+    meInt   predchars;		/* # chars preceding point */
+    meInt   predlines;		/* # lines preceding point */
+    meUByte buf[meBUF_SIZE_MAX];
+    int     ii;
     
-    if((wp = meWindowPopup(BaboutN,BFND_CREAT|BFND_CLEAR|WPOP_USESTR,NULL)) == NULL)
-        return meFALSE ;
-    bp = wp->buffer ;
+    if((wp = meWindowPopup(NULL,BaboutN,BFND_CREAT|BFND_CLEAR|WPOP_USESTR,NULL)) == NULL)
+        return meFALSE;
+    bp = wp->buffer;
     
     /* definitions in evers.h */
     addLineToEob(bp,(meUByte *) meVERSION_INFO);
     addLineToEob(bp,(meUByte *) "\nGlobal Status:");
     tbp = bheadp;
-    ii = 0 ;
+    ii = 0;
     while(tbp != NULL)
     {
-        ii++ ;
+        ii++;
         tbp = tbp->next;
     }
-    sprintf((char *)buf,"  # buffers : %d", ii) ;
-    addLineToEob(bp,buf) ;
-    addModesLists(bp,buf,globMode) ;
-    sprintf((char *)buf,"Current Buffer Status:\n  Buffer    : %s", frameCur->bufferCur->name) ;
-    addLineToEob(bp,buf) ;
+    sprintf((char *)buf,"  # buffers : %d", ii);
+    addLineToEob(bp,buf);
+    addModesLists(bp,buf,globMode);
+    sprintf((char *)buf,"Current Buffer Status:\n  Buffer    : %s", frameCur->bufferCur->name);
+    addLineToEob(bp,buf);
     sprintf((char *)buf,"  File name : %s",
-            (frameCur->bufferCur->fileName == NULL) ? (meUByte *)"":frameCur->bufferCur->fileName) ;
-    addLineToEob(bp,buf) ;
+            (frameCur->bufferCur->fileName == NULL) ? (meUByte *)"":frameCur->bufferCur->fileName);
+    addLineToEob(bp,buf);
     
-    getBufferInfo(&numlines,&predlines,&numchars,&predchars) ;
+    getBufferInfo(&numlines,&predlines,&numchars,&predchars);
     sprintf((char *)buf,"  Lines     : Total %6d, Current %6d\n  Characters: Total %6d, Current %6d",
-            numlines,predlines,numchars,predchars) ;
-    addLineToEob(bp,buf) ;
+            numlines,predlines,numchars,predchars);
+    addLineToEob(bp,buf);
     
-    addModesLists(bp,buf,frameCur->bufferCur->mode) ;
-    addLineToEob(bp,meCopyright) ;
+    addModesLists(bp,buf,frameCur->bufferCur->mode);
+    addLineToEob(bp,meCopyright);
 #if KEY_TEST
     fnctest(bp);
 #endif
     bp->dotLine = meLineGetNext(bp->baseLine);
-    bp->dotOffset = 0 ;
-    bp->dotLineNo = 0 ;
+    bp->dotOffset = 0;
+    bp->dotLineNo = 0;
     meModeClear(bp->mode,MDEDIT);     /* don't flag this as a change */
     meModeSet(bp->mode,MDVIEW);       /* put this buffer view mode */
-    resetBufferWindows(bp) ;
-    return meTRUE ;
+    resetBufferWindows(bp);
+    return meTRUE;
 }
 
 /*
@@ -2225,33 +2225,33 @@ main(int argc, char *argv[])
             macbug = 0;                 /* Force macro debugging off */
 #endif
             /* Iterate down the list and get the files. */
-            while ((dadp = dadHead) != NULL)
+            while((dadp = dadHead) != NULL)
             {
 #if MEOPT_FRAME
                 /* Change to the correct frame */
-                meFrameMakeCur(dadp->frame, 1);
+                meFrameMakeCur(dadp->frame,1);
 #endif
                 
 #if MEOPT_MOUSE
                 /* Re-position the mouse */
                 mouse_X = clientToCol (dadp->mouse_x);
                 mouse_Y = clientToRow (dadp->mouse_y);
-                if (mouse_X > frameCur->width)
+                if(mouse_X > frameCur->width)
                     mouse_X = frameCur->width;
-                if (mouse_Y > frameCur->depth)
+                if(mouse_Y > frameCur->depth)
                     mouse_Y = frameCur->depth;
                 
                 /* Find the window with the mouse */
-                setCursorToMouse (meFALSE, 0);
+                setCursorToMouse(meFALSE, 0);
 #endif
 #if MEOPT_EXTENDED
                 /* if the current window is locked to a buffer find another */
                 if(frameCur->windowCur->flags & meWINDOW_LOCK_BUFFER)
-                    meWindowPopup(NULL,WPOP_MKCURR|WPOP_USESTR,NULL) ;
+                    meWindowPopup(NULL,NULL,WPOP_MKCURR|WPOP_USESTR,NULL);
 #endif
                 
                 /* Find the file into buffer */
-                findSwapFileList (dadp->fname,BFND_CREAT|BFND_MKNAM,0,0);
+                findSwapFileList(dadp->fname,BFND_CREAT|BFND_MKNAM,0,0);
                 
                 /* Destruct the list */
                 dadHead = dadp->next;

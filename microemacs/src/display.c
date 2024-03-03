@@ -263,7 +263,7 @@ showRegion(int f, int n)
 
     case -2:
         frameCur->windowCur->updateFlags |= WFMOVEL ;
-        if((windowGotoLine(meTRUE,selhilight.markLineNo+1) > 0) &&
+        if((meWindowGotoLine(frameCur->windowCur,selhilight.markLineNo+1) > 0) &&
            (selhilight.markOffset <= meLineGetLength(frameCur->windowCur->dotLine)))
         {
             frameCur->windowCur->dotOffset = (meUShort) selhilight.markOffset ;
@@ -307,7 +307,7 @@ showRegion(int f, int n)
 
     case 2:
         frameCur->windowCur->updateFlags |= WFMOVEL ;
-        if((windowGotoLine(meTRUE,selhilight.dotLineNo+1) > 0) &&
+        if((meWindowGotoLine(frameCur->windowCur,selhilight.dotLineNo+1) > 0) &&
            (selhilight.dotOffset <= meLineGetLength(frameCur->windowCur->dotLine)))
         {
             frameCur->windowCur->dotOffset = (meUShort) selhilight.dotOffset ;
@@ -2016,8 +2016,8 @@ screenUpdate(int f, int n)
 #if MEOPT_MWFRAME
     meFrame *fc ;
 #endif
-    meWindow *wp ;
-    int force ;
+    meWindow *wp, *cwp;
+    int force;
 
 #if DEBUGGING
     if(drawno++ == 'Z')
@@ -2028,28 +2028,29 @@ screenUpdate(int f, int n)
         screenUpdateDisabledCount = n;
         return meTRUE;
     }
+    cwp = frameCur->windowCur;
     if(n == 3)
     {
         /* only update the screen enough to get the $window vars correct */
-        if(frameCur->windowCur->bufferLast != frameCur->bufferCur)
+        if(cwp->bufferLast != cwp->buffer)
         {
-            frameCur->windowCur->bufferLast = frameCur->bufferCur;
-            frameCur->windowCur->updateFlags |= WFMODE|WFREDRAW|WFMOVEL|WFSBOX;
+            cwp->bufferLast = cwp->buffer;
+            cwp->updateFlags |= WFMODE|WFREDRAW|WFMOVEL|WFSBOX;
         }
         /* if top of window is the last line and there's more than
          * one, force refame and draw */
-        if((frameCur->windowCur->vertScroll == frameCur->bufferCur->lineCount) && frameCur->windowCur->vertScroll)
-            frameCur->windowCur->updateFlags |= WFFORCE;
+        if((cwp->vertScroll == cwp->buffer->lineCount) && cwp->vertScroll)
+            cwp->updateFlags |= WFFORCE;
 
         /* if the window has changed, service it */
-        if(frameCur->windowCur->updateFlags & (WFMOVEL|WFFORCE))
-            reframe(frameCur->windowCur);     /* check the framing */
+        if(cwp->updateFlags & (WFMOVEL|WFFORCE))
+            reframe(cwp);     /* check the framing */
 
-        if(frameCur->windowCur->updateFlags & (WFREDRAW|WFRESIZE|WFSELHIL|WFSELDRAWN))
-            shilightWindow(frameCur->windowCur); /* Update selection hilight */
+        if(cwp->updateFlags & (WFREDRAW|WFRESIZE|WFSELHIL|WFSELDRAWN))
+            shilightWindow(cwp); /* Update selection hilight */
 
         /* check the horizontal scroll and cursor position */
-        updCursor(frameCur->windowCur);
+        updCursor(cwp);
         return meTRUE;
     }
 
@@ -2106,10 +2107,10 @@ screenUpdate(int f, int n)
 
     /* Does the title bar need updating? */
 #ifdef _WINDOW
-    if(force || (frameCur->bufferCur->name != frameCur->titleBufferName))
+    if(force || (cwp->buffer->name != frameCur->titleBufferName))
     {
-        frameCur->titleBufferName = frameCur->bufferCur->name;
-        meFrameSetWindowTitle(frameCur,frameCur->bufferCur->name);
+        frameCur->titleBufferName = cwp->buffer->name;
+        meFrameSetWindowTitle(frameCur,cwp->buffer->name);
     }
 #endif
 #if MEOPT_OSD
@@ -2143,7 +2144,7 @@ screenUpdate(int f, int n)
             shilightWindow(wp);               /* Update selection hilight */
 
         /* check the horizontal scroll and cursor position */
-        if(wp == frameCur->windowCur)
+        if(wp == cwp)
             updCursor(wp);
 
         if(wp->updateFlags & ~(WFSELDRAWN|WFLOOKBK))

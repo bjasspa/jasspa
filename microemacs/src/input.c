@@ -1220,33 +1220,33 @@ input_expand:
                 contstr = compSole ;
             else
             {
-                meBuffer **br ;
-                meUByte line[150] ;
-                int jj, last, len, lwidth ;
+                meBuffer **br;
+                meUByte line[150];
+                int jj, last, len, lwidth;
                 
                 for(ii=fstPos ; ii<=lstPos ; ii++)
                     if(strList[ii][ilen-compOff] == cc)
-                        goto input_addexpand ;
+                        goto input_addexpand;
                 /* if a new window is created to display the completion list
                  * then store the information we need to delete it once we
                  * have finished with it */
                 if(mlgsOldCwp == NULL)
                 {
-                    mlgsSingWind = frameCur->windowCur->vertScroll+1 ;
-                    mlgsOldCwp = frameCur->windowCur ;
-                    br = &mlgsOldWBp ;
+                    mlgsSingWind = frameCur->windowCur->vertScroll+1;
+                    mlgsOldCwp = frameCur->windowCur;
+                    br = &mlgsOldWBp;
                 }
                 else
                     br = NULL ;
-                if(meWindowPopup(BcompleteN,BFND_CREAT|BFND_CLEAR|WPOP_MKCURR,br) == NULL)
+                if(meWindowPopup(NULL,BcompleteN,BFND_CREAT|BFND_CLEAR|WPOP_MKCURR,br) == NULL)
                 {
-                    contstr = compFailComp ;
-                    break ;
+                    contstr = compFailComp;
+                    break;
                 }
                 
                 /* remove any completion list selection hilighting */
                 if(selhilight.bp == frameCur->bufferCur)
-                    selhilight.flags &= ~SELHIL_ACTIVE ;
+                    selhilight.flags &= ~SELHIL_ACTIVE;
                 
                 /* Compute the widths available from the window width */
                 lwidth = frameCur->windowCur->textWidth >> 1;

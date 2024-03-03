@@ -827,9 +827,9 @@ dirDrawDir(meUByte *fname, int n)
     meUByte   iStr[meBUF_SIZE_MAX];               /* Vertical bars buffer */
     
     /* Find the buffer and vapour the old one */
-    if((wp = meWindowPopup(dirBufName,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR),NULL)) == NULL)
-        return ;
-    bp = wp->buffer ;                   /* Point to the buffer */
+    if((wp = meWindowPopup(NULL,dirBufName,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR),NULL)) == NULL)
+        return;
+    bp = wp->buffer;                   /* Point to the buffer */
     
     if((n & LDO_SELECT) && fnamecmp(bp->fileName,fname))
         meStrrep(&bp->fileName,fname);

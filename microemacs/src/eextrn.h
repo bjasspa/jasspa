@@ -45,17 +45,16 @@ extern	int	windowGotoBol(int f, int n);
 extern	int	windowGotoEol(int f, int n);
 extern	int	meErrorEob(void) ;
 extern	int	meErrorBob(void) ;
-extern	int	meWindowBackwardChar(register meWindow *wp, register int n) ;
-extern	int	meWindowForwardChar(register meWindow *wp, register int n) ;
+extern	int	meWindowBackwardChar(register meWindow *wp, register int n);
+extern	int	meWindowForwardChar(register meWindow *wp, register int n);
 extern	int	windowBackwardChar(int f, int n);
 extern	int	windowForwardChar(int f, int n);
-extern	meUByte meWindowGetChar(meWindow *wp) ;
-extern	int	windowGotoLine(int f, int n);
+extern	meUByte meWindowGetChar(register meWindow *wp);
+extern	int	meWindowGotoLine(register meWindow *wp,meInt line);
 #if MEOPT_EXTENDED || MEOPT_NARROW
-extern	int	windowGotoAbsLine(meInt line) ;
-#else
-#define windowGotoAbsLine(l) windowGotoLine(1,l)
+extern	int	meWindowGotoAbsLine(register meWindow *wp,meInt line);
 #endif
+extern	int	windowGotoLine(int f, int n);
 extern	int	windowGotoBob(int f, int n);
 extern	int	windowGotoEob(int f, int n);
 extern	int	windowForwardLine(int f, int n);
@@ -1166,7 +1165,7 @@ extern  int     windowSetScrollWithMouse(int f, int n);
 #define WPOP_MKCURR 0x100
 #define WPOP_USESTR 0x200
 #define WPOP_EXIST  0x400
-extern	meWindow *meWindowPopup(meUByte *name, int flags, meBuffer **bufferReplaced);
+extern	meWindow *meWindowPopup(register meBuffer *bp, meUByte *name, int flags, meBuffer **bufferReplaced);
 extern	int	windowPopup(int f, int n);
 #if MEOPT_EXTENDED
 extern	int	windowScrollNextUp(int f, int n);

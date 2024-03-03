@@ -246,88 +246,88 @@ findTagExec(int nn, meUByte tag[])
     
     if(nn & 0x04)
     {
-        if(findTagSearchNext(tag, file, fpatt) <= 0)
-            return meFALSE ;
+        if(findTagSearchNext(tag,file,fpatt) <= 0)
+            return meFALSE;
     }
-    else if(findTagSearch(tag, file, fpatt) <= 0)
-        return meFALSE ;
+    else if(findTagSearch(tag,file,fpatt) <= 0)
+        return meFALSE;
     
-    if((nn & 0x01) && (meWindowPopup(NULL,WPOP_MKCURR,NULL) == NULL))
-        return meFALSE ;
+    if((nn & 0x01) && (meWindowPopup(NULL,NULL,WPOP_MKCURR,NULL) == NULL))
+        return meFALSE;
     if(findSwapFileList(file,(BFND_CREAT|BFND_MKNAM),0,0) <= 0)
-        return mlwrite(MWABORT,(meUByte *)"[Can't find %s]", file);
+        return mlwrite(MWABORT,(meUByte *)"[Can't find %s]",file);
     
     /* now convert the tag file search pattern into a magic search string */
     {
-        meUByte cc, *ss, *dd, ee ;
-        ss = fpatt ;
+        meUByte cc, *ss, *dd, ee;
+        ss = fpatt;
         
         /* if the first char is a '/' then search forwards, '?' for backwards */
         ee = *ss++ ;
         if(ee == '?')
         {
-            flags = ISCANNER_BACKW|ISCANNER_PTBEG|ISCANNER_MAGIC|ISCANNER_EXACT ;
-            windowGotoEob(meTRUE, 0);
+            flags = ISCANNER_BACKW|ISCANNER_PTBEG|ISCANNER_MAGIC|ISCANNER_EXACT;
+            windowGotoEob(meTRUE,0);
         }            
         else
         {
-            flags = ISCANNER_PTBEG|ISCANNER_MAGIC|ISCANNER_EXACT ;
-            windowGotoBob(meTRUE, 0);
+            flags = ISCANNER_PTBEG|ISCANNER_MAGIC|ISCANNER_EXACT;
+            windowGotoBob(meTRUE,0);
             if(ee != '/')
             {
-                ee = '\0' ;
-                ss-- ;
+                ee = '\0';
+                ss--;
             }
         }
         if(ee != '\0')
         {
             /* look for the end '/' or '?' - start at the end and look backwards */
-            dd = ss + meStrlen(ss) ;
+            dd = ss + meStrlen(ss);
             while(dd != ss)
                 if(*--dd == ee)
                 {
-                    *dd = '\0' ;
-                    break ;
+                    *dd = '\0';
+                    break;
                 }
         }
             
-        dd = mpatt ;
+        dd = mpatt;
         if(*ss == '^')
         {
-            *dd++ = '^' ;
-            ss++ ;
+            *dd++ = '^';
+            ss++;
         }
         
         while((cc=*ss++) != '\0')
         {
             if(cc == '\\')
             {
-                *dd++ = '\\' ;
-                *dd++ = *ss++ ;
+                *dd++ = '\\';
+                *dd++ = *ss++;
             }
             else
             {
                 if((cc == '[') || (cc == '*') || (cc == '+') ||
                    (cc == '.') || (cc == '?') || (cc == '$'))
-                    *dd++ = '\\' ;
-                *dd++ = cc ;
+                    *dd++ = '\\';
+                *dd++ = cc;
             }
         }
         if(dd[-1] == '$')
         {
-            dd[-2] = '$' ;
-            dd[-1] = '\0' ;
+            dd[-2] = '$';
+            dd[-1] = '\0';
         }
         else
-            *dd = '\0' ;
+            *dd = '\0';
     }
     
     if(iscanner(mpatt,0,flags,NULL) > 0)
-        return meTRUE ;
+        return meTRUE;
     
-    windowGotoBob(meTRUE,0) ;
-    iscanner(tag,0,ISCANNER_PTBEG|ISCANNER_EXACT,NULL) ;
-    return mlwrite(MWABORT,(meUByte *)"[Can't find %s]",fpatt) ;
+    windowGotoBob(meTRUE,0);
+    iscanner(tag,0,ISCANNER_PTBEG|ISCANNER_EXACT,NULL);
+    return mlwrite(MWABORT,(meUByte *)"[Can't find %s]",fpatt);
 }
 
 /*ARGSUSED*/

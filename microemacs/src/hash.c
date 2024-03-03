@@ -205,34 +205,10 @@ hmac_sha256_init(SHA256_CTX *iCtx, SHA256_CTX *oCtx, const meUByte *key, int key
 int
 generateHash(int f, int n)
 {
-    register meLine *elp,*lp;
     SHA256_CTX iCtx, oCtx;
     meUByte *ss, cc, hd[32];
     int ii, elo;
     
-    if(meModeTest(frameCur->bufferCur->mode,MDCR))
-    {
-        if(meModeTest(frameCur->bufferCur->mode,MDLF))
-        {
-            ss = (meUByte *) "\r\n";
-            ii = 2;
-        }
-        else
-        {
-            ss = (meUByte *) "\r";
-            ii = 1;
-        }
-    }
-    else if(meModeTest(frameCur->bufferCur->mode,MDLF))
-    {
-        ss = (meUByte *) "\n";
-        ii = 1;
-    }
-    else
-    {
-        ss = (meUByte *) "";
-        ii = 0;
-    }
     if(n & 0x04)
     {
         /* HMAC-SHA256, must get key */
@@ -251,37 +227,64 @@ generateHash(int f, int n)
     }
     else
     {
+        meWindow *wp=frameCur->windowCur;
+        meBuffer *bp=wp->buffer;
+        register meLine *elp,*lp;
+        
+        if(meModeTest(bp->mode,MDCR))
+        {
+            if(meModeTest(bp->mode,MDLF))
+            {
+                ss = (meUByte *) "\r\n";
+                ii = 2;
+            }
+            else
+            {
+                ss = (meUByte *) "\r";
+                ii = 1;
+            }
+        }
+        else if(meModeTest(bp->mode,MDLF))
+        {
+            ss = (meUByte *) "\n";
+            ii = 1;
+        }
+        else
+        {
+            ss = (meUByte *) "";
+            ii = 0;
+        }
         if(n & 2)
         {
             int slo;
-            if(frameCur->windowCur->markLine == NULL)
+            if(wp->markLine == NULL)
                 return noMarkSet();
-            if(meModeTest(frameCur->bufferCur->mode,MDBINARY) || meModeTest(frameCur->bufferCur->mode,MDRBIN))
+            if(meModeTest(bp->mode,MDBINARY) || meModeTest(bp->mode,MDRBIN))
             {
-                if(frameCur->windowCur->dotLineNo < frameCur->windowCur->markLineNo)
+                if(wp->dotLineNo < wp->markLineNo)
                 {
-                    lp = frameCur->windowCur->dotLine;
-                    elp = frameCur->windowCur->markLine;
-                    if(frameCur->windowCur->markOffset)
+                    lp = wp->dotLine;
+                    elp = wp->markLine;
+                    if(wp->markOffset)
                         elp = meLineGetNext(elp);
                 }
                 else
                 {
-                    lp = frameCur->windowCur->markLine;
-                    elp = frameCur->windowCur->dotLine;
-                    if(frameCur->windowCur->dotOffset)
+                    lp = wp->markLine;
+                    elp = wp->dotLine;
+                    if(wp->dotOffset)
                         elp = meLineGetNext(elp);
                 }
                 elo = 0;
             }
-            else if(frameCur->windowCur->dotLineNo == frameCur->windowCur->markLineNo)
+            else if(wp->dotLineNo == wp->markLineNo)
             {
-                elp = lp = frameCur->windowCur->dotLine;
-                slo = frameCur->windowCur->dotOffset;
-                elo = frameCur->windowCur->markOffset-slo;
+                elp = lp = wp->dotLine;
+                slo = wp->dotOffset;
+                elo = wp->markOffset-slo;
                 if(elo < 0)
                 {
-                    slo = frameCur->windowCur->markOffset;
+                    slo = wp->markOffset;
                     elo = 0 - elo;
                 }
                 sha256_update(&iCtx,meLineGetText(lp)+slo,elo);
@@ -289,19 +292,19 @@ generateHash(int f, int n)
             }
             else
             {
-                if(frameCur->windowCur->dotLineNo < frameCur->windowCur->markLineNo)
+                if(wp->dotLineNo < wp->markLineNo)
                 {
-                    lp = frameCur->windowCur->dotLine;
-                    slo = frameCur->windowCur->dotOffset;
-                    elp = frameCur->windowCur->markLine;
-                    elo = frameCur->windowCur->markOffset;
+                    lp = wp->dotLine;
+                    slo = wp->dotOffset;
+                    elp = wp->markLine;
+                    elo = wp->markOffset;
                 }
                 else
                 {
-                    lp = frameCur->windowCur->markLine;
-                    slo = frameCur->windowCur->markOffset;
-                    elp = frameCur->windowCur->dotLine;
-                    elo = frameCur->windowCur->dotOffset;
+                    lp = wp->markLine;
+                    slo = wp->markOffset;
+                    elp = wp->dotLine;
+                    elo = wp->dotOffset;
                 }
                 if(slo < meLineGetLength(lp))
                     sha256_update(&iCtx,meLineGetText(lp)+slo,meLineGetLength(lp)-slo);
@@ -312,10 +315,10 @@ generateHash(int f, int n)
         }
         else
         {            
-            elp = frameCur->bufferCur->baseLine;
+            elp = bp->baseLine;
             lp = meLineGetNext(elp);
         }
-        if(meModeTest(frameCur->bufferCur->mode,MDBINARY))
+        if(meModeTest(bp->mode,MDBINARY))
         {
             meUByte dd;
             while(lp != elp)
@@ -341,7 +344,7 @@ generateHash(int f, int n)
                 lp = meLineGetNext(lp);
             }
         }
-        else if(meModeTest(frameCur->bufferCur->mode,MDRBIN))
+        else if(meModeTest(bp->mode,MDRBIN))
         {
             meUByte dd;
             while(lp != elp)
@@ -371,7 +374,7 @@ generateHash(int f, int n)
                 if(elo)
                     sha256_update(&iCtx,meLineGetText(elp),elo);
             }
-            else if(meModeTest(frameCur->bufferCur->mode,MDCTRLZ))
+            else if(meModeTest(bp->mode,MDCTRLZ))
                 sha256_update(&iCtx,(meUByte *) "\x1a",1);
         }
     }

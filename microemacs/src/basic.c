@@ -150,7 +150,7 @@ windowForwardChar(int f, register int n)
 
 
 meUByte
-meWindowGetChar(meWindow *wp)
+meWindowGetChar(register meWindow *wp)
 {
     register meUByte cc;
     
@@ -269,6 +269,163 @@ windowBackwardLine(int f, int n)
     return meTRUE;
 }
 
+int	
+meWindowGotoLine(register meWindow *wp, meInt nlno)
+{
+    register meLine *lp;
+    meInt nn;
+    /* if a bogus argument...then leave */
+    if(--nlno < 0)
+        return meFALSE;
+    
+    /* always reset offset to the left hand edge */
+    wp->dotOffset = 0;
+    if(wp == frameCur->windowCur)
+        curgoal = 0;
+    
+    if((nn=wp->dotLineNo-nlno) == 0)
+        return meTRUE;
+    wp->updateFlags |= WFMOVEL;
+    wp->dotLineNo = nlno;
+    if(nlno < nn)
+    {
+        /* first, we go to the start of the buffer */
+        lp = meLineGetNext(wp->buffer->baseLine);
+        if(!nlno)
+        {
+            wp->dotLine = lp;
+            return meTRUE;
+        }
+    }
+    else if((nlno=nlno - wp->buffer->lineCount) >= nn)
+    {
+        /* first, we go to the end of the buffer */
+        lp = wp->buffer->baseLine;
+        if(nlno >= 0)
+        {
+            wp->dotLine = lp;
+            if(nlno == 0)
+                return meTRUE;
+            wp->dotLineNo = wp->buffer->lineCount;
+            return meErrorEob();
+        }
+    }
+    else
+    {
+        lp = wp->dotLine;
+        nlno = 0-nn;
+    }
+    if(nlno < 0)
+    {
+        do
+            lp = meLineGetPrev(lp);
+        while(++nlno);
+    }
+    else
+    {
+        do
+            lp = meLineGetNext(lp);
+        while(--nlno);
+    }
+    wp->dotLine = lp;
+    return meTRUE;
+}
+
+#if MEOPT_EXTENDED || MEOPT_NARROW
+/* windowGotoAbsLine
+ * 
+ * Goto absolute line is similar to windowGotoLine except it considers narrowed out
+ * text as well */
+int	
+meWindowGotoAbsLine(register meWindow *wp, meInt line)
+{
+    meBuffer *bp=wp->buffer;
+    meLine *lp;
+    int rr;
+    
+    if(line == 0)		/* if a bogus argument...then leave */
+        return meFALSE;
+#if MEOPT_NARROW
+    if(bp->narrow != NULL)
+        /* There are narrows - first unnarrow buffer */
+        meBufferExpandNarrowAll(bp);
+#endif
+    if(line < 0)
+    {
+        rr = wp->dotLineNo;
+#if MEOPT_EXTENDED
+        if(wp->dotLine->flag & meLINE_MARKUP)
+            rr = -1;
+        else
+        {
+            lp = meLineGetNext(bp->baseLine);
+            while(lp != wp->dotLine)
+            {
+                if(lp->flag & meLINE_MARKUP)
+                    rr--;
+                lp = meLineGetNext(lp);
+            }
+        }
+#endif
+#if MEOPT_NARROW
+        if(bp->narrow != NULL)
+            meBufferCollapseNarrowAll(bp);
+#endif
+        return rr;
+    }
+    /* now move to the required line */
+    if(line > bp->lineCount)
+    {
+        wp->dotLine = bp->baseLine;
+        wp->dotLineNo = bp->lineCount;
+        rr = (line == bp->lineCount);
+    }
+    else
+    {
+        wp->dotLineNo = 0;
+        lp = meLineGetNext(bp->baseLine);
+        while(((lp->flag & meLINE_MARKUP) || (--line > 0)) &&
+              (lp != bp->baseLine))
+        {
+            lp = meLineGetNext(lp);
+            wp->dotLineNo++;
+        }
+        wp->dotLine = lp;
+        rr = (line == 0);
+    }
+    /* set column to left hand edge and reset the goal column */
+    wp->dotOffset = 0;
+    wp->updateFlags |= WFMOVEL;
+    if(wp == frameCur->windowCur)
+        curgoal = 0;
+    
+#if MEOPT_NARROW
+    if(bp->narrow != NULL)
+    {
+        /* To ensure we get back to the right line (could be
+         * currently narrowed out), drop an alpha mark.
+         */
+        if(rr > 0)
+            rr = meAnchorSet(bp,meANCHOR_ABS_LINE,wp->dotLine,wp->dotLineNo,0,1);
+        meBufferCollapseNarrowAll(bp);
+        if(rr > 0) 
+        {
+            if((rr = meAnchorGet(bp,meANCHOR_ABS_LINE)) > 0)
+            {
+                /* do the buisness */
+                wp->dotLine = bp->dotLine;
+                wp->dotOffset = bp->dotOffset;
+                wp->dotLineNo = bp->dotLineNo;
+                wp->updateFlags |= WFMOVEL;
+            }
+            meAnchorDelete(bp,meANCHOR_ABS_LINE);
+        }
+    }
+#endif
+    return rr;
+}
+#endif
+
 /* move to a particular line. argument (n) must be a positive integer for this
  * to actually do anything
  */
@@ -283,7 +440,7 @@ windowGotoLine(int f, int n)
     if((f == meFALSE) || (n == 0))
     {
         if((status = meGetString((meUByte *)"Goto line", 0, 0, arg, meSBUF_SIZE_MAX)) <= 0) 
-            return(status);
+            return status;
         
         /*---	Skip white space */
         
@@ -293,17 +450,16 @@ windowGotoLine(int f, int n)
         /*---	Record if it is a displacement */
         
         status = (arg[n]=='+' || arg[n]=='-');	/* Displacement ?? */
-        nlno = meAtoi(arg);				/* Get value */
+        nlno = meAtoi(arg);			/* Get value */
         
-        /* SWP moved these two lines into this bracket as if arguement is given
-         * the default must be absolution (previously undefined as status was
-         * left uninitialised.
+        /* SWP moved these two lines into this bracket as if arguement is given the default must be
+         * absolution (previously undefined as status was left uninitialised.
          */
         if(status)			/* Displacement ?? */
         {
 #if MEOPT_NARROW
             if(f != meFALSE)
-                nlno += windowGotoAbsLine(-1);
+                nlno += meWindowGotoAbsLine(frameCur->windowCur,-1);
             else
 #endif
                 nlno += frameCur->windowCur->dotLineNo;
@@ -316,141 +472,14 @@ windowGotoLine(int f, int n)
         }
 #if MEOPT_NARROW
         if(f != meFALSE)
-            return windowGotoAbsLine(nlno);
+            return meWindowGotoAbsLine(frameCur->windowCur,nlno);
 #endif
     }
     else
         nlno = n;
     
-    /*--- This is an absolute jump. Go to zero & move */
-
-    if(nlno < 1)		/* if a bogus argument...then leave */
-        return meFALSE;
-    
-    /* always reset offset to the left hand edge */
-    curgoal = 0;
-    frameCur->windowCur->dotOffset = 0;
-    if(nlno < (frameCur->windowCur->dotLineNo-nlno))
-    {
-        /* first, we go to the start of the buffer */
-        frameCur->windowCur->dotLine = meLineGetNext(frameCur->bufferCur->baseLine);
-        frameCur->windowCur->dotLineNo = 0;
-        frameCur->windowCur->updateFlags |= WFMOVEL;
-    }
-    else if((frameCur->bufferCur->lineCount-nlno) < (nlno-frameCur->windowCur->dotLineNo))
-    {
-        /* first, we go to the end of the buffer */
-        frameCur->windowCur->dotLine = frameCur->bufferCur->baseLine;
-        frameCur->windowCur->dotLineNo = frameCur->bufferCur->lineCount;
-        frameCur->windowCur->updateFlags |= WFMOVEL;
-    }
-    nlno -= frameCur->windowCur->dotLineNo;
-    /* force the $scroll variable to no smooth so if the line is off the screen
-     * the reframe will center the line */
-    {
-        meUByte sscrollFlag; 
-        
-        sscrollFlag = scrollFlag;
-        scrollFlag = 0;
-        n =  windowForwardLine(f,nlno-1);
-        scrollFlag = sscrollFlag;
-    }
-    return n;
+    return meWindowGotoLine(frameCur->windowCur,nlno);
 }
-
-#if MEOPT_EXTENDED || MEOPT_NARROW
-/* windowGotoAbsLine
- * 
- * Goto absolute line is similar to windowGotoLine except it considers narrowed out
- * text as well */
-int	
-windowGotoAbsLine(meInt line)
-{
-    meLine *lp;
-    int rr;
-    
-    if(line == 0)		/* if a bogus argument...then leave */
-        return meFALSE;
-#if MEOPT_NARROW
-    if(frameCur->bufferCur->narrow != NULL)
-        /* There are narrows - first unnarrow buffer */
-        meBufferExpandNarrowAll(frameCur->bufferCur);
-#endif
-    if(line < 0)
-    {
-        rr = frameCur->windowCur->dotLineNo;
-#if MEOPT_EXTENDED
-        if(frameCur->windowCur->dotLine->flag & meLINE_MARKUP)
-            rr = -1;
-        else
-        {
-            lp = meLineGetNext(frameCur->bufferCur->baseLine);
-            while(lp != frameCur->windowCur->dotLine)
-            {
-                if(lp->flag & meLINE_MARKUP)
-                    rr--;
-                lp = meLineGetNext(lp);
-            }
-        }
-#endif
-#if MEOPT_NARROW
-        if(frameCur->bufferCur->narrow != NULL)
-            meBufferCollapseNarrowAll(frameCur->bufferCur);
-#endif
-        return rr;
-    }
-    /* now move to the required line */
-    if(line > frameCur->bufferCur->lineCount)
-    {
-        frameCur->windowCur->dotLine = frameCur->bufferCur->baseLine;
-        frameCur->windowCur->dotLineNo = frameCur->bufferCur->lineCount;
-        rr = (line == frameCur->bufferCur->lineCount);
-    }
-    else
-    {
-        frameCur->windowCur->dotLineNo = 0;
-        lp = meLineGetNext(frameCur->bufferCur->baseLine);
-        while(((lp->flag & meLINE_MARKUP) || (--line > 0)) &&
-              (lp != frameCur->bufferCur->baseLine))
-        {
-            lp = meLineGetNext(lp);
-            frameCur->windowCur->dotLineNo++;
-        }
-        frameCur->windowCur->dotLine = lp;
-        rr = (line == 0);
-    }
-    /* set column to left hand edge and reset the goal column */
-    frameCur->windowCur->dotOffset = 0;
-    curgoal = 0;
-    frameCur->windowCur->updateFlags |= WFMOVEL;
-    
-#if MEOPT_NARROW
-    if(frameCur->bufferCur->narrow != NULL)
-    {
-        /* To ensure we get back to the right line (could be
-         * currently narrowed out), drop an alpha mark.
-         */
-        if(rr > 0)
-            rr = meAnchorSet(frameCur->bufferCur,meANCHOR_ABS_LINE,frameCur->windowCur->dotLine,frameCur->windowCur->dotLineNo,0,1);
-        meBufferCollapseNarrowAll(frameCur->bufferCur);
-        if(rr > 0) 
-        {
-            if((rr = meAnchorGet(frameCur->bufferCur,meANCHOR_ABS_LINE)) > 0)
-            {
-                /* do the buisness */
-                frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine;
-                frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset;
-                frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo;
-                frameCur->windowCur->updateFlags |= WFMOVEL;
-            }
-            meAnchorDelete(frameCur->bufferCur,meANCHOR_ABS_LINE);
-        }
-    }
-#endif
-    return rr;
-}
-#endif
-
 
 /*
  * Goto the beginning of the buffer. Massive adjustment of dot. This is
@@ -623,22 +652,23 @@ windowSetMark(int f, int n)
 int
 windowSwapDotAndMark(int f, int n)
 {
+    meWindow *cwp;
     meLine   *odotp;
     meUShort  odoto;
     meInt     lineno;
 
-    if(frameCur->windowCur->markLine == NULL)
+    if((cwp=frameCur->windowCur)->markLine == NULL)
         return noMarkSet();
-    odotp = frameCur->windowCur->dotLine;
-    odoto = frameCur->windowCur->dotOffset;
-    lineno = frameCur->windowCur->dotLineNo;
-    frameCur->windowCur->dotLine = frameCur->windowCur->markLine;
-    frameCur->windowCur->dotOffset = frameCur->windowCur->markOffset;
-    frameCur->windowCur->dotLineNo = frameCur->windowCur->markLineNo;
-    frameCur->windowCur->markLine = odotp;
-    frameCur->windowCur->markOffset = odoto;
-    frameCur->windowCur->markLineNo = lineno;
-    frameCur->windowCur->updateFlags |= WFMOVEL;
+    odotp = cwp->dotLine;
+    odoto = cwp->dotOffset;
+    lineno = cwp->dotLineNo;
+    cwp->dotLine = cwp->markLine;
+    cwp->dotOffset = cwp->markOffset;
+    cwp->dotLineNo = cwp->markLineNo;
+    cwp->markLine = odotp;
+    cwp->markOffset = odoto;
+    cwp->markLineNo = lineno;
+    cwp->updateFlags |= WFMOVEL;
     return meTRUE;
 }
 

@@ -1875,21 +1875,21 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     {
         /* get a popup window for the command output */
         meWindow *wp ;
-        if(((wp = meWindowPopup(bp->name,0,NULL)) != NULL) && (ipipes == ipipe))
+        if(((wp = meWindowPopup(bp,NULL,0,NULL)) != NULL) && (ipipes == ipipe))
             ipipeSetSize(wp,bp);
     }
     
     if((bp->ipipeFunc >= 0) && (ipipes == ipipe))
         /* Give argument of 1 to indicate process has not exited */
-        execBufferFunc(bp,bp->ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),1) ;
+        execBufferFunc(bp,bp->ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),1);
     
     /* reset again incase there was a delay in the meWindowPopup call */
-    bp->dotLine = meLineGetPrev(bp->baseLine) ;
-    bp->dotOffset = 0 ;
-    bp->dotLineNo = bp->lineCount-1 ;
-    resetBufferWindows(bp) ;
+    bp->dotLine = meLineGetPrev(bp->baseLine);
+    bp->dotOffset = 0;
+    bp->dotLineNo = bp->lineCount-1;
+    resetBufferWindows(bp);
 
-    return meTRUE ;
+    return meTRUE;
 }
 
 int
@@ -2138,23 +2138,23 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
         bp->fileName = meStrdup(path);
         /* make this window in VIEW mode, update all mode lines */
         meModeClear(bp->mode,MDEDIT);
-        meModeSet(bp->mode,MDVIEW) ;
-        bp->dotLine = meLineGetNext(bp->baseLine) ;
-        bp->dotLineNo = 0 ;
-        resetBufferWindows(bp) ;
+        meModeSet(bp->mode,MDVIEW);
+        bp->dotLine = meLineGetNext(bp->baseLine);
+        bp->dotLineNo = 0;
+        resetBufferWindows(bp);
 
         if((flags & LAUNCH_SILENT) == 0)
-            meWindowPopup(bp->name,WPOP_MKCURR,NULL) ;
+            meWindowPopup(bp,NULL,WPOP_MKCURR,NULL);
 
         /* Issue the callback if required. */
 #if MEOPT_IPIPES
         ipipeFunc = bp->ipipeFunc;
         if ((flags & LAUNCH_BUFIPIPE) && (ipipeFunc >= 0))
-            execBufferFunc(bp,ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),0) ;
+            execBufferFunc(bp,ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),0);
 #endif 
     }
-    meStrcpy(resultStr,meItoa(systemRet)) ;
-    return ret ;
+    meStrcpy(resultStr,meItoa(systemRet));
+    return ret;
 }
 
 /*
