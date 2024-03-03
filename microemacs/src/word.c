@@ -563,6 +563,7 @@ getBestGap(void)
 int
 justify(int leftMargin, int leftDoto, meUByte jmode)
 {
+    meWindow *wp = frameCur->windowCur;
     meUShort  len, doto, ss ;
     meUShort  odoto;              /* Starting doto backup */
     meUByte   cc ;
@@ -570,23 +571,23 @@ justify(int leftMargin, int leftDoto, meUByte jmode)
     int       col ;               /* left indent with tab expansion */
 
     /* Save old context */
-    odoto = frameCur->windowCur->dotOffset;
-    frameCur->windowCur->dotLine = meLineGetPrev(frameCur->windowCur->dotLine) ;
-    (frameCur->windowCur->dotLineNo)-- ;
+    odoto = wp->dotOffset;
+    wp->dotLine = meLineGetPrev(wp->dotLine) ;
+    (wp->dotLineNo)-- ;
     undoMode = (leftMargin < 0) ? 2:0;  /* Compute the undo mode */
 
     /* lowercase the given jmode to remove the auto-detect */
     jmode = toLower(jmode);
 
     /* We are always filling the previous line */
-    len = meLineGetLength(frameCur->windowCur->dotLine) ;
+    len = meLineGetLength(wp->dotLine) ;
     ss = len ;
 
     /* Strip any spaces from the right of the string */
     while(len > 0)
     {
         len-- ;
-        if(((cc = meLineGetChar(frameCur->windowCur->dotLine,len)) != ' ') && (cc != meCHAR_TAB))
+        if(((cc = meLineGetChar(wp->dotLine,len)) != ' ') && (cc != meCHAR_TAB))
         {
             len++ ;
             break ;
@@ -594,7 +595,7 @@ justify(int leftMargin, int leftDoto, meUByte jmode)
     }
     if((ss = ss - len) != 0)
     {
-        frameCur->windowCur->dotOffset = len ;
+        wp->dotOffset = len ;
         ldelete (ss, undoMode) ;
     }
 
@@ -605,11 +606,11 @@ justify(int leftMargin, int leftDoto, meUByte jmode)
     if(leftDoto < 0)
     {
         /* move to the left hand margin */
-        frameCur->windowCur->dotOffset = 0 ;
-        while(((cc = meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset)) != '\0') &&
+        wp->dotOffset = 0 ;
+        while(((cc = meLineGetChar(wp->dotLine,wp->dotOffset)) != '\0') &&
               ((cc == ' ') || (cc == '\t')))
-            frameCur->windowCur->dotOffset++ ;
-        doto = frameCur->windowCur->dotOffset ;
+            wp->dotOffset++ ;
+        doto = wp->dotOffset ;
         col = getccol() ;
         if(leftMargin < 0)
             leftMargin = col ;
@@ -617,11 +618,11 @@ justify(int leftMargin, int leftDoto, meUByte jmode)
     else
     {
         doto = leftDoto ;
-        frameCur->windowCur->dotOffset = doto ;
+        wp->dotOffset = doto ;
         col = leftMargin ;
     }
     /* check for and trash any TABs on the rest of the line */
-    while((cc=meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset)) != '\0')
+    while((cc=meLineGetChar(wp->dotLine,wp->dotOffset)) != '\0')
     {
         if (cc == meCHAR_TAB)
         {
@@ -635,9 +636,9 @@ justify(int leftMargin, int leftDoto, meUByte jmode)
                 meUndoAddInsChars(jj) ;
 #endif
         }
-        frameCur->windowCur->dotOffset++ ;
+        wp->dotOffset++ ;
     }
-    len = meLineGetLength(frameCur->windowCur->dotLine) - doto + leftMargin ;
+    len = meLineGetLength(wp->dotLine) - doto + leftMargin ;
 
     /* If there is leading white space and we are justifying centre or right
      * then delete the white space. */
@@ -672,7 +673,7 @@ justify(int leftMargin, int leftDoto, meUByte jmode)
         int gaps ;			/* The number of gaps in the line */
 
         ss = frameCur->bufferCur->fillcol - len ;
-        frameCur->windowCur->dotOffset = doto ;	        /* Save doto position */
+        wp->dotOffset = doto ;	        /* Save doto position */
         gaps = countGaps() ;	        /* Get number of gaps */
 
         if(gaps == 0)			/* No gaps ?? */
@@ -690,7 +691,7 @@ justify(int leftMargin, int leftDoto, meUByte jmode)
             gapDir ^= 1 ;               /* Direction of gaps */
             do
             {
-                frameCur->windowCur->dotOffset = doto ;	/* Save doto position */
+                wp->dotOffset = doto ;	/* Save doto position */
                 getBestGap() ;
 
                 incGaps = (ss+gaps-1)/gaps ;
@@ -712,10 +713,10 @@ justify(int leftMargin, int leftDoto, meUByte jmode)
 finished:
 
     /* Restore context - return the new line length */
-    ss = meLineGetLength (frameCur->windowCur->dotLine);
-    frameCur->windowCur->dotLine = meLineGetNext(frameCur->windowCur->dotLine) ;
-    frameCur->windowCur->dotOffset = odoto ;
-    (frameCur->windowCur->dotLineNo)++ ;
+    ss = meLineGetLength(wp->dotLine);
+    wp->dotLine = meLineGetNext(wp->dotLine) ;
+    wp->dotOffset = odoto ;
+    (wp->dotLineNo)++ ;
     return ss;
 }
 
@@ -733,7 +734,7 @@ finished:
  */
 
 static meInt
-lookahead(meInt fillState)
+lookahead(meWindow *wp, meInt fillState)
 {
     int status;                         /* Status of command. */
     int	ii;                             /* Loop counter */
@@ -744,21 +745,21 @@ lookahead(meInt fillState)
     /* Nothing to do if there are no paragraph markers */
     if (fillbullet[0] == '\0')
         return fillState ;
-    limit = frameCur->windowCur->dotOffset+fillbulletlen;/* Define the limit of search */
-    if (limit > meLineGetLength(frameCur->windowCur->dotLine))
-        limit = meLineGetLength (frameCur->windowCur->dotLine);
+    limit = wp->dotOffset+fillbulletlen;/* Define the limit of search */
+    if (limit > meLineGetLength(wp->dotLine))
+        limit = meLineGetLength (wp->dotLine);
 
     /* Scan the line for a paragraph starting point. Start from the beginning
        of the line */
     for (ii = 0, last_c = (char) 1; ii < limit; ii++)
     {
-        c = meLineGetChar (frameCur->windowCur->dotLine, ii);
+        c = meLineGetChar (wp->dotLine, ii);
         if ((meStrchr (fillbullet, last_c) != NULL) && (c == ' ' || c == meCHAR_TAB))
         {
             /* Go to the end of the spaces. */
             while (++ii < limit)
             {
-                c = meLineGetChar(frameCur->windowCur->dotLine, ii);
+                c = meLineGetChar(wp->dotLine, ii);
                 if ((c != ' ') && (c != meCHAR_TAB))
                     break;
             }
@@ -774,18 +775,18 @@ lookahead(meInt fillState)
                 meLine *temp_dotp;      /* Save our current line */
 
                 /* Move to the next line and scan it */
-                temp_dotp = frameCur->windowCur->dotLine;
-                frameCur->windowCur->dotLine = meLineGetNext (frameCur->windowCur->dotLine);
-                if (frameCur->windowCur->dotLine != frameCur->bufferCur->baseLine)	/* EOF  ?? */
+                temp_dotp = wp->dotLine;
+                wp->dotLine = meLineGetNext (wp->dotLine);
+                if (wp->dotLine != wp->buffer->baseLine)	/* EOF  ?? */
                 {
                     int jj;
                     int jlen;
 
                     /* Build up a profile of the spaces on the next line */
-                    jlen = meLineGetLength (frameCur->windowCur->dotLine);
+                    jlen = meLineGetLength (wp->dotLine);
                     for (jj = 0; jj < jlen; jj++)
                     {
-                        c = meLineGetChar(frameCur->windowCur->dotLine, jj);
+                        c = meLineGetChar(wp->dotLine, jj);
                         if ((c != ' ') && (c != meCHAR_TAB))
                             break;
                     }
@@ -795,14 +796,14 @@ lookahead(meInt fillState)
                      * current line is liable to spill onto the next line
                      * which is empty */
                     if ((jj == ii) ||   /* Next line indented to 'ii' */
-                        ((jj == jlen) && (meLineGetLength(temp_dotp) <= frameCur->bufferCur->fillcol)))
+                        ((jj == jlen) && (meLineGetLength(temp_dotp) <= wp->buffer->fillcol)))
                     {
-                        frameCur->windowCur->dotOffset = ii; /* Assume position 'i' */
+                        wp->dotOffset = ii; /* Assume position 'i' */
                         status = 0;     /* Disable prompt */
                     }
                 }
                 /* Restore previous position */
-                frameCur->windowCur->dotLine = temp_dotp;
+                wp->dotLine = temp_dotp;
             }
 
             /* If auto detect is disabled or failed then manually prompt the user
@@ -811,8 +812,8 @@ lookahead(meInt fillState)
             {
                 short temp_doto;        /* Temporary character position */
 
-                temp_doto = frameCur->windowCur->dotOffset;
-                frameCur->windowCur->dotOffset = ii;
+                temp_doto = wp->dotOffset;
+                wp->dotOffset = ii;
 
                 if(fillState & FILL_INDALL)
                     status = 'y' ;
@@ -822,7 +823,7 @@ lookahead(meInt fillState)
                 {
                     if((status = mlCharReply((meUByte *)"Indent to <<<<<<<<<< (?/y/n/a/o) ? ",mlCR_QUIT_ON_USER|mlCR_LOWER_CASE,(meUByte *)"ynao",NULL)) == -2)
                     {
-                        meUByte scheme=(frameCur->bufferCur->scheme/meSCHEME_STYLES) ;
+                        meUByte scheme=(wp->buffer->scheme/meSCHEME_STYLES) ;
 
                         /* Force an update of the screen to to ensure that the user
                          * can see the information in the correct location */
@@ -834,7 +835,7 @@ lookahead(meInt fillState)
                     }
                     if (status == -1)
                     {
-                        frameCur->windowCur->dotOffset = temp_doto;	/* Restore */
+                        wp->dotOffset = temp_doto;	/* Restore */
                         return -1 ;
                     }
                     if(status == 'a')
@@ -849,9 +850,9 @@ lookahead(meInt fillState)
                     }
                 }
                 if(status == 'y')
-                    frameCur->windowCur->dotOffset = ii;
+                    wp->dotOffset = ii;
                 else
-                    frameCur->windowCur->dotOffset = temp_doto;	/* Restore */
+                    wp->dotOffset = temp_doto;	/* Restore */
             }
             return fillState ;          /* Return potentially modified fillState */
         }
@@ -918,6 +919,8 @@ fillAutoDetect (char mode)
 int
 fillPara(int f, int n)
 {
+    meWindow *wp=frameCur->windowCur;
+    meBuffer *bp;
     meLine *eopline;		        /* ptr to line just past EOP	*/
     meInt eoplno;		        /* line no of line just past EOP*/
     meInt ilength;			/* Initial line length          */
@@ -934,14 +937,14 @@ fillPara(int f, int n)
     int paralen ;
 #endif
 
-    if (frameCur->bufferCur->fillcol == 0)  /* Fill column set ??*/
+    if((bp=wp->buffer)->fillcol == 0)  /* Fill column set ??*/
         return mlwrite(MWABORT,(meUByte *)"No fill column set");
-    if ((c=bufferSetEdit()) <= 0)       /* Check we can change the buffer */
+    if((c=bufferSetEdit()) <= 0)       /* Check we can change the buffer */
         return c ;
 
     /* A -ve cont indicates that we do not want to be prompted for indentation
      * We also do not prompt if we are right or centre justifying */
-    if (n < 0)
+    if(n < 0)
     {
         fillState = 0 ;                 /* Disable indented fill */
         n = 0 - n ;
@@ -956,7 +959,7 @@ fillPara(int f, int n)
      *
      * If the One Line mode (o) is operational then fill compleate
      * paragraphs to a single line. Indentation is disabled */
-    jmode = frameCur->bufferCur->fillmode;
+    jmode = bp->fillmode;
     if (isUpper(jmode))
     {
         fillState |= FILL_AUTO;         /* Auto paragraph type detection */
@@ -965,22 +968,22 @@ fillPara(int f, int n)
             fillState = (fillState | FILL_LINE | FILL_MARGIN) & ~FILL_INDENT;
 
     }
-    else if (jmode == 'o')
+    else if(jmode == 'o')
         fillState = (fillState | FILL_LINE) & ~FILL_INDENT;
 
     /* In none mode then we do not touch the paragraph. */
-    if (jmode == 'n')
+    if(jmode == 'n')
     {
         /* If there are no arguments then do nothing, otherwise advance the
          * paragraph. */
         if (!f)
             return meTRUE;
-        return windowForwardParagraph(meFALSE, n) ;
+        return windowForwardParagraph(meFALSE,n);
     }
 
     /* Record if justify mode is enabled. Record in our local context Also
      * knock off indent if disabled. We do not want to be prompting the user. */
-    if(meModeTest(frameCur->bufferCur->mode,MDJUST)) /* Justify enabled ?? */
+    if(meModeTest(bp->mode,MDJUST)) /* Justify enabled ?? */
         fillState |= FILL_JUSTIFY;      /* Yes - Set justification state */
     else
     {
@@ -989,7 +992,7 @@ fillPara(int f, int n)
         jmode = 'l';
         fillState &= ~FILL_INDENT;      /* No - Knock indent off */
     }
-
+    
     /* If fill paragraph is called with no arguments then we must retain the
      * position of dot so that we can preserve the users position after we
      * have filled the paragraph, but only if we are not at the top of the
@@ -999,12 +1002,12 @@ fillPara(int f, int n)
         /* See if this is a paragraph separator line. If it is not a
          * separator then the paragraph position must be restored. */
         f = 1;                          /* Anchor will be set */
-        if ((icol = meLineGetLength (frameCur->windowCur->dotLine)) != 0)
+        if ((icol = meLineGetLength(wp->dotLine)) != 0)
         {
             for (ccol = 0; ccol < icol; ccol++)
             {
                 /* Check that this is not a paragraph sepearator line */
-                c = meLineGetChar (frameCur->windowCur->dotLine, ccol);
+                c = meLineGetChar (wp->dotLine, ccol);
                 if ((c != meCHAR_TAB) && (c != ' '))
                 {
                     f = 2;              /* Char exists on line, restore pos */
@@ -1013,10 +1016,9 @@ fillPara(int f, int n)
             }
         }
 
-        meAnchorSet(frameCur->bufferCur,meANCHOR_FILL_DOT,frameCur->windowCur->dotLine,
-                    frameCur->windowCur->dotLineNo,frameCur->windowCur->dotOffset,1);
-        ilength = frameCur->windowCur->dotLineNo ;
-        icol = frameCur->windowCur->dotOffset ;
+        meAnchorSet(bp,meANCHOR_FILL_DOT,wp->dotLine,wp->dotLineNo,wp->dotOffset,1);
+        ilength = wp->dotLineNo ;
+        icol = wp->dotOffset ;
     }
     else
         f = -1 ;
@@ -1027,29 +1029,29 @@ fillPara(int f, int n)
         /* go to the beginning of the line and use forward-paragraph
          * to go to the end of the current or next paragraph, if this
          * fails we are at the end of buffer */
-        frameCur->windowCur->dotOffset = 0 ;             /* Got start of current line */
-        if (windowForwardParagraph(meFALSE, 1) <= 0)
+        wp->dotOffset = 0 ;             /* Got start of current line */
+        if(windowForwardParagraph(meFALSE, 1) <= 0)
             break;
 
         /* record the pointer to the line just past the EOP
          * and then back top the beginning of the paragraph.
          * doto is at the beginning of the first word */
-        eopline = frameCur->windowCur->dotLine ;
-        eoplno = frameCur->windowCur->dotLineNo ;
+        eopline = wp->dotLine ;
+        eoplno = wp->dotLineNo ;
         windowBackwardParagraph(meFALSE, 1);
 
         /* Advance to the first character in the paragraph. */
         while(!inPWord())
-            if(meWindowForwardChar(frameCur->windowCur, 1) <= 0)
+            if(meWindowForwardChar(wp, 1) <= 0)
                 break;
 
         /* Skip non-formatting paragraphs */
         if((fillignore[0] != '\0') &&
-           (meStrchr(fillignore,meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset)) != NULL))
+           (meStrchr(fillignore,meLineGetChar(wp->dotLine,wp->dotOffset)) != NULL))
         {
-            frameCur->windowCur->dotLine = eopline;    /* Goto the end of the paragraph */
-            frameCur->windowCur->dotLineNo = eoplno ;
-            frameCur->windowCur->dotOffset = 0;
+            wp->dotLine = eopline;    /* Goto the end of the paragraph */
+            wp->dotLineNo = eoplno ;
+            wp->dotOffset = 0;
             continue;			/* Next one */
         }
 
@@ -1057,13 +1059,13 @@ fillPara(int f, int n)
         {
             /* check that this paragraph can be filled */
             meLine *lp ;
-            lp = frameCur->windowCur->dotLine ;
+            lp = wp->dotLine ;
             do
             {
                 if(meLineGetFlag(lp) & meLINE_PROTECT)
                     return mlwrite(MWABORT,(meUByte *)"[Protected line in paragraph!]") ;
 #if MEOPT_NARROW
-                if((lp != frameCur->windowCur->dotLine) &&
+                if((lp != wp->dotLine) &&
                    (meLineGetFlag(lp) & meLINE_ANCHOR_NARROW))
                     return mlwrite(MWABORT,(meUByte *)"[Narrow in paragraph!]") ;
 #endif
@@ -1073,7 +1075,7 @@ fillPara(int f, int n)
         /* Quick auto test to determine what mode the current paragraph is.
          * Set up the modes in the fill status mask */
         if (fillState & FILL_AUTO)
-            jmode = fillAutoDetect(frameCur->bufferCur->fillmode);
+            jmode = fillAutoDetect(bp->fillmode);
         fillState &= ~FILL_TMASK;
         switch (jmode)
         {
@@ -1105,26 +1107,26 @@ noIndent:
             break;
         }
 
-        fdoto = frameCur->windowCur->dotOffset ;
+        fdoto = wp->dotOffset ;
         /* Get the initial string from the start of the paragraph.
          * lookahead() modifies the current doto value. */
         if (((fillState & (FILL_INDENT|FILL_BOTH|FILL_LEFT)) > FILL_INDENT) &&
-            ((fillState=lookahead(fillState)) == -1))
+            ((fillState=lookahead(wp,fillState)) == -1))
             return meABORT ;
 
         /* if lookahead has found a new left indent position, this position
          * must be passed to justify so justify ignores the text to the left
          * of this indent point */
-        if(fdoto == frameCur->windowCur->dotOffset)
+        if(fdoto == wp->dotOffset)
             fdoto = -1 ;
         else
-            fdoto = frameCur->windowCur->dotOffset ;
+            fdoto = wp->dotOffset ;
 
-        ilength = frameCur->windowCur->dotOffset;
+        ilength = wp->dotOffset;
 #if MEOPT_UNDO
-        frameCur->windowCur->dotOffset = 0;
+        wp->dotOffset = 0;
         meUndoAddReplaceBgn(eopline,0) ;
-        frameCur->windowCur->dotOffset = (meUShort) ilength;
+        wp->dotOffset = (meUShort) ilength;
         paralen = 0 ;
 #endif
         /* Get the indentation column, this is the real left indentation position */
@@ -1138,7 +1140,6 @@ noIndent:
          *     ~DOT    - Not a period present
          *      FIRST  - This is the first word
          */
-        ccol = icol;
         wordlen = 0;                    /* No word is present */
 
         fillState = ((fillState & ~(FILL_EOP|FILL_FORCE|FILL_DOT)) |
@@ -1148,10 +1149,10 @@ noIndent:
         while ((fillState & FILL_EOP) == 0)
         {
             /* get the next character in the paragraph */
-            if((c = meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset)) == '\0')
+            if((c = meLineGetChar(wp->dotLine,wp->dotOffset)) == '\0')
             {
                 c = meCHAR_TAB ;
-                if (meLineGetNext(frameCur->windowCur->dotLine) == eopline)
+                if (meLineGetNext(wp->dotLine) == eopline)
                     fillState |= FILL_EOP;  /* End of paragraph */
 
                 if (fillState & (FILL_CENTRE|FILL_NONE|FILL_RIGHT))
@@ -1161,40 +1162,42 @@ noIndent:
             /* if not a separator, just add it in */
             if ((c == ' ') || (c == meCHAR_TAB))
             {
-                if (wordlen)
+                if(wordlen)
                 {
-                    /* at a word break with a word waiting - reset offset to start of word */
-                    frameCur->windowCur->dotOffset -= wordlen ;
+                    /* at a word break with a word waiting - calculate tantitive new length with word added & reset offset to start of word */
+                    newcol = wp->dotOffset;
+                    wp->dotOffset -= wordlen ;
                     if(fillState & FILL_SPACE)
-                        frameCur->windowCur->dotOffset-- ;
-
-                    /* calculate tantitive new length with word added */
-                    newcol = ccol + 1 + wordlen;
-                    if (fillState & FILL_DOT)
+                        wp->dotOffset--;
+                    else
+                        newcol++;
+                    if(fillState & FILL_DOT)
                         newcol += filleoslen-1 ;
-                    if ((newcol <= frameCur->bufferCur->fillcol) || (fillState & FILL_LINE))
+                    
+                    if((newcol <= bp->fillcol) || (fillState & FILL_LINE))
                     {
                         /* add word to current line */
                         if((fillState & FILL_FIRST) == 0)
                         {
-                            int nosp = (fillState & FILL_DOT) ? filleoslen:1 ;
-                            ccol += nosp ;
+                            int nosp = (fillState & FILL_DOT) ? filleoslen:1;
                             if(fillState & FILL_SPACE)
                             {
-                                frameCur->windowCur->dotOffset++ ;
+                                wp->dotOffset++ ;
                                 nosp-- ;
                             }
                             if(nosp)
-                                lineInsertChar(nosp, ' ') ; /* the space */
+                                lineInsertChar(nosp,' '); /* the space */
                         }
                         fillState &= ~(FILL_FIRST|FILL_DOT);
                     }
                     else
                     {
-                        ccol = frameCur->windowCur->dotOffset;
                         if(fillState & FILL_SPACE)
+                        {
                             /* the saved space is not required, delete it */
                             ldelete(1L,0);
+                        }
+                        ccol = wp->dotOffset;
                         lineInsertNewline(0);
                         if (fillState & FILL_JUSTIFY)
                         {
@@ -1208,80 +1211,91 @@ noIndent:
                         paralen += ccol + 1;
 #endif
                         meLineSetIndent(0,icol,0) ;
-                        ccol = (int) icol;
                         fillState &= ~FILL_DOT;
                     }
 
                     /* and add the length of the word in either case */
-                    ccol += wordlen;
-                    frameCur->windowCur->dotOffset += wordlen;
+                    wp->dotOffset += wordlen;
                     if(meStrchr(filleos,lastc) != NULL)
                         fillState |= FILL_DOT;
                     fillState &= ~FILL_SPACE ;
                     wordlen = 0;
                 }
 
-                if (fillState & FILL_FORCE)
+                if(fillState & FILL_FORCE)
                 {
-                    if (fillState & FILL_JUSTIFY)
+                    if(fillState & FILL_JUSTIFY)
                     {
-                        lineInsertNewline(0);
+                        if(fillState & FILL_EOP)
+                        {
+                            wp->dotLineNo++;
+                            wp->dotLine = meLineGetNext(wp->dotLine);
+                            wp->dotOffset = 0;
+                        }
+                        else
+                            lineInsertNewline(0);
                         ccol = justify(icol,fdoto,jmode);
+                        if(fillState & FILL_EOP)
+                        {
+                            wp->dotLineNo--;
+                            wp->dotLine = meLineGetPrev(wp->dotLine);
+                            wp->dotOffset = meLineGetLength(wp->dotLine);
+                        }
+#if MEOPT_UNDO
+                        else
+                            paralen += ccol + 1;
+#endif
                         fdoto = -1 ;
                     }
-                    else
+                    else if(!(fillState & FILL_EOP))
                     {
-                        ccol = frameCur->windowCur->dotOffset;
+#if MEOPT_UNDO
+                        paralen += wp->dotOffset + 1;
+#endif
                         lineInsertNewline(0);
                     }
-#if MEOPT_UNDO
-                    paralen += ccol + 1;
-#endif
                     /* Turn off dot marker and forced line */
-                    ccol = 0;
-                    if ((fillState & FILL_EOP) == 0)
-                        fillState = ((fillState & ~(FILL_DOT|FILL_FORCE)) |
-                                     FILL_FIRST);
+                    if((fillState & FILL_EOP) == 0)
+                        fillState = (fillState & ~(FILL_DOT|FILL_FORCE)) | FILL_FIRST;
                 }
                 /* delete the space */
                 if((c == ' ') && ((fillState & (FILL_FIRST|FILL_SPACE)) == 0))
                 {
-                    frameCur->windowCur->dotOffset++ ;
+                    wp->dotOffset++ ;
                     fillState |= FILL_SPACE ;
                 }
-                else
-                    ldelete(1L,0);
+                else if(!(fillState & FILL_EOP))
++                    ldelete(1L,0);
             }
             else
             {
                 lastc = c ;
                 wordlen++ ;
-                frameCur->windowCur->dotOffset++ ;
+                wp->dotOffset++ ;
             }
         }
-
-        if ((fillState & FILL_FORCE) == 0)
-        {
 #if MEOPT_UNDO
-            paralen += frameCur->windowCur->dotOffset + 1;
+        paralen += wp->dotOffset + 1;
 #endif
-            lineInsertNewline(0);
-        }
+        wp->dotLineNo++;
+        wp->dotLine = meLineGetNext(wp->dotLine);
+        wp->dotOffset = 0;
 #if MEOPT_UNDO
         meUndoAddReplaceEnd(paralen);
 #endif
+        fillState &= ~FILL_SPACE;
     }
 
     if(f >= 0)
     {
         /* Restore starting point */
-        if((f == 2) && (meAnchorGet(frameCur->bufferCur,meANCHOR_FILL_DOT) > 0))
+        if((f == 2) && (meAnchorGet(bp,meANCHOR_FILL_DOT) > 0))
         {
-            frameCur->windowCur->dotLine = frameCur->bufferCur->dotLine ;
-            frameCur->windowCur->dotOffset = frameCur->bufferCur->dotOffset ;
-            frameCur->windowCur->dotLineNo = frameCur->bufferCur->dotLineNo ;
+            wp->dotLine = bp->dotLine ;
+            wp->dotOffset = bp->dotOffset ;
+            wp->dotLineNo = bp->dotLineNo ;
         }
-        meAnchorDelete(frameCur->bufferCur,meANCHOR_FILL_DOT) ;
+        meAnchorDelete(bp,meANCHOR_FILL_DOT) ;
     }
     return meTRUE ;
 }
