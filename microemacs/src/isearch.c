@@ -49,8 +49,10 @@ static meUByte *statusStr[5]={
 static meInt
 isearchGotoEnd(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNERPOS *histPos)
 {
+    meWindow *cwp;
     if(histLen[histNo] == 0)
         return meTRUE;
+    cwp = frameCur->windowCur;
 #if MEOPT_IPIPES
     /* due to the dynamic nature of an active ipipe buffer, things have to
      * be done differently */
@@ -60,19 +62,19 @@ isearchGotoEnd(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNERP
         int   tmpoff;
         meInt tmplno;
         meByte cc;
-        tmpline = frameCur->windowCur->dotLine;      /* Store the current position*/
-        tmpoff = frameCur->windowCur->dotOffset;     /* incase its not found      */
-        tmplno = frameCur->windowCur->dotLineNo;
+        tmpline = cwp->dotLine;      /* Store the current position*/
+        tmpoff = cwp->dotOffset;     /* incase its not found      */
+        tmplno = cwp->dotLineNo;
         if(flags & ISCANNER_BACKW)
-            meWindowForwardChar(frameCur->windowCur, 1);
+            meWindowForwardChar(cwp, 1);
         cc = patrn[histLen[histNo]];
         patrn[histLen[histNo]] = '\0';
         if(iscanner(patrn, 0,flags,histPos+histNo+1) <= 0)
         {
             patrn[histLen[histNo]] = cc;
-            frameCur->windowCur->dotLine = tmpline;       /* Reset the position */
-            frameCur->windowCur->dotOffset = tmpoff;
-            frameCur->windowCur->dotLineNo = tmplno;
+            cwp->dotLine = tmpline;       /* Reset the position */
+            cwp->dotOffset = tmpoff;
+            cwp->dotLineNo = tmplno;
             return meFALSE;
         }
         patrn[histLen[histNo]] = cc;
@@ -80,17 +82,19 @@ isearchGotoEnd(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNERP
     else
 #endif
     {
-        frameCur->windowCur->dotLine = histPos[histNo].endline;
-        frameCur->windowCur->dotOffset = histPos[histNo].endoffset;
-        frameCur->windowCur->dotLineNo = histPos[histNo].endline_no;
+        cwp->dotLine = histPos[histNo].endline;
+        cwp->dotOffset = histPos[histNo].endoffset;
+        cwp->dotLineNo = histPos[histNo].endline_no;
     }
     return meTRUE;
 }
 static meInt
 isearchGotoStart(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNERPOS *histPos)
 {
+    meWindow *cwp;
     if(histLen[histNo] == 0)
         return meTRUE;
+    cwp = frameCur->windowCur;
 #if MEOPT_IPIPES
     /* due to the dynamic nature of an active ipipe buffer, things have to
      * be done differently */
@@ -100,19 +104,19 @@ isearchGotoStart(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNE
         int   tmpoff;
         long  tmplno;
         meUByte cc;
-        tmpline = frameCur->windowCur->dotLine;      /* Store the current position*/
-        tmpoff = frameCur->windowCur->dotOffset;     /* incase its not found      */
-        tmplno = frameCur->windowCur->dotLineNo;
+        tmpline = cwp->dotLine;      /* Store the current position*/
+        tmpoff = cwp->dotOffset;     /* incase its not found      */
+        tmplno = cwp->dotLineNo;
         if(!(flags & ISCANNER_BACKW))
-            meWindowForwardChar(frameCur->windowCur, 1);
+            meWindowForwardChar(cwp, 1);
         cc = patrn[histLen[histNo]];
         patrn[histLen[histNo]] = '\0';
         if(iscanner(patrn,0,(flags ^ (ISCANNER_BACKW|ISCANNER_PTBEG)),histPos+histNo+1) <= 0)
         {
             patrn[histLen[histNo]] = cc;
-            frameCur->windowCur->dotLine = tmpline;       /* Reset the position */
-            frameCur->windowCur->dotOffset = tmpoff;
-            frameCur->windowCur->dotLineNo = tmplno;
+            cwp->dotLine = tmpline;       /* Reset the position */
+            cwp->dotOffset = tmpoff;
+            cwp->dotLineNo = tmplno;
             return meFALSE;
         }
         patrn[histLen[histNo]] = cc;
@@ -120,9 +124,9 @@ isearchGotoStart(meUByte *patrn, int flags, int histNo, meShort *histLen, SCANNE
     else
 #endif
     {
-        frameCur->windowCur->dotLine = histPos[histNo].startline;
-        frameCur->windowCur->dotOffset = histPos[histNo].startoff;
-        frameCur->windowCur->dotLineNo = histPos[histNo].startline_no;
+        cwp->dotLine = histPos[histNo].startline;
+        cwp->dotOffset = histPos[histNo].startoff;
+        cwp->dotLineNo = histPos[histNo].startline_no;
     }
     return meTRUE;
 }
@@ -225,6 +229,7 @@ do {                                                                         \
 static int
 isearch(int flags)
 {
+    meWindow     *cwp=frameCur->windowCur;
     meInt         status;       /* Search status */
     meUInt        arg;          /* argument */
     int           cpos;         /* character number in search string */
@@ -244,9 +249,9 @@ isearch(int flags)
     
     /* Use search's srchPat array so that the hunt functions will work */
     srchPat[0] = '\0';
-    histPos[0].startline = histPos[0].endline = frameCur->windowCur->dotLine;       /* Save the current line pointer     */
-    histPos[0].startoff = histPos[0].endoffset = frameCur->windowCur->dotOffset;     /* Save the current line pointer     */
-    histPos[0].startline_no = histPos[0].endline_no = frameCur->windowCur->dotLineNo;   /* Save the current line pointer     */
+    histPos[0].startline = histPos[0].endline = cwp->dotLine;       /* Save the current line pointer     */
+    histPos[0].startoff = histPos[0].endoffset = cwp->dotOffset;     /* Save the current line pointer     */
+    histPos[0].startline_no = histPos[0].endline_no = cwp->dotLineNo;   /* Save the current line pointer     */
     histLen[0] = 0;                                   /* Save the current offset */
     histStt[0] = meTRUE;
     
@@ -255,14 +260,14 @@ isearch(int flags)
     mlwrite(MWCURSOR,(meUByte *)"%s (default [%s]): ",isHeadStr,(numSrchHist==0) ? (meUByte *)"":srchHist[0]);
     /* switch on the status so we save it */
     frameCur->mlStatus = MLSTATUS_KEEP|MLSTATUS_POSML;
-    if(meModeTest(frameCur->bufferCur->mode,MDMAGIC))
+    if(meModeTest((arg=cwp->buffer->mode),MDMAGIC))
         flags |= ISCANNER_MAGIC;
-    if(meModeTest(frameCur->bufferCur->mode,MDEXACT))
+    if(meModeTest(arg,MDEXACT))
         flags |= ISCANNER_EXACT;
 #if MEOPT_IPIPES
     /* due to the dynamic nature of an active ipipe buffer, things have to
      * be done differently */
-    if(meModeTest(frameCur->bufferCur->mode,MDPIPE))
+    if(meModeTest(arg,MDPIPE))
         flags |= ISCANNER_PIPE;
 #endif    
         
@@ -339,10 +344,10 @@ get_another_key:
             if(!(flags & ISCANNER_PIPE))
 #endif    
             {
-                frameCur->windowCur->dotLine = histPos[0].endline;
-                frameCur->windowCur->dotOffset = histPos[0].endoffset;
-                frameCur->windowCur->dotLineNo = histPos[0].endline_no;
-                frameCur->windowCur->updateFlags |= WFMOVEL;       /* Say that we've moved      */
+                cwp->dotLine = histPos[0].endline;
+                cwp->dotOffset = histPos[0].endoffset;
+                cwp->dotLineNo = histPos[0].endline_no;
+                cwp->updateFlags |= WFMOVEL;       /* Say that we've moved      */
             }
             goto bad_finish;                    /* Finish processing */
 
@@ -368,9 +373,9 @@ find_next:
                 if(status == meFALSE)
                     status = meTRUE;
             }
-            tmpline = frameCur->windowCur->dotLine;       /* Store the current position*/
-            tmpoff = frameCur->windowCur->dotOffset;      /* incase its not found      */
-            tmplno = frameCur->windowCur->dotLineNo;
+            tmpline = cwp->dotLine;       /* Store the current position*/
+            tmpoff = cwp->dotOffset;      /* incase its not found      */
+            tmplno = cwp->dotLineNo;
             /* The status cannot be meABORT, only meFALSE or meTRUE */
             if(!status)                         /* if already lost goto start*/
             {
@@ -385,9 +390,9 @@ find_next:
                 /* the search string has matched a zero length string, e.g. "^"
                  * so move the cursor position one character */ 
                 if(flags & ISCANNER_BACKW)      /* if backward               */
-                    c = meWindowBackwardChar(frameCur->windowCur,1);
+                    c = meWindowBackwardChar(cwp,1);
                 else
-                    c = meWindowForwardChar(frameCur->windowCur,1);
+                    c = meWindowForwardChar(cwp,1);
             }
             else
                 c = meTRUE;
@@ -400,9 +405,9 @@ find_next:
                     c = 0;
                     goto bad_finish;           /* Finish processing */
                 }
-                frameCur->windowCur->dotLine = tmpline;   /* Reset the position        */
-                frameCur->windowCur->dotOffset = tmpoff;
-                frameCur->windowCur->dotLineNo = tmplno;
+                cwp->dotLine = tmpline;   /* Reset the position        */
+                cwp->dotOffset = tmpoff;
+                cwp->dotLineNo = tmplno;
             }
             status = c;
             histNo++;
@@ -431,18 +436,18 @@ find_next:
                     isearchGotoEnd(srchPat,flags,histNo,histLen,histPos);
                 
                 /* use function from word.c  */
-                tt = (inWord()==0);
-                while(((inWord()==0)==tt) && (cpos < meBUF_SIZE_MAX))    
+                tt = (meWindowInWord(cwp)==0);
+                while(((meWindowInWord(cwp)==0)==tt) && (cpos < meBUF_SIZE_MAX))    
                 {
-                    if(meLineGetLength(frameCur->windowCur->dotLine) == frameCur->windowCur->dotOffset)
+                    if(meLineGetLength(cwp->dotLine) == cwp->dotOffset)
                         c = meCHAR_NL;
                     else
-                        c = meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset);
-                    if(meModeTest(frameCur->bufferCur->mode,MDMAGIC) &&
+                        c = meLineGetChar(cwp->dotLine, cwp->dotOffset);
+                    if((flags & ISCANNER_MAGIC) &&
                        ((c == '[') || (c == '.') || (c == '+') || (c == '*') || (c == '^') || (c == '$') || (c == '?') || (c == '\\')))
                         srchPat[cpos++] = '\\';
                     srchPat[cpos++] = c;
-                    if(meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
+                    if(meWindowForwardChar(cwp, 1) == meFALSE)
                         break;
                 }
                 srchPat[cpos] = 0;              /* null terminate the buffer */
@@ -450,9 +455,9 @@ find_next:
                 histNo++;
                 histStt[histNo] = meTRUE;
                 histLen[histNo] = cpos;         /* Save the current srchPat len */
-                histPos[histNo].endline = frameCur->windowCur->dotLine;
-                histPos[histNo].endoffset = frameCur->windowCur->dotOffset;
-                histPos[histNo].endline_no = frameCur->windowCur->dotLineNo;
+                histPos[histNo].endline = cwp->dotLine;
+                histPos[histNo].endoffset = cwp->dotOffset;
+                histPos[histNo].endline_no = cwp->dotLineNo;
                 
                 if(flags & ISCANNER_BACKW)
                     isearchGotoStart(srchPat,flags,histNo,histLen,histPos);
@@ -505,8 +510,8 @@ find_next:
                     {
                         isearchGotoStart(srchPat,flags,histNo,histLen,histPos+1);
                         srchPat[cpos] = 0;
-                        if(((frameCur->windowCur->dotLine != histPos[histNo].startline) ||
-                            (frameCur->windowCur->dotOffset != histPos[histNo].startoff)) && (histStt[histNo] == meTRUE))
+                        if(((cwp->dotLine != histPos[histNo].startline) ||
+                            (cwp->dotOffset != histPos[histNo].startoff)) && (histStt[histNo] == meTRUE))
                             iscanner(srchPat,0,(flags ^ (ISCANNER_BACKW|ISCANNER_PTBEG)),&(histPos[histNo]));
                         isearchGotoEnd(srchPat,flags,histNo,histLen,histPos);
                     }
@@ -515,12 +520,12 @@ find_next:
             else
 #endif
             {
-                frameCur->windowCur->dotLine = histPos[histNo].endline;
-                frameCur->windowCur->dotOffset = histPos[histNo].endoffset;
-                frameCur->windowCur->dotLineNo = histPos[histNo].endline_no;
+                cwp->dotLine = histPos[histNo].endline;
+                cwp->dotOffset = histPos[histNo].endoffset;
+                cwp->dotLineNo = histPos[histNo].endline_no;
             }
             srchPat[cpos] = 0;
-            frameCur->windowCur->updateFlags |= WFMOVEL;           /* Say that we've moved      */
+            cwp->updateFlags |= WFMOVEL;           /* Say that we've moved      */
 is_redraw:
 #if MEOPT_IPIPES
             /* due to the dynamic nature of an active ipipe buffer, things have to
@@ -528,19 +533,19 @@ is_redraw:
             if(flags & ISCANNER_PIPE)
             {
                 isearchGotoStart(srchPat,flags,histNo,histLen,histPos);
-                histPos[histNo].startline = frameCur->windowCur->dotLine;
-                histPos[histNo].startoff = frameCur->windowCur->dotOffset;
-                histPos[histNo].startline_no = frameCur->windowCur->dotLineNo;
+                histPos[histNo].startline = cwp->dotLine;
+                histPos[histNo].startoff = cwp->dotOffset;
+                histPos[histNo].startline_no = cwp->dotLineNo;
                 isearchGotoEnd(srchPat,flags,histNo,histLen,histPos);
-                histPos[histNo].endline = frameCur->windowCur->dotLine;
-                histPos[histNo].endoffset = frameCur->windowCur->dotOffset;
-                histPos[histNo].endline_no = frameCur->windowCur->dotLineNo;
+                histPos[histNo].endline = cwp->dotLine;
+                histPos[histNo].endoffset = cwp->dotOffset;
+                histPos[histNo].endline_no = cwp->dotLineNo;
             }
 #endif
-            setShowRegion(frameCur->bufferCur,
+            setShowRegion(cwp->buffer,
                           histPos[histNo].startline_no,histPos[histNo].startoff,
                           histPos[histNo].endline_no,histPos[histNo].endoffset);
-            meBufferAddModeToWindows(frameCur->bufferCur, WFSELHIL);
+            meBufferAddModeToWindows(cwp->buffer,WFSELHIL);
             break;
             
         default:                                /* All other chars           */

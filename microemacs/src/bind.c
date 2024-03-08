@@ -279,11 +279,11 @@ descKey(int f, int n)	/* describe the command for a certain key */
     /* find the right function */
 #if MEOPT_LOCALBIND
     mb = useMlBinds;
-    bc = frameCur->bufferCur->bindCount;
+    bc = frameCur->windowCur->buffer->bindCount;
     if(n & 2)
         useMlBinds = 1;
     else if(n & 4)
-        frameCur->bufferCur->bindCount = 0;
+        frameCur->windowCur->buffer->bindCount = 0;
 #endif
     if ((found = decode_key(cc,&arg)) < 0)
     {
@@ -300,7 +300,7 @@ descKey(int f, int n)	/* describe the command for a certain key */
     }
 #if MEOPT_LOCALBIND
     useMlBinds = mb;
-    frameCur->bufferCur->bindCount = bc;
+    frameCur->windowCur->buffer->bindCount = bc;
 #endif
 
     if(n & 1)
@@ -769,12 +769,12 @@ globalBindKey(int f, int n)
 int
 bufferBindKey(int f, int n)
 {
-    return bindkey((meUByte *)"local bind", f, n, &(frameCur->bufferCur->bindCount), &(frameCur->bufferCur->bindList)) ;
+    return bindkey((meUByte *)"local bind",f,n,&(frameCur->windowCur->buffer->bindCount),&(frameCur->windowCur->buffer->bindList)) ;
 }
 int
 mlBind(int f, int n)
 {
-    return bindkey((meUByte *)"ml bind", f, n, &mlNoBinds, &mlBinds) ;
+    return bindkey((meUByte *)"ml bind",f,n,&mlNoBinds,&mlBinds) ;
 }
 #endif
 
@@ -866,15 +866,15 @@ unbindkey(meUByte *prom, int n, meUShort *lclNoBinds, meBind **lclBinds)
         register meBind *ktp ;
         register int	 ss;
         
-        rr = meFALSE ;
-        ktp = *lclBinds ;
-        ss = *lclNoBinds ;
+        rr = meFALSE;
+        ktp = *lclBinds;
+        ss = *lclNoBinds;
         while(--ss >= 0)
         {
             if(ktp[ss].code == cc)
             {
-                ktp[ss].code = ME_INVALID_KEY ;
-                rr = meTRUE ;
+                ktp[ss].code = ME_INVALID_KEY;
+                rr = meTRUE;
             }
         }
     }
@@ -889,67 +889,67 @@ unbindkey(meUByte *prom, int n, meUShort *lclNoBinds, meBind **lclBinds)
                 
                 while(--mask > 0)
                     if(cc == prefixc[mask])
-                        break ;
+                        break;
                 if(mask)
                 {
-                    int ii= (int) keyTableSize ;
+                    int ii= (int) keyTableSize;
                     
-                    prefixc[mask] = ME_INVALID_KEY ;
-                    mask <<= ME_PREFIX_BIT ;
+                    prefixc[mask] = ME_INVALID_KEY;
+                    mask <<= ME_PREFIX_BIT;
                     while(--ii>=0)
                         if((keytab[ii].code & ME_PREFIX_MASK) == mask)
-                            delete_key(keytab[ii].code) ;
+                            delete_key(keytab[ii].code);
 #if MEOPT_LOCALBIND
                     {
-                        register int ss ;
-                        meBuffer *bp ;
+                        register int ss;
+                        meBuffer *bp;
                         
                         /* loop through all buffer bindings using prefix */
                         bp = bheadp ;
                         while(bp != NULL)
                         {
-                            ss = bp->bindCount ;
+                            ss = bp->bindCount;
                             while(--ss >= 0)
                                 if((bp->bindList[ss].code & ME_PREFIX_MASK) == mask)
-                                    bp->bindList[ss].code = ME_INVALID_KEY ;
-                            bp = bp->next ;
+                                    bp->bindList[ss].code = ME_INVALID_KEY;
+                            bp = bp->next;
                         }
                         /* loop through all ml bindings using prefix */
                         ss = mlNoBinds ;
                         while(--ss >= 0)
                             if((mlBinds[ss].code & ME_PREFIX_MASK) == mask)
-                                mlBinds[ss].code = ME_INVALID_KEY ;
+                                mlBinds[ss].code = ME_INVALID_KEY;
                     }
 #endif
                 }
             }
             if (breakc == cc)
-                breakc = ME_INVALID_KEY ;
+                breakc = ME_INVALID_KEY;
             if (reptc == cc)
-                reptc = ME_INVALID_KEY ;
+                reptc = ME_INVALID_KEY;
         }
     }
     if(rr == meFALSE)	/* if it isn't bound, bitch */
         return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[%s Key \"%s\" not bound]", prom,outseq);
-    return meTRUE ;
+    return meTRUE;
 }
 
 int
 globalUnbindKey(int f, int n)
 {
-    return unbindkey((meUByte *)"Global",n, NULL, NULL) ;
+    return unbindkey((meUByte *)"Global",n,NULL,NULL);
 }
 
 #if MEOPT_LOCALBIND
 int
 bufferUnbindKey(int f, int n)
 {
-    return unbindkey((meUByte *)"Local",n, &(frameCur->bufferCur->bindCount), &(frameCur->bufferCur->bindList)) ;
+    return unbindkey((meUByte *)"Local",n,&(frameCur->windowCur->buffer->bindCount),&(frameCur->windowCur->buffer->bindList));
 }
 int
 mlUnbind(int f, int n)
 {
-    return unbindkey((meUByte *)"ML",n, &mlNoBinds, &mlBinds) ;
+    return unbindkey((meUByte *)"ML",n,&mlNoBinds,&mlBinds);
 }
 #endif
 
@@ -1106,37 +1106,37 @@ descBindings (int f, int n)
     {
         addLineToEob(bp,(meUByte *)"Buffer bindings:\n");
         
-        ii  = frameCur->bufferCur->bindCount ;
-        ktp = frameCur->bufferCur->bindList ;
+        ii  = frameCur->windowCur->buffer->bindCount;
+        ktp = frameCur->windowCur->buffer->bindList;
         while(ii--)
-            showBinding(bp,ktp++) ;
+            showBinding(bp,ktp++);
         
-        addLineToEob(bp,(meUByte *)"\nMl bindings:\n") ;
+        addLineToEob(bp,(meUByte *)"\nMl bindings:\n");
         
-        ii  = mlNoBinds ;
-        ktp = mlBinds ;
+        ii  = mlNoBinds;
+        ktp = mlBinds;
         while(ii--)
-            showBinding(bp,ktp++) ;
-        addLineToEob(bp,(meUByte *)"") ;
+            showBinding(bp,ktp++);
+        addLineToEob(bp,(meUByte *)"");
     }
 #endif    
     
     addLineToEob(bp,(meUByte *)"Global bindings:\n");
     
-    ii  = keyTableSize ;
-    ktp = keytab ;
+    ii  = keyTableSize;
+    ktp = keytab;
     while(ii--)
-        showBinding(bp,ktp++) ;
+        showBinding(bp,ktp++);
     
     bp->dotLine = meLineGetNext(bp->baseLine);
-    bp->dotOffset = 0 ;
-    bp->dotLineNo = 0 ;
+    bp->dotOffset = 0;
+    bp->dotLineNo = 0;
     
-    meModeClear(bp->mode,MDEDIT) ;    /* don't flag this as a change */
-    meModeSet(bp->mode,MDVIEW) ;      /* put this buffer view mode */
-    resetBufferWindows(bp) ;            /* Update the window */
-    mlerase(MWCLEXEC);	                /* clear the mode line */
-    return meTRUE ;
+    meModeClear(bp->mode,MDEDIT);    /* don't flag this as a change */
+    meModeSet(bp->mode,MDVIEW);      /* put this buffer view mode */
+    resetBufferWindows(bp);          /* Update the window */
+    mlerase(MWCLEXEC);	             /* clear the mode line */
+    return meTRUE;
 }
      
 

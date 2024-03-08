@@ -1444,9 +1444,9 @@ printSection (meWindow *wp, long sLineNo, long numLines, meLine *sLine, meLine *
         {
 #if MEOPT_HILIGHT
             vps[0].line = sLine;
-            if (printAddLine (bp,sLine,vps) <= 0)
+            if (printAddLine(bp,sLine,vps) <= 0)
 #else
-            if (printAddLine (bp,sLine) <= 0)
+            if (printAddLine(bp,sLine) <= 0)
 #endif
             {
                 status = mlwrite(MWABORT,(meUByte *)"Internal error: Cannot add new prin line");
@@ -1473,11 +1473,11 @@ printSection (meWindow *wp, long sLineNo, long numLines, meLine *sLine, meLine *
 
         /* Output the formatted page to the approipriate destination */
         if (fp)                         /* File device */
-            dumpToFile (fp, clp);
+            dumpToFile(fp, clp);
         else if (dbp)                   /* Buffer device */
-            dumpToBuffer (dbp, clp);
+            dumpToBuffer(dbp, clp);
         else                            /* Internal device */
-            dumpToInternal (&ihead, &itail, clp);
+            dumpToInternal(&ihead, &itail, clp);
 
         /* Delete the formatted page data */
         if(printer.pNoLines)
@@ -1501,11 +1501,11 @@ printSection (meWindow *wp, long sLineNo, long numLines, meLine *sLine, meLine *
     if ((clp = composePage (-1)) != NULL)
     {
         if (fp)
-            dumpToFile (fp, clp);
+            dumpToFile(fp, clp);
         else if (dbp)                   /* Buffer device */
-            dumpToBuffer (dbp, clp);
+            dumpToBuffer(dbp, clp);
         else                            /* Internal device */
-            dumpToInternal (&ihead, &itail, clp);
+            dumpToInternal(&ihead, &itail, clp);
     }
 
     /* Close the file descriptor */
@@ -1565,25 +1565,24 @@ printSection (meWindow *wp, long sLineNo, long numLines, meLine *sLine, meLine *
              * on unix a " </dev/null" safety arg is added to the cmdLine
              */
             if((status=doShellCommand(cmdLine,0)) > 0)
-                status = (resultStr[0] == '0') ? meTRUE:meFALSE ;
+                status = (resultStr[0] == '0') ? meTRUE:meFALSE;
             if(status <= 0)
                 mlwrite(MWABORT,(meUByte *)"[Failed to print file %s]",fname);
             break;
         
         case PDEST_INTERNAL:
 #ifdef _WIN32
-            status = WinPrint ((frameCur->bufferCur->fileName != NULL) ? frameCur->bufferCur->fileName
-                               : (frameCur->bufferCur->name != NULL) ? frameCur->bufferCur->name
-                               :(meUByte *)"UNKNOWN source",
-                               ihead);
+            status = WinPrint((frameCur->windowCur->buffer->fileName != NULL) ? frameCur->windowCur->buffer->fileName :
+                              (frameCur->windowCur->buffer->name != NULL) ? frameCur->windowCur->buffer->name :
+                              (meUByte *) "UNKNOWN source",ihead);
             ihead = NULL;               /* Reset - never returned */
             break;
 #endif
         case PDEST_BUFFER:
-            dbp->dotLine = meLineGetNext (dbp->baseLine);
+            dbp->dotLine = meLineGetNext(dbp->baseLine);
             dbp->dotOffset = 0;
             dbp->dotLineNo = 0;
-            resetBufferWindows (dbp);
+            resetBufferWindows(dbp);
             break;
         }
     }
@@ -1621,36 +1620,38 @@ quitEarly:
 int
 printRegion (int f, int n)
 {
+    meWindow *cwp=frameCur->windowCur;
     meLine *startLine, *endLine;
     long startLineNo;
     long numLines;
 
-    if (frameCur->windowCur->markLine == NULL)
-        return noMarkSet ();
+    if (cwp->markLine == NULL)
+        return noMarkSet();
 
-    if ((startLineNo=frameCur->windowCur->dotLineNo-frameCur->windowCur->markLineNo) == 0)
+    if ((startLineNo=cwp->dotLineNo-cwp->markLineNo) == 0)
         return meTRUE;
     numLines = abs((int) startLineNo);
     if (startLineNo < 0)
     {
-        startLineNo = frameCur->windowCur->dotLineNo;
-        startLine = frameCur->windowCur->dotLine;
-        endLine = frameCur->windowCur->markLine;
+        startLineNo = cwp->dotLineNo;
+        startLine = cwp->dotLine;
+        endLine = cwp->markLine;
     }
     else
     {
-        startLineNo = frameCur->windowCur->markLineNo;
-        startLine = frameCur->windowCur->markLine;
-        endLine = frameCur->windowCur->dotLine;
+        startLineNo = cwp->markLineNo;
+        startLine = cwp->markLine;
+        endLine = cwp->dotLine;
     }
-    return printSection (frameCur->windowCur, startLineNo, numLines, startLine, endLine, n);
+    return printSection(cwp, startLineNo, numLines, startLine, endLine, n);
 }
 
 int
 printBuffer (int f, int n)
 {
-    return printSection (frameCur->windowCur, 0, frameCur->bufferCur->lineCount,
-                         meLineGetNext (frameCur->bufferCur->baseLine), frameCur->bufferCur->baseLine,n);
+    meWindow *cwp=frameCur->windowCur;
+    return printSection(cwp,0,cwp->buffer->lineCount,
+                         meLineGetNext(cwp->buffer->baseLine),cwp->buffer->baseLine,n);
 }
 
 #endif

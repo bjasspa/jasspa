@@ -85,42 +85,39 @@ createTimeStampSrch(meUByte *buf, meUByte *pos)
 int
 set_timestamp(meBuffer *bp)
 {
-    meWindow *owp, win ;
-    meBuffer *obp ;
-    meUByte   pos[TSNUMFIELD];	/* pos of fields in search */
-    meUByte   patt[512];    	/* Search pattern */
-    int     ii, jj ;
+    meWindow *owp, win;
+    meUByte pos[TSNUMFIELD];	/* pos of fields in search */
+    meUByte patt[512];    	/* Search pattern */
+    int ii, jj;
     
     /*---	Determine if time stamping is to be performed. */
     
     if(!meModeTest(bp->mode,MDTIME) ||	/* Time stamping mode on ?? */
        (time_stamp[0] == '\0'))			/* No time stamp defined */
-        return meTRUE ;				/* No - exit */
+        return meTRUE;				/* No - exit */
     
     mlwrite(MWCURSOR,(meUByte *)"[Time stamping file]");
     
     /*---	Save current position in buffer and go to the start of the buffer. */
     
-    obp = frameCur->bufferCur ;
-    owp = frameCur->windowCur ;
-    frameCur->windowCur = &win ;
-    frameCur->bufferCur = bp ;
-    win.buffer = frameCur->bufferCur ;
-    win.dotLine = meLineGetNext(frameCur->bufferCur->baseLine) ;	/* Save position */
-    win.dotOffset = 0 ;
-    win.dotLineNo = 0 ;    
-    win.updateFlags = 0 ;
+    owp = frameCur->windowCur;
+    frameCur->windowCur = &win;
+    win.buffer = bp;
+    win.dotLine = meLineGetNext(bp->baseLine) ;	/* Save position */
+    win.dotOffset = 0;
+    win.dotLineNo = 0;    
+    win.updateFlags = 0;
     
     /* create magic search string */
-    createTimeStampSrch(patt,pos) ;
+    createTimeStampSrch(patt,pos);
     
     /*---	Search for the time stamp string. */
     if(iscanner(patt,100,ISCANNER_PTBEG|ISCANNER_MAGIC|ISCANNER_EXACT,NULL) == meTRUE)
     {
-        int values[TSNUMFIELD] ;
+        int values[TSNUMFIELD];
         struct tm  *time_ptr;		/* Pointer to time frame. */
         time_t clock;			/* Time in machine format. */
-        meUShort soff ;
+        meUShort soff;
 
         /* Found it, so fill in the slots */
         
@@ -134,24 +131,23 @@ set_timestamp(meBuffer *bp)
         values[4] = time_ptr->tm_min ;
         values[5] = time_ptr->tm_sec ;
         
-        soff = frameCur->windowCur->dotOffset ;
+        soff = win.dotOffset ;
         for(ii=0 ; ii<TSNUMFIELD ; ii++)
             if((jj=pos[ii]) != 0)
             {
                 if(!ii && ((mereRegexGroupEnd(jj)-mereRegexGroupStart(jj)) == 4))
                 {
-                    frameCur->windowCur->dotLine->text[soff+mereRegexGroupEnd(jj)-4] = '0' + ((values[0]/1000)%10) ;
-                    frameCur->windowCur->dotLine->text[soff+mereRegexGroupEnd(jj)-3] = '0' + ((values[0]/100)%10) ;
+                    win.dotLine->text[soff+mereRegexGroupEnd(jj)-4] = '0' + ((values[0]/1000)%10) ;
+                    win.dotLine->text[soff+mereRegexGroupEnd(jj)-3] = '0' + ((values[0]/100)%10) ;
                 }
-                frameCur->windowCur->dotLine->text[soff+mereRegexGroupEnd(jj)-2] = '0' + ((values[ii]/10)%10) ;
-                frameCur->windowCur->dotLine->text[soff+mereRegexGroupEnd(jj)-1] = '0' + (values[ii]%10) ;
+                win.dotLine->text[soff+mereRegexGroupEnd(jj)-2] = '0' + ((values[ii]/10)%10) ;
+                win.dotLine->text[soff+mereRegexGroupEnd(jj)-1] = '0' + (values[ii]%10) ;
             }
-        frameCur->windowCur->dotLine->flag |= meLINE_CHANGED ;
+        win.dotLine->flag |= meLINE_CHANGED ;
     }
     else
         ii = 0 ;
-    frameCur->bufferCur = obp ;
-    frameCur->windowCur = owp ;
+    frameCur->windowCur = owp;
     if(ii)
         /* if found flag any window displaying it to update */
         meBufferAddModeToWindows(bp,WFMAIN) ;

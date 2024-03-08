@@ -693,7 +693,7 @@ createVarList(meUByte ***listPtr)
         ii++;
         vp = vp->next;
     }
-    vp = frameCur->bufferCur->varList;
+    vp = frameCur->windowCur->buffer->varList;
     while(vp != NULL)
     {
         ii++;
@@ -722,7 +722,7 @@ createVarList(meUByte ***listPtr)
         ii++;
         vp = vp->next;
     }
-    vp = frameCur->bufferCur->varList;
+    vp = frameCur->windowCur->buffer->varList;
     while(vp != NULL)
     {
         if((list[ii] = meMalloc(meStrlen(vp->name)+2)) == NULL)
@@ -764,19 +764,20 @@ createCommList(meUByte ***listPtr, int noHidden)
 static int
 mlHandleMouse(meUByte *inpBuf, int inpBufSz, int compOff)
 {
+    meWindow *cwp=frameCur->windowCur;
     int row, col ;
     
-    if(((row=mouse_Y-frameCur->windowCur->frameRow) >= 0) && (row < frameCur->windowCur->depth-1) &&
-       ((col=mouse_X-frameCur->windowCur->frameColumn) >= 0) && (col < frameCur->windowCur->width))
+    if(((row=mouse_Y-cwp->frameRow) >= 0) && (row < cwp->depth-1) &&
+       ((col=mouse_X-cwp->frameColumn) >= 0) && (col < cwp->width))
     {
-        if (col >= frameCur->windowCur->textWidth)
+        if (col >= cwp->textWidth)
         {
             /* only do scroll bar if on pick and bars are enabled */
-            if((inpBuf == NULL) && (frameCur->windowCur->vertScrollBarMode & WMSCROL))
+            if((inpBuf == NULL) && (cwp->vertScrollBarMode & WMSCROL))
             {
                 int ii ;
                 for (ii = 0; ii <= (WCVSBML-WCVSBSPLIT); ii++)
-                    if (mouse_Y < (meShort) frameCur->windowCur->vertScrollBarPos[ii])
+                    if (mouse_Y < (meShort) cwp->vertScrollBarPos[ii])
                         break;
                 if(ii == (WCVSBUP-WCVSBSPLIT))
                     windowScrollUp(1,1) ;
@@ -794,13 +795,13 @@ mlHandleMouse(meUByte *inpBuf, int inpBufSz, int compOff)
             meLine *lp ;
             int ii, jj, lineNo ;
             
-            row += frameCur->windowCur->vertScroll ;
+            row += cwp->vertScroll ;
             lineNo = row ;
-            lp = frameCur->bufferCur->baseLine->next ;
+            lp = cwp->buffer->baseLine->next ;
             while(--row >= 0)
                 lp = meLineGetNext(lp) ;
-            if((lp->flag & meLINE_NOEOL) && (col >= frameCur->windowCur->markOffset))
-                ii = frameCur->windowCur->markOffset ;
+            if((lp->flag & meLINE_NOEOL) && (col >= cwp->markOffset))
+                ii = cwp->markOffset ;
             else
                 ii = 0 ;
             if((ii == 0) && (lp->flag & meLINE_NOEOL))
@@ -813,11 +814,11 @@ mlHandleMouse(meUByte *inpBuf, int inpBufSz, int compOff)
                 jj = meLineGetLength(lp) ;
             if(jj > col)
             {
-                frameCur->windowCur->dotLine = lp ;
-                frameCur->windowCur->dotOffset = ii ;
-                frameCur->windowCur->dotLineNo = lineNo ;
-                setShowRegion(frameCur->bufferCur,lineNo,ii,lineNo,jj) ;
-                frameCur->windowCur->updateFlags |= WFMOVEL|WFSELHIL ;
+                cwp->dotLine = lp ;
+                cwp->dotOffset = ii ;
+                cwp->dotLineNo = lineNo ;
+                setShowRegion(cwp->buffer,lineNo,ii,lineNo,jj) ;
+                cwp->updateFlags |= WFMOVEL|WFSELHIL ;
                 if(inpBuf != NULL)
                 {
                     if((jj -= ii) >= (inpBufSz-compOff))
@@ -1220,7 +1221,8 @@ input_expand:
                 contstr = compSole ;
             else
             {
-                meBuffer **br;
+                meWindow *cwp;
+                meBuffer *cbp, **br;
                 meUByte line[150];
                 int jj, last, len, lwidth;
                 
@@ -1232,27 +1234,28 @@ input_expand:
                  * have finished with it */
                 if(mlgsOldCwp == NULL)
                 {
-                    mlgsSingWind = frameCur->windowCur->vertScroll+1;
                     mlgsOldCwp = frameCur->windowCur;
+                    mlgsSingWind = mlgsOldCwp->vertScroll+1;
                     br = &mlgsOldWBp;
                 }
                 else
-                    br = NULL ;
+                    br = NULL;
                 if(meWindowPopup(NULL,BcompleteN,BFND_CREAT|BFND_CLEAR|WPOP_MKCURR,br) == NULL)
                 {
                     contstr = compFailComp;
                     break;
                 }
-                
+                cwp = frameCur->windowCur;
+                cbp = cwp->buffer;
                 /* remove any completion list selection hilighting */
-                if(selhilight.bp == frameCur->bufferCur)
+                if(selhilight.bp == cbp)
                     selhilight.flags &= ~SELHIL_ACTIVE;
                 
                 /* Compute the widths available from the window width */
-                lwidth = frameCur->windowCur->textWidth >> 1;
+                lwidth = cwp->textWidth >> 1;
                 if (lwidth > 75)
                     lwidth = 75 ;
-                frameCur->windowCur->markOffset = lwidth ;
+                cwp->markOffset = lwidth ;
                 jj = (option & MLFILE) ? 1:0 ;
                 last = -1 ;
                 do {
@@ -1270,13 +1273,13 @@ input_expand:
                                     meStrcpy(line,strList[last]) ;
                                     memset(line+len,' ',lwidth-len) ;
                                     meStrcpy(line+lwidth,strList[ii]) ;
-                                    addLineToEob(frameCur->bufferCur,line) ;
-                                    frameCur->bufferCur->baseLine->prev->flag |= meLINE_NOEOL ;
+                                    addLineToEob(cbp,line) ;
+                                    cbp->baseLine->prev->flag |= meLINE_NOEOL ;
                                     last = -1 ;
                                 }
                                 else
                                 {
-                                    addLineToEob(frameCur->bufferCur,strList[last]) ;
+                                    addLineToEob(cbp,strList[last]) ;
                                     last = ii ;
                                 }
                             }
@@ -1286,12 +1289,12 @@ input_expand:
                                 last = ii ;
                             }
                             else
-                                addLineToEob(frameCur->bufferCur,strList[ii]) ;
+                                addLineToEob(cbp,strList[ii]) ;
                         }
                     }
                     if(last >= 0)
-                        addLineToEob(frameCur->bufferCur,strList[last]) ;
-                } while((frameCur->bufferCur->lineCount == 0) && (--jj >= 0)) ; 
+                        addLineToEob(cbp,strList[last]);
+                } while((cbp->lineCount == 0) && (--jj >= 0));
                 windowGotoBob(meFALSE,meFALSE) ;
                 update(meTRUE) ;
             }
@@ -1594,13 +1597,12 @@ input_expand:
             
         case CK_OPNLIN:    /* ^O : Insert current line into buffer */
             {
-                register meUByte *p = frameCur->windowCur->dotLine->text;
-                register int count = frameCur->windowCur->dotLine->length;
+                register meUByte cc, *pp=frameCur->windowCur->dotLine->text;
                 
-                while(*p && count--)
-                    mlInsertChar(*p++, buf, &ipos, &ilen, nbuf);
-                changed=1 ;
-                break ;
+                while((cc=*pp++) != '\0')
+                    mlInsertChar(cc,buf,&ipos,&ilen,nbuf);
+                changed=1;
+                break;
             }
         case CK_YANK:    /* ^Y : insert yank buffer */
             {
@@ -1651,9 +1653,9 @@ ml_yank:
             
         case CK_INSFLNM:    /* insert file name */
             {
-                register meUByte ch, *p ;
-                
-                p = (ii < 0) ? frameCur->bufferCur->name:frameCur->bufferCur->fileName ;
+                register meUByte ch, *p;
+                meBuffer *cbp=frameCur->windowCur->buffer;
+                p = (ii < 0) ? cbp->name:cbp->fileName;
                 if(p != NULL)
                     while(((ch=*p++) != '\0') && mlInsertChar(ch, buf, &ipos, &ilen, nbuf))
                         ;
@@ -1878,24 +1880,25 @@ input_addexpand:
     }
     if(mlgsOldCwp != NULL)
     {
-        meBuffer *bp=frameCur->bufferCur ;
+        meWindow *cwp=frameCur->windowCur;
+        meBuffer *cbp=cwp->buffer;
         if(mlgsOldWBp == NULL)
         {
             /* was no replacement so the window was split */
-            windowDelete(meFALSE,1) ;
-            frameCur->windowCur->vertScroll = mlgsSingWind-1 ;
+            windowDelete(meFALSE,1);
+            cwp->vertScroll = mlgsSingWind-1;
         }
         else
         {
-            swbuffer(frameCur->windowCur,mlgsOldWBp) ;
-            meWindowMakeCurrent(mlgsOldCwp) ;
+            swbuffer(cwp,mlgsOldWBp);
+            meWindowMakeCurrent(mlgsOldCwp);
         }
-        zotbuf(bp,1) ;
-        mlgsOldCwp = NULL ;
+        zotbuf(cbp,1);
+        mlgsOldCwp = NULL;
     }
 #if MEOPT_EXTENDED
     if(oldCursorState < 0)
-        showCursor(meTRUE,oldCursorState) ;
+        showCursor(meTRUE,oldCursorState);
 #endif
     
     if(cont_flag & 0x04)

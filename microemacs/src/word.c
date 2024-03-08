@@ -84,23 +84,26 @@
 int
 backWord(int f, int n)
 {
+    meWindow *cwp;
+    
     if(n < 0)
-        return forwWord(f,-n) ;
-    if(meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
-        return meErrorBob() ;
+        return forwWord(f,-n);
+    cwp = frameCur->windowCur;
+    if(meWindowBackwardChar(cwp,1) == meFALSE)
+        return meErrorBob();
     while (n--)
     {
-        while(inWord() == meFALSE)
-            if(meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
-                return meErrorBob() ;
-        while(inWord() != meFALSE)
-            if(meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
+        while(meWindowInWord(cwp) == meFALSE)
+            if(meWindowBackwardChar(cwp,1) == meFALSE)
+                return meErrorBob();
+        while(meWindowInWord(cwp) != meFALSE)
+            if(meWindowBackwardChar(cwp, 1) == meFALSE)
                 /* We can't move back any more cos we're at the start,
                  * BUT as we have moved and we are in the buffers first word,
                  * we should succeed */
-                return meTRUE ;
+                return meTRUE;
     }
-    return meWindowForwardChar(frameCur->windowCur,1) ;
+    return meWindowForwardChar(cwp,1);
 }
 
 /*
@@ -110,17 +113,20 @@ backWord(int f, int n)
 int
 forwWord(int f, int n)
 {
+    meWindow *cwp;
+    
     if(n < 0)
-        return backWord(f,-n) ;
+        return backWord(f,-n);
+    cwp = frameCur->windowCur;
     while(n--)
     {
-        while(!inWord())
+        while(!meWindowInWord(cwp))
         {
-            if(meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
-                return meErrorEob() ;
+            if(meWindowForwardChar(cwp,1) == meFALSE)
+                return meErrorEob();
         }
-        while(inWord())
-            meWindowForwardChar(frameCur->windowCur,1) ;
+        while(meWindowInWord(cwp))
+            meWindowForwardChar(cwp,1);
     }
     return meTRUE ;
 }
@@ -133,36 +139,38 @@ forwWord(int f, int n)
 int
 upperWord(int f, int n)
 {
-    register int    c;
+    meWindow *cwp;
+    register int c;
 
     if (n < 0)
-        return (meFALSE);
+        return meFALSE;
     if((c=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return c ;
+    cwp = frameCur->windowCur;
     while (n--)
     {
-        while (inWord() == meFALSE)
+        while(meWindowInWord(cwp) == meFALSE)
         {
-            if(meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
-                return (meFALSE);
+            if(meWindowForwardChar(cwp,1) == meFALSE)
+                return meFALSE;
         }
-        while (inWord() != meFALSE)
+        while(meWindowInWord(cwp) != meFALSE)
         {
-            c = meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset);
-            if (isLower(c))
+            c = meLineGetChar(cwp->dotLine,cwp->dotOffset);
+            if(isLower(c))
             {
                 lineSetChanged(WFMAIN);
 #if MEOPT_UNDO
-                meUndoAddRepChar() ;
+                meUndoAddRepChar();
 #endif
-                c = toggleCase(c) ;
-                meLineSetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset, c);
+                c = toggleCase(c);
+                meLineSetChar(cwp->dotLine,cwp->dotOffset,c);
             }
-            if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
-                return (meFALSE);
+            if(meWindowForwardChar(cwp,1) == meFALSE)
+                return meFALSE;
         }
     }
-    return (meTRUE);
+    return meTRUE;
 }
 
 /*
@@ -173,36 +181,38 @@ upperWord(int f, int n)
 int
 lowerWord(int f, int n)
 {
-    register int    c;
+    meWindow *cwp;
+    register int c;
 
     if (n < 0)
         return (meFALSE);
     if((c=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return c ;
-    while (n--)
+    cwp = frameCur->windowCur;
+    while(n--)
     {
-        while (inWord() == meFALSE)
+        while(meWindowInWord(cwp) == meFALSE)
         {
-            if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
-                return (meFALSE);
+            if(meWindowForwardChar(cwp,1) == meFALSE)
+                return meFALSE;
         }
-        while (inWord() != meFALSE)
+        while(meWindowInWord(cwp) != meFALSE)
         {
-            c = meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset);
-            if (isUpper(c))
+            c = meLineGetChar(cwp->dotLine,cwp->dotOffset);
+            if(isUpper(c))
             {
                 lineSetChanged(WFMAIN);
 #if MEOPT_UNDO
-                meUndoAddRepChar() ;
+                meUndoAddRepChar();
 #endif
-                c = toggleCase(c) ;
-                meLineSetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset, c);
+                c = toggleCase(c);
+                meLineSetChar(cwp->dotLine,cwp->dotOffset,c);
             }
-            if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
-                return (meFALSE);
+            if (meWindowForwardChar(cwp,1) == meFALSE)
+                return meFALSE;
         }
     }
-    return (meTRUE);
+    return meTRUE;
 }
 
 /*
@@ -214,50 +224,53 @@ lowerWord(int f, int n)
 int
 capWord(int f, int n)
 {
-    register int    c;
+    meWindow *cwp;
+    register int c;
 
     if(n < 0)
         return (meFALSE);
     if((c=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return c ;
-    while (n--)
+    cwp = frameCur->windowCur;
+    while(n--)
     {
-        while (inWord() == meFALSE)
+        while(meWindowInWord(cwp) == meFALSE)
         {
-            if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
+            if(meWindowForwardChar(cwp,1) == meFALSE)
                 return (meFALSE);
         }
-        if (inWord() != meFALSE) {
-            c = meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset);
-            if (isLower(c))
+        if(meWindowInWord(cwp) != meFALSE)
+        {
+            c = meLineGetChar(cwp->dotLine,cwp->dotOffset);
+            if(isLower(c))
             {
                 lineSetChanged(WFMAIN);
 #if MEOPT_UNDO
-                meUndoAddRepChar() ;
+                meUndoAddRepChar();
 #endif
-                c = toggleCase(c) ;
-                meLineSetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset,c);
+                c = toggleCase(c);
+                meLineSetChar(cwp->dotLine,cwp->dotOffset,c);
             }
-            if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
+            if(meWindowForwardChar(cwp,1) == meFALSE)
                 return (meFALSE);
-            while (inWord() != meFALSE)
+            while(meWindowInWord(cwp) != meFALSE)
             {
-                c = meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset);
-                if (isUpper(c))
+                c = meLineGetChar(cwp->dotLine,cwp->dotOffset);
+                if(isUpper(c))
                 {
                     lineSetChanged(WFMAIN);
 #if MEOPT_UNDO
-                    meUndoAddRepChar() ;
+                    meUndoAddRepChar();
 #endif
-                    c = toggleCase(c) ;
-                    meLineSetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset,c);
+                    c = toggleCase(c);
+                    meLineSetChar(cwp->dotLine,cwp->dotOffset,c);
                 }
-                if (meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
-                    return meFALSE ;
+                if (meWindowForwardChar(cwp,1) == meFALSE)
+                    return meFALSE;
             }
         }
     }
-    return meTRUE ;
+    return meTRUE;
 }
 
 /*
@@ -268,25 +281,27 @@ capWord(int f, int n)
 int
 forwDelWord(int f, int n)
 {
-    meLine  *dotp ;
-    meInt    size, lineno ;
-    meUShort doto ;
+    meWindow *cwp;
+    meLine *dotp;
+    meInt size, lineno;
+    meUShort doto;
 
     if(n == 0)
         return meTRUE ;
     if(n < 0)
-        return backDelWord(f,-n) ;
+        return backDelWord(f,-n);
 
     if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
-        return meABORT ;
-    dotp   = frameCur->windowCur->dotLine;
-    doto   = frameCur->windowCur->dotOffset;
-    lineno = frameCur->windowCur->dotLineNo ;
+        return meABORT;
+    cwp = frameCur->windowCur;
+    dotp = cwp->dotLine;
+    doto = cwp->dotOffset;
+    lineno = cwp->dotLineNo;
     size = 0;
     /* if no argument was given then only kill the white space before the word */
-    if(!f && !inWord())
+    if(!f && !meWindowInWord(cwp))
     {
-        while(!inWord() && (meWindowForwardChar(frameCur->windowCur, 1) > 0))
+        while(!meWindowInWord(cwp) && (meWindowForwardChar(cwp,1) > 0))
             size++ ;
         if(size)
             n = 0 ;
@@ -294,23 +309,23 @@ forwDelWord(int f, int n)
     else
     {
         do {
-            while(!inWord() && (meWindowForwardChar(frameCur->windowCur, 1) > 0))
-                size++ ;
-            if(!inWord())
-                break ;
-            while(inWord())
+            while(!meWindowInWord(cwp) && (meWindowForwardChar(cwp,1) > 0))
+                size++;
+            if(!meWindowInWord(cwp))
+                break;
+            while(meWindowInWord(cwp))
             {
-                meWindowForwardChar(frameCur->windowCur, 1) ;
-                size++ ;
+                meWindowForwardChar(cwp,1);
+                size++;
             }
-        } while(--n) ;
+        } while(--n);
     }
-    frameCur->windowCur->dotLine = dotp;
-    frameCur->windowCur->dotOffset = doto;
-    frameCur->windowCur->dotLineNo = lineno ;
+    cwp->dotLine = dotp;
+    cwp->dotOffset = doto;
+    cwp->dotLineNo = lineno;
     if(ldelete(size,3) <= 0)
-        return meFALSE ;
-    return ((n) ? meErrorEob():meTRUE) ;
+        return meFALSE;
+    return ((n) ? meErrorEob():meTRUE);
 }
 
 /*
@@ -321,55 +336,57 @@ forwDelWord(int f, int n)
 int
 backDelWord(int f, int n)
 {
+    meWindow *cwp;
     meInt size;
 
     if(n == 0)
         return meTRUE ;
     if(n < 0)
-        return forwDelWord(f,-n) ;
+        return forwDelWord(f,-n);
 
     if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return meABORT ;
-    if(meWindowBackwardChar(frameCur->windowCur, 1) == meFALSE)
-        return meErrorBob() ;
+    cwp = frameCur->windowCur;
+    if(meWindowBackwardChar(cwp, 1) == meFALSE)
+        return meErrorBob();
     size = 0;
     /* if no argument was given then only kill the white space before the word */
-    if(!f && !inWord())
+    if(!f && !meWindowInWord(cwp))
     {
         do
-            size++ ;
-        while((meWindowBackwardChar(frameCur->windowCur, 1) > 0) && !inWord()) ;
-        if(inWord())
-            meWindowForwardChar(frameCur->windowCur, 1) ;
+            size++;
+        while((meWindowBackwardChar(cwp,1) > 0) && !meWindowInWord(cwp));
+        if(meWindowInWord(cwp))
+            meWindowForwardChar(cwp,1);
         n = 0 ;
     }
     else
     {
         do {
-            while(!inWord() && (meWindowBackwardChar(frameCur->windowCur, 1) > 0))
-                size++ ;
-            if(!inWord())
+            while(!meWindowInWord(cwp) && (meWindowBackwardChar(cwp,1) > 0))
+                size++;
+            if(!meWindowInWord(cwp))
             {
-                size++ ;
-                break ;
+                size++;
+                break;
             }
-            while(inWord() && (meWindowBackwardChar(frameCur->windowCur, 1) > 0))
-                size++ ;
-        } while(--n) ;
+            while(meWindowInWord(cwp) && (meWindowBackwardChar(cwp,1) > 0))
+                size++;
+        } while(--n);
 
         if(n == 0)
         {
-            if(inWord())
+            if(meWindowInWord(cwp))
                 /* must be at start of the buffer, add on the initial char */
-                size++ ;
+                size++;
             else
-                meWindowForwardChar(frameCur->windowCur, 1) ;
+                meWindowForwardChar(cwp,1);
         }
     }
 
     if(ldelete(size,3) <= 0)
-        return meFALSE ;
-    return ((n) ? meErrorBob():meTRUE) ;
+        return meFALSE;
+    return ((n) ? meErrorBob():meTRUE);
 }
 
 #if MEOPT_WORDPRO
@@ -404,86 +421,88 @@ backDelWord(int f, int n)
 int
 wrapWord(int f, int n)
 {
+    register meWindow *cwp;
     register meUShort cnt, off ;		/* size of word wrapped to next line */
     register meUByte c, last=2 ;		/* charector temporary */
 
     if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return meABORT ;
-
+    
+    cwp = frameCur->windowCur;
     /* Make sure we are not in no fill mode */
-    if (toLower(frameCur->bufferCur->fillmode) == 'n')
+    if (toLower(cwp->buffer->fillmode) == 'n')
         return meTRUE;
 
     /* back up until we aren't in a word,
        make sure there is a break in the line */
     cnt = 0 ;
-    off = frameCur->windowCur->dotOffset ;
+    off = cwp->dotOffset ;
     do
     {
-        c = meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset) ;
+        c = meLineGetChar(cwp->dotLine,cwp->dotOffset) ;
         if((c == ' ') || (c == meCHAR_TAB))
         {
             if(last == 1)
-                cnt = frameCur->windowCur->dotOffset+1 ;
+                cnt = cwp->dotOffset+1 ;
             last = 0 ;
         }
-        else if(!last && (getccol() < frameCur->bufferCur->fillcol))
+        else if(!last && (getwcol(cwp) < cwp->buffer->fillcol))
             break ;
         else
             last = 1 ;
-    } while((frameCur->windowCur->dotOffset)-- > 0) ;
+    } while((cwp->dotOffset)-- > 0) ;
 
     if(cnt != 0)
-        frameCur->windowCur->dotOffset = cnt ;
+        cwp->dotOffset = cnt;
     else
     {
-        frameCur->windowCur->dotOffset = off ;
-        if(((c = meLineGetChar(frameCur->windowCur->dotLine,off)) != ' ') && (c != meCHAR_TAB))
-            return meTRUE ;
+        cwp->dotOffset = off;
+        if(((c = meLineGetChar(cwp->dotLine,off)) != ' ') && (c != meCHAR_TAB))
+            return meTRUE;
     }
-    off = meLineGetLength(frameCur->windowCur->dotLine) - off ;
+    off = meLineGetLength(cwp->dotLine) - off;
 #if MEOPT_HILIGHT
-    if(frameCur->bufferCur->indent)
-        cnt = indentInsert() ;
+    if(cwp->buffer->indent)
+        cnt = indentInsert();
     else
 #endif
-        if(meModeTest(frameCur->bufferCur->mode,MDINDENT))
-        cnt = winsert() ;
+        if(meModeTest(cwp->buffer->mode,MDINDENT))
+        cnt = winsert();
     else
     {
-        cnt = lineInsertNewline(0) ;
+        cnt = lineInsertNewline(0);
 #if MEOPT_UNDO
         if(cnt > 0)
-            meUndoAddInsChars(n) ;
+            meUndoAddInsChars(n);
 #endif
     }
-    if(meModeTest(frameCur->bufferCur->mode,MDJUST))
-        justify(-1,-1,frameCur->bufferCur->fillmode) ;
+    if(meModeTest(cwp->buffer->mode,MDJUST))
+        justify(-1,-1,cwp->buffer->fillmode);
 
-    frameCur->windowCur->dotOffset = meLineGetLength(frameCur->windowCur->dotLine) - off ;
+    cwp->dotOffset = meLineGetLength(cwp->dotLine) - off;
     return cnt ;
 }
 
 
 
 static int
-countGaps(void)
+countGaps(register meLine *lp, register meUShort doto)
 {
     meUByte last;       /* Last character read. */
     meUByte c;          /* Current character */
     int	count=0 ;	/* Number of gaps encountered */
 
     last = '\0';				/* Reset word */
-    while((c=meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset)) != '\0')
+    while((c=meLineGetChar(lp,doto)) != '\0')
     {
         if((last == ' ') && (c != ' '))
-            ++count ;
-        last = c;		/* Save last character */
-        frameCur->windowCur->dotOffset++;	/* Next character position */
+            ++count;
+        last = c;	/* Save last character */
+        doto++;		/* Next character position */
     }
     return count ;		/* Record word */
 
-}	/* End of "goto_gap" */
+}
 
 static char gapDir = 0;                 /* Gap direction */
 
@@ -563,7 +582,7 @@ getBestGap(void)
 int
 justify(int leftMargin, int leftDoto, meUByte jmode)
 {
-    meWindow *wp = frameCur->windowCur;
+    meWindow *cwp = frameCur->windowCur;
     meUShort  len, doto, ss ;
     meUShort  odoto;              /* Starting doto backup */
     meUByte   cc ;
@@ -571,23 +590,23 @@ justify(int leftMargin, int leftDoto, meUByte jmode)
     int       col ;               /* left indent with tab expansion */
 
     /* Save old context */
-    odoto = wp->dotOffset;
-    wp->dotLine = meLineGetPrev(wp->dotLine) ;
-    (wp->dotLineNo)-- ;
+    odoto = cwp->dotOffset;
+    cwp->dotLine = meLineGetPrev(cwp->dotLine) ;
+    cwp->dotLineNo-- ;
     undoMode = (leftMargin < 0) ? 2:0;  /* Compute the undo mode */
 
     /* lowercase the given jmode to remove the auto-detect */
     jmode = toLower(jmode);
 
     /* We are always filling the previous line */
-    len = meLineGetLength(wp->dotLine) ;
+    len = meLineGetLength(cwp->dotLine) ;
     ss = len ;
 
     /* Strip any spaces from the right of the string */
     while(len > 0)
     {
         len-- ;
-        if(((cc = meLineGetChar(wp->dotLine,len)) != ' ') && (cc != meCHAR_TAB))
+        if(((cc = meLineGetChar(cwp->dotLine,len)) != ' ') && (cc != meCHAR_TAB))
         {
             len++ ;
             break ;
@@ -595,8 +614,8 @@ justify(int leftMargin, int leftDoto, meUByte jmode)
     }
     if((ss = ss - len) != 0)
     {
-        wp->dotOffset = len ;
-        ldelete (ss, undoMode) ;
+        cwp->dotOffset = len ;
+        ldelete(ss, undoMode);
     }
 
     /* If line is empty or left justification is required then do nothing */
@@ -606,39 +625,39 @@ justify(int leftMargin, int leftDoto, meUByte jmode)
     if(leftDoto < 0)
     {
         /* move to the left hand margin */
-        wp->dotOffset = 0 ;
-        while(((cc = meLineGetChar(wp->dotLine,wp->dotOffset)) != '\0') &&
+        cwp->dotOffset = 0;
+        while(((cc = meLineGetChar(cwp->dotLine,cwp->dotOffset)) != '\0') &&
               ((cc == ' ') || (cc == '\t')))
-            wp->dotOffset++ ;
-        doto = wp->dotOffset ;
-        col = getccol() ;
+            cwp->dotOffset++;
+        doto = cwp->dotOffset;
+        col = getwcol(cwp);
         if(leftMargin < 0)
-            leftMargin = col ;
+            leftMargin = col;
     }
     else
     {
-        doto = leftDoto ;
-        wp->dotOffset = doto ;
-        col = leftMargin ;
+        doto = leftDoto;
+        cwp->dotOffset = doto;
+        col = leftMargin;
     }
     /* check for and trash any TABs on the rest of the line */
-    while((cc=meLineGetChar(wp->dotLine,wp->dotOffset)) != '\0')
+    while((cc=meLineGetChar(cwp->dotLine,cwp->dotOffset)) != '\0')
     {
         if (cc == meCHAR_TAB)
         {
             /* Get expansion width of TAB */
-            int jj = next_tab_pos(getccol(), frameCur->bufferCur->tabWidth);
+            int jj = next_tab_pos(getwcol(cwp),cwp->buffer->tabWidth);
             /* Replace the TAB with equivelent SPACE's */
             ldelete (1L,undoMode);
             lineInsertChar (jj, ' ');
 #if MEOPT_UNDO
             if (undoMode)
-                meUndoAddInsChars(jj) ;
+                meUndoAddInsChars(jj);
 #endif
         }
-        wp->dotOffset++ ;
+        cwp->dotOffset++;
     }
-    len = meLineGetLength(wp->dotLine) - doto + leftMargin ;
+    len = meLineGetLength(cwp->dotLine) - doto + leftMargin;
 
     /* If there is leading white space and we are justifying centre or right
      * then delete the white space. */
@@ -647,61 +666,61 @@ justify(int leftMargin, int leftDoto, meUByte jmode)
         /* Centre and right justification are pretty similar. For right
          * justification we insert "fillcol-linelen" spaces. For centre
          * justification we insert "fillcol-linelen/2" spaces. */
-        if(len > frameCur->bufferCur->fillcol)
+        if(len > cwp->buffer->fillcol)
         {
             /* line is already too long - this can happen when filling a
              * paragraph to the right and the first line is not the longest -
              * pull back minimum to stay within the fillcol */
-            len -= frameCur->bufferCur->fillcol ;
+            len -= cwp->buffer->fillcol;
             if(leftMargin < len)
-                leftMargin = 0 ;
+                leftMargin = 0;
             else
-                leftMargin -= len ;
+                leftMargin -= len;
         }
         else
         {
-            len = frameCur->bufferCur->fillcol - len ;
+            len = cwp->buffer->fillcol - len;
             if(jmode == 'c')                /* Centre ?? */
-                leftMargin = (len + leftMargin) >> 1 ;
+                leftMargin = (len + leftMargin) >> 1;
             else
-                leftMargin += len ;
+                leftMargin += len;
         }
     }
     /* Both left and right margin justification. */
-    else if(len < frameCur->bufferCur->fillcol)
+    else if(len < cwp->buffer->fillcol)
     {
-        int gaps ;			/* The number of gaps in the line */
+        int gaps;			/* The number of gaps in the line */
 
-        ss = frameCur->bufferCur->fillcol - len ;
-        wp->dotOffset = doto ;	        /* Save doto position */
-        gaps = countGaps() ;	        /* Get number of gaps */
+        ss = cwp->buffer->fillcol - len;
+        gaps = countGaps(cwp->dotLine,doto);      /* Get number of gaps */
 
         if(gaps == 0)			/* No gaps ?? */
         {
-            lineInsertChar(ss, ' ') ;	/* Fill at end */
+            cwp->dotOffset = meLineGetLength(cwp->dotLine);
+            lineInsertChar(ss, ' ');	/* Fill at end */
 #if MEOPT_UNDO
             if (undoMode)
-                meUndoAddInsChars(ss) ;
+                meUndoAddInsChars(ss);
 #endif
         }
         else                            /* Start filling the gaps with spaces */
         {
-            int incGaps ;
+            int incGaps;
 
-            gapDir ^= 1 ;               /* Direction of gaps */
+            gapDir ^= 1;                /* Direction of gaps */
             do
             {
-                wp->dotOffset = doto ;	/* Save doto position */
-                getBestGap() ;
+                cwp->dotOffset = doto;	/* Save doto position */
+                getBestGap();
 
-                incGaps = (ss+gaps-1)/gaps ;
-                lineInsertChar(incGaps, ' ') ;
+                incGaps = (ss+gaps-1)/gaps;
+                lineInsertChar(incGaps, ' ');
 #if MEOPT_UNDO
                 if (undoMode)
                     meUndoAddInsChars(incGaps) ;
 #endif
-                ss -= incGaps ;
-                gaps-- ;
+                ss -= incGaps;
+                gaps--;
             } while(ss) ;
         }
     }
@@ -713,10 +732,10 @@ justify(int leftMargin, int leftDoto, meUByte jmode)
 finished:
 
     /* Restore context - return the new line length */
-    ss = meLineGetLength(wp->dotLine);
-    wp->dotLine = meLineGetNext(wp->dotLine) ;
-    wp->dotOffset = odoto ;
-    (wp->dotLineNo)++ ;
+    ss = meLineGetLength(cwp->dotLine);
+    cwp->dotLine = meLineGetNext(cwp->dotLine);
+    cwp->dotOffset = odoto ;
+    cwp->dotLineNo++ ;
     return ss;
 }
 
@@ -871,17 +890,18 @@ lookahead(meWindow *wp, meInt fillState)
 static char
 fillAutoDetect (char mode)
 {
+    meWindow *cwp=frameCur->windowCur;
     int doto;                           /* Doto position */
     int len;                            /* lenght of the line */
     int textLen;                        /* Length of the text */
 
-    doto = frameCur->windowCur->dotOffset;               /* Save current position */
-    len = meLineGetLength (frameCur->windowCur->dotLine);      /* Length of the line */
+    doto = cwp->dotOffset;              /* Save current position */
+    len = meLineGetLength(cwp->dotLine);   /* Length of the line */
     textLen = (len - doto);             /* Text length */
     mode = toLower (mode);              /* Align mode to regular operation */
 
     /* Test for centre */
-    if (len < frameCur->bufferCur->fillcol)   /* On the right margin */
+    if(len < cwp->buffer->fillcol)      /* On the right margin */
     {
         int sdiff;                      /* Start difference */
         int ediff;                      /* End difference */
@@ -889,27 +909,27 @@ fillAutoDetect (char mode)
         /* Check for balanced line. We expect the start and end of the
          * line to be approximatly balanced. Allow a margin of error of
          * 6 characters */
-        sdiff = (frameCur->bufferCur->fillcol >> 1) - (doto + (textLen >> 1));
-        if (sdiff < 0)                  /* Quick abs !! */
+        sdiff = (cwp->buffer->fillcol >> 1) - (doto + (textLen >> 1));
+        if(sdiff < 0)                   /* Quick abs !! */
             sdiff = -sdiff;
-        ediff = (frameCur->bufferCur->fillcol >> 1) - (len  - (textLen >> 1));
-        if (ediff < 0)                  /* Quick abs !! */
+        ediff = (cwp->buffer->fillcol >> 1) - (len  - (textLen >> 1));
+        if(ediff < 0)                   /* Quick abs !! */
             ediff = -ediff;
         sdiff += ediff;
 
-        if ((sdiff == 0) ||             /* We are certain !! */
-            ((sdiff < 2) && (textLen < (frameCur->bufferCur->fillcol >> 1))))
+        if((sdiff == 0) ||              /* We are certain !! */
+            ((sdiff < 2) && (textLen < (cwp->buffer->fillcol >> 1))))
             return ('c');               /* We are centred */
     }
 
     /* Test for right aligned text */
-    if ((len >= frameCur->bufferCur->fillcol) && (doto > (frameCur->bufferCur->fillcol >> 1)))
+    if((len >= cwp->buffer->fillcol) && (doto > (cwp->buffer->fillcol >> 1)))
         return ('r');                   /* We are right */
 
     /* Check for text on the left-hand edge of line. If it meets our
      * criteria for not filling the whole paragraph then apply 'n' which
      * formats each line separately. */
-    if ((doto == 0) && (len <= (frameCur->bufferCur->fillcol >> 1)))
+    if((doto == 0) && (len <= (cwp->buffer->fillcol >> 1)))
         return ('n');                   /* No justification for left */
 
     return mode ;                       /* Returned modified mode */
@@ -919,8 +939,8 @@ fillAutoDetect (char mode)
 int
 fillPara(int f, int n)
 {
-    meWindow *wp=frameCur->windowCur;
-    meBuffer *bp;
+    meWindow *cwp=frameCur->windowCur;
+    meBuffer *cbp=cwp->buffer;
     meLine *eopline;		        /* ptr to line just past EOP	*/
     meInt eoplno;		        /* line no of line just past EOP*/
     meInt ilength;			/* Initial line length          */
@@ -937,7 +957,7 @@ fillPara(int f, int n)
     int paralen ;
 #endif
 
-    if((bp=wp->buffer)->fillcol == 0)  /* Fill column set ??*/
+    if(cbp->fillcol == 0)  /* Fill column set ??*/
         return mlwrite(MWABORT,(meUByte *)"No fill column set");
     if((c=bufferSetEdit()) <= 0)       /* Check we can change the buffer */
         return c ;
@@ -959,7 +979,7 @@ fillPara(int f, int n)
      *
      * If the One Line mode (o) is operational then fill compleate
      * paragraphs to a single line. Indentation is disabled */
-    jmode = bp->fillmode;
+    jmode = cbp->fillmode;
     if (isUpper(jmode))
     {
         fillState |= FILL_AUTO;         /* Auto paragraph type detection */
@@ -983,7 +1003,7 @@ fillPara(int f, int n)
 
     /* Record if justify mode is enabled. Record in our local context Also
      * knock off indent if disabled. We do not want to be prompting the user. */
-    if(meModeTest(bp->mode,MDJUST)) /* Justify enabled ?? */
+    if(meModeTest(cbp->mode,MDJUST)) /* Justify enabled ?? */
         fillState |= FILL_JUSTIFY;      /* Yes - Set justification state */
     else
     {
@@ -1002,12 +1022,12 @@ fillPara(int f, int n)
         /* See if this is a paragraph separator line. If it is not a
          * separator then the paragraph position must be restored. */
         f = 1;                          /* Anchor will be set */
-        if ((icol = meLineGetLength(wp->dotLine)) != 0)
+        if ((icol = meLineGetLength(cwp->dotLine)) != 0)
         {
             for (ccol = 0; ccol < icol; ccol++)
             {
                 /* Check that this is not a paragraph sepearator line */
-                c = meLineGetChar (wp->dotLine, ccol);
+                c = meLineGetChar (cwp->dotLine, ccol);
                 if ((c != meCHAR_TAB) && (c != ' '))
                 {
                     f = 2;              /* Char exists on line, restore pos */
@@ -1016,9 +1036,9 @@ fillPara(int f, int n)
             }
         }
 
-        meAnchorSet(bp,meANCHOR_FILL_DOT,wp->dotLine,wp->dotLineNo,wp->dotOffset,1);
-        ilength = wp->dotLineNo ;
-        icol = wp->dotOffset ;
+        meAnchorSet(cbp,meANCHOR_FILL_DOT,cwp->dotLine,cwp->dotLineNo,cwp->dotOffset,1);
+        ilength = cwp->dotLineNo ;
+        icol = cwp->dotOffset ;
     }
     else
         f = -1 ;
@@ -1029,53 +1049,53 @@ fillPara(int f, int n)
         /* go to the beginning of the line and use forward-paragraph
          * to go to the end of the current or next paragraph, if this
          * fails we are at the end of buffer */
-        wp->dotOffset = 0 ;             /* Got start of current line */
+        cwp->dotOffset = 0 ;             /* Got start of current line */
         if(windowForwardParagraph(meFALSE, 1) <= 0)
             break;
 
         /* record the pointer to the line just past the EOP
          * and then back top the beginning of the paragraph.
          * doto is at the beginning of the first word */
-        eopline = wp->dotLine ;
-        eoplno = wp->dotLineNo ;
+        eopline = cwp->dotLine;
+        eoplno = cwp->dotLineNo;
         windowBackwardParagraph(meFALSE, 1);
 
         /* Advance to the first character in the paragraph. */
-        while(!inPWord())
-            if(meWindowForwardChar(wp, 1) <= 0)
+        while(!meWindowInPWord(cwp))
+            if(meWindowForwardChar(cwp,1) <= 0)
                 break;
 
         /* Skip non-formatting paragraphs */
         if((fillignore[0] != '\0') &&
-           (meStrchr(fillignore,meLineGetChar(wp->dotLine,wp->dotOffset)) != NULL))
+           (meStrchr(fillignore,meLineGetChar(cwp->dotLine,cwp->dotOffset)) != NULL))
         {
-            wp->dotLine = eopline;    /* Goto the end of the paragraph */
-            wp->dotLineNo = eoplno ;
-            wp->dotOffset = 0;
+            cwp->dotLine = eopline;    /* Goto the end of the paragraph */
+            cwp->dotLineNo = eoplno;
+            cwp->dotOffset = 0;
             continue;			/* Next one */
         }
 
 #if MEOPT_EXTENDED
         {
             /* check that this paragraph can be filled */
-            meLine *lp ;
-            lp = wp->dotLine ;
+            meLine *lp;
+            lp = cwp->dotLine;
             do
             {
                 if(meLineGetFlag(lp) & meLINE_PROTECT)
-                    return mlwrite(MWABORT,(meUByte *)"[Protected line in paragraph!]") ;
+                    return mlwrite(MWABORT,(meUByte *)"[Protected line in paragraph!]");
 #if MEOPT_NARROW
-                if((lp != wp->dotLine) &&
+                if((lp != cwp->dotLine) &&
                    (meLineGetFlag(lp) & meLINE_ANCHOR_NARROW))
-                    return mlwrite(MWABORT,(meUByte *)"[Narrow in paragraph!]") ;
+                    return mlwrite(MWABORT,(meUByte *)"[Narrow in paragraph!]");
 #endif
-            } while((lp=meLineGetNext(lp)) != eopline) ;
+            } while((lp=meLineGetNext(lp)) != eopline);
         }
 #endif
         /* Quick auto test to determine what mode the current paragraph is.
          * Set up the modes in the fill status mask */
         if (fillState & FILL_AUTO)
-            jmode = fillAutoDetect(bp->fillmode);
+            jmode = fillAutoDetect(cbp->fillmode);
         fillState &= ~FILL_TMASK;
         switch (jmode)
         {
@@ -1107,30 +1127,30 @@ noIndent:
             break;
         }
 
-        fdoto = wp->dotOffset ;
+        fdoto = cwp->dotOffset ;
         /* Get the initial string from the start of the paragraph.
          * lookahead() modifies the current doto value. */
         if (((fillState & (FILL_INDENT|FILL_BOTH|FILL_LEFT)) > FILL_INDENT) &&
-            ((fillState=lookahead(wp,fillState)) == -1))
-            return meABORT ;
+            ((fillState=lookahead(cwp,fillState)) == -1))
+            return meABORT;
 
         /* if lookahead has found a new left indent position, this position
          * must be passed to justify so justify ignores the text to the left
          * of this indent point */
-        if(fdoto == wp->dotOffset)
-            fdoto = -1 ;
+        if(fdoto == cwp->dotOffset)
+            fdoto = -1;
         else
-            fdoto = wp->dotOffset ;
+            fdoto = cwp->dotOffset;
 
-        ilength = wp->dotOffset;
+        ilength = cwp->dotOffset;
 #if MEOPT_UNDO
-        wp->dotOffset = 0;
-        meUndoAddReplaceBgn(eopline,0) ;
-        wp->dotOffset = (meUShort) ilength;
-        paralen = 0 ;
+        cwp->dotOffset = 0;
+        meUndoAddReplaceBgn(eopline,0);
+        cwp->dotOffset = (meUShort) ilength;
+        paralen = 0;
 #endif
         /* Get the indentation column, this is the real left indentation position */
-        icol = getccol() ;
+        icol = getwcol(cwp);
 
         /* Reset to initial settings.
          * Modes are:-
@@ -1149,10 +1169,10 @@ noIndent:
         while ((fillState & FILL_EOP) == 0)
         {
             /* get the next character in the paragraph */
-            if((c = meLineGetChar(wp->dotLine,wp->dotOffset)) == '\0')
+            if((c = meLineGetChar(cwp->dotLine,cwp->dotOffset)) == '\0')
             {
                 c = meCHAR_TAB ;
-                if (meLineGetNext(wp->dotLine) == eopline)
+                if (meLineGetNext(cwp->dotLine) == eopline)
                     fillState |= FILL_EOP;  /* End of paragraph */
 
                 if (fillState & (FILL_CENTRE|FILL_NONE|FILL_RIGHT))
@@ -1165,16 +1185,16 @@ noIndent:
                 if(wordlen)
                 {
                     /* at a word break with a word waiting - calculate tantitive new length with word added & reset offset to start of word */
-                    newcol = wp->dotOffset;
-                    wp->dotOffset -= wordlen ;
+                    newcol = cwp->dotOffset;
+                    cwp->dotOffset -= wordlen;
                     if(fillState & FILL_SPACE)
-                        wp->dotOffset--;
+                        cwp->dotOffset--;
                     else
                         newcol++;
                     if(fillState & FILL_DOT)
                         newcol += filleoslen-1 ;
                     
-                    if((newcol <= bp->fillcol) || (fillState & FILL_LINE))
+                    if((newcol <= cbp->fillcol) || (fillState & FILL_LINE))
                     {
                         /* add word to current line */
                         if((fillState & FILL_FIRST) == 0)
@@ -1182,8 +1202,8 @@ noIndent:
                             int nosp = (fillState & FILL_DOT) ? filleoslen:1;
                             if(fillState & FILL_SPACE)
                             {
-                                wp->dotOffset++ ;
-                                nosp-- ;
+                                cwp->dotOffset++;
+                                nosp--;
                             }
                             if(nosp)
                                 lineInsertChar(nosp,' '); /* the space */
@@ -1197,7 +1217,7 @@ noIndent:
                             /* the saved space is not required, delete it */
                             ldelete(1L,0);
                         }
-                        ccol = wp->dotOffset;
+                        ccol = cwp->dotOffset;
                         lineInsertNewline(0);
                         if (fillState & FILL_JUSTIFY)
                         {
@@ -1210,15 +1230,15 @@ noIndent:
 #if MEOPT_UNDO
                         paralen += ccol + 1;
 #endif
-                        meLineSetIndent(0,icol,0) ;
+                        meLineSetIndent(0,icol,0);
                         fillState &= ~FILL_DOT;
                     }
 
                     /* and add the length of the word in either case */
-                    wp->dotOffset += wordlen;
+                    cwp->dotOffset += wordlen;
                     if(meStrchr(filleos,lastc) != NULL)
                         fillState |= FILL_DOT;
-                    fillState &= ~FILL_SPACE ;
+                    fillState &= ~FILL_SPACE;
                     wordlen = 0;
                 }
 
@@ -1228,29 +1248,29 @@ noIndent:
                     {
                         if(fillState & FILL_EOP)
                         {
-                            wp->dotLineNo++;
-                            wp->dotLine = meLineGetNext(wp->dotLine);
-                            wp->dotOffset = 0;
+                            cwp->dotLineNo++;
+                            cwp->dotLine = meLineGetNext(cwp->dotLine);
+                            cwp->dotOffset = 0;
                         }
                         else
                             lineInsertNewline(0);
                         ccol = justify(icol,fdoto,jmode);
                         if(fillState & FILL_EOP)
                         {
-                            wp->dotLineNo--;
-                            wp->dotLine = meLineGetPrev(wp->dotLine);
-                            wp->dotOffset = meLineGetLength(wp->dotLine);
+                            cwp->dotLineNo--;
+                            cwp->dotLine = meLineGetPrev(cwp->dotLine);
+                            cwp->dotOffset = meLineGetLength(cwp->dotLine);
                         }
 #if MEOPT_UNDO
                         else
                             paralen += ccol + 1;
 #endif
-                        fdoto = -1 ;
+                        fdoto = -1;
                     }
                     else if(!(fillState & FILL_EOP))
                     {
 #if MEOPT_UNDO
-                        paralen += wp->dotOffset + 1;
+                        paralen += cwp->dotOffset + 1;
 #endif
                         lineInsertNewline(0);
                     }
@@ -1261,25 +1281,25 @@ noIndent:
                 /* delete the space */
                 if((c == ' ') && ((fillState & (FILL_FIRST|FILL_SPACE)) == 0))
                 {
-                    wp->dotOffset++ ;
-                    fillState |= FILL_SPACE ;
+                    cwp->dotOffset++;
+                    fillState |= FILL_SPACE;
                 }
                 else if(!(fillState & FILL_EOP))
                     ldelete(1L,0);
             }
             else
             {
-                lastc = c ;
-                wordlen++ ;
-                wp->dotOffset++ ;
+                lastc = c;
+                wordlen++;
+                cwp->dotOffset++;
             }
         }
 #if MEOPT_UNDO
-        paralen += wp->dotOffset + 1;
+        paralen += cwp->dotOffset + 1;
 #endif
-        wp->dotLineNo++;
-        wp->dotLine = meLineGetNext(wp->dotLine);
-        wp->dotOffset = 0;
+        cwp->dotLineNo++;
+        cwp->dotLine = meLineGetNext(cwp->dotLine);
+        cwp->dotOffset = 0;
 #if MEOPT_UNDO
         meUndoAddReplaceEnd(paralen);
 #endif
@@ -1289,13 +1309,13 @@ noIndent:
     if(f >= 0)
     {
         /* Restore starting point */
-        if((f == 2) && (meAnchorGet(bp,meANCHOR_FILL_DOT) > 0))
+        if((f == 2) && (meAnchorGet(cbp,meANCHOR_FILL_DOT) > 0))
         {
-            wp->dotLine = bp->dotLine ;
-            wp->dotOffset = bp->dotOffset ;
-            wp->dotLineNo = bp->dotLineNo ;
+            cwp->dotLine = cbp->dotLine;
+            cwp->dotOffset = cbp->dotOffset;
+            cwp->dotLineNo = cbp->dotLineNo;
         }
-        meAnchorDelete(bp,meANCHOR_FILL_DOT) ;
+        meAnchorDelete(cbp,meANCHOR_FILL_DOT);
     }
     return meTRUE ;
 }
@@ -1305,35 +1325,37 @@ noIndent:
 int
 killPara(int f, int n)
 {
-    int ss ;
+    meWindow *cwp;
+    int ss;
     int sep_line = 1;                   /* Paragraph separator line */
 
     /* A zero kill then do not kill anything. */
     if(n == 0)
-        return meTRUE ;
+        return meTRUE;
 
     /* Check we can change the buffer */
     if(bufferSetEdit() <= 0)
-        return meABORT ;
+        return meABORT;
+    cwp = frameCur->windowCur;
 
     /* Set the mark at the current position. */
-    frameCur->windowCur->markLine = frameCur->windowCur->dotLine ;
-    frameCur->windowCur->markLineNo = frameCur->windowCur->dotLineNo ;
-    frameCur->windowCur->markOffset = frameCur->windowCur->dotOffset ;
+    cwp->markLine = cwp->dotLine;
+    cwp->markLineNo = cwp->dotLineNo;
+    cwp->markOffset = cwp->dotOffset;
 
     /* See if this is a paragraph separator line. If it is then the kill is
      * performed differently. */
-    if ((ss = meLineGetLength (frameCur->windowCur->dotLine)) != 0)
+    if((ss = meLineGetLength (cwp->dotLine)) != 0)
     {
         int ii;
 
-        for (ii = 0; ii < ss; ii++)
+        for(ii = 0; ii < ss; ii++)
         {
             char cc;
 
             /* Check that this is not a paragraph sepearator line */
-            cc = meLineGetChar (frameCur->windowCur->dotLine, ii);
-            if ((cc != meCHAR_TAB) && (cc != ' '))
+            cc = meLineGetChar (cwp->dotLine, ii);
+            if((cc != meCHAR_TAB) && (cc != ' '))
             {
                 /* Character exists on the line. */
                 sep_line = 0;
@@ -1343,35 +1365,35 @@ killPara(int f, int n)
     }
 
     /* Move to the appropriate paragraph position and delete the region. */
-    ss = windowForwardParagraph(meTRUE,n) ;
+    ss = windowForwardParagraph(meTRUE,n);
 
     /* If we commenced on a separator line then we do not need to protect the
      * paragraph separator. */
     if (sep_line == 0)
     {
         /* Did not start on a separator line, protect the paragraph space. */
-        if (n < 0)
+        if(n < 0)
         {
             /* If killing backwards advance to the first character of the line in
              * the paragraph so that we do not delete the paragraph space. */
-            while(!inPWord())
-                if(meWindowForwardChar(frameCur->windowCur, 1) <= 0)
+            while(!meWindowInPWord(cwp))
+                if(meWindowForwardChar(cwp,1) <= 0)
                     break;
-            frameCur->windowCur->dotOffset = 0;        /* Beginning of line */
+            cwp->dotOffset = 0;        /* Beginning of line */
         }
         else
         {
             /* If killing forwards goto the previous character so that we do not
              * destroy the line separating the paragraph. */
-            meWindowBackwardChar(frameCur->windowCur, 1);
+            meWindowBackwardChar(cwp,1);
         }
     }
 
     /* Kill the region containing the paragraphs */
     if(killRegion(meTRUE,1) <= 0)
-        return meFALSE ;
+        return meFALSE;
 
-    return ss ;
+    return ss;
 }
 
 /* Count the # of words in the marked region, along with average word sizes,
@@ -1393,10 +1415,10 @@ countWords(int f, int n)
 
     /* make sure we have a region to count */
     if((status = getregion(&region)) <= 0)
-        return status ;
-    lp = region.line ;
-    offset = region.offset ;
-    size = region.size ;
+        return status;
+    lp = region.line;
+    offset = region.offset;
+    size = region.size;
 
     /* count up things */
     lastword = meFALSE;

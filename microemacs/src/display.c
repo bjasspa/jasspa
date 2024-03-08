@@ -242,31 +242,33 @@ showCursor(int f, int n)
 int
 showRegion(int f, int n)
 {
-    int absn ;
+    register meWindow *cwp;
+    int absn;
 
     absn = (n < 0) ? -n:n ;
 
     if(((absn == 1) || (absn == 2)) && !(selhilight.flags & SELHIL_FIXED))
-        return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No current region]") ;
-    if(((absn == 2) || (n == 4)) && (selhilight.bp != frameCur->bufferCur))
-        return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Current region not in this buffer]") ;
+        return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No current region]");
+    cwp = frameCur->windowCur;
+    if(((absn == 2) || (n == 4)) && (selhilight.bp != cwp->buffer))
+        return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Current region not in this buffer]");
     switch(n)
     {
     case -3:
-        selhilight.bp = frameCur->bufferCur;                  /* Select the current buffer */
+        selhilight.bp = cwp->buffer;               /* Select the current buffer */
         selhilight.flags = SELHIL_ACTIVE|SELHIL_CHANGED ;
-        selhilight.markOffset = frameCur->windowCur->dotOffset;   /* Current mark offset */
-        selhilight.markLineNo = frameCur->windowCur->dotLineNo;    /* Current mark line number */
-        selhilight.dotOffset = frameCur->windowCur->dotOffset;   /* Current mark offset */
-        selhilight.dotLineNo = frameCur->windowCur->dotLineNo;    /* Current mark line number */
+        selhilight.markOffset = cwp->dotOffset;    /* Current mark offset */
+        selhilight.markLineNo = cwp->dotLineNo;    /* Current mark line number */
+        selhilight.dotOffset = cwp->dotOffset;     /* Current mark offset */
+        selhilight.dotLineNo = cwp->dotLineNo;     /* Current mark line number */
         break ;
 
     case -2:
-        frameCur->windowCur->updateFlags |= WFMOVEL ;
-        if((meWindowGotoLine(frameCur->windowCur,selhilight.markLineNo+1) > 0) &&
-           (selhilight.markOffset <= meLineGetLength(frameCur->windowCur->dotLine)))
+        cwp->updateFlags |= WFMOVEL ;
+        if((meWindowGotoLine(cwp,selhilight.markLineNo+1) > 0) &&
+           (selhilight.markOffset <= meLineGetLength(cwp->dotLine)))
         {
-            frameCur->windowCur->dotOffset = (meUShort) selhilight.markOffset ;
+            cwp->dotOffset = (meUShort) selhilight.markOffset ;
             return meTRUE ;
         }
         return meFALSE ;
@@ -280,20 +282,20 @@ showRegion(int f, int n)
             n |= 1 ;
         if(selhilight.flags & SELHIL_FIXED)
             n |= 2 ;
-        if(selhilight.bp == frameCur->bufferCur)
+        if(selhilight.bp == cwp->buffer)
         {
             n |= 4 ;
             /* check for d >= dot > m */
-            if(((selhilight.dotLineNo < frameCur->windowCur->dotLineNo) ||
-                ((selhilight.dotLineNo == frameCur->windowCur->dotLineNo) && (selhilight.dotOffset <= frameCur->windowCur->dotOffset))) &&
-               ((selhilight.markLineNo > frameCur->windowCur->dotLineNo) ||
-                ((selhilight.markLineNo == frameCur->windowCur->dotLineNo) && (selhilight.markOffset >  frameCur->windowCur->dotOffset))))
+            if(((selhilight.dotLineNo < cwp->dotLineNo) ||
+                ((selhilight.dotLineNo == cwp->dotLineNo) && (selhilight.dotOffset <= cwp->dotOffset))) &&
+               ((selhilight.markLineNo > cwp->dotLineNo) ||
+                ((selhilight.markLineNo == cwp->dotLineNo) && (selhilight.markOffset > cwp->dotOffset))))
                 n |= 8 ;
             /* check for m >= dot > d */
-            else if(((selhilight.markLineNo < frameCur->windowCur->dotLineNo) ||
-                     ((selhilight.markLineNo == frameCur->windowCur->dotLineNo) && (selhilight.markOffset <= frameCur->windowCur->dotOffset))) &&
-                    ((selhilight.dotLineNo > frameCur->windowCur->dotLineNo) ||
-                     ((selhilight.dotLineNo == frameCur->windowCur->dotLineNo) && (selhilight.dotOffset >  frameCur->windowCur->dotOffset))))
+            else if(((selhilight.markLineNo < cwp->dotLineNo) ||
+                     ((selhilight.markLineNo == cwp->dotLineNo) && (selhilight.markOffset <= cwp->dotOffset))) &&
+                    ((selhilight.dotLineNo > cwp->dotLineNo) ||
+                     ((selhilight.dotLineNo == cwp->dotLineNo) && (selhilight.dotOffset > cwp->dotOffset))))
                 n |= 8 ;
         }
         sprintf((char *)resultStr,"%d",n) ;
@@ -306,34 +308,33 @@ showRegion(int f, int n)
         break ;
 
     case 2:
-        frameCur->windowCur->updateFlags |= WFMOVEL ;
-        if((meWindowGotoLine(frameCur->windowCur,selhilight.dotLineNo+1) > 0) &&
-           (selhilight.dotOffset <= meLineGetLength(frameCur->windowCur->dotLine)))
+        cwp->updateFlags |= WFMOVEL ;
+        if((meWindowGotoLine(cwp,selhilight.dotLineNo+1) > 0) &&
+           (selhilight.dotOffset <= meLineGetLength(cwp->dotLine)))
         {
-            frameCur->windowCur->dotOffset = (meUShort) selhilight.dotOffset ;
+            cwp->dotOffset = (meUShort) selhilight.dotOffset ;
             return meTRUE ;
         }
         return meFALSE ;
 
     case 3:
-        if(((selhilight.flags & (SELHIL_FIXED|SELHIL_ACTIVE)) == 0) ||
-           (selhilight.bp != frameCur->bufferCur))
+        if(((selhilight.flags & (SELHIL_FIXED|SELHIL_ACTIVE)) == 0) || (selhilight.bp != cwp->buffer))
         {
-            selhilight.bp = frameCur->bufferCur ;
-            selhilight.markOffset = frameCur->windowCur->dotOffset;  /* Current mark offset */
-            selhilight.markLineNo = frameCur->windowCur->dotLineNo;  /* Current mark line number */
+            selhilight.bp = cwp->buffer ;
+            selhilight.markOffset = cwp->dotOffset;  /* Current mark offset */
+            selhilight.markLineNo = cwp->dotLineNo;  /* Current mark line number */
         }
         selhilight.flags |= SELHIL_FIXED|SELHIL_CHANGED|SELHIL_ACTIVE ;
         if(selhilight.uFlags & SELHILU_KEEP)
             selhilight.flags |= SELHIL_KEEP ;
-        selhilight.dotOffset = frameCur->windowCur->dotOffset;      /* Current mark offset */
-        selhilight.dotLineNo = frameCur->windowCur->dotLineNo;      /* Current mark line number */
+        selhilight.dotOffset = cwp->dotOffset;      /* Current mark offset */
+        selhilight.dotLineNo = cwp->dotLineNo;      /* Current mark line number */
         break ;
 
     case 4:
         selhilight.flags = SELHIL_ACTIVE|SELHIL_CHANGED ;
-        selhilight.dotOffset = frameCur->windowCur->dotOffset;      /* Current mark offset */
-        selhilight.dotLineNo = frameCur->windowCur->dotLineNo;      /* Current mark line number */
+        selhilight.dotOffset = cwp->dotOffset;      /* Current mark offset */
+        selhilight.dotLineNo = cwp->dotLineNo;      /* Current mark line number */
         break ;
 
     default:
@@ -590,9 +591,9 @@ updateline(register int row, register meVideoLine *vp1, meWindow *window)
 {
     register meUByte *s1;       /* Text line pointer */
     register meUShort flag ;    /* Video line flag */
-    meSchemeSet *blkp;             /* Style change list */
+    meSchemeSet *blkp;          /* Style change list */
     meScheme *fssp;             /* Frame store - colour pointer */
-    meUByte    *fstp;           /* Frame store - text pointer */
+    meUByte *fstp;              /* Frame store - text pointer */
     meUShort noColChng;         /* Number of colour changes */
     meUShort scol;              /* Lines starting column */
     meUShort ncol;              /* Lines number of columns */
@@ -612,14 +613,15 @@ updateline(register int row, register meVideoLine *vp1, meWindow *window)
 
     if((flag = vp1->flag) & VFMAINL)
     {
+        meBuffer *bp = window->buffer;
         meScheme scheme;
 #if MEOPT_HILIGHT
         if(meLineIsSchemeSet(vp1->line))
         {
-            scheme = window->buffer->lscheme[meLineGetSchemeIndex(vp1->line)] ;
+            scheme = bp->lscheme[meLineGetSchemeIndex(vp1->line)] ;
             /* We have to assume this line is an exception and the hilno & bracket
              * for the next line should be what this line would have been */
-            if(window->buffer->hilight &&
+            if(bp->hilight &&
                ((vp1[1].hilno != vp1[0].hilno) || (vp1[1].bracket != vp1[0].bracket)))
             {
                 vp1[1].flag |= VFCHNGD ;
@@ -628,7 +630,7 @@ updateline(register int row, register meVideoLine *vp1, meWindow *window)
             }
             goto hideLineJump ;
         }
-        else if(window->buffer->hilight)
+        else if(bp->hilight)
         {
             meUByte tempIsWordMask;
 
@@ -637,7 +639,7 @@ updateline(register int row, register meVideoLine *vp1, meWindow *window)
              * word mask and restore from the buffer. Do the hilighting
              * and then restore the previous setting. */
             tempIsWordMask = isWordMask;
-            isWordMask = window->buffer->isWordMask;
+            isWordMask = bp->isWordMask;
             noColChng = hilightLine(vp1,0) ;
             isWordMask = tempIsWordMask;
 
@@ -651,7 +653,7 @@ updateline(register int row, register meVideoLine *vp1, meWindow *window)
             meUShort lineLen;
 
 #if MEOPT_COLOR
-            scheme = window->buffer->scheme;
+            scheme = bp->scheme;
 #else
             scheme = globScheme;
 #endif
@@ -671,7 +673,7 @@ hideLineJump:
                 if (flag & VFSHALL)
                 {
                     if(lineLen > 0)
-                        blkp[0].column = renderLine(s1,lineLen,0,window->buffer) ;
+                        blkp[0].column = renderLine(s1,lineLen,0,bp) ;
                     else
                         blkp[0].column = 0 ;
                     blkp[0].scheme = scheme + meSCHEME_SELECT;
@@ -685,7 +687,7 @@ hideLineJump:
                     if((flag & VFSHBEG) && (selhilight.soff > 0))
                     {
                         len = selhilight.soff ;
-                        wid = renderLine (s1, len, 0, window->buffer) ;
+                        wid = renderLine (s1, len, 0, bp) ;
                         blkp[0].scheme = scheme ;
                         blkp[0].column = wid ;
                         noColChng = 1 ;
@@ -703,7 +705,7 @@ hideLineJump:
                         if (selhilight.eoff > len)
                         {
                             /* Set up the colour change */
-                            wid = renderLine(s1+len,selhilight.eoff-len,wid,window->buffer) ;
+                            wid = renderLine(s1+len,selhilight.eoff-len,wid,bp) ;
                             blkp[noColChng].scheme = scheme + meSCHEME_SELECT;
                             blkp[noColChng++].column = wid ;
                             len = selhilight.eoff ;
@@ -716,7 +718,7 @@ hideLineJump:
 
                     /* Render the rest of the line in the standard colour */
                     if (lineLen > len)
-                        wid = renderLine(s1+len, lineLen-len,wid,window->buffer) ;
+                        wid = renderLine(s1+len, lineLen-len,wid,bp) ;
                     blkp[noColChng].column = wid ;
                     noColChng += 1 ;
                 }
@@ -725,7 +727,7 @@ hideLineJump:
             {
                 /* Render the rest of the line in the standard colour */
                 if (lineLen > 0)
-                    blkp[0].column = renderLine(s1,lineLen,0,window->buffer) ;
+                    blkp[0].column = renderLine(s1,lineLen,0,bp) ;
                 else
                     blkp[0].column = 0 ;
                 blkp[0].scheme = scheme ;
@@ -799,7 +801,7 @@ hideLineJump:
         {
             /* An extra space is added to the last column so that
              * the cursor will be the right colour */
-            if(vp1->line != window->buffer->baseLine)
+            if(vp1->line != bp->baseLine)
                 s1[blkp[noColChng-1].column] = displayNewLine ;
             else
                 s1[blkp[noColChng-1].column] = ' ' ;
@@ -1379,28 +1381,28 @@ updateModeLine(meWindow *wp)
     if((ml = bp->modeLineStr) != NULL)
     {
         if((wp->updateFlags & bp->modeLineFlags) == 0)
-            return ;
+            return;
     }
     else
 #endif
     {
         if((wp->updateFlags & modeLineFlags) == 0)
-            return ;
-        ml = modeLineStr ;
+            return;
+        ml = modeLineStr;
     }
 
-    lineLen = wp->textWidth ;              /* Max length of line. Only need to
+    lineLen = wp->textWidth;               /* Max length of line. Only need to
                                             * evaluate this many characters */
-    wp->modeLine->length = lineLen ;
+    wp->modeLine->length = lineLen;
 
     if (wp == frameCur->windowCur)                        /* mark the current buffer */
-        lchar = windowChars [WCMLCWSEP];    /* Typically '=' */
+        lchar = windowChars[WCMLCWSEP];    /* Typically '=' */
     else
-        lchar = windowChars [WCMLIWSEP];    /* Typically '-' */
+        lchar = windowChars[WCMLIWSEP];    /* Typically '-' */
 
     clock = time(NULL);                     /* Get system time */
     time_ptr = (struct tm *) localtime(&clock);	/* Get time frame */
-    cp = wp->modeLine->text ;
+    cp = wp->modeLine->text;
     while((lineLen > 0) && ((cc = *ml++) != '\0'))
     {
         if(cc == '%')
@@ -1413,7 +1415,7 @@ updateModeLine(meWindow *wp)
                 if (gsbarmode & WMSPLIT)
                 {
                     *cp++ = windowChars [WCHSBSPLIT];
-                    lineLen-- ;
+                    lineLen--;
                 }
                 break;
             case 'r':
@@ -1424,12 +1426,12 @@ updateModeLine(meWindow *wp)
                  * changed to give some visual indication when running as root.
                  */
                 if(meUid == 0)
-                    *cp++ = '#' ;
+                    *cp++ = '#';
                 else
 #endif
-                    *cp++ = lchar ;
-                lineLen-- ;
-                break ;
+                    *cp++ = lchar;
+                lineLen--;
+                break;
 
             case 'u':
                 /* buffer changed */
@@ -1438,9 +1440,9 @@ updateModeLine(meWindow *wp)
                 else if (meModeTest(bp->mode,MDVIEW))  /* "%" if view. */
                     *cp++ = windowChars [WCMLBVIEW];     /* Typically '%' */
                 else
-                    *cp++ = lchar ;
+                    *cp++ = lchar;
                 lineLen--;
-                break ;
+                break;
 
             case 'e':
                 /* add in the mode flags */
@@ -1448,11 +1450,11 @@ updateModeLine(meWindow *wp)
                     if(meModeTest(modeLineDraw,ii) &&
                        meModeTest(bp->mode,ii))
                     {
-                        *cp++ = modeCode[ii] ;
+                        *cp++ = modeCode[ii];
                         if (--lineLen == 0)
                             break;
                     }
-                break ;
+                break;
 
             case 'k':
                 if (kbdmode == meRECORD)           /* if playing macro */

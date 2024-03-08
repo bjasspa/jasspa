@@ -466,23 +466,25 @@ meWindowFixTextSize(meWindow *wp)
 /* Main Window functions */
 
 void
-meWindowMakeCurrent(meWindow *wp)
+meWindowMakeCurrent(meWindow *nwp)
 {
+    meWindow *owp=frameCur->windowCur;
+    if(owp == nwp)
+        return;
 #if MEOPT_FILEHOOK
     /* Process the exit hook of the old buffer.
      * Force mode line / scroll bar update on old window */
-    if(frameCur->bufferCur->ehook >= 0)
-        execBufferFunc(frameCur->bufferCur,frameCur->bufferCur->ehook,0,1) ;
+    if(owp->buffer->ehook >= 0)
+        execBufferFunc(owp->buffer,owp->buffer->ehook,0,1) ;
 #endif
-    frameCur->windowCur->updateFlags |= WFMODE|WFSBAR;     /* Update scroll and mode lines */
+    owp->updateFlags |= WFMODE|WFSBAR;     /* Update scroll and mode lines */
 
     /* Do the swap */
-    frameCur->windowCur = wp;
-    frameCur->bufferCur = wp->buffer;
+    frameCur->windowCur = nwp;
 #if MEOPT_EXTENDED
-    if(isWordMask != frameCur->bufferCur->isWordMask)
+    if(isWordMask != nwp->buffer->isWordMask)
     {
-        isWordMask = frameCur->bufferCur->isWordMask ;
+        isWordMask = nwp->buffer->isWordMask ;
 #if MEOPT_MAGIC
         mereRegexClassChanged() ;
 #endif
@@ -491,13 +493,13 @@ meWindowMakeCurrent(meWindow *wp)
 #if MEOPT_FILEHOOK
     /* Process the entry hook of the new buffer.
      * Force mode line / scroll bar update on new window */
-    if(frameCur->bufferCur->bhook >= 0)
-        execBufferFunc(frameCur->bufferCur,frameCur->bufferCur->bhook,0,1) ;
+    if(nwp->buffer->bhook >= 0)
+        execBufferFunc(nwp->buffer,nwp->buffer->bhook,0,1) ;
 #endif
-    frameCur->windowCur->updateFlags |= WFMODE|WFSBAR;
+    nwp->updateFlags |= WFMODE|WFSBAR;
 #if MEOPT_IPIPES
-    if(meModeTest(frameCur->bufferCur->mode,MDPIPE))
-        ipipeSetSize(frameCur->windowCur,frameCur->bufferCur) ;
+    if(meModeTest(nwp->buffer->mode,MDPIPE))
+        ipipeSetSize(nwp,nwp->buffer);
 #endif
 }
 
@@ -546,14 +548,13 @@ meBufferAddModeToWindows (meBuffer *bp, int mode)
 int
 windowRecenter(int f, int n)
 {
-    if (f == meFALSE)     /* default to 0 to center screen */
+    if(f == meFALSE)     /* default to 0 to center screen */
         n = 0;
-    frameCur->windowCur->windowRecenter = n ;             /* Center */
-    frameCur->windowCur->updateFlags |= WFFORCE ;
-
+    frameCur->windowCur->windowRecenter = n;     /* Center */
+    frameCur->windowCur->updateFlags |= WFFORCE;
     sgarbf = meTRUE;                   /* refresh */
 
-    return (meTRUE);
+    return meTRUE;
 }
 
 
@@ -617,14 +618,14 @@ windowGotoNext(int f, int n)
 int
 windowGotoPrevious(int f, int n)
 {
-    meWindow *wp, *ewp ;
+    meWindow *wp, *ewp;
 
+    wp = frameCur->windowCur;
     if(n & 0x04)
-        ewp = NULL ;
+        ewp = NULL;
     else
-        ewp = wp = frameCur->windowCur ;
+        ewp = wp;
 
-    wp = frameCur->windowCur ;
     for(;;)
     {
         if(n & 0x04)
@@ -653,7 +654,7 @@ windowGotoPrevious(int f, int n)
         if(((wp->flags & meWINDOW_NO_NEXT) == 0) || (n & 0x02))
 #endif
         {
-            meWindowMakeCurrent(wp) ;
+            meWindowMakeCurrent(wp);
             break;
         }
     }
@@ -671,22 +672,23 @@ windowGotoPrevious(int f, int n)
 int
 windowScrollUp(int f, int n)
 {
+    register meWindow *cwp = frameCur->windowCur;
     register long ii ;
 
     if(f == meFALSE)
-        n = frameCur->windowCur->textDepth-1 ;
+        n = cwp->textDepth-1;
     else if(n < 0)
-        return windowScrollDown(f, -n) ;
+        return windowScrollDown(f,-n);
 
-    if(frameCur->windowCur->vertScroll == 0)
-        return meErrorBob() ;
+    if(cwp->vertScroll == 0)
+        return meErrorBob();
 
-    if((frameCur->windowCur->vertScroll-=n) < 0)
-        frameCur->windowCur->vertScroll = 0 ;
-    ii = frameCur->windowCur->dotLineNo - frameCur->windowCur->vertScroll - frameCur->windowCur->textDepth + 1 ;
+    if((cwp->vertScroll-=n) < 0)
+        cwp->vertScroll = 0 ;
+    ii = cwp->dotLineNo - cwp->vertScroll - cwp->textDepth + 1 ;
     if(ii > 0)
         windowBackwardLine(meTRUE,ii) ;
-    frameCur->windowCur->updateFlags |= (WFREDRAW|WFSBOX) ;           /* Mode line is OK. */
+    cwp->updateFlags |= (WFREDRAW|WFSBOX) ;           /* Mode line is OK. */
     return meTRUE ;
 }
 
@@ -701,23 +703,24 @@ windowScrollUp(int f, int n)
 int
 windowScrollDown(int f, int n)
 {
+    register meWindow *cwp = frameCur->windowCur;
     register long ii ;
 
     if(f == meFALSE)
-        n = frameCur->windowCur->textDepth-1 ;
+        n = cwp->textDepth-1 ;
     else if(n < 0)
         return windowScrollUp(f, -n) ;
     /* A quick if no lines case to make rest easier */
-    if(frameCur->windowCur->vertScroll >= frameCur->bufferCur->lineCount-1)
+    if(cwp->vertScroll >= cwp->buffer->lineCount-1)
         return meErrorEob() ;
 
-    if((frameCur->windowCur->vertScroll+=n) >= frameCur->bufferCur->lineCount)
-        frameCur->windowCur->vertScroll = frameCur->bufferCur->lineCount - 1 ;
+    if((cwp->vertScroll+=n) >= cwp->buffer->lineCount)
+        cwp->vertScroll = cwp->buffer->lineCount - 1 ;
 
-    ii = frameCur->windowCur->vertScroll - frameCur->windowCur->dotLineNo ;
+    ii = cwp->vertScroll - cwp->dotLineNo ;
     if(ii > 0)
         windowForwardLine(meTRUE,ii) ;
-    frameCur->windowCur->updateFlags |= (WFREDRAW|WFSBOX) ;           /* Mode line is OK. */
+    cwp->updateFlags |= (WFREDRAW|WFSBOX) ;           /* Mode line is OK. */
     return meTRUE ;
 }
 
@@ -732,8 +735,9 @@ windowScrollDown(int f, int n)
 int
 windowScrollRight (int f, int n)
 {
+    register meWindow *cwp = frameCur->windowCur;
     if (f == meFALSE)                     /* No argument ?? */
-        n = frameCur->windowCur->textWidth-2;          /* Scroll a whole screen width */
+        n = cwp->textWidth-2;          /* Scroll a whole screen width */
 
     /* To scroll simply set the current windows scroll position to the
      * appropriate start column. */
@@ -741,15 +745,15 @@ windowScrollRight (int f, int n)
     {
         int scroll, ii, jj, doto ;
         unsigned char *off;
-        off = windCurLineOffsetEval(frameCur->windowCur);
+        off = windCurLineOffsetEval(cwp);
         /* try to scroll the current line by n */
-        jj = meLineGetLength(frameCur->windowCur->dotLine);
+        jj = meLineGetLength(cwp->dotLine);
         if((scrollFlag & 0x0f) > 2)
-            scroll = frameCur->windowCur->horzScrollRest;
+            scroll = cwp->horzScrollRest;
         else if(jj == 0)
             return meTRUE;
         else
-            scroll = frameCur->windowCur->horzScroll;
+            scroll = cwp->horzScroll;
         if((scroll == 0) && (n < 0))
             return meTRUE;
         if((scroll += n) < 0)
@@ -769,44 +773,44 @@ windowScrollRight (int f, int n)
         }
         else
             jj = -ii;
-        if(frameCur->windowCur->horzScroll != scroll)
+        if(cwp->horzScroll != scroll)
         {
-            frameCur->windowCur->horzScroll = scroll ;
-            frameCur->windowCur->updateFlags |= WFDOT ;
+            cwp->horzScroll = scroll ;
+            cwp->updateFlags |= WFDOT ;
             /* Check the position of the cursor, move it if it has been
              * scrolled off the screen.
              */
-            ii = frameCur->windowCur->textWidth - 1 ;
-            while(doto < frameCur->windowCur->dotOffset)
+            ii = cwp->textWidth - 1 ;
+            while(doto < cwp->dotOffset)
             {
                 jj += *off++ ;
                 if(jj >= ii)
                     break ;
                 doto++ ;
             }
-            if(frameCur->windowCur->dotOffset != doto)
+            if(cwp->dotOffset != doto)
             {
-                frameCur->windowCur->dotOffset = doto ;
-                frameCur->windowCur->updateFlags |= WFMOVEC ;
+                cwp->dotOffset = doto ;
+                cwp->updateFlags |= WFMOVEC ;
             }
         }
         if((scrollFlag & 0x0f) == 3)
         {
-            ii = frameCur->windowCur->horzScrollRest + n ;
+            ii = cwp->horzScrollRest + n ;
             if(ii < 0)
                 ii = 0 ;
             else if(ii > disLineSize)
                 ii = disLineSize ;
-            if(ii != frameCur->windowCur->horzScrollRest)
+            if(ii != cwp->horzScrollRest)
             {
-                frameCur->windowCur->horzScrollRest = ii ;
-                frameCur->windowCur->updateFlags |= WFREDRAW;        /* Force complete screen refresh */
+                cwp->horzScrollRest = ii ;
+                cwp->updateFlags |= WFREDRAW;        /* Force complete screen refresh */
             }
         }
-        else if((scrollFlag & 0x0f) && (frameCur->windowCur->horzScrollRest != frameCur->windowCur->horzScroll))
+        else if((scrollFlag & 0x0f) && (cwp->horzScrollRest != cwp->horzScroll))
         {
-            frameCur->windowCur->horzScrollRest = frameCur->windowCur->horzScroll ;
-            frameCur->windowCur->updateFlags |= WFREDRAW;        /* Force complete screen refresh */
+            cwp->horzScrollRest = cwp->horzScroll ;
+            cwp->updateFlags |= WFREDRAW;        /* Force complete screen refresh */
         }
     }
     return meTRUE ;
@@ -843,6 +847,7 @@ windowScrollLeft (int f, int n)
 int
 windowSetScrollWithMouse (int f, int n)
 {
+    register meWindow *cwp = frameCur->windowCur;
     long mousePos;                      /* Curent mouse position */
     long screenTopRow;                  /* Top row of the screen */
     long currentTopRow;                 /* Current buffer top row. */
@@ -852,7 +857,7 @@ windowSetScrollWithMouse (int f, int n)
     static long maxTopRow;              /* The maximum top row */
 
     /* Has this window got a bar present ?? */
-    if ((frameCur->windowCur->vertScrollBarMode & WMSCROL) == 0)
+    if ((cwp->vertScrollBarMode & WMSCROL) == 0)
         return meFALSE;                   /* No quit and bitch about it */
 
     /*****************************************************************************
@@ -870,23 +875,23 @@ windowSetScrollWithMouse (int f, int n)
         long bufferLength;               /* Length of the buffer */
 
         /* Get the buffer length */
-        bufferLength = (long)(frameCur->bufferCur->lineCount) + 1;
+        bufferLength = (long) (cwp->buffer->lineCount + 1);
 
         /* If the buffer is wholly contained in the window then there is nothing
          * to do - quit now. Make sure that the top line is showing */
-        if (frameCur->windowCur->textDepth >= bufferLength)
+        if (cwp->textDepth >= bufferLength)
         {
             mouseRatio = -1;
-            windowScrollUp (meTRUE, bufferLength + frameCur->windowCur->textDepth);
+            windowScrollUp(meTRUE,bufferLength + cwp->textDepth);
             return meTRUE;
         }
 
         /* Get the line number of the top row of the buffer. This is used as
          * the reference point for all of out scroll work */
-        startLine = frameCur->windowCur->vertScroll ;
+        startLine = cwp->vertScroll ;
         /* We normalise the scroll bar if there is over-hanging
          * text by supplying a scroll at the start of the scroll */
-        maxTopRow = bufferLength - frameCur->windowCur->textDepth;
+        maxTopRow = bufferLength - cwp->textDepth;
         if (maxTopRow < startLine)
         {
             windowScrollUp(meTRUE, startLine - maxTopRow);
@@ -900,17 +905,17 @@ windowSetScrollWithMouse (int f, int n)
 
         /* Determine how long the movable scroll region is. This is a simple
            calculation of the (scroll bar length - scroll box length) */
-        scrollLength = (long)((frameCur->windowCur->vertScrollBarPos [WCVSBDSHAFT - WCVSBSPLIT] -
-                               frameCur->windowCur->vertScrollBarPos [WCVSBUP - WCVSBSPLIT]) -
-                              (frameCur->windowCur->vertScrollBarPos [WCVSBBOX - WCVSBSPLIT] -
-                               frameCur->windowCur->vertScrollBarPos [WCVSBUSHAFT - WCVSBSPLIT]));
+        scrollLength = (long)((cwp->vertScrollBarPos[WCVSBDSHAFT - WCVSBSPLIT] -
+                               cwp->vertScrollBarPos[WCVSBUP - WCVSBSPLIT]) -
+                              (cwp->vertScrollBarPos[WCVSBBOX - WCVSBSPLIT] -
+                               cwp->vertScrollBarPos[WCVSBUSHAFT - WCVSBSPLIT]));
 
         /* Build a ratio factor of number of lines to the length of the scroll.
          * Again keep the precision by storing as a 8-bit fractional integer. */
-        if (scrollLength <= 0)
+        if(scrollLength <= 0)
             mouseRatio = -1;            /* Cannot do alot with this !! */
         else
-            mouseRatio = ((long)(bufferLength - frameCur->windowCur->textDepth) << 8) / scrollLength;
+            mouseRatio = ((long)(bufferLength - cwp->textDepth) << 8) / scrollLength;
 
         return meTRUE;                    /* Finished locking. */
     }
@@ -925,7 +930,7 @@ windowSetScrollWithMouse (int f, int n)
      *****************************************************************************/
 
     /* if the mouse ratio is -1 then nothing to do */
-    if (mouseRatio == -1)               /* Nothing to do !! */
+    if(mouseRatio == -1)               /* Nothing to do !! */
         return meTRUE;
 
     /* Compute the current mouse position. Use the fractional mouse information
@@ -940,24 +945,24 @@ windowSetScrollWithMouse (int f, int n)
      *
      * Simple compute by multiplying the delta mouse position by the ratio and add
      * to our reference start line. */
-    if (mouseRatio >= (1 << 16))
+    if(mouseRatio >= (1 << 16))
         screenTopRow = startLine + ((mousePos * (mouseRatio>>8)) >> 8);
     else
         screenTopRow = startLine + ((mousePos * mouseRatio) >> 16);
-    if (screenTopRow < 0)
+    if(screenTopRow < 0)
         screenTopRow = 0;               /* Normailize incase of underflow */
-    else if (screenTopRow > maxTopRow)
+    else if(screenTopRow > maxTopRow)
         screenTopRow = maxTopRow;
 
     /* Work out the top row of the buffer in the window. We use the line number of
      * the current line and the offset in the window of the current line */
-    currentTopRow = frameCur->windowCur->vertScroll ;
-    if (currentTopRow == screenTopRow)  /* Same position ?? */
-        return meTRUE;                    /* Nothing to do - quit now. */
+    currentTopRow = cwp->vertScroll;
+    if(currentTopRow == screenTopRow)   /* Same position ?? */
+        return meTRUE;                  /* Nothing to do - quit now. */
 
     /* Go and scroll - simple signed difference of the current top line and the
      * target top line -  done when the scroll has finished - simple !! */
-    return (windowScrollDown (meTRUE, (int)(screenTopRow - currentTopRow)));
+    return windowScrollDown(meTRUE,(int) (screenTopRow - currentTopRow));
 }
 #endif
 
@@ -972,40 +977,40 @@ windowSetScrollWithMouse (int f, int n)
 int
 windowDeleteOthers(int f, int n)
 {
-    register meWindow *wp, *nwp ;
+    register meWindow *wp, *nwp;
 
 #if MEOPT_EXTENDED
     if((n & 2) == 0)
     {
-        wp = frameCur->windowList ;
+        wp = frameCur->windowList;
         while (wp != NULL)
         {
             if((wp->flags & (meWINDOW_NO_DELETE|meWINDOW_NO_OTHER_DEL)) && (wp != frameCur->windowCur))
-                break ;
+                break;
             wp = wp->next;
         }
         if(wp != NULL)
         {
             meWindow *cwp ;
-            cwp = frameCur->windowCur ;
-            wp = frameCur->windowList ;
+            cwp = frameCur->windowCur;
+            wp = frameCur->windowList;
             while (wp != NULL)
             {
                 nwp = wp->next;
                 if(((wp->flags & (meWINDOW_NO_DELETE|meWINDOW_NO_OTHER_DEL)) == 0) && (wp != cwp))
                 {
-                    meWindowMakeCurrent(wp) ;
-                    windowDelete(meFALSE,1) ;
+                    meWindowMakeCurrent(wp);
+                    windowDelete(meFALSE,1);
                 }
-                wp = nwp ;
+                wp = nwp;
             }
-            meWindowMakeCurrent(cwp) ;
-            return meTRUE ;
+            meWindowMakeCurrent(cwp);
+            return meTRUE;
         }
     }
 #endif
-    bufHistNo++ ;
-    wp = frameCur->windowList ;
+    bufHistNo++;
+    wp = frameCur->windowList;
     while (wp != NULL)
     {
         nwp = wp->next;
@@ -1014,25 +1019,25 @@ windowDeleteOthers(int f, int n)
         {
             if(--wp->buffer->windowCount == 0)
             {
-                storeWindBSet(wp->buffer,wp) ;
-                wp->buffer->histNo = bufHistNo ;
+                storeWindBSet(wp->buffer,wp);
+                wp->buffer->histNo = bufHistNo;
             }
             meFree(wp->modeLine);
             meFree(wp->dotCharOffset);
             meFree(wp);
         }
-        wp = nwp ;
+        wp = nwp;
     }
 
-    meAssert (frameCur->video.window == NULL);
-    meAssert (frameCur->video.next == NULL);
+    meAssert(frameCur->video.window == NULL);
+    meAssert(frameCur->video.next == NULL);
 
     /* Fix up the meWindow pointers */
     frameCur->windowList = frameCur->windowCur ;                    /* Point to first window */
     frameCur->windowCount = 1;                     /* Only one window displayed */
     frameCur->windowCur->next = NULL ;              /* Reset linkage */
     frameCur->windowCur->prev = NULL ;
-    meVideoAttach (&frameCur->video, frameCur->windowCur);      /* Attach to root video bloc */
+    meVideoAttach(&frameCur->video, frameCur->windowCur);      /* Attach to root video bloc */
 
     if((frameCur->windowCur->vertScroll -= frameCur->windowCur->frameRow - meFrameGetMenuDepth(frameCur)) < 0)
         frameCur->windowCur->vertScroll = 0 ;
@@ -1356,94 +1361,94 @@ windowDelete(int f, int n)
 int
 windowSplitDepth(int f, int n)
 {
-    register meWindow *wp;
+    register meWindow *wp, *cwp=frameCur->windowCur;
     register meLine   *lp, *off;
     register int    ntru, stru;
     register int    ntrl, strl;
     register int    ntrd;
 
 #if MEOPT_EXTENDED
-    if(frameCur->windowCur->flags & meWINDOW_NO_SPLIT)
+    if(cwp->flags & meWINDOW_NO_SPLIT)
         /* cannot split this window */
-        return meFALSE ;
+        return meFALSE;
 #endif
-    if (frameCur->windowCur->textDepth < 3)
-        return mlwrite(MWABORT,(meUByte *)"Cannot split a %d line window",frameCur->windowCur->textDepth);
+    if (cwp->textDepth < 3)
+        return mlwrite(MWABORT,(meUByte *)"Cannot split a %d line window",cwp->textDepth);
     if (frameCur->windowCount == meWINDOW_MAX)
         return mlwrite(MWABORT,(meUByte *)"Cannot create more than %d windows",frameCur->windowCount);
     if(((wp = (meWindow *) meMalloc(sizeof(meWindow))) == NULL) ||
        ((lp=meLineMalloc(frameCur->widthMax,0)) == NULL) || ((off=meLineMalloc(frameCur->widthMax,0)) == NULL))
     {
-        meNullFree(wp) ;                /* Destruct created window */
-        return meFALSE ;                /* Fail */
+        meNullFree(wp);                /* Destruct created window */
+        return meFALSE;                /* Fail */
     }
     /* reset the window flags for both as these tend to cause more trouble
      * than they are worth */
 #if MEOPT_EXTENDED
-    frameCur->windowCur->flags = 0 ;
+    cwp->flags = 0;
 #endif
-    memcpy(wp,frameCur->windowCur,sizeof(meWindow)) ;
+    memcpy(wp,cwp,sizeof(meWindow));
 
-    wp->modeLine = lp ;
-    off->next = NULL ;
-    wp->dotCharOffset = off ;
+    wp->modeLine = lp;
+    off->next = NULL;
+    wp->dotCharOffset = off;
 #if MEOPT_EXTENDED
-    wp->id = ++nextWindowId ;
+    wp->id = ++nextWindowId;
 #endif
-    frameCur->windowCount++;                       /* One more window displayed */
-    frameCur->bufferCur->windowCount++;            /* Displayed once more.  */
+    frameCur->windowCount++;           /* One more window displayed */
+    cwp->buffer->windowCount++;        /* Displayed once more.  */
 
-    meVideoAttach (frameCur->windowCur->video, wp); /* Attach to frameCur->vvideo block */
+    meVideoAttach(cwp->video,wp);      /* Attach to frameCur->vvideo block */
 
-    ntru = (frameCur->windowCur->textDepth-1) / 2;     /* Upper size           */
-    ntrl = (frameCur->windowCur->textDepth-1) - ntru;  /* Lower size           */
-    stru = (frameCur->windowCur->depth)/2;           /* Upper window size    */
-    strl = (frameCur->windowCur->depth) - stru;      /* Lower window size    */
-    ntrd = frameCur->windowCur->dotLineNo - frameCur->windowCur->vertScroll ;
-    if (((f == meFALSE) && (ntru >= ntrd)) || ((f == meTRUE) && (n == 1)))
+    ntru = (cwp->textDepth-1) / 2;     /* Upper size           */
+    ntrl = (cwp->textDepth-1) - ntru;  /* Lower size           */
+    stru = (cwp->depth)/2;             /* Upper window size    */
+    strl = (cwp->depth) - stru;        /* Lower window size    */
+    ntrd = cwp->dotLineNo - cwp->vertScroll ;
+    if(((f == meFALSE) && (ntru >= ntrd)) || ((f == meTRUE) && (n == 1)))
     {
         /* Old is upper window. */
-        if(ntrd == ntru)           /* Hit mode line.       */
-            frameCur->windowCur->vertScroll++ ;
-        frameCur->windowCur->textDepth = ntru;
-        frameCur->windowCur->depth = stru;
+        if(ntrd == ntru)               /* Hit mode line.       */
+            cwp->vertScroll++;
+        cwp->textDepth = ntru;
+        cwp->depth = stru;
 
         /* Maintain the window prevous/next linkage. */
-        if ((wp->next = frameCur->windowCur->next) != NULL)
+        if((wp->next = cwp->next) != NULL)
             wp->next->prev = wp;
-        frameCur->windowCur->next = wp;
-        wp->prev = frameCur->windowCur;
+        cwp->next = wp;
+        wp->prev = cwp;
 
-        wp->frameRow = frameCur->windowCur->frameRow+ntru+1;
+        wp->frameRow = cwp->frameRow+ntru+1;
         wp->textDepth = ntrl;
-        wp->depth   = strl;
+        wp->depth = strl;
     }
     else
     {
         /* Old is lower window  */
-        wp->frameRow = frameCur->windowCur->frameRow;
+        wp->frameRow = cwp->frameRow;
         wp->textDepth = ntru;
-        wp->depth   = stru;
+        wp->depth = stru;
 
         ++ntru;                         /* Mode line.           */
-        frameCur->windowCur->frameRow += ntru;
-        frameCur->windowCur->textDepth = ntrl;
-        frameCur->windowCur->depth = strl;
-        frameCur->windowCur->vertScroll += ntru ;
+        cwp->frameRow += ntru;
+        cwp->textDepth = ntrl;
+        cwp->depth = strl;
+        cwp->vertScroll += ntru;
 
         /* Maintain the window prevous/next linkage. */
-        if ((wp->prev = frameCur->windowCur->prev) != NULL)
+        if ((wp->prev = cwp->prev) != NULL)
             wp->prev->next = wp;
         else
             frameCur->windowList = wp;
-        frameCur->windowCur->prev = wp;
-        wp->next = frameCur->windowCur;
+        cwp->prev = wp;
+        wp->next = cwp;
     }
 
-    wp->vertScroll = frameCur->windowCur->vertScroll ;
-    meWindowFixTextSize (frameCur->windowCur);              /* Fix text window size */
-    meWindowFixTextSize (wp);                 /* Fix text window size */
-    return meTRUE ;
+    wp->vertScroll = cwp->vertScroll;
+    meWindowFixTextSize(cwp);              /* Fix text window size */
+    meWindowFixTextSize(wp);                 /* Fix text window size */
+    return meTRUE;
 }
 
 #if MEOPT_HSPLIT
@@ -1460,64 +1465,64 @@ windowSplitDepth(int f, int n)
 int
 windowSplitWidth(int f, int n)
 {
-    register meWindow *wp;
+    register meWindow *wp, *cwp=frameCur->windowCur;
     register meLine   *lp, *off;
 
-    if(frameCur->windowCur->flags & meWINDOW_NO_SPLIT)
+    if(cwp->flags & meWINDOW_NO_SPLIT)
         /* cannot split this window */
-        return meFALSE ;
+        return meFALSE;
     /* Out minimum split value horizontally is 7 i.e. |$c$|$c$| */
-    if (frameCur->windowCur->textWidth < ((gsbarmode & WMVWIDE) ? 8 : 7))
-        return mlwrite(MWABORT,(meUByte *)"Cannot split a %d column window", frameCur->windowCur->textWidth);
-    if (frameCur->windowCount == meWINDOW_MAX)
+    if(cwp->textWidth < ((gsbarmode & WMVWIDE) ? 8 : 7))
+        return mlwrite(MWABORT,(meUByte *)"Cannot split a %d column window", cwp->textWidth);
+    if(frameCur->windowCount == meWINDOW_MAX)
         return mlwrite(MWABORT,(meUByte *)"Cannot create more than %d windows",frameCur->windowCount);
     if(((wp = (meWindow *) meMalloc(sizeof(meWindow))) == NULL) ||
        ((lp=meLineMalloc(frameCur->widthMax,0)) == NULL) || ((off=meLineMalloc(frameCur->widthMax,0)) == NULL))
     {
-        meNullFree (wp);                /* Destruct window */
-        return (meFALSE);                 /* and Fail */
+        meNullFree(wp);                   /* Destruct window */
+        return meFALSE;                   /* and Fail */
     }
     /* reset the window flags for both as these tend to cause more trouble
      * than they are worth */
 #if MEOPT_EXTENDED
-    frameCur->windowCur->flags = 0 ;
+    cwp->flags = 0 ;
 #endif
-    memcpy(wp,frameCur->windowCur,sizeof(meWindow)) ;
-    if (meVideoAttach (NULL, wp) == meFALSE)
+    memcpy(wp,cwp,sizeof(meWindow)) ;
+    if(meVideoAttach(NULL,wp) == meFALSE)
     {
-        meFree(lp) ;                       /* Destruct line */
-        meFree(off) ;                      /* Destruct line */
-        meFree(wp) ;                       /* Destruct window */
-        return meFALSE ;                   /* Failed */
+        meFree(lp);                       /* Destruct line */
+        meFree(off);                      /* Destruct line */
+        meFree(wp);                       /* Destruct window */
+        return meFALSE;                   /* Failed */
     }
 
     /* All storage allocated. Build the new window */
-    wp->modeLine = lp ;                    /* Attach mode line */
-    off->next = NULL ;
-    wp->dotCharOffset = off ;              /* Attach current line offset buffer */
+    wp->modeLine = lp;                    /* Attach mode line */
+    off->next = NULL;
+    wp->dotCharOffset = off;              /* Attach current line offset buffer */
 #if MEOPT_EXTENDED
-    wp->id = ++nextWindowId ;
+    wp->id = ++nextWindowId;
 #endif
-    frameCur->windowCount++;               /* One more window displayed */
-    frameCur->bufferCur->windowCount++;    /* Displayed once more.  */
+    frameCur->windowCount++;              /* One more window displayed */
+    cwp->buffer->windowCount++;           /* Displayed once more.  */
 
     /* Maintain the window prevous/next linkage. */
-    if((wp->next = frameCur->windowCur->next) != NULL)
+    if((wp->next = cwp->next) != NULL)
         wp->next->prev = wp;
-    frameCur->windowCur->next = wp;
-    wp->prev = frameCur->windowCur;
+    cwp->next = wp;
+    wp->prev = cwp;
 
     /* Compute the new size of the windows and reset the width counters and
      * the margins */
-    frameCur->windowCur->width /= 2;
-    wp->width -= frameCur->windowCur->width;
-    wp->frameColumn  = frameCur->windowCur->frameColumn + frameCur->windowCur->width;
+    cwp->width /= 2;
+    wp->width -= cwp->width;
+    wp->frameColumn  = cwp->frameColumn + cwp->width;
     meWindowFixTextSize(wp);
-    meWindowFixTextSize(frameCur->windowCur);
+    meWindowFixTextSize(cwp);
 
-    if ((f != meFALSE) && (n == 2))
-        meWindowMakeCurrent(wp);               /* Next window is IT !! */
-    return (meTRUE);
+    if((f != meFALSE) && (n == 2))
+        meWindowMakeCurrent(wp);          /* Next window is IT !! */
+    return meTRUE;
 }
 #endif
 
@@ -1778,7 +1783,7 @@ meWindowPopup(register meBuffer *bp, meUByte *name, int flags, meBuffer **buffer
         return NULL;
     if(bp != NULL)
     {
-        if(bp == frameCur->bufferCur)
+        if(bp == frameCur->windowCur->buffer)
         {
             /* It is already the current buffer so return the current window
              * One complication is that this is often used with BFND_CLEAR
@@ -2623,83 +2628,85 @@ frameResizeWindows (int f, int n)
 int
 positionSet(int f, int n)		/* save ptr to current window */
 {
-    register mePosition *pos ;
-    meInt anchor ;                      /* Position anchor name*/
-    int cc ;
+    register mePosition *pos;
+    register meWindow *cwp;
+    meInt anchor;                       /* Position anchor name*/
+    int cc;
 
     if((cc = mlCharReply((meUByte *)"Set position: ",mlCR_QUIT_ON_USER,NULL,NULL)) == -2)
-        cc = mlCharReply((meUByte *)"Set position: ",mlCR_ALPHANUM_CHAR,NULL,NULL) ;
+        cc = mlCharReply((meUByte *)"Set position: ",mlCR_ALPHANUM_CHAR,NULL,NULL);
 
     if(cc < 0)
-        return ctrlg(meFALSE,1) ;
+        return ctrlg(meFALSE,1);
 
-    pos = position ;
-    anchor = 0 ;
+    pos = position;
+    anchor = 0;
     while((pos != NULL) && (cc != (int) pos->name))
     {
-        pos = pos->next ;
-        anchor++ ;
+        pos = pos->next;
+        anchor++;
     }
     if(pos == NULL)
     {
-        pos = meMalloc(sizeof(mePosition)) ;
+        pos = meMalloc(sizeof(mePosition));
         if(pos == NULL)
-            return meABORT ;
-        pos->next = position ;
-        position = pos ;
-        pos->name = cc ;
-        pos->anchor = anchor ;
+            return meABORT;
+        pos->next = position;
+        position = pos;
+        pos->name = cc;
+        pos->anchor = anchor;
     }
+    cwp = frameCur->windowCur;
     if(f == meFALSE)
-        n = mePOS_DEFAULT ;
-    if(frameCur->windowCur->markLine == NULL)
+        n = mePOS_DEFAULT;
+    if(cwp->markLine == NULL)
         n &= ~(mePOS_MLINEMRK|mePOS_MLINENO|mePOS_MLINEOFF) ;
 
     pos->flags = n ;
 
     if(n & mePOS_WINDOW)
     {
-        pos->window = frameCur->windowCur ;
+        pos->window = cwp ;
         /* store window dimentions so we can pick the best */
-        pos->winMinRow = frameCur->windowCur->frameRow ;
-        pos->winMinCol = frameCur->windowCur->frameColumn ;
-        pos->winMaxRow = frameCur->windowCur->frameRow + frameCur->windowCur->width - 1 ;
-        pos->winMaxCol = frameCur->windowCur->frameColumn + frameCur->windowCur->depth - 1 ;
+        pos->winMinRow = cwp->frameRow ;
+        pos->winMinCol = cwp->frameColumn ;
+        pos->winMaxRow = cwp->frameRow + cwp->width - 1 ;
+        pos->winMaxCol = cwp->frameColumn + cwp->depth - 1 ;
     }
     if(n & mePOS_BUFFER)
-        pos->buffer = frameCur->bufferCur ;
+        pos->buffer = cwp->buffer;
     if(n & mePOS_LINEMRK)
     {
-        if(meAnchorSet(frameCur->bufferCur,meANCHOR_POSITION_DOT|pos->anchor,frameCur->windowCur->dotLine,
-                       frameCur->windowCur->dotLineNo,frameCur->windowCur->dotOffset,1) <= 0)
+        if(meAnchorSet(cwp->buffer,meANCHOR_POSITION_DOT|pos->anchor,cwp->dotLine,
+                       cwp->dotLineNo,cwp->dotOffset,1) <= 0)
         {
             pos->flags = 0 ;
             return meABORT ;
         }
     }
     if(n & mePOS_LINENO)
-        pos->dotLineNo = frameCur->windowCur->dotLineNo ;
+        pos->dotLineNo = cwp->dotLineNo ;
     if(n & mePOS_LINEOFF)
-        pos->dotOffset = frameCur->windowCur->dotOffset ;
+        pos->dotOffset = cwp->dotOffset ;
     if(n & mePOS_MLINEMRK)
     {
-        if(meAnchorSet(frameCur->bufferCur,meANCHOR_POSITION_MARK|pos->anchor,frameCur->windowCur->markLine,
-                       frameCur->windowCur->markLineNo,frameCur->windowCur->markOffset,1) <= 0)
+        if(meAnchorSet(cwp->buffer,meANCHOR_POSITION_MARK|pos->anchor,cwp->markLine,
+                       cwp->markLineNo,cwp->markOffset,1) <= 0)
         {
             pos->flags = 0 ;
             return meABORT ;
         }
     }
     if(n & mePOS_MLINENO)
-        pos->markLineNo = frameCur->windowCur->markLineNo ;
+        pos->markLineNo = cwp->markLineNo ;
     if(n & mePOS_MLINEOFF)
-        pos->markOffset = frameCur->windowCur->markOffset ;
+        pos->markOffset = cwp->markOffset ;
     if(n & mePOS_WINYSCRL)
-        pos->vertScroll = frameCur->windowCur->vertScroll ;
+        pos->vertScroll = cwp->vertScroll ;
     if(n & mePOS_WINXCSCRL)
-        pos->horzScroll = frameCur->windowCur->horzScroll ;
+        pos->horzScroll = cwp->horzScroll ;
     if(n & mePOS_WINXSCRL)
-        pos->horzScrollRest = frameCur->windowCur->horzScrollRest ;
+        pos->horzScrollRest = cwp->horzScrollRest ;
 
     return meTRUE ;
 }
@@ -2792,7 +2799,7 @@ positionGoto(int f, int n)		/* restore the saved screen */
         if(cwp != frameCur->windowCur)
             meWindowMakeCurrent(cwp);
     }
-    cbp = frameCur->bufferCur;
+    cbp = cwp->buffer;
     if((n & mePOS_BUFFER) && (cbp != pos->buffer))
     {
         /* find the buffer */
@@ -2893,14 +2900,14 @@ positionGoto(int f, int n)		/* restore the saved screen */
     }
     if(n & mePOS_WINXCSCRL)
     {
-        cc = getccol()-1 ;
+        cc = getwcol(cwp)-1;
         if(pos->horzScroll < cc)
-            cc = pos->horzScroll ;
+            cc = pos->horzScroll;
         if(cwp->horzScroll != cc)
         {
-            cwp->horzScroll = cc ;
-            cwp->updateFlags |= WFREDRAW ;        /* Force a screen update */
-            sflg = 1 ;
+            cwp->horzScroll = cc;
+            cwp->updateFlags |= WFREDRAW;        /* Force a screen update */
+            sflg = 1;
         }
     }
     if(n & mePOS_WINXSCRL)

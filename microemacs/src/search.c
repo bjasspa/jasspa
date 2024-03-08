@@ -92,9 +92,10 @@ mere_compile_pattern(meUByte *apat)
 static int
 mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
 {
-    register meLine *lp=frameCur->windowCur->dotLine, *nlp ;
-    register meInt lnno=frameCur->windowCur->dotLineNo, nlnno ;
-    register int   ii=frameCur->windowCur->dotOffset, jj, kk, count=*n, flags ;
+    meWindow *cwp=frameCur->windowCur;
+    register meLine *lp=cwp->dotLine, *nlp;
+    register meInt lnno=cwp->dotLineNo, nlnno;
+    register int   ii=cwp->dotOffset, jj, kk, count=*n, flags;
     
     srchLastState = meFALSE ;
         
@@ -111,13 +112,13 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
             ctrlg(meFALSE,1) ;
             return meFALSE ;
         }
-        flags = (lp == frameCur->bufferCur->baseLine) ? meREGEX_ENDBUFF:0 ;
+        flags = (lp == cwp->buffer->baseLine) ? meREGEX_ENDBUFF:0 ;
         if(lnno == 0)
             flags |= meREGEX_BEGBUFF ;
         jj = meLineGetLength(lp) ;
         if(direct == meFORWARD)
         {
-            if((lp == frameCur->bufferCur->baseLine) &&
+            if((lp == cwp->buffer->baseLine) &&
                (!(mereRegex.flags & meREGEX_MAYENDBUFF) ||
                 !(mereRegex.flags & meREGEX_MAYBEEMPTY) ))
                 /* never match $ or \n on the last line going forwards, only \' */
@@ -146,7 +147,7 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
                         return meFALSE ;
                     }
                     lnno++ ;
-                    if((lp=meLineGetNext(lp)) == frameCur->bufferCur->baseLine)
+                    if((lp=meLineGetNext(lp)) == cwp->buffer->baseLine)
                     {
                         if(!(mereRegex.flags & meREGEX_MAYENDBUFF) ||
                            !(mereRegex.flags & meREGEX_MAYBEEMPTY) )
@@ -222,7 +223,7 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
             nlp = lp ;
             do
             {
-                if(nlp == frameCur->bufferCur->baseLine)
+                if(nlp == cwp->buffer->baseLine)
                     break ;
                 jj += meLineGetLength(nlp) ;
                 nlp = meLineGetNext(nlp) ;
@@ -259,7 +260,7 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
             
             if(direct == meFORWARD)
             {
-                if(lp == frameCur->bufferCur->baseLine)
+                if(lp == cwp->buffer->baseLine)
                     break ;
                 lp = meLineGetNext(lp) ;
                 lnno++ ;
@@ -300,15 +301,15 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
     }    
     if(beg_or_end == PTEND)
     {
-        frameCur->windowCur->dotLine = nlp ;
-        frameCur->windowCur->dotLineNo = nlnno ;
-        frameCur->windowCur->dotOffset = kk ;
+        cwp->dotLine = nlp ;
+        cwp->dotLineNo = nlnno ;
+        cwp->dotOffset = kk ;
     }
     else
     {
-        frameCur->windowCur->dotLine = lp ;
-        frameCur->windowCur->dotLineNo = lnno ;
-        frameCur->windowCur->dotOffset = ii ;
+        cwp->dotLine = lp ;
+        cwp->dotLineNo = lnno ;
+        cwp->dotOffset = ii ;
     }
     if (sp != NULL)
     {
@@ -319,8 +320,8 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
         sp->endline_no = nlnno ;
         sp->endoffset = kk ;
     }
-    setShowRegion(frameCur->bufferCur,lnno,ii,nlnno,kk) ;
-    frameCur->windowCur->updateFlags |= WFMOVEL|WFSELHIL ;
+    setShowRegion(cwp->buffer,lnno,ii,nlnno,kk) ;
+    cwp->updateFlags |= WFMOVEL|WFSELHIL ;
     /* change the start and end position */
     mereRegexGroupEnd(0) -= mereRegex.group[0].start ;
     mereRegexGroupStart(0) = 0 ;
@@ -346,7 +347,8 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
 static int 
 scanner(meUByte *patrn, int direct, int beg_or_end, int *count, SCANNERPOS *sp)
 {
-    register meUByte cc, aa, bb ;       /* character at current position */
+    meWindow *cwp=frameCur->windowCur;
+    register meUByte cc, aa, bb;        /* character at current position */
     register meUByte *patptr;           /* pointer into pattern */
     register meUByte *curptr;           /* pointer into pattern */
     register meLine *curline;           /* current line during scan */
@@ -354,17 +356,17 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count, SCANNERPOS *sp)
     register meUByte *matchptr;         /* pointer into pattern */
     register meLine *matchline;         /* current line during matching */
     register int matchoff;              /* position in matching line */
-    register meInt curlnno, matchlnno ;
+    register meInt curlnno, matchlnno;
     
-    srchLastState = meFALSE ;
+    srchLastState = meFALSE;
     
     /* Setup local scan pointers to global ".". */
-    aa = patrn[0] ;
-    curline = frameCur->windowCur->dotLine;
-    curlnno = frameCur->windowCur->dotLineNo;
+    aa = patrn[0];
+    curline = cwp->dotLine;
+    curlnno = cwp->dotLineNo;
     if (direct == meFORWARD)
     {
-        curptr = curline->text+frameCur->windowCur->dotOffset ;
+        curptr = curline->text+cwp->dotOffset ;
         for (;;)
         {
             /* Get the character resolving newlines, and
@@ -373,7 +375,7 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count, SCANNERPOS *sp)
             if((cc=*curptr++) == '\0')    /* if at EOL */
             {
                 /* if on last line or searching a fixed number of lines and this is the last */
-                if((curline == frameCur->bufferCur->baseLine) ||
+                if((curline == cwp->buffer->baseLine) ||
                    ((*count > 0) && (--(*count) == 0) &&
                     /* must check that the pattern isn't "\n" */
                     ((patrn[0] != meCHAR_NL) || (patrn[1] != '\0'))))
@@ -398,7 +400,7 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count, SCANNERPOS *sp)
                 {
                     if((cc=*matchptr++) == '\0')    /* if at EOL */
                     {
-                        if(matchline != frameCur->bufferCur->baseLine)
+                        if(matchline != cwp->buffer->baseLine)
                         {
                             matchline = meLineGetNext(matchline) ; /* skip to next line */
                             matchlnno++ ;
@@ -433,7 +435,7 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count, SCANNERPOS *sp)
     }
     else /* Reverse.*/
     {
-        curoff = frameCur->windowCur->dotOffset;
+        curoff = cwp->dotOffset;
         for (;;)
         {
             /* Get the character resolving newlines, and
@@ -441,10 +443,10 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count, SCANNERPOS *sp)
              */
             if(curoff == 0)
             {
-                if(((curline = meLineGetPrev(curline)) == frameCur->bufferCur->baseLine) ||
+                if(((curline = meLineGetPrev(curline)) == cwp->buffer->baseLine) ||
                    ((*count > 0) && (--(*count) == 0)))
                     return meFALSE;  /* We could not find a match */
-                curlnno-- ;
+                curlnno--;
                 curoff = meLineGetLength(curline);
                 cc = meCHAR_NL;
             }
@@ -455,9 +457,9 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count, SCANNERPOS *sp)
             {
                 /* Setup match pointers.
                  */
-                matchline = curline ;
-                matchlnno = curlnno ;
-                matchoff = curoff ;
+                matchline = curline;
+                matchlnno = curlnno;
+                matchoff = curoff;
                 patptr = &patrn[0];
                 
                 /* Scan through the pattern for a match.
@@ -466,19 +468,19 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count, SCANNERPOS *sp)
                 {
                     if (matchoff == 0)
                     {
-                        if((matchline = meLineGetPrev(matchline)) == frameCur->bufferCur->baseLine)
+                        if((matchline = meLineGetPrev(matchline)) == cwp->buffer->baseLine)
                             cc = '\0';
                         else
                         {
-                            matchlnno-- ;
+                            matchlnno--;
                             matchoff = meLineGetLength(matchline);
                             cc = meCHAR_NL;
                         }
                     }
                     else
-                        cc = meLineGetChar(matchline, --matchoff);
+                        cc = meLineGetChar(matchline,--matchoff);
                     if(cNotEq(cc,bb))
-                        break ;
+                        break;
                 }
                 
                 if(bb == '\0')
@@ -486,12 +488,12 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count, SCANNERPOS *sp)
                     /* Save the current position in case we need to restore it on a match. */
                     if(curoff == meLineGetLength(curline))  /* if at EOL */
                     {
-                        curline = meLineGetNext(curline) ;  /* skip to next line */
-                        curlnno++ ;
+                        curline = meLineGetNext(curline);  /* skip to next line */
+                        curlnno++;
                         curoff = 0;
                     }
                     else
-                        curoff++ ;  /* get the char */
+                        curoff++;  /* get the char */
                     
                     break ;
                 }
@@ -499,8 +501,8 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count, SCANNERPOS *sp)
             }
             if(TTbreakTest(1))
             {
-                ctrlg(meFALSE,1) ;
-                return meFALSE ;
+                ctrlg(meFALSE,1);
+                return meFALSE;
             }
         }
     }
@@ -514,29 +516,29 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count, SCANNERPOS *sp)
     {
         sp->startline = curline;
         sp->startoff = curoff;
-        sp->startline_no = curlnno ;
+        sp->startline_no = curlnno;
         sp->endline = matchline;
         sp->endoffset = matchoff;
-        sp->endline_no = matchlnno ;
+        sp->endline_no = matchlnno;
     }
-    setShowRegion(frameCur->bufferCur,curlnno,curoff,matchlnno,matchoff) ;
+    setShowRegion(cwp->buffer,curlnno,curoff,matchlnno,matchoff);
     /* If we are going in reverse, then the 'end' is actually the beginning of the pattern. Toggle it. */
     if((beg_or_end ^ direct) == PTEND) /* at end of string */
     {
-        frameCur->windowCur->dotLine = matchline ;
-        frameCur->windowCur->dotOffset = matchoff ;
-        frameCur->windowCur->dotLineNo = matchlnno ;
+        cwp->dotLine = matchline;
+        cwp->dotOffset = matchoff;
+        cwp->dotLineNo = matchlnno;
     }
     else /* at beginning of string */
     {
-        frameCur->windowCur->dotLine = curline;
-        frameCur->windowCur->dotOffset = curoff;
-        frameCur->windowCur->dotLineNo = curlnno ;
+        cwp->dotLine = curline;
+        cwp->dotOffset = curoff;
+        cwp->dotLineNo = curlnno;
     }
     /* Flag that we have moved and got a region to hilight.*/
-    frameCur->windowCur->updateFlags |= WFMOVEL|WFSELHIL ;
-    srchLastMatch = srchPat ;
-    srchLastState = meTRUE ;
+    cwp->updateFlags |= WFMOVEL|WFSELHIL;
+    srchLastMatch = srchPat;
+    srchLastState = meTRUE;
     return meTRUE;
                     
         
@@ -663,13 +665,13 @@ readpattern(meUByte *prompt, int defnum)
      */
     if((status = meGetString(prompt,MLSEARCH,defnum,srchPat,meBUF_SIZE_MAX)) > 0)
     {
-        exactFlag = (meModeTest(frameCur->bufferCur->mode,MDEXACT) == 0);
+        exactFlag = (meModeTest(frameCur->windowCur->buffer->mode,MDEXACT) == 0);
 #if MEOPT_MAGIC
         /* Only make the meta-pattern if in magic mode,
          * since the pattern in question might have an
          * invalid meta combination.
          */
-        if(meModeTest(frameCur->bufferCur->mode,MDMAGIC))
+        if(meModeTest(frameCur->windowCur->buffer->mode,MDMAGIC))
         {
             srchLastMagic = meSEARCH_LAST_MAGIC_MAIN ;
             status = (mere_compile_pattern(srchPat) == meREGEX_OKAY) ;
@@ -727,6 +729,7 @@ replaces(int kind, int ff, int nn)
     int 	 cc;		/* input char for query */
     meUByte	 tmpc;		/* temporary character */
     meUByte	 tpat[meBUF_SIZE_MAX];	/* temporary to hold search pattern */
+    meWindow    *cwp;
     
     /* Determine if we are  in the correct viewing  mode, and if the number
        of repetitions is correct. */
@@ -747,7 +750,7 @@ replaces(int kind, int ff, int nn)
       is  not  super  efficient  in  terms  of  speed,  but  is  good  for
       versitility.  Hence we should be able to add what we like at a later
       date.  */
-
+    cwp = frameCur->windowCur;
     for(state_mc = SL_GETSEARCH; state_mc != SL_EXIT; /* NULL */)
     {
         switch(state_mc)
@@ -846,7 +849,7 @@ replaces(int kind, int ff, int nn)
             
             /* Check if we are on the last line. */
             
-            nlrepl = (meLineGetNext(frameCur->windowCur->dotLine) == frameCur->bufferCur->baseLine);
+            nlrepl = (meLineGetNext(cwp->dotLine) == cwp->buffer->baseLine);
             
             if (kind)
 		state_mc = SL_QUERYINPUT;
@@ -905,7 +908,7 @@ replaces(int kind, int ff, int nn)
 		break;
                 
             case 'n':			/* no, onword */
-		meWindowForwardChar(frameCur->windowCur, 1);
+		meWindowForwardChar(cwp, 1);
 		state_mc = SL_NEXTREPLACE;
 		break;
                 
@@ -933,15 +936,15 @@ replaces(int kind, int ff, int nn)
                 
                 /*---	Reset the last position */
                 
-                frameCur->windowCur->dotLine  = lastline ; 
-                frameCur->windowCur->dotOffset  = lastoff ;
-                frameCur->windowCur->dotLineNo = lastlno ;
-                frameCur->windowCur->updateFlags |= WFMOVEL ;
+                cwp->dotLine  = lastline ; 
+                cwp->dotOffset  = lastoff ;
+                cwp->dotLineNo = lastlno ;
+                cwp->updateFlags |= WFMOVEL ;
 		lastline = NULL;
                 
 		/* Delete the new string. */
                 
-		meWindowBackwardChar(frameCur->windowCur, ilength);
+		meWindowBackwardChar(cwp, ilength);
                 if (!ldelete(ilength,6))
                     return mlwrite(MWABORT,(meUByte *)"[ERROR while deleting]");
                 
@@ -953,9 +956,9 @@ replaces(int kind, int ff, int nn)
 		
                 /* Record one less substitution, backup, and reprompt. */
 		--numsub;
-                lastoff = frameCur->windowCur->dotOffset ;
-                lastlno = frameCur->windowCur->dotLineNo ;
-                meWindowBackwardChar(frameCur->windowCur, slength);
+                lastoff = cwp->dotOffset ;
+                lastlno = cwp->dotLineNo ;
+                meWindowBackwardChar(cwp, slength);
                 /* must research for this instance to setup the auto-repeat sections
                  * correctly */
                 --nummatch;	/* decrement # of matches */
@@ -978,10 +981,10 @@ replaces(int kind, int ff, int nn)
                 i = mereRegexGroupEnd(0) ;
             else
 #endif
-                i = slength + frameCur->windowCur->dotOffset ;
-            i += frameCur->windowCur->dotOffset;
+                i = slength + cwp->dotOffset ;
+            i += cwp->dotOffset;
             {
-                meLine *lp = frameCur->windowCur->dotLine;
+                meLine *lp = cwp->dotLine;
                 if(i > meLineGetLength(lp))
                 {
                     for(;;)
@@ -989,7 +992,7 @@ replaces(int kind, int ff, int nn)
                         if(meLineGetFlag(lp) & meLINE_PROTECT)
                             return mlwrite(MWABORT,(meUByte *)"[Protected line in matched string!]") ;
 #if MEOPT_NARROW
-                        if((lp != frameCur->windowCur->dotLine) &&
+                        if((lp != cwp->dotLine) &&
                            (meLineGetFlag(lp) & meLINE_ANCHOR_NARROW))
                             return mlwrite(MWABORT,(meUByte *)"[Narrow in matched string!]") ;
 #endif
@@ -999,7 +1002,7 @@ replaces(int kind, int ff, int nn)
                         lp = meLineGetNext(lp) ;
                     }
                 }
-                if(lp == frameCur->bufferCur->baseLine)
+                if(lp == cwp->buffer->baseLine)
                     /* current match includes the buffer's last line, this must be the last replace or ME could spin (e.g. rep '\n' -> 'a\n') */
                     onemore = meABORT;
             }
@@ -1115,16 +1118,16 @@ replaces(int kind, int ff, int nn)
             
             if (kind) 
             {			/* Save position for undo. */
-		lastline = frameCur->windowCur->dotLine;
-		lastoff = frameCur->windowCur->dotOffset; 
-		lastlno = frameCur->windowCur->dotLineNo; 
+		lastline = cwp->dotLine;
+		lastoff = cwp->dotOffset; 
+		lastlno = cwp->dotLineNo; 
             }
             numsub++;			/* increment # of substitutions */
             state_mc = SL_NEXTREPLACE;	/* Do next replacement */
             if (slength == 0)
             {
-                meWindowForwardChar(frameCur->windowCur, 1);
-                if ((ff > 0) && (frameCur->windowCur->dotOffset == 0) && (--ff == 0))
+                meWindowForwardChar(cwp, 1);
+                if ((ff > 0) && (cwp->dotOffset == 0) && (--ff == 0))
                     state_mc = SL_EXIT;
             }
             break;
@@ -1443,12 +1446,12 @@ searchBuffer(int f, int n)
             flags |= ISCANNER_BACKW|ISCANNER_PTBEG ;
         if(meStrchr(flagsStr,'e') ||
            ((meStrchr(flagsStr,'E') == NULL) &&
-            meModeTest(frameCur->bufferCur->mode,MDEXACT)))
+            meModeTest(frameCur->windowCur->buffer->mode,MDEXACT)))
             flags |= ISCANNER_EXACT ;
 #if MEOPT_MAGIC
         if(meStrchr(flagsStr,'m') ||
            ((meStrchr(flagsStr,'M') == NULL) &&
-            meModeTest(frameCur->bufferCur->mode,MDMAGIC)))
+            meModeTest(frameCur->windowCur->buffer->mode,MDMAGIC)))
             flags |= ISCANNER_MAGIC ;
 #endif
         if(n <= 0)

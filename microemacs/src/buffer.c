@@ -43,30 +43,28 @@ getBufferName(meUByte *prompt, int opt, int defH, meUByte *buf)
      */
     if(defH && (clexec != meTRUE))
     {
-        register meBuffer *bp ;
-        if(defH == 1)
-            bp = frameCur->bufferCur ;
-        else
+        register meBuffer *bp=frameCur->windowCur->buffer;
+        if(defH != 1)
         {
-            bp = replacebuffer(frameCur->bufferCur) ;
-            defH = 1 ;
+            bp = replacebuffer(bp);
+            defH = 1;
         }
-        addHistory(MLBUFFER,bp->name,meFALSE) ;
+        addHistory(MLBUFFER,bp->name,meFALSE);
     }
-    return meGetString(prompt,opt|MLBUFFERCASE,defH,buf,meBUF_SIZE_MAX) ;
+    return meGetString(prompt,opt|MLBUFFERCASE,defH,buf,meBUF_SIZE_MAX);
 }
 
 #if MEOPT_FILEHOOK
-static meUByte    fileHookCount ;
-static meUByte  **fileHookExt ;
-static meUByte  **fileHookFunc ;
-static meShort   *fileHookArg ;
-static meUByte    defaultHookName[] = "fhook-default" ;
-static meUByte    binaryHookName[]  = "fhook-binary" ;
-static meUByte    rbinHookName[]    = "fhook-rbin" ;
-static meUByte    triedDefault=0 ;
-static meUByte    triedBinary=0 ;
-static meUByte    triedRbin=0 ;
+static meUByte    fileHookCount;
+static meUByte  **fileHookExt;
+static meUByte  **fileHookFunc;
+static meShort   *fileHookArg;
+static meUByte    defaultHookName[] = "fhook-default";
+static meUByte    binaryHookName[] = "fhook-binary";
+static meUByte    rbinHookName[] = "fhook-rbin";
+static meUByte    triedDefault=0;
+static meUByte    triedBinary=0;
+static meUByte    triedRbin=0;
 
 int
 addFileHook(int f, int n)
@@ -434,7 +432,6 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
     
     if(wp == frameCur->windowCur)
     {
-        frameCur->bufferCur = bp;
 #if MEOPT_EXTENDED
         if(isWordMask != bp->isWordMask)
         {
@@ -564,7 +561,6 @@ HideBuffer(meBuffer *bp, int forceAll)
             {
                 if(wp->buffer == bp)
                 {
-                    
 #if MEOPT_EXTENDED
                     if(forceAll || ((wp->flags & meWINDOW_LOCK_BUFFER) == 0))
 #endif
@@ -657,7 +653,7 @@ findBuffer(int f, int n)
     if((n & 4) && meModeTest(bp->mode,MDNACT))
         bp->intFlag |= BIFNACT;
     if(n & 32)
-        chistNo = (cbp = frameCur->bufferCur)->histNo;
+        chistNo = (cbp = frameCur->windowCur->buffer)->histNo;
     s = swbuffer(frameCur->windowCur,bp);
     if(n & 32)
         cbp->histNo = chistNo;
@@ -684,16 +680,16 @@ nextWndFindBuf(int f, int n)
         n = BFND_CREAT;
     if((meWindowPopup(NULL,NULL,WPOP_MKCURR,NULL) == NULL) || ((bp=bfind(bufn,n)) == NULL))
         return meFALSE;
-    return swbuffer(frameCur->windowCur, bp) ;
+    return swbuffer(frameCur->windowCur,bp);
 }
 #endif
 
 int     
 nextBuffer(int f, int n)   /* switch to the next buffer in the buffer list */
 {
-    meBuffer *bp, *pbp;
+    meBuffer *bp, *cbp, *pbp;
     
-    bp = frameCur->bufferCur ;
+    bp = cbp = frameCur->windowCur->buffer;
     if(n < 0)
     {
         /* cycle backward through the buffers to find an eligable one */
@@ -701,14 +697,14 @@ nextBuffer(int f, int n)   /* switch to the next buffer in the buffer list */
         {
             if(bp == bheadp)
                 bp = NULL;
-            pbp = bheadp ;
+            pbp = bheadp;
             while(pbp->next != bp)
                 pbp = pbp->next;
-            bp = pbp ;
-            if(bp == frameCur->bufferCur)
-                break ;
+            bp = pbp;
+            if(bp == cbp)
+                break;
             if(!meModeTest(bp->mode,MDHIDE))
-                n++ ;
+                n++;
         }
     }
     else
@@ -719,15 +715,15 @@ nextBuffer(int f, int n)   /* switch to the next buffer in the buffer list */
             bp = bp->next;
             if(bp == NULL)
                 bp = bheadp;
-            if(bp == frameCur->bufferCur)
-                break ;
+            if(bp == cbp)
+                break;
             if(!meModeTest(bp->mode,MDHIDE))
-                n-- ;
+                n--;
         }
     }
-    if(bp == frameCur->bufferCur)
-        return meTRUE ;
-    return(swbuffer(frameCur->windowCur,bp));
+    if(bp == cbp)
+        return meTRUE;
+    return swbuffer(frameCur->windowCur,bp);
 }
 
 
@@ -884,7 +880,7 @@ bclear(register meBuffer *bp)
      * zotbuf() calls bclear; hence any operation to delete a buffer
      * will cause the end hook to be executed.
      */
-    if((frameCur->bufferCur == bp) && (bp->ehook >= 0))
+    if((frameCur->windowCur->buffer == bp) && (bp->ehook >= 0))
     {
         execBufferFunc(bp,bp->ehook,0,1) ;      /* Execute the end hook */
         bp->ehook = -1;                         /* Disable the end hook */
@@ -1051,9 +1047,6 @@ zotbuf(register meBuffer *bp, int silent) /* kill the buffer pointed to by bp */
     ** it the current window and then remove it from the screen. Once
     ** this has been done, we can then go about zapping it.
     */
-    /* This must really be the frameCur->windowCur, ie frameCur->bufferCur
-    ** must be bp otherwise swbuffer stuffs up big time.
-    */
     if(HideBuffer(bp,1) <= 0)
         /* only scratch left */
         return meTRUE ;
@@ -1179,7 +1172,7 @@ changeBufName(int f, int n)     /*      Rename the current buffer       */
     if((s = getBufferName((meUByte *)"New buffer name", 0, 0, bufn)) <= 0)
         return s ;
     
-    bp1 = frameCur->bufferCur ;
+    bp1 = frameCur->windowCur->buffer;
     unlinkBuffer(bp1) ;
     
     /* check for duplicates */
@@ -1196,20 +1189,20 @@ changeBufName(int f, int n)     /*      Rename the current buffer       */
         nn = bufn ;
         if(n & 2)
         {
-            meUByte *name ;
-            unlinkBuffer(bp2) ;
-            name = bp1->name ;
-            bp1->name = bp2->name ;
-            bp2->name = name ;
-            linkBuffer(bp1) ;
-            bp1 = bp2 ;
+            meUByte *name;
+            unlinkBuffer(bp2);
+            name = bp1->name;
+            bp1->name = bp2->name;
+            bp2->name = name;
+            linkBuffer(bp1);
+            bp1 = bp2;
             if(bp1->fileName != NULL)
-                nn = bp1->fileName ;
+                nn = bp1->fileName;
         }
-        makename(bufn,nn) ;
+        makename(bufn,nn);
     }
     
-    frameAddModeToWindows(WFMODE) ;
+    frameAddModeToWindows(WFMODE);
     if((nn = meStrdup(bufn)) == NULL)
     {
         linkBuffer(bp1) ;
@@ -1713,17 +1706,17 @@ adjustMode(meBuffer *bp, int nn)  /* change the editor mode status */
         }
         else if(func >= 0)
         {
-            if(bp != frameCur->bufferCur)
+            register meWindow *cwp = frameCur->windowCur;
+            register meBuffer *cbp = cwp->buffer;
+            if(bp != cbp)
             {
-                register meBuffer *tbp = frameCur->bufferCur;
-                
-                storeWindBSet(tbp,frameCur->windowCur);
-                swbuffer(frameCur->windowCur,bp);
+                storeWindBSet(cbp,cwp);
+                swbuffer(cwp,bp);
                 
                 nn = bufferSetEdit();
                 
-                swbuffer(frameCur->windowCur,tbp);
-                restoreWindBSet(frameCur->windowCur,tbp);
+                swbuffer(cwp,cbp);
+                restoreWindBSet(cwp,cbp);
             }
             else
                 nn = bufferSetEdit();
@@ -1800,7 +1793,7 @@ invalid_global:
 int     
 bufferMode(int f, int n)        /* prompt and set an editor mode */
 {
-    return adjustMode(frameCur->bufferCur,(f) ? n:0) ;
+    return adjustMode(frameCur->windowCur->buffer,(f) ? n:0);
 }
 
 int     

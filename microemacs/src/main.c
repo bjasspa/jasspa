@@ -179,22 +179,23 @@ meInit(meUByte *bname)
 int
 insertChar(register int c, register int n)
 {
-    /*---    If we are  in overwrite mode,  not at eol,  and next char is
-       not a tab or we are at a tab stop, delete a char forword */
+    meWindow *wp=frameCur->windowCur;
     
-    if(meModeTest(frameCur->bufferCur->mode,MDOVER))
+    /* If we are in overwrite mode, not at eol, and next char is not a tab or we are at a tab stop,
+     * delete a char forword */
+    if(meModeTest(wp->buffer->mode,MDOVER))
     {
         int index, ii=n ;
-        for(index=0,n=0 ; (ii>0) && (frameCur->windowCur->dotOffset < frameCur->windowCur->dotLine->length) ; ii--)
+        for(index=0,n=0 ; (ii>0) && (wp->dotOffset < wp->dotLine->length) ; ii--)
         {
-            if((meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset) != meCHAR_TAB) ||
-               (at_tab_pos(getccol()+index+1,frameCur->bufferCur->tabWidth) == 0))
+            if((meLineGetChar(wp->dotLine, wp->dotOffset) != meCHAR_TAB) ||
+               (at_tab_pos(getwcol(wp)+index+1,wp->buffer->tabWidth) == 0))
             {
                 lineSetChanged(WFMAIN);
 #if MEOPT_UNDO
                 meUndoAddRepChar() ;
 #endif
-                meLineSetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset++,c) ;
+                meLineSetChar(wp->dotLine,wp->dotOffset++,c) ;
                 index = 0 ;
             }
             else
@@ -238,6 +239,7 @@ insertChar(register int c, register int n)
 int
 execute(register int c, register int f, register int n)
 {
+    register meWindow *cwp;
     register int index;
     meUInt arg ;
 #if MEOPT_EXTENDED
@@ -299,7 +301,7 @@ execute(register int c, register int f, register int n)
      * aborted && .status == "0" then its not handled the input
      */
 #if MEOPT_EXTENDED
-    if((ii=frameCur->bufferCur->inputFunc) >= 0)
+    if((ii=frameCur->windowCur->buffer->inputFunc) >= 0)
     {
         meUByte *ss, ff ;
         /* set a force value for the execution as the macro is allowed to
@@ -351,78 +353,79 @@ execute(register int c, register int f, register int n)
     if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return (cmdstatus = meFALSE) ;
     
+    cwp = frameCur->windowCur;
 #if MEOPT_WORDPRO
     /* If a space was  typed, fill column is  defined, the argument is non-
      * negative, wrap mode is enabled, and we are now past fill column, and
      * we are not read-only, perform word wrap. */
     
-    if(meModeTest(frameCur->bufferCur->mode,MDWRAP) &&
+    if(meModeTest(cwp->buffer->mode,MDWRAP) &&
        ((c == ' ') || (meStrchr(filleos,c) != NULL)) &&
-       (frameCur->bufferCur->fillcol > 0) && (n >= 0) &&
-       (getccol() > frameCur->bufferCur->fillcol) &&
-       !meModeTest(frameCur->bufferCur->mode,MDVIEW))
-        wrapWord(meFALSE, 1);
+       (cwp->buffer->fillcol > 0) && (n >= 0) &&
+       (getwcol(cwp) > cwp->buffer->fillcol) &&
+       !meModeTest(cwp->buffer->mode,MDVIEW))
+        wrapWord(meFALSE,1);
 #endif
     
     /* insert the required number of chars */
     if(insertChar(c,n) <= 0)
-        return (cmdstatus = meFALSE) ;
+        return (cmdstatus = meFALSE);
     
 #if MEOPT_HILIGHT
-    if(frameCur->bufferCur->indent && (meHilightGetFlags(indents[frameCur->bufferCur->indent]) & HIGFBELL))
+    if(cwp->buffer->indent && (meHilightGetFlags(indents[cwp->buffer->indent]) & HIGFBELL))
     {
-        meHilight *indent=indents[frameCur->bufferCur->indent] ;
+        meHilight *indent=indents[cwp->buffer->indent] ;
         if((c == '}') || (c == '#'))
         {
-            ii = frameCur->windowCur->dotOffset ;
-            frameCur->windowCur->dotOffset = 0 ;
+            ii = cwp->dotOffset ;
+            cwp->dotOffset = 0 ;
             if(gotoFrstNonWhite() == c)
             {
-                frameCur->windowCur->dotOffset = ii ;
+                cwp->dotOffset = ii ;
                 doCindent(indent,&ii) ;
             }
             else
-                frameCur->windowCur->dotOffset = ii ;
+                cwp->dotOffset = ii ;
         }
-        else if((meIndentGetCommentMargin(indent) >= 0) &&
-                ((c == '*') || (c == '/')) && (frameCur->windowCur->dotOffset > 2) &&
-                (meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset-2) == '/') &&
-                (meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset-3) != '/'))
+        else if((meIndentGetCommentMargin(indent,cwp->buffer) >= 0) &&
+                ((c == '*') || (c == '/')) && (cwp->dotOffset > 2) &&
+                (meLineGetChar(cwp->dotLine, cwp->dotOffset-2) == '/') &&
+                (meLineGetChar(cwp->dotLine, cwp->dotOffset-3) != '/'))
         {
-            ii = frameCur->windowCur->dotOffset - 2 ;
+            ii = cwp->dotOffset - 2 ;
             if((gotoFrstNonWhite() == 0) &&
-               (frameCur->windowCur->dotOffset=0,(gotoFrstNonWhite() != 0)) &&
-               (frameCur->windowCur->dotOffset < ii))
+               (cwp->dotOffset=0,(gotoFrstNonWhite() != 0)) &&
+               (cwp->dotOffset < ii))
             {
-                frameCur->windowCur->dotOffset = ii ;
-                if(ii > meIndentGetCommentMargin(indent))
-                    ii = (((int)(frameCur->bufferCur->indentWidth)-1) -
-                          ((ii-1)%(int)(frameCur->bufferCur->indentWidth))) ;
+                cwp->dotOffset = ii ;
+                if(ii > meIndentGetCommentMargin(indent,cwp->buffer))
+                    ii = (((int)(cwp->buffer->indentWidth)-1) -
+                          ((ii-1)%(int)(cwp->buffer->indentWidth)));
                 else
-                    ii = meIndentGetCommentMargin(indent) - ii ;
-                lineInsertChar(ii,' ') ;
+                    ii = meIndentGetCommentMargin(indent,cwp->buffer) - ii;
+                lineInsertChar(ii,' ');
 #if MEOPT_UNDO
-                meUndoAddInsChars(ii) ;
+                meUndoAddInsChars(ii);
 #endif
             }
             else
-                frameCur->windowCur->dotOffset = ii ;
-            frameCur->windowCur->dotOffset += 2 ;
+                cwp->dotOffset = ii;
+            cwp->dotOffset += 2;
         }
     }
 #endif
 #if MEOPT_FENCE
     /* check for fence matching */
-    if(meModeTest(frameCur->bufferCur->mode,MDFENCE) && ((c == '}') || (c == ')') || (c == ']')))
+    if(meModeTest(cwp->buffer->mode,MDFENCE) && ((c == '}') || (c == ')') || (c == ']')))
     {
-        frameCur->windowCur->dotOffset-- ;
+        cwp->dotOffset--;
         /* flag for delay move and only bell in cmode */
-        gotoFence(meTRUE,(frameCur->bufferCur->indent && (meHilightGetFlags(indents[frameCur->bufferCur->indent]) & HIGFBELL)) ? 3:2) ;
-        frameCur->windowCur->dotOffset++ ;
+        gotoFence(meTRUE,(cwp->buffer->indent && (meHilightGetFlags(indents[cwp->buffer->indent]) & HIGFBELL)) ? 3:2);
+        cwp->dotOffset++;
     }
 #endif
     lastflag = thisflag;
-    return (cmdstatus = meTRUE) ;
+    return (cmdstatus = meTRUE);
 }
 
 /*
@@ -495,10 +498,10 @@ meAbout(int f, int n)
     sprintf((char *)buf,"  # buffers : %d", ii);
     addLineToEob(bp,buf);
     addModesLists(bp,buf,globMode);
-    sprintf((char *)buf,"Current Buffer Status:\n  Buffer    : %s", frameCur->bufferCur->name);
+    tbp = frameCur->windowCur->buffer;
+    sprintf((char *)buf,"Current Buffer Status:\n  Buffer    : %s",tbp->name);
     addLineToEob(bp,buf);
-    sprintf((char *)buf,"  File name : %s",
-            (frameCur->bufferCur->fileName == NULL) ? (meUByte *)"":frameCur->bufferCur->fileName);
+    sprintf((char *)buf,"  File name : %s",(tbp->fileName == NULL) ? (meUByte *)"":tbp->fileName);
     addLineToEob(bp,buf);
     
     getBufferInfo(&numlines,&predlines,&numchars,&predchars);
@@ -506,7 +509,7 @@ meAbout(int f, int n)
             numlines,predlines,numchars,predchars);
     addLineToEob(bp,buf);
     
-    addModesLists(bp,buf,frameCur->bufferCur->mode);
+    addModesLists(bp,buf,tbp->mode);
     addLineToEob(bp,meCopyright);
 #if KEY_TEST
     fnctest(bp);
@@ -640,12 +643,12 @@ exitEmacs(int f, int n)
 #if MEOPT_FILEHOOK
         /* execute ehooks for all current buffers */
         meFrameLoopBegin();
-        if(loopFrame->bufferCur->ehook >= 0)
-            execBufferFunc(loopFrame->bufferCur,loopFrame->bufferCur->ehook,0,1) ;
+        if((bp=loopFrame->windowCur->buffer)->ehook >= 0)
+            execBufferFunc(bp,bp->ehook,0,1) ;
         meFrameLoopEnd();
 #endif
         /* For all buffers remove the autosave and execute the dhook */
-        bp = bheadp ;
+        bp = bheadp;
         while(bp != NULL)
         {
             nbp = bp->next;
@@ -1848,9 +1851,9 @@ missing_arg:
 #ifdef _DOS
     if(dumpScreen)
     {
-        extern void TTdump(meBuffer *) ;
-        TTdump(frameCur->bufferCur) ;
-        windowGotoBob(meFALSE,1) ;
+        extern void TTdump(meBuffer *);
+        TTdump(frameCur->windowCur->buffer);
+        windowGotoBob(meFALSE,1);
         carg++ ;
     }
 #endif
@@ -2020,38 +2023,38 @@ handle_stdin:
 #endif
                             if((searchStr != NULL) || stdinflag)
                             {
-                                meBuffer *cbp ;
-                                int histNo, flags ;
-                                cbp = frameCur->bufferCur ;
+                                meBuffer *cbp;
+                                int histNo, flags;
+                                cbp = frameCur->windowCur->buffer;
                                 histNo = cbp->histNo ;
                                 swbuffer(frameCur->windowCur,bp) ;
                                 if(searchStr != NULL)
                                 {
                                     flags = ISCANNER_QUIET ;
                                     if(meModeTest(bp->mode,MDMAGIC))
-                                        flags |= ISCANNER_MAGIC ;
+                                        flags |= ISCANNER_MAGIC;
                                     if(meModeTest(bp->mode,MDEXACT))
-                                        flags |= ISCANNER_EXACT ;
+                                        flags |= ISCANNER_EXACT;
                                     /* what can we do if we fail to find it? */
-                                    iscanner(searchStr,0,flags,NULL) ;
+                                    iscanner(searchStr,0,flags,NULL);
                                 }
-                                swbuffer(frameCur->windowCur,cbp) ;
-                                cbp->histNo = histNo ;
-                                bp->histNo = bufHistNo ;
+                                swbuffer(frameCur->windowCur,cbp);
+                                cbp->histNo = histNo;
+                                bp->histNo = bufHistNo;
                             }
                         }
-                        bp = bp->next ;
+                        bp = bp->next;
                     }
-                    cryptStr = NULL ;
-                    searchStr = NULL ;
+                    cryptStr = NULL;
+                    searchStr = NULL;
                 }
-                gcol = 0 ;
-                gline = 0 ;
-                binflag = 0 ;
-                stdinflag = 0 ;
+                gcol = 0;
+                gline = 0;
+                binflag = 0;
+                stdinflag = 0;
             }
         }
-        bufHistNo = obufHistNo + rarg ;
+        bufHistNo = obufHistNo + rarg;
     }
     
     if(noFiles > 0)

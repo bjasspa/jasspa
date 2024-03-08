@@ -507,45 +507,48 @@ dictionaryAdd(int f, int n)
 {
     meDictionary *dict ;
     
-    if     (n == 0) f = 7 ;
-    else if(n >  0) f = 3 ;
-    else            f = 1 ;
+    if(n == 0)
+        f = 7;
+    else if(n > 0)
+        f = 3;
+    else
+        f = 1;
     if((dict = meDictionaryFind(f)) == NULL)
-        return meFALSE ;
+        return meFALSE;
     if(n < 0)
     {
-        meDictAddr    *tbl ;
-        meUInt  tableSize, ii, off ;
+        meDictAddr *tbl ;
+        meUInt tableSize, ii, off ;
         
-        if(meModeTest(frameCur->bufferCur->mode,MDVIEW))
+        if(meModeTest(frameCur->windowCur->buffer->mode,MDVIEW))
             /* don't allow character insert if in read only */
-            return (rdonly()) ;
+            return rdonly();
         if((meSpellInitDictionaries() <= 0) ||
            (lineInsertString(0,(meUByte *)"Dictionary: ") <= 0) ||
            (lineInsertString(0,dict->fname) <= 0) ||
            (lineInsertNewline(0) <= 0) ||
            (lineInsertNewline(0) <= 0))
-            return meABORT ;
+            return meABORT;
         
-        tableSize = dict->tableSize ;
-        tbl = dict->table ;
+        tableSize = dict->tableSize;
+        tbl = dict->table;
         frameCur->windowCur->dotOffset = 0 ;
         for(ii=0 ; ii<tableSize ; ii++)
         {
-            off = meEntryGetAddr(tbl[ii]) ;
+            off = meEntryGetAddr(tbl[ii]);
             while(off != 0)
             {
-                meDictWord    *ent ;
-                meUByte  buff[meBUF_SIZE_MAX] ;
+                meDictWord *ent;
+                meUByte buff[meBUF_SIZE_MAX];
                 
-                ent = (meDictWord *) mePtrOffset(tbl,off) ;
-                off = meWordGetAddr(ent) ;
+                ent = (meDictWord *) mePtrOffset(tbl,off);
+                off = meWordGetAddr(ent);
                 if(meWordGetWord(ent)[0] != '\0')
                 {
-                    meDictWordDump(ent,buff) ;
+                    meDictWordDump(ent,buff);
                     if((lineInsertString(0,buff) <= 0) ||
                        (lineInsertNewline(0) <= 0))
-                        return meABORT ;
+                        return meABORT;
                 }
             }
         }
@@ -907,28 +910,29 @@ dictionaryDelete(int f, int n)
 static int
 meSpellGetCurrentWord(meWORDBUF word)
 {
-    register meUByte  *dp, c, alnm, nalnm=1 ;
-    register int sz=0, alphaCnt=0 ;
+    register meWindow *cwp=frameCur->windowCur;
+    register meUByte  *dp, c, alnm, nalnm=1;
+    register int sz=0, alphaCnt=0;
     
-    dp = (meUByte *) word ;
+    dp = (meUByte *) word;
     do
     {
-        alnm = nalnm ;
-        c = meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset) ;
-        frameCur->windowCur->dotOffset++ ;
-        *dp++ = c ;
+        alnm = nalnm;
+        c = meLineGetChar(cwp->dotLine,cwp->dotOffset);
+        cwp->dotOffset++;
+        *dp++ = c;
         if(isAlpha(c))
-            alphaCnt = 1 ;
-        nalnm = isAlphaNum(c) ;
+            alphaCnt = 1;
+        nalnm = isAlphaNum(c);
     } while((++sz < meWORD_SIZE_MAX) && 
-            (nalnm || (alnm && isSpllExt(c)))) ;
+            (nalnm || (alnm && isSpllExt(c))));
     
-    dp[-1] = 0 ;
-    frameCur->windowCur->dotOffset-- ;
+    dp[-1] = 0;
+    cwp->dotOffset--;
     if(!alphaCnt)
-        return -1 ;
+        return -1;
     
-    return sz - 1 ;
+    return sz - 1;
 }
 
 #define wordPrefixRuleAdd(bwd,rr)         memcpy(bwd,rr->append,rr->appendLen) ;
@@ -1840,47 +1844,48 @@ spellWord(int f, int n)
     int       len ;
     
     if(meSpellInitDictionaries() <= 0)
-        return meABORT ;
+        return meABORT;
     
     if(n & SPELLWORD_GET)
     {
         if(meGetString((meUByte *)"Enter word", MLNOSPACE,0,resultStr+1,meWORD_SIZE_MAX) <= 0)
-            return meABORT ;
-        spellWordToLatinFont(word,resultStr+1) ;
+            return meABORT;
+        spellWordToLatinFont(word,resultStr+1);
     }
     else if(n & SPELLWORD_GETNEXT)
     {
-        meUByte  cc, chkDbl, curDbl ;
-        meUShort soff, eoff ;
-        meWORDBUF lword ;
+        meWindow *cwp=frameCur->windowCur;
+        meUByte  cc, chkDbl, curDbl;
+        meUShort soff, eoff;
+        meWORDBUF lword;
         
-        chkDbl = (n & SPELLWORD_DOUBLE) ;
-        curDbl = 0 ;
-        while((frameCur->windowCur->dotOffset > 0) && isAlphaNum(meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset)))
-            frameCur->windowCur->dotOffset-- ;
+        chkDbl = (n & SPELLWORD_DOUBLE);
+        curDbl = 0;
+        while((cwp->dotOffset > 0) && isAlphaNum(meLineGetChar(cwp->dotLine,cwp->dotOffset)))
+            cwp->dotOffset-- ;
         for(;;)
         {
-            while(((cc = meLineGetChar(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset)) != '.') && 
+            while(((cc = meLineGetChar(cwp->dotLine,cwp->dotOffset)) != '.') && 
                   !isAlphaNum(cc))
             {
                 if(!isSpace(cc))
                     curDbl = 0 ;
-                if(meWindowForwardChar(frameCur->windowCur, 1) == meFALSE)
+                if(meWindowForwardChar(cwp, 1) == meFALSE)
                 {
                     resultStr[0] = 'F' ;
                     resultStr[1] = '\0' ;
                     return meTRUE ;
                 }
             }
-            soff = frameCur->windowCur->dotOffset ;
+            soff = cwp->dotOffset ;
             if(meSpellGetCurrentWord((meUByte *) resultStr+1) < 0)
                 continue ;
-            eoff = frameCur->windowCur->dotOffset ;
+            eoff = cwp->dotOffset ;
             if(curDbl && !meStricmp(lword,resultStr+1))
             {
                 resultStr[0] = 'D' ;
-                setShowRegion(frameCur->bufferCur,frameCur->windowCur->dotLineNo,soff,frameCur->windowCur->dotLineNo,eoff) ;
-                frameCur->windowCur->updateFlags |= WFMOVEL|WFSELHIL ;
+                setShowRegion(cwp->buffer,cwp->dotLineNo,soff,cwp->dotLineNo,eoff) ;
+                cwp->updateFlags |= WFMOVEL|WFSELHIL ;
                 return meTRUE ;
             }
             spellWordToLatinFont(word,(meUByte *) resultStr+1) ;
@@ -1893,47 +1898,48 @@ spellWord(int f, int n)
                 curDbl = 1 ;
             }
         }
-        setShowRegion(frameCur->bufferCur,frameCur->windowCur->dotLineNo,soff,frameCur->windowCur->dotLineNo,eoff) ;
-        frameCur->windowCur->updateFlags |= WFMOVEL|WFSELHIL ;
+        setShowRegion(cwp->buffer,cwp->dotLineNo,soff,cwp->dotLineNo,eoff) ;
+        cwp->updateFlags |= WFMOVEL|WFSELHIL ;
     }
     else
     {
-        meUByte  cc ;
-        meUShort off, soff, eoff ;
+        meWindow *cwp=frameCur->windowCur;
+        meUByte  cc;
+        meUShort off, soff, eoff;
         
-        soff = off = frameCur->windowCur->dotOffset ;
+        soff = off = cwp->dotOffset;
         for(;;soff--)
         {
-            cc = meLineGetChar(frameCur->windowCur->dotLine,soff) ;
+            cc = meLineGetChar(cwp->dotLine,soff);
             if((soff==0) || isSpllWord(cc))
-                break ;
+                break;
         }
         if(!isSpllWord(cc))
-            return meFALSE ;
+            return meFALSE;
         while(soff > 0)
         {
             --soff ;
-            cc = meLineGetChar(frameCur->windowCur->dotLine,soff) ;
+            cc = meLineGetChar(cwp->dotLine,soff);
             if(!isSpllWord(cc))
             {
                 soff++ ;
                 break ;
             }
             if(!isAlphaNum(cc) && 
-               ((soff == 0) || !isAlphaNum(meLineGetChar(frameCur->windowCur->dotLine,soff-1))))
+               ((soff == 0) || !isAlphaNum(meLineGetChar(cwp->dotLine,soff-1))))
                 break ;
         }
         /* if the first character is not alphanumeric or a '.' then move
          * on one, this stops misspellings of 'quoted words'
          */
-        if(((cc = meLineGetChar(frameCur->windowCur->dotLine,soff)) != '.') && !isAlphaNum(cc))
+        if(((cc = meLineGetChar(cwp->dotLine,soff)) != '.') && !isAlphaNum(cc))
             soff++ ;
-        frameCur->windowCur->dotOffset = soff ;
+        cwp->dotOffset = soff ;
         len = meSpellGetCurrentWord((meUByte *) resultStr+1) ;
-        eoff = frameCur->windowCur->dotOffset ;
-        frameCur->windowCur->dotOffset = off ;
-        setShowRegion(frameCur->bufferCur,frameCur->windowCur->dotLineNo,soff,frameCur->windowCur->dotLineNo,eoff) ;
-        frameCur->windowCur->updateFlags |= WFMOVEL|WFSELHIL ;
+        eoff = cwp->dotOffset ;
+        cwp->dotOffset = off ;
+        setShowRegion(cwp->buffer,cwp->dotLineNo,soff,cwp->dotLineNo,eoff) ;
+        cwp->updateFlags |= WFMOVEL|WFSELHIL ;
         if(len < 0)
         {
             resultStr[0] = 'N' ;
@@ -1992,7 +1998,7 @@ spellWord(int f, int n)
             /* dump all derivatives into the current buffer */
             int ii ;
             
-            if(meModeTest(frameCur->bufferCur->mode,MDVIEW))
+            if(meModeTest(frameCur->windowCur->buffer->mode,MDVIEW))
                 /* don't allow character insert if in read only */
                 return (rdonly()) ;
             wd = buff+longestPrefixChange ;

@@ -150,7 +150,7 @@ findTagSearch(meUByte *key, meUByte *file, meUByte *patt)
     
     /* Get the current directory location of our file and use this to locate
      * the tag file. */
-    getFilePath(frameCur->bufferCur->fileName,file) ;
+    getFilePath(frameCur->windowCur->buffer->fileName,file) ;
     baseName = file + meStrlen(file) ;
     for(;;)
     {
@@ -335,40 +335,39 @@ findTagExec(int nn, meUByte tag[])
 int
 findTag(int f, int n)
 {
-    meUByte  tag[meBUF_SIZE_MAX], *ss ;
-    int      offs, len ;
+    register meWindow *cwp=frameCur->windowCur;
+    meUByte  tag[meBUF_SIZE_MAX], *ss;
+    int      offs, len;
     
     /* Determine if we are in a word. If not then get a word from the user. */
     if(n & 0x04)
         ;
-    else if((n & 0x02) || (inWord() == meFALSE))
+    else if((n & 0x02) || !meWindowInWord(cwp))
     {
 	/*---	Get user word. */
-        if((meGetString((meUByte *)"Enter Tag", MLNOSPACE, 0, tag,meBUF_SIZE_MAX) <= 0) || (tag[0] == '\0'))
-            return ctrlg(meFALSE,1) ;
+        if((meGetString((meUByte *)"Enter Tag",MLNOSPACE,0,tag,meBUF_SIZE_MAX) <= 0) || (tag[0] == '\0'))
+            return ctrlg(meFALSE,1);
     }
     else
     {
-        ss = frameCur->windowCur->dotLine->text ;
-        offs = frameCur->windowCur->dotOffset ;
+        ss = cwp->dotLine->text;
+        offs = cwp->dotOffset;
         
 	/* Go to the start of the word. */
         while((--offs >= 0) && isWord(ss[offs]))
             ;
-        offs++ ;
+        offs++;
         
 	/* Get the word required. */
         len = 0;
         do
-            tag[len++] = ss[offs++] ;
-        while((len < meBUF_SIZE_MAX-1) && isWord(ss[offs]) != meFALSE) ;
-        tag[len] = 0 ;
+            tag[len++] = ss[offs++];
+        while((len < meBUF_SIZE_MAX-1) && isWord(ss[offs]));
+        tag[len] = 0;
     }
     
     /*---	Call the tag find. */
-
     return findTagExec(n,tag);
-
 }
 
 #endif

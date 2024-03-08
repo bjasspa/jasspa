@@ -390,44 +390,44 @@ regSave(meRegNode *rnp, meUByte *fname, int mode)
     }
     
     /* Recurse the children of the node and write to file */
-    rr = rnp->child ;
+    rr = rnp->child;
     while((ss > 0) && (rr != NULL))
     {
-        meUByte buff[4096] ;
-        int  len ;
+        meUByte buff[4096];
+        int  len;
         /* Print the node */
         if((len = level) != 0)
-            memset(buff,' ',len) ;
-        buff[len++] = '"' ;
-        len = expandexp(-1,rr->name,4096-11,len,buff,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO|meEXPAND_PRINTABLE) ;
+            memset(buff,' ',len);
+        buff[len++] = '"';
+        len = expandexp(-1,rr->name,4096-11,len,buff,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO|meEXPAND_PRINTABLE);
         buff[len++] = '"' ;
         if (rr->mode & (meREGMODE_HIDDEN|meREGMODE_INTERNAL))
         {
-            buff[len++] = ' ' ;
-            buff[len++] = '0' + (rr->mode & (meREGMODE_HIDDEN|meREGMODE_INTERNAL)) ;
+            buff[len++] = ' ';
+            buff[len++] = '0' + (rr->mode & (meREGMODE_HIDDEN|meREGMODE_INTERNAL));
         }
         if (rr->value != NULL)
         {
-            buff[len++] = ' ' ;
-            buff[len++] = '=' ;
-            buff[len++] = ' ' ;
-            buff[len++] = '"' ;
+            buff[len++] = ' ';
+            buff[len++] = '=';
+            buff[len++] = ' ';
+            buff[len++] = '"';
             len = expandexp(-1,rr->value,4096-4,len,buff,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO|meEXPAND_PRINTABLE) ;
-            buff[len++] = '"' ;
+            buff[len++] = '"';
         }
         /* write open '{' if it has children */
         if (rr->child != NULL)
         {
-            buff[len++] = ' ' ;
-            buff[len++] = '{' ;
+            buff[len++] = ' ';
+            buff[len++] = '{';
         }
         if((mode & meREGMODE_FROOT) == 0)
         {
-            buff[len] = '\0' ;
+            buff[len] = '\0';
             if((ss = addLine(frameCur->windowCur->dotLine,buff)) <= 0)
                 break ;
-            lineCount += ss ;
-            charCount += len + 1 ;
+            lineCount += ss;
+            charCount += len + 1;
         }
         else if((ss = ffWriteFileWrite(&meiow,len,buff,1)) <= 0)
             break ;
@@ -483,30 +483,30 @@ regSave(meRegNode *rnp, meUByte *fname, int mode)
     }
     else
     {
-        meWindow *wp ;
-        level = frameCur->windowCur->dotLineNo ;
-        frameCur->bufferCur->lineCount += lineCount ;
-        meFrameLoopBegin() ;
+        meWindow *wp, *cwp=frameCur->windowCur;
+        level = cwp->dotLineNo;
+        cwp->buffer->lineCount += lineCount;
+        meFrameLoopBegin();
         for(wp=loopFrame->windowList; wp!=NULL; wp=wp->next)
         {
-            if (wp->buffer == frameCur->bufferCur)
+            if (wp->buffer == cwp->buffer)
             {
                 if(wp->dotLineNo >= level)
-                    wp->dotLineNo += lineCount ;
+                    wp->dotLineNo += lineCount;
                 if(wp->markLineNo >= level)
-                    wp->markLineNo += lineCount ;
-                wp->updateFlags |= WFMAIN|WFMOVEL ;
+                    wp->markLineNo += lineCount;
+                wp->updateFlags |= WFMAIN|WFMOVEL;
             }
         }
-        meFrameLoopEnd() ;
-        frameCur->windowCur->dotOffset = 0 ;
+        meFrameLoopEnd();
+        cwp->dotOffset = 0;
 #if MEOPT_UNDO
-        meUndoAddInsChars(charCount) ;
+        meUndoAddInsChars(charCount);
 #endif
         if(ss <= 0)
-            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to write registry %s]",fname) ;
+            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Failed to write registry %s]",fname);
     }
-    return meTRUE ;
+    return meTRUE;
 }
 
 /*
@@ -684,10 +684,10 @@ regDelete (meRegNode *sroot)
 meRegNode *
 regRead(meUByte *rname, meUByte *fname, int mode)
 {
-    meLine hlp, *lp ;
-    meUByte *fn ;
+    meLine hlp, *lp;
+    meUByte *fn;
     meRegNode *rnp;                         /* Root node pointer */
-    meUInt flags ;
+    meUInt flags;
     
     /* Find the registry entry */
     if(*rname == '/')
@@ -697,7 +697,7 @@ regRead(meUByte *rname, meUByte *fname, int mode)
         /* if not merging or reloading then we've can use the existing node */
         if (!(mode & (meREGMODE_MERGE|meREGMODE_RELOAD)))
             goto finished;
-        fn = rnp->value ;
+        fn = rnp->value;
     }
     else
         fn = NULL ;
@@ -710,26 +710,26 @@ regRead(meUByte *rname, meUByte *fname, int mode)
         {
             meUByte filename[meBUF_SIZE_MAX] ;	/* Filename */
             if(fileLookup(fname,extRegCnt,extRegLst,meFL_CHECKDOT|meFL_USESRCHPATH,filename))
-                fn = meStrdup(filename) ;
+                fn = meStrdup(filename);
             else
-                fn = meStrdup(fname) ;
+                fn = meStrdup(fname);
         }
         /* else use the old file name (if there is one) else fail */
         else if(fn == NULL)
         {
             mlwrite(MWABORT|MWWAIT,(meUByte *)"[No file name given to load]") ;
-            return NULL ;
+            return NULL;
         }
     
         /* Load in the registry file */
-        flags = meRWFLAG_SILENT ;
-        hlp.next = &hlp ;
-        hlp.prev = &hlp ;
+        flags = meRWFLAG_SILENT;
+        hlp.next = &hlp;
+        hlp.prev = &hlp;
         if(mode & meREGMODE_CRYPT)
         {
             meUInt key[meCRYPT_KEY_SIZE];
             meUByte s1[meBUF_SIZE_MAX];
-            int len ;
+            int len;
             
             meStrcpy(s1,getFileBaseName(fn));
             len = meStrlen(s1) + 1;
@@ -747,45 +747,45 @@ regRead(meUByte *rname, meUByte *fname, int mode)
         if((ffReadFile(&meior,fn,flags|meRWFLAG_READ,NULL,&hlp,0,0,0) == meABORT) && !(mode & meREGMODE_CREATE))
         {
             mlwrite (MWABORT|MWWAIT,(meUByte *)"[Cannot load registry file %s]", fname);
-            return NULL ;
+            return NULL;
         }
         lp = &hlp ;
     }
     else
-        lp = frameCur->bufferCur->baseLine ;
+        lp = frameCur->windowCur->buffer->baseLine;
     
     if ((rnp != NULL) && (mode & meREGMODE_RELOAD))
     {
         /* Want to replace with new one. so delete old */
         if(fn == rnp->value)
-            rnp->value = NULL ;
-        rnodeUnlink (rnp);
-        rnodeDelete (rnp);
+            rnp->value = NULL;
+        rnodeUnlink(rnp);
+        rnodeDelete(rnp);
         rnp = NULL;
     }
     /* Construct the node for the file node */
     if (rnp == NULL)
     {
         /* Construct the node */
-        if((rnp = regSet (&root, rname, NULL)) == NULL)
+        if((rnp = regSet(&root, rname, NULL)) == NULL)
             return NULL ;
         rnp->mode = 0;
     }
     /* set the new file name */
     if(rnp->value != fn)
     {
-        meNullFree(rnp->value) ;
-        rnp->value = fn ;
+        meNullFree(rnp->value);
+        rnp->value = fn;
     }
     /* Now parse the registry file */
-    parseFile(rnp, lp) ;
+    parseFile(rnp,lp);
     
     if(mode & meREGMODE_FROOT)
-        meLineLoopFree(lp,0) ;
+        meLineLoopFree(lp,0);
 
 finished:
-    rnp->mode |= mode & meREGMODE_STORE_MASK ;
-    return rnp ;
+    rnp->mode |= mode & meREGMODE_STORE_MASK;
+    return rnp;
 }
 
 

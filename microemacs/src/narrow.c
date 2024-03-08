@@ -355,7 +355,7 @@ meBufferRemoveNarrow(meBuffer *bp, register meNarrow *nrrw, meUByte *firstLine, 
     }
     if(!undoCall && ((nrrw->name & meNARROW_TYPE_MASK) != meNARROW_TYPE_OUT))
     {
-        nn = frameCur->bufferCur->narrow ;
+        nn = frameCur->windowCur->buffer->narrow;
         while(nn != NULL)
         {
             if((nn->name & meNARROW_NUMBER_MASK) == (nrrw->name & meNARROW_NUMBER_MASK))
@@ -372,27 +372,26 @@ meBufferRemoveNarrow(meBuffer *bp, register meNarrow *nrrw, meUByte *firstLine, 
 static meNarrow *
 meLineGetNarrow(meBuffer *bp, meLine *lp)
 {
+    meBuffer *cbp=frameCur->windowCur->buffer;
     meNarrow *nrrw ;
     meAnchor *aa ;
     
-    nrrw = frameCur->bufferCur->narrow ;
+    nrrw = cbp->narrow;
     while(nrrw != NULL)
     {
         if(!nrrw->expanded)
         {
-            aa = frameCur->bufferCur->anchorList;
+            aa = cbp->anchorList;
             while(aa != NULL)
             {
                 if((nrrw->name == aa->name) && (aa->line == lp))
-                {
-                    return nrrw ;
-                }
+                    return nrrw;
                 aa = aa->next;
             }
         }
-        nrrw = nrrw->next ;
+        nrrw = nrrw->next;
     }
-    return NULL ;
+    return NULL;
 }
 
 void
@@ -542,6 +541,8 @@ meBufferRegionExpandNarrow(meBuffer *bp, meLine **startLine, meUShort soffset, m
 int
 narrowBuffer(int f, int n)
 {
+    meWindow *cwp=frameCur->windowCur;
+    meBuffer *cbp=cwp->buffer;
     meUByte buf[meBUF_SIZE_MAX] ;
     meUByte *ml1, ml1b[meBUF_SIZE_MAX], *ml2, ml2b[meBUF_SIZE_MAX] ;
     meInt markupCmd, sln, eln ;
@@ -554,19 +555,19 @@ narrowBuffer(int f, int n)
     
     if(n == 1)
     {
-        if(frameCur->bufferCur->narrow == NULL)
+        if(cbp->narrow == NULL)
             return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Current buffer not narrowed]") ;
     
-        while(frameCur->bufferCur->narrow != NULL)
-            meBufferRemoveNarrow(frameCur->bufferCur,frameCur->bufferCur->narrow,NULL,0) ;
+        while(cbp->narrow != NULL)
+            meBufferRemoveNarrow(cbp,cbp->narrow,NULL,0) ;
         return meTRUE ;
     }
     else if(n == 2)
     {
-        if((frameCur->windowCur->dotLine->flag & meLINE_ANCHOR_NARROW) &&
-           ((nrrw=meLineGetNarrow(frameCur->bufferCur,frameCur->windowCur->dotLine)) != NULL))
+        if((cwp->dotLine->flag & meLINE_ANCHOR_NARROW) &&
+           ((nrrw=meLineGetNarrow(cbp,cwp->dotLine)) != NULL))
         {
-            meBufferRemoveNarrow(frameCur->bufferCur,nrrw,NULL,0) ;
+            meBufferRemoveNarrow(cbp,nrrw,NULL,0) ;
             return meTRUE ;
         }
         return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No narrow on current line]") ;
@@ -574,16 +575,16 @@ narrowBuffer(int f, int n)
     else if((n != 3) && (n != 4))
         return mlwrite(MWABORT,(meUByte *)"[Illegal narrow argument]") ;
     
-    if(frameCur->windowCur->markLine == NULL)
+    if(cwp->markLine == NULL)
         return noMarkSet() ;
-    if(frameCur->windowCur->dotLineNo == frameCur->windowCur->markLineNo)
+    if(cwp->dotLineNo == cwp->markLineNo)
         return mlwrite(MWABORT,(meUByte *)"[Illegal narrow]") ;
     
     if(f & 0x10)
     {
         if(meGetString((meUByte *)"Line Scheme",0,0,buf,meBUF_SIZE_MAX) <= 0)
             return meABORT ;
-        scheme = convertUserScheme(meAtoi(buf),frameCur->bufferCur->scheme) ;
+        scheme = convertUserScheme(meAtoi(buf),cbp->scheme) ;
     }
     else
         scheme = meSCHEME_INVALID ;
@@ -611,19 +612,19 @@ narrowBuffer(int f, int n)
            ((markupCmd = decode_fncname(buf,0)) < 0))
             return meABORT ;
     }
-    if(frameCur->windowCur->dotLineNo < frameCur->windowCur->markLineNo)
+    if(cwp->dotLineNo < cwp->markLineNo)
     {
-        slp = frameCur->windowCur->dotLine ;
-        elp = frameCur->windowCur->markLine ;
-        sln = frameCur->windowCur->dotLineNo ;
-        eln = frameCur->windowCur->markLineNo ;
+        slp = cwp->dotLine ;
+        elp = cwp->markLine ;
+        sln = cwp->dotLineNo ;
+        eln = cwp->markLineNo ;
     }
     else
     {
-        slp = frameCur->windowCur->markLine ;
-        elp = frameCur->windowCur->dotLine ;
-        sln = frameCur->windowCur->markLineNo ;
-        eln = frameCur->windowCur->dotLineNo ;
+        slp = cwp->markLine ;
+        elp = cwp->dotLine ;
+        sln = cwp->markLineNo ;
+        eln = cwp->dotLineNo ;
     }
     if(n == 3)
     {
@@ -632,19 +633,19 @@ narrowBuffer(int f, int n)
          * expanded first if all lines in between a delete. This ensures the
          * top stays at the top */
         n = meNARROW_TYPE_TO_TOP ;
-        if(elp != frameCur->bufferCur->baseLine)
+        if(elp != cbp->baseLine)
         {
-            if((nrrw=meBufferCreateNarrow(frameCur->bufferCur,elp,frameCur->bufferCur->baseLine,eln,
-                                          frameCur->bufferCur->lineCount,meNARROW_TYPE_TO_BOTTOM,scheme,ml2,markupCmd,0)) == NULL)
+            if((nrrw=meBufferCreateNarrow(cbp,elp,cbp->baseLine,eln,
+                                          cbp->lineCount,meNARROW_TYPE_TO_BOTTOM,scheme,ml2,markupCmd,0)) == NULL)
                 return meFALSE ;
             n = meANCHOR_NARROW | meNARROW_TYPE_TO_TOP | (nrrw->name & meNARROW_NUMBER_MASK) ;
         }
         if(sln != 0)
-            nrrw = meBufferCreateNarrow(frameCur->bufferCur,meLineGetNext(frameCur->bufferCur->baseLine),
+            nrrw = meBufferCreateNarrow(cbp,meLineGetNext(cbp->baseLine),
                                         slp,0,sln,n,scheme,ml1,markupCmd,0) ;
     }
     else
-        nrrw = meBufferCreateNarrow(frameCur->bufferCur,slp,elp,sln,eln,meNARROW_TYPE_OUT,scheme,ml1,markupCmd,0) ;
+        nrrw = meBufferCreateNarrow(cbp,slp,elp,sln,eln,meNARROW_TYPE_OUT,scheme,ml1,markupCmd,0) ;
     return (nrrw == NULL) ? meFALSE:meTRUE ;
 }
 #endif

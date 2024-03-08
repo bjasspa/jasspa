@@ -83,19 +83,19 @@ try_again:
 #if MEOPT_LOCALBIND
     if(useMlBinds)
     {
-        ktp = mlBinds ;
-        mid = mlNoBinds ;
+        ktp = mlBinds;
+        mid = mlNoBinds;
     }
     else
     {
-        mid = frameCur->bufferCur->bindCount ;
-        ktp = frameCur->bufferCur->bindList ;
+        mid = frameCur->windowCur->buffer->bindCount;
+        ktp = frameCur->windowCur->buffer->bindList;
     }
     while(mid>0)
         if(ktp[--mid].code == code)
         {
-            *arg = ktp[mid].arg ;
-            return ktp[mid].index ;
+            *arg = ktp[mid].arg;
+            return ktp[mid].index;
         }
 
 #endif

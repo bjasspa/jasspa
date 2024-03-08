@@ -95,7 +95,7 @@ setAbbrev(int f, int n, meAbbrev **abrevPtr)
 int
 bufferAbbrev(int f, int n)
 {
-    return setAbbrev(f,n,&(frameCur->bufferCur->abbrevFile)) ;
+    return setAbbrev(f,n,&(frameCur->windowCur->buffer->abbrevFile)) ;
 }
 int
 globalAbbrev(int f, int n)
@@ -141,21 +141,23 @@ doExpandAbbrev(meUByte *abName, int abLen, meAbbrev *abrev)
 int
 expandAbbrev(int f, int n)
 {
+    register meWindow *cwp;
     register int len, ii ;
     meUByte buf[meBUF_SIZE_MAX] ;
     
     if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return meABORT ;
-    ii = frameCur->windowCur->dotOffset ;
-    if(((frameCur->bufferCur->abbrevFile != NULL) || (globalAbbrevFile != NULL)) &&
-       (--ii >= 0) && isWord(frameCur->windowCur->dotLine->text[ii]))
+    cwp = frameCur->windowCur;
+    ii = cwp->dotOffset ;
+    if(((cwp->buffer->abbrevFile != NULL) || (globalAbbrevFile != NULL)) &&
+       (--ii >= 0) && isWord(cwp->dotLine->text[ii]))
     {
         len = 1 ;
-        while((--ii >= 0) && isWord(frameCur->windowCur->dotLine->text[ii]))
+        while((--ii >= 0) && isWord(cwp->dotLine->text[ii]))
             len++ ;
-        strncpy((char *) buf,(char *) &(frameCur->windowCur->dotLine->text[++ii]),len) ;
-        if(((frameCur->bufferCur->abbrevFile != NULL) && 
-            ((ii=doExpandAbbrev(buf,len,frameCur->bufferCur->abbrevFile)) != meFALSE)) ||
+        strncpy((char *) buf,(char *) &(cwp->dotLine->text[++ii]),len) ;
+        if(((cwp->buffer->abbrevFile != NULL) && 
+            ((ii=doExpandAbbrev(buf,len,cwp->buffer->abbrevFile)) != meFALSE)) ||
            ((globalAbbrevFile != NULL) && 
             ((ii=doExpandAbbrev(buf,len,globalAbbrevFile)) != meFALSE)))
             return ii ;

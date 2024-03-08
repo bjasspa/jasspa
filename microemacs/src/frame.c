@@ -445,7 +445,6 @@ meFrameInitWindow(meFrame *frame, meBuffer *buffer)
        ((off= meLineMalloc(frame->widthMax,0)) == NULL))
         return meFALSE;
     
-    frame->bufferCur = buffer;              /* Make this current    */
     frame->windowList = wp;
     frame->windowCur = wp;
     frame->windowCount = 1;
@@ -670,7 +669,7 @@ frameCreate(int f, int n)
     /* these functions cannot use meMalloc as they are used to init ME,
      * so if they fail we must warn of the malloc failure */
     if(((frame = meFrameInit(sf)) == NULL) ||
-       (meFrameInitWindow(frame,frameCur->bufferCur) <= 0))
+       (meFrameInitWindow(frame,frameCur->windowCur->buffer) <= 0))
         return mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"[Failed to create new frame]");
 #if MEOPT_MWFRAME
     if(sf != NULL)
@@ -680,7 +679,7 @@ frameCreate(int f, int n)
     frame->next = frameCur->next;
     restoreWindWSet(frame->windowCur,frameCur->windowCur);
     frameCur->next = frame;
-    meFrameMakeCur(frame, 0);
+    meFrameMakeCur(frame,0);
     if(menuDepth)
         frameSetupMenuLine(menuDepth);
     sgarbf = meTRUE;                      /* Garbage the screen */

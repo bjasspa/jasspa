@@ -55,51 +55,62 @@ static meKill *reyankLastYank=NULL;
 static meLine *
 meLineShrink(meLine *lp, int newlen)
 {
-    int unused = meLineGetMaxLength(lp) - newlen ;
+    int unused = meLineGetMaxLength(lp) - newlen;
     if(unused > 0xff)
     {
-        meLine *nlp ;
+        meLine *nlp;
         
-        unused = meLineMallocSize(newlen+meLINE_BLOCK_SIZE) ;
+        unused = meLineMallocSize(newlen+meLINE_BLOCK_SIZE);
         if((nlp = meRealloc(lp,unused)) != lp)
         {
-            meWindow *wp ;
-            assert (nlp != NULL) ;
-            nlp->next->prev = nlp ;
-            nlp->prev->next = nlp ;
+            meWindow *wp=frameCur->windowCur;
+            meBuffer *bp=wp->buffer;
+            assert (nlp != NULL);
+            nlp->next->prev = nlp;
+            nlp->prev->next = nlp;
             if(nlp->flag & meLINE_ANCHOR)
             {
                 /* update anchors */
-                meAnchor *ap = frameCur->bufferCur->anchorList;
+                meAnchor *ap = bp->anchorList;
                 while(ap != NULL)
                 {
                     if(ap->line == lp)
-                        ap->line = nlp ;
+                        ap->line = nlp;
                     ap = ap->next;
                 }
             }
-            meFrameLoopBegin() ;
-            wp = loopFrame->windowList;                    /* Update windows       */
-            while (wp != NULL)
+            if(bp->windowCount > 1)
             {
-                if(wp->buffer == frameCur->bufferCur)
+                meFrameLoopBegin();
+                wp = loopFrame->windowList;                    /* Update windows       */
+                while(wp != NULL)
                 {
-                    if(wp->dotLine == lp)
-                        wp->dotLine = nlp ;
-                    if(wp->markLine == lp)
-                        wp->markLine = nlp ;
+                    if(wp->buffer == bp)
+                    {
+                        if(wp->dotLine == lp)
+                            wp->dotLine = nlp;
+                        if(wp->markLine == lp)
+                            wp->markLine = nlp;
+                    }
+                    wp = wp->next;
                 }
-                wp = wp->next;
+                meFrameLoopEnd();
             }
-            meFrameLoopEnd() ;
-            lp = nlp ;
+            else
+            {
+                if(wp->dotLine == lp)
+                    wp->dotLine = nlp;
+                if(wp->markLine == lp)
+                    wp->markLine = nlp;
+            }
+            lp = nlp;
         }
         lp->unused = (meUByte) (unused - newlen - meLINE_SIZE);
     }
     else
-        lp->unused = unused ;
-    lp->length = newlen ;
-    return lp ;
+        lp->unused = unused;
+    lp->length = newlen;
+    return lp;
 }
 
 /****************************************************************************
@@ -188,18 +199,19 @@ meLineResetAnchors(meInt flags, meBuffer *bp, meLine *lp, meLine *nlp,
 int
 bufferSetEdit(void)
 {
-    if(meModeTest(frameCur->bufferCur->mode,MDVIEW))
+    meBuffer *cbp=frameCur->windowCur->buffer;
+    if(meModeTest(cbp->mode,MDVIEW))
         return rdonly() ;
-    if(!meModeTest(frameCur->bufferCur->mode,MDEDIT))      /* First change, so     */
+    if(!meModeTest(cbp->mode,MDEDIT))      /* First change, so     */
     {
-        if((frameCur->bufferCur->name[0] != '*') &&
-           (bufferOutOfDate(frameCur->bufferCur)) &&
+        if((cbp->name[0] != '*') &&
+           (bufferOutOfDate(cbp)) &&
            (mlyesno((meUByte *)"File changed on disk, really edit") <= 0))
             return ctrlg(meTRUE,1) ;
-        meModeSet(frameCur->bufferCur->mode,MDEDIT);
+        meModeSet(cbp->mode,MDEDIT);
         frameAddModeToWindows(WFMODE);
 #if MEOPT_UNDO
-        if(meModeTest(frameCur->bufferCur->mode,MDUNDO))
+        if(meModeTest(cbp->mode,MDUNDO))
         {
             meUndoNode *uu;
             
@@ -209,18 +221,18 @@ bufferSetEdit(void)
         }
 #endif
     }
-    if((autoTime > 0) && (frameCur->bufferCur->autoTime < 0) &&
-       meModeTest(frameCur->bufferCur->mode,MDAUTOSV) &&
-       (frameCur->bufferCur->name[0] != '*'))
+    if((autoTime > 0) && (cbp->autoTime < 0) &&
+       meModeTest(cbp->mode,MDAUTOSV) &&
+       (cbp->name[0] != '*'))
     {
         struct   meTimeval tp;
         
         gettimeofday(&tp,NULL);
-        frameCur->bufferCur->autoTime = (int) (((tp.tv_sec-startTime+autoTime)*1000) + (tp.tv_usec/1000));
+        cbp->autoTime = (int) (((tp.tv_sec-startTime+autoTime)*1000) + (tp.tv_usec/1000));
         if(!isTimerExpired(AUTOS_TIMER_ID) &&
            (!isTimerSet(AUTOS_TIMER_ID) || 
-            (meTimerTime[AUTOS_TIMER_ID] > frameCur->bufferCur->autoTime)))
-            timerSet(AUTOS_TIMER_ID,frameCur->bufferCur->autoTime,((long)autoTime) * 1000L);
+            (meTimerTime[AUTOS_TIMER_ID] > cbp->autoTime)))
+            timerSet(AUTOS_TIMER_ID,cbp->autoTime,((long)autoTime) * 1000L);
     }
     return meTRUE ;
 }
@@ -228,24 +240,25 @@ bufferSetEdit(void)
 void
 lineSetChanged(register int flag)
 {
-    frameCur->windowCur->dotLine->flag |= meLINE_CHANGED ;
+    register meWindow *wp=frameCur->windowCur;
+    register meBuffer *bp;
     
-    if (frameCur->bufferCur->windowCount != 1)             /* If more than 1 window, update rest */
+    wp->dotLine->flag |= meLINE_CHANGED;
+    
+    if((bp=wp->buffer)->windowCount > 1)             /* If more than 1 window, update rest */
     {
-        register meWindow *wp;
-        
-        meFrameLoopBegin() ;
+        meFrameLoopBegin();
         wp = loopFrame->windowList;
-        while (wp != NULL)
+        while(wp != NULL)
         {
-            if(wp->buffer == frameCur->bufferCur)
+            if(wp->buffer == bp)
                 wp->updateFlags |= flag;
             wp = wp->next;
         }
-        meFrameLoopEnd() ;
+        meFrameLoopEnd();
     }
     else
-        frameCur->windowCur->updateFlags |= flag;              /* update current window */
+        wp->updateFlags |= flag;              /* update current window */
 }
 
 /*
@@ -260,68 +273,69 @@ lineSetChanged(register int flag)
 meUByte *
 lineMakeSpace(int n)
 {
+    meWindow *wp=frameCur->windowCur;
+    meBuffer *bp=wp->buffer;
     meUByte  *cp1;
-    meWindow *wp;
     meLine   *lp_new;
     meLine   *lp_old;
-    meUShort  doto ;
-    int     newl ;
+    meUShort  doto;
+    int       newl;
     
-    lp_old = frameCur->windowCur->dotLine;			/* Current line         */
+    lp_old = wp->dotLine;			/* Current line         */
     if((newl=(n+((int) meLineGetLength(lp_old)))) > meLINE_ELEN_MAX)
     {
         mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Line too long!]") ;
-        return NULL ;
+        return NULL;
     }
-    if (lp_old == frameCur->bufferCur->baseLine)		/* At the end: special  */
+    if (lp_old == bp->baseLine)		/* At the end: special  */
     {
         /*---	Allocate a new line */
         
         if ((lp_new=meLineMalloc(n,1)) == NULL)    /* Allocate new line    */
-            return NULL ;
+            return NULL;
         
         /*---	Link in with the previous line */
-        frameCur->bufferCur->lineCount++ ;
+        bp->lineCount++;
         lp_new->next = lp_old;
         lp_new->prev = lp_old->prev;
         lp_new->flag = (lp_old->flag & ~meLINE_ANCHOR) | meLINE_CHANGED ;
 #if MEOPT_EXTENDED
         /* only the new line should have any $line-scheme */
-        lp_old->flag &= ~meLINE_SCHEME_MASK ;
+        lp_old->flag &= ~meLINE_SCHEME_MASK;
 #endif
         lp_old->prev->next = lp_new;
         lp_old->prev = lp_new;
         
         if(lp_old->flag & meLINE_ANCHOR)
             /* update the position of any anchors - important for narrows */
-            meLineResetAnchors(meLINEANCHOR_IF_LESS|meLINEANCHOR_RETAIN,frameCur->bufferCur,
-                               lp_old,lp_new,0,0) ;
-        cp1 = lp_new->text ;	/* Return pointer */
-        doto = 0 ;
+            meLineResetAnchors(meLINEANCHOR_IF_LESS|meLINEANCHOR_RETAIN,bp,
+                               lp_old,lp_new,0,0);
+        cp1 = lp_new->text;	/* Return pointer */
+        doto = 0;
 #if MEOPT_UNDO
-        meUndoAddInsChar() ;
+        meUndoAddInsChar();
 #endif
     }
     else
     {
-        doto = frameCur->windowCur->dotOffset;           /* Save for later.      */
+        doto = wp->dotOffset;           /* Save for later.      */
         if (n > (int) lp_old->unused)                    /* Hard: reallocate     */
         {
-            meUByte *cp2 ;
-            meInt ii ;
+            meUByte *cp2;
+            meInt ii;
             
             /*---	Allocate new line of correct length */
             
             if ((lp_new = meLineMalloc(newl,1)) == NULL)
-                return NULL ;
+                return NULL;
             
             /*---	Copy line */
             
             cp1 = &lp_old->text[0];
             cp2 = &lp_new->text[0];
-            ii = (meInt) doto ;
+            ii = (meInt) doto;
             while(--ii >= 0)
-                *cp2++ = *cp1++ ;
+                *cp2++ = *cp1++;
             cp2 += n;
             while((*cp2++ = *cp1++))
                 ;
@@ -331,65 +345,82 @@ lineMakeSpace(int n)
             lp_new->prev = lp_old->prev;
             lp_new->next = lp_old->next;
             /* preserve the $line-scheme */
-            lp_new->flag = (lp_old->flag & ~meLINE_ANCHOR) | meLINE_CHANGED ;
+            lp_new->flag = (lp_old->flag & ~meLINE_ANCHOR) | meLINE_CHANGED;
             lp_old->prev->next = lp_new;
             lp_old->next->prev = lp_new;
             if(lp_old->flag & meLINE_ANCHOR)
             {
                 /* update the position of any anchors - important for narrows */
-                meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_RELATIVE,frameCur->bufferCur,
+                meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_RELATIVE,bp,
                                    lp_old,lp_new,doto,n);
-                meLineResetAnchors(meLINEANCHOR_ALWAYS|meLINEANCHOR_RETAIN,frameCur->bufferCur,
-                                   lp_old,lp_new,0,0) ;
+                meLineResetAnchors(meLINEANCHOR_ALWAYS|meLINEANCHOR_RETAIN,bp,
+                                   lp_old,lp_new,0,0);
             }
             meFree(lp_old);
-            cp1 = lp_new->text + doto ;		/* Save position */
+            cp1 = lp_new->text + doto;		/* Save position */
         }
         else                                /* Easy: in place       */
         {
-            meUByte *cp2 ;
-            meUShort ii ;
+            meUByte *cp2;
+            meUShort ii;
             
             lp_new = lp_old;                      /* Pretend new line     */
-            lp_new->unused -= n ;
-            lp_new->length = newl ;
-            lp_new->flag |= meLINE_CHANGED ;
-            cp2 = lp_old->text + lp_old->length ;
-            cp1 = cp2 - n ;
-            ii  = cp1 - lp_old->text - doto ;
+            lp_new->unused -= n;
+            lp_new->length = newl;
+            lp_new->flag |= meLINE_CHANGED;
+            cp2 = lp_old->text + lp_old->length;
+            cp1 = cp2 - n;
+            ii  = cp1 - lp_old->text - doto;
             do
-                *cp2-- = *cp1-- ;
-            while(ii--) ;
+                *cp2-- = *cp1--;
+            while(ii--);
             cp1++ ;
             if(lp_old->flag & meLINE_ANCHOR)
                 /* update the position of any anchors - important for narrows */
-                meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_RELATIVE,frameCur->bufferCur,
+                meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_RELATIVE,bp,
                                    lp_old,lp_new,doto,n);
         }
     }
-    
-    meFrameLoopBegin() ;
-    wp = loopFrame->windowList;                    /* Update windows       */
-    while (wp != NULL)
+    if(bp->windowCount > 1)
     {
-        if(wp->buffer == frameCur->bufferCur)
+        meFrameLoopBegin();
+        wp = loopFrame->windowList;                    /* Update windows       */
+        while (wp != NULL)
         {
-            if (wp->dotLine == lp_old)
+            if(wp->buffer == bp)
             {
-                wp->dotLine = lp_new;
-                if(wp->dotOffset >= doto)
-                    wp->dotOffset += n;
+                if(wp->dotLine == lp_old)
+                {
+                    wp->dotLine = lp_new;
+                    if(wp->dotOffset >= doto)
+                        wp->dotOffset += n;
+                }
+                if(wp->markLine == lp_old)
+                {
+                    wp->markLine = lp_new;
+                    if (wp->markOffset > doto)
+                        wp->markOffset += n;
+                }
             }
-            if (wp->markLine == lp_old)
-            {
-                wp->markLine = lp_new;
-                if (wp->markOffset > doto)
-                    wp->markOffset += n;
-            }
+            wp = wp->next;
         }
-        wp = wp->next;
+        meFrameLoopEnd();
     }
-    meFrameLoopEnd() ;
+    else
+    {
+        if(wp->dotLine == lp_old)
+        {
+            wp->dotLine = lp_new;
+            if(wp->dotOffset >= doto)
+                wp->dotOffset += n;
+        }
+        if(wp->markLine == lp_old)
+        {
+            wp->markLine = lp_new;
+            if (wp->markOffset > doto)
+                wp->markOffset += n;
+        }
+    }
     return cp1 ;
 }
 
@@ -409,10 +440,10 @@ lineInsertChar(int n, int c)
     
     lineSetChanged(WFMOVEC|WFMAIN);		/* Declare editied buffer */
     if ((cp = lineMakeSpace(n))==NULL)  /* Make space for the characters */
-        return meFALSE ;	        /* Error !!! */
+        return meFALSE;		        /* Error !!! */
     while (n-- > 0)                     /* Copy in the characters */
         *cp++ = c;
-    return meTRUE ;
+    return meTRUE;
 }
 
 /*---	As insrt char, insert string */
@@ -424,15 +455,15 @@ lineInsertString(register int n, register meUByte *cp)
     /* if n == 0 the length if the string is unknown calc the length */
     if((n == 0) &&
        ((n = meStrlen(cp)) == 0))
-        return meTRUE ;
+        return meTRUE;
     
-    lineSetChanged(WFMAIN) ;
+    lineSetChanged(WFMAIN);
     
     if ((lp = lineMakeSpace(n))==NULL)	/* Make space for the characters */
-        return meFALSE ;		/* Error !!! */
+        return meFALSE;			/* Error !!! */
     while(n-- > 0)			/* Copy in the characters */
         *lp++ = *cp++;
-    return meTRUE ;
+    return meTRUE;
 }
 
 /*
@@ -446,15 +477,16 @@ lineInsertString(register int n, register meUByte *cp)
 int
 lineInsertNewline(meInt flags)
 {
+    meWindow *wp=frameCur->windowCur;
+    meBuffer *bp=wp->buffer;
     meLine   *lp1;
     meLine   *lp2;
-    meWindow *wp;
-    meInt     lineno ;
-    meUShort  doto, llen ;
-    meLineFlag lflag ;
+    meInt     lineno;
+    meUShort  doto, llen;
+    meLineFlag lflag;
     
-    lp1 = frameCur->windowCur->dotLine ;
-    doto = frameCur->windowCur->dotOffset;
+    lp1 = wp->dotLine ;
+    doto = wp->dotOffset;
     lflag = meLineGetFlag(lp1) ;
 #if MEOPT_EXTENDED
     if((lflag & meLINE_PROTECT) == 0)
@@ -503,11 +535,11 @@ lineInsertNewline(meInt flags)
             {
                 /* update the position of any anchors */
                 /* move ones before split over to the first line (lp1) */
-                meLineResetAnchors(meLINEANCHOR_IF_LESS|meLINEANCHOR_RETAIN,frameCur->bufferCur,
+                meLineResetAnchors(meLINEANCHOR_IF_LESS|meLINEANCHOR_RETAIN,bp,
                                    lp2,lp1,doto,0) ;
                 /* adjust offset of remaining ones on the second line (lp2) */
                 if(doto && (lp2->flag & meLINE_ANCHOR))
-                    meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_RELATIVE,frameCur->bufferCur,
+                    meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_RELATIVE,bp,
                                        lp2,lp2,doto,0-((meInt)doto)) ;
             }
         }
@@ -531,7 +563,7 @@ lineInsertNewline(meInt flags)
         
         if(lp1->flag & meLINE_ANCHOR)
             /* move to the second line anchors with an offset greater than the split offset */
-            meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_RELATIVE,frameCur->bufferCur,
+            meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_RELATIVE,bp,
                                lp1,lp2,doto,0-((meInt)doto)) ;
     }
     if(lflag & meLINE_NOEOL)
@@ -547,46 +579,80 @@ lineInsertNewline(meInt flags)
         lp2->flag &= ~(meLINE_MARKUP|meLINE_PROTECT|meLINE_SET_MASK|meLINE_SCHEME_MASK) ;
     }
 #endif
-    lineno = frameCur->windowCur->dotLineNo ;
-    meFrameLoopBegin() ;
-    wp = loopFrame->windowList ;
-    while(wp != NULL)
+    lineno = wp->dotLineNo;
+    if(bp->windowCount > 1)
     {
-        if(wp->buffer == frameCur->bufferCur)
+        meFrameLoopBegin();
+        wp = loopFrame->windowList;
+        while(wp != NULL)
         {
-            if(wp->vertScroll > lineno)
-                wp->vertScroll++ ;
-            if(wp->dotLineNo == lineno)
+            if(wp->buffer == bp)
             {
-                if (wp->dotOffset >= doto)
+                if(wp->vertScroll > lineno)
+                    wp->vertScroll++;
+                if(wp->dotLineNo == lineno)
                 {
-                    wp->dotLine = lp2;
-                    wp->dotLineNo++ ;
-                    wp->dotOffset -= doto;
+                    if (wp->dotOffset >= doto)
+                    {
+                        wp->dotLine = lp2;
+                        wp->dotLineNo++;
+                        wp->dotOffset -= doto;
+                    }
+                    else
+                        wp->dotLine = lp1;
                 }
-                else
-                    wp->dotLine = lp1;
-            }
-            else if(wp->dotLineNo > lineno)
-                wp->dotLineNo++ ;
-            if(wp->markLineNo == lineno)
-            {
-                if (wp->markOffset > doto)
+                else if(wp->dotLineNo > lineno)
+                    wp->dotLineNo++;
+                if(wp->markLineNo == lineno)
                 {
-                    wp->markLine = lp2;
-                    wp->markLineNo++ ;
-                    wp->markOffset -= doto;
+                    if (wp->markOffset > doto)
+                    {
+                        wp->markLine = lp2;
+                        wp->markLineNo++;
+                        wp->markOffset -= doto;
+                    }
+                    else
+                        wp->markLine = lp1;
                 }
-                else
-                    wp->markLine = lp1;
+                else if(wp->markLineNo > lineno)
+                    wp->markLineNo++;
             }
-            else if(wp->markLineNo > lineno)
-                wp->markLineNo++ ;
+            wp = wp->next;
         }
-        wp = wp->next;
+        meFrameLoopEnd();
     }
-    meFrameLoopEnd() ;
-    frameCur->bufferCur->lineCount++ ;
+    else
+    {
+        if(wp->vertScroll > lineno)
+            wp->vertScroll++;
+        if(wp->dotLineNo == lineno)
+        {
+            if (wp->dotOffset >= doto)
+            {
+                wp->dotLine = lp2;
+                wp->dotLineNo++;
+                wp->dotOffset -= doto;
+            }
+            else
+                wp->dotLine = lp1;
+        }
+        else if(wp->dotLineNo > lineno)
+            wp->dotLineNo++;
+        if(wp->markLineNo == lineno)
+        {
+            if (wp->markOffset > doto)
+            {
+                wp->markLine = lp2;
+                wp->markLineNo++;
+                wp->markOffset -= doto;
+            }
+            else
+                wp->markLine = lp1;
+        }
+        else if(wp->markLineNo > lineno)
+            wp->markLineNo++;
+    }
+    bp->lineCount++;
     return meTRUE ;
 }
 
@@ -608,9 +674,10 @@ bufferIsTextInsertLegal(meUByte *str)
 int
 bufferInsertText(meUByte *str, meInt flags)
 {
-    meUByte *ss=str, cc, ccnl ;
-    meInt status, lineCount=0, lineNo, len, tlen=0 ;
-    meLine *line ;
+    meWindow *wp=frameCur->windowCur;
+    meUByte *ss=str, cc, ccnl;
+    meInt status, lineCount=0, lineNo, len, tlen=0;
+    meLine *line;
     
     if(str[0] == '\0')
         return 0 ;
@@ -633,7 +700,7 @@ bufferInsertText(meUByte *str, meInt flags)
                 tlen += len ;
             break ;
         }
-        if(frameCur->windowCur->dotOffset)
+        if(wp->dotOffset)
         {
             assert(lineCount == 0) ;
             if(len && (lineInsertString(len,str) <= 0))
@@ -647,24 +714,24 @@ bufferInsertText(meUByte *str, meInt flags)
         {
             if(lineCount == 0)
             {
-                line = meLineGetPrev(frameCur->windowCur->dotLine) ;
-                lineNo = frameCur->windowCur->dotLineNo ;
+                line = meLineGetPrev(wp->dotLine) ;
+                lineNo = wp->dotLineNo ;
             }
             *ss = '\0' ;
-            status = addLine(frameCur->windowCur->dotLine,str) ;
+            status = addLine(wp->dotLine,str) ;
             *ss = meCHAR_NL ;
             if(status <= 0)
                 break ;
             if(!tlen & !(flags & meBUFINSFLAG_UNDOCALL))
             {
                 /* Update the position of any anchors at the start of the line, these are left behind */
-                if(frameCur->windowCur->dotLine->flag & meLINE_ANCHOR)
-                    meLineResetAnchors(meLINEANCHOR_IF_LESS|meLINEANCHOR_RETAIN,frameCur->bufferCur,
-                                       frameCur->windowCur->dotLine,meLineGetNext(line),0,0) ;
+                if(wp->dotLine->flag & meLINE_ANCHOR)
+                    meLineResetAnchors(meLINEANCHOR_IF_LESS|meLINEANCHOR_RETAIN,wp->buffer,
+                                       wp->dotLine,meLineGetNext(line),0,0) ;
 #if MEOPT_EXTENDED
                 /* scheme & user set flags should remain on the top line as well - important for narrows etc */ 
-                meLineGetNext(line)->flag |= frameCur->windowCur->dotLine->flag & (meLINE_MARKUP|meLINE_PROTECT|meLINE_SET_MASK|meLINE_SCHEME_MASK) ;
-                frameCur->windowCur->dotLine->flag &= ~(meLINE_MARKUP|meLINE_PROTECT|meLINE_SET_MASK|meLINE_SCHEME_MASK) ;
+                meLineGetNext(line)->flag |= wp->dotLine->flag & (meLINE_MARKUP|meLINE_PROTECT|meLINE_SET_MASK|meLINE_SCHEME_MASK) ;
+                wp->dotLine->flag &= ~(meLINE_MARKUP|meLINE_PROTECT|meLINE_SET_MASK|meLINE_SCHEME_MASK) ;
 #endif
             }
             tlen += len+1 ;
@@ -674,32 +741,50 @@ bufferInsertText(meUByte *str, meInt flags)
     }
     if(lineCount > 0)
     {
-        meWindow *wp;
-        
-        frameCur->bufferCur->lineCount += lineCount ;
-        meFrameLoopBegin() ;
-        wp = loopFrame->windowList ;
-        while(wp != NULL)
+        meBuffer *bp=wp->buffer;
+        bp->lineCount += lineCount;
+        if(bp->windowCount > 1)
         {
-            if(wp->buffer == frameCur->bufferCur)
+            meFrameLoopBegin();
+            wp = loopFrame->windowList;
+            while(wp != NULL)
             {
-                if(wp->vertScroll > lineNo)
-                    wp->vertScroll += lineCount ;
-                if(wp->dotLineNo >= lineNo)
-                    wp->dotLineNo += lineCount ;
-                if(wp->markLineNo >= lineNo)
+                if(wp->buffer == bp)
                 {
-                    if((wp->markLineNo == lineNo) && (wp->markOffset == 0))
-                        /* the mark gets left behind */
-                        wp->markLine = meLineGetNext(line) ;
-                    else
-                        wp->markLineNo += lineCount ;
+                    if(wp->vertScroll > lineNo)
+                        wp->vertScroll += lineCount ;
+                    if(wp->dotLineNo >= lineNo)
+                        wp->dotLineNo += lineCount ;
+                    if(wp->markLineNo >= lineNo)
+                    {
+                        if((wp->markLineNo == lineNo) && (wp->markOffset == 0))
+                            /* the mark gets left behind */
+                            wp->markLine = meLineGetNext(line) ;
+                        else
+                            wp->markLineNo += lineCount ;
+                    }
+                    wp->updateFlags |= WFMOVEL|WFMAIN|WFSBOX ;
                 }
-                wp->updateFlags |= WFMOVEL|WFMAIN|WFSBOX ;
+                wp = wp->next;
             }
-            wp = wp->next;
+            meFrameLoopEnd();
         }
-        meFrameLoopEnd() ;
+        else
+        {
+            if(wp->vertScroll > lineNo)
+                wp->vertScroll += lineCount;
+            if(wp->dotLineNo >= lineNo)
+                wp->dotLineNo += lineCount;
+            if(wp->markLineNo >= lineNo)
+            {
+                if((wp->markLineNo == lineNo) && (wp->markOffset == 0))
+                    /* the mark gets left behind */
+                    wp->markLine = meLineGetNext(line);
+                else
+                    wp->markLineNo += lineCount;
+            }
+            wp->updateFlags |= WFMOVEL|WFMAIN|WFSBOX ;
+        }
     }
     return tlen ;
 }

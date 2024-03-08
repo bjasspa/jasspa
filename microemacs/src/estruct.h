@@ -943,15 +943,15 @@ typedef struct meKill {
 #define meIndentGetLookBackLines(ind)        meHilightGetLookBackLines(ind)
 #define meIndentSetLookBackLines(ind,v)      meHilightSetLookBackLines(ind,v)
 #define meIndentGetLookBackScheme(ind)       meHilightGetLookBackScheme(ind)
-#define meIndentGetStatementIndent(ind)      meIndentGetIndent(ind->token[0],frameCur->bufferCur->indentWidth)
-#define meIndentGetBraceIndent(ind)          meIndentGetIndent(ind->token[1],frameCur->bufferCur->indentWidth)
-#define meIndentGetBraceStatementIndent(ind) meIndentGetIndent(ind->token[2],frameCur->bufferCur->indentWidth)
-#define meIndentGetContinueIndent(ind)       meIndentGetIndent(ind->token[3],frameCur->bufferCur->indentWidth)
-#define meIndentGetContinueMax(ind)          meIndentGetIndent(ind->token[4],frameCur->bufferCur->indentWidth)
-#define meIndentGetSwitchIndent(ind)         meIndentGetIndent(ind->token[5],frameCur->bufferCur->indentWidth)
-#define meIndentGetCaseIndent(ind)           meIndentGetIndent(ind->token[6],frameCur->bufferCur->indentWidth)
-#define meIndentGetLabelIndent(ind)          meIndentGetIndent(ind->token[7],frameCur->bufferCur->indentWidth)
-#define meIndentGetCommentMargin(ind)        meIndentGetIndent(ind->token[8],frameCur->bufferCur->indentWidth)
+#define meIndentGetStatementIndent(ind,bp)   meIndentGetIndent(ind->token[0],(bp)->indentWidth)
+#define meIndentGetBraceIndent(ind,bp)       meIndentGetIndent(ind->token[1],(bp)->indentWidth)
+#define meIndentGetBraceStatementIndent(ind,bp) meIndentGetIndent(ind->token[2],(bp)->indentWidth)
+#define meIndentGetContinueIndent(ind,bp)    meIndentGetIndent(ind->token[3],(bp)->indentWidth)
+#define meIndentGetContinueMax(ind,bp)       meIndentGetIndent(ind->token[4],(bp)->indentWidth)
+#define meIndentGetSwitchIndent(ind,bp)      meIndentGetIndent(ind->token[5],(bp)->indentWidth)
+#define meIndentGetCaseIndent(ind,bp)        meIndentGetIndent(ind->token[6],(bp)->indentWidth)
+#define meIndentGetLabelIndent(ind,bp)       meIndentGetIndent(ind->token[7],(bp)->indentWidth)
+#define meIndentGetCommentMargin(ind,bp)     meIndentGetIndent(ind->token[8],(bp)->indentWidth)
 #define meIndentGetCommentContinue(ind)      ((ind)->rtoken)
 #define meIndentGetChangeFunc(ind)           ((ind)->scheme)
 #define meIndentSetChangeFunc(ind,v)         ((ind)->scheme = (meScheme) (v))
@@ -1105,7 +1105,6 @@ typedef struct meFrame
     meFrameLine       *store ;
     meWindow          *windowList ;             /* Head of list of windows         */
     meWindow          *windowCur ;              /* Current window                  */
-    meBuffer          *bufferCur ;              /* Current buffer                  */
     meLine            *mlLine ;                 /* message line.                   */
     meUByte           *mlLineStore ;            /* stored message line.            */
 #ifdef _WINDOW

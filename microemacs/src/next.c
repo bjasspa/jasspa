@@ -452,13 +452,15 @@ doRcsCommand(meUByte *fname, register meUByte *comStr)
 int
 rcsCiCoFile(int f, int n)
 {
-    register meUByte *str;
-    register int lineno, curcol, ss;
+    meWindow *cwp=frameCur->windowCur;
+    meBuffer *cbp=cwp->buffer;
+    meUByte *str;
+    int lineno, curcol, ss;
 
-    if(frameCur->bufferCur->fileName == NULL)
+    if(cbp->fileName == NULL)
         return mlwrite(MWABORT,(meUByte *)"No file name!");
-    ss = rcsFilePresent(frameCur->bufferCur->fileName);
-    if(meModeTest(frameCur->bufferCur->mode,MDVIEW))	/* if read-only then unlock */
+    ss = rcsFilePresent(cbp->fileName);
+    if(meModeTest(cbp->mode,MDVIEW))	/* if read-only then unlock */
     {
         if(n < 0)
             /* already read-only, no changes to undo, return */
@@ -467,16 +469,16 @@ rcsCiCoFile(int f, int n)
         if(ss <= 0)
         {
 #ifdef _DOS
-            frameCur->bufferCur->stats.stmode &= ~0x01;
+            cbp->stats.stmode &= ~0x01;
 #endif
 #ifdef _WIN32
-            frameCur->bufferCur->stats.stmode &= ~FILE_ATTRIBUTE_READONLY;/* Write permission for owner */
+            cbp->stats.stmode &= ~FILE_ATTRIBUTE_READONLY;/* Write permission for owner */
 #endif
 #ifdef _UNIX
-            frameCur->bufferCur->stats.stmode |= 00200;
+            cbp->stats.stmode |= 00200;
 #endif
-            meModeClear(frameCur->bufferCur->mode,MDVIEW);
-            frameCur->windowCur->updateFlags |= WFMODE;
+            meModeClear(cbp->mode,MDVIEW);
+            cwp->updateFlags |= WFMODE;
             return meTRUE;
         }
         if((str = rcsCoUStr) == NULL)
@@ -500,22 +502,22 @@ rcsCiCoFile(int f, int n)
         }
         if(str == NULL)
             return mlwrite(MWABORT,(meUByte *)"[rcs ci or cif command not set]");
-        if((n >= 0) && meModeTest(frameCur->bufferCur->mode,MDEDIT) &&
+        if((n >= 0) && meModeTest(cbp->mode,MDEDIT) &&
            ((ss=saveBuffer(meTRUE,meTRUE)) <= 0))
             return ss;
     }
-    lineno = frameCur->windowCur->dotLineNo;
-    curcol = frameCur->windowCur->dotOffset;
+    lineno = cwp->dotLineNo;
+    curcol = cwp->dotOffset;
     /* must execute the command and then reload, reload taken from swbuffer */
-    if((doRcsCommand(frameCur->bufferCur->fileName,str) <= 0) ||
-       (bclear(frameCur->bufferCur) <= 0) ||
-       ((frameCur->bufferCur->intFlag |= BIFFILE),(frameCur->bufferCur->dotLineNo = lineno+1),
-        (swbuffer(frameCur->windowCur,frameCur->bufferCur) <= 0)))
+    if((doRcsCommand(cbp->fileName,str) <= 0) ||
+       (bclear(cbp) <= 0) ||
+       ((cbp->intFlag |= BIFFILE),(cbp->dotLineNo = lineno+1),
+        (swbuffer(cwp,cbp) <= 0)))
         return meFALSE;
-    if(curcol > meLineGetLength(frameCur->windowCur->dotLine))
-        frameCur->windowCur->dotOffset = meLineGetLength(frameCur->windowCur->dotLine);
+    if(curcol > meLineGetLength(cwp->dotLine))
+        cwp->dotOffset = meLineGetLength(cwp->dotLine);
     else
-        frameCur->windowCur->dotOffset = curcol;
+        cwp->dotOffset = curcol;
 
     return meTRUE;
 }

@@ -857,27 +857,27 @@ dirDrawDir(meUByte *fname, int n)
 int
 directoryTree(int f, int n)
 {
-    DIRNODE *dnode, *dn ;
-    meUByte buf[meBUF_SIZE_MAX] ;
+    DIRNODE *dnode, *dn;
+    meUByte buf[meBUF_SIZE_MAX];
     
     if(n & LDO_GETPATH)
     {
         if(inputFileName((meUByte *)"List Directory ", buf, 1) <= 0)
-            return meABORT ;
+            return meABORT;
         if((dnode = addPath(buf,0)) == NULL)
             return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s not a directory]",buf);
     }
     else
     {
-        if(meStrcmp(frameCur->bufferCur->name,dirBufName))
-            return mlwrite(MWABORT,(meUByte *)"[buffer is not *directory*]") ;
+        if(meStrcmp(frameCur->windowCur->buffer->name,dirBufName))
+            return mlwrite(MWABORT,(meUByte *)"[buffer is not *directory*]");
         if((dnode = findDirLine(frameCur->windowCur->dotLineNo,buf)) == NULL)
-            return meABORT ;
+            return meABORT;
     }
     dn = dnode ;
 #if DIR_HAS_SLINK
     while((dn->lname != NULL) && (dn->child != NULL))
-        dn = dn->child ;
+        dn = dn->child;
 #endif
     
     /* If the users has asked for a toggle then work out

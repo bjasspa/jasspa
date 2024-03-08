@@ -1121,7 +1121,7 @@ meCryptBufferSetKey(meBuffer *bp, meUByte *key)
 int
 setCryptKey(int f, int n)	/* reset encryption key of current buffer */
 {
-    return meCryptBufferSetKey(frameCur->bufferCur,NULL);
+    return meCryptBufferSetKey(frameCur->windowCur->buffer,NULL);
 }
 
 void

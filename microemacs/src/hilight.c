@@ -2423,30 +2423,30 @@ indentLookBack(meLine *lp, meUByte lindent, meUShort offset)
 void
 hilightLookBack(meWindow *wp)
 {
-    meVideoLine  *vptr ;
-    meBuffer *bp ;
-    register meLine *lp, *blp ;
-    meUByte  hilno ;
-    meHilight *root, *bracket ;
-    int ii, jj ;
+    meVideoLine *vptr;
+    meBuffer *bp;
+    register meLine *lp, *blp;
+    meUByte  hilno;
+    meHilight *root, *bracket;
+    int ii, jj;
 
     bp = wp->buffer ;
     hilno = bp->hilight ;
     root = hilights[hilno] ;
     bracket = NULL ;
-    blp = wp->dotLine ;
-    ii = wp->dotLineNo - wp->vertScroll ;
+    blp = wp->dotLine;
+    ii = wp->dotLineNo - wp->vertScroll;
     while(--ii >= 0)
-        blp=meLineGetPrev(blp) ;
+        blp=meLineGetPrev(blp);
 
     if(meHilightGetFlags(root) & HFLOOKBSCH)
     {
-        meHilight **bhis ;
-        bhis = hilights ;
-        hilights = indents ;
-        lp = blp ;
+        meHilight **bhis;
+        bhis = hilights;
+        hilights = indents;
+        lp = blp;
         ii = meHilightGetLookBackLines(indents[meHilightGetLookBackScheme(root)]) ;
-        while((--ii >= 0) && ((lp = meLineGetPrev(lp)) != frameCur->bufferCur->baseLine))
+        while((--ii >= 0) && ((lp = meLineGetPrev(lp)) != bp->baseLine))
         {
             if((jj = indentLookBack(lp,meHilightGetLookBackScheme(root),0xffff)) >= 0)
             {
@@ -2603,18 +2603,18 @@ int
 indent(int f, int n)
 {
 #define noINDTYPES 13
-    static meUByte  ctypesChar[meHICMODE_SIZE+2]="sbecxwalmu" ;
-    static meUByte  typesChar[(noINDTYPES*2)+1]="bcefinostuvwxBCEFINOSTUVWX" ;
+    static meUByte ctypesChar[meHICMODE_SIZE+2]="sbecxwalmu";
+    static meUByte typesChar[(noINDTYPES*2)+1]="bcefinostuvwxBCEFINOSTUVWX";
     static meUShort typesFlag[noINDTYPES]= {
         INDBRACKETOPEN, INDCONTINUE, INDEXCLUSION, INDFIXED, INDIGNORE, INDNEXTONWARD,
-        INDCURONWARD, INDSINGLE, INDFILETYPE, INDBOTH, INDBOTH, INDFTCURONWARD, INDFTNEXTONWARD } ;
+        INDCURONWARD, INDSINGLE, INDFILETYPE, INDBOTH, INDBOTH, INDFTCURONWARD, INDFTNEXTONWARD };
     static meUShort typesType[noINDTYPES]= {
         0x00, 0x00, HLBRACKET, HLENDLINE|HLSTTLINE, HLENDLINE, 0x00, 0x00, 0x00, 0x00, 0x00,
-        HLBRANCH, HLBRANCH, HLBRANCH } ;
-    meHilight *root, *node ;
-    int itype ;
-    meUShort htype ;
-    meUByte indno, lindno, buf[meBUF_SIZE_MAX] ;
+        HLBRANCH, HLBRANCH, HLBRANCH };
+    meHilight *root, *node;
+    int itype;
+    meUShort htype;
+    meUByte indno, lindno, buf[meBUF_SIZE_MAX];
 
     if(n == 0)
     {
@@ -2658,7 +2658,9 @@ indent(int f, int n)
     }
     if(n == 2)
     {
-        if(((indno = frameCur->bufferCur->indent) != 0) &&
+        meWindow *cwp=frameCur->windowCur;
+        meBuffer *cbp=cwp->buffer;
+        if(((indno = cbp->indent) != 0) &&
            (meIndentGetFlags(indents[indno]) & HILOOKBSCH))
         {
             meHilight **bhis ;
@@ -2666,8 +2668,8 @@ indent(int f, int n)
             int ii ;
             bhis = hilights ;
             hilights = indents ;
-            lp = frameCur->windowCur->dotLine ;
-            htype = frameCur->windowCur->dotOffset ;
+            lp = cwp->dotLine ;
+            htype = cwp->dotOffset ;
             lindno = meHilightGetLookBackScheme(indents[indno]) ;
             ii = (int) meIndentGetLookBackLines(indents[lindno]) ;
             do {
@@ -2678,7 +2680,7 @@ indent(int f, int n)
                     break ;
                 }
                 htype = 0xffff ;
-            } while((--ii >= 0) && ((lp = meLineGetPrev(lp)) != frameCur->bufferCur->baseLine)) ;
+            } while((--ii >= 0) && ((lp = meLineGetPrev(lp)) != cbp->baseLine)) ;
             hilights = bhis ;
         }
         meStrcpy(resultStr,meItoa(indno)) ;

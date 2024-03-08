@@ -393,6 +393,8 @@
 #undef _TCAP                    /* Do not want Termcap                   */
 #endif
 
+#define _INSENSE_CASE  1                /* File names case insensitive   */
+
 #ifndef _NANOEMACS
 /*************************************************************************
  * MicroEmacs Configuration options - all feature version                *

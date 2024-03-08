@@ -962,7 +962,7 @@ inputFileName(meUByte *prompt, meUByte *fn, int corFlag)
     
     buf = (corFlag) ? tmp:fn ;
     
-    getFilePath(frameCur->bufferCur->fileName,buf) ;
+    getFilePath(frameCur->windowCur->buffer->fileName,buf) ;
     s = meGetString(prompt,(MLFILECASE|MLNORESET|MLMACNORT), 0, buf, meBUF_SIZE_MAX) ;
     if(s > 0)
     {
@@ -1698,7 +1698,7 @@ meBufferInsertFile(meBuffer *bp, meUByte *fname, meUInt flags,
     }
     meFrameLoopEnd();
 #if MEOPT_UNDO
-    if((bp == frameCur->bufferCur) && meModeTest(bp->mode,MDUNDO))
+    if((bp == frameCur->windowCur->buffer) && meModeTest(bp->mode,MDUNDO))
     {
         int ii = 0;
         frameCur->windowCur->dotOffset = 0;
@@ -1720,6 +1720,7 @@ meBufferInsertFile(meBuffer *bp, meUByte *fname, meUInt flags,
 int
 insertFile(int f, int n)
 {
+    meWindow *cwp;
     meUByte fname[meBUF_SIZE_MAX];
     meStat stats;
     meUInt uoffset, loffset=0;
@@ -1748,13 +1749,13 @@ insertFile(int f, int n)
 #if MEOPT_EXTENDED
     if((fileSizePrompt > 0) && ((n & 4) == 0) && ((uoffset=(stats.stsizeHigh << 12) | (stats.stsizeLow >> 20)) > fileSizePrompt))
     {
-        meUByte prompt[200] ;
+        meUByte prompt[200];
         memcpy(prompt,"File ",5);
         meStrncpy(prompt+5,getFileBaseName(fname),200-5-25);
         prompt[200-25] = '\0';
         sprintf((char *) (prompt+meStrlen(prompt))," is %dMb, continue",uoffset);
         if(mlyesno(prompt) <= 0)
-            return meABORT ;
+            return meABORT;
     }
 #endif
 #if MEOPT_DIRLIST
@@ -1763,15 +1764,16 @@ insertFile(int f, int n)
 #endif
     /* Check we can change the buffer */
     if((s=bufferSetEdit()) <= 0)
-        return s ;
+        return s;
+    cwp = frameCur->windowCur;
     /* set mark to previous line so it doesnt get moved down */
-    frameCur->windowCur->markLine = meLineGetPrev(frameCur->windowCur->dotLine) ;
-    frameCur->windowCur->markOffset = 0 ;
-    frameCur->windowCur->markLineNo = frameCur->windowCur->dotLineNo-1 ;
+    cwp->markLine = meLineGetPrev(cwp->dotLine) ;
+    cwp->markOffset = 0;
+    cwp->markLineNo = cwp->dotLineNo-1;
     
     /* store current line in buffer */
-    frameCur->bufferCur->dotLine = frameCur->windowCur->dotLine ;
-    frameCur->bufferCur->dotLineNo = frameCur->windowCur->dotLineNo ;   /* must have the line no. correct */
+    cwp->buffer->dotLine = cwp->dotLine;
+    cwp->buffer->dotLineNo = cwp->dotLineNo;   /* must have the line no. correct */
     
     if((n & 2) == 0)
         flags |= meRWFLAG_PRESRVFMOD ;
@@ -1780,23 +1782,23 @@ insertFile(int f, int n)
         meUByte arg[meSBUF_SIZE_MAX] ;
         
         if(meGetString((meUByte *)"UOffest",0,0,arg,meSBUF_SIZE_MAX) <= 0)
-            return meABORT ;
-        uoffset = meAtoi(arg) ;
+            return meABORT;
+        uoffset = meAtoi(arg);
         if(meGetString((meUByte *)"LOffest",0,0,arg,meSBUF_SIZE_MAX) <= 0)
-            return meABORT ;
-        loffset = meAtoi(arg) ;
+            return meABORT;
+        loffset = meAtoi(arg);
         if((meGetString((meUByte *)"Length",0,0,arg,meSBUF_SIZE_MAX) <= 0) ||
            ((length = meAtoi(arg)) == 0))
-            return meABORT ;
+            return meABORT;
     }
     
-    if(((s = meBufferInsertFile(frameCur->bufferCur,fname,flags,uoffset,loffset,length)) > 0) && (n & 2))
-        meStatCopy(&(frameCur->bufferCur->stats),&stats);
+    if(((s = meBufferInsertFile(cwp->buffer,fname,flags,uoffset,loffset,length)) > 0) && (n & 2))
+        meStatCopy(&(cwp->buffer->stats),&stats);
     
     /* move the mark down 1 line into the correct place */
-    frameCur->windowCur->markLine = meLineGetNext(frameCur->windowCur->markLine);
-    frameCur->windowCur->markLineNo++ ;
-    return s ;
+    cwp->markLine = meLineGetNext(cwp->markLine);
+    cwp->markLineNo++;
+    return s;
 }
 
 /*
@@ -1809,12 +1811,12 @@ insertFile(int f, int n)
 void
 makename(meUByte *bname, meUByte *fname)
 {
-    register meUByte *cp1 ;
-    register meUByte *cp2 ;
-    int             i ;
+    register meUByte *cp1;
+    register meUByte *cp2;
+    int i;
     
-    cp1 = getFileBaseName(fname) ;
-    cp2 = bname ;
+    cp1 = getFileBaseName(fname);
+    cp2 = bname;
     while((*cp2++=*cp1++) != '\0')
         ;
     cp2-- ;
@@ -2010,18 +2012,18 @@ findFileList(meUByte *fname, int bflag, meInt lineno, meUShort colno)
 int
 findSwapFileList(meUByte *fname, int bflag, meInt lineno, meUShort colno)
 {
-    meBuffer *bp ;
-    int     ret ;
+    meBuffer *bp;
+    int ret;
     
-    bufHistNo += 2 ;
+    bufHistNo += 2;
     if(!findFileList(fname,bflag,lineno,colno))
         return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Failed to find file %s]",fname);
     for(bp=bheadp ; bp->histNo!=bufHistNo ; bp=bp->next)
         ;
-    bufHistNo -= 2 ;
-    ret = swbuffer(frameCur->windowCur,bp) ;  /* make buffer BP current */
-    bufHistNo++ ;
-    return ret ;
+    bufHistNo -= 2;
+    ret = swbuffer(frameCur->windowCur,bp);  /* make buffer BP current */
+    bufHistNo++;
+    return ret;
 }
 
 /*
@@ -2091,13 +2093,13 @@ readFile(int f, int n)
     register int s;		/* status return */
     
     if(inputFileName((meUByte *)"Read file", fname,0) <= 0)
-        return meABORT ;
+        return meABORT;
     if(n & 0x20)
-	frameCur->bufferCur->intFlag |= BIFBLOW ;
-    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN|BFND_NOHOOK)) | BFND_MKNAM ;
-    if((s=zotbuf(frameCur->bufferCur,clexec)) > 0)
-        s = findSwapFileList(fname,n,0,0) ;
-    return s ;
+	frameCur->windowCur->buffer->intFlag |= BIFBLOW;
+    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN|BFND_NOHOOK)) | BFND_MKNAM;
+    if((s=zotbuf(frameCur->windowCur->buffer,clexec)) > 0)
+        s = findSwapFileList(fname,n,0,0);
+    return s;
 }
 
 int
@@ -2212,11 +2214,11 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
              * Check to see if the new filename conflicts with the filenames for any
              * other buffer and produce a warning if so.
              */
-            meBuffer *bp = bheadp;
+            meBuffer *bp=bheadp, *cbp=frameCur->windowCur->buffer;
             
             while(bp != NULL)
             {
-                if((bp != frameCur->bufferCur) &&
+                if((bp != cbp) &&
 #ifdef _UNIX
                    (!fnamecmp(bp->fileName,fn) ||
                     ((stats.stdev != (dev_t)(-1)) &&
@@ -2533,9 +2535,9 @@ writeOut(register meBuffer *bp, meUInt flags, meUByte *fn)
            (meUid != 0) &&
 #endif
            (!meStatTestWrite(bp->stats)))
-            meModeSet(frameCur->bufferCur->mode,MDVIEW) ;
+            meModeSet(frameCur->windowCur->buffer->mode,MDVIEW) ;
         else
-            meModeClear(frameCur->bufferCur->mode,MDVIEW) ;
+            meModeClear(frameCur->windowCur->buffer->mode,MDVIEW) ;
     }
     return meTRUE ;
 }
@@ -2625,7 +2627,7 @@ writeBuffer(int f, int n)
     if(inputFileName((meUByte *)"Write file",fname,1) <= 0)
         return meABORT ;
     
-    if((bp=frameCur->bufferCur)->fileName != NULL)
+    if((bp=frameCur->windowCur->buffer)->fileName != NULL)
         fn = bp->fileName ;
     else if(bp->name[0] != '*')
         fn = bp->name ;
@@ -2656,7 +2658,8 @@ writeBuffer(int f, int n)
 int
 saveBuffer(int f, int n)
 {
-    register int    s;
+    meBuffer *cbp=frameCur->windowCur->buffer;
+    register int s;
     
     /* Note that we check for existance here just incase sombody has
      * deleted it under our feet. There is nothing more annoying than the
@@ -2664,12 +2667,12 @@ saveBuffer(int f, int n)
     /* Further note: the file name can be NULL, e.g. theres no file name
      * so this must be tested before meTestExist, BUT the file name can be
      * NULL and still be saved, e.g. the buffer name is *stdin* - so be careful */
-    if((n & 0x01) && (frameCur->bufferCur->fileName != NULL) &&  /* Are we Checking ?? */
-       (meTestExist(frameCur->bufferCur->fileName) == 0) &&      /* Does file actually exist ? */
-       !meModeTest(frameCur->bufferCur->mode,MDEDIT))            /* Have we edited buffer ? */
+    if((n & 0x01) && (cbp->fileName != NULL) &&  /* Are we Checking ?? */
+       (meTestExist(cbp->fileName) == 0) &&      /* Does file actually exist ? */
+       !meModeTest(cbp->mode,MDEDIT))            /* Have we edited buffer ? */
         /* Return, no changes.  */
         return mlwrite(0,(meUByte *)"[No changes made]") ;
-    if((s=writeout(frameCur->bufferCur,n)) > 0)
+    if((s=writeout(cbp,n)) > 0)
         frameAddModeToWindows(WFMODE) ;  /* and update ALL mode lines */
     return (s);
 }
@@ -2697,9 +2700,9 @@ saveSomeBuffers(int f, int n)
                     return ctrlg(meFALSE,1) ;
                 else if(status == 'g')
                 {
-                    swbuffer(frameCur->windowCur,bp) ;
+                    swbuffer(frameCur->windowCur,bp);
                     /* return abort to halt any calling macro (e.g. compile) */
-                    return meABORT ;
+                    return meABORT;
                 }
                 else if(status == 'o')
                     break ;
@@ -2752,7 +2755,7 @@ appendBuffer(int f, int n)
         flags = meRWFLAG_OPENEND ;
     if(n & 0x02)
         flags |= meRWFLAG_IGNRNRRW ;
-    return ffWriteFile(&meiow,fname,flags,frameCur->bufferCur) ;
+    return ffWriteFile(&meiow,fname,flags,frameCur->windowCur->buffer) ;
 }
 
 /*
@@ -2767,8 +2770,9 @@ appendBuffer(int f, int n)
 int
 changeFileName(int f, int n)
 {
+    meBuffer *cbp;
     register int s;
-    meUByte fname[meBUF_SIZE_MAX], lname[meBUF_SIZE_MAX], *fn ;
+    meUByte fname[meBUF_SIZE_MAX], lname[meBUF_SIZE_MAX], *fn;
     
     if((s=inputFileName((meUByte *)"New file name",fname,1)) == meABORT)
         return s;
@@ -2778,24 +2782,25 @@ changeFileName(int f, int n)
                                                                                                |meIOTYPE_FTP|meIOTYPE_FTPE
 #endif
                                                                                                )) == 0)
-        return meABORT ;
-    fn = (lname[0] == '\0') ? fname:lname ;
-    meNullFree(frameCur->bufferCur->fileName) ;
+        return meABORT;
+    fn = (lname[0] == '\0') ? fname:lname;
+    cbp = frameCur->windowCur->buffer;
+    meNullFree(cbp->fileName);
     
-    if (s == meFALSE)
-        frameCur->bufferCur->fileName = NULL ;
+    if(s == meFALSE)
+        cbp->fileName = NULL;
     else
-        frameCur->bufferCur->fileName = meStrdup(fname) ;
+        cbp->fileName = meStrdup(fname);
     
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
     if(meTestWrite(fn))
-        meModeSet(frameCur->bufferCur->mode,MDVIEW) ;
+        meModeSet(cbp->mode,MDVIEW);
     else
-        meModeClear(frameCur->bufferCur->mode,MDVIEW) ;	/* no longer read only mode */
+        meModeClear(cbp->mode,MDVIEW);	/* no longer read only mode */
 #endif
-    frameAddModeToWindows(WFMODE) ;  /* and update ALL mode lines */
+    frameAddModeToWindows(WFMODE);      /* and update ALL mode lines */
     
-    return (meTRUE);
+    return meTRUE;
 }
 #endif
 

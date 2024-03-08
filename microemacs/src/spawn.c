@@ -115,15 +115,15 @@ meShell(int f, int n)
     meUByte path[meBUF_SIZE_MAX] ;		/* pathfrom where to execute */
     int  cd, ss ;
     
-    getFilePath(frameCur->bufferCur->fileName,path) ;
-    cd = (meStrcmp(path,curdir) && (meChdir(path) != -1)) ;
+    getFilePath(frameCur->windowCur->buffer->fileName,path);
+    cd = (meStrcmp(path,curdir) && (meChdir(path) != -1));
 
 #ifdef _WIN32
-    ss = WinLaunchProgram (NULL, LAUNCH_SHELL, NULL, NULL,
+    ss = WinLaunchProgram(NULL,LAUNCH_SHELL,NULL,NULL,
 #if MEOPT_IPIPES
                            NULL, 
 #endif
-                           NULL) ;
+                           NULL);
 #endif
 #ifdef _DOS
     TTclose();
@@ -220,7 +220,7 @@ doShellCommand(meUByte *cmdstr, int flags)
     meUByte *cmdline, *pp ; 
 #endif
 
-    getFilePath(frameCur->bufferCur->fileName,path) ;
+    getFilePath(frameCur->windowCur->buffer->fileName,path) ;
     cd = (meStrcmp(path,curdir) && (meChdir(path) != -1)) ;
 
 #ifdef _WIN32
@@ -542,16 +542,17 @@ ipipeKillBuf(meIPipe *ipipe, int type)
 int
 ipipeKill(int f, int n)
 {
-    meIPipe *ipipe ;
+    meBuffer *cbp=frameCur->windowCur->buffer;
+    meIPipe *ipipe;
 
-    if(!meModeTest(frameCur->bufferCur->mode,MDPIPE))
+    if(!meModeTest(cbp->mode,MDPIPE))
     {
-        TTbell() ;
-        return meFALSE ;
+        TTbell();
+        return meFALSE;
     }
-    ipipe = ipipes ;
-    while(ipipe->bp != frameCur->bufferCur)
-        ipipe = ipipe->next ;
+    ipipe = ipipes;
+    while(ipipe->bp != cbp)
+        ipipe = ipipe->next;
     if(f == meFALSE)
         /* Use -ve arg by default to kill the whole group/tree */
 #ifdef _WIN32
@@ -560,7 +561,7 @@ ipipeKill(int f, int n)
         n = (meSystemCfg & meSYSTEM_TERMSIG) ? -SIGTERM:-SIGKILL;
 #endif
     ipipeKillBuf(ipipe,n);
-    return meTRUE ;
+    return meTRUE;
 }
 
 void
@@ -758,9 +759,9 @@ ipipeRead(meIPipe *ipipe)
 {
     meBuffer *bp=ipipe->bp ;
     meLine   *lp_old ;
-    int     len, curOff, maxOff, curRow, ii ;
-    meUInt  noLines ;
-    meUByte  *p1, cc, buff[meBUF_SIZE_MAX+1] ;
+    int     len, curOff, maxOff, curRow, ii;
+    meUInt  noLines;
+    meUByte  *p1, cc, buff[meBUF_SIZE_MAX+1];
     meUByte   rbuff[meBUF_SIZE_MAX] ;
     int     curROff=0, curRRead=0 ;
 #if _UNIX
@@ -1255,22 +1256,23 @@ cant_handle_this:
 int
 ipipeWrite(int f, int n)
 {
-    int      ss ;
-    meUByte    buff[meBUF_SIZE_MAX];	/* string to add */
-    meIPipe *ipipe ;
+    meUByte buff[meBUF_SIZE_MAX];	/* string to add */
+    meBuffer *cbp=frameCur->windowCur->buffer;
+    meIPipe *ipipe;
+    int ss;
 
-    if(!meModeTest(frameCur->bufferCur->mode,MDPIPE))
-        return mlwrite(MWABORT,(meUByte *)"[Not an ipipe-buffer]") ;
+    if(!meModeTest(cbp->mode,MDPIPE))
+        return mlwrite(MWABORT,(meUByte *)"[Not an ipipe-buffer]");
     /* ask for string to insert */
     if((ss=meGetString((meUByte *)"String", 0, 0, buff, meBUF_SIZE_MAX)) <= 0)
-        return ss ;
+        return ss;
     
-    ipipe = ipipes ;
-    while(ipipe->bp != frameCur->bufferCur)
-        ipipe = ipipe->next ;
-    ipipeWriteString(ipipe,n,buff) ;
+    ipipe = ipipes;
+    while(ipipe->bp != cbp)
+        ipipe = ipipe->next;
+    ipipeWriteString(ipipe,n,buff);
 
-    return meTRUE ;
+    return meTRUE;
 }
 
 void
@@ -1940,7 +1942,7 @@ ipipeCommand(int f, int n)
     else
         ipipeFunc = -1;
     
-    getFilePath(frameCur->bufferCur->fileName,pbuf) ;
+    getFilePath(frameCur->windowCur->buffer->fileName,pbuf) ;
     return doIpipeCommand(cl,pbuf,bn,ipipeFunc,(n & LAUNCH_USER_FLAGS)) ;
 }
 
@@ -2207,7 +2209,7 @@ pipeCommand(int f, int n)
     else
         bn = BcommandN ;
 
-    getFilePath(frameCur->bufferCur->fileName,pbuf) ;
+    getFilePath(frameCur->windowCur->buffer->fileName,pbuf) ;
 
     return doPipeCommand(cl,pbuf,bn,-1,(n & LAUNCH_USER_FLAGS),regs) ;
 }
@@ -2244,7 +2246,7 @@ meFilter(int f, int n)
         return s;
 
     /* setup the proper file names */
-    bp = frameCur->bufferCur;
+    bp = frameCur->windowCur->buffer;
     tmpnam = bp->fileName;	/* save the original name */
     bp->fileName = NULL;	/* set it to NULL         */
 
@@ -2295,10 +2297,11 @@ meFilter(int f, int n)
     /* on failure, escape gracefully */
     if(s > 0)
     {
-        bp->fileName = filnam2 ;
+        bp->fileName = filnam2;
         if((bclear(bp) <= 0) ||
-           ((frameCur->bufferCur->intFlag |= BIFFILE),(swbuffer(frameCur->windowCur,frameCur->bufferCur) <= 0)))
-            s = meFALSE ;
+           ((frameCur->windowCur->buffer->intFlag |= BIFFILE),
+            (swbuffer(frameCur->windowCur,frameCur->windowCur->buffer) <= 0)))
+            s = meFALSE;
     }
     /* reset file name */
     bp->fileName = tmpnam;

@@ -816,12 +816,10 @@ extern  int     sortLines(int f, int n) ;
 extern	int	bufferInfo(int f, int n);
 extern	int	getcline(meWindow *wp);
 extern	int	getcol(meUByte *ss, int off, int tabWidth);
-#define getccol() getcol(frameCur->windowCur->dotLine->text,\
-                         frameCur->windowCur->dotOffset,\
-                         frameCur->windowCur->buffer->tabWidth)
-extern	int	setccol(int pos);
-extern	int	getcwcol(void);
-extern	int	setcwcol(int pos);
+#define getwcol(wp) getcol(wp->dotLine->text,wp->dotOffset,wp->buffer->tabWidth)
+extern	int	setwcol(meWindow *wp,int pos);
+extern	int	getcwcol(meWindow *wp);
+extern	int	setcwcol(meWindow *wp,int pos);
 extern	int	transChars(int f, int n);
 extern	int	transLines(int f, int n);
 extern	int	quoteKeyToChar(meUShort c) ;
@@ -1485,8 +1483,8 @@ extern int      putenv(const char *s);
 #define isPrint(c)       (charMaskTbl1[((meUByte) (c))] & CHRMSK_PRINTABLE)
 #define isSpace(c)       (charMaskTbl1[((meUByte) (c))] & CHRMSK_SPACE)
 
-#define inWord()         (isWord(meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset)))
-#define inPWord()        ((meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset)) > ' ')
+#define meWindowInWord(wp)  (isWord(meLineGetChar((wp)->dotLine,(wp)->dotOffset)))
+#define meWindowInPWord(wp) ((meLineGetChar((wp)->dotLine,(wp)->dotOffset)) > ' ')
 
 #if MEOPT_EXTENDED
 /* with extended option enable set-char-mask can be used to configure the char sets */

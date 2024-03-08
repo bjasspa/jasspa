@@ -687,48 +687,49 @@ userGetMacro(meUByte *buf, int len)
 int
 insMacro(int f, int n)
 {
-    meWindow          *wp ;
-    register meLine   *lp, *slp ;
-    meMacro         *mac ;
-    meUByte            buf[meBUF_SIZE_MAX] ;
-    meInt            nol, lineNo, len ;
-    int              ii ;
+    register meLine *lp, *slp;
+    meWindow *wp, *cwp;
+    meMacro *mac;
+    meUByte buf[meBUF_SIZE_MAX];
+    meInt nol, lineNo, len;
+    int ii;
     
-    meStrcpy(buf,"define-macro ") ;
+    meStrcpy(buf,"define-macro ");
     if((mac=userGetMacro(buf+13, meBUF_SIZE_MAX-13)) == NULL)
-        return meFALSE ;
+        return meFALSE;
     
     if((ii=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
-        return ii ;
-    frameCur->windowCur->dotOffset = 0 ;
-    slp = frameCur->windowCur->dotLine ;
-    lineNo = frameCur->windowCur->dotLineNo ;
-    nol = addLine(slp,buf) ;
-    len = meStrlen(buf) + 9 ;
+        return ii;
+    cwp = frameCur->windowCur;
+    cwp->dotOffset = 0;
+    slp = cwp->dotLine;
+    lineNo = cwp->dotLineNo;
+    nol = addLine(slp,buf);
+    len = meStrlen(buf) + 9;
     lp = meLineGetNext(mac->hlp);            /* First line.          */
     while (lp != mac->hlp)
     {
-        nol += addLine(slp,lp->text) ;
-        len += meLineGetLength(lp) + 1 ;
+        nol += addLine(slp,lp->text);
+        len += meLineGetLength(lp) + 1;
         lp = meLineGetNext(lp);
     }
     nol += addLine(slp,(meUByte *)"!emacro") ;
-    frameCur->bufferCur->lineCount += nol ;
+    cwp->buffer->lineCount += nol;
     meFrameLoopBegin() ;
-    for (wp=loopFrame->windowList; wp!=NULL; wp=wp->next)
+    for(wp=loopFrame->windowList; wp!=NULL; wp=wp->next)
     {
-        if (wp->buffer == frameCur->bufferCur)
+        if(wp->buffer == cwp->buffer)
         {
             if(wp->dotLineNo >= lineNo)
-                wp->dotLineNo += nol ;
+                wp->dotLineNo += nol;
             if(wp->markLineNo >= lineNo)
-                wp->markLineNo += nol ;
-            wp->updateFlags |= WFMAIN|WFMOVEL ;
+                wp->markLineNo += nol;
+            wp->updateFlags |= WFMAIN|WFMOVEL;
         }
     }
-    meFrameLoopEnd() ;
+    meFrameLoopEnd();
 #if MEOPT_UNDO
-    meUndoAddInsChars(len) ;
+    meUndoAddInsChars(len);
 #endif
     return meTRUE ;
 }

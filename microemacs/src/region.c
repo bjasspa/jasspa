@@ -46,46 +46,47 @@
 int
 getregion(register meRegion *rp)
 {
+    meWindow *cwp=frameCur->windowCur;
     meLine *lp, *elp;
     long  size;
     
-    if (frameCur->windowCur->markLine == NULL)
+    if (cwp->markLine == NULL)
         return noMarkSet() ;
-    if(frameCur->windowCur->dotLine == frameCur->windowCur->markLine)
+    if(cwp->dotLine == cwp->markLine)
     {
-        rp->line = frameCur->windowCur->dotLine;
-        if (frameCur->windowCur->dotOffset < frameCur->windowCur->markOffset) 
+        rp->line = cwp->dotLine;
+        if (cwp->dotOffset < cwp->markOffset) 
         {
-            rp->offset = frameCur->windowCur->dotOffset;
-            rp->size = (long)(frameCur->windowCur->markOffset-frameCur->windowCur->dotOffset);
+            rp->offset = cwp->dotOffset;
+            rp->size = (long)(cwp->markOffset-cwp->dotOffset);
         }
         else
         {
-            rp->offset = frameCur->windowCur->markOffset;
-            rp->size = (long)(frameCur->windowCur->dotOffset-frameCur->windowCur->markOffset);
+            rp->offset = cwp->markOffset;
+            rp->size = (long)(cwp->dotOffset-cwp->markOffset);
         }
-        rp->lineNo = frameCur->windowCur->dotLineNo;
+        rp->lineNo = cwp->dotLineNo;
         return meTRUE ;
     }
-    if(frameCur->windowCur->dotLineNo < frameCur->windowCur->markLineNo)
+    if(cwp->dotLineNo < cwp->markLineNo)
     {
-        elp = frameCur->windowCur->markLine ;
-        lp = frameCur->windowCur->dotLine ;
-        rp->lineNo = frameCur->windowCur->dotLineNo ;
-        rp->offset = frameCur->windowCur->dotOffset ;
-        size = frameCur->windowCur->dotOffset ;
-        size = frameCur->windowCur->markOffset + meLineGetLength(lp) - size -
-                  frameCur->windowCur->dotLineNo + frameCur->windowCur->markLineNo ;
+        elp = cwp->markLine ;
+        lp = cwp->dotLine ;
+        rp->lineNo = cwp->dotLineNo ;
+        rp->offset = cwp->dotOffset ;
+        size = cwp->dotOffset ;
+        size = cwp->markOffset + meLineGetLength(lp) - size -
+                  cwp->dotLineNo + cwp->markLineNo ;
     }
     else
     {
-        elp = frameCur->windowCur->dotLine ;
-        lp = frameCur->windowCur->markLine ;
-        rp->lineNo = frameCur->windowCur->markLineNo ;
-        rp->offset = frameCur->windowCur->markOffset ;
-        size = frameCur->windowCur->markOffset ;
-        size = frameCur->windowCur->dotOffset + meLineGetLength(lp) - size +
-                  frameCur->windowCur->dotLineNo - frameCur->windowCur->markLineNo ;
+        elp = cwp->dotLine ;
+        lp = cwp->markLine ;
+        rp->lineNo = cwp->markLineNo ;
+        rp->offset = cwp->markOffset ;
+        size = cwp->markOffset ;
+        size = cwp->dotOffset + meLineGetLength(lp) - size +
+                  cwp->dotLineNo - cwp->markLineNo ;
     }
     rp->line = lp ;
     while((lp=meLineGetNext(lp)) != elp)
@@ -127,15 +128,16 @@ killRegion(int f, int n)
 int	
 copyRegion(int f, int n)
 {
-    meRegion region ;
+    meRegion region;
     meLine *line;
-    meUByte  *ss, *dd ;
-    meInt left, ii, ret ;
+    meUByte  *ss, *dd;
+    meInt left, ii, ret;
 #if MEOPT_NARROW
-    meUShort eoffset ;
-    meLine *markLine, *dotLine, *elp ;
-    meInt markLineNo, dotLineNo, expandNarrows=meFALSE ;
-    meUShort markOffset, dotOffset ;
+    meWindow *cwp;
+    meUShort eoffset;
+    meLine *markLine, *dotLine, *elp;
+    meInt markLineNo, dotLineNo, expandNarrows=meFALSE;
+    meUShort markOffset, dotOffset;
 #endif
     
     if(n < 0)
@@ -146,99 +148,100 @@ copyRegion(int f, int n)
         return meTRUE;
     }
     if(getregion(&region) <= 0)
-        return meFALSE ;
-    left = region.size ;
-    line = region.line ;
+        return meFALSE;
+    left = region.size;
+    line = region.line;
 #if MEOPT_NARROW
-    if((n & 0x01) && (frameCur->bufferCur->narrow != NULL) &&
-       (frameCur->windowCur->dotLine != frameCur->windowCur->markLine))
+    cwp = frameCur->windowCur;
+    if((n & 0x01) && (cwp->buffer->narrow != NULL) &&
+       (cwp->dotLine != cwp->markLine))
     {
         /* expand narrows that are within the region */
-        expandNarrows = meTRUE ;
-        dotLine = frameCur->windowCur->dotLine ;
-        dotLineNo = frameCur->windowCur->dotLineNo ;
-        dotOffset = frameCur->windowCur->dotOffset ;
-        markLine = frameCur->windowCur->markLine ;
-        markLineNo = frameCur->windowCur->markLineNo ;
-        markOffset = frameCur->windowCur->markOffset ;
+        expandNarrows = meTRUE;
+        dotLine = cwp->dotLine;
+        dotLineNo = cwp->dotLineNo;
+        dotOffset = cwp->dotOffset;
+        markLine = cwp->markLine;
+        markLineNo = cwp->markLineNo;
+        markOffset = cwp->markOffset;
         if(line == dotLine)
         {
-            elp = markLine ;
-            eoffset = markOffset ;
+            elp = markLine;
+            eoffset = markOffset;
         }
         else
         {
-            elp = dotLine ;
-            eoffset = dotOffset ;
+            elp = dotLine;
+            eoffset = dotOffset;
         }
-        left += meBufferRegionExpandNarrow(frameCur->bufferCur,&line,region.offset,elp,eoffset,0) ;
-        if(((frameCur->windowCur->dotLine != dotLine) && dotOffset) ||
-           ((frameCur->windowCur->markLine != markLine) && markOffset))
+        left += meBufferRegionExpandNarrow(cwp->buffer,&line,region.offset,elp,eoffset,0) ;
+        if(((cwp->dotLine != dotLine) && dotOffset) ||
+           ((cwp->markLine != markLine) && markOffset))
         {
-            ret = mlwrite(MWABORT,(meUByte *)"[Bad region definition]") ;
-            goto copy_region_exit ;
+            ret = mlwrite(MWABORT,(meUByte *)"[Bad region definition]");
+            goto copy_region_exit;
         }
     }
 #endif
     killInit(lastflag == meCFKILL);
     if(left == 0)
     {
-        thisflag = meCFKILL ;
-        ret =  meTRUE ;
-        goto copy_region_exit ;
+        thisflag = meCFKILL;
+        ret =  meTRUE;
+        goto copy_region_exit;
     }
     
     if((dd = killAddNode(left)) == NULL)
     {
-        ret = meFALSE ;
-        goto copy_region_exit ;
+        ret = meFALSE;
+        goto copy_region_exit;
     }
     if((ii = region.offset) == meLineGetLength(line))
-        goto add_newline ;                 /* Current offset.      */
-    ss = line->text+ii ;
-    ii = meLineGetLength(line) - ii ;
-    goto copy_middle ;
+        goto add_newline;                 /* Current offset.      */
+    ss = line->text+ii;
+    ii = meLineGetLength(line) - ii;
+    goto copy_middle;
     while(left)
     {
-        ss = line->text ;
-        ii = meLineGetLength(line) ;
+        ss = line->text;
+        ii = meLineGetLength(line);
 copy_middle:
         /* Middle of line.      */
         if(ii > left)
         {
-            ii = left ;
-            left = 0 ;
+            ii = left;
+            left = 0;
         }
         else
-            left -= ii ;
+            left -= ii;
         while(ii--)
-            *dd++ = *ss++ ;
+            *dd++ = *ss++;
 add_newline:
         if(left != 0)
         {
-            *dd++ = meCHAR_NL ;
+            *dd++ = meCHAR_NL;
             line = meLineGetNext(line);
-            left-- ;
+            left--;
         }
     }
-    thisflag = meCFKILL ;
-    ret = meTRUE ;
+    thisflag = meCFKILL;
+    ret = meTRUE;
 
 copy_region_exit:
 
 #if MEOPT_NARROW
     if(expandNarrows)
     {
-        meBufferCollapseNarrowAll(frameCur->bufferCur) ;
-        frameCur->windowCur->dotLine = dotLine ;
-        frameCur->windowCur->dotLineNo = dotLineNo ;
-        frameCur->windowCur->dotOffset = dotOffset ;
-        frameCur->windowCur->markLine = markLine ;
-        frameCur->windowCur->markLineNo = markLineNo ;
-        frameCur->windowCur->markOffset = markOffset ;
+        meBufferCollapseNarrowAll(cwp->buffer);
+        cwp->dotLine = dotLine;
+        cwp->dotLineNo = dotLineNo;
+        cwp->dotOffset = dotOffset;
+        cwp->markLine = markLine;
+        cwp->markLineNo = markLineNo;
+        cwp->markOffset = markOffset;
     }
 #endif
-    return ret ;
+    return ret;
 }
 
 /*
@@ -252,30 +255,32 @@ copy_region_exit:
 int
 lowerRegion(int f, int n)
 {
-    meLine *line ;
-    int   loffs ;
-    meInt lline ;
+    meWindow *cwp;
+    meLine *line;
+    int loffs;
+    meInt lline;
     register meUByte c;
-    register int   s;
+    register int s;
     meRegion  region;
     
     if((s=getregion(&region)) <= 0)
         return (s);
     if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
-        return s ;
-    line = frameCur->windowCur->dotLine ;
-    loffs = frameCur->windowCur->dotOffset ;
-    lline = frameCur->windowCur->dotLineNo ;
-    frameCur->windowCur->dotLine = region.line ;
-    frameCur->windowCur->dotOffset = region.offset ;
-    frameCur->windowCur->dotLineNo = region.lineNo ;
+        return s;
+    cwp = frameCur->windowCur;
+    line = cwp->dotLine;
+    loffs = cwp->dotOffset;
+    lline = cwp->dotLineNo;
+    cwp->dotLine = region.line;
+    cwp->dotOffset = region.offset;
+    cwp->dotLineNo = region.lineNo;
     while (region.size--)
     {
-        if((c = meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset)) == '\0')
+        if((c = meLineGetChar(cwp->dotLine, cwp->dotOffset)) == '\0')
         {
-            frameCur->windowCur->dotLine = meLineGetNext(frameCur->windowCur->dotLine);
-            frameCur->windowCur->dotOffset = 0;
-            frameCur->windowCur->dotLineNo++ ;
+            cwp->dotLine = meLineGetNext(cwp->dotLine);
+            cwp->dotOffset = 0;
+            cwp->dotLineNo++ ;
         }
         else
         {
@@ -286,14 +291,14 @@ lowerRegion(int f, int n)
                 meUndoAddRepChar() ;
 #endif
                 c = toggleCase(c) ;
-                meLineSetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset, c);
+                meLineSetChar(cwp->dotLine, cwp->dotOffset, c);
             }
-            (frameCur->windowCur->dotOffset)++ ;
+            (cwp->dotOffset)++ ;
         }
     }
-    frameCur->windowCur->dotLine = line ;
-    frameCur->windowCur->dotOffset = loffs ;
-    frameCur->windowCur->dotLineNo = lline ;
+    cwp->dotLine = line ;
+    cwp->dotOffset = loffs ;
+    cwp->dotLineNo = lline ;
     return meTRUE ;
 }
 
@@ -308,30 +313,32 @@ lowerRegion(int f, int n)
 int
 upperRegion(int f, int n)
 {
-    meLine *line ;
-    int   loffs ;
-    long  lline ;
-    register char  c;
-    register int   s;
-    meRegion         region;
+    meWindow *cwp;
+    meLine *line;
+    int loffs;
+    long lline;
+    register char c;
+    register int s;
+    meRegion region;
     
     if((s=getregion(&region)) <= 0)
         return (s);
     if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
-        return s ;
-    line = frameCur->windowCur->dotLine ;
-    loffs = frameCur->windowCur->dotOffset ;
-    lline = frameCur->windowCur->dotLineNo ;
-    frameCur->windowCur->dotLine = region.line ;
-    frameCur->windowCur->dotOffset = region.offset ;
-    frameCur->windowCur->dotLineNo = region.lineNo ;
+        return s;
+    cwp = frameCur->windowCur;
+    line = cwp->dotLine ;
+    loffs = cwp->dotOffset ;
+    lline = cwp->dotLineNo ;
+    cwp->dotLine = region.line ;
+    cwp->dotOffset = region.offset ;
+    cwp->dotLineNo = region.lineNo ;
     while (region.size--)
     {
-        if((c = meLineGetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset)) == '\0')
+        if((c = meLineGetChar(cwp->dotLine, cwp->dotOffset)) == '\0')
         {
-            frameCur->windowCur->dotLine = meLineGetNext(frameCur->windowCur->dotLine);
-            frameCur->windowCur->dotOffset = 0;
-            frameCur->windowCur->dotLineNo++ ;
+            cwp->dotLine = meLineGetNext(cwp->dotLine);
+            cwp->dotOffset = 0;
+            cwp->dotLineNo++ ;
         }
         else
         {
@@ -342,14 +349,14 @@ upperRegion(int f, int n)
                 meUndoAddRepChar() ;
 #endif
                 c = toggleCase(c) ;
-                meLineSetChar(frameCur->windowCur->dotLine, frameCur->windowCur->dotOffset, c);
+                meLineSetChar(cwp->dotLine, cwp->dotOffset, c);
             }
-            (frameCur->windowCur->dotOffset)++ ;
+            (cwp->dotOffset)++ ;
         }
     }
-    frameCur->windowCur->dotLine = line ;
-    frameCur->windowCur->dotOffset = loffs ;
-    frameCur->windowCur->dotLineNo = lline ;
+    cwp->dotLine = line ;
+    cwp->dotOffset = loffs ;
+    cwp->dotLineNo = lline ;
     return meTRUE ;
 }
 
@@ -357,21 +364,22 @@ upperRegion(int f, int n)
 int
 killRectangle(int f, int n)
 {
-    meUByte *kstr ;
-    meInt slno, elno, size ;
-    int soff, eoff, coff, llen, dotPos ;
+    meWindow *cwp=frameCur->windowCur;
+    meUByte *kstr;
+    meInt slno, elno, size;
+    int soff, eoff, coff, llen, dotPos;
     
-    if (frameCur->windowCur->markLine == NULL)
-        return noMarkSet() ;
-    if(frameCur->windowCur->dotLine == frameCur->windowCur->markLine)
-        return killRegion(f,n) ;
+    if(cwp->markLine == NULL)
+        return noMarkSet();
+    if(cwp->dotLine == cwp->markLine)
+        return killRegion(f,n);
     if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
-        return meFALSE ;
+        return meFALSE;
     
-    eoff = getcwcol() ;
+    eoff = getcwcol(cwp);
     /* remember we have swapped */
-    windowSwapDotAndMark(0,1) ;
-    soff = getcwcol() ;
+    windowSwapDotAndMark(0,1);
+    soff = getcwcol(cwp);
     if(soff > eoff)
     {
         llen = eoff ;
@@ -379,10 +387,10 @@ killRectangle(int f, int n)
         soff = llen ;
     }
     llen = eoff - soff ;
-    if((dotPos=frameCur->windowCur->dotLineNo > frameCur->windowCur->markLineNo))
+    if((dotPos=cwp->dotLineNo > cwp->markLineNo))
         windowSwapDotAndMark(0,1) ;
-    slno = frameCur->windowCur->dotLineNo ;
-    elno = frameCur->windowCur->markLineNo ;
+    slno = cwp->dotLineNo ;
+    elno = cwp->markLineNo ;
     /* calculate the maximum length */
     size = (elno - slno + 1) * (llen + 1) ;
     
@@ -396,10 +404,10 @@ killRectangle(int f, int n)
         meUByte *off, cc ;
         int lspc=0, ii, jj, kk, ll ;
         
-        off = windCurLineOffsetEval(frameCur->windowCur);
+        off = windCurLineOffsetEval(cwp);
         coff = 0;
         ii = 0;
-        kk = frameCur->windowCur->dotLine->length;
+        kk = cwp->dotLine->length;
         while(ii < kk)
         {
             if(coff == soff)
@@ -408,7 +416,7 @@ killRectangle(int f, int n)
             {
                 lspc = soff - coff ;
                 /* as we can convert tabs to spaces, adjust the offset */
-                if(meLineGetChar(frameCur->windowCur->dotLine,ii) == meCHAR_TAB)
+                if(meLineGetChar(cwp->dotLine,ii) == meCHAR_TAB)
                     off[ii] -= lspc ;
                 coff = soff ;
                 break ;
@@ -431,7 +439,7 @@ killRectangle(int f, int n)
                     break ;
                 if((ll = off[jj]) != 0)
                 {
-                    cc = meLineGetChar(frameCur->windowCur->dotLine,jj) ;
+                    cc = meLineGetChar(cwp->dotLine,jj) ;
                     if((coff+ll) > eoff)
                     {
                         /* as we can convert tabs to spaces, delete and convert */
@@ -465,7 +473,7 @@ killRectangle(int f, int n)
             
         }
         *kstr++ = '\n' ;
-        frameCur->windowCur->dotOffset = ii ;
+        cwp->dotOffset = ii ;
         if((jj -= ii) > 0)
         {
 #if MEOPT_UNDO
@@ -487,12 +495,12 @@ killRectangle(int f, int n)
                 meUndoAddInsChars(lspc) ;
 #endif
         }
-        if(frameCur->windowCur->dotLineNo == elno)
+        if(cwp->dotLineNo == elno)
             break ;
         /* move on to the next line */
-        frameCur->windowCur->dotLineNo++ ;
-        frameCur->windowCur->dotLine  = meLineGetNext(frameCur->windowCur->dotLine);
-        frameCur->windowCur->dotOffset  = 0;
+        cwp->dotLineNo++ ;
+        cwp->dotLine  = meLineGetNext(cwp->dotLine);
+        cwp->dotOffset  = 0;
     }
     *kstr = '\0' ;
     if(dotPos)
@@ -503,25 +511,26 @@ killRectangle(int f, int n)
 static int
 yankRectangleKill(struct meKill *pklist, int soff, int notLast)
 {
+    meWindow *cwp=frameCur->windowCur;
     meUByte *off, *ss, *tt, *dd=NULL, cc ;
     int ii, jj, kk, lsspc, lespc, ldel, linsc, coff ;
     meKillNode *killp ;
     
-    killp = pklist->kill ;
-    while (killp != NULL)
+    killp = pklist->kill;
+    while(killp != NULL)
     {
-        ss = killp->data ;
+        ss = killp->data;
         while(*ss != '\0')
         {
             tt = ss ;
             while(((cc = *ss) != '\0') && (cc != meCHAR_NL))
                 ss++ ;
             ii = (size_t) ss - (size_t) tt ;
-            off = windCurLineOffsetEval(frameCur->windowCur);
+            off = windCurLineOffsetEval(cwp);
             ldel = lsspc = lespc = 0 ;
             coff = 0 ;
             jj = 0 ;
-            kk = frameCur->windowCur->dotLine->length;
+            kk = cwp->dotLine->length;
             while(jj < kk)
             {
                 if(coff == soff)
@@ -529,7 +538,7 @@ yankRectangleKill(struct meKill *pklist, int soff, int notLast)
                 if((coff+off[jj]) > soff)
                 {
                     /* if its a tab we can remove the tab and replace with spaces */
-                    if(meLineGetChar(frameCur->windowCur->dotLine,jj) == meCHAR_TAB)
+                    if(meLineGetChar(cwp->dotLine,jj) == meCHAR_TAB)
                     {
                         ldel = 1 ;
                         lespc = off[jj] - soff + coff ;
@@ -540,7 +549,7 @@ yankRectangleKill(struct meKill *pklist, int soff, int notLast)
             }
             lsspc = soff - coff ;
             linsc = ii + lsspc + lespc - ldel ;
-            frameCur->windowCur->dotOffset = jj ;
+            cwp->dotOffset = jj ;
             /* Make space for the characters */
             if((dd = lineMakeSpace(linsc)) == NULL)
                 return meABORT ;
@@ -549,7 +558,7 @@ yankRectangleKill(struct meKill *pklist, int soff, int notLast)
             if(ldel > 0)
             {
                 *dd = meCHAR_TAB ;
-                frameCur->windowCur->dotOffset = jj ;
+                cwp->dotOffset = jj ;
                 meUndoAddDelChars(ldel) ;
             }
 #endif
@@ -566,7 +575,7 @@ yankRectangleKill(struct meKill *pklist, int soff, int notLast)
 #if MEOPT_UNDO
             if(ldel > 0)
             {
-                frameCur->windowCur->dotOffset += linsc+ldel ;
+                cwp->dotOffset += linsc+ldel ;
                 meUndoAddReplaceEnd(linsc+ldel) ;
             }
             else
@@ -574,17 +583,17 @@ yankRectangleKill(struct meKill *pklist, int soff, int notLast)
 #endif
             if(*ss == meCHAR_NL)
                 ss++ ;
-            frameCur->windowCur->dotLineNo++ ;
-            frameCur->windowCur->dotLine  = meLineGetNext(frameCur->windowCur->dotLine);
-            frameCur->windowCur->dotOffset  = 0;
+            cwp->dotLineNo++ ;
+            cwp->dotLine  = meLineGetNext(cwp->dotLine);
+            cwp->dotOffset  = 0;
         }
         killp = killp->next;
     }
     if((dd != NULL) && !notLast)
     {
-        frameCur->windowCur->dotLineNo--;
-        frameCur->windowCur->dotLine = meLineGetPrev(frameCur->windowCur->dotLine);
-        frameCur->windowCur->dotOffset = (meUShort) ((size_t) dd - (size_t) meLineGetText(frameCur->windowCur->dotLine));
+        cwp->dotLineNo--;
+        cwp->dotLine = meLineGetPrev(cwp->dotLine);
+        cwp->dotOffset = (meUShort) ((size_t) dd - (size_t) meLineGetText(cwp->dotLine));
     }
     return meTRUE ;
 }
@@ -592,19 +601,19 @@ yankRectangleKill(struct meKill *pklist, int soff, int notLast)
 int
 yankRectangle(int f, int n)
 {
-    int col ;
+    int col;
 #ifdef _CLIPBRD
-    TTgetClipboard() ;
+    TTgetClipboard();
 #endif
     /* make sure there is something to yank */
     if(klhead == NULL)
         return mlwrite(MWABORT,(meUByte *)"[nothing to yank]");
     /* Check we can change the buffer */
     if(bufferSetEdit() <= 0)
-        return meABORT ;
+        return meABORT;
     
     /* get the current column */
-    col = getcwcol() ;
+    col = getcwcol(frameCur->windowCur);
     
     /* place the mark on the current line */
     windowSetMark(meFALSE, meFALSE);
@@ -612,8 +621,8 @@ yankRectangle(int f, int n)
     /* for each time.... */
     while(--n >= 0)
         if(yankRectangleKill(klhead,col,n) <= 0)
-            return meABORT ;
-    return meTRUE ;
+            return meABORT;
+    return meTRUE;
 }
 #endif
 

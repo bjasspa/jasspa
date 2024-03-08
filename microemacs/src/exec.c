@@ -1572,9 +1572,10 @@ execFunc(register int index, int f, int n)
                 }
                 else
                 {
+                    meWindow *cwp=frameCur->windowCur;
                     if(isComSelStart(index))
                     {
-                        selhilight.bp = frameCur->bufferCur;                  /* Select the current buffer */
+                        selhilight.bp = cwp->buffer;                  /* Select the current buffer */
                         selhilight.flags = SELHIL_ACTIVE|SELHIL_CHANGED ;
                     }
                     if(selhilight.flags & SELHIL_FIXED)
@@ -1585,20 +1586,20 @@ execFunc(register int index, int f, int n)
                     else if(selhilight.flags & SELHIL_ACTIVE)
                     {
                         if(isComSelSetMark(index) &&
-                           ((selhilight.markOffset != frameCur->windowCur->markOffset) ||
-                            (selhilight.markLineNo != frameCur->windowCur->markLineNo)))
+                           ((selhilight.markOffset != cwp->markOffset) ||
+                            (selhilight.markLineNo != cwp->markLineNo)))
                         {
                             selhilight.flags |= SELHIL_CHANGED ;
-                            selhilight.markOffset = frameCur->windowCur->markOffset;
-                            selhilight.markLineNo = frameCur->windowCur->markLineNo;
+                            selhilight.markOffset = cwp->markOffset;
+                            selhilight.markLineNo = cwp->markLineNo;
                         }
                         if(isComSelSetDot(index) &&
-                           ((selhilight.dotOffset != frameCur->windowCur->dotOffset) ||
-                            (selhilight.dotLineNo != frameCur->windowCur->dotLineNo)))
+                           ((selhilight.dotOffset != cwp->dotOffset) ||
+                            (selhilight.dotLineNo != cwp->dotLineNo)))
                         {
                             selhilight.flags |= SELHIL_CHANGED ;
-                            selhilight.dotOffset = frameCur->windowCur->dotOffset;
-                            selhilight.dotLineNo = frameCur->windowCur->dotLineNo;
+                            selhilight.dotOffset = cwp->dotOffset;
+                            selhilight.dotLineNo = cwp->dotLineNo;
                         }
                         if(isComSelSetFix(index))
                         {
@@ -1613,7 +1614,7 @@ execFunc(register int index, int f, int n)
                             if(selhilight.bp->windowCount > 1)
                                 meBufferAddModeToWindows(selhilight.bp, WFSELHIL);
                             else
-                                frameCur->windowCur->updateFlags |= WFSELHIL;
+                                cwp->updateFlags |= WFSELHIL;
                         }
                     }
                 }
@@ -1694,7 +1695,7 @@ execFuncHidden(int keyCode, int index, meUInt arg)
         n = 1;
     }
 #if MEOPT_EXTENDED
-    if(keyCode && ((ii=frameCur->bufferCur->inputFunc) >= 0))
+    if(keyCode && ((ii=frameCur->windowCur->buffer->inputFunc) >= 0))
     {
         meUByte *ss, ff;
         /* set a force value for the execution as the macro is allowed to
@@ -1724,44 +1725,44 @@ execFuncHidden(int keyCode, int index, meUInt arg)
 int
 execBufferFunc(meBuffer *bp, int index, int flags, int n)
 {
-    meSelection sh ;
+    meWindow *cwp=frameCur->windowCur;
+    meBuffer *cbp=cwp->buffer;
+    meSelection sh;
     meUByte tf, lf, cs;
-    int cg, tc, ti, ret ;
+    int cg, tc, ti, ret;
     
-    cs = cmdstatus ;
-    tc = thisCommand ;
-    ti = thisIndex ;
-    tf = thisflag ;
-    lf = lastflag ;
-    thisIndex = index ;
+    cs = cmdstatus;
+    tc = thisCommand;
+    ti = thisIndex;
+    tf = thisflag;
+    lf = lastflag;
+    thisIndex = index;
     if(flags & meEBF_USE_B_DOT)
     {
-        cg = curgoal ;    
-        memcpy(&sh,&selhilight,sizeof(meSelection)) ;
-        if(bp == frameCur->bufferCur)
+        cg = curgoal;    
+        memcpy(&sh,&selhilight,sizeof(meSelection));
+        if(bp == cbp)
         {
             /* drop an anchor and return back to it after */
-            meAnchorSet(bp,meANCHOR_EXEC_BUFFER,frameCur->windowCur->dotLine,frameCur->windowCur->dotLineNo,frameCur->windowCur->dotOffset,1);
-            frameCur->windowCur->dotLine = bp->dotLine;
-            frameCur->windowCur->dotOffset = bp->dotOffset;
-            frameCur->windowCur->dotLineNo = bp->dotLineNo;
+            meAnchorSet(bp,meANCHOR_EXEC_BUFFER,cwp->dotLine,cwp->dotLineNo,cwp->dotOffset,1);
+            cwp->dotLine = bp->dotLine;
+            cwp->dotOffset = bp->dotOffset;
+            cwp->dotLineNo = bp->dotLineNo;
         }
     }
-    if(bp != frameCur->bufferCur)
+    if(bp != cbp)
     {
-        /* swap this buffer into the current window, execute the function
-         * and then swap back out */
-        meBuffer *cbp = frameCur->bufferCur;
+        /* swap this buffer into the current window, execute the function and then swap back out */
         meUInt flag;
         meInt vertScroll;
         
-        storeWindBSet(cbp,frameCur->windowCur);
-        flag = frameCur->windowCur->updateFlags;
-        vertScroll = frameCur->windowCur->vertScroll;
+        storeWindBSet(cbp,cwp);
+        flag = cwp->updateFlags;
+        vertScroll = cwp->vertScroll;
         
         cbp->windowCount--;
-        frameCur->bufferCur = frameCur->windowCur->buffer = bp;
-        restoreWindBSet(frameCur->windowCur,bp);
+        cwp->buffer = bp;
+        restoreWindBSet(cwp,bp);
 #if MEOPT_EXTENDED
         isWordMask = bp->isWordMask;
 #endif
@@ -1769,7 +1770,7 @@ execBufferFunc(meBuffer *bp, int index, int flags, int n)
         
         ret = execFunc(index,(flags & meEBF_ARG_GIVEN),n);
         
-        if(frameCur->bufferCur != cbp)
+        if((cwp = frameCur->windowCur)->buffer != cbp)
         {
             /* the func could have done some really whacky things like delete the buffer that was being displayed.
              * If it has avoid crashing by checking the buffer is still a buffer! */
@@ -1777,16 +1778,17 @@ execBufferFunc(meBuffer *bp, int index, int flags, int n)
             do {
                 if(tbp == cbp)
                 {
-                    frameCur->bufferCur->windowCount--;
-                    storeWindBSet(frameCur->bufferCur,frameCur->windowCur);
-                    frameCur->bufferCur = frameCur->windowCur->buffer = tbp;
-                    tbp->windowCount++;
-                    frameCur->windowCur->vertScroll = vertScroll;
+                    tbp = cwp->buffer;
+                    tbp->windowCount--;
+                    storeWindBSet(tbp,cwp);
+                    cwp->buffer = cbp;
+                    cbp->windowCount++;
+                    cwp->vertScroll = vertScroll;
                     /* force a check on update, just incase the Func has done something behind our back */
-                    frameCur->windowCur->updateFlags |= (flag|WFMOVEL|WFMAIN);
-                    restoreWindBSet(frameCur->windowCur,tbp);
+                    cwp->updateFlags |= (flag|WFMOVEL|WFMAIN);
+                    restoreWindBSet(cwp,cbp);
 #if MEOPT_EXTENDED
-                    isWordMask = tbp->isWordMask;
+                    isWordMask = cbp->isWordMask;
 #endif
                     break;
                 }
@@ -1794,39 +1796,42 @@ execBufferFunc(meBuffer *bp, int index, int flags, int n)
         }
     }
     else
+    {
         ret = execFunc(index,(flags & meEBF_ARG_GIVEN),n);
+        cwp = frameCur->windowCur;
+    }
     if(flags & meEBF_USE_B_DOT)
     {
-        if(bp == frameCur->bufferCur)
+        if(bp == cwp->buffer)
         {
             /* return back to the anchor */
             if(meAnchorGet(bp,meANCHOR_EXEC_BUFFER) > 0)
             {
-                frameCur->windowCur->dotLine = bp->dotLine ;
-                frameCur->windowCur->dotOffset = bp->dotOffset ;
-                frameCur->windowCur->dotLineNo = bp->dotLineNo ;
-                frameCur->windowCur->updateFlags |= WFMOVEL ;
+                cwp->dotLine = bp->dotLine;
+                cwp->dotOffset = bp->dotOffset;
+                cwp->dotLineNo = bp->dotLineNo;
+                cwp->updateFlags |= WFMOVEL;
             }
-            meAnchorDelete(bp,meANCHOR_EXEC_BUFFER) ;
+            meAnchorDelete(bp,meANCHOR_EXEC_BUFFER);
         }
-        selhilight.bp = NULL ;
-        selhilight.flags = 0 ;
+        selhilight.bp = NULL;
+        selhilight.flags = 0;
         if(sh.flags != 0)
         {
-            meBuffer *bp = bheadp ;
+            meBuffer *bp = bheadp;
             while((bp != NULL) && (bp != sh.bp))
                 bp = bp->next;
             if((bp != NULL) && (sh.dotLineNo < bp->lineCount) && (sh.markLineNo < bp->lineCount))
-                memcpy(&selhilight,&sh,sizeof(meSelection)) ;
+                memcpy(&selhilight,&sh,sizeof(meSelection));
         }
-        curgoal = cg ;    
+        curgoal = cg;    
     }
     thisflag = tf;
     lastflag = lf;
-    thisIndex = ti ;
-    thisCommand = tc ;
-    cmdstatus = cs ;
-    return ret ;
+    thisIndex = ti;
+    thisCommand = tc;
+    cmdstatus = cs;
+    return ret;
 }
 
 /* executeBuffer:     Execute the contents of a buffer of commands    */
