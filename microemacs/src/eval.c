@@ -2795,39 +2795,13 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
     case UFLINS:
     case UFLSET:
         {
-            int  index=meAtoi(arg2), ii ;
-            meUByte cc, *s1, *s2 ;
-            s2 = arg1 ;
-            cc = *s2 ;
-            if(index <= 0)
-            {
-                if((fnum == UFLINS) && (index < -1))
-                {
-                    do
-                    {
-                        s1 = s2+1 ;
-                        if((s2 = meStrchr(s1,cc)) == NULL)
-                        {
-                            s2 = s1-1 ;
-                            break ;
-                        }
-                        *s2 = '\0' ;
-                        if(index == -2)
-                            ii = (meStrcmp(s1,arg3) < 0) ;
-                        else
-                            ii = (meStricmp(s1,arg3) < 0) ;
-                        *s2 = cc ;
-                    } while(ii) ;
-                    s2 = s1-1 ;
-                }
-                else
-                {
-                    if(index < 0)
-                        s2 += meStrlen(s2)-1 ;
-                    s1 = s2+1 ;
-                }
-            }
-            else
+            int  index, ii;
+            meUByte cc, *s1, *s2;
+            s2 = arg1;
+            cc = *s2;
+            if((index=meAtoi(arg2)) == 0)
+                s1 = s2+1;
+            else if(index > 0)
             {
                 do {
                     s1 = s2+1 ;
@@ -2838,24 +2812,49 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
                     }
                 } while(--index > 0) ;
             }
-            index = (int) (s1 - arg1) ;
+            else if((fnum == UFLINS) && (index < -1))
+            {
+                do
+                {
+                    s1 = s2+1 ;
+                    if((s2 = meStrchr(s1,cc)) == NULL)
+                    {
+                        s2 = s1-1 ;
+                        break ;
+                    }
+                    *s2 = '\0' ;
+                    if(index == -2)
+                        ii = (meStrcmp(s1,arg3) < 0);
+                    else
+                        ii = (meStricmp(s1,arg3) < 0);
+                    *s2 = cc;
+                } while(ii);
+                s2 = s1-1;
+            }
+            else
+            {
+                ii = meStrlen(s2);
+                s1 = s2+ii;
+                s2 += ii-1;
+            }
+            index = (int) (s1 - arg1);
             memcpy(evalResult,arg1,index);
             ii = meStrlen(arg3);
             if(ii+index < meBUF_SIZE_MAX)
             {
                 memcpy(evalResult+index,arg3,ii);
-                index += ii ;
+                index += ii;
                 if(fnum == UFLINS)
-                    s2 = s1-1 ;
-                ii = meStrlen(s2) ;
+                    s2 = s1-1;
+                ii = meStrlen(s2);
                 if(ii+index < meBUF_SIZE_MAX)
                 {
                     memcpy(evalResult+index,s2,ii);
-                    index += ii ;
+                    index += ii;
                 }
             }
-            evalResult[index] = '\0' ;
-            return evalResult ;
+            evalResult[index] = '\0';
+            return evalResult;
         }
     case UFFIND:
         {

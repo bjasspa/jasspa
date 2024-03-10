@@ -103,7 +103,6 @@ set-variable .fhook-git-status.refresh "git-status-refresh"
 set-variable .git.cnames "\b"
 set-variable .git.cflags "\b"
 set-variable .git.cdefs  "\b"
-set-variable .git.cvals  "\b"
 ; Command 1 - Fetch
 set-variable .git.cnames &lins .git.cnames -1 "Fetch"
 set-variable .git.cflags &lins .git.cflags -1 "Bs*!$"
@@ -150,15 +149,15 @@ set-variable .git.cflags &lins .git.cflags -1 "CS*!D"
 set-variable .git.cdefs  &lins .git.cdefs  -1 "||0|"
 ; Command 12 - Checkout
 set-variable .git.cnames &lins .git.cnames -1 "Checkout"
-set-variable .git.cflags &lins .git.cflags -1 "rS*!"
-set-variable .git.cdefs  &lins .git.cdefs  -1 "|0|0|"
+set-variable .git.cflags &lins .git.cflags -1 "Bbtr*!D"
+set-variable .git.cdefs  &lins .git.cdefs  -1 "||0|1|0|"
 ; Command ?? - Blame
-
-set-variable .git.ccount  15
-set-variable .git.cstrv1  ""
-set-variable .git.cstrv2  ""
-set-variable .git.cstrv3  ""
-set-variable .git.cstrv4  ""
+set-variable .git.ccount &sub &len .git.cnames &len &rep .git.cnames "\b" ""
+set-variable .git.cvals  &spr "%n" &pdec .git.ccount 1 "\b"
+set-variable .git.cstrv1 ""
+set-variable .git.cstrv2 ""
+set-variable .git.cstrv3 ""
+set-variable .git.cstrv4 ""
 
 ; Add these to git-setup
 set-variable .git.rep "origin"
@@ -413,6 +412,9 @@ set-variable .git-revision-op.lbl7 "|Head \Hto Master|\HMaster to Local|Head to 
         osd .osd.git-osd &inc #l2 1 "Sfh" "    \HBranch:     " &add #l2 1
         osd .osd.git-osd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 40 1 "" 1 git-osd-gstr
         osd .osd.git-osd &inc #l2 1 "f"  "    "
+      !elif &seq #l1 "b"
+        osd .osd.git-osd &inc #l2 1 "fh" "    "
+        osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Create a \Hnew branch" #l0 git-osd-cbc
       !elif &seq #l1 "C"
         osd .osd.git-osd &inc #l2 1 "Sfh" "    Co\Hmment:     " &add #l2 1
         @# git-osd-init-comment #l4
@@ -459,6 +461,9 @@ set-variable .git-revision-op.lbl7 "|Head \Hto Master|\HMaster to Local|Head to 
       !elif &seq #l1 "r"
         osd .osd.git-osd &inc #l2 1 "fh" "    "
         osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Refresh directory \Hlisting" #l0 git-osd-cbc
+      !elif &seq #l1 "t"
+        osd .osd.git-osd &inc #l2 1 "fh" "    "
+        osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HTrack the branch" #l0 git-osd-cbc
       !elif &seq #l1 "u"
         osd .osd.git-osd &inc #l2 1 "fh" "    "
         osd .osd.git-osd &inc #l2 1 "Cptfx" &spr "%s\} List unintegrated changes from %s    " .osd.checkbox-chars .git.rep #l0 git-osd-cbc
@@ -1336,12 +1341,25 @@ define-macro git-commit
 define-macro git-checkout
   12 git-osd
   set-variable #l9 .git.values
-  set-variable #l2 &spr "%s checkout -- " .git.com
-  7 git-get-file-list 0 0 #l2
+  !if &len &set #l2 .git.cstrv1
+    !if .find-file.file-count
+      osd-dialog "Git - Checkout" "    Checkout cannot operate on a branch and selected files at the same time!    " "  \HAbort  "
+      !abort
+    !endif
+    !iif &sin " " #l2 set-variable #l2 &spr "\"%s\"" #l2
+    set-variable #l2 &spr "%s checkout %s%s%s" .git.com &con &lget #l9 2 "-b " "" #l2 &con &lget #l9 3 " --track" ""
+    7 git-get-file-list 1 0 #l2
+  !elif &not .find-file.file-count
+    osd-dialog "Git - Checkout" "    Checkout requires a branch or selected files to operate on!    " "  \HAbort  "
+    !abort
+  !else
+    set-variable #l2 &spr "%s checkout -- " .git.com
+    7 git-get-file-list 0 0 #l2
+  !endif
   12 git-exec 3 $buffer-fname
   !if &seq $buffer-fname ""
   !elif &not &band $buffer-fmod 0x10000
-  !elif &lget #l9 2
+  !elif &lget #l9 4
     dirlst-refresh
   !endif
 !emacro
