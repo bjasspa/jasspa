@@ -1,0 +1,58 @@
+name: Binaries MacOS-14
+
+on:
+  workflow_dispatch:
+    branches: [ master ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies on MacOS and compile and produce mecw, mec and standalone ME application 
+        if: runner.os == 'macOS'
+        run: |
+           echo `uname -a`
+           ls
+           brew install xquartz
+           brew install gcc
+           brew install make
+           cd microemacs/3rdparty/zlib && gmake -f macos64cc.mak CC=gcc-13
+           cd ../tfs && gmake -f macos64cc.mak CC=gcc-13
+           cd ../../src 
+           gmake -f macos64cc.mak  CC=gcc-13 BTYP=w
+           gmake -f macos64cc.mak  CC=gcc-13 BTYP=c
+           ls -la
+           cd ../..
+           mkdir binaries-MacOS-14
+           cp microemacs/src/.macos64cc-release-mew/mew binaries-MacOS-14/
+           cp microemacs/src/.macos64cc-release-mec/mec binaries-MacOS-14/
+           cp microemacs/3rdparty/tfs/.macos64cc-release/tfs binaries-MacOS-14/
+           
+           cd microemacs 
+           tar cfvz macros.tar.gz macros/*
+           cp macros.tar.gz ../binaries-MacOS-14/
+           cd ..
+           echo '-1 ml-write &cat "Platform   :" $platform' >  platform.emf
+           echo '-1 ml-write &cat "Platformc  :" %platform' >> platform.emf
+           echo "exit-emacs" >> platform.emf
+           MEPATH=`pwd`/microemacs/macros TERM=xterm-256color ./microemacs/src/.macos64cc-release-mec/mec @platform.emf
+           cd ../
+      - name: Make tfs executable
+        run: |
+           cd microemacs/mesingle
+           export PATH=`pwd`/../src/.macos64cc-release-mec/:$PATH
+           export PATH=`pwd`/../3rdparty/tfs/.macos64cc-release/:$PATH
+           bash mesgen.sh -d -p ../src/.macos64cc-release-mew/mew   -o ../../binaries-MacOS-11/mews-macos64cc-14.bin
+           bash mesgen.sh -d -p ../src/.macos64cc-release-mec/mec -o  ../../binaries-MacOS-14/mecs-macos64cc-14.bin
+           cd ../../
+           TERM=xterm-256color ./binaries-MacOS-11/mecs-macos64cc-14.bin @platform.emf
+      - name: Upload Artifact GitHub Action MacOS executables
+        uses: actions/upload-artifact@v4
+        with: 
+           name: binaries-MacOS-14
+           path: binaries-MacOS-14
+           
