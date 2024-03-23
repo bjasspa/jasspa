@@ -1470,7 +1470,7 @@ typedef struct meIo {
     meRegNode *passwdReg;
     meBuffer  *urlBp;
     time_t     startTime;
-    int        length;                  /* TODO - potentially merge with urlLen */
+    int        length;
 
     meUShort   urlOpts;                 /* Option flags such as logging etc */
     meUShort   urlFlags;                /* Flags store connection type & state */

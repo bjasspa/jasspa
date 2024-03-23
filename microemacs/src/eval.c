@@ -1217,9 +1217,9 @@ handle_namesvar:
         return evalResult;
 #endif
     case EVVERSION:
-        return (meUByte *) meVERSION_CODE ;
+        return (meUByte *) meVERSION_CODE;
 #if MEOPT_SPELL
-    case EVFINDWORDS:   return findWordsNext() ;
+    case EVFINDWORDS:   return findWordsNext();
 #endif
 #if MEOPT_EXTENDED
     case EVRECENTKEYS:
@@ -1230,12 +1230,12 @@ handle_namesvar:
             {
                 if(((cc=TTkeyBuf[jj++]) == 0) ||
                    ((kk+=meGetStringFromChar(cc,evalResult+kk)) > meBUF_SIZE_MAX-20))
-                    break ;
-                evalResult[kk++] = ' ' ;
+                    break;
+                evalResult[kk++] = ' ';
                 if(jj == KEYBUFSIZ)
-                    jj = 0 ;
+                    jj = 0;
             }
-            evalResult[kk] = '\0' ;
+            evalResult[kk] = '\0';
             return evalResult;
         }
 #endif
@@ -1243,7 +1243,7 @@ handle_namesvar:
 #if MEOPT_EXTENDED
     case EVTIME:
         {
-            struct meTimeval tp ;           /* Time interval for current time */
+            struct meTimeval tp;            /* Time interval for current time */
             struct tm *time_ptr;            /* Pointer to time frame. */
             time_t clock;                   /* Time in machine format. */
             
@@ -1262,8 +1262,8 @@ handle_namesvar:
              *     ss   - Seconds 0-59
              *     SSS  - Milliseconds 0-999
              */
-            gettimeofday(&tp,NULL) ;
-            clock = tp.tv_sec + timeOffset ;              /* Get system time */
+            gettimeofday(&tp,NULL);
+            clock = tp.tv_sec + timeOffset;               /* Get system time */
             time_ptr = (struct tm *) localtime (&clock);  /* Get time frame */
             /* SWP - Took out the 0 padding because of macro use.
              *       ME interprets numbers of the form 0## as octagon based numbers

@@ -14,8 +14,8 @@
 ;
 !if &les @# 1
   ; if executed with an argument of 0 or less, return the list
-  set-variable %charset-names  "|ISO-8859|ISO-8859 with box chars|Windows ANSI|Windows OEM|Windows Greek|Windows Turkish|Windows Central Europe|Windows Cyrillic|DOS LatinUS CP437|DOS Latin1 CP850|DOS Cyrillic CP866|Cyrillic koi8-r|Plain Text|"
-  set-variable %charset-value  "||ISO-box|Win-ANSI|Win-OEM|Win-GREEK|Win-TURK|Win-CENTEUR|Win-CYR|PC-437|PC-850|PC-866|koi8-r|plain-text|"
+  set-variable %charset-names  "|ISO-8859|Windows CP-1252|Windows ANSI|Windows OEM|Windows Greek|Windows Turkish|Windows Central Europe|Windows Cyrillic|DOS LatinUS CP437|DOS Latin1 CP850|DOS Cyrillic CP866|Cyrillic koi8-r|Plain Text|"
+  set-variable %charset-value  "||CP-1252|Win-ANSI|Win-OEM|Win-GREEK|Win-TURK|Win-CENTEUR|Win-CYR|PC-437|PC-850|PC-866|koi8-r|plain-text|"
   ; the windows font type
   set-variable %charset-types  "|||0|255|161|162|238|204|||||"
   !return
@@ -26,14 +26,9 @@ set-variable #l1 1
 set-variable .change-font.type 0
 !if &seq #l0 ""
   set-char-mask "M" ""
-!elif &seq #l0 "ISO-box"
+!elif &seq #l0 "CP-1252"
   set-char-mask "M" ""
-  set-char-mask "dp" "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR\CP\CQ\C\\\C^\C_"
-  set-char-mask "p"  "\CI\CJ"
-  set-variable $box-chars "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR"
-  set-variable $window-chars "=-#*%=^   v*==^^      vv**|<   >*||<<      >>** x* > <>\\.$$\\"
-  set-variable $system &band $system &bnot 0x10000
-  set-variable #l1 0
+  set-char-mask "dp" "\x80\x82\x83\x84\x85\x86\x87\x88\x89\x8A\x8B\x8C\x8E\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9A\x9B\x9C\x9E\x9F"
 !elif &seq #l0 "Win-ANSI"
   set-char-mask "M" ""
 !elif &seq #l0 "Win-OEM"
@@ -80,7 +75,7 @@ set-variable .change-font.type 0
 !endif
 
 !if &reg &spr "/history/%s/ext-char-set" %platform "0"
-  set-char-mask "dp" "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR\CP\CQ\C^\C_\CG\C[\C]"
+  set-char-mask "dp" "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR\CP\CQ\C^\C_\CG\C[\C\\\C]"
   set-char-mask "p"  "\CA\CB\CC\CD\CH\CI\CJ\CS\CT\CZ"
   set-variable .osd.checkbox-chars "^\CA\CB\CC\CD^"
   set-variable $box-chars "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR"

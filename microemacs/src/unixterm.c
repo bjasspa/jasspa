@@ -1051,8 +1051,8 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
     {
     case 0x01:          /* checkbox left side ([) */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth,
-                  x + mecm.fwidth - 2, y + mecm.fhdepth - mecm.fhwidth) ;
+                  x + mecm.fwidth - 2, y + mecm.fhdepth - mecm.fhwidth,
+                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth) ;
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
                   x + mecm.fwidth - 2, y + mecm.fhdepth - mecm.fhwidth,
                   x + mecm.fwidth - 2, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
@@ -1152,8 +1152,8 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
         break;
         
     case 0x0d:          /* Line Drawing / Top left */
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fwidth - 1, y + mecm.fhdepth, x + mecm.fhwidth, y + mecm.fhdepth);
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fhwidth, y + mecm.fhdepth, x + mecm.fhwidth, y + mecm.fdepth - 1);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fhwidth, y + mecm.fhdepth, x + mecm.fwidth - 1, y + mecm.fhdepth);
         break;
         
     case 0x0e:          /* Line Drawing / Bottom left |_ */
@@ -1249,7 +1249,7 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
         
     case 0x18:          /* Line Drawing / Top Tee -|- */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y + mecm.fhdepth, x + mecm.fwidth - 1, y + mecm.fhdepth);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fhwidth, y + mecm.fdepth - 1, x + mecm.fhwidth, y + mecm.fhdepth);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fhwidth, y + mecm.fhdepth, x + mecm.fhwidth, y + mecm.fdepth - 1);
         break;
         
     case 0x19:          /* Line Drawing / Vertical Line | */
@@ -2261,7 +2261,7 @@ special_bound:
                (XGetWindowProperty(mecm.xdisplay,meFrameGetXWindow(frame),meAtoms[meATOM_COPY_TEXT],0,0x1fffffffL,False,AnyPropertyType,
                                    &type,&fmt,&nitems,&left,&buff) == Success))
             {
-                /* printf("SelectionNotify2 (%ld %ld %ld %ld) (%d %ld) %ld [%s]\n",type,meAtoms[meATOM_MULTIPLE],meAtoms[meATOM_INCR],XA_STRING,fmt,nitems,left,(type == XA_STRING) ? ((char *)buff):"<na>");*/
+                /* printf("SelectionNotify2 (%ld %ld %ld %ld) (%d %ld) %ld [%s]\n",type,meAtoms[meATOM_MULTIPLE],meAtoms[meATOM_INCR],XA_STRING,fmt,nitems,left,((type == XA_STRING) || (type == meAtoms[meATOM_UTF8_STRING])) ? ((char *)buff):"<na>");*/
                 if(type == meAtoms[meATOM_MULTIPLE])
 #ifndef NDEBUG
                     printf("Currently don't support multiple\n")
@@ -4181,7 +4181,7 @@ TTgetClipboard(void)
     if(!(meSystemCfg & (meSYSTEM_CONSOLE|meSYSTEM_NOCLIPBRD)) &&
        !(clipState & (CLIP_OWNER|CLIP_DISABLED)) && (kbdmode != mePLAY) &&
        !(frameCur->flags & meFRAME_NOT_FOCUS))
-   {
+    {
         /* Add the CLIP_RECEIVING flag. This is really important if increment
          * copy texts are being used. If they are and this flag is set after receiving
          * the initial size, the killInit then take ownership of the block and so we never
@@ -4190,6 +4190,7 @@ TTgetClipboard(void)
         clipState |= CLIP_RECEIVING;
         /* Request for the current Primary/Clipboard string owner to send a
          * SelectionNotify event to us giving the current string */
+        /* TODO request meAtoms[meATOM_UTF8_STRING] rather than XA_STRING then convert to our code page, but need unicode to CP conv table */
         XConvertSelection(mecm.xdisplay,clipboardA,XA_STRING,meAtoms[meATOM_COPY_TEXT],meFrameGetXWindow(frameCur),CurrentTime);
         /* Must do a flush to ensure the request has gone */
         XFlush(mecm.xdisplay);
