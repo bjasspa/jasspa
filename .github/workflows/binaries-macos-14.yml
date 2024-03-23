@@ -46,10 +46,10 @@ jobs:
            cd microemacs/mesingle
            export PATH=`pwd`/../src/.macos64cc-release-mec/:$PATH
            export PATH=`pwd`/../3rdparty/tfs/.macos64cc-release/:$PATH
-           bash mesgen.sh -d -p ../src/.macos64cc-release-mew/mew   -o ../../binaries-MacOS-11/mews-macos64cc-14.bin
+           bash mesgen.sh -d -p ../src/.macos64cc-release-mew/mew   -o ../../binaries-MacOS-14/mews-macos64cc-14.bin
            bash mesgen.sh -d -p ../src/.macos64cc-release-mec/mec -o  ../../binaries-MacOS-14/mecs-macos64cc-14.bin
            cd ../../
-           TERM=xterm-256color ./binaries-MacOS-11/mecs-macos64cc-14.bin @platform.emf
+           TERM=xterm-256color ./binaries-MacOS-14/mecs-macos64cc-14.bin @platform.emf
       - name: Upload Artifact GitHub Action MacOS executables
         uses: actions/upload-artifact@v4
         with: 
