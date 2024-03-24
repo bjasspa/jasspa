@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : <unknown>
 #  Created       : Sun Mar 24 17:52:35 2024
-#  Last Modified : <240324.1905>
+#  Last Modified : <240324.1923>
 #
 #  Description	
 #
@@ -42,6 +42,9 @@ ifeq ($(PLATFORM),fedora38)
    MEDIR := .linux32gcc-release
 endif
 ifeq ($(PLATFORM),macos11)
+   MEDIR := .macos64cc-release
+endif
+ifeq ($(PLATFORM),macos14)
    MEDIR := .macos64cc-release
 endif
 
