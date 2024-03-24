@@ -40,6 +40,13 @@ jobs:
         name: tfs_202403_ubuntu20.zip
         path: tfs_202403_ubuntu20
 
+    - name: Upload Artifact macros
+      uses: actions/upload-artifact@v4
+      with: 
+        name: macros_202403.zip
+        path: macros_202403
+
+
   build-ubuntu-22:
     runs-on: ubuntu-22.04
     steps:
@@ -112,6 +119,13 @@ jobs:
            name: MicroEmacs_202403_macos11_mews.zip
            path: MicroEmacs_202403_macos11_mews
 
+      - name: Upload Artifact tfs_202403_macos11
+        uses: actions/upload-artifact@v4
+        with: 
+          name: tfs_202403_macos11.zip
+          path: tfs_202403_macos11
+
+
   build-macos-14:
     runs-on: macos-14
     steps:
@@ -144,3 +158,10 @@ jobs:
         with: 
            name: MicroEmacs_202403_macos14_mews.zip
            path: MicroEmacs_202403_macos14_mews
+
+      - name: Upload Artifact tfs_202403_macos14
+        uses: actions/upload-artifact@v4
+        with: 
+          name: tfs_202403_macos14.zip
+          path: tfs_202403_macos14
+
