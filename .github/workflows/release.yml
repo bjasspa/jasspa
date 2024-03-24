@@ -65,3 +65,19 @@ jobs:
       with: 
         name: MicroEmacs_202403_ubuntu22_mews.zip
         path: MicroEmacs_202403_ubuntu22_mews
+
+  build-macos-11:
+    runs-on: macos-11
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies on MacOS and compile and produce mecw, mec and standalone ME application 
+        run: |
+           brew install xquartz
+           brew install make
+           export PATH=
+           make -f microemacs/actions.mk PLATFORM=macos11
+    - name: Upload Artifact MicroEmacs_202403_macos11_mec
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_202403_macos11_mec.zip
+        path: MicroEmacs_202403_macos11_mec
