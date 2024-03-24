@@ -74,7 +74,7 @@ jobs:
         run: |
            brew install xquartz
            brew install make
-           export PATH=
+           export PATH=/usr/local/opt/make/libexec/gnubin/:$PATH
            make -f microemacs/actions.mk PLATFORM=macos11
     - name: Upload Artifact MicroEmacs_202403_macos11_mec
       uses: actions/upload-artifact@v4
