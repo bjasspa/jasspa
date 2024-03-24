@@ -1,4 +1,4 @@
-name: Binaries Ubuntu Linux
+name: Release Ubuntu Linux 20, 22
 
 on:
   workflow_dispatch:
