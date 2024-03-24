@@ -1,4 +1,4 @@
-name: Release Ubuntu Linux 20, 22
+name: Release Ubuntu Linux 20, 22, MacOS 11 (INTEL), 14 (ARM)
 
 on:
   workflow_dispatch:
