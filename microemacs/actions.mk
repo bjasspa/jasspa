@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : <unknown>
 #  Created       : Sun Mar 24 17:52:35 2024
-#  Last Modified : <240324.1923>
+#  Last Modified : <240324.1940>
 #
 #  Description	
 #
@@ -55,6 +55,11 @@ default:
 	-mkdir -p MicroEmacs_$(VERSION)_$(PLATFORM)_mews/bin
 	-mkdir -p MicroEmacs_$(VERSION)_$(PLATFORM)_mec/bin
 	-mkdir -p MicroEmacs_$(VERSION)_$(PLATFORM)_mew/bin	
+	-mkdir -p tfs_$(VERSION)_$(PLATFORM)/bin
+	ln -sf `pwd`/microemacs/macros macros
+	zip macros-$(VERSION).zip macros/*.e?f
+	cp microemacs/3rdparty/tfs/$(MEDIR)/tfs tfs_$(VERSION)_$(PLATFORM)/bin/
+	cp microemacs/3rdparty/tfs/readme.txt tfs_$(VERSION)_$(PLATFORM)/
 	cp microemacs/src/$(MEDIR)-mew/mew MicroEmacs_$(VERSION)_$(PLATFORM)_mew/bin/
 	cp microemacs/src/$(MEDIR)-mec/mec MicroEmacs_$(VERSION)_$(PLATFORM)_mec/bin/
 	cp microemacs/license.txt microemacs/src/readme.txt MicroEmacs_$(VERSION)_$(PLATFORM)_mew/
