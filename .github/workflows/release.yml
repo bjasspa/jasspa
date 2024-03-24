@@ -17,7 +17,22 @@ jobs:
       uses: actions/upload-artifact@v4
       with: 
         name: MicroEmacs_202403_ubuntu20_mec.zip
-        path: MicroEmacs_202403_ubuntu20
+        path: MicroEmacs_202403_ubuntu20_mec
+    - name: Upload Artifact MicroEmacs_202403_ubuntu20_mew
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_202403_ubuntu20_mew.zip
+        path: MicroEmacs_202403_ubuntu20_mew
+    - name: Upload Artifact MicroEmacs_202403_ubuntu20_mecs
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_202403_ubuntu20_mecs.zip
+        path: MicroEmacs_202403_ubuntu20_mecs
+    - name: Upload Artifact MicroEmacs_202403_ubuntu20_mew
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_202403_ubuntu20_mews.zip
+        path: MicroEmacs_202403_ubuntu20_mews
 
   build-ubuntu-22:
     runs-on: ubuntu-22.04
@@ -31,5 +46,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with: 
         name: MicroEmacs_202403_ubuntu22_mec.zip
-        path: MicroEmacs_202403_ubuntu22
+        path: MicroEmacs_202403_ubuntu22_mec
     
