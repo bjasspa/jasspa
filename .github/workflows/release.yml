@@ -1,0 +1,35 @@
+name: Binaries Ubuntu Linux
+
+on:
+  workflow_dispatch:
+    branches: [ master ]
+
+jobs:
+  build-ubuntu-20:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v4
+     
+    - name: make me-binaries
+      run: |
+        make -f microemacs/actions.mk PLATFORM=ubuntu20
+    - name: Upload Artifact MicroEmacs_202403_ubuntu20_mec
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_202403_ubuntu20_mec.zip
+        path: MicroEmacs_202403_ubuntu20
+
+  build-ubuntu-22:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+     
+    - name: make me-binaries
+      run: |
+        make -f microemacs/actions.mk PLATFORM=ubuntu22
+    - name: Upload Artifact MicroEmacs_202403_ubuntu22_mec
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_202403_ubuntu22_mec.zip
+        path: MicroEmacs_202403_ubuntu22
+    
