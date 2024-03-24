@@ -3188,7 +3188,6 @@ setCursorToMouse(int f, int n)
     /* Compute the new position */
     wp->dotLine = ln;
     col += wp->horzScroll;
-    /* TODO: should thi be wp or frameCur->windowCur */
     setcwcol(wp,col);
     
     /* If we have moved then set Window flag to indicate that we have

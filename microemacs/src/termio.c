@@ -45,16 +45,16 @@
 meUByte ttSpeChars [TTSPECCHARS] =
 {
     ' ', /*  0/0x00 - Undefined */
-    ' ', /*  1/0x01 - Undefined */
-    ' ', /*  2/0x02 - Undefined */
-    'H', /*  3/0x03 - Graphic / Playing card Heart */
-    'D', /*  4/0x04 - Graphic / Playing card Diamond */
-    'C', /*  5/0x05 - Graphic / Playing card Club */
-    'S', /*  6/0x06 - Graphic / Playing card Space */
+    '[', /*  1/0x01 - Checkbox left side */
+    ' ', /*  2/0x02 - Checkbox center not selected */
+    'X', /*  3/0x03 - Checkbox center selected */
+    ']', /*  4/0x04 - Checkbox right side */
+    ' ', /*  5/0x05 - Not used */
+    ' ', /*  6/0x06 - Not used */
     ' ', /*  7/0x07 - Visible space */
-    ' ', /*  8/0x08 - Undefined */
-    '\t', /*  9/0x09 - Tab character */
-    ' ', /* 10/0x0a - New line character */
+    ' ', /*  8/0x08 - Visible backspace char */
+    '\t',/*  9/0x09 - Tab character */
+    ' ', /* 10/0x0a - Visible new line character */
     '+', /* 11/0x0b - Line Drawing / Bottom right _| */
     '+', /* 12/0x0c - Line Drawing / Top right */
     '+', /* 13/0x0d - Line Drawing / Top left */
@@ -63,17 +63,17 @@ meUByte ttSpeChars [TTSPECCHARS] =
     '>', /* 16/0x10 - Cursor Arrows / Right */
     '<', /* 17/0x11 - Cursor Arrows / Left */
     '-', /* 18/0x12 - Line Drawing / Horizontal line - */
-    ' ', /* 19/0x13 - Undefined */
-    ' ', /* 20/0x14 - Undefined */
+    ' ', /* 19/0x13 - Cross box empty [ ] */
+    'X', /* 20/0x14 - Cross box [X] */
     '+', /* 21/0x15 - Line Drawing / Left Tee |- */
     '+', /* 22/0x16 - Line Drawing / Right Tee -| */
     '+', /* 23/0x17 - Line Drawing / Bottom Tee _|_ */
     '+', /* 24/0x18 - Line Drawing / Top Tee -|- */
     '|', /* 25/0x19 - Line Drawing / Vertical Line | */
-    ' ', /* 26/0x1a - Graphic  / Filled Gray Box */
-    ' ', /* 27/0x1b - undefined */
-    ' ', /* 28/0x1c - undefined */
-    ' ', /* 28/0x1d - undefined */
+    '*', /* 26/0x1a - Line Drawing / Bottom right _| with resize */
+    ' ', /* 27/0x1b - Scroll box - vertical */
+    '?', /* 28/0x1c - unsupported/undefined char (i.e. \uFFFD) */
+    ' ', /* 28/0x1d - Scroll box - horizontal */
     '^', /* 29/0x1e - Cursor Arrows / Up */
     'v'  /* 31/0x1f - Cursor Arrows / Down */
 };
