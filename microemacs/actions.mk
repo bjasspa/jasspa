@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : <unknown>
 #  Created       : Sun Mar 24 17:52:35 2024
-#  Last Modified : <240324.1847>
+#  Last Modified : <240324.1848>
 #
 #  Description	
 #
@@ -57,8 +57,8 @@ default:
 	cp microemacs/license.txt microemacs/src/readme.txt MicroEmacs_$(VERSION)_$(PLATFORM)_mecs/
 	export PATH=`pwd`/microemacs/src/$(MEDIR)-mec/:$PATH
 	export PATH=`pwd`/microemacs/3rdparty/tfs/$(MEDIR)/:$PATH
-	PATH=`pwd`/microemacs/src/$(MEDIR)-mec/:$$PATH && \
+	PATH=`pwd`/microemacs/src/$(MEDIR)-mec/:`pwd`/microemacs/3rdparty/tfs/$(MEDIR)/:$$PATH && \
 		cd microemacs/mesingle && bash mesgen.sh -d -p ../src/$(MEDIR)-mew/mew -o ../../MicroEmacs_$(VERSION)_$(PLATFORM)_mews/bin/mews
-	PATH=`pwd`/microemacs/src/$(MEDIR)-mec/:$$PATH && \
+	PATH=`pwd`/microemacs/src/$(MEDIR)-mec/:`pwd`/microemacs/3rdparty/tfs/$(MEDIR)/:$$PATH && \
 		cd microemacs/mesingle && bash mesgen.sh -d -p ../src/$(MEDIR)-mec/mec -o ../../MicroEmacs_$(VERSION)_$(PLATFORM)_mecs/bin/mecs
 
