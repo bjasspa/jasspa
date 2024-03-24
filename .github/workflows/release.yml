@@ -81,3 +81,53 @@ jobs:
         with: 
            name: MicroEmacs_202403_macos11_mec.zip
            path: MicroEmacs_202403_macos11_mec
+
+      - name: Upload Artifact MicroEmacs_202403_macos11_mew
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_202403_macos11_mew.zip
+           path: MicroEmacs_202403_macos11_mew
+      - name: Upload Artifact MicroEmacs_202403_macos11_mecs
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_202403_macos11_mecs.zip
+           path: MicroEmacs_202403_macos11_mecs
+
+      - name: Upload Artifact MicroEmacs_202403_macos11_mews
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_202403_macos11_mews.zip
+           path: MicroEmacs_202403_macos11_mews
+
+  build-macos-14:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies on MacOS and compile and produce mecw, mec and standalone ME application 
+        run: |
+           brew install xquartz
+           brew install make
+           export PATH=/usr/local/opt/make/libexec/gnubin/:$PATH
+           make -f microemacs/actions.mk PLATFORM=macos14
+      - name: Upload Artifact MicroEmacs_202403_macos14_mec
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_202403_macos14_mec.zip
+           path: MicroEmacs_202403_macos14_mec
+
+      - name: Upload Artifact MicroEmacs_202403_macos14_mew
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_202403_macos14_mew.zip
+           path: MicroEmacs_202403_macos14_mew
+      - name: Upload Artifact MicroEmacs_202403_macos14_mecs
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_202403_macos14_mecs.zip
+           path: MicroEmacs_202403_macos14_mecs
+
+      - name: Upload Artifact MicroEmacs_202403_macos14_mews
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_202403_macos14_mews.zip
+           path: MicroEmacs_202403_macos14_mews
