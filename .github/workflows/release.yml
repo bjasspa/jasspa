@@ -76,8 +76,8 @@ jobs:
            brew install make
            export PATH=/usr/local/opt/make/libexec/gnubin/:$PATH
            make -f microemacs/actions.mk PLATFORM=macos11
-    - name: Upload Artifact MicroEmacs_202403_macos11_mec
-      uses: actions/upload-artifact@v4
-      with: 
-        name: MicroEmacs_202403_macos11_mec.zip
-        path: MicroEmacs_202403_macos11_mec
+      - name: Upload Artifact MicroEmacs_202403_macos11_mec
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_202403_macos11_mec.zip
+           path: MicroEmacs_202403_macos11_mec
