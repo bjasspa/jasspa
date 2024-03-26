@@ -1,0 +1,167 @@
+name: Release Ubuntu Linux 20, 22, MacOS 11 (INTEL), 14 (ARM)
+
+on:
+  workflow_dispatch:
+    branches: [ master ]
+
+jobs:
+  build-ubuntu-20:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v4
+     
+    - name: make me-binaries
+      run: |
+        make -f microemacs/actions.mk PLATFORM=ubuntu20
+    - name: Upload Artifact MicroEmacs_202403_ubuntu20_mec
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_202403_ubuntu20_mec.zip
+        path: MicroEmacs_202403_ubuntu20_mec
+    - name: Upload Artifact MicroEmacs_202403_ubuntu20_mew
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_202403_ubuntu20_mew.zip
+        path: MicroEmacs_202403_ubuntu20_mew
+    - name: Upload Artifact MicroEmacs_202403_ubuntu20_mecs
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_202403_ubuntu20_mecs.zip
+        path: MicroEmacs_202403_ubuntu20_mecs
+    - name: Upload Artifact MicroEmacs_202403_ubuntu20_mew
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_202403_ubuntu20_mews.zip
+        path: MicroEmacs_202403_ubuntu20_mews
+
+    - name: Upload Artifact tfs_202403_ubuntu20
+      uses: actions/upload-artifact@v4
+      with: 
+        name: tfs_202403_ubuntu20.zip
+        path: tfs_202403_ubuntu20
+
+    - name: Upload Artifact macros
+      uses: actions/upload-artifact@v4
+      with: 
+        name: macros_202403.zip
+        path: macros_202403
+
+
+  build-ubuntu-22:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+     
+    - name: make me-binaries
+      run: |
+        make -f microemacs/actions.mk PLATFORM=ubuntu22
+    - name: Upload Artifact MicroEmacs_202403_ubuntu22_mec
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_202403_ubuntu22_mec.zip
+        path: MicroEmacs_202403_ubuntu22_mec
+    
+    - name: Upload Artifact MicroEmacs_202403_ubuntu22_mew
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_202403_ubuntu22_mew.zip
+        path: MicroEmacs_202403_ubuntu22_mew
+    
+    - name: Upload Artifact MicroEmacs_202403_ubuntu22_mecs
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_202403_ubuntu22_mecs.zip
+        path: MicroEmacs_202403_ubuntu22_mecs
+
+    - name: Upload Artifact MicroEmacs_202403_ubuntu22_mews
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_202403_ubuntu22_mews.zip
+        path: MicroEmacs_202403_ubuntu22_mews
+
+    - name: Upload Artifact tfs_202403_ubuntu22
+      uses: actions/upload-artifact@v4
+      with: 
+        name: tfs_202403_ubuntu22.zip
+        path: tfs_202403_ubuntu22
+
+
+  build-macos-11:
+    runs-on: macos-11
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies on MacOS and compile and produce mecw, mec and standalone ME application 
+        run: |
+           brew install xquartz
+           brew install make
+           export PATH=/usr/local/opt/make/libexec/gnubin/:$PATH
+           make -f microemacs/actions.mk PLATFORM=macos11
+      - name: Upload Artifact MicroEmacs_202403_macos11_mec
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_202403_macos11_mec.zip
+           path: MicroEmacs_202403_macos11_mec
+
+      - name: Upload Artifact MicroEmacs_202403_macos11_mew
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_202403_macos11_mew.zip
+           path: MicroEmacs_202403_macos11_mew
+      - name: Upload Artifact MicroEmacs_202403_macos11_mecs
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_202403_macos11_mecs.zip
+           path: MicroEmacs_202403_macos11_mecs
+
+      - name: Upload Artifact MicroEmacs_202403_macos11_mews
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_202403_macos11_mews.zip
+           path: MicroEmacs_202403_macos11_mews
+
+      - name: Upload Artifact tfs_202403_macos11
+        uses: actions/upload-artifact@v4
+        with: 
+          name: tfs_202403_macos11.zip
+          path: tfs_202403_macos11
+
+
+  build-macos-14:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies on MacOS and compile and produce mecw, mec and standalone ME application 
+        run: |
+           brew install xquartz
+           brew install make
+           export PATH=/usr/local/opt/make/libexec/gnubin/:$PATH
+           make -f microemacs/actions.mk PLATFORM=macos14
+      - name: Upload Artifact MicroEmacs_202403_macos14_mec
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_202403_macos14_mec.zip
+           path: MicroEmacs_202403_macos14_mec
+
+      - name: Upload Artifact MicroEmacs_202403_macos14_mew
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_202403_macos14_mew.zip
+           path: MicroEmacs_202403_macos14_mew
+      - name: Upload Artifact MicroEmacs_202403_macos14_mecs
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_202403_macos14_mecs.zip
+           path: MicroEmacs_202403_macos14_mecs
+
+      - name: Upload Artifact MicroEmacs_202403_macos14_mews
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_202403_macos14_mews.zip
+           path: MicroEmacs_202403_macos14_mews
+
+      - name: Upload Artifact tfs_202403_macos14
+        uses: actions/upload-artifact@v4
+        with: 
+          name: tfs_202403_macos14.zip
+          path: tfs_202403_macos14
+
