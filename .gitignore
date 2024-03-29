@@ -2,7 +2,9 @@
 *~
 tags
 .linux32gcc-*/
+.linux32gccp-*/
 .macos64cc-*/
 .win32vc[1-2][0-9]-*/
 .win32vc[1-2][0-9]s-*/
 .win32mingw-*/
+.win32mingwp-*/
