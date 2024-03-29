@@ -32,7 +32,12 @@ AR       = ar
 RM       = rm -f
 RMDIR    = rm -rf
 
-BUILDID  = linux32gcc
+TOOLKIT  = linux32gcc
+ifeq "$(BPRF)" "1"
+BUILDID  = $(TOOLKIT)p
+else
+BUILDID  = $(TOOLKIT)
+endif
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
@@ -51,6 +56,7 @@ OUTDIR   = $(OUTDIRD)
 CCFLAGS  = $(CCFLAGSD)
 LDFLAGS  = $(LDFLAGSD)
 ARFLAGS  = $(ARFLAGSD)
+STRIP    = - echo No strip - debug 
 else
 OUTDIR   = $(OUTDIRR)
 CCFLAGS  = $(CCFLAGSR)
@@ -58,14 +64,23 @@ LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
 endif
 
+ifeq "$(BPRF)" "1"
+CCPROF = -D_ME_PROFILE -pg
+LDPROF = -pg
+STRIP  = - echo No strip - profile 
+else
+CCPROF = 
+LDPROF = 
+endif
+
 LIBNAME  = tfs
 LIBFILE  = $(LIBNAME)$(A)
-LIBHDRS  = tfs.h $(BUILDID).mak
+LIBHDRS  = tfs.h $(TOOLKIT).mak
 LIBOBJS  = $(OUTDIR)/tfs.o
 
 PRGNAME  = tfs
 PRGFILE  = $(PRGNAME)$(EXE)
-PRGHDRS  = tfs.h tfsutil.h $(BUILDID).mak
+PRGHDRS  = tfs.h tfsutil.h $(TOOLKIT).mak
 PRGOBJS  = $(OUTDIR)/tfsutil.o $(OUTDIR)/tfs.o $(OUTDIR)/uappend.o $(OUTDIR)/ubuild.o $(OUTDIR)/ucopy.o \
 	   $(OUTDIR)/ucreate.o $(OUTDIR)/uinfo.o $(OUTDIR)/ulist.o $(OUTDIR)/ustrip.o $(OUTDIR)/utest.o \
 	   $(OUTDIR)/uxdir.o $(OUTDIR)/uxfile.o
@@ -74,7 +89,7 @@ PRGLIBS  = $(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A)
 .SUFFIXES: .c .o
 
 $(OUTDIR)/%.o : %.c
-	$(CC) $(CCDEFS) $(CCFLAGS) -c -o $@ $<
+	$(CC) $(CCDEFS) $(CCPROF) $(CCFLAGS) -c -o $@ $<
 
 all: $(PRGLIBS) $(OUTDIR)/$(LIBFILE) $(OUTDIR)/$(PRGFILE)
 
@@ -86,12 +101,13 @@ $(LIBOBJS): $(LIBHDRS)
 
 $(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(RM) $@
-	$(LD) $(LDDEFS) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS)
+	$(LD) $(LDDEFS) $(LDPROF) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS)
+	$(STRIP) $@
 
 $(PRGOBJS): $(PRGHDRS)
 
 $(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A):
-	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
+	cd $(TRDPARTY)/zlib && $(MK) -f $(TOOLKIT).mak BCFG=$(BCFG)
 
 $(OUTDIR):
 	-mkdir $(OUTDIR)

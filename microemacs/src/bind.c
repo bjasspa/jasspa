@@ -730,8 +730,7 @@ bindkey(meUByte *prom, int f, int n, meUShort *lclNoBinds, meBind **lclBinds)
         }
         else
         {
-            if((ktp = *lclBinds = 
-                meRealloc(ktp,(++(*lclNoBinds))*sizeof(meBind))) == NULL)
+            if((ktp = *lclBinds = meRealloc(ktp,(++(*lclNoBinds))*sizeof(meBind))) == NULL)
                 return meFALSE ;
             ktp[ss].code  = cc ;
             ktp[ss].index = (meUShort) namidx ;

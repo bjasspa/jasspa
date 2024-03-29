@@ -50,7 +50,12 @@ RMDIR    = rm -r -f
 
 include evers.mak
 
-BUILDID  = linux32gcc
+TOOLKIT  = linux32gcc
+ifeq "$(BPRF)" "1"
+BUILDID  = $(TOOLKIT)p
+else
+BUILDID  = $(TOOLKIT)
+endif
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
@@ -98,6 +103,15 @@ PRGLIBS  = $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A) $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(
 
 endif
 
+ifeq "$(BPRF)" "1"
+CCPROF = -D_ME_PROFILE -pg
+LDPROF = -pg
+STRIP  = - echo No strip - profile 
+else
+CCPROF = 
+LDPROF = 
+endif
+
 #
 # The Xlib are located in /usr/X11R6/lib64 on some Linux distributions like RHEL4.* .
 #
@@ -137,7 +151,7 @@ PRGNAME  = $(BCOR)$(BTYP)
 PRGFILE  = $(PRGNAME)$(EXE)
 PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
 	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def \
-	   $(BUILDID).mak evers.mak
+	   $(TOOLKIT).mak evers.mak
 PRGOBJS  = $(OUTDIR)/abbrev.o $(OUTDIR)/basic.o $(OUTDIR)/bind.o $(OUTDIR)/buffer.o $(OUTDIR)/crypt.o $(OUTDIR)/dirlist.o $(OUTDIR)/display.o \
 	   $(OUTDIR)/eval.o $(OUTDIR)/exec.o $(OUTDIR)/file.o $(OUTDIR)/fileio.o $(OUTDIR)/frame.o $(OUTDIR)/hash.o $(OUTDIR)/hilight.o $(OUTDIR)/history.o \
 	   $(OUTDIR)/input.o $(OUTDIR)/isearch.o $(OUTDIR)/key.o $(OUTDIR)/line.o $(OUTDIR)/macro.o $(OUTDIR)/main.o $(OUTDIR)/narrow.o $(OUTDIR)/next.o \
@@ -149,14 +163,14 @@ PRGOBJS  = $(OUTDIR)/abbrev.o $(OUTDIR)/basic.o $(OUTDIR)/bind.o $(OUTDIR)/buffe
 .SUFFIXES: .c .o
 
 $(OUTDIR)/%.o : %.c
-	$(CC) $(CCDEFS) $(BCOR_CDF) $(BTYP_CDF) $(CCFLAGS) -c -o $@ $<
+	$(CC) $(CCDEFS) $(CCPROF) $(BCOR_CDF) $(BTYP_CDF) $(CCFLAGS) -c -o $@ $<
 
 
 all: $(PRGLIBS) $(OUTDIR)/$(PRGFILE)
 
 $(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(RM) $@
-	$(LD) $(LDDEFS) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS) $(BTYP_LIB) $(LDLIBS)
+	$(LD) $(LDDEFS) $(LDPROF) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS) $(BTYP_LIB) $(LDLIBS)
 	$(STRIP) $@
 
 $(PRGOBJS): $(PRGHDRS)
@@ -165,18 +179,18 @@ $(OUTDIR):
 	-mkdir $(OUTDIR)
 
 $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A):
-	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
+	cd $(TRDPARTY)/zlib && $(MK) -f $(TOOLKIT).mak BCFG=$(BCFG)
 
 $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A):
-	cd $(TRDPARTY)/tfs && $(MK) -f $(BUILDID).mak BCFG=$(BCFG)
+	cd $(TRDPARTY)/tfs && $(MK) -f $(TOOLKIT).mak BCFG=$(BCFG)
 
 clean:
 	$(RMDIR) $(OUTDIR)
-	cd $(TRDPARTY)/tfs && $(MK) -f $(BUILDID).mak clean
-	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak clean
+	cd $(TRDPARTY)/tfs && $(MK) -f $(TOOLKIT).mak clean
+	cd $(TRDPARTY)/zlib && $(MK) -f $(TOOLKIT).mak clean
 
 spotless: clean
 	$(RM) *~
 	$(RM) tags
-	cd $(TRDPARTY)/tfs && $(MK) -f $(BUILDID).mak spotless
-	cd $(TRDPARTY)/zlib && $(MK) -f $(BUILDID).mak spotless
+	cd $(TRDPARTY)/tfs && $(MK) -f $(TOOLKIT).mak spotless
+	cd $(TRDPARTY)/zlib && $(MK) -f $(TOOLKIT).mak spotless

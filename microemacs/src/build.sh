@@ -7,6 +7,7 @@ OPTIONS=
 LOGFILE=
 LOGFILEA=
 MECORE=
+MEPROF=
 METYPE=
 MEDEBUG=
 MAKEFILE=
@@ -33,6 +34,7 @@ do
         echo "        : Sets the makefile to use where <makefile> can be"
         echo "            aix4.mak, freebsd.mak, freebsd.gmk etc."
         echo "   -ne  : for NanoEmacs build (output is ne)."
+        echo "   -P   : Build with profiling instructions."
         echo "   -p <search-path>"
         echo "        : Sets the default system search path to <search-path>,"
         echo "          default is "'"'"/usr/local/microemacs"'"'
@@ -66,6 +68,8 @@ do
         MAKEFILE=$1
     elif [ $1 = "-ne" ] ; then
         MECORE=" BCOR=ne"
+    elif [ $1 = "-P" ] ; then
+        MEPROF=" BPRF=1"
     elif [ $1 = "-p" ] ; then
         shift
         if [ -n "$MAKECDEFS" ] ; then
@@ -273,7 +277,7 @@ elif [ -z "$OPTIONS" ] ; then
         export MAKEWINDEFS MAKEWINLIBS
     fi
 fi
-OPTIONS="$MECORE$MEDEBUG$METYPE$OPTIONS"
+OPTIONS="$MECORE$MEDEBUG$METYPE$MEPROF$OPTIONS"
 MAKECDEFS="MAKECDEFS=$MAKECDEFS"
 if [ -r $MAKEFILE ] ; then
     if [ -n "$LOGFILE" ] ; then

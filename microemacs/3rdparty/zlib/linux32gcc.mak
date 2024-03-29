@@ -32,7 +32,12 @@ AR       = ar
 RM       = rm -f
 RMDIR    = rm -rf
 
-BUILDID  = linux32gcc
+TOOLKIT  = linux32gcc
+ifeq "$(BPRF)" "1"
+BUILDID  = $(TOOLKIT)p
+else
+BUILDID  = $(TOOLKIT)
+endif
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
@@ -51,6 +56,7 @@ OUTDIR   = $(OUTDIRD)
 CCFLAGS  = $(CCFLAGSD)
 LDFLAGS  = $(LDFLAGSD)
 ARFLAGS  = $(ARFLAGSD)
+STRIP    = - echo No strip - debug 
 else
 OUTDIR   = $(OUTDIRR)
 CCFLAGS  = $(CCFLAGSR)
@@ -58,10 +64,19 @@ LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
 endif
 
+ifeq "$(BPRF)" "1"
+CCPROF = -D_ME_PROFILE -pg
+LDPROF = -pg
+STRIP  = - echo No strip - profile 
+else
+CCPROF = 
+LDPROF = 
+endif
+
 LIBNAME  = zlib
 LIBFILE  = $(LIBNAME)$(A)
 LIBHDRS  = zutil.h zlib.h zconf.in.h zconf.h trees.h inftrees.h inflate.h \
-	   inffixed.h inffast.h deflate.h crc32.h $(BUILDID).mak
+	   inffixed.h inffast.h deflate.h crc32.h $(TOOLKIT).mak
 LIBOBJS  = $(OUTDIR)/adler32.o $(OUTDIR)/compress.o $(OUTDIR)/crc32.o $(OUTDIR)/gzio.o $(OUTDIR)/uncompr.o \
 	   $(OUTDIR)/deflate.o $(OUTDIR)/trees.o $(OUTDIR)/zutil.o $(OUTDIR)/inflate.o $(OUTDIR)/infback.o \
 	   $(OUTDIR)/inftrees.o $(OUTDIR)/inffast.o
@@ -69,7 +84,7 @@ LIBOBJS  = $(OUTDIR)/adler32.o $(OUTDIR)/compress.o $(OUTDIR)/crc32.o $(OUTDIR)/
 .SUFFIXES: .c .o
 
 $(OUTDIR)/%.o : %.c
-	$(CC) $(CCDEFS) $(CCFLAGS) -c -o $@ $<
+	$(CC) $(CCDEFS) $(CCPROF) $(CCFLAGS) -c -o $@ $<
 
 all: $(OUTDIR)/$(LIBFILE)
 

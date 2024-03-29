@@ -22,7 +22,7 @@ if "%1" == "-la"   goto build_logfa
 if "%1" == "-LS"   set  MELSTT= LSTT=1
 if "%1" == "-m"    goto build_mkfl
 if "%1" == "-ne"   set  MECORE= BCOR=ne
-if "%1" == "-p"    set  MEPROF= BPRF=1
+if "%1" == "-P"    set  MEPROF= BPRF=1
 if "%1" == "-S"    set  OPTIONS= spotless
 if "%1" == "-t"    goto build_type
 shift
@@ -127,7 +127,7 @@ echo              win32vc10.mak  Win32 build using MS VC version 10 (or 2010)
 echo              win32vc15.mak  Win32 build using MS VC version 15 (or 2017)
 echo              win32vc16.mak  Win32 build using MS VC version 16 (or 2019)
 echo     -ne  : for NanoEmacs build (output is ne).
-echo     -p   : Build with profiling instructions (MinGW)
+echo     -P   : Build with profiling instructions (MinGW)
 echo     -S   : Build clean spotless.
 echo     -t {type}
 echo          : Sets build type:

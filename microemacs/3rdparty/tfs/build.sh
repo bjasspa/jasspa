@@ -6,6 +6,7 @@
 OPTIONS=
 LOGFILE=
 LOGFILEA=
+MEPROF=
 MEDEBUG=
 MAKEFILE=
 MAKECDEFS=
@@ -30,6 +31,7 @@ do
         echo "   -m <makefile>"
         echo "        : Sets the makefile to use where <makefile> can be"
         echo "            aix4.mak, freebsd.mak, freebsd.gmk etc."
+        echo "   -P   : Build with profiling instructions."
         echo "   -S   : Build clean spotless."
         echo ""
         exit 1
@@ -53,6 +55,8 @@ do
     elif [ $1 = "-m" ] ; then
         shift
         MAKEFILE=$1
+    elif [ $1 = "-P" ] ; then
+        MEPROF=" BPRF=1"
     elif [ $1 = "-S" ] ; then
         OPTIONS=" spotless"
     else
@@ -182,7 +186,7 @@ if [ -z "$MAKEFILE" ] ; then
     fi
 fi
 
-OPTIONS="$MEDEBUG$OPTIONS"
+OPTIONS="$MEDEBUG$MEPROF$OPTIONS"
 MAKECDEFS="MAKECDEFS=$MAKECDEFS"
 if [ -r $MAKEFILE ] ; then
     if [ -n "$LOGFILE" ] ; then

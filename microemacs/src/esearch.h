@@ -144,6 +144,16 @@ extern int      srchLastMagic;      /* last search was a magic        */
 #define mereRegexGroupEnd(n)    (mereRegex.group[(n)].end)
 #define mereRegexGroupNo()      (mereRegex.groupNo)
 
+/* meRegexClass functions and macros */
+#define meRegexClassTest(clss,cc)    (clss[(cc)>>3] &   (1<<((cc)&0x7)))
+#define meRegexClassSet(clss,cc)     (clss[(cc)>>3] |=  (1<<((cc)&0x7)))
+#define meRegexClassClear(clss,cc)   (clss[(cc)>>3] &= ~(1<<((cc)&0x7)))
+#define meRegexClassToggle(clss,cc)  (clss[(cc)>>3] ^=  (1<<((cc)&0x7)))
+#define meRegexClassSetAll(clss)     (memset(clss,0xff,meREGEXCLASS_SIZE))
+#define meRegexClassClearAll(clss)   (memset(clss,0x00,meREGEXCLASS_SIZE))
+#define meRegexClassCpy(cls1,cls2)   (memcpy(cls1,cls2,meREGEXCLASS_SIZE))
+#define meRegexClassCmp(cls1,cls2)   memcmp(cls1,cls2,meREGEXCLASS_SIZE)
+
 #endif
 
 typedef struct {                       

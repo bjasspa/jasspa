@@ -119,6 +119,14 @@ typedef struct meRegex {
 #define meRegexInvalidate(regex)   (regex->flags = 0)
 #define meRegexClassChanged(regex) (regex->flags |= meREGEX_CLASSCHANGE)
 
+/* meRegexClass functions and macros */
+#define meRegexClassTest(clss,cc)    (clss[(cc)>>3] &   (1<<((cc)&0x7)))
+#define meRegexClassSet(clss,cc)     (clss[(cc)>>3] |=  (1<<((cc)&0x7)))
+#define meRegexClassClear(clss,cc)   (clss[(cc)>>3] &= ~(1<<((cc)&0x7)))
+#define meRegexClassToggle(clss,cc)  (clss[(cc)>>3] ^=  (1<<((cc)&0x7)))
+#define meRegexClassSetAll(clss)     (memset(clss,0xff,meREGEXCLASS_SIZE))
+#define meRegexClassClearAll(clss)   (memset(clss,0x00,meREGEXCLASS_SIZE))
+
 /* meRegexMatch flags */
 #define meREGEX_BACKWARD        0x01
 #define meREGEX_BEGBUFF         0x02
@@ -211,14 +219,6 @@ enum {
     meREGEXITEM_WORDBND,
     meREGEXITEM_NWORDBND
 } meREGEXITEM;
-
-/* meRegexClass functions and macros */
-#define meRegexClassTest(clss,cc)    (clss[(cc)>>3] &   (1<<((cc)&0x7)))
-#define meRegexClassSet(clss,cc)     (clss[(cc)>>3] |=  (1<<((cc)&0x7)))
-#define meRegexClassClear(clss,cc)   (clss[(cc)>>3] &= ~(1<<((cc)&0x7)))
-#define meRegexClassToggle(clss,cc)  (clss[(cc)>>3] ^=  (1<<((cc)&0x7)))
-#define meRegexClassSetAll(clss)     (memset(clss,0xff,meREGEXCLASS_SIZE))
-#define meRegexClassClearAll(clss)   (memset(clss,0x00,meREGEXCLASS_SIZE))
 
 #define meREGEX_MAX_NESTED_GROUPS 20
 /* static variables to store the matching info */
