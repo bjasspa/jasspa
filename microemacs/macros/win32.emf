@@ -31,14 +31,14 @@
 ; Standard Terminal Fonts - heavy weight use     0 7
 !if &band $system 0x01
   ; using a console interface
-  1 change-font .change-font.type
+  1 change-font .change-font.wftp
 !else
   ; using our own window
   set-variable #l0 &reg &spr "/history/%s/font" $platform ""
   set-variable #l1 &reg &spr "/history/%s/font-weight" $platform "0"
   set-variable #l2 &reg &spr "/history/%s/font-width" $platform "0"
   set-variable #l3 &reg &spr "/history/%s/font-depth" $platform "0"
-  !force 1 change-font .change-font.type #l0 #l1 #l2 #l3
+  !force 1 change-font .change-font.wftp #l0 #l1 #l2 #l3
   set-variable .change-font.ofnt $result
   define-macro change-font-size
     !if &not @#

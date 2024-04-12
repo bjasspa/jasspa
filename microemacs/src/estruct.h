@@ -48,6 +48,7 @@
 #define meTIME_STAMP_SIZE_MAX 40                /* Max len of a time stamp str. */
 #define meMACRO_DEPTH_MAX     20                /* maximum depth of recursion   */
 
+#define meCHAR_UNDEF          0x07              /* convert from unicode to ME code page can lead to char loss which are changed to this */
 #define meCHAR_BELL           0x07              /* the bell character           */
 #define meCHAR_TAB            0x09              /* the tab character            */
 #define meCHAR_NL             0x0a              /* the \n char ^J, not ^M       */

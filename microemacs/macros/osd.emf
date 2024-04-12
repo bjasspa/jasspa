@@ -415,7 +415,7 @@ osd 5 80  ""  "Fill \HAll Paragraphs"          65536 fill-paragraph
 osd 5 90  ""  "Para\Hgraph to Line"                f paragraph-to-line
 osd 5 90  ""  "All Paragraphs to Li\Hnes"      65536 paragraph-to-line
 osd 5 100 "-"
-osd 5 110 ""  "C\Hhange Character Set..."          f charset-change
+osd 5 110 ""  "C\Hhange Character Set..."          f change-buffer-charset
 osd 5 120 ""  "\HTabs to Spaces"                   f tabs-to-spaces
 osd 5 130 ""  "\HClean Buffer"                     f clean
 osd 5 140 "-"

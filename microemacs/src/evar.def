@@ -324,6 +324,9 @@ DEFFUN (UFSUPPER,   "sup", 0x737570, FUN_MONAMIC)     /* string to upper case */
 DEFFUN (UFTRIMB,    "trb", 0x747262, FUN_MONAMIC)     /* Trim whitespace both */
 DEFFUN (UFTRIML,    "trl", 0x74726C, FUN_MONAMIC)     /* Trim whitespace left */
 DEFFUN (UFTRIMR,    "trr", 0x747272, FUN_MONAMIC)     /* Trim whitespace right */
+DEFFUN (UFUCINFO,   "uci", 0x756369, FUN_MONAMIC)     /* Unicode char info */
+DEFFUN (UFUFINFO,   "ufi", 0x756669, FUN_MONAMIC)     /* Unicode utf8 info */
+DEFFUN (UFUNINFO,   "uni", 0x756E69, FUN_MONAMIC)     /* Unicode info */
 DEFFUN (UFWHICH,    "whi", 0x776869, FUN_MONAMIC)     /* Does a which on a given program name */
 DEFFUN (UFXIREP,    "xir", 0x786972, FUN_TRINAMIC)    /* regexp case insensitive replace str in str */
 DEFFUN (UFXISEQ,    "xis", 0x786973, FUN_DYNAMIC)     /* regexp case insensitive string logical equality check */

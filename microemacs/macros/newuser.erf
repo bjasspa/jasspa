@@ -23,7 +23,7 @@
 }
 "dos" {
  "blink" = "13107800"
- "char-set" = "PC-437"
+ "char-set" = "cp437"
  "file-ignore" = "~ ./"
  "scroll-bar" = "0x1be"
 }
@@ -87,7 +87,7 @@
 }
 "win32" {
  "blink" = "13107800"
- "char-set" = "Win-ANSI"
+ "char-set" = "cp1252"
  "ext-char-set" = "1"
  "file-ignore" = "~ ./"
  "scheme" = "schemebc"
@@ -95,7 +95,7 @@
 }
 "win32c" {
  "blink" = "13107800"
- "char-set" = "Win-OEM"
+ "char-set" = "cp850"
  "file-ignore" = "~ ./"
  "scroll-bar" = "0x1be"
 }

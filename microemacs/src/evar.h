@@ -104,7 +104,7 @@ int funcHashs[] =
 /* This array can be tested using the !test directive, enable KEY_TEST in exec.c */
 meUByte funcOffst[26] = {
 #if MEOPT_EXTENDED
-    2,7,12,15,16,21,26,0,28,0,34,39,43,49,51,53,0,56,62,70,0,0,72,75,0,0
+    2,7,12,15,16,21,26,0,28,0,34,39,43,49,51,53,0,56,62,70,73,0,75,78,0,0
 #else
     1,6,10,11,12,0,14,0,15,0,0,18,21,24,26,0,0,27,29,0,0,0,0,0,0,0
 #endif

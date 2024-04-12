@@ -25,8 +25,7 @@
     !endif
     !abort
   !endif
-  ; Add the eXtended, Main and Personal dictionaries
-  add-dictionary &cat "lsdx" .spell.language
-  add-dictionary &cat "lsdm" .spell.language
-  add-dictionary &cat "lsdp" .spell.language
+  ; Add the Main and Personal dictionaries
+  add-dictionary &cat "lsm" .spell.language
+  add-dictionary &cat "lsp" .spell.language
 !emacro

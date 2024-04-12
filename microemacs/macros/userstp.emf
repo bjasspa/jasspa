@@ -414,12 +414,10 @@ set-variable .user-set-mouse.A ""
       set-registry &spr "/history/%s/font-weight" %platform &lget $result 3
       set-registry &spr "/history/%s/font-width" %platform &lget $result 6
       set-registry &spr "/history/%s/font-depth" %platform &lget $result 7
-      set-variable #l0 &lfind %charset-types &lget $result 2
-      !if &not #l0
-        set-variable #l0 &lfind %charset-types 0
-      !endif
+      set-variable #l0 &lfind .change-font.cs-wftp &lget $result 2
+      !iif &not #l0  set-variable #l0 &lfind .change-font.cs-wftp 0
       set-registry &spr "/history/%s/ext-char-set" %platform &not &equ #l0 255
-      set-registry &spr "/history/%s/char-set" %platform &lget %charset-value #l0
+      set-registry &spr "/history/%s/char-set" %platform &lget .change-font.cs-id #l0
     !endif
   !emacro
 !else
@@ -428,7 +426,7 @@ set-variable .user-set-mouse.A ""
 !endif
 
 0 define-macro user-setup-charset-set
-  set-registry &spr "/history/%s/char-set" %platform &lget %charset-value @#
+  set-registry &spr "/history/%s/char-set" %platform &lget .change-font.cs-id @#
 !emacro
 
 0 define-macro user-setup-charset
@@ -436,11 +434,11 @@ set-variable .user-set-mouse.A ""
     -1 osd .osd.tmp
     osd .osd.tmp 0 "bs" 33 0 0 0
     set-variable #l0 0
-    !while &not &seq "" &set #l1 &lget %charset-names &inc #l0 1
+    !while &not &seq "" &set #l1 &lget .change-font.cs-name &inc #l0 1
       osd .osd.tmp #l0 "" #l1 #l0 user-setup-charset-set
     !done
   !else
-    set-variable $result &lget %charset-names &lfind %charset-value &reg &spr "/history/%s/char-set" %platform &lget %charset-value 1
+    set-variable $result &lget .change-font.cs-name &lfind .change-font.cs-id &reg &spr "/history/%s/char-set" %platform &lget .change-font.cs-id 1
   !endif
 !emacro
 

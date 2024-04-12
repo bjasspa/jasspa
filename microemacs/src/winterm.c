@@ -1074,21 +1074,28 @@ WinSpecialChar(HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol
     /* Fill in the character */
     switch(cc)
     {
-    case 0x01:          /* checkbox left side ([) */
+    case 0x01:          /* unicode tag - 3 byte encode [u] */
+        /* TODO SSP */
+        break;
+        
+    case 0x02:          /* unicode tag - 5 byte encode [U] */
+        break;
+    
+    case 0x03:          /* checkbox left side ([) */
         MoveToEx (hdc, x + cm->sizeX - 1, y + 1, NULL);
         LineTo(hdc, x + cm->sizeX - 2, y + 1);
         LineTo(hdc, x + cm->sizeX - 2, y + cm->sizeY - 2);
         LineTo(hdc, x + cm->sizeX, y + cm->sizeY - 2);
         break;
         
-    case 0x02:          /* checkbox center not selected */
+    case 0x04:          /* checkbox center not selected */
         MoveToEx (hdc, x, y + 1, NULL);
         LineTo(hdc, x + cm->sizeX, y + 1);
         MoveToEx (hdc, x, y + cm->sizeY - 2, NULL);
         LineTo(hdc, x + cm->sizeX, y + cm->sizeY - 2);
         break;
         
-    case 0x03:          /* checkbox center not selected */
+    case 0x05:          /* checkbox center not selected */
         {
             HBRUSH obrush;
             HBRUSH fbrush;
@@ -1116,29 +1123,28 @@ WinSpecialChar(HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol
         }
         break;
         
-    case 0x04:          /* checkbox right side (]) */
+    case 0x06:          /* checkbox right side (]) */
         MoveToEx(hdc, x, y + 1, NULL);
         LineTo(hdc, x + 1, y + 1);
         LineTo(hdc, x + 1, y + cm->sizeY - 2);
         LineTo(hdc, x - 1, y + cm->sizeY - 2);
         break;
         
-    case 0x07:          /* Line space '.' */
+    case 0x07:          /* meCHAR_UNDEF, undefined char - can be generated during X11 clipboard get or charset change <+> */
+        MoveToEx(hdc, x, y + cm->midY, NULL);
+        LineTo(hdc, x + cm->midX,  y);
+        LineTo(hdc, x + cm->sizeX, y + cm->midY);
+        LineTo(hdc, x + cm->midX,  y + cm->sizeY);
+        LineTo(hdc, x, y + cm->midY);
+        LineTo(hdc, x + cm->sizeX, y + cm->midY);
+        MoveToEx(hdc, x + cm->midX,  y, NULL);
+        LineTo(hdc, x + cm->midX,  y + cm->sizeY);
+        break;
+
+    case 0x08:          /* Line space '.' */
         MoveToEx(hdc, x + cm->midX, y + cm->midY, NULL);
         LineTo(hdc, x + cm->midX + 1, y + cm->midY);
         break;
-        
-    case 0x08:          /* Line & Poly / Backspace <- */
-        ii = cm->midY >> 1;
-        MoveToEx(hdc, x + cm->sizeX - 2, y + cm->midY, NULL);
-        LineTo(hdc, x + cm->midX - 1, y + cm->midY);
-        points[0].x = x + cm->midX - 1;
-        points[0].y = y + cm->midY - ii;
-        points[1].x = x + cm->midX - 1;
-        points[1].y = y + cm->midY + ii;
-        points[2].x = x;
-        points[2].y = y + cm->midY;
-        goto makePoly;
         
     case 0x09:          /* Line & Poly / Tab -> */
         ii = cm->midY >> 1;
@@ -1298,17 +1304,8 @@ WinSpecialChar(HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol
         }
         break;
         
-    case 0x1c:          /* Invalid char - can be generated during utf8 to latin1 X11 clipboard get <+> */
-        MoveToEx(hdc, x, y + cm->midY, NULL);
-        LineTo(hdc, x + cm->midX,  y);
-        LineTo(hdc, x + cm->sizeX, y + cm->midY);
-        LineTo(hdc, x + cm->midX,  y + cm->sizeY);
-        LineTo(hdc, x, y + cm->midY);
-        LineTo(hdc, x + cm->sizeX, y + cm->midY);
-        MoveToEx(hdc, x + cm->midX,  y, NULL);
-        LineTo(hdc, x + cm->midX,  y + cm->sizeY);
-        break;
-
+        /* 0x1c is difficult to use as its the meCHAR_LEADER char - only use if value not used in variables such as $window-chars */ 
+        
     case 0x1d:          /* Scroll box - horizontal */
         for(ii = (x+1) & ~1; ii < x + cm->sizeX; ii += 2)
         {

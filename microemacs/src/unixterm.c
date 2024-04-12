@@ -177,11 +177,11 @@ enum
 };
 
 /* Define the local termcap constants that we require */
-unsigned  short  TTnewWid, TTnewHig  ;
-static    int    TTcursorVisible = 1;   /* Cursor is visible */
-static    int    TTaMarginsDisabled = 0;/* Automatic margins disabled */
+unsigned short TTnewWid, TTnewHig;
+static int TTcursorVisible = 1;     /* Cursor is visible */
+static int TTaMarginsDisabled = 0;  /* Automatic margins disabled */
 #ifndef _USE_NCURSES
-static    char   tcapbuf[TCAPSLEN];
+static char tcapbuf[TCAPSLEN];
 #endif
 /**************************************************************************
  * Special termcal color definitions                                       *
@@ -913,10 +913,9 @@ TCAPgetWinSize(void)
         }
     }
     
-    /* If there is a new line glitch and we have automargins then it is
-     * dangerous for us to use the last line as we cause a scroll that we
-     * cannot easily correct. If this is the case then reduce the number of
-     * lines by 1. */
+    /* If there is a new line glitch and we have automargins then it is dangerous for us to use the
+     * last line as we cause a scroll that we cannot easily correct. If this is the case then
+     * reduce the number of lines by 1. */
     if ((tcaptab[TCAPam].code.value > 0) && (tcaptab[TCAPxenl].code.value == 0) &&
         (TTaMarginsDisabled == 0))
         TTnewHig-- ;
@@ -1045,11 +1044,31 @@ void
 meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
 {
     XPoint points[4] ;
-    int ii ;
+    int ii;
     /* Fill in the character */
     switch (cc)
     {
-    case 0x01:          /* checkbox left side ([) */
+    case 0x01:          /* unicode tag - 3 byte encode [u] */
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y, x+mecm.fwidth-1, y);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fwidth-1, y, x+mecm.fwidth-1, y+mecm.fdepth-1);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fwidth-1, y+mecm.fdepth-1, x, y+mecm.fdepth-1);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y+mecm.fdepth-1, x, y);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+2, y+4, x+2, y+mecm.fdepth-4);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+3, y+mecm.fdepth-3, x+mecm.fwidth-4, y+mecm.fdepth-3);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fwidth-3, y+4, x+mecm.fwidth-3, y+mecm.fdepth-4);
+        break;
+        
+    case 0x02:          /* unicode tag - 5 byte encode [U] */
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y, x+mecm.fwidth-1, y);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fwidth-1, y, x+mecm.fwidth-1, y+mecm.fdepth-1);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fwidth-1, y+mecm.fdepth-1, x, y+mecm.fdepth-1);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y+mecm.fdepth-1, x, y);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+2, y+2, x+2, y+mecm.fdepth-4);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+3, y+mecm.fdepth-3, x+mecm.fwidth-4, y+mecm.fdepth-3);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fwidth-3, y+2, x+mecm.fwidth-3, y+mecm.fdepth-4);
+        break;
+    
+    case 0x03:          /* checkbox left side ([) */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
                   x + mecm.fwidth - 2, y + mecm.fhdepth - mecm.fhwidth,
                   x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth) ;
@@ -1061,7 +1080,7 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
                   x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
         break;
         
-    case 0x02:          /* checkbox center not selected */
+    case 0x04:          /* checkbox center not selected */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
                   x, y + mecm.fhdepth - mecm.fhwidth,
                   x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth);
@@ -1070,7 +1089,7 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
                   x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
         break;
         
-    case 0x03:          /* checkbox center not selected */
+    case 0x05:          /* checkbox center not selected */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
                   x, y + mecm.fhdepth - mecm.fhwidth,
                   x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth);
@@ -1088,7 +1107,7 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
         XFillPolygon(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), points, 4, Convex, CoordModeOrigin) ;
         break;
         
-    case 0x04:          /* checkbox right side (]) */
+    case 0x06:          /* checkbox right side (]) */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
                   x, y + mecm.fhdepth - mecm.fhwidth,
                   x + 1, y + mecm.fhdepth - mecm.fhwidth) ;
@@ -1100,45 +1119,42 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
                   x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
         break;
         
-    case 0x07:          /* Line space '.' */
+    case 0x07:          /* meCHAR_UNDEF, undefined char - can be generated during X11 clipboard get or charset change <+> */
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y + mecm.fhdepth, x + mecm.fhwidth, y);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y + mecm.fhdepth, x + mecm.fhwidth, y + mecm.fdepth - 1);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y + mecm.fhdepth, x + mecm.fwidth -1, y + mecm.fhdepth);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fhwidth, y, x + mecm.fwidth -1, y + mecm.fhdepth);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fhwidth, y + mecm.fdepth - 1, x + mecm.fwidth -1, y + mecm.fhdepth);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fhwidth, y, x + mecm.fhwidth, y + mecm.fdepth - 1);
+        break;
+        
+    case 0x08:          /* Line space '.' */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fhwidth, y+mecm.fhdepth, x+mecm.fhwidth+1, y+mecm.fhdepth);
         break;
-        
-    case 0x08:          /* Backspace character <- */
-        ii=(mecm.fhdepth+1) >> 1 ;
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fwidth-2, y+mecm.fhdepth, x+mecm.fhwidth, y+mecm.fhdepth);
-        points[0].x = x+mecm.fhwidth ;
-        points[0].y = y+ii ;
-        points[1].x = x+mecm.fhwidth ;
-        points[1].y = y+mecm.fdepth-ii-1;
-        points[2].x = x+1 ;
-        points[2].y = y+mecm.fhdepth ;
-        XFillPolygon(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), points, 3, Convex, CoordModeOrigin) ;
-        break;
-        
+    
     case 0x09:          /* Tab character -> */
-        ii=(mecm.fhdepth+1) >> 1 ;
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+1, y+mecm.fhdepth, x+mecm.fhwidth-1, y+mecm.fhdepth);
-        points[0].x = x+mecm.fhwidth-1 ;
-        points[0].y = y+ii ;
-        points[1].x = x+mecm.fhwidth-1 ;
+        ii=(mecm.fhdepth) >> 1 ;
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+1, y+mecm.fhdepth, x+mecm.fhwidth, y+mecm.fhdepth);
+        points[0].x = x+mecm.fhwidth;
+        points[0].y = y+ii;
+        points[1].x = x+mecm.fhwidth;
         points[1].y = y+mecm.fdepth-ii-1;
-        points[2].x = x+mecm.fwidth-2 ;
-        points[2].y = y+mecm.fhdepth ;
-        XFillPolygon(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), points, 3, Convex, CoordModeOrigin) ;
+        points[2].x = x+mecm.fwidth-1;
+        points[2].y = y+mecm.fhdepth;
+        XFillPolygon(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),points, 3,Convex,CoordModeOrigin);
         break;
         
     case 0x0a:          /* CR character / <-| */
-        ii=(mecm.fhdepth+1) >> 1 ;
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fhwidth,  y+mecm.fhdepth, x+mecm.fwidth-2, y+mecm.fhdepth);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fwidth-2, y+mecm.fhdepth, x+mecm.fwidth-2, y+ii-1);
-        points[0].x = x+mecm.fhwidth ;
-        points[0].y = y+ii ;
-        points[1].x = x+mecm.fhwidth ;
+        ii=mecm.fhdepth >> 1 ;
+        XDrawLine(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),x+mecm.fhwidth,y+mecm.fhdepth,x+mecm.fwidth-2,y+mecm.fhdepth);
+        XDrawLine(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),x+mecm.fwidth-2,y+mecm.fhdepth,x+mecm.fwidth-2,y+ii-1);
+        points[0].x = x+mecm.fhwidth;
+        points[0].y = y+ii;
+        points[1].x = x+mecm.fhwidth;
         points[1].y = y+mecm.fdepth-ii-1;
-        points[2].x = x+1 ;
-        points[2].y = y+mecm.fhdepth ;
-        XFillPolygon(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), points, 3, Convex, CoordModeOrigin) ;
+        points[2].x = x;
+        points[2].y = y+mecm.fhdepth;
+        XFillPolygon(mecm.xdisplay, meFrameGetXWindow(frame),meFrameGetXGC(frame),points,3,Convex,CoordModeOrigin);
         break;
         
     case 0x0b:          /* Line Drawing / Bottom right _| */
@@ -1197,18 +1213,14 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
         break;
         
     case 0x13:          /* cross box empty ([ ]) */
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x, y + mecm.fhdepth - mecm.fhwidth + 1,
-                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth + 1);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth,
-                  x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x, y + mecm.fhdepth - mecm.fhwidth + 1,
-                  x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth + 1,
-                  x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+        XDrawLine(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),
+                  x, y + mecm.fhdepth - mecm.fhwidth + 1, x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth + 1);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame),meFrameGetXGC(frame),
+                  x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth, x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame),meFrameGetXGC(frame),
+                  x, y + mecm.fhdepth - mecm.fhwidth + 1, x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame),meFrameGetXGC(frame),
+                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth + 1, x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
         break;
         
     case 0x14:          /* cross box ([X]) */
@@ -1270,14 +1282,7 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
             XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, ii, x + mecm.fwidth - 1, ii);
         break;
         
-    case 0x1c:          /* Invalid char - can be generated during utf8 to latin1 X11 clipboard get <+> */
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y + mecm.fhdepth, x + mecm.fhwidth, y);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y + mecm.fhdepth, x + mecm.fhwidth, y + mecm.fdepth - 1);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y + mecm.fhdepth, x + mecm.fwidth -1, y + mecm.fhdepth);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fwidth -1, y + mecm.fhdepth, x + mecm.fhwidth, y);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fwidth -1, y + mecm.fhdepth, x + mecm.fhwidth, y + mecm.fdepth - 1);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fhwidth, y, x + mecm.fhwidth, y + mecm.fdepth - 1);
-        break;
+        /* 0x1c is difficult to use as its the meCHAR_LEADER char - only use if value not used in variables such as $window-chars */ 
         
     case 0x1d:          /* Scroll box - horizontal */
         for (ii = (x+1) & ~1; ii < x+mecm.fwidth; ii += 2)
@@ -2181,7 +2186,7 @@ special_bound:
                             len += meStrlen(killp->data);
                         else
                         {
-                            /* TODO SSP should have a CP to UNICODE for chars 0x80 - 0xff, for now convert all to replace char (U+fffd, UTF8: \xEF\xBF\xBD) */
+                            /* charToUnicode supports up to 0xffff which requires up to 3 chars */
                             ss = killp->data;
                             while((cc=*ss++) != '\0')
                                 len += (cc & 0x80) ? 3:1;
@@ -2212,9 +2217,27 @@ special_bound:
                                 {
                                     if(cc & 0x80)
                                     {
-                                        *dd++ = 0xEF;
-                                        *dd++ = 0xBF;
-                                        *dd++ = 0xBD;
+                                        int uc;
+                                        if((uc = charToUnicode[cc-128]) == 0)
+                                        {
+                                            /* No mapping convert to UNICODE replacement char (U+fffd, UTF8: \xEF\xBF\xBD) */
+                                            *dd++ = 0xEF;
+                                            *dd++ = 0xBF;
+                                            *dd++ = 0xBD;
+                                        }
+                                        else if(uc & 0x0f800)
+                                        {
+                                            *dd++ = 0xe0 | (uc >> 12);
+                                            *dd++ = 0x80 | ((uc >> 6) & 0x3f);
+                                            *dd++ = 0x80 | (uc & 0x3f);
+                                        }
+                                        else if(uc & 0x00780)
+                                        {
+                                            *dd++ = 0xc0 | (uc >> 6);
+                                            *dd++ = 0x80 | (uc & 0x3f);
+                                        }
+                                        else
+                                            *dd++ = uc;
                                     }
                                     else
                                         *dd++ = cc;
@@ -2297,26 +2320,45 @@ special_bound:
                 {
                     if(type != XA_STRING)
                     {
-                        int ss;
-                        meUByte cc, c2;
+                        int ss, uc;
+                        meUByte cc, c1, bc, bm;
                         ss = nitems = 0;
                         while((cc=buff[ss++]) != '\0')
                         {
-                            if(cc < 0xc0)
+                            if(cc < 0x80)
                                 buff[nitems++] = cc;
                             else
                             {
-                                if((c2 = buff[ss++]) == '\0')
-                                    break;
-                                if(cc < 0xc4)
-                                    buff[nitems++] = ((cc & 0x03) << 6) | (c2 & 0x3f);
+                                bc = 0;
+                                uc = 0;
+                                bm = 0x40;
+                                while(cc & bm)
+                                {
+                                    if(((c1 = buff[ss++]) & 0xc0) != 0x80)
+                                    {
+                                        bc = 0;
+                                        break;
+                                    }
+                                    uc = (uc << 6) | (c1 & 0x3f);
+                                    bm >>= 1;
+                                    bc += 6;
+                                }
+                                if((bc == 0) || ((uc |= (cc & (bm - 1)) << bc) == 0) || (uc > 0xffff))
+                                    buff[nitems++] = meCHAR_UNDEF;
+                                else if((uc < 256) && ((uc < 128) || (charToUnicode[uc-128] == uc)))
+                                    buff[nitems++] = uc;
                                 else
                                 {
-                                    buff[nitems++] = 0x1c;
-                                    if(((cc >= 0xe0) && (buff[ss++] == '\0')) || ((cc >= 0xf0) && (buff[ss++] == '\0')) ||
-                                       ((cc >= 0xf8) && (buff[ss++] == '\0')) || ((cc >= 0xfc) && (buff[ss++] == '\0')))
-                                        break;
+                                    int ii = 127;
+                                    while((charToUnicode[ii] != uc) && (--ii >= 0))
+                                        ;
+                                    if(ii >= 0)
+                                        buff[nitems++] = ii+128;
+                                    else
+                                        buff[nitems++] = meCHAR_UNDEF;
                                 }
+                                if(c1 == 0)
+                                    break;
                             }
                         }
                         buff[nitems] = '\0';
@@ -2609,16 +2651,12 @@ TCAPstart(void)
         tcaptab[TCAPasbe].code.str = NULL;
     
     /* Determine if there is a mechanism to enable and disable the automatic margins.
-     * If there is then disable them now */
-    if(tcaptab[TCAPam].code.value > 0)
+     * If there is and auto-margins are enabled then disable them now */
+    if((tcaptab[TCAPam].code.value > 0) && (tcaptab[TCAPrmam].code.str != NULL))
     {
-        /* Try to disable the margins */
-        if(tcaptab[TCAPsmam].code.str != NULL)
-        {
-            putpad(tcaptab[TCAPsmam].code.str);
-            tcaptab[TCAPam].code.value = meTCAPgetflag(tcaptab[TCAPam].capKey);
-            TTaMarginsDisabled = 1;
-        }
+        putpad(tcaptab[TCAPrmam].code.str);
+        tcaptab[TCAPam].code.value = meTCAPgetflag(tcaptab[TCAPam].capKey);
+        TTaMarginsDisabled = 1;
     }
     TCAPgetWinSize() ;
     TTdepthDefault = TTnewHig ;
@@ -2857,13 +2895,10 @@ TCAPclose(void)
 #endif
     
     /* If automatic margins are disabled then try to enable them again */
-    if (TTaMarginsDisabled != 0)
+    if((TTaMarginsDisabled != 0) && (tcaptab[TCAPsmam].code.str != NULL))
     {
-        if (tcaptab[TCAPsmam].code.str != NULL)
-        {
-            putpad(tcaptab[TCAPsmam].code.str);
-            tcaptab[TCAPam].code.value = meTCAPgetflag(tcaptab[TCAPam].capKey);
-        }
+        putpad(tcaptab[TCAPsmam].code.str);
+        tcaptab[TCAPam].code.value = meTCAPgetflag(tcaptab[TCAPam].capKey);
         TTaMarginsDisabled = 0;
     }
     if(tcaptab[TCAPasbe].code.str != NULL)
@@ -4188,10 +4223,10 @@ TTgetClipboard(void)
          * get the copy text. Take ownership at the end */
         clipState &= ~CLIP_RECEIVED;
         clipState |= CLIP_RECEIVING;
-        /* Request for the current Primary/Clipboard string owner to send a
-         * SelectionNotify event to us giving the current string */
-        /* TODO request meAtoms[meATOM_UTF8_STRING] rather than XA_STRING then convert to our code page, but need unicode to CP conv table */
-        XConvertSelection(mecm.xdisplay,clipboardA,XA_STRING,meAtoms[meATOM_COPY_TEXT],meFrameGetXWindow(frameCur),CurrentTime);
+        /* Request for the current Primary/Clipboard string owner to send a SelectionNotify event
+         * to us giving the current string. Request preference for UTF8 and rely on ME Unicode conversion
+         * to preserve as many chars as possible */
+        XConvertSelection(mecm.xdisplay,clipboardA,(meAtoms[meATOM_UTF8_STRING]) ? meAtoms[meATOM_UTF8_STRING]:XA_STRING,meAtoms[meATOM_COPY_TEXT],meFrameGetXWindow(frameCur),CurrentTime);
         /* Must do a flush to ensure the request has gone */
         XFlush(mecm.xdisplay);
         /* Wait for the returned value, alarmState bit will be set */

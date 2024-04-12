@@ -133,29 +133,29 @@ try_again:
            ((status = osdMainMenuCheckKey(code & 0x0ff)) != 0))
         {
             /* Found - return index */
-            *arg = (meUInt) (status+0x80000000) ;
-            return CK_OSD ;
+            *arg = (meUInt) (status+0x80000000);
+            return CK_OSD;
         }
 #endif
         if((meSystemCfg & meSYSTEM_ALTPRFX1) &&
            ((code & ME_PREFIX_MASK) == 0))
         {
-            code = (code & ~ME_ALT)|ME_PREFIX1 ;
-            goto try_again ;
+            code = (code & ~ME_ALT)|ME_PREFIX1;
+            goto try_again;
         }
     }
     if((charKeyboardMap != NULL) && ((code & ME_SPECIAL) == 0) &&
        (charKeyboardMap[code & 0x0ff] != 0))
     {
-        meUByte *ckm=charKeyboardMap ;
-        code = (ocode & 0xff00) | charKeyboardMap[code & 0x0ff] ;
-        charKeyboardMap = NULL ;
-        status = decode_key(code,arg) ;
-        charKeyboardMap = ckm ;
-        return status ;
+        meUByte *ckm=charKeyboardMap;
+        code = (ocode & 0xff00) | charKeyboardMap[code & 0x0ff];
+        charKeyboardMap = NULL;
+        status = decode_key(code,arg);
+        charKeyboardMap = ckm;
+        return status;
     }
-    *arg = 0 ;
-    return -1 ;				/* Not found - return error */
+    *arg = 0;
+    return -1;				/* Not found - return error */
 }
 
 /*****************************************************************************
@@ -181,28 +181,30 @@ try_again:
 int
 delete_key(register meUShort code)
 {
-    register meBind	*ktp;			/* Keyboard character array */
-    register int	ii ;			/* Index counter */
+    register meBind *ktp;		/* Keyboard character array */
+    register int ii;			/* Index counter */
 
     /* move to the right part of the table */
-    ii = keyTableSize ;
-    ktp = keytab ;
+    ii = keyTableSize;
+    ktp = keytab;
     while(--ii >= 0)
     {
         if(ktp->code == code)
-            break ;
-        ktp++ ;
+            break;
+        ktp++;
     }
     if(ii < 0)
-        return meFALSE ;
-    keyTableSize-- ;
+        return meFALSE;
+    keyTableSize--;
     /* move all infront back one */
     while(--ii >= 0)
     {
-        memcpy(ktp,ktp+1,sizeof(meBind)) ;
-        ktp++ ;
+        memcpy(ktp,ktp+1,sizeof(meBind));
+        ktp++;
     }
-    return meTRUE ;
+    /* clear unused binding */
+    ktp->code = 0;
+    return meTRUE;
 }	/* End of "delete_key" () */
 
 /*****************************************************************************
@@ -229,33 +231,33 @@ delete_key(register meUShort code)
 *****************************************************************************/
 
 int
-insert_key (register meUShort code, meUShort index, meUInt arg)
+insert_key(register meUShort code, meUShort index, meUInt arg)
 /*  code - Code to add to key table. */
 /* index - Index for the code. */
 {
-    register meBind	*ktp;			/* Keyboard character array */
-    register int	i;			/* Index counter */
+    register meBind *ktp;		/* Keyboard character array */
+    register int i;			/* Index counter */
 
     /* Is there room in the table */
     if(keyTableSize >= meBIND_MAX-1)		/* No space in table ?? */
-        return meFALSE ;                          /* No - return error. */
+        return meFALSE;                         /* No - return error. */
 
-/*--- Go backwards down table finding place in table and moving rest back. */
-    i = keyTableSize++ ;
-    ktp=&keytab[i] ;
+    /*--- Go backwards down table finding place in table and moving rest back. */
+    i = keyTableSize++;
+    ktp = &keytab[i];
     do {
-        memcpy(ktp+1,ktp,sizeof(meBind)) ;
+        memcpy(ktp+1,ktp,sizeof(meBind));
         if((--ktp)->code <= code)
-            break ;
-    } while(--i > 0) ;
+            break;
+    } while(--i > 0);
 
- /*---	Fill in the new code at new position */
-    ktp++ ;
-    ktp->index = index ;	/* Add new index */
-    ktp->code  = code ;		/* Add new function code */
-    ktp->arg   = arg ;		/* Add new argument */
+    /*---	Fill in the new code at new position */
+    ktp++;
+    ktp->index = index;		/* Add new index */
+    ktp->code = code;		/* Add new function code */
+    ktp->arg = arg;		/* Add new argument */
 
-    return meTRUE ;
+    return meTRUE;
 }	/* End of "insert_key" () */
 
 

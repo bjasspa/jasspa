@@ -2192,7 +2192,6 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
     if((fnum == UFCBIND) || (fnum == UFNBIND))
     {
         meUInt arg ;
-        int ii;
         
         if((ii = decode_key(meGetKey(meGETKEY_SILENT),&arg)) < 0)
             return errorm ;
@@ -2208,7 +2207,6 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
     /* retrieve the arguments */
     {
         meUByte alarmStateStr=alarmState;
-        int ii;
         
 #if MEOPT_EXTENDED
         if(funcTypes[fnum] & FUN_SETVAR)
@@ -2948,47 +2946,202 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             evalResult[ii] = '\0';
             return evalResult;
         }
-    case UFSET:
+    case UFUCINFO:
         {
-            if(setVar(arg1,arg2,regs) <= 0)
-                return abortm ;
-            meStrcpy (evalResult, arg2);
+            meUByte cc=arg1[0];
+            if(cc == 0)
+                meStrcpy(evalResult,"|3|0x000000||1||");
+            else if(cc < 128)
+                sprintf((char *) evalResult,"\xa0" "3\xa0" "0x%06x\xa0%c\xa0" "1\xa0%c\xa0",(int) cc,cc,cc);
+            else if((ii = charToUnicode[cc-128]) == 0)
+                sprintf((char *) evalResult,"|1|0x000000|%c|3|\xef\xbf\xbd|",cc);
+            else
+            {
+                varVal = evalResult + sprintf((char *) evalResult,"|3|0x%06x|%c|",ii,cc);
+                if(ii & 0x0f800)
+                {
+                    *varVal++ = '3';
+                    *varVal++ = '|';
+                    *varVal++ = 0xe0 | (ii >> 12);
+                    *varVal++ = 0x80 | ((ii >> 6) & 0x3f);
+                    *varVal++ = 0x80 | (ii & 0x3f);
+                }
+                else if(ii & 0x00780)
+                {
+                    *varVal++ = '2';
+                    *varVal++ = '|';
+                    *varVal++ = 0xc0 | (ii >> 6);
+                    *varVal++ = 0x80 | (ii & 0x3f);
+                }
+                else
+                {
+                    *varVal++ = '1';
+                    *varVal++ = '|';
+                    *varVal++ = ii;
+                }
+                *varVal++ = '|';
+                *varVal = '\0';
+            }
             return evalResult;
         }
+    case UFUFINFO:
+        {
+            meUByte cc=arg1[0], c1, bc, bm, ll=1;
+            varVal = evalResult + 16;
+            if(cc < 0x80)
+            {
+                if((ii = cc) != 0)
+                    *varVal++ = cc;
+                c1 = '\xa0';
+                bc = 3;
+            }
+            else
+            {
+                *varVal++ = cc;
+                bc = 0;
+                ii = 0;
+                bm = 0x40;
+                while(cc & bm)
+                {
+                    c1 = arg1[ll++];
+                    *varVal++ = c1;
+                    if((c1 & 0xc0) != 0x80)
+                    {
+                        bc = 0;
+                        break;
+                    }
+                    ii = (ii << 6) | (c1 & 0x3f);
+                    bm >>= 1;
+                    bc += 6;
+                }
+                if(bc == 0)
+                {
+                    ii = 0;
+                    cc = meCHAR_UNDEF;
+                }
+                else if(((ii |= (cc & (bm - 1)) << bc) < 256) && ((ii < 128) || (charToUnicode[ii-128] == ii)))
+                {
+                    cc = ii;
+                    bc = 3;
+                }
+                else
+                {
+                    int jj = 127;
+                    while((charToUnicode[jj] != ii) && (--jj >= 0))
+                        ;
+                    if(jj >= 0)
+                    {
+                        cc = jj+128;
+                        bc = 3;
+                    }
+                    else
+                    {
+                        cc = meCHAR_UNDEF;
+                        bc = 1;
+                    }
+                }
+                c1 = '|';
+            }
+            *varVal++ = c1;
+            *varVal = '\0';
+            sprintf((char *) evalResult,"%c%c%c0x%06x%c%c%c%c",c1,'0'+bc,c1,ii,c1,cc,c1,'0'+ll);
+            evalResult[15] = c1;
+            if(cc == '\0')
+            {
+                varVal = evalResult + 12;
+                while((*varVal = varVal[1]) != '\0')
+                    varVal++;
+            }
+            return evalResult;
+        }
+    case UFUNINFO:
+        {
+            if((ii = meAtoi(arg1)) == 0)
+                meStrcpy(evalResult,"|3|0x000000||1||");
+            else if((ii < 0) || (ii > 0x10ffff))
+                sprintf((char *) evalResult,"|0|0x000000|%c|3|\xef\xbf\xbd|",meCHAR_UNDEF);
+            else if(ii < 128)
+                sprintf((char *) evalResult,"\xa0" "3\xa0" "0x%06x\xa0%c\xa0" "1\xa0%c\xa0",ii,(meUByte) ii,(meUByte) ii);
+            else
+            {
+                int jj = 127;
+                while((charToUnicode[jj] != ii) && (--jj >= 0))
+                    ;
+                if(jj < 0)
+                    varVal = evalResult + sprintf((char *) evalResult,"|1|0x%06x|%c|",ii,meCHAR_UNDEF);
+                else
+                    varVal = evalResult + sprintf((char *) evalResult,"|3|0x%06x|%c|",ii,(meUByte) jj+128);
+                if(ii & 0x1f0000)
+                {
+                    *varVal++ = '4';
+                    *varVal++ = '|';
+                    *varVal++ = 0xf0 | (ii >> 18);
+                    *varVal++ = 0x80 | ((ii >> 12) & 0x3f);
+                    *varVal++ = 0x80 | ((ii >> 6) & 0x3f);
+                    *varVal++ = 0x80 | (ii & 0x3f);
+                }
+                else if(ii & 0x00f800)
+                {
+                    *varVal++ = '3';
+                    *varVal++ = '|';
+                    *varVal++ = 0xe0 | (ii >> 12);
+                    *varVal++ = 0x80 | ((ii >> 6) & 0x3f);
+                    *varVal++ = 0x80 | (ii & 0x3f);
+                }
+                else if(ii & 0x000780)
+                {
+                    *varVal++ = '2';
+                    *varVal++ = '|';
+                    *varVal++ = 0xc0 | (ii >> 6);
+                    *varVal++ = 0x80 | (ii & 0x3f);
+                }
+                else
+                {
+                    *varVal++ = '1';
+                    *varVal++ = '|';
+                    *varVal++ = ii;
+                }
+                *varVal++ = '|';
+                *varVal = '\0';
+            }
+            return evalResult;
+        }
+    case UFSET:
+        if(setVar(arg1,arg2,regs) <= 0)
+            return abortm ;
+        meStrcpy (evalResult, arg2);
+        return evalResult;
+    
     case UFDEC:
-        {
-            varVal = meItoa(meAtoi(varVal) - meAtoi(arg2));
-            if(setVar(arg1,varVal,regs) <= 0)
-                return abortm ;
-            return varVal ;
-        }
+        varVal = meItoa(meAtoi(varVal) - meAtoi(arg2));
+        if(setVar(arg1,varVal,regs) <= 0)
+            return abortm;
+        return varVal;
+    
     case UFINC:
-        {
-            varVal = meItoa(meAtoi(varVal) + meAtoi(arg2));
-            if(setVar(arg1,varVal,regs) <= 0)
-                return abortm ;
-            return varVal ;
-        }
+        varVal = meItoa(meAtoi(varVal) + meAtoi(arg2));
+        if(setVar(arg1,varVal,regs) <= 0)
+            return abortm;
+        return varVal;
+    
     case UFPDEC:
-        {
-            /* cannot copy into evalResult here cos meItoa uses it */
-            meStrcpy(arg3,varVal) ;
-            varVal = meItoa(meAtoi(varVal) - meAtoi(arg2));
-            if(setVar(arg1,varVal,regs) <= 0)
-                return abortm ;
-            meStrcpy(evalResult,arg3) ;
-            return evalResult ;
-        }
+        /* cannot copy into evalResult here cos meItoa uses it */
+        meStrcpy(arg3,varVal) ;
+        varVal = meItoa(meAtoi(varVal) - meAtoi(arg2));
+        if(setVar(arg1,varVal,regs) <= 0)
+            return abortm;
+        meStrcpy(evalResult,arg3);
+        return evalResult;
+    
     case UFPINC:
-        {
-            /* cannot copy into evalResult here cos meItoa uses it */
-            meStrcpy(arg3,varVal) ;
-            varVal = meItoa(meAtoi(varVal) + meAtoi(arg2));
-            if(setVar(arg1,varVal,regs) <= 0)
-                return abortm ;
-            meStrcpy(evalResult,arg3) ;
-            return evalResult ;
-        }
+        /* cannot copy into evalResult here cos meItoa uses it */
+        meStrcpy(arg3,varVal);
+        varVal = meItoa(meAtoi(varVal) + meAtoi(arg2));
+        if(setVar(arg1,varVal,regs) <= 0)
+            return abortm;
+        meStrcpy(evalResult,arg3) ;
+        return evalResult;
+    
     case UFREGISTRY:
 #if MEOPT_REGISTRY
         {

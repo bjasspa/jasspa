@@ -406,14 +406,15 @@ extern meAbbrev  *aheadp;               /* Head of list of abrev files  */
 extern struct meKill *klhead;           /* Head of klist                */
 
 /* the character lookup tables */
-extern meUByte    charMaskTbl1[] ;
-extern meUByte    charMaskTbl2[] ;
-extern meUByte    charCaseTbl[] ;
-extern meUByte    charLatinUserTbl[] ;
-extern meUByte    charUserLatinTbl[] ;
-extern meUByte    charMaskFlags[] ;
-extern meUByte   *charKeyboardMap ;
-extern meUByte    isWordMask ;
+extern meUByte    charMaskTbl1[];
+extern meUByte    charMaskTbl2[];
+extern meUByte    charCaseTbl[];
+extern meUByte    charLatinUserTbl[];
+extern meUByte    charUserLatinTbl[];
+extern meUByte    charMaskFlags[];
+extern meUShort   charToUnicode[];
+extern meUByte   *charKeyboardMap;
+extern meUByte    isWordMask;
 
 /* the following are global variables but not defined in this file */
 extern int        screenUpdateDisabledCount ;

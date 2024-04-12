@@ -12,7 +12,7 @@
 ;
 !if &les @# 1
   ; if executed with an argument of 0 or less, return the list
-  set-variable %language-names "|Default|American|British|Deutsch|Espanol|Finnish|Francais|Italiano|Polish|Portugues|Russian (Ye)|Russian (Yo)|"
+  set-variable %language-names "|Default|American|British|Deutsch|Espanol|Finnish|Francais|Greek|Italiano|Polish|Portugues|Russian (Ye)|Russian (Yo)|"
   !return
 !endif
 
@@ -29,46 +29,66 @@
 
 ; set up MicroEmacs for the users language
 set-variable #l0 &reg "/history/language" ""
+set-variable .change-font.ln-type ""
 !if &seq #l0 ""
 !elif &seq #l0 "Default"
 !elif &seq #l0 "American"
+  set-variable .change-font.ln-type 12579
   set-variable .spell.language "enus"
 !elif &seq #l0 "British"
+  set-variable .change-font.ln-type 12579
   set-variable .spell.language "engb"
 !elif &seq #l0 "Deutsch"
+  set-variable .change-font.ln-type 129
+  set-variable .spell.language "dede"
   set-char-mask "a" "ÄäÖöÜüßßAaOoUu"
   set-variable .set-char-mask.rm-chars "ÄäÖöÜüß"
-  set-variable .spell.language "dede"
 !elif &seq #l0 "Espanol"
+  set-variable .change-font.ln-type 19
+  set-variable .spell.language "eses"
   set-char-mask "a" "ÁáÉéÍíÑñÓóÚúÜüAaEeIiNnOoUu"
   set-variable .set-char-mask.rm-chars "ÁáÉéÍíÑñÓóÚúÜü"
-  set-variable .spell.language "eses"
 !elif &seq #l0 "Finnish"
+  set-variable .change-font.ln-type 12
+  set-variable .spell.language "fifi"
   set-char-mask "a" "ÅåÄäÖöAaOo"
   set-variable .set-char-mask.rm-chars "ÅåÄäÖö"
-  set-variable .spell.language "fifi"
 !elif &seq #l0 "Francais"
-  set-char-mask "a" "ÀàÂâÁáÇçÈèÊêÉéËëÎîÍíÏïÑñÒòÔôÓóÖöÙùÛûÚúÜüAaCcEeIiNnOoUu"
-  set-variable .set-char-mask.rm-chars "ÀàÂâÁáÇçÈèÊêÉéËëÎîÍíÏïÑñÒòÔôÓóÖöÙùÛûÚúÜü"
+  set-variable .change-font.ln-type 19
   set-variable .spell.language "frfr"
+  set-char-mask "a" "ÀàÂâÁáÇçÈèÊêÉéËëÎîÍíÏïÑñÒòÔôÓóÖöÙùÛûÚúÜüÿÿAaCcEeIiNnOoUu"
+  set-variable .set-char-mask.rm-chars "ÀàÂâÁáÇçÈèÊêÉéËëÎîÍíÏïÑñÒòÔôÓóÖöÙùÛûÚúÜüÿ"
+!elif &seq #l0 "Greek"
+  set-variable .change-font.ln-type 7
+  set-variable .spell.language "elgr"
+  set-char-mask "a" "¶Ü¸İ¹ŞºßÚúÉÀ¼ü¾ıÛûÕà¿şÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÓòÓóÔôÕõÖö×÷ØøÙù"
+  set-variable .set-char-mask.rm-chars "¶Ü¸İ¹ŞºßÚúÉÀ¼ü¾ıÛûÕà¿şÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÓòÓóÔôÕõÖö×÷ØøÙù"
 !elif &seq #l0 "Italiano"
+  set-variable .change-font.ln-type 19
+  set-variable .spell.language "itit"
   set-char-mask "a" "ÁáÈèÉéÌìÍíÒòÓóÀàÙùÚúAaCcEeIiOoRrUu"
   set-variable .set-char-mask.rm-chars "ÁáÈèÉéÌìÍíÒòÓóÀàÙùÚú"
-  set-variable .spell.language "itit"
 !elif &seq #l0 "Polish"
+  set-variable .change-font.ln-type 2
+  set-variable .spell.language "plpl"
   set-char-mask "a" "ÊêÓó¡±¦¶£³¯¿¬¼ÆæÑñAaCcEeLlNnOoSsZz"
   set-variable .set-char-mask.rm-chars "ÊêÓó¡±¦¶£³¯¿¬¼ÆæÑñ"
-  set-variable .spell.language "plpl"
 !elif &seq #l0 "Portugues"
+  set-variable .change-font.ln-type 19
+  set-variable .spell.language "ptpt"
   set-char-mask "a" "ÀàÂâÁáÃãÇçÈèÊêÉéÌìÍíÒòÔôÓóÕõÙùÚúÜüAaCcEeIiOoUu"
   set-variable .set-char-mask.rm-chars "ÀàÂâÁáÃãÇçÈèÊêÉéÌìÍíÒòÔôÓóÕõÙùÚúÜü"
-  set-variable .spell.language "ptpt"
 !elif &seq #l0 "Russian (Ye)"
+  set-variable .change-font.ln-type 5
   set-variable .spell.language "ruye"
   !jump 3
 !elif &seq #l0 "Russian (Yo)"
+  set-variable .change-font.ln-type 5
   set-variable .spell.language "ruyo"
   set-char-mask "a" "°Ğ±Ñ²Ò³Ó´ÔµÕ¶Ö·×¸Ø¹ÙºÚ»Û¼Ü½İ¾Ş¿ßÀàÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏï¡ñ"
   set-variable .set-char-mask.rm-chars "°Ğ±Ñ²Ò³Ó´ÔµÕ¶Ö·×¸Ø¹ÙºÚ»Û¼Ü½İ¾Ş¿ßÀàÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏï¡ñ"
+!else
+  ml-write &spr "[Error: Unknown/unsupported language - %s]" #l0
+  !abort
 !endif
 
