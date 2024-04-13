@@ -71,8 +71,8 @@ set-variable .change-font.ln-type ""
 !elif &seq #l0 "Polish"
   set-variable .change-font.ln-type 2
   set-variable .spell.language "plpl"
-  set-char-mask "a" "ÊêÓó¡±¦¶£³¯¿¬¼ÆæÑñAaCcEeLlNnOoSsZz"
-  set-variable .set-char-mask.rm-chars "ÊêÓó¡±¦¶£³¯¿¬¼ÆæÑñ"
+  set-char-mask "a" "ÊêÓó¥¹Œœ£³¯¿ŸÆæÑñAaCcEeLlNnOoSsZz"
+  set-variable .set-char-mask.rm-chars "ÊêÓó¥¹Œœ£³¯¿ŸÆæÑñ"
 !elif &seq #l0 "Portugues"
   set-variable .change-font.ln-type 19
   set-variable .spell.language "ptpt"
@@ -81,12 +81,12 @@ set-variable .change-font.ln-type ""
 !elif &seq #l0 "Russian (Ye)"
   set-variable .change-font.ln-type 5
   set-variable .spell.language "ruye"
-  !jump 3
+  !jump 4
 !elif &seq #l0 "Russian (Yo)"
   set-variable .change-font.ln-type 5
   set-variable .spell.language "ruyo"
-  set-char-mask "a" "°Ğ±Ñ²Ò³Ó´ÔµÕ¶Ö·×¸Ø¹ÙºÚ»Û¼Ü½İ¾Ş¿ßÀàÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏï¡ñ"
-  set-variable .set-char-mask.rm-chars "°Ğ±Ñ²Ò³Ó´ÔµÕ¶Ö·×¸Ø¹ÙºÚ»Û¼Ü½İ¾Ş¿ßÀàÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏï¡ñ"
+  set-char-mask "a" "ÀàÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÒòÓóÔôÕõÖö×÷ØøÙùÚúÛûÜüİıŞşßÿ¨¸"
+  set-variable .set-char-mask.rm-chars "ÀàÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÒòÓóÔôÕõÖö×÷ØøÙùÚúÛûÜüİıŞşßÿ¨¸"
 !else
   ml-write &spr "[Error: Unknown/unsupported language - %s]" #l0
   !abort

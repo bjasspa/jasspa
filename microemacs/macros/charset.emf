@@ -18,7 +18,7 @@ set-variable .change-font.cs-type  "1122555577991111"
 set-variable .change-font.cs-wftp  "|0||238||204||||161||162||||255||"
 !if &les @# 1
   ; if executed with an argument of 0 or less, define the charset names and return
-  set-variable .change-font.cs-name  "|Western Europe - Win CP1252|Western Europe - ISO-8859-1|Central Europe - Win CP1250|Central Europe - ISO-8859-2|Cyrillic - Windows CP1251|Cyrillic - ISO-8859-5|Cyrillic - DOS CP866|Cyrillic - KOI8-F|Greek - Windows CP1253|Greek - ISO-8859-7|Turkish - Windows CP1254|Turkish - ISO-8859-9|Western Europe - ISO-8859-15|Western Europe - DOS CP850|US PC & Win Console - DOS CP437|Plain Text|"
+  set-variable .change-font.cs-name  "|Western Europe - Win CP1252|Western Europe - ISO-8859-1|Central Europe - Win CP1250|Central Europe - ISO-8859-2|Cyrillic - Windows CP1251|Cyrillic - ISO-8859-5|Cyrillic - DOS CP866|Cyrillic - KOI8-F|Greek - Windows CP1253|Greek - ISO-8859-7|Turkish - Windows CP1254|Turkish - ISO-8859-9|Western Europe - ISO-8859-15|Western Europe - Win Console CP850|US PC - DOS CP437|Plain Text|"
   !return
 !endif
 ; get the users display char set
@@ -37,6 +37,7 @@ set-variable #l1 1
 !elif &seq #l0 "cp850"
   set-char-mask "M" "£œª¦«®¬ª®©°§±ñ²ý³ü´îµæ¶õ·ú¸ý¹û»¯¼¬½«¾ó¿¨À·ÁÂŠÃ²ÄŽÆ’Ç€ÈÔÉÊÒËÑÌÞÍÖÎ×ÏØÐÑÑ¥ÒãÓàÔâÕåÖ™×žØÙëÚéÛêÜšÝìÞçßÿà…á âƒä„å†æ‘ç‡èŠé‚êˆë‰ìí¡îŒï‹ñ¤ò•ó¢ô“õäö”÷öø›ù—ú£û–üýìþèÿ˜"
   set-char-mask "c" "00C700FC00E900E200E400E000E500E700EA00EB00E800EF00EE00EC00C400C500C900E600C600F400F600F200FB00F900FF00D600DC00F800A300D800D7019200E100ED00F300FA00F100D100AA00BA00BF00AE00AC00BD00BC00A100AB00BB2591259225932502252400C100C200C000A9256325512557255D00A200A5251025142534252C251C2500253C00E300C3255A25542569256625602550256C00A400F000D000CA00CB00C8013100CD00CE00CF2518250C2588258400A600CC258000D300DF00D400D200F500D500B500FE00DE00DA00DB00D900FD00DD00AF00B400AD00B1201700BE00B600A700F700B800B000A800B700B900B300B225A000A0"
+  set-char-mask "dp" "\CA\CB\CC\CD\CE\CF\CG\CP\CQ\CZ\C[\C^\C_"
   set-variable $box-chars "³Ú¿ÀÙÂÃÅ´ÁÄ"
   set-variable $window-chars "=-#*%=\C^± ±\C_\CD==\C^\C^±±  ±±\C_\C_\C[\CZ|\CQ± ±\CP\CD||\CQ\CQ±±  ±±\CP\CP\C[\CZ x* \CP \CQ\x1a\x14\xfa$$\\"
   set-variable $system &band $system &bnot 0x10000
@@ -74,6 +75,7 @@ set-variable #l1 1
 !elif &seq #l0 "cp437"
   set-char-mask "M" "\x83\x9F\x8AS\x8EZ\x9As\x9Ez\x9FY\xA0\xFF\xA1\xAD\xA2\x9B\xA3\x9C\xA5\x9D\xAA\xA6\xAB\xAE\xAC\xAA\xB0\xF8\xB1\xF1\xB2\xFD\xB5\xE6\xB7\xFA\xBA\xA7\xBB\xAF\xBC\xAC\xBD\xAB\xBF\xA8\xC0A\xC1A\xC2A\xC3A\xC4\x8E\xC5\x8F\xC6\x92\xC7\x80\xC8E\xC9\x90\xCAE\xCBE\xCCI\xCDI\xCEI\xCFI\xD1\xA5\xD2O\xD3O\xD4O\xD5O\xD6\x99\xD8O\xD9U\xDAU\xDBU\xDC\x9A\xDDY\xDF\xE1\xE0\x85\xE1\xA0\xE2\x83\xE3a\xE4\x84\xE5\x86\xE6\x91\xE7\x87\xE8\x8A\xE9\x82\xEA\x88\xEB\x89\xEC\x8D\xED\xA1\xEE\x8C\xEF\x8B\xF1\xA4\xF2\x95\xF3\xA2\xF4\x93\xF5o\xF6\x94\xF7\xF6\xF8o\xF9\x97\xFA\xA3\xFB\x96\xFC\x81\xFDy\xFF\x98AAEEIIOOSSUUYYZZoossyyzz"
   set-char-mask "c" "00C700FC00E900E200E400E000E500E700EA00EB00E800EF00EE00EC00C400C500C900E600C600F400F600F200FB00F900FF00D600DC00A200A300A520A7019200E100ED00F300FA00F100D100AA00BA00BF231000AC00BD00BC00A100AB00BB259125922593250225242561256225562555256325512557255D255C255B251025142534252C251C2500253C255E255F255A25542569256625602550256C25672568256425652559255825522553256B256A2518250C25882584258C2590258003B100DF039303C003A303C300B503C403A6039803A903B4221E03C603B52229226100B1226522642320232100F7224800B0221900B7221A207F00B225A000A0"
+  set-char-mask "dp" "\CA\CB\CC\CD\CE\CF\CG\CP\CQ\CZ\C[\C^\C_"
   set-variable $box-chars "³Ú¿ÀÙÂÃÅ´ÁÄ"
   set-variable $window-chars "=-#*%=\C^± ±\C_\CD==\C^\C^±±  ±±\C_\C_\C[\CZ|\CQ± ±\CP\CD||\CQ\CQ±±  ±±\CP\CP\C[\CZ x* \CP \CQ>\\.$$\\"
   set-variable $system &band $system &bnot 0x10000

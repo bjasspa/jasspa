@@ -49,7 +49,7 @@
 
 #include <assert.h>
 
-static meKillNode **currkill=NULL ;	/* current kill buffer */
+static meKillNode **currkill=NULL;	/* current kill buffer */
 static meKill *reyankLastYank=NULL;
 
 static meLine *
@@ -971,15 +971,23 @@ killInit(int contKill)
 meUByte *
 killAddNode(meInt count)
 {
-    meKillNode *nbl ;
+    meKillNode *nbl;
     
     if((nbl = (meKillNode*) meMalloc(sizeof(meKillNode)+count)) == NULL)
-        return NULL ;
-    nbl->next = NULL ;
-    nbl->data[count] = '\0' ;
-    *currkill = nbl ;
-    currkill  = &(nbl->next) ;
-    return nbl->data ;
+        return NULL;
+    nbl->next = NULL;
+    nbl->data[count] = '\0';
+    *currkill = nbl;
+    currkill = &(nbl->next);
+    return nbl->data;
+}
+
+void
+killInsertNode(meKillNode *nbl)
+{
+    nbl->next = NULL;
+    *currkill = nbl;
+    currkill = &(nbl->next);
 }
 
 /*

@@ -842,7 +842,7 @@ meGetConsoleMessage(MSG *msg, int mode)
         
         hmem = WinKillToClipboard();
         EmptyClipboard();
-        SetClipboardData(((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT:CF_TEXT), hmem);
+        SetClipboardData(CF_UNICODETEXT,hmem);
         CloseClipboard();
         
         clipState &= ~CLIP_OWNER;
@@ -1072,13 +1072,35 @@ WinSpecialChar(HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol
     int ii;
     
     /* Fill in the character */
+    /* Note: LineTo does not draw the last pixel, i.e. a line x1,y1 -> x2,y2 will be drawn as x1,y1 -> x2-1,y2-1 */
     switch(cc)
     {
     case 0x01:          /* unicode tag - 3 byte encode [u] */
-        /* TODO SSP */
+        MoveToEx(hdc,x,y,NULL);
+        LineTo(hdc,x+cm->sizeX-1,y);
+        LineTo(hdc,x+cm->sizeX-1,y+cm->sizeY-1);
+        LineTo(hdc,x,y+cm->sizeY-1);
+        LineTo(hdc,x,y);
+        MoveToEx(hdc,x+2,y+4,NULL);
+        LineTo(hdc,x+2,y+cm->sizeY-3);
+        MoveToEx(hdc,x+3,y+cm->sizeY-3,NULL);
+        LineTo(hdc,x+cm->sizeX-3,y+cm->sizeY-3);
+        MoveToEx(hdc,x+cm->sizeX-3,y+4,NULL);
+        LineTo(hdc,x+cm->sizeX-3,y+cm->sizeY-3);
         break;
         
     case 0x02:          /* unicode tag - 5 byte encode [U] */
+        MoveToEx(hdc,x,y,NULL);
+        LineTo(hdc,x+cm->sizeX-1,y);
+        LineTo(hdc,x+cm->sizeX-1,y+cm->sizeY-1);
+        LineTo(hdc,x,y+cm->sizeY-1);
+        LineTo(hdc,x,y);
+        MoveToEx(hdc,x+2,y+2,NULL);
+        LineTo(hdc,x+2,y+cm->sizeY-3);
+        MoveToEx(hdc,x+3,y+cm->sizeY-3,NULL);
+        LineTo(hdc,x+cm->sizeX-3,y+cm->sizeY-3);
+        MoveToEx(hdc,x+cm->sizeX-3,y+2,NULL);
+        LineTo(hdc,x+cm->sizeX-3,y+cm->sizeY-3);
         break;
     
     case 0x03:          /* checkbox left side ([) */
@@ -1840,7 +1862,7 @@ static HANDLE
 WinKillToClipboard(void)
 {
     HANDLE hmem;                        /* Windows global memory handle */
-    meUByte *bufp;                      /* Windows global memory pointer */
+    WCHAR uc, *bufp;                    /* Windows global memory pointer */
     meKillNode *killp;                  /* Pointer to the kill data */
     meUByte cc;                         /* Local character pointer */
     meUByte *dd;                        /* Pointer to the kill data */
@@ -1862,7 +1884,7 @@ WinKillToClipboard(void)
         killSize++;
     
     /* Create global buffer for the data */
-    if((hmem = GlobalAlloc(GMEM_MOVEABLE,killSize + 1)) != NULL)
+    if((hmem = GlobalAlloc(GMEM_MOVEABLE,(killSize + 1)*sizeof(WCHAR))) != NULL)
     {
         bufp = GlobalLock(hmem);
         
@@ -1874,16 +1896,18 @@ WinKillToClipboard(void)
             for(killp = klhead->kill; killp != NULL; killp = killp->next)
             {
                 dd = killp->data;
-                while((cc = *dd++))
+                while((uc = (WCHAR) *dd++))
                 {
                     /* Convert the end of line to CR/LF */
-                    if(cc == meCHAR_NL)
+                    if(uc == meCHAR_NL)
                         *bufp++ = '\r';
                     /* Convert any special characters */
-                    else if((meSystemCfg & meSYSTEM_FONTFIX) && (cc < TTSPECCHARS))
-                        cc = ttSpeChars[cc];
+                    else if(uc >= 0x80)
+                        uc = charToUnicode[uc-128];
+                    else if((meSystemCfg & meSYSTEM_FONTFIX) && (uc < TTSPECCHARS))
+                        uc = ttSpeChars[uc];
                     /* Copy in the character */
-                    *bufp++ = cc;
+                    *bufp++ = uc;
                 }
             }
         }
@@ -1923,7 +1947,7 @@ TTsetClipboard(int cpData)
              * will generate a WM_DESTROYCLIPBOARD to this window, ignore it! */
             clipState |= CLIP_IGNORE_DC;
         EmptyClipboard();
-        SetClipboardData(((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT : CF_TEXT),hmem);
+        SetClipboardData(CF_UNICODETEXT,hmem);
         CloseClipboard();
         clipState |= CLIP_OWNER;
         clipState &= ~CLIP_STALE;
@@ -1938,9 +1962,6 @@ void
 TTgetClipboard(void)
 {
     HANDLE hmem;                          /* Windows clipboard memory handle */
-    meUByte *bufp;                        /* Clipboard data pointer */
-    meUByte cc;                           /* Local character buffer */
-    meUByte *dd, *tp;                     /* Pointers to the data areas */
     
     /* Check the standard clipboard status, if owner or not got focus or it has
      * been disabled then there's nothing to do */
@@ -1949,60 +1970,84 @@ TTgetClipboard(void)
         return;
     
     /* Get the data from the clipboard */
-    if((hmem = GetClipboardData((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT:CF_TEXT)) != NULL)
+    if((hmem = GetClipboardData(CF_UNICODETEXT)) != NULL)
     {
-        int len, ll;
-        meUByte *tmpbuf;
+        meKillNode *kn;
+        WCHAR *cb, *ss, uc;
+        meUByte *dd;
+        int ll, len;
         
-        bufp = GlobalLock(hmem);        /* Lock global buffer */
-        len = meStrlen(bufp);           /* Get length of text */
+        cb = GlobalLock(hmem);        /* Lock global buffer */
+        ss = cb;
+        len = ll = 0;
+        while((uc = *ss++) != '\0')
+        {
+            if(uc == '\n')
+            {
+                /* If line is longer than 32KB it must be split, the (ll>>15) adds the extra chars required */
+                len += ll+(ll>>15)+1;
+                ll = 0;
+            }
+            else if((uc != '\r') || (*ss != '\n'))
+                ll++;
+        }
+        len += ll+(ll>>15);
         
-        /* Compute the length of the data and construct
-         * a stripped down copy of the string excluding the
-         * '\r' characters
-         */
-        if((tmpbuf = (meUByte *) meMalloc(len+1+(len>>15))) == NULL)
+        if((kn = (meKillNode *) meMalloc(sizeof(meKillNode)+len)) == NULL)
             goto do_unlock;             /* Failed memory allocation */
         
-        tp = tmpbuf;                    /* Start of the temporary buffer */
-        dd = bufp;                      /* Start of clipboard data */
+        ss = cb;                        /* Start of clipboard data */
+        dd = kn->data;                  /* Start of the kill buffer */
         ll = 0;
-        while((cc = *dd++) !='\0')
+        while((uc = *ss++) != '\0')
         {
-            if((cc == '\r') && (*dd == '\n'))
-                len--;
+            if((uc == '\r') || (*ss == '\n'))
+            {
+                ss++;
+                *dd++ = '\n';
+                ll = 0;
+            }
+            else if(uc == '\n')
+            {
+                *dd++ = '\n';
+                ll = 0;
+            }
             else
             {
-                if(cc == '\n')
-                    ll = 0;
-                else if(ll == meLINE_ELEN_MAX)
+                if(ll == meLINE_ELEN_MAX)
                 {
-                    *tp++ = '\n';
-                    len++;
-                    ll = 1;
+                    *dd++ = '\n';
+                    ll = 0;
+                }
+                if(uc >= 0x80)
+                {
+                    int ii = 127;
+                    while((charToUnicode[ii] != uc) && (--ii >= 0))
+                        ;
+                    if(ii >= 0)
+                        *dd++ = (meUByte) ii+128;
+                    else
+                        *dd++ = meCHAR_UNDEF;
                 }
                 else
-                    ll++;
-                *tp++ = cc;
+                    *dd++ = (meUByte) uc;
+                ll++;
             }
         }
-        *tp = '\0';
+        *dd = '\0';
         
-        /* Make sure that it is not the same as the current
-         * save buffer head */
-        
+        /* Make sure that it is not the same as the current save buffer head */
         if((len == 0) || (klhead == NULL) || (klhead->kill == NULL) ||
-           (klhead->kill->next != NULL) || (meStrcmp(klhead->kill->data,tmpbuf)))
+           (klhead->kill->next != NULL) || (meStrcmp(klhead->kill->data,kn->data)))
         {
             /* Always new kill, don't want to glue them together */
             killInit(0);
-            if((dd = killAddNode(len+1)) != NULL)
-                memcpy(dd,tmpbuf,len+1);
-            thisflag = meCFKILL;
+            killInsertNode(kn);
         }
-        meFree(tmpbuf);                /* Relinquish temp buffer */
+        else
+            meFree(kn);                /* Relinquish temp buffer */
 do_unlock:
-        GlobalUnlock(hmem);            /* Unlock clipboard data */
+        GlobalUnlock(cb);              /* Unlock clipboard data */
     }
     CloseClipboard();
 }
@@ -6227,7 +6272,7 @@ MainWndProc(HWND hWnd, UINT message, UINT wParam, LONG lParam)
         {
             HANDLE hmem;
             hmem = WinKillToClipboard();
-            SetClipboardData((ttlogfont.lfCharSet == OEM_CHARSET) ? CF_OEMTEXT : CF_TEXT, hmem);
+            SetClipboardData(CF_UNICODETEXT, hmem);
             /* Force the stale state. If another application is pulling data
              * from us while we are the clipboard owner we must force the
              * clipboard to be refreshed whenever the 'yank' buffer changes.
