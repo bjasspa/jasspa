@@ -1930,16 +1930,16 @@ missing_arg:
 #endif
     
     {
-        meUByte  *searchStr=NULL, *cryptStr=NULL ;
-        int       binflag=0 ;         /* load next file as a binary file*/
-        meInt     gline = 0 ;         /* what line? (-l option)         */
-        meUShort  gcol = 0 ;
-        char     *ss ;
-        int       stdinflag=0 ;
-        int       obufHistNo ;
+        meUByte  *searchStr=NULL, *cryptStr=NULL;
+        int       binflag=0;         /* load next file as a binary file*/
+        meInt     gline = 0;         /* what line? (-l option)         */
+        meUShort  gcol = 0;
+        char     *ss;
+        int       stdinflag=0;
+        int       obufHistNo;
         
-        obufHistNo = bufHistNo ;
-        noFiles = 0 ;
+        obufHistNo = bufHistNo;
+        noFiles = 0;
         /* scan through the command line and get the files to edit */
         for(carg=1 ; carg < rarg ; carg++)
         {
@@ -1950,47 +1950,47 @@ missing_arg:
                 {
 #if MEOPT_EXTENDED
                 case 0:
-                    bufHistNo = obufHistNo + rarg - carg ;
+                    bufHistNo = obufHistNo + rarg - carg;
                     bp = bfind(BstdinN,BFND_CREAT|binflag);
-                    bp->dotLineNo = gline ;
-                    bufHistNo = obufHistNo + rarg - carg + 1 ;
-                    bp->histNo = bufHistNo ;
-                    bp->intFlag |= BIFFILE ;
+                    bp->dotLineNo = gline;
+                    bufHistNo = obufHistNo + rarg - carg + 1;
+                    bp->histNo = bufHistNo;
+                    bp->intFlag |= BIFFILE;
                     noFiles++;
 #ifdef _WIN32
-                    meior.fp = GetStdHandle(STD_INPUT_HANDLE) ;
+                    meior.fp = GetStdHandle(STD_INPUT_HANDLE);
 #else
-                    meior.fp = stdin ;
+                    meior.fp = stdin;
 #endif
-                    stdinflag = 1 ;
-                    goto handle_stdin ;
+                    stdinflag = 1;
+                    goto handle_stdin;
 #endif
                 case 'l':    /* -l for initial goto line */
                     if (argv[carg][2] == 0)
-                        ss = argv[++carg] ;
+                        ss = argv[++carg];
                     else
-                        ss = (argv[carg])+2 ;
+                        ss = (argv[carg])+2;
                     gline = meAtoi(ss);
                     if((ss=strchr(ss,':')) != NULL)
-                        gcol = (meUShort) meAtoi(ss+1) ;
+                        gcol = (meUShort) meAtoi(ss+1);
                     break;
                 case 'b':    /* -b bin flag */
-                    binflag |= BFND_BINARY ;
+                    binflag |= BFND_BINARY;
                     break;
                 case 'k':    /* -k crypt flag */
-                    binflag |= BFND_CRYPT ;
+                    binflag |= BFND_CRYPT;
                     if (argv[carg][2] != 0)
-                        cryptStr = (meUByte *) argv[carg] + 2 ;
+                        cryptStr = (meUByte *) argv[carg] + 2;
                     break;
                 case 's':
                     /* -s not supported across client-server */
                     if (argv[carg][2] == 0)
-                        searchStr = (meUByte *) argv[++carg] ;
+                        searchStr = (meUByte *) argv[++carg];
                     else
-                        searchStr = (meUByte *) argv[carg]+2 ;
+                        searchStr = (meUByte *) argv[carg]+2;
                     break ;
                 case 'y':    /* -y rbin flag */
-                    binflag |= BFND_RBIN ;
+                    binflag |= BFND_RBIN;
                     break;
                 }
             }
@@ -2005,7 +2005,7 @@ missing_arg:
                 /* set up a buffer for this file - force the history so the first file
                  * on the command-line has the highest bufHistNo so is shown first */
                 bufHistNo = obufHistNo + rarg - carg ;
-                noFiles += findFileList((meUByte *)argv[carg],(BFND_CREAT|BFND_MKNAM|binflag),gline,gcol) ;
+                noFiles += findFileList((meUByte *)argv[carg],(BFND_CREAT|BFND_MKNAM|binflag),gline,gcol);
                 if((cryptStr != NULL) || (searchStr != NULL))
                 {
 #if MEOPT_EXTENDED
@@ -2019,18 +2019,18 @@ handle_stdin:
                         {
 #if MEOPT_CRYPT
                             if(cryptStr != NULL)
-                                meCryptBufferSetKey(bp,cryptStr) ;
+                                meCryptBufferSetKey(bp,cryptStr);
 #endif
                             if((searchStr != NULL) || stdinflag)
                             {
                                 meBuffer *cbp;
                                 int histNo, flags;
                                 cbp = frameCur->windowCur->buffer;
-                                histNo = cbp->histNo ;
-                                swbuffer(frameCur->windowCur,bp) ;
+                                histNo = cbp->histNo;
+                                swbuffer(frameCur->windowCur,bp);
                                 if(searchStr != NULL)
                                 {
-                                    flags = ISCANNER_QUIET ;
+                                    flags = ISCANNER_QUIET;
                                     if(meModeTest(bp->mode,MDMAGIC))
                                         flags |= ISCANNER_MAGIC;
                                     if(meModeTest(bp->mode,MDEXACT))

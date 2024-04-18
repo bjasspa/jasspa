@@ -1038,37 +1038,40 @@ int main(int argc, char *argv[])
 void
 meCryptKeyEncode(meUInt *enc,meUByte *key, int len)
 {
-    meUInt rndSs[4];
-    meUByte *dd=(meUByte *) enc;
-    int ii=((len-1)|0x03)+1;
+    meUInt rndSs[4], ki[meSBUF_SIZE_MAX>>2];
+    meUByte *dd=(meUByte *) ki;
+    int ii;
+    if(len > meSBUF_SIZE_MAX)
+        len = meSBUF_SIZE_MAX;
+    ii = ((len-1)|0x03)+1;
     memcpy(dd,key,len);
     while(len < ii)
         dd[len++] = '\x01';
     len >>= 2;
     for(ii=0 ; ii<len ; ii++)
-        enc[ii] = (enc[ii] >> (ii+1)) | (enc[ii] << (31-ii));
+        ki[ii] = (ki[ii] >> (ii+1)) | (ki[ii] << (31-ii));
         
     if(len < meCRYPT_KEY_SIZE)
     {
         for(ii=len-1 ; len<meCRYPT_KEY_SIZE ; ii++,len++)
-            enc[len] = (enc[ii] >> len) | (enc[ii] << (32-len));
+            ki[len] = (ki[ii] >> len) | (ki[ii] << (32-len));
     }
     else if(len > meCRYPT_KEY_SIZE)
     {
         ii = 0;
         while(--len >= meCRYPT_KEY_SIZE)
         {
-            enc[ii] ^= (enc[len] >> (ii+1)) | (enc[len] << (31-ii));
+            ki[ii] ^= (ki[len] >> (ii+1)) | (ki[len] << (31-ii));
             ii++;
             if(ii & meCRYPT_KEY_SIZE)
                 ii = 0;
         }
     }
     memcpy(rndSs,meRndSeed,4*4);
-    memcpy(meRndSeed,enc,4*4);
+    memcpy(meRndSeed,ki,4*4);
     ii = 7;
     do {
-        enc[ii] ^= meXoshiro128Next();
+        enc[ii] = ki[ii] ^ meXoshiro128Next();
     } while(--ii >= 0);
     memcpy(meRndSeed,rndSs,4*4);
 }
@@ -1085,7 +1088,7 @@ meCryptBufferSetKey(meBuffer *bp, meUByte *key)
 	/* get the string to use as an encrytion string */
         meStrcpy(buf,(bp->fileName != NULL) ? bp->fileName:bp->name);
         meStrcat(buf," password");
-        if(meGetString(buf,MLNOHIST|MLHIDEVAL,0,(meUByte *) keybuf,meSBUF_SIZE_MAX) <= 0)
+        if(meGetString(buf,MLNOHIST|MLHIDEVAL,0,keybuf,meSBUF_SIZE_MAX) <= 0)
             return meFALSE;
         mlerase(MWCLEXEC);		/* clear it off the bottom line */
         key = keybuf;

@@ -355,20 +355,29 @@ regSave(meRegNode *rnp, meUByte *fname, int mode)
         flags = meRWFLAG_WRITE ;
         if(mode & meREGMODE_BACKUP)
             flags |= meRWFLAG_BACKUP ;
-        if(mode & meREGMODE_CRYPT)
+        if(mode & (meREGMODE_ACRYPT|meREGMODE_PCRYPT))
         {
             meUInt key[meCRYPT_KEY_SIZE];
             meUByte s1[meBUF_SIZE_MAX];
-            int len;
+            int len=0;
             
-            meStrcpy(s1,getFileBaseName(fname));
-            len = meStrlen(s1) + 1;
-            if(meUserName == NULL)
-                s1[len++] = '\0';
-            else
+            if(mode & meREGMODE_PCRYPT)
             {
-                meStrcpy(s1+len,meUserName);
-                len += meStrlen(meUserName)+1;
+                if(meGetString("Reg password",MLNOHIST|MLHIDEVAL,0,(meUByte *) s1,meSBUF_SIZE_MAX) <= 0)
+                    return meABORT;
+                len = meStrlen(s1)+1;
+            }
+            if(mode & meREGMODE_ACRYPT)
+            {
+                meStrcpy(s1+len,getFileBaseName(fname));
+                len += meStrlen(s1+len)+1;
+                if(meUserName == NULL)
+                    s1[len++] = '\0';
+                else
+                {
+                    meStrcpy(s1+len,meUserName);
+                    len += meStrlen(meUserName)+1;
+                }
             }
             meCryptKeyEncode(key,s1,len);
             meCryptInit(key);
@@ -376,17 +385,17 @@ regSave(meRegNode *rnp, meUByte *fname, int mode)
         }
         /* Open the file */
         if(ffWriteFileOpen(&meiow,fname,flags,NULL) <= 0)
-            return meABORT ;
+            return meABORT;
         
         /* Add a recognition string to the header */
-        if(!(mode & meREGMODE_CRYPT))
+        if(!(mode & (meREGMODE_ACRYPT|meREGMODE_PCRYPT)))
             ss = ffWriteFileWrite(&meiow,12,(meUByte *) ";-!- erf -!-",1) ;
     }
     else
     {
-        mode &= ~meREGMODE_CRYPT ;
-        lineCount = 0 ;
-        charCount = 0 ;
+        mode &= ~(meREGMODE_ACRYPT|meREGMODE_PCRYPT);
+        lineCount = 0;
+        charCount = 0;
     }
     
     /* Recurse the children of the node and write to file */
@@ -725,28 +734,37 @@ regRead(meUByte *rname, meUByte *fname, int mode)
         flags = meRWFLAG_SILENT;
         hlp.next = &hlp;
         hlp.prev = &hlp;
-        if(mode & meREGMODE_CRYPT)
+        if(mode & (meREGMODE_ACRYPT|meREGMODE_PCRYPT))
         {
             meUInt key[meCRYPT_KEY_SIZE];
             meUByte s1[meBUF_SIZE_MAX];
-            int len;
+            int len=0;
             
-            meStrcpy(s1,getFileBaseName(fn));
-            len = meStrlen(s1) + 1;
-            if(meUserName == NULL)
-                s1[len++] = '\0';
-            else
+            if(mode & meREGMODE_PCRYPT)
             {
-                meStrcpy(s1+len,meUserName);
-                len += meStrlen(meUserName)+1;
+                if(meGetString("Reg password",MLNOHIST|MLHIDEVAL,0,(meUByte *) s1,meSBUF_SIZE_MAX) <= 0)
+                    return NULL;
+                len = meStrlen(s1)+1;
+            }
+            if(mode & meREGMODE_ACRYPT)
+            {
+                meStrcpy(s1+len,getFileBaseName(fn));
+                len += meStrlen(s1+len)+1;
+                if(meUserName == NULL)
+                    s1[len++] = '\0';
+                else
+                {
+                    meStrcpy(s1+len,meUserName);
+                    len += meStrlen(meUserName)+1;
+                }
             }
             meCryptKeyEncode(key,s1,len);
             meCryptInit(key);
-            flags |= meRWFLAG_CRYPT ;
+            flags |= meRWFLAG_CRYPT;
         }
         if((ffReadFile(&meior,fn,flags|meRWFLAG_READ,NULL,&hlp,0,0,0) == meABORT) && !(mode & meREGMODE_CREATE))
         {
-            mlwrite (MWABORT|MWWAIT,(meUByte *)"[Cannot load registry file %s]", fname);
+            mlwrite(MWABORT|MWWAIT,(meUByte *)"[Cannot load registry file %s]",fname);
             return NULL;
         }
         lp = &hlp ;
@@ -798,7 +816,7 @@ finished:
  * regDecodeMode
  * Decode the registry mode.
  */
-static meUByte meRegModeList[]="!hifubadymrc?g" ;
+static meUByte meRegModeList[]="!hifubadypmrc?g" ;
 static int
 regDecodeMode (int *modep, meUByte *modeStr)
 {

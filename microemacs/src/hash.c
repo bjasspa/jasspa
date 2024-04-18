@@ -20,7 +20,7 @@
  *********************************************************************/
 #define meHASH_OVERRUN   0x01
 #define meHASH_FINALISED 0x02
-#define meHASH_SHA1      0x08
+#define meHASH_SHA1      0x10
 
 typedef struct {
     meULong bitlen;
@@ -322,24 +322,50 @@ int
 generateHash(int f, int n)
 {
     meHash iCtx, oCtx;
-    meUByte *ss, cc, hd[32];
+    meUByte *ss, *bb, cc, dd, hd[64];
     int ii, elo;
     
     if(n & 0x04)
     {
         /* HMAC-SHA256, must get key */
         if(meGetString((meUByte *) "Key",MLNOHIST|MLHIDEVAL,0,resultStr,meBUF_SIZE_MAX) <= 0)
-            return meABORT ;
-        meHashInitHmac(&iCtx,&oCtx,n,resultStr,meStrlen(resultStr));
+            return meABORT;
+        if(n & 0x08)
+        {
+            bb = ss = resultStr;
+            while((cc=*ss++) != '\0')
+            {
+                if(!isXDigit(cc) || ((dd = *ss++) == '\0') || !isXDigit(dd))
+                    return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Data hex format error]");
+                *bb++ = (hexToNum(cc)<<4) | hexToNum(dd);
+            }
+            ii = (size_t) (bb - resultStr);
+        }
+        else
+            ii = meStrlen(resultStr);
+        meHashInitHmac(&iCtx,&oCtx,n,resultStr,ii);
         resultStr[0] = '\0';
     }
     else
         meHashInit(&iCtx,n);
-    if((n & 0x03) == 0)
+    if(n & 0x02)
     {
         if(meGetString((meUByte *) "Data",0,0,resultStr,meBUF_SIZE_MAX) <= 0)
-            return meABORT ;
-        meHashUpdate(&iCtx,resultStr,meStrlen(resultStr));
+            return meABORT;
+        if(n & 0x01)
+        {
+            bb = ss = resultStr;
+            while((cc=*ss++) != '\0')
+            {
+                if(!isXDigit(cc) || ((dd = *ss++) == '\0') || !isXDigit(dd))
+                    return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Data hex format error]");
+                *bb++ = (hexToNum(cc)<<4) | hexToNum(dd);
+            }
+            ii = (size_t) (bb - resultStr);
+        }
+        else
+            ii = meStrlen(resultStr);
+        meHashUpdate(&iCtx,resultStr,ii);
     }
     else
     {
@@ -436,7 +462,6 @@ generateHash(int f, int n)
         }
         if(meModeTest(bp->mode,MDBINARY))
         {
-            meUByte dd;
             while(lp != elp)
             {
                 ss = meLineGetText(lp);
@@ -462,7 +487,6 @@ generateHash(int f, int n)
         }
         else if(meModeTest(bp->mode,MDRBIN))
         {
-            meUByte dd;
             while(lp != elp)
             {
                 ss = meLineGetText(lp);
