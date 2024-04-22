@@ -28,17 +28,21 @@ variable is set to the resultant 64 byte string.
 The numeric  argument  \fIn\fR is used to modify the default  behavior of the  command,  where the bits are defined as
 follows:
 .IP \fB0x03\fR
-The  first 2 bits  are  used to set the  mode, if both  bits  are  clear  (i.e. 0) then the user is  prompted  for the
-\fIdata\fR test string and the hash is calculated for this. If set to 1 then the hash of the whole buffer as a file is calculated,
-and if set to 2 the hash for the current region is calculated.
+The  first 2 bits  are  used to set the  mode, if set to 1 (default) then the hash of the whole buffer as a file is calculated,
+if set to 0 the hash for the current region is calculated. If set to 2 or 3 then the user is  prompted  for the
+\fIdata\fR test string, as a hex-string if 3 or plain text if 2, and the hash is calculated for this.
 .IP \fB0x04\fR
 When set a HMAC-SHA256 hash is calculated instead, the user will be prompted for the \fIkey\fR.
+.IP \fB0x08\fR
+When calculating a HMAC, setting this bit indicates the \fIkey\fR is given in the form of a hex-string.
+.IP \fB0x10\fR
+When set a SHA1 based hash/HMAC is calculated instead.
 .SH EXAMPLE
 To calculate the hash of a string use:
 .RS
 .Me $emf-scheme
 .CS
-0 generate-hash "Hello world"
+2 generate-hash "Hello world"
 .CE 0
 .Me $ehf-scheme
 .RE
@@ -47,10 +51,12 @@ After executing the hash value will be stored in \fB$result\fR. To calculate a H
 .RS
 .Me $emf-scheme
 .CS
-4 generate-hash "TheKey" "Hello world"
+6 generate-hash "TheKey" "Hello world"
 .CE 0
 .Me $ehf-scheme
 .RE
+.PP
+After executing \fB$result\fR will be set to \fC1804C1869D6DD76A9A8D00819E6F62E970D981F01FE805F927CF4E3BDF4AD95C\fR.
 .SH NOTES
 When using an argument of 0 the data must be a plain text string  which means it cannot  contain a byte of value 0. If
 the hash of binary data is required then create a temporary buffer, enable

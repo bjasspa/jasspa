@@ -396,7 +396,12 @@ generateHash(int f, int n)
             ss = (meUByte *) "";
             ii = 0;
         }
-        if(n & 2)
+        if(n & 1)
+        {            
+            elp = bp->baseLine;
+            lp = meLineGetNext(elp);
+        }
+        else
         {
             int slo;
             if(wp->markLine == NULL)
@@ -454,11 +459,6 @@ generateHash(int f, int n)
                     meHashUpdate(&iCtx,ss,ii);
                 lp = meLineGetNext(lp);
             }
-        }
-        else
-        {            
-            elp = bp->baseLine;
-            lp = meLineGetNext(elp);
         }
         if(meModeTest(bp->mode,MDBINARY))
         {

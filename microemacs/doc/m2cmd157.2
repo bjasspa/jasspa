@@ -58,14 +58,12 @@ the  invocation  succeeds.  If this mode is omitted  then the call fails if the
 Marks the registry as discardable.  This is typically used for registries that
 are not saved.
 .IP "\fBr\fR \- Reload"
-If the registry node already  exists then it is deleted and reloaded, see also
-the merge flag  (\fBm\fR). By default, when both the \fBr\fR and \fBm\fR flags
-are omitted and the  registry  node already  exists the read  operation is not
+If the registry node already exists then it is deleted and reloaded, see also the merge flag (\fBm\fR). By default,
+when both the \fBr\fR and \fBm\fR flags are omitted and the registry node already exists the read operation is not
 performed and the existing node is used.
 .IP "\fBm\fR \- Merge"
-The registry file is merged with the contents of any existing  registry  node.
-(i.e. the existing registry tree nodes are not deleted if they already exist).
-See also the reload flag (\fBr\fR).
+The registry file is merged with the contents of any existing registry node. (i.e. the existing registry tree nodes
+are not deleted if they already exist). See also the reload flag (\fBr\fR).
 .IP "\fBh\fR \- Hidden"
 The registry  node is created in the  \fIHidden\fR  state. (i.e. children will
 not be shown in
@@ -73,6 +71,14 @@ not be shown in
 output). Refer to 
 .Ht mark-registry 2 
 for hiding modes.
+.IP "\fBy\fR \- Auto-encrypt"
+The registry file will be automatically encrypted/decrypted with a key generated from current data, don't change the 
+file name (can be different path) or your
+.Ht $MENAME 5 .
+This flag can be used with flag \fCp\fR. 
+.IP "\fBp\fR \- Prompt encrypt"
+The registry file will be encrypted/decrypted with a key prompted for, the key is not stored the key must be 
+re-entered when saving any changes. This flag can be used with flag \fCy\fR. 
 .IP "\fBu\fR \- Updated"
 Marks the registry as modified.  The modified bit is removed when the registry
 file is saved. If the  modified  bit is  applied  to a registry  node the user
