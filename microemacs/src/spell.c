@@ -292,7 +292,7 @@ meDictionaryAddWord(meDictionary *dict, meDictWord *wrd)
                 /* Combine the word flags with a separator char, this avoid inappropriate flag mixing, e.g. unzip okay and zipless okay but not unzipless */
                 if((flen+olen+1) > meWORD_FLAG_MAX)
                     return meFALSE;
-                buff[flen++] = SPELLRULE_SEP;
+                ff[flen++] = SPELLRULE_SEP;
                 memcpy(ff+flen,buff,olen);
                 flen += olen;
             }
@@ -1816,7 +1816,7 @@ wordApplyPrefixRule(meUByte *wd, int wlen, meSpellRule *rr)
     meUByte *nw;
     int len;
     
-    if((rr->removeLen >= wlen) || (((len=rr->endingLen) != 0) && ((len > wlen) || ruleEndingCmp(wd,rr->ending))))
+    if((rr->removeLen > wlen) || (((len=rr->endingLen) != 0) && ((len > wlen) || ruleEndingCmp(wd,rr->ending))))
         return NULL;
     nw = wd - rr->changeLen;
     wordPrefixRuleAdd(nw,rr);
@@ -1829,7 +1829,7 @@ wordApplySuffixRule(meUByte *wd, int wlen, meSpellRule *rr)
     meUByte *ew, len;
     
     ew = wd+wlen;
-    if((rr->removeLen >= wlen) || (((len=rr->endingLen) != 0) && ((len > wlen) || ruleEndingCmp(ew-len,rr->ending))))
+    if((rr->removeLen > wlen) || (((len=rr->endingLen) != 0) && ((len > wlen) || ruleEndingCmp(ew-len,rr->ending))))
         return NULL;
     ew -= rr->removeLen;
     wordSuffixRuleAdd(ew,rr);
@@ -2099,16 +2099,9 @@ wordGuessGetList(meUByte *word, int olen, meWORDBUF *words)
     meDictionary *dict;
     meDictWord *ent;
     meUByte *wb, *ww, wbuff[meWORD_SIZE_MAX+meWORD_SIZE_MAX];
-    meUInt  off, noWrds;
+    meUInt ii, off, noWrds;
     int scores[meGUESS_MAX], curScr, bsufScr;
-#if 0
-    meSpellRule *srp;
-    meUByte cc, *nwd;
-    int wlen, mlen, nlen, ii, jj, kk, ll, sri, scr;
-    int wln, wlx, ldx;
-#else
-    int wlen, mlen, ii;
-#endif
+    int wlen, mlen;
     
 #ifdef __LOG_FILE
     fp = fopen("log","w+");
@@ -3001,8 +2994,8 @@ sfwJumpP1bsBaseS1p1:
                                                                                         return wRs1;
                                                                                     }
                                                                                     wordSuffixRuleRemove(wRs3,sfwRp3);
-sfwJumpP1bsBaseS1p1S2s1:
                                                                                 }
+sfwJumpP1bsBaseS1p1S2s1:
                                                                                 sfwRp3 = sfwRp3->next;
                                                                             }
                                                                         }

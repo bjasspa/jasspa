@@ -1,647 +1,483 @@
-; -!- emf -!-
-; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1999-2002 JASSPA (www.jasspa.com)
-;
-; Created:     Thu May 27 1999
-; Authors:     Steven Phillips
-; Synopsis:    Spell checker rules for Deutsch 
-; Description:
-;     This file "lsrdede.emf", "lsdmdede.edf" and "lsdxdede.edf" are 
-;     derived from the German ispell dictionary by Geoff Kuenning.
-;     The spell rules and word derivations have been repackaged in
-;     a proprietary format for use with JASSPA's MicroEmacs.
-;     The following copyright applies to these files:-
-;
-;       Copyright 1988, 1989, 1992, 1993, Geoff Kuenning, Granada Hills, CA
-;       All rights reserved.
-;   
-;       Redistribution and use in source and binary forms, with or without
-;       modification, are permitted provided that the following conditions
-;       are met:
-;   
-;       1. Redistributions of source code must retain the above copyright
-;          notice, this list of conditions and the following disclaimer.
-;       2. Redistributions in binary form must reproduce the above copyright
-;          notice, this list of conditions and the following disclaimer in the
-;          documentation and/or other materials provided with the distribution.
-;       3. All modifications to the source code must be clearly marked as
-;          such.  Binary redistributions based on modified source code
-;          must be clearly marked as modified versions in the documentation
-;          and/or other materials provided with the distribution.
-;       4. All advertising materials mentioning features or use of this software
-;          must display the following acknowledgment:
-;            This product includes software developed by Geoff Kuenning and
-;            other unpaid contributors.
-;       5. The name of Geoff Kuenning may not be used to endorse or promote
-;          products derived from this software without specific prior
-;          written permission.
-;      
-;       THIS SOFTWARE IS PROVIDED BY GEOFF KUENNING AND CONTRIBUTORS ``AS IS'' AND
-;       ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-;       IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-;       ARE DISCLAIMED.  IN NO EVENT SHALL GEOFF KUENNING OR CONTRIBUTORS BE LIABLE
-;       FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-;       DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-;       OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-;       HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-;       LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-;       OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-;       SUCH DAMAGE.
-;
-; Rules used - list used by spell-edit-word
-set-variable .spell.rules "ABCDEFGHIJKLMNOPRSQTUVWXYZ"
+; Spell rules for MicroEmacs German Deutsch
+; Base on de_DE_frami for Hunspell (2024-03-03), see included readme and license files for more information
 
-; reset the spell rules
+; Rules used - list used by spell-edit-word
+set-variable .spell.rules "ABCDEFIJLMNOPQRSTUVWXYZefgijkmpq"
+
+; Reset the spell rules
 0 add-spell-rule
 
-;
-;			Quick Reference
-;			===============
-;
-; nouns and adjectives:
-;	E   -e			A  adj.: -e,-er,-en,-em,-es
-;	N   -n
-;	P   -en 		C  adj. comp.:	-ere, -erer, -eren, ...
-;	R   -er, -ern				-ste, -ster, -sten, ...
-;	S   -s,-es	        
-;	T   -es 		D  verb > adj.: -d,   -de,  -den, 
-;	Q   -s > sse,ssen			-dem, -der, -des
-;			        
-; verbs:
-;	W   Du-imperative form			holen  > hol
-;	I   ich- and ihr-form present tense	nehmen > nehme, nehmt
-;	X   other present tense forms		legen  > legst, legt
-;	Y   past tense forms			wagen  > wagte, wagtest, ...
-;	Z   past tense and conditional forms from ich-from
-;	    e.g.  nahm > nahmen, nahmst, nahmt
-;	O   Partizip: -tete, -teter, tetes, teten, tetem
-;
-; other suffixes:
-;	L   -lich, -liche, -licher, ...
-;	B   -bar, -bare, -barer, ...
-;	J   -ung, -ungen, ...
-;	M   -chen, -chens
-;
-; prefixes and msic. suffixes:
-;	U  un-			F   -in,   -innen
-;	G  ge-			H   -heit, -heiten
-;	V  ver- 		K   -keit, -keiten
-
-; Now add the German spell rules
-; prefixes
-
-; flag G: 	; Inseparable ge- prefix for verbs
--1 add-spell-rule "G" "" "" "ge" ; Wie rufen	> gerufen
-
-; flag *U:	; un- prefix for anything
--2 add-spell-rule "U" "" "" "un" ; Wie gesund	> ungesund
-
-; flag *V:	; Inseparable ver- prefix for verbs
--2 add-spell-rule "V" "" "" "ver" ; Wie kaufen	> verkaufen
-
-; suffixes
-
-; flag F: 	; IN, INNEN for feminizing nouns and NEN for xxxIN nouns
- 1 add-spell-rule "F" "in" "" "nen" ; Wie Bäuerin	> Bäuerinnen
- 1 add-spell-rule "F" "e" "e" "in" ;     Bote	> Botin   
- 1 add-spell-rule "F" "e" "e" "innen" ;     Bote	> Botinnen
- 1 add-spell-rule "F" "[^i]n" "" "in" ;     Freund	> Freundin
- 1 add-spell-rule "F" "[^i]n" "" "innen" ;     Freund	> Freundinnen
- 1 add-spell-rule "F" "[^en]" "" "in" ;
- 1 add-spell-rule "F" "[^en]" "" "innen" ;
-
-; The question is: How to switch Capitalization off?
-; This will not serve us much otherwise!
-; flag L: 	; LICHxx for creating adverbs and adjectives:
- 1 add-spell-rule "L" "n" "" "tlich" ; Wie Wesen	> wesentlich
- 1 add-spell-rule "L" "n" "" "tliche" ;     rund	> rundliche
- 1 add-spell-rule "L" "n" "" "tlicher" ;     Wesen	> wesentlicher
- 1 add-spell-rule "L" "n" "" "tliches" ;     Wesen	> wesentliches
- 1 add-spell-rule "L" "n" "" "tlichem" ;     Wesen	> wesentlichem
- 1 add-spell-rule "L" "n" "" "tlichen" ;     Wesen	> wesentlichen
- 1 add-spell-rule "L" "[^n]" "" "lich" ;     Kind	> kindlich
- 1 add-spell-rule "L" "[^n]" "" "liche" ;     Kind	> kindliche
- 1 add-spell-rule "L" "[^n]" "" "licher" ;     Kind	> kindlicher
- 1 add-spell-rule "L" "[^n]" "" "liches" ;     Kind	> kindliches
- 1 add-spell-rule "L" "[^n]" "" "lichem" ;     Kind	> kindlichem
- 1 add-spell-rule "L" "[^n]" "" "lichen" ;     Kind	> kindlichen
-
-;
-; How to force Capitals on for heit/keit ?
-;
-; flag H: 	; HEIT substantivation:
- 1 add-spell-rule "H" "." "" "heit" ; Wie gemein	> Gemeinheit
- 1 add-spell-rule "H" "." "" "heiten" ;     fein	> Feinheiten
-
-; flag K: 	; KEIT substantivation:
- 1 add-spell-rule "K" "." "" "keit" ; Wie heimlich	> Heimlichkeit
- 1 add-spell-rule "K" "." "" "keiten" ;     eitel	> Eitelkeiten
-
-; flag M: 	; CHEN diminuitiv:
- 1 add-spell-rule "M" "." "" "chen" ; Tür		> Türchen
- 1 add-spell-rule "M" "." "" "chens" ; Heft		> Heftchens
-
-; flag *A:	; for adjectives:
- 2 add-spell-rule "A" "e" "" "r" ; Wie älteste	> ältester
- 2 add-spell-rule "A" "e" "" "n" ;
- 2 add-spell-rule "A" "e" "" "m" ;
- 2 add-spell-rule "A" "e" "" "s" ;
- 2 add-spell-rule "A" "[^elrß]" "" "e" ; Wie formbar	> formbare
- 2 add-spell-rule "A" "[^elrß]" "" "er" ;     formbar	> formbarer
- 2 add-spell-rule "A" "[^elrß]" "" "en" ;     formbar	> formbaren
- 2 add-spell-rule "A" "[^elrß]" "" "em" ;     formbar	> formbarem
- 2 add-spell-rule "A" "[^elrß]" "" "es" ;     formbar	> formbares
- 2 add-spell-rule "A" "[^e][rl]" "" "e" ;     schnell	> schnelle
- 2 add-spell-rule "A" "[^e][rl]" "" "er" ;     schal	> schale
- 2 add-spell-rule "A" "[^e][rl]" "" "en" ;
- 2 add-spell-rule "A" "[^e][rl]" "" "em" ;
- 2 add-spell-rule "A" "[^e][rl]" "" "es" ;
- 2 add-spell-rule "A" "[^u]er" "" "e" ; Wie schwer	> schwere
- 2 add-spell-rule "A" "[^u]er" "" "er" ;
- 2 add-spell-rule "A" "[^u]er" "" "en" ;
- 2 add-spell-rule "A" "[^u]er" "" "em" ;
- 2 add-spell-rule "A" "[^u]er" "" "es" ;
-
- 2 add-spell-rule "A" "uer" "er" "re" ; Wie teuer	> teure
- 2 add-spell-rule "A" "uer" "er" "rer" ;     sauer	> saurer
- 2 add-spell-rule "A" "uer" "er" "ren" ;
- 2 add-spell-rule "A" "uer" "er" "rem" ;
- 2 add-spell-rule "A" "uer" "er" "res" ;
- 2 add-spell-rule "A" "[eil]el" "" "e" ; Wie parallel	> parallele
- 2 add-spell-rule "A" "[eil]el" "" "er" ;     viel	> viele
- 2 add-spell-rule "A" "[eil]el" "" "en" ;     scheel	> scheele
- 2 add-spell-rule "A" "[eil]el" "" "em" ;
- 2 add-spell-rule "A" "[eil]el" "" "es" ;
- 2 add-spell-rule "A" "[^eil]el" "el" "le" ; Wie eitel	> eitle
- 2 add-spell-rule "A" "[^eil]el" "el" "ler" ;     simpel	> simple
- 2 add-spell-rule "A" "[^eil]el" "el" "len" ;
- 2 add-spell-rule "A" "[^eil]el" "el" "lem" ;
- 2 add-spell-rule "A" "[^eil]el" "el" "les" ;
-
- 2 add-spell-rule "A" "[ae]ß" "ß" "sse"  ; Wie blasS	> blasse
- 2 add-spell-rule "A" "[ae]ß" "ß" "sser" ;     kesS	> kesser
- 2 add-spell-rule "A" "[ae]ß" "ß" "ssen" ;
- 2 add-spell-rule "A" "[ae]ß" "ß" "ssem" ;
- 2 add-spell-rule "A" "[ae]ß" "ß" "sses" ;
-
- 2 add-spell-rule "A" "[^iae]ß" "" "e" ; Wie gemäsS	> gemäsSe
- 2 add-spell-rule "A" "[^iae]ß" "" "er" ;
- 2 add-spell-rule "A" "[^iae]ß" "" "en" ;
- 2 add-spell-rule "A" "[^iae]ß" "" "em" ;
- 2 add-spell-rule "A" "[^iae]ß" "" "es" ;
-
- 2 add-spell-rule "A" "eiß" "" "e" ; Wie weisS	> weisSe
- 2 add-spell-rule "A" "eiß" "" "er" ;     heisS	> heisSer
- 2 add-spell-rule "A" "eiß" "" "en" ;
- 2 add-spell-rule "A" "eiß" "" "em" ;
- 2 add-spell-rule "A" "eiß" "" "es" ;
-
- 2 add-spell-rule "A" "[^e]iß" "ß" "sse" ; Wie gewisS	> gewisse
- 2 add-spell-rule "A" "[^e]iß" "ß" "sser" ;
- 2 add-spell-rule "A" "[^e]iß" "ß" "ssen" ;
- 2 add-spell-rule "A" "[^e]iß" "ß" "ssem" ;
- 2 add-spell-rule "A" "[^e]iß" "ß" "sses" ;
-
-; flag *C:		; for comparative forms of adjectives:
- 2 add-spell-rule "C" "[^lrß]" "" "ere" ; Wie neu	> neuere
- 2 add-spell-rule "C" "[^lrß]" "" "erer" ;
- 2 add-spell-rule "C" "[^lrß]" "" "eren" ;
- 2 add-spell-rule "C" "[^lrß]" "" "erem" ;
- 2 add-spell-rule "C" "[^lrß]" "" "eres" ;
-
- 2 add-spell-rule "C" "[^e][lr]" "" "ere" ; Wie schmal	> schmale
- 2 add-spell-rule "C" "[^e][lr]" "" "erer" ;
- 2 add-spell-rule "C" "[^e][lr]" "" "eren" ;
- 2 add-spell-rule "C" "[^e][lr]" "" "erem" ;
- 2 add-spell-rule "C" "[^e][lr]" "" "eres" ;
-
- 2 add-spell-rule "C" "el" "el" "lere" ; Wie eitel	> eitlere
- 2 add-spell-rule "C" "el" "el" "lerer" ;
- 2 add-spell-rule "C" "el" "el" "leren" ;
- 2 add-spell-rule "C" "el" "el" "lerem" ;
- 2 add-spell-rule "C" "el" "el" "leres" ;
-
- 2 add-spell-rule "C" "uer" "er" "rere" ; Wie teuer	> teurere
- 2 add-spell-rule "C" "uer" "er" "rerer" ;
- 2 add-spell-rule "C" "uer" "er" "reren" ;
- 2 add-spell-rule "C" "uer" "er" "rerem" ;
- 2 add-spell-rule "C" "uer" "er" "reres" ;
-
- 2 add-spell-rule "C" "[^u]er" "" "ere" ; Wie schwer	> schwerere
- 2 add-spell-rule "C" "[^u]er" "" "erer" ;
- 2 add-spell-rule "C" "[^u]er" "" "eren" ;
- 2 add-spell-rule "C" "[^u]er" "" "erem" ;
- 2 add-spell-rule "C" "[^u]er" "" "eres" ;
-
- 2 add-spell-rule "C" "[ae]ß" "ß" "ssere" ; Wie blasS	> blassere
- 2 add-spell-rule "C" "[ae]ß" "ß" "sserer" ; Wie kesS	> kesserer
- 2 add-spell-rule "C" "[ae]ß" "ß" "sseren" ;
- 2 add-spell-rule "C" "[ae]ß" "ß" "sserem" ;
- 2 add-spell-rule "C" "[ae]ß" "ß" "sseres" ;
-
- 2 add-spell-rule "C" "[^aei]ß" "" "ere" ; Wie gemäsS	> gemäsSere
- 2 add-spell-rule "C" "[^aei]ß" "" "erer" ;
- 2 add-spell-rule "C" "[^aei]ß" "" "eren" ;
- 2 add-spell-rule "C" "[^aei]ß" "" "erem" ;
- 2 add-spell-rule "C" "[^aei]ß" "" "eres" ;
-
- 2 add-spell-rule "C" "eiß" "" "ere" ; Wie weisS	> weisSere
- 2 add-spell-rule "C" "eiß" "" "erer" ;     heisS	> heisSerer
- 2 add-spell-rule "C" "eiß" "" "eren" ;
- 2 add-spell-rule "C" "eiß" "" "erem" ;
- 2 add-spell-rule "C" "eiß" "" "eres" ;
-
- 2 add-spell-rule "C" "[^e]iß" "ß" "ssere" ; Wie gewisS	> gewissere
- 2 add-spell-rule "C" "[^e]iß" "ß" "sserer" ;
- 2 add-spell-rule "C" "[^e]iß" "ß" "sseren" ;
- 2 add-spell-rule "C" "[^e]iß" "ß" "sserem" ;
- 2 add-spell-rule "C" "[^e]iß" "ß" "sseres" ;
-
- 2 add-spell-rule "C" "[stxz]" "" "este" ; Wie neu	> neueste
- 2 add-spell-rule "C" "[stxz]" "" "ester" ;     matt	> mattester
- 2 add-spell-rule "C" "[stxz]" "" "esten" ;     mies	> miesesten
- 2 add-spell-rule "C" "[stxz]" "" "estem" ;     lax	> laxestem
- 2 add-spell-rule "C" "[stxz]" "" "estes" ;     spitz	> spitzestes
-
- 2 add-spell-rule "C" "[^ßstxz]" "" "ste" ;     teuer	> teuerste
- 2 add-spell-rule "C" "[^ßstxz]" "" "ster" ;     dick	> dickster
- 2 add-spell-rule "C" "[^ßstxz]" "" "sten" ;     lahm	> lahmsten
- 2 add-spell-rule "C" "[^ßstxz]" "" "stem" ;     teuer	> teuerstem
- 2 add-spell-rule "C" "[^ßstxz]" "" "stes" ;     teuer	> teuerstes
-
- 2 add-spell-rule "C" "[ae]ß" "ß" "sseste" ; Wie blasS	> blasseste
- 2 add-spell-rule "C" "[ae]ß" "ß" "ssester" ;     kesS	> kesseste
- 2 add-spell-rule "C" "[ae]ß" "ß" "ssesten" ;
- 2 add-spell-rule "C" "[ae]ß" "ß" "ssestem" ;
- 2 add-spell-rule "C" "[ae]ß" "ß" "ssestes" ;
-
- 2 add-spell-rule "C" "[^aei]ß" "" "este" ; Wie gemäsS	> gemäsSeste
- 2 add-spell-rule "C" "[^aei]ß" "" "ester" ;
- 2 add-spell-rule "C" "[^aei]ß" "" "esten" ;
- 2 add-spell-rule "C" "[^aei]ß" "" "estem" ;
- 2 add-spell-rule "C" "[^aei]ß" "" "estes" ;
-
- 2 add-spell-rule "C" "eiß" "" "este" ; Wie weisS	> weisSeste
- 2 add-spell-rule "C" "eiß" "" "ester" ;     heisS	> heisSester
- 2 add-spell-rule "C" "eiß" "" "esten" ;
- 2 add-spell-rule "C" "eiß" "" "estem" ;
- 2 add-spell-rule "C" "eiß" "" "estes" ;
-
- 2 add-spell-rule "C" "[^e]iß" "ß" "sseste" ; Wie gewisS	> gewisseste
- 2 add-spell-rule "C" "[^e]iß" "ß" "ssester" ;
- 2 add-spell-rule "C" "[^e]iß" "ß" "ssesten" ;
- 2 add-spell-rule "C" "[^e]iß" "ß" "ssestem" ;
- 2 add-spell-rule "C" "[^e]iß" "ß" "ssestes" ;
-
-
-; a few 'catch all' plural forms:
-; All plurals seem to boil down to one of 'N', 'E', 'P' or 'Q'
-; (or are 'irregular')
-
-; flag E:
- 1 add-spell-rule "E" "" "" "e" ; Wie Wind	> Winde
-
-; flag N:
- 1 add-spell-rule "N" "" "" "n" ; Wie Lampe	> Lampen
-						; Auch: Häuser > Häusern (Dativ)
-; flag P:
- 1 add-spell-rule "P" "" "" "en" ; Wie Tat	> Taten
-
-; flag R:
- 1 add-spell-rule "R" "" "" "er" ; Wie Licht	> Lichter
- 1 add-spell-rule "R" "" "" "ern" ;     Licht	> Lichtern
-
-; Genitiv (and a few plurals like Auto > Autos):
-; flag S:
- 1 add-spell-rule "S" "[^ßs]" "" "s" ; Wie Wolfgang	 > Wolfgangs
- 1 add-spell-rule "S" "s" "s" "sses" ;     Geheimnis  > Geheimnisses
- 1 add-spell-rule "S" "ß" "ß" "sses" ;     KompromisS > Kompromisses
-
-; flag Q:
- 1 add-spell-rule "Q" "s" "s" "sse" ; Wie Geheimnis  > Geheimnisse
- 1 add-spell-rule "Q" "s" "s" "ssen" ;     Geheimnis  > Geheimnissen
- 1 add-spell-rule "Q" "ß" "ß" "sse" ;     KompromisS > Kompromisse
- 1 add-spell-rule "Q" "ß" "ß" "ssen" ;     KompromisS > Kompromissen
-
-; Genitiv seperate -s and -es, many words may take them both! (Muts, Mutes)
-; flag T:
- 1 add-spell-rule "T" "" "" "es" ; Wie Platz	> Platzes
-						;     Reis	> Reises
-; verbs:
-
-; flag J: 	; -ung (verb -> noun)
-; capitalization problem revisited!
- 1 add-spell-rule "J" "eln" "eln" "lung" ; Wie handeln	> Handlung
- 1 add-spell-rule "J" "ern" "n" "ung" ;     wandern	> Wanderung
- 1 add-spell-rule "J" "en" "en" "ung" ;     reiben	> Reibung
- 1 add-spell-rule "J" "eln" "eln" "lungen" ;     handeln	> Handlungen
- 1 add-spell-rule "J" "ern" "n" "ungen" ;     wandern	> Wanderungen
- 1 add-spell-rule "J" "en" "en" "ungen" ;     reiben	> Reibungen
- 1 add-spell-rule "J" "[^n]" "" "ung" ;     Bild	> Bildung
- 1 add-spell-rule "J" "[^n]" "" "ungen" ;     Abbild	> Abbildung
-
-; flag B: 	; -bar	(verb -> adj.):
- 1 add-spell-rule "B" "e[lr]n" "n" "bar" ; Wie wundern	> wunderbar
- 1 add-spell-rule "B" "e[lr]n" "n" "bare" ;
- 1 add-spell-rule "B" "e[lr]n" "n" "baren" ;
- 1 add-spell-rule "B" "e[lr]n" "n" "barer" ;
- 1 add-spell-rule "B" "e[lr]n" "n" "bares" ;
- 1 add-spell-rule "B" "e[lr]n" "n" "barem" ;
- 1 add-spell-rule "B" "[^s]en" "en" "bar" ;     halten	> haltbar
- 1 add-spell-rule "B" "[^s]sen" "en" "bar" ;
- 1 add-spell-rule "B" "[^s]en" "en" "bare" ;
- 1 add-spell-rule "B" "[^s]sen" "en" "bare" ;
- 1 add-spell-rule "B" "[^s]en" "en" "baren" ;
- 1 add-spell-rule "B" "[^s]sen" "en" "baren" ;
- 1 add-spell-rule "B" "[^s]en" "en" "barer" ;
- 1 add-spell-rule "B" "[^s]sen" "en" "barer" ;
- 1 add-spell-rule "B" "[^s]en" "en" "bares" ;
- 1 add-spell-rule "B" "[^s]sen" "en" "bares" ;
- 1 add-spell-rule "B" "[^s]en" "en" "barem" ;
- 1 add-spell-rule "B" "[^s]sen" "en" "barem" ;
- 1 add-spell-rule "B" "ssen" "ssen" "ßbar" ;     messen	> mesSbar
- 1 add-spell-rule "B" "ssen" "ssen" "ßbare" ;
- 1 add-spell-rule "B" "ssen" "ssen" "ßbaren" ;
- 1 add-spell-rule "B" "ssen" "ssen" "ßbarer" ;
- 1 add-spell-rule "B" "ssen" "ssen" "ßbares" ;
- 1 add-spell-rule "B" "ssen" "ssen" "ßbarem" ;
-
-; flag *D:	; -d..	(verb -> Partizip Präs.):
- 2 add-spell-rule "D" "n" "" "d" ; Wie schlafen	> schlafend
- 2 add-spell-rule "D" "n" "" "de" ;     schlafen	> schlafende
- 2 add-spell-rule "D" "n" "" "den" ;     schlafen	> schlafenden
- 2 add-spell-rule "D" "n" "" "der" ;     schlafen	> schlafender
- 2 add-spell-rule "D" "n" "" "des" ;     schlafen	> schlafendes
- 2 add-spell-rule "D" "n" "" "dem" ;     schlafen	> schlafendem
-
-; flag *W:
-; Du-form imperative endings
- 2 add-spell-rule "W" "[^imns]en" "en" "" ; Wie reimen	> reim
- 2 add-spell-rule "W" "eien" "en" "" ;     schreien	> schrei
-						; aber nicht: knien > kni
- 2 add-spell-rule "W" "[^bght][mn]en" "en" "" ;     rennen	> renn
- 2 add-spell-rule "W" "[^c]hnen" "en" "" ;     dehnen	> dehn
- 2 add-spell-rule "W" "[^s]sen" "en" ""
- 2 add-spell-rule "W" "ssen" "ssen" "ß" ;     lassen	> lasS
-
- 2 add-spell-rule "W" "eln" "n" "" ;     lächeln	> lächel
- 2 add-spell-rule "W" "ern" "n" "" ;     nähern	> näher
-						; otherwise: ich-ending below
-; Du-form imperative endings from du- or er/sie/es-form:
- 2 add-spell-rule "W" "st" "st" "" ; Wie trittst	> tritt
- 2 add-spell-rule "W" "[^s]t" "t" "" ;     nimmt	> nimm
-
-;
-; Present tense:
-;
-; ich,ihr-forms are seperated from du,er/sie/es-forms.
-; Many (starke) verbs can only build the ich,ihr-form from the infinitive.
-;	tragen/I > trage, tragt
-;
-; Also flag X is sometimes useful for past tense of Konjunktiv:
-;	abnahmen/X > abnahmst, abnahmt
-;
-; For present tense regular (schwache) verbs, I and X will go together.
-;
-; flag *I:
-; ich
- 2 add-spell-rule "I" "en" "n" "" ; Wie kommen	> komme
- 2 add-spell-rule "I" "[^s]eln" "eln" "le" ;     lächeln	> lächle
- 2 add-spell-rule "I" "[^s]seln" "eln" "le"
- 2 add-spell-rule "I" "sseln" "sseln" "ßle" ;     rasseln	> rasSle
- 2 add-spell-rule "I" "eln" "ln" "le" ; auch: lächeln > lächele
- 2 add-spell-rule "I" "[^s]ern" "ern" "re" ;     wandern	> wandre
- 2 add-spell-rule "I" "[^s]sern" "ern" "re"
- 2 add-spell-rule "I" "ssern" "ssern" "ßre" ;     wässern	> wäsSre
- 2 add-spell-rule "I" "ern" "n" "e" ; auch: nähern > nähere
-
-; Ihr-form endings (redundant with er/sie/es most of the time)
- 2 add-spell-rule "I" "e[lr]n" "n" "t" ; Wie lächeln	> lächelt
- 2 add-spell-rule "I" "[dt]en" "n" "t" ;
- 2 add-spell-rule "I" "[^dimnst]en" "en" "t" ;
-
- 2 add-spell-rule "I" "eien" "en" "t" ;     schreien	> schreit
- 2 add-spell-rule "I" "[^e]ien" "n" "t" ;     knien	> kniet
-
- 2 add-spell-rule "I" "chnen" "n" "t" ;
- 2 add-spell-rule "I" "[^c]h[mn]en" "en" "t" ; Wie nehmen	> nehmt
-
- 2 add-spell-rule "I" "[^aäehilmnoöuür][mn]en" "n" "t" ;
- 2 add-spell-rule "I" "[aäeilmnoöuür][mn]en" "en" "t" ;
- 2 add-spell-rule "I" "[^s]sen" "en" "t" ;
- 2 add-spell-rule "I" "ssen" "ssen" "ßt" ;
-
-; special treatment for 'tun': (worthwile?)
- 2 add-spell-rule "I" "un" "n" "e" ;     tun > ich tue
- 2 add-spell-rule "I" "un" "n" "en" ;     tun > wir tuen
- 2 add-spell-rule "I" "un" "n" "t" ;     tun > er	tut
-
-
-; flag *X:	; other present tense verb endings:
-; Er/sie/es-form endings
- 2 add-spell-rule "X" "e[lr]n" "n" "t" ; Wie lächeln	> lächelt
- 2 add-spell-rule "X" "[dtw]en" "n" "t" ;     arbeiten	> arbeitet
- 2 add-spell-rule "X" "eien" "en" "t" ;     schreien	> schreit
-; old form:
-;2 add-spell-rule "X" "eien" "n" "t" ;     schreien	> schreiet
-
- 2 add-spell-rule "X" "[^e]ien" "n" "t" ;     knien	> kniet
- 2 add-spell-rule "X" "[^ditmnsw]en" "en" "t" ;     leben	> lebt
-
- 2 add-spell-rule "X" "chnen" "n" "t" ; Wie rechnen	> rechnet
- 2 add-spell-rule "X" "[^c]h[mn]en" "en" "t" ;     ahnen	> ahnt
-
- 2 add-spell-rule "X" "[^aäehilmnoöuür][mn]en" "n" "t" ; Wie atmen	> atmet
- 2 add-spell-rule "X" "[aäeilmnoöuür][mn]en" "en" "t" ; Wie lernen	> lernt
-
- 2 add-spell-rule "X" "[^s]sen" "en" "t" ;     leben	> lebt
- 2 add-spell-rule "X" "ssen" "ssen" "ßt" ;     hassen	> hasSt
-
-; old fashioned imperative and ihr- form:
-;2 add-spell-rule "X" "[bfghklmnprsßvx]en" "n" "t" ; Wie lernen	> lernet
-
- 2 add-spell-rule "X" "un" "n" "t" ;     tun	> tut
-; old fashioned form:
-;2 add-spell-rule "X" "un" "n" "et" ;     tun	> tuet
-
-; Er/sie/es-form ending from Du-form:
- 2 add-spell-rule "X" "tst" "st" "" ; Wie trittst	> tritt
-; Wie trittst	> tritt
-
-; Du-form endings
- 2 add-spell-rule "X" "e[lr]n" "n" "st" ; Wie na"ehern	> na"eherst
- 2 add-spell-rule "X" "[dtw]en" "n" "st" ;     arbeiten	> arbeitest
- 2 add-spell-rule "X" "[^dimnßstwzx]en" "en" "st" ;     leben	> lebst
-
- 2 add-spell-rule "X" "eien" "en" "st" ;     schreien	> schreist
- 2 add-spell-rule "X" "[^e]ien" "n" "st" ;     knien	> kniest
-
- 2 add-spell-rule "X" "chnen" "n" "st" ; Wie rechnen	> rechnest
- 2 add-spell-rule "X" "[^c]h[mn]en" "en" "st" ;     ahnen	> ahnst
-
- 2 add-spell-rule "X" "[^aäehilmnoöuür][mn]en" "n" "st" ; Wie atmen	> atmest
- 2 add-spell-rule "X" "[aäeilmnoöuür][mn]en" "en" "st" ; Wie lernen	> lernst
-
- 2 add-spell-rule "X" "un" "n" "st" ;     tun	> tust
-
- 2 add-spell-rule "X" "[ßsxz]en" "en" "est" ; Wie heisSen	> heisSest
-
-;   alternate form for -schen:
- 2 add-spell-rule "X" "schen" "en" "est" ;     wischen	> wischest
-
-;   the other form allowed is the same as above:
-;2 add-spell-rule "X" "[ßsxz]en" "en" "t" ; Wie heisSen	> heisSt
-;2 add-spell-rule "X" "ssen" "ssen" "ßt" ;     hassen	> hasSt
-
-; Du-form ending from Er/sie/es-form:
- 2 add-spell-rule "X" "[^sz]t" "t" "st" ; Wie nimmt	> nimmst
- 2 add-spell-rule "X" "zt" "t" "est" ;     schmilzt	> schmilzest
-
-; flag *Y:
-; Past-tense ich/er/sie/es-form endings
- 2 add-spell-rule "Y" "e[lr]n" "n" "te" ; Wie lächeln	> lächelte
- 2 add-spell-rule "Y" "[dtw]en" "n" "te" ;     arbeiten	> arbeitete
- 2 add-spell-rule "Y" "[^dimnstw]en" "en" "te" ;     leben	> lebte
-
- 2 add-spell-rule "Y" "eien" "en" "te" ;     freien	> freite
- 2 add-spell-rule "Y" "[^e]ien" "n" "te" ;     knien	> kniete
-
- 2 add-spell-rule "Y" "chnen" "n" "te" ; Wie rechnen	> rechnete
- 2 add-spell-rule "Y" "[^c]h[mn]en" "en" "te" ;     ahnen	> ahnte
-
- 2 add-spell-rule "Y" "[^aäehilmnoöuür][mn]en" "n" "te" ; Wie atmen	> atmete
- 2 add-spell-rule "Y" "[aäeilmnoöuür][mn]en" "en" "te" ; Wie lernen	> lernte
- 2 add-spell-rule "Y" "[^s]sen" "en" "te"
- 2 add-spell-rule "Y" "ssen" "ssen" "ßte" ;     hassen	> hasSte
-
-; Past-tense du-form endings
- 2 add-spell-rule "Y" "e[lr]n" "n" "test" ; Wie lächeln	> lächeltest
- 2 add-spell-rule "Y" "[dtw]en" "n" "test" ;     arbeiten	> arbeitetest
- 2 add-spell-rule "Y" "[^dimnstw]en" "en" "test" ;     leben	> lebtest
-
- 2 add-spell-rule "Y" "eien" "en" "test" ;     freien	> freitest
- 2 add-spell-rule "Y" "[^e]ien" "n" "test" ;     knien	> knietest
-
- 2 add-spell-rule "Y" "chnen" "n" "test" ; Wie rechnen	> rechnetest
- 2 add-spell-rule "Y" "[^c]h[mn]en" "en" "test" ;     ahnen	> ahntest
-
- 2 add-spell-rule "Y" "[^aäehilmnoöuür][mn]en" "n" "test" ; Wie atmen	> atmetest
- 2 add-spell-rule "Y" "[aäeilmnoöuür][mn]en" "en" "test" ; Wie lernen	> lerntest
- 2 add-spell-rule "Y" "[^s]sen" "en" "test"
- 2 add-spell-rule "Y" "ssen" "ssen" "ßtest" ;     hassen	> hasStest
-
-; Past-tense ihr-form endings
- 2 add-spell-rule "Y" "e[lr]n" "n" "tet" ; Wie näehern	> näehertet
- 2 add-spell-rule "Y" "[dtw]en" "n" "tet" ;     rasten	> rastetet
- 2 add-spell-rule "Y" "[^dimnstw]en" "en" "tet" ;     rasen	> rastet
-
- 2 add-spell-rule "Y" "eien" "en" "tet" ;     freien	> freitet
- 2 add-spell-rule "Y" "[^e]ien" "n" "tet" ;     knien	> knietet
-
- 2 add-spell-rule "Y" "chnen" "n" "tet" ; Wie rechnen	> rechnetet
- 2 add-spell-rule "Y" "[^c]h[mn]en" "en" "tet" ;     ahnen	> ahntet
-
- 2 add-spell-rule "Y" "[^aäehilmnoöuür][mn]en" "n" "tet" ; Wie atmen	> atmetet
- 2 add-spell-rule "Y" "[aäeilmnoöuür][mn]en" "en" "tet" ; Wie lernen	> lerntet
- 2 add-spell-rule "Y" "[^s]sen" "en" "tet" ;     rasen	> rastet
- 2 add-spell-rule "Y" "ssen" "ssen" "ßtet" ;     hassen	> hasStet
-
-; Past-tense sie/Sie-form endings
- 2 add-spell-rule "Y" "e[lr]n" "n" "ten" ; Wie lächeln	> lächelten
- 2 add-spell-rule "Y" "[dtw]en" "n" "ten" ;     arbeiten	> arbeiteten
- 2 add-spell-rule "Y" "[^dimnstw]en" "en" "ten" ;     leben	> lebten
-
- 2 add-spell-rule "Y" "eien" "en" "ten" ;     freien	> freiten
- 2 add-spell-rule "Y" "[^e]ien" "n" "ten" ;     knien	> knieten
-
- 2 add-spell-rule "Y" "chnen" "n" "ten" ; Wie rechnen	> rechneten
- 2 add-spell-rule "Y" "[^c]h[mn]en" "en" "ten" ;     ahnen	> ahnten
-
- 2 add-spell-rule "Y" "[^aäehilmnoöuür][mn]en" "n" "ten" ; Wie atmen	> atmeten
- 2 add-spell-rule "Y" "[aäeilmnoöuür][mn]en" "en" "ten" ; Wie lernen	> lernten
- 2 add-spell-rule "Y" "[^s]sen" "en" "ten" ;     leben	> lebten
- 2 add-spell-rule "Y" "ssen" "ssen" "ßten" ;     hassen	> hasSten
-
-; Past-tense endings for non-regular verbs and Konjunktiv forms from ich-form:
-; flag *Z:
-; er/sie/es = ich
-; du
- 2 add-spell-rule "Z" "[^hßsz]" "" "st" ; Wie wusSte	> wusStest
- 2 add-spell-rule "Z" "[^c]h" "" "st" ;     floh	> flohest
- 2 add-spell-rule "Z" "[^s]ch" "" "st" ;     wich	> wichst
-; CH,D,F,K and T may also have an 'e' before 'st':
- 2 add-spell-rule "Z" "[dfkstz]" "" "est" ;     riet	> rietest
-; There are verbs which don't have the -chest form below, such as 'brachst'
-; or 'rochst'.	Then use 'brachen/WX', which is only slightly less elegant.
- 2 add-spell-rule "Z" "ch" "" "est" ;     wusch	> wuschest
- 2 add-spell-rule "Z" "[au]ß" "" "est" ;     asS	> asSest
- 2 add-spell-rule "Z" "ieß" "" "est" ;     liesS	> liesSest
- 2 add-spell-rule "Z" "[io]ß" "ß" "ssest" ;     gosS	> gossest
-
-; ihr
- 2 add-spell-rule "Z" "[^dt]" "" "t" ;     wüsSte	> wüsStet
- 2 add-spell-rule "Z" "[dt]" "" "et" ;     riet	> rietet
-;   If you insist on all past tense ihr-forms ending in -et,
-;   here is how to do it:
-;   [ I didn't check if this is 'normal' or not, but it seems somewhat
-;     old-fashioned to me.  My Duden (DDR '73) doesn't mention them ]
-;2 add-spell-rule "Z" "[^ß]" "" "et" ;     hob	> hobet
-;2 add-spell-rule "Z" "ß" "ß" "sset" ;     schosS	> schosset
-
-; wir/sie
- 2 add-spell-rule "Z" "e" "" "n" ;     hatte	> hatten
- 2 add-spell-rule "Z" "ie" "" "en" ; auch: schrie	> schrieen
- 2 add-spell-rule "Z" "[^eß]" "" "en" ;     nahm	> nahmen
- 2 add-spell-rule "Z" "[au]ß" "" "en" ;     asS	> asSen
- 2 add-spell-rule "Z" "ieß" "" "en" ;     liesS	> liesSen
- 2 add-spell-rule "Z" "[io]ß" "ß" "ssen" ;     gosS	> gossen
-
-; flag *O:
-;
-; Partizip dekliniert: Wie  verarbeiten -> verarbeiteter
-;
-; This is similar to flag Y,  but will not necessaryly apply
-; to all verbs which have regular (Y) past tense form.
-;
-; The forms to be generated are the same as for the A flag
-; (which could be used with a different stem to do the same thing).
-;
-; flag *Y wil already produce the -e, -en forms.
-;
-; -tes
- 2 add-spell-rule "O" "e[lr]n" "n" "tes" ; Wie vererben	> vererbtes
- 2 add-spell-rule "O" "[dtw]en" "n" "tes" ;
- 2 add-spell-rule "O" "[^dmnstw]en" "en" "tes" ;
-
- 2 add-spell-rule "O" "chnen" "n" "tes" ;
- 2 add-spell-rule "O" "[^c]h[mn]en" "en" "tes" ;
-
- 2 add-spell-rule "O" "[^aäehilmnoöuür][mn]en" "n" "tes" ;
- 2 add-spell-rule "O" "[aäeilmnoöuür][mn]en" "en" "tes" ;
- 2 add-spell-rule "O" "[^s]sen" "en" "tes" ;
- 2 add-spell-rule "O" "ssen" "ssen" "ßtes" ;
-; -ter						; Wie erzielen > erzielter
- 2 add-spell-rule "O" "e[lr]n" "n" "ter" ;
- 2 add-spell-rule "O" "[dtw]en" "n" "ter" ;
- 2 add-spell-rule "O" "[^dmnstw]en" "en" "ter" ;
-
- 2 add-spell-rule "O" "chnen" "n" "ter" ;
- 2 add-spell-rule "O" "[^c]h[mn]en" "en" "ter" ;
-
- 2 add-spell-rule "O" "[^aäehilmnoöuür][mn]en" "n" "ter" ;
- 2 add-spell-rule "O" "[aäeilmnoöuür][mn]en" "en" "ter" ;
- 2 add-spell-rule "O" "[^s]sen" "en" "ter" ;
- 2 add-spell-rule "O" "ssen" "ssen" "ßter" ;
-; -tem						; Wie verfluchen > verfluchtem
- 2 add-spell-rule "O" "e[lr]n" "n" "tem" ;
- 2 add-spell-rule "O" "[dtw]en" "n" "tem" ;
- 2 add-spell-rule "O" "[^dmnstw]en" "en" "tem" ;
-
- 2 add-spell-rule "O" "chnen" "n" "tem" ;
- 2 add-spell-rule "O" "[^c]h[mn]en" "en" "tem" ;
-
- 2 add-spell-rule "O" "[^aäehilmnoöuür][mn]en" "n" "tem" ;
- 2 add-spell-rule "O" "[aäeilmnoöuür][mn]en" "en" "tem" ;
- 2 add-spell-rule "O" "[^s]sen" "en" "tem" ;
- 2 add-spell-rule "O" "ssen" "ssen" "ßtem" ;
-
+; Add prefix & suffix spell rules
+-2 add-spell-rule "U" "" "" "un" ""
+-2 add-spell-rule "V" "" "" "ver" ""
+2 add-spell-rule "F" "in" "" "nen" ""
+2 add-spell-rule "F" "e" "e" "in" ""
+2 add-spell-rule "F" "e" "e" "innen" ""
+2 add-spell-rule "F" "[^i]n" "" "in" ""
+2 add-spell-rule "F" "[^i]n" "" "innen" ""
+2 add-spell-rule "F" "[^enr]" "" "in" ""
+2 add-spell-rule "F" "[^enr]" "" "innen" ""
+2 add-spell-rule "F" "[^e]r" "" "in" ""
+2 add-spell-rule "F" "[^e]r" "" "innen" ""
+2 add-spell-rule "F" "[^r]er" "" "in" ""
+2 add-spell-rule "F" "[^r]er" "" "innen" ""
+2 add-spell-rule "F" "[^e]rer" "" "in" ""
+2 add-spell-rule "F" "[^e]rer" "" "innen" ""
+2 add-spell-rule "F" "ierer" "" "in" ""
+2 add-spell-rule "F" "ierer" "" "innen" ""
+2 add-spell-rule "F" "[^i]erer" "er" "in" ""
+2 add-spell-rule "F" "[^i]erer" "er" "innen" ""
+2 add-spell-rule "F" "in" "in" "In" ""
+2 add-spell-rule "F" "in" "in" "Innen" ""
+2 add-spell-rule "F" "e" "e" "In" ""
+2 add-spell-rule "F" "e" "e" "Innen" ""
+2 add-spell-rule "F" "[^i]n" "" "In" ""
+2 add-spell-rule "F" "[^i]n" "" "Innen" ""
+2 add-spell-rule "F" "[^en]" "" "In" ""
+2 add-spell-rule "F" "[^en]" "" "Innen" ""
+2 add-spell-rule "F" "[^e]r" "" "In" ""
+2 add-spell-rule "F" "[^e]r" "" "Innen" ""
+2 add-spell-rule "F" "[^r]er" "" "In" ""
+2 add-spell-rule "F" "[^r]er" "" "Innen" ""
+2 add-spell-rule "F" "[^e]rer" "" "In" ""
+2 add-spell-rule "F" "[^e]rer" "" "Innen" ""
+2 add-spell-rule "F" "ierer" "" "In" ""
+2 add-spell-rule "F" "ierer" "" "Innen" ""
+2 add-spell-rule "F" "[^i]erer" "er" "In" ""
+2 add-spell-rule "F" "[^i]erer" "er" "Innen" ""
+1 add-spell-rule "L" "n" "" "tlich" ""
+1 add-spell-rule "L" "n" "" "tliche" ""
+1 add-spell-rule "L" "n" "" "tlicher" ""
+1 add-spell-rule "L" "n" "" "tliches" ""
+1 add-spell-rule "L" "n" "" "tlichem" ""
+1 add-spell-rule "L" "n" "" "tlichen" ""
+1 add-spell-rule "L" "[^n]" "" "lich" ""
+1 add-spell-rule "L" "[^n]" "" "liche" ""
+1 add-spell-rule "L" "[^n]" "" "licher" ""
+1 add-spell-rule "L" "[^n]" "" "liches" ""
+1 add-spell-rule "L" "[^n]" "" "lichem" ""
+1 add-spell-rule "L" "[^n]" "" "lichen" ""
+1 add-spell-rule "M" "[^se]" "" "chen" ""
+1 add-spell-rule "M" "[^se]" "" "chens" ""
+1 add-spell-rule "M" "ass" "ass" "ässchen" ""
+1 add-spell-rule "M" "ass" "ass" "ässchens" ""
+1 add-spell-rule "M" "oss" "oss" "össchen" ""
+1 add-spell-rule "M" "oss" "oss" "össchens" ""
+1 add-spell-rule "M" "uss" "uss" "üsschen" ""
+1 add-spell-rule "M" "uss" "uss" "üsschens" ""
+1 add-spell-rule "M" "e" "e" "chen" ""
+1 add-spell-rule "M" "e" "e" "chens" ""
+2 add-spell-rule "A" "e" "" "r" ""
+2 add-spell-rule "A" "e" "" "n" ""
+2 add-spell-rule "A" "e" "" "m" ""
+2 add-spell-rule "A" "e" "" "s" ""
+2 add-spell-rule "A" "[^elr]" "" "e" ""
+2 add-spell-rule "A" "[^elr]" "" "er" ""
+2 add-spell-rule "A" "[^elr]" "" "en" ""
+2 add-spell-rule "A" "[^elr]" "" "em" ""
+2 add-spell-rule "A" "[^elr]" "" "es" ""
+2 add-spell-rule "A" "[^e][rl]" "" "e" ""
+2 add-spell-rule "A" "[^e][rl]" "" "er" ""
+2 add-spell-rule "A" "[^e][rl]" "" "en" ""
+2 add-spell-rule "A" "[^e][rl]" "" "em" ""
+2 add-spell-rule "A" "[^e][rl]" "" "es" ""
+2 add-spell-rule "A" "[^u]er" "" "e" ""
+2 add-spell-rule "A" "[^u]er" "" "er" ""
+2 add-spell-rule "A" "[^u]er" "" "en" ""
+2 add-spell-rule "A" "[^u]er" "" "em" ""
+2 add-spell-rule "A" "[^u]er" "" "es" ""
+2 add-spell-rule "A" "uer" "er" "re" ""
+2 add-spell-rule "A" "uer" "er" "rer" ""
+2 add-spell-rule "A" "uer" "er" "ren" ""
+2 add-spell-rule "A" "uer" "er" "rem" ""
+2 add-spell-rule "A" "uer" "er" "res" ""
+2 add-spell-rule "A" "[eil]el" "" "e" ""
+2 add-spell-rule "A" "[eil]el" "" "er" ""
+2 add-spell-rule "A" "[eil]el" "" "en" ""
+2 add-spell-rule "A" "[eil]el" "" "em" ""
+2 add-spell-rule "A" "[eil]el" "" "es" ""
+2 add-spell-rule "A" "[^eil]el" "el" "le" ""
+2 add-spell-rule "A" "[^eil]el" "el" "ler" ""
+2 add-spell-rule "A" "[^eil]el" "el" "len" ""
+2 add-spell-rule "A" "[^eil]el" "el" "lem" ""
+2 add-spell-rule "A" "[^eil]el" "el" "les" ""
+2 add-spell-rule "A" "[^aeiouhlräüö]lig" "lig" "elig" ""
+2 add-spell-rule "A" "[^aeiouhlräüö]lig" "lig" "elige" ""
+2 add-spell-rule "A" "[^aeiouhlräüö]lig" "lig" "eliger" ""
+2 add-spell-rule "A" "[^aeiouhlräüö]lig" "lig" "eligen" ""
+2 add-spell-rule "A" "[^aeiouhlräüö]lig" "lig" "eligem" ""
+2 add-spell-rule "A" "[^aeiouhlräüö]lig" "lig" "eliges" ""
+2 add-spell-rule "A" "[^hi]erig" "erig" "rig" ""
+2 add-spell-rule "A" "[^hi]erig" "erig" "rige" ""
+2 add-spell-rule "A" "[^hi]erig" "erig" "riger" ""
+2 add-spell-rule "A" "[^hi]erig" "erig" "rigen" ""
+2 add-spell-rule "A" "[^hi]erig" "erig" "rigem" ""
+2 add-spell-rule "A" "[^hi]erig" "erig" "riges" ""
+2 add-spell-rule "C" "[^elr]" "" "ere" ""
+2 add-spell-rule "C" "[^elr]" "" "erer" ""
+2 add-spell-rule "C" "[^elr]" "" "eren" ""
+2 add-spell-rule "C" "[^elr]" "" "erem" ""
+2 add-spell-rule "C" "[^elr]" "" "eres" ""
+2 add-spell-rule "C" "e" "" "re" ""
+2 add-spell-rule "C" "e" "" "rer" ""
+2 add-spell-rule "C" "e" "" "ren" ""
+2 add-spell-rule "C" "e" "" "rem" ""
+2 add-spell-rule "C" "e" "" "res" ""
+2 add-spell-rule "C" "[^e][lr]" "" "ere" ""
+2 add-spell-rule "C" "[^e][lr]" "" "erer" ""
+2 add-spell-rule "C" "[^e][lr]" "" "eren" ""
+2 add-spell-rule "C" "[^e][lr]" "" "erem" ""
+2 add-spell-rule "C" "[^e][lr]" "" "eres" ""
+2 add-spell-rule "C" "el" "el" "lere" ""
+2 add-spell-rule "C" "el" "el" "lerer" ""
+2 add-spell-rule "C" "el" "el" "leren" ""
+2 add-spell-rule "C" "el" "el" "lerem" ""
+2 add-spell-rule "C" "el" "el" "leres" ""
+2 add-spell-rule "C" "uer" "er" "rere" ""
+2 add-spell-rule "C" "uer" "er" "rerer" ""
+2 add-spell-rule "C" "uer" "er" "reren" ""
+2 add-spell-rule "C" "uer" "er" "rerem" ""
+2 add-spell-rule "C" "uer" "er" "reres" ""
+2 add-spell-rule "C" "[^u]er" "" "ere" ""
+2 add-spell-rule "C" "[^u]er" "" "erer" ""
+2 add-spell-rule "C" "[^u]er" "" "eren" ""
+2 add-spell-rule "C" "[^u]er" "" "erem" ""
+2 add-spell-rule "C" "[^u]er" "" "eres" ""
+2 add-spell-rule "C" "[^aeiouhlräüö]lig" "lig" "eligere" ""
+2 add-spell-rule "C" "[^aeiouhlräüö]lig" "lig" "eligerer" ""
+2 add-spell-rule "C" "[^aeiouhlräüö]lig" "lig" "eligeren" ""
+2 add-spell-rule "C" "[^aeiouhlräüö]lig" "lig" "eligerem" ""
+2 add-spell-rule "C" "[^aeiouhlräüö]lig" "lig" "eligeres" ""
+2 add-spell-rule "C" "[^hi]erig" "erig" "rigere" ""
+2 add-spell-rule "C" "[^hi]erig" "erig" "rigerer" ""
+2 add-spell-rule "C" "[^hi]erig" "erig" "rigeren" ""
+2 add-spell-rule "C" "[^hi]erig" "erig" "rigerem" ""
+2 add-spell-rule "C" "[^hi]erig" "erig" "rigeres" ""
+2 add-spell-rule "C" "[kßsuxz]" "" "est" ""
+2 add-spell-rule "C" "[kßsuxz]" "" "este" ""
+2 add-spell-rule "C" "[kßsuxz]" "" "ester" ""
+2 add-spell-rule "C" "[kßsuxz]" "" "esten" ""
+2 add-spell-rule "C" "[kßsuxz]" "" "estem" ""
+2 add-spell-rule "C" "[kßsuxz]" "" "estes" ""
+2 add-spell-rule "C" "et" "" "st" ""
+2 add-spell-rule "C" "et" "" "ste" ""
+2 add-spell-rule "C" "et" "" "ster" ""
+2 add-spell-rule "C" "et" "" "sten" ""
+2 add-spell-rule "C" "et" "" "stem" ""
+2 add-spell-rule "C" "et" "" "stes" ""
+2 add-spell-rule "C" "igt" "" "st" ""
+2 add-spell-rule "C" "igt" "" "ste" ""
+2 add-spell-rule "C" "igt" "" "ster" ""
+2 add-spell-rule "C" "igt" "" "sten" ""
+2 add-spell-rule "C" "igt" "" "stem" ""
+2 add-spell-rule "C" "igt" "" "stes" ""
+2 add-spell-rule "C" "[^i]gt" "" "est" ""
+2 add-spell-rule "C" "[^i]gt" "" "este" ""
+2 add-spell-rule "C" "[^i]gt" "" "ester" ""
+2 add-spell-rule "C" "[^i]gt" "" "esten" ""
+2 add-spell-rule "C" "[^i]gt" "" "estem" ""
+2 add-spell-rule "C" "[^i]gt" "" "estes" ""
+2 add-spell-rule "C" "[^eg]t" "" "est" ""
+2 add-spell-rule "C" "[^eg]t" "" "este" ""
+2 add-spell-rule "C" "[^eg]t" "" "ester" ""
+2 add-spell-rule "C" "[^eg]t" "" "esten" ""
+2 add-spell-rule "C" "[^eg]t" "" "estem" ""
+2 add-spell-rule "C" "[^eg]t" "" "estes" ""
+2 add-spell-rule "C" "[^kßstxz]" "" "st" ""
+2 add-spell-rule "C" "[^kßstxz]" "" "ste" ""
+2 add-spell-rule "C" "[^kßstxz]" "" "ster" ""
+2 add-spell-rule "C" "[^kßstxz]" "" "sten" ""
+2 add-spell-rule "C" "[^kßstxz]" "" "stem" ""
+2 add-spell-rule "C" "[^kßstxz]" "" "stes" ""
+2 add-spell-rule "C" "nd" "" "st" ""
+2 add-spell-rule "C" "nd" "" "ste" ""
+2 add-spell-rule "C" "nd" "" "ster" ""
+2 add-spell-rule "C" "nd" "" "sten" ""
+2 add-spell-rule "C" "nd" "" "stem" ""
+2 add-spell-rule "C" "nd" "" "stes" ""
+2 add-spell-rule "C" "[^n]d" "" "est" ""
+2 add-spell-rule "C" "[^n]d" "" "este" ""
+2 add-spell-rule "C" "[^n]d" "" "ester" ""
+2 add-spell-rule "C" "[^n]d" "" "esten" ""
+2 add-spell-rule "C" "[^n]d" "" "estem" ""
+2 add-spell-rule "C" "[^n]d" "" "estes" ""
+2 add-spell-rule "C" "[^aeiouhlräüö]lig" "lig" "eligst" ""
+2 add-spell-rule "C" "[^aeiouhlräüö]lig" "lig" "eligste" ""
+2 add-spell-rule "C" "[^aeiouhlräüö]lig" "lig" "eligster" ""
+2 add-spell-rule "C" "[^aeiouhlräüö]lig" "lig" "eligsten" ""
+2 add-spell-rule "C" "[^aeiouhlräüö]lig" "lig" "eligstem" ""
+2 add-spell-rule "C" "[^aeiouhlräüö]lig" "lig" "eligstes" ""
+2 add-spell-rule "C" "[^hi]erig" "erig" "rigst" ""
+2 add-spell-rule "C" "[^hi]erig" "erig" "rigste" ""
+2 add-spell-rule "C" "[^hi]erig" "erig" "rigster" ""
+2 add-spell-rule "C" "[^hi]erig" "erig" "rigsten" ""
+2 add-spell-rule "C" "[^hi]erig" "erig" "rigstem" ""
+2 add-spell-rule "C" "[^hi]erig" "erig" "rigstes" ""
+2 add-spell-rule "E" "" "" "e" ""
+2 add-spell-rule "f" "ph" "ph" "f" ""
+2 add-spell-rule "f" "ph" "ph" "fen" ""
+2 add-spell-rule "f" "phie" "phie" "fie" ""
+2 add-spell-rule "f" "phie" "phie" "fien" ""
+2 add-spell-rule "N" "" "" "n" ""
+2 add-spell-rule "P" "" "" "en" ""
+2 add-spell-rule "p" "auf" "auf" "äufe" ""
+2 add-spell-rule "p" "auf" "auf" "äufen" ""
+2 add-spell-rule "p" "[hH]aus" "aus" "äuser" ""
+2 add-spell-rule "p" "[hH]aus" "aus" "äusern" ""
+2 add-spell-rule "p" "[mM]arkt" "arkt" "ärkte" ""
+2 add-spell-rule "p" "[mM]arkt" "arkt" "ärkten" ""
+2 add-spell-rule "p" "ang" "ang" "änge" ""
+2 add-spell-rule "p" "ang" "ang" "ängen" ""
+2 add-spell-rule "p" "uß" "uß" "üße" ""
+2 add-spell-rule "p" "uß" "uß" "üßen" ""
+2 add-spell-rule "p" "oß" "oß" "öße" ""
+2 add-spell-rule "p" "oß" "oß" "ößen" ""
+2 add-spell-rule "p" "aum" "aum" "äume" ""
+2 add-spell-rule "p" "aum" "aum" "äumen" ""
+2 add-spell-rule "p" "ag" "ag" "äge" ""
+2 add-spell-rule "p" "ag" "ag" "ägen" ""
+2 add-spell-rule "p" "ug" "ug" "üge" ""
+2 add-spell-rule "p" "ug" "ug" "ügen" ""
+2 add-spell-rule "p" "all" "all" "älle" ""
+2 add-spell-rule "p" "all" "all" "ällen" ""
+2 add-spell-rule "p" "ass" "ass" "ässe" ""
+2 add-spell-rule "p" "ass" "ass" "ässen" ""
+2 add-spell-rule "p" "uss" "uss" "üsse" ""
+2 add-spell-rule "p" "uss" "uss" "üssen" ""
+2 add-spell-rule "p" "oss" "oss" "össe" ""
+2 add-spell-rule "p" "oss" "oss" "össen" ""
+2 add-spell-rule "R" "[^e]" "" "er" ""
+2 add-spell-rule "R" "[^e]" "" "ern" ""
+2 add-spell-rule "R" "e" "" "r" ""
+2 add-spell-rule "S" "" "" "s" ""
+2 add-spell-rule "q" "s" "" "se" ""
+2 add-spell-rule "q" "s" "" "sen" ""
+2 add-spell-rule "Q" "s" "" "ses" ""
+2 add-spell-rule "T" "" "" "es" ""
+2 add-spell-rule "J" "[bgkpßsz]eln" "n" "ung" ""
+2 add-spell-rule "J" "[bgkpßsz]eln" "n" "ungen" ""
+2 add-spell-rule "J" "eln" "eln" "lung" ""
+2 add-spell-rule "J" "ern" "n" "ung" ""
+2 add-spell-rule "J" "en" "en" "ung" ""
+2 add-spell-rule "J" "eln" "eln" "lungen" ""
+2 add-spell-rule "J" "ern" "n" "ungen" ""
+2 add-spell-rule "J" "en" "en" "ungen" ""
+2 add-spell-rule "J" "[^n]" "" "ung" ""
+2 add-spell-rule "J" "[^n]" "" "ungen" ""
+2 add-spell-rule "J" "el" "el" "lung" ""
+2 add-spell-rule "J" "el" "el" "lungen" ""
+1 add-spell-rule "B" "e[lr]n" "n" "bar" ""
+1 add-spell-rule "B" "e[lr]n" "n" "bare" ""
+1 add-spell-rule "B" "e[lr]n" "n" "baren" ""
+1 add-spell-rule "B" "e[lr]n" "n" "barer" ""
+1 add-spell-rule "B" "e[lr]n" "n" "bares" ""
+1 add-spell-rule "B" "e[lr]n" "n" "barem" ""
+1 add-spell-rule "B" "en" "en" "bar" ""
+1 add-spell-rule "B" "en" "en" "bare" ""
+1 add-spell-rule "B" "en" "en" "baren" ""
+1 add-spell-rule "B" "en" "en" "barer" ""
+1 add-spell-rule "B" "en" "en" "bares" ""
+1 add-spell-rule "B" "en" "en" "barem" ""
+2 add-spell-rule "D" "n" "" "d" ""
+2 add-spell-rule "D" "n" "" "de" ""
+2 add-spell-rule "D" "n" "" "den" ""
+2 add-spell-rule "D" "n" "" "der" ""
+2 add-spell-rule "D" "n" "" "des" ""
+2 add-spell-rule "D" "n" "" "dem" ""
+2 add-spell-rule "W" "en" "en" "" ""
+2 add-spell-rule "W" "[^e]n" "n" "" ""
+2 add-spell-rule "W" "[^s]st" "st" "" ""
+2 add-spell-rule "W" "sst" "t" "" ""
+2 add-spell-rule "W" "[^s]t" "t" "" ""
+2 add-spell-rule "I" "en" "n" "" ""
+2 add-spell-rule "I" "eln" "eln" "le" ""
+2 add-spell-rule "I" "eln" "n" "e" ""
+2 add-spell-rule "I" "ern" "ern" "re" ""
+2 add-spell-rule "I" "ern" "n" "e" ""
+2 add-spell-rule "I" "e[lr]n" "n" "t" ""
+2 add-spell-rule "I" "[dt]en" "n" "t" ""
+2 add-spell-rule "I" "[^dimnt]en" "en" "t" ""
+2 add-spell-rule "I" "eien" "en" "t" ""
+2 add-spell-rule "I" "[^e]ien" "n" "t" ""
+2 add-spell-rule "I" "chnen" "n" "t" ""
+2 add-spell-rule "I" "[^c]h[mn]en" "en" "t" ""
+2 add-spell-rule "I" "[^aäehilmnoöuür][mn]en" "n" "t" ""
+2 add-spell-rule "I" "[aäeilmnoöuür][mn]en" "en" "t" ""
+2 add-spell-rule "I" "un" "n" "e" ""
+2 add-spell-rule "I" "un" "n" "t" ""
+2 add-spell-rule "X" "e[lr]n" "n" "t" ""
+2 add-spell-rule "X" "[dtw]en" "n" "t" ""
+2 add-spell-rule "X" "eien" "en" "t" ""
+2 add-spell-rule "X" "[^e]ien" "n" "t" ""
+2 add-spell-rule "X" "[^ditmnw]en" "en" "t" ""
+2 add-spell-rule "X" "chnen" "n" "t" ""
+2 add-spell-rule "X" "[^c]h[mn]en" "en" "t" ""
+2 add-spell-rule "X" "[^aäehilmnoöuür][mn]en" "n" "t" ""
+2 add-spell-rule "X" "[aäeilmnoöuür][mn]en" "en" "t" ""
+2 add-spell-rule "X" "un" "n" "t" ""
+2 add-spell-rule "X" "tst" "st" "" ""
+2 add-spell-rule "X" "e[lr]n" "n" "st" ""
+2 add-spell-rule "X" "[dtw]en" "n" "st" ""
+2 add-spell-rule "X" "[^dimnßstwzx]en" "en" "st" ""
+2 add-spell-rule "X" "eien" "en" "st" ""
+2 add-spell-rule "X" "[^e]ien" "n" "st" ""
+2 add-spell-rule "X" "chnen" "n" "st" ""
+2 add-spell-rule "X" "[^c]h[mn]en" "en" "st" ""
+2 add-spell-rule "X" "[^aäehilmnoöuür][mn]en" "n" "st" ""
+2 add-spell-rule "X" "[aäeilmnoöuür][mn]en" "en" "st" ""
+2 add-spell-rule "X" "un" "n" "st" ""
+2 add-spell-rule "X" "[ßsxz]en" "n" "st" ""
+2 add-spell-rule "X" "ssen" "n" "st" ""
+2 add-spell-rule "X" "schen" "n" "st" ""
+2 add-spell-rule "X" "[^sz]t" "t" "st" ""
+2 add-spell-rule "X" "zt" "t" "est" ""
+2 add-spell-rule "Y" "e[lr]n" "n" "te" ""
+2 add-spell-rule "Y" "[dtw]en" "n" "te" ""
+2 add-spell-rule "Y" "[^dimntw]en" "en" "te" ""
+2 add-spell-rule "Y" "eien" "en" "te" ""
+2 add-spell-rule "Y" "[^e]ien" "n" "te" ""
+2 add-spell-rule "Y" "chnen" "n" "te" ""
+2 add-spell-rule "Y" "[^c]h[mn]en" "en" "te" ""
+2 add-spell-rule "Y" "[^aäehilmnoöuür][mn]en" "n" "te" ""
+2 add-spell-rule "Y" "[aäeilmnoöuür][mn]en" "en" "te" ""
+2 add-spell-rule "Y" "e[lr]n" "n" "test" ""
+2 add-spell-rule "Y" "[dtw]en" "n" "test" ""
+2 add-spell-rule "Y" "[^dimntw]en" "en" "test" ""
+2 add-spell-rule "Y" "eien" "en" "test" ""
+2 add-spell-rule "Y" "[^e]ien" "n" "test" ""
+2 add-spell-rule "Y" "chnen" "n" "test" ""
+2 add-spell-rule "Y" "[^c]h[mn]en" "en" "test" ""
+2 add-spell-rule "Y" "[^aäehilmnoöuür][mn]en" "n" "test" ""
+2 add-spell-rule "Y" "[aäeilmnoöuür][mn]en" "en" "test" ""
+2 add-spell-rule "Y" "e[lr]n" "n" "tet" ""
+2 add-spell-rule "Y" "[dtw]en" "n" "tet" ""
+2 add-spell-rule "Y" "[^dimntw]en" "en" "tet" ""
+2 add-spell-rule "Y" "eien" "en" "tet" ""
+2 add-spell-rule "Y" "[^e]ien" "n" "tet" ""
+2 add-spell-rule "Y" "chnen" "n" "tet" ""
+2 add-spell-rule "Y" "[^c]h[mn]en" "en" "tet" ""
+2 add-spell-rule "Y" "[^aäehilmnoöuür][mn]en" "n" "tet" ""
+2 add-spell-rule "Y" "[aäeilmnoöuür][mn]en" "en" "tet" ""
+2 add-spell-rule "Y" "e[lr]n" "n" "ten" ""
+2 add-spell-rule "Y" "[dtw]en" "n" "ten" ""
+2 add-spell-rule "Y" "[^dimntw]en" "en" "ten" ""
+2 add-spell-rule "Y" "eien" "en" "ten" ""
+2 add-spell-rule "Y" "[^e]ien" "n" "ten" ""
+2 add-spell-rule "Y" "chnen" "n" "ten" ""
+2 add-spell-rule "Y" "[^c]h[mn]en" "en" "ten" ""
+2 add-spell-rule "Y" "[^aäehilmnoöuür][mn]en" "n" "ten" ""
+2 add-spell-rule "Y" "[aäeilmnoöuür][mn]en" "en" "ten" ""
+2 add-spell-rule "Z" "[^hßsz]" "" "st" ""
+2 add-spell-rule "Z" "[^c]h" "" "st" ""
+2 add-spell-rule "Z" "[^s]ch" "" "st" ""
+2 add-spell-rule "Z" "[dfkstz]" "" "est" ""
+2 add-spell-rule "Z" "ch" "" "est" ""
+2 add-spell-rule "Z" "[au]ß" "" "est" ""
+2 add-spell-rule "Z" "ieß" "" "est" ""
+2 add-spell-rule "Z" "[io]ss" "" "est" ""
+2 add-spell-rule "Z" "[^dt]" "" "t" ""
+2 add-spell-rule "Z" "[dt]" "" "et" ""
+2 add-spell-rule "Z" "e" "" "n" ""
+2 add-spell-rule "Z" "ie" "" "en" ""
+2 add-spell-rule "Z" "[^e]" "" "en" ""
+2 add-spell-rule "Z" "iess" "" "est" ""
+2 add-spell-rule "Z" "[au]ss" "" "est" ""
+2 add-spell-rule "O" "e[lr]n" "n" "tes" ""
+2 add-spell-rule "O" "[dtw]en" "n" "tes" ""
+2 add-spell-rule "O" "[^dmntw]en" "en" "tes" ""
+2 add-spell-rule "O" "chnen" "n" "tes" ""
+2 add-spell-rule "O" "[^c]h[mn]en" "en" "tes" ""
+2 add-spell-rule "O" "[^aäehilmnoöuür][mn]en" "n" "tes" ""
+2 add-spell-rule "O" "[aäeilmnoöuür][mn]en" "en" "tes" ""
+2 add-spell-rule "O" "e[lr]n" "n" "ter" ""
+2 add-spell-rule "O" "[dtw]en" "n" "ter" ""
+2 add-spell-rule "O" "[^dmntw]en" "en" "ter" ""
+2 add-spell-rule "O" "chnen" "n" "ter" ""
+2 add-spell-rule "O" "[^c]h[mn]en" "en" "ter" ""
+2 add-spell-rule "O" "[^aäehilmnoöuür][mn]en" "n" "ter" ""
+2 add-spell-rule "O" "[aäeilmnoöuür][mn]en" "en" "ter" ""
+2 add-spell-rule "O" "e[lr]n" "n" "tem" ""
+2 add-spell-rule "O" "[dtw]en" "n" "tem" ""
+2 add-spell-rule "O" "[^dmntw]en" "en" "tem" ""
+2 add-spell-rule "O" "chnen" "n" "tem" ""
+2 add-spell-rule "O" "[^c]h[mn]en" "en" "tem" ""
+2 add-spell-rule "O" "[^aäehilmnoöuür][mn]en" "n" "tem" ""
+2 add-spell-rule "O" "[aäeilmnoöuür][mn]en" "en" "tem" ""
+-2 add-spell-rule "i" "" "" "-" "coyf"
+2 add-spell-rule "j" "" "" "" "xoc"
+2 add-spell-rule "j" "" "" "-" "zocf"
+2 add-spell-rule "j" "" "" "-" "cz"
+2 add-spell-rule "g" "[^n]" "" "innen" "xyoc"
+2 add-spell-rule "g" "en" "en" "innen" "xyoc"
+2 add-spell-rule "g" "[^n]" "" "Innen" "xyoc"
+2 add-spell-rule "g" "en" "en" "Innen" "xyoc"
+2 add-spell-rule "g" "[^n]" "" "innen" "xyocf"
+2 add-spell-rule "g" "en" "en" "innen" "xyocf"
+2 add-spell-rule "g" "[^n]" "" "Innen" "xyocf"
+2 add-spell-rule "g" "en" "en" "Innen" "xyocf"
+2 add-spell-rule "g" "[^n]" "" "innen-" "cz"
+2 add-spell-rule "g" "en" "en" "innen-" "cz"
+2 add-spell-rule "g" "[^n]" "" "Innen-" "cz"
+2 add-spell-rule "g" "en" "en" "Innen-" "cz"
+-2 add-spell-rule "k" "" "" "-" "coxf"
+-2 add-spell-rule "k" "" "" "" "coy"
+2 add-spell-rule "e" "" "" "" "yoc"
+2 add-spell-rule "e" "" "" "-" "zc"
+-2 add-spell-rule "m" "A" "A" "-a" ""
+-2 add-spell-rule "m" "B" "B" "-b" ""
+-2 add-spell-rule "m" "C" "C" "-c" ""
+-2 add-spell-rule "m" "D" "D" "-d" ""
+-2 add-spell-rule "m" "E" "E" "-e" ""
+-2 add-spell-rule "m" "F" "F" "-f" ""
+-2 add-spell-rule "m" "G" "G" "-g" ""
+-2 add-spell-rule "m" "H" "H" "-h" ""
+-2 add-spell-rule "m" "I" "I" "-i" ""
+-2 add-spell-rule "m" "J" "J" "-j" ""
+-2 add-spell-rule "m" "K" "K" "-k" ""
+-2 add-spell-rule "m" "L" "L" "-l" ""
+-2 add-spell-rule "m" "M" "M" "-m" ""
+-2 add-spell-rule "m" "N" "N" "-n" ""
+-2 add-spell-rule "m" "O" "O" "-o" ""
+-2 add-spell-rule "m" "P" "P" "-p" ""
+-2 add-spell-rule "m" "Q" "Q" "-q" ""
+-2 add-spell-rule "m" "R" "R" "-r" ""
+-2 add-spell-rule "m" "S" "S" "-s" ""
+-2 add-spell-rule "m" "T" "T" "-t" ""
+-2 add-spell-rule "m" "U" "U" "-u" ""
+-2 add-spell-rule "m" "V" "V" "-v" ""
+-2 add-spell-rule "m" "W" "W" "-w" ""
+-2 add-spell-rule "m" "X" "X" "-x" ""
+-2 add-spell-rule "m" "Y" "Y" "-y" ""
+-2 add-spell-rule "m" "Z" "Z" "-z" ""
+-2 add-spell-rule "m" "Ä" "Ä" "-ä" ""
+-2 add-spell-rule "m" "Ö" "Ö" "-ö" ""
+-2 add-spell-rule "m" "Ü" "Ü" "-ü" ""
+-2 add-spell-rule "m" "a" "a" "-A" "co"
+-2 add-spell-rule "m" "b" "b" "-B" "co"
+-2 add-spell-rule "m" "c" "c" "-C" "co"
+-2 add-spell-rule "m" "d" "d" "-D" "co"
+-2 add-spell-rule "m" "e" "e" "-E" "co"
+-2 add-spell-rule "m" "f" "f" "-F" "co"
+-2 add-spell-rule "m" "g" "g" "-G" "co"
+-2 add-spell-rule "m" "h" "h" "-H" "co"
+-2 add-spell-rule "m" "i" "i" "-I" "co"
+-2 add-spell-rule "m" "j" "j" "-J" "co"
+-2 add-spell-rule "m" "k" "k" "-K" "co"
+-2 add-spell-rule "m" "l" "l" "-L" "co"
+-2 add-spell-rule "m" "m" "m" "-M" "co"
+-2 add-spell-rule "m" "n" "n" "-N" "co"
+-2 add-spell-rule "m" "o" "o" "-O" "co"
+-2 add-spell-rule "m" "p" "p" "-P" "co"
+-2 add-spell-rule "m" "q" "q" "-Q" "co"
+-2 add-spell-rule "m" "r" "r" "-R" "co"
+-2 add-spell-rule "m" "s" "s" "-S" "co"
+-2 add-spell-rule "m" "t" "t" "-T" "co"
+-2 add-spell-rule "m" "u" "u" "-U" "co"
+-2 add-spell-rule "m" "v" "v" "-V" "co"
+-2 add-spell-rule "m" "w" "w" "-W" "co"
+-2 add-spell-rule "m" "x" "x" "-X" "co"
+-2 add-spell-rule "m" "y" "y" "-Y" "co"
+-2 add-spell-rule "m" "z" "z" "-Z" "co"
+-2 add-spell-rule "m" "ä" "ä" "-Ä" "co"
+-2 add-spell-rule "m" "ö" "ö" "-Ö" "co"
+-2 add-spell-rule "m" "ü" "ü" "-Ü" "co"
