@@ -317,15 +317,15 @@ charMaskTblInit(void)
     int ii ;
     for(ii=0 ; ii<128 ; ii++)
     {
-        charLatinUserTbl[ii] = ii;
-        charUserLatinTbl[ii] = ii;
+        charIntrnlDsplyTbl[ii] = ii;
+        charDsplyIntrnlTbl[ii] = ii;
         charMaskTbl2[ii] &= ~(CHRMSK_LOWER|CHRMSK_UPPER|CHRMSK_HEXDIGIT|CHRMSK_SPLLEXT);
         charCaseTbl[ii] = ii;
     }
     for( ; ii<256 ; ii++)
     {
-        charLatinUserTbl[ii] = ii;
-        charUserLatinTbl[ii] = ii;
+        charIntrnlDsplyTbl[ii] = ii;
+        charDsplyIntrnlTbl[ii] = ii;
         charMaskTbl2[ii] = 0x00;
         charCaseTbl[ii] = ii;
     }
@@ -421,7 +421,7 @@ setCharMask(int f, int n)
                 flags |= 0x18000;
             for(c1=0 ; c1<256 ; c1++)
             {
-                c2 = charLatinUserTbl[c1];
+                c2 = charIntrnlDsplyTbl[c1];
                 if(c1 != c2)
                 {
                     if(flags & 0x8000)
@@ -532,7 +532,7 @@ setCharMask(int f, int n)
                 {
                     if((c1 == meCHAR_LEADER) && ((c1=*ss++) == meCHAR_TRAIL_NULL))
                         c1 = 0 ;
-                    c1 = toUserFont(c1);
+                    c1 = toDisplayCharset(c1);
                     if((c2=*ss++) == '\0')
                         break ;
                     if((c2 == meCHAR_LEADER) && ((c2=*ss++) == meCHAR_TRAIL_NULL))
@@ -561,8 +561,8 @@ setCharMask(int f, int n)
                     break ;
                 if((c2 == meCHAR_LEADER) && ((c2=*ss++) == meCHAR_TRAIL_NULL))
                     c2 = 0 ;
-                charLatinUserTbl[c1] = c2;
-                charUserLatinTbl[c2] = c1;
+                charIntrnlDsplyTbl[c1] = c2;
+                charDsplyIntrnlTbl[c2] = c1;
             }
             return meTRUE ;
         }
@@ -574,7 +574,7 @@ setCharMask(int f, int n)
         {
             if((c1 == meCHAR_LEADER) && ((c1=*ss++) == meCHAR_TRAIL_NULL))
                 c1 = 0 ;
-            *dd++ = toUserFont(c1) ;
+            *dd++ = toDisplayCharset(c1) ;
             ii++ ;
         }
         if(n < 0)

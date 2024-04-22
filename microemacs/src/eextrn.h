@@ -1503,8 +1503,8 @@ extern int      putenv(const char *s);
 #define toUpper(c)       (isLower(c) ? (charCaseTbl[((meUByte) (c))]):c)
 #define toggleCase(c)    (charCaseTbl[((meUByte) (c))])
 
-#define toUserFont(c)    (charLatinUserTbl[((meUByte) c)])
-#define toLatinFont(c)   (charUserLatinTbl[((meUByte) c)])
+#define toDisplayCharset(c)  (charIntrnlDsplyTbl[((meUByte) c)])
+#define toInternalCharset(c) (charDsplyIntrnlTbl[((meUByte) c)])
 
 #else
 

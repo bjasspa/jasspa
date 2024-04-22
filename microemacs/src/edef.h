@@ -409,8 +409,8 @@ extern struct meKill *klhead;           /* Head of klist                */
 extern meUByte    charMaskTbl1[];
 extern meUByte    charMaskTbl2[];
 extern meUByte    charCaseTbl[];
-extern meUByte    charLatinUserTbl[];
-extern meUByte    charUserLatinTbl[];
+extern meUByte    charIntrnlDsplyTbl[];
+extern meUByte    charDsplyIntrnlTbl[];
 extern meUByte    charMaskFlags[];
 extern meUShort   charToUnicode[];
 extern meUByte   *charKeyboardMap;

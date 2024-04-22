@@ -1794,22 +1794,24 @@ gtarg(meUByte *tkn)
                 else
                 {
                     ss = buff2 ;
-                    divChr = *ss++ ;
                     mlgsStrListSize = 0 ;
-                    while((tt = meStrchr(ss,divChr)) != NULL)
+                    if((divChr = *ss++) != '\0')
                     {
-                        *tt++ = '\0' ;
-                        if(mlgsStrListSize == strListSize)
+                        while((tt = meStrchr(ss,divChr)) != NULL)
                         {
-                            if((strList = meRealloc(strList,(strListSize+8)*sizeof(meUByte *))) == NULL)
+                            *tt++ = '\0' ;
+                            if(mlgsStrListSize == strListSize)
                             {
-                                strListSize = 0 ;
-                                return abortm ;
+                                if((strList = meRealloc(strList,(strListSize+8)*sizeof(meUByte *))) == NULL)
+                                {
+                                    strListSize = 0 ;
+                                    return abortm ;
+                                }
+                                strListSize += 8 ;
                             }
-                            strListSize += 8 ;
+                            strList[mlgsStrListSize++] = ss ;
+                            ss = tt ;
                         }
-                        strList[mlgsStrListSize++] = ss ;
-                        ss = tt ;
                     }
                 }
                 mlgsStrList = strList ;
