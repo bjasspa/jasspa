@@ -723,9 +723,9 @@ spellRuleAdd(int f, int n)
             if((meGetString((meUByte *)"Ending",MLNOSPACE,0,buff,255) <= 0) ||
                ((ll = meStrlen(buff) + 1),
                 (meGetString((meUByte *)"Remove",MLNOSPACE,0,buff+ll,255) <= 0)) ||
-               ((rl = meStrlen(buff+ll)),
+               ((rl = (meUByte) meStrlen(buff+ll)),
                 (meGetString((meUByte *)"Append",MLNOSPACE,0,buff+ll+rl,255) <= 0)) ||
-               ((al = meStrlen(buff+ll+rl)),
+               ((al = (meUByte) meStrlen(buff+ll+rl)),
                 (meGetString((meUByte *)"Sub-rules",MLNOSPACE,0,buff+ll+rl+al,255) <= 0)))
                 return meABORT;
             
@@ -797,7 +797,7 @@ spellRuleAdd(int f, int n)
             ee[bb] = '\0';
             if(f < rl)
                 return mlwrite(MWABORT,(meUByte *)"[Spell rule - cennot remove more chars than tested]");
-            cc = meStrlen(buff+ll+rl+al);
+            cc = (meUByte) meStrlen(buff+ll+rl+al);
             if((rr = meMalloc(sizeof(meSpellRule)+cc+rl+al+bb)) == NULL)
                 return meABORT;
             rr->remove = rr->subRule+cc;
