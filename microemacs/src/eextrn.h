@@ -1068,8 +1068,8 @@ extern  int     anyChangedDictionary(void) ;
 #define dictionarySave notAvailable
 #define spellWord notAvailable
 #endif
-extern	void	findWordsInit(meUByte *mask);
-extern	meUByte  *findWordsNext(void);
+extern	int	findWordsInit(meUByte *mask);
+extern	meUByte *findWordsNext(void);
 
 /* tag.c externals */
 #if MEOPT_TAGS

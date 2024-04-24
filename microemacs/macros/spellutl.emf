@@ -7,7 +7,28 @@
 ; Synopsis:    Spelling dictionary creation and maintenance routines.
 ; Authors:     Steven Phillips
 ;
-define-macro-file charsutl charset-change-exec
+; Get a list of charsets & languages
+0 execute-file "charset"
+0 execute-file "language"
+
+define-macro insert-word-list
+  set-variable $find-words ".*"
+  set-variable #l2 $window-line
+  beginning-of-line
+  set-mark
+  !while &not &seq &set #l1 $find-words ""
+    insert-string #l1
+    insert-newline
+  !done
+  !if @#
+    sort-lines
+    uniq
+  !endif
+  set-variable #l0 &sub $window-line #l2
+  goto-line #l2
+  ml-write &spr "[All done - %d %swords inserted]" #l0 &con @# "unique " ""
+!emacro
+
 define-macro spell-add-word
   !if @?
     ; add the spell extended chars
@@ -44,312 +65,6 @@ define-macro spell-add-word
     !nma 0x05 spell
   !endif
 !emacro
-
-define-macro spell-conv-aff-accent-chars
-  beginning-of-buffer
-  replace-string "`[Aa]"  "à"
-  beginning-of-buffer
-  replace-string "\\([^[]\\)\\^[Aa]"  "\\1â"
-  beginning-of-buffer
-  replace-string "'[Aa]"  "á"
-  beginning-of-buffer
-  replace-string "\"[Aa]"  "ä"
-  beginning-of-buffer
-  replace-string "`[Ee]"  "è"
-  beginning-of-buffer
-  replace-string "\\([^[]\\)\\^[Ee]"  "\\1ê"
-  beginning-of-buffer
-  replace-string "'[Ee]"  "é"
-  beginning-of-buffer
-  replace-string "\"[Ee]" "ë"
-  beginning-of-buffer
-  replace-string "'[Ii]"  "í"
-  beginning-of-buffer
-  replace-string "\\([^[]\\)\\^[Ii]"  "\\1î"
-  beginning-of-buffer
-  replace-string "\"[Ii]" "ï"
-  beginning-of-buffer
-  replace-string "'[Nn]"  "ñ"
-  beginning-of-buffer
-  replace-string "`[Oo]"  "ò"
-  beginning-of-buffer
-  replace-string "\\([^[]\\)\\^[Oo]"  "\\1ô"
-  beginning-of-buffer
-  replace-string "'[Oo]"  "ó"
-  beginning-of-buffer
-  replace-string "\"[Oo]"  "ö"
-  beginning-of-buffer
-  replace-string "`[Uu]"  "ù"
-  beginning-of-buffer
-  replace-string "\\([^[]\\)\\^[Uu]"  "\\1û"
-  beginning-of-buffer
-  replace-string "'[Uu]"  "ú"
-  beginning-of-buffer
-  replace-string "\"[Uu]" "ü"
-  beginning-of-buffer
-!emacro
-
-0 define-macro spell-conv-aff-rules
-  set-variable .rule ""
-  set-variable .args ""
-  set-variable .argn ""
-  beginning-of-buffer
-  !force search-buffer "em" "^\\(flag\\|prefixes\\|suffixes\\)"
-  !if &seq @s1 "flag"
-    ml-write &spr "Failed to find initial prefixes or suffixes label (found flag label first on line %d)" $window-line
-    !abort
-  !endif
-  set-variable #l0 $window-line
-  beginning-of-buffer
-  !while &not &equ $window-line #l0
-    !if &not &seq &lef &trl @wl 1 "#"
-      insert-string "#"
-      beginning-of-line
-    !endif
-    forward-line
-  !done
-  !while 1
-    beginning-of-line
-    !force search-buffer "em" "^\\(flag[ \t]+\\(*?\\)\\([A-Za-a]\\)[ \t]*:\\|prefixes\\|suffixes\\|[^\n>#]+>\\)"
-    !if &not $status
-      beginning-of-buffer
-      ; fix the comments
-      replace-string "#" ";"
-      beginning-of-buffer
-      !return
-    !elif &not &seq @s3 ""
-      set-variable .rule @s3
-      set-variable .argn &cond &seq @s2 "" "1" "2"
-      beginning-of-line
-      insert-string ";"
-    !elif &seq @s1 "prefixes"
-      set-variable .args "-"
-      beginning-of-line
-      insert-string ";"
-    !elif &seq @s1 "suffixes"
-      set-variable .args " "
-      beginning-of-line
-      insert-string ";"
-    !else
-      !if &seq &trb @s1 ">"
-        delete-indentation
-      !endif
-      !force -1 search-buffer "eM" "#"
-      !if &not $status
-        end-of-line
-        insert-string "#"
-      !endif
-      beginning-of-line
-      insert-string "\""
-      -1 search-buffer "eM" ">"
-      backward-delete-char
-      insert-string "\"_\"\"_ \""
-      !force -1 search-buffer "eM" ",-"
-      !if $status
-        backward-delete-char
-      !endif
-      -1 search-buffer "eM" "#"
-      backward-delete-char
-      insert-string "\"\n;"
-      2 backward-char
-      !force execute-string "\E-1\CXR[^\\\\]-\N\CF\CF\E \CR\"\"\CF\CW\CS,\CB\"_\"\CD"
-      beginning-of-line
-      -1 replace-string "[ \t]+" ""
-      beginning-of-line
-      -1 replace-string "_" " "
-      beginning-of-line
-      !if &seq &lef @wl 3 "\".\""
-        forward-char
-        forward-delete-char
-        backward-char
-      !endif
-      !if &seq .args ""
-        5000 ml-write &spr "Warning: Expected prefixes or suffixes label before line %d - defaulting to suffix" $window-line 
-        set-variable .args " "
-      !endif
-      !if &seq .args ""
-        5000 ml-write &spr "Error: Expected flag label before line %d - must be manually fixed" $window-line 
-        set-variable .argn "2"
-        set-variable .rule "?"
-      !endif
-      insert-string &spr "%s%s add-spell-rule \"%s\" " .args .argn .rule
-      set-mark
-      end-of-line
-      lower-case-region
-      insert-space
-      forward-delete-char
-    !endif
-    forward-line
-  !done
-!emacro
-
-define-macro spell-conv-aff-buffer
-  set-variable #l0 @mc5 "Current Char Set should be set to ISO-8895 - continue (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-  !if &seq &slo #l0 "n"
-    !abort
-  !endif
-  1 buffer-mode "magic"
-  1 buffer-mode "exact"
-  set-variable #l0 @mc5 "Fix aff accent letters (`a, \"o etc) to Latin1 chars (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-  !if &seq &slo #l0 "y"
-    spell-conv-aff-accent-chars
-  !endif
-  spell-conv-aff-rules
-  ml-write "Conversion complete and successfully - please check output carefully"
-!emacro
-
-define-macro spell-conv-aff-deutsch
-  set-variable #l0 @mc5 "Current Char Set should be set to ISO-8895 - continue (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-  !if &seq &slo #l0 "n"
-    !abort
-  !endif
-  ; fix the accent & sS letters first
-  1 buffer-mode "magic"
-  1 buffer-mode "exact"
-  beginning-of-buffer
-  replace-string "sS" "ß"
-  beginning-of-buffer
-  replace-string "[Aa]\"" "ä"
-  beginning-of-buffer
-  replace-string "[Oo]\"" "ö"
-  beginning-of-buffer
-  replace-string "[Uu]\"" "ü"
-  beginning-of-buffer
-  ; ZZZZ need to fix rules with [^ SS ] here
-  ; now convert the rules
-  spell-conv-aff-rules
-  ml-write "Conversion complete and successfully - please check output carefully"
-!emacro
-
-define-macro spell-conv-aff-russian
-  set-variable #l0 @mc5 "Current Char Set should be set to ISO-8895 - continue (?/y/n) ? " "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-  !if &seq &slo #l0 "n"
-    !abort
-  !endif
-  ; Generate Yo or Ye?
-  set-variable #l0 @mc5 "Generate Ye or Yo version (?/e/o) ? " "eEoO" "Y(e), Y(o), (C-g)Abort ? "
-  set-variable #l1 &cond &seq &slo #l0 "o" "ye" "ey"
-  1 buffer-mode "magic"
-  1 buffer-mode "exact"
-  beginning-of-buffer
-  replace-string &cat "^#" &lef #l1 1 ""
-  beginning-of-buffer
-  replace-string &spr "^#%s.*\n" &rig #l1 1 ""
-  beginning-of-buffer
-  charset-change-exec "koi8-r" ""
-  beginning-of-buffer
-  ; now convert the rules
-  spell-conv-aff-rules
-  ml-write "Conversion complete and successfully - please check output carefully"
-!emacro
-
-define-macro spell-conv-accent-chars
-  1 buffer-mode "magic"
-  1 buffer-mode "exact"
-  beginning-of-buffer
-  replace-string "`A"  "À"
-  beginning-of-buffer
-  replace-string "\\^A"  "Â"
-  beginning-of-buffer
-  replace-string "'A"  "Á"
-  beginning-of-buffer
-  replace-string "\"A"  "Ä"
-  beginning-of-buffer
-  replace-string "`E"  "È"
-  beginning-of-buffer
-  replace-string "\\^E"  "Ê"
-  beginning-of-buffer
-  replace-string "'E"  "É"
-  beginning-of-buffer
-  replace-string "\"E" "Ë"
-  beginning-of-buffer
-  replace-string "'I"  "Í"
-  beginning-of-buffer
-  replace-string "\\^I"  "Î"
-  beginning-of-buffer
-  replace-string "\"I" "Ï"
-  beginning-of-buffer
-  replace-string "'N"  "Ñ"
-  beginning-of-buffer
-  replace-string "~N"  "Ñ"
-  beginning-of-buffer
-  replace-string "`O"  "Ò"
-  beginning-of-buffer
-  replace-string "'O"  "Ô"
-  beginning-of-buffer
-  replace-string "'O"  "Ó"
-  beginning-of-buffer
-  replace-string "\"O" "Ö"
-  beginning-of-buffer
-  replace-string "`U"  "Ù"
-  beginning-of-buffer
-  replace-string "\\^U"  "Û"
-  beginning-of-buffer
-  replace-string "'U"  "Ú"
-  beginning-of-buffer
-  replace-string "\"U" "Ü"
-  beginning-of-buffer
-  replace-string "`a"  "à"
-  beginning-of-buffer
-  replace-string "\\^a"  "â"
-  beginning-of-buffer
-  replace-string "'a"  "á"
-  beginning-of-buffer
-  replace-string "\"a" "ä"
-  beginning-of-buffer
-  replace-string "`e"  "è"
-  beginning-of-buffer
-  replace-string "\\^e"  "ê"
-  beginning-of-buffer
-  replace-string "'e"  "é"
-  beginning-of-buffer
-  replace-string "\"e" "ë"
-  beginning-of-buffer
-  replace-string "'i"  "í"
-  beginning-of-buffer
-  replace-string "\\^i"  "î"
-  beginning-of-buffer
-  replace-string "\"i" "ï"
-  beginning-of-buffer
-  replace-string "'n"  "ñ"
-  beginning-of-buffer
-  replace-string "~n"  "ñ"
-  beginning-of-buffer
-  replace-string "`o"  "ò"
-  beginning-of-buffer
-  replace-string "\\^o"  "ô"
-  beginning-of-buffer
-  replace-string "'o"  "ó"
-  beginning-of-buffer
-  replace-string "\"o" "ö"
-  beginning-of-buffer
-  replace-string "`u"  "ù"
-  beginning-of-buffer
-  replace-string "\\^u"  "û"
-  beginning-of-buffer
-  replace-string "'u"  "ú"
-  beginning-of-buffer
-  replace-string "\"u" "ü"
-  beginning-of-buffer
-!emacro
-!if 0
-  ; some aff files use a" instead of "a ...
-  define-macro spell-conv-buffer-chars
-    beginning-of-buffer
-    replace-string "A\"" "Ä"
-    beginning-of-buffer
-    replace-string "a\"" "ä"
-    beginning-of-buffer
-    replace-string "O\"" "Ö"
-    beginning-of-buffer
-    replace-string "o\"" "ö"
-    beginning-of-buffer
-    replace-string "U\"" "Ü"
-    beginning-of-buffer
-    replace-string "u\"" "ü"
-    beginning-of-buffer
-  !emacro
-!endif
 
 define-macro spell-conv-word-buffer
   spell-conv-buffer-chars
@@ -389,4 +104,398 @@ define-macro restore-dictionary
   ml-write "All Done!!"
 !emacro
 
+define-macro ispell-convert
+  !force set-variable .sl @1
+  !iif &not $status  set-variable .sl @ml09 "Language" %language-names
+  !force set-variable #l0 @2
+  !iif &not $status  set-variable #l0 @ml01 "ispell file"
+  !if &not &seq "R" &stat t &set #l0 &stat a #l0 
+    ml-write &spr "[Error: Unexpected file type - %s]" #l0
+    !abort
+  !elif &seq &rig #l0 -4 ".dic"
+    set-variable #l0 &cat &lef &set #l1 #l0 -3 "aff"
+  !elif &seq &rig #l0 -4 ".aff"
+    set-variable #l1 &cat &lef #l0 -3 "dic"
+  !else
+    ml-write &spr "[Error: Unexpected file extension - %s]" #l0
+    !abort
+  !endif
+  set-variable #l8 &lef #l0 &rsin "/" #l0
+  delete-other-windows
+  set-variable .uc &reg &spr "/history/%s/char-set" %platform "iso8859-1"
+  set-variable .ul &reg "/history/language" ""
+  !if &seq .sl "test"
+    set-variable .mc "test"
+    set-variable #l9 &slo &rep &rep &mid #l0 &len #l8 -4 "-" "" "_" ""
+  !else
+    !if &not &seq .ul .sl
+      set-registry "/history/language" .sl
+      execute-file "language"
+    !endif
+    ; get the best code page for the language
+    set-variable .mc &lget .change-font.cs-id &sin &lef .change-font.ln-type 1 .change-font.cs-type
+    set-variable #l9 .spell.language
+    set-registry "/history/language" .ul
+    execute-file "language"
+  !endif
+  !if &band 2 @#
+    !force 0 delete-buffer "*isp-aff"
+    !force 0 delete-buffer "*isp-dic"
+  !endif
+  find-buffer "*isp-aff"
+  !if &not &seq $buffer-fname #l0
+    !force 0 delete-buffer "*isp-aff"
+    find-buffer "*isp-aff"
+    insert-file #l0
+    set-variable $buffer-fname #l0
+  !endif
+  beginning-of-buffer
+  -1 buffer-mode "edit"
+  !force search-buffer "me" "[\x01\x02]"
+  !if $status
+    ml-write "[ERROR: aff file contains control chars \x01 or \x02 which are required for convertion]"
+    !abort
+  !endif
+  !force search-buffer "me" "^ *SET +\\([-\\m]+\\)"
+  !if &not $status
+    ml-write "[Warning: Failed to find SET line - character encoding may be wrong]"
+    set-variable .sc .mc
+  !elif &seq &set .sc &slo @s1 "utf-8"
+    set-variable .sc "utf8"
+  !elif &not &lfin .change-font.cs-id .sc
+    ml-write &spr "[ERROR: aff uses unknown/unsupported character set - %s]" .sc
+    !abort
+  !elif &seq .sl "test"
+    set-variable .mc .sc
+  !endif
+  beginning-of-buffer
+  !if &not &seq &lef @wl 3 "\xef\xbb\xbf"
+  !elif &seq .sc "utf8"
+    3 forward-delete-char
+  !else
+    ml-write "[ERROR: AFF charset not SET as utf-8 but aff has utf-8 signature - check encoding]"
+    !abort
+  !endif
+  !if &not &seq .sc .mc
+    !if &seq .mc "test"
+      ml-write &spr "[ERROR: Must convert test files to correct charset first - %s %s]" .sc .mc
+      !abort
+    !endif
+    4 change-buffer-charset .sc .mc
+    !if &lget .change-buffer-charset.result 1
+      beginning-of-buffer
+      !force search-buffer "me" &spr "^[ \\t]*[PS]FX[ \\t].*\CG"
+      !if $status
+        !if &bmo "edit"
+          set-variable #l6 $window-line
+          undo
+          set-variable $window-line #l6
+        !endif
+        beginning-of-line
+        ml-write "[Error: Unconvertable unicode characters in rules must be fixed]"
+        !abort
+      !endif
+    !endif
+  !endif
+  find-buffer "*isp-dic"
+  !if &not &seq $buffer-fname #l1
+    !force 0 delete-buffer "*isp-dic"
+    find-buffer "*isp-dic"
+    insert-file #l1
+    set-variable $buffer-fname #l1
+  !endif
+  beginning-of-buffer
+  !force search-buffer "me" "[\x01\x02]"
+  !if $status
+    ml-write "[ERROR: dic file contains control chars \x01 or \x02 which are required for convertion]"
+    !abort
+  !endif
+  !if &not &seq &lef @wl 3 "\xef\xbb\xbf"
+  !elif &seq .sc "utf8"
+    3 forward-delete-char
+  !else
+    ml-write "[ERROR: Charset not SET as utf-8 but dic has utf-8 signature - check encoding]"
+    !abort
+  !endif
+  ; First of all remove all Morphological analysis as these can contain unconvertable chars
+  replace-string "[ \t].*" ""
+  beginning-of-buffer
+  !if &not &seq .sc .mc
+    -1 buffer-mode "edit"
+    4 change-buffer-charset .sc .mc
+    !if &lget .change-buffer-charset.result 1
+      beginning-of-buffer
+      !force search-buffer "Me" "\CG"
+      !if $status
+        recenter
+        !force !force set-variable #l2 @mc5 "Dic file contains unconvertable unicode chars - remove words (?/y/n) ? " "nNyY" "(Y)es, (N)o ? "
+        !if &not &iseq #l2 "y"
+          set-variable #l6 $window-line
+          undo
+          set-variable $window-line #l6
+          ml-write "[Abort - words containing unconvertable chars must be fixed first]"
+          !abort
+        !endif
+        !repeat
+          beginning-of-line
+          set-mark
+          forward-line
+          -1 kill-region
+          backward-char
+          !force search-buffer "Me" "\CG"
+        !until &not $status
+      !endif
+    !endif
+  !endif
+  beginning-of-buffer
+  !force 0 delete-buffer "*isp-tmp"
+  find-buffer "*isp-aff"
+  beginning-of-buffer
+  !force search-buffer "me" "^[ \\t]*\\(PFX\\|SFX\\|CIRCUMFIX\\|COMPOUNDBEGIN\\|COMPOUNDEND\\|COMPOUNDMIDDLE\\|COMPOUNDPERMITFLAG\\|FORBIDDENWORD\\|KEEPCASE\\|LEMMA_PRESENT\\|NEEDAFFIX\\|NOSUGGEST\\|ONLYINCOMPOUND\\|PSEUDOROOT\\)[ \\t]+\\(\\S+\\)\\s"
+  !if &not $status
+    ml-write "[Abort - no SFX or PFX rules found in aff file]"
+    !abort
+  !elif &equ &len @s2 1
+    !force search-buffer "me" "^[ \\t]*\\(PFX\\|SFX\\|CIRCUMFIX\\|COMPOUNDBEGIN\\|COMPOUNDEND\\|COMPOUNDMIDDLE\\|COMPOUNDPERMITFLAG\\|FORBIDDENWORD\\|KEEPCASE\\|LEMMA_PRESENT\\|NEEDAFFIX\\|NOSUGGEST\\|ONLYINCOMPOUND\\|PSEUDOROOT\\)[ \\t]+\\S\\S"
+    !if $status
+      ml-write "[Abort - affix rule flag length inconsistent - 1 to many]"
+      !abort
+    !endif
+  !elif &equ &len @s2 2
+    !force search-buffer "me" "^[ \\t]*\\(PFX\\|SFX\\|CIRCUMFIX\\|COMPOUNDBEGIN\\|COMPOUNDEND\\|COMPOUNDMIDDLE\\|COMPOUNDPERMITFLAG\\|FORBIDDENWORD\\|KEEPCASE\\|LEMMA_PRESENT\\|NEEDAFFIX\\|NOSUGGEST\\|ONLYINCOMPOUND\\|PSEUDOROOT\\)[ \\t]+\\S\\s"
+    !if $status
+      ml-write "[Abort - affix rule flag length inconsistent - 2 to 1]"
+      !abort
+    !endif
+    !force search-buffer "me" "^[ \\t]*\\(PFX\\|SFX\\|CIRCUMFIX\\|COMPOUNDBEGIN\\|COMPOUNDEND\\|COMPOUNDMIDDLE\\|COMPOUNDPERMITFLAG\\|FORBIDDENWORD\\|KEEPCASE\\|LEMMA_PRESENT\\|NEEDAFFIX\\|NOSUGGEST\\|ONLYINCOMPOUND\\|PSEUDOROOT\\)[ \\t]+\\S\\S\\S"
+    !if $status
+      ml-write "[Abort - affix rule flag length inconsistent - 2 to many]"
+      !abort
+    !endif
+    set-variable #l3 32
+    beginning-of-buffer
+    !repeat
+      !force search-buffer "me" "^[ \\t]*\\(PFX\\|SFX\\|CIRCUMFIX\\|COMPOUNDBEGIN\\|COMPOUNDEND\\|COMPOUNDMIDDLE\\|COMPOUNDPERMITFLAG\\|FORBIDDENWORD\\|KEEPCASE\\|LEMMA_PRESENT\\|NEEDAFFIX\\|NOSUGGEST\\|ONLYINCOMPOUND\\|PSEUDOROOT\\)[ \\t]+\\(\\S[^ \t\n\x01]\\)\\s"
+      !iif &not $status  !break
+      set-variable #l1 @s2
+      set-variable #l1 &xrep #l1 "[\\\\[*+.?^$]" "\\\\\\0"
+      backward-char
+      set-variable #l2 $window-line
+      !if &gre &inc #l3 1 255
+        ml-write "[Abort - Too many affix rule flags used - max is 235]"
+        !abort
+      !endif
+      !if &equ #l3 92
+        set-variable #l4 "\\\\\x01"
+      !else
+        set-variable #l4 &cat &itoa #l3 "\x01"
+      !endif
+      backward-line
+      replace-string &cat "^\\([ \t]*\\(PFX\\|SFX\\|CIRCUMFIX\\|COMPOUNDBEGIN\\|COMPOUNDEND\\|COMPOUNDMIDDLE\\|COMPOUNDPERMITFLAG\\|FORBIDDENWORD\\|KEEPCASE\\|LEMMA_PRESENT\\|NEEDAFFIX\\|NOSUGGEST\\|ONLYINCOMPOUND\\|PSEUDOROOT\\)[ \t]+\\)" #l1 &cat "\\1" #l4
+      beginning-of-buffer
+      replace-string &cat "^\\([ \t]*[PS]FX[ \t]+.*/\\([^ \t\n][^ \t\n]\\)*\\)" #l1 &cat "\\1" #l4
+      find-buffer "*isp-dic"
+      beginning-of-buffer
+      replace-string &cat "\\(/\\([^ \t\n][^ \t\n]\\)*\\)" #l1 &cat "\\1" #l4
+      find-buffer "*isp-aff"
+      goto-line #l2
+      end-of-line
+    !done
+    beginning-of-buffer
+    replace-string "\x01" ""
+    find-buffer "*isp-dic"
+    beginning-of-buffer
+    replace-string "\x01" ""
+    find-buffer "*isp-aff"
+  !else
+    ml-write "[Abort - affix rule flags of length greater than 2 are not supported]"
+    !abort
+  !endif
+  set-variable #l6 ""
+  beginning-of-buffer
+  set-variable .ns "\CH"
+  !force search-buffer "me" "^[ \\t]*NOSUGGEST[ \\t]+\\(\\S+\\)"
+  !if &not $status
+  !elif &gre &len &set .ns @s1 1 
+    ml-write "[Abort - NOSUGGEST has more than one flag letter]"
+    !abort
+  !endif
+  beginning-of-buffer
+  set-variable .fw "\CH"
+  !force search-buffer "me" "^[ \\t]*FORBIDDENWORD[ \\t]+\\(\\S+\\)"
+  !if &not $status
+  !elif &gre &len &set .fw @s1 1 
+    ml-write "[Abort - FORBIDDENWORD has more than one flag letter]"
+    !abort
+  !endif
+  beginning-of-buffer
+  !repeat
+    !force search-buffer "me" "^[ \\t]*\\([PS]\\)FX[ \\t]+\\(\\S+\\)[ \\t]+\\([YN]\\)[ \\t]+\\(\\d+\\)[ \\t]*$"
+    !iif &not $status  !break
+    set-variable #l1 @s1
+    set-variable #l2 @s2
+    set-variable #l3 @s4
+    set-variable #l4 &mul &con &seq @s3 "N" "1" "2" &con &seq #l1 "P" -1 1
+    !if &sub &len #l2 1
+      ml-write &spr "[Error: Invalid rule flag %s]" #l2
+      !abort
+    !elif &sle #l2 "!"
+      ml-write &spr "[Error: Invalid rule flag %s]" #l2
+      !abort
+    !elif &sin #l2 #l6
+      ml-write &spr "[Error: Rule flag %s is reused]" #l2
+      !abort
+    !endif
+    set-variable #l6 &cat #l6 &cat #l2 "\n"
+    set-variable #l5 &spr "[ \\t]*%sFX[ \\t]+%s%s[ \\t]+\\(\\S+\\)[ \\t]+\\([^\\s/]+\\)\\(/\\S+\\)?\\([ \\t]+\\(\\S+\\)\\([ \\t]+.*\\)?\\)?[ \\t]*$" #l1 &con &sin #l2 "-^+*.$?\\" "\\" "" #l2
+    !while &pdec #l3 1
+      forward-line
+      !if &seq &trl @wl ""
+        set-variable #l3 &add #l3 1
+      !elif &not &xse @wl #l5
+        set-variable #g1 #l5
+        ml-write &spr "[Error: Unexpected %sFX line]" #l1
+        !abort
+      !else
+        find-buffer "*isp-tmp"
+        insert-string &spr "%s add-spell-rule \"%s%s\" \"%s\" \"%s\" \"%s\" \"%s\"\n" #l4 &con &sin #l2 "\\\"" "\\" "" #l2 &con &seq @s5 "." "" @s5 &con &seq @s1 "0" "" @s1 &con &seq @s2 "0" "" @s2 &rig @s3 1
+        find-buffer "*isp-aff"
+      !endif
+    !done
+    end-of-line
+  !done
+  find-buffer "*isp-tmp"
+  beginning-of-buffer
+  !if &seq #l6 ""
+    insert-newline
+    beginning-of-buffer
+  !else
+    set-mark
+    insert-string #l6
+    !if &gre &set #l3 $window-line 2
+      sort-lines
+      beginning-of-buffer
+      &sub #l3 2 replace-string "\n" ""
+    !else
+      backward-line
+    !endif
+    beginning-of-line
+    -1 replace-string "\\\\" "\\\\\\\\"
+    beginning-of-line
+    -1 replace-string "\"" "\\\\\""
+    beginning-of-line
+  !endif
+  insert-string "; Rules used - list used by spell-edit-word\nset-variable .spell.rules \""
+  end-of-line
+  insert-string "\"\n\n; Reset the spell rules\n0 add-spell-rule\n\n; Add prefix & suffix spell rules"
+  &band @# 1 write-buffer &spr "%slsr%s.emf" #l8 #l9
+  !if &band @# 2
+    !force 0 delete-buffer "*isp-aff.emf"
+    set-variable $buffer-bname "*isp-aff.emf"
+  !else
+    !force 0 delete-buffer $buffer-bname
+  !endif
+  !force 0 delete-dictionary &set #l7 &spr "%slsm%s.edf" #l8 #l9
+  ; above change-buffer-charset gets the dic file into the ME internal charset so must clear the internal-display mapping table to avoid the spell function messing with the chars
+  set-char-mask "M" ""
+  0 add-dictionary #l7
+  find-buffer "*isp-dic"
+  beginning-of-buffer
+  forward-line
+  !while &not &seq @wc ""
+    !if &xse @wl "^\\([^\\t /]+\\)\\(/\\([^\\t ]+\\)\\)?\\([\\t ].*\\)?"
+      !if &sin ":" &set #l1 @s1
+        ml-write &spr "[Error: Unexpected word - %s]" #l1
+        !abort
+      !endif
+      !if &sin .fw &set #l2 @s3
+        0x15 spell #l1 &rep &rep #l2 .fw "" .ns ""
+      !elif &sin .ns #l2
+        0x405 spell #l1 &rep #l2 .ns ""
+      !else
+        0x05 spell #l1 #l2
+      !endif
+    !elif &not &seq &trr @wl ""
+      ml-write &spr "[Error: Unexpected word line - %s]" #l1
+      !abort
+    !endif
+    forward-line
+  !done
+  !if &not &band @# 2
+    &band @# 1 save-dictionary #l7
+    ; this forces the reload of the dictionary with will rehash to a reasonable hash table size
+    !force 0 delete-dictionary #l7
+    add-dictionary #l7
+    !force spell "foobar"
+    0 save-dictionary #l7
+  !endif
+  ; reset the charset
+  !force !force execute-file "charset"
+  ml-write "All Done!!"
+!emacro
 
+define-macro ispell-check-list
+  set-variable #l1 0
+  set-variable #l2 0
+  set-variable #l3 0
+  !while &not &seq @wl ""
+    spell @wl
+    !if &not &seq &rig &set #l4 $result 1 @wl
+      !if &band 2 @#
+        ml-write "[Wrong word returned]"
+        !abort
+      !endif
+      !iif &not #l1  set-variable #l1 $window-line
+      set-variable #l3 &add #l3 1
+    !endif
+    !if &seq &lef $result 1 "O"
+      !if &not &band @# 1
+        !if &band 2 @#
+          ml-write "[Word evaluated as correct]"
+          !abort
+        !endif
+        !iif &not #l1  set-variable #l1 $window-line
+        set-variable #l2 &add #l2 1
+      !endif
+    !elif &band @# 1
+      !if &band 2 @#
+        ml-write "[Word evaluated as wrong]"
+        !abort
+      !endif
+      !iif &not #l1  set-variable #l1 $window-line
+      set-variable #l2 &add #l2 1
+    !endif
+    forward-line
+  !done
+  !iif #l1  set-variable $window-line #l1
+  ml-write &spr "[Check complete - %d false-%s, %d bad word returns]" #l2 &con &band @# 1 "wrong" "good" #l3
+!emacro
+
+define-macro ispell-test
+  !force 0 delete-buffer "*isp-aff.emf"
+  2 delete-dictionary
+  4 delete-dictionary
+  3 ispell-convert "test"
+  execute-buffer "*isp-aff.emf"
+  !force 0 delete-buffer "*isp-test"
+  find-buffer "*isp-test"
+  insert-word-list
+  beginning-of-buffer
+  set-variable #l1 0
+  set-variable #l2 0
+  set-variable #l3 0
+  !while &not &seq @wl ""
+    spell @wl
+    !if &not &seq $result &cat "O" @wl
+      !iif &not #l1  set-variable #l1 $window-line
+      !if &seq &lef $result 1 "O"
+        set-variable #l3 &add #l3 1
+      !else
+        set-variable #l2 &add #l2 1
+      !endif
+    !endif
+    forward-line
+  !done
+  !iif #l1  set-variable $window-line #l1
+  ml-write &spr "[Test complete - %d missing, %d bad returns]" #l2 #l3
+!emacro

@@ -1081,25 +1081,24 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                     meStrcpy(resultStr,path) ;
                 }
                 fileNames.curr = 0 ;
-                break ;
+                break;
             }
         case EVMNAMES:
             modeNames.curr = 0 ;
-            meStrrep(&modeNames.mask,vvalue) ;
-            break ;
+            meStrrep(&modeNames.mask,vvalue);
+            break;
         case EVVNAMES:
-            varbNames.curr = 0 ;
+            varbNames.curr = 0;
             freeFileList(varbNames.size,varbNames.list) ;
-            varbNames.list = NULL ;
-            meStrrep(&varbNames.mask,vvalue) ;
+            varbNames.list = NULL;
+            meStrrep(&varbNames.mask,vvalue);
             if(varbNames.mask != NULL)
                 varbNames.size = createVarList(&varbNames.list) ;
-            break ;
+            break;
 #endif
 #if MEOPT_SPELL
         case EVFINDWORDS:
-            findWordsInit(vvalue) ;
-            break ;
+            return findWordsInit(vvalue);
 #endif
 #if MEOPT_EXTENDED
         case EVRECENTKEYS:

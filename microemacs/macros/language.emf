@@ -12,7 +12,7 @@
 ;
 !if &les @# 1
   ; if executed with an argument of 0 or less, return the list
-  set-variable %language-names "|Default|American|British|Deutsch|Espanol|Finnish|Francais|Greek|Italiano|Polish|Portugues|Russian (Ye)|Russian (Yo)|"
+  set-variable %language-names "|Default|American|British|Deutsch|Espanol|Finnish|Francais|Greek|Italiano|Polish|Portugues|Russian|"
   !return
 !endif
 
@@ -78,13 +78,9 @@ set-variable .change-font.ln-type ""
   set-variable .spell.language "ptpt"
   set-char-mask "a" "ÀàÂâÁáÃãÇçÈèÊêÉéÌìÍíÒòÔôÓóÕõÙùÚúÜüAaCcEeIiOoUu"
   set-variable .set-char-mask.rm-chars "ÀàÂâÁáÃãÇçÈèÊêÉéÌìÍíÒòÔôÓóÕõÙùÚúÜü"
-!elif &seq #l0 "Russian (Ye)"
+!elif &seq #l0 "Russian"
   set-variable .change-font.ln-type 5
-  set-variable .spell.language "ruye"
-  !jump 4
-!elif &seq #l0 "Russian (Yo)"
-  set-variable .change-font.ln-type 5
-  set-variable .spell.language "ruyo"
+  set-variable .spell.language "ruru"
   set-char-mask "a" "ÀàÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÒòÓóÔôÕõÖö×÷ØøÙùÚúÛûÜüİıŞşßÿ¨¸"
   set-variable .set-char-mask.rm-chars "ÀàÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÒòÓóÔôÕõÖö×÷ØøÙùÚúÛûÜüİıŞşßÿ¨¸"
 !else

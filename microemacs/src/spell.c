@@ -2334,7 +2334,7 @@ int
 spellWord(int f, int n)
 {
     meWORDBUF word;
-    int       len;
+    int len;
     
     if(meSpellInitDictionaries() <= 0)
         return meABORT;
@@ -2814,16 +2814,17 @@ spellWord(int f, int n)
 }
 
 
-void
+int
 findWordsInit(meUByte *mask)
 {
+    int rr;
     if(sfwMsk != NULL)
     {
         free(sfwMsk);
         sfwMsk = NULL;
     }
-    if(meSpellInitDictionaries() <= 0)
-        return;
+    if((rr=meSpellInitDictionaries()) <= 0)
+        return rr;
     
     sfwWrd = NULL;
     sfwDct = dictHead;
@@ -2840,6 +2841,7 @@ findWordsInit(meUByte *mask)
             *ww++ = toInternalCharset(cc);
         *ww = '\0';
     }
+    return meTRUE;
 }
 
 meUByte *
