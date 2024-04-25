@@ -83,8 +83,7 @@ set-variable #l1 1
 !elif &seq #l0 "plain-text"
   set-char-mask "M" "ÀAÁAÂAÃAÄAÇCÈEÉEÊEËEÌIÍIÎIÏIÑNÒOÓOÔOÕOÖO×xØOÙUÚUÛUÜUÝYßBàaáaâaäaåaçcèeéeêeëeìiíiîiïiñnòoóoôoõoöoøoùuúuûuüuýyþbÿy"
 !else
-  ml-write &spr "[Error: Unknown character set - %s]" #l0
-  !abort
+  2000 ml-write &spr "[Error: Unknown character set \"%s\", use user-setup to reconfigure]" #l0
 !endif
 !iif &seq "" &set .change-font.wftp &lget .change-font.cs-wftp &lfind .change-font.cs-id #l0  set-variable .change-font.wftp 0
 !if &reg &spr "/history/%s/ext-char-set" %platform "0"

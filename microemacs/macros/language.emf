@@ -84,7 +84,6 @@ set-variable .change-font.ln-type ""
   set-char-mask "a" "ÀàÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÒòÓóÔôÕõÖö×÷ØøÙùÚúÛûÜüİıŞşßÿ¨¸"
   set-variable .set-char-mask.rm-chars "ÀàÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÒòÓóÔôÕõÖö×÷ØøÙùÚúÛûÜüİıŞşßÿ¨¸"
 !else
-  ml-write &spr "[Error: Unknown/unsupported language - %s]" #l0
-  !abort
+  2000 ml-write &spr "[Error: Unknown/unsupported language \"%s\" - use user-setup to reconfigure]" #l0
 !endif
 
