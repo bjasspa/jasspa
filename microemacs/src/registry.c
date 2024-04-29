@@ -363,7 +363,7 @@ regSave(meRegNode *rnp, meUByte *fname, int mode)
             
             if(mode & meREGMODE_PCRYPT)
             {
-                if(meGetString("Reg password",MLNOHIST|MLHIDEVAL,0,(meUByte *) s1,meSBUF_SIZE_MAX) <= 0)
+                if(meGetString((meUByte *) "Reg password",MLNOHIST|MLHIDEVAL,0,(meUByte *) s1,meSBUF_SIZE_MAX) <= 0)
                     return meABORT;
                 len = meStrlen(s1)+1;
             }
@@ -742,7 +742,7 @@ regRead(meUByte *rname, meUByte *fname, int mode)
             
             if(mode & meREGMODE_PCRYPT)
             {
-                if(meGetString("Reg password",MLNOHIST|MLHIDEVAL,0,(meUByte *) s1,meSBUF_SIZE_MAX) <= 0)
+                if(meGetString((meUByte *) "Reg password",MLNOHIST|MLHIDEVAL,0,(meUByte *) s1,meSBUF_SIZE_MAX) <= 0)
                     return NULL;
                 len = meStrlen(s1)+1;
             }
