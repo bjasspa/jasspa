@@ -530,13 +530,13 @@ generateHash(int f, int n)
                     meHashUpdate(&iCtx,ss,ii);
                 lp = meLineGetNext(lp);
             }
-            if(n & 2)
+            if(n & 1)
             {
-                if(elo)
-                    meHashUpdate(&iCtx,meLineGetText(elp),elo);
+                if(meModeTest(bp->mode,MDCTRLZ))
+                    meHashUpdate(&iCtx,(meUByte *) "\x1a",1);
             }
-            else if(meModeTest(bp->mode,MDCTRLZ))
-                meHashUpdate(&iCtx,(meUByte *) "\x1a",1);
+            else if(elo)
+                meHashUpdate(&iCtx,meLineGetText(elp),elo);
         }
     }
     if(iCtx.flag & meHASH_OVERRUN)
