@@ -2202,7 +2202,7 @@ wordGuessGetList(meUByte *word, int olen, meWordBuf *words)
                     {
                         meUByte *flags;
                         meSpellRule *rr;
-                        int jj, ff, nlen;
+                        int jj, fi, fr, nlen;
                         
                         memcpy(wb,ww,wlen);
                         wb[wlen] = '\0';
@@ -2226,14 +2226,14 @@ wordGuessGetList(meUByte *word, int olen, meWordBuf *words)
                                 return -1;
                         }
                         /* try all the allowed prefixes */
-                        ff = noflags;
-                        while(--ff >= 0)
+                        fi = noflags;
+                        while(--fi >= 0)
                         {
-                            if((jj = flags[ff]) == SPELLRULE_SEP)
-                                noflags = ff;
-                            else if(meRuleFlags[(jj-=SPELLRULE_OFFST)] & RULE_PREFIX)
+                            if((fr = flags[fi]) == SPELLRULE_SEP)
+                                noflags = fi;
+                            else if(meRuleFlags[(fr-=SPELLRULE_OFFST)] & RULE_PREFIX)
                             {
-                                rr = meRuleTable[jj];
+                                rr = meRuleTable[fr];
                                 while(rr != NULL)
                                 {
                                     if((ww = wordApplyPrefixRule(wb,wlen,rr)) != NULL)
@@ -2246,19 +2246,26 @@ wordGuessGetList(meUByte *word, int olen, meWordBuf *words)
                                         curScr = wordGuessCalcScore(word,jj,ww,jj,1);
                                         if(curScr < scores[meGUESS_MAX-1])
                                         {
-                                            /* try all suffixes on the word */ 
-                                            if(((curScr+bsufScr) <  scores[meGUESS_MAX-1]) && (meRuleFlags[jj] & RULE_MIXABLE))
+                                            if((jj = wordGuessCalcScore(word,olen,ww,nlen,0)) < scores[meGUESS_MAX-1])
+                                                wordGuessAddToList(ww,nlen,jj,words,scores);
+                                            if((curScr+bsufScr) <  scores[meGUESS_MAX-1])
                                             {
-                                                int f1, f2;
-                                                for(f1=f2=0 ; f2<ff ; )
-                                                    if(flags[f2++] == SPELLRULE_SEP)
-                                                        f1 = f2;
-                                                if(wordGuessAddSuffixRulesToList(word,olen,ww,nlen,flags+f1,noflags-f1,
+                                                /* try all suffixes on the prefix rule */ 
+                                                if(((jj=rr->subRuleLen) > 0) &&
+                                                   wordGuessAddSuffixRulesToList(word,olen,ww,nlen,rr->subRule,jj,
                                                                                  words,scores,curScr,RULE_SUFFIX|RULE_MIXABLE))
                                                     return -1;
+                                                /* try all suffixes on the word */ 
+                                                if(meRuleFlags[fr] & RULE_MIXABLE)
+                                                {
+                                                    int fs=fi;
+                                                    while((fs > 0) && (flags[fs-1] != SPELLRULE_SEP))
+                                                        fs--;
+                                                    if(wordGuessAddSuffixRulesToList(word,olen,ww,nlen,flags+fs,noflags-fs,
+                                                                                     words,scores,curScr,RULE_SUFFIX|RULE_MIXABLE))
+                                                        return -1;
+                                                }
                                             }
-                                            if((curScr = wordGuessCalcScore(word,olen,ww,nlen,0)) < scores[meGUESS_MAX-1])
-                                                wordGuessAddToList(ww,nlen,curScr,words,scores);
                                             if(TTbreakTest(0))
                                                 return -1;
                                         }
