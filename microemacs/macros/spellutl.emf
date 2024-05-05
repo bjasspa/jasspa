@@ -499,3 +499,24 @@ define-macro ispell-test
   !iif #l1  set-variable $window-line #l1
   ml-write &spr "[Test complete - %d missing, %d bad returns]" #l2 #l3
 !emacro
+
+define-macro ispell-test-guess
+  set-variable #l0 $buffer-bname
+  set-variable #l1 $window-line
+  delete-other-windows
+  !force 0 delete-buffer "*isp-guess"
+  !while &not &seq &set #l2 &trb @wl ""
+    33 spell #l2
+    set-variable #l3 $result
+    find-buffer "*isp-guess"
+    insert-string #l3
+    insert-newline
+    find-buffer #l0
+    forward-line
+  !done
+  split-window-vertically
+  set-variable $window-line #l1
+  next-window
+  find-buffer "*isp-guess"
+  beginning-of-buffer
+!emacro

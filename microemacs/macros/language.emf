@@ -17,10 +17,6 @@
 !endif
 
 ; remove extended chars from current language first
-!if &exi .set-char-mask.rm-chars
-  -1 set-char-mask "a" .set-char-mask.rm-chars
-  unset-variable .set-char-mask.rm-chars
-!endif
 !if &exi .spell.language
   3 save-dictionary @mna
   2 delete-dictionary @mna
@@ -33,56 +29,38 @@ set-variable .change-font.ln-type ""
 !if &seq #l0 ""
 !elif &seq #l0 "Default"
 !elif &seq #l0 "American"
-  set-variable .change-font.ln-type 12579
+  set-variable .change-font.ln-type 20134
   set-variable .spell.language "enus"
 !elif &seq #l0 "British"
-  set-variable .change-font.ln-type 12579
+  set-variable .change-font.ln-type 20134
   set-variable .spell.language "engb"
 !elif &seq #l0 "Deutsch"
-  set-variable .change-font.ln-type 129
+  set-variable .change-font.ln-type 204
   set-variable .spell.language "dede"
-  set-char-mask "a" "ÄäÖöÜüßßAaOoUu"
-  set-variable .set-char-mask.rm-chars "ÄäÖöÜüß"
 !elif &seq #l0 "Espanol"
-  set-variable .change-font.ln-type 19
+  set-variable .change-font.ln-type 24
   set-variable .spell.language "eses"
-  set-char-mask "a" "ÁáÉéÍíÑñÓóÚúÜüAaEeIiNnOoUu"
-  set-variable .set-char-mask.rm-chars "ÁáÉéÍíÑñÓóÚúÜü"
 !elif &seq #l0 "Finnish"
-  set-variable .change-font.ln-type 12
+  set-variable .change-font.ln-type 20
   set-variable .spell.language "fifi"
-  set-char-mask "a" "ÅåÄäÖöAaOo"
-  set-variable .set-char-mask.rm-chars "ÅåÄäÖö"
 !elif &seq #l0 "Francais"
-  set-variable .change-font.ln-type 19
+  set-variable .change-font.ln-type 24
   set-variable .spell.language "frfr"
-  set-char-mask "a" "ÀàÂâÁáÇçÈèÊêÉéËëÎîÍíÏïÑñÒòÔôÓóÖöÙùÛûÚúÜüÿÿAaCcEeIiNnOoUu"
-  set-variable .set-char-mask.rm-chars "ÀàÂâÁáÇçÈèÊêÉéËëÎîÍíÏïÑñÒòÔôÓóÖöÙùÛûÚúÜüÿ"
 !elif &seq #l0 "Greek"
-  set-variable .change-font.ln-type 7
+  set-variable .change-font.ln-type 3
   set-variable .spell.language "elgr"
-  set-char-mask "a" "¶Ü¸İ¹ŞºßÚúÉÀ¼ü¾ıÛûÕà¿şÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÓòÓóÔôÕõÖö×÷ØøÙù"
-  set-variable .set-char-mask.rm-chars "¶Ü¸İ¹ŞºßÚúÉÀ¼ü¾ıÛûÕà¿şÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÓòÓóÔôÕõÖö×÷ØøÙù"
 !elif &seq #l0 "Italiano"
-  set-variable .change-font.ln-type 19
+  set-variable .change-font.ln-type 24
   set-variable .spell.language "itit"
-  set-char-mask "a" "ÁáÈèÉéÌìÍíÒòÓóÀàÙùÚúAaCcEeIiOoRrUu"
-  set-variable .set-char-mask.rm-chars "ÁáÈèÉéÌìÍíÒòÓóÀàÙùÚú"
 !elif &seq #l0 "Polish"
-  set-variable .change-font.ln-type 2
+  set-variable .change-font.ln-type 0
   set-variable .spell.language "plpl"
-  set-char-mask "a" "ÊêÓó¥¹Œœ£³¯¿ŸÆæÑñAaCcEeLlNnOoSsZz"
-  set-variable .set-char-mask.rm-chars "ÊêÓó¥¹Œœ£³¯¿ŸÆæÑñ"
 !elif &seq #l0 "Portugues"
-  set-variable .change-font.ln-type 19
+  set-variable .change-font.ln-type 24
   set-variable .spell.language "ptpt"
-  set-char-mask "a" "ÀàÂâÁáÃãÇçÈèÊêÉéÌìÍíÒòÔôÓóÕõÙùÚúÜüAaCcEeIiOoUu"
-  set-variable .set-char-mask.rm-chars "ÀàÂâÁáÃãÇçÈèÊêÉéÌìÍíÒòÔôÓóÕõÙùÚúÜü"
 !elif &seq #l0 "Russian"
-  set-variable .change-font.ln-type 5
+  set-variable .change-font.ln-type 1
   set-variable .spell.language "ruru"
-  set-char-mask "a" "ÀàÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÒòÓóÔôÕõÖö×÷ØøÙùÚúÛûÜüİıŞşßÿ¨¸"
-  set-variable .set-char-mask.rm-chars "ÀàÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÒòÓóÔôÕõÖö×÷ØøÙùÚúÛûÜüİıŞşßÿ¨¸"
 !else
   2000 ml-write &spr "[Error: Unknown/unsupported language \"%s\" - use user-setup to reconfigure]" #l0
 !endif
