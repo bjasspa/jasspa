@@ -434,6 +434,8 @@ define-macro ispell-convert
   ml-write "All Done!!"
 !emacro
 
+; Run through a list of words checking ME spell returns (O)kay
+; if n&2 then check all words are incorrect (E)
 define-macro ispell-check-list
   set-variable #l1 0
   set-variable #l2 0
@@ -449,16 +451,16 @@ define-macro ispell-check-list
       set-variable #l3 &add #l3 1
     !endif
     !if &seq &lef $result 1 "O"
-      !if &not &band @# 1
-        !if &band 2 @#
+      !if &band @# 2
+        !if &band 1 @#
           ml-write "[Word evaluated as correct]"
           !abort
         !endif
         !iif &not #l1  set-variable #l1 $window-line
         set-variable #l2 &add #l2 1
       !endif
-    !elif &band @# 1
-      !if &band 2 @#
+    !elif &not &band @# 2
+      !if &band 1 @#
         ml-write "[Word evaluated as wrong]"
         !abort
       !endif
@@ -469,6 +471,45 @@ define-macro ispell-check-list
   !done
   !iif #l1  set-variable $window-line #l1
   ml-write &spr "[Check complete - %d false-%s, %d bad word returns]" #l2 &con &band @# 1 "wrong" "good" #l3
+!emacro
+
+; run through a list of correct words checking the guess list includes the word
+; if n&2 then also check all words in guess list are correct
+define-macro ispell-check-guess
+  set-variable #l0 0
+  !while &not &seq &set #l2 &trb @wl ""
+    33 spell #l2
+    set-variable #l3 $result
+    !if &lfin #l3 #l2
+      !if &band @# 2
+        set-variable #l4 0
+        !while &len &set #l5 &lget #l3 &inc #l4 1
+          1 spell #l5
+          !if &seq "O" &lef $result 1
+          !elif &sin " " #l5
+          !elif &not &sin "-" #l5
+            set-variable #g0 #l3
+            ml-write &spr "[Bad word returned in guess list: %s]" #l5
+            !abort
+          !endif
+        !done
+      !endif
+    !elif &band @# 1
+      set-variable #g0 #l3
+      ml-write &spr "[Word missing, best guess: %s]" &lget #l3 1
+      !abort
+    !elif &not &pinc #l0 1
+      set-variable #g0 #l3
+      set-variable #l1 $window-line
+    !endif
+    forward-line
+  !done
+  !if #l0
+    goto-line #l1
+    ml-write &spr "[%d missing words, first best guess: %s]" #l0 &lget #g0 1
+  !else
+    ml-write "[No missing guess words]"
+  !endif
 !emacro
 
 define-macro ispell-test
@@ -498,25 +539,4 @@ define-macro ispell-test
   !done
   !iif #l1  set-variable $window-line #l1
   ml-write &spr "[Test complete - %d missing, %d bad returns]" #l2 #l3
-!emacro
-
-define-macro ispell-test-guess
-  set-variable #l0 $buffer-bname
-  set-variable #l1 $window-line
-  delete-other-windows
-  !force 0 delete-buffer "*isp-guess"
-  !while &not &seq &set #l2 &trb @wl ""
-    33 spell #l2
-    set-variable #l3 $result
-    find-buffer "*isp-guess"
-    insert-string #l3
-    insert-newline
-    find-buffer #l0
-    forward-line
-  !done
-  split-window-vertically
-  set-variable $window-line #l1
-  next-window
-  find-buffer "*isp-guess"
-  beginning-of-buffer
 !emacro

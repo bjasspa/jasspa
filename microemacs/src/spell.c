@@ -25,30 +25,30 @@
  * Synopsis:    Spell checking routines.
  * Authors:     Steven Phillips
  * Notes:
- *      The external input/output mostly complies with ispell, there are a 
+ *      The external input/output mostly complies with ispell, there are a
  *      few extenstions such as the disabling of hypens and auto-replacement
  *      words. The internals, including dictionaries, are completely different.
- * 
+ *
  * TODO:
- * 
+ *
  * hunspell aff features not yet implemented:
  *
  * a. NEEDAFFIX, CIRCUMFIX, COMPOUND*, ONLYINCOMPOUND (only used by Deutsch given EN ordinals are supported via ME regex rules)
- * 
+ *
  * b. KEEPCASE (used only by Francais)
  *
  * c. COMPLEXPREFIXES support:
- * 
+ *
  *   The used of COMPLEXPREFIXES rule to allow the removal of two prefixes, see
  *   complexprefixes.aff test for example of twofold stripping of prefixes. However
  *   multi-prefix stripping is associated with right to left languages, e.g. hebrew & arabic
  *   and given ME's lack of basic support for right to left languages, this is not a high
  *   priority in ME.
- * 
+ *
  * d. Limited 2char and numeric aff rule flags
- * 
+ *
  * Hunspell allow only the following combination of rules (when COMPLEXPREFIXES is disabled)
- * 
+ *
  *         <base>
  *         <base>S1(bs)
  *         <base>S1(bs)S2(S1)
@@ -60,10 +60,10 @@
  *   P1(bs)<base>
  *   P1(bs)<base>S1(P1)
  *   P1(bs)<base>S1(P1)S2(S1)
- *   
+ *
  * Where P1(bs) is the a prefix flagged on the base word & S2(S1) is a suffix flagged as a subrule of
  * a suffix. S1(bs) is applied before p1(bs). The following are not allowed
- *   
+ *
  *   P2(bs)P1(bs)<base>
  *   P2(P1)P1(bs)<base>
  *         <base>S1(bs)S2(bs)
@@ -93,7 +93,7 @@
 #define TBLMINSIZE 128
 #define TBLINCSIZE 512
 
-/* Regex special rules are stored in rule slot [0], so rule '!' (0x21) is [1] etc so last rule '\xff' is [0xff-0x21+1] & there are 0xff-0x21+2 rules */ 
+/* Regex special rules are stored in rule slot [0], so rule '!' (0x21) is [1] etc so last rule '\xff' is [0xff-0x21+1] & there are 0xff-0x21+2 rules */
 #define SPELLRULE_FIRST 0x21
 #define SPELLRULE_LAST  0xff
 #define SPELLRULE_SEP   '\x01'
@@ -107,6 +107,7 @@
 #define RULE_SUBR_USEP  16
 #define RULE_SUBR_REFS  32
 #define RULE_SUBR_USES  64
+#define RULE_CAN_GUESS  128
 
 typedef struct meSpellRule {
     struct meSpellRule *next;
@@ -125,7 +126,6 @@ typedef struct meSpellRule {
     meUByte subRule[1];
 } meSpellRule;
 
-static meUByte meRuleScore[SPELLRULE_COUNT];
 static meUByte meRuleFlags[SPELLRULE_COUNT];
 static meSpellRule *meRuleTable[SPELLRULE_COUNT];
 static meRegexClass *meRuleClassLst;
@@ -138,7 +138,7 @@ static meUByte meRuleMax=1;
  * suffix removal the maximum length is 127+3*32 (1 pre and 2 suf).
  * However as right to left languages need twofold 'prefix' instead of suffix keep the prefix and
  * suffix padding requirements symetrical.
- * 
+ *
  * All functions that add/remove affixes should be given the starting word 64 bytes into the buffer
  * and with at least 64 chars after it. This are theoretical limits but, as we still limit all word
  * input meWORD_SIZE_MAX this is purely theoretical and very unlikely to ever be fully required.
@@ -162,8 +162,8 @@ typedef struct {
 /* following is the same as above but with a fixed max buffer used for word adding */
 typedef struct {
     meDictAddr  next;
-    meUByte     wordLen;     
-    meUByte     flagLen;     
+    meUByte     wordLen;
+    meUByte     flagLen;
     meUByte     data[meWORD_SIZE_MAX+meWORD_SIZE_MAX];
 } meDictAddWord;
 
@@ -183,21 +183,23 @@ typedef struct meDictionary {
 static meDictionary *dictHead;
 static meDictionary *dictIgnr;
 static meDictWord *wordCurr;
-static int longestSuffixRemove;
-static int caseFlags;
-static int hyphenCheck;
-static int maxScore;
+static meUByte suffixRmvLenMax;
+static meUByte guessWordLenMin;
+static meUByte guessWordLenMax;
+static meUByte caseFlags;
+static meUByte hyphenCheck;
+static meUByte maxScore;
 
 /* find-words static variables */
+static meUByte        sfwPlc;
+static meUByte        sfwWfl;
+static meInt          sfwDctI;
 static meUByte       *sfwMsk;
 static meDictionary  *sfwDct;
-static meInt          sfwDctI;
 static meDictWord    *sfwWrd;
 static meSpellRule   *sfwRp1;
 static meSpellRule   *sfwRp2;
 static meSpellRule   *sfwRp3;
-static meUByte        sfwPlc;
-static meUByte        sfwWfl;
 
 #define SPELL_FLAG_LMASK      meWORD_FLAG_MAX
 #define SPELL_ERROR           0x80
@@ -242,10 +244,10 @@ meDictionaryLookupWord(meDictionary *dict, meUByte *word, int len)
     meDictWord *ent;
     meInt n, off;
     int s, ll;
-    
+
     meSpellHashFunc(dict->tableSize,word,len,n);
     off = meEntryGetAddr(dict->table[n]);
-    
+
     while(off != 0)
     {
         ent = (meDictWord *) mePtrOffset(dict->table,off);
@@ -284,7 +286,7 @@ meDictionaryAddWord(meDictionary *dict, meDictWord *wrd)
     meDictWord *ent, *lent, *nent;
     meInt n, len, off;
     meUByte wlen, flen, olen, *word;
-    
+
     word = meWordGetWord(wrd);
     wlen = meWordGetWordLen(wrd);
     flen = meWordGetFlagLen(wrd);
@@ -318,7 +320,7 @@ meDictionaryAddWord(meDictionary *dict, meDictWord *wrd)
     }
     dict->flags |= DTCHNGD;
     len = meDICTWORD_SIZE + wlen + flen;
-    
+
     if((dict->dUsed+len) > dict->dSize)
     {
         dict->dSize = dict->dUsed+len+TBLINCSIZE;
@@ -331,7 +333,7 @@ meDictionaryAddWord(meDictionary *dict, meDictWord *wrd)
     meWordSetFlagLen(nent,flen);
     memcpy(meWordGetWord(nent),word,wlen);
     memcpy(meWordGetFlag(nent),meWordGetFlag(wrd),flen);
-    
+
     lent = NULL;
     meSpellHashFunc(dict->tableSize,word,wlen,n);
     off = meEntryGetAddr(dict->table[n]);
@@ -365,7 +367,7 @@ meDictionaryRehash(meDictionary *dict)
     meDictAddr *table, *tbl;
     meInt tableSize, oldtableSize, ii, dUsed, dSize, noWords, off;
     int repeat;
-    
+
     oldtableSize = dict->tableSize;
     noWords = dict->noWords >> 3;
     tableSize = TBLMINSIZE;
@@ -379,7 +381,7 @@ meDictionaryRehash(meDictionary *dict)
     do {
         dUsed = sizeof(meDictAddr)*tableSize;
         dSize = dict->dUsed+dUsed;
-        
+
         if((table = (meDictAddr *) meMalloc(dSize)) == NULL)
             return;
         memset(table,0,dUsed);
@@ -415,7 +417,7 @@ meDictionaryLoad(meDictionary *dict)
     meInt dSize, dUsed;
     meStat stats;
     int rr;
-    
+
     /* use internal fileio functions to support loading TFS dictionaries */
     if((dict->fname == NULL) || (((rr = getFileStats(dict->fname,0,&stats,NULL)) & meIOTYPE_REGULAR) == 0) ||
        (stats.stsizeHigh != 0) || (stats.stsizeLow < meDICT_HDR_SZ) ||
@@ -423,7 +425,7 @@ meDictionaryLoad(meDictionary *dict)
         return mlwrite(MWABORT,(meUByte *)"Failed to open dictionary [%s]",dict->fname);
     dUsed = stats.stsizeLow - meDICT_HDR_SZ;
     dSize = dUsed + TBLINCSIZE;
-    
+
     if((ffgetBuf(&meior,0,meFIOBUFSIZ) < 0) || (ffremain < meDICT_HDR_SZ) ||
        (ffbuf[0] != 0xED) || (ffbuf[1] != 0xF1))
         rr = mlwrite(MWABORT,(meUByte *)"[%s does not have correct id string]",dict->fname);
@@ -456,7 +458,7 @@ meDictionaryLoad(meDictionary *dict)
         }
     }
     ffReadFileClose(&meior,meRWFLAG_READ|meRWFLAG_SILENT);
-    
+
     return rr;
 }
 
@@ -465,7 +467,7 @@ static int
 meSpellInitDictionaries(void)
 {
     meDictionary   *dict, *ldict;
-    
+
     ldict = NULL;
     dict = dictHead;
     if(dict == NULL)
@@ -519,7 +521,7 @@ meSpellInitDictionaries(void)
     {
         meDictAddr *table;
         meInt dSize, dUsed;
-        
+
         dUsed = sizeof(meDictAddr)*TBLMINSIZE;
         dSize = dUsed + TBLINCSIZE;
         if(((dictIgnr = (meDictionary *) meMalloc(sizeof(meDictionary))) == NULL) ||
@@ -544,10 +546,10 @@ meDictionaryFind(int flag)
     meDictionary *dict;
     meUByte fname[meBUF_SIZE_MAX], tmp[meBUF_SIZE_MAX];
     int found;
-    
+
     if(meGetString((meUByte *)"Dictionary name",MLFILECASE,0,tmp,meBUF_SIZE_MAX) <= 0)
         return meFALSE;
-    
+
     if(!fileLookup(tmp,extDictCnt,extDictLst,meFL_CHECKDOT|meFL_USESRCHPATH,fname))
     {
         meStrcpy(fname,tmp);
@@ -600,13 +602,13 @@ meDictWordDump(meDictWord *ent, meUByte *buff)
 {
     meUByte cc, *ss=meWordGetWord(ent), *dd=buff;
     int len;
-    
+
     len = meWordGetWordLen(ent);
     do {
         cc = *ss++;
         *dd++ = toDisplayCharset(cc);
     } while(--len > 0);
-    
+
     len = meWordGetFlagLen(ent);
     if(meWordGetErrorFlag(ent))
         *dd++ = '>';
@@ -629,7 +631,7 @@ int
 dictionaryAdd(int f, int n)
 {
     meDictionary *dict;
-    
+
     if(n == 0)
         f = 7;
     else if(n > 0)
@@ -642,7 +644,7 @@ dictionaryAdd(int f, int n)
     {
         meDictAddr *tbl;
         meInt tableSize, ii, off;
-        
+
         if(meModeTest(frameCur->windowCur->buffer->mode,MDVIEW))
             /* don't allow character insert if in read only */
             return rdonly();
@@ -652,7 +654,7 @@ dictionaryAdd(int f, int n)
            (lineInsertNewline(0) <= 0) ||
            (lineInsertNewline(0) <= 0))
             return meABORT;
-        
+
         tableSize = dict->tableSize;
         tbl = dict->table;
         frameCur->windowCur->dotOffset = 0;
@@ -663,7 +665,7 @@ dictionaryAdd(int f, int n)
             {
                 meDictWord *ent;
                 meUByte buff[meBUF_SIZE_MAX];
-                
+
                 ent = (meDictWord *) mePtrOffset(tbl,off);
                 off = meWordGetAddr(ent);
                 if(meWordGetWord(ent)[0] != '\0')
@@ -717,7 +719,7 @@ spellRuleAdd(int f, int n)
         meUByte *ss, cc, bb, rl, al;
         meUByte buff[meBUF_SIZE_MAX];
         int rule, ll;
-        
+
         if((rule = mlCharReply((meUByte *)"Rule flag: ",0,NULL,NULL)) < 0)
             return meABORT;
         if(f == meFALSE)
@@ -726,21 +728,21 @@ spellRuleAdd(int f, int n)
             {
                 if((rule = mlyesno((meUByte *)"Enable hyphen")) == meABORT)
                     return meABORT;
-                hyphenCheck = rule;
+                hyphenCheck = (meUByte) rule;
                 return meTRUE;
             }
             if(rule == '#')
             {
                 if(meGetString((meUByte *)"Guess score",MLNOSPACE,0,buff,meBUF_SIZE_MAX) <= 0)
                     return meABORT;
-                maxScore = meAtoi(buff);
+                maxScore = ((ll = meAtoi(buff)) > 255) ? 255:ll;
                 return meTRUE;
             }
             if(rule == '*')
             {
                 rule = SPELLRULE_REGEX;
                 if((meGetString((meUByte *)"Rule",MLNOSPACE,0,buff,meBUF_SIZE_MAX) <= 0) ||
-                   ((rr = meMalloc(sizeof(meSpellRule)+(ll=meStrlen(buff)))) == NULL)) 
+                   ((rr = meMalloc(sizeof(meSpellRule)+(ll=meStrlen(buff)))) == NULL))
                     return meABORT;
                 rr->ending = rr->subRule;
                 memcpy(rr->ending,buff,ll);
@@ -760,7 +762,7 @@ spellRuleAdd(int f, int n)
         else
         {
             meUByte ee[255];
-            
+
             rule -= SPELLRULE_OFFST;
             if((meGetString((meUByte *)"Ending",MLNOSPACE,0,buff,255) <= 0) ||
                ((ll = meStrlen(buff) + 1),
@@ -770,7 +772,7 @@ spellRuleAdd(int f, int n)
                ((al = (meUByte) meStrlen(buff+ll+rl)),
                 (meGetString((meUByte *)"Sub-rules",MLNOSPACE,0,buff+ll+rl+al,meWORD_FLAG_MAX) <= 0)))
                 return meABORT;
-            
+
             ss = buff;
             bb = 0;
             f = 0;
@@ -900,13 +902,13 @@ meDictionarySave(meDictionary *dict, int n)
 {
     meRegNode *reg;
     int ii;
-    
+
     if(!(dict->flags & DTCHNGD))
         return meTRUE;
-    
+
     /* Never auto-save created dictionaries */
     if((dict->flags & DTCREATE) ||
-       ((n & 0x01) && 
+       ((n & 0x01) &&
         (((reg=regFind(NULL,(meUByte *)SP_REG_ROOT "/" SP_REGI_SAVE))==NULL) || (regGetLong(reg,0) == 0))))
     {
         meUByte prompt[meBUF_SIZE_MAX];
@@ -942,7 +944,7 @@ meDictionarySave(meDictionary *dict, int n)
                     *pp++ = DIR_CHAR;
                 meStrcpy(pp,ss);
             }
-            
+
             if(((ii=meStrlen(fname)) < 4) ||
 #ifdef _INSENSE_CASE
                meStricmp(fname+ii-4,(const meUByte *)".edf")
@@ -956,14 +958,14 @@ meDictionarySave(meDictionary *dict, int n)
         }
     }
     if(ffWriteFileOpen(&meiow,dict->fname,meRWFLAG_WRITE,NULL) > 0)
-    {    
+    {
         meUByte header[8];
-        
+
         header[0] = 0xED;
         header[1] = 0xF1;
         meEntrySetAddr(header+2,dict->noWords);
         meEntrySetAddr(header+5,dict->tableSize);
-        
+
         if(ffWriteFileWrite(&meiow,8,header,0) > 0)
             ffWriteFileWrite(&meiow,dict->dUsed,(meUByte *) dict->table,0);
         if(ffWriteFileClose(&meiow,meRWFLAG_WRITE,NULL) > 0)
@@ -985,7 +987,7 @@ int
 dictionarySave(int f, int n)
 {
     meDictionary   *dict;
-    
+
     if(n & 0x02)
     {
         dict = dictHead;
@@ -1003,7 +1005,7 @@ dictionarySave(int f, int n)
            ((f=meDictionarySave(dict,0)) <= 0))
             return f;
     }
-    
+
     return meTRUE;
 }
 
@@ -1012,7 +1014,7 @@ int
 anyChangedDictionary(void)
 {
     meDictionary *dict;
-    
+
     dict = dictHead;
     while(dict != NULL)
     {
@@ -1032,9 +1034,9 @@ meDictionaryFree(meDictionary *dict)
 }
 
 /* dictionaryDelete
- * 
+ *
  * Argument is a bitmask where:
- * 
+ *
  * 0x01 prompt before losing changes
  * 0x02 delete ignore dictionary
  * 0x04 delete all non-ignore dictionaries
@@ -1059,11 +1061,11 @@ dictionaryDelete(int f, int n)
             /* just remove the ignore */
             return meTRUE;
     }
-    
+
     if(n & 0x02)
     {
         meDictionary *dd;
-        
+
         while((dd=dictHead) != NULL)
         {
             if((n & 0x01) && (meDictionarySave(dd,0x01) <= 0))
@@ -1075,10 +1077,10 @@ dictionaryDelete(int f, int n)
     else
     {
         meDictionary *dict, *dd;
-        
+
         if((dict = meDictionaryFind(0)) == NULL)
             return meFALSE;
-        
+
         if((n & 0x01) && (meDictionarySave(dict,0x01) <= 0))
             return meFALSE;
         if(dict == dictHead)
@@ -1102,7 +1104,7 @@ meSpellGetCurrentWord(meUByte *word)
     register meWindow *cwp=frameCur->windowCur;
     register meUByte *dp, c, alnm, nalnm=1;
     register int sz=0, alphaCnt=0;
-    
+
     dp = (meUByte *) word;
     do
     {
@@ -1114,12 +1116,12 @@ meSpellGetCurrentWord(meUByte *word)
             alphaCnt = 1;
         nalnm = isAlphaNum(c);
     } while((++sz < meWORD_SIZE_MAX) && (nalnm || (alnm && isSpllExt(c))));
-    
+
     dp[-1] = 0;
     cwp->dotOffset--;
     if(!alphaCnt)
         return -1;
-    
+
     return sz - 1;
 }
 
@@ -1177,7 +1179,7 @@ wordApplyPrefixRule(meUByte *wd, int wlen, meSpellRule *rr)
 {
     meUByte *nw;
     int len;
-    
+
     if((rr->removeLen > wlen) || (((len=rr->endingLen) != 0) && ((len > wlen) || ruleEndingCmp(wd,rr->ending))))
         return NULL;
     nw = wd - rr->changeLen;
@@ -1189,7 +1191,7 @@ static meUByte *
 wordApplySuffixRule(meUByte *wd, int wlen, meSpellRule *rr)
 {
     meUByte *ew, len;
-    
+
     ew = wd+wlen;
     if((rr->removeLen > wlen) || (((len=rr->endingLen) != 0) && ((len > wlen) || ruleEndingCmp(ew-len,rr->ending))))
         return NULL;
@@ -1205,7 +1207,7 @@ wordTryAffixRules(meUByte *word, int wlen)
     meSpellRule *rr;
     meDictWord *wd;
     int ii, jj, ll;
-    
+
     /* Try all the suffix rules to see if we can derive the word from another */
     ii = meRuleMax;
     do
@@ -1252,7 +1254,7 @@ wordTryAffixRules(meUByte *word, int wlen)
                                     {
                                         meUByte *nw;
                                         int pnlen, pelen;
-                                        
+
                                         if((nlen > pr->appendLen) && !memcmp(pr->append,word,pr->appendLen))
                                         {
                                             pnlen = nlen - pr->changeLen;
@@ -1334,7 +1336,7 @@ wordTryAffixRules(meUByte *word, int wlen)
                                                                         {
                                                                             meUByte *nw;
                                                                             int pnlen, pelen;
-                                                                            
+
                                                                             if((snlen > pr->appendLen) && !memcmp(pr->append,word,pr->appendLen))
                                                                             {
                                                                                 pnlen = snlen - pr->changeLen;
@@ -1375,7 +1377,7 @@ wordTryAffixRules(meUByte *word, int wlen)
                                                                         {
                                                                             meUByte *nw;
                                                                             int pnlen, pelen;
-                                                                            
+
                                                                             if((snlen > pr->appendLen) && !memcmp(pr->append,word,pr->appendLen))
                                                                             {
                                                                                 pnlen = snlen - pr->changeLen;
@@ -1418,7 +1420,7 @@ wordTryAffixRules(meUByte *word, int wlen)
                                                                             {
                                                                                 meUByte *nw;
                                                                                 int pnlen, pelen;
-                                                                                
+
                                                                                 if((snlen > pr->appendLen) && !memcmp(pr->append,word,pr->appendLen))
                                                                                 {
                                                                                     pnlen = snlen - pr->changeLen;
@@ -1467,7 +1469,7 @@ wordTryAffixRules(meUByte *word, int wlen)
                                                 {
                                                     meUByte *nw;
                                                     int pnlen, pelen;
-                                                    
+
                                                     if((nlen > sr->appendLen) && !memcmp(sr->append,word,sr->appendLen))
                                                     {
                                                         pnlen = nlen - sr->changeLen;
@@ -1510,7 +1512,7 @@ wordTryAffixRules(meUByte *word, int wlen)
                                         {
                                             meUByte *nw;
                                             int pnlen, pelen;
-                                            
+
                                             if((nlen > sr->appendLen) && !memcmp(sr->append,word,sr->appendLen))
                                             {
                                                 pnlen = nlen - sr->changeLen;
@@ -1554,7 +1556,7 @@ wordTryAffixRules(meUByte *word, int wlen)
             {
                 meUByte *nw;
                 int si, nlen, elen;
-                
+
                 if((wlen > rr->appendLen) && !memcmp(rr->append,word,rr->appendLen))
                 {
                     nlen = wlen - rr->changeLen;
@@ -1612,7 +1614,7 @@ wordTryAffixRules(meUByte *word, int wlen)
                                             memcpy(nw+nlen-alen,sr->append,alen);
                                         }
                                         /* in the case of P1(bs)<base>S1(P1)S2(S1) we must find and remove S2(S1) before S1(P1) */
-                                        
+
                                         si = sr->subRuleLen;
                                         while(--si >= 0)
                                         {
@@ -1683,7 +1685,7 @@ wordTrySpecialRules(meUByte *word, int wlen)
 {
     meUByte cc;
     meSpellRule  *rr;
-    
+
     if((rr = meRuleTable[SPELLRULE_REGEX]) != NULL)
     {
         /* Now try all the special rules - e.g. [0-9]*1st for 1st, 21st etc */
@@ -1704,7 +1706,7 @@ wordTrySpecialRules(meUByte *word, int wlen)
 }
 
 /* wordCheckSearch
- * 
+ *
  * Looks in all dictionaries for the given word, then tries all
  * the rules. Returns:
  *   meFALSE  Word not found
@@ -1716,7 +1718,7 @@ wordCheckSearch(meUByte *word, int wlen)
 {
     meDictionary *dict;
     meDictWord   *wd;
-    
+
     if((wd=meDictionaryLookupWord(dictIgnr,word,wlen)) == NULL)
     {
         dict = dictHead;
@@ -1730,7 +1732,7 @@ wordCheckSearch(meUByte *word, int wlen)
         {
             /* Now try all the suffixes on the original word */
             wd = wordTryAffixRules(word,wlen);
-            
+
             if(wd == NULL)
                 return wordTrySpecialRules(word,wlen);
         }
@@ -1742,13 +1744,13 @@ wordCheckSearch(meUByte *word, int wlen)
 }
 
 /* wordCheckBase
- * 
+ *
  * Checks
  * 1) The word is a word
  * 2) Tries wordCheckSearch
  * 3) If upper case then capitalises and tries wordCheckSearch
  * 4) If capitalised the makes lower case and tries wordCheckSearch
- * 
+ *
  * If all the above fail then it fails. Returns:
  *   meFALSE  Word is okay
  *   meTRUE   found and word is good
@@ -1759,14 +1761,14 @@ wordCheckBase(meUByte *word, int wlen)
 {
     meUByte *ss, cc;
     int ii;
-    
+
     if(caseFlags == 0)
         /* No letters in the word -> not a word -> word okay */
         return meTRUE;
-    
+
     if((ii=wordCheckSearch(word,wlen)) != meFALSE)
         return ii;
-    
+
     /* If all upper then capitalise */
     if(caseFlags == (SPELL_CASE_FUPPER|SPELL_CASE_CUPPER))
     {
@@ -1803,7 +1805,7 @@ wordCheckBase(meUByte *word, int wlen)
 }
 
 /* wordCheck
- * 
+ *
  * Check for the given word in all dictionaries, returns:
  *   meFALSE  Word not found
  *   meTRUE   found and word is good
@@ -1811,14 +1813,14 @@ wordCheckBase(meUByte *word, int wlen)
  *
  * WARNING:
  *   The word buffer should have padding before and after the word (theoretical max is meAFFIXBUF_SIZE_MAX).
- *   The function only preserves word[0..len-1] chars, chars before & after (including terminator) may be trashed! 
+ *   The function only preserves word[0..len-1] chars, chars before & after (including terminator) may be trashed!
  */
 static int
 wordCheck(meUByte *word, int len)
 {
     meUByte *ss;
     int ii, hyphen;
-    
+
     if((ii=wordCheckBase(word,len)) != meFALSE)
         return ii;
     if(isSpllExt(word[len-1]))
@@ -1841,7 +1843,7 @@ wordCheck(meUByte *word, int len)
                 hyphen = 1;
             }
         }
-        if(hyphen && 
+        if(hyphen &&
            (((len=ss-word) == 0) || (wordCheckBase(word,(meUByte)len) > 0)))
         {
             wordCurr = NULL;
@@ -1849,7 +1851,7 @@ wordCheck(meUByte *word, int len)
         }
     }
     return meFALSE;
-}    
+}
 
 
 #if 0
@@ -1861,8 +1863,8 @@ FILE *fp;
 #endif
 
 /* wordGuessCalcScore
- * 
- * Given the user source word (swd) and a dictionary word (dwd) the 
+ *
+ * Given the user source word (swd) and a dictionary word (dwd) the
  */
 static int
 wordGuessCalcScore(const meUByte *swd, int slen, const meUByte *dwd, int dlen, int testFlag)
@@ -1872,7 +1874,7 @@ wordGuessCalcScore(const meUByte *swd, int slen, const meUByte *dwd, int dlen, i
 #endif
     int  scr=0;
     meUByte cc, lcc='\0', dd, ldd='\0';
-    
+
     for(;;)
     {
         if(slen == 0)
@@ -1900,7 +1902,7 @@ wordGuessCalcScore(const meUByte *swd, int slen, const meUByte *dwd, int dlen, i
         cc = *swd;
         dd = *dwd;
         dd = toLatinLower(dd);
-        if(dd == cc) 
+        if(dd == cc)
         {
             swd++;
             slen--;
@@ -1912,7 +1914,7 @@ wordGuessCalcScore(const meUByte *swd, int slen, const meUByte *dwd, int dlen, i
         }
         if((dlen > 1) && (dwd[1] == cc))
         {
-            if((slen > 1) && (swd[1] == dd) && 
+            if((slen > 1) && (swd[1] == dd) &&
                ((dlen <= slen) || (dwd[2] != dd)))
             {
                 /* transposed chars */
@@ -1987,16 +1989,16 @@ wordGuessCalcScore(const meUByte *swd, int slen, const meUByte *dwd, int dlen, i
     }
 #ifdef __LOG_FILE
 #if __LOG_FILE == 1
-    if(scr < maxScore)
+    if(!testFlag && (scr < maxScore))
 #endif
     {
-        slen = (int) (swd - swp);
-        dlen = (int) (dwd - dwp);
+        slen += (int) (swd - swp);
+        dlen += (int) (dwd - dwp);
         cc = swp[slen];
         swp[slen] = '\0';
         dd = dwp[dlen];
         dwp[dlen] = '\0';
-        fprintf(fp,"WordScore [%s] with [%s] scr = %d, len %d\n",swp,dwp,scr,dlen-slen);
+        fprintf(fp,"WordScore [%s] with [%s] scr = %d, len %d (%d)\n",swp,dwp,scr,dlen-slen,testFlag);
         swp[slen] = cc;
         dwp[dlen] = dd;
     }
@@ -2008,7 +2010,7 @@ static void
 wordGuessAddToList(meUByte *word, int wlen, int curScr, meWordBuf *words, int *scores)
 {
     int ii, jj;
-    
+
     for(ii=0 ; ii<meGUESS_MAX ; ii++)
     {
         if(curScr < scores[ii])
@@ -2034,89 +2036,23 @@ wordGuessAddToList(meUByte *word, int wlen, int curScr, meWordBuf *words, int *s
     }
 }
 
-static int
-wordGuessAddSuffixRulesToList(meUByte *sword, int slen, meUByte *bword, int blen,
-                              meUByte *flags, int noflags, meWordBuf *words,
-                              int *scores, int bscore, int pflags)
-{
-    meSpellRule *rr, *sr;
-    meUByte el, *nwd;
-    int ii;
-    
-    /* try all the allowed suffixes */
-    while(--noflags >= 0)
-    {
-        ii = flags[noflags] - SPELLRULE_OFFST;
-        if(((bscore+meRuleScore[ii]) < scores[meGUESS_MAX-1]) &&
-           ((meRuleFlags[ii] & pflags) == pflags))
-        {
-            rr = meRuleTable[ii];
-            while(rr != NULL)
-            {
-                if((bscore+rr->score < scores[meGUESS_MAX-1]) &&
-                   (((el=rr->endingLen) == 0) || ((el <= blen) && !ruleEndingCmp(bword+blen-el,rr->ending))))
-                {
-                    int curScr, nlen;
-                    nwd = wordSuffixRuleGetEnd(bword,blen,rr);
-                    wordSuffixRuleAdd(nwd,rr);
-                    nlen = blen+rr->changeLen;
-                    if((curScr = wordGuessCalcScore(sword,slen,bword,nlen,0)) < maxScore)
-                        wordGuessAddToList(bword,nlen,curScr,words,scores);
-                    if(bscore+rr->rule < scores[meGUESS_MAX-1])
-                    {
-                        int si, snlen, sl=rr->subRuleLen;
-                        meUByte *swd;
-                        do {
-                            si = rr->subRule[--sl]-SPELLRULE_OFFST;
-                            if(meRuleFlags[si] & RULE_SUFFIX)
-                            {
-                                /* this makes the assumption that the primary suffix appends enough
-                                 * to test all relevant secondary suffixes correctly */
-                                sr = meRuleTable[si];
-                                while(sr != NULL)
-                                {
-                                    if(((el=sr->endingLen) == 0) || ((el <= nlen) && !ruleEndingCmp(bword+nlen-el,sr->ending)))
-                                    {
-                                        swd = wordSuffixRuleGetEnd(bword,nlen,sr);
-                                        wordSuffixRuleAdd(swd,sr);
-                                        snlen = nlen+sr->changeLen;
-                                        if((curScr = wordGuessCalcScore(sword,slen,bword,snlen,0)) < maxScore)
-                                            wordGuessAddToList(bword,snlen,curScr,words,scores);
-                                        wordSuffixRuleRemove(swd,sr);
-                                    }                                    
-                                    sr = sr->next;
-                                }
-                            }
-                        } while(sl > 0);
-                    }
-                    wordSuffixRuleRemove(nwd,rr);
-                }
-                rr = rr->next;
-            }
-        }
-    }
-    return 0;
-}
-
-
-static int
+static void
 wordGuessScoreSuffixRules(meUByte *word, int olen)
 {
     meSpellRule *rr, *sr;
-    int ii, jj, sl, scr, rscr, bscr=maxScore;
-    
-    longestSuffixRemove = 0;
+    int ii, jj, sl, scr, use;
+
+    suffixRmvLenMax = 0;
     if(isSpllExt(word[olen-1]))
         /* if the last letter is a '.' then ignore it, i.e. "anommolies."
-         * should compare suffixes with the "ies", not "es."
-         */
+         * should compare suffixes with the "ies", not "es." */
         olen--;
     ii = meRuleMax;
     do
     {
         if(meRuleFlags[ii] & RULE_SUFFIX)
         {
-            rscr = maxScore;
+            use = 0;
             rr = meRuleTable[ii];
             while(rr != NULL)
             {
@@ -2127,11 +2063,10 @@ wordGuessScoreSuffixRules(meUByte *word, int olen)
                 {
                     if((scr = wordGuessCalcScore(word+olen-jj,jj,rr->append,jj,1)) < maxScore)
                     {
+                        use = 1;
                         rr->score = scr;
-                        if(scr < rscr)
-                            rscr = scr;
-                        if(rr->removeLen > longestSuffixRemove)
-                            longestSuffixRemove = rr->removeLen;
+                        if(rr->removeLen > suffixRmvLenMax)
+                            suffixRmvLenMax = rr->removeLen;
                     }
                     if((meRuleFlags[ii] & RULE_SUBR_USES) && ((sl = rr->subRuleLen) > 0))
                     {
@@ -2153,16 +2088,15 @@ wordGuessScoreSuffixRules(meUByte *word, int olen)
                                         sj = jj + sr->changeLen;
                                         if((scr = wordGuessCalcScore(word+olen-sj,sj,buf,sj,1)) < maxScore)
                                         {
+                                            use = 1;
                                             if(scr < sscr)
                                                 sscr = scr;
-                                            if(scr < rscr)
-                                                rscr = scr;
-                                            /* wrt. the base word only the primary suffix remove len counts */ 
-                                            if(rr->removeLen > longestSuffixRemove)
-                                                longestSuffixRemove = rr->removeLen;
+                                            /* wrt. the base word only the primary suffix remove len counts */
+                                            if(rr->removeLen > suffixRmvLenMax)
+                                                suffixRmvLenMax = rr->removeLen;
                                         }
                                         wordSuffixRuleRemove(sbf,sr);
-                                    }                                    
+                                    }
                                     sr = sr->next;
                                 }
                             }
@@ -2172,12 +2106,93 @@ wordGuessScoreSuffixRules(meUByte *word, int olen)
                 }
                 rr = rr->next;
             }
-            meRuleScore[ii] = rscr;
-            if(rscr < bscr)
-                bscr = rscr;
+            if(use)
+                meRuleFlags[ii] |= RULE_CAN_GUESS;
+            else
+                meRuleFlags[ii] &= ~RULE_CAN_GUESS;
         }
     } while(--ii > 0);
-    return bscr;
+}
+
+static void
+wordGuessAddAffixRulesToList(meUByte *sword, int slen, meUByte *bword, int blen,
+                             meUByte *wfp, meUByte wfc, meUByte *flags, meUByte noflags, meWordBuf *words,
+                             int *scores, int bScr, meUByte prf, meUByte srf)
+{
+    meSpellRule *rr;
+    meUByte el, *rws;
+    int rwl, rScr, ii, fi;
+
+    fi = noflags;
+    while(--fi >= 0)
+    {
+        if((ii = flags[fi] - SPELLRULE_OFFST) < 0)
+            noflags = fi;
+        else if(meRuleFlags[ii] & RULE_PREFIX)
+        {
+            if((prf == 0) && ((srf == 0) || (meRuleFlags[ii] & RULE_MIXABLE)))
+            {
+                rr = meRuleTable[ii];
+                while(rr != NULL)
+                {
+                    if(((rwl = blen+rr->changeLen) <= guessWordLenMax) &&
+                       ((rws = wordApplyPrefixRule(bword,blen,rr)) != NULL))
+                    {
+                        if(srf || (rr->subRuleLen == 0))
+                        {
+                            if((rwl >= guessWordLenMin) &&
+                               ((rScr = wordGuessCalcScore(sword,slen,rws,rwl,0)) < scores[meGUESS_MAX-1]))
+                                wordGuessAddToList(rws,rwl,rScr,words,scores);
+                        }
+                        else if(((rScr = rwl - suffixRmvLenMax) < 1) ||
+                                ((rScr = wordGuessCalcScore(sword,(rScr < slen) ? rScr:slen,rws,rScr,1)) < scores[meGUESS_MAX-1]))
+                        {
+                            wordGuessAddAffixRulesToList(sword,slen,rws,rwl,wfp,wfc,rr->subRule,rr->subRuleLen,words,scores,rScr,1,0);
+                            if((rwl >= guessWordLenMin) &&
+                               ((rScr = wordGuessCalcScore(sword,slen,rws,rwl,0)) < scores[meGUESS_MAX-1]))
+                                wordGuessAddToList(rws,rwl,rScr,words,scores);
+                        }
+                        wordPrefixRuleRemove(bword,rr);
+                    }
+                    rr = rr->next;
+                }
+            }
+        }
+        else if((meRuleFlags[ii] & RULE_CAN_GUESS) && ((srf & 2) == 0))
+        {
+            /* if prf is not 0 then this is a prefix subRule so doesn't matter if not mixable */
+            rr = meRuleTable[ii];
+            while(rr != NULL)
+            {
+                /* TODO? this does not support P1(S1)<base>S1(bs)S2(S1) */
+
+                if(((rwl = blen+rr->changeLen) <= guessWordLenMax) &&
+                   ((bScr+rr->score < scores[meGUESS_MAX-1]) || ((srf == 0) && (bScr+rr->rule < scores[meGUESS_MAX-1])) ||
+                    ((prf == 0) && ((meRuleFlags[ii] & RULE_MIXABLE) || ((meRuleFlags[ii] & RULE_SUBR_USEP) && rr->subRuleLen)))) &&
+                   (((el=rr->endingLen) == 0) || ((el <= blen) && !ruleEndingCmp(bword+blen-el,rr->ending))))
+                {
+                    rws = wordSuffixRuleGetEnd(bword,blen,rr);
+                    wordSuffixRuleAdd(rws,rr);
+                    if((rwl >= guessWordLenMin) && (bScr+rr->score < scores[meGUESS_MAX-1]) &&
+                       ((rScr = wordGuessCalcScore(sword,slen,bword,rwl,0)) < scores[meGUESS_MAX-1]))
+                        wordGuessAddToList(bword,rwl,rScr,words,scores);
+                    if(((srf == 0) && (bScr+rr->rule < scores[meGUESS_MAX-1]) &&
+                        (((rScr = rwl - suffixRmvLenMax) < 1) ||
+                         ((rScr = wordGuessCalcScore(sword,(rScr < slen) ? rScr:slen,bword,rScr,1)) < scores[meGUESS_MAX-1]))) ||
+                       ((prf == 0) && (meRuleFlags[ii] & RULE_SUBR_USEP) && rr->subRuleLen))
+                        wordGuessAddAffixRulesToList(sword,slen,bword,rwl,wfp,wfc,rr->subRule,rr->subRuleLen,words,scores,rScr,prf,
+                                                     ((srf == 0) ? 1:3)|(meRuleFlags[ii] & RULE_MIXABLE));
+                    if((prf == 0) && (meRuleFlags[ii] & RULE_MIXABLE))
+                    {
+                        /* don't allow any suffix rule to be added, prefix only */
+                        wordGuessAddAffixRulesToList(sword,slen,bword,rwl,wfp,wfc,wfp,wfc,words,scores,rScr,prf,(1|RULE_SUFFIX|RULE_MIXABLE));
+                    }
+                    wordSuffixRuleRemove(rws,rr);
+                }
+                rr = rr->next;
+            }
+        }
+    }
 }
 
 static int
@@ -2187,9 +2202,9 @@ wordGuessGetList(meUByte *word, int olen, meWordBuf *words)
     meDictWord *ent;
     meUByte cc, *wb, *ww, wbuff[meWORDBUF_SIZE_MAX];
     meInt ii, off;
-    int scores[meGUESS_MAX], curScr, bsufScr;
-    int wlen, mlen;
-    
+    int scores[meGUESS_MAX];
+    int wlen;
+
 #ifdef __LOG_FILE
     fp = fopen("log","w+");
     cc = word[olen];
@@ -2203,12 +2218,11 @@ wordGuessGetList(meUByte *word, int olen, meWordBuf *words)
         scores[ii] = maxScore;
         words[ii][0] = '\0';
     } while(--ii >= 0);
-    mlen = (olen < 3) ? olen:3;
     wb = wbuff+meAFFIXBUF_SIZE_MAX;
     /* check for two words with a missing ' ' or '-' */
     if((wlen=olen-1) > 0)
     {
-        /* wordCheck only preserves wlen chars, chars before & after (including terminator) can be trashed! 
+        /* wordCheck only preserves wlen chars, chars before & after (including terminator) can be trashed!
          * so we must use two different buffers to do this */
         meUByte *sw, swb[meWORDBUF_SIZE_MAX];
         sw = swb+meAFFIXBUF_SIZE_MAX+meWORD_SIZE_MAX;
@@ -2240,7 +2254,10 @@ wordGuessGetList(meUByte *word, int olen, meWordBuf *words)
         while((cc = *ww) != '\0')
             *ww++ = toLatinLower(cc);
     }
-    bsufScr = wordGuessScoreSuffixRules(word,olen);
+    guessWordLenMin = maxScore/22;
+    guessWordLenMax = olen + guessWordLenMin;
+    guessWordLenMin = (guessWordLenMin >= olen) ? 1:olen-guessWordLenMin;
+    wordGuessScoreSuffixRules(word,olen);
     dict = dictHead;
     while(dict != NULL)
     {
@@ -2251,10 +2268,10 @@ wordGuessGetList(meUByte *word, int olen, meWordBuf *words)
             {
                 ent = (meDictWord *) mePtrOffset(dict->table,off);
                 /* Check this is not an error or no-suggest word and has not been erased */
-                if(meWordIsSuggestable(ent) && ((ww=meWordGetWord(ent))[0] != '\0'))
+                if(meWordIsSuggestable(ent) && ((ww=meWordGetWord(ent))[0] != '\0') &&
+                   ((wlen = meWordGetWordLen(ent)) <= guessWordLenMax))
                 {
-                    int noflags;
-                    wlen = meWordGetWordLen(ent);
+                    int wfl, wScr;
 #ifdef __LOG_FILE
                     {
                         meUByte ccc=ww[wlen];
@@ -2263,90 +2280,18 @@ wordGuessGetList(meUByte *word, int olen, meWordBuf *words)
                         ww[wlen]=ccc;
                     }
 #endif
-                    if((noflags=meWordGetFlagLen(ent)) > 0)
-                    {
-                        meUByte *flags;
-                        meSpellRule *rr;
-                        int jj, fi, fr, nlen;
-                        
-                        memcpy(wb,ww,wlen);
-                        wb[wlen] = '\0';
-                        flags = meWordGetFlag(ent);
-                        if((jj = wlen - longestSuffixRemove) < mlen)
-                            jj = (wlen < mlen) ? wlen:mlen;
-                        else if(jj > olen)
-                            jj = olen;
-                        curScr = wordGuessCalcScore(word,jj,wb,jj,1);
-                        if(curScr < scores[meGUESS_MAX-1])
-                        {
-                            /* try all suffixes on the word, wordGuessAddSuffixRulesToList returns
-                             * true if the user aborted */
-                            if(((curScr+bsufScr) < scores[meGUESS_MAX-1]) &&
-                               wordGuessAddSuffixRulesToList(word,olen,wb,wlen,flags,noflags,words,
-                                                             scores,curScr,RULE_SUFFIX))
-                                return -1;
-                            if((curScr = wordGuessCalcScore(word,olen,wb,wlen,0)) < scores[meGUESS_MAX-1])
-                                wordGuessAddToList(wb,wlen,curScr,words,scores);
-                            if(TTbreakTest(0))
-                                return -1;
-                        }
-                        /* try all the allowed prefixes */
-                        fi = noflags;
-                        while(--fi >= 0)
-                        {
-                            if((fr = flags[fi]) == SPELLRULE_SEP)
-                                noflags = fi;
-                            else if(meRuleFlags[(fr-=SPELLRULE_OFFST)] & RULE_PREFIX)
-                            {
-                                rr = meRuleTable[fr];
-                                while(rr != NULL)
-                                {
-                                    if((ww = wordApplyPrefixRule(wb,wlen,rr)) != NULL)
-                                    {
-                                        nlen = wlen+rr->changeLen;
-                                        if((jj = nlen - longestSuffixRemove) < mlen)
-                                            jj = (nlen < mlen) ? nlen:mlen;
-                                        else if(jj > olen)
-                                            jj = olen;
-                                        curScr = wordGuessCalcScore(word,jj,ww,jj,1);
-                                        if(curScr < scores[meGUESS_MAX-1])
-                                        {
-                                            if((jj = wordGuessCalcScore(word,olen,ww,nlen,0)) < scores[meGUESS_MAX-1])
-                                                wordGuessAddToList(ww,nlen,jj,words,scores);
-                                            if((curScr+bsufScr) <  scores[meGUESS_MAX-1])
-                                            {
-                                                /* try all suffixes on the prefix rule */ 
-                                                if(((jj=rr->subRuleLen) > 0) &&
-                                                   wordGuessAddSuffixRulesToList(word,olen,ww,nlen,rr->subRule,jj,
-                                                                                 words,scores,curScr,RULE_SUFFIX|RULE_MIXABLE))
-                                                    return -1;
-                                                /* try all suffixes on the word */ 
-                                                if(meRuleFlags[fr] & RULE_MIXABLE)
-                                                {
-                                                    int fs=fi;
-                                                    while((fs > 0) && (flags[fs-1] != SPELLRULE_SEP))
-                                                        fs--;
-                                                    if(wordGuessAddSuffixRulesToList(word,olen,ww,nlen,flags+fs,noflags-fs,
-                                                                                     words,scores,curScr,RULE_SUFFIX|RULE_MIXABLE))
-                                                        return -1;
-                                                }
-                                            }
-                                            if(TTbreakTest(0))
-                                                return -1;
-                                        }
-                                        wordPrefixRuleRemove(wb,rr);
-                                    }
-                                    rr = rr->next;
-                                }
-                            }
-                        }
-                    }
-                    else if((curScr = wordGuessCalcScore(word,olen,ww,wlen,0)) < scores[meGUESS_MAX-1])
+                    if((wlen >= guessWordLenMin) &&
+                       ((wScr = wordGuessCalcScore(word,olen,ww,wlen,0)) < scores[meGUESS_MAX-1]))
+                        wordGuessAddToList(ww,wlen,wScr,words,scores);
+                    if((wfl=meWordGetFlagLen(ent)) > 0)
                     {
                         memcpy(wb,ww,wlen);
-                        wb[wlen] = '\0';
-                        wordGuessAddToList(wb,wlen,curScr,words,scores);
+                        if((wScr = wlen - suffixRmvLenMax) >= 1)
+                            wScr = wordGuessCalcScore(word,(wScr < olen) ? wScr:olen,wb,wScr,1);
+                        wordGuessAddAffixRulesToList(word,olen,wb,wlen,meWordGetFlag(ent),wfl,meWordGetFlag(ent),wfl,words,scores,wScr,0,0);
                     }
+                    if(TTbreakTest(0))
+                        return -1;
                 }
                 off = meWordGetAddr(ent);
             }
@@ -2356,7 +2301,7 @@ wordGuessGetList(meUByte *word, int olen, meWordBuf *words)
     off=0;
     while((off<meGUESS_MAX) && (scores[off] < maxScore))
         off++;
-    
+
     cc = word[olen-1];
     if(isSpllExt(cc))
     {
@@ -2422,7 +2367,7 @@ static void
 spellWordToDisplayCharset(meUByte *dd, meUByte *ss)
 {
     meUByte cc;
-    
+
     cc = *ss++;
     cc = toDisplayCharset(cc);
     if((caseFlags & SPELL_CASE_FUPPER) || (caseFlags == (SPELL_CASE_FLOWER|SPELL_CASE_CUPPER)))
@@ -2444,10 +2389,10 @@ spellWord(int f, int n)
     meWordBuf wb;
     meUByte *wd=wb+meAFFIXBUF_SIZE_MAX;
     int len;
-    
+
     if(meSpellInitDictionaries() <= 0)
         return meABORT;
-    
+
     if(n & SPELLWORD_GET)
     {
         if(meGetString((meUByte *)"Enter word", MLNOSPACE,0,resultStr+1,meWORD_SIZE_MAX) <= 0)
@@ -2460,14 +2405,14 @@ spellWord(int f, int n)
         meUByte  cc, chkDbl, curDbl;
         meUShort soff, eoff;
         meWordBuf lword;
-        
+
         chkDbl = (n & SPELLWORD_DOUBLE);
         curDbl = 0;
         while((cwp->dotOffset > 0) && isAlphaNum(meLineGetChar(cwp->dotLine,cwp->dotOffset)))
             cwp->dotOffset--;
         for(;;)
         {
-            while(((cc = meLineGetChar(cwp->dotLine,cwp->dotOffset)) != '.') && 
+            while(((cc = meLineGetChar(cwp->dotLine,cwp->dotOffset)) != '.') &&
                   !isAlphaNum(cc))
             {
                 if(!isSpace(cc))
@@ -2508,7 +2453,7 @@ spellWord(int f, int n)
         meWindow *cwp=frameCur->windowCur;
         meUByte  cc;
         meUShort off, soff, eoff;
-        
+
         soff = off = cwp->dotOffset;
         for(;;soff--)
         {
@@ -2527,7 +2472,7 @@ spellWord(int f, int n)
                 soff++;
                 break;
             }
-            if(!isAlphaNum(cc) && 
+            if(!isAlphaNum(cc) &&
                ((soff == 0) || !isAlphaNum(meLineGetChar(cwp->dotLine,soff-1))))
                 break;
         }
@@ -2554,10 +2499,10 @@ spellWord(int f, int n)
         meDictAddWord  dwb;
         meDictionary  *dict;
         meDictWord    *dw=(meDictWord *) &dwb;
-        
+
         memcpy(meWordGetWord(dw),wd,len);
         meWordSetWordLen(dw,len);
-        
+
         if(meGetString((meUByte *)"Enter flags", MLNOSPACE,0,wd,meWORD_FLAG_MAX) <= 0)
             return meABORT;
         len = meStrlen(wd);
@@ -2577,7 +2522,7 @@ spellWord(int f, int n)
     if(n & SPELLWORD_DELETE)
     {
         meDictionary  *dict;
-        
+
         if(n & SPELLWORD_IGNORE)
             meDictionaryDeleteWord(dictIgnr,wd,len);
         else
@@ -2595,16 +2540,16 @@ spellWord(int f, int n)
     {
         meSpellRule  *rr;
         meUByte *nwd, *swd;
-        
+
         if(n & SPELLWORD_INFO)
         {
             /* dump all derivatives into the current buffer */
             int ii;
-            
+
             if(meModeTest(frameCur->windowCur->buffer->mode,MDVIEW))
                 /* don't allow character insert if in read only */
                 return (rdonly());
-            
+
             if(wordCheck(wd,len) > 0)
             {
                 lineInsertString(len,wd);
@@ -2630,8 +2575,8 @@ spellWord(int f, int n)
                             meSpellRule  *ssr, *psr;
                             meUByte *sswd, *pwd;
                             int ssi, psi, sslen, jj;
-                            
-                            
+
+
                             if((ssi=rr->subRuleLen) > 0)
                             {
                                 ssi--;
@@ -2883,7 +2828,7 @@ spellWord(int f, int n)
         meWordBuf words[meGUESS_MAX];
         meUByte *ss, *dd;
         int nw, cw, ll, ii;
-        
+
         if((nw = wordGuessGetList(wd,len,words)) < 0)
             return meABORT;
         dd = (meUByte *) resultStr;
@@ -2929,7 +2874,7 @@ findWordsInit(meUByte *mask)
     }
     if((rr=meSpellInitDictionaries()) <= 0)
         return rr;
-    
+
     sfwWrd = NULL;
     sfwDct = dictHead;
     sfwRp1 = NULL;
@@ -2954,7 +2899,7 @@ findWordsNext(void)
     meUByte *ww, *wp, *wFp, *wRs1, *wRs2, *wRs3;
     meInt off, wl, wRl1, wRl2, wRf1, wRf2, wRf3;
     meUByte wFl0, wFl1, wFl2;
-    
+
     if(sfwMsk == NULL)
         return abortm;
     caseFlags = SPELL_CASE_FLOWER|SPELL_CASE_CLOWER;
@@ -2965,7 +2910,7 @@ findWordsNext(void)
         memcpy(wp,meWordGetWord(sfwWrd),wl);
         wp[wl] = '\0';
         if(sfwRp1 == NULL)
-            goto sfwJumpBase; 
+            goto sfwJumpBase;
         wFp = meWordGetFlag(sfwWrd);
         wFl0 = sfwRp1->rule;
         wRf1 = wFp[wFl0]-SPELLRULE_OFFST;
@@ -3047,7 +2992,7 @@ sfwJumpBase:
                             {
                                 if(meRuleFlags[wRf1] & RULE_PREFIX)
                                 {
-                                    while(sfwRp1 != NULL)
+                                    do
                                     {
                                         if((wRs1 = wordApplyPrefixRule(wp,wl,sfwRp1)) != NULL)
                                         {
@@ -3118,13 +3063,12 @@ sfwJumpP1bsBaseS1p1S2s1:
                                             }
                                             wordPrefixRuleRemove(wp,sfwRp1);
                                         }
-                                        sfwRp1 = sfwRp1->next;
-                                    }
-                                    
+                                    } while((sfwRp1 = sfwRp1->next) != NULL);
+
                                 }
                                 else
                                 {
-                                    while(sfwRp1 != NULL)
+                                    do
                                     {
                                         if((wRs1 = wordApplySuffixRule(wp,wl,sfwRp1)) != NULL)
                                         {
@@ -3301,8 +3245,7 @@ sfwJumpP1s2BaseS1bsS2s1:
                                             }
                                             wordSuffixRuleRemove(wRs1,sfwRp1);
                                         }
-                                        sfwRp1 = sfwRp1->next;
-                                    }
+                                    } while((sfwRp1 = sfwRp1->next) != NULL);
                                 }
                             }
                         } while(wFl0 > 0);
