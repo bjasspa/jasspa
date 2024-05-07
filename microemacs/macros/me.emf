@@ -74,7 +74,7 @@ define-macro-file spellaut auto-spell auto-spell-menu
 define-macro-file hkinfo info info-on info-goto-link
 define-macro-file charsutl change-buffer-charset
 define-macro-file pagefile page-file page-bfile
-define-macro-file calc calc-op calc calc-insert
+define-macro-file calc calc-op calc insert-calc
 define-macro-file zfile find-zfile zfile-setup
 define-macro-file gentags generate-tags-file
 define-macro-file dmf display-matching-fence
@@ -121,7 +121,8 @@ set-variable #l0 &reg &spr "/history/%s/fence" %platform "1"
 4 global-bind-key prefix                 "C-c"
 0x1 global-bind-key spell-word           "esc $"
 global-bind-key frame-handle             "C-x 5"
-global-bind-key find-zfile               "C-x 7"
+global-bind-key find-zfile               "C-x 6"
+9 global-bind-key find-file              "C-x 7"
 global-bind-key set-position             "C-c C-a"
 global-bind-key goto-position            "C-c a"
 global-bind-key grep                     "C-c g"

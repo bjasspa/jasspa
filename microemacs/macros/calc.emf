@@ -364,6 +364,6 @@ define-macro calc
 !emacro
 set-variable .calc.ops " ~ ! * / % + - << >> < > <= >= == != & ^ | && || "
 set-variable .calc.opf " 1 17 2 18 34 3 19 4 20 5 21 37 53 6 22 7 8 9 10 11 "
-define-macro calc-insert
+define-macro insert-calc
   &bor 2 @# calc @1
 !emacro
