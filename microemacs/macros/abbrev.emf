@@ -91,18 +91,16 @@ define-macro expand-abbrev-handle
 ; expand-iso-accents routines
 
 define-macro expand-iso-accents
-  !if &not &set #l0 &lfind "|+-|12|14|34|`a|^a|'a|\"a|~a|.a|ae|,c|co|`e|^e|'e|\"e|`i|^i|'i|\"i|'d|~n|oe|`o|^o|'o|\"o|~o|/:|/o|rg|sz|tm|`u|^u|'u|\"u|'y|'t|\"y|`A|^A|'A|\"A|~A|.A|AE|,C|`E|^E|'E|\"E|`I|^I|'I|\"I|'D|~N|OE|`O|^O|'O|\"O|~O|/*|/O|`U|^U|'U|\"U|'Y|'T|\"Y|^Z|^!|^?|" &mid @wl &sub $window-col 2 2
+  !if &not &set #l0 &lfind "|+-|12|14|34|`a|^a|'a|\"a|~a|.a|ae|,c|co|`e|^e|'e|\"e|`i|^i|'i|\"i|'d|~n|oe|`o|^o|'o|\"o|~o|/:|/o|rg|sz|tm|`u|^u|'u|\"u|'y|'t|\"y|`A|^A|'A|\"A|~A|.A|AE|,C|`E|^E|'E|\"E|`I|^I|'I|\"I|'D|~N|OE|`O|^O|'O|\"O|~O|/*|/O|`U|^U|'U|\"U|'Y|'T|\"Y|^Z|^!|^?|<<|>>|" &set #l1 &mid @wl &sub $window-col 2 2
+    ml-write &spr "[Error: Unrecognised ISO accent - %s]" #l1
+    !abort
+  !elif &not &equ 3 &lget &set #l1 &uni &cat 0x0 &lget "|b1|bd|bc|be|e0|e2|e1|e4|e3|e5|e6|e7|a9|e8|ea|e9|eb|ec|ee|ed|ef|f0|f1|153|f2|f4|f3|f6|f5|f7|f8|ae|df|2122|f9|fb|fa|fc|fd|fe|ff|c0|c2|c1|c4|c3|c5|c6|c7|c8|ca|c9|cb|cc|ce|cd|cf|d0|d1|152|d2|d4|d3|d6|d5|d7|d8|d9|db|da|dc|dd|de|178|17e|a1|bf|ab|bb|" #l0 1
+    ml-write &spr "[Error: ISO accent not supported by current display charset - U+%04X]" &lget #l1 2
     !abort
   !endif
   backward-delete-char
   backward-delete-char
-  set-variable #l0 &lget "|±|½|¼|¾|à|â|á|ä|ã|å|æ|ç|©|è|ê|é|ë|ì|î|í|ï|ð|ñ|œ|ò|ô|ó|ö|õ|÷|ø|®|ß|™|ù|û|ú|ü|ý|þ|ÿ|À|Â|Á|Ä|Ã|Å|Æ|Ç|È|Ê|É|Ë|Ì|Î|Í|Ï|Ð|Ñ|Œ|Ò|Ô|Ó|Ö|Õ|×|Ø|Ù|Û|Ú|Ü|Ý|Þ|Ÿ|ž|¡|¿|" #l0
-  0 set-char-mask "L"
-  !if &set #l1 &sin #l0 $result
-    0 set-char-mask "U"
-    set-variable #l0 &mid $result #l1 1
-  !endif
-  insert-string #l0
+  insert-string &lget #l1 3
 !emacro
 
 define-macro iso-accents-mode

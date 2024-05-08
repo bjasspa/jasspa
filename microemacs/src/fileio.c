@@ -184,8 +184,7 @@ meUByte charIntrnlDsplyTbl[256] = {
 };
 meUShort charToUnicode[128] = { 0 };
 meUByte isWordMask=CHRMSK_DEFWORDMSK;
-/* TODO UL flags should be DI (Display & Internal) */
-meUByte charMaskFlags[]="luhs1234dpPwaAMLUkc";
+meUByte charMaskFlags[]="luhs1234dpPwaAMIDkc";
 #endif
 
 meUByte *charKeyboardMap=NULL;

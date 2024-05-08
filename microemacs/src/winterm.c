@@ -1117,7 +1117,7 @@ WinSpecialChar(HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol
         LineTo(hdc, x + cm->sizeX, y + cm->sizeY - 2);
         break;
         
-    case 0x05:          /* checkbox center not selected */
+    case 0x05:          /* checkbox center selected */
         {
             HBRUSH obrush;
             HBRUSH fbrush;

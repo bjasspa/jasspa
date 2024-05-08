@@ -2955,7 +2955,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             else if(cc < 128)
                 sprintf((char *) evalResult,"\xa0" "3\xa0" "0x%06x\xa0%c\xa0" "1\xa0%c\xa0",(int) cc,cc,cc);
             else if((ii = charToUnicode[cc-128]) == 0)
-                sprintf((char *) evalResult,"|1|0x000000|%c|3|\xef\xbf\xbd|",cc);
+                sprintf((char *) evalResult,"|2|0x000000|%c|3|\xef\xbf\xbd|",cc);
             else
             {
                 varVal = evalResult + sprintf((char *) evalResult,"|3|0x%06x|%c|",ii,cc);
@@ -2996,6 +2996,14 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
                 c1 = '\xa0';
                 bc = 3;
             }
+            else if(cc > 0xf4)
+            {
+                *varVal++ = cc;
+                c1 = '|';
+                bc = 0;
+                ii = 0;
+                cc = meCHAR_UNDEF;
+            }
             else
             {
                 *varVal++ = cc;
@@ -3024,6 +3032,12 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
                 {
                     cc = ii;
                     bc = 3;
+                }
+                else if(ii > 0x10ffff)
+                {
+                    bc = 0;
+                    ii = 0;
+                    cc = meCHAR_UNDEF;
                 }
                 else
                 {

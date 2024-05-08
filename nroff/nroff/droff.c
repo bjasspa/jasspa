@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.3 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <231205.1202>
+ *  Last Modified : <240508.1235>
  *
  *  Description
  *
@@ -1175,6 +1175,7 @@ usage (void)
     fprintf (stdout, "-p        : Plain Text (no control characters)\n");
     fprintf (stdout, "-q        : Quiet\n");
     fprintf (stdout, "-s        : Output to standard out.\n");
+    fprintf (stdout, "-w <len>  : Page width in chars.\n");
     exit (1);
 }
 
@@ -1285,7 +1286,7 @@ int main
     uInteractiveSet (0);                /* Disable interaction */
 
     while (1) {
-        c = getopt (argc, argv, "c:e:E:h?Il:o:sapq");
+        c = getopt (argc, argv, "c:e:E:h?Il:w:o:sapq");
         if (c == EOF)
             break;
         switch (c) {
@@ -1303,6 +1304,9 @@ int main
             break;
         case 'l':
             page_len = atoi (optarg);
+            break;
+        case 'w':
+            line_right = atoi (optarg);
             break;
         case 'q':
             quietMode = 1;

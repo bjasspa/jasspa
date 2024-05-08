@@ -8,8 +8,8 @@
 .so me.tni
 .TH &uni 4
 .XI &uni - "Unicode character information"
-.XI &uci - "Charater-set character unicode info"
-.XI &ufi - "UTF-8 character unicode info"
+.XI &uci - "Charater-set character Unicode info"
+.XI &ufi - "UTF-8 character Unicode info"
 .SH NAME
 &uni, &uci, &ufi \- Miscellaneous functions
 .SH SYNOPSIS
@@ -26,144 +26,67 @@
 .SH DESCRIPTION
 These three functions provide information about Unicode charater support within the current \*(mS character-set. 
 .IP "\fB&uni\fR \fIint\fR"
-Returns information regarding the unicode character \fIint\fR.
+Returns information regarding the Unicode character \fIint\fR.
 .IP "\fB&uci\fR \fIchar\fR"
 Returns information regarding the \*(mS character-set character \fIchar\fR.
 .IP "\fB&ufi\fR \fIstring\fR"
-Returns information regarding the UTF-8 encoded unicode character \fIstring\fR.
+Returns information regarding the UTF-8 encoded Unicode character \fIstring\fR.
 .PP
 All three functions return a \*(mS formatted list of information of the follow form:
 .IP
-"|\fIflags\fR|\fIunicode\fR|\fIchar\fR|\fIutf8-len\fR|\fIutf8\fR|"
+"|\fIflags\fR|\fIUnicode\fR|\fIchar\fR|\fIutf8-len\fR|\fIutf8\fR|"
 .PP
-Where \fIflags\fR is a bitwise flag
-
-TODO TODO
- 
-Converts the given character  \fIchar\fR to it's \s-1ASCII\s0  number which is
-returned. (see \fB&itoa\fR). Abbreviated command is \fB&ato\fR.
-.IP "\fB&itoa\fR \fInum\fR"
-Converts an integer \fInum\fR to it's ASCII character  representation which is
-returned to the caller. Abbreviated command is \fB&ito\fR.
-.IP "\fB&gmode\fR \fImode\fR"
-Returns \fC1\fR if the given mode  \fImode\fR is globally enabled. Allows
-macros to test the global mode state (see
-.Hl "Operating Modes" Modes - ).
-Abbreviated command is \fB&gmo\fR.
-.IP "\fB&bmode\fR \fImode\fR"
-Returns \fC1\fR if the mode  \fImode\fR is enabled in the current  buffer. Allows
-macros to test the state of the buffer mode. Abbreviated command is \fB&bmo\fR.
-.IP "\fB&nbmode\fR \fIbuffer\fR \fImode\fR"
-Returns  \fC1\fR if the mode  \fImode\fR  is enabled in buffer  \fIbuffer\fR .
-Allows  macros  to test the state of a buffer  mode  other  than the  current.
-Abbreviated command is \fB&nbm\fR.
-.IP "\fB&inword\fR \fIchar\fR"
-\fCTRUE\fR. If the given character \fIchar\fR is a 'word' character, see
-.Ht forward-word 2
-for a description of a 'word' character. Abbreviated command is \fB&inw\fR.
-.IP "\fB&indirect\fR \fIstr\fR"
-Evaluate  \fIstr\fR as a variable.  The  \fIstr\fR  argument is evaluated  and
-takes  the  resulting  string,  and then  uses it as a  variable  name. i.e. a
-variable  may  reference  another  variable  which  contains  the  data  to be
-referenced. Abbreviated command is \fB&ind\fR.
-.IP "\fB&exist\fR \fIstr\fR"
-Tests  for  the  existance  of  \fIstr\fR   which  may  be  a  buffer, variable  or  a
-command/macro  name,  returning  \fCTRUE\fR  if the  buffer, variable or command  does
-currently  exist. Note that when  testing for the  existence of a buffer the buffer name must be encased in ':'s, e.g.
-"\fC:*scratch*:\fR" to distinguish it from a check command/macro name. Abbreviated command is \fB&exi\fR.
+\fIflags\fR  is a bitwise flag where bit 1 indicates  which the given input was a valid Unicode  character,  see notes
+below and bit 2 indicates whether the input is supported in the current \*(mS display character-set.
+.PP
+\fIUnicode\fR is the hexadecimal value representing the input or zero if the input cannot be mapped to a valid Unicode
+character  (bit 1 of  \fIflags\fR  is clear).  The value is always 6 digits  long with a \fC0x\fP  hexadecimal  number
+prefix.
+.PP
+\fIchar\fR  is the \*(mS  display  character-set  equivalent  of the input or the  character  0x07 if the input is not
+supported (bit 2 of \fIflags\fR is clear).
+.PP
+In the case of \fB&ufi\fR, \fIutf8-len\fR is set to the length of \fIstring\fR parsed, this may be less than the total
+length of \fIstring\fP, otherwise  \fIutf8-len\fR is the string length of \fIutf8\fP. Note that if the input character
+is 0x00 (the Nul character) the \fIutf8\fP  string is "" (the empty string and 0 in length) but the  \fIutf8-len\fR is
+.PP
+\fIutf8\fR is the UTF-8  equivalent  of the input or the  character string 0xEF 0xBF 0xBD (U+FFFD - replacement  char)
+if the input to \fB&uni\fP or \fB&uci\fP cannot be mapped to a valid Unicode character.
 .SH EXAMPLE
-The \fB&exi\fR function is etremely useful in initializing, for example:
+The  following  macro code can be used to convert the UTF-8  encode  character  string at the current  location to the
+current display character set equivalent:
 .Me $emf-scheme
 .CS
-!if &not &exi %my-init
-    ; %my-init is not yet defined so this is the first call
-    set-variable %my-init 1
-    .
-    .
-.CE
-.Me $ehf-scheme
-Or in all the
-.Hl "file hooks" fileHooks 2
-a user defined extension is checked for and executed if defined:
-.Me $emf-scheme
-.CS
-define-macro fhook-c
-    .
-    .
-    ; execute user extensions if macro is defined
-    !if &exi my-fhook-c
-        my-fhook-c
-    !endif
-!emacro
-.CE
-.Me $ehf-scheme
-The \fB&ind\fR  function deserves more explanation.  \fB&ind\fR  evaluates its
-string  argument  \fIstr\fR, takes the resulting  string and then uses it as a
-variable name. For example, given the following code sequence:
-.Me $emf-scheme
-.CS
-; set up reference table
-
-set-variable  %one	"elephant"
-set-variable  %two	"giraffe"
-set-variable  %three	"donkey"
-
-set-variable  %index "%two"
-insert-string &ind %index
-.CE
-.Me $ehf-scheme
-the  string  "\fCgiraffe\fR"  would  have  been  inserted  at the point in the
-current buffer.
-.PP
-The  \fB&bmode\fR  invocation  allows a calling  macro to determine the buffer
-mode state (see
-.Hl "Operating Modes" Modes - ).
-Consider the following  example which is a macro to perform a case insensitive
-alphabetic sort using the
-.Ht sort-lines 2
-function.  \fBsort-list\fR  sorts  according  to the state of the
-.Ht exact 2m
-mode, hence the macro has to determine the buffer state in order to be able to
-do the sort.
-.Me $emf-scheme
-.CS
-define-macro sort-lines-ignore-case
-    set-variable #l0 &bmod exact
-    -1 buffer-mode "exact"
-    !if @?
-        @# sort-lines
-    !else
-        sort-lines
-    !endif
-    &cond #l0 1 -1 buffer-mode "exact"
-!emacro
-.CE
-.Me $ehf-scheme
-The \fB&inword\fR function is shown in the following example. In this case the
-mouse  is  positioned  over a word.  The  \fB&inword\fR  function  is  used to
-determine  if the  cursor is on a valid  word  character,  if so the cursor is
-placed at the start of the word.
-.Me $emf-scheme
-.CS
-define-macro mouse-control-drop-left
-    set-cursor-to-mouse
-    !if &inword @wc
-        backward-word
-        set-mark
-        forward-word
-    !else
-        ...
-    !endif
-    copy-region
-    set-cursor-to-mouse
-!emacro
+set-variable #l0 &ufi &mid @wl $window-col 4
+!if &not &band 1 &lget #l0 1
+  ml-write "Error: String at current location is not a valid UTF-8 char"
+!elif &not &band 2 &lget #l0 1
+  ml-write "Error: UTF-8 character not supported in current dsplay charset"
+!else
+  &lget #l0 4 forward-delete-char
+  insert-string &lget #l0 3
+!endif
 .CE 0
 .Me $ehf-scheme
+.SH NOTES
+In 2003 the Unicode character range was officially  restricted to 0x0000-0x10ffff  (see RFC 3629) which means that a 6
+digit  hexadecimal  number can be used to represent all possible Unicode  characters and the longest UTF-8 string is 4
+bytes (0xF4 0x8F 0xBF 0xBD is the highest  assigned  char which is for private use).  Currently  the highest  assigned
+non-private character is U+E01EF so 5 digits will cover all publicly used characters.
+.PP
+The mapping to and from the current \*(mS display character-set is configured by flag \fBc\fP of command
+.Ht set-char-mask 2 .
+.PP
+In \*(mS  character 0x07 is used to represent an unmappable  character, this is better than using a character like '?'
+which is in common use. If extended character rendering is being used (see bit \fB0x10000\fP of
+.Ht $system 5 )
+the character is drawn as a crossed diamond, an attempt to represent the Unicode replacement character.
 .SH "SEE ALSO"
 .na
-.Hl "Operating Modes" Modes - ,
 .Hl "Variable Functions" Functions - ,
-.Ht &sprintf 4 ,
+.Ht set-char-mask 2 ,
+.Ht change-buffer-charset 3 ,
+.Ht &lget 4 ,
 .Ht &equal 4 .
 .ad
 .FH

@@ -16,201 +16,192 @@ $system \- System configuration variable
 \fB$system\fR \fIbitmask\fR; Default is system dependent
 .ad
 .SH DESCRIPTION
-The \fB$system\fR is used to define and configure the \*(mS environment, it is
-a bit based flag where:-
+The \fB$system\fR is used to define and configure the \*(mS environment, it is a bit based flag where:-
 .IP \fB0x001\fR
-This bit is set if \*(mS is  running  in  Console  mode. On UNIX  systems  the
-default is to use X whenever  possible,  in which case this bit will be clear.
-If X is not used then a TERMCAP  base  interface  is used instead and this bit
-will be set (see  notes  below on how to set which  interface  to use). On all
-other systems this bit will be clear.
+This bit is set if \*(mS is running in Console  mode. On UNIX  systems the default is to use X whenever  possible,  in
+which case this bit will be clear. If X is not used then a TERMCAP base interface is used instead and this bit will be
+set (see notes below on how to set which interface to use). On all other systems this bit will be clear.
 .IP \fB0x002\fR
-If this bit is set then the  current  system  supports  definable  RGB  colors
-allowing any color to be created and used in a
+If this bit is set then the current system supports  definable RGB colors allowing any color to be created and used in
+a
 .Hl "color scheme" add-color-scheme 2 .
-This bit cannot be set, typically  Windows and UNIX X-Windows  systems support
-this. 
+This bit cannot be set, typically Windows and UNIX X-Windows systems support this. 
 .IP \fB0x004\fR
-If this bit is set then the  current  system  supports  ANSI colors (8 colors,
-black, red, green,  yellow, blue, magenta, cyan & white), bits 0x002 and 0x004
-are mutually exclusive. On UNIX systems if the TERMCAP interface is being used
-then  this bit can be  changed  to  (de)select  the used of color.  Many  unix
-terminals  do not support  color so this should be set  appropriately.  On all
-other  systems  this bit cannot be changed  and MS-DOS is  currently  the only
-other system to use ANSI colors.
+If this bit is set then the current  system  supports ANSI colors (8 colors, black, red, green, yellow, blue, magenta,
+cyan & white), bits 0x002 and 0x004 are  mutually  exclusive.  On UNIX systems if the TERMCAP  interface is being used
+then this bit can be changed to (de)select the used of color. Many unix  terminals do not support color so this should
+be set appropriately. On all other systems this bit cannot be changed and MS-DOS is currently the only other system to
+use ANSI colors.
 .IP \fB0x008\fR
-If this bit is set then the current  system  supports  Extended  ANSI  colors,
-brighter versions of the 8 ANSI colors doubling the number of colors available
-to 16. On UNIX  systems if the TERMCAP  interface  is being used then this bit
-can be  changed  to  (de)select  the used of bold  with  color to create  this
-extended  color set for  foreground  colors.  But many UNIX  terminals  do not
-support  this  use  of  color  with  the  bold  font  so  this  should  be set
-appropriately.  On all other  systems this bit cannot be changed and MS-DOS is
-currently the only other system to support this.
+If this bit is set then the current  system  supports  Extended  ANSI colors,  brighter  versions of the 8 ANSI colors
+doubling  the number of colors  available to 16. On UNIX systems if the TERMCAP  interface is being used then this bit
+can be changed to (de)select the used of bold with color to create this extended color set for foreground  colors. But
+many UNIX  terminals do not support this use of color with the bold font so this should be set  appropriately.  On all
+other systems this bit cannot be changed and MS-DOS is currently the only other system to support this.
 .IP \fB0x010\fR
-If  this  bit is set  then  the  current  system  supports  the  use of  fonts
-(bold, italic, light and underline).  Whether these fonts can be  successfully
-utilized  depends  upon the  platform and the system font being used, for UNIX
-TERMCAP systems it will also depend on the terminal being used. This option is
-not supported on MS_DOS.
+If this bit is set then the current  system  supports the use of fonts (bold,  italic, light and  underline).  Whether
+these fonts can be  successfully  utilized  depends upon the platform and the system font being used, for UNIX TERMCAP
+systems it will also depend on the terminal being used. This option is not supported on MS_DOS.
 .IP \fB0x020\fR
-When this bit is set the  cursor is always  shown in OSD (main menu)  dialogs,
-this helps to improve navigation of dialogs ion systems with limited colors. 
+When this bit is set the  cursor is always  shown in OSD (main  menu)  dialogs,  this helps to improve  navigation  of
+dialogs ion systems with limited colors. 
 .IP \fB0x080\fR
-This  bit  is  set if the  current  system  is a UNIX  based  system  such  as
-\s-1LINUX\s0  or  \s-1HPUX\s0.  This bit cannot be altered,  its use is within
-macros.
+This bit is set if the current system is a UNIX based system such as  \s-1LINUX\s0 or \s-1HPUX\s0.  This bit cannot be
+altered, its use is within macros.
 .IP \fB0x100\fR
-This bit is set if the  current  system is a  Microsoft  based  system such as
-\s-1DOS\s0  or  \s-1Windows  '95\s0.  This bit cannot be  altered,  its use is
-within macros.
+This bit is set if the current system is a Microsoft  based system such as \s-1DOS\s0 or \s-1Windows  '95\s0. This bit
+cannot be altered, its use is within macros.
 .IP \fB0x200\fR
-If this bit is set then the  current  system  uses the concept of drives (i.e.
-\fCc:/\fR  on  \s-1DOS\s0  systems).  This bit cannot be  altered,  its use is
-within macros.
+If this bit is set then the current system uses the concept of drives (i.e. \fCc:/\fR on \s-1DOS\s0 systems). This bit
+cannot be altered, its use is within macros.
 .IP \fB0x400\fR
-If this bit is set then a \s-1DOS\s0 style \fC8.3\fR file naming system should
-be used (i.e.  "\fCBBBBBBBB.XXX\fR"),  otherwise an unlimited file name length
-is used. This effects the backup and auto-save file names  generated by \*(mS,
+If this bit is set then a \s-1DOS\s0  style  \fC8.3\fR file naming system should be used (i.e.  "\fCBBBBBBBB.XXX\fR"),
+otherwise an unlimited file name length is used. This effects the backup and auto-save file names  generated by \*(mS,
 the bit can be altered on systems that support unlimited file name length.
 .IP \fB0x800\fR
 If this bit is set then the current system supports and uses
 .Ht ipipe-shell-command 2
-when  required. For systems such as \s-1DOS\s0  which cannot  support  ipipes,
-this bit will be clear and cannot be  altered.  For  systems  which do support
-ipipes, this bit can be cleared to disable their use.
+when  required.  For systems  such as  \s-1DOS\s0  which cannot  support  ipipes, this bit will be clear and cannot be
+altered. For systems which do support ipipes, this bit can be cleared to disable their use.
 .IP \fB0x1000\fR
 If this bit set, the then execution of the
 .Ht tab 2
-command (bound to \fCtab\fR)  always checks and adjusts the indentation of the
-current line when the current buffer has an
+command (bound to \fCtab\fR) always checks and adjusts the indentation of the current line when the current buffer has
+an
 .Hl indentation indent 2
-method. If the bit is clear then the \fCtab\fR may only checks the indentation
-when  the  cursor  is  in  column  zero   depending  on  the  setting  of  bit
-\fB0x200000\fR.
+method. If the bit is clear then the  \fCtab\fR  may only  checks the  indentation  when the cursor is in column  zero
+depending on the setting of bit \fB0x200000\fR.
 .IP \fB0x2000\fR
-If this bit is set the main menu Alt hot-key  bindings are enabled. These are
-dynamic  bindings  automatically  generated from the main menu.  Typically the
-first item in the main menu is "\fCFile\fR"  with a hot key of '\fBF\fR', with
-this bit set '\fCA-f\fR'  will open this menu item. Note that global and local
-key bindings override these. Also see bit \fB0x4000\fR.
+If this bit is set the main menu Alt hot-key bindings are enabled. These are dynamic bindings automatically  generated
+from the main menu.  Typically the first item in the main menu is "\fCFile\fR"  with a hot key of '\fBF\fR', with this
+bit set  '\fCA-f\fR'  will open this menu item. Note that global and local key bindings  override  these. Also see bit
+\fB0x4000\fR.
 .IP \fB0x4000\fR
 If this bit is set the Alt key acts as a
 .Hl "prefix 1" prefix 2
-modifier key. By default  '\fCA-n\fR'  is not bound, with this bit set the key
-is inferred to '\fCesc n\fR' which is bound to  \fBforward-paragraph\fR.  Note
-that global,  local and menu  hot-key  bindings  override  these. Also see bit
+modifier  key. By default  '\fCA-n\fR'  is not bound, with this bit set the key is inferred to '\fCesc  n\fR' which is
+bound to  \fBforward-paragraph\fR.  Note that global,  local and menu hot-key  bindings  override  these. Also see bit
 0x2000.
 .IP \fB0x8000\fR
 If this bit is set the
 .Hl undo undo 2
 history is kept after a save allowing the
 .Ht undo 2
-command to back-up  changes  beyond the last save. When clear the undo history
-is discarded after the buffer is saved.
+command to back-up changes beyond the last save. When clear the undo history is discarded after the buffer is saved.
 .IP \fB0x10000\fR
-Enable box character  rendering  fix, supported on Win32 and XTerm  interfaces
-only.  Windows  ANSI fonts and many XTerm \*(aF fonts do not have well  formed
-box characters which are used by
+Enable box character  rendering fix, supported on Win32 and XTerm  interfaces  only. Windows ANSI fonts and many XTerm
+\*(aF fonts do not have well formed box characters which are used by
 .Ht osd 2
-and other  commands  to create a better  looking  interface.  When this bit is
-enabled \*(mS traps the  printing of  characters  with an ASCII value of less
-than  32  and  renders  them  directly.  Following  is a  table  of  supported
-characters,  other  characters  in the range of  \fC0x00\fR to \fC0x1f\fR  not
-listed are rendered as a space:
+and other  commands  to create a better  looking  interface.  When this bit is enabled  \*(mS  traps the  printing  of
+characters  with an  ASCII  value  of less  than 32 and  renders  them  directly.  Following  is a table of  supported
+characters, other characters in the range of \fC0x00\fR to \fC0x1f\fR not listed are rendered as a space:
 .RS
 .RS
+.IP \fC0x01\fR
+Special Character; Small encoded Unicode char ([u]) 
+.IP \fC0x02\fR
+Special Character; Large encoded Unicode char ([U]) 
+.IP \fC0x03\fR
+Window Character; Checkbox left side ([) 
+.IP \fC0x04\fR
+Window Character; Checkbox centre not selected ( ) 
+.IP \fC0x05\fR
+Window Character; Checkbox centre selected (X) 
+.IP \fC0x06\fR
+Window Character; Checkbox right side (]) 
+.IP \fC0x07\fR
+Special Character; Unsupported/unmappable char (<+>)
 .IP \fC0x08\fR
-Special Character; Backspace 
+Special Character; Visible space (.) 
 .IP \fC0x09\fR
-Special Character; Tab 
+Special Character; Visible tab (->) 
+.IP \fC0x0a\fR
+Special Character; Visible newline (<-|) 
 .IP \fC0x0b\fR
-Box Character; Bottom right
+Box Character; Bottom right (_|)
 .IP \fC0x0c\fR
-Box Character; Top right
+Box Character; Top right (-|)
 .IP \fC0x0d\fR
-Box Character; Top left
+Box Character; Top left (|-)
 .IP \fC0x0e\fR
-Box Character; Bottom left
+Box Character; Bottom left (_|)
 .IP \fC0x0f\fR
-Box Character; Center cross
+Box Character; Center cross (+)
 .IP \fC0x10\fR
-Arrows; Right
+Arrows; Right (|>)
 .IP \fC0x11\fR
-Arrows; Left
+Arrows; Left (<|)
 .IP \fC0x12\fR
-Box Character; Horizontal line
+Box Character; Horizontal line (-)
+.IP \fC0x13\fR
+Window Character; Empty box ([ ])
+.IP \fC0x14\fR
+Window Character; Box with cross ([X])
 .IP \fC0x15\fR
-Box Character; Left Tee
+Box Character; Left Tee (|-)
 .IP \fC0x16\fR
-Box Character; Right Tee
+Box Character; Right Tee (-|)
 .IP \fC0x17\fR
-Box Character; Bottom Tee
+Box Character; Bottom Tee (_|_)
 .IP \fC0x18\fR
-Box Character; Top Tee
+Box Character; Top Tee (T)
 .IP \fC0x19\fR
-Box Character; Vertical Line
+Box Character; Vertical Line (|)
+.IP \fC0x1a\fR
+Window Character; Bottom right with resize (_|)
+.IP \fC0x1b\fR
+Window Character; Vertical scroll box (=)
+.IP \fC0x1d\fR
+Window Character; Horizontal scroll box (|||)
 .IP \fC0x1e\fR
-Arrows; Up
+Arrows; Up (/\e)
 .IP \fC0x1f\fR
-Arrows; Down
+Arrows; Down (\e/)
 .RE
 .RE
 .IP \fB0x20000\fR
-Enables the client  server,  default is disabled  (UNIX and Win32 NT or Win95+
-platforms  only).  When  enabled a hidden  "\fC*server*\fR"  buffer is created
-which    monitors    commands    written   to   the    server,    the   socket
-"\fC/tmp/mesrv\fR\fBuid\fR"  on  UNIX  systems  and  the  command  input  file
-"\fB$TEMP\fR\fC/me\fR\fB$MENAME\fR\fC.cmd\fR"  on Win32 systems.  Commands can
-be written out using the command
+Enables the client  server,  default is disabled (UNIX and Win32 NT or Win95+  platforms  only). When enabled a hidden
+"\fC*server*\fR"    buffer   is   created   which   monitors    commands   written   to   the   server,   the   socket
+"\fC/tmp/mesrv\fR\fBuid\fR"  on UNIX systems and the command input file  "\fB$TEMP\fR\fC/me\fR\fB$MENAME\fR\fC.cmd\fR"
+on Win32 systems. Commands can be written out using the command
 .Ht ipipe-write 2 
-while in the  "*server*"  buffer, the command is written to the same socket on
-UNIX    systems   and   to   the    response    file   and    response    file
-"\fB$TEMP\fR\fC/me\fR\fB$MENAME\fR\fC.rsp\fR"    on   Win32    systems.   This
-functionality is used by the \fB-m\fR and \fB-o\fR
+while in the "*server*" buffer, the command is written to the same socket on UNIX systems and to the response file and
+response  file  "\fB$TEMP\fR\fC/me\fR\fB$MENAME\fR\fC.rsp\fR"  on Win32  systems.  This  functionality  is used by the
+\fB-m\fR and \fB-o\fR
 .Hl "command-line" me 1
 options.  
 .IP \fB0x40000\fR
-Enables the capture of the Alt space key ("\fCA-space\fR"), default is enabled
-(Win32 platform only). In the Windows environment the Alt Space key is used to
-activate the main  window's pull down menu at the top left. if this bit is set
-\*(mS  captures  this key and executes it as normal,  thereby  disabling  this
-standard windows binding.
+Enables the capture of the Alt space key  ("\fCA-space\fR"),  default is enabled (Win32 platform only). In the Windows
+environment the Alt Space key is used to activate the main window's pull down menu at the top left. if this bit is set
+\*(mS captures this key and executes it as normal, thereby disabling this standard windows binding.
 .IP \fB0x80000\fR
-Enables the drawing of visible white  spaces, i.e. space, tab and new-line
-characters.  When disabled  (default) white  spaces are drawn using spaces
-('\fC \fR') which means the user cannot  distinguish  between a tab and spaces
-or determine the last  character of the line by merely looking at the display.
-When enabled \*(mS uses visible  characters to draw the white  spaces, the
-characters used are set with the variable
+Enables the drawing of visible white spaces, i.e. space, tab and new-line  characters.  When disabled  (default) white
+spaces  are drawn  using  spaces  ('\fC \fR')  which  means the user  cannot  distinguish  between a tab and spaces or
+determine the last character of the line by merely looking at the display. When enabled \*(mS uses visible  characters
+to draw the white spaces, the characters used are set with the variable
 .Ht $window-chars 5 .
 .IP \fB0x100000\fR
-Enables hiding \*(mS generated  backup files. On Windows and Dos platforms the
-Hidden  file  attribute  is used to hide the file,  whereas on UNIX the backup
-file name is prepended with a '\fC.\fR'.
+Enables  hiding \*(mS  generated  backup files. On Windows and Dos platforms the Hidden file attribute is used to hide
+the file, whereas on UNIX the backup file name is prepended with a '\fC.\fR'.
 .IP \fB0x200000\fR
 If this bit set, the then execution of the
 .Ht tab 2
-command (bound to \fCtab\fR) checks and adjusts the indentation of the current
-line when the cursor is in column zero and current buffer has an
+command (bound to \fCtab\fR)  checks and adjusts the indentation of the current line when the cursor is in column zero
+and current buffer has an
 .Hl indentation indent 2
-method. The setting of this bit has no effect if bit  \fB0x1000\fR  is set. If
-this and bit  \fB0x1000\fR  are clear  then the  \fCtab\fR  will not check the
-indentation.
+method. The setting of this bit has no effect if bit  \fB0x1000\fR is set. If this and bit \fB0x1000\fR are clear then
+the \fCtab\fR will not check the indentation.
 .IP \fB0x400000\fR
-When this bit is set the external clipboard (Windows & XTerm  platforms) will
-never be set to empty, if the current  yank buffer is the empty string the cut
-buffer will be set to a space (i.e. " "). This feature has been added to avoid
+When this bit is set the external  clipboard  (Windows & XTerm  platforms)  will never be set to empty, if the current
+yank buffer is the empty string the cut buffer will be set to a space (i.e. " "). This feature has been added to avoid
 problems with other software (e.g.
 .Hr exceed 1
 which can crash if given an empty cut buffer).
 .IP \fB0x800000\fR
-When  this  bit is set  all use of the  external  clipboard  (Windows  & XTerm
-platforms) is disabled,  this means that \*(mS will not attempt to retrieve or
-set the content of the system clipboard.
+When this bit is set all use of the external  clipboard (Windows & XTerm platforms) is disabled, this means that \*(mS
+will not attempt to retrieve or set the content of the system clipboard.
 .IP \fB0x1000000\fR
-When this bit is set the  \fC-p\fR or \fC-P\fR  option was used on the command
-line (see 
+When this bit is set the \fC-p\fR or \fC-P\fR option was used on the command line (see 
 .Ht me 1 ).
 This bit can be used by macros to determine how to function, see
 .Ht filetype 3f 

@@ -1089,7 +1089,7 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
                   x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
         break;
         
-    case 0x05:          /* checkbox center not selected */
+    case 0x05:          /* checkbox center selected */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
                   x, y + mecm.fhdepth - mecm.fhwidth,
                   x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth);
