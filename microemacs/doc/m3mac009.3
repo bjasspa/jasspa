@@ -8,15 +8,15 @@
 .so me.tni
 .TH calc 3
 .XI calc - "Calculator"
-.XI calc-insert - "Calculator with answer insertion"
+.XI insert-calc - "Calculator with answer insertion"
 .XI calc-op - "Low level calculator command"
 .SH NAME
 .br
 .Me "|calc"
 calc \- Calculator
 .br
-.Me "|calc-insert"
-calc-insert \- Calculator with answer insertion
+.Me "|insert-calc"
+insert-calc \- Calculator with answer insertion
 .br
 .Me "|calc-op"
 calc-op \- Low level calculator command
@@ -26,7 +26,7 @@ calc-op \- Low level calculator command
 .B calc
 "\fIstring\fR"
 .br
-.B calc-insert
+.B insert-calc
 "\fIstring\fR"
 .br
 .B calc-op
@@ -106,7 +106,7 @@ Insert the answer into the current buffer at the current location.
 .PP
 When omitted the default argument is 1.
 .PP
-\fBcalc-insert\fP  is a simple macro for executing  \fBcalc\fR with flag 2 set of the numerical argument so the answer
+\fBinsert-calc\fP  is a simple macro for executing  \fBcalc\fR with flag 2 set of the numerical argument so the answer
 is inserted.
 .PP
 \fBcalc-op\fP  is the low-level  macro used by \fBcalc\fR to perform the  calculation, it is similar to executing calc

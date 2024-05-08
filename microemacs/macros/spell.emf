@@ -23,7 +23,7 @@
   set-variable .osd.spell-fndc  &pinc .osd.next 1
 !endif
 
-define-macro-file spellutl insert-word-list spell-add-word edit-dictionary ispell-convert ispell-check-list
+define-macro-file spellutl insert-word-list spell-add-word edit-dictionary ispell-convert spell-check-list spell-check-guess
 
 set-variable .spell.edit-word ""
 set-variable .spell.edit-worda ""

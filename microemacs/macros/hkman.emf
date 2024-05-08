@@ -104,11 +104,10 @@ set-variable .fhook-man.item-list-r1 "Sec \\1"
 define-macro aman
   !if &bmod "edit"
     set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-    !if &iseq #l0 "y"
-      save-buffer
-    !endif
+    !iif &iseq #l0 "y"  save-buffer
   !endif
-  pipe-shell-command &spr "soelim %s | tbl -TX | neqn | nroff -man | col -x" $buffer-fname
+  set-variable #l1 &con &les 140 &set #l1 &con &gre 70 &set #l1 &sub $window-width 10 70 #l1 140 #l1
+  pipe-shell-command &set #g1 &spr "soelim %s | tbl -TX | neqn | nroff -man -rLL=%dn | col -x" $buffer-fname #l1
   -1 buffer-mode "view"
   set-mark
   2 forward-line
@@ -231,7 +230,8 @@ define-macro man
       !endif
     !endif
   !endif
-  0 pipe-shell-command &spr "%s %s %s" %man-com #l1 #l0 &cat "*Man on " #l9
+  !iif &sub $MANWIDTH &set #l3 &con &les 140 &set #l3 &con &gre 70 $window-width 70 $window-width 140 #l3  set-variable $MANWIDTH #l3
+  0 pipe-shell-command &spr "%s -rIN=6n -rLL=140n %s %s" %man-com #l1 #l0 &cat "*Man on " #l9
   -1 buffer-mode "view"
   set-mark
   2 forward-line

@@ -7,9 +7,9 @@
 .Im MicroEmacs command|transposition
 .so me.tni
 .TH generate-hash 2
-.XI generate-hash - "Generate SHA256 or HMAC-SHA256 hash"
+.XI generate-hash - "Generate SHA1 or SHA256 hash or HMAC"
 .SH NAME
-generate-hash \- Generate SHA256 or HMAC-SHA256 hash
+generate-hash \- Generate SHA1 or SHA256 hash or HMAC
 .Me $a
 .SH SYNOPSIS
 .na
@@ -25,14 +25,17 @@ the
 .Ht $result 5
 variable is set to the resultant 64 byte string.
 .PP
-The numeric  argument  \fIn\fR is used to modify the default  behavior of the  command,  where the bits are defined as
+The numeric  argument  \fIn\fR is a bit based flag used to modify the default  behaviour of the  command,  where the bits are defined as
 follows:
-.IP \fB0x03\fR
-The  first 2 bits  are  used to set the  mode, if set to 1 (default) then the hash of the whole buffer as a file is calculated,
-if set to 0 the hash for the current region is calculated. If set to 2 or 3 then the user is  prompted  for the
-\fIdata\fR test string, as a hex-string if 3 or plain text if 2, and the hash is calculated for this.
+.IP \fB0x01\fR
+If bit 2 is clear this defines  whether the hash will be generated  for the current  region (if clear) or whole buffer
+(if set). If bit 2 is set then this bit  determines  whether the input  \fIdata\fR  is a hex-string  (if set) or plain
+text.
+.IP \fB0x02\fR
+When set the user is prompted  for the  \fIdata\fR,  in plain text or  hex-string  form (see bit 0x01) rather than the
+current region or buffer.
 .IP \fB0x04\fR
-When set a HMAC-SHA256 hash is calculated instead, the user will be prompted for the \fIkey\fR.
+When set a HMAC is calculated instead, the user will be prompted for the \fIkey\fR.
 .IP \fB0x08\fR
 When calculating a HMAC, setting this bit indicates the \fIkey\fR is given in the form of a hex-string.
 .IP \fB0x10\fR
@@ -47,7 +50,7 @@ To calculate the hash of a string use:
 .Me $ehf-scheme
 .RE
 .PP
-After executing the hash value will be stored in \fB$result\fR. To calculate a HMAC-SHA256 of a string use:
+After executing the SHA256 hash value will be stored in \fB$result\fR. To calculate a HMAC-SHA256 of a string use:
 .RS
 .Me $emf-scheme
 .CS
@@ -58,8 +61,8 @@ After executing the hash value will be stored in \fB$result\fR. To calculate a H
 .PP
 After executing \fB$result\fR will be set to \fC1804C1869D6DD76A9A8D00819E6F62E970D981F01FE805F927CF4E3BDF4AD95C\fR.
 .SH NOTES
-When using an argument of 0 the data must be a plain text string  which means it cannot  contain a byte of value 0. If
-the hash of binary data is required then create a temporary buffer, enable
+When using an argument of 2 the data must be a plain text string  which means it cannot  contain a byte of value 0. If
+the hash of binary data is required then set bit 1 and convert to a hex-string or create a temporary buffer, enable
 .Ht rbin 2m
 mode, insert the data as a hex string and then call  \fBgenerate-hash\fR  with no argument to  calculate  the buffer's
 hash.
@@ -68,11 +71,14 @@ When calculating the hash of a region, if
 .Ht binary 2m
 or
 .Ht rbin 2m
-modes are  enabled  then the whole of the  region's  first line is always  included  and the whole of the last line is
-included  if the  region's  end point  column is greater  than 0. If neither of these modes are enabled  then the line
-termination modes are taken into account but the
+modes are enabled then the whole of the region's  first line is always  included , as is the whole of the last line if
+the region's end point column is greater than 0. If neither of these modes are enabled then the
+.Ht cr 2m 
+and 
+.Ht lf 2m 
+line termination modes are taken into account, as is the
 .Ht ctrlz 2m 
-end of file mode isn't.  
+end of file mode.  
 .SH "SEE ALSO"
 .na
 .Ht $result 5 ,
@@ -82,7 +88,8 @@ end of file mode isn't.
 .Ht lf 2m ,
 .Ht ctrlz 2m ,
 .Ht buffer-mode 2 ,
-.Hr SHA256 2 ,
-.Hr HMAC-SHA256 2 .
+.Hr SHA1 3 ,
+.Hr SHA256 3 ,
+.Hr HMAC-SHA256 3 .
 .ad
 .FH
