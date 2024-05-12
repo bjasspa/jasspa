@@ -775,6 +775,7 @@ define-macro tex2nr
 !emacro
 
 define-macro-file hkman aman
+define-macro-file hkdman dman adman
 
 !if &sin "x" .fhook-nroff.setup
   ; only define the b & e hooks if time stamping is enabled

@@ -19,7 +19,7 @@ set-variable .change-font.cs-type  "220011113344222-"
 set-variable .change-font.cs-wftp  "|0||238||204||||161||162||||255||"
 !if &les @# 1
   ; if executed with an argument of 0 or less, define the charset names and return
-  set-variable .change-font.cs-name  "|Western Europe - Win CP1252|Western Europe - ISO-8859-1|Central Europe - Win CP1250|Central Europe - ISO-8859-2|Cyrillic - Windows CP1251|Cyrillic - ISO-8859-5|Cyrillic - DOS CP866|Cyrillic - KOI8-F|Greek - Windows CP1253|Greek - ISO-8859-7|Turkish - Windows CP1254|Turkish - ISO-8859-9|Western Europe - ISO-8859-15|Western Europe - Win Console CP850|US PC - DOS CP437|Plain Text|"
+  set-variable .change-font.cs-name  "|Western Europe - Win CP-1252|Western Europe - ISO-8859-1|Central Europe - Win CP-1250|Central Europe - ISO-8859-2|Cyrillic - Windows CP-1251|Cyrillic - ISO-8859-5|Cyrillic - DOS CP-866|Cyrillic - KOI8-F|Greek - Windows CP-1253|Greek - ISO-8859-7|Turkish - Windows CP-1254|Turkish - ISO-8859-9|Western Europe - ISO-8859-15|Western - Win Console CP-850|Western Europe - DOS CP-437|Plain Text|"
   !return
 !endif
 ; get the users display char set

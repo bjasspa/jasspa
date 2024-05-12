@@ -6,43 +6,39 @@
 .Id $Id: m3mac041.3,v 2.6 2009/08/29 17:13:59 jon Exp $
 .Im MicroEmacs command
 .so me.tni
-.TH charset-change 3
-.XI charset-change - "Convert buffer between two character sets"
-.XI charset-iso-to-user - "Convert buffer from ISO standard to user character set"
-.XI charset-user-to-iso - "Convert buffer from user to ISO standard character set"
+.TH change-buffer-charset 3
+.XI change-buffer-charset - "Convert buffer between two character sets"
 .SH NAME
-.Me "|charset-change"
-charset-change \- Convert buffer; between two character sets
-.br
-.Me "|charset-iso-to-user"
-charset-iso-to-user \- Convert buffer; ISO standard to user character set
-.br
-.Me "|charset-user-to-iso"
-charset-user-to-iso \- Convert buffer; user to ISO standard character set
+.Me "|change-buffer-charset"
+change-buffer-charset \- Convert buffer; between two character sets
 .Me $a
 .SH SYNOPSIS
 .na
-\fBcharset-change\fR
-.br
-\fBcharset-iso-to-user\fR
-.br
-\fBcharset-user-to-iso\fR
+\fBchange-buffer-charset\fR
 .ad
 .SH DESCRIPTION
-\fBcharset-change\fR  opens a dialog  allowing the user to select a \fBFrom\fR
-and  \fBTo\fR  character  set. If the  \fIConvert\fR  button is  selected  the
-current  buffer is  converted to the  destination  character  set. The command
-assumes that the current buffer is written in the \fBFrom\fR  character set,
-no attempt is made to verify this.
+\fBchange-buffer-charset\fR opens a dialog allowing the user to select a \fBFrom\fR and \fBTo\fR character set. If the
+\fIConvert\fR button is selected the current buffer is converted to the destination character set. The command assumes
+that the current buffer is written in the \fBFrom\fR character set, no attempt is made to verify this.
 .PP
-\fBcharset-iso-to-user\fR  converts the current buffer, assumed to be in \*(sF
-font format, to the current user's character set (defined by
-.Ht user-setup 3 ).
-This process typically corrects any foreign language display problems.
+The command also provides the ability to convert to and from UTF-8. \*(mS cannot directly support Unicode, UTF-8 or 
+and multi-byte code pages, for various reasons (insert FAQ ref here) \*(mS only supports a single byte code page 
+restricting the user to working with 255 characters at any one time. However, \fBchange-buffer-charset\fR does provide 
+the user with the ability to load a UTF-8 file, losslessly convert the loaded file to the current code-page, edit the 
+file and then convert it back to UTF-8 before saving.
 .PP
-Conversely,  \fBcharset-user-to-iso\fR  converts  the current  buffer from the
-user's character set to \*(sF, this is typically used for the transfer of text
-files between different systems.
+The lossless conversion makes use of 2 special prefix characters, \fB0x01\fR and \fB0x02\fR, followed by 3 or 5
+hexadecimal digits respectively. It is important to understand that these 4 or 6 character strings are just that to
+the rest of the system, as a result operations like
+.Ht kill-rectangle 2
+could split the character strings and invalidate them in any later conversion process. This is not an ideal solution
+but better than losing the characters entirely. The prefix characters are rendered as \fC[u]\fR and \fC[U]\fR if
+extended character rendering is enabled, see bit \fB0x10000\fR of
+.Ht $system 5
+for more information.
+.PP
+\fBchange-buffer-charset\fR also allows unsupported characters to be changed to the unsupported character (\fB0x07\fR) 
+or the characters can be removed.
 .PP
 The current character set is configured using the
 .Ht user-setup 3
@@ -52,12 +48,12 @@ This in turn uses the command
 .Ht set-char-mask 2
 to create the low level character conversion tables.
 .SH NOTES
-\fBcharset-change\fR,  \fBcharset-iso-to-user\fR and \fBcharset-user-to-iso\fR
-are macros defined in \fClangutl.emf\fR.
+\fBchange-buffer-charset\fR is a macro defined in \fCcharsutl.emf\fR.
 .SH "SEE ALSO"
 .na
 .Ht user-setup 3 ,
 .Ht set-char-mask 2 ,
+.Ht &uni 4 ,
 .Hl "Locale Support" localeSupport 2 .
 .ad
 .FH

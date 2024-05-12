@@ -20,8 +20,8 @@ set-char-mask \- Set character word mask
 .ad
 .SH DESCRIPTION
 .B set-char-mask
-returns  or modifies  the  setting of \*(mS  internal  character  tables.  The
-argument \fIn\fR defines the action to be taken, as follows:-
+returns or modifies the setting of \*(mS internal character tables. The argument \fIn\fR defines the action to be
+taken, as follows:-
 .IP "\fB-1\fR"
 Removes characters from the given set.
 .IP "\fB0\fR"
@@ -30,152 +30,149 @@ Returns characters in the given set in
 .IP "\fB1\fR"
 Adds characters to the given set.
 .PP
-The first  argument  "\fIflags\fR"  determines  the required  character set as
-follows:-
+The first argument "\fIflags\fR" determines the required character set as follows:-
+.IP "\fBM\fR"
+Character set Map. Internally \*(mS uses a standard character set, or code page, for each language so that only one
+set of spelling rules and dictionaries are required, however the current display character set may be different so a
+mapping is required to enable \*(mS to convert between the two. By convention \*(mS uses the most appropriate Windows
+code page for its internal character set, e.g. Windows CP-1252 is the internal character set used for American,
+British, French, German, Spanish, Portuguese and Italian while CP-1253 is used for Greek. Windows code pages are used
+in preference to \*(iF character sets because they tend to have more characters available so have slightly better
+language coverage.
+.IP
+The "\fIvalue\fR" for the \fBM\fR flag must be a string containing pairs of characters, an internal character set
+character followed by its display character set equivalent. For example, if the current internal character set is
+CP-1252 and the display character set is CP-437 (a common DOS code page), then 'e' acute must be mapped from 0xe9 in
+CP-1252 to 0x82 in CP-437 so "\fIvalue\fR" should contain "\fC\\xe9\\x82\fR" as well as many other mappings. All
+characters in the display character set should be mapped if possible rather than just the letters most commonly used
+by the current language as this creates the best support for any text entered.
+.IP
+Some display character sets may not have all the characters available in the internal character set, for instance 
+DOS code page CP-437 does not have an upper-case 'E' grave. In this case an ordinary 'E' should be used as a sensible
+replacement, i.e. "`EE" (where `E is an 'E' grave) as this is the best that can be done given the limitations of the 
+current display character set.
+.IP
+This flag cannot be incrementally altered, any calls to alter this set leads to the resetting of all the character
+tables so the character mapping must be performed first and in a single call. No other set may be altered in the same
+call.
+.IP "\fBc\fR"
+Unicode character mapping. This flag is used to define a mapping between the upper half of the current display
+character set (the lower half is assumed to be \s-1ASCII\s0) and the Unicode character set. This flag cannot be
+incrementally altered, any call to set this mapping first resets the mapping table to \fC0\fR's so the mapping must be
+performed in a single call. No other set may be altered in the same call. The \fBvalue\fR must be a continuous
+string of up to 128 4-digit hexadecimal numbers, each value being either 0 for no mapping or the U+#### Unicode character
+value. The values must be given in ascending order with the first being for character 0x80 etc.
+.IP
+The mapping is used by \*(mS on Windows and UNIX XTerm systems to better map the system clipboard text to the current 
+display character set. For example XTerm typically uses an \*aF code page which does not support a euro currency 
+symbol, however CP-1252 based fonts can be installed and used correctly by \*(mS allowing support for the euro and 
+many other characters. This mapping then allows \*(mS to correctly handle these characters when copied between 
+different applications. The mapping table is also used by the
+.Ht &uni 4
+functions, 
+.Ht expand-iso-accents 3
+and  
+.Ht change-buffer-charset 3
+commands.
 .IP "\fBd\fR"
-Is Displayable. Characters in this set can be directly displayed to the screen
-(as a single  character)  when  occurring in a buffer. When a character not in
-this set is to be  displayed  it is performed  using more than one  character.
-Characters in the range 1-31 are displayed as "\fC^?\fR"  where \fC?\fR is the
-\s-1ASCII\s0  character plus 64, (e.g. 0x01 -> 65, i.e. "\fC^A\fR")  otherwise
-the character is displayed in the form "\fC\\xhh\fR" where \fChh\fR is the hex
-form of the  \s-1ASCII\s0  value. One notable  exception is the tab  character
-(0x09), by default this character is not displayable,  instead it is displayed
-as a sequence of one or more spaces up to the next tab stop.
+Is Displayable. Characters in this set can be directly displayed to the screen (as a single character) when occurring
+in a buffer. When a character not in this set is to be displayed it is performed using more than one character.
+Characters in the range 1-31 are displayed as "\fC^?\fR" where \fC?\fR is the \s-1ASCII\s0 character plus 64, (e.g.
+0x01 -> 65, i.e. "\fC^A\fR") otherwise the character is displayed in the form "\fC\\xhh\fR" where \fChh\fR is the hex
+form of the \s-1ASCII\s0 value. One notable exception is the tab character (0x09), by default this character is not
+displayable, instead it is displayed as a sequence of one or more spaces up to the next tab stop.
 .IP "\fBp\fR"
-Is  Pokable.  Similar to \fBd\fR,  characters  in this set can be poked to the
-screen when using
+Is Pokable. Similar to \fBd\fR, characters in this set can be poked to the screen when using
 .Ht screen-poke 2 .
-When found in a binary  file the  character  is  displayed  in the right hand
-column. Unlike \fBd\fR, any character  outside this set will be displayed as a
-single period \&'\fC.\fR', indicating that it cannot be displayed.
+When found in a binary file the character is displayed in the right hand column. Unlike \fBd\fR, any character outside
+this set will be displayed as a single period \&'\fC.\fR', indicating that it cannot be displayed.
 .IP "\fBP\fR"
-Is Printable.  Similar to \fBd\fR,  characters in this set may be printed as a
-single character when using
+Is Printable. Similar to \fBd\fR, characters in this set may be printed as a single character when using
 .Ht print-buffer 2
 or
 .Ht print-region 2 .
 Any character not in this set is printed in a similar fashion to \fBd\fR.
-.IP "\fBM\fR"
-Character  font Map.  Internally  \*(mS  uses  \*(sF to  configure  alphabetic
-classes  and the  spell-checker,  however  the  system  font being used by the
-native  platform  may not be the  same,  for  example  a small  'e'  acute  is
-character 0xe9 in \*(aF but character 0x82 in Windows OEM fonts. To change the
-characteristics  of the 'e' acute  character  (such as making it an alphabetic
-character), the \*(aF character  should always be used, but a correct  mapping
-of \*(aF to the display font (such as Windows OEM) must also be supplied.
-.IP
-Unlike  other  sets, this set cannot be  incrementally  altered,  any calls to
-alter  this set  leads to the  resetting  of all the  character  tables so the
-character  mapping must be performed  first and in a single call. No other set
-may be altered in the same call. When setting, the  "\fIvalue\fR"  must supply
-pairs  of  characters,  an  \*(aF  character   followed  by  its  system  font
-equivalent.
-.IP "\fBL\fR"
-\*(sF  character  map list.  This set  cannot  be  altered  using  this  flag,
-character  mappings  must be set up  using  flag  \fBM\fR.  The  order  of the
-characters in the returned  \fB$result\fR  string is the same as the order for
-flag \fBU\fR.
-.IP "\fBU\fR"
-User font  character  map list. This set  cannot be  altered  using this flag,
-character  mappings  must be set up  using  flag  \fBM\fR.  The  order  of the
-characters  in  \fB$result\fR  when returned is the same as the order for flag
-\fBL\fR.
+.IP "\fBI\fR"
+Internal character set map list. This set cannot be altered using this flag, character mappings must be set up using flag
+\fBM\fR. The order of the characters in the returned \fB$result\fR string is the same as the order for flag \fBD\fR.
+.IP "\fBD\fR"
+Display character set map list. This set cannot be altered using this flag, character mappings must be set up using
+flag \fBM\fR. The order of the characters in \fB$result\fR when returned is the same as the order for flag \fBI\fR.
 .IP "\fBa\fR"
-Is Alphabetic letter. Characters in this set are alphabetical characters, used
-by many \*(mS commands such as
+Is Alphabetic letter. Characters in this set are alphabetical characters, used by many \*(mS commands such as
 .Ht forward-word 2 .
-When setting, the  "\fIvalue\fR"  must specify pairs of \*(sF  characters,  an
-Upper-case  character  followed by its  lower-case  equivalent.  This  enables
-commands such as
+When setting, the "\fIvalue\fR" must specify pairs of internal character set chars, an upper-case character followed by its
+lower-case equivalent. This enables commands such as
 .Ht lower-case-word 2
-to operate  correctly  regardless  of the font and  language  being used. Some
-fonts may not have all the characters available for rendering, for instance PC
-Code page 437 does not have an  upper-case 'e' grave. In this case an ordinary
-\&'E' should be used as a sensible replacement, i.e. "E`e" (where `e is an 'e'
-grave).  However, this will lead to all upper-case 'E's to map to a lower-case
-\&'e' grave in a case  changing  operation,  this may be corrected by adding a
-further  mapping  of 'E' to 'e' to  over-ride  the  'e'  grave  mapping,  i.e.
-"E`eEe". This  technique does fail when changing the case more than once, when
-all lower case 'e' graves will be lost.
+to operate correctly regardless of the font and language being used. Some character sets may not have all the characters
+available for rendering, for instance PC DOS Code page 437 does not have an upper-case 'e' grave. In this case an ordinary
+\&'E' should be used as a sensible replacement, i.e. "E`e" (where `e is an 'e' grave). However, this will lead to all
+upper-case 'E's to map to a lower-case \&'e' grave in a case changing operation, this may be corrected by adding a
+further mapping of 'E' to 'e' to over-ride the 'e' grave mapping, i.e. "E`eEe". This technique does fail when changing
+the case more than once, when all lower case 'e' graves will be lost.
 .IP
-Note that the returned character list will pair all lower-case characters with
-their upper-case equivalent letters first.
+Note that the returned character list will pair all lower-case characters with their upper-case equivalent letters
+first.
 .IP "\fBl\fR"
-Is Lower case letter. This set cannot be altered using this flag,  alterations
-to the alphabetic set must be performed using flag \fBa\fR. Characters in this
-set are all the  lower-case  letters,  typically the  characters  '\fCa\fR' to
+Is Lower case letter. This set cannot be altered using this flag, alterations to the alphabetic set must be performed
+using flag \fBa\fR. Characters in this set are all the lower-case letters, typically the characters '\fCa\fR' to
 \&'\fCz\fR'. The order may not be the same as returned by flag \fBu\fR.
 .IP "\fBu\fR"
-Is Upper case letter. This set cannot be altered using this flag,  alterations
-to the alphabetic set must be performed using flag \fBa\fR. Characters in this
-set are all the  upper-case  letters,  typically the  characters  '\fCA\fR' to
+Is Upper case letter. This set cannot be altered using this flag, alterations to the alphabetic set must be performed
+using flag \fBa\fR. Characters in this set are all the upper-case letters, typically the characters '\fCA\fR' to
 \&'\fCZ\fR'. The order may not be the same as returned by
 .IP "\fBh\fR"
-Is  Hex-decimal  Digit. The set is rarely used as it is invariably  the digits
-\&'\fC0\fR'  to '\fC9\fR' and the letters  '\fCa\fR' to '\fCf\fR' in upper and
-lower case. It is often used in the setting of
+Is Hex-decimal Digit. The set is rarely used as it is invariably the digits \&'\fC0\fR' to '\fC9\fR' and the letters
+\&'\fCa\fR' to '\fCf\fR' in upper and lower case. It is often used in the setting of
 .Ht $buffer-mask 5 .
 .IP "\fBA\fR"
-Is  Alpha-numeric.  This set cannot be altered using this flag, alterations to
-the  alphabetic set must be performed  using flag \fBa\fR.  Characters in this
-set are either alphabetic characters or the digits 0-9.
+Is Alpha-numeric. This set cannot be altered using this flag, alterations to the alphabetic set must be performed
+using flag \fBa\fR. Characters in this set are either alphabetic characters or the digits 0-9.
 .IP "\fBs\fR"
-Is Spell extended word character. The characters in this set are recognized by
-the spell  checker as characters  which may be considered  part of a word, for
-example  the  period   \&'\fC.\fR's  in  e.g.  or  the  hyphen   '\fC-\fR'  in
-hyphenated-words.  Typically  this  set  contains  the  characters  '\fC'\fR',
-\&'\fC-\fR' and '\fC.\fR'.
+Is Spell extended word character. The characters in this set are recognized by the spell checker as characters which
+may be considered part of a word, for example the period \&'\fC.\fR's in e.g. or the hyphen '\fC-\fR' in
+hyphenated-words. Typically this set contains the characters '\fC'\fR', \&'\fC-\fR' and '\fC.\fR'.
 .IP "\fB1\fR, \fB2\fR, \fB3\fR & \fB4\fR"
-Is in Word. These user definable sets are used to add characters to a buffer's
-word character set, affecting the operation of commands like
+Is in Word. These user definable sets are used to add characters to a buffer's word character set, affecting the
+operation of commands like
 .Ht forward-word 2 .
-Many different file types operate better with a different word character set,
-e.g. it is preferable to include the '\fC_\fR' character when editing C files.
-See variable
+Many different file types operate better with a different word character set, e.g. it is preferable to include the
+\&'\fC_\fR' character when editing C files. See variable
 .Ht $buffer-mask 5 .
 .IP "\fBk\fR"
-Keyboard  character  map. This  flag is used to  configure  a  mapping  from a
-foreign non-latin keyboard (such as Russian) to Latin characters,  setting the
-mapping correctly can greatly improve usability in \*(mS as changing keyboards
-is required less  frequently. The mapping is used by character  input routines
-which first check the main key typed (e.g. the Cyrillic  character) and if not
-bound or invalid \*(mS uses this  keyboard  mapping to translate the character
-into a Latin  character.  This  allows  the user to  execute  binding  such as
-"\fCC-x k\fR" or responding to "\fC[y/n]\fR"  prompts without having to change
-keyboards. 
+Keyboard character map. This flag is used to configure a mapping from a foreign non-latin keyboard (such as Russian)
+to Latin characters, setting the mapping correctly can greatly improve usability in \*(mS as changing keyboards is
+required less frequently. The mapping is used by character input routines which first check the main key typed (e.g.
+the Cyrillic character) and if not bound or invalid \*(mS uses this keyboard mapping to translate the character into a
+Latin character. This allows the user to execute binding such as "\fCC-x k\fR" or responding to "\fC[y/n]\fR" prompts
+without having to change keyboards. 
 .IP
-As with flag  \fBM\fR, this cannot be  incrementally  altered, any call to set
-this mapping  first resets the mapping  table so the mapping must be performed
-in a single call. No other set may be altered in the same call. When  setting,
-the  "\fIvalue\fR"  must  supply  pairs of  characters,  the  \*(iF  non-latin
-character followed by its latin character mapping.
+As with flag \fBM\fR, this cannot be incrementally altered, any call to set this mapping first resets the mapping
+table so the mapping must be performed in a single call. No other set may be altered in the same call. When setting,
+the "\fIvalue\fR" must supply pairs of characters, the keyboard character followed by the character to map it to, 
+typically an ASCII character.
 .PP
-Unless  stated  otherwise,  multiple  flags may be  specified at the same time
-returning a combined  character  set or setting  multiple  properties  for the
-given "\fIvalue\fR" characters.
+Unless stated otherwise, multiple flags may be specified at the same time returning a combined character set or
+setting multiple properties for the given "\fIvalue\fR" characters.
 .SH EXAMPLE
 For many UNIX XTerm fonts the best characters to use for
 .Ht $box-chars 5
 (used in drawing
 .Ht osd 2
-dialogs)  lie in the  range  0x0B to 0x19. For  example  the  vertical  bar is
-\&'\fC\\x19\fR',  the top left  hand  corner  is  \&'\fC\\x0D\fR'  etc.  These
-characters  are by default set to be not  displayable or pokable which renders
-them useless. They can be made displayable and pokable as follows:-
+dialogs) lie in the range 0x0B to 0x19. For example the vertical bar is \&'\fC\\x19\fR', the top left hand corner is
+\&'\fC\\x0D\fR' etc. These characters are by default set to be not displayable or pokable which renders them useless.
+They can be made displayable and pokable as follows:-
 .Me "$emf-scheme"
 .CS
 set-char-mask "dp" "\\x19\\x0D\\x0C\\x0E\\x0B\\x18\\x15\\x0F\\x16\\x17\\x12"
 .CE
 .Me "$ehf-scheme"
-\*(mS variables have either '\fC$\fR',  '\fC#\fR',  '\fC%\fR',  '\fC:\fR' or a
-\&'\fC.\fR'  character  prepended  to  their  name,  they may also  contain  a
-\&'\fC-\fR'  character in the body of their name. It is  preferable  for these
-characters to be part of the variable 'word' so commands like
+\*(mS variables have either '\fC$\fR', '\fC#\fR', '\fC%\fR', '\fC:\fR' or a \&'\fC.\fR' character prepended to their
+name, they may also contain a \&'\fC-\fR' character in the body of their name. It is preferable for these characters
+to be part of the variable 'word' so commands like
 .Ht forward-kill-word 2
-can work  correctly.  This may be achieved by adding these  characters to user
-set \fB2\fR and setting the \fBbuffer-mask\fR variable to include set \fB2\fR,
-as follows:
+can work correctly. This may be achieved by adding these characters to user set \fB2\fR and setting the
+\fBbuffer-mask\fR variable to include set \fB2\fR, as follows:
 .Me "$emf-scheme"
 .CS
 set-char-mask "2" "$#%:.-"
@@ -189,7 +186,7 @@ define-macro fhook-emf
 .Me "$ehf-scheme"
 For the examples below only the following subset of characters will be used:-
 .CS
-Character               ISO-8859-1    Windows OEM    PC Page 437
+Character               Win CP-1252   Cmd CP-850     DOS CP-437
 
 Capital A (A)           A             A              A
 Capital A grave (`A)    \\xC0          \\xB7           No equivalent
@@ -198,67 +195,61 @@ Small a (a)             a             a              a
 Small A grave (`a)      \\xE0          \\x85           \\x85
 Small A acute ('a)      \\xE1          \\xA0           \\xA0
 .CE
-As the spell checker only operates in \*(sF, the character  font mapping (flag
-\fBM\fR) must be correctly setup for spell checking to operate  correctly. For
-\*(aF (ISO) this is an empty string as the default mapping is correct, but for
-both  Windows OEM (OEM) and PC Code Page 437 (PC-437) the  mappings  should be
-set as follows:-
+As the spell checker for French will operates in Windows CP-1252, the character font mapping (flag \fBM\fR) must be correctly setup for
+spell checking to operate correctly. When CP-1252 is also used as the display character set the mapping is the empty 
+string as the internal and display character set are fully in-sync, but
+for both Windows Console CP-850 and DOS code page CP-437 the mappings should be set as follows:-
 .Me "$emf-scheme"
 .CS
-; OEM font mapping setup
+; CP-850 mapping setup
 set-char-mask "M" "\\xC0\\xB7\\xC1\\x90\\xE0\\x85\\xE1\\xA0"
-; PC-437 font mapping setup
+; CP-437 mapping setup
 set-char-mask "M" "\\xC0A\\xC1AAA\\xE0\\x85\\xE1\\xA0"
 .CE
 .Me "$ehf-scheme"
-As all the characters in ISO have equivalents in OEM, the mapping for OEM is a
-simple ISO to OEM  character  list. However the missing  capital  \fBA\fR's in
-PC-437 cause problems, for the command
-.Ht charset-iso-to-user 3
-it is preferable for a mapping of \fB`A\fR to be given, otherwise the document
-being  converted  may remain  unreadable.  Therefore  a mapping of \fB`A\fR to
-\fBA\fR is given to alleviate this problem,  similarly \fB'A\fR is also mapped
-to \fBA\fR.
+As all the characters in CP-1252 have equivalents in CP-850, the mapping for Windows console is a simple 1-to-1 
+lossless character list.
+However the missing capital \fBA\fR's in CP-437 causes problems, for the command
+.Ht change-buffer-charset 3
+it is preferable for a mapping of \fB`A\fR to be given, otherwise the document being converted may become corrupted and unreadable.
+Therefore a mapping of \fB`A\fR to \fBA\fR is given to alleviate this problem, similarly \fB'A\fR is also mapped to
+\fBA\fR leading to loss of information.
 .PP
-This leads to a similar problem with the conversion of PC-437 back to ISO (the
-operation of command
-.Ht charset-user-to-iso 3 ).
-If only the  mapping  of  "\fC\\xC0A\\xC1A\fR"  was  given,  the last  mapping
-(\fB'A\fR to \fBA\fR) would also be the back  conversion for \fBA\fR, i.e. ALL
-\fBA\fR's  would be converted  back to  \fB'A\fR's.  To solve this  problem, a
-further seemingly  pointless mapping of \fBA\fR to \fBA\fR is given to correct
-the back conversion.
+This leads to a further problem with the conversion of CP-437 back to CP-1252, if the mapping the 'A's was left as
+just "\fC\\xC0A\\xC1A\fR" the last mapping (\fB'A\fR to \fBA\fR) would also be the back conversion for \fBA\fR, i.e.
+ALL \fBA\fR's would be converted back to \fB'A\fR's. To solve this problem, a further seemingly pointless mapping of
+\fBA\fR to \fBA\fR is given to correct the back conversion.
 .PP
-For languages which use these characters, the alphabetic character set must be
-extended to include these characters for letter based commands like
+While \*(sF supports a very similar set of characters to CP-1252, it lacks  some accented 'S', 'Y' & 'Z' characters 
+must be mapped to their plain letter equivalents.
+.PP
+For languages which use accented characters, the alphabetic character set must be extended to include these characters
+for letter based commands like
 .Ht forward-word 2
 and
 .Ht upper-case-word 2
-to operate  correctly.  The addition of extra  letters must achieve two goals,
-firstly to define  whether a character  is a letter,  enabling  commands  like
-\fBforward-word\fR  to work  correctly. The second is to provide an upper case
-to lower case character mapping, enabling commands like  \fBupper-case-word\fR
-to work correctly. This is achieved with a single call to  \fBset-char-mask\fR
+to operate correctly. However, the letter set should be fully extended for each code page regardless of the language
+being used as an 'a' acute should always be considered a letter even though it is unlikely to occur. The addition of
+extra letters must achieve two goals, firstly to define whether a character is a letter, enabling commands like
+\fBforward-word\fR to work correctly. The second is to provide an upper case to lower case character mapping, enabling
+commands like \fBupper-case-word\fR to work correctly. This is achieved with a single call to \fBset-char-mask\fR
 using the \fBa\fR flag as follows:-
 .Me "$emf-scheme"
 .CS
 set-char-mask "a" "\\xC0\\xE0\\xC1\\xE1"
 .CE
 .Me "$ehf-scheme"
-Note that this flag always expects a \*(aF character, this allows the same map
-character  list to be used  regardless  of the font set  being  used, i.e. the
-above  line can be used for ISO, OEM and  PC-437  fonts. But it does mean that
-the ISO to user font  character  mapping (flag \fBM\fR) must already have been
-performed.
+Note that this flag always expects an internal character set based string, this allows the same map character list to
+be used regardless of the display character set being used, i.e. the above line can be used for CP-1252, CP-850,
+CP-437 & \*(aF code pages. But it does mean that the internal to display character set mapping (flag \fBM\fR) must
+already have been provided.
 .PP
-Similar  problems are encountered with the \fBM\fR flag with font PC-437. This
-problem is not  immediately  obvious  because the mapping is given in ISO, but
-when   this   is   converted   to   PC-437,   the   mapping   string   becomes
-"\fCA\\x85A\\xA0\fR". As can be seen, \fBA\fR is mapped last to \fB'a\fR so an
-upper to lower  character  operation  will  convert a \fBA\fR to  \fB'a\fR.  A
-similar  solution is used, a further mapping of \fBA\fR to \fBa\fR is given to
-correct  the  default  case  mapping  for both  \fBA\fR and \fBa\fR,  i.e. the
-following line should always be used instead:-
+Similar mapping problems are encountered with the \fBa\fR flag as with flag \fBM\fR above. The problem is not
+immediately obvious because the mapping is always given in internal character set which will support the widest set of
+characters, but when CP-437 is used the mapping string of "\fCA\\x85A\\xA0\fR" must be used. As can be seen, \fBA\fR
+is mapped last to \fB'a\fR so an upper to lower character operation will convert a \fBA\fR to \fB'a\fR. A similar
+solution is used, a further mapping of \fBA\fR to \fBa\fR is given to correct the default case mapping for both
+\fBA\fR and \fBa\fR, i.e. the following line should always be used instead:-
 .Me "$emf-scheme"
 .CS
 set-char-mask "a" "\\xC0\\xE0\\xC1\\xE1Aa"
@@ -267,6 +258,9 @@ set-char-mask "a" "\\xC0\\xE0\\xC1\\xE1Aa"
 .SH "SEE ALSO"
 .na
 .Ht forward-word 2 ,
+.Ht upper-case-word 2 ,
+.Ht change-buffer-charset 3 ,
+.Ht &uni 4 ,
 .Ht $buffer-mask 5 ,
 .Ht screen-poke 2 ,
 .Ht spell 2 ,

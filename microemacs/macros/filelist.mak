@@ -31,8 +31,8 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkbibtex.emf	hkbinary.emf	hkblist.emf	hkbnf.emf	\
 	hkc.emf		hkcfm.emf	hkcfms.emf	hkcobol.emf	\
 	hkcpp.emf	hkcs.emf	hkcss.emf	hkcygwin.emf	\
-	hkdiff.emf	hkdirlst.emf	hkdirtre.emf	hkdoc.emf	\
-	hkdos.emf	hkdot.emf	\
+	hkdiff.emf	hkdirlst.emf	hkdirtre.emf	hkdman.emf	\
+	hkdoc.emf	hkdos.emf	hkdot.emf	\
 	hkehf.emf	hkemf.emf	hkerf.emf	hkeuphor.emf	\
 	hkf90.emf	hkfvwm.emf	\
 	hkhtml.emf	\

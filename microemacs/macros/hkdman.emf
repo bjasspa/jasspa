@@ -1,0 +1,67 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1997-2009 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Synopsis:    ME droff man pages hook (does grotty string replaces)
+; Authors:     Steven Phillips
+;
+; Runs droff utile (located in Jasspa/nroff) to generate man page style output from nroff page
+;
+!iif &sequal .hilight.dman "ERROR"  set-variable .hilight.dman  &pinc .hilight.next 1
+
+0 hilight .hilight.dman 0                             .scheme.text
+hilight .hilight.dman 0x40 "\e\\[0m" ""               .scheme.text
+hilight .hilight.dman 0x44 "\e\\[1m" "" "\\}\e" "" "" .scheme.bold
+hilight .hilight.dman 0x44 "\e\\[4m" "" "\\}\e" "" "" .scheme.italic
+hilight .hilight.dman 0x44 "\e\\[7m" "" "\\}\e" "" "" .scheme.string
+hilight .hilight.dman 2    "ERROR:"                   .scheme.error
+hilight .hilight.dman 2    "WARNING:"                 .scheme.error
+hilight .hilight.dman 2    "WARN:"                    .scheme.error
+
+add-next-line "*dman*" ""
+add-next-line "*dman*" "ERROR: %f: %l:"
+add-next-line "*dman*" "WARN: %f: %l:"
+
+define-macro fhook-dman
+  beginning-of-buffer
+  !if &seq "droff : Processing" &lef @wl 18
+    -1 buffer-mode "view"
+    set-mark
+    forward-line
+    kill-region
+    -1 buffer-mode "edit"
+  !endif
+  set-variable $buffer-hilight .hilight.dman
+  1 buffer-mode "view"
+!emacro
+
+define-macro dman
+    1 pipe-shell-command &cat "droff -a -s " @ml "dMan on" "*dman*"
+    -1 buffer-mode "view"
+    set-mark
+    3 forward-line
+    kill-region
+    -1 yank
+    fhook-dman
+!emacro
+
+define-macro adman
+  !if &bmod "edit"
+    !iif &iseq @mc1 "Save buffer first [y/n]? " "nNyY" "y"  save-buffer
+  !endif
+  set-variable #l3 &con &les 140 &set #l3 &con &gre 70 &set #l3 &sub $window-width 4 70 #l3 140 #l3
+  1 pipe-shell-command &spr "droff -a -l 1000 -w %d -s %s" #l3 $buffer-fname "*dman*"
+  -1 buffer-mode "view"
+  set-mark
+  3 forward-line
+  kill-region
+  -1 yank
+  fhook-dman
+!emacro
+
+ml-write "[Dman file hook loaded]"
+
+; load in user extensions if found
+!force execute-file "mydman"
+
