@@ -126,6 +126,9 @@ meUByte meOptionList[]=
 #if MEOPT_SPELL
     "spe\n"
 #endif
+#if MEOPT_OPENSSL
+    "ssl\n"
+#endif
 #if MEOPT_TAGS
     "tag\n"
 #endif

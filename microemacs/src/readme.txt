@@ -761,7 +761,7 @@ EXAMPLE
        ; Set up the ftp flags. The letters have the following meaning: 
        ; c   - Create a console (*ftp-console* for ftp, *http-console* for http)
        ; s   - Show the console 
-       ; p   - Show download progress ('#' every 2Kb downloaded) 
+       ; p   - Show download progress ('#' every 2KB downloaded) 
        set-variable %ftp-flags "csp" 
        ; Info files 
        ;To hilight the .info and also the dir file 

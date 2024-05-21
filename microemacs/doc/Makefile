@@ -102,7 +102,6 @@ CMD2_140=	$(DOCDIR)m2cmd140.2 $(DOCDIR)m2cmd141.2 $(DOCDIR)m2cmd142.2\
 		$(DOCDIR)m2cmd143.2			$(DOCDIR)m2cmd145.2\
 		$(DOCDIR)m2cmd146.2 $(DOCDIR)m2cmd147.2 $(DOCDIR)m2cmd148.2\
 		$(DOCDIR)m2cmd149.2
-# TODO: $(DOCDIR)m2cmd144.2 - This is spare
 CMD2_150=	$(DOCDIR)m2cmd150.2 $(DOCDIR)m2cmd151.2 $(DOCDIR)m2cmd152.2\
 		$(DOCDIR)m2cmd153.2 $(DOCDIR)m2cmd154.2 $(DOCDIR)m2cmd155.2\
 		$(DOCDIR)m2cmd156.2 $(DOCDIR)m2cmd157.2 $(DOCDIR)m2cmd158.2\
@@ -123,16 +122,12 @@ MOD2_000=	$(DOCDIR)m2mod000.2 $(DOCDIR)m2mod001.2 \
 		$(DOCDIR)m2mod003.2 $(DOCDIR)m2mod004.2 $(DOCDIR)m2mod005.2\
 		$(DOCDIR)m2mod006.2 \
 		$(DOCDIR)m2mod009.2
-# TODO: deleted c-mode(2m) - $(DOCDIR)m2mod002.2
-# TODO: deleted letter(2m) - $(DOCDIR)m2mod007.2
-# TODO: deleted line(2m) - $(DOCDIR)m2mod008.2
 MOD2_010=	$(DOCDIR)m2mod010.2 $(DOCDIR)m2mod011.2 $(DOCDIR)m2mod012.2\
-		$(DOCDIR)m2mod013.2 $(DOCDIR)m2mod014.2 $(DOCDIR)m2mod015.2\
+		$(DOCDIR)m2mod013.2 $(DOCDIR)m2mod014.2 \
 		$(DOCDIR)m2mod016.2 $(DOCDIR)m2mod017.2 $(DOCDIR)m2mod018.2\
 		$(DOCDIR)m2mod019.2
 MOD2_020=	$(DOCDIR)m2mod020.2 $(DOCDIR)m2mod021.2 $(DOCDIR)m2mod022.2\
 		$(DOCDIR)m2mod023.2 $(DOCDIR)m2mod024.2 $(DOCDIR)m2mod025.2\
-		$(DOCDIR)m2mod026.2 $(DOCDIR)m2mod027.2 $(DOCDIR)m2mod028.2\
 		$(DOCDIR)m2mod029.2
 MOD2_030=	$(DOCDIR)m2mod030.2 $(DOCDIR)m2mod031.2 $(DOCDIR)m2mod032.2
 #
@@ -173,7 +168,8 @@ MAC3_080=	$(DOCDIR)m3mac080.3 $(DOCDIR)m3mac081.3 $(DOCDIR)m3mac082.3\
 		$(DOCDIR)m3mac086.3 $(DOCDIR)m3mac087.3 $(DOCDIR)m3mac088.3\
 		$(DOCDIR)m3mac089.3
 MAC3_090=	$(DOCDIR)m3mac090.3 $(DOCDIR)m3mac091.3 $(DOCDIR)m3mac092.3\
-		$(DOCDIR)m3mac093.3 $(DOCDIR)m3mac094.3
+		$(DOCDIR)m3mac093.3 $(DOCDIR)m3mac094.3 $(DOCDIR)m3mac095.3\
+		$(DOCDIR)m3mac096.3
 # TODO: doc change-font-size
 #
 OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
@@ -211,12 +207,9 @@ VAR5_000=	$(DOCDIR)m5var000.5 $(DOCDIR)m5var001.5 $(DOCDIR)m5var002.5\
 		$(DOCDIR)m5var006.5 $(DOCDIR)m5var007.5 $(DOCDIR)m5var008.5\
 		$(DOCDIR)m5var009.5
 VAR5_010=	$(DOCDIR)m5var010.5 $(DOCDIR)m5var011.5 $(DOCDIR)m5var012.5\
-		$(DOCDIR)m5var013.5 $(DOCDIR)m5var014.5\
+		$(DOCDIR)m5var013.5 $(DOCDIR)m5var014.5 $(DOCDIR)m5var015.5\
+		$(DOCDIR)m5var016.5 \
 		$(DOCDIR)m5var019.5
-# TODO: deleted $c-contcomm - $(DOCDIR)m5var015.5
-# TODO: deleted $c-margin - $(DOCDIR)m5var016.5
-# TODO: deleted $c-statement(5) - $(DOCDIR)m5var017.5
-# TODO: deleted $c-continue(5), $c-contmax - $(DOCDIR)m5var018.5
 VAR5_020=	$(DOCDIR)m5var020.5 $(DOCDIR)m5var021.5 $(DOCDIR)m5var022.5\
 		$(DOCDIR)m5var023.5 $(DOCDIR)m5var024.5 $(DOCDIR)m5var025.5\
 		$(DOCDIR)m5var026.5 $(DOCDIR)m5var027.5 $(DOCDIR)m5var028.5\

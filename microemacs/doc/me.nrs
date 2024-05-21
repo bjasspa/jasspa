@@ -4269,38 +4269,31 @@ and only buffer delete problem.
 would be good to test on win95  (which  should  work) and NT which  should not
 work but hopefully will be no worse than current version.
 .BU " "
-This is a process  tree  killing  for ipipes, in win32  killing the process we
-create is simply not good enough, all child processes continue unaffected. For
-example, run compile,  kill the buffer in mid compile and it carries on behind
-your back!
+This is a process tree killing for ipipes, in win32 killing the process we create is simply not good enough, all child
+processes continue  unaffected. For example, run compile, kill the buffer in mid compile and it carries on behind your
+back!
 .BU " "
-For Unix we use a new group and kill the group, DOS does not support ipipe. We
-could have used the new Job concept in ME but this is only  present in win2000
-& XP and the  binaries  are  unlikely  to run on win98 etc. This should run on
-every win32 platform  although it is unlikely to do anything positive on an NT
-box (works in win2k)
+For Unix we use a new group and kill the group, DOS does not support  ipipe. We could have used the new Job concept in
+ME but this is only  present in win2000 & XP and the  binaries  are  unlikely  to run on win98 etc. This should run on
+every win32 platform although it is unlikely to do anything positive on an NT box (works in win2k)
 .BU
-[050126]  Changed the  location of the  \fBfhook-default\fR  macro so its only
-defined if using \fBbuffinit\fR (i.e. if running main \fCme.emf\fR)
+[050126] Changed the location of the  \fBfhook-default\fR  macro so its only defined if using  \fBbuffinit\fR (i.e. if
+running main \fCme.emf\fR)
 .BU
 [050126] Fixed osd button repeat issue when current focus is an entry.
 .BU
-[050126] Changed  \fBinsert-file-name\fR to insert buffer name if a -ve arg is
-given, bound to \fBC-x y\fR on the mode line, this replaces ml-lines \fBesc\fR
-\fBy\fR feature.
+[050126] Changed  \fBinsert-file-name\fR to insert buffer name if a -ve arg is given, bound to \fBC-x y\fR on the mode
+line, this replaces ml-lines \fBesc\fR \fBy\fR feature.
 .BU
-[050123] Fixed a crash caused by too many closed fences, the recursive  nature
-of the  \fCfindfence()\fR  function  triggers a stack crash at around 22000 on
-windows. Set limit to 256 nested fences.
+[050123]  Fixed a crash  caused by too many closed  fences, the  recursive  nature of the  \fCfindfence()\fR  function
+triggers a stack crash at around 22000 on windows. Set limit to 256 nested fences.
 .BU
-[050122]  Fixed
-.Ht dir 2m
-mode  loss on a  directory  re-read,  this  caused  a number  of side  effects
-including loss of highlighting and user prompt to reload the directory when it
-had changed.
+[050122] Fixed 
+.Hr dir 2m
+mode loss on a directory  re-read, this caused a number of side effects including loss of highlighting and user prompt
+to reload the directory when it had changed.
 .BU
-[050119] Removed the "\fIsub-key\fR"  argument  from all registry  related calls
-(see
+[050119] Removed the "\fIsub-key\fR" argument from all registry related calls (see
 .Ht &reg 4
 and
 .Ht set-registry 2 ).

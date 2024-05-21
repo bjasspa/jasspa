@@ -34,7 +34,7 @@ add-file-hook ".C" fhook-cpp
 !else
   !iif &not &seq &set #l0 &reg &spr "/history/%s/font" $platform "" ""  !force change-font #l0
   define-macro change-font-size
-    !if &not @#
+    !if &not &and @? @#
       set-variable .change-font.sz-dpth &lget .change-font.ofnt 5
       5 change-font &lget .change-font.ofnt 8
       ml-write "[Text Zoom reset]"

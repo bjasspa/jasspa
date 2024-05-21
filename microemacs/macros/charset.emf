@@ -14,7 +14,6 @@
 ;
 ; Define the list  of supported charsets and if windows then the font type
 set-variable .change-font.cs-id  "|cp1252|iso8859-1|cp1250|iso8859-2|cp1251|iso8859-5|cp866|koi8-f|cp1253|iso8859-7|cp1254|iso8859-9|iso8859-15|cp850|cp437|plain-text|"
-set-variable .change-font.cs-type  "1122555577991110"
 set-variable .change-font.cs-type  "220011113344222-"
 set-variable .change-font.cs-wftp  "|0||238||204||||161||162||||255||"
 !if &les @# 1

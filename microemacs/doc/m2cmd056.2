@@ -177,6 +177,10 @@ matching file. Note that these are not the same wild-card characters used by
 For \fIftp\fR and  \fIhttp\fR  then a ftp console  window is opened up to show
 the progress of the transfer (when configured), this is described in 
 .Ht ftp 3 .
+.SH "NOTES"
+The automatic loading of very large files can be avoided by setting the variable
+.Ht $file-size-prompt 5
+to an appropriate size.
 .SH "SEE ALSO"
 .na
 .Ht auto 2m ,
@@ -197,6 +201,7 @@ the progress of the transfer (when configured), this is described in
 .Ht save-buffer 2 ,
 .Ht view-file 2 ,
 .Ht write-buffer 2 ,
+.Ht $file-size-prompt 5 ,
 .Ht $rcs-file 5 ,
 .Ht %ftp-flags 5 ,
 .Ht %http-flags 5 ,

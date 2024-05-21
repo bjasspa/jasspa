@@ -1,0 +1,54 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac071.3,v 2.2 2009/08/29 17:13:59 jon Exp $
+.Im MicroEmacs command|hilight
+.so me.tni
+.TH change-font-size 3
+.XI change-font-size - "Incrementally change font size"
+.SH NAME
+change-font-size \- Incrementally change font size
+.SH SYNOPSIS
+.na
+.I n
+\fBchange-font-size\fR
+.ad
+.SH DESCRIPTION
+.B change-font-size
+incrementally  increases,  decrease or resets the size of the display  font. The numeric  argument  \fBn\fR is used to
+determine the action required, a \fB+ve\fR  argument will increase the font size, \fB\-ve\fR will decrease and \fB0\fR
+or no argument will reset the size.
+.PP
+The size of \fBn\fR is important, a value of \fB+2\fR will increase the font size at twice the rate of \fB+1\fR.
+.PP
+When using a relatively  small text size it is often  desirable to use good bitmap based fonts as these typically offer
+greater clarity, for example  ProggyFonts  (\fIhttp://www.proggyfonts.net/\fR)  are small yet very clear. However these
+fonts do not typically scale well. To address this issue set the \fB.change-font.sz-font\fR command variable to a font
+name that should be used when changing the font size. For example, on UNIX this could be set to:
+.Me $emf-scheme
+.CS
+set-variable .change-font.sz-font "-*-fixed-medium-r-*-*-%d-*-*-*-*-*-iso8859-*"
+.CE
+.Me $ehf-scheme
+On Windows the following could be used:
+.Me $emf-scheme
+.CS
+set-variable .change-font.sz-font "Consolas"
+.CE
+.Me $ehf-scheme
+When this variable is used the first call to \fBchange-font-size\fR  often leads to a greater size change than desired
+as the new font sizing may differ, however this can then be adjusted via subsequent call to the command. When the font
+size is reset, by giving no numeric  argument  or an  argument  of \fB0\fR, the font as well as the font size is reset
+back to their original values.
+.SH "NOTES"
+The implementation of  \fBchange-font-size\fR is platform specific, on Windows the macro is defined in \fCwin32.emf\fR
+and for UNIX systems it is defined in \fCunixterm.emf\fR. Both variant rely on the
+.Ht change-font 2
+command.
+.SH "SEE ALSO"
+.na
+.Ht change-font 2 .
+.ad
+.FH

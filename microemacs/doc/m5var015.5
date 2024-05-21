@@ -1,0 +1,34 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m5var086.5,v 2.2 2009/08/29 17:14:33 jon Exp $
+.Im MicroEmacs variable|window
+.so me.tni
+.TH $frame-title 5
+.XI $frame-title - "Set frame title prefix"
+.SH NAME
+$frame-title \- Set frame title prefix
+.SH SYNOPSIS
+\fB$frame-title\fR
+.SH DESCRIPTION
+On  windowing  systems, such as UNIX XTerm and Windows, the frame title is composed of the \fB$frame-title\fR followed
+by the  current buffer. Setting the variable can be  particularly  useful when running \*(mS multiple times as an easy
+way to distinguish between each instance.
+.PP
+The
+.Ht read-session 3
+command  sets this  variable  to  "\fC\*(mS:  <session-name>\fP"  so that if  multiple  instance of \*(mS are run with
+different sessions each can be easily identified.
+.SH "NOTES"
+Unlike other frame variables, such as
+.Ht $frame-id 5 ,
+there is only one \fB$frame-title\fR value, changing its value will effect the titles of all external frames. 
+.SH "SEE ALSO"
+.na
+.Ht create-frame 2 ,
+.Ht read-session 3 ,
+.Ht $frame-id 5 .
+.ad
+.FH

@@ -41,7 +41,7 @@
   !force 1 change-font .change-font.wftp #l0 #l1 #l2 #l3
   set-variable .change-font.ofnt $result
   define-macro change-font-size
-    !if &not @#
+    !if &not &and @? @#
       set-variable .change-font.sz-dpth &lget .change-font.ofnt 5
       5 change-font &lget .change-font.ofnt 2 &lget .change-font.ofnt 8 &lget .change-font.ofnt 3 &lget .change-font.ofnt 6 &lget .change-font.ofnt 7
       ml-write "[Text Zoom reset]"

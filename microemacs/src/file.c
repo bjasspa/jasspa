@@ -1586,7 +1586,7 @@ readin(register meBuffer *bp, meUByte *fname)
                 memcpy(prompt,"File ",5);
                 meStrncpy(prompt+5,getFileBaseName(fn),200-5-25);
                 prompt[200-25] = '\0';
-                sprintf((char *) (prompt+meStrlen(prompt))," is %dMb, continue",ui);
+                sprintf((char *) (prompt+meStrlen(prompt))," is %dMB, continue",ui);
                 if(mlyesno(prompt) <= 0)
                     goto error_end;
             }
@@ -1753,7 +1753,7 @@ insertFile(int f, int n)
         memcpy(prompt,"File ",5);
         meStrncpy(prompt+5,getFileBaseName(fname),200-5-25);
         prompt[200-25] = '\0';
-        sprintf((char *) (prompt+meStrlen(prompt))," is %dMb, continue",uoffset);
+        sprintf((char *) (prompt+meStrlen(prompt))," is %dMB, continue",uoffset);
         if(mlyesno(prompt) <= 0)
             return meABORT;
     }

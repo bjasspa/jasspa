@@ -1,0 +1,27 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m5var039.5,v 2.7 2009/08/29 17:14:15 jon Exp $
+.Im MicroEmacs variable|file|buffer
+.so me.tni
+.TH $file-size-prompt 5
+.XI $file-size-prompt - "Large file size warning prompt"
+.SH NAME
+$file-size-prompt \- Large file size warning prompt
+.Me $a
+.SH SYNOPSIS
+\fB$file-size-prompt\fR "\fIinteger\fR"; Default is "\fC1024\fR"
+.SH DESCRIPTION
+Sets the size, in megabytes, to trigger a warning prompt before  loading a file. Any attempt to load a file this size
+or larger will result in a "\fCFile <name> is #MB, continue  ?\fR", entering  '\fBN\fR' or aborting will stop the file
+loading processes resulting in an empty buffer.
+.PP
+The default value is 1024MB, i.e. 1 gigabyte.
+.SH "SEE ALSO"
+.na
+.Ht find-file 2 .
+.ad
+.FH
+

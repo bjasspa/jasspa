@@ -26,11 +26,11 @@ define-macro fhook-blist
 set-variable .fhook-blist.name "Buffer List"
 set-variable .fhook-blist.setup &reg "/history/fhook/blist" "gop"
 set-variable .fhook-blist.setup-mask "aegmop"
-set-variable .fhook-blist.command-flag  "|thbio|bio|thbio|bio|thbio|bio|h|thbio|bio|thbio|bio|h|thbio|bio|thbio|bio|thbio|bio|h|"
-set-variable .fhook-blist.command-name  "|blist-command|blist-command|blist-command|blist-command|blist-command|blist-command||blist-command|blist-command|blist-command|blist-command||list-buffers|list-buffers|blist-command|blist-command|blist-command|blist-command||"
-set-variable .fhook-blist.command-nbind "|1|1|2|2|3|3||4|4|5|5||||6|6|7|7||"
-set-variable .fhook-blist.command-kbind "|return|1|space|2|d|D||e|E|s|S||u|U|v|V|x|X||"
-set-variable .fhook-blist.command-desc  "|Switch to Buffer & Only Window||Switch to Buffer||Toggle Buffer \HDeletion Flag||            ('D' in first column), see x|Toggle Buffer \HEdited Status||Toggle Buffer \HSave Flag||            ('S' in second column), see x|\HUpdate Buffer List||Toggle Buffer \HView mode||Execute all the 'D' and 'S' flags||            currently set ('S' first)|"
+set-variable .fhook-blist.command-flag  "|thbio|bio|th|thbio|bio|thbio|bio|thbio|bio|h|thbio|bio|thbio|bio|h|thbio|bio|thbio|bio|th|thbio|bio|h|"
+set-variable .fhook-blist.command-name  "|list-buffers|list-buffers||blist-command|blist-command|blist-command|blist-command|blist-command|blist-command||blist-command|blist-command|blist-command|blist-command||blist-command|blist-command|blist-command|blist-command||blist-command|blist-command||"
+set-variable .fhook-blist.command-nbind "||||1|1|2|2|3|3||4|4|5|5||6|6|8|8||7|7||"
+set-variable .fhook-blist.command-kbind "|l|L||return|1|space|2|d|D||e|E|s|S||v|V|u|U||x|X||"
+set-variable .fhook-blist.command-desc  "|Refresh Buffer \HList|||Switch to Buffer & Only Window||Switch to Buffer||Toggle Buffer \HDeletion Flag||            ('D' in first column), see x|Toggle Buffer \HEdited Status||Toggle Buffer \HSave Flag||            ('S' in second column), see x|Toggle Buffer \HView mode||\HUnmark Buffer|||Execute all 'D' and 'S' flags||            currently set ('S' first)|"
 
 0 define-macro blist-set-line
   set-variable #l0 &mid @wl 11 &sub &sin &mid @wl 10 1 &rig @wl 11 1
@@ -140,6 +140,9 @@ set-variable .fhook-blist.command-desc  "|Switch to Buffer & Only Window||Switch
   !elif &equ @# 6
     ; 'v' - toggle buffer view mode
     0 named-buffer-mode #l0 "view"
+  !elif &equ @# 8
+    ; 'u' - unmark buffer
+    !iif &exi &set #l2 &spr ":%s:buffer-info" #l0  set-variable &ind #l2 &lset &ind #l2 1 ""
   !else
     ; invalid command
     ml-write "[Invalid command]"

@@ -16,11 +16,13 @@ Locale support within \*(mS handles the hardware and software configuration with
 .RS
 .sp
 .na
-Displayed Character Set
+Character Sets
+.br
+Word Characters
 .br
 Keyboard Support
 .br
-Word characters
+Language
 .br
 Spell Support
 .ad
@@ -40,23 +42,46 @@ In addition, the \fIinternal id\fR and \fIdata file\fR names have a length limit
 "\fC8.3\fR" naming conversion of MS-DOS. The standard adopted by JASSPA \*(mS for the internal locale id is to combine
 the 2 letter ISO language name (ISO 639-1) with the 2 letter ISO country name (ISO 3166-1). Should the locale
 encompasses more than one country, then the most appropriate \fIcountry id\fR is selected.
-.SH "Displayed Character Set"
+.SH "Character Sets"
 A character set is the mapping of an integer number to a display symbol (i.e. character). The ASCII standard defines a
 mapping of numbers to the standard English characters, this standard is well defined and accepted, as a result the
 character set rarely causes a problem for plain English.
 .PP
-Problems occur when displaying characters found outside the ASCII standard, such as letters with accents, letters
-which are not Latin based (e.g. Greek alphabet) and graphical characters (used for drawing dialog boxes etc.). There
+Problems occur when a language uses characters located outside the ASCII standard, such as letters with accents, letters
+which are not Latin based (e.g. Greek alphabet) and particularly  with languages that have a large number of 'letters'
+or logograms (e.g. Chinese) which require multiple bytes to encode. There
 are many different character sets to choose between and if the wrong character set is selected then the incorrect
-character translation is performed resulting in an incorrect character display. If the character display looks
-incorrect then first try changing the font and character-set setting, these can be configured using the platform page
-of
-.Ht user-setup 3 .
+character translation is performed resulting in an incorrect command behaviour and/or character display.
+.PP
+For several  reasons the core of \*(mS can only support a single byte  character set so cannot support  languages like
+Chinese. 
+.SS "Internal Character Set"
+Before the adoption of  international  standards such as Unicode, each operating  system vendor would typically create
+their own character  set, or code page, that best met the needs of their  customers. As a result there are many in use
+making it impossible to properly support them all directly. The use of a standard  internal  character set allows
+for the creation of a single set of spelling rules and dictionary  that can be used by all compatible  character sets
+with a simple mapping.
+.PP
+\*(mS does not  intrinsically  require, nor is it biased  towards any one  character set or group of sets, however the
+main  Windows  code pages (i.e.  CP-1252,  CP-1253 etc) have been  adopted as these  typically  have the most  defined
+characters  providing the best language support.  Therefore all supported  languages use the most appropriate  Windows
+character set for their spelling rules and dictionaries. 
+.SS "Displayed Character Set"
+The current display  character set being used is not determined by the current operating system, but by the font being
+used in \*(mS (which may be limited be the OS). For example, UNIX X-Term  systems  typically  use \*(iF based fonts but
+fonts using other code pages, such as CP-1252  which have  numerous  additional  important  characters  such as a Euro
+symbol, can be found in \fCpcf\fR format, installed and used by \*(mS.
+.PP
+If the character display looks incorrect in \*(mS, such as text containing incorrect or weird symbols, use the
+.Ht insert-symbol 3
+command the review the display character set actually being used and verify what it is, then use the platform page of
+.Ht user-setup 3 
+command to check and correct the font and character set \*mS is configured to use.
 .PP
 If the problem persists (i.e. because the character set used to write the text is not supported on your current
 system) use the
 .Ht change-buffer-charset 3
-command to convert the text to the current character set.
+command to convert the text to the current display character set.
 .PP
 If your character-set is not supported then first make sure that \*(mS will draw all of the characters to be used. By
 default \*(mS does not draw some characters directly as the symbol may not be defined. When a character is not defined
@@ -70,7 +95,7 @@ For a character to be rendered (when in main text) or poked (drawn by
 .Ht screen-poke 2
 or
 .Ht osd 2 )
-is defined by the
+is defined by the \fCd\fR and \fCp\fR flags of
 .Ht set-char-mask 2
 command. The characters that are used when drawing \*(mS's window boarders or \fBosd\fR dialogs is set via the
 .Ht $box-chars 5
@@ -96,6 +121,54 @@ The user may declare the current character set in the platform page of
 .Ht user-setup 3 .
 All the settings required for supporting each character set may be found in the \fCcharset.emf\fR macro file, so if
 your character set is not supported, this is the file to edit.
+.SS "Unicode support"
+Unicode support within \*(mS is very limited due to its single byte character set limitation,  however flag \fBc\fR of
+command 
+.Ht set-char-mask 2
+can be used to map characters 0x80 to 0xff of the display character set to their Unicode equivalent. Correctly mapping
+these  characters  allows  better  handling  of  text  transfer  between  \*(mS  and the  system  clipboard  (see  bit
+\fB0x800000\fR of
+.Ht $system 5 )
+and allows conversion to and from UTF-8 using the
+.Ht change-buffer-charset 3
+command.
+.PP
+The use of character  \fC0x07\fR (Bell) is used to denote an unsupported  character while  \fBchange-buffer-charset\fR
+has an option to  preserve  unsupported  Unicode  characters  by encoding  them to a 3 or 5 digit  hexadecimal  number
+prefixed  with the  character  \fC0x01\fR  or  \fC0x02\fR.  Care must be taken to avoid  splitting or  corrupting  the
+resultant 4 or 6 byte strings, however once editing is complete the \fBchange-buffer-charset\fR command can be used to
+convert the buffer back to UTF-8 before saving. 
+.SH "Word characters"
+Word characters are those characters which are deemed to be part of a word, numbers are usually included. Many \*(mS
+commands use the 'Word' character set such as
+.Ht forward-word 2
+and
+.Ht upper-case-word 2 .
+The  characters  that form the word class should be determined by the display  character set being used rather than by
+the language, this is because which character are letters within the display character set doesn't change and flagging
+all letters  improves  general  usability.  For example,  English does not typically use accented  letters but it does
+inherit words that do, eg. \fIfianc'e\fR, so treating \fC'e\fR ('e' acute) as a letter always makes more sense.
+.PP
+The '\fCa\fR' flag of command
+.Ht set-char-mask 2
+is used to specify whether a character is part of a word, you must specify the uppercase letter and then the lowercase
+equivalent so the case conversion functions work correctly.
+.PP
+This may unfortunately be made a little more tricky by the requirement that this list must be specified in the most
+appropriate character set (see \fBInternal Character Set\fR section). When extending the word character
+set the characters have to be mapped to the current character set which may not support all the required characters.
+For example in the PC-437 DOS character set there is an e-grave (\fC`e\fR) but no E-grave so the E-grave is mapped to
+the normal E. As a result, if trying to write French text the case changing commands will behave oddly, for example:
+.CS
+    r`egle -> REGLE -> r`egl`e
+.CE
+The conversion of all '\fCE\fR's to '\fC`e\fR' is an undesirable side effect of '\fC`E\fR' being mapped to \fCE\fR.
+This can be avoided by redefining the base letter again at the end of the word character list, for example:
+.Me $emf-scheme
+.CS
+set-char-mask "a" "`E`eEe"
+.CE 0
+.Me $ehf-scheme
 .SH "Keyboard Support"
 The keyboard to character mapping is defined in the Start-Up page of
 .Ht user-setup 3 ,
@@ -138,42 +211,24 @@ re-diagnose the problem.
 .PP
 All the settings required for supporting each keyboard may be found in the \fCkeyboard.emf\fR macro file, so if your
 keyboard is not supported, this is the file you need to edit.
-.SH "Word characters"
-Word characters are those characters which are deemed to be part of a word, numbers are usually included. Many \*(mS
-commands use the 'Word' character set such as
-.Ht forward-word 2
-and
-.Ht upper-case-word 2 .
-The characters that form the word class are determined by the language being used and this can be set in the Start-Up
-page of
-.Ht user-setup 3 .
+.SH Language
+The current language can be set in the Start-up page of
+.Ht user-setup 3 ,
+setting the language lets to the following two variables being set:
+.IP \fB.spell.language\fR
+This  variable  defines  the 4 letter ID used for the  language  which is made up of the 2 letter  ISO  language  code
+followed  by the 2 letter  ISO  country  code, see  \fINote  on Names and  IDs\fR  above.  The value of this  variable
+determines which spell checking rules and dictionary are loaded.
+.IP \fB.change-font.ln-type\fR
+This variable is a string whose characters  determine which character set groups can support the language, for example
+Francais  is set to  "\fC24\fR"  indicated  that both  character  sets of group  \fB2\fR and \fB4\fR can  support  the
+language,  these  character  sets include  CP-1252, \*(aF, CP-850 & CP-437 from group \fB2\fR and CP-1254 & ISO-8859-9
+from group  \fB4\fR.  The first  character  set group given by this  variable, 2 in this case,  defines the main or
+preferred character set group, and the first character set within this group, see variable  \fB.change-font.cs-type\fR
+defined in \fBcharset.emf\fR defines the primary or internal character set used by that group.
 .PP
-If your language is not supported you will need to add it to the list and define the word characters, these settings
-may be found in the \fClanguage.emf\fR macro file. The '\fCa\fR' flag of command
-.Ht set-char-mask 2
-is used to specify whether a character is part of a word, you must specify the uppercase letter and then the lowercase
-equivalent so the case conversion functions work correctly.
-.PP
-A list of characters to be removed from the word character set is stored in the \fB.set-char-mask.rm-chars\fR
-variable. This is done so that the language may be changed many times in the same session of \*(mS without any side
-effects (such as the expansion of the word character set to include all letters of all languages). This makes \*(mS
-ideal for writing multi-language documents.
-.PP
-This may unfortunately be made a little more tricky by the requirement that this list must be specified in the most
-appropriate ISO standard character set (see \fBDisplayed Character Set\fR section). When extending the word character
-set the characters have to be mapped to the current character set which may not support all the required characters.
-For example in the PC-437 DOS character set there is an e-grave (\fC`e\fR) but no E-grave so the E-grave is mapped to
-the normal E. As a result, if trying to write French text the case changing commands will behave oddly, for example:
-.CS
-    r`egle -> REGLE -> r`egl`e
-.CE
-The conversion of all '\fCE\fR's to '\fC`e\fR' is an undesirable side effect of '\fC`E\fR' being mapped to \fCE\fR.
-This can be avoided by redefining the base letter again at the end of the word character list, for example:
-.Me $emf-scheme
-.CS
-set-char-mask "a" "`E`eEe"
-.CE 0
-.Me $ehf-scheme
+If your  language is not  supported  you will need to add it to the list and define these two  variables  found in the
+\fClanguage.emf\fR macro file.
 .SH "Spell Support"
 The current language is set using the Language setting on General page of
 .Ht user-setup 3 ,
@@ -215,10 +270,14 @@ The spelling checker is not supported by the current language, see the following
 To support a language \*(mS's spelling checker requires a base word dictionary and a set of rules which define what
 words can be derived from each base word in the dictionary. The concept and format of the word list and rules are
 compatible with the \fBFree Software Foundation\fR GNU
-.Hr ispell 1
-package.
+.Hr ispell 1 ,
+.Hr myspell 1
+and
+.Hr hunspell 1
+packages.  Not all  features  of hunspell  are  supported  by \*(mS, most  notably  composite  rules and right to left
+languages.
 .PP
-The best starting point is to obtain \fBispell\fR rules and word lists in plain text form, the web can usually yield
+The best starting point is to obtain rules and dictionary files (<lang>.aff & <lang>.dic) for one of these packages, the web can usually yield
 these. Once these have been obtained the rules file (or affix file) must be converted to a \*(mS macro file calling
 the
 .Ht add-spell-rule 2
@@ -226,22 +285,23 @@ command to define the rules. The rule file should be named "\fClsr\fR\fI<lang-id
 "\fI<lang-id>\fR" is the spelling language id, determined by the \fB.spell.language\fR variable set in the
 \fClanguage.emf\fR macro file.
 .PP
-The \fCspellutl.emf\fR macro file contains the command \fBspell-conv-aff-buffer\fR which will attempt to convert the
-buffer but due to formatting anomalies this process often goes wrong so using the command \fBspell-conv-aff-line\fR
-(also contained in \fCspellutl.emf\fR) to convert a single line is often quicker. See existing spelling rule files
-(\fClsr*.emf\fR) for examples and help on command
+The \fCspellutl.emf\fR macro file contains the command  \fBispell-convert\fR which will attempt to convert the aff and
+dic files and macros \fBspell-check-list\fR,  \fBspell-check-guess\fR and \fBispell-test\fR to aid conversion accuracy
+verification. See existing spelling rule files (\fClsr*.emf\fR) for examples and help on command
 .Ht add-spell-rule 2 .
 .PP
-\fBNote\fR: the character set used by the rules should be the most appropriate ISO standard (see \fBDisplayed
-Character Set\fR section), this can make the process much more difficult if the current character set not compatible,
-if you are having difficulty with this please e-mail
+\fBNote\fR: the character set used by the rules should be the most appropriate for the language (see
+\fBInternal  Character  Set\fRsection),  this can make the process  more  difficult,  but adding  support for the base
+character sets involved to \fCcharset.emf\fR will enable the command
+.Ht change-buffer-charset 3
+to function correctly and avoid some of the more subtle issues that can arise from incompatible character sets. If you
+are having difficulty with this please e-mail
 .Hl "JASSPA Support" Contact - .
 .PP
-Once the rules have been created, create a dictionary for the language from the word lists, see help on command
-.Ht add-dictionary 2 .
-The dictionary file name should be "\fClsm\fR\fI<lang-id>\fR\fC.edf\fR", if the dictionary is large and can be split
-into two sections, a set of common words and a set of more obscure ones, create two dictionaries calling the
-dictionary containing obscure words "\fClsx\fR\fI<lang-id>\fR\fC.edf\fR" and the other as above.
+Once the conversion process has completed it should have generated a  "\fClsr\fR\fI<lang-id>\fR\fC.emf\fR"  rules file
+and a "\fClsm\fR\fI<lang-id>\fR\fC.edf\fR" dictionary file. With the rapid increase in memory capacity there is little
+point these days in splitting  dictionaries into two files so the use of an extended dictionary file for obscure words
+has been dropped.
 .PP
 Once the generated word and dictionary files have been place in the \*(mS
 .Hl "search path" $search-path 5 ,
@@ -250,6 +310,7 @@ the spelling checker should find and use them. Please submit your generated supp
 .na
 .Ht set-char-mask 2 ,
 .Ht translate-key 2 ,
+.Ht add-spell-rule 2 ,
 .Ht change-buffer-charset 3 ,
 .Ht user-setup 3 ,
 .Ht $box-chars 5 ,
