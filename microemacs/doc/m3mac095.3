@@ -1,0 +1,109 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m2cmd054.2,v 2.6 2009/08/29 17:13:09 jon Exp $
+.Im MicroEmacs command|file
+.ds C0 "(\fB\*(cX9\fR)\ \&
+.so me.tni
+.TH find-bfile 2
+.XI find-bfile \- "\*(C0Load a file as binary data"
+.XI find-rfile \- "Load a file as binary data (reduced)"
+.SH NAME
+.Me "|find-bfile"
+find-bfile \- Load a file as binary data
+.br
+.Me "|find-rfile"
+find-rfile \- Load a file as binary data (reduced)
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B find-bfile
+"\fIfile-name\fR" \*(C0
+.br
+.I n
+.B find-rfile
+"\fIfile-name\fR"
+.ad
+.SH DESCRIPTION
+\fBfind-bfile\fR  and  \fBfind-rfile\fR  both load a file as binary data, providing binary editing  capabilities.  The
+commands operate as command
+.Ht find-file 2
+except that they load the given  file with
+.Ht binary 2m
+or
+.Ht rbin 2m
+mode set.
+.PP
+\fBfind-bfile\fR, which uses \s-1binary\s0 mode, loads any file and converts every 16 bytes into a line of text giving
+the hex address of the current position in the file, the bytes as hexadecimal numbers and all printable  characters at
+the end of the line (all non-printable  characters are displayed as a '\fC.\fR'). However, This format makes it memory
+hungry in that every 16 bytes of the file requires a 78 character line (approximately 5 times more memory!).
+.PP
+\fBfind-rfile\fR,  which  uses  \s-1rbin\s0  mode,  loads any file and  converts  every 256 bytes  into a line of text
+containing only 2 hexadecimal numbers per byte leading to a line length of 512 characters. This format greatly reduces
+the memory required (approximately 2 times more memory) making it ideal for large binary file editing.
+.PP
+The extension of a file loaded using binary or rbin mode is ignored with respect to file hooks (See
+.Ht add-file-hook 2 ).
+Instead the \fBfhook-binary\fR or \fBfhook-rbin\fR command is always executed if it exists.
+.PP
+Each line of text may be edited,  providing that the basic format of every line remains the same, the altered file may
+be written out, providing full binary editing capabilities.
+.SH EXAMPLE
+Given a single line \s-1MSDOS\s0 file:-
+.CS
+Live long and prosper.
+.CE
+When loaded in using \fBfind-bfile\fR will produce the following 2 line buffer:-
+.CS
+00000000: 4C 69 76 65 20 6C 6F 6E 67 20 61 6E 64 20 70 72  |  Live long and pr
+00000010: 6F 73 70 65 72 2E 0D 0A 1A                       |  osper....
+.CE
+Note  the  "\fC0D  0A  1A\fR"  at  the  end,  this  is  due to  \s-1MSDOS\s0's
+"\fC\\n\\r\fR"   carriage  returns  and  \fC^Z\fR  file   termination,   these
+characters  are  unprintable and are shown as '\fC.\fR' at the end of the line.
+The basic form of a binary file is:-
+.CS
+AAAAAAAA: XX XX XX XX ....  |
+.CE
+When saving a binary file, only the text  between the  '\fC:\fR' and '\fC|\fR'
+is considered and it may contain any number of hexadecimal  numbers. The given
+file could be made \s-1UNIX\s0 compatible by editing the buffer to:-
+.CS
+00000000: 4C 69 76 65 20 6C 6F 6E 67 20 61 6E 64 20 70 72  |  Live long and pr
+00000010: 6F 73 70 65 72 2E 0D                       |  osper....
+.CE
+If the word  "\fBlong\fR"  is required to be removed, the following  would not
+work:-
+.CS
+00000000: 4C 69 76 65 20 6C 6F 6E 67 20 61 6E 64 20 70 72  |  Live and pr
+00000010: 6F 73 70 65 72 2E 0D 0A 1A                       |  osper....
+.CE
+The ASCII end letters are ignored,  instead the  following  operation  must be
+performed which removes the characters from the binary representation:-
+.CS
+00000000: 4C 69 76 65 20 61 6E 64 20 70 72  |  Live long and pr
+00000010: 6F 73 70 65 72 2E 0D 0A 1A                       |  osper....
+.CE
+One could be nasty by doing the following:-
+.CS
+00000000: 4C 69 76 65 20 73 68 6F 72 74 20 61 6E 64 20 |
+00000010: 64 6F 6E 27 74 20 70 72 6F 73 70 65 72 2E 0D 0A 1A           |
+.CE
+("Live  short  and  don't  prosper").  If this  file  was  then  loaded  using
+\fBfind-rfile\fR, the following single line buffer would be created:-
+.CS
+4C6976652073686F727420616E6420646F6E27742070726F737065722E0D0A1A
+.CE 0
+.SH "SEE ALSO"
+.na
+.Ht find-file 2 ,
+.Ht find-cfile 3 ,
+.Ht binary 2m ,
+.Ht rbin 2m .
+.ad
+.rm C0
+.FH
