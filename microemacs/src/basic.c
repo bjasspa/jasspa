@@ -181,8 +181,7 @@ windowForwardLine(int f, int n)
         return windowBackwardLine(f,-n);
     cwp = frameCur->windowCur;
 
-    /* if the last command was not a line move,
-       reset the goal column */
+    /* if the last command was not a line move, reset the goal column */
     if((lastflag & meCFCPCN) == 0)
         curgoal = getcwcol(cwp);
     

@@ -14,6 +14,49 @@ define-macro fhook-ehf
   ; Hyperlink with the mouse.
   set-variable :mouse-word-select ehf-process-link
   !if &seq $buffer-bname "*help*"
+    -1 buffer-mode "view"
+    1 buffer-mode "magic"
+    set-variable #l0 &cond &bmod "magic" 1 -1
+    set-variable #l3 &con &les 140 &set #l3 &con &gre 70 &set #l3 &sub $window-width 4 70 #l3 140 #l3
+    set-variable #l1 &spr "\es[B-Z]\\|^\\( *\\(\\* \\)?\\).\\{%d\\}" #l3
+    !repeat
+      !force search-buffer "me" #l1
+      !iif &not $status  !break
+      !if &sub &len @s0 3
+        set-variable #l5 &len @s1
+        set-variable #l2 $window-line
+        !while &set #l4 &sub #l3 $window-acol
+          !force #l4 forward-char
+          !iif &gre $window-line #l2  !break
+          !if &equ #l3 $window-acol
+            set-variable #l6 $window-col
+            forward-char
+            !force search-buffer "bMe" " "
+            !if $status
+              forward-delete-char
+              insert-newline
+            !else
+              set-variable $window-col &sub #l6 1
+              insert-string "-\n"
+            !endif
+            #l5 insert-space
+            set-variable #l2 &add #l2 1
+          !endif
+        !done
+        set-variable $window-line #l2
+        end-of-line
+      !else
+        !force search-buffer "Me" "\esA"
+      !endif
+    !done
+    beginning-of-buffer
+    !force replace-string "\\(\ecB[^\e]*\\)\n\\( *\\)" "\\1\ecA\n\\2\ecB"
+    beginning-of-buffer
+    !force replace-string "\\(\elm[^\e]*\\)\n\\( *\\)" "\\1\eln\n\\2\eln"
+    beginning-of-buffer
+    #l0 buffer-mode "magic"
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
     ; Hyperlink with the <RETURN> key
     buffer-bind-create "bio" "return" "0" ehf-process-link
     ; Move between links with the <TAB> key
