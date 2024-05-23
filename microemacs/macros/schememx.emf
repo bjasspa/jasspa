@@ -21,7 +21,7 @@ add-color &set .col11 11 255 165 0
 add-color &set .col12 12 148 148 148
 add-color &set .col13 13 220 170 220
 add-color &set .col14 14 220 170 155
-add-color &set .col15 15 240 70 70
+add-color &set .col15 15 255 80 80
 add-color &set .col16 16 0 0 0
 add-color &set .col17 17 255 255 255
 add-color &set .col18 18 170 0 0
