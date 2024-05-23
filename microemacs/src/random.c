@@ -382,19 +382,19 @@ bufferInfo(int f, int n)
     meInt predlines;			/* # lines preceding point */
     int   curchar;			/* character under cursor */
     int   ratio;
-    int   col;
-    int   savepos;			/* temp save for current offset */
-    int   ecol;				/* column pos/end of current line */
+    int   coff;
+    int   ccol;
+    int   eoff;
+    int   ecol;
     
     curchar = getBufferInfo(&numlines,&predlines,&numchars,&predchars) ;
     cwp = frameCur->windowCur;    
     
     /* Get real column and end-of-line column. */
-    col = getwcol(cwp);
-    savepos = cwp->dotOffset;
-    cwp->dotOffset = meLineGetLength(cwp->dotLine);
-    ecol = getwcol(cwp);
-    cwp->dotOffset = savepos;
+    coff = cwp->dotOffset;
+    ccol = getiwcol(cwp,coff);
+    eoff = meLineGetLength(cwp->dotLine);
+    ecol = (eoff == coff) ? ccol:getiwcol(cwp,eoff);
     
     ratio = 0;              /* Ratio before dot. */
     if (numchars != 0)
@@ -404,14 +404,14 @@ bufferInfo(int f, int n)
     {
         /* macro call - put info into $result only and in a more usable form */
         sprintf((char *)resultStr,"|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|0x%02x|",
-                predlines+1, numlines+1, savepos, meLineGetLength(cwp->dotLine),predchars, numchars, ratio, 
-                (int) (cwp->dotLineNo-cwp->vertScroll), cwp->textDepth-1,col, ecol, curchar);
+                predlines+1,numlines+1,coff,eoff,predchars,numchars,ratio, 
+                (int) (cwp->dotLineNo-cwp->vertScroll),cwp->textDepth-1,ccol,ecol,curchar);
         return meTRUE ;
     }
     /* summarize and report the info */
     sprintf((char *)resultStr,"Line %d/%d Col %d/%d Char %d/%d (%d%%) Win Line %d/%d ACol %d/%d char %d (0x%02x)",
-            predlines+1, numlines+1, savepos, meLineGetLength(cwp->dotLine),predchars, numchars, ratio, 
-            (int) (cwp->dotLineNo-cwp->vertScroll), cwp->textDepth-1,col, ecol, curchar, curchar);
+            predlines+1,numlines+1,coff,eoff,predchars,numchars,ratio, 
+            (int) (cwp->dotLineNo-cwp->vertScroll),cwp->textDepth-1,ccol,ecol,curchar,curchar);
     return mlwrite(MWSPEC,resultStr) ;
 }
 
@@ -440,27 +440,27 @@ getcline(meWindow *wp)	/* get the current line number */
 }
 
 int
-getcol(meUByte *ss, int off, int tabWidth)
+getcol(meUByte *ss,register int off, int tabWidth)
 {
-    register int c, col=0 ;
+    register int c, col=0;
     
     while(off--)
     {
-        c = *ss++ ;
+        c = *ss++;
         if(isDisplayable(c))
-            col++ ;
+            col++;
         else if(c == meCHAR_TAB)
-            col += get_tab_pos(col,tabWidth) + 1 ;
+            col += get_tab_pos(col,tabWidth) + 1;
         else if (c  < 0x20)
-            col += 2 ;
+            col += 2;
         else
-            col += 4 ;
+            col += 4;
     }
-    return col ;
+    return col;
 }
 
 int
-setccol(meWindow *wp,int pos)
+setccol(meWindow *wp,register int pos)
 {
     register int c; 	/* character being scanned */
     register int i; 	/* index into current line */
@@ -495,21 +495,20 @@ setccol(meWindow *wp,int pos)
 }
 
 int
-getcwcol(meWindow *wp)
+getiwcol(meWindow *wp, register int off)
 {
-    int ii, col=0;
-    
-    if((ii = wp->dotOffset) > 0)
+    int col=0;
+    if(off > 0)
     {
-        register meUByte *off = windCurLineOffsetEval(wp);
+        register meUByte *cOff = windCurLineOffsetEval(wp);
         do {
-            col += *off++;
-        } while(--ii > 0);
+            col += *cOff++;
+        } while(--off > 0);
     }
     return col;
 }
 int
-setcwcol(meWindow *wp,int col)
+setcwcol(meWindow *wp,register int col)
 {
     int ii=0, jj;
     

@@ -816,11 +816,12 @@ extern  void    sortStrings(int noStr, meUByte **strs, int offset, meIFuncSS cmp
 extern  int     sortLines(int f, int n) ;
 extern	int	bufferInfo(int f, int n);
 extern	int	getcline(meWindow *wp);
-extern	int	getcol(meUByte *ss, int off, int tabWidth);
-#define getwcol(wp) getcol(wp->dotLine->text,wp->dotOffset,wp->buffer->tabWidth)
-extern	int	setwcol(meWindow *wp,int pos);
-extern	int	getcwcol(meWindow *wp);
-extern	int	setcwcol(meWindow *wp,int pos);
+extern	int	getcol(meUByte *ss,register int off, int tabWidth);
+#define getwcol(wp) getcol((wp)->dotLine->text,(wp)->dotOffset,(wp)->buffer->tabWidth)
+extern	int	setwcol(meWindow *wp,register int pos);
+extern	int	getiwcol(meWindow *wp,register int off);
+#define getcwcol(wp) getiwcol((wp),(wp)->dotOffset)
+extern	int	setcwcol(meWindow *wp,register int pos);
 extern	int	transChars(int f, int n);
 extern	int	transLines(int f, int n);
 extern	int	quoteKeyToChar(meUShort c) ;
