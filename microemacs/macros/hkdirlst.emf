@@ -1336,16 +1336,23 @@ define-macro dirlst-search
     !if &band .mode 0x40
       !iif &seq &rig #l2 -1 "/"  set-variable #l2 &lef #l2 -1
       !force !force .mode file-op &cat #l0 &lef #l1 -1 #l2 @mna
-      !iif $status  !return
+      !if $status
+        set-variable .result &lset .result 1 &add 1 &lget .result 1
+        !return
+      !endif
     !endif
     set-variable &cat ".find-file.dir" &inc .find-file.dir-count 1 #l1
   !else
     set-variable #l6 2
 *retry
     !force !force .mode file-op &cat #l0 #l1 #l2 @mna
-    !if &and &not $status &equ $result 6
-      ; write file check failure, dest already exists
-      !iif &band .state 4  !return
+    ; if failed and $result = 6 then write file check failure, dest already exists
+    !if $status
+    !elif &sub $result 6
+    !elif &band .state 4
+      set-variable .result &lset .result 4 &add 1 &lget .result 4
+      !return
+    !else
       set-variable #l4 @mc5 &spr "File \"%s\" already exists, overwrite (?/y/n/a/o) ? " #l2 "aAnNoOyY" "(Y)es, (N)o, Yes to (A)ll, N(o) to All, (C-g)Abort ? "
       !if &iseq #l4 "o"
         set-variable .state &bor .state 4
@@ -1355,38 +1362,35 @@ define-macro dirlst-search
         !force !force #l5 file-op &cat #l0 #l1 #l2 @mna
       !endif
     !endif
-    !if &not $status
-      !if &equ $result 2
-        ; failed to open src for reading
-        !if &seq &set #l4 &lget &stat "i" &cat #l0 #l1 2 "D"
-          set-variable #l1 &cat #l1 "/"
-          set-variable &cat ".find-file.dir" &inc .find-file.dir-count 1 #l1
-        !elif &seq #l4 "X"
-        !elif #l6
-          set-variable #l6 &sub #l6 1
-          !goto retry
-        !elif &not &band .state 1
-          set-variable #l4 @mc5 &spr "Cannot read \"%s\", retry (?/y/n/o) ? " #l1 "nNoOyY" "(Y)es, (N)o, N(o) to All, (C-g)Abort ? "
-          !if &iseq #l4 "y"
-            !goto retry
-          !elif &iseq #l4 "o"
-            set-variable .state &bor .state 1
-          !endif
-        !endif
-      !elif &equ $result 3
-        ; failed to open dest for writing
-        !if &not &band .state 2
-          set-variable #l4 @mc5 &spr "Cannot write to \"%s\", retry (?/y/n/o) ? " #l2 "nNoOyY" "(Y)es, (N)o, N(o) to All, (C-g)Abort ? "
-          !if &iseq #l4 "y"
-            !goto retry
-          !elif &iseq #l4 "o"
-            set-variable .state &bor .state 2
-          !endif
-        !endif
-      !else
-        ml-write &spr "[Copy file error: unexpected failure code %d]" $result
-        !abort
+    !if $status
+      set-variable .result &lset .result 3 &add 1 &lget .result 3
+    !elif &equ $result 2
+      ; failed to open src for reading
+      !if &seq &set #l4 &lget &stat "i" &cat #l0 #l1 2 "D"
+        set-variable #l1 &cat #l1 "/"
+        set-variable &cat ".find-file.dir" &inc .find-file.dir-count 1 #l1
+      !elif &seq #l4 "X"
+      !elif #l6
+        set-variable #l6 &sub #l6 1
+        !goto retry
+      !elif &not &band .state 1
+        set-variable #l4 @mc5 &spr "Cannot read \"%s\", retry (?/y/n/o) ? " #l1 "nNoOyY" "(Y)es, (N)o, N(o) to All, (C-g)Abort ? "
+        !tgoto &iseq #l4 "y" retry
+        !iif &iseq #l4 "o"  set-variable .state &bor .state 1
       !endif
+      set-variable .result &lset .result 4 &add 1 &lget .result 4
+    !elif &equ $result 3
+      ; failed to open dest for writing
+      !if &not &band .state 2
+        set-variable #l4 @mc5 &spr "Cannot write to \"%s\", retry (?/y/n/o) ? " #l2 "nNoOyY" "(Y)es, (N)o, N(o) to All, (C-g)Abort ? "
+        !tgoto &iseq #l4 "y" retry
+        !iif &iseq #l4 "o"  set-variable .state &bor .state 2
+      !endif
+      set-variable .result &lset .result 4 &add 1 &lget .result 4
+    !else
+      ml-write &spr "[Copy file error: unexpected failure code %d]" $result
+      set-variable .result &lset .result 4 &add 1 &lget .result 4
+      !abort
     !endif
   !endif
 !emacro
@@ -1434,8 +1438,7 @@ define-macro dirlst-search
       !endif
     !until &les #l2 1
   !endif
-  set-variable .dirlst-tag-list-copy-file.mode &cond &band @# 1 0x8d 0x4d
-  set-variable .dirlst-tag-list-copy-file.state 0
+  set-variable #l4 &band 7 &div @# 2
   set-variable #l2 .find-file.file-count
   !if &not #p9
     !repeat
@@ -1443,10 +1446,14 @@ define-macro dirlst-search
     !until &les #l2 1
     !if &les #l2 0
       set-variable #l2 @mc5 "Recreate directories (?/y/n/o) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-      set-variable .dirlst-tag-list-copy-file.state &con &iseq #l2 "y" 0x30 0x50
+      set-variable #l4 &bor #l4 &con &iseq #l2 "y" 0x30 0x50
     !endif
   !endif
+  set-variable .dirlst-tag-list-copy-file.mode &bor &con &band #l4 8 0 1 &cond &band @# 1 0x8c 0x4c
+  set-variable .dirlst-tag-list-copy-file.state #l4
+  set-variable .dirlst-tag-list-copy-file.result "|0|0|0|0|"
   set-variable .find-file.dir-count 0
+  set-variable .result 0
   set-variable #l2 0
   !repeat
     ml-write &spr "%s %n" #l9 &mod &inc #l2 1 40 "."
@@ -1492,7 +1499,9 @@ define-macro dirlst-search
           !force !force dirlst-tag-list-copy-file #l1 #l4 #l5
           !iif &not $status  !goto dir-tidy
         !done
-      !elif &not &band .dirlst-tag-list-copy-file.state 2
+      !elif &band .dirlst-tag-list-copy-file.state 2
+        set-variable .result &add 1 .result
+      !else
         !force !force set-variable #l4 @mc5 &spr "Cannot create \"%s\", retry (?/y/n/o) ? " #l6 "nNoOyY" "(Y)es, (N)o, N(o) to All, (C-g)Abort ? "
         !if &not $status
 *dir-tidy
@@ -1503,12 +1512,12 @@ define-macro dirlst-search
               !force !force 0x20 file-op &cat #l1 #l3 @mna
             !done
           !endif
+          set-variable .result &spr "|%d|%d|%d|%d|" &add &sub #l8 1 &lget .dirlst-tag-list-copy-file.result 1 &add 1 .result &lget .dirlst-tag-list-copy-file.result 3 &lget .dirlst-tag-list-copy-file.result 4
           !abort
-        !elif &iseq #l4 "y"
-          !goto dir_retry
-        !elif &iseq #l4 "o"
-          set-variable .dirlst-tag-list-copy-file.state &bor .dirlst-tag-list-copy-file.state 2
         !endif
+        !tgoto &iseq #l4 "y" dir_retry
+        set-variable .result &add 1 .result
+        !iif &iseq #l4 "o"  set-variable .dirlst-tag-list-copy-file.state &bor .dirlst-tag-list-copy-file.state 2
       !endif
     !until &equ #l8 .find-file.dir-count
     !if &not &band @# 1
@@ -1519,6 +1528,7 @@ define-macro dirlst-search
       !done
     !endif
   !endif
+  set-variable .result &spr "|%d|%d|%d|%d|" &add .find-file.dir-count &lget .dirlst-tag-list-copy-file.result 1 .result &lget .dirlst-tag-list-copy-file.result 3 &lget .dirlst-tag-list-copy-file.result 4
   ml-write &cat #l9 " complete"
 !emacro
 
@@ -1553,6 +1563,34 @@ define-macro dirlst-search
       -1 dirlst-tag-set
     !endif
   !endif
+!emacro
+
+; 0x01 Copy rather than Move 
+; 0x02 Don't prompt on file read failure - No retry
+; 0x04 Don't prompt on create/write failure - No retry
+; 0x08 Don't prompt overwrite - No to all
+; 0x10 Don't prompt overwrite - Yes to all
+define-macro copy-file
+  set-variable #l0 &cond &band @# 2 "Move" "Copy"
+  !force set-variable #l1 @1
+  !iif &not $status  set-variable #l1 @ml01 #l0
+  !if &seq "X" &set #l3 &stat t #l1
+    ml-write "[Error: Given file does not exist]"
+    !abort
+  !elif &seq "" &set #l4 &lget "||file|directory|http link|ftp file|" &sin #l3 " RDHF"
+    ml-write "[Error: Given file is not a supported file type]"
+    !abort
+  !endif
+  !force set-variable #l2 @2
+  !iif &not $status  set-variable #l2 @ml01 &spr "%s %s to" #l0 #l4
+  set-variable .find-file.file-count 1
+  set-variable .find-file.file-dcount &con &seq "D" #l3 1 0
+  set-variable .find-file.file-dir &lef #l1 &set #l4 &rsin "/" &lef #l1 -1
+  set-variable .find-file.file1 &rig #l1 #l4
+  !force !force @# dirlst-tag-list-copy #l2
+  set-variable #l5 $status
+  set-variable $result .dirlst-tag-list-copy.result
+  !return #l5
 !emacro
 
 0 define-macro dirlst-file-rename
