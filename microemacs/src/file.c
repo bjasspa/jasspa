@@ -131,9 +131,27 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
     if(ffUrlTypeIsTfs(ft))
     {
         tfsstat_t tfs_statbuf;
-        if(tfs_stat(tfsdev,(char *)(file+5),&tfs_statbuf) != 0)
+        tfs_t tfsh;
+        char *ss;
+        int st;
+        
+        if((ss=strstr((char *) file,"?/")) != NULL)
         {
-            if(file[meStrlen(file)-1] == DIR_CHAR)
+            *ss = '\0';
+            tfsh = tfs_mount((char *) (file+6),TFS_CHECK_HEAD);
+            *ss++ = '?';
+        }
+        else
+        {
+            tfsh = tfsdev;
+            ss = (char *) (file+5);
+        }
+        st = tfs_stat(tfsh,ss,&tfs_statbuf);
+        if((tfsh!= NULL) && (tfsh != tfsdev))
+            tfs_umount(tfsh);            
+        if(st != 0)
+        {
+            if(ss[meStrlen(ss)-1] == DIR_CHAR)
             {
                 if(flag & gfsERRON_DIR)
                     mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s directory]", file) ;
@@ -179,8 +197,7 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
             stats->stmtime = tfs_statbuf.st_utc_mtime;
 #endif
 #ifdef _UNIX
-            stats->stdev = meIntFromPtr(tfsdev);
-            stats->stino = (meUInt) tfs_statbuf.st_bno;
+            /* NOTE: TFS does not support sym-links so nothing to be gained by trying to store stdev or stino, fname cmp will be enough */
             stats->stmode |= S_IRGRP|S_IROTH|S_IRUSR;
             if(ft & meIOTYPE_REGULAR)
                 stats->stmode |= 0100000;
@@ -430,14 +447,14 @@ gft_directory:
         
         if(stats != NULL)
         {
-            stats->stmode = statbuf.st_mode ;
-            stats->stuid  = statbuf.st_uid ;
-            stats->stgid  = statbuf.st_gid ;
-            stats->stdev  = statbuf.st_dev ;
-            stats->stino  = statbuf.st_ino ;
+            stats->stmode = statbuf.st_mode;
+            stats->stuid = statbuf.st_uid;
+            stats->stgid = statbuf.st_gid;
+            stats->stdev = statbuf.st_dev;
+            stats->stino = statbuf.st_ino;
 #ifdef _LARGEFILE_SOURCE
-            stats->stsizeHigh = (meUInt) (statbuf.st_size >> 32) ;
-            stats->stsizeLow = (meUInt) statbuf.st_size ;
+            stats->stsizeHigh = (meUInt) (statbuf.st_size >> 32);
+            stats->stsizeLow = (meUInt) statbuf.st_size;
 #else
             stats->stsizeLow = statbuf.st_size ;
 #endif
@@ -639,7 +656,19 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
 #if MEOPT_TFS
                 if(ffUrlTypeIsTfs(ffUrlGetType(outName)))
                 {
-                    if(tfs_type(tfsdev,(char *)(outName+5)) == TFS_TYPE_FILE)
+                    if((sp=(meUByte *) strstr((char *) outName,"?/")) != NULL)
+                    {
+                        tfs_t tfsh;
+                        int tt;
+                        *sp = '\0';
+                        tfsh = tfs_mount((char *) (outName+6),TFS_CHECK_HEAD);
+                        *sp++ = '?';
+                        tt = tfs_type(tfsh,(char *) sp);
+                        tfs_umount(tfsh);
+                        if(tt == TFS_TYPE_FILE)
+                            return 1;
+                    }
+                    else if(tfs_type(tfsdev,(char *)(outName+5)) == TFS_TYPE_FILE)
                         return 1;
                 }
                 else
@@ -659,7 +688,19 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
 #if MEOPT_TFS
         else if(ffUrlTypeIsTfs(ffUrlGetType(outName)))
         {
-            if(tfs_type(tfsdev,(char *)(outName+5)) == TFS_TYPE_FILE)
+            if((sp=(meUByte *) strstr((char *) outName,"?/")) != NULL)
+            {
+                tfs_t tfsh;
+                int tt;
+                *sp = '\0';
+                tfsh = tfs_mount((char *) (outName+6),TFS_CHECK_HEAD);
+                *sp++ = '?';
+                tt = tfs_type(tfsh,(char *) sp);
+                tfs_umount(tfsh);
+                if(tt == TFS_TYPE_FILE)
+                    return 1;
+            }
+            else if(tfs_type(tfsdev,(char *)(outName+5)) == TFS_TYPE_FILE)
                 return 1;
         }
 #endif
@@ -685,7 +726,7 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
         sp = path;
 #if MEOPT_TFS
 #if mePATH_CHAR == ':'
-        /* Special case: if the path starts with tfs: the assume its a tfs path rather than just 'tfs' */
+        /* Special case: if the path starts with tfs: then assume its a tfs path rather than just 'tfs' */
         if((path[0] == 't') && (path[1] == 'f') && (path[2] == 's') && (path[3] == ':'))
             path += 4;
 #endif
@@ -722,7 +763,19 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
 #if MEOPT_TFS
                     if(ffUrlTypeIsTfs(ffUrlGetType(buf)))
                     {
-                        if(tfs_type(tfsdev,(char *)(buf+5)) == TFS_TYPE_FILE)
+                        int tt;
+                        if((sp=(meUByte *) strstr((char *) buf,"?/")) != NULL)
+                        {
+                            tfs_t tfsh;
+                            *sp = '\0';
+                            tfsh = tfs_mount((char *) (buf+6),TFS_CHECK_HEAD);
+                            *sp++ = '?';
+                            tt = tfs_type(tfsh,(char *) sp);
+                            tfs_umount(tfsh);
+                        }
+                        else 
+                            tt = tfs_type(tfsdev,(char *)(buf+5));
+                        if(tt == TFS_TYPE_FILE)
                         {
                             fileNameCorrect(buf,outName,NULL);
                             return 1;
@@ -751,7 +804,19 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
 #if MEOPT_TFS
             else if(ffUrlTypeIsTfs(ffUrlGetType(buf)))
             {
-                if(tfs_type(tfsdev,(char *)(buf+5)) == TFS_TYPE_FILE)
+                int tt;
+                if((sp=(meUByte *) strstr((char *) buf,"?/")) != NULL)
+                {
+                    tfs_t tfsh;
+                    *sp = '\0';
+                    tfsh = tfs_mount((char *) (buf+6),TFS_CHECK_HEAD);
+                    *sp++ = '?';
+                    tt = tfs_type(tfsh,(char *) sp);
+                    tfs_umount(tfsh);
+                }
+                else 
+                    tt = tfs_type(tfsdev,(char *)(buf+5));
+                if(tt == TFS_TYPE_FILE)
                 {
                     fileNameCorrect(buf,outName,NULL);
                     return 1;
@@ -1082,32 +1147,51 @@ getDirectoryInfo(meUByte *fname)
 #if MEOPT_TFS
     if(ffUrlTypeIsTfs(ffUrlGetType(fname)))
     {
+        tfs_t tfsh;
         tfsdir_t dirp;
         tfsdirent_t *dp;
         tfsstat_t sbuf;
-        meUByte *ff;
+        meUByte *fp,*ff;
         
         /* Render the list of files. */
         curHead = NULL ;
         meStrcpy(bfname,fname) ;
-        fn = bfname+meStrlen(bfname) ;
-        
-        if((dirp = tfs_opendir(tfsdev, (char *)fname+5)) != NULL)
+        if((fp=(meUByte *) strstr((char *) bfname,"?/")) != NULL)
         {
+            *fp = '\0';
+            tfsh = tfs_mount((char *) (bfname+6),TFS_CHECK_HEAD);
+            *fp++ = '?';
+        }
+        else
+        {
+            tfsh = tfsdev;
+            fp = bfname+5;
+        }
+        if((dirp = tfs_opendir(tfsh,(char *) fp)) != NULL)
+        {
+            fn = fp+meStrlen(fp);
             while((dp = tfs_readdir(dirp)) != NULL)
             {
                 if(((noFiles & 0x0f) == 0) &&
                    ((curHead = (FILENODE *) meRealloc(curHead,sizeof(FILENODE)*(noFiles+16))) == NULL))
-                    return NULL ;
-                curFile = &(curHead[noFiles++]) ;
-                if((ff = malloc ((dp->len + 1) * sizeof (char))) == NULL)
-                    return NULL ;
+                {
+                    if(tfsh != tfsdev)
+                        tfs_umount(tfsh);
+                    return NULL;
+                }
+                curFile = &(curHead[noFiles++]);
+                if((ff = malloc((dp->len + 1) * sizeof (char))) == NULL)
+                {
+                    if(tfsh != tfsdev)
+                        tfs_umount(tfsh);
+                    return NULL;
+                }
                 meStrncpy(ff,(meUByte *)dp->name,dp->len);
                 ff[dp->len] = '\0';
-                curFile->lname = NULL ;
-                curFile->fname = ff ;
+                curFile->lname = NULL;
+                curFile->fname = ff;
                 meStrcpy(fn,ff) ;
-                if (tfs_stat(tfsdev,(char *)bfname+5,&sbuf) != 0)
+                if (tfs_stat(tfsh,(char *) fp,&sbuf) != 0)
                 {
                     sbuf.st_mode = TFS_TYPE_DIR;
                     sbuf.st_size = 0;
@@ -1124,8 +1208,10 @@ getDirectoryInfo(meUByte *fname)
                 curFile->mtime = 0;
 #endif
             }
-            tfs_closedir(dirp) ;
+            tfs_closedir(dirp);
         }
+        if(tfsh != tfsdev)
+            tfs_umount(tfsh);
     }
     else
 #endif
@@ -2875,11 +2961,12 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
     /* search for
      * 1) set to root,  xxxx/http:// -> http://  (for urls)
      * 2) set to root,  xxxx/ftp://  -> ftp://   (for urls)
-     * 2) set to root,  xxxx/file:yy -> yy       (for urls)
-     * 3) set to root,  xxxx///yyyyy -> //yyyyy  (for network drives)
-     * 4) set to root,  xxxx//yyyyy  -> /yyyyy
-     * 5) set to Drive, xxxx/z:yyyyy -> z:yyyyy
-     * 6) set to home,  xxxx/~yyyyy  -> ~yyyyy
+     * 3) set to root,  xxxx/tfs://  -> tfs://   (for urls)
+     * 4) set to root,  xxxx/file:yy -> yy       (for urls)
+     * 5) set to root,  xxxx///yyyyy -> //yyyyy  (for network drives)
+     * 6) set to root,  xxxx//yyyyy  -> /yyyyy
+     * 7) set to Drive, xxxx/z:yyyyy -> z:yyyyy
+     * 8) set to home,  xxxx/~yyyyy  -> ~yyyyy
      */
     for(;;)
     {
@@ -2898,16 +2985,16 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
             urls = p1 ;
             if((p=meStrchr((urle=p1+6+(((ft & (meIOTYPE_SSL|meIOTYPE_FTPE))) ? 1:0)),DIR_CHAR)) == NULL)
                 break;
-            urle = p;
-            p1 = p;
+            p1 = urle = p;
         }
         else if(ffUrlTypeIsTfs(ft))
         {
-            flag = 3;
+            flag = 4;
             urls = p1;
-            /* continue at the 2nd '/' so path tfs://x: -> x: */
-            urle = p = p1+5;
-            p1 = p;
+            /* this can either be a built in tfs ref (tfs:/<path>) or external tfs file (tfs://<file>?<path>) where the path starts with '/' */
+            if((p=meStrchr((urle=p1+6),DIR_CHAR)) == NULL)
+                break;
+            p1 = urle = p;
         }
         else if(ffUrlTypeIsFile(ft))
         {
@@ -3059,7 +3146,7 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
         }
     }
     else if(flag)
-        meStrcpy(p1,p) ;
+        meStrcpy(p1,p);
 #ifdef _DRV_CHAR
     /* case for /xxxx... */
     else if(p[0] == DIR_CHAR)
@@ -3157,7 +3244,7 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
         {
             if((cc == DIR_CHAR) && (*p1 != '\0'))
                 p = p1 ;
-            else if((cc == '[') || (cc == '?') || (cc == '*'))
+            else if((cc == '[') || (cc == '*') || ((cc == '?') && ((flag != 4) || (*p1 != DIR_CHAR))))
                 /* this is base of a wild file base name break */
                 break ;
         }
@@ -3290,15 +3377,28 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
 #ifdef MEOPT_TFS
         if(ffUrlTypeIsTfs(ft))
         {
+            tfs_t tfsh;
             tfsdir_t dirp;
-            
-            if((dirp = tfs_opendir(tfsdev, (char *)pathName+5)) != NULL)
+            meUByte *fn;
+            if((fn=(meUByte *) strstr((char *) pathName,"?/")) != NULL)
+            {
+                *fn = '\0';
+                tfsh = tfs_mount((char *) (pathName+6),TFS_CHECK_HEAD);
+                *fn++ = '?';
+            }
+            else
+            {
+                tfsh = tfsdev;
+                fn = pathName+5;
+            }
+
+            if((dirp = tfs_opendir(tfsh,(char *) fn)) != NULL)
             {
                 tfsdirent_t *dirent;
-                meUByte *ff, *bb, fname[meBUF_SIZE_MAX] ;
+                meUByte *ff, fname[meBUF_SIZE_MAX];
                 
-                meStrcpy(fname,pathName) ;
-                bb = fname + meStrlen(fname) ;
+                meStrcpy(fname,fn);
+                fn = fname + meStrlen(fname);
                 
                 while((dirent = tfs_readdir(dirp)) != NULL)
                 {
@@ -3306,23 +3406,23 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                         ((fls = meRealloc(fls,sizeof(meUByte *) * (noFiles+16))) == NULL)) ||
                        ((ff = meMalloc(dirent->len+3)) == NULL))
                         break ;
-                    fls[noFiles++] = ff ;
-                    meStrncpy(ff,dirent->name,dirent->len) ;
+                    fls[noFiles++] = ff;
+                    meStrncpy(ff,dirent->name,dirent->len);
                     ff[dirent->len] = '\0';
                     if((ff[0] == '.') && ((ff[1] == '\0') || ((ff[1] == '.') && (ff[2] == '\0'))))
                     {
-                        ff += (ff[1] == '\0') ? 1:2 ;
-                        *ff++ = DIR_CHAR ;
-                        *ff   = '\0' ;
+                        ff += (ff[1] == '\0') ? 1:2;
+                        *ff++ = DIR_CHAR;
+                        *ff   = '\0';
                     }
                     else
                     {
-                        meStrcpy(bb,ff) ;
-                        if (tfs_type (tfsdev, (char *)fname+5) == TFS_TYPE_DIR)
+                        meStrcpy(fn,ff);
+                        if(tfs_type(tfsh,(char *) fname) == TFS_TYPE_DIR)
                         {
-                            ff += meStrlen(ff) ;
-                            *ff++ = DIR_CHAR ;
-                            *ff   = '\0' ;
+                            ff += meStrlen(ff);
+                            *ff++ = DIR_CHAR;
+                            *ff   = '\0';
                         }
                     }
                 }
@@ -3338,6 +3438,8 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                     noFiles = 0;
                 }
             }
+            if(tfsh != tfsdev)
+                tfs_umount(tfsh);
         }
 #endif  /* MEOPT_TFS */
         if(noFiles > 0)

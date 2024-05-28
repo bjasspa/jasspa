@@ -1491,7 +1491,7 @@ mesetup(int argc, char *argv[])
 #if MEOPT_TFS
     /* Initialise the tack-on file system. Note for speed we only check the header. */
     if((tfsdev = tfs_mount((char *)meProgName,TFS_CHECK_HEAD)) != NULL)
-        argc = mesetupInsertTsfResource(argc,&argv) ;
+        argc = mesetupInsertTsfResource(argc,&argv);
 #endif
     
     /* scan through the command line and get all global options */

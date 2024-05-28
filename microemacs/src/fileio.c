@@ -1611,7 +1611,22 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
     else if (ffUrlTypeIsTfs(io->type))
     {
 #ifdef MEOPT_TFS
-        io->tfsp = tfs_fopen(tfsdev,(char *)(fname+5));
+        tfs_t tfsh;
+        meUByte *fn;
+        if((fn=(meUByte *) strstr((char *) fname,"?/")) != NULL)
+        {
+            *fn = '\0';
+            tfsh = tfs_mount((char *) (fname+6),TFS_CHECK_HEAD);
+            *fn++ = '?';
+        }
+        else
+        {
+            tfsh = tfsdev;
+            fn = fname+5;
+        }
+        io->tfsp = tfs_fopen(tfsh,(char *) fn);
+        if(tfsh != tfsdev)
+            tfs_umount(tfsh);
         if(io->tfsp == NULL)
         {
             if(!(flags & meRWFLAG_SILENT))
