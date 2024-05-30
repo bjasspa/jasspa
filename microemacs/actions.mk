@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : <unknown>
 #  Created       : Sun Mar 24 17:52:35 2024
-#  Last Modified : <240324.2010>
+#  Last Modified : <240507.1556>
 #
 #  Description	
 #
@@ -41,6 +41,9 @@ endif
 ifeq ($(PLATFORM),fedora38)
    MEDIR := .linux32gcc-release
 endif
+ifeq ($(PLATFORM),fedora39)
+   MEDIR := .linux32gcc-release
+endif
 ifeq ($(PLATFORM),macos11)
    MEDIR := .macos64cc-release
 endif
@@ -49,6 +52,7 @@ ifeq ($(PLATFORM),macos14)
 endif
 
 default:
+	cd microemacs/3rdparty/tfs && bash build.sh
 	cd microemacs/src && bash build.sh -t w
 	cd microemacs/src && bash build.sh -t c	
 	-mkdir -p MicroEmacs_$(VERSION)_$(PLATFORM)_mecs/bin
