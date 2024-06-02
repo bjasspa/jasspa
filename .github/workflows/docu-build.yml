@@ -1,0 +1,24 @@
+name: Build nroff tools and documentation
+
+on:
+  workflow_dispatch:
+    branches: [ master ]
+env:
+    VERSION: "202406"
+jobs:
+  build-ubuntu-22:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+     
+    - name: make nroff
+      run: |
+        cd nroff
+        make
+    - name: Upload Artifact nroff tools
+      uses: actions/upload-artifact@v4
+      with: 
+        name: nroff_bin_${{ env.VERSION }}
+        path: nroff/bin/linux
+
+
