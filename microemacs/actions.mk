@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : <unknown>
 #  Created       : Sun Mar 24 17:52:35 2024
-#  Last Modified : <240602.0748>
+#  Last Modified : <240602.0836>
 #
 #  Description	
 #
@@ -52,10 +52,13 @@ default:
 	cd microemacs/3rdparty/tfs && bash build.sh
 	cd microemacs/src && bash build.sh -t w
 	cd microemacs/src && bash build.sh -t c	
+	cd microemacs/src && bash build.sh -t cw		
 	-mkdir -p MicroEmacs_$(VERSION)_$(PLATFORM)_mecs/bin
 	-mkdir -p MicroEmacs_$(VERSION)_$(PLATFORM)_mews/bin
+	-mkdir -p MicroEmacs_$(VERSION)_$(PLATFORM)_mecws/bin
 	-mkdir -p MicroEmacs_$(VERSION)_$(PLATFORM)_mec/bin
 	-mkdir -p MicroEmacs_$(VERSION)_$(PLATFORM)_mew/bin	
+	-mkdir -p MicroEmacs_$(VERSION)_$(PLATFORM)_mecw/bin		
 	-mkdir -p tfs_$(VERSION)_$(PLATFORM)/bin
 	ln -sf `pwd`/microemacs/macros macros_$(VERSION)
 	cp microemacs/3rdparty/tfs/$(MEDIR)/tfs tfs_$(VERSION)_$(PLATFORM)/bin/
@@ -66,13 +69,16 @@ default:
 	cp microemacs/license.txt microemacs/src/readme.txt MicroEmacs_$(VERSION)_$(PLATFORM)_mews/	
 	cp microemacs/license.txt microemacs/src/readme.txt MicroEmacs_$(VERSION)_$(PLATFORM)_mec/
 	cp microemacs/license.txt microemacs/src/readme.txt MicroEmacs_$(VERSION)_$(PLATFORM)_mecs/
+	cp microemacs/license.txt microemacs/src/readme.txt MicroEmacs_$(VERSION)_$(PLATFORM)_mecw/		
+	cp microemacs/license.txt microemacs/src/readme.txt MicroEmacs_$(VERSION)_$(PLATFORM)_mecws/	
 	export PATH=`pwd`/microemacs/src/$(MEDIR)-mec/:$PATH
 	export PATH=`pwd`/microemacs/3rdparty/tfs/$(MEDIR)/:$PATH
 	PATH=`pwd`/microemacs/src/$(MEDIR)-mec/:`pwd`/microemacs/3rdparty/tfs/$(MEDIR)/:$$PATH && \
 		cd microemacs/mesingle && bash mesgen.sh -d -p ../src/$(MEDIR)-mew/mew -o ../../MicroEmacs_$(VERSION)_$(PLATFORM)_mews/bin/mews
 	PATH=`pwd`/microemacs/src/$(MEDIR)-mec/:`pwd`/microemacs/3rdparty/tfs/$(MEDIR)/:$$PATH && \
 		cd microemacs/mesingle && bash mesgen.sh -d -p ../src/$(MEDIR)-mec/mec -o ../../MicroEmacs_$(VERSION)_$(PLATFORM)_mecs/bin/mecs
-
+	PATH=`pwd`/microemacs/src/$(MEDIR)-mec/:`pwd`/microemacs/3rdparty/tfs/$(MEDIR)/:$$PATH && \
+		cd microemacs/mesingle && bash mesgen.sh -d -p ../src/$(MEDIR)-mec/mecw -o ../../MicroEmacs_$(VERSION)_$(PLATFORM)_mecs/bin/mecws
 test:
 	echo "MEDIR=$(MEDIR) PLATFORM=$(PLATFORM)"
 	echo $(findstring fedora,$(PLATFORM))
