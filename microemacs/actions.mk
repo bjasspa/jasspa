@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : <unknown>
 #  Created       : Sun Mar 24 17:52:35 2024
-#  Last Modified : <240602.0836>
+#  Last Modified : <240602.0846>
 #
 #  Description	
 #
@@ -78,7 +78,7 @@ default:
 	PATH=`pwd`/microemacs/src/$(MEDIR)-mec/:`pwd`/microemacs/3rdparty/tfs/$(MEDIR)/:$$PATH && \
 		cd microemacs/mesingle && bash mesgen.sh -d -p ../src/$(MEDIR)-mec/mec -o ../../MicroEmacs_$(VERSION)_$(PLATFORM)_mecs/bin/mecs
 	PATH=`pwd`/microemacs/src/$(MEDIR)-mec/:`pwd`/microemacs/3rdparty/tfs/$(MEDIR)/:$$PATH && \
-		cd microemacs/mesingle && bash mesgen.sh -d -p ../src/$(MEDIR)-mec/mecw -o ../../MicroEmacs_$(VERSION)_$(PLATFORM)_mecs/bin/mecws
+		cd microemacs/mesingle && bash mesgen.sh -d -p ../src/$(MEDIR)-mecw/mecw -o ../../MicroEmacs_$(VERSION)_$(PLATFORM)_mecws/bin/mecws
 test:
 	echo "MEDIR=$(MEDIR) PLATFORM=$(PLATFORM)"
 	echo $(findstring fedora,$(PLATFORM))
