@@ -26,6 +26,7 @@ jobs:
         cp ./microemacs/mesingle/mec-linux nroff/bin/linux/me
         cd microemacs/doc 
         make
+        make me.ehf
         
     - name: Upload Artifact nroff tools
       uses: actions/upload-artifact@v4
