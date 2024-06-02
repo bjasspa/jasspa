@@ -15,6 +15,15 @@ jobs:
       run: |
         cd nroff
         make
+        cd ..
+    - name: make me-binaries
+      run: |
+        sudo apt install libxt-dev
+        make -f microemacs/actions.mk PLATFORM=ubuntu22 VERSION=${VERSION}
+    - name: make me doc
+        export PATH=`pwd`/nroff/bin$PATH
+        cd ../microemacs/doc 
+        make
     - name: Upload Artifact nroff tools
       uses: actions/upload-artifact@v4
       with: 
