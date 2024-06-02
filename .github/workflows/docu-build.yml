@@ -23,7 +23,7 @@ jobs:
     - name: make me doc
       run: |  
         export PATH=`pwd`/nroff/bin/linux:$PATH
-        cp ./microemacs/mesingle/mec-linux nroff/bin/linux/me
+        cp MicroEmacs_${VERSION}_ubuntu22_mecs/bin/mecs nroff/bin/linux/me
         cd microemacs/doc 
         make
         make me.ehf
