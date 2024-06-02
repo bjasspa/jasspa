@@ -23,12 +23,25 @@ jobs:
     - name: make me doc
       run: |  
         export PATH=`pwd`/nroff/bin/linux:$PATH
+        cp ./microemacs/mesingle/mec-linux nroff/bin/linux/me
         cd microemacs/doc 
         make
+        
     - name: Upload Artifact nroff tools
       uses: actions/upload-artifact@v4
       with: 
         name: nroff_bin_${{ env.VERSION }}
         path: nroff/bin/linux
 
+    - name: Upload Artifact HTML pages
+      uses: actions/upload-artifact@v4
+      with: 
+        name: htmlpages_${{ env.VERSION }}
+        path: microemacs/doc/ehf
+        
+    - name: Upload Artifact man pages
+      uses: actions/upload-artifact@v4
+      with: 
+        name: manpages_${{ env.VERSION }}
+        path: microemacs/doc/me.1.gz microemacs/doc/ne.1.gz
 
