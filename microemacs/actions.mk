@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : <unknown>
 #  Created       : Sun Mar 24 17:52:35 2024
-#  Last Modified : <240507.1556>
+#  Last Modified : <240602.0742>
 #
 #  Description	
 #
@@ -31,25 +31,19 @@
 ##############################################################################
 
 PLATFORM=ubuntu20
-VERSION=202403
-ifeq ($(PLATFORM),ubuntu20)
+VERSION=202406
+ifeq (ubuntu,$(findstring ubuntu,$(PLATFORM)))
    MEDIR := .linux32gcc-release
 endif
-ifeq ($(PLATFORM),ubuntu22)
+ifeq (fedora,$(findstring fedora,$(PLATFORM)))
    MEDIR := .linux32gcc-release
 endif
-ifeq ($(PLATFORM),fedora38)
-   MEDIR := .linux32gcc-release
-endif
-ifeq ($(PLATFORM),fedora39)
-   MEDIR := .linux32gcc-release
-endif
-ifeq ($(PLATFORM),macos11)
+ifeq (macos,$findstring macos,$(PLATFORM))
    MEDIR := .macos64cc-release
 endif
-ifeq ($(PLATFORM),macos14)
-   MEDIR := .macos64cc-release
-endif
+#ifeq ($(PLATFORM),macos14)
+#   MEDIR := .macos64cc-release
+#endif
 
 default:
 	cd microemacs/3rdparty/tfs && bash build.sh
@@ -76,3 +70,6 @@ default:
 	PATH=`pwd`/microemacs/src/$(MEDIR)-mec/:`pwd`/microemacs/3rdparty/tfs/$(MEDIR)/:$$PATH && \
 		cd microemacs/mesingle && bash mesgen.sh -d -p ../src/$(MEDIR)-mec/mec -o ../../MicroEmacs_$(VERSION)_$(PLATFORM)_mecs/bin/mecs
 
+test:
+	echo "MEDIR=$(MEDIR) PLATFORM=$(PLATFORM)"
+	echo $(findstring fedora,$(PLATFORM))
