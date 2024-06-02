@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     branches: [ master ]
 env:
-    VERSION: "202404"
+    VERSION: "202406"
 jobs:
   build-ubuntu-20:
     runs-on: ubuntu-20.04
