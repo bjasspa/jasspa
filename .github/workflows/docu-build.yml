@@ -21,6 +21,7 @@ jobs:
         sudo apt install libxt-dev
         make -f microemacs/actions.mk PLATFORM=ubuntu22 VERSION=${VERSION}
     - name: make me doc
+      run: |  
         export PATH=`pwd`/nroff/bin$PATH
         cd ../microemacs/doc 
         make
