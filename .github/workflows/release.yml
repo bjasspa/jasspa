@@ -86,6 +86,12 @@ jobs:
         name: MicroEmacs_${{ env.VERSION }}_ubuntu22_mews
         path: MicroEmacs_${{ env.VERSION }}_ubuntu22_mews
 
+    - name: Upload Artifact MicroEmacs Ubuntu 22 mecws
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_${{ env.VERSION }}_ubuntu22_mecws
+        path: MicroEmacs_${{ env.VERSION }}_ubuntu22_mecws
+
     - name: Upload Artifact tfs Ubuntu 22
       uses: actions/upload-artifact@v4
       with: 
@@ -124,6 +130,12 @@ jobs:
       with: 
         name: MicroEmacs_${{ env.VERSION }}_ubuntu24_mews
         path: MicroEmacs_${{ env.VERSION }}_ubuntu24_mews
+
+    - name: Upload Artifact MicroEmacs Ubuntu 24 mecws
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_${{ env.VERSION }}_ubuntu24_mecws
+        path: MicroEmacs_${{ env.VERSION }}_ubuntu24_mecws
 
     - name: Upload Artifact tfs Ubuntu 24
       uses: actions/upload-artifact@v4
@@ -164,6 +176,12 @@ jobs:
            name: MicroEmacs_${{ env.VERSION }}_macos11_mews
            path: MicroEmacs_${{ env.VERSION }}_macos11_mews
 
+      - name: Upload Artifact MicroEmacs macOS 11 mecws
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_${{ env.VERSION }}_macos11_mecws
+           path: MicroEmacs_${{ env.VERSION }}_macos11_mecws
+
       - name: Upload Artifact tfs macOS 11
         uses: actions/upload-artifact@v4
         with: 
@@ -203,6 +221,12 @@ jobs:
         with: 
            name: MicroEmacs_${{ env.VERSION }}_macos14_mews
            path: MicroEmacs_${{ env.VERSION }}_macos14_mews
+
+      - name: Upload Artifact MicroEmacs macOS 14 mecws
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_${{ env.VERSION }}_macos14_mecws
+           path: MicroEmacs_${{ env.VERSION }}_macos14_mecws
 
       - name: Upload Artifact tfs macOS 14
         uses: actions/upload-artifact@v4
