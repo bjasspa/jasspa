@@ -22,7 +22,7 @@ jobs:
         make -f microemacs/actions.mk PLATFORM=ubuntu22 VERSION=${VERSION}
     - name: make me doc
       run: |  
-        export PATH=`pwd`/nroff/bin:$PATH
+        export PATH=`pwd`/nroff/bin/linux:$PATH
         cd microemacs/doc 
         make
     - name: Upload Artifact nroff tools
