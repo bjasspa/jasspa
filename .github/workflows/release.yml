@@ -86,6 +86,44 @@ jobs:
         name: tfs_${{ env.VERSION }}_ubuntu22
         path: tfs_${{ env.VERSION }}_ubuntu22
 
+  build-ubuntu-24:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+     
+    - name: make me-binaries
+      run: |
+        sudo apt install libxt-dev
+        make -f microemacs/actions.mk PLATFORM=ubuntu24 VERSION=${VERSION}
+    - name: Upload Artifact MicroEmacs Ubuntu 24 mec
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_${{ env.VERSION }}_ubuntu24_mec
+        path: MicroEmacs_${{ env.VERSION }}_ubuntu24_mec
+    
+    - name: Upload Artifact MicroEmacs Ubuntu 24 mew
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_${{ env.VERSION }}_ubuntu24_mew
+        path: MicroEmacs_${{ env.VERSION }}_ubuntu24_mew
+    
+    - name: Upload Artifact MicroEmacs Ubuntu 24 mecs
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_${{ env.VERSION }}_ubuntu24_mecs
+        path: MicroEmacs_${{ env.VERSION }}_ubuntu24_mecs
+
+    - name: Upload Artifact MicroEmacs Ubuntu 24 mews
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_${{ env.VERSION }}_ubuntu24_mews
+        path: MicroEmacs_${{ env.VERSION }}_ubuntu24_mews
+
+    - name: Upload Artifact tfs Ubuntu 24
+      uses: actions/upload-artifact@v4
+      with: 
+        name: tfs_${{ env.VERSION }}_ubuntu24
+        path: tfs_${{ env.VERSION }}_ubuntu24
 
   build-macos-11:
     runs-on: macos-11
