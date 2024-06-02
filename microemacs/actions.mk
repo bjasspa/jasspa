@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : <unknown>
 #  Created       : Sun Mar 24 17:52:35 2024
-#  Last Modified : <240602.0742>
+#  Last Modified : <240602.0748>
 #
 #  Description	
 #
@@ -38,12 +38,15 @@ endif
 ifeq (fedora,$(findstring fedora,$(PLATFORM)))
    MEDIR := .linux32gcc-release
 endif
-ifeq (macos,$findstring macos,$(PLATFORM))
-   MEDIR := .macos64cc-release
-endif
-#ifeq ($(PLATFORM),macos14)
+#ifeq (macos,$findstring macos,$(PLATFORM))
 #   MEDIR := .macos64cc-release
 #endif
+ifeq ($(PLATFORM),macos11)
+   MEDIR := .macos64cc-release
+endif
+ifeq ($(PLATFORM),macos14)
+   MEDIR := .macos64cc-release
+endif
 
 default:
 	cd microemacs/3rdparty/tfs && bash build.sh
