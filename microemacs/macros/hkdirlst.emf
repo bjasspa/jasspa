@@ -1190,39 +1190,36 @@ define-macro dirlst-search
     !force !force .mode file-op &cat #l1 #l3 @mna
     !if &and &not $status &equ $result 8
       ; read only file
-      !if &band .state 2
+      !tjump &band .state 2 4
+      set-variable #l4 @mc5 &spr "File \"%s\" is read-only, delete (?/y/n/a/o) ? " #l3 "aAnNoOyY"  "(Y)es, (N)o, Yes to (A)ll, N(o) to All, (C-g)Abort ? "
+      !if &isin #l4 "no"
+        !iif &iseq #l4 "o"  set-variable .state &bor .state 2
+        set-variable .result &lset .result 2 &add 1 &lget .result 2
         !return
-      !else
-        set-variable #l4 @mc5 &spr "File \"%s\" is read-only, delete (?/y/n/a/o) ? " #l3 "aAnNoOyY"  "(Y)es, (N)o, Yes to (A)ll, N(o) to All, (C-g)Abort ? "
-        !if &iseq #l4 "o"
-          set-variable .state &bor .state 2
-        !elif &not &iseq #l4 "n"
-          !iif &iseq #l4 "a"  set-variable .mode 0x20
-          !force !force 0x20 file-op &cat #l1 #l3 @mna
-        !endif
       !endif
+      !iif &iseq #l4 "a"  set-variable .mode 0x20
+      !force !force 0x20 file-op &cat #l1 #l3 @mna
     !endif
-    !if &not $status
-      !if &equ $result 5
-        ; delete failed
-        !if &seq &set #l4 &lget &stat "i" &cat #l1 #l3 2 "D"
-          !iif &not &seq &rig #l3 &sub &len #l3 1 "/"  set-variable #l3 &cat #l3 "/"
-          set-variable &cat ".find-file.dir" &inc .find-file.dir-count 1 #l3
-        !elif &seq #l4 "X"
-        !elif &not &band .state 1
-          set-variable #l4 @mc5 &spr "Failed to delete \"%s\", retry (?/y/n/o) ? " #l3 "nNoOyY" "(Y)es, (N)o, N(o) to All, (C-g)Abort ? "
-          !if &iseq #l4 "y"
-            !goto retry
-          !elif &iseq #l4 "o"
-            set-variable .state &bor .state 1
-          !endif
-        !endif
-      !elif &equ $result 2
-        ; file does not exist
-      !else
-        ml-write &spr "[Delete file error: unexpected failure code %d]" $result
-        !abort
+    !if $status
+      set-variable .result &lset .result 1 &add 1 &lget .result 1
+    !elif &equ $result 5
+      ; delete failed
+      !if &seq &set #l4 &lget &stat "i" &cat #l1 #l3 2 "D"
+        !iif &not &seq &rig #l3 &sub &len #l3 1 "/"  set-variable #l3 &cat #l3 "/"
+        set-variable &cat ".find-file.dir" &inc .find-file.dir-count 1 #l3
+      !elif &seq #l4 "X"
+      !elif &not &band .state 1
+        set-variable #l4 @mc5 &spr "Failed to delete \"%s\", retry (?/y/n/o) ? " #l3 "nNoOyY" "(Y)es, (N)o, N(o) to All, (C-g)Abort ? "
+        !iif &iseq #l4 "y"  !goto retry
+        !iif &iseq #l4 "o"  set-variable .state &bor .state 1
+        set-variable .result &lset .result 2 &add 1 &lget .result 2
       !endif
+    !elif &equ $result 2
+      ; file does not exist
+    !else
+      set-variable .result &lset .result 2 &add 1 &lget .result 2
+      ml-write &spr "[Delete file error: unexpected failure code %d]" $result
+      !abort
     !endif
   !endif
 !emacro
@@ -1234,14 +1231,16 @@ define-macro dirlst-search
     set-variable #l1 &cat "file:" #l1
   !endif
   set-variable .find-file.dir-count 0
-  set-variable .dirlst-tag-list-delete-file.mode &con &band @# 2 0x20 0x25
-  set-variable .dirlst-tag-list-delete-file.state 0
+  set-variable .dirlst-tag-list-delete-file.mode &con &band @# 0x12 0x20 0x25
+  set-variable .dirlst-tag-list-delete-file.state &div &band @# 0x0c 4
+  set-variable .dirlst-tag-list-delete-file.result "|0|0|"
   set-variable #l0 0
   !while &les &pinc #l0 1 .find-file.file-count
     ml-write &spr "Delete %n" &mod #l0 40 "."
     set-variable #l3 &ind &cat ".find-file.file" #l0
-    @# dirlst-tag-list-delete-file #l1 #l3
+    &band @# 3 dirlst-tag-list-delete-file #l1 #l3
   !done
+  set-variable #l4 0
   !if .find-file.dir-count
     set-variable #l8 0
     !repeat
@@ -1250,13 +1249,15 @@ define-macro dirlst-search
       !while &not &seq &set #l3 $file-names ""
         ml-write &spr "Delete %n" &mod &inc #l0 1 40 "."
         set-variable #l3 &cat #l7 #l3
-        !force !force @# dirlst-tag-list-delete-file #l1 #l3
+        !force !force &band @# 3 dirlst-tag-list-delete-file #l1 #l3
         !if &not $status
           ; delete failed - still remove all directories we have already emptied
           !while &dec #l8 1
             set-variable #l3 &ind &cat ".find-file.dir" #l8
             !force !force 0x20 file-op &cat #l1 #l3 @mna
+            !iif $status  set-variable #l4 &add #l4 1
           !done
+          set-variable .result &spr "|%d|%d|%d|%d|" #l4 &sub .find-file.dir-count #l4 &lget .dirlst-tag-list-delete-file.result 1 &lget .dirlst-tag-list-delete-file.result 2
           !abort
         !endif
       !done
@@ -1265,8 +1266,10 @@ define-macro dirlst-search
     !while #l8
       set-variable #l3 &ind &cat ".find-file.dir" &pdec #l8 1
       !force !force 0x20 file-op &cat #l1 #l3 @mna
+      !iif $status  set-variable #l4 &add #l4 1
     !done
   !endif
+  set-variable .result &spr "|%d|%d|%d|%d|" #l4 &sub .find-file.dir-count #l4 &lget .dirlst-tag-list-delete-file.result 1 &lget .dirlst-tag-list-delete-file.result 2
   ml-write "Delete complete"
 !emacro
 
@@ -1311,6 +1314,46 @@ define-macro dirlst-search
   !endif
 !emacro
 
+; 0x01 Not used
+; 0x02 Trash file content first
+; 0x04 Don't prompt on delete failure - No retry
+; 0x08 Don't prompt for readonly files - No to all
+; 0x10 Don't prompt for readonly files - Yes to all
+; 0x20 <file> is a regex
+define-macro delete-file
+  !force set-variable #l1 @1
+  !iif &not $status  set-variable #l1 @ml01 #l0
+  !if &band @# 0x10
+    set-variable $file-names #l1
+    set-variable #l2 $result
+    !if &seq "" &set #l3 $file-names
+      ml-write &spr "[Error: '%s' regex failed to match a file]" #l1
+      !abort
+    !endif
+    set-variable .find-file.file-dir #l2
+    set-variable .find-file.file1 #l3
+    set-variable #l4 1
+    !while &not &seq &set #l3 $file-names ""
+      set-variable &ind &cat ".find-file.file" &inc #l4 1 #l3
+    !done
+    set-variable .find-file.file-count #l4
+  !elif &seq "X" &set #l3 &stat t #l1
+    ml-write &spr "[Error: Given file '%s' does not exist]" #l1
+    !abort
+  !elif &not &sin #l3 "RDF"
+    ml-write &spr "[Error: Given file '%s' is not a supported file type]" #l1
+    !abort
+  !else
+    set-variable .find-file.file-dir &lef #l1 &set #l4 &rsin "/" &lef #l1 -1
+    set-variable .find-file.file1 &rig #l1 #l4
+    set-variable .find-file.file-count 1
+  !endif
+  !force !force @# dirlst-tag-list-delete
+  set-variable #l5 $status
+  set-variable $result .dirlst-tag-list-delete.result
+  !return #l5
+!emacro
+
 0 define-macro dirlst-delete-line
   !if &or &or &les $window-line 5 &les &len @wl :fmpf &not &sin &lef @wl 1 " *"
     !iif &band @# 1  ml-write "[Error: Invalid line]"
@@ -1333,7 +1376,8 @@ define-macro dirlst-search
   set-variable #l2 @3
   !if &xseq #l1 "\\(.*/\\)?\\.?\\./?"
   !elif &seq &rig #l1 -1 "/"
-    !if &band .mode 0x40
+    !if &not &band .mode 0x40
+    !elif &seq "X" &stat t #l2
       !iif &seq &rig #l2 -1 "/"  set-variable #l2 &lef #l2 -1
       !force !force .mode file-op &cat #l0 &lef #l1 -1 #l2 @mna
       !if $status
@@ -1350,13 +1394,14 @@ define-macro dirlst-search
     !if $status
     !elif &sub $result 6
     !elif &band .state 4
-      set-variable .result &lset .result 4 &add 1 &lget .result 4
       !return
     !else
       set-variable #l4 @mc5 &spr "File \"%s\" already exists, overwrite (?/y/n/a/o) ? " #l2 "aAnNoOyY" "(Y)es, (N)o, Yes to (A)ll, N(o) to All, (C-g)Abort ? "
       !if &iseq #l4 "o"
         set-variable .state &bor .state 4
-      !elif &not &iseq #l4 "n"
+        !return
+      !else
+        !iif &iseq #l4 "n"  !return
         set-variable #l5 &band .mode 0x0fff6
         !iif &iseq #l4 "a"  set-variable .mode #l5
         !force !force #l5 file-op &cat #l0 #l1 #l2 @mna
@@ -1439,12 +1484,12 @@ define-macro dirlst-search
     !until &les #l2 1
   !endif
   set-variable #l4 &band 7 &div @# 2
-  set-variable #l2 .find-file.file-count
   !if &not #p9
+    set-variable #l2 .find-file.file-count
     !repeat
-      !iif &sin "/" &lef &ind &cat ".find-file.file" &pdec #l2 1 -1  set-variable #l2 -1
-    !until &les #l2 1
-    !if &les #l2 0
+      !iif &sin "/" &lef &ind &cat ".find-file.file" #l2 -1  !break
+    !until &not &dec #l2 1
+    !if #l2
       set-variable #l2 @mc5 "Recreate directories (?/y/n/o) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
       set-variable #l4 &bor #l4 &con &iseq #l2 "y" 0x30 0x50
     !endif
@@ -1565,28 +1610,101 @@ define-macro dirlst-search
   !endif
 !emacro
 
-; 0x01 Copy rather than Move 
+; 0x01 Copy rather than Move
 ; 0x02 Don't prompt on file read failure - No retry
 ; 0x04 Don't prompt on create/write failure - No retry
 ; 0x08 Don't prompt overwrite - No to all
 ; 0x10 Don't prompt overwrite - Yes to all
+; 0x20 Create intermediate directories
+; 0x40 <from> file is a regex, <to> must be a dir
 define-macro copy-file
   set-variable #l0 &cond &band @# 2 "Move" "Copy"
   !force set-variable #l1 @1
   !iif &not $status  set-variable #l1 @ml01 #l0
-  !if &seq "X" &set #l3 &stat t #l1
-    ml-write "[Error: Given file does not exist]"
+  !if &band @# 0x40
+    set-variable $file-names #l1
+    set-variable #l1 $result
+    !if &seq "" &set #l4 $file-names
+      ml-write "[Error: <from> regex failed to match a file]"
+      !abort
+    !endif
+    set-variable .find-file.file1 #l4
+    set-variable #l4 "matching files"
+    set-variable #l3 "D"
+  !elif &seq "X" &set #l3 &stat t #l1
+    ml-write &spr "[Error: Given file '%s' does not exist]" #l1
     !abort
   !elif &seq "" &set #l4 &lget "||file|directory|http link|ftp file|" &sin #l3 " RDHF"
-    ml-write "[Error: Given file is not a supported file type]"
+    ml-write &spr "[Error: Given file '%s' is not a supported file type]" #l1
+    !abort
+  !elif &seq "D" #l3
+    !iif &not &seq "/" &rig #l1 -1  set-variable #l1 &cat #l1 "/"
+  !elif &seq "/" &rig #l1 -1
+    ml-write &spr "[Error: '%s' is a file with an erroneous trailing '/']" #l1
     !abort
   !endif
   !force set-variable #l2 @2
   !iif &not $status  set-variable #l2 @ml01 &spr "%s %s to" #l0 #l4
-  set-variable .find-file.file-count 1
-  set-variable .find-file.file-dcount &con &seq "D" #l3 1 0
-  set-variable .find-file.file-dir &lef #l1 &set #l4 &rsin "/" &lef #l1 -1
-  set-variable .find-file.file1 &rig #l1 #l4
+  !if &seq &lef #l2 6 "tfs://"
+    ml-write &spr "[Error: Cannot %s to a TFS]" &slo #l0
+    !abort
+  !elif &seq "X" &set #l5 &stat t #l2
+    set-variable #l7 &con &and &seq "D" #l3 &not &band @# 0x40 -1 0
+    !if &seq "/" &rig &set #l6 #l2 -1
+      !iif &not &band @# 0x40  set-variable #l2 &cat #l2 &rig #l1 &rsin "/" &lef #l1 -1
+    !elif &band @# 0x40
+      ml-write "[Error: <to> must be a directory when using '<from>/<regex>']"
+      !abort
+    !else
+      set-variable #l5 &stat t &set #l6 &lef #l6 &rsin "/" #l6
+    !endif
+    !if &seq "D" #l5
+    !elif &not &band 0x20 @#
+      ml-write &spr "[Error: <to> directory '%s' does not exist]" #l6
+      !abort
+    !else
+      set-variable #l7 &rig #l6 1
+      set-variable #l6 &lef #l6 1
+      !while &set #l5 &sin "/" #l7
+        set-variable #l6 &cat #l6 &lef #l7 #l5
+        set-variable #l7 &rig #l7 #l5
+        !iif &not &seq "D" &stat t #l6  !force 0x100 file-op &lef #l6 -1
+      !until &not $status
+      !if &seq "X" &set #l5 &stat t &cat #l6 #l7
+        ml-write &spr "[Error: Failed to create directory '%s%s']" #l6 #l7
+        !abort
+      !endif
+    !endif
+  !elif &seq #l5 "D"
+    !if &seq "/" &rig #l2 -1
+    !elif &not &seq #l3 "D"
+      ml-write &spr "[Error: Cannot %s as destination already exists as a directory]" &slo #l0
+      !abort
+    !elif &not &seq &mid #l1 &rsin "/" &lef #l1 -1 -1 &rig #l2 &rsin "/" #l2
+      ml-write &spr "[Error: Cannot %s and rename directory to and existing directory]" &slo #l0
+      !abort
+    !else
+      set-variable #l2 &lef #l2 &rsin "/" #l2
+    !endif
+  !elif &not &sin #l5 "R"
+    ml-write &spr "[Error: The given destination type is not yet supported (%s)]" #l5
+    !abort
+  !elif &or &seq #l3 "D" &seq "/" &rig #l2 -1
+    ml-write &spr "[Error: Cannot %s as destination already exists as a file]" &slo #l0
+    !abort
+  !endif
+  !if &band @# 0x40
+    set-variable .find-file.file-dir #l1
+    set-variable #l4 1
+    !while &not &seq &set #l3 $file-names ""
+      set-variable &ind &cat ".find-file.file" &inc #l4 1 #l3
+    !done
+    set-variable .find-file.file-count #l4
+  !else
+    set-variable .find-file.file-dir &lef #l1 &set #l4 &rsin "/" &lef #l1 -1
+    set-variable .find-file.file1 &rig #l1 #l4
+    set-variable .find-file.file-count 1
+  !endif
   !force !force @# dirlst-tag-list-copy #l2
   set-variable #l5 $status
   set-variable $result .dirlst-tag-list-copy.result

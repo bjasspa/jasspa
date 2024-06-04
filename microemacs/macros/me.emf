@@ -57,11 +57,11 @@ define-macro-file osdmisc insert-symbol buffer-setup alarm browse alias-path-set
 define-macro-file tools compile which diff rdiff xdiff diff-changes execute-tool uniq find-bfile find-cfile reread-file reread-all save-kbd-macro
 define-macro-file abbrev expand-abbrev-handle expand-iso-accents expand-look-back expand-word iso-accents-mode
 define-macro-file comment comment-line uncomment-line comment-to-end-of-line comment-start comment-restyle
+define-macro-file hkdirlst copy-file delete-file file-browser file-browser-close file-browser-swap-buffers
 define-macro-file rect string-rectangle space-rectangle copy-rectangle yank-rectangle-overwrite
 define-macro-file majormod buffer-major-mode major-mode-setup major-mode-help major-mode-tool
 define-macro-file games cross-word Brag Fahtzee Mahjongg Match-It Metris Patience Triangle
 define-macro-file find find grep replace-string-in-files query-replace-string-in-files
-define-macro-file hkdirlst file-browser file-browser-close file-browser-swap-buffers
 define-macro-file password password-to-phonic generate-password insert-password
 define-macro-file toolbar toolbar toolbar-close toolbar-open toolbar-mode-line
 define-macro-file spell spell-word spell-buffer spell-edit-word find-word
