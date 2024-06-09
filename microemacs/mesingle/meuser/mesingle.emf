@@ -11,7 +11,7 @@
 ;              .about.userpath will have a trailing '/' if the path exists, otherwise it wont
 ;
 !if &set .about.hasssn &seq "D" &stat t &set .about.userpath &stat a &stat a &cat &con &seq $platform "win32" $APPDATA "~/.config" "/jasspa" 
-  set-variable $search-path &spr "%s%s%s" .about.userpath &con &band $system 0x200 ";" ":" $search-path
+  set-variable $search-path &spr "%s%s%smacros%s%sspelling%s%s" .about.userpath &set #l0 &con &band $system 0x200 ";" ":" .about.userpath #l0 .about.userpath #l0 $search-path
   !iif &set .about.hasssn &seq "R" &stat t &spr "%s%s.emf" .about.userpath $user-name  set-variable $user-path .about.userpath
 !endif
 execute-file "me"

@@ -655,9 +655,23 @@ osd 21 80  ""  "\HTriangle"   f Triangle
   !endif
 !emacro
 
+0 define-macro-file mepinst me-pinstall
+0 define-macro osd-pinstall
+  set-variable #l1 @1
+  set-variable #l3 &spr "  Install MicroEmacs %s package?  " &set #l2 @2
+  3 osd-xdialog "Package Installer" #l3 1 10 6 "  \HYes  " "  \HNo  "
+  !iif &sub $result 1  !abort
+  set-position "\x88"
+  !force me-pinstall #l1
+  set-variable #l4 $status
+  goto-position "\x88"
+  !if &not #l4
+    3 osd-dialog "Package Installer" &spr "  Error: Failed to install package (%s)  " #l1 10 6 "  \HCancel  "
+    !abort
+  !endif
+!emacro
+
 ; execute any emulation osd file, e.g. Emacs, Vi etc
-!if &exi %emulate
-  !force execute-file &cat "osd" %emulate
-!endif
+!iif &exi %emulate  !force execute-file &cat "osd" %emulate
 ; load in user extensions if found
 !force execute-file "myosd"

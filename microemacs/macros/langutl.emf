@@ -13,17 +13,25 @@
 ;
 0 define-macro spell-rules-init
   !if &not &exi .spell.language
-    set-variable #l0 &spr "  Language \"%s\" not supported!  " &reg "/history/language" "Default"
+    !if &len &set #l0 &reg "/history/language" ""
+      set-variable #l0 &spr "  %s language not yet supported.  " #l0
+    !else
+      set-variable #l0 "  Lanuage has not yet been set.\n\n  See Start-Up tab of user-setup.  "
+    !endif
     osd-dialog "Spelling Checker" #l0 "  \HOk  "
     !abort
   !endif
   !force execute-file &cat "lsr" .spell.language
   !if &not $status
-    !if @#
-      set-variable #l0 &spr "  Rules and dictionaries for language \"%s\"  \n     are not available, please download." &reg "/history/language" "Default"
-      osd-dialog "Spelling Checker" #l0 "  \HOk  "
+    !force osd-pinstall &cat "ls" .spell.language &cat &set #l1 &lget .spell.lang-name &lfin .spell.lang-id .spell.language " Language"
+    !force execute-file &cat "lsr" .spell.language
+    !if &not $status
+      !if @#
+        set-variable #l0 &spr "  Rules and dictionaries for %s language  \n     are not available, please download." #l1
+        3 osd-dialog "Spelling Checker" #l0 8 5 "  \HOk  "
+      !endif
+      !abort
     !endif
-    !abort
   !endif
   ; Add the Main and Personal dictionaries
   add-dictionary &cat "lsm" .spell.language

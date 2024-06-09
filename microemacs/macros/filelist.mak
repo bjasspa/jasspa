@@ -65,8 +65,8 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	macos.emf	mahjongg.emf	mail.emf	mailmerg.emf	\
 	majormod.emf	matchit.emf	me.emf		mecua.emf	\
 	meemacs.emf	melogo.emf	meme3_8.emf	menedit.emf	\
-	meserver.emf	metris.emf	misc.emf	mouse.emf	\
-	mouseosd.emf	mouserec.emf	msshift.emf	\
+	mepinst.emf	meserver.emf	metris.emf	misc.emf	\
+	mouse.emf	mouseosd.emf	mouserec.emf	msshift.emf	\
 	narrow.emf	newuser.emf	notes.emf	notesutl.emf	\
 	ntags.emf	\
 	openbsd.emf	openstep.emf	organiza.emf	organizd.emf	\

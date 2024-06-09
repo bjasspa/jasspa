@@ -1,0 +1,115 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1998-2024 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     2024-06-04
+; Synopsis:    MicroEmacs package installer 
+; Authors:     Steven Phillips
+;
+set-variable .help.purl "http://demo.maxinity.co.uk/MicroEmacs/"
+
+0 define-macro me-pinstall
+  set-variable #l1 @1
+  !if &band @# 1
+    set-variable #l2 "_"
+  !else
+    set-variable #l2 @2
+  !endif
+  find-buffer "*jmplst*"
+  !if &equ $window-eline 1
+    ml-write "Downloading JASSPA MicroEmacs Package list ... "
+    1 buffer-mode "hide"
+    !force insert-file &cat .help.purl "jmp.idx"
+    !if &equ $window-eline 1
+      ml-write "Failed to download MicroEmacs package list - computer or server may be offline"
+      !abort
+    !endif
+    beginning-of-buffer
+    !if &not &seq @wl "JMP1"
+      !force delete-buffer "*jmplst*"
+      ml-write "This version of MicroEmacs is not compatible with the current package list, try upgrading"
+      !abort
+    !endif
+  !endif
+  set-variable #l0 0
+  beginning-of-buffer
+  !repeat
+    search-buffer "me" &spr "^%s\t\\(\\d+\\)\t\\([_\\d]+\\)\t\\(.*\\)" #l1
+    !if &not $status
+      !if &gre $window-line 1
+        ml-write &spr "Error: Failed to find a version of '%s' compatible with this version of MicroEmacs, try upgrading" #l1
+      !else
+        ml-write &spr "Error: Failed to find package '%s', please report" #l1
+      !endif
+      !abort
+    !endif
+    !if &sgre &set #l8 @s1 $version
+    !elif &sgre @s2 $version
+      !break
+    !endif
+  !done
+  set-variable #l3 @s3
+  !if &not &gre @s1 #l2
+    ml-write &spr "MicroEmacs Package %s: Up-to-date" #l1
+    !return
+  !endif
+  ml-write &spr "MicroEmacs Package %s: Downloading ... " #l1
+  set-variable #l4 $temp-name
+  !force 0x80 file-op &cat .help.purl #l3 #l4
+  !if &not $status
+    ml-write &spr "[Error: Failed to download package file %s]" #l3
+    !abort
+  !endif
+  ml-write &spr "MicroEmacs Package %s: %s ... " #l1 &con &band @# 1 "Installing" "Updating"
+  !if &xse $search-path "\\(^\\|.*[:;]\\)\\([^:;]+/macros\\)/?\\([:;].*\\|$\\)"
+    set-variable #l5 &cat @s2 "/"
+  !else
+    set-variable #l5 $user-path
+  !endif
+  set-variable #l6 &set #l7 0
+  !force 0xf7 copy-file &spr "tfs://%s?/macros/.*" #l4 #l5
+  !if &not $status
+    set-variable #l7 &add #l7 1
+  !else
+    set-variable #l6 &add &add #l6 &lget $result 1 &lget $result 3
+    set-variable #l7 &add &add #l7 &lget $result 2 &lget $result 4
+  !endif
+  !iif &xse $search-path "\\(^\\|.*[:;]\\)\\([^:;]+/spelling\\)/?\\([:;].*\\|$\\)"  set-variable #l5 &cat @s2 "/"
+  !force 0xf7 copy-file &spr "tfs://%s?/spelling/.*" #l4 #l5
+  !if &not $status
+    set-variable #l7 &add #l7 1
+  !else
+    set-variable #l6 &add &add #l6 &lget $result 1 &lget $result 3
+    set-variable #l7 &add &add #l7 &lget $result 2 &lget $result 4
+  !endif
+  !force 0xf7 copy-file &spr "tfs://%s?/.*[^/]" #l4 $user-path
+  !if &not $status
+    set-variable #l7 &add #l7 1
+  !else
+    set-variable #l6 &add &add #l6 &lget $result 1 &lget $result 3
+    set-variable #l7 &add &add #l7 &lget $result 2 &lget $result 4
+  !endif
+  0x20 file-op #l4
+  !if #l7
+    1000 ml-write &spr "Error: Failed to %s MicroEmacs Package %s - %d,%d" &con &band @# 1 "install" "update" #l1 #l6 #l7
+  !elif &not #l6
+    1000 ml-write &spr "Error: Failed to find any content in MicroEmacs Package %s" #l1
+  !else
+    find-file &cat $user-path "jmp.lst"
+    beginning-of-buffer
+    insert-string &spr "%s\t%s\n" #l1 #l8
+    !force search-buffer "me" &spr "^%s\t" #l1
+    !if $status
+      beginning-of-line
+      set-mark
+      forward-line
+      -1 kill-region
+    !endif
+    save-buffer
+    delete-buffer $buffer-bname
+    ml-write &spr "MicroEmacs Package %s: %s complete" #l1 &con &band @# 1 "Install" "Update"
+  !endif
+!emacro
+
+;me-pinstall "lsptpt"

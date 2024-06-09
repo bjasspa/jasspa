@@ -7,61 +7,24 @@
 ; Synopsis:    Configure ME for the users language
 ; Authors:     Steven Phillips
 ;
-; Notes:
-;     See help on localeSupport(2) for adding support for a new lanugage
+; Notes:       See help on localeSupport(2) for adding support for a new lanugage
 ;
-!if &les @# 1
-  ; if executed with an argument of 0 or less, return the list
-  set-variable %language-names "|Default|American|British|Deutsch|Espanol|Finnish|Francais|Greek|Italiano|Polish|Portugues|Russian|"
-  !return
-!endif
+set-variable .spell.lang-id "|enus|engb|dede|eses|fifi|frfr|elgr|itit|plpl|ptpt|ruru|"
+set-variable .spell.lang-type "|20134|20134|204|24|20|24|3|24|0|24|1|"
+set-variable .spell.lang-name "|American|British|Deutsch|Espanol|Finnish|Francais|Greek|Italiano|Polish|Portugues|Russian|"
 
-; remove extended chars from current language first
-!if &exi .spell.language
-  3 save-dictionary @mna
-  2 delete-dictionary @mna
-  unset-variable .spell.language
+set-variable #l2 &lget .spell.lang-id &set #l1 &lfin .spell.lang-name &set #l0 &reg "/history/language" ""
+!if &not &seq #l2 .spell.language
+  ; remove extended chars from current language first
+  !if &exi .spell.language
+    3 save-dictionary @mna
+    2 delete-dictionary @mna
+    unset-variable .spell.language
+  !endif
+  !if &len #l2
+    set-variable .change-font.ln-type &lget .spell.lang-type #l1
+    set-variable .spell.language #l2
+  !elif &len #l0
+    2000 ml-write &spr "[Error: Unknown/unsupported language \"%s\" - use user-setup to reconfigure]" #l0
+  !endif
 !endif
-
-; set up MicroEmacs for the users language
-set-variable #l0 &reg "/history/language" ""
-set-variable .change-font.ln-type ""
-!if &seq #l0 ""
-!elif &seq #l0 "Default"
-!elif &seq #l0 "American"
-  set-variable .change-font.ln-type 20134
-  set-variable .spell.language "enus"
-!elif &seq #l0 "British"
-  set-variable .change-font.ln-type 20134
-  set-variable .spell.language "engb"
-!elif &seq #l0 "Deutsch"
-  set-variable .change-font.ln-type 204
-  set-variable .spell.language "dede"
-!elif &seq #l0 "Espanol"
-  set-variable .change-font.ln-type 24
-  set-variable .spell.language "eses"
-!elif &seq #l0 "Finnish"
-  set-variable .change-font.ln-type 20
-  set-variable .spell.language "fifi"
-!elif &seq #l0 "Francais"
-  set-variable .change-font.ln-type 24
-  set-variable .spell.language "frfr"
-!elif &seq #l0 "Greek"
-  set-variable .change-font.ln-type 3
-  set-variable .spell.language "elgr"
-!elif &seq #l0 "Italiano"
-  set-variable .change-font.ln-type 24
-  set-variable .spell.language "itit"
-!elif &seq #l0 "Polish"
-  set-variable .change-font.ln-type 0
-  set-variable .spell.language "plpl"
-!elif &seq #l0 "Portugues"
-  set-variable .change-font.ln-type 24
-  set-variable .spell.language "ptpt"
-!elif &seq #l0 "Russian"
-  set-variable .change-font.ln-type 1
-  set-variable .spell.language "ruru"
-!else
-  2000 ml-write &spr "[Error: Unknown/unsupported language \"%s\" - use user-setup to reconfigure]" #l0
-!endif
-

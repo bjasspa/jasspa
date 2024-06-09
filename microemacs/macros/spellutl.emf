@@ -7,9 +7,8 @@
 ; Synopsis:    Spelling dictionary creation and maintenance routines.
 ; Authors:     Steven Phillips
 ;
-; Get a list of charsets & languages
+; Get a list of charsets
 0 execute-file "charset"
-0 execute-file "language"
 
 define-macro insert-word-list
   set-variable $find-words ".*"
@@ -184,7 +183,7 @@ define-macro spell-check-guess
 
 define-macro ispell-convert
   !force set-variable .sl @1
-  !iif &not $status  set-variable .sl @ml09 "Language" %language-names
+  !iif &not $status  set-variable .sl @ml09 "Language" .spell.lang-name
   !force set-variable #l0 @2
   !iif &not $status  set-variable #l0 @ml01 "ispell file"
   !if &not &seq "R" &stat t &set #l0 &stat a #l0 

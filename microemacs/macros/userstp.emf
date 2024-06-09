@@ -25,13 +25,9 @@ set-variable %hscroll-names "|Fast, One line & Reset|Default, One line|Scroll Al
 set-variable %vscroll-names "|Default, Half screen|Smooth, Single line|"
 set-variable %scrollb-names "|Disabled|Narrow, no splitter|Narrow with splitter|Wide, no splitter|Wide with splitter|"
 set-variable %scrollb-value "|0|0x13e|0x1be|0x13f|0x1bf|"
-; Get a list of display char sets
+; Get a list of display char sets, keyboards & schemes
 0 execute-file "charset"
-; Get a list of keyboards
 0 execute-file "keyboard"
-; Get a list of languages
-0 execute-file "language"
-; Get a list of schemes
 0 execute-file "schemes"
 ; Implemented Emulation modes
 set-variable %emulate-names "|<No Emulation>|GNU Emacs|CUA (Windows Style)|MicroEmacs v3.8|NEdit v5|"
@@ -815,11 +811,12 @@ osd .osd.user-gener 390 "MdtxmfH" .scheme.osd-ebtt &cat "Sho\Hw Modes  " &mid $w
     -1 osd .osd.tmp
     osd .osd.tmp 0 "Abs" 16 0 0 0
     set-variable #l0 0
-    !while &not &seq "" &set #l1 &lget %language-names &inc #l0 1
-      osd .osd.tmp 1 "i" #l1 #l0 "set-registry \"/history/language\" &lget %language-names @#"
+    !while &not &seq "" &set #l1 &lget .spell.lang-name &inc #l0 1
+      osd .osd.tmp 1 "i" #l1 #l0 "set-registry \"/history/language\" &lget .spell.lang-name @#"
     !done
+    osd .osd.tmp 1 "i" "<Not set>" #l0 "delete-registry \"/history/language\""
   !else
-    set-variable $result &reg "/history/language"  &lget %language-names 1
+    set-variable $result &reg "/history/language" "<Not-set>"
   !endif
 !emacro
 

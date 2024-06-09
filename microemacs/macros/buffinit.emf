@@ -181,10 +181,9 @@ define-macro-file collapse collapse-current collapse-all beginning-of-function e
     buffer-bind-create "b" "esc C-e" "" end-of-function
     buffer-bind-create "b" "esc C-h" "" mark-function
   !endif
-  !if &sin "s" #l0
-    !if &not &seq %language "Default"
-      !iif &reg "/history/spell/autospell" "0"  1 auto-spell
-    !endif
+  !if &not &sin "s" #l0
+  !elif &exi .spell.language
+    !iif &reg "/history/spell/autospell" "0"  1 auto-spell
   !endif
   !if &not &seq #l9 ""
     !iif &set #l1 &xseq #l9 ".*tab-width[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;].*"  set-variable $buffer-tab-width @s1
