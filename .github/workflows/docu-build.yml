@@ -1,0 +1,54 @@
+name: Build nroff tools and documentation
+
+on:
+  workflow_dispatch:
+    branches: [ master ]
+env:
+    VERSION: "202406"
+jobs:
+  build-ubuntu-22:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+     
+    - name: make nroff
+      run: |
+        cd nroff
+        make
+        cd ..
+    - name: make me-binaries
+      run: |
+        sudo apt install libxt-dev
+        make -f microemacs/actions.mk PLATFORM=ubuntu22 VERSION=${VERSION}
+    - name: make me doc
+      run: |  
+        export PATH=`pwd`/nroff/bin/linux:$PATH
+        cp MicroEmacs_${VERSION}_ubuntu22_mecs/bin/mecs nroff/bin/linux/mec
+        cd microemacs/doc 
+        make
+        make me.ehf
+        
+    - name: Upload Artifact nroff tools
+      uses: actions/upload-artifact@v4
+      with: 
+        name: nroff_bin_${{ env.VERSION }}
+        path: nroff/bin/linux
+
+    - name: Upload Artifact HTML pages
+      uses: actions/upload-artifact@v4
+      with: 
+        name: me_htm_${{ env.VERSION }}
+        path: microemacs/doc/ehf
+        
+    - name: Upload Artifact me.ehf manual
+      uses: actions/upload-artifact@v4
+      with: 
+        name: me_ehf_${{ env.VERSION }}
+        path: microemacs/doc/ehf/me/me.ehf
+        
+    - name: Upload Artifact man pages
+      uses: actions/upload-artifact@v4
+      with: 
+        name: me_man_${{ env.VERSION }}
+        path: microemacs/doc/me.1.gz
+

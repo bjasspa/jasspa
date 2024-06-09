@@ -1,10 +1,10 @@
-name: Release Ubuntu Linux 20, 22, MacOS 11 (INTEL), 14 (ARM)
+name: Release Ubuntu Linux 20, 22, 24, MacOS 11 (INTEL), MacOS 14 (ARM)
 
 on:
   workflow_dispatch:
     branches: [ master ]
 env:
-    VERSION: "202404"
+    VERSION: "202406"
 jobs:
   build-ubuntu-20:
     runs-on: ubuntu-20.04
@@ -34,6 +34,12 @@ jobs:
       with: 
         name: MicroEmacs_${{ env.VERSION }}_ubuntu20_mews
         path: MicroEmacs_${{ env.VERSION }}_ubuntu20_mews
+
+    - name: Upload Artifact MicroEmacs Ubuntu 20 mecws
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_${{ env.VERSION }}_ubuntu20_mecws
+        path: MicroEmacs_${{ env.VERSION }}_ubuntu20_mecws
 
     - name: Upload Artifact tfs Ubuntu 20
       uses: actions/upload-artifact@v4
@@ -80,12 +86,62 @@ jobs:
         name: MicroEmacs_${{ env.VERSION }}_ubuntu22_mews
         path: MicroEmacs_${{ env.VERSION }}_ubuntu22_mews
 
+    - name: Upload Artifact MicroEmacs Ubuntu 22 mecws
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_${{ env.VERSION }}_ubuntu22_mecws
+        path: MicroEmacs_${{ env.VERSION }}_ubuntu22_mecws
+
     - name: Upload Artifact tfs Ubuntu 22
       uses: actions/upload-artifact@v4
       with: 
         name: tfs_${{ env.VERSION }}_ubuntu22
         path: tfs_${{ env.VERSION }}_ubuntu22
 
+  build-ubuntu-24:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+     
+    - name: make me-binaries
+      run: |
+        sudo apt install libxt-dev
+        make -f microemacs/actions.mk PLATFORM=ubuntu24 VERSION=${VERSION}
+    - name: Upload Artifact MicroEmacs Ubuntu 24 mec
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_${{ env.VERSION }}_ubuntu24_mec
+        path: MicroEmacs_${{ env.VERSION }}_ubuntu24_mec
+    
+    - name: Upload Artifact MicroEmacs Ubuntu 24 mew
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_${{ env.VERSION }}_ubuntu24_mew
+        path: MicroEmacs_${{ env.VERSION }}_ubuntu24_mew
+    
+    - name: Upload Artifact MicroEmacs Ubuntu 24 mecs
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_${{ env.VERSION }}_ubuntu24_mecs
+        path: MicroEmacs_${{ env.VERSION }}_ubuntu24_mecs
+
+    - name: Upload Artifact MicroEmacs Ubuntu 24 mews
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_${{ env.VERSION }}_ubuntu24_mews
+        path: MicroEmacs_${{ env.VERSION }}_ubuntu24_mews
+
+    - name: Upload Artifact MicroEmacs Ubuntu 24 mecws
+      uses: actions/upload-artifact@v4
+      with: 
+        name: MicroEmacs_${{ env.VERSION }}_ubuntu24_mecws
+        path: MicroEmacs_${{ env.VERSION }}_ubuntu24_mecws
+
+    - name: Upload Artifact tfs Ubuntu 24
+      uses: actions/upload-artifact@v4
+      with: 
+        name: tfs_${{ env.VERSION }}_ubuntu24
+        path: tfs_${{ env.VERSION }}_ubuntu24
 
   build-macos-11:
     runs-on: macos-11
@@ -119,6 +175,12 @@ jobs:
         with: 
            name: MicroEmacs_${{ env.VERSION }}_macos11_mews
            path: MicroEmacs_${{ env.VERSION }}_macos11_mews
+
+      - name: Upload Artifact MicroEmacs macOS 11 mecws
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_${{ env.VERSION }}_macos11_mecws
+           path: MicroEmacs_${{ env.VERSION }}_macos11_mecws
 
       - name: Upload Artifact tfs macOS 11
         uses: actions/upload-artifact@v4
@@ -159,6 +221,12 @@ jobs:
         with: 
            name: MicroEmacs_${{ env.VERSION }}_macos14_mews
            path: MicroEmacs_${{ env.VERSION }}_macos14_mews
+
+      - name: Upload Artifact MicroEmacs macOS 14 mecws
+        uses: actions/upload-artifact@v4
+        with: 
+           name: MicroEmacs_${{ env.VERSION }}_macos14_mecws
+           path: MicroEmacs_${{ env.VERSION }}_macos14_mecws
 
       - name: Upload Artifact tfs macOS 14
         uses: actions/upload-artifact@v4
