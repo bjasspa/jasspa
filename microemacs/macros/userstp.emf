@@ -801,8 +801,9 @@ osd .osd.user-gener 390 "MdtxmfH" .scheme.osd-ebtt &cat "Sho\Hw Modes  " &mid $w
     !while &not &seq "" &set #l1 &lget %keyboard-names &inc #l0 1
       osd .osd.tmp 1 "i" #l1 #l0 "set-registry \"/history/keyboard\" &lget %keyboard-names @#"
     !done
+    osd .osd.tmp 1 "i" "<Not set>" #l0 "!force delete-registry \"/history/keyboard\""
   !else
-    set-variable $result &reg "/history/keyboard"  &lget %keyboard-names 1
+    set-variable $result &reg "/history/keyboard" "<Not-set>"
   !endif
 !emacro
 
@@ -814,7 +815,7 @@ osd .osd.user-gener 390 "MdtxmfH" .scheme.osd-ebtt &cat "Sho\Hw Modes  " &mid $w
     !while &not &seq "" &set #l1 &lget .spell.lang-name &inc #l0 1
       osd .osd.tmp 1 "i" #l1 #l0 "set-registry \"/history/language\" &lget .spell.lang-name @#"
     !done
-    osd .osd.tmp 1 "i" "<Not set>" #l0 "delete-registry \"/history/language\""
+    osd .osd.tmp 1 "i" "<Not set>" #l0 "!force delete-registry \"/history/language\""
   !else
     set-variable $result &reg "/history/language" "<Not-set>"
   !endif

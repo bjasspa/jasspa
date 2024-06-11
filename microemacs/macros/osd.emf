@@ -661,6 +661,11 @@ osd 21 80  ""  "\HTriangle"   f Triangle
   set-variable #l3 &spr "  Install MicroEmacs %s package?  " &set #l2 @2
   3 osd-xdialog "Package Installer" #l3 1 10 6 "  \HYes  " "  \HNo  "
   !iif &sub $result 1  !abort
+  !if &sin "tfs://" $user-path
+    3 osd-xdialog "Package Installer" "  User session and storage required.  \n\n  Run init-session now?" 1 10 6 "  \HYes  " "  \HNo  "
+    !iif &sub $result 1  !abort
+    init-session
+  !endif
   set-position "\x88"
   !force me-pinstall #l1
   set-variable #l4 $status

@@ -19,12 +19,11 @@ execute-file "me"
 
 define-macro init-session
   set-position "\x81"
-  !iif &seq "X" &stat "t" .about.userpath  !force 0x100 file-op .about.userpath
-  !if &not &seq "D" &stat t &set .about.userpath &stat a .about.userpath
+  !iif &seq "X" &stat "t" &set #l1 &cat "file:" .about.userpath  !force 0x100 file-op #l1
+  !if &not &seq "D" &stat t #l1
     ml-write &spr "[Error: Cannot create config path: %s]" .about.userpath
     !abort
-  !endif
-  !if &seq "X" &stat "t" &set #l0 &spr "%s%s.emf" &set $user-path .about.userpath $user-name
+  !elif &seq "X" &stat "t" &set #l0 &spr "file:%s%s.emf" &set $user-path &stat a .about.userpath $user-name
     !force 0 delete-buffer "*mes-tmp*"
     find-buffer "*mes-tmp*"
     insert-file "tfs://meuser.emf"
@@ -32,6 +31,7 @@ define-macro init-session
     !iif &not $status  ml-write &spr "[Error: Cannot write to file %s]" #l0
     !force delete-buffer $buffer-bname
   !endif
+  set-variable $search-path &spr "%s%s%smacros%s%sspelling%s%s" $user-path &set #l0 &con &band $system 0x200 ";" ":" $user-path #l0 $user-path #l0 $search-path
   set-variable .session.update 1
   0 update-session
   goto-position "\x81"

@@ -2970,40 +2970,47 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
      */
     for(;;)
     {
-        ft = ffUrlGetType(p1);
-        if(ffUrlTypeIsHttp(ft))
+        if(((ft = ffUrlGetType(p1)) & (meIOTYPE_FILE|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE|meIOTYPE_TFS)) != 0)
         {
-            flag = 2;
-            urls = p1;
-            if((p=meStrchr((urle=p1+7+(ft & meIOTYPE_SSL)),DIR_CHAR)) == NULL)
+double_url:
+            if(ffUrlTypeIsHttp(ft))
+            {
+                flag = 2;
+                urls = p1;
+                urle = p1+7+(ft & meIOTYPE_SSL);
+            }
+            else if(ffUrlTypeIsFtp(ft))
+            {
+                flag = 3;
+                urls = p1;
+                urle = p1+6+(((ft & (meIOTYPE_SSL|meIOTYPE_FTPE))) ? 1:0);
+            }
+            else if(ffUrlTypeIsTfs(ft))
+            {
+                flag = 4;
+                urls = p1;
+                urle = p1+6;
+                /* this can either be a built in tfs ref (tfs:/<path>) or external tfs file (tfs://<file>?<path>) where the path starts with '/' */
+            }
+            else if(ffUrlTypeIsFile(ft))
+            {
+                flag = 0;
+                p1 += 5;
+                p = p1;
+                /* loop here as if at the start of the file name, this
+                 * is so it handles "file:ftp://..." correctly */
+                continue;
+            }
+            if((p=meStrchr(urle,DIR_CHAR)) == NULL)
                 break;
+            if((p[-1] == ':') && (((ft = ffUrlGetType(urle)) & (meIOTYPE_FILE|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE|meIOTYPE_TFS)) != 0))
+            {
+                p1 = urle;
+                goto double_url;
+            }
             p1 = p;
-        }
-        else if(ffUrlTypeIsFtp(ft))
-        {
-            flag = 3 ;
-            urls = p1 ;
-            if((p=meStrchr((urle=p1+6+(((ft & (meIOTYPE_SSL|meIOTYPE_FTPE))) ? 1:0)),DIR_CHAR)) == NULL)
-                break;
-            p1 = urle = p;
-        }
-        else if(ffUrlTypeIsTfs(ft))
-        {
-            flag = 4;
-            urls = p1;
-            /* this can either be a built in tfs ref (tfs:/<path>) or external tfs file (tfs://<file>?<path>) where the path starts with '/' */
-            if((p=meStrchr((urle=p1+6),DIR_CHAR)) == NULL)
-                break;
-            p1 = urle = p;
-        }
-        else if(ffUrlTypeIsFile(ft))
-        {
-            flag = 0;
-            p1 += 5;
-            p = p1;
-            /* loop here as if at the start of the file name, this
-             * is so it handles "file:ftp://..." correctly */
-            continue;
+            if(flag != 2)
+                urle = p;
         }
         else if(flag == 2)
             p = p1;
@@ -3060,17 +3067,8 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
     if((flag == 2) || (p == NULL))
     {
         meStrcpy(p1,urls);
-        if(p == NULL)
-        {
-            /* http://xxx -> http://xxx/ */
-            p = p1 + meStrlen(p1);
-            *p++ = DIR_CHAR;
-            *p = '\0';
-            if(baseName != NULL)
-                *baseName = p1 + (urle-urls);
-        }
-        else if(baseName != NULL)
-            *baseName = p1 + (p-urls);
+        if(baseName != NULL)
+            *baseName = p1 + (((p == NULL) ? urle:p)-urls);
         return;
     }
     if(flag)
