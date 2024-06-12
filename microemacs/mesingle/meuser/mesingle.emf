@@ -19,7 +19,10 @@ execute-file "me"
 
 define-macro init-session
   set-position "\x81"
-  !iif &seq "X" &stat "t" &set #l1 &cat "file:" .about.userpath  !force 0x100 file-op #l1
+  !if &seq "X" &stat "t" &set #l1 &cat "file:" .about.userpath
+    !iif &not &seq $platform "win32"  !force 0x100 file-op &lef #l1 &rsin "/" #l1
+    !force 0x100 file-op #l1
+  !endif
   !if &not &seq "D" &stat t #l1
     ml-write &spr "[Error: Cannot create config path: %s]" .about.userpath
     !abort

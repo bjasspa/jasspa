@@ -1,4 +1,4 @@
 @echo off
 set ERRORLEVEL=
-mecw32 -p -n @mesgen -f %*
+mec -p @mesgen -f %*
 EXIT /B %ERRORLEVEL%

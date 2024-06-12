@@ -1625,9 +1625,9 @@ define-macro delete-file
 ; 0x40 <from> file is a regex, <to> must be a dir
 ; 0x80 Don't throw error if <from> does not exist
 define-macro copy-file
-  set-variable #l0 &cond &band @# 2 "Move" "Copy"
+  set-variable #l0 &cond &band @# 1 "Copy" "Move"
   !force set-variable #l1 @1
-  !iif &not $status  set-variable #l1 @ml01 #l0
+  !iif &not $status  set-variable #l1 @ml04 #l0
   !if &band @# 0x40
     set-variable $file-names #l1
     set-variable #l1 $result

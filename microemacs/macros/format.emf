@@ -115,28 +115,23 @@ define-macro paragraph-to-line
   set-variable $buffer-fill-mode #l1
 !emacro
 ;
-; create the delete-indentation command usually bound to "esc ^"
+; create the delete-indentation command usually bound to "esc ^" & "esc %"
 define-macro delete-indentation
-  !if &set #l0 &les @# 1
-    set-variable @# &abs @# 
-  !endif
-  !repeat
+  !iif &not &set #l0 &gre @# 0  set-variable @# &abs @#
+  !while &gre &pdec @# 1 0
     beginning-of-line
+    backward-delete-char
     !while &sin @wc " \t"
       forward-delete-char
     !done
-    backward-delete-char
     backward-char
     !while &sin @wc " \t"
       forward-delete-char
       backward-char
     !done
     forward-char
-    !if #l0
-    !elif &not &seq @wc "\n"
-      insert-space
-    !endif
-  !until &les &dec @# 1 1
+    !iif &not &seq @wc "\n"  #l0 insert-space
+  !done
 !emacro
 ; ifill-paragraph - intelligently try to fill paragraphs by spotting
 ; bullet lists etc.

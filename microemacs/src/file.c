@@ -264,7 +264,7 @@ gft_directory:
 #ifdef _WIN32
     {
         DWORD status;
-        int   len ;
+        int len;
         
         if(((len = meStrlen(file)) == 0) || (meStrchr(file,'*') != NULL) || (meStrchr(file,'?') != NULL))
         {
@@ -380,15 +380,22 @@ gft_directory:
 #ifdef _UNIX
     {
         struct stat statbuf;
-        long stmtime = -1 ;
+        long stmtime = -1;
+        int len;
         
+        if((len = meStrlen(file)) == 0)
+        {
+            if(flag & gfsERRON_ILLEGAL_NAME)
+                mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s illegal name]", file);
+            return (ft|meIOTYPE_NOTEXIST);
+        }
         if((lname == NULL) && (stats == NULL))
         {
             if(stat((char *)file,&statbuf) != 0)
-                return (ft|meIOTYPE_NOTEXIST);
+                return ft | ((file[len-1] == DIR_CHAR) ? (meIOTYPE_DIRECTORY|meIOTYPE_NOTEXIST):meIOTYPE_NOTEXIST);
         }
         else if(lstat((char *)file, &statbuf) != 0)
-            return (ft|meIOTYPE_NOTEXIST);
+            return ft | ((file[len-1] == DIR_CHAR) ? (meIOTYPE_DIRECTORY|meIOTYPE_NOTEXIST):meIOTYPE_NOTEXIST);
         else if(S_ISLNK(statbuf.st_mode))
         {
             meUByte lbuf[meBUF_SIZE_MAX], buf[meBUF_SIZE_MAX], *ss ;

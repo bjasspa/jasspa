@@ -3554,12 +3554,14 @@ get_flag:
                     ftype = stats.stsizeLow ;
                 break ;
             case 't':
-                if(ftype & (meIOTYPE_REGULAR|meIOTYPE_DIRECTORY))
+                if(ftype & meIOTYPE_NOTEXIST)
+                    evalResult[0] = 'X';
+                else if(ftype & (meIOTYPE_REGULAR|meIOTYPE_DIRECTORY))
                     evalResult[0] = (ftype & meIOTYPE_REGULAR) ? 'R':'D';
                 else if(ftype & (meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE))
                     evalResult[0] = (ftype & meIOTYPE_HTTP) ? 'H':'F';
                 else
-                    evalResult[0] = (ftype & meIOTYPE_NOTEXIST) ? 'X':'N';
+                    evalResult[0] = 'N';
                 evalResult[1] = '\0';
                 return evalResult;
                 
