@@ -33,6 +33,7 @@
 
 #include "emain.h"
 #include "efunc.h"
+#include "eskeys.h"
 #include "esearch.h"
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
 #include <limits.h>                     /* Constant limit definitions */
@@ -726,7 +727,7 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
     else if(flags & meFL_USESRCHPATH)
         path = searchPath;
     else
-        return 0;
+        path = NULL;
     while((path != NULL) && (*path != '\0'))
     {
         /* build next possible file spec */
@@ -847,6 +848,22 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
             }
         }
     }
+#if MEOPT_CALLBACK
+    if(flags & meFL_CALLBACK)
+    {
+        meUInt arg;
+        if((ii=decode_key(ME_SPECIAL|SKEY_find_file,&arg)) != -1)
+        {
+            meStrcpy(buf,resultStr);
+            meStrcpy(resultStr,fname);
+            if((ii = execFuncHidden(ME_SPECIAL|SKEY_find_file,ii,arg)) > 0)
+                fileNameCorrect(resultStr,outName,NULL);
+            meStrcpy(resultStr,buf);
+            if(ii > 0)
+                return 1;
+        }
+    }
+#endif
     return 0; /* no such luck */
 }
 

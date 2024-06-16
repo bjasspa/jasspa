@@ -64,6 +64,9 @@ DEFSKEY ("f7",           "kf7",   "k7", "\033[18~",SKEY_f7 )
 DEFSKEY ("f8",           "kf8",   "k8", "\033[19~",SKEY_f8 )
 DEFSKEY ("f9",           "kf9",   "k9", "\033[20~",SKEY_f9 )
 DEFSKEY ("find",         NULL,    NULL, NULL,      SKEY_find )
+#if MEOPT_CALLBACK
+DEFSKEY ("find-file",    NULL,    NULL, NULL,      SKEY_find_file )
+#endif
 DEFSKEY ("help",         NULL,    NULL, NULL,      SKEY_help )
 DEFSKEY ("home",         "khome", "kh", "\033[3~", SKEY_home )
 #if MEOPT_CALLBACK

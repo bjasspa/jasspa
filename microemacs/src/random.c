@@ -1186,25 +1186,30 @@ mlWrite(int f, int n)
     meUByte buf[meBUF_SIZE_MAX];	/* buffer to recieve message into */
     
     if(n == 0)
+    {
         mlerase(0);
-    else if((status = meGetString((meUByte *)"Message", 0, 0, buf, meBUF_SIZE_MAX)) <= 0)
-        return status;
-    else
+        return meTRUE;
+    }
+    if((status = meGetString((meUByte *)"Message", 0, 0, buf, meBUF_SIZE_MAX)) > 0)
     {
         status = MWSPEC;
-        if((n < 0) && ((alarmState & meALARM_PIPED) || (n < -2)))
+        if(f == meFALSE)
+            n = 0;
+        else if(n < 0)
         {
-            if(n & 0x01)
-                status |= MWSTDOUTWRT;
-            else
-                status |= MWSTDERRWRT;
+            f = 0-n;
+            if((f & 0x03) && ((alarmState & meALARM_PIPED) || (f & 0x04)))
+                status |= (f & 0x01) ? MWSTDOUTWRT:MWSTDERRWRT;
+            if(f & 0x08) 
+                status |= MWABORT;
+            if(f & 0x10) 
+                status |= MWWAIT;
         }
-        mlwrite(status,buf);
-        
-        if((f == meTRUE) && (n > 0))
+        status = mlwrite(status,buf);
+        if(n > 0)
             TTsleep(n,0,NULL);
     }
-    return meTRUE;
+    return status;
 }
 
 #if MEOPT_FENCE

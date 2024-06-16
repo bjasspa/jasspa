@@ -342,6 +342,7 @@ extern  int mePathAddSearchPath(int index, meUByte *path_name,
 #define meFL_USESRCHPATH 0x02
 #define meFL_USEPATH     0x04
 #define meFL_EXEC        0x08
+#define meFL_CALLBACK    0x10
 extern	int fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte *outName);
 extern	int executableLookup(meUByte *fname, meUByte *outName);
 extern  int bufferOutOfDate(meBuffer *bp) ;

@@ -675,6 +675,15 @@ osd 21 80  ""  "\HTriangle"   f Triangle
     !abort
   !endif
 !emacro
+0 define-macro me-find-file
+  !if &seq "me.ehf" &set #l1 $result
+    osd-pinstall "hlpehf" "Online Help"
+    !iif &seq "ERROR" &set $result &find "me" ".ehf"  !abort 
+  !else
+    set-variable #g9 &spr "me-find-file error: unexpected file [%s]" #l1
+    !abort
+  !endif
+!emacro
 
 ; execute any emulation osd file, e.g. Emacs, Vi etc
 !iif &exi %emulate  !force execute-file &cat "osd" %emulate

@@ -363,7 +363,7 @@ helpBufferLoad(meBuffer *hbp)
         meUByte fname[meBUF_SIZE_MAX];
     
         meModeSet(hbp->mode,MDLOCK);
-        if(!fileLookup(helpFileName,0,NULL,meFL_CHECKDOT|meFL_USESRCHPATH,fname))
+        if(!fileLookup(helpFileName,0,NULL,meFL_CHECKDOT|meFL_USESRCHPATH|meFL_CALLBACK,fname))
             return mlwrite(MWABORT,(meUByte *)"[Help file \"%s\" is not on-line]",helpFileName);
         /* and read the stuff in */
         meModeClear(hbp->mode,MDVIEW);
