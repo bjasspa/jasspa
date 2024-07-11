@@ -3,7 +3,7 @@
 # build - JASSPA MicroEmacs build shell script for unix platforms
 # Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 # See the file main.c for copying and conditions.
-OPTIONS=
+BITSIZE=
 LOGFILE=
 LOGFILEA=
 MECORE=
@@ -12,6 +12,8 @@ METYPE=
 MEDEBUG=
 MAKEFILE=
 MAKECDEFS=
+OPTIONS=
+# TODO remove all X11 code as moved into makefiles
 X11_MAKEINC=/usr/include
 X11_MAKELIB=
 
@@ -21,6 +23,7 @@ do
         echo "usage: build [options]"
         echo ""
         echo "Where options can be:-"
+        echo "   -32  : Build 32bit binary."
         echo "   -C   : Build clean."
         echo "   -D <define>[=<value>]"
         echo "        : Build with given define, (e.g. -D _USETPARM)."
@@ -32,7 +35,7 @@ do
         echo "        : Append the compile log to the given file"
         echo "   -m <makefile>"
         echo "        : Sets the makefile to use where <makefile> can be"
-        echo "            aix4.mak, freebsd.mak, freebsd.gmk etc."
+        echo "            macos64cc.mak etc."
         echo "   -ne  : for NanoEmacs build (output is ne)."
         echo "   -P   : Build with profiling instructions."
         echo "   -p <search-path>"
@@ -41,20 +44,18 @@ do
         echo "   -S   : Build clean spotless."
         echo "   -t <type>"
         echo "        : Sets build type:"
-        echo "             c   Console support only (Termcap)"
+        echo "             c   Console support only (Termcap/ncurses - default)"
         echo "             w   Window support only (XTerm)"
-        echo "             cw  Console and window support (default)"
+        echo "             cw  Console and window support"
         echo ""
         exit 1
+    elif [ $1 = "-32" ] ; then
+        BITSIZE=" BIT_SIZE=32"
     elif [ $1 = "-C" ] ; then
         OPTIONS=" clean"
     elif [ $1 = "-D" ] ; then
         shift
-        if [ -n "$MAKECDEFS" ] ; then
-            MAKECDEFS="$MAKECDEFS -D$1"
-        else
-            MAKECDEFS="-D$1"
-        fi
+        MAKECDEFS="$MAKECDEFS -D$1"
     elif [ $1 = "-d" ] ; then
         MEDEBUG=" BCFG=debug"
     elif [ $1 = "-l" ] ; then
@@ -72,11 +73,7 @@ do
         MEPROF=" BPRF=1"
     elif [ $1 = "-p" ] ; then
         shift
-        if [ -n "$MAKECDEFS" ] ; then
-            MAKECDEFS="$MAKECDEFS -D_SEARCH_PATH=\\"'"'"$1\\"'"'
-        else
-            MAKECDEFS="-D_SEARCH_PATH=\\"'"'"$1\\"'"'
-        fi
+        MAKECDEFS="$MAKECDEFS -D_SEARCH_PATH=\\"'"'"$1\\"'"'
     elif [ $1 = "-S" ] ; then
         OPTIONS=" spotless"
     elif [ $1 = "-t" ] ; then
@@ -94,18 +91,7 @@ if [ -z "$MAKEFILE" ] ; then
     
     PLATFORM=`uname`
     
-    if   [ $PLATFORM = "AIX" ] ; then
-        VERSION=`uname -v`
-        if [ $VERSION = 5 ] ; then
-            MAKEBAS=aix5
-        else
-            MAKEBAS=aix4
-        fi
-    elif [ `echo $PLATFORM | sed -e "s/^CYGWIN.*/CYGWIN/"` = "CYGWIN" ] ; then
-        MAKEBAS=cygwin
-        X11_MAKEINC=/usr/X11R6/include
-        X11_MAKELIB=/usr/X11R6/lib
-    elif [ $PLATFORM = "Darwin" ] ; then
+    if [ $PLATFORM = "Darwin" ] ; then
         VERSION=`uname -r | cut -f 1 -d .`
         if [ $VERSION -gt 18 ] ; then
             MAKEBAS=macos64
@@ -120,10 +106,32 @@ if [ -z "$MAKEFILE" ] ; then
             X11_MAKEINC=/usr/X11R6/include
             X11_MAKELIB=/usr/X11R6/lib
         fi
+    elif [ $PLATFORM = "Linux" ] ; then
+        MACHINE=`uname -m | cut -c 1-3`
+        if [ $MACHINE = "arm" ] ; then
+            MAKEBAS=zaurus
+        else
+            MAKEBAS=linux
+        fi
+    elif   [ $PLATFORM = "AIX" ] ; then
+        VERSION=`uname -v`
+        if [ $VERSION = 5 ] ; then
+            MAKEBAS=aix5
+        else
+            MAKEBAS=aix4
+        fi
+    elif [ `echo $PLATFORM | sed -e "s/^CYGWIN.*/CYGWIN/"` = "CYGWIN" ] ; then
+        MAKEBAS=cygwin
+        X11_MAKEINC=/usr/X11R6/include
+        X11_MAKELIB=/usr/X11R6/lib
     elif [ $PLATFORM = "FreeBSD" ] ; then
         MAKEBAS=freebsd
         X11_MAKEINC=/usr/X11R6/include
         X11_MAKELIB=/usr/X11R6/lib
+    elif [ `echo $PLATFORM | sed -e "s/^MINGW32_NT.*/MINGW32_NT/"` = "MINGW32_NT" ] ; then
+        MAKEBAS=win32mingw
+    elif [ `echo $PLATFORM | sed -e "s/^MINGW.*/MINGW/"` = "MINGW" ] ; then
+        MAKEBAS=mingw
     elif [ $PLATFORM = "HP-UX" ] ; then
         X11_MAKEINC=/usr/include/X11R6
         X11_MAKELIB=/usr/lib/X11R6
@@ -144,21 +152,6 @@ if [ -z "$MAKEFILE" ] ; then
         else
             MAKEBAS=irix6
         fi
-    elif [ $PLATFORM = "Linux" ] ; then
-        MACHINE=`uname -m | cut -c 1-3`
-        if [ $MACHINE = "arm" ] ; then
-            MAKEBAS=zaurus
-        else
-            MAKEBAS="linux32"
-        fi
-        if [ -f "/usr/X11R6/lib/libX11.a" ] ; then
-           X11_MAKELIB=/usr/X11R6/lib
-        fi
-        if [ -f "/usr/lib/x86_64-linux-gnu/libX11.a" ] ; then
-           X11_MAKELIB=/usr/lib/x86_64-linux-gnu
-        fi
-    elif [ `echo $PLATFORM | sed -e "s/^MINGW32_NT.*/MINGW32_NT/"` = "MINGW32_NT" ] ; then
-        MAKEBAS=win32mingw
     elif [ $PLATFORM = "OpenBSD" ] ; then
         MAKEBAS=openbsd
         X11_MAKEINC=/usr/X11R6/include
@@ -178,8 +171,6 @@ if [ -z "$MAKEFILE" ] ; then
         fi
         X11_MAKEINC=/usr/openwin/include
         X11_MAKELIB=/usr/openwin/lib
-    elif [ `echo $PLATFORM | sed -e "s/^MINGW.*/MINGW/"` = "MINGW" ] ; then
-        MAKEBAS=mingw
     else
         echo "Error: Unrecognized platform - $PLATFORM"
         exit 1
@@ -216,8 +207,6 @@ fi
 
 MAKE=make
 if [ "$MAKEFILE" = "win32mingw.mak" ] ; then
-    # No X11 required as this uses native windows
-    X11_INCLUDE=
     MAKE=mingw32-make
     if [ "`type windres | cut -b 1-10`" = "windres is" ] ; then
       # Using native tools
@@ -277,7 +266,7 @@ elif [ -z "$OPTIONS" ] ; then
         export MAKEWINDEFS MAKEWINLIBS
     fi
 fi
-OPTIONS="$MECORE$MEDEBUG$METYPE$MEPROF$OPTIONS"
+OPTIONS="$MECORE$MEDEBUG$METYPE$MEPROF$BITSIZE$OPTIONS"
 MAKECDEFS="MAKECDEFS=$MAKECDEFS"
 if [ -r $MAKEFILE ] ; then
     if [ -n "$LOGFILE" ] ; then

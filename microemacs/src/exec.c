@@ -474,6 +474,19 @@ fnctest(meBuffer *bp)
     int count=0,ix,ii,jj,fn;                 /* Counter of errors */
     
     addLineToEob(bp,(meUByte *) "");
+    ii = sizeof(size_t);
+#ifdef _64BIT
+    if(ii != 8)
+    {
+        sprintf((char *) resultStr,"Compile Error: Pointer size is %d, should be 8",ii);
+#else
+    if(ii != 4)
+    {
+        sprintf((char *) resultStr,"Compile Error: Pointer size is %d, should be 4",ii);
+#endif
+        addLineToEob(bp,resultStr);
+        count++;
+    }
 #if MEOPT_CMDHASH
     /* test the command hash table */
     for (ii=0; ii < CK_MAX; ii++)

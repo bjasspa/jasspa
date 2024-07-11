@@ -920,7 +920,7 @@ meSockCheckCertificate(meIo *io, const char *sniHost, meUByte *rbuff)
         return 1;
 #endif
     logType = (io->urlOpts & meSOCKOPT_IGN_CRT_ERR) ? meSOCKOPT_LOG_WARNING:meSOCKOPT_LOG_ERROR;
-    if(io->urlFlags & logType)
+    if(io->urlOpts & logType)
         severityLbl = (io->urlOpts & meSOCKOPT_IGN_CRT_ERR) ? "Warning":"Error";
     else
         severityLbl = NULL;
@@ -1181,7 +1181,7 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
     if(!meSockHasInit)
         meSockSetup(io);
 
-    flags |= (io->urlFlags & meSOCKOPT_CLOSE) | meSOCKFLG_INUSE;
+    flags |= (io->urlFlags & meSOCKFLG_CLOSE) | meSOCKFLG_INUSE;
 
     if(meSockIsInUse(io))
     {
@@ -1982,7 +1982,7 @@ meSockFtpCommand(meIo *io, meUByte *rbuff, char *fmt, ...)
     va_start(ap,fmt);
     ii = vsnprintf((char *) rbuff,meSOCK_BUFF_SIZE,fmt,ap);
     va_end(ap);
-    if(io->urlFlags & (meSOCKOPT_LOG_DETAILS|meSOCKOPT_LOG_VERBOSE))
+    if(io->urlOpts & (meSOCKOPT_LOG_DETAILS|meSOCKOPT_LOG_VERBOSE))
     {
         if(!strncmp((char *) rbuff,"PASS",4))
             ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,(meUByte *) "PASS XXXX");

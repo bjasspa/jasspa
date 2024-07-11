@@ -68,6 +68,7 @@ DEFVAR ("buffer-names",        EVBNAMES)        /* buffer names access variable 
 DEFVAR ("buffer-scheme",       EVBUFSCHM)       /* Window colour  */
 #endif
 DEFVAR ("buffer-tab-width",    EVBUFTABWIDTH)   /* Buffer literal tab width */
+DEFVAR ("build",               EVBUILD)         /* Build OS bit & compiler info */
 #if MEOPT_EXTENDED
 DEFVAR ("command-names",       EVCNAMES)        /* command names access variable */
 #endif
@@ -151,7 +152,7 @@ DEFVAR ("osd-scheme",          EVOSDSCHM)       /* Main osd color scheme */
 #if MEOPT_EXTENDED
 DEFVAR ("pause-time",          EVPAUSETIME)     /* Pause time (used in Fence matching etc) */
 #endif
-DEFVAR ("platform",            EVMACHINE)       /* the name of the platform */ 
+DEFVAR ("platform",            EVPLATFORM)      /* the name of the platform */ 
 DEFVAR ("progname",            EVPROGNM)        /* argv[0] */ 
 DEFVAR ("quiet",               EVQUIET)         /* Be quiet */ 
 #if MEOPT_EXTENDED

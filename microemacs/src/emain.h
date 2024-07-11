@@ -605,7 +605,11 @@ typedef   time_t       meTime;
 #include <tfs.h>        /* Tack-on file system defs.     */
 #endif
 
+#ifdef NDEBUG
 #define KEY_TEST 0      /* Enable 'about' self-test      */
+#else
+#define KEY_TEST 1      /* Leave enabled on debug build  */
+#endif
 
 #include "emode.h"      /* Mode enum, type & var defs    */
 #include "estruct.h"    /* Type structure definitions    */

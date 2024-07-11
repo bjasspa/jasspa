@@ -42,8 +42,15 @@
 #endif
 #endif
 
-meUByte evalResult[meTOKENBUF_SIZE_MAX];    /* resulting string */
-static meUByte machineName[]=meSYSTEM_NAME;    /* resulting string */
+meUByte evalResult[meTOKENBUF_SIZE_MAX];    /* result string */
+static meUByte machineName[]=meSYSTEM_NAME; /* platform & build strings */
+static meUByte buildStr[]=" " meSYSTEM_NAME " " DEF_TO_STR(_PLATFORM_VER) " " DEF_TO_STR(_ARCHITEC) " " 
+#ifdef _64BIT
+"64"
+#else
+"32"
+#endif
+" " DEF_TO_STR(_TOOLKIT) " " DEF_TO_STR(_TOOLKIT_VER) " ";
 
 #if MEOPT_TIMSTMP
 extern meUByte time_stamp[];   /* Time stamp string */
@@ -1120,7 +1127,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 break ;
             }
         default:
-            /* default includes EVUSERNAME EVCBUFBACKUP EVSTATUS EVMACHINE 
+            /* default includes EVUSERNAME EVCBUFBACKUP EVSTATUS EVBUILD EVPLATFORM 
              * EVSYSRET EVUSEX, EVVERSION, EVWMDLINE, EVEOBLINE or system dependant vars
              * where this isn't the system (e.g. use-x) which cant be set
              */
@@ -1156,14 +1163,15 @@ gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
     case EVIDLETIME:    return meItoa(idleTime);
 #endif
     case EVBOXCHRS:     return boxChars;
-    case EVMODELINE:    return modeLineStr ;
-    case EVMACHINE:     return machineName ;
-    case EVPROGNM:      return meProgName ;
+    case EVBUILD:       return buildStr;
+    case EVMODELINE:    return modeLineStr;
+    case EVPLATFORM:    return machineName;
+    case EVPROGNM:      return meProgName;
     case EVCURSORX:     return meItoa(frameCur->mainColumn);
     case EVCURSORY:     return meItoa(frameCur->mainRow);
     case EVSYSTEM:      return meItoa(meSystemCfg);
 #if MEOPT_WORDPRO
-    case EVBUFFILLCOL:  return meItoa(frameCur->windowCur->buffer->fillcol) ;
+    case EVBUFFILLCOL:  return meItoa(frameCur->windowCur->buffer->fillcol);
     case EVBUFFILLMODE:
         evalResult[0] = frameCur->windowCur->buffer->fillmode;
         evalResult[1] = '\0';
