@@ -73,10 +73,7 @@
     set-variable .osd-favorites.fname &cat "file:" .osd-favorites.fname
   !endif
   !force find-file .osd-favorites.fname
-  !if &not $status
-    ml-write &spr "[Failed to load %s]" #l0
-    !abort
-  !endif
+  !iif &not $status  -8 ml-write &spr "[Failed to load %s]" #l0
   1 buffer-mode "hide"
   beginning-of-buffer
 !emacro

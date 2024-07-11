@@ -104,10 +104,7 @@ set-variable #l0 0
 
 0 define-macro cvs-command-init
   !if &band @# 1
-    !if &seq $buffer-fname ""
-      ml-write "[Current buffer has no file name]"
-      !abort
-    !endif
+    !iif &seq $buffer-fname ""  -8 ml-write "[Current buffer has no file name]"
     !if &band @# 2
       !if &bmod "edit"
         set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
@@ -316,8 +313,7 @@ define-macro cvs-log-list
     !endif
     !force 0x20 file-op #p9
   !endif
-  ml-write &spr "[Failed to generate %s version of file]" &cond @# "repository" "local"
-  !abort
+  -8 ml-write &spr "[Failed to generate %s version of file]" &cond @# "repository" "local"
 !emacro
 
 0 define-macro cvs-resolve-conflictsi
@@ -329,10 +325,7 @@ define-macro cvs-log-list
     ml-write "[No conflicts found]"
     !return
   !endif
-  !if &bmod "edit"
-    ml-write "[Must save changes first]"
-    !abort
-  !endif
+  !iif &bmod "edit"  -8 ml-write "[Must save changes first]"
   set-variable #l0 $buffer-fname
   !force 1 cvs-resolve-ver
   !iif &not $status  !abort

@@ -113,14 +113,11 @@ define-macro file-attrib
     !if &seq #l0 ""
       !abort
     !elif &not &seq "L" &lget &set #l1 &stat i #l0 1
-      ml-write "[Only local files supported]"
-      !abort
+      -8 ml-write "[Only local files supported]"
     !elif &seq "X" &lget #l1 2
-      ml-write "[No such file exists]"
-      !abort
+      -8 ml-write "[No such file exists]"
     !elif &seq "L" &lget #l1 2
-      ml-write "[Symbolic links not supported]"
-      !abort
+      -8 ml-write "[Symbolic links not supported]"
     !endif
     set-variable .info &spr "|%d|%d|-1|-1|" &lget #l1 4 &lget #l1 4
     osd .osd.fattr 20  "" "  File: "

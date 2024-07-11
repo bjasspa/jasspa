@@ -56,10 +56,7 @@
   set-variable #l9 0
   !while &set #l7 &sin "%i[" #l0
     set-variable #l4 &rig #l0 &add #l7 2
-    !if &not &set #l5 &sin "]" #l4
-      ml-write "[Error: Missing ']' in %i input]"
-      !abort
-    !endif
+    !iif &not &set #l5 &sin "]" #l4  -8 ml-write "[Error: Missing ']' in %i input]"
     set-variable #l4 &spr "\r%s\r" &rep &lef #l4 &sub #l5 1 "|" "\r"
     set-variable #l6 &rep &rep &rep &rep #l4 "%f" #l1 "%F" &rep #l1 "/" .osp "%b" #l2 "%e" #l3
     set-variable #l6 &rep &rep &rep &rep #l6 "\bA" "%" "\bB" "[" "\bC" "|" "\bD" "]"
@@ -75,18 +72,14 @@
   set-variable $buffer-fname .p
   !if &not &band @# 0x2000
     !if &sin "%*[" #l0
-      !if &not &sin "]" #l0
-        ml-write "[Error: Missing ']' in %*[ multi-file command line]"
-        !abort
-      !endif
+      !iif &not &sin "]" #l0  -8 ml-write "[Error: Missing ']' in %*[ multi-file command line]"
       set-variable #l0 &rep &rep #l0 "%*[" "" "]" ""
     !endif
     set-variable #l0 &rep &rep &rep &rep #l0 "%f" #l1 "%F" &rep #l1 "/" .osp "%b" #l2 "%e" #l3
     set-variable #l0 &rep &rep &rep &rep #l0 "\bA" "%" "\bB" "[" "\bC" "|" "\bD" "]"
     !while &set #l4 &sin "\bE" #l0
       !if &not &set #l5 &sin "\bE" &rig #l0 &add #l4 1
-        ml-write "[Error: Missing '%\"' in command line]"
-        !abort
+        -8 ml-write "[Error: Missing '%\"' in command line]"
       !elif &not &xse &set #l7 &mid #l0 &add #l4 1 &sub #l5 1 ".*\\s.*"
       !elif &band $system 0x100
         set-variable #l7 &spr "\"%s\"" #l7
@@ -115,23 +108,17 @@
       !force !force &bor &cond &band @# 0x40 0 1 &cond &band @# 0x200 0x24 4 shell-command #l0
     !endif
   !elif &not &set #l7 &sin "%*[" #l0
-    ml-write "[Error: Missing '%*[' in command line]"
-    !abort
+    -8 ml-write "[Error: Missing '%*[' in command line]"
   !else
     set-variable #l4 &rig #l0 &add #l7 2
-    !if &not &set #l5 &sin "]" #l4
-      ml-write "[Error: Missing ']' in %*[ multi-file command line]"
-      !abort
-    !endif
+    !iif &not &set #l5 &sin "]" #l4  -8 ml-write "[Error: Missing ']' in %*[ multi-file command line]"
     set-variable #l4 &lef #l4 &sub #l5 1
     set-variable #l8 &rig #l0 &add &add #l7 #l5 2
     -1 insert-string &lef #l0 &sub #l7 1
     set-variable #l9 0
     !while &les &pinc #l9 1 .find-file.file-count
       set-variable #l1 &rep &ind &cat ".find-file.file" #l9 "%" "\bA"
-      !if &seq &rig #l1 -1 "/"
-        set-variable #l1 &lef #l1 -1
-      !endif
+      !iif &seq &rig #l1 -1 "/"  set-variable #l1 &lef #l1 -1
       set-variable #l2 &rep &rep #l4 "%f" #l1 "%F" &rep #l1 "/" .osp
       !if &gre &set #l3 &rsin "." #l1 1
         set-variable #l2 &rep &rep #l2 "%b" &lef #l1 &sub #l3 1 "%e" &rig #l1 &sub #l3 1
@@ -142,9 +129,7 @@
     !done
     -1 insert-string #l8
     beginning-of-buffer
-    !if &seq @wc "*"
-      set-variable @wc " "
-    !endif
+    !iif &seq @wc "*"  set-variable @wc " "
     !force replace-string "\bA" "%"
     beginning-of-buffer
     !force replace-string "\bB" "["
@@ -160,10 +145,7 @@
         backward-delete-char
         set-mark
         !force search-buffer "me" "\bE"
-        !if &not $status
-          ml-write "[Error: Missing '%\"' in command line]"
-          !abort
-        !endif
+        !iif &not $status  -8 ml-write "[Error: Missing '%\"' in command line]"
         backward-delete-char
         backward-delete-char
         kill-region
@@ -227,12 +209,8 @@ set-variable .file-tool-run.osp &con &band $system 0x100 "\\" "/"
       save-buffer @mna
     !endif
   !endif
-  !if &band #l9 0x04
-    &cond &band #l9 0x08 1 0 save-some-buffers @mna
-  !endif
-  !if &len &set #l3 &reg &spr "/history/%s/file-tool/%d/bname" $platform @# ""
-    set-variable #l9 &bor #l9 0x4000
-  !endif
+  !iif &band #l9 0x04  &cond &band #l9 0x08 1 0 save-some-buffers @mna
+  !iif &len &set #l3 &reg &spr "/history/%s/file-tool/%d/bname" $platform @# ""  set-variable #l9 &bor #l9 0x4000
   !if #l1
     !force set-variable #l2 @1
     !if $status
@@ -248,9 +226,7 @@ set-variable .file-tool-run.osp &con &band $system 0x100 "\\" "/"
     &bor 0x1000 #l9 file-tool-run #l0 1 #l3
   !else
     set-variable #l2 @mc5 &spr "Launch %d separate processes (?/y/n) ? " .find-file.file-count "yYnN" "(Y)es, (N)o, (C-g)Abort ? "
-    !if &not &iseq #l2 "y"
-      !abort
-    !endif
+    !iif &not &iseq #l2 "y"  !abort
     set-variable #l2 0
     !while &les &pinc #l2 1 .find-file.file-count
       &bor 0x1000 #l9 file-tool-run #l0 #l2 #l3

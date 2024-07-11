@@ -41,9 +41,7 @@ define-macro cygwin
   !elif &seq "R" &stat "t" &cat %cygwin-path "/bin/bash.exe"
     ; Load the macro file and execute the cygwin session.
     execute-file "hkcygwin"
-    !if $status
-      cygwin
-    !endif
+    !iif $status  cygwin
   !else
     5000 ml-write &spr "[Error: Cannot find bash program. %s]" "/bin/bash.exe"
     !abort

@@ -432,10 +432,7 @@ define-macro ctags-process-buffers
 !emacro
 
 define-macro ctags
-  !if &seq &lget %tag-filemask 1 ""
-    ml-write "[No input file mask set!]"
-    !abort
-  !endif
+  !iif &seq &lget %tag-filemask 1 ""  -8 ml-write "[No input file mask set!]"
   delete-other-windows
   split-window-vertically
   find-buffer "*scratch*"

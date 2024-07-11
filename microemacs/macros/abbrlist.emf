@@ -35,8 +35,7 @@
   !repeat
     !force search-forward "<FOLD[+-]>\\|</FOLD>"
     !if &not $status
-      ml-write &spr  "[missing </FOLD> for <FOLD+> on line %d]" &sub #l1 3
-      !abort
+      -8 ml-write &spr  "[missing </FOLD> for <FOLD+> on line %d]" &sub #l1 3
     !elif &seq @s0 "</FOLD>"
       !if &not &dec #l0 1
         !return
@@ -256,8 +255,7 @@ define-macro abbrev-list
   !force &cond @? 1 0 abbrev-list-create
   !if &not $status
     goto-position "\x81"
-    ml-write "[Failed to load abbreviation list for current buffer]"
-    !abort
+    -8 ml-write "[Failed to load abbreviation list for current buffer]"
   !endif
   goto-position "\x81"
   popup-window "*abbrev-list*"

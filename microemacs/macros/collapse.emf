@@ -90,10 +90,7 @@
   set-variable #l1 &spr ".fhook-%s." #l0
   set-variable #p9 &ind &cat #l1 "collapse-open"
   set-variable #p8 &ind &cat #l1 "collapse-close"
-  !if &or &seq #p9 "ERROR" &seq #p8 "ERROR"
-    ml-write &spr "[Collapse not available for %s]" #l0 
-    !abort
-  !endif
+  !iif &or &seq #p9 "ERROR" &seq #p8 "ERROR"  -8 ml-write &spr "[Collapse not available for %s]" #l0 
   set-variable #p7 &ind &cat #l1 "collapse-mopen"
   set-variable #p6 &ind &cat #l1 "collapse-mclose"
   set-variable #p5 &ind &cat #l1 "collapse-mnext"
@@ -118,8 +115,7 @@ define-macro collapse-current
     ; this is a narrowed marker line, most likely a collapsed function which still matches the open search - fail
     -1 show-region
     set-variable $window-line #l0
-    ml-write "[Collapse open not found]"
-    !abort
+    -8 ml-write "[Collapse open not found]"
   !endif
   set-variable #l2 " ..."
   !iif &les #l7 0  set-variable #l2 &cat &cat " " &lef &trb @s0 15 #l2
@@ -130,8 +126,7 @@ define-macro collapse-current
   !if &or &not $status &les $window-line #l0
     !force -1 show-region
     set-variable $window-line #l0
-    ml-write "[Collapse close not found]"
-    !abort
+    -8 ml-write "[Collapse close not found]"
   !endif
   !iif &gre #l6 0  set-variable #l2 &cat #l2 &cat " "  &lef &trb @s0 15
   #l6 forward-line
@@ -195,8 +190,7 @@ define-macro beginning-of-function
     !force search-buffer &cat "b" #l4 #l9
     !if &not $status
       goto-alpha-mark "\x81"
-      ml-write "[Function beginning not found]"
-      !abort
+      -8 ml-write "[Function beginning not found]"
     !endif
   !done
   -1 show-region
@@ -211,8 +205,7 @@ define-macro end-of-function
     !force search-buffer #l4 #l8
     !if &not $status
       goto-alpha-mark "\x81"
-      ml-write "[Function end not found]"
-      !abort
+      -8 ml-write "[Function end not found]"
     !endif
   !done
   -1 show-region
@@ -234,8 +227,7 @@ define-macro mark-function
   !force search-buffer #l4 #l8
   !if &not $status
     goto-alpha-mark "\x81"
-    ml-write "[Function end not found]"
-    !abort
+    -8 ml-write "[Function end not found]"
   !endif
   beginning-of-line
   #l6 forward-line
@@ -243,8 +235,7 @@ define-macro mark-function
   !force search-buffer &cat "b" #l4 #l9
   !if &not $status
     goto-alpha-mark "\x81"
-    ml-write "[Function beginning not found]"
-    !abort
+    -8 ml-write "[Function beginning not found]"
   !endif
   -1 show-region
   #l7 forward-line

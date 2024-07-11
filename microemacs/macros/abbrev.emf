@@ -208,8 +208,7 @@ define-macro expand-word
     insert-string #l5
   !else
     forward-char
-    ml-write "[Invalid cursor position]"
-    !abort
+    -8 ml-write "[Invalid cursor position]"
   !endif
 !emacro
 set-variable .expand-word.on &cond &exi .expand-word.on .expand-word.on 0

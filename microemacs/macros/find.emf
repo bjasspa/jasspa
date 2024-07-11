@@ -417,18 +417,15 @@
         set-variable #l2 &rep #l2 &slo #l3 ""
       !elif &set #l4 &sin #l3 "wWsStT!"
         !if &seq #p0 ""
-          ml-write &spr "[Failed to get parameter for -%s option]" #l3
-          !abort
+          -10 ml-write &spr "[Failed to get parameter for -%s option]" #l3
         !elif &not &seq &lef #p0 1 "\""
           set-variable #l1 &sin " " &cat #p0 " "
           set-variable #l5 &lef #p0 &sub #l1 1
           set-variable #p0 &trl &rig #p0 #l1
         !elif &not &xse #p0 "\"\\(\\(\\\\.\\|[^\\\\\"]\\)*\\)\"\\s+\\(.*\\)"
-          -2 ml-write "[Badly quoted parameter]"
-          !abort
+          -10 ml-write "[Badly quoted parameter]"
         !elif &seq &set #l5 @s1 ""
-          -2 ml-write "[Invalid empty parameter]"
-          !abort
+          -10 ml-write "[Invalid empty parameter]"
         !else
           set-variable #p0 &trl @s3
           set-variable #l5 &xrep #l5 "\\\\\\(.\\)" "\\1"
@@ -452,8 +449,7 @@
           !elif &xseq #l5 "\\(\\d\\d\\)[-/]\\(\\d\\d\\)[-/]\\(\\d\\d\\)\\( \\(\\d\\d\\):\\(\\d\\d\\)\\(:\\(\\d\\d\\)\\)?\\)?"
             set-variable #l5 &spr "%s%s%2d%2d%2d%2d%2d" &lef $time 2 @s1 &mod &cat "100" @s2 100 &mod &cat "100" @s3 100 &mod &cat "100" @s5 100 &mod &cat "100" @s6 100 &mod &cat "100" @s8 100
           !else
-            -2 ml-write &spr "[Malformed -%s time parameter]" #l3
-            !abort
+            -10 ml-write &spr "[Malformed -%s time parameter]" #l3
           !endif
         !endif
         set-variable #p9 &lset #p9 &add #l4 1 #l5
@@ -461,8 +457,7 @@
       !elif &seq #l3 "&"
         !iif &not &band $system 0x1000000  set-variable #l2 &cat #l2 "&"
       !else
-        -2 ml-write &spr "[Unknown -%s option]" #l3
-        !abort
+        -10 ml-write &spr "[Unknown -%s option]" #l3
       !endif
       set-variable #l0 &rig #l0 1
     !done
@@ -477,8 +472,7 @@
   set-variable #l9 &lget #p9 1
   !if &sin "f" #l9
   !elif &not &sin "d" #l9
-    -2 ml-write "[Cannot use -F and -D together]"
-    !abort
+    -10 ml-write "[Cannot use -F and -D together]"
   !endif
   !while &len &set #l0 &trl #l0
     !if &not &seq &lef #l0 1 "\""
@@ -486,14 +480,12 @@
       set-variable #l4 &lef #l0 &sub #l1 1
       set-variable #l0 &rig #l0 #l1
     !elif &not &xse #l0 "\"\\(\\(\\\\.\\|[^\\\\\"]\\)*\\)\"\\s+\\(.*\\)"
-      -2 ml-write "[Badly quoted file mask]"
-      !abort
+      -10 ml-write "[Badly quoted file mask]"
     !elif &len &set #l4 @s1
       set-variable #l0 &trb @s3
       set-variable #l4 &xrep #l4 "\\\\\\(.\\)" "\\1"
     !else
-      -2 ml-write "[Invalid empty quoted file mask]"
-      !abort
+      -10 ml-write "[Invalid empty quoted file mask]"
     !endif
     set-variable #l5 ""
     !if &not &sin "g" #l9
@@ -534,10 +526,7 @@
       forward-line
     !done
   !endif
-  !if &not #l3
-    -2 ml-write "[No file mask given]"
-    !abort
-  !endif
+  !iif &not #l3  -10 ml-write "[No file mask given]"
   set-variable .find-proc.mask-count #l3
 !emacro
 
@@ -550,10 +539,7 @@
     find-proc-option
   !until &sin "-" &lget #l9 1
   !if &band @# 1
-    !if &seq "" &trl #l0
-      -2 ml-write "[No search string given]"
-      !abort
-    !endif
+    !iif &seq "" &trl #l0  -10 ml-write "[No search string given]"
     set-variable #l0 &cat "-w " #l0
     find-proc-option
   !endif
@@ -668,10 +654,7 @@ define-macro grep
 define-macro grep-rerun
   beginning-of-buffer
   forward-line
-  !if &not &seq &lef @wl 6 "Grep: "
-    ml-write "[Error: expected \"Grep: \" here]"
-    !abort
-  !endif
+  !iif &not &seq &lef @wl 6 "Grep: "  -8 ml-write "[Error: expected \"Grep: \" here]"
   set-variable #l1 &rig @wl 6
   0x11 grep #l1
 !emacro
@@ -783,10 +766,7 @@ define-macro find
 define-macro find-rerun
   beginning-of-buffer
   forward-line
-  !if &not &seq &lef @wl 6 "Find: "
-    ml-write "[Error: expected \"Find: \" here]"
-    !abort
-  !endif
+  !iif &not &seq &lef @wl 6 "Find: "  -8 ml-write "[Error: expected \"Find: \" here]"
   set-variable #l1 &rig @wl 6
   0x11 find #l1
 !emacro
@@ -917,11 +897,9 @@ define-macro replace-string-in-files
   set-variable .rsif-callback.l 0
   0 find-options "\b|@!fb\b\b\b\b\b\b\brsif-callback\b" #l6 @4
   !if &sin "d" &lget #l9 1
-    ml-write "[Option -d not supported - cannot replace strings in directories]"
-    !abort
+    -8 ml-write "[Option -d not supported - cannot replace strings in directories]"
   !elif &and &band @# 0x20 &sin "&" &lget #l9 1
-    ml-write "[Option -& not supported by query-replace-string-in-files]"
-    !abort
+    -8 ml-write "[Option -& not supported by query-replace-string-in-files]"
   !elif &not &sin "l" &lget #l9 1
     &band @# 1 save-some-buffers @mna
   !endif

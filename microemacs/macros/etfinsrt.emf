@@ -21,15 +21,13 @@
 define-macro insert-template
   !force set-variable #l4 @1
   !if &seq "" &set #l0 &rig $buffer-fhook 6
-    ml-write "[Error: Invalid $buffer-fhook]"
-    !abort
+    -8 ml-write "[Error: Invalid $buffer-fhook]"
   !elif $status
     set-variable #l2 &con &seq ".etf" &rig #l4 -4 &lef #l4 -4 #l4
     !iif @#  set-variable @# &seq "R" &stat t &set #l1 &spr "%s%s/%s.etf" $user-path #l0 #l2
     !if @#
     !elif &seq "ERROR" &set #l1 &find #l2 ".etf"
-      ml-write &spr "[Error: Failed to locate template file: %s.etf]" #l2
-      !abort
+      -8 ml-write &spr "[Error: Failed to locate template file: %s.etf]" #l2
     !endif
   !elif &not @?
     set-variable $file-names &spr "%s%s/.*\.etf" $user-path #l0
@@ -43,10 +41,8 @@ define-macro insert-template
     !elif &set #l6 &seq "R" &stat t &set #l1 &spr "%s%s.etf" $user-path #l2
       set-variable #l3 &lins #l3 0 &cat "0 " #l0
     !endif
-    !if #l2 "|"
-      ml-write &spr "[Error: No %s templates found]" &ind &spr ".fhook-%s.name"
-      !abort
-    !elif &seq "" &lget #l3 2
+    !iif #l2 "|"  -8 ml-write &spr "[Error: No %s templates found]" &ind &spr ".fhook-%s.name"
+    !if &seq "" &lget #l3 2
       set-variable #l4 &lget #l3 1
     !else
       set-variable #l4 @ml09 "Select template to insert" #l3
@@ -54,14 +50,10 @@ define-macro insert-template
     !iif &not &and #l6 &seq #l4 &cat "0 " #l0  set-variable #l1 &spr "%s%s.etf" #l2 &rep #l4 " " "_"
   !elif @#
     set-variable $file-names &spr "%s%s/0*%d_.+\\.etf" $user-path #l0 @#
-    !if &seq "" &set #l1 $file-names
-      ml-write &spr "[Error: %s template %d not found in: %s%s/]" &ind &spr ".fhook-%s.name" #l0 @# $user-path #l0
-      !abort
-    !endif
+    !iif &seq "" &set #l1 $file-names  -8 ml-write &spr "[Error: %s template %d not found in: %s%s/]" &ind &spr ".fhook-%s.name" #l0 @# $user-path #l0
     set-variable #l1 &cat $result #l1
   !elif &seq "ERROR" &set #l1 &find #l0 ".etf"
-    ml-write &spr "[Error: %s default template not found]" &ind &spr ".fhook-%s.name" #l0
-    !abort
+    -8 ml-write &spr "[Error: %s default template not found]" &ind &spr ".fhook-%s.name" #l0
   !endif
   ; Remember if new buffer & current magic mode then add it if not set
   set-variable #l3 &sub $window-eline 1

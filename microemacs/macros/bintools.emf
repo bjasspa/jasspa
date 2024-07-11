@@ -8,13 +8,8 @@
 ;
 define-macro bin-txt-to-hex
   !force set-variable #l1 @1
-  !if &not $status
-    set-variable #l1 @ml "String"
-  !endif
-  !if &gre &len #l2 510
-    ml-write "[ERROR: Invalid string given, too long to convert]"
-    !abort
-  !endif
+  !iif &not $status  set-variable #l1 @ml "String"
+  !iif &gre &len #l1 510  -8 ml-write "[ERROR: Invalid string given, too long to convert]"
   set-variable #l4 ""
   set-variable #l2 0
   !while &not &seq "" &set #l3 &mid #l1 &pinc #l2 1 1
@@ -25,22 +20,13 @@ define-macro bin-txt-to-hex
 
 define-macro bin-hex-to-txt
   !force set-variable #l1 @1
-  !if &not $status
-    set-variable #l1 @ml "Hex string"
-  !endif
-  !if &not &xse #l1 "\\h+"
-    ml-write "[ERROR: Invalid hex string given, non-hex chars found]"
-    !abort
-  !elif &band &len #l1 1
-    ml-write "[ERROR: Invalid hex string given, half byte given]"
-    !abort
-  !endif
+  !iif &not $status  set-variable #l1 @ml "Hex string"
+  !iif &not &xse #l1 "\\h+"  -8 ml-write "[ERROR: Invalid hex string given, non-hex chars found]"
+  !iif &band &len #l1 1  -8 ml-write "[ERROR: Invalid hex string given, half byte given]"
   set-variable #l4 ""
   set-variable #l2 0
   !while &not &seq "" &set #l3 &mid #l1 &pinc #l2 2 2
-    !if &not &seq #l3 "00"
-      set-variable #l4 &cat #l4 &itoa &cat "0x" #l3
-    !endif
+    !iif &not &seq #l3 "00"  set-variable #l4 &cat #l4 &itoa &cat "0x" #l3
   !done
   set-variable $result #l4
 !emacro
@@ -89,17 +75,13 @@ define-macro bin-hex-to-txt
     !abort
   !elif &les @# &set #l5 &add #l4 &len #l2
     set-variable #l5 &len &rep &lef #l2 &sub @# #l4 " " ""
-    !if &band #l5 1
-      !abort
-    !endif
+    !iif &band #l5 1  !abort
     set-variable #p9 &cat #l8 &cat &div #l5 2 "|"
   !elif &les @# &set #l5 &add #l5 3
     !abort
   !else
     set-variable #l4 &sub @# #l5
-    !if &gre &mul #l4 2 &len #l9
-      !abort
-    !endif
+    !iif &gre &mul #l4 2 &len #l9  !abort
     set-variable #p9 &cat #l8 &cat #l4 "|"
   !endif
 !emacro
@@ -116,10 +98,7 @@ define-macro bin-hex-to-txt
 define-macro bin-move-backward
   !if &bmo "binary"
     !force &set #l1 $window-col bin-get-line-info
-    !if &not $status
-      ml-write "[ERROR: Bad cursor position or badly formatted line]"
-      !abort
-    !endif
+    !iif &not $status  -8 ml-write "[ERROR: Bad cursor position or badly formatted line]"
   !elif &not &bmo "rbin"
     ml-write "[ERROR: Not a binary or rbin buffer]"
     !abort
@@ -128,9 +107,7 @@ define-macro bin-move-backward
     !abort
   !endif
   !force set-variable #l5 @1
-  !if &not $status
-    set-variable #l5 @ml "Move backward by"
-  !endif
+  !iif &not $status  set-variable #l5 @ml "Move backward by"
   calc #l5
   set-variable #l5 .calc.answer
   !if &bmo "binary"
@@ -154,10 +131,7 @@ define-macro bin-move-backward
 define-macro bin-move-forward
   !if &bmo "binary"
     !force &set #l1 $window-col bin-get-line-info
-    !if &not $status
-      ml-write "[ERROR: Bad cursor position or badly formatted line]"
-      !abort
-    !endif
+    !iif &not $status  -8 ml-write "[ERROR: Bad cursor position or badly formatted line]"
   !elif &not &bmo "rbin"
     ml-write "[ERROR: Not a binary or rbin mode buffer]"
     !abort
@@ -166,9 +140,7 @@ define-macro bin-move-forward
     !abort
   !endif
   !force set-variable #l5 @1
-  !if &not $status
-    set-variable #l5 @ml "Move forward by"
-  !endif
+  !iif &not $status  set-variable #l5 @ml "Move forward by"
   calc #l5
   set-variable #l5 .calc.answer
   !if &bmo "binary"
@@ -205,9 +177,7 @@ define-macro bin-yank-to-hex
     end-of-buffer
     backward-char
   !else
-    !if &not $window-col
-      insert-newline
-    !endif
+    !iif &not $window-col  insert-newline
     insert-newline
     beginning-of-buffer
     !while &gre $window-eline &add $window-line 1
@@ -217,9 +187,7 @@ define-macro bin-yank-to-hex
         insert-string &spr "%02X" &ato @wc
       !endif
       forward-delete-char
-      !if &gre $window-col 511
-        insert-newline
-      !endif
+      !iif &gre $window-col 511  insert-newline
     !done
     backward-char
     end-of-line
@@ -590,8 +558,7 @@ define-macro bin-insert-string
     !until &les @# 1
     !if @#
       goto-alpha-mark "\x81"
-      ml-write "[Not found]"
-      !abort
+      -8 ml-write "[Not found]"
     !else
       set-alpha-mark "\x81"
       goto-alpha-mark "\x82"
@@ -632,8 +599,7 @@ define-macro bin-insert-string
     !until &les @# 1
     !if @#
       goto-alpha-mark "\x81"
-      ml-write "[Not found]"
-      !abort
+      -8 ml-write "[Not found]"
     !else
       set-alpha-mark "\x81"
       goto-alpha-mark "\x82"

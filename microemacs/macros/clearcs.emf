@@ -48,8 +48,7 @@ set-variable .fhook-cc-state.refresh "cc-state-refresh"
 
 0 define-macro cc-coci
   !if &band $buffer-fmod 0x10000
-    ml-write "[directories not supported by cc-coci]"
-    !abort
+    -8 ml-write "[directories not supported by cc-coci]"
   !elif &bmod "view"
     cc-checkout
   !else
@@ -920,8 +919,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
   find-buffer #l0
   !if &not #l2
     1 goto-position "\x82"
-    ml-write "[ClearCase Warning: failed to run cleartool]"
-    !abort
+    -8 ml-write "[ClearCase Warning: failed to run cleartool]"
   !elif &sin "!" &lget .cc-init.flags @#
     set-variable $buffer-input cc-cleartool-input
     screen-update
@@ -1336,8 +1334,7 @@ define-macro cc-add
   !repeat
     !if &not &xseq @wl "\\(\\d+\\)\\(,\\(\\d+\\)\\)?\\([acd]\\)\\(\\d+\\)\\(,\\(\\d+\\)\\)?"
       !force 0 delete-buffer "*cc-diff-temp*"
-      ml-write "[ClearCase diff: Error strange line found]"
-      !abort
+      -8 ml-write "[ClearCase diff: Error strange line found]"
     !else
       set-variable #l2 @s1
       set-variable #l3 @s4
@@ -1365,8 +1362,7 @@ define-macro cc-add
       !if &seq #l3 "c"
         !if &not &seq @wc "-"
           !force 0 delete-buffer "*cc-diff-temp*"
-          ml-write "[ClearCase diff: Error strange divide line found]"
-          !abort
+          -8 ml-write "[ClearCase diff: Error strange divide line found]"
         !endif
         forward-line
       !endif
@@ -1385,10 +1381,7 @@ define-macro cc-add
 !emacro
 
 0 define-macro cc-diff-context
-  !if &not &seq "R" &stat t &set #l0 &cat $buffer-fname @1
-    ml-write &spr "[ClearCase diff: Error failed to located source file \"%s\"]" #l0
-    !abort
-  !endif
+  !iif &not &seq "R" &stat t &set #l0 &cat $buffer-fname @1  -8 ml-write &spr "[ClearCase diff: Error failed to located source file \"%s\"]" #l0
   cc-diff-create-old-file #l0
   set-variable #l2 $buffer-bname
   find-buffer "*cc-diff-temp*"
@@ -1752,19 +1745,12 @@ define-macro cc-explorer
   set-variable :ccco-last $window-line
 !emacro
 0 define-macro cc-config-spec-set
-  !if &not &bmod "edit"
-    ml-write "[no changes made]"
-    !abort
-  !elif &not &xseq $buffer-bname "\\*cc-config-spec \\(.+\\)"
-    ml-write "[ClearCase Error: Invalid buffer]"
-    !abort
-  !endif
+  !iif &not &bmod "edit"  -8 ml-write "[no changes made]"
+  !iif &not &xseq $buffer-bname "\\*cc-config-spec \\(.+\\)"  -8 ml-write "[ClearCase Error: Invalid buffer]"
   set-position "\x82"
   set-variable #l0 @s1
   osd-xdialog "ClearCase - Set Config Spec" "    Update the config spec for the current view?    " 2 "  \HYes  " "  \HNo  "
-  !if &not &equ $result 1
-    !abort
-  !endif
+  !iif &not &equ $result 1  !abort
   set-variable .tmp $temp-name
   4 append-buffer .tmp
   !force 0 delete-buffer "*cc-cmdline*"
@@ -1784,8 +1770,7 @@ define-macro cc-config-spec
   !if &not $status
     goto-position "\x82"
     !force 0 delete-buffer "*cc-cstemp*"
-    ml-write "[ClearCase Error: failed to get current view]"
-    !abort
+    -8 ml-write "[ClearCase Error: failed to get current view]"
   !endif
   set-variable #l0 @s1
   set-variable #l1 &spr "*cc-config-spec %s" #l0

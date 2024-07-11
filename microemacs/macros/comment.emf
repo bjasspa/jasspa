@@ -190,10 +190,7 @@ define-macro comment-get-type
     comment-get-type
     !iif &not &seq &lget #l9 1 ""  set-variable #p9 #l9
   !endif
-  !if &seq &lget #p9 1 ""
-    ml-write "[Comments not setup for this buffer]"
-    !abort
-  !endif
+  !iif &seq &lget #p9 1 ""  -8 ml-write "[Comments not setup for this buffer]"
 !emacro
 ; comment line ie xxx -> <comment start>xxx
 ;              or xxx -> <comment start>xxx<comment end>

@@ -29,8 +29,7 @@ define-macro change-buffer-charset
   !repeat
     !if &gre #l3 127
       goto-alpha-mark "\x82"
-      ml-write "[ERROR: Failed to find padding char for change-buffer-charset]"
-      !abort
+      -8 ml-write "[ERROR: Failed to find padding char for change-buffer-charset]"
     !endif
     beginning-of-buffer
     !force search-buffer "Me" &set #l4 &itoa #l3
@@ -151,8 +150,7 @@ define-macro change-buffer-charset
     !force !force execute-file "charset"
   !endif
   !force !force execute-file "language"
-  ml-write "[Command Aborted!]"
-  !abort
+  -8 ml-write "[Command Aborted!]"
 !emacro
   
 0 define-macro change-charset-set
