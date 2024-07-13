@@ -25,7 +25,7 @@
  * Synopsis:    Windows Print handler.
  * Authors:     Jon Green & Steven Phillips
  * Description:
- *     Printer driver routines for the WIN32 build for Microsoft windows
+ *     Printer driver routines for Microsoft windows
  *     environments.
  */
 

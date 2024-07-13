@@ -2183,10 +2183,8 @@ wordGuessAddAffixRulesToList(meUByte *sword, int slen, meUByte *bword, int blen,
                         wordGuessAddAffixRulesToList(sword,slen,bword,rwl,wfp,wfc,rr->subRule,rr->subRuleLen,words,scores,rScr,prf,
                                                      ((srf == 0) ? 1:3)|(meRuleFlags[ii] & RULE_MIXABLE));
                     if((prf == 0) && (meRuleFlags[ii] & RULE_MIXABLE))
-                    {
                         /* don't allow any suffix rule to be added, prefix only */
-                        wordGuessAddAffixRulesToList(sword,slen,bword,rwl,wfp,wfc,wfp,wfc,words,scores,rScr,prf,(1|RULE_SUFFIX|RULE_MIXABLE));
-                    }
+                        wordGuessAddAffixRulesToList(sword,slen,bword,rwl,wfp,wfc,wfp,wfc,words,scores,0,0,(1|RULE_SUFFIX|RULE_MIXABLE));
                     wordSuffixRuleRemove(rws,rr);
                 }
                 rr = rr->next;
@@ -2567,15 +2565,15 @@ spellWord(int f, int n)
                         {
                             /* got <base>S1(bs) */
                             int slen = len + rr->changeLen;
+                            meSpellRule  *ssr, *psr;
+                            meUByte *sswd, *pwd;
+                            int ssi, psi, sslen, jj;
+                            
                             if(wordCheck(wd,slen) > 0)
                             {
                                 lineInsertString(slen,wd);
                                 lineInsertNewline(0);
                             }
-                            meSpellRule  *ssr, *psr;
-                            meUByte *sswd, *pwd;
-                            int ssi, psi, sslen, jj;
-
 
                             if((ssi=rr->subRuleLen) > 0)
                             {

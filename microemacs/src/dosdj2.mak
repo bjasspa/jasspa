@@ -52,12 +52,17 @@ RMDIR    = deltree /Y
 
 include evers.mak
 
+PLATFORM = dos
+PLATFORM_VER = 5
+TOOLKIT  = djgpp2
+TOOLKIT_VER = 9
+ARCHITEC = intel
+MAKEFILE = dosdj2
 BUILDID  = dosdj2
 OUTDIRR  = $(BUILDID)_r
 OUTDIRD  = $(BUILDID)_d
-TRDPARTY = ../3rdparty
 
-CCDEFS   = -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY) -D_DOS -D__DJGPP2__ -I. 
+CCDEFS   = -D_DOS -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D__DJGPP2__ -I. -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY)
 CCFLAGSR = -O2 -DNDEBUG=1 -Wall -Wno-uninitialized
 CCFLAGSD = -g -Wall
 LDDEFS   = 
@@ -92,7 +97,7 @@ PRGNAME  = $(BCOR)$(BTYP)
 PRGFILE  = $(PRGNAME)$(EXE)
 PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
 	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def \
-	   $(BUILDID).mak evers.mak
+	   evers.mak
 PRGOBJS  = $(OUTDIR)/abbrev.o $(OUTDIR)/basic.o $(OUTDIR)/bind.o $(OUTDIR)/buffer.o $(OUTDIR)/crypt.o $(OUTDIR)/dirlist.o $(OUTDIR)/display.o \
 	   $(OUTDIR)/eval.o $(OUTDIR)/exec.o $(OUTDIR)/file.o $(OUTDIR)/fileio.o $(OUTDIR)/frame.o $(OUTDIR)/hash.o $(OUTDIR)/hilight.o $(OUTDIR)/history.o \
 	   $(OUTDIR)/input.o $(OUTDIR)/isearch.o $(OUTDIR)/key.o $(OUTDIR)/line.o $(OUTDIR)/macro.o $(OUTDIR)/main.o $(OUTDIR)/narrow.o $(OUTDIR)/next.o \

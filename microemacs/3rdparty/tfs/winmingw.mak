@@ -1,7 +1,7 @@
-# -!- makefile -!-
+##############################################################################
 #
-# JASSPA MicroEmacs - www.jasspa.com
-# linuxgcc.mak - Make file for Linux (v3+ Kernel) using gcc
+## JASSPA MicroEmacs - www.jasspa.com
+# win32mingw.mak - Make file for Windows using MinGW development kit.
 #
 # Copyright (C) 2007-2022 JASSPA (www.jasspa.com)
 #
@@ -22,48 +22,54 @@
 ##############################################################################
 
 A        = .a
-EXE      = 
+EXE      = .exe
 
 CC       = gcc
-MK       = make
+RC       = windres
+MK       = mingw32-make
 LD       = $(CC)
 STRIP    = strip
 AR       = ar
 RM       = rm -f
 RMDIR    = rm -rf
 
-ifeq "$(BIT_SIZE)" ""
-BIT_SIZE = $(shell getconf LONG_BIT)
+ifneq "$(BIT_SIZE)" ""
+else ifeq "$(PLATFORM)" "x64"
+BIT_SIZE = 64
+else
+BIT_SIZE = 32
 endif
 
-PLATFORM = linux
-TOOLKIT  = gcc
+TOOLKIT_VER = $(word 1,$(subst ., ,$(shell $(CC) -dumpversion)))
+
+PLATFORM = windows
+TOOLKIT  = mingw
 ARCHITEC = intel
-MAKEFILE = $(PLATFORM)$(TOOLKIT)
+MAKEFILE = win$(TOOLKIT)
 ifeq "$(BPRF)" "1"
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)p
+BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)$(TOOLKIT_VER)p
 else
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)
+BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)$(TOOLKIT_VER)
 endif
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
 
-CCDEFS   = -m$(BIT_SIZE) -D_LINUX -D_$(BIT_SIZE)BIT -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I$(TRDPARTY)/zlib
+CCDEFS   = -m$(BIT_SIZE) -D_MINGW -D_$(BIT_SIZE)BIT -Wall -I$(TRDPARTY)/zlib
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g
-LDDEFS   = -m$(BIT_SIZE)
+LDDEFS   = -m$(BIT_SIZE) 
 LDFLAGSR = -O3 -flto
 LDFLAGSD = -g
 ARFLAGSR = rcs
 ARFLAGSD = rcs
+RCFLAGS  =
 
 ifeq "$(BCFG)" "debug"
 OUTDIR   = $(OUTDIRD)
 CCFLAGS  = $(CCFLAGSD)
 LDFLAGS  = $(LDFLAGSD)
 ARFLAGS  = $(ARFLAGSD)
-STRIP    = - echo No strip - debug 
 else
 OUTDIR   = $(OUTDIRR)
 CCFLAGS  = $(CCFLAGSR)
@@ -72,8 +78,8 @@ ARFLAGS  = $(ARFLAGSR)
 endif
 
 ifeq "$(BPRF)" "1"
-CCPROF = -D_ME_PROFILE -pg
-LDPROF = -pg
+CCPROF = -D_ME_PROFILE -pg -no-pie
+LDPROF = -pg -no-pie
 STRIP  = - echo No strip - profile 
 else
 CCPROF = 
@@ -108,13 +114,12 @@ $(LIBOBJS): $(LIBHDRS)
 
 $(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(RM) $@
-	$(LD) $(LDDEFS) $(LDPROF) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS)
-	$(STRIP) $@
+	$(LD) $(LDFLAGS) $(LDPROF) -o $@ $(PRGOBJS) $(PRGLIBS)
 
 $(PRGOBJS): $(PRGHDRS)
 
 $(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A):
-	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG)
+	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE)
 
 $(OUTDIR):
 	-mkdir $(OUTDIR)

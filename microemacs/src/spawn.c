@@ -312,7 +312,7 @@ meShellCommand(int f, int n)
 #ifdef _WIN32
 
 static BOOL CALLBACK
-ipipeFindChildWindow(HWND hwnd, long lipipe)
+ipipeFindChildWindow(HWND hwnd, LPARAM lipipe)
 {
     DWORD process ;
     meIPipe *ipipe = (meIPipe *)(lipipe);
@@ -331,7 +331,7 @@ static HWND
 ipipeGetChildWindow(meIPipe *ipipe)
 {
     ipipe->childWnd = NULL ;
-    EnumWindows(ipipeFindChildWindow,(long) ipipe) ;
+    EnumWindows(ipipeFindChildWindow,(LPARAM) ipipe);
     return ipipe->childWnd ;
 }
 
@@ -426,7 +426,7 @@ ipipeWriteString(meIPipe *ipipe, int n, meUByte *str)
     {
 #ifdef _WIN32
         DWORD written ;
-        WriteFile(ipipe->outWfd,str,meStrlen(str),&written,NULL) ;
+        WriteFile(ipipe->outWfd,str,(DWORD) meStrlen(str),&written,NULL) ;
 #else
         write(ipipe->outWfd,str,meStrlen(str)) ;
 #endif

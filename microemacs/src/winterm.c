@@ -25,9 +25,9 @@
  * Synopsis:    Win32 platform support.
  * Authors:     Jon Green, Matthew Robinson & Steven Phillips
  * Description:
- *     This is the windows terminal driver for the WIN32 build for Microsoft
- *     windows environments.  This file contains the display and terminal input
- *     functions for collecting and displaying data.
+ *     This is the windows terminal driver for Microsoft windows environments.
+ *     This file contains the display and terminal input functions for
+ *     collecting and displaying data.
  *
  * Notes:
  *
@@ -188,8 +188,8 @@ int ttServerToRead = 0;
 meUByte ttServerCheck = 0;
 #endif
 
-LONG APIENTRY
-MainWndProc(HWND hWnd,UINT message,UINT wParam,LONG lParam);
+LRESULT APIENTRY
+MainWndProc(HWND hWnd,UINT message,UINT wParam,LPARAM lParam);
 
 /***************************************************************************/
 #ifdef _ME_CONSOLE
@@ -2800,7 +2800,7 @@ TTinitMouse(void)
  * Returning meTRUE if the event is handled; otherwise meFALSE.
  */
 int
-WinMouse(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+WinMouse(HWND hwnd, UINT message, UINT wParam, LPARAM lParam)
 {
     meFrame *frame;
     
@@ -2840,7 +2840,7 @@ WinMouse(HWND hwnd, UINT message, UINT wParam, LONG lParam)
          */
         if(((wParam ^ mouseButs) & (MK_LBUTTON|MK_RBUTTON|MK_MBUTTON)) == 0)
         {
-            static LONG lastPos=-1;
+            static LPARAM lastPos=-1;
             meUInt arg;           /* Decode key argument */
             meUShort cc;
             
@@ -2996,7 +2996,7 @@ WinMouse(HWND hwnd, UINT message, UINT wParam, LONG lParam)
  * Returning meTRUE if the event is handled; otherwise meFALSE.
  */
 int
-WinKeyboard(HWND hwnd, UINT message, UINT wParam, LONG lParam)
+WinKeyboard(HWND hwnd, UINT message, UINT wParam, LPARAM lParam)
 {
     meFrame *frame;
     meUShort cc;                  /* Local keyboard character */
@@ -5407,7 +5407,7 @@ meFrameRepositionWindow(meFrame *frame, int resize)
        !meFrameGetWinMaximized(frame))
     {
         RECT wRect;
-        int left, top, width, depth, bw;
+        int left, top, width, depth;
         
         /* Always reposition so the top left is visible and as much of the window */
         GetWindowRect(meFrameGetWinHandle(frame),&wRect);
@@ -5426,7 +5426,6 @@ meFrameRepositionWindow(meFrame *frame, int resize)
         if(top < eCellMetrics.workArea.top)
             top = eCellMetrics.workArea.top;
         
-        bw = eCellMetrics.borderWidth >> 1;
         if(resize && (((left + width) > eCellMetrics.workArea.right) || ((top + depth) > eCellMetrics.workArea.bottom)))
         {
             if((left + width) > eCellMetrics.workArea.right)
@@ -5954,7 +5953,7 @@ meFrameKillFocus(meFrame *frame)
 
 /****************************************************************************
    
-FUNCTION: MainWndProc(HWND, unsigned, WORD, LONG)
+FUNCTION: MainWndProc(HWND, UINT, UINT, LPARAM)
    
 PURPOSE:  Processes messages
    
@@ -5980,10 +5979,10 @@ COMMENTS:
    
  ****************************************************************************/
 
-LONG APIENTRY
-MainWndProc(HWND hWnd, UINT message, UINT wParam, LONG lParam)
+LRESULT APIENTRY
+MainWndProc(HWND hWnd, UINT message, UINT wParam, LPARAM lParam)
 {
-    static LONG setCursorLastLParam;
+    static LPARAM setCursorLastLParam;
     meFrame *frame;
     
     /* static int msgCount=0;*/
@@ -6395,11 +6394,7 @@ MainWndProc(HWND hWnd, UINT message, UINT wParam, LONG lParam)
 unhandled_message:
         /* fprintf(logfp,"Unhandled message %x %x %x\n",message, wParam, lParam);*/
         /* fflush(logfp);*/
-        {
-            int ii;
-            ii = DefWindowProc(hWnd,message,wParam,lParam);
-            return ii;
-        }
+        return DefWindowProc(hWnd,message,wParam,lParam);
     }
     return meFALSE;
 }
@@ -6461,24 +6456,27 @@ TTsetBgcol(void)
         
         /* Get the new background color scheme */
         bcol = meStyleGetBColor(meSchemeGetStyle(globScheme));
-        
-        meFrameLoopBegin();
-        
-        meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN);
-        
-        if(((newBrush = CreateSolidBrush(eCellMetrics.pInfo.cPal[bcol].cpixel)) != NULL) &&
-            (SetClassLong(meFrameGetWinHandle(loopFrame),GCL_HBRBACKGROUND,(LONG)(newBrush)) != (LONG)(NULL)))
+        if((newBrush = CreateSolidBrush(eCellMetrics.pInfo.cPal[bcol].cpixel)) != NULL)
         {
-            /* The new brush has been installed. Delete the old brush if we
-             * have defined it and remember the old context */
+            meFrameLoopBegin();
+            
+            meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN);
+        
+#ifdef _WIN64
+            SetClassLongPtr(meFrameGetWinHandle(loopFrame),GCLP_HBRBACKGROUND,(LONG_PTR)(newBrush));
+#else
+            SetClassLong(meFrameGetWinHandle(loopFrame),GCL_HBRBACKGROUND,(LONG)(newBrush));
+#endif
+            
+            meFrameLoopEnd();
+            
+            /* The new brush has been installed. Delete the old brush if we have defined it and remember the old context */
             if(ttBrush != NULL)
                 DeleteObject(ttBrush);
             ttBrush = newBrush;
         }
         else if(newBrush != NULL)
             DeleteObject(newBrush);
-        
-        meFrameLoopEnd();
         
     }
 #endif /* _ME_WINDOW */

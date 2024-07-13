@@ -265,7 +265,7 @@ printGetParams (void)
        ((ss = regGetString(regData,NULL)) == NULL) || !meAtoi(ss))
         return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Printer driver not setup]");
 
-#ifdef WIN32
+#ifdef _WIN32
     if(((regData = regFind (regPrint,(meUByte *)"internal")) != NULL) &&
        ((ss = regGetString(regData,NULL)) != NULL))
         printer.pInternal = meAtoi(ss) ;

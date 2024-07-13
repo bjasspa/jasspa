@@ -332,9 +332,6 @@
 #endif
 #ifdef _WIN32
 #define meSYSTEM_NAME  "win32"          /* Identity name of the system   */
-#ifndef WIN32
-#define WIN32          1                /* Standard win32 definition     */
-#endif
 #define _CTRLZ         1                /* ^Z at end of files (MSDOS)    */
 #define _CTRLM         1                /* ^M at end of lines (MSDOS)    */
 #if (_MSC_VER != 900)

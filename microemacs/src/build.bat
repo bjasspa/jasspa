@@ -3,7 +3,7 @@ rem JASSPA MicroEmacs - www.jasspa.com
 rem build - JASSPA MicroEmacs build script for MS windows and dos platforms
 rem Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
 rem See the file main.c for copying and conditions.
-set OPTIONS=
+set BITSIZE=
 set LOGFILE=
 set LOGFILEA=
 set MECORE=
@@ -12,8 +12,11 @@ set MELSTT=
 set MEPROF=
 set METYPE=
 set MAKEFILE=
+set OPTIONS=
 :build_option
 if "%1." == "."    goto build_cont
+if "%1" == "-32"   set  BITSIZE= BIT_SIZE=32
+if "%1" == "-64"   set  BITSIZE= BIT_SIZE=64
 if "%1" == "-C"    set  OPTIONS= clean
 if "%1" == "-d"    set  MEDEBUG= BCFG=debug
 if "%1" == "-h"    goto build_help
@@ -54,18 +57,12 @@ goto build_option
 
 :build_cont
 
-set OPTIONS=%MECORE%%MEDEBUG%%METYPE%%MEPROF%%MELSTT%%OPTIONS%
+set OPTIONS=%MECORE%%MEDEBUG%%METYPE%%MEPROF%%MELSTT%%BITSIZE%%OPTIONS%
 
 if NOT "%MAKEFILE%." == "." goto build_got_makefile
-
-
-if NOT "%PATH:Microsoft Visual Studio\2019=%." == "%PATH%." set MAKEFILE=win32vc16.mak & goto build_got_makefile
-if NOT "%PATH:Microsoft Visual Studio\2017=%." == "%PATH%." set MAKEFILE=win32vc15.mak & goto build_got_makefile
-if NOT "%PATH:Microsoft Visual Studio 10.0=%." == "%PATH%." set MAKEFILE=win32vc10.mak & goto build_got_makefile
-if NOT "%PATH:Microsoft Visual Studio 9.0=%." == "%PATH%." set MAKEFILE=win32vc9.mak & goto build_got_makefile
-if NOT "%PATH:Microsoft Visual Studio 8.0=%." == "%PATH%." set MAKEFILE=win32vc8.mak & goto build_got_makefile
-if NOT "%PATH:\mingw=%." == "%PATH%." set MAKEFILE=win32mingw.mak & goto build_got_makefile
-if NOT "%MSVCDir%." == "." set MAKEFILE=win32vc6.mak & goto build_got_makefile
+if NOT "%VisualStudioVersion%." == "." set MAKEFILE=winmsvc.mak & goto build_got_makefile
+if NOT "%VCINSTALLDIR%." == "." set MAKEFILE=winmsvc.mak & goto build_got_makefile
+if NOT "%PATH:\mingw=%." == "%PATH%." set MAKEFILE=winmingw.mak & goto build_got_makefile
 
 echo.
 echo ERROR: Failed to identify compiler, use -m to specify the required makefile.
@@ -77,8 +74,8 @@ goto :build_exit
 :build_got_makefile
 
 set MAKE=make
-if "%MAKEFILE:~0,10%" == "win32mingw" set MAKE=mingw32-make
-if "%MAKEFILE:~0,7%" == "win32vc" set MAKE=nmake
+if "%MAKEFILE:~0,7%" == "winmsvc" set MAKE=nmake
+if "%MAKEFILE:~0,8%" == "winmingw" set MAKE=mingw32-make
 
 if "%LOGFILE%." == "." goto build_applog
 
@@ -109,6 +106,8 @@ goto build_exit
 echo Usage: build [options]
 echo.
 echo Where options can be:-
+echo     -32  : Build 32bit binary.
+echo     -64  : Build 64bit binary.
 echo     -C   : Build clean.
 echo     -d   : For debug build (output is med* or ned*)
 echo     -h   : For this help page
@@ -119,13 +118,8 @@ echo          : Append the compile log to the given file
 echo     -LS  : Link with static libraries to reduce dynamic runtime dependents (MSVC)
 echo     -m {makefile}
 echo            Sets the makefile to use where {makefile} can be:-
-echo              win32mingw.mak  Win32 build using MinGW GNU GCC
-echo              win32vc6.mak  Win32 build using MS VC version 6 (or 98)
-echo              win32vc8.mak  Win32 build using MS VC version 8 (or 2005)
-echo              win32vc9.mak  Win32 build using MS VC version 9 (or 2008)
-echo              win32vc10.mak  Win32 build using MS VC version 10 (or 2010)
-echo              win32vc15.mak  Win32 build using MS VC version 15 (or 2017)
-echo              win32vc16.mak  Win32 build using MS VC version 16 (or 2019)
+echo              winmingw.mak  Windows 32bit build using MinGW GNU GCC
+echo              winmsvc.mak   Windows build using MS VC version 8+
 echo     -ne  : for NanoEmacs build (output is ne).
 echo     -P   : Build with profiling instructions (MinGW)
 echo     -S   : Build clean spotless.
