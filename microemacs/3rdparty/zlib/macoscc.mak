@@ -1,30 +1,19 @@
-# -!- makefile -!-
+##############################################################################
 #
-# JASSPA MicroEmacs - www.jasspa.com
-# linuxgcc.mak - Make file for Linux (v3+ Kernel) using gcc
-#
-# Copyright (C) 2007-2022 JASSPA (www.jasspa.com)
-#
-# This program is free software; you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by the Free
-# Software Foundation; either version 2 of the License, or (at your option)
-# any later version.
-#
-# This program is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-# more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with this program; if not, write to the Free Software Foundation, Inc.,
-# 675 Mass Ave, Cambridge, MA 02139, USA.
+#  Copyright (c) 2009 Jasspa
+# 
+#  All Rights Reserved.
+# 
+#  This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
+#  reproduced,  translated,  or  reduced to any  electronic  medium or machine
+#  readable form without prior written consent from Maxexam Ltd.
 #
 ##############################################################################
 
 A        = .a
 EXE      = 
 
-CC       = gcc
+CC       = cc
 MK       = make
 LD       = $(CC)
 STRIP    = strip
@@ -36,9 +25,14 @@ ifeq "$(BIT_SIZE)" ""
 BIT_SIZE = $(shell getconf LONG_BIT)
 endif
 
-PLATFORM = linux
-TOOLKIT  = gcc
+PLATFORM = macos
+TOOLKIT  = cc
+ifneq "$(ARCHITEC)" ""
+else ifeq "$(shell uname -p)" "i386"
 ARCHITEC = intel
+else
+ARCHITEC = apple
+endif
 MAKEFILE = $(PLATFORM)$(TOOLKIT)
 ifeq "$(BPRF)" "1"
 BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)p
@@ -49,7 +43,7 @@ OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
 
-CCDEFS   = -m$(BIT_SIZE) -D_LINUX -D_$(BIT_SIZE)BIT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -Wall -I.
+CCDEFS   = -m$(BIT_SIZE) -D_MACOS -D_$(BIT_SIZE)BIT -Wall
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g
 LDDEFS   = -m$(BIT_SIZE)
@@ -63,21 +57,11 @@ OUTDIR   = $(OUTDIRD)
 CCFLAGS  = $(CCFLAGSD)
 LDFLAGS  = $(LDFLAGSD)
 ARFLAGS  = $(ARFLAGSD)
-STRIP    = - echo No strip - debug 
 else
 OUTDIR   = $(OUTDIRR)
 CCFLAGS  = $(CCFLAGSR)
 LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
-endif
-
-ifeq "$(BPRF)" "1"
-CCPROF = -D_ME_PROFILE -pg
-LDPROF = -pg
-STRIP  = - echo No strip - profile 
-else
-CCPROF = 
-LDPROF = 
 endif
 
 LIBNAME  = zlib
@@ -91,7 +75,7 @@ LIBOBJS  = $(OUTDIR)/adler32.o $(OUTDIR)/compress.o $(OUTDIR)/crc32.o $(OUTDIR)/
 .SUFFIXES: .c .o
 
 $(OUTDIR)/%.o : %.c
-	$(CC) $(CCDEFS) $(CCPROF) $(CCFLAGS) -c -o $@ $<
+	$(CC) $(CCDEFS) $(CCFLAGS) -c -o $@ $<
 
 all: $(OUTDIR)/$(LIBFILE)
 

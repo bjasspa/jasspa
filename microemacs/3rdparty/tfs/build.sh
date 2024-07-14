@@ -31,7 +31,7 @@ do
         echo "        : Append the compile log to the given file"
         echo "   -m <makefile>"
         echo "        : Sets the makefile to use where <makefile> can be"
-        echo "            aix4.mak, freebsd.mak, freebsd.gmk etc."
+        echo "            linuxgcc.mak, macoscc.mak etc."
         echo "   -P   : Build with profiling instructions."
         echo "   -S   : Build clean spotless."
         echo ""
@@ -74,10 +74,8 @@ if [ -z "$MAKEFILE" ] ; then
     
     if [ $PLATFORM = "Darwin" ] ; then
         VERSION=`uname -r | cut -f 1 -d .`
-        if [ $VERSION -gt 18 ] ; then
-            MAKEBAS=macos64
-        elif [ $VERSION -gt 15 ] ; then
-            MAKEBAS=macos32
+        if [ $VERSION -gt 15 ] ; then
+            MAKEBAS=macos
         else
             MAKEBAS=darwin
         fi

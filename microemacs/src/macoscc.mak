@@ -1,0 +1,254 @@
+# -!- makefile -!-
+#
+# JASSPA MicroEmacs - www.jasspa.com
+# macos64cc.mak - Make file for MacOS using cc 64bit compiler.
+#
+# Copyright (C) 2007-2009 JASSPA (www.jasspa.com)
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 2 of the License, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+##############################################################################
+#
+# Created:     Sat Jan 24 1998
+# Synopsis:    Make file for Windows using MinGW development kit.
+# Notes:
+#     Run ./build.sh to compile, ./build.sh -h for more information.
+#
+#     To build from the command line using make & makefile. 
+#
+#	Run "make -f macos64cc.mak"            for optimised build produces ./.macos64cc-release-mew/mecw
+#	Run "make -f macos64cc.mak BCFG=debug" for debug build produces     ./.macos64cc-debug-mew/med
+#	Run "make -f macos64cc.mak BTYP=c"     for console support          ./.macos64cc-release-mec/mec
+#	Run "make -f macos64cc.mak BCOR=ne"    for ne build produces        ./.macos64cc-release-new/ne
+#
+#	Run "make -f macos64cc.mak clean"      to clean source directory
+#	Run "make -f macos64cc.mak spotless"   to clean source directory even more
+#
+##############################################################################
+#
+# Installation Directory
+INSTDIR	      = /c/emacs
+INSTPROGFLAGS = 
+#
+# Local Definitions
+A        = .a
+EXE      = 
+
+CC       = cc
+MK       = make
+LD       = $(CC)
+STRIP    = strip
+AR       = ar
+RM       = rm -f
+RMDIR    = rm -r -f
+hashstr  = \#
+
+include evers.mak
+
+ifeq "$(BIT_SIZE)" ""
+BIT_SIZE = $(shell getconf LONG_BIT)
+endif
+
+PLATFORM = macos
+TOOLKIT  = cc
+ifneq "$(ARCHITEC)" ""
+else ifeq "$(shell uname -p)" "i386"
+ARCHITEC = intel
+else
+ARCHITEC = apple
+endif
+MAKEFILE = $(PLATFORM)$(TOOLKIT)
+ifeq "$(BPRF)" "1"
+BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)p
+else
+BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)
+endif
+OUTDIRR  = .$(BUILDID)-release
+OUTDIRD  = .$(BUILDID)-debug
+TRDPARTY = ../3rdparty
+
+TOOLKIT_VER = $(shell $(CC) -dumpversion | cut -f 1 -d .)
+PLATFORM_VER = $(shell uname -r | cut -f 1 -d .)
+
+CCDEFS   = -m$(BIT_SIZE) -D_MACOS -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -Wall -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY)
+CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wno-uninitialized
+CCFLAGSD = -g
+LDDEFS   = -m$(BIT_SIZE)
+LDFLAGSR = -O3 -flto
+LDFLAGSD = -g
+LDLIBS   = 
+ARFLAGSR = rcs
+ARFLAGSD = rcs
+
+ifeq "$(BCFG)" "debug"
+BOUTDIR  = $(OUTDIRD)
+CCFLAGS  = $(CCFLAGSD)
+LDFLAGS  = $(LDFLAGSD)
+ARFLAGS  = $(ARFLAGSD)
+STRIP    = - echo No strip - debug 
+else
+BOUTDIR  = $(OUTDIRR)
+CCFLAGS  = $(CCFLAGSR)
+LDFLAGS  = $(LDFLAGSR)
+ARFLAGS  = $(ARFLAGSR)
+endif
+
+ifeq "$(BCOR)" "ne"
+
+BCOR_CDF = -D_NANOEMACS
+PRGLIBS  = 
+
+else
+
+ifneq "$(OPENSSLP)" ""
+else ifneq "$(wildcard /usr/local/opt/openssl@3/include/openssl/ssl.h)" ""
+OPENSSLP = /usr/local/opt/openssl@3
+OPENSSLV = .3
+else ifneq "$(wildcard /opt/homebrew/opt/openssl@3/include/openssl/ssl.h)" ""
+OPENSSLP = /opt/homebrew/opt/openssl@3
+OPENSSLV = .3
+else ifneq "$(wildcard /usr/local/opt/openssl@1.1/include/openssl/ssl.h)" ""
+OPENSSLP = /usr/local/opt/openssl@1.1
+OPENSSLV = .1.1
+else ifneq "$(wildcard /opt/homebrew/opt/openssl@1.1/include/openssl/ssl.h)" ""
+OPENSSLP = /opt/homebrew/opt/openssl@1.1
+OPENSSLV = .1.1
+else ifneq "$(wildcard /usr/local/opt/openssl/include/openssl/ssl.h)" ""
+OPENSSLP = /usr/local/opt/openssl
+else ifneq "$(wildcard /opt/homebrew/opt/openssl/include/openssl/ssl.h)" ""
+OPENSSLP = /opt/homebrew/opt/openssl
+else ifneq "$(wildcard /usr/include/openssl/ssl.h)" ""
+OPENSSLP = /usr/include
+endif
+ifeq "$(OPENSSLP)" ""
+$(warning WARNING: No OpenSSL support found, https support will be disabled.)
+else
+OPENSSLDEFS = -DMEOPT_OPENSSL=1 -I$(OPENSSLP)/include -D_OPENSSLLNM=libssl$(OPENSSLV).dylib -D_OPENSSLCNM=libcrypto$(OPENSSLV).dylib
+endif
+BCOR     = me
+BCOR_CDF = -D_SOCKET $(OPENSSLDEFS)
+PRGLIBS  = $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A) $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A)
+
+endif
+
+ifeq "$(BPRF)" "1"
+CCPROF = -D_ME_PROFILE -pg
+LDPROF = -pg
+STRIP  = - echo No strip - profile 
+else
+CCPROF = 
+LDPROF = 
+endif
+
+ifneq (,$(findstring w,$(BTYP)))
+
+ifeq "$(shell echo '$(hashstr)include <stdio.h>\n$(hashstr)include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lX11 > /dev/null 2> /dev/null - ; echo $$? )" "0"
+X11_LIBS = -lX11
+else ifneq (,$(wildcard /opt/X11/lib/libX11.dylib))
+X11_INCL = -I/opt/X11/include
+X11_LIBS = -L/opt/X11/lib -lX11
+else ifneq (,$(wildcard /usr/X11R6/lib/libX11.dylib))
+X11_INCL = -I/usr/X11R6/include
+X11_LIBS = -L/usr/X11R6/lib -lX11
+endif
+
+ifeq "$(X11_LIBS)" ""
+$(warning WARNING: No X11 support found, forcing build type to console only.)
+override BTYP = c
+else ifeq "$(shell echo '$(hashstr)include <stdio.h>\n$(hashstr)include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) $(X11_INCL) -o /dev/null $(X11_LIBS) -lXpm > /dev/null 2> /dev/null - ; echo $$? )" "0"
+WINDOW_DEFS = $(X11_INCL) -D_XPM
+WINDOW_LIBS = $(X11_LIBS) -lXpm
+else
+WINDOW_DEFS = $(X11_INCL)
+WINDOW_LIBS = $(X11_LIBS)
+endif
+
+endif
+
+ifneq "$(BTYP)" "w"
+#
+# Preference now is to use "ncurses" rather than "termcap", figure out if ncurses is avaiable or if we must fall back to termcap.
+#
+ifeq "$(shell echo '$(hashstr)include <stdio.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o _tmptst.out -lncurses > /dev/null 2> /dev/null - ; echo $$? )" "0"
+CONSOLE_LIBS  = -lncurses
+CONSOLE_DEFS  = -D_USE_NCURSES
+else
+$(warning WARNING: No ncurses, defaulting to termcap.)
+CONSOLE_LIBS  = -ltermcap
+endif
+ifeq "$(shell rm -rf ./_tmptst.out* )" "0"
+endif
+endif
+
+ifeq "$(BTYP)" "cw"
+BTYP_CDF = $(CONSOLE_DEFS) $(WINDOW_DEFS) -D_ME_CONSOLE -D_ME_WINDOW
+BTYP_LIB = $(CONSOLE_LIBS) $(WINDOW_LIBS)
+else ifeq "$(BTYP)" "w"
+BTYP_CDF = $(WINDOW_DEFS) -D_ME_WINDOW
+BTYP_LIB = $(WINDOW_LIBS)
+else
+BTYP_CDF = $(CONSOLE_DEFS) -D_ME_CONSOLE
+BTYP_LIB = $(CONSOLE_LIBS)
+override BTYP = c
+endif
+
+OUTDIR   = $(BOUTDIR)-$(BCOR)$(BTYP)
+PRGNAME  = $(BCOR)$(BTYP)
+PRGFILE  = $(PRGNAME)$(EXE)
+PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
+	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def \
+	   $(MAKEFILE).mak evers.mak
+PRGOBJS  = $(OUTDIR)/abbrev.o $(OUTDIR)/basic.o $(OUTDIR)/bind.o $(OUTDIR)/buffer.o $(OUTDIR)/crypt.o $(OUTDIR)/dirlist.o $(OUTDIR)/display.o \
+	   $(OUTDIR)/eval.o $(OUTDIR)/exec.o $(OUTDIR)/file.o $(OUTDIR)/fileio.o $(OUTDIR)/frame.o $(OUTDIR)/hash.o $(OUTDIR)/hilight.o $(OUTDIR)/history.o \
+	   $(OUTDIR)/input.o $(OUTDIR)/isearch.o $(OUTDIR)/key.o $(OUTDIR)/line.o $(OUTDIR)/macro.o $(OUTDIR)/main.o $(OUTDIR)/narrow.o $(OUTDIR)/next.o \
+	   $(OUTDIR)/osd.o $(OUTDIR)/print.o $(OUTDIR)/random.o $(OUTDIR)/regex.o $(OUTDIR)/region.o $(OUTDIR)/registry.o $(OUTDIR)/search.o $(OUTDIR)/sock.o \
+	   $(OUTDIR)/spawn.o $(OUTDIR)/spell.o $(OUTDIR)/tag.o $(OUTDIR)/termio.o $(OUTDIR)/time.o $(OUTDIR)/undo.o $(OUTDIR)/window.o $(OUTDIR)/word.o \
+	   $(OUTDIR)/unixterm.o
+#
+# Rules
+.SUFFIXES: .c .o
+
+$(OUTDIR)/%.o : %.c
+	$(CC) $(CCDEFS) $(BCOR_CDF) $(BTYP_CDF) $(CCFLAGS) -c -o $@ $<
+
+
+all: $(PRGLIBS) $(OUTDIR)/$(PRGFILE)
+
+$(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
+	$(RM) $@
+	$(LD) $(LDDEFS) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS) $(BTYP_LIB) $(LDLIBS)
+	$(STRIP) $@
+
+$(PRGOBJS): $(PRGHDRS)
+
+$(OUTDIR):
+	-mkdir $(OUTDIR)
+
+$(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A):
+	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG)
+
+$(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A):
+	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG)
+
+clean:
+	$(RMDIR) $(OUTDIR)
+	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak clean
+	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak clean
+
+spotless: clean
+	$(RM) *~
+	$(RM) tags
+	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak spotless
+	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak spotless
