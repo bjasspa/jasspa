@@ -46,12 +46,12 @@ INSTPROGFLAGS =
 A        = .a
 EXE      = .exe
 
-CC       = gcc
-RC       = windres
+CC       = $(TOOLPREF)gcc
+RC       = $(TOOLPREF)windres
 MK       = mingw32-make
 LD       = $(CC)
-STRIP    = strip
-AR       = ar
+STRIP    = $(TOOLPREF)strip
+AR       = $(TOOLPREF)ar
 RM       = rm -f
 RMDIR    = rm -r -f
 
@@ -64,12 +64,15 @@ else
 BIT_SIZE = 32
 endif
 
-TOOLKIT_VER = $(word 1,$(subst ., ,$(shell $(CC) -dumpversion)))
+TOOLKIT_VER = $(subst -win32,,$(word 1,$(subst ., ,$(shell $(CC) -dumpversion))))
+ifeq "$(TOOLPREF)" ""
 WINDOWS_VER = $(subst ., ,$(shell ver))
 WINDOWS_MNV = $(word 5,$(WINDOWS_VER))
 $(eval WINDOWS_MNR := $$$(WINDOWS_MNV))
 PLATFORM_VER = $(word 4,$(WINDOWS_VER))$(subst $(WINDOWS_MNR),,$(WINDOWS_MNV))
-
+else
+PLATFORM_VER = 0
+endif
 PLATFORM = windows
 TOOLKIT  = mingw
 ARCHITEC = intel
@@ -195,18 +198,18 @@ $(OUTDIR):
 	-mkdir $(OUTDIR)
 
 $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A):
-	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE)
+	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) MK=$(MK)
 
 $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A):
-	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE)
+	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) MK=$(MK)
 
 clean:
 	$(RMDIR) $(OUTDIR)
-	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak clean BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE)
-	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak clean BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE)
+	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak clean BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) MK=$(MK)
+	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak clean BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) MK=$(MK)
 
 spotless: clean
 	$(RM) *~
 	$(RM) tags
-	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak spotless BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE)
-	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak spotless BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE)
+	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak spotless BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) MK=$(MK)
+	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak spotless BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) MK=$(MK)

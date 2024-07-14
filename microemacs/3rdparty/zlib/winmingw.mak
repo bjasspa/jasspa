@@ -13,12 +13,12 @@
 A        = .a
 EXE      = .exe
 
-CC       = gcc
-RC       = windres
+CC       = $(TOOLPREF)gcc
+RC       = $(TOOLPREF)windres
 MK       = mingw32-make
 LD       = $(CC)
-STRIP    = strip
-AR       = ar
+STRIP    = $(TOOLPREF)strip
+AR       = $(TOOLPREF)ar
 RM       = rm -f
 RMDIR    = rm -rf
 
@@ -29,7 +29,7 @@ else
 BIT_SIZE = 32
 endif
 
-TOOLKIT_VER = $(word 1,$(subst ., ,$(shell $(CC) -dumpversion)))
+TOOLKIT_VER = $(subst -win32,,$(word 1,$(subst ., ,$(shell $(CC) -dumpversion))))
 
 PLATFORM = windows
 TOOLKIT  = mingw

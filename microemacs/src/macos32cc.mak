@@ -54,12 +54,14 @@ AR       = ar
 RM       = rm -f
 RMDIR    = rm -r -f
 
+include evers.mak
+
 BUILDID  = macos32cc
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
 
-CCDEFS   = -D_MACOS -m32 -Wall -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib
+CCDEFS   = -D_MACOS -m32 -Wall -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY)
 CCFLAGSR = -O3 -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g
 LDDEFS   = -m32

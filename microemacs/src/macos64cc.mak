@@ -61,7 +61,7 @@ OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
 
-CCDEFS   = -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY) -D_MACOS -D_64BIT -m64 -Wall -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib
+CCDEFS   = -D_MACOS -D_64BIT -m64 -Wall -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY)
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g
 LDDEFS   = -m64
@@ -125,7 +125,8 @@ endif
 #
 # Preference now is to use "ncurses" rather than "termcap", figure out if ncurses is avaiable or if we must fall back to termcap.
 #
-test = $(shell echo "\#include <stdio.h>" > _t.c ; echo "int main() { printf(\"Test\"); return 0; }" >> _t.c ; $(LD) $(LDFLAGS) -o _t.out -lncurses _t.c 2>&1 ; rm -f _t.c _t.out)
+#TODO see linux32gcc for more efficient form
+test = $(shell echo "\#include <stdio.h>" > _t.c ; echo "int main(){return 0;}" >> _t.c ; $(LD) $(LDFLAGS) -o _t.out -lncurses _t.c 2>&1 ; rm -f _t.c _t.out)
 ifneq "$(strip $(test))" ""
 $(warning WARNING: No ncurses, defaulting to termcap.)
 CONSOLE_LIBS  = -ltermcap

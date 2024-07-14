@@ -970,7 +970,7 @@ hilight(int f, int n)
         {
             if(meGetString((meUByte *)"Lines",0,0,buf,meBUF_SIZE_MAX) <= 0)
                 return meABORT ;
-            meHilightSetLookBackLines(root,meAtoi(buf)) ;
+            meHilightSetLookBackLines(root,mePtrFromStr(buf));
         }
         if(type & HFLOOKBSCH)
         {
@@ -2631,19 +2631,19 @@ indent(int f, int n)
         if(itype & HICMODE)
         {
             /* Initialise to t 0 t 3/2t 0 0 -t -1 and no CommentContinue */
-            root->token[0] = (meUByte) 0x84 ;
-            root->token[1] = (meUByte) 0x00 ;
-            root->token[2] = (meUByte) 0x84 ;
-            root->token[3] = (meUByte) 0x86 ;
-            root->token[4] = (meUByte) 0x00 ;
-            root->token[5] = (meUByte) 0x00 ;
-            root->token[6] = (meUByte) 0xc4 ;
-            root->token[7] = (meUByte) (INDNUMNEG|INDNUMOFFSETMASK) ;
-            root->token[8] = (meUByte) 0x41 ;
+            root->token[0] = (meUByte) 0x84;
+            root->token[1] = (meUByte) 0x00;
+            root->token[2] = (meUByte) 0x84;
+            root->token[3] = (meUByte) 0x86;
+            root->token[4] = (meUByte) 0x00;
+            root->token[5] = (meUByte) 0x00;
+            root->token[6] = (meUByte) 0xc4;
+            root->token[7] = (meUByte) (INDNUMNEG|INDNUMOFFSETMASK);
+            root->token[8] = (meUByte) 0x41;
         }
         else
         {
-            meIndentSetLookBackLines(root,meAtoi(buf)) ;
+            meIndentSetLookBackLines(root,mePtrFromStr(buf));
             if(itype & HILOOKBSCH)
             {
                 if((meGetString((meUByte *)"Ind no",0,0,buf,meBUF_SIZE_MAX) <= 0) ||

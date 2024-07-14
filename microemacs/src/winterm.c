@@ -189,7 +189,7 @@ meUByte ttServerCheck = 0;
 #endif
 
 LRESULT APIENTRY
-MainWndProc(HWND hWnd,UINT message,UINT wParam,LPARAM lParam);
+MainWndProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam);
 
 /***************************************************************************/
 #ifdef _ME_CONSOLE
@@ -244,8 +244,8 @@ static meUByte ttPitchFam=0;
 #define MOUSE_STATE_BUTTONS      (MOUSE_STATE_LEFT|MOUSE_STATE_MIDDLE|MOUSE_STATE_RIGHT)
 #define MOUSE_STATE_LOCKED       0x0800 /* Mouse is locked in */
 
-static UINT mouseButs=0;                /* State of the mouse buttons. */
-static int  mouseState=0;               /* State of the mouse. */
+static WPARAM mouseButs=0;              /* State of the mouse buttons. */
+static int mouseState=0;                /* State of the mouse. */
 /* bit button lookup - [0] = no keys, [1] = left, [2]=middle, [4] = right */
 static meUShort mouseKeys[8] = { 0, 1, 2, 0, 3, 0, 0, 0 };
 static meUByte mouseInFrame=0;
@@ -548,7 +548,11 @@ TTopenClientServer(void)
         {
             meUByte buff[meBUF_SIZE_MAX+20];
             
+#ifdef _64BIT
+            ii = sprintf((char *)buff,"%llu\n",(size_t) baseHwnd);
+#else
             ii = sprintf((char *)buff,"%d\n",(int) baseHwnd);
+#endif
             WriteFile(clientHandle,buff,ii,(DWORD *)&ii,NULL);
             
             sprintf((char *)buff,"Client Server: %s\n\n",fname);
@@ -660,7 +664,7 @@ TTconnectClientServer(void)
                               OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL)) != INVALID_HANDLE_VALUE)
         {
             if((ReadFile(hndl,&fname,20,&ii,NULL) != 0) && (ii > 0))
-                baseHwnd = (HWND) atoi((LPCSTR) fname);
+                baseHwnd = (HWND) mePtrFromStr(fname);
             CloseHandle(hndl);
         }
     }
@@ -2800,7 +2804,7 @@ TTinitMouse(void)
  * Returning meTRUE if the event is handled; otherwise meFALSE.
  */
 int
-WinMouse(HWND hwnd, UINT message, UINT wParam, LPARAM lParam)
+WinMouse(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     meFrame *frame;
     
@@ -2996,7 +3000,7 @@ WinMouse(HWND hwnd, UINT message, UINT wParam, LPARAM lParam)
  * Returning meTRUE if the event is handled; otherwise meFALSE.
  */
 int
-WinKeyboard(HWND hwnd, UINT message, UINT wParam, LPARAM lParam)
+WinKeyboard(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     meFrame *frame;
     meUShort cc;                  /* Local keyboard character */
@@ -5980,7 +5984,7 @@ COMMENTS:
  ****************************************************************************/
 
 LRESULT APIENTRY
-MainWndProc(HWND hWnd, UINT message, UINT wParam, LPARAM lParam)
+MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static LPARAM setCursorLastLParam;
     meFrame *frame;
@@ -6079,15 +6083,16 @@ MainWndProc(HWND hWnd, UINT message, UINT wParam, LPARAM lParam)
          * cursor position so that we may show the appropriate file in a
          * specified buffer. */
         {
+            HDROP hDrp = (HDROP) wParam;
             POINT pt;                   /* Position in the window */
             WORD fcount;                /* Count of the number of files */
             meUByte dfname[meBUF_SIZE_MAX];       /* Dropped filename */
             
             /* Get the position of the mouse */
-            DragQueryPoint((HANDLE)(wParam), &pt);
+            DragQueryPoint(hDrp, &pt);
             
             /* Get the files from the drop */
-            fcount = DragQueryFile((HANDLE)(wParam), 0xffffffff, "", 0);
+            fcount = DragQueryFile(hDrp, 0xffffffff, "", 0);
             if(fcount > 0)
             {
                 WORD ii;
@@ -6097,7 +6102,7 @@ MainWndProc(HWND hWnd, UINT message, UINT wParam, LPARAM lParam)
                     int len;
                     struct s_DragAndDrop *dadp;
                     
-                    if((len = DragQueryFile((HANDLE)(wParam),ii,(LPSTR) dfname,meBUF_SIZE_MAX)) <= 0)
+                    if((len = DragQueryFile(hDrp,ii,(LPSTR) dfname,meBUF_SIZE_MAX)) <= 0)
                         continue;
                     
                     /* Get the drag and drop buffer and add to the list */
@@ -6108,7 +6113,7 @@ MainWndProc(HWND hWnd, UINT message, UINT wParam, LPARAM lParam)
                     dadHead = dadp;
                 }
             }
-            DragFinish((HANDLE)(wParam));
+            DragFinish(hDrp);
             
             /* Flush the input queue, send an abort to kill any command
              * off. The drag and drop list is processed once we return to

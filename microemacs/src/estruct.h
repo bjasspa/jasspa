@@ -116,9 +116,11 @@ typedef int (*meIFuncSSI)(const meUByte *, const meUByte *, size_t);
 #ifdef _64BIT
 #define meIntFromPtr(n)   ((meInt)(intptr_t)(n))
 #define mePtrFromInt(n)   ((meUByte *)(intptr_t)(n))
+#define mePtrFromStr(n)   ((void *) atoll((char *) n))
 #else
 #define meIntFromPtr(n)   ((meInt)(n))
 #define mePtrFromInt(n)   ((meUByte *)(n))
+#define mePtrFromStr(n)   ((void *) atoi((char *) n))
 #endif
 
 /* meStyle contains color and font information coded into an meInt the

@@ -19,6 +19,7 @@ do
         echo ""
         echo "Where options can be:-"
         echo "   -32  : Build 32bit binary."
+        echo "   -64  : Build 64bit binary."
         echo "   -C   : Build clean."
         echo "   -D <define>[=<value>]"
         echo "        : Build with given define, (e.g. -D _USETPARM)."
@@ -37,6 +38,8 @@ do
         exit 1
     elif [ $1 = "-32" ] ; then
         BITSIZE=" BIT_SIZE=32"
+    elif [ $1 = "-64" ] ; then
+        BITSIZE=" BIT_SIZE=64"
     elif [ $1 = "-C" ] ; then
         OPTIONS=" clean"
     elif [ $1 = "-D" ] ; then
@@ -96,10 +99,9 @@ if [ -z "$MAKEFILE" ] ; then
         MAKEBAS=cygwin
     elif [ $PLATFORM = "FreeBSD" ] ; then
         MAKEBAS=freebsd
-    elif [ `echo $PLATFORM | sed -e "s/^MINGW32_NT.*/MINGW32_NT/"` = "MINGW32_NT" ] ; then
-        MAKEBAS=win32mingw
     elif [ `echo $PLATFORM | sed -e "s/^MINGW.*/MINGW/"` = "MINGW" ] ; then
-        MAKEBAS=mingw
+        MAKEBAS=winmingw
+        MAKEFILE=${MAKEBAS}.mak
     elif [ $PLATFORM = "HP-UX" ] ; then
         VERSION=`uname -r | cut -f 2 -d .`
         if [ $VERSION = 11 ] ; then
@@ -163,21 +165,52 @@ if [ -z "$MAKEFILE" ] ; then
     fi
 fi
 
+MAKE=make
+if [ "$MAKEFILE" = "winmingw.mak" ] ; then
+    # when cross compiling the system gnu make can be used
+    if [ "`type mingw32-make | cut -b 1-15`" = "mingw32-make is" ] ; then
+        MAKE=mingw32-make
+    fi
+    if [ "`type windres | cut -b 1-10`" = "windres is" ] ; then
+      # Using native tools
+      :
+    else
+      if [ "$BITSIZE" = " BIT_SIZE=64" ] ; then
+        if [ "`type x86_64-w64-mingw32-windres | cut -b 1-29`" = "x86_64-w64-mingw32-windres is" ] ; then
+          # Using a cross compiler
+          OPTIONS=" MK=$MAKE TOOLPREF=x86_64-w64-mingw32-$OPTIONS"
+        else
+          echo "Failed to find 64bit windres!"
+          exit 1
+        fi
+      elif [ "`type i686-w64-mingw32-windres | cut -b 1-27`" = "i686-w64-mingw32-windres is" ] ; then
+        # Using a cross compiler
+        OPTIONS=" MK=$MAKE TOOLPREF=i686-w64-mingw32-$OPTIONS"
+      else
+        echo "Failed to find 32bit windres!"
+        exit 1
+      fi
+      if [ -z "$INCLUDE" ] ; then
+         OPTIONS=" RCOPTS=-I$INCLUDE$OPTIONS"
+      fi
+    fi
+fi
 OPTIONS="$MEDEBUG$MEPROF$BITSIZE$OPTIONS"
 MAKECDEFS="MAKECDEFS=$MAKECDEFS"
 if [ -r $MAKEFILE ] ; then
     if [ -n "$LOGFILE" ] ; then
-        echo "make -f $MAKEFILE $OPTIONS \"$MAKECDEFS\"" > $LOGFILE 2>&1
-        make -f $MAKEFILE $OPTIONS "$MAKECDEFS" > $LOGFILE 2>&1
+        echo "$MAKE -f $MAKEFILE $OPTIONS \"$MAKECDEFS\"" > $LOGFILE 2>&1
+        $MAKE -f $MAKEFILE $OPTIONS "$MAKECDEFS" > $LOGFILE 2>&1
     else
         if [ -n "$LOGFILEA" ] ; then
-            echo "make -f $MAKEFILE $OPTIONS \"$MAKECDEFS\"" >> $LOGFILEA 2>&1
-            make -f $MAKEFILE $OPTIONS "$MAKECDEFS" >> $LOGFILEA 2>&1
+            echo "$MAKE -f $MAKEFILE $OPTIONS \"$MAKECDEFS\"" >> $LOGFILEA 2>&1
+            $MAKE -f $MAKEFILE $OPTIONS "$MAKECDEFS" >> $LOGFILEA 2>&1
         else
-            echo "make -f $MAKEFILE $OPTIONS \"$MAKECDEFS\""
-            make -f $MAKEFILE $OPTIONS "$MAKECDEFS"
+            echo "$MAKE -f $MAKEFILE $OPTIONS \"$MAKECDEFS\""
+            $MAKE -f $MAKEFILE $OPTIONS "$MAKECDEFS"
         fi
     fi
 else
     echo "Error: Failed to find the makefile $MAKEFILE"
+    exit 1
 fi

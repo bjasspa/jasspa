@@ -122,9 +122,7 @@ CCPROF =
 LDPROF = 
 endif
 
-ifeq "$(BTYP)" ""
-BTYP = c
-else ifneq "$(BTYP)" "c"
+ifneq (,$(findstring w,$(BTYP)))
 
 ifeq "$(shell echo '#include <stdio.h>\n#include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lX11 > /dev/null 2> /dev/null - ; echo $$? )" "0"
 
