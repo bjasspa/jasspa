@@ -847,11 +847,15 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
         {
             meStrcpy(buf,resultStr);
             meStrcpy(resultStr,fname);
-            if((ii = execFuncHidden(ME_SPECIAL|SKEY_find_file,ii,arg)) > 0)
+            if((execFuncHidden(ME_SPECIAL|SKEY_find_file,ii,arg) > 0) && !meTestExist(resultStr))
+            {
                 fileNameCorrect(resultStr,outName,NULL);
+                ii = 1;
+            }
+            else
+                ii = 0;
             meStrcpy(resultStr,buf);
-            if(ii > 0)
-                return 1;
+            return ii;
         }
     }
 #endif

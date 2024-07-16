@@ -1,0 +1,4 @@
+# ignore backup files, tags and build directories
+linux[1-9]-*/
+macos-*/
+windows-*/

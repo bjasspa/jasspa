@@ -23,7 +23,6 @@
 
 A        = .a
 EXE      = 
-
 CC       = gcc
 MK       = make
 LD       = $(CC)
@@ -32,18 +31,22 @@ AR       = ar
 RM       = rm -f
 RMDIR    = rm -rf
 
+TOOLKIT  = gcc
+TOOLKIT_VER = $(shell $(CC) -dumpversion)
+
+ARCHITEC = intel
 ifeq "$(BIT_SIZE)" ""
 BIT_SIZE = $(shell getconf LONG_BIT)
 endif
 
 PLATFORM = linux
-TOOLKIT  = gcc
-ARCHITEC = intel
+PLATFORM_VER = $(shell uname -r | cut -f 1 -d .)
+
 MAKEFILE = $(PLATFORM)$(TOOLKIT)
 ifeq "$(BPRF)" "1"
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)p
+BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)p
 else
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)
+BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
 endif
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
@@ -64,11 +67,15 @@ CCFLAGS  = $(CCFLAGSD)
 LDFLAGS  = $(LDFLAGSD)
 ARFLAGS  = $(ARFLAGSD)
 STRIP    = - echo No strip - debug 
+INSTDIR	 = 
+INSTPRG  = - echo No install - debug 
 else
 OUTDIR   = $(OUTDIRR)
 CCFLAGS  = $(CCFLAGSR)
 LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
+INSTDIR	 = ../../bin/$(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)
+INSTPRG  = cp
 endif
 
 ifeq "$(BPRF)" "1"
@@ -106,18 +113,22 @@ $(OUTDIR)/$(LIBFILE): $(OUTDIR) $(LIBOBJS)
 
 $(LIBOBJS): $(LIBHDRS)
 
-$(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
+$(OUTDIR)/$(PRGFILE): $(OUTDIR) $(INSTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(RM) $@
 	$(LD) $(LDDEFS) $(LDPROF) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS)
 	$(STRIP) $@
+	$(INSTPRG) $@ $(INSTDIR)
 
 $(PRGOBJS): $(PRGHDRS)
 
-$(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A):
-	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG)
-
 $(OUTDIR):
 	-mkdir $(OUTDIR)
+
+$(INSTDIR):
+	-mkdir $(INSTDIR)
+
+$(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A):
+	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG)
 
 clean:
 	$(RMDIR) $(OUTDIRD)

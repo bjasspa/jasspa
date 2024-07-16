@@ -12,7 +12,6 @@
 
 A        = .lib
 EXE      = .exe
-
 CC       = cl.exe /nologo
 RC       = rc.exe
 MT       = mt.exe -nologo
@@ -22,12 +21,7 @@ AR       = lib /NOLOGO
 RM       = del /F /Q
 RMDIR    = rd /S /Q
 
-!IF "$(BIT_SIZE)" != ""
-!ELSEIF "$(PLATFORM)" == "x64"
-BIT_SIZE = 64
-!ELSE
-BIT_SIZE = 32
-!ENDIF
+TOOLKIT  = msvc
 !IF "$(TOOLKIT_VER)" != ""
 !ELSEIF "$(VISUALSTUDIOVERSION:.0=)" != ""
 TOOLKIT_VER=$(VISUALSTUDIOVERSION:.0=)
@@ -37,16 +31,23 @@ TOOLKIT_VER=10
 !ERROR Failed to determine version of MSVC
 !ENDIF
 
-PLATFORM = windows
-TOOLKIT  = msvc
 ARCHITEC = intel
+!IF "$(BIT_SIZE)" != ""
+!ELSEIF "$(PLATFORM)" == "x64"
+BIT_SIZE = 64
+!ELSE
+BIT_SIZE = 32
+!ENDIF
+
+PLATFORM = windows
+
 MAKEFILE = win$(TOOLKIT)
 !IF "$(LSTT)" == "1"
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)$(TOOLKIT_VER)s
+BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)s
 CCLSTT   = /MT
 LDLSTT   = /NODEFAULTLIB:msvcrt.lib
 !ELSE
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)$(TOOLKIT_VER)
+BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
 CCLSTT   = /MD
 LDLSTT   = 
 !ENDIF

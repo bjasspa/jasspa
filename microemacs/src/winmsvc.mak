@@ -38,14 +38,8 @@
 #
 ##############################################################################
 #
-# Installation Directory
-INSTDIR	      = c:\emacs
-INSTPROGFLAGS = 
-#
-# Local Definitions
 A        = .lib
 EXE      = .exe
-
 CC       = cl.exe /nologo
 RC       = rc.exe
 MT       = mt.exe -nologo
@@ -55,14 +49,7 @@ AR       = lib /NOLOGO
 RM       = del /F /Q
 RMDIR    = rd /S /Q
 
-include evers.mak
-
-!IF "$(BIT_SIZE)" != ""
-!ELSEIF "$(PLATFORM)" == "x64"
-BIT_SIZE = 64
-!ELSE
-BIT_SIZE = 32
-!ENDIF
+TOOLKIT  = msvc
 !IF "$(TOOLKIT_VER)" != ""
 !ELSEIF "$(VISUALSTUDIOVERSION:.0=)" != ""
 TOOLKIT_VER=$(VISUALSTUDIOVERSION:.0=)
@@ -76,6 +63,16 @@ TOOLKIT_VER=8
 !ERROR Failed to determine version of MSVC
 !ENDIF
 
+ARCHITEC = intel
+!IF "$(BIT_SIZE)" != ""
+!ELSEIF "$(PLATFORM)" == "x64"
+BIT_SIZE = 64
+!ELSE
+BIT_SIZE = 32
+!ENDIF
+
+PLATFORM = windows
+!IF "$(PLATFORM_VER)" == ""
 PLATFORM_VER = -1
 !IF [ver | findstr Version > .windows-ver.tmp] == 0
 WIN_VER = \
@@ -96,17 +93,17 @@ PLATFORM_VER = 61
 PLATFORM_VER = 60
 !ENDIF
 !ENDIF
+!ENDIF
 
-PLATFORM = windows
-TOOLKIT  = msvc
-ARCHITEC = intel
+include evers.mak
+
 MAKEFILE = win$(TOOLKIT)
 !IF "$(LSTT)" == "1"
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)$(TOOLKIT_VER)s
+BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)s
 CCLSTT   = /MT
 LDLSTT   = /NODEFAULTLIB:msvcrt.lib
 !ELSE
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)$(TOOLKIT_VER)
+BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
 CCLSTT   = /MD
 LDLSTT   = 
 !ENDIF
@@ -134,11 +131,15 @@ BOUTDIR  = $(OUTDIRD)
 CCFLAGS  = $(CCFLAGSD)
 LDFLAGS  = $(LDFLAGSD)
 ARFLAGS  = $(ARFLAGSD)
+INSTDIR  = 
+INSTPRG  = - echo No install - debug 
 !ELSE
 BOUTDIR  = $(OUTDIRR)
 CCFLAGS  = $(CCFLAGSR)
 LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
+INSTDIR  = ..\bin\$(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)
+INSTPRG  = copy
 !ENDIF
 
 !IF "$(BCOR)" == "ne"
@@ -210,17 +211,21 @@ PRGOBJS  = $(OUTDIR)\abbrev.o $(OUTDIR)\basic.o $(OUTDIR)\bind.o $(OUTDIR)\buffe
 
 all: $(PRGLIBS) $(OUTDIR)\$(PRGFILE)
 
-$(OUTDIR)\$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS) $(MAKEFILE).mak
+$(OUTDIR)\$(PRGFILE): $(OUTDIR) $(INSTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(RM) $@
 	$(LD) $(LDDEFS) $(BTYP_LDF) $(LDFLAGS) /PDB:"$(OUTDIR)\$(PRGNAME).pdb" /OUT:"$@" $(PRGOBJS) $(PRGLIBS) $(LDLIBS)
 	(echo ^<?xml version="1.0" encoding="UTF-8" standalone="yes"?^> & echo ^<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"^> & echo ^<assemblyIdentity version="$(meVER_YR).$(meVER_MN).$(meVER_DY).0" processorArchitecture="X86" name="$(PRGNAME).exe" type="win32"/^> & echo ^<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"^> & echo ^<security^> & echo ^<requestedPrivileges^> & echo ^<requestedExecutionLevel level="asInvoker" uiAccess="false"/^> & echo ^</requestedPrivileges^> & echo ^</security^> & echo ^</trustInfo^> & echo ^</assembly^>) > $@.manifest
 	$(MT) -manifest $@.manifest -validate_manifest
 	$(MT) -outputresource:"$@;#1" -manifest $@.manifest
+	$(INSTPRG) $@ $(INSTDIR)
 
 $(PRGOBJS): $(PRGHDRS)
 
 $(OUTDIR):
 	if not exist $(OUTDIR)\ mkdir $(OUTDIR)
+
+$(INSTDIR):
+	if not exist $(INSTDIR)\ mkdir $(INSTDIR)
 
 $(TRDPARTY)\zlib\$(BOUTDIR)\zlib.lib:
 	cd $(TRDPARTY)\zlib

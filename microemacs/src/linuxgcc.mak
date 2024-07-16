@@ -31,15 +31,9 @@
 #	Run "make -f linux26gcc.mak spotless"   to clean source directory even more
 #
 ##############################################################################
-#
-# Installation Directory
-INSTDIR	      = /usr/local/bin
-INSTPROGFLAGS = -s -o root -g root -m 0775
-#
-# Local Definitions
+
 A        = .a
 EXE      = 
-
 CC       = gcc
 MK       = make
 LD       = $(CC)
@@ -48,27 +42,28 @@ AR       = ar
 RM       = rm -f
 RMDIR    = rm -rf
 
-include evers.mak
+TOOLKIT  = gcc
+TOOLKIT_VER = $(shell $(CC) -dumpversion)
 
+ARCHITEC = intel
 ifeq "$(BIT_SIZE)" ""
 BIT_SIZE = $(shell getconf LONG_BIT)
 endif
 
 PLATFORM = linux
-TOOLKIT  = gcc
-ARCHITEC = intel
+PLATFORM_VER = $(shell uname -r | cut -f 1 -d .)
+
+include evers.mak
+
 MAKEFILE = $(PLATFORM)$(TOOLKIT)
 ifeq "$(BPRF)" "1"
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)p
+BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)p
 else
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)
+BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
 endif
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
-
-TOOLKIT_VER = $(shell $(CC) -dumpversion)
-PLATFORM_VER = $(shell uname -r | cut -f 1 -d .)
 
 CCDEFS   = -m$(BIT_SIZE) -D_LINUX -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I. -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY) $(MAKECDEFS)
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wall -Wno-uninitialized -Wno-unused-result
@@ -83,10 +78,14 @@ BOUTDIR  = $(OUTDIRD)
 CCFLAGS  = $(CCFLAGSD)
 LDFLAGS  = $(LDFLAGSD)
 STRIP    = - echo No strip - debug 
+INSTDIR  = 
+INSTPRG  = - echo No install - debug 
 else
 BOUTDIR  = $(OUTDIRR)
 CCFLAGS  = $(CCFLAGSR)
 LDFLAGS  = $(LDFLAGSR)
+INSTDIR  = ../bin/$(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)
+INSTPRG  = cp
 endif
 
 ifeq "$(BCOR)" "ne"
@@ -97,9 +96,9 @@ PRGLIBS  =
 else
 
 ifneq "$(OPENSSLP)" ""
-else ifneq (,$(wildcard /usr/include/openssl/ssl.h))
+else ifeq "$(shell echo '#include <stdio.h>\n#include <openssl/ssl.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null > /dev/null 2> /dev/null - ; echo $$? )" "0"
 OPENSSLP = 1
-else ifneq (,$(wildcard /usr/local/opt/openssl/include/openssl/ssl.h))
+else ifeq "$(shell echo '#include <stdio.h>\n#include <openssl/ssl.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -I/usr/local/opt/openssl/include -o /dev/null > /dev/null 2> /dev/null - ; echo $$? )" "0"
 OPENSSLP = 1 -I/usr/local/opt/openssl/include
 endif
 ifeq "$(OPENSSLP)" ""
@@ -207,15 +206,19 @@ $(OUTDIR)/%.o : %.c
 
 all: $(PRGLIBS) $(OUTDIR)/$(PRGFILE)
 
-$(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
+$(OUTDIR)/$(PRGFILE): $(OUTDIR) $(INSTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(RM) $@
 	$(LD) $(LDDEFS) $(LDPROF) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS) $(BTYP_LIB) $(LDLIBS)
 	$(STRIP) $@
+	$(INSTPRG) $@ $(INSTDIR)
 
 $(PRGOBJS): $(PRGHDRS)
 
 $(OUTDIR):
 	-mkdir $(OUTDIR)
+
+$(INSTDIR):
+	-mkdir $(INSTDIR)
 
 $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A):
 	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG)

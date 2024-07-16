@@ -32,18 +32,22 @@ AR       = ar
 RM       = rm -f
 RMDIR    = rm -rf
 
+TOOLKIT  = gcc
+TOOLKIT_VER = $(shell $(CC) -dumpversion)
+
+ARCHITEC = intel
 ifeq "$(BIT_SIZE)" ""
 BIT_SIZE = $(shell getconf LONG_BIT)
 endif
 
 PLATFORM = linux
-TOOLKIT  = gcc
-ARCHITEC = intel
+PLATFORM_VER = $(shell uname -r | cut -f 1 -d .)
+
 MAKEFILE = $(PLATFORM)$(TOOLKIT)
 ifeq "$(BPRF)" "1"
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)p
+BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)p
 else
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)
+BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
 endif
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug

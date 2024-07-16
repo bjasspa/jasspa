@@ -28,24 +28,18 @@
 #
 #     To build from the command line using make & makefile. 
 #
-#	Run "mingw32-make -f win32mingw.mak"            for optimised build produces ./.win32mingw-release-mew/mew.exe
-#	Run "mingw32-make -f win32mingw.mak BCFG=debug" for debug build produces     ./.win32mingw-debug-mew/mew.exe
-#	Run "mingw32-make -f win32mingw.mak BTYP=c"     for console support          ./.win32mingw-release-mec/mec.exe
-#	Run "mingw32-make -f win32mingw.mak BCOR=ne"    for ne build produces        ./.win32mingw-release-new/new.exe
+#	Run "mingw32-make -f winmingw.mak"            for optimised build produces ./.winmingw-release-mew/mew.exe
+#	Run "mingw32-make -f winmingw.mak BCFG=debug" for debug build produces     ./.winmingw-debug-mew/mew.exe
+#	Run "mingw32-make -f winmingw.mak BTYP=c"     for console support          ./.winmingw-release-mec/mec.exe
+#	Run "mingw32-make -f winmingw.mak BCOR=ne"    for ne build produces        ./.winmingw-release-new/new.exe
 #
-#	Run "mingw32-make -f win32mingw.mak clean"      to clean source directory
-#	Run "mingw32-make -f win32mingw.mak spotless"   to clean source directory even more
+#	Run "mingw32-make -f winmingw.mak clean"      to clean source directory
+#	Run "mingw32-make -f winmingw.mak spotless"   to clean source directory even more
 #
 ##############################################################################
-#
-# Installation Directory
-INSTDIR	      = /c/emacs
-INSTPROGFLAGS = 
-#
-# Local Definitions
+
 A        = .a
 EXE      = .exe
-
 CC       = $(TOOLPREF)gcc
 RC       = $(TOOLPREF)windres
 MK       = mingw32-make
@@ -55,8 +49,10 @@ AR       = $(TOOLPREF)ar
 RM       = rm -f
 RMDIR    = rm -r -f
 
-include evers.mak
+TOOLKIT  = mingw
+TOOLKIT_VER = $(subst -win32,,$(word 1,$(subst ., ,$(shell $(CC) -dumpversion))))
 
+ARCHITEC = intel
 ifneq "$(BIT_SIZE)" ""
 else ifeq "$(PLATFORM)" "x64"
 BIT_SIZE = 64
@@ -64,7 +60,7 @@ else
 BIT_SIZE = 32
 endif
 
-TOOLKIT_VER = $(subst -win32,,$(word 1,$(subst ., ,$(shell $(CC) -dumpversion))))
+PLATFORM = windows
 ifeq "$(TOOLPREF)" ""
 WINDOWS_VER = $(subst ., ,$(shell ver))
 WINDOWS_MNV = $(word 5,$(WINDOWS_VER))
@@ -73,24 +69,24 @@ PLATFORM_VER = $(word 4,$(WINDOWS_VER))$(subst $(WINDOWS_MNR),,$(WINDOWS_MNV))
 else
 PLATFORM_VER = 0
 endif
-PLATFORM = windows
-TOOLKIT  = mingw
-ARCHITEC = intel
+
+include evers.mak
+
 MAKEFILE = win$(TOOLKIT)
 ifeq "$(BPRF)" "1"
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)$(TOOLKIT_VER)p
+BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)p
 else
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)$(TOOLKIT_VER)
+BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
 endif
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
 
-CCDEFS   = -D_MINGW -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -Wall -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY)
-CCFLAGSR = -m$(BIT_SIZE) -O3 -mfpmath=sse -Ofast -flto -march=native -funroll-loops -DNDEBUG=1 -Wno-uninitialized
+CCDEFS   = -m$(BIT_SIZE) -D_MINGW -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -Wall -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY)
+CCFLAGSR = -O3 -mfpmath=sse -Ofast -flto -march=native -funroll-loops -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g -D_DEBUG
-LDDEFS   = 
-LDFLAGSR = -m$(BIT_SIZE) -O3 -mfpmath=sse -Ofast -flto -march=native -funroll-loops
+LDDEFS   = -m$(BIT_SIZE)
+LDFLAGSR = -O3 -mfpmath=sse -Ofast -flto -march=native -funroll-loops
 LDFLAGSD = -g
 LDLIBSB  = -lshell32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32
 ARFLAGSR = rcs
@@ -103,11 +99,15 @@ CCFLAGS  = $(CCFLAGSD)
 LDFLAGS  = $(LDFLAGSD)
 ARFLAGS  = $(ARFLAGSD)
 STRIP    = - echo No strip - debug 
+INSTDIR  = 
+INSTPRG  = - echo No install - debug 
 else
 BOUTDIR  = $(OUTDIRR)
 CCFLAGS  = $(CCFLAGSR)
 LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
+INSTDIR  = ../bin/$(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)
+INSTPRG  = cp
 endif
 
 ifeq "$(BCOR)" "ne"
@@ -187,15 +187,19 @@ $(OUTDIR)/%.coff : %.rc
 
 all: $(PRGLIBS) $(OUTDIR)/$(PRGFILE)
 
-$(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
+$(OUTDIR)/$(PRGFILE): $(OUTDIR) $(INSTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(RM) $@
 	$(LD) $(LDDEFS) $(LDPROF) $(BTYP_LDF) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS) $(LDLIBS)
 	$(STRIP) $@
+	$(INSTPRG) $@ $(INSTDIR)
 
 $(PRGOBJS): $(PRGHDRS)
 
 $(OUTDIR):
 	-mkdir $(OUTDIR)
+
+$(INSTDIR):
+	-mkdir $(INSTDIR)
 
 $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A):
 	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) MK=$(MK)

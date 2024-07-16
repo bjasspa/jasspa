@@ -12,7 +12,6 @@
 
 A        = .a
 EXE      = .exe
-
 CC       = $(TOOLPREF)gcc
 RC       = $(TOOLPREF)windres
 MK       = mingw32-make
@@ -22,6 +21,10 @@ AR       = $(TOOLPREF)ar
 RM       = rm -f
 RMDIR    = rm -rf
 
+TOOLKIT  = mingw
+TOOLKIT_VER = $(subst -win32,,$(word 1,$(subst ., ,$(shell $(CC) -dumpversion))))
+
+ARCHITEC = intel
 ifneq "$(BIT_SIZE)" ""
 else ifeq "$(PLATFORM)" "x64"
 BIT_SIZE = 64
@@ -29,16 +32,13 @@ else
 BIT_SIZE = 32
 endif
 
-TOOLKIT_VER = $(subst -win32,,$(word 1,$(subst ., ,$(shell $(CC) -dumpversion))))
-
 PLATFORM = windows
-TOOLKIT  = mingw
-ARCHITEC = intel
+
 MAKEFILE = win$(TOOLKIT)
 ifeq "$(BPRF)" "1"
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)$(TOOLKIT_VER)p
+BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)p
 else
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)$(TOOLKIT_VER)
+BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
 endif
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
@@ -59,6 +59,7 @@ OUTDIR   = $(OUTDIRD)
 CCFLAGS  = $(CCFLAGSD)
 LDFLAGS  = $(LDFLAGSD)
 ARFLAGS  = $(ARFLAGSD)
+STRIP    = - echo No strip - debug 
 else
 OUTDIR   = $(OUTDIRR)
 CCFLAGS  = $(CCFLAGSR)

@@ -647,12 +647,24 @@ meSockInit(meIo *io, meUByte *buff)
 #endif
     if(libHandle == NULL)
     {
-        if(io->urlOpts & meSOCKOPT_LOG_ERROR)
+        char fname[meBUF_SIZE_MAX];
+        if(fileLookup((meUByte *) MESOCK_STRINGIFY(_OPENSSLCNM),0,NULL,meFL_CALLBACK,(meUByte *) fname))
         {
-            snprintf((char *) buff,meSOCK_BUFF_SIZE,"meSock Error: Failed to load " MESOCK_STRINGIFY(_OPENSSLCNM) " library - OpenSSL installed? (%d)",meSockGetError());
-            ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,buff);
+#ifdef _WIN32
+            libHandle = LoadLibrary(fname);
+#else
+            libHandle = dlopen(fname,RTLD_LOCAL|RTLD_LAZY);
+#endif
+        }            
+        if(libHandle == NULL)
+        {
+            if(io->urlOpts & meSOCKOPT_LOG_ERROR)
+            {
+                snprintf((char *) buff,meSOCK_BUFF_SIZE,"meSock Error: Failed to load " MESOCK_STRINGIFY(_OPENSSLCNM) " library - OpenSSL installed? (%d)",meSockGetError());
+                ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,buff);
+            }
+            return -1;
         }
-        return -1;
     }
     if(((sslF_ASN1_OCTET_STRING_free = (meSOCKF_ASN1_OCTET_STRING_free) meSockLibGetFunc(libHandle,"ASN1_OCTET_STRING_free")) == NULL) ||
        ((sslF_ASN1_STRING_cmp = (meSOCKF_ASN1_STRING_cmp) meSockLibGetFunc(libHandle,"ASN1_STRING_cmp")) == NULL) ||
@@ -712,10 +724,22 @@ meSockInit(meIo *io, meUByte *buff)
 #endif
     if(libHandle == NULL)
     {
-        snprintf((char *) buff,meSOCK_BUFF_SIZE,"meSock Error: Failed to load " MESOCK_STRINGIFY(_OPENSSLLNM) " library - OpenSSL installed? (%d)",meSockGetError());
-        if(io->urlOpts & meSOCKOPT_LOG_ERROR)
-            ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,buff);
-        return -3;
+        char fname[meBUF_SIZE_MAX];
+        if(fileLookup((meUByte *) MESOCK_STRINGIFY(_OPENSSLLNM),0,NULL,meFL_CALLBACK,(meUByte *) fname))
+        {
+#ifdef _WIN32
+            libHandle = LoadLibrary(fname);
+#else
+            libHandle = dlopen(fname,RTLD_LOCAL|RTLD_LAZY);
+#endif
+        }            
+        if(libHandle == NULL)
+        {
+            snprintf((char *) buff,meSOCK_BUFF_SIZE,"meSock Error: Failed to load " MESOCK_STRINGIFY(_OPENSSLLNM) " library - OpenSSL installed? (%d)",meSockGetError());
+            if(io->urlOpts & meSOCKOPT_LOG_ERROR)
+                ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,buff);
+            return -3;
+        }
     }
     if(((sslF_OPENSSL_init_ssl = (meSOCKF_OPENSSL_init_ssl) meSockLibGetFunc(libHandle,"OPENSSL_init_ssl")) == NULL) ||
        ((sslF_SSL_CIPHER_get_name = (meSOCKF_SSL_CIPHER_get_name) meSockLibGetFunc(libHandle,"SSL_CIPHER_get_name")) == NULL) ||
