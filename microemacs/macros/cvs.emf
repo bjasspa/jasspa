@@ -472,7 +472,7 @@ define-macro cvs-log-list
   !endif
   set-variable #l9 &cat "CVS: " #l9
   set-variable #l2 $temp-name
-  !if &seq $platform "win32"
+  !if &seq $platform "windows"
     ; system does not maintain the correct starting dir so use whole file name
     set-variable #l3 &cat #l0 #l1
   !else

@@ -93,7 +93,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	triangle.emf	\
 	unixterm.emf	userstp.emf	utils.emf	\
 	vbtags.emf	vm.emf		\
-	watch.emf	win32.emf	word.emf	\
+	watch.emf	windows.emf	word.emf	\
 	xfind.emf	\
 	zaurus.emf	zfile.emf
 # ETFS:sh =ls *.etf

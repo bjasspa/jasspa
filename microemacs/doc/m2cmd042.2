@@ -47,14 +47,14 @@ may be retrieved using
 The following call (where the registry node \fC/history\fR already exists):
 .Me $emf-scheme
 .CS
-set-registry "/history/foo/win32/printer" "foo-bar"
+set-registry "/history/foo/windows/printer" "foo-bar"
 .CE
 .Me $ehf-scheme
 constructs a registry hierarchy of the form:-
 .CS
 "history" {
   "foo" {
-    "win32" {
+    "windows" {
       "printer"="foo-bar";
     }
   }
@@ -63,7 +63,7 @@ constructs a registry hierarchy of the form:-
 The value of the registry node may be retrieved using:-
 .Me $emf-scheme
 .CS
-&reg "/history/foo/win32/printer"
+&reg "/history/foo/windows/printer"
 .CE
 .Me $ehf-scheme
 which would return the value "\fCfoo-bar\fR".

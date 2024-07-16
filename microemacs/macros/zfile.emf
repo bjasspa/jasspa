@@ -311,7 +311,7 @@ define-macro zfile-find-file
       !endif
       ; launch system open tool and don't wait, however if we immediate continue we will delete the tmp file
       ; before the system app has loaded, so throw in a long interruptable wait and hope!
-      !if &seq $platform "win32"
+      !if &seq $platform "windows"
         !force !force 0x20 shell-command &rep #l4 "/" "\\"
         -20000 command-wait
       !elif &seq $platform "macos"

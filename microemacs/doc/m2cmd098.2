@@ -47,9 +47,8 @@ to be started without effecting any other command buffer.
 Hides the output  buffer,  default  action pops up a window and  displays  the
 output buffer in the new window.
 .IP \fB0x04\fR
-Disable the use of the  command-line  processor  to launch the program  (win32
-versions  only). By default the  "\fBcommand\fR"  is launched by executing the
-command:
+Disable the use of the command-line processor to launch the program (windows versions only). By default the
+"\fBcommand\fR" is launched by executing the command:
 .CS
     %COMSPEC% /c command 
 .CE 0
@@ -57,16 +56,13 @@ command:
 Where  \fC%COMSPEC%\fR  is  typically  command.com.  If this  bit is set,  the
 "\fBcommand\fR" is launched directly.
 .IP \fB0x08\fR
-Detach the launched  process from \*(mS (win32  versions only). By default the
-command is launched as a child  process of \*(mS with a new console. With this
-bit set the process is completely detached from \*(mS instead.
+Detach the launched process from \*(mS (windows versions only). By default the command is launched as a child process
+of \*(mS with a new console. With this bit set the process is completely detached from \*(mS instead.
 .IP \fB0x10\fR
-Disable  the  command  name  mangling  (win32  versions  only). By default any
-\&'\fC/\fR' characters found in the command name (the first argument only) are
-converted to '\fC\\\fR' characters to make it Windows compliant.
+Disable the command name mangling (windows versions only). By default any \&'\fC/\fR' characters found in the command
+name (the first argument only) are converted to '\fC\\\fR' characters to make it Windows compliant.
 .IP \fB0x20\fR
-Displays the new process window (win32  versions  only), by default the window
-is hidden.
+Displays the new process window (windows versions only), by default the window is hidden.
 .IP \fB0x40\fR
 Raw mode, disable text annotation at the start of the pipe output.
 .IP \fB0x80\fR

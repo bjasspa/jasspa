@@ -42,7 +42,7 @@
 ;      This file is now used by mecygwin to provide a BASH shell in the 
 ;      the UNIX build environment. The notes above reply to run a bash 
 ;      shell. The cygwin environment is initialised by settings in 
-;      cygwin.emf these are similar to the win32.emf start up script.
+;      cygwin.emf these are similar to the windows.emf start up script.
 ;
 ;      Jon 2004-02-21 
 ; 

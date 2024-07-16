@@ -1504,7 +1504,7 @@ define-macro file-tool-menu
     osd .osd.file-tool 150 "fh" "  Buffer Name:     "
     osd .osd.file-tool 151 "Ctpftx" &cat .osd.checkbox-chars "\} \HHide Buffer" 0x0100 file-tool-set-flag
     osd .osd.file-tool 170 "ExHtf" .scheme.osd-entry "###################" 4 file-tool-set-fld
-  !elif &and &seq $platform "win32" &not &band .file-tool-setup.flag 0x20
+  !elif &and &seq $platform "windows" &not &band .file-tool-setup.flag 0x20
     osd .osd.file-tool 170 "Ctpftx" &cat .osd.checkbox-chars "\} \HShow process window" 0x0200 file-tool-set-flag
   !endif
 !emacro

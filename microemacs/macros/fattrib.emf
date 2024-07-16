@@ -51,7 +51,7 @@ osd .osd.fattr 110 ""   "  Attributes:"
   osd .osd.fattr 150 "SCfxRp" &cat .osd.checkbox-chars "\} Directory"    16 fattr-attr
   osd .osd.fattr 155 "fh" "      "
   osd .osd.fattr 160 "CfxRpt" &cat .osd.checkbox-chars "\} \HArchive  "  32 fattr-attr
-!elif &seq $platform "win32"
+!elif &seq $platform "windows"
   osd .osd.fattr 115 "fh" "      "
   osd .osd.fattr 120 "CfxRpt" &cat .osd.checkbox-chars "\} \HRead-only "    1 fattr-attr
   osd .osd.fattr 125 "fh" "      "

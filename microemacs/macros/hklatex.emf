@@ -67,7 +67,7 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*%\\|^[ \t]*$\\|^[ \t]*\
   set-variable .fhook-latex.collapse-mnext "-1"
 !endif
 
-!if &seq $platform "win32"
+!if &seq $platform "windows"
   ; Win32, lets assume that everybody is using MikTex, and why not !!
   set-variable %latex-view    &cond &seq %latex-view    "ERROR" "yap"  %latex-view
   set-variable %latex-compile &cond &seq %latex-compile "ERROR" "latex --c-style-errors --halt-on-error " %latex-compile

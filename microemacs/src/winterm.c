@@ -5606,7 +5606,8 @@ meSetupPathsAndUser(void)
         }
 #if MEOPT_TFS
         /* also check for the built-in file system */
-        ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "tfs://",&gotUserPath);
+        if(tfsdev != NULL)
+            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "tfs://",&gotUserPath);
 #endif        
         if(!gotUserPath && (appData != NULL))
         {

@@ -400,7 +400,7 @@ set-variable .user-set-mouse.A ""
 
 ; The platform menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 !if &band $system 0x01
-!elif &seq $platform "win32" 
+!elif &seq $platform "windows" 
   set-variable %clpbd-names "|No interaction|Interact with clipboard|"
   set-variable %clpbd-val "|8388608|0|"
   0 define-macro user-set-winfont
@@ -622,7 +622,7 @@ osd .osd.user-plat 821 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 820
   osd .osd.user-plat 60  "EtxHf" .scheme.osd-entry "####" 1 user-set-cpfentry
   osd .osd.user-plat 320 "fh"  "    "
   osd .osd.user-plat 330 "Ctxfp" &cat .osd.checkbox-chars "\} Double Lines" 1 user-set-cpfcheckbox
-!elif &seq $platform "win32"
+!elif &seq $platform "windows"
   osd .osd.user-plat 509 "fh" "          "
   osd .osd.user-plat 510 "Ctfxp" &cat .osd.checkbox-chars "\} Client Server" 0x20000 user-set-system
   osd .osd.user-plat 520 "fh" "    "

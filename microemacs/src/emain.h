@@ -331,7 +331,7 @@
 #define _WIN32         1                /* Use win32                     */
 #endif
 #ifdef _WIN32
-#define meSYSTEM_NAME  "win32"          /* Identity name of the system   */
+#define meSYSTEM_NAME  "windows"        /* Identity name of the system   */
 #define _CTRLZ         1                /* ^Z at end of files (MSDOS)    */
 #define _CTRLM         1                /* ^M at end of lines (MSDOS)    */
 #if (_MSC_VER != 900)

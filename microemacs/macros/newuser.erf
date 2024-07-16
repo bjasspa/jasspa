@@ -85,7 +85,7 @@
  "scheme" = "schemebc"
  "scroll-bar" = "0x1be"
 }
-"win32" {
+"windows" {
  "blink" = "13107800"
  "char-set" = "cp1252"
  "ext-char-set" = "1"
@@ -93,7 +93,7 @@
  "scheme" = "schemebc"
  "scroll-bar" = "0x1be"
 }
-"win32c" {
+"windowsc" {
  "blink" = "13107800"
  "char-set" = "cp850"
  "file-ignore" = "~ ./"

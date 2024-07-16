@@ -37,9 +37,9 @@ ipipe-write \- Write a string to an incremental pipe
 .B ipipe-kill
 .ad
 .SH PLATFORM
-UNIX - \fIirix\fR, \fIhpux\fR, \fIsunos\fR, \fIfreebsd\fR, \fIlinux\fR.
+UNIX - \fIlinux\fR, \fImacos\fR, \fIfreebsd\fR, \fIhpux\fR, \fIsunos\fR.
 .PP
-Windows NT - \fIwin32\fR.
+Windows NT - \fIwindows\fR.
 .SH DESCRIPTION
 .B ipipe-shell-command
 executes the given system command \fIcommand\fR, opening up a \fB*icommand*\fR
@@ -78,11 +78,9 @@ Disable the command  name  mangling (MS Win32  versions  only). By default any
 \&'\fC/\fR' characters found in the command name (the first argument only) are
 converted to '\fC\\\fR' characters to make it Windows compliant.
 .IP \fB0x20\fR
-Displays the new process window (win32  versions  only), by default the window
-is hidden.
+Displays the new process window (windows versions only), by default the window is hidden.
 .IP \fB0x40\fR
-Raw ipipe,  disable  text  annotation  at the start and end of the pipe output
-and force
+Raw ipipe, disable text annotation at the start and end of the pipe output and force
 .Ht wrap 2m
 mode off.
 .IP \fB0x80\fR

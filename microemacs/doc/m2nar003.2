@@ -237,7 +237,7 @@ global-bind-key undo                    "f4"
 ;
 ; Define my hilighting colour for Windows and UNIX.
 !if &equ &band $system 0x001 0
-    !if &not &seq $platform "win32"
+    !if &not &seq $platform "windows"
         ; Small bold font is better for me.
         change-font "-*-clean-medium-r-*-*-*-130-*-*-*-*-*-*"
     !endif
@@ -246,7 +246,7 @@ global-bind-key undo                    "f4"
 set-variable %diff-com "diff --context --minimal --ignore-space-change --report-identical-files --recursive"
 set-variable %gdiff-com "diff --context --ignore-space-change -w"
 ; Setup for cygwin
-!if &seq $platform "win32"
+!if &seq $platform "windows"
     set-variable %cygwin-path "c:/cygwin"
     set-variable %cygwin-hilight 1
 !endif

@@ -482,7 +482,7 @@ define-macro ishell
   !if &and $status &bmod "pipe"
     find-buffer #l0
   !elif &band $system 0x100           ; is it MS-DOS type system ?
-    !if &seq $platform "win32"
+    !if &seq $platform "windows"
       ; For windows DOS shell in a window we need to drop the command
       ; shell (!c!) and run a detached process (!d!). Optionally allow
       ; the user to run a different command shell %comspec2. This must

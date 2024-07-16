@@ -25,7 +25,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Change the home directory on Windows and DOS.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;!if &or &seq $platform "dos" &seq $platform "win32"
+;!if &or &seq $platform "dos" &seq $platform "windows"
 ;    set-variable $home "c:/"
 ;!endif
 

@@ -36,7 +36,7 @@ define-macro rgrep
     set-variable #l0 @1
     set-variable #l1 @2
   !endif
-  !if &seq $platform "win32"
+  !if &seq $platform "windows"
     ; If this is a drive then add a dot to the end.
     !if &xis #l1 "[a-z]:/"
       set-variable #l1 &cat #l1 "."

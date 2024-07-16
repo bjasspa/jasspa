@@ -1211,7 +1211,7 @@ define-macro-file htmltool html-to-ehf
   set-variable #l6 &rig #l3 &rsin "/" #l3
   set-variable #l8 #l3
   !if &band $system 0x100
-    ; on win32 and dos change '/' to '\'
+    ; on windows and dos change '/' to '\'
     set-variable #l8 &rep #l8 "/" "\\"
   !endif
   find-buffer &rig %vm-curbuf 1

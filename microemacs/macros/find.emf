@@ -133,7 +133,7 @@
 !if &seq $platform "dos"
   set-variable .find-proc-find.ab "|32|4|2|1|"
   set-variable .find-proc-find.al "|a|s|h|r|"
-!elif &seq $platform "win32"
+!elif &seq $platform "windows"
   set-variable .find-proc-find.ab "|2048|256|128|32|4|2|1|"
   set-variable .find-proc-find.al "|c|t|n|a|s|h|r|"
 !else
@@ -572,7 +572,7 @@
   !repeat
     !force set-variable #l2 &ind &cat "@" &pinc #l1 1
     !if $status
-      !iif &seq $platform "win32"  set-variable #l2 &rep #l2 "%" "%%"
+      !iif &seq $platform "windows"  set-variable #l2 &rep #l2 "%" "%%"
       set-variable #l0 &spr "%s \"%s\"" #l0 &xrep #l2 "[\\\\\"]" "\\\\\\0"
     !endif
   !until &not $status
@@ -689,7 +689,7 @@ define-macro find
   !if &not &sin "2" &lget #l9 1
   !elif &seq $platform "dos"
     set-variable #l0 &cat #l0 " "
-  !elif &seq $platform "win32"
+  !elif &seq $platform "windows"
     set-variable #l0 &cat #l0 "    "
   !else
     set-variable #l0 &cat #l0 "       "

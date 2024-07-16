@@ -867,9 +867,9 @@ set-variable #l9 &reg &spr "/history/%s/mouse2to3" $platform 0
     !else
       ml-bind-key backward-line #l1
     !endif
-    ; only win32 supports the wheel keys directly, unix systems must
+    ; only windows supports the wheel keys directly, unix systems must
     ; translate a button event to the wheel event, usually 4 or 5 
-    !if &not &seq $platform "win32"
+    !if &not &seq $platform "windows"
       set-variable #l1 &lef #l1 #l2
       translate-key &spr "%spick-4 %sdrop-4" #l1 #l1 &cat #l1 "wup"
     !endif
@@ -881,9 +881,9 @@ set-variable #l9 &reg &spr "/history/%s/mouse2to3" $platform 0
     !else
       ml-bind-key forward-line #l1
     !endif
-    ; only win32 supports the wheel keys directly, unix systems must
+    ; only windows supports the wheel keys directly, unix systems must
     ; translate a button event to the wheel event, usually 4 or 5 
-    !if &not &seq $platform "win32"
+    !if &not &seq $platform "windows"
       set-variable #l1 &lef #l1 #l2
       translate-key &spr "%spick-5 %sdrop-5" #l1 #l1 &cat #l1 "wdown"
     !endif

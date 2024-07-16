@@ -22,11 +22,11 @@ set-char-mask "k" ""
 ; get the users keyboard
 !if &seq "" &set #l0 &reg "/history/keyboard" ""
 !elif &seq #l0 "American"
-  !if &seq $platform "win32"
+  !if &seq $platform "windows"
     translate-key "C-# C-#" "C-#"
   !endif
 !elif &seq #l0 "Belgian"
-  !if &seq $platform "win32"
+  !if &seq $platform "windows"
     ; Thanks to Meyer Jean-Francois
     ; This should also work for French keyboards
     translate-key "A-C-9 A-C-{" "{"
@@ -35,12 +35,12 @@ set-char-mask "k" ""
     translate-key "A-C-] A-C-[" "["
   !endif
 !elif &seq #l0 "British"
-  !if &seq $platform "win32"
+  !if &seq $platform "windows"
     translate-key "C-# C-\\" "C-#"
   !endif
 !elif &seq #l0 "Deutsch"
   ; Thanks to Detlef Groth
-  !if &not &seq $platform "win32"
+  !if &not &seq $platform "windows"
   !elif &band $system 0x01
     translate-key "A-C-{" "{"
     translate-key "A-C-}" "}"
@@ -69,7 +69,7 @@ set-char-mask "k" ""
     translate-key "A-C-b A-C-|" "\x7c"
   !endif
 !elif &seq #l0 "Espanol"
-  !if &seq $platform "win32"
+  !if &seq $platform "windows"
     ; Thanks to Rodolfo Valeiras
     translate-key "A-C-# A-C-{" "{"
     translate-key "A-C-/ A-C-}" "}"
@@ -82,7 +82,7 @@ set-char-mask "k" ""
     translate-key "A-C-6 A-C-¨" "¨"
   !endif
 !elif &seq #l0 "Finnish"
-  !if &seq $platform "win32"
+  !if &seq $platform "windows"
     ; Thanks to Sebastian Bojers
     translate-key "A-C-2 A-C-@" "@"
     translate-key "A-C-3 A-C-£" "£"
@@ -95,7 +95,7 @@ set-char-mask "k" ""
     translate-key "A-C-b A-C-|" "|"
   !endif
 !elif &seq #l0 "Francais"
-  !if &seq $platform "win32"
+  !if &seq $platform "windows"
     translate-key "A-C-3 A-C-#" "#"
     translate-key "A-C-4 A-C-{" "{"
     translate-key "A-C-5 A-C-[" "["
@@ -112,7 +112,7 @@ set-char-mask "k" ""
     translate-key "A-C-] A-C-[" "["
   !endif
 !elif &seq #l0 "Polish"
-  !if &seq $platform "win32"
+  !if &seq $platform "windows"
     ; Thanks to Piotr Poczta
     translate-key "A-C-S-a" "•"
     translate-key "A-C-a" "π"
@@ -134,7 +134,7 @@ set-char-mask "k" ""
     translate-key "A-C-S-X" "è"
   !endif
 !elif &seq #l0 "Portugues"
-  !if &seq $platform "win32"
+  !if &seq $platform "windows"
     ; Thanks to Pedro Gomes
     translate-key "C-/" "C-~"
     translate-key "C-`" "C-\\"
