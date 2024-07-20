@@ -1,6 +1,7 @@
 # ignore backup files, tags and build directories
 *~
 tags
-.linux-*/
-.macos-*/
-.windows-*/
+.linux[0-9]-*/
+.macos[0-9][0-9]-*/
+.windows[0-9][0-9]-*/
+.windows1[0-9][0-9]-*/
