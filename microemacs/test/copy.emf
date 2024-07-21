@@ -1,0 +1,224 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author$
+;  Created By    : Steven Phillips
+;  Created       : 2024-06-02 14:41:00
+;  Last Modified : <240604.1318>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 2024 Maxinity Software Ltd.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+set-variable #g0 &cat $temp-name "/"
+!force copy-file "/home/bill/jasspa/microemacs/test" #g0
+!if $status
+  ml-write &cat "Error: copy-file should have failed - " #g0
+  !abort
+!endif
+0x21 copy-file "/home/bill/jasspa/microemacs/test/sql" #g0
+!if &not $status
+  ml-write &cat "Error: copy-file unexpectedly failed - " #g0
+  !abort
+!elif &not &seq $result "|1|0|3|0|"
+  ml-write &spr "Error: copy-file rturn wrong %s - %s" &set #g2 $result #g0
+  !abort
+!elif &not &seq "D" &stat t &cat #g0 "sql"
+  ml-write &spr "Error: copy-file output missing - %ssql" #g0
+  !abort
+!endif
+set-variable #g1 &cat $temp-name "/"
+0x21 copy-file "/home/bill/jasspa/microemacs/test/" #g1
+!if &not $status
+  ml-write &cat "Error: copy-file unexpectedly failed - " #g1
+  !abort
+!elif &not &seq $result "|52|0|444|0|"
+  ml-write &spr "Error: copy-file rturn wrong %s - %s" &set #g2 $result #g1
+  !abort
+!elif &not &seq "D" &stat t &cat #g1 "test"
+  ml-write &spr "Error: copy-file output missing - %stest" #g1
+  !abort
+!elif &not &seq "D" &stat t &cat #g1 "test/sql"
+  ml-write &spr "Error: copy-file output missing - %stest/sql" #g1
+  !abort
+!endif
+9 copy-file "/home/bill/jasspa/microemacs/test/" #g1
+!if &not $status
+  ml-write &cat "Error: copy-file unexpectedly failed - " #g1
+  !abort
+!elif &not &seq $result "|52|0|0|0|"
+  ml-write &spr "Error: copy-file rturn wrong %s - %s" &set #g2 $result #g1
+  !abort
+!endif
+!force copy-file &cat #g0 "sql/sample4.sql" &cat #g1 "test"
+!if $status
+  ml-write &spr "Error: copy-file should have failed %s - %stest" &set #g2 $result #g1
+  !abort
+!endif
+copy-file &cat #g0 "sql/sample4.sql" &cat #g1 "foo"
+!if &not $status
+  ml-write &spr "Error: copy-file unexpectedly failed - %sfoo" #g1
+  !abort
+!elif &not &seq $result "|0|0|1|0|"
+  ml-write &spr "Error: copy-file rturn wrong %s - %sfoo" &set #g2 $result #g1
+  !abort
+!elif &not &seq "R" &stat t &cat #g1 "foo"
+  ml-write &spr "Error: copy-file output missing - %sfoo" #g1
+  !abort
+!endif
+!force copy-file &cat #g0 "sql/sample4.sql" &cat #g1 "bar/"
+!if $status
+  ml-write &spr "Error: copy-file should have failed %s - %stest" &set #g2 $result #g1
+  !abort
+!endif
+0x21 copy-file &cat #g0 "sql/sample4.sql" &cat #g1 "bar/"
+!if &not $status
+  ml-write &spr "Error: copy-file unexpectedly failed - %sbar/sample4.sql" #g1
+  !abort
+!elif &not &seq $result "|0|0|1|0|"
+  ml-write &spr "Error: copy-file rturn wrong %s - %sbar/sample4.sql" &set #g2 $result #g1
+  !abort
+!elif &not &seq "R" &stat t &cat #g1 "bar/sample4.sql"
+  ml-write &spr "Error: copy-file output missing - %sbar/sample4.sql" #g1
+  !abort
+!endif
+0x20 copy-file &cat #g0 "sql/sample4.sql" &cat #g1 "bob/bar"
+!if &not $status
+  ml-write &spr "Error: copy-file unexpectedly failed - %sbob/bar" #g1
+  !abort
+!elif &not &seq $result "|0|0|1|0|"
+  ml-write &spr "Error: copy-file rturn wrong %s - %sbob/bar" &set #g2 $result #g1
+  !abort
+!elif &not &seq "R" &stat t &cat #g1 "bob/bar"
+  ml-write &spr "Error: copy-file output missing - %sbob/bar" #g1
+  !abort
+!elif &seq "R" &stat t &cat #g0 "sql/sample4.sql"
+  ml-write &spr "Error: copy-file file wasn't moved - %ssql/sample4.sql" #g0
+  !abort
+!endif
+copy-file &cat #g1 "bob/bar" &cat #g0 "sql/"
+!if &not &seq "R" &stat t &cat #g0 "sql/bar"
+  ml-write &spr "Error: copy-file failed - %ssql/bar" #g0
+  !abort
+!endif
+9 copy-file &cat #g0 "sql" &cat #g1 "test/sql"
+!if &not $status
+  ml-write &spr "Error: copy-file unexpectedly failed - %stest/sql" #g1
+  !abort
+!elif &not &seq $result "|1|0|1|0|"
+  ml-write &spr "Error: copy-file rturn wrong %s - %stest/sql" &set #g2 $result #g1
+  !abort
+!elif &not &seq "R" &stat t &cat #g1 "test/sql/bar"
+  ml-write &spr "Error: copy-file output missing - %stest/sql/bar" #g1
+  !abort
+!endif
+0 copy-file &cat #g0 "sql" #g1
+!if &not $status
+  ml-write &spr "Error: copy-file unexpectedly failed - %ssql" #g1
+  !abort
+!elif &not &seq $result "|1|0|0|0|"
+  ml-write &spr "Error: copy-file rturn wrong %s - %ssql" &set #g2 $result #g1
+  !abort
+!elif &not &seq "R" &stat t &cat #g1 "sql/bar"
+  ml-write &spr "Error: copy-file output missing - %ssql/bar" #g1
+  !abort
+!endif
+1 copy-file &cat #g1 "sql" &cat #g1 "new"
+!if &not $status
+  ml-write &spr "Error: copy-file unexpectedly failed - %snew" #g1
+  !abort
+!elif &not &seq $result "|1|0|3|0|"
+  ml-write &spr "Error: copy-file rturn wrong %s - %snew" &set #g2 $result #g1
+  !abort
+!elif &not &seq "R" &stat t &cat #g1 "new/bar"
+  ml-write &spr "Error: copy-file output missing - %snew/bar" #g1
+  !abort
+!endif
+8 copy-file &cat #g1 "test/sql" #g1
+!if &not $status
+  ml-write &spr "Error: copy-file unexpectedly failed - %ssql" #g1
+  !abort
+!elif &not &seq $result "|1|0|1|0|"
+  ml-write &spr "Error: copy-file return wrong %s - %ssql" &set #g2 $result #g1
+  !abort
+!elif &not &seq "R" &stat t &cat #g1 "sql/sample4.sql"
+  ml-write &spr "Error: copy-file output missing - %ssql/sample4.sql" #g1
+  !abort
+!elif &seq "X" &stat t &cat #g1 "test/sql/bar"
+  ml-write &spr "Error: copy-file file not removed - %stest/sql/bar" #g1
+  !abort
+!elif &seq "X" &stat t &cat #g1 "test/sql"
+  ml-write &spr "Error: copy-file dir not removed - %stest/sql" #g1
+  !abort
+!endif
+!force 4 delete-file &cat #g1 "sql/not_exist"
+!if $status
+  ml-write &spr "Error: delete-file unexpectedly succeeded %s - %ssql/not_exist" &set #g2 $result #g1
+  !abort
+!endif
+0x20 delete-file &cat #g1 "sql/.*_.*"
+!if &not $status
+  ml-write &spr "Error: delete-file unexpectedly failed - %ssql/*._.*" #g1
+  !abort
+!elif &not &seq $result "|0|0|2|0|"
+  ml-write &spr "Error: delete-file return wrong %s - %ssql" &set #g2 $result #g1
+  !abort
+!elif &not &seq "R" &stat t &cat #g1 "sql/sample4.sql"
+  ml-write &spr "Error: delete-file file missing - %ssql/sample4.sql" #g1
+  !abort
+!elif &not &seq "R" &stat t &cat #g1 "sql/bar"
+  ml-write &spr "Error: delete-file file missing - %ssql/bar" #g1
+  !abort
+!endif
+delete-file &cat #g1 "sql"
+!if &not $status
+  ml-write &spr "Error: delete-file unexpectedly failed - %ssql" #g1
+  !abort
+!elif &not &seq $result "|1|0|2|0|"
+  ml-write &spr "Error: delete-file return wrong %s - %ssql" &set #g2 $result #g1
+  !abort
+!elif &not &seq "X" &stat t &cat #g1 "sql"
+  ml-write &spr "Error: delete-file file missing - %ssql/sample4.sql" #g1
+  !abort
+!endif
+0x20 delete-file &cat #g1 "...[/]?"
+!if &not $status
+  ml-write &spr "Error: delete-file unexpectedly failed - %s.../?" #g1
+  !abort
+!elif &not &seq $result "|3|0|6|0|"
+  ml-write &spr "Error: delete-file return wrong %s - %ssql" &set #g2 $result #g1
+  !abort
+!elif &not &seq "X" &stat t &cat #g1 "foo"
+  ml-write &spr "Error: delete-file file missing - %ssql/sample4.sql" #g1
+  !abort
+!elif &not &seq "D" &stat t &cat #g1 "test"
+  ml-write &spr "Error: delete-file file missing - %ssql/bar" #g1
+  !abort
+!endif
+delete-file #g0
+!if &not $status
+  ml-write &spr "Error: delete-file unexpectedly failed - %s.../?" #g0
+  !abort
+!elif &not &seq $result "|1|0|0|0|"
+  ml-write &spr "Error: delete-file return wrong %s - %ssql" &set #g2 $result #g0
+  !abort
+!elif &not &seq "X" &stat t #g0
+  ml-write &spr "Error: delete-file file missing - %ssql/sample4.sql" #g0
+  !abort
+!endif
+delete-file #g1
+!if &not $status
+  ml-write &spr "Error: delete-file unexpectedly failed - %s.../?" #g1
+  !abort
+!elif &not &seq $result "|53|0|444|0|"
+  ml-write &spr "Error: delete-file return wrong %s - %ssql" &set #g2 $result #g1
+  !abort
+!elif &not &seq "X" &stat t #g1
+  ml-write &spr "Error: delete-file file missing - %ssql/sample4.sql" #g1
+  !abort
+!endif

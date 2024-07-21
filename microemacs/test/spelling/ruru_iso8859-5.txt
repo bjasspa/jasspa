@@ -1,0 +1,38 @@
+Зарегистрируйтесь сейчас на Десятую Международную Конференцию по Unicode, которая состоится 10-12 марта 1997 года в
+Майнце в Германии. Конференция соберет широкий круг экспертов по вопросам глобального Интернета и Unicode, локализации
+и интернационализации, воплощению и применению Unicode в различных операционных системах и программных приложениях,
+шрифтах, верстке и многоязычных компьютерных системах.
+
+---------
+
+Кошка это одно из наиболее популярных домашних животных. В настоящее время в мире живёт около 600 (шестисот) миллионов
+домашних кошек.
+
+Кошки стали домашними примерно 9500 (девять тысяч пятьсот) лет назад на Востоке. Люди очень ценили способность кошек
+ловить мышей и крыс.
+
+Вот несколько интересных фактов о кошках:
+
+    Рисунок на носу кошки так же уникален, как отпечаток пальца человека.
+    За свою жизнь кошка может родить около 100 (ста) котят.
+    Когда кошке жарко, у неё потеют только лапы.
+    Люди, у которых есть домашние животные живут дольше.
+    Кошки  очень ленивые. Они спят 16 (шестнадцать) часов в день.
+    Ньютон изобрёл дверь для кошки.
+
+---
+
+The cat is one of the most popular pets. Currently there are around 600 million domestic cats in the world.
+
+Cats became domestic about 9500 years ago in the East. People valued a lot cats' abilities to catch mice and rats.
+
+Here are some interesting facts about cats:
+
+    The pattern of a cat's nose is as unique as a person's fingerprint.
+    During its life a cat can give birth to around 100 kittens.
+    When a cat feels hot only its paws sweat.
+    People who have domestic animals live longer.
+    Cats are very lazy. They sleep 16 hours a day.
+    Newton invented the cat door.
+
+------------------
