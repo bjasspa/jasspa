@@ -110,7 +110,7 @@ set-variable .git.cdefs  &lins .git.cdefs  -1 "||"
 ; Command 2 - Pull
 set-variable .git.cnames &lins .git.cnames -1 "Pull"
 set-variable .git.cflags &lins .git.cflags -1 "BTs*!$"
-set-variable .git.cdefs  &lins .git.cdefs  -1 "||1|"
+set-variable .git.cdefs  &lins .git.cdefs  -1 "||0|"
 ; Command 3 - Push
 set-variable .git.cnames &lins .git.cnames -1 "Push"
 set-variable .git.cflags &lins .git.cflags -1 "Bs*!$"
@@ -800,27 +800,29 @@ define-macro git-fetch
 
 ;; GIT Pull ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-0 define-macro git-exec-complete2
-  set-variable #l0 $buffer-bname
-  !if &lget &lget .git.cvals 2 2
+define-macro git-pull
+  2 git-osd
+  !if &lget &set #l9 .git-osd.values 2
+    set-variable #l0 $buffer-bname
+    !force 0 delete-buffer "*git-pll-s1*"
+    6 pipe-shell-command &set .uc &spr "%s stash -- %s" .git.com .git-dirlst-detect.ld "*git-pll-s1*"
+    set-variable #l3 $result
     find-buffer "*git-pll-s1*"
     beginning-of-buffer
     set-mark
     end-of-buffer
+    copy-region
     !force 0 delete-buffer $buffer-bname
-    find-buffer #l0
-    beginning-of-buffer
+    find-buffer "*git-console*"
+    end-of-buffer
+    -1 buffer-mode "view"
+    !iif &gre $window-line 1  insert-newline
     yank
-    insert-string "----------\n"
-  !endif
-!emacro
-
-define-macro git-pull
-  2 git-osd
-  set-variable $debug 2
-  !if &lget &set #l9 .git-osd.values 2
-    !force 0 delete-buffer "*git-pll-s1*"
-    6 pipe-shell-command &set .uc &spr "%s stash -- %s" .git.com .git-dirlst-detect.ld "*git-pll-s1*"
+    -1 yank
+    insert-string &spr "\n[**** Git Stash %s ****]" &con #l3 &cat "exited with code " #l3 "completed successfully"
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    find-buffer #l0
   !endif
   !if &len &set #l2 .git.cstrv1
     !iif &sin " " #l2 set-variable #l2 &spr "\"%s\"" #l2
