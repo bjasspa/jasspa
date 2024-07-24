@@ -1,0 +1,273 @@
+Temperatura
+
+La temperatura di un corpo può essere definita come una misura dello stato di agitazione delle entità molecolari dalle
+quali è costituito.[1] È una proprietà fisica intensiva[2] rappresentata da una grandezza scalare.
+
+La temperatura può essere utilizzata per prevedere la direzione verso la quale avviene lo scambio termico tra due
+corpi. Infatti, la differenza di temperatura tra due sistemi che sono in contatto termico determina un flusso di
+calore in direzione del sistema meno caldo finché non sia raggiunto l'equilibrio termico.
+
+Storia
+
+Il concetto di temperatura nasce come tentativo di quantificare le nozioni comuni di "caldo" e "freddo". In seguito,
+la comprensione via  maggiore dei fenomeni termici estende il concetto di temperatura e mette in luce il fatto che
+le percezioni termiche al tatto sono il risultato di una complessa serie di fattori (calore specifico, conducibilità
+termica, eccetera) che include la temperatura. Tuttavia, la corrispondenza tra le impressioni sensoriali e la
+temperatura è approssimativa: infatti, in genere, al tatto, il materiale a temperatura più alta appare più caldo,
+anche se ci sono numerose eccezioni. Per esempio un oggetto d'argento viene percepito come più freddo (o più caldo) di
+un oggetto di plastica che si trovi alla stessa temperatura, se tale temperatura è minore (o maggiore) della
+temperatura del corpo umano, e questo a causa della diversa conduttività termica, che fa sì che siano diverse le
+velocità con cui viene sottratto calore dalla superficie della cute.
+
+Ciò è dovuto al fatto che il nostro cervello percepisce la temperatura in corrispondenza delle terminazioni nervose,
+il che implica che a innescare la percezione di caldo/freddo è la variazione di temperatura della parte del nostro
+corpo in contatto con il materiale, non la temperatura del materiale. Per tale motivo, l'argento è recepito come "più
+caldo" rispetto ad un oggetto di plastica alla stessa temperatura se tale temperatura è maggiore della temperatura del
+corpo umano, poiché l'argento, essendo un ottimo conduttore termico, scambia calore più velocemente rispetto alla
+plastica, scaldando la pelle più velocemente. Per lo stesso motivo, l'argento è recepito come "più freddo" rispetto ad
+un oggetto di plastica alla stessa temperatura se tale temperatura è inferiore della temperatura del corpo umano.
+
+I primi tentativi di dare un numero alla sensazione di caldo o di freddo risalgono ai tempi di Galileo e
+dell'Accademia del Cimento. Il primo termometro ad alcool, di tipo moderno, viene attribuito tradizionalmente
+all'inventiva del granduca di Toscana Ferdinando II de' Medici. Ma si va affermando la convinzione che il termometro a
+liquido in capillare chiuso sia stato inventato da altri, molto prima. Il termometro a mercurio viene attribuito a
+Gabriel Fahrenheit, che nel 1714 introdusse una scala di temperature in uso ancora; un'altra, detta all'epoca
+della definizione scala centigrada, si deve a Anders Celsius nel 1742.
+
+La relativa precocità delle misure di temperatura non implica che il concetto di temperatura fosse ben chiaro a quei
+tempi. La distinzione chiara fra calore e temperatura è stata posta solo dopo la metà del 1700, da Joseph Black. In
+ogni caso, il termometro consente di definire il concetto di equilibrio termico. 
+
+Descrizione
+
+La temperatura è la proprietà fisica che registra il trasferimento di energia termica da un sistema a un altro.
+
+Quando due sistemi si trovano in equilibrio termico, non avviene nessun trasferimento di energia e si dice che sono
+alla stessa temperatura. Quando esiste una differenza di temperatura, il calore tende a muoversi dal sistema che viene
+detto a temperatura più alta verso il sistema che diremo a temperatura più bassa, fino al raggiungimento
+dell'equilibrio termico.
+
+Il trasferimento di calore può avvenire per conduzione, convezione o irraggiamento[3].
+
+Le proprietà formali della temperatura vengono studiate dalla termodinamica. La temperatura svolge un ruolo importante
+in quasi tutti i campi della scienza, in particolare in fisica, chimica, biologia.
+
+La temperatura non è una misura della quantità di energia termica o calore di un sistema: non ha senso chiedersi
+quanto calore possieda un corpo; è, però, a essa correlata. Pur con notevoli eccezioni, se a un sistema viene fornito
+calore, la sua temperatura aumenta, mentre, se gli viene sottratto calore, la sua temperatura diminuisce; in altre
+parole, un aumento di temperatura del sistema corrisponde a un assorbimento di calore da parte del sistema, mentre un
+abbassamento di temperatura del sistema corrisponde a una cessione di calore da parte del sistema.
+
+Su scala microscopica, nei casi più semplici, la temperatura di un sistema è legata in modo diretto al movimento
+casuale dei suoi atomi e delle sue molecole, cioè un incremento di temperatura corrisponde a un incremento del
+movimento degli atomi. Per questo, la temperatura viene anche definita come l'indice dello stato di agitazione
+molecolare del sistema (inoltre l'entropia viene definita come lo stato di disordine molecolare). Ci sono casi in cui
+è possibile fornire o sottrarre calore senza variazione della temperatura, poiché il calore fornito o sottratto può
+essere causa della variazione di qualche altra proprietà termodinamica del sistema (pressione, volume, ecc.), oppure
+può essere implicata in fenomeni di transizione di fase (come i passaggi di stato), descritti termodinamicamente in
+termini di calore latente. Analogamente, è possibile aumentare o diminuire la temperatura di un sistema senza fornire
+o sottrarre calore.
+
+La temperatura è una grandezza fisica scalare ed è intrinsecamente una proprietà intensiva di un sistema. Essa,
+infatti, non dipende dalle dimensioni del sistema o dalla sua quantità di materia, ma non corrisponde alla densità di
+nessuna proprietà estensiva. 
+
+
+--------------------------------------------
+Cappuccetto Rosso
+
+C'era una volta una dolce bimbetta; solo a vederla le volevan tutti bene, e specialmente la nonna che non sapeva più
+che cosa regalarle. Una volta le regalò un cappuccetto di velluto rosso, e poiché‚ le donava tanto, ed ella non voleva
+portare altro, la chiamarono sempre Cappuccetto Rosso. Un giorno sua madre le disse: "Vieni, Cappuccetto Rosso, eccoti
+un pezzo di focaccia e una bottiglia di vino, portali alla nonna; è debole e malata e si ristorerà. Sii gentile,
+salutala per me, e va' da brava senza uscire di strada, se no cadi, rompi la bottiglia e la nonna resta a mani vuote."
+
+"Sì, farò tutto per bene," promise Cappuccetto Rosso alla mamma, e le diede la mano. Ma la nonna abitava fuori, nel
+bosco, a una mezz'ora dal villaggio. Quando Cappuccetto Rosso giunse nel bosco, incontrò il lupo, ma non sapeva che
+fosse una bestia tanto cattiva e non ebbe paura. "Buon giorno, Cappuccetto Rosso," disse questo. "Grazie, lupo." -
+"Dove vai così presto, Cappuccetto Rosso?" - "Dalla nonna." - "Che cos'hai sotto il grembiule?" - "Vino e focaccia per
+la nonna debole e vecchia; ieri abbiamo cotto il pane, così la rinforzerà!" - "Dove abita la tua nonna, Cappuccetto
+Rosso?" - "A un buon quarto d'ora da qui, nel bosco, sotto le tre grosse querce; là c'è la sua casa, è sotto la
+macchia di noccioli, lo saprai già," disse Cappuccetto Rosso. Il lupo pensò fra s': Questa bimba tenerella è un buon
+boccone prelibato per te, devi far in modo di acchiapparla. Fece un pezzetto di strada con Cappuccetto Rosso, poi
+disse: "Guarda un po' quanti bei fiori ci sono nel bosco, Cappuccetto Rosso; perché‚ non ti guardi attorno? Credo che
+tu non senta neppure come cantano dolcemente gli uccellini! Te ne stai tutta seria come se andassi a scuola, ed è così
+allegro nel bosco!"
+
+Cappuccetto Rosso alzò gli occhi e quando vide i raggi del sole filtrare attraverso gli alberi, e tutto intorno pieno
+di bei fiori, pensò: Se porto alla nonna un mazzo di fiori, le farà piacere; è così presto che arrivo ancora in tempo.
+E corse nel bosco in cerca di fiori. E quando ne aveva colto uno, credeva che più in là ce ne fosse uno ancora più
+bello, correva lì e così si addentrava sempre più nel bosco. Il lupo invece andò dritto alla casa della nonna e bussò
+alla porta. "Chi è?" - "Cappuccetto Rosso, ti porto vino e focaccia; aprimi." - "Non hai che da alzare il saliscendi,"
+gridò la nonna, "io sono troppo debole e non posso alzarmi." Il lupo alzò il saliscendi, entrò, e senza dir motto andò
+dritto al letto della nonna e la inghiottì. Poi indossò i suoi vestiti e la cuffia, si coricò nel letto, e tirò le
+cortine.
+
+Ma Cappuccetto Rosso aveva girato in cerca di fiori, e quando ne ebbe raccolti tanti che più non ne poteva portare, si
+ricordò della nonna e si mise in cammino per andare da lei. Quando giunse si meravigliò che la porta fosse spalancata,
+ed entrando nella stanza ebbe un'impressione così strana che pensò: "Oh, Dio mio, che paura oggi! e dire che di solito
+sto così volentieri con la nonna!" Allora si avvicinò al letto e scostò le cortine: la nonna era coricata con la
+cuffia abbassata sulla faccia, e aveva un aspetto strano. "Oh, nonna, che orecchie grandi!" - "Per sentirti meglio." -
+"Oh, nonna, che occhi grossi!" - "Per vederti meglio." - "Oh, nonna, che mani grandi!" - "Per afferrarti meglio." -
+"Ma, nonna, che bocca spaventosa!" - "Per divorarti meglio!" E come ebbe detto queste parole, il lupo balzò dal letto
+e ingoiò la povera Cappuccetto Rosso.
+
+Poi, con la pancia bella piena, si rimise a letto, s'addormentò e incominciò a russare sonoramente. Proprio allora
+passò lì davanti il cacciatore e pensò fra s': "Come russa la vecchia! devi darle un'occhiata se ha bisogno di
+qualcosa." Entrò nella stanza e avvicinandosi al letto vide il lupo che egli cercava da tempo. Stava per puntare lo
+schioppo quando gli venne in mente che forse il lupo aveva ingoiato la nonna e che poteva ancora salvarla. Così non
+sparò, ma prese un paio di forbici e aprì la pancia del lupo addormentato. Dopo due tagli vide brillare il cappuccetto
+rosso, e dopo altri due la bambina saltò fuori gridando: "Che paura ho avuto! Era così buio nella pancia del lupo!"
+Poi venne fuori anche la nonna ancora viva. E Cappuccetto Rosso andò prendere dei gran pietroni con cui riempirono il
+ventre del lupo; quando egli si svegliò fece per correr via, ma le pietre erano così pesanti che subito cadde a terra
+e morì.
+
+Erano contenti tutti e tre: il cacciatore prese la pelle del lupo, la nonna mangiò la focaccia e bevve il vino che le
+aveva portato Cappuccetto Rosso; e Cappuccetto Rosso pensava fra s': "Mai più correrai sola nel bosco, lontano dal
+sentiero, quando la mamma te lo ha proibito."
+
+Raccontano pure che una volta Cappuccetto Rosso portava di nuovo una focaccia alla vecchia nonna, e un altro lupo le
+aveva rivolto la parola, cercando di convincerla a deviare dal sentiero Ma Cappuccetto Rosso se ne guardò bene, andò
+dritta per la sua strada e disse alla nonna di aver visto il lupo che l'aveva salutata, guardandola però con occhi
+feroci: "Se non fossimo stati sulla pubblica via, mi avrebbe mangiata!" - "Vieni," disse la nonna, "chiudiamo la porta
+perché‚ non entri." Poco dopo il lupo bussò e disse: "Apri, nonna, sono Cappuccetto Rosso, ti porto la focaccia." Ma
+quelle, zitte, non aprirono; allora il malvagio gironzolò un po' intorno alla casa e alla fine saltò sul tetto per
+aspettare che Cappuccetto Rosso, a sera, prendesse la via del ritorno: voleva seguirla di soppiatto per mangiarsela al
+buio. Ma la nonna capì le sue intenzioni. Davanti alla casa c'era un grosso trogolo di pietra, ed ella disse alla
+bambina: "Prendi il secchio, Cappuccetto Rosso; ieri ho cotto le salsicce, porta nel trogolo l'acqua dove han
+bollito." Cappuccetto Rosso portò tanta acqua, finché‚ il grosso trogolo fu ben pieno. Allora il profumo delle
+salsicce salì alle nari del lupo; egli si mise a fiutare e a sbirciare giù, e alla fine allungò tanto il collo che non
+pot‚ più trattenersi e incominciò a scivolare: scivolò dal tetto proprio nel grosso trogolo e affogò. Invece
+Cappuccetto Rosso tornò a casa tutta allegra e nessuno le fece del male.
+
+
+------------------------------------------------------
+Hansel e Gretel
+
+Davanti a un gran bosco abitava un povero taglialegna che non aveva di che sfamarsi; riusciva a stento a procurare il
+pane per sua moglie e i suoi due bambini: Hansel e Gretel. Infine giunse un tempo in cui non pot‚ più provvedere
+neanche a questo e non sapeva più a che santo votarsi. Una sera, mentre si voltava inquieto nel letto, la moglie gli
+disse: "Ascolta marito mio, domattina all'alba prendi i due bambini, dai a ciascuno un pezzetto di pane e conducili
+fuori in mezzo al bosco, nel punto dov'è più fitto; accendi loro un fuoco, poi vai via e li lasci soli laggiù. Non
+possiamo nutrirli più a lungo." - "No moglie mia" disse l'uomo "non ho cuore di abbandonare i miei cari bambini nel
+bosco, le bestie feroci li sbranerebbero subito." - "Se non lo fai," disse la donna, "moriremo tutti quanti di fame."
+E non lo lasciò in pace finché‚ egli non acconsentì.
+
+Anche i due bambini non potevano dormire per la fame, e avevano sentito quello che la madre aveva detto al padre.
+Gretel pensò che per loro fosse finita e incominciò a piangere amaramente, ma Hansel disse: "Stai zitta Gretel, non ti
+crucciare, ci penserò io." Si alzò, si mise la giacchettina, aprì l'uscio da basso e sgattaiolò fuori. La luna
+splendeva chiara e i ciottoli bianchi rilucevano come monete nuove di zecca. Hansel si chinò, ne ficcò nella taschina
+della giacca quanti pot‚ farne entrare e se ne tornò a casa. "Consolati Gretel e riposa tranquilla," disse; si rimise
+di nuovo a letto e si addormentò.
+
+Allo spuntar del giorno, ancor prima che sorgesse il sole, la madre venne e li svegliò entrambi: "Alzatevi bambini,
+vogliamo andare nel bosco; qui c'è un pezzetto di pane per ciascuno di voi, ma siate saggi e conservatelo per
+mezzogiorno." Gretel mise il pane sotto il grembiule perché‚ Hansel aveva le pietre in tasca, poi si incamminarono
+verso il bosco. Quando ebbero fatto un pezzetto di strada: Hansel si fermò e si volse a guardare la casa; così fece
+per più volte. Il padre disse: "Hansel, che cos'è che ti volti a guardare e perché‚ ti fermi? Su, muoviti!" - "Ah,
+babbo, guardo il mio gattino bianco che è sul tetto e vuole dirmi addio." Disse la madre: "Ehi, sciocco, non è il tuo
+gattino, è il primo sole che brilla sul comignolo." Hansel però non aveva guardato il gattino, ma aveva buttato ogni
+volta sulla strada uno dei sassolini lucidi che aveva in tasca.
+
+Quando giunsero in mezzo al bosco, il padre disse: "Ora raccogliete legna, bambini, voglio accendere un fuoco per non
+gelare." Hansel e Gretel raccolsero rami secchi e ne fecero un mucchietto. Poi accesero il fuoco e quando la fiamma si
+levò alta, la madre disse: "Adesso stendetevi accanto al fuoco e dormite, noi andiamo a spaccare legna nel bosco;
+aspettate fino a quando non torniamo a prendervi."
+
+Hansel e Gretel rimasero accanto al fuoco fino a mezzogiorno, poi ciascuno mangiò il proprio pezzetto di pane.
+Credevano che il padre fosse ancora nel bosco perché‚ udivano i colpi d'accetta; invece era un ramo che egli aveva
+legato a un albero e che il vento sbattéva di qua e di là. Così attesero fino a sera, ma il padre e la madre non
+tornavano e nessuno veniva a prenderli. Quando fu notte fonda Gretel incominciò a piangere, ma Hansel disse: "Aspetta
+soltanto un poco, finché‚ sorga la luna." E quando la luna sorse, prese Gretel per mano; i ciottoli brillavano come
+monete nuove di zecca e indicavano loro il cammino. Camminarono tutta la notte e quando fu mattina giunsero alla casa
+patema. Il padre si rallegrò di cuore quando vide i suoi bambini, poiché‚ gli era dispiaciuto doverli lasciare soli;
+la madre finse anch'essa di rallegrarsi, ma segretamente ne era furiosa.
+
+Non passò molto tempo e il pane tornò a mancare in casa, e Hansel e Gretel udirono una sera la madre che diceva al
+padre: "Una volta i bambini hanno ritrovato il cammino e io ho lasciato correre: ma adesso non c'è di nuovo più
+niente, rimane solo una mezza pagnotta in casa; devi condurli domani più addentro nel bosco, perché‚ non ritrovino la
+strada: per noi non c'è altro rimedio." L'uomo si sentì stringere il cuore e pensò: "Sarebbe meglio se dividessi
+l'ultimo boccone con i tuoi bambini." Ma siccome aveva già ceduto una volta, non pot‚ dire di no.
+
+Quando i bambini ebbero udito quel discorso, Hansel si alzò per raccogliere di nuovo i ciottoli, ma quando giunse alla
+porta, la madre l'aveva chiusa. Tuttavia consolò Gretel e disse: "Dormi, cara Gretel, il buon Dio ci aiuterà."
+
+Allo spuntar del giorno ebbero il loro pezzetto di pane, ancora più piccolo della volta precedente. Per strada Hansel
+lo sbriciolò in tasca; si fermava sovente e gettava una briciola per terra. "Perché‚ ti fermi sempre, Hansel, e ti
+guardi intorno?" disse il padre. "Cammina!" - "Ah! Guardo il mio piccioncino che è sul tetto e vuole dirmi addio." -
+"Sciocco," disse la madre, "non è il tuo piccione, è il primo sole che brilla sul comignolo." Ma Hansel sbriciolò
+tutto il suo pane e gettò le briciole per via.
+
+La madre li condusse ancora più addentro nel bosco, dove non erano mai stati in vita loro. Là dovevano di nuovo sedere
+accanto al fuoco e dormire e alla sera i genitori sarebbero venuti a prenderli. A mezzogiorno Gretel divise il proprio
+pane con Hansel, che aveva sparso tutto il suo per via. Ma passò mezzogiorno e passò anche la sera senza che nessuno
+venisse dai poveri bambini. Hansel consolò Gretel e disse: "Aspetta che sorga la luna: allora vedrò le briciole di
+pane che ho sparso; ci mostreranno la via di casa." La luna sorse, ma quando Hansel cercò le briciole non le trovò: i
+mille e mille uccellini del bosco le avevano viste e le avevano beccate. Hansel pensava di trovare ugualmente la via
+di casa e si portava dietro Gretel, ma ben presto si persero nel grande bosco; camminarono tutta la notte e tutto il
+giorno, poi si addormentarono per la gran stanchezza. Poi camminarono ancora tutta una giornata, ma non riuscirono a
+uscire dal bosco, e avevano tanta fame, perché‚ non avevano nient'altro da mangiare che un po' di bacche trovate per
+terra.
+
+Il terzo giorno, quand'ebbero camminato fino a mezzogiorno, giunsero a una casina fatta di pane e ricoperta di
+focaccia, con le finestre di zucchero trasparente. "Ci siederemo qui e mangeremo a sazietà," disse Hansel. "Io mangerò
+un pezzo di tetto; tu, Gretel, mangia un pezzo di finestra: è dolce." Quando Gretel incominciò a rosicchiare lo
+zucchero, una voce sottile gridò dall'interno:
+
+"Chi mi mangia la casina zuccherosa e sopraffina?"
+
+I bambini risposero:
+
+"E' il vento che piega ogni stelo, il bel bambino venuto dal cielo."
+
+E continuarono a mangiare. Gretel tirò fuori tutto un vetro rotondo e Hansel staccò un enorme pezzo di focaccia dal
+tetto. Ma d'un tratto la porta della casa si aprì e una vecchia decrepita venne fuori piano piano. Hansel e Gretel si
+spaventarono tanto che lasciarono cadere quello che avevano in mano. Ma la vecchia scosse il capo e disse: "Ah, cari
+bambini, come siete giunti fin qui? Venite dentro con me, siete i benvenuti." Prese entrambi per mano e li condusse
+nella sua casetta. Fu loro servita una buona cena, latte e frittelle, mele e noci; poi furono preparati due bei
+lettini bianchi, e Hansel e Gretel si coricarono e pensavano di essere in Paradiso.
+
+Ma la vecchia era una strega cattiva che attendeva con impazienza l'arrivo dei bambini e, per attirarli, aveva
+costruito la casetta di pane. Quando un bambino cadeva nelle sue mani, lo uccideva, lo cucinava e lo mangiava; e per
+lei quello era un giorno di festa. Era proprio felice che Hansel e Gretel fossero capitati lì. Di buon mattino, prima
+che i bambini fossero svegli, ella si alzò, andò ai loro lettini, e quando li vide riposare così dolcemente, si
+rallegrò e mormorò fra sì: "Saranno un buon bocconcino per me!" Poi afferrò Hansel e lo rinchiuse in una stia. Quando
+questi si svegliò, si trovò circondato da una grata, come un pollo da ingrassare, e poteva fare solo pochi passi. Poi
+la vecchia svegliò Gretel con uno scossone e le gridò: "Alzati, poltrona, prendi dell'acqua e vai in cucina a
+preparare qualcosa di buono; tuo fratello è là nella stia e voglio ingrassarlo per poi mangiarmelo; tu devi dargli da
+mangiare." Gretel si spaventò e pianse, ma dovette fare quello che voleva la strega.
+
+Ora ad Hansel venivano cucinati ogni giorno i cibi più squisiti, poiché‚ doveva ingrassare; Gretel invece non riceveva
+altro che gusci di gambero. Ogni giorno la vecchia veniva e diceva: "Hansel, sporgi le dita, che senta se presto sarai
+grasso." Ma Hansel le sporgeva sempre un ossicino ed ella si meravigliava che non volesse proprio ingrassare. Dopo
+quattro settimane, una sera disse a Gretel: "Vai a prendere dell'acqua, svelta; grasso o magro che sia, domani
+ammazzerò il tuo fratellino e lo cucinerò; nel frattempo mi metterò a impastare il pane da cuocere nel forno." Con il
+cuore grosso, Gretel portò l'acqua nella quale doveva essere cucinato Hansel. Dovette poi alzarsi di buon mattino,
+accendere il fuoco e appendere il paiolo pieno d'acqua. "Ora fa' attenzione," disse la strega. "Accendo il fuoco nel
+forno per cuocere il pane." Gretel era in cucina e piangeva a calde lacrime mentre pensava: "Ci avessero divorato le
+bestie feroci nel bosco! Almeno saremmo morti insieme senza dover sopportare questa pena, e io non dovrei far bollire
+l'acqua che deve servire per la morte di mio fratello. Buon Dio, aiuta noi, miseri bambini!"
+
+La vecchia gridò: "Gretel, vieni subito qui al forno!" e quando Gretel arrivò, disse: "Dai un'occhiata dentro se il
+pane è ben cotto e dorato; i miei occhi sono deboli e io non arrivo a vedere fin là. E se anche tu non ci riesci,
+siediti sull'asse: ti spingerò dentro, così potrai controllare meglio." Ma la perfida strega aveva chiamato Gretel
+perché‚ pensava, una volta spintala dentro al forno, di chiuderlo e di farla arrostire per mangiarsi pure lei. Ma Dio
+ispirò alla fanciulla un'idea, ed ella disse: "Non so proprio come fare, fammi vedere tu per prima: siediti sull'asse
+e io ti spingerò dentro." La vecchia si sedette e, siccome era leggera, Gretel pot‚ spingerla dentro, il più in fondo
+possibile; poi chiuse in fretta la porta e mise il paletto di ferro. Allora la vecchia incominciò a gridare e a
+lamentarsi nel forno bollente, ma Gretel scappò via, ed ella dovette bruciare miseramente.
+
+Gretel corse da Hansel, gli aprì la porticina e gridò: "Salta fuori, Hansel, siamo liberi!" Allora Hansel saltò fuori,
+come un uccello quando gli aprono la gabbia. Ed essi piansero di gioia e si baciarono. Tutta la casetta era piena di
+perle e di pietre preziose: essi se ne riempirono le tasche e se ne andarono in cerca della via che li riconducesse a
+casa. Ma giunsero a un gran fiume che non erano in grado di attraversare. Allora la sorellina vide un'anatrina bianca
+nuotare di qua e di là.
+
+E le gridò:
+
+"Ah, cara anatrina, prendici sul tuo dorso."
+
+Udite queste parole, l'anatrina si avvicinò nuotando e trasportò prima Gretel e poi Hansel dall'altra parte del fiume.
+Dopo breve tempo ritrovarono la loro casa: il padre si rallegrò di cuore quando li rivide, poiché‚ non aveva più avuto
+un giorno di felicità da quando i suoi bambini non c'erano più. La madre invece era morta. Ora i bambini portarono
+ricchezze a sufficienza perché‚ non avessero più bisogno di procurarsi il necessario per vivere.

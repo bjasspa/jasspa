@@ -57,30 +57,31 @@ hashstr  = \#
 
 include evers.mak
 
-ifeq "$(BIT_SIZE)" ""
-BIT_SIZE = $(shell getconf LONG_BIT)
-endif
-
-PLATFORM = macos
 TOOLKIT  = cc
+TOOLKIT_VER = $(shell $(CC) -dumpversion | cut -f 1 -d .)
+
 ifneq "$(ARCHITEC)" ""
 else ifeq "$(shell uname -p)" "i386"
 ARCHITEC = intel
 else
 ARCHITEC = apple
 endif
+ifeq "$(BIT_SIZE)" ""
+BIT_SIZE = $(shell getconf LONG_BIT)
+endif
+
+PLATFORM = macos
+PLATFORM_VER = $(shell uname -r | cut -f 1 -d .)
+
 MAKEFILE = $(PLATFORM)$(TOOLKIT)
 ifeq "$(BPRF)" "1"
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)p
+BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)p
 else
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)$(TOOLKIT)
+BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
 endif
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
-
-TOOLKIT_VER = $(shell $(CC) -dumpversion | cut -f 1 -d .)
-PLATFORM_VER = $(shell uname -r | cut -f 1 -d .)
 
 CCDEFS   = -m$(BIT_SIZE) -D_MACOS -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -Wall -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY)
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wno-uninitialized
@@ -98,11 +99,15 @@ CCFLAGS  = $(CCFLAGSD)
 LDFLAGS  = $(LDFLAGSD)
 ARFLAGS  = $(ARFLAGSD)
 STRIP    = - echo No strip - debug 
+INSTDIR  = 
+INSTPRG  = - echo No install - debug 
 else
 BOUTDIR  = $(OUTDIRR)
 CCFLAGS  = $(CCFLAGSR)
 LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
+INSTDIR  = ../bin/$(BUILDID)
+INSTPRG  = cp
 endif
 
 ifeq "$(BCOR)" "ne"
@@ -226,15 +231,19 @@ $(OUTDIR)/%.o : %.c
 
 all: $(PRGLIBS) $(OUTDIR)/$(PRGFILE)
 
-$(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
+$(OUTDIR)/$(PRGFILE): $(OUTDIR) $(INSTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(RM) $@
 	$(LD) $(LDDEFS) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS) $(BTYP_LIB) $(LDLIBS)
 	$(STRIP) $@
+	$(INSTPRG) $@ $(INSTDIR)
 
 $(PRGOBJS): $(PRGHDRS)
 
 $(OUTDIR):
 	-mkdir $(OUTDIR)
+
+$(INSTDIR):
+	-mkdir $(INSTDIR)
 
 $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A):
 	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG)

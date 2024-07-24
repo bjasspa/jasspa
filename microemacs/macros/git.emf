@@ -109,8 +109,8 @@ set-variable .git.cflags &lins .git.cflags -1 "Bs*!$"
 set-variable .git.cdefs  &lins .git.cdefs  -1 "||"
 ; Command 2 - Pull
 set-variable .git.cnames &lins .git.cnames -1 "Pull"
-set-variable .git.cflags &lins .git.cflags -1 "Bs*!$"
-set-variable .git.cdefs  &lins .git.cdefs  -1 "||"
+set-variable .git.cflags &lins .git.cflags -1 "BTs*!$"
+set-variable .git.cdefs  &lins .git.cdefs  -1 "||0|"
 ; Command 3 - Push
 set-variable .git.cnames &lins .git.cnames -1 "Push"
 set-variable .git.cflags &lins .git.cflags -1 "Bs*!$"
@@ -408,7 +408,10 @@ set-variable .git-revision-op.lbl7 "|Head \Hto Master|\HMaster to Local|Head to 
     !if &not &sin #l1 "DSs*!$@"
       set-variable #l2 &mul #l0 100
       osd .osd.git-osd &inc #l2 1 ""
-      !if &seq #l1 "B"
+      !if &seq #l1 "A"
+        osd .osd.git-osd &inc #l2 1 "fh" "    "
+        osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HApply stash after pull" #l0 git-osd-cbc
+      !elif &seq #l1 "B"
         osd .osd.git-osd &inc #l2 1 "Sfh" "    \HBranch:     " &add #l2 1
         osd .osd.git-osd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 40 1 "" 1 git-osd-gstr
         osd .osd.git-osd &inc #l2 1 "f"  "    "
@@ -461,6 +464,9 @@ set-variable .git-revision-op.lbl7 "|Head \Hto Master|\HMaster to Local|Head to 
       !elif &seq #l1 "r"
         osd .osd.git-osd &inc #l2 1 "fh" "    "
         osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Refresh directory \Hlisting" #l0 git-osd-cbc
+      !elif &seq #l1 "T"
+        osd .osd.git-osd &inc #l2 1 "fh" "    "
+        osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HStash local changes first" #l0 git-osd-cbc
       !elif &seq #l1 "t"
         osd .osd.git-osd &inc #l2 1 "fh" "    "
         osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HTrack the branch" #l0 git-osd-cbc
@@ -796,6 +802,28 @@ define-macro git-fetch
 
 define-macro git-pull
   2 git-osd
+  !if &lget &set #l9 .git-osd.values 2
+    set-variable #l0 $buffer-bname
+    !force 0 delete-buffer "*git-pll-s1*"
+    6 pipe-shell-command &set .uc &spr "%s stash -- %s" .git.com .git-dirlst-detect.ld "*git-pll-s1*"
+    set-variable #l3 $result
+    find-buffer "*git-pll-s1*"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    copy-region
+    !force 0 delete-buffer $buffer-bname
+    find-buffer "*git-console*"
+    end-of-buffer
+    -1 buffer-mode "view"
+    !iif &gre $window-line 1  insert-newline
+    yank
+    -1 yank
+    insert-string &spr "\n[**** Git Stash %s ****]" &con #l3 &cat "exited with code " #l3 "completed successfully"
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    find-buffer #l0
+  !endif
   !if &len &set #l2 .git.cstrv1
     !iif &sin " " #l2 set-variable #l2 &spr "\"%s\"" #l2
     set-variable #l2 &spr "%s %s" .git.rep #l2

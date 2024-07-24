@@ -32,10 +32,14 @@ set-variable .help.purl "http://demo.maxinity.co.uk/MicroEmacs/"
       !abort
     !endif
   !endif
-  set-variable #l0 0
+  !if &band @# 2
+    set-variable #l3 &spr "^%s-%s-%s-%s-%s-\\(%s\\)?-\\(%s\\)?\t\\(\\d+\\)\t\\([_\\d]+\\)\t\\(.*\\)" #l1 &lget $build 1 &lget $build 2 &lget $build 3 &lget $build 4 &lget $build 5 &lget $build 6
+  !else
+    set-variable #l3 &spr "^\\(%s\\)\\(\t\\)\\(\\d+\\)\t\\([_\\d]+\\)\t\\(.*\\)" #l1
+  !endif
   beginning-of-buffer
   !repeat
-    search-buffer "me" &spr "^%s\t\\(\\d+\\)\t\\([_\\d]+\\)\t\\(.*\\)" #l1
+    search-buffer "me" #l3 
     !if &not $status
       !if &gre $window-line 1
         ml-write &spr "Error: Failed to find a version of '%s' compatible with this version of MicroEmacs, try upgrading" #l1
@@ -44,13 +48,13 @@ set-variable .help.purl "http://demo.maxinity.co.uk/MicroEmacs/"
       !endif
       !abort
     !endif
-    !if &sgre &set #l8 @s1 $version
-    !elif &sgre @s2 $version
+    !if &sgre &set #l8 @s3 $version
+    !elif &sgre @s4 $version
       !break
     !endif
   !done
-  set-variable #l3 @s3
-  !if &not &gre @s1 #l2
+  set-variable #l3 @s5
+  !if &not &gre @s3 #l2
     ml-write &spr "MicroEmacs Package %s: Up-to-date" #l1
     !return
   !endif
@@ -69,6 +73,14 @@ set-variable .help.purl "http://demo.maxinity.co.uk/MicroEmacs/"
   !endif
   set-variable #l6 &set #l7 0
   !force 0xf7 copy-file &spr "tfs://%s?/macros/.*" #l4 #l5
+  !if &not $status
+    set-variable #l7 &add #l7 1
+  !else
+    set-variable #l6 &add &add #l6 &lget $result 1 &lget $result 3
+    set-variable #l7 &add &add #l7 &lget $result 2 &lget $result 4
+  !endif
+  !iif &not &seq &stat a &cat #l5 "../" &set #l9 &stat a &cat $user-path "../"  set-variable #l5 $user-path
+  !force 0xf7 copy-file &spr "tfs://%s?/bin/.*" #l4 &spr "file:%sbin/" #l9
   !if &not $status
     set-variable #l7 &add #l7 1
   !else
