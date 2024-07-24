@@ -651,7 +651,7 @@ pcdEnumFontFamiliesCallback (ENUMLOGFONT *lpelf, NEWTEXTMETRIC *lpntm, int fontT
     if ((fontType & (DEVICE_FONTTYPE|TRUETYPE_FONTTYPE)) &&
         (lpelf->elfLogFont.lfPitchAndFamily & FIXED_PITCH))
     {
-        DWORD index;
+        LRESULT index;
 
         index = SendMessage((HWND) lParam,CB_ADDSTRING,0,(LPARAM) lpelf->elfLogFont.lfFaceName);
         if ((index >= 0) &&

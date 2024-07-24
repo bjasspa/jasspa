@@ -3181,12 +3181,12 @@ test_do_keydown:
         case VK_F7:
         case VK_F8:
         case VK_F9:
-            cc = SKEY_f3 + (wParam - VK_F3);
+            cc = SKEY_f3 + ((meUShort) (wParam - VK_F3));
             goto do_keydown;
         case VK_F10:
         case VK_F11:
         case VK_F12:
-            cc = SKEY_f10 + (wParam - VK_F10);
+            cc = SKEY_f10 + ((meUShort) (wParam - VK_F10));
 do_keydown:
             cc = (ME_SPECIAL | ttmodif | cc);
             /* Add the character to the typeahead buffer.
@@ -3235,7 +3235,7 @@ do_keydown:
                 if((wParam == '6') && (ttmodif == (ME_CONTROL|ME_SHIFT)))
                     /* Windows also sends a WM_CHAR (0x1e) message for a C-S-6 (presumably because this equates to the special ^^ (0x1e) char) so don't add this one */ 
                     return meFALSE;
-                cc  = (ttmodif & (ME_CONTROL|ME_ALT)) | ((ttmodif & ME_SHIFT) ? shiftDigits[wParam - '0'] : wParam);
+                cc  = (ttmodif & (ME_CONTROL|ME_ALT)) | ((ttmodif & ME_SHIFT) ? shiftDigits[wParam - '0'] : ((meUShort) wParam));
             }
             else if((lParam & (1<<29)) == 0)  /* Get out quickly - this is fastest check */
             {
@@ -3301,10 +3301,10 @@ do_keydown:
                         case 0x5d:
                             /* C-~ */
                         case 0x5e:
-                            cc = (~ME_SHIFT & ttmodif) | wParam | 0x20;
+                            cc = (~ME_SHIFT & ttmodif) | ((meUShort) wParam) | 0x20;
                             break;
                         case 0x40:
-                            cc = (~ME_SHIFT & ttmodif) | wParam;
+                            cc = (~ME_SHIFT & ttmodif) | ((meUShort) wParam);
                             break;
                             /* C-: */
                         case 0x3a:
@@ -3314,7 +3314,7 @@ do_keydown:
                         case 0x3f:
                             /* C-< */
                         case 0x3c:
-                            cc = (~ME_SHIFT & ttmodif) | wParam; break;
+                            cc = (~ME_SHIFT & ttmodif) | ((meUShort) wParam); break;
                         default:
                             return meFALSE;
                         }
@@ -3324,9 +3324,9 @@ do_keydown:
                 else if((wParam >= VK_NUMPAD0) && (wParam <= VK_DIVIDE))
                 {
                     if(wParam <= VK_NUMPAD9)
-                        cc  = ttmodif | ('0' + wParam - VK_NUMPAD0);
+                        cc  = ttmodif | ((meUShort) ('0' + wParam - VK_NUMPAD0));
                     else
-                        cc  = ttmodif | ('*' + wParam - VK_MULTIPLY);
+                        cc  = ttmodif | ((meUShort) ('*' + wParam - VK_MULTIPLY));
                     
                 }
                 else if(wParam == VK_TAB)
@@ -3339,11 +3339,11 @@ do_keydown:
             }
             else if((wParam >= 'A') && (wParam <= 'Z'))
             {
-                cc  = ttmodif | toLower(wParam);
+                cc  = ttmodif | toLower(((meUShort) wParam));
             }
             else if((wParam >= VK_NUMPAD0) && (wParam <= VK_NUMPAD9))
             {
-                cc  = ttmodif | ME_SPECIAL | ('0' + wParam - VK_NUMPAD0);
+                cc  = ttmodif | ME_SPECIAL | ((meUShort) ('0' + wParam - VK_NUMPAD0));
             }
             else if(wParam == VK_MULTIPLY)
                 cc  = ttmodif | '*' /* ME_SPECIAL | SKEY_kp_multiply*/;
@@ -3408,13 +3408,13 @@ do_keydown:
                     case 0x5c:             /* A-C-\ */
                     case 0x5d:             /* A-C-} */
                     case 0x5e:             /* A-C-~ */
-                        cc = (~ME_SHIFT & ttmodif) | wParam | 0x20;
+                        cc = (~ME_SHIFT & ttmodif) | ((meUShort) wParam) | 0x20;
                         break;
                     case 0x40:
-                        cc = (~ME_SHIFT & ttmodif) | wParam;
+                        cc = (~ME_SHIFT & ttmodif) | ((meUShort) wParam);
                         break;
                     default:
-                        cc = (~ME_SHIFT & ttmodif) | wParam;
+                        cc = (~ME_SHIFT & ttmodif) | ((meUShort) wParam);
                         break;
                     }
                 }
@@ -3499,7 +3499,7 @@ do_keydown:
             }
 #endif
         }
-        cc = wParam;
+        cc = (meUShort) wParam;
         if(cc == 0x20)
         {
             if((ttmodif == ME_ALT) && !(meSystemCfg & meSYSTEM_CTCHASPC))
