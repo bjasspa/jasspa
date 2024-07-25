@@ -172,7 +172,7 @@ OPENSSLV = -1_1$(OSSL_LIB)
 !MESSAGE WARNING: No OpenSSL support found, https support will be disabled.
 !MESSAGE
 !ELSE
-OPENSSLDEFS = /DMEOPT_OPENSSL=1 /I$(OPENSSLP)\include /D_OPENSSLLNM=libssl$(OPENSSLV) /D_OPENSSLCNM=libcrypto$(OPENSSLV)
+OPENSSLDEFS = /DMEOPT_OPENSSL=1 /I$(OPENSSLP)\include /D_OPENSSLLNM=libssl$(OPENSSLV).dll /D_OPENSSLCNM=libcrypto$(OPENSSLV).dll
 OPENSSLLIBS = $(OPENSSLP)\lib\libssl.lib $(OPENSSLP)\lib\libcrypto.lib crypt32.lib
 !ENDIF
 BCOR     = me
