@@ -61,7 +61,8 @@ BIT_SIZE = 32
 endif
 
 PLATFORM = windows
-ifeq "$(TOOLPREF)" ""
+ifneq "$(PLATFORM_VER)" ""
+else ifeq "$(TOOLPREF)" ""
 WINDOWS_VER = $(subst ., ,$(shell ver))
 WINDOWS_MNV = $(word 5,$(WINDOWS_VER))
 $(eval WINDOWS_MNR := $$$(WINDOWS_MNV))
@@ -74,9 +75,9 @@ include evers.mak
 
 MAKEFILE = win$(TOOLKIT)
 ifeq "$(BPRF)" "1"
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)p
+BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)p
 else
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
+BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
 endif
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
@@ -106,8 +107,12 @@ BOUTDIR  = $(OUTDIRR)
 CCFLAGS  = $(CCFLAGSR)
 LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
-INSTDIR  = ../bin/$(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)
+INSTDIR  = ../bin/$(BUILDID)
+ifeq "$(TOOLPREF)" ""
+INSTPRG  = copy
+else
 INSTPRG  = cp
+endif
 endif
 
 ifeq "$(BCOR)" "ne"
@@ -118,21 +123,28 @@ LDLIBS   = $(LDLIBSB)
 
 else
 
-ifneq "$(OPENSSLP)" ""
-else ifneq "$(wildcard $(TRDPARTY)/openssl-3.1/x86/include/openssl/ssl.h)" ""
-OPENSSLP = $(TRDPARTY)/openssl-3.1/x86
-OPENSSLV = -3_1
-else ifneq "$(wildcard $(TRDPARTY)/openssl-3/x86/include/openssl/ssl.h)" ""
-OPENSSLP = $(TRDPARTY)/openssl-3/x86
-OPENSSLV = -3
-else ifneq "$(wildcard $(TRDPARTY)/openssl-1.1/x86/include/openssl/ssl.h)" ""
-OPENSSLP = $(TRDPARTY)/openssl-1.1/x86
-OPENSSLV = -1_1
+ifeq "$(OPENSSLP)" ""
+ifeq "$(BIT_SIZE)" "64"
+OSSL_DIR = x64
+OSSL_LIB = -x64
+else
+OSSL_DIR = x86
+endif
+ifneq "$(wildcard $(TRDPARTY)/openssl-3.1/$(OSSL_DIR)/include/openssl/ssl.h)" ""
+OPENSSLP = $(TRDPARTY)/openssl-3.1/$(OSSL_DIR)
+OPENSSLV = -3_1$(OSSL_LIB)
+else ifneq "$(wildcard $(TRDPARTY)/openssl-3/$(OSSL_DIR)/include/openssl/ssl.h)" ""
+OPENSSLP = $(TRDPARTY)/openssl-3/$(OSSL_DIR)
+OPENSSLV = -3$(OSSL_LIB)
+else ifneq "$(wildcard $(TRDPARTY)/openssl-1.1/$(OSSL_DIR)/include/openssl/ssl.h)" ""
+OPENSSLP = $(TRDPARTY)/openssl-1.1/$(OSSL_DIR)
+OPENSSLV = -1_1$(OSSL_LIB)
+endif
 endif
 ifeq "$(OPENSSLP)" ""
 $(warning WARNING: No OpenSSL support found, https support will be disabled.)
 else
-OPENSSLDEFS = -DMEOPT_OPENSSL=1 -I$(OPENSSLP)/include -D_OPENSSLLNM=libssl$(OPENSSLV) -D_OPENSSLCNM=libcrypto$(OPENSSLV)
+OPENSSLDEFS = -DMEOPT_OPENSSL=1 -I$(OPENSSLP)/include -D_OPENSSLLNM=libssl$(OPENSSLV).dll -D_OPENSSLCNM=libcrypto$(OPENSSLV).dll
 OPENSSLLIBS = $(OPENSSLP)/lib/libssl.lib $(OPENSSLP)/lib/libcrypto.lib -lcrypt32
 endif
 BCOR     = me
@@ -191,7 +203,11 @@ $(OUTDIR)/$(PRGFILE): $(OUTDIR) $(INSTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(RM) $@
 	$(LD) $(LDDEFS) $(LDPROF) $(BTYP_LDF) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS) $(LDLIBS)
 	$(STRIP) $@
+ifeq "$(TOOLPREF)" ""
+	$(INSTPRG) $(subst /,\\,$@ $(INSTDIR))
+else
 	$(INSTPRG) $@ $(INSTDIR)
+endif
 
 $(PRGOBJS): $(PRGHDRS)
 
@@ -199,21 +215,25 @@ $(OUTDIR):
 	-mkdir $(OUTDIR)
 
 $(INSTDIR):
+ifeq "$(TOOLPREF)" ""
+	-mkdir $(subst /,\\,$(INSTDIR))
+else
 	-mkdir $(INSTDIR)
+endif
 
 $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A):
-	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) MK=$(MK)
+	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) PLATFORM_VER=$(PLATFORM_VER) MK=$(MK)
 
 $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A):
-	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) MK=$(MK)
+	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) PLATFORM_VER=$(PLATFORM_VER) MK=$(MK)
 
 clean:
 	$(RMDIR) $(OUTDIR)
-	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak clean BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) MK=$(MK)
-	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak clean BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) MK=$(MK)
+	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak clean BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) PLATFORM_VER=$(PLATFORM_VER) MK=$(MK)
+	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak clean BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) PLATFORM_VER=$(PLATFORM_VER) MK=$(MK)
 
 spotless: clean
 	$(RM) *~
 	$(RM) tags
-	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak spotless BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) MK=$(MK)
-	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak spotless BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) MK=$(MK)
+	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak spotless BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) PLATFORM_VER=$(PLATFORM_VER) MK=$(MK)
+	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak spotless BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) PLATFORM_VER=$(PLATFORM_VER) MK=$(MK)

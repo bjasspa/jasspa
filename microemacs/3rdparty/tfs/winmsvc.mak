@@ -40,14 +40,36 @@ BIT_SIZE = 32
 !ENDIF
 
 PLATFORM = windows
+!IF "$(PLATFORM_VER)" == ""
+PLATFORM_VER = -1
+!IF [ver | findstr Version > .windows-ver.tmp] == 0
+WIN_VER = \
+!INCLUDE .windows-ver.tmp
+!IF [del .windows-ver.tmp] == 0
+!ENDIF
+!IF "$(WIN_VER:Version 10.0=)" != "$(WIN_VER)"
+PLATFORM_VER = 100
+!ELSEIF "$(WIN_VER:Version 6.3=)" != "$(WIN_VER)"
+PLATFORM_VER = 63
+!ELSEIF "$(WIN_VER:Version 6.2=)" != "$(WIN_VER)"
+PLATFORM_VER = 62
+!ELSEIF "$(WIN_VER:Version 6.1=)" != "$(WIN_VER)"
+PLATFORM_VER = 61
+!ELSEIF "$(WIN_VER:Version 6.=)" != "$(WIN_VER)"
+PLATFORM_VER = 60
+!ELSEIF "$(WIN_VER:Version 5.=)" != "$(WIN_VER)"
+PLATFORM_VER = 51
+!ENDIF
+!ENDIF
+!ENDIF
 
 MAKEFILE = win$(TOOLKIT)
 !IF "$(LSTT)" == "1"
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)s
+BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)s
 CCLSTT   = /MT
 LDLSTT   = /NODEFAULTLIB:msvcrt.lib
 !ELSE
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
+BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
 CCLSTT   = /MD
 LDLSTT   = 
 !ENDIF
@@ -81,7 +103,7 @@ OUTDIR   = $(OUTDIRR)
 CCFLAGS  = $(CCFLAGSR)
 LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
-INSTDIR  = ..\..\bin\$(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)
+INSTDIR  = ..\..\bin\$(BUILDID)
 INSTPRG  = copy
 !ENDIF
 
@@ -115,6 +137,7 @@ $(OUTDIR)\$(PRGFILE): $(OUTDIR) $(INSTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(RM) $@
 	$(LD) $(LDDEFS) $(LDFLAGS) /PDB:"$(OUTDIR)\$(PRGNAME).pdb" /MANIFESTFILE:"$@.intermediate.manifest" /OUT:"$@" $(PRGOBJS) $(PRGLIBS)
 	$(MT) -outputresource:"$@;#2" -manifest $@.intermediate.manifest
+	$(INSTPRG) $@ $(INSTDIR)
 
 $(PRGOBJS): $(PRGHDRS)
 

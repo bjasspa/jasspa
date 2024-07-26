@@ -44,19 +44,28 @@ BIT_SIZE = 32
 endif
 
 PLATFORM = windows
+ifneq "$(PLATFORM_VER)" ""
+else ifeq "$(TOOLPREF)" ""
+WINDOWS_VER = $(subst ., ,$(shell ver))
+WINDOWS_MNV = $(word 5,$(WINDOWS_VER))
+$(eval WINDOWS_MNR := $$$(WINDOWS_MNV))
+PLATFORM_VER = $(word 4,$(WINDOWS_VER))$(subst $(WINDOWS_MNR),,$(WINDOWS_MNV))
+else
+PLATFORM_VER = 0
+endif
 
 MAKEFILE = win$(TOOLKIT)
 ifeq "$(BPRF)" "1"
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)p
+BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)p
 else
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
+BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
 endif
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
 
 CCDEFS   = -m$(BIT_SIZE) -D_MINGW -D_$(BIT_SIZE)BIT -Wall -I$(TRDPARTY)/zlib
-CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wno-uninitialized
+CCFLAGSR = -O3 -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g
 LDDEFS   = -m$(BIT_SIZE) 
 LDFLAGSR = -O3 -flto
@@ -78,8 +87,12 @@ OUTDIR   = $(OUTDIRR)
 CCFLAGS  = $(CCFLAGSR)
 LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
-INSTDIR  = ../../bin/$(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)
+INSTDIR  = ../../bin/$(BUILDID)
+ifeq "$(TOOLPREF)" ""
+INSTPRG  = copy
+else
 INSTPRG  = cp
+endif
 endif
 
 ifeq "$(BPRF)" "1"
@@ -121,7 +134,11 @@ $(OUTDIR)/$(PRGFILE): $(OUTDIR) $(INSTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(RM) $@
 	$(LD) $(LDFLAGS) $(LDPROF) -o $@ $(PRGOBJS) $(PRGLIBS)
 	$(STRIP) $@
+ifeq "$(TOOLPREF)" ""
+	$(INSTPRG) $(subst /,\\,$@ $(INSTDIR))
+else
 	$(INSTPRG) $@ $(INSTDIR)
+endif
 
 $(PRGOBJS): $(PRGHDRS)
 
@@ -129,10 +146,15 @@ $(OUTDIR):
 	-mkdir $(OUTDIR)
 
 $(INSTDIR):
+ifeq "$(TOOLPREF)" ""
+	-mkdir $(subst /,\\,$(INSTDIR))
+else
 	-mkdir $(INSTDIR)
+endif
 
 $(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A):
-	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE)
+	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) PLATFORM_VER=$(PLATFORM_VER)
+
 
 clean:
 	$(RMDIR) $(OUTDIRD)

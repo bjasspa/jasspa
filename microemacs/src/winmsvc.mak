@@ -79,18 +79,18 @@ WIN_VER = \
 !INCLUDE .windows-ver.tmp
 !IF [del .windows-ver.tmp] == 0
 !ENDIF
-!IF "$(WIN_VER:Version 10.2=)" != "$(WIN_VER)"
-PLATFORM_VER = 102
-!ELSEIF "$(WIN_VER:Version 10.0=)" != "$(WIN_VER)"
+!IF "$(WIN_VER:Version 10.0=)" != "$(WIN_VER)"
 PLATFORM_VER = 100
-!ELSEIF "$(WIN_VER:Version 6.3.=)" != "$(WIN_VER)"
+!ELSEIF "$(WIN_VER:Version 6.3=)" != "$(WIN_VER)"
 PLATFORM_VER = 63
-!ELSEIF "$(WIN_VER:Version 6.2.=)" != "$(WIN_VER)"
+!ELSEIF "$(WIN_VER:Version 6.2=)" != "$(WIN_VER)"
 PLATFORM_VER = 62
-!ELSEIF "$(WIN_VER:Version 6.1.=)" != "$(WIN_VER)"
+!ELSEIF "$(WIN_VER:Version 6.1=)" != "$(WIN_VER)"
 PLATFORM_VER = 61
-!ELSEIF "$(WIN_VER:Version 6.0.=)" != "$(WIN_VER)"
+!ELSEIF "$(WIN_VER:Version 6.=)" != "$(WIN_VER)"
 PLATFORM_VER = 60
+!ELSEIF "$(WIN_VER:Version 5.=)" != "$(WIN_VER)"
+PLATFORM_VER = 51
 !ENDIF
 !ENDIF
 !ENDIF
@@ -99,11 +99,11 @@ include evers.mak
 
 MAKEFILE = win$(TOOLKIT)
 !IF "$(LSTT)" == "1"
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)s
+BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)s
 CCLSTT   = /MT
 LDLSTT   = /NODEFAULTLIB:msvcrt.lib
 !ELSE
-BUILDID  = $(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
+BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
 CCLSTT   = /MD
 LDLSTT   = 
 !ENDIF
@@ -138,7 +138,7 @@ BOUTDIR  = $(OUTDIRR)
 CCFLAGS  = $(CCFLAGSR)
 LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
-INSTDIR  = ..\bin\$(PLATFORM)-$(ARCHITEC)$(BIT_SIZE)
+INSTDIR  = ..\bin\$(BUILDID)
 INSTPRG  = copy
 !ENDIF
 
@@ -150,22 +150,29 @@ LDLIBS   = $(LDLIBSB)
 
 !ELSE
 
-!IF "$(OPENSSLP)" != ""
-!ELSEIF EXISTS($(TRDPARTY)\openssl-3.1\x86\include\openssl\ssl.h)
-OPENSSLP = $(TRDPARTY)\openssl-3.1\x86
-OPENSSLV = -3_1
-!ELSEIF EXISTS($(TRDPARTY)\openssl-3\x86\include\openssl\ssl.h)
-OPENSSLP = $(TRDPARTY)\openssl-3\x86
-OPENSSLV = -3
-!ELSEIF EXISTS($(TRDPARTY)\openssl-1.1\x86\include\openssl\ssl.h)
-OPENSSLP = $(TRDPARTY)\openssl-1.1\x86
-OPENSSLV = -1_1
+!IF "$(OPENSSLP)" == ""
+!IF "$(BIT_SIZE)" == "64"
+OSSL_DIR = x64
+OSSL_LIB = -x64
+!ELSE
+OSSL_DIR = x86
+!ENDIF
+!IF EXISTS($(TRDPARTY)\openssl-3.1\$(OSSL_DIR)\include\openssl\ssl.h)
+OPENSSLP = $(TRDPARTY)\openssl-3.1\$(OSSL_DIR)
+OPENSSLV = -3_1$(OSSL_LIB)
+!ELSEIF EXISTS($(TRDPARTY)\openssl-3\$(OSSL_DIR)\include\openssl\ssl.h)
+OPENSSLP = $(TRDPARTY)\openssl-3\$(OSSL_DIR)
+OPENSSLV = -3$(OSSL_LIB)
+!ELSEIF EXISTS($(TRDPARTY)\openssl-1.1\$(OSSL_DIR)\include\openssl\ssl.h)
+OPENSSLP = $(TRDPARTY)\openssl-1.1\$(OSSL_DIR)
+OPENSSLV = -1_1$(OSSL_LIB)
+!ENDIF
 !ENDIF
 !IF "$(OPENSSLP)" == ""
 !MESSAGE WARNING: No OpenSSL support found, https support will be disabled.
 !MESSAGE
 !ELSE
-OPENSSLDEFS = /DMEOPT_OPENSSL=1 /I$(OPENSSLP)\include /D_OPENSSLLNM=libssl$(OPENSSLV) /D_OPENSSLCNM=libcrypto$(OPENSSLV)
+OPENSSLDEFS = /DMEOPT_OPENSSL=1 /I$(OPENSSLP)\include /D_OPENSSLLNM=libssl$(OPENSSLV).dll /D_OPENSSLCNM=libcrypto$(OPENSSLV).dll
 OPENSSLLIBS = $(OPENSSLP)\lib\libssl.lib $(OPENSSLP)\lib\libcrypto.lib crypt32.lib
 !ENDIF
 BCOR     = me

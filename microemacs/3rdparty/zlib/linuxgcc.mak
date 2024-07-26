@@ -54,7 +54,7 @@ OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
 
 CCDEFS   = -m$(BIT_SIZE) -D_LINUX -D_$(BIT_SIZE)BIT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -Wall -I.
-CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wno-uninitialized
+CCFLAGSR = -O3 -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g
 LDDEFS   = -m$(BIT_SIZE)
 LDFLAGSR = -O3 -flto
