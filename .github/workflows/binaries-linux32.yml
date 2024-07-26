@@ -19,9 +19,6 @@ jobs:
      
     - name: Compile nroff tools
       run: |
-        make --version
-        export
-        ps -p $$
         make
       working-directory: ./nroff
 
@@ -37,7 +34,7 @@ jobs:
 
     - name: Generate docs
       run: |
-        export PATH=`pwd`/microemacs/src/.linux32gcc-release-mec:`pwd`/nroff/bin/linux:$PATH
+        export PATH=`pwd`/microemacs/bin/linux5-intel64-gcc9:`pwd`/nroff/bin/linux:$PATH
         export MEPATH=`pwd`/microemacs/macros
         cd ./microemacs/doc
         make me.ehf

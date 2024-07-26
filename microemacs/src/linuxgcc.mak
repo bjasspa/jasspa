@@ -97,12 +97,8 @@ PRGLIBS  =
 else
 
 ifeq ($(OPENSSLP),)
-TEST1 = $(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <openssl/ssl.h>\nint main(){return 0;}' > _t1.c)
-$(warning TEST1a: $(TEST1).)
-TEST1 = $(shell $(LD) $(LDDEFS) $(LDFLAGS) -o /dev/null _t1.c > /dev/null 2> /dev/null ; echo $$? )
-$(warning TEST1b: $(TEST1).)
-
-ifeq ($(shell $(LD) $(LDDEFS) $(LDFLAGS) -o /dev/null _t1.c > /dev/null 2> /dev/null ; echo $$? ), 0)
+$(warning WARNING: HERE0.)
+ifeq ($(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <openssl/ssl.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null > /dev/null 2> /dev/null - ; echo $$? ), 0)
 $(warning WARNING: HERE1.)
 OPENSSLP = 1
 else
