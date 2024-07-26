@@ -95,11 +95,11 @@ PRGLIBS  =
 
 else
 
-ifeq "$(OPENSSLP)" ""
-ifeq "$(shell echo '#include <stdio.h>\n#include <openssl/ssl.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null > /dev/null 2> /dev/null - ; echo $$? )" "0"
+ifeq ($(OPENSSLP),)
+ifeq ($(shell echo '#include <stdio.h>\n#include <openssl/ssl.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null > /dev/null 2> /dev/null - ; echo $$? ), 0)
 OPENSSLP = 1
 else
-ifeq "$(shell echo '#include <stdio.h>\n#include <openssl/ssl.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -I/usr/local/opt/openssl/include -o /dev/null > /dev/null 2> /dev/null - ; echo $$? )" "0"
+ifeq ($(shell echo '#include <stdio.h>\n#include <openssl/ssl.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -I/usr/local/opt/openssl/include -o /dev/null > /dev/null 2> /dev/null - ; echo $$? ), 0)
 OPENSSLP = 1 -I/usr/local/opt/openssl/include
 endif
 endif
