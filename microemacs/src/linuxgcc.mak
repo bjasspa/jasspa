@@ -32,6 +32,7 @@
 #
 ##############################################################################
 
+HASH     = \#
 A        = .a
 EXE      = 
 CC       = gcc
@@ -96,7 +97,7 @@ PRGLIBS  =
 else
 
 ifeq ($(OPENSSLP),)
-TEST1 = $(shell echo '#include <stdio.h>\n#include <openssl/ssl.h>\nint main(){return 0;}' > _t1.c)
+TEST1 = $(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <openssl/ssl.h>\nint main(){return 0;}' > _t1.c)
 $(warning TEST1a: $(TEST1).)
 TEST1 = $(shell $(LD) $(LDDEFS) $(LDFLAGS) -o /dev/null _t1.c > /dev/null 2> /dev/null ; echo $$? )
 $(warning TEST1b: $(TEST1).)
@@ -106,7 +107,7 @@ $(warning WARNING: HERE1.)
 OPENSSLP = 1
 else
 $(warning WARNING: HERE2.)
-ifeq ($(shell echo '#include <stdio.h>\n#include <openssl/ssl.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -I/usr/local/opt/openssl/include -o /dev/null > /dev/null 2> /dev/null - ; echo $$? ), 0)
+ifeq ($(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <openssl/ssl.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -I/usr/local/opt/openssl/include -o /dev/null > /dev/null 2> /dev/null - ; echo $$? ), 0)
 OPENSSLP = 1 -I/usr/local/opt/openssl/include
 endif
 endif
@@ -133,7 +134,7 @@ endif
 
 ifneq (,$(findstring w,$(BTYP)))
 
-ifeq "$(shell echo '#include <stdio.h>\n#include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lX11 > /dev/null 2> /dev/null - ; echo $$? )" "0"
+ifeq "$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lX11 > /dev/null 2> /dev/null - ; echo $$? )" "0"
 
 X11_LIBS = -lX11
 
@@ -160,7 +161,7 @@ endif
 ifneq "$(WINDOW_LIBS)" ""
 $(warning WARNING: No X11 support found, forcing build type to console only.)
 BTYP = c
-else ifeq "$(shell echo '#include <stdio.h>\n#include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null $(X11_LIBS) -lXpm > /dev/null 2> /dev/null - ; echo $$? )" "0"
+else ifeq "$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null $(X11_LIBS) -lXpm > /dev/null 2> /dev/null - ; echo $$? )" "0"
 WINDOW_DEFS = -D_XPM
 WINDOW_LIBS = $(X11_LIBS) -lXpm
 else
@@ -173,7 +174,7 @@ ifneq "$(BTYP)" "w"
 #
 # Preference now is to use "ncurses" rather than "termcap", figure out if ncurses is avaiable or if we must fall back to termcap.
 #
-ifeq "$(shell echo '#include <stdio.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lncurses > /dev/null 2> /dev/null - ; echo $$? )" "0"
+ifeq "$(shell echo '$(HASH)include <stdio.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lncurses > /dev/null 2> /dev/null - ; echo $$? )" "0"
 CONSOLE_LIBS  = -lncurses
 CONSOLE_DEFS  = -D_USE_NCURSES
 else
