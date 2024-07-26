@@ -4,6 +4,10 @@ on:
   workflow_dispatch:
     branches: [ master ]
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
     runs-on: ubuntu-20.04
@@ -17,6 +21,7 @@ jobs:
       run: |
         make --version
         export
+        ps -p $$
         make
       working-directory: ./nroff
 
