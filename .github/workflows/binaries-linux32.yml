@@ -64,26 +64,22 @@ jobs:
       uses: actions/upload-artifact@v3
       with: 
         name: linux5-bin.zip
-        path: linux5-bin.zip
-      working-directory: ./microemacs
+        path: microemacs/linux5-bin.zip
     
     - name: Upload linux5 mecs
       uses: actions/upload-artifact@v3
       with: 
         name: linux5-mecs.zip
-        path: linux5-mecs.zip
-      working-directory: ./microemacs
+        path: microemacs/linux5-mecs.zip
 
     - name: Upload linux5 mews
       uses: actions/upload-artifact@v3
       with: 
         name: linux5-mews.zip
-        path: linux5-mews.zip
-      working-directory: ./microemacs
+        path: microemacs/linux5-mews.zip
 
     - name: Upload MicroEmacs help
       uses: actions/upload-artifact@v3
       with: 
         name: meehf.zip
-        path: meehf.zip
-      working-directory: ./microemacs
+        path: microemacs/meehf.zip
