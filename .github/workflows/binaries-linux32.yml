@@ -37,29 +37,53 @@ jobs:
 
     - name: Create packages
       run: |
-        mkdir binaries-linux32
-        cd ./microemacs/src
-        cp ./.linux32gcc-release-mec/mec ../../binaries-linux32/
-        cp ./.linux32gcc-release-mew/mew ../../binaries-linux32/
-        cd ../../binaries-linux32/
-        zip linux32-bin mec mew
-        rm mec mew
-        cd ../microemacs/doc
-        cp me.ehf ../../binaries-linux32/
+        cd ./microemacs
+        zip -r linux5-bin bin
+        cd doc
+        mkdir macros
+        mv me.ehf macros
+        zip -r ../meehf macros
         
-    - name: Create mesc
+    - name: Create linux5 mesc
       run: |
-        ../src/.linux32gcc-release-mec/mec -p "@mesgen" -f -p ../src/.linux32gcc-release-mec/mec -t ../3rdparty/tfs/.linux32gcc-release/tfs -o ../../binaries-linux32/mesc-linux32
+        mkdir -p bin/linux5-intel64-gcc9
+        ../bin/linux5-intel64-gcc9/mec -p "@mesgen" -f -p ../bin/linux5-intel64-gcc9/mec -t ../bin/linux5-intel64-gcc9/tfs -o bin/linux5-intel64-gcc9/mecs
+        zip -r ../linux5-mecs bin
+        rm bin/linux5-intel64-gcc9/mecs
       working-directory: ./microemacs/mesingle
 
-    - name: Create mesw
+    - name: Create linux5 mesw
       run: |
-        ../src/.linux32gcc-release-mec/mec -p "@mesgen" -f -p ../src/.linux32gcc-release-mew/mew -t ../3rdparty/tfs/.linux32gcc-release/tfs -o ../../binaries-linux32/mesw-linux32
+        mkdir -p bin/linux5-intel64-gcc9
+        ../bin/linux5-intel64-gcc9/mec -p "@mesgen" -f -p ../bin/linux5-intel64-gcc9/mew -t ../bin/linux5-intel64-gcc9/tfs -o bin/linux5-intel64-gcc9/mews
+        zip -r ../linux5-mews bin
+        rm bin/linux5-intel64-gcc9/mews
       working-directory: ./microemacs/mesingle
 
-    - name: Upload Artifact GitHub Action Linux64
+    - name: Upload linux5 bin
       uses: actions/upload-artifact@v3
       with: 
-        name: binaries-linux32
-        path: binaries-linux32
+        name: linux5-bin.zip
+        path: linux5-bin.zip
+      working-directory: ./microemacs
     
+    - name: Upload linux5 mecs
+      uses: actions/upload-artifact@v3
+      with: 
+        name: linux5-mecs.zip
+        path: linux5-mecs.zip
+      working-directory: ./microemacs
+
+    - name: Upload linux5 mews
+      uses: actions/upload-artifact@v3
+      with: 
+        name: linux5-mews.zip
+        path: linux5-mews.zip
+      working-directory: ./microemacs
+
+    - name: Upload MicroEmacs help
+      uses: actions/upload-artifact@v3
+      with: 
+        name: meehf.zip
+        path: meehf.zip
+      working-directory: ./microemacs
