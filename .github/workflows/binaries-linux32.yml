@@ -15,18 +15,22 @@ jobs:
      
     - name: Compile nroff tools
       run: |
+        cd ./nroff
         make
-      working-directory: ./nroff
 
     - name: Compile mec
       run: |
+        cd ./microemacs/src
         ./build.sh -t c
-      working-directory: ./microemacs/src
-
     - name: Compile mew
       run: |
+        cd ./microemacs/src
         ./build.sh -t w
-      working-directory: ./microemacs/src
+    - name: Upload linux5 bin
+      uses: actions/upload-artifact@v4
+      with: 
+        name: linux5-bin
+        path: microemacs/bin
 
     - name: Generate docs
       run: |
@@ -34,52 +38,37 @@ jobs:
         export MEPATH=`pwd`/microemacs/macros
         cd ./microemacs/doc
         make me.ehf
-
-    - name: Create packages
-      run: |
-        cd ./microemacs
-        zip -r linux5-bin bin
-        cd doc
+        rm -rf macros
         mkdir macros
         mv me.ehf macros
-        zip -r ../meehf macros
+    - name: Upload docs
+      uses: actions/upload-artifact@v4
+      with: 
+        name: meehf
+        path: macros
         
-    - name: Create linux5 mesc
+    - name: Create linux5 mecs
       run: |
+        cd ./microemacs/mesingle
+        rm -rf bin
         mkdir -p bin/linux5-intel64-gcc9
         ../bin/linux5-intel64-gcc9/mec -p "@mesgen" -f -p ../bin/linux5-intel64-gcc9/mec -t ../bin/linux5-intel64-gcc9/tfs -o bin/linux5-intel64-gcc9/mecs
-        zip -r ../linux5-mecs bin
-        rm bin/linux5-intel64-gcc9/mecs
-      working-directory: ./microemacs/mesingle
+    - name: Upload linux5 mecs
+      uses: actions/upload-artifact@v4
+      with: 
+        name: linux5-mecs
+        path: microemacs/mesingle/bin
 
-    - name: Create linux5 mesw
+    - name: Create linux5 mews
       run: |
+        cd ./microemacs/mesingle
+        rm -rf bin
         mkdir -p bin/linux5-intel64-gcc9
         ../bin/linux5-intel64-gcc9/mec -p "@mesgen" -f -p ../bin/linux5-intel64-gcc9/mew -t ../bin/linux5-intel64-gcc9/tfs -o bin/linux5-intel64-gcc9/mews
-        zip -r ../linux5-mews bin
-        rm bin/linux5-intel64-gcc9/mews
-      working-directory: ./microemacs/mesingle
-
-    - name: Upload linux5 bin
-      uses: actions/upload-artifact@v3
-      with: 
-        name: linux5-bin.zip
-        path: microemacs/linux5-bin.zip
-    
-    - name: Upload linux5 mecs
-      uses: actions/upload-artifact@v3
-      with: 
-        name: linux5-mecs.zip
-        path: microemacs/linux5-mecs.zip
-
     - name: Upload linux5 mews
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with: 
-        name: linux5-mews.zip
-        path: microemacs/linux5-mews.zip
+        name: linux5-mews
+        path: microemacs/mesingle/bin/linux5-intel64-gcc9/mews
 
-    - name: Upload MicroEmacs help
-      uses: actions/upload-artifact@v3
-      with: 
-        name: meehf.zip
-        path: microemacs/meehf.zip
+    
