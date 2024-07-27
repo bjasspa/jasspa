@@ -47,7 +47,7 @@ TOOLKIT  = gcc
 TOOLKIT_VER = $(shell $(CC) -dumpversion)
 
 ARCHITEC = intel
-ifeq "$(BIT_SIZE)" ""
+ifeq (,$(BIT_SIZE))
 BIT_SIZE = $(shell getconf LONG_BIT)
 endif
 
@@ -57,7 +57,7 @@ PLATFORM_VER = $(shell uname -r | cut -f 1 -d .)
 include evers.mak
 
 MAKEFILE = $(PLATFORM)$(TOOLKIT)
-ifeq "$(BPRF)" "1"
+ifeq (1,$(BPRF))
 BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)p
 else
 BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
@@ -74,7 +74,7 @@ LDFLAGSR = -O3 -flto
 LDFLAGSD = -g
 LDLIBS   = -lm -ldl
 
-ifeq "$(BCFG)" "debug"
+ifeq (debug,$(BCFG))
 BOUTDIR  = $(OUTDIRD)
 CCFLAGS  = $(CCFLAGSD)
 LDFLAGS  = $(LDFLAGSD)
@@ -89,26 +89,23 @@ INSTDIR  = ../bin/$(BUILDID)
 INSTPRG  = cp
 endif
 
-ifeq "$(BCOR)" "ne"
+ifeq (ne,$(BCOR))
 
 BCOR_CDF = -D_NANOEMACS
 PRGLIBS  = 
 
 else
 
-ifeq ($(OPENSSLP),)
+ifneq (,$(OPENSSLP))
 $(warning WARNING: HERE0.)
-ifeq ($(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <openssl/ssl.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null > /dev/null 2> /dev/null - ; echo $$? ), 0)
+else ifeq (0,$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <openssl/ssl.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null > /dev/null 2> /dev/null - ; echo $$? ))
 $(warning WARNING: HERE1.)
 OPENSSLP = 1
-else
+else ifeq (0,$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <openssl/ssl.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -I/usr/local/opt/openssl/include -o /dev/null > /dev/null 2> /dev/null - ; echo $$? ))
 $(warning WARNING: HERE2.)
-ifeq ($(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <openssl/ssl.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -I/usr/local/opt/openssl/include -o /dev/null > /dev/null 2> /dev/null - ; echo $$? ), 0)
 OPENSSLP = 1 -I/usr/local/opt/openssl/include
 endif
-endif
-endif
-ifeq "$(OPENSSLP)" ""
+ifeq (,$(OPENSSLP))
 $(warning WARNING: No OpenSSL support found, https support will be disabled.)
 else
 OPENSSLDEFS = -DMEOPT_OPENSSL=$(OPENSSLP) -D_OPENSSLLNM=libssl$(OPENSSLV).so -D_OPENSSLCNM=libcrypto$(OPENSSLV).so
@@ -119,7 +116,7 @@ PRGLIBS  = $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A) $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(
 
 endif
 
-ifeq "$(BPRF)" "1"
+ifeq (1,$(BPRF))
 CCPROF = -D_ME_PROFILE -pg
 LDPROF = -pg
 STRIP  = - echo No strip - profile 
@@ -130,11 +127,11 @@ endif
 
 ifneq (,$(findstring w,$(BTYP)))
 
-ifeq "$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lX11 > /dev/null 2> /dev/null - ; echo $$? )" "0"
+ifeq (0,$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lX11 > /dev/null 2> /dev/null - ; echo $$? ))
 
 X11_LIBS = -lX11
 
-else ifeq "$(BIT_SIZE)" "64"
+else ifeq (64,$(BIT_SIZE))
 
 ifneq (,$(wildcard /usr/lib/x86_64-linux-gnu/libX11.a))
 X11_LIBS = -L/usr/lib/x86_64-linux-gnu -lX11
@@ -154,10 +151,10 @@ endif
 
 endif
 
-ifneq "$(WINDOW_LIBS)" ""
+ifneq (,$(WINDOW_LIBS))
 $(warning WARNING: No X11 support found, forcing build type to console only.)
 BTYP = c
-else ifeq "$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null $(X11_LIBS) -lXpm > /dev/null 2> /dev/null - ; echo $$? )" "0"
+else ifeq (0,$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null $(X11_LIBS) -lXpm > /dev/null 2> /dev/null - ; echo $$? ))
 WINDOW_DEFS = -D_XPM
 WINDOW_LIBS = $(X11_LIBS) -lXpm
 else
@@ -166,11 +163,11 @@ endif
 
 endif
 
-ifneq "$(BTYP)" "w"
+ifneq (w,$(BTYP))
 #
 # Preference now is to use "ncurses" rather than "termcap", figure out if ncurses is avaiable or if we must fall back to termcap.
 #
-ifeq "$(shell echo '$(HASH)include <stdio.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lncurses > /dev/null 2> /dev/null - ; echo $$? )" "0"
+ifeq (0,$(shell echo '$(HASH)include <stdio.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lncurses > /dev/null 2> /dev/null - ; echo $$? ))
 CONSOLE_LIBS  = -lncurses
 CONSOLE_DEFS  = -D_USE_NCURSES
 else
@@ -179,10 +176,10 @@ CONSOLE_LIBS  = -ltermcap
 endif
 endif
 
-ifeq "$(BTYP)" "cw"
+ifeq (cw,$(BTYP))
 BTYP_CDF = $(CONSOLE_DEFS) $(WINDOW_DEFS) -D_ME_CONSOLE -D_ME_WINDOW
 BTYP_LIB = $(CONSOLE_LIBS) $(WINDOW_LIBS)
-else ifeq "$(BTYP)" "w"
+else ifeq (w,$(BTYP))
 BTYP_CDF = $(WINDOW_DEFS) -D_ME_WINDOW
 BTYP_LIB = $(WINDOW_LIBS)
 else

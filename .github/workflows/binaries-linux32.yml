@@ -4,10 +4,6 @@ on:
   workflow_dispatch:
     branches: [ master ]
 
-defaults:
-  run:
-    shell: bash
-
 jobs:
   build:
     runs-on: ubuntu-20.04
