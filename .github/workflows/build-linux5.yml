@@ -1,4 +1,4 @@
-name: Linux5 build (Ubuntu-20)
+name: Build linux5 (Ubuntu-20)
 
 on:
   workflow_dispatch:

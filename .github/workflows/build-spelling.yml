@@ -1,4 +1,4 @@
-name: Spelling build (Ubuntu-20)
+name: Build spelling (Ubuntu-20)
 
 on:
   workflow_dispatch:
