@@ -24,26 +24,15 @@ jobs:
         export PATH=`pwd`/microemacs/bin/linux5-intel64-gcc9:$PATH
         export MEVER=`mec -p @microemacs/contribs/ver.emf`
         cd ./microemacs/spelling
-        rm -rf tfs
-        mkdir -p tfs/spelling
-        cp *dede* tfs/spelling
-        tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_lsdede.tfs -a ../mesingle/tfs_hd tfs
-        rm -rf tfs
-        mkdir -p tfs/spelling
-        cp *elgr* tfs/spelling
-        tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_lselgr.tfs -a ../mesingle/tfs_hd tfs
-        rm -rf tfs
-        mkdir -p tfs/spelling
-        cp *engb* tfs/spelling
-        tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_lsengb.tfs -a ../mesingle/tfs_hd tfs
-        rm -rf tfs
-        mkdir -p tfs/spelling
-        cp *enus* tfs/spelling
-        tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_lsenus.tfs -a ../mesingle/tfs_hd tfs
-        rm -rf tfs
-        mkdir -p tfs/spelling
-        cp *eses* tfs/spelling
-        tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_lseses.tfs -a ../mesingle/tfs_hd tfs
+        declare -a lsl=("dede" "elgr" "engb" "enus" "eses" "fifi" "frfr" "itit" "plpl" "ptpt" "ruru")
+        for ii in "${lsl[@]}"
+        do
+           echo "Language $ii"
+            rm -rf tfs
+            mkdir -p tfs/spelling
+            cp *${ii}* tfs/spelling
+            tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_ls${ii}.tfs -a ../mesingle/tfs_hd tfs
+        done
 
     - name: Upload spelling packages
       uses: actions/upload-artifact@v4
