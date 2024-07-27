@@ -1,0 +1,11 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2023-2024 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Authors:     Steven Phillips
+; Created:     2024-07-27 22:37:41
+; Synopsis:    Print ME version - mec -p @ver.emf
+;
+-1 ml-write $version
+0 quick-exit

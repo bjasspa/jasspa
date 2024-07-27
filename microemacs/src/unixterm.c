@@ -2652,34 +2652,36 @@ TCAPstart(void)
     if(tcaptab[TCAPasbd].code.str == NULL)
         tcaptab[TCAPasbe].code.str = NULL;
     
-    /* Determine if there is a mechanism to enable and disable the automatic margins.
-     * If there is and auto-margins are enabled then disable them now */
-    if((tcaptab[TCAPam].code.value > 0) && (tcaptab[TCAPrmam].code.str != NULL))
-    {
-        putpad(tcaptab[TCAPrmam].code.str);
-        tcaptab[TCAPam].code.value = meTCAPgetflag(tcaptab[TCAPam].capKey);
-        TTaMarginsDisabled = 1;
-    }
     TCAPgetWinSize() ;
-    TTdepthDefault = TTnewHig ;
-    TTwidthDefault = TTnewWid ;
+    TTdepthDefault = TTnewHig;
+    TTwidthDefault = TTnewWid;
     
-    /* We rely on Clear and Move <x><y>, make sure that these exist */
-    if((tcaptab[TCAPclear].code.str == NULL) || (tcaptab[TCAPcup].code.str == NULL))
+    if(!(meSystemCfg & meSYSTEM_PIPEDMODE))
     {
-        sprintf(err_str, "%s termcap lacks %s or %s entry",
-                tv_stype,tcaptab[TCAPclear].capKey, tcaptab[TCAPcup].capKey);
-        puts(err_str);
-        meExit(1);
-    }
+        /* Determine if there is a mechanism to enable and disable the automatic margins.
+         * If there is and auto-margins are enabled then disable them now */
+        if((tcaptab[TCAPam].code.value > 0) && (tcaptab[TCAPrmam].code.str != NULL))
+        {
+            putpad(tcaptab[TCAPrmam].code.str);
+            tcaptab[TCAPam].code.value = meTCAPgetflag(tcaptab[TCAPam].capKey);
+            TTaMarginsDisabled = 1;
+        }
+        /* We rely on Clear and Move <x><y>, make sure that these exist */
+        if((tcaptab[TCAPclear].code.str == NULL) || (tcaptab[TCAPcup].code.str == NULL))
+        {
+            sprintf(err_str, "%s termcap lacks %s or %s entry",
+                    tv_stype,tcaptab[TCAPclear].capKey, tcaptab[TCAPcup].capKey);
+            puts(err_str);
+            meExit(1);
+        }
 #if MEOPT_COLOR
-    if(tcaptab[TCAPcolors].code.value < 8)
-        meSystemCfg &= ~(meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR);
-    else if((meSystemCfg & meSYSTEM_ANSICOLOR) && (tcaptab[TCAPcolors].code.value > 8))
-        meSystemCfg |= meSYSTEM_XANSICOLOR;
+        if(tcaptab[TCAPcolors].code.value < 8)
+            meSystemCfg &= ~(meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR);
+        else if((meSystemCfg & meSYSTEM_ANSICOLOR) && (tcaptab[TCAPcolors].code.value > 8))
+            meSystemCfg |= meSYSTEM_XANSICOLOR;
 #endif
     /* Try and setup some of the standard keys like the cursor keys */
-    {
+        {
 #ifndef _USE_NCURSES
         char buf[20];
 #endif
@@ -2721,7 +2723,7 @@ TCAPstart(void)
         {
             if((tcapSpecKeyStrs[ii] == NULL) && (tcapSpecKeyDefs[ii] != NULL))
                 translateKeyAdd(&TTtransKey,charListToShorts(sl,tcapSpecKeyDefs[ii]),
-                                TTtransKey.time,sl,ME_SPECIAL|ii) ;
+                                TTtransKey.time,sl,ME_SPECIAL|ii);
         }
         ii = 0;
         while(tcapSpecSKeyIdxs[ii])
@@ -2750,18 +2752,19 @@ TCAPstart(void)
 #endif
             ii++;
         }
+        }
     }
     /* Switch off the vertical window scroll bar */
-    gsbarmode &= ~WMVBAR ;
+    gsbarmode &= ~WMVBAR;
     {
 #ifdef _POSIX_SIGNALS
-        struct sigaction sa ;
-        sigemptyset(&sa.sa_mask) ;
-        sa.sa_flags=0 ;
-        sa.sa_handler=sigSize ;
-        sigaction(SIGWINCH,&sa,NULL) ;
+        struct sigaction sa;
+        sigemptyset(&sa.sa_mask);
+        sa.sa_flags=0;
+        sa.sa_handler=sigSize;
+        sigaction(SIGWINCH,&sa,NULL);
 #else
-        signal (SIGWINCH, sigSize);
+        signal(SIGWINCH,sigSize);
 #endif
     }
     return TCAPopen() ;

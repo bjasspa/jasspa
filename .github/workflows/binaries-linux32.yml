@@ -15,60 +15,62 @@ jobs:
      
     - name: Compile nroff tools
       run: |
+        mkdir downloads
+        mkdir packages
         cd ./nroff
         make
 
-    - name: Compile mec
+    - name: Compile linux5 mec
       run: |
         cd ./microemacs/src
         ./build.sh -t c
-    - name: Compile mew
+    - name: Compile linux5 mew
       run: |
         cd ./microemacs/src
         ./build.sh -t w
-    - name: Upload linux5 bin
-      uses: actions/upload-artifact@v4
-      with: 
-        name: linux5-bin
-        path: microemacs/bin
-
-    - name: Generate docs
+    - name: Create linux5 bin download
       run: |
-        export PATH=`pwd`/microemacs/bin/linux5-intel64-gcc9:`pwd`/nroff/bin/linux:$PATH
-        export MEPATH=`pwd`/microemacs/macros
-        cd ./microemacs/doc
-        make me.ehf
-        rm -rf macros
-        mkdir macros
-        mv me.ehf macros
-    - name: Upload docs
-      uses: actions/upload-artifact@v4
-      with: 
-        name: meehf
-        path: macros
-        
+        cd ./microemacs
+        zip -r ../downloads/linux5-bin bin
+
     - name: Create linux5 mecs
       run: |
         cd ./microemacs/mesingle
         rm -rf bin
         mkdir -p bin/linux5-intel64-gcc9
         ../bin/linux5-intel64-gcc9/mec -p "@mesgen" -f -p ../bin/linux5-intel64-gcc9/mec -t ../bin/linux5-intel64-gcc9/tfs -o bin/linux5-intel64-gcc9/mecs
-    - name: Upload linux5 mecs
-      uses: actions/upload-artifact@v4
-      with: 
-        name: linux5-mecs
-        path: microemacs/mesingle/bin
-
+        zip -r ../../downloads/linux5-mecs bin
+        
     - name: Create linux5 mews
       run: |
         cd ./microemacs/mesingle
         rm -rf bin
         mkdir -p bin/linux5-intel64-gcc9
         ../bin/linux5-intel64-gcc9/mec -p "@mesgen" -f -p ../bin/linux5-intel64-gcc9/mew -t ../bin/linux5-intel64-gcc9/tfs -o bin/linux5-intel64-gcc9/mews
-    - name: Upload linux5 mews
+        zip -r ../../downloads/linux5-mecs bin
+
+    - name: Generate docs
+      run: |
+        export PATH=`pwd`/microemacs/bin/linux5-intel64-gcc9:`pwd`/nroff/bin/linux:$PATH
+        export MEPATH=`pwd`/microemacs/macros
+        export MEVER=`mec -p @microemacs/contribs/ver.emf`
+        cd ./microemacs/doc
+        make me.ehf
+        rm -rf tfs
+        mkdir -p tfs/macros
+        mv me.ehf tfs/macros
+        zip -r ../../downloads/meehf tfs/macros
+        ../bin/linux5-intel64-gcc9/tfs -o Jasspa_MicroEmacs_${MEVER}_hlpehf.tfs -a ../mesingle/tfs_hd tfs -o ../../packages
+        
+    - name: Upload linux5 downloads
       uses: actions/upload-artifact@v4
       with: 
-        name: linux5-mews
-        path: microemacs/mesingle/bin/linux5-intel64-gcc9/mews
-
+        name: linux5-downloads
+        path: downloads
+        
+    - name: Upload linux5 packages
+      uses: actions/upload-artifact@v4
+      with: 
+        name: linux5-packages
+        path: packages
     

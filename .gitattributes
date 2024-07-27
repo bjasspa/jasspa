@@ -1,2 +1,3 @@
-*.sh crlf
-*.bat -crlf
+*.sh   text eol=lf
+*.bat  text eol=crlf
+tfs_hd -text
