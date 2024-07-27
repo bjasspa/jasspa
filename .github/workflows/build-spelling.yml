@@ -1,0 +1,53 @@
+name: Spelling build (Ubuntu-20)
+
+on:
+  workflow_dispatch:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+     
+    - name: Compile linux5 mec
+      run: |
+        mkdir packages
+        cd ./microemacs/src
+        ./build.sh -t c
+
+    - name: Generate spelling packages
+      run: |
+        export PATH=`pwd`/microemacs/bin/linux5-intel64-gcc9:$PATH
+        export MEVER=`mec -p @microemacs/contribs/ver.emf`
+        cd ./microemacs/spelling
+        rm -rf tfs
+        mkdir -p tfs/spelling
+        cp *dede* tfs/spelling
+        tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_lsdede.tfs -a ../mesingle/tfs_hd tfs
+        rm -rf tfs
+        mkdir -p tfs/spelling
+        cp *elgr* tfs/spelling
+        tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_lselgr.tfs -a ../mesingle/tfs_hd tfs
+        rm -rf tfs
+        mkdir -p tfs/spelling
+        cp *engb* tfs/spelling
+        tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_lsengb.tfs -a ../mesingle/tfs_hd tfs
+        rm -rf tfs
+        mkdir -p tfs/spelling
+        cp *enus* tfs/spelling
+        tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_lsenus.tfs -a ../mesingle/tfs_hd tfs
+        rm -rf tfs
+        mkdir -p tfs/spelling
+        cp *eses* tfs/spelling
+        tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_lseses.tfs -a ../mesingle/tfs_hd tfs
+
+    - name: Upload spelling packages
+      uses: actions/upload-artifact@v4
+      with: 
+        name: spelling-packages
+        path: packages
+    
