@@ -1,9 +1,10 @@
-name: Binaries Ubuntu Linux
+name: Binaries Ubuntu-20 (Linux5 intel-64)
 
 on:
   workflow_dispatch:
     branches: [ master ]
-
+env:
+    VERSION: "202407"
 jobs:
   build:
     runs-on: ubuntu-20.04
