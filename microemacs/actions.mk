@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : <unknown>
 #  Created       : Sun Mar 24 17:52:35 2024
-#  Last Modified : <240728.1223>
+#  Last Modified : <240728.1232>
 #
 #  Description	
 #
@@ -41,7 +41,7 @@ endif
 #ifeq (macos,$findstring macos,$(PLATFORM))
 #   MEDIR := .macos64cc-release
 #endif
-ifeq (linux,$(findstring ubuntu,$(PLATFORM)))
+ifeq ($(PLATFORM),linux)
    MEDIR := .linux*-release
 endif
 ifeq ($(PLATFORM),macos)
