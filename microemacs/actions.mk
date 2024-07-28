@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : <unknown>
 #  Created       : Sun Mar 24 17:52:35 2024
-#  Last Modified : <240728.1102>
+#  Last Modified : <240728.1117>
 #
 #  Description	
 #
@@ -42,7 +42,7 @@ endif
 #   MEDIR := .macos64cc-release
 #endif
 ifeq ($(PLATFORM),macos)
-   MEDIR := .macos64cc-release
+   MEDIR := .macos*-release
 endif
 ifeq ($(PLATFORM),macos12)
    MEDIR := .macos64cc-release
