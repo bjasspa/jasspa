@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : <unknown>
 #  Created       : Sun Mar 24 17:52:35 2024
-#  Last Modified : <240728.1138>
+#  Last Modified : <240728.1146>
 #
 #  Description	
 #
@@ -80,11 +80,11 @@ default:
 	cp microemacs/license.txt microemacs/src/readme.txt MicroEmacs_$(VERSION)_$(PLATFORM)_mecws/	
 	#export PATH=`pwd`tfs_$(VERSION)_$(PLATFORM)/bin/icroemacs/src/$(MEDIR)-mec/:$PATH
 	#export PATH=`pwd`/microemacs/3rdparty/tfs/$(MEDIR)/:$PATH
-	PATH=MicroEmacs_$(VERSION)_$(PLATFORM)_mec/bin/:tfs_$(VERSION)_$(PLATFORM)/bin/:$$PATH && \
+	PATH=`pwd`/MicroEmacs_$(VERSION)_$(PLATFORM)_mec/bin/:`pwd`/tfs_$(VERSION)_$(PLATFORM)/bin/:$$PATH && \
 		cd microemacs/mesingle && bash mesgen.sh -d -p ../src/$(MEDIR)-mew/mew -o ../../MicroEmacs_$(VERSION)_$(PLATFORM)_mews/bin/mews
-	PATH=MicroEmacs_$(VERSION)_$(PLATFORM)_mec/bin/:tfs_$(VERSION)_$(PLATFORM)/bin/:$$PATH && \
+	PATH=`pwd`/MicroEmacs_$(VERSION)_$(PLATFORM)_mec/bin/:`pwd`/tfs_$(VERSION)_$(PLATFORM)/bin/:$$PATH && \
 		cd microemacs/mesingle && bash mesgen.sh -d -p ../src/$(MEDIR)-mec/mec -o ../../MicroEmacs_$(VERSION)_$(PLATFORM)_mecs/bin/mecs
-	PATH=MicroEmacs_$(VERSION)_$(PLATFORM)_mec/bin/:tfs_$(VERSION)_$(PLATFORM)/bin/:$$PATH && \
+	PATH=`pwd`/MicroEmacs_$(VERSION)_$(PLATFORM)_mec/bin/:`pwd`/tfs_$(VERSION)_$(PLATFORM)/bin/:$$PATH && \
 		cd microemacs/mesingle && bash mesgen.sh -d -p ../src/$(MEDIR)-mecw/mecw -o ../../MicroEmacs_$(VERSION)_$(PLATFORM)_mecws/bin/mecws
 test:
 	echo "MEDIR=$(MEDIR) PLATFORM=$(PLATFORM)"
