@@ -26,34 +26,34 @@ jobs:
         uses: actions/upload-artifact@v4
         with: 
            name: MicroEmacs_${{ env.VERSION }}_macos12_mec
-           path: MicroEmacs_${{ env.VERSION }}_macos12_mec
+           path: MicroEmacs_${{ env.VERSION }}_macos_mec
 
       - name: Upload Artifact MicroEmacs macOS 12 mew
         uses: actions/upload-artifact@v4
         with: 
            name: MicroEmacs_${{ env.VERSION }}_macos12_mew
-           path: MicroEmacs_${{ env.VERSION }}_macos12_mew
+           path: MicroEmacs_${{ env.VERSION }}_macos_mew
       - name: Upload Artifact MicroEmacs macOS 12 mecs
         uses: actions/upload-artifact@v4
         with: 
            name: MicroEmacs_${{ env.VERSION }}_macos12_mecs
-           path: MicroEmacs_${{ env.VERSION }}_macos12_mecs
+           path: MicroEmacs_${{ env.VERSION }}_macos_mecs
 
       - name: Upload Artifact MicroEmacs macOS 12 mews
         uses: actions/upload-artifact@v4
         with: 
            name: MicroEmacs_${{ env.VERSION }}_macos12_mews
-           path: MicroEmacs_${{ env.VERSION }}_macos12_mews
+           path: MicroEmacs_${{ env.VERSION }}_macos_mews
 
       - name: Upload Artifact MicroEmacs macOS 12 mecws
         uses: actions/upload-artifact@v4
         with: 
            name: MicroEmacs_${{ env.VERSION }}_macos12_mecws
-           path: MicroEmacs_${{ env.VERSION }}_macos12_mecws
+           path: MicroEmacs_${{ env.VERSION }}_macos_mecws
 
       - name: Upload Artifact tfs macOS 12
         uses: actions/upload-artifact@v4
         with: 
           name: tfs_${{ env.VERSION }}_macos12
-          path: tfs_${{ env.VERSION }}_macos12
+          path: tfs_${{ env.VERSION }}_macos
            
