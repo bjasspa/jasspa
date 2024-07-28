@@ -1,4 +1,4 @@
-name: Release Ubuntu Linux 20, 22, 24, MacOS 11 (INTEL), MacOS 14 (ARM)
+name: Release Ubuntu Linux 20, 22, 24, MacOS 12 (INTEL), MacOS 14 (ARM)
 
 on:
   workflow_dispatch:
@@ -143,8 +143,8 @@ jobs:
         name: tfs_${{ env.VERSION }}_ubuntu24
         path: tfs_${{ env.VERSION }}_ubuntu24
 
-  build-macos-11:
-    runs-on: macos-11
+  build-macos-12:
+    runs-on: macos-12
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies on MacOS and compile and produce mecw, mec and standalone ME application 
@@ -152,41 +152,41 @@ jobs:
            brew install xquartz
            brew install make
            export PATH=/usr/local/opt/make/libexec/gnubin/:$PATH
-           make -f microemacs/actions.mk PLATFORM=macos11 VERSION=${VERSION}
-      - name: Upload Artifact MicroEmacs macS 11 mec
+           make -f microemacs/actions.mk PLATFORM=macos12 VERSION=${VERSION}
+      - name: Upload Artifact MicroEmacs macS 12 mec
         uses: actions/upload-artifact@v4
         with: 
-           name: MicroEmacs_${{ env.VERSION }}_macos11_mec
-           path: MicroEmacs_${{ env.VERSION }}_macos11_mec
+           name: MicroEmacs_${{ env.VERSION }}_macos12_mec
+           path: MicroEmacs_${{ env.VERSION }}_macos12_mec
 
-      - name: Upload Artifact MicroEmacs macOS 11 mew
+      - name: Upload Artifact MicroEmacs macOS 12 mew
         uses: actions/upload-artifact@v4
         with: 
-           name: MicroEmacs_${{ env.VERSION }}_macos11_mew
-           path: MicroEmacs_${{ env.VERSION }}_macos11_mew
-      - name: Upload Artifact MicroEmacs macOS 11 mecs
+           name: MicroEmacs_${{ env.VERSION }}_macos12_mew
+           path: MicroEmacs_${{ env.VERSION }}_macos12_mew
+      - name: Upload Artifact MicroEmacs macOS 12 mecs
         uses: actions/upload-artifact@v4
         with: 
-           name: MicroEmacs_${{ env.VERSION }}_macos11_mecs
-           path: MicroEmacs_${{ env.VERSION }}_macos11_mecs
+           name: MicroEmacs_${{ env.VERSION }}_macos12_mecs
+           path: MicroEmacs_${{ env.VERSION }}_macos12_mecs
 
-      - name: Upload Artifact MicroEmacs macOS 11 mews
+      - name: Upload Artifact MicroEmacs macOS 12 mews
         uses: actions/upload-artifact@v4
         with: 
-           name: MicroEmacs_${{ env.VERSION }}_macos11_mews
-           path: MicroEmacs_${{ env.VERSION }}_macos11_mews
+           name: MicroEmacs_${{ env.VERSION }}_macos12_mews
+           path: MicroEmacs_${{ env.VERSION }}_macos12_mews
 
-      - name: Upload Artifact MicroEmacs macOS 11 mecws
+      - name: Upload Artifact MicroEmacs macOS 12 mecws
         uses: actions/upload-artifact@v4
         with: 
-           name: MicroEmacs_${{ env.VERSION }}_macos11_mecws
-           path: MicroEmacs_${{ env.VERSION }}_macos11_mecws
+           name: MicroEmacs_${{ env.VERSION }}_macos12_mecws
+           path: MicroEmacs_${{ env.VERSION }}_macos12_mecws
 
-      - name: Upload Artifact tfs macOS 11
+      - name: Upload Artifact tfs macOS 12
         uses: actions/upload-artifact@v4
         with: 
-          name: tfs_${{ env.VERSION }}_macos11
-          path: tfs_${{ env.VERSION }}_macos11
+          name: tfs_${{ env.VERSION }}_macos12
+          path: tfs_${{ env.VERSION }}_macos12
 
 
   build-macos-14:
