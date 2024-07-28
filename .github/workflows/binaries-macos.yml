@@ -21,7 +21,7 @@ jobs:
            cd microemacs/3rdparty/zlib
            make -f macoscc.mak
            cd ../../../
-           make -f microemacs/actions.mk PLATFORM=macos12 VERSION=${VERSION}
+           make -f microemacs/actions.mk PLATFORM=macos VERSION=${VERSION}
       - name: Upload Artifact MicroEmacs macOS 12 mec
         uses: actions/upload-artifact@v4
         with: 
