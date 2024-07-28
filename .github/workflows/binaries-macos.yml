@@ -18,7 +18,7 @@ jobs:
            brew install make
            export PATH=/usr/local/opt/make/libexec/gnubin/:$PATH
            make -f microemacs/actions.mk PLATFORM=macos12 VERSION=${VERSION}
-      - name: Upload Artifact MicroEmacs macS 12 mec
+      - name: Upload Artifact MicroEmacs macOS 12 mec
         uses: actions/upload-artifact@v4
         with: 
            name: MicroEmacs_${{ env.VERSION }}_macos12_mec
