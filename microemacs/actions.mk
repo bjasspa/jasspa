@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : <unknown>
 #  Created       : Sun Mar 24 17:52:35 2024
-#  Last Modified : <240728.1009>
+#  Last Modified : <240728.1016>
 #
 #  Description	
 #
@@ -55,7 +55,7 @@ ifeq ($(PLATFORM),macos14)
 endif
 
 default:
-	cd microemacs/3rdparty/zlib && bash build.sh
+	##cd microemacs/3rdparty/zlib && make 
 	cd microemacs/3rdparty/tfs && bash build.sh
 	cd microemacs/src && bash build.sh -t w
 	cd microemacs/src && bash build.sh -t c	

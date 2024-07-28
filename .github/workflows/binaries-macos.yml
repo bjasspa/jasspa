@@ -6,7 +6,8 @@ on:
 
 permissions:
   contents: read
-
+env:
+    VERSION: "202407"
 jobs:
   build:
     runs-on: macos-12
@@ -17,6 +18,9 @@ jobs:
            brew install xquartz
            brew install make
            export PATH=/usr/local/opt/make/libexec/gnubin/:$PATH
+           cd microemacs/3rdparty/zlib
+           make -f macoscc.mak
+           cd ../../../
            make -f microemacs/actions.mk PLATFORM=macos12 VERSION=${VERSION}
       - name: Upload Artifact MicroEmacs macOS 12 mec
         uses: actions/upload-artifact@v4
