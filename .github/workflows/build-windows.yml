@@ -71,7 +71,7 @@ jobs:
         Copy-Item -Path libssl-3.dll -Destination tfs\bin\windows100-intel32
         Copy-Item -Path libcrypto-3.dll -Destination tfs\bin\windows100-intel32
         cd tfs
-        Compress-Archive -Path bin -DestinationPath ..\..\..\..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_bin
+        Compress-Archive -Path bin -DestinationPath ..\..\..\..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_openssl.zip
         cd ..
         ..\..\..\..\bin\windows100-intel32\tfs -o ../../../../../packages/Jasspa_MicroEmacs_${env:MEVER}_openssl_windows100_intel32.tfs -a ../../../../mesingle/tfs_hd tfs
 
