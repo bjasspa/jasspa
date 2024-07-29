@@ -47,7 +47,7 @@ jobs:
         mkdir -Path downloads
         cd .\microemacs\bin
         Remove-Item .gitignore
-        Rename-Item -Path windows100-intel32-msvc16 -NewName windows100-intel32
+        Rename-Item -Path windows100-intel32-msvc17 -NewName windows100-intel32
         cd ..
         $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
         Compress-Archive -Path bin -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_linux5_bin
@@ -68,7 +68,7 @@ jobs:
         $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
         cd .\mesingle
         mkdir -Path bin/windows100-intel32
-        ..\bin\windows100-intel32\mec.exe -p "@mesgen" -f -p ..\bin\windows100-intel32-msvc16s\mew.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mews.exe
+        ..\bin\windows100-intel32\mec.exe -p "@mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mew.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mews.exe
         Compress-Archive -Path bin -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_mews
 
     - name: Upload Packages
