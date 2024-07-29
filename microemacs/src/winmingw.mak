@@ -130,11 +130,17 @@ OSSL_LIB = -x64
 else
 OSSL_DIR = x86
 endif
-ifneq "$(wildcard $(TRDPARTY)/openssl-3.1/$(OSSL_DIR)/include/openssl/ssl.h)" ""
+ifneq "$(wildcard $(TRDPARTY)/openssl-3.3/$(OSSL_DIR)/include/openssl/ssl.h)" ""
+OPENSSLP = $(TRDPARTY)/openssl-3.3/$(OSSL_DIR)
+OPENSSLV = -3_3$(OSSL_LIB)
+else ifneq "$(wildcard $(TRDPARTY)/openssl-3.2/$(OSSL_DIR)/include/openssl/ssl.h)" ""
+OPENSSLP = $(TRDPARTY)/openssl-3.2/$(OSSL_DIR)
+OPENSSLV = -3_2$(OSSL_LIB)
+else ifneq "$(wildcard $(TRDPARTY)/openssl-3.1/$(OSSL_DIR)/include/openssl/ssl.h)" ""
 OPENSSLP = $(TRDPARTY)/openssl-3.1/$(OSSL_DIR)
 OPENSSLV = -3_1$(OSSL_LIB)
-else ifneq "$(wildcard $(TRDPARTY)/openssl-3/$(OSSL_DIR)/include/openssl/ssl.h)" ""
-OPENSSLP = $(TRDPARTY)/openssl-3/$(OSSL_DIR)
+else ifneq "$(wildcard $(TRDPARTY)/openssl-3.0/$(OSSL_DIR)/include/openssl/ssl.h)" ""
+OPENSSLP = $(TRDPARTY)/openssl-3.0/$(OSSL_DIR)
 OPENSSLV = -3$(OSSL_LIB)
 else ifneq "$(wildcard $(TRDPARTY)/openssl-1.1/$(OSSL_DIR)/include/openssl/ssl.h)" ""
 OPENSSLP = $(TRDPARTY)/openssl-1.1/$(OSSL_DIR)

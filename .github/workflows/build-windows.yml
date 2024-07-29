@@ -19,19 +19,18 @@ jobs:
         Write-Output "VSDEVCMD=${installationPath}\Common7\Tools\VsDevCmd.bat" `
           | Out-File -FilePath "${Env:GITHUB_ENV}" -Append
         cat "${Env:GITHUB_ENV}"
-        choco install openssl
-        c:
-        cd "C:\Program Files"
-        dir
-        cd OpenSSL
-        dir
-        cd ..
-        cd OpenSSL-Win64
-        dir
-                
+        
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Download pre-built OpenSSL
+      shell: pwsh
+      run: |
+        cd .\microemacs\3rdparty
+        Invoke-WebRequest https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.0.14.zip -OutFile openssl.zip
+        Expand-Archive -Path .\openssl.zip -DestinationPath .
+        dir .
+        
     - name: Compile windows100 mec
       shell: pwsh
       run: |

@@ -157,11 +157,17 @@ OSSL_LIB = -x64
 !ELSE
 OSSL_DIR = x86
 !ENDIF
-!IF EXISTS($(TRDPARTY)\openssl-3.1\$(OSSL_DIR)\include\openssl\ssl.h)
+!IF EXISTS($(TRDPARTY)\openssl-3.3\$(OSSL_DIR)\include\openssl\ssl.h)
+OPENSSLP = $(TRDPARTY)\openssl-3.3\$(OSSL_DIR)
+OPENSSLV = -3_3$(OSSL_LIB)
+!ELSEIF EXISTS($(TRDPARTY)\openssl-3.2\$(OSSL_DIR)\include\openssl\ssl.h)
+OPENSSLP = $(TRDPARTY)\openssl-3.2\$(OSSL_DIR)
+OPENSSLV = -3_2$(OSSL_LIB)
+!ELSEIF EXISTS($(TRDPARTY)\openssl-3.1\$(OSSL_DIR)\include\openssl\ssl.h)
 OPENSSLP = $(TRDPARTY)\openssl-3.1\$(OSSL_DIR)
 OPENSSLV = -3_1$(OSSL_LIB)
-!ELSEIF EXISTS($(TRDPARTY)\openssl-3\$(OSSL_DIR)\include\openssl\ssl.h)
-OPENSSLP = $(TRDPARTY)\openssl-3\$(OSSL_DIR)
+!ELSEIF EXISTS($(TRDPARTY)\openssl-3.0\$(OSSL_DIR)\include\openssl\ssl.h)
+OPENSSLP = $(TRDPARTY)\openssl-3.0\$(OSSL_DIR)
 OPENSSLV = -3$(OSSL_LIB)
 !ELSEIF EXISTS($(TRDPARTY)\openssl-1.1\$(OSSL_DIR)\include\openssl\ssl.h)
 OPENSSLP = $(TRDPARTY)\openssl-1.1\$(OSSL_DIR)
