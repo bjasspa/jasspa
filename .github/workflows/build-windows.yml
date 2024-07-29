@@ -1,0 +1,78 @@
+name: Build windows (Win-latest)
+
+on:
+  workflow_dispatch:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+
+    steps:
+    - name: Find VS
+      shell: pwsh
+      run: |
+        $installationPath = Get-VSSetupInstance `
+          | Select-VSSetupInstance -Require Microsoft.VisualStudio.Workload.NativeDesktop -Latest `
+          | Select-Object -ExpandProperty InstallationPath
+        Write-Output "VSDEVCMD=${installationPath}\Common7\Tools\VsDevCmd.bat" `
+          | Out-File -FilePath "${Env:GITHUB_ENV}" -Append
+        cat "${Env:GITHUB_ENV}"
+        
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Compile windows100 mec
+      shell: pwsh
+      run: |
+        & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
+          | % { , ($_ -Split '=', 2) } `
+          | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
+        nmake -f winmsvc.mak BTYP=c
+      working-directory: ./microemacs/src
+
+    - name: Compile windows100 mew
+      shell: pwsh
+      run: |
+        & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
+          | % { , ($_ -Split '=', 2) } `
+          | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
+        nmake -f winmsvc.mak BTYP=w
+      working-directory: ./microemacs/src
+
+    - name: Create windows100 bin download
+      shell: pwsh
+      run: |
+        mkdir -Path downloads
+        cd .\microemacs\bin
+        Remove-Item .gitignore
+        Rename-Item -Path windows100-intel32-msvc16 -NewName windows100-intel32
+        cd ..
+        $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
+        Compress-Archive -Path bin -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_linux5_bin
+
+    - name: Compile windows100 static mew
+      shell: pwsh
+      run: |
+        & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
+          | % { , ($_ -Split '=', 2) } `
+          | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
+        nmake -f winmsvc.mak BTYP=w LSTT=1
+      working-directory: ./microemacs/src
+
+    - name: Create windows100 mews
+      shell: pwsh
+      run: |
+        cd .\microemacs
+        $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
+        cd .\mesingle
+        mkdir -Path bin/windows100-intel32
+        ..\bin\windows100-intel32\mec.exe -p "@mesgen" -f -p ..\bin\windows100-intel32-msvc16s\mew.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mews.exe
+        Compress-Archive -Path bin -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_mews
+
+    - name: Upload Packages
+      uses: actions/upload-artifact@v4
+      with: 
+        name: windows100-downloads
+        path: downloads
