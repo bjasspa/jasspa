@@ -19,6 +19,7 @@ jobs:
         Write-Output "VSDEVCMD=${installationPath}\Common7\Tools\VsDevCmd.bat" `
           | Out-File -FilePath "${Env:GITHUB_ENV}" -Append
         cat "${Env:GITHUB_ENV}"
+        choco install openssl
         c:
         cd "C:\Program Files"
         dir
