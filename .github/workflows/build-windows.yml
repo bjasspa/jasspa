@@ -19,7 +19,15 @@ jobs:
         Write-Output "VSDEVCMD=${installationPath}\Common7\Tools\VsDevCmd.bat" `
           | Out-File -FilePath "${Env:GITHUB_ENV}" -Append
         cat "${Env:GITHUB_ENV}"
-        
+        c:
+        cd "C:\Program Files"
+        dir
+        cd OpenSSL
+        dir
+        cd ..
+        cd OpenSSL-Win64
+        dir
+                
     - name: Checkout code
       uses: actions/checkout@v4
 
@@ -50,7 +58,7 @@ jobs:
         Rename-Item -Path windows100-intel32-msvc17 -NewName windows100-intel32
         cd ..
         $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
-        Compress-Archive -Path bin -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_linux5_bin
+        Compress-Archive -Path bin -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_bin
 
     - name: Compile windows100 static mew
       shell: pwsh
