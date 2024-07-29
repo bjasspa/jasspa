@@ -53,12 +53,27 @@ jobs:
       shell: pwsh
       run: |
         mkdir -Path downloads
+        mkdir -Path packages
         cd .\microemacs\bin
         Remove-Item .gitignore
         Rename-Item -Path windows100-intel32-msvc17 -NewName windows100-intel32
         cd ..
         $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
         Compress-Archive -Path bin -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_bin
+
+    - name: Create windows100 openssl download
+      shell: pwsh
+      run: |
+        cd .\microemacs
+        $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
+        cd .\3rdparty\openssl-3.0\x86\bin
+        mkdir -Path tfs\bin\windows100-intel32
+        Copy-Item -Path libssl-3.dll -Destination tfs\bin\windows100-intel32
+        Copy-Item -Path libcrypto-3.dll -Destination tfs\bin\windows100-intel32
+        cd tfs
+        Compress-Archive -Path bin -DestinationPath ..\..\..\..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_bin
+        cd ..
+        ..\..\..\..\bin\windows100-intel32\tfs -o ../../../../../packages/Jasspa_MicroEmacs_${env:MEVER}_openssl_windows100_intel32.tfs -a ../../../../mesingle/tfs_hd tfs
 
     - name: Compile windows100 static mew
       shell: pwsh
@@ -75,7 +90,7 @@ jobs:
         cd .\microemacs
         $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
         cd .\mesingle
-        mkdir -Path bin/windows100-intel32
+        mkdir -Path bin\windows100-intel32
         ..\bin\windows100-intel32\mec.exe -p "@mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mew.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mews.exe
         Compress-Archive -Path bin -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_mews
 
@@ -84,3 +99,9 @@ jobs:
       with: 
         name: windows100-downloads
         path: downloads
+
+    - name: Upload windows100 packages
+      uses: actions/upload-artifact@v4
+      with: 
+        name: windows100-packages
+        path: packages
