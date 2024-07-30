@@ -16,23 +16,25 @@ jobs:
          cc --version
          which make
          make --version
-         /usr/bin/xcrun --sdk macosx -show-sdk-version
-         which cc
-         cc --version
          brew install xquartz
-         which cc
-         cc --version
       
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Compile macos mec
+    - name: Compile macos apple mec
       run: |
         cd ./microemacs/src
-        ./build.sh -t c
-    - name: Compile macos mew
+        ./build.sh -t c -D ARCHITEC=apple
+    - name: Compile macos apple mew
       run: |
-        export PATH=/usr/local/opt/make/libexec/gnubin/:$PATH
         cd ./microemacs/src
-        ./build.sh -t w
+        ./build.sh -t w -D ARCHITEC=apple
+    - name: Compile macos intel mec
+      run: |
+        cd ./microemacs/src
+        ./build.sh -t c -D ARCHITEC=intel
+    - name: Compile macos intel mew
+      run: |
+        cd ./microemacs/src
+        ./build.sh -t w -D ARCHITEC=intel
            

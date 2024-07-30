@@ -63,8 +63,15 @@ TOOLKIT_VER = $(shell $(CC) -dumpversion | cut -f 1 -d .)
 ifneq "$(ARCHITEC)" ""
 else ifeq "$(shell uname -p)" "i386"
 ARCHITEC = intel
+ARCFLAGS = -arch x86_64
 else
 ARCHITEC = apple
+ARCFLAGS = -arch arm64
+endif
+ifeq "$(ARCHITEC)" "intel"
+ARCFLAGS = -arch x86_64
+else
+ARCFLAGS = -arch arm64
 endif
 ifeq "$(BIT_SIZE)" ""
 BIT_SIZE = $(shell getconf LONG_BIT)
@@ -83,10 +90,10 @@ OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
 
-CCDEFS   = -m$(BIT_SIZE) -D_MACOS -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -Wall -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY)
+CCDEFS   = -m$(BIT_SIZE) $(ARCFLAGS) -D_MACOS -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -Wall -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY)
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g
-LDDEFS   = -m$(BIT_SIZE)
+LDDEFS   = -m$(BIT_SIZE) $(ARCFLAGS)
 LDFLAGSR = -O3 -flto
 LDFLAGSD = -g
 LDLIBS   = 
