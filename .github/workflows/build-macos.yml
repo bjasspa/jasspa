@@ -1,0 +1,31 @@
+name: Build macOS (macos-latest)
+
+on:
+  workflow_dispatch:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+
+    steps:
+    - name: Install dependencies
+      run: |
+         brew install xquartz
+         brew install make
+      
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Compile macos mec
+      run: |
+        export PATH=/usr/local/opt/make/libexec/gnubin/:$PATH
+        cd ./microemacs/src
+        ./build.sh -t c
+    - name: Compile macos mew
+      run: |
+        export PATH=/usr/local/opt/make/libexec/gnubin/:$PATH
+        cd ./microemacs/src
+        ./build.sh -t w
+           
