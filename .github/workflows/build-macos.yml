@@ -29,6 +29,14 @@ jobs:
       run: |
         cd ./microemacs/src
         ./build.sh -t w -a apple
+    - name: Create macos apple binaries download
+      run: |
+        cd ./microemacs/bin
+        mv macos23-apple64-* macos23-apple64
+        cd ..
+        export MEVER=`./bin/macos23-apple64/mec -p @contribs/ver.emf`
+        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_macos23_apple64_binaries bin
+
     - name: Compile macos intel mec
       run: |
         cd ./microemacs/src
@@ -37,4 +45,11 @@ jobs:
       run: |
         cd ./microemacs/src
         ./build.sh -t w -a intel
+    - name: Create macos apple binaries download
+      run: |
+        cd ./microemacs/bin
+        mv macos23-intel64-* macos23-intel64
+        cd ..
+        export MEVER=`./bin/macos23-apple64/mec -p @contribs/ver.emf`
+        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_macos23_intel64_binaries bin/macos23-intel64
            

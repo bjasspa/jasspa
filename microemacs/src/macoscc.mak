@@ -251,18 +251,18 @@ $(INSTDIR):
 	-mkdir $(INSTDIR)
 
 $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A):
-	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG)
+	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak ARCHITEC=$(ARCHITEC) BCFG=$(BCFG)
 
 $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A):
-	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG)
+	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak ARCHITEC=$(ARCHITEC) BCFG=$(BCFG)
 
 clean:
 	$(RMDIR) $(OUTDIR)
-	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak clean
-	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak clean
+	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak ARCHITEC=$(ARCHITEC) BCFG=$(BCFG) clean
+	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak ARCHITEC=$(ARCHITEC) BCFG=$(BCFG) clean
 
 spotless: clean
 	$(RM) *~
 	$(RM) tags
-	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak spotless
-	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak spotless
+	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak ARCHITEC=$(ARCHITEC) BCFG=$(BCFG) spotless
+	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak ARCHITEC=$(ARCHITEC) BCFG=$(BCFG) spotless

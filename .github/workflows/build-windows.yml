@@ -59,7 +59,7 @@ jobs:
         Rename-Item -Path windows100-intel32-msvc17 -NewName windows100-intel32
         cd ..
         $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
-        Compress-Archive -Path bin -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_bin
+        Compress-Archive -Path bin -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_binaries
 
     - name: Create windows100 openssl download
       shell: pwsh

@@ -28,13 +28,13 @@ jobs:
       run: |
         cd ./microemacs/src
         ./build.sh -t w
-    - name: Create linux5 bin download
+    - name: Create linux5 binaries download
       run: |
         cd ./microemacs/bin
         mv linux5-intel64-gcc9 linux5-intel64
         cd ..
         export MEVER=`./bin/linux5-intel64/mec -p @contribs/ver.emf`
-        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_linux5_bin bin
+        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_linux5_binaries bin
 
     - name: Create linux5 mecs
       run: |

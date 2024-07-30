@@ -30,6 +30,11 @@ ARCHITEC = intel
 else
 ARCHITEC = apple
 endif
+ifeq "$(ARCHITEC)" "intel"
+ARCFLAGS = -arch x86_64
+else
+ARCFLAGS = -arch arm64
+endif
 ifeq "$(BIT_SIZE)" ""
 BIT_SIZE = $(shell getconf LONG_BIT)
 endif
@@ -47,10 +52,10 @@ OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
 
-CCDEFS   = -m$(BIT_SIZE) -D_MACOS -D_$(BIT_SIZE)BIT -Wall -I$(TRDPARTY)/zlib
+CCDEFS   = -m$(BIT_SIZE) $(ARCFLAGS) -D_MACOS -D_$(BIT_SIZE)BIT -Wall -I$(TRDPARTY)/zlib
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g
-LDDEFS   = -m$(BIT_SIZE)
+LDDEFS   = -m$(BIT_SIZE) $(ARCFLAGS)
 LDFLAGSR = -O3 -flto
 LDFLAGSD = -g
 ARFLAGSR = rcs
@@ -116,7 +121,7 @@ $(OUTDIR)/$(PRGFILE): $(OUTDIR) $(INSTDIR) $(PRGOBJS) $(PRGLIBS)
 $(PRGOBJS): $(PRGHDRS)
 
 $(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A):
-	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG)
+	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak ARCHITEC=$(ARCHITEC) BCFG=$(BCFG)
 
 $(OUTDIR):
 	-mkdir $(OUTDIR)
