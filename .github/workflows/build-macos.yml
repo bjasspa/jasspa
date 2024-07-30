@@ -23,6 +23,8 @@ jobs:
 
     - name: Compile macos apple mec
       run: |
+        mkdir downloads
+        mkdir packages
         cd ./microemacs/src
         ./build.sh -t c -a apple
     - name: Compile macos apple mew
