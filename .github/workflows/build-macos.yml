@@ -17,6 +17,15 @@ jobs:
          which make
          make --version
          brew install xquartz
+         echo Macos VER 1
+         sw_vers
+         echo Macos VER 2
+         sw_vers -productVersion 
+         sw_vers -productVersion | cut -f 1 -d .
+         echo Macos OpenSSL 1
+         ls /opt/homebrew/opt/openssl@3/
+         echo Macos OpenSSL 2
+         ls /opt/homebrew/opt/openssl@3/lib
       
     - name: Checkout code
       uses: actions/checkout@v4
@@ -47,11 +56,51 @@ jobs:
       run: |
         cd ./microemacs/src
         ./build.sh -t w -a intel
-    - name: Create macos apple binaries download
+    - name: Create macos intel binaries download
       run: |
         cd ./microemacs/bin
         mv macos23-intel64-* macos23-intel64
         cd ..
         export MEVER=`./bin/macos23-apple64/mec -p @contribs/ver.emf`
         zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_macos23_intel64_binaries bin/macos23-intel64
-           
+
+    - name: Create macos apple mecs
+      run: |
+        export MEVER=`./microemacs/bin/macos23-apple64/mec -p @microemacs/contribs/ver.emf`
+        cd ./microemacs/mesingle
+        rm -rf bin
+        mkdir -p bin/macos23-apple64
+        ../bin/macos23-apple64/mec -p "@mesgen" -f -p ../bin/macos23-apple64/mec -t ../bin/macos23-apple64/tfs -o bin/macos23-apple64/mecs
+        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos23_apple64_mecs bin
+    - name: Create macos apple mews
+      run: |
+        export MEVER=`./microemacs/bin/macos23-apple64/mec -p @microemacs/contribs/ver.emf`
+        cd ./microemacs/mesingle
+        rm -rf bin
+        mkdir -p bin/macos23-apple64
+        ../bin/macos23-apple64/mec -p "@mesgen" -f -p ../bin/macos23-apple64/mew -t ../bin/macos23-apple64/tfs -o bin/macos23-apple64/mews
+        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos23_apple64_mews bin
+
+    - name: Create macos intel mecs
+      run: |
+        export MEVER=`./microemacs/bin/macos23-apple64/mec -p @microemacs/contribs/ver.emf`
+        cd ./microemacs/mesingle
+        rm -rf bin
+        mkdir -p bin/macos23-intel64
+        ../bin/macos23-apple64/mec -p "@mesgen" -f -p ../bin/macos23-intel64/mec -t ../bin/macos23-apple64/tfs -o bin/macos23-intel64/mecs
+        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos23_intel64_mecs bin
+    - name: Create macos intel mews
+      run: |
+        export MEVER=`./microemacs/bin/macos23-apple64/mec -p @microemacs/contribs/ver.emf`
+        cd ./microemacs/mesingle
+        rm -rf bin
+        mkdir -p bin/macos23-intel64
+        ../bin/macos23-apple64/mec -p "@mesgen" -f -p ../bin/macos23-intel64/mew -t ../bin/macos23-apple64/tfs -o bin/macos23-intel64/mews
+        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos23_intel64_mews bin
+
+    - name: Upload macos downloads
+      uses: actions/upload-artifact@v4
+      with: 
+        name: macos-downloads
+        path: downloads
+        
