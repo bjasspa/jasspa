@@ -6,6 +6,7 @@
 BITSIZE=
 LOGFILE=
 LOGFILEA=
+MEARCH=
 MECORE=
 MEPROF=
 METYPE=
@@ -25,10 +26,12 @@ do
         echo "Where options can be:-"
         echo "   -32  : Build 32bit binary."
         echo "   -64  : Build 64bit binary."
+        echo "   -a <value>"
+        echo "        : Define the required architecture."
         echo "   -C   : Build clean."
         echo "   -D <define>[=<value>]"
         echo "        : Build with given define, (e.g. -D _USETPARM)."
-        echo "   -d   : For debug build (output is med)."
+        echo "   -d   : For debug build."
         echo "   -h   : For this help page."
         echo "   -l <logfile>"
         echo "        : Set the compile log file"
@@ -54,6 +57,9 @@ do
         BITSIZE=" BIT_SIZE=32"
     elif [ $1 = "-64" ] ; then
         BITSIZE=" BIT_SIZE=64"
+    elif [ $1 = "-a" ] ; then
+        shift
+        MEARCH=" ARCHITEC=$1"
     elif [ $1 = "-C" ] ; then
         OPTIONS=" clean"
     elif [ $1 = "-D" ] ; then
@@ -215,7 +221,7 @@ if [ "$MAKEFILE" = "winmingw.mak" ] ; then
       fi
     fi
 fi
-OPTIONS="$MECORE$MEDEBUG$METYPE$MEPROF$BITSIZE$OPTIONS"
+OPTIONS="$MEARCH$MECORE$MEDEBUG$METYPE$MEPROF$BITSIZE$OPTIONS"
 MAKECDEFS="MAKECDEFS=$MAKECDEFS"
 if [ -r $MAKEFILE ] ; then
     if [ -n "$LOGFILE" ] ; then

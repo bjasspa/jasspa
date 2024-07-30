@@ -63,10 +63,8 @@ TOOLKIT_VER = $(shell $(CC) -dumpversion | cut -f 1 -d .)
 ifneq "$(ARCHITEC)" ""
 else ifeq "$(shell uname -p)" "i386"
 ARCHITEC = intel
-ARCFLAGS = -arch x86_64
 else
 ARCHITEC = apple
-ARCFLAGS = -arch arm64
 endif
 ifeq "$(ARCHITEC)" "intel"
 ARCFLAGS = -arch x86_64

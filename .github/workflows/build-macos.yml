@@ -24,17 +24,17 @@ jobs:
     - name: Compile macos apple mec
       run: |
         cd ./microemacs/src
-        ./build.sh -t c -D ARCHITEC=apple
+        ./build.sh -t c -a apple
     - name: Compile macos apple mew
       run: |
         cd ./microemacs/src
-        ./build.sh -t w -D ARCHITEC=apple
+        ./build.sh -t w -a apple
     - name: Compile macos intel mec
       run: |
         cd ./microemacs/src
-        ./build.sh -t c -D ARCHITEC=intel
+        ./build.sh -t c -a intel
     - name: Compile macos intel mew
       run: |
         cd ./microemacs/src
-        ./build.sh -t w -D ARCHITEC=intel
+        ./build.sh -t w -a intel
            
