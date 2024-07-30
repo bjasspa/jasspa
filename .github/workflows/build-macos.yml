@@ -12,15 +12,22 @@ jobs:
     steps:
     - name: Install dependencies
       run: |
+         which cc
+         cc --version
+         which make
+         make --version
+         /usr/bin/xcrun --sdk macosx -show-sdk-version
+         which cc
+         cc --version
          brew install xquartz
-         brew install make
+         which cc
+         cc --version
       
     - name: Checkout code
       uses: actions/checkout@v4
 
     - name: Compile macos mec
       run: |
-        export PATH=/usr/local/opt/make/libexec/gnubin/:$PATH
         cd ./microemacs/src
         ./build.sh -t c
     - name: Compile macos mew
