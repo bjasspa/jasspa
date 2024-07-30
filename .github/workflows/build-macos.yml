@@ -43,10 +43,10 @@ jobs:
     - name: Create macos apple binaries download
       run: |
         cd ./microemacs/bin
-        mv macos23-apple64-* macos23-apple64
+        mv macos14-apple64-* macos14-apple64
         cd ..
-        export MEVER=`./bin/macos23-apple64/mec -p @contribs/ver.emf`
-        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_macos23_apple64_binaries bin
+        export MEVER=`./bin/macos14-apple64/mec -p @contribs/ver.emf`
+        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_macos14_apple64_binaries bin
 
     - name: Compile macos intel mec
       run: |
@@ -59,44 +59,44 @@ jobs:
     - name: Create macos intel binaries download
       run: |
         cd ./microemacs/bin
-        mv macos23-intel64-* macos23-intel64
+        mv macos14-intel64-* macos14-intel64
         cd ..
-        export MEVER=`./bin/macos23-apple64/mec -p @contribs/ver.emf`
-        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_macos23_intel64_binaries bin/macos23-intel64
+        export MEVER=`./bin/macos14-apple64/mec -p @contribs/ver.emf`
+        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_macos14_intel64_binaries bin/macos14-intel64
 
     - name: Create macos apple mecs
       run: |
-        export MEVER=`./microemacs/bin/macos23-apple64/mec -p @microemacs/contribs/ver.emf`
+        export MEVER=`./microemacs/bin/macos14-apple64/mec -p @microemacs/contribs/ver.emf`
         cd ./microemacs/mesingle
         rm -rf bin
-        mkdir -p bin/macos23-apple64
-        ../bin/macos23-apple64/mec -p "@mesgen" -f -p ../bin/macos23-apple64/mec -t ../bin/macos23-apple64/tfs -o bin/macos23-apple64/mecs
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos23_apple64_mecs bin
+        mkdir -p bin/macos14-apple64
+        ../bin/macos14-apple64/mec -p "@mesgen" -f -p ../bin/macos14-apple64/mec -t ../bin/macos14-apple64/tfs -o bin/macos14-apple64/mecs
+        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos14_apple64_mecs bin
     - name: Create macos apple mews
       run: |
-        export MEVER=`./microemacs/bin/macos23-apple64/mec -p @microemacs/contribs/ver.emf`
+        export MEVER=`./microemacs/bin/macos14-apple64/mec -p @microemacs/contribs/ver.emf`
         cd ./microemacs/mesingle
         rm -rf bin
-        mkdir -p bin/macos23-apple64
-        ../bin/macos23-apple64/mec -p "@mesgen" -f -p ../bin/macos23-apple64/mew -t ../bin/macos23-apple64/tfs -o bin/macos23-apple64/mews
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos23_apple64_mews bin
+        mkdir -p bin/macos14-apple64
+        ../bin/macos14-apple64/mec -p "@mesgen" -f -p ../bin/macos14-apple64/mew -t ../bin/macos14-apple64/tfs -o bin/macos14-apple64/mews
+        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos14_apple64_mews bin
 
     - name: Create macos intel mecs
       run: |
-        export MEVER=`./microemacs/bin/macos23-apple64/mec -p @microemacs/contribs/ver.emf`
+        export MEVER=`./microemacs/bin/macos14-apple64/mec -p @microemacs/contribs/ver.emf`
         cd ./microemacs/mesingle
         rm -rf bin
-        mkdir -p bin/macos23-intel64
-        ../bin/macos23-apple64/mec -p "@mesgen" -f -p ../bin/macos23-intel64/mec -t ../bin/macos23-apple64/tfs -o bin/macos23-intel64/mecs
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos23_intel64_mecs bin
+        mkdir -p bin/macos14-intel64
+        ../bin/macos14-apple64/mec -p "@mesgen" -f -p ../bin/macos14-intel64/mec -t ../bin/macos14-apple64/tfs -o bin/macos14-intel64/mecs
+        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos14_intel64_mecs bin
     - name: Create macos intel mews
       run: |
-        export MEVER=`./microemacs/bin/macos23-apple64/mec -p @microemacs/contribs/ver.emf`
+        export MEVER=`./microemacs/bin/macos14-apple64/mec -p @microemacs/contribs/ver.emf`
         cd ./microemacs/mesingle
         rm -rf bin
-        mkdir -p bin/macos23-intel64
-        ../bin/macos23-apple64/mec -p "@mesgen" -f -p ../bin/macos23-intel64/mew -t ../bin/macos23-apple64/tfs -o bin/macos23-intel64/mews
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos23_intel64_mews bin
+        mkdir -p bin/macos14-intel64
+        ../bin/macos14-apple64/mec -p "@mesgen" -f -p ../bin/macos14-intel64/mew -t ../bin/macos14-apple64/tfs -o bin/macos14-intel64/mews
+        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos14_intel64_mews bin
 
     - name: Upload macos downloads
       uses: actions/upload-artifact@v4

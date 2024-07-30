@@ -40,7 +40,7 @@ BIT_SIZE = $(shell getconf LONG_BIT)
 endif
 
 PLATFORM = macos
-PLATFORM_VER = $(shell uname -r | cut -f 1 -d .)
+PLATFORM_VER = $(shell sw_vers -productVersion | cut -f 1 -d .)
 
 MAKEFILE = $(PLATFORM)$(TOOLKIT)
 ifeq "$(BPRF)" "1"
