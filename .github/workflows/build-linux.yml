@@ -32,7 +32,7 @@ jobs:
       run: |
         cd ./microemacs/bin
         mv linux5-intel64-gcc9 linux5-intel64
-        del ./.gitignore
+        rm ./.gitignore
         cp ../license.txt ./
         cp ../readme.txt ./
         cd ..
