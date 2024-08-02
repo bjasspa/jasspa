@@ -15,6 +15,7 @@ jobs:
      
     - name: Compile linux5 mec
       run: |
+        mkdir downloads
         mkdir packages
         cd ./microemacs/src
         ./build.sh -t c
@@ -31,9 +32,18 @@ jobs:
             rm -rf tfs
             mkdir -p tfs/spelling
             cp *${ii}* tfs/spelling
+            cd tfs
+            zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_ls${ii} spelling
+            cd ..
             tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_ls${ii}.tfs -a ../mesingle/tfs_hd tfs
         done
 
+    - name: Upload spelling downloads
+      uses: actions/upload-artifact@v4
+      with: 
+        name: spelling-downloads
+        path: downloads
+        
     - name: Upload spelling packages
       uses: actions/upload-artifact@v4
       with: 
