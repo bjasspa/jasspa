@@ -85,7 +85,7 @@ jobs:
         cp ../../readme.txt ./
         zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_macros macros *.txt
         cd ..
-        ../bin/linux5-intel64/tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_macros.tfs -a ../mesingle/tfs_hd tfs
+        ../bin/linux5-intel64/tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_macros.tfs -a ../mesingle/tfs_hd jasspa
 
     - name: Create linux OpenSSL download
       run: |
