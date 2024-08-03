@@ -33,11 +33,9 @@ jobs:
         cd ./microemacs/bin
         mv linux5-intel64-gcc9 linux5-intel64
         rm ./.gitignore
-        cp ../license.txt ./
-        cp ../readme.txt ./
         cd ..
         export MEVER=`./bin/linux5-intel64/mec -p @contribs/ver.emf`
-        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_linux_binaries bin *.emf
+        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_linux_binaries bin license.txt readme.txt
 
     - name: Create linux mecs
       run: |
@@ -46,7 +44,9 @@ jobs:
         rm -rf bin/linux5-intel64
         mkdir -p bin/linux5-intel64
         ../bin/linux5-intel64/mec -p "@mesgen" -f -p ../bin/linux5-intel64/mec -t ../bin/linux5-intel64/tfs -o bin/linux5-intel64/mecs
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_linux_mecs bin
+        cp ../license.txt ./
+        cp ../readme.txt ./
+        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_linux_mecs bin license.txt readme.txt
         
     - name: Create linux mews
       run: |
@@ -55,7 +55,7 @@ jobs:
         rm -rf bin/linux5-intel64
         mkdir -p bin/linux5-intel64
         ../bin/linux5-intel64/mec -p "@mesgen" -f -p ../bin/linux5-intel64/mew -t ../bin/linux5-intel64/tfs -o bin/linux5-intel64/mews
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_linux_mews bin
+        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_linux_mews bin license.txt readme.txt
 
     - name: Generate docs
       run: |
@@ -70,7 +70,7 @@ jobs:
         cd tfs
         cp ../../license.txt ./
         cp ../../readme.txt ./
-        zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_hlpehf macros *.txt
+        zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_hlpehf macros license.txt readme.txt
         cd ..
         ../bin/linux5-intel64/tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_hlpehf.tfs -a ../mesingle/tfs_hd tfs
 
@@ -83,7 +83,7 @@ jobs:
         cd ../release/jasspa/
         cp ../../license.txt ./
         cp ../../readme.txt ./
-        zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_macros macros *.txt
+        zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_macros macros license.txt readme.txt
         cd ..
         ../bin/linux5-intel64/tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_macros.tfs -a ../mesingle/tfs_hd jasspa
 
@@ -98,9 +98,9 @@ jobs:
         cp ../readme.txt ./
         cp /lib/x86_64-linux-gnu/libcrypto.so bin/linux5-intel64
         cp /lib/x86_64-linux-gnu/libssl.so bin/linux5-intel64
-        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_linux_openssl bin *.txt
+        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_linux_openssl bin license.txt readme.txt
         cd ..
-        ./bin/linux5-intel64/tfs -o ../packages/Jasspa_MicroEmacs_${MEVER}_openssl.tfs -a ./mesingle/tfs_hd tfs
+        ./bin/linux5-intel64/tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_openssl.tfs -a ./mesingle/tfs_hd tfs
 
     - name: Upload linux downloads
       uses: actions/upload-artifact@v4
