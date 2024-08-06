@@ -92,7 +92,7 @@ jobs:
         cp /opt/homebrew/opt/openssl@3/lib/libssl.3.dylib bin/macos14-apple64
         cp /opt/homebrew/opt/openssl@3/LICENSE.txt bin/macos14-apple64
         cp /opt/homebrew/opt/openssl@3/README.md bin/macos14-apple64
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_apple_openssl bin
+        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos_apple_openssl bin
         cd ..
         ./bin/macos14-apple64/tfs -o ../packages/Jasspa_MicroEmacs_${MEVER}_macos_apple64_openssl.tfs -a ./mesingle/tfs_hd tfs
 
@@ -120,3 +120,8 @@ jobs:
         name: macos-downloads
         path: downloads
         
+    - name: Upload macos packages
+      uses: actions/upload-artifact@v4
+      with: 
+        name: macos-packages
+        path: packages

@@ -1,23 +1,24 @@
-/* -*- C -*- ****************************************************************
+/* -*- c -*-
  *
- *  			      Copyright 2021 Maxinity Software Ltd.
- *			      All Rights Reserved
+ * JASSPA MicroEmacs - www.jasspa.com
+ * spell.c - Spell checking routines.
  *
- *  Created By  : Steven Phillips
- *  Created     : 2021-09-20 17:39:05
- *  Description	: Error numbers used
+ * Copyright (C) 2020-2024 JASSPA (www.jasspa.com)
  *
- ****************************************************************************
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  Copyright (c) 2021 Maxinity Software Ltd.
- * 
- *  All Rights Reserved.
- * 
- * This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
- * reproduced,  translated,  or  reduced to any  electronic  medium or machine
- * readable form without prior written consent from Maxinity Software Ltd.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- ****************************************************************************/
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
 #ifndef __MESOCK_H
 #define __MESOCK_H

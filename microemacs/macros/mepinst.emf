@@ -7,7 +7,7 @@
 ; Synopsis:    MicroEmacs package installer 
 ; Authors:     Steven Phillips
 ;
-set-variable .help.purl "http://demo.maxinity.co.uk/MicroEmacs/"
+set-variable .help.purl "http://d1j8pqz26umfbo.cloudfront.net/packages/"
 
 0 define-macro me-pinstall
   set-variable #l1 @1
