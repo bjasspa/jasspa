@@ -59,7 +59,7 @@ jobs:
         Rename-Item -Path windows100-intel32-msvc17 -NewName windows100-intel32
         cd ..
         $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
-        Compress-Archive -Path bin,license.txt,readme.txt -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_binaries
+        Compress-Archive -Path bin,license.txt,readme.txt -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows_binaries
 
     - name: Create windows100 openssl download
       shell: pwsh
@@ -73,9 +73,9 @@ jobs:
         Copy-Item -Path ..\..\version.txt -Destination tfs\bin\windows100-intel32
         Copy-Item -Path ..\..\LICENSE.txt -Destination tfs\bin\windows100-intel32
         cd tfs
-        Compress-Archive -Path bin -DestinationPath ..\..\..\..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_openssl.zip
+        Compress-Archive -Path bin -DestinationPath ..\..\..\..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows_openssl.zip
         cd ..
-        ..\..\..\..\bin\windows100-intel32\tfs -o ../../../../../packages/Jasspa_MicroEmacs_${env:MEVER}_openssl_windows100_intel32.tfs -a ../../../../mesingle/tfs_hd tfs
+        ..\..\..\..\bin\windows100-intel32\tfs -o ../../../../../packages/Jasspa_MicroEmacs_${env:MEVER}_windows_openssl.tfs -a ../../../../mesingle/tfs_hd tfs
 
     - name: Compile windows100 static mec
       shell: pwsh
@@ -96,7 +96,7 @@ jobs:
         ..\bin\windows100-intel32\mec.exe -p "@mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mec.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mecs.exe
         Copy-Item -Path ..\license.txt -Destination .
         Copy-Item -Path ..\readme.txt -Destination .
-        Compress-Archive -Path bin,license.txt,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_mecs
+        Compress-Archive -Path bin,license.txt,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows_mecs
 
     - name: Compile windows100 static mecw
       shell: pwsh
@@ -115,7 +115,7 @@ jobs:
         cd .\mesingle
         Remove-Item bin\windows100-intel32\mecs.exe
         ..\bin\windows100-intel32\mec.exe -p "@mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mew.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mews.exe
-        Compress-Archive -Path bin,license.txt,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_mews
+        Compress-Archive -Path bin,license.txt,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows_mews
 
     - name: Upload Packages
       uses: actions/upload-artifact@v4

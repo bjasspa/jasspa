@@ -57,6 +57,19 @@ jobs:
         ../bin/linux5-intel64/mec -p "@mesgen" -f -p ../bin/linux5-intel64/mew -t ../bin/linux5-intel64/tfs -o bin/linux5-intel64/mews
         zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_linux_mews bin license.txt readme.txt
 
+    - name: Create linux OpenSSL download
+      run: |
+        cd ./microemacs/
+        export MEVER=`./bin/linux5-intel64/mec -p @contribs/ver.emf`
+        rm -rf tfs
+        mkdir -p tfs/bin/linux5-intel64
+        cd tfs
+        cp /lib/x86_64-linux-gnu/libcrypto.so bin/linux5-intel64
+        cp /lib/x86_64-linux-gnu/libssl.so bin/linux5-intel64
+        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_linux_openssl bin
+        cd ..
+        ./bin/linux5-intel64/tfs -o ../packages/Jasspa_MicroEmacs_${MEVER}_linux_openssl.tfs -a ./mesingle/tfs_hd tfs
+
     - name: Generate docs
       run: |
         export PATH=`pwd`/microemacs/bin/linux5-intel64:`pwd`/nroff/bin/linux:$PATH
@@ -86,21 +99,6 @@ jobs:
         zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_macros macros license.txt readme.txt
         cd ..
         ../bin/linux5-intel64/tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_macros.tfs -a ../mesingle/tfs_hd jasspa
-
-    - name: Create linux OpenSSL download
-      run: |
-        cd ./microemacs/
-        export MEVER=`./bin/linux5-intel64/mec -p @contribs/ver.emf`
-        rm -rf tfs
-        mkdir -p tfs/bin/linux5-intel64
-        cd tfs
-        cp ../license.txt ./
-        cp ../readme.txt ./
-        cp /lib/x86_64-linux-gnu/libcrypto.so bin/linux5-intel64
-        cp /lib/x86_64-linux-gnu/libssl.so bin/linux5-intel64
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_linux_openssl bin license.txt readme.txt
-        cd ..
-        ./bin/linux5-intel64/tfs -o ../packages/Jasspa_MicroEmacs_${MEVER}_openssl.tfs -a ./mesingle/tfs_hd tfs
 
     - name: Upload linux downloads
       uses: actions/upload-artifact@v4
