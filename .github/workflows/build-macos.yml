@@ -26,6 +26,12 @@ jobs:
          ls /opt/homebrew/opt/openssl@3/
          echo Macos OpenSSL 2
          ls /opt/homebrew/opt/openssl@3/lib
+         echo Macos OpenSSL 3
+         ls /usr/local/opt/
+         echo Macos OpenSSL 4
+         ls /usr/local/opt/openssl@3
+         echo Macos OpenSSL 5
+         ls /usr/local/opt/openssl@3/lib
       
     - name: Checkout code
       uses: actions/checkout@v4
@@ -44,9 +50,10 @@ jobs:
       run: |
         cd ./microemacs/bin
         mv macos14-apple64-* macos14-apple64
+        rm ./.gitignore
         cd ..
         export MEVER=`./bin/macos14-apple64/mec -p @contribs/ver.emf`
-        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_macos14_apple64_binaries bin
+        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_macos14_apple64_binaries bin license.txt readme.txt
 
     - name: Compile macos intel mec
       run: |
@@ -62,7 +69,7 @@ jobs:
         mv macos14-intel64-* macos14-intel64
         cd ..
         export MEVER=`./bin/macos14-apple64/mec -p @contribs/ver.emf`
-        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_macos14_intel64_binaries bin/macos14-intel64
+        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_macos14_intel64_binaries bin/macos14-intel64 license.txt readme.txt
 
     - name: Create macos apple mecs
       run: |
@@ -71,7 +78,10 @@ jobs:
         rm -rf bin
         mkdir -p bin/macos14-apple64
         ../bin/macos14-apple64/mec -p "@mesgen" -f -p ../bin/macos14-apple64/mec -t ../bin/macos14-apple64/tfs -o bin/macos14-apple64/mecs
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos14_apple64_mecs bin
+        cp ../license.txt ./
+        cp ../readme.txt ./
+        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos14_apple64_mecs bin license.txt readme.txt
+
     - name: Create macos apple mews
       run: |
         export MEVER=`./microemacs/bin/macos14-apple64/mec -p @microemacs/contribs/ver.emf`
@@ -79,7 +89,23 @@ jobs:
         rm -rf bin
         mkdir -p bin/macos14-apple64
         ../bin/macos14-apple64/mec -p "@mesgen" -f -p ../bin/macos14-apple64/mew -t ../bin/macos14-apple64/tfs -o bin/macos14-apple64/mews
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos14_apple64_mews bin
+        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos14_apple64_mews bin license.txt readme.txt
+
+    - name: Create macos apple OpenSSL download
+      run: |
+        cd ./microemacs/
+        export MEVER=`./bin/macos14-apple64/mec -p @contribs/ver.emf`
+        rm -rf tfs
+        mkdir -p tfs/bin/macos14-apple64
+        cd tfs
+        cp /opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib bin/macos14-apple64
+        cp /opt/homebrew/opt/openssl@3/lib/libssl.3.dylib bin/macos14-apple64
+        cp /opt/homebrew/opt/openssl@3/LICENSE.txt bin/macos14-apple64
+        cp /opt/homebrew/opt/openssl@3/README.md bin/macos14-apple64
+        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_apple_openssl bin
+        cd ..
+        ./bin/macos14-apple64/tfs -o ../packages/Jasspa_MicroEmacs_${MEVER}_macos_apple64_openssl.tfs -a ./mesingle/tfs_hd tfs
+
 
     - name: Create macos intel mecs
       run: |

@@ -99,6 +99,8 @@ set-variable .fhook-emf.item-list-r1 "Macr \ecB\\1\ecA"
     !force set-variable #l1 @ml66 "Variable" #l1
   !elif &seq &lef #l1 1 "!"
     !force set-variable #l1 @ml69 "Directive" #l1 .dirc-list
+  !elif &seq &lef #l1 1 "&"
+    !force set-variable #l1 @ml69 "Operator" #l1 .oper-list
   !else
     !force set-variable #l1 @ml63 "Command" #l1
   !endif
@@ -107,7 +109,8 @@ set-variable .fhook-emf.item-list-r1 "Macr \ecB\\1\ecA"
     insert-string #l1
   !endif
 !emacro
-set-variable .emf-expand-abbrev.dirc-list "|!abort|!bell|!cont|!done|!ehelp|!elif|!else|!emacro|!endif|!force|!goto|!if|!jump|!nma|!repeat|!return|!tgoto|!tjump|!until|!while|"
+set-variable .emf-expand-abbrev.dirc-list "|!abort|!bell|!break|!cont|!done|!ehelp|!elif|!else|!emacro|!endif|!force|!goto|!if|!iif|!jump|!nma|!repeat|!return|!tgoto|!tjump|!until|!while|"
+set-variable .emf-expand-abbrev.oper-list "|&abs|&add|&and|&ato|&ban|&bmo|&bno|&bor|&bst|&bxo|&cat|&cbi|&con|&dec|&div|&equ|&exi|&fab|&fad|&fdi|&fin|&fmu|&fsq|&fsu|&gmo|&gre|&inc|&ind|&inw|&ire|&ise|&isi|&ito|&kbi|&lde|&lef|&len|&les|&lfi|&lge|&lin|&lse|&mid|&mod|&mul|&nbi|&nbm|&neg|&not|&opt|&or|&pde|&pin|&reg|&rep|&rig|&ris|&rsi|&seq|&set|&sgr|&sin|&sle|&slo|&spr|&sta|&sub|&sup|&trb|&trl|&trr|&uci|&ufi|&uni|&whi|&xir|&xis|&xre|&xse|"
 
 define-macro emf-quote-command
   ml-write "Quote command: "

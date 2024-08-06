@@ -16,6 +16,7 @@
 .XI svn-blame - "\*(mS SVN interface - annotate a file"
 .XI svn-checkout - "\*(mS SVN interface - checkout a working copy"
 .XI svn-commit - "\*(mS SVN interface - commit changes back"
+.XI svn-commit-log - "\*(mS SVN interface - get log for a commit"
 .XI svn-copy - "\*(mS SVN interface - copy items"
 .XI svn-delete - "\*(mS SVN interface - delete items"
 .XI svn-diff - "\*(mS SVN interface - diff changes"
@@ -47,6 +48,9 @@ svn-checkout \- \*(mS SVN interface - checkout a working copy
 .br
 .Me "|svn-commit"
 svn-commit \- \*(mS SVN interface - commit changes back
+.br
+.Me "|svn-commit-log"
+svn-commit-log \- \*(mS SVN interface - get log for a commit
 .br
 .Me "|svn-copy"
 svn-copy \- \*(mS SVN interface - copy items
@@ -101,6 +105,8 @@ svn-xdiff \- \*(mS SVN interface - external diff changes
 .B svn-checkout
 .br
 .B svn-commit
+.br
+.B svn-commit-log
 .br
 .B svn-copy
 .br
@@ -189,6 +195,10 @@ current directory. The user specifies the item via an SVN repository URL.
 .PP
 The  \fBsvn-commit\fR  command  commits  any  changes  made to the  current  buffer's  file or  selection  list to the
 repository. The user is prompted for a commit log message.
+.PP
+The  \fBsvn-commit-log\fR  command  opens a \fI*svn-commit-log*\fR window displaying the SVN log for the given commit. 
+If the output is processed then clicking on or pressing enter on any of the file names listed will execute a 
+\fBsvn-diff\fR showing the changes made. 
 .PP
 The \fBsvn-copy\fR  command creates a local copy of the current buffer's file or selected items;  alternatively a full
 SVN repository URL can be given as the destination which will immediately commit the items back to the repository. The

@@ -13,6 +13,7 @@
 .XI cvs - "\*(mS CVS interface"
 .XI cvs-setup - "\*(mS CVS interface setup"
 .XI cvs-add - "\*(mS CVS interface - add file"
+.XI cvs-annotate - "\*(mS CVS interface - annotate file"
 .XI cvs-checkout - "\*(mS CVS interface - checkout files"
 .XI cvs-commit - "\*(mS CVS interface - commit changes"
 .XI cvs-diff - "\*(mS CVS interface - diff changes"
@@ -34,6 +35,9 @@ cvs-setup \- \*(mS CVS interface setup
 .br
 .Me "|cvs-add"
 cvs-add \- \*(mS CVS interface - add file
+.br
+.Me "|cvs-annotate"
+cvs-annotate \- \*(mS CVS interface - annotate file
 .br
 .Me "|cvs-checkout"
 cvs-checkout \- \*(mS CVS interface - checkout files and directories
@@ -76,6 +80,8 @@ cvs-update \- \*(mS CVS interface - update directory files
 .B cvs-setup
 .sp 1
 .B cvs-add
+.br
+.B cvs-annotate
 .br
 .B cvs-checkout
 .br
@@ -190,9 +196,11 @@ command only works with a single file.
 .IP "\fBClear cvs console\fR"
 Clears the \fI*cvs-console*\fR buffer.
 .PP
-The  \fBcvs-add\fR  command adds the current  buffers file to the  repository.
-Note  that  this  command  only  performs  the  local  addition,  a  \fICVS\fR
-\fIcommit\fR is required to make the addition permanent.
+The \fBcvs-add\fR command adds the current buffers file to the repository. Note that this command only performs the
+local addition, a \fICVS\fR \fIcommit\fR is required to make the addition permanent.
+.PP
+The \fBcvs-annotate\fR command displays information about the most recent change for each line of the current buffer's 
+file, very useful when trying to locate the cause of a problem.
 .PP
 The  \fBcvs-checkout\fR  command  checks  out a file  or  directory  from  the
 repository  into the current  directory.  The user  specifies  the file on the

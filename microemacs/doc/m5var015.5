@@ -7,20 +7,31 @@
 .Im MicroEmacs variable|window
 .so me.tni
 .TH $frame-title 5
-.XI $frame-title - "Set frame title prefix"
+.XI $frame-title - "Frame title prefix"
+.XI set-title 3 "Set frame title prefix"
 .SH NAME
-$frame-title \- Set frame title prefix
+$frame-title \- Frame title prefix
+.br
+set-title \- Set frame title prefix
 .SH SYNOPSIS
-\fB$frame-title\fR
+.na
+.Me "|$frame-title"
+\fB$frame-title\fR "\fIstring\fR"
+.Me "|diff"
+.br
+\fBset-title\fR "\fItitle\fR"
+.ad
 .SH DESCRIPTION
-On  windowing  systems, such as UNIX XTerm and Windows, the frame title is composed of the \fB$frame-title\fR followed
-by the  current buffer. Setting the variable can be  particularly  useful when running \*(mS multiple times as an easy
+On windowing systems, such as UNIX XTerm and Windows, the frame title is composed of the \fB$frame-title\fR followed
+by the current buffer. Setting the variable can be particularly useful when running \*(mS multiple times as an easy
 way to distinguish between each instance.
 .PP
 The
 .Ht read-session 3
 command  sets this  variable  to  "\fC\*(mS:  <session-name>\fP"  so that if  multiple  instance of \*(mS are run with
 different sessions each can be easily identified.
+.PP
+\fBset-title\fR is a simple macro used to set the \fB$frame-title\fR variable.
 .SH "NOTES"
 Unlike other frame variables, such as
 .Ht $frame-id 5 ,

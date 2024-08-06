@@ -8,15 +8,31 @@
 .so me.tni
 .TH $version 5
 .XI $version - "\*(mS version date-code"
+.XI $build - "\*(mS build information"
 .SH NAME
+.Me |$version
 $version \- \*(mS version date-code
+.br
+.Me |$build
+$build - \*(mS build information
 .Me $a
 .SH SYNOPSIS
+.na
+.nf
 \fB$version\fR "\fIYYYYMMDD\fR"
+\fB$build\fR "\fI <platform> <platform-mjr-ver> <arch> <bit-size> <toolset> <toolset-mjr-ver> \fR"
+.fi
+.ad
 .SH DESCRIPTION
-\fB$version\fR  is a system  variable which is defined as the \*(mS build date
-code. This value is fixed at compile  time and cannot be changed. The variable
-may be used in macros to identify incompatibility issues.
+\fB$version\fR is a system variable which is defined as the \*(mS build date code. This value is fixed at compile time
+and cannot be changed. The variable may be used in macros to identify incompatibility issues.
+.PP
+\fB$build\fR is a
+.Hl "\*(mS list" &lset 4
+variable detailing the platform, architecture and toolset (compiler) used to build the running version. This variable
+is used to locate compatible binary components such as upgrades or
+.Hr OpenSSL 1
+dynamic libraries.
 .SH EXAMPLE
 Given a macro  that only  operates  with a \*(mS  executable  built on or
 after 1st August 2001 then this macro should check that  \fC$version\fR  is not
@@ -30,11 +46,13 @@ less than \fC20010801\fR. The check may be performed as follows:
 .CE 0
 .Me $ehf-scheme
 .SH NOTES
-This variable was introduced in 2001-08-01, evaluating this variable on an
-earlier  version  of \*(mS  would  return the string  "\fCERROR\fR"  unless an
-environment  variable  $version  has  been  defined.  "\fCERROR\fR"  evaluates
-to \fC0\fR hence the test still operates correctly.
+The \fB$version\fR variable was introduced in 2001-08-01, evaluating this variable on an earlier version of \*(mS would
+return the string "\fCERROR\fR" unless an environment variable $version has been defined. "\fCERROR\fR" evaluates to
+\fC0\fR hence the test still operates correctly.
 .PP
-This variable is used in the macro file  \fCme.emf\fR to check for any macro -
-executable incompatibility issues.
+This variable is used in the macro file \fCme.emf\fR to check for any macro - executable incompatibility issues.
+.PP
+The \fB$build\fR variable was introduced in 2024-07-01 along with the
+.Hl find-file keyNames 2
+pseudo key which together can be used to download and install missing or out-of-date components.
 .FH

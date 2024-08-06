@@ -59,7 +59,7 @@ jobs:
         Rename-Item -Path windows100-intel32-msvc17 -NewName windows100-intel32
         cd ..
         $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
-        Compress-Archive -Path bin -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_binaries
+        Compress-Archive -Path bin,license.txt,readme.txt -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_binaries
 
     - name: Create windows100 openssl download
       shell: pwsh
@@ -70,12 +70,35 @@ jobs:
         mkdir -Path tfs\bin\windows100-intel32
         Copy-Item -Path libssl-3.dll -Destination tfs\bin\windows100-intel32
         Copy-Item -Path libcrypto-3.dll -Destination tfs\bin\windows100-intel32
+        Copy-Item -Path ..\..\version.txt -Destination tfs\bin\windows100-intel32
+        Copy-Item -Path ..\..\LICENSE.txt -Destination tfs\bin\windows100-intel32
         cd tfs
         Compress-Archive -Path bin -DestinationPath ..\..\..\..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_openssl.zip
         cd ..
         ..\..\..\..\bin\windows100-intel32\tfs -o ../../../../../packages/Jasspa_MicroEmacs_${env:MEVER}_openssl_windows100_intel32.tfs -a ../../../../mesingle/tfs_hd tfs
 
-    - name: Compile windows100 static mew
+    - name: Compile windows100 static mec
+      shell: pwsh
+      run: |
+        & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
+          | % { , ($_ -Split '=', 2) } `
+          | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
+        nmake -f winmsvc.mak BTYP=c LSTT=1
+      working-directory: ./microemacs/src
+
+    - name: Create windows100 mecs
+      shell: pwsh
+      run: |
+        cd .\microemacs
+        $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
+        cd .\mesingle
+        mkdir -Path bin\windows100-intel32
+        ..\bin\windows100-intel32\mec.exe -p "@mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mec.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mecs.exe
+        Copy-Item -Path ..\license.txt -Destination .
+        Copy-Item -Path ..\readme.txt -Destination .
+        Compress-Archive -Path bin,license.txt,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_mecs
+
+    - name: Compile windows100 static mecw
       shell: pwsh
       run: |
         & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
@@ -90,9 +113,9 @@ jobs:
         cd .\microemacs
         $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
         cd .\mesingle
-        mkdir -Path bin\windows100-intel32
+        Remove-Item bin\windows100-intel32\mecs.exe
         ..\bin\windows100-intel32\mec.exe -p "@mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mew.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mews.exe
-        Compress-Archive -Path bin -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_mews
+        Compress-Archive -Path bin,license.txt,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows100_mews
 
     - name: Upload Packages
       uses: actions/upload-artifact@v4
