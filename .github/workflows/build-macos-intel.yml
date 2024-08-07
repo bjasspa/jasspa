@@ -27,7 +27,9 @@ jobs:
 
     - name: Compile macos-intel mec
       run: |
-        cd ./microemacs/src
+        mkdir downloads
+        mkdir packages
+            cd ./microemacs/src
         ./build.sh -t c -a intel
     - name: Compile macos-intel mew
       run: |
