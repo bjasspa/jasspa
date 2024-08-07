@@ -721,7 +721,7 @@ ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meInt fd
     }
     fl--;
     if(cc == '\0')
-        return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Invalid URL, missing '/' after host - %s]",buff);
+        return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Invalid URL, missing '/' after host - %s]",url);
     *dd = '\0';
     if((prt == NULL) || (prt[0] == '\0'))
     {
