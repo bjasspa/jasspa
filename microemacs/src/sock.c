@@ -272,42 +272,6 @@ static int timeoutSnd=20000;
 static int timeoutRcv=3600000;
 
 
-void
-meSockSetup(meIo *io)
-{
-    meUByte *ss;
-    if(((ss = getUsrVar((meUByte *)"http-proxy-addr")) != errorm) && (*ss != '\0'))
-    {
-        if((proxyHost == NULL) || meStrcmp(ss,proxyHost))
-        {
-            if(proxyHost == NULL)
-                free(proxyHost);
-            proxyHost = meStrdup(ss);
-            proxyHost = NULL;
-        }
-        if((ss = getUsrVar((meUByte *)"http-proxy-port")) != errorm)
-            proxyPort = meAtoi(ss);
-        else
-            proxyPort = 0;
-    }
-    else if(proxyHost != NULL)
-    {
-        free(proxyHost);
-        proxyHost = NULL;
-    }
-#ifdef _WIN32
-    {
-        WSADATA wsaData;
-        if(WSAStartup(MAKEWORD(1,1),&wsaData))
-        {
-            ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,(meUByte *) "meSock Error: WSAStartup failed");
-            return;
-        }
-    }
-#endif
-    meSockHasInit = 1;
-}
-
 
 static void
 strBase64Encode3(meUByte *dd, meUByte c1, meUByte c2, meUByte c3)
@@ -658,6 +622,8 @@ meSockInit(meIo *io, meUByte *buff)
     if(libHandle == NULL)
     {
         char fname[meBUF_SIZE_MAX];
+        meIo tio;
+        memcpy(&tio,io,sizeof(meIo));
         if(fileLookup((meUByte *) MESOCK_STRINGIFY(_OPENSSLCNM),0,NULL,meFL_CALLBACK,(meUByte *) fname))
         {
 #ifdef _WIN32
@@ -666,6 +632,7 @@ meSockInit(meIo *io, meUByte *buff)
             libHandle = dlopen(fname,RTLD_LOCAL|RTLD_LAZY);
 #endif
         }            
+        memcpy(io,&tio,sizeof(meIo));
         if(libHandle == NULL)
         {
             if(io->urlOpts & meSOCKOPT_LOG_ERROR)
@@ -735,6 +702,8 @@ meSockInit(meIo *io, meUByte *buff)
     if(libHandle == NULL)
     {
         char fname[meBUF_SIZE_MAX];
+        meIo tio;
+        memcpy(&tio,io,sizeof(meIo));
         if(fileLookup((meUByte *) MESOCK_STRINGIFY(_OPENSSLLNM),0,NULL,meFL_CALLBACK,(meUByte *) fname))
         {
 #ifdef _WIN32
@@ -743,6 +712,7 @@ meSockInit(meIo *io, meUByte *buff)
             libHandle = dlopen(fname,RTLD_LOCAL|RTLD_LAZY);
 #endif
         }            
+        memcpy(io,&tio,sizeof(meIo));
         if(libHandle == NULL)
         {
             snprintf((char *) buff,meSOCK_BUFF_SIZE,"meSock Error: Failed to load " MESOCK_STRINGIFY(_OPENSSLLNM) " library - OpenSSL installed? (%d)",meSockGetError());
@@ -1154,6 +1124,58 @@ meSockCheckCertificate(meIo *io, const char *sniHost, meUByte *rbuff)
 }
 #endif
 
+int
+meSockSetup(meIo *io, meUShort flags)
+{
+    if(!meSockHasInit)
+    {
+        meUByte *ss;
+        if(((ss = getUsrVar((meUByte *)"http-proxy-addr")) != errorm) && (*ss != '\0'))
+        {
+            if((proxyHost == NULL) || meStrcmp(ss,proxyHost))
+            {
+                if(proxyHost == NULL)
+                    free(proxyHost);
+                proxyHost = meStrdup(ss);
+                proxyHost = NULL;
+            }
+            if((ss = getUsrVar((meUByte *)"http-proxy-port")) != errorm)
+                proxyPort = meAtoi(ss);
+            else
+                proxyPort = 0;
+        }
+        else if(proxyHost != NULL)
+        {
+            free(proxyHost);
+            proxyHost = NULL;
+        }
+#ifdef _WIN32
+        {
+            WSADATA wsaData;
+            if(WSAStartup(MAKEWORD(1,1),&wsaData))
+            {
+                ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,(meUByte *) "meSock Error: WSAStartup failed");
+                return -1;
+            }
+        }
+#endif
+        meSockHasInit = 1;
+    }
+ #if MEOPT_OPENSSL
+    if((flags & (meSOCKFLG_USE_SSL|meSOCKFLG_EXPLICIT_SSL)) && (meSockCtx == NULL))
+    {
+        if(meSockHasInit & 2)
+            return -1;
+        meSockHasInit |= 3;
+        if(meSockInit(io,ffbuf) < 0)
+            return -1;
+        meSockHasInit &= ~2;
+    }
+#endif
+    return 0;
+}
+
+
 static int
 meSockReadLine(meIo *io, meUByte *buff)
 {
@@ -1212,9 +1234,9 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
 #if MEOPT_OPENSSL
     SSL *ssl;
 #endif
-    if(!meSockHasInit)
-        meSockSetup(io);
-
+    if(meSockSetup(io,flags) < 0)
+        return -1;
+    
     flags |= (io->urlFlags & meSOCKFLG_CLOSE) | meSOCKFLG_INUSE;
 
     if(meSockIsInUse(io))
@@ -1286,11 +1308,7 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
         }
 #if MEOPT_OPENSSL
         if(flags & meSOCKFLG_USE_SSL)
-        {
-            if((meSockCtx == NULL) && ((ret = meSockInit(io,rbuff)) < 0))
-                return ret;
             OPENSSLFunc(ERR_clear_error)();
-        }
 #endif
         if(io->urlOpts & meSOCKOPT_LOG_STATUS)
         {
@@ -2201,9 +2219,9 @@ meSockFtpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *user
 #if MEOPT_OPENSSL
     SSL *ssl;
 #endif
-    if(!meSockHasInit)
-        meSockSetup(io);
-
+    if(meSockSetup(io,flags) < 0)
+        return -1;
+    
     flags |= (meSOCKFLG_CTRL_INUSE|meSOCKFLG_CLOSE);
     if(!port)
         port = (flags & meSOCKFLG_USE_SSL) ? 990:21;
@@ -2244,11 +2262,7 @@ meSockFtpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *user
         io->urlPrt = -1;
 #if MEOPT_OPENSSL
         if(flags & (meSOCKFLG_USE_SSL|meSOCKFLG_EXPLICIT_SSL))
-        {
-            if((meSockCtx == NULL) && ((ret = meSockInit(io,rbuff)) < 0))
-                return ret;
             OPENSSLFunc(ERR_clear_error)();
-        }
 #endif
         if(io->urlOpts & meSOCKOPT_LOG_STATUS)
         {

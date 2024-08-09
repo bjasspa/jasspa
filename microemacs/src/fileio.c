@@ -853,7 +853,7 @@ ffUrlFileSetupFlags(meIo *io, meUInt rwflag)
 static int
 ffUrlFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
 {
-    int ii ;
+    int ii;
     
     io->fp = meBadFile;
     io->length = -1;
@@ -1597,9 +1597,9 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
         if((rr=ffUrlFileOpen(io,flags,fname,bp)) <= 0)
         {
 #ifdef _UNIX
-            meSigRelease() ;
+            meSigRelease();
 #endif
-            return rr ;
+            return rr;
         }
 #else
 #ifdef _UNIX
@@ -1889,7 +1889,7 @@ ffReadFileToBuffer(meUByte *sfname, meUByte *buff, meInt buffLen)
     meior.type = ffUrlGetType(sfname);
     meAssert((meior.type & meIOTYPE_FILE) == 0);
     if((rr=ffReadFileOpen(&meior,sfname,meRWFLAG_READ|meRWFLAG_SILENT,NULL)) <= 0)
-        return rr ;
+        return rr;
     if(((rr=ffgetBuf(&meior,0,meFIOBUFSIZ)) >= 0) && (ffremain > 0))
     {
         
