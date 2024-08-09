@@ -75,7 +75,7 @@ jobs:
         cd tfs
         Compress-Archive -Path bin -DestinationPath ..\..\..\..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows_openssl.zip
         cd ..
-        ..\..\..\..\bin\windows100-intel32\tfs -o ../../../../../packages/Jasspa_MicroEmacs_${env:MEVER}_windows_openssl.tfs -a ../../../../mesingle/tfs_hd tfs
+        ..\..\..\..\bin\windows100-intel32\tfs -o ../../../../../packages/Jasspa_MicroEmacs_${env:MEVER}_openssl_windows_intel32.tfs -a ../../../../mesingle/tfs_hd tfs
 
     - name: Compile windows100 static mec
       shell: pwsh

@@ -79,6 +79,8 @@ jobs:
         install_name_tool -id @loader_path/libcrypto.3.dylib libcrypto.3.dylib
         install_name_tool -id @loader_path/libssl.3.dylib libssl.3.dylib
         install_name_tool -change $CRYPT_PATH @loader_path/libcrypto.3.dylib libssl.3.dylib
+        codesign --force --deep --sign - libcrypto.3.dylib
+        codesign --force --deep --sign - libssl.3.dylib
         echo OTOOL crypto
         otool -L libcrypto.3.dylib
         echo OTOOL ssl
@@ -86,7 +88,7 @@ jobs:
         cd ../..
         zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos_apple_openssl bin
         cd ..
-        ./bin/macos14-apple64/tfs -o ../packages/Jasspa_MicroEmacs_${MEVER}_macos_apple64_openssl.tfs -a ./mesingle/tfs_hd tfs
+        ./bin/macos14-apple64/tfs -o ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_macos_apple64.tfs -a ./mesingle/tfs_hd tfs
 
     - name: Upload macos-apple downloads
       uses: actions/upload-artifact@v4
