@@ -50,7 +50,7 @@ jobs:
         rm -rf bin
         mkdir -p bin/macos13-intel64
         ../bin/macos13-intel64/mec -p "@mesgen" -f -p ../bin/macos13-intel64/mec -t ../bin/macos13-intel64/tfs -o bin/macos13-intel64/mecs
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos_intel_mecs bin
+        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos_intel_mecs bin license.txt readme.txt
 
     - name: Create macos-intel mews
       run: |
@@ -59,7 +59,7 @@ jobs:
         rm -rf bin
         mkdir -p bin/macos13-intel64
         ../bin/macos13-intel64/mec -p "@mesgen" -f -p ../bin/macos13-intel64/mew -t ../bin/macos13-intel64/tfs -o bin/macos13-intel64/mews
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos_intel_mews bin
+        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos_intel_mews bin license.txt readme.txt
 
     - name: Create macos-intel OpenSSL download
       run: |
