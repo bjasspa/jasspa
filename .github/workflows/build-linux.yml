@@ -82,7 +82,7 @@ jobs:
         mkdir -p tfs/macros
         mv me.ehf tfs/macros
         cd tfs
-        cp ../..COPYING ./
+        cp ../../COPYING ./
         cp ../../license.txt ./
         cp ../../readme.txt ./
         zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_hlpehf macros COPYING license.txt readme.txt
@@ -96,7 +96,7 @@ jobs:
         cd macros
         make -f Makefile release
         cd ../release/jasspa/
-        cp ../..COPYING ./
+        cp ../../COPYING ./
         cp ../../license.txt ./
         cp ../../readme.txt ./
         zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_macros macros COPYING license.txt readme.txt
