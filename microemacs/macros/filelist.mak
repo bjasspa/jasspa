@@ -25,9 +25,9 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	fattrib.emf	favorite.emf	fileopen.emf	filetool.emf	\
 	filetype.emf	find.emf	fold.emf	format.emf	\
 	freebsd.emf	ftp.emf		\
-	games.emf	gdiff.emf	gentags.emf	hkada.emf	\
-	hkapache.emf	hkapt.emf	hkasmx86.emf	hkasn1.emf	\
-	hkasp.emf	hkau3.emf	hkawk.emf	\
+	games.emf	gdiff.emf	gentags.emf	git.emf	\
+	hkada.emf	hkapache.emf	hkapt.emf	hkasmx86.emf	\
+	hkasn1.emf	hkasp.emf	hkau3.emf	hkawk.emf	\
 	hkbibtex.emf	hkbinary.emf	hkblist.emf	hkbnf.emf	\
 	hkc.emf		hkcfm.emf	hkcfms.emf	hkcobol.emf	\
 	hkcpp.emf	hkcs.emf	hkcss.emf	hkcygwin.emf	\
@@ -37,9 +37,9 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkf90.emf	hkfvwm.emf	\
 	hkhtml.emf	\
 	hkidl.emf	hkimake.emf	hkinfo.emf	hkini.emf	\
-	hkiss.emf	\
-	hkipipe.emf	\
-	hkjava.emf	hkjs.emf	hkjsp.emf	hkjst.emf	\
+	hkipipe.emf	hkiss.emf	\
+	hkjava.emf	hkjs.emf	hkjson.emf	hkjsp.emf	\
+	hkjst.emf	\
 	hklatex.emf	hklhtml.emf	hklisp.emf	hklists.emf	\
 	hklua.emf	\
 	hkm4.emf	hkmake.emf	hkman.emf	hkmd.emf	\

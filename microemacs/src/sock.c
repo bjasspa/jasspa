@@ -1164,12 +1164,14 @@ meSockSetup(meIo *io, meUShort flags)
  #if MEOPT_OPENSSL
     if((flags & (meSOCKFLG_USE_SSL|meSOCKFLG_EXPLICIT_SSL)) && (meSockCtx == NULL))
     {
+        int rr;
         if(meSockHasInit & 2)
             return -1;
         meSockHasInit |= 3;
-        if(meSockInit(io,ffbuf) < 0)
-            return -1;
+        rr = meSockInit(io,ffbuf);
         meSockHasInit &= ~2;
+        if(rr < 0)
+            return -1;
     }
 #endif
     return 0;
