@@ -79,7 +79,7 @@ set-variable .help.purl "http://d1j8pqz26umfbo.cloudfront.net/packages/"
     set-variable #l6 &add &add #l6 &lget $result 1 &lget $result 3
     set-variable #l7 &add &add #l7 &lget $result 2 &lget $result 4
   !endif
-  !iif &not &seq &stat a &cat #l5 "./../" &set #l9 &stat a &cat $user-path "./../"  set-variable #l5 $user-path
+  !iif &not &seq &stat a &cat #l5 "./../" &set #l9 &stat a &cat $user-path "./../"  set-variable #l9 $user-path
   !force 0xf7 copy-file &spr "tfs://%s?/bin/.*" #l4 &spr "file:%sbin/" #l9
   !if &not $status
     set-variable #l7 &add #l7 1
