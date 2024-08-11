@@ -44,7 +44,7 @@ jobs:
         rm -rf bin/linux5-intel64
         mkdir -p bin/linux5-intel64
         ../bin/linux5-intel64/mec -p "@mesgen" -f -p ../bin/linux5-intel64/mec -t ../bin/linux5-intel64/tfs -o bin/linux5-intel64/mecs
-        cp ..COPYING ./
+        cp ../COPYING ./
         cp ../license.txt ./
         cp ../readme.txt ./
         zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_linux_mecs bin COPYING license.txt readme.txt
