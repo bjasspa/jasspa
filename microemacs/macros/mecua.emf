@@ -230,8 +230,6 @@ global-bind-key hunt-backward "S-f3"
 global-bind-key osd-close "C-f4"
 global-bind-key save-buffers-exit-emacs "A-f4"
 
-global-bind-key context-menu "menu"
-
 ; reconfigure the buffer bindings
 set-variable .buffer-bind-key.map-from "|C-c C-c|C-c C-d|"
 set-variable .buffer-bind-key.map-to   "|C-#|C-~|"

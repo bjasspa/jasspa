@@ -522,7 +522,8 @@ define-macro bin-insert-string
 
 
 0 define-macro ibin-hex-search-forward
-  set-variable #l1 @1
+  set-variable #l2 &len &set #l1 @1
+  set-alpha-mark "\x81"
   !if &bmo "binary"
     set-variable #l3 &spr " %s " &lef #l1 2
     !repeat
@@ -569,7 +570,6 @@ define-macro bin-insert-string
       ; 2 screen-update
     !endif
   !else
-    set-alpha-mark "\x81"
     set-variable #l3 &lef #l1 2
     !repeat
       !force search-buffer "ME" #l3
@@ -613,40 +613,21 @@ define-macro bin-insert-string
 !emacro
 
 define-macro bin-hex-search-forward
-  !if &not &or &bmo "binary" &bmo "rbin"
-    ml-write "[ERROR: Not a binary or rbin mode buffer]"
-    !abort
-  !elif &les @# 1
-    ml-write "[ERROR: Numeric arg must be greater than zero]"
-    !abort
-  !endif
+  !iif &not &or &bmo "binary" &bmo "rbin"  -8 ml-write "[ERROR: Not a binary or rbin mode buffer]"
+  !iif &les @# 1  -8 ml-write "[ERROR: Numeric arg must be greater than zero]"
   !force set-variable #l1 @1
-  !if &not $status
-    set-variable #l1 @ml "Bin hex search"
-  !endif
-  set-variable #l1 &rep #l1 "\n" ""
-  !if &not &xse #l1 "\\h+"
-    ml-write "[ERROR: Invalid hex string given, non-hex chars found]"
-    !abort
-  !elif &band &set #l2 &len #l1 1
-    ml-write "[ERROR: Invalid hex string given, half byte given]"
-    !abort
-  !endif
-  @# ibin-hex-search-forward #l2
+  !iif &not $status  set-variable #l1 @ml "Bin hex search"
+  set-variable #l1 &rep &rep #l1 " " "" "\n" ""
+  !iif &not &xse #l1 "\\h+"  -8 ml-write "[ERROR: Invalid hex string given, non-hex chars found]"
+  !iif &band 1 &len #l1  -8 ml-write "[ERROR: Invalid hex string given, half byte given]"
+  @# ibin-hex-search-forward #l1
 !emacro
 
 define-macro bin-search-forward
-  !if &not &or &bmo "binary" &bmo "rbin"
-    ml-write "[ERROR: Not a binary or rbin mode buffer]"
-    !abort
-  !elif &les @# 1
-    ml-write "[ERROR: Numeric arg must be greater than zero]"
-    !abort
-  !endif
+  !iif &not &or &bmo "binary" &bmo "rbin"  -8 ml-write "[ERROR: Not a binary or rbin mode buffer]"
+  !iif &les @# 1  -8 ml-write "[ERROR: Numeric arg must be greater than zero]"
   !force set-variable #l1 @1
-  !if &not $status
-    set-variable #l1 @ml15 "Bin search" @h4 0
-  !endif
+  !iif &not $status  set-variable #l1 @ml15 "Bin search" @h4 0
   bin-txt-to-hex #l1
   set-variable #l2 $result
   @# ibin-hex-search-forward #l2

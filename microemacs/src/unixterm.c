@@ -5176,7 +5176,7 @@ xdndClientMessage (XEvent *xevent, meFrame *frame)
                       __FILE__, __LINE__));
     }
     else
-        DEBUGOUT(("%s:%d: Not a xdnd message %d\n",
+        DEBUGOUT(("%s:%d: Not a xdnd message %ld\n",
                   __FILE__, __LINE__, xevent->xclient.message_type));
     
     return processed;
@@ -5294,11 +5294,11 @@ xdndSelectionNotify (XEvent *xevent, meFrame *frame)
                 {
                     if (s != NULL)
                         XFree (s);
-                    DEBUGOUT(("%s:%d: ERROR: count=%d remaining=%d read=%d format=%d\n",
+                    DEBUGOUT(("%s:%d: ERROR: count=%ld remaining=%ld read=%ld format=%d\n",
                               __FILE__, __LINE__, count, remaining, read, format));
                     return 1;
                 }
-                DEBUGOUT(("%s:%d: count=%d remaining=%d read=%d format=%d\n",
+                DEBUGOUT(("%s:%d: count=%ld remaining=%ld read=%ld format=%d\n",
                           __FILE__, __LINE__, count, remaining, read, format));
                 
                 /* Build the buffer by concatinating the data extracted from
@@ -5404,8 +5404,8 @@ xdndSelectionNotify (XEvent *xevent, meFrame *frame)
         else
         {
 	    DEBUGOUT(("%s:%d: property is not Xdnd_NON_PROTOCOL_ATOM"
-                      " - ignoring (%d/0x%08x)\n", __FILE__, __LINE__,
-                      xevent->xselection.property, xevent->xselection.property));
+                      " - ignoring (%ld/0x%08x)\n", __FILE__, __LINE__,
+                      xevent->xselection.property, (unsigned int) xevent->xselection.property));
 	}
     }
     return processed;

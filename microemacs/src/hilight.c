@@ -765,7 +765,7 @@ meHiltStringCompile(meUByte *dest, meUByte *token, meUByte changeCase,
 static meHilight *
 meHiltTokenAddSearchString(meHilight *root, meHilight *node, meUByte *token, int flags)
 {
-    meUByte buff[meBUF_SIZE_MAX], *dd, *ss, *lastItem ;
+    meUByte buff[meBUF_SIZE_MAX], cc, *dd, *ss, *lastItem ;
     int retValues[4], l1, l2, len ;
 
     dd = buff ;
@@ -858,7 +858,7 @@ meHiltTokenAddSearchString(meHilight *root, meHilight *node, meUByte *token, int
         dd = ss ;
         while(dd <= lastItem)
         {
-            if((*dd++ == meCHAR_LEADER) && (*dd++ != meCHAR_TRAIL_LEADER) && (dd != ss+2))
+            if(((cc=*dd++) == meCHAR_LEADER) && (*dd++ != meCHAR_TRAIL_LEADER) && (dd != ss+2))
             {
                 dd[-2] = '\0' ;
                 if(addTokenNode(root,ss,flags|ADDTOKEN_DUMMY) == NULL)
@@ -866,68 +866,81 @@ meHiltTokenAddSearchString(meHilight *root, meHilight *node, meUByte *token, int
                 dd[-2] = meCHAR_LEADER ;
                 dd++ ;
             }
+            else if(!isDisplayable(cc))
+                len += (cc < 0x20) ? 1:3;
         }
         if(((node = addTokenNode(root,ss,flags)) == NULL) || (flags & ADDTOKEN_REMOVE))
             return NULL ;
 
         if(flags & (HLBRANCH|HLBRACKET))
             flags &= ~HLCONTIN ;
-        tokenSetType(node,flags) ;
-        node->tknSttTst = sttTst ;
-        node->tknEndTst = endTst ;
-        node->tknSttOff = l1 ;
-        node->tknEndOff = l2 ;
+        tokenSetType(node,flags);
+        node->tknSttTst = sttTst;
+        node->tknEndTst = endTst;
+        node->tknSttOff = l1;
+        node->tknEndOff = l2;
     }
     else
     {
         if((dd = meStrdup(buff)) == NULL)
-            return NULL ;
+            return NULL;
 
-        node->close = dd ;
-        node->clsSttOff = l1 ;
-        node->clsEndOff = l2 ;
+        node->close = dd;
+        node->clsSttOff = l1;
+        node->clsEndOff = l2;
+        while((cc=*dd++) != '\0')
+        {
+            if(!isDisplayable(cc))
+                len += (cc < 0x20) ? 1:3;
+        }
     }
     /* store the len temporarily into scheme for len tests on the replace strings */
-    node->scheme = len ;
-    return node ;
+    node->scheme = len;
+    return node;
 }
 
 static meHilight *
 meHiltTokenAddReplaceString(meHilight *root, meHilight *node, meUByte *token, int mainRepl)
 {
-    meUByte buff[meBUF_SIZE_MAX], *dd, *ss, cc ;
-    int len ;
+    meUByte buff[meBUF_SIZE_MAX], *dd, *ss, cc;
+    int len;
 
-    ss = token ;
-    dd = buff ;
-    len = 0 ;
+    ss = token;
+    dd = buff;
+    len = 0;
     while((cc=*ss++) != '\0')
     {
         if(cc == '\\')
         {
-            cc = *ss++ ;
+            cc = *ss++;
             if((cc > '0') && (cc <= '9'))
             {
-                *dd++ = meCHAR_LEADER ;
-                cc -= '0' ;
+                *dd++ = meCHAR_LEADER;
+                cc -= '0';
             }
+            /* unknown char display length - guess 1 */ 
+            len++;
         }
         else if(cc == meCHAR_LEADER)
         {
-            *dd++ = meCHAR_LEADER ;
+            *dd++ = meCHAR_LEADER;
             if((cc = *ss++) != meCHAR_TRAIL_LEADER)
             {
                 mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unsupported special \\ quoted char]");
-                return NULL ;
+                return NULL;
             }
+            len += 2;
         }
-        *dd++ = cc ;
-        len++ ;
+        else if(isDisplayable(cc))
+            len++;
+        else
+            len += (cc < 0x20) ? 2:4;
+        *dd++ = cc;
     }
-    *dd = 0 ;
+    *dd = 0;
 
     if((dd = meStrdup(buff)) == NULL)
-        return NULL ;
+        return NULL;
 
     if(mainRepl)
         node->rtoken = dd ;

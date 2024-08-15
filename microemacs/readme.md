@@ -26,7 +26,7 @@ Extract the executable for the zip and run.
 This is a truly portable version, it will not alter/add to your environment or registry and will only create/edit
 files you explicitly ask it to. So this version is ideal for trying MicroEmacs without affecting your computer.
 
-For a more complete experience execute command  init-session, this creates a small user configuration directory in
+For a more complete experience execute command  **init-session**, this creates a small user configuration directory in
 your user area, allowing MicroEmacs to save setup changes and download supporting files such as the comprehensive help
 docs and spelling dictionaries for numerous languages.
 
@@ -37,41 +37,41 @@ SLOWER QUICK START GUIDE
 To build a more complete, native environment do the following:
 
 1. Create a main MicroEmacs directory to hold all required files, this is typically ~/MicroEmacs on Unix or
-   c:\Users\<user-name>\MicroEmacs on Windows, but the path can be anywhere. In following steps this path will be
+   c:\\Users\\\<user-name>\\MicroEmacs on Windows, but the path can be anywhere. In following steps this path will be
    referred to as ~/MicroEmacs
 
 2. Download the following zip package files:
 
-    a. **Required:** Binaries for your platform (Jasspa_MicroEmacs_<VERSION>_<PLATFORM>_binaries.zip)
+    a. **Required:** Binaries for your platform (Jasspa_MicroEmacs_\<VERSION>_\<PLATFORM>_binaries.zip)
      
-    b. **Required:** Macro files (Jasspa_MicroEmacs_<VERSION>_macros.zip)
+    b. **Required:** Macro files (Jasspa_MicroEmacs_\<VERSION>_macros.zip)
 
-    c. Help file (Jasspa_MicroEmacs_<VERSION>_hlpehf.zip)
+    c. Help file (Jasspa_MicroEmacs_\<VERSION>_hlpehf.zip)
 
-    d. Spelling dictionaries for any language you require (Jasspa_MicroEmacs_<VERSION>_ls<LANGUAGE>.zip)
+    d. Spelling dictionaries for any language you require (Jasspa_MicroEmacs_\<VERSION>_ls\<LANGUAGE>.zip)
      
-    e. OpenSSL dynamic libraries (Jasspa_MicroEmacs_<VERSION>_<PLATFORM>_openssl.zip) for https/ftps support (country
+    e. OpenSSL dynamic libraries (Jasspa_MicroEmacs_\<VERSION>_\<PLATFORM>_openssl.zip) for https/ftps support (country
     permitting) 
 
 3. Extract downloaded zip files into the ~/MicroEmacs directory you created in (1), this should have created:
 
-    ~/MicroEmacs/bin - containing platform directories for each of the binary packages you downloaded and
+    `~/MicroEmacs/bin` - containing platform directories for each of the binary packages you downloaded and
      extracted.
 
-    ~/MicroEmacs/macros - containing many macro files (*.emf), the me.ehf help file and other supporting
+    `~/MicroEmacs/macros` - containing many macro files (*.emf), the me.ehf help file and other supporting
      files.
 
-    ~/MicroEmacs/spelling - containing the dictionaries of the languages you downloaded.
+    `~/MicroEmacs/spelling` - containing the dictionaries of the languages you downloaded.
 
 4. Set the following environment variable:
 
-     MEINSTALLPATH=~/MicroEmacs
+     `MEINSTALLPATH=~/MicroEmacs`
 
    Setting an environment variable is platform & shell dependent.
 
 5. Run:
 
-     ~/MicroEmacs/<platform>/mec
+     `~/MicroEmacs/\<platform>/mec`
 
    The console version should run on all platforms, if the message '[Failed to load file me]' appears at the bottom of
    the window then you have either not set the environment variable correctly or it has not taken effect in your
@@ -79,19 +79,19 @@ To build a more complete, native environment do the following:
 
 6. Try running:
 
-     ~/MicroEmacs/<platform>/mew
+     `~/MicroEmacs/\<platform>/mew`
 
    This should always work on Windows but may not on Unix systems,  particularly macOS, where an X server (XQuartz) is
    required  to  support  the  window  interface.  Fixing  issues  causing  mew to not run is beyond the scope of this
    document.
 
-7. Optionally copy the binaries (mec & mew) into a directory on your path (or add ~/MicroEmacs/bin/<platform> to your
+7. Optionally copy the binaries (mec & mew) into a directory on your path (or add ~/MicroEmacs/bin/\<platform> to your
    path. This simplifies running MicroEmacs in a terminal.
 
 8. Run mew, if working, mec otherwise and follow the setup steps to create a basic user configuration area, this will
    create the directory:
 
-     ~/MicroEmacs/<user-name>
+     `~/MicroEmacs/\<user-name>`
 
    All your customisations should go in here. Run the command user-setup (in the Tools menu) to start customising the
    editor.

@@ -14,9 +14,6 @@ MEDEBUG=
 MAKEFILE=
 MAKECDEFS=
 OPTIONS=
-# TODO remove all X11 code as moved into makefiles
-X11_MAKEINC=/usr/include
-X11_MAKELIB=
 
 while [ -n "$1" ]
 do
