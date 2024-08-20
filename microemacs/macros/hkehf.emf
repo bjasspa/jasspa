@@ -18,35 +18,30 @@ define-macro fhook-ehf
     1 buffer-mode "magic"
     set-variable #l0 &cond &bmod "magic" 1 -1
     set-variable #l3 &con &les 140 &set #l3 &con &gre 70 &set #l3 &sub $window-width 4 70 #l3 140 #l3
-    set-variable #l1 &spr "\es[B-Z]\\|^\\( *\\(\\* \\)?\\).\\{%d\\}" #l3
+    ; found largest indent in ehf was ~26 chars, this must be removed from the \{#\} long-line regex len 
+    set-variable #l1 &spr "\es[B-Z]\\|^\\( *\\(\\* \\)?\\).\\{%d\\}.*" &sub #l3 26
     !repeat
       !force search-buffer "me" #l1
       !iif &not $status  !break
-      !if &sub &len @s0 3
-        set-variable #l5 &len @s1
-        set-variable #l2 $window-line
-        !while &set #l4 &sub #l3 $window-acol
-          !force #l4 forward-char
-          !iif &gre $window-line #l2  !break
-          !if &equ #l3 $window-acol
-            set-variable #l6 $window-col
-            forward-char
-            !force search-buffer "bMe" " "
-            !if $status
-              forward-delete-char
-              insert-newline
-            !else
-              set-variable $window-col &sub #l6 1
-              insert-string "-\n"
-            !endif
-            #l5 insert-space
-            set-variable #l2 &add #l2 1
-          !endif
-        !done
-        set-variable $window-line #l2
-        end-of-line
-      !else
+      !if &equ &set #l5 &len @s0 3
         !force search-buffer "Me" "\esA"
+      !elif &gre #l5 #l3
+        set-variable #l5 &set #g1 &len @s1
+        !repeat
+          !force set-variable $window-acol &add #l3 1
+          !iif &not $status  !break
+          set-variable #l6 $window-col
+          !force search-buffer "bMe" " "
+          !if $status
+            forward-delete-char
+            insert-newline
+          !else
+            set-variable $window-col &sub #l6 2
+            insert-string "-\n"
+          !endif
+          #l5 insert-space
+        !done
+        end-of-line
       !endif
     !done
     beginning-of-buffer

@@ -104,7 +104,6 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
   hilight .hilight.phps 0 "\\\\\""               $global-scheme 
   hilight .hilight.phps 0x80 "\'" .hilight.phpsS .scheme.string
   hilight .hilight.phps 0x80 "\"" .hilight.phpsD .scheme.string
-  hilight .hilight.phps 0    "\\W\\{/[^/]*\\}$"  $global-scheme 
   hilight .hilight.phps 20 "/\\*\\s*[tT][oO][dD][oO]" "*/" "" .scheme.error
   hilight .hilight.phps 20   "/\\*" "*/" ""      .scheme.comment
   hilight .hilight.phps 0x1004 "^//" "\\}\\?>" "" .scheme.comment

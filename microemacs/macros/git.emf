@@ -31,6 +31,7 @@
   set-variable .fhook-dirlst.sc-detect &lins .fhook-dirlst.sc-detect -1 "git-dirlst-detect"
   set-variable .fhook-dirlst.sc-format &lins .fhook-dirlst.sc-format -1 "git-dirlst-format"
 !endif
+
 !if &band .hilight.flags 0x02
   !iif &not &exi .hilight.diff  !force execute-file "hkdiff"
   hilight .hilight.diff 0x100 "commit \\h+" .scheme.no2
@@ -38,6 +39,7 @@
   hilight .hilight.diff 20 " \\{\\[Diff-" "]" "" $mode-line-scheme
   !if &not &exist .hilight.git-status
     set-variable .hilight.git-status &pinc .hilight.next 1
+    set-variable .hilight.git-blm &pinc .hilight.next 1
     set-variable .hilight.git-log &pinc .hilight.next 1
   !endif
   
@@ -151,7 +153,11 @@ set-variable .git.cdefs  &lins .git.cdefs  -1 "||0|"
 set-variable .git.cnames &lins .git.cnames -1 "Checkout"
 set-variable .git.cflags &lins .git.cflags -1 "Bbtr*!D"
 set-variable .git.cdefs  &lins .git.cdefs  -1 "||0|1|0|"
-; Command ?? - Blame
+; Command 13 - Blame
+set-variable .git.cnames &lins .git.cnames -1 "Blame"
+set-variable .git.cflags &lins .git.cflags -1 "vphVs"
+set-variable .git.cdefs  &lins .git.cdefs  -1 "|2|1|0|0|"
+
 set-variable .git.ccount &sub &len .git.cnames &len &rep .git.cnames "\b" ""
 set-variable .git.cvals  &spr "%n" &pdec .git.ccount 1 "\b"
 set-variable .git.cstrv1 ""
@@ -334,6 +340,7 @@ set-variable #l9 .git.ccount
 !emacro
 set-variable .git-revision-op.lbl6 "|\HMaster|\HHead|\HPrevious to head|\HSpecific commit|"
 set-variable .git-revision-op.lbl7 "|Head \Hto Master|\HMaster to Local|Head to Inde\Hx|\HHead to Local|\HIndex to Local|\HPrevious to Head|\HSpecific commit|Specific \Hrange|"
+set-variable .git-revision-op.lbl13 "|\HMaster|\HHead|\HPrevious to head|\HSpecific commit|"
 0 define-macro git-revision-ops
   set-variable .git-osd.values &lset .git-osd.values .git-osd.o-v @#
 !emacro
@@ -433,6 +440,9 @@ set-variable .git-revision-op.lbl7 "|Head \Hto Master|\HMaster to Local|Head to 
       !elif &seq #l1 "f"
         osd .osd.git-osd &inc #l2 1 "Sfh" &spr "    \HFilter (regex):  " &add #l2 1
         osd .osd.git-osd &inc #l2 1 "EtxHfz" .scheme.osd-entry 20 1 "" 4 git-osd-gstr
+      !elif &seq #l1 "h"
+        osd .osd.git-osd &inc #l2 1 "fh" "    "
+        osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} R\Haw out, remove header etc" #l0 git-osd-cbc
       !elif &seq #l1 "I"
         osd .osd.git-osd &inc #l2 1 "fh" "    "
         osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HInclude ignored files" #l0 git-osd-cbc
@@ -473,6 +483,9 @@ set-variable .git-revision-op.lbl7 "|Head \Hto Master|\HMaster to Local|Head to 
       !elif &seq #l1 "u"
         osd .osd.git-osd &inc #l2 1 "fh" "    "
         osd .osd.git-osd &inc #l2 1 "Cptfx" &spr "%s\} List unintegrated changes from %s    " .osd.checkbox-chars .git.rep #l0 git-osd-cbc
+      !elif &seq #l1 "V"
+        osd .osd.git-osd &inc #l2 1 "fh" "    "
+        osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} V\Herbose output" #l0 git-osd-cbc
       !elif &seq #l1 "v"
         set-variable .git-revision-op.si @#
         osd .osd.git-osd &inc #l2 1 "Sfh" &spr "    %s re\Hvision:  " &set #l4 &lget .git.cnames @# &add #l2 1
@@ -1390,6 +1403,73 @@ define-macro git-checkout
   !elif &lget #l9 4
     dirlst-refresh
   !endif
+!emacro
+
+;; GIT Blame ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+0 define-macro git-blame-cmd
+  !iif &not &xseq @wl "^\\[\\(\\h+\\)] .*"  -8 ml-write "[ERROR: Invalid log line]"
+  !iif &gre $window-col &add 1 &len &set #l1 @s1  -8 ml-write "[ERROR: Not in commit hash]"
+  set-position "\x82"
+  git-show-commit #l1
+!emacro
+0 define-macro git-exec-complete13
+  set-variable #l9 &lget .git.cvals 13
+  0 hilight .hilight.git-blm 0 $global-scheme
+  1 buffer-mode "magic"
+  !if &not &lget #l9 4
+    goto-line 3
+    replace-string "^\\(\\h+ ([^)]+ \\d\\d:\\d\\d\\) +\\d+)" "\\1)"
+  !endif
+  !if &lget #l9 2
+    goto-line 3
+    replace-string "^\\(\\h+\\) (" "[\\1] ("
+    hilight .hilight.git-blm 0x400 0 &sin "]" @wl $mode-line-scheme
+    buffer-bind-key git-blame-cmd "return"
+    buffer-bind-key git-blame-cmd "space"
+    set-variable :mouse-word-select "git-blame-cmd"
+  !endif
+  goto-line 4
+  hilight .hilight.git-blm 0x400 &sub &sin "(" @wl 1 &sin ")" @wl .scheme.no2
+  end-of-buffer
+  backward-line
+  !if &not &seq &lef @wl 9 "[**** Git"
+  !elif &lget #l9 3
+    backward-line
+    !iif &not &seq @wl ""  forward-line
+    set-mark
+    end-of-buffer
+    -1 kill-region
+  !else
+    set-variable $line-scheme &con &sin "completed successfully" @wl .scheme.no1 .scheme.error
+  !endif
+  beginning-of-buffer
+  !if &lget #l9 3
+    set-mark
+    !force 3 forward-line
+    -1 kill-region
+  !else
+    set-variable $line-scheme $global-scheme
+    forward-line
+    set-variable $line-scheme $global-scheme
+    backward-line
+  !endif
+  1 buffer-mode "view"
+  set-variable $buffer-hilight .hilight.git-blm
+!emacro
+
+define-macro git-blame
+  13 git-osd
+  !if &les &lget &set #l9 .git-osd.values 1 4
+    set-variable #l3 &rep &rep &lget "|#REP#/#BRC#|@|@~|" &lget #l9 1 "#REP#" .git.rep "#BRC#" .git.brc
+  !elif &seq "" &set #l3 &trl .git.cstrv2
+    osd-dialog "Git - Show" "    The specific commit must be given!    " "  \HAbort  "
+    !abort
+  !endif
+  set-variable #l2 &spr "%s blame %s-- " .git.com &con &lget #l9 4 "" "\"--date=format:%Y-%m-%d %H:%m\" "
+  7 git-get-file-list 0 0 #l2
+  13 git-exec 3 $buffer-fname
+  popup-window "*git-blame*"
+  beginning-of-buffer
 !emacro
 
 ;; GIT file browser ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
