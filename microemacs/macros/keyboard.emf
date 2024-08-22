@@ -49,7 +49,7 @@ set-char-mask "k" ""
     translate-key "A-C-~" "~"
     translate-key "A-C-@" "@"
     ; following can be used to get euro working on CP1252, but warning - non-standard char
-    ;translate-key "A-C-\x80" "\x80" 
+    translate-key "A-C-\x80" "\x80" 
     translate-key "C-\"" "C-space"
     translate-key "A-C-\xE6" "\xB5"
     translate-key "A-C-\\" "\\"

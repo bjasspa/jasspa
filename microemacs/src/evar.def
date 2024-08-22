@@ -281,6 +281,7 @@ DEFFUN (UFLESS,     "les", 0x6C6573, FUN_DYNAMIC)     /* logical less than */
 DEFFUN (UFLFIND,    "lfi", 0x6C6669, FUN_DYNAMIC)     /* list find value return index */
 DEFFUN (UFLGET,     "lge", 0x6C6765, FUN_DYNAMIC)     /* list get index value */
 DEFFUN (UFLINS,     "lin", 0x6C696E, FUN_TRINAMIC)    /* list insert index value */
+DEFFUN (UFLLEN,     "lle", 0x6C6C65, FUN_MONAMIC)     /* list length */
 DEFFUN (UFLSET,     "lse", 0x6C7365, FUN_TRINAMIC)    /* list set index value */
 #endif
 DEFFUN (UFMID,      "mid", 0x6D6964, FUN_TRINAMIC)    /* mid string(string, pos, len) */

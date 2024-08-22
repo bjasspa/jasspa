@@ -65,7 +65,7 @@ define-macro bc-buffer
         !endif
       !endif
     !elif &seq #l1 "&"
-      !if &not &set #l3 &lfin "|abs|add|and|ato|ban|bmo|bno|bor|bst|bxo|cat|cbi|con|dec|div|equ|exi|fab|fad|fdi|fin|fmu|fsq|fsu|gmo|gre|inc|ind|inw|ire|ise|isi|ito|kbi|lde|lef|len|les|lfi|lge|lin|lse|mid|mod|mul|nbi|nbm|neg|not|opt|or|pde|pin|reg|rep|rig|ris|rsi|seq|set|sgr|sin|sle|slo|spr|sta|sub|sup|trb|trl|trr|uci|ufi|uni|whi|xir|xis|xre|xse|" &mid #l2 1 3
+      !if &not &set #l3 &lfin "|abs|add|and|ato|ban|bmo|bno|bor|bst|bxo|cat|cbi|con|dec|div|equ|exi|fab|fad|fdi|fin|fmu|fsq|fsu|gmo|gre|inc|ind|inw|ire|ise|isi|ito|kbi|lde|lef|len|les|lfi|lge|lin|lle|lse|mid|mod|mul|nbi|nbm|neg|not|opt|or|pde|pin|reg|rep|rig|ris|rsi|seq|set|sgr|sin|sle|slo|spr|sta|sub|sup|trb|trl|trr|uci|ufi|uni|whi|xir|xis|xre|xse|" &mid #l2 1 3
         ml-write &spr "[ERROR: Unknown function (&%s): %s]" #l2 $buffer-fname
         !abort
       !endif

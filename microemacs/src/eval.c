@@ -2741,36 +2741,37 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
     case UFXISEQ:      return meLtoa(regexStrCmp(arg1,arg2,meRSTRCMP_ICASE|meRSTRCMP_WHOLE|meRSTRCMP_USEMAIN) == 1);
     case UFLDEL:
         {
-            int  index=meAtoi(arg2) ;
-            meUByte cc, *s1, *s2 ;
+            int  index=meAtoi(arg2);
+            meUByte cc, *s1, *s2=arg1;
+            if((cc = *s2) == '\0')
+                return abortm;
             if(index > 0)
             {
-                s2 = arg1 ;
-                cc = *s2 ;
                 do {
                     s1 = s2+1 ;
                     if((s2 = meStrchr(s1,cc)) == NULL)
-                        break ;
-                } while(--index > 0) ;
+                        break;
+                } while(--index > 0);
             }
             else
-                s2 = NULL ;
+                s2 = NULL;
             if(s2 == NULL)
-                meStrcpy(evalResult,arg1) ;
+                meStrcpy(evalResult,arg1);
             else
             {
-                index = (int) (s1 - arg1) ;
-                meStrncpy(evalResult,arg1,index) ;
-                meStrcpy(evalResult+index,s2+1) ;
+                index = (int) (s1 - arg1);
+                meStrncpy(evalResult,arg1,index);
+                meStrcpy(evalResult+index,s2+1);
             }
-            return evalResult ;
+            return evalResult;
         }
     case UFLFIND:
         {
-            int  index ;
-            meUByte cc, *s1, *s2 ;
-            s2 = arg1 ;
-            cc = *s2 ;
+            int  index;
+            meUByte cc, *s1, *s2;
+            s2 = arg1;
+            if((cc = *s2) == '\0')
+                return abortm;
             for(index=1 ; ; index++)
             {
                 s1 = s2+1 ;
@@ -2783,21 +2784,33 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
         }
     case UFLGET:
         {
-            int  index ;
-            meUByte cc, *s1, *s2 ;
+            int  index;
+            meUByte cc, *s1, *s2;
+            s2 = arg1;
+            if((cc = *s2) == '\0')
+                return abortm;
             if((index=meAtoi(arg2)) <= 0)
-                return emptym ;
-            s2 = arg1 ;
-            cc = *s2 ;
+                return emptym;
             do {
                 s1 = s2+1 ;
                 if((s2 = meStrchr(s1,cc)) == NULL)
-                    return emptym ;
-            } while(--index > 0) ;
-            index = (int) (s2 - s1) ;
-            meStrncpy(evalResult,s1,index) ;
-            evalResult[index] = '\0' ;
-            return evalResult ;
+                    return emptym;
+            } while(--index > 0);
+            index = (int) (s2 - s1);
+            meStrncpy(evalResult,s1,index);
+            evalResult[index] = '\0';
+            return evalResult;
+        }
+    case UFLLEN:
+        {
+            int ll=0;
+            meUByte cc, *s1;
+            s1 = arg1;
+            if((cc=*s1) == '\0')
+                return abortm;
+            while((s1 = meStrchr(s1+1,cc)) != NULL)
+                ll++;
+            return meItoa(ll);
         }
     case UFLINS:
     case UFLSET:
@@ -2805,7 +2818,8 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             int  index, ii;
             meUByte cc, *s1, *s2;
             s2 = arg1;
-            cc = *s2;
+            if((cc = *s2) == '\0')
+                return abortm;
             if((index=meAtoi(arg2)) == 0)
                 s1 = s2+1;
             else if(index > 0)
