@@ -26,15 +26,17 @@ define-macro fhook-ehf
       !if &equ &set #l5 &len @s0 3
         !force search-buffer "Me" "\esA"
       !elif &gre #l5 #l3
-        set-variable #l5 &set #g1 &len @s1
+        set-variable #l5 &len @s1
         !repeat
           !force set-variable $window-acol &add #l3 1
           !iif &not $status  !break
           set-variable #l6 $window-col
-          !force search-buffer "bMe" " "
+          !force -1 search-buffer "bMe" " "
           !if $status
             forward-delete-char
             insert-newline
+          !elif &seq "" &rep @wl "\x12" ""
+            !break
           !else
             set-variable $window-col &sub #l6 2
             insert-string "-\n"
