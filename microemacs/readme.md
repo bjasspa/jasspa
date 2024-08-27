@@ -15,11 +15,11 @@ VERY QUICK START GUIDE
 
 For your platform download the single-file binary zip file:
 
-    - Jasspa_MicroEmacs_<VERSION>_<PLATFORM>_mecs.zip for console/terminal app, this should work on all computers of
-      given platform.
+- Jasspa_MicroEmacs_\<VERSION>_\<PLATFORM>_mecs.zip for console/terminal app, this should work on all computers of
+  given platform.
 
-    - Jasspa_MicroEmacs_<VERSION>_<PLATFORM>_mews.zip  for window  based app, this should give best user  experience
-      but may not work on all computers (particularly macOS where XQuartz is required).
+- Jasspa_MicroEmacs_\<VERSION>_\<PLATFORM>_mews.zip  for window  based app, this should give best user  experience
+  but may not work on all computers (particularly macOS where XQuartz is required).
 
 Extract the executable for the zip and run.
 

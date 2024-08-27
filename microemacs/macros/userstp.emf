@@ -420,7 +420,7 @@ set-variable .user-set-mouse.A ""
   set-variable %clpbd-names "|No interaction|Interact with Clipboard only|Interact with Primary only|Get Clipboard set both|Get Primary set both|"
   set-variable %clpbd-val "|8388608|0|67108864|134217728|201326592|"
   0 define-macro user-set-unxfont
-    0x400 pipe-shell-command "xfontsel -pattern \"-*-*-medium-r-*-*-*-*-*-*-*-*-*-*\" -print -scaled" #l0
+    0x400 pipe-shell-command "LC_ALL=C xfontsel -pattern \"-*-*-*-r-*-*-*-*-*-*-*-*-*-*\" -print -scaled" #l0
     !if &set #l1 $result
       osd-dialog "User Setup Error" &spr "  Failed to run xfontsel, system returned error (%d):  \n\n    %s  " #l1 #l0 "  \HOK  "
     !else
