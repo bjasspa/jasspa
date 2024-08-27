@@ -71,7 +71,7 @@ To build a more complete, native environment do the following:
 
 5. Run:
 
-     ~/MicroEmacs/<platform>/mec
+     ~/MicroEmacs/bin/<platform>/mec
 
    The console version should run on all platforms, if the message '[Failed to load file me]' appears at the bottom of
    the window then you have either not set the environment variable correctly or it has not taken effect in your
@@ -79,7 +79,7 @@ To build a more complete, native environment do the following:
 
 6. Try running:
 
-     ~/MicroEmacs/<platform>/mew
+     ~/MicroEmacs/bin/<platform>/mew
 
    This should always work on Windows but may not on Unix systems,  particularly macOS, where an X server (XQuartz) is
    required  to  support  the  window  interface.  Fixing  issues  causing  mew to not run is beyond the scope of this

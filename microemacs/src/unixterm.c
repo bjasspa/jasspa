@@ -3385,15 +3385,12 @@ XTERMsetFont(int n, char *fontName)
         return meFALSE;
         
     /* Make sure that the font is legal and we do not get a divide by zero error through zero width characters. */
-    if(((ii=font->max_bounds.width) <= 0) || ((jj=font->ascent + font->descent) <= 0))
-    {
-        XUnloadFont(mecm.xdisplay,font->fid);
-        return meFALSE;
-    }
+    ii = font->max_bounds.width;
+    jj = font->ascent + font->descent;
     if((n & 0x04) == 0)
         /* Save the values in $result */
-        sprintf((char *) resultStr,"||||%d|%d|||%s|",font->max_bounds.width,ii,fontName);
-    if((n & 0x02) || (ii == 0) || (jj == 0))
+        sprintf((char *) resultStr,"|%c|||%d|%d|||%s|",((font->min_bounds.width == font->max_bounds.width) ? '0':'1'),ii,jj,fontName);
+    if((n & 0x02) || (ii <= 0) || (jj <= 0))
     {
         /* Don't apply the font so free and get out */
         XUnloadFont(mecm.xdisplay,font->fid);

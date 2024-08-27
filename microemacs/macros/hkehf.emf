@@ -31,9 +31,12 @@ define-macro fhook-ehf
           !force set-variable $window-acol &add #l3 1
           !iif &not $status  !break
           set-variable #l6 $window-col
-          !force -1 search-buffer "bMe" " "
+          !force -1 search-buffer "bme" "[^ ] "
           !if $status
-            forward-delete-char
+            forward-char
+            !while &seq @wc " "
+              forward-delete-char
+            !done
             insert-newline
           !elif &seq "" &rep @wl "\x12" ""
             !break

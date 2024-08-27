@@ -83,8 +83,8 @@ Horizontal resolution of the font in dpi.
 .IP \fIvres\fR
 Vertical resolution of the font in dpi.
 .IP \fIspace\fR
-The spacing of the font. Typical spacing values include \fBm\fRonospaced (i.e.
-fixed width), \fBp\fRroportional and \fBc\fRharacter cell.
+The spacing of the font. Typical spacing values include  \fBm\fRonospaced (i.e. fixed width),  \fBp\fRroportional  and
+\fBc\fRharacter cell. Proportional fonts should be avoided as these will create rendering issues.
 .IP \fIav\fR
 Mean width of all font characters, measured in tenths of a pixel.
 .IP \fIset\fR
@@ -123,8 +123,10 @@ When set the command does not alter the value of variable
 .Ht $result 5 .
 When not set \fB$result\fR is set to the following information about the font in a \*(mS list format:
 .CS
-"||||<pixel-width>|<pixel-height>|||<fontName>|"
-.CE 0
+"|<flg>|||<pixel-width>|<pixel-height>|||<fontName>|"
+.CE
+The  \fB<flg>\fR  is an  bitwise  integer  value  where bit 1  indicates  the font is not fixed  width,  i.e. the font
+\fIspace\fR is of type \fBp\fRroportional.
 .SS "IBM-PC / MS-DOS"
 \s-1MS-DOS\s0 may only change the screen resolution, the standard screen resolution is either 80 columns by 25 rows or
 80 by 50. A more advanced  graphics card can typically  support up to 132 by 60, MicroEmacs in theory has no limit but
@@ -196,10 +198,10 @@ When set the command does not alter the value of variable
 .Ht $result 5 .
 When not set \fB$result\fR is set to the following information about the font in a \*(mS list format:
 .CS
-"|<ptch-tech>|<char-set>|<weight>|<pixel-width>|<pixel-height>|<width>|<height>|<fontName>|"
+"|<flg>|<char-set>|<weight>|<pixel-width>|<pixel-height>|<width>|<height>|<fontName>|"
 .CE 0
 .IP
-The  \fB<ptch-tech>\fR  is an bitwise integer value where bit 1 indicates the font is not fixed width, bit 2 indicates
+The  \fB<flg>\fR  is an bitwise integer value where bit 1 indicates the font is not fixed width, bit 2 indicates
 it is a vector font and bit 4 that it is a TrueType font. Note that the \fB<width>\fR and \fB<height>\fR values are in
 logical  units and  usually  differ to the actual  size in pixels, see  \fBwidth\fR  and  \fBheight\fR  below for more
 details.

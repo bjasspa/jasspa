@@ -419,6 +419,20 @@ set-variable .user-set-mouse.A ""
 !else
   set-variable %clpbd-names "|No interaction|Interact with Clipboard only|Interact with Primary only|Get Clipboard set both|Get Primary set both|"
   set-variable %clpbd-val "|8388608|0|67108864|134217728|201326592|"
+  0 define-macro user-set-unxfont
+    0x400 pipe-shell-command "xfontsel -pattern \"-*-*-medium-r-*-*-*-*-*-*-*-*-*-*\" -print -scaled" #l0
+    !if &set #l1 $result
+      osd-dialog "User Setup Error" &spr "  Failed to run xfontsel, system returned error (%d):  \n\n    %s  " #l1 #l0 "  \HOK  "
+    !else
+      !force 3 change-font #l0
+      !if &not $status
+        osd-dialog "User Setup Error" &spr "  Failed to load selected font: %s " #l0 "  \HOK  "
+      !else
+        !iif &band 1 &lget $result 1  osd-dialog "User Setup" "  Warning: The selected font appears to be proportional spacing  \n           which will cause rendering issues.  \n\n  Monospaced (m) or character cell (c) spaced fonts should be used.  " "  \HOK  "
+        set-registry &spr "/history/%s/font" %platform #l0
+      !endif
+    !endif
+  !emacro
 !endif
 
 0 define-macro user-setup-charset-set
@@ -668,6 +682,8 @@ osd .osd.user-plat 821 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 820
     osd .osd.user-plat 330 "Ctfxph" &cat .osd.checkbox-chars "\} \HExtend Char Set" 2 user-set-cpfcheckbox
     osd .osd.user-plat 340 "fh" "         "
     osd .osd.user-plat 350 "Ctfxp" &cat .osd.checkbox-chars "\} Use \HFonts" 0x10 user-set-system
+    osd .osd.user-plat 420 "fh"  "           "
+    osd .osd.user-plat 430 "BtfxHR" .scheme.osd-ebtt " Choose Font.. " f user-set-unxfont
     osd .osd.user-plat 650 "Sfh" "  \HSystem Clipboard:  " 660
     osd .osd.user-plat 660 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.tmp user-setup-clipboard
     osd .osd.user-plat 661 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 661
