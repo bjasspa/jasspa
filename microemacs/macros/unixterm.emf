@@ -55,7 +55,7 @@ add-file-hook ".C" fhook-cpp
         !force change-font &spr .change-font.sz-font #l0
         !if &not $status
         !elif &sub &lget $result 5 #l2
-          ml-write &spr "[Text Zoom: %d%%]" &div &mul #l0 100 &lget .change-font.ofnt 5
+          ml-write &spr "[Text Zoom: %d%%  (%dx%d)]" &div &mul #l0 100 &lget .change-font.ofnt 5 &lget $result 4 &lget $result 5
           !return
         !endif
       !until &not &dec #l3 1

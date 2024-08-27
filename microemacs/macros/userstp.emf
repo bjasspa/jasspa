@@ -428,7 +428,10 @@ set-variable .user-set-mouse.A ""
       !if &not $status
         osd-dialog "User Setup Error" &spr "  Failed to load selected font: %s " #l0 "  \HOK  "
       !else
-        !iif &band 1 &lget $result 1  osd-dialog "User Setup" "  Warning: The selected font appears to be proportional spacing  \n           which will cause rendering issues.  \n\n  Monospaced (m) or character cell (c) spaced fonts should be used.  " "  \HOK  "
+        !if &band 1 &lget $result 1
+          osd-xdialog "User Setup" "  Warning: The selected font appears to be proportional spacing  \n           which will cause rendering issues.  \n\n  A monospaced (m) or character cell (c) spaced fonts should be used.  " 1 "  \HCancel  " "  \HI know what I'm doing - select font  "
+          !iif &sub $result 2  !return
+        !endif
         set-registry &spr "/history/%s/font" %platform #l0
       !endif
     !endif

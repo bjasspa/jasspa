@@ -3397,7 +3397,6 @@ XTERMsetFont(int n, char *fontName)
         return meTRUE;
     }
     
-    
     /* Font is acceptable - continue to load. */
     mecm.ascent  = font->ascent;
     mecm.descent = font->descent;
