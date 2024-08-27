@@ -1,0 +1,87 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author$
+;  Created By    : MicroEmacs User
+;  Created       : 2024-08-27 16:21:42
+;  Last Modified : <240827.1626>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 2024 MicroEmacs User.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+define-macro change-font-xfontsel
+  set-variable #l0 &reg &spr "/history/%s/font" %platform "-*-fixed-*-*-*-*-*-*-*-*-*-*-iso8859-1"
+  set-variable #l1 &reg &spr "/history/%s/char-set" %platform  "iso8859-1"
+  set-variable #l1 &cat "-*-*-*-r-*-*-*-*-*-m-*-" #l1
+  2 pipe-shell-command &spr "xfontsel -print -pattern '%s' -scaled" #l1 "*fontsel*"
+  !if $result
+    1000 ml-write "Error: xfontsel could not be exectuted!"
+    !abort
+  !endif
+  set-position "\x90"
+  find-buffer "*fontsel*"
+  beginning-of-buffer
+  search-buffer "me" "^-"
+  !if $status
+    set-variable .change-font.xfontsel-font @wl
+    !if &equ &sin "-*-*" .change-font.xfontsel-font 1
+      1000 ml-write "No font selected!"
+      !return
+    !endif
+    !if &xse .change-font.xfontsel-font "\\(-[^-]*-[^-]*-[^-]*-[^-]*-\\)[^-]*-[^-]*-\\([^-]*\\)-[^-]*-[^-]*\\(-[^-]*-\\)[^-]*\\(-.*\\)"
+      set-variable .change-font.sz-font &spr "%s*-*-%%d-*-*%s*%s" @s1 @s3 @s4
+      !if &seq @s2 "*"
+        !if &not &exi .change-font.sz-size
+          set-variable .change-font.sz-size 17
+        !endif
+      !else
+        set-variable .change-font.sz-size @s2
+      !endif
+      !force change-font &spr .change-font.sz-font  .change-font.sz-size
+      !if &not $status
+        ; failed try other sizes 14, 18 or 24 for bitmap fonts!
+        set-variable #l1 &sub .change-font.sz-size 3
+        set-variable #l2 &add .change-font.sz-size 4
+        !repeat
+          !force change-font &spr .change-font.sz-font #l1
+          !if $status
+            set-variable .change-font.sz-size #l1
+          !endif
+          set-variable #l1 &add #l1 1
+        !until &less #l1 #l2
+      !endif
+      !if $status
+        500 ml-write &cat "font: " &spr .change-font.sz-font  .change-font.sz-size
+        set-registry &spr "/history/%s/font" %platform &spr .change-font.sz-font  .change-font.sz-size
+        save-registry "/history" ""
+      !else
+        1000 ml-write &cat "font not found: " &spr .change-font.sz-font  .change-font.sz-size
+      !endif
+    !else
+      ; should be not reached
+      change-font .change.font.xfontsel-font
+      set-variable .change-font.sz-font ""
+    !endif
+  !else
+    1000 ml-write "Error: Failed to find font name - did you click on Selt and Quit?"
+  !endif
+  delete-buffer "*fontsel*"
+  goto-position "\x90"
+!emacro
+; should be used to check if the function could be offered
+; and if this us true then as well put a button in user-setup
+0 define-macro change-font-check-xfontsel
+  ; 
+  2 pipe-shell-command "which xfontsel" "*fontsel*"
+  !if $result
+    set-variable .change-font.xfontsel 0
+  !else
+    set-variable .change-font.xfontsel 1
+  !endif
+  delete-buffer "*fontsel*"
+!emacro
