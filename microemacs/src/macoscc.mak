@@ -92,7 +92,7 @@ CCDEFS   = -m$(BIT_SIZE) $(ARCFLAGS) -D_MACOS -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g
 LDDEFS   = -m$(BIT_SIZE) $(ARCFLAGS)
-LDFLAGSR = -O3 -flto
+LDFLAGSR = -O3 -flto=auto
 LDFLAGSD = -g
 LDLIBS   = 
 ARFLAGSR = rcs

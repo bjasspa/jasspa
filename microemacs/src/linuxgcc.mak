@@ -70,7 +70,7 @@ CCDEFS   = -m$(BIT_SIZE) -D_LINUX -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) 
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wall -Wno-uninitialized -Wno-unused-result
 CCFLAGSD = -g -Wall
 LDDEFS   = -m$(BIT_SIZE)
-LDFLAGSR = -O3 -flto
+LDFLAGSR = -O3 -flto=auto
 LDFLAGSD = -g
 LDLIBS   = -lm -ldl
 
