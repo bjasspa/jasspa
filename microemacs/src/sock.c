@@ -1227,7 +1227,7 @@ meSockReadLine(meIo *io, meUByte *buff)
 
 int
 meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *user, meUByte *pass, meUByte *file, meCookie *cookie,
-               meInt fdLen, meUByte *frmData, meUByte *postFName, meUByte *rbuff)
+               meUByte *hdr, meInt fdLen, meUByte *frmData, meUByte *postFName, meUByte *rbuff)
 {
     meUByte *ss;
     meInt pfs, ret, err, ll;
@@ -1601,6 +1601,8 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
         if(cookie->buffLen < 0)
             cookie = NULL;
     }
+    if((hdr != NULL) && (hdr[0] != '\0'))
+        ss += sprintf((char *) ss,"\r\n%s",hdr);
     if(io->urlOpts & meSOCKOPT_LOG_DETAILS)
     {
         ss[0] = '\n';
@@ -1643,7 +1645,7 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
                 if(io->urlOpts & meSOCKOPT_LOG_DETAILS)
                     ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,(meUByte *) "meSock Info: Closing connection as server shutdown");
                 meSockClose(io,1);
-                return meSockHttpOpen(io,flags,host,port,user,pass,file,cookie,fdLen,frmData,postFName,rbuff);
+                return meSockHttpOpen(io,flags,host,port,user,pass,file,cookie,hdr,fdLen,frmData,postFName,rbuff);
             }
 #endif
             if(io->urlOpts & meSOCKOPT_LOG_ERROR)

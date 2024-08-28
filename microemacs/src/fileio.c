@@ -674,7 +674,7 @@ ffFtpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
 }
 
 static int
-ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meInt fdLen, meUByte *frmData, meUByte *postFName, meBuffer *bp)
+ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meUByte *hdr, meInt fdLen, meUByte *frmData, meUByte *postFName, meBuffer *bp)
 {
     meUByte buff[meBUF_SOCK_SIZE_MAX], urlBuff[meBUF_SIZE_MAX], *hst, *prt, *usr, *psw, *ups=NULL, *fl, *dd, cc;
     meUShort flags;
@@ -734,7 +734,7 @@ ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meInt fd
     if(ffUrlGetInfo(io,&hst,&prt,&usr,&psw) <= 0)
         return meFALSE;
     
-    if((ii=meSockHttpOpen(io,flags,hst,ii,usr,psw,fl,cookie,fdLen,frmData,postFName,buff)) < 0)
+    if((ii=meSockHttpOpen(io,flags,hst,ii,usr,psw,fl,cookie,hdr,fdLen,frmData,postFName,buff)) < 0)
         return meFALSE;
     
     if(ii == 0)
@@ -783,7 +783,7 @@ ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meInt fd
                 return meABORT;
             return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Redirection loop to %s]",buff);
         }
-        return ffHttpFileOpen(io,rwflag,dd,cookie,0,NULL,NULL,bp);
+        return ffHttpFileOpen(io,rwflag,dd,cookie,hdr,0,NULL,NULL,bp);
     }
     io->length = io->urlLen;
     if(((rwflag & (meRWFLAG_READ|meRWFLAG_INSERT)) == meRWFLAG_READ) && (bp != NULL))
@@ -868,8 +868,9 @@ ffUrlFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
     {
         meCookie *cookie;
         meVariable *vp;
-        meUByte *s1, *s2, *cv;
+        meUByte *s1, *s2, *cv, *hdr;
         meInt s1l;
+        hdr = ((vp = getUsrLclCmdVarP((meUByte *)"http-header",usrVarList)) == NULL) ? NULL:vp->value;
         if(((vp = getUsrLclCmdVarP((meUByte *)"http-post-data",usrVarList)) == NULL) || ((s1=vp->value) == NULL) || ((s1l=meStrlen(s1)) == 0))
         {
             s1 = NULL;
@@ -894,7 +895,7 @@ ffUrlFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
                 ffUrlCookie.buffLen = meStrlen(cv);
             }
         }
-        ii = ffHttpFileOpen(io,rwflag,url,cookie,s1l,s1,s2,bp);
+        ii = ffHttpFileOpen(io,rwflag,url,cookie,hdr,s1l,s1,s2,bp);
         if((cookie != NULL) && (ffUrlCookie.value != cv))
             vp->value = ffUrlCookie.value;
         if(s1 != NULL)

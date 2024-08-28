@@ -956,7 +956,7 @@ extern	int	searchBuffer(int f, int n);
 
 int
 meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *user, meUByte *pass, meUByte *file, meCookie *cookie, 
-               meInt fdLen, meUByte *frmData, meUByte *postFName, meUByte *rbuff);
+               meUByte *hdr, meInt fdLen, meUByte *frmData, meUByte *postFName, meUByte *rbuff);
 
 
 int
