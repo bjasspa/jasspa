@@ -1,4 +1,4 @@
-/* -*- pls -*- **************************************************************
+/* -*- pls; tabwidth:4; tabsize:5; -*- **************************************
  *
  *  			Copyright 2002 Jon Green.
  *			      All Rights Reserved
@@ -12,7 +12,7 @@
  *  Author        : $Author: bill $
  *  Created By    : <unknown>
  *  Created       : Fri Oct 4 00:40:59 2002
- *  Last Modified : <021004.0041>
+ *  Last Modified : <240829.1301>
  *
  *  Description	
  *
@@ -38,6 +38,7 @@
  ****************************************************************************/
 
 if  then
+   DELETE FROM accounts WHERE account_id = acct.account_id;
 elsif  then   
 end if;
 begin

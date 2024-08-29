@@ -168,34 +168,33 @@ assignHooks(meBuffer *bp, meUByte *hooknm)
     {
         meUByte fn[meBUF_SIZE_MAX], buff[meBUF_SIZE_MAX] ;             /* Temporary buffer */
         
-        buff[0] = 'h' ;
-        buff[1] = 'k' ;
-        meStrcpy(buff+2,hooknm+6) ;
+        buff[0] = 'h';
+        buff[1] = 'k';
+        meStrcpy(buff+2,hooknm+6);
         if(!fileLookup(buff,extMacroCnt,extMacroLst,meFL_CHECKDOT|meFL_USESRCHPATH,fn))
         {
             if(hooknm == defaultHookName)
-                triedDefault++ ;
+                triedDefault++;
             else if(hooknm == binaryHookName)
-                triedBinary++ ;
+                triedBinary++;
             else if(hooknm == rbinHookName)
-                triedRbin++ ;
+                triedRbin++;
             else
                 mlwrite(MWABORT|MWWAIT,(meUByte *)"Failed to find file [%s]",buff);
         }
         else
         {
-            execFile(fn,0,1) ;
-            bp->fhook = decode_fncname(hooknm,1) ;
+            execFile(fn,0,1);
+            bp->fhook = decode_fncname(hooknm,1);
         }
     }
-    if((bp->fhook = decode_fncname(hooknm,1)) >= 0)
-        resultStr[0] = '\0' ;
+    bp->fhook = decode_fncname(hooknm,1);
     *hooknm   = 'b' ;
-    bp->bhook = decode_fncname(hooknm,1) ;
+    bp->bhook = decode_fncname(hooknm,1);
     *hooknm   = 'd' ;
-    bp->dhook = decode_fncname(hooknm,1) ;
+    bp->dhook = decode_fncname(hooknm,1);
     *hooknm   = 'e' ;
-    bp->ehook = decode_fncname(hooknm,1) ;
+    bp->ehook = decode_fncname(hooknm,1);
     *hooknm   = 'f';
     return;
 }
@@ -221,7 +220,8 @@ assignHooks(meBuffer *bp, meUByte *hooknm)
 void
 setBufferContext(meBuffer *bp)
 {
-    int ii ;
+    meLine *lp, *tlp;
+    int ii, ml=0;
     
 #if MEOPT_COLOR
     /* First setup the global scheme - this can be missed by buffers loaded with -c */
@@ -233,9 +233,8 @@ setBufferContext(meBuffer *bp)
         !meModeTest(bp->mode,MDRBIN) && ((bp->fileFlag & meBFFLAG_DIR) == 0) &&
         ((ii = fileHookCount) > 0))
     {
-        meUByte *pp, cc ;
-        meLine *lp, *tlp ;
-        int nn ;
+        meUByte *pp, cc;
+        int nn;
         
         /* search for the first non-blank line */
         for(lp=meLineGetNext(bp->baseLine) ; lp != bp->baseLine ; lp = meLineGetNext(lp))
@@ -250,84 +249,74 @@ setBufferContext(meBuffer *bp)
                            (meRegexComp(&meRegexStrCmp,fileHookExt[ii],(nn < 0) ? meREGEX_ICASE:0) == meREGEX_OKAY))
                         {
                             if(nn < 0)
-                                nn = -nn ;
-                            tlp = lp ;
+                                nn = -nn;
+                            tlp = lp;
                             do {
                                 if(meRegexMatch(&meRegexStrCmp,meLineGetText(tlp),
                                                 meLineGetLength(tlp),0,meLineGetLength(tlp),0))
                                 {
-                                    assignHooks(bp,fileHookFunc[ii]) ;
-                                    if(bp->fhook >= 0)
-                                    {
-                                        ii = meRegexStrCmp.group[0].end - meRegexStrCmp.group[0].start ;
-                                        if(ii >= meBUF_SIZE_MAX)
-                                            ii = meBUF_SIZE_MAX - 1 ;
-                                        meStrncpy(resultStr,meLineGetText(tlp)+
-                                                  meRegexStrCmp.group[0].start,ii) ;
-                                        resultStr[ii] = '\0' ;
-                                        ii = 0 ;
-                                        break ;
-                                    }
+                                    assignHooks(bp,fileHookFunc[ii]);
+                                    ml = meRegexStrCmp.group[0].end - meRegexStrCmp.group[0].start;
+                                    ii = 0;
+                                    break;
                                 }
-                            } while((--nn > 0) && ((tlp=meLineGetNext(tlp)) != bp->baseLine)) ; 
+                            } while((--nn > 0) && ((tlp=meLineGetNext(tlp)) != bp->baseLine));
                         }
                     }
-                    break ;
+                    break;
                 }
             }
         }
     }
     if(bp->fhook < 0)
     {
-        meUByte *hooknm ;
+        meUByte *hooknm;
         
         /* Do file hooks */
         if(meModeTest(bp->mode,MDBINARY))
-            hooknm = binaryHookName ;
+            hooknm = binaryHookName;
         else if(meModeTest(bp->mode,MDRBIN))
-            hooknm = rbinHookName ;
+            hooknm = rbinHookName;
         else
         {
-            meUByte *sp, *bn ;
-            int ll, bnll ;
+            meUByte *sp, *bn;
+            int ll, bnll;
             
             /* Find the length of the string to pass into check_extension.
              * Check if its name has a <?> and/or a backup ~, if so reduce
              * the length so '<?>' & '~'s not inc. */
-            sp = bp->name ;
-            ll = meStrlen(sp) ;
-            if((sp[ll-1] == '>') && (bp->fileName != NULL) &&
-               ((bn = getFileBaseName(bp->fileName)) != NULL) &&
-               ((bnll = meStrlen(bn)) > 0) && (ll > bnll) &&
-               (sp[bnll] == '<')  && !meStrncmp(sp,bn,bnll))
-                ll = bnll ;
+            sp = bp->name;
+            ll = meStrlen(sp);
+            if((sp[ll-1] == '>') && (bp->fileName != NULL) && ((bn = getFileBaseName(bp->fileName)) != NULL) &&
+               ((bnll = meStrlen(bn)) > 0) && (ll > bnll) && (sp[bnll] == '<')  && !meStrncmp(sp,bn,bnll))
+                ll = bnll;
             if(sp[ll-1] == '~')
-                ll-- ;
+                ll--;
             if(ll)
             {
-                meUByte cc = sp[ll-1] ;
+                meUByte cc = sp[ll-1];
                 if(cc == '~')
                 {
-                    ll-- ;
+                    ll--;
                     if((ll > 2) && (sp[ll-1] == '~') && (sp[ll-2] == '.'))
-                        ll -= 2 ;
+                        ll -= 2;
                 }
                 else if(isDigit(cc))
                 {
-                    int ii=ll-2 ;
+                    int ii=ll-2;
                     while(ii > 0)
                     {
-                        cc = sp[ii--] ;
+                        cc = sp[ii--];
                         if(!isDigit(cc))
                         {
                             if((cc == '~') && (sp[ii] == '.'))
-                                ll = ii ;
-                            break ;
+                                ll = ii;
+                            break;
                         }
                     }
                 }
             }
-            ii = fileHookCount ;
+            ii = fileHookCount;
             while(--ii >= 0)
                 if((fileHookArg[ii] == 0) &&
                    checkExtent(sp,ll,fileHookExt[ii],
@@ -338,16 +327,26 @@ setBufferContext(meBuffer *bp)
 #endif
                                ))
                 {
-                    hooknm = fileHookFunc[ii] ;
-                    break ;
+                    hooknm = fileHookFunc[ii];
+                    break;
                 }
             if(ii < 0)
-                hooknm = defaultHookName ;
+                hooknm = defaultHookName;
         }
-        assignHooks(bp,hooknm) ;
+        assignHooks(bp,hooknm);
     }
     if(bp->fhook >= 0)
-        execBufferFunc(bp,bp->fhook,meEBF_ARG_GIVEN,(bp->intFlag & BIFFILE)) ;
+    {
+        /* copy the magic string identifier or "" to fhook's #l9 */
+        if(ml)
+        {
+            if(ml >= meBUF_SIZE_MAX)
+                ml = meBUF_SIZE_MAX - 1;
+            meStrncpy(meRegCurr->next->reg[9],meLineGetText(tlp)+meRegexStrCmp.group[0].start,ml);
+        }
+        meRegCurr->next->reg[9][ml] = '\0';
+        execBufferFunc(bp,bp->fhook,meEBF_ARG_GIVEN,(bp->intFlag & BIFFILE));
+    }
 }
 #endif
 

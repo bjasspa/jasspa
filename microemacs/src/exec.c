@@ -1517,21 +1517,21 @@ donbuf(meLine *hlp, meVariable **varList, meUByte *commandName, int f, int n)
     meUByte oldcle;
     int oldexec, status;
     
-    if((rp=meRegCurr->next) == NULL)
+    /* Always make sure there is another child so functions calling execBufferFunc can use it */
+    if((rp=meRegCurr->next)->next == NULL)
     {
-        if(meRegCurr->depth >= meMACRO_DEPTH_MAX)
+        if(rp->depth > meMACRO_DEPTH_MAX)
         {
             /* macro recursion gone too deep, bail out.
              * attempt to force the break out by pretending C-g was pressed */
             TTbreakFlag = 1 ;
             return mlwrite(MWABORT|MWWAIT,(meUByte *)"[Macro recursion gone too deep]") ;
         }
-        if((rp = meMalloc(sizeof(meRegister))) == NULL)
+        if((rp->next = meMalloc(sizeof(meRegister))) == NULL)
             return meABORT;
-        meRegCurr->next = rp;
-        rp->depth = meRegCurr->depth + 1;
-        rp->prev = meRegCurr;
-        rp->next = NULL;
+        rp->next->depth = rp->depth + 1;
+        rp->next->prev = rp;
+        rp->next->next = NULL;
     }
     /* save the arguments */
     oldcle = clexec;

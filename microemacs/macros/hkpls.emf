@@ -22,7 +22,6 @@
 ;    ^proceedure[ \t\n]+[a-zA-Z0-9_]+[ \t]*([^)]*)[ \t\n]*;
 
 define-macro fhook-pls
-  set-variable #l1 $result
   set-variable $buffer-mask "luh1"
   @# buffer-init "pls"
   buffer-init-hooks
@@ -30,7 +29,7 @@ define-macro fhook-pls
   ;
   ; -!- pls; tabwidth:<digit>; -!-
   ;
-  !if &not &seq #l1 ""
+  !if &not &seq #l9 ""
     !iif &xseq #l9 ".*tabsize[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;].*"  set-variable $buffer-indent-width @s1
     !iif &xseq #l9 ".*tabwidth[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;].*"  set-variable $buffer-tab-width @s1
   !endif
@@ -569,10 +568,10 @@ set-variable .fhook-pls.fold-mopen "1"
   ;EXTRA;    hilight .hilight.pls 1 "wait"              .scheme.keyword
   !if &band .hilight.flags 0x08
     ; hilight constants, e.g. numbers
-    hilight .hilight.pls 1 "[[:digit:]]+"  .scheme.constant
+    hilight .hilight.pls 1 "[[:digit:]]+" .scheme.constant
     hilight .hilight.pls 1 "-[[:digit:]]+" .scheme.constant
     hilight .hilight.pls 1 "[[:digit:]]+\\.[[:digit:]]+" .scheme.constant
-    hilight .hilight.c 1 "-[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
+    hilight .hilight.pls 1 "-[[:digit:]]+\\.[[:digit:]]+" .scheme.constant
   !endif
 !endif
 

@@ -57,10 +57,16 @@ a file extension or magic string association with the hook file. i.e.
 .CE
 .Me $ehf-scheme
 .RE
-On loading a file which matches the
+The first time a file is loaded that that is bound to \fBfhook-XXX\fR via an
 .Ht add-file-hook 2
-definition  then the  \fChkXXX.emf\fR  file is  executed  and the  template is
-applied to the file.
+definition,  the  \fChkXXX.emf\fR macro  file is  executed and then the \fBfhook-XXX\fR command is executed
+with the file's buffer current so that the template is applied to it. Only the execution of \fBfhook-XXX\fR is done on 
+subsequent loading of files of this type.
+.PP
+When the \fBfhook-XXX\fR command is executed it's
+.Hl #l9 Variables 4
+register variable is set to the matched magic string if the binding was via a file content hook, or an empty string. 
+This can be useful as the magic string often contains configuration values such as the tab and indent width. 
 .PP
 A basic template framework to be used with the \fBbuff-init\fR commands may be
 defined as follows for a language template called \fIXXX\fR:-
