@@ -1501,26 +1501,29 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
     }
     /*Send message to the server.*/
     ss = ffbuf;
-    if(postFName != NULL)
+    if((postFName != NULL) && ((pfp=fopen((char *) postFName,"rb")) == NULL))
     {
-        if((pfp=fopen((char *) postFName,"rb")) == NULL)
+        if(io->urlOpts & meSOCKOPT_LOG_ERROR)
         {
-            if(io->urlOpts & meSOCKOPT_LOG_ERROR)
-            {
-                snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: Failed to open post file [%s]",postFName);
-                ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,rbuff);
-            }
-            meSockClose(io,1);
-            return -19;
+            snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: Failed to open post file [%s]",postFName);
+            ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,rbuff);
         }
-        /* send POST message to http */
-        strcpy((char *) ss,"POST ") ;
-        ss += 5;
+        meSockClose(io,1);
+        return -19;
     }
-    else if(fdLen > 0)
+    if((hdr != NULL) && (hdr[0] == ':'))
+    {
+        meUByte cc;
+        while(((cc=*++hdr) != '\0') && (cc != ':'))
+            *ss++ = cc;
+        if(cc != '\0')
+            hdr++;
+        *ss++ = ' ';
+    }
+    else if((postFName != NULL) || (fdLen > 0))
     {
         /* send POST message to http */
-        strcpy((char *) ss,"POST ") ;
+        strcpy((char *) ss,"POST ");
         ss += 5;
     }
     else
@@ -1792,6 +1795,8 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
             ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,ffbuf);
         if(ffbuf[0] == '\0')
         {
+            if((io->urlLen < 0) && (err == 204))
+                io->urlLen = 0;
             if((io->urlFlags & meSOCKFLG_CHUNKED) && (io->urlLen >= 0))
             {
                 if(io->urlOpts & meSOCKOPT_LOG_ERROR)
@@ -1804,7 +1809,16 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
             }
             return err;
         }
-        if(((cc=(ffbuf[0]|0x20)) == 'c') && ((ffbuf[1]|0x20) == 'o') && ((ffbuf[2]|0x20) == 'n'))
+        if(((cc=(ffbuf[0]|0x20)) == 'h') && ((ffbuf[1]|0x20) == 't') && ((ffbuf[2]|0x20) == 't') && ((ffbuf[3]|0x20) == 'p') &&
+           (ffbuf[4] == '/') && (ffbuf[5] >= '1') && (ffbuf[5] <= '9'))
+        {
+            ss = ffbuf+5;
+            while(((cc=*++ss) != '\0') && (cc != ' ') && (cc != '\t'))
+                ;
+            if((err = atoi((char *) ss)) <= 0)
+                err = 1;
+        }
+        else if((cc == 'c') && ((ffbuf[1]|0x20) == 'o') && ((ffbuf[2]|0x20) == 'n'))
         {
             if(((ffbuf[3]|0x20) == 't') && ((ffbuf[4]|0x20) == 'e') && ((ffbuf[5]|0x20) == 'n') && ((ffbuf[6]|0x20) == 't') && (ffbuf[7] == '-') && ((ffbuf[8]|0x20) == 'l') &&
                ((ffbuf[9]|0x20) == 'e') && ((ffbuf[10]|0x20) == 'n') && ((ffbuf[11]|0x20) == 'g') && ((ffbuf[12]|0x20) == 't') && ((ffbuf[13]|0x20) == 'h') && (ffbuf[14] == ':'))
@@ -1823,8 +1837,8 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
         else if((cc == 'l') && ((ffbuf[1]|0x20) == 'o') && ((ffbuf[2]|0x20) == 'c') && ((ffbuf[3]|0x20) == 'a') && ((ffbuf[4]|0x20) == 't') &&
                 ((ffbuf[5]|0x20) == 'i') && ((ffbuf[6]|0x20) == 'o') && ((ffbuf[7]|0x20) == 'n') && (ffbuf[8] == ':'))
         {
-            /* The requested file is not here, its at the given location */
-            ss = ffbuf+9 ;
+            /* The requested file is not here, its at the given location - could/should check the http return code (stored in err) to check its a 3?? */
+            ss = ffbuf+9;
             while(((cc=*ss) == ' ') || (cc == '\t'))
                 ss++;
             if(cc != '\0')

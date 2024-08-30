@@ -19,7 +19,11 @@
 .SH SYNOPSIS
 \fB%http-cookies\fR "\fIcookie=value; ...\fR"; Default is undefined
 .br
-\fB%http-header\fR "\fIHeader1: value1\\r\\n ...\fR"; Default is undefined
+\fB%http-header\fR "\fI:VERB:"; Default is undefined
+.br
+\fB%http-header\fR "\fIHeader1: value1\\r\\n ...\fR";
+.br
+\fB%http-header\fR "\fI:VERB:Header1: value1\\r\\n ...\fR";
 .SH DESCRIPTION
 If the \fB%http-cookies\fR variable is set all HTTP file loading requests,
 using commands like
@@ -31,8 +35,12 @@ value will be updated.
 If the variable is not defined then no \fBCookie:\fR request header is sent and all response \fBSet-Cookie:\fR headers
 are ignored.
 .PP
-If the \fB%http-header\fR variable is set, all HTTP file loading requests are sent with the variable value appended to 
-the end of the URL request header. The value is prefixed and suffixed with a '\fC\\r\\n\fR' newline, therefore if the value 
+If the \fB%http-header\fR  variable is set, if the first character is a ':' then the string up to the next ':' is used
+as the HTTP  request  verb, e.g. POST, PUT, DELETE etc. If the value does not start with a ':' then the default  verb,
+which is either  GET or POST, is used. The  remainder  of the value, if any, is  appended  to the end of the  standard
+request header, but before the terminating blank line.
+.PP
+When a header is appended, the value is prefixed and suffixed with a '\fC\\r\\n\fR' newline, therefore if the value 
 starts, ends or contains double newline character sequences the URL request will be invalid.
 .SH NOTES
 The \fB%http-cookies\fR variable should take the form of "<name1>=<value1>; <name2>=<value2>; ...; <name#>=<value#>" with no trailing ';',

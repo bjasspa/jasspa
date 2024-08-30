@@ -2,7 +2,6 @@ name: Build macos-intel (macos-13)
 
 on:
   workflow_dispatch:
-    branches: [ master ]
 
 jobs:
   build:

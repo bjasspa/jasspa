@@ -785,6 +785,7 @@ ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meUByte 
         }
         return ffHttpFileOpen(io,rwflag,dd,cookie,hdr,0,NULL,NULL,bp);
     }
+    meStrcpy(resultStr,meItoa(ii));
     io->length = io->urlLen;
     if(((rwflag & (meRWFLAG_READ|meRWFLAG_INSERT)) == meRWFLAG_READ) && (bp != NULL))
     {
