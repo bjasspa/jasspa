@@ -1796,7 +1796,11 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
         if(ffbuf[0] == '\0')
         {
             if((io->urlLen < 0) && (err == 204))
+            {
+                /* no return data but no content length, best to set length to zero and close connection */
                 io->urlLen = 0;
+                io->urlFlags |= meSOCKFLG_CLOSE;
+            }
             if((io->urlFlags & meSOCKFLG_CHUNKED) && (io->urlLen >= 0))
             {
                 if(io->urlOpts & meSOCKOPT_LOG_ERROR)
