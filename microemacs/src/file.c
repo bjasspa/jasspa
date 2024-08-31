@@ -1700,7 +1700,7 @@ readin(register meBuffer *bp, meUByte *fname)
             if(!meStatTestSystem(bp->stats))
             {
                 /* if windows system file read in a readonly */
-                meModeSet(bp->mode,MDVIEW) ;
+                meModeSet(bp->mode,MDVIEW);
                 mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"[Reading %s (system file)]", fn);
             }
             else
@@ -1714,35 +1714,35 @@ readin(register meBuffer *bp, meUByte *fname)
                      (meUid != 0) &&
 #endif
                      (!meStatTestWrite(bp->stats))))
-                meModeSet(bp->mode,MDVIEW) ;
+                meModeSet(bp->mode,MDVIEW);
         }
         mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"[Reading %s%s]",fn,
                 meModeTest(bp->mode,MDVIEW) ? " (readonly)" : "");
     }
-    ss = ffReadFile(&meior,fn,meRWFLAG_READ,bp,bp->baseLine,0,0,0) ;
+    ss = ffReadFile(&meior,fn,meRWFLAG_READ,bp,bp->baseLine,0,0,0);
     
     /*
     ** Set up the modification time field of the buffer structure.
     */
     if(ss != meABORT)
     {
-        mlwrite(MWCLEXEC,(meUByte *)"[Read %d line%s]",bp->lineCount,(bp->lineCount==1) ? "":"s") ;
+        mlwrite(MWCLEXEC,(meUByte *)"[Read %d line%s]",bp->lineCount,(bp->lineCount==1) ? "":"s");
         if(fn == afn)
             /* this is a recovered file so flag the buffer as changed */
-            meModeSet(bp->mode,MDEDIT) ;
-        ss = meTRUE ;
+            meModeSet(bp->mode,MDEDIT);
+        ss = meTRUE;
     }
     else
-        meModeSet(bp->mode,MDVIEW) ;
+        meModeSet(bp->mode,MDVIEW);
     
 newfile_end:
     
     bp->dotLine = meLineGetNext(bp->baseLine);
-    bp->dotLineNo = 0 ;
-    bp->dotOffset = 0 ;
+    bp->dotLineNo = 0;
+    bp->dotOffset = 0;
     
 error_end:
-    return ss ;
+    return ss;
 }
 
 /*
@@ -2143,29 +2143,29 @@ findSwapFileList(meUByte *fname, int bflag, meInt lineno, meUShort colno)
 int
 findFile(int f, int n)
 {
-    meUByte fname[meBUF_SIZE_MAX], prompt[16], *ss ;
+    meUByte fname[meBUF_SIZE_MAX], prompt[16], *ss;
     
-    ss = prompt ;
-    *ss++ = 'f' ;
-    *ss++ = 'i' ;
-    *ss++ = 'n' ;
-    *ss++ = 'd' ;
-    *ss++ = '-' ;
+    ss = prompt;
+    *ss++ = 'f';
+    *ss++ = 'i';
+    *ss++ = 'n';
+    *ss++ = 'd';
+    *ss++ = '-';
     if(n & BFND_BINARY)
-        *ss++ = 'b' ;
+        *ss++ = 'b';
     if(n & BFND_CRYPT)
-        *ss++ = 'c' ;
+        *ss++ = 'c';
     if(n & BFND_RBIN)
-        *ss++ = 'r' ;
-    *ss++ = 'f' ;
-    *ss++ = 'i' ;
-    *ss++ = 'l' ;
-    *ss++ = 'e' ;
-    *ss   = '\0' ;
+        *ss++ = 'r';
+    *ss++ = 'f';
+    *ss++ = 'i';
+    *ss++ = 'l';
+    *ss++ = 'e';
+    *ss   = '\0';
     if(inputFileName(prompt,fname,0) <= 0)
-        return meABORT ;
-    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN|BFND_NOHOOK)) | BFND_MKNAM ;
-    return findSwapFileList(fname,n,0,0) ;
+        return meABORT;
+    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN|BFND_NOHOOK)) | BFND_MKNAM;
+    return findSwapFileList(fname,n,0,0);
 }
 
 #if MEOPT_EXTENDED

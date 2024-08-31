@@ -744,11 +744,11 @@ ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meUByte 
         /* if this starts with http:// https:// etc. then start again */
         meSockClose(io,0);
         io->redirect++;
-        if((io->redirect > 5) || (io->urlOpts & meSOCKOPT_REDIR_HALT))
+        if(io->redirect > 5)
         {
             if(rwflag & meRWFLAG_SILENT)
                 return meABORT;
-            return mlwrite(MWABORT|MWPAUSE,(meUByte *) ((io->urlOpts & meSOCKOPT_REDIR_HALT) ? "[Following redirections disabled - see console]":"[To many redirections - see console]"));
+            return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[To many redirections - see console]");
         }
         cc = ffUrlGetType(buff);
         if(cc & meIOTYPE_HTTP)
@@ -758,13 +758,7 @@ ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meUByte 
             io->type = cc;
             dd = buff;
         }
-        else if(cc != meIOTYPE_NONE)
-        {
-            if(rwflag & meRWFLAG_SILENT)
-                return meABORT;
-            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Redirection to an unsupported file type - %s]",buff);
-        }
-        else
+        else if(cc == meIOTYPE_NONE)
         {
             if(buff[0] != '/')
             {
@@ -777,7 +771,20 @@ ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meUByte 
             meStrcpy(urlBuff+ii,buff);
             dd = urlBuff;
         }
-        if(!meStrcmp(url,dd) && ((io->redirect > 1) || ((fdLen == 0) && (postFName == NULL))))
+        else if(!(io->urlOpts & meSOCKOPT_REDIR_HALT))
+        {
+            if(rwflag & meRWFLAG_SILENT)
+                return meABORT;
+            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Redirection to an unsupported file type - %s]",buff);
+        }
+        if(io->urlOpts & meSOCKOPT_REDIR_HALT)
+        {
+            meStrcpy(resultStr,dd);
+            if(clexec || (rwflag & meRWFLAG_SILENT))
+                return meABORT;
+            return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[Following redirections disabled - see console]");
+        }
+        else if(!meStrcmp(url,dd) && ((io->redirect > 1) || ((fdLen == 0) && (postFName == NULL))))
         {
             if(rwflag & meRWFLAG_SILENT)
                 return meABORT;

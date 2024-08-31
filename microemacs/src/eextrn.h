@@ -43,8 +43,8 @@ extern	int	expandAbbrev(int f, int n);
 /* basic.c externals */
 extern	int	windowGotoBol(int f, int n);
 extern	int	windowGotoEol(int f, int n);
-extern	int	meErrorEob(void) ;
-extern	int	meErrorBob(void) ;
+extern	int	meErrorEob(void);
+extern	int	meErrorBob(void);
 extern	int	meWindowBackwardChar(register meWindow *wp, register int n);
 extern	int	meWindowForwardChar(register meWindow *wp, register int n);
 extern	int	windowBackwardChar(int f, int n);
@@ -68,8 +68,8 @@ extern	int	windowForwardParagraph(int f, int n);
 #endif
 extern	int	windowSetMark(int f, int n);
 extern	int	windowSwapDotAndMark(int f, int n);
-extern	void	meBufferStoreLocation(meLine *lp, meUShort lo, meInt ln) ;
-extern	void	meBufferUpdateLocation(meBuffer *bp, meUInt noLines, meUShort newOff) ;
+extern	void	meBufferStoreLocation(meLine *lp, meUShort lo, meInt ln);
+extern	void	meBufferUpdateLocation(meBuffer *bp, meUInt noLines, meUShort newOff);
 
 /* bind.c externals */
 /* General string hash based on djb2 hash by Bernstein (hash = (hash*33)+key[i]) */
@@ -82,15 +82,15 @@ do {                                                                         \
     hsh = hh;                                                                \
 } while(0)
 
-extern  meUShort  meGetKeyFromString(meUByte **tp) ;
-extern  meUShort  meGetKey(int flag) ;
-extern  int     meGetStringFromChar(meUShort cc, meUByte *d) ;
+extern  meUShort  meGetKeyFromString(meUByte **tp);
+extern  meUShort  meGetKey(int flag);
+extern  int     meGetStringFromChar(meUShort cc, meUByte *d);
 extern	void	meGetStringFromKey(meUShort cc, meUByte *seq);
 extern	int     decode_fncname(meUByte *fname, int silent);
 extern	int	bindkey(meUByte *prom, int f, int n, meUShort *lclNoBinds,
-                        meBind **lclBinds) ;
+                        meBind **lclBinds);
 extern	int	unbindkey(meUByte *prom, int n, meUShort *lclNoBinds,
-                          meBind **lclBinds) ;
+                          meBind **lclBinds);
 extern	int	globalBindKey(int f, int n);
 extern	int	globalUnbindKey(int f, int n);
 #if MEOPT_LOCALBIND
@@ -118,9 +118,9 @@ extern	int	setCharMask(int f, int n);
 #endif
 
 /* buffer.c externals */
-extern  int     getBufferName(meUByte *prompt, int opt, int defH, meUByte *buf) ;
+extern  int     getBufferName(meUByte *prompt, int opt, int defH, meUByte *buf);
 #if MEOPT_FILEHOOK
-extern int      addFileHook(int f, int n) ;
+extern int      addFileHook(int f, int n);
 #else
 #define addFileHook notAvailable
 #endif
@@ -137,23 +137,23 @@ extern	int	namedBufferMode(int f, int n);
 #endif
 extern	int	findBuffer(int f, int n);
 extern	int	nextBuffer(int f, int n);
-extern  void    setBufferContext(meBuffer *bp) ;
+extern  void    setBufferContext(meBuffer *bp);
 extern	int	swbuffer(meWindow *wp, meBuffer *bp);
 extern	int	bufferDelete(int f, int n);
-extern  meBuffer *replacebuffer(meBuffer *oldbuf) ;
-extern  void    linkBuffer(meBuffer *bp) ;
-extern  void    unlinkBuffer(meBuffer *bp) ;
+extern  meBuffer *replacebuffer(meBuffer *oldbuf);
+extern  void    linkBuffer(meBuffer *bp);
+extern  void    unlinkBuffer(meBuffer *bp);
 extern	int	zotbuf(meBuffer *bp, int silent);
 extern	int	adjustMode(meBuffer *bp, int nn);
 extern	int	bufferMode(int f, int n);
 extern	int	globalMode(int f, int n);
-extern  int     addLine(register meLine *ilp, meUByte *text) ;
+extern  int     addLine(register meLine *ilp, meUByte *text);
 #define addLineToBob(bp,text) (bp->lineCount += addLine(bp->dotLine,text))
 #define addLineToEob(bp,text) (bp->lineCount += addLine(bp->baseLine,text))
 extern	int	listBuffers(int f, int n);
-extern  int     bufferNeedSaving(meBuffer *bp) ;
+extern  int     bufferNeedSaving(meBuffer *bp);
 extern	int	anyChangedBuffer(void);
-extern  meBuffer *createBuffer(register meUByte *bname) ;
+extern  meBuffer *createBuffer(register meUByte *bname);
 #define BFND_CREAT  0x01
 #define BFND_BINARY 0x02
 #define BFND_CRYPT  0x04
@@ -163,9 +163,9 @@ extern  meBuffer *createBuffer(register meUByte *bname) ;
 #define BFND_CLEAR  0x40
 
 extern	meBuffer *bfind(meUByte *bname, int cflag);
-extern	void    resetBufferWindows(meBuffer *bp) ;
+extern	void    resetBufferWindows(meBuffer *bp);
 extern	int	bclear(meBuffer *bp);
-extern  int     getBufferInfo(meInt *,meInt *,meInt *,meInt *) ;
+extern  int     getBufferInfo(meInt *,meInt *,meInt *,meInt *);
 
 /* crypt.c externals */
 extern  void    meXoshiro128Seed(void);
@@ -192,25 +192,25 @@ extern int directoryTree(int f, int n);
 
 /* display.c externals */
 #if MEOPT_COLOR
-extern  int	addColor(int f, int n) ;
+extern  int	addColor(int f, int n);
 extern	int	addColorScheme(int f, int n);
 #else
 #define addColor notAvailable
 #define addColorScheme notAvailable
 #endif
 extern  int     convertUserScheme(int n, int defaultScheme);
-extern  meUByte assessModeLine(meUByte *ml) ;
+extern  meUByte assessModeLine(meUByte *ml);
 extern  meUByte *windCurLineOffsetEval(meWindow *wp);
-extern  void    reframe(meWindow *wp) ;
-extern  void    updCursor(register meWindow *wp) ;
+extern  void    reframe(meWindow *wp);
+extern  void    updCursor(register meWindow *wp);
 extern  int     renderLine(meUByte *s, int len, int wid, meBuffer *bp);
 extern	int	screenUpdate(int f, int n);
 extern	int	update(int force);
 extern	void	updone(meWindow *wp);
 extern	void	updall(meWindow *wp);
 #if MEOPT_EXTENDED
-extern	int     showCursor(int f, int n) ;
-extern	int     showRegion(int f, int n) ;
+extern	int     showCursor(int f, int n);
+extern	int     showRegion(int f, int n);
 #else
 #define showCursor notAvailable
 #define showRegion notAvailable
@@ -219,15 +219,15 @@ extern	int     showRegion(int f, int n) ;
 #define POKE_NOMARK   0x01      /* Don't mark the poke */
 #define POKE_NOFLUSH  0x02      /* Don't flush the poke */
 #define POKE_COLORS   0x04      /* The fore & back args are color strings */
-extern  void    pokeScreen(int flags, int row, int col, meUByte *scheme, meUByte *str) ;
+extern  void    pokeScreen(int flags, int row, int col, meUByte *scheme, meUByte *str);
 #if MEOPT_EXTENDED
-extern	int	screenPoke(int f, int n) ;
+extern	int	screenPoke(int f, int n);
 #else
 #define screenPoke notAvailable
 #endif
 extern  void    menuline(int flag);
 
-extern  int     renderLine(meUByte *s1, int len, int wid, meBuffer *bp) ;
+extern  int     renderLine(meUByte *s1, int len, int wid, meBuffer *bp);
 
 /* Virtual video interfaces */
 extern  int     meVideoAttach(meVideo *vvptr, meWindow *wp);
@@ -248,7 +248,7 @@ extern  int     doRedrawEvent(void);
 #define MWSTDERRWRT 0x400
 #define MWSTDALLWRT 0x600
 
-extern  int     mlwrite(int flags, meUByte *fmt, ...) ;
+extern  int     mlwrite(int flags, meUByte *fmt, ...);
 #ifdef _WIN32
 #ifdef _ME_WINDOW
 #define mePrintMessage(mm) MessageBox(NULL,(char *) mm,ME_FULLNAME " '" meVERSION,MB_OK);
@@ -266,14 +266,14 @@ extern  int     mlwrite(int flags, meUByte *fmt, ...) ;
 #define meRSTRCMP_MATCHWHOLE 0x08
 #define meRSTRCMP_WHOLE      (meRSTRCMP_BEGBUFF|meRSTRCMP_ENDBUFF|meRSTRCMP_MATCHWHOLE)
 #define meRSTRCMP_USEMAIN    0x10
-extern  int     regexStrCmp(meUByte *str, meUByte *reg, int flags) ;
+extern  int     regexStrCmp(meUByte *str, meUByte *reg, int flags);
 extern	meUByte *gtfun(register int fnum, meUByte *fname);
 extern	meVariable *getUsrLclCmdVarP(meUByte *vname, register meVariable *varList);
 extern  meUByte *getUsrLclCmdVar(meUByte *vname, register meVariable *varList);
 #define getUsrVar(vname) getUsrLclCmdVar(vname,usrVarList)
 extern	meVariable *SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue,
-                                    register meVariable **varList) ;
-extern	int	setVar(meUByte *vname, meUByte *vvalue, meRegister *regs) ;
+                                    register meVariable **varList);
+extern	int	setVar(meUByte *vname, meUByte *vvalue, meRegister *regs);
 extern	int	setVariable(int f, int n);
 extern	meUByte *meItoa(int i);
 #define mePtos(pp) (((pp) == NULL) ? emptym:(pp))
@@ -307,12 +307,12 @@ do {                                                                         \
 } while(0)
 extern	int	mePushRegisters(int flags);
 extern	int	mePopRegisters(int flags);
-extern	int	execFunc(int index, int f, int n) ;
-extern  int     execFuncHidden(int keyCode, int index, meUInt arg) ;
+extern	int	execFunc(int index, int f, int n);
+extern  int     execFuncHidden(int keyCode, int index, meUInt arg);
 #define meEBF_ARG_GIVEN   0x01
 #define meEBF_HIDDEN      0x02
 #define meEBF_USE_B_DOT   0x04
-extern  int     execBufferFunc(meBuffer *bp, int index, int flags, int n) ;
+extern  int     execBufferFunc(meBuffer *bp, int index, int flags, int n);
 extern  int     lineExec(int f, int n, meUByte *cmdstr);
 /* Note  tok (the destination token string) must be meTOKENBUF_SIZE_MAX in size, 
  * returning a string no bigger than meBUF_SIZE_MAX with the \0 */
@@ -331,13 +331,13 @@ extern  void    fnctest(meBuffer *bp);
 #endif
 
 /* file.c externals */
-extern  int fnamecmp(meUByte *f1, meUByte *f2) ;
+extern  int fnamecmp(meUByte *f1, meUByte *f2);
 #define gfsERRON_ILLEGAL_NAME 1
 #define gfsERRON_BAD_FILE     2
 #define gfsERRON_DIR          4
-extern  int getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname) ;
+extern  int getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname);
 extern  int mePathAddSearchPath(int index, meUByte *path_name,
-                                meUByte *path_base, int *gotUserPath) ;
+                                meUByte *path_base, int *gotUserPath);
 #define meFL_CHECKDOT    0x01
 #define meFL_USESRCHPATH 0x02
 #define meFL_USEPATH     0x04
@@ -345,24 +345,24 @@ extern  int mePathAddSearchPath(int index, meUByte *path_name,
 #define meFL_CALLBACK    0x10
 extern	int fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte *outName);
 extern	int executableLookup(meUByte *fname, meUByte *outName);
-extern  int bufferOutOfDate(meBuffer *bp) ;
+extern  int bufferOutOfDate(meBuffer *bp);
 extern	meUByte *gwd(meUByte drive);
-extern  meUByte *getFileBaseName(meUByte *fname) ;
-extern  void  getFilePath(meUByte *fname, meUByte *path) ;
+extern  meUByte *getFileBaseName(meUByte *fname);
+extern  void  getFilePath(meUByte *fname, meUByte *path);
 extern  int inputFileName(meUByte *prompt, meUByte *fn, int corFlag);
 extern	int meBufferInsertFile(meBuffer *bp, meUByte *fname, meUInt flags,
                                meUInt hoffest, meUInt loffest, meInt length);
 extern	int insertFile(int f, int n);
-extern  int findFileList(meUByte *seed, int bflag, meInt lineno, meUShort colno) ;
-extern  int findSwapFileList(meUByte *seed, int bflag, meInt lineno, meUShort colno) ;
+extern  int findFileList(meUByte *seed, int bflag, meInt lineno, meUShort colno);
+extern  int findSwapFileList(meUByte *seed, int bflag, meInt lineno, meUShort colno);
 extern	int findFile(int f, int n);
 extern	int readFile(int f, int n);
 extern	int viewFile(int f, int n);
-extern  void freeFileList(int noStr, meUByte **files) ;
+extern  void freeFileList(int noStr, meUByte **files);
 extern	int	readin(meBuffer *, meUByte *fname);
 extern	void    makename(meUByte *bname, meUByte *fname);
-extern  void    autowriteout(register meBuffer *bp) ;
-extern  void    autowriteremove(meBuffer *bp) ;
+extern  void    autowriteout(register meBuffer *bp);
+extern  void    autowriteremove(meBuffer *bp);
 #if MEOPT_EXTENDED
 extern	int     nextWndFindFile(int f, int n);
 extern	int     fileOp(int f, int n);
@@ -373,27 +373,27 @@ extern	int	appendBuffer(int f, int n);
 #define appendBuffer notAvailable
 #endif
 extern	int	saveBuffer(int f, int n);
-extern	int     saveSomeBuffers(int f, int n) ;
+extern	int     saveSomeBuffers(int f, int n);
 extern	int	writeBuffer(int f, int n);
-extern  int     writeOut(register meBuffer *bp, meUInt flags, meUByte *fn) ;
+extern  int     writeOut(register meBuffer *bp, meUInt flags, meUByte *fn);
 extern	void	resetBufferNames(meBuffer *bp, meUByte *fname);
 extern	int	changeFileName(int f, int n);
 #ifdef _CONVDIR_CHAR
-extern  void    fileNameConvertDirChar(meUByte *fname) ;
+extern  void    fileNameConvertDirChar(meUByte *fname);
 #else
 #define fileNameConvertDirChar(ff)
 #endif
-extern  void    fileNameSetHome(meUByte *ss) ;
+extern  void    fileNameSetHome(meUByte *ss);
 #define PATHNAME_COMPLETE 0
 #define PATHNAME_PARTIAL  1
 extern  void    pathNameCorrect(meUByte *oldName, int nameType, 
-                                meUByte *newName, meUByte **baseName) ;
+                                meUByte *newName, meUByte **baseName);
 #ifdef _WIN32
-extern  void    fileNameCorrect(meUByte *oldName, meUByte *newName, meUByte **baseName) ;
+extern  void    fileNameCorrect(meUByte *oldName, meUByte *newName, meUByte **baseName);
 #else
 #define fileNameCorrect(o,n,b) pathNameCorrect(o,PATHNAME_COMPLETE,n,b)
 #endif
-extern  void    getDirectoryList(meUByte *pathName, meDirList *dirList) ;
+extern  void    getDirectoryList(meUByte *pathName, meDirList *dirList);
 
 /* fileio.c externals */
 #define meBACKUP_CREATE_PATH 0x0001
@@ -464,13 +464,13 @@ extern int      ffReadFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp,
                            meUInt uoffset, meUInt loffset, meInt length);
 extern int      ffReadFileToBuffer(meUByte *sfname, meUByte *buff, meInt buffLen);
 
-extern int      ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp) ;
+extern int      ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp);
 extern int      ffWriteFileWrite(meIo *io, register int len, 
-                                 register meUByte *buff, int eolFlag) ;
-extern int      ffWriteFileClose(meIo *io, meUInt flags, meBuffer *bp) ;
-extern int      ffWriteFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp) ;
+                                 register meUByte *buff, int eolFlag);
+extern int      ffWriteFileClose(meIo *io, meUInt flags, meBuffer *bp);
+extern int      ffWriteFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp);
 #if MEOPT_EXTENDED
-extern int	ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode) ;
+extern int	ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode);
 #else
 #define ffFileOp(s,d,f,m) 0
 #endif
@@ -480,8 +480,8 @@ extern	int     meFrameChangeWidth(meFrame *frame, int ww);
 extern	int     meFrameChangeDepth(meFrame *frame, int hh);
 extern	int	frameChangeDepth(int f, int n);
 extern	int	frameChangeWidth(int f, int n);
-extern	meFrame *meFrameInit(meFrame *sibling) ;
-extern	int     meFrameInitWindow(meFrame *frame, meBuffer *buffer) ;
+extern	meFrame *meFrameInit(meFrame *sibling);
+extern	int     meFrameInitWindow(meFrame *frame, meBuffer *buffer);
 #if MEOPT_FRAME
 extern	int	meFrameDelete(meFrame *frame, int flags);
 extern	void	meFrameMakeCur(meFrame *frame, int quiet);
@@ -527,11 +527,11 @@ extern	int	generateHash(int f, int n);
 extern	void	mlerase(int flag);
 #if MEOPT_HILIGHT
 extern	int	hilight(int f, int n);
-extern  void    hilightCurLineOffsetEval(meWindow *wp) ;
-extern  int     indentLine(int *inComment) ;
-extern  meUShort hilightLine(meVideoLine *vp1, meUByte mode) ;
-extern  void    hilightLookBack(meWindow *) ;
-extern	int	meIndentGetIndent(meUByte indent, meUShort bIndentWidth) ;
+extern  void    hilightCurLineOffsetEval(meWindow *wp);
+extern  int     indentLine(int *inComment);
+extern  meUShort hilightLine(meVideoLine *vp1, meUByte mode);
+extern  void    hilightLookBack(meWindow *);
+extern	int	meIndentGetIndent(meUByte indent, meUShort bIndentWidth);
 extern	int	indent(int f, int n);
 #else
 #define hilight notAvailable
@@ -540,7 +540,7 @@ extern	int	indent(int f, int n);
 
 /* history.c externals */
 extern  void    initHistory(void);
-extern  int     setupHistory(int option, meUByte **numPtr, meUByte ***list) ;
+extern  int     setupHistory(int option, meUByte **numPtr, meUByte ***list);
 extern  void    addHistory(int option, meUByte *str, int rmv);
 
 /* input.c externals */
@@ -550,18 +550,18 @@ extern  void    addHistory(int option, meUByte *str, int rmv);
 #define mlCR_CURSOR_IN_MAIN 0x08
 #define mlCR_QUOTE_CHAR     0x10
 #define mlCR_ALPHANUM_CHAR  0x20
-extern	int     mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr) ;
+extern	int     mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr);
 extern	int	mlyesno(meUByte *prompt);
-extern	void	mlDisp(meUByte *prompt, meUByte *buf, meUByte *cont, int cpos) ;
+extern	void	mlDisp(meUByte *prompt, meUByte *buf, meUByte *cont, int cpos);
 extern	int     isFileIgnored(meUByte *fileName);
 extern	int	getexecCommand(void);
 #define meGETKEY_SILENT     0x01
 #define meGETKEY_SINGLE     0x02
 #define meGETKEY_COMMAND    0x04
 extern	meUShort  meGetKeyFromUser(int f, int n, int flag);
-extern  int     createBuffList(meUByte ***listPtr, int noHidden) ;
-extern  int     createCommList(meUByte ***listPtr, int noHidden) ;
-extern  int     createVarList(meUByte ***listPtr) ;
+extern  int     createBuffList(meUByte ***listPtr, int noHidden);
+extern  int     createCommList(meUByte ***listPtr, int noHidden);
+extern  int     createVarList(meUByte ***listPtr);
 #define MLBUFFER     0x00001		/* entering a buffer name	     */
 #define MLCOMMAND    0x00002		/* entering a command		     */
 #define MLFILE       0x00004		/* entering a filename		     */
@@ -605,9 +605,9 @@ extern  int     createVarList(meUByte ***listPtr) ;
  * array of completion strings, and mlgsStrListSize must be a count
  * of the number of completions. Not the completion array is sorted!
  */
-extern meUByte **mlgsStrList ;
-extern int mlgsStrListSize ;
-extern int meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int nbuf) ;
+extern meUByte **mlgsStrList;
+extern int mlgsStrListSize;
+extern int meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int nbuf);
 
 /* isearch.c externals */
 #if MEOPT_ISEARCH
@@ -619,13 +619,13 @@ extern	int	isearchForw(int f, int n);
 #endif
 
 /* key.c externals */
-extern  void    count_key_table(void) ;
-extern  int     decode_key(register meUShort code, meUInt *arg) ;
-extern  int     delete_key(register meUShort code) ;
-extern  int	insert_key(register meUShort code, meUShort index, meUInt arg) ;
+extern  void    count_key_table(void);
+extern  int     decode_key(register meUShort code, meUInt *arg);
+extern  int     delete_key(register meUShort code);
+extern  int	insert_key(register meUShort code, meUShort index, meUInt arg);
 
 /* line.c externals */
-extern  meLine *meLineMalloc(int length, int editLine) ;
+extern  meLine *meLineMalloc(int length, int editLine);
 #define meLINEANCHOR_ALWAYS     0x00
 #define meLINEANCHOR_IF_LESS    0x01
 #define meLINEANCHOR_IF_GREATER 0x02
@@ -634,7 +634,7 @@ extern  meLine *meLineMalloc(int length, int editLine) ;
 #define meLINEANCHOR_RELATIVE   0x20
 #define meLINEANCHOR_COMPRESS   0x40
 extern  void	meLineResetAnchors(meInt flags, meBuffer *bp, meLine *lp,
-                                   meLine *nlp, meUShort offset, meInt adjust) ;
+                                   meLine *nlp, meUShort offset, meInt adjust);
 extern	int	bufferSetEdit(void);
 extern	void	lineSetChanged(int flag);
 extern  meUByte *lineMakeSpace(int n);
@@ -643,7 +643,7 @@ extern	int	lineInsertString(int n, meUByte *cp);
 #define meBUFINSFLAG_UNDOCALL   0x01
 #define meBUFINSFLAG_LITERAL    0x02
 extern	int	lineInsertNewline(meInt flags);
-extern	int     bufferInsertText(meUByte *str, meInt flags) ;
+extern	int     bufferInsertText(meUByte *str, meInt flags);
 extern	int	bufferInsertSpace(int f, int n);
 extern	int	bufferInsertTab(int f, int n);
 extern	int	bufferInsertString(int f, int n);
@@ -656,7 +656,7 @@ extern	void    killInsertNode(meKillNode *nbl);
 extern	int	yankfrom(struct meKill *pklist);
 extern	int	yank(int f, int n);
 extern	int	reyank(int f, int n);
-extern  void    meLineLoopFree(meLine *lp, int flag) ;
+extern  void    meLineLoopFree(meLine *lp, int flag);
 
 /* macro.c externals */
 extern	int	macroDefine(int f, int n);
@@ -666,12 +666,12 @@ extern	int	macroHelpDefine(int f, int n);
 extern  void    helpBufferReset(meBuffer *bp);
 extern	int	help(int f, int n);
 extern	int	helpItem(int f, int n);
-extern  int	helpCommand(int f, int n) ;
-extern  int	helpVariable(int f, int n) ;
-extern  int     nameKbdMacro(int f, int n) ;
+extern  int	helpCommand(int f, int n);
+extern  int	helpVariable(int f, int n);
+extern  int     nameKbdMacro(int f, int n);
 extern	int	macroQuery(int f, int n);
-extern  meMacro *userGetMacro(meUByte *buf, int len) ;
-extern  int     insMacro(int f, int n) ;
+extern  meMacro *userGetMacro(meUByte *buf, int len);
+extern  int     insMacro(int f, int n);
 #else
 #define macroFileDefine notAvailable
 #define macroHelpDefine notAvailable
@@ -686,33 +686,33 @@ extern  int     insMacro(int f, int n) ;
 extern	int	startKbdMacro(int f, int n);
 extern	int	endKbdMacro(int f, int n);
 extern	int	executeKbdMacro(int f, int n);
-extern	int	stringExec(int f, int n, meUByte *macro) ;
+extern	int	stringExec(int f, int n, meUByte *macro);
 extern	int	executeString(int f, int n);
 
 /* main.c externals */
-extern  int     insertChar(register int c, register int n) ;
-extern  void    doOneKey(void) ;
+extern  int     insertChar(register int c, register int n);
+extern  void    doOneKey(void);
 extern	int	execute(int c, int f, int n);
 extern	int	meAbout(int f, int n);
 extern	int	exitEmacs(int f, int n);
 extern	int	quickExit(int f, int n);
-extern  int     promptSaveAll(int f, int n) ;
+extern  int     promptSaveAll(int f, int n);
 extern	int	saveExitEmacs(int f, int n);
 extern	int	ctrlg(int f, int n);
 extern	int	notAvailable(int f, int n);
-extern  int     noMarkSet(void) ;
+extern  int     noMarkSet(void);
 extern	int	rdonly(void);
-extern	int     voidFunc(int f, int n) ;
+extern	int     voidFunc(int f, int n);
 extern	int	resterr(void);
 extern	int	prefixFunc(int f, int n);
 extern	int	uniArgument(int f, int n);
 extern  void    mesetup(int argc, char *argv[]);
 #if (defined _UNIX) || (defined _WIN32)
-extern  int     meDie(void) ;
+extern  int     meDie(void);
 #endif
-extern  void    autoSaveHandler(void) ;
+extern  void    autoSaveHandler(void);
 #if MEOPT_EXTENDED
-extern	int     commandWait(int f, int n) ;
+extern	int     commandWait(int f, int n);
 #else
 #define commandWait notAvailable
 #endif
@@ -728,30 +728,30 @@ extern  void    _meAssert(char *file, int line);
 #if MEOPT_NARROW
 extern meNarrow *
 meBufferCreateNarrow(meBuffer *bp, meLine *slp, meLine *elp, meInt sln, meInt eln,
-                     meInt name, meScheme scheme, meUByte *markupLine, meInt markupCmd, meInt undoCall) ;
+                     meInt name, meScheme scheme, meUByte *markupLine, meInt markupCmd, meInt undoCall);
 extern void
-meBufferRemoveNarrow(meBuffer *bp, register meNarrow *nrrw, meUByte *firstLine, meInt undoCall) ;
-extern void  meBufferExpandNarrowAll(meBuffer *bp) ;
-extern void  meBufferCollapseNarrowAll(meBuffer *bp) ;
+meBufferRemoveNarrow(meBuffer *bp, register meNarrow *nrrw, meUByte *firstLine, meInt undoCall);
+extern void  meBufferExpandNarrowAll(meBuffer *bp);
+extern void  meBufferCollapseNarrowAll(meBuffer *bp);
 extern meInt meBufferRegionExpandNarrow(meBuffer *bp, meLine **startLine, meUShort soffset,
-                                        meLine *endLine, meUShort eoffset, meInt remove) ;
-extern int   narrowBuffer(int f, int n) ;
+                                        meLine *endLine, meUShort eoffset, meInt remove);
+extern int   narrowBuffer(int f, int n);
 #else
 #define narrowBuffer notAvailable
 #endif
 
 /* next.c externals */
 #if MEOPT_FILENEXT
-extern int      getNextLine(int f, int n) ;
-extern int      addNextLine(int f, int n) ;
+extern int      getNextLine(int f, int n);
+extern int      addNextLine(int f, int n);
 #else
 #define getNextLine notAvailable
 #define addNextLine notAvailable
 #endif
 #if MEOPT_RCS
-extern int      rcsFilePresent(meUByte *fname) ;
-extern int      doRcsCommand(meUByte *fname, register meUByte *comStr) ;
-extern int      rcsCiCoFile(int f, int n) ;
+extern int      rcsFilePresent(meUByte *fname);
+extern int      doRcsCommand(meUByte *fname, register meUByte *comStr);
+extern int      rcsCiCoFile(int f, int n);
 #else
 #define rcsCiCoFile notAvailable
 #endif
@@ -763,13 +763,13 @@ extern int      changeFont(int f, int n);
 
 /* osd.c externals */
 #if MEOPT_OSD
-extern void     osdStoreAll(void) ;
-extern void     osdRestoreAll(int) ;
-extern void     osdDisp(meUByte *buf, meUByte *cont, int cpos) ;
-extern int      osdDisplayMouseLocate(int leftPick) ;
-extern int      osdMainMenuCheckKey(int cc) ;
+extern void     osdStoreAll(void);
+extern void     osdRestoreAll(int);
+extern void     osdDisp(meUByte *buf, meUByte *cont, int cpos);
+extern int      osdDisplayMouseLocate(int leftPick);
+extern int      osdMainMenuCheckKey(int cc);
 extern int      osd(int f, int n);
-extern void     osdMainMenuUpdate(int force) ;
+extern void     osdMainMenuUpdate(int force);
 #if MEOPT_LOCALBIND
 extern	int	osdBindKey(int f, int n);
 extern	int	osdUnbindKey(int f, int n);
@@ -787,8 +787,8 @@ extern	int	osdUnbindKey(int f, int n);
 #if MEOPT_PRINT
 extern  int     printColor(int f, int n);
 extern  int     printScheme(int f, int n);
-extern	int	printBuffer(int f, int n) ;
-extern	int	printRegion(int f, int n) ;
+extern	int	printBuffer(int f, int n);
+extern	int	printRegion(int f, int n);
 #ifdef _WIN32
 extern  int     WinPrint(meUByte *name, meLine *phead);
 #endif /* _WIN32 */
@@ -805,16 +805,16 @@ extern  int     WinPrint(meUByte *name, meLine *phead);
 #define meRealloc realloc
 #define meStrdup  strdup
 #else
-extern  void   *meMalloc(size_t s) ;
-extern  void   *meRealloc(void *, size_t s) ;
-extern  void   *meStrdup(const meUByte *s) ;
+extern  void   *meMalloc(size_t s);
+extern  void   *meRealloc(void *, size_t s);
+extern  void   *meStrdup(const meUByte *s);
 #endif
-extern  void    meStrrep(meUByte **d, const meUByte *s) ;
-extern  int     meStricmp(const meUByte *str1, const meUByte *str2) ;
-extern  int     meStrnicmp(const meUByte *str1, const meUByte *str2, size_t nn) ;
-extern  int     meStridif(const meUByte *str1, const meUByte *str2) ;
-extern  void    sortStrings(int noStr, meUByte **strs, int offset, meIFuncSS cmpFunc) ;
-extern  int     sortLines(int f, int n) ;
+extern  void    meStrrep(meUByte **d, const meUByte *s);
+extern  int     meStricmp(const meUByte *str1, const meUByte *str2);
+extern  int     meStrnicmp(const meUByte *str1, const meUByte *str2, size_t nn);
+extern  int     meStridif(const meUByte *str1, const meUByte *str2);
+extern  void    sortStrings(int noStr, meUByte **strs, int offset, meIFuncSS cmpFunc);
+extern  int     sortLines(int f, int n);
 extern	int	bufferInfo(int f, int n);
 extern	int	getcline(meWindow *wp);
 extern	int	getcol(meUByte *ss,register int off, int tabWidth);
@@ -825,7 +825,7 @@ extern	int	getiwcol(meWindow *wp,register int off);
 extern	int	setcwcol(meWindow *wp,register int pos);
 extern	int	transChars(int f, int n);
 extern	int	transLines(int f, int n);
-extern	int	quoteKeyToChar(meUShort c) ;
+extern	int	quoteKeyToChar(meUShort c);
 extern	int	quote(int f, int n);
 extern	int	meTab(int f, int n);
 #if MEOPT_EXTENDED
@@ -843,17 +843,17 @@ extern	int	killLine(int f, int n);
 extern	int	mlWrite(int f, int n);
 extern  void    makestrlow(meUByte *str);
 #if MEOPT_FENCE
-extern  meUByte gotoFrstNonWhite(void) ;
+extern  meUByte gotoFrstNonWhite(void);
 extern	int	gotoFence(int f, int n);
 #else
 #define gotoFence notAvailable
 #endif
 #if MEOPT_HILIGHT
-extern  int     doCindent(meHilight *indentDef, int *inComment) ;
-extern	int	indentInsert(void) ;
+extern  int     doCindent(meHilight *indentDef, int *inComment);
+extern	int	indentInsert(void);
 #endif
 #if MEOPT_WORDPRO
-extern  int	winsert(void) ;
+extern  int	winsert(void);
 #endif
 
 extern  int     meAnchorSet(meBuffer *bp, meInt name, meLine *lp, meInt lineNo, meUShort off, int silent);
@@ -861,20 +861,20 @@ extern  int     meAnchorGet(meBuffer *bp, meInt name);
 extern  int     meAnchorDelete(meBuffer *bp, meInt name);
 extern	int	setAlphaMark(int f, int n);
 extern	int	gotoAlphaMark(int f, int n);
-extern  int     insFileName(int f, int n) ;
+extern  int     insFileName(int f, int n);
 #if MEOPT_EXTENDED
-extern  int     cmpBuffers(int f, int n) ;
+extern  int     cmpBuffers(int f, int n);
 #else
 #define cmpBuffers notAvailable
 #endif
 #if MEOPT_CALLBACK
-extern  int     createCallback(int f, int n) ;
-extern  void    callBackHandler(void) ;
+extern  int     createCallback(int f, int n);
+extern  void    callBackHandler(void);
 #else
 #define createCallback notAvailable
 #endif
 #if MEOPT_MOUSE
-extern  int     setCursorToMouse(int f, int n) ;
+extern  int     setCursorToMouse(int f, int n);
 #else
 #define setCursorToMouse notAvailable
 #endif
@@ -933,9 +933,9 @@ extern int  anyChangedRegistry(void);
 #define meEXPAND_BACKSLASH 0x01
 #define meEXPAND_FFZERO    0x02
 #define meEXPAND_PRINTABLE 0x04
-extern  int     expandchar(int c, meUByte *d, int flags) ;
+extern  int     expandchar(int c, meUByte *d, int flags);
 extern  int     expandexp(int slen, meUByte *s, int dlen, int doff,
-                          meUByte *d, int cpos, int *opos, int flags) ;
+                          meUByte *d, int cpos, int *opos, int flags);
 extern	int	eq(int bc, int pc);
 extern	int	searchForw(int f, int n);
 extern	int	huntForw(int f, int n);
@@ -1006,22 +1006,22 @@ meSockEnd();
 #define LAUNCH_IPIPE         0x10000
 #define LAUNCH_NOWAIT        0x20000
 extern	int	meShell(int f, int n);
-extern	int	doShellCommand(meUByte *cmdstr, int flags) ;
+extern	int	doShellCommand(meUByte *cmdstr, int flags);
 extern	int	meShellCommand(int f, int n);
 extern  int     doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, 
-                              int ipipe, int silent, meRegister *regs) ;
+                              int ipipe, int silent, meRegister *regs);
 extern	int	pipeCommand(int f, int n);
 #if MEOPT_IPIPES
-extern	int	ipipeCommand(int f, int n) ;
-extern	int	ipipeWrite(int f, int n) ;
-extern  void    ipipeRead(meIPipe *ipipe) ;
-extern  void    ipipeSetSize(meWindow *wp, meBuffer *bp) ;
-extern	void    ipipeRemove(meIPipe *ipipe) ;
+extern	int	ipipeCommand(int f, int n);
+extern	int	ipipeWrite(int f, int n);
+extern  void    ipipeRead(meIPipe *ipipe);
+extern  void    ipipeSetSize(meWindow *wp, meBuffer *bp);
+extern	void    ipipeRemove(meIPipe *ipipe);
 #ifdef _UNIX
-extern  void    ipipeCheck(void) ;
+extern  void    ipipeCheck(void);
 #endif
-extern	int	ipipeKill(int f, int n) ;
-extern  int     anyActiveIpipe(void) ;
+extern	int	ipipeKill(int f, int n);
+extern  int     anyActiveIpipe(void);
 #else
 #define ipipeWriteString voidFunc
 #define ipipeCommand  pipeCommand
@@ -1062,7 +1062,7 @@ extern	int	spellRuleAdd(int f, int n);
 extern	int	dictionaryDelete(int f, int n);
 extern	int	dictionarySave(int f, int n);
 extern	int	spellWord(int f, int n);
-extern  int     anyChangedDictionary(void) ;
+extern  int     anyChangedDictionary(void);
 #else
 #define dictionaryAdd notAvailable
 #define spellRuleAdd notAvailable
@@ -1081,21 +1081,21 @@ extern	int	findTag(int f, int n);
 #endif
 
 /* termio.c externals */
-extern	void    TTdoBell(int) ;
+extern	void    TTdoBell(int);
 extern	void    TTbell(void);
-extern  int     charListToShorts(meUShort *sl, meUByte *cl) ;
-extern  int     keyListToShorts(meUShort *sl, meUByte *kl) ;
+extern  int     charListToShorts(meUShort *sl, meUByte *cl);
+extern  int     keyListToShorts(meUShort *sl, meUByte *kl);
 extern  void    translateKeyAdd(meTRANSKEY *tcapKeys, int count, int time,
-                                meUShort *key, meUShort map) ;
+                                meUShort *key, meUShort map);
 extern	int	translateKey(int f, int n);
-extern  char   *meTParm(char *str, ...) ;
+extern  char   *meTParm(char *str, ...);
 
 /* time.c externals */
 extern	int	set_timestamp(meBuffer *bp);
 
 /* undo.c externals */
 #if MEOPT_UNDO
-extern  meUndoNode *meUndoCreateNode(size_t size) ;
+extern  meUndoNode *meUndoCreateNode(size_t size);
 extern	void	meUndoAddInsChar(void);
 extern	void	meUndoAddDelChar(void);
 extern  void    meUndoAddRepChar(void);
@@ -1103,24 +1103,24 @@ extern	void	meUndoAddInsChars(meInt numChars);
 extern	void	meUndoAddDelChars(meInt numChars);
 extern	void	meUndoAddReplaceBgn(meLine *elinep, meUShort elineo);
 extern	void	meUndoAddReplaceEnd(meInt numChars);
-extern	void    meUndoAddReplace(meUByte *dstr, meInt count) ;
-extern  meInt  *meUndoAddLineSort(meInt lineCount) ;
+extern	void    meUndoAddReplace(meUByte *dstr, meInt count);
+extern  meInt  *meUndoAddLineSort(meInt lineCount);
 #if MEOPT_NARROW
 extern  void    meUndoAddUnnarrow(meInt sln, meInt eln, meInt name, meScheme scheme,
-                                  meInt markupCmd, meLine *markupLine) ;
+                                  meInt markupCmd, meLine *markupLine);
 extern  void    meUndoAddNarrow(meInt sln, meInt name,
-                                meInt markupCmd, meLine *firstLine) ;
+                                meInt markupCmd, meLine *firstLine);
 #endif
-extern	void	meUndoRemove(meBuffer *bp) ;
+extern	void	meUndoRemove(meBuffer *bp);
 extern	int	meUndo(int f, int n);
 #else
 #define meUndo notAvailable
 #endif
 
 /* window.c externals */
-extern  void    meWindowMakeCurrent(meWindow *wp) ;
-extern  void    frameAddModeToWindows(int mode) ;
-extern  void    meBufferAddModeToWindows(meBuffer *bp, int mode) ;
+extern  void    meWindowMakeCurrent(meWindow *wp);
+extern  void    frameAddModeToWindows(int mode);
+extern  void    meBufferAddModeToWindows(meBuffer *bp, int mode);
 extern  void    meWindowFixTextSize(meWindow *wp);
 extern  void    meWindowFixScrollBars(meWindow *wp);
 extern  void    meWindowFixScrollBox(meWindow *wp);
@@ -1243,7 +1243,7 @@ extern void gettimeofday (struct meTimeval *tp, struct meTimezone *tz);
 #define meTestWrite(fn)     ((((int) GetFileAttributes((const char *) (fn))) & 0xffff8001) > 0)
 /* File is a directory */
 #define meTestDir(fn)       ((GetFileAttributes((const char *) (fn)) & (0xf0000000|FILE_ATTRIBUTE_DIRECTORY)) != FILE_ATTRIBUTE_DIRECTORY)
-extern int meTestExecutable(meUByte *fileName) ;
+extern int meTestExecutable(meUByte *fileName);
 #define meStatTestRead(st)  (((st).stmode & FILE_ATTRIBUTE_DIRECTORY) == 0)
 #define meStatTestWrite(st) (((st).stmode & (FILE_ATTRIBUTE_DIRECTORY|FILE_ATTRIBUTE_READONLY)) == 0)
 #define meStatTestSystem(st) (((st).stmode & FILE_ATTRIBUTE_SYSTEM) == 0)
@@ -1269,17 +1269,17 @@ extern void WinShutdown (void);
 #endif
 
 #ifdef _DOS
-extern int   unlink(const char *file) ;
+extern int   unlink(const char *file);
 #define meFILE_ATTRIB_READONLY  0x01
 #define meFILE_ATTRIB_HIDDEN    0x02
 #define meFILE_ATTRIB_SYSTEM    0x04
 #define meFILE_ATTRIB_VOLLABEL  0x08
 #define meFILE_ATTRIB_DIRECTORY 0x10
 #define meFILE_ATTRIB_ARCHIVE   0x20
-extern meInt meFileGetAttributes(meUByte *fn) ;
-extern void  _meFileSetAttributes(meUByte *fn, meUShort attr) ;
+extern meInt meFileGetAttributes(meUByte *fn);
+extern void  _meFileSetAttributes(meUByte *fn, meUShort attr);
 #define meFileSetAttributes _meFileSetAttributes
-extern int   meChdir(meUByte *path) ;
+extern int   meChdir(meUByte *path);
 /* Doesn't exist if function returns -1 */
 #define meTestExist(fn)     (meFileGetAttributes(fn) < 0)
 /* Can't read if doesn't exist or its a directory */
@@ -1288,7 +1288,7 @@ extern int   meChdir(meUByte *path) ;
 #define meTestWrite(fn)     ((meFileGetAttributes(fn) & 0xffff8001) > 0)
 /* File is a directory */
 #define meTestDir(fn)       ((meFileGetAttributes(fn) & 0xf0000010) != 0x010)
-extern int   meTestExecutable(meUByte *fileName) ;
+extern int   meTestExecutable(meUByte *fileName);
 #define meStatTestRead(st)  (((st).stmode & 0x10) == 0)
 #define meStatTestWrite(st) (((st).stmode & 0x11) == 0)
 #endif
@@ -1361,8 +1361,8 @@ extern int   meTestExecutable(meUByte *fileName) ;
 #endif
 
 /* File modes defined in terms of POSIX tests */
-extern meInt meFileGetAttributes(meUByte *fn) ;
-extern int meGidInGidList(gid_t gid) ;
+extern meInt meFileGetAttributes(meUByte *fn);
+extern int meGidInGidList(gid_t gid);
 #define meStatTestRead(st)                                                   \
 ((((st).stuid == meUid) && ((st).stmode & S_IRUSR)) ||                       \
  ((st).stmode & S_IROTH) ||                                                  \

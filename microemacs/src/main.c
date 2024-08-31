@@ -140,34 +140,34 @@ meInit(meUByte *bname)
     meBuffer *bp;
     
     if (TTstart() == meFALSE)             /* Started ?? */
-        meExit(1) ;
+        meExit(1);
     
     /* add 2 to hilBlockS to allow for a double trunc-scheme change
      * Note: ME is not yet 'initialised' so any meMalloc failure will
      * lead to exit in mlwrite so we don't need to check */
-    styleTable = meMalloc(2*meSCHEME_STYLES*sizeof(meStyle)) ;
-    hilBlock = meMalloc((hilBlockS+2)*sizeof(meSchemeSet)) ;
-    disLineBuff = meMalloc((disLineSize+32)*sizeof(meUByte)) ;
+    styleTable = meMalloc(2*meSCHEME_STYLES*sizeof(meStyle));
+    hilBlock = meMalloc((hilBlockS+2)*sizeof(meSchemeSet));
+    disLineBuff = meMalloc((disLineSize+32)*sizeof(meUByte));
     
     memcpy(styleTable,defaultScheme,2*meSCHEME_STYLES*sizeof(meStyle));
     /* Set the fore and back colours */
-    TTaddColor(meCOLOR_FDEFAULT,255,255,255) ;
-    TTaddColor(meCOLOR_BDEFAULT,0,0,0) ;
+    TTaddColor(meCOLOR_FDEFAULT,255,255,255);
+    TTaddColor(meCOLOR_BDEFAULT,0,0,0);
     
     /* Create the frame - make sure that we do not access the screen during
      * the re-size */
     screenUpdateDisabledCount++;
     if((frameCur=meFrameInit(NULL)) == NULL)
-        meExit(1) ;
+        meExit(1);
 #if MEOPT_FRAME
-    frameList = frameCur ;
+    frameList = frameCur;
 #endif
     screenUpdateDisabledCount--;
     
     if(((bp = bfind(bname,BFND_CREAT)) == NULL) ||
        (meFrameInitWindow(frameCur,bp) <= 0))
         meExit(1);
-    alarmState |= meALARM_INITIALIZED ;
+    alarmState |= meALARM_INITIALIZED;
 }
 
 /*
@@ -185,7 +185,7 @@ insertChar(register int c, register int n)
      * delete a char forword */
     if(meModeTest(wp->buffer->mode,MDOVER))
     {
-        int index, ii=n ;
+        int index, ii=n;
         for(index=0,n=0 ; (ii>0) && (wp->dotOffset < wp->dotLine->length) ; ii--)
         {
             if((meLineGetChar(wp->dotLine, wp->dotOffset) != meCHAR_TAB) ||
@@ -193,18 +193,18 @@ insertChar(register int c, register int n)
             {
                 lineSetChanged(WFMAIN);
 #if MEOPT_UNDO
-                meUndoAddRepChar() ;
+                meUndoAddRepChar();
 #endif
-                meLineSetChar(wp->dotLine,wp->dotOffset++,c) ;
-                index = 0 ;
+                meLineSetChar(wp->dotLine,wp->dotOffset++,c);
+                index = 0;
             }
             else
             {
-                index++ ;
-                n++ ;
+                index++;
+                n++;
             }
         }
-        n += ii ;
+        n += ii;
     }
     /*---    Do the appropriate insertion */
     if(n > 0)
@@ -213,21 +213,21 @@ insertChar(register int c, register int n)
         if(n == 1)
         {
             if(lineInsertChar(1,c) <= 0)
-                return meFALSE ;
-            meUndoAddInsChar() ;
+                return meFALSE;
+            meUndoAddInsChar();
         }
         else
         {
             if(lineInsertChar(n, c) <= 0)
-                return meFALSE ;
-            meUndoAddInsChars(n) ;
+                return meFALSE;
+            meUndoAddInsChars(n);
         }
 #else
         if(lineInsertChar(n, c) <= 0)
-            return meFALSE ;
+            return meFALSE;
 #endif
     }
-    return meTRUE ;
+    return meTRUE;
 }
 
 /*
@@ -241,9 +241,9 @@ execute(register int c, register int f, register int n)
 {
     register meWindow *cwp;
     register int index;
-    meUInt arg ;
+    meUInt arg;
 #if MEOPT_EXTENDED
-    int ii ;
+    int ii;
 #endif
     
 #if MEOPT_CALLBACK
@@ -257,21 +257,21 @@ execute(register int c, register int f, register int n)
          * kbd macros or in the $recent-keys. This could led to a macro failing
          * but alternatives have similar if not worse problems.
          */
-        static meUShort lastcc=0 ;
-        meUInt arg ;
-        meUShort mask, kk, ccx=lastcc ^ c ;
+        static meUShort lastcc=0;
+        meUInt arg;
+        meUShort mask, kk, ccx=lastcc ^ c;
         
-        lastcc = c ;
+        lastcc = c;
         for(mask=ME_SHIFT ; mask != ME_SPECIAL ; mask<<=1)
         {
             if(ccx & mask)
             {
                 if(c & mask)
-                    kk = ME_SPECIAL|SKEY_pick|mask ;
+                    kk = ME_SPECIAL|SKEY_pick|mask;
                 else
-                    kk = ME_SPECIAL|SKEY_drop|mask ;
+                    kk = ME_SPECIAL|SKEY_drop|mask;
                 if((index=decode_key(kk,&arg)) != -1)
-                    execFuncHidden(kk,index,arg) ;
+                    execFuncHidden(kk,index,arg);
             }
         }
     }
@@ -279,20 +279,20 @@ execute(register int c, register int f, register int n)
     
 #if MEOPT_UNDO
     if(kbdmode != mePLAY)
-        undoContFlag++ ;
+        undoContFlag++;
 #endif
-    lastCommand = thisCommand ;
-    lastIndex = thisIndex ;
-    thisCommand = c ;
+    lastCommand = thisCommand;
+    lastIndex = thisIndex;
+    thisCommand = c;
     
     if(((index = decode_key((meUShort) c,&arg)) >= 0) && (arg != 0))
     {
-        f = 1 ;
-        n *= (int) (arg + 0x80000000) ;
+        f = 1;
+        n *= (int) (arg + 0x80000000);
     }
-    thisIndex = index ;
-    meRegCurr->f = f ;
-    meRegCurr->n = n ;
+    thisIndex = index;
+    meRegCurr->f = f;
+    meRegCurr->n = n;
     /* SWP - 27/2/99 - to enable input commands to not have to jump through
      * so many hoops I've changed the input support so that macros can fail
      * in such a way as to indicate that they have not handled this input,
@@ -303,22 +303,22 @@ execute(register int c, register int f, register int n)
 #if MEOPT_EXTENDED
     if((ii=frameCur->windowCur->buffer->inputFunc) >= 0)
     {
-        meUByte *ss, ff ;
+        meUByte *ss, ff;
         /* set a force value for the execution as the macro is allowed to
          * fail and we don't want to kick in the macro debugging */
-        ff = meRegHead->force ;
-        meRegHead->force = 1 ;
+        ff = meRegHead->force;
+        meRegHead->force = 1;
         if(((cmdstatus = (execFunc(ii,f,n) > 0))) ||
            ((ss=getUsrLclCmdVar((meUByte *)"status",cmdTable[ii]->varList)) == errorm) || meAtoi(ss))
         {
-            meRegHead->force = ff ;
-            return cmdstatus ;
+            meRegHead->force = ff;
+            return cmdstatus;
         }
-        meRegHead->force = ff ;
+        meRegHead->force = ff;
     }
 #endif
     if(index >= 0)
-        return (cmdstatus = (execFunc(index,f,n) > 0)) ;
+        return (cmdstatus = (execFunc(index,f,n) > 0));
     if(selhilight.flags)
     {
         selhilight.bp = NULL;
@@ -329,16 +329,16 @@ execute(register int c, register int f, register int n)
         meUByte outseq[40];	/* output buffer for keystroke sequence */
         meGetStringFromKey((meUShort) c,outseq);  /* change to something printable */
         lastflag = 0;                             /* Fake last flags.     */
-        cmdstatus = 0 ;
+        cmdstatus = 0;
 #if MEOPT_MOUSE
         /* don't complain about mouse_move* or mouse_time* as these are
          * special keys that are only added if they are bound and due
          * to their frequence they can be in the input buffer before they're
          * unbound leading to this error */
-        c &= ~(ME_SHIFT|ME_CONTROL|ME_ALT) ;
+        c &= ~(ME_SHIFT|ME_CONTROL|ME_ALT);
         if(((c >= (ME_SPECIAL|SKEY_mouse_move)) && (c <= (ME_SPECIAL|SKEY_mouse_move_3))) ||
            ((c >= (ME_SPECIAL|SKEY_mouse_time)) && (c <= (ME_SPECIAL|SKEY_mouse_time_3))) )
-            return meTRUE ;
+            return meTRUE;
 #endif
         return mlwrite(MWABORT,(meUByte *)"[Key not bound \"%s\"]", outseq); /* complain */
     }
@@ -351,7 +351,7 @@ execute(register int c, register int f, register int n)
     thisflag = 0;          /* For the future.      */
     
     if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
-        return (cmdstatus = meFALSE) ;
+        return (cmdstatus = meFALSE);
     
     cwp = frameCur->windowCur;
 #if MEOPT_WORDPRO
@@ -374,30 +374,30 @@ execute(register int c, register int f, register int n)
 #if MEOPT_HILIGHT
     if(cwp->buffer->indent && (meHilightGetFlags(indents[cwp->buffer->indent]) & HIGFBELL))
     {
-        meHilight *indent=indents[cwp->buffer->indent] ;
+        meHilight *indent=indents[cwp->buffer->indent];
         if((c == '}') || (c == '#'))
         {
-            ii = cwp->dotOffset ;
-            cwp->dotOffset = 0 ;
+            ii = cwp->dotOffset;
+            cwp->dotOffset = 0;
             if(gotoFrstNonWhite() == c)
             {
-                cwp->dotOffset = ii ;
-                doCindent(indent,&ii) ;
+                cwp->dotOffset = ii;
+                doCindent(indent,&ii);
             }
             else
-                cwp->dotOffset = ii ;
+                cwp->dotOffset = ii;
         }
         else if((meIndentGetCommentMargin(indent,cwp->buffer) >= 0) &&
                 ((c == '*') || (c == '/')) && (cwp->dotOffset > 2) &&
                 (meLineGetChar(cwp->dotLine, cwp->dotOffset-2) == '/') &&
                 (meLineGetChar(cwp->dotLine, cwp->dotOffset-3) != '/'))
         {
-            ii = cwp->dotOffset - 2 ;
+            ii = cwp->dotOffset - 2;
             if((gotoFrstNonWhite() == 0) &&
                (cwp->dotOffset=0,(gotoFrstNonWhite() != 0)) &&
                (cwp->dotOffset < ii))
             {
-                cwp->dotOffset = ii ;
+                cwp->dotOffset = ii;
                 if(ii > meIndentGetCommentMargin(indent,cwp->buffer))
                     ii = (((int)(cwp->buffer->indentWidth)-1) -
                           ((ii-1)%(int)(cwp->buffer->indentWidth)));
@@ -437,38 +437,38 @@ static void
 addModesList(meBuffer *bp, register meUByte *buf, meUByte *name, meMode mode,
              int res)
 {
-    register int ii, nlen, len, ll ;
+    register int ii, nlen, len, ll;
     
-    meStrcpy(buf,name) ;
-    len = nlen = meStrlen(name) ;
+    meStrcpy(buf,name);
+    len = nlen = meStrlen(name);
     for (ii = 0; ii < MDNUMMODES; ii++)	/* add in the mode flags */
         if((meModeTest(mode,ii) != 0) == res)
         {
             ll = meStrlen(modeName[ii]);
             if(len+ll >= 78)
             {
-                buf[len] = '\0' ;
-                addLineToEob(bp,buf) ;
-                len = nlen ;
-                memset(buf,' ',len) ;
+                buf[len] = '\0';
+                addLineToEob(bp,buf);
+                len = nlen;
+                memset(buf,' ',len);
             }
-            buf[len++] = ' ' ;
+            buf[len++] = ' ';
             meStrcpy(buf+len, modeName[ii]);
-            len += ll ;
+            len += ll;
         }
-    buf[len] = '\0' ;
-    addLineToEob(bp,buf) ;
+    buf[len] = '\0';
+    addLineToEob(bp,buf);
 }
 
 static void
 addModesLists(meBuffer *bp, register meUByte *buf, meMode mode)
 {
-    addModesList(bp,buf,(meUByte *)"  Modes on  :",mode,1) ;
-    addModesList(bp,buf,(meUByte *)"  Modes off :",mode,0) ;
-    addLineToEob(bp,(meUByte *)"") ;
+    addModesList(bp,buf,(meUByte *)"  Modes on  :",mode,1);
+    addModesList(bp,buf,(meUByte *)"  Modes off :",mode,0);
+    addLineToEob(bp,(meUByte *)"");
 }
 
-meUByte meCopyright[]="Copyright (C) 1988-" meCENTURY meYEAR " " ME_COMPANY_NAME " (" ME_COMPANY_SITE ")" ;
+meUByte meCopyright[]="Copyright (C) 1988-" meCENTURY meYEAR " " ME_COMPANY_NAME " (" ME_COMPANY_SITE ")";
 int
 meAbout(int f, int n)
 {
@@ -530,21 +530,21 @@ meAbout(int f, int n)
 int
 exitEmacs(int f, int n)
 {
-    int s, ec=0 ;
-    char buff[128] ;
+    int s, ec=0;
+    char buff[128];
     
 #if MEOPT_EXTENDED
     /* Set the exit code */
     if(n & 0x04)
     {
         if(meGetString((meUByte *)"Exit code", 0, 0, (meUByte *) buff,128) <= 0)
-            return meFALSE ;
-        ec = meAtoi(buff) ;
+            return meFALSE;
+        ec = meAtoi(buff);
     }
     else
 #endif
         if(n & 0x20)
-        ec = 1 ;
+        ec = 1;
     
     /* (Un)conditionally save buffers, dictionary and registry files */
     if((n & 0x02) &&
@@ -556,46 +556,46 @@ exitEmacs(int f, int n)
         || (saveRegistry(f,2|(n & 0x01)) <= meFALSE)
 #endif
         ))
-        return meFALSE ;
+        return meFALSE;
     
-    s = 1 ;
+    s = 1;
     if(n & 0x01)
     {
         if(anyChangedBuffer())
-            strcpy(buff,"Modified buffer") ;
+            strcpy(buff,"Modified buffer");
         else
-            buff[0] = '\0' ;
+            buff[0] = '\0';
 #if MEOPT_SPELL
         if(anyChangedDictionary())
         {
-            strcat(buff,(buff[0] == '\0') ? "Modified":",") ;
-            strcat(buff," dictionary") ;
+            strcat(buff,(buff[0] == '\0') ? "Modified":",");
+            strcat(buff," dictionary");
         }
 #endif
 #if MEOPT_REGISTRY
         if(anyChangedRegistry())
         {
-            strcat(buff,(buff[0] == '\0') ? "Modified":",") ;
-            strcat(buff," registry") ;
+            strcat(buff,(buff[0] == '\0') ? "Modified":",");
+            strcat(buff," registry");
         }
 #endif
 #if MEOPT_IPIPES
         if(anyActiveIpipe())
         {
-            strcat(buff,(buff[0] == '\0') ? "A":" and a") ;
-            strcat(buff,"ctive process") ;
+            strcat(buff,(buff[0] == '\0') ? "A":" and a");
+            strcat(buff,"ctive process");
         }
 #endif
         if(buff[0] != '\0')
         {
             /* somethings changed - check the user is happy */
-            strcat(buff," exists, leave anyway") ;
-            s = mlyesno((meUByte *)buff) ;
+            strcat(buff," exists, leave anyway");
+            s = mlyesno((meUByte *)buff);
         }
     }
     if(s > 0)
     {
-        meBuffer *bp, *nbp ;
+        meBuffer *bp, *nbp;
         
 #ifdef _CLIPBRD
         /* don't mess with the system clipboard from this point - could be a problem for a shut-down macro */
@@ -644,7 +644,7 @@ exitEmacs(int f, int n)
         /* execute ehooks for all current buffers */
         meFrameLoopBegin();
         if((bp=loopFrame->windowCur->buffer)->ehook >= 0)
-            execBufferFunc(bp,bp->ehook,0,1) ;
+            execBufferFunc(bp,bp->ehook,0,1);
         meFrameLoopEnd();
 #endif
         /* For all buffers remove the autosave and execute the dhook */
@@ -677,174 +677,174 @@ exitEmacs(int f, int n)
 #ifdef _ME_FREE_ALL_MEMORY
         {
             /* free of everything we can */
-            extern void freeToken(meHilight * root) ;
-            extern void meFrameFree(meFrame *frame) ;
-            extern void dirFreeMemory(void) ;
-            extern void printFreeMemory(void) ;
-            extern void osdFreeMemory(void) ;
-            extern void regFreeMemory(void) ;
-            extern void srchFreeMemory(void) ;
-            extern void TTfreeTranslateKey(void) ;
-            extern meUInt *colTable ;
-            mePosition   *pos ;
-            meBuffer     *bc, *bn ;
-            meFrame      *fc, *fn ;
-            meMacro      *mac ;
-            meVariable   *nuv, *cuv ;
-            meKill       *thiskl ;
-            meKillNode   *next, *kill ;
-            meAbbrev     *abrev ;
-            int           ii, jj ;
+            extern void freeToken(meHilight * root);
+            extern void meFrameFree(meFrame *frame);
+            extern void dirFreeMemory(void);
+            extern void printFreeMemory(void);
+            extern void osdFreeMemory(void);
+            extern void regFreeMemory(void);
+            extern void srchFreeMemory(void);
+            extern void TTfreeTranslateKey(void);
+            extern meUInt *colTable;
+            mePosition   *pos;
+            meBuffer     *bc, *bn;
+            meFrame      *fc, *fn;
+            meMacro      *mac;
+            meVariable   *nuv, *cuv;
+            meKill       *thiskl;
+            meKillNode   *next, *kill;
+            meAbbrev     *abrev;
+            int           ii, jj;
             
             /* remove all but a simple *scratch* */
-            bc = bheadp ;
+            bc = bheadp;
             while(bc != NULL)
             {
-                bn = bc->next ;
-                bc->intFlag |= BIFBLOW ;
-                zotbuf(bc,1) ;
-                bc = bn ;
+                bn = bc->next;
+                bc->intFlag |= BIFBLOW;
+                zotbuf(bc,1);
+                bc = bn;
             }
-            addFileHook(meTRUE,0) ;
+            addFileHook(meTRUE,0);
             
-            dictionaryDelete(1,6) ;
-            spellRuleAdd(1,0) ;
-            dirFreeMemory() ;
-            printFreeMemory() ;
-            osdFreeMemory() ;
-            regFreeMemory() ;
-            srchFreeMemory() ;
-            TTfreeTranslateKey() ;
+            dictionaryDelete(1,6);
+            spellRuleAdd(1,0);
+            dirFreeMemory();
+            printFreeMemory();
+            osdFreeMemory();
+            regFreeMemory();
+            srchFreeMemory();
+            TTfreeTranslateKey();
             
-            meNullFree(mlBinds) ;
-            meFree(hilBlock) ;
+            meNullFree(mlBinds);
+            meFree(hilBlock);
 #ifdef _XTERM
-            meNullFree(colTable) ;
+            meNullFree(colTable);
 #endif
-            meNullFree(disLineBuff) ;
-            meNullFree(searchPath) ;
-            meNullFree(homedir) ;
-            meNullFree(curdir) ;
-            meNullFree(frameTitle) ;
+            meNullFree(disLineBuff);
+            meNullFree(searchPath);
+            meNullFree(homedir);
+            meNullFree(curdir);
+            meNullFree(frameTitle);
             
             for(ii=0 ; ii<numStrHist ; ii++)
-                free(strHist[ii]) ;
+                free(strHist[ii]);
             for(ii=0 ; ii<numBuffHist ; ii++)
-                free(buffHist[ii]) ;
+                free(buffHist[ii]);
             for(ii=0 ; ii<numCommHist ; ii++)
-                free(commHist[ii]) ;
+                free(commHist[ii]);
             for(ii=0 ; ii<numFileHist ; ii++)
-                free(fileHist[ii]) ;
+                free(fileHist[ii]);
             for(ii=0 ; ii<numSrchHist ; ii++)
-                free(srchHist[ii]) ;
-            free(strHist) ;
+                free(srchHist[ii]);
+            free(strHist);
             
             while(klhead != NULL)
             {
-                thiskl = klhead ;
-                klhead = klhead->next ;
-                kill = thiskl->kill ;
+                thiskl = klhead;
+                klhead = klhead->next;
+                kill = thiskl->kill;
                 while(kill != NULL)
                 {
                     next = kill->next;
                     free(kill);
                     kill = next;
                 }
-                free(thiskl) ;
+                free(thiskl);
             }
             while((pos=position) != NULL)
             {
-                position = pos->next ;
-                free(pos) ;
+                position = pos->next;
+                free(pos);
             }
             for(ii=0 ; ii<CK_MAX ; ii++)
             {
-                cuv = cmdTable[ii]->varList.head ;
+                cuv = cmdTable[ii]->varList.head;
                 while(cuv != NULL)
                 {
-                    nuv = cuv->next ;
-                    meNullFree(cuv->value) ;
-                    free(cuv) ;
-                    cuv = nuv ;
+                    nuv = cuv->next;
+                    meNullFree(cuv->value);
+                    free(cuv);
+                    cuv = nuv;
                 }
             }
             for( ; ii<cmdTableSize ; ii++)
             {
-                mac = getMacro(ii) ;
-                meFree(mac->name) ;
-                meNullFree(mac->fname) ;
-                meLineLoopFree(mac->hlp,1) ;
-                cuv = mac->varList.head ;
+                mac = getMacro(ii);
+                meFree(mac->name);
+                meNullFree(mac->fname);
+                meLineLoopFree(mac->hlp,1);
+                cuv = mac->varList.head;
                 while(cuv != NULL)
                 {
-                    nuv = cuv->next ;
-                    meNullFree(cuv->value) ;
-                    free(cuv) ;
-                    cuv = nuv ;
+                    nuv = cuv->next;
+                    meNullFree(cuv->value);
+                    free(cuv);
+                    cuv = nuv;
                 }
-                free(mac) ;
+                free(mac);
             }
             if(cmdTable != __cmdTable)
-                free(cmdTable) ;
-            cuv = usrVarList.head ;
+                free(cmdTable);
+            cuv = usrVarList.head;
             while(cuv != NULL)
             {
-                nuv = cuv->next ;
-                meNullFree(cuv->value) ;
-                free(cuv) ;
-                cuv = nuv ;
+                nuv = cuv->next;
+                meNullFree(cuv->value);
+                free(cuv);
+                cuv = nuv;
             }
-            meFree(meRegHead) ;
-            meFree(meProgName) ;
+            meFree(meRegHead);
+            meFree(meProgName);
             if(modeLineStr != orgModeLineStr)
-                meNullFree(modeLineStr) ;
-            meNullFree(flNextFileTemp) ;
-            meNullFree(flNextLineTemp) ;
+                meNullFree(modeLineStr);
+            meNullFree(flNextFileTemp);
+            meNullFree(flNextLineTemp);
             
-            meNullFree(meUserName) ;
-            meNullFree(meUserPath) ;
+            meNullFree(meUserName);
+            meNullFree(meUserPath);
             
-            meNullFree(rcsFile) ;
-            meNullFree(rcsCiStr) ;
-            meNullFree(rcsCiFStr) ;
-            meNullFree(rcsCoStr) ;
-            meNullFree(rcsCoUStr) ;
-            meNullFree(rcsUeStr) ;
+            meNullFree(rcsFile);
+            meNullFree(rcsCiStr);
+            meNullFree(rcsCiFStr);
+            meNullFree(rcsCoStr);
+            meNullFree(rcsCoUStr);
+            meNullFree(rcsUeStr);
             
             {
-                extern meNamesList buffNames ;
-                extern meDirList   fileNames ;
-                extern meNamesList commNames ;
-                extern meNamesList modeNames ;
-                extern meNamesList varbNames ;
+                extern meNamesList buffNames;
+                extern meDirList   fileNames;
+                extern meNamesList commNames;
+                extern meNamesList modeNames;
+                extern meNamesList varbNames;
                 
-                meNullFree(curDirList.path) ;
-                freeFileList(curDirList.size,curDirList.list) ;
-                meNullFree(fileNames.mask) ;
-                meNullFree(fileNames.path) ;
-                freeFileList(fileNames.size,fileNames.list) ;
-                meNullFree(modeNames.mask) ;
-                meNullFree(commNames.list) ;
-                meNullFree(commNames.mask) ;
-                meNullFree(buffNames.list) ;
-                meNullFree(buffNames.mask) ;
+                meNullFree(curDirList.path);
+                freeFileList(curDirList.size,curDirList.list);
+                meNullFree(fileNames.mask);
+                meNullFree(fileNames.path);
+                freeFileList(fileNames.size,fileNames.list);
+                meNullFree(modeNames.mask);
+                meNullFree(commNames.list);
+                meNullFree(commNames.mask);
+                meNullFree(buffNames.list);
+                meNullFree(buffNames.mask);
                 if(varbNames.list != NULL)
-                    freeFileList(varbNames.size,varbNames.list) ;
-                meNullFree(varbNames.mask) ;
+                    freeFileList(varbNames.size,varbNames.list);
+                meNullFree(varbNames.mask);
             }
             
             if(noNextLine > 0)
             {
                 for(ii=0 ; ii<noNextLine ; ii++)
                 {
-                    meFree(nextName[ii]) ;
+                    meFree(nextName[ii]);
                     for(jj=0 ; jj<nextLineCnt[ii] ; jj++)
-                        meFree(nextLineStr[ii][jj]) ;
-                    meNullFree(nextLineStr[ii]) ;
+                        meFree(nextLineStr[ii][jj]);
+                    meNullFree(nextLineStr[ii]);
                 }
-                meFree(nextLineCnt) ;
-                meFree(nextLineStr) ;
-                meFree(nextName) ;
+                meFree(nextLineCnt);
+                meFree(nextLineStr);
+                meFree(nextName);
             }
 #if MEOPT_HILIGHT
             if(noHilights > 0)
@@ -853,12 +853,12 @@ exitEmacs(int f, int n)
                 {
                     if(hilights[ii] != NULL)
                     {
-                        hilights[ii]->close = NULL ;
-                        hilights[ii]->rtoken = NULL ;
-                        freeToken(hilights[ii]) ;
+                        hilights[ii]->close = NULL;
+                        hilights[ii]->rtoken = NULL;
+                        freeToken(hilights[ii]);
                     }
                 }
-                meFree(hilights) ;
+                meFree(hilights);
             }
             if(noIndents > 0)
             {
@@ -885,34 +885,34 @@ exitEmacs(int f, int n)
             }
             meFree(styleTable);
             
-            fc = frameList ;
+            fc = frameList;
             while(fc != NULL)
             {
-                fn = fc->next ;
-                meFrameFree(fc) ;
-                fc = fn ;
+                fn = fc->next;
+                meFrameFree(fc);
+                fc = fn;
             }
             /* as we have deleted all frames the *scratch* is not show, so we
              * don't need a replacement so ztbuf does the lot! */
-            bheadp->intFlag |= BIFBLOW ;
-            zotbuf(bheadp,1) ;
+            bheadp->intFlag |= BIFBLOW;
+            zotbuf(bheadp,1);
         }
 #endif
 #ifdef _ME_WIN32_FULL_DEBUG
         {
-            _CrtMemState ss ;
+            _CrtMemState ss;
             
             _CrtMemCheckpoint( &ss );
-            _CrtMemDumpStatistics(&ss) ;
-            _CrtCheckMemory() ;
-            _CrtDumpMemoryLeaks() ;
+            _CrtMemDumpStatistics(&ss);
+            _CrtCheckMemory();
+            _CrtDumpMemoryLeaks();
         }
 #endif
         meExit(ec);
     }
     mlerase(MWCLEXEC);
     
-    return s ;
+    return s;
 }
 
 #if MEOPT_EXTENDED
@@ -923,7 +923,7 @@ exitEmacs(int f, int n)
 int
 saveExitEmacs(int f, int n)
 {
-    return exitEmacs(1,3) ;
+    return exitEmacs(1,3);
 }
 #endif
 
@@ -935,12 +935,12 @@ int
 quickExit(int f, int n)
 {
     if(n == 0)
-        n = 0x10 ;
+        n = 0x10;
     else if(n == 2)
-        n = 0x08 ;
+        n = 0x08;
     else
-        n = 0x02 ;
-    return exitEmacs(1,n) ;
+        n = 0x02;
+    return exitEmacs(1,n);
 }
 
 /*
@@ -956,12 +956,12 @@ ctrlg(int f, int n)
      * the macro end record key */
     if(kbdmode == meRECORD)
     {
-        kbdmode = meSTOP ;
-        frameAddModeToWindows(WFMODE) ;  /* update ALL mode lines */
+        kbdmode = meSTOP;
+        frameAddModeToWindows(WFMODE);  /* update ALL mode lines */
     }
     if(n)
         mlwrite(MWABORT,(meUByte *)"[Aborted]");
-    return meABORT ;
+    return meABORT;
 }
 
 /*
@@ -994,18 +994,18 @@ rdonly(void)
 int
 voidFunc(int f, int n)
 {
-    return ((n) ? meTRUE:meFALSE) ;
+    return ((n) ? meTRUE:meFALSE);
 }
 
 int
 prefixFunc(int f, int n) /* dummy prefix function */
 {
-    return meTRUE ;
+    return meTRUE;
 }
 int
 uniArgument(int f, int n)         /* dummy function for binding to universal-argument */
 {
-    return meTRUE ;
+    return meTRUE;
 }
 
 #ifdef _UNIX
@@ -1015,14 +1015,14 @@ uniArgument(int f, int n)         /* dummy function for binding to universal-arg
 static void
 sigchild(SIGNAL_PROTOTYPE)
 {
-    meWAIT_STATUS status ;              /* Status return from waitpid() */
+    meWAIT_STATUS status;              /* Status return from waitpid() */
     
 #if MEOPT_IPIPES
     if(noIpipes != 0)
     {
-        meIPipe *ipipe ;
+        meIPipe *ipipe;
         
-        ipipe = ipipes ;
+        ipipe = ipipes;
         while(ipipe != NULL)
         {
             if((ipipe->pid > 0) &&
@@ -1030,23 +1030,23 @@ sigchild(SIGNAL_PROTOTYPE)
             {
                 if(WIFEXITED(status))
                 {
-                    ipipe->pid = -4 ;
-                    ipipe->exitCode = WEXITSTATUS(status) ;
+                    ipipe->pid = -4;
+                    ipipe->exitCode = WEXITSTATUS(status);
                 }
                 else if(WIFSIGNALED(status))
-                    ipipe->pid = -3 ;
+                    ipipe->pid = -3;
 #ifdef WCOREDUMP
                 else if(WCOREDUMP(status))
-                    ipipe->pid = -2 ;
+                    ipipe->pid = -2;
 #endif
             }
-            ipipe = ipipe->next ;
+            ipipe = ipipe->next;
         }
     }
 #endif
     /* clear up any zoombie children if we are not running a piped command */
     if((alarmState & meALARM_PIPE_COMMAND) == 0)
-        meWaitpid(-1,&status,WNOHANG) ;
+        meWaitpid(-1,&status,WNOHANG);
     
     /* Reload the signal handler. Note that the child is a special case where
      * the signal is reset at the end of the handler as opposed to the head of
@@ -1074,11 +1074,11 @@ meDie(void)
 void
 autoSaveHandler(void)
 {
-    struct meTimeval tp ;
-    register meBuffer *bp ;
+    struct meTimeval tp;
+    register meBuffer *bp;
     register meTime tim, next=0x7fffffff;
     
-    gettimeofday(&tp,NULL) ;
+    gettimeofday(&tp,NULL);
     tim = ((tp.tv_sec-startTime)*1000) + (tp.tv_usec/1000);
     bp  = bheadp;
     while (bp != NULL)
@@ -1086,18 +1086,18 @@ autoSaveHandler(void)
         if(bp->autoTime >= 0)
         {
             if(bp->autoTime <= tim)
-                autowriteout(bp) ;
+                autowriteout(bp);
             else if(bp->autoTime < next)
-                next = bp->autoTime ;
+                next = bp->autoTime;
         }
-        bp = bp->next ;
+        bp = bp->next;
     }
     if(next != 0x7fffffff)
-        timerSet(AUTOS_TIMER_ID,next,(meInt) (next-tim)) ;
+        timerSet(AUTOS_TIMER_ID,next,(meInt) (next-tim));
     else
-        timerClearExpired(AUTOS_TIMER_ID) ;
+        timerClearExpired(AUTOS_TIMER_ID);
     if(tim & 0x40000000)
-        adjustStartTime(tp.tv_sec-startTime) ;
+        adjustStartTime(tp.tv_sec-startTime);
 }
 
 #ifdef _UNIX
@@ -1114,11 +1114,11 @@ sigeat(SIGNAL_PROTOTYPE)
      * Can't just do that cos god knows what me is doing (broken links etc).
      * So can only flag request here and hope its seen.
      */
-    alarmState |= meALARM_DIE ;
+    alarmState |= meALARM_DIE;
 }
 #endif    /* _UNIX */
 
-int commandDepth=0 ;
+int commandDepth=0;
 void
 doOneKey(void)
 {
@@ -1144,39 +1144,39 @@ doOneKey(void)
     c = meGetKeyFromUser(meFALSE, 1, meGETKEY_COMMAND);     /* Get a key */
     
     if (frameCur->mlStatus & MLSTATUS_CLEAR)
-        mlerase(MWCLEXEC) ;
+        mlerase(MWCLEXEC);
     
     f = meFALSE;
     n = 1;
     
     /* do ME_PREFIX1-# processing if needed */
-    basec = c & ~ME_PREFIX1 ;        /* strip meta char off if there */
+    basec = c & ~ME_PREFIX1;        /* strip meta char off if there */
     if((c & ME_PREFIX1) && (((basec >= '0') && (basec <= '9')) || (basec == '`') || (basec == '-')))
     {
         f = meTRUE;
         if(basec == '-')
         {
-            mflag = -1 ;
+            mflag = -1;
             n = 0;
         }
         else if(basec == '`')
         {
-            mflag = 1 ;
-            n = 99999999 ;
+            mflag = 1;
+            n = 99999999;
         }
         else
         {
-            mflag = 1 ;
-            n = basec - '0' ;
+            mflag = 1;
+            n = basec - '0';
         }
         while((c=meGetKeyFromUser(meTRUE,(n * mflag),meGETKEY_COMMAND)) >= '0')
         {
             if(c <= '9')
                 n = n * 10 + (c - '0');
             else if(c == '`')
-                n = 99999999 ;
+                n = 99999999;
             else
-                break ;
+                break;
         }
         n *= mflag;    /* figure in the sign */
     }
@@ -1225,40 +1225,40 @@ doOneKey(void)
     
     if(f == meTRUE)        /* Zap count from cmd line ? */
         mlerase(MWCLEXEC);
-    commandDepth++ ;
-    execute(c, f, n) ;   /* Do it. */
-    commandDepth-- ;
+    commandDepth++;
+    execute(c, f, n);   /* Do it. */
+    commandDepth--;
 }
 
 int
 mesetupInsertResourceString(char *ss, int argi, int oargc, char **oargv[])
 {
-    char **argv=NULL ;
-    char cc ;
-    int nargc=0 ;
+    char **argv=NULL;
+    char cc;
+    int nargc=0;
     
     for(;;)
     {
         while(((cc=*ss) != '\0') && isSpace(cc))
-            ss++ ;
+            ss++;
         if(cc == '\0')
-            break ;
+            break;
         
         if((nargc & 0x0f) == 0)
         {
             /* Construct larger argv container */
             if(nargc == 0)
-                argv = meMalloc(sizeof(char *) * (oargc + 17)) ;
+                argv = meMalloc(sizeof(char *) * (oargc + 17));
             else
-                argv = meRealloc(argv,sizeof(char *) * (oargc + nargc + 17)) ;
+                argv = meRealloc(argv,sizeof(char *) * (oargc + nargc + 17));
             if(argv == NULL)
-                return oargc ;
+                return oargc;
         }
         /* Determine the end of option. This may be a quoted string
          * option or unquoted string option. */
         if(cc != '"')
         {
-            argv[argi + nargc++] = ss ;
+            argv[argi + nargc++] = ss;
 #ifdef _WIN32
             /* if the next argument does not start with a '-' (a Com-line option)
              * and the rest of the line makes up the name of an existing file then
@@ -1269,7 +1269,7 @@ mesetupInsertResourceString(char *ss, int argi, int oargc, char **oargv[])
              * the user double clicks on c:\program files\fred.foo the command line
              * is [me c:\program files\fred.foo] - nuff said. */
             if((cc != '-') && !meTestRead(ss))
-                break ;
+                break;
 #endif
             while((cc = *ss) != '\0')
             {
@@ -1283,7 +1283,7 @@ mesetupInsertResourceString(char *ss, int argi, int oargc, char **oargv[])
         }
         else
         {
-            argv[argi + nargc++] = ++ss ;
+            argv[argi + nargc++] = ++ss;
             /* Scan to the end of the string */
             while((cc = *ss) != '\0')
             {
@@ -1297,118 +1297,118 @@ mesetupInsertResourceString(char *ss, int argi, int oargc, char **oargv[])
         }
     }
     if(nargc == 0)
-        return oargc ;
+        return oargc;
     if(argi)
-        memcpy(argv,(*oargv),sizeof(char *) * argi) ;
-    memcpy((argv+argi+nargc),((*oargv)+argi),sizeof(char *) * (oargc-argi+1)) ;
-    *oargv = argv ;
-    return oargc + nargc ;
+        memcpy(argv,(*oargv),sizeof(char *) * argi);
+    memcpy((argv+argi+nargc),((*oargv)+argi),sizeof(char *) * (oargc-argi+1));
+    *oargv = argv;
+    return oargc + nargc;
 }
 
 int
 mesetupInsertResourceFile(char *fname, int iarg, int oargc, char **oargv[])
 {
-    meUInt len ;
-    FILE *fp ;
-    char *buff ;
+    meUInt len;
+    FILE *fp;
+    char *buff;
     
     if((fp = fopen(fname,"rb")) == NULL)
     {
         sprintf((char *)evalResult,"%s Error: Failed to open [%s] for reading\n",(*oargv)[0],fname);
-        mePrintMessage(evalResult) ;
+        mePrintMessage(evalResult);
         meExit(1);
     }
-    fseek(fp,0,SEEK_END) ;
-    len = ftell(fp) ;
-    fseek(fp,0,SEEK_SET) ;
-    buff = (char *) meMalloc(len+1) ;
+    fseek(fp,0,SEEK_END);
+    len = ftell(fp);
+    fseek(fp,0,SEEK_SET);
+    buff = (char *) meMalloc(len+1);
     if(fread(buff,1,len,fp) < len)
     {
         sprintf((char *)evalResult,"%s Error: Failed to read [%s]\n",(*oargv)[0],fname);
-        mePrintMessage(evalResult) ;
+        mePrintMessage(evalResult);
         meExit(1);
     }
-    fclose(fp) ;
-    buff[len] = '\0' ;
-    /*    rr = dpgCalloc(1,sizeof(dpgResourceFile)) ;*/
+    fclose(fp);
+    buff[len] = '\0';
+    /*    rr = dpgCalloc(1,sizeof(dpgResourceFile));*/
     
-    return mesetupInsertResourceString(buff,iarg,oargc,oargv) ;
+    return mesetupInsertResourceString(buff,iarg,oargc,oargv);
 }
 
 #if MEOPT_TFS
 int
 mesetupInsertTsfResource(int oargc, char **oargv[])
 {
-    tfsstat_t st ;
-    tfsfile_t fp ;
-    meInt len ;
-    char *buff ;
+    tfsstat_t st;
+    tfsfile_t fp;
+    meInt len;
+    char *buff;
     
     if((tfs_stat(tfsdev,"/@@clo",&st) != 0) || (st.st_mode != TFS_TYPE_FILE) ||
        ((fp = tfs_fopen(tfsdev,"/@@clo")) == NULL))
-        return oargc ;
-    len = st.st_size ;
-    buff = (char *) meMalloc(len+1) ;
+        return oargc;
+    len = st.st_size;
+    buff = (char *) meMalloc(len+1);
     if(tfs_fread(buff,1,len,fp) < len)
     {
-        sprintf((char *)evalResult,"%s Error: Failed to read [{tfs}/@@clo]\n",(*oargv)[0]) ;
-        mePrintMessage(evalResult) ;
+        sprintf((char *)evalResult,"%s Error: Failed to read [{tfs}/@@clo]\n",(*oargv)[0]);
+        mePrintMessage(evalResult);
         meExit(1);
     }
-    tfs_fclose(fp) ;
-    buff[len] = '\0' ;
+    tfs_fclose(fp);
+    buff[len] = '\0';
     
-    return mesetupInsertResourceString(buff,1,oargc,oargv) ;
+    return mesetupInsertResourceString(buff,1,oargc,oargv);
 }
 #endif
 
 void
 mesetup(int argc, char *argv[])
 {
-    meBuffer *bp, *mainbp ;
+    meBuffer *bp, *mainbp;
     int     carg,rarg;                  /* current arg to scan */
-    int     noFiles=0 ;
-    meUByte  *file=NULL ;
+    int     noFiles=0;
+    meUByte  *file=NULL;
 #ifdef _UNIX
-    int     sigcatch=1 ;                /* Dont catch signals */
+    int     sigcatch=1;                /* Dont catch signals */
 #endif
 #ifdef _DOS
-    int     dumpScreen=0 ;
+    int     dumpScreen=0;
 #endif
 #if MEOPT_CLIENTSERVER
-    meUByte  *clientMessage=NULL ;
-    int     userClientServer=0 ;
+    meUByte  *clientMessage=NULL;
+    int     userClientServer=0;
 #endif
     startTime = time(NULL);
     
     /* asserts to check that the defines are consistent */
-    assert(argv[0] != NULL) ;
+    assert(argv[0] != NULL);
 #if MEOPT_NARROW
     /* more info is required to undo a narrow than can be held in the main
      * structure so an alternative definition is used, but elements within it
      * must remain the same */
-    assert(&(((meUndoNode *) NULL)->next) == &(((meUndoNarrow *) NULL)->next)) ;
-    assert(&(((meUndoNode *) NULL)->count) == &(((meUndoNarrow *) NULL)->count)) ;
-    assert(&(((meUndoNode *) NULL)->type) == &(((meUndoNarrow *) NULL)->type)) ;
+    assert(&(((meUndoNode *) NULL)->next) == &(((meUndoNarrow *) NULL)->next));
+    assert(&(((meUndoNode *) NULL)->count) == &(((meUndoNarrow *) NULL)->count));
+    assert(&(((meUndoNode *) NULL)->type) == &(((meUndoNarrow *) NULL)->type));
 #endif
 #ifdef _UNIX
     /* Get the usr id and group id for mode-line and file permissions */
     meXUmask = umask(0);
     umask(meXUmask);
     meXUmask = (meXUmask & (S_IROTH|S_IWOTH|S_IXOTH|S_IRGRP|S_IWGRP|S_IXGRP|S_IRUSR|S_IWUSR|S_IXUSR)) ^
-          (S_IROTH|S_IWOTH|S_IXOTH|S_IRGRP|S_IWGRP|S_IXGRP|S_IRUSR|S_IWUSR|S_IXUSR) ; /* 00666 */
-    meUmask = meXUmask & (S_IROTH|S_IWOTH|S_IRGRP|S_IWGRP|S_IRUSR|S_IWUSR) ;
+          (S_IROTH|S_IWOTH|S_IXOTH|S_IRGRP|S_IWGRP|S_IXGRP|S_IRUSR|S_IWUSR|S_IXUSR); /* 00666 */
+    meUmask = meXUmask & (S_IROTH|S_IWOTH|S_IRGRP|S_IWGRP|S_IRUSR|S_IWUSR);
     meUid = getuid();
     meGid = getgid();
     /* get a list of groups the user belongs to */
-    meGidSize = getgroups(0,NULL) ;
+    meGidSize = getgroups(0,NULL);
     if(meGidSize > 1)
     {
-        meGidList = meMalloc(meGidSize*sizeof(gid_t)) ;
-        meGidSize = getgroups(meGidSize,meGidList) ;
+        meGidList = meMalloc(meGidSize*sizeof(gid_t));
+        meGidSize = getgroups(meGidSize,meGidList);
     }
     else
-        meGidSize = 0 ;
+        meGidSize = 0;
     
     /* Set the required alarms first so we always have them */
     /* setup alarm process for timers */
@@ -1486,8 +1486,8 @@ mesetup(int argc, char *argv[])
     meior.fp = meBadFile;
     meiow.fp = meBadFile;
     /* initialize the editor and process the command line arguments */
-    initHistory() ;                     /* allocate history space */
-    meSetupProgname(argv[0]) ;
+    initHistory();                     /* allocate history space */
+    meSetupProgname(argv[0]);
 #if MEOPT_TFS
     /* Initialise the tack-on file system. Note for speed we only check the header. */
     if((tfsdev = tfs_mount((char *)meProgName,TFS_CHECK_HEAD)) != NULL)
@@ -1495,8 +1495,8 @@ mesetup(int argc, char *argv[])
 #endif
     
     /* scan through the command line and get all global options */
-    carg = rarg = 1 ;
-    for( ; carg < argc; ++carg)
+    carg = rarg = 1;
+    for(; carg < argc; ++carg)
     {
         /* if its a switch, process it */
         if (argv[carg][0] == '-')
@@ -1507,20 +1507,20 @@ mesetup(int argc, char *argv[])
 #ifdef _TCAP
             case 'A':
                 meSystemCfg |= meSYSTEM_NOALTSBUF;
-                break ;
+                break;
 #endif /* _TCAP */
 #endif /* _ME_CONSOLE */
             case 'a':
                 meModeToggle(globMode,MDAUTOSV);
-                break ;
+                break;
                 
             case 'B':
                 meModeToggle(globMode,MDBACKUP);
-                break ;
+                break;
                 
 #if MEOPT_EXTENDED
             case 0:      /* -  get input from stdin */
-                noFiles = 1 ;
+                noFiles = 1;
 #endif
             case 'b':    /* -b bin flag */
             case 'k':    /* -k crypt flag */
@@ -1528,39 +1528,39 @@ mesetup(int argc, char *argv[])
                 /* don't want these options yet as they apply to the
                  * next file on the command line
                  */
-                argv[rarg++] = argv[carg] ;
-                break ;
+                argv[rarg++] = argv[carg];
+                break;
 #if MEOPT_EXTENDED
             case 'c':
-                SetUsrLclCmdVar((meUByte *) "session-name",(meUByte *) (argv[carg] + 2),&usrVarList) ;
-                break ;
+                SetUsrLclCmdVar((meUByte *) "session-name",(meUByte *) (argv[carg] + 2),&usrVarList);
+                break;
             case 'f':
                 {
-                    meUByte vname[16] ;
-                    int nn=0 ;
+                    meUByte vname[16];
+                    int nn=0;
                     while(++carg < argc)
                     {
-                        sprintf((char *) vname,"arg%d",nn++) ;
-                        SetUsrLclCmdVar(vname,(meUByte *) argv[carg],&(__cmdArray[CK_ABOUT].varList)) ;
+                        sprintf((char *) vname,"arg%d",nn++);
+                        SetUsrLclCmdVar(vname,(meUByte *) argv[carg],&(__cmdArray[CK_ABOUT].varList));
                     }
-                    sprintf((char *) vname,"%d",nn) ;
-                    SetUsrLclCmdVar((meUByte *) "argc",vname,&(__cmdArray[CK_ABOUT].varList)) ;
+                    sprintf((char *) vname,"%d",nn);
+                    SetUsrLclCmdVar((meUByte *) "argc",vname,&(__cmdArray[CK_ABOUT].varList));
                 }
-                break ;
+                break;
 #endif
             case 'h':
-                mePrintMessage(meHelpPage) ;
-                meExit(0) ;
+                mePrintMessage(meHelpPage);
+                meExit(0);
 #ifdef _DOS
             case 'i':
-                dumpScreen = 1 ;
-                break ;
+                dumpScreen = 1;
+                break;
 #endif
             case 'l':    /* -l for initial goto line */
                 /* don't want these options yet as they apply to the
                  * next file on the command line
                  */
-                argv[rarg++] = argv[carg] ;
+                argv[rarg++] = argv[carg];
                 if (argv[carg][2] == 0)
                 {
                     if (carg == argc-1)
@@ -1568,24 +1568,24 @@ mesetup(int argc, char *argv[])
 missing_arg:
                         sprintf((char *)evalResult,"%s Error: Argument expected with option %s\nOption -h gives further help\n",
                                 argv[0],argv[carg]);
-                        mePrintMessage(evalResult) ;
+                        mePrintMessage(evalResult);
                         meExit(1);
                     }
-                    argv[rarg++] = argv[++carg] ;
+                    argv[rarg++] = argv[++carg];
                 }
-                break ;
+                break;
                 
 #if MEOPT_CLIENTSERVER
             case 'm':    /* -m send a client server message */
-                userClientServer |= 1 ;
+                userClientServer |= 1;
                 if(argv[carg][2] == '\0')
                 {
                     if (carg == argc-1)
-                        goto missing_arg ;
-                    clientMessage = (meUByte *)argv[++carg] ;
+                        goto missing_arg;
+                    clientMessage = (meUByte *)argv[++carg];
                 }
                 else
-                    clientMessage = (meUByte *)argv[carg]+2 ;
+                    clientMessage = (meUByte *)argv[carg]+2;
                 break;
 #endif
 #ifdef _ME_CONSOLE
@@ -1593,12 +1593,12 @@ missing_arg:
 #ifdef _ME_WINDOW
                 meSystemCfg |= meSYSTEM_CONSOLE;
 #endif /* _ME_WINDOW */
-                break ;
+                break;
 #endif /* _ME_CONSOLE */
 #if MEOPT_CLIENTSERVER
             case 'o':
-                userClientServer |= 2 ;
-                break ;
+                userClientServer |= 2;
+                break;
 #endif
 #if MEOPT_EXTENDED
             case 'p':
@@ -1606,11 +1606,11 @@ missing_arg:
             case 'P':
                 alarmState |= meALARM_PIPED;
                 meSystemCfg |= meSYSTEM_PIPEDMODE;
-                break ;
+                break;
 #endif
             case 'r':
-                meModeToggle(globMode,MDVIEW) ;
-                break ;
+                meModeToggle(globMode,MDVIEW);
+                break;
                 
                 /* Reverse the video, simply exchange the forward and reverse
                  * schemes with each other. Note that this affects the internal
@@ -1632,117 +1632,117 @@ missing_arg:
                 break;
                 
             case 's':    /* -s for initial search string */
-                argv[rarg++] = argv[carg] ;
+                argv[rarg++] = argv[carg];
                 if(argv[carg][2] == '\0')
                 {
                     if (carg == argc-1)
-                        goto missing_arg ;
-                    argv[rarg++] = argv[++carg] ;
+                        goto missing_arg;
+                    argv[rarg++] = argv[++carg];
                 }
                 break;
                 
             case 'u':    /* -u for setting the user name */
                 {
-                    char *un ;
+                    char *un;
                     if (argv[carg][2] == 0)
                     {
                         if (carg == argc-1)
-                            goto missing_arg ;
-                        un = argv[++carg] ;
+                            goto missing_arg;
+                        un = argv[++carg];
                     }
                     else
-                        un = argv[carg] + 2 ;
-                    meStrrep(&meUserName,(meUByte *) un) ;
+                        un = argv[carg] + 2;
+                    meStrrep(&meUserName,(meUByte *) un);
                     break;
                 }
                 
             case 'V':
-                mePrintMessage(meVERSION_INFO) ;
-                meExit(0) ;
+                mePrintMessage(meVERSION_INFO);
+                meExit(0);
                 
             case 'v':
                 {
-                    char *ss, *tt, cc ;
+                    char *ss, *tt, cc;
                     if (argv[carg][2] == 0)
                     {
                         if (carg == argc-1)
-                            goto missing_arg ;
-                        ss = argv[++carg] ;
+                            goto missing_arg;
+                        ss = argv[++carg];
                     }
                     else
-                        ss = argv[carg] + 2 ;
+                        ss = argv[carg] + 2;
                     if((tt = strchr(ss,'=')) == NULL)
                     {
-                        sprintf((char *)evalResult,"%s Error: Mal-formed -v option\n",argv[0]) ;
-                        mePrintMessage(evalResult) ;
-                        meExit(1) ;
+                        sprintf((char *)evalResult,"%s Error: Mal-formed -v option\n",argv[0]);
+                        mePrintMessage(evalResult);
+                        meExit(1);
                     }
                     
                     if(((cc=getMacroTypeS(ss)) != TKREG) && (cc != TKVAR) &&
                        (cc != TKCVR) && (cc != TKENV))
                     {
-                        *tt = '\0' ;
-                        sprintf((char *)evalResult,"%s Error: Cannot set variable [%s] from the command-line\n",argv[0],ss) ;
-                        mePrintMessage(evalResult) ;
-                        meExit(1) ;
+                        *tt = '\0';
+                        sprintf((char *)evalResult,"%s Error: Cannot set variable [%s] from the command-line\n",argv[0],ss);
+                        mePrintMessage(evalResult);
+                        meExit(1);
                     }
                     if((tt = strchr(ss,'=')) != NULL)
                     {
-                        *tt++ = '\0' ;
+                        *tt++ = '\0';
                         if(setVar((meUByte *)ss,(meUByte *)tt,meRegCurr) <= 0)  /* set a variable */
                         {
-                            sprintf((char *)evalResult,"%s Error: Unable to set variable [%s]\n",argv[0],ss) ;
-                            mePrintMessage(evalResult) ;
-                            meExit(1) ;
+                            sprintf((char *)evalResult,"%s Error: Unable to set variable [%s]\n",argv[0],ss);
+                            mePrintMessage(evalResult);
+                            meExit(1);
                         }
-                        execstr = NULL ;
-                        clexec = meFALSE ;
+                        execstr = NULL;
+                        clexec = meFALSE;
                     }
-                    break ;
+                    break;
                 }
 #ifdef _UNIX
             case 'x':
-                sigcatch = 0 ;
+                sigcatch = 0;
                 break;
 #endif
                 
             default:
                 {
-                    sprintf((char *)evalResult,"%s Error: Unknown option %s\nOption -h gives further help\n",argv[0],argv[carg]) ;
-                    mePrintMessage(evalResult) ;
-                    meExit(1) ;
+                    sprintf((char *)evalResult,"%s Error: Unknown option %s\nOption -h gives further help\n",argv[0],argv[carg]);
+                    mePrintMessage(evalResult);
+                    meExit(1);
                 }
             }
         }
         else if(argv[carg][0] == '@')
         {
             if(argv[carg][1] == '@')
-                argc = mesetupInsertResourceFile(argv[carg] + 2,carg+1,argc,&argv) ;
+                argc = mesetupInsertResourceFile(argv[carg] + 2,carg+1,argc,&argv);
             else
-                file = (meUByte *) argv[carg] + 1 ;
+                file = (meUByte *) argv[carg] + 1;
         }
         else if((argv[carg][0] == '+') && (argv[carg][1] == '\0'))
-            goto missing_arg ;
+            goto missing_arg;
         else
         {
-            argv[rarg++] = argv[carg] ;
-            noFiles = 1 ;
+            argv[rarg++] = argv[carg];
+            noFiles = 1;
         }
     }
     /* Set up the path information. */
-    meSetupPathsAndUser() ;
+    meSetupPathsAndUser();
     
 #if MEOPT_CLIENTSERVER
     if(userClientServer && TTconnectClientServer())
     {
-        int      binflag=0 ;         /* load next file as a binary file*/
-        meInt    gline = 0 ;         /* what line? (-l option)         */
-        meUShort gcol = 0 ;
-        meUByte  buff[meBUF_SIZE_MAX+32] ;
-        int      nn ;
-        char    *ss ;
+        int      binflag=0;         /* load next file as a binary file*/
+        meInt    gline = 0;         /* what line? (-l option)         */
+        meUShort gcol = 0;
+        meUByte  buff[meBUF_SIZE_MAX+32];
+        int      nn;
+        char    *ss;
         
-        for(carg=1 ; carg < rarg ; carg++)
+        for(carg=1; carg < rarg; carg++)
         {
             /* if its a switch, process it */
             if(argv[carg][0] == '-')
@@ -1751,26 +1751,26 @@ missing_arg:
                 {
                 case 'l':    /* -l for initial goto line */
                     if (argv[carg][2] == 0)
-                        ss = argv[++carg] ;
+                        ss = argv[++carg];
                     else
-                        ss = (argv[carg])+2 ;
+                        ss = (argv[carg])+2;
                     gline = meAtoi(ss);
                     if((ss=strchr(ss,':')) != NULL)
-                        gcol = (meUShort) meAtoi(ss+1) ;
+                        gcol = (meUShort) meAtoi(ss+1);
                     break;
                 case 'b':    /* -b bin flag */
-                    binflag |= BFND_BINARY ;
+                    binflag |= BFND_BINARY;
                     break;
                 case 'k':    /* -k crypt flag */
-                    binflag |= BFND_CRYPT ;
+                    binflag |= BFND_CRYPT;
                     break;
                 case 's':
                     /* -s not supported across client-server */
                     if (argv[carg][2] == 0)
-                        carg++ ;
-                    break ;
+                        carg++;
+                    break;
                 case 'y':    /* -y rbin flag */
-                    binflag |= BFND_RBIN ;
+                    binflag |= BFND_RBIN;
                     break;
                 }
             }
@@ -1778,71 +1778,71 @@ missing_arg:
             {
                 gline = meAtoi((argv[carg])+1);
                 if((ss=strchr(argv[carg],':')) != NULL)
-                    gcol = (meUShort) meAtoi(ss+1) ;
+                    gcol = (meUShort) meAtoi(ss+1);
             }
             else
             {
                 /* set up a buffer for this file */
-                findFileList((meUByte *)argv[carg],(BFND_CREAT|BFND_MKNAM|binflag),gline,gcol) ;
-                gline = 0 ;
-                gcol = 0 ;
-                binflag = 0 ;
+                findFileList((meUByte *)argv[carg],(BFND_CREAT|BFND_MKNAM|binflag),gline,gcol);
+                gline = 0;
+                gcol = 0;
+                binflag = 0;
             }
         }
         if(clientMessage != NULL)
         {
-            buff[0] = '"' ;
-            meStrncpy(buff+1,clientMessage,meBUF_SIZE_MAX) ;
-            meStrcat(buff+1,"\"") ;
-            token(buff,resultStr) ;
-            nn = meStrlen(resultStr) ;
+            buff[0] = '"';
+            meStrncpy(buff+1,clientMessage,meBUF_SIZE_MAX);
+            meStrcat(buff+1,"\"");
+            token(buff,resultStr);
+            nn = meStrlen(resultStr);
             if((nn <= 1) || (resultStr[nn-1] != '\n'))
             {
-                resultStr[nn++] = '\n' ;
-                resultStr[nn] = '\0' ;
+                resultStr[nn++] = '\n';
+                resultStr[nn] = '\0';
             }
-            TTsendClientServer(resultStr+1) ;
+            TTsendClientServer(resultStr+1);
         }
-        bp = bheadp ;
+        bp = bheadp;
         while(bp != NULL)
         {
             if(bp->fileName != NULL)
             {
-                nn = 1 ;
+                nn = 1;
                 if(meModeTest(bp->mode,MDBINARY))
-                    nn |= BFND_BINARY ;
+                    nn |= BFND_BINARY;
                 if(meModeTest(bp->mode,MDCRYPT))
-                    nn |= BFND_CRYPT ;
+                    nn |= BFND_CRYPT;
                 if(meModeTest(bp->mode,MDRBIN))
-                    nn |= BFND_RBIN ;
-                sprintf((char *)buff,"C:ME:%d find-file \"%s\"\n",nn,bp->fileName) ;
-                TTsendClientServer(buff) ;
+                    nn |= BFND_RBIN;
+                sprintf((char *)buff,"C:ME:%d find-file \"%s\"\n",nn,bp->fileName);
+                TTsendClientServer(buff);
                 if(bp->dotLineNo != 0)
                 {
-                    sprintf((char *)buff,"C:ME:goto-line %d\n",(int) bp->dotLineNo) ;
-                    TTsendClientServer(buff) ;
+                    sprintf((char *)buff,"C:ME:goto-line %d\n",(int) bp->dotLineNo);
+                    TTsendClientServer(buff);
                 }
             }
-            bp = bp->next ;
+            bp = bp->next;
         }
         if(userClientServer & 2)
             /* send a 'make-current' command to server */
-            TTsendClientServer((meUByte *) "C:ME:2 popup-window\n") ;
+            TTsendClientServer((meUByte *) "C:ME:2 popup-window\n");
 #ifdef _WIN32
         /* send a WM_USR message to the main window to wake ME up */
-        SendMessage(baseHwnd,WM_USER,1,0) ;
+        SendMessage(baseHwnd,WM_USER,1,0);
         /* if only a -o (not -m) then pause before exiting to give the server me a chance to
          * load the files, the file could be a temp which will be removed once this me exits */
         if(userClientServer == 2)
-            Sleep(250) ;
+            Sleep(250);
 #endif
-        meExit(0) ;
+        meExit(0);
     }
     else if(userClientServer & 1)
     {
-        sprintf((char *)evalResult,"%s Error: Unable to connect to server\n",argv[0]) ;
-        mePrintMessage(evalResult) ;
-        meExit(1) ;
+        sprintf((char *)evalResult,"%s Error: Unable to connect to server\n",argv[0]);
+        mePrintMessage(evalResult);
+        meExit(1);
     }
 #endif
     
@@ -1854,7 +1854,7 @@ missing_arg:
         extern void TTdump(meBuffer *);
         TTdump(frameCur->windowCur->buffer);
         windowGotoBob(meFALSE,1);
-        carg++ ;
+        carg++;
     }
 #endif
     
@@ -1876,45 +1876,45 @@ missing_arg:
     if(sigcatch)
     {
 #ifdef _POSIX_SIGNALS
-        struct sigaction sa ;
+        struct sigaction sa;
         
-        sigemptyset(&sa.sa_mask) ;
+        sigemptyset(&sa.sa_mask);
         sa.sa_flags=0;
-        sa.sa_handler=sigeat ;
-        sigaction(SIGHUP,&sa,NULL) ;
-        sigaction(SIGINT,&sa,NULL) ;
-        sigaction(SIGQUIT,&sa,NULL) ;
-        sigaction(SIGTERM,&sa,NULL) ;
-        sigaction(SIGUSR1,&sa,NULL) ;
+        sa.sa_handler=sigeat;
+        sigaction(SIGHUP,&sa,NULL);
+        sigaction(SIGINT,&sa,NULL);
+        sigaction(SIGQUIT,&sa,NULL);
+        sigaction(SIGTERM,&sa,NULL);
+        sigaction(SIGUSR1,&sa,NULL);
 #else /* _POSIX_SIGNALS */
-        signal(SIGHUP,sigeat) ;
-        signal(SIGINT,sigeat) ;
-        signal(SIGQUIT,sigeat) ;
-        signal(SIGTERM,sigeat) ;
-        signal(SIGUSR1,sigeat) ;
+        signal(SIGHUP,sigeat);
+        signal(SIGINT,sigeat);
+        signal(SIGQUIT,sigeat);
+        signal(SIGTERM,sigeat);
+        signal(SIGUSR1,sigeat);
 #endif /* _POSIX_SIGNALS */
     }
 #endif /* _UNIX */
     
     mlerase(0);                /* Delete command line */
     /* disable screen updates to reduce the flickering and startup time */
-    screenUpdateDisabledCount = -9999 ;
+    screenUpdateDisabledCount = -9999;
     /* run me.emf unless an @... arg was given in which case run that */
-    execFile(file,meTRUE,noFiles) ;
+    execFile(file,meTRUE,noFiles);
     
     /* initalize *scratch* colors & modes to global defaults & check for a hook */
     if((mainbp=bfind(BmainN,0)) != NULL)
     {
-        meModeCopy(mainbp->mode,globMode) ;
+        meModeCopy(mainbp->mode,globMode);
 #if MEOPT_COLOR
         mainbp->scheme = globScheme;
 #endif
 #if MEOPT_FILEHOOK
-        setBufferContext(mainbp) ;
+        setBufferContext(mainbp);
 #endif
         /* make *scratch*'s history number very low so any other
          * buffer is preferable */
-        mainbp->histNo = -1 ;
+        mainbp->histNo = -1;
     }
 #if MEOPT_COLOR
 #if MEOPT_CLIENTSERVER
@@ -1923,10 +1923,10 @@ missing_arg:
         ipipes->bp->scheme = globScheme;
 #endif
 #endif
-    screenUpdateDisabledCount = 0 ;
+    screenUpdateDisabledCount = 0;
 #ifdef _CLIPBRD
     /* allow interaction with the clipboard now that me has initialized */
-    clipState &= ~CLIP_DISABLED ;
+    clipState &= ~CLIP_DISABLED;
 #endif
     
     {
@@ -1988,7 +1988,7 @@ missing_arg:
                         searchStr = (meUByte *) argv[++carg];
                     else
                         searchStr = (meUByte *) argv[carg]+2;
-                    break ;
+                    break;
                 case 'y':    /* -y rbin flag */
                     binflag |= BFND_RBIN;
                     break;
@@ -1998,13 +1998,13 @@ missing_arg:
             {
                 gline = meAtoi((argv[carg])+1);
                 if((ss=strchr(argv[carg],':')) != NULL)
-                    gcol = (meUShort) meAtoi(ss+1) ;
+                    gcol = (meUShort) meAtoi(ss+1);
             }
             else
             {
                 /* set up a buffer for this file - force the history so the first file
                  * on the command-line has the highest bufHistNo so is shown first */
-                bufHistNo = obufHistNo + rarg - carg ;
+                bufHistNo = obufHistNo + rarg - carg;
                 noFiles += findFileList((meUByte *)argv[carg],(BFND_CREAT|BFND_MKNAM|binflag),gline,gcol);
                 if((cryptStr != NULL) || (searchStr != NULL))
                 {
@@ -2012,7 +2012,7 @@ missing_arg:
 handle_stdin:
 #endif
                     /* Deal with -k<key> and -s <search> */
-                    bp = bheadp ;
+                    bp = bheadp;
                     while(bp != NULL)
                     {
                         if(bp->histNo == bufHistNo)
@@ -2061,13 +2061,13 @@ handle_stdin:
     {
         if((bp = replacebuffer(NULL)) != mainbp)
         {
-            swbuffer(frameCur->windowCur,bp) ;
-	    mainbp->histNo = -1 ;
+            swbuffer(frameCur->windowCur,bp);
+	    mainbp->histNo = -1;
             if((noFiles > 1) && ((bp = replacebuffer(NULL)) != mainbp) &&
                (windowSplitDepth(meTRUE,2) > 0))
             {
-                swbuffer(frameCur->windowCur,replacebuffer(NULL)) ;
-                windowGotoPrevious(meFALSE,1) ;
+                swbuffer(frameCur->windowCur,replacebuffer(NULL));
+                windowGotoPrevious(meFALSE,1);
             }
         }
     }
@@ -2080,7 +2080,7 @@ handle_stdin:
      */
     sgarbf = meTRUE;			 /* Erase-page clears */
     
-    carg = decode_fncname((meUByte *)"start-up",1) ;
+    carg = decode_fncname((meUByte *)"start-up",1);
     if(carg >= 0)
         execFunc(carg,meFALSE,1);
 #if MEOPT_EXTENDED
@@ -2122,8 +2122,8 @@ _meAssert (char *file, int line)
             /* Try and perform an emergency save for the user - no guarantees
              * here I am afraid - we may be totally screwed at this point in
              * time. */
-            alarmState = meALARM_DIE ;
-            exitEmacs(1,0x28) ;
+            alarmState = meALARM_DIE;
+            exitEmacs(1,0x28);
         }
         else if(cc == 'Q')
             meExit(1);                  /* Die the death */
@@ -2144,52 +2144,52 @@ commandWait(int f, int n)
     
     if(f && n)
     {
-        f = clexec ;
-        clexec = meFALSE ;
+        f = clexec;
+        clexec = meFALSE;
         if(n < 0)
-            TTsleep(0-n,1,NULL) ;
+            TTsleep(0-n,1,NULL);
         else
-            TTsleep(n,0,NULL) ;
-        clexec = f ;
-        return meTRUE ;
+            TTsleep(n,0,NULL);
+        clexec = f;
+        return meTRUE;
     }
     if((meRegCurr->commandName == NULL) ||
        ((f=decode_fncname(meRegCurr->commandName,1)) < 0))
-        return meTRUE ;
+        return meTRUE;
     varList = &(cmdTable[f]->varList);
     
     if(n == 0)
     {
-        TTsleep(-1,0,varList) ;
+        TTsleep(-1,0,varList);
     }
     else
     {
         clexecSv = clexec;
-        execlevelSv = execlevel ;
-        clexec = meFALSE ;
-        execlevel = 0 ;
+        execlevelSv = execlevel;
+        clexec = meFALSE;
+        execlevel = 0;
         do
         {
             /* Fix up the screen before waiting for input otherwise TTahead
              * will be true and the screen will never be refreshed - test with gdiff */
             update(meFALSE);
-            TTsleep(-1,1,varList) ;
+            TTsleep(-1,1,varList);
             if(((ss=getUsrLclCmdVar((meUByte *)"wait",*varList)) == errorm) || !meAtoi(ss))
-                break ;
-            doOneKey() ;
+                break;
+            doOneKey();
             if(TTbreakFlag)
             {
-                TTinflush() ;
+                TTinflush();
                 if((selhilight.flags & (SELHIL_ACTIVE|SELHIL_KEEP)) == SELHIL_ACTIVE)
-                    selhilight.flags &= ~SELHIL_ACTIVE ;
-                TTbreakFlag = 0 ;
+                    selhilight.flags &= ~SELHIL_ACTIVE;
+                TTbreakFlag = 0;
             }
         } while((varList != NULL) &&
-                ((ss=getUsrLclCmdVar((meUByte *)"wait",*varList)) != errorm) && meAtoi(ss)) ;
-        clexec = clexecSv ;
-        execlevel = execlevelSv ;
+                ((ss=getUsrLclCmdVar((meUByte *)"wait",*varList)) != errorm) && meAtoi(ss));
+        clexec = clexecSv;
+        execlevel = execlevelSv;
     }
-    return meTRUE ;
+    return meTRUE;
 }
 #endif
 
@@ -2200,13 +2200,13 @@ main(int argc, char *argv[])
     mesetup(argc,argv);
     while(1)
     {
-        doOneKey() ;
+        doOneKey();
         if(TTbreakFlag)
         {
-            TTinflush() ;
+            TTinflush();
             if((selhilight.flags & (SELHIL_ACTIVE|SELHIL_KEEP)) == SELHIL_ACTIVE)
-                selhilight.flags &= ~SELHIL_ACTIVE ;
-            TTbreakFlag = 0 ;
+                selhilight.flags &= ~SELHIL_ACTIVE;
+            TTbreakFlag = 0;
         }
         
 #ifdef _DRAGNDROP
@@ -2271,6 +2271,6 @@ main(int argc, char *argv[])
         }
 #endif /* _DRAGNDROP */
     }
-    return 0 ;
+    return 0;
 }
 #endif
