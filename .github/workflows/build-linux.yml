@@ -2,6 +2,11 @@ name: Build linux (Ubuntu-20)
 
 on:
   workflow_dispatch:
+    inputs:
+      refToBuild:
+        description: 'Branch, tag or commit SHA1 to build'
+        required: false
+        type: string
 
 jobs:
   build:
@@ -11,6 +16,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.refToBuild }}
      
     - name: Compile nroff tools
       run: |
