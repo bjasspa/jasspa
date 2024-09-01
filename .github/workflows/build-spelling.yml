@@ -2,6 +2,12 @@ name: Build spelling (Ubuntu-20)
 
 on:
   workflow_dispatch:
+    inputs:
+      refToBuild:
+        description: 'Branch, tag or commit SHA1 to build'
+        default: ''
+        required: true
+        type: string
 
 jobs:
   build:
@@ -9,43 +15,45 @@ jobs:
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-     
-    - name: Compile linux5 mec
-      run: |
-        mkdir downloads
-        mkdir packages
-        cd ./microemacs/src
-        ./build.sh -t c
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.refToBuild }}
+       
+      - name: Compile linux5 mec
+        run: |
+          mkdir downloads
+          mkdir packages
+          cd ./microemacs/src
+          ./build.sh -t c
 
-    - name: Generate spelling packages
-      run: |
-        export PATH=`pwd`/microemacs/bin/linux5-intel64-gcc9:$PATH
-        export MEVER=`mec -p @microemacs/contribs/ver.emf`
-        cd ./microemacs/spelling
-        declare -a lsl=("dede" "elgr" "engb" "enus" "eses" "fifi" "frfr" "itit" "plpl" "ptpt" "ruru")
-        for ii in "${lsl[@]}"
-        do
-           echo "Language $ii"
-            rm -rf tfs
-            mkdir -p tfs/spelling
-            cp *${ii}* tfs/spelling
-            cd tfs
-            zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_ls${ii} spelling
-            cd ..
-            tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_ls${ii}.tfs -a ../mesingle/tfs_hd tfs
-        done
+      - name: Generate spelling packages
+        run: |
+          export PATH=`pwd`/microemacs/bin/linux5-intel64-gcc9:$PATH
+          export MEVER=`mec -p @microemacs/contribs/ver.emf`
+          cd ./microemacs/spelling
+          declare -a lsl=("dede" "elgr" "engb" "enus" "eses" "fifi" "frfr" "itit" "plpl" "ptpt" "ruru")
+          for ii in "${lsl[@]}"
+          do
+             echo "Language $ii"
+              rm -rf tfs
+              mkdir -p tfs/spelling
+              cp *${ii}* tfs/spelling
+              cd tfs
+              zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_ls${ii} spelling
+              cd ..
+              tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_ls${ii}.tfs -a ../mesingle/tfs_hd tfs
+          done
 
-    - name: Upload spelling downloads
-      uses: actions/upload-artifact@v4
-      with: 
-        name: spelling-downloads
-        path: downloads
-        
-    - name: Upload spelling packages
-      uses: actions/upload-artifact@v4
-      with: 
-        name: spelling-packages
-        path: packages
-    
+      - name: Upload spelling downloads
+        uses: actions/upload-artifact@v4
+        with: 
+          name: spelling-downloads
+          path: downloads
+          
+      - name: Upload spelling packages
+        uses: actions/upload-artifact@v4
+        with: 
+          name: spelling-packages
+          path: packages
+

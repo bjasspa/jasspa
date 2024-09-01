@@ -2,6 +2,12 @@ name: Build macos-intel (macos-13)
 
 on:
   workflow_dispatch:
+    inputs:
+      refToBuild:
+        description: 'Branch, tag or commit SHA1 to build'
+        default: ''
+        required: true
+        type: string
 
 jobs:
   build:
@@ -9,94 +15,98 @@ jobs:
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
     steps:
-    - name: Install dependencies
-      run: |
-         echo INFO: uname -a
-         uname -a
-         echo INFO: sw_vers
-         sw_vers
-         echo INFO: OpenSSL 1
-         ls /usr/local/opt/openssl@3/
-         echo INFO: OpenSSL 2
-         ls /usr/local/opt/openssl@3/lib
-         brew install xquartz
-      
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Compile macos-intel mec
-      run: |
-        mkdir downloads
-        mkdir packages
-            cd ./microemacs/src
-        ./build.sh -t c -a intel
-    - name: Compile macos-intel mew
-      run: |
-        cd ./microemacs/src
-        ./build.sh -t w -a intel
-    - name: Create macos-intel binaries download
-      run: |
-        cd ./microemacs/bin
-        mv macos13-intel64-* macos13-intel64
-        cd ..
-        export MEVER=`./bin/macos13-intel64/mec -p @contribs/ver.emf`
-        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_macos_intel_binaries bin/macos13-intel64 COPYING license.txt readme.txt
-
-    - name: Create macos-intel mecs
-      run: |
-        export MEVER=`./microemacs/bin/macos13-intel64/mec -p @microemacs/contribs/ver.emf`
-        cd ./microemacs/mesingle
-        rm -rf bin
-        mkdir -p bin/macos13-intel64
-        ../bin/macos13-intel64/mec -p "@mesgen" -f -p ../bin/macos13-intel64/mec -t ../bin/macos13-intel64/tfs -o bin/macos13-intel64/mecs
-        cp ../COPYING ./
-        cp ../license.txt ./
-        cp ../readme.txt ./
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos_intel_mecs bin COPYING license.txt readme.txt
-
-    - name: Create macos-intel mews
-      run: |
-        export MEVER=`./microemacs/bin/macos13-intel64/mec -p @microemacs/contribs/ver.emf`
-        cd ./microemacs/mesingle
-        rm -rf bin
-        mkdir -p bin/macos13-intel64
-        ../bin/macos13-intel64/mec -p "@mesgen" -f -p ../bin/macos13-intel64/mew -t ../bin/macos13-intel64/tfs -o bin/macos13-intel64/mews
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos_intel_mews bin COPYING license.txt readme.txt
-
-    - name: Create macos-intel OpenSSL download
-      run: |
-        cd ./microemacs/
-        export MEVER=`./bin/macos13-intel64/mec -p @contribs/ver.emf`
-        rm -rf tfs
-        mkdir -p tfs/bin/macos13-intel64
-        cd tfs/bin/macos13-intel64
-        cp /usr/local/opt/openssl@3/lib/libcrypto.3.dylib .
-        cp /usr/local/opt/openssl@3/lib/libssl.3.dylib .
-        cp /usr/local/opt/openssl@3/LICENSE.txt .
-        cp /usr/local/opt/openssl@3/README.md .
-        CRYPT_PATH=`otool -L libssl.3.dylib | grep libcrypt | cut -f 1 -d ' '`
-        install_name_tool -id @loader_path/libcrypto.3.dylib libcrypto.3.dylib
-        install_name_tool -id @loader_path/libssl.3.dylib libssl.3.dylib
-        install_name_tool -change $CRYPT_PATH @loader_path/libcrypto.3.dylib libssl.3.dylib
-        codesign --force --deep --sign - libcrypto.3.dylib
-        codesign --force --deep --sign - libssl.3.dylib
-        echo OTOOL crypto
-        otool -L libcrypto.3.dylib
-        echo OTOOL ssl
-        otool -L libssl.3.dylib
-        cd ../..
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos_intel_openssl bin
-        cd ..
-        ./bin/macos13-intel64/tfs -o ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_macos_intel64.tfs -a ./mesingle/tfs_hd tfs
-
-    - name: Upload macos-intel downloads
-      uses: actions/upload-artifact@v4
-      with: 
-        name: macos-intel-downloads
-        path: downloads
+      - name: Install dependencies
+        run: |
+           echo INFO: uname -a
+           uname -a
+           echo INFO: sw_vers
+           sw_vers
+           echo INFO: OpenSSL 1
+           ls /usr/local/opt/openssl@3/
+           echo INFO: OpenSSL 2
+           ls /usr/local/opt/openssl@3/lib
+           brew install xquartz
         
-    - name: Upload macos-intel packages
-      uses: actions/upload-artifact@v4
-      with: 
-        name: macos-intel-packages
-        path: packages
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.refToBuild }}
+
+      - name: Compile macos-intel mec
+        run: |
+          mkdir downloads
+          mkdir packages
+              cd ./microemacs/src
+          ./build.sh -t c -a intel
+
+      - name: Compile macos-intel mew
+        run: |
+          cd ./microemacs/src
+          ./build.sh -t w -a intel
+
+      - name: Create macos-intel binaries download
+        run: |
+          cd ./microemacs/bin
+          mv macos13-intel64-* macos13-intel64
+          cd ..
+          export MEVER=`./bin/macos13-intel64/mec -p @contribs/ver.emf`
+          zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_macos_intel_binaries bin/macos13-intel64 COPYING license.txt readme.txt
+
+      - name: Create macos-intel mecs
+        run: |
+          export MEVER=`./microemacs/bin/macos13-intel64/mec -p @microemacs/contribs/ver.emf`
+          cd ./microemacs/mesingle
+          rm -rf bin
+          mkdir -p bin/macos13-intel64
+          ../bin/macos13-intel64/mec -p "@mesgen" -f -p ../bin/macos13-intel64/mec -t ../bin/macos13-intel64/tfs -o bin/macos13-intel64/mecs
+          cp ../COPYING ./
+          cp ../license.txt ./
+          cp ../readme.txt ./
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos_intel_mecs bin COPYING license.txt readme.txt
+
+      - name: Create macos-intel mews
+        run: |
+          export MEVER=`./microemacs/bin/macos13-intel64/mec -p @microemacs/contribs/ver.emf`
+          cd ./microemacs/mesingle
+          rm -rf bin
+          mkdir -p bin/macos13-intel64
+          ../bin/macos13-intel64/mec -p "@mesgen" -f -p ../bin/macos13-intel64/mew -t ../bin/macos13-intel64/tfs -o bin/macos13-intel64/mews
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos_intel_mews bin COPYING license.txt readme.txt
+
+      - name: Create macos-intel OpenSSL download
+        run: |
+          cd ./microemacs/
+          export MEVER=`./bin/macos13-intel64/mec -p @contribs/ver.emf`
+          rm -rf tfs
+          mkdir -p tfs/bin/macos13-intel64
+          cd tfs/bin/macos13-intel64
+          cp /usr/local/opt/openssl@3/lib/libcrypto.3.dylib .
+          cp /usr/local/opt/openssl@3/lib/libssl.3.dylib .
+          cp /usr/local/opt/openssl@3/LICENSE.txt .
+          cp /usr/local/opt/openssl@3/README.md .
+          CRYPT_PATH=`otool -L libssl.3.dylib | grep libcrypt | cut -f 1 -d ' '`
+          install_name_tool -id @loader_path/libcrypto.3.dylib libcrypto.3.dylib
+          install_name_tool -id @loader_path/libssl.3.dylib libssl.3.dylib
+          install_name_tool -change $CRYPT_PATH @loader_path/libcrypto.3.dylib libssl.3.dylib
+          codesign --force --deep --sign - libcrypto.3.dylib
+          codesign --force --deep --sign - libssl.3.dylib
+          echo OTOOL crypto
+          otool -L libcrypto.3.dylib
+          echo OTOOL ssl
+          otool -L libssl.3.dylib
+          cd ../..
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_macos_intel_openssl bin
+          cd ..
+          ./bin/macos13-intel64/tfs -o ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_macos_intel64.tfs -a ./mesingle/tfs_hd tfs
+
+      - name: Upload macos-intel downloads
+        uses: actions/upload-artifact@v4
+        with: 
+          name: macos-intel-downloads
+          path: downloads
+          
+      - name: Upload macos-intel packages
+        uses: actions/upload-artifact@v4
+        with: 
+          name: macos-intel-packages
+          path: packages

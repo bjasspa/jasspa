@@ -2,6 +2,12 @@ name: Build windows (Win-latest)
 
 on:
   workflow_dispatch:
+    inputs:
+      refToBuild:
+        description: 'Branch, tag or commit SHA1 to build'
+        default: ''
+        required: true
+        type: string
 
 jobs:
   build:
@@ -9,122 +15,124 @@ jobs:
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
     steps:
-    - name: Find VS
-      shell: pwsh
-      run: |
-        $installationPath = Get-VSSetupInstance `
-          | Select-VSSetupInstance -Require Microsoft.VisualStudio.Workload.NativeDesktop -Latest `
-          | Select-Object -ExpandProperty InstallationPath
-        Write-Output "VSDEVCMD=${installationPath}\Common7\Tools\VsDevCmd.bat" `
-          | Out-File -FilePath "${Env:GITHUB_ENV}" -Append
-        cat "${Env:GITHUB_ENV}"
-        
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Find VS
+        shell: pwsh
+        run: |
+          $installationPath = Get-VSSetupInstance `
+            | Select-VSSetupInstance -Require Microsoft.VisualStudio.Workload.NativeDesktop -Latest `
+            | Select-Object -ExpandProperty InstallationPath
+          Write-Output "VSDEVCMD=${installationPath}\Common7\Tools\VsDevCmd.bat" `
+            | Out-File -FilePath "${Env:GITHUB_ENV}" -Append
+          cat "${Env:GITHUB_ENV}"
+          
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.refToBuild }}
 
-    - name: Download pre-built OpenSSL
-      shell: pwsh
-      run: |
-        cd .\microemacs\3rdparty
-        Invoke-WebRequest https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.0.14.zip -OutFile openssl.zip
-        Expand-Archive -Path .\openssl.zip -DestinationPath .
-        dir .
-        
-    - name: Compile windows100 mec
-      shell: pwsh
-      run: |
-        & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
-          | % { , ($_ -Split '=', 2) } `
-          | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
-        nmake -f winmsvc.mak BTYP=c
-      working-directory: ./microemacs/src
+      - name: Download pre-built OpenSSL
+        shell: pwsh
+        run: |
+          cd .\microemacs\3rdparty
+          Invoke-WebRequest https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.0.14.zip -OutFile openssl.zip
+          Expand-Archive -Path .\openssl.zip -DestinationPath .
+          dir .
+          
+      - name: Compile windows100 mec
+        shell: pwsh
+        run: |
+          & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
+            | % { , ($_ -Split '=', 2) } `
+            | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
+          nmake -f winmsvc.mak BTYP=c
+        working-directory: ./microemacs/src
 
-    - name: Compile windows100 mew
-      shell: pwsh
-      run: |
-        & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
-          | % { , ($_ -Split '=', 2) } `
-          | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
-        nmake -f winmsvc.mak BTYP=w
-      working-directory: ./microemacs/src
+      - name: Compile windows100 mew
+        shell: pwsh
+        run: |
+          & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
+            | % { , ($_ -Split '=', 2) } `
+            | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
+          nmake -f winmsvc.mak BTYP=w
+        working-directory: ./microemacs/src
 
-    - name: Create windows100 bin download
-      shell: pwsh
-      run: |
-        mkdir -Path downloads
-        mkdir -Path packages
-        cd .\microemacs\bin
-        Remove-Item .gitignore
-        Rename-Item -Path windows100-intel32-msvc17 -NewName windows100-intel32
-        cd ..
-        $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
-        Compress-Archive -Path bin,COPYING,license.txt,readme.txt -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows_binaries
+      - name: Create windows100 bin download
+        shell: pwsh
+        run: |
+          mkdir -Path downloads
+          mkdir -Path packages
+          cd .\microemacs\bin
+          Remove-Item .gitignore
+          Rename-Item -Path windows100-intel32-msvc17 -NewName windows100-intel32
+          cd ..
+          $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
+          Compress-Archive -Path bin,COPYING,license.txt,readme.txt -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows_binaries
 
-    - name: Create windows100 openssl download
-      shell: pwsh
-      run: |
-        cd .\microemacs
-        $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
-        cd .\3rdparty\openssl-3.0\x86\bin
-        mkdir -Path tfs\bin\windows100-intel32
-        Copy-Item -Path libssl-3.dll -Destination tfs\bin\windows100-intel32
-        Copy-Item -Path libcrypto-3.dll -Destination tfs\bin\windows100-intel32
-        Copy-Item -Path ..\..\version.txt -Destination tfs\bin\windows100-intel32
-        Copy-Item -Path ..\..\LICENSE.txt -Destination tfs\bin\windows100-intel32
-        cd tfs
-        Compress-Archive -Path bin -DestinationPath ..\..\..\..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows_openssl.zip
-        cd ..
-        ..\..\..\..\bin\windows100-intel32\tfs -o ../../../../../packages/Jasspa_MicroEmacs_${env:MEVER}_openssl_windows_intel32.tfs -a ../../../../mesingle/tfs_hd tfs
+      - name: Create windows100 openssl download
+        shell: pwsh
+        run: |
+          cd .\microemacs
+          $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
+          cd .\3rdparty\openssl-3.0\x86\bin
+          mkdir -Path tfs\bin\windows100-intel32
+          Copy-Item -Path libssl-3.dll -Destination tfs\bin\windows100-intel32
+          Copy-Item -Path libcrypto-3.dll -Destination tfs\bin\windows100-intel32
+          Copy-Item -Path ..\..\version.txt -Destination tfs\bin\windows100-intel32
+          Copy-Item -Path ..\..\LICENSE.txt -Destination tfs\bin\windows100-intel32
+          cd tfs
+          Compress-Archive -Path bin -DestinationPath ..\..\..\..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows_openssl.zip
+          cd ..
+          ..\..\..\..\bin\windows100-intel32\tfs -o ../../../../../packages/Jasspa_MicroEmacs_${env:MEVER}_openssl_windows_intel32.tfs -a ../../../../mesingle/tfs_hd tfs
 
-    - name: Compile windows100 static mec
-      shell: pwsh
-      run: |
-        & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
-          | % { , ($_ -Split '=', 2) } `
-          | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
-        nmake -f winmsvc.mak BTYP=c LSTT=1
-      working-directory: ./microemacs/src
+      - name: Compile windows100 static mec
+        shell: pwsh
+        run: |
+          & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
+            | % { , ($_ -Split '=', 2) } `
+            | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
+          nmake -f winmsvc.mak BTYP=c LSTT=1
+        working-directory: ./microemacs/src
 
-    - name: Create windows100 mecs
-      shell: pwsh
-      run: |
-        cd .\microemacs
-        $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
-        cd .\mesingle
-        mkdir -Path bin\windows100-intel32
-        ..\bin\windows100-intel32\mec.exe -p "@mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mec.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mecs.exe
-        Copy-Item -Path ..\COPYING -Destination .
-        Copy-Item -Path ..\license.txt -Destination .
-        Copy-Item -Path ..\readme.txt -Destination .
-        Compress-Archive -Path bin,COPYING,license.txt,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows_mecs
+      - name: Create windows100 mecs
+        shell: pwsh
+        run: |
+          cd .\microemacs
+          $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
+          cd .\mesingle
+          mkdir -Path bin\windows100-intel32
+          ..\bin\windows100-intel32\mec.exe -p "@mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mec.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mecs.exe
+          Copy-Item -Path ..\COPYING -Destination .
+          Copy-Item -Path ..\license.txt -Destination .
+          Copy-Item -Path ..\readme.txt -Destination .
+          Compress-Archive -Path bin,COPYING,license.txt,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows_mecs
 
-    - name: Compile windows100 static mecw
-      shell: pwsh
-      run: |
-        & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
-          | % { , ($_ -Split '=', 2) } `
-          | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
-        nmake -f winmsvc.mak BTYP=w LSTT=1
-      working-directory: ./microemacs/src
+      - name: Compile windows100 static mecw
+        shell: pwsh
+        run: |
+          & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
+            | % { , ($_ -Split '=', 2) } `
+            | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
+          nmake -f winmsvc.mak BTYP=w LSTT=1
+        working-directory: ./microemacs/src
 
-    - name: Create windows100 mews
-      shell: pwsh
-      run: |
-        cd .\microemacs
-        $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
-        cd .\mesingle
-        Remove-Item bin\windows100-intel32\mecs.exe
-        ..\bin\windows100-intel32\mec.exe -p "@mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mew.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mews.exe
-        Compress-Archive -Path bin,COPYING,license.txt,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows_mews
+      - name: Create windows100 mews
+        shell: pwsh
+        run: |
+          cd .\microemacs
+          $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
+          cd .\mesingle
+          Remove-Item bin\windows100-intel32\mecs.exe
+          ..\bin\windows100-intel32\mec.exe -p "@mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mew.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mews.exe
+          Compress-Archive -Path bin,COPYING,license.txt,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_windows_mews
 
-    - name: Upload Packages
-      uses: actions/upload-artifact@v4
-      with: 
-        name: windows100-downloads
-        path: downloads
+      - name: Upload Packages
+        uses: actions/upload-artifact@v4
+        with: 
+          name: windows100-downloads
+          path: downloads
 
-    - name: Upload windows100 packages
-      uses: actions/upload-artifact@v4
-      with: 
-        name: windows100-packages
-        path: packages
+      - name: Upload windows100 packages
+        uses: actions/upload-artifact@v4
+        with: 
+          name: windows100-packages
+          path: packages
