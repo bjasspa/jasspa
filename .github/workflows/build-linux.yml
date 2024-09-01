@@ -5,7 +5,8 @@ on:
     inputs:
       refToBuild:
         description: 'Branch, tag or commit SHA1 to build'
-        required: false
+        default: ''
+        required: true
         type: string
 
 jobs:
@@ -14,110 +15,112 @@ jobs:
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.refToBuild }}
-     
-    - name: Compile nroff tools
-      run: |
-        mkdir downloads
-        mkdir packages
-        cd ./nroff
-        make
+       
+      - name: Compile nroff tools
+        run: |
+          mkdir downloads
+          mkdir packages
+          cd ./nroff
+          make
 
-    - name: Compile linux mec
-      run: |
-        cd ./microemacs/src
-        ./build.sh -t c
-    - name: Compile linux mew
-      run: |
-        cd ./microemacs/src
-        ./build.sh -t w
-    - name: Create linux binaries download
-      run: |
-        cd ./microemacs/bin
-        mv linux5-intel64-gcc9 linux5-intel64
-        rm ./.gitignore
-        cd ..
-        export MEVER=`./bin/linux5-intel64/mec -p @contribs/ver.emf`
-        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_linux_binaries bin COPYING license.txt readme.txt
+      - name: Compile linux mec
+        run: |
+          cd ./microemacs/src
+          ./build.sh -t c
 
-    - name: Create linux mecs
-      run: |
-        export MEVER=`./microemacs/bin/linux5-intel64/mec -p @microemacs/contribs/ver.emf`
-        cd ./microemacs/mesingle
-        rm -rf bin/linux5-intel64
-        mkdir -p bin/linux5-intel64
-        ../bin/linux5-intel64/mec -p "@mesgen" -f -p ../bin/linux5-intel64/mec -t ../bin/linux5-intel64/tfs -o bin/linux5-intel64/mecs
-        cp ../COPYING ./
-        cp ../license.txt ./
-        cp ../readme.txt ./
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_linux_mecs bin COPYING license.txt readme.txt
-        
-    - name: Create linux mews
-      run: |
-        export MEVER=`./microemacs/bin/linux5-intel64/mec -p @microemacs/contribs/ver.emf`
-        cd ./microemacs/mesingle
-        rm -rf bin/linux5-intel64
-        mkdir -p bin/linux5-intel64
-        ../bin/linux5-intel64/mec -p "@mesgen" -f -p ../bin/linux5-intel64/mew -t ../bin/linux5-intel64/tfs -o bin/linux5-intel64/mews
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_linux_mews bin COPYING license.txt readme.txt
+      - name: Compile linux mew
+        run: |
+          cd ./microemacs/src
+          ./build.sh -t w
 
-    - name: Create linux OpenSSL download
-      run: |
-        cd ./microemacs/
-        export MEVER=`./bin/linux5-intel64/mec -p @contribs/ver.emf`
-        rm -rf tfs
-        mkdir -p tfs/bin/linux5-intel64
-        cd tfs
-        cp /lib/x86_64-linux-gnu/libcrypto.so bin/linux5-intel64
-        cp /lib/x86_64-linux-gnu/libssl.so bin/linux5-intel64
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_linux_openssl bin
-        cd ..
-        ./bin/linux5-intel64/tfs -o ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_linux_intel64.tfs -a ./mesingle/tfs_hd tfs
+      - name: Create linux binaries download
+        run: |
+          cd ./microemacs/bin
+          mv linux5-intel64-gcc9 linux5-intel64
+          rm ./.gitignore
+          cd ..
+          export MEVER=`./bin/linux5-intel64/mec -p @contribs/ver.emf`
+          zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_linux_binaries bin COPYING license.txt readme.txt
 
-    - name: Generate docs
-      run: |
-        export PATH=`pwd`/microemacs/bin/linux5-intel64:`pwd`/nroff/bin/linux:$PATH
-        export MEPATH=`pwd`/microemacs/macros
-        export MEVER=`mec -p @microemacs/contribs/ver.emf`
-        cd ./microemacs/doc
-        make me.ehf
-        rm -rf tfs
-        mkdir -p tfs/macros
-        mv me.ehf tfs/macros
-        cd tfs
-        cp ../../COPYING ./
-        cp ../../license.txt ./
-        cp ../../readme.txt ./
-        zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_hlpehf macros COPYING license.txt readme.txt
-        cd ..
-        ../bin/linux5-intel64/tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_hlpehf.tfs -a ../mesingle/tfs_hd tfs
+      - name: Create linux mecs
+        run: |
+          export MEVER=`./microemacs/bin/linux5-intel64/mec -p @microemacs/contribs/ver.emf`
+          cd ./microemacs/mesingle
+          rm -rf bin/linux5-intel64
+          mkdir -p bin/linux5-intel64
+          ../bin/linux5-intel64/mec -p "@mesgen" -f -p ../bin/linux5-intel64/mec -t ../bin/linux5-intel64/tfs -o bin/linux5-intel64/mecs
+          cp ../COPYING ./
+          cp ../license.txt ./
+          cp ../readme.txt ./
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_linux_mecs bin COPYING license.txt readme.txt
+          
+      - name: Create linux mews
+        run: |
+          export MEVER=`./microemacs/bin/linux5-intel64/mec -p @microemacs/contribs/ver.emf`
+          cd ./microemacs/mesingle
+          rm -rf bin/linux5-intel64
+          mkdir -p bin/linux5-intel64
+          ../bin/linux5-intel64/mec -p "@mesgen" -f -p ../bin/linux5-intel64/mew -t ../bin/linux5-intel64/tfs -o bin/linux5-intel64/mews
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_linux_mews bin COPYING license.txt readme.txt
 
-    - name: Generate macros
-      run: |
-        cd ./microemacs/
-        export MEVER=`./bin/linux5-intel64/mec -p @contribs/ver.emf`
-        cd macros
-        make -f Makefile release
-        cd ../release/jasspa/
-        cp ../../COPYING ./
-        cp ../../license.txt ./
-        cp ../../readme.txt ./
-        zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_macros macros COPYING license.txt readme.txt
-        cd ..
-        ../bin/linux5-intel64/tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_macros.tfs -a ../mesingle/tfs_hd jasspa
+      - name: Create linux OpenSSL download
+        run: |
+          cd ./microemacs/
+          export MEVER=`./bin/linux5-intel64/mec -p @contribs/ver.emf`
+          rm -rf tfs
+          mkdir -p tfs/bin/linux5-intel64
+          cd tfs
+          cp /lib/x86_64-linux-gnu/libcrypto.so bin/linux5-intel64
+          cp /lib/x86_64-linux-gnu/libssl.so bin/linux5-intel64
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_linux_openssl bin
+          cd ..
+          ./bin/linux5-intel64/tfs -o ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_linux_intel64.tfs -a ./mesingle/tfs_hd tfs
 
-    - name: Upload linux downloads
-      uses: actions/upload-artifact@v4
-      with: 
-        name: linux-downloads
-        path: downloads
-        
-    - name: Upload linux packages
-      uses: actions/upload-artifact@v4
-      with: 
-        name: linux-packages
-        path: packages
-    
+      - name: Generate docs
+        run: |
+          export PATH=`pwd`/microemacs/bin/linux5-intel64:`pwd`/nroff/bin/linux:$PATH
+          export MEPATH=`pwd`/microemacs/macros
+          export MEVER=`mec -p @microemacs/contribs/ver.emf`
+          cd ./microemacs/doc
+          make me.ehf
+          rm -rf tfs
+          mkdir -p tfs/macros
+          mv me.ehf tfs/macros
+          cd tfs
+          cp ../../COPYING ./
+          cp ../../license.txt ./
+          cp ../../readme.txt ./
+          zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_hlpehf macros COPYING license.txt readme.txt
+          cd ..
+          ../bin/linux5-intel64/tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_hlpehf.tfs -a ../mesingle/tfs_hd tfs
+
+      - name: Generate macros
+        run: |
+          cd ./microemacs/
+          export MEVER=`./bin/linux5-intel64/mec -p @contribs/ver.emf`
+          cd macros
+          make -f Makefile release
+          cd ../release/jasspa/
+          cp ../../COPYING ./
+          cp ../../license.txt ./
+          cp ../../readme.txt ./
+          zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_macros macros COPYING license.txt readme.txt
+          cd ..
+          ../bin/linux5-intel64/tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_macros.tfs -a ../mesingle/tfs_hd jasspa
+
+      - name: Upload linux downloads
+        uses: actions/upload-artifact@v4
+        with: 
+          name: linux-downloads
+          path: downloads
+          
+      - name: Upload linux packages
+        uses: actions/upload-artifact@v4
+        with: 
+          name: linux-packages
+          path: packages
+      
