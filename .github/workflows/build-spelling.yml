@@ -40,7 +40,7 @@ jobs:
               mkdir -p tfs/spelling
               cp *${ii}* tfs/spelling
               cd tfs
-              zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_ls${ii} spelling
+              zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_spelling_${ii} spelling
               cd ..
               tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_ls${ii}.tfs -a ../mesingle/tfs_hd tfs
           done

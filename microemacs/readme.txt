@@ -15,11 +15,11 @@ VERY QUICK START GUIDE
 
 For your platform download the single-file binary zip file:
 
-    - Jasspa_MicroEmacs_<VERSION>_<PLATFORM>_mecs.zip for console/terminal app, this should work on all computers of
-      given platform.
+  - Jasspa_MicroEmacs_<VERSION>_abin_<PLATFORM>_mecs.zip for console/terminal app, this should work on all computers of
+    given platform.
 
-    - Jasspa_MicroEmacs_<VERSION>_<PLATFORM>_mews.zip  for window  based app, this should give best user  experience
-      but may not work on all computers (particularly macOS where XQuartz is required).
+  - Jasspa_MicroEmacs_<VERSION>_abin_<PLATFORM>_mews.zip  for window  based app, this should give best user  experience
+    but may not work on all computers (particularly macOS where XQuartz is required).
 
 Extract the executable for the zip and run.
 
@@ -42,15 +42,15 @@ To build a more complete, native environment do the following:
 
 2. Download the following zip package files:
 
-    a. **Required:** Binaries for your platform (Jasspa_MicroEmacs_<VERSION>_<PLATFORM>_binaries.zip)
+    a. **Required:** Binaries for your platform (Jasspa_MicroEmacs_<VERSION>_bin_<PLATFORM>_binaries.zip)
      
     b. **Required:** Macro files (Jasspa_MicroEmacs_<VERSION>_macros.zip)
 
-    c. Help file (Jasspa_MicroEmacs_<VERSION>_hlpehf.zip)
+    c. Help file (Jasspa_MicroEmacs_<VERSION>_help_ehf.zip)
 
-    d. Spelling dictionaries for any language you require (Jasspa_MicroEmacs_<VERSION>_ls<LANGUAGE>.zip)
+    d. Spelling dictionaries for any language you require (Jasspa_MicroEmacs_<VERSION>_spelling_<LANGUAGE>.zip)
      
-    e. OpenSSL dynamic libraries (Jasspa_MicroEmacs_<VERSION>_<PLATFORM>_openssl.zip) for https/ftps support (country
+    e. OpenSSL dynamic libraries (Jasspa_MicroEmacs_<VERSION>_bin_<PLATFORM>_openssl.zip) for https/ftps support (country
     permitting) 
 
 3. Extract downloaded zip files into the ~/MicroEmacs directory you created in (1), this should have created:

@@ -44,7 +44,7 @@ jobs:
           rm ./.gitignore
           cd ..
           export MEVER=`./bin/linux5-intel64/mec -p @contribs/ver.emf`
-          zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_linux_binaries bin COPYING license.txt readme.txt
+          zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_linux_binaries bin COPYING license.txt readme.txt
 
       - name: Create linux mecs
         run: |
@@ -56,7 +56,7 @@ jobs:
           cp ../COPYING ./
           cp ../license.txt ./
           cp ../readme.txt ./
-          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_linux_mecs bin COPYING license.txt readme.txt
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_linux_mecs bin COPYING license.txt readme.txt
           
       - name: Create linux mews
         run: |
@@ -65,7 +65,7 @@ jobs:
           rm -rf bin/linux5-intel64
           mkdir -p bin/linux5-intel64
           ../bin/linux5-intel64/mec -p "@mesgen" -f -p ../bin/linux5-intel64/mew -t ../bin/linux5-intel64/tfs -o bin/linux5-intel64/mews
-          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_linux_mews bin COPYING license.txt readme.txt
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_linux_mews bin COPYING license.txt readme.txt
 
       - name: Create linux OpenSSL download
         run: |
@@ -76,7 +76,7 @@ jobs:
           cd tfs
           cp /lib/x86_64-linux-gnu/libcrypto.so bin/linux5-intel64
           cp /lib/x86_64-linux-gnu/libssl.so bin/linux5-intel64
-          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_linux_openssl bin
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_bin_linux_openssl bin
           cd ..
           ./bin/linux5-intel64/tfs -o ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_linux_intel64.tfs -a ./mesingle/tfs_hd tfs
 
@@ -94,7 +94,7 @@ jobs:
           cp ../../COPYING ./
           cp ../../license.txt ./
           cp ../../readme.txt ./
-          zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_hlpehf macros COPYING license.txt readme.txt
+          zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_help_ehf macros COPYING license.txt readme.txt
           cd ..
           ../bin/linux5-intel64/tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_hlpehf.tfs -a ../mesingle/tfs_hd tfs
 
