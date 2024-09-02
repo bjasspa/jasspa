@@ -19,7 +19,7 @@
 .SH SYNOPSIS
 \fB%http-cookies\fR "\fIcookie=value; ...\fR"; Default is undefined
 .br
-\fB%http-header\fR "\fI:VERB:"; Default is undefined
+\fB%http-header\fR "\fI:VERB:\fR"; Default is undefined
 .br
 \fB%http-header\fR "\fIHeader1: value1\\r\\n ...\fR";
 .br
@@ -53,6 +53,10 @@ its value using macro code.
 .PP
 \*(mS cookie support is minimal, it does not support  domains,  expires, paths etc. it is up to the user or supporting
 macros to implement any additional features required.
+.PP
+\fB%http-header\fR can effect how a file is submitted using 
+.Ht %http-post-file 5 ,
+see help for the variable for more information.
 .SH "SEE ALSO"
 .na
 .Ht %http-flags 5 ,

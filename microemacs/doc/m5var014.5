@@ -33,7 +33,11 @@ When   \fB%http-post-data\fR   variable  is  set  to  a  non-empty   string  its
 URL encoded form data.
 .PP
 When  \fB%http-post-file\fR  variable is set to a non-empty  string its value must be set to the  absolute  path of an
-existing local file that is to be submitted as a multi-part form submission.
+existing local file that is to be submitted with the http request. If
+.Ht %http-header 5
+is set and includes  "\fCContent-type:\fR" then the given file becomes the full data body. However, if the variable is
+not set or does not contain the header string "\fCContent-type:\fR" then the file is submitted as part of a multi-part
+form submission (with "\fCContent-Disposition: form-data;\fR" and "\fCContent-Type: application/octet-stream\fR").
 .PP 
 Both variables cannot be used at the same time. 
 .SH "SEE ALSO"

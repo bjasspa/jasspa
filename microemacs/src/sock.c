@@ -1501,15 +1501,23 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
     }
     /*Send message to the server.*/
     ss = ffbuf;
-    if((postFName != NULL) && ((pfp=fopen((char *) postFName,"rb")) == NULL))
+    if(postFName != NULL)
     {
-        if(io->urlOpts & meSOCKOPT_LOG_ERROR)
+        if((pfp=fopen((char *) postFName,"rb")) == NULL)
         {
-            snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: Failed to open post file [%s]",postFName);
-            ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,rbuff);
+            if(io->urlOpts & meSOCKOPT_LOG_ERROR)
+            {
+                snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: Failed to open post file [%s]",postFName);
+                ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,rbuff);
+            }
+            meSockClose(io,1);
+            return -19;
         }
-        meSockClose(io,1);
-        return -19;
+        fseek(pfp,0,SEEK_END);
+        if((fdLen = ftell(pfp)) <= 0)
+            fclose(pfp);
+        else
+            fseek(pfp,0,SEEK_SET);
     }
     if((hdr != NULL) && (hdr[0] == ':'))
     {
@@ -1520,7 +1528,7 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
             hdr++;
         *ss++ = ' ';
     }
-    else if((postFName != NULL) || (fdLen > 0))
+    else if(fdLen > 0)
     {
         /* send POST message to http */
         strcpy((char *) ss,"POST ");
@@ -1573,24 +1581,29 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
         ss = strBase64Encode(ss,rbuff) ;
         strcpy((char *) io->urlUsr,(char *) user);
     }
-    if(pfp != NULL)
+    if(fdLen > 0)
     {
-        meInt ii;
-        meUByte *s1, *s2 ;
-        fseek(pfp,0,SEEK_END);
-        ii = ftell(pfp) ;
-        fseek(pfp,0,SEEK_SET) ;
-        if((s1 = (meUByte *) strrchr((char *) postFName,'/')) == NULL)
-            s1 = postFName;
-        if((s2 = (meUByte *) strrchr((char *) s1,'\\')) == NULL)
-            s2 = s1;
-        pfs = sprintf((char *) rbuff,"\r\n----5Iz6dTINmxNFw6S42Ryf98IBXX1NCe%x",(meUInt) meClock());
-        ll = sprintf((char *) rbuff+pfs,"\r\nContent-Disposition: form-data; name=\"file\"; filename=\"%s\"\r\nContent-Type: application/octet-stream\r\n\r\n",s2);
-        ss += sprintf((char *) ss,"\r\nContent-Length: %d",pfs-2+ll+ii+pfs+4);
-    }
-    else if(fdLen > 0)
-    {
-        ss += sprintf((char *) ss,"\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: %d",fdLen);
+        pfs = ((hdr == NULL) || (strstr((char *) hdr,"Content-Type:") == NULL));
+        if(pfp != NULL)
+        {
+            meUByte *s1, *s2 ;
+            if(pfs)
+            {
+                if((s1 = (meUByte *) strrchr((char *) postFName,'/')) == NULL)
+                    s1 = postFName;
+                if((s2 = (meUByte *) strrchr((char *) s1,'\\')) == NULL)
+                    s2 = s1;
+                pfs = sprintf((char *) rbuff,"\r\n----5Iz6dTINmxNFw6S42Ryf98IBXX1NCe%x",(meUInt) meClock());
+                ll = sprintf((char *) rbuff+pfs,"\r\nContent-Disposition: form-data; name=\"file\"; filename=\"%s\"\r\nContent-Type: application/octet-stream\r\n\r\n",s2);
+                fdLen += pfs-2+ll+pfs+4;
+            }
+        }
+        else if(pfs)
+        {
+            strcpy((char *) ss,"\r\nContent-Type: application/x-www-form-urlencoded");
+            ss += 49;
+        }
+        ss += sprintf((char *) ss,"\r\nContent-Length: %d",fdLen);
     }
     if(cookie != NULL)
     {
@@ -1648,6 +1661,11 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
                 if(io->urlOpts & meSOCKOPT_LOG_DETAILS)
                     ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,(meUByte *) "meSock Info: Closing connection as server shutdown");
                 meSockClose(io,1);
+                if((fdLen > 0) && (pfp != NULL))
+                {
+                    fclose(pfp);
+                    fdLen = 0;
+                }
                 return meSockHttpOpen(io,flags,host,port,user,pass,file,cookie,hdr,fdLen,frmData,postFName,rbuff);
             }
 #endif
@@ -1669,27 +1687,14 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
             break;
         ss += ret;
     }
-    if(pfp != NULL)
+    if(fdLen > 0)
     {
-        ss = rbuff+2;
-        ll = strlen((char *) ss);
-        for(;;)
+        if(pfp != NULL)
         {
-#if MEOPT_OPENSSL
-            if(flags & meSOCKFLG_USE_SSL)
-                ret = OPENSSLFunc(SSL_write)(ssl,ss,ll);
-            else
-#endif
-                ret = meSocketWrite(sck,(char *) ss,ll,0);
-            if((ret <= 0) || ((ll -= ret) <= 0))
-                break;
-            ss += ret;
-        }
-        if(ret > 0)
-        {
-            while((ll=fread(ffbuf,1,meFIOBUFSIZ,pfp)) > 0)
+            if(pfs)
             {
-                ss = ffbuf;
+                ss = rbuff+2;
+                ll = strlen((char *) ss);
                 for(;;)
                 {
 #if MEOPT_OPENSSL
@@ -1703,54 +1708,36 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
                     ss += ret;
                 }
             }
-            fclose(pfp);
             if(ret > 0)
             {
-                strcpy((char *) rbuff+pfs,"--\r\n");
+                while((ll=fread(ffbuf,1,meFIOBUFSIZ,pfp)) > 0)
+                {
+                    ss = ffbuf;
+                    for(;;)
+                    {
 #if MEOPT_OPENSSL
-                if(flags & meSOCKFLG_USE_SSL)
-                    ret = OPENSSLFunc(SSL_write)(ssl,rbuff,pfs+4);
-                else
+                        if(flags & meSOCKFLG_USE_SSL)
+                            ret = OPENSSLFunc(SSL_write)(ssl,ss,ll);
+                        else
 #endif
-                    ret = meSocketWrite(sck,(char *) rbuff,pfs+4,0);
+                            ret = meSocketWrite(sck,(char *) ss,ll,0);
+                        if((ret <= 0) || ((ll -= ret) <= 0))
+                            break;
+                        ss += ret;
+                    }
+                }
+                if((ret > 0) && pfs)
+                {
+                    strcpy((char *) rbuff+pfs,"--\r\n");
+#if MEOPT_OPENSSL
+                    if(flags & meSOCKFLG_USE_SSL)
+                        ret = OPENSSLFunc(SSL_write)(ssl,rbuff,pfs+4);
+                    else
+#endif
+                        ret = meSocketWrite(sck,(char *) rbuff,pfs+4,0);
+                }
             }
-        }
-        else
             fclose(pfp);
-        if(ret <= 0)
-        {
-#if MEOPT_OPENSSL
-            if(flags & meSOCKFLG_USE_SSL)
-            {
-                if(((err = OPENSSLFunc(SSL_get_error)(ssl,ret)) == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL))
-                    io->urlFlags &= ~meSOCKFLG_SHUTDOWN;
-            }
-            else
-#endif
-                err = meSocketGetError();
-            if(io->urlOpts & meSOCKOPT_LOG_ERROR)
-            {
-                snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: Post file write error %d,%d",ret,err);
-                ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,rbuff);
-            }
-#if MEOPT_OPENSSL
-            if(flags & meSOCKFLG_USE_SSL)
-                meSockGetSSLErrors(io,rbuff);
-#endif
-            meSockClose(io,1);
-            return -22;
-        }
-    }
-    else if(fdLen > 0)
-    {
-        for(;;)
-        {
-#if MEOPT_OPENSSL
-            if(flags & meSOCKFLG_USE_SSL)
-                ret = OPENSSLFunc(SSL_write)(ssl,frmData,fdLen);
-            else
-#endif
-                ret = meSocketWrite(sck,(char *) frmData,fdLen,0);
             if(ret <= 0)
             {
 #if MEOPT_OPENSSL
@@ -1764,7 +1751,7 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
                     err = meSocketGetError();
                 if(io->urlOpts & meSOCKOPT_LOG_ERROR)
                 {
-                    snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: Form data write error %d,%d",ret,err);
+                    snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: Post file write error %d,%d",ret,err);
                     ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,rbuff);
                 }
 #if MEOPT_OPENSSL
@@ -1772,11 +1759,46 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
                     meSockGetSSLErrors(io,rbuff);
 #endif
                 meSockClose(io,1);
-                return -23;
+                return -22;
             }
-            if((fdLen -= ret) <= 0)
-                break;
-            frmData += ret;
+        }
+        else 
+        {
+            for(;;)
+            {
+#if MEOPT_OPENSSL
+                if(flags & meSOCKFLG_USE_SSL)
+                    ret = OPENSSLFunc(SSL_write)(ssl,frmData,fdLen);
+                else
+#endif
+                    ret = meSocketWrite(sck,(char *) frmData,fdLen,0);
+                if(ret <= 0)
+                {
+#if MEOPT_OPENSSL
+                    if(flags & meSOCKFLG_USE_SSL)
+                    {
+                        if(((err = OPENSSLFunc(SSL_get_error)(ssl,ret)) == SSL_ERROR_SYSCALL) || (err == SSL_ERROR_SSL))
+                            io->urlFlags &= ~meSOCKFLG_SHUTDOWN;
+                    }
+                    else
+#endif
+                        err = meSocketGetError();
+                    if(io->urlOpts & meSOCKOPT_LOG_ERROR)
+                    {
+                        snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: Form data write error %d,%d",ret,err);
+                        ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,rbuff);
+                    }
+#if MEOPT_OPENSSL
+                    if(flags & meSOCKFLG_USE_SSL)
+                        meSockGetSSLErrors(io,rbuff);
+#endif
+                    meSockClose(io,1);
+                    return -23;
+                }
+                if((fdLen -= ret) <= 0)
+                    break;
+                frmData += ret;
+            }
         }
     }
     /* must read header getting now ditch the header, read up to the first blank line */
@@ -1848,8 +1870,10 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
             if(cc != '\0')
             {
                 strcpy((char *) rbuff,(char *) ss);
-                /* note: carry on reading to validate the rest of the header and get updated cookies etc. */
-                err = 0;
+                /* This is only a redirection if the HTTP response status code returned is 3##, e.g. if its 201 created, 
+                 * then this URL is the location of the new resource and not to be redirected to. */
+                if((err == 1) || ((err >= 300) && (err < 400)))
+                    err = 0;
             }
         }
         else if((cc == 't') && ((ffbuf[1]|0x20) == 'r') && ((ffbuf[2]|0x20) == 'a') && ((ffbuf[3]|0x20) == 'n') && ((ffbuf[4]|0x20) == 's') &&
