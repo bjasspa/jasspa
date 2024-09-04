@@ -1,4 +1,5 @@
-{% capture URLPREFIX %}releases/download/me_20240901/Jasspa_MicroEmacs_20240901_{% endcapture %
+{% capture URLPREFIX %}releases/download/me_20240901/Jasspa_MicroEmacs_20240901_{% endcapture %}
+
 ## MicroEmacs (2024) TextEditor
 
 MicroEmacs  text editor is an Emacs like text editor  suitable for experienced
