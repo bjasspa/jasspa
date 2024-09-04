@@ -1,4 +1,3 @@
-{% capture URLPREFIX %}releases/download/me_20240901/Jasspa_MicroEmacs_20240901_{% endcapture %}
 
 ## MicroEmacs (2024) TextEditor
 
@@ -42,7 +41,7 @@ the executables into a folder belonging to your PATH
 
 | Platform      | Terminal        | GUI (X11 on Linux/Mac) |
 |:-------------:|:---------------:|:----------------------:|
-| Linux         | [mecs]({{ URLPREFIX }}abin_linux_mecs.zip)       | [mews](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_linux_mews.zip) |
+| Linux         | [mecs]({% data vars.URLPREFIX %}abin_linux_mecs.zip)       | [mews](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_linux_mews.zip) |
 | MacOS apple   | [mecs](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_apple_mecs.zip) | [mews](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_apple_mews.zip) |
 | MacOS intel   | [mecs](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_intel_mecs.zip) | [mews](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_intel_mews.zip)
 | Windows       | [mecs](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_windows_mecs.zip)     | [mews](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_windows_mews.zip)
