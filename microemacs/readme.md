@@ -15,10 +15,10 @@ VERY QUICK START GUIDE
 
 For your platform download the single-file binary zip file:
 
-- Jasspa_MicroEmacs_\<VERSION>_abin_\<PLATFORM>_mecs.zip for console/terminal app, this should work on all computers of
+- Jasspa_MicroEmacs_\<VERSION>\_abin_\<PLATFORM>\_mecs.zip for console/terminal app, this should work on all computers of
   given platform.
 
-- Jasspa_MicroEmacs_\<VERSION>_abin__\<PLATFORM>_mews.zip  for window  based app, this should give best user  experience
+- Jasspa_MicroEmacs_\<VERSION>\_abin_\<PLATFORM>\_mews.zip  for window  based app, this should give best user  experience
   but may not work on all computers (particularly macOS where XQuartz is required).
 
 Extract the executable for the zip and run.
@@ -42,15 +42,15 @@ To build a more complete, native environment do the following:
 
 2. Download the following zip package files:
 
-    a. **Required:** Binaries for your platform (Jasspa_MicroEmacs_\<VERSION>_bin_\<PLATFORM>_binaries.zip)
+    a. **Required:** Binaries for your platform (Jasspa_MicroEmacs_\<VERSION>\_bin_\<PLATFORM>\_binaries.zip)
      
-    b. **Required:** Macro files (Jasspa_MicroEmacs_\<VERSION>_macros.zip)
+    b. **Required:** Macro files (Jasspa_MicroEmacs_\<VERSION>\_macros.zip)
 
-    c. Help file (Jasspa_MicroEmacs_\<VERSION>_help_ehf.zip)
+    c. Help file (Jasspa_MicroEmacs_\<VERSION>\_help_ehf.zip)
 
-    d. Spelling dictionaries for any language you require (Jasspa_MicroEmacs_\<VERSION>_spelling_\<LANGUAGE>.zip)
+    d. Spelling dictionaries for any language you require (Jasspa_MicroEmacs_\<VERSION>\_spelling_\<LANGUAGE>.zip)
      
-    e. OpenSSL dynamic libraries (Jasspa_MicroEmacs_\<VERSION>_bin_\<PLATFORM>_openssl.zip) for https/ftps support (country
+    e. OpenSSL dynamic libraries (Jasspa_MicroEmacs_\<VERSION>\_bin_\<PLATFORM>\_openssl.zip) for https/ftps support (country
     permitting) 
 
 3. Extract downloaded zip files into the ~/MicroEmacs directory you created in (1), this should have created:
@@ -71,7 +71,7 @@ To build a more complete, native environment do the following:
 
 5. Run:
 
-     `~/MicroEmacs/bin/\<platform>/mec`
+     `~/MicroEmacs/bin/<platform>/mec`
 
    The console version should run on all platforms, if the message '[Failed to load file me]' appears at the bottom of
    the window then you have either not set the environment variable correctly or it has not taken effect in your
@@ -79,7 +79,7 @@ To build a more complete, native environment do the following:
 
 6. Try running:
 
-     `~/MicroEmacs/bin/\<platform>/mew`
+     `~/MicroEmacs/bin/<platform>/mew`
 
    This should always work on Windows but may not on Unix systems,  particularly macOS, where an X server (XQuartz) is
    required  to  support  the  window  interface.  Fixing  issues  causing  mew to not run is beyond the scope of this
@@ -91,7 +91,7 @@ To build a more complete, native environment do the following:
 8. Run mew, if working, mec otherwise and follow the setup steps to create a basic user configuration area, this will
    create the directory:
 
-     `~/MicroEmacs/\<user-name>`
+     `~/MicroEmacs/<user-name>`
 
    All your customisations should go in here. Run the command user-setup (in the Tools menu) to start customising the
    editor.

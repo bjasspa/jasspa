@@ -127,14 +127,10 @@ set-variable %user-misc-cmd  "|alias-path-setup|cc-setup|cvs-setup|mail-setup|fi
     set-variable @# &abs @#
     set-variable #l0 &bxor #l0 @#
     set-variable $system #l0
-    !if &bxor &band @# $system &band @# #l0
-      set-variable #l0 &bxor #l0 @#
-    !endif
+    !iif &bxor &band @# $system &band @# #l0  set-variable #l0 &bxor #l0 @#
     set-variable $system #l1
     set-registry #l2 #l0
-    !if &equ &abs @# 0x400
-      user-setup-backups
-    !endif
+    !iif &equ &abs @# 0x400  user-setup-backups
   !elif &not &band #l0 @#
     !abort
   !endif
@@ -178,18 +174,14 @@ set-variable %user-misc-cmd  "|alias-path-setup|cc-setup|cvs-setup|mail-setup|fi
         !endif
         insert-string &spr "set-variable %%company-name \"%s\"" #l0
         ; don't save if we failed to save the reg file
-        !if &not .user-setup.save-err
-          save-buffer
-        !endif
+        !iif &not .user-setup.save-err  save-buffer
       !endif
     !endif
   !endif
   !if &not &seq &set #l0 &reg "/history/setup-file" "" ""
     set-variable #l0 &spr "%s%s.emf" $user-path #l0
     !if &sequ &stat "t" #l0 "R"
-      !if &reg "/history/edituser" "1"
-        !force 0 find-file &cat "file:" #l0
-      !endif
+      !iif &reg "/history/edituser" "1"  !force 0 find-file &cat "file:" #l0
     !else
       find-file &cat "file:" #l0
       beginning-of-buffer
@@ -208,23 +200,16 @@ set-variable %user-misc-cmd  "|alias-path-setup|cc-setup|cvs-setup|mail-setup|fi
         insert-string ";"
       !endif
       ; don't save if we failed to save the reg file
-      !if &not .user-setup.save-err
-        save-buffer
-      !endif
+      !iif &not .user-setup.save-err  save-buffer
     !endif
   !endif
-  !if &seq $frame-id .notes.frame-id
-    ; close notes otherwise we break the notes frame
-    !force notes-close
-  !endif
+  ; close notes otherwise we break the notes frame
+  !iif &seq $frame-id .notes.frame-id  !force notes-close
+  !iif &exi change-font-size  0 change-font-size
   3 execute-file "me"
-  !if &exi .spell.language
-    ; make sure spelling is setup otherwise auto-spell will fail
-    spell-rules-init
-  !endif
-  !if &exi .user-setup.scheme
-    change-scheme .user-setup.scheme
-  !endif
+  ; make sure spelling is setup otherwise auto-spell will fail
+  !iif &exi .spell.language  spell-rules-init
+  !iif &exi .user-setup.scheme  change-scheme .user-setup.scheme
   set-variable .user-setup.loop @#
 !emacro
 
@@ -311,14 +296,10 @@ set-variable .user-mouse-set-button.bnames "|\HLeft|\HMiddle|\HRight|Wheel \HUp|
     set-variable @# &abs @#
     set-variable #l0 &bxor #l0 @#
     set-variable $mouse #l0
-    !if &not &equ &band @# $mouse &band @# #l0
-      set-variable #l0 &bxor #l0 @#
-    !endif
+    !iif &not &equ &band @# $mouse &band @# #l0  set-variable #l0 &bxor #l0 @#
     set-variable $mouse #l1
     set-registry &spr "/history/%s/mouse" $platform #l0
-    !if &equ &abs @# 0x400
-      user-setup-backups
-    !endif
+    !iif &equ &abs @# 0x400  user-setup-backups
   !elif &not &band #l0 @#
     !abort
   !endif
@@ -574,9 +555,7 @@ set-variable .user-set-mouse.A ""
   set-variable #l0 &reg #l2 "0"
   !if &equ &abs @# 2
     set-variable #l1 &div #l0 0x10000
-    !if &not #l1
-      set-variable #l1 #l0
-    !endif
+    !iif &not #l1  set-variable #l1 #l0
   !else
     set-variable #l1 &band #l0 0x0ffff
   !endif
@@ -840,9 +819,7 @@ osd .osd.user-gener 390 "MdtxmfH" .scheme.osd-ebtt &cat "Sho\Hw Modes  " &mid $w
   !endif
 !emacro
 
-!if &gre &len &set #l0 $user-path 35
-  set-variable #l0 &cat &mid $window-chars 57 1 &rig #l0 &sub &len #l0 35
-!endif
+!iif &gre &len &set #l0 $user-path 35  set-variable #l0 &cat &mid $window-chars 57 1 &rig #l0 &sub &len #l0 35
 -1 osd .osd.user-start
 osd .osd.user-start 0   "s" 55 18 -1 -1
 osd .osd.user-start 10  ""
