@@ -37,12 +37,12 @@ MicroEmacs single file executables comes in two flavors:
 Download one of the following zip archives with the binaries  inside and place
 the executables into a folder belonging to your PATH
 
-| Platform      | mecs (terminal) | GUI (X11 on Linux/Mac) |
+| Platform      | Terminal        | GUI (X11 on Linux/Mac) |
 |:-------------:|:---------------:|:----------------------:|
-| Linux         | [](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_linux_mecs.zip)       | [+](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_linux_mews.zip) |
-| MacOS apple   | [x](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_apple_mecs.zip) | [x](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_apple_mews.zip) |
-| MacOS intel   | [x](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_intel_mecs.zip) | [x](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_intel_mews.zip)
-| Windows       | [x](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_windows_mecs.zip)     | [x](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_windows_mews.zip)
+| Linux         | [mecs](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_linux_mecs.zip)       | [mews](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_linux_mews.zip) |
+| MacOS apple   | [mecs](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_apple_mecs.zip) | [mews](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_apple_mews.zip) |
+| MacOS intel   | [mecs](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_intel_mecs.zip) | [mews](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_intel_mews.zip)
+| Windows       | [mecs](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_windows_mecs.zip)     | [mews](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_windows_mews.zip)
 
 Then test the executable in your terminal:
 
