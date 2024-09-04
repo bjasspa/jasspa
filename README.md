@@ -64,7 +64,7 @@ Then you should select your keyboard layout. Either you use the menubar on top
 to find that  functionality "Esc =" should work in the terminal and in the GUI
 application,  the  latter  can use as well  mouse or "Alt-t"  key and then `u`
 combination, or you enter the command `Esc x user-setup`. In the Menu you have
-to access the "__T__ools-__U__ser Setup" entry.
+to access the __T__ools - __U__ser Setup entry.
 
 In User setup select in the "Start-Up" your keyboard layout and in GUI mode in
 the  "Platform"  tab your font. X11 users  here will  greatly  benefit if they
