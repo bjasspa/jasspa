@@ -13,15 +13,15 @@ In contrast to other editors it offers a set of unique features:
 - hypertext help system within your editor
 - alternative keybindings
 
-As other editors it has:
+As other editors it has obviously:
 
-- session management - separate parallel sessions due to low memory footprint are no problem
-- extensible by a macro language
+- session management (pro: parallel sessions for every project - due to low memory footprint are no problem)
+- extensible by a macro language (as well a macro recorder)
 - syntax highlighting for many languages - even nested highlighting (R, Python etc in Markdown documents )
 - spell checking for many languages
 - and much more ...
 
-Cons:
+Cons (because it is a __Micro__-Emacs:
 
 - no Unicode support - but all the ISO and extended Windows encodings are usable
 - no soft (visual) wrap - what you see is what you get
