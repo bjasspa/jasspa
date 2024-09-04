@@ -17,7 +17,7 @@ As other editors it has:
 - extensible by macro language
 - syntax hilighting - even nested highlighting (R, Python etc in Markdown documents )
 - spell checking
-- much more ...
+- and much more ...
 
 Cons:
 
@@ -66,7 +66,7 @@ application,  the  latter  can use as well  mouse or "Alt-t"  key and then `u`
 combination, or you enter the command `Esc x user-setup`. In the Menu you have
 to access the "(T)ools - (U)ser Setup" entry.
 
-In User setup select in the "Start-Up" your keyboard layout and in GUI mode in
+In User setup select in the "Start-Up" tab your keyboard layout and in GUI mode in
 the  "Platform"  tab your font. X11 users  here will  greatly  benefit if they
 installed  the  xfontsel  tool as it allows to  visually  select the font on a
 MacOS or Linux system.
