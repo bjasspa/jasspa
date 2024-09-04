@@ -39,7 +39,7 @@ the executables into a folder belonging to your PATH
 
 | Platform      | mecs (terminal) | GUI (X11 on Linux/Mac) |
 |:-------------:|:---------------:|:----------------------:|
-| Linux         | [\2B73](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_linux_mecs.zip)       | [+](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_linux_mews.zip) |
+| Linux         | [&#2B73;](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_linux_mecs.zip)       | [+](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_linux_mews.zip) |
 | MacOS apple   | [x](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_apple_mecs.zip) | [x](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_apple_mews.zip) |
 | MacOS intel   | [x](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_intel_mecs.zip) | [x](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_intel_mews.zip)
 | Windows       | [x](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_windows_mecs.zip)     | [x](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_windows_mews.zip)
