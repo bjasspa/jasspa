@@ -9,14 +9,16 @@ In contrast to other editors it offers a set of unique features:
 - small size 1-2MB on your harddisk
 - single file binaries - easy to install 
 - low memory footprint - 1-2 Mb in principle
-- terminal and GUI version with full menu support
+- terminal and GUI version working the same way with full menu support
+- hypertext help system within your editor
+- alternative keybindings
 
 As other editors it has:
 
-- session management
-- extensible by macro language
-- syntax hilighting - even nested highlighting (R, Python etc in Markdown documents )
-- spell checking
+- session management - separate parallel sessions due to low memory footprint are no problem
+- extensible by a macro language
+- syntax highlighting for many languages - even nested highlighting (R, Python etc in Markdown documents )
+- spell checking for many languages
 - and much more ...
 
 Cons:
