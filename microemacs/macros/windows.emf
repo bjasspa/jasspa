@@ -34,35 +34,34 @@
   1 change-font .change-font.wftp
 !else
   ; using our own window
+  define-macro change-font-size
+    !if &not &and @? @#
+      set-variable .dpth &lget .ofnt 5
+      5 change-font &lget .ofnt 2 &lget .ofnt 8 &lget .ofnt 3 &lget .ofnt 6 &lget .ofnt 7
+      ml-write &spr "[Text Zoom reset  (%s: %dx%d)]" &lget .ofnt 8 &lget .ofnt 4 &lget .ofnt 5
+    !elif &les &set #l0 &add .dpth @# 5
+      -8 ml-write "[Text too small]"
+    !else
+      !if &exi .font
+        set-variable #l1 .font
+      !elif &band 6 &lget .ofnt 1
+        set-variable #l1 &lget .ofnt 8
+      !else
+        set-variable #l1 "Lucida Console"
+      !endif
+      1 change-font &lget .ofnt 2 #l1 &lget .ofnt 3 0 &set .dpth #l0
+      ml-write &spr "[Text Zoom: %d%%  (%s: %dx%d)]" &div &mul &lget $result 5 100 &lget .ofnt 5 &lget $result 8 &lget $result 4 &lget $result 5
+    !endif
+  !emacro
   set-variable #l0 &reg &spr "/history/%s/font" $platform ""
   set-variable #l1 &reg &spr "/history/%s/font-weight" $platform "0"
   set-variable #l2 &reg &spr "/history/%s/font-width" $platform "0"
   set-variable #l3 &reg &spr "/history/%s/font-depth" $platform "0"
   !force 1 change-font .change-font.wftp #l0 #l1 #l2 #l3
-  set-variable .change-font.ofnt $result
-  define-macro change-font-size
-    !if &not &and @? @#
-      set-variable .change-font.sz-dpth &lget .change-font.ofnt 5
-      5 change-font &lget .change-font.ofnt 2 &lget .change-font.ofnt 8 &lget .change-font.ofnt 3 &lget .change-font.ofnt 6 &lget .change-font.ofnt 7
-      ml-write "[Text Zoom reset]"
-    !elif &les &set #l0 &add .change-font.sz-dpth @# 5
-      ml-write "[Text too small]"
-      !abort
-    !else
-      set-variable .change-font.sz-dpth #l0
-      5 change-font &lget .change-font.ofnt 2 .change-font.sz-font &lget .change-font.ofnt 3 0 .change-font.sz-dpth
-      ml-write &spr "[Text Zoom: %d%%]" &div &mul #l0 100 &lget .change-font.ofnt 5
-    !endif
-  !emacro
-  set-variable .change-font.sz-dpth &lget .change-font.ofnt 5
-  !if &exi .change-font.sz-font
-  !elif &band 6 &lget .change-font.ofnt 1
-    set-variable .change-font.sz-font &lget .change-font.ofnt 8
-  !else
-    set-variable .change-font.sz-font "Lucida Console"
-  !endif
+  set-variable .change-font-size.ofnt $result
+  set-variable .change-font-size.dpth &lget .change-font-size.ofnt 5
   1 global-bind-key change-font-size "C-+"
-  0 global-bind-key change-font-size "C-="
+  global-bind-key change-font-size "C-="
   -1 global-bind-key change-font-size "C--"
 !endif
 0 define-macro pipe-me

@@ -205,7 +205,6 @@ set-variable %user-misc-cmd  "|alias-path-setup|cc-setup|cvs-setup|mail-setup|fi
   !endif
   ; close notes otherwise we break the notes frame
   !iif &seq $frame-id .notes.frame-id  !force notes-close
-  !iif &exi change-font-size  0 change-font-size
   3 execute-file "me"
   ; make sure spelling is setup otherwise auto-spell will fail
   !iif &exi .spell.language  spell-rules-init
