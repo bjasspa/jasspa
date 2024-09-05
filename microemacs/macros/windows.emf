@@ -60,8 +60,8 @@
   !force 1 change-font .change-font.wftp #l0 #l1 #l2 #l3
   set-variable .change-font-size.ofnt $result
   set-variable .change-font-size.dpth &lget .change-font-size.ofnt 5
-  1 global-bind-key change-font-size "C-+"
   global-bind-key change-font-size "C-="
+  1 global-bind-key change-font-size "C-+"
   -1 global-bind-key change-font-size "C--"
 !endif
 0 define-macro pipe-me
