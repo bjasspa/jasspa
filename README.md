@@ -1,5 +1,5 @@
 
-## <img src="graphics/me_m.png" />MicroEmacs (2024) TextEditor
+## <img src="microemacs/graphics/me_m.png" /> &nbsp;MicroEmacs (2024) TextEditor
 
 MicroEmacs  text editor is an Emacs like text editor  suitable for experienced
 programmers and as well beginners.
@@ -27,7 +27,7 @@ Cons (because it is a __Micro__-Emacs):
   usable
 - no soft (visual) wrap - what you see is what you get
 
-<img src="graphics/me24.png" />
+<img src="microemacs/graphics/ME24.png" />
 
 ## Installation
 
