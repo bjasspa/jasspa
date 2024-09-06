@@ -90,7 +90,7 @@ session should start with these saved settings.
     - luit - run MicroEmacs with extendd character sets on UTF-8 terminals
     - abduco - suspend a luit session
 - X11 (macOS, Linux):
-    - xfontsel - to interactively select fonts within your Micro
+    - xfontsel - to interactively select fonts from within your ME session
     - mkfontscale - if you like to add your own TTF fonts as available fonts
 
 Here as an example a bash  script  `mecu`  which runs a  MicroEmacs  on UTF-8
