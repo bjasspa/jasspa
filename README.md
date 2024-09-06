@@ -34,9 +34,11 @@ Cons (because it is a __Micro__-Emacs):
 _Left:_ GUI  version  - theme "Basic  Black on Cream",  _Right:_  Greek Text in the
 Terminal  version  within a Tmux  session - theme:  "Default  White on Black".
 There  are  more  than  25  themes  (schemes)  to  choose  from  ... The  main
-appplication  frame is split into two  windows, one is for editing a file, the
+appplication  frame is split here into two  windows, one is for editing a file, the
 other here has the hyperhelp documentation open. You can as well edit the same
-file within two separate windows.
+file within several separate  windows, for  instance writing  something on top,
+and then in the  other  windows  more down in the same file ... but  obviously
+editing one file in a single window is as well possible.
 
 ## Installation
 
