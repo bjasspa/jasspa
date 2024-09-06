@@ -1,8 +1,8 @@
 
 ## <img src="microemacs/graphics/me_m.png" /> &nbsp;MicroEmacs (2024) TextEditor
 
-MicroEmacs  text editor is an Emacs like text editor  suitable for experienced
-programmers and as well beginners.
+MicroEmacs  text editor is an Emacs like text editor  suitable for 
+experienced programmers and as well beginners.
 
 In contrast to other editors it offers a set of unique features:
 
@@ -15,7 +15,8 @@ In contrast to other editors it offers a set of unique features:
 
 As other editors it has obviously:
 
-- session management (pro: parallel sessions for every project - due to low memory footprint are no problem)
+- session management (pro: parallel sessions for every project - 
+  due to low memory footprint are no problem)
 - extensible by a macro language (as well a macro recorder)
 - syntax highlighting for many languages - even nested highlighting (R, Python etc in Markdown documents )
 - spell checking for many languages
