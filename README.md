@@ -28,8 +28,10 @@ Cons (because it is a __Micro__-Emacs):
   usable
 - no soft (visual) wrap - what you see is what you get
 
-<img src="microemacs/graphics/ME24.png" width="350px"/>&nbsp;&nbsp;<img src="microemacs/graphics/ME24-terminal-greek.png" width="350px"/>
+<img src="microemacs/graphics/ME24.png" width="380px"/>&nbsp;&nbsp;<img src="microemacs/graphics/ME24-terminal-greek.png" width="380px"/>
 
+Left: GUI  version  - theme "Basic  Black on Cream",  Right:  Greek Text in the
+Terminal version within a Tmux session - theme: "Default White on Black" 
 ## Installation
 
 You can compile the code yourself, or you pick one or two of the precompiled
