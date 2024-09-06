@@ -28,7 +28,7 @@ Cons (because it is a __Micro__-Emacs):
   usable
 - no soft (visual) wrap - what you see is what you get
 
-<img src="microemacs/graphics/ME24.png" width="300px"/><img src="microemacs/graphics/ME24-terminal-greek.png" width="300px"/>
+<img src="microemacs/graphics/ME24.png" width="350px"/>&nbsp;&nbsp;<img src="microemacs/graphics/ME24-terminal-greek.png" width="350px"/>
 
 ## Installation
 
