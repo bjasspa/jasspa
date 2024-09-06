@@ -33,7 +33,7 @@ Cons (because it is a __Micro__-Emacs):
 
 _Left:_ GUI  version  - theme "Basic  Black on Cream",  _Right:_  Greek Text in the
 Terminal  version  within a Tmux  session with an open menu entry - theme:  "Default  White on Black".
-The menu entry can be opened on a terminal version usually with "Esc ="
+The menu entry can be opened on a terminal version usually with "Esc =".
 There  are  more  than  25  themes  (schemes)  to  choose  from  ... The  main
 appplication  frame is split here into two  windows, one is for editing a file, the
 other here has the hyperhelp documentation open. You can as well edit the same
