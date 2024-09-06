@@ -1,5 +1,5 @@
 
-## MicroEmacs (2024) TextEditor
+## <img src="graphics/me_m.png" />MicroEmacs (2024) TextEditor
 
 MicroEmacs  text editor is an Emacs like text editor  suitable for experienced
 programmers and as well beginners.
@@ -23,8 +23,11 @@ As other editors it has obviously:
 
 Cons (because it is a __Micro__-Emacs):
 
-- no Unicode support - but all the ISO and extended Windows encodings are usable
+- no Unicode  support - but all the ISO and  extended  Windows  encodings  are
+  usable
 - no soft (visual) wrap - what you see is what you get
+
+<img src="graphics/me24.png" />
 
 ## Installation
 
@@ -79,10 +82,67 @@ MacOS or Linux system.
 If you are  ready  use  "File-Save  All" to save  your  settings.  The next ME
 session should start with these saved settings.
 
+
+## Tools to improve your editing on Linux and MacOS
+
+- Terminal (macOS, Linux):
+    - luit - run MicroEmacs with extendd character sets on UTF-8 terminals
+    - abduco - suspend a luit session
+- X11 (macOS, Linux):
+    - xfontsel - to interactively select fonts within your Micro
+    - mkfontscale - if you like to add your own TTF fonts as available fonts
+
+Here as an example a bash  script  `mecu`  which runs a  MicroEmacs  on UTF-8
+terminal using the Western European ISO-encodings:
+
+```bash
+#!/usr/bin/env bash
+### file: mecu 
+### Description: wrapper to run MicroEmacs with extended character settings
+###              on UTF-8 enabled terminals
+###  
+### Tools required:
+###   abduco: session management and detacher
+###           https://www.brain-dump.org/projects/abduco/   
+###   luit:   filter between non-utf-8 applications and utf-8 terminals
+###           https://invisible-island.net/luit/
+### Installation:
+###           fedora: sudo dnf install abduco luit  
+###           debian: sudo apt install abduco luit
+
+### session name creation for the current tty 
+tty=$(tty | grep -Eo '[0-9]+')
+## already running? list abduco sessions
+res=$(abduco -l | grep mec$tty)
+
+### running session, if no create an new one
+### otherwise attach to the old one
+### (press in ME Ctrl-l to update screen if neccesary)
+
+if [ "$res" == "" ] ; then 
+    ### need a new one 
+   TERM=xterm abduco -A -e ^z mec$tty luit -encoding ISO-8859-15 mecs "$@"
+else
+    ### attach to the old one
+    abduco -a -e ^z mec$tty 
+fi
+```    
+
+Change  the  filename  mecs to the  name  you  give  you  MicroEmacs  terminal
+instance.  Name  the  file  `mecu`,  Make it  executable  and move to a folder
+belonging  to your PATH  variable.  With this little  shell  script  using two
+small tools, you can run MicroEmacs nicely as well on all UTF-8 terminals with
+a more extended character set.
+
 ## License
 
 GPL - see the file [COPYING](COPYING)
 
+## Authors
 
-
+- Dave Conroy         1985-1986
+- Daniel M. Lawrence  1986-1988  
+- John Green          1990-2010
+- Steven Phillips     1990-2024
+- Detlef Groth        2021-2024
 
