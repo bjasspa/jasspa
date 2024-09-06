@@ -31,9 +31,12 @@ Cons (because it is a __Micro__-Emacs):
 
 <img src="microemacs/graphics/ME24.png" width="390px"/>&nbsp;&nbsp;<img src="microemacs/graphics/ME24-terminal-greek.png" width="390px"/>
 
-Left: GUI  version  - theme "Basic  Black on Cream",  Right:  Greek Text in the
+_Left:_ GUI  version  - theme "Basic  Black on Cream",  _Right:_  Greek Text in the
 Terminal  version  within a Tmux  session - theme:  "Default  White on Black".
-There are more than 25 themes (schemes) to choose from ...
+There  are  more  than  25  themes  (schemes)  to  choose  from  ... The  main
+appplication  frame is split into two  windows, one is for editing a file, the
+other here has the hyperhelp documentation open. You can as well edit the same
+file within two separate windows.
 
 ## Installation
 
