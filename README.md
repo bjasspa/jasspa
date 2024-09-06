@@ -25,13 +25,16 @@ As other editors it has obviously:
 Cons (because it is a __Micro__-Emacs):
 
 - no Unicode  support - but all the ISO and  extended  Windows  encodings  are
-  usable
-- no soft (visual) wrap - what you see is what you get
+  usable even on UTF-8 terminals
+- no  soft  (visual)  wrap - what  you  see is what  you  get (you can let ME
+  autowrap for you the text during writing)
 
-<img src="microemacs/graphics/ME24.png" width="380px"/>&nbsp;&nbsp;<img src="microemacs/graphics/ME24-terminal-greek.png" width="380px"/>
+<img src="microemacs/graphics/ME24.png" width="390px"/>&nbsp;&nbsp;<img src="microemacs/graphics/ME24-terminal-greek.png" width="390px"/>
 
 Left: GUI  version  - theme "Basic  Black on Cream",  Right:  Greek Text in the
-Terminal version within a Tmux session - theme: "Default White on Black" 
+Terminal  version  within a Tmux  session - theme:  "Default  White on Black".
+There are more than 25 themes (schemes) to choose from ...
+
 ## Installation
 
 You can compile the code yourself, or you pick one or two of the precompiled
