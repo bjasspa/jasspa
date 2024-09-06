@@ -46,6 +46,9 @@ the executables into a folder belonging to your PATH
 | MacOS intel   | [mecs](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_intel_mecs.zip) | [mews](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_intel_mews.zip)
 | Windows       | [mecs](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_windows_mecs.zip)     | [mews](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_windows_mews.zip)
 
+To test the  integrity  of the  downloads  you can use the
+[sha256 hash keys](https://github.com/bjasspa/jasspa/releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin.sha256).
+
 Then test the executable in your terminal:
 
 ```
