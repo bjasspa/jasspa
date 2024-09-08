@@ -37,26 +37,32 @@ previous message from the last command(s) in a script and is equivalent to the o
 .\"callback macro may interrupt the user while using the message-line (entering a
 .\"file name or searching a buffer etc.), executing \fC2\  ml-write\fR at the end
 .\"of the callback macro ensures that the  message-line is restored.
-.IP \fC\-1\fR
-If running in piped mode (see command-line  option \fB-p\fR) the \fImessage\fR is written to \fIstandard  error\fR as
-per  \fC-3\fR  below,  otherwise  it is written to the message  line as normal. This allows the same macro code to run
+.IP "\fI-ve\fR"
+The argument value is negate and used as a bitwise flag whose bits are defined as follows:
+.RS
+.IP \fC1\fR
+If running in piped mode (see command-line  option \fB-p\fR) the \fImessage\fR is written to \fIstandard-out\fR as
+per  \fC4\fR  below,  otherwise  it is written to the message  line as normal. This allows the same macro code to run
 correctly in both environments.
-.IP \fC\-2\fR
-If running in piped mode the  \fImessage\fR  is written to \fIstandard  error\fR as per \fC-4\fR below,  otherwise it
+.IP \fC2\fR
+If running in piped mode the  \fImessage\fR  is written to \fIstandard-error\fR as per \fC4\fR below,  otherwise it
 is written to the message line as normal.
-.IP \fC\-3\fR
-Writes the \fImessage\fR to \fIstandard out\fR. A carriage return  (\fC'\\n'\fR) is automatically  added to the end of
-the \fImessage\fR to create a line on the given stream.
-.IP \fC\-4\fR
-Writes the \fImessage\fR to \fIstandard error\fR, the behaviour is the same as standard output (\fC\-3\fR option)
+.IP \fC4\fR
+Force the \fImessage\fR to be written to \fIstandard-out\fR if bit \fC1\fR is also set, or \fIstandard-error\fR 
+otherwise.
+.IP \fC8\fR
+When set the function will return an \fCABORT\fR, typically halting the execution of the current macro.
+.IP \fC16\fR
+When set the function waits for the user to press a key, this can be used to ensure the user will see the message.
+.RE
 .SH NOTES
 .\"A call to \fBml-write\fR  from a callback macro can erase a message line which
 .\"is currently being used (to enter a buffer name say). A call to
 .\"".C "2 ml-clear"
 .\"restores the previous message-line.
 .\".PP
-If the argument  value is not \fC\-1\fR,  \fC\-2\fR,  \fC\-3\fR or \fC\-4\fR  calls to  \fBml-write\fR  are ignored in
-standard \*(mS piped mode  (command-line  option \fB-p\fR). They are printed to \fIstandard  error\fR when debug piped
+If the argument value is not \fC\-1\fR, \fC\-2\fR, \fC\-4\fR or \fC\-5\fR calls to \fBml-write\fR are ignored in
+standard \*(mS piped mode (command-line option \fB-p\fR). They are printed to \fIstandard error\fR when debug piped
 mode is used (command-line option \fB-P\fR, see
 .Ht me 1 ),
 making the debugging and maintenance of macro based piped processing easier.

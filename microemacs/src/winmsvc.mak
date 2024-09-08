@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# win32vc10.mak - Make file for Windows using Microsoft MSVC v10.0 development kit.
+# winmsvc.mak - Make file for Windows using Microsoft MSVC development kit.
 #
 # Copyright (C) 2007-2009 JASSPA (www.jasspa.com)
 #

@@ -43,7 +43,6 @@ jobs:
           Invoke-WebRequest https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.0.14.zip -OutFile openssl.zip
           Expand-Archive -Path .\openssl.zip -DestinationPath .
           dir .
-          gci env:* | sort-object name
           
       - name: Get ehf help file
         uses: dawidd6/action-download-artifact@v6
@@ -51,7 +50,7 @@ jobs:
           run_id: ${{ inputs.refToHelpAsset }}
           workflow: build-linux.yml
           name: help-ehf
-          path: ./microemacs/3rdparty
+          path: ./microemacs
           search_artifacts: true
 
       - name: Compile windows100 mec
@@ -77,7 +76,6 @@ jobs:
         run: |
           mkdir -Path downloads
           mkdir -Path packages
-          dir .\microemacs\3rdparty
           cd .\microemacs\bin
           Remove-Item .gitignore
           Rename-Item -Path windows100-intel32-msvc17 -NewName windows100-intel32
@@ -100,6 +98,21 @@ jobs:
           Compress-Archive -Path bin -DestinationPath ..\..\..\..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_windows_openssl.zip
           cd ..
           ..\..\..\..\bin\windows100-intel32\tfs -o ../../../../../packages/Jasspa_MicroEmacs_${env:MEVER}_openssl_windows_intel32.tfs -a ../../../../mesingle/tfs_hd tfs
+
+      - name: Create windows MSI installer
+        shell: pwsh
+        run: |
+          $env:Path = $env:WIX + 'bin;' + $env:Path
+          cd .\microemacs
+          $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
+          cd .\wix
+          Copy-Item -Path ..\bin\windows100-intel32\mew -Destination .
+          Copy-Item -Path ..\bin\windows100-intel32\mec -Destination .
+          Copy-Item -Path ..\COPYING.txt -Destination .
+          ..\bin\windows100-intel32\mec.exe -p "@meigen"
+          heat dir macros -o jmeMacros.wxs -scom -frag -srd -sreg -gg -cg MacrosGroupId -dr jmeMacrosDirRef
+          candle -ext WixUIExtension -ext WixUtilExtension jme.wxs jmeMacros.wxs
+          light -ext WixUIExtension -ext WixUtilExtension -o Jasspa_MicroEmacs_${env:MEVER}_installer_windows.msi jme.wixobj jmeMacros.wixobj -b macros
 
       - name: Compile windows100 static mec
         shell: pwsh

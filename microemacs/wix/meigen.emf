@@ -1,0 +1,54 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2024 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     2024-09-08 22:40:53
+; Synopsis:    Generate macros folder for msi
+; Authors:     Steven Phillips
+;
+set-variable %mei-verb 2
+define-macro mei-gen
+  set-variable #l1 @1
+  set-variable #l2 @2
+  -1 ml-write &spr "meigen: Processing %s" #l1
+  !iif &not &seq "R" &stat "t" &set #l4 &cat #l1 "filelist.mak"  -10 ml-write &spr "mesgen Error: Failed to locate %s" #l4
+  !force 0 delete-buffer "*mesml*"
+  find-buffer "*mesml*"
+  insert-file #l4
+  beginning-of-buffer
+  1 buffer-mode "magic"
+  replace-string "\\\\[ \t]*\n" ""
+  beginning-of-buffer
+  !while &not &seq @wc ""
+    !if &seq "#" &lef @wl 1
+    !elif &xse &lef @wl 10 "\\(\\(\\m+\\)[ \t]*=\\).*"
+      set-variable #l4 @s2
+      !iif %mei-verb  -2 ml-write &spr "mesgen:  Line %s" #l4
+      set-variable #l5 $window-line
+      set-variable $window-col &len @s1
+      !repeat
+        !force search-buffer "me" "[\\m._@]+"
+        !iif &not $status  !break
+        !iif &sub #l5 $window-line  !break
+        set-variable #l6 @s0
+        !iif %mei-verb  -2 ml-write &spr "meigen:   File %s" #l6
+        !iif &gre %mei-verb 1  -2 ml-write &spr "meigen:     Coping %s%s" #l1 #l6
+        !force 0x80 file-op &cat #l1 #l6 &cat #l2 #l6
+        !iif &not $status  -10 ml-write &spr "meigen Error: Failed to copy file to [%s%s]" #l1 #l6
+      !done
+      set-variable $window-line #l5
+    !endif
+    forward-line
+  !done
+!emacro
+
+define-macro start-up
+  set-variable #l0 &stat "a" "."
+  !iif &seq "X" &stat t &set #l1 &cat #l0 "macros"  0x100 file-op #l1
+  !iif &not &seq "D" &stat t #l1  -10 ml-write "[ERROR: Failed to create macros directory]"
+  set-variable #l1 &cat #l1 "/"
+  !iif &not &seq "D" &stat t &set #l2 &stat a &cat #l0 "../macros"  -10 ml-write "[ERROR: Failed to create macros directory]"
+  !force !force mei-gen #l2 #l1
+  4 exit-emacs &not $status
+!emacro

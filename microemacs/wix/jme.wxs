@@ -1,0 +1,182 @@
+<?xml version="1.0"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+  <Product Id="*" Name="Jasspa MicroEmacs" Language="1033" Version="24.9.1.1" Manufacturer="Jasspa" UpgradeCode="0F662A5A-DE89-48C9-8CB0-2576720C4060" >
+    
+    <Package Description="Jasspa MicroEmacs v$(env.MEVER) Installer package" Comments="Copyright (C) 2001-2024 Jasspa" Manufacturer="Jasspa" InstallerVersion="200" Compressed="yes" />
+
+    <Media Id="1" Cabinet="jme.cab" EmbedCab="yes" />
+
+    <Icon Id="ProductIcon" SourceFile="..\src\icon_me.ico" />
+    
+    <Property Id="ARPPRODUCTICON" Value="ProductIcon" />
+    <Property Id="ARPHELPLINK" Value="https://github.com/bjasspa/jasspa/" />
+    <Property Id="ARPURLINFOABOUT" Value="http://www.jasspa.com/about.html" />
+    <Property Id="ARPNOREPAIR" Value="1" />
+    <Property Id="ARPNOMODIFY" Value="1" />
+    <MajorUpgrade DowngradeErrorMessage="A later version of Jasspa MicroEmacs is already installed." />
+    
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLDIR" Name="Jasspa MicroEmacs">
+          <Component Id="ProductFiles" Guid="8D4EC16E-3293-42A9-9936-7AA107E0C3E0">
+            <File Id="mew.exe" Source="mew.exe" KeyPath="yes" />
+            <File Id="mec.exe" Source="mec.exe" />
+            <File Id="COPYING.txt" Source="COPYING.txt" />
+
+          </Component>
+          <Directory Id="jmeMacrosDirRef" Name="macros">
+            
+          </Directory>
+
+        </Directory>
+      </Directory>
+      
+      <Directory Id="DesktopFolder" Name="Desktop">
+        <Component Id="ProductDesktopShortcuts" Guid="509FF356-DBE0-48EF-A6B5-45C8815E3509">
+          <Condition>INSTJMEDTSHORTCUT</Condition>
+          <RegistryValue Root="HKCU" Key="Software\Jasspa\MicroEmacs" Name="DesktopSC" Value="1" Type="integer" KeyPath="yes" />
+          <Shortcut Id="ProductDesktopShortcut1" Target="[INSTALLDIR]mew.exe" Directory="DesktopFolder" Name="Jasspa MicroEmacs" Icon="ProductIcon" IconIndex="0" WorkingDirectory="USERHOME" Advertise="no"/>
+        </Component>
+      </Directory>
+      
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ProductMenuFolder" Name="Jasspa MicroEmacs">
+          <Component Id="ProductMenuShortcuts" Guid="9C35143B-EC3E-42C6-A07F-92DE23C5D707">
+            <Condition>INSTJMESMSHORTCUT</Condition>
+            <Shortcut Id="ProductMenuShortcut1" Name="MicroEmacs" Description="Jasspa MicroEmacs" Target="[INSTALLDIR]mew.exe" WorkingDirectory="USERHOME"/>
+            <Shortcut Id="ProductMenuShortcut2" Name="Uninstall MicroEmacs" Description="Uninstalls Jasspa MicroEmacs" Target="[System64Folder]msiexec.exe" Arguments="/x [ProductCode]"/>
+            <RegistryValue Root="HKCU" Key="Software\Jasspa\MicroEmacs" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+            <RemoveFolder Id="ProductMenuFolder" On="uninstall"/>
+          </Component>
+        </Directory>
+      </Directory>
+      
+      <Directory Id="ExplorerMenuFolder">
+        <Component Id="ExplorerMenuShortcuts" Guid="FB55B137-FF09-45EC-A028-6A30D8BAB680">
+          <Condition>INSTJMEEMSHORTCUT</Condition>
+          <RegistryValue Root="HKCR" Key="*\shell\Edit with MicroEmacs\command" Value="&quot;[INSTALLDIR]mew.exe&quot; -c -o &quot;%1&quot;" Type="string" KeyPath="yes" />
+        </Component>
+      </Directory>
+
+    </Directory>
+    
+    <Property Id="INSTJMEDTSHORTCUT" Value="1" />
+    <Property Id="INSTJMESMSHORTCUT" Value="1" />
+    <Property Id="INSTJMEEMSHORTCUT" Secure="yes" />
+    <Property Id="USERHOME" Value="%HOMEDRIVE%%HOMEPATH%" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1"/>
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch MicroEmacs"/>
+    <Property Id="WixShellExecTarget" Value="[#mew.exe]" />
+    <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+    
+    <UI Id="WixUI_InstallDir">
+      <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+      <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+      <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+      
+      <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+      <Property Id="WixUI_Mode" Value="InstallDir" />
+      
+      <DialogRef Id="BrowseDlg" />
+      <DialogRef Id="DiskCostDlg" />
+      <DialogRef Id="ErrorDlg" />
+      <DialogRef Id="FatalError" />
+      <DialogRef Id="FilesInUse" />
+      <DialogRef Id="MsiRMFilesInUse" />
+      <DialogRef Id="PrepareDlg" />
+      <DialogRef Id="ProgressDlg" />
+      <DialogRef Id="ResumeDlg" />
+      <DialogRef Id="UserExit" />
+      
+      <Dialog Id="jmeInstallDirDlg" Width="370" Height="270" Title="!(loc.InstallDirDlg_Title)">
+        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" />
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)" />
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+        </Control>
+        
+        <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgDescription)" />
+        <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgTitle)" />
+        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.InstallDirDlgBannerBitmap)" />
+        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+        
+        <Control Id="FolderLabel" Type="Text" X="20" Y="70" Width="290" Height="20" NoPrefix="yes" Text="!(loc.InstallDirDlgFolderLabel)" />
+        <Control Id="Folder" Type="PathEdit" X="20" Y="90" Width="320" Height="18" Property="WIXUI_INSTALLDIR" Indirect="yes" />
+        <Control Id="ChangeFolder" Type="PushButton" X="20" Y="110" Width="56" Height="17" Text="!(loc.InstallDirDlgChange)" />
+      </Dialog>
+      
+      <Dialog Id="jmeAdditionalDlg" Width="370" Height="270" Title="!(loc.InstallDirDlg_Title)">
+        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" />
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)" />
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+        </Control>
+        
+        <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes">
+          <Text>{\WixUI_Font_Title}Additional Tasks</Text>
+        </Control>
+        <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="Which additional tasks should be performed?"/>
+        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.InstallDirDlgBannerBitmap)" />
+        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+        
+        <Control Id="DTShortcutCB" Type="CheckBox" X="20" Y="70" Width="290" Height="17" Property="INSTJMEDTSHORTCUT" CheckBoxValue="1" Text="Create a shortcut for MicroEmacs on the desktop" />
+        <Control Id="SMShortcutCB" Type="CheckBox" X="20" Y="90" Width="290" Height="17" Property="INSTJMESMSHORTCUT" CheckBoxValue="1" Text="Create a shortcut for MicroEmacs in the Start menu" />
+        <Control Id="EMShortcutCB" Type="CheckBox" X="20" Y="135" Width="290" Height="17" Property="INSTJMEEMSHORTCUT" CheckBoxValue="1" Text="Create an Edit with MicroEmacs menu item in Explorer" />
+      </Dialog>
+      
+      <Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath" Order="3">1</Publish>
+      <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4"><![CDATA[WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
+        
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
+      <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+      
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="LicenseAgreementDlg">NOT Installed</Publish>
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">Installed AND PATCH</Publish>
+      
+      <Publish Dialog="LicenseAgreementDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
+      <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="jmeInstallDirDlg">LicenseAccepted = "1"</Publish>
+      
+      <Publish Dialog="jmeInstallDirDlg" Control="Back" Event="NewDialog" Value="LicenseAgreementDlg">1</Publish>
+      <Publish Dialog="jmeInstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
+      <Publish Dialog="jmeInstallDirDlg" Control="Next" Event="DoAction" Value="WixUIValidatePath" Order="2">NOT WIXUI_DONTVALIDATEPATH</Publish>
+      <Publish Dialog="jmeInstallDirDlg" Control="Next" Event="SpawnDialog" Value="InvalidDirDlg" Order="3"><![CDATA[NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
+      <Publish Dialog="jmeInstallDirDlg" Control="Next" Event="NewDialog" Value="jmeAdditionalDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"</Publish>
+      <Publish Dialog="jmeInstallDirDlg" Control="ChangeFolder" Property="_BrowseProperty" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
+      <Publish Dialog="jmeInstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
+      
+      <Publish Dialog="jmeAdditionalDlg" Control="Back" Event="NewDialog" Value="jmeInstallDirDlg">1</Publish>
+      <Publish Dialog="jmeAdditionalDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="jmeAdditionalDlg" Order="1">NOT Installed</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2">Installed AND NOT PATCH</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">Installed AND PATCH</Publish>
+      
+      <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
+      
+      <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+      
+    </UI>
+    
+    <UIRef Id="WixUI_Common" />
+    
+    <WixVariable Id="WixUIBannerBmp" Value="bannrbmp.bmp"/>
+    <WixVariable Id="WixUIDialogBmp" Value="dlgbmp.bmp"/>
+    <WixVariable Id="WixUILicenseRtf" Value="eula.rtf" />
+    <WixVariable Id="WixUICostingPopupOptOut" Value="0" />
+    
+    <Feature Id="DefaultFeature" Level="1">
+      <ComponentRef Id="ProductFiles" />
+      <ComponentGroupRef Id="MacrosGroupId" /> 
+      <ComponentRef Id="ProductDesktopShortcuts" />
+      <ComponentRef Id="ProductMenuShortcuts" />
+      <ComponentRef Id="ExplorerMenuShortcuts" />
+    </Feature>
+    
+  </Product>
+</Wix>
