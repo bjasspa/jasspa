@@ -9,6 +9,12 @@ on:
         required: false
         type: string
 
+      refToHelpAsset:
+        description: 'Run-ID of build with help-ehf asset (not used)'
+        default: ''
+        required: false
+        type: string
+
 jobs:
   build:
     runs-on: ubuntu-20.04
