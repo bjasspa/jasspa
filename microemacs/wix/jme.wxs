@@ -1,14 +1,15 @@
 <?xml version="1.0"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
-  <Product Id="*" Name="Jasspa MicroEmacs" Language="1033" Version="24.9.1.1" Manufacturer="Jasspa" UpgradeCode="0F662A5A-DE89-48C9-8CB0-2576720C4060" >
+  <Product Id="*" Name="Jasspa MicroEmacs" Language="1033" Version="$(env.MEVERDT)" Manufacturer="Jasspa" UpgradeCode="0F662A5A-DE89-48C9-8CB0-2576720C4060" >
     
-    <Package Description="Jasspa MicroEmacs v$(env.MEVER) Installer package" Comments="Copyright (C) 2001-2024 Jasspa" Manufacturer="Jasspa" InstallerVersion="200" Compressed="yes" />
+    <Package Description="Jasspa MicroEmacs v$(env.MEVER) Installer package" Comments="Copyright (C) 2001-$(env.MEVERYR) Jasspa" Manufacturer="Jasspa" InstallerVersion="200" Compressed="yes" />
 
     <Media Id="1" Cabinet="jme.cab" EmbedCab="yes" />
 
     <Icon Id="ProductIcon" SourceFile="..\src\icon_me.ico" />
     
+    <Property Id="jmeVersion">$(env.MEVER)</Property>
     <Property Id="ARPPRODUCTICON" Value="ProductIcon" />
     <Property Id="ARPHELPLINK" Value="https://github.com/bjasspa/jasspa/" />
     <Property Id="ARPURLINFOABOUT" Value="http://www.jasspa.com/about.html" />

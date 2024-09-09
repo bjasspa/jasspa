@@ -50,6 +50,7 @@ jobs:
           mv macos14-apple64-* macos14-apple64
           rm ./.gitignore
           cd ..
+          mv release_readme.txt readme.txt
           export MEVER=`./bin/macos14-apple64/mec -p @contribs/ver.emf`
           zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_macos_apple_binaries bin COPYING.txt readme.txt
 

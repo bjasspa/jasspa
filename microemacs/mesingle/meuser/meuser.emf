@@ -1,4 +1,4 @@
-; My own customisations
+; User customisations
 ;
 global-bind-key forward-kill-word "C-t"
 global-bind-key forward-kill-word "C-delete"
@@ -11,20 +11,16 @@ global-bind-key compile "esc c"
 9 global-bind-key compile "esc C-c"
 4 global-bind-key find-tag "esc C-t"
 1 global-bind-key scroll-next-window-down "A-C-down"
-1 global-bind-key scroll-next-window-up   "A-C-up"
+1 global-bind-key scroll-next-window-up "A-C-up"
 2 global-bind-key file-browser "C-f10"
 -1 add-next-line "*compile*" "^Makefile:[0-9]+: Makefile.d:"
 set-variable .ascii-time.format "%Y-%m-%d %H:%M:%S"
-set-variable %tag-option "rcemsv"
-set-variable %diff-com "diff -c -w"
 set-variable $mode-line "%s%r%u%k %b %l of %n - %h:%m %D/%M/%Y (%e) - (%f) "
-set-variable %ftp-flags "cisp"
+set-variable %diff-com "diff -c -w"
 set-variable %http-flags "csp"
+set-variable %tag-option "rcemsv"
 !if &seq $platform "dos"
 !elif &seq $platform "windows"
-  set-variable %xdiff-com "c:/utils/Meld/Meld %lf -L %lt %rf -L %rt"
-  set-variable %svn-xdiff-com "c:/utils/Meld/Meld -n %f"
-  set-variable %svn-xdiff-nto " -n"
   add-next-line "*compile*" "Error %f %l:"
   add-next-line "*compile*" "Warning %f %l:"
   -1 add-next-line "*compile*" "^Makefile:%l:"
@@ -33,7 +29,5 @@ set-variable %http-flags "csp"
     ; Not using X
     translate-key "\x7f" "backspace"
     translate-key "C-[ [ 2 ; 5 ~" "C-backspace"
-  !else
-    set-variable .change-font.sz-font "-*-fixed-medium-r-*-*-%d-*-*-*-*-*-iso8859-*"
   !endif
 !endif

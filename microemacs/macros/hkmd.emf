@@ -45,7 +45,7 @@ set-variable .fhook-md.item-list-r3 "H2 \ecB\\1\ecA"
     set-variable .hilight.mdL &pinc .hilight.next 1
     set-variable .hilight.mdU &pinc .hilight.next 1
   !endif
-  0 hilight .hilight.md 3 100              $global-scheme
+  0 hilight .hilight.md 3 100           $global-scheme
   hilight .hilight.md 4 "<!--" "-->" "" .scheme.comment
   hilight .hilight.md 2 "^#"            .scheme.header
   hilight .hilight.md 2 "^```"          .scheme.string
@@ -55,11 +55,9 @@ set-variable .fhook-md.item-list-r3 "H2 \ecB\\1\ecA"
   hilight .hilight.md 0 "\\\\\\}[-[-]`*_{}<>()#+.!|]"   .scheme.hide
   
   hilight .hilight.md 0x890 "\\*\\}\\S" .hilight.mdI    .scheme.hide
-  hilight .hilight.md 0x890 "_\\}\\S" .hilight.mdI      .scheme.hide
-  hilight .hilight.md 0x890 "\\w_\\}\\S" .hilight.mdI   .scheme.error
+  hilight .hilight.md 0x890 "\\W\\{_\\}\\S" .hilight.mdI .scheme.hide
   hilight .hilight.md 0x890 "\\*\\*\\}\\S" .hilight.mdB .scheme.hide
-  hilight .hilight.md 0x890 "__\\}\\S" .hilight.mdB     .scheme.hide
-  hilight .hilight.md 0x890 "\\w__\\}\\S" .hilight.mdB  .scheme.error
+  hilight .hilight.md 0x890 "\\W\\{__\\}\\S" .hilight.mdB .scheme.hide
   hilight .hilight.md 0 "\\*\\*\\*+"                    $global-scheme
   hilight .hilight.md 0 "___+"                          $global-scheme
   hilight .hilight.md 0x890 "!\\[" .hilight.mdA         .scheme.hide
@@ -80,6 +78,9 @@ set-variable .fhook-md.item-list-r3 "H2 \ecB\\1\ecA"
   hilight .hilight.md 0 "ftps:[-@~_a-zA-Z#%\\.:\\/0-9]+"     .scheme.link
   hilight .hilight.md 0 "mailto:[-@~_a-zA-Z#%\\.:\\/0-9]+"   .scheme.link
   hilight .hilight.md 0 "news:[-@~_a-zA-Z#%\\.:\\/0-9]+"     .scheme.link 
+  ; bullet and item lists
+  hilight .hilight.md 0x20 "\\-\\} "                   .scheme.keyword
+  hilight .hilight.md 0x20 "\\d+\\.\\} "               .scheme.keyword
   ; footnotes and task lists
   hilight .hilight.md 0 "\\[^\\{\\d+\\}]"              .scheme.link
   hilight .hilight.md 0x20 "\\[^\\d+]:"                .scheme.bold
@@ -89,27 +90,23 @@ set-variable .fhook-md.item-list-r3 "H2 \ecB\\1\ecA"
   0 hilight .hilight.mdB 0                             .scheme.bold
   hilight   .hilight.mdB 0 "\\\\."                     .scheme.bold
   hilight   .hilight.mdB 0x80 "\\*\\*" .hilight.md     .scheme.hide
-  hilight   .hilight.mdB 0x80 "__" .hilight.md         .scheme.hide
-  hilight   .hilight.mdB 0x80 "__\\w" .hilight.md      .scheme.error
+  hilight   .hilight.mdB 0x80 "__\\}\\W" .hilight.md  .scheme.hide
   hilight   .hilight.mdB 0x80 "\\*" .hilight.mdBI      .scheme.hide
-  hilight   .hilight.mdB 0x80 "_" .hilight.mdBI        .scheme.hide
+  hilight   .hilight.mdB 0x80 "\\W\\{_\\}\\S" .hilight.mdBI .scheme.hide
   
   0 hilight .hilight.mdI 0                             .scheme.italic
   hilight   .hilight.mdI 0 "\\\\."                     .scheme.italic
   hilight   .hilight.mdI 0x80 "\\*" .hilight.md        .scheme.hide
-  hilight   .hilight.mdI 0x80 "_" .hilight.md          .scheme.hide
-  hilight   .hilight.mdI 0x80 "_\\w" .hilight.md       .scheme.error
-  hilight   .hilight.mdI 0x80 "__" .hilight.mdBI       .scheme.hide
+  hilight   .hilight.mdI 0x80 "_\\}\\W" .hilight.md   .scheme.hide
   hilight   .hilight.mdI 0x80 "\\*\\*" .hilight.mdBI   .scheme.hide
+  hilight   .hilight.mdI 0x80 "\\W\\{__\\}\\S" .hilight.mdBI      .scheme.hide
   
   0 hilight .hilight.mdBI 0                            .scheme.bold-italic
   hilight   .hilight.mdBI 0 "\\\\."                    .scheme.bold-italic
   hilight   .hilight.mdBI 0x80 "\\*\\*" .hilight.mdI   .scheme.hide
-  hilight   .hilight.mdBI 0x80 "__" .hilight.mdI       .scheme.hide
-  hilight   .hilight.mdBI 0x80 "__\\w" .hilight.mdI    .scheme.error
+  hilight   .hilight.mdBI 0x80 "__\\}\\W" .hilight.mdI .scheme.hide
   hilight   .hilight.mdBI 0x80 "\\*" .hilight.mdB      .scheme.hide
-  hilight   .hilight.mdBI 0x80 "_" .hilight.mdB        .scheme.hide
-  hilight   .hilight.mdBI 0x80 "_\\w" .hilight.mdB     .scheme.error
+  hilight   .hilight.mdBI 0x80 "_\\}\\W" .hilight.mdB  .scheme.hide
   
   0 hilight .hilight.mdH 0                             .scheme.hlblue
   hilight   .hilight.mdH 0 "\\\\."                     .scheme.bold

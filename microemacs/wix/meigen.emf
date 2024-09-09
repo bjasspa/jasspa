@@ -7,7 +7,7 @@
 ; Synopsis:    Generate macros folder for msi
 ; Authors:     Steven Phillips
 ;
-set-variable %mei-verb 2
+set-variable %mei-verb 0
 define-macro mei-gen
   set-variable #l1 @1
   set-variable #l2 @2

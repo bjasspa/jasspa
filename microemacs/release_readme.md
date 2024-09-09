@@ -9,27 +9,39 @@ editing multi-language files this is probably not the best tool for you. MicroEm
 wrapping in its rendering, one line of a file will always be represented as one line on the screen regardless of how
 long the line is - this is *Micro*Emacs, if these issues are blockers to you, try Emacs.
 
+For move information visit our [Github repository](https://github.com/bjasspa/jasspa/).
 
 VERY QUICK START GUIDE
 ----------------------
 
 For your platform download the single-file binary zip file:
 
-- Jasspa_MicroEmacs_\<VERSION>\_abin_\<PLATFORM>\_mecs.zip for console/terminal app, this should work on all computers of
-  given platform.
+  - Jasspa_MicroEmacs_<VERSION>_abin_\<PLATFORM>\_mecs.zip for console/terminal app, this should work on all computers of
+    given platform.
 
-- Jasspa_MicroEmacs_\<VERSION>\_abin_\<PLATFORM>\_mews.zip  for window  based app, this should give best user  experience
-  but may not work on all computers (particularly macOS where XQuartz is required).
+  - Jasspa_MicroEmacs_<VERSION>_abin_\<PLATFORM>\_mews.zip  for window  based app, this should give best user  experience
+    but may not work on all computers (particularly macOS where XQuartz is required).
 
 Extract the executable for the zip and run.
 
 This is a truly portable version, it will not alter/add to your environment or registry and will only create/edit
 files you explicitly ask it to. So this version is ideal for trying MicroEmacs without affecting your computer.
 
-For a more complete experience execute command  **init-session**, this creates a small user configuration directory in
+For a more complete experience execute command **init-session**, this creates a small user configuration directory in
 your user area, allowing MicroEmacs to save setup changes and download supporting files such as the comprehensive help
 docs and spelling dictionaries for numerous languages.
 
+
+INSTALLERS
+----------
+
+- Homebrew installers for Linux and macOS, details to follow.
+
+- Jasspa_MicroEmacs_<VERSION>_installer_windows.msi contains the binaries for Windows, the macros and help file, 
+  simply download and run to create a fully working environment.
+
+Spelling dictionary can be downloaded and installed by MicroEmacs as and when required.
+ 
 
 SLOWER QUICK START GUIDE
 ------------------------
@@ -42,16 +54,16 @@ To build a more complete, native environment do the following:
 
 2. Download the following zip package files:
 
-    a. **Required:** Binaries for your platform (Jasspa_MicroEmacs_\<VERSION>\_bin_\<PLATFORM>\_binaries.zip)
+    a. **Required:** Binaries for your platform (Jasspa_MicroEmacs_<VERSION>_bin_\<PLATFORM>\_binaries.zip)
      
-    b. **Required:** Macro files (Jasspa_MicroEmacs_\<VERSION>\_macros.zip)
+    b. **Required:** Macro files (Jasspa_MicroEmacs_<VERSION>_macros.zip)
 
-    c. Help file (Jasspa_MicroEmacs_\<VERSION>\_help_ehf.zip)
+    c. Help file (Jasspa_MicroEmacs_<VERSION>_help_ehf.zip)
 
-    d. Spelling dictionaries for any language you require (Jasspa_MicroEmacs_\<VERSION>\_spelling_\<LANGUAGE>.zip)
+    d. Spelling dictionaries for any language you require (Jasspa_MicroEmacs_<VERSION>_spelling_\<LANGUAGE>.zip)
      
-    e. OpenSSL dynamic libraries (Jasspa_MicroEmacs_\<VERSION>\_bin_\<PLATFORM>\_openssl.zip) for https/ftps support (country
-    permitting) 
+    e. OpenSSL dynamic libraries (Jasspa_MicroEmacs_<VERSION>_bin_\<PLATFORM>\_openssl.zip) for https/ftps support (country
+       permitting) 
 
 3. Extract downloaded zip files into the ~/MicroEmacs directory you created in (1), this should have created:
 

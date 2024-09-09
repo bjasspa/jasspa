@@ -49,6 +49,7 @@ jobs:
           cd ./microemacs/bin
           mv macos13-intel64-* macos13-intel64
           cd ..
+          mv release_readme.txt readme.txt
           export MEVER=`./bin/macos13-intel64/mec -p @contribs/ver.emf`
           zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_macos_intel_binaries bin/macos13-intel64 COPYING.txt readme.txt
 

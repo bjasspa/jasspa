@@ -71,6 +71,7 @@ jobs:
           Remove-Item .gitignore
           Rename-Item -Path windows100-intel32-msvc17 -NewName windows100-intel32
           cd ..
+          Rename-Item -Path release_readme.txt -NewName readme.txt
           $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
           Compress-Archive -Path bin,COPYING.txt,readme.txt -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_windows_binaries
 
@@ -105,6 +106,8 @@ jobs:
           $env:Path = $env:WIX + 'bin;' + $env:Path
           cd .\microemacs
           $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
+          $env:MEVERDT=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf -f MEVERDT)
+          $env:MEVERYR=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf -f MEVERYR)
           cd .\wix
           Copy-Item -Path ..\bin\windows100-intel32\mew.exe -Destination .
           Copy-Item -Path ..\bin\windows100-intel32\mec.exe -Destination .
@@ -113,7 +116,7 @@ jobs:
           Copy-Item -Path ..\me.ehf -Destination macros
           heat dir macros -o jmeMacros.wxs -scom -frag -srd -sreg -gg -cg MacrosGroupId -dr jmeMacrosDirRef
           candle -ext WixUIExtension -ext WixUtilExtension jme.wxs jmeMacros.wxs
-          light -ext WixUIExtension -ext WixUtilExtension -o Jasspa_MicroEmacs_${env:MEVER}_installer_windows.msi jme.wixobj jmeMacros.wixobj -b macros
+          light -ext WixUIExtension -ext WixUtilExtension -o Jasspa_MicroEmacs_${env:MEVER}_installer_windows.msi -loc jme.wxl jme.wixobj jmeMacros.wixobj -b macros
           Compress-Archive -Path Jasspa_MicroEmacs_${env:MEVER}_installer_windows.msi -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_installer_windows
 
       - name: Compile windows100 static mec

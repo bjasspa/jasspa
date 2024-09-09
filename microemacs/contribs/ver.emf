@@ -5,7 +5,13 @@
 ;
 ; Authors:     Steven Phillips
 ; Created:     2024-07-27 22:37:41
-; Synopsis:    Print ME version - mec -p @ver.emf
+; Synopsis:    Print ME version - mec -p @ver.emf [-f <MEVERYR|MEVERDO>]
 ;
--1 ml-write $version
+!if &seq  .about.arg0 "MEVERYR"
+  -1 ml-write &lef $version 4
+!elif &seq  .about.arg0 "MEVERDT"
+  -1 ml-write &spr "%d.%d.%d.1" &mid $version 2 2 &sub &cat "1" &mid $version 4 2 100 &sub &cat "1" &rig $version -2 100
+!else
+  -1 ml-write $version
+!endif
 0 quick-exit

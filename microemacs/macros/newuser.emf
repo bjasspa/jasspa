@@ -51,9 +51,7 @@
   !force set-registry "/history" #l1
   set-registry "/history/user-name" .newuser.fullname
   set-registry "/history/setup-file" .newuser.setup-file
-  !if &exi .newuser.company
-    set-registry "/history/company" .newuser.company
-  !endif
+  !iif &exi .newuser.company  set-registry "/history/company" .newuser.company
   !force save-registry "/history" ""
   !if &not $status
     insert-string "[ERROR]\n"
@@ -121,14 +119,11 @@
 ;
 ; Create the company file.
 0 define-macro newuser-makecompany
-  !if &not &exi .newuser.company-name
-    ; not required or already exists
-    !return
-  !endif
+  ; check not required or already exists
+  !iif &not &exi .newuser.company-name  !return
   insert-string &spr "Creating company setup file \"%s.emf\" ... " .newuser.company
   set-variable #l1 &spr "%s%s.emf" $user-path .newuser.company
-  set-variable #l0 &stat "t" #l1
-  !if &not &seq #l0 "X"
+  !if &not &seq &stat "t" #l1 "X"
     insert-string &spr "[ERROR]\n"
     insert-string &spr "ERROR: Macro file \"%s\" already exists.\nIt should be deleted and re-created.\n" #l1
     !abort
@@ -244,24 +239,24 @@
     ; Therefore if the current $user-path is not a jasspa path we can
     ; create one and ME will automatically find one.
     set-variable #l0 &spr "/%s/" .newuser.jasspa
-    !if &seq &rig $user-path &sub &len $user-path &len #l0 #l0
+    !if &seq &rig $user-path &sub 0 &len #l0 #l0
       ; ends in "/.jaspa" or "/jasspa", this is okay as ME will ensure that
       ; the $user-path points to a user area if possible (i.e. ~/ or $APPDATA/)
       set-variable .newuser.user-path $user-path
     !else
       set-variable #l0 &spr "/%s/%s/" .newuser.jasspa $user-name
-      !if &seq &rig $user-path &sub &len $user-path &len #l0 #l0
-        ; ends in "/<user>/.jaspa" or "/<user>/jasspa", again this is okay
+      !if &seq &rig $user-path &sub 0 &len #l0 #l0
+        ; ends in "/.jaspa/<user>" or "/jasspa/<user>", again this is okay
         set-variable .newuser.user-path $user-path
       !else
         ; add a .jasspa to the current $user-path and we will need to create it
         set-variable .newuser.user-path &spr "%s%s/" $user-path .newuser.jasspa
-        set-variable #l0 &stat "t" .newuser.user-path
-        !if &seq #l0 "X"
+        !if &seq &set #l0 &stat "t" .newuser.user-path "X"
           ; we will create this path which should mean that ME will ignore the current $user-path 
           set-variable .newuser.create-path .newuser.user-path
-          set-variable #l1 &cat $user-path .newuser.pathdiv
-          !if &seq &lef .newuser.search-path &len #l1 #l1
+          !if &seq &set #l1 &cat $user-path .newuser.pathdiv &lef .newuser.search-path &len #l1
+            set-variable .newuser.search-path &rig .newuser.search-path &len #l1
+          !elif &seq &set #l1 &cat &lef $user-path -1 .newuser.pathdiv &lef .newuser.search-path &len #l1
             set-variable .newuser.search-path &rig .newuser.search-path &len #l1
           !endif
           set-variable .newuser.search-path &cat &cat .newuser.user-path .newuser.pathdiv .newuser.search-path
@@ -276,9 +271,7 @@
     !endif
   !endif
   insert-string &spr "\n  User Name:   %s\n  User Path:   %s\n" $user-name .newuser.user-path
-  !if &exi .newuser.create-path
-    insert-string "               *** This directory will be created ***\n"
-  !endif
+  !iif &exi .newuser.create-path  insert-string "               *** This directory will be created ***\n"
   set-variable #l0 &rep .newuser.search-path .newuser.pathdiv "\n               "
   insert-string &cat &cat "  Search Path: " #l0 "\n\nIs this correct? "
   -1 recenter
@@ -386,9 +379,7 @@
   insert-string "\n"
   insert-string &spr "  Registry file:      %s\n" &find $user-name ".erf"
   insert-string &spr "  User Setup file:    %s\n" &find .newuser.setup-file ".emf"
-  !if &exi .newuser.company
-    insert-string &spr "  Company Setup file: %s\n" &find .newuser.company ".emf"
-  !endif
+  !iif &exi .newuser.company  insert-string &spr "  Company Setup file: %s\n" &find .newuser.company ".emf"
   insert-string "\n"
   insert-string "Use \"Tools -> User Setup\" from the menu bar or \"esc x user-setup\"\n"
   insert-string "from the command line to configure other preferences. The preferences\n"
