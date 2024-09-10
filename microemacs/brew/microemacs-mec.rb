@@ -35,7 +35,7 @@ class MicroemacsMec < Formula
       elsif OS.windows?
           bin.install "bin/windows100-intel32/mec.exe"
       end
-      puts "start Microemacs with: MEPATH=~/.config/jasspa:/home/linuxbrew/.linuxbrew/share/jasspa/macros:/home/linuxbrew/.linuxbrew/share/jasspa/spelling mews"      
+      puts "start Microemacs with: MEPATH=~/.config/jasspa:#{share}/jasspa/macros:#{share}/jasspa/spelling mec"      
   end
   
   def caveats 

@@ -5,8 +5,7 @@ class MicroemacsSpellingEnus < Formula
   url "https://github.com/bjasspa/jasspa/releases/download/me_20240902/Jasspa_MicroEmacs_20240902_spelling_enus.zip"
   sha256 "BFDE3D9DE8B7617ED86859F4B47AD25825B1000A0AB9A57692B184C812C7BCC6"
   version "20240902"
-  depends_on "microemacs-mec"
-
+  depends_on "microemacs-macros"
   def install
     # Define the target directory
     spellfolder = "#{share}/jasspa/spelling"
