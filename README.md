@@ -148,7 +148,7 @@ a more extended character set.
 
 ## License
 
-GPL - see the file [COPYING](COPYING)
+GPL - see the file [COPYING.txt](microemacs/COPYING.txt)
 
 ## Authors
 
