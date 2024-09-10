@@ -1,0 +1,247 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2023-2024 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Authors:     Steven Phillips
+; Created:     2024-07-27 22:37:41
+; Synopsis:    Macros used to build and create relesae
+;
+; Variables:
+;   .git.hub-tkn  Github API access token
+;   .git.hub-url  Main api url for the repository
+;   .git.hub-bal  Build action list (Run-ID of first is passed to rest as input refToHelpAsset)
+;   .git.hub-brn  Build reference name (typically main branch name of repository)
+;   .git.hub-rtp  Release tag prefix
+;   .git.hub-rnp  Release name prefix
+;   .git.hub-rrt  Release readme template file, should point to an md (<VERSION> is replaced with the version string)
+;   .git.hub-hdr  Githup api header (uses .git.hub-tkn)
+;
+set-variable .git.hub-url "https://api.github.com/repos/bjasspa/jasspa/"
+set-variable .git.hub-bal "|build-linux.yml|build-windows.yml|build-macos-intel.yml|build-macos-apple.yml|build-spelling.yml|"
+set-variable .git.hub-brn "main"
+set-variable .git.hub-rtp "me_"
+set-variable .git.hub-rnp "Jasspa MicroEmacs "
+set-variable .git.hub-rrt "~/jasspa/microemacs/release_readme.md"
+set-variable .git.hub-hdr &spr "Accept: application/vnd.github+json\r\nAuthorization: Bearer %s\r\nX-GitHub-Api-Version: 2022-11-28\r\nUser-Agent: Jasspa" .git.hub-tkn
+
+set-variable %http-flags "scvwdh"
+!iif &not &exi json-parse  execute-file "hkjson"
+; time used by github filter is UTC so take 12 hours off to ensure local time - 12hours gives Github start date or day before  
+set-variable $time -43200
+set-variable .git.hub-date &spr "%s-%02d-%02d" &lef $time 4 &mid $time 7 2 &mid $time 9 2
+set-variable $time 0
+0 define-macro github-api-call
+  set-variable #l1 @1
+  !force set-variable #l2 @2
+  !if &and $status &len #l2
+    set-variable %http-header &spr ":%s:%s" #l2 .git.hub-hdr
+  !else
+    set-variable %http-header .git.hub-hdr
+  !endif
+  !force set-variable #l2 @3
+  !iif &and $status &len #l2  set-variable %http-post-data #l2
+  !force delete-buffer "*ghac*"
+  find-buffer "*ghac*"
+  insert-file &cat .git.hub-url #l1
+  set-variable #l0 $result
+  beginning-of-buffer
+  !iif &gre #l0 399  -8 ml-write &spr "[Github %d Error: %s]" #l0 @wl
+!emacro
+
+0 define-macro github-api-json
+  set-variable #l1 @1
+  !force set-variable #l2 @2
+  !if &and $status &len #l2
+    set-variable %http-header &spr ":%s:%s" #l2 .git.hub-hdr
+  !else
+    set-variable %http-header .git.hub-hdr
+  !endif
+  !force set-variable #l2 @3
+  !if &and $status &len #l2
+    set-variable %http-post-data #l2
+  !elif &not &exi %http-post-file
+  !elif &seq "" %http-post-file
+  !elif &not &sin "Content-Type:" %http-header
+    set-variable %http-header &cat %http-header "\r\nContent-Type: application/octet-stream"
+  !endif
+  !force delete-buffer "*ghaj*"
+  find-buffer "*ghaj*"
+  insert-file &cat .git.hub-url #l1
+  set-variable #l0 $result
+  beginning-of-buffer
+  !iif &gre #l0 399  -8 ml-write &spr "[Github %d Error: %s]" #l0 @wl
+  json-parse "/json/ghaj"
+!emacro
+
+; Build an action with given commit
+;  @1 - Commit SHA1
+;  @2 - Name of action to build
+;  @3 - Full path to the artifact directory
+;  @4 - Additional inputs to the dispatch call
+; Returns
+;  #p9 - Run ID
+define-macro github-build-action
+  set-variable #l9 @1
+  set-variable #l0 @2
+  set-variable #l8 @3
+  set-variable #l3 @4
+  set-variable #l1 &cat "actions/workflows/" #l0
+  github-api-call &cat #l1 "/dispatches" "" &spr "{\"ref\":\"%s\",\"inputs\":{\"refToBuild\":\"%s\"%s}}" .git.hub-brn #l9 #l3
+  30000 ml-write &spr "[Action %s dispatched... ]" #l0
+  ml-write &spr "[Action %s dispatched... Getting ID]" #l0
+  github-api-json &spr "%s/runs?created=%%3e%%3d%s&head_sha=%s" #l1 &rep .git.hub-date "-" "%2d" #l9
+  !iif &or &not &seq "#" &lef &set #l2 &reg "/json/ghaj/total_count" "" 1 &les &rig #l2 1 1  -8 ml-write &spr "[Github %s Error: Unexpected total_count %s]" #l0 #l2
+  !iif &or &not &seq "#" &lef &set #l2 &reg "/json/ghaj/workflow_runs/0/id" "" 1 &les &set #l5 &rig #l2 1 1  -8 ml-write &spr "[Github %s Error: Unexpected run id %s]" #l0 #l2
+  set-variable #p9 #l5
+  10000 ml-write &spr "[Action %s run %s state %s... ]" #l0 #l5 &rig &reg "/json/ghaj/workflow_runs/0/status" "#<not set>" 1
+  set-variable #l2 0
+  !repeat
+    github-api-json &cat "actions/runs/" #l5
+    !iif &seq "" &set #l3 &rig &reg "/json/ghaj/status" "" 1  -8 ml-write &spr "[Github %s Error: No run id %s status]" #l0 #l5
+    !iif &not &lfin "|in_progress|queued|requested|waiting|pending|" #l3  !break
+    10000 ml-write &spr "[Action %s run %s state %s... %d]" #l0 #l5 #l3 &inc #l2 1
+  !done
+  !iif &not &seq "completed" #l3  -8 ml-write &spr "[Github %s Error: Unexpected state %s for run id %s]" #l0 #l3 #l5
+  github-api-json &spr "actions/runs/%s/artifacts" #l5
+  !iif &or &not &seq "[" &lef &set #l2 &reg "/json/ghaj/artifacts" "" 1 &seq &set #l6 &rig #l2 1 ""  -8 ml-write &spr "[Github %s Error: Unexpected artifacts array: %s]" #l0 #l2
+  set-variable #l3 0
+  !while &gre #l6 #l3
+    !iif &not &seq &lef &set #l2 &rig &reg &spr "/json/ghaj/artifacts/%d/archive_download_url" #l3 "" 1 &len .git.hub-url .git.hub-url  -8 ml-write &spr "[Github %s Error: Unexpected artifact %d download URL: %s]" #l0 #l3 #l2
+    set-variable #l4 &spr "%s.%s" &rig &reg &spr "/json/ghaj/artifacts/%d/name" #l3 &cat #l5 #l3 1 &rig #l2 &rsin "/" #l2 
+    ml-write &spr "[Github %s: Downloading artifact %d to %s]" #l0 #l3 #l4
+    set-variable %http-header .git.hub-hdr
+    !force find-file #l2
+    !iif &not &seq "http" &lef &set #l2 $result 4  -8 ml-write &spr "[Github %s Error: Expected redirect downloading artifact - %s]" #l0 #l2
+    !force delete-buffer $buffer-bname
+    set-variable %http-header ""
+    0x80 file-op #l2 &spr "%sartifacts/%s" #l8 #l4
+    !if &sin "downloads.zip" #l4
+      1 shell-command &spr "unzip \"%sartifacts/%s\" -d \"%sdownloads/\"" #l8 #l4 #l8
+      !iif &set #l2 $result  -8 ml-write &spr "[Github %s Error: Failed to extract downloads artifact %d zip  - %s]" #l0 #l3 #l4
+    !elif &sin "packages.zip" #l4
+      1 shell-command &spr "unzip \"%sartifacts/%s\" -d \"%spackages/\"" #l8 #l4 #l8
+      !iif &set #l2 $result  -8 ml-write &spr "[Github %s Error: Failed to extract packages artifact %d zip  - %s]" #l0 #l3 #l4
+    !endif
+    set-variable #l3 &add #l3 1 
+  !done
+!emacro
+
+; Build all actions listed in .git.hub-bal with given commit
+;  @1 - Commit SHA1, if not given or "" then latest commit on .git.hub-brn is built
+;  @2 - Artifact download directory name, if not given or "" then $temp-name is used, otherwise ~/@2 is used
+; Returns
+;  #p8 - SHA1 of the commit built
+;  #p9 - Full path to the artifact directory
+define-macro github-build
+  ; Get the sha of the commit to be used for building and release
+  ; this can be passed in or, if not given we get the latest commit on the main branch 
+  !force set-variable #l0 @1
+  !if &or &not $status &seq #l0 ""
+    github-api-json &cat "commits/" .git.hub-brn
+    !iif &not &xseq &set #l0 &rig &reg &spr "/json/ghaj/sha" "" 1 "\\h+"  -8 ml-write &spr "[Github Error: Failed to get latest commit sha - %s]" #l0
+  !endif
+  set-variable #p8 #l0
+  !force set-variable #l9 @2
+  !if &or &not $status &seq #l1 ""
+    set-variable #l1 $temp-name
+  !else
+    set-variable #l1 &stat a &cat "~/" #l9
+  !endif
+  !iif &not &seq "X" &stat t #l1  -8 ml-write &spr "[Github Error: Output directory already exists - %s]" #l1
+  !force 0x100 file-op #l1 
+  !iif &not &seq "D" &stat t #l1  -8 ml-write &spr "[Github Error: Failed to create output directory - %s]" #l1
+  set-variable #l1 &cat #l1 "/"
+  set-variable #p9 #l1
+  !force 0x100 file-op &cat #l1 "artifacts" 
+  !force 0x100 file-op &cat #l1 "downloads" 
+  !force 0x100 file-op &cat #l1 "packages" 
+  ml-write &spr "[Github Build: Output to %s]" #l1
+  set-variable #l4 ""
+  set-variable #l2 0
+  !while &not &seq "" &set #l3 &lget .git.hub-bal &inc #l2 1
+    github-build-action #l0 #l3 #l1 #l4
+    !iif &seq #l4 ""  set-variable #l4 &spr ",\"refToHelpAsset\":\"%s\"" #l9
+  !done
+  ml-write &spr "[Github Build: Complete, output to %s]" #l1
+!emacro
+
+; Create release and upload 'download' artifacts as assets
+;  @1 - SHA1 of the commit built
+;  @2 - Release version, used with .git.hub-rtp to create tag and .git.hub-rnp to create name
+;  @3 - Full path to the artifact directory
+;  @4 - Release readme template md filename
+define-macro github-release
+  set-variable #l0 @1
+  set-variable #l9 @2
+  set-variable #l1 @3
+  !iif &not &seq "D" &stat t #l1  -8 ml-write &spr "[Github Release Error: Failed to locate given release directory - %s]" #l1
+  !iif &not &seq "D" &stat t &cat #l1 "downloads"  -8 ml-write &spr "[Github Release Error: Failed to locate given release downloads directory - %sdownloads]" #l1
+  github-api-json "releases" "" &spr "{\"tag_name\":\"%s%s\",\"target_commitish\":\"%s\",\"name\":\"%s%s\",\"generate_release_notes\":false,\"draft\":true,\"prerelease\":true}" .git.hub-rtp #l9 #l0 .git.hub-rnp #l9
+  !iif &not &xseq &set #l8 &rig &reg &spr "/json/ghaj/id" "" 1 "\\h+"  -8 ml-write &spr "[Github Release Error: Unexpected release ID - %s]" #l8
+  !iif &not &seq "\"http" &lef &set #l2 &reg "/json/ghaj/upload_url" "" 5  -8 ml-write &spr "[Github Release Error: Unexpected upload_url %s]" #l2
+  set-variable #p7 #l8
+  set-variable #l2 &rep &rig #l2 1 "{?name,label}" "?name="
+  !force delete-buffer "*ghrt*"
+  !force delete-buffer "*ghrc*"
+  find-buffer "*ghrc*"
+  !force delete-buffer "*ghru*"
+  find-buffer "*ghru*"
+  set-variable $file-names &cat #l1 "downloads/.*\\.\\(zip\\|msi\\)"
+  set-variable #l1 $result
+  set-variable #l5 0
+  !while &not &seq "" &set #l3 $file-names
+    ml-write &spr "[Github Release: Uploading asset %s]" #l3
+    !if &not #l5
+      !iif &not &set #l4 &sin #l9 #l3  -8 ml-write &spr "[Github Release Error: Asset %s does not have release ID %s in name]" #l3 #l9
+      set-variable #l6 &lef #l3 &sub #l4 1
+    !endif
+    find-buffer "*ghrt*"
+    1 buffer-mode "rbin"
+    insert-file &cat #l1 #l3
+    generate-hash
+    set-variable #l4 $result
+    !force delete-buffer "*ghrt*"
+    find-buffer "*ghrc*"
+    insert-string &spr "%s %s\n" #l4 #l3
+    find-buffer "*ghru*"
+    set-variable %http-post-file &cat #l1 #l3
+    set-variable %http-header &cat .git.hub-hdr "\r\nContent-Type: application/octet-stream"
+    !force insert-file &cat #l2 &rep &rep #l3 "_" "%5f" "." "%2e"
+    !iif &not $status  -8 ml-write &spr "[Github Release Error: Failed to upload asset %s%s]" #l1 #l3
+    set-variable #l5 &add #l5 1
+  !done
+  find-buffer "*ghrc*"
+  !force 0 write-buffer &set %http-post-file &stat a &spr "%s../%s%s-sha265.txt" #l1 #l6 #l9
+  set-variable %http-header &cat .git.hub-hdr "\r\nContent-Type: application/octet-stream"
+  find-buffer "*ghrc*"
+  !force insert-file &cat #l2 &rep &rep &spr "%s%s-sha265.txt" #l6 #l9 "_" "%5f" "." "%2e"
+  !iif &not $status  -8 ml-write &spr "[Github Release Error: Failed to upload asset %s%s]" #l1 #l3
+  set-variable #l5 &add #l5 1
+  find-file @4
+  beginning-of-buffer
+  replace-string "<VERSION>" #l9
+  beginning-of-buffer
+  replace-string "\\\\" "\\\\\\\\"
+  beginning-of-buffer
+  replace-string "\"" "\\\\\""
+  beginning-of-buffer
+  insert-string "{\"body\":\""
+  replace-string "\n" "\\\\n"
+  2 backward-delete-char
+  insert-string "\"}"
+  !force 0 write-buffer &set %http-post-file &stat a &spr "%s../readme.md.upl" #l1
+  github-api-json &cat "releases/" #l8
+  ml-write &spr "[Github Release: Complete, uploaded %d assets]" #l5
+!emacro
+
+define-macro github-build-release
+  !force set-variable #l0 @1
+  !if &or &not $status &seq #l0 ""
+    set-variable #l0 @ml "MicroEmacs Version"
+    !iif &seq #l0 ""  -8 ml-write "[Github Release Error: A version must be given]"
+  !endif
+  !iif &not &seq "R" &stat t &set #l1 &stat a .git.hub-rrt  -8 ml-write &spr "[Github Release Error: Release readme template is not a regular file: %s]" #l1
+  github-build "" &cat .git.hub-rtp #l0
+  github-release #l8 #l0 #l9 #l1
+!emacro

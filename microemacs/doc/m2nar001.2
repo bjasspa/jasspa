@@ -245,35 +245,29 @@ users  execute a "\fCrehash\fR"  command and then
 .Ht me 1
 can be executed from the command line.
 .PP
-By default a X-Windows  terminal is displayed, ensure that  \fC$DISPLAY\fR and
-\fC$TERM\fR  are correctly  configured. To execute a terminal  emulation  then
-execute  \fBme\fR  with the \fC\-n\fR  option i.e. "\fCme\  \-n\fR". Note that
-this is not required if you are using a \fCvt100\fR emulation.
+By default a X-Windows terminal is displayed, ensure that \fC$DISPLAY\fR and \fC$TERM\fR are correctly  configured. To
+execute a terminal  emulation then execute  \fBme\fR with the \fC\-n\fR option i.e. "\fCme\ \-n\fR". Note that this is
+not required if you are using a \fCvt100\fR emulation.
 .PP
-When \*(mS is executed the local directory  \fC~/.jasspa\fR is created for the
-user  settings.  The  user  home  directory  may be  changed  by  setting  the
-environment variable
+When \*(mS is executed the local  directory  \fC~/.config/jasspa\fR  is created for the user  settings.  The user home
+directory may be changed by setting the environment variable
 .Ht $MEPATH 5 .
 .SS "UNIX Installation (Single User)"
-Where the user is not  permitted  to  install  3rd party  applications  in the
-system directories then \*(mS may be installed locally as follows:-
+Where the user is not  permitted  to  install  3rd party  applications  in the  system  directories  then \*(mS may be
+installed locally as follows:-
 .BS
-Create the directory \fC~/.jasspa\fR.
+Create the directory \fC~/.config/jasspa\fR.
 .BU
-Unpack  and   install   the   \fCjasspa-metree-YYYYMMDD.tar.gz\fR   into  this
-directory.
+Unpack and install the \fCjasspa-metree-YYYYMMDD.tar.gz\fR into this directory.
 .BU
-If spelling  dictionaries  are required then place them in the  \fIspelling\fR
-sub-directory  created when  \fImetree\fR was unpacked. Unpack and install the
-\fCspelling\fR into this directory.
+If spelling  dictionaries are required then place them in the \fIspelling\fR  sub-directory  created when \fImetree\fR
+was unpacked. Unpack and install the \fCspelling\fR into this directory.
 .BU
-If the standard icons are required for Gnome, KDE or some other window manager
-then  create the  sub-directory  \fC~/.jasspa/icons\fR  and unpack and
-install the icons into the new directory.
+If the  standard  icons are  required  for Gnome, KDE or some  other  window  manager  then  create the  sub-directory
+\fC~/.config/jasspa/icons\fR and unpack and install the icons into the new directory.
 .BU
-The user files will be placed in the \fC~/.jasspa\fR  directory by default. To
-keep the user macros separate then the directory  \fC~/.jasspa/$LOGNAME\fR may
-be created and will identified as the users home directory.
+The user files will be placed in the  \fC~/.config/jasspa\fR  directory  by default. To keep the user macros  separate
+then the directory \fC~/.config/jasspa/$LOGNAME\fR may be created and will identified as the users home directory.
 .BU
 Unpack (or build) the executable and place in "\fC~/bin\fR"
 .BE

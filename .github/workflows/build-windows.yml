@@ -117,7 +117,7 @@ jobs:
           heat dir macros -o jmeMacros.wxs -scom -frag -srd -sreg -gg -cg MacrosGroupId -dr jmeMacrosDirRef
           candle -ext WixUIExtension -ext WixUtilExtension jme.wxs jmeMacros.wxs
           light -ext WixUIExtension -ext WixUtilExtension -o Jasspa_MicroEmacs_${env:MEVER}_installer_windows.msi -loc jme.wxl jme.wixobj jmeMacros.wixobj -b macros
-          Compress-Archive -Path Jasspa_MicroEmacs_${env:MEVER}_installer_windows.msi -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_installer_windows
+          Copy-Item -Path Jasspa_MicroEmacs_${env:MEVER}_installer_windows.msi -Destination ..\..\downloads
 
       - name: Compile windows100 static mec
         shell: pwsh

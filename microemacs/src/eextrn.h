@@ -337,7 +337,7 @@ extern  int fnamecmp(meUByte *f1, meUByte *f2);
 #define gfsERRON_DIR          4
 extern  int getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname);
 extern  int mePathAddSearchPath(int index, meUByte *path_name,
-                                meUByte *path_base, int *gotUserPath);
+                                meUByte *path_base, int isUsrArea, int *gotUserPath);
 #define meFL_CHECKDOT    0x01
 #define meFL_USESRCHPATH 0x02
 #define meFL_USEPATH     0x04

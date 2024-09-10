@@ -5581,11 +5581,8 @@ meSetupPathsAndUser(void)
         {
             strcpy(buff,appData);
             strcat(buff,"/jasspa");
-            if(((ll = mePathAddSearchPath(ll,evalResult,(meUByte *) buff,&gotUserPath)) > 0) &&
-               !gotUserPath)
-                /* as this is the user's area, use this directory unless we find
-                 * a .../<$user-name>/ directory */
-                gotUserPath = -1;
+            /* as this is the user's area, use this directory as user path (with or without .../<$user-name>/ sub-directory */
+            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) buff,1,&gotUserPath);
         }
         
         /* Get the system path of the installed macros. Use $MEINSTPATH as the
@@ -5593,7 +5590,7 @@ meSetupPathsAndUser(void)
         if(((ss = meGetenv("MEINSTALLPATH")) != NULL) && (ss[0] != '\0'))
         {
             strcpy(buff,ss);
-            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) buff,&gotUserPath);
+            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) buff,0,&gotUserPath);
         }
         
         /* also check for directories in the same location as the binary */
@@ -5602,12 +5599,12 @@ meSetupPathsAndUser(void)
             ii = (((size_t) ss) - ((size_t) meProgName));
             meStrncpy(buff,meProgName,ii);
             buff[ii] = '\0';
-            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) buff,&gotUserPath);
+            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) buff,0,&gotUserPath);
         }
 #if MEOPT_TFS
         /* also check for the built-in file system */
         if(tfsdev != NULL)
-            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "tfs://",&gotUserPath);
+            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "tfs://",0,&gotUserPath);
 #endif        
         if(!gotUserPath && (appData != NULL))
         {

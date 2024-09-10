@@ -4,7 +4,7 @@
 >
 >  Created By    : Jon Green
 >  Created       : Sun Dec 8 14:46:52 2002
->  Last Modified : <20050513.0026>
+>  Last Modified : <20240909.2146>
 >  File Name     : cygwin.txt
 >
 
@@ -70,8 +70,8 @@ RUNNING:
 SETTING UP:
 
     On  running  the  editor for the first time then a  configuration  file is
-    created in your home directory  "$HOME/.jasspa"  which contains the editor
-    configuration setting.
+    created in your home directory  "$HOME/.config/jasspa"  which contains the
+    editor configuration setting.
 
     You can  configure  the editor to remember  session  history and preferred
     configuration:-
@@ -86,7 +86,7 @@ SETTING UP:
         "N" - (Log Name) Enter your $USER name, the default one is guest.
 
         "P" - (Setup Path) Set up your local path, should be
-              /home/<name>/.jasspa
+              /home/<name>/.config/jasspa
 
         "F" - (Setup File) Enter your <name>.
 

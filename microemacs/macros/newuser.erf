@@ -174,7 +174,6 @@
 "msshift" = "0"
 "quiet" = "1"
 "rsif-com" = "-xml"
-"setup-file" = "meuser"
 "spell" 2 {
  "autosave" = "0"
  "autospell" = "1"

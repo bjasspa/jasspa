@@ -527,8 +527,8 @@ meSetupPathsAndUser(void)
 #endif
     static meUByte lpath[] = _SEARCH_PATH;
     struct passwd *pwdp;            /* Password structure entry */
-    meUByte *ss, buff[meBUF_SIZE_MAX] ;
-    int ii, ll, gotUserPath ;
+    meUByte *ss, buff[meBUF_SIZE_MAX];
+    int ii, ll, gotUserPath;
     
     if((meUserName == NULL) &&
        ((ss = meGetenv ("MENAME")) != NULL) && (ss[0] != '\0'))
@@ -591,21 +591,18 @@ meSetupPathsAndUser(void)
         /* construct the search-path */
         /* put the $user-path first */
         if((gotUserPath = (meUserPath != NULL)))
-            meStrcpy(evalResult,meUserPath) ;
+            meStrcpy(evalResult,meUserPath);
         else
-            evalResult[0] = '\0' ;
-        ll = meStrlen(evalResult) ;
+            evalResult[0] = '\0';
+        ll = meStrlen(evalResult);
         
-        /* TODO should this be changed to ~/.config/jasspa ? */
-        /* look for the ~/.jasspa directory */
+        /* look for the ~/.config/jasspa directory */
         if(homedir != NULL)
         {
-            meStrcpy(buff,homedir) ;
-            meStrcat(buff,".jasspa") ;
-            if(((ll = mePathAddSearchPath(ll,evalResult,buff,&gotUserPath)) > 0) && !gotUserPath)
-                /* as this is the user's area, use this directory unless we find
-                 * a .../<$user-name>/ directory */
-                gotUserPath = -1 ;
+            meStrcpy(buff,homedir);
+            meStrcat(buff,".config/jasspa");
+            /* as this is the user's area, use this directory as user path (with or without .../<$user-name>/ sub-directory */
+            ll = mePathAddSearchPath(ll,evalResult,buff,1,&gotUserPath);
         }
         
         /* Get the system path of the installed macros. Use $MEINSTPATH as the
@@ -614,7 +611,7 @@ meSetupPathsAndUser(void)
            (((ss = lpath) != NULL) && (ss[0] != '\0')))
         {
             meStrcpy(buff,ss) ;
-            ll = mePathAddSearchPath(ll,evalResult,buff,&gotUserPath) ;
+            ll = mePathAddSearchPath(ll,evalResult,buff,0,&gotUserPath) ;
         }
         
         /* also check for directories in the same location as the binary */
@@ -623,13 +620,13 @@ meSetupPathsAndUser(void)
             ii = (((size_t) ss) - ((size_t) meProgName)) ;
             meStrncpy(buff,meProgName,ii) ;
             buff[ii] = '\0' ;
-            ll = mePathAddSearchPath(ll,evalResult,buff,&gotUserPath) ;
+            ll = mePathAddSearchPath(ll,evalResult,buff,0,&gotUserPath) ;
         }
         
 #if MEOPT_TFS
         /* also check for the built-in file system */
         if(tfsdev != NULL)
-            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "tfs://",&gotUserPath) ;
+            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "tfs://",0,&gotUserPath) ;
 #endif        
         
         if(!gotUserPath && (homedir != NULL))

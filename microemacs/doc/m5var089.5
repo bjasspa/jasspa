@@ -38,21 +38,18 @@ is undefined. The first directory in the \fB$MEPATH\fR variable is used as the
 .BU
 The  directory is  determined  from the system:
 .br
-\fBUNIX\fR: the home directory from \fC/etc/passwd\fR entry is used and
-appended with \fC.jasspa\fR i.e. \fC$HOME/.jasspa\fR, if the sub-directory
+\fBUNIX\fR:  the home  directory  from  \fC/etc/passwd\fR  entry is used and appended with  \fC.config/jasspa\fR  i.e.
+\fC$HOME/.config/jasspa\fR, if the sub-directory
 .Hl $user-name $user-name 5
-is    detected    in    this    directory    then    it   is   used    instead
-(\fC$HOME/.jasspa/$user\-name\fR).
+is detected in this directory then it is used instead (\fC$HOME/.config/jasspa/$user\-name\fR).
 .br
-\fBMicrosoft  Windows\fR: the user application data directory is obtained from
-the system and appended with \fCjasspa\fR i.e.  \fC$APPDATA/jasspa\fR.  If the
-sub-directory
+\fBMicrosoft  Windows\fR:  the user  application  data  directory  is  obtained  from the  system  and  appended  with
+\fCjasspa\fR i.e. \fC$APPDATA/jasspa\fR. If the sub-directory
 .Hl $user-name $user-name 5
-is    detected    in    this    directory    then    it   is   used    instead
-(\fC$APPDATA/jasspa/$user\-name\fR).
+is detected in this directory then it is used instead (\fC$APPDATA/jasspa/$user\-name\fR).
 .br
-\fBMS-DOS\fR  and  older  versions  of  \fBMicrosoft\fR   \fBWindows\fR
-without \fIInternet\fR \fIExplorer\fR \fI4.0\fR then a sub-directory
+\fBMS-DOS\fR and older versions of \fBMicrosoft\fR  \fBWindows\fR without \fIInternet\fR \fIExplorer\fR \fI4.0\fR then
+a sub-directory
 .Hl $user-name $user-name 5
 of the  program
 directory

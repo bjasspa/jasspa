@@ -5101,13 +5101,11 @@ The \s-1UNIX\s0 path searching is improved.  \fC/usr/local/microemacs\fR  will
 be  depreciated  and replaced with  \fC/usr/local/jasspa\fR  in addition other
 standard path locations are supported on a per-platform basis.
 .BU "-"
-On  \s-1UNIX\s0  then the  directory  \fC~/.jasspa\fR  shall  contain the user
-configuration   files.  Optionally  the  \fBcompany\fR,   \fBspelling\fR   and
-\fBmacros\fR sub-directories may be included in this directory where access to
-the system directory locations by the user is not permitted.
+On \s-1UNIX\s0 then the directory  \fC~/.config/jasspa\fR  shall contain the user configuration  files. Optionally the
+\fBcompany\fR,  \fBspelling\fR and \fBmacros\fR  sub-directories may be included in this directory where access to the
+system directory locations by the user is not permitted.
 .BU "-"
-Concept of guest has been removed. \fCguest.emf\fR and \fCguest.erf\fR removed
-replaced with \fInewuser\fR.
+Concept of guest has been removed. \fCguest.emf\fR and \fCguest.erf\fR removed replaced with \fInewuser\fR.
 .Ht user-setup 3
 no longer supports setting of name.
 .BU "-"

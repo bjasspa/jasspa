@@ -37,7 +37,7 @@ INSTALLERS
 
 - Homebrew installers for Linux and macOS, details to follow.
 
-- Jasspa_MicroEmacs_<VERSION>_installer_windows.msi contains the binaries for Windows, the macros and help file, 
+- [Jasspa_MicroEmacs_<VERSION>_installer_windows.msi](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_installer_windows.msi) contains the binaries for Windows, the macros and help file, 
   simply download and run to create a fully working environment.
 
 Spelling dictionary can be downloaded and installed by MicroEmacs as and when required.
@@ -56,9 +56,9 @@ To build a more complete, native environment do the following:
 
     a. **Required:** Binaries for your platform (Jasspa_MicroEmacs_<VERSION>_bin_\<PLATFORM>\_binaries.zip)
      
-    b. **Required:** Macro files (Jasspa_MicroEmacs_<VERSION>_macros.zip)
+    b. **Required:** Macro files ([Jasspa_MicroEmacs_<VERSION>_macros.zip](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_macros.zip))
 
-    c. Help file (Jasspa_MicroEmacs_<VERSION>_help_ehf.zip)
+    c. Help file ([Jasspa_MicroEmacs_<VERSION>_help_ehf.zip](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_help_ehf.zip))
 
     d. Spelling dictionaries for any language you require (Jasspa_MicroEmacs_<VERSION>_spelling_\<LANGUAGE>.zip)
      

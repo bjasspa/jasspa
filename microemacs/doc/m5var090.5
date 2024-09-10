@@ -145,35 +145,29 @@ Default install directories:-
 .I /usr/local/jasspa
 \- searching
 .LP
-The  default  user  location is defined as follows.
+The default user location is defined as follows.
 .IP
-\fI$(passwd-home)/.jasspa\fR \- searching
+\fI$(passwd-home)/.config/jasspa\fR \- searching
 .PP
-\*(mS searches for user defined configuration files in this directory and will
-write new user  configuration  files to this  directory.  The behaviour of the
-search may be over-ridden by setting some environment variables. 
+\*(mS searches for user defined  configuration  files in this directory and will write new user configuration files to
+this directory. The behaviour of the search may be over-ridden by setting some environment variables. 
 .TP 
 \fC$MEUSERPATH\fR  \- not searching
 .\"
-Specified as a single pathname and redefines the  \fI$user-path\fR  where user
-macros are placed, this overrides the  \fI$(passwd-home)/.jasspa\fR  directory
-location.
+Specified as a single  pathname and redefines the  \fI$user-path\fR  where user macros are placed, this  overrides the
+\fI$(passwd-home)/.config/jasspa\fR directory location.
 .TP
 \fC$MEINSTALLPATH\fR \- searching
 .\"
-Specified as multiple  pathname  components and overrides the default  install
-directory location (i.e. \fC/usr/local/jasspa\fR, etc. Typically used when the
-system  macro  directory  has been  install  in another  location  that is not
-included in the default  search path. This does not affect the user  directory
-location.
+Specified  as  multiple   pathname   components   and  overrides  the  default   install   directory   location  (i.e.
+\fC/usr/local/jasspa\fR, etc. Typically used when the system macro directory has been install in another location that
+is not included in the default search path. This does not affect the user directory location.
 .TP
 \fC$MEPATH\fR \- not searching
 .\"
-Overrides the \fI$(passwd-home)/.jasspa\fR and default search paths (including
-\fC$MEINSTALLPATH\fR),  \*(mS will use this  directory as the search path. The
-user directory is assumed to be the \s-1FIRST\s0  directory path in the string
-unless the  \fC$MEUSERPATH\fR  environment variable is defined which specifies
-the user path.
+Overrides the  \fI$(passwd-home)/.config/jasspa\fR  and default search paths (including  \fC$MEINSTALLPATH\fR),  \*(mS
+will use this directory as the search path. The user directory is assumed to be the \s-1FIRST\s0 directory path in the
+string unless the \fC$MEUSERPATH\fR environment variable is defined which specifies the user path.
 .SS "Microsoft Windows"
 he defined search paths for \s-1WINDOWS\s0 are defined as follows:-
 .IP

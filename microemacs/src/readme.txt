@@ -216,27 +216,27 @@ INSTALLATION
      execute me  with  the -n  option  i.e. "me   -n".  Note that  this  is not
      required if you are using a vt100 emulation. 
 
-     When MicroEmacs is executed  the local directory  ~/.jasspa is created for
-     the user settings. The  user home directory may  be changed by setting the
-     environment variable $MEPATH(5). 
+     When  MicroEmacs  is  executed  the local  directory  ~/.config/jasspa  is
+     created for the user  settings. The user home  directory may be changed by
+     setting the environment variable $MEPATH(5). 
 
   UNIX Installation (Single User) 
      Where the user is  not permitted to install  3rd party applications in the
      system directories then MicroEmacs may be installed locally as follows:- 
 
-       *  Create the directory ~/.jasspa. 
-       *  Unpack  and  install   the  jasspa-metree-YYYYMMDD.tar.gz  into  this
+       *  Create the directory ~/.config/jasspa. 
+       *  Unpack  and  install  the  jasspa-metree-YYYYMMDD.tar.gz   into  this
           directory. 
        *  If spelling dictionaries are required then place them in the spelling
-          sub-directory created  when metree  was unpacked.  Unpack and install
+          sub-directory  created when metree was  unpacked.  Unpack and install
           the spelling into this directory. 
-       *  If the  standard icons  are  required for  Gnome,  KDE or  some other
-          window manager  then  create  the  sub-directory  ~/.jasspa/icons and
-          unpack and install the icons into the new directory. 
-       *  The user files will be placed  in the ~/.jasspa directory by default.
-          To   keep   the    user   macros   separate    then   the   directory
-          ~/.jasspa/$LOGNAME may be  created and  will identified  as the users
-          home directory. 
+       *  If the  standard  icons are  required  for  Gnome, KDE or some  other
+          window manager then create the  sub-directory  ~/.config/jasspa/icons
+          and unpack and install the icons into the new directory. 
+       *  The user files will be placed in the  ~/.config/jasspa  directory  by
+          default.  To  keep  the  user  macros  separate  then  the  directory
+          ~/.config/jasspa/$LOGNAME  may be created and will  identified as the
+          users home directory. 
        *  Unpack (or build) the executable and place in "~/bin" 
 
      MicroEmacs may be executed  after it has been  re-hashed (depending on the
@@ -610,9 +610,9 @@ USER PROFILES
 
      UNIX In the UNIX environment then the local directory is typically created
           in the users home directory obtained from the /etc/passwd file and is
-          called  ~/.jasspa.  MicroEmacs  will   automatically  look  for  this
-          directory and  set  the  $user-path(5) variable  to  this  value. The
-          location  may  be  overridden  by  setting  the  environment variable
+          called ~/.config/jasspa.  MicroEmacs will automatically look for this
+          directory  and set the  $user-path(5)  variable  to this  value.  The
+          location  may be  overridden  by  setting  the  environment  variable
           $MEUSERPATH(5) to reference a different directory location. 
 
      DOS  For MS-DOS environments, there is  typically no user directory, it is
