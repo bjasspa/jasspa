@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : <unknown>
 #  Created       : Sun Mar 24 17:52:35 2024
-#  Last Modified : <240728.1232>
+#  Last Modified : <240731.0649>
 #
 #  Description	
 #
@@ -56,19 +56,25 @@ endif
 ifeq ($(PLATFORM),macos14)
    MEDIR := .macos64cc-release
 endif
-
+OSV=$(shell grep -E 'VERSION_ID=' /etc/os-release | sed -E 's/VERSION_ID="?([0-9]+).*"?/\1/') #"
+DIST=$(shell grep -E '^ID=' /etc/os-release | sed -E 's/ID=//')
+OSVERSION="$(DIST)$(OSV)"
+X11FLAG=""
+ifeq ($(DIST),fedora)
+   X11FLAG="X11_LIBS=-lX11"
+endif
 default:
 	##cd microemacs/3rdparty/zlib && make 
 	cd microemacs/3rdparty/tfs && bash build.sh
-	cd microemacs/src && bash build.sh -t w
 	cd microemacs/src && bash build.sh -t c	
-	cd microemacs/src && bash build.sh -t cw		
-	-mkdir -p MicroEmacs_$(VERSION)_$(PLATFORM)_mecs/bin
-	-mkdir -p MicroEmacs_$(VERSION)_$(PLATFORM)_mews/bin
-	-mkdir -p MicroEmacs_$(VERSION)_$(PLATFORM)_mecws/bin
-	-mkdir -p MicroEmacs_$(VERSION)_$(PLATFORM)_mec/bin
-	-mkdir -p MicroEmacs_$(VERSION)_$(PLATFORM)_mew/bin	
-	-mkdir -p MicroEmacs_$(VERSION)_$(PLATFORM)_mecw/bin		
+	cd microemacs/src && eval $(X11FLAG) bash build.sh -t w
+	cd microemacs/src && eval $(X11FLAG) bash build.sh -t cw		
+	-mkdir -p MicroEmacs_$(VERSION)_$(OSVERSION)_mecs/bin
+	-mkdir -p MicroEmacs_$(VERSION)_$(OSVERSION)_mews/bin
+	-mkdir -p MicroEmacs_$(VERSION)_$(OSVERSION)_mecws/bin
+	-mkdir -p MicroEmacs_$(VERSION)_$(OSVERSION)_mec/bin
+	-mkdir -p MicroEmacs_$(VERSION)_$(OSVERSION)_mew/bin	
+	-mkdir -p MicroEmacs_$(VERSION)_$(OSVERSION)_mecw/bin		
 	-mkdir -p tfs_$(VERSION)_$(PLATFORM)/bin
 	ln -sf `pwd`/microemacs/macros macros_$(VERSION)
 	cp microemacs/3rdparty/tfs/$(MEDIR)/tfs tfs_$(VERSION)_$(PLATFORM)/bin/
@@ -91,4 +97,5 @@ default:
 		cd microemacs/mesingle && bash mesgen.sh -d -p ../src/$(MEDIR)-mecw/mecw -o ../../MicroEmacs_$(VERSION)_$(PLATFORM)_mecws/bin/mecws
 test:
 	echo "MEDIR=$(MEDIR) PLATFORM=$(PLATFORM)"
+	echo "OSV=$(OSV) DIST=$(DIST)"
 	echo $(findstring fedora,$(PLATFORM))
