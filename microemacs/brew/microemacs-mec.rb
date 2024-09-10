@@ -35,7 +35,15 @@ class MicroemacsMec < Formula
           bin.install "bin/windows100-intel32/mecs"
       end
   end
-
+  
+  def caveats 
+      <<~EOS
+        This application is better working if you install tools like
+        luit and abduco, which you can install it with:
+        brew install abduco luit
+      EOS
+  end
+  
   test do
     assert_match "MicroEmacs 24 - Date 2024/09/02 - linux", shell_output("#{bin}/mecs -V")
   end

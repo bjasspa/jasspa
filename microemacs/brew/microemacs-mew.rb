@@ -41,7 +41,14 @@ class MicroemacsMew < Formula
           bin.install "bin/windows100-intel32/mews"
       end
   end
-
+  def caveats
+      <<~EOS  
+         On MacOS:
+         Before you can open the X-Window version please 
+         open X11 with this command:
+         open -a XQuartz
+      EOS
+  end
   test do
     assert_match "MicroEmacs 24 - Date 2024/09/02 - linux", shell_output("#{bin}/mews -V")
   end
