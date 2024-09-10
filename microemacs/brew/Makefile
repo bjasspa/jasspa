@@ -6,6 +6,9 @@
 ##############################################################################
 
 ## just for testing of a local install
+pkg=microemacs-mec
+## or reinstall
+action=install
 default:
-	brew install --build-from-source  microemacs-mec.rb
+	brew $(action) --build-from-source  $(pkg).rb
 
