@@ -18,6 +18,7 @@ class MicroemacsSpellingEnus < Formula
         puts "Found file: #{file}"
         cp "#{file}", spellfolder
     end  
+    ### setting MEPATH for mews and mecs does not work, what could we do?
     puts "start Microemacs with: MEPATH=~/.config/jasspa:/home/linuxbrew/.linuxbrew/share/jasspa/:/home/linuxbrew/.linuxbrew/share/jasspa/spelling mews"
   end
 
