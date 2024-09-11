@@ -39,7 +39,7 @@ jobs:
             ls
             pwd
             cd microemacs/packages/msys2
-            bash tpl2pkg.sh 20240902 PKGBUILD.tpl
+            bash tpl2pkg.sh ${VERSION} PKGBUILD.tpl
             ls microemacs-package
             cd microemacs-package
             ls -lr
@@ -52,10 +52,9 @@ jobs:
             ls -lh
             makepkg -si --noconfirm
             mecs -V
-            cygdrive .
 
       - name: Upload linux downloads
         uses: actions/upload-artifact@v4
         with: 
-          name: microemacs-20240902-1-x86_64.pkg.tar.zst
-          path: microemacs/packages/msys2/microemacs-package/microemacs-240902-1-x86_64.pkg.tar.zst
+          name: microemacs-${{ env.VERSION }}-1-x86_64.pkg.tar.zst
+          path: microemacs/packages/msys2/microemacs-package/microemacs-${{ env.VERSION }}-1-x86_64.pkg.tar.zst
