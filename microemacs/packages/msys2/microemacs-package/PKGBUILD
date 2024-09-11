@@ -7,9 +7,13 @@ pkgdesc="Jasspa MicroEmacs Text Editor"
 arch=('x86_64')
 url="https://github.com/bjasspa/jasspa"
 license=('GPL')
-source=("bin/windows100-intel32/mecs.exe")
-sha256sums=('dcc2ccb607422c4d4970ef1fb5634965bba4765505e4b306390604aa15fdf5c6')
+source=("mecs.exe" "readme.txt" "COPYING.txt")
+sha256sums=('dcc2ccb607422c4d4970ef1fb5634965bba4765505e4b306390604aa15fdf5c6'
+    'dd8f9cb06614559745af3a1db410589a1efade8eaecee2f90891a05203fc92f6'
+    '08a74c60c75c32ed76ce06a9189dfbcc400ffc2cbb2767c3dce6f3587e3d4458')
 
 package() {
-    install -Dm755 "${srcdir}/mecs.exe" "${pkgdir}/usr/bin/mecs.exe"
+   install -Dm755 "${srcdir}/mecs.exe" "${pkgdir}/usr/bin/mecs.exe"
+   install -Dm644 "${srcdir}/readme.txt" "${pkgdir}/usr/share/jasspa/readme.txt"
+   install -Dm644 "${srcdir}/COPYING.txt" "${pkgdir}/usr/share/jasspa/COPYING.txt"   
 }
