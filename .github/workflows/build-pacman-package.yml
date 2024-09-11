@@ -19,10 +19,12 @@ jobs:
         uses: msys2/setup-msys2@v2
         
       - name: Installs 
+        shell: msys2 {0}
         run: |
             pacman -Ss unzip
 
       - name: Initial file checking
+        shell: msys2 {0}
         run: |
             ls
             pwd
@@ -36,4 +38,3 @@ jobs:
             makepkg -f
             makepkg -si
             mec -V
-        shell: msys2 {0}
