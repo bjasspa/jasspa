@@ -1,4 +1,4 @@
-name: Build Pacman package (Windows-2019)
+name: Build Pacman package (Windows-2022)
 
 on:
   workflow_dispatch:
@@ -40,3 +40,9 @@ jobs:
             ls -lh
             makepkg -si --noconfirm
             mecs -V
+
+      - name: Upload linux downloads
+        uses: actions/upload-artifact@v4
+        with: 
+          name: microemacs-24.09.02-1-x86_64.pkg.tar.zst
+          path: microemacs-24.09.02-1-x86_64.pkg.tar.zst
