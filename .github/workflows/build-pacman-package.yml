@@ -1,0 +1,22 @@
+name: Build Pacman package (Windows-2019)
+
+on:
+  workflow_dispatch:
+    branches: [ master ]
+env:
+   VERSION: "20240902"
+
+jobs:
+  build:
+    runs-on: windows-2019
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+       
+      - name: uses: msys2/setup-msys2
+        run: ||
+            ls
+            pwd
+        shell: msys2 {0]
