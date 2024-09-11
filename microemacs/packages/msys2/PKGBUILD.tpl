@@ -1,7 +1,7 @@
 # Maintainer: Detlef Groth <your@email.com>
 
 pkgname=microemacs
-pkgver=24.09.02
+pkgver=20240902
 pkgrel=1
 pkgdesc="Jasspa MicroEmacs Text Editor"
 arch=('x86_64')
