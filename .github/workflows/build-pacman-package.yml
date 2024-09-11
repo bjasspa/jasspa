@@ -47,7 +47,7 @@ jobs:
       - name: Creating package file
         shell: msys2 {0}
         run: |
-            cd microemacs/packages/msys2
+            cd microemacs/packages/msys2/microemacs-package
             makepkg -f
             ls -lh
             makepkg -si --noconfirm
