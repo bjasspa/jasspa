@@ -51,8 +51,7 @@ jobs:
             cygdrive .
 
       - name: Upload linux downloads
-        shell: msys2 {0]
         uses: actions/upload-artifact@v4
         with: 
           name: microemacs-24.09.02-1-x86_64.pkg.tar.zst
-          path: microemacs-packages/-microemacs-24.09.02-1-x86_64.pkg.tar.zst
+          path: microemacs/packages/msys2/microemacs-package/microemacs-24.09.02-1-x86_64.pkg.tar.zst
