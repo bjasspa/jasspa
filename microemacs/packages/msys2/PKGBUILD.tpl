@@ -15,6 +15,7 @@ sha256sums=(
     'digest-COPYING.txt'
     'SKIP')
 
+options=("!strip")
 package() {
    install -Dm755 "${srcdir}/bin/windows100-intel32/mec.exe"     "${pkgdir}/usr/bin/mec.exe"
    install -Dm755 "${srcdir}/bin/windows100-intel32/mec.exe"     "${pkgdir}/usr/bin/mew.exe"   
