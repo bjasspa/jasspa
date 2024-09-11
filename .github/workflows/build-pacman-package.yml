@@ -15,7 +15,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
        
-      - name: uses: msys2/setup-msys2
+      - name: Msys setup
+        uses: msys2/setup-msys2
         run: ||
             ls
             pwd
