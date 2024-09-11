@@ -17,8 +17,8 @@ noextract=('macros/')
 
 options=("!strip")
 package() {
-   install -Dm755 "${srcdir}/bin/windows100-intel32/mec.exe"     "${pkgdir}/usr/bin/mec.exe"
-   install -Dm755 "${srcdir}/bin/windows100-intel32/mec.exe"     "${pkgdir}/usr/bin/mew.exe"   
+   install -Dm755 "${srcdir}/mec.exe"     "${pkgdir}/usr/bin/mec.exe"
+   install -Dm755 "${srcdir}/mec.exe"     "${pkgdir}/usr/bin/mew.exe"   
    install -Dm644 "${srcdir}/readme.txt"  "${pkgdir}/usr/share/jasspa/readme.txt"
    install -Dm644 "${srcdir}/COPYING.txt" "${pkgdir}/usr/share/jasspa/COPYING.txt"
    install -d "${pkgdir}/usr/share/jasspa/macros"
