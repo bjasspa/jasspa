@@ -17,7 +17,7 @@ jobs:
        
       - name: Msys setup
         uses: msys2/setup-msys2
-        run: ||
+        run: |
             ls
             pwd
         shell: msys2 {0]
