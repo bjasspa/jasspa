@@ -38,4 +38,4 @@ jobs:
             ls -lr
             makepkg -f
             makepkg -si
-            mec -V
+            mecs -V
