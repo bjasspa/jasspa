@@ -36,6 +36,8 @@ jobs:
       - name: Downloading ME Zip files and creating package structure
         shell: msys2 {0}
         run: |
+            ls
+            pwd
             bash tpl2pkg.sh 20240902 PKGBUILD.tpl
             ls microemacs-package
             cd microemacs-package
