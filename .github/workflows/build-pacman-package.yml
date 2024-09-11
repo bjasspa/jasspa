@@ -37,5 +37,6 @@ jobs:
             cd microemacs-package
             ls -lr
             makepkg -f
-            makepkg -si
+            ls -lh
+            makepkg -si --noconfirm
             mecs -V
