@@ -7,13 +7,13 @@ pkgdesc="Jasspa MicroEmacs Text Editor"
 arch=('x86_64')
 url="https://github.com/bjasspa/jasspa"
 license=('GPL')
-source=("mec.exe" "mew.exe" "readme.txt" "COPYING.txt" "macros/*.emf")
+source=("mec.exe" "mew.exe" "readme.txt" "COPYING.txt")
 sha256sums=(
     'digest-mec.exe'
     'digest-mew.exe'
     'digest-readme.txt'
-    'digest-COPYING.txt'
-    'SKIP')
+    'digest-COPYING.txt')
+noextract=('macros/')
 
 options=("!strip")
 package() {
