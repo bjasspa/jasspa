@@ -17,6 +17,8 @@ jobs:
        
       - name: Msys setup
         uses: msys2/setup-msys2
+        
+      - name: Initial file checking
         run: |
             ls
             pwd
