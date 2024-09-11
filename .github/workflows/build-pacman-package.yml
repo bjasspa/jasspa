@@ -34,7 +34,7 @@ jobs:
             which bash
 
       - name: Downloading ME Zip files and creating package structure
-        shell: msys2 {0]
+        shell: msys2 {0}
         run: |
             bash tpl2pkg.sh 20240902 PKGBUILD.tpl
             ls microemacs-package
@@ -42,7 +42,7 @@ jobs:
             ls -lr
             
       - name: Creating package file
-        shell: msys2 {0]
+        shell: msys2 {0}
         run: |
             makepkg -f
             ls -lh
