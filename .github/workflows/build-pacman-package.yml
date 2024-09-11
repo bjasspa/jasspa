@@ -18,6 +18,10 @@ jobs:
       - name: Msys setup
         uses: msys2/setup-msys2@v2
         
+      - name: Installs 
+        run:
+            pacman -Ss unzip
+        run: |
       - name: Initial file checking
         run: |
             ls
@@ -27,4 +31,9 @@ jobs:
             which bash
             bash tpl2pkg.sh 20240902 PKGBUILD.tpl
             ls microemacs-package
+            cd microemacs-package
+            ls
+            makepkg -f
+            makepkg -si
+            mec -V
         shell: msys2 {0}

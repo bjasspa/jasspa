@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Detlef Groth
 #  Created       : Wed Sep 11 08:13:58 2024
-#  Last Modified : <240911.1356>
+#  Last Modified : <240911.1502>
 #
 #  Description	
 #
@@ -38,5 +38,6 @@ default:
 	cp microemacs-package/bin/*/mec.exe microemacs-package
 	cp microemacs-package/bin/*/mew.exe microemacs-package	
 	sha5sum microemacs-package/mec.exe  microemacs-package && rm *.zst
+	
 	#cd microemacs-package && makepkg -si
 	#pacman -Qlp package_file.pkg.tar.zst
