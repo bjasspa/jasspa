@@ -22,5 +22,5 @@ package() {
    install -Dm644 "${srcdir}/readme.txt"  "${pkgdir}/usr/share/jasspa/readme.txt"
    install -Dm644 "${srcdir}/COPYING.txt" "${pkgdir}/usr/share/jasspa/COPYING.txt"
    install -d "${pkgdir}/usr/share/jasspa/macros"
-   cp -r "$srcdir/macros"*  "${pkgdir}/usr/share/jasspa/macros/"
+   cp -r "${srcdir}/macros"  "${pkgdir}/usr/share/jasspa/"
 }
