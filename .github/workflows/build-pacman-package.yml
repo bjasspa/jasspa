@@ -32,16 +32,26 @@ jobs:
             cd microemacs/packages/msys2
             ls
             which bash
+
+      - name: Downloading ME Zip files and creating package structure
+        shell: msys2 {0]
+        run: |
             bash tpl2pkg.sh 20240902 PKGBUILD.tpl
             ls microemacs-package
             cd microemacs-package
             ls -lr
+            
+      - name: Creating package file
+        shell: msys2 {0]
+        run: |
             makepkg -f
             ls -lh
             makepkg -si --noconfirm
             mecs -V
+            cygdrive .
 
       - name: Upload linux downloads
+        shell: msys2 {0]
         uses: actions/upload-artifact@v4
         with: 
           name: microemacs-24.09.02-1-x86_64.pkg.tar.zst
