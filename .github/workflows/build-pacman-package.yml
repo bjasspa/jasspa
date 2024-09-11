@@ -21,7 +21,7 @@ jobs:
       - name: Installs 
         shell: msys2 {0}
         run: |
-            pacman -S unzip
+            yes | pacman -S unzip
 
       - name: Initial file checking
         shell: msys2 {0}
