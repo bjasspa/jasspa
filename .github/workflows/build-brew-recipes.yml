@@ -19,12 +19,12 @@ jobs:
         run: |
           cd microemacs/brew
           mkdir recipes
-          make tpl2rb
+          make tpl2rb version=${VERSION}
           cp *.rb recipes 
 
 
       - name: Upload linux downloads
         uses: actions/upload-artifact@v4
         with: 
-          name: JasspaJasspa_MicroEmacs_{{ env.VERSION }}-formula-downloads
+          name: JasspaJasspa_MicroEmacs_${{ env.VERSION }}-formula-downloads
           path: microemacs/brew/recipes
