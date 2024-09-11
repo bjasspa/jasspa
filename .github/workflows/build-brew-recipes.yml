@@ -1,8 +1,10 @@
-name: Build Homebrew recipes (Ubuntu-20)
+name: Build Homebrew formulas (Ubuntu-20)
 
 on:
   workflow_dispatch:
     branches: [ master ]
+env:
+   VERSION: "20240902"
 
 jobs:
   build:
@@ -24,5 +26,5 @@ jobs:
       - name: Upload linux downloads
         uses: actions/upload-artifact@v4
         with: 
-          name: recipe-downloads
+          name: JasspaJasspa_MicroEmacs_{{ env.VERSION }}-formula-downloads
           path: microemacs/brew/recipes
