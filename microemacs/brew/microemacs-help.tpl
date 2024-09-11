@@ -1,11 +1,12 @@
 
-class MicroemacsMacros < Formula
-  desc "MicroEmacs 24 Text Editor Macro files"
+class MicroemacsHelp < Formula
+  desc "MicroEmacs 24 Text Editor Help file"
   homepage "https://github.com/bjasspa/jasspa"
-  version "20240902"
-  url "https://github.com/bjasspa/jasspa/releases/download/me_#{version}/Jasspa_MicroEmacs_#{version}_macros.zip"
-  sha256 "BDB62B43AC4B948AA641C372D6BA9DD861C80DFB29B88AC6A5EB69862B3D2F9F"
+  sha256 "__sha__"
+  version "__version__"
+  url "https://github.com/bjasspa/jasspa/releases/download/me_#{version}/Jasspa_MicroEmacs_#{version}_help_ehf.zip"
   depends_on "microemacs-mec"
+  depends_on "microemacs-macros"
 
   def install
     # Define the target directory
@@ -19,7 +20,7 @@ class MicroemacsMacros < Formula
         cp "#{file}", macrofolder
     end  
     ### setting MEPATH for mews and mecs does not work, what could we do?
-    puts "start Microemacs with: MEPATH=~/.config/jasspa:/home/linuxbrew/.linuxbrew/share/jasspa/:/home/linuxbrew/.linuxbrew/share/jasspa/spelling mews"
+    puts "start Microemacs with: MEPATH=~/.config/jasspa:#{share}/jasspa/macros:${share}/jasspa/spelling mec"
   end
 
 end
