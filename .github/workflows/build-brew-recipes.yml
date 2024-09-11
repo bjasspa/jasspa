@@ -1,0 +1,28 @@
+name: Build Jomebrew recipes (Ubuntu-20)
+
+on:
+  workflow_dispatch:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+       
+      - name: Create Brew Recipes
+        run: |
+          cd brew
+          mkdir recipes
+          make tpl2rb
+          cp *.rb recipes 
+
+
+      - name: Upload linux downloads
+        uses: actions/upload-artifact@v4
+        with: 
+          name: recipe-downloads
+          path: brew/recipes
