@@ -23,6 +23,7 @@ jobs:
             ls
             pwd
             cd microemacs/packages/msys2
+            ls
             wget -v
             bash tpl2pkg.sh 20240902 PKGBUILD.tpl
             ls microemacs-package
