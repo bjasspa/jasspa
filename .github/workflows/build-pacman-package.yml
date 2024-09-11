@@ -35,7 +35,7 @@ jobs:
             bash tpl2pkg.sh 20240902 PKGBUILD.tpl
             ls microemacs-package
             cd microemacs-package
-            ls -l macros/*.ehf
-            makepkg --debug -f
+            ls -lr
+            makepkg -f
             makepkg -si
             mec -V
