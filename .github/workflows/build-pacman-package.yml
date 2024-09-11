@@ -7,21 +7,22 @@ env:
    VERSION: "20240902"
 
 jobs:
-  build:
-    runs-on: windows-2019
+  msys2-ucrt64:
+    runs-on: windows-latest
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
-
+    defaults:
+        run:
+            shell: msys2 {0}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
        
       - name: Msys setup
         uses: msys2/setup-msys2@v2
-        
-      - name: Installs 
-        shell: msys2 {0}
-        run: |
-            pacman --noconfirm -S unzip 2>&1 /dev/null
+        with: 
+          msystem: UCRT64
+          update: true
+          install: git unzip
 
       - name: Initial file checking
         shell: msys2 {0}
