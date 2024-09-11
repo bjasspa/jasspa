@@ -38,6 +38,7 @@ jobs:
         run: |
             ls
             pwd
+            cd microemacs/packages/msys2
             bash tpl2pkg.sh 20240902 PKGBUILD.tpl
             ls microemacs-package
             cd microemacs-package
@@ -46,6 +47,7 @@ jobs:
       - name: Creating package file
         shell: msys2 {0}
         run: |
+            cd microemacs/packages/msys2
             makepkg -f
             ls -lh
             makepkg -si --noconfirm
