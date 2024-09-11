@@ -1,0 +1,15 @@
+# Maintainer: Detlef Groth <your@email.com>
+
+pkgname=microemacs
+pkgver=24.09.02
+pkgrel=1
+pkgdesc="Jasspa MicroEmacs Text Editor"
+arch=('x86_64')
+url="https://github.com/bjasspa/jasspa"
+license=('GPL')
+source=("bin/windows100-intel32/mecs.exe")
+sha256sums=('dcc2ccb607422c4d4970ef1fb5634965bba4765505e4b306390604aa15fdf5c6')
+
+package() {
+    install -Dm755 "${srcdir}/mecs.exe" "${pkgdir}/usr/bin/mecs.exe"
+}
