@@ -1,0 +1,60 @@
+name: Build Pacman package (Windows-2022)
+
+on:
+  workflow_dispatch:
+    branches: [ master ]
+env:
+   VERSION: "20240902"
+
+jobs:
+  msys2-ucrt64:
+    runs-on: windows-latest
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+    defaults:
+        run:
+            shell: msys2 {0}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+       
+      - name: Msys setup
+        uses: msys2/setup-msys2@v2
+        with: 
+          msystem: UCRT64
+          update: true
+          install: git unzip
+
+      - name: Initial file checking
+        shell: msys2 {0}
+        run: |
+            ls
+            pwd
+            cd microemacs/packages/msys2
+            ls
+            which bash
+
+      - name: Downloading ME Zip files and creating package structure
+        shell: msys2 {0}
+        run: |
+            ls
+            pwd
+            cd microemacs/packages/msys2
+            bash tpl2pkg.sh ${VERSION} PKGBUILD.tpl
+            ls microemacs-package
+            cd microemacs-package
+            ls -lr
+            
+      - name: Creating package file
+        shell: msys2 {0}
+        run: |
+            cd microemacs/packages/msys2/microemacs-package
+            makepkg -f
+            ls -lh
+            makepkg -si --noconfirm
+            mecs -V
+
+      - name: Upload linux downloads
+        uses: actions/upload-artifact@v4
+        with: 
+          name: microemacs-${{ env.VERSION }}-1-x86_64.pkg.tar.zst
+          path: microemacs/packages/msys2/microemacs-package/microemacs-${{ env.VERSION }}-1-x86_64.pkg.tar.zst
