@@ -346,7 +346,7 @@ set-variable .newuser.pathdiv &con &band $system 0x80 ":" ";"
   !if &exi .newuser.create-path
     insert-string &spr "Creating User Path: %s ... " .newuser.create-path
     ; may need to create the ~/.config dir first
-    !iif &not &seq "D" &stat "t" &set #g1 &stat a &cat .newuser.create-path ".." !force !force 0x105 file-op #g1
+    !iif &not &seq "D" &stat "t" &set #l1 &stat a &cat .newuser.create-path ".." !force !force 0x105 file-op #l1
     !force !force 0x100 file-op &lef .newuser.create-path -1
     !if &not $status
       insert-string "[ERROR]\n"

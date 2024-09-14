@@ -66,6 +66,11 @@ set-variable .help.purl "http://d1j8pqz26umfbo.cloudfront.net/packages/"
     !abort
   !endif
   ml-write &spr "MicroEmacs Package %s: %s ... " #l1 &con &band @# 1 "Installing" "Updating"
+  ; TODO regex will get the last /macros rather than first...
+  !if &or &set #l5 &sin &cat "/macros" &set #l2 &con &band $system 0x200 ";" ":" &cat $search-path #l2 &set #l6 &sin &cat "/macros/" #l2 &cat $search-path #l2
+    set-variable #l5 &lef $search-path &add 6 &con &less &spr "file:%s/" @s2
+    set-variable #l5 &spr "file:%s/" @s2
+    
   !if &xse $search-path &spr "\\(^\\|.*%s\\)\\([^%s]+/macros\\)/?\\(%s.*\\|$\\)" &set #l2 &con &band $system 0x200 ";" ":" #l2 #l2
     set-variable #l5 &spr "file:%s/" @s2
   !else

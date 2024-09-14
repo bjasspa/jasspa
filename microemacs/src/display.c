@@ -3081,11 +3081,11 @@ addColorScheme(int f, int n)
     /* Get the hilight colour index */
     if ((meGetString((meUByte *)"Color scheme index",0,0,buf,meBUF_SIZE_MAX) <= 0) ||
         ((index = meAtoi(buf)) < 0))
-        return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Invalid scheme index number");
+        return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Invalid scheme index number: %s",buf);
 
     /* See if we are replicating a color and validate the existing index */
     if ((f) && ((n > styleTableSize) || (n < 0)))
-        return mlwrite (MWABORT|MWPAUSE,(meUByte *)"Cannot duplicate undefined scheme %d.", n);
+        return mlwrite (MWABORT|MWPAUSE,(meUByte *)"Cannot duplicate undefined scheme %d.",n);
     else
         dcolors = styleTable + (n*meSCHEME_STYLES);
 
@@ -3116,7 +3116,7 @@ addColorScheme(int f, int n)
             meStrcat(prompt,schmPromptP[jj]) ;
             if((meGetString(prompt,0,0,buf,meBUF_SIZE_MAX) <= 0) ||
                ((col=meAtoi(buf)) < 0) || (col >= noColors))
-                return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Invalid scheme entry");
+                return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Invalid scheme %d entry %d: %s",index,ii*2+jj,buf);
             scheme[ii][jj] = col;
         }
         scheme[ii][2] = 0 ;

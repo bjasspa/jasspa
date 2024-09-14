@@ -134,6 +134,7 @@ define-macro github-build-action
 ;  #p8 - SHA1 of the commit built
 ;  #p9 - Full path to the artifact directory
 define-macro github-build
+  !force 0x10 file-op
   ; Get the sha of the commit to be used for building and release
   ; this can be passed in or, if not given we get the latest commit on the main branch 
   !force set-variable #l0 @1
@@ -177,7 +178,7 @@ define-macro github-release
   set-variable #l1 @3
   !iif &not &seq "D" &stat t #l1  -8 ml-write &spr "[Github Release Error: Failed to locate given release directory - %s]" #l1
   !iif &not &seq "D" &stat t &cat #l1 "downloads"  -8 ml-write &spr "[Github Release Error: Failed to locate given release downloads directory - %sdownloads]" #l1
-  github-api-json "releases" "" &spr "{\"tag_name\":\"%s%s\",\"target_commitish\":\"%s\",\"name\":\"%s%s\",\"generate_release_notes\":false,\"draft\":true,\"prerelease\":true}" .git.hub-rtp #l9 #l0 .git.hub-rnp #l9
+  github-api-json "releases" "" &spr "{\"tag_name\":\"%s%s\",\"target_commitish\":\"%s\",\"name\":\"%s%s\",\"generate_release_notes\":false,\"draft\":false,\"prerelease\":true}" .git.hub-rtp #l9 #l0 .git.hub-rnp #l9
   !iif &not &xseq &set #l8 &rig &reg &spr "/json/ghaj/id" "" 1 "\\h+"  -8 ml-write &spr "[Github Release Error: Unexpected release ID - %s]" #l8
   !iif &not &seq "\"http" &lef &set #l2 &reg "/json/ghaj/upload_url" "" 5  -8 ml-write &spr "[Github Release Error: Unexpected upload_url %s]" #l2
   set-variable #p7 #l8
@@ -212,10 +213,10 @@ define-macro github-release
     set-variable #l5 &add #l5 1
   !done
   find-buffer "*ghrc*"
-  !force 0 write-buffer &set %http-post-file &stat a &spr "%s../%s%s-sha265.txt" #l1 #l6 #l9
+  !force 0 write-buffer &set %http-post-file &stat a &spr "%s../%s%s-sha256.txt" #l1 #l6 #l9
   set-variable %http-header &cat .git.hub-hdr "\r\nContent-Type: application/octet-stream"
   find-buffer "*ghrc*"
-  !force insert-file &cat #l2 &rep &rep &spr "%s%s-sha265.txt" #l6 #l9 "_" "%5f" "." "%2e"
+  !force insert-file &cat #l2 &rep &rep &spr "%s%s-sha256.txt" #l6 #l9 "_" "%5f" "." "%2e"
   !iif &not $status  -8 ml-write &spr "[Github Release Error: Failed to upload asset %s%s]" #l1 #l3
   set-variable #l5 &add #l5 1
   find-file @4

@@ -39,7 +39,8 @@
 
 #define meREGEXCLASS_SIZE 32
 typedef unsigned char meRegexClass[meREGEXCLASS_SIZE];
-typedef unsigned char meRegexDouble[2];
+typedef unsigned char meRegexDByte[2];
+typedef int meRegexDInt[2];
 
 typedef struct meRegexItem {
     /* linked list of all malloced items */
@@ -48,16 +49,21 @@ typedef struct meRegexItem {
     struct meRegexItem *next;     /* next item in the regex */
     struct meRegexItem *child;    /* Groups sub-expression list */
     struct meRegexItem *alt;      /* Group alternative sub expression */
-    int matchMin;                 /* minimum number of matches */
-    int matchMax;                 /* maximum number of matches */
+    unsigned short matchMin;      /* minimum number of matches */
+    unsigned short matchMax;      /* maximum number of matches */
     union {
         unsigned char cc;         /* character data */
-        meRegexDouble dd;         /* double character data */
-        int group;                /* group number */
+        meRegexDByte dd;          /* double character data */
+        meRegexDInt group;        /* group number and state */
         meRegexClass cclass;      /* Class bit mask */
     } data;
+    unsigned char flag;           /* item type */
     unsigned char type;           /* item type */
 } meRegexItem;     
+
+#define meREGEXITEM_FLAG_HASQ  0x01
+#define meREGEXITEM_FLAG_LAZY  0x02
+#define meREGEXITEM_MATCH_MAX  0xffff
 
 typedef struct {
     int start;
@@ -91,16 +97,18 @@ typedef struct meRegex {
 #define meREGEX_ERROR_TRAIL_BKSSH  2
 #define meREGEX_ERROR_OCLASS       3
 #define meREGEX_ERROR_OGROUP       4
+#define meREGEX_ERROR_OINTERVAL    5
 /* the next set are regex errors which aren't caused by being incomplete */
-#define meREGEX_ERROR_CLASS        5
-#define meREGEX_ERROR_UNSUPCLASS   6
-#define meREGEX_ERROR_BKSSH_CHAR   7
-#define meREGEX_ERROR_CGROUP       8
-#define meREGEX_ERROR_INTERVAL     9
-#define meREGEX_ERROR_BACK_REF     10
-#define meREGEX_ERROR_NESTGROUP    11
+#define meREGEX_ERROR_CLASS        6
+#define meREGEX_ERROR_UNSUPCLASS   7
+#define meREGEX_ERROR_BKSSH_CHAR   8
+#define meREGEX_ERROR_CGROUP       9
+#define meREGEX_ERROR_INTERVAL     10
+#define meREGEX_ERROR_BACK_REF     11
+#define meREGEX_ERROR_NESTGROUP    12
+#define meREGEX_ERROR_BADQUAL      13
 /* the next set are internal errors */
-#define meREGEX_ERROR_MALLOC       12
+#define meREGEX_ERROR_MALLOC       14
 
 /* meRegexComp internal return value - never actually returned */
 #define meREGEX_ALT               -1
@@ -121,16 +129,16 @@ typedef struct meRegex {
 #define meREGEX_MATCHWHOLE      0x08
 
 int
-meRegexComp(meRegex *regex, unsigned char *regStr, int flags) ;
+meRegexComp(meRegex *regex, unsigned char *regStr, int flags);
 int
 meRegexMatch(meRegex *regex, unsigned char *string, int len, 
-             int offsetS, int offsetE, int flags) ;
+             int offsetS, int offsetE, int flags);
 
-extern char    *meRegexCompErrors[] ;
+extern char    *meRegexCompErrors[];
 extern meRegex  mereRegex;          /* meRegex used by main search */
 extern meRegex  meRegexStrCmp;      /* meRegex used by meRegexStrCmp if main is not used  */
-extern int      mereNewlBufSz ;
-extern meUByte *mereNewlBuf ;
+extern int      mereNewlBufSz;
+extern meUByte *mereNewlBuf;
 
 #define meSEARCH_LAST_MAGIC_MAIN   0x01
 #define meSEARCH_LAST_MAGIC_STRCMP 0x02
