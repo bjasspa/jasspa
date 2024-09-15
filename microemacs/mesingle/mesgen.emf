@@ -134,7 +134,8 @@ define-macro mesingle-gen
           !iif &not $status  !break
           !iif &sub #l5 $window-line  !break
           !iif %mes-verb  -2 ml-write &spr "mesgen:   File %s" @s0
-          !if &seq ".emf" &rig &set #l6 @s0 -4
+          ; do not byte-compile any scheme files as they won't work with the scheme-editor 
+          !if &and &seq ".emf" &rig &set #l6 @s0 -4 &not &seq "scheme" &lef #l6 6
             set-variable #l7 &cat &lef #l6 -1 "b"
             !if &sin "d" %mes-opts
               !if &seq "R" &stat "t" &cat #l3 &rep #l6 ".emf" ".emb" 
