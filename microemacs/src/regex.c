@@ -43,7 +43,6 @@
 #define meREGEXCLASS_SIZE 32
 typedef unsigned char meRegexClass[meREGEXCLASS_SIZE];
 typedef unsigned char meRegexDByte[2];
-typedef int meRegexDInt[2];
 
 typedef struct meRegexItem {
     /* linked list of all malloced items */
@@ -55,7 +54,7 @@ typedef struct meRegexItem {
     union {
         unsigned char cc;         /* character data */
         meRegexDByte dd;          /* double character data */
-        meRegexDInt group;        /* group number and state */
+        int group;                /* group number and state */
         meRegexClass cclass;      /* Class bit mask */
     } data;
     unsigned short matchMin;      /* minimum number of matches */
@@ -310,11 +309,11 @@ do { \
             int __so, __eo, __ii; \
             retOffset = -1; \
             /* look back for the enclosure */ \
-            __eo = item->data.group[0]; \
+            __eo = item->data.group; \
             __ii = matchLen; \
             while(--__ii > 0) \
                 if(((__bri=matchItem[__ii])->type == meREGEXITEM_GROUP) && \
-                   (__bri->data.group[0] == __eo)) \
+                   (__bri->data.group == __eo)) \
                     break; \
             if(__ii > 0) \
             { \
@@ -534,7 +533,6 @@ lazy_add_more:
             }
             if(ci->type == meREGEXITEM_GROUP)
             {
-                ci->data.group[1] = -1;
                 if(!matchNo)
                 {
                     curMatchLen[depth] = matchLen-1;
@@ -575,12 +573,21 @@ back_step:
                         offset = matchIOff[matchLen];
                         if((ci->flag & meREGEXITEM_FLAG_LAZY) && ((ii = matchIMNo[-matchNo]) < ci->matchMax))
                         {
-                            matchNo = ii;
-                            matchLen++;
+                            /* on a 0th match lazy placeholder (i.e. a \(...\)?? or \(...\)*? etc. which must now be grown */
+                            if(ii == 0)
+                            {
+                                meAssert(matchNo == -1);
+                                matchNo = 0;
+                                matchLen--;
+                            }
+                            else
+                            {
+                                matchNo = ii;
+                                matchLen++;
+                            }
                             goto lazy_add_more;
                         }
                         /* set the ci group[1] to current offset, no point trying to move forward on next \) if offset is the same  */
-                        ci->data.group[1] = offset;
                         curMatchLen[depth++] = -matchNo;
                     }
                     else
@@ -636,41 +643,12 @@ back_step:
             }
         }
 move_on:
-        if((ci = ci->next) == NULL)
+        if((ci = ci->next) != NULL)
+            matchNo = 0;
+        else if(depth)
         {
-            if(depth == 0)
-            {
-                int ss = matchIOff[0];
-                regex->group[0].start = ss;
-                regex->group[0].end = offset;
-                if(regex->groupNo)
-                {
-                    ii = regex->groupNo+1;
-                    while(--ii > 0)
-                        regex->group[ii].start = regex->group[ii].end = -1;
-                    for(ii=1 ; ii < matchLen ; ii++)
-                    {
-                        if((matchItem[ii])->type == meREGEXITEM_GROUP)
-                        {
-                            int jj = (matchItem[ii])->data.group[0];
-                            if((regex->group[jj].start == -1) || (regex->group[jj].end != -1))
-                            {
-                                regex->group[jj].start = matchIOff[ii] - ss;
-                                regex->group[jj].end = -1;
-                            }
-                            else
-                                regex->group[jj].end = matchIOff[ii] - ss;
-                        }
-                    }
-                }
-                return 1;
-            }
             ii = curMatchLen[--depth];
             ci = matchItem[ii];
-            if(ci->data.group[1] == offset)
-            {
-                printf("HERE GROUP\n");
-            }
             matchNo = matchIMNo[ii];
             matchItem[matchLen] = ci;
             matchIOff[matchLen] = offset;
@@ -680,8 +658,37 @@ move_on:
             if((matchNo >= ci->matchMin) && ((ci->flag & meREGEXITEM_FLAG_LAZY) || (offset == matchIOff[ii])))
                 goto move_on;
         }
+        else if(((matchFlags & meREGEX_MATCHWHOLE) == 0) || (offset == len))
+        {
+            int ss = matchIOff[0];
+            regex->group[0].start = ss;
+            regex->group[0].end = offset;
+            if(regex->groupNo)
+            {
+                ii = regex->groupNo+1;
+                while(--ii > 0)
+                    regex->group[ii].start = regex->group[ii].end = -1;
+                for(ii=1 ; ii < matchLen ; ii++)
+                {
+                    if((matchItem[ii])->type == meREGEXITEM_GROUP)
+                    {
+                        int jj = (matchItem[ii])->data.group;
+                        if((regex->group[jj].start == -1) || (regex->group[jj].end != -1))
+                        {
+                            regex->group[jj].start = matchIOff[ii] - ss;
+                            regex->group[jj].end = -1;
+                        }
+                        else
+                            regex->group[jj].end = matchIOff[ii] - ss;
+                    }
+                }
+            }
+            return 1;
+        }
         else
-            matchNo = 0;
+        {
+            goto back_step;
+        }
     }
     return 0;
 }
@@ -931,7 +938,7 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
                     return meREGEX_ERROR_MALLOC;
                 item->type = meREGEXITEM_GROUP;
                 gg = ++(regex->groupNo);
-                item->data.group[0] = gg;
+                item->data.group = gg;
                 /* check the group array is large enough */
                 if(gg >= regex->groupSz)
                 {
@@ -1033,7 +1040,7 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
             if(meRegexGroupCompComplete(dd))
             {
                 item->type = meREGEXITEM_BACKREF;
-                item->data.group[0] = dd;
+                item->data.group = dd;
                 break;
             }
             dd += '0';
@@ -1600,10 +1607,10 @@ meRegexItemPrint(meRegexItem *item, int indent)
         printf("'%c' '%c'\n",item->data.dd[0],item->data.dd[1]);
         break;
     case meREGEXITEM_BACKREF:
-        printf("%d\n",item->data.group[0]);
+        printf("%d\n",item->data.group);
         break;
     case meREGEXITEM_GROUP:
-        printf("%d\n",item->data.group[0]);
+        printf("%d\n",item->data.group);
         meRegexGroupPrint(item->child,indent+2);
         break;
     case meREGEXITEM_CLASS:

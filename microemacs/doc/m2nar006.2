@@ -67,15 +67,15 @@ matches any  three-character  string that begins with  '\fCa\fR' and ends with
 .TP
 \fB*\fR (asterisk)
 .\"
-is not a construct by itself; it is a postfix operator that means to match the
-preceding  regular  expression  repetitively  as many times as possible. Thus,
+is not a construct  by itself; it is a postfix  qualifier  that means to match
+the preceding regular expression repetitively as many times as possible. Thus,
 \'\fCo*\fR' matches any number of '\fCo\fR's (including no '\fCo\fR's).
 .IP
 \'\fC*\fR' always applies to the \fBsmallest\fR possible preceding expression.
 Thus,  '\fCfo*\fR' has a repeating  '\fCo\fR', not a repeating  '\fCfo\fR'. It
 matches '\fCf\fR', '\fCfo\fR', '\fCfoo\fR', and so on.
 .IP
-The matcher processes a '\fC*\fR' construct by matching,  immediately, as many
+The '\fC*\fR' qualifier is greedy, which means the matcher processes the  construct by matching,  immediately, as many
 repetitions  as can be found. Then it continues  with the rest of the pattern.
 If that fails,  backtracking  occurs,  discarding  some of the  matches of the
 \'\fC*\fR'-modified construct in case that makes it possible to match the rest
@@ -84,19 +84,42 @@ of the  pattern.  For  example, in matching  '\fCca*ar\fR'  against the string
 the rest of the  pattern is  '\fCar\fR'  and there is only  '\fCr\fR'  left to
 match, so this try fails. The next alternative is for '\fCa*\fR' to match only
 two '\fCa\fR's. With this choice, the rest of the regex matches successfully.
-.IP
+.TP
 \fB+\fR (plus)
 .\"
-is a postfix  operator,  similar to  '\fC*\fR'  except  that it must match the
+is a postfix  qualifier,  similar to  '\fC*\fR'  except  that it must match the
 preceding  expression at least once. So, for example, '\fCca+r\fR' matches the
 strings  '\fCcar\fR' and '\fCcaaaar\fR' but not the string '\fCcr\fR', whereas
-\'\fCca*r\fR' matches all three strings.
+\'\fCca*r\fR'  matches all three  strings. This  qualifier is also greedy, see
+above.
 .TP
 \'\fB?\fR' (question mark)
 .\"
-is a postfix  operator,  similar  to  '\fC*\fR'  except  that it can match the
+is a postfix  qualifier,  similar  to  '\fC*\fR'  except  that it can match the
 preceding  expression  either once or not at all. For  example,  \'\fCca?r\fR'
-matches '\fCcar\fR' or '\fCcr\fR'; nothing else.
+matches '\fCcar\fR' or '\fCcr\fR'; nothing else. This  qualifier is also greedy, see
+above.
+.TP
+\fB*?\fR (asterisk-question mark)
+.\"
+is a  postfix  qualifier,  similar  to  '\fC*\fR'  except  that  it  is  lazy,
+i.e. not greedy. When  processing a lazy  qualifier, the matcher first matches
+the fewest allowed  repetitions (zero in this case) before continuing with the
+rest of the  pattern. It is only when a match  fails and  backtracking  occurs
+that more  repetitions  are matched if possible. So, for example,  '\fCc.*?r\fR'
+will return a match of '\fCcar\fR' for '\fCcarrrrd\fR' rather than  '\fCcarrrr\fR' as '\fCc.*r\fR'
+would do. Both would  return  '\fCcarrrrd\fR'  if a '\fCd\fR' was added to the
+regex. 
+.TP
+\fB+?\fR (plus-question mark)
+.\"
+is a lazy postfix  qualifier to match one or more  occurrences of the preceding
+expression. 
+.TP
+\fB??\fR (question mark-question mark)
+.\"
+is a lazy postfix  qualifier to match zero or one  occurrence of the preceding
+expression. 
 .TP
 \fB[\fR ... \fB]\fR
 .\"
@@ -356,7 +379,7 @@ matches any character that is not a word-constituent.
 .TP
 \fC\\{N,M\\}\fR
 .\"
-Matches an integer  number of the previous item, where \fCN\fR and \fCM\fR are
+is a greedy postfix  qualifier to matches an integer  number of the previous item, where \fCN\fR and \fCM\fR are
 integer constants interpreted as follows:-
 .RS
 .TP
@@ -376,6 +399,11 @@ The  preceeding  item is  matched  at least  \fCN\fR  times, but no more than
 .\"
 The preceeding item is optional and is matched at most \fCM\fR times.
 .RE
+.TP
+\fC\\{N,M\\}?\fR
+.\"
+is the lazy form or the previous postfix  qualifier, see above for the meaning
+of \fCN\fR and \fCM\fR.
 .RE
 .LP
 The constructs  that pertain to words and syntax are controlled by the setting
@@ -445,8 +473,8 @@ sensitive; disabled then case is ignored. The
 .Ht exact 2m
 mode is set on a per-buffer basis.
 .SH "NOTES"
-The  search  engine  searches  for the  longest  string  that  matches a given
-pattern, the longest  pattern is  sometimes  the pattern  that is not actually
+Greedy  qualifiers  will  return  the  longest  string  that they can  matche,
+however the longest  pattern is  sometimes   not what is actually
 required.  For instance,  consider  searching  for an  HTML  bracket  set.  The
 simplest search is:-
 .CS
@@ -458,8 +486,12 @@ Unfortunately, this pattern is not specific enough, given an HTML line:-
 .CE
 Then the pattern  matched is actually  the whole line as the \fC.*\fR  matches
 everything  to the last  \fC>\fR,  this is the longest  string. To rectify the
-pattern then we must be more  specific, the correct  search  pattern to use in
-this instance is:-
+pattern then we can either use a lazy qualifier, for example:
+.CS
+M-x search-forward "<.*?>"
+.CE
+Alternatively  the pattern can be made more  specific, for example the correct
+search pattern to use in this instance is:-
 .CS
 M-x search-forward "<[^>]*>"
 .CE
@@ -467,6 +499,13 @@ In this case we match any  character  excluding  the closing  character,  this
 guarantees that we always find the shortest string match. A search of our HTML
 line   locates   two   separate    instances   of   the   regular   expression
 \fC<a\ href="www.jasspa.com">\fR and \fC</a>\fR.
+.PP
+When matching a group with multiple  alternatives  the matcher will  match/use
+the first one that  successfully  matches,  this  means you  should  order the
+alternative  forms in  preference,  typically  longest  first. For example, if
+trying  to  match   '\fCok\fR'   or   '\fCokay\fR'   the  pattern   should  be
+'\fC\(okay\|ok\)\fR' and not '\fC\(ok\|okay\)\fR' as this will only ever match
+the 'ok' in an 'okay'.
 .SH HISTORY
 As of March 2005 then the existing  Emacs search string syntax of "\fC\\s?\fR"
 and  "\fC\\S?\fR"  has been  discarded  in favor of Perl's  simpler  syntax of

@@ -65,42 +65,55 @@ set-variable .help.purl "http://d1j8pqz26umfbo.cloudfront.net/packages/"
     ml-write &spr "[Error: Failed to download package file %s]" #l3
     !abort
   !endif
+  set-variable #l3 &set #l5 &cat "file:" &stat a $user-path
   ml-write &spr "MicroEmacs Package %s: %s ... " #l1 &con &band @# 1 "Installing" "Updating"
-  ; TODO regex will get the last /macros rather than first...
-  !if &or &set #l5 &sin &cat "/macros" &set #l2 &con &band $system 0x200 ";" ":" &cat $search-path #l2 &set #l6 &sin &cat "/macros/" #l2 &cat $search-path #l2
-    set-variable #l5 &lef $search-path &add 6 &con &less &spr "file:%s/" @s2
-    set-variable #l5 &spr "file:%s/" @s2
-    
-  !if &xse $search-path &spr "\\(^\\|.*%s\\)\\([^%s]+/macros\\)/?\\(%s.*\\|$\\)" &set #l2 &con &band $system 0x200 ";" ":" #l2 #l2
-    set-variable #l5 &spr "file:%s/" @s2
-  !else
-    set-variable #l5 $user-path
+  !if &xse $search-path &spr "\\(.*?%s\\)??\\([^%s]*/macros\\)/?\\(%s.*\\)?" &set #l2 &con &band $system 0x200 ";" ":" #l2 #l2
+    set-variable #l5 &cat "file:" &stat a &spr "file:%s/" @s2
   !endif
   set-variable #l6 &set #l7 0
+*try-mcs-agn
   !force 0xf7 copy-file &spr "tfs://%s?/macros/.*" #l4 #l5
   !if &not $status
     set-variable #l7 &add #l7 1
+  !elif &and &add &lget $result 2 &lget $result 4 &not &seq &lef #l5 &len #l3 #l3
+    ; had a copy fail to search-path location that is not the user-path, user may not have write permission to central dir like /usr/share. try the user-path instead
+    set-variable #l5 #l3
+    !goto try-mcs-agn
   !else
     set-variable #l6 &add &add #l6 &lget $result 1 &lget $result 3
     set-variable #l7 &add &add #l7 &lget $result 2 &lget $result 4
   !endif
-  !iif &not &seq &stat a &cat #l5 "./../" &set #l9 &stat a &cat $user-path "./../"  set-variable #l9 $user-path
-  !force 0xf7 copy-file &spr "tfs://%s?/bin/.*" #l4 &spr "file:%sbin/" #l9
+  !if &not &seq &rig #l5 -8 "/macros/"
+    set-variable #l9 #l3
+  !elif &seq &stat a &cat #l5 "./../" &set #l9 &stat a &cat $user-path "./../"
+    set-variable #l9 &cat "file:" #l9
+  !else
+*try-bin-agn
+    set-variable #l9 #l3
+  !endif
+  !force 0xf7 copy-file &spr "tfs://%s?/bin/.*" #l4 &cat #l9 "bin/"
   !if &not $status
     set-variable #l7 &add #l7 1
+  !elif &and &add &lget $result 2 &lget $result 4 &not &seq &lef #l9 &len #l3 #l3
+    !goto try-bin-agn
   !else
     set-variable #l6 &add &add #l6 &lget $result 1 &lget $result 3
     set-variable #l7 &add &add #l7 &lget $result 2 &lget $result 4
   !endif
-  !iif &xse $search-path &spr "\\(^\\|.*%s\\)\\([^%s]+/spelling\\)/?\\(%s.*\\|$\\)" #l2 #l2 #l2  set-variable #l5 &spr "file:%s/" @s2
+  !iif &xse $search-path &spr "\\(.*?%s\\)??\\([^%s]*/spelling\\)/?\\(%s.*\\)?" #l2 #l2 #l2  set-variable #l5 &spr "file:%s/" @s2
+*try-spl-agn
   !force 0xf7 copy-file &spr "tfs://%s?/spelling/.*" #l4 #l5
   !if &not $status
     set-variable #l7 &add #l7 1
+  !elif &and &add &lget $result 2 &lget $result 4 &not &seq &lef #l5 &len #l3 #l3
+    ; had a copy fail to search-path location that is not the user-path, user may not have write permission to central dir like /usr/share. try the user-path instead
+    set-variable #l5 #l3
+    !goto try-spl-agn
   !else
     set-variable #l6 &add &add #l6 &lget $result 1 &lget $result 3
     set-variable #l7 &add &add #l7 &lget $result 2 &lget $result 4
   !endif
-  !force 0xf7 copy-file &spr "tfs://%s?/.*[^/]" #l4 $user-path
+  !force 0xf7 copy-file &spr "tfs://%s?/.*[^/]" #l4 #l3
   !if &not $status
     set-variable #l7 &add #l7 1
   !else

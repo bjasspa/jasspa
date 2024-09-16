@@ -40,7 +40,6 @@
 #define meREGEXCLASS_SIZE 32
 typedef unsigned char meRegexClass[meREGEXCLASS_SIZE];
 typedef unsigned char meRegexDByte[2];
-typedef int meRegexDInt[2];
 
 typedef struct meRegexItem {
     /* linked list of all malloced items */
@@ -54,7 +53,7 @@ typedef struct meRegexItem {
     union {
         unsigned char cc;         /* character data */
         meRegexDByte dd;          /* double character data */
-        meRegexDInt group;        /* group number and state */
+        int group;                /* group number and state */
         meRegexClass cclass;      /* Class bit mask */
     } data;
     unsigned char flag;           /* item type */
