@@ -143,11 +143,11 @@ define-macro github-build
     !iif &not &xseq &set #l0 &rig &reg &spr "/json/ghaj/sha" "" 1 "\\h+"  -8 ml-write &spr "[Github Error: Failed to get latest commit sha - %s]" #l0
   !endif
   set-variable #p8 #l0
-  !force set-variable #l9 @2
+  !force set-variable #l1 @2
   !if &or &not $status &seq #l1 ""
     set-variable #l1 $temp-name
   !else
-    set-variable #l1 &stat a &cat "~/" #l9
+    set-variable #l1 &stat a &cat "~/" #l1
   !endif
   !iif &not &seq "X" &stat t #l1  -8 ml-write &spr "[Github Error: Output directory already exists - %s]" #l1
   !force 0x100 file-op #l1 

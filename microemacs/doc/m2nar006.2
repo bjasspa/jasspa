@@ -500,12 +500,10 @@ guarantees that we always find the shortest string match. A search of our HTML
 line   locates   two   separate    instances   of   the   regular   expression
 \fC<a\ href="www.jasspa.com">\fR and \fC</a>\fR.
 .PP
-When matching a group with multiple  alternatives  the matcher will  match/use
-the first one that  successfully  matches,  this  means you  should  order the
-alternative  forms in  preference,  typically  longest  first. For example, if
-trying  to  match   '\fCok\fR'   or   '\fCokay\fR'   the  pattern   should  be
-'\fC\(okay\|ok\)\fR' and not '\fC\(ok\|okay\)\fR' as this will only ever match
-the 'ok' in an 'okay'.
+When matching a group with multiple  alternatives the matcher will match/use the first one that successfully  matches,
+this means you should order the alternative  forms in preference,  typically  longest first. For example, if trying to
+match '\fCok\fR' or '\fCokay\fR' the pattern should be '\fC\\(okay\\|ok\\)\fR' and not '\fC\\(ok\\|okay\\)\fR' as this
+will only ever match the 'ok' in an 'okay'.
 .SH HISTORY
 As of March 2005 then the existing  Emacs search string syntax of "\fC\\s?\fR"
 and  "\fC\\S?\fR"  has been  discarded  in favor of Perl's  simpler  syntax of
