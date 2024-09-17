@@ -170,7 +170,7 @@ MAC3_080=	$(DOCDIR)m3mac080.3 $(DOCDIR)m3mac081.3 $(DOCDIR)m3mac082.3\
 MAC3_090=	$(DOCDIR)m3mac090.3 $(DOCDIR)m3mac091.3 $(DOCDIR)m3mac092.3\
 		$(DOCDIR)m3mac093.3 $(DOCDIR)m3mac094.3 $(DOCDIR)m3mac095.3\
 		$(DOCDIR)m3mac096.3
-# TODO: doc change-font-size, copy-file, delete-file
+# TODO: doc change-font-size, copy-file, delete-file & git interface
 #
 OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd003.3 $(DOCDIR)m3osd004.3 $(DOCDIR)m3osd005.3\

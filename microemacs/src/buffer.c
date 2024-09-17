@@ -519,8 +519,9 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
     
     if((bp->intFlag & (BIFLOAD|BIFNACT)) == BIFLOAD)
     {
+        int ood;
         bp->intFlag &= ~BIFLOAD;
-        if(bufferOutOfDate(bp))
+        if((ood = bufferOutOfDate(bp)) > 0)
         {
             update(meTRUE);
             dotLineNo = wp->dotLineNo;
@@ -537,7 +538,7 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
             }
         }
         else
-            mlwrite(MWCLEXEC,(meUByte *)"[Old buffer]");
+            mlwrite(MWCLEXEC,(meUByte *) ((ood == 0) ? "[Old buffer]":"[Old buffer, file has been moved or deleted]"));
     }
     return meTRUE ;
 }

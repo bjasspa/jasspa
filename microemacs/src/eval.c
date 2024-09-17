@@ -3629,7 +3629,7 @@ get_flag:
             switch(arg1[0])
             {
             case 'o':
-                ret = bufferOutOfDate(frameCur->windowCur->buffer) ;
+                ret = (bufferOutOfDate(frameCur->windowCur->buffer) == 2);
                 break ;
             default:
                 return abortm ;

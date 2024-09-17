@@ -204,9 +204,9 @@ bufferSetEdit(void)
         return rdonly() ;
     if(!meModeTest(cbp->mode,MDEDIT))      /* First change, so     */
     {
-        if((cbp->name[0] != '*') &&
-           (bufferOutOfDate(cbp)) &&
-           (mlyesno((meUByte *)"File changed on disk, really edit") <= 0))
+        int ood;
+        if((cbp->name[0] != '*') && ((ood = bufferOutOfDate(cbp)) != 0) &&
+           (mlyesno((meUByte *) ((ood < 0) ? "File has been moved or deleted, really edit":"File changed on disk, really edit")) <= 0))
             return ctrlg(meTRUE,1) ;
         meModeSet(cbp->mode,MDEDIT);
         frameAddModeToWindows(WFMODE);

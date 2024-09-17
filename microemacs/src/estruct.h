@@ -480,11 +480,13 @@ typedef FILETIME meFiletime ;
 
 /* initialize to a recognizable duff value */
 #define meFiletimeInit(t1)            ((t1).dwHighDateTime = (t1).dwLowDateTime = -1)
-#define meFiletimeIsSet(t1)            (((t1).dwHighDateTime != -1) || ((t1).dwLowDateTime != -1))
+#define meFiletimeIsSet(t1)           (((t1).dwHighDateTime != -1) || ((t1).dwLowDateTime != -1))
 
 /* return meTRUE if t1 == t2 */
 #define meFiletimeIsSame(t1,t2)                 \
 (((t1).dwHighDateTime == (t2).dwHighDateTime) && ((t1).dwLowDateTime == (t2).dwLowDateTime))
+#define meFiletimeIsNotSame(t1,t2)              \
+(((t1).dwHighDateTime != (t2).dwHighDateTime) || ((t1).dwLowDateTime != (t2).dwLowDateTime))
 
 /* return meTRUE if t1 is newer than t2 */
 #define meFiletimeIsModified(t1,t2)             \
@@ -504,6 +506,7 @@ typedef meUInt meFiletime;
 
 /* return meTRUE if t1 == t2 */
 #define meFiletimeIsSame(t1,t2)       ((t1) == (t2))
+#define meFiletimeIsNotSame(t1,t2)    ((t1) != (t2))
 
 /* return meTRUE if t1 is newer than t2 */
 #define meFiletimeIsModified(t1,t2)   ((t1) > (t2))

@@ -926,6 +926,39 @@ define-macro git-push
   dirlst-sort-list
 !emacro
 
+0 define-macro git-status-refresh
+  !if .find-file.file-count
+    set-alpha-mark "\x81"
+    -1 buffer-mode "view"
+    set-variable $window-line 5
+    !while &not &seq @wc ""
+      !if &seq @wc "*"
+        set-variable @wc " "
+        set-variable :tag-count &sub :tag-count 1
+        !if &not &seq "X" &stat "t" &cat .find-file.file-dir &rig @wl :fmpf
+        !elif &seq "??" &mid @wl 2 2
+          set-mark
+          forward-line
+          -1 kill-region
+          backward-line
+        !else
+          forward-char
+          set-variable #l1 &con &seq @wc " " " " "-"
+          forward-char
+          set-variable @wc #l1
+          forward-char
+          set-variable @wc "D"
+          beginning-of-line
+        !endif
+      !endif
+      forward-line
+    !done
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    goto-alpha-mark "\x81"
+  !endif
+!emacro
+
 define-macro git-status
   !force git-dirlst-detect
   !if &not $status

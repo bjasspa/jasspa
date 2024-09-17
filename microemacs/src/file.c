@@ -892,14 +892,22 @@ executableLookup(meUByte *fname, meUByte *outName)
     return 0;
 }
 
+/* return: 0 if no file, or its not changeable, can't get timestamp or file has not changed, -1 if file deleted, 1 of older, 2 if newer */
 int
 bufferOutOfDate(meBuffer *bp)
 {
-    meStat stats ;
-    if((bp->fileName != NULL) && getFileStats(bp->fileName,0,&stats,NULL) &&
-       meFiletimeIsModified(stats.stmtime,bp->stats.stmtime))
-        return meTRUE ;
-    return meFALSE ;
+    meStat stats;
+    int ft;
+    if(bp->fileName == NULL)
+        return 0;
+    ft = getFileStats(bp->fileName,0,&stats,NULL);
+    if(ft & (meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE))
+        return 0;
+    if(ft & meIOTYPE_NOTEXIST)
+        return -1;
+    if(meFiletimeIsSame(stats.stmtime,bp->stats.stmtime))
+        return 0;
+    return ((meFiletimeIsModified(stats.stmtime,bp->stats.stmtime)) ? 2:1);
 }
 
 /* get current working directory
@@ -2689,10 +2697,10 @@ writeout(register meBuffer *bp, int flags)
         getFileStats(bp->fileName,0,&stats,lname);
         if(flags & 1)
         {
-            if(meFiletimeIsModified(stats.stmtime,bp->stats.stmtime))
+            if(meFiletimeIsNotSame(stats.stmtime,bp->stats.stmtime))
             {
                 meUByte prompt[meBUF_SIZE_MAX] ;
-                sprintf((char *) prompt,"%s modified, write",bp->fileName) ;
+                sprintf((char *) prompt,"%s has been %s, write",bp->fileName,(meFiletimeIsSet(stats.stmtime)) ? "modified":"moved or deleted") ;
                 if(mlyesno(prompt) <= 0)
                     return ctrlg(meFALSE,1) ;
             }
@@ -3603,7 +3611,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         if((dirList->path != NULL) &&
            !meStrcmp(dirList->path,pathName) &&
 #if (defined _UNIX) || (defined _WIN32)
-           !meFiletimeIsModified(stmtime,dirList->stmtime)
+           meFiletimeIsSame(stmtime,dirList->stmtime)
 #else
            !dirList->stmtime
 #endif
