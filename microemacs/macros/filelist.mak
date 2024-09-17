@@ -77,9 +77,9 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	phptags.emf	print.emf	printall.emf	printd.emf	\
 	printepc.emf	printers.emf	printf.emf	printstp.emf	\
 	rect.emf	\
-	scheme.emf	schemeal.emf	schemeb.emf	schemebc.emf	\
-	schemech.emf	schemebh.emf	schemed.emf	schemedp.emf	\
-	schemedr.emf	schemegb.emf	schemege.emf	\
+	scheme.emf	schemeal.emf	schemead.emf	schemeb.emf	\
+	schemebc.emf	schemech.emf	schemebh.emf	schemed.emf	\
+	schemedp.emf	schemedr.emf	schemegb.emf	schemege.emf	\
 	schemegg.emf	schemego.emf	schemej.emf	schemelm.emf	\
 	schemel.emf	schemel2.emf	schemelj.emf	schememd.emf	\
 	schememw.emf	schememx.emf	schemepd.emf	schemepl.emf	\

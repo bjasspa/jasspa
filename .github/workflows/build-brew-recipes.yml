@@ -17,14 +17,17 @@ jobs:
        
       - name: Create Brew Recipes
         run: |
+          VRS=`grep meVER microemacs/src/evers.mak | grep -oE '[0-9]+'  | sed -E 's/^([0-9])$/0\1/' | paste -sd ''`
+          echo "VRS=$VRS" >> $GITHUB_ENV
+          echo $VRS
           cd microemacs/brew
           mkdir recipes
-          make tpl2rb version=${VERSION}
+          make tpl2rb version=${VRS}
           cp *.rb recipes 
 
 
       - name: Upload linux downloads
         uses: actions/upload-artifact@v4
         with: 
-          name: Jasspa_MicroEmacs_${{ env.VERSION }}-formula-downloads
+          name: Jasspa_MicroEmacs_${{ env.VRS }}-formula-downloads
           path: microemacs/brew/recipes
