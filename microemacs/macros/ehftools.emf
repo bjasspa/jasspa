@@ -7,9 +7,11 @@
 ; Synopsis:    On-line help macros.
 ; Authors:     Steven Phillips
 ;
+-2 ml-write "HERE 1"
 0 define-macro-file utils ascii-time var-str-sub str-to-regex
 define-macro-file htmltool html-to-ehf
 define-macro-file format clean
+-2 ml-write "HERE 2"
 
 define-macro ehf-process-buffer
   ; Carry on as normal
@@ -148,17 +150,22 @@ define-macro ehf-process-buffer
 !emacro
 
 define-macro ehf-process-all
+-2 ml-write "HERE A1"
   !force 0 delete-buffer "*scratch*"
   delete-other-windows
   split-window-vertically
+-2 ml-write "HERE A2"
   find-file "me.ehf"
   beginning-of-buffer
   set-mark
   end-of-buffer
   -1 kill-region
+-2 ml-write "HERE A3"
   next-window
   !while &not &seq $buffer-bname "me.ehf"
+-2 ml-write "HERE A4"
     ehf-process-buffer
+-2 ml-write "HERE A5"
     beginning-of-buffer
     set-mark
     !while &seq @wc "#"
@@ -289,7 +296,8 @@ define-macro ehf-process-all
 
 ; don't advertise the definition of start-up
 0 define-macro start-up
+-2 ml-write "HERE 3"
   ehf-process-all
+-2 ml-write "HERE 4"
   quick-exit
 !emacro
-

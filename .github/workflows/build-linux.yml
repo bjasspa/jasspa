@@ -86,6 +86,23 @@ jobs:
           cd ..
           ./bin/linux5-intel64/tfs -o ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_linux_intel64.tfs -a ./mesingle/tfs_hd tfs
 
+      - name: Generate docs
+        run: |
+          export PATH=`pwd`/microemacs/bin/linux5-intel64:`pwd`/nroff/bin/linux:$PATH
+          export MEPATH=`pwd`/microemacs/macros
+          export MEVER=`mec -p @microemacs/contribs/ver.emf`
+          cd ./microemacs/doc
+          make me.ehf
+          rm -rf tfs
+          mkdir -p tfs/macros
+          cp me.ehf tfs/macros
+          cd tfs
+          cp ../../COPYING.txt ./
+          cp ../../readme.txt ./
+          zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_help_ehf macros COPYING.txt readme.txt
+          cd ..
+          ../bin/linux5-intel64/tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_hlpehf.tfs -a ../mesingle/tfs_hd tfs
+
       - name: Generate macros
         run: |
           cd ./microemacs/
