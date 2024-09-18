@@ -5,7 +5,7 @@
 set-variable $system &band $system &bnot 0x020
 set-variable .hilight.flags 15
 ; Create the colors first
-add-color &set .col0 0 200 200 200 ; menu
+add-color &set .col0 0 200 200 200
 add-color &set .col1 1 1 6 14
 add-color &set .col2 2 234 108 115
 add-color &set .col3 3 145 179 115
@@ -22,23 +22,26 @@ add-color &set .col13 13 89 194 255
 add-color &set .col14 14 255 148 238
 add-color &set .col15 15 149 230 203
 add-color &set .col16 16 255 255 255
-add-color &set .col17 17 10 14 20    ; background
-add-color &set .col18 18 179 177 173 ; foreground
-add-color &set .col19 19 255 204 102 ; cursor
-add-color &set .col20 20 51 65 94    ; selected background
-add-color &set .col21 21 203 204 198 ; selected text forground
+add-color &set .col17 17 10 14 20
+add-color &set .col18 18 179 177 173
+add-color &set .col19 19 255 204 102
+add-color &set .col20 20 51 65 94
+add-color &set .col21 21 203 204 198
 ; Set the required cursor-color
 set-variable $cursor-color .col19
 ; Create the color schemes
 ; Standard
 add-color-scheme $global-scheme .col18 .col17 .col16 .col1 .col0 .col9 .col16 .col9 0 8 0 8 0 8 0 8
 add-color-scheme $ml-scheme .col18 .col17 .col16 .col1 .col8 .col9 .col16 .col9 0 8 0 8 0 8 0 8
-add-color-scheme $mode-line-scheme .col18 .col2 .col10 .col1 .col0 .col2 .col8 .col10 8 0 8 0 0 8 0 8
+add-color-scheme $mode-line-scheme .col18 .col17 .col10 .col1 .col0 .col2 .col8 .col10 8 0 8 0 0 8 0 8
 add-color-scheme $scroll-bar-scheme .col9 .col18 .col9 .col8 .col9 .col0 .col9 .col8 8 0 8 0 0 8 0 8
 add-color-scheme $trunc-scheme .col4 .col17 .col12 .col1 .col4 .col9 .col12 .col9 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.dmf .col18 .col9 .col8 .col9 .col8 .col10 .col9 .col16 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.no1 .col7 .col17 .col15 .col1 .col7 .col9 .col15 .col9 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.no2 .col3 .col17 .col11 .col1 .col3 .col9 .col11 .col9 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.chg .col9 .col1 .col9 .col2 .col9 .col3 .col9 .col3 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.add .col8 .col1 .col8 .col2 .col8 .col3 .col8 .col3 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.rmv .col7 .col1 .col7 .col2 .col7 .col3 .col7 .col3 0 8 0 8 0 8 0 8
 ; OSD
 add-color-scheme $osd-scheme .col18 .col17 .col18 .col2 .col8 .col9 .col2 .col9 8 0 24 16 0 8 16 24
 add-color-scheme .scheme.osd-entry .col18 .col17 .col2 .col1 .col9 .col0 .col9 .col2 0 8 0 8 8 0 8 0
