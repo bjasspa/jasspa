@@ -904,7 +904,7 @@ bufferOutOfDate(meBuffer *bp)
     if(ft & (meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE))
         return 0;
     if(ft & meIOTYPE_NOTEXIST)
-        return -1;
+        return ((meFiletimeIsSet(bp->stats.stmtime)) ? -1:0);
     if(meFiletimeIsSame(stats.stmtime,bp->stats.stmtime))
         return 0;
     return ((meFiletimeIsModified(stats.stmtime,bp->stats.stmtime)) ? 2:1);
