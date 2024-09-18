@@ -1498,7 +1498,7 @@ define-macro git-blame
     osd-dialog "Git - Show" "    The specific commit must be given!    " "  \HAbort  "
     !abort
   !endif
-  set-variable #l2 &spr "%s blame %s-- " .git.com &con &lget #l9 4 "" "\"--date=format:%Y-%m-%d %H:%m\" "
+  set-variable #l2 &spr "%s blame %s%s " .git.com &con &lget #l9 4 "" "\"--date=format:%Y-%m-%d %H:%m\" " #l3
   7 git-get-file-list 0 0 #l2
   13 git-exec 3 $buffer-fname
   popup-window "*git-blame*"

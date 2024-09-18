@@ -1972,7 +1972,7 @@ findFileSingle(meUByte *fname, int bflag, meInt lineno, meUShort colno)
     int fnlen ;
 #endif
 #ifdef _UNIX
-    meStat  stats ;
+    meStat  bstt,stats;
     gft = getFileStats(fname,meFINDFILESINGLE_GFS_OPT & (bflag | ~BFND_CREAT),&stats,NULL);
 #else
     /* Stop getFileStats complaining on gfsERRON_ILLEGAL_NAME if BFND_CREAT not set (error reported elsewhere) */
@@ -2005,30 +2005,27 @@ findFileSingle(meUByte *fname, int bflag, meInt lineno, meUShort colno)
         }
     }
 #if MEOPT_SOCKET
-    if((gft & (meIOTYPE_FTP|meIOTYPE_FTPE)) || ((fnlen = meStrlen(fname)),(fname[fnlen-1] == DIR_CHAR)))
-        fnlen = 0 ;
+    if(((gft & (meIOTYPE_FTP|meIOTYPE_FTPE)) == 0) || ((fnlen = meStrlen(fname)),(fname[fnlen] == DIR_CHAR)))
+        fnlen = 0;
 #endif
     for(bp=bheadp; bp!=NULL; bp=bp->next)
     {
         if((bp->fileName != NULL) && (bp->name != NULL) && (bp->name[0] != '*'))
         {
-            if(
+            if(!fnamecmp(bp->fileName,fname))
+                break;
 #ifdef _UNIX
-               !fnamecmp(bp->fileName,fname) ||
-               ((stats.stdev != (dev_t)(-1)) &&
-                (bp->stats.stdev == stats.stdev) &&
-                (bp->stats.stino == stats.stino) &&
-                (bp->stats.stsizeHigh == stats.stsizeHigh) &&
-                (bp->stats.stsizeLow == stats.stsizeLow))
-#else
-               !fnamecmp(bp->fileName,fname)
+            /* On UNIX the same file could be loaded via different symbolic links, so if the stdev & stino are the same its the same file
+             * originally, however the file may have been moved so only use it if the bp->fileName still exists and has same file details */
+            if((stats.stdev != (dev_t)(-1)) && (bp->stats.stdev == stats.stdev) && (bp->stats.stino == stats.stino) &&
+               (getFileStats(bp->fileName,0,&bstt,NULL) & (meIOTYPE_REGULAR|meIOTYPE_DIRECTORY)) &&
+               (bstt.stino == stats.stino) && (bstt.stsizeHigh == stats.stsizeHigh) && (bstt.stsizeLow == stats.stsizeLow))
+                break;
 #endif
-               )
-                break ;
 #if MEOPT_SOCKET
-            /* at this point the type of an ftp file (i.e. reg of dir)
-             * is unknown, the filename will be changed,but the comparison
-             * of ftp: file names must allow for this */
+            /* at this point the type of an ftp file (i.e. regulare file or dir) is unknown, the
+             * filename will be changed if dir ('/' added), but the comparison of ftp: file names
+             * must allow for this */
             if(fnlen && !meStrncmp(bp->fileName,fname,fnlen) &&
                (bp->fileName[fnlen] == DIR_CHAR) && (bp->fileName[fnlen+1] == '\0'))
                 break ;
