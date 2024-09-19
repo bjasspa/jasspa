@@ -15,6 +15,7 @@ jobs:
        
       - name: Install MicroEmacs mec
         run: |
+          export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
           brew tap mittelmark/mittelmark
           brew install microemacs-mec
           ls /home/linuxbrew/.linuxbrew/bin
