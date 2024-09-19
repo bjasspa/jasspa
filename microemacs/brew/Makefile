@@ -7,10 +7,10 @@
 
 ## just for testing of a local install
 pkg=microemacs-mec
-version=20240902
+version=20240903
 ## or reinstall
 action=install
-shafile=Jasspa_MicroEmacs_$(version)-sha265.txt
+shafile=Jasspa_MicroEmacs_$(version)-sha256.txt
 default:
 	brew $(action) --build-from-source  $(pkg).rb
 
