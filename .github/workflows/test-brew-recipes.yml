@@ -1,0 +1,21 @@
+name: Test Homebrew formulas (Ubuntu-20)
+
+on:
+  workflow_dispatch:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+       
+      - name: Install MicroEmacs mec
+        run: |
+          brew tap mittelmark/mittelmark
+          brew install microemacs-mec
+          ls /home/linuxbrew/.linuxbrew/bin
+          /home/linuxbrew/.linuxbrew/bin/mec -V
