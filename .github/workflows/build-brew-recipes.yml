@@ -22,10 +22,20 @@ jobs:
           mkdir recipes
           make tpl2rb version=${VRS}
           cp *.rb recipes 
+          cd ..
 
+      - name: Create Readme folder
+        run: |
+           make -f microemacs/brew/Makefile readme
 
       - name: Upload linux downloads
         uses: actions/upload-artifact@v4
         with: 
           name: Jasspa_MicroEmacs_${{ env.VRS }}-formula-downloads
           path: microemacs/brew/recipes
+          
+      - name: Upload Readme archive
+        uses: actions/upload-artifact@v4
+        with: 
+          name: Jasspa_MicroEmacs_${{ env.VRS }}-readme
+          path: Jasspa_MicroEmacs_${{ env.VRS }}_readme
