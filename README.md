@@ -56,13 +56,13 @@ the executables into a folder belonging to your PATH
 
 | Platform      | Terminal        | GUI (X11 on Linux/Mac) |
 |:-------------:|:---------------:|:----------------------:|
-| Linux         | [mecs](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_linux_mecs.zip)       | [mews](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_linux_mews.zip) |
-| MacOS apple   | [mecs](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_apple_mecs.zip) | [mews](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_apple_mews.zip) |
-| MacOS intel   | [mecs](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_intel_mecs.zip) | [mews](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_macos_intel_mews.zip)
-| Windows       | [mecs](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_windows_mecs.zip)     | [mews](releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin_windows_mews.zip)
+| Linux         | [mecs](releases/download/me_20240903/Jasspa_MicroEmacs_20240903_abin_linux_mecs.zip)       | [mews](releases/download/me_20240903/Jasspa_MicroEmacs_20240903_abin_linux_mews.zip) |
+| MacOS apple   | [mecs](releases/download/me_20240903/Jasspa_MicroEmacs_20240903_abin_macos_apple_mecs.zip) | [mews](releases/download/me_20240903/Jasspa_MicroEmacs_20240903_abin_macos_apple_mews.zip) |
+| MacOS intel   | [mecs](releases/download/me_20240903/Jasspa_MicroEmacs_20240903_abin_macos_intel_mecs.zip) | [mews](releases/download/me_20240903/Jasspa_MicroEmacs_20240903_abin_macos_intel_mews.zip)
+| Windows       | [mecs](releases/download/me_20240903/Jasspa_MicroEmacs_20240903_abin_windows_mecs.zip)     | [mews](releases/download/me_20240903/Jasspa_MicroEmacs_20240903_abin_windows_mews.zip)
 
 To test the  integrity  of the  downloads  you can use the
-[sha256 hash keys](https://github.com/bjasspa/jasspa/releases/download/me_20240901/Jasspa_MicroEmacs_20240901_abin.sha256).
+[sha256 hash keys](https://github.com/bjasspa/jasspa/releases/download/me_20240903/Jasspa_MicroEmacs_20240903_abin.sha256).
 
 Then test the executable in your terminal:
 
