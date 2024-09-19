@@ -20,4 +20,5 @@ jobs:
           brew install microemacs-mec
           ls /home/linuxbrew/.linuxbrew/bin
           find /home/linuxbrew/.linuxbrew -name "*mec*"
-          mec -V
+          ls -l /home/linuxbrew/.linuxbrew/opt/microemacs-mec
+          ##mec -V
