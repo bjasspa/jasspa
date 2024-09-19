@@ -1,11 +1,11 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2000-2009 JASSPA (www.jasspa.com)
+; Copyright (C) 2000-2024 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Fri Feb 2 2001
 ; Synopsis:    List of screen color schemes
-; Authors:     Steven Phillips
+; Authors:     Steven Phillips, Detlef Groth
 ;
-set-variable .scheme.scheme-names "|Basic White on Black|Midnight X|Basic Black on Cream|Black on Cream|Ayu Dark|Ayu Light|Dark Pastel|Dracula|Sandy Shores|Sherwood Forest|Brownie|Lemon Jelly|Blue Hue|Mirkwood|Plain Black on Cream|Plain White on Black|Black on Grey|MS Dev-Studio Colors|Termcap (Black)|Termcap (White)|Charcoal|Lumina|Lumina Evolution|General Electric Black|General Electric Blue|General Electric Olive|General Electric Gray|"
-set-variable .scheme.scheme-files "|schemed|schememx|schemebc|schemej|schemead|schemeal|schemedp|schemedr|schemevi|schemesf|schemeb|schemelj|schemebh|schememw|schemepl|schemepd|schemel|schememd|schemetb|schemetw|schemech|schemelm|schemel2|schemege|schemegb|schemego|schemegg|"
+set-variable .scheme.scheme-names "|Basic White on Black|Midnight X|Basic Black on Cream|Ayu Dark|Ayu Light|Black on Cream|Black on Grey|Blue Hue|Brownie|Charcoal|Dark Pastel|Dracula|Lemon Jelly|Lumina|Lumina Evolution|Mirkwood|MS Dev-Studio Colors|Plain Black on Cream|Plain White on Black|Sandy Shores|Sherwood Forest|Solarized Dark|Solarized Light|Termcap (Black)|Termcap (White)|General Electric Black|General Electric Blue|General Electric Olive|General Electric Gray|"
+set-variable .scheme.scheme-files "|schemed|schememx|schemebc|schemead|schemeal|schemej|schemel|schemebh|schemeb|schemech|schemedp|schemedr|schemelj|schemelm|schemel2|schememw|schememd|schemepl|schemepd|schemevi|schemesf|schemesd|schemesl|schemetb|schemetw|schemege|schemegb|schemego|schemegg|"
