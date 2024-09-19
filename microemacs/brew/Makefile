@@ -15,7 +15,7 @@ default:
 	brew $(action) --build-from-source  $(pkg).rb
 
 shafile:
-	@if [ ! -f $(shafile) ]; then wget -O $(shafile) https://github.com/bjasspa/jasspa/releases/download/me_$(version)/Jasspa_MicroEmacs_$(version)-sha265.txt ; fi
+	@if [ ! -f $(shafile) ]; then wget -O $(shafile) https://github.com/bjasspa/jasspa/releases/download/me_$(version)/Jasspa_MicroEmacs_$(version)-sha256.txt ; fi
 ### create receipe (rb files) from templates (tpl)
 tpl2rb: shafile
 	bash tpl2rb.sh mec2rb  $(shafile) microemacs-mec.tpl
