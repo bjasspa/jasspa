@@ -6,8 +6,6 @@ class MicroemacsMec < Formula
   PREFIX="https://github.com/bjasspa/jasspa/releases/download/me_#{version}/Jasspa_MicroEmacs_#{version}_bin_"
   depends_on "luit"
   depends_on "abduco"
-  depends_on "microemacs-macros"
-  depends_on "microemacs-help"
   if OS.mac?
       if Hardware::CPU.arm?
           # Code for Apple Silicon (M1, M2, etc.)
@@ -35,7 +33,8 @@ class MicroemacsMec < Formula
       elsif OS.windows?
           bin.install "bin/windows100-intel32/mec.exe"
       end
-      puts "start Microemacs with: MEPATH=~/.config/jasspa:#{share}/jasspa/macros:#{share}/jasspa/spelling mec"      
+      puts "start Microemacs with: MEPATH=~/.config/jasspa:/home/linuxbrew/.linuxbrew/share/jasspa/macros:/home/linuxbrew/.linuxbrew/share/jasspa/spelling mec"
+      puts "on MacOS replace /home/linuxbrew/.linuxbrew with /opt/homebrew for M1 Macs or /usr/local for intel Macs"
   end
   
   def caveats 

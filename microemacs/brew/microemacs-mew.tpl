@@ -11,8 +11,6 @@ class MicroemacsMew < Formula
     depends_on "libxaw"
     depends_on "libxt"
   end  
-  depends_on "microemacs-macros"
-  depends_on "microemacs-help"
   if OS.mac?
       if Hardware::CPU.arm?
           # Code for Apple Silicon (M1, M2, etc.)
@@ -40,7 +38,8 @@ class MicroemacsMew < Formula
       elsif OS.windows?
           bin.install "bin/windows100-intel32/mew.exe"
       end
-      puts "start Microemacs with: MEPATH=~/.config/jasspa:${share}/jasspa/macros:${share}/jasspa/spelling mew"      
+      puts "start Microemacs with: MEPATH=~/.config/jasspa:/home/linuxbrew/.linuxbrew/share/jasspa/macros:/home/linuxbrew/.linuxbrew/share/jasspa/spelling mew"
+      puts "on MacOS replace /home/linuxbrew/.linuxbrew with /opt/homebrew for M1 Macs or /usr/local for Intel Macs"
   end
   
   def caveats 
