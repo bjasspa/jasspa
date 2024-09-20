@@ -3,7 +3,7 @@
 ;  Author        : Detlef Groth, University of Potsdam
 ;  Created By    : Detlef Groth
 ;  Created       : Mon Sep 16 17:09:35 2024
-;  Last Modified : <240920.0752>
+;  Last Modified : <240920.0759>
 ;
 ;  Description   : Load xrdb themes for X11 applications
 ;                  directly as schemes into MicroEmacs
@@ -149,12 +149,12 @@ define-help "xrdb-scheme" "3"
 
 ## NAME 
 
-     xrdb-scheme - load xrdb scheme files into the editor
+    xrdb-scheme - load xrdb scheme files into the editor
      
      
 ## SYNOPSIS
      
-     xrdb-scheme ["theme-name"]     
+    xrdb-scheme ["theme-name"]     
      
 ## DESCRIPTION
      
@@ -173,8 +173,8 @@ define-help "xrdb-scheme" "3"
        https://github.com/mbadolato/iTerm2-Color-Schemes/blob/master/xrdb/PencilDark.xrdb
        
        
-  Thereafter you can load the scheme using the command line: `xrdb-scheme  "pencil-dark"`   
-  or without argument by selecting the menu from the message line menu.
+  Thereafter you can load the scheme using the command line: `xrdb-scheme  "pencil-dark"`
+  or without a given argument by selecting the menu from the message line menu.
   
 ## SEE ALSO
 
