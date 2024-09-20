@@ -76,3 +76,22 @@ jobs:
           #find /usr -name "*mec*"
           #ls -l /home/linuxbrew/.linuxbrew/opt/microemacs-mec
           mec -V
+
+  build5:
+    runs-on: macos-13
+    name: Build on MacOS 13
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+       
+      - name: Install MicroEmacs mec
+        run: |
+          #export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
+          which brew
+          brew tap mittelmark/mittelmark
+          brew install microemacs-mec
+          #ls /home/linuxbrew/.linuxbrew/bin
+          #find /usr -name "*mec*"
+          #ls -l /home/linuxbrew/.linuxbrew/opt/microemacs-mec
+          mec -V
