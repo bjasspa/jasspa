@@ -1,0 +1,29 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author$
+;  Created By    : MicroEmacs User
+;  Created       : Fri Sep 20 20:53:30 2024
+;  Last Modified : <240920.2055>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 2024 MicroEmacs User.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+hilight .hilight.emf 0x44 "^## "  "" "\n" "" ""      .scheme.header
+hilight .hilight.emf 0x44 " __" " " "__" "" ""       .scheme.bold  ; bold  
+hilight .hilight.emf 0x44 " _" " " "_" "" ""       .scheme.italic  ; italic    
+hilight .hilight.emf 0x44 " `" " " "`" "" ""       .scheme.keyword  ; code
+hilight .hilight.emf 0x44 "```emf" "\ecB" "```" "\ecA" "" .scheme.keyword  ; code
+hilight .hilight.emf 4  "\"" "\"" "\\"           .scheme.string
+;hilight .hilight.emf 0x44 "`" "" "`" "" ""       .scheme.underline  ; code
+hilight .hilight.emf 0x44 "\\[\\[" "" "\\]\\]" "" ""      .scheme.link  ; italic      
+
+hilight .hilight.emf 0xc0 "```emf" "" .hilight.ehfB  $global-scheme
+hilight .hilight.ehfB 0xc0 "```" ""   .hilight.emf   $global-scheme
+
+1000 ml-write "loading myemf.emf"
