@@ -3,7 +3,7 @@
 ;  Author        : Detlef Groth, University of Potsdam
 ;  Created By    : Detlef Groth
 ;  Created       : Mon Sep 16 17:09:35 2024
-;  Last Modified : <240916.1726>
+;  Last Modified : <240920.0752>
 ;
 ;  Description   : Load xrdb themes for X11 applications
 ;                  directly as schemes into MicroEmacs
@@ -145,3 +145,39 @@ define-macro xrdb-scheme
     !endif
 !emacro
 
+define-help "xrdb-scheme" "3"
+
+## NAME 
+
+     xrdb-scheme - load xrdb scheme files into the editor
+     
+     
+## SYNOPSIS
+     
+     xrdb-scheme ["theme-name"]     
+     
+## DESCRIPTION
+     
+  _xrdb-scheme_ allows the user to use downloaded xrdb scheme files which 
+  are placed into the themes folder of the users config directory. If the 
+  optional argument "theme-name" is not given the user can interactively
+  select a theme from the message line menu.
+  
+## NOTES
+
+  You can download xrdb-theme files for instance from the following Github 
+  project page: https://github.com/mbadolato/iTerm2-Color-Schemes/
+  Here an example on how to install a theme:
+  
+    wget -O ~/.config/jasspa/themes/pencil-dark.xrdb \
+       https://github.com/mbadolato/iTerm2-Color-Schemes/blob/master/xrdb/PencilDark.xrdb
+       
+       
+  Thereafter you can load the scheme using the command line: `xrdb-scheme  "pencil-dark"`   
+  or without argument by selecting the menu from the message line menu.
+  
+## SEE ALSO
+
+   [[scheme-editor(3)]] - could be transposed to a link
+   
+!ehelp
