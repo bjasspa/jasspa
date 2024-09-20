@@ -15,6 +15,7 @@ jobs:
        
       - name: Install MicroEmacs mec
         run: |
+          uname -a
           export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
           brew tap mittelmark/mittelmark
           brew install microemacs-mec
@@ -32,6 +33,7 @@ jobs:
        
       - name: Install MicroEmacs mec
         run: |
+          uname -a
           export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
           brew tap mittelmark/mittelmark
           brew install microemacs-mec
@@ -50,6 +52,7 @@ jobs:
        
       - name: Install MicroEmacs mec
         run: |
+          uname -a
           export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
           brew tap mittelmark/mittelmark
           brew install microemacs-mec
@@ -58,9 +61,9 @@ jobs:
           ls -l /home/linuxbrew/.linuxbrew/opt/microemacs-mec
           mec -V
 
-  build4:
-    runs-on: macos-14
-    name: Build on MacOS 14
+  build3:
+    runs-on: macos-12
+    name: Build on MacOS 12
 
     steps:
       - name: Checkout code
@@ -68,6 +71,7 @@ jobs:
        
       - name: Install MicroEmacs mec
         run: |
+          uname -a
           #export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
           which brew
           brew tap mittelmark/mittelmark
@@ -87,6 +91,7 @@ jobs:
        
       - name: Install MicroEmacs mec
         run: |
+          uname -a
           #export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
           which brew
           brew tap mittelmark/mittelmark
@@ -95,3 +100,24 @@ jobs:
           #find /usr -name "*mec*"
           #ls -l /home/linuxbrew/.linuxbrew/opt/microemacs-mec
           mec -V
+
+  build6:
+    runs-on: macos-14
+    name: Build on MacOS 14
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+       
+      - name: Install MicroEmacs mec
+        run: |
+          uname -a
+          #export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
+          which brew
+          brew tap mittelmark/mittelmark
+          brew install microemacs-mec
+          #ls /home/linuxbrew/.linuxbrew/bin
+          #find /usr -name "*mec*"
+          #ls -l /home/linuxbrew/.linuxbrew/opt/microemacs-mec
+          mec -V
+
