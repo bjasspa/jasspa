@@ -59,8 +59,8 @@ jobs:
           mec -V
 
   build4:
-    runs-on: macos-13
-    name: Build on MacOS 13
+    runs-on: macos-14
+    name: Build on MacOS 14
 
     steps:
       - name: Checkout code
@@ -73,6 +73,6 @@ jobs:
           brew tap mittelmark/mittelmark
           brew install microemacs-mec
           #ls /home/linuxbrew/.linuxbrew/bin
-          find /usr -name "*mec*"
+          #find /usr -name "*mec*"
           #ls -l /home/linuxbrew/.linuxbrew/opt/microemacs-mec
-          #mec -V
+          mec -V
