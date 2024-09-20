@@ -1,4 +1,4 @@
-name: Test Homebrew formulas (Ubuntu-20,22,24)
+name: Test Homebrew formulas (Ubuntu-20,22,24, MacOS 12,13,14)
 
 on:
   workflow_dispatch:
