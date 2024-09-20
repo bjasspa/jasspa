@@ -34,7 +34,7 @@ class MicroemacsMew < Formula
       elsif OS.mac? && Hardware::CPU.arm?
           bin.install "bin/macos14-apple64/mew"
       elsif OS.mac? && Hardware::CPU.intel?
-          bin.install "bin/macos14-intel64/mew"
+          bin.install "bin/macos13-intel64/mew"
       elsif OS.windows?
           bin.install "bin/windows100-intel32/mew.exe"
       end
