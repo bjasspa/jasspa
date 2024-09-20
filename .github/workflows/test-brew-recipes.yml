@@ -1,4 +1,4 @@
-name: Test Homebrew formulas (Ubuntu-22)
+name: Test Homebrew formulas (Ubuntu-20,22,24)
 
 on:
   workflow_dispatch:
@@ -57,3 +57,22 @@ jobs:
           find /home/linuxbrew/.linuxbrew -name "*mec*"
           ls -l /home/linuxbrew/.linuxbrew/opt/microemacs-mec
           mec -V
+
+  build4:
+    runs-on: macos-13
+    name: Build on MacOS 13
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+       
+      - name: Install MicroEmacs mec
+        run: |
+          #export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
+          which brew
+          brew tap mittelmark/mittelmark
+          brew install microemacs-mec
+          #ls /home/linuxbrew/.linuxbrew/bin
+          find /usr -name "*mec*"
+          #ls -l /home/linuxbrew/.linuxbrew/opt/microemacs-mec
+          #mec -V
