@@ -61,7 +61,7 @@ jobs:
           ls -l /home/linuxbrew/.linuxbrew/opt/microemacs-mec
           mec -V
 
-  build3:
+  build4:
     runs-on: macos-12
     name: Build on MacOS 12
 
