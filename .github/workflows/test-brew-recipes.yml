@@ -1,4 +1,4 @@
-name: Test Homebrew formulas (Ubuntu-20)
+name: Test Homebrew formulas (Ubuntu-22)
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
 jobs:
   build1:
     runs-on: ubuntu-20.04
-    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+    name: Build on Ubuntu 20
 
     steps:
       - name: Checkout code
@@ -21,10 +21,10 @@ jobs:
           ls /home/linuxbrew/.linuxbrew/bin
           find /home/linuxbrew/.linuxbrew -name "*mec*"
           ls -l /home/linuxbrew/.linuxbrew/opt/microemacs-mec
-          ##mec -V
+          ##mec -V - is not in bin
   build2:
     runs-on: ubuntu-22.04
-    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+    name: Build on Ubuntu 22
 
     steps:
       - name: Checkout code
@@ -38,4 +38,22 @@ jobs:
           ls /home/linuxbrew/.linuxbrew/bin
           find /home/linuxbrew/.linuxbrew -name "*mec*"
           ls -l /home/linuxbrew/.linuxbrew/opt/microemacs-mec
-          ##mec -V
+          mec -V
+
+  build3:
+    runs-on: ubuntu-24.04
+    name: Build on Ubuntu 24
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+       
+      - name: Install MicroEmacs mec
+        run: |
+          export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
+          brew tap mittelmark/mittelmark
+          brew install microemacs-mec
+          ls /home/linuxbrew/.linuxbrew/bin
+          find /home/linuxbrew/.linuxbrew -name "*mec*"
+          ls -l /home/linuxbrew/.linuxbrew/opt/microemacs-mec
+          mec -V
