@@ -2,9 +2,9 @@
 class MicroemacsSpellingEnus < Formula
   desc "MicroEmacs 24 Text Editor Spelling Rules American"
   homepage "https://github.com/bjasspa/jasspa"
-  url "https://github.com/bjasspa/jasspa/releases/download/me_20240902/Jasspa_MicroEmacs_20240902_spelling_enus.zip"
-  sha256 "BFDE3D9DE8B7617ED86859F4B47AD25825B1000A0AB9A57692B184C812C7BCC6"
-  version "20240902"
+  url "https://github.com/bjasspa/jasspa/releases/download/me_20240903/Jasspa_MicroEmacs_20240903_spelling_enus.zip"
+  sha256 "05478326936FA78AA433E595A030AAD321F8D3DD2EEC3B8F2FF55824E3605BAE"
+  version "20240903"
   depends_on "microemacs-macros"
   def install
     # Define the target directory

@@ -2,9 +2,9 @@
 class MicroemacsSpellingEses < Formula
   desc "MicroEmacs 24 Text Editor Spelling Rules Spanish"
   homepage "https://github.com/bjasspa/jasspa"
-  url "https://github.com/bjasspa/jasspa/releases/download/me_20240902/Jasspa_MicroEmacs_20240902_spelling_eses.zip"
-  sha256 "35496D32311F4B5217EF2F4043169577D27EB4BB2F7DA22AECF5C727B7606357"
-  version "20240902"
+  url "https://github.com/bjasspa/jasspa/releases/download/me_20240903/Jasspa_MicroEmacs_20240903_spelling_eses.zip"
+  sha256 "0FD68355D0B3A34893DA315DA3D4088CDD4E16AA27D183A07BECF958E8319A2B"
+  version "20240903"
   depends_on "microemacs-macros"
   def install
     # Define the target directory

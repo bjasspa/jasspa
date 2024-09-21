@@ -2,9 +2,9 @@
 class MicroemacsSpellingPlpl < Formula
   desc "MicroEmacs 24 Text Editor Spelling Rules Polish"
   homepage "https://github.com/bjasspa/jasspa"
-  url "https://github.com/bjasspa/jasspa/releases/download/me_20240902/Jasspa_MicroEmacs_20240902_spelling_plpl.zip"
-  sha256 "39FBDAF5F62548573AC28E479FDBF7E8115DD556F16750F6F1B25CCD30767E0E"
-  version "20240902"
+  url "https://github.com/bjasspa/jasspa/releases/download/me_20240903/Jasspa_MicroEmacs_20240903_spelling_plpl.zip"
+  sha256 "24A35A921D6EA8E13BC3E5A32E72CA5C5802091AC25A40AEFC45A3366E56E83F"
+  version "20240903"
   depends_on "microemacs-macros"
   def install
     # Define the target directory

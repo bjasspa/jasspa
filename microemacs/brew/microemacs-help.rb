@@ -2,10 +2,9 @@
 class MicroemacsHelp < Formula
   desc "MicroEmacs 24 Text Editor Help file"
   homepage "https://github.com/bjasspa/jasspa"
-  sha256 "CC95587293B33B0805906D1143CF473F419325F493E146C695C6325A45D56D27"
-  version "20240902"
+  sha256 "3CC3172C3B8F2EA0104ECC2E23D27D92E80DD0873285BDED7CEBD53D26D8ECF3"
+  version "20240903"
   url "https://github.com/bjasspa/jasspa/releases/download/me_#{version}/Jasspa_MicroEmacs_#{version}_help_ehf.zip"
-  depends_on "microemacs-mec"
   depends_on "microemacs-macros"
 
   def install

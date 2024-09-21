@@ -2,9 +2,9 @@
 class MicroemacsSpellingFrfr < Formula
   desc "MicroEmacs 24 Text Editor Spelling Rules French"
   homepage "https://github.com/bjasspa/jasspa"
-  url "https://github.com/bjasspa/jasspa/releases/download/me_20240902/Jasspa_MicroEmacs_20240902_spelling_frfr.zip"
-  sha256 "C6B939456BD178D833D23F9CA6F7FF5D9A6FC1E35E4EBDBD38B7D98935DD3A5D"
-  version "20240902"
+  url "https://github.com/bjasspa/jasspa/releases/download/me_20240903/Jasspa_MicroEmacs_20240903_spelling_frfr.zip"
+  sha256 "A0B6E99DEF908208E1835DEBE6A71C5FC659466C656C5EABDC10E4F00114AAA1"
+  version "20240903"
   depends_on "microemacs-macros"
   def install
     # Define the target directory

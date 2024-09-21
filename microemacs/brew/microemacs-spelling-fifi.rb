@@ -2,9 +2,9 @@
 class MicroemacsSpellingFifi < Formula
   desc "MicroEmacs 24 Text Editor Spelling Rules Finish"
   homepage "https://github.com/bjasspa/jasspa"
-  url "https://github.com/bjasspa/jasspa/releases/download/me_20240902/Jasspa_MicroEmacs_20240902_spelling_fifi.zip"
-  sha256 "2C19855D195B1E02F75B7773A82577678E8FB4C20BE6576DE3545E2E71923F74"
-  version "20240902"
+  url "https://github.com/bjasspa/jasspa/releases/download/me_20240903/Jasspa_MicroEmacs_20240903_spelling_fifi.zip"
+  sha256 "8C577D7CD83C7A641934EF3F132D079E1FADE25204D550E19EAD1C15A41A4DA9"
+  version "20240903"
   depends_on "microemacs-macros"
   def install
     # Define the target directory

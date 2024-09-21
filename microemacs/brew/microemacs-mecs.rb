@@ -2,7 +2,7 @@
 class MicroemacsMecs < Formula
   desc "MicroEmacs 24 Text Editor Standalone Terminal Version"
   homepage "https://github.com/bjasspa/jasspa"
-  version "20240902"
+  version "20240903"
   PREFIX="https://github.com/bjasspa/jasspa/releases/download/me_#{version}/Jasspa_MicroEmacs_#{version}_abin_"
   depends_on "luit"
   depends_on "abduco"
@@ -10,17 +10,17 @@ class MicroemacsMecs < Formula
       if Hardware::CPU.arm?
           # Code for Apple Silicon (M1, M2, etc.)
           url "#{PREFIX}macos_apple_mecs.zip"
-          sha256 "38CA966B71BC3EA6B274A9D5A64C5E3BA1EA8175FC644560059FCD69A323A041"
+          sha256 "0F6279D26443506F721C88B2745ED65E0FE000BEBE9C163689B0B387DF258292"
       elsif Hardware::CPU.intel?
           url "#{PREFIX}macos_intel_mecs.zip"
-          sha256 "D58A17332C5CE464BAD7CE20200CDCF0FDFC74AFA99D236207C2B10917699F92"
+          sha256 "BCE548C11F5B5FBDF98EA25285E4746CB806FA800CA3D3964F8F1B4BFA099BC0"
       end
   elsif OS.linux?
       url "#{PREFIX}linux_mecs.zip"
-    sha256 "9547B9FA8A460DC11DE06FDED6F28BFD0199996C10E840FF7DEA6EE3C37C63CB"
+    sha256 "4ABD118A3FA20ECE663D2F1BD4A3D4295A0243D43E6B2B3B76FD4ADC8C9370EC"
   elsif OS.windows?
       url "#{PREFIX}windows_mecs.zip"
-    sha256 "607A995FAAE2202A474F7C249A7245F8A0840D9F4E53CADFC9DBBD819E95A2D7"
+    sha256 "40AD16AA27E1A35856D4B048D2A28F5895708D0ED1C88A4B89470DC899F5B252"
   end
 
   def install

@@ -2,9 +2,9 @@
 class MicroemacsSpellingRuru < Formula
   desc "MicroEmacs 24 Text Editor Spelling Rules Russian"
   homepage "https://github.com/bjasspa/jasspa"
-  url "https://github.com/bjasspa/jasspa/releases/download/me_20240902/Jasspa_MicroEmacs_20240902_spelling_ruru.zip"
-  sha256 "EEC741688ED922609FF8C696AD6A72BE2BF3EE5896AD30622BE3AAF51C735408"
-  version "20240902"
+  url "https://github.com/bjasspa/jasspa/releases/download/me_20240903/Jasspa_MicroEmacs_20240903_spelling_ruru.zip"
+  sha256 "26734551AFCDA268FEA5E7629352A8C9A4A0BA41428EC7ADAA1FE3AEA593CA0C"
+  version "20240903"
   depends_on "microemacs-macros"
   def install
     # Define the target directory

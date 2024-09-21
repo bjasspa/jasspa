@@ -2,9 +2,9 @@
 class MicroemacsSpellingElgr < Formula
   desc "MicroEmacs 24 Text Editor Spelling Rules Greek"
   homepage "https://github.com/bjasspa/jasspa"
-  url "https://github.com/bjasspa/jasspa/releases/download/me_20240902/Jasspa_MicroEmacs_20240902_spelling_elgr.zip"
-  sha256 "E34CFDEAF93859540B01A8B5DD0B8C6FF3F2F1D164591287A2DC1F43B1E0F73F"
-  version "20240902"
+  url "https://github.com/bjasspa/jasspa/releases/download/me_20240903/Jasspa_MicroEmacs_20240903_spelling_elgr.zip"
+  sha256 "CE5AA41810AE7A27C1EAD486B707EB256E123E907013ED25078F0BA6B003F814"
+  version "20240903"
   depends_on "microemacs-macros"
   def install
     # Define the target directory

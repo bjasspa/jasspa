@@ -2,21 +2,21 @@
 class MicroemacsOpenssl < Formula
   desc "MicroEmacs 24 Text Editor Open SSL libraries"
   homepage "https://github.com/bjasspa/jasspa"
-  version "20240902"
+  version "20240903"
   PREFIX="https://github.com/bjasspa/jasspa/releases/download/me_#{version}/Jasspa_MicroEmacs_#{version}_bin_"
   depends_on "microemacs-mec"
   if OS.mac?
       if Hardware::CPU.arm?
           # Code for Apple Silicon (M1, M2, etc.)
           url "#{PREFIX}macos_apple_openssl.zip"
-          sha256 "B775B6B9F00FF506AB34D962F9AD3546AC37E833C59D8957DC4EA59F2055AD46"
+          sha256 "9B180CCE2E28EC3432B81A48B94EB35B713D184486E4B917D6329729F3C92FD7"
       elsif Hardware::CPU.intel?
           url "#{PREFIX}macos_intel_openssl.zip"
-          sha256 "10692CBE4C4033E6422E9B6C0EBA055F4AEBAFB4EF667818188DF5C1742029C4"
+          sha256 "3A6743DF66ACF845E3A515A333510E6AF57F189CDB26AF95C43DA058BCB5E63B"
       end
   elsif OS.linux?
       url "#{PREFIX}linux_openssl.zip"
-    sha256 "FA382AAD2AA9334983CC68DACC464B7EB0526CBA05591AEFD2D3EC263A33F975"
+    sha256 "C0167D5D6C1F8C7079A1600904B02DB1372514A56FD33F75380C1ACFF8B135D4"
   elsif OS.windows?
       url "#{PREFIX}windows_openssl.zip"
     sha256 "4DDC326CCED0B6B2807BBA0D47FC39824EFD78DC707D0CFA7461845AB7CC38D2"

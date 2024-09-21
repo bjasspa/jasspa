@@ -2,9 +2,9 @@
 class MicroemacsSpellingPtpt < Formula
   desc "MicroEmacs 24 Text Editor Spelling Rules Portuguese"
   homepage "https://github.com/bjasspa/jasspa"
-  url "https://github.com/bjasspa/jasspa/releases/download/me_20240902/Jasspa_MicroEmacs_20240902_spelling_ptpt.zip"
-  sha256 "8F44946B2AE80A9B82808AE0CD5910A75402E5E7E80FA8963FEF11C27A7F65F4"
-  version "20240902"
+  url "https://github.com/bjasspa/jasspa/releases/download/me_20240903/Jasspa_MicroEmacs_20240903_spelling_ptpt.zip"
+  sha256 "34886F92B3080F4B0F65C423DE581AC27E3389BEE99030DA9D5612D762B12F03"
+  version "20240903"
   depends_on "microemacs-macros"
   def install
     # Define the target directory

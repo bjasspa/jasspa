@@ -2,9 +2,9 @@
 class MicroemacsSpellingItit < Formula
   desc "MicroEmacs 24 Text Editor Spelling Rules Italian"
   homepage "https://github.com/bjasspa/jasspa"
-  url "https://github.com/bjasspa/jasspa/releases/download/me_20240902/Jasspa_MicroEmacs_20240902_spelling_itit.zip"
-  sha256 "C161485E7BEF7212366F4C012EB424585BF880B593EAF84891BC8CA73ED65F2F"
-  version "20240902"
+  url "https://github.com/bjasspa/jasspa/releases/download/me_20240903/Jasspa_MicroEmacs_20240903_spelling_itit.zip"
+  sha256 "BA59AFBCA245FC4F15979EF89034C1593EF08BF4EDC3B4E19E2B64C6B0077628"
+  version "20240903"
   depends_on "microemacs-macros"
   def install
     # Define the target directory

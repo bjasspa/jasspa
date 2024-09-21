@@ -2,9 +2,9 @@
 class MicroemacsSpellingDede < Formula
   desc "MicroEmacs 24 Text Editor Spelling Rules German"
   homepage "https://github.com/bjasspa/jasspa"
-  url "https://github.com/bjasspa/jasspa/releases/download/me_20240902/Jasspa_MicroEmacs_20240902_spelling_dede.zip"
-  sha256 "EB7196669B5282EE75E75CF444B2865FFBE421312DE8E5EFC2D65D633B13E14E"
-  version "20240902"
+  url "https://github.com/bjasspa/jasspa/releases/download/me_20240903/Jasspa_MicroEmacs_20240903_spelling_dede.zip"
+  sha256 "B2AD90995B39D8563DE72C01C3C4B78270BB8A6B813FEDC8A38A18FFBBBB6BDF"
+  version "20240903"
   depends_on "microemacs-macros"
   def install
     # Define the target directory

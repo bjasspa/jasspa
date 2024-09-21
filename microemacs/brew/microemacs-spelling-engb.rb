@@ -2,9 +2,9 @@
 class MicroemacsSpellingEngb < Formula
   desc "MicroEmacs 24 Text Editor Spelling Rules British"
   homepage "https://github.com/bjasspa/jasspa"
-  url "https://github.com/bjasspa/jasspa/releases/download/me_20240902/Jasspa_MicroEmacs_20240902_spelling_engb.zip"
-  sha256 "F11716E3F791910B5AD9E47D34BC7642CE0316029225A58EC721AEE2C7ACB44F"
-  version "20240902"
+  url "https://github.com/bjasspa/jasspa/releases/download/me_20240903/Jasspa_MicroEmacs_20240903_spelling_engb.zip"
+  sha256 "35AF8D378BD0E895858233F8D651022C5BDA0BC1482018FAED305F742EBC4C8C"
+  version "20240903"
   depends_on "microemacs-macros"
   def install
     # Define the target directory

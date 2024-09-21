@@ -2,7 +2,7 @@
 class MicroemacsMews < Formula
   desc "MicroEmacs 24 Text Editor GUI Version"
   homepage "https://github.com/bjasspa/jasspa"
-  version "20240902"
+  version "20240903"
   on_macos do
     depends_on "xquartz"
     depends_on "libx11"
@@ -15,17 +15,17 @@ class MicroemacsMews < Formula
       if Hardware::CPU.arm?
           # Code for Apple Silicon (M1, M2, etc.)
           url "#{PREFIX}macos_apple_mews.zip"
-          sha256 "40F2329E81E8F768D150FC9C22858DA49DEFF7AD35AE878A5424CFAEAA94F0C2"
+          sha256 "73D03DDBF1D39C1B40FCAA5D143B8D9FE70DADC2FB0508866AD12308E088B1D2"
       elsif Hardware::CPU.intel?
           url "#{PREFIX}macos_intel_mews.zip"
-          sha256 "CF272913DF93D139A3F3391BDD493D74C856F3B1BBD46D2552D8010365789761"
+          sha256 "84E78BA0B30CA8CFE7B2FEB432A548F81EB2177395754CBBD3B511146398FCD8"
       end
   elsif OS.linux?
       url "#{PREFIX}linux_mews.zip"
-    sha256 "00CB8B47023BFE9BD27326B2E52614FD006F8A3408089613FEE8CE68DF6536B8"
+    sha256 "48CC60861C6B9F30BC6F0B1740CB00FFC0911F4CE5D8D480A1C6BAAED49DAC22"
   elsif OS.windows?
       url "#{PREFIX}windows_mews.zip"
-    sha256 "041376D26F0D9D651F69AB63CBB199B8F2BD8455405F7F52AAC4952597BA6920"
+    sha256 "7E1EAA8E749D324A3635AA9E733547DC4BE195D5CFD0C4B62FDDFC3B7AF8E1FD"
   end
 
   def install
