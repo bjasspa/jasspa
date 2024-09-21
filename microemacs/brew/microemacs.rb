@@ -1,10 +1,10 @@
 
 class Microemacs < Formula
-  desc "MicroEmacs 24 Text Editor GUI Version"
+  desc "MicroEmacs 24 Text Editor Meta Package Terminal and GUI Version"
   homepage "https://github.com/bjasspa/jasspa"
   version "20240903"
-  url "https://example.com/mymetapackage-1.0.tar.gz"
-  sha256 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  url "https://github.com/bjasspa/jasspa/releases/download/me_#{version}/Jasspa_MicroEmacs_#{version}_readme.zip"
+  sha256 "38f30e3005aa9bf7bd3c606d7f01fdb79467890219c138d09e2123d12eda75c0"
   # Add more dependencies as needed
   depends_on "microemacs-mec"
   depends_on "microemacs-mew"  
@@ -12,6 +12,14 @@ class Microemacs < Formula
   depends_on "microemacs-macros"  
 
   def install
-    # This is intentionally empty as we're not installing any files
+    jasspafolder = "#{share}/jasspa/"
+    # Create the directory if it does not exist
+    require 'fileutils'
+    FileUtils.mkdir_p(jasspafolder) unless Dir.exist?(jasspafolder)
+    # Example: List files in the buildpath
+    Dir.glob("#{buildpath}/*").each do |file|
+        puts "Found file: #{file}"
+        cp "#{file}", jasspafolder
+    end  
   end
 end

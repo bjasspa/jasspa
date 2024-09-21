@@ -18,7 +18,8 @@ class MicroemacsSpellingFifi < Formula
         cp "#{file}", spellfolder
     end  
     ### setting MEPATH for mews and mecs does not work, what could we do?
-    puts "start Microemacs with: MEPATH=~/.config/jasspa:/home/linuxbrew/.linuxbrew/share/jasspa/:/home/linuxbrew/.linuxbrew/share/jasspa/spelling mews"
+    puts "start Microemacs with: MEPATH=~/.config/jasspa:/home/linuxbrew/.linuxbrew/share/jasspa/macros:/home/linuxbrew/.linuxbrew/share/jasspa/spelling mec (or mew)"
+    puts "on MacOS replace /home/linuxbrew/.linuxbrew with /opt/homebrew for M1 Macs or /usr/local for Intel Macs"
   end
 
 end

@@ -19,7 +19,8 @@ class MicroemacsHelp < Formula
         cp "#{file}", macrofolder
     end  
     ### setting MEPATH for mews and mecs does not work, what could we do?
-    puts "start Microemacs with: MEPATH=~/.config/jasspa:#{share}/jasspa/macros:${share}/jasspa/spelling mec"
+    puts "start Microemacs with: MEPATH=~/.config/jasspa:/home/linuxbrew/.linuxbrew/share/jasspa/macros:/home/linuxbrew/.linuxbrew/share/jasspa/spelling mec (or mew)"
+    puts "on MacOS replace /home/linuxbrew/.linuxbrew with /opt/homebrew for M1 Macs or /usr/local for Intel Macs"
   end
 
 end
