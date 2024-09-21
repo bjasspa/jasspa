@@ -4,8 +4,6 @@ class MicroemacsMec < Formula
   homepage "https://github.com/bjasspa/jasspa"
   version "__version__"
   PREFIX="https://github.com/bjasspa/jasspa/releases/download/me_#{version}/Jasspa_MicroEmacs_#{version}_bin_"
-  depends_on "luit"
-  depends_on "abduco"
   if OS.mac?
       if Hardware::CPU.arm?
           # Code for Apple Silicon (M1, M2, etc.)

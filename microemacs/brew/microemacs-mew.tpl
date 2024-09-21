@@ -4,13 +4,6 @@ class MicroemacsMew < Formula
   homepage "https://github.com/bjasspa/jasspa"
   version "__version__"
   PREFIX="https://github.com/bjasspa/jasspa/releases/download/me_#{version}/Jasspa_MicroEmacs_#{version}_bin_"
-  on_macos do
-    depends_on "xquartz"
-    depends_on "libx11"
-    depends_on "libxext"
-    depends_on "libxaw"
-    depends_on "libxt"
-  end  
   if OS.mac?
       if Hardware::CPU.arm?
           # Code for Apple Silicon (M1, M2, etc.)
