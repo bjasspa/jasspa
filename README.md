@@ -108,7 +108,7 @@ Here as an example a bash  script  `mecu`  which runs a  MicroEmacs  on UTF-8
 terminal using the Western European ISO-encodings:
 
 ```bash
-#!/usr/bin/env bash
+#!/bin/sh
 ### file: mecu 
 ### Description: wrapper to run MicroEmacs with extended character settings
 ###              on UTF-8 enabled terminals
@@ -131,7 +131,7 @@ res=$(abduco -l | grep mec$tty)
 ### otherwise attach to the old one
 ### (press in ME Ctrl-l to update screen if neccesary)
 
-if [ "$res" == "" ] ; then 
+if [[ "$res" == "" ]] ; then 
     ### need a new one 
    TERM=xterm abduco -A -e ^z mec$tty luit -encoding ISO-8859-15 mecs "$@"
 else
