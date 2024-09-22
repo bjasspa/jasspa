@@ -3,7 +3,7 @@
 ;  Author        : Detlef Groth, University of Potsdam
 ;  Created By    : Detlef Groth
 ;  Created       : Mon Sep 16 17:09:35 2024
-;  Last Modified : <240920.0759>
+;  Last Modified : <240922.0956>
 ;
 ;  Description   : Load xrdb themes for X11 applications
 ;                  directly as schemes into MicroEmacs
@@ -145,8 +145,8 @@ define-macro xrdb-scheme
     !endif
 !emacro
 
-define-help "xrdb-scheme" "3"
-
+define-help xrdb-scheme 3
+<!--- md nowrap -->
 ## NAME 
 
     xrdb-scheme - load xrdb scheme files into the editor
@@ -154,7 +154,7 @@ define-help "xrdb-scheme" "3"
      
 ## SYNOPSIS
      
-    xrdb-scheme ["theme-name"]     
+    xrdb-scheme ["theme-name"]
      
 ## DESCRIPTION
      
@@ -178,6 +178,6 @@ define-help "xrdb-scheme" "3"
   
 ## SEE ALSO
 
-   [[scheme-editor(3)]] - could be transposed to a link
+   [scheme-editor(3)](scheme-editor\(3\)) - could be transposed to a link
    
 !ehelp

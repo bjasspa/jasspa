@@ -90,16 +90,16 @@ set-variable .fhook-md.item-list-r3 "H2 \ecB\\1\ecA"
   0 hilight .hilight.mdB 0                             .scheme.bold
   hilight   .hilight.mdB 0 "\\\\."                     .scheme.bold
   hilight   .hilight.mdB 0x80 "\\*\\*" .hilight.md     .scheme.hide
-  hilight   .hilight.mdB 0x80 "__\\}\\W" .hilight.md  .scheme.hide
+  hilight   .hilight.mdB 0x80 "__\\}\\W" .hilight.md   .scheme.hide
   hilight   .hilight.mdB 0x80 "\\*" .hilight.mdBI      .scheme.hide
   hilight   .hilight.mdB 0x80 "\\W\\{_\\}\\S" .hilight.mdBI .scheme.hide
   
   0 hilight .hilight.mdI 0                             .scheme.italic
   hilight   .hilight.mdI 0 "\\\\."                     .scheme.italic
   hilight   .hilight.mdI 0x80 "\\*" .hilight.md        .scheme.hide
-  hilight   .hilight.mdI 0x80 "_\\}\\W" .hilight.md   .scheme.hide
+  hilight   .hilight.mdI 0x80 "_\\}\\W" .hilight.md    .scheme.hide
   hilight   .hilight.mdI 0x80 "\\*\\*" .hilight.mdBI   .scheme.hide
-  hilight   .hilight.mdI 0x80 "\\W\\{__\\}\\S" .hilight.mdBI      .scheme.hide
+  hilight   .hilight.mdI 0x80 "\\W\\{__\\}\\S" .hilight.mdBI .scheme.hide
   
   0 hilight .hilight.mdBI 0                            .scheme.bold-italic
   hilight   .hilight.mdBI 0 "\\\\."                    .scheme.bold-italic

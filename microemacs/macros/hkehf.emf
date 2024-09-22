@@ -15,40 +15,95 @@ define-macro fhook-ehf
   set-variable :mouse-word-select ehf-process-link
   !if &seq $buffer-bname "*help*"
     -1 buffer-mode "view"
-    1 buffer-mode "magic"
     set-variable #l0 &cond &bmod "magic" 1 -1
-    set-variable #l3 &con &les 140 &set #l3 &con &gre 70 &set #l3 &sub $window-width 4 70 #l3 140 #l3
-    ; found largest indent in ehf was ~26 chars, this must be removed from the \{#\} long-line regex len 
-    set-variable #l1 &spr "\es[B-Z]\\|^\\( *\\(\\* \\)?\\).\\{%d\\}.*" &sub #l3 26
-    !repeat
-      !force search-buffer "me" #l1
-      !iif &not $status  !break
-      !if &equ &set #l5 &len @s0 3
-        !force search-buffer "Me" "\esA"
-      !elif &gre #l5 #l3
-        set-variable #l5 &len @s1
-        !repeat
-          !force set-variable $window-acol &add #l3 1
-          !iif &not $status  !break
-          set-variable #l6 $window-col
-          !force -1 search-buffer "bme" "[^ ] "
-          !if $status
-            forward-char
-            !while &seq @wc " "
-              forward-delete-char
-            !done
-            insert-newline
-          !elif &seq "" &rep @wl "\x12" ""
-            !break
-          !else
-            set-variable $window-col &sub #l6 2
-            insert-string "-\n"
-          !endif
-          #l5 insert-space
-        !done
-        end-of-line
+    1 buffer-mode "magic"
+    6 goto-line
+    set-variable #l4 ""
+    !if &xse @wl "\\(<!---? *\\(.*?\\) *-->\\)\\(.*\\)"
+      set-variable #l4 @s2
+      !if &seq &trr @s3 ""
+        set-mark
+        forward-line
+        -1 kill-region
+      !else
+        &len @s1 forward-delete-char
+        -1 yank
       !endif
-    !done
+      !if &seq "md" &lef #l4 2
+        replace-string "\\([^\\\\\n]\\|^\\)\\\\\\*" "\\1cZ"
+        6 goto-line
+        replace-string "^#+ +\\(.*\\)" "cE\\1cA"
+        6 goto-line
+        replace-string "\\*\\*\\(.*\\(\n.*\\)?\\)\\*\\*" "cD\\1cA"
+        6 goto-line
+        replace-string "\\*\\(.*\\(\n.*\\)?\\)\\*" "cC\\1cA"
+        6 goto-line
+        replace-string "\\(^\\|[ \\t]\\)__\\(.*\\(\n.*\\)?\\)__\\(^\\| \\)" "\\1cD\\2cA\\4"
+        6 goto-line
+        replace-string "\\(^\\|[ \\t]\\)_\\(.*\\(\n.*\\)?\\)_\\(^\\| \\)" "\\1cC\\2cA\\4"
+        6 goto-line
+        replace-string "\\[\\(\\([^]\\\\]\\|\\\\.\\)+\\)](\\(\\([^)\\\\]\\|\\\\.\\)+\\))" "ls\\3lm\\1le"
+        6 goto-line
+        ; only convert http links that are not in code blocks
+        !repeat
+          !force search-buffer "me" "\\(^\\|[ \\t]\\)\\(```\\(emf\\)?\\|\\(ht\\|f\\)tps?://[-@~_a-zA-Z#%?&=\\.:\\/0-9]+\\|mailto:[-_a-zA-Z.0-9]+@[-_a-zA-Z.0-9]+\\)"
+          !iif &not $status  !break
+          !if &seq &lef &set #l1 @s2 3 "```"
+            &len #l1 backward-delete-char
+            -1 yank
+            insert-string &con &seq #l1 "```" "cG" "sB"
+            !force 1 replace-string "```" &con &seq #l1 "```" "cA" "sA"
+            !iif &not $status  100 ml-write &spr "[Error: failed to find close to ``` on around line %d]" $window-line 
+          !else
+            &len #l1 backward-char
+            insert-string "ls\\lm"
+            &len #l1 forward-char
+            insert-string "le"
+          !endif
+        !done
+        6 goto-line
+        replace-string "\\(^\\|[ \\t]\\)`\\([^\n`]\\([^\\\\`]\\|\\\\.\\)*\\)`" "\\1cG\\2cA"
+        6 goto-line
+        replace-string "cZ" "\\\\*"
+        6 goto-line
+        replace-string "\\\\\\(.\\)" "\\1"
+        6 goto-line
+      !endif
+    !endif
+    !if &not &sin "nowrap" #l4
+      set-variable #l3 &con &les 140 &set #l3 &con &gre 70 &set #l3 &sub $window-width 4 70 #l3 140 #l3
+      ; found largest indent in ehf was ~26 chars, this must be removed from the \{#\} long-line regex len 
+      set-variable #l1 &spr "\es[B-Z]\\|^\\( *\\(\\* \\)?\\).\\{%d\\}.*" &sub #l3 26
+      !repeat
+        !force search-buffer "me" #l1
+        !iif &not $status  !break
+        !if &equ &set #l5 &len @s0 3
+          !force search-buffer "Me" "\esA"
+        !elif &gre #l5 #l3
+          set-variable #l5 &len @s1
+          !repeat
+            !force set-variable $window-acol &add #l3 1
+            !iif &not $status  !break
+            set-variable #l6 $window-col
+            !force -1 search-buffer "bme" "[^ ] "
+            !if $status
+              forward-char
+              !while &seq @wc " "
+                forward-delete-char
+              !done
+              insert-newline
+            !elif &seq "" &rep @wl "\x12" ""
+              !break
+            !else
+              set-variable $window-col &sub #l6 2
+              insert-string "-\n"
+            !endif
+            #l5 insert-space
+          !done
+          end-of-line
+        !endif
+      !done
+    !endif
     beginning-of-buffer
     !force replace-string "\\(\ecB[^\e]*\\)\n\\( *\\)" "\\1\ecA\n\\2\ecB"
     beginning-of-buffer
