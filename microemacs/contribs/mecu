@@ -1,0 +1,30 @@
+#!/bin/sh
+### file: mecu 
+### Description: wrapper to run MicroEmacs with extended character settings
+###              on UTF-8 enabled terminals
+###  
+### Tools required:
+###   abduco: session management and detacher
+###           https://www.brain-dump.org/projects/abduco/   
+###   luit:   filter between non-utf-8 applications and utf-8 terminals
+###           https://invisible-island.net/luit/
+### Installation:
+###           fedora: sudo dnf install abduco luit  
+###           debian: sudo apt install abduco luit
+
+### session name creation for the current tty 
+tty=$(tty | grep -Eo '[0-9]+')
+## already running? list abduco sessions
+res=$(abduco -l | grep mec$tty)
+
+### running session, if no create an new one
+### otherwise attach to the old one
+### (press in ME Ctrl-l to update screen if neccesary)
+
+if [[ "$res" == "" ]] ; then 
+    ### need a new one 
+   TERM=xterm abduco -A -e ^z mec$tty luit -encoding ISO-8859-15 mecs "$@"
+else
+    ### attach to the old one
+    abduco -a -e ^z mec$tty 
+fi
