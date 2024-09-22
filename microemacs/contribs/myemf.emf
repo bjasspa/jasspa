@@ -1,9 +1,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;  Author        : $Author$
-;  Created By    : MicroEmacs User
-;  Created       : Fri Sep 20 20:53:30 2024
-;  Last Modified : <240920.2055>
+;  Created By    : Detlef Groth
+;  Created       : Sat Sep 21 14:56:50 2024
+;  Last Modified : <240921.1920>
 ;
 ;  Description
 ;
@@ -11,19 +11,48 @@
 ;
 ;  History
 ;
-;  Copyright (c) 2024 MicroEmacs User.
+;  Copyright (c) 2024 Detlef Groth.
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-hilight .hilight.emf 0x44 "^## "  "" "\n" "" ""      .scheme.header
-hilight .hilight.emf 0x44 " __" " " "__" "" ""       .scheme.bold  ; bold  
-hilight .hilight.emf 0x44 " _" " " "_" "" ""       .scheme.italic  ; italic    
-hilight .hilight.emf 0x44 " `" " " "`" "" ""       .scheme.keyword  ; code
-hilight .hilight.emf 0x44 "```emf" "\ecB" "```" "\ecA" "" .scheme.keyword  ; code
-hilight .hilight.emf 4  "\"" "\"" "\\"           .scheme.string
-;hilight .hilight.emf 0x44 "`" "" "`" "" ""       .scheme.underline  ; code
-hilight .hilight.emf 0x44 "\\[\\[" "" "\\]\\]" "" ""      .scheme.link  ; italic      
 
-hilight .hilight.emf 0xc0 "```emf" "" .hilight.ehfB  $global-scheme
-hilight .hilight.ehfB 0xc0 "```" ""   .hilight.emf   $global-scheme
+!if &not &exi .hilight.md 
+    !force execute-file "hkmd" 
+    ml-write "executed hkmd" 
+    ; special links to other help pages within ME
+    hilight .hilight.md 1 "\\[\\[[-$&!A-Za-z0-9()]+\\]\\]"     .scheme.link
+!endif
 
-1000 ml-write "loading myemf.emf"
+hilight .hilight.emf 0x080 "^## NAME"  .hilight.md  .scheme.header
+hilight .hilight.md 0x080 "^!ehelp"    .hilight.emf .scheme.keyword
+;hilight .hilight.md 1 "\\[\\[[^\\n]+\\]\\]" .scheme.link  ; italic      
+define-macro test
+    ml-write "test"
+!emacro
+
+define-help "test" "3"
+## NAME
+
+  _n_ __test__ ["argument"] - print a test message given on the terminal
+  
+  [[$test-macro(3)]] hi
+  
+## SYNOPSIS
+
+  Lets display 'quotes' and "strings"
+
+  foo _italic_ and __bold__
+  this is some text in _italic_  and __bold__ .
+  __some more text__ 
+  and _italic_ as well as `typewriter`
+  
+    ls 
+    dir
+  
+## SEE ALSO
+
+  [[$test-macro(3)]] hi
+
+!ehelp
+
+; _bold_
+screen-update
