@@ -212,18 +212,19 @@ set-variable .fhook-r-doc.setup-mask "acfhmw"
 !if &and &sin "h" .fhook-r-doc.setup &band .hilight.flags 0x02
   !iif &not &exi .hilight.r-doc  set-variable .hilight.r-doc &pinc .hilight.next 1
   !iif &not &exi .hilight.r-docL  set-variable .hilight.r-docL &pinc .hilight.next 1  
-  0 hilight .hilight.r-doc 0                 .scheme.text
-  0 hilight .hilight.r-docL 0                 .scheme.text  
-  hilight .hilight.r-doc 2 "^_"               .scheme.header
-  hilight .hilight.r-docL 4 "'" "'" "\\"    .scheme.link
-  hilight .hilight.r-doc 2 "^[A-Z]"            .scheme.header
-  ;hilight .hilight.r-doc 2 "^ +[a-z]+:"         .scheme.keyword  
-  hilight .hilight.r-doc 0x80 "^[A-Z].+"  .hilight.r-doc .scheme.header
-  hilight .hilight.r-doc 0x80 "^See Also:"  .hilight.r-docL .scheme.header  
-  hilight .hilight.r-doc 0x80 "^Usage:"  .hilight.r .scheme.header
-  hilight .hilight.r-doc 0x80 "^Examples:"  .hilight.r .scheme.header  
-  hilight .hilight.r 0x80 "^Arguments:"  .hilight.r-doc  .scheme.header
-  hilight .hilight.r-docL 0x80 "^Examples:"  .hilight.r  .scheme.header
+  0 hilight .hilight.r-doc   0                 .scheme.text
+  0 hilight .hilight.r-docL  0                 .scheme.text  
+  hilight .hilight.r-doc     2 "^_"            .scheme.header
+  hilight .hilight.r-doc     2 "^[A-Z]"        .scheme.header
+  hilight .hilight.r-doc  0x80 "^Usage:"       .hilight.r       .scheme.header
+  hilight .hilight.r-doc  0x80 "^Examples:"    .hilight.r       .scheme.header  
+  hilight .hilight.r-doc  0x80 "^See Also:"    .hilight.r-docL  .scheme.header  
+  hilight .hilight.r      0x80 "^[A-Z].+"      .hilight.r-doc   .scheme.header
+  ;hilight .hilight.r      0x80 "^Arguments:"   .hilight.r-doc   .scheme.header
+  hilight .hilight.r-docL    4 "'" "'" "\\"    .scheme.link
+  hilight .hilight.r-docL 0x80 "^Examples:"    .hilight.r       .scheme.header
+  hilight .hilight.r-docL 0x80 "^[A-Z].+"      .hilight.r-doc   .scheme.header
+  
 !endif
 
 !if &sin "f" .fhook-r-doc.setup
