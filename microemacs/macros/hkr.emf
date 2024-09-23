@@ -185,6 +185,7 @@ set-variable .fhook-r.item-list-r2 "MDHE \ecB\\1\ecA"
   hilight .hilight.r 1 "FALSE"        .scheme.prepro
   hilight .hilight.r 1 "NA"           .scheme.prepro
   hilight .hilight.r 1 "TRUE"         .scheme.prepro
+  hilight .hilight.r 1 "NULL"         .scheme.prepro  
   ; sql stuff
   hilight .hilight.r 1 "dbSendQuery"  .scheme.keyword
   hilight .hilight.r 1 "dbDriver"     .scheme.keyword
