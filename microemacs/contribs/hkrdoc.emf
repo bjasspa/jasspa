@@ -1,0 +1,42 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2009 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     Oct 7 2022
+; Authors:     Detlef Groth
+; Synopsis:    R-doc file hook (https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Rd-format)
+; 
+
+define-macro fhook-rdoc
+  @# buffer-init "rdoc"
+  buffer-init-hooks
+!emacro
+
+; buffer-init variables
+set-variable .fhook-rdoc.name "Rdoc"
+set-variable .fhook-rdoc.setup &reg "/history/fhook/rdoc" "bfghinopx"
+set-variable .fhook-rdoc.setup-mask "abefghijkmnpstuwx"
+;set-variable .fhook-rdoc.comment "|%||%|% | %||"
+
+!if &and &sin "h" .fhook-rdoc.setup &band .hilight.flags 0x02
+  !iif &not &exi .hilight.rdoc  set-variable .hilight.rdoc &pinc .hilight.next 1
+  !iif &not &exi .hilight.rdocL  set-variable .hilight.rdocL &pinc .hilight.next 1  
+  0 hilight .hilight.rdoc 0                 .scheme.text
+  0 hilight .hilight.rdocL 0                 .scheme.text  
+  hilight .hilight.rdoc 2 "^_"               .scheme.header
+  hilight .hilight.rdocL 4 "'" "'" "\\"    .scheme.link
+  hilight .hilight.rdoc 2 "^[A-Z]"            .scheme.header
+  ;hilight .hilight.rdoc 2 "^ +[a-z]+:"         .scheme.keyword  
+  !iif &not &exi ".hilight.r"  !force execute-file "hkr"
+  hilight .hilight.rdoc 0x80 "^[A-Z].+"  .hilight.rdoc .scheme.header
+  hilight .hilight.rdoc 0x80 "^See Also:"  .hilight.rdocL .scheme.header  
+  hilight .hilight.rdoc 0x80 "^Usage:"  .hilight.r .scheme.header
+  hilight .hilight.rdoc 0x80 "^Examples:"  .hilight.r .scheme.header  
+  hilight .hilight.r 0x80 "^Arguments:"  .hilight.rdoc  .scheme.header
+!endif
+
+
+;add-file-hook "*rdoc*" fhook-ehf
+buffer-init-fhook "rdoc"
+1000 ml-write "hkrdoc loaded"
