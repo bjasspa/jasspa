@@ -1,0 +1,254 @@
+pam                  package:cluster                   R Documentation
+
+_P_a_r_t_i_t_i_o_n_i_n_g _A_r_o_u_n_d _M_e_d_o_i_d_s
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Partitioning (clustering) of the data into ‘k’ clusters “around
+     medoids”, a more robust version of K-means.
+
+_U_s_a_g_e:
+
+     pam(x, k, diss = inherits(x, "dist"),
+         metric = c("euclidean", "manhattan"), 
+         medoids = if(is.numeric(nstart)) "random",
+         nstart = if(variant == "faster") 1 else NA,
+         stand = FALSE, cluster.only = FALSE,
+         do.swap = TRUE,
+         keep.diss = !diss && !cluster.only && n < 100,
+         keep.data = !diss && !cluster.only,
+         variant = c("original", "o_1", "o_2", "f_3", "f_4", "f_5", "faster"),
+         pamonce = FALSE, trace.lev = 0)
+     
+_A_r_g_u_m_e_n_t_s:
+
+       x: data matrix or data frame, or dissimilarity matrix or object,
+          depending on the value of the ‘diss’ argument.
+
+          In case of a matrix or data frame, each row corresponds to an
+          observation, and each column corresponds to a variable.  All
+          variables must be numeric (or logical).  Missing values
+          (‘NA’s) _are_ allowed-as long as every pair of observations
+          has at least one case not missing.
+
+          In case of a dissimilarity matrix, ‘x’ is typically the
+          output of ‘daisy’ or ‘dist’.  Also a vector of length
+          n*(n-1)/2 is allowed (where n is the number of observations),
+          and will be interpreted in the same way as the output of the
+          above-mentioned functions. Missing values (‘NA’s) are _not_
+          allowed.
+
+       k: positive integer specifying the number of clusters, less than
+          the number of observations.
+
+    diss: logical flag: if TRUE (default for ‘dist’ or ‘dissimilarity’
+          objects), then ‘x’ will be considered as a dissimilarity
+          matrix.  If FALSE, then ‘x’ will be considered as a matrix of
+          observations by variables.
+
+  metric: character string specifying the metric to be used for
+          calculating dissimilarities between observations.
+          The currently available options are "euclidean" and
+          "manhattan".  Euclidean distances are root sum-of-squares of
+          differences, and manhattan distances are the sum of absolute
+          differences.  If ‘x’ is already a dissimilarity matrix, then
+          this argument will be ignored.
+
+ medoids: NULL (default) or length-‘k’ vector of integer indices (in
+          ‘1:n’) specifying initial medoids instead of using the
+          ‘_build_’ algorithm.
+
+  nstart: used only when ‘medoids = "random"’: specifies the _number_
+          of random “starts”; this argument corresponds to the one of
+          ‘kmeans()’ (from R's package ‘stats’).
+
+   stand: logical; if true, the measurements in ‘x’ are standardized
+          before calculating the dissimilarities.  Measurements are
+          standardized for each variable (column), by subtracting the
+          variable's mean value and dividing by the variable's mean
+          absolute deviation.  If ‘x’ is already a dissimilarity
+          matrix, then this argument will be ignored.
+
+cluster.only: logical; if true, only the clustering will be computed
+          and returned, see details.
+
+ do.swap: logical indicating if the *swap* phase should happen. The
+          default, ‘TRUE’, correspond to the original algorithm.  On
+          the other hand, the *swap* phase is much more computer
+          intensive than the *build* one for large n, so can be skipped
+          by ‘do.swap = FALSE’.
+
+keep.diss, keep.data: logicals indicating if the dissimilarities and/or
+          input data ‘x’ should be kept in the result.  Setting these
+          to ‘FALSE’ can give much smaller results and hence even save
+          memory allocation _time_.
+
+ pamonce: logical or integer in ‘0:6’ specifying algorithmic short cuts
+          as proposed by Reynolds et al. (2006), and Schubert and
+          Rousseeuw (2019, 2021) see below.
+
+ variant: a ‘character’ string denoting the variant of PAM algorithm to
+          use; a more self-documenting version of ‘pamonce’ which
+          should be used preferably; note that ‘"faster"’ not only uses
+          ‘pamonce = 6’ but also ‘nstart = 1’ and hence ‘medoids =
+          "random"’ by default.
+
+trace.lev: integer specifying a trace level for printing diagnostics
+          during the build and swap phase of the algorithm.  Default
+          ‘0’ does not print anything; higher values print increasingly
+          more.
+
+_D_e_t_a_i_l_s:
+
+     The basic ‘pam’ algorithm is fully described in chapter 2 of
+     Kaufman and Rousseeuw(1990).  Compared to the k-means approach in
+     ‘kmeans’, the function ‘pam’ has the following features: (a) it
+     also accepts a dissimilarity matrix; (b) it is more robust because
+     it minimizes a sum of dissimilarities instead of a sum of squared
+     euclidean distances; (c) it provides a novel graphical display,
+     the silhouette plot (see ‘plot.partition’) (d) it allows to select
+     the number of clusters using ‘mean(silhouette(pr)[, "sil_width"])’
+     on the result ‘pr <- pam(..)’, or directly its component
+     ‘pr$silinfo$avg.width’, see also ‘pam.object’.
+
+     When ‘cluster.only’ is true, the result is simply a (possibly
+     named) integer vector specifying the clustering, i.e.,
+     ‘pam(x,k, cluster.only=TRUE)’ is the same as
+     ‘pam(x,k)$clustering’ but computed more efficiently.
+
+     The ‘pam’-algorithm is based on the search for ‘k’ representative
+     objects or medoids among the observations of the dataset.  These
+     observations should represent the structure of the data.  After
+     finding a set of ‘k’ medoids, ‘k’ clusters are constructed by
+     assigning each observation to the nearest medoid.  The goal is to
+     find ‘k’ representative objects which minimize the sum of the
+     dissimilarities of the observations to their closest
+     representative object.
+
+     By default, when ‘medoids’ are not specified, the algorithm first
+     looks for a good initial set of medoids (this is called the
+     *build* phase).  Then it finds a local minimum for the objective
+     function, that is, a solution such that there is no single switch
+     of an observation with a medoid (i.e. a ‘swap’) that will decrease
+     the objective (this is called the *swap* phase).
+
+     When the ‘medoids’ are specified (or randomly generated), their
+     order does _not_ matter; in general, the algorithms have been
+     designed to not depend on the order of the observations.
+
+     The ‘pamonce’ option, new in cluster 1.14.2 (Jan. 2012), has been
+     proposed by Matthias Studer, University of Geneva, based on the
+     findings by Reynolds et al. (2006) and was extended by Erich
+     Schubert, TU Dortmund, with the FastPAM optimizations.
+
+     The default ‘FALSE’ (or integer ‘0’) corresponds to the original
+     “swap” algorithm, whereas ‘pamonce = 1’ (or ‘TRUE’), corresponds
+     to the first proposal ....  and ‘pamonce = 2’ additionally
+     implements the second proposal as well.
+
+     The key ideas of ‘FastPAM’ (Schubert and Rousseeuw, 2019) are
+     implemented except for the linear approximate build as follows:
+
+     ‘pamonce = 3’: reduces the runtime by a factor of O(k) by
+          exploiting that points cannot be closest to all current
+          medoids at the same time.
+
+     ‘pamonce = 4’: additionally allows executing multiple swaps per
+          iteration, usually reducing the number of iterations.
+
+     ‘pamonce = 5’: adds minor optimizations copied from the ‘pamonce =
+          2’ approach, and is expected to be the fastest of the
+          ‘FastPam’ variants included.
+
+     ‘FasterPAM’ (Schubert and Rousseeuw, 2021) is implemented via
+
+     ‘pamonce = 6’: execute each swap which improves results
+          immediately, and hence typically multiple swaps per
+          iteration; this swapping algorithm runs in O(n^2) rather than
+          O(n(n-k)k) time which is much faster for all but small k.
+
+     In addition, ‘FasterPAM’ uses _random_ initialization of the
+     medoids (instead of the ‘_build_’ phase) to avoid the O(n^2 k)
+     initialization cost of the build algorithm.  In particular for
+     large k, this yields a much faster algorithm, while preserving a
+     similar result quality.
+
+     One may decide to use _repeated_ random initialization by setting
+     ‘nstart > 1’.
+
+_V_a_l_u_e:
+
+     an object of class ‘"pam"’ representing the clustering.  See
+     ‘?pam.object’ for details.
+
+_N_o_t_e:
+
+     For large datasets, ‘pam’ may need too much memory or too much
+     computation time since both are O(n^2).  Then, ‘clara()’ is
+     preferable, see its documentation.
+
+     There is hard limit currently, n <= 65536, at 2^{16} because for
+     larger n, n(n-1)/2 is larger than the maximal integer
+     (‘.Machine$integer.max’ = 2^{31} - 1).
+
+_A_u_t_h_o_r(_s):
+
+     Kaufman and Rousseeuw's orginal Fortran code was translated to C
+     and augmented in several ways, e.g. to allow ‘cluster.only=TRUE’
+     or ‘do.swap=FALSE’, by Martin Maechler.
+
+     Matthias Studer, Univ.Geneva provided the ‘pamonce’ (‘1’ and ‘2’)
+     implementation.
+
+     Erich Schubert, TU Dortmund contributed the ‘pamonce’ (‘3’ to ‘6’)
+     implementation.
+
+_R_e_f_e_r_e_n_c_e_s:
+
+     Reynolds, A., Richards, G., de la Iglesia, B. and Rayward-Smith,
+     V. (1992) Clustering rules: A comparison of partitioning and
+     hierarchical clustering algorithms; _Journal of Mathematical
+     Modelling and Algorithms_ *5*, 475-504.
+     doi:10.1007/s10852-005-9022-1
+     <https://doi.org/10.1007/s10852-005-9022-1>.  Erich Schubert and
+     Peter J. Rousseeuw (2019) Faster k-Medoids Clustering: Improving
+     the PAM, CLARA, and CLARANS Algorithms; SISAP 2020, 171-187.
+     doi:10.1007/978-3-030-32047-8_16
+     <https://doi.org/10.1007/978-3-030-32047-8_16>.  Erich Schubert
+     and Peter J. Rousseeuw (2021) Fast and Eager k-Medoids Clustering:
+     O(k) Runtime Improvement of the PAM, CLARA, and CLARANS
+     Algorithms; Preprint, to appear in Information Systems
+     (<https://arxiv.org/abs/2008.05171>).
+
+_S_e_e _A_l_s_o:
+
+     ‘agnes’ for background and references; ‘pam.object’, ‘clara’,
+     ‘daisy’, ‘partition.object’, ‘plot.partition’, ‘dist’.
+
+_E_x_a_m_p_l_e_s:
+
+     ## generate 25 objects, divided into 2 clusters.
+     x <- rbind(cbind(rnorm(10,0,0.5), rnorm(10,0,0.5)),
+                cbind(rnorm(15,5,0.5), rnorm(15,5,0.5)))
+     pamx <- pam(x, 2)
+     pamx # Medoids: '7' and '25' ...
+     summary(pamx)
+     plot(pamx)
+     ## use obs. 1 & 16 as starting medoids -- same result (typically)
+     (p2m <- pam(x, 2, medoids = c(1,16)))
+     ## no _build_ *and* no _swap_ phase: just cluster all obs. around (1, 16):
+     p2.s <- pam(x, 2, medoids = c(1,16), do.swap = FALSE)
+     p2.s
+     
+     p3m <- pam(x, 3, trace = 2)
+     ## rather stupid initial medoids:
+     (p3m. <- pam(x, 3, medoids = 3:1, trace = 1))
+     
+     
+     pam(daisy(x, metric = "manhattan"), 2, diss = TRUE)
+     
+     data(ruspini)
+     ## Plot similar to Figure 4 in Stryuf et al (1996)
+     ## Not run: plot(pam(ruspini, 4), ask = TRUE)
+     
+
