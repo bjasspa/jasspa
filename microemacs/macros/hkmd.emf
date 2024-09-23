@@ -30,7 +30,7 @@ set-variable .fhook-md.item-list-r3 "H2 \ecB\\1\ecA"
 !if &sin "f" .fhook-md.setup
   ; setup emf collapsing
   set-variable .fhook-md.collapse-open  "^\\(# \\|## \\|---\\)"
-  set-variable .fhook-md.collapse-close "^\\(# \\|## \\|---\\)"
+  set-variable .fhook-md.collapse-close "^\\(# \\|## \\|---\\|\\'\\)"
   set-variable .fhook-md.collapse-mnext "-1"
 !endif
 
