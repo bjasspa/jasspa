@@ -200,4 +200,82 @@ set-variable .fhook-r.item-list-r2 "MDHE \ecB\\1\ecA"
   indent .hilight.r c "\\\\\\s " 3/2t
   indent .hilight.r i "#"
 !endif
+
+define-macro fhook-r-doc
+  buffer-init-hooks
+!emacro
+
+set-variable .fhook-r-doc.name "R Doc"
+set-variable .fhook-r-doc.setup &reg "/history/fhook/r-doc" "acfhmw"
+set-variable .fhook-r-doc.setup-mask "acfhmw"
+
+!if &and &sin "h" .fhook-r-doc.setup &band .hilight.flags 0x02
+  !iif &not &exi .hilight.r-doc  set-variable .hilight.r-doc &pinc .hilight.next 1
+  !iif &not &exi .hilight.r-docL  set-variable .hilight.r-docL &pinc .hilight.next 1  
+  0 hilight .hilight.r-doc 0                 .scheme.text
+  0 hilight .hilight.r-docL 0                 .scheme.text  
+  hilight .hilight.r-doc 2 "^_"               .scheme.header
+  hilight .hilight.r-docL 4 "'" "'" "\\"    .scheme.link
+  hilight .hilight.r-doc 2 "^[A-Z]"            .scheme.header
+  ;hilight .hilight.r-doc 2 "^ +[a-z]+:"         .scheme.keyword  
+  hilight .hilight.r-doc 0x80 "^[A-Z].+"  .hilight.r-doc .scheme.header
+  hilight .hilight.r-doc 0x80 "^See Also:"  .hilight.r-docL .scheme.header  
+  hilight .hilight.r-doc 0x80 "^Usage:"  .hilight.r .scheme.header
+  hilight .hilight.r-doc 0x80 "^Examples:"  .hilight.r .scheme.header  
+  hilight .hilight.r 0x80 "^Arguments:"  .hilight.r-doc  .scheme.header
+  hilight .hilight.r-docL 0x80 "^Examples:"  .hilight.r  .scheme.header
+!endif
+
+!if &sin "f" .fhook-r-doc.setup
+  ; setup emf collapsing
+  set-variable .fhook-r-doc.collapse-open  "^[A-Z]"
+  set-variable .fhook-r-doc.collapse-close "^\\([A-Z]\\|\\'\\)"
+  set-variable .fhook-r-doc.collapse-mnext "-1"
+!endif
+
+define-macro r-doc
+  !force set-variable #l0 @1
+  !if &not $status
+    set-variable #l0 @ml00 "R help on"
+  !endif
+  0 pipe-shell-command &spr "LANG=en_US Rscript -e \"help(%s)\"" #l0 "*r-doc*"
+  set-variable :mouse-word-select r-doc-process-link
+  -1 buffer-mode "view"
+  beginning-of-buffer
+  3 kill-line
+  replace-string "_" "" 
+  beginning-of-buffer
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"
+  buffer-init "r-doc"
+  ; some terminals might need this
+  !iif &band $system 0x01  screen-update
+!emacro    
+
+0 define-macro r-doc-process-link
+  set-position "\x80"
+  !force -10 search-backward "^See Also"
+  !iif &not $status  -8 ml-write "Error: Not in the See Also section."
+  goto-position "\x80"
+  !force -1 search-forward "'"
+  !if $status
+    backward-char
+    set-variable #l1 $window-col
+    !force -1 search-backward "'"
+    !if $status
+      forward-char
+      set-mark
+      set-variable $window-col #l1 
+      copy-region
+      set-variable #l6 @y
+      -1 yank
+      goto-position "\x80"
+      r-doc #l6
+      !return
+    !endif
+  !endif
+  goto-position "\x80"
+  -8 ml-write "Error: Not in a See Also link."
+!emacro
+
 buffer-init-fhook "r"
