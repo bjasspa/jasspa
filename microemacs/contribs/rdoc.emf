@@ -1,0 +1,41 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : Detlef Groth
+;  Created By    : Detlef Groth
+;  Created       : Mon Sep 23 07:25:15 2024
+;  Last Modified : <240923.0818>
+;
+;  Description   : Rendering help pages for R in MicroEmacs
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 2024 Detlef Groth
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+add-file-hook "*rdoc*" fhook-ehf
+
+define-macro rdoc
+  set-variable #l0 @ml00 "R help on"
+  
+  0 pipe-shell-command &spr "LANG=en_US Rscript -e \"help(%s)\"" #l0 "*rdoc*"
+  hilight .hilight.ehf 0x44 "‘" "\ecE" "’" "\eCA" "" .scheme.link
+  ;-1 buffer-mode "magic"
+  -1 buffer-mode "view"
+  beginning-of-buffer
+  3 kill-line
+  replace-string "^\\(_.*\\:?\\)" "cE\\1cA"
+  beginning-of-buffer
+  replace-string "_" "" 
+  beginning-of-buffer
+  replace-string "‘" "cB"
+  beginning-of-buffer    
+  replace-string "’" "cA"
+  beginning-of-buffer        
+  1 buffer-mode "view"
+  !if &band $system 0x01
+    ; some terminals might need this
+    screen-update
+  !endif
+!emacro    
