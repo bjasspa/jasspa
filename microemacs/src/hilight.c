@@ -808,10 +808,9 @@ meHiltTokenAddSearchString(meHilight *root, meHilight *node, meUByte *token, int
             l1-- ;
             ss += 3 ;
         }
-        /* if the token ends with ".*\\}" then we can
-         * optimize this to HLENDLINE - note as the token includes
-         * the .*, a replace should also replace the .* */
-        if(!l2 && (len || l1) && (lastItem[0] == meCHAR_LEADER) &&
+        /* if the token ends with ".*\\}" then we can optimize this to HLENDLINE as long as its not
+         * a HLBRANCH - note as the token includes the .*, a replace should also replace the .* */
+        if(!l2 && (len || l1) && (lastItem[0] == meCHAR_LEADER) && ((flags & HLBRANCH) == 0) &&
            (lastItem[1] == (meHIL_TEST_VALID|meHIL_TEST_MATCH_NONE|meHIL_TEST_MATCH_MULTI|meHIL_TEST_ANY)))
         {
             flags |= HLENDLINE|HLREPTOEOL ;

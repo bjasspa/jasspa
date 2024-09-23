@@ -73,8 +73,9 @@ set-variable .fhook-emf.item-list-r1 "Macr \ecB\\1\ecA"
   hilight .hilight.emfh 0 "c\\u"       .scheme.hide
   hilight .hilight.emfh 0x80 "!ehel?p?" .hilight.emf .scheme.function
   !iif &not &exi ".hilight.md"  !force execute-file "hkmd"
-  hilight .hilight.emfh 0x80 "<!---? ?md[^-]*-->" .hilight.md .scheme.comment
-  hilight .hilight.md 0x80 "!ehel?p?"   .hilight.emf  .scheme.function
+  hilight .hilight.emfh 0x180 "<!---? ?md[^-]*-->" .hilight.md .scheme.comment
+  hilight .hilight.emfh 0x180 "#+ \\w.*" .hilight.md .scheme.header
+  hilight .hilight.md 0x80 "!ehel?p?"   .hilight.emf .scheme.function
 !endif
 !if &sin "d" .fhook-emf.setup
   0 indent  .hilight.emf 0 10

@@ -19,9 +19,11 @@ define-macro fhook-ehf
     1 buffer-mode "magic"
     6 goto-line
     set-variable #l4 ""
-    !if &xse @wl "\\(<!---? *\\(.*?\\) *-->\\)\\(.*\\)"
+    !if &xse @wl "\\(<!---? *\\(.*?\\) *-->\\|#+ \\w\\)\\(.*\\)"
       set-variable #l4 @s2
-      !if &seq &trr @s3 ""
+      !if &seq @wc "#"
+        set-variable #l4 "md nowrap"
+      !elif &seq &trr @s3 ""
         set-mark
         forward-line
         -1 kill-region
@@ -51,9 +53,15 @@ define-macro fhook-ehf
           !if &seq &lef &set #l1 @s2 3 "```"
             &len #l1 backward-delete-char
             -1 yank
+            !iif &seq @wl ""  backward-delete-char
             insert-string &con &seq #l1 "```" "cG" "sB"
             !force 1 replace-string "```" &con &seq #l1 "```" "cA" "sA"
-            !iif &not $status  100 ml-write &spr "[Error: failed to find close to ``` on around line %d]" $window-line 
+            !if &not $status
+              100 ml-write &spr "[Error: failed to find close to ``` on around line %d]" $window-line 
+            !elif &equ &len @wl 3
+              beginning-of-line
+              backward-delete-char
+            !endif
           !else
             &len #l1 backward-char
             insert-string "ls\\lm"
@@ -67,6 +75,10 @@ define-macro fhook-ehf
         replace-string "cZ" "\\\\*"
         6 goto-line
         replace-string "\\\\\\(.\\)" "\\1"
+        6 goto-line
+        &sub $window-eline 9 replace-string "^" "    "
+        6 goto-line
+        replace-string "^    cE" "cE"
         6 goto-line
       !endif
     !endif
