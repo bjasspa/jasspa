@@ -15,8 +15,8 @@ define-macro fhook-rdoc
 
 ; buffer-init variables
 set-variable .fhook-rdoc.name "Rdoc"
-set-variable .fhook-rdoc.setup &reg "/history/fhook/rdoc" "bfghinopx"
-set-variable .fhook-rdoc.setup-mask "abefghijkmnpstuwx"
+set-variable .fhook-rdoc.setup &reg "/history/fhook/rdoc" "acfhmw"
+set-variable .fhook-rdoc.setup-mask "acfhmw"
 ;set-variable .fhook-rdoc.comment "|%||%|% | %||"
 
 !if &and &sin "h" .fhook-rdoc.setup &band .hilight.flags 0x02
@@ -34,8 +34,15 @@ set-variable .fhook-rdoc.setup-mask "abefghijkmnpstuwx"
   hilight .hilight.rdoc 0x80 "^Usage:"  .hilight.r .scheme.header
   hilight .hilight.rdoc 0x80 "^Examples:"  .hilight.r .scheme.header  
   hilight .hilight.r 0x80 "^Arguments:"  .hilight.rdoc  .scheme.header
+  hilight .hilight.rdocL 0x80 "^Examples:"  .hilight.r  .scheme.header
 !endif
 
+!if &sin "f" .fhook-rdoc.setup
+  ; setup emf collapsing
+  set-variable .fhook-rdoc.collapse-open  "^[A-Z]"
+  set-variable .fhook-rdoc.collapse-close "^\\([A-Z]\\|\\'\\)"
+  set-variable .fhook-rdoc.collapse-mnext "-1"
+!endif
 
 ;add-file-hook "*rdoc*" fhook-ehf
 buffer-init-fhook "rdoc"
