@@ -3,7 +3,7 @@
 ;  Author        : Detlef Groth
 ;  Created By    : Detlef Groth
 ;  Created       : Mon Sep 23 07:25:15 2024
-;  Last Modified : <240923.0818>
+;  Last Modified : <240923.0835>
 ;
 ;  Description   : Rendering help pages for R in MicroEmacs
 ;
@@ -15,12 +15,17 @@
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 add-file-hook "*rdoc*" fhook-ehf
+!if &not &exi .hilight.r
+  !force execute-file "hkr"
+  ml-write "executed hkr"
+!endif
 
 define-macro rdoc
   set-variable #l0 @ml00 "R help on"
   
   0 pipe-shell-command &spr "LANG=en_US Rscript -e \"help(%s)\"" #l0 "*rdoc*"
   hilight .hilight.ehf 0x44 "‘" "\ecE" "’" "\eCA" "" .scheme.link
+  hilight .hilight.ehf 0x180 "cEExamples:cA" .hilight.r  .scheme.header
   ;-1 buffer-mode "magic"
   -1 buffer-mode "view"
   beginning-of-buffer
@@ -29,7 +34,7 @@ define-macro rdoc
   beginning-of-buffer
   replace-string "_" "" 
   beginning-of-buffer
-  replace-string "‘" "cB"
+  replace-string "‘" "cE"
   beginning-of-buffer    
   replace-string "’" "cA"
   beginning-of-buffer        
@@ -39,3 +44,5 @@ define-macro rdoc
     screen-update
   !endif
 !emacro    
+
+
