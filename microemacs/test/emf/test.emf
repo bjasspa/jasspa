@@ -1,0 +1,69 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author$
+;  Created By    : MicroEmacs User
+;  Created       : Tue Sep 24 07:58:59 2024
+;  Last Modified : <240924.0821>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 2024 MicroEmacs User.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+define-macro test
+    ml-write "test"
+!emacro
+
+define-help "test" "3"
+## NAME
+
+__test__ - print a test message given on the terminal
+  
+## SYNOPSIS
+
+_n_ __test__ ["argument"]
+
+## DESCRIPTION
+
+This is a test help page used to check formatting issues.
+
+Lets display 'quotes' and "strings". There should be currently no hilight.
+
+Formatting of lists:
+
+- no space at the end _italic_
+- space at the end _italic_ 
+- no space at the end  __bold__
+- space at the end  __bold__ 
+- no space at the end  `typewriter`
+- space at the end  `typewriter` 
+
+Let's mix markup on one line such as  _italic_  __bold__ and `typewriter` on one line.
+
+Same but with commas such as  _italic_, __bold__,  `typewriter`, and that on one line.
+
+Now with spaces __some more text__ and _italic_ as well as `typewriter`, again on a line.
+
+Indented code block should be untouched no replacements of underlines.
+
+       ls _dir_
+       dir
+
+       
+Now an example for MicroEmacs macro code using code fences:
+       
+```emf
+      define-macro test
+        ml-write @1
+      !emacro  
+```
+
+## SEE ALSO
+
+Here an example link: [user-setup(3)](user-setup\(3\)).
+  
+!ehelp
