@@ -653,9 +653,13 @@ osd .osd.user-plat 821 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 820
   osd .osd.user-plat 540 "f" " "
   !if &band $system 0x01
     osd .osd.user-plat 320 "fh" "    "
-    osd .osd.user-plat 330 "Ctfxph" &cat .osd.checkbox-chars "\} Termca\Hp Color" 0x04 user-set-system
-    osd .osd.user-plat 340 "fh" "           "
-    osd .osd.user-plat 350 "Ctfxp" &cat .osd.checkbox-chars "\} Use \HFonts" 0x10 user-set-system
+    osd .osd.user-plat 330 "Ctfxph" &cat .osd.checkbox-chars "\} \HUTF-8 encode term I/O" 0x20000000 user-set-system
+    osd .osd.user-plat 340 "fh" "   "
+    osd .osd.user-plat 350 "Ctfxp" &cat .osd.checkbox-chars "\} \HExtend Char Set" 2 user-set-cpfcheckbox
+    osd .osd.user-plat 360 "fh" "    "
+    osd .osd.user-plat 370 "Ctfxph" &cat .osd.checkbox-chars "\} Termca\Hp Color" 0x04 user-set-system
+    osd .osd.user-plat 380 "fh" "           "
+    osd .osd.user-plat 390 "Ctfxp" &cat .osd.checkbox-chars "\} Use \HFonts" 0x10 user-set-system
   !else
     osd .osd.user-plat 50  "Sfh" "  \HFont Name:         " 60
     osd .osd.user-plat 60  "EtxHf" .scheme.osd-entry "################################" 1 user-set-cpfentry

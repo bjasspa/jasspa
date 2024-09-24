@@ -549,13 +549,23 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                     displayNewLine = ' ';
                     displaySpace = ' ';    
                 }
-#ifdef _XTERM
+#ifdef _UNIX
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
                 /* on unix, if using x-window then can't set ANSI || XANSI bits, and update clipboard settings */
                 if(!(meSystemCfg & meSYSTEM_CONSOLE))
+#endif
                 {
                     meSystemCfg &= ~(meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR);
                     TTinitClipboard();
                 }
+#ifdef _ME_CONSOLE
+                else
+#endif
+#endif
+#ifdef _ME_CONSOLE
+                    TCAPinitDrawChar();
+#endif
 #endif
 #if MEOPT_CLIENTSERVER
                 /* open or close the client server files */

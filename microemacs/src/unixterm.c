@@ -180,6 +180,8 @@ enum
 unsigned short TTnewWid, TTnewHig;
 static int TTcursorVisible = 1;     /* Cursor is visible */
 static int TTaMarginsDisabled = 0;  /* Automatic margins disabled */
+static meUByte TTspecChar = 0;
+static meUByte TTutf8Char = 255;
 #ifndef _USE_NCURSES
 static char tcapbuf[TCAPSLEN];
 #endif
@@ -931,6 +933,53 @@ sigSize(SIGNAL_PROTOTYPE)
     
     if((TTnewWid != frameCur->width) || (TTnewHig != frameCur->depth+1))
         alarmState |= meALARM_WINSIZE ;
+}
+
+void
+TCAPinitDrawChar(void)
+{
+    if(meSystemCfg & meSYSTEM_IO_UTF8)
+        TTutf8Char = 0x7f;
+    else
+    {
+        TTutf8Char = 0xff;
+        meSystemCfg &= ~meSYSTEM_FONTFIX;
+    }
+    if(meSystemCfg & meSYSTEM_FONTFIX)
+        TTspecChar = 0x20;
+    else
+        TTspecChar = 0x00;
+}
+
+void
+TCAPdrawChar(meUByte cc)
+{
+    int uc;
+    if(cc > TTutf8Char)
+    {
+        if((uc = (int) charToUnicode[cc-128]) == 0)
+            uc = ttSpeUChars[0];
+    }
+    else if(cc < TTspecChar)
+        uc = ttSpeUChars[cc];
+    else
+    {
+        TCAPputc(cc);
+        return;
+    }
+    if(uc & 0x0f800)
+    {
+        TCAPputc(0xe0 | (uc >> 12));
+        TCAPputc(0x80 | ((uc >> 6) & 0x3f));
+        TCAPputc(0x80 | (uc & 0x3f));
+    }
+    else if(uc & 0x00780)
+    {
+        TCAPputc(0xc0 | (uc >> 6));
+        TCAPputc(0x80 | (uc & 0x3f));
+    }
+    else
+        TCAPputc(uc);
 }
 #endif /* _TCAP */
 #endif /* _ME_CONSOLE */
@@ -4146,7 +4195,7 @@ meFrameRepositionWindow(meFrame *frame, int resize)
 #endif /* _ME_WINDOW */
 }
 #endif
-
+    
 /* meFrameSetWindowTitle
  *
  * Put the name of the buffer into the window frame
@@ -4465,6 +4514,48 @@ TTahead(void)
                  * translation. */
                 if (cc == '\0')
                     addKeyToBuffer (ME_CONTROL|' ');
+                else if(cc > TTutf8Char)
+                {
+                    int uc;
+                    if((cc & 0xf0) > 0xe0)
+                    {
+                        /* ME only supports unicode chars upto 0xffff, so 4 byte UTF-8 cannot be supported */
+                        read(meStdin,&uc,3);
+                        uc = 0x07;
+                    }
+                    else if((cc & 0xf0) == 0xe0)
+                    {
+                        meUByte c2,c3;
+                        if((read(meStdin,&c2,1) > 0) && (read(meStdin,&c3,1) > 0))
+                            uc = (((int) (cc & 0x0f)) << 12) | (((int) (c2 & 0x3f)) << 6) | (c3 & 0x3f);
+                        else
+                            uc = 0x07;
+                    }
+                    else if((cc & 0xe0) == 0xc0)
+                    {
+                        meUByte c2;
+                        if(read(meStdin,&c2,1) > 0)
+                            uc = (((int) (cc & 0x1f)) << 6) | (c2 & 0x3f);
+                        else
+                            uc = 0x07;
+                    }
+                    else
+                    {
+                        printf("ERROR: Invalid UTF-8 character encoding - leader char: 0x%02x\n",(int) cc);
+                        uc = 0x07;
+                    }
+                    if((uc > 0x7f) && ((uc > 0x0ff) || (charToUnicode[uc-128] != uc)))
+                    {
+                        int jj = 127;
+                        while((charToUnicode[jj] != uc) && (--jj >= 0))
+                            ;
+                        if(jj < 0)
+                            uc = 0x07;
+                        else
+                            uc = jj+128;
+                    }
+                    addKeyToBuffer((meUShort) uc);
+                }
                 else
                     addKeyToBuffer(cc);
             }

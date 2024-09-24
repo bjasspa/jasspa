@@ -79,6 +79,7 @@ extern meUShort   TTwidthDefault;       /* Default no. of cols per frame*/
 extern meUShort   TTdepthDefault;       /* Default no. of rows per frame*/
 extern meUShort   TTkeyBuf[KEYBUFSIZ];  /* Key beuffer/pending keys     */
 extern meUByte  ttSpeChars[TTSPECCHARS];/* Special characters           */
+extern meUShort ttSpeUChars[TTSPECCHARS];/* Unciode ver of Special chars*/
 extern meUByte    TTnextKeyIdx;         /* Circular buffer index        */
 extern meUByte    TTlastKeyIdx;         /* Key buffer - last index.     */
 extern meUByte    TTnoKeys;             /* Number of keys in buffer     */
@@ -193,6 +194,8 @@ extern int TCAPclose(void);
 extern void TCAPmove(int row, int col);
 #define TCAPputc(c)    putchar(c)
 #define TCAPflush()    fflush(stdout)
+extern void TCAPinitDrawChar(void);
+extern void TCAPdrawChar(meUByte c);
 extern void TCAPhideCur(void);
 extern void TCAPshowCur(void);
 extern void TCAPhandleBlink(void);

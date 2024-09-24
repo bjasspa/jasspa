@@ -89,7 +89,8 @@ history is kept after a save allowing the
 .Ht undo 2
 command to back-up changes beyond the last save. When clear the undo history is discarded after the buffer is saved.
 .IP \fB0x10000\fR
-Enable box character  rendering fix, supported on Win32 and XTerm  interfaces  only. Windows ANSI fonts and many XTerm
+Enable box character  rendering fix, supported on Windows and XTerm window based  interfaces  and UNIX  terminals when
+UTF-8 encoding is in use (see bit \fB0x20000000\fR). Windows ANSI fonts and many XTerm
 \*(aF fonts do not have well formed box characters which are used by
 .Ht osd 2
 and other  commands  to create a better  looking  interface.  When this bit is enabled  \*(mS  traps the  printing  of
@@ -221,6 +222,11 @@ selection buffers when the kill-buffer is changed. When not set only one buffer 
 \fB0x800000\fR.
 .IP \fB0x10000000\fR
 When  this  bit is set the use of the alternative screen buffer is disabled, see command-line \fB-A\fR option.
+.IP \fB0x20000000\fR
+When  this  bit is set \*(mS UTF-8  encodes all  terminal  output and UTF-8  decodes all  terminal  input, this bit is
+currently  only used when \*(mS is running in a UNIX  terminal,  other  interfaces  such as XTerm and  Windows  handle
+Unicode I/O  differently.  When UTF-8 encoding is being used, bit  \fB0x10000\fR  is also supported in the terminal as
+Unicode drawing characters can be used.
 .SH EXAMPLE
 The follow  example  works out the  current  buffer's  backup  file name using
 \fB$system\fR to determine the naming system being used by \*(mS:-

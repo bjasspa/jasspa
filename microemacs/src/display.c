@@ -843,8 +843,8 @@ hideLineJump:
     }
 
     /* Get the frame store colour and text pointers */
-    fssp = &frameCur->store[row].scheme[scol] ;
-    fstp = &frameCur->store[row].text[scol] ;
+    fssp = &frameCur->store[row].scheme[scol];
+    fstp = &frameCur->store[row].text[scol];
 
 #ifdef _UNIX
 
@@ -857,49 +857,51 @@ hideLineJump:
         /********************************************************************
          * TERMCAP                                                          *
          ********************************************************************/
-        meScheme scheme ;
-        register int ii, col, cno ;
+        meScheme scheme;
+        register int ii, col, cno;
+        meUByte cc;
 
         TCAPmove(row,scol);	/* Go to start of line. */
 
         col = 0 ;
         for(cno=0 ; cno<noColChng ; cno++)
         {
-            scheme = blkp->scheme ;
-            TCAPschemeSet(scheme) ;
+            scheme = blkp->scheme;
+            TCAPschemeSet(scheme);
 
             /* Output the character in the specified colour.
              * Maintain the frame store */
             for(ii = blkp->column ; col<ii ; col++)
             {
                 *fssp++ = scheme;
-                *fstp++ = *s1;
-                TCAPputc(*s1++) ;
+                cc = *s1++;
+                *fstp++ = cc;
+                TCAPdrawChar(cc);
             }
             blkp++;
         }
-        if (meStyleCmpBColor(meSchemeGetStyle(vp1->eolScheme),meSchemeGetStyle(scheme)))
+        if(meStyleCmpBColor(meSchemeGetStyle(vp1->eolScheme),meSchemeGetStyle(scheme)))
         {
-            ii = ncol ;
-            vp1->eolScheme = scheme ;
+            ii = ncol;
+            vp1->eolScheme = scheme;
         }
         else
-            ii = vp1->endp ;
-        vp1->endp = col ;
+            ii = vp1->endp;
+        vp1->endp = col;
         if((ii -= col) > 0)
         {
             /* Output the end of the line - maintain the frame store */
             while(--ii >= 0)
             {
-                *fssp++ = scheme ;
-                *fstp++ = ' ' ;
-                TCAPputc(' ') ;
+                *fssp++ = scheme;
+                *fstp++ = ' ';
+                TCAPputc(' ');
             }
         }
 #if DEBUGGING
-        TCAPputc(drawno) ;
+        TCAPputc(drawno);
 #endif
-        TCAPschemeReset() ;
+        TCAPschemeReset();
 #endif /* _TCAP */
     }
 #ifdef _ME_WINDOW
@@ -1787,20 +1789,20 @@ updateScrollBar (meWindow *wp)
                 meUByte cc;
 
                 TCAPmove(row, col);    /* Go to correct place. */
-                TCAPschemeSet(scheme) ;
+                TCAPschemeSet(scheme);
 
                 fssp[0] = scheme;      /* Assign the colour */
                 cc = *wbase;
-                fstp[0] = cc ;           /* Assign the text */
-                TCAPputc(cc) ;
+                fstp[0] = cc;          /* Assign the text */
+                TCAPdrawChar(cc);
                 if(len > 1)
                 {
                     fssp[1] = scheme; /* Assign the colour */
-                    cc = wbase[1] ;
-                    fstp[1] = cc ;    /* Assign the text */
-                    TCAPputc(cc) ;
+                    cc = wbase[1];
+                    fstp[1] = cc;     /* Assign the text */
+                    TCAPdrawChar(cc);
                 }
-                TCAPschemeReset() ;
+                TCAPschemeReset();
 #endif /* _TCAP */
             }
 #ifdef _ME_WINDOW
@@ -1813,43 +1815,43 @@ updateScrollBar (meWindow *wp)
                 /************************************************************
                  * X-WINDOWS                                                *
                  ************************************************************/
-                meFrameXTermSetScheme(frameCur,scheme) ;
+                meFrameXTermSetScheme(frameCur,scheme);
 
                 if (meSystemCfg & meSYSTEM_FONTFIX)
                 {
                     meUByte cc;
                     fssp[0] = scheme;  /* Assign the colour */
                     if(!((cc = *wbase) & 0xe0))
-                        cc = ' ' ;    /* Assign the text */
-                    fstp[0] = cc ;    /* Assign the text */
+                        cc = ' ';      /* Assign the text */
+                    fstp[0] = cc;      /* Assign the text */
 
                     if(len > 1)
                     {
-                        fssp[1] = scheme;  /* Assign the colour */
+                        fssp[1] = scheme; /* Assign the colour */
                         if(!((cc = wbase[1]) & 0xe0))
-                            cc = ' ' ;    /* Assign the text */
-                        fstp[1] = cc ;    /* Assign the text */
+                            cc = ' ';     /* Assign the text */
+                        fstp[1] = cc;     /* Assign the text */
                     }
                     meFrameXTermDrawString(frameCur,colToClient(col),rowToClient(row),fstp,len);
                     if(!((cc = *wbase) & 0xe0))
                     {
                         meFrameXTermDrawSpecialChar(frameCur,colToClient(col),rowToClientTop(row),cc) ;
-                        fstp[0] = cc ;   /* Assign the text */
+                        fstp[0] = cc;     /* Assign the text */
                     }
                     if((len > 1) && !((cc = *wbase) & 0xe0))
                     {
                         meFrameXTermDrawSpecialChar(frameCur,colToClient(col+1),rowToClientTop(row),cc) ;
-                        fstp[1] = cc ;   /* Assign the text */
+                        fstp[1] = cc;     /* Assign the text */
                     }
                 }
                 else
                 {
-                    fssp[0] = scheme ;   /* Assign the colour */
-                    fstp[0] = *wbase ;   /* Assign the text */
+                    fssp[0] = scheme;     /* Assign the colour */
+                    fstp[0] = *wbase;     /* Assign the text */
                     if(len > 1)
                     {
-                        fssp[1] = scheme ;  /* Assign the colour */
-                        fstp[1] = wbase[1] ;
+                        fssp[1] = scheme; /* Assign the colour */
+                        fstp[1] = wbase[1];
                     }
                     meFrameXTermDrawString(frameCur,colToClient(col),rowToClient(row),wbase,len);
                 }
@@ -2403,19 +2405,19 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
             TCAPmove(row, col);	/* Go to correct place. */
             while(len--)
             {
-                schm = *scheme++ ;
+                schm = *scheme++;
                 if((schm == meCHAR_LEADER) && ((schm = *scheme++) == meCHAR_TRAIL_NULL))
-                    schm = 0 ;
+                    schm = 0;
                 else
-                    schm = meSchemeCheck(schm)*meSCHEME_STYLES ;
-                schm += off ;
-                *fssp++ = schm ;
-                TCAPschemeSet(schm) ;
-                cc = *str++ ;
-                TCAPputc(cc) ;
+                    schm = meSchemeCheck(schm)*meSCHEME_STYLES;
+                schm += off;
+                *fssp++ = schm;
+                TCAPschemeSet(schm);
+                cc = *str++;
+                TCAPdrawChar(cc);
 
             }
-            TCAPschemeReset() ;
+            TCAPschemeReset();
 #endif /* _TCAP */
         }
 #ifdef _ME_WINDOW
@@ -2428,51 +2430,51 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
             /****************************************************************
              * X-WINDOWS                                                    *
              ****************************************************************/
-            col = colToClient(col) ;
-            row = rowToClient(row) ;
+            col = colToClient(col);
+            row = rowToClient(row);
 
             if (meSystemCfg & meSYSTEM_FONTFIX)
             {
-                meUByte cc ;
-                str-- ;
+                meUByte cc;
+                str--;
                 while(len--)
                 {
-                    schm = *scheme++ ;
+                    schm = *scheme++;
                     if((schm == meCHAR_LEADER) && ((schm = *scheme++) == meCHAR_TRAIL_NULL))
-                        schm = 0 ;
+                        schm = 0;
                     else
-                        schm = meSchemeCheck(schm)*meSCHEME_STYLES ;
-                    schm += off ;
+                        schm = meSchemeCheck(schm)*meSCHEME_STYLES;
+                    schm += off;
                     /* Update the frame store colour */
                     *fssp++ = schm ;
-                    meFrameXTermSetScheme(frameCur,schm) ;
+                    meFrameXTermSetScheme(frameCur,schm);
                     if((cc=*++str) & 0xe0)
                         meFrameXTermDrawString(frameCur,col,row,str,1);
                     else
                     {
-                        static char ss[1]={' '} ;
+                        static char ss[1]={' '};
                         meFrameXTermDrawString(frameCur,col,row,ss,1);
-                        meFrameXTermDrawSpecialChar(frameCur,col,row-mecm.ascent,cc) ;
+                        meFrameXTermDrawSpecialChar(frameCur,col,row-mecm.ascent,cc);
                     }
-                    col += mecm.fwidth ;
+                    col += mecm.fwidth;
                 }
             }
             else
             {
                 while(len--)
                 {
-                    schm = *scheme++ ;
+                    schm = *scheme++;
                     if((schm == meCHAR_LEADER) && ((schm = *scheme++) == meCHAR_TRAIL_NULL))
-                        schm = 0 ;
+                        schm = 0;
                     else
-                        schm = meSchemeCheck(schm)*meSCHEME_STYLES ;
-                    schm += off ;
+                        schm = meSchemeCheck(schm)*meSCHEME_STYLES;
+                    schm += off;
                     /* Update the frame store colour */
-                    *fssp++ = schm ;
-                    meFrameXTermSetScheme(frameCur,schm) ;
+                    *fssp++ = schm;
+                    meFrameXTermSetScheme(frameCur,schm);
                     meFrameXTermDrawString(frameCur,col,row,str,1);
-                    str++ ;
-                    col += mecm.fwidth ;
+                    str++;
+                    col += mecm.fwidth;
                 }
             }
 #endif /* _XTERM */
@@ -2488,15 +2490,15 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
         {
             while(len--)
             {
-                schm = *scheme++ ;
+                schm = *scheme++;
                 if((schm == meCHAR_LEADER) && ((schm = *scheme++) == meCHAR_TRAIL_NULL))
-                    schm = 0 ;
+                    schm = 0;
                 else
-                    schm = meSchemeCheck(schm)*meSCHEME_STYLES ;
-                schm += off ;
-                *fssp++ = schm ;
-                cc = TTschemeSet(schm) ;
-                ScreenPutChar(*str++, cc, col++, row);
+                    schm = meSchemeCheck(schm)*meSCHEME_STYLES;
+                schm += off;
+                *fssp++ = schm;
+                cc = TTschemeSet(schm);
+                ScreenPutChar(*str++,cc,col++,row);
             }
         }
 #endif /* _DOS */
@@ -2508,22 +2510,22 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
         {
             while(len--)
             {
-                schm = *scheme++ ;
+                schm = *scheme++;
                 if((schm == meCHAR_LEADER) && ((schm = *scheme++) == meCHAR_TRAIL_NULL))
-                    schm = 0 ;
+                    schm = 0;
                 else
-                    schm = meSchemeCheck(schm)*meSCHEME_STYLES ;
-                schm += off ;
+                    schm = meSchemeCheck(schm)*meSCHEME_STYLES;
+                schm += off;
                 /* Update the frame store colour */
-                *fssp++ = schm ;
+                *fssp++ = schm;
 #ifdef _ME_CONSOLE
 #ifdef _ME_WINDOW
                 if (meSystemCfg & meSYSTEM_CONSOLE)
 #endif /* _ME_WINDOW */
                 {
-                    WORD att ;
-                    att = (WORD) TTschemeSet(schm) ;
-                    ConsoleDrawString(str++, att, col++, row, 1);
+                    WORD att;
+                    att = (WORD) TTschemeSet(schm);
+                    ConsoleDrawString(str++,att,col++,row,1);
                 }
 #endif /* _ME_CONSOLE */
             }
@@ -2533,12 +2535,12 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
     else
 #endif
     {
-        schm = *scheme ;
+        schm = *scheme;
         if((schm == meCHAR_LEADER) && ((schm = *scheme++) == meCHAR_TRAIL_NULL))
-            schm = 0 ;
+            schm = 0;
         else
-            schm = meSchemeCheck(schm)*meSCHEME_STYLES ;
-        schm += off ;
+            schm = meSchemeCheck(schm)*meSCHEME_STYLES;
+        schm += off;
 
 #ifdef _UNIX
 
@@ -2552,21 +2554,21 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
              * TERMCAP                                                      *
              ****************************************************************/
             TCAPmove(row, col);	/* Go to correct place. */
-            TCAPschemeSet(schm) ;
+            TCAPschemeSet(schm);
 
             while(len--)
             {
-                cc = *str++ ;
-                TCAPputc(cc) ;
+                cc = *str++;
+                TCAPdrawChar(cc);
                 /* Update the frame store colour */
-                *fssp++ = schm ;
+                *fssp++ = schm;
             }
-            TCAPschemeReset() ;
+            TCAPschemeReset();
             /* restore cursor position */
             if((cursorState >= 0) && blinkState)
-                TTshowCur() ;
+                TTshowCur();
             else
-                TThideCur() ;
+                TThideCur();
 #endif /* _TCAP */
         }
 #ifdef _ME_WINDOW

@@ -858,19 +858,19 @@ menuRenderArea(int x, int y, int len, int dep)
             TCAPmove(y++,x);	/* Go to correct place. */
             while(ii--)
             {
-                scheme = *schmp++ ;
-                TCAPschemeSet(scheme) ;
-                cc = *textp++ ;
-                TCAPputc(cc) ;
+                scheme = *schmp++;
+                TCAPschemeSet(scheme);
+                cc = *textp++;
+                TCAPdrawChar(cc);
             }
         }
-        TCAPschemeReset() ;
+        TCAPschemeReset();
         /* restore cursor position */
         if((cursorState >= 0) && blinkState)
-            TTshowCur() ;
+            TTshowCur();
         else
-            TThideCur() ;
-        TCAPflush() ;
+            TThideCur();
+        TCAPflush();
 #endif
     }
 #endif /* _ME_CONSOLE */
