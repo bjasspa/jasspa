@@ -3,7 +3,7 @@
 ;  Author        : Detlef Groth, University of Potsdam
 ;  Created By    : Detlef Groth
 ;  Created       : Mon Sep 16 17:09:35 2024
-;  Last Modified : <240923.1358>
+;  Last Modified : <240925.1640>
 ;
 ;  Description   : Load xrdb themes for X11 applications
 ;                  directly as schemes into MicroEmacs
@@ -169,8 +169,8 @@ project page: https://github.com/mbadolato/iTerm2-Color-Schemes/
 Here an example on how to install a theme:
 
 ```
-wget -O ~/.config/jasspa/themes/pencil-dark.xrdb \
- https://github.com/mbadolato/iTerm2-Color-Schemes/blob/master/xrdb/PencilDark.xrdb
+    wget -O ~/.config/jasspa/themes/pencil-dark.xrdb \
+      https://github.com/mbadolato/iTerm2-Color-Schemes/blob/master/xrdb/PencilDark.xrdb
 ```
 
 Thereafter you can load the scheme using the command line: `xrdb-scheme  "pencil-dark"`
