@@ -215,13 +215,17 @@ set-variable .fhook-r-doc.setup-mask "acfhmw"
   0 hilight .hilight.r-doc   0                 .scheme.text
   0 hilight .hilight.r-docL  0                 .scheme.text  
   hilight .hilight.r-doc     2 "^_"            .scheme.header
-  hilight .hilight.r-doc     2 "^[A-Z]"        .scheme.header
+  hilight .hilight.r-doc     2 "^[A-Z][()a-z]+:\n"      .scheme.header
   hilight .hilight.r-doc  0x80 "^Usage:"       .hilight.r       .scheme.header
   hilight .hilight.r-doc  0x80 "^Examples:"    .hilight.r       .scheme.header  
   hilight .hilight.r-doc  0x80 "^See Also:"    .hilight.r-docL  .scheme.header  
-  hilight .hilight.r      0x80 "^[A-Z].+"      .hilight.r-doc   .scheme.header
+  hilight .hilight.r-doc  0x80 "^Methods:"     .hilight.r-docL  .scheme.header    
+  ;hilight .hilight.r-doc  0x80 "^Index:"       .hilight.r-docL  .scheme.header    
+  hilight .hilight.r      0x80 "^[A-Z][a-z]+:"      .hilight.r-doc   .scheme.header
   ;hilight .hilight.r      0x80 "^Arguments:"   .hilight.r-doc   .scheme.header
   hilight .hilight.r-docL    4 "'" "'" "\\"    .scheme.link
+  hilight .hilight.r-doc    0 "^[a-z][-A-Za-z0-9\\.\\$_]+[\t \n]"    .scheme.link  
+  hilight .hilight.r-doc    0 "package:[A-Za-z\\.]+"    .scheme.link    
   hilight .hilight.r-docL 0x80 "^Examples:"    .hilight.r       .scheme.header
   hilight .hilight.r-docL 0x80 "^[A-Z].+"      .hilight.r-doc   .scheme.header
   
@@ -239,10 +243,15 @@ define-macro r-doc
   !if &not $status
     set-variable #l0 @ml00 "R help on"
   !endif
-  !if &xse #l0 "\\(.+\\)::\\(.+\\)" 
+  set-variable .package-overview 0
+  set-variable #l0 &rep #l0 "::" ":"
+  set-variable #l0 &rep #l0 "$" "_"  
+  500 ml-write &cat "fetching ... " #l0
+  !if &xse #l0 "\\(.+\\):\\(.+\\)" 
       !if &or &seq @s1 "library" &seq @s1 "package"
           set-variable #l0 &spr "library(help='%s')" @s2
           set-variable .package @s2
+          set-variable .package-overview 1
       !else
           set-variable #l0 &spr "help('%s',package='%s')" @s2 @s1
           set-variable .package @s1
@@ -253,6 +262,8 @@ define-macro r-doc
   !endif
   0 pipe-shell-command &spr "LANG=en_US Rscript -e \"%s\"" #l0 "*r-doc*"
   set-variable :mouse-word-select r-doc-process-link
+  buffer-bind-create "bio" "return" "0" r-doc-process-link
+  buffer-bind-key  "scroll-down" "space"
   -1 buffer-mode "view"
   beginning-of-buffer
   3 kill-line
@@ -266,9 +277,22 @@ define-macro r-doc
 !emacro    
 
 0 define-macro r-doc-process-link
+  !if .r-doc.package-overview
+    r-doc-process-package-link
+    !return
+  !endif
+  !if &equ $window-line 1
+    ; click on header package:pkgname
+    !if &gre $window-col 20
+      r-doc-process-header-link
+    !endif
+    !return
+  !endif
   set-position "\x80"
+  ; check first for a beginning of line link in package index
   !force -10 search-backward "^See Also"
-  !iif &not $status  -8 ml-write "Error: Not in the See Also section."
+  !iif &not $status -100 search-backward "^Methods"
+  !iif &not $status  -8 ml-write "Error: Not in the See Also or Methods section."
   goto-position "\x80"
   !force -1 search-forward "'"
   !if $status
@@ -292,7 +316,50 @@ define-macro r-doc
     !endif
   !endif
   goto-position "\x80"
-  -8 ml-write "Error: Not in a See Also link."
+  -8 ml-write "Error: Not in a See Also or Method section link."
 !emacro
+
+0 define-macro r-doc-process-header-link
+  !force search-backward " "
+  !if $status
+    forward-char
+    set-mark
+    !force search-forward " "
+    !if $status 
+      backward-char
+      copy-region
+      set-variable #l6 @y
+      -1 yank
+      !if &xse #l6 "package:[a-z]+"
+        r-doc #l6
+      !endif
+    !endif
+  !endif
+!emacro
+
+0 define-macro r-doc-process-package-link
+  set-position "\x80"
+  ; fetch links on the index part at the beginning of a line
+  !if &less $window-col 10
+    beginning-of-line
+    set-mark
+    !force -1 search-forward "[\t \n]"
+    !if $status
+      backward-char
+      copy-region
+      set-variable #l6 @y
+      -1 yank
+      !if &not &xse #l6 " "
+        !if &seq .r-doc.package ""
+          r-doc #l6
+        !else
+          r-doc &spr "%s::%s" .r-doc.package #l6
+        !endif
+        !return
+      !endif
+    !endif
+  !endif
+  goto-position "\x80"
+!emacro    
 
 buffer-init-fhook "r"
