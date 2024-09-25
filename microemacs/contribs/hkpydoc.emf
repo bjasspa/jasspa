@@ -3,7 +3,7 @@
 ;  Created By    : Detlef Groth, University of Potsdam
 ;  Author        : Detlef Groth, University of Potsdam
 ;  Created       : Wed Sep 25 15:42:35 2024
-;  Last Modified : <240925.1607>
+;  Last Modified : <240925.1752>
 ;
 ;  Description   : Documentation viewer within MicroEmacs for
 ;                  Python  
@@ -41,7 +41,7 @@ set-variable .fhook-pydoc.setup-mask "acfhmw"
 !if &sin "f" .fhook-pydoc.setup
   ; setup emf collapsing
   set-variable .fhook-pydoc.collapse-open  "^[A-Z]"
-  set-variable .fhook-pydoc.collapse-close "^\\([A-Z]\\|    class\\|\\'\\)"
+  set-variable .fhook-pydoc.collapse-close "^\\([A-Z]\\|\\'\\)"
   set-variable .fhook-pydoc.collapse-mnext "-1"
 !endif
 ; setup item-list
@@ -71,3 +71,49 @@ define-macro pydoc
 add-file-hook "*pydoc*" fhook-pydoc
 buffer-init-fhook "pydoc"
 ml-write "hkpydoc loaded"
+
+define-help "pydoc" "3"
+## NAME
+
+__pydoc__ - display Python function, module or package documentation
+
+$a
+
+## SYNOPSIS
+
+__pydoc__ ["manualpage"]
+
+## DESCRIPTION
+
+The __pydoc__ macro asks the user for Python manual page and then displays the 
+appropiate manual page in a buffer *pydoc* which provides hilighting for the 
+section headers and the clases and folding support for them. Further you can use
+the [item-list(3)](item-list\(3\)) command to browse the content using the outline
+shown in the _item-list_ buffer.
+
+## EXAMPLE
+
+Here an example to display the "argparse" package documentation and open an 
+_item-list_ buffer for easy navigation.
+
+
+```{emf}
+    pydoc "argparse"
+    find-buffer "*pydoc*"
+    beginning-of-buffer
+    item-list
+```
+
+
+## NOTES
+
+The __pydoc__ macro is implemented in the file _hkpydoc.emf_ which is currently 
+placed in the contribs folder. For installation copy that file into your user-path 
+folder - usually `~/.config/jasspa` and made the macro available by placing the 
+following line into your `username.emf` file.
+
+## SEE ALSO
+
+[py(0)](py\(9\)) and [r-doc(3)](r-doc\(3\)).
+
+!ehelp
