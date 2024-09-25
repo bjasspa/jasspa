@@ -3,7 +3,7 @@
 ;  Author        : $Author$
 ;  Created By    : MicroEmacs User
 ;  Created       : Tue Sep 24 07:58:59 2024
-;  Last Modified : <240924.0821>
+;  Last Modified : <240925.1145>
 ;
 ;  Description
 ;
@@ -18,14 +18,14 @@ define-macro test
     ml-write "test"
 !emacro
 
-define-help "test" "3"
+define-help test 3
 ## NAME
 
 __test__ - print a test message given on the terminal
   
 ## SYNOPSIS
 
-_n_ __test__ ["argument"]
+_n_ __test__ ["*argument*"]
 
 ## DESCRIPTION
 
@@ -39,6 +39,10 @@ Formatting of lists:
 - space at the end _italic_ 
 - no space at the end  __bold__
 - space at the end  __bold__ 
+- no space at the end *italic*
+- space at the end *italic* 
+- no space at the end  **bold**
+- space at the end  **bold** 
 - no space at the end  `typewriter`
 - space at the end  `typewriter` 
 
@@ -50,13 +54,14 @@ Now with spaces __some more text__ and _italic_ as well as `typewriter`, again o
 
 Indented code block should be untouched no replacements of underlines.
 
+```
        ls _dir_
        dir
+```
 
-       
 Now an example for MicroEmacs macro code using code fences:
        
-```emf
+```{emf}
       define-macro test
         ml-write @1
       !emacro  
@@ -64,6 +69,27 @@ Now an example for MicroEmacs macro code using code fences:
 
 ## SEE ALSO
 
-Here an example link: [user-setup(3)](user-setup\(3\)).
-  
+Here an example link: [user-setup(3)](user-setup\(3\)), [%test(5)](%test\(5\)).
+
+!ehelp
+
+set-variable %test 42
+
+define-help "%test" 5
+## NAME
+
+__%test__ - this is a test variable
+
+## SYNOPSIS
+
+__%test__ "*value*"
+
+## DESCRIPTION
+
+This is a test help page for a user variable, not more information here.
+
+## SEE ALSO
+
+[test(3)](test\(3\)).
+
 !ehelp

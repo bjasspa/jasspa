@@ -44,31 +44,26 @@ set-variable .fhook-md.item-list-r3 "H2 \ecB\\1\ecA"
     set-variable .hilight.mdA &pinc .hilight.next 1
     set-variable .hilight.mdL &pinc .hilight.next 1
     set-variable .hilight.mdU &pinc .hilight.next 1
+    set-variable .hilight.mdC &pinc .hilight.next 1
   !endif
   0 hilight .hilight.md 3 100           $global-scheme
   hilight .hilight.md 4 "<!--" "-->" "" .scheme.comment
   hilight .hilight.md 2 "^#"            .scheme.header
-  hilight .hilight.md 2 "^```"          .scheme.string
   hilight .hilight.md 4 "\"" "\"" "\\"  .scheme.string
-  ;hilight .hilight.md 4 "```" "```" "\\"   .scheme.string
   hilight .hilight.md 0 "'[^']+'"       .scheme.quote
-  hilight .hilight.md 0 "\\\\\\}[-[-]`*_{}<>()#+.!|]"   .scheme.hide
+  hilight .hilight.md 0 "\\\\\\}[-[-]`*_{}<>()#+.!|]" .scheme.hide
   
-  hilight .hilight.md 0x890 "\\*\\}\\S" .hilight.mdI    .scheme.hide
+  hilight .hilight.md 0x890 "\\*\\}\\S" .hilight.mdI .scheme.hide
   hilight .hilight.md 0x890 "\\W\\{_\\}\\S" .hilight.mdI .scheme.hide
   hilight .hilight.md 0x890 "\\*\\*\\}\\S" .hilight.mdB .scheme.hide
   hilight .hilight.md 0x890 "\\W\\{__\\}\\S" .hilight.mdB .scheme.hide
-  hilight .hilight.md 0 "\\*\\*\\*+"                    $global-scheme
-  hilight .hilight.md 0 "___+"                          $global-scheme
-  hilight .hilight.md 0x890 "!\\[" .hilight.mdA         .scheme.hide
-  hilight .hilight.md 0x890 "\\[" .hilight.mdL          .scheme.hide
+  hilight .hilight.md 0 "\\*\\*\\*+"    $global-scheme
+  hilight .hilight.md 0 "___+"          $global-scheme
+  hilight .hilight.md 0x890 "!\\["      .hilight.mdA .scheme.hide
+  hilight .hilight.md 0x890 "\\["       .hilight.mdL .scheme.hide
 
-  hilight .hilight.md 0x890 "==\\}\\S" .hilight.mdH     .scheme.hide
-  hilight .hilight.md 0 "===+"                          $global-scheme
-
-  hilight .hilight.md 1 "`[^`]+`"       .scheme.quote
-  hilight .hilight.md 0x300 "```{"
-  hilight .hilight.md 0x300 "```{\\."
+  hilight .hilight.md 0x890 "==\\}\\S"  .hilight.mdH .scheme.hide
+  hilight .hilight.md 0 "===+"          $global-scheme
   
   ; HTTP links etc.
   hilight .hilight.md 0 "file:[-@~_a-zA-Z#%=\\.:\\/0-9]+"    .scheme.link
@@ -126,6 +121,14 @@ set-variable .fhook-md.item-list-r3 "H2 \ecB\\1\ecA"
   hilight   .hilight.mdU 0 "\\\\."                     .scheme.hide
   hilight   .hilight.mdU 0x80 ")" .hilight.md          .scheme.hide
 
+  ; Code blocks
+  hilight .hilight.md 1 "`[^`]+`"     .scheme.quote
+  hilight .hilight.md 0x300 "```"
+  hilight .hilight.md 0x180 "```.*"   .hilight.mdC .scheme.hide
+  
+  0 hilight .hilight.mdC 0            $global-scheme
+  hilight   .hilight.mdC 0x180 "```"  .hilight.md .scheme.hide
+  
   ; Allow inserts into the markdown mode. You may add to the inserts in your mymd.emf file
   0 define-macro md-add-file-support
     set-variable #l0 @1
@@ -135,18 +138,13 @@ set-variable .fhook-md.item-list-r3 "H2 \ecB\\1\ecA"
       !force execute-file &cat "hk" #l0
       ml-write &cat "executed " #l0
     !endif
-    ; If the hilighting mode is loaded then modify it.
+    ; If the hilighting mode is loaded then modify it, else leave to the default code block hilighter
     !if &sin "h" &ind &spr ".fhook-%s.setup" #l0 &band .hilight.flags 0x02 
       hilight .hilight.md 0x180 &spr "```{%s}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
       hilight .hilight.md 0x180 &spr "```{\\.%s}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
       hilight .hilight.md 0x180 &spr "```{%s[, ][^}]+}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
       hilight .hilight.md 0x180 &spr "```{\\.%s[, ][^}]+}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
       hilight &ind &cat ".hilight." #l0 0x180 "```" .hilight.md .scheme.hide
-    !else
-      hilight .hilight.md 0x104 &spr "```{%s}" #l1 "```" "" .scheme.quote
-      hilight .hilight.md 0x104 &spr "```{\\.%s}" #l1 "```" "" .scheme.quote
-      hilight .hilight.md 0x104 &spr "```{%s[, ][^}]+}" #l1 "```" "" .scheme.quote
-      hilight .hilight.md 0x104 &spr "```{\\.%s[, ][^}]+}" #l1 "```" "" .scheme.quote
     !endif
   !emacro
   md-add-file-support "tcl" "tcl"
@@ -155,6 +153,7 @@ set-variable .fhook-md.item-list-r3 "H2 \ecB\\1\ecA"
   md-add-file-support "python" "python"
   md-add-file-support "python" "py"
   md-add-file-support "sql" "sql"
+  md-add-file-support "emf" "emf"
 !endif
 
 !if &sin "x" .fhook-md.setup

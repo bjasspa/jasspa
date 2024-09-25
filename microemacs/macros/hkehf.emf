@@ -32,43 +32,48 @@ define-macro fhook-ehf
         -1 yank
       !endif
       !if &seq "md" &lef #l4 2
+        ; find and narrow out all ``` code blocks
+        !repeat
+          !force search-buffer "me" "^```"
+          !iif &not $status  !break
+          beginning-of-line
+          set-variable #l1 &seq &lef @wl 8 "```{emf}"
+          set-variable #l2 $window-line
+          set-mark
+          forward-line
+          -1 kill-region
+          !force search-buffer "me" "^```"
+          !if &not $status
+            100 ml-write &spr "[Error: failed to find close to ``` on around line %d]" $window-line 
+            !break
+          !endif
+          beginning-of-line
+          set-mark
+          forward-line
+          -1 kill-region
+          backward-char
+          insert-string &con #l1 "sA" "cA"
+          #l2 goto-line
+          4 narrow-buffer
+          backward-char
+          insert-string &con #l1 "sB" "cG"
+        !done
+        6 goto-line
         replace-string "\\([^\\\\\n]\\|^\\)\\\\\\*" "\\1cZ"
         6 goto-line
         replace-string "^#+ +\\(.*\\)" "cE\\1cA"
         6 goto-line
-        replace-string "\\*\\*\\(.*\\(\n.*\\)?\\)\\*\\*" "cD\\1cA"
+        replace-string "\\*\\*\\(\\([^*\\\\]\\|\\\\.\\|\\*\\\\.\\)+\\)\\*\\*" "cD\\1cA"
         6 goto-line
-        replace-string "\\*\\(.*\\(\n.*\\)?\\)\\*" "cC\\1cA"
+        replace-string "\\*\\(\\([^*\\\\]\\|\\\\.\\)+\\)\\*" "cC\\1cA"
         6 goto-line
-        replace-string "\\(^\\|[ \\t]\\)__\\(.*\\(\n.*\\)?\\)__\\(^\\| \\)" "\\1cD\\2cA\\4"
+        replace-string "\\(^\\|[ \\t]\\)__\\(\\([^_\\\\]\\|\\\\.\\|_\\\\.\\)+\\)__\\($\\|\\W\\)" "\\1cD\\2cA\\4"
         6 goto-line
-        replace-string "\\(^\\|[ \\t]\\)_\\(.*\\(\n.*\\)?\\)_\\(^\\| \\)" "\\1cC\\2cA\\4"
+        replace-string "\\(^\\|[ \\t]\\)_\\(\\([^_\\\\]\\|\\\\.\\)+\\)_\\($\\|\\W\\)" "\\1cC\\2cA\\4"
         6 goto-line
         replace-string "\\[\\(\\([^]\\\\]\\|\\\\.\\)+\\)](\\(\\([^)\\\\]\\|\\\\.\\)+\\))" "ls\\3lm\\1le"
         6 goto-line
-        ; only convert http links that are not in code blocks
-        !repeat
-          !force search-buffer "me" "\\(^\\|[ \\t]\\)\\(```\\(emf\\)?\\|\\(ht\\|f\\)tps?://[-@~_a-zA-Z#%?&=\\.:\\/0-9]+\\|mailto:[-_a-zA-Z.0-9]+@[-_a-zA-Z.0-9]+\\)"
-          !iif &not $status  !break
-          !if &seq &lef &set #l1 @s2 3 "```"
-            &len #l1 backward-delete-char
-            -1 yank
-            !iif &seq @wl ""  backward-delete-char
-            insert-string &con &seq #l1 "```" "cG" "sB"
-            !force 1 replace-string "```" &con &seq #l1 "```" "cA" "sA"
-            !if &not $status
-              100 ml-write &spr "[Error: failed to find close to ``` on around line %d]" $window-line 
-            !elif &equ &len @wl 3
-              beginning-of-line
-              backward-delete-char
-            !endif
-          !else
-            &len #l1 backward-char
-            insert-string "ls\\lm"
-            &len #l1 forward-char
-            insert-string "le"
-          !endif
-        !done
+        replace-string "\\(^\\|[ \\t]\\)\\(\\(ht\\|f\\)tps?://[-@~_a-zA-Z#%?&=\\.:\\/0-9]+\\|mailto:[-_a-zA-Z.0-9]+@[-_a-zA-Z.0-9]+\\)" "\\1lslm\\2le"
         6 goto-line
         replace-string "\\(^\\|[ \\t]\\)`\\([^\n`]\\([^\\\\`]\\|\\\\.\\)*\\)`" "\\1cG\\2cA"
         6 goto-line
@@ -79,6 +84,8 @@ define-macro fhook-ehf
         &sub $window-eline 9 replace-string "^" "    "
         6 goto-line
         replace-string "^    cE" "cE"
+        ; Get all the code block back
+        1 narrow-buffer
         6 goto-line
       !endif
     !endif
