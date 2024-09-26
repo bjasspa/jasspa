@@ -249,15 +249,15 @@ define-macro r-doc
   500 ml-write &cat "fetching ... " #l0
   !if &xse #l0 "\\(.+\\):\\(.+\\)" 
       !if &or &seq @s1 "library" &seq @s1 "package"
-          set-variable #l0 &spr "library(help='%s')" @s2
+          set-variable #l0 &spr "options(useFancyQuotes=FALSE;library(help='%s')" @s2
           set-variable .package @s2
           set-variable .package-overview 1
       !else
-          set-variable #l0 &spr "help('%s',package='%s')" @s2 @s1
+          set-variable #l0 &spr "options(useFancyQuotes=FALSE);help('%s',package='%s')" @s2 @s1
           set-variable .package @s1
       !endif
   !else
-      set-variable #l0 &spr "help('%s')" #l0
+      set-variable #l0 &spr "options(useFancyQuotes=FALSE);help('%s')" #l0
       set-variable .package ""
   !endif
   0 pipe-shell-command &spr "LANG=en_US Rscript -e \"%s\"" #l0 "*r-doc*"
