@@ -1,0 +1,30 @@
+simul                  package:hanna                   R Documentation
+
+_E_n_v_i_r_o_n_m_e_n_t _o_b_k_j_e_c_t _w_i_t_h _f_u_n_c_t_i_o_n_s _d_o _s_i_m_u_l_a_t_e _w_i_n_n_e_r-_l_o_o_s_e_r _e_f_f_e_c_t_s.
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     The functions within the simul environment perform simulations of
+     winner-looser effects for the paper ...
+
+_M_e_t_h_o_d_s:
+
+        • ‘simul$compare’ - compare the different models for a certain
+          number of seasons
+
+        • ‘simul$graph’ - create a adjacency matrix out of the results
+          for a match season
+
+        • ‘simul$pairings’ - create roundpairings for a season
+
+        • ‘simul$season’ - create matches for everyone against everyone
+          using the given model
+
+_E_x_a_m_p_l_e_s:
+
+     set.seed(124) 
+     res=simul$season(LETTERS[1:6],model="null") 
+     res 
+     hgraph$plot(res$M) 
+     
+
