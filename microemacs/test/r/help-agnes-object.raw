@@ -1,0 +1,92 @@
+agnes.object              package:cluster              R Documentation
+
+_A_g_g_l_o_m_e_r_a_t_i_v_e _N_e_s_t_i_n_g (_A_G_N_E_S) _O_b_j_e_c_t
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     The objects of class ‘"agnes"’ represent an agglomerative
+     hierarchical clustering of a dataset.
+
+_V_a_l_u_e:
+
+     A legitimate ‘agnes’ object is a list with the following
+     components:
+
+   order: a vector giving a permutation of the original observations to
+          allow for plotting, in the sense that the branches of a
+          clustering tree will not cross.
+
+order.lab: a vector similar to ‘order’, but containing observation
+          labels instead of observation numbers. This component is only
+          available if the original observations were labelled.
+
+  height: a vector with the distances between merging clusters at the
+          successive stages.
+
+      ac: the agglomerative coefficient, measuring the clustering
+          structure of the dataset.
+
+          For each observation i, denote by m(i) its dissimilarity to
+          the first cluster it is merged with, divided by the
+          dissimilarity of the merger in the final step of the
+          algorithm.  The ‘ac’ is the average of all 1 - m(i). It can
+          also be seen as the average width (or the percentage filled)
+          of the banner plot.  Because ‘ac’ grows with the number of
+          observations, this measure should not be used to compare
+          datasets of very different sizes.
+
+   merge: an (n-1) by 2 matrix, where n is the number of observations.
+          Row i of ‘merge’ describes the merging of clusters at step i
+          of the clustering.  If a number j in the row is negative,
+          then the single observation |j| is merged at this stage.  If
+          j is positive, then the merger is with the cluster formed at
+          stage j of the algorithm.
+
+    diss: an object of class ‘"dissimilarity"’ (see
+          ‘dissimilarity.object’), representing the total dissimilarity
+          matrix of the dataset.
+
+    data: a matrix containing the original or standardized
+          measurements, depending on the ‘stand’ option of the function
+          ‘agnes’. If a dissimilarity matrix was given as input
+          structure, then this component is not available.
+
+_G_E_N_E_R_A_T_I_O_N:
+
+     This class of objects is returned from ‘agnes’.
+
+_M_E_T_H_O_D_S:
+
+     The ‘"agnes"’ class has methods for the following generic
+     functions: ‘print’, ‘summary’, ‘plot’, and ‘as.dendrogram’.
+
+     In addition, ‘cutree(x, *)’ can be used to “cut” the dendrogram in
+     order to produce cluster assignments.
+
+_I_N_H_E_R_I_T_A_N_C_E:
+
+     The class ‘"agnes"’ inherits from ‘"twins"’.  Therefore, the
+     generic functions ‘pltree’ and ‘as.hclust’ are available for
+     ‘agnes’ objects.  After applying ‘as.hclust()’, all _its_ methods
+     are available, of course.
+
+_S_e_e _A_l_s_o:
+
+     ‘agnes’, ‘diana’, ‘as.hclust’, ‘hclust’, ‘plot.agnes’,
+     ‘twins.object’.
+
+     ‘cutree’.
+
+_E_x_a_m_p_l_e_s:
+
+     data(agriculture)
+     ag.ag <- agnes(agriculture)
+     class(ag.ag)
+     pltree(ag.ag) # the dendrogram
+     
+     ## cut the dendrogram -> get cluster assignments:
+     (ck3 <- cutree(ag.ag, k = 3))
+     (ch6 <- cutree(as.hclust(ag.ag), h = 6))
+     stopifnot(identical(unname(ch6), ck3))
+     
+

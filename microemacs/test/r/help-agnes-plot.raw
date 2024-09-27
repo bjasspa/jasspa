@@ -1,0 +1,123 @@
+plot.agnes               package:cluster               R Documentation
+
+_P_l_o_t_s _o_f _a_n _A_g_g_l_o_m_e_r_a_t_i_v_e _H_i_e_r_a_r_c_h_i_c_a_l _C_l_u_s_t_e_r_i_n_g
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Creates plots for visualizing an ‘agnes’ object.
+
+_U_s_a_g_e:
+
+     ## S3 method for class 'agnes'
+     plot(x, ask = FALSE, which.plots = NULL, main = NULL,
+                sub = paste("Agglomerative Coefficient = ",round(x$ac, digits = 2)),
+                adj = 0, nmax.lab = 35, max.strlen = 5, xax.pretty = TRUE, ...)
+     
+_A_r_g_u_m_e_n_t_s:
+
+       x: an object of class ‘"agnes"’, typically created by
+          ‘agnes(.)’.
+
+     ask: logical; if true and ‘which.plots’ is ‘NULL’, ‘plot.agnes’
+          operates in interactive mode, via ‘menu’.
+
+which.plots: integer vector or NULL (default), the latter producing
+          both plots.  Otherwise, ‘which.plots’ must contain integers
+          of ‘1’ for a _banner_ plot or ‘2’ for a dendrogram or
+          “clustering tree”.
+
+main, sub: main and sub title for the plot, with convenient defaults.
+          See documentation for these arguments in ‘plot.default’.
+
+     adj: for label adjustment in ‘bannerplot()’.
+
+nmax.lab: integer indicating the number of labels which is considered
+          too large for single-name labelling the banner plot.
+
+max.strlen: positive integer giving the length to which strings are
+          truncated in banner plot labeling.
+
+xax.pretty: logical or integer indicating if ‘pretty(*, n =
+          xax.pretty)’ should be used for the x axis.  ‘xax.pretty =
+          FALSE’ is for back compatibility.
+
+     ...: graphical parameters (see ‘par’) may also be supplied and are
+          passed to ‘bannerplot()’ or ‘pltree()’ (see ‘pltree.twins’),
+          respectively.
+
+_D_e_t_a_i_l_s:
+
+     When ‘ask = TRUE’, rather than producing each plot sequentially,
+     ‘plot.agnes’ displays a menu listing all the plots that can be
+     produced.  If the menu is not desired but a pause between plots is
+     still wanted one must set ‘par(ask= TRUE)’ before invoking the
+     plot command.
+
+     The banner displays the hierarchy of clusters, and is equivalent
+     to a tree.  See Rousseeuw (1986) or chapter 5 of Kaufman and
+     Rousseeuw (1990).  The banner plots distances at which
+     observations and clusters are merged.  The observations are listed
+     in the order found by the ‘agnes’ algorithm, and the numbers in
+     the ‘height’ vector are represented as bars between the
+     observations.
+
+     The leaves of the clustering tree are the original observations.
+     Two branches come together at the distance between the two
+     clusters being merged.
+
+     For more customization of the plots, rather call ‘bannerplot’ and
+     ‘pltree()’, i.e., its method ‘pltree.twins’, respectively.
+
+     directly with corresponding arguments, e.g., ‘xlab’ or ‘ylab’.
+
+_S_i_d_e _E_f_f_e_c_t_s:
+
+     Appropriate plots are produced on the current graphics device.
+     This can be one or both of the following choices:
+
+     Banner
+
+     Clustering tree
+
+_N_o_t_e:
+
+     In the banner plot, observation labels are only printed when the
+     number of observations is limited less than ‘nmax.lab’ (35, by
+     default), for readability.  Moreover, observation labels are
+     truncated to maximally ‘max.strlen’ (5) characters.
+
+     For the dendrogram, more flexibility than via ‘pltree()’ is
+     provided by ‘dg <- as.dendrogram(x)’ and plotting ‘dg’ via
+     ‘plot.dendrogram’.
+
+_R_e_f_e_r_e_n_c_e_s:
+
+     Kaufman, L. and Rousseeuw, P.J. (1990) _Finding Groups in Data: An
+     Introduction to Cluster Analysis_.  Wiley, New York.
+
+     Rousseeuw, P.J. (1986). A visual display for hierarchical
+     classification, in _Data Analysis and Informatics 4_; edited by E.
+     Diday, Y. Escoufier, L. Lebart, J. Pages, Y. Schektman, and R.
+     Tomassone.  North-Holland, Amsterdam, 743-748.
+
+     Struyf, A., Hubert, M. and Rousseeuw, P.J. (1997) Integrating
+     Robust Clustering Techniques in S-PLUS, _Computational Statistics
+     and Data Analysis_, *26*, 17-37.
+
+_S_e_e _A_l_s_o:
+
+     ‘agnes’ and ‘agnes.object’; ‘bannerplot’, ‘pltree.twins’, and
+     ‘par’.
+
+_E_x_a_m_p_l_e_s:
+
+     ## Can also pass 'labels' to pltree() and bannerplot():
+     data(iris)
+     cS <- as.character(Sp <- iris$Species)
+     cS[Sp == "setosa"] <- "S"
+     cS[Sp == "versicolor"] <- "V"
+     cS[Sp == "virginica"] <- "g"
+     ai <- agnes(iris[, 1:4])
+     plot(ai, labels = cS, nmax = 150)# bannerplot labels are mess
+     
+
