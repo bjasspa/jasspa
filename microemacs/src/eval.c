@@ -3045,12 +3045,12 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
                 while(cc & bm)
                 {
                     c1 = arg1[ll++];
-                    *varVal++ = c1;
                     if((c1 & 0xc0) != 0x80)
                     {
                         bc = 0;
                         break;
                     }
+                    *varVal++ = c1;
                     ii = (ii << 6) | (c1 & 0x3f);
                     bm >>= 1;
                     bc += 6;
