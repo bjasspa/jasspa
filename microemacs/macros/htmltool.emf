@@ -339,7 +339,7 @@
             !elif &iseq #l3 "DIV>"
               html-add-newline
             !elif &iseq #l3 "MEDEBUG>"
-              set-variable $debug 1
+              set-variable $debug 2
             !endif
           !elif &iseq &lef #l3 1 "S"
             !if &iseq &left #l3 6 "SCRIPT"

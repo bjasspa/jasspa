@@ -3047,6 +3047,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
                     c1 = arg1[ll++];
                     if((c1 & 0xc0) != 0x80)
                     {
+                        ll--;
                         bc = 0;
                         break;
                     }

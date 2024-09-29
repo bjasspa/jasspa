@@ -218,18 +218,15 @@ set-variable .fhook-r-doc.setup-mask "acfhmw"
   hilight .hilight.r-doc  0x42 "\ecE" ""       .scheme.header
   hilight .hilight.r-doc  0x42 "\ecL" ""       .scheme.link
   hilight .hilight.r-doc  0x40 "\esA" ""       $global-scheme
-  hilight .hilight.r-doc  0xc0 "\ecEUsage:" "Usage:" .hilight.r .scheme.header
-  hilight .hilight.r-doc  0xc0 "\ecEExamples:" "Examples:"    .hilight.r .scheme.header  
-  hilight .hilight.r-doc  0xc0 "\ecESee Also:" "See Also:"    .hilight.r-docL .scheme.header  
-  hilight .hilight.r-doc  0xc0 "\ecEMethods:" "Methods:"      .hilight.r-docL .scheme.header    
+  hilight .hilight.r-doc  0xc0 "\esR" ""       .hilight.r .scheme.header
+  hilight .hilight.r-doc  0xc0 "\esL" ""       .hilight.r-docL .scheme.header  
   hilight .hilight.r-doc     0 "^\\a[-A-Za-z0-9.$_]*\\}[\t ][\t ]" .scheme.link  
-  hilight .hilight.r-doc     0 "package:\\a[-A-Za-z0-9.$_]+" .scheme.link    
+  hilight .hilight.r-doc     0 "^\\a[-A-Za-z0-9.$_]*::[-A-Za-z0-9.$_]+" .scheme.link    
+  hilight .hilight.r-doc     0 "package:\\a[-A-Za-z0-9.$_]*" .scheme.link    
   hilight .hilight.r-docL    4 "'\\{\\a" "\\}'" "\\"          .scheme.link
-  hilight .hilight.r-docL 0x80 "^Examples:"    .hilight.r     .scheme.header
   hilight .hilight.r-docL 0x80 "^[A-Z].+"      .hilight.r-doc .scheme.header
   hilight .hilight.r-docL 0xc0 "\esA" ""       .hilight.r-doc .scheme.header
   hilight .hilight.r      0xc0 "\esA" ""       .hilight.r-doc .scheme.header
-  
 !endif
 
 !if &sin "f" .fhook-r-doc.setup
@@ -261,8 +258,8 @@ define-macro r-doc
     find-buffer "*r-doc*"
     1 buffer-mode "hide"
     change-buffer-name "*r-doc*1"
+    goto-position "\x81"
   !endif
-  goto-position "\x81"
   !if &not &set #l3 &xse #l5 "\\(.+\\):\\(.+\\)" 
     set-variable #l0 &spr "help('%s')" #l5
     set-variable #l4 ""
@@ -275,6 +272,7 @@ define-macro r-doc
   &con &seq $buffer-bname "*r-doc*1" 2 0 pipe-shell-command &spr "Rscript -e \"options(useFancyQuotes=FALSE);%s\"" #l0 "*r-doc*"
   !iif &not &seq $buffer-bname "*r-doc*" find-buffer "*r-doc*"
   -1 buffer-mode "view"
+  1 buffer-mode "magic"
   beginning-of-buffer
   set-mark
   3 forward-line
@@ -318,7 +316,14 @@ define-macro r-doc
     beginning-of-buffer
     !force replace-string "^\n\\(\\w['\\w()]+\\( ['\\w()]+\\)*:\n\\)$" "\nsAcE\\1"
   !endif
+  set-variable #l1 &cond &bmod "exact" 1 -1
+  -1 buffer-mode "exact"
   beginning-of-buffer
+  replace-string "^sAcE\\(Usage\\|Examples\\):.*\n" "\\0sR"
+  beginning-of-buffer
+  replace-string "^sAcE\\(See Also\\|Methods\\):.*\n" "\\0sL"
+  beginning-of-buffer
+  #l1 buffer-mode "exact"
   -1 buffer-mode "edit"
   1 buffer-mode "view"
   set-variable :mouse-word-select r-doc-process-link
@@ -354,8 +359,8 @@ define-macro r-doc
     !return
   !endif
   ; check first for a beginning of line link in package index
-  !force search-buffer "meb" "^sAcE\\(.*\\)"
-  !iif &not &and $status &lfin "|Methods:|See Also:|" @s1  -8 ml-write "Error: Not in the Method or See Also section."
+  !force search-buffer "meb" "^s\\(.\\)"
+  !iif &not &and $status &seq @s1 "L"  -8 ml-write "Error: Not in the Method or See Also section."
   goto-position "\x80"
   set-variable #l1 $window-col
   !force -1 search-buffer "meb" "'\\m"
