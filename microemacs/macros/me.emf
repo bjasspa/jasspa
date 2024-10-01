@@ -387,6 +387,3 @@ execute-file $platform
   goto-alpha-mark  "I"
   -1 find-buffer "*server*"
 !endif
-; chaeck-mail setup - delay the first check by a minute to allow for
-; initial setup to complete
-!iif &reg &spr "/history/%s/mail-check" $platform "0"  60000 create-callback mail-check

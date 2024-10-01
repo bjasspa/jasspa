@@ -459,8 +459,6 @@ osd 7 70  "-"
 osd 7 80  ""  "\HCalculate"                       f calc
 osd 7 90  ""  "\HNotes               f8"          f notes
 osd 7 100 ""  "\HOrganizer..."                    f organizer
-osd 7 110 ""  "\HSend Mail"                       f mail
-osd 7 120 ""  "\HView Mail"                       f vm
 osd 7 130 "-"
 osd 7 140 "M" "File \HTools"               .osd.tmp file-tool-menu
 osd 7 150 ""  "\HIpipe Command...    esc \\"      f ipipe-shell-command

@@ -14,7 +14,6 @@
 ;   .git.hub-brn  Build reference name (typically main branch name of repository)
 ;   .git.hub-rtp  Release tag prefix
 ;   .git.hub-rnp  Release name prefix
-;   .git.hub-rrt  Release readme template file, should point to an md (<VERSION> is replaced with the version string)
 ;   .git.hub-hdr  Githup api header (uses .git.hub-tkn)
 ;
 set-variable .git.hub-url "https://api.github.com/repos/bjasspa/jasspa/"
@@ -22,10 +21,10 @@ set-variable .git.hub-bal "|build-linux.yml|build-windows.yml|build-macos-intel.
 set-variable .git.hub-brn "main"
 set-variable .git.hub-rtp "me_"
 set-variable .git.hub-rnp "Jasspa MicroEmacs "
-set-variable .git.hub-rrt "~/jasspa/microemacs/release_readme.md"
 set-variable .git.hub-hdr &spr "Accept: application/vnd.github+json\r\nAuthorization: Bearer %s\r\nX-GitHub-Api-Version: 2022-11-28\r\nUser-Agent: Jasspa" .git.hub-tkn
 
 set-variable %http-flags "scvwdh"
+!iif &not &exi .spell.lang-id  execute-file "language"
 !iif &not &exi json-parse  execute-file "hkjson"
 ; time used by github filter is UTC so take 12 hours off to ensure local time - 12hours gives Github start date or day before  
 set-variable $time -43200
@@ -238,11 +237,134 @@ define-macro github-release
 
 define-macro github-build-release
   !force set-variable #l0 @1
-  !if &or &not $status &seq #l0 ""
-    set-variable #l0 @ml "MicroEmacs Version"
-    !iif &seq #l0 ""  -8 ml-write "[Github Release Error: A version must be given]"
+  !iif &not $status set-variable #l0 @ml61 "Jasspa Git repository" "~/jasspa"
+  !iif &not &seq "D" &stat t &set #l0 &stat a #l0  -8 ml-write &spr "[Github Release Error: Given repository is not a directory: %s]" #l0
+  !iif &not &seq "R" &stat t &set #l1 &cat #l0 "microemacs/src/evers.mak"  -8 ml-write &spr "[Github Release Error: Cannot locate ver file: %s]" #l1
+  !iif &not &seq "R" &stat t &set #l3 &cat #l0 "microemacs/release_readme.md"  -8 ml-write &spr "[Github Release Error: Cannot locate the release readme template: %s]" #l3
+  !force 0 delete-buffer "*ghmv"
+  find-buffer "*ghmv"
+  insert-file #l1
+  beginning-of-buffer
+  !force search-buffer "me" "^meVER_CN *= *\\(\\d+\\)$"
+  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_CN in evers.mak]"
+  !iif &not &seq @s1 &lef $time 2  -8 ml-write &spr "[Github Release Error: Incorrect meVER_CN in evers.mak (%s,%s)]" @s1 &lef $time 2
+  beginning-of-buffer
+  !force search-buffer "me" "^meVER_YR *= *\\(\\d+\\)$"
+  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_YR in evers.mak]"
+  !iif &not &seq @s1 &mid $time 2 2  -8 ml-write &spr "[Github Release Error: Incorrect meVER_YR in evers.mak (%s,%s)]" @s1 &mid $time 2 2
+  beginning-of-buffer
+  !force search-buffer "me" "^meVER_MN *= *\\(\\d+\\)$"
+  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_MN in evers.mak]"
+  !iif &not &seq @s1 &trl &mid $time 7 2  -8 ml-write &spr "[Github Release Error: Incorrect meVER_MN in evers.mak (%s,%s)]" @s1 &trl &mid $time 7 2
+  beginning-of-buffer
+  !force search-buffer "me" "^meVER_DY *= *\\(\\d+\\)$"
+  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_DY in evers.mak]"
+  !iif &or &les &set #l2 @s1 1 &gre #l2 30  -8 ml-write &spr "[Github Release Error: Invalid meVER_DY in evers.mak (%s)]" #l2
+  !force 0 delete-buffer "*ghmv"
+  set-variable #l1 &spr "%s%02d%02d" &lef $time 4 &mid $time 7 2 #l2
+  !force set-variable #l2 @mc1 &spr "New MicroEmacs version will be \"%s\", is this correct (y/n) ? " #l1 "NYny"
+  !iif &not &iseq "y" #l2  -8 ml-write "[Github Release Error: Version incorrect - abort]"
+  github-build "" &cat .git.hub-rtp #l1
+  github-release #l8 #l1 #l9 #l3
+!emacro
+
+; @# language index or not given
+; @1 version
+; @2 sha buffer
+; @3 template location
+; @4 homebrew formula location
+; @5 formula name
+define-macro github-finalise-release-formula
+  set-variable #l0 @5
+  set-variable #l1 @1
+  set-variable #l2 @2
+  !force 0 delete-buffer "*ghbf"
+  find-buffer "*ghbf"
+  !force insert-file &set #l3 &cat @3 #l0
+  !if &les $window-eline 3
+    !force 0 delete-buffer "*ghbf"
+    -8 ml-write &spr "[Github Release Error: Failed to load brew template: %s]" #l3
   !endif
-  !iif &not &seq "R" &stat t &set #l1 &stat a .git.hub-rrt  -8 ml-write &spr "[Github Release Error: Release readme template is not a regular file: %s]" #l1
-  github-build "" &cat .git.hub-rtp #l0
-  github-release #l8 #l0 #l9 #l1
+  beginning-of-buffer
+  replace-string "##VERSION##" #l1
+  !if @?
+    set-variable #l0 &rep #l0 "##LANG##" &set #l4 &lget .spell.lang-id @#
+    beginning-of-buffer
+    replace-string "##LANG##" #l4
+    beginning-of-buffer
+    replace-string "##Lang##" &cat &sup &lef #l4 1 &rig #l4 1
+    beginning-of-buffer
+    replace-string "##LANGUAGE##" &lget .spell.lang-name @#
+  !endif
+  beginning-of-buffer
+  !repeat
+    !force search-buffer "Me" "##SHA256##"
+    !iif &not $status  !break
+    set-alpha-mark "\x80"
+    !force -2 search-buffer "meb" "Jasspa_MicroEmacs_[^/\"\n]*\\.zip"
+    !iif &not $status  -8 ml-write "[Github Release Error: Failed to find SHA256 url file name]"
+    set-variable #l5 @s0
+    find-buffer #l2
+    beginning-of-buffer
+    !force search-buffer "me" &cat "^\\(\\h+\\) " #l5
+    !iif &not $status  -8 ml-write &spr "[Github Release Error: Failed to find SHA256 for file %s]" #l5
+    find-buffer "*ghbf"
+    goto-alpha-mark "\x80"
+    10 backward-delete-char
+    -1 yank
+    insert-string @s1
+  !done
+  !force 0 write-buffer &set #l4 &cat @4 #l0
+  !iif &not $status  -8 ml-write &spr "[Github Release Error: Failed to write brew template to: %s]" #l4
+  !force 0 delete-buffer $buffer-bname
+!emacro
+  
+define-macro github-finalise-release
+  set-position "\x80"
+  !force set-variable #l0 @1
+  !iif &not $status set-variable #l0 @ml61 "Jasspa Git repository" "~/jasspa"
+  !iif &not &seq "D" &stat t &set #l0 &stat a #l0  -8 ml-write &spr "[Github Release Error: Given jasspa repository is not a directory: %s]" #l0
+  !iif &not &seq "R" &stat t &set #l1 &cat #l0 "microemacs/src/evers.mak"  -8 ml-write &spr "[Github Release Error: Cannot locate ver file: %s]" #l1
+  find-file #l1
+  set-variable #l9 $buffer-bname
+  beginning-of-buffer
+  !force search-buffer "me" "^meVER_CN *= *\\(\\d+\\)$"
+  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_CN in evers.mak]"
+  set-variable #l1 @s1
+  beginning-of-buffer
+  !force search-buffer "me" "^meVER_YR *= *\\(\\d+\\)$"
+  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_YR in evers.mak]"
+  set-variable #l1 &cat #l1 @s1
+  beginning-of-buffer
+  !force search-buffer "me" "^meVER_MN *= *\\(\\d+\\)$"
+  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_MN in evers.mak]"
+  set-variable #l1 &spr "%s%02d" #l1 @s1
+  beginning-of-buffer
+  !force search-buffer "me" "^meVER_DY *= *\\(\\d+\\)$"
+  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_DY in evers.mak]"
+  set-variable #l1 &spr "%s%02d" #l1 @s1
+  goto-position "\x80"
+  !force set-variable #l2 @mc1 &spr "New MicroEmacs version is \"%s\", is this correct (y/n) ? " #l1 "NYny"
+  !iif &not &iseq "y" #l2  -8 ml-write "[Github Release Error: Version incorrect - abort]"
+  !force set-variable #l2 @2
+  !iif &not $status set-variable #l2 @ml61 "Homebrew-jasspa Git repository" "~/homebrew-jasspa"
+  !iif &not &seq "D" &stat t &set #l2 &stat a #l2  -8 ml-write &spr "[Github Release Error: Given homebrew repository is not a directory: %s]" #l2
+  !iif &not &seq "R" &stat t &cat #l2 "Formula/microemacs.rb"  -8 ml-write &spr "[Github Release Error: Cannot locate main formula file: %sFormula/microemacs.rb]" #l2
+  !force set-variable #l3 @3
+  !iif &not $status set-variable #l3 @ml61 "Release artifact directory" &spr "~/%s%s" .git.hub-rtp #l1
+  !iif &not &seq "D" &stat t &set #l3 &stat a #l3  -8 ml-write &spr "[Github Release Error: Given artifact directory is not a directory: %s]" #l3
+  !iif &not &seq "R" &stat t &set #l4 &spr "%sJasspa_MicroEmacs_%s-sha256.txt" #l3 #l1  -8 ml-write &spr "[Github Release Error: Cannot locate main formula file: %s]" #l3
+  !force 0 delete-buffer "*ghdh"
+  find-buffer "*ghdh"
+  insert-file #l4
+  set-variable #l5 &cat #l0 "microemacs/brew/"
+  set-variable #l2 &cat #l2 "Formula/"
+  set-variable #l6 0
+  !while &not &seq "" &set #l7 &lget "|microemacs.rb|microemacs-binaries.rb|microemacs-macros.rb|microemacs-help.rb|microemacs-openssl.rb|" &inc #l6 1
+    github-finalise-release-formula #l1 "*ghdh" #l5 #l2 #l7
+  !done
+  set-variable #l6 &llen .spell.lang-id
+  !repeat
+    #l6 github-finalise-release-formula #l1 "*ghdh" #l5 #l2 "microemacs-spelling-##LANG##.rb"
+  !until &not &dec #l6 1
 !emacro
