@@ -231,7 +231,7 @@ define-macro github-release
   2 backward-delete-char
   insert-string "\"}"
   !force 0 write-buffer &set %http-post-file &stat a &spr "%s../readme.md.upl" #l1
-  github-api-json &cat "releases/" #l8
+  github-api-json &cat "releases/" #l8 
   ml-write &spr "[Github Release: Complete, uploaded %d assets]" #l5
 !emacro
 
@@ -342,10 +342,14 @@ define-macro github-finalise-release
   beginning-of-buffer
   !force search-buffer "me" "^meVER_DY *= *\\(\\d+\\)$"
   !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_DY in evers.mak]"
-  set-variable #l1 &spr "%s%02d" #l1 @s1
+  set-variable #l1 &spr "%s%02d" #l1 &set #l8 @s1
   goto-position "\x80"
   !force set-variable #l2 @mc1 &spr "New MicroEmacs version is \"%s\", is this correct (y/n) ? " #l1 "NYny"
   !iif &not &iseq "y" #l2  -8 ml-write "[Github Release Error: Version incorrect - abort]"
+  github-api-json "releases?per_page=1"
+  !iif &not &seq &reg "/json/ghaj/0/tag_name" "" &set #l2 &spr "\"%s%s" .git.hub-rtp #l1  -8 ml-write &spr "[Github Release Error: Latest release has incorrect tag (%s)]" #l2
+  !iif &not &xseq &set #l2 &reg "/json/ghaj/0/id" "" "#\\d\\{6,\\}"  -8 ml-write &spr "[Github Release Error: Latest release has an invalid ID (%s)]" #l2
+  goto-position "\x80"
   !force set-variable #l2 @2
   !iif &not $status set-variable #l2 @ml61 "Homebrew-jasspa Git repository" "~/homebrew-jasspa"
   !iif &not &seq "D" &stat t &set #l2 &stat a #l2  -8 ml-write &spr "[Github Release Error: Given homebrew repository is not a directory: %s]" #l2
@@ -360,11 +364,26 @@ define-macro github-finalise-release
   set-variable #l5 &cat #l0 "microemacs/brew/"
   set-variable #l2 &cat #l2 "Formula/"
   set-variable #l6 0
-  !while &not &seq "" &set #l7 &lget "|microemacs.rb|microemacs-binaries.rb|microemacs-macros.rb|microemacs-help.rb|microemacs-openssl.rb|" &inc #l6 1
+  !while &not &seq "" &set #l7 &lget "|microemacs.rb|microemacs-binaries.rb|microemacs-macros.rb|microemacs-help.rb|" &inc #l6 1
     github-finalise-release-formula #l1 "*ghdh" #l5 #l2 #l7
   !done
   set-variable #l6 &llen .spell.lang-id
   !repeat
     #l6 github-finalise-release-formula #l1 "*ghdh" #l5 #l2 "microemacs-spelling-##LANG##.rb"
   !until &not &dec #l6 1
+  find-buffer #l9
+  set-variable @wl &spr "meVER_DY = %d" &add #l8 1
+  save-buffer
+  find-file &cat #l0 "README.md"
+  beginning-of-buffer
+  replace-string &cat .git.hub-rtp "\\d\\{8\\}" &cat .git.hub-rtp #l1
+  beginning-of-buffer
+  replace-string &cat &rep .git.hub-rnp " " "_" "\\d\\{8\\}" &cat &rep .git.hub-rnp " " "_" #l1
+  save-buffer
+  set-variable #l9 &reg "/json/ghaj/0/id" ""
+  github-api-json &cat "releases/" &rig #l9 1 "PATCH" "{\"prerelease\":false}"
+  !iif &not &seq &set #l2 &reg "/json/ghaj/id" "" #l9  -8 ml-write &spr "[Github Release Error: Unexpected release ID returned - %s]" #l2
+  !iif &not &seq &set #l2 &reg "/json/ghaj/prerelease" "" "b0"  -8 ml-write &spr "[Github Release Error: Unexpected prerelease setting %s]" #l2
+  goto-position "\x80"
+  ml-write "[Release Finalised - commit changes to jasspa & homebrew-jasspa repositories]" 
 !emacro

@@ -1,5 +1,5 @@
 
-## <img src="microemacs/graphics/me_m.png" /> &nbsp;MicroEmacs (2024) TextEditor
+## <img src="microemacs/graphics/me_m.png" /> &nbsp;Jasspa MicroEmacs Text Editor
 
 MicroEmacs  text editor is an Emacs like text editor  suitable for 
 experienced programmers and as well beginners.
