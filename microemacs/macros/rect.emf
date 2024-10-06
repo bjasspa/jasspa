@@ -57,8 +57,7 @@ define-macro space-rectangle
 !emacro
 
 define-macro copy-rectangle
-  set-alpha-mark "\x81" 
-  set-variable #l9 $window-col
+  0x6df set-position "\x81" 
   set-variable #l0 &bmod "view" 
   set-variable #l1 &bmod "edit" 
   set-variable #l2 &bmod "undo" 
@@ -70,8 +69,7 @@ define-macro copy-rectangle
   &cond #l2 1 -1 buffer-mode "undo" 
   &cond #l1 1 -1 buffer-mode "edit" 
   &cond #l0 1 -1 buffer-mode "view" 
-  goto-alpha-mark "\x81" 
-  set-variable $window-col #l9
+  !force goto-position "\x81" 
   ; flag the command to be a copy-region type command 
   set-variable @cl copy-region 
 !emacro 

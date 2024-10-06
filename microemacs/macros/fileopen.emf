@@ -13,10 +13,10 @@ set-variable .osd.fo-depth 10
 
 !if &seq .osd.fom "ERROR"
   set-variable .osd.fom  &pinc .osd.next 1
+  set-variable .osd.fodm &pinc .osd.next 1
   set-variable .osd.fofm &pinc .osd.next 1
   set-variable .osd.fofc &pinc .osd.next 1
   set-variable .osd.foft &pinc .osd.next 1
-  set-variable .osd.fodm &pinc .osd.next 1
   ; increment by 2 cos we need 1 for .osd.fodv if this is a drive system
   set-variable .osd.fodc &pinc .osd.next 2
   set-variable .osd.fobm &pinc .osd.next 1
@@ -258,19 +258,17 @@ define-macro osd-fo-okay
   osd .osd.fofm 6 "xMdscfHt" .scheme.osd-entry &spr "%s%n" &lef #l3 .osd.fo-width &sub .osd.fo-width &len #l3 " " .osd.foft
 !emacro
 
+osd .osd.fodm 0 ""
+osd .osd.fodm 1 "S" " \HDirectories:" 3
+osd .osd.fodm 3 "ExHtfc" .scheme.osd-entry "####################" 1 osd-fo-dirset
+osd .osd.fodm 4 "IbHt" .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fodc
+!iif &band $system 0x200  osd .osd.fodm 5 "S" " D\Hrive:" 6
+
 osd .osd.fofm 0 "I" 3
 osd .osd.fofm 1 "S" " \HFile Name:" 3
 osd .osd.fofm 3 "ExHtfc" .scheme.osd-entry "####################" 1 osd-fo-fileset
 osd .osd.fofm 4 "IbHt" .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fofc
 osd .osd.fofm 5 "S" " File \HType:" 6
-
-osd .osd.fodm 0 ""
-osd .osd.fodm 1 "S" " \HDirectories:" 3
-osd .osd.fodm 3 "ExHtfc" .scheme.osd-entry "####################" 1 osd-fo-dirset
-osd .osd.fodm 4 "IbHt" .scheme.osd-sbar .osd.fo-width .osd.fo-depth .osd.fodc
-!if &band $system 0x200
-  osd .osd.fodm 5 "S" " Dri\Hve:" 6
-!endif
 
 osd .osd.fobm 0   "D" 20
 osd .osd.fobm 10  ""
@@ -279,15 +277,15 @@ osd .osd.fobm 30  ""
 osd .osd.fobm 40  "BcftH" .scheme.osd-ebtt "  \HCancel  " f void
 osd .osd.fobm 50  ""
 osd .osd.fobm 60  ""
-osd .osd.fobm 70  ""
-osd .osd.fobm 90  ""
-osd .osd.fobm 100  "Cfpxt" &cat .osd.checkbox-chars "\} \HShow backups" 1 osd-fo-options
+osd .osd.fobm 70  "Cfpxt" &cat .osd.checkbox-chars "\} \HShow backups " 1 osd-fo-options
+osd .osd.fobm 80 ""
+osd .osd.fobm 90 ""
 
 osd .osd.fom 0  "batcDIHR" 3 6 6 2 .scheme.osd-title "" osd-fo-resize
 osd .osd.fom 1  ""
-osd .osd.fom 2  "Iht" .osd.fofm
+osd .osd.fom 2  "Iht" .osd.fodm
 osd .osd.fom 3  "h" " "
-osd .osd.fom 4  "Iht" .osd.fodm
+osd .osd.fom 4  "Iht" .osd.fofm
 osd .osd.fom 5  "h" " "
 osd .osd.fom 6  "It" .osd.fobm
 
@@ -334,10 +332,10 @@ set-variable .osd-get-file.file-type &cond &seq .osd-get-file.file-type "ERROR" 
 !emacro
 
 define-macro osd-file-open
-  osd .osd.fobm 110 ""
-  osd .osd.fobm 120 "Cfpxt" &cat .osd.checkbox-chars "\} \HView File"     8 osd-fo-options
-  osd .osd.fobm 130 "Cfpxt" &cat .osd.checkbox-chars "\} \HBinary File"   2 osd-fo-options
-  osd .osd.fobm 140 "Cfpxt" &cat .osd.checkbox-chars "\} \HEncrypt File"  4 osd-fo-options
+  osd .osd.fobm 110 "S" " Load options:"
+  osd .osd.fobm 120 "Cfpxt" &cat .osd.checkbox-chars "\} \HView only"     8 osd-fo-options
+  osd .osd.fobm 130 "Cfpxt" &cat .osd.checkbox-chars "\} \HBinary mode"   2 osd-fo-options
+  osd .osd.fobm 140 "Cfpxt" &cat .osd.checkbox-chars "\} Decr\Hypt File"  4 osd-fo-options
   set-variable .osd-get-file.title "Find File"
   set-variable .osd-get-file.file-type ""
   set-variable .osd-get-file.ft .ft

@@ -140,9 +140,9 @@ define-macro file-attrib
     osd .osd.fattr 40  ""
     osd .osd.fattr 50  "" "  File Type:"
     osd .osd.fattr 60  "CxfRpht" &cat .osd.checkbox-chars "\} \HUnix"    2 fattr-type
-    osd .osd.fattr 70  "CxfRpht" &cat .osd.checkbox-chars "\} \HMac"     1 fattr-type
+    osd .osd.fattr 70  "CxfRpht" &cat .osd.checkbox-chars "\} Old \HMac" 1 fattr-type
     osd .osd.fattr 75  "CxfRpht" &cat .osd.checkbox-chars "\} \HWindows" 3 fattr-type
-    osd .osd.fattr 80  "CxfRpt"  &cat .osd.checkbox-chars "\} \HDos"     7 fattr-type
+    osd .osd.fattr 80  "CxfRpt"  &cat .osd.checkbox-chars "\} \HDos "    7 fattr-type
     osd .osd.fattr 600 "BHrfhti" .scheme.osd-ebtt " \HSave Changes "  f "set-variable .file-attrib.ok 2"
   !endif
   set-variable .ok 0

@@ -34,7 +34,7 @@
  "vb" = "dfghiopxb"
 }
 "file-mask" = "\CH*.txt,*.doc,*.log\CH*.asp,*.htm,*.html,*.php\CH*.css,*.js,web.config\CH*.c,*.cpp,*.cs,*.h,*.hpp,*.rc\CHImakefile,Makefile*,*.mak,*.gmk,*.cfg\CH*.bat,*.sys,*.sh,*.csh,*shrc,.login\CH*.emf\CH*.eaf,*.ehf,*.eof,*.erf,*.esf,*.etf\CH*.gif,*.ico,*.jpg,*.png,*.tif\CH"
-"file-type" = "\CHText file\CHWeb page\CHWeb other\CHC/C++/C#\CHMakefile\CHShell Script\CHME Macro\CHME Other\CHImage file\CH"
+"file-type" = "\CHText file\CHWeb page\CHWeb other\CHC/C++/C#\CHMakefile\CHShell Script\CHMicroEmacs Macro\CHMicroEmacs Other\CHImage file\CH"
 "find-buffer" = "1"
 "find-com" = "-xm"
 "grep-com" = "-xml"

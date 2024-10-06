@@ -14,21 +14,40 @@ count-words \- Count the number of words in a region
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 .B count-words
 (\fB\*e\*cc\fR)
 .ad
 .SH DESCRIPTION
 .B count-words
-Counts the  number of  words  between the
+counts the  number of  words in the current buffer and  between the
 .Ht set-mark 2
-position and the current cursor position. The command also gives statistics on
-the  number of  characters  and the  average  characters  per word. The output
-appears on the message line in a format such as:-
+position and the current cursor  position. The command also gives  statistics on the average  characters per word, the
+number of characters and the number of lines. The output appears on the message line in a format such as:-
 .IP
-.C "54 Words, 345 Chars, 8 Lines"
+.C "Buffer: 3959 Words (4.7), 23394 Chars, 274 Lines Region: 154 Words (5.2), 983 Chars, 10 Lines"
 .PP
+The
 .Ht $result 5
-is set to the same output string.
+variable is also set to the same output string.
+.PP
+The  numeric  argument  \fIn\fR is used to modify the default  behavior of the
+command, where the bits are defined as follows:
+.IP \fB0x01\fR
+When clear the command gives the information in the form of a
+.Hl "\*(mS list" &lset 4
+and does not print it to the message line; this interface is more useful to macros.
+.IP \fB0x02\fR
+When set whole buffer information is included, i.e. the first half, when clear this information is not computed or included.
+.IP \fB0x04\fR
+When set buffer region  information is included, i.e. the second half; if the current buffer does not have a region an
+error is returned unless bit \fB0x08\fR is also set.
+.IP \fB0x08\fR
+When set no error is thrown if buffer  region  information  is requested but the buffer does not have a region, if bit
+\fB0x01\fR is clear \fC-1\fR is returned for all 4 values.
+.PP
+When \fIn\fR is not  specified, the default value is \fC0x0f\fR,  i.e. print both whole buffer and region  information
+without error.
 .SH "SEE ALSO"
 .na
 .Ht $result 5 ,

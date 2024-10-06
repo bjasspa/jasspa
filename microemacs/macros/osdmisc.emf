@@ -830,7 +830,7 @@ osd .osd.sar  10 "It" .osd.sar-nb
 !emacro
 set-variable .osd-search.search ""
 set-variable .osd-search.replace ""
-set-variable .osd-search.scheme 1
+set-variable .osd-search.scheme 6
 set-variable .osd-search.hilnames "|Remove |White  |Black  |Red    |Green  |Yellow |Blue   |Magenta|Cyan   |"
 set-variable .osd-search.hilschms &spr "|%d|%d|%d|%d|%d|%d|%d|%d|%d|" $global-scheme .scheme.hlwhite .scheme.hlblack .scheme.hlred .scheme.hlgreen .scheme.hlyellow .scheme.hlblue .scheme.hlmagenta .scheme.hlcyan
 .osd-search.scheme osd-search-set-hilight

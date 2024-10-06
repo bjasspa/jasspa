@@ -171,9 +171,7 @@ osd .osd.draw-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void
 
 define-macro draw
   !force 0 find-buffer  "*draw*"
-  !if $status
-    !return
-  !endif
+  !iif $status  !return
   set-variable #l0 $window-line
   set-variable #l1 $window-acol
   set-variable #l2 $buffer-bname
@@ -226,8 +224,8 @@ define-macro draw
       set-mark
       end-of-buffer
       kill-region
-      goto-line #l0
-      #l1 forward-char
+      goto-line #l1
+      #l0 forward-char
       !return
     !elif &seq #l0 "forward-line"
       1 draw-vert

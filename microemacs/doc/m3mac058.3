@@ -15,21 +15,28 @@
 .Me $a
 .SH SYNOPSIS
 .na
+.I n
 .B occur
+"\|\fIsearch-string\fR\|"
 .ad
 .SH DESCRIPTION
-\fB\&occur\fR\&  performs a regular  expression search for a string in the current
-buffer; generating a list of every occurrence of the regular  expression in the
-buffer. 
+\fB\&occur\fR\&  performs a  search for a string in the current
+buffer;  generating  a list  of  every  occurrence  found.  If the  \fIsearch-string\fR  has not  been  given  via the
+command-line  and the buffer has an active  region  when the command is called, the content of the region will be used
+as the search string, otherwise the string will be prompted for.
 .PP
-On invocation the user is prompted for a 
-.Hl "Regular Expressions" RegularExpressions 2
-the buffer is searched for the expression and the results are presented in the
-\fC*item-list*\fR  window  appearing  at  the  left-hand  side  of the  window.
+The buffer's
+.Ht magic 2m
+mode setting is used to determine whether the  \fIsearch-string\fR is a the regular expression or not, except with the
+current region is used.
 .PP
-The user may interact with the \fC\&*item-list*\fR\& buffer using the mouse or
-\fC<RETURN>\fR,   on   selecting  a  line  then  the  user  is  moved  to  the
-corresponding line in the original buffer.
+The results are presented in the \fC*item-list*\fR window, the user may interact with the \fC\&*item-list*\fR\& buffer
+using  the  mouse or  \fC<RETURN>\fR,  on  selecting  a line then the user is moved to the  corresponding  line in the
+original buffer.
+.PP
+If an argument  \fBn\fR is given then the width of the match sample  string is limited to 15 or 28 chars, with a value
+of 1 or 2, on each side of the match making the output  narrower; this can be used to allow the buffer to be placed in
+a side window such as a toolbar.
 .SH NOTES
 The  \fC*item-list*\fR  window  may be closed with the command 
 .Ht item-list-close 3 
@@ -42,6 +49,7 @@ is a macro defined in \fCitemlist.emf\fR.
 .Ht item-list 3 ,
 .Ht item-list-close 3 ,
 .Ht search-forward 2 ,
+.Ht magic 2m ,
 .Hl "Regular Expressions" RegularExpressions 2
 .ad
 .FH
