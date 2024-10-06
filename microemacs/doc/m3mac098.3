@@ -1,0 +1,89 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac069.3,v 2.2 2009/08/29 17:13:59 jon Exp $
+.Im MicroEmacs command|file|macrodevelop
+.so me.tni
+.TH copy-file 3
+.XI copy-file - "Copy or move files and directories"
+.XI delete-file - "Delete files and directories"
+.SH NAME
+.Me "|copy-file"
+copy-file \- Copy or move files and directories
+.br
+.Me "|delete-file"
+delete-file \- Delete files and directories
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B copy-file
+"\fIfrom\fR" "\fIto\fR"
+.br
+.I n
+.B delete-file
+"\fIfile\fR"
+.ad
+.SH DESCRIPTION
+\fBcopy-file\fR copies or moves file or directory \fIfrom\fR to file name or directory \fBto\fR, particular attention
+should be paid to the last character of \fBto\fR, as a trailing '\fC/\fR' is assumed to be a destination directory as
+opposed to the destination name. For example:
+.CS
+     copy-file "a/" "b"
+.CE    
+will copy directory \fCa\fR to \fCb\fR, effectively renaming it, whereas:
+.CS
+     copy-file "a/" "b/"
+.CE
+will copy directory \fCa\fR into directory \fCb/\fR. The numeric argument \fIn\fR is used to modify the default
+behavior of the command, where the bits are defined as follows:
+.IP \fB0x01\fR
+wWhen set \fBcopy-file\fR copies \fBfrom\fR, when clear \fBcopy-file\fR moves \fBfrom\fR to \fBto\fR.
+.IP \fB0x02\fR
+When set the command will not prompt the user on a file read failure, the copy/move for that file will simply fail.
+.IP \fB0x04\fR
+When set the command will not prompt the user on a file create or write failure, the copy/move for that file/directory
+will simply fail.
+.IP \fB0x08\fR
+When set the command will not prompt the user on a file overwrite issue, 'no' is assumed for all, i.e. no files will 
+be overwritten.
+.IP \fB0x10\fR
+When set the command will not prompt the user on a file overwrite issue, 'yes' is assumed for all, i.e. any file will 
+be overwritten if required.
+.IP \fB0x20\fR
+When set all intermediate directories are create as required, i.e. if \fBto\fR evaluates to a directory that does not 
+currently exist it will be created. If this bit is clear the command will fail if the destination directory does not 
+yet exist.
+.IP \fB0x40\fR
+When set the file name part of \fBfrom\fR is treated as a regular expression, as this can match multiple files 
+\fBto\fR must be a directory.
+.IP \fB0x80\fR
+When set an error is not thrown if \fBfrom\fR does not match a file.
+.PP 
+\fBdelete-file\fR deletes the given \fBfile\fR or directory. The numeric argument \fIn\fR is used to modify the default
+behavior of the command, where the bits are defined as follows:
+.IP \fB0x01\fR
+Not used.
+.IP \fB0x02\fR
+When set the file is trashed first. While this is not guaranteed to put the file beyond recovery it should make it very 
+much harder.
+.IP \fB0x04\fR
+When set the command will not prompt the user on a delete failure, the delete will simply fail and move on to the next.
+.IP \fB0x08\fR
+When set the command will not prompt the user before deleting a read-only file, '\fIno\fR' is assumed and all 
+read-only files will be skipped.
+.IP \fB0x10\fR
+When set the command will not prompt the user before deleting a read-only file, '\fIyes\fR' is assumed and all 
+read-only files will be deleted.
+.IP \fB0x20\fR
+When set the file name part of \fBfile\fR is treated as a regular expression, this can be used to delete multiple 
+files.
+.SH NOTES
+\fBcopy-file\fR and \fBdelete-file\fR are macros defined in \fChkdirlst.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht file-op 2 .
+.ad
+.FH

@@ -17,16 +17,17 @@ change-font-size \- Incrementally change font size
 .ad
 .SH DESCRIPTION
 .B change-font-size
-incrementally  increases,  decrease or resets the size of the display  font. The numeric  argument  \fBn\fR is used to
-determine the action required, a \fB+ve\fR  argument will increase the font size, \fB\-ve\fR will decrease and \fB0\fR
-or no argument will reset the size.
+incrementally increases or decreases the size of the font or resets it back to the original size. The numeric argument
+\fBn\fR is used to determine the action required, a \fB+ve\fR argument will increase the font size by the given
+amount, \fB\-ve\fR will decrease and \fB0\fR or no argument will reset the size.
 .PP
 The size of \fBn\fR is important, a value of \fB+2\fR will increase the font size at twice the rate of \fB+1\fR.
 .PP
-When using a relatively  small text size it is often  desirable to use good bitmap based fonts as these typically offer
-greater clarity, for example  ProggyFonts  (\fIhttp://www.proggyfonts.net/\fR)  are small yet very clear. However these
-fonts do not typically scale well. To address this issue set the \fB.change-font.sz-font\fR command variable to a font
-name that should be used when changing the font size. For example, on UNIX this could be set to:
+When using a relatively small text size it is often desirable to use good bitmap based font rather than a scalable one
+as these typically offer greater clarity. For example ProggyFonts (\fIhttp://www.proggyfonts.net/\fR) are small yet
+very clear. However these fonts do not typically scale well. To address this issue the variable
+\fB.change-font.sz-font\fR can be set to a font name that should be used when changing the font size. For example, on
+UNIX this could be set to:
 .Me $emf-scheme
 .CS
 set-variable .change-font.sz-font "-*-fixed-medium-r-*-*-%d-*-*-*-*-*-iso8859-*"
@@ -38,9 +39,9 @@ On Windows the following could be used:
 set-variable .change-font.sz-font "Consolas"
 .CE
 .Me $ehf-scheme
-When this variable is used the first call to \fBchange-font-size\fR  often leads to a greater size change than desired
+When this variable is used the first call to \fBchange-font-size\fR often leads to a greater size change than desired
 as the new font sizing may differ, however this can then be adjusted via subsequent call to the command. When the font
-size is reset, by giving no numeric  argument  or an  argument  of \fB0\fR, the font as well as the font size is reset
+size is reset, by giving no numeric argument or an argument of \fB0\fR, the font as well as the font size is reset
 back to their original values.
 .SH "NOTES"
 The implementation of \fBchange-font-size\fR is platform specific, on Windows the macro is defined in
