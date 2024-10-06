@@ -51,7 +51,7 @@ getregion(register meRegion *rp)
     long  size;
     
     if (cwp->markLine == NULL)
-        return noMarkSet() ;
+        return noMarkSet();
     if(cwp->dotLine == cwp->markLine)
     {
         rp->line = cwp->dotLine;
@@ -382,27 +382,32 @@ killRectangle(int f, int n)
     soff = getcwcol(cwp);
     if(soff > eoff)
     {
-        llen = eoff ;
-        eoff = soff ;
-        soff = llen ;
+        llen = eoff;
+        eoff = soff;
+        soff = llen;
     }
-    llen = eoff - soff ;
-    if((dotPos=cwp->dotLineNo > cwp->markLineNo))
-        windowSwapDotAndMark(0,1) ;
-    slno = cwp->dotLineNo ;
-    elno = cwp->markLineNo ;
+    llen = eoff - soff;
+    dotPos = (cwp->dotLineNo > cwp->markLineNo) ? 1:0;    
+    if(dotPos)
+        windowSwapDotAndMark(0,1);
+    
+    if(meAnchorSet(cwp->buffer,meANCHOR_ABS_LINE,cwp->dotLine,cwp->dotLineNo,cwp->dotOffset,1))
+        dotPos |= 2;
+            
+    slno = cwp->dotLineNo;
+    elno = cwp->markLineNo;
     /* calculate the maximum length */
-    size = (elno - slno + 1) * (llen + 1) ;
+    size = (elno - slno + 1) * (llen + 1);
     
     /* sort out the kill buffer */
     killInit((lastflag == meCFKILL) || (thisflag == meCFKILL));
     if((kstr = killAddNode(size)) == NULL)
-        return meFALSE ;
+        return meFALSE;
     thisflag = meCFKILL;
     for(;;)
     {
-        meUByte *off, cc ;
-        int lspc=0, ii, jj, kk, ll ;
+        meUByte *off, cc;
+        int lspc=0, ii, jj, kk, ll;
         
         off = windCurLineOffsetEval(cwp);
         coff = 0;
@@ -411,101 +416,125 @@ killRectangle(int f, int n)
         while(ii < kk)
         {
             if(coff == soff)
-                break ;
+                break;
             if((coff+off[ii]) > soff)
             {
-                lspc = soff - coff ;
+                lspc = soff - coff;
                 /* as we can convert tabs to spaces, adjust the offset */
                 if(meLineGetChar(cwp->dotLine,ii) == meCHAR_TAB)
-                    off[ii] -= lspc ;
-                coff = soff ;
-                break ;
+                    off[ii] -= lspc;
+                coff = soff;
+                break;
             }
-            coff += off[ii++] ;
+            coff += off[ii++];
         }
-        jj = ii ;
+        jj = ii;
         if(coff < soff)
         {
             /* line too short to even get to the start point */
-            lspc = soff - coff ;
-            memset(kstr,' ',llen) ;
-            kstr += llen ;
+            lspc = soff - coff;
+            memset(kstr,' ',llen);
+            kstr += llen;
         }
         else
         {
             while(jj < kk)
             {
                 if(coff == eoff)
-                    break ;
+                    break;
                 if((ll = off[jj]) != 0)
                 {
-                    cc = meLineGetChar(cwp->dotLine,jj) ;
+                    cc = meLineGetChar(cwp->dotLine,jj);
                     if((coff+ll) > eoff)
                     {
                         /* as we can convert tabs to spaces, delete and convert */
                         if(cc == meCHAR_TAB)
                         {
-                            lspc += coff + ll - eoff ;
-                            jj++ ;
+                            lspc += coff + ll - eoff;
+                            jj++;
                         }
-                        break ;
+                        break;
                     }
-                    coff += ll ;
+                    coff += ll;
                     if(cc == meCHAR_TAB)
                     {
                         /* convert tabs to spaces for better column support */
                         do
-                            *kstr++ = ' ' ;
-                        while(--ll > 0) ;
+                            *kstr++ = ' ';
+                        while(--ll > 0);
                     }
                     else
-                        *kstr++ = cc ;
+                        *kstr++ = cc;
                 }
-                jj++ ;
+                jj++;
             }
             if(coff < eoff)
             {
                 /* line too short to get to the end point, fill with spaces */
-                coff = eoff - coff ;
-                memset(kstr,' ',coff) ;
-                kstr += coff ;
+                coff = eoff - coff;
+                memset(kstr,' ',coff);
+                kstr += coff;
             }
             
         }
-        *kstr++ = '\n' ;
-        cwp->dotOffset = ii ;
+        *kstr++ = '\n';
+        cwp->dotOffset = ii;
         if((jj -= ii) > 0)
         {
 #if MEOPT_UNDO
-            meUndoAddDelChars(jj) ;
+            meUndoAddDelChars(jj);
 #endif
-            mldelete(jj,NULL) ;
+            mldelete(jj,NULL);
         }
         if(lspc)
         {
             if(lineInsertChar(lspc,' ') <= 0)
             {
-                *kstr = '\0' ;
-                return meFALSE ;
+                *kstr = '\0';
+                return meFALSE;
             }
 #if MEOPT_UNDO
             if(jj > 0)
-                meUndoAddReplaceEnd(lspc) ;
+                meUndoAddReplaceEnd(lspc);
             else
-                meUndoAddInsChars(lspc) ;
+                meUndoAddInsChars(lspc);
 #endif
         }
         if(cwp->dotLineNo == elno)
-            break ;
+            break;
         /* move on to the next line */
-        cwp->dotLineNo++ ;
-        cwp->dotLine  = meLineGetNext(cwp->dotLine);
+        cwp->dotLineNo++;
+        cwp->dotLine = meLineGetNext(cwp->dotLine);
         cwp->dotOffset  = 0;
     }
-    *kstr = '\0' ;
-    if(dotPos)
-        windowSwapDotAndMark(0,1) ;
-    return meTRUE ;
+    *kstr = '\0';
+    if(dotPos & 2)
+    {
+        meAnchor *p = cwp->buffer->anchorList;
+        
+        while(p != NULL)
+        {
+            if(p->name == meANCHOR_ABS_LINE)
+            {
+                if(dotPos & 1)
+                {
+                    cwp->dotLine = p->line;
+                    cwp->dotOffset = p->offs;
+                    cwp->dotLineNo = slno;
+                }
+                else
+                {
+                    cwp->markLine = p->line;
+                    cwp->markOffset = p->offs;
+                    cwp->markLineNo = slno;
+                }
+                break;
+            }
+            p = p->next;
+        }
+        meAnchorDelete(cwp->buffer,meANCHOR_ABS_LINE);
+    }
+    return meTRUE;
 }
 
 static int

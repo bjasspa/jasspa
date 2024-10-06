@@ -87,24 +87,23 @@ static void
 shilightWindow(meWindow *wp)
 {
     meInt lineNo;           /* Toprow line number */
-
+    
     /* Check to see if any selection hilighting is to be removed. */
-    if(((selhilight.flags & SELHIL_ACTIVE) == 0) ||
-       (wp->buffer != selhilight.bp))
+    if(((selhilight.flags & SELHIL_ACTIVE) == 0) || (wp->buffer != selhilight.bp))
         goto remove_hilight;
 
     if((wp->updateFlags & (WFSELHIL|WFREDRAW)) == 0)
-        return ;
+        return;
 
     /* Hilight selection has been modified. Work out the start and
      * end points
      */
-    if (selhilight.flags & SELHIL_CHANGED)
+    if(selhilight.flags & SELHIL_CHANGED)
     {
         selhilight.flags &= ~(SELHIL_CHANGED|SELHIL_SAME);
 
         /* dot ahead of mark line */
-        if (selhilight.dotLineNo > selhilight.markLineNo)
+        if(selhilight.dotLineNo > selhilight.markLineNo)
         {
             selhilight.sline = selhilight.markLineNo;
             selhilight.eline = selhilight.dotLineNo;
@@ -112,7 +111,7 @@ shilightWindow(meWindow *wp)
             selhilight.eoff = selhilight.dotOffset;
         }
         /* dot behind mark line */
-        else if (selhilight.dotLineNo < selhilight.markLineNo)
+        else if(selhilight.dotLineNo < selhilight.markLineNo)
         {
             selhilight.sline = selhilight.dotLineNo;
             selhilight.eline = selhilight.markLineNo;
@@ -125,13 +124,13 @@ shilightWindow(meWindow *wp)
             selhilight.sline = selhilight.markLineNo;
             selhilight.eline = selhilight.markLineNo;
             /* dot ahead of mark */
-            if (selhilight.markOffset > selhilight.dotOffset)
+            if(selhilight.markOffset > selhilight.dotOffset)
             {
                 selhilight.soff = selhilight.dotOffset;
                 selhilight.eoff = selhilight.markOffset;
             }
             /* dot behind mark line */
-            else if (selhilight.markOffset < selhilight.dotOffset)
+            else if(selhilight.markOffset < selhilight.dotOffset)
             {
                 selhilight.soff = selhilight.markOffset;
                 selhilight.eoff = selhilight.dotOffset;
@@ -142,22 +141,21 @@ shilightWindow(meWindow *wp)
         }
     }
 
-    lineNo = wp->vertScroll ;
-    if ((selhilight.flags & SELHIL_SAME) ||
-        (lineNo > selhilight.eline) ||
+    lineNo = wp->vertScroll;
+    if ((selhilight.flags & SELHIL_SAME) || (lineNo > selhilight.eline) ||
         (lineNo+wp->textDepth-1 < selhilight.sline))
     {
 remove_hilight:
         if(wp->updateFlags & WFSELDRAWN)
         {
             meVideoLine  *vptr;               /* Pointer to the video block */
-            meUShort  sline, eline ;          /* physical screen line to update */
+            meUShort  sline, eline;           /* physical screen line to update */
 
             /* Determine the video line position and determine the video block that
              * is being used. */
             vptr = wp->video->lineArray;      /* Video block */
             sline = wp->frameRow;             /* Start line */
-            eline = sline + wp->textDepth ;  /* End line */
+            eline = sline + wp->textDepth;    /* End line */
 
             while (sline < eline)
             {
@@ -167,19 +165,19 @@ remove_hilight:
                     vptr[sline].flag = (vflag & ~VFSHMSK)|VFCHNGD;
                 sline++;
             }
-            wp->updateFlags = (wp->updateFlags & ~WFSELDRAWN) | WFMAIN ;
+            wp->updateFlags = (wp->updateFlags & ~WFSELDRAWN) | WFMAIN;
         }
     }
     else
     {
         meVideoLine *vptr;                /* Pointer to the video block */
-        meUShort  sline, eline ;          /* physical screen line to update */
+        meUShort  sline, eline;           /* physical screen line to update */
 
         /* Determine the video line position and determine the video block that
          * is being used. */
         vptr = wp->video->lineArray;      /* Video block */
         sline = wp->frameRow;             /* Start line */
-        eline = sline + wp->textDepth ;  /* End line */
+        eline = sline + wp->textDepth;    /* End line */
 
         /* Mark all of the video lines with the update. */
         while (sline < eline)
@@ -211,7 +209,7 @@ remove_hilight:
             sline++;                        /* Next video line */
             lineNo++;                       /* Next line number */
         }
-        wp->updateFlags |= (WFSELDRAWN|WFMAIN) ;
+        wp->updateFlags |= (WFSELDRAWN|WFMAIN);
     }
 }
 
@@ -219,24 +217,24 @@ remove_hilight:
 int
 showCursor(int f, int n)
 {
-    int ii ;
+    int ii;
 
-    ii = cursorState ;
+    ii = cursorState;
     if(f)
-        cursorState += n ;
+        cursorState += n;
     else
         cursorState = 0 ;
     if((cursorState >= 0) && (ii < 0))
     {
         if(cursorBlink)
             /* kick off the timer */
-            TThandleBlink(1) ;
+            TThandleBlink(1);
         else
-            TTshowCur() ;
+            TTshowCur();
     }
     else if((cursorState < 0) && (ii >= 0))
-        TThideCur() ;
-    return meTRUE ;
+        TThideCur();
+    return meTRUE;
 }
 
 int
@@ -245,9 +243,9 @@ showRegion(int f, int n)
     register meWindow *cwp;
     int absn;
 
-    absn = (n < 0) ? -n:n ;
+    absn = (n < 0) ? -n:n;
 
-    if(((absn == 1) || (absn == 2)) && !(selhilight.flags & SELHIL_FIXED))
+    if(((n == 1) || (absn == 2)) && !(selhilight.flags & SELHIL_FIXED))
         return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No current region]");
     cwp = frameCur->windowCur;
     if(((absn == 2) || (n == 4)) && (selhilight.bp != cwp->buffer))
@@ -256,7 +254,7 @@ showRegion(int f, int n)
     {
     case -3:
         selhilight.bp = cwp->buffer;               /* Select the current buffer */
-        selhilight.flags = SELHIL_ACTIVE|SELHIL_CHANGED ;
+        selhilight.flags = SELHIL_ACTIVE|SELHIL_CHANGED;
         selhilight.markOffset = cwp->dotOffset;    /* Current mark offset */
         selhilight.markLineNo = cwp->dotLineNo;    /* Current mark line number */
         selhilight.dotOffset = cwp->dotOffset;     /* Current mark offset */
@@ -264,69 +262,69 @@ showRegion(int f, int n)
         break ;
 
     case -2:
-        cwp->updateFlags |= WFMOVEL ;
+        cwp->updateFlags |= WFMOVEL;
         if((meWindowGotoLine(cwp,selhilight.markLineNo+1) > 0) &&
            (selhilight.markOffset <= meLineGetLength(cwp->dotLine)))
         {
-            cwp->dotOffset = (meUShort) selhilight.markOffset ;
-            return meTRUE ;
+            cwp->dotOffset = (meUShort) selhilight.markOffset;
+            return meTRUE;
         }
-        return meFALSE ;
+        return meFALSE;
 
     case -1:
-        selhilight.flags &= ~SELHIL_ACTIVE ;
-        break ;
+        selhilight.flags &= ~SELHIL_ACTIVE;
+        break;
     case 0:        /* Show status of hilighting */
-        n = 0 ;
+        n = 0;
         if(selhilight.flags & SELHIL_ACTIVE)
-            n |= 1 ;
+            n |= 1;
         if(selhilight.flags & SELHIL_FIXED)
-            n |= 2 ;
+            n |= 2;
         if(selhilight.bp == cwp->buffer)
         {
-            n |= 4 ;
+            n |= 4;
             /* check for d >= dot > m */
             if(((selhilight.dotLineNo < cwp->dotLineNo) ||
                 ((selhilight.dotLineNo == cwp->dotLineNo) && (selhilight.dotOffset <= cwp->dotOffset))) &&
                ((selhilight.markLineNo > cwp->dotLineNo) ||
                 ((selhilight.markLineNo == cwp->dotLineNo) && (selhilight.markOffset > cwp->dotOffset))))
-                n |= 8 ;
+                n |= 8;
             /* check for m >= dot > d */
             else if(((selhilight.markLineNo < cwp->dotLineNo) ||
                      ((selhilight.markLineNo == cwp->dotLineNo) && (selhilight.markOffset <= cwp->dotOffset))) &&
                     ((selhilight.dotLineNo > cwp->dotLineNo) ||
                      ((selhilight.dotLineNo == cwp->dotLineNo) && (selhilight.dotOffset > cwp->dotOffset))))
-                n |= 8 ;
+                n |= 8;
         }
-        sprintf((char *)resultStr,"%d",n) ;
-        return meTRUE ;
+        sprintf((char *)resultStr,"%d",n);
+        return meTRUE;
 
     case 1:
         selhilight.flags |= SELHIL_ACTIVE;
         if(f || (selhilight.uFlags & SELHILU_KEEP))
-            selhilight.flags |= SELHIL_KEEP ;
-        break ;
+            selhilight.flags |= SELHIL_KEEP;
+        break;
 
     case 2:
-        cwp->updateFlags |= WFMOVEL ;
+        cwp->updateFlags |= WFMOVEL;
         if((meWindowGotoLine(cwp,selhilight.dotLineNo+1) > 0) &&
            (selhilight.dotOffset <= meLineGetLength(cwp->dotLine)))
         {
-            cwp->dotOffset = (meUShort) selhilight.dotOffset ;
-            return meTRUE ;
+            cwp->dotOffset = (meUShort) selhilight.dotOffset;
+            return meTRUE;
         }
-        return meFALSE ;
+        return meFALSE;
 
     case 3:
         if(((selhilight.flags & (SELHIL_FIXED|SELHIL_ACTIVE)) == 0) || (selhilight.bp != cwp->buffer))
         {
-            selhilight.bp = cwp->buffer ;
+            selhilight.bp = cwp->buffer;
             selhilight.markOffset = cwp->dotOffset;  /* Current mark offset */
             selhilight.markLineNo = cwp->dotLineNo;  /* Current mark line number */
         }
-        selhilight.flags |= SELHIL_FIXED|SELHIL_CHANGED|SELHIL_ACTIVE ;
+        selhilight.flags |= SELHIL_FIXED|SELHIL_CHANGED|SELHIL_ACTIVE;
         if(selhilight.uFlags & SELHILU_KEEP)
-            selhilight.flags |= SELHIL_KEEP ;
+            selhilight.flags |= SELHIL_KEEP;
         selhilight.dotOffset = cwp->dotOffset;      /* Current mark offset */
         selhilight.dotLineNo = cwp->dotLineNo;      /* Current mark line number */
         break ;
@@ -338,10 +336,10 @@ showRegion(int f, int n)
         break ;
 
     default:
-        return meABORT ;
+        return meABORT;
     }
-    meBufferAddModeToWindows(selhilight.bp, WFSELHIL);
-    return meTRUE ;
+    meBufferAddModeToWindows(selhilight.bp,WFSELHIL);
+    return meTRUE;
 }
 #endif
 
@@ -1577,13 +1575,11 @@ reframe(meWindow *wp)
     register long  ii ;
 
     /* See if the selection hilighting is enabled for the buffer */
-    if ((selhilight.flags & SELHIL_ACTIVE) &&
-        (selhilight.bp == wp->buffer))
+    if((selhilight.flags & SELHIL_ACTIVE) && (selhilight.bp == wp->buffer))
         wp->updateFlags |= WFSELHIL;
 
 #if MEOPT_IPIPES
-    if(meModeTest(wp->buffer->mode,MDLOCK) &&
-       (wp->dotLine->flag & meLINE_ANCHOR_AMARK))
+    if(meModeTest(wp->buffer->mode,MDLOCK) && (wp->dotLine->flag & meLINE_ANCHOR_AMARK))
     {
         meAnchor *ap=wp->buffer->anchorList ;
 
@@ -1612,16 +1608,16 @@ reframe(meWindow *wp)
                 /* Force the scroll box to be updated if present. */
                 wp->updateFlags |= WFSBOX|WFLOOKBK ;
             }
-            return ;
+            return;
         }
     }
 #endif
     /* if not a requested reframe, check for a needed one */
     if(!(wp->updateFlags & WFFORCE))
     {
-        ii = wp->dotLineNo - wp->vertScroll ;
+        ii = wp->dotLineNo - wp->vertScroll;
         if((ii >= 0) && (ii < wp->textDepth))
-            return ;
+            return;
     }
     /* reaching here, we need a window refresh */
     ii = wp->windowRecenter ;

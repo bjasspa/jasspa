@@ -1401,54 +1401,100 @@ killPara(int f, int n)
 int
 countWords(int f, int n)
 {
-    register meLine *lp;		/* current line to scan */
+    meLine *blp;		/* Base line pointer */
+    meUByte *outBuf;            /* output buffer */
+    register meLine *lp;	/* current line to scan */
     register int offset;	/* current char to scan */
     long size;			/* size of region left to count */
     register int ch;		/* current character to scan */
     register int wordflag;	/* are we in a word now? */
     register int lastword;	/* were we just in a word? */
     long nwords;		/* total # of words */
+    long nwchrs;		/* total # of word chars */
     long nchars;		/* total number of chars */
     int nlines;			/* total number of lines in region */
     int status;			/* status return code */
     meRegion region;		/* region to look at */
-
-    /* make sure we have a region to count */
-    if((status = getregion(&region)) <= 0)
-        return status;
-    lp = region.line;
-    offset = region.offset;
-    size = region.size;
-
-    /* count up things */
-    lastword = meFALSE;
-    nchars = 0L;
-    nwords = 0L;
-    nlines = 0;
-    while(size--)
+    
+    outBuf = resultStr;
+    if((n & 6) == 0)
+        n |= 14;
+   
+    for(;;)
     {
-        /* get the current character */
-        if((ch = meLineGetChar(lp, offset)) == '\0')
-        {   /* end of line */
-            ch = meCHAR_NL;
-            lp = meLineGetNext(lp);
+        if(n & 2)
+        {
+            blp = frameCur->windowCur->buffer->baseLine;
+            /* setting size to -1 means it will keep going till the end of the buffer */
+            lp = meLineGetNext(blp);
             offset = 0;
-            nlines++ ;
+            size = -1;
         }
         else
-            offset++ ;
-
-        /* and tabulate it */
-        wordflag = isWord(ch) ;
-        if((wordflag != meFALSE) && (lastword == meFALSE))
-            ++nwords;
-        lastword = wordflag;
-        ++nchars;
+        {
+            /* make sure we have a region to count */
+            if((status = getregion(&region)) <= 0)
+            {
+                if((n & 8) == 0)
+                    return status;
+                if(n & 1)
+                    meStrcpy(outBuf,"Region: No mark set");
+                else
+                    meStrcpy(outBuf,"|-1|-1|-1|-1|");
+                break;
+            }
+            lp = region.line;
+            offset = region.offset;
+            size = region.size;
+        }
+        /* count up things */
+        lastword = meFALSE;
+        nchars = 0L;
+        nwords = 0L;
+        nwchrs = 0L;
+        nlines = 0;
+        while(size--)
+        {
+            /* get the current character */
+            ++nchars;
+            if((ch = meLineGetChar(lp, offset)) == '\0')
+            {   /* end of line */
+                nlines++ ;
+                if((lp = meLineGetNext(lp)) == blp)
+                    break;
+                ch = meCHAR_NL;
+                offset = 0;
+            }
+            else
+                offset++ ;
+            
+            /* and tabulate it */
+            wordflag = isWord(ch) ;
+            if(wordflag != meFALSE)
+            {
+                nwchrs++;
+                if(lastword == meFALSE)
+                    nwords++;
+            }
+            lastword = wordflag;
+        }
+        /* and report on the info */
+        if(nwords)
+            nwchrs = ((10*nwchrs)+(nwords>>1))/nwords;
+        if(n & 1)
+            outBuf += sprintf((char *)outBuf,"%s: %ld Words (%ld.%ld), %ld Chars, %d Lines",(n & 2) ? "Buffer":"Region",nwords,nwchrs/10,nwchrs%10,nchars,nlines+1);
+        else
+            outBuf += sprintf((char *)outBuf,"|%ld|%ld.%ld|%ld|%d|",nwords,nwchrs/10,nwchrs%10,nchars,nlines+1);
+        if((n & 6) != 6)
+            break;
+        if(n & 1)
+            *outBuf++ = ' ';
+        else
+            outBuf--;
+        n ^= 2;
     }
-
-    /* and report on the info */
-    sprintf((char *)resultStr,"%ld Words, %ld Chars, %d Lines",
-            nwords,nchars,nlines+1);
-    return mlwrite(MWSPEC,resultStr) ;
+    if(n & 1)
+        return mlwrite(MWSPEC,resultStr);
+    return meTRUE;
 }
 #endif
