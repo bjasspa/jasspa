@@ -31,9 +31,10 @@ jobs:
            ls -l /usr/
            echo INFO: OpenSSL 4
            ls -l /include/
-       
+           exit 1
+           
       - name: Checkout code
-        uses: actions/checkout@v9
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.refToBuild }}
        
