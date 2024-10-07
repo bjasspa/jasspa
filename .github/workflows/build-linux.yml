@@ -32,7 +32,9 @@ jobs:
            echo INFO: OpenSSL 4
            ls -l /home/linuxbrew/.linuxbrew/bin
            echo INFO: OpenSSL 5
-           ls -l /home/linuxbrew/.linuxbrew/share/bin
+           ls -l /home/linuxbrew/.linuxbrew/lib
+           echo INFO: OpenSSL 6
+           brew search openssl
            exit 1
            
       - name: Checkout code
