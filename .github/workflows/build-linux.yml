@@ -24,13 +24,15 @@ jobs:
       - name: Check dependencies
         run: |
            echo INFO: OpenSSL 1
-           ls -l /lib/x86_64-linux-gnu/
+           ls -l /home/linuxbrew
            echo INFO: OpenSSL 2
-           ls -l /home/
+           ls -l /home/linuxbrew/.linuxbrew
            echo INFO: OpenSSL 3
-           ls -l /usr/
+           ls -l /home/linuxbrew/.linuxbrew/share
            echo INFO: OpenSSL 4
-           ls -l /include/
+           ls -l /home/linuxbrew/.linuxbrew/bin
+           echo INFO: OpenSSL 5
+           ls -l /home/linuxbrew/.linuxbrew/share/bin
            exit 1
            
       - name: Checkout code
