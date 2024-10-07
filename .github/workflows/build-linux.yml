@@ -32,9 +32,15 @@ jobs:
            echo INFO: OpenSSL 4
            ls -l /home/linuxbrew/.linuxbrew/bin
            echo INFO: OpenSSL 5
-           ls -l /home/linuxbrew/.linuxbrew/lib
+           ls -l /home/linuxbrew/.linuxbrew/Cellar
            echo INFO: OpenSSL 6
-           brew search openssl
+           /home/linuxbrew/.linuxbrew/bin/brew search openssl
+           echo INFO: OpenSSL 6.5
+           /home/linuxbrew/.linuxbrew/bin/brew search libssl
+           echo INFO: OpenSSL 7
+           apt list --installed
+           echo INFO: OpenSSL 8
+           apt search libssl
            exit 1
            
       - name: Checkout code
