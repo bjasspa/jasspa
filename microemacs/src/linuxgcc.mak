@@ -97,10 +97,14 @@ PRGLIBS  =
 else
 
 ifneq (,$(OPENSSLP))
+else ifneq (,$(OPENSSLPATH))
+OPENSSLP = 1 -I$(OPENSSLPATH)
 else ifeq (0,$(shell printf '$(HASH)include <stdio.h>\n$(HASH)include <openssl/ssl.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null > /dev/null 2> /dev/null - ; echo $$? ))
 OPENSSLP = 1
 else ifeq (0,$(shell printf '$(HASH)include <stdio.h>\n$(HASH)include <openssl/ssl.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -I/usr/local/opt/openssl/include -o /dev/null > /dev/null 2> /dev/null - ; echo $$? ))
 OPENSSLP = 1 -I/usr/local/opt/openssl/include
+else ifeq (0,$(shell printf '$(HASH)include <stdio.h>\n$(HASH)include <openssl/ssl.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -I/home/linuxbrew/.linuxbrew/opt/openssl@3.0/include -o /dev/null > /dev/null 2> /dev/null - ; echo $$? ))
+OPENSSLP = 1 -I/home/linuxbrew/.linuxbrew/opt/openssl@3.0/include
 endif
 ifeq (,$(OPENSSLP))
 $(warning WARNING: No OpenSSL support found, https support will be disabled.)

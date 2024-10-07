@@ -21,24 +21,16 @@ jobs:
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
     steps:
-      - name: Check dependencies
+      - name: Install dependencies
         run: |
-           echo INFO: OpenSSL 6.5
+           echo INFO: uname -a
+           uname -a
+           echo INSTALL: OpenSSL@3.0
            /home/linuxbrew/.linuxbrew/bin/brew install openssl@3.0
            echo INFO: OpenSSL 1
-           ls -l /home/linuxbrew
+           ls /home/linuxbrew/.linuxbrew/opt/openssl@3.0/
            echo INFO: OpenSSL 2
-           ls -l /home/linuxbrew/.linuxbrew
-           echo INFO: OpenSSL 3
-           ls -l /home/linuxbrew/.linuxbrew/share
-           echo INFO: OpenSSL 4
-           ls -l /home/linuxbrew/.linuxbrew/bin
-           echo INFO: OpenSSL 5
-           ls -l /home/linuxbrew/.linuxbrew/Cellar
-           echo INFO: OpenSSL 6
-           ls -l /home/linuxbrew/.linuxbrew/lib
-           echo INFO: OpenSSL 7
-           exit 1
+           ls /home/linuxbrew/.linuxbrew/opt/openssl@3.0/lib
            
       - name: Checkout code
         uses: actions/checkout@v4
@@ -55,12 +47,12 @@ jobs:
       - name: Compile linux mec
         run: |
           cd ./microemacs/src
-          ./build.sh -t c
+          ./build.sh -t c -v OPENSSLPATH=/home/linuxbrew/.linuxbrew/opt/openssl@3.0/include
 
       - name: Compile linux mew
         run: |
           cd ./microemacs/src
-          ./build.sh -t w
+          ./build.sh -t w -v OPENSSLPATH=/home/linuxbrew/.linuxbrew/opt/openssl@3.0/include
 
       - name: Create linux binaries download
         run: |
@@ -98,9 +90,12 @@ jobs:
           export MEVER=`./bin/linux5-intel64/mec -p @contribs/ver.emf`
           rm -rf tfs
           mkdir -p tfs/bin/linux5-intel64
-          cd tfs
-          cp /lib/x86_64-linux-gnu/libcrypto.so bin/linux5-intel64
-          cp /lib/x86_64-linux-gnu/libssl.so bin/linux5-intel64
+          cd tfs/bin/linux5-intel64
+          cp /home/linuxbrew/.linuxbrew/opt/openssl@3.0/lib/libcrypto.so .
+          cp /home/linuxbrew/.linuxbrew/opt/openssl@3.0/lib/libssl.so .
+          cp /home/linuxbrew/.linuxbrew/opt/openssl@3.0/LICENSE.txt .
+          cp /home/linuxbrew/.linuxbrew/opt/openssl@3.0/README.md .
+          cd ../..
           zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_bin_linux_openssl bin
           cd ..
           ./bin/linux5-intel64/tfs -o ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_linux_intel64.tfs -a ./mesingle/tfs_hd tfs

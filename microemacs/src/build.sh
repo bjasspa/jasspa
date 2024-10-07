@@ -48,6 +48,8 @@ do
         echo "             c   Console support only (Termcap/ncurses - default)"
         echo "             w   Window support only (XTerm)"
         echo "             cw  Console and window support"
+        echo "   -v <variable>=<value>"
+        echo "        : Build with given variable override, (e.g. -v OPENSSLPATH=...)"
         echo ""
         exit 1
     elif [ $1 = "-32" ] ; then
@@ -85,6 +87,9 @@ do
     elif [ $1 = "-t" ] ; then
         shift
         METYPE=" BTYP=$1"
+    elif [ $1 = "-v" ] ; then
+        shift
+        OPTIONS=" $1$OPTIONS"
     else
         echo "Error: Unkown option $1, run build -h for help"
         echo ""
