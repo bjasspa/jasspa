@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Check dependencies
         run: |
+           echo INFO: OpenSSL 6.5
+           /home/linuxbrew/.linuxbrew/bin/brew install openssl@3.0
            echo INFO: OpenSSL 1
            ls -l /home/linuxbrew
            echo INFO: OpenSSL 2
@@ -34,13 +36,8 @@ jobs:
            echo INFO: OpenSSL 5
            ls -l /home/linuxbrew/.linuxbrew/Cellar
            echo INFO: OpenSSL 6
-           /home/linuxbrew/.linuxbrew/bin/brew search openssl
-           echo INFO: OpenSSL 6.5
-           /home/linuxbrew/.linuxbrew/bin/brew search libssl
+           ls -l /home/linuxbrew/.linuxbrew/lib
            echo INFO: OpenSSL 7
-           apt list --installed
-           echo INFO: OpenSSL 8
-           apt search libssl
            exit 1
            
       - name: Checkout code
