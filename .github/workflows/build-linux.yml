@@ -22,7 +22,6 @@ jobs:
 
     steps:
       - name: Check dependencies
-        uses: actions/checkout@v4
         run: |
            echo INFO: OpenSSL 1
            ls -l /lib/x86_64-linux-gnu/
