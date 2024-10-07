@@ -21,8 +21,20 @@ jobs:
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
     steps:
-      - name: Checkout code
+      - name: Check dependencies
         uses: actions/checkout@v4
+        run: |
+           echo INFO: OpenSSL 1
+           ls -l /lib/x86_64-linux-gnu/
+           echo INFO: OpenSSL 2
+           ls -l /home/
+           echo INFO: OpenSSL 3
+           ls -l /usr/
+           echo INFO: OpenSSL 4
+           ls -l /include/
+       
+      - name: Checkout code
+        uses: actions/checkout@v9
         with:
           ref: ${{ inputs.refToBuild }}
        

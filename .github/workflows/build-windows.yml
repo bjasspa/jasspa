@@ -40,7 +40,7 @@ jobs:
         shell: pwsh
         run: |
           cd .\microemacs\3rdparty
-          Invoke-WebRequest https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.0.14.zip -OutFile openssl.zip
+          Invoke-WebRequest https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.0.15.zip -OutFile openssl.zip
           Expand-Archive -Path .\openssl.zip -DestinationPath .
           dir .
           
