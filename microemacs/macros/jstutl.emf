@@ -840,7 +840,7 @@
   !endif
   ; remove the temporary start and end markers
   set-mark
-  3 backward-line
+  2 backward-line
   -1 kill-region
   beginning-of-buffer
   set-mark
