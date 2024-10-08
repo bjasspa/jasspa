@@ -52,8 +52,10 @@ osd \- Manage the On-Screen Display
 \fIn\fR \fBosd\fR
 .ad
 .SH DESCRIPTION
-The \fBosd\fR  command  manages the  On-Screen  Display, menu and dialogs. The
-command takes various forms as defined by the arguments.  Each of the argument
+The \fBosd\fR  command  manages the  On-Screen  Display, menu and dialogs. For information about the main menu see
+.Hl "Top Main Menu" MainMenu 3 .
+.PP
+The command takes various forms as defined by the arguments.  Each of the argument
 configurations is defined as follows:-
 .SS "Main Menu-Bar Status"
 .na
@@ -112,107 +114,83 @@ drawn at the bottom.
 Draw  boarder,  draws a boarder  around the  outside of the  dialog.  See also
 \fIflag\fR \fBt\fR (title) as flag effects the boarder.
 .IP \fBa\fR
-Defines  the  absolute  start-up  position  of  the  dialog  in the  arguments
-\fIx-pos\fR   and  \fIy-pos\fR,   which  are  the  column  and  row  positions
-respectively  of the dialog from the top left-hand  corner of the display. The
-arguments  must be  specified.  e.g. the main menu is defined with an absolute
-position  of (0,0). If the dialog can not be fully  drawn on the screen at the
-given position it will be moved to a position which shows the most.
+Defines the absolute  start-up  position of the dialog in the arguments  \fIx-pos\fR  and  \fIy-pos\fR,  which are the
+column and row positions  respectively of the dialog from the top left-hand  corner of the display. The arguments must
+be specified.  e.g. the main menu is defined with an absolute  position of (0,0). If the dialog can not be fully drawn
+on the screen at the given position it will be moved to a position which shows the most.
 .IP \fBo\fR
-Specifies  an  offset  to the  dialog  position  calculated  by  \*(mS  in the
-arguments  \fIx-pos\fR and \fIy-pos\fR,  which are the column and row offsets.
-This flag is ignored  when flag \fBa\fR is also  specified.  If the dialog can
-not be fully  drawn on the  screen at the new  position  it will be moved to a
-position which shows the most.
+Specifies an offset to the dialog position calculated by \*(mS in the arguments \fIx-pos\fR and \fIy-pos\fR, which are
+the column and row offsets.  This flag is ignored when flag \fBa\fR is also  specified. If the dialog can not be fully
+drawn on the screen at the new position it will be moved to a position which shows the most.
 .IP \fBs\fR
-Sets the size of the dialog. \fBosd\fR  automatically  resizes a dialog to fit
-the contents, this flag should be considered as a size hint for \fBosd\fR, and
-is not  guaranteed  to be honored. If the dialog has a boarder  (flag \fBb\fR)
-the size given should include the boarder size.
+Sets the size of the  dialog.  \fBosd\fR  automatically  resizes  a dialog to fit the  contents,  this flag  should be
+considered  as a size hint for  \fBosd\fR,  and is not  guaranteed  to be  honored. If the dialog has a boarder  (flag
+\fBb\fR) the size given should include the boarder size.
 .IP
-The   arguments,   \fImin-width\fR,   \fImin-depth\fR,   \fImax-width\fR   and
-\fImax-depth\fR must be specified, as
+The arguments, \fImin-width\fR, \fImin-depth\fR, \fImax-width\fR and \fImax-depth\fR must be specified, as
 .RS
 .IP \fB+ve\fR
 The actual size of the dialog, minimum and maximum sizes.
 .IP \fB0\fR
-\fImin\fR  value should be specified as desired  window size, \fImax\fR may be
-0 which specifies the screen size.
+\fImin\fR value should be specified as desired window size, \fImax\fR may be 0 which specifies the screen size.
 .IP \fB\-ve\fR
-\fImin\fR defines the maximum size.
-\fImax\fR is unlimited.
+\fImin\fR defines the maximum size. \fImax\fR is unlimited.
 .LP
-The following  table shows  possible  combination  of the sing  parameters and
-their effect:-
+The following table shows possible combination of the sing parameters and their effect:-
 .IP "\fImin\fR=0, \fImax\fR=0"
-Default setting, makes dialog as small as possible,
-with a maximum size of the screen.
+Default setting, makes dialog as small as possible, with a maximum size of the screen.
 .IP "\fImin\fR=0, \fImax\fR=50"
 Make dialog as small as possible with a max of 50 characters.
 .IP "\fImin\fR=50, \fImax\fR=0"
-Make dialog as small as possible,  but make it
-at least 50 characters  big and no larger  than the
-screen.
+Make dialog as small as possible, but make it at least 50 characters big and no larger than the screen.
 .IP "\fImin\fR=30, \fImax\fR=-1"
-Make  dialog  at  least  30 characters  big with no
-upper  limit, very  useful for  dialogs  being
-used as scrolled children.
+Make dialog at least 30 characters big with no upper limit, very useful for dialogs being used as scrolled children.
 .IP "\fImin\fR=\-1, \fImax\fR=50"
 Make dialog 50 characters big.
 .IP "\fImin\fR=-1, \fImax\fR=0"
 Make dialog the same size as the screen.
 .IP "\fImin\fR=\-1, \fImax\fR=\-1"
-Make dialog as big as possible  (do not do this
-unless  you have a large  amount  of memory to throw away).
+Make dialog as big as possible (do not do this unless you have a large amount of memory to throw away).
 .RE
 .IP \fBS\fR
-Sets the main  dialog  scheme,  The default  scheme  when not specified is
+Sets the main dialog scheme, The default scheme when not specified is
 .Ht $osd-scheme 5
 See macro file \fCfileopen.emf\fR for an example.
 .IP \fBD\fR
-Sets  "\fIdefault-button\fR"  to be the button executed when the  \fCreturn\fR
-key is pressed and no other button has the focus. The current  default  button
-is  typically  denoted by "\fC>  Button  <\fR",  other  buttons are denoted by
-"\fC[ Button ]\fR" or have no denoting characters, this is configured via the
+Sets "\fIdefault-button\fR" to be the button executed when the \fCreturn\fR key is pressed and no other button has the
+focus. The current  default  button is  typically  denoted by "\fC> Button  <\fR", other  buttons are denoted 
+by "\fC[ Button ]\fR" or have no denoting characters, this is configured via the
 .Ht $window-chars 5
 variable.
 .IP \fBI\fR
-Set  "\fIinitial-item\fR"  to be selected when the dialog first opens, if this
-item is an  automatically  opened  sub-menu  then the child  menu will also be
-opened.
+Set  "\fIinitial-item\fR" to be selected when the dialog first opens, if this item is an automatically opened sub-menu
+then the child menu will also be opened.
 .IP \fBt\fR
-Title bar is present \- draws the title bar. The \fItext\fR argument is
-optional
+Title bar is present \- draws the title bar. The \fItext\fR argument is optional
 .\"   (but   strikes   me  now   that   if  not   given   and
 .\"resize-command  or init-command  are then things go wrong (help)).
 Also see flags \fBH\fR, \fBc\fR and \fBr\fR.
 .IP \fBH\fR
-Defines the title bar color scheme if flag \fBt\fR is specified.
-If \fIt\fR is absent the  option is ignored.
+Defines the title bar color scheme if flag \fBt\fR is specified. If \fIt\fR is absent the option is ignored.
 .IP \fBc\fR
-Centers the title bar text if  specified.  Option  \fBt\fR must be  specified,
-otherwise the option is ignored.
+Centers the title bar text if specified. Option \fBt\fR must be specified, otherwise the option is ignored.
 .IP \fBr\fR
-Right  justifies  the  title bar text if  specified.  Option  \fBt\fR  must be
-specified, otherwise the option is ignored.
+Right justifies the title bar text if specified. Option \fBt\fR must be specified, otherwise the option is ignored.
 .IP \fBR\fR
-Defines the dialog as re-sizable.  The  \fIresize-command\fR  argument must be
-specified and the command should resize the dialog to the sizes given in
+Defines the dialog as re-sizable.  The  \fIresize-command\fR  argument must be specified and the command should resize
+the dialog to the sizes given in
 .Ht $result 5
-in the format  "\fCwwwwdddd\fR", where \fCw\fR is width and \fCd\fR the depth.
-If  the   \fIresize-command\fR  is  aborted  then  that  resize  operation  is
-abandoned.
+in the format  "\fCwwwwdddd\fR", where \fCw\fR is width and \fCd\fR the depth. If the  \fIresize-command\fR is aborted
+then that resize operation is abandoned.
 .IP \fBM\fR
 Identifies the dialog as the main menu dialog.
 .IP \fBC\fR
-Binds a command to the dialog, which is automatically executed when the dialog
-is opened. When the dialog with a \fBC\fR  attribute is opened, it is rendered
-on the screen and then a command, defined by \fIcontrol-command\fR is invoked,
-when the command completes the dialog is closed.
+Binds a command to the dialog,  which is  automatically  executed  when the dialog is opened.  When the dialog  with a
+\fBC\fR  attribute  is opened, it is rendered on the screen and then a command,  defined by  \fIcontrol-command\fR  is
+invoked, when the command completes the dialog is closed.
 .IP
-The  command  dialog  is  typically  used to create  status  messages.  e.g. a
-"\fCBusy - Please  Wait\fR" dialog box, such a dialog may be implemented  when
-saving  the  current  buffer  then  create  the  simple  dialog  and  sent the
+The command dialog is typically used to create status  messages. e.g. a "\fCBusy - Please  Wait\fR" dialog box, such a
+dialog  may  be   implemented   when  saving  the  current   buffer  then  create  the  simple  dialog  and  sent  the
 \fIcontrol-command\fR to
 .Ht save-buffer 2 .
 The dialog would be defined as:-
@@ -625,6 +603,7 @@ was  changed to an  automated  calculation  so a tab index  value is no longer
 required with the item tab \fBt\fR flag.
 .SH "SEE ALSO"
 .na
+.Hl "Top Main Menu" MainMenu 3 ,
 .Ht $osd-scheme 5 ,
 .Ht $result 5 ,
 .Ht $scroll-bar 5 .

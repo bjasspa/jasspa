@@ -20,7 +20,7 @@ Main Menu \- The top main menu
 .br
 .B toolbar
 .ad
-.SH "FRAME COMPOSIOTION"
+.SH "FRAME COMPOSITION"
 The frame composition presented by \*(mS is defined as follows:-
 .CS
           +--------------------------------------------+
@@ -50,57 +50,47 @@ the right of the window and a \fBMode Line\fR at the bottom of the window. The
 mouse interactions with the window are defined as follows:-
 .RS
 .IP "Left mouse in window \- Selecting a region"
-Regions may be selected with
-the mouse. Select a position with the left mouse, keep the left button
-pressed move the mouse to the desired region end and release the left button.
-Theregion is hilighted, the text is copied the user does not need to perform
-any other selection operation to copy the text.
+Regions may be selected  with the mouse. Select a position with the left mouse, keep the left button  pressed move the
+mouse to the desired region end and release the left button.  Theregion is hilighted, the text is copied the user does
+not need to perform any other selection operation to copy the text.
 .IP "Right mouse in window \- Pop up Dialog"
-A right mouse click in the window brings up a context sensitive pop-up menu. A
-right click on a spelling error, with
+A right mouse click in the window brings up a context sensitive pop-up menu. A right click on a spelling error, with
 .Ht auto-spell 3
 enabled shows a list of possible corrections.
 .IP "Right mouse on mode line \- Pop up Dialog"
-A right mouse click on the \fBMode  Line\fR brings up a pop-up menu to control
-the buffer.
+A right mouse click on the \fBMode Line\fR brings up a pop-up menu to control the buffer.
 .IP "Left mouse on mode line \- split and resize window"
-If the \fC|\fR character is selected on the \fBMode Line\fR then the window is
-split into two  horizontally.  If the mode line is dragged with the mouse then
-the buffer is re-sized. If the window is dragged into another  window then the
+If the \fC|\fR  character is selected on the \fBMode  Line\fR then the window is split into two  horizontally.  If the
+mode line is dragged with the mouse then the buffer is re-sized. If the window is dragged into another window then the
 other window is deleted.
 .IP "Left mouse on scroll bar \- Up/down action"
-A left  click on the  scroll  bar moves the  window  up/down.  If the  \fC=\fR
-component  of the  scroll  bar is  selected  then the window is split into two
-vertically.  Dragging the scroll-bar  with the mouse  horizontally  causes the
-window to be  re-sized.  Selecting  the  \fC*\fR in the  corner of the  window
-allows the window to be resized both horizontally and vertically.
+A left click on the scroll bar moves the window  up/down. If the \fC=\fR  component of the scroll bar is selected then
+the window is split into two vertically.  Dragging the scroll-bar with the mouse horizontally  causes the window to be
+re-sized.  Selecting  the \fC*\fR in the corner of the window  allows the window to be resized both  horizontally  and
+vertically.
 .IP "Right mouse on scroll bar \- Scroll bar size"
-A right click of the mouse on the scroll bar allows the scroll bar width to be
-altered.
+A right click of the mouse on the scroll bar allows the scroll bar width to be altered.
 .RE
 .IP "Message Line"
-The  message  line is used from  command  entry and  messages.  On  entering a
-command such as
+The message line is used from command entry and messages. On entering a command such as
 .Ht isearch-forward 2
-then the user  enters  text  into the  \fBMessage  Line\fR  until the  command
-completes. Messages are also displayed in the message line using
+then the user enters text into the \fBMessage Line\fR until the command completes.  Messages are also displayed in the
+message line using
 .Ht ml-write 2 .
 .IP "Toolbar"
 The toolbar window is displayed if
 .Hl toolbar toolbar 3
 mode is enabled in
 .Ht user-setup 3 .
-The mouse  interaction is a little different from a conventional  mode line, a
-mouse  right  click on the toolbar  \fBMode  Line\fR  allows the tollbar to be
-configured. A Right click on the \fC<\fR and \fC>\fR characters of the toolbar
-mode line moves to the next or previous tool.
+The mouse  interaction is a little different from a conventional mode line, a mouse right click on the toolbar
+\fBMode  Line\fR  allows the  tollbar to be  configured.  A Right click on the \fC<\fR and \fC>\fR  characters  of the
+toolbar mode line moves to the next or previous tool.
 .SH "MAIN MENU"
-The  main  menu is  provided  to give an  easier  access  to  parts  of  \*(mS
-functionality,  the menu is not burnt into \*(mS but  defined on  start-up  in
-\fCme.emf\fR and \fCosd.emf\fR. The
+The main menu is provided to give an easier access to parts of \*(mS  functionality,  the menu is not burnt into \*(mS
+but defined on start-up in \fCme.emf\fR and \fCosd.emf\fR. The
 .Ht user-setup 3
-command  can be used to set  whether  the menu is  always  visible  and if the
-Alt-Hotkeys are enabled (i.e. '\fCA-f\fR' to open the \fBFile\fR menu).
+command can be used to set whether the menu is always visible and if the  Alt-Hotkeys are enabled (i.e. '\fCA-f\fR' to
+open the \fBFile\fR menu).
 .PP
 The main menu is
 .Ht osd 2
@@ -133,22 +123,22 @@ modes enabled.
 .IP "\fCQuick Open\fR"
 Opens a sub-menu list all user file types (defined in
 .Ht user-setup 3 ).
-Selecting one will open another  sub-dialog list all files of that type in the
-current directory, selecting a file will open it using command
+Selecting one will open another sub-dialog list all files of that type in the current directory, selecting a file will
+open it using command
 .Ht find-file 2 .
 .IP "\fCFavorites\fR"
-Opens a  sub-menu  enabling  the  user to add new  favorite  files,  edit  the
-existing list of favorite files, or select an existing  favorite file in which
-case the file is opened using command
+Opens a sub-menu  enabling the user to add new favorite  files, edit the existing list of favorite files, or select an
+existing favorite file in which case the file is opened using command
 .Ht find-file 2 .
-The favorite file using to store the list is "\fB$MENAME\fR\fC.eff\fR"  and is
-saved in the first path given in the
+The favorite file using to store the list is "\fB$MENAME\fR\fC.eff\fR" and is saved in the first path given in the
 .Ht $search-path 5 .
-Each favorite file takes 2 lines in the file, the first is the text  displayed
-in the dialog (note that characters '\fC\\\fR' and '\fC&\fR' must be protected
-with a '\fC\\\fR'  and the  '\fC&\fR'  can be used to set the Hot key) and the
-second line is the file name. A line with a single '\fC-\fR' character creates
-a separater line in the dialog.
+Each  favorite  file takes 2 lines in the file, the first is the text  displayed  in the dialog (note that  character
+\&'\fC\\\fR' must be protected with a '\fC\\\fR' and the characters  '\fC\\H\fR'  inserted before another character will
+make that character a Hot key) and the
+second line is the file name. If the second line starts with a '!' character, the rest of the line is processed using
+.Ht execute-line 2 ,
+this can be used to view help  pages or execute  processes  such as compile  etc. A file line with a single  '\fC-\fR'
+character creates a separater line in the dialog, no second line is required.
 .\".IP "\fCFind Tag\fR"
 .\"Only  visible when a \fCtags\fR  file is found in the current  directory,  the
 .\"command  jumps to the  current tag or if not on a tag or the tag is not found,

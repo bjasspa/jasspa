@@ -50,6 +50,7 @@ osd 23 7  ""  "Store Frame Size"  f store-frame-size
   osd 24 1 "CxH" .scheme.osd-ebtt &cat "^^^^^^" #l0 f "osd-24-buffer-mode"
 !emacro
 
+-1 osd 24
 osd 24 0 "bA"
 set-variable #l1 0
 set-variable $mode-names ".*"
