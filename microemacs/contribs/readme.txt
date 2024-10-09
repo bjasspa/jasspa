@@ -103,6 +103,16 @@ hkgroovy.emf
         Groovy Language Template
         http://groovy.codehaus.org
 
+hkpydoc.emf
+
+       Support for display of Python documentation within MicroEmacs.
+       Used as `pydoc  "manualpage"` like `Esc x` "pydoc" and then entering "argparse"
+       for instance in the command line.
+       Install:  copy  the  file  `hkpydoc.emf`  to your  jasspa  user  folder
+       (usually `~/.config/jasspa`  and add the following line to your `username.emf` file:
+       
+       define-macro-file hkpydoc pydoc       
+
 jasspa-microemacs.desktop
 
         Gnome Desktop entry. Copied to the  /usr/share/applications  directory
