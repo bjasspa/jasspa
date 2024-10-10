@@ -3,13 +3,19 @@
 ;  Created By    : Detlef Groth, University of Potsdam
 ;  Author        : Detlef Groth, University of Potsdam
 ;  Created       : Wed Sep 25 15:42:35 2024
-;  Last Modified : <240925.1752>
+;  Last Modified : <241010.0602>
 ;
 ;  Description   : Documentation viewer within MicroEmacs for
-;                  Python  
-;  Notes
+;                  Python  supporting section folding item-list navigation
+;                  and some highlighting of sections and class names
+;
+;  Notes         : to install the pydoc macro, copy this file to user jasspa folder
+;                  usually ~/.config/jasspa and add the following line to your 
+;                  USERNAME.emf file
+;                  define-macro-file hkpydoc pydoc 
 ;
 ;  History       : 2024-09-25 initial version
+;                  2024-10-10 hints on installation
 ;
 ;  Copyright (c) 2024 Detlef Groth.
 ;
