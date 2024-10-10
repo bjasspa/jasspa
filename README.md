@@ -41,6 +41,11 @@ file within several separate  windows, for  instance writing  something on top,
 and then in the  other  windows  more down in the same file ... but  obviously
 editing one file in a single window is as well possible.
 
+<img src="microemacs/graphics/ME24-pydoc-solarized-light.png" width="390px"/>&nbsp;&nbsp;<img src="microemacs/graphics/ME24-r-doc-ayu-dark.png" width="390px"/>
+
+_Left:_ GUI version - theme "Solarized Light", displaying on top a help page defined using Markdown (bottom window) for the [pydoc](contribs/hkpydoc.emf) macro,  
+_Right:_ GUI version - theme "Ayu Dark", displaying the hypertext enabled R documentation browser defined with the r-doc command.
+
 ## Installation
 
 You can compile the code yourself, or you pick one or two of the precompiled
