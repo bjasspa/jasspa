@@ -113,6 +113,11 @@ hkpydoc.emf
        
        define-macro-file hkpydoc pydoc       
 
+jeany.emf
+
+      CUA like  bindings but after the C-j prefix, so C-j C-x is cut, C-j -C-v
+      is paste or C-j C-s is saving the file etc.
+      
 jasspa-microemacs.desktop
 
         Gnome Desktop entry. Copied to the  /usr/share/applications  directory

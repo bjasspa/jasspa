@@ -1,0 +1,200 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author$
+;  Created By    : <unknown>
+;  Created       : Mon Mar 25 17:52:20 2024
+;  Last Modified : <241011.1548>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 2024 <unknown>.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Geany like bindings (Jeany - C-j)
+0 define-macro jeany-select-all
+    set-position "\x81"
+    beginning-of-buffer
+    -3 show-region
+    end-of-buffer
+    3 show-region
+    goto-position "\x81"
+    show-region
+!emacro
+
+define-macro jeany-bindings
+    !force global-unbind-key "C-j"
+    5 global-bind-key prefix           "C-j"
+    ; file commands
+    global-bind-key  save-buffer       "C-j C-s"
+    global-bind-key  delete-buffer     "C-j C-w"    
+    global-bind-key  exit-emacs        "C-j C-q"
+    global-bind-key  find-file         "C-j C-o"
+    global-bind-key  find-file         "C-j C-n"
+    global-bind-key  reread-file       "C-j C-r"
+    global-bind-key  print-buffer      "C-j C-p"    
+    ; edit commands
+    global-bind-key  undo              "C-j C-z"
+    global-bind-key  kill-region       "C-j C-x"
+    global-bind-key  copy-region       "C-j C-c"
+    global-bind-key  yank              "C-j C-v" ; paste 
+    global-bind-key  reyank            "C-j V"   ; walk through the paste buffer
+    global-bind-key  jeany-select-all  "C-j C-a"
+    global-bind-key  isearch-forward   "C-j C-f" ; search forward
+    global-bind-key  hunt-forward      "C-j C-g" ; repeat search forward
+    global-bind-key  hunt-backward     "C-j G"   ; repeat search backward
+    ;global-bind-key  osd-redo          "C-j C-y"
+    global-bind-key  goto-line         "C-j C-l"
+    1  global-bind-key  change-font-size  "C-j C-+"
+    -1 global-bind-key  change-font-size  "C-j C--"
+    500 ml-write "installed jeany bindings like C-j C-s (save), C-j C-q (exit) ..."
+!emacro
+
+define-macro jeany-osd
+    osd 1 10  ""  "\HNew           C-j C-o"   f osd-new-buffer ; Create a new document
+    osd 1 20  ""  "\HOpen...       C-j C-o"   f osd-file-open  ; Find a new file
+    osd 1 50  ""  "\HClose         C-j C-w"   f osd-close
+    osd 1 80  ""  "\HSave          C-j C-s"   f osd-save       ; Save the buffer
+    osd 1 140 ""  "\HPrint         C-j C-p"   f print-buffer   ; Print
+    osd 1 210 ""  "E\Hxit          C-j C-q"   f save-buffers-exit-emacs
+    ; edit menu
+    osd 2 10  ""  "\HUndo                C-j C-z"   1 osd-undo       ; Undo the last command
+    osd 2 50  ""  "Cu\Ht                 C-j C-x"   f kill-region    ; Kill off the region
+    osd 2 60  ""  "\HCopy                C-j C-c"   f copy-region    ; Copy the region
+    osd 2 70  ""  "\HPaste               C-j C-v"   f yank           ; Paste text
+    osd 2 100 ""  "\HSelect All          C-j C-a"   f jeany-select-all     ; Select all text
+    ;osd 2 110 "D"
+    osd 2 90 "D" ; deleting entry
+    ; search menu
+    osd 3 10  ""  "Incremental \HSearch   C-j C-f"  f isearch-forward    
+    osd 3 40  ""  "\HFind..."                       1 osd-search
+    osd 3 50  ""  "Find \HNext            C-j C-g"  f hunt-forward
+    osd 3 60  ""  "Find \HPrevious        C-j G"    f hunt-backward
+    osd 3 70  ""  "\HReplace              C-j C-h"  2 osd-search
+    osd 3 150 ""  "Goto \HLine...         C-j C-l"  f osd-goto-line
+!emacro
+
+define-macro jeany-osd-undo
+  osd 1 10  ""  "\HNew"   f osd-new-buffer ; Create a new document
+  osd 1 20  ""  "\HOpen...         C-x C-f"   f osd-file-open
+  osd 1 50  ""  "\HClose           C-x k"     f osd-close
+  osd 1 80  ""  "\HSave            C-x C-s"   f osd-save
+  osd 1 140 ""  "\HPrint"                     f print-buffer
+  osd 1 210 ""  "E\Hxit            C-x C-c"   f save-buffers-exit-emacs
+  ; edit menu
+  osd 2 10  ""  "\HUndo                C-x u"      1 osd-undo      ; Undo the last command
+  osd 2 20  ""  "Redo                         "                    ; Re-do the last osd-undo
+  osd 2 50  ""  "\HSet Mark            esc space"  f set-mark
+  osd 2 60  ""  "\HCopy Region         esc w"      f copy-region
+  osd 2 70  ""  "\HKill Region         C-w"        f kill-region
+  osd 2 80  ""  "\HDelete Region"                 -1 kill-region
+  osd 2 90  ""  "\HPaste Region        C-y"        f yank
+  osd 2 100 ""  "Kill R\Hectangle      esc C-w"    f kill-rectangle
+  osd 2 110 ""  "C\Hopy Rectangle"                 f copy-rectangle
+  ; search menu
+  osd 3 10  ""  "Incremental \HSearch   C-s"       f isearch-forward
+  osd 3 40  ""  "\HFind...              C-x C-s"   1 osd-search
+  osd 3 50  ""  "Find \HNext            C-x h"     f hunt-forward
+  osd 3 60  ""  "Find \HPrev            C-x C-h"   f hunt-backward
+  osd 3 70  ""  "\HReplace...           esc C-r"   2 osd-search
+  osd 3 150 ""  "Goto \HLine...         esc g"     f osd-goto-line    
+!emacro
+  
+define-help "jeany-bindings" "3"  
+## NAME
+
+
+  jeany-bindings    - creates Geany like bindings with a C-j prefix  
+  jeany-osd         - creates menu entries for the new jeany bindings  
+  jeany-osd-undo    - restores the original MicroEmacs menu entries again  
+$a
+
+
+## SYNOPSIS
+
+
+  __jeany-bindings__  
+  __jeany-osd__  
+  __jeany-osd-undo__  
+
+## DESCRIPTION
+
+  The command __jeany-bindings__ installs key-bindings similar to the bindings
+  you find in the Geany text editor but with a 'C-j' prefix. Such key-bindings
+  are probably  more  similar to that what new users  expect.  To  not  break
+  the original Emacs  key-bindings all Geany key-bindings are prefixed with the
+  _Ctrl-j_  key. The menu  entries can be as well  adapted to show the changed
+  key-bindings using the command __jeany-osd__, these changed menu entries can
+  be reverted to the normal key bindings using the command __jeany-osd-undo__.
+  The  following  key-bindings  are  currently  available  if you  execute the
+  command __jeany-bindings__:
+  
+  
+  __File menu commands:__
+
+  - _Ctrl-j C-n_ - find-file (creates a new file if it does not yet exists)
+  - _Ctrl-j C-o_ - find-file (open a file)
+  - _Ctrl-j C-w_ - delete-buffer (close it)
+  - _Ctrl-j C-s_ - save-buffer
+  - _Ctrl-j C-r_ - reread-file (refresh the buffer if it has been modified)
+  - _Ctrl-j C-p_ - print-buffer
+  - _Ctrl-j C-q_ - exit-emacs 
+  
+  __Edit menu commands:__
+  
+  - _Ctrl-j Ctrl-z_ - undo (undo editing possible until last save)
+  - _Ctrl-j Ctrl-x_ - kill-region (cut marked text)
+  - _Ctrl-j Ctrl-c_ - copy-region (copy marked text)
+  - _Ctrl-j Ctrl-v_ - yank (paste text)
+  - _Ctrl-j V_      - reyank (paste previous copied text(s))
+  - _Ctrl-j Ctrl-a_ - jeany-select-all (mark all text)
+  
+  __Search menu commands:__
+ 
+  - _Ctrl-j Ctrl-f_ - isearch-forward (search forward)
+  - _Ctrl-j Ctrl-g_ - hunt-forward (search again)
+  - _Ctrl-j G_      - hunt-backward (repeat search backward)
+  - _Ctrl-j Ctrl-l_ - goto-line
+  
+  __Font size commands:__
+  
+  - _Ctrl-j Ctrl-+_ - increase font-size
+  - _Ctrl-j Ctrl--_ - decrease font-size
+   
+
+## EXAMPLE
+
+
+```{.emf}
+  jeany-bindings
+  jeany-osd
+```
+
+## NOTES
+
+
+  __jeany-bindings__  and the osd macros __jeany-osd__ and __jeany-osd-undo__ 
+  are macros  defined in  `jeany.emf`.  The osd macros are only  available  if
+  __jeany-bindings__ was called before by the user.
+  
+  In case you have trouble using  Ctrl-Space to start your text  selection you
+  can, for a more conventional  region selection use in the user-setup the
+  "Start-Up" option "MS Shift region" to begin your text selection.
+  
+  To install the function jeany-bindings you have to copy the files `jeany.emf` to
+  your jasspa configuration folder, usually `~/.config/jasspa` and then add the
+  following line to your `USERNAME.emf` file:
+  
+       define-macro-file jeany jeany-bindings
+  
+
+## SEE ALSO
+
+  For    other    more     invasive     changes    of     key-bindings     see
+  [user-setup(3)](user-setup\(3\))  where  the  selection  of  completely  other
+  key-bindings is explained.
+!ehelp
+  
