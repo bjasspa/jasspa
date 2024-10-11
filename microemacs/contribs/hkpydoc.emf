@@ -3,7 +3,7 @@
 ;  Created By    : Detlef Groth, University of Potsdam
 ;  Author        : Detlef Groth, University of Potsdam
 ;  Created       : Wed Sep 25 15:42:35 2024
-;  Last Modified : <241010.0619>
+;  Last Modified : <241011.0946>
 ;
 ;  Description   : Documentation viewer within MicroEmacs for
 ;                  Python  supporting section folding item-list navigation
@@ -93,8 +93,8 @@ __pydoc__ ["manualpage"]
 ## DESCRIPTION
 
 The __pydoc__ macro asks the user for Python manual page and then displays the 
-appropiate manual page in a buffer *pydoc* which provides hilighting for the 
-section headers and the clases and folding support for them. Further you can use
+appropriate manual page in a buffer *pydoc* which provides hilighting for the 
+section headers and the classes and folding support for them. Further you can use
 the [item-list(3)](item-list\(3\)) command to browse the content using the outline
 shown in the _item-list_ buffer.
 
@@ -115,9 +115,9 @@ _item-list_ buffer for easy navigation.
 ## NOTES
 
 The __pydoc__ macro is implemented in the file _hkpydoc.emf_ which is currently 
-placed in the contribs folder. For installation copy that file into your user-path 
-folder - usually `~/.config/jasspa` and made the macro available by placing the 
-following line into your `username.emf` file.
+placed in the `microemacs/contribs` project folder. For installation copy that file into your user-path 
+folder - usually `~/.config/jasspa` and make the macro available by placing the 
+following line into your `~/.config/jasspa/USERNAME.emf` file.
 
 ## SEE ALSO
 
