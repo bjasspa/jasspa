@@ -1,18 +1,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
-;  Author        : $Author$
-;  Created By    : <unknown>
+;  Author        : Detlef Groth
+;  Created By    : Detlef groth
 ;  Created       : Mon Mar 25 17:52:20 2024
-;  Last Modified : <241011.1548>
+;  Last Modified : <241011.1623>
 ;
-;  Description
+;  Description   : CUA like bindings behind the C-j prefix. See help at then end.
 ;
-;  Notes
+;  Copyright (c) 2024 Detlef Groth, University of Potsdam, Germany
 ;
-;  History
-;
-;  Copyright (c) 2024 <unknown>.
-;
+;  License       : Same as MicroEmacs so GPL 2     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Geany like bindings (Jeany - C-j)
 0 define-macro jeany-select-all
