@@ -117,6 +117,11 @@ jeany.emf
 
       CUA like  bindings but after the C-j prefix, so C-j C-x is cut, C-j -C-v
       is paste or C-j C-s is saving the file etc.
+
+myshell.emf, shell.eaf, shell.etf
+
+      Extending the Shell file-hook by a myXXX.emf file adding abbreviations, abbrev-list(s),
+      folding, item-list(s) and templating to shell scripts
       
 jasspa-microemacs.desktop
 

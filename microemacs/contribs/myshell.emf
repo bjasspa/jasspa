@@ -1,0 +1,49 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : Detlef Groth, University of Potsdam, Germany
+;  Created By    : dgroth
+;  Created       : Sat Oct 12 07:19:21 2024
+;  Last Modified : <241012.0801>
+;
+;  Description   : Extending the hkshell.emf file-hook file
+;
+;  Notes         : This demonstrates how to extend an existing file hook
+;
+;  History       : 2024-10-12 - first version
+;
+;  Copyright (c) 2024 Detlef Groth, University of Potsdam, Germany
+;                  same License as MicroEmacs - GPL 2.0
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; this Macro files shows how to add some more features to an existing file hook
+; 
+;   - adding file type abbreviations
+;   - adding file type folding / collapsing
+;   - modifiying and adding more hilghtings
+
+; adding abbbreviation mode a(b)breviation (f)folding (n)ew buffer header from etf
+; so adding b f and n to the string below
+; the two lines where just taken from the file hkshell.emf and then the letters b, f and n where added
+; the abbreviation file shell.eaf and the template file shell.etf just be placed as well in the users jasspa directory
+
+set-variable .fhook-shell.setup &reg "/history/fhook/shell" "bfghinopx"
+set-variable .fhook-shell.setup-mask "abefghikmnoptux"
+; modifying hilighting scheme for a function line
+hilight .hilight.shell 0 "^\\s*\\{function\\s+\\S+" .scheme.function
+
+; setup shell function collapsing/folding
+set-variable .fhook-shell.collapse-open  "^function[ \t]"
+set-variable .fhook-shell.collapse-close "^\\}"
+set-variable .fhook-shell.collapse-mclose "1"
+set-variable .fhook-shell.collapse-mnext "-1"
+
+; setup item-list
+set-variable .fhook-shell.item-list-s1 "^function[ \t]+\\(\\w+\\)"
+set-variable .fhook-shell.item-list-r1 "Func \ecB\\1\ecA"
+
+; setup an abbreviation file shell.eaf
+0 buffer-abbrev-file "shell"
+1000 ml-write "loading myhshell.emf"
+
+
