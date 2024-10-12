@@ -25,11 +25,14 @@ set-variable .fhook-python.collapse-mclose "0"
 set-variable .fhook-python.collapse-mnext "-1"
 
 ; setup item-list
-set-variable .fhook-python.item-list-s1 "^[ \t]*def[ \t]+\\(\\w+\\)"
+set-variable .fhook-python.item-list-s1 "^def[ \t]+\\(\\w+\\)"
 set-variable .fhook-python.item-list-r1 "Defn \ecB\\1\ecA"
 set-variable .fhook-python.item-list-s2 "^[ \t]*class*[ \t]+\\(\\w+\\)"
-set-variable .fhook-python.item-list-r2 "Class \ecB\\1\ecA"
-
+set-variable .fhook-python.item-list-r2 "Clss \ecB\\1\ecA"
+set-variable .fhook-python.item-list-s3 "^[ \t]+def[ \t]+\\(\\w+\\)"
+set-variable .fhook-python.item-list-r3 "  df \ecB\\1\ecA"
+set-variable .fhook-python.item-list-s4 "^if __name__"
+set-variable .fhook-python.item-list-r4 "Main \ecBBlock\ecA"
 !if &and &sin "h" .fhook-python.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.python
     set-variable .hilight.python &pinc .hilight.next 1
