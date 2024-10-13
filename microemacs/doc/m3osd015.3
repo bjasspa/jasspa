@@ -21,9 +21,12 @@ file-type-setup \- Define file type set
 .SH DESCRIPTION
 .B file-type-setup
 provides  a  dialog  interface  for  declaring  a set  of  common  files  type
-categories and their  associated file extensions. The file categories are used
-to determine the common file types in the File main menu
-.BR "Quick Open" .
+categories and their  associated file extensions. The file type list is used in two places, the 
+.Hl "main  menu" MainMenu 3 's
+.C "File => Quick Open"
+sub-menu and the main
+.C "File => Open"
+\fBFile Type\fR list. In each case the file type "\fCAll Files\fR" is automatically added.
 .PP
 .B file-type-setup
 may be  invoked  directly  from  the  command  line or more  usually  from the
@@ -32,8 +35,26 @@ miscellaneous configuration item
 in
 .Ht user-setup 3 .
 .PP
-On  invocation  a generic name for the file class is assigned to a set of file
-names or extensions as a comma separated list i.e. \fC*.a,*.b,*.c\fR.
+The user can add, remove and change the list of file types by using this dialog. An entry can be selected  for editing
+or deletion by simply  selecting  it with the left mouse  button. A new entry may be added by simply  filling in the 3
+entry boxes and selecting Add. Items in the Dialog are as follows.
+.IP "\fCNo.\fR"
+The file type entry number. A new entry is always added to the end of the list,  ignoring  this value. The position of
+an existing entry can be changed by altering this field to the desired position and selecting the \fCChange\fR  button
+to move it to its new position.
+.IP "\fCName\fR"
+The file type name, the string printed in the sub-menus.
+.IP "\fCFile Mask List\fR"
+A comma  ('\fC,\fR')  separated  list of file  masks  which  match the file type, e.g. for C and C++ source  files use
+"\fC*.c,*.cc,*.cpp\fR".
+.IP "\fCAdd\fR"
+Adds a new entry to the list, only the  \fBName\fR and  \fBFileMask  List\fR  fields are used, the \fBNo.\fR  field is
+ignored as the new entry is always added to the end of the list. The position can be altered by using the \fBChange\fR
+button.
+.IP "\fCModify\fR"
+Alters an existing file type entry, all 3 fields must be set.
+.IP "\fCDelete\fR"
+Deletes the current entry number, only the \fBNo.\fR entry is used.
 .SH "SEE ALSO"
 .na
 .Ht buffer-setup 3 ,

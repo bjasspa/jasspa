@@ -139,12 +139,6 @@ second line is the file name. If the second line starts with a '!' character, th
 .Ht execute-line 2 ,
 this can be used to view help  pages or execute  processes  such as compile  etc. A file line with a single  '\fC-\fR'
 character creates a separater line in the dialog, no second line is required.
-.\".IP "\fCFind Tag\fR"
-.\"Only  visible when a \fCtags\fR  file is found in the current  directory,  the
-.\"command  jumps to the  current tag or if not on a tag or the tag is not found,
-.\"opens a dialog enabling the user to select a tag. See command
-.\".Ht find-tag 2
-.\"for more information.
 .IP "\fCClose\fR"
 Closes the current buffer, executes a dialog form of the command
 .Ht delete-buffer 2 .
@@ -228,7 +222,7 @@ which may be retrieved using \fBPaste\fR, executes command
 .IP "\fCDelete Region\fR"
 Deletes a marked up region but the  deleted  text is not saved in the the kill
 buffer and cannot be retrieved using \fBPaste\fR.
-.IP "\fCPaste\fR"
+.IP "\fCPaste Region\fR"
 Inserts  text  from  the  clipboard  into the  buffer  at the  current  cursor
 position, executes command
 .Ht yank 2 .
@@ -284,11 +278,6 @@ of the buffer may not be altered. Change the buffer mode
 Initiates an  incremental  search, the user is prompted to enter the string to
 search for, execute the command
 .Ht isearch-forward 2 .
-.IP "\fCHilight Search\fR"
-Opens a dialog which allows lines of the buffer to be searched and highlighted
-by changing the line color. Setting a line highlight is a temporary change, it
-does not effect any files and is lost when the buffer is deleted, see 
-.Ht osd-search 3 .
 .\" -----------------
 .IP "\fCFind\fR"
 Opens a dialogue for searching the buffer for a given string, see 
@@ -302,7 +291,16 @@ Finds the previous string in the buffer using the last search string, uses
 .IP "\fCReplace\fR"
 Opens a dialogue for searching and replacing the buffer for a given string, see 
 .Ht osd-search 3 .
+.IP "\fCHilight Search\fR"
+Opens a dialog which allows lines of the buffer to be searched and highlighted
+by changing the line color. Setting a line highlight is a temporary change, it
+does not effect any files and is lost when the buffer is deleted, see 
+.Ht osd-search 3 .
 .\" -----------------
+.IP "\fCFind Files\fR"
+Initiates a search for files in the file system from the directory of the current
+buffer using
+.Ht find 3 .
 .IP "\fCFind in Files\fR"
 Initiates a string  search of the file system, in the directory of the current
 buffer using
@@ -310,6 +308,9 @@ buffer using
 .IP "\fCReplace in Files\fR" 
 Initiates a string  search and replace of the file system, in the directory of
 the current buffer using
+.Ht replace-all-string 3 .
+.IP "\fCQuery Replace in Files\fR" 
+As with \fBReplace in Files\fR except prompts the user before each replace using
 .Ht query-replace-all-string 3 .
 .\" -----------------
 .IP "\fCSet Bookmark\fR"
@@ -334,10 +335,9 @@ Moves cursor to the specified line number or relative line position,  executes
 a dialog form of the command
 .Ht goto-line  2 .
 .IP "\fCGoto Tag\fR"
-Only  active  when a  \fCtags\fR  file is found in the  current  directory,  a
-dialog  is  presented  with the tags, on  selection  of a tag then the file is
-opened and the cursor position is moved to the definition of the tag.
-See command
+Only  available  when a \fCtags\fR  file is found in the current  directory,  on  selection  either the current tag is
+located and  displayed in a pop-up  window or a dialog is presented  with a list of tags found within the tag file. On
+selection of a tag then the file is opened and the cursor position is moved to the definition of the tag. See command
 .Ht find-tag 2
 for more information.
 .\"*************************************************************************
@@ -367,7 +367,7 @@ Provides  information  on the buffer current cursor  position on the mode line
 including line number, character under the cursor etc. See
 .Ht buffer-info 2 .
 .IP "\fC Word Count\fR"
-Counts the number of words in the selected region (between point and mark),
+Counts the number of words in the buffer and in the selected region (between point and mark),
 executes 
 .Ht count-words 2 .
 .IP "\fCOccurrences\fR"
@@ -380,6 +380,9 @@ the mouse, moves the cursor to the specified occurrence. See
 .IP "\fCBuffer\fR"
 Lists the current buffers in the editor,  selecting one changes the
 current buffer to the selection.
+.IP "\fCBuffer (by type)\fR"
+Similar to the File menu's Quick Open, this opens a sub-menu  listing the the user's file types and for each file type
+a list of buffers matching that type is shown. Selecting a buffer will change the current buffer to the select. 
 .\" -----------------
 .IP "\fCMain Menu\fR"
 Hides or shows the Main Menu. If the main menu has been  hidden then  \fBF1\fR
@@ -581,14 +584,10 @@ short notes).
 Invokes the 
 .Ht organizer 3 
 tool which provides a calendar and address book. 
-.IP "\fCSend Mail\fR"
-Create and send a electronic  mail message, this  requires  that the mail tool
-has been configured, see
-.Ht mail 3 .
-.IP "\fCView Mail\fR"
-Start the mail reading tool 
-.Ht vm 3 .
 .\" -----------------
+.IP "\fCFile Tool\fR"
+Opens a sub-menu listing all tools applicable to the current buffer's file type, selecting a tool will launch the tool
+with the current buffer's file.
 .IP "\fCIpipe command\fR"
 Start a incremental  shell command, the command runs in the background and the
 results are collected in a new buffer window, using 

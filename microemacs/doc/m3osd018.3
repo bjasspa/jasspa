@@ -1,0 +1,106 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Sun Feb 6 18:14:27 2005
+.\"
+.Id $Id: m3osd017.3,v 2.5 2009/08/29 17:14:01 jon Exp $
+.Im MicroEmacs command|osd;command|shell
+.so me.tni
+.TH shell-tool-setup 3
+.XI shell-tool-setup - "Define shell tools"
+.SH NAME
+shell-tool-setup \- Define shell tools
+.Me $a
+.SH SYNOPSIS
+.na
+.B shell-tool-setup
+.ad
+.SH DESCRIPTION
+The  \fBshell-tool-setup\fR  dialog  allows the user to  configure  up to 10 system  commands,  or tools, which can be
+executed via \*(mS Main Advanced Menu. The dialog configures the user's registry for the command
+.Ht execute-tool 3
+to be used. The execution of a tool can also be bound to a key, see \fBexecute-tool\fR for more information.
+.PP
+The top half of the dialog consists of the 10 Tools  (\fC0\fR-\fC9\fR)  configuration  buttons. Selecting one of these
+selects the current tool to be configured, the current tool is shown by the title in the middle of the dialog.
+.PP
+The lower half of the dialog configures the currently selected tool, as follows:-
+.IP "\fCTool Name\fR"
+Sets the  displayed  name of the tool. The tool name is used in the  buttons in the top half of this dialog and in the
+\*(mS Main Tools Menu.
+.IP "\fCCommand Line\fR"
+Sets the system command-line to be launched whenever the tool is executed, the following special tokens may be used in
+the command-line which are substituted at execution:-
+.RS
+.IP "\fB%ff\fR"
+The current  buffer's full file name, including the path.
+.IP "\fB%fp\fR"
+The current  buffer's file path.
+.IP "\fB%fn\fR"
+The current  buffer's file name without the path.
+.IP "\fB%fb\fR"
+The current  buffer's  file base name, i.e. the file name  without the path or
+the  extension.
+.IP "\fB%fe\fR"
+The current buffer's file extension with the '\fI.\fR' (e.g.  "\fI.emf\fR"),  set to the empty string if the file name
+does not have an extension.
+.RE
+.IP
+Note that "\fB%ff\fR" is always the same as "\fB%fp%fn\fR" and "\fB%fp%fb%fe\fR". If any of these tokens are used, the
+tool will fail to execute if the current buffer does not have a file name.
+.IP "\fCRun Concurrently\fR"
+If enabled,  when the tool is executed  the command is launched  and run  concurrently,  allowing the user to continue
+working in \*(mS during the tools  execution.  This option is not  available  for all versions on \*(mS and forces the
+output to be captured. Enabling this option will force the use of command
+.Ht ipipe-shell-command 2
+to launch the tool.
+.IP "\fCReread Current Buffer\fR"
+When enabled the current buffer is reloaded when the command completes, this option is only available when
+\fBRun Concurrently\fR is disabled.
+.IP "\fCCapture Output\fR"
+If enabled any output  produced  from the  execution of the tool will be captured and inserted into a new buffer. When
+enabled the following two items,  \fCBuffer\fR  and  \fCHide\fR,  may be specified.  When disabled the command used to
+execute the tool is
+.Ht shell-command 2 ,
+otherwise the command used is either
+.Ht pipe-shell-command 2
+or
+.Ht ipipe-shell-command 2
+depending on the setting of \fCRun Concurrently\fR.
+.IP "\fCBuffer\fR"
+Specifies  the buffer  name the  captured  output  should be dumped to, this option is only  visible  when
+\fCCapture Output\fR is enabled. The following special tokens may be used in the buffer name which are substituted at execution:-
+.RS
+.IP "\fB%fn\fR"
+The current  buffer's  file name  without the path, set to the buffer name if the current  buffer does not have a file
+name.
+.IP "\fB%fb\fR"
+The current  buffer's file base name, i.e. the file name without the path or the  extension. Set to the buffer name if
+the current buffer does not have a file name.
+.IP "\fB%fe\fR"
+The current  buffer's file  extension with the '\fI.\fR' (e.g.  "\fI.emf\fR"),  set to the empty string if the current
+buffer does not have a file name or it does not have an extension.
+.RE
+Note that  "\fB%fn\fR"  is always the same as  "\fB%fb%fe\fR".  Default  buffer  name when this field is left empty is
+"\fI*command*\fR", or "\fI*icommand*\fR" if \fCRun Concurrently\fR is enabled.
+.IP "\fCHide\fR"
+When  enabled the tool output  capture  buffer is hidden,  this option is only
+visible when \fCCapture Output\fR is enabled.
+.IP "Current Buffer - \fCSave\fR and \fCPrompt Before Saving\fR"
+If the current buffer has been edited, enabling \fCSave Current Buffer\fR will  automatically  save the current buffer
+before  executing  the tool. This is  particularly  useful when the tool  operates on the current  buffer's file (e.g.
+compiles the file). If \fCPrompt\fR is also enabled the user will be prompted before the file is saved.
+.IP "All Buffers - \fCSave\fR and \fCPrompt Before Saving\fR"
+If \fCSave All Buffers\fR is enabled, all edited buffers will be  automatically  saved before executing the tool. This
+is particularly useful when the tool may operate on multiple files (e.g. compilation of a project). If \fCPrompt\fR is
+also enabled the user will be prompted before each file is saved.
+.SH "SEE ALSO"
+.na
+.Ht execute-tool 3 ,
+.Ht user-setup 3 ,
+.Hl "Top Main Menu" MainMenu 3 .
+.ad
+.FH

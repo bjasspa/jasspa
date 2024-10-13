@@ -55,7 +55,7 @@ osd 24 0 "bA"
 set-variable #l1 0
 set-variable $mode-names ".*"
 !while &not &seq &set #l0 $mode-names ""
-  osd 24 1 "Cx" &spr "^^^^^^%s %n%s%s" #l0 &sub 8 &len #l0 " " &mid $mode-chars #l1 1 &con &mid $show-modes &pinc #l1 1 1 "*" " " f "osd-24-buffer-mode"
+  osd 24 1 "Cx" &spr "^^^^^^%s %n%s" #l0 &sub 8 &len #l0 " " &mid $mode-chars &pinc #l1 1 1 f "osd-24-buffer-mode"
 !done
 ;
 ; Menu #25 - SCROLL BAR pop-up menu

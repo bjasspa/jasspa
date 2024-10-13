@@ -122,17 +122,15 @@ with  appropriate  spelling rules and  dictionaries.  For more  information on
 adding support for a language see
 .Hl "Locale Support" localeSupport 2 .
 .IP \fBNOTES\fR
-Earlier versions \*(mS had "\fC(Ext)\fR" languages which use extended
-language   dictionaries,   vastly  increasing  the  word  list.  New  versions
-automatically test for and use these dictionaries if available.
+Earlier versions \*(mS had "\fC(Ext)\fR"  languages which use extended  language  dictionaries,  vastly increasing the
+word  list. New  versions  automatically  test for and use  these  dictionaries  if  available.  More  recently  these
+dictionaries have been merged into the main dictionary.
 .IP
-In earlier versions a personal dictionary name could be set in the next field,
-this option was removed on Oct 2001.  Instead a personal  dictionary  for each
-language is automatically  created for you, any words or auto-corrected  words
-will be  added  to the  current  languages  personal  dictionary.  The name of
-dictionary is "\fClsdp\fR\fI<lang-id>\fR\fC.edf\fR" where "\fI<lang-id>\fR" is
-the 4 letter \*(mS  language name (e.g.  "\fCenus\fR"  for  American),  simply
-rename any existing personal dictionary to this new name.
+In earlier  versions a personal  dictionary  name could be set in the next field, this option was removed on Oct 2001.
+Instead a personal  dictionary for each language is automatically  created for you, any words or auto-corrected  words
+will   be   added   to   the   current    language's    personal    dictionary.    The   name   of    dictionary    is
+"\fClsp\fR\fI<lang-id>\fR\fC.edf\fR"  where  "\fI<lang-id>\fR"  is the 4 letter \*(mS language name (e.g. "\fCenus\fR"
+for American), simply rename any existing personal dictionary to this new name.
 .IP "\fCAuto Save Dictionaries\fR"
 Enables  auto-saving of any changed  dictionaries on exit. If this is disabled
 the user is prompted to save for each changed dictionary.
@@ -198,14 +196,6 @@ settings, such as the
 hook which overrides the \fBtab\fR mode. This indirectly executes
 .Ht global-mode 2
 to set the required modes.
-.IP "\fCAuto-Save Time\fR"
-Sets the length of time in seconds  between  buffer  auto-saves,  a setting of
-\fC0\fR or an empty string  disables  auto-saving.  The default setting is 300
-seconds or 5 minutes. This indirectly sets the
-.Ht auto-time 5
-variable and the
-.Ht autosv 2m
-global mode.
 .IP "\fCKeep Undo\fR"
 If this is enabled the
 .Hl undo undo 2
@@ -215,6 +205,14 @@ command to back-up  changes  beyond the last save. When clear the undo history
 is discarded after the buffer is saved. This indirectly sets bit 0x8000 of the
 .Ht $system 5
 variable.
+.IP "\fCAuto-Save Time\fR"
+Sets the length of time in seconds  between  buffer  auto-saves,  a setting of
+\fC0\fR or an empty string  disables  auto-saving.  The default setting is 300
+seconds or 5 minutes. This indirectly sets the
+.Ht auto-time 5
+variable and the
+.Ht autosv 2m
+global mode.
 .IP "\fCHide Backups\fR"
 Enables hiding \*(mS generated  backup files. On Windows and Dos platforms the
 Hidden  file  attribute  is used to hide the file,  whereas on UNIX the backup
@@ -272,9 +270,8 @@ token is used in the
 variable. This indirectly sets the
 .Ht $show-modes 5
 variable.
-.SS "Platform - UNIX Setup"
-Only  present  on UNIX  platforms  using  the X  interface,  see below for the
-Console setup.
+.SS "Platform - UNIX XTerm Setup"
+Only present on UNIX platforms using the X interface, see below for the Console setup.
 .IP "\fCFont\fR"
 Sets the X font name to be used. This indirectly executes
 .Ht change-font 2
@@ -313,6 +310,11 @@ characters. This indirectly sets bit
 \fC0x80000\fR of the
 .Ht $system 5
 variable.
+.IP "\fCChoose Font\fR"
+Runs XTerm command
+.Hr xfontsel 1 
+which opens a dialog  allowing the user to select a font, the current font name is passed back to \*(mS if the  \fBquit\fR
+button is press, the font name is not altered if \fBxfontsel\fR is exited using the title bar close button.
 .IP "\fCEnable Toolbar\fR"
 Enables the Toolbar - configurable, managed windows giving easy access to many
 features  and tools.  When  enabled  the  toolbar is opened and  displayed  at
@@ -432,8 +434,6 @@ See \fBPlatform UNIX Setup\fR above.
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCIgnore Files\fR"
 See \fBPlatform UNIX Setup\fR above.
-.IP "\fCSystem Clipboard\fR"
-See \fBPlatform UNIX Setup\fR above.
 .IP "\fCCursor Blink Rate\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCFence Display\fR"
@@ -446,8 +446,8 @@ See \fBPlatform UNIX Setup\fR above.
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCColor Scheme\fR"
 See \fBPlatform UNIX Setup\fR above.
-.SS "Platform - Win32 Setup"
-Only present on Microsoft Windows based machines.
+.SS "Platform - Windows Window Setup"
+Only present on Microsoft Windows window-based machines, see below for the Console setup.
 .IP "\fCFont Name\fR"
 Sets the windows font name and size. This indirectly executes
 .Ht change-font 2
@@ -513,9 +513,8 @@ See \fBPlatform UNIX Setup\fR above.
 .IP "\fCColor Scheme\fR"
 See \fBPlatform UNIX Setup\fR above.
 .SS "Platform - Win32 Console Setup"
-Only  present  on  Windows  NT and Win95+  platforms  when  using the  console
-interface,  all the Console  platform  settings  are kept  independent  of the
-Window interface settings.
+Only  present on Windows  platforms  when using the console  interface,  all the Console  platform  settings  are kept
+independent of the Window interface settings.
 .IP "\fCDisplay Char Set\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCDraw White Spaces\fR"
@@ -741,201 +740,43 @@ is only called if the mouse is in a main window. If disabled, the
 \fBBound To\fR command is always called.
 .IP "\fCDefaults\fR"
 Rests the mouse configuration to the default settings.
-.SS "File Types"
-The file type list is used in two places, the main  menu's
-.C "File => Quick Open"
-sub-menu  list and the
-.C "File => Open => File Type"
-list. In each case the file
-type "\fCAll Files\fR" is automatically added. The user can add, remove and
-change the list of file types by using this dialog. An entry can be selected
-for editing or deletion by simply selecting it with the left mouse button. A
-new entry may be added by simply filling in the 3 entry boxes and selecting
-Add. Items in the Dialog are as follows.
-.IP "\fCNo.\fR"
-The file  type  entry  number. A new  entry is always  added to the end of the
-list, ignoring this value. The position of an existing  entry can be changed by
-altering  this field to the desired  position and  selecting the  \fCChange\fR
-button to move it to its new position.
-.IP "\fCName\fR"
-The file type name, the string printed in the sub-menus.
-.IP "\fCFile Mask List\fR"
-A comma  ('\fC,\fR')  separated  list of file masks which match the file type,
-e.g. for C and C++ source files use "\fC*.c,*.cc,*.cpp\fR".
-.IP "\fCAdd\fR"
-Adds a new entry to the list,  only the  \fBName\fR  and  \fBFileMask  List\fR
-fields  are used, the  \fBNo.\fR  field is  ignored as the new entry is always
-added  to the end of the  list.  The  position  can be  altered  by using  the
-\fBChange\fR button.
-.IP "\fCChange\fR"
-Alters an existing file type entry, all 3 fields must be set.
-.IP "\fCDelete\fR"
-Deletes the current entry number, only the \fBNo.\fR entry is used.
-.SS Tools
-The Tools  dialog  allows the user to  configure up to 10 system  commands, or
-tools, which can be executed via \*(mS Main Tools Menu. The dialog  configures
-the user's registry for the command
-.Ht execute-tool 3
-to be  used.  The  execution  of a  tool  can  also  be  bound  to a key,  see
-\fBexecute-tool\fR for more information.
-.PP
-The  top  half  of  the  dialog  consists  of the 10  Tools  (\fC0\fR-\fC9\fR)
-configuration  buttons.  Selecting  one of these  selects the current  tool to
-be  configured,  the  current  tool is shown by the title in the middle of the
-dialog.
-.PP
-The lower  half of the  dialog  configures  the  currently  selected  tool, as
-follows:-
-.IP "\fCTool Name\fR"
-Sets the  displayed  name of the tool. The tool name is used in the buttons in
-the top half of this dialog and in the \*(mS Main Tools Menu.
-.IP "\fCCommand Line\fR"
-Sets the system command-line to be launched whenever the tool is executed, the
-following  special tokens may be used in the command-line which are substituted
-at execution:-
-.RS
-.IP "\fB%ff\fR"
-The current  buffer's full file name, including the path.
-.IP "\fB%fp\fR"
-The current  buffer's file path.
-.IP "\fB%fn\fR"
-The current  buffer's file name without the path.
-.IP "\fB%fb\fR"
-The current  buffer's  file base name, i.e. the file name  without the path or
-the  extension.
-.IP "\fB%fe\fR"
-The current  buffer's file  extension with the '\fI.\fR' (e.g.  "\fI.emf\fR"),
-set to the empty string if the file name does not have an extension.
-.RE
-.IP
-Note   that   "\fB%ff\fR"   is   always   the  same  as   "\fB%fp%fn\fR"   and
-"\fB%fp%fb%fe\fR".  If any of these  tokens  are used, the tool  will  fail to
-execute if the current buffer does not have a file name.
-.IP "\fCRun Concurrently\fR"
-If  enabled,  when  the tool is  executed  the  command  is  launched  and run
-concurrently,  allowing the user to continue working in \*(mS during the tools
-execution.  This option is not  available for all versions on \*(mS and forces
-the output to be captured. Enabling this option will force the use of command
-.Ht ipipe-shell-command 2
-to launch the tool.
-.IP "\fCCapture Output\fR"
-If enabled any output produced from the execution of the tool will be captured
-and  inserted  into a new  buffer.  When  enabled  the  following  two  items,
-\fCBuffer\fR  and \fCHide\fR, may be specified. When disabled the command used
-to execute the tool is
-.Ht shell-command 2 ,
-otherwise the command used is either
-.Ht pipe-shell-command 2
-or
-.Ht ipipe-shell-command 2
-depending on the setting of \fCRun Concurrently\fR.
-.IP "\fCBuffer\fR"
-Specifies the buffer name the captured output should be dumped to, this option
-is only visible when  \fCCapture  Output\fR is enabled. The following  special
-tokens may be used in the buffer name which are substituted at execution:-
-.RS
-.IP "\fB%fn\fR"
-The current  buffer's file name without the path, set to the buffer name if the
-current buffer does not have a file name.
-.IP "\fB%fb\fR"
-The current  buffer's  file base name, i.e. the file name  without the path or
-the  extension.  Set to the buffer name if the current  buffer does not have a
-file name.
-.IP "\fB%fe\fR"
-The current  buffer's file  extension with the '\fI.\fR' (e.g.  "\fI.emf\fR"),
-set to the empty string if the current  buffer does not have a file name or it
-does not have an extension.
-.RE
-Note that  "\fB%fn\fR" is always the same as  "\fB%fb%fe\fR".  Default  buffer
-name when this field is left empty is "\fI*command*\fR", or "\fI*icommand*\fR"
-if \fCRun Concurrently\fR is enabled.
-.IP "\fCHide\fR"
-When  enabled the tool output  capture  buffer is hidden,  this option is only
-visible when \fCCapture Output\fR is enabled.
-.IP "Current Buffer - \fCSave\fR and \fCPrompt Before Saving\fR"
-If the current buffer has been edited, enabling \fCSave Current Buffer\fR will
-automatically  save the  current  buffer  before  executing  the tool. This is
-particularly  useful when the tool operates on the current buffer's file (e.g.
-compiles the file). If  \fCPrompt\fR is also enabled the user will be prompted
-before the file is saved.
-.IP "All Buffers - \fCSave\fR and \fCPrompt Before Saving\fR"
-If \fCSave All Buffers\fR is enabled, all edited buffers will be automatically
-saved before executing the tool. This is particularly useful when the tool may
-operate on multiple files (e.g.  compilation of a project). If \fCPrompt\fR is
-also enabled the user will be prompted before each file is saved.
-.SS "E-Mail"
-\*(mE provides a simple E-Mail manager, see
-.Ht vm 3
-for more  information  and example  entries. It must be stressed that \fBvm\fR
-has only  been  tested in one  environment,  caution  should be used as system
-differences  may cause  problems,  such as loss of data, which the author does
-not except any responsibility for.
-.PP
-The  \fBE-Mail Setup\fR dialog  configures  a user  to use  part or all of the
-\fBvm\fR E-Mail manager, as follows:-
-.SS "Platform ALL Mail Setup"
-The following field is used for both sending and receiving mail:
-.IP "\fCUser Mail Dir\fR"
-Sets the user  mail-box  directory  where all files are to be found and stored
-(except  usually  the  \fBIncoming  Mail  box\fR).  The value of this field is
-platform  independent  and  must be  setup  for each  one.
-.PP
-The following fields are used for sending mail:
-.IP "\fCSend Mail Signature\fR"
-Sets  the  signature  file  name  which is  inserted  at the  bottom  of every
-out-going  email  message, if empty the no signature is inserted. The value of
-this  field is  platform  independent,  is value  use by all. The file must be
-located in the \fBUser  Mail Dir\fR and no path  entered for it to work across
-platforms.
-.IP "\fCCarbon-Copy File\fR"
-Sets the sent-mail  carbon-copy  file, creating the  "\fCFcc:\fR"  line of the
-mail buffer. All out-going  emails are appended to the end of this file if the
-"\fCFcc:\fR"  line  is not  altered.  If  this  field  is left  empty  then no
-"\fCFcc:\fR" line is created. The value of this field is platform independent,
-the file must be located in the \fBUser Mail Dir\fR.
-.IP "\fCInsert Data (^C^I)\fR"
-Sets the first embedded data command line, bound to "\fCC-c C-I\fR". The value
-of this field is platform dependent.
-.IP "\fCInsert Data (^C^Z)\fR"
-Sets the second  embedded  data  command  line, bound to "\fCC-c  C-z\fR". The
-value of this field is platform dependent.
-.IP "\fCSend Mail Command\fR"
-Sets the command-line used for sending email messages. The value of this field
-is platform dependent.
-.PP
-The following fields are used for receiving mail:
-.IP "\fCCheck for mail\fR"
-Sets the time  interval  between the  automatic  checking for incoming mail in
-seconds, when set to 0 the automatic checking is disabled. When enabled, the
-check is performed by
-.Ht mail-check 3
-which also sends any queued mail and gets any new mail if the
-.B "Get Mail Command"
-is used. The value of this field is platform dependent.
-.IP "\fCGet Mail Command\fR"
-The  command  used to get new mail from the server, if empty it is assumed the
-\fBIncoming  Mail Box\fR is  automatically  updated by the system. If used the
-command  must  append  new  mail  to the end of the  \fBIncoming  Mail  Box\fR
-specified below. The value of this field is platform dependent.
-.IP "\fCIncoming Mail Box\fR"
-Sets the incoming mail box file which new incoming mail is appended to, either
-automatically  by the system or by the \fBGet  Mail  Command\fR.  The value of
-this field is platform dependent.
-.IP "\fCVM Main In Box\fR"
-Sets the main  current mail box, or inbox. The value of this field is platform
-independent, the file must be located in the \fBUser Mail Dir\fR.
-.IP "\fCVM Gets Mail\fR"
-When  enabled,  executing  the  command  vm will not only  create the mail box
-windows, it will also get and process any new mail. When  disabled only the vm
-\&'\fCg\fR' command can be used to get and process new mail.
-.IP "\fCMime Data Extract\fR"
-Sets the  command-line  used for  extracting  Mime encoded  embedded data. The
-value of this field is platform dependent.
-.IP "\fCUuencode Extract\fR"
-Sets the command-line used for extracting  Uuencoded  embedded data. The value
-of this field is platform dependent.
-.IP "\fCAuto-Archive Setup\fR"
-Sets up the auto-archive of messages in the current inbox to other mail boxes.
+.SS "Miscellaneous"
+This tab gives easy access to setup dialogs of other features:
+.IP "\fCAlias Path\fR"
+Dialog to configure alias paths, for more information see
+.Ht alias-path-setup 3 .
+.IP "\fCClearCase\fR"
+Dialog to configure the IBM ClearCase interface, for more information see
+.Ht cc-setup 3 .
+.IP "\fCCVS\fR"
+Dialog to configure the Concurrent Versions System (CVS) interface, for more information see
+.Ht cvs-setup 3 .
+.IP "\fCFile Tools\fR"
+Dialog to configure file tools which can be used in the file browser, for more information see
+file-tool-setup 3 .
+.IP "\fCFile Types\fR"
+Dialog to configure file type list which is used in the
+.Hl "main menu" MainMenu 3 's
+\fBOpen\fR and \fBQuick Open\fR items, for more information see
+file-type-setup 3 .
+.IP "\fCFind\fR"
+Dialog to configure the 
+.Ht find 3 ,
+.Ht grep 3
+and
+.Ht replace-string-in-files 3
+commands, see
+.Ht find-setup 3 .
+.IP "\fCSession\fR"
+Dialog to configure the current session, for more information see
+.Ht session-setup 3 . 
+.IP "\fCShell Tools\fR"
+Dialog to  configure  the shell tools, these are an  alternative  to \fBFile  Tools\fR as they are  typically  used to
+operate on the current buffer's file. For more information see
+.Ht shell-tool-setup 3 . 
+.IP "\fCSubversion\fR"
+Dialog to configure the Subversion (SVN) interface, see
+.Ht svn-setup 3 .
 .SH NOTES
 \fBuser-setup\fR is a macro using
 .Ht osd 2 ,
@@ -945,6 +786,7 @@ defined in \fCuserstp.emf\fR.
 .Hl "User Profiles" userProfiles 2 ,
 .Hl "Company Profiles" companyProfiles 2 ,
 .Hl "Installation" Installation 1 ,
+.Hl "Top Main Menu" MainMenu 3 ,
 .Ht buffer-setup 3 ,
 .Ht change-scheme 3 ,
 .Ht scheme-editor 3 ,
