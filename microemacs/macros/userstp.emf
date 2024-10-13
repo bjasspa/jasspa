@@ -403,7 +403,7 @@ set-variable .user-set-mouse.A ""
     0x400 pipe-shell-command "LC_ALL=C xfontsel -pattern \"-*-*-*-r-*-*-*-*-*-*-*-*-*-*\" -print -scaled" #l0
     !if &set #l1 $result
       osd-dialog "User Setup Error" &spr "  Failed to run xfontsel, system returned error (%d):  \n\n    %s  " #l1 #l0 "  \HOK  "
-    !else
+    !elif &len &set #l0 &trb #l0
       !force 3 change-font #l0
       !if &not $status
         osd-dialog "User Setup Error" &spr "  Failed to load selected font: %s " #l0 "  \HOK  "
