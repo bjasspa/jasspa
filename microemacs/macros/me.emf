@@ -290,6 +290,7 @@ add-file-hook ".swift"                                        fhook-swift
 1 add-file-hook "^#![ \t]*/.*awk"               fhook-awk    ; awk scripts
 1 add-file-hook "^#![ \t]*/.*python"            fhook-python ; Python file
 1 add-file-hook "^#![ \t]*/.*ruby"              fhook-ruby   ; Ruby shell script
+1 add-file-hook "^#![ \t]*/.*Rscript"           fhook-r      ; R    shell script
 1 add-file-hook "^#![ \t]*/.*make"              fhook-make   ; Make script
 4 add-file-hook "^[ \t]*exec[ \t]*\\(wish\\|tclsh\\)" fhook-tcl ; TCL shell script
 1 add-file-hook "^#VRML"                        fhook-vrml   ; VRML or wrl files
