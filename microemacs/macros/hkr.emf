@@ -41,6 +41,8 @@ set-variable .fhook-r.item-list-r3 "Oper \ecB\\1\ecA"
   0 hilight .hilight.r 0              $global-scheme
   hilight .hilight.r 0 "^\\s *\\{#.*" .scheme.comment
   hilight .hilight.r 0 "^#.*"         .scheme.comment   
+  hilight .hilight.r 2 "\\s\\{#"      .scheme.comment
+  hilight .hilight.r 2 "^#!"          .scheme.header
   hilight .hilight.r 4 "\"" "\"" "\\" .scheme.string
   hilight .hilight.r 4 "'" "'" "\\"   .scheme.string    
   !if &band .hilight.flags 0x04

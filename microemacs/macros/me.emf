@@ -201,88 +201,88 @@ set-variable .expand-word.on &reg "/history/expword" "0"
 ; File hooks - reset the file hook list first
 0 add-file-hook
 ; Add file extension hooks. Files loaded in binary mode do not need hook as fixed
-add-file-hook "*help* *about* .ehf"                           fhook-ehf
-add-file-hook "*bindings* *commands* *variables*"             fhook-lists
-add-file-hook "*buffers*"                                     fhook-blist
-add-file-hook "/ *files*"                                     fhook-dirlst
-add-file-hook "*directory*"                                   fhook-dirtre
-add-file-hook "*registry*"                                    fhook-reg
-add-file-hook "*icommand* *shell*"                            fhook-ipipe
-add-file-hook ".emf"                                          fhook-emf
-add-file-hook ".doc"                                          fhook-doc
-add-file-hook ".apt"                                          fhook-apt
-add-file-hook ".txt"                                          fhook-txt
-add-file-hook ".jst"                                          fhook-jst
-add-file-hook ".tex .sty"                                     fhook-latex
-add-file-hook ".bib"                                          fhook-bibtex
-add-file-hook ".n .1 .2 .3 .4 .5 .6 .7 .8 .9 .so .tni .sm"    fhook-nroff
-add-file-hook ".sgm .sgml"                                    fhook-sgml
-add-file-hook ".c .h .def .i"                                 fhook-c
-add-file-hook ".cc .cpp .hpp .rc"                             fhook-cpp
-add-file-hook ".l .y"                                         fhook-yacc
-add-file-hook "Makefile makefile .mak .mk .gmk"               fhook-make
-add-file-hook "Imakefile imakefile"                           fhook-imake
-add-file-hook "smb.conf"                                      fhook-samba
-add-file-hook "httpd.conf"                                    fhook-apache
+add-file-hook "*help* *about* .ehf"             fhook-ehf
+add-file-hook "*bindings* *commands* *variables*" fhook-lists
+add-file-hook "*buffers*"                       fhook-blist
+add-file-hook "/ *files*"                       fhook-dirlst
+add-file-hook "*directory*"                     fhook-dirtre
+add-file-hook "*registry*"                      fhook-reg
+add-file-hook "*icommand* *shell*"              fhook-ipipe
+add-file-hook ".emf"                            fhook-emf
+add-file-hook ".doc"                            fhook-doc
+add-file-hook ".apt"                            fhook-apt
+add-file-hook ".txt"                            fhook-txt
+add-file-hook ".jst"                            fhook-jst
+add-file-hook ".tex .sty"                       fhook-latex
+add-file-hook ".bib"                            fhook-bibtex
+add-file-hook ".n .1 .2 .3 .4 .5 .6 .7 .8 .9 .so .tni .sm" fhook-nroff
+add-file-hook ".sgm .sgml"                      fhook-sgml
+add-file-hook ".c .h .def .i"                   fhook-c
+add-file-hook ".cc .cpp .hpp .rc"               fhook-cpp
+add-file-hook ".l .y"                           fhook-yacc
+add-file-hook "Makefile makefile .mak .mk .gmk" fhook-make
+add-file-hook "Imakefile imakefile"             fhook-imake
+add-file-hook "smb.conf"                        fhook-samba
+add-file-hook "httpd.conf"                      fhook-apache
 add-file-hook ".sh .ksh .csh .login .bashrc .cshrc .tcshrc .zshrc .profile" fhook-shell
-add-file-hook ".ini .hpj .reg .rgy"                           fhook-ini
-add-file-hook ".htm .html .htp .hts"                          fhook-html
-add-file-hook ".lhtm .lhtml"                                  fhook-lhtml
-add-file-hook ".cs"                                           fhook-cs
-add-file-hook ".css"                                          fhook-css
-add-file-hook ".bas .cls"                                     fhook-vb
-add-file-hook ".asp"                                          fhook-asp
-add-file-hook ".java .jav"                                    fhook-java
-add-file-hook ".jsp"                                          fhook-jsp
-add-file-hook ".js"                                           fhook-js
-add-file-hook ".json"                                         fhook-json
-add-file-hook ".pl .pm"                                       fhook-perl
-add-file-hook ".php .php3 .php4 .php5 .phtml .inc"            fhook-php
-add-file-hook ".phps"                                         fhook-phps
-add-file-hook ".cmd .bat .btm"                                fhook-dos
-add-file-hook ".tcl .tk"                                      fhook-tcl
-add-file-hook ".rul"                                          fhook-rul
-add-file-hook ".awk .nawk .gawk"                              fhook-awk
-add-file-hook ".ada .adb .ads"                                fhook-ada
-add-file-hook ".f .f77 .f90"                                  fhook-f90
-add-file-hook ".p .pas"                                       fhook-pascal
-add-file-hook ".el"                                           fhook-lisp
-add-file-hook ".vhdl .vhd"                                    fhook-vhdl
-add-file-hook ".v"                                            fhook-verilg
-add-file-hook ".fvwm .fvwm2rc"                                fhook-fvwm
-add-file-hook ".nsr"                                          fhook-nsr
-add-file-hook ".erf"                                          fhook-erf
-add-file-hook ".bnf"                                          fhook-bnf
-add-file-hook ".sql"                                          fhook-sql
-add-file-hook ".asn1"                                         fhook-asn1
-add-file-hook ".mhg .mhg5"                                    fhook-mhg
-add-file-hook ".cbl"                                          fhook-cobol
-add-file-hook ".x86"                                          fhook-asmx86
-add-file-hook ".py"                                           fhook-python
-add-file-hook ".scm .sch"                                     fhook-scheme
-add-file-hook ".mp .mf"                                       fhook-meta
-add-file-hook ".m4"                                           fhook-m4
-add-file-hook ".md .tmd .Rmd .rmd"                            fhook-md
-add-file-hook ".texi"                                         fhook-texi
-add-file-hook ".idl"                                          fhook-idl
-add-file-hook ".info dir"                                     fhook-info
-add-file-hook ".diff .dif *diff*"                             fhook-diff
-add-file-hook ".xml .xsl .xul .xaml"                          fhook-xml
-add-file-hook ".ex .exw .exu .e .ew .eu"                      fhook-euphor
-add-file-hook ".pls"                                          fhook-pls
-add-file-hook ".lua"                                          fhook-lua
-add-file-hook ".psf"                                          fhook-psf
-add-file-hook ".spec"                                         fhook-spec
-add-file-hook ".sl"                                           fhook-slang
-add-file-hook ".au3"                                          fhook-au3
-add-file-hook ".mod"                                          fhook-mod2
-add-file-hook ".dot"                                          fhook-dot
-add-file-hook ".rb"                                           fhook-ruby
-add-file-hook ".rd .Rd"                                       fhook-rd
-add-file-hook ".r .R .Rtk"                                    fhook-r
-add-file-hook ".cfm .cfml .cfc"                               fhook-cfm
-add-file-hook ".iss"                                          fhook-iss
-add-file-hook ".swift"                                        fhook-swift
+add-file-hook ".ini .hpj .reg .rgy"             fhook-ini
+add-file-hook ".htm .html .htp .hts"            fhook-html
+add-file-hook ".lhtm .lhtml"                    fhook-lhtml
+add-file-hook ".cs"                             fhook-cs
+add-file-hook ".css"                            fhook-css
+add-file-hook ".bas .cls"                       fhook-vb
+add-file-hook ".asp"                            fhook-asp
+add-file-hook ".java .jav"                      fhook-java
+add-file-hook ".jsp"                            fhook-jsp
+add-file-hook ".js"                             fhook-js
+add-file-hook ".json"                           fhook-json
+add-file-hook ".pl .pm"                         fhook-perl
+add-file-hook ".php .php3 .php4 .php5 .phtml .inc" fhook-php
+add-file-hook ".phps"                           fhook-phps
+add-file-hook ".cmd .bat .btm"                  fhook-dos
+add-file-hook ".tcl .tk"                        fhook-tcl
+add-file-hook ".rul"                            fhook-rul
+add-file-hook ".awk .nawk .gawk"                fhook-awk
+add-file-hook ".ada .adb .ads"                  fhook-ada
+add-file-hook ".f .f77 .f90"                    fhook-f90
+add-file-hook ".p .pas"                         fhook-pascal
+add-file-hook ".el"                             fhook-lisp
+add-file-hook ".vhdl .vhd"                      fhook-vhdl
+add-file-hook ".v"                              fhook-verilg
+add-file-hook ".fvwm .fvwm2rc"                  fhook-fvwm
+add-file-hook ".nsr"                            fhook-nsr
+add-file-hook ".erf"                            fhook-erf
+add-file-hook ".bnf"                            fhook-bnf
+add-file-hook ".sql"                            fhook-sql
+add-file-hook ".asn1"                           fhook-asn1
+add-file-hook ".mhg .mhg5"                      fhook-mhg
+add-file-hook ".cbl"                            fhook-cobol
+add-file-hook ".x86"                            fhook-asmx86
+add-file-hook ".py"                             fhook-python
+add-file-hook ".scm .sch"                       fhook-scheme
+add-file-hook ".mp .mf"                         fhook-meta
+add-file-hook ".m4"                             fhook-m4
+add-file-hook ".md .tmd .Rmd .rmd"              fhook-md
+add-file-hook ".texi"                           fhook-texi
+add-file-hook ".idl"                            fhook-idl
+add-file-hook ".info dir"                       fhook-info
+add-file-hook ".diff .dif *diff*"               fhook-diff
+add-file-hook ".xml .xsl .xul .xaml"            fhook-xml
+add-file-hook ".ex .exw .exu .e .ew .eu"        fhook-euphor
+add-file-hook ".pls"                            fhook-pls
+add-file-hook ".lua"                            fhook-lua
+add-file-hook ".psf"                            fhook-psf
+add-file-hook ".spec"                           fhook-spec
+add-file-hook ".sl"                             fhook-slang
+add-file-hook ".au3"                            fhook-au3
+add-file-hook ".mod"                            fhook-mod2
+add-file-hook ".dot"                            fhook-dot
+add-file-hook ".rb"                             fhook-ruby
+add-file-hook ".rd .Rd"                         fhook-rd
+add-file-hook ".r .R .Rtk"                      fhook-r
+add-file-hook ".cfm .cfml .cfc"                 fhook-cfm
+add-file-hook ".iss"                            fhook-iss
+add-file-hook ".swift"                          fhook-swift
 ; Add magic hooks
 1 add-file-hook "^#![ \t]*/.*sh"                fhook-shell  ; UNIX shell files
 1 add-file-hook "^#![ \t]*/.*perl"              fhook-perl   ; UNIX perl script
@@ -290,40 +290,41 @@ add-file-hook ".swift"                                        fhook-swift
 1 add-file-hook "^#![ \t]*/.*awk"               fhook-awk    ; awk scripts
 1 add-file-hook "^#![ \t]*/.*python"            fhook-python ; Python file
 1 add-file-hook "^#![ \t]*/.*ruby"              fhook-ruby   ; Ruby shell script
+1 add-file-hook "^#![ \t]*/.*Rscript"           fhook-r      ; R shell script
 1 add-file-hook "^#![ \t]*/.*make"              fhook-make   ; Make script
 4 add-file-hook "^[ \t]*exec[ \t]*\\(wish\\|tclsh\\)" fhook-tcl ; TCL shell script
 1 add-file-hook "^#VRML"                        fhook-vrml   ; VRML or wrl files
 1 add-file-hook "^#Inventor"                    fhook-vrml   ; Use the VRML hook for iv files
--2 add-file-hook "This is Info file"             fhook-info   ; GNU info file
--1 add-file-hook "<\\?xml"                       fhook-xml    ; <?xml version="1.0" standalone="no"?>
--1 add-file-hook "-[*!]-[ \t]*c.*-[*!]-"         fhook-c      ; -*- C -*-
--1 add-file-hook "-[*!]-[ \t]*c\\+\\+.*-[*!]-"   fhook-cpp    ; -*- C++ -*-
--1 add-file-hook "-[*!]-[ \t]*f.*-[*!]-"         fhook-f90    ; -*- f -*-
--1 add-file-hook "-[*!]-[ \t]*perl.*-[*!]-"      fhook-perl   ; -*- perl -*-
--1 add-file-hook "-[*!]-[ \t]*texinfo.*-[*!]-"   fhook-texi   ; -*- texinfo -*-
--1 add-file-hook "-[*!]-[ \t]*nroff.*-[*!]-"     fhook-nroff  ; -*- nroff -*-
--1 add-file-hook "-[*!]-[ \t]*cobol.*-[*!]-"     fhook-cobol  ; -*- cobol -*-
--1 add-file-hook "-[*!]-[ \t]*pl/?sq?l?.*-[*!]-" fhook-pls    ; -*- pl/sql -*- or -*- pls -*-
--1 add-file-hook "-[*!]-[ \t]*makefile.*-[*!]-"  fhook-make   ; -!- makefile -!-
--1 add-file-hook "-[*!]-[ \t]*sh\\(ell\\)?.*-[*!]-" fhook-shell  ; -!- shell -!-
--1 add-file-hook "-[*!]-[ \t]*mode: wiki.*-[*!]-" fhook-wiki  ; -*- mode: wiki -*-
--1 add-file-hook "-[*!]-[ \t]*ruby.*-[*!]-"      fhook-ruby   ; -*- ruby -*-
--1 add-file-hook "-!-[ \t]*mhg.*-!-"             fhook-mhg    ; -!- mhg -!-
--1 add-file-hook "-!-[ \t]*msdos.*-!-"           fhook-dos    ; -!- msdos -!-
--1 add-file-hook "-!-[ \t]*imakefile.*-!-"       fhook-imake  ; -!- imakefile -!-
--1 add-file-hook "-!-[ \t]*document.*-!-"        fhook-doc    ; -!- document -!-
--1 add-file-hook "-!-[ \t]*jst.*-!-"             fhook-jst    ; -!- jst -!-
--1 add-file-hook "-[*!]-[ \t]*sgml.*-[*!]-"      fhook-sgml   ; -!- sgml -!-
--1 add-file-hook "DTD DocBook"                   fhook-sgml
--1 add-file-hook "-!-[ \t]*fvwm.*-!-"            fhook-fvwm   ; -!- fvwm -!-
--1 add-file-hook "-!-[ \t]*emf.*-!-"             fhook-emf    ; -!- emf -!-
--1 add-file-hook "-!-[ \t]*erf.*-!-"             fhook-erf    ; -!- erf -!-
--1 add-file-hook "-!-[ \t]*asn\\.1.*-!-"         fhook-asn1   ; -!- asn.1... -!-
--1 add-file-hook "-!-[ \t]*asmx86.*-!-"          fhook-asmx86 ; -!- asmx86 -!-
--1 add-file-hook "-!-[ \t]*text.*-!-"            fhook-txt    ; -!- text -!-
--1 add-file-hook "-!-[ \t]*msvb.*-!-"            fhook-vb     ; -!- msvb -!-
--1 add-file-hook "-!-[ \t]*swift.*-!-"           fhook-swift  ; -!- swift -!-
--1 add-file-hook "^diff "                        fhook-diff   ; diff -Naur file.c ...
+-2 add-file-hook "This is Info file"            fhook-info   ; GNU info file
+-1 add-file-hook "<\\?xml"                      fhook-xml    ; <?xml version="1.0" standalone="no"?>
+-1 add-file-hook "-[*!]-[ \t]*c.*-[*!]-"        fhook-c      ; -*- C -*-
+-1 add-file-hook "-[*!]-[ \t]*c\\+\\+.*-[*!]-"  fhook-cpp    ; -*- C++ -*-
+-1 add-file-hook "-[*!]-[ \t]*f.*-[*!]-"        fhook-f90    ; -*- f -*-
+-1 add-file-hook "-[*!]-[ \t]*perl.*-[*!]-"     fhook-perl   ; -*- perl -*-
+-1 add-file-hook "-[*!]-[ \t]*texinfo.*-[*!]-"  fhook-texi   ; -*- texinfo -*-
+-1 add-file-hook "-[*!]-[ \t]*nroff.*-[*!]-"    fhook-nroff  ; -*- nroff -*-
+-1 add-file-hook "-[*!]-[ \t]*cobol.*-[*!]-"    fhook-cobol  ; -*- cobol -*-
+-1 add-file-hook "-[*!]-[ \t]*pl/?sq?l?.*-[*!]-" fhook-pls   ; -*- pl/sql -*- or -*- pls -*-
+-1 add-file-hook "-[*!]-[ \t]*makefile.*-[*!]-"  fhook-make  ; -!- makefile -!-
+-1 add-file-hook "-[*!]-[ \t]*sh\\(ell\\)?.*-[*!]-" fhook-shell ; -!- shell -!-
+-1 add-file-hook "-[*!]-[ \t]*mode: wiki.*-[*!]-" fhook-wiki ; -*- mode: wiki -*-
+-1 add-file-hook "-[*!]-[ \t]*ruby.*-[*!]-"     fhook-ruby   ; -*- ruby -*-
+-1 add-file-hook "-!-[ \t]*mhg.*-!-"            fhook-mhg    ; -!- mhg -!-
+-1 add-file-hook "-!-[ \t]*msdos.*-!-"          fhook-dos    ; -!- msdos -!-
+-1 add-file-hook "-!-[ \t]*imakefile.*-!-"      fhook-imake  ; -!- imakefile -!-
+-1 add-file-hook "-!-[ \t]*document.*-!-"       fhook-doc    ; -!- document -!-
+-1 add-file-hook "-!-[ \t]*jst.*-!-"            fhook-jst    ; -!- jst -!-
+-1 add-file-hook "-[*!]-[ \t]*sgml.*-[*!]-"     fhook-sgml   ; -!- sgml -!-
+-1 add-file-hook "DTD DocBook"                  fhook-sgml
+-1 add-file-hook "-!-[ \t]*fvwm.*-!-"           fhook-fvwm   ; -!- fvwm -!-
+-1 add-file-hook "-!-[ \t]*emf.*-!-"            fhook-emf    ; -!- emf -!-
+-1 add-file-hook "-!-[ \t]*erf.*-!-"            fhook-erf    ; -!- erf -!-
+-1 add-file-hook "-!-[ \t]*asn\\.1.*-!-"        fhook-asn1   ; -!- asn.1... -!-
+-1 add-file-hook "-!-[ \t]*asmx86.*-!-"         fhook-asmx86 ; -!- asmx86 -!-
+-1 add-file-hook "-!-[ \t]*text.*-!-"           fhook-txt    ; -!- text -!-
+-1 add-file-hook "-!-[ \t]*msvb.*-!-"           fhook-vb     ; -!- msvb -!-
+-1 add-file-hook "-!-[ \t]*swift.*-!-"          fhook-swift  ; -!- swift -!-
+-1 add-file-hook "^diff "                       fhook-diff   ; diff -Naur file.c ...
 
 ; Initialize the top menu line
 osd 0 0  "asM" 0 0 -1 0 0 0 osd-main
