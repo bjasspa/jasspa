@@ -30,7 +30,13 @@ PLATFORM=`uname`
 if [ $PLATFORM = "Darwin" ] ; then
   VERSION=`uname -r | cut -f 1 -d .`
   if [ $VERSION -gt 15 ] ; then
-    MEPLATPKG=macos
+    if [ `uname -p` = "i386" ] ; then
+      MEPLATPKG=macos_intel
+      MEPLATFUL=macos13-intel64
+    else
+      MEPLATPKG=macos_apple
+      MEPLATFUL=macos14-apple64
+    fi
   fi
 elif [ $PLATFORM = "Linux" ] ; then
   MEPLATPKG=linux
@@ -157,6 +163,8 @@ if [ -z "$1" ] ; then
     install_package "" bin_${MEPLATPKG}_binaries
     install_package "" macros
     install_package "" help_ehf
+    # make the spelling folder so search-path with have it
+    mkdir -p ${INSTPATH}/jasspa/spelling
     printf "#!/bin/sh\nMEINSTALLPATH=${INSTPATH}/jasspa\n${INSTPATH}/jasspa/bin/${MEPLATFUL}/mec $@\n" > ${INSTPATH}/jasspa/bin/mec
     chmod 755 ${INSTPATH}/jasspa/bin/mec
     printf "#!/bin/sh\nMEINSTALLPATH=${INSTPATH}/jasspa\n${INSTPATH}/jasspa/bin/${MEPLATFUL}/mew $@\n" > ${INSTPATH}/jasspa/bin/mew
@@ -174,9 +182,13 @@ if [ -z "$1" ] ; then
       echo "Warning: Cannot create links in \"${BINPATH}\" to binaries in \"${INSTPATH}/jasspa/bin\", either add ${INSTPATH}/jasspa/bin to your PATH, or copy the scripts to somewhere in your PATH, or rerun with sudo."
       echo ""
     else
+      rm -f ${BINPATH}/mec
       ln -s ${INSTPATH}/jasspa/bin/mec ${BINPATH}/mec
+      rm -f ${BINPATH}/mew
       ln -s ${INSTPATH}/jasspa/bin/mew ${BINPATH}/mew
+      rm -f ${BINPATH}/tfs
       ln -s ${INSTPATH}/jasspa/bin/tfs ${BINPATH}/tfs
+      rm -f ${BINPATH}/microemacs-update
       ln -s ${INSTPATH}/jasspa/bin/microemacs-update ${BINPATH}/microemacs-update
     fi
   
