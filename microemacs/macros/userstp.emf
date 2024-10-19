@@ -137,7 +137,7 @@ set-variable %user-misc-cmd  "|alias-path-setup|cc-setup|cvs-setup|file-tool-set
 !emacro
 
 0 define-macro user-set-checkbox
-  set-variable #l2 &cat "/history/" &lget "|main-menu|spell/autosave|exact|magic|backup|quiet|tab|undo|spell/autospell|msshift|edituser|expaccent|explookbk|expword|find-buffer|mskeys|" &abs @#
+  set-variable #l2 &cat "/history/" &lget "|main-menu|spell/autosave|exact|magic|backup|quiet|tab|undo|spell/autospell|msshift|edituser|expaccent|explookbk|expword|find-buffer|mskeys|bndfav|" &abs @#
   set-variable #l0 &lget "|1|0|1|1|1|1|1|1|0|0|1|0|1|0|0|0|" &abs @#
   set-variable #l0 &reg #l2 #l0
   !if &les @# 0
@@ -844,6 +844,8 @@ osd .osd.user-start 150 "fh" "  Key Bindings: "
 osd .osd.user-start 160 "Ctpfx" &cat .osd.checkbox-chars "\} \HRebind Home Keys" 16 user-set-checkbox
 osd .osd.user-start 170 "fh" "                "
 osd .osd.user-start 180 "Ctpfx" &cat .osd.checkbox-chars "\} \HMS Shift Region" 10 user-set-checkbox
+osd .osd.user-start 190 "fh" "                "
+osd .osd.user-start 200 "Ctpfx" &cat .osd.checkbox-chars "\} Favorites to C-\H#" 17 user-set-checkbox
 osd .osd.user-start 500 ""
 osd .osd.user-start 510 "c"  "Locale Setup"
 osd .osd.user-start 520 ""

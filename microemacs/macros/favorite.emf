@@ -5,79 +5,156 @@
 ;
 ; Created:     Tue Aug 10 1999
 ; Synopsis:    Favorite file list macros.
-; Authors:     Steven Phillips
+; Authors:     Steven Phillips & Daniel Phillips
 ;
-0 define-macro osd-favorites-add
-  set-variable #l0 $buffer-bname
-  set-variable #l1 $window-line
-  set-variable #l2 $window-y-scroll
-  set-variable #l3 $window-col
-  set-variable #l4 $buffer-fname
-  !force find-file .osd-favorites.fname
-  1 buffer-mode "magic"
-  beginning-of-buffer
-  !force search-forward "^[ \t]*$"
-  !while $status
-    beginning-of-line
-    set-mark
-    forward-line
-    -1 kill-region
-    !force search-forward "^[ \t]*$"
-  !done
-  end-of-buffer
-  set-variable #l5 &rep &rig #l4 &rsin "/" #l4 "\\" "\\\\"
-  !if &les $window-line 18
-    insert-string &spr "\\H%d " &add 1 &div $window-line 2
-  !endif
-  insert-string &spr "%s\n%s" #l5 #l4
-  find-buffer #l0
-  set-variable $window-line #l1
-  set-variable $window-y-scroll #l2
-  set-variable $window-col #l3
-  !if .toolbar-favorites.update
-    toolbar-favorites
-  !endif
-!emacro
-
-0 define-macro osd-favorites-edit
-  !force find-file .osd-favorites.fname
-  beginning-of-buffer
-!emacro
-
-0 define-macro osd-favorites-sel
-  !force find-file .osd-favorites.fname
-  !if $status
-    beginning-of-buffer
-    !while @#
-      !if &not &seq &trl @wl ""
-        !if &and &dec @# 1 &not &seq @wl "-"
-          forward-line
-        !endif
-      !endif
-      forward-line
-    !done
-    set-variable #l1 @wl
-    -1 find-buffer $buffer-bname
-    !if &seq "!" &lef #l1 1
-      execute-line &rig #l1 1
-    !else
-      !force file-tool-exec-default #l1
-      !iif &not $status  find-file #l1
-    !endif
-  !endif
-!emacro
-
 0 define-macro favorites-load
-  !if &not &exi .osd-favorites.fname
-    !if &seq &set .osd-favorites.fname &find $user-name ".eff" "ERROR"
-      set-variable .osd-favorites.fname &spr "%s%s.eff" $user-path $user-name
-    !endif
-    set-variable .osd-favorites.fname &cat "file:" .osd-favorites.fname
+  !if &not &exi .favorites.fname
+    !iif &seq &set .favorites.fname &find $user-name ".eff" "ERROR"  set-variable .favorites.fname &spr "%s%s.eff" $user-path $user-name
+    set-variable .favorites.fname &cat "file:" .favorites.fname
   !endif
-  !force find-file .osd-favorites.fname
-  !iif &not $status  -8 ml-write &spr "[Failed to load %s]" #l0
+  !force find-file .favorites.fname
+  !iif &not $status  -8 ml-write &spr "Error: Failed to load favorites file \"%s\"" #l0
   1 buffer-mode "hide"
+  !iif &not &band 1 $window-eline  -8 ml-write &spr "Error: Invalid favorites file \"%s\", must have 2 lines per favorite" #l0
   beginning-of-buffer
+  !if &band 2 @#
+    !force search-buffer "me" "^[ \t]*$"
+    !iif $status  -8 ml-write &spr "Error: Invalid favorites file \"%s\", blank line found" #l0
+  !endif
+!emacro
+
+define-macro favorites-add
+  set-position "\x81"
+  !if &or &seq &lef $buffer-bname 1 "*" &seq &set #l0 $buffer-fname ""
+    set-variable #l0 &cat ":" &set #l5 $buffer-bname
+    set-variable #l7 &spr "Added buffer \"%s\" to favorites" #l5
+  !else
+    set-variable #l5 &rep &rig #l0 &rsin "/" &lef #l0 -1 "\\" "\\\\"
+    set-variable #l7 &spr "Added file \"%s\" to favorites" #l0
+  !endif
+  set-variable #l6 ""
+  3 favorites-load
+  ; @? = false add to end, or @# = 0 Add to start, @# > 35 error else replace hotkey, @# < 0 replace fav abs(@#) (abs(@#) <= (num favs)+1) 
+  ; sort of hotkey first, looking for an existing entry with the same hotkey
+  !if &not @?
+    set-variable #l1 &con &gre $window-eline 70 0 &div &add 1 $window-eline 2 
+  !elif &not @#
+    set-variable #l1 1
+  !elif &les @# 0
+    !force goto-line &sub &mul @# -2 1
+    !if &not &seq &trr @wl ""
+      set-variable #l6 &con &seq @wc "-" "-" ""
+      set-mark
+      2 forward-line
+      -1 kill-region
+    !endif
+    set-variable #l1 &con &les @# -35 0 &abs @#
+  !elif &gre @# 35
+    -8 ml-write &spr "Error: Invalid arg given, greater than 35 (%d)" @#
+  !else
+    set-variable #l1 @#
+  !endif
+  !if &set #l3 #l1
+    beginning-of-buffer
+    !repeat
+      !force search-buffer "me" &spr "\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\\\H[%s%s]" &set #l2 &con &gre #l1 9 &ito &add 55 #l1 #l1 &slo #l2
+      !iif &not &set #l3 $status  !break
+    !until &band 1 $window-line
+  !endif
+  !if &not @?
+    !if #l3
+      set-variable #l1 0
+      end-of-buffer
+    !else
+      beginning-of-buffer
+      !repeat
+        !force search-buffer "me" &spr "\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\\\H[%s-Z%s-z]" #l2 &slo #l2
+        !iif &not $status  !break
+      !until &band 1 $window-line
+      !if $status
+        beginning-of-line
+      !else
+        end-of-buffer
+      !endif
+    !endif
+  !elif &not @#
+    beginning-of-buffer
+    !iif #l3  set-variable #l1 0
+  !elif &les @# 0
+    !force goto-line &sub &mul @# -2 1
+    !iif #l3  set-variable #l1 0
+  !elif #l3
+    beginning-of-line
+    set-variable #l6 &con &seq @wc "-" "-" ""
+    set-mark
+    2 forward-line
+    -1 kill-region
+  !else
+    beginning-of-buffer
+    !repeat
+      !force search-buffer "me" &spr "\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\\\H[%s-Z%s-z]" #l2 &slo #l2
+      !iif &not $status  !break
+    !until &band 1 $window-line
+    !if $status
+      beginning-of-line
+    !else
+      end-of-buffer
+    !endif
+  !endif
+  !if #l1
+    set-variable #l6 &spr "%s\\H%s " #l6 #l2
+    set-variable #l7 &spr "%s, hotkey %s" #l7 #l2
+  !endif
+  insert-string &spr "%s%s\n%s%s" #l6 #l5 #l0 &con &seq @wc "" "" "\n"
+  goto-position "\x81"
+  !iif .toolbar-favorites.update  toolbar-favorites
+  ml-write #l7
+!emacro
+
+define-macro favorites-edit
+  3 favorites-load
+  beginning-of-buffer
+!emacro
+
+define-macro favorites-goto
+  !if &not &and @? @#
+    favorites
+    !return
+  !endif
+  favorites-load
+  !iif &not $status  -8 ml-write "Error: Failed to load favorites file \"%s\"" .favorites.fname
+  !if &gre @# 0
+    !if &les @# 10
+      set-variable #l2 &set #l1 @#
+    !elif &gre @# 35
+      -8 ml-write &spr "Error: Invalid arg given, greater than 35 (%d)" @#
+    !else
+      set-variable #l2 &spr "[%s%s]" &set #l1 &ito &add @# 55 &slo #l1
+    !endif
+    beginning-of-buffer
+    !repeat
+      !force search-buffer "me" &cat "\\(^\\|[^\\\\\n]\\)\\(\\\\\\\\\\)*\\\\H" #l2
+      !iif &not $status  -8 ml-write &spr "Error: Failed to find favorite with Hotkey '%s'" #l1
+    !until &band 1 $window-line
+    forward-line
+  !elif &not &gre $window-eline &set #l1 &mul @# -2
+    -8 ml-write &spr "Error: Invalid arg given, not enough favorites (%d < -%d)" @# &div $window-eline 2
+  !else
+    goto-line #l1
+  !endif
+  set-variable #l1 @wl
+  -1 find-buffer $buffer-bname
+  !if &seq "!" &lef #l1 1
+    ml-write &cat "Exec favorite command: " &rig #l1 1
+    execute-line &rig #l1 1
+  !elif &seq ":" &lef #l1 1
+    ml-write &cat "Goto favorite buffer: " &rig #l1 1
+    find-buffer &rig #l1 1
+  !else
+    ml-write &cat "Goto favorite file: " #l1
+    !force file-tool-exec-default #l1
+    !iif &not $status  find-file #l1
+  !endif
 !emacro
 
 0 define-macro toolbar-favorites-pick
@@ -86,13 +163,16 @@
 !emacro
 
 0 define-macro toolbar-favorites-drop
-  !if &equ .line $window-line
-    !if &not &seq @wl ""
-      set-variable #l0 $window-line
-      goto-position "\x82"
-      #l0 osd-favorites-sel
-      !return
-    !endif
+  !if &sub .line $window-line
+  !elif &not &seq @wl ""
+    set-variable #l0 &sub 0 $window-line
+    !repeat
+      !force search-buffer "meb" "^[ \t]*$"
+      !iif $status  set-variable #l0 &add #l0 1
+    !until &not $status
+    goto-position "\x82"
+    #l0 favorites-goto
+    !return
   !endif
   goto-position "\x82"
 !emacro
@@ -113,20 +193,14 @@
   end-of-buffer
   -1 kill-region
   find-buffer #l0
-  !while &not &seq @wc ""
-    !if &not &seq &trl @wl ""
-      !if &seq @wl "-"
-        set-variable #l1 "\n"
-      !else
-        set-variable #l1 &xrep @wl "\\\\\\(H\\|\\(.\\)\\)" "\\2"
-        forward-line
-      !endif
-      find-buffer "*favorites*"
-      end-of-buffer
-      insert-string #l1
-      find-buffer #l0
-    !endif
-    forward-line
+  !while &not &seq &set #l1 &trr @wl ""
+    !iif &seq &lef #l1 1 "-"  set-variable #l1 &cat "\n" &rig #l1 1
+    set-variable #l1 &xrep #l1 "\\\\\\(H\\|\\(.\\)\\)" "\\2"
+    !force 2 forward-line
+    find-buffer "*favorites*"
+    end-of-buffer
+    insert-string #l1
+    find-buffer #l0
   !done
   find-buffer "*favorites*" 
   beginning-of-buffer
@@ -138,39 +212,33 @@
   set-variable .update 1
 !emacro
 
-0 define-macro osd-favorites-set
-  favorites-load
+0 define-macro favorites-osd-set
+  3 favorites-load
   -1 osd @#
   osd @# 0 "boI" 0 -3 10
   !if &or &seq &lef $buffer-bname 1 "*" &seq $buffer-fname ""
     osd @# 1 "S" "Add"
   !else
-    osd @# 1 "" "\HAdd" f osd-favorites-add
+    osd @# 1 "" "\H+ Add" f favorites-add
   !endif
-  osd @# 2 "" "\HEdit  "  f osd-favorites-edit
+  osd @# 2 "" "\H= Edit  " f favorites-edit
   osd @# 3  "-"
   set-variable #l0 1
-  !while &not &seq @wc ""
-    !if &not &seq &trl @wl ""
-      !if &seq @wl "-"
-        osd @# &mul &pinc #l0 1 10 "-"
-      !else
-        execute-line &spr "set-variable #l1 \"%s\"" @wl 
-        osd @# &mul #l0 10 "" #l1 &pinc #l0 1 osd-favorites-sel
-        forward-line
-      !endif
+  !while &not &seq &set #l2 &trr @wl ""
+    !if &seq &lef #l2 1 "-"
+      osd @# &sub &mul #l0 10 1 "-"
+      set-variable #l2 &rig #l2 1
     !endif
-    forward-line
+    execute-line &spr "set-variable #l1 \"%s\"" #l2
+    osd @# &mul #l0 10 "" #l1 &sub 0 &pinc #l0 1 favorites-goto
+    !force 2 forward-line
   !done
-  !if &equ #l0 1
-    osd @# 10 "" "<no favorites>"
-  !endif
+  !iif &equ #l0 1  osd @# 10 "" "<no favorites>"
 !emacro
 
-0 define-macro osd-favorites
+define-macro favorites
   set-position "\x81"
-  !force @# osd-favorites-set
+  !force &con @? @# .osd.tmp favorites-osd-set
   goto-position "\x81"
+  !iif &not @? .osd.tmp osd
 !emacro
-
-
