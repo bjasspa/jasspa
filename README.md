@@ -102,54 +102,12 @@ session should start with these saved settings.
 
 ## Tools to improve your editing on Linux and MacOS
 
-- Terminal (macOS, Linux):
-    - luit - run MicroEmacs with extendd character sets on UTF-8 terminals
-    - abduco - suspend a luit session
 - X11 (macOS, Linux):
     - xfontsel - to interactively select fonts from within your ME session
     - mkfontscale - if you like to add your own TTF fonts as available fonts
 
-Here as an example a bash  script  `mecu`  which runs a  MicroEmacs  on UTF-8
-terminal using the Western European ISO-encodings:
-
-```bash
-#!/bin/sh
-### file: mecu 
-### Description: wrapper to run MicroEmacs with extended character settings
-###              on UTF-8 enabled terminals
-###  
-### Tools required:
-###   abduco: session management and detacher
-###           https://www.brain-dump.org/projects/abduco/   
-###   luit:   filter between non-utf-8 applications and utf-8 terminals
-###           https://invisible-island.net/luit/
-### Installation:
-###           fedora: sudo dnf install abduco luit  
-###           debian: sudo apt install abduco luit
-
-### session name creation for the current tty 
-tty=$(tty | grep -Eo '[0-9]+')
-## already running? list abduco sessions
-res=$(abduco -l | grep mec$tty)
-
-### running session, if no create an new one
-### otherwise attach to the old one
-### (press in ME Ctrl-l to update screen if neccesary)
-
-if [[ "$res" == "" ]] ; then 
-    ### need a new one 
-   TERM=xterm abduco -A -e ^z mec$tty luit -encoding ISO-8859-15 mecs "$@"
-else
-    ### attach to the old one
-    abduco -a -e ^z mec$tty 
-fi
-```    
-
-Change  the  filename  mecs to the  name  you  give  you  MicroEmacs  terminal
-instance.  Name  the  file  `mecu`,  Make it  executable  and move to a folder
-belonging  to your PATH  variable.  With this little  shell  script  using two
-small tools, you can run MicroEmacs nicely as well on all UTF-8 terminals with
-a more extended character set.
+MicroEmacs versions  before  20241001  might require the tools luit and abduco for better
+support of international character encodings on UTF-8 enabled terminals.
 
 ## License
 
