@@ -231,7 +231,7 @@ define-macro man
     !endif
   !endif
   !iif &sub $MANWIDTH &set #l3 &con &les 140 &set #l3 &con &gre 70 $window-width 70 $window-width 140 #l3  set-variable $MANWIDTH #l3
-  0 pipe-shell-command &spr "%s -rIN=6n -rLL=140n %s %s" %man-com #l1 #l0 &cat "*Man on " #l9
+  0 pipe-shell-command &spr "%s %s %s" %man-com #l1 #l0 &cat "*Man on " #l9
   -1 buffer-mode "view"
   set-mark
   2 forward-line

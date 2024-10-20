@@ -496,22 +496,37 @@ meSetupProgname(char *progname)
     }
     else
 #endif
-    /* on macos use if (_NSGetExecutablePath(dirNameBuffer, &size) == 0) */
-    /* Setup the $progname make it an absolute path. Where the system
-     * provides a system call to get the absolute path then we use that (i.e.
-     * the /proc file system, where the system does not then we fall back to
-     * looking for the executable from the program name. */
-    if(((ii = execFilename(progname,(char *) evalResult,sizeof(evalResult))) == 0) &&
-       ((ii = executableLookup((meUByte *) progname,evalResult)) == 0))
     {
-        /* Some shells, specifically zsh, will execute from the current
-         * directory and pass through the argv[0] parameter with no pathname
-         * component. Attempt to fix this condition. Note that we cannot add
-         * this to executableLookup() since we may not search the current
-         * directory unless it is specifically on the $PATH hence the
-         * additional test here. */
-        if (meStrrchr(progname,DIR_CHAR) == NULL)
-            ii = fileLookup((meUByte *)progname,0,NULL,meFL_CHECKDOT|meFL_EXEC,evalResult);
+#ifdef _MACOS
+        /* following function is better on macOS as is avoids arg[0] vulnerabilities */
+        ii = meBUF_SIZE_MAX;
+        if(_NSGetExecutablePath(evalResult,&ii) == 0)
+        {
+            ;
+        }
+        else
+#endif
+        /* Setup the $progname make it an absolute path. Where the system provides a system call to
+         * get the absolute path then we use that (i.e. the /proc file system, where the system
+         * does not then we fall back to looking for the executable from the program name. */
+        if(((ii = execFilename(progname,(char *) evalResult,sizeof(evalResult))) == 0) &&
+           ((ii = executableLookup((meUByte *) progname,evalResult)) == 0))
+        {
+            /* Some shells, specifically zsh, will execute from the current directory and pass
+             * through the argv[0] parameter with no pathname component. Attempt to fix this
+             * condition. Note that we cannot add this to executableLookup() since we may not
+             * search the current directory unless it is specifically on the $PATH hence the
+             * additional test here. */
+            if (meStrrchr(progname,DIR_CHAR) == NULL)
+                ii = fileLookup((meUByte *)progname,0,NULL,meFL_CHECKDOT|meFL_EXEC,evalResult);
+        }
+        /* the path obtained so far could be a symbolic link, we ideally need to find the actual
+         * path so ../macros etc can be added to the search path */
+        if((ii > 0) && ((ll=readlink((char *)evalResult,(char *)resultStr,meBUF_SIZE_MAX)) > 0))
+        {
+            memcpy(evalResult,resultStr,ll);
+            evalResult[ll] = '\0';
+        }
     }
     if (ii != 0)
         meProgName = meStrdup(evalResult);
