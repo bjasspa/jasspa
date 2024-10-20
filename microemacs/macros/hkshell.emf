@@ -47,11 +47,11 @@ set-variable .fhook-shell.comment "|#||#|# | #|r|"
   ; Strings and things
   hilight .hilight.shell 0x804 "'" "'" ""        .scheme.quote
   hilight .hilight.shell 0x880 "\"" .hilight.shellS .scheme.string
+  hilight .hilight.shell 0 "`"                   .scheme.prepro
   ; Comments. Note "#!" is the very first line
-  hilight .hilight.shell 2     "\\s\\{#"        .scheme.comment
+  hilight .hilight.shell 2     "\\s\\{#"         .scheme.comment
   hilight .hilight.shell 2     "^#!"             .scheme.header
-  ; Strings are not necessarily escaped in quotes, pick up on an escaped
-  ; character. 
+  ; Strings are not necessarily escaped in quotes, pick up on an escaped character. 
   hilight .hilight.shell 0     "\\\\."           .scheme.string
   ; Variables.
   hilight .hilight.shell 4     "\\$" "\\}\\W" "" .scheme.variable
@@ -141,6 +141,7 @@ set-variable .fhook-shell.comment "|#||#|# | #|r|"
   hilight .hilight.shell 1     "pushd"           .scheme.keyword
   hilight .hilight.shell 1     "read"            .scheme.keyword
   hilight .hilight.shell 1     "rehash"          .scheme.keyword
+  hilight .hilight.shell 1     "return"          .scheme.keyword
   hilight .hilight.shell 1     "set"             .scheme.keyword
   hilight .hilight.shell 1     "setenv"          .scheme.keyword
   hilight .hilight.shell 1     "shift"           .scheme.keyword

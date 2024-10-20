@@ -263,43 +263,34 @@ add-file-hook ".h .hpp"                         "fhook-hmode"
 .Me $ehf-scheme
 In this case the
 .Hl define-macro-file define-macro-file 2
-has been used to inform  \*(mE  of the location of the  \fBfhook-hmode\fR
-macro   thereby   overriding   the   automatic   load   of   a   file   called
-\fBhkhmode.emf\fR. The \fBfhook-cmode\fR  macro requires no such definition as
-it is located in a hook file that matches the mode name, \fChkcmode.emf\fR.
+has been used to inform \*(mE of the location of the \fBfhook-hmode\fR macro thereby overriding the automatic load of
+a file called \fBhkhmode.emf\fR. The \fBfhook-cmode\fR macro requires no such definition as it is located in a hook
+file that matches the mode name, \fChkcmode.emf\fR.
 .SS "Extending a standard hook definition"
-The  standard  file  hook  files  \fBhk\fR\fIXXX\fR\fB.emf\fR  should  not  be
-modified. The standard  file hooks may be extended with local  definitions  by
-defining a file \fBmy\fR\fIXXX\fR\fB.emf\fR, which is an extension to the hook
-file   \fBhk\fR\fIXXX\fR\fB.emf\fR.   This  is  automatically  executed  after
-\fBhk\fR\fIXXX\fR\fB.emf\fR. Refer to sections
+The standard file hook files \fBhk\fR\fIXXX\fR\fB.emf\fR should not be modified. The standard file hooks may be
+extended with local definitions by defining a file \fBmy\fR\fIXXX\fR\fB.emf\fR, which is an extension to the hook file
+\fBhk\fR\fIXXX\fR\fB.emf\fR. This is automatically executed after \fBhk\fR\fIXXX\fR\fB.emf\fR. Refer to sections
 .Hl "Language Templates" languageTemplates 2 
 and
 .Hl "File Hooks" fileHooks 2 
 for details.
 .SS "File Extensions"
-The file  extensions  are  specified  as a space  separated  list of file name
-endings.  Back-up  file  endings  such as tilde  (\fC~\fR)  are not classed as
-correct  file  endings and are skipped by the file hook  search,  hence a file
-ending "\fC.c~\fR"  invokes the same hook function as a "\fC.c\fR" file. It is
-therefore  not  necessary  to add the backup and auto-save endings to the file
-hook definition.
+The file extensions are specified as a space separated list of file name endings. Back-up file endings such as tilde
+(\fC~\fR) are not classed as correct file endings and are skipped by the file hook search, hence a file ending
+"\fC.c~\fR" invokes the same hook function as a "\fC.c\fR" file. It is therefore not necessary to add the backup and
+auto-save endings to the file hook definition.
 .PP 
-The  extension  separator,  usually dot  (\fC.\fR), is typically  added to the
-\fIextensions\fR  list, they may be omitted  with  effect  where a file always
-ends in the same set of  characters.  A notable  example  is  "\fCmakefile\fR"
-which  includes no extension, as such, \*(mE applies the same hook function to
-a file called \fCImakefile\fR as the endings are the same.
+The extension separator, usually dot (\fC.\fR), is typically added to the \fIextensions\fR list, they may be omitted
+with effect where a file always ends in the same set of characters. A notable example is "\fCmakefile\fR" which
+includes no extension, as such, \*(mE applies the same hook function to a file called \fCImakefile\fR as the endings
+are the same.
 .SS "Binary Files"
-It is sometimes  useful to associate  file types as binary files, so that they
-are immediately loaded in binary. In this case, both file extension and content
-recognition  methods (i.e. of a magic string) are applicable. In both cases the
-file is bound to the well known hook  \fCfhook-binary\fR  which  automatically
-loads the file in a binary mode. 
+It is sometimes useful to associate file types as binary files, so that they are immediately loaded in binary. In this
+case, both file extension and content recognition methods (i.e. of a magic string) are applicable. In both cases the
+file is bound to the well known hook \fCfhook-binary\fR which automatically loads the file in a binary mode. 
 .PP
-Note, that for the  content  recognition  process for a binary  hook, the load
-time is doubled as the file is initially  loaded in the default text mode, the
-binary hook function forces a second load operation in binary.
+Note, that for the content recognition process for a binary hook, the load time is doubled as the file is initially
+loaded in the default text mode, the binary hook function forces a second load operation in binary.
 .SH SUMMARY
 .B add-file-hook
 is summarized as follows:-
@@ -312,27 +303,24 @@ Multiple extensions are specified as a space separated list.
 .BU
 Binds a regular expression search string to a macro called fhook-\fIxxxx\fR.
 .BU
-The absolute value of the numerical argument determines the number of lines in
-the file over which the regular expression search is made.
+The absolute value of the numerical argument determines the number of lines in the file over which the regular
+expression search is made.
 .BU
-The sign of the numerical argument determines if the regular expression search
-is case (in)sensitive.
+The sign of the numerical argument determines if the regular expression search is case (in)sensitive.
 .BU
-When one of the files with a known file  extension, or recognized  content, is
-loaded macro \fBfhook-xxxx\fR is executed.
+When one of the files with a known file extension, or recognized content, is loaded macro \fBfhook-xxxx\fR is
+executed.
 .BU
-\fBfhook-xxxx\fR, if undefined, is automatically searched for in file 
-\fBhk\fIxxxx\fB.emf\fR.
+\fBfhook-xxxx\fR, if undefined, is automatically searched for in file \fBhk\fIxxxx\fB.emf\fR.
 .BU
-When the buffer  containing the known file is entered (i.e. gains focus), then
-entry macro \fBbhook-xxxx\fR is executed.
+When the buffer containing the known file is entered (i.e. gains focus), then entry macro \fBbhook-xxxx\fR is
+executed.
 .BU
-When the buffer  containing the known file is exited (i.e. looses focus), then
-the exit macro \fBehook-xxxx\fR is executed.
+When the buffer containing the known file is exited (i.e. looses focus), then the exit macro \fBehook-xxxx\fR is
+executed.
 .BE 0
 .SH EXAMPLE
-The standard set of supported  file types by \*(mE, at the time of writing, is
-defined as:-
+The standard set of supported file types by \*(mE, at the time of writing, is defined as:-
 .Me $emf-scheme
 .CS
 ; reset the file hook list
@@ -387,21 +375,17 @@ add-file-hook ".erf"                                          fhook-erf
 .CE 0
 .Me $ehf-scheme
 .SH "OBSCURE INFORMATION"
-This section includes some low-level information which is so obscure it is not
-relevant to the typical user.
+This section includes some low-level information which is so obscure it is not relevant to the typical user.
 .SS "Resolving Loading Order Problems"
-There is a potential  loading  order problem  involving  auto-loading  of file
-libraries  and  the  setting  up  of  \fBbhook\fR  and  \fBehook\fR.  E.g.  if
-the main fhook function has been defined as a
+There is a potential loading order problem involving auto-loading of file libraries and the setting up of \fBbhook\fR
+and \fBehook\fR. E.g. if the main fhook function has been defined as a
 .Ht define-macro-file 2 ,
-but the  bhook or  ehooks  have not the when a buffer is  created  as only the
-fhook is define, only the fhook is set, the rest remain  disabled  even though
-the  execution  of the macro file will define these extra hooks.
+but the bhook or ehooks have not then when a buffer is created as only the fhook is define, only the fhook is set, the
+rest remain disabled even though the execution of the macro file will define these extra hooks.
 .PP
-To solve  this  problem  simply  define  the  bhook/ehooks  as well. Note that
-automatically  loaded  hooks do not suffer from this problem as the macro file
-is executed before the hooks are assigned,  thereby ensuring the all the hooks
-are defined.
+To solve this problem simply define the bhook/ehooks as well. Note that automatically loaded hooks do not suffer from
+this problem as the macro file is executed before the hooks are assigned, thereby ensuring that all the hooks are
+defined.
 .SH "SEE ALSO"
 .na
 .Hl "File Hooks" fileHooks 2 ,

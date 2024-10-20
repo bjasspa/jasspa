@@ -188,16 +188,16 @@ meSetupPathsAndUser(void)
         if(((ss = meGetenv ("MEINSTALLPATH")) != NULL) && (ss[0] != '\0'))
         {
             meStrcpy(buff,ss) ;
-            ll = mePathAddSearchPath(ll,evalResult,buff,0,&gotUserPath) ;
+            ll = mePathAddSearchPath(ll,evalResult,buff,0,&gotUserPath);
         }
         
         /* also check for directories in the same location as the binary */
         if((ss=meStrrchr(meProgName,DIR_CHAR)) != NULL)
         {
-            ii = (((size_t) ss) - ((size_t) meProgName)) ;
-            meStrncpy(buff,meProgName,ii) ;
-            buff[ii] = '\0' ;
-            ll = mePathAddSearchPath(ll,evalResult,buff,0,&gotUserPath) ;
+            ii = (((size_t) ss) - ((size_t) meProgName));
+            meStrncpy(buff,meProgName,ii);
+            buff[ii] = '\0';
+            ll = mePathAddSearchPath(ll,evalResult,buff,2,&gotUserPath);
         }
         if(!gotUserPath && (homedir != NULL))
         {

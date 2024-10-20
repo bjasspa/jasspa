@@ -110,8 +110,8 @@ mkTempName(meUByte *buf, meUByte *name, meUByte *ext)
     if(tmpDir == NULL)
     {
         /* Get location of the temporary directory from the environment $TEMP */
-        if((((pp = (meUByte *) meGetenv ("TMP")) == NULL) || meTestDir(pp)) &&
-           (((pp = (meUByte *) meGetenv ("TEMP")) == NULL) || meTestDir(pp)))
+        if((((pp = (meUByte *) meGetenv("TMP")) == NULL) || meTestDir(pp)) &&
+           (((pp = (meUByte *) meGetenv("TEMP")) == NULL) || meTestDir(pp)))
         {
             pp = NULL;
 #if (defined _DOS) || (defined _WIN32)

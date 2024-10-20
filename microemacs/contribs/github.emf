@@ -4,7 +4,7 @@
 ; See the file me.emf for copying and conditions.
 ;
 ; Authors:     Steven Phillips
-; Created:     2024-07-27 22:37:41
+; Created:     2024-07-27
 ; Synopsis:    Macros used to build and create relesae
 ;
 ; Variables:
@@ -170,7 +170,7 @@ define-macro github-build
 ;  @1 - SHA1 of the commit built
 ;  @2 - Release version, used with .git.hub-rtp to create tag and .git.hub-rnp to create name
 ;  @3 - Full path to the artifact directory
-;  @4 - Release readme template md filename
+;  @4 - Github repository from which to get the release readme and install script
 define-macro github-release
   set-variable #l0 @1
   set-variable #l9 @2
@@ -212,13 +212,22 @@ define-macro github-release
     set-variable #l5 &add #l5 1
   !done
   find-buffer "*ghrc*"
-  !force 0 write-buffer &set %http-post-file &stat a &spr "%s../%s%s-sha256.txt" #l1 #l6 #l9
+  !force 0 write-buffer &set %http-post-file &stat a &spr "%s../%s" #l1 &set #l3 &spr "%s%s-sha256.txt" #l6 #l9
   set-variable %http-header &cat .git.hub-hdr "\r\nContent-Type: application/octet-stream"
   find-buffer "*ghrc*"
-  !force insert-file &cat #l2 &rep &rep &spr "%s%s-sha256.txt" #l6 #l9 "_" "%5f" "." "%2e"
+  !force insert-file &cat #l2 &rep &rep #l3 "_" "%5f" "." "%2e"
   !iif &not $status  -8 ml-write &spr "[Github Release Error: Failed to upload asset %s%s]" #l1 #l3
   set-variable #l5 &add #l5 1
-  find-file @4
+  find-file &cat @4 "microemacs/microemacs-install.sh"
+  beginning-of-buffer
+  replace-string "<VERSION>" #l9
+  !force 0 write-buffer &set %http-post-file &stat a &spr "%s../microemacs-install" #l1
+  set-variable %http-header &cat .git.hub-hdr "\r\nContent-Type: application/octet-stream"
+  find-buffer "*ghrc*"
+  !force insert-file &cat #l2 "microemacs-install"
+  !iif &not $status  -8 ml-write &spr "[Github Release Error: Failed to upload asset %smicroemacs-install]" #l1
+  set-variable #l5 &add #l5 1
+  find-file &cat @4 "microemacs/release_readme.md"
   beginning-of-buffer
   replace-string "<VERSION>" #l9
   beginning-of-buffer
@@ -240,6 +249,7 @@ define-macro github-build-release
   !iif &not $status set-variable #l0 @ml61 "Jasspa Git repository" "~/jasspa"
   !iif &not &seq "D" &stat t &set #l0 &stat a #l0  -8 ml-write &spr "[Github Release Error: Given repository is not a directory: %s]" #l0
   !iif &not &seq "R" &stat t &set #l1 &cat #l0 "microemacs/src/evers.mak"  -8 ml-write &spr "[Github Release Error: Cannot locate ver file: %s]" #l1
+  !iif &not &seq "R" &stat t &set #l3 &cat #l0 "microemacs/microemacs-install.sh"  -8 ml-write &spr "[Github Release Error: Cannot locate the install script %s]" #l3
   !iif &not &seq "R" &stat t &set #l3 &cat #l0 "microemacs/release_readme.md"  -8 ml-write &spr "[Github Release Error: Cannot locate the release readme template: %s]" #l3
   !force 0 delete-buffer "*ghmv"
   find-buffer "*ghmv"
@@ -265,7 +275,7 @@ define-macro github-build-release
   !force set-variable #l2 @mc1 &spr "New MicroEmacs version will be \"%s\", is this correct (y/n) ? " #l1 "NYny"
   !iif &not &iseq "y" #l2  -8 ml-write "[Github Release Error: Version incorrect - abort]"
   github-build "" &cat .git.hub-rtp #l1
-  github-release #l8 #l1 #l9 #l3
+  github-release #l8 #l1 #l9 #l0
 !emacro
 
 ; @# language index or not given

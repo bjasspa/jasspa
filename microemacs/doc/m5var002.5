@@ -47,11 +47,9 @@ When the buffer becomes the current buffer.
 .IP \fBbuffer-ehook\fR
 When the buffer is swapped out from being the current buffer.
 .LP
-The  variable  \fB$buffer-fhook\fR  is largely  redundant  as the file hook is
-executed  only once and  before it can be sent. Its main use is within  macros
-which  wish to  ascertain  what type of buffer it is  executing  on, i.e. if a
-command was to be executed only on c file then the follow ensures that this is
-the case:
+The variable \fB$buffer-fhook\fR is largely redundant as the file hook is executed only once and before it can be
+set. Its main use is within macros which wish to ascertain what type of buffer it is executing on, i.e. if a command
+was to be executed only on c file then the follow ensures that this is the case:
 .Me $emf-scheme
 .CS
 !if &not &seq $buffer-fhook "fhook-cmode"
@@ -61,15 +59,14 @@ the case:
 .Me $ehf-scheme
 Where the command \fIfhook-cmode\fR is the c file hook.
 .PP
-\fBdhooks\fR are executed when a buffer is deleted, but before the contents of
-the buffer are lost. Note that  dhooks will not be called if the buffer  never
-becomes  active, or if \*(mE quits due to the receipt of a panic signal.
+\fBdhooks\fR are executed when a buffer is deleted, but before the contents of the buffer are lost. Note that dhooks
+will not be called if the buffer never becomes active, or if \*(mS quits due to the receipt of a panic signal.
 .PP
-\fBbhooks\fR  and  \fBehooks\fR  are  usually  used to set and restore  global
-variables which require different setting in the current buffer.
+\fBbhooks\fR and \fBehooks\fR are usually used to set and restore global variables which require different setting in
+the current buffer.
 .PP
-The order of 
-The  default  settings  of  these  variable  are  determined  by  the command
+These variables are set by the system when the buffer first becomes active, the order, or priority, of the different
+file hooks is determined by the command
 .Ht add-file-hook 2 .
 .SH "SEE ALSO"
 .na

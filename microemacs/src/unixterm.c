@@ -464,7 +464,7 @@ meSetupProgname(char *progname)
     struct stat dotstat, pwdstat;
     meUByte cc, *ss, *dd ;
     int ii, ll ;
-    
+
     /* If PWD is accurate, use it instead of calling gwd.
      * This solves problems with bad ~/ as the shell will
      * store as /user/.... etc.
@@ -488,11 +488,20 @@ meSetupProgname(char *progname)
         /* not yet initialised so mlwrite will exit */
         mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Failed to get cwd\n") ;
     
+#ifdef _LINUX
+    /* Linux creates a symbolic link from /proc/self/exe to the program, use this in preference as cannot be hacked or go wrong */
+    if((ii=readlink("/proc/self/exe",(char *)evalResult,meBUF_SIZE_MAX)) > 0)
+    {
+        evalResult[ii] = '\0';
+    }
+    else
+#endif
+    /* on macos use if (_NSGetExecutablePath(dirNameBuffer, &size) == 0) */
     /* Setup the $progname make it an absolute path. Where the system
      * provides a system call to get the absolute path then we use that (i.e.
      * the /proc file system, where the system does not then we fall back to
      * looking for the executable from the program name. */
-    if(((ii = execFilename(progname, (char *) evalResult,sizeof(evalResult))) == 0) &&
+    if(((ii = execFilename(progname,(char *) evalResult,sizeof(evalResult))) == 0) &&
        ((ii = executableLookup((meUByte *) progname,evalResult)) == 0))
     {
         /* Some shells, specifically zsh, will execute from the current
@@ -505,14 +514,14 @@ meSetupProgname(char *progname)
             ii = fileLookup((meUByte *)progname,0,NULL,meFL_CHECKDOT|meFL_EXEC,evalResult);
     }
     if (ii != 0)
-        meProgName = meStrdup(evalResult) ;
+        meProgName = meStrdup(evalResult);
     else
     {
 #ifdef _ME_FREE_ALL_MEMORY
         /* stops problems on exit */
-        meProgName = meStrdup(progname) ;
+        meProgName = meStrdup(progname);
 #else
-        meProgName = (meUByte *)progname ;
+        meProgName = (meUByte *) progname;
 #endif
     }
 }
@@ -612,25 +621,24 @@ meSetupPathsAndUser(void)
         if((((ss = meGetenv ("MEINSTALLPATH")) != NULL) && (ss[0] != '\0')) ||
            (((ss = lpath) != NULL) && (ss[0] != '\0')))
         {
-            meStrcpy(buff,ss) ;
-            ll = mePathAddSearchPath(ll,evalResult,buff,0,&gotUserPath) ;
+            meStrcpy(buff,ss);
+            ll = mePathAddSearchPath(ll,evalResult,buff,0,&gotUserPath);
         }
         
         /* also check for directories in the same location as the binary */
         if((ss=meStrrchr(meProgName,DIR_CHAR)) != NULL)
         {
-            ii = (((size_t) ss) - ((size_t) meProgName)) ;
-            meStrncpy(buff,meProgName,ii) ;
-            buff[ii] = '\0' ;
-            ll = mePathAddSearchPath(ll,evalResult,buff,0,&gotUserPath) ;
+            ii = (((size_t) ss) - ((size_t) meProgName));
+            meStrncpy(buff,meProgName,ii);
+            buff[ii] = '\0';
+            ll = mePathAddSearchPath(ll,evalResult,buff,2,&gotUserPath);
         }
         
 #if MEOPT_TFS
         /* also check for the built-in file system */
         if(tfsdev != NULL)
-            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "tfs://",0,&gotUserPath) ;
+            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "tfs://",0,&gotUserPath);
 #endif        
-        
         if(!gotUserPath && (homedir != NULL))
         {
             /* We have not found a user path so set ~/ as the user-path

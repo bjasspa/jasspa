@@ -519,7 +519,7 @@ fnamecmp(meUByte *f1, meUByte *f2)
 
 /* Search the directory and subdirectories for MicroEmacs macro directories */
 int
-mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int isUsrArea, int *gotUserPath)
+mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int flags, int *gotUserPath)
 {
     /* Common sub-directories of JASSPAs MicroEmacs */
     static meUByte *subdirs[] =
@@ -549,9 +549,20 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int isUsr
             continue;
         if(base_name[ll-1] == DIR_CHAR)
             ll--;
-        base_name[ll] = '\0' ;
+        base_name[ll] = '\0';
         if(getFileStats(base_name,0,NULL,NULL) & meIOTYPE_DIRECTORY)
         {
+            if((flags & 2) && !memcmp(base_name+ll-4,"/bin",4))
+            {
+                /* If this is the program path, in a bin/ and ../macros exists then add ../ to the search path */
+                meStrcpy(base_name+ll-3,subdirs[1]);
+                if(!meTestDir(base_name))
+                {
+                    base_name[ll-3] = '\0';
+                    index = mePathAddSearchPath(index,path_name,base_name,0,gotUserPath);
+                }
+                memcpy(base_name+ll-4,"/bin",4);
+            }
             base_name[ll++] = DIR_CHAR;
             /* check for base_name/$user-name first */
             if(meUserName != NULL)
@@ -601,7 +612,7 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int isUsr
                 }
             }
             ll--;
-            if((*gotUserPath == 0) && isUsrArea)
+            if((*gotUserPath == 0) && (flags & 1))
             {
                 *gotUserPath = 1;
                 if(index)
@@ -620,6 +631,7 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int isUsr
             index += ll;
         }
     }
+    path_name[index] = '\0';
     return index;
 }
 

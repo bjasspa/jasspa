@@ -5599,7 +5599,7 @@ meSetupPathsAndUser(void)
             ii = (((size_t) ss) - ((size_t) meProgName));
             meStrncpy(buff,meProgName,ii);
             buff[ii] = '\0';
-            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) buff,0,&gotUserPath);
+            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) buff,2,&gotUserPath);
         }
 #if MEOPT_TFS
         /* also check for the built-in file system */
