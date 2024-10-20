@@ -845,7 +845,7 @@ osd .osd.user-start 160 "Ctpfx" &cat .osd.checkbox-chars "\} \HRebind Home Keys"
 osd .osd.user-start 170 "fh" "                "
 osd .osd.user-start 180 "Ctpfx" &cat .osd.checkbox-chars "\} \HMS Shift Region" 10 user-set-checkbox
 osd .osd.user-start 190 "fh" "                "
-osd .osd.user-start 200 "Ctpfx" &cat .osd.checkbox-chars "\} Favorites to C-\H#" 17 user-set-checkbox
+osd .osd.user-start 200 "Ctpfx" &cat .osd.checkbox-chars "\} C-\H# to Favorites" 17 user-set-checkbox
 osd .osd.user-start 500 ""
 osd .osd.user-start 510 "c"  "Locale Setup"
 osd .osd.user-start 520 ""

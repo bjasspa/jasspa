@@ -130,15 +130,21 @@ open it using command
 Opens a sub-menu  enabling the user to add new favorite  files, edit the existing list of favorite files, or select an
 existing favorite file in which case the file is opened using command
 .Ht find-file 2 .
-The favorite file using to store the list is "\fB$MENAME\fR\fC.eff\fR" and is saved in the first path given in the
-.Ht $search-path 5 .
+The favorite file used to store the list is "\fB$MENAME\fR\fC.eff\fR" and is saved in the
+.Ht $user-path 5 .
+.IP
 Each  favorite  file takes 2 lines in the file, the first is the text  displayed  in the dialog (note that  character
 \&'\fC\\\fR' must be protected with a '\fC\\\fR' and the characters  '\fC\\H\fR'  inserted before another character will
-make that character a Hot key) and the
-second line is the file name. If the second line starts with a '!' character, the rest of the line is processed using
+make that character a Hot key), if the line starts with a '-' then a dividing line is inserted before it in the menu 
+(use '\\-' if the line should start with a '-'). The
+second line is the file name of the favorite file. If this line with a ':' character the rest of the line is a buffer 
+name rather than a file name. If it starts with a '!' character, the rest of the line is processed using
 .Ht execute-line 2 ,
-this can be used to view help  pages or execute  processes  such as compile  etc. A file line with a single  '\fC-\fR'
-character creates a separater line in the dialog, no second line is required.
+this can be used to view help  pages or execute  processes  such as compile  etc.
+.IP
+Quicker access to the favorite menu, and the first 9 favorite files in particular, by enabling the \fBC-#\fR bindings, 
+see the Start-up tab of
+.Ht user-setup 3 .
 .IP "\fCClose\fR"
 Closes the current buffer, executes a dialog form of the command
 .Ht delete-buffer 2 .
