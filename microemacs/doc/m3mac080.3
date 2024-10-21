@@ -8,14 +8,21 @@
 .so me.tni
 .TH save-session 3
 .XI save-session - "Write session information to session file"
+.XI session-setup - "Configure the data written to a session file"
 .SH NAME
+.Me "|save-session"
 save-session \- Write session information to session file
+.br
+.Me "|c-hash-undo"
+session-setup \- Configure the data written to a session file
 .Me $a
 .SH SYNOPSIS
 .na
 .I n
 .B save-session
 "\fIsession-file\fR"
+.br
+.B session-setup
 .ad
 .SH DESCRIPTION
 .B save-session
@@ -27,6 +34,10 @@ can set a default  session  file in which  case the  session is  automatically
 written  out to this  file if an  argument  of zero is given;  the user is not
 prompted for a file. \*(mE  automatically  tries to write the default  session
 whenever it is exited.
+.PP
+The \fBsession-setp\fR command opens a simple dialog to configure the current session. The saving of the kill chain 
+and bookmarks can be extremely useful, but can also greatly increase the size of a session file and the time 
+taken to read and write it.
 .SH NOTES
 The session information is saved in a ascii format file (see
 .Ht esf 8 ).

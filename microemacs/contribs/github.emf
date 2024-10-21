@@ -102,6 +102,7 @@ define-macro github-build-action
     10000 ml-write &spr "[Action %s run %s state %s... %d]" #l0 #l5 #l3 &inc #l2 1
   !done
   !iif &not &seq "completed" #l3  -8 ml-write &spr "[Github %s Error: Unexpected state %s for run id %s]" #l0 #l3 #l5
+  !iif &not &seq "success" &set #l3 &rig &reg "/json/ghaj/conclusion" "" 1 -8 ml-write &spr "[Github %s Error: Workflow run failed for run id %s, conclusion: %s]" #l0 #l5
   github-api-json &spr "actions/runs/%s/artifacts" #l5
   !iif &or &not &seq "[" &lef &set #l2 &reg "/json/ghaj/artifacts" "" 1 &seq &set #l6 &rig #l2 1 ""  -8 ml-write &spr "[Github %s Error: Unexpected artifacts array: %s]" #l0 #l2
   set-variable #l3 0

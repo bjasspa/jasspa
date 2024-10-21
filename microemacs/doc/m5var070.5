@@ -27,12 +27,13 @@ $global-fmod \- Global file modes (or attributes)
 .ad
 .SH DESCRIPTION
 .B $buffer-fmod
-is bit based variable  setting the buffers file system modes or attributes. If
-the   buffer   was   loaded   from  an   existing   file  then  the  value  of
-\fB$buffer-fmod\fR  is taken  directly  from the file. But if the  buffer  was
-created then the buffer  inherits the default file modes,  \fB$global-fmod\fR,
-which is  determined  from the  users  umask on  \s-1UNIX\s0  or a default  on
-others.
+is bit based variable setting the buffers file system modes or attributes. If the buffer was loaded from an existing
+file then the value of \fB$buffer-fmod\fR is taken directly from the file. But if the buffer was created then the
+buffer inherits the default file modes, \fB$global-fmod\fR, which is determined from the users umask on \s-1UNIX\s0 or
+a default on others.
+.PP
+Note that the retrieved value of \fB$buffer-fmod\fR can be different to the set value, see the \fBNOTES\fR section 
+below.
 .PP
 The definition of the file mode bits are platform  specific and are considered
 independently, as follows:
@@ -67,10 +68,34 @@ executable (UNIX only), useful when writing a shell script.
 set-variable $buffer-fmod 0775
 .CE 0
 .Me $ehf-scheme
+.SH NOTES
+When retrieved, the buffer's file flags are also merged into the value of \fB$buffer-fmod\fR. These flags are not 
+platform specific and used to store the current properties of the buffer's file. They cannot be set and are defined as 
+follows:
+.IP \fB0x10000\fR
+ When set the buffer is a directory listing, created by the
+.Ht find-file 2
+command when the file name given is a directory. Earlier versions of \*(mS had a \fBdir\fR buffer mode, this mode has been 
+ removed as this property cannot be simply toggled like other modes. Checking the value of this bit should be used 
+ instead.
+.IP \fB0x20000\fR
+When set the file was found to contain binary data that cannot be safely represented in a buffer, as a result saving 
+the buffer will result in data loss and corruption. Note that this is different to
+.Ht binary 2m
+or 
+.Ht rbin 2m
+buffer modes which can safely represent any binary data, i.e. a file loaded with binary mode enabled will never have 
+this bit set.
+.IP \fB0x40000\fR
+When set the file was found to contain inconsistent line terminations, i.e. typically some lines terminated with '\fC\\n\fR'
+and others with '\fC\\r\\n\fR'. Saving the file will unify/correct the line terminations, but this could be a 
+corruption.
 .SH "SEE ALSO"
 .na
+.Ht find-file 2 ,
 .Ht cr 2m ,
 .Ht lf 2m ,
+.Ht binary 2m,
 .Ht ctrlz 2m ,
 .Ht auto 2m .
 .ad

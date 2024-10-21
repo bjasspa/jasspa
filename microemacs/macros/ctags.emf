@@ -16,7 +16,7 @@
 set-variable %tag-option   ""
 set-variable %tag-file     "tags"
 set-variable %tag-filemask ":*.h:*.hpp:*.[cC]:*.cpp:*.cc:"
-set-variable %tag-ignore   ":SCCS/:CVS/:.svn/:"
+set-variable %tag-ignore   ":SCCS/:CVS/:.git/:.svn/:"
 ; set $auto-time to 0 to stop issues with any existing <file># files
 set-variable $auto-time 0
 
@@ -416,7 +416,8 @@ define-macro ctags-process-buffers
       set-variable #l2 $buffer-fname
       set-variable #l3 0
       !while &not &seq &set #l4 &lget %tag-filemask &inc #l3 1 ""
-        !force find-file &cat #l2 #l4 
+        !force find-file &cat #l2 #l4
+        !iif &seq $buffer-fname &cat #l2 #l4  !force 0 delete-buffer $buffer-bname
       !done
     !else
       beginning-of-buffer
