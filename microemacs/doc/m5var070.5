@@ -73,11 +73,11 @@ When retrieved, the buffer's file flags are also merged into the value of \fB$bu
 platform specific and used to store the current properties of the buffer's file. They cannot be set and are defined as 
 follows:
 .IP \fB0x10000\fR
- When set the buffer is a directory listing, created by the
+When set the buffer is a directory listing, created by the
 .Ht find-file 2
-command when the file name given is a directory. Earlier versions of \*(mS had a \fBdir\fR buffer mode, this mode has been 
- removed as this property cannot be simply toggled like other modes. Checking the value of this bit should be used 
- instead.
+command when the file name given is a directory. Earlier versions of \*(mS had a \fBdir\fR buffer mode, this mode has
+been removed as this property cannot be simply toggled like other modes. Checking the value of this bit should be used
+instead.
 .IP \fB0x20000\fR
 When set the file was found to contain binary data that cannot be safely represented in a buffer, as a result saving 
 the buffer will result in data loss and corruption. Note that this is different to
@@ -95,7 +95,7 @@ corruption.
 .Ht find-file 2 ,
 .Ht cr 2m ,
 .Ht lf 2m ,
-.Ht binary 2m,
+.Ht binary 2m ,
 .Ht ctrlz 2m ,
 .Ht auto 2m .
 .ad
