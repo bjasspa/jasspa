@@ -8,6 +8,7 @@
 ; Synopsis:    Macros used to build and create relesae
 ;
 ; Notes:       Run github-build-release first, check release then run github-finalise-release
+;
 ; Variables:
 ;   .git.hub-tkn  Github API access token
 ;   .git.hub-url  Main api url for the repository
