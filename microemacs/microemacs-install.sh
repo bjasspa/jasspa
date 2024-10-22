@@ -320,106 +320,110 @@ fi
 
 cd /tmp
 
-if [ $ISUPDT -ne 0 ] ; then
+if [ -z "$1" ] ; then
 
-  read -r MECRL < ${INSTPATH}/jasspa/meinfo
-  if [ "${MECRL}" = "${MEVER}" ] ; then
-    printf "\nNote: Installation is already version ${MEVER} - nothing to do.\n\n" | fold -s
-    exit 0
-  fi
-
-  echo "Updating Jasspa MicroEmacs installation from v${MECRL} to v${MEVER}"
-
-  echo ${MEVER} > ${INSTPATH}/jasspa/meinfo.upd
-  skipped1=0    
-  while read ln; do
-    if [ $skipped1 -ne 0 ] ; then
-      install_package ".upd" $ln
+  if [ $ISUPDT -ne 0 ] ; then
+  
+    read -r MECRL < ${INSTPATH}/jasspa/meinfo
+    if [ "${MECRL}" = "${MEVER}" ] ; then
+      printf "\nNote: Installation is already version ${MEVER} - nothing to do.\n\n" | fold -s
+      exit 0
     fi
-    skipped1=1    
-  done <${INSTPATH}/jasspa/meinfo
-
-  mv ${INSTPATH}/jasspa/meinfo.upd ${INSTPATH}/jasspa/meinfo  
-  curl -fsSL -o ${INSTPATH}/jasspa/bin/microemacs-update $MEBASEURL/releases/latest/download/microemacs-install
-  if [ $? -ne 0 ]; then
-    printf "Error: Failed to download latest update script:\n    \"$MEBASEURL/releases/latest/download/microemacs-install\".\n\n" | fold -s
-    exit 1
-  fi
-  chmod 755 ${INSTPATH}/jasspa/bin/microemacs-update
-  printf "Update to ${MEVER} complete and successful.\n\n"
-
-elif [ -z "$1" ] ; then
-
-  printf "\nInstallating Jasspa MicroEmacs v${MEVER} to \"${INSTPATH}/jasspa\"\n" | fold -s
-  mkdir -p "${INSTPATH}/jasspa"
-  if [ ! -d ${INSTPATH}/jasspa ] ; then
-    printf "\nError: Failed to create install path \"${INSTPATH}/jasspa\", either create directory \"${INSTPATH}/jasspa\" or rerun with sudo.\n\n" | fold -s
-    return 1
-  fi
-  echo ${MEVER} > ${INSTPATH}/jasspa/meinfo
-
-  #install the core
-  install_package "" binaries
-  install_package "" macros
-  install_package "" help_ehf
-  # make the spelling folder so search-path with have it and download latest install script as update
-  mkdir -p ${INSTPATH}/jasspa/spelling
-  curl -fsSL -o ${INSTPATH}/jasspa/bin/microemacs-update $MEBASEURL/releases/latest/download/microemacs-install
-  if [ $? -ne 0 ]; then
-    echo "Error: Failed to download latest update script \"$MEBASEURL/releases/latest/download/microemacs-install\"."
-    exit 1
-  fi
-  chmod 755 ${INSTPATH}/jasspa/bin/microemacs-update
-
-  if [ -z "${BINPATH}" ] ; then
-    BINPATH=${INSTPATH}/jasspa
+  
+    echo "Updating Jasspa MicroEmacs installation from v${MECRL} to v${MEVER}"
+  
+    echo ${MEVER} > ${INSTPATH}/jasspa/meinfo.upd
+    skipped1=0    
+    while read ln; do
+      if [ $skipped1 -ne 0 ] ; then
+        install_package ".upd" $ln
+      fi
+      skipped1=1    
+    done <${INSTPATH}/jasspa/meinfo
+  
+    mv ${INSTPATH}/jasspa/meinfo.upd ${INSTPATH}/jasspa/meinfo  
+    curl -fsSL -o ${INSTPATH}/jasspa/bin/microemacs-update $MEBASEURL/releases/latest/download/microemacs-install
+    if [ $? -ne 0 ]; then
+      printf "Error: Failed to download latest update script:\n    \"$MEBASEURL/releases/latest/download/microemacs-install\".\n\n" | fold -s
+      exit 1
+    fi
+    chmod 755 ${INSTPATH}/jasspa/bin/microemacs-update
+    printf "Update to ${MEVER} complete and successful.\n\n"
+  
   else
-    if [ ! -e ${BINPATH}/bin ] ; then
-      mkdir -p "${BINPATH}/bin" >/dev/null 2>&1
+  
+    printf "\nInstallating Jasspa MicroEmacs v${MEVER} to \"${INSTPATH}/jasspa\"\n" | fold -s
+    mkdir -p "${INSTPATH}/jasspa"
+    if [ ! -d ${INSTPATH}/jasspa ] ; then
+      printf "\nError: Failed to create install path \"${INSTPATH}/jasspa\", either create directory \"${INSTPATH}/jasspa\" or rerun with sudo.\n\n" | fold -s
+      return 1
     fi
-    if [ ! -d ${BINPATH}/bin -o ! -w ${BINPATH}/bin ] ; then
-      printf "\nWarning: Cannot create links in \"${BINPATH}\" to binaries in \"${INSTPATH}/jasspa/bin\", either add ${INSTPATH}/jasspa/bin to your PATH, or copy the scripts to somewhere in your PATH, or rerun with sudo.\n\n" | fold -s
+    echo ${MEVER} > ${INSTPATH}/jasspa/meinfo
+  
+    #install the core
+    install_package "" binaries
+    install_package "" macros
+    install_package "" help_ehf
+    # make the spelling folder so search-path with have it and download latest install script as update
+    mkdir -p ${INSTPATH}/jasspa/spelling
+    curl -fsSL -o ${INSTPATH}/jasspa/bin/microemacs-update $MEBASEURL/releases/latest/download/microemacs-install
+    if [ $? -ne 0 ]; then
+      echo "Error: Failed to download latest update script \"$MEBASEURL/releases/latest/download/microemacs-install\"."
+      exit 1
+    fi
+    chmod 755 ${INSTPATH}/jasspa/bin/microemacs-update
+  
+    if [ -z "${BINPATH}" ] ; then
       BINPATH=${INSTPATH}/jasspa
     else
-      rm -f ${BINPATH}/bin/mec
-      ln -s ${INSTPATH}/jasspa/bin/mec ${BINPATH}/bin/mec
-      rm -f ${BINPATH}/bin/mew
-      ln -s ${INSTPATH}/jasspa/bin/mew ${BINPATH}/bin/mew
-      rm -f ${BINPATH}/bin/tfs
-      ln -s ${INSTPATH}/jasspa/bin/tfs ${BINPATH}/bin/tfs
-      rm -f ${BINPATH}/bin/microemacs-update
-      ln -s ${INSTPATH}/jasspa/bin/microemacs-update ${BINPATH}/bin/microemacs-update
+      if [ ! -e ${BINPATH}/bin ] ; then
+        mkdir -p "${BINPATH}/bin" >/dev/null 2>&1
+      fi
+      if [ ! -d ${BINPATH}/bin -o ! -w ${BINPATH}/bin ] ; then
+        printf "\nWarning: Cannot create links in \"${BINPATH}\" to binaries in \"${INSTPATH}/jasspa/bin\", either add ${INSTPATH}/jasspa/bin to your PATH, or copy the scripts to somewhere in your PATH, or rerun with sudo.\n\n" | fold -s
+        BINPATH=${INSTPATH}/jasspa
+      else
+        rm -f ${BINPATH}/bin/mec
+        ln -s ${INSTPATH}/jasspa/bin/mec ${BINPATH}/bin/mec
+        rm -f ${BINPATH}/bin/mew
+        ln -s ${INSTPATH}/jasspa/bin/mew ${BINPATH}/bin/mew
+        rm -f ${BINPATH}/bin/tfs
+        ln -s ${INSTPATH}/jasspa/bin/tfs ${BINPATH}/bin/tfs
+        rm -f ${BINPATH}/bin/microemacs-update
+        ln -s ${INSTPATH}/jasspa/bin/microemacs-update ${BINPATH}/bin/microemacs-update
+      fi
     fi
+    if [ `which mec` = "${BINPATH}/bin/mec" ] ; then
+      echo "Installation complete and programmes are in your \$PATH."
+      BINPATH=""
+    else
+      echo "Installation complete, but the programmes are not in your \$PATH. We recommend"
+      echo "adding ${BINPATH}/bin to your \$PATH environment variable, e.g. add"
+      echo "    PATH=\"${BINPATH}/bin:\$PATH\""
+      echo "to the end of your ~/.profile (or .bash_profile, .zprofile etc) file."
+      BINPATH="${BINPATH}/bin/"
+    fi
+    echo "To install spelling support for a language run:"
+    echo ""
+    echo "   ${BINPATH}microemacs-update <lang-id>"
+    echo ""
+    echo "where <lang-id> is the 4 character language code, such as \"enus\" or \"dede\" etc."
+    echo "To add https support OpenSSL libraries are required, if not already available run:"
+    echo ""
+    echo "   ${BINPATH}microemacs-update openssl"
+    echo ""
+    echo "To start using Jasspa MicroEmacs run:"
+    echo ""
+    echo "   ${BINPATH}mec"
+    echo ""
+    echo "in a console/terminal, or run:"
+    echo ""
+    echo "   ${BINPATH}mew"
+    echo ""
+    echo "for the GUI version, requires a working X (install XQuartz on macOS)."
+    echo ""
+  
   fi
-  if [ `which mec` = "${BINPATH}/bin/mec" ] ; then
-    echo "Installation complete and programmes are in your \$PATH."
-    BINPATH=""
-  else
-    echo "Installation complete, but the programmes are not in your \$PATH. We recommend"
-    echo "adding ${BINPATH}/bin to your \$PATH environment variable, e.g. add"
-    echo "    PATH=\"${BINPATH}/bin:\$PATH\""
-    echo "to the end of your ~/.profile (or .bash_profile, .zprofile etc) file."
-    BINPATH="${BINPATH}/bin/"
-  fi
-  echo "To install spelling support for a language run:"
-  echo ""
-  echo "   ${BINPATH}microemacs-update <lang-id>"
-  echo ""
-  echo "where <lang-id> is the 4 character language code, such as \"enus\" or \"dede\" etc."
-  echo "To add https support OpenSSL libraries are required, if not already available run:"
-  echo ""
-  echo "   ${BINPATH}microemacs-update openssl"
-  echo ""
-  echo "To start using Jasspa MicroEmacs run:"
-  echo ""
-  echo "   ${BINPATH}mec"
-  echo ""
-  echo "in a console/terminal, or run:"
-  echo ""
-  echo "   ${BINPATH}mew"
-  echo ""
-  echo "for the GUI version, requires a working X (install XQuartz on macOS)."
-  echo ""
        
 elif [ $1 = "openssl" ] ; then
 
