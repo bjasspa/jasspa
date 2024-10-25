@@ -13,13 +13,21 @@
     set-variable .favorites.fname &cat "file:" .favorites.fname
   !endif
   !force find-file .favorites.fname
-  !iif &not $status  -8 ml-write &spr "Error: Failed to load favorites file \"%s\"" #l0
+  !iif &not $status  -24 ml-write &spr "Error: Failed to load favorites file \"%s\"" #l0
   1 buffer-mode "hide"
-  !iif &not &band 1 $window-eline  -8 ml-write &spr "Error: Invalid favorites file \"%s\", must have 2 lines per favorite" #l0
+  !if &not &band 1 $window-eline
+    ; even number of lines, if this is caused by a blank last line - fix
+    end-of-buffer
+    backward-line
+    !iif &not &seq &trr @wl ""  -24 ml-write &spr "Error: Invalid favorites file \"%s\", must have 2 lines per favorite" #l0
+    set-mark
+    forward-line
+    -1 kill-region
+  !endif
   beginning-of-buffer
   !if &band 2 @#
     !force search-buffer "me" "^[ \t]*$"
-    !iif $status  -8 ml-write &spr "Error: Invalid favorites file \"%s\", blank line found" #l0
+    !iif $status  -24 ml-write &spr "Error: Invalid favorites file \"%s\", blank line found" #l0
   !endif
 !emacro
 
@@ -213,7 +221,6 @@ define-macro favorites-goto
 !emacro
 
 0 define-macro favorites-osd-set
-  3 favorites-load
   -1 osd @#
   osd @# 0 "boI" 0 -3 10
   !if &or &seq &lef $buffer-bname 1 "*" &seq $buffer-fname ""
@@ -223,22 +230,29 @@ define-macro favorites-goto
   !endif
   osd @# 2 "" "\H= Edit  " f favorites-edit
   osd @# 3  "-"
-  set-variable #l0 1
-  !while &not &seq &set #l2 &trr @wl ""
-    !if &seq &lef #l2 1 "-"
-      osd @# &sub &mul #l0 10 1 "-"
-      set-variable #l2 &rig #l2 1
-    !endif
-    execute-line &spr "set-variable #l1 \"%s\"" #l2
-    osd @# &mul #l0 10 "" #l1 &sub 0 &pinc #l0 1 favorites-goto
-    !force 2 forward-line
-  !done
-  !iif &equ #l0 1  osd @# 10 "" "<no favorites>"
+  !force 3 favorites-load
+  !if $status
+    set-variable #l0 1
+    !while &not &seq &set #l2 &trr @wl ""
+      !if &seq &lef #l2 1 "-"
+        osd @# &sub &mul #l0 10 1 "-"
+        set-variable #l2 &rig #l2 1
+      !endif
+      execute-line &spr "set-variable #l1 \"%s\"" #l2
+      osd @# &mul #l0 10 "" #l1 &sub 0 &pinc #l0 1 favorites-goto
+      !force 2 forward-line
+    !done
+    !iif &equ #l0 1  osd @# 10 "" "<no favorites>"
+  !else
+    osd @# 10 "" "<failed to load>"
+  !endif
 !emacro
 
 define-macro favorites
   set-position "\x81"
   !force &con @? @# .osd.tmp favorites-osd-set
+  set-variable #l1 $status
   goto-position "\x81"
+  !iif &not #l1  !abort
   !iif &not @? .osd.tmp osd
 !emacro
