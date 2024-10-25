@@ -1,6 +1,9 @@
 
 ## <img src="microemacs/graphics/me_m.png" /> &nbsp;Jasspa MicroEmacs Text Editor
 
+[![Release](https://img.shields.io/github/v/release/bjasspa/jasspa.svg?label=current+release)](https://github.com/bjasspa/jasspa/releases)
+[![license](https://img.shields.io/badge/license-GPL2-lightgray.svg)](https://www.gnu.org/licenses/gpl.htm)
+
 MicroEmacs  text editor is an Emacs like text editor  suitable for 
 experienced programmers and as well beginners.
 
