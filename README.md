@@ -57,7 +57,7 @@ _Right:_ GUI version - theme "Ayu Dark", displaying the hypertext enabled R docu
 
 ## Installation
 
-You can compile the code yourself, or you pick one or two of the precompiled
+You can compile the code yourself, or you pick one or two of the pre-compiled
 single file executables from the Release page or you install the usual mec/mew
 executables  using curl or the homebrew  package manager. For Windows you have
 as well a installer which is available [here](https://github.com/bjasspa/jasspa/releases/download/me_20241001/Jasspa_MicroEmacs_20241001_installer_windows.msi):
@@ -68,6 +68,14 @@ command into your terminal:
 
 ```
 /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)"
+```
+
+Thereafter  you have to add the folder  `~/.local/bin`  to your PATH variable.
+This is explained in the install  output on your terminal.  Thereafter you can
+check that the binaries are installed by typing in the terminal.
+
+```
+mec -V 
 ```
 
 Installation using [Homebrew](https://brew.sh) package manager on Linux or MacOS:
@@ -81,7 +89,7 @@ These two install methods will provide you with the terminal  version of MicroEm
 and the GUI  version  (mew)  which  requires  X11 on Linux  MacOS  (using  for
 instance [XQuartz](https://www.xquartz.org/).
 
-THe MicroEmacs single file executables with macro files embedded come in two flavors:
+The MicroEmacs single file executables with macro files embedded come in two flavors:
 
 - mecs - terminal version ('c' stands for console, 's' for single file)
 - mews - GUI version (require X11 on Linux and MacOS, 'w' stands for Window)
