@@ -63,7 +63,7 @@ executables  using curl or the homebrew  package manager. For Windows you have
 as well a installer which is available [here](https://github.com/bjasspa/jasspa/releases/download/me_20241001/Jasspa_MicroEmacs_20241001_installer_windows.msi):
 
 
-Installation  using  curl for Linux and MacOS by copy and paste the  following
+Installation  using  curl for Linux and MacOS by copying and pasting the  following
 command into your terminal:
 
 ```
@@ -81,10 +81,10 @@ These two install methods will provide you with the terminal  version of MicroEm
 and the GUI  version  (mew)  which  requires  X11 on Linux  MacOS  (using  for
 instance [XQuartz](https://www.xquartz.org/).
 
-THe MicroEmacs single file executables comes in two flavors:
+THe MicroEmacs single file executables with macro files embedded come in two flavors:
 
-- mecs - terminal version
-- mews - GUI version (require X11 on Linux and MacOS)
+- mecs - terminal version ('c' stands for console, 's' for single file)
+- mews - GUI version (require X11 on Linux and MacOS, 'w' stands for Window)
 
 Download one of the following zip archives with the binaries  inside and place
 the executables into a folder belonging to your PATH
