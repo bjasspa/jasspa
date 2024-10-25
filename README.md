@@ -15,12 +15,13 @@ experienced programmers and as well beginners.
 
 In contrast to other editors it offers a set of unique features:
 
-- small size 1-2MB on your harddisk
-- single file binaries - easy to install 
-- low memory footprint - 1-2 Mb in principle
+- small size 1-2MB on your disk
+- single file binaries available - easy to install 
+- low memory footprint - 1-2 MB (yes MB)
 - terminal and GUI version working the same way with full menu support
-- hypertext help system within your editor
-- alternative keybindings
+- hypertext help system within your editor for MicroEmacs help but as well man
+  pages or R help pages
+- alternative key bindings available (Emacs, CUA, nedit)
 
 As other editors it has obviously:
 
@@ -34,7 +35,7 @@ As other editors it has obviously:
 Cons (because it is a __Micro__-Emacs):
 
 - no Unicode  support - but all the ISO and  extended  Windows  encodings  are
-  usable even on UTF-8 terminals
+  usable, even on UTF-8 terminals
 - no  soft  (visual)  wrap - what  you  see is what  you  get (you can let ME
   autowrap for you the text during writing)
 
