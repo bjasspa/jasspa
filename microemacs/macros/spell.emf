@@ -810,6 +810,7 @@ define-macro spell-word
   !if @?
     !force 0 spell
     !if $status
+      set-variable @# 0
       ; if the buffer has a word checker, e.g. nroff adjust the word
       !if &exi &set #l1 &cat &rig $buffer-fhook 6 "-spell-word"
         set-variable .spell.check-word &rig $result 1
@@ -831,7 +832,16 @@ define-macro spell-word
   !else
     !nma 1 spell 
   !endif
-  !if &seq &lef $result 1 "O"
+  !if &seq &lef &set #l1 $result 1 "O"
+    !if @#
+    !elif &seq $buffer-input "auto-spell-input"
+      !if &not &set #l2 &equ @fss $cursor-y $cursor-x .scheme.spell-error
+        backward-char
+        set-variable #l2 &equ @fss $cursor-y $cursor-x .scheme.spell-error
+        forward-char
+      !endif
+      !iif #l2  !force auto-spell-reset-word &rig #l1 1
+    !endif
     ml-write &cat &rig $result 1 " ok"
     set-variable $window-col #l0 
   !elif &seq &lef $result 1 "N"
@@ -852,4 +862,3 @@ define-macro spell-word
     !force -1 show-region
   !endif
 !emacro
-

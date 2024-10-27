@@ -14,8 +14,15 @@
 
 0 hilight .hilight.spell 0 $global-scheme
 
-; note - a lot of !forces around to ensure the macro does not exit
-; prematurely
+0 define-macro auto-spell-reset-word
+  set-variable #l2 &xrep @1 "[\\\\[*+.?^$]" "\\\\\\0"
+  set-variable #l2 &spr "[^[:%s:]]\\{%s\\}[^[:%s:]]" &con &inw #l2 "word" "alnum" #l2 &con &inw &rig #l2 -1 "sword" "alnum"
+  !force -1 hilight $buffer-hilight 0 #l2
+  ; force this line to be redrawn
+  set-variable $line-scheme $line-scheme
+!emacro
+
+; note - a lot of !forces around to ensure the macro does not exit prematurely
 ; n = bitmask - 0x01 Do hilighting & auto corrections, 0x02 currently inserting a white char
 0 define-macro auto-spell-test
   set-variable #l0 $window-col
@@ -62,14 +69,10 @@
         !if &exi &set #l2 &cat &rig $buffer-fhook 6 "-spell-word"
           set-variable .spell.check-word &rig $result 1
           !force 0 execute-named-command #l2
-          !if &not $status
-            !goto add-word
-          !elif &seq .spell.check-word ""
-          !else
+          !tgoto &not $status add-word
+          !if &not &seq .spell.check-word ""
             !force !force 1 spell .spell.check-word
-            !if &sin &lef $result 1 "AE"
-              !goto add-word
-            !endif
+            !tgoto &sin &lef $result 1 "AE" add-word
           !endif
         !else
 *add-word
@@ -91,17 +94,9 @@
             set-variable #l1 &add #l1 &sub $window-col #l2
           !else
             ; hilight the bad word - must protect . as regex any
-            set-variable #l2 &rep $result "." "\\."
-            !if &inw &rig #l2 -1
-              set-variable #l2 &cat &rig #l2 1 "\\}[^[:sword:]]"
-            !else
-              set-variable #l2 &cat &rig #l2 1 "\\}[^[:alnum:]]"
-            !endif
-            !if &inw #l2
-              !force hilight $buffer-hilight 0 &cat "[^[:word:]]\\{" #l2  .scheme.spell-error
-            !else
-              !force hilight $buffer-hilight 0 &cat "[^[:alnum:]]\\{" #l2  .scheme.spell-error
-            !endif
+            set-variable #l2 &xrep &rig $result 1 "[\\\\[*+.?^$]" "\\\\\\0"
+            set-variable #l2 &spr "[^[:%s:]]\\{%s\\}[^[:%s:]]" &con &inw #l2 "word" "alnum" #l2 &con &inw &rig #l2 -1 "sword" "alnum"
+            !force hilight $buffer-hilight 0 #l2 .scheme.spell-error
             ; force this line to be redrawn
             set-variable $line-scheme $line-scheme
           !endif
@@ -163,30 +158,16 @@ define-macro auto-spell-ignore
   !force !force 0 spell
   set-variable $buffer-mask #l0
   set-variable #l1 &rig $result 1
-  !if &seq &lef $result 1 "E"
-    !if &equ @# 2
-      ; add word to personal dictionary
-      5 spell #l1 ""
-    !else
-      ; ignore the word
-      13 spell #l1 ""
-    !endif
-  !endif
-  ; else this could be just a hilighting problem so always 'unhilight
-  ; re-hilight the word in global scheme - i.e. unhilight
-  str-to-regex #l1
-  !if &inw &rig #l1 -1
-    set-variable #l2 &cat #l1 "\\}[^[:sword:]]"
+  !if &not &seq &lef $result 1 "E"
+  !elif &equ @# 2
+    ; add word to personal dictionary
+    5 spell #l1 ""
   !else
-    set-variable #l2 &cat #l1 "\\}[^[:alnum:]]"
+    ; ignore the word
+    13 spell #l1 ""
   !endif
-  !if &inw #l2
-    !force hilight $buffer-hilight 0 &cat "[^[:word:]]\\{" #l2  $global-scheme
-  !else
-    !force hilight $buffer-hilight 0 &cat "[^[:alnum:]]\\{" #l2  $global-scheme
-  !endif
-  ; force this line to be redrawn
-  set-variable $line-scheme $line-scheme
+  ; else this could be just a hilighting problem so always unhilight
+  auto-spell-reset-word #l1
 !emacro
 
 define-macro auto-spell-buffer
@@ -329,6 +310,13 @@ define-macro auto-spell
     !if &sin &lef .word 1 "AE"
       osd @# 110 "" "\HIgnore All" 1 auto-spell-osdcmd
       osd @# 120 "" "\HAdd"        2 auto-spell-osdcmd
+    !else
+      !if &not &set #l2 &equ @fss $cursor-y $cursor-x .scheme.spell-error
+        backward-char
+        set-variable #l2 &equ @fss $cursor-y $cursor-x .scheme.spell-error
+        forward-char
+      !endif
+      !iif #l2  osd @# 110 "" "\HIgnore All" 1 auto-spell-osdcmd
     !endif
     osd @# 140 "" "\HSpell Word"     3 auto-spell-osdcmd
     osd @# 150 "-"
