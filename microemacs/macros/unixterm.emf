@@ -29,6 +29,7 @@ add-file-hook ".C" fhook-cpp
 !emacro
 !if &band $system 0x01
   ; Not using X
+  0 global-bind-key suspend-emacs "C-c z"
   ; if no color - change the window chars so osd is more usable
   !iif &not &band $system 0x02  set-variable $window-chars &spr "%s=x*[>]<%s" &lef $window-chars 47 &rig $window-chars 54
 !else
