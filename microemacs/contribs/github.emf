@@ -18,6 +18,7 @@
 ;   .git.hub-rnp  Release name prefix
 ;   .git.hub-hdr  Githup api header (uses .git.hub-tkn)
 ;
+!iif &not &exi .git.hub-tkn  -8 ml-write "[Github Error: Github API access token variable .git.hub-tkn not set]"
 set-variable .git.hub-url "https://api.github.com/repos/bjasspa/jasspa/"
 set-variable .git.hub-bal "|build-linux.yml|build-windows.yml|build-macos-intel.yml|build-macos-apple.yml|build-spelling.yml|"
 set-variable .git.hub-brn "main"
