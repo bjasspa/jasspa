@@ -69,7 +69,14 @@ token(meUByte *src, meUByte *tok)
             /* lengthed-str, 0xFLSSSS... 0xFLLLSSSS... F = 0xC0; L = 0 to 0x1F length; or F = 0xE0; L = 0x20 to 0x0FFF;  SSS.. = String */ 
             int len = (cc & BCSLLM);
             if(cc & BCSTRT)
-                len = (len << 7) | (*ss++ - '0');
+            {
+                if(((cc=*ss++) < '0') || (cc > 0xaf))
+                {
+                    *dd = 0;
+                    return ss;
+                }
+                len = (len << 7) | (cc - '0');
+            }
             memcpy(dd,ss,len);
             dd[len] = '\0';
             ss += len;
