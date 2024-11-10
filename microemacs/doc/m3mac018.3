@@ -6,48 +6,45 @@
 .Id $Id: m3mac018.3,v 2.8 2009/08/29 17:13:42 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
-.TH etfinsrt 3
-.XI etfinsrt - "Insert template file into current buffer"
+.TH insert-template 3
+.XI insert-template - "Insert template file into current buffer"
 .XI %company-name 5 "Name of company for template"
 .SH NAME
-etfinsrt \- Insert template file into current buffer
+insert-template \- Insert template file into current buffer
 .Me $a
 .SH SYNOPSIS
 .na
-\fBetfinsrt\fR
-"\fItemplate\fR"
+\fIn\fR \fBinsert-template\fR [ "\fItemplate\fR" ]
 .ad
 .SH DESCRIPTION
-\fBetfinsrt\fR  is generally called by file hooks when the new buffer has been
-created as opposed to loaded from a file (see
+\fBinsert-template\fR is generally called by file hooks when the new buffer has been created as opposed to loaded from
+a file (see
 .Ht $buffer-fhook 5 ).
 .PP
-\fBetfinsrt\fR uses
+\fBinsert-template\fR uses
 .Ht &find 4
-to locate and insert the required  "\fItemplate\fR.etf"  file. If  successful,
-\fBetfinsrt\fR then replaces the following strings in the template:
+to locate and insert the required "\fItemplate\fR.etf" file. If successful, \fBinsert-template\fR then replaces the
+following strings in the template:
 .IP \fC$ASCII_TIME$\fR
 To the current time. Inserts the output of
 .Ht ascii-time 3 .
 The default format of the time string may be changed with 
 .Ht .ascii-time.format 5 .
 .IP \fC$BUFFER_NAME$\fR
-To the buffer name. The name is  capitalized,  '.'s are replaced  with '_' and
-any  trailing  "\fI<##>\fR"  digits  (used to make the buffer name unique) are
-removed. 
+To the buffer name. The name is capitalized, '.'s are replaced with '_' and a trailing "\fI<##>\fR" string (used to
+make the buffer name unique) is removed. 
 .IP \fC$COMPANY_NAME$\fR
-To the value of  \fB%company-name\fR,  or if not defined to the value used for
-\fC$USER_NAME$\fR.  \fB%company-name\fR is usually set up in the company setup
-file defined in User setup.
+To the value of \fB%company-name\fR, or if not defined to the value used for \fC$USER_NAME$\fR. \fB%company-name\fR is
+usually set up in the company setup file defined in User setup.
+.IP \fC$FILE_NAME$\fR
+To the buffer name which is typically the buffer's file name without a path. A trailing "\fI<##>\fR" string is removed. 
 .IP \fC$USER_NAME$\fR
-To the  value  of the  registry  entry  "\fC/history/user-name\fR",  or if not
-defined to the value "\fC<unknown>\fR". The user name is usually set up in the
-User setup dialog.
+To the value of the registry entry "\fC/history/user-name\fR", or if not defined to the value "\fC<unknown>\fR". The
+user name is usually set up in the User setup dialog.
 .IP \fC$YEAR$\fR
 To the current year (4 digit number).
 .IP \fC$CURSOR$\fR
-To leave the cursor at this point, only one of these tokens  should be used in
-the template and the token is removed.
+To leave the cursor at this point, only one of these tokens should be used in the template and the token is removed.
 .SH EXAMPLE
 The following is taken from  hkmake.emf  and inserts the  "\fImakefile.etf\fR"
 template if the buffer has been created. 
@@ -56,7 +53,7 @@ template if the buffer has been created.
 define-macro fhook-make
     ; if arg is 0 this is a new file so add template 
     !if &not @#
-        etfinsrt "makefile"
+        insert-template "makefile"
     !endif
     set-variable $buffer-hilight .hilight.make
     -1 buffer-mode "tab"		; Normal tabs please !!!
@@ -66,7 +63,7 @@ define-macro fhook-make
 .CE 0
 .Me $ehf-scheme
 .SH NOTES
-\fBetfinsrt\fR is a macro defined in \fCetfinsrt.emf\fR.
+\fBinsert-template\fR is a macro defined in \fCetfinsrt.emf\fR.
 .PP
 .Ht magic 2m
 mode is always used to perform the the  search/replace  so the replace strings

@@ -78,7 +78,7 @@ indent .hilight.foo o "endif" -4
 define-macro fhook-foo
     ; if arg is 0 this is a new file so add template
     !if &not @#
-        etfinsrt "foo"
+        insert-template "foo"
     !endif
     ; Assign the hilighting
     set-variable $buffer-hilight .hilight.foo

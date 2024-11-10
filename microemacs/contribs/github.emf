@@ -395,7 +395,7 @@ define-macro github-finalise-release
   replace-string &cat &rep .git.hub-rnp " " "_" "\\d\\{8\\}" &cat &rep .git.hub-rnp " " "_" #l1
   save-buffer
   set-variable #l9 &reg "/json/ghaj/0/id" ""
-  github-api-json &cat "releases/" &rig #l9 1 "PATCH" "{\"prerelease\":false}"
+  github-api-json &cat "releases/" &rig #l9 1 "PATCH" "{\"prerelease\":false,\"make_latest\":true}"
   !iif &not &seq &set #l2 &reg "/json/ghaj/id" "" #l9  -8 ml-write &spr "[Github Release Error: Unexpected release ID returned - %s]" #l2
   !iif &not &seq &set #l2 &reg "/json/ghaj/prerelease" "" "b0"  -8 ml-write &spr "[Github Release Error: Unexpected prerelease setting %s]" #l2
   goto-position "\x80"

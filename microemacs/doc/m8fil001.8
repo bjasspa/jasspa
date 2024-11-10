@@ -21,10 +21,10 @@ template for a new file and defines common text that is automatically included
 when a new file is created.
 .PP
 The file inclusion is usually performed by macro
-.Ht etfinsrt 3 ,
+.Ht insert-template 3 ,
 called from the
 .Hl "File Hooks" fileHooks 2 .
-The  template  file has no specific  format, although \fBetfinsrt\fR replaces
+The  template  file has no specific  format, although \fBinsert-template\fR replaces
 key strings with relevant information.
 .SH EXAMPLE
 The  template  file is inserted  with the file hooks. If a file hook is called
@@ -37,9 +37,9 @@ define-macro fhook-c
     !if &not @#
         ; Is it an include h file or a c file?
         !if &seq &mid $buffer-bname &rsin "." $buffer-bname 1 "h"
-            etfinsrt "h"
+            insert-template "h"
         !else
-            etfinsrt "c"
+            insert-template "c"
         !endif
     !endif
     1 buffer-mode "time"
@@ -49,7 +49,7 @@ define-macro fhook-c
 .CE
 .Me $ehf-scheme
 See
-.Ht etfinsrt 3
+.Ht insert-template 3
 for more information on how the template file is located and inserted into the
 buffer.
 .PP
@@ -68,7 +68,7 @@ with any other text:-
  *  Object Name   : m8fil001.8
  *  Created By    : $USER_NAME$
  *  Created       : $ASCII_TIME$
- *  Last Modified : <220105.2244>
+ *  Last Modified : <241110.0001>
  *
  *  Description	
  *
@@ -101,7 +101,7 @@ directory file with their own file located in a personal \*(mE directory. See
 .na
 .Hl "File Hooks" fileHooks 2 .
 .br
-.Ht etfinsrt 3 ,
+.Ht insert-template 3 ,
 .Ht &find 4 ,
 .Ht $user-path 5 .
 .ad

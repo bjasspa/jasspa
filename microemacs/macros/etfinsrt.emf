@@ -13,8 +13,8 @@
 ;
 ;  0 insert-template  : Inserts the default template for the current file hook (<fhook-label>.etf)
 ;  # insert-template  : Inserts the template matching #_<name>.etf with the user's $user-path/<fhook-label>/ directory (# can be prefixed with '0's)
-;  insert-template "<template-name> : Inserts the given template, first checking for $user-path/<fhook-label>/<template-name>.etf, then using &find
-;  0 insert-template "<template-name> : Same except only &find is used to locate it (used by system to insert the main hook template)
+;  insert-template "<template-name>" : Inserts the given template, first checking for $user-path/<fhook-label>/<template-name>.etf, then using &find
+;  0 insert-template "<template-name>" : Same except only &find is used to locate it (used by system to insert the main hook template)
 ;  insert-template    : Prompt user to select template from list made up of the default and any templates in $user-path/<fhook-label>/, if only one found it is automatically inserted.
 ;
 
@@ -41,7 +41,7 @@ define-macro insert-template
     !elif &set #l6 &seq "R" &stat t &set #l1 &spr "%s%s.etf" $user-path #l2
       set-variable #l3 &lins #l3 0 &cat "0 " #l0
     !endif
-    !iif #l2 "|"  -8 ml-write &spr "[Error: No %s templates found]" &ind &spr ".fhook-%s.name"
+    !iif &seq #l3 "|"  -8 ml-write &spr "[Error: No %s templates found in: %s%s]" &ind &spr ".fhook-%s.name" #l0 $user-path #l0
     !if &seq "" &lget #l3 2
       set-variable #l4 &lget #l3 1
     !else

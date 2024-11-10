@@ -274,7 +274,7 @@ The  template  file must be  explicitly  loaded by the hook file,  within  the
 \fBfhook\fR  function.  A new file  condition  may be tested  within the fhook
 macro by checking the numerical argument, an argument of 0 indicates that this
 is a new file. The template file is inserted with an invocation of
-.Ht etfinsrt 3 .
+.Ht insert-template 3 .
 The  \fBfhook\fR  macro checks the  argument and inserts the template file as
 follows:-
 .Me $emf-scheme
@@ -283,7 +283,7 @@ follows:-
 define-macro fhook-foo
     ; if arg is 0 this is a new file so add template
     !if &not @#
-        etfinsrt "foo"
+        insert-template "foo"
     !endif
     ; Assign the hilighting
     set-variable $buffer-hilight .hilight.foo
@@ -314,7 +314,7 @@ For the example language file \fIfoo\fR the \fIfhook\fR macro becomes:-
 define-macro fhook-foo
     ; if arg is 0 this is a new file so add template
     !if &not @#
-        etfinsrt "foo"
+        insert-template "foo"
     !endif
     ; Assign the hilighting
     set-variable $buffer-hilight .hilight.foo
@@ -373,7 +373,7 @@ For the example file \fIfoo\fR then the \fIfhook\fR is defined as:-
 define-macro fhook-foo
     ; if arg is 0 this is a new file so add template
     !if &not @#
-        etfinsrt "foo"
+        insert-template "foo"
     !endif
     ; Assign the hilighting
     set-variable $buffer-hilight .hilight.foo
@@ -408,7 +408,7 @@ As an example, the \fIfoo\fR \fIfhook\fR file becomes:-
 define-macro fhook-foo
     ; if arg is 0 this is a new file so add template
     !if &not @#
-        etfinsrt "foo"
+        insert-template "foo"
     !endif
     ; Assign the hilighting
     set-variable $buffer-hilight .hilight.foo
@@ -470,7 +470,7 @@ The bindings are declared in the \fIfhook\fR macro as follows:-
 define-macro fhook-foo
     ; if arg is 0 this is a new file so add template
     !if &not @#
-        etfinsrt "foo"
+        insert-template "foo"
     !endif
     ; Assign the hilighting
     set-variable $buffer-hilight .hilight.foo
@@ -591,7 +591,7 @@ define-macro foo-uncomment-line
 define-macro fhook-foo
     ; if arg is 0 this is a new file so add template
     !if &not @#
-        etfinsrt "foo"
+        insert-template "foo"
     !endif
     ; Assign the hilighting
     set-variable $buffer-hilight .hilight.foo
@@ -643,7 +643,7 @@ el "else\\r\\p\\P"
 .Ht add-file-hook 2 ,
 .Ht buffer-abbrev-file 2 ,
 .Ht buffer-init 3 ,
-.Ht etfinsrt 3 ,
+.Ht insert-template 3 ,
 .Ht execute-buffer 2 ,
 .Ht expand-abbrev 2 ,
 .Ht global-abbrev-file 2 ,

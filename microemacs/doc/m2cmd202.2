@@ -374,7 +374,7 @@ indent .hilight.mode n "while" 4
 define-macro fhook-mode
     ; if arg is 0 this is a new file so add template
     !if &not @#
-        etfinsrt "mode"
+        insert-template "mode"
     !endif
     set-variable $buffer-hilight .hilight.mode
     set-variable $buffer-indent .hilight.mode
