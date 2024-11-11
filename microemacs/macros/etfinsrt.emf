@@ -19,10 +19,10 @@
 ;
 
 define-macro insert-template
+  !iif &seq "" &set #l0 &rig $buffer-fhook 6  -8 ml-write "[Error: Invalid $buffer-fhook]"
+  !iif &seq &set #l9 &ind &spr ".fhook-%s.name" #l0 "ERROR"  set-variable #l9 #l0
   !force set-variable #l4 @1
-  !if &seq "" &set #l0 &rig $buffer-fhook 6
-    -8 ml-write "[Error: Invalid $buffer-fhook]"
-  !elif $status
+  !if $status
     set-variable #l2 &con &seq ".etf" &rig #l4 -4 &lef #l4 -4 #l4
     !iif @#  set-variable @# &seq "R" &stat t &set #l1 &spr "%s%s/%s.etf" $user-path #l0 #l2
     !if @#
@@ -41,7 +41,7 @@ define-macro insert-template
     !elif &set #l6 &seq "R" &stat t &set #l1 &spr "%s%s.etf" $user-path #l2
       set-variable #l3 &lins #l3 0 &cat "0 " #l0
     !endif
-    !iif &seq #l3 "|"  -8 ml-write &spr "[Error: No %s templates found in: %s%s]" &ind &spr ".fhook-%s.name" #l0 $user-path #l0
+    !iif &seq #l3 "|"  -8 ml-write &spr "[Error: No %s templates found in: %s%s]" #l9 $user-path #l0
     !if &seq "" &lget #l3 2
       set-variable #l4 &lget #l3 1
     !else
@@ -50,10 +50,10 @@ define-macro insert-template
     !iif &not &and #l6 &seq #l4 &cat "0 " #l0  set-variable #l1 &spr "%s%s.etf" #l2 &rep #l4 " " "_"
   !elif @#
     set-variable $file-names &spr "%s%s/0*%d_.+\\.etf" $user-path #l0 @#
-    !iif &seq "" &set #l1 $file-names  -8 ml-write &spr "[Error: %s template %d not found in: %s%s/]" &ind &spr ".fhook-%s.name" #l0 @# $user-path #l0
+    !iif &seq "" &set #l1 $file-names  -8 ml-write &spr "[Error: %s template %d not found in: %s%s/]" #l9 @# $user-path #l0
     set-variable #l1 &cat $result #l1
   !elif &seq "ERROR" &set #l1 &find #l0 ".etf"
-    -8 ml-write &spr "[Error: %s default template not found]" &ind &spr ".fhook-%s.name" #l0
+    -8 ml-write &spr "[Error: %s default template not found]" #l9
   !endif
   ; Remember if new buffer & current magic mode then add it if not set
   set-variable #l3 &sub $window-eline 1
@@ -66,6 +66,7 @@ define-macro insert-template
     ml-write &spr "[Could not insert template file: %s]" #l1
     !return
   !endif
+  set-variable #l6 ""
   set-variable #l7 &sub #l8 $window-line
   1 buffer-mode "magic"
   set-variable $window-line #l8
@@ -73,10 +74,16 @@ define-macro insert-template
   set-variable #l1 &reg "/history/user-name" "<unknown>"
   set-variable $window-line #l8
   !force #l7 replace-string "\\$USER_NAME\\$" #l1
+  !iif &and &lget $result 1 &seq #l1 "<unknown>"  set-variable #l6 &cat #l6 ", Full name (user-setup > General)"
   ; Change to the company name $COMPANY_NAME$.
-  !iif &not &seq %company-name "ERROR"  set-variable #l1 %company-name
+  !iif &not &set #l5 &seq %company-name "ERROR"  set-variable #l1 %company-name
   set-variable $window-line #l8
   !force #l7 replace-string "\\$COMPANY_NAME\\$" #l1
+  !iif &and &lget $result 1 #l5  set-variable #l6 &cat #l6 ", %company-name"
+  !iif &set #l5 &seq &set #l1 %company-url "ERROR"  set-variable #l1 ""
+  set-variable $window-line #l8
+  !force #l7 replace-string "\\$COMPANY_URL\\$" #l1
+  !iif &and &lget $result 1 #l5  set-variable #l6 &cat #l6 ", %company-url"
   ; Change the year $YEAR$
   set-variable $window-line #l8
   !force #l7 replace-string "\\$YEAR\\$" &lef $time 4
@@ -112,4 +119,5 @@ define-macro insert-template
   ; Reset magic mode if we added it, flag buffer as unedited and goto end
   &cond #l0 1 -1 buffer-mode "magic"
   &cond #l3 1 -1 buffer-mode "edit"
+  !iif &len #l6  ml-write &spr "[Template may be improved if you defined:%s]" &rig #l6 1 
 !emacro

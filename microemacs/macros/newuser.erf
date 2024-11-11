@@ -180,7 +180,7 @@
 }
 "system" = "61440"
 "tab" = "1"
-"user-name" = "MicroEmacs User"
+"user-name" = "<unknown>"
 "windows" {
  "blink" = "13107800"
  "char-set" = "cp1252"

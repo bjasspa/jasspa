@@ -9,8 +9,16 @@
 .TH insert-template 3
 .XI insert-template - "Insert template file into current buffer"
 .XI %company-name 5 "Name of company for template"
+.XI %company-url 5 "Company URL for template"
 .SH NAME
+.Me "|insert-template"
 insert-template \- Insert template file into current buffer
+.br
+.Me "|$buffer-bname"
+%company-name \- Name of company for template
+.br
+.Me "|$company-url"
+%company-url \- Company URL for template
 .Me $a
 .SH SYNOPSIS
 .na
@@ -36,6 +44,9 @@ make the buffer name unique) is removed.
 .IP \fC$COMPANY_NAME$\fR
 To the value of \fB%company-name\fR, or if not defined to the value used for \fC$USER_NAME$\fR. \fB%company-name\fR is
 usually set up in the company setup file defined in User setup.
+.IP \fC$COMPANY_URL$\fR
+To the value of \fB%company-url\fR, or if not defined to an empty string (i.e. ""). \fB%company-url\fR is
+usually set up in the company setup file defined in User setup.
 .IP \fC$FILE_NAME$\fR
 To the buffer name which is typically the buffer's file name without a path. A trailing "\fI<##>\fR" string is removed. 
 .IP \fC$USER_NAME$\fR
@@ -45,6 +56,30 @@ user name is usually set up in the User setup dialog.
 To the current year (4 digit number).
 .IP \fC$CURSOR$\fR
 To leave the cursor at this point, only one of these tokens should be used in the template and the token is removed.
+.PP
+The  numeric  argument  \fIn\fR is used to modify the default  behavior of the
+command, where the values are defined as follows:
+.IP "\fI0\fR \fBinsert-template\fR"
+Inserts the default template for the current file hook, for example if the current file is a \*(mS macros file the 
+hook will be \fCfhook-emf\fR so this will insert "\fCemf.etf\fR".
+.IP "\fI0\fR \fBinsert-template\fR '\fC<template-name>\fR'"
+In this form "\fC<template-name>\fR" must be given in the execution line, i.e. will not be prompted for, and only the
+.Ht &find 4
+macro function is used to locate the template file, this will include the
+.Ht $user-path 5
+and the other paths on the
+.Ht $search-path 5
+but will not include directory "\fC$user-path/<fhook>/\fR", see next option.
+.IP "\fBinsert-template\fR '\fC<template-name>\fR'"
+When no argument is supplied, the file of the given template is first search for within the directory 
+"\fC$user-path/<fhook>/\fR" and only if not found will it then use the
+.Ht &find 4
+macro function to locate the file.
+.IP "\fI#\fR \fBinsert-template\fR"
+When \fBn\fR is non-zero \fBinsert-template\fR inserts the template matching "\fC$user-path/<fhook>/#_<name>.etf\fR"
+where'\fC#\fR' can be prefixed with zeros, i.e. '\fC3 insert-template\fR' would insert templates \fC3_test.etf\fR or
+\fC003_hello.etf\fR if located in the correct directory. If multiple files match this base criteria the first file
+will be inserted.
 .SH EXAMPLE
 The following is taken from  hkmake.emf  and inserts the  "\fImakefile.etf\fR"
 template if the buffer has been created. 
