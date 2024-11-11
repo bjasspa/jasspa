@@ -18,7 +18,7 @@ define-macro fhook-r
 
 ; buffer-init variables
 set-variable .fhook-r.name "R/S-Plus"
-set-variable .fhook-r.setup &reg "/history/fhook/r" "dfghopx"
+set-variable .fhook-r.setup &reg "/history/fhook/r" "bdfghopx"
 set-variable .fhook-r.setup-mask "adefghikmoptux"
 set-variable .fhook-r.comment "|#||#|# | #|r|"
 
@@ -237,8 +237,8 @@ set-variable .fhook-r-doc.setup-mask "acfhmw"
 
 !if &sin "f" .fhook-r-doc.setup
   ; setup emf collapsing
-  set-variable .fhook-r-doc.collapse-open  "^[A-Z]"
-  set-variable .fhook-r-doc.collapse-close "^\\([A-Z]\\|\\'\\)"
+  set-variable .fhook-r-doc.collapse-open  "^[A-Z][a-z]+:"
+  set-variable .fhook-r-doc.collapse-close "^\\([A-Z][a-z]+:\\|\\'\\)"
   set-variable .fhook-r-doc.collapse-mnext "-1"
 !endif
 
