@@ -1,5 +1,7 @@
  "" "</FOLD><FOLD+> \ecCControl Flow:\ecA"
 main "#!/usr/bin/env python3\r# -*- coding: ISO-8859-15 -*-\r\"\"\"\pModule docstring\"\"\"\r__author__ = \"first last\"\r__version__ = \"0.1\"\rimport sys, os, re\r\rdef usage(argv):\r\Tprint(f\"Usage: {argv[0]} args\")\r\r\Tprint(__doc__)\r\rdef main(argv):\r\Tif (len(argv)) == 1:\r\Tusage(argv)\r\rif __name__ == \"__main__\":\r\Tmain(sys.argv)\r\r\P" "  main"
+enc15  "# -*- coding: ISO-8859-15 -*-\r" "  enc15"
+enc1252  "# -*- coding: cp1252 -*-\r" "  enc1252"
 def "def \p:\r\T\"\"\"\"this is a docstring for a method\"\"\"\rpass\r\P" "  def"
 class "class \p:\r    \"\"\"Docstring for the class\"\"\"\rdef __init__(self):\r\Tpass\r\P" "  class"
 classi "class \p (BaseClass):\r    \"Docstring\"\rdef __init__(self,arg):\r    super().__init__(arg)\r\P" "  classi"
