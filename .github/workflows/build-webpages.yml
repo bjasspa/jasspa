@@ -27,18 +27,10 @@ jobs:
           make web_pages/me/index.html
           
       - name: Upload web-pages as artifact
-        id: deployment
         uses: actions/upload-pages-artifact@v3
         with:
           path: microemacs/doc/web_pages/me/
 
-deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
