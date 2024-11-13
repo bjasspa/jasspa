@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac081.3,v 2.4 2009/08/29 17:13:59 jon Exp $
+.Id $Id: m3mac081.3,v 2.4 2024/10/21 17:13:59 jon Exp $
 .Im MicroEmacs command|scuts
 .so me.tni
 .TH read-session 3
@@ -19,12 +19,10 @@ read-session \- Read in session information
 .ad
 .SH DESCRIPTION
 .B read-session
-reads in a \*(mE  session file, setting the current  session  information.  If
-argument  \fBn\fR is not given then the given  "\fIsession-file\fR"  is simply
-read in. If a non-zero  argument is specified  then default  session is set to
-the given file-name and the file is read. If an argument of zero is given then
-the  default  session is  re-read.  Information  read in (and saved)  from the
-history file includes:-
+reads in a \*(mS session file, setting the current session information. If argument \fBn\fR is not given then the
+given "\fIsession-file\fR" is simply read in. If a non-zero argument is specified then default session is set to the
+given file-name and the file is read. If an argument of zero is given then the default session is re-read. Information
+read in (and saved) from the history file includes:-
 .BS
 Searching and replacing history.
 .BU
@@ -38,26 +36,22 @@ General (all the rest) history.
 .BU
 Buffer and file list with line numbers.
 .BE
-\*(mE's  environment  may be retained  almost intact by the use of the default
-session and using the \fB-c\fR (continue)  command-line  option to re-load all
-files that were being edited in a previous session.
+\*(mS's environment may be retained almost intact by the use of the default session and using the \fB-c\fR (continue)
+command-line option to re-load all files that were being edited in a previous session.
 .PP
-On  loading  a new  session  then  the user is  prompted  to save the  current
-session.  If the  numeric  argument  is zero (bit 0 is 0) then the user is not
-prompted and the  \fIsession-file\fR is effectively loaded and merged into the
-current session.
+On loading a new session then the user is prompted to save the current session. If the numeric argument is zero (bit 0
+is 0) then the user is not prompted and the \fIsession-file\fR is effectively loaded and merged into the current
+session.
 .SH NOTES
-When running  multiple \*(mE sessions on the same  work-station  (or different
-workstations  sharing the same home  directory), the default  history is saved
-when \*(mE exits. As a result the last \*(mE sessions that  terminates  writes
+When running multiple \*(mS sessions on the same work-station (or different workstations sharing the same home
+directory), the default history is saved when \*(mS exits. As a result the last \*(mS sessions that terminates writes
 the history information used next time.
 .PP
 The session information is saved in a registry format file (see
 .Ht esf 8 ).
 Reference should be made to the notes included in
 .Ht erf 8
-as to how the  history  file may be  edited  and  effected  in the same  \*(mE
-session.
+as to how the history file may be edited and effected in the same \*(mS session.
 .PP
 The user may now have multiple sessions, this is useful when one is working on
 different  projects, the sessions are created using

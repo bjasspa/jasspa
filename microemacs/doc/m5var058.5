@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var058.5,v 2.6 2023/03/07 16:52:58 jon Exp $
+.Id $Id: m5var058.5,v 2.6 2023/06/29 16:52:58 jon Exp $
 .Im MicroEmacs variable|file
 .so me.tni
 .TH $file-ignore 5
@@ -48,8 +48,8 @@ is achieved by using:
 set-variable $file-ignore "./"
 .CE
 .Me $ehf-scheme
-To  ignore  \*(mE  backup  files  ("\fC~\fR"),  C object  files  ("\fC.o\fR"),
-"\fC./\fR" and "\fC../\fR" directories try using:
+To ignore \*(mS backup files ("\fC~\fR"), C object files ("\fC.o\fR"), "\fC./\fR" and "\fC../\fR" directories try
+using:
 .Me $emf-scheme
 .CS
 set-variable $file-ignore "~ .o ./"

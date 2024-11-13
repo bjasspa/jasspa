@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd071.2,v 2.7 2009/08/29 17:13:11 jon Exp $
+.Id $Id: m2cmd071.2,v 2.7 2022/06/12 17:13:11 jon Exp $
 .Im MicroEmacs command|shell
 .ds C0 "(\fB\*(cXc\fR)\ \&
 .so me.tni
@@ -18,16 +18,13 @@ shell \- Create a new command processor or shell
 .ad
 .SH DESCRIPTION
 .B shell
-creates a new  command  processor  or shell.  Upon  exiting  the shell,  \*(mE
-redraws  its  screen and  continues  editing.  The  exceptions  to this are as
-follows:
+creates a new command processor or shell. Upon exiting the shell, \*(mS redraws its screen and continues editing. The
+exceptions to this are as follows:
 .IP "\fBX-Windows\fR"
-A new \fBxterm\fR is spawned off and editing control is returned to \*(mE once
-the \fBxterm\fR has initialized.
+A new \fBxterm\fR is spawned off and editing control is returned to \*(mS once the \fBxterm\fR has initialized.
 .IP "\fBMicrosoft Windows\fR"
-A new \s-1MS-DOS\s0 shell is created and control is returned to \*(mE once the
-\s-1DOS\s0  console window has initialized. The shell created is determined by
-the  \s-1MS-DOS\s0   environment   variable   \fCCOMSPEC\fR,  this  may  be  a
+A new \s-1MS-DOS\s0 shell is created and control is returned to \*(mS once the \s-1DOS\s0 console window has
+initialized. The shell created is determined by the \s-1MS-DOS\s0 environment variable \fCCOMSPEC\fR, this may be a
 replacement shell e.g. \fC4DOS\fR.
 .SH "SEE ALSO"
 .na

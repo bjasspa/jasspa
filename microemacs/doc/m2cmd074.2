@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd074.2,v 2.6 2009/08/29 17:13:11 jon Exp $
+.Id $Id: m2cmd074.2,v 2.6 2022/06/12 17:13:11 jon Exp $
 .Im MicroEmacs command|macro
 .so me.tni
 .TH insert-macro 2
@@ -18,19 +18,16 @@ insert-macro \- Insert keyboard macro into buffer
 .ad
 .SH DESCRIPTION
 .B insert-macro
-inserts  the named  \fIcommand\fR  into the current  buffer in the \*(mE macro
-language,  thus  enables it to be saved,  re-load and  therefore  re-used at a
-later date. This is often used in conjunction with
+inserts the named \fIcommand\fR into the current buffer in the \*(mS macro language, thus enables it to be saved,
+re-load and therefore re-used at a later date. This is often used in conjunction with
 .Ht start-kbd-macro 2 ,
 .Ht end-kbd-macro 2
 and
 .Ht name-kbd-macro 2 .
-The given  \fIcommand\fR  must have been defined either by a keyboard macro or
-in \*(mE macro code.
+The given \fIcommand\fR must have been defined either by a keyboard macro or in \*(mS macro code.
 .SH NOTES
-The \fBinsert-macro\fR provides a good method of identifying unknown low level
-key codes. Simply  record the unknown key as a macro and insert the macro into
-the scratch buffer. The low level key code appears within the string.
+The \fBinsert-macro\fR provides a good method of identifying unknown low level key codes. Simply record the unknown
+key as a macro and insert the macro into the scratch buffer. The low level key code appears within the string.
 .SH "SEE ALSO"
 .na
 .Ht start-kbd-macro 2 ,

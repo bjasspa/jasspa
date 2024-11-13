@@ -3,7 +3,7 @@
 .\" Copyright (c) 2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac088.3,v 2.1 2022/01/06 15:12:26 jon Exp $
+.Id $Id: m3mac088.3,v 2.1 2024/05/21 15:12:26 jon Exp $
 .Im MicroEmacs command|search
 .so me.tni
 .TH find 3
@@ -26,12 +26,12 @@ find \- Execute find command
 .SH DESCRIPTION
 .B find
 performs   a   search   for   files  in  the   current   directory   (or  from
-\fIstarting-path\fR\|)  using built in \*(mE constructs rather than relying on
+\fIstarting-path\fR\|)  using built in \*(mS constructs rather than relying on
 any external executables such as 
 .Hr find 1 . 
 .B find
 operates  in exactly the same way as a  traditional  \fIfind\fR  command  line
-utility and uses a command line option  sequence  from the \*(mE command line.
+utility and uses a command line option  sequence  from the \*(mS command line.
 The  \fIfile-options\fR  allow  recursive  and  regular  expression  searches,
 searching  against the file  modification time etc. The command line takes the
 user supplied \fIfile-options\fR, \fIfile-mask\fR and \fIstarting-path\fR. The
@@ -154,11 +154,11 @@ File must contain a string matching the given \fIsearch-pattern\fR.
 .IP "\fB-W\fR \fI<search-pattern>\fR"
 File must not contain a string matching the given \fIsearch-pattern\fR.
 .BP "-x"
-Use \*(mE 
+Use \*(mS 
 .Ht $file-ignore 5
 to exclude unimportant files
 .BP "-X"
-Do not use \*(mE 
+Do not use \*(mS
 .Ht $file-ignore 5 .
 .BP "-&"
 Launch find using a separate process, this stops the current  MicroEmacs hanging during the find process which can
@@ -182,14 +182,13 @@ The  default  when no  options  are given will be  \fB-XGPrdfMIBL\fR,  default
 options    can   be   set   via   the    find-setup    command    (sets    the
 \fB/history/find-com\fR registry entry). 
 .BU 
-Use of \fB-w\fR on directories searches for \fI<search-pattern>\fR  within the
-\*(mE  directory  listing, the command is then the same as 
+Use of \fB-w\fR on directories searches for \fI<search-pattern>\fR within the \*(mS directory listing, the command is
+then the same as 
 .Ht grep 3 
 except for the output buffer format.  
 .BU
-String  searches  of \fB-w\fR  are not  performed  on files that exceed  100MB
-unless the \fB-u\fR  option is  specified on the command  line. This  prevents
-\*(mE from loading exceptionally large files unless explicitly required.
+String searches of \fB-w\fR are not performed on files that exceed 100MB unless the \fB-u\fR option is specified on
+the command line. This prevents \*(mS from loading exceptionally large files unless explicitly required.
 .BE 0
 .SH "SEE ALSO"
 .na

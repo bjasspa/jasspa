@@ -2,10 +2,8 @@
 #
 # MicroEmacs date
 #
-MEYY=09
-MEMM=10
-MEDD=11
-MEVERS=20$(MEYY)$(MEMM)$(MEDD)
+include ../src/evers.mak
+MEVERS=$(meVER_CN)$(meVER_YR)$(meVER_MN)$(meVER_DY)
 #
 # Documentation tools
 #
@@ -29,7 +27,7 @@ DOCRELDIR=	$(RELDIR)/doc
 RTFRELDIR=	$(RELDIR)/rtf
 WWWRELDIR=	$(RELDIR)/www
 #
-MERELDIR=	$(RELDIR)/me$(MEYY)$(MEMM)$(MEDD)
+MERELDIR=	$(RELDIR)/me$(meVER_YR)$(meVER_MN)$(meVER_DY)
 SRCRELDIR=	$(MERELDIR)/src
 #
 #

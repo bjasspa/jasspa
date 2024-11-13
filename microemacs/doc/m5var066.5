@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var066.5,v 2.7 2009/08/29 17:14:15 jon Exp $
+.Id $Id: m5var066.5,v 2.7 2022/06/12 17:14:15 jon Exp $
 .Im MicroEmacs variable|macrodevelop
 .so me.tni
 .TH $progname 5
@@ -17,10 +17,10 @@ $progname \- Program file name
 .SH DESCRIPTION
 .B $progname 
 contains the absolute file and path to the \*(mE binary file  currently  being
-executed.  This value is typically  used by macros to spawning  another  \*(mE
-sessions and to determine where \*(mE is being executed from.
+executed.  This value is typically  used by macros to spawning  another  \*(mS
+sessions and to determine where \*(mS is being executed from.
 .SH EXAMPLE
-The  following  example is used to spawn of another  \*(mE command to create a
+The  following  example is used to spawn of another  \*(mS command to create a
 C-tags file:-
 .CS
 shell-command &cat $progname " \\"@ctags\\" *.c *.h" 

@@ -6,7 +6,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Wed Aug 5 23:13:35 1998
 .\"
-.Id $Id: m5var076.5,v 2.9 2009/08/29 17:14:33 jon Exp $
+.Id $Id: m5var076.5,v 2.9 2022/06/12 17:14:33 jon Exp $
 .Im MicroEmacs variable;environment
 .so me.tni
 .TH $MENAME 5
@@ -27,11 +27,9 @@ $LOGNAME \- System user name (UNIX)
 .ad
 .SH DESCRIPTION
 .B $MENAME
-is an  environment  variable  which  may  be  used  to  initialize  the  \*(mE
-environment  for a given user. At start-up, if  \fB$MENAME\fR  is defined then
-the user's  configuration and history file  "\fCname\fR\fI.erf\fR"  is located
-and read, where \fCname\fR is the variable value. The environment  variable is
-used to initialise the 
+is an environment variable which may be used to initialize the \*(mS environment for a given user. At start-up, if
+\fB$MENAME\fR is defined then the user's configuration and history file "\fCname\fR\fI.erf\fR" is located and read,
+where \fCname\fR is the variable value. The environment variable is used to initialise the 
 .Ht $user-name 5 
 variable.
 .PP

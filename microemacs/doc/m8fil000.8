@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m8fil000.8,v 2.8 2009/08/29 17:14:33 jon Exp $
+.Id $Id: m8fil000.8,v 2.8 2022/06/12 17:14:33 jon Exp $
 .Im MicroEmacs files
 .so me.tni
 .TH eaf 8
@@ -20,7 +20,7 @@ eaf \- MicroEmacs abbreviation file format
 .fi
 .ad
 .SH DESCRIPTION
-The \*(mE abbreviation file, typically given the extension \fB.eaf\fR, defines
+The \*(mS abbreviation file, typically given the extension \fB.eaf\fR, defines
 a set of shorthand expansion strings which are used by the command
 .Ht expand-abbrev 2 .
 .Ht buffer-abbrev-file 2
@@ -156,7 +156,7 @@ mode enabled generates:-
 Similarly the "\\b" is typically used when
 .Ht indent 2m
 is enabled, but when the tab spacing is known. Consider the following  example
-used in the \*(mE  \fB.emf\fR  files to define a help  entry. In this case the
+used in the \*(mS  \fB.emf\fR  files to define a help  entry. In this case the
 indent is known to be 5 characters. Hence to move the cursor back 5 characters
 then a sequence of \fB\\b\fR's are used:-
 .CS
@@ -173,10 +173,10 @@ SEE ALSO
 !ehelp
 .CE 0
 .SH FILES
-The default abbreviation files are located in the \*(mE \fIhome\fR directory.
+The default abbreviation files are located in the \*(mS \fIhome\fR directory.
 .PP
 User's may specify their own  abbreviation  files by shadowing the \fIhome\fR
-directory file with their own file located in a personal \*(mE directory. See
+directory file with their own file located in a personal \*(mS directory. See
 .Ht $user-path 5 .
 .SH "SEE ALSO"
 .na

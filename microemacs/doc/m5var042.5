@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m5var042.5,v 2.7 2009/08/29 17:14:15 jon Exp $
+.Id $Id: m5var042.5,v 2.7 2022/06/12 17:14:15 jon Exp $
 .Im MicroEmacs variable|insert
 .so me.tni
 .TH $tab-width 5
@@ -21,9 +21,9 @@ defines the default width of a tab character  specified in spaces. The default
 value is used when new files are loaded and created and seeds the variable
 .Ht $buffer-tab-width 5 .
 .PP
-Setting  tabs to arbitrary  widths is possible in  \*(mE  but you must be
+Setting  tabs to arbitrary  widths is possible in  \*(mS  but you must be
 aware  of a subtle  difference  that it makes to your  file and  hence to your
-editing.  When  you  start  \*(mE,  the tab  width is set to the  default
+editing.  When  you  start  \*(mS,  the tab  width is set to the  default
 (usually  every 8th column) for the tab character  (\fCCTRL-I\fR).  As long as
 you stay with the default,  every time you insert the tab  character, a CTRL-I
 get inserted. Hence, you logically have a single  character which might appear
@@ -32,7 +32,7 @@ location of the tab character.  This means that to remove the spacing you have
 to delete a \fIsingle\fR character \-\- the tab character.
 .PP
 On the other hand, the moment you  explicitly set the tab interval (even if it
-is to the default  value),  \*(mE  handles the tab character by expanding
+is to the default  value),  \*(mS  handles the tab character by expanding
 the  character  into  the  required  number  of  spaces  to  move  you  to the
 appropriate column. In this case, to remove the spacing you have to delete the
 appropriate number of spaces inserted by \*me to get you to the right column.

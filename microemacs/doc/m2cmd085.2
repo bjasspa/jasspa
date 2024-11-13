@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd085.2,v 2.12 2009/08/29 17:13:25 jon Exp $
+.Id $Id: m2cmd085.2,v 2.12 2022/06/12 17:13:25 jon Exp $
 .Im MicroEmacs command|bind|message
 .so me.tni
 .TH ml-bind-key 2
@@ -135,7 +135,7 @@ erase whole line, the text is placed in the kill buffer, command
 current word to the search string.
 .BE 0
 .SS History
-\*(mE stores the last 20 entries of each kind  (command,  buffer, file, search
+\*(mS stores the last 20 entries of each kind  (command,  buffer, file, search
 and  general  which  is also  saved in the  history  file so the  state of the
 history is retained  when next loaded. The  following  commands can be used to
 manipulate the history.
@@ -149,7 +149,7 @@ previous history list entry, command:
 (\fB\*ep\fR, \fB\*cp\fR, \fBup\fR)
 .BE 0
 .SS Completion
-When  entering a command,  file, buffer or a mode name \*(mE creates a list of
+When  entering a command,  file, buffer or a mode name \*(mS creates a list of
 possible completions the following operations can be performed on this list.
 .BS
 expand. This  completes the given input until the first  ambiguous  character,

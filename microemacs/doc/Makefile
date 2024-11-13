@@ -11,6 +11,7 @@
 
 TOPDIR=..
 include $(TOPDIR)/etc/makeinc
+
 #
 # Build components
 #
@@ -37,8 +38,8 @@ TXTS	=	$(READTXT) $(FAQTXT) $(BUILDTXT) $(PATCHTXT) $(MISCTXT)
 #
 RTFS	=	me.rtf me.hpj logo.bmp me.hhp
 #
-MEHTMZIP=	jasspa-mehtm-20$(MEYY)$(MEMM)$(MEDD).zip
-MEHTMLTGZ=	jasspa-mehtml-20$(MEYY)$(MEMM)$(MEDD).tar.gz
+MEHTMZIP=	jasspa-mehtm-$(meVER_CN)$(meVER_YR)$(meVER_MN)$(meVER_DY).zip
+MEHTMLTGZ=	jasspa-mehtml-$(meVER_CN)$(meVER_YR)$(meVER_MN)$(meVER_DY).tar.gz
 #
 MAN1	=	$(DOCDIR)m1cmd000.1 $(DOCDIR)m1cmd002.1
 #
@@ -523,6 +524,14 @@ $(MEHTMLTGZ): me.hts
 clean::
 	$(RMDIR) html
 	$(RM) $(MEHTMLTGZ)
+# Github pages docs (.html) dir
+web_pages/me/index.html: me.hts
+	$(RMDIR) web_pages
+	$(MKDIR) web_pages
+	$(MKDIR) web_pages$(pc)me
+	sed 'sZ<<FILE> me&HTMLZ<<FILE> me/index\&HTMLZ' me.hts | sed 'sZHREF="me/ZHREF="Z' | sed 'sZHREF="\.\./me&HTMLZHREF="index\&HTMLZg' | sed 'sZHREF="me&HTMLZHREF="index\&HTMLZg' | sed 'sZSRC="\.\./me/ZSRC="Z' | sed 'sZSRC="me/ZSRC="Z' >> web_pages$(pc)me_wp.hts
+	cd web_pages$(sc) $(HTS2HTML) -l .html me_wp.hts
+
 #
 # Build the txt readme files.
 #

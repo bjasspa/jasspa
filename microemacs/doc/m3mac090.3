@@ -3,7 +3,7 @@
 .\" Copyright (c) 2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac090.3,v 2.1 2022/02/05 14:51:30 jon Exp $
+.Id $Id: m3mac090.3,v 2.1 2024/05/21 14:51:30 jon Exp $
 .Im MicroEmacs command|search
 .so me.tni
 .TH replace-string-in-files 3
@@ -149,11 +149,11 @@ File must contain a string matching the given \fIsearch-pattern\fR.
 .IP "\fB-W\fR \fI<search-pattern>\fR"
 File must not contain a string matching the given \fIsearch-pattern\fR.
 .BP "-x"
-Use \*(mE
+Use \*(mS
 .Ht $file-ignore 5
 to exclude unimportant files
 .BP "-X"
-Do not use \*(mE
+Do not use \*(mS
 .Ht $file-ignore 5 .
 .BP "-&"
 Launch command using a separate process, this stops the current  MicroEmacs hanging during the replace process which can

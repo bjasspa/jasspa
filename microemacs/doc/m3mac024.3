@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac024.3,v 2.6 2009/08/29 17:13:42 jon Exp $
+.Id $Id: m3mac024.3,v 2.6 2022/06/12 17:13:42 jon Exp $
 .Im MicroEmacs macrodevelop|filter
 .so me.tni
 .TH start-up 3
@@ -27,7 +27,7 @@ shut-down \- Editor exit callback command
 By default  
 .B start-up
 is not defined, if the  command is defined  (via a
-user macro) then it is executed immediately after \*(mE has completed its
+user macro) then it is executed immediately after \*(mS has completed its
 initialization. 
 .PP
 This command may initially  seem redundant as the user may execute any command
@@ -38,7 +38,7 @@ required  on the  given  command-line  files  will not work  (the only  buffer
 present will be the "\fB*scratch*\fR" buffer).
 .PP
 The  \fBstart-up\fR   command  is  executed   \s-1AFTER\s0  the  execution  of
-"\fCme.emf\fR" and  initialization of buffers, but before \*(mE waits for user
+"\fCme.emf\fR" and  initialization of buffers, but before \*(mS waits for user
 input.
 .PP
 The  \fBshut-down\fR  command  is also not  defined by  default,  but if it is

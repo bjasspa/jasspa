@@ -12,18 +12,18 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.58 2009/10/12 07:43:54 jon Exp $
+.Id $Id: me.nrs,v 2.58 2024/09/10 07:43:54 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
-.TH me - - - "MicroEmacs 2009"
+.TH me - - - "\*(mE"
 .XI me - -
 .XI home - -
 .XI MicroEmacs - -
 .\" Next section (until .Ss) is for the osd-help contents page
 .Me "!   Contents"
 .Me "| home"
-.Me "MicroEmacs 2009"
+.Me "\*(mE"
 .Me "|"
 .Me " "
 .Me "| osd-help(3)"
@@ -98,7 +98,7 @@
 .Me "    Registry"
 .Me "| Command Line Filters"
 .Me "    Command Line Filters"
-.Me "| MicroEmacs 2009 - Games"
+.Me "| \*(mE - Games"
 .Me "    Games"
 .Me "|"
 .Me " "
@@ -130,7 +130,7 @@
 .Me "    Compatibility"
 .Me "| Interfacing(2)"
 .Me "    Interfacing to external components"
-.Me "| MicroEmacs 2009 - Supported File Types"
+.Me "| \*(mE - Supported File Types"
 .Me "    Supported File Types"
 .Me "| Client-Server(2)"
 .Me "    Client-Server Interface"
