@@ -972,25 +972,15 @@ fillPara(int f, int n)
     else
         fillState = FILL_INDENT;        /* Enable indented fill */
 
-    /* Sort out the justification mode that we are running in.
-     * An upper case justification mode implies an automatic mode
-     * where we detect the current state of the line and apply the
-     * appropriate formatting.
-     *
-     * If the One Line mode (o) is operational then fill compleate
-     * paragraphs to a single line. Indentation is disabled */
+    /* Sort out the justification mode that we are running in. An upper case justification mode
+     * implies an automatic mode where we detect the current state of the line and apply the
+     * appropriate formatting. */
     jmode = cbp->fillmode;
     if (isUpper(jmode))
     {
         fillState |= FILL_AUTO;         /* Auto paragraph type detection */
         jmode = toLower(jmode);
-        if (jmode == 'o')
-            fillState = (fillState | FILL_LINE | FILL_MARGIN) & ~FILL_INDENT;
-
     }
-    else if(jmode == 'o')
-        fillState = (fillState | FILL_LINE) & ~FILL_INDENT;
-
     /* In none mode then we do not touch the paragraph. */
     if(jmode == 'n')
     {
@@ -1000,10 +990,15 @@ fillPara(int f, int n)
             return meTRUE;
         return windowForwardParagraph(meFALSE,n);
     }
-
+    if(jmode == 'o')
+    {
+        /* If the One Line mode (o) is operational then fill compleate paragraphs to a single line.
+         * Indentation & Justify is disabled */
+        fillState = (fillState | FILL_LINE) & ~(FILL_INDENT|FILL_AUTO);
+    }
     /* Record if justify mode is enabled. Record in our local context Also
      * knock off indent if disabled. We do not want to be prompting the user. */
-    if(meModeTest(cbp->mode,MDJUST)) /* Justify enabled ?? */
+    else if(meModeTest(cbp->mode,MDJUST)) /* Justify enabled ?? */
         fillState |= FILL_JUSTIFY;      /* Yes - Set justification state */
     else
     {
@@ -1050,7 +1045,7 @@ fillPara(int f, int n)
          * to go to the end of the current or next paragraph, if this
          * fails we are at the end of buffer */
         cwp->dotOffset = 0 ;             /* Got start of current line */
-        if(windowForwardParagraph(meFALSE, 1) <= 0)
+        if(windowForwardParagraph(meFALSE,1) <= 0)
             break;
 
         /* record the pointer to the line just past the EOP
@@ -1058,7 +1053,7 @@ fillPara(int f, int n)
          * doto is at the beginning of the first word */
         eopline = cwp->dotLine;
         eoplno = cwp->dotLineNo;
-        windowBackwardParagraph(meFALSE, 1);
+        windowBackwardParagraph(meFALSE,1);
 
         /* Advance to the first character in the paragraph. */
         while(!meWindowInPWord(cwp))

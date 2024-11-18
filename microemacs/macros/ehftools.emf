@@ -283,6 +283,8 @@ define-macro ehf-process-all
     insert-string "\eln"
     !force search-forward "\elm[^\e]*\n"
   !done
+  beginning-of-buffer
+  !force replace-string "\ecE\\(\ecE.+?\\)\ecE" "\\1"
   ; clean the buffer
   clean
 !emacro

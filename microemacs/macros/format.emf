@@ -102,7 +102,7 @@ define-macro sort-lines-ignore-case
 
 define-macro paragraph-to-line
   set-variable #l1 $buffer-fill-mode
-  set-variable $buffer-fill-mode "O"
+  set-variable $buffer-fill-mode "o"
   !force !force &sub 0 @# fill-paragraph
   !if &not $status
     set-variable $buffer-fill-mode #l1
