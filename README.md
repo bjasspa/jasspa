@@ -102,11 +102,10 @@ the executables into a folder belonging to your PATH
 |:-------------:|:----------------:|:----------------------:|
 | Linux         | [mecs](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_linux_mecs.zip)       | [mews](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_linux_mews.zip) |
 | MacOS apple   | [mecs](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_apple_mecs.zip) | [mews](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_apple_mews.zip) |
-| MacOS intel   | [mecs](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_intel_mecs.zip) | [mews](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_intel_mews.zip)
-| Windows       | [mecs](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_windows_mecs.zip)     | [mews](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_windows_mews.zip)
+| MacOS intel   | [mecs](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_intel_mecs.zip) | [mews](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_intel_mews.zip) |
+| Windows       | [mecs](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_windows_mecs.zip)     | [mews](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_windows_mews.zip) |
 
-To test the  integrity  of the  downloads  you can use the
-[sha256 hash keys](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101-sha256.txt)
+To test the integrity of the downloads you can use the [sha256 hash keys](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101-sha256.txt)
 
 Then test the executable in your terminal:
 
@@ -115,6 +114,12 @@ mecs -V
 ```
 
 This should printout the version and exit MicroEmacs.
+
+
+## Documentation & Help
+
+Jasspa's  MicroEmacs  ships with a  comprehensive  set of  documentation  which  covers most aspects of the use of the
+editor. It can also be browsed on-line [here](https://bjasspa.github.io/jasspa/).
 
 
 ## User Setup
@@ -157,7 +162,7 @@ GPL - see the file [COPYING.txt](microemacs/COPYING.txt)
 
 - Dave Conroy         1985-1986
 - Daniel M. Lawrence  1986-1988  
-- John Green          1990-2010
+- John Green          1990-2024
 - Steven Phillips     1990-2024
 - Detlef Groth        2021-2024
 
