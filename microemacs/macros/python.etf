@@ -5,29 +5,33 @@ Description ...
 
 Usage: {0} usage line ...
 
-Arguments: 
+Arguments:
 
     Mandatory:
-    
+
     Options:
 
 """
-import sys, os, re
+import sys
+import os
 
-def help(argv):
+def mhelp(argv):
+    """help function for the module"""
     print(__doc__.format(argv[0]))
 
 def usage(argv):
-    print(f"Usage: {argv[0]} args")
-    
+    """displays a short usage line"""
+    print(f"Usage: {argv[0]} FILENAME")
+
 def main(argv):
+    """main function of a possible command line application"""
     if len(argv) == 1:
         usage(argv)
     elif "-h" in argv or "--help" in argv:
         help(argv)
     else:
-        print("running ...")
-    
+        if os.path.isfile(argv[1]):
+            print("running ...")
+
 if __name__ == "__main__":
     main(sys.argv)
-        
