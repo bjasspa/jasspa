@@ -1,15 +1,37 @@
 #!/usr/bin/env python3
-import sys, os, re
+"""Module docstring
+
+Description ...
+
+Usage: {0} usage line ...
+
+Arguments:
+
+    Mandatory:
+
+    Options:
+
+"""
+import sys
+import os
+
+def mhelp(argv):
+    """help function for the module"""
+    print(__doc__.format(argv[0]))
 
 def usage(argv):
-    print(f"Usage: {argv[0]} args")
-    
+    """displays a short usage line"""
+    print(f"Usage: {argv[0]} FILENAME")
+
 def main(argv):
-    pass
-    
-if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        usage(sys.argv)
+    """main function of a possible command line application"""
+    if len(argv) == 1:
+        usage(argv)
+    elif "-h" in argv or "--help" in argv:
+        help(argv)
     else:
-        main(sys.argv)
-        
+        if os.path.isfile(argv[1]):
+            print("running ...")
+
+if __name__ == "__main__":
+    main(sys.argv)
