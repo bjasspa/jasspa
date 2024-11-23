@@ -134,9 +134,8 @@ EAFS=	ada.eaf		asp.eaf		au3.eaf		\
 	tcl.eaf		txt.eaf		\
 	vhdl.eaf
 # ERFS:sh=ls *.erf
-ERFS=	jstprint.erf	\
+ERFS=	jstprint.erf	newuser.erf	\
 	print.erf	printeps.erf	printhpl.erf	printwdw.erf	\
-	printd.erf	printhpd.erf	printhtm.erf	\
-	newuser.erf
+	printd.erf	printhpd.erf	printhtm.erf
 # ERFS:sh=ls *.edf
-EDFS=	matchit.edf
+EDFS=	matchit.edf	password.lst

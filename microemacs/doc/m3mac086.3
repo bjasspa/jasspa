@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 18:16:21 1999
 .\"
-.Id $Id: m3mac086.3,v 2.2 2023/12/09 17:13:59 jon Exp $
+.Id $Id: m3mac086.3,v 2.2 2024/11/23 19:41:40 jon Exp $
 .Im MicroEmacs command|scuts
 .so me.tni
 .TH generate-password 3
@@ -54,7 +54,8 @@ variable to a new password meeting the criteria defined by combinations of argum
 arguments "\fIlength\fR" and "\fIflags\fR".
 .PP
 If argument \fIn\fR is given then the lower byte (0x0ff) defines the password length, otherwise the "\fIlength\fR"
-must be given. The maximum length of the password is 255 bytes.
+must be given. When a word base password is generated the length is the number of words, if a character based password 
+is to be generated the length is the number of characters. The maximum length of the password is 255 bytes/words.
 .PP
 If the argument \fIn\fR is given and its value is greater than 255 then the bits above 255 are used to determine the
 flags, see list below. Otherwise the \fIflags\fR must get given and are defined as follows:
@@ -92,9 +93,14 @@ specified by bit 0x8000 in argument \fBn\fR.
 When the \fBe\fR flag is given then at least one character from each of the main requested character classes, i.e.
 digits, lowercase letters, uppercase letters and specials, must be present in the generated password, if not another
 password is generated until it does. This can be specified by bit 0x10000 in argument \fBn\fR. 
+.IP \fBD\fR
+When generating a word based password and this flag is given the current spelling dictionary is used, when not given a 
+fixed dictionary of 7776 English words is used. Caution should be used when using a general \*(mS dictionary as the 
+words can be rude, hard to spell and have accents, the alternative password word list contains only relatively 
+unambiguous, easy to spell non-expletive words. This can be specified by bit 0x20000 in argument \fBn\fR.
 .IP \fBN\fR
 When given, flag \fBN\fR does not update the user's last or default password criteria, this flag can be used by macros
-to avoid affecting the user experience. This can be specified by bit 0x20000 in argument \fBn\fR.
+to avoid affecting the user experience. This can be specified by bit 0x40000 in argument \fBn\fR.
 .PP
 .B insert-password
 uses \fBgenerate-password\fR to generates a new random password and insert it into the current buffer with the phonic
