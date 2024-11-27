@@ -1,0 +1,70 @@
+; 
+; inserts the primary selection on X11 
+; converting it from UTF-8 to the current encoding
+; installation:
+;     - place this file into your configuration folder
+;     - add the following line to your USERNAME.emf file
+;     - `define-macro-file insprsel insert-primary-selection`
+;     - you can the move the global-key binding as well to the USERNAME.emf
+;       file     
+define-macro insert-primary-selection
+  !if &seq &which "xclip" "ERROR"
+     ml-write "Error: xclip is not installed, please install!"
+     !return
+  !endif  
+  set-position "\x82"
+  !force 0 delete-buffer "*ips-tmp*"
+  0x40 pipe-shell-command "xclip -o -selection primary" "*ips-tmp*"
+  buffer-mode "view"
+  buffer-is-utf8 #l1
+  !iif #l1  4 change-buffer-charset "utf8" "display"
+  beginning-of-buffer
+  set-mark
+  end-of-buffer
+  !force backward-char
+  copy-region
+  goto-position "\x82"
+  !force 0 delete-buffer "*ips-tmp*"
+  yank
+!emacro
+
+global-bind-key "insert-primary-selection" "S-insert"
+
+define-help "insert-primary-selection" "3"
+## NAME
+
+__insert-primary-selection__ - inserts the primary selection converting it from
+UTF-8 to the current ME encoding
+$a
+
+## SYNOPSIS
+
+[X11]  
+__insert-primary-selection__ "S-insert"
+$a
+
+## DESCRIPTION
+
+The __insert-primary-selection__ macro can be used on X11 systems like on Linux or
+on MacOS with installed XQuartz to insert, text which is currently selected with the
+mouse in other applications, using the __xclip__ command and pasting it into the
+running MicroEmacs GUI session.
+
+## NOTES
+
+The __insert-primary-selection__ macro is implemented in the file _insprsel.emf_ which
+is currently placed in the _microemacs/contribs_ project folder. For installation  copy
+that file into your user-path  folder - usually `~/.config/jasspa` and make the macro
+available by placing the following line into your `~/.config/jasspa/USERNAME.emf` file. 
+
+
+```{.emf}
+     define-macro-file insprsel insert-primary-selection
+```
+
+## SEE ALSO
+
+[change-buffer-charset(3)](change-buffer-charset\(3\)), xclip(1).
+
+!ehelp
+
