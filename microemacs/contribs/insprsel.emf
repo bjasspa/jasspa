@@ -1,12 +1,34 @@
-; 
-; inserts the primary selection on X11 
-; converting it from UTF-8 to the current encoding
-; installation:
-;     - place this file into your configuration folder
-;     - add the following line to your USERNAME.emf file
-;     - `define-macro-file insprsel insert-primary-selection`
-;     - you can the move the global-key binding as well to the USERNAME.emf
-;       file     
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Detlef Groth, University of Potsdam
+;  Author        : Detlef Groth, University of Potsdam, Steven Phillips jasspa.com
+;  Created       : Wed Nov 27 2024
+;  Last Modified : <241127.1826>
+;
+;  Description   : For X11 version of MicroEmacs
+;                  Insert primary selection converting it from UTF-8 to the current
+;                  encodings using the xclip application.
+;
+;  Notes         : to install the install-primary-selection, copy this file to user jasspa folder
+;                  usually ~/.config/jasspa and add the following lines to your 
+;                  USERNAME.emf file:
+;
+;                  define-macro-file insprsel insert-primary-selection
+;                  !if &not &band $system 0x01
+;                     ; Using X
+;                     global-bind-key "insert-primary-selection" "S-insert"
+;                  !endif
+;
+;  History        : 2024-11-27 initial version
+;
+;  Copyright (c) 2024 Detlef Groth, Steven Phillips.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2024 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+
 define-macro insert-primary-selection
   !if &seq &which "xclip" "ERROR"
      ml-write "Error: xclip is not installed, please install!"
@@ -27,8 +49,6 @@ define-macro insert-primary-selection
   !force 0 delete-buffer "*ips-tmp*"
   yank
 !emacro
-
-global-bind-key "insert-primary-selection" "S-insert"
 
 define-help "insert-primary-selection" "3"
 ## NAME
