@@ -2,8 +2,9 @@
 ## <img src="microemacs/graphics/me_m.png" /> &nbsp;Jasspa MicroEmacs Text Editor
 
 [![Release](https://img.shields.io/github/v/release/bjasspa/jasspa.svg?label=current+release)](https://github.com/bjasspa/jasspa/releases)
-[![license](https://img.shields.io/badge/license-GPL2-lightgray.svg)](https://www.gnu.org/licenses/gpl.htm)
-![downloads](https://img.shields.io/github/downloads/bjasspa/jasspa/total)
+![Commits](https://img.shields.io/github/commits-since/bjasspa/jasspa/latest)
+[![License](https://img.shields.io/badge/license-GPL2-lightgray.svg)](https://www.gnu.org/licenses/gpl.htm)
+![Downloads](https://img.shields.io/github/downloads/bjasspa/jasspa/total)
 
 ![Ubuntu](https://github.com/bjasspa/jasspa/workflows/Build%20linux%20(Ubuntu-20)/badge.svg)
 ![Windows](https://github.com/bjasspa/jasspa/workflows/Build%20windows%20(Win-latest)/badge.svg)
