@@ -7,6 +7,9 @@
 ![Downloads All](https://img.shields.io/github/downloads/bjasspa/jasspa/total)
 ![Commits](https://img.shields.io/github/commits-since/bjasspa/jasspa/latest)
 
+[![Docu HTML](https://img.shields.io/badge/Docu-HTML-blue)](https://bjasspa.github.io/jasspa/)
+[![Docu Wiki](https://img.shields.io/badge/Docu-Wiki-blue)](https://github.com/bjasspa/jasspa/wiki)
+
 ![Ubuntu](https://github.com/bjasspa/jasspa/workflows/Build%20linux%20(Ubuntu-20)/badge.svg)
 ![Windows](https://github.com/bjasspa/jasspa/workflows/Build%20windows%20(Win-latest)/badge.svg)
 
@@ -99,7 +102,7 @@ The MicroEmacs single file executables with macro files embedded come in two fla
 - mews - GUI version (require X11 on Linux and MacOS, 'w' stands for Window)
 
 Download one of the following zip archives with the binaries  inside and place
-the executables into a folder belonging to your PATH
+the executables into a folder belonging to your PATH variable.
 
 | Platform      | Console/Terminal | GUI (X11 on Linux/Mac) |
 |:-------------:|:----------------:|:----------------------:|
@@ -121,9 +124,13 @@ This should printout the version and exit MicroEmacs.
 
 ## Documentation & Help
 
-Jasspa's  MicroEmacs  ships with a  comprehensive  set of  documentation  which  covers most aspects of the use of the
-editor. It can also be browsed on-line [here](https://bjasspa.github.io/jasspa/).
+Jasspa's  MicroEmacs  ships with a comprehensive  set of  documentation  which
+covers most  aspects of the use of the editor. It can also be browsed  on-line
+[here](https://bjasspa.github.io/jasspa/).
 
+Further  there is a  [Wiki](https://github.com/bjasspa/jasspa/wiki)  with some
+tips and tricks. New documentation and scripts will be often described therein
+first and later go into the official editor release.
 
 ## User Setup
 
@@ -150,11 +157,14 @@ session should start with these saved settings.
 
 ## Tools to improve your editing on Linux and MacOS
 
+- Fixing ISO / UTF-8 issues
+    - _iconv_ - encoding converter
 - X11 (macOS, Linux):
-    - xfontsel - to interactively select fonts from within your ME session
-    - mkfontscale - if you like to add your own TTF fonts as available fonts
+    - _xclip_ - importing text from the primary selection to the clipboard
+    - _xfontsel_ - to interactively select fonts from within your ME session
+    - _mkfontscale_ - if you like to add your own TTF fonts as available fonts
 
-MicroEmacs versions  before  20241001  might require the tools luit and abduco for better
+MicroEmacs versions  before  20241001  might as require the tools luit and abduco for better
 support of international character encodings on UTF-8 enabled terminals.
 
 ## License
