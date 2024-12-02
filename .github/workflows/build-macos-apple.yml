@@ -60,25 +60,25 @@ jobs:
           export MEVER=`./bin/macos14-apple64/mec -p @contribs/ver.emf`
           zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_macos_apple_binaries bin COPYING.txt readme.txt
 
-      - name: Create macos-apple mecs
+      - name: Create macos-apple mesc
         run: |
           export MEVER=`./microemacs/bin/macos14-apple64/mec -p @microemacs/contribs/ver.emf`
           cd ./microemacs/mesingle
           rm -rf bin
           mkdir -p bin/macos14-apple64
-          ../bin/macos14-apple64/mec -p "@mesgen" -f -p ../bin/macos14-apple64/mec -t ../bin/macos14-apple64/tfs -o bin/macos14-apple64/mecs
+          ../bin/macos14-apple64/mec -p "@mesgen" -f -p ../bin/macos14-apple64/mec -t ../bin/macos14-apple64/tfs -o bin/macos14-apple64/mesc
           cp ../COPYING.txt ./
           cp ../readme.txt ./
-          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_apple_mecs bin COPYING.txt readme.txt
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_apple_mesc bin COPYING.txt readme.txt
 
-      - name: Create macos-apple mews
+      - name: Create macos-apple mesw
         run: |
           export MEVER=`./microemacs/bin/macos14-apple64/mec -p @microemacs/contribs/ver.emf`
           cd ./microemacs/mesingle
           rm -rf bin
           mkdir -p bin/macos14-apple64
-          ../bin/macos14-apple64/mec -p "@mesgen" -f -p ../bin/macos14-apple64/mew -t ../bin/macos14-apple64/tfs -o bin/macos14-apple64/mews
-          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_apple_mews bin COPYING.txt readme.txt
+          ../bin/macos14-apple64/mec -p "@mesgen" -f -p ../bin/macos14-apple64/mew -t ../bin/macos14-apple64/tfs -o bin/macos14-apple64/mesw
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_apple_mesw bin COPYING.txt readme.txt
 
       - name: Create macos-apple OpenSSL download
         run: |

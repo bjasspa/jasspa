@@ -51,7 +51,7 @@ jobs:
             makepkg -f
             ls -lh
             makepkg -si --noconfirm
-            mecs -V
+            mesc -V
 
       - name: Upload linux downloads
         uses: actions/upload-artifact@v4

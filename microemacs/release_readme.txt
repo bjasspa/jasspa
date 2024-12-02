@@ -16,13 +16,16 @@ VERY QUICK START GUIDE
 
 For your platform download the single-file binary zip file:
 
-  - Jasspa_MicroEmacs_<VERSION>_abin_<PLATFORM>_mecs.zip for console/terminal app, this should work on all computers of
+  - Jasspa_MicroEmacs_<VERSION>_abin_<PLATFORM>_mesc.zip for console/terminal app, this should work on all computers of
     given platform.
 
-  - Jasspa_MicroEmacs_<VERSION>_abin_<PLATFORM>_mews.zip  for window  based app, this should give best user  experience
+  - Jasspa_MicroEmacs_<VERSION>_abin_<PLATFORM>_mesw.zip  for window  based app, this should give best user  experience
     but may not work on all computers (particularly macOS where XQuartz is required).
 
-Extract the executable for the zip and run.
+Extract the executable from the zip and run.
+
+The console/terminal version should work on all computers of the given platform, whereas the GUI version may not work
+on all computers (particularly macOS where XQuartz is required) but will give the best user experience.
 
 This is a truly portable version, it will not alter/add to your environment or registry and will only create/edit
 files you explicitly ask it to. So this version is ideal for trying MicroEmacs without affecting your computer.
@@ -35,13 +38,38 @@ docs and spelling dictionaries for numerous languages.
 INSTALLERS
 ----------
 
-- Homebrew installers for Linux and macOS, details to follow.
-
-- Jasspa_MicroEmacs_<VERSION>_installer_windows.msi contains the binaries for Windows, the macros and help file, 
+- Windows: Jasspa_MicroEmacs_<VERSION>_installer_windows.msi contains the binaries for Windows, the macros and help file, 
   simply download and run to create a fully working environment.
 
-Spelling dictionary can be downloaded and installed by MicroEmacs as and when required.
- 
+- UNIX: The preferred install method is using the script:
+
+    https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/microemacs-install
+    
+  download and run locally or run the following in a terminal:
+
+      /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)"
+    
+  Note that this will always install the latest release. If the script encounters issues during the installation
+  processes, typically insufficient permissions, please follow the instructions given.
+  
+  Once successfully installed a `microemacs-update` script can be used to update the installation to the latest
+  version or to install spelling languages, e.g. run:
+  
+      microemacs-update enus
+   
+- UNIX - Homebrew: For users familiar with brew we also provide a brew installer. In a terminal run:
+
+      brew tap bjasspa/jasspa
+      brew install microemacs
+    
+  This will install the binaries, macros and help. To install spelling languages run:
+  
+      brew install microemacs-spelling-<LANG>
+    
+  Use `brew search microemacs` for a full list of available packages.
+
+On all platforms, spelling dictionaries can also be downloaded and installed by MicroEmacs as and when required.
+  
 
 SLOWER QUICK START GUIDE
 ------------------------

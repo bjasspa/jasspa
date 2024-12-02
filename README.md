@@ -98,25 +98,25 @@ instance [XQuartz](https://www.xquartz.org/).
 
 The MicroEmacs single file executables with macro files embedded come in two flavors:
 
-- mecs - terminal version ('c' stands for console, 's' for single file)
-- mews - GUI version (require X11 on Linux and MacOS, 'w' stands for Window)
+- mesc - terminal version ('s' for single file, 'c' stands for console)
+- mesw - GUI version ('w' stands for window, requires X11 on Linux and MacOS)
 
 Download one of the following zip archives with the binaries  inside and place
 the executables into a folder belonging to your PATH variable.
 
 | Platform      | Console/Terminal | GUI (X11 on Linux/Mac) |
 |:-------------:|:----------------:|:----------------------:|
-| Linux         | [mecs](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_linux_mecs.zip)       | [mews](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_linux_mews.zip) |
-| MacOS apple   | [mecs](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_apple_mecs.zip) | [mews](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_apple_mews.zip) |
-| MacOS intel   | [mecs](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_intel_mecs.zip) | [mews](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_intel_mews.zip) |
-| Windows       | [mecs](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_windows_mecs.zip)     | [mews](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_windows_mews.zip) |
+| Linux         | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_linux_mesc.zip)       | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_linux_mesw.zip) |
+| MacOS apple   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_apple_mesc.zip) | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_apple_mesw.zip) |
+| MacOS intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_intel_mesc.zip) | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_intel_mesw.zip) |
+| Windows       | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_windows_mesc.zip)     | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_windows_mesw.zip) |
 
 To test the integrity of the downloads you can use the [sha256 hash keys](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101-sha256.txt)
 
 Then test the executable in your terminal:
 
 ```
-mecs -V
+mesc -V
 ```
 
 This should printout the version and exit MicroEmacs.

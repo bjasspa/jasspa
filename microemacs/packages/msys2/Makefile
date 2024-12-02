@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Detlef Groth
 #  Created       : Wed Sep 11 08:13:58 2024
-#  Last Modified : <240911.1502>
+#  Last Modified : <241201.2344>
 #
 #  Description	
 #
@@ -33,7 +33,7 @@
 version=20240902
 
 default:
-	if [ ! -f Jasspa_MicroEmacs_$(version)_bin_windows_binaries.zip ]; then wget https://github.com/bjasspa/jasspa/releases/download/me_20240902/Jasspa_MicroEmacs_$(version)_abin_windows_mecs.zip ; fi
+	if [ ! -f Jasspa_MicroEmacs_$(version)_bin_windows_binaries.zip ]; then wget https://github.com/bjasspa/jasspa/releases/download/me_20240902/Jasspa_MicroEmacs_$(version)_abin_windows_mesc.zip ; fi
 	unzip Jasspa_MicroEmacs_$(version)_bin_windows_binaries.zip -d microemacs-package
 	cp microemacs-package/bin/*/mec.exe microemacs-package
 	cp microemacs-package/bin/*/mew.exe microemacs-package	

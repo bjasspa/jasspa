@@ -35,7 +35,7 @@ function lang2rb () {
 
 function mec2rb {
     ## creating one recipe file with multiple Zip file
-    ## for mec, mew, mecs, mews and openssl release files
+    ## for mec, mew, mesc, mesw and openssl release files
     if [ -z $3 ]; then 
         printf "mec2rb shafile templatefile\n"
     else
@@ -50,10 +50,10 @@ function mec2rb {
         zip="binaries.zip"
         if [ "$(echo $2 | grep openssl)" != "" ]; then
             zip="openssl.zip"
-        elif [ "$(echo $2 | grep mecs)" != "" ]; then
-            zip="mecs.zip"
-        elif [ "$(echo $2 | grep mews)" != "" ]; then
-            zip="mews.zip"
+        elif [ "$(echo $2 | grep mesc)" != "" ]; then
+            zip="mesc.zip"
+        elif [ "$(echo $2 | grep mesw)" != "" ]; then
+            zip="mesw.zip"
         fi
         ## collecting hashes
         for key in "${!dict[@]}"; do

@@ -23,7 +23,7 @@ res=$(abduco -l | grep mec$tty)
 
 if [[ "$res" == "" ]] ; then 
     ### need a new one 
-   TERM=xterm abduco -A -e ^z mec$tty luit -encoding ISO-8859-15 mecs "$@"
+   TERM=xterm abduco -A -e ^z mec$tty luit -encoding ISO-8859-15 mesc "$@"
 else
     ### attach to the old one
     abduco -a -e ^z mec$tty 

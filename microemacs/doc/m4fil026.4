@@ -3,13 +3,13 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil026.4,v 2.8 2022/06/12 17:14:14 jon Exp $
+.Id $Id: m4fil026.4,v 2.8 2024/12/01 09:39:34 jon Exp $
 .Im MicroEmacs macro;function;miscellaneous|bind
 .so me.tni
 .TH &cbind 4
 .XI &cbind - "Return the command a key is bound to"
-.XI &kbind - "Return the key a command is bound to"
 .XI &nbind - "Return the numerial argument of a binding"
+.XI &kbind - "Return the key a command is bound to"
 .SH NAME
 &cbind, &kbind, &nkind \- Command/key binding operators
 .SH SYNOPSIS
@@ -17,26 +17,24 @@
 .B &cbind
 .I key
 .br
+.B &nbind
+.I key
+.br
 .B &kbind
 .I n
 .I command
-.br
-.B &nbind
-.I key
 .ad
 .SH DESCRIPTION
-\fB&cbind\fR returns the command bound to the given key sequence, \fB&kbind\fR
-can be  abbreviated  to \fB&kbi\fR. If the key is not bound then  \fB&kbind\fR
-returns the string "\fIERROR\fR".
+\fB&cbind\fR returns the command bound to the given key sequence, \fB&cbind\fR can be abbreviated to \fB&cbi\fR. If
+the key is not bound then \fB&cbind\fR returns the string "\fIERROR\fR".
 .PP
-\fB&nbind\fR  returns the  numerical  argument  associated  with the given key
-binding,  \fB&nbind\fR  can be  abbreviated  to  \fB&nbi\fR. If the key is not
-bound then \fB&nbind\fR  returns the string  "\fIERROR\fR", if the binding has
-no argument then an empty string (\fC""\fR) is returned.
+\fB&nbind\fR returns the numerical argument associated with the given key binding, \fB&nbind\fR can be abbreviated to
+\fB&nbi\fR. If the key is not bound then \fB&nbind\fR returns the string "\fIERROR\fR", if the binding has no argument
+then an empty string (\fC""\fR) is returned.
 .PP
-\fB&kbind\fR  returns a key sequence bound to the given \fIcommand\fR with the
-given numerical argument \fIn\fR. If no binding can be found then \fB&kbind\fR
-returns an empty string (\fC""\fR).
+\fB&kbind\fR returns a key sequence bound to the given \fIcommand\fR with the given numerical argument \fIn\fR, use an
+empty string (\fC""\fR) for no argument. If no binding can be found then \fB&kbind\fR returns an empty string
+(\fC""\fR).
 .SH EXAMPLE
 The  following  example  waits for the user to press a key, then  prints  what
 command the key is bound to.

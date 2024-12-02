@@ -22,8 +22,8 @@ tpl2rb: shafile
 	bash tpl2rb.sh mec2rb  $(shafile) microemacs.tpl
 	bash tpl2rb.sh mec2rb  $(shafile) microemacs-mew.tpl	
 	bash tpl2rb.sh mec2rb  $(shafile) microemacs-openssl.tpl
-	bash tpl2rb.sh mec2rb  $(shafile) microemacs-mecs.tpl
-	bash tpl2rb.sh mec2rb  $(shafile) microemacs-mews.tpl
+	bash tpl2rb.sh mec2rb  $(shafile) microemacs-mesc.tpl
+	bash tpl2rb.sh mec2rb  $(shafile) microemacs-mesw.tpl
 	bash tpl2rb.sh lang2rb $(shafile) microemacs-spelling-template.tpl
 	bash tpl2rb.sh emf2rb  $(shafile) microemacs-help.tpl
 	bash tpl2rb.sh emf2rb  $(shafile) microemacs-macros.tpl

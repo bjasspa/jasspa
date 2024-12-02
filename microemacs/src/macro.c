@@ -506,32 +506,29 @@ try_again:
                         addLineToEob(bp,line);
                     }
                 }
-                if(sect[1] == '2')
+                if(((sect[1] == '2') || (sect[1] == '3')) && ((ii = decode_fncname(item,1)) >= 0))
                 {
-                    if((ii = decode_fncname(item,1)) >= 0)
+                    meBind *ktp;
+                    meUByte line[meBUF_SIZE_MAX], *ss;
+                    addLineToEob(bp,(meUByte *)"\n\n\033cEBINDINGS\033cA\n");
+                    meStrcpy(line,"    ");
+                    ss = line+4;
+                    for(ktp = &keytab[0] ; ktp->code != ME_INVALID_KEY ; ktp++)
                     {
-                        meBind *ktp;
-                        meUByte line[meBUF_SIZE_MAX], *ss;
-                        addLineToEob(bp,(meUByte *)"\n\n\033cEBINDINGS\033cA\n");
-                        meStrcpy(line,"    ");
-                        ss = line+4;
-                        for(ktp = &keytab[0] ; ktp->code != ME_INVALID_KEY ; ktp++)
+                        if(ktp->index == ii)
                         {
-                            if(ktp->index == ii)
-                            {
-                                *ss++ = '"';
-                                meGetStringFromKey(ktp->code,ss);
-                                ss += meStrlen(ss);
-                                *ss++ = '"';
-                                *ss++ = ' ';
-                            }
+                            *ss++ = '"';
+                            meGetStringFromKey(ktp->code,ss);
+                            ss += meStrlen(ss);
+                            *ss++ = '"';
+                            *ss++ = ' ';
                         }
-                        if(ss == line+4)
-                            meStrcpy(ss,"none");
-                        else
-                            *ss = '\0';
-                        addLineToEob(bp,line);
                     }
+                    if(ss == line+4)
+                        meStrcpy(ss,"none");
+                    else
+                        *ss = '\0';
+                    addLineToEob(bp,line);
                 }
             }
         }

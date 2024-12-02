@@ -46,15 +46,14 @@ meGetKeyFromString(meUByte **tp)
     
     for(;;)
     {
-        if(((cc=*ss++) == '\0') ||
-           ((dd=*ss++) != '-'))
-            break ;
-        if     (cc == 'C')
-            ii |= ME_CONTROL ;
+        if(((cc=*ss++) == '\0') || ((dd=*ss++) != '-'))
+            break;
+        if(cc == 'C')
+            ii |= ME_CONTROL;
         else if(cc == 'S')
-            ii |= ME_SHIFT ;
+            ii |= ME_SHIFT;
         else if(cc == 'A')
-            ii |= ME_ALT ;
+            ii |= ME_ALT;
     }
     if(cc != '\0')
     {
@@ -81,19 +80,23 @@ meGetKeyFromString(meUByte **tp)
             /* duff key string - fail */
             return 0 ;
         }
-        if(ii)
+        /* A shift modifier is only allowed on specials, so we need to remove ME_SHIFT to avoid ambiguity */
+        if(cc < 0x20)
         {
-            cc = toUpper(cc) ;
-            if((ii == ME_CONTROL) && (cc >= 'A') && (cc <= '_'))
-                ii = cc - '@' ;
+            /* only allow Alt with base control chars */
+            ii = cc | (ii & ME_ALT);
+        }
+        else if(ii & ME_CONTROL)
+        {
+            if((cc >= 'A') && (cc <= '_'))
+                ii = (cc ^ 0x40) | (ii & ME_ALT);
+            else if((cc >= 'a') && (cc <= 'z'))
+                ii = (cc ^ 0x60) | (ii & ME_ALT);
             else
-            {
-                cc = toLower(cc) ;
-                ii |= cc ;
-            }
+                ii = cc | (ii & (ME_ALT|ME_CONTROL));
         }
         else
-            ii |= cc ;
+            ii = toLower(cc) | (ii & ME_ALT);
     }
     *tp = ss-1 ;
     return ii ;
@@ -117,13 +120,13 @@ meGetKey(int flag)
         meUByte *tp;		/* pointer into the token */
         meUByte tok[meTOKENBUF_SIZE_MAX];	/* command incoming */
         
-        tp = execstr ;
-        execstr = token(tp,tok) ;
+        tp = execstr;
+        execstr = token(tp,tok);
         if((tok[0] != '@') || (tok[1] != 'm') || (tok[2] != 'n'))
         {
-            tp = getval(tok) ;
+            tp = getval(tok);
             if((tp == abortm) || ((cc = meGetKeyFromString(&tp)) == 0))
-                return 0 ;
+                return 0;
             
             if(!(flag & meGETKEY_SINGLE))
             {
@@ -137,32 +140,32 @@ meGetKey(int flag)
                     }
                 if(cc & ME_PREFIX_MASK)
                 {
-                    meUShort ee ;	/* character fetched */
-                    meUByte  dd ;
+                    meUShort ee;	/* character fetched */
+                    meUByte dd;
                     while(((dd=*tp) != '\0') && isSpace(dd))
-                        tp++ ;
+                        tp++;
                     
                     if((ee = meGetKeyFromString(&tp)) == 0)
-                        return 0 ;
+                        return 0;
                     
                     if((ee >= 'A') && (ee <= 'Z'))
                         /* with a prefix make a letter lower case */
-                        ee ^= 0x20 ;
-                    cc |= ee ;
+                        ee ^= 0x20;
+                    cc |= ee;
                 }
             }
             /* check there are no superfluous chars in the string, fail if found as
              * this is probably a bad bind string */
             if(*tp != '\0')
-                return 0 ;
-            return cc ;
+                return 0;
+            return cc;
         }
         /* if @mna (get all input from user) then rewind the execstr */
         if(tok[3] == 'a')
             execstr = tp ;
         /* Force an update of the screen to to ensure that the user
          * can see the information in the correct location */
-        update (meTRUE);
+        update(meTRUE);
     }
     /* or the normal way */
     cc = meGetKeyFromUser(meFALSE,0,flag) ;
@@ -202,21 +205,6 @@ meGetStringFromChar(meUShort cc, meUByte *d)
 name_copy:
         while((ch = *ss++) != '\0')
             d[doff++] = ch ;
-        return doff ;
-    }
-    
-    if((cc > 0) && (cc <= 0x20))	/* control character */
-    {
-        if(cc == 0x20)
-        {
-            ss = specKeyNames[SKEY_space] ;
-            goto name_copy ;
-        }
-        cc |= 0x40 ;
-        cc = toLower(cc) ;
-        d[doff++] = 'C' ;
-        d[doff++] = '-' ;
-        d[doff++] = (meUByte) cc ;
     }
     else if((cc == 0) || (cc >= 0x80))
     {
@@ -224,6 +212,25 @@ name_copy:
         d[doff++] = 'x';
         d[doff++] = hexdigits[cc >> 4] ;
         d[doff++] = hexdigits[cc & 0x0f] ;
+    }
+    else if(cc <= 0x20)	/* control character */
+    {
+        if(cc == 0x20)
+        {
+            ss = specKeyNames[SKEY_space];
+            goto name_copy;
+        }
+        d[doff++] = 'C';
+        d[doff++] = '-';
+        if(cc < 27)
+            d[doff++] = (meUByte) (cc|0x60);
+        else if(cc == 28)
+        {
+            d[doff++] = '\\';
+            d[doff++] = '\\';
+        }
+        else
+            d[doff++] = (meUByte) (cc|0x40);
     }
     else if((cc == '\\') || (cc == '"'))
     {
@@ -1104,7 +1111,7 @@ showBinding(meBuffer *bp, meBind *ktp)
         return;
     
     /* The key command is non-zero therefore it is legal - print it */
-    meGetStringFromKey(ktp->code, outseq);
+    meGetStringFromKey(ktp->code,outseq);
     len = sprintf((char *)buf, "    \"%s\" ", outseq);
     while (len < 35)
         buf[len++] = '.';

@@ -128,17 +128,17 @@ jobs:
           nmake -f winmsvc.mak BTYP=c LSTT=1
         working-directory: ./microemacs/src
 
-      - name: Create windows100 mecs
+      - name: Create windows100 mesc
         shell: pwsh
         run: |
           cd .\microemacs
           $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
           cd .\mesingle
           mkdir -Path bin\windows100-intel32
-          ..\bin\windows100-intel32\mec.exe -p "@mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mec.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mecs.exe
+          ..\bin\windows100-intel32\mec.exe -p "@mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mec.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mesc.exe
           Copy-Item -Path ..\COPYING.txt -Destination .
           Copy-Item -Path ..\readme.txt -Destination .
-          Compress-Archive -Path bin,COPYING.txt,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_mecs
+          Compress-Archive -Path bin,COPYING.txt,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_mesc
 
       - name: Compile windows100 static mew
         shell: pwsh
@@ -149,15 +149,15 @@ jobs:
           nmake -f winmsvc.mak BTYP=w LSTT=1
         working-directory: ./microemacs/src
 
-      - name: Create windows100 mews
+      - name: Create windows100 mesw
         shell: pwsh
         run: |
           cd .\microemacs
           $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
           cd .\mesingle
-          Remove-Item bin\windows100-intel32\mecs.exe
-          ..\bin\windows100-intel32\mec.exe -p "@mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mew.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mews.exe
-          Compress-Archive -Path bin,COPYING.txt,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_mews
+          Remove-Item bin\windows100-intel32\mesc.exe
+          ..\bin\windows100-intel32\mec.exe -p "@mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mew.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mesw.exe
+          Compress-Archive -Path bin,COPYING.txt,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_mesw
 
       - name: Upload Packages
         uses: actions/upload-artifact@v4
