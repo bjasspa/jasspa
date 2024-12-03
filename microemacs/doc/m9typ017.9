@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ017.9,v 2.6 2024/12/03 19:22:29 jon Exp $
+.Id $Id: m9typ017.9,v 2.6 2024/12/03 19:57:46 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH sh 9
@@ -23,6 +23,12 @@
 .na
 .B hkshell.emf
 \- UNIX shell file hook definition
+.br
+.B shell.eaf
+\- UNIX shell abbreviation file
+.br
+.B shell.etf
+\- UNIX shell programming language template file
 .ad
 .SH EXTENSIONS
 .na
@@ -77,9 +83,12 @@ version of \*(mE using the
 .Ht abbrev-list 3
 command.
 .SH NOTES
-.PP  The  file  hook  is  implemented  in  the  \fChkshell.emf\fR   file,  the
-abbreviations are placed within the \fCshell.arg\fR file, the template for the
-initialization of the new file is defined in the \fCshell.etf\fR file.
+.PP  
+The  file  hook  is  implemented  in  the  \fChkshell.emf\fR   file,  the
+abbreviations are placed within the \fCshell.eaf\fR file, the template for the
+initialization  of the new file is  defined  in the  \fCshell.etf\fR  file. To
+add your own abbreviations or your own template copy the files to your config
+folder and edit them within this folder.
 .SH BUGS
 None reported.
 .PP
