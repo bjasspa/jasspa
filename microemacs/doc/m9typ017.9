@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ017.9,v 2.6 2024/12/03 18:53:06 jon Exp $
+.Id $Id: m9typ017.9,v 2.6 2024/12/03 19:22:29 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH sh 9
@@ -50,7 +50,14 @@ recognized.  Note that this is the typical  method of identifying  shell files
 and will recognize other files not mentioned above i.e. \fBbash\fR shells.
 .SH DESCRIPTION
 The \fBshell\fR  file type template  provides  simple  hilighting of the shell
-files.
+files. It offers as well folding and support for displaying and outline of the
+functions of the shell script for easy navigation using the 
+.Ht item-list 3
+command and expanding abbreviations either via short strings using the
+.Ht expand-abbrev-handle 3
+command and visual inserting abbreviations using the
+.Ht abbrev-list 3
+macro. 
 .IP "\fBFolding and Information Hiding\fR"
 Generic  folding is enabled  within the Shell files. The folds occur about
 the function keyword and closing braces \fBfunction...{\fR...\fB}\fR located
@@ -64,7 +71,7 @@ the function bodies.
 The  installation  comes with a default  abbreviation  file for shell  editing
 which can be used by writing  short  abbreviations  like  "\fBfor\fR"  and the
 pressing the key-binding for the 
-.Ht expand-abbreviation-handle 3
+.Ht expand-abbrev-handle 3
 command.  The  list  of  abbreviations  can be used  interactively  in the GUI
 version of \*(mE using the 
 .Ht abbrev-list 3
