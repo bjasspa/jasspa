@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ017.9,v 2.6 2022/06/12 17:14:33 jon Exp $
+.Id $Id: m9typ017.9,v 2.6 2024/12/03 18:53:06 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH sh 9
@@ -51,6 +51,28 @@ and will recognize other files not mentioned above i.e. \fBbash\fR shells.
 .SH DESCRIPTION
 The \fBshell\fR  file type template  provides  simple  hilighting of the shell
 files.
+.IP "\fBFolding and Information Hiding\fR"
+Generic  folding is enabled  within the Shell files. The folds occur about
+the function keyword and closing braces \fBfunction...{\fR...\fB}\fR located
+on the left-hand margin. The following command are supported to show and hide
+the function bodies.
+.Ht collapse-all 3
+(un)folds all regions in the file,
+.Ht collapse-current 3
+(un)folds the current region.
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for shell  editing
+which can be used by writing  short  abbreviations  like  "\fBfor\fR"  and the
+pressing the key-binding for the 
+.Ht expand-abbreviation-handle 3
+command.  The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mE using the 
+.Ht abbrev-list 3
+command.
+.SH NOTES
+.PP  The  file  hook  is  implemented  in  the  \fChkshell.emf\fR   file,  the
+abbreviations are placed within the \fCshell.arg\fR file, the template for the
+initialization of the new file is defined in the \fCshell.etf\fR file.
 .SH BUGS
 None reported.
 .PP
