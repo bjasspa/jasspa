@@ -1,4 +1,4 @@
-## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-11-19 12:26
+## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-03 16:04
 
 Homepage: [https://github.com/bjasspa/jasspa](https://github.com/bjasspa/jasspa)  
 Help pages: [https://bjasspa.github.io/jasspa/](https://bjasspa.github.io/jasspa/)
@@ -42,6 +42,7 @@ __MicroEmacs command line arguments (mec terminal or mew graphical application):
 __MicroEmacs Editor most important menu commands (Esc =):__
 
 <div class="compact">
+
 | File               | Edit                     | Search                 |         View        |
 |:-------------------|:-------------------------|:-----------------------|:--------------------|
 | Open: `C-x C-f`    | Undo: `C-x u`            | Incr Search: `C-s`      | Buffer Info: `C-x =` |
@@ -70,6 +71,7 @@ __Text selection:__  `Ctrl-Space` to start then cursor keys, `Esc w` to copy and
 __Further menu points with most important commands:__
 
 <div class="compact">
+
 | Format              | Tools              | Advanced           | Window            | Help                   |
 |:-----------------------|:-------------------|:----------------|:------------------|:-----------------------|
 | Incr Indent         | Spell Word: `esc $`| Rec Mac:  `C-x (`  | Split WV:`C-x 2`  | General H: `Esc ?`     |
@@ -80,6 +82,7 @@ __Further menu points with most important commands:__
 |                     | Buffer Setup       | File Tools         | Next W:  `C-x o`  | About ME               |
 |                     | Scheme Editor      | Ipipe: `Esc \`     |                   |                        |
 </div>
+
 __Other important commands / shortcuts:__
 
 | Important                    | Navigation                 | Deletion                    |
@@ -97,6 +100,7 @@ __Other important commands / shortcuts:__
 __MicroEmacs Files:__
 
 <div class="noth">
+
 | &nbsp;                     | &nbsp;                 | &nsbp;                 |
 |:---------------------------|------------------------|:-----------------------|
 | Abbreviation Files `*.eaf` | Macro Files `*.emf`    | Template Files `*.etf` |

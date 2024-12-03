@@ -129,3 +129,8 @@ jasspa-microemacs.desktop
         to appear in the Gnome desktop menu. If JASSPA MicroEmacs is installed
         into a  different  location  then  this  file  should  be  edited with
         the appropriate values for its new location.
+
+cheatsheet.md
+
+        Most important  workflows for  installation,  commands,  shortcuts and
+        tips and tricks for MicroEmacs.
