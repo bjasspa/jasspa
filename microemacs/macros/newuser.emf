@@ -232,22 +232,22 @@ set-variable .newuser.pathdiv &con &band $system 0x80 ":" ";"
     ; user has not fixed the environment, searching paths are being used.
     ; Therefore if the current $user-path is not a jasspa path we can
     ; create one and ME will automatically find one.
-    !if &seq &rig $user-path &sub 0 &len &set #l0 "/jasspa/" #l0
-      ; ends in "/jasspa", this is okay as ME will ensure that the $user-path
-      ; points to a user area if possible (i.e. ~/ or $APPDATA/) 
-      set-variable .newuser.user-path $user-path
-    !elif &seq &rig $user-path &sub 0 &len &set #l0 &spr "/jasspa/%s/" $user-name #l0
-      ; ends in "/jaspa/<user>", again this is okay
+    !if &seq &rig $user-path &sub 0 &len &set #l0 &spr "/jasspa/%s/" $user-name #l0
+      ; ends in "/jaspa/<user>/", this is okay as is
       set-variable .newuser.user-path $user-path
     !else
-      ; add a .config/jasspa to the current $user-path if its the home directory and we are on UNIX
-      ; otherwise just add 'jasspa'. We will need to create it and mayby .config
-      !if &not &band $system 0x80
-        set-variable .newuser.user-path &cat $user-path "jasspa/"
+      !if &seq &rig $user-path &sub 0 &len &set #l0 "/jasspa/" #l0
+        ; ends in "/jasspa/", we need to append user-name to ensure its user specific and will isolate from other users and mes' meuser
+        set-variable .newuser.user-path &spr "%s%s/" $user-path $user-name
+      !elif &not &band $system 0x80
+        ; if not UNIX add 'jasspa/<user>/' to current $user-path.
+        set-variable .newuser.user-path &spr "%sjasspa/%s/" $user-path $user-name
       !elif &seq $user-path &stat a "~/"
-        set-variable .newuser.user-path &cat $user-path ".config/jasspa/"
+        ; if UNIX and the current $user-path is the home directory add a .config/jasspa/<user>/
+        set-variable .newuser.user-path &spr "%s.config/jasspa/%s/" $user-path $user-name
       !else
-        set-variable .newuser.user-path &cat $user-path "jasspa/"
+        ; Otherwise add 'jasspa/<user>/' to current $user-path.
+        set-variable .newuser.user-path &spr "%sjasspa/%s/" $user-path $user-name
       !endif
       !if &seq &set #l0 &stat "t" .newuser.user-path "X"
         ; we will create this path which should mean that ME will ignore the current $user-path 

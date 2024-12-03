@@ -169,27 +169,31 @@ meSetupPathsAndUser(void)
         /* construct the search-path */
         /* put the $user-path first */
         if((gotUserPath = (meUserPath != NULL)))
-            meStrcpy(evalResult,meUserPath) ;
-        else
-            evalResult[0] = '\0' ;
-        ll = meStrlen(evalResult) ;
-        
-        /* look for the ~/jasspa directory */
-        if(homedir != NULL)
         {
-            meStrcpy(buff,homedir) ;
-            meStrcat(buff,"jasspa") ;
-            /* as this is the user's area, use this directory as user path (with or without .../<$user-name>/ sub-directory */
-            ll = mePathAddSearchPath(ll,evalResult,buff,1,&gotUserPath);
+            meStrcpy(evalResult,meUserPath);
+            ll = meStrlen(evalResult);
+        }
+        else
+        {
+            evalResult[0] = '\0';
+            ll = 0;
         }
         
-        /* Get the system path of the installed macros. Use $MEINSTPATH as the
-         * MicroEmacs standard macros */
+        /* Check for setting of $MEINSTALLPATH first, if set, check for $user-path and standard sub-dirs */
         if(((ss = meGetenv ("MEINSTALLPATH")) != NULL) && (ss[0] != '\0'))
         {
             meStrcpy(buff,ss) ;
-            ll = mePathAddSearchPath(ll,evalResult,buff,0,&gotUserPath);
+            ll = mePathAddSearchPath(ll,evalResult,buff,6,&gotUserPath);
         }
+        else if(homedir != NULL)
+        {
+            /* look for the ~/jasspa directory */
+            meStrcpy(buff,homedir) ;
+            meStrcat(buff,"jasspa") ;
+            /* as this is the user's area, use this directory as user path (with or without .../<$user-name>/ sub-directory */
+            ll = mePathAddSearchPath(ll,evalResult,buff,6,&gotUserPath);
+        }
+        
         
         /* also check for directories in the same location as the binary */
         if((ss=meStrrchr(meProgName,DIR_CHAR)) != NULL)
@@ -197,7 +201,7 @@ meSetupPathsAndUser(void)
             ii = (((size_t) ss) - ((size_t) meProgName));
             meStrncpy(buff,meProgName,ii);
             buff[ii] = '\0';
-            ll = mePathAddSearchPath(ll,evalResult,buff,2,&gotUserPath);
+            ll = mePathAddSearchPath(ll,evalResult,buff,9,&gotUserPath);
         }
         if(!gotUserPath && (homedir != NULL))
         {

@@ -517,7 +517,14 @@ fnamecmp(meUByte *f1, meUByte *f2)
 #endif
 }
 
-/* Search the directory and subdirectories for MicroEmacs macro directories */
+/* Search the directory and subdirectories for MicroEmacs macro directories - flags
+ * 0x01 Add the given base path
+ * 0x02 Add <base-path>/<user-sub-path>
+ * 0x04 Add <base-path>/<std-sub-paths>
+ * 0x08 Is program name so check for <...>/bin/ or <...>/bin/<spath>/ and if found check for <...>/macros etc
+ * 
+ * Old: 1 (add base as user path removed), 2 -> 8 
+ */
 int
 mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int flags, int *gotUserPath)
 {
@@ -552,20 +559,22 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int flags
         base_name[ll] = '\0';
         if(getFileStats(base_name,0,NULL,NULL) & meIOTYPE_DIRECTORY)
         {
-            if((flags & 2) && !memcmp(base_name+ll-4,"/bin",4))
+            /* If this is the program path, in a <bpth>/bin/ or <bpth>/bin/sub-dir/ and <bpth>/macros exists then add <bpth>/<sub-dirs> to the search path */
+            if((flags & 8) && (ll > 4) && (!memcmp((ss=base_name+ll-4),"/bin",4) || (((ss=meStrrchr(base_name+4,DIR_CHAR)) != NULL) && !memcmp((ss-=4),"/bin",4))))
             {
-                /* If this is the program path, in a bin/ and ../macros exists then add ../ to the search path */
-                meStrcpy(base_name+ll-3,subdirs[1]);
+                meUByte sp[256];
+                meStrcpy(sp,++ss);
+                meStrcpy(ss,subdirs[1]);
                 if(!meTestDir(base_name))
                 {
-                    base_name[ll-3] = '\0';
-                    index = mePathAddSearchPath(index,path_name,base_name,0,gotUserPath);
+                    *ss = '\0';
+                    index = mePathAddSearchPath(index,path_name,base_name,6,gotUserPath);
                 }
-                memcpy(base_name+ll-4,"/bin",4);
+                meStrcpy(ss,sp);
             }
             base_name[ll++] = DIR_CHAR;
             /* check for base_name/$user-name first */
-            if(meUserName != NULL)
+            if((flags & 2) && (meUserName != NULL))
             {
                 meStrcpy(base_name+ll,meUserName);
                 if(getFileStats(base_name,0,NULL,NULL) & meIOTYPE_DIRECTORY)
@@ -579,56 +588,49 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int flags
                         if(index)
                         {
                             base_name[jj++] = mePATH_CHAR;
-                            memcpy(base_name+jj,path_name,index+1);
+                            memcpy(base_name+jj,path_name,index);
                         }
-                        memcpy(path_name,base_name,jj+index+1);
+                        memcpy(path_name,base_name,jj+index);
                     }
                     else
                     {
                         if(index)
                             path_name[index++] = mePATH_CHAR;
-                        memcpy(path_name+index,base_name,jj+1);
+                        memcpy(path_name+index,base_name,jj);
                     }
                     index += jj;
                 }
             }
-            /* Append the search paths if necessary. We construct the standard JASSPA MicroEmacs
-             * paths and then test for the existance of the directory. If the directory exists then
-             * we add it to the search path. We do not add any directories to the search path that
-             * do not exist. */
-            for(ii=0 ; (ss=subdirs[ii]) != NULL ; ii++)
+            if(flags & 4)
             {
-                meStrcpy(base_name+ll,ss);
-                /* Test the directory for existance, if it does not exist then do not add it as we
-                 * do not want to search any directory unecessarily. */
-                if(getFileStats(base_name,0,NULL,NULL) & meIOTYPE_DIRECTORY)
+                /* Append the search paths if necessary. We construct the standard JASSPA MicroEmacs
+                 * paths and then test for the existance of the directory. If the directory exists then
+                 * we add it to the search path. We do not add any directories to the search path that
+                 * do not exist. */
+                for(ii=0 ; (ss=subdirs[ii]) != NULL ; ii++)
                 {
-                    /* it exists, add it */
-                    if(index)
-                        path_name[index++] = mePATH_CHAR;
-                    jj = ll + meStrlen(ss);
-                    memcpy(path_name+index,base_name,jj+1);
-                    index += jj;
+                    meStrcpy(base_name+ll,ss);
+                    /* Test the directory for existance, if it does not exist then do not add it as we
+                     * do not want to search any directory unecessarily. */
+                    if(getFileStats(base_name,0,NULL,NULL) & meIOTYPE_DIRECTORY)
+                    {
+                        /* it exists, add it */
+                        if(index)
+                            path_name[index++] = mePATH_CHAR;
+                        jj = ll + meStrlen(ss);
+                        memcpy(path_name+index,base_name,jj);
+                        index += jj;
+                    }
                 }
             }
-            ll--;
-            if((*gotUserPath == 0) && (flags & 1))
+            if(flags & 1)
             {
-                *gotUserPath = 1;
-                if(index)
-                {
-                    base_name[ll++] = mePATH_CHAR;
-                    memcpy(base_name+ll,path_name,index+1);
-                }
-                memcpy(path_name,base_name,ll+index+1);
-            }
-            else
-            {
+                ll--;
                 if(index)
                     path_name[index++] = mePATH_CHAR;
-                memcpy(path_name+index,base_name,ll+1);
+                memcpy(path_name+index,base_name,ll);
+                index += ll;
             }
-            index += ll;
         }
     }
     path_name[index] = '\0';

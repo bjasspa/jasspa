@@ -86,7 +86,14 @@
 #define WM_MOUSEWHEEL (WM_MOUSELAST+1)  // message that will be supported by the OS
 #endif
 
-/*FILE *logfp=NULL;*/
+#define _WIN_DEBUG_KEY   0
+#define _WIN_DEBUG_MOUSE 0
+#define _WIN_DEBUG_MSG   0
+#define _WIN_DEBUG_POS   0
+
+#if _WIN_DEBUG_KEY || _WIN_DEBUG_MOUSE || _WIN_DEBUG_MSG || _WIN_DEBUG_POS
+FILE *logfp=NULL;
+#endif
 
 /* For the Win32s then we have to perform a thunking operation in order to get
  * a synchronous spawn to operate correctly. In addition to the fact we
@@ -2850,8 +2857,13 @@ WinMouse(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             
             /* Mouse buttons are the same - handle as a move mouse */
             
-            /* fprintf(logfp,"Mouse button %x %08x %08x\n",message, wParam, lParam);*/
-            /* fflush(logfp);*/
+#if _WIN_DEBUG_MOUSE
+            if(logfp != NULL)
+            {
+                fprintf(logfp,"Mouse button %x %08x %08x\n",message, wParam, lParam);
+                fflush(logfp);
+            }
+#endif
             /* Convert the mouse coordinates to cell space. Compute
              * the fractional bits which are 1/128ths */
             mousePosUpdate(lParam);
@@ -2913,8 +2925,13 @@ WinMouse(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             
             mouseButs = wParam;
             
-            /* fprintf(logfp,"Mouse button %x %08x %08x - %d %d\n",message,wParam,lParam,mouse_X,mouse_Y);*/
-            /* fflush(logfp);*/
+#if _WIN_DEBUG_MOUSE
+            if(logfp != NULL)
+            {
+                fprintf(logfp,"Mouse button %x %08x %08x - %d %d\n",message,wParam,lParam,mouse_X,mouse_Y);
+                fflush(logfp);
+            }
+#endif
             mouseCode = 0;
             if(wParam & MK_LBUTTON)
                 mouseCode |= MOUSE_STATE_LEFT;
@@ -2968,8 +2985,13 @@ WinMouse(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             meUShort cc;
             
-            /* fprintf(logfp,"Mouse wheel  %x %08x %08x\n",message, wParam, lParam);*/
-            /* fflush(logfp);*/
+#if _WIN_DEBUG_MOUSE
+            if(logfp != NULL)
+            {
+                fprintf(logfp,"Mouse wheel  %x %08x %08x\n",message, wParam, lParam);
+                fflush(logfp);
+            }
+#endif
             /* unlike mouse move or button events the lParam mouse position is
              * absolute, not the position within the window, we should therefore
              * subtract the top left point of the window from the position to get
@@ -3014,43 +3036,39 @@ WinKeyboard(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 #endif /* _ME_CONSOLE */
         meModifierUpdate();
 #endif /* _ME_WINDOW */
-#ifdef _WIN_KEY_DEBUGGING
+#if _WIN_DEBUG_KEY
+    if(logfp != NULL)
     {
-        FILE *fp = NULL;
+        char *name;
         
-        if((fp = fopen("c:/me.dump","a")) != NULL)
+        switch(message)
         {
-            char *name;
-            
-            switch(message)
-            {
-            case WM_SYSKEYDOWN:
-                name = "WM_SYSKEYDOWN";
-                break;
-            case WM_KEYDOWN:
-                name = "WM_KEYDOWN";
-                break;
-            case WM_SYSKEYUP:
-                name = "WM_SYSKEYUP";
-                break;
-            case WM_KEYUP:
-                name = "WM_KEYUP";
-                break;
-            case WM_SYSCHAR:
-                name = "WM_SYSCHAR";
-                break;
-            case WM_CHAR:
-                name = "WM_CHAR";
-                break;
-            default:
-                name = "?WM_UNKNOWN?";
-                break;
-            }
-            
-            fprintf(fp,"%s::%d(0x%08x). wParam = %d(%04x) lParam = %d(%08x) modif %x\n",
-                     name, message, message, wParam, wParam, lParam, lParam, ttmodif);
-            fclose(fp);
+        case WM_SYSKEYDOWN:
+            name = "WM_SYSKEYDOWN";
+            break;
+        case WM_KEYDOWN:
+            name = "WM_KEYDOWN";
+            break;
+        case WM_SYSKEYUP:
+            name = "WM_SYSKEYUP";
+            break;
+        case WM_KEYUP:
+            name = "WM_KEYUP";
+            break;
+        case WM_SYSCHAR:
+            name = "WM_SYSCHAR";
+            break;
+        case WM_CHAR:
+            name = "WM_CHAR";
+            break;
+        default:
+            name = "?WM_UNKNOWN?";
+            break;
         }
+        
+        fprintf(logfp,"%s::%d(0x%08x). wParam = %d(%04x) lParam = %d(%08x) modif %x\n",
+                name, message, message, wParam, wParam, lParam, lParam, ttmodif);
+        fflush(logfp);
     }
 #endif
     
@@ -3192,15 +3210,11 @@ do_keydown:
             /* Add the character to the typeahead buffer.
              * Note that we do not process (lParam & 0xff) which is the
              * auto-repeat count - this always appears to be 1. */
-#ifdef _WIN_KEY_DEBUGGING
+#if _WIN_DEBUG_KEY
+            if(logfp != NULL)
             {
-                FILE *fp = NULL;
-                
-                if((fp = fopen("c:/me.dump","a")) != NULL)
-                {
-                    fprintf(fp,"addKeyToBuffer1 %c - %d(0x%04x)\n",cc & 0xff, cc, cc);
-                    fclose(fp);
-                }
+                fprintf(logfp,"addKeyToBuffer1 %c - %d(0x%04x)\n",cc & 0xff, cc, cc);
+                fflush(logfp);
             }
 #endif
             addKeyToBuffer(cc);
@@ -3271,8 +3285,7 @@ do_keydown:
                         case 0x3e:
                             /* C-? */
                         case 0x3f:
-                            cc = ttmodif | (wParam & ~0x10);
-                            break;
+                            cc = ttmodif | (wParam & ~0x10); break;
                             /* C-' */
                         case 0x40: cc = ttmodif | 0x27; break;
                             /* C-~ */
@@ -3301,25 +3314,22 @@ do_keydown:
                         case 0x5d:
                             /* C-~ */
                         case 0x5e:
-                            cc = (~ME_SHIFT & ttmodif) | ((meUShort) wParam) | 0x20;
-                            break;
-                        case 0x40:
-                            cc = (~ME_SHIFT & ttmodif) | ((meUShort) wParam);
-                            break;
+                            cc = (~ME_SHIFT & ttmodif) | ((meUShort) wParam) | 0x20; break;
                             /* C-: */
                         case 0x3a:
                             /* C-> */
+                        case 0x3c:
+                            /* C-@ */
                         case 0x3e:
                             /* C-? */
                         case 0x3f:
                             /* C-< */
-                        case 0x3c:
+                        case 0x40:
                             cc = (~ME_SHIFT & ttmodif) | ((meUShort) wParam); break;
                         default:
                             return meFALSE;
                         }
                     }
-                    /*                cc = ttmodif | (wParam & 0x7f);*/
                 }
                 else if((wParam >= VK_NUMPAD0) && (wParam <= VK_DIVIDE))
                 {
@@ -3339,7 +3349,10 @@ do_keydown:
             }
             else if((wParam >= 'A') && (wParam <= 'Z'))
             {
-                cc  = ttmodif | toLower(((meUShort) wParam));
+                if(ttmodif & ME_CONTROL)
+                   cc  = (ttmodif & ME_ALT) | (wParam & 0x1f);
+                else
+                   cc  = (ttmodif & ME_ALT) | wParam | 0x20;
             }
             else if((wParam >= VK_NUMPAD0) && (wParam <= VK_NUMPAD9))
             {
@@ -3418,7 +3431,6 @@ do_keydown:
                         break;
                     }
                 }
-                /*                cc = ttmodif | (wParam & 0x7f);*/
             }
             else
                 return meFALSE;          /* NOT PROCESSED - return a false state */
@@ -3426,15 +3438,11 @@ do_keydown:
             /* Add the character to the typeahead buffer.
              * Note that we do no process (lParam & 0xff) which is the
              * auto-repeat count. - this always appears to be 1 */
-#ifdef _WIN_KEY_DEBUGGING
+#if _WIN_DEBUG_KEY
+            if(logfp != NULL)
             {
-                FILE *fp = NULL;
-                
-                if((fp = fopen("c:/me.dump", "a")) != NULL)
-                {
-                    fprintf(fp,"addKeyToBuffer2 %c - %d(0x%04x)\n",cc & 0xff, cc, cc);
-                    fclose(fp);
-                }
+                fprintf(logfp,"addKeyToBuffer2 %c - %d(0x%04x)\n",cc & 0xff, cc, cc);
+                fflush(logfp);
             }
 #endif
             addKeyToBuffer(cc);
@@ -3545,26 +3553,19 @@ do_keydown:
                 goto return_spec;
             }
         }
-        if((ttmodif & ME_ALT) || ((ttmodif & ME_CONTROL) && (cc >= 0x20)))
+        if(ttmodif & ME_ALT)
         {
-            /* Must make the letters lower case */
-            cc = toLower(cc);
-            /*            cc |= ((ttmodif & 0x01) << 8) | ((ttmodif & 0x0e) << 7);*/
-            cc |= ttmodif & (ME_CONTROL|ME_ALT);
+            /* This cannot have control pressed as well, see DISABLE_ALT_C_KEY_DETECTION above, not special, so remove ME_SHIFT and make letter lower case */
+            cc = ME_ALT | toLower(cc);
         }
-        
         /* Add the character to the typeahead buffer.
          * Note that we do no process (lParam & 0xff) which is the
          * auto-repeat count. - this always appears to be 1 */
-#ifdef _WIN_KEY_DEBUGGING
+#if _WIN_DEBUG_KEY
+        if(logfp != NULL)
         {
-            FILE *fp = NULL;
-            
-            if((fp = fopen("c:/me.dump","a")) != NULL)
-            {
-                fprintf(fp,"addKeyToBuffer3 %c - %d(0x%04x)\n",cc & 0xff, cc, cc);
-                fclose(fp);
-            }
+            fprintf(logfp,"addKeyToBuffer3 %c - %d(0x%04x)\n",cc & 0xff, cc, cc);
+            fflush(logfp);
         }
 #endif
         addKeyToBuffer(cc);
@@ -3574,15 +3575,11 @@ do_keydown:
         break;
 return_spec:
         cc = (ME_SPECIAL | ttmodif | cc);
-#ifdef _WIN_KEY_DEBUGGING
+#if _WIN_DEBUG_KEY
+        if(logfp != NULL)
         {
-            FILE *fp = NULL;
-            
-            if((fp = fopen("c:/me.dump","a")) != NULL)
-            {
-                fprintf(fp,"addKeyToBuffer4 %c - %d(0x%04x)\n",cc & 0xff, cc, cc);
-                fclose(fp);
-            }
+            fprintf(logfp,"addKeyToBuffer4 %c - %d(0x%04x)\n",cc & 0xff, cc, cc);
+            fflush(logfp);
         }
 #endif
         addKeyToBuffer(cc);
@@ -4949,7 +4946,7 @@ TTahead(void)
         {
             if(PeekMessage(&msg, meHWndNull, WM_KEYFIRST, WM_KEYLAST, PM_REMOVE) != meFALSE)
             {
-                TranslateMessage(&msg);    /* Translate keyboard characters */
+                TranslateMessage(&msg);
                 if(!WinKeyboard(msg.hwnd, msg.message, msg.wParam, msg.lParam))
                     meMessageHandler(&msg);
             }
@@ -5093,7 +5090,7 @@ TTaheadFlush(void)
                 /* Check out the keyboard. */
                 if((msg.message >=  WM_KEYFIRST) && (msg.message <= WM_KEYLAST))
                 {
-                    TranslateMessage(&msg);    /* Translate keyboard characters */
+                    TranslateMessage(&msg);
                     if(!WinKeyboard(msg.hwnd, msg.message, msg.wParam, msg.lParam))
                         meMessageHandler(&msg);
                 }
@@ -5234,7 +5231,7 @@ TTsleep(int msec, int intable, meVariable **waitVarList)
 #endif /* _ME_CONSOLE */
 #ifdef _ME_WINDOW
         {
-            TranslateMessage(&msg);    /* Translate keyboard characters */
+            TranslateMessage(&msg);
             meMessageHandler(&msg);
         }
 #endif /* _ME_WINDOW */
@@ -5387,8 +5384,13 @@ meFrameSetWindowSize(meFrame *frame)
         
         if((nwidth != (wRect.right - wRect.left)) || (ndepth != (wRect.bottom - wRect.top)))
         {
-            /* fprintf(logfp,"SetWindowPos - %d %d -> %d %d (%d)\n",width,depth,nwidth,ndepth,eCellMetrics.maxDepth);*/
-            /* fflush(logfp);*/
+#if _WIN_DEBUG_POS
+            if(logfp != NULL)
+            {
+                fprintf(logfp,"SetWindowPos - %d %d -> %d %d (%d)\n",width,depth,nwidth,ndepth,eCellMetrics.maxDepth);
+                fflush(logfp);
+            }
+#endif
             SetWindowPos(meFrameGetWinHandle(frame),NULL,0,0,nwidth,ndepth,
                          SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
             meFrameSetWindowSizeInternal(frame);
@@ -5571,26 +5573,28 @@ meSetupPathsAndUser(void)
         /* construct the search-path */
         /* put the $user-path first */
         if((gotUserPath = (meUserPath != NULL)))
-            meStrcpy(evalResult,meUserPath);
-        else
-            evalResult[0] = '\0';
-        ll = meStrlen(evalResult);
-        
-        /* look for the $APPDATA/jasspa directory */
-        if(appData != NULL)
         {
-            strcpy(buff,appData);
-            strcat(buff,"/jasspa");
-            /* as this is the user's area, use this directory as user path (with or without .../<$user-name>/ sub-directory */
-            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) buff,1,&gotUserPath);
+            meStrcpy(evalResult,meUserPath);
+            ll = meStrlen(evalResult);
         }
-        
-        /* Get the system path of the installed macros. Use $MEINSTPATH as the
-         * MicroEmacs standard macros */
+        else
+        {
+            evalResult[0] = '\0';
+            ll = 0;
+        }
+        /* Check for setting of $MEINSTALLPATH first, if set, check for $user-path and standard sub-dirs */
         if(((ss = meGetenv("MEINSTALLPATH")) != NULL) && (ss[0] != '\0'))
         {
             strcpy(buff,ss);
-            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) buff,0,&gotUserPath);
+            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) buff,6,&gotUserPath);
+        }
+        else if(appData != NULL)
+        {
+            /* look for the $APPDATA/jasspa directory */
+            strcpy(buff,appData);
+            strcat(buff,"/jasspa");
+            /* as this is the user's area, use this directory as user path (with or without .../<$user-name>/ sub-directory */
+            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) buff,6,&gotUserPath);
         }
         
         /* also check for directories in the same location as the binary */
@@ -5599,12 +5603,12 @@ meSetupPathsAndUser(void)
             ii = (((size_t) ss) - ((size_t) meProgName));
             meStrncpy(buff,meProgName,ii);
             buff[ii] = '\0';
-            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) buff,2,&gotUserPath);
+            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) buff,9,&gotUserPath);
         }
 #if MEOPT_TFS
         /* also check for the built-in file system */
         if(tfsdev != NULL)
-            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "tfs://",0,&gotUserPath);
+            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "tfs://",1,&gotUserPath);
 #endif        
         if(!gotUserPath && (appData != NULL))
         {
@@ -5693,8 +5697,10 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdS
     _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) |_CRTDBG_ALLOC_MEM_DF|_CRTDBG_LEAK_CHECK_DF|_CRTDBG_DELAY_FREE_MEM_DF);
 #endif
     
-/*         if(logfp == NULL)*/
-/*             logfp = fopen("log","w+");*/
+#if _WIN_DEBUG_KEY || _WIN_DEBUG_MOUSE || _WIN_DEBUG_MSG || _WIN_DEBUG_POS
+    if(logfp == NULL)
+        logfp = fopen("medebug.log","w+");
+#endif
     
 #ifdef _ME_WINDOW
 #ifdef _ME_CONSOLE
@@ -5987,9 +5993,14 @@ MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static LPARAM setCursorLastLParam;
     meFrame *frame;
     
-    /* static int msgCount=0;*/
-    /* fprintf(logfp,"%05d Got message %x %x %x\n",msgCount++,message, wParam, lParam);*/
-    /* fflush(logfp);*/
+#if _WIN_DEBUG_MSG
+    if(logfp != NULL)
+    {
+        static int msgCount=0;
+        fprintf(logfp,"%05d Got message %x %x %x\n",msgCount++,message, wParam, lParam);
+        fflush(logfp);
+    }
+#endif
     
     switch(message)
     {
@@ -6182,8 +6193,13 @@ MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             GetClientRect(hWnd, &cRect);
             nrow = cRect.bottom / eCellMetrics.cell.sizeY;
             ncol = cRect.right / eCellMetrics.cell.sizeX;
-            /* fprintf(logfp,"WM_SIZE - %x %x %d %d -> %d %d\n",wParam,lParam,cRect.right,cRect.bottom,ncol,nrow);*/
-            /* fflush(logfp);*/
+#if _WIN_DEBUG_POS
+            if(logfp != NULL)
+            {
+                fprintf(logfp,"WM_SIZE - %x %x %d %d -> %d %d\n",wParam,lParam,cRect.right,cRect.bottom,ncol,nrow);
+                fflush(logfp);
+            }
+#endif
             if(ncol != frame->width)
             {
                 meFrameChangeWidth(frame,ncol);
@@ -6210,8 +6226,13 @@ MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 
                 col = (pos->cx - eCellMetrics.borderWidth) / eCellMetrics.cell.sizeX;
                 row = (pos->cy - eCellMetrics.borderDepth) / eCellMetrics.cell.sizeY;
-                /* fprintf(logfp,"WM_WINDOWPOSCHANGING - %x %x - %d %d - %d %d -> %d %d\n",wParam,lParam,eCellMetrics.borderWidth,eCellMetrics.borderDepth,pos->cx,pos->cy,col,row);*/
-                /* fflush(logfp);*/
+#if _WIN_DEBUG_POS
+                if(logfp != NULL)
+                {
+                    fprintf(logfp,"WM_WINDOWPOSCHANGING - %x %x - %d %d - %d %d -> %d %d\n",wParam,lParam,eCellMetrics.borderWidth,eCellMetrics.borderDepth,pos->cx,pos->cy,col,row);
+                    fflush(logfp);
+                }
+#endif
                 pos->cx = (col * eCellMetrics.cell.sizeX) + eCellMetrics.borderWidth;
                 pos->cy = (row * eCellMetrics.cell.sizeY) + eCellMetrics.borderDepth;
             }
@@ -6395,8 +6416,13 @@ MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         
     default:
 unhandled_message:
-        /* fprintf(logfp,"Unhandled message %x %x %x\n",message, wParam, lParam);*/
-        /* fflush(logfp);*/
+#if _WIN_DEBUG_MSG
+        if(logfp != NULL)
+        {
+            fprintf(logfp,"Unhandled message %x %x %x\n",message, wParam, lParam);
+            fflush(logfp);
+        }
+#endif
         return DefWindowProc(hWnd,message,wParam,lParam);
     }
     return meFALSE;
