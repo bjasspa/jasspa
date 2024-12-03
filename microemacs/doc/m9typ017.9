@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ017.9,v 2.6 2024/12/03 19:57:46 jon Exp $
+.Id $Id: m9typ017.9,v 2.6 2024/12/03 21:11:23 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH sh 9
@@ -82,6 +82,24 @@ command.  The  list  of  abbreviations  can be used  interactively  in the GUI
 version of \*(mE using the 
 .Ht abbrev-list 3
 command.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*cc \*cc\fR \- Comment out the current line.
+.br
+\fB\*cc \*cd\fR \- Uncomment the current line.
+.br
+\fB\*cc \*ce\fR \- Comment to the end of the line with stars (*).
+.br
+\fB\*a\*ci\fR \- Restyle the current region.
+.br
+\fBf2\fR \- (un)fold the current region
+.br
+\fBf3\fR \- (un)fold all regions
+.br
+\fBf6\fR \- list items
+.br
+\fB\*eS f6\fR \- close list items
 .SH NOTES
 .PP  
 The  file  hook  is  implemented  in  the  \fChkshell.emf\fR   file,  the
