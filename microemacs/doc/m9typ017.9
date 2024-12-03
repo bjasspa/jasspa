@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ017.9,v 2.6 2022/06/12 17:14:33 jon Exp $
+.Id $Id: m9typ017.9,v 2.6 2024/12/03 21:11:23 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH sh 9
@@ -23,6 +23,12 @@
 .na
 .B hkshell.emf
 \- UNIX shell file hook definition
+.br
+.B shell.eaf
+\- UNIX shell abbreviation file
+.br
+.B shell.etf
+\- UNIX shell programming language template file
 .ad
 .SH EXTENSIONS
 .na
@@ -50,7 +56,57 @@ recognized.  Note that this is the typical  method of identifying  shell files
 and will recognize other files not mentioned above i.e. \fBbash\fR shells.
 .SH DESCRIPTION
 The \fBshell\fR  file type template  provides  simple  hilighting of the shell
-files.
+files. It offers as well folding and support for displaying and outline of the
+functions of the shell script for easy navigation using the 
+.Ht item-list 3
+command and expanding abbreviations either via short strings using the
+.Ht expand-abbrev-handle 3
+command and visual inserting abbreviations using the
+.Ht abbrev-list 3
+macro. 
+.IP "\fBFolding and Information Hiding\fR"
+Generic  folding is enabled  within the Shell files. The folds occur about
+the function keyword and closing braces \fBfunction...{\fR...\fB}\fR located
+on the left-hand margin. The following command are supported to show and hide
+the function bodies.
+.Ht collapse-all 3
+(un)folds all regions in the file,
+.Ht collapse-current 3
+(un)folds the current region.
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for shell  editing
+which can be used by writing  short  abbreviations  like  "\fBfor\fR"  and the
+pressing the key-binding for the 
+.Ht expand-abbrev-handle 3
+command.  The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mE using the 
+.Ht abbrev-list 3
+command.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*cc \*cc\fR \- Comment out the current line.
+.br
+\fB\*cc \*cd\fR \- Uncomment the current line.
+.br
+\fB\*cc \*ce\fR \- Comment to the end of the line with stars (*).
+.br
+\fB\*a\*ci\fR \- Restyle the current region.
+.br
+\fBf2\fR \- (un)fold the current region
+.br
+\fBf3\fR \- (un)fold all regions
+.br
+\fBf6\fR \- list items
+.br
+\fB\*eS f6\fR \- close list items
+.SH NOTES
+.PP  
+The  file  hook  is  implemented  in  the  \fChkshell.emf\fR   file,  the
+abbreviations are placed within the \fCshell.eaf\fR file, the template for the
+initialization  of the new file is  defined  in the  \fCshell.etf\fR  file. To
+add your own abbreviations or your own template copy the files to your config
+folder and edit them within this folder.
 .SH BUGS
 None reported.
 .PP

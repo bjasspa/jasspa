@@ -130,7 +130,7 @@ EAFS=	ada.eaf		asp.eaf		au3.eaf		\
 	latex.eaf	md.eaf		\
 	pascal.eaf	perl.eaf	php.eaf		pls.eaf		\
 	python.eaf	\
-	r.eaf		rd.eaf		sgml.eaf	\
+	r.eaf		rd.eaf		shell.eaf	sgml.eaf	\
 	tcl.eaf		txt.eaf		\
 	vhdl.eaf
 # ERFS:sh=ls *.erf
