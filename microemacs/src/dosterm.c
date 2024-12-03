@@ -178,7 +178,6 @@ meSetupPathsAndUser(void)
             evalResult[0] = '\0';
             ll = 0;
         }
-        
         /* Check for setting of $MEINSTALLPATH first, if set, check for $user-path and standard sub-dirs */
         if(((ss = meGetenv ("MEINSTALLPATH")) != NULL) && (ss[0] != '\0'))
         {
@@ -193,7 +192,6 @@ meSetupPathsAndUser(void)
             /* as this is the user's area, use this directory as user path (with or without .../<$user-name>/ sub-directory */
             ll = mePathAddSearchPath(ll,evalResult,buff,6,&gotUserPath);
         }
-        
         
         /* also check for directories in the same location as the binary */
         if((ss=meStrrchr(meProgName,DIR_CHAR)) != NULL)
