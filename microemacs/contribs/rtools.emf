@@ -1,0 +1,76 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author$
+;  Created By    : MicroEmacs User
+;  Created       : Wed Dec 4 17:39:58 2024
+;  Last Modified : <241204.1957>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 2024 MicroEmacs User.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+define-macro r-format
+  2 pipe-shell-command &spr "Rscript -e 'formatR::tidy_file(\"%s\")'" $buffer-fname "*command*"
+  !if &equ $result 1
+    ml-write "Error: It seems that R package formatR is not installed!"
+  !else
+    0 reread-file
+  !endif
+!emacro
+
+define-macro r-lint
+  !if &bmod "edit"
+    set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+    !if &iseq #l0 "y" 
+      save-buffer 
+    !endif
+  !endif 
+  2 pipe-shell-command &spr "Rscript -e 'lintr::lint(\"%s\")'" $buffer-fname "*lintr*"
+  !if &equ $result 1
+    ml-write "Error: It seems that R package lintr is not installed!"
+  !else
+    set-variable .buffer $buffer-bname
+    next-window-find-buffer "*lintr*"
+    buffer-init "r-lint"
+    set-variable :mouse-word-select r-lint-find-line
+    buffer-bind-create "bio" "return" "0" r-lint-find-line
+  !endif
+!emacro
+
+0 define-macro r-lint-find-line
+  set-variable #l0 @wl
+  !if &xse #l0 "\\(.+\\):\\([0-9]+\\):\\([0-9]+\\):.+"
+    next-window-find-buffer .r-lint.buffer
+    goto-line @s2
+    beginning-of-line
+    @s3 forward-char
+  !else
+    ml-write "Not a error line!"
+  !endif
+!emacro
+
+define-macro fhook-r-lint
+  buffer-init-hooks
+!emacro
+
+set-variable .fhook-r-lint.name "R Lint"
+set-variable .fhook-r-lint.setup &reg "/history/fhook/r-lint" "acfhmw"
+set-variable .fhook-r-lint.setup-mask "acfhmw"
+
+!if &and &sin "h" .fhook-r-lint.setup &band .hilight.flags 0x02
+  !iif &not &exi .hilight.r-lint  set-variable .hilight.r-lint &pinc .hilight.next 1
+  0 hilight .hilight.r-lint 2 200                     $global-scheme
+  hilight .hilight.r-lint   0  "[/\\.A-Za-z0-9]+:[0-9]+:[0-9]+:"      .scheme.link  
+  hilight .hilight.r-lint   1 "commas_linter"         .scheme.operator
+  hilight .hilight.r-lint   1 "infix_spaces_linter"   .scheme.operator
+  hilight .hilight.r-lint   1 "function_left_parentheses_linter" .scheme.operator
+  hilight .hilight.r-lint   1 "indentation_linter" .scheme.operator  
+  ;hilight .hilight.r-lint   0 "\[.+\]"   .scheme.operator  ; does not work
+!endif
+
+add-file-hook "*lintr*" fhook-r-lint
