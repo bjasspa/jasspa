@@ -554,7 +554,7 @@ meSetupPathsAndUser(void)
     static meUByte lpath[] = _SEARCH_PATH;
     struct passwd *pwdp;            /* Password structure entry */
     meUByte *ss, buff[meBUF_SIZE_MAX];
-    int ii, ll, gotUserPath;
+    int ii, ll;
     
     if((meUserName == NULL) &&
        ((ss = meGetenv ("MENAME")) != NULL) && (ss[0] != '\0'))
@@ -614,9 +614,9 @@ meSetupPathsAndUser(void)
     }
     else
     {
-        /* construct the search-path */
-        /* put the $user-path first */
-        if((gotUserPath = (meUserPath != NULL)))
+        /* construct the search-path, put the $user-path first */
+        int gotPaths = (meUserPath != NULL) ? 8:0;
+        if(gotPaths)
         {
             meStrcpy(evalResult,meUserPath);
             ll = meStrlen(evalResult);
@@ -631,15 +631,17 @@ meSetupPathsAndUser(void)
            (((ss = lpath) != NULL) && (ss[0] != '\0')))
         {
             meStrcpy(buff,ss);
-            ll = mePathAddSearchPath(ll,evalResult,buff,6,&gotUserPath);
+            ll = mePathAddSearchPath(ll,evalResult,buff,6,&gotPaths);
         }
-        else if(homedir != NULL)
+        if((homedir != NULL) && (gotPaths != 0x0f))
         {
-            /* look for the ~/.config/jasspa directory */
+            /* look for the user's area in ~/.config/jasspa directory - an exception here, if we find macros or spelling here
+             * still look for it in the program area as this may just contain downloaded help and spelling packages */
+            ii = gotPaths;
             meStrcpy(buff,homedir);
             meStrcat(buff,".config/jasspa");
-            /* as this is the user's area, use this directory as user path (with or without .../<$user-name>/ sub-directory */
-            ll = mePathAddSearchPath(ll,evalResult,buff,6,&gotUserPath);
+            ll = mePathAddSearchPath(ll,evalResult,buff,6,&ii);
+            gotPaths |= (ii & 0x0c);
         }
         
         /* also check for directories in the same location as the binary */
@@ -648,14 +650,14 @@ meSetupPathsAndUser(void)
             ii = (((size_t) ss) - ((size_t) meProgName));
             meStrncpy(buff,meProgName,ii);
             buff[ii] = '\0';
-            ll = mePathAddSearchPath(ll,evalResult,buff,9,&gotUserPath);
+            ll = mePathAddSearchPath(ll,evalResult,buff,9,&gotPaths);
         }
 #if MEOPT_TFS
         /* also check for the built-in file system */
-        if(tfsdev != NULL)
-            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "tfs://",1,&gotUserPath);
+        if((tfsdev != NULL) && (gotPaths != 0x0f))
+            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "tfs://",1,&gotPaths);
 #endif        
-        if(!gotUserPath && (homedir != NULL))
+        if(!(gotPaths & 8) && (homedir != NULL))
         {
             /* We have not found a user path so set ~/ as the user-path
              * as this is the best place for macros to write to etc. */
@@ -680,7 +682,7 @@ meSetupPathsAndUser(void)
             ss = searchPath;
 #if MEOPT_TFS
 #if mePATH_CHAR == ':'
-            /* Special case: if the path starts with tfs: the assume its a tfs path rather than just 'tfs' */
+            /* Special case: if the path starts with tfs: then assume its a tfs path rather than just 'tfs' */
             /* This is not a good path for the user-path, but this is likely to be a mesingle exe with no session so no files should be written */
             if((ss[0] == 't') && (ss[1] == 'f') && (ss[2] == 's') && (ss[3] == ':'))
                 ss += 4;
