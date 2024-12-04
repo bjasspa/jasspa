@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 24 22:02:47 1999
 .\"
-.Id $Id: m9typ033.9,v 2.6 2022/06/12 17:14:33 jon Exp $
+.Id $Id: m9typ033.9,v 2.6 2024/12/04 07:17:24 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH python 9
@@ -18,6 +18,9 @@ python \- Python Language File.
 .na
 .B hkpython.emf
 \- Python Language file hook definition
+.br
+.B python.eaf
+\- UNIX shell abbreviation file
 .ad
 .SH EXTENSIONS
 .na
@@ -36,6 +39,57 @@ files, the template provides minimal hilighting.
 .PP
 File recognition is performed using the standard file extension  \fB.py\fR, or
 by the magic string.
+.PP
+It offers as well folding and support for displaying an outline of the
+functions of the Python script for easy navigation using the 
+.Ht item-list 3
+command.  Further  is is  possible  to expand  abbreviations  either via short
+strings using the
+.Ht expand-abbrev-handle 3
+command and visual inserting abbreviations using the mouse by the
+.Ht abbrev-list 3
+macro. 
+.IP "\fBFolding and Information Hiding\fR"
+Generic  folding is enabled  within the Python files. The folds occur about
+the \fBdef\fR or \fBclass\fR keywords located
+on the left-hand margin at the beginning of the line.
+The following commands are supported to show and hide the function bodies.
+.Ht collapse-all 3
+(un)folds all regions in the file,
+.Ht collapse-current 3
+(un)folds the current region.
+.IP "\fBList Items\fR"
+Item listing is available and the key  constructs of the file may be listed in
+the \fIitem-list\fR.
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for Python code  editing
+which  can  be  used  by  writing  short   abbreviations   like   "\fBmain\fR"
+for a default Python application outline,"\fBfor\fR",
+"\fBif\fR" or "\fBdef\fR" - for a Python function,  "\fBclass\fR" for a Python
+class - and then  pressing the key-binding for the 
+.Ht expand-abbrev-handle 3
+command.  The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mE using the 
+.Ht abbrev-list 3
+command.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*cc \*cc\fR \- Comment out the current line.
+.br
+\fB\*cc \*cd\fR \- Uncomment the current line.
+.br
+\fB\*cc \*ce\fR \- Comment to the end of the line with stars (*).
+.br
+\fB\*a\*ci\fR \- Restyle the current region.
+.br
+\fBf2\fR \- (un)fold the current region
+.br
+\fBf3\fR \- (un)fold all regions
+.br
+\fBf6\fR \- list items
+.br
+\fB\*e f6\fR \- close list items
 .SH BUGS
 There would  appear to be too much applied  hilighting  in this file, it could
 probably do with rationalizing.

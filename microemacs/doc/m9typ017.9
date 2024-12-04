@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ017.9,v 2.6 2024/12/04 06:18:33 jon Exp $
+.Id $Id: m9typ017.9,v 2.6 2024/12/04 07:02:34 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH sh 9
@@ -56,19 +56,20 @@ recognized.  Note that this is the typical  method of identifying  shell files
 and will recognize other files not mentioned above i.e. \fBbash\fR shells.
 .SH DESCRIPTION
 The \fBshell\fR  file type template  provides  simple  hilighting of the shell
-files. It offers as well folding and support for displaying and outline of the
+files. It offers as well folding and support for displaying an outline of the
 functions of the shell script for easy navigation using the 
 .Ht item-list 3
-command and expanding abbreviations either via short strings using the
+command.  Further  is is  possible  to expand  abbreviations  either via short
+strings using the
 .Ht expand-abbrev-handle 3
-command and visual inserting abbreviations using the
+command and visual inserting abbreviations using the mouse by the
 .Ht abbrev-list 3
 macro. 
 .IP "\fBFolding and Information Hiding\fR"
 Generic  folding is enabled  within the Shell files. The folds occur about
-the function keyword and closing braces \fBfunction...{\fR...\fB}\fR located
-on the left-hand margin. The following commands are supported to show and hide
-the function bodies.
+the function keyword and the closing braces \fBfunction...{\fR...\fB}\fR located
+on the left-hand margin at the beginning of the line.
+The following commands are supported to show and hide the function bodies.
 .Ht collapse-all 3
 (un)folds all regions in the file,
 .Ht collapse-current 3
@@ -112,10 +113,11 @@ initialization  of the new file is  defined  in the  \fCshell.etf\fR  file. To
 add your own abbreviations or your own template copy the files to your config
 folder and edit them within this folder.
 .SH BUGS
-None reported.
+Functions  defined without using the function  keyword can't currenly folded
+and as well do not appear in the item-list outline.
 .PP
-There is a heavy bias towards Bourne, Korn and Zsh shells. The author is not a
-csh shell user so has probably missed a lot of csh features.
+There is a heavy bias towards Bourne, Korn and Zsh shells. The authors are not 
+csh shell users so have probably missed a lot of csh features.
 .SH "SEE ALSO"
 .na
 .Ht fvwm 9 .
