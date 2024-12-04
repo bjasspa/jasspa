@@ -6,42 +6,41 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 24 22:02:47 1999
 .\"
-.Id $Id: m9typ033.9,v 2.6 2024/12/04 08:27:19 jon Exp $
+.Id $Id: m9typ033.9,v 2.6 2024/12/04 09:59:20 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
-.TH python 9
-.XI python - "Python Language File"
-.XI py - "Python Language File"
+.TH r 9
+.XI r - "R Language File"
 .SH SYNOPSIS
-python \- Python Language File.
+r \- R Language File.
 .SH FILES
 .na
-.B hkpython.emf
-\- Python Language file hook definition
+.B hkr.emf
+\- R Language file hook definition
 .br
-.B python.eaf
-\- Python abbreviation file
+.B r.eaf
+\- R language abbreviation file
 .ad
 .SH EXTENSIONS
 .na
-\fB.py\fR \- Python file
+\fB.r\fR \- R file
 .ad
 .SH "MAGIC STRINGS"
 .TP
-\fB^#![ \\t]*/.*env[ \\t]+python\fR
+\fB^#![ \\t]*/.*env[ \\t]+Rscript\fR
 .\"
 \*(mE recognizes the magic string on the first line of the file used to locate
-the  executable.  The  Python  files  may  be  extension-less  and  are  still
+the  executable.  The  Rscript  files  may  be  extension-less  and  are  still
 recognized.
 .SH DESCRIPTION
-The  \fBpython\fR  file type  template  provides  simple  hilighting of Python
+The  \fBR\fR  file type  template  provides  simple  hilighting of Python
 files, the template provides minimal hilighting.
 .PP
-File recognition is performed using the standard file extension  \fB.py\fR, or
-by the magic string.
+File  recognition  is performed  using the standard file  extension  \fB.r\fR,
+\fB.R\fR or by the magic string.
 .PP
 It offers as well folding and support for displaying an outline of the
-functions of the Python script for easy navigation using the 
+functions of the R script for easy navigation using the 
 .Ht item-list 3
 command.  Further  is is  possible  to expand  abbreviations  either via short
 strings using the
@@ -50,9 +49,9 @@ command and visual inserting abbreviations using the mouse by the
 .Ht abbrev-list 3
 macro. 
 .IP "\fBFolding and Information Hiding\fR"
-Generic  folding is enabled  within the Python files. The folds occur about
-the \fBdef\fR or \fBclass\fR keywords located
-on the left-hand margin at the beginning of the line.
+Generic  folding is enabled  within the R files. The folds occur about
+the \fBfunction\fR keywords located on the left-hand margin at the beginning 
+of the line if the smaller-minus assignment operator is used.
 The following commands are supported to show and hide the function bodies.
 .Ht collapse-all 3
 (un)folds all regions in the file,
@@ -62,11 +61,11 @@ The following commands are supported to show and hide the function bodies.
 Item listing is available and the key  constructs of the file may be listed in
 the \fIitem-list\fR.
 .IP "\fBAbbreviations\fR"
-The  installation  comes with a default  abbreviation  file for Python code  editing
+The  installation  comes with a default  abbreviation  file for R code  editing
 which  can  be  used  by  writing  short   abbreviations   like   "\fBmain\fR"
-for a default Python application outline,"\fBfor\fR",
-"\fBif\fR" or "\fBdef\fR" - for a Python function,  "\fBclass\fR" for a Python
-class - and then  pressing the key-binding for the 
+for a default Rscript application outline,"\fBfor\fR",
+"\fBif\fR"  or  "\fBfun\fR"  -  for  a R  function  - and  then  pressing  the
+key-binding  for the 
 .Ht expand-abbrev-handle 3
 command.  The  list  of  abbreviations  can be used  interactively  in the GUI
 version of \*(mE using the 
@@ -91,10 +90,13 @@ The short cut keys used within the buffer are:-
 .br
 \fB\*e f6\fR \- close list items
 .SH BUGS
-There would  appear to be too much applied  hilighting  in this file, it could
-probably do with rationalizing.
+Functions with using the equal operator for  assignments  are not shown in the
+function  outline,  this should be seen as a feature  which allow you to write
+hidden internal functions within other functions.
 .SH "SEE ALSO"
 .na
+.Ht py 9 .
+.Ht sh 9 .
 .Hl "Supported File Types" FileTypes -
 .ad
 .FH
