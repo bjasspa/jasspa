@@ -243,6 +243,10 @@ set-variable .fhook-r-doc.setup-mask "acfhmw"
 !endif
 
 define-macro r-doc
+  !force set-variable #l0 .rscript
+  !if &seq #l0 "ERROR"
+    set-variable .rscript "Rscript"
+  !endif
   !force set-variable #l0 @1
   !if &not $status
     set-variable #l0 @ml00 "R help on"
@@ -275,7 +279,7 @@ define-macro r-doc
     set-variable #l0 &spr "help('%s',package='%s')" &set #l5 @s2 &set #l4 @s1
   !endif
 *try_again
-  &con &seq $buffer-bname "*r-doc*1" 2 0 pipe-shell-command &spr "Rscript -e \"options(useFancyQuotes=FALSE);%s\"" #l0 "*r-doc*"
+  &con &seq $buffer-bname "*r-doc*1" 2 0 pipe-shell-command &spr "%s -e \"options(useFancyQuotes=FALSE);%s\"" .rscript #l0 "*r-doc*"
   !iif &not &seq $buffer-bname "*r-doc*" find-buffer "*r-doc*"
   -1 buffer-mode "view"
   1 buffer-mode "magic"

@@ -1,0 +1,70 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Aug 31 21:02:32 1998
+.\"
+.Id $Id: m3mac099.3,v 2.10 2024/12/05 09:27:06 dgroth Exp $
+.Im MicroEmacs command
+.so me.tni
+.TH r-doc 3
+.XI r-doc - "R documentation manual page viewer"
+.XI .r-doc.rscript 5 "Rscript Command line path" variable|shell
+.SH NAME
+.Me "|r-doc"
+r-doc \- R documentation manual page viewer.
+.br
+.Me "|.r-doc.rscript"
+\&.r-doc.rscript \- Rscript Command line path
+.Me $a
+.SH SYNOPSIS
+.na
+\fBr-doc\fR
+.br
+\fBr-doc\fR \fIfunction\fR
+.br
+\fBr-doc\fR \fIpackage::packagename\fR
+.br
+\fBr-doc\fR \fIpackage::function\fR
+.br
+\fB.r-doc.rscript\fR \fIstring\fR
+.ad
+.SH DESCRIPTION
+\fBr-doc\fR  provides  a  mechanism  to display a R manual  page  within the
+MicroEmacs  window. On invoking \fBr-doc\fR the user is prompted for the name of
+the manual page to display:-
+.CS
+R help on ?
+.CE
+The name of the R manual page are entered on the command line.
+The macro invokes the R \fBhelp\fR function using the 
+.Hr Rscript 1
+command  interpreter  which  must be on the  PATH to  generate  the  page  and
+display   the  result  in a window.  The Rscript page
+executable may be defined with the variable
+.B .r-doc.rscript
+this is  defined  as  \fCRscript\fR  by default  and should  work on any Linux
+system. On Windows the user should point this variable to the Rscript interpreter
+within the program files directory.
+.PP
+Another  R documentation page can be selected by either  moving the cursor to the link
+and pressing return or double clicking on it with the left mouse button. \*(mS
+will then attempt to load and display the selected R manual page.
+.SH NOTES
+\fBr-doc\fR is a macro defined in \fChkr.emf\fR.
+.PP
+.B r-doc
+should work mainly within \s-1UNIX\s0  environments but should work as well on
+Windows if the 
+.B Rscript 
+executable is on the PATH or if the user sets the 
+.B .r-doc.rscript 
+variable.
+.SH "SEE ALSO"
+.na
+.Hr man 1 ,
+.Ht r 9 .
+.ad
+.FH
