@@ -3,7 +3,7 @@
 ;  Author        : Detlef Groth, University of Potsdam, Germany
 ;  Created By    : Detlef Groth
 ;  Created       : Wed Dec 4 17:39:58 2024
-;  Last Modified : <241205.0813>
+;  Last Modified : <241206.1319>
 ;
 ;  Description   : functions useful to be used for R development
 ;
@@ -31,6 +31,24 @@ define-macro r-format
   !endif
 !emacro
 
+0 define-macro r-rscript
+  !force set-variable #l0 %rscript-com
+  ;set-variable $file-names "/home/dgroth/.local/share/fonts/*"
+  !if &seq #l0 "ERROR"
+    set-variable %rscript-com "Rscript"
+  !endif
+  ; TODO: 
+  ; - Windows check for set-variable $file-names "c:/Program File/R/*"
+  ; - then check for bin/x64/Rscript.exe file
+  !if &seq &which %rscript-com ""
+    1000 ml-write &spr "Error: Executable '%s' is not in the path! Please install it!" %rscript-com
+    !abort
+  !else
+    ml-write "all fine"
+  !endif
+  
+!emacro
+
 define-help "r-format" "3"
 ## NAME
 
@@ -39,7 +57,8 @@ $a
 
 ## SYNOPSIS
 
-__r-format__ 
+__r-format__  
+__%rscript-com__ "string" ; Default "Rscript -e"
 
 ## DESCRIPTION
 

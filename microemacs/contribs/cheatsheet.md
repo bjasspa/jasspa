@@ -1,4 +1,4 @@
-## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-03 16:04
+## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-06 13:17
 
 Homepage: [https://github.com/bjasspa/jasspa](https://github.com/bjasspa/jasspa)  
 Help pages: [https://bjasspa.github.io/jasspa/](https://bjasspa.github.io/jasspa/)
@@ -176,11 +176,16 @@ example,  liberation-mono and dejavu-sans-mono as they come with a lot of font
 encodings are quite visually appealing.
  
 ```
-## check installable mono fonts 
-sudo dnf search mono-fonts | less
-[[ ! -d ~/.local/share/fonts/ttf ]] && mkdir ~/.local/share/fonts/ttf
+### check installable mono fonts 
+### Fedora
+### sudo dnf search mono-fonts | less
+### sudo dnf install gnu-free-mono-fonts cascadia-mono-fonts dejavu-sans-mono-fonts
+### sudo dnf install liberation-mono-fonts adobe-source-code-pro-fonts
+### sudo apt install fonts-firacode font-cascadia-code fonts-ubuntu-console
+### sudo apt install fonts-anonymous-pro
+[[ ! -d ~/.local/share/fonts/ttf ]] && mkdir -p ~/.local/share/fonts/ttf
 find  /usr/ -iregex \
-  ".*\\(Mono\\|Mono-?Bold\\|Mono-?Regular\\|Code-Regular\\|Code-Bold\\).ttf"  \
+  ".*\\(Mono\\|Mono-?Bold\\|Mono-?Regular\\|Code-Regular\\|Code-Bold\\).ttf" 2>/dev/null \
   | xargs ln -sf -t ~/.local/share/fonts/ttf
 mkfontscale ~/.local/share/fonts/ttf/
 mkfontdir ~/.local/share/fonts/ttf
