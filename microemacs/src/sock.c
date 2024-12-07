@@ -1,7 +1,7 @@
 /* -*- c -*-
  *
  * JASSPA MicroEmacs - www.jasspa.com
- * spell.c - Spell checking routines.
+ * sock.c - Socket, HTTP(S) & FTP(S) routines.
  *
  * Copyright (C) 2020-2024 JASSPA (www.jasspa.com)
  *
@@ -72,6 +72,7 @@
 #define meHtons            htons
 #define meClock            GetTickCount
 #define snprintf           sprintf_s
+#define MESOCK_TIMEO_MULT  1000
 #else
 #include <errno.h>
 #include <unistd.h>
@@ -97,6 +98,7 @@
 #define meInet_addr        inet_addr
 #define meHtons            htons
 #define meClock            clock
+#define MESOCK_TIMEO_MULT  1
 #endif
 
 #if MEOPT_OPENSSL
@@ -268,8 +270,8 @@ static SSL_CTX *meSockCtx=NULL;
 static meUByte meSockHasInit=0;
 static meUByte *proxyHost=NULL;
 static int proxyPort=0;
-static int timeoutSnd=20000;
-static int timeoutRcv=3600000;
+static int timeoutSnd=20 * MESOCK_TIMEO_MULT;
+static int timeoutRcv=300 * MESOCK_TIMEO_MULT;
 
 
 
@@ -1149,6 +1151,10 @@ meSockSetup(meIo *io, meUShort flags)
             free(proxyHost);
             proxyHost = NULL;
         }
+        if(((ss = getUsrVar((meUByte *)"sock-send-timeout")) != errorm) && (*ss != '\0'))
+            timeoutSnd = meAtoi(ss) * MESOCK_TIMEO_MULT;
+        if(((ss = getUsrVar((meUByte *)"sock-recv-timeout")) != errorm) && (*ss != '\0'))
+            timeoutRcv = meAtoi(ss) * MESOCK_TIMEO_MULT;
 #ifdef _WIN32
         {
             WSADATA wsaData;
@@ -1391,10 +1397,13 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
         io->urlFlags = flags;
         if(timeoutSnd > 0)
         {
-            /* using setsockopt to set the send timeout to given millisecs, alternatively use select(0,fd_set,NULL,NULL,struct timeval) */
+#ifdef _WIN32
+            DWORD to=timeoutSnd;
+#else
             struct timeval to;
             to.tv_sec = timeoutSnd;
             to.tv_usec = 0;
+#endif
             if((ret=setsockopt(sck,SOL_SOCKET,SO_SNDTIMEO,(char *) &to,sizeof(to))) < 0)
             {
                 if(io->urlOpts & meSOCKOPT_LOG_WARNING)
@@ -1406,9 +1415,13 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
         }
         if(timeoutRcv > 0)
         {
+#ifdef _WIN32
+            DWORD to=timeoutRcv;
+#else
             struct timeval to;
             to.tv_sec = timeoutRcv;
             to.tv_usec = 0;
+#endif
             if((ret=setsockopt(sck,SOL_SOCKET,SO_RCVTIMEO,(char *) &to,sizeof(to))) < 0)
             {
                 if(io->urlOpts & meSOCKOPT_LOG_WARNING)
@@ -2369,10 +2382,13 @@ meSockFtpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *user
         }
         if(timeoutSnd > 0)
         {
-            /* using setsockopt to set the send timeout to given millisecs, alternatively use select(0,fd_set,NULL,NULL,struct timeval) */
+#ifdef _WIN32
+            DWORD to=timeoutSnd;
+#else
             struct timeval to;
             to.tv_sec = timeoutSnd;
             to.tv_usec = 0;
+#endif
             if((ret=setsockopt(sck,SOL_SOCKET,SO_SNDTIMEO,(char *) &to,sizeof(to))) < 0)
             {
                 if(io->urlOpts & meSOCKOPT_LOG_WARNING)
@@ -2384,9 +2400,13 @@ meSockFtpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *user
         }
         if(timeoutRcv > 0)
         {
+#ifdef _WIN32
+            DWORD to=timeoutRcv;
+#else
             struct timeval to;
             to.tv_sec = timeoutRcv;
             to.tv_usec = 0;
+#endif
             if((ret=setsockopt(sck,SOL_SOCKET,SO_RCVTIMEO,(char *) &to,sizeof(to))) < 0)
             {
                 if(io->urlOpts & meSOCKOPT_LOG_WARNING)

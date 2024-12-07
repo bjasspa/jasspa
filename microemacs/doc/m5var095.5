@@ -1,0 +1,42 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m5var095.5,v 2.6 2024/07/16 14:17:47 jon Exp $
+.Im MicroEmacs variable|file
+.so me.tni
+.TH %sock-send-timeout 5
+.XI %sock-send-timeout - "Set socket send timeout"
+.XI %sock-recv-timeout - "Set socket receive timeout"
+.SH NAME
+.Me "|%sock-send-timeout"
+%sock-send-timeout \- Set socket send timeout
+.br
+.Me "|%sock-recv-timeout"
+%sock-recv-timeout \- Set socket receive timeout
+.Me $a
+.SH SYNOPSIS
+\fB%sock-send-timeout\fR "\fIlength\fR"; Default is 20sec 
+.br
+\fB%sock-recv-timeout\fR "\fIlength\fR"; Default is 300sec
+.SH DESCRIPTION
+\fB%sock-send-timeout\fR sets the timeout in seconds for sending data, via ftp or http protocols, down a socket. If 
+the variable is set to less than or equal to zero the timeout is infinite.
+.PP
+\fB%sock-recv-timeout\fR sets the timeout in seconds for receiving data, via ftp or http protocols, from a socket.
+Note that a socket connection may terminate for other reasons, such as the server closing the socket after a defined
+period of inactivity. If the variable is set to less than or equal to zero the timeout is infinite, i.e. \*(mS will
+hang until a response is received.
+.SH NOTES
+These variables must be set before the first URL, FTP or HTTP, is loaded, after which a value change to them is ignored.
+.SH "SEE ALSO"
+.na
+.Ht %http-flags 5 ,
+.Ht %http-cookies 5 ,
+.Ht %http-post-file 5 ,
+.Ht %http-proxy-addr 5 ,
+.Ht find-file 2 ,
+.Ht ftp 3 .
+.ad
+.FH
