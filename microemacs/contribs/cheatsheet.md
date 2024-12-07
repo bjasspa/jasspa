@@ -1,4 +1,4 @@
-## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-06 13:17
+## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-07 14:33
 
 Homepage: [https://github.com/bjasspa/jasspa](https://github.com/bjasspa/jasspa)  
 Help pages: [https://bjasspa.github.io/jasspa/](https://bjasspa.github.io/jasspa/)
@@ -21,11 +21,11 @@ __User Setup:__
 After  starting  `mec` the terminal or `mew` the GUI version you will be asked
 for your name and the basic user  settings.  Thereafter  run the  `user-setup`
 command  either via __`Esc x user-setup  ENTER`__ or via "Menu (__`Esc =`__) - Tools -
-User Setup" where you setup your __keyboard layout__ at least, select the more
-traditional,  __Rebind  Home Keys__ and __MS Shift  Region__  options and then
+User Setup" where you should setup your __keyboard layout__ at least, may be select the more
+traditional  __Rebind  Home Keys__ and __MS Shift  Region__  options and then
 optionally  as well a __spell  checking  language__  in the first  setup  tab.
 Beginners  as well might  un-select  the  __Edit__  options  beside the
-__Setup File__ name.
+__Setup File__ name so that the users configuration file is not autoloaded after pressing OK.
 
 __MicroEmacs command line arguments (mec terminal or mew graphical application):__
 
@@ -85,28 +85,59 @@ __Further menu points with most important commands:__
 
 __Other important commands / shortcuts:__
 
-| Important                    | Navigation                 | Deletion                    |
-|----------------------------- |:---------------------------|:----------------------------|
-| 655360 osd (__menu__): `Esc =` | beginning-of-line: `C-a` | forward-delete-char: `C-d`  |
-| execute-named-command:`Esc x`| end-of-line: `C-e`         | backward-delete-char:       |
-| abort-command: `C-g`         | forward-char: `C-f`        | .... `backspace (C-h)`      |
-| list-commands: `C-h c`       | forward-word: `Esc f`      | kill-line (rest): `C-k`     |
-| help-command: `C-h C-c`      | backward-char: `C-b`       | delete-buffer: `C-x k`      |
-| describe-bindings: `C-h b`   | backward-word: `Esc b`     | kill-region: `C-w`          |
-| suspend-emacs (mec): `C-c z` | occur (list): `S-f6`       | delete-window (current): `C-x 0`|
-| help: `Esc x help`           | item-list (outline)        | delete-other-windows `C-x 1` |
+| Important                     | Navigation                 | Deletion                          |
+|-------------------------------|:---------------------------|:----------------------------------|
+| 655360 osd (__menu__): `Esc =`| beginning-of-line: `C-a`   | forward-delete-char: `C-d`        |
+| execute-named-command: `Esc x`| end-of-line: `C-e`         | backward-delete-char: `backspace` |
+| abort-command: `C-g`          | forward-char: `C-f`        | kill-line (rest): `C-k`           |                              
+| list-commands: `C-h c`        | forward-word: `Esc f`      | delete-buffer: `C-x k`            |      
+| help-command: `C-h C-c`       | backward-char: `C-b`       | kill-region: `C-w`                |    
+| describe-bindings: `C-h b`    | backward-word: `Esc b`     | delete-window (current): `C-x 0`  |
+| suspend-emacs (mec): `C-c z`  | occur (list): `S-f6`       | delete-other-windows `C-x 1`      |
+| help: `Esc x help`            | item-list (outline)        | 
 
 
 __MicroEmacs Files:__
 
 <div class="noth">
 
-| &nbsp;                     | &nbsp;                 | &nsbp;                 |
-|:---------------------------|------------------------|:-----------------------|
-| Abbreviation Files `*.eaf` | Macro Files `*.emf`    | Template Files `*.etf` |
-| Dictionary files `*.edf`   | Registry files `*.erf` |                        |
-| Help file `*.ehf`          | Session Files `*.esf`  |                        |
+| &nbsp;                       | &nbsp;                       | &nsbp;                 |
+|:-----------------------------|------------------------------|:-----------------------|
+| Abbreviation Files `*.eaf`   | Help File `me.ehf`           | Session Files `*.esf`  |
+| Dictionary Files `*.edf`     | Macro Files `*.emf`          | Template Files `*.etf` |
+| Favorite File `username.eff` | Registry File `username.erf` |                        |
 </div>
+
+__USERNAME.emf__
+
+The user can  configure  specific key bindings,  abbreviation  files, and file
+extension  mappings within its `USERNAME.emf`  file, which is usually based on
+the  username  on the  current  machine,  but could be switched as well giving
+options  like  `MEUSERNAME=test`  on the command  line. Here an example for an
+user called `kiosk-user` which adds the file extension .Tmd to be edited using
+Markdown mode, declares a global  abbreviation  file  kiosk-user.eaf  and then
+binds the key combination `C-x t` to the insert-template command.
+
+```
+; file ~/.config/jasspa/kiosk-user.emf
+global-abbrev-file "kiosk-user"         ; file is kiosk-user.eaf
+add-file-hook ".tmd .Tmd" fhook-r-md    ; tmd files are Markdown files
+add-file-hook ".rnw .snw" fhook-latex   ; snw and rnw files are LaTeX files
+add-file-hook ".re2c" fhook-c           ; re2c files are C files
+global-bind-key insert-template "C-x t" ; new keybinding for insert-template
+```
+
+And here is an example for an abbreviation file (kiosk-user.eaf), after adding the line:
+
+```
+MM "Max Musterman, University of Potsdam, Germany"
+```
+
+Hint: You can reload the abbreviation file within the current editor session
+after saving it by using the following keys: 
+
+`Esc 0 Esc x global-abbreviation-fileENTERkiosk-userENTER`
+
 
 __Macros and Macro Recording:__ 
 
