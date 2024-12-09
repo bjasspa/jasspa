@@ -1,4 +1,4 @@
-## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-09 09:31
+## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-09 10:13
 
 Homepage: [https://github.com/bjasspa/jasspa](https://github.com/bjasspa/jasspa)  
 Help pages: [https://bjasspa.github.io/jasspa/](https://bjasspa.github.io/jasspa/)
@@ -201,9 +201,9 @@ For the GUI version additional TrueType Font installations on X systems (MacOS
 Here an example how you can index  existing  True Type fonts which are already
 on your system  installed by the package  manager.  Recommended  fonts are for
 example,  liberation-mono and dejavu-sans-mono as they come with a lot of font
-encodings are quite visually appealing.
+encodings and they are quite visually appealing.
  
-```
+```bash
 ### check installable mono fonts 
 ### Fedora
 ### sudo dnf search mono-fonts | less
@@ -221,13 +221,18 @@ mkfontscale ~/.local/share/fonts/
 mkfontdir ~/.local/share/fonts
 xset +fp ~/.local/share/fonts
 xset fp rehash
-alias mfontscale="LC_ALL=C xfontsel -pattern '*-r-*-m-*' -print -scaled"
+alias mfontscale="LC_ALL=C xfontsel -pattern '*-r-*-m-*' -scaled"
 ```
 
-You can check the  installed  fonts then with the tool  `xfontsel`.  Default  for Western
-Europe usually should be ISO-8859-15  which covers for instance German umlauts
-and the Euro symbol. The alias  _mfontscale_  gives easy access to  monospaced
-fonts.
+You can check the installed  fonts then with the tool `xfontsel`.  Default for
+Western  Europe usually should be ISO-8859-15 or  Windows-CP1252  which covers
+for instance  German  umlauts and the Euro symbol or the standards  ISO-8859-5
+(Cyrillic),  ISO-8859-7 (Greek), ISO-8859-9 (Turkish), ISO-8859-10 (Nordic) or
+ISO-8859-13  (Baltic). The alias defined above  _mfontscale_ gives easy access
+to monospaced fonts. See as well the
+[Wikipedias entry for ISO-encodings](https://de.wikipedia.org/wiki/ISO_8859).
+
+Hint: To convert between different encodings using the command: `change-buffer-charset`
 
 To install other fonts like Ubuntu Mono you can do the following:
 
