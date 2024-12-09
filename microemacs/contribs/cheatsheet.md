@@ -1,4 +1,4 @@
-## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-09 09:19
+## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-09 09:31
 
 Homepage: [https://github.com/bjasspa/jasspa](https://github.com/bjasspa/jasspa)  
 Help pages: [https://bjasspa.github.io/jasspa/](https://bjasspa.github.io/jasspa/)
@@ -34,7 +34,7 @@ __MicroEmacs command line arguments (mec terminal or mew graphical application):
 |                   |                      |                    |                                      |
 |:------------------|----------------------|--------------------|------------------------------|
 | mec/mew FILENAME  | open the given file  | mec/mew -c         | continue default session     |
-| mec/mew -h        | display help         | mec/mew <br >-cSESSION  | continue named SESSION       |
+| mec/mew -h        | display help         | mec/mew <br/>-cSESSION  | continue named SESSION       |
 | mec/mew -V        | show version         | mec/mew -u USERNAME| start ME with other username |
 
 </div>
@@ -89,9 +89,9 @@ __Other important commands / shortcuts:__
 |-------------------------------|:---------------------------|:----------------------------------|
 | 655360 osd (__menu__): `Esc =`| beginning-of-line: `C-a`   | forward-delete-char: `C-d`        |
 | execute-named-command: `Esc x`| end-of-line: `C-e`         | backward-delete-char: `backspace` |
-| abort-command: `C-g`          | forward-char: `C-f`        | forward-kill-word: 'Esc-d`        |                              
-| list-commands: `C-h c`        | forward-word: `Esc f`      | kill-line (rest): `C-k`           |      
-| help-command: `C-h C-c`       | backward-char: `C-b`       | delete-buffer: `C-x k`            |    
+| abort-command: `C-g`          | forward-char: `C-f`        | forward-kill-word: `Esc-d`        |
+| list-commands: `C-h c`        | forward-word: `Esc f`      | kill-line (rest): `C-k`           |
+| help-command: `C-h C-c`       | backward-char: `C-b`       | delete-buffer: `C-x k`            |
 | describe-bindings: `C-h b`    | backward-word: `Esc b`     | kill-region: `C-w`                |
 | suspend-emacs (mec): `C-c z`  | occur (list): `S-f6`       | delete-window (current): `C-x 0`  |
 | help: `Esc x help`            | item-list (outline)        | delete-other-windows `C-x 1`      |
@@ -126,16 +126,6 @@ add-file-hook ".rnw .snw" fhook-latex   ; snw and rnw files are LaTeX files
 add-file-hook ".re2c" fhook-c           ; re2c files are C files
 global-bind-key insert-template "C-x t" ; new key-binding for insert-template
 ```
-
-__Macros and Macro Recording:__ 
-
-MicroEmacs  can be  extended  using  self  written  or  recorded  macros.  For
-beginners  it might be easier to record key  sequences  and replay them later.
-The steps to do this are as follows:
-
-Press  the keys  `C-x (` and then do your  editing  steps,  you then  stop the
-recording  with `C-x )`. Thereafter you can re-execute the last recorded macro
-with `C-x e`. You can as well save the executed macro with a name then with the `save-kbd-macro` command.
 
 <div style="page-break-after: always"> </div>
 
@@ -190,6 +180,15 @@ extension "*.etf" and should be placed in the folder  `~/.config/jasspa/HOOK/`
 where HOOK is the filehook for which the should be used like  "python", "r" or
 "md" (Markdown).
 
+## Macros and Macro Recording
+
+MicroEmacs  can be  extended  using  self  written  or  recorded  macros.  For
+beginners  it might be easier to record key  sequences  and replay them later.
+The steps to do this are as follows:
+
+Press  the keys  `C-x (` and then do your  editing  steps,  you then  stop the
+recording  with `C-x )`. Thereafter you can re-execute the last recorded macro
+with `C-x e`. You can as well save the executed macro with a name then with the `save-kbd-macro` command.
 
 <div style="page-break-after: always"> </div>
 
