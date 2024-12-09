@@ -1,4 +1,4 @@
-## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-09 10:13
+## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-09 11:42
 
 Homepage: [https://github.com/bjasspa/jasspa](https://github.com/bjasspa/jasspa)  
 Help pages: [https://bjasspa.github.io/jasspa/](https://bjasspa.github.io/jasspa/)
@@ -196,8 +196,9 @@ with `C-x e`. You can as well save the executed macro with a name then with the 
 
 ### Installation of True Type Fonts for X11
 
-For the GUI version additional TrueType Font installations on X systems (MacOS
-- [XQuartz](, and Linux - X11) improve  visual  display and ISO  encodings  usage.
+For the GUI version additional TrueType Font installations on X systems (MacOS with
+[XQuartz](https://www.xquartz.org/)  or Linux  with [X11](https://www.x.org) or  [XWayland]()  improve
+the visual  display and ISO  encodings  usage.
 Here an example how you can index  existing  True Type fonts which are already
 on your system  installed by the package  manager.  Recommended  fonts are for
 example,  liberation-mono and dejavu-sans-mono as they come with a lot of font
@@ -236,8 +237,8 @@ Hint: To convert between different encodings using the command: `change-buffer-c
 
 To install other fonts like Ubuntu Mono you can do the following:
 
-```
-cd ~/.local/share/fonts/ttf
+```bash
+cd ~/.local/share/fonts
 BURL="https://github.com/braver/programmingfonts/raw/gh-pages/fonts/resources/ubuntu/"
 wget "${BURL}/ubuntu-bold.ttf -O ubuntu-mono-bold.ttf
 wget "${BURL}/ubuntu.ttf    -O ubuntu-mono-medium.ttf    
