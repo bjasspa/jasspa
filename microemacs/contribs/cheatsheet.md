@@ -1,4 +1,4 @@
-## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-07 14:33
+## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-09 09:19
 
 Homepage: [https://github.com/bjasspa/jasspa](https://github.com/bjasspa/jasspa)  
 Help pages: [https://bjasspa.github.io/jasspa/](https://bjasspa.github.io/jasspa/)
@@ -89,23 +89,23 @@ __Other important commands / shortcuts:__
 |-------------------------------|:---------------------------|:----------------------------------|
 | 655360 osd (__menu__): `Esc =`| beginning-of-line: `C-a`   | forward-delete-char: `C-d`        |
 | execute-named-command: `Esc x`| end-of-line: `C-e`         | backward-delete-char: `backspace` |
-| abort-command: `C-g`          | forward-char: `C-f`        | kill-line (rest): `C-k`           |                              
-| list-commands: `C-h c`        | forward-word: `Esc f`      | delete-buffer: `C-x k`            |      
-| help-command: `C-h C-c`       | backward-char: `C-b`       | kill-region: `C-w`                |    
-| describe-bindings: `C-h b`    | backward-word: `Esc b`     | delete-window (current): `C-x 0`  |
-| suspend-emacs (mec): `C-c z`  | occur (list): `S-f6`       | delete-other-windows `C-x 1`      |
-| help: `Esc x help`            | item-list (outline)        | 
+| abort-command: `C-g`          | forward-char: `C-f`        | forward-kill-word: 'Esc-d`        |                              
+| list-commands: `C-h c`        | forward-word: `Esc f`      | kill-line (rest): `C-k`           |      
+| help-command: `C-h C-c`       | backward-char: `C-b`       | delete-buffer: `C-x k`            |    
+| describe-bindings: `C-h b`    | backward-word: `Esc b`     | kill-region: `C-w`                |
+| suspend-emacs (mec): `C-c z`  | occur (list): `S-f6`       | delete-window (current): `C-x 0`  |
+| help: `Esc x help`            | item-list (outline)        | delete-other-windows `C-x 1`      |
 
 
 __MicroEmacs Files:__
 
 <div class="noth">
 
-| &nbsp;                       | &nbsp;                       | &nsbp;                 |
-|:-----------------------------|------------------------------|:-----------------------|
-| Abbreviation Files `*.eaf`   | Help File `me.ehf`           | Session Files `*.esf`  |
-| Dictionary Files `*.edf`     | Macro Files `*.emf`          | Template Files `*.etf` |
-| Favorite File `username.eff` | Registry File `username.erf` |                        |
+| &nbsp;                       | &nbsp;                   | &nsbp;                       |
+|:-----------------------------|--------------------------|:-----------------------------|
+| Abbreviation Files `*.eaf`   | Help File `me.ehf`       | Registry File `USERNAME.erf` |
+| Dictionary Files `*.edf`     | Macro Files `*.emf`      | Session Files `*.esf`        |
+| Favorite File `USERNAME.eff` | User File `USERNAME.emf` | Template Files `*.etf`       |
 </div>
 
 __USERNAME.emf__
@@ -121,23 +121,11 @@ binds the key combination `C-x t` to the insert-template command.
 ```
 ; file ~/.config/jasspa/kiosk-user.emf
 global-abbrev-file "kiosk-user"         ; file is kiosk-user.eaf
-add-file-hook ".tmd .Tmd" fhook-r-md    ; tmd files are Markdown files
+add-file-hook ".tmd .Tmd" fhook-md      ; tmd files are Markdown files
 add-file-hook ".rnw .snw" fhook-latex   ; snw and rnw files are LaTeX files
 add-file-hook ".re2c" fhook-c           ; re2c files are C files
-global-bind-key insert-template "C-x t" ; new keybinding for insert-template
+global-bind-key insert-template "C-x t" ; new key-binding for insert-template
 ```
-
-And here is an example for an abbreviation file (kiosk-user.eaf), after adding the line:
-
-```
-MM "Max Musterman, University of Potsdam, Germany"
-```
-
-Hint: You can reload the abbreviation file within the current editor session
-after saving it by using the following keys: 
-
-`Esc 0 Esc x global-abbreviation-fileENTERkiosk-userENTER`
-
 
 __Macros and Macro Recording:__ 
 
@@ -153,10 +141,10 @@ with `C-x e`. You can as well save the executed macro with a name then with the 
 
 ## &nbsp;
 
-## Snippets
+## Snippets / Abbreviation Files
 
 Snippets are text  fragments  which can be inserted by typing an  abbreviation
-into the text after pressing the `Esc Esc` key combination. There are two type
+into the text after pressing usually the `Esc Esc` key combination. There are two type
 of abbreviations, global abbreviations which are available in all documents or
 scripts and buffer specific abbreviations which are the same for all documents
 of the same type, for instance for all Python files. These  abbreviations  are
@@ -178,9 +166,21 @@ UP "Universty of Potsdam
 br "best regards,\rDetlef Groth"
 ```
 
+Hint: You can reload the abbreviation file within the current editor session
+after saving it by using the following keys: 
+
+`Esc 0 Esc x global-abbreviation-file<ENTER>kiosk-user<ENTER>`
+
 MicroEmacs comes for many programming and markup languages already with buffer
-specific abbreviation files.
-To see what abbreviations are 
+specific  abbreviation  files. To see what abbreviations are available you can
+use for  instance  the  `abbrev-list`  command,  which  allows  you in the GUI
+version graphically select the abbreviations with the mouse. To configure your
+own abbreviation file for a specific  programming language you should create a
+file  `myHOOK.emf`,  where `HOOK` is your file type like 'python', 'r' or 'md'
+(Markdown)      in     your      config      folder     so     for     example
+`~/.config/jasspa/mypython.eaf`   and  in  this  you  then   place   your  own
+abbreviations.  Hint: You can as well copy the default  `python.eaf` file from
+the macros directory to your personal config folder and modify that file.
 
 ## Templates
 
@@ -189,8 +189,6 @@ for instance to start a new application. User defined  templates have the filew
 extension "*.etf" and should be placed in the folder  `~/.config/jasspa/HOOK/`
 where HOOK is the filehook for which the should be used like  "python", "r" or
 "md" (Markdown).
-
-
 
 
 <div style="page-break-after: always"> </div>
@@ -214,16 +212,17 @@ encodings are quite visually appealing.
 ### sudo dnf install liberation-mono-fonts adobe-source-code-pro-fonts
 ### sudo apt install fonts-firacode font-cascadia-code fonts-ubuntu-console
 ### sudo apt install fonts-anonymous-pro
-[[ ! -d ~/.local/share/fonts/ttf ]] && mkdir -p ~/.local/share/fonts/ttf
+if [ ! -d ~/.local/share/fonts ]; then
+    mkdir -p ~/.local/share/fonts
+fi
 find  /usr/ -iregex \
   ".*\\(Mono\\|Mono-?Bold\\|Mono-?Regular\\|Code-Regular\\|Code-Bold\\).ttf" 2>/dev/null \
-  | xargs ln -sf -t ~/.local/share/fonts/ttf
-mkfontscale ~/.local/share/fonts/ttf/
-mkfontdir ~/.local/share/fonts/ttf
-xset +fp ~/.local/share/fonts/ttf/
+  | xargs ln -sf -t ~/.local/share/fonts
+mkfontscale ~/.local/share/fonts/
+mkfontdir ~/.local/share/fonts
+xset +fp ~/.local/share/fonts
 xset fp rehash
 alias mfontscale="LC_ALL=C xfontsel -pattern '*-r-*-m-*' -print -scaled"
-mfontscale
 ```
 
 You can check the  installed  fonts then with the tool  `xfontsel`.  Default  for Western
@@ -242,6 +241,20 @@ wget "{BURL}/license.txt -O ubuntu-license.txt
 mkfontscale .
 mkfontdir .
 xset fp rehash
-
 ```
 
+To check the fontpath you can as well add this to your .bashrc configuration:
+
+```bash
+### end of .bashrc
+alias mfontsel="xfontsel -pattern '*-r-*-m-*' -scaled"
+if [ "$DISPLAY" != "" ]; then
+   if [ "`xset q | grep .local/share/fonts`" == "" ]; then 
+     xset +fp ~/.local/share/fonts
+     set fp rehash
+   fi
+fi   
+```
+
+For   more   information   on   adding   other   fonts   have   a   look   at:
+[https://github.com/mittelmark/x11-ttf-fonts](https://github.com/mittelmark/x11-ttf-fonts)
