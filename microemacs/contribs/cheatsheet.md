@@ -1,6 +1,6 @@
-## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-09 11:42
+## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-10 18:17
 
-Homepage: [https://github.com/bjasspa/jasspa](https://github.com/bjasspa/jasspa)  
+Homepage: [https://github.com/bjasspa/jasspa](https://github.com/bjasspa/jasspa)
 Help pages: [https://bjasspa.github.io/jasspa/](https://bjasspa.github.io/jasspa/)
 
 Small, low footprint  text editor with highly  sophisticated  editing  facilities for
@@ -39,28 +39,30 @@ __MicroEmacs command line arguments (mec terminal or mew graphical application):
 
 </div>
 
-__MicroEmacs Editor most important menu commands (Esc =):__
+__MicroEmacs  Editor most  important  menu commands (use 'Esc =' to access the
+menu without a mouse ):__
 
 <div class="compact">
 
-| File               | Edit                     | Search                 |         View        |
-|:-------------------|:-------------------------|:-----------------------|:--------------------|
+| File               | Edit                     | Search                  |         View         |
+|:-------------------|:-------------------------|:------------------------|:---------------------|
 | Open: `C-x C-f`    | Undo: `C-x u`            | Incr Search: `C-s`      | Buffer Info: `C-x =` |
-| Favorites          | Set Mark: `C-space`      | OSD Search             | Occur: `S-f6`        |
+| Favorites          | Set Mark: `C-space`      | Search Dialog           | Occur: `S-f6`        |
 | Close: `C-x k`     | Copy Region: `Esc w`     | Find Next: `C-x h`      | Buffer: `C-x b`      |
-| Save: `C-x C-s`    | Cut/Kill Region: `C-w`   | Replace: `Esc r`        | Whitespaces: `F11`   |
-| Save As: `C-x C-w` | Paste/Yank Region: `C-y` | Set Bookmark: `C-x C-a` |                     |
-| File Browser: `F10`| Cut Rectangle: `Esc C-w` | Goto Bookmark: `C-x a`  |                     |
-| Load Session:      | Paste Retangle `Esc C-y` | Goto Line: `Esc g`      |                     |
-| Exit; `C-x C-c`    | Insert File: `C-x C-i`   |                        |                     | 
+| Save: `C-x C-s`    | Cut/Kill Region: `C-w`   | Replace: `Esc r`        | Toolbar: `S-f11`     |
+| Save As: `C-x C-w` | Paste/Yank Region: `C-y` | Set Bookmark: `C-x C-a` | Whitespaces: `f11`   |
+| File Browser: `F10`| Cut Rectangle: `Esc C-w` | Goto Bookmark: `C-x a`  |                      |
+| Load Session       | Paste Rectangle `Esc C-y`| Goto Line: `Esc g`      |                      |
+| Exit: `C-x C-c`    | Insert File: `C-x C-i`   |                         |                      |
+
 </div>
 
 __Hint:__ To  repeat  a  command N times press  `Esc N` and then  enter  the  command,  for
 example, do the following:
 
 - `Esc 15 C-x u` - undo the last 15 editing steps
-- `Esc 10 Down` - go 10 lines down
 - `Esc 10 Esc x redo  ENTER` - redo the last 10  editing  steps
+- `Esc 10 Down` - go 10 lines down
 
 __Text selection:__  `Ctrl-Space` to start then cursor keys, `Esc w` to copy and `C-y` to yank/paste.
 
@@ -73,12 +75,12 @@ __Further menu points with most important commands:__
 <div class="compact">
 
 | Format              | Tools              | Advanced           | Window            | Help                   |
-|:-----------------------|:-------------------|:----------------|:------------------|:-----------------------|
+|:--------------------|:-------------------|:-------------------|:------------------|:-----------------------|
 | Incr Indent         | Spell Word: `esc $`| Rec Mac:  `C-x (`  | Split WV:`C-x 2`  | General H: `Esc ?`     |
 | Decr Indent         | Spell Buffer: `f7` | End Mac:   `C-x )` | Split WH: `C-x 3` | List Bnd:  `C-h b`     |
 | Fill Para: `Esc q`  | Diff               | Exec Mac: `C-x e`  | One W:    `C-x 1` | List Buffs: `C-x C-b`  |
 | Tabs to Spaces      | Graphical Diff     | Exec Cmd: `Esc x`  | Delete W: `C-x 0` | Descr Key: `C-h k`     |
-|                     | User Setup         | Notes:       `f8`  | Prev W: `C-x p`   | Help  Cmd: `C-h C-c`   |
+| Clean Buffer        | User Setup         | Notes:       `f8`  | Prev W: `C-x p`   | Help  Cmd: `C-h C-c`   |
 |                     | Buffer Setup       | File Tools         | Next W:  `C-x o`  | About ME               |
 |                     | Scheme Editor      | Ipipe: `Esc \`     |                   |                        |
 </div>
@@ -88,35 +90,37 @@ __Other important commands / shortcuts:__
 | Important                     | Navigation                 | Deletion                          |
 |-------------------------------|:---------------------------|:----------------------------------|
 | 655360 osd (__menu__): `Esc =`| beginning-of-line: `C-a`   | forward-delete-char: `C-d`        |
-| execute-named-command: `Esc x`| end-of-line: `C-e`         | backward-delete-char: `backspace` |
-| abort-command: `C-g`          | forward-char: `C-f`        | forward-kill-word: `Esc-d`        |
-| list-commands: `C-h c`        | forward-word: `Esc f`      | kill-line (rest): `C-k`           |
-| help-command: `C-h C-c`       | backward-char: `C-b`       | delete-buffer: `C-x k`            |
-| describe-bindings: `C-h b`    | backward-word: `Esc b`     | kill-region: `C-w`                |
-| suspend-emacs (mec): `C-c z`  | occur (list): `S-f6`       | delete-window (current): `C-x 0`  |
-| help: `Esc x help`            | item-list (outline)        | delete-other-windows `C-x 1`      |
-
+| execute-named-command:        | end-of-line: `C-e`         | backward-delete-char: `backspace` |
+| `Esc x`                       | forward-char: `C-f`        | forward-kill-word: `Esc-d`        |
+| abort-command: `C-g`          | forward-word: `Esc f`      | backward-kill-word: `Esc backsp`  |
+| list-commands: `C-h c`        | backward-char: `C-b`       | kill-line (rest): `C-k`           |
+| help-command: `C-h C-c`       | backward-word: `Esc b`     | delete-buffer: `C-x k`            |
+| describe-bindings: `C-h b`    | occur (list): `S-f6`       | kill-region: `C-w`                |
+| suspend-emacs (mec): `C-c z`  | item-list (code outline)   | delete-window (current): `C-x 0`  |
+| help: `Esc x help`            | abbrev-list                | delete-other-windows `C-x 1`      |  
 
 __MicroEmacs Files:__
 
 <div class="noth">
 
-| &nbsp;                       | &nbsp;                   | &nsbp;                       |
-|:-----------------------------|--------------------------|:-----------------------------|
-| Abbreviation Files `*.eaf`   | Help File `me.ehf`       | Registry File `USERNAME.erf` |
-| Dictionary Files `*.edf`     | Macro Files `*.emf`      | Session Files `*.esf`        |
-| Favorite File `USERNAME.eff` | User File `USERNAME.emf` | Template Files `*.etf`       |
+| &nbsp;                        | &nbsp;                    | &nsbp;                        |
+|:------------------------------|:--------------------------|:------------------------------|
+| Abbreviation Files: `*.eaf`   | Help File: `me.ehf`       | Registry File: `USERNAME.erf` |
+| Dictionary Files: `*.edf`     | Macro Files: `*.emf`      | Session Files: `*.esf`        |
+| Favorite File: `USERNAME.eff` | User File: `USERNAME.emf` | Template Files: `*.etf`       |
+
 </div>
 
 __USERNAME.emf__
 
-The user can  configure  specific key bindings,  abbreviation  files, and file
-extension  mappings within its `USERNAME.emf`  file, which is usually based on
-the  username  on the  current  machine,  but could be switched as well giving
-options  like  `MEUSERNAME=test`  on the command  line. Here an example for an
-user called `kiosk-user` which adds the file extension .Tmd to be edited using
-Markdown mode, declares a global  abbreviation  file  kiosk-user.eaf  and then
-binds the key combination `C-x t` to the insert-template command.
+The  user can  configure  specific  key  bindings,  abbreviation  files,  file
+extension  mappings and short self written  macros  within its  `USERNAME.emf`
+file, which is usually based on the username on the current machine, but could
+be switched as well giving options like `MEUSERNAME=test` on the command line.
+Here an example for an user called  `kiosk-user` which adds the file extension
+.Tmd to be edited using  Markdown  mode, declares a global  abbreviation  file
+kiosk-user.eaf   and  then   binds  the  key   combination   `C-x  t`  to  the
+insert-template command.
 
 ```
 ; file ~/.config/jasspa/kiosk-user.emf
@@ -152,12 +156,13 @@ content like this:
 
 ```
 DG "Detlef Groth, University of Potsdam, Germany
-UP "Universty of Potsdam
+UP "University of Potsdam
 br "best regards,\rDetlef Groth"
+JML "[Jasspa MicroEmacs Text Editor](https://github.com/bjasspa/jasspa)"
 ```
 
 Hint: You can reload the abbreviation file within the current editor session
-after saving it by using the following keys: 
+after saving it by using the following keys:
 
 `Esc 0 Esc x global-abbreviation-file<ENTER>kiosk-user<ENTER>`
 
@@ -203,9 +208,9 @@ Here an example how you can index  existing  True Type fonts which are already
 on your system  installed by the package  manager.  Recommended  fonts are for
 example,  liberation-mono and dejavu-sans-mono as they come with a lot of font
 encodings and they are quite visually appealing.
- 
+
 ```bash
-### check installable mono fonts 
+### check installable mono fonts
 ### Fedora
 ### sudo dnf search mono-fonts | less
 ### sudo dnf install gnu-free-mono-fonts cascadia-mono-fonts dejavu-sans-mono-fonts
@@ -241,7 +246,7 @@ To install other fonts like Ubuntu Mono you can do the following:
 cd ~/.local/share/fonts
 BURL="https://github.com/braver/programmingfonts/raw/gh-pages/fonts/resources/ubuntu/"
 wget "${BURL}/ubuntu-bold.ttf -O ubuntu-mono-bold.ttf
-wget "${BURL}/ubuntu.ttf    -O ubuntu-mono-medium.ttf    
+wget "${BURL}/ubuntu.ttf    -O ubuntu-mono-medium.ttf
 wget "{BURL}/license.txt -O ubuntu-license.txt
 mkfontscale .
 mkfontdir .
@@ -254,11 +259,11 @@ To check the fontpath you can as well add this to your .bashrc configuration:
 ### end of .bashrc
 alias mfontsel="xfontsel -pattern '*-r-*-m-*' -scaled"
 if [ "$DISPLAY" != "" ]; then
-   if [ "`xset q | grep .local/share/fonts`" == "" ]; then 
+   if [ "`xset q | grep .local/share/fonts`" == "" ]; then
      xset +fp ~/.local/share/fonts
      set fp rehash
    fi
-fi   
+fi
 ```
 
 For   more   information   on   adding   other   fonts   have   a   look   at:
