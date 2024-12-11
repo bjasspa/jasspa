@@ -1,4 +1,4 @@
-## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-10 18:17
+## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-11 09:05
 
 Homepage: [https://github.com/bjasspa/jasspa](https://github.com/bjasspa/jasspa)
 Help pages: [https://bjasspa.github.io/jasspa/](https://bjasspa.github.io/jasspa/)
@@ -164,7 +164,7 @@ JML "[Jasspa MicroEmacs Text Editor](https://github.com/bjasspa/jasspa)"
 Hint: You can reload the abbreviation file within the current editor session
 after saving it by using the following keys:
 
-`Esc 0 Esc x global-abbreviation-file<ENTER>kiosk-user<ENTER>`
+`Esc 0 Esc x global-abbreviation-file<ENTER>`
 
 MicroEmacs comes for many programming and markup languages already with buffer
 specific  abbreviation  files. To see what abbreviations are available you can
@@ -180,31 +180,43 @@ the macros directory to your personal config folder and modify that file.
 ## Templates
 
 Templates  are files which are usually used to insert  larger  chunks of text,
-for instance to start a new application. User defined  templates have the filew
-extension "*.etf" and should be placed in the folder  `~/.config/jasspa/HOOK/`
-where HOOK is the filehook for which the should be used like  "python", "r" or
-"md" (Markdown).
+for  example,  to start a new  application  using a template  for the  current
+programming language you are coding. User defined  templates have the file
+extension  ".etf"  and user  defined  ones  should  be  placed  either in the  folder
+_~/config/jasspa/default_  for generic  templates  like License  files or user
+addresses which are not defined as abbreviations, or in file type specific folders named _~/.config/jasspa/HOOK/_
+where HOOK is the file hook for which they  should be used. For  example  like
+_~/.config/jasspa/python_, _.../r_ (R file templates) or _.../md_ (Markdown file
+templates).
 
-## Macros and Macro Recording
+The following  place holders which are used for  replacement  of text in these
+templates or for  inserting the cursor are defined:  _$CURSOR$_,  _$FILE_NAME$_,
+_$USER$_, _$YEAR$_ - for more see _`C-h C-c insert-template`_.
+
+## Macro Recording
 
 MicroEmacs  can be  extended  using  self  written  or  recorded  macros.  For
 beginners  it might be easier to record key  sequences  and replay them later.
 The steps to do this are as follows:
 
-Press  the keys  `C-x (` and then do your  editing  steps,  you then  stop the
-recording  with `C-x )`. Thereafter you can re-execute the last recorded macro
-with `C-x e`. You can as well save the executed macro with a name then with the `save-kbd-macro` command.
+- press  the keys  `C-x (`
+- do your  editing  steps using only your keyboard
+- stop recording with `C-x )`
+
+Thereafter you can re-execute the last recorded macro with `C-x e`. To redo it
+ten  times for  instance  your can do `Esc 10 C-x e`. You can as well save the
+executed macro with a name then with the `save-kbd-macro` command.
 
 <div style="page-break-after: always"> </div>
 
 ## &nbsp;
 
-### Installation of True Type Fonts for X11
+### Installation of TrueType Fonts for X11 for mew/mesw
 
-For the GUI version additional TrueType Font installations on X systems (MacOS with
-[XQuartz](https://www.xquartz.org/)  or Linux  with [X11](https://www.x.org) or  [XWayland]()  improve
-the visual  display and ISO  encodings  usage.
-Here an example how you can index  existing  True Type fonts which are already
+For the GUI version (mew/mesw) additional TrueType Font installations on X systems (MacOS with
+[XQuartz](https://www.xquartz.org/)  or Linux  with [X11](https://www.x.org) or  XWayland)  improve
+the visual  display and Windows code pages or the ISO-8859  encodings  usage.
+Here an example how you can index  existing  TrueType fonts which are already
 on your system  installed by the package  manager.  Recommended  fonts are for
 example,  liberation-mono and dejavu-sans-mono as they come with a lot of font
 encodings and they are quite visually appealing.
@@ -227,7 +239,7 @@ mkfontscale ~/.local/share/fonts/
 mkfontdir ~/.local/share/fonts
 xset +fp ~/.local/share/fonts
 xset fp rehash
-alias mfontscale="LC_ALL=C xfontsel -pattern '*-r-*-m-*' -scaled"
+alias mfontsel="LC_ALL=C xfontsel -pattern '*-r-*-m-*' -scaled"
 ```
 
 You can check the installed  fonts then with the tool `xfontsel`.  Default for
@@ -245,9 +257,9 @@ To install other fonts like Ubuntu Mono you can do the following:
 ```bash
 cd ~/.local/share/fonts
 BURL="https://github.com/braver/programmingfonts/raw/gh-pages/fonts/resources/ubuntu/"
-wget "${BURL}/ubuntu-bold.ttf -O ubuntu-mono-bold.ttf
-wget "${BURL}/ubuntu.ttf    -O ubuntu-mono-medium.ttf
-wget "{BURL}/license.txt -O ubuntu-license.txt
+wget ${BURL}/ubuntu-bold.ttf -O ubuntu-mono-bold.ttf
+wget ${BURL}/ubuntu.ttf    -O ubuntu-mono-medium.ttf
+wget ${BURL}/license.txt -O ubuntu-license.txt
 mkfontscale .
 mkfontdir .
 xset fp rehash
@@ -266,5 +278,5 @@ if [ "$DISPLAY" != "" ]; then
 fi
 ```
 
-For   more   information   on   adding   other   fonts   have   a   look   at:
+For   more   information  and for  adding   other   fonts:
 [https://github.com/mittelmark/x11-ttf-fonts](https://github.com/mittelmark/x11-ttf-fonts)
