@@ -3,7 +3,7 @@
 ;  Author        : Detlef Groth, University of Potsdam, Germany
 ;  Created By    : Detlef Groth
 ;  Created       : Wed Dec 4 17:39:58 2024
-;  Last Modified : <241206.1319>
+;  Last Modified : <241212.0729>
 ;
 ;  Description   : functions useful to be used for R development
 ;
@@ -23,7 +23,11 @@ define-macro r-format
       save-buffer 
     !endif
   !endif 
-  2 pipe-shell-command &spr "Rscript -e 'formatR::tidy_file(\"%s\")'" $buffer-fname "*command*"
+  set-variable #l0 &reg &spr "/history/%s/char-set" %platform ""
+  set-variable #l0 &xre #l0 "iso" "ISO-" #l0
+  set-variable #l0 &xre #l0 "cp" "CP" #l0    
+  set-variable #l0 &xre #l0 "microsoft-" "" #l0        
+  2 pipe-shell-command &spr "Rscript  -e 'options(\"encoding\"=\"%s\");formatR::tidy_file(\"%s\")'" #l0 $buffer-fname "*command*"
   !if &equ $result 1
     ml-write "Error: It seems that R package formatR is not installed!"
   !else
@@ -98,17 +102,21 @@ available by placing the following line into your `~/.config/jasspa/myr.emf` fil
 
 define-macro r-lint
   !force set-variable #l1 .lint
-  !if &seq #l1 "ERROR"
-    set-variable .lint "Rscript -e 'library(lintr);lintr::lint(\"%s\",linters = linters_with_defaults( indentation_linter = indentation_linter(indent = 4L) ))'"
+  set-variable #l0 &reg &spr "/history/%s/char-set" %platform ""
+  set-variable #l0 &xre #l0 "iso" "ISO-" #l0
+  set-variable #l0 &xre #l0 "cp" "CP" #l0    
+  set-variable #l0 &xre #l0 "microsoft-" "" #l0        
+  ;!if &seq #l1 "ERROR"
+    set-variable .lint "Rscript -e 'options(\"encoding\"=\"%s\");library(lintr);lintr::lint(\"%s\",linters = linters_with_defaults( indentation_linter = indentation_linter(indent = 4L) ))'" #l0
     set-variable #l1 .lint
-  !endif
+  ;!endif
   !if &bmod "edit"
-    set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-    !if &iseq #l0 "y" 
+    set-variable #l2 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+    !if &iseq #l2 "y" 
       save-buffer 
     !endif
   !endif 
-  2 pipe-shell-command &spr #l1 $buffer-fname "*lintr*"
+  2 pipe-shell-command &spr #l1 #l0 $buffer-fname "*lintr*"
   !if &equ $result 1
     ml-write "Error: It seems that R package lintr is not installed!"
   !else
