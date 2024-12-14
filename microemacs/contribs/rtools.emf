@@ -3,7 +3,7 @@
 ;  Author        : Detlef Groth, University of Potsdam, Germany
 ;  Created By    : Detlef Groth
 ;  Created       : Wed Dec 4 17:39:58 2024
-;  Last Modified : <241214.2139>
+;  Last Modified : <241214.2155>
 ;
 ;  Description   : functions useful to be used for R development
 ;
@@ -203,15 +203,15 @@ available by placing the following line into your `~/.config/jasspa/myr.emf` fil
 
 define-macro r-rscript
   !force set-variable #l0 %rscript-com
-  ;set-variable $file-names "/home/dgroth/.local/share/fonts/*"
   !if &and &seq #l0 "ERROR" &not &seq $platform "windows"
-    !if &which "Rscript"
-    set-variable %rscript-com "Rscript"
+    !if &not &seq &which "Rscript" ""
+      set-variable %rscript-com "Rscript"
+    !endif
   !else 
     set-variable $file-names "C:/Program Files/R/R-.*"
     !while &not &seq &set #l0 $file-names ""
-      !if &xse #l0 "R-[3-9]-[0-9].[0-9].+"
-        set-variable %rscript-com &spr "\"C:/Program Files/R/%s/bin/Rscript.exe\"" #l0
+      !if &xse #l0 "R-[3-9].[0-9].[0-9].+"
+        set-variable %rscript-com &spr "\"C:/Program Files/R/%sbin/Rscript.exe\"" #l0
       !endif
     !done
   !endif
@@ -219,7 +219,7 @@ define-macro r-rscript
     1000 ml-write &spr "Error: Executable '%s' is not in the path! Please install it!" %rscript-com
     !abort
   !else
-    ml-write "all fine"
+    ml-write &spr "OK: Executable is '%s'!" %rscript-com
   !endif
 !emacro
 
