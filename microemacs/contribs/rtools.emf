@@ -3,7 +3,7 @@
 ;  Author        : Detlef Groth, University of Potsdam, Germany
 ;  Created By    : Detlef Groth
 ;  Created       : Wed Dec 4 17:39:58 2024
-;  Last Modified : <241214.1638>
+;  Last Modified : <241214.2139>
 ;
 ;  Description   : functions useful to be used for R development
 ;
@@ -201,22 +201,26 @@ available by placing the following line into your `~/.config/jasspa/myr.emf` fil
 
 !ehelp
 
-0 define-macro r-rscript
+define-macro r-rscript
   !force set-variable #l0 %rscript-com
   ;set-variable $file-names "/home/dgroth/.local/share/fonts/*"
-  !if &seq #l0 "ERROR"
+  !if &and &seq #l0 "ERROR" &not &seq $platform "windows"
+    !if &which "Rscript"
     set-variable %rscript-com "Rscript"
+  !else 
+    set-variable $file-names "C:/Program Files/R/R-.*"
+    !while &not &seq &set #l0 $file-names ""
+      !if &xse #l0 "R-[3-9]-[0-9].[0-9].+"
+        set-variable %rscript-com &spr "\"C:/Program Files/R/%s/bin/Rscript.exe\"" #l0
+      !endif
+    !done
   !endif
-  ; TODO: 
-  ; - Windows check for set-variable $file-names "c:/Program File/R/*"
-  ; - then check for bin/x64/Rscript.exe file
   !if &seq &which %rscript-com ""
     1000 ml-write &spr "Error: Executable '%s' is not in the path! Please install it!" %rscript-com
     !abort
   !else
     ml-write "all fine"
   !endif
-  
 !emacro
 
 ; execute a R file using Rscript executable directly from MicroEmacs using the current
@@ -278,3 +282,4 @@ available by placing the following line into your `~/.config/jasspa/myr.emf` fil
 [r(9)](r\(9\)), [r-doc(3)](r-doc\(3\)), [r-format(3)](r-format\(3\)), [r-lint(3)](r-lint\(3\)).
 
 !ehelp
+
