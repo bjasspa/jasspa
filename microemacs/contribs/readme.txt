@@ -112,11 +112,15 @@ pytools.emf
          of errors
        - py-format - formatting Python code using yapf or black
        - py-lint   - linting Pythoncode using pylint
+       
        Install:  copy  the  file  `pytools.emf`  to your  jasspa  user  folder
        (usually   `~/.config/jasspa`  and  add  the  following  line  to  your
        `username.emf` or your `mypython.emf` file.
        
        define-macro-file pytools py-doc py-exec py-format py-lint
+
+       All functions have documented help pages which you can show using the 
+       `help-command`.
 
 rtools.emf
 
@@ -126,11 +130,15 @@ rtools.emf
        - r-exec - Running the current R script optional with command line arguments
        - r-format - formatting R code using `formatR` library
        - r-lint   - linting R code using `lintr` library
+       
        Install:  copy  the  file  `rtools.emf`  to your  jasspa  user  folder
        (usually   `~/.config/jasspa`  and  add  the  following  line  to  your
        `username.emf` or your `myr.emf` file.
        
        define-macro-file rtools r-exec r-format r-lint
+       
+       All functions have documented help pages which you can show using the 
+       `help-command`.
      
 jeany.emf
 
