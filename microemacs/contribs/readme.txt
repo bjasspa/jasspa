@@ -103,16 +103,35 @@ hkgroovy.emf
         Groovy Language Template
         http://groovy.codehaus.org
 
-hkpydoc.emf
+pytools.emf
 
-       Support for display of Python documentation within MicroEmacs.
-       Used as `pydoc  "manualpage"` like `Esc x` "pydoc" and then entering "argparse"
-       for instance in the command line.
-       Install:  copy  the  file  `hkpydoc.emf`  to your  jasspa  user  folder
-       (usually `~/.config/jasspa`  and add the following line to your `username.emf` file:
+       - py-doc - Support for display of Python documentation within MicroEmacs.
+         Used as `py-doc  "manualpage"` like `Esc x` "py-doc" and then entering "argparse"
+         for instance in the command line.
+       - py-exec - Running the current Python script and interactive  browsing
+         of errors
+       - py-format - formatting Python code using yapf or black
+       - py-lint   - linting Pythoncode using pylint
+       Install:  copy  the  file  `pytools.emf`  to your  jasspa  user  folder
+       (usually   `~/.config/jasspa`  and  add  the  following  line  to  your
+       `username.emf` or your `mypython.emf` file.
        
-       define-macro-file hkpydoc pydoc       
+       define-macro-file pytools py-doc py-exec py-format py-lint
 
+rtools.emf
+
+       - r-doc - Support for display of R documentation within MicroEmacs and browse
+         it  interactively  using mouse or keyboard - now in ME macros  folder
+         within hk.r file
+       - r-exec - Running the current R script optional with command line arguments
+       - r-format - formatting R code using `formatR` library
+       - r-lint   - linting R code using `lintr` library
+       Install:  copy  the  file  `rtools.emf`  to your  jasspa  user  folder
+       (usually   `~/.config/jasspa`  and  add  the  following  line  to  your
+       `username.emf` or your `myr.emf` file.
+       
+       define-macro-file rtools r-exec r-format r-lint
+     
 jeany.emf
 
       CUA like  bindings but after the C-j prefix, so C-j C-x is cut, C-j -C-v
