@@ -3,7 +3,7 @@
 ;  Author        : Detlef Groth, University of Potsdam, Germany
 ;  Created By    : Detlef Groth
 ;  Created       : Wed Dec 4 17:39:58 2024
-;  Last Modified : <241212.0729>
+;  Last Modified : <241214.1301>
 ;
 ;  Description   : functions useful to be used for R development
 ;
@@ -33,24 +33,6 @@ define-macro r-format
   !else
     0 reread-file
   !endif
-!emacro
-
-0 define-macro r-rscript
-  !force set-variable #l0 %rscript-com
-  ;set-variable $file-names "/home/dgroth/.local/share/fonts/*"
-  !if &seq #l0 "ERROR"
-    set-variable %rscript-com "Rscript"
-  !endif
-  ; TODO: 
-  ; - Windows check for set-variable $file-names "c:/Program File/R/*"
-  ; - then check for bin/x64/Rscript.exe file
-  !if &seq &which %rscript-com ""
-    1000 ml-write &spr "Error: Executable '%s' is not in the path! Please install it!" %rscript-com
-    !abort
-  !else
-    ml-write "all fine"
-  !endif
-  
 !emacro
 
 define-help "r-format" "3"
@@ -96,7 +78,7 @@ available by placing the following line into your `~/.config/jasspa/myr.emf` fil
     
 ## SEE ALSO
 
-[r(9)](r\(9\)), [r-doc(3)](r-doc\(3\)) and [r-lint(3)](r-lint\(3\)).
+[r(9)](r\(9\)), [r-doc(3)](r-doc\(3\)), [r-exec(3)](r-exec\(3\)) and [r-lint(3)](r-lint\(3\)).
 
 !ehelp
 
@@ -214,7 +196,84 @@ available by placing the following line into your `~/.config/jasspa/myr.emf` fil
     
 ## SEE ALSO
 
-[r(9)](r\(9\)), [r-doc(3)](r-doc\(3\)) and [r-format(3)](r-lint\(3\)).
+[r(9)](r\(9\)), [r-doc(3)](r-doc\(3\)), [r-exec(3)](r-exec\(3\)) and [r-format(3)](r-format\(3\)).
 
 !ehelp
 
+0 define-macro r-rscript
+  !force set-variable #l0 %rscript-com
+  ;set-variable $file-names "/home/dgroth/.local/share/fonts/*"
+  !if &seq #l0 "ERROR"
+    set-variable %rscript-com "Rscript"
+  !endif
+  ; TODO: 
+  ; - Windows check for set-variable $file-names "c:/Program File/R/*"
+  ; - then check for bin/x64/Rscript.exe file
+  !if &seq &which %rscript-com ""
+    1000 ml-write &spr "Error: Executable '%s' is not in the path! Please install it!" %rscript-com
+    !abort
+  !else
+    ml-write "all fine"
+  !endif
+  
+!emacro
+
+; execute a R file using Rscript executable directly from MicroEmacs using the current
+; ISO or Windows encodings
+define-macro r-exec
+  !if &bmod "edit"
+    set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+    !if &iseq #l0 "y" 
+      save-buffer 
+    !endif
+  !endif 
+  ; command line arguments
+  set-variable #l1 ""
+  !if @?
+    set-variable #l1 @ml "Add command line arguments" 
+  !endif
+  set-variable #l0 &reg &spr "/history/%s/char-set" %platform ""
+  set-variable #l0 &xre #l0 "iso" "ISO-" #l0
+  set-variable #l0 &xre #l0 "cp" "CP" #l0    
+  set-variable #l0 &xre #l0 "microsoft-" "" #l0        
+  0 pipe-shell-command &spr "Rscript  --encoding=%s %s %s" #l0 $buffer-fname #l1 "*command*"
+!emacro
+
+define-help "r-exec" "3"
+## NAME
+
+__r-exec__ - executes the current R script with or without command line arguments
+$a
+
+## SYNOPSIS
+
+_n_ __r-exec__   
+
+## DESCRIPTION
+
+The __r-exec__ macro executed the currently edited file using the Rscript command line
+interpreter. If any numeric argument is given before calling the script, then the user
+is asked for command line arguments which should be given on the message line.
+
+After executing the macro a popup-window (`*command*`) displays the results of the script
+execution. The script executes the R file using the current character encodings.
+
+
+## NOTES
+
+The __r-exec__ macro is implemented in the file _rtools.emf_ which is currently 
+placed in the `microemacs/contribs` project folder. For installation copy that 
+file into your user-path folder - usually `~/.config/jasspa` and make the macro
+available by placing the following line into your `~/.config/jasspa/myr.emf` file.
+
+```{.emf}
+    ; within myr.emf add this line 
+    ; or extend the rtools line
+    define-macro-file rtools r-exec
+```
+    
+## SEE ALSO
+
+[r(9)](r\(9\)), [r-doc(3)](r-doc\(3\)), [r-format(3)](r-format\(3\)), [r-lint(3)](r-lint\(3\)).
+
+!ehelp
