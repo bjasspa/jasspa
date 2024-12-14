@@ -3,7 +3,7 @@
 ;  Author        : Detlef Groth, University of Potsdam, Germany
 ;  Created By    : Detlef Groth
 ;  Created       : Wed Dec 4 17:39:58 2024
-;  Last Modified : <241214.1301>
+;  Last Modified : <241214.1638>
 ;
 ;  Description   : functions useful to be used for R development
 ;
@@ -88,10 +88,10 @@ define-macro r-lint
   set-variable #l0 &xre #l0 "iso" "ISO-" #l0
   set-variable #l0 &xre #l0 "cp" "CP" #l0    
   set-variable #l0 &xre #l0 "microsoft-" "" #l0        
-  ;!if &seq #l1 "ERROR"
+  !if &seq #l1 "ERROR"
     set-variable .lint "Rscript -e 'options(\"encoding\"=\"%s\");library(lintr);lintr::lint(\"%s\",linters = linters_with_defaults( indentation_linter = indentation_linter(indent = 4L) ))'" #l0
     set-variable #l1 .lint
-  ;!endif
+  !endif
   !if &bmod "edit"
     set-variable #l2 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
     !if &iseq #l2 "y" 
@@ -164,7 +164,8 @@ The __r-lint__ macro checks the currently edited file using the R package
 After executing the macro a popup-window (`*lintr*`) displays the warning
 messages of the linter package, the user can click on the hilighted lines
 showing  warnings and jump directly to the problematic line. The same can
-be achieved by pressing th eENTER key on the hilighted line.
+be achieved by pressing th ENTER key on the hilighted line without using
+a mouse.
 
 Setting the variable _.r-lint.lint_ allows you to customize the linter settings.
 

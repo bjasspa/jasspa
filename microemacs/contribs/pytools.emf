@@ -1,0 +1,405 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Created By    : Detlef Groth, University of Potsdam
+;  Author        : Detlef Groth, University of Potsdam
+;  Created       : Wed Sep 25 15:42:35 2024
+;  Last Modified : <241214.1813>
+;
+;  Description   : Documentation viewer within MicroEmacs for
+;                  Python  supporting section folding item-list navigation
+;                  and some highlighting of sections and class names
+;
+;  Notes         : to install the pydoc macro, copy this file to user jasspa folder
+;                  usually ~/.config/jasspa and add the following line to your 
+;                  USERNAME.emf file:
+;
+;                  define-macro-file hkpydoc py-doc py-lint
+;
+;  History       : 2024-09-25 initial version
+;                  2024-10-10 hints on installation
+;                  2024-12-14 moved from hkpydoc.emf renamed to pytools.emf
+;                             macro pydoc renamed to py-doc
+;                             adding macro py-lint
+;                             adding macro py-format
+;
+;  Copyright (c) 2024 Detlef Groth.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2024 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+
+
+define-macro fhook-py-doc
+  @# buffer-init "py-doc"
+  buffer-init-hooks
+!emacro
+
+; buffer-init variables
+set-variable .fhook-py-doc.name "py-doc"
+set-variable .fhook-py-doc.setup &reg "/history/fhook/py-doc" "acfhmw"
+set-variable .fhook-py-doc.setup-mask "acfhmw"
+
+!if &and &sin "h" .fhook-py-doc.setup &band .hilight.flags 0x02
+  !iif &not &exi .hilight.py-doc  set-variable .hilight.py-doc &pinc .hilight.next 1
+  0 hilight .hilight.py-doc 0                   .scheme.text
+  hilight .hilight.py-doc  2    "^[A-Z].+"       .scheme.header
+  hilight .hilight.py-doc  2    "^    class"     .scheme.keyword
+!endif
+
+!if &sin "f" .fhook-py-doc.setup
+  ; setup emf collapsing
+  set-variable .fhook-py-doc.collapse-open  "^[A-Z]"
+  set-variable .fhook-py-doc.collapse-close "^\\([A-Z]\\|\\'\\)"
+  set-variable .fhook-py-doc.collapse-mnext "-1"
+!endif
+; setup item-list
+set-variable .fhook-py-doc.item-list-s1 "^\\([A-Z][A-Z]\.+\\)"
+set-variable .fhook-py-doc.item-list-r1 "SECT \ecB\\1\ecA"
+set-variable .fhook-py-doc.item-list-s2 "^    class +\\([^(]+\\)"
+set-variable .fhook-py-doc.item-list-r2 "  class \ecB\\1\ecA"
+
+define-macro py-doc
+  !force set-variable #l0 @1
+  !if &not $status
+    set-variable #l0 @ml00 "Python help on"
+  !endif
+  0 pipe-shell-command &spr "LANG=en_US pydoc %s" #l0 "*py-doc*"
+  -1 buffer-mode "view"
+  beginning-of-buffer
+  3 kill-line
+  beginning-of-buffer
+  1 buffer-mode "view"
+
+  !if &band $system 0x01
+    ; some terminals might need this
+    screen-update
+  !endif
+!emacro    
+
+add-file-hook "*py-doc*" fhook-py-doc
+buffer-init-fhook "py-doc"
+
+define-help "py-doc" "3"
+## NAME
+
+__py-doc__ - display Python function, module or package documentation
+
+$a
+
+## SYNOPSIS
+
+__py-doc__ ["manualpage"]
+
+## DESCRIPTION
+
+The __py-doc__ macro asks the user for Python manual page and then displays the 
+appropriate manual page in a buffer *py-doc* which provides hilighting for the 
+section headers and the classes and folding support for them. Further you can use
+the [item-list(3)](item-list\(3\)) command to browse the content using the outline
+shown in the _item-list_ buffer.
+
+## EXAMPLE
+
+Here an example to display the "argparse" package documentation and open an 
+_item-list_ buffer for easy navigation.
+
+
+```{emf}
+    py-doc "argparse"
+    find-buffer "*py-doc*"
+    beginning-of-buffer
+    item-list
+```
+
+
+## NOTES
+
+The __py-doc__ macro is implemented in the file _hkpy-doc.emf_ which is currently 
+placed in the `microemacs/contribs` project folder. For installation copy that file into your user-path 
+folder - usually `~/.config/jasspa` and make the macro available by placing the 
+following line into your `~/.config/jasspa/USERNAME.emf` file.
+
+## SEE ALSO
+
+[py(0)](py\(9\)), [py-format(3)](py-format\(3\)), [py-exec(3)](py-exec\(3\)) and [py-lint(3)](py-lint\(3\)).
+
+!ehelp
+
+define-macro py-format
+  !if &bmod "edit"
+    set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+    !if &iseq #l0 "y" 
+      save-buffer 
+    !endif
+  !endif 
+  !force set-variable #l1 .format
+  !if &seq #l1 "ERROR"
+    !if &and &seq &which "yapf" "" &seq &which "black" ""
+      ml-write "Error: You must have either the black or the yapf formatter installed!"
+      !abort
+    !endif  
+    !if &and &seq #l1 "ERROR" &not &seq &which "yapf" ""
+      set-variable .format "yapf -i"
+    !else 
+      set-variable .format "black -q"
+    !endif
+    set-variable #l1 .format
+  !endif
+  2 pipe-shell-command &spr "%s %s" #l1 $buffer-fname "*command*"
+  !if &equ $result 1
+    ml-write "Error: It seems that python linters yapf or black are not installed!"
+  !else
+    0 reread-file
+  !endif
+!emacro
+
+define-help "py-format" "3"
+## NAME
+
+__py-format__ - format an R script file using the R package formatR
+$a
+
+## SYNOPSIS
+
+__py-format__  
+
+## DESCRIPTION
+
+The __py-format__ macro formats the currently edited file using one of the
+Python formatters either `yapf` or `black`.
+
+You can usually install these application using your systems package manager 
+or using the pip package manager.
+
+## EXAMPLE
+
+Here an example to format the currently edited Python script file.
+
+```{.emf}
+    ; during editing an R file press Esc x and then write
+    py-format
+    ; and then press the ENTER key
+```
+
+
+## NOTES
+
+The __py-format__ macro is implemented in the file _pytools.emf_ which is currently 
+placed in the `microemacs/contribs` project folder. For installation copy that 
+file into your user-path folder - usually `~/.config/jasspa` and make the macro
+available by placing the following line into your `~/.config/jasspa/mypython.emf` file.
+
+```{.emf}
+    ; within mypython.emf add this line 
+    ; or extend an existing pytools line
+    define-macro-file pytools py-format
+```
+    
+## SEE ALSO
+
+[py(9)](py\(9\)), [py-doc(3)](py-doc\(3\)), [py-exec(3)](py-exec\(3\)) and [py-lint(3)](py-lint\(3\)).
+
+!ehelp
+
+define-macro fhook-py-lint
+  buffer-init-hooks
+!emacro
+
+define-macro py-lint
+  !if &bmod "edit"
+    set-variable #l2 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+    !if &iseq #l2 "y" 
+      save-buffer 
+    !endif
+  !endif 
+  !force set-variable #l0 .lint
+  !if &seq #l0 "ERROR"
+    set-variable #l0 "pylint %s"
+    set-variable .lint #l0
+  !endif
+  2 pipe-shell-command &spr #l0 $buffer-fname "*pylint*"
+  !if &equ $result 1
+    ml-write "Error: It seems that Python package pylint is not installed!"
+  !else
+    set-variable .buffer $buffer-bname
+    next-window-find-buffer "*pylint*"
+    buffer-init "py-lint"
+    set-variable :mouse-word-select py-lint-find-line
+    buffer-bind-create "bio" "return" "0" py-lint-find-line
+  !endif
+!emacro
+
+0 define-macro py-lint-find-line
+  set-variable #l0 @wl
+  !if &xse #l0 "\\(.+\\):\\([0-9]+\\):\\([0-9]+\\):.+"
+    next-window-find-buffer .py-lint.buffer
+    goto-line @s2
+    beginning-of-line
+    @s3 forward-char
+  !else
+    ml-write "Not a error line!"
+  !endif
+!emacro
+
+set-variable .fhook-py-lint.name "Python Lint"
+set-variable .fhook-py-lint.setup &reg "/history/fhook/py-lint" "acfhmw"
+set-variable .fhook-py-lint.setup-mask "acfhmw"
+
+!if &and &sin "h" .fhook-py-lint.setup &band .hilight.flags 0x02
+  !iif &not &exi .hilight.py-lint  set-variable .hilight.py-lint &pinc  .hilight.next 1
+  0 hilight .hilight.py-lint 2 200                                     $global-scheme
+  hilight .hilight.py-lint   0  "[/\\.A-Za-z0-9]+:[0-9]+:[0-9]+:"      .scheme.link  
+!endif
+
+add-file-hook "*pylint*" fhook-py-lint
+
+define-help "py-lint" "3"
+## NAME
+
+__py-lint__       - check a Python script file for possible problems
+_.py-lint.lint_ -  linting command to be executed, default: _pylint_
+$a
+
+## SYNOPSIS
+
+__py-lint__   
+__set-variable__ _.py-lint.lint_ "string"  
+
+## DESCRIPTION
+
+The __py-lint__ macro checks the currently edited file using the Python package
+tool `pylint` which must be installed by the user for instance using the standard
+package manager or using the Python package manager pip like this: 
+
+    pip install pylint
+
+After executing the macro a popup-window (`*pylint*`) displays the warning
+messages of the `pylint` program, the user can click on the hilighted lines
+showing  warnings and jump directly to the problematic line. The same can
+be achieved by pressing th ENTER key on the highlighted line using the keyboard.
+
+Setting the variable _.py-lint.lint_ allows you to customize the linter settings.
+
+## EXAMPLE
+
+Here an example to lint the currently edited R script file.
+
+```{emf}
+    ; by modifying the macro variable .py-lint.lint
+    ; you can add no  standard options to pylint like here
+    set-variable .py-lint.lint "pylint  --docstring-min-length 20 %s"
+    ; during editing an Python file press Esc x and then execute
+    py-lint
+```
+
+
+## NOTES
+
+The __py-lint__ macro is implemented in the file _pytools.emf_ which is currently 
+placed in the `microemacs/contribs` project folder. For installation copy that 
+file into your user-path folder - usually `~/.config/jasspa` and make the macro
+available by placing the following line into your `~/.config/jasspa/mypython.emf` file.
+
+```{.emf}
+    ; within mypython.emf add this line 
+    ; or extend an already existing pytools line
+    define-macro-file pytools py-lint
+```
+    
+## SEE ALSO
+
+[py(9)](py\(9\)), [py-doc(3)](py-doc\(3\)), [py-exec(3)](py-exec\(3\)) and [py-format(3)](py-format\(3\)).
+
+!ehelp
+
+define-macro fhook-py-exec
+  buffer-init-hooks
+!emacro
+
+; execute a Python file directly from MicroEmacs 
+define-macro py-exec
+  !if &bmod "edit"
+    set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+    !if &iseq #l0 "y" 
+      save-buffer 
+    !endif
+  !endif 
+  ; command line arguments
+  set-variable #l1 ""
+  !if @?
+    set-variable #l1 @ml "Add command line arguments" 
+  !endif
+  2 pipe-shell-command &spr "python3 %s %s" $buffer-fname #l1 "*pyexec*"
+  set-variable .buffer $buffer-bname
+  next-window-find-buffer "*pyexec*"
+  buffer-init "py-exec"
+  set-variable :mouse-word-select py-exec-find-line
+  buffer-bind-create "bio" "return" "0" py-exec-find-line
+
+!emacro
+
+0 define-macro py-exec-find-line
+  set-variable #l0 @wl
+  !if &xse #l0 ".+line \\([0-9]+\\),.+"
+    next-window-find-buffer .py-exec.buffer
+    goto-line @s1
+  !else
+    ml-write "Not a error line!"
+  !endif
+!emacro
+
+set-variable .fhook-py-exec.name "Python Exec"
+set-variable .fhook-py-exec.setup &reg "/history/fhook/py-exec" "acfhmw"
+set-variable .fhook-py-exec.setup-mask "acfhmw"
+
+!if &and &sin "h" .fhook-py-exec.setup &band .hilight.flags 0x02
+  !iif &not &exi .hilight.py-exec  set-variable .hilight.py-exec &pinc  .hilight.next 1
+  0 hilight .hilight.py-exec 2 200                                     $global-scheme
+  hilight .hilight.py-exec   0  "  File.*"      .scheme.link  
+!endif
+
+add-file-hook "*pyexec*" fhook-py-exec
+
+define-help "py-exec" "3"
+## NAME
+
+__py-exec__ - executes the current Python script with or without command line arguments
+$a
+
+## SYNOPSIS
+
+_n_ __py-exec__   
+
+## DESCRIPTION
+
+The __py-exec__ macro executed the currently edited file using the python3 command line
+interpreter. If any numeric argument is given before calling the script, then the user
+is asked for command line arguments which should be given on the message line.
+
+After executing the macro a popup-window (`*pyexec*`) displays the results of the script
+execution. The user can click on the hilighted lines showing  warnings and jump directly
+to the problematic line in the source script. The same can be achieved by pressing the
+ENTER key on the highlighted line using the keyboard.
+
+## NOTES
+
+The __py-exec__ macro is implemented in the file _pytools.emf_ which is currently 
+placed in the `microemacs/contribs` project folder. For installation copy that 
+file into your user-path folder - usually `~/.config/jasspa` and make the macro
+available by placing the following line into your `~/.config/jasspa/mypython.emf` file.
+
+```{.emf}
+    ; within mypython.emf add this line 
+    ; or extend an already existing pytools line
+    define-macro-file pytools py-exec
+```
+    
+## SEE ALSO
+
+[py(9)](py\(9\)), [py-doc(3)](py-doc\(3\)), [py-format(3)](py-format\(3\)), [py-lint(3)](py-lint\(3\)).
+
+!ehelp
+
