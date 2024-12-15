@@ -3,7 +3,7 @@
 ;  Author        : Detlef Groth, University of Potsdam, Germany
 ;  Created By    : Detlef Groth
 ;  Created       : Wed Dec 4 17:39:58 2024
-;  Last Modified : <241214.2155>
+;  Last Modified : <241215.0611>
 ;
 ;  Description   : functions useful to be used for R development
 ;
@@ -23,13 +23,16 @@ define-macro r-format
       save-buffer 
     !endif
   !endif 
+  !if &seq %rscript-com "ERROR"
+    r-rscript
+  !endif
   set-variable #l0 &reg &spr "/history/%s/char-set" %platform ""
   set-variable #l0 &xre #l0 "iso" "ISO-" #l0
   set-variable #l0 &xre #l0 "cp" "CP" #l0    
   set-variable #l0 &xre #l0 "microsoft-" "" #l0        
-  2 pipe-shell-command &spr "Rscript  -e 'options(\"encoding\"=\"%s\");formatR::tidy_file(\"%s\")'" #l0 $buffer-fname "*command*"
+  2 pipe-shell-command &spr "%s  -e 'options(\"encoding\"=\"%s\");formatR::tidy_file(\"%s\")'" %rscript-com #l0 $buffer-fname "*command*"
   !if &equ $result 1
-    ml-write "Error: It seems that R package formatR is not installed!"
+    ml-write "Error: It seems that R or the R package formatR is not installed!"
   !else
     0 reread-file
   !endif
@@ -83,13 +86,16 @@ available by placing the following line into your `~/.config/jasspa/myr.emf` fil
 !ehelp
 
 define-macro r-lint
-  !force set-variable #l1 .lint
+  !if &seq %rscript-com "ERROR"
+    r-rscript
+  !endif
   set-variable #l0 &reg &spr "/history/%s/char-set" %platform ""
   set-variable #l0 &xre #l0 "iso" "ISO-" #l0
   set-variable #l0 &xre #l0 "cp" "CP" #l0    
   set-variable #l0 &xre #l0 "microsoft-" "" #l0        
+  !force set-variable #l1 .lint
   !if &seq #l1 "ERROR"
-    set-variable .lint "Rscript -e 'options(\"encoding\"=\"%s\");library(lintr);lintr::lint(\"%s\",linters = linters_with_defaults( indentation_linter = indentation_linter(indent = 4L) ))'" #l0
+    set-variable .lint "%s -e 'options(\"encoding\"=\"%s\");library(lintr);lintr::lint(\"%s\",linters = linters_with_defaults( indentation_linter = indentation_linter(indent = 4L) ))'" %rscript-com #l0
     set-variable #l1 .lint
   !endif
   !if &bmod "edit"
@@ -104,6 +110,8 @@ define-macro r-lint
   !else
     set-variable .buffer $buffer-bname
     next-window-find-buffer "*lintr*"
+    buffer-is-utf8 #l1
+    !iif #l1  4 change-buffer-charset "utf8" "display"
     buffer-init "r-lint"
     set-variable :mouse-word-select r-lint-find-line
     buffer-bind-create "bio" "return" "0" r-lint-find-line
@@ -176,7 +184,9 @@ Here an example to lint the currently edited R script file.
 ```{emf}
     ; inside myr.emf file configure your linter to use 2 char indentation instead of default 4
     ; by modifying the macro variable .r-lint.lint
-    set-variable .r-lint.lint "Rscript -e 'library(lintr);lintr::lint(\"%s\",linters = linters_with_defaults( indentation_linter = indentation_linter(indent = 2L) ))'"
+    set-variable .r-lint.lint "%s 'library(lintr);lintr::lint(\"%s\",linters = linters_with_defaults( indentation_linter = indentation_linter(indent = 2L) ))'"
+    ; the first place holder %s will be replaced with the value of the variable %rscript-com
+    ; the second place holder %s will be replaced with the filename
     ; during editing an R file press Esc x and then write
     r-lint
 ```
@@ -201,7 +211,7 @@ available by placing the following line into your `~/.config/jasspa/myr.emf` fil
 
 !ehelp
 
-define-macro r-rscript
+0 define-macro r-rscript
   !force set-variable #l0 %rscript-com
   !if &and &seq #l0 "ERROR" &not &seq $platform "windows"
     !if &not &seq &which "Rscript" ""
@@ -232,6 +242,9 @@ define-macro r-exec
       save-buffer 
     !endif
   !endif 
+  !if &seq %rscript-com "ERROR"
+    r-rscript
+  !endif
   ; command line arguments
   set-variable #l1 ""
   !if @?
@@ -241,7 +254,14 @@ define-macro r-exec
   set-variable #l0 &xre #l0 "iso" "ISO-" #l0
   set-variable #l0 &xre #l0 "cp" "CP" #l0    
   set-variable #l0 &xre #l0 "microsoft-" "" #l0        
-  0 pipe-shell-command &spr "Rscript  --encoding=%s %s %s" #l0 $buffer-fname #l1 "*command*"
+  0 pipe-shell-command &spr "%s  --encoding=%s %s %s" %rscript-com #l0 $buffer-fname #l1 "*command*"
+  find-buffer "*command*"
+  buffer-is-utf8 #l1
+  !if #l1  
+    -1 buffer-mode "view"
+    4 change-buffer-charset "utf8" "display"
+    -1 buffer-mode "view"
+  !endif
 !emacro
 
 define-help "r-exec" "3"
