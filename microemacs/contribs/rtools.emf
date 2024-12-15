@@ -3,7 +3,7 @@
 ;  Author        : Detlef Groth, University of Potsdam, Germany
 ;  Created By    : Detlef Groth
 ;  Created       : Wed Dec 4 17:39:58 2024
-;  Last Modified : <241215.0611>
+;  Last Modified : <241215.0650>
 ;
 ;  Description   : functions useful to be used for R development
 ;
@@ -30,7 +30,7 @@ define-macro r-format
   set-variable #l0 &xre #l0 "iso" "ISO-" #l0
   set-variable #l0 &xre #l0 "cp" "CP" #l0    
   set-variable #l0 &xre #l0 "microsoft-" "" #l0        
-  2 pipe-shell-command &spr "%s  -e 'options(\"encoding\"=\"%s\");formatR::tidy_file(\"%s\")'" %rscript-com #l0 $buffer-fname "*command*"
+  2 pipe-shell-command &spr "%s  -e \"options('encoding'='%s');formatR::tidy_file('%s')\"" %rscript-com #l0 $buffer-fname "*command*"
   !if &equ $result 1
     ml-write "Error: It seems that R or the R package formatR is not installed!"
   !else
@@ -95,7 +95,7 @@ define-macro r-lint
   set-variable #l0 &xre #l0 "microsoft-" "" #l0        
   !force set-variable #l1 .lint
   !if &seq #l1 "ERROR"
-    set-variable .lint "%s -e 'options(\"encoding\"=\"%s\");library(lintr);lintr::lint(\"%s\",linters = linters_with_defaults( indentation_linter = indentation_linter(indent = 4L) ))'" %rscript-com #l0
+    set-variable .lint "%s -e \"options('encoding'='%s');library(lintr);lintr::lint('%s',linters = linters_with_defaults( indentation_linter = indentation_linter(indent = 4L) ))\""
     set-variable #l1 .lint
   !endif
   !if &bmod "edit"
@@ -104,14 +104,18 @@ define-macro r-lint
       save-buffer 
     !endif
   !endif 
-  2 pipe-shell-command &spr #l1 #l0 $buffer-fname "*lintr*"
+  2 pipe-shell-command &spr .lint %rscript-com #l0 $buffer-fname "*lintr*"
   !if &equ $result 1
-    ml-write "Error: It seems that R package lintr is not installed!"
+    ml-write "Error: It seems that either R or the R package lintr is not installed!"
   !else
     set-variable .buffer $buffer-bname
     next-window-find-buffer "*lintr*"
     buffer-is-utf8 #l1
-    !iif #l1  4 change-buffer-charset "utf8" "display"
+    !if #l1  
+      -1 buffer-mode "view"
+      4 change-buffer-charset "utf8" "display"
+      -1 buffer-mode "view"
+    !endif
     buffer-init "r-lint"
     set-variable :mouse-word-select r-lint-find-line
     buffer-bind-create "bio" "return" "0" r-lint-find-line
@@ -141,8 +145,8 @@ set-variable .fhook-r-lint.setup-mask "acfhmw"
 !if &and &sin "h" .fhook-r-lint.setup &band .hilight.flags 0x02
   !iif &not &exi .hilight.r-lint  set-variable .hilight.r-lint &pinc  .hilight.next 1
   0 hilight .hilight.r-lint 2 200                                     $global-scheme
-  hilight .hilight.r-lint   0  "[/\\.A-Za-z0-9]+:[0-9]+:[0-9]+:"      .scheme.link  
-  hilight .hilight.r-lint   1 "commas_linter"                         .scheme.operator
+  hilight .hilight.r-lint   0  "[ /\\.A-Za-z0-9]+:[0-9]+:[0-9]+:"      .scheme.link  
+  hilight .hilight.r-lint   0 "style: .*"                         .scheme.operator
   hilight .hilight.r-lint   1 "infix_spaces_linter"                   .scheme.operator
   hilight .hilight.r-lint   1 "function_left_parentheses_linter"      .scheme.operator
   hilight .hilight.r-lint   1 "indentation_linter"                    .scheme.operator  
@@ -254,7 +258,7 @@ define-macro r-exec
   set-variable #l0 &xre #l0 "iso" "ISO-" #l0
   set-variable #l0 &xre #l0 "cp" "CP" #l0    
   set-variable #l0 &xre #l0 "microsoft-" "" #l0        
-  0 pipe-shell-command &spr "%s  --encoding=%s %s %s" %rscript-com #l0 $buffer-fname #l1 "*command*"
+  0 pipe-shell-command &spr "%s  --encoding=%s \"%s\" %s" %rscript-com #l0 $buffer-fname #l1 "*command*"
   find-buffer "*command*"
   buffer-is-utf8 #l1
   !if #l1  
