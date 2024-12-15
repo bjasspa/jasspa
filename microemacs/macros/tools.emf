@@ -172,7 +172,19 @@ define-macro which
   !endif
   ml-write .result
 !emacro
-
+define-macro change-company
+  set-variable #l0 &spr "\b%s\bNo company\b" &rep &reg "/history/company" "" " " "\b"
+  set-variable #l1 @ml09 "Company (use company-setup to add more)" #l0
+  !force unset-variable %company-name
+  !force unset-variable %company-url
+  !force unset-variable %company-license
+  !if &seq #l1 "No company"
+    !iif &exi %no-company-url  set-variable %company-url %no-company-url 
+    !iif &exi %no-company-license  set-variable %company-license %no-company-license
+  !elif &len #l1
+    execute-file #l1
+  !endif
+!emacro
 define-macro diff
   !force set-variable #l1 @2
   !if $status

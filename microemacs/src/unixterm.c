@@ -627,8 +627,7 @@ meSetupPathsAndUser(void)
             ll = 0;
         }
         /* Check for setting of $MEINSTALLPATH first, if set, check for $user-path and standard sub-dirs */
-        if((((ss = meGetenv ("MEINSTALLPATH")) != NULL) && (ss[0] != '\0')) ||
-           (((ss = lpath) != NULL) && (ss[0] != '\0')))
+        if(((ss = meGetenv("MEINSTALLPATH")) != NULL) && (ss[0] != '\0'))
         {
             meStrcpy(buff,ss);
             ll = mePathAddSearchPath(ll,evalResult,buff,6,&gotPaths);
@@ -653,25 +652,30 @@ meSetupPathsAndUser(void)
             ll = mePathAddSearchPath(ll,evalResult,buff,9,&gotPaths);
         }
 #if MEOPT_TFS
-        /* also check for the built-in file system */
-        if((tfsdev != NULL) && (gotPaths != 0x0f))
+        /* also check for the built-in file system, always add if there is one */
+        if(tfsdev != NULL)
             ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "tfs://",1,&gotPaths);
 #endif        
+        if(!(gotPaths & 2) && (lpath[0] != '\0'))
+        {
+            meStrcpy(buff,lpath);
+            ll = mePathAddSearchPath(ll,evalResult,buff,6,&gotPaths);
+        }
         if(!(gotPaths & 8) && (homedir != NULL))
         {
             /* We have not found a user path so set ~/ as the user-path
              * as this is the best place for macros to write to etc. */
-            meStrcpy(buff,homedir) ;
+            meStrcpy(buff,homedir);
             if(ll)
             {
-                ii = meStrlen(buff) ;
-                buff[ii++] = mePATH_CHAR ;
-                meStrcpy(buff+ii,evalResult) ;
+                ii = meStrlen(buff);
+                buff[ii++] = mePATH_CHAR;
+                meStrcpy(buff+ii,evalResult);
             }
-            searchPath = meStrdup(buff) ;
+            searchPath = meStrdup(buff);
         }
         else if(ll > 0)
-            searchPath = meStrdup(evalResult) ;
+            searchPath = meStrdup(evalResult);
     }
     if(searchPath != NULL)
     {

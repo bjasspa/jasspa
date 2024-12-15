@@ -631,6 +631,8 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int flags
                 index += ll;
             }
         }
+        if(gotPaths & 0x02)
+            break;
     }
     *gotPathsP = gotPaths;
     path_name[index] = '\0';

@@ -215,18 +215,18 @@ define-macro buffer-setup
 set-variable .osd.ftagw 32
 set-variable .osd.ftagd 16
 0 define-macro osd-find-tag-goto
-  !if @?
-    !if &seq $result .osd.tag-cur
-      3 find-tag .osd.tag-cur
-      !abort
-    !else
-      set-variable .osd.tag-cur $result
-    !endif
-  !elif &seq .osd.tag-cur ""
-    ml-write "[No tag selected]"
-  !else
-    3 find-tag .osd.tag-cur
+  !iif @?  set-variable .osd.tag-cur $result
+  !if &seq .osd.tag-cur ""
+    osd .osd.ftagl 30  "" "  [No tag selected]"
+    ml-write ""
+    !return
   !endif
+  !force 3 find-tag .osd.tag-cur
+  !if $status
+    ml-write &spr "[Found tag: %s]" .osd.tag-cur
+    !abort
+  !endif
+  osd .osd.ftagl 30  "" "  [Failed to find tag]"
 !emacro
 
 0 define-macro osd-find-tag-set
@@ -359,11 +359,11 @@ osd .osd.ftagl 30  ""
 osd .osd.ftagl 40  "IbHt" .scheme.osd-sbar .osd.ftagw .osd.ftagd .osd.ftagc
 osd .osd.ftagl 50  ""
 
-osd .osd.ftagr 0   "D" 30
+osd .osd.ftagr 0   "D" 10
 osd .osd.ftagr 5   ""
 osd .osd.ftagr 10  "BHRxt" .scheme.osd-ebtt " \HFilter " f osd-find-tag-find
 osd .osd.ftagr 20  ""
-osd .osd.ftagr 30  "BHt" .scheme.osd-ebtt   " \HGoto   " f osd-find-tag-goto
+osd .osd.ftagr 30  "BHxt" .scheme.osd-ebtt  " \HGoto   " f osd-find-tag-goto
 osd .osd.ftagr 40  ""
 osd .osd.ftagr 50  "BHt"  .scheme.osd-ebtt  " \HCancel " f void
 

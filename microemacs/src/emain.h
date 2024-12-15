@@ -203,7 +203,7 @@
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _DRAGNDROP     1                /* Drag and drop supported.      */
 #define _METFS         1                /* Use the tack-on file system   */
-#define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa:/usr/local/share/jasspa"
+#define _DEFAULT_SEARCH_PATH "/usr/local/share/jasspa"
 #endif
 
 /*************************************************************************
@@ -254,7 +254,7 @@
 #define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _DRAGNDROP     1                /* Drag and drop supported.      */
 #define _METFS         1                /* Use the tack-on file system   */
-#define _DEFAULT_SEARCH_PATH "/usr/share/jasspa:/usr/local/jasspa"
+#define _DEFAULT_SEARCH_PATH "/usr/local/share/jasspa"
 #endif
 
 /*************************************************************************

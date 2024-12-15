@@ -53,8 +53,8 @@ define-macro-file misc save-all set-title encase open-line get-next-indent-chang
 define-macro-file cvs cvs cvs-setup cvs-add cvs-annotate cvs-checkout cvs-commit cvs-diff cvs-gdiff cvs-log cvs-remove cvs-resolve-conflicts cvs-state cvs-status cvs-tag cvs-update
 define-macro-file git git git-setup git-add git-blame git-checkout git-commit git-copy git-diff git-fetch git-log git-move git-pull git-push git-remove git-show git-status
 define-macro-file svn svn svn-setup svn-add svn-blame svn-checkout svn-commit svn-commit-log svn-copy svn-delete svn-diff svn-ignore svn-info svn-log svn-move svn-status svn-update
+define-macro-file tools change-company compile which diff rdiff xdiff diff-changes execute-tool uniq find-bfile find-cfile reread-file reread-all save-kbd-macro
 define-macro-file osdmisc insert-symbol buffer-setup alarm browse alias-path-setup file-type-setup file-tool-setup file-tool-menu shell-tool-setup find-setup
-define-macro-file tools compile which diff rdiff xdiff diff-changes execute-tool uniq find-bfile find-cfile reread-file reread-all save-kbd-macro
 define-macro-file abbrev expand-abbrev-handle expand-iso-accents expand-look-back expand-word iso-accents-mode
 define-macro-file comment comment-line uncomment-line comment-to-end-of-line comment-start comment-restyle
 define-macro-file hkdirlst copy-file delete-file file-browser file-browser-close file-browser-swap-buffers
@@ -365,7 +365,7 @@ execute-file $platform
   !force read-registry "/url" #l0 "y"
 !endif
 ; execute company setup
-!iif &not &seq &set #l0 &reg "/history/company" "" ""  execute-file #l0
+!iif &not &seq "" &set #l0 &lget &spr " %s " &reg "/history/company" "" 1  execute-file #l0
 ; excute own setup
 !iif &not &seq &set #l0 &reg "/history/setup-file" "" ""  execute-file #l0
 !if &not &exi session
