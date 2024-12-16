@@ -107,10 +107,10 @@ the executables into a folder belonging to your PATH variable.
 
 | Platform      | Console/Terminal | GUI (X11 on Linux/Mac) |
 |:-------------:|:----------------:|:----------------------:|
-| Linux         | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_linux_mesc.zip)       | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_linux_mesw.zip) |
-| MacOS apple   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_apple_mesc.zip) | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_apple_mesw.zip) |
-| MacOS intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_intel_mesc.zip) | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_intel_mesw.zip) |
-| Windows       | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_windows_mesc.zip)     | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_windows_mesw.zip) |
+| Linux         | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_linux_mecs.zip)       | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_linux_mews.zip) |
+| MacOS apple   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_apple_mecs.zip) | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_apple_mews.zip) |
+| MacOS intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_intel_mecs.zip) | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_intel_mews.zip) |
+| Windows       | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_windows_mecs.zip)     | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_windows_mews.zip) |
 
 To test the integrity of the downloads you can use the [sha256 hash keys](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101-sha256.txt)
 
