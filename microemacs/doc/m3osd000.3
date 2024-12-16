@@ -6,7 +6,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd000.3,v 2.23 2024/11/11 11:00:36 jon Exp $
+.Id $Id: m3osd000.3,v 2.23 2024/12/16 18:34:59 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH user-setup 3
@@ -69,7 +69,10 @@ the  automatic   loading  of  the  setup  file  ready  for  editing  when  the
 \fBCurrent\fR button is used.
 .IP "\fCCompany File\fR"
 Sets the company setup macro file name which is executed at start-up. A company macro file should contain all company
-wide standard settings such as \fC%company-name\fR and \fC%company-url\fR. No \fC.emf\fR extension is supplied, see
+wide standard settings such as \fC%company-name\fR, \fC%company-url\fR and \fC%company-license\fR. The value given 
+should not include the \fC.emf\fR extension. The value can be a space separated list of company file names, in which case only the 
+first file is executed on start-up, unless the first name is just "\fC-\fR" which no file is executed, see
+.Ht change-company 3 ,
 .Ht insert-template 3
 and
 .Hl "Setting Up a Company Profile" CompanyProfiles 2
@@ -796,6 +799,7 @@ defined in \fCuserstp.emf\fR.
 .Hl "Installation" Installation 1 ,
 .Hl "Top Main Menu" MainMenu 3 ,
 .Ht buffer-setup 3 ,
+.Ht change-company 3 ,
 .Ht change-scheme 3 ,
 .Ht scheme-editor 3 ,
 .Ht alias-path-setup 3 ,

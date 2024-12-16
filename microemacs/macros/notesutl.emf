@@ -1,12 +1,12 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2011 JASSPA (www.jasspa.com)
+; Copyright (C) 2011-2023 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     2011-06-15 11:04:40
 ; Synopsis:    
 ; Authors:     $Author: jon $
-; Last Modified: <230203.1126> 
+; Last Modified: <241216.1809> 
 ;
 
 0 define-macro inote-to-file

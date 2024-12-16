@@ -1,9 +1,9 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# macos64cc.mak - Make file for MacOS using cc 64bit compiler.
+# macoscc.mak - Make file for MacOS using cc compiler.
 #
-# Copyright (C) 2007-2009 JASSPA (www.jasspa.com)
+# Copyright (C) 2007-2024 JASSPA (www.jasspa.com)
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -21,31 +21,15 @@
 #
 ##############################################################################
 #
-# Created:     Sat Jan 24 1998
-# Synopsis:    Make file for Windows using MinGW development kit.
+# Synopsis:    Make file for macOS using cc
 # Notes:
 #     Run ./build.sh to compile, ./build.sh -h for more information.
 #
-#     To build from the command line using make & makefile. 
-#
-#	Run "make -f macos64cc.mak"            for optimised build produces ./.macos64cc-release-mew/mecw
-#	Run "make -f macos64cc.mak BCFG=debug" for debug build produces     ./.macos64cc-debug-mew/med
-#	Run "make -f macos64cc.mak BTYP=c"     for console support          ./.macos64cc-release-mec/mec
-#	Run "make -f macos64cc.mak BCOR=ne"    for ne build produces        ./.macos64cc-release-new/ne
-#
-#	Run "make -f macos64cc.mak clean"      to clean source directory
-#	Run "make -f macos64cc.mak spotless"   to clean source directory even more
-#
 ##############################################################################
-#
-# Installation Directory
-INSTDIR	      = /c/emacs
-INSTPROGFLAGS = 
-#
-# Local Definitions
+
+HASH     = \#
 A        = .a
 EXE      = 
-
 CC       = cc
 MK       = make
 LD       = $(CC)
@@ -53,7 +37,6 @@ STRIP    = strip
 AR       = ar
 RM       = rm -f
 RMDIR    = rm -r -f
-hashstr  = \#
 
 include evers.mak
 
@@ -164,7 +147,7 @@ endif
 
 ifneq (,$(findstring w,$(BTYP)))
 
-ifeq "$(shell echo '$(hashstr)include <stdio.h>\n$(hashstr)include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lX11 > /dev/null 2> /dev/null - ; echo $$? )" "0"
+ifeq "$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lX11 > /dev/null 2> /dev/null - ; echo $$? )" "0"
 X11_LIBS = -lX11
 else ifneq (,$(wildcard /opt/X11/lib/libX11.dylib))
 X11_INCL = -I/opt/X11/include
@@ -177,7 +160,7 @@ endif
 ifeq "$(X11_LIBS)" ""
 $(warning WARNING: No X11 support found, forcing build type to console only.)
 override BTYP = c
-else ifeq "$(shell echo '$(hashstr)include <stdio.h>\n$(hashstr)include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) $(X11_INCL) -o /dev/null $(X11_LIBS) -lXpm > /dev/null 2> /dev/null - ; echo $$? )" "0"
+else ifeq "$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) $(X11_INCL) -o /dev/null $(X11_LIBS) -lXpm > /dev/null 2> /dev/null - ; echo $$? )" "0"
 WINDOW_DEFS = $(X11_INCL) -D_XPM
 WINDOW_LIBS = $(X11_LIBS) -lXpm
 else
@@ -191,7 +174,7 @@ ifneq "$(BTYP)" "w"
 #
 # Preference now is to use "ncurses" rather than "termcap", figure out if ncurses is avaiable or if we must fall back to termcap.
 #
-ifeq "$(shell echo '$(hashstr)include <stdio.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o _tmptst.out -lncurses > /dev/null 2> /dev/null - ; echo $$? )" "0"
+ifeq "$(shell echo '$(HASH)include <stdio.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o _tmptst.out -lncurses > /dev/null 2> /dev/null - ; echo $$? )" "0"
 CONSOLE_LIBS  = -lncurses
 CONSOLE_DEFS  = -D_USE_NCURSES
 else

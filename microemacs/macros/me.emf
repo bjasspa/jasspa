@@ -2,7 +2,7 @@
 ; JASSPA MicroEmacs - www.jasspa.com
 ; me.emf - Startup file for JASSPA MicroEmacs Distribution
 ;
-; Copyright (C) 1988-2009 JASSPA (www.jasspa.com)
+; Copyright (C) 1988-2024 JASSPA (www.jasspa.com)
 ;
 ; This program is free software; you can redistribute it and/or modify it
 ; under the terms of the GNU General Public License as published by the Free
@@ -365,9 +365,15 @@ execute-file $platform
   !force read-registry "/url" #l0 "y"
 !endif
 ; execute company setup
-!iif &not &seq "" &set #l0 &lget &spr " %s " &reg "/history/company" "" 1  execute-file #l0
+!iif &not &sin &set #l0 &lget &spr " %s " &reg "/history/company" "" 1 "-"  execute-file #l0
 ; excute own setup
-!iif &not &seq &set #l0 &reg "/history/setup-file" "" ""  execute-file #l0
+!if &not &seq &set #l1 &reg "/history/setup-file" "" ""
+  execute-file #l1
+  !if &sin #l0 "-"
+    !iif &exi %no-company-url  set-variable %company-url %no-company-url 
+    !iif &exi %no-company-license  set-variable %company-license %no-company-license
+  !endif
+!endif
 !if &not &exi session
   execute-file session
   set-variable #l1 &bor &mul 16 &ban @# 1 &con &exi %session-name &con &seq %session-name "" 42 34 62

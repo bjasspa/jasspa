@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2023 JASSPA (www.jasspa.com)
+; Copyright (C) 2023-2024 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     2023-11-07 16:01:55
@@ -51,6 +51,7 @@
   hilight .hilight.git-status 0x102 "[ *] AM"   .scheme.add
   hilight .hilight.git-status 0x102 "[ *] D "   .scheme.rmv
   hilight .hilight.git-status 0x102 "[ *] R "   .scheme.chg
+  hilight .hilight.git-status 0x102 "[ *] M "   .scheme.chg
   hilight .hilight.git-status 0x102 "[ *] MM"   .scheme.chg
   hilight .hilight.git-status 0x102 "[ *]  M"   .scheme.chg
   hilight .hilight.git-status 0x102 "[ *] !!"   .scheme.hide

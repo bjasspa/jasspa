@@ -3,7 +3,7 @@
 # JASSPA MicroEmacs - www.jasspa.com
 # dosdj2.mak - Make file for Dos using djgpp v2.0
 #
-# Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
+# Copyright (C) 2001-2024 JASSPA (www.jasspa.com)
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -24,21 +24,16 @@
 # Created:     Sat Jan 24 1998
 # Synopsis:    Make file for Dos using djgpp v2.0
 # Notes:
-#	DJDIR must be setup to point to your DJGPP installation (normally
-#		done in djgpp.env)
+#       Run ./dosdj2.bat to compile, ./dosdj2.bat -h for more information.
 #
-#	Run "make -f dosdj2.mak"      for optimised build produces ./me.exe
-#	Run "make -f dosdj2.mak med"  for debug build produces     ./med.386
-#
-#	Run "make -f dosdj2.mak clean"      to clean source directory
-#	Run "make -f dosdj2.mak spotless"   to clean source directory even more
+#   DJDIR must be setup to point to your DJGPP installation (normally done in djgpp.env)
 #
 ##############################################################################
 #
 # Installation Directory
 INSTALL  = copy
 INSTDIR	 = c:\emacs
-INSTPROGFLAGS	= 
+INSTPROGFLAGS = 
 #
 # Local Definitions
 CP       = copy

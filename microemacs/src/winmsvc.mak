@@ -3,7 +3,7 @@
 # JASSPA MicroEmacs - www.jasspa.com
 # winmsvc.mak - Make file for Windows using Microsoft MSVC development kit.
 #
-# Copyright (C) 2007-2009 JASSPA (www.jasspa.com)
+# Copyright (C) 2007-2024 JASSPA (www.jasspa.com)
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -21,20 +21,9 @@
 #
 ##############################################################################
 #
-# Created:     Sat Jan 24 1998
-# Synopsis:    Make file for Windows using Microsoft MSVC v10.0 development kit.
+# Synopsis:    Make file for Windows using Microsoft MSVC compiler.
 # Notes:
 #     Run .\build.bat to compile, build.bat -h for more information.
-#
-#     To build from the command line using nmake & makefile. 
-#
-#	Run "nmake -f win32vc15.mak"            for optimised build produces ./.win32vc15-release-mew/mew.exe
-#	Run "nmake -f win32vc15.mak BCFG=debug" for debug build produces     ./.win32vc15-debug-mew/mew.exe
-#	Run "nmake -f win32vc15.mak BTYP=c"     for console support          ./.win32vc15-release-mec/mec.exe
-#	Run "nmake -f win32vc15.mak BCOR=ne"    for ne build produces        ./.win32vc15-release-new/new.exe
-#
-#	Run "nmake -f win32vc15.mak clean"      to clean source directory
-#	Run "nmake -f win32vc15.mak spotless"   to clean source directory even more
 #
 ##############################################################################
 #

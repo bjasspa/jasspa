@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1998-2009 JASSPA (www.jasspa.com)
+; Copyright (C) 1998-2024 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     Sat Jul 18 1998
@@ -173,15 +173,40 @@ define-macro which
   ml-write .result
 !emacro
 define-macro change-company
-  set-variable #l0 &spr "\b%s\bNo company\b" &rep &reg "/history/company" "" " " "\b"
-  set-variable #l1 @ml09 "Company (use company-setup to add more)" #l0
+  !force set-variable #l1 @1
+  !if &not $status
+    set-variable #l0 &rep &spr "\b%s\bNo company\b" &rep &reg "/history/company" "" " " "\b" "\b-\b" "\b"
+    set-variable #l1 @ml09 "Change company" #l0
+  !endif
   !force unset-variable %company-name
   !force unset-variable %company-url
   !force unset-variable %company-license
-  !if &seq #l1 "No company"
+  !if &or &sin #l1 "-" &seq #l1 "No company"
     !iif &exi %no-company-url  set-variable %company-url %no-company-url 
     !iif &exi %no-company-license  set-variable %company-license %no-company-license
-  !elif &len #l1
+  !elif &seq &find #l1 ".emf" "ERROR"
+    !force 0 find-file &spr "file:%s%s.emf" $user-path #l1
+    !if &not $status
+      find-file &spr "file:%s%s.emf" $user-path #l1
+      beginning-of-buffer
+      set-mark
+      end-of-buffer
+      -1 kill-region
+      !force insert-file &find "newcomp" ".etf"
+      beginning-of-buffer
+      !force search-buffer "me" "set-variable %company-name +\"\\(.*\\)\""
+      !if $status
+        backward-char
+        &len @s1 backward-delete-char
+        -1 yank
+        insert-string #l1
+      !else
+        end-of-buffer
+        insert-string &spr "set-variable %%company-name \"%s\"" #l1
+        backward-char
+      !endif
+    !endif
+  !else
     execute-file #l1
   !endif
 !emacro

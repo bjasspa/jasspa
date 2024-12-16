@@ -172,6 +172,7 @@ MAC3_090=	$(DOCDIR)m3mac090.3 $(DOCDIR)m3mac091.3 $(DOCDIR)m3mac092.3\
 		$(DOCDIR)m3mac093.3 $(DOCDIR)m3mac094.3 $(DOCDIR)m3mac095.3\
 		$(DOCDIR)m3mac096.3 $(DOCDIR)m3mac097.3 $(DOCDIR)m3mac098.3\
 		$(DOCDIR)m3mac099.3
+MAC3_100=	$(DOCDIR)m3mac100.3
 # TODO: doc git interface
 #
 OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
@@ -278,7 +279,7 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 		mod2_000.sm	mod2_010.sm	mod2_020.sm	mod2_030.sm \
 		mac3_000.sm	mac3_010.sm	mac3_020.sm	mac3_030.sm \
 		mac3_040.sm	mac3_050.sm	mac3_060.sm	mac3_070.sm \
-		mac3_080.sm	mac3_090.sm \
+		mac3_080.sm	mac3_090.sm	mac3_100.sm \
 		osd3_000.sm	osd3_010.sm \
 		fcl3_000.sm	fcl3_010.sm \
 		fil4_000.sm	fil4_010.sm	fil4_020.sm	fil4_030.sm \
@@ -416,6 +417,8 @@ mac3_080.sm:	$(MAC3_080)
 	$(SUPERMAN) -o $@ $(MAC3_080)
 mac3_090.sm:	$(MAC3_090)
 	$(SUPERMAN) -o $@ $(MAC3_090)
+mac3_100.sm:	$(MAC3_100)
+	$(SUPERMAN) -o $@ $(MAC3_100)
 # OSD
 osd3_000.sm:	$(OSD3_000)
 	$(SUPERMAN) -o $@ $(OSD3_000)

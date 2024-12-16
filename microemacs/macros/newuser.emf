@@ -1,5 +1,5 @@
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2004-2009 JASSPA (www.jasspa.com)
+; Copyright (C) 2004-2024 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
 ; Created:     25 Jan 2004
@@ -83,16 +83,6 @@ set-variable .newuser.pathdiv &con &band $system 0x80 ":" ";"
   end-of-buffer
   -1 kill-region
   !force insert-file &find "newuser" ".etf"
-  !if &not $status
-    insert-string "; -!- emf -!-\n"
-    insert-string "; This is part of the JASSPA MicroEmacs macro files\n"
-    insert-string "; Copyright (C) 1999-2009 JASSPA (www.jasspa.com)\n"
-    insert-string "; See the file me.emf for copying and conditions.\n"
-    insert-string ";\n"
-    insert-string "; Add your private macros and definitions to this file.\n"
-    insert-string "; This is usually called \"<user>.emf\".\n"
-    insert-string ";"
-  !endif
   !force 0 save-buffer
   !if &not $status
     !force 0 delete-buffer $buffer-bname
@@ -134,17 +124,18 @@ set-variable .newuser.pathdiv &con &band $system 0x80 ":" ";"
   end-of-buffer
   -1 kill-region
   !force insert-file &find "newcomp" ".etf"
-  !if &not $status
-    insert-string "; -!- emf -!-\n"
-    insert-string "; This is part of the JASSPA MicroEmacs macro files\n"
-    insert-string "; Copyright (C) 1999-2009 JASSPA (www.jasspa.com)\n"
-    insert-string "; See the file me.emf for copying and conditions.\n"
-    insert-string ";\n"
-    insert-string "; Add your company macros and definitions to this file.\n"
-    insert-string "; This is usually called \"<company>.emf\".\n"
-    insert-string ";\n"
+  beginning-of-buffer
+  !force search-buffer "me" "set-variable %company-name +\"\\(.*\\)\""
+  !if $status
+    backward-char
+    &len @s1 backward-delete-char
+    -1 yank
+    insert-string .newuser.company-name
+  !else
+    end-of-buffer
+    insert-string &spr "set-variable %%company-name \"%s\"" .newuser.company-name
+    backward-char
   !endif
-  insert-string &spr "set-variable %%company-name \"%s\"" .newuser.company-name
   !force 0 save-buffer
   !if &not $status
     !force 0 delete-buffer $buffer-bname
@@ -360,7 +351,9 @@ set-variable .newuser.pathdiv &con &band $system 0x80 ":" ";"
   
   newuser-makeerf
   newuser-makeemf
-  newuser-makecompany
+  !if 0
+    newuser-makecompany
+  !endif
   
   insert-string "\nRe-initialsing using new configuration ... "
   !force !force execute-file "me"

@@ -1,9 +1,9 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# linux32gcc.mak - Make file for Linux (v3+ Kernel) using gcc
+# linuxgcc.mak - Make file for Linux using gcc
 #
-# Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
+# Copyright (C) 2001-2024 JASSPA (www.jasspa.com)
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -21,14 +21,9 @@
 #
 ##############################################################################
 #
-# Created:     Wed Jul 28 2004
-# Synopsis:    Make file for Linux v2 Kernel 2.6 using gcc
+# Synopsis:    Make file for Linux using gcc
 # Notes:
-#	Run "make -f linux26gcc.mak"      for optimised build produces ./me
-#	Run "make -f linux26gcc.mak med"  for debug build produces     ./med
-#
-#	Run "make -f linux26gcc.mak clean"      to clean source directory
-#	Run "make -f linux26gcc.mak spotless"   to clean source directory even more
+#     Run ./build.sh to compile, ./build.sh -h for more information.
 #
 ##############################################################################
 

@@ -3,30 +3,24 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac018.3,v 2.8 2024/11/11 17:13:42 jon Exp $
-.Im MicroEmacs command|macrodevelop
+.Id $Id: m3mac018.3,v 2.8 2024/12/16 18:56:10 jon Exp $
+.Im MicroEmacs command|file
 .so me.tni
 .TH insert-template 3
 .XI insert-template - "Insert template file into current buffer"
-.XI %company-name 5 "Name of company for template"
 .XI %company-ref 5 "Company reference template"
-.XI %company-url 5 "Company URL for template"
 .SH NAME
 .Me "|insert-template"
 insert-template \- Insert template file into current buffer
 .br
-.Me "|%company-name"
-%company-name \- Name of company for template
-.br
 .Me "|%company-ref"
 %company-ref \- Company reference template
-.br
-.Me "|%company-url"
-%company-url \- Company URL for template
 .Me $a
 .SH SYNOPSIS
 .na
 \fIn\fR \fBinsert-template\fR [ "\fItemplate\fR" ]
+.br
+\fB%company-ref\fR "\fIstring\fR" ; See $COMPANY_REF$ below for default when undefined
 .ad
 .SH DESCRIPTION
 \fBinsert-template\fR is generally called by file hooks when the new buffer has been created as opposed to loaded from
@@ -43,15 +37,19 @@ To the current time. Inserts the output of
 The default format of the time string may be changed with 
 .Ht .ascii-time.format 5 .
 .IP \fC$COMPANY_NAME$\fR
-To the value of \fB%company-name\fR, or, if not defined, to the value used for \fC$USER_NAME$\fR. \fB%company-name\fR is
+To the value of
+.Ht %company-name 5 ,
+or, if not defined, to the value used for \fC$USER_NAME$\fR. \fB%company-name\fR is
 usually set up in the company setup file defined in User setup.
 .IP \fC$COMPANY_REF$\fR
 This is set to either "\fC$COMPANY_NAME$\fR (\fC$COMPANY_URL$\fR)" if the \fB%company-url\fR is defined, or simply 
 "\fC$COMPANY_NAME$\fR" if not, the tags are then replaced as defined in this help. The value can be altered by setting 
 the \fB%company-ref\fR variable.
 .IP \fC$COMPANY_URL$\fR
-To the value of \fB%company-url\fR, or if not defined to an empty string (i.e. ""). \fB%company-url\fR is
-usually set up in the company setup file defined in User setup.
+To the value of
+.Ht %company-url 5 ,
+or if not defined to an empty string (i.e. ""). \fB%company-url\fR is usually set up in the company setup file defined
+in User setup.
 .IP \fC$FILE_NAME$\fR
 To the buffer name which is typically the buffer's file name without a path. A trailing "\fI<##>\fR" string (used to
 make the buffer name unique) is removed. 
@@ -118,6 +116,8 @@ should be appropriate for \fBmagic\fR.
 .na
 .Ht .ascii-time.format 5 ,
 .Ht $buffer-fhook 5 ,
+.Ht %company-name 5 ,
+.Ht %company-url 5 ,
 .Ht &find 4 ,
 .Ht ascii-time 3 .
 .ad

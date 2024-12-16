@@ -1,9 +1,9 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# cygwingcc.mak - Make file for Cygnus Cygwin v20.1 using gcc
+# cygwingcc.mak - Make file for Cygnus Cygwin using gcc
 #
-# Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
+# Copyright (C) 2001-2024 JASSPA (www.jasspa.com)
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
