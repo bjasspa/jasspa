@@ -1,4 +1,4 @@
-## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-11 09:05
+## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-17 14:22
 
 Homepage: [https://github.com/bjasspa/jasspa](https://github.com/bjasspa/jasspa)
 Help pages: [https://bjasspa.github.io/jasspa/](https://bjasspa.github.io/jasspa/)
@@ -18,7 +18,7 @@ Download and Install: [Jasspa_MicroEmacs_20241101_installer_windows.msi](https:/
 
 __User Setup:__
 
-After  starting  `mec` the terminal or `mew` the GUI version you will be asked
+After  starting  `mec` (terminal) or `mew` (GUI version) you will be asked
 for your name and the basic user  settings.  Thereafter  run the  `user-setup`
 command  either via __`Esc x user-setup  ENTER`__ or via "Menu (__`Esc =`__) - Tools -
 User Setup" where you should setup your __keyboard layout__ at least, may be select the more
@@ -33,9 +33,9 @@ __MicroEmacs command line arguments (mec terminal or mew graphical application):
 
 |                   |                      |                    |                                      |
 |:------------------|----------------------|--------------------|------------------------------|
-| mec/mew FILENAME  | open the given file  | mec/mew -c         | continue default session     |
+| mec/mew FILENAME  | open given file      | mec/mew -c         | continue default session     |
 | mec/mew -h        | display help         | mec/mew <br/>-cSESSION  | continue named SESSION       |
-| mec/mew -V        | show version         | mec/mew -u USERNAME| start ME with other username |
+| mec/mew -V        | show version         | mec/mew -u USERNAME| start with other username |
 
 </div>
 
@@ -57,14 +57,17 @@ menu without a mouse ):__
 
 </div>
 
-__Hint:__ To  repeat  a  command N times press  `Esc N` and then  enter  the  command,  for
-example, do the following:
+__Hint:__  To  repeat  a  command N times press  `Esc N` and press the command
+shortcut or  enter  the  command name into the message line,  for
+example, you can do the following:
 
+- `Esc 10 Down` - go 10 lines down by pressing  Esc, then  writing 10 into the
+   message line and then pressing the Down key
 - `Esc 15 C-x u` - undo the last 15 editing steps
 - `Esc 10 Esc x redo  ENTER` - redo the last 10  editing  steps
-- `Esc 10 Down` - go 10 lines down
+- `C-a Esc x 10 C-k` - delete the next ten lines
 
-__Text selection:__  `Ctrl-Space` to start then cursor keys, `Esc w` to copy and `C-y` to yank/paste.
+__Text selection:__  `Ctrl-Space` to start then cursor keys (or `C-p` or `C-n`) , `Esc w` to copy and `C-y` to yank/paste.
 
 <div style="page-break-after: always"> </div>
 
@@ -94,10 +97,10 @@ __Other important commands / shortcuts:__
 | `Esc x`                       | forward-char: `C-f`        | forward-kill-word: `Esc-d`        |
 | abort-command: `C-g`          | forward-word: `Esc f`      | backward-kill-word: `Esc backsp`  |
 | list-commands: `C-h c`        | backward-char: `C-b`       | kill-line (rest): `C-k`           |
-| help-command: `C-h C-c`       | backward-word: `Esc b`     | delete-buffer: `C-x k`            |
-| describe-bindings: `C-h b`    | occur (list): `S-f6`       | kill-region: `C-w`                |
+| help-command:  `C-h C-c`       |  backward-word:  `Esc b`  | kill-region:`C-w`                 |
+| describe-bindings: `C-h b`    | occur (list): `S-f6`       | delete-buffer: `C-x k`            |
 | suspend-emacs (mec): `C-c z`  | item-list (code outline)   | delete-window (current): `C-x 0`  |
-| help: `Esc x help`            | abbrev-list                | delete-other-windows `C-x 1`      |  
+| help: `Esc x help`            | abbrev-list / toolbar      | delete-other-windows `C-x 1`      |  
 
 __MicroEmacs Files:__
 
@@ -116,11 +119,11 @@ __USERNAME.emf__
 The  user can  configure  specific  key  bindings,  abbreviation  files,  file
 extension  mappings and short self written  macros  within its  `USERNAME.emf`
 file, which is usually based on the username on the current machine, but could
-be switched as well giving options like `MEUSERNAME=test` on the command line.
-Here an example for an user called  `kiosk-user` which adds the file extension
-.Tmd to be edited using  Markdown  mode, declares a global  abbreviation  file
-kiosk-user.eaf   and  then   binds  the  key   combination   `C-x  t`  to  the
-insert-template command.
+be switched as well giving options like  `MEUSERNAME=test` on the command line
+or using the `-u  USERNAME`  command  line option. Here an example for an user
+called  `kiosk-user`  which adds the file  extension  `.Tmd` to be edited  using
+Markdown mode, declares a global  abbreviation  file  kiosk-user.eaf  and then
+binds the key combination `C-x t` to the `insert-template` macro command.
 
 ```
 ; file ~/.config/jasspa/kiosk-user.emf
@@ -177,6 +180,21 @@ file  `myHOOK.emf`,  where `HOOK` is your file type like 'python', 'r' or 'md'
 abbreviations.  Hint: You can as well copy the default  `python.eaf` file from
 the macros directory to your personal config folder and modify that file.
 
+Here an example  for a Python  abbreviation  file which is  declared in a file
+_mypython.emf_ and implemented in a file _python.eaf_ (\p sets a mark \P jumps to that mark):
+
+```
+; file ~/.config/USERNAME/mypython.emf
+buffer-abbreviation-file "python"
+; file ~/.config/USERNAME/python.eaf
+sb "#!/usr/bin/env python3
+enc "# -*- coding: UTF-8 -*-\r" 
+if "if \p:\r    \r\P"
+elif ""elif \p:\r    \r\P"
+else "else:\r    \p\r\P"
+def "def \p ():\r    '''def docu'''\r"
+```
+
 ## Templates
 
 Templates  are files which are usually used to insert  larger  chunks of text,
@@ -184,14 +202,15 @@ for  example,  to start a new  application  using a template  for the  current
 programming language you are coding. User defined  templates have the file
 extension  ".etf"  and user  defined  ones  should  be  placed  either in the  folder
 _~/config/jasspa/default_  for generic  templates  like License  files or user
-addresses which are not defined as abbreviations, or in file type specific folders named _~/.config/jasspa/HOOK/_
+addresses which are not defined as abbreviations, 
+or in file type specific folders named _~/.config/jasspa/HOOK/_
 where HOOK is the file hook for which they  should be used. For  example  like
 _~/.config/jasspa/python_, _.../r_ (R file templates) or _.../md_ (Markdown file
 templates).
 
 The following  place holders which are used for  replacement  of text in these
-templates or for  inserting the cursor are defined:  _$CURSOR$_,  _$FILE_NAME$_,
-_$USER$_, _$YEAR$_ - for more see _`C-h C-c insert-template`_.
+templates or for  inserting the cursor are defined:  _\$CURSOR\$_,  _\$FILE_NAME\$_,
+_\$USER\$_, _\$YEAR\$_ - for more see `C-h C-c insert-template`.
 
 ## Macro Recording
 
@@ -202,10 +221,9 @@ The steps to do this are as follows:
 - press  the keys  `C-x (`
 - do your  editing  steps using only your keyboard
 - stop recording with `C-x )`
-
-Thereafter you can re-execute the last recorded macro with `C-x e`. To redo it
-ten  times for  instance  your can do `Esc 10 C-x e`. You can as well save the
-executed macro with a name then with the `save-kbd-macro` command.
+- execute recorded macro with `C-x e`
+- execute a macro N times by `Esc N C-x e`
+- save macro using the `save-kbd-macro` command
 
 <div style="page-break-after: always"> </div>
 

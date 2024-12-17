@@ -133,3 +133,6 @@
       padding: 20px;
       border: 2px solid red;
     }  
+    p code, li code, td code {
+      text-decoration: underline;
+   }
