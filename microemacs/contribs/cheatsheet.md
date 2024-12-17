@@ -1,4 +1,4 @@
-## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-17 14:44
+## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-17 14:50
 
 Homepage: [https://github.com/bjasspa/jasspa](https://github.com/bjasspa/jasspa)
 Help pages: [https://bjasspa.github.io/jasspa/](https://bjasspa.github.io/jasspa/)
@@ -229,26 +229,32 @@ The steps to do this are as follows:
 
 <table>
 <tr>
-<td>
-Variables:
+<td width='50%'>
+__Variables:__
 
 - local (within macros): `#l0 #l1 ... #l9 
 - namespace: `.local .macroname.local`
 - global: `#g0 #g1 ... #g9` - %global
 
-Control-Flow: 
+__Control-Flow:__
 
 - `!if cond` - `!elif cond` - `!else`
 - `!while cond` - `!done` 
 - `!repeat` - `!until cond`
 - `!continue` - `!break`
 
-Data structures:
+__Data structures:__
 
 - scalar - `set-variable #l0 1`
-- list   - `set-variable #l0 "|item1|item2|item3|`
+- list   - `set-variable #l0 "|item1|item2|item3|"`
 
-Macros:
+__Operators:__
+
+- logical: 
+
+__Functions:__
+
+__Macros:__
 
 - Definition: `define-macro` - `!emacro`
 - Arguments: @1 @2 
