@@ -1,4 +1,4 @@
-## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-17 14:22
+## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-17 14:44
 
 Homepage: [https://github.com/bjasspa/jasspa](https://github.com/bjasspa/jasspa)
 Help pages: [https://bjasspa.github.io/jasspa/](https://bjasspa.github.io/jasspa/)
@@ -225,7 +225,43 @@ The steps to do this are as follows:
 - execute a macro N times by `Esc N C-x e`
 - save macro using the `save-kbd-macro` command
 
+## Macro Programming
+
+<table>
+<tr>
+<td>
+Variables:
+
+- local (within macros): `#l0 #l1 ... #l9 
+- namespace: `.local .macroname.local`
+- global: `#g0 #g1 ... #g9` - %global
+
+Control-Flow: 
+
+- `!if cond` - `!elif cond` - `!else`
+- `!while cond` - `!done` 
+- `!repeat` - `!until cond`
+- `!continue` - `!break`
+
+Data structures:
+
+- scalar - `set-variable #l0 1`
+- list   - `set-variable #l0 "|item1|item2|item3|`
+
+Macros:
+
+- Definition: `define-macro` - `!emacro`
+- Arguments: @1 @2 
+- Numeric arguments: @? (bool) and @# (number)
+
+</td>
+<td>
+
+</td>
+</tr>
+</table>
 <div style="page-break-after: always"> </div>
+
 
 ## &nbsp;
 
