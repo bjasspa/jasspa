@@ -1,4 +1,4 @@
-## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-17 14:50
+## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-17 15:33
 
 Homepage: [https://github.com/bjasspa/jasspa](https://github.com/bjasspa/jasspa)
 Help pages: [https://bjasspa.github.io/jasspa/](https://bjasspa.github.io/jasspa/)
@@ -125,7 +125,7 @@ called  `kiosk-user`  which adds the file  extension  `.Tmd` to be edited  using
 Markdown mode, declares a global  abbreviation  file  kiosk-user.eaf  and then
 binds the key combination `C-x t` to the `insert-template` macro command.
 
-```
+```emf
 ; file ~/.config/jasspa/kiosk-user.emf
 global-abbrev-file "kiosk-user"         ; file is kiosk-user.eaf
 add-file-hook ".tmd .Tmd" fhook-md      ; tmd files are Markdown files
@@ -150,14 +150,14 @@ defined in files having the extension `.eaf`.
 To define a __global abbreviation__  file you have to add the  following  line to
 your USERNAME.emf setup file (USERNAME should be replaced with your ME username).
 
-```
+```emf
 global-abbrev-file "USERNAME"
 ```
 
 and  then  add a file  `USERNAME.eaf`  to your ME  configuration  folder  with
 content like this:
 
-```
+```emf
 DG "Detlef Groth, University of Potsdam, Germany
 UP "University of Potsdam
 br "best regards,\rDetlef Groth"
@@ -183,14 +183,14 @@ the macros directory to your personal config folder and modify that file.
 Here an example  for a Python  abbreviation  file which is  declared in a file
 _mypython.emf_ and implemented in a file _python.eaf_ (\p sets a mark \P jumps to that mark):
 
-```
+```emf
 ; file ~/.config/USERNAME/mypython.emf
 buffer-abbreviation-file "python"
 ; file ~/.config/USERNAME/python.eaf
 sb "#!/usr/bin/env python3
 enc "# -*- coding: UTF-8 -*-\r" 
 if "if \p:\r    \r\P"
-elif ""elif \p:\r    \r\P"
+elif "elif \p:\r    \r\P"
 else "else:\r    \p\r\P"
 def "def \p ():\r    '''def docu'''\r"
 ```
@@ -227,9 +227,9 @@ The steps to do this are as follows:
 
 ## Macro Programming
 
-<table>
+<table width="100%">
 <tr>
-<td width='50%'>
+<td width='40%'>
 __Variables:__
 
 - local (within macros): `#l0 #l1 ... #l9 
@@ -250,7 +250,8 @@ __Data structures:__
 
 __Operators:__
 
-- logical: 
+- logical: `&and`, `&not`, `&or`
+- math: `&abs`, `&equ`, 
 
 __Functions:__
 
@@ -262,7 +263,21 @@ __Macros:__
 
 </td>
 <td>
+Example:
 
+```emf
+set-variable %global "Max Musterman"
+define-macro hwllo-world-test
+    set-variable #l0 "World"
+    1000 ml-write &spr "Hello %s for %s!" #l0 %global
+    set-variable #l1 0
+    !while &gre #l1 10
+        set-variable #l1 &add #l1 1
+        1000 ml-write &spr "#l0 is now '%i'!" #l1
+    !done
+    1000 ml-write "Done!"
+!emacro
+```
 </td>
 </tr>
 </table>

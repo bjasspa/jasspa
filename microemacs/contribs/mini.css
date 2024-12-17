@@ -136,3 +136,6 @@
     p code, li code, td code {
       text-decoration: underline;
    }
+   pre code {
+      text-decoration: none;
+   }

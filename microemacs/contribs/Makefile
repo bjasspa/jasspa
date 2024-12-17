@@ -6,7 +6,7 @@
 # Created:       Thu Feb 5 21:36:24 2004
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20091004.1057>
+# Last Modified: <20241217.1553>
 #
 ##############################################################################
 
@@ -64,3 +64,8 @@ clean:
 spotless:
 	$(RM) tags
 	$(RM) *~
+
+cheatsheet:
+	 pandoc cheatsheet.md -o cheatsheet.html --css mini.css -s \
+	 	--metadata title="Jasspa MicroEmacs Cheatsheet" --metadata author="Detlef Groth, University of Potsdam"  \
+	 	--syntax-definition /home/dgroth/workspace/microemacs/docs/emf.xml
