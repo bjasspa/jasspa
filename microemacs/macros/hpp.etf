@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : $USER_NAME$
 //  Created       : $ASCII_TIME$
-//  Last Modified : <090829.1745>
+//  Last Modified : <241217.1952>
 //
 //  Description	
 //
@@ -28,9 +28,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __$BUFFER_NAME$
-#define __$BUFFER_NAME$
+#ifndef __$FILE_NAME_UD$
+#define __$FILE_NAME_UD$
 $CURSOR$
 
-#endif // __$BUFFER_NAME$
+#endif // __$FILE_NAME_UD$
 
