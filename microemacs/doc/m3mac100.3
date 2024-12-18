@@ -1,0 +1,73 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac098.3,v 2.2 2024/12/16 19:25:06 jon Exp $
+.Im MicroEmacs command|file
+.so me.tni
+.TH change-company 3
+.XI change-company - "Change current company profile"
+.XI %company-name 5 "Name of company for template"
+.XI %company-url 5 "Company URL for template"
+.SH NAME
+.Me "|change-company"
+change-company \- Change current company profile"
+.br
+.Me "|%company-name"
+%company-name \- Name of company for template
+.br
+.Me "|%company-url"
+%company-url \- Company URL for template
+.br
+.Me "|%company-license"
+%company-license \- Company copyright license for template
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B change-company
+"\fIcompanyName\fR"
+.br
+\fB%company-name\fR "\fIstring\fR" ; Default is ""
+.br
+\fB%company-url\fR "\fIstring\fR" ; Default is ""
+.br
+\fB%company-license\fR "\fIstring\fR" ; Default is "\fIAll rights reserved.\fR"
+.ad
+.SH DESCRIPTION
+\fBchange-company\fR changes the current company profile \fIcompanyName\fR by executing the macro file 
+\fCcompanyName.emf\fR, this file is typically referred to as \fI<company>\fR.emf. If the file does not exist it is 
+created with a base company template.
+.PP
+The \fI<company>\fR.emf macro file is used to define company related things such as company template information and supporting 
+macros. The file will typically define values for the following variables:
+.IP \fB%company-name\fR
+Set to the name of the company, this value is used by
+.Ht insert-template 3
+when replacing tag \fC$COMPANY_NAME$\fR.
+.IP \fB%company-url\fR
+Set to the main company URL, this value is used by
+.Ht insert-template 3
+when replacing tag \fC$COMPANY_URL$\fR and to define the default value of \fC$COMPANY_REF$\fR.
+.IP \fB%company-license\fR
+Set to the text string of the company copyright notice, this value is used by
+.Ht insert-template 3
+when replacing tag \fC$COMPANY_LICENSE$\fR. The value can contain any other tag, such as \fC$COMPANY_NAME$\fR, as well 
+as newline "\fC\\n\fR" characters.
+.PP
+When \fIcompanyName\fR is not supplied on the execution command-line, \fBchange-company\fR prompts for the company 
+name, using the value of
+.Ht user-setup 3 's
+\fBCompany File\fR, located on the Start-Up page, which can contain a space separated list of companies. The command 
+also adds a "\fINo company\fR" option which, if selected, unsets the \fB%company-name\fR variable and sets \fB%company-url\fR to 
+the value of \fB%no-company-url\fR and \fB%company-license\fR to \fB%no-company-license\fR.
+.SH NOTES
+\fBchange-company\fR is a macro defined in \fCtools.emf\fR.
+.SH "SEE ALSO"
+.na
+.Hl "Company Profiles" companyProfiles 2 ,
+.Ht insert-template 3 ,
+.Ht user-setup 3 .
+.ad
+.FH
