@@ -3,7 +3,7 @@
 ;  Created By    : Detlef Groth, University of Potsdam
 ;  Author        : Detlef Groth, University of Potsdam
 ;  Created       : Wed Sep 25 15:42:35 2024
-;  Last Modified : <241214.1813>
+;  Last Modified : <241220.1804>
 ;
 ;  Description   : Documentation viewer within MicroEmacs for
 ;                  Python  supporting section folding item-list navigation
@@ -51,8 +51,8 @@ set-variable .fhook-py-doc.setup-mask "acfhmw"
 
 !if &sin "f" .fhook-py-doc.setup
   ; setup emf collapsing
-  set-variable .fhook-py-doc.collapse-open  "^[A-Z]"
-  set-variable .fhook-py-doc.collapse-close "^\\([A-Z]\\|\\'\\)"
+  set-variable .fhook-py-doc.collapse-open  "^\\([A-Z]\\|    class\\)"
+  set-variable .fhook-py-doc.collapse-close "^\\([A-Z]\\|    class\\|\\'\\)"
   set-variable .fhook-py-doc.collapse-mnext "-1"
 !endif
 ; setup item-list
