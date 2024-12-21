@@ -6,18 +6,34 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Aug 31 21:02:32 1998
 .\"
-.Id $Id: m3mac099.3,v 2.10 2024/12/05 09:27:06 dgroth Exp $
+.Id $Id: m3mac099.3,v 2.10 2024/12/21 10:32:24 dgroth Exp $
 .Im MicroEmacs command
 .so me.tni
 .TH r-doc 3
 .XI r-doc - "R documentation manual page viewer"
-.XI .r-doc.rscript 5 "Rscript Command line path" variable|shell
+.XI r-exec - "Executes the current R buffer using Rscript"
+.XI r-format - "Format the current R buffer using the R formatR package"
+.XI r-lint - "check the current R buffer for problems using Rscript lint"
+.XI %rscript-com 5 "Rscript command line path"
+.XI %rscript-lint-opts 5 "Rscript lint format options"
 .SH NAME
 .Me "|r-doc"
 r-doc \- R documentation manual page viewer
 .br
+.Me "|r-exec"
+r-exec - Executes the current R buffer using Rscript
+.br
+.Me "|r-format"
+r-format \- Format the current R buffer using the R formatR package
+.br
+.Me "|r-lint"
+r-lint \- check the current R buffer for problems using Rscript lint
+.br
 .Me "|%rscript-com"
-\&%rscript-com \- Rscript command line
+\&%rscript-com \- Rscript command line path
+.br
+.Me "|%rscript-lint-opts"
+\&%rscript-lint-opts \- Rscript lint format options"
 .Me $a
 .SH SYNOPSIS
 .na
@@ -28,8 +44,17 @@ r-doc \- R documentation manual page viewer
 \fBr-doc\fR \fIpackage::packagename\fR
 .br
 \fBr-doc\fR \fIpackage::function\fR
+.sp
+.I n
+\fBr-exec\fR [ "\fIcommand-line-arguments\fR" ]
 .br
+\fBr-format\fR
+.br
+\fBr-lint\fR
+.sp
 \fB%rscript-com\fR \fIstring\fR; Default is "\fCRscript\fR"
+.br
+\fB%rscript-lint-opts\fR \fIstring\fR; Default is "\fClinters = linters_with_defaults(indentation_linter = indentation_linter(indent = 4L))\fR"
 .ad
 .SH DESCRIPTION
 \fBr-doc\fR provides a mechanism to display an R manual page within \*(mS. On invoking \fBr-doc\fR the
@@ -44,12 +69,37 @@ for the R manual page entered in the message line.
 Another R documentation page can be selected in the generated help page by either moving the cursor to the link and
 pressing return or double clicking on it with the left mouse button. \*(mS will then attempt to load and display the
 selected R manual page.
+.PP
+The \fBr-exec\fR macro executes the current buffer using the Rscript command line interpreter. If a numeric argument
+\fIn\fR is given, value not used, then the user is prompted for additional \fIcommand-line-arguments\fR which are
+passed to Rscript command.
+.PP
+After executing the script, a \fC*r-exec*\fR buffer is opened with the output of the script execution. The script
+executes the R file using the current \*(mS character encodings.
+.PP
+The \fBr-format\fR macro formats the current buffer using the R library formatR. The formatR package must be pre-installed
+by the user, this is typically done by running `install.packages('formatR')` within an R console.
+.PP
+The \fBr-lint\fR macro checks the currently edited file using the R package
+`lintr` which must be installed by the user for instance using the usual 
+`install.packages('lintr)` syntax from within a R console. 
+.PP
+The command opens a \fC*r-lint*\fR buffer with the output from Rscript lint, any warnings or styling issues raised are 
+typically high-lighted. the buffer is configured to for
+.Ht get-next-line 2
+to make traverse through the warnings as easy as possible.
+.PP
+Use the \fB%rscript-lint-opts\fR variable to configure Rscript lint to the format/style you require, when not defined,
+the default options given to R lint are:
+.CS
+linters = linters_with_defaults(indentation_linter = indentation_linter(indent = 4L))
+.CE 0
 .SH NOTES
-\fBr-doc\fR is a macro defined in \fChkr.emf\fR.
+\fBr-doc\fR, \fBr-exec\fR, \fBr-format\fR and \fBr-lint\fR are macros defined in \fCrtols.emf\fR.
 .PP
 The Rscript executable must be installed and in the system path for the command to function correctly. If Rscript is
 not in the path, or a different command is used, set the \fB%rscript-com\fR user variable to the command needed to
-generate R manual pages.
+run Rscript.
 .PP
 On Windows, the \fB%rscript-com\fR variable is typically set to the full path to the Rscript interpreter within the
 program files directory.
@@ -57,6 +107,7 @@ program files directory.
 .na
 .Hr Rscript 1 ,
 .Hr man 1 ,
+.Ht get-next-line 2 ,
 .Ht r 9 .
 .ad
 .FH
