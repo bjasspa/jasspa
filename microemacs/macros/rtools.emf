@@ -67,18 +67,21 @@ add-next-line "*r-lint*" "^%f:%l:\\d+: "
 
 0 define-macro r-rscript-setup
   !iif &exi %rscript-com !return
-  !if &seq $platform "windows"
-    set-variable $file-names "C:/Program Files/R/R-\\d+\\.\\d+\\.\\d+\\.+/"
+  !if &not &seq "ERROR" &which "Rscript"
+    set-variable %rscript-com "Rscript"
+    ml-write "Rscript executable found in path"
+    !return
+  !elif &seq $platform "windows"
+    set-variable $file-names "C:/Program Files/R/R-\\d+\\.\\d+\\.\\d+.*/"
     !while &not &seq &set #l1 $file-names ""
       !if &seq "R" &stat t &set #l0 &spr "C:/Program Files/R/%sbin/Rscript.exe" #l1
-        set-variable #l0 "\"%s\"" #l0
+        ml-write &spr "Rscript executable found: %s" #l0
+        set-variable %rscript-com &spr "\"%s\"" #l0
+        !return
       !endif
     !done
-  !else
-    set-variable #l0 "Rscript"
   !endif
-  !iif &seq &which #l0 "ERROR"  -24 ml-write "Error: Rscript executable not found, please install R or set %rscript-com]"
-  ml-write &spr "Rscript executable found: %s" &set %rscript-com #l0
+  -24 ml-write "Error: Rscript executable not found, please install R or set %rscript-com"
 !emacro
 
 0 define-macro r-doc-back
