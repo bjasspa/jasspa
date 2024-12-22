@@ -98,7 +98,7 @@ jobs:
           cd ../..
           zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_bin_linux_openssl bin
           cd ..
-          ./bin/linux5-intel64/tfs -o ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_linux_intel64.tfs -a ./mesingle/tfs_hd tfs
+          ./bin/linux5-intel64/tfs -o ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_linux5_intel64.tfs -a ./mesingle/tfs_hd tfs
 
       - name: Generate docs
         run: |

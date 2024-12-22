@@ -668,7 +668,7 @@ osd 21 80  ""  "\HTriangle"   f Triangle
   set-variable #l4 $status
   goto-position "\x88"
   !if &not #l4
-    3 osd-dialog "Package Installer" &spr "  Error: Failed to install package (%s)  " #l1 10 6 "  \HCancel  "
+    3 osd-dialog "Package Installer" &spr "  Error: Failed to install package (%s)  \n\n%s" #l1 #l9 10 6 "  \HCancel  "
     !abort
   !endif
 !emacro

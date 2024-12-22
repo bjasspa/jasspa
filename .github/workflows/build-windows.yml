@@ -89,7 +89,7 @@ jobs:
           cd tfs
           Compress-Archive -Path bin -DestinationPath ..\..\..\..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_windows_openssl.zip
           cd ..
-          ..\..\..\..\bin\windows100-intel32\tfs -o ../../../../../packages/Jasspa_MicroEmacs_${env:MEVER}_openssl_windows_intel32.tfs -a ../../../../mesingle/tfs_hd tfs
+          ..\..\..\..\bin\windows100-intel32\tfs -o ../../../../../packages/Jasspa_MicroEmacs_${env:MEVER}_openssl_windows100_intel32.tfs -a ../../../../mesingle/tfs_hd tfs
 
       - name: Get ehf help file
         uses: dawidd6/action-download-artifact@v6

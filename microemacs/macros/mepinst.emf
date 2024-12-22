@@ -8,6 +8,7 @@
 ; Authors:     Steven Phillips
 ;
 set-variable .help.purl "http://d1j8pqz26umfbo.cloudfront.net/packages/"
+set-variable .help.purl "http://docs.asid.family/packages/"
 
 0 define-macro me-pinstall
   set-variable #l1 @1
@@ -16,53 +17,41 @@ set-variable .help.purl "http://d1j8pqz26umfbo.cloudfront.net/packages/"
   !else
     set-variable #l2 @2
   !endif
-  find-buffer "*jmplst*"
-  !if &equ $window-eline 1
+  !if &not &exi .jmpver
     ml-write "Downloading JASSPA MicroEmacs Package list ... "
-    1 buffer-mode "hide"
+    find-buffer "*jmplst*"
     !force insert-file &cat .help.purl "jmp.idx"
-    !if &equ $window-eline 1
-      ml-write "Failed to download MicroEmacs package list - computer or server may be offline"
-      !abort
-    !endif
     beginning-of-buffer
-    !if &not &seq @wl "JMP1"
-      !force delete-buffer "*jmplst*"
-      ml-write "This version of MicroEmacs is not compatible with the current package list, try upgrading"
-      !abort
-    !endif
-  !endif
-  !if &band @# 2
-    set-variable #l3 &spr "^%s-%s-%s-%s-%s-\\(%s\\)?-\\(%s\\)?\t\\(\\d+\\)\t\\([_\\d]+\\)\t\\(.*\\)" #l1 &lget $build 1 &lget $build 2 &lget $build 3 &lget $build 4 &lget $build 5 &lget $build 6
-  !else
-    set-variable #l3 &spr "^\\(%s\\)\\(\t\\)\\(\\d+\\)\t\\([_\\d]+\\)\t\\(.*\\)" #l1
-  !endif
-  beginning-of-buffer
-  !repeat
-    search-buffer "me" #l3 
-    !if &not $status
-      !if &gre $window-line 1
-        ml-write &spr "Error: Failed to find a version of '%s' compatible with this version of MicroEmacs, try upgrading" #l1
+    !if &les $window-eline 3
+      set-variable #p9 "  Failed to download MicroEmacs package list,  \n  computer or server may be offline.  "
+    !elif &not &seq @wl "JMP2"
+      set-variable #p9 "  This version of MicroEmacs is not compatible  \n  with the current package server, try upgrading.  "
+    !else
+      forward-line
+      !if &les $version &set #l3 @wl
+        set-variable #p9 &spr "  This version of MicroEmacs is not compatible  \n  with the current package server. \n\n  Upgrade to version %s or newer.  " #l3
       !else
-        ml-write &spr "Error: Failed to find package '%s', please report" #l1
+        forward-line
+        set-variable .jmpver @wl
       !endif
-      !abort
     !endif
-    !if &sgre &set #l8 @s3 $version
-    !elif &sgre @s4 $version
-      !break
-    !endif
-  !done
-  set-variable #l3 @s5
-  !if &not &gre @s3 #l2
+    !force delete-buffer "*jmplst*"
+    !iif &not &exi .jmpver  !abort
+  !endif
+  !if &not &gre .jmpver #l2
     ml-write &spr "MicroEmacs Package %s: Up-to-date" #l1
     !return
+  !endif
+  !if &band @# 2
+    set-variable #l3 &spr "Jasspa_MicroEmacs_%s_%s_%s%s_%s%s.tfs" .jmpver #l1 &lget $build 1 &lget $build 2 &lget $build 3 &lget $build 4
+  !else
+    set-variable #l3 &spr "Jasspa_MicroEmacs_%s_%s.tfs" .jmpver #l1
   !endif
   ml-write &spr "MicroEmacs Package %s: Downloading ... " #l1
   set-variable #l4 $temp-name
   !force 0x80 file-op &cat .help.purl #l3 #l4
   !if &not $status
-    ml-write &spr "[Error: Failed to download package file %s]" #l3
+    set-variable #p9 &spr "  Failed to download package file:  \n\n    %s  " #l3
     !abort
   !endif
   set-variable #l3 &set #l5 &cat "file:" &stat a $user-path
@@ -122,22 +111,23 @@ set-variable .help.purl "http://d1j8pqz26umfbo.cloudfront.net/packages/"
   !endif
   0x20 file-op #l4
   !if #l7
-    1000 ml-write &spr "Error: Failed to %s MicroEmacs Package %s - %d,%d" &con &band @# 1 "install" "update" #l1 #l6 #l7
+    set-variable #p9 &spr "  Failed to %s MicroEmacs Package %s (%d,%d)  " &con &band @# 1 "install" "update" #l1 #l6 #l7
+    !abort
   !elif &not #l6
-    1000 ml-write &spr "Error: Failed to find any content in MicroEmacs Package %s" #l1
-  !else
-    find-file &cat $user-path "jmp.lst"
-    beginning-of-buffer
-    insert-string &spr "%s\t%s\n" #l1 #l8
-    !force search-buffer "me" &spr "^%s\t" #l1
-    !if $status
-      beginning-of-line
-      set-mark
-      forward-line
-      -1 kill-region
-    !endif
-    save-buffer
-    delete-buffer $buffer-bname
-    ml-write &spr "MicroEmacs Package %s: %s complete" #l1 &con &band @# 1 "Install" "Update"
+    set-variable #p9 &spr "  Failed to find any content in MicroEmacs Package %s  " #l1
+    !abort
   !endif
+  find-file &cat $user-path "jmp.lst"
+  beginning-of-buffer
+  insert-string &spr "%s\t%s\n" #l1 #l8
+  !force search-buffer "me" &spr "^%s\t" #l1
+  !if $status
+    beginning-of-line
+    set-mark
+    forward-line
+    -1 kill-region
+  !endif
+  save-buffer
+  delete-buffer $buffer-bname
+  ml-write &spr "MicroEmacs Package %s: %s complete" #l1 &con &band @# 1 "Install" "Update"
 !emacro
