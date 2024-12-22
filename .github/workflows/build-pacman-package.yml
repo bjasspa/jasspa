@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     branches: [ master ]
 env:
-   VERSION: "20240902"
+   VERSION: "20241101"
 
 jobs:
   msys2-ucrt64:
