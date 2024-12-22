@@ -34,9 +34,9 @@ jobs:
       - name: Build package store
         run: |
           cd microemacs/doc/web_pages
-          curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/Jasspa_MicroEmacs_Latest_packages.zip
+          curl -fsSL -o packages.zip https://github.com/bjasspa/jasspa/releases/latest/download/Jasspa_MicroEmacs_Latest_packages.zip
           cd me
-          unzip ../Jasspa_MicroEmacs_Latest_packages.zip -d .
+          unzip ../packages.zip -d .
 
       - name: Upload web-pages as artifact
         uses: actions/upload-pages-artifact@v3
