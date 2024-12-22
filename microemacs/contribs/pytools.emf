@@ -3,7 +3,7 @@
 ;  Created By    : Detlef Groth, University of Potsdam
 ;  Author        : Detlef Groth, University of Potsdam
 ;  Created       : Wed Sep 25 15:42:35 2024
-;  Last Modified : <241220.1804>
+;  Last Modified : <241221.1254>
 ;
 ;  Description   : Documentation viewer within MicroEmacs for
 ;                  Python  supporting section folding item-list navigation
@@ -266,7 +266,7 @@ $a
 ## SYNOPSIS
 
 __py-lint__   
-__set-variable__ _.py-lint.lint_ "string"  
+set-variable _.py-lint.lint_ "_string_"  
 
 ## DESCRIPTION
 
@@ -285,7 +285,7 @@ Setting the variable _.py-lint.lint_ allows you to customize the linter settings
 
 ## EXAMPLE
 
-Here an example to lint the currently edited R script file.
+Here an example to lint the currently edited Python script.
 
 ```{emf}
     ; by modifying the macro variable .py-lint.lint
