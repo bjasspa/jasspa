@@ -209,7 +209,7 @@ define-macro github-release
     set-variable $buffer-fname #l1
     shell-command "zip -r downloads/Jasspa_MicroEmacs_Latest_packages.zip packages"
     !iif $result  -8 ml-write &spr "[Github Release Error: Failed to create packages zip - zip returned %d]" $result
-    !iif &not &seq "R" &stat t &cat #l1 "Jasspa_MicroEmacs_Latest_packages.zip"  -8 ml-write &spr "[Github Release Error: Failed to create packages zip - file not found]"
+    !iif &not &seq "R" &stat t &cat #l1 "downloads/Jasspa_MicroEmacs_Latest_packages.zip"  -8 ml-write &spr "[Github Release Error: Failed to create packages zip - file not found]"
     !force 0 delete-buffer "*ghr1*"
   !endif
   github-api-json "releases" "" &spr "{\"tag_name\":\"%s%s\",\"target_commitish\":\"%s\",\"name\":\"%s%s\",\"generate_release_notes\":false,\"draft\":false,\"prerelease\":true}" .git.hub-rtp #l9 #l0 .git.hub-rnp #l9
