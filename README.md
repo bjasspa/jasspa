@@ -68,7 +68,7 @@ _Right:_ GUI version - theme "Ayu Dark", displaying the hypertext enabled R docu
 You can compile the code yourself, or you pick one or two of the pre-compiled
 single file executables from the Release page or you install the usual mec/mew
 executables  using curl or the homebrew  package manager. For Windows you have
-as well a installer which is available [here](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_installer_windows.msi):
+as well a installer which is available [here](https://github.com/bjasspa/jasspa/releases/download/me_20241201/Jasspa_MicroEmacs_20241201_installer_windows.msi):
 
 
 Installation  using  curl for Linux and MacOS by copying and pasting the  following
@@ -107,12 +107,12 @@ the executables into a folder belonging to your PATH variable.
 
 | Platform      | Console/Terminal | GUI (X11 on Linux/Mac) |
 |:-------------:|:----------------:|:----------------------:|
-| Linux         | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_linux_mecs.zip)       | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_linux_mews.zip) |
-| MacOS apple   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_apple_mecs.zip) | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_apple_mews.zip) |
-| MacOS intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_intel_mecs.zip) | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_macos_intel_mews.zip) |
-| Windows       | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_windows_mecs.zip)     | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_abin_windows_mews.zip) |
+| Linux         | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241201/Jasspa_MicroEmacs_20241201_abin_linux_mecs.zip)       | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241201/Jasspa_MicroEmacs_20241201_abin_linux_mews.zip) |
+| MacOS apple   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241201/Jasspa_MicroEmacs_20241201_abin_macos_apple_mecs.zip) | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241201/Jasspa_MicroEmacs_20241201_abin_macos_apple_mews.zip) |
+| MacOS intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241201/Jasspa_MicroEmacs_20241201_abin_macos_intel_mecs.zip) | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241201/Jasspa_MicroEmacs_20241201_abin_macos_intel_mews.zip) |
+| Windows       | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20241201/Jasspa_MicroEmacs_20241201_abin_windows_mecs.zip)     | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20241201/Jasspa_MicroEmacs_20241201_abin_windows_mews.zip) |
 
-To test the integrity of the downloads you can use the [sha256 hash keys](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101-sha256.txt)
+To test the integrity of the downloads you can use the [sha256 hash keys](https://github.com/bjasspa/jasspa/releases/download/me_20241201/Jasspa_MicroEmacs_20241201-sha256.txt)
 
 Then test the executable in your terminal:
 

@@ -77,7 +77,7 @@ set-variable $time 0
 !emacro
 
 ; Build an action with given commit
-;  @# - if 0 don't download artifacts
+;  @# - 0x01 Use refToBuild to pass commit SHA, 0x02 don't download artifacts
 ;  @1 - Commit SHA1
 ;  @2 - Name of action to build
 ;  @3 - Full path to the artifact directory
@@ -90,7 +90,9 @@ define-macro github-build-action
   set-variable #l8 @3
   set-variable #l3 @4
   set-variable #l1 &cat "actions/workflows/" #l0
-  github-api-call &cat #l1 "/dispatches" "" &spr "{\"ref\":\"%s\",\"inputs\":{\"refToBuild\":\"%s\"%s}}" .git.hub-brn #l9 #l3
+  !iif &band 1 @#  set-variable #l3 &spr "\"refToBuild\":\"%s\"%s%s" #l9 &con &len #l3 "," "" #l3
+  !iif &len #l3  set-variable #l3 &spr ",\"inputs\":{%s}" #l3
+  github-api-call &cat #l1 "/dispatches" "" &spr "{\"ref\":\"%s\"%s}" .git.hub-brn #l3
   30000 ml-write &spr "[Action %s dispatched... ]" #l0
   ml-write &spr "[Action %s dispatched... Getting ID]" #l0
   github-api-json &spr "%s/runs?created=%%3e%%3d%s&head_sha=%s" #l1 &rep .git.hub-date "-" "%2d" #l9
@@ -176,7 +178,7 @@ define-macro github-build
   set-variable #l2 0
   !while &not &seq "" &set #l3 &lget .git.hub-bal &inc #l2 1
     github-build-action #l0 #l3 #l1 #l4
-    !iif &seq #l4 ""  set-variable #l4 &spr ",\"refToHelpAsset\":\"%s\"" #l9
+    !iif &seq #l4 ""  set-variable #l4 &spr "\"refToHelpAsset\":\"%s\"" #l9
   !done
   ml-write &spr "[Github Build: Complete, output to %s]" #l1
 !emacro
@@ -435,7 +437,7 @@ define-macro github-finalise-release
   beginning-of-buffer
   set-variable #l0 @wl
   !force 0 delete-buffer $buffer-bname
-  0 github-build-action #l0 "build-webpages.yml" #l1 ""
+  2 github-build-action #l0 "build-webpages.yml" #l1 ""
   goto-position "\x80"
   ml-write "[Release Finalised - commit changes to jasspa & homebrew-jasspa repositories]" 
 !emacro

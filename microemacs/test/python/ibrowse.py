@@ -125,7 +125,7 @@ def makemainmenu(win):
 	additem(mp, 'Help (tutorial)',		'H', itutor)
 	additem(mp, 'Command summary',		'?', isummary)
 	additem(mp, 'Close this window',	'W', iclose)
-	additem(mp, '', '', None)
+  	 additem(mp, '', '', None)
 	additem(mp, 'Copy to clipboard',	'C', icopy)
 	additem(mp, '', '', None)
 	additem(mp, 'Search regexp...',		'S', isearch)
