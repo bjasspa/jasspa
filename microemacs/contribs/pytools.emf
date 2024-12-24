@@ -3,7 +3,7 @@
 ;  Created By    : Detlef Groth, University of Potsdam
 ;  Author        : Detlef Groth, University of Potsdam
 ;  Created       : Wed Sep 25 15:42:35 2024
-;  Last Modified : <241224.1244>
+;  Last Modified : <241224.1845>
 ;
 ;  Description   : Documentation viewer within MicroEmacs for
 ;                  Python  supporting section folding item-list navigation
@@ -135,7 +135,6 @@ define-macro py-format
       save-buffer 
     !endif
   !endif 
-  set-variable $debug 2
   !force set-variable #l1 .format
   !if &seq #l1 "ERROR"
     !if &and &seq &which "yapf" "" &seq &which "black" ""
