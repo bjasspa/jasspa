@@ -77,6 +77,7 @@ set-variable $time 0
 !emacro
 
 ; Build an action with given commit
+;  @# - if 0 don't download artifacts
 ;  @1 - Commit SHA1
 ;  @2 - Name of action to build
 ;  @3 - Full path to the artifact directory
@@ -106,6 +107,7 @@ define-macro github-build-action
   !done
   !iif &not &seq "completed" #l3  -8 ml-write &spr "[Github %s Error: Unexpected state %s for run id %s]" #l0 #l3 #l5
   !iif &not &seq "success" &set #l3 &rig &reg "/json/ghaj/conclusion" "" 1 -8 ml-write &spr "[Github %s Error: Workflow run failed for run id %s, conclusion: %s]" #l0 #l5
+  !iif &not @#  !return
   github-api-json &spr "actions/runs/%s/artifacts" #l5
   !iif &or &not &seq "[" &lef &set #l2 &reg "/json/ghaj/artifacts" "" 1 &seq &set #l6 &rig #l2 1 ""  -8 ml-write &spr "[Github %s Error: Unexpected artifacts array: %s]" #l0 #l2
   set-variable #l3 0
@@ -161,6 +163,15 @@ define-macro github-build
   !force 0x100 file-op &cat #l1 "downloads" 
   !force 0x100 file-op &cat #l1 "packages" 
   ml-write &spr "[Github Build: Output to %s]" #l1
+  find-file &cat #l1 "commit_sha.txt"
+  beginning-of-buffer
+  set-mark
+  end-of-buffer
+  -1 kill-region
+  insert-string #l0
+  -1 buffer-mode "backup"
+  save-buffer
+  !force 0 delete-buffer $buffer-bname
   set-variable #l4 ""
   set-variable #l2 0
   !while &not &seq "" &set #l3 &lget .git.hub-bal &inc #l2 1
@@ -181,6 +192,26 @@ define-macro github-release
   set-variable #l1 @3
   !iif &not &seq "D" &stat t #l1  -8 ml-write &spr "[Github Release Error: Failed to locate given release directory - %s]" #l1
   !iif &not &seq "D" &stat t &cat #l1 "downloads"  -8 ml-write &spr "[Github Release Error: Failed to locate given release downloads directory - %sdownloads]" #l1
+  !if &not &seq "R" &stat t &cat #l1 "downloads/Jasspa_MicroEmacs_Latest_packages.zip"
+    !iif &not &seq "D" &stat t &cat #l1 "packages"  -8 ml-write &spr "[Github Release Error: Failed to locate given release packages directory - %spackages]" #l1
+    ml-write "[Github Build: Generating packages zip]"
+    find-file &cat #l1 "packages/jmp.idx"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    insert-string &cat "JMP2\n20241201\n" #l9
+    -1 buffer-mode "backup"
+    save-buffer
+    !force 0 delete-buffer $buffer-bname
+    !force 0 delete-buffer "*ghr1*"
+    find-buffer "*ghr1*"
+    set-variable $buffer-fname #l1
+    shell-command "zip -r downloads/Jasspa_MicroEmacs_Latest_packages.zip packages"
+    !iif $result  -8 ml-write &spr "[Github Release Error: Failed to create packages zip - zip returned %d]" $result
+    !iif &not &seq "R" &stat t &cat #l1 "Jasspa_MicroEmacs_Latest_packages.zip"  -8 ml-write &spr "[Github Release Error: Failed to create packages zip - file not found]"
+    !force 0 delete-buffer "*ghr1*"
+  !endif
   github-api-json "releases" "" &spr "{\"tag_name\":\"%s%s\",\"target_commitish\":\"%s\",\"name\":\"%s%s\",\"generate_release_notes\":false,\"draft\":false,\"prerelease\":true}" .git.hub-rtp #l9 #l0 .git.hub-rnp #l9
   !iif &not &xseq &set #l8 &rig &reg &spr "/json/ghaj/id" "" 1 "\\h+"  -8 ml-write &spr "[Github Release Error: Unexpected release ID - %s]" #l8
   !iif &not &seq "\"http" &lef &set #l2 &reg "/json/ghaj/upload_url" "" 5  -8 ml-write &spr "[Github Release Error: Unexpected upload_url %s]" #l2
@@ -371,6 +402,7 @@ define-macro github-finalise-release
   !force set-variable #l3 @3
   !iif &not $status set-variable #l3 @ml61 "Release artifact directory" &spr "~/%s%s" .git.hub-rtp #l1
   !iif &not &seq "D" &stat t &set #l3 &stat a #l3  -8 ml-write &spr "[Github Release Error: Given artifact directory is not a directory: %s]" #l3
+  !iif &not &seq "R" &stat t &cat #l3 "commit_sha.txt"  -8 ml-write &spr "[Github Release Error: Cannot locate release build commit sha: %scommit_sha.txt]" #l3
   !iif &not &seq "R" &stat t &set #l4 &spr "%sJasspa_MicroEmacs_%s-sha256.txt" #l3 #l1  -8 ml-write &spr "[Github Release Error: Cannot locate main formula file: %s]" #l3
   !force 0 delete-buffer "*ghdh"
   find-buffer "*ghdh"
@@ -398,6 +430,12 @@ define-macro github-finalise-release
   github-api-json &cat "releases/" &rig #l9 1 "PATCH" "{\"prerelease\":false,\"make_latest\":true}"
   !iif &not &seq &set #l2 &reg "/json/ghaj/id" "" #l9  -8 ml-write &spr "[Github Release Error: Unexpected release ID returned - %s]" #l2
   !iif &not &seq &set #l2 &reg "/json/ghaj/prerelease" "" "b0"  -8 ml-write &spr "[Github Release Error: Unexpected prerelease setting %s]" #l2
+  ; run the build-webpages action to update docs and packages
+  find-file &cat #l3 "commit_sha.txt"
+  beginning-of-buffer
+  set-variable #l0 @wl
+  !force 0 delete-buffer $buffer-bname
+  0 github-build-action #l0 "build-webpages.yml" #l1 ""
   goto-position "\x80"
   ml-write "[Release Finalised - commit changes to jasspa & homebrew-jasspa repositories]" 
 !emacro

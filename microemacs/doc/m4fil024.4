@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil024.4,v 2.8 2024/11/11 15:58:44 jon Exp $
+.Id $Id: m4fil024.4,v 2.8 2024/12/22 21:42:54 jon Exp $
 .Im MicroEmacs macro;function;miscellaneous
 .so me.tni
 .TH &find 4
@@ -34,10 +34,9 @@ initialized by the system of from the the environment variables
 .Ht $MEINSTALLPATH 5
 etc.
 .PP
-Each  path  component  defined  in  \fB$search-path\fR  is  prepended  to  the
-constructed  file name and it's  existence is tested. If the file exists, then
-the  \s-1FULL\s0  path name of the file is  returned to the caller,  otherwise
-\fCERROR\fR.
+Each path component defined in \fB$search-path\fR is prepended to the constructed file name and it's existence is
+tested. If the file exists, then the \s-1FULL\s0 path name of the file is returned to the caller, otherwise the string
+"\fCERROR\fR" is returned.
 .IP "\fI<basename>\fR"
 The base name of the file, excluding any extension.
 .IP "\fI<extension>\fR"
@@ -48,8 +47,11 @@ The  extension of the file name, this must be specified  with the extension  del
 for more information on \*(mS list format and functions.
 .PP
 .B &which
-searches  for the given  executable  program  \fI<progname>\fR  on the  system
-program search path defined the the environment variable \fB$PATH\fR.
+searches for the given executable program \fI<progname>\fR on the system program search path defined by the
+environment variable \fB$PATH\fR. If the program is found, then the \s-1FULL\s0 path to the program is returned, 
+otherwise the string "\fCERROR\fR" is returned.
+.PP
+Note that on dos and Windows only the extensions \fC.bat\fR, \fB.cmd\fR, \fC.com\fR and \fC.exe\fR are checked for.
 .SH USAGE
 .B &find
 is typically used with

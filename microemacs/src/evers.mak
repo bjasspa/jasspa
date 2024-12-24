@@ -31,5 +31,5 @@
 #
 meVER_CN = 20
 meVER_YR = 24
-meVER_MN = 11
-meVER_DY = 2
+meVER_MN = 12
+meVER_DY = 1

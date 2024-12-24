@@ -7,7 +7,6 @@
 ; Synopsis:    MicroEmacs package installer 
 ; Authors:     Steven Phillips
 ;
-set-variable .help.purl "http://d1j8pqz26umfbo.cloudfront.net/packages/"
 set-variable .help.purl "http://docs.asid.family/packages/"
 
 0 define-macro me-pinstall
