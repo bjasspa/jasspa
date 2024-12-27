@@ -30,7 +30,7 @@ function tpl2pkg {
       #mv microemacs-package/bin/*/*.exe microemacs-package/
       #unzip -o Jasspa_MicroEmacs_${version}_macros.zip -d microemacs-package
       #unzip -o Jasspa_MicroEmacs_${version}_help_ehf.zip -d microemacs-package
-      mv microemacs-package/bin/*/me?s.exe microemacs-package/
+      mv microemacs-package/bin/*/mes?.exe microemacs-package/
       dig=$(sha256sum microemacs-package/mesc.exe | cut -c 1-64)
       sed -E "s/digest-mesc.exe/${dig}/" $2 > microemacs-package/PKGBUILD
       dig=$(sha256sum microemacs-package/mesw.exe | cut -c 1-64)      
