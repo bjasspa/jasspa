@@ -1,4 +1,4 @@
-name: Build Pacman package (Windows-2022)
+name: Build Msys2 Pacman package (Windows-2022)
 
 on:
   workflow_dispatch:
@@ -54,7 +54,7 @@ jobs:
             makepkg -si --noconfirm
             mesc -V
 
-      - name: Upload linux downloads
+      - name: Upload Windows Msys 2 downloads
         uses: actions/upload-artifact@v4
         with: 
           name: microemacs-${{ env.VERSION }}-1-x86_64.pkg.tar.zst
