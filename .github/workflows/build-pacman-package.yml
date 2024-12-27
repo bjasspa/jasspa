@@ -39,6 +39,7 @@ jobs:
             ls
             pwd
             cd microemacs/packages/msys2
+            sed -i "s/__VERSION__/${VERSION}/" PKGBUILD.tpl
             bash tpl2pkg.sh ${VERSION} PKGBUILD.tpl
             ls microemacs-package
             cd microemacs-package

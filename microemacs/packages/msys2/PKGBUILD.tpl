@@ -1,7 +1,7 @@
 # Maintainer: Detlef Groth <your@email.com>
 
 pkgname=microemacs
-pkgver=20240902
+pkgver=__VERSION__
 pkgrel=1
 pkgdesc="Jasspa MicroEmacs Text Editor"
 arch=('x86_64')
@@ -9,7 +9,7 @@ url="https://github.com/bjasspa/jasspa"
 license=('GPL')
 source=("mesc.exe" "mesw.exe" "readme.txt" "COPYING.txt")
 sha256sums=(
-    'digest-mesw.exe'
+    'digest-mesc.exe'
     'digest-mesw.exe'
     'digest-readme.txt'
     'digest-COPYING.txt')
