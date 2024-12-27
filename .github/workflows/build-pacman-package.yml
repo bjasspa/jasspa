@@ -40,9 +40,11 @@ jobs:
             pwd
             cd microemacs/packages/msys2
             VRS=`curl https://github.com/bjasspa/jasspa/releases/latest -s -L -I -o /dev/null -w '%{url_effective}' | sed -E 's/.+me_//'`
+            echo "VRS=$VRS" >> $GITHUB_ENV
+            export VRS=$VRS
             echo $VRS
-            sed -i "s/__VERSION__/${VERSION}/" PKGBUILD.tpl
-            bash tpl2pkg.sh ${VERSION} PKGBUILD.tpl
+            sed -i "s/__VERSION__/${VRS}/" PKGBUILD.tpl
+            bash tpl2pkg.sh ${VRS} PKGBUILD.tpl
             ls microemacs-package
             cd microemacs-package
             ls -lr
