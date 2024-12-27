@@ -61,5 +61,5 @@ jobs:
       - name: Upload Windows Msys 2 downloads
         uses: actions/upload-artifact@v4
         with: 
-          name: microemacs-${{ env.VERSION }}-1-x86_64.pkg.tar.zst
-          path: microemacs/packages/msys2/microemacs-package/microemacs-${{ env.VERSION }}-1-x86_64.pkg.tar.zst
+          name: microemacs-${{ env.VRS }}-1-x86_64.pkg.tar.zst
+          path: microemacs/packages/msys2/microemacs-package/microemacs-${{ env.VRS }}-1-x86_64.pkg.tar.zst
