@@ -175,12 +175,15 @@ extern meUByte *extExecLst[extExecCnt];
 #define meMOUSE_NOBUTTONS   0x0000f     /* # mouse buttons              */
 #define meMOUSE_ENBLE       0x00010     /* mouse is enabled             */
 #define meMOUSE_SWAPBUTTONS 0x00020     /* swap mouse buttons           */
+#define meMOUSE_FORCEALL    0x00040     /* On terminal force all events */
 #define meMOUSE_ICON        0xf0000     /* Mask to set the mouse pointer icon */
-extern  meUInt meMouseCfg;              /* ME mouse config variable     */
+extern  meInt meMouseCfg;               /* ME mouse config variable     */
 extern  meUByte mouse_pos;              /* mouse virtual position       */
 extern  meShort mouse_X;                /* mouse X pos at last event    */
 extern  meShort mouse_Y;                /* mouse X pos at last event    */
 #if MEOPT_MOUSE
+extern  meInt mouseState;               /* State of the mouse. */
+extern  meUShort mouseKeyState;         /* State of keyboard ACS on Unix*/
 extern  meShort mouse_dX;               /* mouse delta X last event pos */
 extern  meShort mouse_dY;               /* mouse delta X last event pos */
 #endif
@@ -666,31 +669,32 @@ meUByte *extExecLst[extExecCnt] = {(meUByte *) ".com",(meUByte *) ".exe",(meUByt
 #endif
 
 #if MEOPT_MOUSE
-meUInt    meMouseCfg=(3|meMOUSE_ENBLE); /* ME mouse config variable     */
-meShort   mouse_dX = 0;                 /* mouse delta X last event pos */
-meShort   mouse_dY = 0;                 /* mouse delta X last event pos */
+meInt    meMouseCfg=(3|meMOUSE_ENBLE);  /* ME mouse config variable     */
+meInt    mouseState=0;                  /* State of the mouse. */
+meShort  mouse_dX=0;                    /* mouse delta X last event pos */
+meShort  mouse_dY=0;                    /* mouse delta X last event pos */
 #else
-meUInt    meMouseCfg=3;                 /* ME mouse config variable - mouse not enabled */
+meInt    meMouseCfg=0;                  /* ME mouse config variable - mouse not enabled */
 #endif
-meUByte   mouse_pos=0xff;               /* mouse virtual position       */
-meShort   mouse_X = 0;                  /* mouse X pos at last event    */
-meShort   mouse_Y = 0;                  /* mouse X pos at last event    */
+meUByte  mouse_pos=0xff;                /* mouse virtual position       */
+meShort  mouse_X=0;                     /* mouse X pos at last event    */
+meShort  mouse_Y=0;                     /* mouse X pos at last event    */
 
 #if MEOPT_UNDO
-meUInt    undoContFlag=0;               /* continuation of an undo      */
+meUInt   undoContFlag=0;                /* continuation of an undo      */
 #endif
 
 /* File Modes */
 #if (defined _DOS) || (defined _WIN32)
-meUShort  meUmask=0x020 ;               /* file creation umask          */
+meUShort  meUmask=0x020;                /* file creation umask          */
 #endif
 #ifdef _UNIX
-meUShort  meUmask ;                     /* file creation umask          */
-mode_t    meXUmask ;                    /* directory creation umask     */
-uid_t     meUid ;                       /* current user id              */
-gid_t     meGid ;                       /* current group id             */
-int       meGidSize ;                   /* number of groups the user belongs to   */
-gid_t    *meGidList=NULL ;              /* list of group ids the user belongs to  */
+meUShort  meUmask;                      /* file creation umask          */
+mode_t    meXUmask;                     /* directory creation umask     */
+uid_t     meUid;                        /* current user id              */
+gid_t     meGid;                        /* current group id             */
+int       meGidSize;                    /* number of groups the user belongs to   */
+gid_t    *meGidList=NULL;               /* list of group ids the user belongs to  */
 #endif /* _UNIX */
 
 /* Signals */

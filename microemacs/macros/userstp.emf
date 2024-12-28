@@ -285,14 +285,14 @@ set-variable .user-mouse-set-button.bnames "|\HLeft|\HMiddle|\HRight|Wheel \HUp|
 
 0 define-macro user-set-mouse
   set-variable #l1 $mouse
-  set-variable #l0 &reg &spr "/history/%s/mouse" $platform #l1
+  set-variable #l0 &reg &spr "/history/%s/mouse" %platform #l1
   !if &les @# 0
     set-variable @# &abs @#
     set-variable #l0 &bxor #l0 @#
     set-variable $mouse #l0
     !iif &not &equ &band @# $mouse &band @# #l0  set-variable #l0 &bxor #l0 @#
     set-variable $mouse #l1
-    set-registry &spr "/history/%s/mouse" $platform #l0
+    set-registry &spr "/history/%s/mouse" %platform #l0
     !iif &equ &abs @# 0x400  user-setup-backups
   !elif &not &band #l0 @#
     !abort
@@ -300,11 +300,11 @@ set-variable .user-mouse-set-button.bnames "|\HLeft|\HMiddle|\HRight|Wheel \HUp|
 !emacro
 
 0 define-macro user-set-mouse-nob
-  set-variable #l0 &reg &spr "/history/%s/mouse" $platform $mouse
+  set-variable #l0 &reg &spr "/history/%s/mouse" %platform $mouse
   set-variable #l1 &band #l0 0x00f
   !if &les @# 0
     set-variable #l0 &bor &band #l0 &bnot 0x00f @ml2 "" #l1
-    set-registry &spr "/history/%s/mouse" $platform #l0
+    set-registry &spr "/history/%s/mouse" %platform #l0
   !else
     set-variable $result #l1
   !endif
@@ -342,16 +342,20 @@ osd .osd.user-mouse 0   "s" 55 18 -1 -1
 osd .osd.user-mouse 2   ""
 osd .osd.user-mouse 10  "Sfh" "  "
 osd .osd.user-mouse 12  "Ctpfx" &cat .osd.checkbox-chars "\} \HEnable Mouse" 0x010 user-set-mouse
-osd .osd.user-mouse 15  "Sfh" "      \HNumber of Buttons: " 17
-osd .osd.user-mouse 17  "EtxHf" .scheme.osd-entry "#####" 1 user-set-mouse-nob
-osd .osd.user-mouse 20  "Sfh" "                "
-osd .osd.user-mouse 22  "Ctpfx" &cat .osd.checkbox-chars "\} S\Hwap Buttons" 0x020 user-set-mouse
-osd .osd.user-mouse 24  "Sfh" "                "
-osd .osd.user-mouse 26  "Ctpfx" &cat .osd.checkbox-chars "\} Simulate \H3 Buttons" 1 user-set-pfcheckbox
+osd .osd.user-mouse 14  "Sfh" "      \HNumber of Buttons: " 16
+osd .osd.user-mouse 16  "EtxHf" .scheme.osd-entry "#####" 1 user-set-mouse-nob
+osd .osd.user-mouse 18  "Sfh" "                "
+osd .osd.user-mouse 19  "Ctpfx" &cat .osd.checkbox-chars "\} S\Hwap Buttons" 0x020 user-set-mouse
+osd .osd.user-mouse 21  "Sfh" "                "
+osd .osd.user-mouse 22  "Ctpfx" &cat .osd.checkbox-chars "\} Simulate \H3 Buttons" 1 user-set-pfcheckbox
+!if &equ 0x81 &band $system 0x81
+  osd .osd.user-mouse 24  "Sfh" "                "
+  osd .osd.user-mouse 25  "Ctpfx" &cat .osd.checkbox-chars "\} \HForce all events" 0x040 user-set-mouse
+!endif
 osd .osd.user-mouse 27  ""
 osd .osd.user-mouse 28  "" "  Mouse Button Bindings"
 osd .osd.user-mouse 29  ""
-osd .osd.user-mouse 30  "Sfh" "      \HButton:   " 25
+osd .osd.user-mouse 30  "Sfh" "      \HButton:   " 40
 osd .osd.user-mouse 40  "OtxmsfhHzR" .scheme.osd-entry 12 1 "" .osd.tmp user-mouse-set-button
 osd .osd.user-mouse 41  "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 40
 osd .osd.user-mouse 50  "Sfh" "      Modifier: "

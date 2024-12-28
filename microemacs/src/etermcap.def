@@ -111,3 +111,8 @@ TCAP_STRING(TCAPsmam, "smam", "SA")
 /* Enable/Disable alternate screen buffer - NOTE: these must be last 2 */
 TCAP_STRING(TCAPasbe, "smcup", "ti")
 TCAP_STRING(TCAPasbd, "rmcup", "te")
+
+#if MEOPT_MOUSE
+/* Enable/Disable mouse events - NOTE: This works with kmous eskeys, don't think XM is suported in termcap */
+TCAP_STRING(TCAPxm, "XM", "XM")
+#endif

@@ -179,10 +179,6 @@ extern char  *CM, *CL;
 #define TTbreakTest(x) ((--TTbreakCnt == 0) &&                         \
                         (((alarmState & meALARM_DIE) && meDie()) ||    \
                          (TTbreakCnt=TTBREAKCNT,TTahead(),TTbreakFlag)))
-#if MEOPT_MOUSE
-extern void TTinitMouse(void);
-#endif
-
 #ifdef _ME_CONSOLE
 #ifdef _TCAP
 #include <term.h>
@@ -561,7 +557,7 @@ TTcolorSet(colTable[meStyleGetFColor(meSchemeGetStyle(scheme))], \
 #endif /* _DOS */
 
 #if MEOPT_MOUSE
-void TTinitMouse(void);
+void TTinitMouse(meInt nCfg);
 #define meCURSOR_DEFAULT   0
 #define meCURSOR_ARROW     1
 #define meCURSOR_IBEAM     2
@@ -571,7 +567,7 @@ void TTinitMouse(void);
 #define meCURSOR_STOP      6
 #define meCURSOR_COUNT     7
 #else
-#define TTinitMouse()
+#define TTinitMouse(nCfg)
 #endif
 
 /* timer definitions */

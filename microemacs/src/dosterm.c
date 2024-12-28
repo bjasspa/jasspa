@@ -37,9 +37,7 @@
 #if MEOPT_MOUSE
 
 /* Local definitions for mouse handling code */
-/* mouseState
- * A integer interpreted as a bit mask that holds the current state of
- * the mouse interaction. */
+/* mouseState - An integer interpreted as a bit mask that holds the current state of the mouse interaction. */
 #define MOUSE_STATE_LEFT         0x0001 /* Left mouse button is pressed */
 #define MOUSE_STATE_MIDDLE       0x0002 /* Middle mouse button is pressed */
 #define MOUSE_STATE_RIGHT        0x0004 /* Right mouse button is pressed */
@@ -47,7 +45,6 @@
 #define MOUSE_STATE_SHOW         0x0400 /* Mouse active, show next time */
 #define MOUSE_STATE_BUTTONS      (MOUSE_STATE_LEFT|MOUSE_STATE_MIDDLE|MOUSE_STATE_RIGHT)
 
-static int  mouseState = 0;             /* State of the mouse. */
 /* bit button lookup - [0] = no keys, [1] = left, [2] = right, [4]=middle */
 static meUShort mouseKeys[8] = { 0, 1, 3, 0, 2, 0, 0, 0 } ;
 
@@ -657,8 +654,9 @@ TTshowCur(void)
 
 #if MEOPT_MOUSE
 void
-TTinitMouse(void)
+TTinitMouse(meInt nCfg)
 {
+    meMouseCfg = nCfg & (meMOUSE_ENBLE|meMOUSE_SWAPBUTTONS|meMOUSE_NOBUTTONS);
     if(meMouseCfg & meMOUSE_ENBLE)
     {
         int b1, b2, b3 ;
@@ -936,34 +934,34 @@ TTsleep(int msec, int intable, meVariable **waitVarList)
 int
 TTahead(void)
 {
-    extern int kbhit(void) ;
+    extern int kbhit(void);
     
     while(kbhit() != 0)
-        TTgetkeyc() ;
+        TTgetkeyc();
     
     /* Check the timers but don't process them if we have a key waiting!
      * This is because the timers can generate a lot of timer
      * keys, filling up the input buffer - these are not wanted.
      * By not processing, we leave them there until we need them.
      */
-    timerCheck(0) ;
+    timerCheck(0);
     
     if(TTnoKeys)
-        return TTnoKeys ;
+        return TTnoKeys;
 
 #if MEOPT_MOUSE
     /* If an alarm hCheck the mouse */
     if(isTimerExpired(MOUSE_TIMER_ID))
     {
-        meUShort mc ;
-        union REGS rg ;
+        meUShort mc;
+        union REGS rg;
         
         /* printf("Clering mouse timer for repeat %1x %1x %d\n",TTallKeys,meTimerState[MOUSE_TIMER_ID],repeatTime) ;*/
-        timerClearExpired(MOUSE_TIMER_ID) ;
+        timerClearExpired(MOUSE_TIMER_ID);
         /* must check that the same mouse button is still pressed  */
-        rg.x.ax = 0x0003 ;
-        int86(0x33, &rg, &rg) ;
-        mc = (mouseState & MOUSE_STATE_BUTTONS) ;
+        rg.x.ax = 0x0003;
+        int86(0x33, &rg, &rg);
+        mc = (mouseState & MOUSE_STATE_BUTTONS);
         if((rg.x.bx & MOUSE_STATE_BUTTONS) == mc)
         {
             meUInt arg ;
@@ -991,17 +989,17 @@ TTahead(void)
         if((index=decode_key(ME_SPECIAL|SKEY_idle_time,&arg)) != -1)
         {
             /* Execute the idle-time key */
-            execFuncHidden(ME_SPECIAL|SKEY_idle_time,index,arg) ;
+            execFuncHidden(ME_SPECIAL|SKEY_idle_time,index,arg);
             
             /* Now set the timer for the next */
             timerSet(IDLE_TIMER_ID,-1,idleTime);
         }
         else if(decode_key(ME_SPECIAL|SKEY_idle_drop,&arg) != -1)
-            meTimerState[IDLE_TIMER_ID] = IDLE_STATE_DROP ;
+            meTimerState[IDLE_TIMER_ID] = IDLE_STATE_DROP;
         else
-            meTimerState[IDLE_TIMER_ID] = 0 ;
+            meTimerState[IDLE_TIMER_ID] = 0;
     }
 #endif
-    return TTnoKeys ;
+    return TTnoKeys;
 }
 #endif

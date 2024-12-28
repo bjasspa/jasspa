@@ -832,90 +832,201 @@ translateKey(int f, int n)
 meUShort
 TTgetc(void)
 {
-    meUShort cc ;
+    int ci, ki, ll, kk, kl;
+    meUShort cc;
     
     do {
         if(!TTahead())
-            TTwaitForChar() ;
+            TTwaitForChar();
         
-        if(TTtransKey.count)
+        if((ci = TTtransKey.count) > 0)
         {
-            meTRANSKEY *tt ;
-            int         ii, nextKeyIdx, keyNo ;
+            meTRANSKEY *tt, *tk=NULL;
             
-            tt = &TTtransKey ;
-            nextKeyIdx = TTnextKeyIdx ;
-            keyNo = 0 ;
-            
-            while(tt->count != 0)
+            tt = &TTtransKey;
+            ki = TTnextKeyIdx;
+            ll = 0;
+            for(;;)
             {
-                if(keyNo == TTnoKeys)
+                if(!ki)
+                    ki = KEYBUFSIZ;
+                cc = TTkeyBuf[--ki];
+                while((--ci >= 0) && (tt->child[ci].key != cc))
+                    ;
+                if(ci < 0)
+                    break;
+                tt = tt->child+ci;
+                ll++;
+                if(tt->map != ME_INVALID_KEY)
+                {
+                    tk = tt;
+                    kk = ki;
+                    kl = ll;
+                }
+                if((ci = tt->count) == 0)
+                    break;
+                if(ll == TTnoKeys)
                 {
                     /* Wait for a quarter a second to see if any more keys are available */
                     /* Only gocha here is that preferably you want an interuptable wait
                      * therefore we must set the TTnoKeys to 0 so we only interrupt on
                      * a receipt of a new key. Must remember to reset it as well.
                      */
-                    TTnoKeys = 0 ;
-                    TTsleep(tt->time,1,NULL) ;
-                    TTnoKeys += keyNo ;
-                    if(keyNo == TTnoKeys)
+                    TTnoKeys = 0;
+                    TTsleep(tt->time,1,NULL);
+                    if((TTnoKeys += ll) == ll)
                         break;
                 }
-                keyNo++ ;
-                if(!nextKeyIdx)
-                    nextKeyIdx = KEYBUFSIZ ;
-                cc = TTkeyBuf[--nextKeyIdx] ;
-                for(ii=0 ; ii<tt->count ; ii++)
+            }
+            if(tk != NULL)
+            {
+                ll = TTnoKeys - kl;
+                TTnoKeys = ll;
+                ki = TTnextKeyIdx;
+#ifdef _USE_NCURSES
+                if((tt->map == (ME_SPECIAL|SKEY_mouse_move))
+#ifdef _ME_WINDOW
+                   && (meSystemCfg & meSYSTEM_CONSOLE)
+#endif
+                   )
                 {
-                    if(tt->child[ii].key == cc)
+                    int iv[3], ix=2;
+                    if(cc == '<')
                     {
-                        tt = tt->child+ii ;
-                        if(tt->map != ME_INVALID_KEY)
+                        do {
+                            iv[ix]=0;
+                            while(--ll >= 0)
+                            {
+                                if(!kk)
+                                    kk = KEYBUFSIZ;
+                                if(((cc = TTkeyBuf[--kk]) < '0') || (cc > '9'))
+                                    break;
+                                iv[ix] = (iv[ix]*10) + cc-'0';
+                            }
+                        } while((--ix >= 0) && (ll >= 0) && (cc == ';'));
+                        if(ix < 0)
                         {
-                            int nn, jj ;
-                            TTnoKeys -= keyNo ;
-                            nn = TTnoKeys ;
-                            ii = TTnextKeyIdx ;
-                            jj = nextKeyIdx ;
-                            if(tt->map == ME_DELETE_KEY)
-                                keyNo = 0 ;
+                            if((cc & 0xdf) != 'M')
+                                ix = 0;
+                            /* fprintf(fplog,"MOUSE-SGR: %d %d %d %d\n",iv[2],iv[1],iv[0],mouseState);*/
+                        }
+                        else if(ll < 0)
+                            ll = 0;
+                    }
+                    else if((ll -= 3) < 0)
+                        ll = 0;
+                    else
+                    {
+                        do {
+                            if(!kk)
+                                kk = KEYBUFSIZ;
+                            iv[ix] = TTkeyBuf[--kk]-32;
+                        } while(--ix >= 0);
+                        /* fprintf(fplog,"MOUSE-X10: %d %d %d %d\n",iv[2],iv[1],iv[0],mouseState);*/
+                        if(((iv[2] & 3) == 3) && mouseState)
+                        {
+                            cc = 'm';
+                            iv[2] = (iv[2] & ~0x03) | ((mouseState == 4) ? 2:((mouseState&3)-1));
+                        }
+                        else
+                            cc = 'M';
+                    }
+                    TTnoKeys = ll;
+                    if(ix < 0)
+                    {
+                        mouse_X = iv[1]-1;
+                        mouse_Y = iv[0]-1;
+                        
+                        if(iv[2] & 192)
+                        {
+                            if(iv[2] & 190)
+                                cc = 0;
                             else
                             {
-                                if(!ii)
-                                    ii = KEYBUFSIZ ;
-                                TTkeyBuf[--ii] = tt->map ;
-                                TTnoKeys++ ;
-                                keyNo = 1 ;
+                                cc = ME_SPECIAL | ((iv[2] & 1) ? SKEY_mouse_wdown:SKEY_mouse_wup);
+                                ci = 1;
                             }
-                            nextKeyIdx = ii ;
-                            while(--nn >= 0)
-                            {
-                                if(!ii)
-                                    ii = KEYBUFSIZ ;
-                                if(!jj)
-                                    jj = KEYBUFSIZ ;
-                                TTkeyBuf[--ii] = TTkeyBuf[--jj] ;
-                            }
-                            TTlastKeyIdx = ii ;
                         }
-                        ii = 0 ;
-                        break;
+                        else
+                        {
+                            ix = (iv[2]+1) & 3;
+                            if(iv[2] & 32)
+                            {
+                                if(ix)
+                                {
+                                    cc = ME_SPECIAL | (SKEY_mouse_move+ix);
+                                    mouseState |= 1 << (ix-1);
+                                }
+                                else
+                                {
+                                    cc = ME_SPECIAL | SKEY_mouse_move;
+                                    mouseState = 0;
+                                }
+                                ci = (TTallKeys & 0x1);
+                            }
+                            else if(ix)
+                            {
+                                ix--;
+                                if(cc == 'm')
+                                {
+                                    mouseState &= ~(1 << ix);
+                                    cc = ME_SPECIAL | (SKEY_mouse_drop_1+ix);
+                                }
+                                else
+                                {
+                                    mouseState |= 1 << ix;
+                                    cc = ME_SPECIAL | (SKEY_mouse_pick_1+ix);
+                                }
+                                ci = 1;
+                            }
+                        }
+                        if(iv[2] & 4)
+                            cc |= ME_SHIFT;
+                        if(iv[2] & 8)
+                            cc |= ME_ALT;
+                        if(iv[2] & 16)
+                            cc |= ME_CONTROL;
+                        
+                        /* Are we after all movements or mouse-move bound ?? */
+                        if((cc & ME_SPECIAL) && (ci || (!TTallKeys && (decode_key(cc,(unsigned int *) iv) != -1))))
+                        {
+                            if(!ki)
+                                ki = KEYBUFSIZ;
+                            TTkeyBuf[--ki] = cc;
+                            mouseKeyState = cc & (ME_SHIFT|ME_CONTROL|ME_ALT);
+                            TTnoKeys++;
+                        }
                     }
                 }
-                if(ii == tt->count)
-                    break;
+                else
+#endif
+                if(tk->map != ME_DELETE_KEY)
+                {
+                    if(!ki)
+                        ki = KEYBUFSIZ;
+                    TTkeyBuf[--ki] = tk->map;
+                    TTnoKeys++;
+                }
+                while(--ll >= 0)
+                {
+                    if(!ki)
+                        ki = KEYBUFSIZ;
+                    if(!kk)
+                        kk = KEYBUFSIZ;
+                    TTkeyBuf[--ki] = TTkeyBuf[--kk];
+                }
+                TTlastKeyIdx = ki;
             }
         }
-    } while(!TTnoKeys) ;
+    } while(!TTnoKeys);
     
     if(!TTnextKeyIdx)
-        TTnextKeyIdx = KEYBUFSIZ ;
-    cc = TTkeyBuf[--TTnextKeyIdx] ;
-    TTnoKeys-- ;
+        TTnextKeyIdx = KEYBUFSIZ;
+    cc = TTkeyBuf[--TTnextKeyIdx];
+    TTnoKeys--;
     /* remove the abort flag if we are waiting for the key */
     if((cc == breakc) && TTbreakFlag)
-        TTbreakFlag = 0 ;
+        TTbreakFlag = 0;
     return cc ;
 }
 

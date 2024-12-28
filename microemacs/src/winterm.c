@@ -241,9 +241,7 @@ static meUByte ttPitchFam=0;
 
 #if MEOPT_MOUSE
 /* Local definitions for mouse handling code */
-/* mouseState
- * A integer interpreted as a bit mask that holds the current state of
- * the mouse interaction. */
+/* mouseState - An integer interpreted as a bit mask that holds the current state of the mouse interaction. */
 #define MOUSE_STATE_LEFT         0x0001 /* Left mouse button is pressed  */
 #define MOUSE_STATE_MIDDLE       0x0002 /* Middle mouse button is pressed*/
 #define MOUSE_STATE_RIGHT        0x0004 /* Right mouse button is pressed */
@@ -252,7 +250,6 @@ static meUByte ttPitchFam=0;
 #define MOUSE_STATE_LOCKED       0x0800 /* Mouse is locked in */
 
 static WPARAM mouseButs=0;              /* State of the mouse buttons. */
-static int mouseState=0;                /* State of the mouse. */
 /* bit button lookup - [0] = no keys, [1] = left, [2]=middle, [4] = right */
 static meUShort mouseKeys[8] = { 0, 1, 2, 0, 3, 0, 0, 0 };
 static meUByte mouseInFrame=0;
@@ -321,12 +318,11 @@ do {                                                                     \
     {                                                                    \
 	mouse_X = LOWORD(lpos);                                          \
 	mouse_Y = HIWORD(lpos);                                          \
-	mouse_dX = mouse_dY = 0;                                         \
     }                                                                    \
     else                                                                 \
     {                                                                    \
         __winMousePosUpdate(lpos)                                        \
-          }                                                              \
+    }                                                                    \
 } while(0)
 
 #else /* _ME_WINDOW */
@@ -335,7 +331,6 @@ do {                                                                     \
 do {                                                                     \
     mouse_X = LOWORD(lpos);                                              \
     mouse_Y = HIWORD(lpos);                                              \
-    mouse_dX = mouse_dY = 0;                                             \
 } while(0)
 
 #endif /* _ME_WINDOW */

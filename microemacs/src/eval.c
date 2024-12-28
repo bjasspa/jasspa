@@ -473,19 +473,18 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             /* always allow the user to set the mouse position as termcap
              * does not support the mouse but context menus need to be positioned sensibly */
         case EVMOUSE:
-            meMouseCfg = meAtoi(vvalue) ;
 #if MEOPT_MOUSE
-            TTinitMouse() ;
+            TTinitMouse(meAtoi(vvalue));
 #endif
             break;
         case EVMOUSEPOS:
-            mouse_pos = (meUByte) meAtoi(vvalue) ;
+            mouse_pos = (meUByte) meAtoi(vvalue);
             break;
         case EVMOUSEX:
-            mouse_X = (meShort) meAtoi(vvalue) ;
+            mouse_X = (meShort) meAtoi(vvalue);
             break;
         case EVMOUSEY:
-            mouse_Y = (meShort) meAtoi(vvalue) ;
+            mouse_Y = (meShort) meAtoi(vvalue);
             break;
         case EVPAUSETIME:
             pauseTime = (meShort) meAtoi(vvalue);
@@ -496,7 +495,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         case EVKEPTVERS:
             if(!(meSystemCfg & meSYSTEM_DOSFNAMES) && 
                ((keptVersions = meAtoi(vvalue)) < 0))
-                keptVersions = 0 ;
+                keptVersions = 0;
             break;
 #endif
         case EVBOXCHRS:

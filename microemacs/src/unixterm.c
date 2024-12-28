@@ -349,9 +349,7 @@ static void meSetIconState (Display *display, Window window);
  **************************************************************************/
 #if MEOPT_MOUSE
 /* Local definitions for mouse handling code */
-/* mouseState
- * A integer interpreted as a bit mask that holds the current state of
- * the mouse interaction. */
+/* mouseState - An integer interpreted as a bit mask that holds the current state of the mouse interaction. */
 #define MOUSE_STATE_LEFT         0x0001 /* Left mouse button is pressed */
 #define MOUSE_STATE_MIDDLE       0x0002 /* Middle mouse button is pressed */
 #define MOUSE_STATE_RIGHT        0x0004 /* Right mouse button is pressed */
@@ -359,17 +357,14 @@ static void meSetIconState (Display *display, Window window);
 #define MOUSE_STATE_BUT5         0x0010 /* Button 5 (can be used by wheel) */
 #define MOUSE_STATE_BUTTONS      (MOUSE_STATE_LEFT|MOUSE_STATE_MIDDLE|MOUSE_STATE_RIGHT|MOUSE_STATE_BUT4|MOUSE_STATE_BUT5)
 
-int  mouseState = 0;             /* State of the mouse. */
-
-/* mouseKeyState
- * The state of the control keys when the mouse was pressed. */
+/* mouseKeyState - The state of the control keys when the mouse was pressed. */
 meUShort mouseKeyState;          /* State of keyboard control */
 
 static meUShort mouseKeys[8] = { 0, 1, 2, 3, 4, 5 } ;
 #define mouseButtonPick(bb) (mouseState |=  (1<<((bb)-1)))
 #define mouseButtonDrop(bb) (mouseState &= ~(1<<((bb)-1)))
 
-#define mouseButtonGetPick()                                                   \
+#define mouseButtonGetPick()                                                 \
 ((mouseState == 0)                 ? 0:                                      \
  (mouseState & MOUSE_STATE_LEFT)   ? 1:                                      \
  (mouseState & MOUSE_STATE_MIDDLE) ? 2:                                      \
@@ -2667,6 +2662,10 @@ TCAPstart(void)
     char err_str[72];
     int  ii;
     
+#if MEOPT_MOUSE
+    /* mouse must be properly initialised in terminal so set to 0 and wait for config to enable */
+    meMouseCfg=3;
+#endif
     /* Get the attributes from the system */
 #ifdef _USG
     TCAPgetattr (&otermio, 0);
@@ -3319,60 +3318,79 @@ TCAPmove(int row, int col)
  * Sort out what to do with the mouse buttons.
  */
 void
-TTinitMouse(void)
+TTinitMouse(meInt nCfg)
 {
+    meInt cCfg=nCfg^meMouseCfg;
 #ifdef _ME_CONSOLE
 #ifdef _ME_WINDOW
     if(meSystemCfg & meSYSTEM_CONSOLE)
 #endif /* _ME_WINDOW */
-        meMouseCfg &= ~meMOUSE_ENBLE;
+    {
+#ifdef _USE_NCURSES
+        if(tcaptab[TCAPxm].code.str == NULL)
+            return;
+        
+        if(cCfg & meMOUSE_ENBLE)
+            putpad(meTCAPParm(tcaptab[TCAPxm].code.str,((nCfg & meMOUSE_ENBLE) ? 1:0)));
+        if(cCfg & meMOUSE_FORCEALL)
+        {
+            /* ideally a well configured terminal will include the following in the XM code, but they often
+             * don't, e.g. xterm-256color and xterm-1003 does not have good color support! The following
+             * should work if the base mouse works in the terminal. Use TERM xterm-x11mouse to test base
+             *  X10 mouse messages */
+            if(meMouseCfg & meMOUSE_FORCEALL)
+                putpad("\033[?1003l");
+            else if(nCfg & meMOUSE_ENBLE)
+                putpad("\033[?1003h");
+            else
+                nCfg ^= meMOUSE_FORCEALL;
+        }
+#else
+        return;
+#endif
+    }
 #ifdef _ME_WINDOW
     else
 #endif /* _ME_WINDOW */
 #endif /* _ME_CONSOLE */
 #ifdef _ME_WINDOW
-        if(meMouseCfg & meMOUSE_ENBLE)
-    {
 #ifdef _XTERM
-        static meUByte  meCurCursor=0;
+        if(cCfg & meMOUSE_ICON)
+    {
         static Cursor meCursors[meCURSOR_COUNT]={0,0,0,0,0,0,0};
-        static meUByte  meCursorChar[meCURSOR_COUNT]={
-            0,XC_arrow,XC_xterm,XC_crosshair,XC_hand2,XC_watch,XC_pirate};
+        static meUByte  meCursorChar[meCURSOR_COUNT]={0,XC_arrow,XC_xterm,XC_crosshair,XC_hand2,XC_watch,XC_pirate};
         meUByte cc;
-        int b1, b2, b3;
         
-        if(meMouseCfg & meMOUSE_SWAPBUTTONS)
+        if(meMouseCfg & meMOUSE_ICON)
+            XUndefineCursor(mecm.xdisplay,meFrameGetXWindow(frameCur));
+        if((cc = (meUByte) ((nCfg & meMOUSE_ICON) >> 16)) != 0)
+        {
+            if((cc < meCURSOR_COUNT) &&
+               ((meCursors[cc] != 0) || ((meCursors[cc] = XCreateFontCursor(mecm.xdisplay,meCursorChar[cc])) != 0)))
+                XDefineCursor(mecm.xdisplay,meFrameGetXWindow(frameCur),meCursors[cc]);
+            else
+                nCfg &= ~meMOUSE_ICON;
+        }
+    }
+#endif /* _XTERM */
+#endif /* _ME_WINDOW */
+    if(cCfg & (meMOUSE_NOBUTTONS|meMOUSE_SWAPBUTTONS))
+    {
+        meUShort b1, b2, b3;
+        
+        if(nCfg & meMOUSE_SWAPBUTTONS)
             b1 = 3, b3 = 1;
         else
             b1 = 1, b3 = 3;
-        if((meMouseCfg & meMOUSE_NOBUTTONS) > 2)
+        if((nCfg & meMOUSE_NOBUTTONS) > 2)
             b2 = 2;
         else
             b2 = b3;
         mouseKeys[1] = b1;
         mouseKeys[2] = b2;
         mouseKeys[3] = b3;
-        
-        cc = (meUByte) ((meMouseCfg & meMOUSE_ICON) >> 16);
-        if(cc >= meCURSOR_COUNT)
-            cc = 0;
-        if(cc != meCurCursor)
-        {
-            if(meCurCursor)
-            {
-                XUndefineCursor(mecm.xdisplay,meFrameGetXWindow(frameCur));
-                meCurCursor = 0;
-            }
-            if(cc && ((meCursors[cc] != 0) ||
-                      ((meCursors[cc] = XCreateFontCursor(mecm.xdisplay,meCursorChar[cc])) != 0)))
-            {
-                XDefineCursor(mecm.xdisplay,meFrameGetXWindow(frameCur),meCursors[cc]);
-                meCurCursor = cc;
-            }
-        }
-#endif /* _XTERM */
     }
-#endif /* _ME_WINDOW */
+    meMouseCfg = nCfg;
 }
 #endif
 
@@ -4377,7 +4395,7 @@ TTwaitForChar(void)
              * a very 'rubbery' feel to the scroll bars. This reduces that
              * effect, allowing the server to process all of our outstanding
              * events (typically mecm.xdisplay requests). */
-            XSync (mecm.xdisplay, meFALSE);
+            XSync(mecm.xdisplay, meFALSE);
         }
 #endif
 #endif /* _XTERM */
@@ -4471,30 +4489,6 @@ TTahead(void)
          */
         if(TTnoKeys)
             return TTnoKeys;
-        
-#if MEOPT_MOUSE
-        /* If an alarm hCheck the mouse */
-        if(isTimerExpired(MOUSE_TIMER_ID))
-        {
-            meUShort mc;
-            meUInt arg;
-            
-            timerClearExpired(MOUSE_TIMER_ID);
-            mc = ME_SPECIAL | mouseKeyState |
-                  (SKEY_mouse_time+mouseKeys[mouseButtonGetPick()]);
-            /* mouse-time bound ?? */
-            if((!TTallKeys && (decode_key(mc,&arg) != -1)) || (TTallKeys & 0x2))
-            {
-                /* Timer has expired and timer still bound. Report the key. */
-                /* Push the generated keycode into the buffer */
-                addKeyToBufferOnce(mc);
-                /* Set the new timer and state */
-                /* Start a new timer to clock in at 'repeat' intervals */
-                /* printf("Setting mouse timer for repeat %d\n",repeatTime);*/
-                timerSet(MOUSE_TIMER_ID,-1,repeatTime);
-            }
-        }
-#endif /* MEOPT_MOUSE */
 #endif /* _XTERM */
     }
 #ifdef _ME_CONSOLE
@@ -4601,6 +4595,29 @@ TTahead(void)
             return TTnoKeys;
     }
 #endif /* _ME_CONSOLE */
+#if MEOPT_MOUSE
+    /* If an alarm hCheck the mouse */
+    if(isTimerExpired(MOUSE_TIMER_ID))
+    {
+        meUShort mc;
+        meUInt arg;
+        
+        timerClearExpired(MOUSE_TIMER_ID);
+        mc = ME_SPECIAL | mouseKeyState |
+              (SKEY_mouse_time+mouseKeys[mouseButtonGetPick()]);
+        /* mouse-time bound ?? */
+        if((!TTallKeys && (decode_key(mc,&arg) != -1)) || (TTallKeys & 0x2))
+        {
+            /* Timer has expired and timer still bound. Report the key. */
+            /* Push the generated keycode into the buffer */
+            addKeyToBufferOnce(mc);
+            /* Set the new timer and state */
+            /* Start a new timer to clock in at 'repeat' intervals */
+            /* printf("Setting mouse timer for repeat %d\n",repeatTime);*/
+            timerSet(MOUSE_TIMER_ID,-1,repeatTime);
+        }
+    }
+#endif /* MEOPT_MOUSE */
 #if MEOPT_CALLBACK
     if(isTimerExpired(IDLE_TIMER_ID))
     {

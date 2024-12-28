@@ -670,7 +670,13 @@ exitEmacs(int f, int n)
            && (meSystemCfg & meSYSTEM_CONSOLE)
 #endif /* _ME_WINDOW */
            )
+        {
+#if MEOPT_MOUSE
+            if(meMouseCfg & meMOUSE_ENBLE)
+                TTinitMouse(0);
             TCAPputc('\n');
+#endif
+        }
 #endif /* _TCAP */
 #endif /* _ME_CONSOLE */
         

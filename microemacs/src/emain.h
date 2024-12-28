@@ -374,6 +374,7 @@
  *************************************************************************/
 #ifndef _ME_WINDOW              /* console only mode?                    */
 #undef _XTERM                   /* Do not want X-Windows                 */
+#undef _DRAGNDROP               /* Do not support Drag-n-drop            */
 #endif
 #ifdef _XTERM
 #define _MOUSE          1       /* Mouse supported on XTERM              */
@@ -388,6 +389,10 @@
 
 #ifndef _ME_CONSOLE             /* window only mode?                     */
 #undef _TCAP                    /* Do not want Termcap                   */
+#else
+#ifdef _USE_NCURSES
+#define _MOUSE          1       /* Mouse support in xterm through ncurses*/
+#endif
 #endif
 
 #ifndef _NANOEMACS
