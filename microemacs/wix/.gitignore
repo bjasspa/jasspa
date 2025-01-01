@@ -1,0 +1,10 @@
+# ignore backup files, tags and build directories
+macros/
+COPYING.txt
+mec.exe
+mew.exe
+jme.wixobj
+jmeMacros.wixobj
+jmeMacros.wxs
+Jasspa_MicroEmacs_*.wixpdb
+Jasspa_MicroEmacs_*.msi
