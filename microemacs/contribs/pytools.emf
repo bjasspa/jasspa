@@ -3,7 +3,7 @@
 ;  Created By    : Detlef Groth, University of Potsdam
 ;  Author        : Detlef Groth, University of Potsdam
 ;  Created       : Wed Sep 25 15:42:35 2024
-;  Last Modified : <241224.1845>
+;  Last Modified : <241229.1320>
 ;
 ;  Description   : Documentation viewer within MicroEmacs for
 ;                  Python  supporting section folding item-list navigation
@@ -129,6 +129,7 @@ following line into your `~/.config/jasspa/USERNAME.emf` file.
 !ehelp
 
 define-macro py-format
+  !iif &not &seq $buffer-fhook "fhook-python"  -8 ml-write &spr "Error: '%s' is not a Python file!" $buffer-bname
   !if &bmod "edit"
     set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
     !if &iseq #l0 "y" 
@@ -209,6 +210,7 @@ define-macro fhook-py-lint
 !emacro
 
 define-macro py-lint
+  !iif &not &seq $buffer-fhook "fhook-python"  -8 ml-write &spr "Error: '%s' is not a Python file!" $buffer-bname  
   !if &bmod "edit"
     set-variable #l2 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
     !if &iseq #l2 "y" 
@@ -321,6 +323,7 @@ define-macro fhook-py-exec
 
 ; execute a Python file directly from MicroEmacs 
 define-macro py-exec
+  !iif &not &seq $buffer-fhook "fhook-python"  -8 ml-write &spr "Error: '%s' is not a Python file!" $buffer-bname
   !if &bmod "edit"
     set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
     !if &iseq #l0 "y" 

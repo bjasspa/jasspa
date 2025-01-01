@@ -276,6 +276,7 @@ define-macro r-doc
 
 ; execute a R file using Rscript executable directly from MicroEmacs using the current ISO or Windows CP encodings
 define-macro r-exec
+  !iif &not &seq $buffer-fhook "fhook-r"  -8 ml-write &spr "Error: '%s' is not an R file!" $buffer-bname
   !iif &not &exi %rscript-com  r-rscript-setup
   !if &bmod "edit"
     set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
@@ -297,6 +298,7 @@ define-macro r-exec
 !emacro
 
 define-macro r-format
+  !iif &not &seq $buffer-fhook "fhook-r"  -8 ml-write &spr "Error: '%s' is not an R file!" $buffer-bname
   !iif &not &exi %rscript-com  r-rscript-setup
   !if &bmod "edit"
     set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
@@ -310,6 +312,7 @@ define-macro r-format
 !emacro
 
 define-macro r-lint
+  !iif &not &seq $buffer-fhook "fhook-r"  -8 ml-write &spr "Error: '%s' is not an R file!" $buffer-bname
   !iif &not &exi %rscript-com  r-rscript-setup
   !if &bmod "edit"
     set-variable #l2 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
