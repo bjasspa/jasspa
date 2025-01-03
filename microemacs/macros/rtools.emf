@@ -60,6 +60,7 @@ set-variable .fhook-r-lint.setup-mask "acfhmw"
   hilight .hilight.r-lint 0 "^/[- /\\.A-Za-z0-9]+:[0-9]+:[0-9]+:"  .scheme.link    
   hilight .hilight.r-lint 0 " style: .*"                               .scheme.operator
   hilight .hilight.r-lint 0 " warning: .*"                             .scheme.error
+  hilight .hilight.r-lint 0 " error: .*"                             .scheme.error  
 !endif
 
 add-next-line "*r-lint*" ""
@@ -331,4 +332,18 @@ define-macro r-lint
     1 buffer-mode "view"
   !endif
   buffer-init "r-lint"
+  set-variable :mouse-word-select r-lint-find-line
+  buffer-bind-create "bio" "return" "0" r-lint-find-line
+!emacro
+
+0 define-macro r-lint-find-line
+  set-variable #l0 @wl
+  !if &xse #l0 "\\(.+\\):\\([0-9]+\\):\\([0-9]+\\):.+"
+    next-window-find-buffer .r-lint.buffer
+    goto-line @s2
+    beginning-of-line
+    @s3 forward-char
+  !else
+    ml-write "Not a error line!"
+  !endif
 !emacro
