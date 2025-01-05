@@ -3,7 +3,7 @@
 ;  Created By    : Detlef Groth, University of Potsdam
 ;  Author        : Detlef Groth, University of Potsdam
 ;  Created       : Wed Sep 25 15:42:35 2024
-;  Last Modified : <250105.1025>
+;  Last Modified : <250105.1346>
 ;
 ;  Description   : Documentation viewer within MicroEmacs for
 ;                  Python  supporting section folding item-list navigation
@@ -108,7 +108,11 @@ define-macro py-doc
 
 add-next-line "*py-exec*" "^ *File \"%f\", line %l"
 0 define-macro py-exec-ipipe
-  !iif &not &exi :ipp-last  set-variable :ipp-last 4
+  !if &not &exi :ipp-last
+    set-variable :ipp-last 4
+    set-variable :mouse-word-select "mouse-get-next-line"
+    buffer-bind-key return-get-next-line "return"
+  !endif
   goto-alpha-mark "I"
   !iif &equ &set #l0 $window-line :ipp-last  !return
   set-variable $window-line &sub :ipp-last 1
@@ -174,7 +178,11 @@ define-macro py-format
 
 add-next-line "*py-lint*" "^%f:%l:\\d+: "
 0 define-macro py-lint-ipipe
-  !iif &not &exi :ipp-last  set-variable :ipp-last 4
+  !if &not &exi :ipp-last
+    set-variable :ipp-last 4
+    set-variable :mouse-word-select "mouse-get-next-line"
+    buffer-bind-key return-get-next-line "return"
+  !endif
   goto-alpha-mark "I"
   !iif &equ &set #l0 $window-line :ipp-last  !return
   set-variable $window-line &sub :ipp-last 1
