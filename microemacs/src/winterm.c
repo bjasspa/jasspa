@@ -2007,7 +2007,7 @@ TTgetClipboard(void)
         ll = 0;
         while((uc = *ss++) != '\0')
         {
-            if((uc == '\r') || (*ss == '\n'))
+            if((uc == '\r') && (*ss == '\n'))
             {
                 ss++;
                 *dd++ = '\n';
