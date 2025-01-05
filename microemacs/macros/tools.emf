@@ -27,9 +27,7 @@ add-file-hook "*compile* *grep*" fhook-ipipe
     5 buffer-bind-key compile "C-j"
   !endif
   goto-alpha-mark "I"
-  !if &equ $window-line :compile-last
-    !return
-  !endif
+  !iif &equ $window-line :compile-last  !return
   set-variable #l0 $window-line
   !if &not &bmod "wrap"
     ; ipipe command will wrap at 1022 even when wrap is disabled, glue the lines back together
@@ -85,14 +83,10 @@ add-file-hook "*compile* *grep*" fhook-ipipe
 !emacro
 define-macro compile
   !if &band @# 8
-    !if &not &exi .lastp
-      ml-write "[Cannot recompile - compile has not been executed]" 
-      !abort
-    !endif
+    !iif &not &exi .lastp  -8 ml-write "[Cannot recompile - compile has not been executed]" 
     set-variable #l2 .lastp
   !elif &seq $buffer-fname ""
-    ml-write "[Cannot compile - current buffer has no file name]" 
-    !abort
+    -8 ml-write "[Cannot compile - current buffer has no file name]" 
   !else
     set-variable #l2 &lef $buffer-fname &rsin "/" $buffer-fname
   !endif
@@ -153,9 +147,7 @@ define-macro compile
     set-variable .lastp #l2
   !endif
   &con &band @# 2 0x80 0x280 ipipe-shell-command %compile-com "*compile*" compile-ipipe @mna
-  !if #l9
-    ml-write &spr "[auto-touch: %s]" .tfn 
-  !endif
+  !iif #l9  ml-write &spr "[auto-touch: %s]" .tfn 
 !emacro
 define-macro recompile
   &bor @# 12 compile

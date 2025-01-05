@@ -124,9 +124,7 @@
       !if &xise #l3 "[ \t]*cdd?[ \t]*\\S.*"
         set-variable #l4 &trb &xirep #l3 "[ \t]*cdd?\\(.*\\)" "\\1"
         !if &xise #l4 "[a-z]:\\([^\\/].*\\)?"
-          !if &not &exi &ind &cat ":dir-" &slo &lef #l4 1
-            set-variable &ind &cat ":dir-" &slo &lef #l4 1 &stat "a" &lef #l4 2
-          !endif
+          !iif &not &exi &ind &cat ":dir-" &slo &lef #l4 1  set-variable &ind &cat ":dir-" &slo &lef #l4 1 &stat "a" &lef #l4 2
           set-variable #l4 &stat "a" &cat &ind &cat ":dir-" &slo &lef #l4 1 &rig #l4 2
           goto-position "\x83"
         !else
@@ -141,12 +139,8 @@
           !if &or &band $system 0x100 &seq $platform "cygwin"
             ; must set the old one as well - the starting path is not 
             ; automatically stored
-            !if &seq &mid #l5 1 1 ":"
-              set-variable &ind &cat ":dir-" &slo &lef #l5 1 #l5
-            !endif
-            !if &seq &mid #l4 1 1 ":"
-              set-variable &ind &cat ":dir-" &slo &lef #l4 1 #l4
-            !endif
+            !iif &seq &mid #l5 1 1 ":"  set-variable &ind &cat ":dir-" &slo &lef #l5 1 #l5
+            !iif &seq &mid #l4 1 1 ":"  set-variable &ind &cat ":dir-" &slo &lef #l4 1 #l4
             ; ensure '/' are '\\'
             set-variable #l4 &rep #l4 "/" "\\"
             set-variable #l2 &cat "cd " #l4
@@ -191,26 +185,20 @@
       !if &sin @wc " \t\n"
         set-variable #l1 $window-col
         !force backward-char
-        !if &not &sin @wc " \t\n"
-          !goto complete-file
-        !endif
+        !iif &not &sin @wc " \t\n"  !goto complete-file
         set-variable $window-col #l1
         set-variable #l2 ""
       !else
 *complete-file
         set-variable #l2 &rsin " " &lef @wl $window-col
-        !if &not &set #l1 &sin " " &rig @wl $window-col
-          set-variable #l1 &len &rig @wl $window-col
-        !endif
+        !iif &not &set #l1 &sin " " &rig @wl $window-col  set-variable #l1 &len &rig @wl $window-col
         set-variable #l1 &add $window-col #l1
         set-variable #l2 &mid @wl #l2 &sub #l1 #l2
         set-variable $window-col #l1
       !endif
       goto-position "\x83"
-      !if &or &band $system 0x100 &seq $platform "cygwin"
-        ; on windows change '\' to '/'
-        set-variable #l2 &rep #l2 "\\" "/"
-      !endif
+      ; on windows change '\' to '/'
+      !iif &or &band $system 0x100 &seq $platform "cygwin"  set-variable #l2 &rep #l2 "\\" "/"
       set-variable #l3 &stat "a" &cat $buffer-fname #l2
       !force !force set-variable #l4 @ml61 "Filename" #l3
       !if &not $status
@@ -219,14 +207,10 @@
         !return
       !endif
       set-variable #l5 &rsin "/" #l3
-      !if &seq &lef #l3 #l5 &lef #l4 #l5
-        ; base path is the same, replace with original
-        set-variable #l4 &cat &lef #l2 &rsin "/" #l2 &rig #l4 #l5
-      !endif
-      !if &or &band $system 0x100 &seq $platform "cygwin"
-        ; on windows change '/' to '\'
-        set-variable #l4 &rep #l4 "/" "\\"
-      !endif
+      ; base path is the same, replace with original
+      !iif &seq &lef #l3 #l5 &lef #l4 #l5  set-variable #l4 &cat &lef #l2 &rsin "/" #l2 &rig #l4 #l5
+      ; on windows change '/' to '\'
+      !iif &or &band $system 0x100 &seq $platform "cygwin"  set-variable #l4 &rep #l4 "/" "\\"
       !force find-buffer &cat #l0 "-cmd"
       &len #l2 backward-delete-char
       -1 yank
@@ -236,14 +220,10 @@
       ; next/prev history
       set-variable #l3 @wl
       !force find-buffer &cat #l0 "-hist"
-      !if &seq @wc ""
-        set-variable :cmd #l3
-      !endif
+      !iif &seq @wc ""  set-variable :cmd #l3
       !force !force execute-string #l1
       set-variable #l3 @wl
-      !if &seq @wc ""
-        set-variable #l3 :cmd 
-      !endif
+      !iif &seq @wc ""  set-variable #l3 :cmd 
       !force find-buffer &cat #l0 "-cmd"
       beginning-of-buffer
       insert-string #l3
@@ -282,18 +262,14 @@
   !else
     ipipe-write #l1
   !endif
-  !if &not #l9
-    !bell
-  !endif
+  !iif &not #l9  !bell
 !emacro
 0 define-macro ipipe-minoutput
   set-variable #l2 @cck
   set-variable #l3 @cc
   !if &not &bmod "pipe"
     set-variable $buffer-input ""
-    !if &gre &len @cc 1
-      !goto exec-lbl
-    !endif
+    !iif &gre &len @cc 1  !goto exec-lbl
     insert-string @cc
     !return
   !elif &les &len @cc 2
@@ -318,9 +294,7 @@
     ipipe-write-prompt #l1
   !else
     goto-alpha-mark "I"
-    !if &or &band $system 0x100 &seq $platform "cygwin"
-      set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
-    !endif
+    !iif &or &band $system 0x100 &seq $platform "cygwin"  set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
     ipipe-write #l1
   !endif
 !emacro
@@ -355,9 +329,7 @@
     ipipe-write-prompt #l1
   !else
     goto-alpha-mark "I"
-    !if &or &band $system 0x100 &seq $platform "cygwin"
-      set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
-    !endif
+    !iif &or &band $system 0x100 &seq $platform "cygwin"  set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
     ipipe-write #l1
   !endif
 !emacro 
@@ -404,22 +376,16 @@
     set-variable $buffer-ipipe ""
     !force buffer-unbind-key &kbin "" ipipe-mode
   !endif
-  !if &equ :imode 2
-    2 screen-update
-  !endif
+  !iif &equ :imode 2  2 screen-update
 !emacro
 
 0 define-macro ipipe-rerun
   beginning-of-buffer
-  !if &seq &lef @wl 3 "cd "
-    forward-line
-  !endif
+  !iif &seq &lef @wl 3 "cd "  forward-line
   &con &bmod "wrap" 0 0x200 ipipe-shell-command @wl $buffer-bname @mna
   popup-window $buffer-bname
-  !if &not &seq $buffer-fhook "fhook-ipipe"
-    ; gdb & dbx + others dont auto setup the hook, they do it manually
-    fhook-ipipe
-  !endif
+  ; gdb & dbx + others dont auto setup the hook, they do it manually
+  !iif &not &seq $buffer-fhook "fhook-ipipe"  fhook-ipipe
 !emacro
 
 define-macro fhook-ipipe
@@ -434,27 +400,19 @@ define-macro fhook-ipipe
   !elif &seq $buffer-bname "*gdb*"
     set-variable $buffer-dhook debug-reset-line
     set-variable $buffer-ipipe gdb-input
-    !if &band .hilight.flags 0x02
-      set-variable $buffer-hilight .hilight.gdb
-    !endif
+    !iif &band .hilight.flags 0x02  set-variable $buffer-hilight .hilight.gdb
     set-variable :last-line 1
   !elif &seq $buffer-bname "*dbx*"
     set-variable $buffer-dhook debug-reset-line
-    !if &band .hilight.flags 0x02
-      set-variable $buffer-hilight .hilight.gdb
-    !endif
+    !iif &band .hilight.flags 0x02  set-variable $buffer-hilight .hilight.gdb
     set-variable :last-line 1
   !elif &seq $buffer-bname "*perldb*"
     set-variable $buffer-dhook debug-reset-line
     set-variable $buffer-ipipe perldb-input
     set-variable :mode 0
     set-variable :prompt "^  DB<[0-9]*> "
-    !if &band $system 0x100
-	    set-variable :noecho 1
-    !endif
-    !if &band .hilight.flags 0x02
-      set-variable $buffer-hilight .hilight.gdb
-    !endif
+    !iif &band $system 0x100  set-variable :noecho 1
+    !iif &band .hilight.flags 0x02  set-variable $buffer-hilight .hilight.gdb
     set-variable :last-line 1
   !else
     set-variable $buffer-input ipipe-minoutput
@@ -464,9 +422,7 @@ define-macro fhook-ipipe
       ; Bind <return> to select the buffer - same as mouse.
       buffer-bind-key return-get-next-line "return"
     !endif
-    !if &exi my-fhook-ipipe
-      my-fhook-ipipe
-    !endif
+    !iif &exi my-fhook-ipipe  my-fhook-ipipe
     !return
   !endif
   -1 buffer-mode "wrap"
@@ -604,8 +560,7 @@ define-macro gdb
   !force popup-window "*dbx*"
   !if &not $status
     popup-window #l1
-    ml-write "No *dbx* running!"
-    !abort
+    -8 ml-write "No *dbx* running!"
   !endif
   ipipe-write #l0
   popup-window #l1
@@ -673,9 +628,7 @@ define-macro dbx
   !if $status
     find-buffer #l0
     popup-window  "*dbx*"
-    !if &bmod "pipe"
-      !return
-    !endif
+    !iif &bmod "pipe"  !return
     screen-update
   !endif
   set-variable #l0 @ml01 "dbx program"
@@ -698,19 +651,13 @@ define-macro dbx
 !emacro
 
 0 define-macro perldb-add-breakpoint
-  !if &not &seq %gdbdbx1 $buffer-bname
-    ml-write "[Breakpoints can only be set inthe current file]"
-    !abort
-  !endif
+  !iif &not &seq %gdbdbx1 $buffer-bname  -8 ml-write "[Breakpoints can only be set inthe current file]"
   set-variable #l0 &spr "b %d\CM" $window-aline
-  !if &band $system 0x100
-    set-variable #l0 &cat #l0 "\CJ"
-  !endif
+  !iif &band $system 0x100  set-variable #l0 &cat #l0 "\CJ"
   !force popup-window "*perldb*"
   !if &not $status
     popup-window %gdbdbx1
-    ml-write "No *perldb* running!"
-    !abort
+    -8 ml-write "No *perldb* running!"
   !endif
   ipipe-write #l0
   popup-window %gdbdbx1
@@ -756,9 +703,7 @@ define-macro perldb
   !if $status
     find-buffer #l0
     popup-window  "*perldb*"
-    !if &bmod "pipe"
-      !return
-    !endif
+    !iif &bmod "pipe"  !return
     screen-update
   !endif
   !if &not &band @# 2

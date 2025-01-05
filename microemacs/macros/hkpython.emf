@@ -53,6 +53,7 @@ set-variable .fhook-python.item-list-r4 "Main \ecBBlock\ecA"
   hilight   .hilight.python 1 "ZeroDivisionError" .scheme.variable
   ; Keywords
   hilight   .hilight.python 1 "and"               .scheme.keyword
+  hilight   .hilight.python 1 "as"                .scheme.keyword
   hilight   .hilight.python 1 "assert"            .scheme.keyword
   hilight   .hilight.python 1 "break"             .scheme.keyword
   hilight   .hilight.python 1 "class"             .scheme.keyword
@@ -82,6 +83,7 @@ set-variable .fhook-python.item-list-r4 "Main \ecBBlock\ecA"
   hilight   .hilight.python 1 "try"               .scheme.keyword
   hilight   .hilight.python 1 "then"              .scheme.keyword
   hilight   .hilight.python 1 "while"             .scheme.keyword
+  hilight   .hilight.python 1 "with"              .scheme.keyword
   ; Operators
   hilight   .hilight.python 0 "("                 .scheme.operator
   hilight   .hilight.python 0 ")"                 .scheme.operator

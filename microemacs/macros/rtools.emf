@@ -277,7 +277,9 @@ define-macro r-doc
 ; execute a R file using Rscript executable directly from MicroEmacs using the current ISO or Windows CP encodings
 define-macro r-exec
   !iif &not &seq $buffer-fhook "fhook-r"  -8 ml-write &spr "Error: '%s' is not an R file!" $buffer-bname
+  !iif &seq $buffer-fname ""  -8 ml-write &spr "Error: Buffer '%s' does not have a file name!" $buffer-bname
   !iif &not &exi %rscript-com  r-rscript-setup
+  ; TODO change save to be like compile
   !if &bmod "edit"
     set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
     !iif &iseq #l0 "y"  save-buffer 
@@ -299,6 +301,7 @@ define-macro r-exec
 
 define-macro r-format
   !iif &not &seq $buffer-fhook "fhook-r"  -8 ml-write &spr "Error: '%s' is not an R file!" $buffer-bname
+  !iif &seq $buffer-fname ""  -8 ml-write &spr "Error: Buffer '%s' does not have a file name!" $buffer-bname
   !iif &not &exi %rscript-com  r-rscript-setup
   !if &bmod "edit"
     set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
@@ -313,12 +316,14 @@ define-macro r-format
 
 define-macro r-lint
   !iif &not &seq $buffer-fhook "fhook-r"  -8 ml-write &spr "Error: '%s' is not an R file!" $buffer-bname
+  !iif &seq $buffer-fname ""  -8 ml-write &spr "Error: Buffer '%s' does not have a file name!" $buffer-bname
   !iif &not &exi %rscript-com  r-rscript-setup
   !if &bmod "edit"
     set-variable #l2 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
     !iif &iseq #l2 "y"  save-buffer 
   !endif 
   !iif &not &seq "" &set #l0 &reg &spr "/history/%s/char-set" %platform ""  set-variable #l0 &spr "options('encoding'='%s');" &rep &rep #l0 "iso" "ISO-" "cp" "CP"
+  ; TODO prompt for %rscript-lint-opts options like compile?
   2 pipe-shell-command &spr "%s -e \"%slibrary(lintr);lintr::lint('%s',%s)\"" %rscript-com #l0 $buffer-fname &con &exi %rscript-lint-opts %rscript-lint-opts "linters = linters_with_defaults(indentation_linter = indentation_linter(indent = 4L))" "*r-lint*"
   !iif $result  -8 ml-write "Error: Rscript execution failed, check R and the lintr package are installed."
   set-variable .buffer $buffer-bname

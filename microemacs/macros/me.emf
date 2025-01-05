@@ -70,6 +70,7 @@ define-macro-file narrow narrow-search-forward narrow-search-backward
 define-macro-file notes notes notes-file notes-instant notes-context
 define-macro-file charsutl buffer-is-utf8 change-buffer-charset
 define-macro-file itemlist item-list item-list-close occur
+define-macro-file pytools py-doc py-exec py-format py-lint
 define-macro-file fileopen osd-file-open osd-get-file
 define-macro-file spellaut auto-spell auto-spell-menu
 define-macro-file rtools r-doc r-exec r-format r-lint
