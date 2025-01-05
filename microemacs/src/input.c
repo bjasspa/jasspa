@@ -32,8 +32,8 @@
 #include "evar.h"
 #include "eskeys.h"
 
-meUByte **mlgsStrList ;
-int    mlgsStrListSize ;
+meUByte **mlgsStrList;
+int    mlgsStrListSize;
 
 /*
  * Ask a yes or no question in the message line. Return either meTRUE, meFALSE, or
@@ -43,9 +43,9 @@ int    mlgsStrListSize ;
 int
 mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr)
 {
-    int   inpType=0, cc ;
-    meUByte buff[meTOKENBUF_SIZE_MAX] ;
-    meUByte *pp=prompt, *lp=NULL ;
+    int   inpType=0, cc;
+    meUByte buff[meTOKENBUF_SIZE_MAX];
+    meUByte *pp=prompt, *lp=NULL;
     
     for(;;)
     {
@@ -55,67 +55,67 @@ mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr)
             {
                 /* We are going to get a key of the user!! */
                 if(mask & mlCR_QUIT_ON_USER)
-                    return -2 ;
+                    return -2;
                 if(mask & mlCR_UPDATE_ON_USER)
-                    update(meTRUE) ;
+                    update(meTRUE);
                 
                 if(frameCur->mlStatus & MLSTATUS_POSOSD)
                 {
-                    frameCur->mlStatus = MLSTATUS_POSOSD ;
-                    mlResetCursor() ;
+                    frameCur->mlStatus = MLSTATUS_POSOSD;
+                    mlResetCursor();
                 }
                 else
                 {
                     /* switch off the status cause we are replacing it */
-                    frameCur->mlStatus = 0 ;
-                    mlwrite(((mask & mlCR_CURSOR_IN_MAIN) ? 0:MWCURSOR)|MWSPEC,pp) ;
-                    lp = pp ;
-                    pp = prompt ;
+                    frameCur->mlStatus = 0;
+                    mlwrite(((mask & mlCR_CURSOR_IN_MAIN) ? 0:MWCURSOR)|MWSPEC,pp);
+                    lp = pp;
+                    pp = prompt;
                     /* switch on the status so we save it */
-                    frameCur->mlStatus = (mask & mlCR_CURSOR_IN_MAIN) ? MLSTATUS_KEEP:(MLSTATUS_KEEP|MLSTATUS_POSML) ;
-                    inpType = 2 ;
+                    frameCur->mlStatus = (mask & mlCR_CURSOR_IN_MAIN) ? MLSTATUS_KEEP:(MLSTATUS_KEEP|MLSTATUS_POSML);
+                    inpType = 2;
                 }
             }
-            cc = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE) ;
-            frameCur->mlStatus &= ~(MLSTATUS_KEEP|MLSTATUS_RESTORE|MLSTATUS_POSML) ;
+            cc = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE);
+            frameCur->mlStatus &= ~(MLSTATUS_KEEP|MLSTATUS_RESTORE|MLSTATUS_POSML);
             if((cc == breakc) && !(mask & mlCR_QUOTE_CHAR))
-                return -1 ;
+                return -1;
         }
         else
         {
-            meUByte *ss = execstr ;
-            execstr = token(execstr,buff) ;
+            meUByte *ss = execstr;
+            execstr = token(execstr,buff);
             if((buff[0] == '@') && (buff[1] == 'm') && (buff[2] == 'x'))
             {
-                cc = buff[3] ;
+                cc = buff[3];
                 execstr = token(execstr, buff);
                 if(cc == 'a')
-                    execstr = ss ;
-                meStrcpy(resultStr,prompt) ;
+                    execstr = ss;
+                meStrcpy(resultStr,prompt);
                 if(lineExec (0, 1, buff) <= 0)
-                    return -1 ;
-                cc = resultStr[0] ;
+                    return -1;
+                cc = resultStr[0];
             }
             else if((buff[0] == '@') && (buff[1] == 'm') && (buff[2] == 'n'))
             {
                 /* if @mna (get all input from user) then rewind the execstr */
                 if(buff[3] == 'a')
-                    execstr = ss ;
-                inpType = 1 ;
-                continue ;
+                    execstr = ss;
+                inpType = 1;
+                continue;
             }
             else
             {
                 /* evaluate it */
-                meUByte *res = getval(buff) ;
+                meUByte *res = getval(buff);
                 if(res == abortm)
                 {
                     if((buff[0] != '\0') && (buff[0] != ';'))
-                        return -1 ;
-                    inpType = 1 ;
-                    continue ;
+                        return -1;
+                    inpType = 1;
+                    continue;
                 }
-                cc = *res ;
+                cc = *res;
             }
         }
         
@@ -123,15 +123,15 @@ mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr)
            ((cc = quoteKeyToChar((meUShort) cc)) < 0))
         {
             if(validList == NULL)
-                return -1 ;
+                return -1;
         }
         else
         {
             if((mask & mlCR_LOWER_CASE) && ((cc & 0xff00) == 0))
-                cc = toLower(cc) ;
+                cc = toLower(cc);
             
             if((cc == '?') && (helpStr != NULL))
-                pp = (lp == helpStr) ? prompt:helpStr ;
+                pp = (lp == helpStr) ? prompt:helpStr;
             else if((cc != '\0') &&
                     (!(mask & mlCR_ALPHANUM_CHAR) || isAlphaNum(cc)) &&
                     ((validList == NULL) || (((cc & 0xff00) == 0) && 
@@ -142,13 +142,13 @@ mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr)
             {
                 if (inpType == 2)
                 {
-                    meGetStringFromKey((meUShort) cc,buff) ;
-                    mlwrite(MWCURSOR,(meUByte *)"%s%s",prompt,buff) ;
+                    meGetStringFromKey((meUShort) cc,buff);
+                    mlwrite(MWCURSOR,(meUByte *)"%s%s",prompt,buff);
                 }
-                return cc ;
+                return cc;
             }
         }
-        inpType = 1 ;
+        inpType = 1;
     }
 }
 
@@ -156,19 +156,19 @@ int
 mlyesno(meUByte *prompt)
 {
     meUByte buf[meBUF_SIZE_MAX] ;    /* prompt to user */
-    int ret ;
+    int ret;
     
     /* build and prompt the user */
-    meStrcpy(buf,prompt) ;
-    meStrcat(buf," (?/y/n) ? ") ;
+    meStrcpy(buf,prompt);
+    meStrcat(buf," (?/y/n) ? ");
 
-    ret = mlCharReply(buf,mlCR_LOWER_CASE,(meUByte *)"yn",(meUByte *)"(Y)es, (N)o, (C-g)Abort ? ") ;
+    ret = mlCharReply(buf,mlCR_LOWER_CASE,(meUByte *)"yn",(meUByte *)"(Y)es, (N)o, (C-g)Abort ? ");
     
     if(ret < 0)
-        return ctrlg(meFALSE,1) ;
+        return ctrlg(meFALSE,1);
     else if(ret == 'n')
-        return meFALSE ;
-    return meTRUE ;
+        return meFALSE;
+    return meTRUE;
 }
 
 /*    tgetc:    Get a key from the terminal driver, resolve any keyboard
@@ -186,36 +186,36 @@ kbd_rep:
         /* if there is some left... */
         if(kbdoff < kbdlen)
         {
-            cc = (meUShort) kbdptr[kbdoff++] ;
+            cc = (meUShort) kbdptr[kbdoff++];
             if(cc == meCHAR_LEADER)
             {
-                cc = kbdptr[kbdoff++] ;
+                cc = kbdptr[kbdoff++];
                 if(cc == meCHAR_TRAIL_SPECIAL)
                 {
                     meUByte dd ;    /* fetched character */
-                    cc = ((meUShort) kbdptr[kbdoff++]) << 8 ;
+                    cc = ((meUShort) kbdptr[kbdoff++]) << 8;
                     if(((dd = kbdptr[kbdoff++]) != meCHAR_LEADER) ||
                        ((dd = kbdptr[kbdoff++]) != meCHAR_TRAIL_NULL))
-                        cc |= dd ;
+                        cc |= dd;
                 }
                 else if(cc == meCHAR_TRAIL_NULL)
-                    cc = 0 ;
+                    cc = 0;
                 else if(cc == meCHAR_TRAIL_LEADER)
                     /* special '\?' key (e.g. OSD hot key) - ignore */
-                    goto kbd_rep ;
+                    goto kbd_rep;
             }
-            return cc ;
+            return cc;
         }
         /* at the end of last repitition? */
         if (--kbdrep > 0)
         {
             /* reset the macro to the begining for the next rep */
-            kbdoff = 0 ;
-            goto kbd_rep ;
+            kbdoff = 0;
+            goto kbd_rep;
         }
         kbdmode = meSTOP;
 #if MEOPT_UNDO
-        undoContFlag++ ;
+        undoContFlag++;
 #endif
         /* force a screen update after all is done */
         update(meFALSE);
@@ -230,7 +230,7 @@ kbd_rep:
             /* fetch a character from the terminal driver */
             cc = TTgetc();
         } while(((cc & (ME_SPECIAL|0x00ff)) >= (ME_SPECIAL|SKEY_mouse_drop_1))  &&
-                ((cc & (ME_SPECIAL|0x00ff)) <= (ME_SPECIAL|SKEY_mouse_time_3))) ;
+                ((cc & (ME_SPECIAL|0x00ff)) <= (ME_SPECIAL|SKEY_mouse_time_3)));
 #else
         cc = TTgetc();
 #endif
@@ -243,49 +243,49 @@ kbd_rep:
         }
         else
         {
-            meUByte dd ;
+            meUByte dd;
             /* must store 0xaabb as ff,2,aa,bb
              * also must store 0x00ff as ff,ff & 0x0000 as 0xff01
              * Also 0x??00 stored as ff,2,??,ff,01
              */
             if(cc > 0xff)
             {
-                kbdptr[kbdlen++] = meCHAR_LEADER ;
-                kbdptr[kbdlen++] = meCHAR_TRAIL_SPECIAL ;
-                kbdptr[kbdlen++] = cc >> 8 ;
+                kbdptr[kbdlen++] = meCHAR_LEADER;
+                kbdptr[kbdlen++] = meCHAR_TRAIL_SPECIAL;
+                kbdptr[kbdlen++] = cc >> 8;
             }
-            dd = (cc & 0xff) ;
+            dd = (cc & 0xff);
             if(dd == meCHAR_LEADER)
             {
-                kbdptr[kbdlen++] = meCHAR_LEADER ;
-                kbdptr[kbdlen++] = meCHAR_TRAIL_LEADER ;
+                kbdptr[kbdlen++] = meCHAR_LEADER;
+                kbdptr[kbdlen++] = meCHAR_TRAIL_LEADER;
             }
             else if(dd == 0x0)
             {
-                kbdptr[kbdlen++] = meCHAR_LEADER ;
-                kbdptr[kbdlen++] = meCHAR_TRAIL_NULL ;
+                kbdptr[kbdlen++] = meCHAR_LEADER;
+                kbdptr[kbdlen++] = meCHAR_TRAIL_NULL;
             }
             else
-                kbdptr[kbdlen++] = dd ;
+                kbdptr[kbdlen++] = dd;
         }
     }
     else
         cc = TTgetc();
 
     /* and finally give the char back */
-    return cc ;
+    return cc;
 }
 
 
 static int
 getprefixchar(int f, int n, int ctlc, int flag)
 {
-    meUByte buf[20] ;
-    int c ;
+    meUByte buf[20];
+    int c;
 
     if(!(flag & meGETKEY_SILENT))
     {
-        buf[meGetStringFromChar((meUShort) ctlc,buf)] = '\0' ;
+        buf[meGetStringFromChar((meUShort) ctlc,buf)] = '\0';
         if(f == meTRUE)
             mlwrite(MWCURSOR,(meUByte *)"Arg %d: %s", n, buf);
         else
@@ -293,8 +293,8 @@ getprefixchar(int f, int n, int ctlc, int flag)
     }
     c = tgetc();
     if(!(c & (ME_SHIFT|ME_CONTROL|ME_ALT|ME_SPECIAL)))
-        c = toLower(c) ;
-    return c ;
+        c = toLower(c);
+    return c;
 }
 
 /* meGetKeyFromUser
@@ -304,7 +304,7 @@ meUShort
 meGetKeyFromUser(int f, int n, int flag)
 {
     meUShort cc ;        /* fetched keystroke */
-    int ii ;
+    int ii;
     
     /* Get a key or mouse event, if meGetKeyFirst is not < 0 then we already
      * have one to process (i.e. tab out of an OSD entry, pre-loaded a TAB
@@ -312,23 +312,23 @@ meGetKeyFromUser(int f, int n, int flag)
      * macro, otherwise wait for an event from the user */
     if(meGetKeyFirst >= 0)
     {
-        cc = (meUShort) meGetKeyFirst ;
+        cc = (meUShort) meGetKeyFirst;
         meGetKeyFirst = -1;
-        return cc ;
+        return cc;
     }
     if(kbdmode == mePLAY)
     {
         if(TTbreakTest(0))
         {
-            ctrlg(meFALSE,1) ;
+            ctrlg(meFALSE,1);
 #if MEOPT_UNDO
-            undoContFlag++ ;
+            undoContFlag++;
 #endif
             /* force a screen update */
             update(0);
         }
         else
-            flag |= meGETKEY_SILENT ;
+            flag |= meGETKEY_SILENT;
     }
     if(f && !(flag & meGETKEY_SILENT))
         mlwrite(MWCURSOR,(meUByte *)"Arg %d:",n);
@@ -343,18 +343,18 @@ meGetKeyFromUser(int f, int n, int flag)
     if(!(flag & meGETKEY_SINGLE))
     {
         /* process prefixes */
-        ii = ME_PREFIX_NUM+1 ;
+        ii = ME_PREFIX_NUM+1;
         while(--ii > 0)
             if(cc == prefixc[ii])
             {
-                cc = ((ii << ME_PREFIX_BIT) | getprefixchar(f,n,cc,flag)) ;
-                break ;
+                cc = ((ii << ME_PREFIX_BIT) | getprefixchar(f,n,cc,flag));
+                break;
             }
         if(flag & meGETKEY_COMMAND)
-            thiskey = cc ;
+            thiskey = cc;
     }
     /* return the key */
-    return cc ;
+    return cc;
 }
 
 #define mlINPUT_LAST_KILL   0x01
@@ -363,10 +363,10 @@ meGetKeyFromUser(int f, int n, int flag)
 #define mlINPUT_THIS_KILL   0x10
 #define mlINPUT_THIS_YANK   0x20
 #define mlINPUT_THIS_REYANK 0x40
-static int mlInputFlags ;
+static int mlInputFlags;
 
-static meIFuncSSI curCmpIFunc ;
-static meIFuncSS  curCmpFunc ;
+static meIFuncSSI curCmpIFunc;
+static meIFuncSS  curCmpFunc;
 
 #define mlForwardToNextSpace(buff,curPos,curLen) \
 for(; (curPos < curLen) && isAlphaNum(buff[curPos]) ; curPos++)
@@ -389,10 +389,10 @@ mlInsertChar(meUByte cc, meUByte *buf, int *pos, int *len, int max)
      * Return:  meTRUE    if the character will fit
      *          meFALSE   otherwise
      */
-    int ll ;
+    int ll;
     ll = meStrlen(buf);
     if(ll + 1 >= max)
-        return meFALSE ;
+        return meFALSE;
     
     if(*pos == ll)
     {
@@ -405,52 +405,52 @@ mlInsertChar(meUByte cc, meUByte *buf, int *pos, int *len, int max)
     else
     {
         /* The character goes in the middle of the buffer. */
-        meUByte *ss, c1, c2 ;
+        meUByte *ss, c1, c2;
         
-        ss = buf + *pos ;
-        c2 = cc ;
+        ss = buf + *pos;
+        c2 = cc;
         
         do {
-            c1 = c2 ;
-            c2 = *ss ;
-            *ss++ = c1 ;
-        } while(c1 != '\0') ;
+            c1 = c2;
+            c2 = *ss;
+            *ss++ = c1;
+        } while(c1 != '\0');
         
         /* update the pos & length */
         *len = ll+1;
-        (*pos)++ ;
+        (*pos)++;
     }
-    return meTRUE ;
+    return meTRUE;
 }
 
 static int
 mlForwardDelete(meUByte *buf,int curPos, int curLen, int delLen, int flags)
 {
-    meUByte *ss, *dd ;
+    meUByte *ss, *dd;
     if((curPos+delLen) > curLen)
-        delLen = curLen - curPos ;
+        delLen = curLen - curPos;
     if(delLen > 0)
     {
-        dd = buf + curPos ;
+        dd = buf + curPos;
         if(flags & 2)
         {
             killInit(mlInputFlags & mlINPUT_LAST_KILL);
             if((ss = killAddNode(delLen)) != NULL)
             {
-                memcpy(ss,dd,delLen) ;
-                ss[delLen] = '\0' ;
-                mlInputFlags |= mlINPUT_THIS_KILL ;
+                memcpy(ss,dd,delLen);
+                ss[delLen] = '\0';
+                mlInputFlags |= mlINPUT_THIS_KILL;
             }
         }
         if(flags & 1)
         {
-            curLen -= delLen ;
-            ss = dd + delLen ;
+            curLen -= delLen;
+            ss = dd + delLen;
             while((*dd++ = *ss++) != '\0')
                 ;
         }
     }
-    return curLen ;
+    return curLen;
 }
 
 
@@ -490,26 +490,26 @@ mlForwardDelete(meUByte *buf,int curPos, int curLen, int delLen, int flags)
 void
 mlDisp(meUByte *prompt, meUByte *buf, meUByte *cont, int cpos)
 {
-    char   expbuf[meMLDISP_SIZE_MAX] ;
-    int    len, start, col, maxCol ;
-    int    promsiz ;
+    char   expbuf[meMLDISP_SIZE_MAX];
+    int    len, start, col, maxCol;
+    int    promsiz;
     
-    col = -1 ;
-    len = expandexp(-1,buf,meMLDISP_SIZE_MAX-1,0,(meUByte *)expbuf,cpos,&col,0) ;
+    col = -1;
+    len = expandexp(-1,buf,meMLDISP_SIZE_MAX-1,0,(meUByte *)expbuf,cpos,&col,0);
     if(col < 0)
-        col = len ;
+        col = len;
     if(cont != NULL)
     {
         meStrncpy(expbuf+len,cont,meMLDISP_SIZE_MAX-len);
-        expbuf[meMLDISP_SIZE_MAX-1] = '\0' ;
-        len += strlen(expbuf+len) ;
+        expbuf[meMLDISP_SIZE_MAX-1] = '\0';
+        len += strlen(expbuf+len);
     }
     /* switch off the status cause we are replacing it */
-    frameCur->mlStatus = 0 ;
-    maxCol = frameCur->width ;
-    promsiz = meStrlen(prompt) ;
-    col += promsiz ;
-    len += promsiz ;
+    frameCur->mlStatus = 0;
+    maxCol = frameCur->width;
+    promsiz = meStrlen(prompt);
+    col += promsiz;
+    len += promsiz;
     /*
      * Having expanded it, display it.
      *
@@ -527,28 +527,28 @@ mlDisp(meUByte *prompt, meUByte *buf, meUByte *cont, int cpos)
      */
     if(col > maxCol - 1)
     {
-        int div = maxCol >> 1 ;
+        int div = maxCol >> 1;
         
-        start = (((col - (div >> 1)) / div) * div) ;
-        len -= start ;
-        col -= start-1 ;
-        maxCol-- ;
+        start = (((col - (div >> 1)) / div) * div);
+        len -= start;
+        col -= start-1;
+        maxCol--;
     }
     else
-        start = 0 ;
+        start = 0;
     if(len > maxCol)
     {
         expbuf[start+maxCol-promsiz-1] = '$';
         expbuf[start+maxCol-promsiz] = '\0';
     }
-    frameCur->mlColumn = col ;
+    frameCur->mlColumn = col;
     if(start >= promsiz)
-        mlwrite(MWUSEMLCOL|MWCURSOR,(meUByte *)"%s%s",(start) ? "$":"",expbuf+start-promsiz) ;
+        mlwrite(MWUSEMLCOL|MWCURSOR,(meUByte *)"%s%s",(start) ? "$":"",expbuf+start-promsiz);
     else
-        mlwrite(MWUSEMLCOL|MWCURSOR,(meUByte *)"%s%s%s",(start) ? "$":"",prompt+start,expbuf) ;
+        mlwrite(MWUSEMLCOL|MWCURSOR,(meUByte *)"%s%s%s",(start) ? "$":"",prompt+start,expbuf);
     
     /* switch on the status so we save it */
-    frameCur->mlStatus = MLSTATUS_KEEP|MLSTATUS_POSML ;
+    frameCur->mlStatus = MLSTATUS_KEEP|MLSTATUS_POSML;
 }
 
 
@@ -556,17 +556,17 @@ mlDisp(meUByte *prompt, meUByte *buf, meUByte *cont, int cpos)
 int
 isFileIgnored(meUByte *fileName)
 {
-    meUByte *fi, cc ;
-    int len, fil ;
+    meUByte *fi, cc;
+    int len, fil;
     
     if((fi = fileIgnore) != NULL)
     {
-        len = meStrlen(fileName) ;
+        len = meStrlen(fileName);
         for(;;)
         {
-            fil=1 ;
+            fil=1;
             while(((cc=fi[fil]) != ' ') && (cc != '\0'))
-                fil++ ;
+                fil++;
             if((fil <= len) &&
 #ifdef _INSENSE_CASE
                !meStrnicmp(fileName+len-fil,fi,fil)
@@ -574,13 +574,13 @@ isFileIgnored(meUByte *fileName)
                !meStrncmp(fileName+len-fil,fi,fil)
 #endif
                )
-                return meTRUE ;
-            fi += fil ;
+                return meTRUE;
+            fi += fil;
             if(*fi++ == '\0')
-                break ;
+                break;
         }
     }
-    return meFALSE ;
+    return meFALSE;
 }
 #endif
 
@@ -588,33 +588,33 @@ static int
 getFirstLastPos(int noStr,meUByte **strs, meUByte *str, int option,
                 int *fstPos, int *lstPos)
 {
-    register int nn ;
+    register int nn;
     
     if((nn = meStrlen(str)) == 0)
     {
-        *fstPos = 0 ;
-        *lstPos = noStr - 1 ;
+        *fstPos = 0;
+        *lstPos = noStr - 1;
         if(noStr <= 0)
-            return 0 ;
+            return 0;
     }
     else
     {
-        register int ii, rr ;
+        register int ii, rr;
         
         for(ii=0 ; ii<noStr ; ii++)
             if(!(rr = curCmpIFunc(str,strs[ii],nn)))
-                break ;
+                break;
             else if(rr < 0)
-                return 0 ;
+                return 0;
         
         if(ii == noStr)
-            return 0 ;
+            return 0;
         
-        *fstPos = ii ;
+        *fstPos = ii;
         for(++ii ; ii<noStr ; ii++)
             if(curCmpIFunc(str,strs[ii],nn))
-                break ;
-        *lstPos = ii - 1 ;
+                break;
+        *lstPos = ii - 1;
     }
 #if MEOPT_EXTENDED
     if((option & MLFILE) && (fileIgnore != NULL))
@@ -624,68 +624,68 @@ getFirstLastPos(int noStr,meUByte **strs, meUByte *str, int option,
          * just one. Can remove fileIngore type files which are 
          * usually . .. and backup files (*~) etc.
          */
-        register int ff, ll, ii=1 ;
-        register meUByte *ss ;
-        ff = *fstPos ;
-        ll = *lstPos ;
+        register int ff, ll, ii=1;
+        register meUByte *ss;
+        ff = *fstPos;
+        ll = *lstPos;
         
         while((ff <= ll) && (ii >= 0))
         {
             if(ii)
-                ss = strs[ll] ;
+                ss = strs[ll];
             else
-                ss = strs[ff] ;
+                ss = strs[ff];
             if(!isFileIgnored(ss))
-                ii-- ;
+                ii--;
             else if(ii)
-                ll-- ;
+                ll--;
             else
-                ff++ ;
+                ff++;
         }
         if(ff == ll)
-            *fstPos = *lstPos = ff ;
+            *fstPos = *lstPos = ff;
     }
 #endif
-    return 1 ;
+    return 1;
 }
 
 int
 createBuffList(meUByte ***listPtr, int noHidden)
 {
     register meBuffer *bp = bheadp ;    /* index buffer pointer    */
-    register int     i, n ;
-    register meUByte **list ;
+    register int     i, n;
+    register meUByte **list;
 
-    n = 0 ;
+    n = 0;
     while(bp != NULL)
     {
         if(!noHidden || !meModeTest(bp->mode,MDHIDE))
             n++;
-        bp = bp->next ;
+        bp = bp->next;
     }
     if((list = (meUByte **) meMalloc(sizeof(meUByte *) * n)) == NULL)
-        return 0 ;
-    bp = bheadp ;
+        return 0;
+    bp = bheadp;
     for(i=0 ; i<n ; )
     {
         if(!noHidden || !meModeTest(bp->mode,MDHIDE))
-            list[i++] = bp->name ;
-        bp = bp->next ;
+            list[i++] = bp->name;
+        bp = bp->next;
     }
-    *listPtr = list ;
-    return i ;
+    *listPtr = list;
+    return i;
 }
     
 int
 createVarList(meUByte ***listPtr)
 {
-    int ii ;
-    meUByte **list ;
+    int ii;
+    meUByte **list;
 #if MEOPT_EXTENDED
     meVariable *vp;     	/* User variable pointer */
 #endif
     
-    ii = NEVARS ;
+    ii = NEVARS;
 #if MEOPT_EXTENDED
     vp = usrVarList;
     while(vp != NULL)
@@ -701,22 +701,22 @@ createVarList(meUByte ***listPtr)
     }
 #endif    
     if((list = (meUByte **) meMalloc(sizeof(meUByte *) * ii)) == NULL)
-        return 0 ;
-    *listPtr = list ;
+        return 0;
+    *listPtr = list;
     
     for(ii=0 ; ii<NEVARS; ii++)
     {
         if((list[ii] = meMalloc(meStrlen(envars[ii])+2)) == NULL)
-            return 0 ;
-        list[ii][0] = '$' ;
-        meStrcpy(list[ii]+1,envars[ii]) ;
+            return 0;
+        list[ii][0] = '$';
+        meStrcpy(list[ii]+1,envars[ii]);
     }
 #if MEOPT_EXTENDED
     vp = usrVarList;
     while(vp != NULL)
     {
         if((list[ii] = meMalloc(meStrlen(vp->name)+2)) == NULL)
-            return 0 ;
+            return 0;
         list[ii][0] = '%';
         meStrcpy(list[ii]+1,vp->name);
         ii++;
@@ -726,36 +726,36 @@ createVarList(meUByte ***listPtr)
     while(vp != NULL)
     {
         if((list[ii] = meMalloc(meStrlen(vp->name)+2)) == NULL)
-            return 0 ;
+            return 0;
         list[ii][0] = ':';
         meStrcpy(list[ii]+1,vp->name);
         ii++;
         vp = vp->next;
     }
 #endif
-    return ii ;
+    return ii;
 }
     
 int
 createCommList(meUByte ***listPtr, int noHidden)
 {
-    meCommand *cmd ;
-    register int ii ;
-    register meUByte **list ;
+    meCommand *cmd;
+    register int ii;
+    register meUByte **list;
     
     if((list = meMalloc(sizeof(meUByte *) * (cmdTableSize))) == NULL)
-        return 0 ;
-    ii = 0 ;
-    cmd = cmdHead ;
+        return 0;
+    ii = 0;
+    cmd = cmdHead;
     while(cmd != NULL)
     {
         if(!noHidden || (cmd->id < CK_MAX) ||
            !(((meMacro *) cmd)->hlp->flag & meMACRO_HIDE))
-            list[ii++] = cmd->name ;
-        cmd = cmd->anext ;
+            list[ii++] = cmd->name;
+        cmd = cmd->anext;
     }
-    *listPtr = list ;
-    return ii ;
+    *listPtr = list;
+    return ii;
 }
 
 
@@ -765,7 +765,7 @@ static int
 mlHandleMouse(meUByte *inpBuf, int inpBufSz, int compOff)
 {
     meWindow *cwp=frameCur->windowCur;
-    int row, col ;
+    int row, col;
     
     if(((row=mouse_Y-cwp->frameRow) >= 0) && (row < cwp->depth-1) &&
        ((col=mouse_X-cwp->frameColumn) >= 0) && (col < cwp->width))
@@ -775,77 +775,77 @@ mlHandleMouse(meUByte *inpBuf, int inpBufSz, int compOff)
             /* only do scroll bar if on pick and bars are enabled */
             if((inpBuf == NULL) && (cwp->vertScrollBarMode & WMSCROL))
             {
-                int ii ;
+                int ii;
                 for (ii = 0; ii <= (WCVSBML-WCVSBSPLIT); ii++)
                     if (mouse_Y < (meShort) cwp->vertScrollBarPos[ii])
                         break;
                 if(ii == (WCVSBUP-WCVSBSPLIT))
-                    windowScrollUp(1,1) ;
+                    windowScrollUp(1,1);
                 else if(ii == (WCVSBUSHAFT-WCVSBSPLIT))
-                    windowScrollUp(0,1) ;
+                    windowScrollUp(0,1);
                 else if(ii == (WCVSBDOWN-WCVSBSPLIT))
-                    windowScrollDown(1,1) ;
+                    windowScrollDown(1,1);
                 else if(ii == (WCVSBDSHAFT-WCVSBSPLIT))
-                    windowScrollDown(0,1) ;
-                update(meTRUE) ;
+                    windowScrollDown(0,1);
+                update(meTRUE);
             }
         }
         else
         {
-            meLine *lp ;
-            int ii, jj, lineNo ;
+            meLine *lp;
+            int ii, jj, lineNo;
             
-            row += cwp->vertScroll ;
-            lineNo = row ;
-            lp = cwp->buffer->baseLine->next ;
+            row += cwp->vertScroll;
+            lineNo = row;
+            lp = cwp->buffer->baseLine->next;
             while(--row >= 0)
-                lp = meLineGetNext(lp) ;
+                lp = meLineGetNext(lp);
             if((lp->flag & meLINE_NOEOL) && (col >= cwp->markOffset))
-                ii = cwp->markOffset ;
+                ii = cwp->markOffset;
             else
-                ii = 0 ;
+                ii = 0;
             if((ii == 0) && (lp->flag & meLINE_NOEOL))
             {
-                jj = 1 ;
+                jj = 1;
                 while((meLineGetChar(lp,jj) != ' ') || (meLineGetChar(lp,jj+1) != ' '))
-                    jj++ ;
+                    jj++;
             }
             else
-                jj = meLineGetLength(lp) ;
+                jj = meLineGetLength(lp);
             if(jj > col)
             {
-                cwp->dotLine = lp ;
-                cwp->dotOffset = ii ;
-                cwp->dotLineNo = lineNo ;
-                setShowRegion(cwp->buffer,lineNo,ii,lineNo,jj) ;
-                cwp->updateFlags |= WFMOVEL|WFSELHIL ;
+                cwp->dotLine = lp;
+                cwp->dotOffset = ii;
+                cwp->dotLineNo = lineNo;
+                setShowRegion(cwp->buffer,lineNo,ii,lineNo,jj);
+                cwp->updateFlags |= WFMOVEL|WFSELHIL;
                 if(inpBuf != NULL)
                 {
                     if((jj -= ii) >= (inpBufSz-compOff))
-                        jj = inpBufSz-compOff-1 ;
+                        jj = inpBufSz-compOff-1;
                     /* if we already have this, assume the user has double clicked
                      * to 'select', so return 2 to exit */
                     if((inpBuf[compOff+jj] == '\0') && 
                        !meStrncmp(inpBuf+compOff,meLineGetText(lp)+ii,jj))
-                        return 2 ;
-                    meStrncpy(inpBuf+compOff,meLineGetText(lp)+ii,jj) ;
-                    inpBuf[compOff+jj] = '\0' ;
+                        return 2;
+                    meStrncpy(inpBuf+compOff,meLineGetText(lp)+ii,jj);
+                    inpBuf[compOff+jj] = '\0';
                 }
-                update(meTRUE) ;
-                return 1 ;
+                update(meTRUE);
+                return 1;
             }
         }
     }
-    return 0 ;
+    return 0;
 }
 #endif
 
-meUByte *compSole     = (meUByte *)" [Sole completion]" ;
-meUByte *compNoMch    = (meUByte *)" [No match]" ;
-meUByte *compNoExp    = (meUByte *)" [No expansion]" ;
-meUByte *compFailComp = (meUByte *)" [Failed to create]" ;
+meUByte *compSole     = (meUByte *)" [Sole completion]";
+meUByte *compNoMch    = (meUByte *)" [No match]";
+meUByte *compNoExp    = (meUByte *)" [No expansion]";
+meUByte *compFailComp = (meUByte *)" [Failed to create]";
 #if MEOPT_SOCKET
-meUByte *compFtpComp  = (meUByte *)" [FTP completion?]" ;
+meUByte *compFtpComp  = (meUByte *)" [FTP completion?]";
 #endif
 
 #if MEOPT_OSD
@@ -864,29 +864,29 @@ int
 meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int nbuf)
 {
 #if MEOPT_LOCALBIND
-    meUByte  oldUseMlBinds ;
+    meUByte  oldUseMlBinds;
 #endif
-    meWindow *mlgsOldCwp=NULL ;
-    meBuffer *mlgsOldWBp=NULL ;
-    meInt    mlgsSingWind=0 ;
+    meWindow *mlgsOldCwp=NULL;
+    meBuffer *mlgsOldWBp=NULL;
+    meInt    mlgsSingWind=0;
 #if MEOPT_EXTENDED
-    int     oldCursorState=0 ;
-    int     curPos ;
+    int     oldCursorState=0;
+    int     curPos;
 #endif
-    int     cc ;
-    int     ii ;
+    int     cc;
+    int     ii;
     int     ipos ;                      /* input position in buffer */
     int     ilen ;                      /* number of chars in buffer */
     int     cont_flag ;                 /* Continue flag */
-    meKill  *lastYank ;
-    meUByte **history ;
-    meUByte onHist, numHist, *numPtr ;
-    meUByte *defaultStr ;
-    meUByte prom[meBUF_SIZE_MAX], storeBuf[meBUF_SIZE_MAX] ;
-    meUByte ch, **strList ;
-    meUByte *contstr=NULL ;
-    int     gotPos=1, fstPos, lstPos, mrkPos=0, noStrs ;
-    int     changed=1, compOff=0 ;
+    meKill  *lastYank;
+    meUByte **history;
+    meUByte onHist, numHist, *numPtr;
+    meUByte *defaultStr;
+    meUByte prom[meBUF_SIZE_MAX], storeBuf[meBUF_SIZE_MAX];
+    meUByte ch, **strList;
+    meUByte *contstr=NULL;
+    int     gotPos=1, fstPos, lstPos, mrkPos=0, noStrs;
+    int     changed=1, compOff=0;
     
     /* Blank line to force update
      * Don't do this if in an osd dialog as the osd cursor position is not
@@ -897,124 +897,124 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
 
     if(option & MLINSENSCASE)
     {
-        curCmpFunc  = meStridif ;
-        curCmpIFunc = meStrnicmp ;
+        curCmpFunc  = meStridif;
+        curCmpIFunc = meStrnicmp;
     }
     else
     {
-        curCmpFunc  = (meIFuncSS) strcmp ;
-        curCmpIFunc = (meIFuncSSI) strncmp ;
+        curCmpFunc  = (meIFuncSS) strcmp;
+        curCmpIFunc = (meIFuncSSI) strncmp;
     }
-    numHist = setupHistory(option, &numPtr, &history) ;
+    numHist = setupHistory(option, &numPtr, &history);
     if(option & MLBUFFER)
-        noStrs = createBuffList(&strList,1) ;
+        noStrs = createBuffList(&strList,1);
     else if(option & MLVARBL)
-        noStrs = createVarList(&strList) ;
+        noStrs = createVarList(&strList);
     else if(option & MLCOMMAND)
-        noStrs = createCommList(&strList,1) ;
+        noStrs = createCommList(&strList,1);
     else if(option & MLUSER)
     {
-        strList = mlgsStrList ;
-        noStrs = mlgsStrListSize ;
+        strList = mlgsStrList;
+        noStrs = mlgsStrListSize;
     }
     else
     {
-        strList = NULL ;
-        noStrs = 0 ;
+        strList = NULL;
+        noStrs = 0;
     }
     if(strList != NULL)
-        sortStrings(noStrs,strList,0,curCmpFunc) ;
+        sortStrings(noStrs,strList,0,curCmpFunc);
 
     if(option & MLNOHIST)
-        onHist = ~0 ;
+        onHist = ~0;
     else
-        onHist = numHist+1 ;
-    mlInputFlags = 0 ;
-    meStrcpy(prom,prompt) ;
-    ii = meStrlen(prom) ;
+        onHist = numHist+1;
+    mlInputFlags = 0;
+    meStrcpy(prom,prompt);
+    ii = meStrlen(prom);
     if((defnum > 0) && (defnum <= numHist))
     {
-        defaultStr = history[defnum-1] ;
-        memcpy(prom+ii," (default [",11) ;
-        ii = expandexp(-1,defaultStr,meBUF_SIZE_MAX-5,ii+11,prom,-1,NULL,0) ;
-        meStrcpy(prom+ii,"]): ") ;
+        defaultStr = history[defnum-1];
+        memcpy(prom+ii," (default [",11);
+        ii = expandexp(-1,defaultStr,meBUF_SIZE_MAX-5,ii+11,prom,-1,NULL,0);
+        meStrcpy(prom+ii,"]): ");
     }
     else
     {
-        defaultStr = NULL ;
-        meStrcpy(prom+ii,": ") ;
+        defaultStr = NULL;
+        meStrcpy(prom+ii,": ");
     }
 
     if(option & MLNORESET)
     {
-        ilen = meStrlen(buf) ;
+        ilen = meStrlen(buf);
 #if MEOPT_OSD
         if(frameCur->mlStatus & MLSTATUS_OSDPOS)
         {
-            meUByte *s1, *s2 ;
-            s1 = buf ;
+            meUByte *s1, *s2;
+            s1 = buf;
             while((--osdRow >= 0) && ((s2 = meStrchr(s1,meCHAR_NL)) != NULL))
-                s1 = s2+1 ;
+                s1 = s2+1;
             if(osdRow >= 0)
-                ipos = ilen ;
+                ipos = ilen;
             else
             {
-                ipos = ((int) (s1 - buf)) + osdCol ;
+                ipos = ((int) (s1 - buf)) + osdCol;
                 if(ipos > ilen)
-                    ipos = ilen ;
+                    ipos = ilen;
                 if(((s2 = meStrchr(s1,meCHAR_NL)) != NULL) &&
                     (((int)(s2 - buf)) < ipos))
-                    ipos = (int) (s2 - buf) ;
+                    ipos = (int) (s2 - buf);
             }
         }
         else
 #endif
-            ipos = ilen ;
+            ipos = ilen;
     }
     else
     {
-        ipos = ilen = 0 ;
-        buf[0] = '\0' ;
+        ipos = ilen = 0;
+        buf[0] = '\0';
     }
 #if MEOPT_LOCALBIND
-    oldUseMlBinds = useMlBinds ;
-    useMlBinds = 1 ;
+    oldUseMlBinds = useMlBinds;
+    useMlBinds = 1;
 #endif
 #if MEOPT_EXTENDED
     if((oldCursorState=cursorState) < 0)
-        showCursor(meFALSE,1) ;
+        showCursor(meFALSE,1);
 #endif
     for(cont_flag=0 ; cont_flag == 0 ;)
     {
-        meUInt arg ;
-        int idx ;
-        int ff ;
+        meUInt arg;
+        int idx;
+        int ff;
         
         if(option & MLHIDEVAL)
         {
-            meUByte hbuf[meBUF_SIZE_MAX] ;
-            ff = meStrlen(buf) ;
-            meAssert(ff < meBUF_SIZE_MAX) ;
-            memset(hbuf,'*',ff) ;
-            hbuf[ff] = '\0' ;
-            mlgsDisp(prom,hbuf,contstr,ipos) ;
+            meUByte hbuf[meBUF_SIZE_MAX];
+            ff = meStrlen(buf);
+            meAssert(ff < meBUF_SIZE_MAX);
+            memset(hbuf,'*',ff);
+            hbuf[ff] = '\0';
+            mlgsDisp(prom,hbuf,contstr,ipos);
         }
         else
-            mlgsDisp(prom,buf,contstr,ipos) ;
-        contstr = NULL ;
-        mlInputFlags >>= 4 ;
+            mlgsDisp(prom,buf,contstr,ipos);
+        contstr = NULL;
+        mlInputFlags >>= 4;
 
-        cc = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT) ;
-        idx = decode_key((meUShort) cc,&arg) ;
+        cc = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT);
+        idx = decode_key((meUShort) cc,&arg);
         if(arg)
         {
-            ff = 1 ;
-            ii = (int) (arg + 0x80000000) ;
+            ff = 1;
+            ii = (int) (arg + 0x80000000);
         }
         else
         {
-            ff = 0 ;
-            ii = 1 ;
+            ff = 0;
+            ii = 1;
         }
         switch(idx)
         {
@@ -1026,7 +1026,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
             if(frameCur->mlStatus & MLSTATUS_NINPUT)
             {
                 while(ipos && (buf[ipos-1] != meCHAR_NL))
-                    ipos-- ;
+                    ipos--;
             }
             else
                 ipos = 0;
@@ -1040,23 +1040,23 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
         case CK_DELFOR:    /* ^D : Delete the character under the cursor */
             if((ipos < ilen) & ii)
             {
-                ilen = mlForwardDelete(buf,ipos,ilen,ii,1) ;
-                changed=1 ;
+                ilen = mlForwardDelete(buf,ipos,ilen,ii,1);
+                changed=1;
             }
             break;
             
         case CK_GOEOF:    /* End : Move to end of buffer */
-            ipos = ilen ;
+            ipos = ilen;
             break;
         
         case CK_GOEOL:    /* ^E : Move to end of line */
             if(frameCur->mlStatus & MLSTATUS_NINPUT)
             {
                 while((ipos < ilen) && (buf[ipos] != meCHAR_NL))
-                    ipos++ ;
+                    ipos++;
             }
             else
-                ipos = ilen ;
+                ipos = ilen;
             break;
             
         case CK_FORCHR:    /* ^F : Move forward one character */
@@ -1065,19 +1065,19 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
             break;
             
         case CK_ABTCMD: /* ^G : Abort input and return */
-            cont_flag = 5 ;
-            break ;
+            cont_flag = 5;
+            break;
             
         case CK_DELBAK:    /* ^H : backwards delete. */
             if(ipos && ii)
             {
                 if((ipos -= ii) < 0)
                 {
-                    ii += ipos ;
-                    ipos = 0 ;
+                    ii += ipos;
+                    ipos = 0;
                 }
-                ilen = mlForwardDelete(buf,ipos,ilen,ii,1) ;
-                changed=1 ;
+                ilen = mlForwardDelete(buf,ipos,ilen,ii,1);
+                changed=1;
             }
             break;
 #if MEOPT_EXTENDED
@@ -1085,8 +1085,8 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
 #if MEOPT_OSD
             if(frameCur->mlStatus & MLSTATUS_POSOSD)
             {
-                meGetKeyFirst = cc ;
-                cont_flag = 3 ;
+                meGetKeyFirst = cc;
+                cont_flag = 3;
             }
             else
 #endif
@@ -1097,19 +1097,19 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
 #if MEOPT_OSD
             if(frameCur->mlStatus & MLSTATUS_POSOSD)
             {
-                meGetKeyFirst = cc ;
-                cont_flag = 3 ;
+                meGetKeyFirst = cc;
+                cont_flag = 3;
                 break;
             }
 #endif
         case CK_INSTAB:
             cc = '\t' ;    /* ^I for search strings */
             if(!(option & (MLCOMMAND | MLFILE | MLBUFFER | MLVARBL | MLUSER)))
-                goto input_addexpand ;
+                goto input_addexpand;
 input_expand:
             if(option & MLFILE)
             {
-                meUByte ft, fname[meBUF_SIZE_MAX], *base ;
+                meUByte ft, fname[meBUF_SIZE_MAX], *base;
                 
                 pathNameCorrect(buf,PATHNAME_PARTIAL,fname,&base);
                 ipos = meStrlen(fname);
@@ -1120,7 +1120,7 @@ input_expand:
                         fname[--ipos] = '\0';
                     meStrcpy(buf,fname);
                     ilen = ipos;
-                    contstr = compNoExp ;
+                    contstr = compNoExp;
                     TTbell();
                     break;
                 }
@@ -1139,86 +1139,86 @@ input_expand:
 #if MEOPT_SOCKET
                     if(ffUrlTypeIsFtp(ft) && ((curDirList.path == NULL) || meStrcmp(curDirList.path,fname)))
                     {
-                        changed ^= 1 ;
+                        changed ^= 1;
                         if(!changed)
                         {
-                            contstr = compFtpComp ;
-                            break ;
+                            contstr = compFtpComp;
+                            break;
                         }
                     }
 #endif
-                    compOff = meStrlen(fname) ;
-                    getDirectoryList(fname,&curDirList) ;
+                    compOff = meStrlen(fname);
+                    getDirectoryList(fname,&curDirList);
                     if(noStrs != curDirList.size)
                     {
-                        changed = 1 ;
-                        noStrs = curDirList.size ;
+                        changed = 1;
+                        noStrs = curDirList.size;
                     }
-                    strList = curDirList.list ;
+                    strList = curDirList.list;
                 }
             }
             if(strList == NULL)
             {
-                contstr = compNoExp ;
+                contstr = compNoExp;
                 TTbell();
-                break ;
+                break;
             }
             if(changed)
             {
-                changed = 0 ;
+                changed = 0;
                 if((gotPos = getFirstLastPos
                     (noStrs,strList,buf+compOff,option,&fstPos,&lstPos)) == 0)
                 {
-                    contstr = compNoMch ;
+                    contstr = compNoMch;
                     TTbell();
-                    break ;
+                    break;
                 }
 #if MEOPT_EXTENDED
-                curPos = fstPos-1 ;
+                curPos = fstPos-1;
 #endif
                 if(fstPos == lstPos)
                 {
-                    meStrcpy(buf+compOff,(strList[lstPos])) ;
-                    ilen += meStrlen(buf+ilen) ;
+                    meStrcpy(buf+compOff,(strList[lstPos]));
+                    ilen += meStrlen(buf+ilen);
                     if((option & MLFILE) && (buf[ilen-1] == DIR_CHAR))
                     {
                         /* if we're entering a file name and we've just
                          * completed to the a directory name then the next
                          * 'TAB' completion should be for inside the new directory,
                          * so effectively we have changed the input point */
-                        changed = 1 ;
+                        changed = 1;
                         if((ilen >= 4) && (buf[ilen-4] == DIR_CHAR) && 
                            (buf[ilen-3] == '.') && (buf[ilen-2] == '.'))
-                            goto input_expand ;
+                            goto input_expand;
                     }
                 }
                 else
                 {
                     for(ii=fstPos ; ii<=lstPos ; ii++)
                         if(strList[ii][ilen-compOff] == cc)
-                            goto input_addexpand ;
+                            goto input_addexpand;
                     for(;;)
                     {
-                        ch = strList[lstPos][ilen-compOff] ;
+                        ch = strList[lstPos][ilen-compOff];
                         for(ii=fstPos ; ii<lstPos ; ii++)
                             if((strList[ii][ilen-compOff] != ch) &&
                                (((option & MLINSENSCASE) == 0) ||
                                 ((meUByte) toLower(strList[ii][ilen-compOff]) != (meUByte) toLower(ch))))
-                                break ;
+                                break;
                         if(ii != lstPos)
-                            break ;
+                            break;
                         if(ch == '\0')
-                            break ;
-                        buf[ilen++] = ch ;
+                            break;
+                        buf[ilen++] = ch;
                     }
-                    buf[ilen] = '\0' ;
+                    buf[ilen] = '\0';
                 }
-                ipos = ilen ;
+                ipos = ilen;
             }
             else if(!gotPos)
-                contstr = compNoMch ;
+                contstr = compNoMch;
             else if(fstPos == lstPos)
-                contstr = compSole ;
+                contstr = compSole;
             else
             {
                 meWindow *cwp;
@@ -1254,10 +1254,10 @@ input_expand:
                 /* Compute the widths available from the window width */
                 lwidth = cwp->textWidth >> 1;
                 if (lwidth > 75)
-                    lwidth = 75 ;
-                cwp->markOffset = lwidth ;
-                jj = (option & MLFILE) ? 1:0 ;
-                last = -1 ;
+                    lwidth = 75;
+                cwp->markOffset = lwidth;
+                jj = (option & MLFILE) ? 1:0;
+                last = -1;
                 do {
                     for(ii=fstPos ; ii<=lstPos ; ii++)
                     {
@@ -1270,77 +1270,77 @@ input_expand:
                                 if(((len=meStrlen(strList[last])) < lwidth) && 
                                    ((int) meStrlen(strList[ii]) < lwidth))
                                 {
-                                    meStrcpy(line,strList[last]) ;
-                                    memset(line+len,' ',lwidth-len) ;
-                                    meStrcpy(line+lwidth,strList[ii]) ;
-                                    addLineToEob(cbp,line) ;
-                                    cbp->baseLine->prev->flag |= meLINE_NOEOL ;
-                                    last = -1 ;
+                                    meStrcpy(line,strList[last]);
+                                    memset(line+len,' ',lwidth-len);
+                                    meStrcpy(line+lwidth,strList[ii]);
+                                    addLineToEob(cbp,line);
+                                    cbp->baseLine->prev->flag |= meLINE_NOEOL;
+                                    last = -1;
                                 }
                                 else
                                 {
-                                    addLineToEob(cbp,strList[last]) ;
-                                    last = ii ;
+                                    addLineToEob(cbp,strList[last]);
+                                    last = ii;
                                 }
                             }
                             else if((int) meStrlen(strList[ii]) < lwidth)
                             {
-                                line[0] = '\0' ;
-                                last = ii ;
+                                line[0] = '\0';
+                                last = ii;
                             }
                             else
-                                addLineToEob(cbp,strList[ii]) ;
+                                addLineToEob(cbp,strList[ii]);
                         }
                     }
                     if(last >= 0)
                         addLineToEob(cbp,strList[last]);
                 } while((cbp->lineCount == 0) && (--jj >= 0));
-                windowGotoBob(meFALSE,meFALSE) ;
-                update(meTRUE) ;
+                windowGotoBob(meFALSE,meFALSE);
+                update(meTRUE);
             }
-            break ;
+            break;
             
         case CK_MOVUWND:
             if(mlgsOldCwp != NULL)
             {
-                windowScrollUp(ff,ii) ;
-                update(meTRUE) ;
+                windowScrollUp(ff,ii);
+                update(meTRUE);
             }
-            break ;
+            break;
             
         case CK_MOVDWND:
             if(mlgsOldCwp != NULL)
             {
-                windowScrollDown(ff,ii) ;
-                update(meTRUE) ;
+                windowScrollDown(ff,ii);
+                update(meTRUE);
             }
-            break ;
+            break;
             
         case CK_BAKLIN: /* M-P - previous match in complete list */
             if(frameCur->mlStatus & MLSTATUS_NINPUT)
             {
-                ii = ipos ;
+                ii = ipos;
                 while((--ii >= 0) && (buf[ii] != meCHAR_NL))
                     ;
                 if(ii >= 0)
                 {
-                    int jj ;
-                    jj = ipos - ii ;
-                    ipos = ii ;
+                    int jj;
+                    jj = ipos - ii;
+                    ipos = ii;
                     /* work out the new line offset */
                     while((--ii >= 0) && (buf[ii] != meCHAR_NL))
                         ;
                     if((ii+jj) < ipos)
-                        ipos = ii+jj ;
+                        ipos = ii+jj;
                 }
-                break ;
+                break;
             }
 #if MEOPT_OSD
             if(frameCur->mlStatus & MLSTATUS_POSOSD)
             {
-                meGetKeyFirst = cc ;
-                cont_flag = 3 ;
-                break ;
+                meGetKeyFirst = cc;
+                cont_flag = 3;
+                break;
             }
 #endif
             /* no break - if not multi-line input then backward-line also cycles history */
@@ -1352,54 +1352,54 @@ input_expand:
                 if(onHist > numHist)
                 {
                     /* if on current then save */
-                    meStrcpy(storeBuf,buf) ;
-                    onHist = 0 ;
+                    meStrcpy(storeBuf,buf);
+                    onHist = 0;
                 }
                 else
-                    ++onHist ;
+                    ++onHist;
                 if(onHist > numHist)
-                    meStrcpy(buf,storeBuf) ;
+                    meStrcpy(buf,storeBuf);
                 else if(onHist == numHist)
                 {
-                    meStrcpy(prom+meStrlen(prompt),": ") ;
-                    defaultStr = NULL ;
-                    buf[0] = '\0' ;
+                    meStrcpy(prom+meStrlen(prompt),": ");
+                    defaultStr = NULL;
+                    buf[0] = '\0';
                 }
                 else
                 {
-                    meStrncpy(buf,history[onHist],nbuf) ;
-                    buf[nbuf-1] = '\0' ;
+                    meStrncpy(buf,history[onHist],nbuf);
+                    buf[nbuf-1] = '\0';
                 }
-                ipos = ilen = meStrlen(buf) ;
-                changed=1 ;
+                ipos = ilen = meStrlen(buf);
+                changed=1;
             }
             break;
             
         case CK_FORLIN: /* ^N - next match in complete list */
             if(frameCur->mlStatus & MLSTATUS_NINPUT)
             {
-                ii = ipos ;
+                ii = ipos;
                 while((ii < ilen) && (buf[ii] != meCHAR_NL))
-                    ii++ ;
+                    ii++;
                 if(ii < ilen)
                 {
-                    int jj ;
-                    jj = ipos ;
+                    int jj;
+                    jj = ipos;
                     while(jj-- && (buf[jj] != meCHAR_NL))
                         ;
-                    jj = ipos-jj-1 ;
-                    ipos = ii+1 ;
+                    jj = ipos-jj-1;
+                    ipos = ii+1;
                     while((--jj >= 0) && (ipos < ilen) && (buf[ipos] != meCHAR_NL))
-                        ipos++ ;
+                        ipos++;
                 }
-                break ;
+                break;
             }
 #if MEOPT_OSD
             if(frameCur->mlStatus & MLSTATUS_POSOSD)
             {
-                meGetKeyFirst = cc ;
-                cont_flag = 3 ;
-                break ;
+                meGetKeyFirst = cc;
+                cont_flag = 3;
+                break;
             }
 #endif
             /* no break - if not multi-line input then forward-line also cycles history */
@@ -1414,84 +1414,84 @@ input_expand:
             {
                 if(onHist > numHist)
                     /* if on current then save */
-                    meStrcpy(storeBuf,buf) ;
+                    meStrcpy(storeBuf,buf);
                 if(onHist == 0)
                 {
-                    onHist = numHist+1 ;
-                    meStrcpy(buf,storeBuf) ;
+                    onHist = numHist+1;
+                    meStrcpy(buf,storeBuf);
                 }
                 else if(onHist > numHist)
                 {
-                    meStrcpy(prom+meStrlen(prompt),": ") ;
-                    defaultStr = NULL ;
-                    onHist = numHist ;
-                    buf[0] = '\0' ;
+                    meStrcpy(prom+meStrlen(prompt),": ");
+                    defaultStr = NULL;
+                    onHist = numHist;
+                    buf[0] = '\0';
                 }
                 else
                 {
-                    meStrncpy(buf,history[--onHist],nbuf) ;
-                    buf[nbuf-1] = '\0' ;
+                    meStrncpy(buf,history[--onHist],nbuf);
+                    buf[nbuf-1] = '\0';
                 }                    
-                ipos = ilen = meStrlen(buf) ;
-                changed=1 ;
+                ipos = ilen = meStrlen(buf);
+                changed=1;
             }
-            break ;
+            break;
             
         case CK_KILEOL:    /* ^K : Kill to end of line */
-            ff = ipos ;
+            ff = ipos;
             if(ii > 0)
             {
                 if(frameCur->mlStatus & MLSTATUS_NINPUT)
                 {
                     while((ff < ilen) && (buf[ff] != meCHAR_NL))
-                        ff++ ;
+                        ff++;
                     /* kill \n as if we were at the end of the line or arg
                      * given (as per kill-line) */
                     if((ff == ipos) ||
                        (ff && (ff < ilen) &&
                         ((ipos == 0) || (buf[ipos-1] == meCHAR_NL))))
-                        ff++ ;
+                        ff++;
                 }
                 else
-                    ff = ilen ;
+                    ff = ilen;
             }
             else if((ii < 0) && ipos)
             {
                 if(frameCur->mlStatus & MLSTATUS_NINPUT)
                 {
-                    ipos-- ;
+                    ipos--;
                     while((ipos > 0) && (buf[ipos-1] != meCHAR_NL))
-                        ipos-- ;
+                        ipos--;
                 }
                 else
                 {
-                    ipos = 0 ;
+                    ipos = 0;
                 }
             }
             if((ff -= ipos) > 0)
             {
-                ilen = mlForwardDelete(buf,ipos,ilen,ff,3) ;
-                changed=1 ;
+                ilen = mlForwardDelete(buf,ipos,ilen,ff,3);
+                changed=1;
             }
             break;
             
         case CK_RECENT:  /* ^L : Redraw the screen */
             sgarbf = meTRUE;
-            update(meTRUE) ;
+            update(meTRUE);
             mlerase(0);
             break;
             
         case CK_NEWLIN:  /* ^J : New line. Finish processing */
             if(frameCur->mlStatus & MLSTATUS_NINPUT)
             {
-                cc = meCHAR_NL ;
-                goto input_addexpand ;
+                cc = meCHAR_NL;
+                goto input_addexpand;
             }
 #if MEOPT_OSD
             if(frameCur->mlStatus & MLSTATUS_POSOSD)
-                meGetKeyFirst = cc ;
+                meGetKeyFirst = cc;
 #endif
-            cont_flag = 3 ;
+            cont_flag = 3;
             break;
             
 #if MEOPT_EXTENDED
@@ -1500,14 +1500,14 @@ input_expand:
                (strList != NULL) && !changed && gotPos)
             {
                 if(fstPos == lstPos)
-                    contstr = compSole ;
+                    contstr = compSole;
                 else
                 {
                     if(++curPos > lstPos)
-                        curPos = fstPos ;
-                    meStrncpy(buf+compOff,strList[curPos],nbuf-compOff) ;
-                    buf[nbuf-1] = '\0' ;
-                    ipos = ilen = meStrlen(buf) ;
+                        curPos = fstPos;
+                    meStrncpy(buf+compOff,strList[curPos],nbuf-compOff);
+                    buf[nbuf-1] = '\0';
+                    ipos = ilen = meStrlen(buf);
                 }
             }
             break;
@@ -1517,14 +1517,14 @@ input_expand:
                (strList != NULL) && !changed && gotPos)
             {
                 if(fstPos == lstPos)
-                    contstr = compSole ;
+                    contstr = compSole;
                 else
                 {
                     if(--curPos < fstPos)
-                        curPos = lstPos ;
-                    meStrncpy(buf+compOff,strList[curPos],nbuf-compOff) ;
-                    buf[nbuf-1] = '\0' ;
-                    ipos = ilen = meStrlen(buf) ;
+                        curPos = lstPos;
+                    meStrncpy(buf+compOff,strList[curPos],nbuf-compOff);
+                    buf[nbuf-1] = '\0';
+                    ipos = ilen = meStrlen(buf);
                 }
             }
             break;
@@ -1539,60 +1539,60 @@ input_expand:
                 cc = buf[ipos - 1];
                 buf[ipos - 1] = buf[ipos];
                 buf[ipos] = cc;
-                changed=1 ;
+                changed=1;
             }
             break;
             
         case CK_SWPMRK:
-            ii = mrkPos ;
-            mrkPos = ipos ;
+            ii = mrkPos;
+            mrkPos = ipos;
             if((ipos=ii) > ilen)
-                ipos = ilen ;
-            break ;
+                ipos = ilen;
+            break;
         
         case CK_SETMRK:
-            mrkPos = ipos ;
-            break ;
+            mrkPos = ipos;
+            break;
             
         case CK_CPYREG:    /* M-w : Copy region */
-            ii = ipos ;
+            ii = ipos;
             if(mrkPos < ipos)
             {
-                ff = ipos ;
-                ipos = mrkPos ;
+                ff = ipos;
+                ipos = mrkPos;
             }
             else
-                ff = mrkPos ;
+                ff = mrkPos;
             if((ff -= ipos) > 0)
-                ilen = mlForwardDelete(buf,ipos,ilen,ff,2) ;
-            ipos = ii ;
+                ilen = mlForwardDelete(buf,ipos,ilen,ff,2);
+            ipos = ii;
             break;
         
         case CK_KILREG:    /* C-w : Kill region */
             if(mrkPos < ipos)
             {
-                ff = ipos ;
-                ipos = mrkPos ;
+                ff = ipos;
+                ipos = mrkPos;
             }
             else
-                ff = mrkPos ;
+                ff = mrkPos;
             if((ff -= ipos) > 0)
             {
-                ilen = mlForwardDelete(buf,ipos,ilen,ff,3) ;
-                changed=1 ;
+                ilen = mlForwardDelete(buf,ipos,ilen,ff,3);
+                changed=1;
             }
             break;
         
         case CK_QUOTE:    /* ^Q - quote the next character */
             if((cc = quoteKeyToChar(tgetc())) < 0)
             {
-                TTbell() ;
-                break ;
+                TTbell();
+                break;
             }
             while(ii--)
                 if(mlInsertChar((meUByte) cc, buf, &ipos, &ilen, nbuf) == meFALSE)
                     TTbell();
-            changed=1 ;
+            changed=1;
             break;
             
         case CK_OPNLIN:    /* ^O : Insert current line into buffer */
@@ -1606,50 +1606,50 @@ input_expand:
             }
         case CK_YANK:    /* ^Y : insert yank buffer */
             {
-                register meUByte *pp, cy ;
+                register meUByte *pp, cy;
                 meKillNode *killp;
                 
 #ifdef _CLIPBRD
-                TTgetClipboard() ;
+                TTgetClipboard();
 #endif
                 if((lastYank=klhead) == (meKill*) NULL)
                 {
-                    TTbell() ;
-                    break ;
+                    TTbell();
+                    break;
                 }
 ml_yank:
-                mrkPos = ipos ;
+                mrkPos = ipos;
                 killp = lastYank->kill;
                 while(killp != NULL)
                 {
-                    pp = killp->data ;
+                    pp = killp->data;
                     while((cy=*pp++))
                         if(mlInsertChar(cy, buf, &ipos, &ilen, nbuf) == meFALSE)
                         {
-                            TTbell() ;
-                            break ;
+                            TTbell();
+                            break;
                         }
                     killp = killp->next;
                 }
-                mlInputFlags |= mlINPUT_THIS_YANK ;
-                changed=1 ;
+                mlInputFlags |= mlINPUT_THIS_YANK;
+                changed=1;
                 break;
             }
             
         case CK_REYANK:    /* ^Y : reyank kill buffer */
             if(mlInputFlags & mlINPUT_LAST_YANK)
             {
-                ff = ipos ;
-                ipos = mrkPos ;
+                ff = ipos;
+                ipos = mrkPos;
                 if((ff -= ipos) > 0)
-                    ilen = mlForwardDelete(buf,ipos,ilen,ff,1) ;
+                    ilen = mlForwardDelete(buf,ipos,ilen,ff,1);
                 if((lastYank = lastYank->next) == NULL)
-                    lastYank = klhead ;
-                mlInputFlags |= mlINPUT_THIS_REYANK ;
-                goto ml_yank ;
+                    lastYank = klhead;
+                mlInputFlags |= mlINPUT_THIS_REYANK;
+                goto ml_yank;
             }
-            TTbell() ;
-            break ;
+            TTbell();
+            break;
             
         case CK_INSFLNM:    /* insert file name */
             {
@@ -1659,7 +1659,7 @@ ml_yank:
                 if(p != NULL)
                     while(((ch=*p++) != '\0') && mlInsertChar(ch, buf, &ipos, &ilen, nbuf))
                         ;
-                break ;
+                break;
             }
             
             /*
@@ -1670,27 +1670,27 @@ ml_yank:
         case CK_BAKWRD:    /* M-B : Move to start of previous word */
             while(ipos && ii--)
             {
-                mlBackwardToNextWord(buf,ipos) ;
-                mlBackwardToNextSpace(buf,ipos) ;
+                mlBackwardToNextWord(buf,ipos);
+                mlBackwardToNextSpace(buf,ipos);
             }
             break;
             
         case CK_FORWRD:    /* M-F : Move forward to start of next word. */
             while((ipos != ilen) && ii--)
             {
-                mlForwardToNextWord(buf,ipos,ilen) ;
-                mlForwardToNextSpace(buf,ipos,ilen) ;
+                mlForwardToNextWord(buf,ipos,ilen);
+                mlForwardToNextSpace(buf,ipos,ilen);
             }
             break;
             
         case CK_CAPWRD:    /* M-C : Capitalise next word and move past it. */
             while(ilen && (ipos != ilen) && ii--)
             {
-                mlForwardToNextWord(buf,ipos,ilen) ;
-                buf[ipos] = toUpper(buf[ipos]) ;
+                mlForwardToNextWord(buf,ipos,ilen);
+                buf[ipos] = toUpper(buf[ipos]);
                 for(ipos++ ; (ipos<ilen) && isAlphaNum(buf[ipos]) ; ipos++)
-                    buf[ipos] = toLower(buf[ipos]) ;
-                changed=1 ;
+                    buf[ipos] = toLower(buf[ipos]);
+                changed=1;
             }
             break;
             
@@ -1698,10 +1698,10 @@ ml_yank:
                            *      word and move past it. */
             while(ii--)
             {
-                mlForwardToNextWord(buf,ipos,ilen) ;
+                mlForwardToNextWord(buf,ipos,ilen);
                 for(; (ipos<ilen) && isAlphaNum(buf[ipos]) ; ipos++)
-                    buf[ipos] = toUpper(buf[ipos]) ;
-                changed=1 ;
+                    buf[ipos] = toUpper(buf[ipos]);
+                changed=1;
             }
             break;
             
@@ -1709,38 +1709,38 @@ ml_yank:
                            *      word and move past it. */
             while(ii--)
             {
-                mlForwardToNextWord(buf,ipos,ilen) ;
+                mlForwardToNextWord(buf,ipos,ilen);
                 for(; (ipos<ilen) && isAlphaNum(buf[ipos]) ; ipos++)
-                    buf[ipos] = toLower(buf[ipos]) ;
-                changed=1 ;
+                    buf[ipos] = toLower(buf[ipos]);
+                changed=1;
             }
             break;
             
         case CK_DELFWRD: /* Delete word forwards. */
-            ff = ipos ;
+            ff = ipos;
             while((ff < ilen) && ii--)
             {
-                mlForwardToNextWord(buf,ff,ilen) ;
-                mlForwardToNextSpace(buf,ff,ilen) ;
+                mlForwardToNextWord(buf,ff,ilen);
+                mlForwardToNextSpace(buf,ff,ilen);
             }
             if((ff -= ipos) > 0)
             {
-                ilen = mlForwardDelete(buf,ipos,ilen,ff,3) ;
-                changed=1 ;
+                ilen = mlForwardDelete(buf,ipos,ilen,ff,3);
+                changed=1;
             }
             break;
             
         case CK_DELWBAK:
-            ff = ipos ;
+            ff = ipos;
             while((ipos > 0) && ii--)
             {
-                mlBackwardToNextWord(buf,ipos) ;
-                mlBackwardToNextSpace(buf,ipos) ;
+                mlBackwardToNextWord(buf,ipos);
+                mlBackwardToNextSpace(buf,ipos);
             }
             if((ff -= ipos) > 0)
             {
-                ilen = mlForwardDelete(buf,ipos,ilen,ff,3) ;
-                changed=1 ;
+                ilen = mlForwardDelete(buf,ipos,ilen,ff,3);
+                changed=1;
             }
             break;
             
@@ -1751,12 +1751,12 @@ ml_yank:
         case CK_FORSRCH:
             if(option & MLISEARCH)
             {
-                meGetKeyFirst = cc ;
-                cont_flag = 1 ;
+                meGetKeyFirst = cc;
+                cont_flag = 1;
             }
             else
-                TTbell() ;
-            break ;
+                TTbell();
+            break;
 #endif
 #if MEOPT_MOUSE            
         case CK_CTOMOUSE:
@@ -1772,13 +1772,13 @@ ml_yank:
                 {
                     if(osdDisplayMouseLocate(1) > 0)
                     {
-                        meGetKeyFirst = cc ;
-                        cont_flag = 3 ;
+                        meGetKeyFirst = cc;
+                        cont_flag = 3;
                     }
                 }
                 else if(mlgsOldCwp != NULL)
 #endif
-                    mlHandleMouse(NULL,0,0) ;
+                    mlHandleMouse(NULL,0,0);
             }
             /* a drop event */
             else if((mlgsOldCwp != NULL) &&
@@ -1787,16 +1787,16 @@ ml_yank:
 #endif            
                     ((cc=mlHandleMouse(buf,nbuf,compOff)) != 0))
             {
-                ipos = ilen = meStrlen(buf) ;
+                ipos = ilen = meStrlen(buf);
                 if(cc == 2)
-                    cont_flag = 3 ;
+                    cont_flag = 3;
                 else
-                    changed = 1 ;
+                    changed = 1;
             }
-            break ;
+            break;
 #endif            
         case CK_VOIDFUNC:
-            break ;
+            break;
             
         case -1:
             if(cc & 0xff00)    /* if control, meta or prefix then scrap */
@@ -1807,17 +1807,17 @@ ml_yank:
                 if((cc & 0x00ff) != SKEY_mouse_move)
 #endif                
                     TTbell();
-                break ;
+                break;
             }
             
             if (cc == ' ')    /* space */
             {
                 if(option & (MLCOMMAND | MLFILE | MLBUFFER | MLVARBL | MLUSER))
-                    goto input_expand ;
+                    goto input_expand;
                 if(option & MLNOSPACE)
                 {
-                    TTbell() ;
-                    break ;
+                    TTbell();
+                    break;
                 }
             }
 input_addexpand:
@@ -1832,7 +1832,7 @@ input_addexpand:
              */
             if(mlInsertChar((meUByte) cc, buf, &ipos, &ilen, nbuf) == meFALSE)
                 TTbell();
-            changed=1 ;
+            changed=1;
             break;
             
         default:
@@ -1845,8 +1845,8 @@ input_addexpand:
         /* if no string has been given and there's a default then return this */
         if((ilen == 0) && (defaultStr != NULL))
         {
-            meStrncpy(buf,defaultStr,nbuf) ;
-            buf[nbuf-1] = '\0' ;
+            meStrncpy(buf,defaultStr,nbuf);
+            buf[nbuf-1] = '\0';
         }
         /* Store the history if it is not disabled. */
         if((option & (MLNOHIST|MLNOSTORE)) == 0)
@@ -1857,26 +1857,26 @@ input_addexpand:
 #endif
                                      ))
             {
-                fileNameCorrect(buf,storeBuf,NULL) ;
-                defaultStr = storeBuf ;
+                fileNameCorrect(buf,storeBuf,NULL);
+                defaultStr = storeBuf;
             }
             else
-                defaultStr = buf ;
+                defaultStr = buf;
             addHistory(option,defaultStr,meFALSE);
         }
     }
     
     
-    frameCur->mlStatus = MLSTATUS_CLEAR ;
+    frameCur->mlStatus = MLSTATUS_CLEAR;
 #if MEOPT_LOCALBIND
-    useMlBinds = oldUseMlBinds ;
+    useMlBinds = oldUseMlBinds;
 #endif
     if(strList != NULL)
     {
         if(option & MLVARBL)
-            freeFileList(noStrs,strList) ;
+            freeFileList(noStrs,strList);
         else if(option & (MLBUFFER|MLCOMMAND))
-            meFree(strList) ;
+            meFree(strList);
     }
     if(mlgsOldCwp != NULL)
     {

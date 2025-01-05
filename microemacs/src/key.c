@@ -78,7 +78,11 @@ decode_key(meUShort ocode, meUInt *arg)
     register int      hi;			/* Hightest index in table. */
     register int      mid;			/* Mid value. */
     register int      status;			/* Status of comparison. */
-    register meUShort code=ocode;    
+    register meUShort code=ocode;
+    /* If no modifier or prefix the code could be a uppercase letter, but
+     * only lowercase bindings are allowed so lowercase the letter */  
+    if((code & 0xff00) == 0)
+        code = toLower(code);
 try_again:
 #if MEOPT_LOCALBIND
     if(useMlBinds)
