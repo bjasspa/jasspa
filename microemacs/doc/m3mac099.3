@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Aug 31 21:02:32 1998
 .\"
-.Id $Id: m3mac099.3,v 2.10 2024/12/21 10:32:24 dgroth Exp $
+.Id $Id: m3mac099.3,v 2.10 2025/01/06 13:22:07 dgroth Exp $
 .Im MicroEmacs command
 .so me.tni
 .TH r-doc 3
@@ -70,9 +70,13 @@ Another R documentation page can be selected in the generated help page by eithe
 pressing return or double clicking on it with the left mouse button. \*(mS will then attempt to load and display the
 selected R manual page.
 .PP
-The \fBr-exec\fR macro executes the current buffer using the Rscript command line interpreter. If a numeric argument
-\fIn\fR is given, value not used, then the user is prompted for additional \fIcommand-line-arguments\fR which are
-passed to Rscript command.
+The \fBr-exec\fR macro executes the current buffer using the Rscript command line interpreter. Before the script is executed
+.Ht save-some-buffers 2
+is executed to allow the user to ensure that all relevant buffers are saved, if bit \fC0x01\fR of the numeric argument
+\fIn\fR is clear then all modified buffers are automatically saved, when set, the default, the user is prompted for
+each. If bit 0x02 of the numeric argument is clear, the default, the user is prompted for any additional
+\fIcommand-line-arguments\fR which are passed to Rscript command. The arguments given are stored in a buffer variable,
+\fB:r-exec-args\fR, and used as a default next time the script is executed.
 .PP
 After executing the script, a \fC*r-exec*\fR buffer is opened with the output of the script execution. The script
 executes the R file using the current \*(mS character encodings.

@@ -278,18 +278,14 @@ define-macro r-doc
 ; execute a R file using Rscript executable directly from MicroEmacs using the current ISO or Windows CP encodings
 define-macro r-exec
   !iif &not &seq $buffer-fhook "fhook-r"  -8 ml-write &spr "Error: '%s' is not an R file!" $buffer-bname
-  !iif &seq $buffer-fname ""  -8 ml-write &spr "Error: Buffer '%s' does not have a file name!" $buffer-bname
+  !iif &seq $buffer-fname ""  -8 ml-write "R-exec Error: Current buffer has no file name!"
   !iif &not &exi %rscript-com  r-rscript-setup
-  ; TODO change save to be like compile
-  !if &bmod "edit"
-    set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-    !iif &iseq #l0 "y"  save-buffer 
-  !endif 
+  &band @# 1 save-some-buffers @mna
   ; command line arguments
-  set-variable #l1 ""
-  !iif @?  set-variable #l1 @ml "Add command line arguments" 
+  !iif &not &exi :r-exec-args  set-variable :r-exec-args ""
+  !iif &not &band @# 2  set-variable :r-exec-args @ml2 "Additional command-line arguments" :r-exec-args
   !iif &not &seq "" &set #l0 &reg &spr "/history/%s/char-set" %platform ""  set-variable #l0 &cat " --encoding=" &rep &rep #l0 "iso" "ISO-" "cp" "CP"
-  0 pipe-shell-command &spr "%s%s \"%s\" %s" %rscript-com #l0 $buffer-fname #l1 "*r-exec*"
+  0 pipe-shell-command &spr "%s%s \"%s\" %s" %rscript-com #l0 $buffer-fname :r-exec-args "*r-exec*"
   find-buffer "*r-exec*"
   buffer-is-utf8 #l1
   !if #l1  

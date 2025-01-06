@@ -1,37 +1,11 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-;  Created By    : Detlef Groth, University of Potsdam
-;  Author        : Detlef Groth, University of Potsdam
-;  Created       : Wed Sep 25 15:42:35 2024
-;  Last Modified : <250105.1346>
-;
-;  Description   : Documentation viewer within MicroEmacs for
-;                  Python  supporting section folding item-list navigation
-;                  and some highlighting of sections and class names
-;
-;  Notes         : to install the pydoc macro, copy this file to user jasspa folder
-;                  usually ~/.config/jasspa and add the following line to your 
-;                  USERNAME.emf file:
-;
-;                  define-macro-file hkpydoc py-doc py-lint
-;
-;  History       : 2024-09-25 initial version
-;                  2024-10-10 hints on installation
-;                  2024-12-14 moved from hkpydoc.emf renamed to pytools.emf
-;                             macro pydoc renamed to py-doc
-;                             adding macro py-lint
-;                             adding macro py-format
-;
-;  Copyright (c) 2024 Detlef Groth.
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; -!- emf -!-
 ; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1999-2024 JASSPA (www.jasspa.com)
+; Copyright (C) 2024 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
-
-
+; Synopsis:    Macros useful for Python development
+; Authors:     Detlef Groth & Steven Phillips
+;
 define-macro fhook-py-doc
   buffer-init-hooks
 !emacro
@@ -60,17 +34,8 @@ set-variable .fhook-py-doc.item-list-r1 "SECT \ecB\\1\ecA"
 set-variable .fhook-py-doc.item-list-s2 "^    class +\\([^(]+\\)"
 set-variable .fhook-py-doc.item-list-r2 "  class \ecB\\1\ecA"
 
-;set-variable .fhook-py-exec.name "Python Exec"
-;set-variable .fhook-py-exec.setup &reg "/history/fhook/py-exec" "acfhmw"
-;set-variable .fhook-py-exec.setup-mask "acfhmw"
-;
-;!if &and &sin "h" .fhook-py-exec.setup &band .hilight.flags 0x02
-;  !iif &not &exi .hilight.py-exec  set-variable .hilight.py-exec &pinc  .hilight.next 1
-;  0 hilight .hilight.py-exec 2 200                                     $global-scheme
-;  hilight .hilight.py-exec   0  "  File.*"      .scheme.link  
-;  SyntaxError: 
-;!endif
-
+add-next-line "*py-exec*" "^ *File \"%f\", line %l"
+add-next-line "*py-lint*" "^%f:%l:\\d+: "
 
 0 define-macro py-python-setup
   !iif &exi %python-com !return
@@ -88,26 +53,7 @@ set-variable .fhook-py-doc.item-list-r2 "  class \ecB\\1\ecA"
   -24 ml-write "Error: Python executable not found, please install Python or set %python-com"
 !emacro
 
-define-macro py-doc
-  !iif &not &exi %python-com  py-python-setup
-  !force set-variable #l0 @1
-  !iif &not $status  set-variable #l0 @ml00 "Python help on"
-  0 pipe-shell-command &spr "LANG=en_US %s -m pydoc %s" %python-com #l0 "*py-doc*"
-  -1 buffer-mode "view"
-  beginning-of-buffer
-  3 kill-line
-  buffer-is-utf8 #l1
-  !iif #l1  4 change-buffer-charset "utf8" "display"
-  beginning-of-buffer
-  -1 buffer-mode "edit"
-  1 buffer-mode "view"
-  buffer-init "py-doc"
-  ; some terminals might need this
-  !iif &band $system 0x01  screen-update
-!emacro    
-
-add-next-line "*py-exec*" "^ *File \"%f\", line %l"
-0 define-macro py-exec-ipipe
+0 define-macro py-tools-ipipe
   !if &not &exi :ipp-last
     set-variable :ipp-last 4
     set-variable :mouse-word-select "mouse-get-next-line"
@@ -121,77 +67,9 @@ add-next-line "*py-exec*" "^ *File \"%f\", line %l"
     !if &not $status
       set-variable $window-line #l0
     !elif &les $window-line #l0
-      set-variable $line-scheme .scheme.error
-    !endif
-  !until &not &les $window-line #l0
-  set-variable :ipp-last #l0
-  !if &not @#
-    ; command finished - check if UTF8
-    buffer-is-utf8 #l1
-    !if #l1  
-      -1 buffer-mode "view"
-      4 change-buffer-charset "utf8" "display"
-      -1 buffer-mode "edit"
-      1 buffer-mode "view"
-    !endif
-  !endif
-!emacro
-define-macro py-exec
-  !iif &not &seq $buffer-fhook "fhook-python"  -8 ml-write &spr "Error: '%s' is not a Python file!" $buffer-bname
-  !iif &seq $buffer-fname ""  -8 ml-write &spr "Error: Buffer '%s' does not have a file name!" $buffer-bname
-  !iif &not &exi %python-com  py-python-setup
-  ; TODO change save to be like compile
-  !if &bmod "edit"
-    set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-    !iif &iseq #l0 "y"  save-buffer 
-  !endif 
-  ; command line arguments
-  set-variable #l1 ""
-  !iif @?  set-variable #l1 @ml "Add command line arguments" 
-  0x80 ipipe-shell-command &spr "%s %s %s" %python-com $buffer-fname #l1 "*py-exec*" py-exec-ipipe @nma
-!emacro
-
-define-macro py-format
-  !iif &not &seq $buffer-fhook "fhook-python"  -8 ml-write &spr "Error: '%s' is not a Python file!" $buffer-bname
-  !iif &seq $buffer-fname ""  -8 ml-write &spr "Error: Buffer '%s' does not have a file name!" $buffer-bname
-  !iif &not &exi %python-com  py-python-setup
-  !if &bmod "edit"
-    set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-    !iif &iseq #l0 "y"  save-buffer 
-  !endif
-  !if &exi %py-format-opts
-  !elif &not &seq &which "yapf" "ERROR"
-      set-variable %py-format-opts "yapf -i"
-  !elif &not &seq &which "black" "ERROR"
-    set-variable %py-format-opts "black -q"
-  !else
-    set-variable %py-format-opts &trb @ml1 "Py-format options [yapf -i / black -q]" "yapf -i"
-  !endif    
-  2 pipe-shell-command &spr "%s -m %s %s" %python-com %py-format-opts $buffer-fname "*py-format*"
-  !if $result
-    popup-window "*py-format*"
-    ml-write &spr "Error: Python %s failed - ls it installed?" &lef %py-format-opts &sin " " &cat %py-format-opts " "
-  !else
-    0 reread-file
-  !endif
-!emacro
-
-add-next-line "*py-lint*" "^%f:%l:\\d+: "
-0 define-macro py-lint-ipipe
-  !if &not &exi :ipp-last
-    set-variable :ipp-last 4
-    set-variable :mouse-word-select "mouse-get-next-line"
-    buffer-bind-key return-get-next-line "return"
-  !endif
-  goto-alpha-mark "I"
-  !iif &equ &set #l0 $window-line :ipp-last  !return
-  set-variable $window-line &sub :ipp-last 1
-  !repeat
-    !force 6 get-next-line
-    !if &not $status
-      set-variable $window-line #l0
-    !elif &les $window-line #l0
-      !if &seq "C" &set #l1 &mid @wl &add &sin ": " @wl 1 1
+      !if &seq $buffer-bname "*py-exec*"
+        set-variable $line-scheme .scheme.error
+      !elif &seq "C" &set #l1 &mid @wl &add &sin ": " @wl 1 1
         set-variable $line-scheme .scheme.comment
       !elif &seq "W" #l1
         set-variable $line-scheme .scheme.constant
@@ -212,6 +90,65 @@ add-next-line "*py-lint*" "^%f:%l:\\d+: "
     !endif
   !endif
 !emacro
+
+define-macro py-doc
+  !iif &not &exi %python-com  py-python-setup
+  !force set-variable #l0 @1
+  !iif &not $status  set-variable #l0 @ml00 "Python help on"
+  0 pipe-shell-command &spr "LANG=en_US %s -m pydoc %s" %python-com #l0 "*py-doc*"
+  -1 buffer-mode "view"
+  beginning-of-buffer
+  3 kill-line
+  buffer-is-utf8 #l1
+  !iif #l1  4 change-buffer-charset "utf8" "display"
+  beginning-of-buffer
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"
+  buffer-init "py-doc"
+  ; some terminals might need this
+  !iif &band $system 0x01  screen-update
+!emacro    
+
+define-macro py-exec
+  !iif &not &seq $buffer-fhook "fhook-python"  -8 ml-write &spr "Error: '%s' is not a Python file!" $buffer-bname
+  !iif &seq $buffer-fname ""  -8 ml-write &spr "Error: Buffer '%s' does not have a file name!" $buffer-bname
+  !iif &not &exi %python-com  py-python-setup
+  &band @# 1 save-some-buffers @mna
+  !iif &not &exi :py-exec-args  set-variable :py-exec-args ""
+  !iif &not &band @# 2  set-variable :py-exec-args @ml2 "Additional command-line arguments" :py-exec-args 
+  0x80 ipipe-shell-command &spr "%s %s %s" %python-com $buffer-fname :py-exec-args "*py-exec*" py-tools-ipipe @nma
+!emacro
+
+define-macro py-format
+  !iif &not &seq $buffer-fhook "fhook-python"  -8 ml-write &spr "Error: '%s' is not a Python file!" $buffer-bname
+  !iif &seq $buffer-fname ""  -8 ml-write &spr "Error: Buffer '%s' does not have a file name!" $buffer-bname
+  !iif &not &exi %python-com  py-python-setup
+  !if &bmod "edit"
+    set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+    !iif &iseq #l0 "y"  save-buffer 
+  !endif
+  set-variable #l3 "Py-format options"
+  !if &and &exi %py-format-opts &len %py-format-opts 
+  !elif &not &seq &which "yapf" "ERROR"
+    set-variable %py-format-opts "yapf -i"
+  !elif &not &seq &which "black" "ERROR"
+    set-variable %py-format-opts "black -q"
+  !else
+    set-variable %py-format-opts ""
+    set-variable #l3 "Py-format options [try: yapf -i / black -q]"
+    set-variable @# &band &bnot 2 
+  !endif
+  !iif &not &band @# 2  set-variable %py-format-opts @ml2 #l3 %py-format-opts
+  !iif &seq %py-format-opts ""  -8 ml-write "Py-format Error: Command needs formatter module and options!"
+  2 pipe-shell-command &spr "%s -m %s %s" %python-com %py-format-opts $buffer-fname "*py-format*"
+  !if $result
+    popup-window "*py-format*"
+    ml-write &spr "Error: Python %s failed - ls formatter installed?" &trr &lef %py-format-opts &sin " " &cat %py-format-opts " "
+  !else
+    0 reread-file
+  !endif
+!emacro
+
 define-macro py-lint
   !iif &not &seq $buffer-fhook "fhook-python"  -8 ml-write &spr "Error: '%s' is not a Python file!" $buffer-bname
   !iif &seq $buffer-fname ""  -8 ml-write &spr "Error: Buffer '%s' does not have a file name!" $buffer-bname
@@ -220,11 +157,7 @@ define-macro py-lint
     set-variable #l2 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
     !iif &iseq #l0 "y"  save-buffer 
   !endif 
-  !if &not &band @# 2
-    !iif &not &exi %py-lint-opts  set-variable %py-lint-opts ""
-    set-variable %py-lint-opts @ml2 "Pylint options" %py-lint-opts
-  !endif
-  0x80 ipipe-shell-command &spr "%s -m pylint %s %s" %python-com %py-lint-opts $buffer-fname "*py-lint*" py-lint-ipipe @nma
+  !iif &not &exi %py-lint-opts  set-variable %py-lint-opts ""
+  !iif &not &band @# 2  set-variable %py-lint-opts @ml2 "Pylint options" %py-lint-opts
+  0x80 ipipe-shell-command &spr "%s -m pylint %s %s" %python-com %py-lint-opts $buffer-fname "*py-lint*" py-tools-ipipe @nma
 !emacro
-
-
