@@ -410,9 +410,25 @@ define-macro uniq
 define-macro find-bfile
   &bor @# 2 find-file @mna
 !emacro
-
 define-macro find-cfile
   &bor @# 4 find-file @mna
+!emacro
+define-macro find-hfile
+  set-variable @# &band @# 1
+  set-variable #l0 @mc5 "File load type (?/b/c/C/r/z) ? " "bCcrz" "(b)inary, (c)rypted, (C)rypted+(b/r), (r)educed bin, (z)file ? "
+  !if &seq #l0 "C"
+    set-variable @# &bor @# 4
+    set-variable #l0 @mc5 "File load type (?/b/r) ? " "br" "(b)inary, (r)educed bin ? "
+  !endif
+  !if &seq #l0 "b"
+    &bor @# 2 find-file @mna
+  !elif &seq #l0 "c"
+    &bor @# 4 find-file @mna
+  !elif &seq #l0 "r"
+    &bor @# 8 find-file @mna
+  !elif &seq #l0 "z"
+    find-zfile @mna
+  !endif
 !emacro
 
 ; reread-file - reloads the current buffer's file into the current buffer
