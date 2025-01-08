@@ -420,14 +420,10 @@ define-macro find-hfile
     set-variable @# &bor @# 4
     set-variable #l0 @mc5 "File load type (?/b/r) ? " "br" "(b)inary, (r)educed bin ? "
   !endif
-  !if &seq #l0 "b"
-    &bor @# 2 find-file @mna
-  !elif &seq #l0 "c"
-    &bor @# 4 find-file @mna
-  !elif &seq #l0 "r"
-    &bor @# 8 find-file @mna
-  !elif &seq #l0 "z"
+  !if &seq #l0 "z"
     find-zfile @mna
+  !else
+    &bor @# &sin #l0 "-b-c---r" find-file @mna
   !endif
 !emacro
 

@@ -18,11 +18,11 @@ define-macro fhook-zfile
 set-variable .fhook-zfile.name "Z-File"
 set-variable .fhook-zfile.setup &reg "/history/fhook/zfile" "ghmop"
 set-variable .fhook-zfile.setup-mask    "eghkop"
-set-variable .fhook-zfile.command-flag  "|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|h|thbio|thbio|thbio|thbio|thbio|th|thbio|"
-set-variable .fhook-zfile.command-name  "|dirlst-search|dirlst-search||dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list||dirlst-tag-toggle|dirlst-tag-mask|dirlst-tag-mask|dirlst-tag-invert|dirlst-tag-set|dirlst-tag-set||zfile-find-file||zfile-find-file|zfile-find-file|zfile-find-file|zfile-find-file|zfile-find-file||zfile-copy-file|"
-set-variable .fhook-zfile.command-nbind &spr "||0||5|6|4|%s|2|1|||1|-1||1|-1||5||1|9|33|4|3||1|" #l0
-set-variable .fhook-zfile.command-kbind "|S|s||5|6|4|3|2|1||space|+|-|*|a|u||return||e|b|B|v|y||c|"
-set-variable .fhook-zfile.command-desc  "|Search for File|\HSearch by Name||Sort by Name|Sort by Extension|Sort by Modified|Sort by Size|Sort by Attribute|Sort by Selected||Toggle Cur File Select|Select Files \H+|Unselect Files \H-|Invert Selection \H*|Select \HAll|\HUnselect All||O\Hpen File|            (Default file tool or Edit file)|\HEdit File|\HBinary Edit File|RBin Edit File|\HView File|System Open File||\HCopy Files|"
+set-variable .fhook-zfile.command-flag  "|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|h|thbio|thbio|thbio|thbio|th|thbio|bio|"
+set-variable .fhook-zfile.command-name  "|dirlst-search|dirlst-search||dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list||dirlst-tag-toggle|dirlst-tag-mask|dirlst-tag-mask|dirlst-tag-invert|dirlst-tag-set|dirlst-tag-set||zfile-find-file||zfile-find-file|zfile-find-file|zfile-find-file|zfile-find-file||zfile-copy-file|zfile-copy-file|"
+set-variable .fhook-zfile.command-nbind &spr "||0||5|6|4|%s|2|1|||1|-1||1|-1||5||1|9|4|3||1|1|" #l0
+set-variable .fhook-zfile.command-kbind "|s|w||5|6|4|3|2|1||space|+|-|*|a|u||return||e|b|v|y||c|x|"
+set-variable .fhook-zfile.command-desc  "|\HSearch for file by name|Search by order column||Sort by Name|Sort by Extension|Sort by Modified|Sort by Size|Sort by Attribute|Sort by Selected||Toggle Cur File Select|Select Files \H+|Unselect Files \H-|Invert Selection \H*|Select \HAll|\HUnselect All||O\Hpen File|            (Default file tool or Edit file)|\HEdit File|\HBinary Edit File|\HView File|S\Hystem Open File||\HCopy Files||"
 
 !if &and &sin "h" .fhook-zfile.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.zfile
