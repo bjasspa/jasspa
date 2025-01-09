@@ -341,7 +341,8 @@ set-variable .user-mouse-set-button.bnames "|\HLeft|\HMiddle|\HRight|Wheel \HUp|
 osd .osd.user-mouse 0   "s" 55 18 -1 -1
 osd .osd.user-mouse 2   ""
 osd .osd.user-mouse 10  "Sfh" "  "
-osd .osd.user-mouse 12  "Ctpfx" &cat .osd.checkbox-chars "\} \HEnable Mouse" 0x010 user-set-mouse
+osd .osd.user-mouse 12  "Ctpfxh" &cat .osd.checkbox-chars "\} \HEnable Mouse" 0x010 user-set-mouse
+osd .osd.user-mouse 13  "Sf" " "
 osd .osd.user-mouse 14  "Sfh" "      \HNumber of Buttons: " 16
 osd .osd.user-mouse 16  "EtxHf" .scheme.osd-entry "#####" 1 user-set-mouse-nob
 osd .osd.user-mouse 18  "Sfh" "                "
@@ -349,6 +350,8 @@ osd .osd.user-mouse 19  "Ctpfx" &cat .osd.checkbox-chars "\} S\Hwap Buttons" 0x0
 osd .osd.user-mouse 21  "Sfh" "                "
 osd .osd.user-mouse 22  "Ctpfx" &cat .osd.checkbox-chars "\} Simulate \H3 Buttons" 1 user-set-pfcheckbox
 !if &equ 0x81 &band $system 0x81
+  osd .osd.user-mouse 2  "Sf" "                      Use 'Shift+mouse' for standard"
+  osd .osd.user-mouse 13 "Sf" "            terminal mouse control"
   osd .osd.user-mouse 24  "Sfh" "                "
   osd .osd.user-mouse 25  "Ctpfx" &cat .osd.checkbox-chars "\} \HForce all events" 0x040 user-set-mouse
 !endif

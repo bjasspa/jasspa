@@ -339,10 +339,11 @@ extern  int getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
 extern  int mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base,
                                 int isUsrArea, int *gotPaths);
 #define meFL_CHECKDOT    0x01
-#define meFL_USESRCHPATH 0x02
-#define meFL_USEPATH     0x04
-#define meFL_EXEC        0x08
-#define meFL_CALLBACK    0x10
+#define meFL_CHECKPATH   0x02
+#define meFL_USESRCHPATH 0x04
+#define meFL_USEPATH     0x08
+#define meFL_EXEC        0x10
+#define meFL_CALLBACK    0x20
 extern	int fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte *outName);
 extern	int executableLookup(meUByte *fname, meUByte *outName);
 extern  int bufferOutOfDate(meBuffer *bp);

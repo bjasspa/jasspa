@@ -669,6 +669,17 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
                 break;
             }
     }
+    /* if meFL_CHECKPATH and fname has a path/drive char then this is an absolute or relative
+     * pathed fname, if not then this must be searched for only, correct flags appropriately */
+    if((flags & meFL_CHECKPATH) && (meStrchr(fname,DIR_CHAR) != NULL)
+#ifdef _CONVDIR_CHAR
+       || (meStrchr(fname,_CONVDIR_CHAR) != NULL)
+#endif
+#ifdef _DRV_CHAR
+       || (meStrchr(fname,_DRV_CHAR) != NULL)
+#endif
+       )
+        flags = (flags & ~(meFL_USESRCHPATH|meFL_USEPATH)) | meFL_CHECKDOT;
     if(flags & meFL_CHECKDOT)
     {
         fileNameCorrect(fname,outName,NULL);
@@ -895,14 +906,11 @@ int
 executableLookup(meUByte *fname, meUByte *outName)
 {
 #if (defined _WIN32) || (defined _DOS)
-    if(fileLookup(fname,extExecCnt,extExecLst,meFL_CHECKDOT|meFL_USEPATH,outName))
+    if(fileLookup(fname,extExecCnt,extExecLst,meFL_CHECKDOT|meFL_CHECKPATH|meFL_USEPATH,outName))
         return 1;
 #endif
 #ifdef _UNIX
-    meUByte flags ;
-    
-    flags = (meStrchr(fname,DIR_CHAR) != NULL) ? meFL_CHECKDOT|meFL_EXEC:meFL_USEPATH|meFL_EXEC;
-    if(fileLookup(fname,0,NULL,flags,outName))
+    if(fileLookup(fname,0,NULL,meFL_CHECKPATH|meFL_USEPATH|meFL_EXEC,outName))
         return 1;
 #endif
     return 0;

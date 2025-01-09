@@ -550,7 +550,7 @@ meDictionaryFind(int flag)
     if(meGetString((meUByte *)"Dictionary name",MLFILECASE,0,tmp,meBUF_SIZE_MAX) <= 0)
         return meFALSE;
 
-    if(!fileLookup(tmp,extDictCnt,extDictLst,meFL_CHECKDOT|meFL_USESRCHPATH,fname))
+    if(!fileLookup(tmp,extDictCnt,extDictLst,meFL_CHECKPATH|meFL_USESRCHPATH,fname))
     {
         meStrcpy(fname,tmp);
         found = 0;

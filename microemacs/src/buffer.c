@@ -171,7 +171,7 @@ assignHooks(meBuffer *bp, meUByte *hooknm)
         buff[0] = 'h';
         buff[1] = 'k';
         meStrcpy(buff+2,hooknm+6);
-        if(!fileLookup(buff,extMacroCnt,extMacroLst,meFL_CHECKDOT|meFL_USESRCHPATH,fn))
+        if(!fileLookup(buff,extMacroCnt,extMacroLst,meFL_CHECKPATH|meFL_USESRCHPATH,fn))
         {
             if(hooknm == defaultHookName)
                 triedDefault++;

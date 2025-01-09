@@ -513,7 +513,7 @@ meSetupProgname(char *progname)
              * search the current directory unless it is specifically on the $PATH hence the
              * additional test here. */
             if (meStrrchr(progname,DIR_CHAR) == NULL)
-                ii = fileLookup((meUByte *)progname,0,NULL,meFL_CHECKDOT|meFL_EXEC,evalResult);
+                ii = fileLookup((meUByte *)progname,0,NULL,meFL_CHECKPATH|meFL_EXEC,evalResult);
         }
         /* the path obtained so far could be a symbolic link, we ideally need to find the actual
          * path so ../macros etc can be added to the search path */

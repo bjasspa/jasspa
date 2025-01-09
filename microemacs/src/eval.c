@@ -2908,7 +2908,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
                 ec = 1;
                 el[0] = arg2;
             }
-            if(!fileLookup(arg1,ec,el,meFL_CHECKDOT|meFL_USESRCHPATH,evalResult))
+            if(!fileLookup(arg1,ec,el,meFL_CHECKPATH|meFL_USESRCHPATH,evalResult))
                 return errorm ;
             return evalResult ;
         }

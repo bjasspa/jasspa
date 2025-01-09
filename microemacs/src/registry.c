@@ -718,7 +718,7 @@ regRead(meUByte *rname, meUByte *fname, int mode)
         if ((fname != NULL) && (fname [0] != '\0'))
         {
             meUByte filename[meBUF_SIZE_MAX] ;	/* Filename */
-            if(fileLookup(fname,extRegCnt,extRegLst,meFL_CHECKDOT|meFL_USESRCHPATH,filename))
+            if(fileLookup(fname,extRegCnt,extRegLst,meFL_CHECKPATH|meFL_USESRCHPATH,filename))
                 fn = meStrdup(filename);
             else
                 fn = meStrdup(fname);

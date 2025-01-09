@@ -1937,7 +1937,7 @@ execFile(meUByte *fname, int f, int n)
     hlp.next = &hlp ;
     hlp.prev = &hlp ;
     /* use a new buffer to ensure it doesn't mess with any loaded files */
-    if(!fileLookup(fname,extMacroCnt,extMacroLst,meFL_CHECKDOT|meFL_USESRCHPATH,fn) ||
+    if(!fileLookup(fname,extMacroCnt,extMacroLst,meFL_CHECKPATH|meFL_USESRCHPATH,fn) ||
        (ffReadFile(&meior,fn,meRWFLAG_READ|meRWFLAG_SILENT,NULL,&hlp,0,0,0) == meABORT))
     {
         if(status)
