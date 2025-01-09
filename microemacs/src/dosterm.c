@@ -198,47 +198,24 @@ meSetupPathsAndUser(void)
             buff[ii] = '\0';
             ll = mePathAddSearchPath(ll,evalResult,buff,9,&gotUserPath);
         }
-        if(!gotUserPath && (homedir != NULL))
-        {
-            /* We have not found a user path so set ~/ as the user-path
-             * as this is the best place for macros to write to etc. */
-            meStrcpy(buff,homedir) ;
-            if(ll)
-            {
-                ii = meStrlen(buff) ;
-                buff[ii++] = mePATH_CHAR ;
-                meStrcpy(buff+ii,evalResult) ;
-            }
-            searchPath = meStrdup(buff) ;
-        }
-        else if(ll > 0)
-            searchPath = meStrdup(evalResult) ;
+        if(ll > 0)
+            searchPath = meStrdup(evalResult);
     }
     if(searchPath != NULL)
-    {
-        fileNameConvertDirChar(searchPath) ;
-        if(meUserPath == NULL)
-        {
-            /* no user path yet, take the first path from the search-path, this
-             * should be a sensible directory to use */
-            if((ss = meStrchr(searchPath,mePATH_CHAR)) != NULL)
-                *ss = '\0' ;
-            meUserPath = meStrdup(searchPath) ;
-            if(ss != NULL)
-                *ss = mePATH_CHAR ;
-        }
-    }
+        fileNameConvertDirChar(searchPath);
     if(meUserPath != NULL)
     {
-        fileNameConvertDirChar(meUserPath) ;
-        ll = meStrlen(meUserPath) ;
+        fileNameConvertDirChar(meUserPath);
+        ll = meStrlen(meUserPath);
         if(meUserPath[ll-1] != DIR_CHAR)
         {
-            meUserPath = meRealloc(meUserPath,ll+2) ;
-            meUserPath[ll++] = DIR_CHAR ;
-            meUserPath[ll] = '\0' ;
+            meUserPath = meRealloc(meUserPath,ll+2);
+            meUserPath[ll++] = DIR_CHAR;
+            meUserPath[ll] = '\0';
         }
     }
+    else
+        meUserPath = meStrdup((meUByte *) "tfs://new-user/");
 }
 
 void
@@ -750,6 +727,9 @@ int
 TTstart(void)
 {
     union REGS rg;
+#if MEOPT_MOUSE
+    int nCfg=0;
+#endif
     
 #ifdef __DJGPP2__
     /* must call this to disable DJ's C-c signal handling */
@@ -769,26 +749,21 @@ TTstart(void)
     
 #if MEOPT_MOUSE
     /* initialise the mouse and flag if okay */
-    rg.x.ax = 0x0000 ;
-    int86(0x33, &rg, &rg) ;
+    rg.x.ax = 0x0000;
+    int86(0x33, &rg, &rg);
     if(rg.x.ax != 0)
     {
-        meMouseCfg |= meMOUSE_ENBLE ;
         /* value of 0xffff also means 2 buttons */
         if(rg.x.bx == 3)
-        {
             /* 3 buttons, so change middle from right to middle */
-            meMouseCfg |= 3 ;
-        }
+            nCfg = 3|meMOUSE_ENBLE;
         else
-            meMouseCfg |= 2 ;
-        TTinitMouse() ;
+            nCfg = 2|meMOUSE_ENBLE;
     }
-    else
-        meMouseCfg &= ~meMOUSE_ENBLE ;
+    TTinitMouse(nCfg);
 #endif
     
-    return TTopen() ;
+    return TTopen();
 }
 
 int
