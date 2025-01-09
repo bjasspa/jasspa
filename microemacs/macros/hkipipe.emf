@@ -17,18 +17,6 @@
   hilight .hilight.gdb 2 "  DB<[0-9]*>" .scheme.keyword
 !endif
 
-; Local macro to allow the next line to be selected when the <return> key is
-; pressed on a line or the mouse. 
-0 define-macro return-get-next-line
-  !force backward-line
-  get-next-line
-!emacro
-0 define-macro mouse-get-next-line
-  set-cursor-to-mouse
-  !force backward-line
-  get-next-line
-!emacro
-
 0 define-macro ipipe-write-prompt
   goto-alpha-mark "I"
   set-variable #l9 1

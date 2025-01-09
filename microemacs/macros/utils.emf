@@ -145,3 +145,13 @@ set-variable .frame-handle.cmd "|delete-frame|create-frame|create-frame|next-fra
     ml-write "[Warning: Cannot save settings - run init-session first to make permanent changes]"
   !endif
 !emacro
+; macros to allow return or mouse click in buffer to go to next line 
+0 define-macro return-get-next-line
+  !force backward-line
+  get-next-line
+!emacro
+0 define-macro mouse-get-next-line
+  set-cursor-to-mouse
+  !force backward-line
+  get-next-line
+!emacro

@@ -59,15 +59,6 @@
     hilight .hilight.grepn 0x80 "[0-9]\\{:" .hilight.grep .scheme.no1
   !endif
 
-  0 define-macro return-get-next-line
-    !force backward-line
-    get-next-line
-  !emacro
-  0 define-macro mouse-get-next-line
-    set-cursor-to-mouse
-    !force backward-line
-    get-next-line
-  !emacro
   0 define-macro find-refresh
     !if .find-file.file-count
       set-alpha-mark "\x81"
