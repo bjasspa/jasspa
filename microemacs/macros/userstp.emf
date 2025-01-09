@@ -48,7 +48,7 @@ set-variable %user-misc-cmd  "|alias-path-setup|cc-setup|cvs-setup|file-tool-set
   osd-dialog "User Setup" "  The User Name cannot be change by user-setup\n\n  See help page for $user-name for information  \n        on how to change your user name" "  \HOK  "
 !emacro
 0 define-macro user-set-path
-  osd-dialog "User Setup" "  The User Path cannot be change by user-setup\n\n  See help page for $user-path for information  \n        on how to change your user path" "  \HOK  "
+  osd-dialog "User Setup" &spr "  The User Path cannot be change by user-setup\n\n  %see help page for $user-path for information  \n        on how to change your user path" &con &not &seq &lef $user-path 6 "tfs://" "S" &con &sin "new-user" $user-path "           Run new-user first or\n  s" "         Run init-session first or\n  s" "  \HOK  "
 !emacro
 0 define-macro user-set-entry
   set-variable #l2 &cat "/history/" &lget "|user-name|organizer|company|setup-file|autosv|" &abs @#
@@ -825,7 +825,11 @@ osd .osd.user-gener 390 "MdtxmfH" .scheme.osd-ebtt &cat "Sho\Hw Modes  " &mid $w
   !endif
 !emacro
 
-!iif &gre &len &set #l0 $user-path 35  set-variable #l0 &cat &mid $window-chars 57 1 &rig #l0 &sub &len #l0 35
+!if &seq &lef $user-path 6 "tfs://"
+  set-variable #l0 "<Not-setup>"
+!elif &gre &len &set #l0 $user-path 35
+  set-variable #l0 &cat &mid $window-chars 57 1 &rig #l0 &sub &len #l0 35
+!endif
 -1 osd .osd.user-start
 osd .osd.user-start 0   "s" 55 18 -1 -1
 osd .osd.user-start 10  ""
@@ -893,6 +897,8 @@ define-macro user-setup
     !if .save-err
     !elif &not &seq &find $user-name ".erf" "ERROR"
       reread-settings
+    !elif &seq &lef $user-path 6 "tfs://"
+      ml-write "[Warning: Cannot save settings - run new-user first to setup]"
     !endif
     user-setup-backups
     set-variable .loop 0

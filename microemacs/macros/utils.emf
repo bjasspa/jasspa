@@ -136,6 +136,10 @@ set-variable .frame-handle.cmd "|delete-frame|create-frame|create-frame|next-fra
 0 define-macro reread-settings
   !force read-registry "/history" $user-name "cbr"
   !if &not &sin "tfs://" &set #l0 &reg "/history" ""
+    !if &seq $user-path $home
+      !iif &band @# 2  -8 ml-write "[Error: Cannot save settings - run new-user first]"
+      ml-write "[Warning: Cannot save settings - run new-user first to make permanent changes]"
+    !endif
   !elif &not &sin "tfs://" $user-path
     set-registry "/history" &rep #l0 "tfs://" $user-path
   !elif &band @# 2

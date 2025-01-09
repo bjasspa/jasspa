@@ -662,6 +662,10 @@ osd 21 80  ""  "\HTriangle"   f Triangle
     3 osd-xdialog "Package Installer" "  User session and storage required.  \n\n  Run init-session now?" 1 10 6 "  \HYes  " "  \HNo  "
     !iif &sub $result 1  !abort
     init-session
+  !elif &seq $user-path $home
+    3 osd-xdialog "Package Installer" "  User setup and storage required.  \n\n  Run new-user now?" 1 10 6 "  \HYes  " "  \HNo  "
+    !iif &sub $result 1  !abort
+    new-user
   !endif
   set-position "\x88"
   !force @# me-pinstall #l1

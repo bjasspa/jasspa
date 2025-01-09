@@ -2758,17 +2758,18 @@ WinShutdown(void)
  * Sort out what to do with the mouse buttons.
  */
 void
-TTinitMouse(void)
+TTinitMouse(meInt nCfg)
 {
-    if(meMouseCfg & meMOUSE_ENBLE)
+    meMouseCfg = nCfg;
+    if(nCfg & meMOUSE_ENBLE)
     {
         int b1, b2, b3;
         
-        if(meMouseCfg & meMOUSE_SWAPBUTTONS)
+        if(nCfg & meMOUSE_SWAPBUTTONS)
             b1 = 3, b3 = 1;
         else
             b1 = 1, b3 = 3;
-        if((meMouseCfg & meMOUSE_NOBUTTONS) > 2)
+        if((nCfg & meMOUSE_NOBUTTONS) > 2)
             b2 = 2;
         else
             b2 = b3;
@@ -2781,7 +2782,7 @@ TTinitMouse(void)
         if(!(meSystemCfg & meSYSTEM_CONSOLE))
 #endif
         {
-            meUByte cc = (meUByte) ((meMouseCfg & meMOUSE_ICON) >> 16);
+            meUByte cc = (meUByte) ((nCfg & meMOUSE_ICON) >> 16);
             if(cc >= meCURSOR_COUNT)
                 cc = 0;
             if(cc != meCurCursor)
@@ -5606,37 +5607,12 @@ meSetupPathsAndUser(void)
         /* also check for the built-in file system */
         if((tfsdev != NULL) && (gotPaths != 0x0f))
             ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "tfs://",1,&gotPaths);
-#endif        
-        if(!(gotPaths & 8) && (appData != NULL))
-        {
-            /* We have not found a user path so add the $APPDATA as the user-path
-             * as this is the best place for macros to write to etc. */
-            strcpy(buff,appData);
-            if(ll)
-            {
-                ii = strlen(buff);
-                buff[ii++] = mePATH_CHAR;
-                meStrcpy(buff+ii,evalResult);
-            }
-            searchPath = meStrdup((meUByte *) buff);
-        }
-        else if(ll > 0)
+#endif
+        if(ll > 0)
             searchPath = meStrdup(evalResult);
     }
     if(searchPath != NULL)
-    {
         fileNameConvertDirChar(searchPath);
-        if(meUserPath == NULL)
-        {
-            /* no user path yet, take the first path from the search-path, this
-             * should be a sensible directory to use */
-            if((ss = meStrchr(searchPath,mePATH_CHAR)) != NULL)
-                *ss = '\0';
-            meUserPath = meStrdup(searchPath);
-            if(ss != NULL)
-                *ss = mePATH_CHAR;
-        }
-    }
     if(meUserPath != NULL)
     {
         fileNameConvertDirChar(meUserPath);
@@ -5648,6 +5624,8 @@ meSetupPathsAndUser(void)
             meUserPath[ll] = '\0';
         }
     }
+    else
+        meUserPath = meStrdup("tfs://new-user/");
     
     if((((ss = meGetenv("HOME")) != NULL) && (ss[0] != '\0')) ||
        ((ss = appData) != NULL))
@@ -6065,11 +6043,9 @@ MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         
     case WM_CREATE:
 #if MEOPT_MOUSE
-        /* Set the default mouse state. Get the number of buttons. Note
-         * under windows we do not need to worry about a left/right swap
-         * since that is performed beneath us. */
-        meMouseCfg |= GetSystemMetrics(SM_CMOUSEBUTTONS) & meMOUSE_NOBUTTONS;
-        TTinitMouse();
+        /* Set the default mouse state. Get the number of buttons. Note under windows we do not
+         * need to worry about a left/right swap since that is performed beneath us. */
+        TTinitMouse(meMouseCfg | (GetSystemMetrics(SM_CMOUSEBUTTONS) & meMOUSE_NOBUTTONS));
 #endif
         /* still must do some work if mouse is disabled */
         meCursors[meCURSOR_DEFAULT] = LoadCursor(NULL,IDC_ARROW);

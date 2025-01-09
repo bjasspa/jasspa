@@ -26,18 +26,16 @@
 !endif
 !if &band @# 2
   ; This is a reinit via user-setup, no point reloading erf (and if readonly it may be wrong) 
-!elif &seq &find $user-name ".erf" "ERROR"
+!elif &seq &set #l0 &find $user-name ".erf" "ERROR"
   ; If <$user-name>.erf registry file isn't found then this is a new user
   !force read-registry "/history" "newuser" "cb"
-  0 define-macro-file newuser
+  define-macro-file newuser new-user
   define-macro start-up
-    !if &seq $buffer-bname "*scratch*"
-      ; Startup for a new user.
-      newuser
-    !endif
+    ; Startup for a new user.
+    !iif &seq $buffer-bname "*scratch*"  new-user
   !emacro
 !else
-  !force read-registry "/history" $user-name "cb"
+  !force read-registry "/history" #l0 "cb"
   ml-write &cat "Setting up for user " $user-name
 !endif
 ;

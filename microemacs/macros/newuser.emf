@@ -8,18 +8,16 @@
 ; Notes:
 ;   For testing - simply run 'me -u new-user-name'
 ;
-0 define-macro newuser
-  !if &exi .exit
-    ; recursive call, probably something has gone wrong with the re-initialise - quit
-    !abort
-  !endif
-  !force !force newuser-wizard
+define-macro new-user
+  ; test for recursive call, probably something has gone wrong with the re-initialise - quit
+  !iif &exi .exit  !abort
+  !force !force new-user-wizard
   !if &band .exit 4
     exit-emacs @nma
     !abort
   !endif
   !if &band .exit 1
-    delete-buffer "*newuser*"
+    delete-buffer "*new-user*"
   !elif &not &band .exit 8
     insert-string "[ABORTED]\n"
   !endif
@@ -29,11 +27,11 @@
   !endif
   unset-variable .exit
 !emacro
-set-variable .newuser.pathdiv &con &band $system 0x80 ":" ";"
+set-variable .new-user.pathdiv &con &band $system 0x80 ":" ";"
 
 ;
 ; Create the file user.erf
-0 define-macro newuser-makeerf
+0 define-macro new-user-makeerf
   insert-string &spr "Creating user registry file \"%s.erf\" ... " $user-name
   set-variable #l1 &spr "%s%s.erf" $user-path $user-name
   set-variable #l0 &stat "t" #l1
@@ -43,9 +41,9 @@ set-variable .newuser.pathdiv &con &band $system 0x80 ":" ";"
     !abort
   !endif
   !force set-registry "/history" #l1
-  set-registry "/history/user-name" .newuser.fullname
-  set-registry "/history/setup-file" .newuser.setup-file
-  !iif &exi .newuser.company  set-registry "/history/company" .newuser.company
+  set-registry "/history/user-name" .new-user.fullname
+  set-registry "/history/setup-file" .new-user.setup-file
+  !iif &exi .new-user.company  set-registry "/history/company" .new-user.company
   !force save-registry "/history" ""
   !if &not $status
     insert-string "[ERROR]\n"
@@ -62,9 +60,9 @@ set-variable .newuser.pathdiv &con &band $system 0x80 ":" ";"
 
 ;
 ; Create the file user.emf
-0 define-macro newuser-makeemf
-  insert-string &spr "Creating user setup file \"%s.emf\" ... " .newuser.setup-file
-  set-variable #l1 &spr "%s%s.emf" $user-path .newuser.setup-file
+0 define-macro new-user-makeemf
+  insert-string &spr "Creating user setup file \"%s.emf\" ... " .new-user.setup-file
+  set-variable #l1 &spr "%s%s.emf" $user-path .new-user.setup-file
   set-variable #l0 &stat "t" #l1
   !if &not &seq #l0 "X"
     insert-string &spr "[ERROR]\n"
@@ -86,27 +84,27 @@ set-variable .newuser.pathdiv &con &band $system 0x80 ":" ";"
   !force 0 save-buffer
   !if &not $status
     !force 0 delete-buffer $buffer-bname
-    find-buffer "*newuser*"
+    find-buffer "*new-user*"
     insert-string "[ERROR]\n"
     insert-string &spr "ERROR: Failed to save macro file \"%s\" - file permissions?\n" #l1
     !abort
   !endif
   !force 0 delete-buffer $buffer-bname
-  find-buffer "*newuser*"
+  find-buffer "*new-user*"
   insert-string "[OK]\n"
-  !if &not &seq &find .newuser.setup-file ".emf" &stat "a" #l1
+  !if &not &seq &find .new-user.setup-file ".emf" &stat "a" #l1
     insert-string "WARNING: MicroEmacs finds the wrong macro file\n"
     insert-string &spr "  Should find:     %s\n" &stat "a" #l1
-    insert-string &spr "  Currently finds: %s\n" &find .newuser.setup-file ".emf"
+    insert-string &spr "  Currently finds: %s\n" &find .new-user.setup-file ".emf"
   !endif
 !emacro
 ;
 ; Create the company file.
-0 define-macro newuser-makecompany
+0 define-macro new-user-makecompany
   ; check not required or already exists
-  !iif &not &exi .newuser.company-name  !return
-  insert-string &spr "Creating company setup file \"%s.emf\" ... " .newuser.company
-  set-variable #l1 &spr "%s%s.emf" $user-path .newuser.company
+  !iif &not &exi .new-user.company-name  !return
+  insert-string &spr "Creating company setup file \"%s.emf\" ... " .new-user.company
+  set-variable #l1 &spr "%s%s.emf" $user-path .new-user.company
   !if &not &seq &stat "t" #l1 "X"
     insert-string &spr "[ERROR]\n"
     insert-string &spr "ERROR: Macro file \"%s\" already exists.\nIt should be deleted and re-created.\n" #l1
@@ -130,34 +128,34 @@ set-variable .newuser.pathdiv &con &band $system 0x80 ":" ";"
     backward-char
     &len @s1 backward-delete-char
     -1 yank
-    insert-string .newuser.company-name
+    insert-string .new-user.company-name
   !else
     end-of-buffer
-    insert-string &spr "set-variable %%company-name \"%s\"" .newuser.company-name
+    insert-string &spr "set-variable %%company-name \"%s\"" .new-user.company-name
     backward-char
   !endif
   !force 0 save-buffer
   !if &not $status
     !force 0 delete-buffer $buffer-bname
-    find-buffer "*newuser*"
+    find-buffer "*new-user*"
     insert-string "[ERROR]\n"
     insert-string &spr "ERROR: Failed to save macro file \"%s\" - file permissions?\n" #l1
     !abort
   !endif
   !force 0 delete-buffer $buffer-bname
-  find-buffer "*newuser*"
+  find-buffer "*new-user*"
   insert-string "[OK]\n"
-  !if &not &seq &find .newuser.company ".emf" &stat "a" #l1
+  !if &not &seq &find .new-user.company ".emf" &stat "a" #l1
     insert-string "WARNING: MicroEmacs finds the wrong macro file\n"
     insert-string &spr "  Should find:     %s\n" &stat "a" #l1
-    insert-string &spr "  Currently finds: %s\n" &find .newuser.company ".emf"
+    insert-string &spr "  Currently finds: %s\n" &find .new-user.company ".emf"
   !endif
 !emacro
 
-0 define-macro newuser-wizard
+0 define-macro new-user-wizard
   ; Find the buffer and empty it
-  set-variable .newuser.exit 0
-  find-buffer "*newuser*"
+  set-variable .new-user.exit 0
+  find-buffer "*new-user*"
   beginning-of-buffer
   set-mark
   end-of-buffer
@@ -178,13 +176,13 @@ set-variable .newuser.pathdiv &con &band $system 0x80 ":" ";"
   insert-string "Would you like to continue? "
   -1 recenter
   2 screen-update
-  set-variable .newuser.exit 1
+  set-variable .new-user.exit 1
   set-variable #l0 @mc5 "Continue (?/y/n) ? " "ynYN" "(Y)es, (N)o, (C-g)Abort ? "
   !if &not &iseq #l0 "y"
-    set-variable .newuser.exit 3
+    set-variable .new-user.exit 3
     !return
   !endif
-  set-variable .newuser.exit 0
+  set-variable .new-user.exit 0
   insert-string "[y]\n\nAnalyzing environment ....\n"
   ;
   ; There are 3 things we need to consider at this point
@@ -192,16 +190,16 @@ set-variable .newuser.pathdiv &con &band $system 0x80 ":" ";"
   ; We cannot directly change their value (although if we create a suitable $user-path
   ; it will be used next time) so if the current setting of these are not correct
   ; the user will have to sort them out first.
-  set-variable .newuser.search-path $search-path
+  set-variable .new-user.search-path $search-path
   !if &not &seq $MEPATH "ERROR"
     !jump 2
   !elif &not &seq $MEUSERPATH "ERROR"
     ; user already has a $MEPATH or $MEUSERPATH, whatever $user-path is set to is all we can use
     ; Check that we can use it.
-    set-variable .newuser.user-path $user-path
-    set-variable #l0 &stat "t" .newuser.user-path
+    set-variable .new-user.user-path $user-path
+    set-variable #l0 &stat "t" .new-user.user-path
     !if &seq #l0 "X"
-      set-variable .newuser.create-path .newuser.user-path
+      set-variable .new-user.create-path .new-user.user-path
     !elif &not &seq #l0 "D"
       ; we can't use it - all we can do is complain and quit!
       !if &not &seq $MEUSERPATH "ERROR"
@@ -209,58 +207,59 @@ set-variable .newuser.pathdiv &con &band $system 0x80 ":" ";"
       !else
         insert-string "The first directory specified by $MEPATH\n"
       !endif
-      insert-string &spr "-- \"%s\"\n" .newuser.user-path
+      insert-string &spr "-- \"%s\"\n" .new-user.user-path
       insert-string "exists and is not a directory. You have to fix\n"
       insert-string "this problem by creating the directory or deleting\n"
       insert-string "the environment variable. Quit MicroEmacs, fix the\n"
       insert-string "problem and then restart.\n\nPress any key to Exit (C-g to Abort):"
-      set-variable .newuser.exit 0
+      set-variable .new-user.exit 0
       set-variable #l0 @mc "Press any key to Exit: "
-      set-variable .newuser.exit 4
+      set-variable .new-user.exit 4
       !return
     !endif
   !else
     ; user has not fixed the environment, searching paths are being used.
     ; Therefore if the current $user-path is not a jasspa path we can
     ; create one and ME will automatically find one.
-    !if &seq &rig $user-path &sub 0 &len &set #l0 &spr "/jasspa/%s/" $user-name #l0
+    !iif &seq &lef &set #l2 $user-path 6 "tfs://"  set-variable #l2 $home
+    !if &seq &rig #l2 &sub 0 &len &set #l0 &spr "/jasspa/%s/" $user-name #l0
       ; ends in "/jaspa/<user>/", this is okay as is
-      set-variable .newuser.user-path $user-path
+      set-variable .new-user.user-path #l2
     !else
-      !if &seq &rig $user-path &sub 0 &len &set #l0 "/jasspa/" #l0
+      !if &seq &rig #l2 &sub 0 &len &set #l0 "/jasspa/" #l0
         ; ends in "/jasspa/", we need to append user-name to ensure its user specific and will isolate from other users and mes' meuser
-        set-variable .newuser.user-path &spr "%s%s/" $user-path $user-name
+        set-variable .new-user.user-path &spr "%s%s/" #l2 $user-name
       !elif &not &band $system 0x80
         ; if not UNIX add 'jasspa/<user>/' to current $user-path.
-        set-variable .newuser.user-path &spr "%sjasspa/%s/" $user-path $user-name
-      !elif &seq $user-path &stat a "~/"
+        set-variable .new-user.user-path &spr "%sjasspa/%s/" #l2 $user-name
+      !elif &seq #l2 &stat a "~/"
         ; if UNIX and the current $user-path is the home directory add a .config/jasspa/<user>/
-        set-variable .newuser.user-path &spr "%s.config/jasspa/%s/" $user-path $user-name
+        set-variable .new-user.user-path &spr "%s.config/jasspa/%s/" #l2 $user-name
       !else
         ; Otherwise add 'jasspa/<user>/' to current $user-path.
-        set-variable .newuser.user-path &spr "%sjasspa/%s/" $user-path $user-name
+        set-variable .new-user.user-path &spr "%sjasspa/%s/" #l2 $user-name
       !endif
-      !if &seq &set #l0 &stat "t" .newuser.user-path "X"
+      !if &seq &set #l0 &stat "t" .new-user.user-path "X"
         ; we will create this path which should mean that ME will ignore the current $user-path 
-        set-variable .newuser.create-path .newuser.user-path
-        !if &seq &set #l1 &cat $user-path .newuser.pathdiv &lef .newuser.search-path &len #l1
-          set-variable .newuser.search-path &rig .newuser.search-path &len #l1
-        !elif &seq &set #l1 &cat &lef $user-path -1 .newuser.pathdiv &lef .newuser.search-path &len #l1
-          set-variable .newuser.search-path &rig .newuser.search-path &len #l1
+        set-variable .new-user.create-path .new-user.user-path
+        !if &seq &set #l1 &cat #l2 .new-user.pathdiv &lef .new-user.search-path &len #l1
+          set-variable .new-user.search-path &rig .new-user.search-path &len #l1
+        !elif &seq &set #l1 &cat &lef #l2 -1 .new-user.pathdiv &lef .new-user.search-path &len #l1
+          set-variable .new-user.search-path &rig .new-user.search-path &len #l1
         !endif
-        set-variable .newuser.search-path &cat &cat .newuser.user-path .newuser.pathdiv .newuser.search-path
+        set-variable .new-user.search-path &cat &cat .new-user.user-path .new-user.pathdiv .new-user.search-path
       !elif &seq #l0 "D"
         ; the directory already exists and ME did not use it so this is not one we can use
-        set-variable .newuser.user-path $user-path
+        set-variable .new-user.user-path #l2
       !else
-        insert-string &spr "\nSuggested user path [%s] already exists as a file -\n  Quit MicroEmacs and move the file if you wish to use this\n" .newuser.user-path
-        set-variable .newuser.user-path $user-path
+        insert-string &spr "\nSuggested user path [%s] already exists as a file -\n  Quit MicroEmacs and move the file if you wish to use this\n" .new-user.user-path
+        set-variable .new-user.user-path #l2
       !endif
     !endif
   !endif
-  insert-string &spr "\n  User Name:   %s\n  User Path:   %s\n" $user-name .newuser.user-path
-  !iif &exi .newuser.create-path  insert-string "               *** This directory will be created ***\n"
-  set-variable #l0 &rep .newuser.search-path .newuser.pathdiv "\n               "
+  insert-string &spr "\n  User Name:   %s\n  User Path:   %s\n" $user-name .new-user.user-path
+  !iif &exi .new-user.create-path  insert-string "               *** This directory will be created ***\n"
+  set-variable #l0 &rep .new-user.search-path .new-user.pathdiv "\n               "
   insert-string &cat &cat "  Search Path: " #l0 "\n\nIs this correct? "
   -1 recenter
   2 screen-update
@@ -271,7 +270,7 @@ set-variable .newuser.pathdiv &con &band $system 0x80 ":" ";"
     insert-string "  $user-name(5)   - to configure your User Name\n"
     insert-string "  $user-path(5)   - to configure your User Path\n"
     insert-string "  $search-path(5) - to configure your Search Path\n"
-    set-variable .newuser.exit 8
+    set-variable .new-user.exit 8
     !return
   !endif
   insert-string "[y]\n\n"
@@ -280,16 +279,16 @@ set-variable .newuser.pathdiv &con &band $system 0x80 ":" ";"
   insert-string "Enter your full name (i.e. \"John Smith\"): "
   -1 recenter
   2 screen-update
-  set-variable .newuser.fullname @ml "Full name"
-  insert-string &spr "[%s]\n\n" .newuser.fullname
+  set-variable .new-user.fullname @ml "Full name"
+  insert-string &spr "[%s]\n\n" .new-user.fullname
   
   ; Get a user setup-file name - must not conflict with system emf files
   set-variable #l1 0
-  set-variable .newuser.setup-file $user-name
-  !while &not &seq &find .newuser.setup-file ".emf" "ERROR"
-    set-variable .newuser.setup-file &spr "%d%s" &inc #l1 1 $user-name
+  set-variable .new-user.setup-file $user-name
+  !while &not &seq &find .new-user.setup-file ".emf" "ERROR"
+    set-variable .new-user.setup-file &spr "%d%s" &inc #l1 1 $user-name
   !done
-  insert-string &spr "User setup file: %s.emf\n\n" .newuser.setup-file 
+  insert-string &spr "User setup file: %s.emf\n\n" .new-user.setup-file 
   
   !if 0
     ; dont do company config here, easy to setup later with user-setup
@@ -312,47 +311,47 @@ set-variable .newuser.pathdiv &con &band $system 0x80 ":" ";"
         insert-string "Enter existing or new name for the company file (8 chars): "
         -1 recenter
         2 screen-update
-        set-variable .newuser.company @ml1 "Company file" #l1
-        insert-string &spr "[%s]\n" .newuser.company
-        set-registry "/history/company" .newuser.company
-        !if &seq &find .newuser.company ".emf" "ERROR"
+        set-variable .new-user.company @ml1 "Company file" #l1
+        insert-string &spr "[%s]\n" .new-user.company
+        set-registry "/history/company" .new-user.company
+        !if &seq &find .new-user.company ".emf" "ERROR"
           ; Create a basic company file.
           insert-string "Enter formal company name as will appear in copyright statements.\n"
           insert-string "Company name (i.e. \"Acme Building Inc.\"): "
           -1 recenter
           2 screen-update
-          set-variable .newuser.company-name @ml "Company name"
-          insert-string &spr "[%s]\n\n" .newuser.company-name
+          set-variable .new-user.company-name @ml "Company name"
+          insert-string &spr "[%s]\n\n" .new-user.company-name
         !else
-          insert-string &spr "Looking for company file \"%s.emf\" ... [FOUND]\n" .newuser.company
+          insert-string &spr "Looking for company file \"%s.emf\" ... [FOUND]\n" .new-user.company
         !endif
       !endif
     !else
       insert-string "[FOUND]\n"
-      set-variable .newuser.company #l1
+      set-variable .new-user.company #l1
     !endif
     insert-string &spr "\n" &slow #l0
   !endif
   ; create the user-path if required
-  !if &exi .newuser.create-path
-    insert-string &spr "Creating User Path: %s ... " .newuser.create-path
+  !if &exi .new-user.create-path
+    insert-string &spr "Creating User Path: %s ... " .new-user.create-path
     ; may need to create the ~/.config dir first
-    !iif &not &seq "D" &stat "t" &set #l1 &stat a &cat .newuser.create-path ".." !force !force 0x105 file-op #l1
-    !force !force 0x100 file-op &lef .newuser.create-path -1
+    !iif &not &seq "D" &stat "t" &set #l1 &stat a &cat .new-user.create-path ".." !force !force 0x105 file-op #l1
+    !force !force 0x100 file-op &lef .new-user.create-path -1
     !if &not $status
       insert-string "[ERROR]\n"
       insert-string "ERROR: Cannot create the directory - resolve problem and re-start\n"
       !return
     !endif
     insert-string &spr "[OK]\n" #l9
-    set-variable $user-path .newuser.create-path
-    set-variable $search-path .newuser.search-path
+    set-variable $user-path .new-user.create-path
+    set-variable $search-path .new-user.search-path
   !endif
   
-  newuser-makeerf
-  newuser-makeemf
+  new-user-makeerf
+  new-user-makeemf
   !if 0
-    newuser-makecompany
+    new-user-makecompany
   !endif
   
   insert-string "\nRe-initialsing using new configuration ... "
@@ -374,8 +373,8 @@ set-variable .newuser.pathdiv &con &band $system 0x80 ":" ";"
   insert-string "need to edit them in the future.\n"
   insert-string "\n"
   insert-string &spr "  Registry file:      %s\n" &find $user-name ".erf"
-  insert-string &spr "  User Setup file:    %s\n" &find .newuser.setup-file ".emf"
-  !iif &exi .newuser.company  insert-string &spr "  Company Setup file: %s\n" &find .newuser.company ".emf"
+  insert-string &spr "  User Setup file:    %s\n" &find .new-user.setup-file ".emf"
+  !iif &exi .new-user.company  insert-string &spr "  Company Setup file: %s\n" &find .new-user.company ".emf"
   insert-string "\n"
   insert-string "\n"
   insert-string "Press 'f1' or 'esc =' to open the main menu bar.\n"
@@ -388,6 +387,6 @@ set-variable .newuser.pathdiv &con &band $system 0x80 ":" ";"
   insert-string "Press any key to Continue:\n"
   -1 recenter
   2 screen-update
-  set-variable .newuser.exit 3
+  set-variable .new-user.exit 3
   !force !force set-variable #l0 @mc "Press any key to Continue: "
 !emacro
