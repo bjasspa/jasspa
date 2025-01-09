@@ -183,11 +183,9 @@ set-variable %user-misc-cmd  "|alias-path-setup|cc-setup|cvs-setup|file-tool-set
       !endif
     !until &not &dec #l2 1
   !endif
-  !if &not &seq &set #l0 &reg "/history/setup-file" "" ""
-    set-variable #l0 &spr "%s%s.emf" $user-path #l0
-    !if &sequ &stat "t" #l0 "R"
-      !iif &reg "/history/edituser" "1"  !force 0 find-file &cat "file:" #l0
-    !else
+  !if &not &seq &set #l1 &reg "/history/setup-file" "" ""
+    set-variable #l0 &spr "%s%s.emf" $user-path #l1
+    !if &not &seq &stat "t" #l0 "R"
       find-file &cat "file:" #l0
       beginning-of-buffer
       set-mark
@@ -196,6 +194,9 @@ set-variable %user-misc-cmd  "|alias-path-setup|cc-setup|cvs-setup|file-tool-set
       !force insert-file &find "newuser" ".etf"
       ; don't save if we failed to save the reg file
       !iif &not .user-setup.save-err  save-buffer
+    !elif &reg "/history/edituser" "1"
+      osd-xdialog "User Setup" &spr "    Edit your user Setup File %s.emf?    " #l1 2 "  \HYes  " "  \HNo  "
+      !iif &equ $result 1  !force 0 find-file &cat "file:" #l0
     !endif
   !endif
   ; close notes otherwise we break the notes frame
@@ -840,8 +841,8 @@ osd .osd.user-start 70  "tRxHf" .scheme.osd-entry &spr "%s%n" #l0 &sub 37 &len #
 osd .osd.user-start 80  ""
 osd .osd.user-start 90  "Sfh" "  Setup \HFile:   " 100
 osd .osd.user-start 100 "EtxHfh" .scheme.osd-entry "###############" 4 user-set-entry
-osd .osd.user-start 103 "fh" "               "
-osd .osd.user-start 105 "Ctpfx" &cat .osd.checkbox-chars "\} E\Hdit" 11 user-set-checkbox
+osd .osd.user-start 103 "fh" "    "
+osd .osd.user-start 105 "Ctpfx" &cat .osd.checkbox-chars "\} Prompt to e\Hdit" 11 user-set-checkbox
 osd .osd.user-start 110 "Sfh" "  Compan\Hy File: " 120
 osd .osd.user-start 120 "EtxHf" .scheme.osd-entry "############################" 3 user-set-entry
 osd .osd.user-start 130 "Sfh" "  \HEmulation:    " 140
@@ -906,6 +907,7 @@ define-macro user-setup
   !until &not .loop
   !if .save-err
     ml-write "[Cannot save user registry file - setup changes will not persist]"
+    set-variable .save-err 0
   !elif &not &seq &find $user-name ".erf" "ERROR"
     0 reread-settings
   !endif
