@@ -70,7 +70,7 @@ jobs:
           cd ./microemacs/mesingle
           rm -rf bin/linux5-intel64
           mkdir -p bin/linux5-intel64
-          ../bin/linux5-intel64/mec -p "@mesgen" -f -p ../bin/linux5-intel64/mec -t ../bin/linux5-intel64/tfs -o bin/linux5-intel64/mesc
+          ../bin/linux5-intel64/mec -p "@./mesgen" -f -p ../bin/linux5-intel64/mec -t ../bin/linux5-intel64/tfs -o bin/linux5-intel64/mesc
           cp ../COPYING.txt ./
           cp ../readme.txt ./
           zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_linux_mesc bin COPYING.txt readme.txt
@@ -81,7 +81,7 @@ jobs:
           cd ./microemacs/mesingle
           rm -rf bin/linux5-intel64
           mkdir -p bin/linux5-intel64
-          ../bin/linux5-intel64/mec -p "@mesgen" -f -p ../bin/linux5-intel64/mew -t ../bin/linux5-intel64/tfs -o bin/linux5-intel64/mesw
+          ../bin/linux5-intel64/mec -p "@./mesgen" -f -p ../bin/linux5-intel64/mew -t ../bin/linux5-intel64/tfs -o bin/linux5-intel64/mesw
           zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_linux_mesw bin COPYING.txt readme.txt
 
       - name: Create linux OpenSSL download

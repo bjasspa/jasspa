@@ -112,7 +112,7 @@ jobs:
           Copy-Item -Path ..\bin\windows100-intel32\mew.exe -Destination .
           Copy-Item -Path ..\bin\windows100-intel32\mec.exe -Destination .
           Copy-Item -Path ..\COPYING.txt -Destination .
-          ..\bin\windows100-intel32\mec.exe -p "@meigen"
+          ..\bin\windows100-intel32\mec.exe -p "@./meigen"
           Copy-Item -Path ..\me.ehf -Destination macros
           heat dir macros -o jmeMacros.wxs -scom -frag -srd -sreg -gg -cg MacrosGroupId -dr jmeMacrosDirRef
           candle -ext WixUIExtension -ext WixUtilExtension jme.wxs jmeMacros.wxs
@@ -135,7 +135,7 @@ jobs:
           $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
           cd .\mesingle
           mkdir -Path bin\windows100-intel32
-          ..\bin\windows100-intel32\mec.exe -p "@mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mec.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mesc.exe
+          ..\bin\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mec.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mesc.exe
           Copy-Item -Path ..\COPYING.txt -Destination .
           Copy-Item -Path ..\readme.txt -Destination .
           Compress-Archive -Path bin,COPYING.txt,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_mesc
@@ -156,7 +156,7 @@ jobs:
           $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
           cd .\mesingle
           Remove-Item bin\windows100-intel32\mesc.exe
-          ..\bin\windows100-intel32\mec.exe -p "@mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mew.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mesw.exe
+          ..\bin\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mew.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mesw.exe
           Compress-Archive -Path bin,COPYING.txt,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_mesw
 
       - name: Upload Packages

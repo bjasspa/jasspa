@@ -66,7 +66,7 @@ jobs:
           cd ./microemacs/mesingle
           rm -rf bin
           mkdir -p bin/macos14-apple64
-          ../bin/macos14-apple64/mec -p "@mesgen" -f -p ../bin/macos14-apple64/mec -t ../bin/macos14-apple64/tfs -o bin/macos14-apple64/mesc
+          ../bin/macos14-apple64/mec -p "@./mesgen" -f -p ../bin/macos14-apple64/mec -t ../bin/macos14-apple64/tfs -o bin/macos14-apple64/mesc
           cp ../COPYING.txt ./
           cp ../readme.txt ./
           zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_apple_mesc bin COPYING.txt readme.txt
@@ -77,7 +77,7 @@ jobs:
           cd ./microemacs/mesingle
           rm -rf bin
           mkdir -p bin/macos14-apple64
-          ../bin/macos14-apple64/mec -p "@mesgen" -f -p ../bin/macos14-apple64/mew -t ../bin/macos14-apple64/tfs -o bin/macos14-apple64/mesw
+          ../bin/macos14-apple64/mec -p "@./mesgen" -f -p ../bin/macos14-apple64/mew -t ../bin/macos14-apple64/tfs -o bin/macos14-apple64/mesw
           zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_apple_mesw bin COPYING.txt readme.txt
 
       - name: Create macos-apple OpenSSL download
