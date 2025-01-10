@@ -415,10 +415,10 @@ define-macro find-cfile
 !emacro
 define-macro find-hfile
   set-variable @# &band @# 1
-  set-variable #l0 @mc5 "File load type (?/b/c/C/r/z) ? " "bCcrz" "(b)inary, (c)rypted, (C)rypted+(b/r), (r)educed bin, (z)file ? "
+  set-variable #l0 @mc5 "File read handler (?/b/c/C/r/t/z) ? " "bCcrtz" "(b)inary, (c)rypted, (C)rypted+(b/r), (r)educed bin, (t)ext, (z)file ? "
   !if &seq #l0 "C"
     set-variable @# &bor @# 4
-    set-variable #l0 @mc5 "File load type (?/b/r) ? " "br" "(b)inary, (r)educed bin ? "
+    set-variable #l0 @mc5 "CFile read handler (?/b/r/t) ? " "brt" "(b)inary, (r)educed bin, (t)ext ? "
   !endif
   !if &seq #l0 "z"
     find-zfile @mna

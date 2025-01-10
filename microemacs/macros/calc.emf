@@ -351,16 +351,18 @@ define-macro calc-op
 
 define-macro calc
   !force set-variable #l0 @1
-  !if &not $status
-    set-variable #l0 @ml "Enter sum"
-  !endif
+  !iif &not $status set-variable #l0 @ml "Enter sum"
+  !iif &gre &len #l0 2040  -8 ml-write "Calc Error: Input string too long - max is 2040"
   !force calc-op #l0
   !if &not $status
     ml-write &spr "[ERROR: %s <^> %s: %s]" &lef .calc.sum &lget .calc.result 1 &rig .calc.sum &lget .calc.result 1 &lget .calc.result 2
     !abort
   !endif
   !iif &band @# 2  insert-string .calc.answer
-  !iif &band @# 1  ml-write &spr "%s = %s" .calc.sum .calc.result
+  !if &band @# 1
+    !iif &gre &len &set #l0 &spr "%s = %s" &rig .calc.sum &neg $frame-width .calc.result &sub $frame-width -10  set-variable #l0 &cat "..." &rig #l0 &sub 10 $frame-width
+    ml-write #l0
+  !endif
 !emacro
 set-variable .calc.ops " ~ ! * / % + - << >> < > <= >= == != & ^ | && || "
 set-variable .calc.opf " 1 17 2 18 34 3 19 4 20 5 21 37 53 6 22 7 8 9 10 11 "

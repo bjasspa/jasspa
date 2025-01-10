@@ -21,8 +21,8 @@ set-variable .fhook-zfile.setup-mask    "eghkop"
 set-variable .fhook-zfile.command-flag  "|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|h|thbio|thbio|thbio|thbio|th|thbio|bio|"
 set-variable .fhook-zfile.command-name  "|dirlst-search|dirlst-search||dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list||dirlst-tag-toggle|dirlst-tag-mask|dirlst-tag-mask|dirlst-tag-invert|dirlst-tag-set|dirlst-tag-set||zfile-find-file||zfile-find-file|zfile-find-file|zfile-find-file|zfile-find-file||zfile-copy-file|zfile-copy-file|"
 set-variable .fhook-zfile.command-nbind &spr "||0||5|6|4|%s|2|1|||1|-1||1|-1||5||1|9|4|3||1|1|" #l0
-set-variable .fhook-zfile.command-kbind "|s|w||5|6|4|3|2|1||space|+|-|*|a|u||return||e|b|v|y||c|x|"
-set-variable .fhook-zfile.command-desc  "|\HSearch for file by name|Search by order column||Sort by Name|Sort by Extension|Sort by Modified|Sort by Size|Sort by Attribute|Sort by Selected||Toggle Cur File Select|Select Files \H+|Unselect Files \H-|Invert Selection \H*|Select \HAll|\HUnselect All||O\Hpen File|            (Default file tool or Edit file)|\HEdit File|\HBinary Edit File|\HView File|S\Hystem Open File||\HCopy Files||"
+set-variable .fhook-zfile.command-kbind "|s|w||5|6|4|3|2|1||space|+|-|*|a|u||return||e|h|v|y||c|x|"
+set-variable .fhook-zfile.command-desc  "|\HSearch for file by name|Search by order column||Sort by Name|Sort by Extension|Sort by Modified|Sort by Size|Sort by Attribute|Sort by Selected||Toggle Cur File Select|Select Files \H+|Unselect Files \H-|Invert Selection \H*|Select \HAll|\HUnselect All||O\Hpen File|            (Default file tool or Edit file)|\HEdit File|\HHandle File|\HView File|S\Hystem Open File||\HCopy Files||"
 
 !if &and &sin "h" .fhook-zfile.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.zfile
@@ -274,18 +274,25 @@ define-macro find-zfile
 !emacro
 
 define-macro zfile-find-file
-  !if &not &exi ":zfl"
-    ml-write "[ZFile Error: Invalid buffer!]"
-    !abort
-  !elif &or &les $window-line 5 &les &len @wl :fmpf
-    ml-write "[ZFile Error: Invalid line!]"
-    !abort
-  !elif &seq "/" &rig &set #l0 &rig @wl :fmpf -1
-    ml-write "[ZFile Error: cannot edit/view directories!]"
-    !abort
-  !elif &exi &spr ":%s:" &set #l3 &spr "%s:%s" $buffer-bname &set #l2 #l0
+  !iif &not &exi ":zfl"  -8 ml-write "[ZFile Error: Invalid buffer!]"
+  !iif &or &les $window-line 5 &les &len @wl :fmpf  -8 ml-write "[ZFile Error: Invalid line!]"
+  !iif &seq "/" &rig &set #l0 &rig @wl :fmpf -1  -8 ml-write "[ZFile Error: cannot edit/view directories!]"
+  !if &exi &spr ":%s:" &set #l3 &spr "%s:%s" $buffer-bname &set #l2 #l0
     find-buffer #l3
     !return
+  !endif
+  set-variable #l5 1
+  !if &band @# 8
+    set-variable #l4 @mc5 "File read handler (?/b/c/C/r/t/z) ? " "bCcrtz" "(b)inary, (c)rypted, (C)rypted+(b/r), (r)educed bin, (t)ext, (z)file ? "
+    !if &seq #l4 "C"
+      set-variable #l5 &bor #l5 4
+      set-variable #l4 @mc5 "CFile read handler (?/b/r/t) ? " "brt" "(b)inary, (r)educed bin, (t)ext ? "
+    !endif
+    !if &seq #l4 "z"
+      set-variable #l5 0
+    !else
+      set-variable #l5 &bor #l5 &sin #l4 "-b-c---r"
+    !endif
   !endif
   !repeat
     !force 0x100 file-op &set #l1 &rep $temp-name "\\" "/"
@@ -325,7 +332,11 @@ define-macro zfile-find-file
       !endif
     !endif
     !if &not #l0
-      &add 1 &div &band @# 40 4 find-file &cat #l1 #l2
+      !if #l5
+        #l5 find-file &cat #l1 #l2 @mna
+      !else
+        find-zfile &cat #l1 #l2 @mna
+      !endif
       set-variable $buffer-fname ""
       set-variable $buffer-bname #l3
     !endif
