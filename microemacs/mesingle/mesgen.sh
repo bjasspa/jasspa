@@ -1,3 +1,3 @@
 #!/bin/sh
-mec -p @mesgen -f "$@"
+mec -p "@./mesgen" -f "$@"
 exit $?
