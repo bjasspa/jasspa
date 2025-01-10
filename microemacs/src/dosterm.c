@@ -119,7 +119,7 @@ void
 meSetupPathsAndUser(void)
 {
     meUByte *ss, buff[meBUF_SIZE_MAX] ;
-    int ii, ll, gotUserPath ;
+    int ii, ll, gotPaths;
     
     if(meUserName == NULL)
     {
@@ -133,9 +133,19 @@ meSetupPathsAndUser(void)
         ss = (meUByte *) "c:/";
     fileNameSetHome(ss);
 
-    if(((ss = meGetenv("MEUSERPATH")) != NULL) && (ss[0] != '\0'))
-        meUserPath = meStrdup(ss);
-    
+    /* meUserPath & searchPath may not be null due to -v command-line option */
+    if((((ss = meUserPath) != NULL) && (ss[0] != '\0')) ||
+       (((ss = meGetenv("MEUSERPATH")) != NULL) && (ss[0] != '\0')))
+    {
+        ll = meStrlen(ss);
+        if((ss[ll-1] == DIR_CHAR) || (ss[ll-1] == _CONVDIR_CHAR))
+            ll--;
+        meUserPath = meMalloc(ll+2);
+        memcpy(meUserPath,ss,ll);
+        meUserPath[ll++] = DIR_CHAR;
+        meUserPath[ll] = '\0';
+        fileNameConvertDirChar(meUserPath);
+    }
     if((searchPath == NULL) &&
        ((ss = meGetenv("MEPATH")) != NULL) && (ss[0] != '\0'))
         searchPath = meStrdup(ss);
@@ -144,33 +154,29 @@ meSetupPathsAndUser(void)
     {
         /* explicit path set by the user, don't need to look at anything else */
         /* we just need to add the $user-path to the front */
-        if(meUserPath != NULL)
+        fileNameConvertDirChar(searchPath);
+        if((meUserPath != NULL) &&
+           (memcmp(searchPath,meUserPath,ll-1) ||
+            ((searchPath[ll-1] != mePATH_CHAR) &&
+             ((searchPath[ll-1] != DIR_CHAR) || (searchPath[ll] != mePATH_CHAR)))))
         {
-            /* check that the user path is first in the search path, if not add it */
-            ll = meStrlen(meUserPath) ;
-            if(meStrncmp(searchPath,meUserPath,ll) ||
-               ((searchPath[ll] != '\0') && (searchPath[ll] != mePATH_CHAR)))
-            {
-                /* meMalloc will exit if it fails as ME has not finished initialising */
-                ss = meMalloc(ll + meStrlen(searchPath) + 2) ;
-                meStrcpy(ss,meUserPath) ;
-                ss[ll] = mePATH_CHAR ;
-                meStrcpy(ss+ll+1,searchPath) ;
-                meFree(searchPath) ;
-                searchPath = ss ;
-            }
+            /* meMalloc will exit if it fails as ME has not finished initialising */
+            ss = meMalloc(ll + meStrlen(searchPath) + 2);
+            memcpy(ss,meUserPath,ll);
+            ss[ll] = mePATH_CHAR;
+            meStrcpy(ss+ll+1,searchPath);
+            meFree(searchPath);
+            searchPath = ss;
         }
+        /* we have to assume that if meUserPath was null then the first path will be the user path */
+        gotPaths = 8;
     }
     else
     {
-        /* construct the search-path */
-        /* put the $user-path first */
-        if((gotUserPath = (meUserPath != NULL)))
-        {
+        /* construct the search-path, put the $user-path first */
+        gotPaths = (meUserPath != NULL) ? 8:0;
+        if(gotPaths)
             meStrcpy(evalResult,meUserPath);
-            ll = meStrlen(evalResult);
-        }
-        else
         {
             evalResult[0] = '\0';
             ll = 0;
@@ -179,15 +185,17 @@ meSetupPathsAndUser(void)
         if(((ss = meGetenv ("MEINSTALLPATH")) != NULL) && (ss[0] != '\0'))
         {
             meStrcpy(buff,ss) ;
-            ll = mePathAddSearchPath(ll,evalResult,buff,6,&gotUserPath);
+            ll = mePathAddSearchPath(ll,evalResult,buff,6,&gotPaths);
         }
         else if(homedir != NULL)
         {
-            /* look for the ~/jasspa directory */
-            meStrcpy(buff,homedir) ;
-            meStrcat(buff,"jasspa") ;
-            /* as this is the user's area, use this directory as user path (with or without .../<$user-name>/ sub-directory */
-            ll = mePathAddSearchPath(ll,evalResult,buff,6,&gotUserPath);
+            /* look for the user's area in ~/jasspa directory - an exception here, if we find macros or spelling here
+             * still look for it in the program area as this may just contain downloaded help and spelling packages */
+            ii = gotPaths;
+            meStrcpy(buff,homedir);
+            meStrcat(buff,"jasspa");
+            ll = mePathAddSearchPath(ll,evalResult,buff,6,&ii);
+            gotPaths |= (ii & 0x0c);
         }
         
         /* also check for directories in the same location as the binary */
@@ -196,26 +204,33 @@ meSetupPathsAndUser(void)
             ii = (((size_t) ss) - ((size_t) meProgName));
             meStrncpy(buff,meProgName,ii);
             buff[ii] = '\0';
-            ll = mePathAddSearchPath(ll,evalResult,buff,9,&gotUserPath);
+            ll = mePathAddSearchPath(ll,evalResult,buff,9,&gotPaths);
         }
         if(ll > 0)
-            searchPath = meStrdup(evalResult);
-    }
-    if(searchPath != NULL)
-        fileNameConvertDirChar(searchPath);
-    if(meUserPath != NULL)
-    {
-        fileNameConvertDirChar(meUserPath);
-        ll = meStrlen(meUserPath);
-        if(meUserPath[ll-1] != DIR_CHAR)
         {
-            meUserPath = meRealloc(meUserPath,ll+2);
+            searchPath = meStrdup(evalResult);
+            fileNameConvertDirChar(searchPath);
+        }
+    }
+    if(meUserPath == NULL)
+    {
+        if((gotPaths & 0x08) && (searchPath != NULL))
+        {
+            /* the first path in the search-path is to be used as the user-path */
+            if((ss = meStrchr(searchPath,mePATH_CHAR)) != NULL)
+                ll = ss-searchPath;
+            else
+                ll = meStrlen(searchPath);
+            if(searchPath[ll-1] == DIR_CHAR)
+                ll--;
+            meUserPath = meMalloc(ll+2);
+            memcpy(meUserPath,searchPath,ll);
             meUserPath[ll++] = DIR_CHAR;
             meUserPath[ll] = '\0';
         }
+        else
+            meUserPath = meStrdup((meUByte *) "tfs://new-user/");
     }
-    else
-        meUserPath = meStrdup((meUByte *) "tfs://new-user/");
 }
 
 void

@@ -5502,7 +5502,7 @@ void
 meSetupPathsAndUser(void)
 {
     char *ss, *appData, buff[meBUF_SIZE_MAX], appDataBuff[meBUF_SIZE_MAX];
-    int ii, ll;
+    int ii, ll, gotPaths;
 #if (defined CSIDL_APPDATA)
     LPITEMIDLIST idList;
 #endif
@@ -5535,10 +5535,19 @@ meSetupPathsAndUser(void)
     else
         appData = NULL;
     
-    if((meUserPath == NULL) &&
-       ((ss = meGetenv("MEUSERPATH")) != NULL) && (ss[0] != '\0'))
-        meUserPath = meStrdup((meUByte *) ss);
-    
+    /* meUserPath & searchPath may not be null due to -v command-line option */ 
+    if((((ss = meUserPath) != NULL) && (ss[0] != '\0')) ||
+       (((ss = meGetenv("MEUSERPATH")) != NULL) && (ss[0] != '\0')))
+    {
+        ll = meStrlen(ss);
+        if((ss[ll-1] == DIR_CHAR) || (ss[ll-1] == _CONVDIR_CHAR))
+            ll--;
+        meUserPath = meMalloc(ll+2);
+        memcpy(meUserPath,ss,ll);
+        meUserPath[ll++] = DIR_CHAR;
+        meUserPath[ll] = '\0';
+        fileNameConvertDirChar(meUserPath);
+    }    
     if((searchPath == NULL) &&
        ((ss = meGetenv("MEPATH")) != NULL) && (ss[0] != '\0'))
         searchPath = meStrdup((meUByte *) ss);
@@ -5547,32 +5556,29 @@ meSetupPathsAndUser(void)
     {
         /* explicit path set by the user, don't need to look at anything else */
         /* we just need to add the $user-path to the front */
-        if(meUserPath != NULL)
+        fileNameConvertDirChar(searchPath);
+        if((meUserPath != NULL) &&
+           (memcmp(searchPath,meUserPath,ll-1) ||
+            ((searchPath[ll-1] != mePATH_CHAR) &&
+             ((searchPath[ll-1] != DIR_CHAR) || (searchPath[ll] != mePATH_CHAR)))))
         {
-            /* check that the user path is first in the search path, if not add it */
-            ll = meStrlen(meUserPath);
-            if(meStrncmp(searchPath,meUserPath,ll) ||
-               ((searchPath[ll] != '\0') && (searchPath[ll] != mePATH_CHAR)))
-            {
-                /* meMalloc will exit if it fails as ME has not finished initialising */
-                ss = meMalloc(ll + meStrlen(searchPath) + 2);
-                meStrcpy(ss,meUserPath);
-                ss[ll] = mePATH_CHAR;
-                meStrcpy(ss+ll+1,searchPath);
-                meFree(searchPath);
-                searchPath = (meUByte *) ss;
-            }
+            /* meMalloc will exit if it fails as ME has not finished initialising */
+            ss = meMalloc(ll + meStrlen(searchPath) + 2);
+            memcpy(ss,meUserPath,ll);
+            ss[ll] = mePATH_CHAR;
+            meStrcpy(ss+ll+1,searchPath);
+            meFree(searchPath);
+            searchPath = (meUByte *) ss;
         }
+        /* we have to assume that if meUserPath was null then the first path will be the user path */
+        gotPaths = 8;
     }
     else
     {
         /* construct the search-path, put the $user-path first */
-        int gotPaths = (meUserPath != NULL) ? 8:0;
+        gotPaths = (meUserPath != NULL) ? 8:0;
         if(gotPaths)
-        {
             meStrcpy(evalResult,meUserPath);
-            ll = meStrlen(evalResult);
-        }
         else
         {
             evalResult[0] = '\0';
@@ -5609,23 +5615,30 @@ meSetupPathsAndUser(void)
             ll = mePathAddSearchPath(ll,evalResult,(meUByte *) "tfs://",1,&gotPaths);
 #endif
         if(ll > 0)
-            searchPath = meStrdup(evalResult);
-    }
-    if(searchPath != NULL)
-        fileNameConvertDirChar(searchPath);
-    if(meUserPath != NULL)
-    {
-        fileNameConvertDirChar(meUserPath);
-        ll = meStrlen(meUserPath);
-        if(meUserPath[ll-1] != DIR_CHAR)
         {
-            meUserPath = meRealloc(meUserPath,ll+2);
+            searchPath = meStrdup(evalResult);
+            fileNameConvertDirChar(searchPath);
+        }
+    }
+    if(meUserPath == NULL)
+    {
+        if((gotPaths & 0x08) && (searchPath != NULL))
+        {
+            /* the first path in the search-path is to be used as the user-path */
+            if((ss = meStrchr(searchPath,mePATH_CHAR)) != NULL)
+                ll = ss-searchPath;
+            else
+                ll = meStrlen(searchPath);
+            if(searchPath[ll-1] == DIR_CHAR)
+                ll--;
+            meUserPath = meMalloc(ll+2);
+            memcpy(meUserPath,searchPath,ll);
             meUserPath[ll++] = DIR_CHAR;
             meUserPath[ll] = '\0';
         }
+        else
+            meUserPath = meStrdup("tfs://new-user/");
     }
-    else
-        meUserPath = meStrdup("tfs://new-user/");
     
     if((((ss = meGetenv("HOME")) != NULL) && (ss[0] != '\0')) ||
        ((ss = appData) != NULL))

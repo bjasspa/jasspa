@@ -579,7 +579,9 @@ meSetupPathsAndUser(void)
        (((ss = meGetenv("HOME")) != NULL) && (ss[0] != '\0')))
         fileNameSetHome(ss);
     
-    if(((ss = meGetenv("MEUSERPATH")) != NULL) && (ss[0] != '\0'))
+    /* meUserPath & searchPath may not be null due to -v command-line option */ 
+    if((((ss = meUserPath) != NULL) && (ss[0] != '\0')) ||
+       (((ss = meGetenv("MEUSERPATH")) != NULL) && (ss[0] != '\0')))
     {
         ll = meStrlen(ss);
         if(ss[ll-1] == DIR_CHAR)
@@ -591,12 +593,8 @@ meSetupPathsAndUser(void)
     }
     if((searchPath == NULL) &&
        ((ss = meGetenv("MEPATH")) != NULL) && (ss[0] != '\0'))
-    {
         searchPath = meStrdup(ss);
-        /* we have to assume that if meUserPath is null then the first
-         * path will be the user path */
-        gotPaths = 8;
-    }    
+        
     if(searchPath != NULL)
     {
         /* explicit path set by the user, don't need to look at anything else */
@@ -608,12 +606,14 @@ meSetupPathsAndUser(void)
         {
             /* meMalloc will exit if it fails as ME has not finished initialising */
             ss = meMalloc(ll + meStrlen(searchPath) + 2) ;
-            meStrcpy(ss,meUserPath);
+            memcpy(ss,meUserPath,ll);
             ss[ll] = mePATH_CHAR;
             meStrcpy(ss+ll+1,searchPath);
             meFree(searchPath);
             searchPath = ss;
         }
+        /* we have to assume that if meUserPath was null then the first path will be the user path */
+        gotPaths = 8;
     }
     else
     {
