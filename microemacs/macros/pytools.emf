@@ -73,6 +73,8 @@ add-next-line "*py-lint*" "^%f:%l:\\d+: "
         set-variable $line-scheme .scheme.comment
       !elif &seq "W" #l1
         set-variable $line-scheme .scheme.constant
+      !elif &seq "R" #l1
+        set-variable $line-scheme .scheme.constant
       !else
         set-variable $line-scheme .scheme.error
       !endif
