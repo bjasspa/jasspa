@@ -28,8 +28,9 @@
       ; extraction failed, but can't add another path of same type to search-path except to user-path area
       !iif &gre #l4 2  set-variable #l4 2
     !endif
-    !if &not &exi $MEPATH
+    !if &or &not &exi $MEPATH &seq #l3 "bin"
       ; Useable path of right type not found, but as $MEPATH not being used we can create one at the same level and it should be found next time
+      ; Exception is a bin component, such as openssl, which does not need to be on the search-path
       !while &dec #l4 1
         !iif &not &seq &rig &set #l5 &lget #l0 #l4 -1 "/"  set-variable #l5 &cat #l5 "/" 
         set-variable #l5 &stat a &spr "file:%s../%s/" #l5 #l3 
@@ -53,15 +54,16 @@
 !emacro
 
 0 define-macro me-pinstall
+  set-variable #l9 $buffer-bname
   set-variable #l1 @1
   !if &band @# 1
     set-variable #l2 "_"
   !else
     set-variable #l2 @2
   !endif
+  find-buffer "*jmplst*"
   !if &not &exi .jmpver
     ml-write "Downloading JASSPA MicroEmacs Package list ... "
-    find-buffer "*jmplst*"
     !force insert-file &cat .purl "jmp.idx"
     beginning-of-buffer
     !if &les $window-eline 3
@@ -77,10 +79,13 @@
         set-variable .jmpver @wl
       !endif
     !endif
-    !force delete-buffer "*jmplst*"
-    !iif &not &exi .jmpver  !abort
+    !if &not &exi .jmpver
+      !force delete-buffer "*jmplst*"
+      !abort
+    !endif
   !endif
   !if &not &gre .jmpver #l2
+    !force delete-buffer "*jmplst*"
     ml-write &spr "MicroEmacs Package %s: Up-to-date" #l1
     !return
   !endif
@@ -93,6 +98,7 @@
   set-variable #l4 $temp-name
   !force 0x80 file-op &cat .purl #l3 #l4
   !if &not $status
+    !force delete-buffer "*jmplst*"
     set-variable #p9 &spr "  Failed to download package file:  \n\n    %s  " #l3
     !abort
   !endif
@@ -104,25 +110,27 @@
   me-pinstall-comp #l4 "/bin/.*" "bin"
   me-pinstall-comp #l4 "/.*[^/]" ""
   0x20 file-op #l4
-  !if #l7
+  !if &set #l2 #l7
     set-variable #p9 &spr "  Failed to %s MicroEmacs Package %s (%d,%d)  " &con &band @# 1 "install" "update" #l1 #l6 #l7
-    !abort
-  !elif &not #l6
+  !elif &set #l2 &not #l6
     set-variable #p9 &spr "  Failed to find any content in MicroEmacs Package %s  " #l1
-    !abort
+  !else
+    find-file &cat $user-path "jmp.lst"
+    beginning-of-buffer
+    insert-string &spr "%s\t%s\n" #l1 #l8
+    !force search-buffer "me" &spr "^%s\t" #l1
+    !if $status
+      beginning-of-line
+      set-mark
+      forward-line
+      -1 kill-region
+    !endif
+    save-buffer
+    delete-buffer $buffer-bname
+    ml-write &spr "MicroEmacs Package %s: %s complete" #l1 &con &band @# 1 "Install" "Update"
   !endif
-  find-file &cat $user-path "jmp.lst"
-  beginning-of-buffer
-  insert-string &spr "%s\t%s\n" #l1 #l8
-  !force search-buffer "me" &spr "^%s\t" #l1
-  !if $status
-    beginning-of-line
-    set-mark
-    forward-line
-    -1 kill-region
-  !endif
-  save-buffer
-  delete-buffer $buffer-bname
-  ml-write &spr "MicroEmacs Package %s: %s complete" #l1 &con &band @# 1 "Install" "Update"
+  find-buffer #l9
+  !force delete-buffer "*jmplst*"
+  !return &not #l2
 !emacro
 set-variable .me-pinstall.purl "http://docs.asid.family/packages/"
