@@ -7,7 +7,50 @@
 ; Synopsis:    MicroEmacs package installer 
 ; Authors:     Steven Phillips
 ;
-set-variable .help.purl "http://docs.asid.family/packages/"
+0 define-macro me-pinstall-comp
+  set-variable $file-names &spr "tfs://%s?%s" &set #l1 @1 &set #l2 @2
+  !iif &seq $file-names ""  !return
+  !if &len &set #l3 @3
+    set-variable #l0 &spr "%s%s%s" &set #l9 &con &band $system 0x200 ";" ":" $search-path #l9
+    set-variable #l4 0
+    !while &len &set #l5 &lget #l0 &inc #l4 1
+      !iif &not &seq &rig #l5 -1 "/"  set-variable #l5 &cat #l5 "/" 
+      !iif &xseq #l5 &spr ".*/%s/" #l3  !break
+    !done
+    !if &len #l5
+      ; found a directory of the right type, attempt to extract
+      !force 0xf7 copy-file &spr "tfs://%s?%s" #l1 #l2 &stat a &cat "file:" #l5
+      !if &not $status
+      !elif &not &add &lget $result 2 &lget $result 4
+        set-variable #p6 &add &add #p6 &lget $result 1 &lget $result 3
+        !return
+      !endif
+      ; extraction failed, but can't add another path of same type to search-path except to user-path area
+      !iif &gre #l4 2  set-variable #l4 2
+    !endif
+    !if &not &exi $MEPATH
+      ; Useable path of right type not found, but as $MEPATH not being used we can create one at the same level and it should be found next time
+      !while &dec #l4 1
+        !iif &not &seq &rig &set #l5 &lget #l0 #l4 -1 "/"  set-variable #l5 &cat #l5 "/" 
+        set-variable #l5 &stat a &spr "file:%s../%s/" #l5 #l3 
+        !force 0xf7 copy-file &spr "tfs://%s?%s" #l1 #l2 #l5
+        !if &not $status
+        !elif &not &set #l7 &add &lget $result 2 &lget $result 4
+          set-variable $search-path &spr "%s%s%s" $search-path #l9 #l5
+          set-variable #p6 &add &add #p6 &lget $result 1 &lget $result 3
+          !return
+        !endif
+      !done
+    !endif
+  !endif
+  !force 0xf7 copy-file &spr "tfs://%s?%s" #l1 #l2 &stat a &cat "file:" $user-path
+  !if $status
+    set-variable #p6 &add #p6 &add &lget $result 1 &lget $result 3
+    set-variable #p7 &add #p7 &add &lget $result 2 &lget $result 4
+  !else
+    set-variable #p7 &add #p7 1
+  !endif
+!emacro
 
 0 define-macro me-pinstall
   set-variable #l1 @1
@@ -19,7 +62,7 @@ set-variable .help.purl "http://docs.asid.family/packages/"
   !if &not &exi .jmpver
     ml-write "Downloading JASSPA MicroEmacs Package list ... "
     find-buffer "*jmplst*"
-    !force insert-file &cat .help.purl "jmp.idx"
+    !force insert-file &cat .purl "jmp.idx"
     beginning-of-buffer
     !if &les $window-eline 3
       set-variable #p9 "  Failed to download MicroEmacs package list,  \n  computer or server may be offline.  "
@@ -48,66 +91,18 @@ set-variable .help.purl "http://docs.asid.family/packages/"
   !endif
   ml-write &spr "MicroEmacs Package %s: Downloading ... " #l1
   set-variable #l4 $temp-name
-  !force 0x80 file-op &cat .help.purl #l3 #l4
+  !force 0x80 file-op &cat .purl #l3 #l4
   !if &not $status
     set-variable #p9 &spr "  Failed to download package file:  \n\n    %s  " #l3
     !abort
   !endif
   set-variable #l3 &set #l5 &cat "file:" &stat a $user-path
   ml-write &spr "MicroEmacs Package %s: %s ... " #l1 &con &band @# 1 "Installing" "Updating"
-  !if &xse $search-path &spr "\\(.*?%s\\)??\\([^%s]*/macros\\)/?\\(%s.*\\)?" &set #l2 &con &band $system 0x200 ";" ":" #l2 #l2
-    set-variable #l5 &cat "file:" &stat a &spr "file:%s/" @s2
-  !endif
   set-variable #l6 &set #l7 0
-*try-mcs-agn
-  !force 0xf7 copy-file &spr "tfs://%s?/macros/.*" #l4 #l5
-  !if &not $status
-    set-variable #l7 &add #l7 1
-  !elif &and &add &lget $result 2 &lget $result 4 &not &seq &lef #l5 &len #l3 #l3
-    ; had a copy fail to search-path location that is not the user-path, user may not have write permission to central dir like /usr/share. try the user-path instead
-    set-variable #l5 #l3
-    !goto try-mcs-agn
-  !else
-    set-variable #l6 &add &add #l6 &lget $result 1 &lget $result 3
-    set-variable #l7 &add &add #l7 &lget $result 2 &lget $result 4
-  !endif
-  !if &not &seq &rig #l5 -8 "/macros/"
-    set-variable #l9 #l3
-  !elif &seq &stat a &cat #l5 "./../" &set #l9 &stat a &cat $user-path "./../"
-    set-variable #l9 &cat "file:" #l9
-  !else
-*try-bin-agn
-    set-variable #l9 #l3
-  !endif
-  !force 0xf7 copy-file &spr "tfs://%s?/bin/.*" #l4 &cat #l9 "bin/"
-  !if &not $status
-    set-variable #l7 &add #l7 1
-  !elif &and &add &lget $result 2 &lget $result 4 &not &seq &lef #l9 &len #l3 #l3
-    !goto try-bin-agn
-  !else
-    set-variable #l6 &add &add #l6 &lget $result 1 &lget $result 3
-    set-variable #l7 &add &add #l7 &lget $result 2 &lget $result 4
-  !endif
-  !iif &xse $search-path &spr "\\(.*?%s\\)??\\([^%s]*/spelling\\)/?\\(%s.*\\)?" #l2 #l2 #l2  set-variable #l5 &spr "file:%s/" @s2
-*try-spl-agn
-  !force 0xf7 copy-file &spr "tfs://%s?/spelling/.*" #l4 #l5
-  !if &not $status
-    set-variable #l7 &add #l7 1
-  !elif &and &add &lget $result 2 &lget $result 4 &not &seq &lef #l5 &len #l3 #l3
-    ; had a copy fail to search-path location that is not the user-path, user may not have write permission to central dir like /usr/share. try the user-path instead
-    set-variable #l5 #l3
-    !goto try-spl-agn
-  !else
-    set-variable #l6 &add &add #l6 &lget $result 1 &lget $result 3
-    set-variable #l7 &add &add #l7 &lget $result 2 &lget $result 4
-  !endif
-  !force 0xf7 copy-file &spr "tfs://%s?/.*[^/]" #l4 #l3
-  !if &not $status
-    set-variable #l7 &add #l7 1
-  !else
-    set-variable #l6 &add &add #l6 &lget $result 1 &lget $result 3
-    set-variable #l7 &add &add #l7 &lget $result 2 &lget $result 4
-  !endif
+  me-pinstall-comp #l4 "/macros/.*" "macros"
+  me-pinstall-comp #l4 "/spelling/.*" "spelling"
+  me-pinstall-comp #l4 "/bin/.*" "bin"
+  me-pinstall-comp #l4 "/.*[^/]" ""
   0x20 file-op #l4
   !if #l7
     set-variable #p9 &spr "  Failed to %s MicroEmacs Package %s (%d,%d)  " &con &band @# 1 "install" "update" #l1 #l6 #l7
@@ -130,3 +125,4 @@ set-variable .help.purl "http://docs.asid.family/packages/"
   delete-buffer $buffer-bname
   ml-write &spr "MicroEmacs Package %s: %s complete" #l1 &con &band @# 1 "Install" "Update"
 !emacro
+set-variable .me-pinstall.purl "http://docs.asid.family/packages/"

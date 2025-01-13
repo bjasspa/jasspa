@@ -364,8 +364,6 @@ if [ -z "$1" ] ; then
     install_package "" binaries
     install_package "" macros
     install_package "" help_ehf
-    # make the spelling folder so search-path with have it and download latest install script as update
-    mkdir -p ${INSTPATH}/jasspa/spelling
     curl -fsSL -o ${INSTPATH}/jasspa/bin/microemacs-update $MEBASEURL/releases/latest/download/microemacs-install
     if [ $? -ne 0 ]; then
       echo "Error: Failed to download latest update script \"$MEBASEURL/releases/latest/download/microemacs-install\"."
