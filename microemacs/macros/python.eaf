@@ -31,6 +31,7 @@ argpn "parser = argparse.ArgumentParser(prog = '\p',\r\Tdescription=__doc__,\rfo
 argpm "parser.add_argument('\pmandatory',help='a mandatory argument')\P" "  argmand"
 argpo "parser.add_argument('--\pinteger','-i',help='an optional argument')\P"  "  argopt"
 argpf "parser.add_argument('--flag','-f',help=\"an flag\",action=\"store_true\")"  "  argflag"
+ "" ""
  "" "</FOLD><FOLD+> \ecCTkinter:\ecA "
 tkimport "import tkinter as tk\rimport tkinter.ttk as ttk\r"  "  tkimport"
 tkfdimport "from tkinter import filedialog" "  tkfdimport"
