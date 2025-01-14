@@ -435,7 +435,7 @@ set-variable .user-set-mouse.A ""
       osd .osd.tmp #l0 "" #l1 #l0 user-setup-charset-set
     !done
   !else
-    set-variable $result &lget .change-font.cs-name &lfind .change-font.cs-id &reg &spr "/history/%s/char-set" %platform &lget .change-font.cs-id 1
+    set-variable $result &lget .change-font.cs-name &lfind .change-font.cs-id &reg &spr "/history/%s/char-set" %platform "iso8859-1"
   !endif
 !emacro
 

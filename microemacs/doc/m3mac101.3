@@ -1,0 +1,117 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.\"  Created By    : Detlef Groth & Steven Phillips
+.\"  Created       : Mon Aug 31 21:02:32 1998
+.\"
+.Id $Id: m3mac101.3,v 2.10 2025/01/14 00:18:47 dgroth Exp $
+.Im MicroEmacs command
+.so me.tni
+.TH py-doc 3
+.XI py-doc - "Display Python manual page"
+.XI py-exec - "Executes the current Python buffer"
+.XI py-format - "Format the current Python buffer"
+.XI py-lint - "Check the current Python buffer using lint"
+.XI %python-com 5 "Python command line path"
+.XI %py-format-opts 5 "Python format command options"
+.XI %py-lint-opts 5 "Python lint format options"
+.SH NAME
+.Me "|py-doc"
+py-doc \- Display Python manual page"
+.br
+.Me "|py-exec"
+py-exec - Executes the current Python buffer
+.br
+.Me "|py-format"
+py-format \- Format the current Python buffer
+.br
+.Me "|py-lint"
+py-lint \- Check the current Python buffer using lint
+.br
+.Me "|%python-com"
+\&%python-com \- Python command line path
+.br
+.Me "|%py-format-opts"
+\&%py-format-opts \- Python format command options
+.br
+.Me "|%py-lint-opts"
+\&%py-lint-opts \- Python lint command options
+.Me $a
+.SH SYNOPSIS
+.na
+\fBpy-doc\fR "\fIman-page\fR"
+.sp
+.I n
+\fBpy-exec\fR [ "\fIcommand-line-arguments\fR" ]
+.br
+.I n
+\fBpy-format\fR [ "\fIformat-options\fR" ]
+.br
+.I n
+\fBpy-lint\fR [ "\fIlint-options\fR" ]
+.sp
+\fB%python-com\fR \fIstring\fR; Default is "\fCpython3\fR"
+.br
+\fB%py-format-opts\fR \fIstring\fR; Default is "\fCyapf -i\fR" or "\fCblack -q\fR"
+.br
+\fB%py-lint-opts\fR \fIstring\fR; Default is ""
+.ad
+.SH DESCRIPTION
+\fBpy-doc\fR provides a mechanism to display a Python manual page within \*(mS. On invoking \fBpy-doc\fR the
+user is prompted for the name of the manual page to display:-
+.CS
+Python help on ?
+.CE
+The command invokes
+.Hr Python 1
+using the \fBpydoc\fR module to generate the requested manual page in a "*py-doc*" buffer. This buffer supports
+.Ht item-list 3
+to help browse the content generated.
+.PP
+The \fBpy-exec\fR macro executes the current buffer using the Python command line interpreter. Before the script is executed
+.Ht save-some-buffers 2
+is executed to allow the user to ensure that all relevant buffers are saved. If bit \fC0x01\fR of the numeric argument
+\fIn\fR is clear then all modified buffers are automatically saved, when set (the default) the user is prompted for
+each buffer. If bit 0x02 of the numeric argument is clear (the default) the user is prompted for any additional
+\fIcommand-line-arguments\fR which are passed to the Python command. The arguments given are stored in a buffer variable,
+\fB:py-exec-args\fR, and used as the default arguments next time the script is executed.
+.PP
+After executing the script, a \fC*py-exec*\fR buffer is opened with the output of the script execution.
+.PP
+The \fBpy-format\fR macro formats the current buffer using either \fByapf\fR or \fBblack\fR Python formatters, you can
+usually  install  these modules using your system  package  manager or using  python's pip package  manager. \*mS will
+attempt to identify  which  formatter is installed and and configure  \fBpy-format\fR  to use it, however the variable
+\fB%py-format-opts\fR  can be used to override  this. If bit \fC0x02\fR of the numeric  argument  \fBn\fR is clear the
+user is prompted to adjust the options before executing the format command.
+.PP
+The  \fBpy-lint\fR  macro invokes  Python's lint module to check the current  buffer for any issues, the pylint module
+must be installed before using this command.
+.PP
+The command opens a \fC*py-lint*\fR buffer with the output from pylint, any warnings or styling issues raised are 
+typically high-lighted. the buffer is configured to for
+.Ht get-next-line 2
+to make traverse through the issues as easy as possible.
+.PP
+The  \fB%py-lint-opts\fR  variable  can be used to configure  \fBpy-lint\fR  to the  format/style  you require, if bit
+\fC0x02\fR  of the  numeric  argument  \fBn\fR is clear the user is  prompted to adjust the options  before  executing
+\fBpylint\fR.
+.SH NOTES
+\fBpy-doc\fR, \fBpy-exec\fR, \fBpy-format\fR and \fBpy-lint\fR are macros defined in \fCpytools.emf\fR.
+.PP
+These  commands  all use  \fB%python-com\fR  to launch  Python, if the  variable  is not  defined  \*(mS  attempts  to
+auto-configure by first searching for a \fBpython3\fR executable, then \fBpython2\fR before finally searching for \fBpython\fR.
+If Python is not in the path, or a different command is used, set the \fB%python-com\fR user variable to the command needed to
+run Python.
+.PP
+On Windows, the \fB%python-com\fR variable is typically set to the full path to the Python interpreter within the
+program files directory.
+.SH "SEE ALSO"
+.na
+.Hr python 1 ,
+.Hr man 1 ,
+.Ht get-next-line 2 ,
+.Ht py 9 .
+.ad
+.FH

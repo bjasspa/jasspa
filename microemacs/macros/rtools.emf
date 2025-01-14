@@ -18,7 +18,7 @@ set-variable .fhook-r-doc.setup-mask "acfhmw"
 
 !if &and &sin "h" .fhook-r-doc.setup &band .hilight.flags 0x02
   !iif &not &exi .hilight.r-doc  set-variable .hilight.r-doc &pinc .hilight.next 1
-  !iif &not &exi .hilight.r-docL  set-variable .hilight.r-docL &pinc .hilight.next 1  
+  !iif &not &exi .hilight.r-docL  set-variable .hilight.r-docL &pinc .hilight.next 1
   0 hilight .hilight.r-doc 2 200               $global-scheme
   0 hilight .hilight.r-docL  0                 $global-scheme
   hilight .hilight.r-doc     2 "^_"            .scheme.header
@@ -26,10 +26,10 @@ set-variable .fhook-r-doc.setup-mask "acfhmw"
   hilight .hilight.r-doc  0x42 "\ecL" ""       .scheme.link
   hilight .hilight.r-doc  0x40 "\esA" ""       $global-scheme
   hilight .hilight.r-doc  0xc0 "\esR" ""       .hilight.r .scheme.header
-  hilight .hilight.r-doc  0xc0 "\esL" ""       .hilight.r-docL .scheme.header  
-  hilight .hilight.r-doc     0 "^\\a[-A-Za-z0-9.$_]*\\}[\t ][\t ]" .scheme.link  
-  hilight .hilight.r-doc     0 "^\\a[-A-Za-z0-9.$_]*::[-A-Za-z0-9.$_]+" .scheme.link    
-  hilight .hilight.r-doc     0 "package:\\a[-A-Za-z0-9.$_]*" .scheme.link    
+  hilight .hilight.r-doc  0xc0 "\esL" ""       .hilight.r-docL .scheme.header
+  hilight .hilight.r-doc     0 "^\\a[-A-Za-z0-9.$_]*\\}[\t ][\t ]" .scheme.link
+  hilight .hilight.r-doc     0 "^\\a[-A-Za-z0-9.$_]*::[-A-Za-z0-9.$_]+" .scheme.link
+  hilight .hilight.r-doc     0 "package:\\a[-A-Za-z0-9.$_]*" .scheme.link
   hilight .hilight.r-docL    4 "'\\{\\a" "\\}'" "\\"          .scheme.link
   hilight .hilight.r-docL 0x80 "^[A-Z].+"      .hilight.r-doc .scheme.header
   hilight .hilight.r-docL 0xc0 "\esA" ""       .hilight.r-doc .scheme.header
@@ -43,27 +43,18 @@ set-variable .fhook-r-doc.setup-mask "acfhmw"
   set-variable .fhook-r-doc.collapse-mnext "-1"
 !endif
 
-define-macro fhook-r-lint
-  buffer-init-hooks
-!emacro
-
-set-variable .fhook-r-lint.name "R Lint"
-set-variable .fhook-r-lint.setup &reg "/history/fhook/r-lint" "acfhmw"
-set-variable .fhook-r-lint.setup-mask "acfhmw"
-
-!if &and &sin "h" .fhook-r-lint.setup &band .hilight.flags 0x02
+!if &and 0 &sin "h" .fhook-r-lint.setup &band .hilight.flags 0x02
   !iif &not &exi .hilight.r-lint  set-variable .hilight.r-lint &pinc .hilight.next 1
   0 hilight .hilight.r-lint 2 200                                       $global-scheme
   ; windows
-  hilight .hilight.r-lint 0 "[C-H]:[ /\\.A-Za-z0-9]+:[0-9]+:[0-9]+:" .scheme.link  
+  hilight .hilight.r-lint 0 "[C-H]:[ /\\.A-Za-z0-9]+:[0-9]+:[0-9]+:" .scheme.link
   ; unix
-  hilight .hilight.r-lint 0 "^/[- /\\.A-Za-z0-9]+:[0-9]+:[0-9]+:"  .scheme.link    
+  hilight .hilight.r-lint 0 "^/[- /\\.A-Za-z0-9]+:[0-9]+:[0-9]+:"  .scheme.link
   hilight .hilight.r-lint 0 " style: .*"                               .scheme.operator
   hilight .hilight.r-lint 0 " warning: .*"                             .scheme.error
-  hilight .hilight.r-lint 0 " error: .*"                             .scheme.error  
+  hilight .hilight.r-lint 0 " error: .*"                             .scheme.error
 !endif
 
-add-next-line "*r-lint*" ""
 add-next-line "*r-lint*" "^%f:%l:\\d+: "
 
 0 define-macro r-rscript-setup
@@ -83,6 +74,43 @@ add-next-line "*r-lint*" "^%f:%l:\\d+: "
     !done
   !endif
   -24 ml-write "Error: Rscript executable not found, please install R or set %rscript-com"
+!emacro
+0 define-macro r-tools-ipipe
+  !if &not &exi :ipp-last
+    set-variable :ipp-last 4
+    set-variable :mouse-word-select "mouse-get-next-line"
+    buffer-bind-key return-get-next-line "return"
+  !endif
+  goto-alpha-mark "I"
+  !if &seq $buffer-bname "*r-exec*"
+  !elif &sub &set #l0 $window-line :ipp-last
+    set-variable $window-line &sub :ipp-last 1
+    !repeat
+      !force 6 get-next-line
+      !if &not $status
+        set-variable $window-line #l0
+      !elif &les $window-line #l0
+        !if &sin ": style: " @wl
+          set-variable $line-scheme .scheme.comment
+        !elif &sin ": warning: " @wl
+          set-variable $line-scheme .scheme.constant
+        !else
+          set-variable $line-scheme .scheme.error
+        !endif
+      !endif
+    !until &not &les $window-line #l0
+    set-variable :ipp-last #l0
+  !endif
+  !if &not @#
+    ; command finished - check if UTF8
+    buffer-is-utf8 #l1
+    !if #l1
+      -1 buffer-mode "view"
+      4 change-buffer-charset "utf8" "display"
+      -1 buffer-mode "edit"
+      1 buffer-mode "view"
+    !endif
+  !endif
 !emacro
 
 0 define-macro r-doc-back
@@ -121,7 +149,7 @@ add-next-line "*r-lint*" "^%f:%l:\\d+: "
     !elif &gre $window-col #l1
       backward-char
       set-mark
-      set-variable $window-col #l2 
+      set-variable $window-col #l2
       copy-region
       set-variable #l6 @y
       -1 yank
@@ -175,14 +203,14 @@ add-next-line "*r-lint*" "^%f:%l:\\d+: "
   !endif
   goto-position "\x80"
   -8 ml-write "Error: Not in an index link."
-!emacro    
+!emacro
 
 define-macro r-doc
   !iif &not &exi %rscript-com  r-rscript-setup
   !force set-variable #l0 @1
   !iif &not $status  set-variable #l0 @ml00 "R help on"
   set-variable #l0 &rep #l0 "::" ":"
-  set-variable #l5 &rep #l0 "$" "_"  
+  set-variable #l5 &rep #l0 "$" "_"
   ml-write &cat "fetching ... " #l5
   ; sort out back history
   !if &set #l2 &exi ":*r-doc*:"
@@ -200,7 +228,7 @@ define-macro r-doc
     change-buffer-name "*r-doc*1"
     goto-position "\x81"
   !endif
-  !if &not &set #l3 &xse #l5 "\\(.+\\):\\(.+\\)" 
+  !if &not &set #l3 &xse #l5 "\\(.+\\):\\(.+\\)"
     set-variable #l0 &spr "help('%s')" #l5
     set-variable #l4 ""
   !elif &set #l3 &lfin "|library|package|" @s1
@@ -249,7 +277,7 @@ define-macro r-doc
   replace-string "^_\b\\(\\w.*:\\)$" "sAcE\\1"
   set-variable #l1 &lget $result 1
   beginning-of-buffer
-  replace-string "_\b" "" 
+  replace-string "_\b" ""
   !if &not #l1
     beginning-of-buffer
     !force replace-string "^\n\\([ \t]+['\\w()]+\\( ['\\w()]+\\)*\n\\)$" "\nsAcE\\1"
@@ -273,7 +301,7 @@ define-macro r-doc
   buffer-init "r-doc"
   ; some terminals might need this
   !iif &band $system 0x01  screen-update
-!emacro    
+!emacro
 
 ; execute a R file using Rscript executable directly from MicroEmacs using the current ISO or Windows CP encodings
 define-macro r-exec
@@ -284,16 +312,8 @@ define-macro r-exec
   ; command line arguments
   !iif &not &exi :r-exec-args  set-variable :r-exec-args ""
   !iif &not &band @# 2  set-variable :r-exec-args @ml2 "Additional command-line arguments" :r-exec-args
-  !iif &not &seq "" &set #l0 &reg &spr "/history/%s/char-set" %platform ""  set-variable #l0 &cat " --encoding=" &rep &rep #l0 "iso" "ISO-" "cp" "CP"
-  0 pipe-shell-command &spr "%s%s \"%s\" %s" %rscript-com #l0 $buffer-fname :r-exec-args "*r-exec*"
-  find-buffer "*r-exec*"
-  buffer-is-utf8 #l1
-  !if #l1  
-    -1 buffer-mode "view"
-    4 change-buffer-charset "utf8" "display"
-    -1 buffer-mode "edit"
-    1 buffer-mode "view"
-  !endif
+  !iif &not &seq "" &set #l0 &reg &spr "/history/%s/char-set" %platform "iso8859-1"  set-variable #l0 &cat " --encoding=" &rep &rep #l0 "iso" "ISO-" "cp" "CP"
+  0x80 ipipe-shell-command &spr "%s%s \"%s\" %s" %rscript-com #l0 $buffer-fname :r-exec-args "*r-exec*" r-tools-ipipe @nma
 !emacro
 
 define-macro r-format
@@ -302,12 +322,15 @@ define-macro r-format
   !iif &not &exi %rscript-com  r-rscript-setup
   !if &bmod "edit"
     set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-    !iif &iseq #l0 "y"  save-buffer 
-  !endif 
-  !iif &not &seq "" &set #l0 &reg &spr "/history/%s/char-set" %platform ""  set-variable #l0 &spr "options('encoding'='%s');" &rep &rep #l0 "iso" "ISO-" "cp" "CP"
+    !iif &iseq #l0 "y"  save-buffer
+  !endif
+  !iif &not &seq "" &set #l0 &reg &spr "/history/%s/char-set" %platform "iso8859-1"  set-variable #l0 &spr "options('encoding'='%s');" &rep &rep #l0 "iso" "ISO-" "cp" "CP"
   ;  set-variable #l0 ""
-  2 pipe-shell-command &spr "%s  -e \"%sformatR::tidy_file('%s')\"" %rscript-com #l0 $buffer-fname "*command*"
-  !iif $result  -8 ml-write "Error: Rscript execution failed, check R and the formatR package are installed."
+  3 pipe-shell-command &spr "%s -e \"%sformatR::tidy_file('%s')\"" %rscript-com #l0 $buffer-fname "*command*"
+  !if $result
+    popup-window "*command*"
+    -8 ml-write "Error: Rscript execution failed, check R and the formatR package are installed."
+  !endif
   0 reread-file
 !emacro
 
@@ -317,22 +340,10 @@ define-macro r-lint
   !iif &not &exi %rscript-com  r-rscript-setup
   !if &bmod "edit"
     set-variable #l2 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-    !iif &iseq #l2 "y"  save-buffer 
-  !endif 
-  !iif &not &seq "" &set #l0 &reg &spr "/history/%s/char-set" %platform ""  set-variable #l0 &spr "options('encoding'='%s');" &rep &rep #l0 "iso" "ISO-" "cp" "CP"
-  ; TODO prompt for %rscript-lint-opts options like compile?
-  2 pipe-shell-command &spr "%s -e \"%slibrary(lintr);lintr::lint('%s',%s)\"" %rscript-com #l0 $buffer-fname &con &exi %rscript-lint-opts %rscript-lint-opts "linters = linters_with_defaults(indentation_linter = indentation_linter(indent = 4L))" "*r-lint*"
-  !iif $result  -8 ml-write "Error: Rscript execution failed, check R and the lintr package are installed."
-  set-variable .buffer $buffer-bname
-  next-window-find-buffer "*r-lint*"
-  buffer-is-utf8 #l1
-  !if #l1  
-    -1 buffer-mode "view"
-    4 change-buffer-charset "utf8" "display"
-    -1 buffer-mode "edit"
-    1 buffer-mode "view"
+    !iif &iseq #l2 "y"  save-buffer
   !endif
-  buffer-init "r-lint"
-  set-variable :mouse-word-select "mouse-get-next-line"
-  buffer-bind-key return-get-next-line "return"
+  !iif &not &seq "" &set #l0 &reg &spr "/history/%s/char-set" %platform "iso8859-1"  set-variable #l0 &spr "options('encoding'='%s');" &rep &rep #l0 "iso" "ISO-" "cp" "CP"
+  !iif &not &exi %r-lint-opts  set-variable %r-lint-opts "linters = linters_with_defaults(indentation_linter = indentation_linter(indent = 4L))"
+  !iif &not &band @# 2  set-variable %r-lint-opts @ml2 "R-lint options" %r-lint-opts
+  0x80 ipipe-shell-command &spr "%s -e \"%slibrary(lintr);lintr::lint('%s',%s)\"" %rscript-com #l0 $buffer-fname %r-lint-opts "*r-lint*" r-tools-ipipe @nma
 !emacro

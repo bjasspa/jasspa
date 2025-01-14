@@ -60,27 +60,28 @@ add-next-line "*py-lint*" "^%f:%l:\\d+: "
     buffer-bind-key return-get-next-line "return"
   !endif
   goto-alpha-mark "I"
-  !iif &equ &set #l0 $window-line :ipp-last  !return
-  set-variable $window-line &sub :ipp-last 1
-  !repeat
-    !force 6 get-next-line
-    !if &not $status
-      set-variable $window-line #l0
-    !elif &les $window-line #l0
-      !if &seq $buffer-bname "*py-exec*"
-        set-variable $line-scheme .scheme.error
-      !elif &seq "C" &set #l1 &mid @wl &add &sin ": " @wl 1 1
-        set-variable $line-scheme .scheme.comment
-      !elif &seq "W" #l1
-        set-variable $line-scheme .scheme.constant
-      !elif &seq "R" #l1
-        set-variable $line-scheme .scheme.constant
-      !else
-        set-variable $line-scheme .scheme.error
+  !if &sub &set #l0 $window-line
+    set-variable $window-line &sub :ipp-last 1
+    !repeat
+      !force 6 get-next-line
+      !if &not $status
+        set-variable $window-line #l0
+      !elif &les $window-line #l0
+        !if &seq $buffer-bname "*py-exec*"
+          set-variable $line-scheme .scheme.error
+        !elif &seq "C" &set #l1 &mid @wl &add &sin ": " @wl 1 1
+          set-variable $line-scheme .scheme.comment
+        !elif &seq "W" #l1
+          set-variable $line-scheme .scheme.constant
+        !elif &seq "R" #l1
+          set-variable $line-scheme .scheme.constant
+        !else
+          set-variable $line-scheme .scheme.error
+        !endif
       !endif
-    !endif
-  !until &not &les $window-line #l0
-  set-variable :ipp-last #l0
+    !until &not &les $window-line #l0
+    set-variable :ipp-last #l0
+  !endif
   !if &not @#
     ; command finished - check if UTF8
     buffer-is-utf8 #l1
@@ -142,13 +143,12 @@ define-macro py-format
   !endif
   !iif &not &band @# 2  set-variable %py-format-opts @ml2 #l3 %py-format-opts
   !iif &seq %py-format-opts ""  -8 ml-write "Py-format Error: Command needs formatter module and options!"
-  2 pipe-shell-command &spr "%s -m %s %s" %python-com %py-format-opts $buffer-fname "*py-format*"
+  3 pipe-shell-command &spr "%s -m %s %s" %python-com %py-format-opts $buffer-fname
   !if $result
-    popup-window "*py-format*"
-    ml-write &spr "Error: Python %s failed - ls formatter installed?" &trr &lef %py-format-opts &sin " " &cat %py-format-opts " "
-  !else
-    0 reread-file
+    popup-window "*command*"
+    -8 ml-write &spr "Error: Python %s failed - ls formatter installed?" &trr &lef %py-format-opts &sin " " &cat %py-format-opts " "
   !endif
+  0 reread-file
 !emacro
 
 define-macro py-lint

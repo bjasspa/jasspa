@@ -3,10 +3,10 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.\"  Created By    : Jon Green
+.\"  Created By    : Detlef Groth & Steven Phillips
 .\"  Created       : Mon Aug 31 21:02:32 1998
 .\"
-.Id $Id: m3mac099.3,v 2.10 2025/01/06 13:22:07 dgroth Exp $
+.Id $Id: m3mac099.3,v 2.10 2025/01/14 00:13:29 dgroth Exp $
 .Im MicroEmacs command
 .so me.tni
 .TH r-doc 3
@@ -15,7 +15,7 @@
 .XI r-format - "Format the current R buffer using the R formatR package"
 .XI r-lint - "check the current R buffer for problems using Rscript lint"
 .XI %rscript-com 5 "Rscript command line path"
-.XI %rscript-lint-opts 5 "Rscript lint format options"
+.XI %r-lint-opts 5 "Rscript lint format options"
 .SH NAME
 .Me "|r-doc"
 r-doc \- R documentation manual page viewer
@@ -32,8 +32,8 @@ r-lint \- check the current R buffer for problems using Rscript lint
 .Me "|%rscript-com"
 \&%rscript-com \- Rscript command line path
 .br
-.Me "|%rscript-lint-opts"
-\&%rscript-lint-opts \- Rscript lint format options"
+.Me "|%r-lint-opts"
+\&%r-lint-opts \- Rscript lint format options
 .Me $a
 .SH SYNOPSIS
 .na
@@ -54,7 +54,7 @@ r-lint \- check the current R buffer for problems using Rscript lint
 .sp
 \fB%rscript-com\fR \fIstring\fR; Default is "\fCRscript\fR"
 .br
-\fB%rscript-lint-opts\fR \fIstring\fR; Default is "\fClinters = linters_with_defaults(indentation_linter = indentation_linter(indent = 4L))\fR"
+\fB%r-lint-opts\fR \fIstring\fR; Default is "\fClinters = linters_with_defaults(indentation_linter = indentation_linter(indent = 4L))\fR"
 .ad
 .SH DESCRIPTION
 \fBr-doc\fR provides a mechanism to display an R manual page within \*(mS. On invoking \fBr-doc\fR the
@@ -72,34 +72,33 @@ selected R manual page.
 .PP
 The \fBr-exec\fR macro executes the current buffer using the Rscript command line interpreter. Before the script is executed
 .Ht save-some-buffers 2
-is executed to allow the user to ensure that all relevant buffers are saved, if bit \fC0x01\fR of the numeric argument
-\fIn\fR is clear then all modified buffers are automatically saved, when set, the default, the user is prompted for
-each. If bit 0x02 of the numeric argument is clear, the default, the user is prompted for any additional
+is executed to allow the user to ensure that all relevant buffers are saved. If bit \fC0x01\fR of the numeric argument
+\fIn\fR is clear then all modified buffers are automatically saved, when set (the default) the user is prompted for
+each buffer. If bit 0x02 of the numeric argument is clear (the default) the user is prompted for any additional
 \fIcommand-line-arguments\fR which are passed to Rscript command. The arguments given are stored in a buffer variable,
-\fB:r-exec-args\fR, and used as a default next time the script is executed.
+\fB:r-exec-args\fR, and used as the default arguments next time the script is executed.
 .PP
-After executing the script, a \fC*r-exec*\fR buffer is opened with the output of the script execution. The script
+After executing the script, an \fC*r-exec*\fR buffer is opened with the output of the script execution. The script
 executes the R file using the current \*(mS character encodings.
 .PP
 The \fBr-format\fR macro formats the current buffer using the R library formatR. The formatR package must be pre-installed
 by the user, this is typically done by running `install.packages('formatR')` within an R console.
 .PP
-The \fBr-lint\fR macro checks the currently edited file using the R package
-`lintr` which must be installed by the user for instance using the usual 
-`install.packages('lintr)` syntax from within a R console. 
+The  \fBr-lint\fR  macro checks the currently  edited file using the R package  `lintr` which must be installed by the
+user for instance using the usual `install.packages('lintr)` syntax from within a R console. 
 .PP
-The command opens a \fC*r-lint*\fR buffer with the output from Rscript lint, any warnings or styling issues raised are 
+The command opens an \fC*r-lint*\fR buffer with the output from Rscript lint, any warnings or styling issues raised are 
 typically high-lighted. the buffer is configured to for
 .Ht get-next-line 2
-to make traverse through the warnings as easy as possible.
+to make traverse through the issues as easy as possible.
 .PP
-Use the \fB%rscript-lint-opts\fR variable to configure Rscript lint to the format/style you require, when not defined,
+Use the \fB%r-lint-opts\fR variable to configure \fBr-lint\fR to the format/style you require. When not defined,
 the default options given to R lint are:
 .CS
 linters = linters_with_defaults(indentation_linter = indentation_linter(indent = 4L))
 .CE 0
 .SH NOTES
-\fBr-doc\fR, \fBr-exec\fR, \fBr-format\fR and \fBr-lint\fR are macros defined in \fCrtols.emf\fR.
+\fBr-doc\fR, \fBr-exec\fR, \fBr-format\fR and \fBr-lint\fR are macros defined in \fCrtools.emf\fR.
 .PP
 The Rscript executable must be installed and in the system path for the command to function correctly. If Rscript is
 not in the path, or a different command is used, set the \fB%rscript-com\fR user variable to the command needed to
