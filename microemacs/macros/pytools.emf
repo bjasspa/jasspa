@@ -131,17 +131,19 @@ define-macro py-format
     !iif &iseq #l0 "y"  save-buffer 
   !endif
   set-variable #l3 "Py-format options"
-  !if &and &exi %py-format-opts &len %py-format-opts 
-  !elif &not &seq &which "yapf" "ERROR"
-    set-variable %py-format-opts "yapf -i"
-  !elif &not &seq &which "black" "ERROR"
-    set-variable %py-format-opts "black -q"
-  !else
-    set-variable %py-format-opts ""
-    set-variable #l3 "Py-format options [try: yapf -i / black -q]"
-    set-variable @# &band &bnot 2 
+  !if &not &and &exi %py-format-opts &len %py-format-opts 
+    !if &not &seq &which "yapf" "ERROR"
+      set-variable %py-format-opts "yapf -i"
+    !elif &not &seq &which "black" "ERROR"
+      set-variable %py-format-opts "black -q"
+    !else
+      set-variable %py-format-opts ""
+      set-variable #l3 "Py-format options [try: yapf -i / black -q]"
+      set-variable @# &band &bnot 2 
+    !endif
+    set-variable @# &bor @# 2
   !endif
-  !iif &not &band @# 2  set-variable %py-format-opts @ml2 #l3 %py-format-opts
+  !iif &band @# 2  set-variable %py-format-opts @ml2 #l3 %py-format-opts
   !iif &seq %py-format-opts ""  -8 ml-write "Py-format Error: Command needs formatter module and options!"
   3 pipe-shell-command &spr "%s -m %s %s" %python-com %py-format-opts $buffer-fname
   !if $result
@@ -159,7 +161,10 @@ define-macro py-lint
     set-variable #l2 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
     !iif &iseq #l0 "y"  save-buffer 
   !endif 
-  !iif &not &exi %py-lint-opts  set-variable %py-lint-opts ""
-  !iif &not &band @# 2  set-variable %py-lint-opts @ml2 "Pylint options" %py-lint-opts
+  !if &not &exi %py-lint-opts
+    set-variable %py-lint-opts ""
+    set-variable @# &bor @# 2
+  !endif
+  !iif &band @# 2  set-variable %py-lint-opts @ml2 "Pylint options" %py-lint-opts
   0x80 ipipe-shell-command &spr "%s -m pylint %s %s" %python-com %py-lint-opts $buffer-fname "*py-lint*" py-tools-ipipe @nma
 !emacro

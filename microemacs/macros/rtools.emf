@@ -343,7 +343,10 @@ define-macro r-lint
     !iif &iseq #l2 "y"  save-buffer
   !endif
   !iif &not &seq "" &set #l0 &reg &spr "/history/%s/char-set" %platform "iso8859-1"  set-variable #l0 &spr "options('encoding'='%s');" &rep &rep #l0 "iso" "ISO-" "cp" "CP"
-  !iif &not &exi %r-lint-opts  set-variable %r-lint-opts "linters = linters_with_defaults(indentation_linter = indentation_linter(indent = 4L))"
-  !iif &not &band @# 2  set-variable %r-lint-opts @ml2 "R-lint options" %r-lint-opts
+  !if &not &exi %r-lint-opts
+    set-variable %r-lint-opts "linters = linters_with_defaults(indentation_linter = indentation_linter(indent = 4L))"
+    set-variable @# &bor @# 2
+  !endif
+  !iif &band @# 2  set-variable %r-lint-opts @ml2 "R-lint options" %r-lint-opts
   0x80 ipipe-shell-command &spr "%s -e \"%slibrary(lintr);lintr::lint('%s',%s)\"" %rscript-com #l0 $buffer-fname %r-lint-opts "*r-lint*" r-tools-ipipe @nma
 !emacro
