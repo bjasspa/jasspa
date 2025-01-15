@@ -44,15 +44,12 @@
 define-macro eaf-list-execute
   0 show-region
   set-variable #l5 $result
+  !iif &set #l8 &seq &lef @cck 10 "mouse-drop"  set-variable @# &con &not &sin ":EXSTR:" @wl 2 &con &or &not &set #l0 &sin "<FOLD" @wl &les &add #l0 5 $window-col 1 2
   !if &band @# 2
-    !if &set #l1 &sin "<FOLD+>" @wl
-    !elif &not &set #l1 &sin "<FOLD->" @wl
-      goto-position "\x82"
+    !if &les &set #l0 &add 4 &sin "<FOLD" @wl 5
+      !iif #l8  goto-position "\x82"
+      !return
     !endif
-    set-variable $window-col &sub #l1 1
-  !endif
-  !if &xseq @wl "\\( *</FOLD>\\)* *<FOLD[+-]>.*"
-    set-variable #l0 &add 4 &sin "<FOLD" @wl
     set-variable #l1 &con &seq &mid @wl #l0 1 "-" "+" "-"
     -1 buffer-mode "view"
     set-variable #l2 $window-line
@@ -98,13 +95,10 @@ define-macro eaf-list-execute
     insert-string #l1
     -1 buffer-mode "edit"
     1 buffer-mode "view"
-    !iif &seq &lef @cck 10 "mouse-drop"  goto-position "\x82"
-  !elif &not &set #l0 &sin ":EXSTR:" @wl
-    !iif &seq &lef @cck 10 "mouse-drop"  goto-position "\x82"
-  !else
-    !iif &set #l1 &seq &lef @cck 10 "mouse-drop"  set-variable #l2 &or &seq &trb &lef &rep @wl "</FOLD>" "" &add $window-col 1 "" &seq &trb &mid @wl $window-col &sub &sub #l0 1 $window-col ""
+  !elif &set #l0 &sin ":EXSTR:" @wl
+    !iif #l8  set-variable #l2 &or &seq &trb &lef &rep @wl "</FOLD>" "" &add $window-col 1 "" &seq &trb &mid @wl $window-col &sub &sub #l0 1 $window-col ""
     set-variable #l0 &rig @wl &add #l0 6
-    !if #l1
+    !if #l8
       goto-position "\x82"
     !else
       set-variable #l5 -1
@@ -126,8 +120,10 @@ define-macro eaf-list-execute
       !endif
     !endif
     !iif &band #l5 1  !force show-region
-    !iif &not &and #l1 #l2  execute-line &spr "execute-string \"%s\"" #l0
+    !iif &not &and #l8 #l2  execute-line &spr "execute-string \"%s\"" #l0
+    !return
   !endif
+  !iif #l8  goto-position "\x82"
 !emacro
 
 define-macro eaf-list-goto
@@ -239,9 +235,9 @@ define-macro eaf-list-goto
   set-variable :mouse-pick-1 mouse-void
   set-variable :mouse-drop-1 eaf-list-execute
   set-variable :eaf-list #l0
-  buffer-bind-key eaf-list-execute "return"
-  buffer-bind-key eaf-list-execute "space"
-  3 buffer-bind-key eaf-list-execute "f2"
+  1 buffer-bind-key eaf-list-execute "return"
+  2 buffer-bind-key eaf-list-execute "space"
+  2 buffer-bind-key eaf-list-execute "f2"
   -1 buffer-mode "edit"
   1 buffer-mode "view"
   goto-position "\x86"

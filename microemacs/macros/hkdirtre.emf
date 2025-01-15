@@ -23,22 +23,22 @@ set-variable .fhook-dirtre.setup-mask "aeghop"
 set-variable .fhook-dirtre.command-flag  "|thbio|thbio|thbio|th|thbio|thbio|bio|thbio|bio|thbio|thbio|bio|"
 set-variable .fhook-dirtre.command-name  "|file-browser-swap-buffers|file-browser-close|dirtre-toggle-filter||dirtre-select-directory|directory-tree|directory-tree|directory-tree|directory-tree|dirtre-select-directory|dirtre-select-directory|dirtre-select-directory|"
 set-variable .fhook-dirtre.command-nbind "|||||0x02|0x4e|0x4e|0x12|0x12|0x66|0xa6|0xa6|"
-set-variable .fhook-dirtre.command-kbind "|tab|f10|f||space|o|+|c|-|return|C-return|C-j|"
+set-variable .fhook-dirtre.command-kbind "|tab|f10|f||return|o|+|c|-|space|C-space|C-j|"
 set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|Close File \HBrowser|Toggle \HFilter||\HSelect Directory|\HOpen Directory||\HClose Directory||Open/Close \HDirectory|\HRecursively Open/Close Directory||"
 
-!if &and &sin "h" .fhook-dirtre.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-dirtre.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.dirtre
     set-variable .hilight.dirtre  &pinc .hilight.next 1
     set-variable .hilight.dirtre2 &pinc .hilight.next 1
   !endif
   0 hilight .hilight.dirtre 0 $global-scheme
   !if &seq &lef $box-chars 1 "|"
-    hilight .hilight.dirtre  0x081 "+" .hilight.dirtre2   $global-scheme
-    
-    0 hilight  .hilight.dirtre2 0                         $global-scheme
-    hilight .hilight.dirtre2 0x081 "+" .hilight.dirtre    .scheme.dir-closed
-    hilight .hilight.dirtre2 0x081 "?" .hilight.dirtre    .scheme.dir-uknown
-    hilight .hilight.dirtre2 0x080 "." .hilight.dirtre    $global-scheme
+    hilight .hilight.dirtre  0x081 "+" .hilight.dirtre2 $global-scheme
+
+    0 hilight  .hilight.dirtre2 0                      $global-scheme
+    hilight .hilight.dirtre2 0x081 "+" .hilight.dirtre .scheme.dir-closed
+    hilight .hilight.dirtre2 0x081 "?" .hilight.dirtre .scheme.dir-uknown
+    hilight .hilight.dirtre2 0x080 "." .hilight.dirtre $global-scheme
   !else
     hilight .hilight.dirtre  0x001 "+"   .scheme.dir-closed
     hilight .hilight.dirtre  0x001 "-"   .scheme.dir-open
@@ -55,7 +55,7 @@ set-variable .fhook-dirtre.command-desc  "|Swap Browser \HWindows|Close File \HB
 
 0 define-macro dirtre-toggle-filter
   0x303 directory-tree $buffer-fname
-!emacro  
+!emacro
 ;
 ; dirtre-select-directory
 ; Note that we assume that we are in the *directory* window - no checks are
