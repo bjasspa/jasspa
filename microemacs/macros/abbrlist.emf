@@ -14,9 +14,7 @@
 ; to get into the abbrev-list, then use 'return' to insert an abbrev and f2 to open/close a fold
 
 !if &band .hilight.flags 0x01
-  !if &not &exist .hilight.abbrev-item
-    set-variable .hilight.abbrev-item &pinc .hilight.next 1
-  !endif
+  !iif &not &exist .hilight.abbrev-item  set-variable .hilight.abbrev-item &pinc .hilight.next 1
   0 hilight .hilight.abbrev-item 0 $global-scheme
   hilight .hilight.abbrev-item 0x40 ":EXSTR:.*" "" $global-scheme
   hilight .hilight.abbrev-item 0x40 "<FOLD\\+>" "+" .scheme.dir-closed
@@ -34,12 +32,9 @@
   set-variable #l0 1
   !repeat
     !force search-forward "<FOLD[+-]>\\|</FOLD>"
-    !if &not $status
-      -8 ml-write &spr  "[missing </FOLD> for <FOLD+> on line %d]" &sub #l1 3
-    !elif &seq @s0 "</FOLD>"
-      !if &not &dec #l0 1
-        !return
-      !endif
+    !iif &not $status  -8 ml-write &spr  "[missing </FOLD> for <FOLD+> on line %d]" &sub #l1 3
+    !if &seq @s0 "</FOLD>"
+      !iif &not &dec #l0 1  !return
     !else
       set-variable #l0 &add #l0 1
     !endif
@@ -56,8 +51,8 @@ define-macro eaf-list-execute
     !endif
     set-variable $window-col &sub #l1 1
   !endif
-  !if &xseq &rig @wl $window-col "\\(</FOLD>\\)*<FOLD[+-]>.*"
-    set-variable #l0 &add 4 &add $window-col &sin "<FOLD" &rig @wl $window-col
+  !if &xseq @wl "\\( *</FOLD>\\)* *<FOLD[+-]>.*"
+    set-variable #l0 &add 4 &sin "<FOLD" @wl
     set-variable #l1 &con &seq &mid @wl #l0 1 "-" "+" "-"
     -1 buffer-mode "view"
     set-variable #l2 $window-line
@@ -103,23 +98,35 @@ define-macro eaf-list-execute
     insert-string #l1
     -1 buffer-mode "edit"
     1 buffer-mode "view"
-    !if &seq &lef @cck 10 "mouse-drop"
-      goto-position "\x82"
-    !endif
+    !iif &seq &lef @cck 10 "mouse-drop"  goto-position "\x82"
   !elif &not &set #l0 &sin ":EXSTR:" @wl
-    goto-position "\x82"
+    !iif &seq &lef @cck 10 "mouse-drop"  goto-position "\x82"
   !else
-    !if &set #l1 &seq &lef @cck 10 "mouse-drop"
-      set-variable #l1 &or &seq &trb &lef &rep @wl "</FOLD>" "" &add $window-col 1 "" &seq &trb &mid @wl $window-col &sub &sub #l0 1 $window-col ""
-    !endif
+    !iif &set #l1 &seq &lef @cck 10 "mouse-drop"  set-variable #l2 &or &seq &trb &lef &rep @wl "</FOLD>" "" &add $window-col 1 "" &seq &trb &mid @wl $window-col &sub &sub #l0 1 $window-col ""
     set-variable #l0 &rig @wl &add #l0 6
-    goto-position "\x82"
-    !if &band #l5 1
-      !force show-region
+    !if #l1
+      goto-position "\x82"
+    !else
+      set-variable #l5 -1
+      !if &len &set #l3 &rig :eaf-list 10
+        set-variable #l4 $window-id
+        !repeat
+          3 next-window
+          !iif &equ #l4 $window-id  !break
+          !iif &or &seq :chook #l3 &seq &rig $buffer-fhook 6 #l3  set-variable #l5 &con &equ #l5 -1 $window-id -2
+        !done
+      !endif
+      !if &les #l5 0
+        -8 ml-write &cat "Abbrev Error: " &con &equ #l5 -1 "Failed to find suitable window to insert into" "More than 1 suitable window to insert into"
+      !else
+        6 next-window
+        !while &sub #l5 $window-id
+          2 next-window
+        !done
+      !endif
     !endif
-    !if &not #l1
-      execute-line &spr "execute-string \"%s\"" #l0
-    !endif
+    !iif &band #l5 1  !force show-region
+    !iif &not &and #l1 #l2  execute-line &spr "execute-string \"%s\"" #l0
   !endif
 !emacro
 
@@ -129,10 +136,7 @@ define-macro eaf-list-goto
   set-variable #l0 $window-id
   !repeat
     3 next-window
-    !if &equ #l0 $window-id
-      ml-write "[Failed to locate *abbrev-list* window]"
-      !abort
-    !endif
+    !iif &equ #l0 $window-id  -8 ml-write "[Failed to locate *abbrev-list* window]"
   !until &seq $buffer-bname "*abbrev-list*"
 !emacro
 
@@ -236,6 +240,7 @@ define-macro eaf-list-goto
   set-variable :mouse-drop-1 eaf-list-execute
   set-variable :eaf-list #l0
   buffer-bind-key eaf-list-execute "return"
+  buffer-bind-key eaf-list-execute "space"
   3 buffer-bind-key eaf-list-execute "f2"
   -1 buffer-mode "edit"
   1 buffer-mode "view"
@@ -257,7 +262,19 @@ define-macro abbrev-list
     goto-position "\x81"
     -8 ml-write "[Failed to load abbreviation list for current buffer]"
   !endif
-  goto-position "\x81"
-  popup-window "*abbrev-list*"
-  goto-position "\x81"
+  !force 0 popup-window "*abbrev-list*"
+  !if $status
+    goto-position "\x81"
+  !else
+    delete-other-windows
+    !if &equ @# 2
+      split-window-vertically
+    !else
+      split-window-horizontally
+      change-window-width .width
+    !endif
+    find-buffer "*abbrev-list*"
+    3 next-window
+  !endif
 !emacro
+!iif &not &exist .abbrev-list.width  set-variable .abbrev-list.width 25
