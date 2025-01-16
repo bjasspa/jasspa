@@ -64,4 +64,4 @@ define-macro bin-swap-section
 0 describe-key "esc A-y"
 !iif &seq $result ""  global-bind-key bin-copy-region "esc A-w"
 
-buffer-init-fhook "binary"
+!iif &exi buffer-init-fhook  buffer-init-fhook "binary"

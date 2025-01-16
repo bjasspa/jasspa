@@ -77,4 +77,4 @@ define-macro rbin-forward-word
 0 describe-key "esc A-y"
 !iif &seq $result ""  global-bind-key bin-copy-region "esc A-w"
 
-buffer-init-fhook "rbin"
+!iif &exi buffer-init-fhook  buffer-init-fhook "rbin"
