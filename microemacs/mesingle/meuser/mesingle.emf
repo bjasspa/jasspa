@@ -10,7 +10,7 @@
 ; Notes:       If it exists add .about.userpath first to search path so user can copy new & override files into directory
 ;
 !if &set .about.hasssn &seq "D" &stat t &set .about.userpath &cat &set #l0 &stat a &spr "file:%s/jasspa/" &con &seq $platform "windows" $APPDATA "~/.config" &cat $user-name "/"
-  set-variable $search-path &spr "%s%s%s" &set $user-path .about.userpath &con &band $system 0x80 ":" ";" $search-path
+  set-variable $search-path &spr "%s%s%smacros%s%sspelling%s%s" &set $user-path .about.userpath &set #l1 &con &band $system 0x80 ":" ";" #l0 #l1 #l0 #l1 $search-path
   set-variable .about.hasssn &seq "R" &stat t &spr "%s%s.emf" $user-path $user-name
 !endif
 execute-file "me"
@@ -37,7 +37,7 @@ define-macro init-session
     !iif &not $status  ml-write &spr "[Error: Cannot write to file %s]" #l0
     !force delete-buffer $buffer-bname
   !endif
-  set-variable $search-path &spr "%s%s%s" $user-path &con &band $system 0x80 ":" ";" $search-path
+  set-variable $search-path &spr "%s%s%smacros%s%sspelling%s%s" $user-path &set #l0 &con &band $system 0x80 ":" ";" $user-path #l0 $user-path #l0 $search-path
   set-variable .session.update 1
   0 update-session
   goto-position "\x81"
