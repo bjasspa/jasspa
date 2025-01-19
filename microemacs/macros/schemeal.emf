@@ -1,5 +1,5 @@
 ; Generated color scheme file for JASSPA MicroEmacs
-; Copyright (C) 1999-2024 JASSPA (www.jasspa.com)
+; Copyright (C) 1999-2023 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ; Description: Ayu Light
 set-variable $system &band $system &bnot 0x020
@@ -21,7 +21,7 @@ add-color &set .col12 12 242 174 73
 add-color &set .col13 13 89 194 255
 add-color &set .col14 14 163 122 204
 add-color &set .col15 15 76 191 153
-add-color &set .col16 16 209 209 209
+add-color &set .col16 16 225 225 225
 add-color &set .col17 17 250 250 250
 add-color &set .col18 18 108 124 128
 add-color &set .col19 19 255 204 102
@@ -39,6 +39,9 @@ add-color-scheme $trunc-scheme .col4 .col17 .col12 .col16 .col4 .col9 .col12 .co
 add-color-scheme .scheme.dmf .col18 .col9 .col8 .col9 .col8 .col10 .col9 .col16 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.no1 .col7 .col17 .col15 .col16 .col7 .col9 .col15 .col9 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.no2 .col3 .col17 .col11 .col16 .col3 .col9 .col11 .col9 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.chg .col9 .col1 .col9 .col2 .col9 .col3 .col9 .col3 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.add .col8 .col1 .col8 .col2 .col8 .col3 .col8 .col3 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.rmv .col7 .col1 .col7 .col2 .col7 .col3 .col7 .col3 0 8 0 8 0 8 0 8
 ; OSD
 add-color-scheme $osd-scheme .col0 .col1 .col0 .col2 .col8 .col9 .col2 .col9 8 0 24 16 0 8 16 24
 add-color-scheme .scheme.osd-entry .col18 .col17 .col2 .col17 .col9 .col0 .col9 .col2 0 8 0 8 8 0 8 0
