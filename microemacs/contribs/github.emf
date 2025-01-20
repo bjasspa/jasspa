@@ -109,7 +109,7 @@ define-macro github-build-action
   !done
   !iif &not &seq "completed" #l3  -8 ml-write &spr "[Github %s Error: Unexpected state %s for run id %s]" #l0 #l3 #l5
   !iif &not &seq "success" &set #l3 &rig &reg "/json/ghaj/conclusion" "" 1 -8 ml-write &spr "[Github %s Error: Workflow run failed for run id %s, conclusion: %s]" #l0 #l5
-  !iif &not @#  !return
+  !iif &band 2 @#  !return
   github-api-json &spr "actions/runs/%s/artifacts" #l5
   !iif &or &not &seq "[" &lef &set #l2 &reg "/json/ghaj/artifacts" "" 1 &seq &set #l6 &rig #l2 1 ""  -8 ml-write &spr "[Github %s Error: Unexpected artifacts array: %s]" #l0 #l2
   set-variable #l3 0
@@ -437,7 +437,7 @@ define-macro github-finalise-release
   beginning-of-buffer
   set-variable #l0 @wl
   !force 0 delete-buffer $buffer-bname
-  2 github-build-action #l0 "build-webpages.yml" #l1 ""
+  3 github-build-action #l0 "build-webpages.yml" #l1 ""
   goto-position "\x80"
   ml-write "[Release Finalised - commit changes to jasspa & homebrew-jasspa repositories]" 
 !emacro
