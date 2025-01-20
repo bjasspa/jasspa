@@ -60,7 +60,7 @@ add-next-line "*py-lint*" "^%f:%l:\\d+: "
     buffer-bind-key return-get-next-line "return"
   !endif
   goto-alpha-mark "I"
-  !if &sub &set #l0 $window-line
+  !if &sub &set #l0 $window-line :ipp-last
     set-variable $window-line &sub :ipp-last 1
     !repeat
       !force 6 get-next-line
