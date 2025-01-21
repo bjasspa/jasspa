@@ -3504,47 +3504,46 @@ do_keydown:
 #endif
         }
         cc = (meUShort) wParam;
-        if(cc == 0x20)
-        {
-            if((ttmodif == ME_ALT) && !(meSystemCfg & meSYSTEM_CTCHASPC))
-                return meFALSE;          /* NOT PROCESSED - return a false state */
-        }
-        else if(cc < 0x20)
-        {
-            if((ttmodif & ME_CONTROL) == 0)
-            {
-                if(cc == 0x09)
-                {
-                    cc = SKEY_tab;
-                    goto return_spec;
-                }
-#if 0
-                /* Jon:991129; Moved to case above. More of the keys
-                 * need to be migrated like this. */
-                if(cc == 0x0d)
-                {
-                    /* Distinguish between the Number Pad and standard enter */
-                    cc = ((lParam & 0x01000000) ? SKEY_kp_enter : SKEY_return);
-                    goto return_spec;
-                }
-#endif
-                if(cc == 0x1b)
-                {
-                    cc = SKEY_esc;
-                    goto return_spec;
-                }
-                if(cc == 0x08)
-                {
-                    cc = SKEY_backspace;
-                    goto return_spec;
-                }
-            }
-        }
-        else
+        if(cc > 0x20)
         {
             if(cc == 0x7f)
             {
                 /* Special case of the C-backspace key */
+                cc = SKEY_backspace;
+                goto return_spec;
+            }
+        }
+        else if(cc == 0x20)
+        {
+            if(ttmodif & ME_CONTROL)
+                cc |= ME_CONTROL;
+            else if((ttmodif == ME_ALT) && !(meSystemCfg & meSYSTEM_CTCHASPC))
+                return meFALSE;          /* NOT PROCESSED - return a false state */
+        }
+        else if((ttmodif & ME_CONTROL) == 0)
+        {
+            if(cc == 0x09)
+            {
+                cc = SKEY_tab;
+                goto return_spec;
+            }
+#if 0
+            /* Jon:991129; Moved to case above. More of the keys
+             * need to be migrated like this. */
+            if(cc == 0x0d)
+            {
+                /* Distinguish between the Number Pad and standard enter */
+                cc = ((lParam & 0x01000000) ? SKEY_kp_enter : SKEY_return);
+                goto return_spec;
+            }
+#endif
+            if(cc == 0x1b)
+            {
+                cc = SKEY_esc;
+                goto return_spec;
+            }
+            if(cc == 0x08)
+            {
                 cc = SKEY_backspace;
                 goto return_spec;
             }
