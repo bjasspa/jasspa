@@ -573,7 +573,10 @@
 define-macro grep
   set-variable #l1 &con &band @# 0x10 "" &reg "/history/grep-com" ""
   !force set-variable #l5 @1
-  !iif &not $status  set-variable #l5 @ml00 &cat "Grep " #l1
+  !if &not $status
+    set-variable #l5 @ml0b &cat "Grep " #l1 &reg "/mac-hist/grep" "\b"
+    !force macro-history-add #l5
+  !endif
   set-variable #l6 &trl &spr "%s %s" #l1 #l5
   3 find-options "\bf\b\b\b\b\b\b\b\b" #l6 @2
   !if &sin "&" &lget #l9 1
@@ -648,6 +651,45 @@ define-macro grep-rerun
   !iif &not &seq &lef @wl 6 "Grep: "  -8 ml-write "[Error: expected \"Grep: \" here]"
   set-variable #l1 &rig @wl 6
   0x11 grep #l1
+!emacro
+define-macro grep-for-region
+  0 show-region
+  set-variable #l0 $result
+  set-variable #l9 ""
+  !if &equ &band #l0 5 5
+    ; a region is hilighted
+    !iif &not &band $result 2  3 show-region
+    set-position "\x81"
+    -2 show-region
+    set-variable #l0 $window-line
+    set-variable #l1 $window-col
+    2 show-region
+    set-variable #l2 &sub $window-col #l1
+    !iif &and &equ #l0 $window-line #l2  set-variable #l9 &mid @wl &cond &gre #l2 0 #l1 $window-col &abs #l2
+    goto-position "\x81"
+  !elif &inw @wc
+    set-variable #l1 $window-col
+    forward-word
+    set-variable #l2 $window-col
+    backward-word
+    set-variable #l9 &mid @wl $window-col &sub #l2 $window-col
+    set-variable $window-col #l1
+  !else
+    set-variable #l1 $window-col
+    backward-char
+    !if &inw @wc
+      forward-char
+      backward-word
+      set-variable #l9 &mid @wl $window-col &sub #l1 $window-col
+    !endif
+    set-variable $window-col #l1
+  !endif
+  !iif &seq #l9 ""  -8 ml-write "Grep Error: No current region or word!"
+  !iif &seq $buffer-fname ""  -8 ml-write "Grep Error: Current buffer has no file name!"
+  str-to-regex #l9
+  set-variable #l5 &cat &rep #l9 " " "\\x20" " *"
+  !force macro-history-add #l5
+  grep #l5
 !emacro
 
 define-macro find

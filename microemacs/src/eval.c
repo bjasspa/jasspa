@@ -1576,7 +1576,7 @@ getMacroArg(int index)
 static meUByte *
 gtarg(meUByte *tkn)
 {
-    meUByte buff[meBUF_SIZE_MAX], prompt[meBUF_SIZE_MAX], buff2[meBUF_SIZE_MAX] ;
+    meUByte buff[meBUF_SIZE_MAX], prompt[meBUF_SIZE_MAX], buff2[meBUF_SIZE_MAX];
     
     switch(tkn[1])
     {
@@ -1710,87 +1710,110 @@ gtarg(meUByte *tkn)
             
             if((flag=tkn[3]) != '\0')
             {
-                flag = hexToNum(flag) ;
+                flag = hexToNum(flag);
                 if(((cc=tkn[4]) > '0') && (cc<='9'))
-                    cc -= '0' ;
+                    cc -= '0';
                 else if(cc == 'a')
-                    cc = 10 ;
+                    cc = 10;
+                else if(cc == 'b')
+                    cc = 11;
                 else
-                    cc = 11 ;
+                    cc = 12;
                 if(cc == 1)
-                    option = MLFILE ;
-                else
+                    option = MLFILE;
+                else if(cc < 11)
                 {
                     if(cc == 7)
                     {
-                        mlgsStrList = modeName ;
-                        mlgsStrListSize = MDNUMMODES ;
+                        mlgsStrList = modeName;
+                        mlgsStrListSize = MDNUMMODES;
                     }
                     else if(cc == 9)
                     {
-                        flag |= 0x100 ;
-                        cc = 7 ;
+                        flag |= 0x100;
+                        cc = 7;
                     }
                     else if(cc == 10)
                     {
-                        flag |= 0x300 ;
-                        cc = 7 ;
+                        flag |= 0x300;
+                        cc = 7;
                     }
-                    if(cc < 11)
-                        option = 1 << (cc-2) ;
+                    option = 1 << (cc-2);
                 }
+                else if(cc == 11)
+                    option = MLHISTLIST|MLNOSTORE;
 #if (MLFILECASE != MLFILE)
                 if(option & MLFILE)
-                    option |= MLFILECASE ;
+                    option |= MLFILECASE;
 #if (MLBUFFERCASE != MLBUFFER)
                 else if(option & MLBUFFER)
-                    option |= MLBUFFERCASE ;
+                    option |= MLBUFFERCASE;
 #endif
 #endif
             }
             else
-                cc = 0 ;
+                cc = 0;
             
             /* Get and evaluate the next argument - this is the prompt */
             if(meGetString(NULL,0,0,prompt,meBUF_SIZE_MAX) <= 0)
-                return abortm ;
+                return abortm;
             if(flag & 0x01)
             {
-                /* Get and evaluate the next argument - this is the default
-                 * value */
-                if(meGetString(NULL,0,0,buff,meBUF_SIZE_MAX) <= 0)
-                    return abortm ;
-                addHistory(option,buff,meFALSE) ;
-                defH = 1 ;
+                if(!(option & MLNOSTORE))
+                {
+                    /* Get and evaluate the next argument - this is the default value */
+                    if(meGetString(NULL,0,0,buff,meBUF_SIZE_MAX) <= 0)
+                        return abortm;
+                    addHistory(option,buff,meFALSE);
+                }
+                defH = 1;
             }
             else
-                defH = 0 ;
+                defH = 0;
             if(flag & 0x02)
             {
-                /* Get and evaluate the next argument - this is the ml
-                 * line init value */
+                /* Get and evaluate the next argument - this is the ml line init value */
                 if(meGetString(NULL,0,0,buff,meBUF_SIZE_MAX) <= 0)
-                    return abortm ;
-                option |= MLNORESET ;
+                    return abortm;
+                option |= MLNORESET;
             }
             if(flag & 0x04)
-                /* set the first key to 'tab' to expand the input according 
-                 * to the completion list */
-                meGetKeyFirst = ME_SPECIAL|SKEY_tab ;
+                /* set the first key to 'tab' to expand the input according to the completion list */
+                meGetKeyFirst = ME_SPECIAL|SKEY_tab;
             if(flag & 0x08)
-                option |= MLNOHIST|MLHIDEVAL ;
+                option |= MLNOHIST|MLHIDEVAL;
             
-            if(flag & 0x100)
+            if((option & MLHISTLIST) || (flag & 0x100))
             {
-                /* Get and evaluate the next argument - this is the
-                 * completion list */
+                /* Get and evaluate the next argument - this is the completion list */
                 if(meGetString(NULL,0,0,buff2,meBUF_SIZE_MAX) <= 0)
-                    return abortm ;
-                if(flag & 0x200)
+                    return abortm;
+                if(option & MLHISTLIST)
                 {
-                    meBuffer *bp ;
-                    meLine *lp ;
-                    flag &= ~0x100 ;
+                    meUByte *numPtr, numHist;
+                    meUByte **history;
+                    
+                    setupHistory(option,&numPtr,&history);
+                    ss = buff2;
+                    numHist = 0;
+                    if((divChr = *ss++) != '\0')
+                    {
+                        while((tt = meStrchr(ss,divChr)) != NULL)
+                        {
+                            *tt++ = '\0';
+                            if(numHist == meHISTORY_SIZE)
+                                break;
+                            history[numHist++] = ss;
+                            ss = tt;
+                        }
+                    }
+                    *numPtr = numHist;
+                }
+                else if(flag & 0x200)
+                {
+                    meBuffer *bp;
+                    meLine *lp;
+                    flag &= ~0x100;
                     if((bp = bfind(buff2,0)) == NULL)
                         return abortm ;
                     if(bp->lineCount > strListSize)
@@ -1798,49 +1821,50 @@ gtarg(meUByte *tkn)
                         strListSize = bp->lineCount ;
                         if((strList = meRealloc(strList,strListSize*sizeof(meUByte *))) == NULL)
                         {
-                            strListSize = 0 ;
-                            return abortm ;
+                            strListSize = 0;
+                            return abortm;
                         }
                     }
-                    lp = bp->baseLine ;
-                    mlgsStrListSize = 0 ;
+                    lp = bp->baseLine;
+                    mlgsStrListSize = 0;
                     while((lp=meLineGetNext(lp)) != bp->baseLine)
                         strList[mlgsStrListSize++] = lp->text ;
+                    mlgsStrList = strList;
                 }
                 else
                 {
-                    ss = buff2 ;
-                    mlgsStrListSize = 0 ;
+                    ss = buff2;
+                    mlgsStrListSize = 0;
                     if((divChr = *ss++) != '\0')
                     {
                         while((tt = meStrchr(ss,divChr)) != NULL)
                         {
-                            *tt++ = '\0' ;
+                            *tt++ = '\0';
                             if(mlgsStrListSize == strListSize)
                             {
                                 if((strList = meRealloc(strList,(strListSize+8)*sizeof(meUByte *))) == NULL)
                                 {
-                                    strListSize = 0 ;
-                                    return abortm ;
+                                    strListSize = 0;
+                                    return abortm;
                                 }
-                                strListSize += 8 ;
+                                strListSize += 8;
                             }
-                            strList[mlgsStrListSize++] = ss ;
-                            ss = tt ;
+                            strList[mlgsStrListSize++] = ss;
+                            ss = tt;
                         }
                     }
+                    mlgsStrList = strList;
                 }
-                mlgsStrList = strList ;
             }
             if(cc == 1)
             {
                 if(!(option & MLNORESET))
-                    getFilePath(frameCur->windowCur->buffer->fileName,buff) ;
-                option &= MLHIDEVAL ;
-                option |= MLFILECASE|MLNORESET|MLMACNORT ;
+                    getFilePath(frameCur->windowCur->buffer->fileName,buff);
+                option &= MLHIDEVAL;
+                option |= MLFILECASE|MLNORESET|MLMACNORT;
                 
                 if((ret = meGetStringFromUser(prompt,option,0,buff,meBUF_SIZE_MAX)) > 0)
-                    fileNameCorrect(buff,evalResult,NULL) ;
+                    fileNameCorrect(buff,evalResult,NULL);
             }
             else
             {

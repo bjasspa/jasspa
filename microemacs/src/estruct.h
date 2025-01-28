@@ -89,7 +89,7 @@
 #define meREVERSE 1                             /* backwards direction          */
 
 /* Number of different history types & Maximum history size */
-#define meHISTORY_COUNT 5
+#define meHISTORY_COUNT 6
 #define meHISTORY_SIZE 20
 
 /* Last command states */

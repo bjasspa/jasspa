@@ -366,14 +366,10 @@ define-macro restyle-buffer
 ; then we adjust the point or mark position at the end of the region such
 ; that it is at the end of the line. 
 define-macro indent-increase
-  !if &not @?
-    set-variable @# $buffer-indent-width
-  !endif
+  !iif &not @?  set-variable @# $buffer-indent-width
   0 show-region
   !if &set #l0 &equ &band $result 5 5
-    !if &not &band $result 2
-      3 show-region
-    !endif
+    !iif &not &band $result 2  3 show-region
     set-alpha-mark "\x81"
     set-variable #l2 $window-line
     set-variable #l4 $window-col
@@ -413,9 +409,7 @@ define-macro indent-increase
       !endif
     !endif
     ; Decrement the region if we are at column 0.
-    !if &equ #l4 0
-      set-variable #l2 &sub #l2 1
-    !endif
+    !iif &equ #l4 0  set-variable #l2 &sub #l2 1
   !else
     set-alpha-mark "\x81"
     set-variable #l1 &set #l2 $window-line
@@ -448,10 +442,7 @@ define-macro indent-increase
   !endif
 !emacro
 
-
 define-macro indent-decrease
-  !if &not @?
-    set-variable @# $buffer-indent-width
-  !endif
+  !iif &not @?  set-variable @# $buffer-indent-width
   &neg @# indent-increase
 !emacro

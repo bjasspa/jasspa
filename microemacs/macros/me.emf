@@ -42,9 +42,8 @@
 ; Define extern file macros first
 0 define-macro-file langutl spell-rules-init
 0 define-macro-file filetool file-tool-run file-tool-exec file-tool-exec-default
-0 define-macro-file buffinit buffer-init buffer-init-fhook buffer-bind-create fhook-default
 0 define-macro-file osd osd-main osd-find-buffer osd-dialog osd-xdialog osd-entry osd-close osd-pinstall me-find-file
-0 define-macro-file utils frame-handle ascii-time var-str-sub str-to-regex filemask-to-regex copy-registry create-file-path reread-settings return-get-next-line mouse-get-next-line
+0 define-macro-file utils frame-handle ascii-time str-to-regex filemask-to-regex macro-history-add copy-registry create-file-path reread-settings return-get-next-line mouse-get-next-line
 define-macro-file format clean sort-lines-ignore-case normal-tab tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph indent-increase indent-decrease
 define-macro-file clearcs cc-state cc-update cc-checkout cc-checkin cc-add cc-diff cc-uncheckout cc-annotate cc-describe cc-delete cc-move cc-merge cc-vtree cc-explorer cc-add-view cc-setup
 define-macro-file misc save-all set-title encase open-line get-next-indent-change check-line-length number-items time compare-windows-exact display-whitespaces write-region execute-region
@@ -56,10 +55,10 @@ define-macro-file osdmisc insert-symbol buffer-setup alarm browse alias-path-set
 define-macro-file abbrev expand-abbrev-handle expand-iso-accents expand-look-back expand-word iso-accents-mode
 define-macro-file comment comment-line uncomment-line comment-to-end-of-line comment-start comment-restyle
 define-macro-file hkdirlst copy-file delete-file file-browser file-browser-close file-browser-swap-buffers
+define-macro-file find find grep grep-for-region replace-string-in-files query-replace-string-in-files
 define-macro-file rect string-rectangle space-rectangle copy-rectangle yank-rectangle-overwrite
 define-macro-file majormod buffer-major-mode major-mode-setup major-mode-help major-mode-tool
 define-macro-file games cross-word Brag Fahtzee Mahjongg Match-It Metris Patience Triangle
-define-macro-file find find grep replace-string-in-files query-replace-string-in-files
 define-macro-file favorite favorites-add favorites-edit favorites-goto favorites
 define-macro-file password password-to-phonic generate-password insert-password
 define-macro-file toolbar toolbar toolbar-close toolbar-open toolbar-mode-line
@@ -101,11 +100,12 @@ set-variable $mouse &reg &spr "/history/%s/mouse" %platform $mouse
 set-variable $scroll &reg &spr "/history/%s/scroll" %platform $scroll
 set-variable $show-modes &reg "/history/show-modes" $show-modes
 set-variable $cursor-blink &reg &spr "/history/%s/blink" %platform $cursor-blink
-; setup the display scheme, char set, keyboard and language
+; setup the display scheme, char set, keyboard, language and buffer initialiser
 execute-file "scheme"
 execute-file "charset"
 execute-file "keyboard"
 execute-file "language"
+execute-file "buffinit"
 ; setup the displaying of fences
 set-variable #l0 &reg &spr "/history/%s/fence" %platform "1"
 &cond &equ #l0 1 1 -1 global-mode "fence"
@@ -126,6 +126,7 @@ global-bind-key find-hfile             "C-x C-h"
 global-bind-key set-position           "C-c C-a"
 global-bind-key goto-position          "C-c a"
 global-bind-key grep                   "C-c g"
+global-bind-key grep-for-region        "C-c C-g"
 global-bind-key describe-word          "C-h w"
 global-bind-key open-line              "C-o"
 ml-bind-key insert-newline             "C-o"

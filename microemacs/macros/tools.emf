@@ -116,14 +116,13 @@ define-macro compile
   !if $status
     set-variable %compile-com #l1
   !elif &not &band @# 4
-    !if &seq %compile-com "ERROR"
-      set-variable %compile-com "make "
-    !endif
+    !iif &not &exi %compile-com  set-variable %compile-com "make "
     set-variable #l3 &con &band @# 8 &spr "recompile (%s)" #l2 "compile"   
-    set-variable %compile-com @ml20 #l3 %compile-com
-  !elif &seq %compile-com "ERROR"
-    ml-write "[Cannot compile - compile command has not been set]"
+    set-variable %compile-com @ml2b #l3 %compile-com &reg "/mac-hist/compile" "\b"
+  !elif &not &exi %compile-com
+    -8 ml-write "[Cannot compile - compile command has not been set]"
   !endif
+  !force macro-history-add %compile-com
   &band @# 1 save-some-buffers @mna
   !if &not &exi ":*compile*:"
   !elif &nbmo "*compile*" "pipe"

@@ -11,18 +11,10 @@
 ; gets another key from user to determine the frame command
 0 define-macro frame-handle
   set-variable #l1 @cck
-  !if @?
-    set-variable #l1 &spr "Arg %d: %s" @# #l1
-  !endif
+  !iif @?  set-variable #l1 &spr "Arg %d: %s" @# #l1
   !force set-variable #l0 @mc2 #l1
-  !if &not &set #l1 &lfind .key #l0
-    ml-write "[Frame key not bound]"
-    !bell
-    !abort
-  !endif
-  !if &and &seq &set #l3 &lget .n #l1 "" @?
-    set-variable #l3 @#
-  !endif
+  !iif &not &set #l1 &lfind .key #l0  -8 ml-write "[Frame key not bound]"
+  !iif &and &seq &set #l3 &lget .n #l1 "" @?  set-variable #l3 @#
   execute-line &spr "%s %s @mna" #l3 &lget .cmd #l1
 !emacro
 set-variable .frame-handle.key "|0|1|2|o|"
@@ -45,29 +37,6 @@ set-variable .frame-handle.cmd "|delete-frame|create-frame|create-frame|next-fra
     ; Use default format: 'Day' 'Month' 'Day of Month' hh:mm:ss YYYY
     set-variable #p9 &spr "%s %s %d %02d:%02d:%02d %s" #l1 #l2 &mid #l0 9 2 &mid #l0 12 2 &mid #l0 14 2 &mid #l0 16 2 &lef #l0 4
   !endif
-!emacro
-
-; sub any occurrence of @2 in @1 to @3
-0 define-macro var-str-sub
-  set-variable #l9 @1
-  set-variable #l0 @2
-  set-variable #l1 @3
-  !if &not @?
-    set-variable @# 0
-  !endif
-  set-variable .count 0
-  set-variable #l2 0
-  !while &set #l3 &sin #l0 &rig #l9 #l2
-    set-variable #l3 &add #l2 &sub #l3 1
-    set-variable #l4 &cat &lef #l9 #l3 #l1
-    set-variable #l2 &len #l4
-    set-variable #l9 &cat #l4 &rig #l9 &add #l3 &len #l0
-    !if &equ &inc .count 1 @#
-      set-variable @1 #l9
-      !return
-    !endif
-  !done
-  set-variable @1 #l9
 !emacro
 
 ; convert a string to a regex compliant search string
@@ -98,6 +67,15 @@ set-variable .frame-handle.cmd "|delete-frame|create-frame|create-frame|next-fra
   set-variable @1 #l9
 !emacro
 
+; Add given value to parent macro's history registry
+0 define-macro macro-history-add
+  !force set-variable #l2 @2
+  !iif &not $status  set-variable #l2 @p
+  set-variable #l3 &reg &cat "/mac-hist/" #l2 "\b"
+  !iif &set #l0 &lfi #l3 &set #l1 @1  set-variable #l3 &lde #l3 #l0
+  set-registry &cat "/mac-hist/" #l2 &lins &lde #l3 20 0 #l1
+!emacro
+
 ; copy-registry <from> <to>
 ; copy <from> and its children to <to>
 0 define-macro copy-registry
@@ -110,9 +88,7 @@ set-variable .frame-handle.cmd "|delete-frame|create-frame|create-frame|next-fra
   set-variable #l3 0
   !while 1
     !force find-registry #l0 &pinc #l3 1
-    !if &not $status
-      !return
-    !endif
+    !iif &not $status  !return
     set-variable #l2 $result
     copy-registry &spr "%s/%s" #l0 #l2 &spr "%s/%s" #l1 #l2
   !done
@@ -143,8 +119,7 @@ set-variable .frame-handle.cmd "|delete-frame|create-frame|create-frame|next-fra
   !elif &not &sin "tfs://" $user-path
     set-registry "/history" &rep #l0 "tfs://" $user-path
   !elif &band @# 2
-    ml-write "[Error: Cannot save settings - run init-session first]"
-    !abort
+    -8 ml-write "[Error: Cannot save settings - run init-session first]"
   !elif &band @# 1
     ml-write "[Warning: Cannot save settings - run init-session first to make permanent changes]"
   !endif

@@ -364,16 +364,18 @@ extern meUByte   *rcsUeStr ;
 #endif
 
 /* history variables used in meGetStringFromUser */
-extern  meUByte   numStrHist ;          /* curent no. of hist. strings    */
-extern  meUByte   numBuffHist ;         /* curent no. of hist. buff names */
-extern  meUByte   numCommHist ;         /* curent no. of hist. comm names */
-extern  meUByte   numFileHist ;         /* curent no. of hist. file names */
-extern  meUByte   numSrchHist ;         /* curent no. of hist. search strs*/
-extern  meUByte **strHist ;             /* string history list            */
-extern  meUByte **buffHist ;            /* etc.                           */
-extern  meUByte **commHist ;
-extern  meUByte **fileHist ;
-extern  meUByte **srchHist ;
+extern  meUByte numStrHist;          /* curent no. of hist. strings    */
+extern  meUByte numBuffHist;         /* curent no. of hist. buff names */
+extern  meUByte numCommHist;         /* curent no. of hist. comm names */
+extern  meUByte numFileHist;         /* curent no. of hist. file names */
+extern  meUByte numSrchHist;         /* curent no. of hist. search strs*/
+extern  meUByte numListHist;         /* curent no. of hist. list strs  */
+extern  meUByte **strHist;           /* string history list            */
+extern  meUByte **buffHist;          /* etc.                           */
+extern  meUByte **commHist;
+extern  meUByte **fileHist;
+extern  meUByte **srchHist;
+extern  meUByte **listHist;
 
 #if MEOPT_HILIGHT
 extern meUByte     noHilights ;
@@ -802,25 +804,27 @@ meUByte ***nextLineStr=NULL;
 #endif
 
 #if MEOPT_RCS
-meUByte  *rcsFile=NULL ;
-meUByte  *rcsCoStr=NULL ;
-meUByte  *rcsCoUStr=NULL ;
-meUByte  *rcsCiStr=NULL ;
-meUByte  *rcsCiFStr=NULL ;
-meUByte  *rcsUeStr=NULL ;
+meUByte *rcsFile=NULL;
+meUByte *rcsCoStr=NULL;
+meUByte *rcsCoUStr=NULL;
+meUByte *rcsCiStr=NULL;
+meUByte *rcsCiFStr=NULL;
+meUByte *rcsUeStr=NULL;
 #endif
 
 /* history variables used in meGetStringFromUser */
-meUByte   numStrHist = 0 ;              /* curent no. of hist. strings    */
-meUByte   numBuffHist = 0 ;             /* curent no. of hist. buff names */
-meUByte   numCommHist = 0 ;             /* curent no. of hist. comm names */
-meUByte   numFileHist = 0 ;             /* curent no. of hist. file names */
-meUByte   numSrchHist = 0 ;             /* curent no. of hist. search strs*/
-meUByte **strHist ;                     /* string history list            */
-meUByte **buffHist ;                    /* etc.                           */
-meUByte **commHist ;
-meUByte **fileHist ;
-meUByte **srchHist ;
+meUByte numStrHist = 0;              /* curent no. of hist. strings    */
+meUByte numBuffHist = 0;             /* curent no. of hist. buff names */
+meUByte numCommHist = 0;             /* curent no. of hist. comm names */
+meUByte numFileHist = 0;             /* curent no. of hist. file names */
+meUByte numSrchHist = 0;             /* curent no. of hist. search strs*/
+meUByte numListHist = 0;             /* curent no. of hist. list strs  */
+meUByte **strHist;                   /* string history list            */
+meUByte **buffHist;                  /* etc.                           */
+meUByte **commHist;
+meUByte **fileHist;
+meUByte **srchHist;
+meUByte **listHist;
 
 #if MEOPT_HILIGHT
 meUByte     noHilights=0 ;

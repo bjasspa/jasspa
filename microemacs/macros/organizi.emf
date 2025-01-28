@@ -367,6 +367,24 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " \HCancel  "   f void
   !endif
 !emacro
 
+; sub any occurrence of @2 in @1 to @3
+0 define-macro var-str-sub
+  set-variable #l9 @1
+  set-variable #l0 @2
+  set-variable #l1 @3
+  !iif &not @?  set-variable @# 0
+  set-variable .count 0
+  set-variable #l2 0
+  !while &set #l3 &sin #l0 &rig #l9 #l2
+    set-variable #l3 &add #l2 &sub #l3 1
+    set-variable #l4 &cat &lef #l9 #l3 #l1
+    set-variable #l2 &len #l4
+    set-variable #l9 &cat #l4 &rig #l9 &add #l3 &len #l0
+    !iif &equ &inc .count 1 @#  !break
+  !done
+  set-variable @1 #l9
+!emacro
+
 ;ADR;Post Office Address;Extended Address;Street;Locality;Region;Postal Code;Country
 ;ADR;HOME:P.O. Box 101;Suite 101;123 Main Street;Any Town;CA;91921-1234;USA
 

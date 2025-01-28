@@ -336,19 +336,13 @@ set-variable .fhook-jst.item-list-r4 "H4  \ecB\\1\ecA"
   set-variable #l2 &abs @#
   set-variable #l3 ""
   !repeat
-    !if &seq &trr @wl ""
-      forward-line
-    !endif
+    !iif &seq &trr @wl ""  forward-line
     !if &xseq @wl "[ \t]*\\(>[^ \t]*\\)"
-      !if &seq @wl ">end>"
-        ml-write "[Unexpected >end> tag]"
-        !abort
-      !endif
+      !iif &seq @wl ">end>"  -8 ml-write "[Unexpected >end> tag]"
       !force search-buffer "em" "^>end>$"
       !if &not $status
         beginning-of-line
-        ml-write "[Missing >end> tag]"
-        !abort
+        -8 ml-write "[Missing >end> tag]"
       !endif
       forward-line
       beginning-of-line
@@ -366,41 +360,33 @@ set-variable .fhook-jst.item-list-r4 "H4  \ecB\\1\ecA"
         set-variable #l3 &lef $recent-keys 1
       !endif
     !endif
-    !if &not &dec #l2 1
-      !return
-    !endif
+    !iif &not &dec #l2 1  !return
     forward-paragraph
     backward-paragraph
   !until 0
 !emacro
 
 define-macro jst-fill-paragraph
-  !if &not @#
-    !return
-  !endif
+  !iif &not @#  !return
   set-position "\x81"
   ; Save the starting paragraph separator state - if the numeric argument
   ; is false then this will be used to determine if we restore the current
   ; position. 
   set-variable #l9 &seq &trr @wl ""
   !force search-buffer "bem" "^[ \t]*\\(>[^ \t\n]*\\)[ \t]*$"
-  !if $status
-    !if &seq @s1 ">end>"
-      goto-position "\x81"
-      beginning-of-line
-      forward-paragraph
-      backward-paragraph
-    !endif
-  !else
+  !if &not $status
+    beginning-of-line
+    forward-paragraph
+    backward-paragraph
+  !elif &seq @s1 ">end>"
+    goto-position "\x81"
     beginning-of-line
     forward-paragraph
     backward-paragraph
   !endif
   !force !force @# jst-fill-paragraphi
   set-variable #l1 $status
-  !if &and &not @? &not #l9
-    goto-position "\x81"
-  !endif
+  !iif &and &not @? &not #l9  goto-position "\x81"
   !return #l1
 !emacro
 

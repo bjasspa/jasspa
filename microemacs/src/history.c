@@ -45,15 +45,16 @@ initHistory(void)
 {
     /* Must malloc the 20 history slots for the 5 history types */
     if((strHist = (meUByte **) meMalloc(sizeof(meUByte *) * meHISTORY_COUNT * meHISTORY_SIZE)) == NULL)
-        meExit(1) ;
+        meExit(1);
     /* Initialise the array to NULLS so we know they don't point to a history
      * string
      */
-    memset(strHist,0,sizeof(meUByte *) * meHISTORY_COUNT * meHISTORY_SIZE) ;
-    buffHist = strHist + meHISTORY_SIZE ;
-    commHist = buffHist + meHISTORY_SIZE ;
-    fileHist = commHist + meHISTORY_SIZE ;
-    srchHist = fileHist + meHISTORY_SIZE ;
+    memset(strHist,0,sizeof(meUByte *) * meHISTORY_COUNT * meHISTORY_SIZE);
+    buffHist = strHist + meHISTORY_SIZE;
+    commHist = buffHist + meHISTORY_SIZE;
+    fileHist = commHist + meHISTORY_SIZE;
+    srchHist = fileHist + meHISTORY_SIZE;
+    listHist = srchHist + meHISTORY_SIZE;
 }
 
 int
@@ -61,37 +62,42 @@ setupHistory(int option, meUByte **numPtr, meUByte ***list)
 {
     if(option & MLBUFFER)
     {
-        *numPtr = &numBuffHist ;
-        *list = buffHist ;
+        *numPtr = &numBuffHist;
+        *list = buffHist;
     }
     else if(option & MLCOMMAND)
     {
-        *numPtr = &numCommHist ;
-        *list = commHist ;
+        *numPtr = &numCommHist;
+        *list = commHist;
     }
     else if(option & MLFILE)
     {
-        *numPtr = &numFileHist ;
-        *list = fileHist ;
+        *numPtr = &numFileHist;
+        *list = fileHist;
     }
     else if(option & MLSEARCH)
     {
-        *numPtr = &numSrchHist ;
-        *list = srchHist ;
+        *numPtr = &numSrchHist;
+        *list = srchHist;
+    }
+    else if(option & MLHISTLIST)
+    {
+        *numPtr = &numListHist;
+        *list = listHist;
     }
     else
     {
-        *numPtr = &numStrHist ;
-        *list = strHist ;
+        *numPtr = &numStrHist;
+        *list = strHist;
     }
-    return **numPtr ;
+    return **numPtr;
 }
 
 
 void
 addHistory(int option, meUByte *str, int rmv)
 {
-    meUByte   *numPtr, numHist ;
+    meUByte   *numPtr, numHist;
     meUByte  **history, *buf ;
     meInt      ii;
 

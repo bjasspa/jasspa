@@ -7,7 +7,7 @@
 ; Synopsis:    On-line help macros.
 ; Authors:     Steven Phillips
 ;
-0 define-macro-file utils ascii-time var-str-sub str-to-regex
+0 define-macro-file utils ascii-time str-to-regex
 define-macro-file htmltool html-to-ehf
 define-macro-file format clean
 
