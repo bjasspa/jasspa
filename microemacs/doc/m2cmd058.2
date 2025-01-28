@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd058.2,v 2.6 2022/06/12 17:22:35 jon Exp $
+.Id $Id: m2cmd058.2,v 2.6 2025/01/28 19:10:47 jon Exp $
 .Im MicroEmacs command|shell
 .ds C0 "(\fB\*(cX`\fR)\ \&
 .so me.tni
@@ -42,18 +42,22 @@ Use  popup-window to display the buffer containing the next location in a differ
 flag is not given the window  containing the 'next' command output, or the current window if the 'next' command output
 is not currently displayed.
 .IP \fB0x02\fR
-When set The command returns an error if the current buffer is not a 'next' command buffer, this effectively force the
+When set the command returns an error if the current buffer is not a 'next' command buffer, this effectively forces the
 command to only get the next line in the current buffer. This flag is used by
 .Hl "ipipe output processing macros" $buffer-ipipe 5
 to highlight error lines in the current buffer.
 .IP \fB0x04\fR
 When set the command does not open the  file/buffer  containing the next location,  leaving the 'next' command buffer
 current with the cursor at the next line.
+.IP \fB0x08\fR
+When set the command does not attempt to get the next line, this can be used to simply go to the most current 'next'
+command buffer or, if used in conjunction with bit \fB0x02\fR, to confirm the current buffer is a 'next' command buffer.
 .SH "SEE ALSO"
 .na
 .Ht $file-template 5 ,
-.Ht $line-template 5 .
+.Ht $line-template 5 ,
 .Ht add-next-line 2 ,
+.Ht keep-next-buffer 3 ,
 .Ht compile 3 ,
 .Ht grep 3 .
 .ad

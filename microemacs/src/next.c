@@ -204,6 +204,8 @@ getNextLine(int f,int n)
         else if(swbuffer(cwp,bp) <= 0)
             return meFALSE;
     }
+    if(n & 0x08)
+        return meTRUE;
     if((noNextLines = nextLineCnt[no]) == 0)
         return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[No lines for next buffer %s]",bp->name);
     nextLines = nextLineStr[no];
