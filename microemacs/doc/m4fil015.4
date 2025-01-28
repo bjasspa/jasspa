@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m4fil015.4,v 2.9 2025/01/26 18:43:10 jon Exp $
+.Id $Id: m4fil015.4,v 2.9 2025/01/28 23:38:14 jon Exp $
 .Im MicroEmacs macro;variable
 .so me.tni
 .TH "MessageLineVariables" 4
@@ -23,7 +23,7 @@
 \fB@mna\fR
 .br
 \fB@ml\fR[\fIf\fR][\fIh\fR] "\fIprompt\fR" ["\fIdefault\fR"] ["\fIinitial\fR"]
-["\fIcom-list\fR"] ["\fIbuffer-name\fR"]
+["\fIcom-list\fR"] ["\fIbuffer-name\fR"] ["\fIhistory-list\fR"] 
 .br
 \fB@mc\fR[\fIf\fR] \fIprompt\fR [\fIvalid-list\fR] [\fIhelp-string\fR]
 .br
@@ -32,35 +32,28 @@
 \fB@mxa\fR "\fIcommand-line\fR"
 .ad
 .SH DESCRIPTION
-The \fBMessage  Line  Variables\fR  provide a method to prompt the user for an
-input returning the data to the caller. The \fB@mn\fR  variable cause \*(mS to
-input data from the user in the default way for that command's  argument, i.e.
-the normal  prompt  with the normal  history  and  completion  etc.  Similarly
-\fB@mna\fR  causes  \*(mS to input the  current  argument  and any  subsequent
-arguments in the default way.
+The \fBMessage Line  Variables\fR  provide a method to prompt the user for an input  returning the data to the caller.
+The \fB@mn\fR  variable  cause \*(mS to input data from the user in the default way for that command's  argument, i.e.
+the normal prompt with the normal history and completion etc. Similarly  \fB@mna\fR  causes \*(mS to input the current
+argument and any subsequent arguments in the default way.
 .PP
-The  \fB@ml\fR  variable  can be used to get a string  (or Line) of text  from
-the user using the  message-line  in a very  flexible way. The first  optional
-flag \fBf\fR is a bitwise flag where each bit has the following meaning
+The \fB@ml\fR  variable can be used to get a string (or Line) of text from the user using the  message-line  in a very
+flexible way. The first optional flag \fBf\fR is a bitwise flag where each bit has the following meaning
 .IP \fC0x01\fR
-The \fIdefault\fR value will be specified and this will be returned by default.
+The \fIdefault\fR value will be specified (except when flag \fBh\fR is \fCb\fR, see below) and this will be returned by default.
 .IP \fC0x02\fR
-The \fIinitial\fR value will be specified and this will be initial value given
-on the input line.
+The \fIinitial\fR value will be specified and this will be initial value given on the input line.
 .IP \fC0x04\fR
 Auto-complete using the initial value, usually used with bit \fC0x02\fR.
 .IP \fC0x08\fR
-Hide the input  string, the  characters  in the current  input  string are all
-displayed as \fC'*'\fRs.
+Hide the input string, the characters in the current input string are all displayed as \fC'*'\fRs.
 .PP
-If no  value is  specified  then  default  value is 0 and  \fBh\fR  can not be
-specified. The  \fIdefault\fR  value is returned when the user enters an empty
-string. If the \fIinitial\fR  string is specified the the input buffer will be
+If no value is specified then default value is 0 and \fBh\fR can not be specified. The \fIdefault\fR value is returned
+when the user  enters  an empty  string.  If the  \fIinitial\fR  string  is  specified  the the input  buffer  will be
 initialized to the given string instead of and empty one.
 .PP
-The flag \fBh\fR  specifies what type of data is to be entered, this specifies
-the  history  to be used  and the  semantics  allowed,  \fBh\fR  can  have the
-following values
+The flag \fBh\fR specifies what type of data is to be entered, this specifies the history to be used and the semantics
+allowed, \fBh\fR can have the following values
 .IP
 .nf
 .na
@@ -79,27 +72,28 @@ following values
 .fi
 .ad
 .LP
-A default  value of 0 is used if no value is specified. At first glance type 1
-and 4 appear to be the same. They differ only when a non absolute file name is
-entered, such as "foobar".  Type 1 will turn this into an absolute  path, i.e.
-if   the   current   directory   is   "\fC/tmp\fR"   then   it   will   return
-"\fC/tmp/foobar\fR".  Type 4  however  will  return  just  "foobar",  this  is
-particularly useful with the
+A default value of 0 is used if no value is specified. At first glance type 1 and 4 appear to be the same. They differ
+only when a non absolute file name is entered, such as "foobar". Type 1 will turn this into an absolute  path, i.e. if
+the  current  directory  is  "\fC/tmp\fR"  then it will return  "\fC/tmp/foobar\fR".  Type 4 however  will return just
+"foobar", this is particularly useful with the
 .Ht &find 4
 function to then find the file "foobar".
 .PP
-When a value of  \fC9\fR  is used the  argument  \fIcom-list\fR  must be given
-which  specifies a list of completion  values in the form of a \*(mS list (see
-help on
+When a value of \fC9\fR is used the argument  \fIcom-list\fR must be given which specifies a list of completion values
+in the form of a \*(mS list (see help on
 .Ht &lget 4
-for further  information  on lists). The user may enter another value which is
-not in the list, which will be returned.
+for further information on lists). The user may enter another value which is not in the list, which will be returned.
 .PP
-Alternatively  a completion  list may be given in the form of a buffer using a
-value of \fCa\fR. The argument  \fIbuffer-name\fR must be given to specify the
-buffer name from which to extract the completion list; each line of the buffer
-is taken as a completion  value. This option is particularly  useful for large
-completion lists as there is no size restrictions.
+Alternatively  a  completion  list  may be  given  in the  form of a buffer  using a value of  \fCa\fR.  The  argument
+\fIbuffer-name\fR must be given to specify the buffer name from which to extract the completion list; each line of the
+buffer is taken as a completion  value. This option is particularly  useful for large  completion lists as there is no
+size restrictions.
+.PP
+When a value of \fCb\fR is used the  argument  \fIhistory-list\fR  must be given  which can  specify up to 20 previous
+values to be used as a history. The list must be given in the form of a \*(mS list (see help on
+.Ht &lget 4
+for further  information  on lists) and if used with bit \fC0x01\fR of the flag \fBf\fR, see above, the  \fIdefault\fR
+value must be given as the first item in the given \fIhistory-list\fR rather than via the separate parameter.
 .PP
 The  \fB@mc\fR  variable can be used to get a single  character  from the user
 using the message-line. The optional flag \fBf\fR is a bitwise flag where each

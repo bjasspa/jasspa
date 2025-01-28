@@ -3,7 +3,7 @@
 ; Copyright (C) 2023-2024 JASSPA (www.jasspa.com)
 ; See the file me.emf for copying and conditions.
 ;
-; Created:     2023-11-07 16:01:55
+; Created:     2023-11-07
 ; Synopsis:    Git support macros for MicroEmacs
 ; Authors:     Steven Phillips
 ;
@@ -148,8 +148,8 @@ set-variable .git.cflags &lins .git.cflags -1 "rS*!"
 set-variable .git.cdefs  &lins .git.cdefs  -1 "|0|0|"
 ; Command 11 - Commit
 set-variable .git.cnames &lins .git.cnames -1 "Commit"
-set-variable .git.cflags &lins .git.cflags -1 "CS*!D"
-set-variable .git.cdefs  &lins .git.cdefs  -1 "||0|"
+set-variable .git.cflags &lins .git.cflags -1 "Cs*!$"
+set-variable .git.cdefs  &lins .git.cdefs  -1 "||"
 ; Command 12 - Checkout
 set-variable .git.cnames &lins .git.cnames -1 "Checkout"
 set-variable .git.cflags &lins .git.cflags -1 "Bbtr*!D"
@@ -427,6 +427,8 @@ set-variable .git-revision-op.lbl13 "|\HMaster|\HHead|\HPrevious to head|\HSpeci
         osd .osd.git-osd &inc #l2 1 "fh" "    "
         osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Create a \Hnew branch" #l0 git-osd-cbc
       !elif &seq #l1 "C"
+        osd .osd.git-osd &inc #l2 1 "f" "    This will only commit changes made to the staging area."
+        osd .osd.git-osd &inc #l2 1 "f" ""
         osd .osd.git-osd &inc #l2 1 "Sfh" "    Co\Hmment:     " &add #l2 1
         @# git-osd-init-comment #l4
         osd .osd.git-osd &inc #l2 1 "EtNxHfhz" .scheme.osd-entry 56 10 "" f git-osd-mec
@@ -1405,9 +1407,9 @@ define-macro git-remove
 
 define-macro git-commit
   11 git-osd
-  set-variable #l2 &spr "%s commit -m \"%s\" -- " .git.com .git.ccomquot
+  set-variable #l2 &spr "%s commit -m \"%s\" --" .git.com .git.ccomquot
   set-variable .git.ccomment11 .git.ccomment
-  7 git-get-file-list 0 0 #l2
+  7 git-get-file-list 1 0 #l2
   11 git-exec 3 $buffer-fname
 !emacro
 
