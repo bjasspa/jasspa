@@ -653,6 +653,7 @@ define-macro grep-rerun
   0x11 grep #l1
 !emacro
 define-macro grep-for-region
+  !iif &seq $buffer-fname ""  -8 ml-write "Grep Error: Current buffer has no file name!"
   0 show-region
   set-variable #l0 $result
   set-variable #l9 ""
@@ -684,12 +685,11 @@ define-macro grep-for-region
     !endif
     set-variable $window-col #l1
   !endif
-  !iif &seq #l9 ""  -8 ml-write "Grep Error: No current region or word!"
-  !iif &seq $buffer-fname ""  -8 ml-write "Grep Error: Current buffer has no file name!"
+  !iif &seq #l9 ""  -8 ml-write "Grep Error: No current single-line region or word!"
   str-to-regex #l9
-  set-variable #l5 &cat &rep #l9 " " "\\x20" " *"
-  !force macro-history-add #l5
-  grep #l5
+  set-variable #l8 &cat &rep #l9 " " "\\x20" " *"
+  !force macro-history-add #l8
+  grep #l8
 !emacro
 
 define-macro find

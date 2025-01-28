@@ -1,0 +1,38 @@
+.\" -*- nroff -*-
+.\" This is part of the JASSPA MicroEmacs documentation files.
+.\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
+.\" See the file "me.nrs" for copying and conditions.
+.\"
+.Id $Id: m3mac096.3,v 2.2 2025/01/28 19:21:40 jon Exp $
+.Im MicroEmacs command|shell
+.so me.tni
+.TH keep-next-buffer 3
+.XI keep-next-buffer - "Rename a next command buffer"
+.SH NAME
+keep-next-buffer \- Rename a next command buffer
+.Me $a
+.SH SYNOPSIS
+.na
+.B keep-next-buffer
+.ad
+.SH DESCRIPTION
+.B keep-next-buffer
+renames the current buffer by appending a number to the end of the current buffer name. This ensures that, if the command used to 
+generate the buffer (such as
+.Ht compile 3
+and
+.Ht grep 3 )
+is rerun, the current buffer will not be deleted.
+.SH NOTES
+The command returns and error if the current buffer is not a 'next' command buffer, leaving the buffer name 
+unchanged.
+.PP
+\fBkeep-next-buffer\fR is a macro defined in \fCtools.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht add-next-line 2 ,
+.Ht get-next-line 2 ,
+.Ht compile 3 ,
+.Ht grep 3 .
+.ad
+.FH
