@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m3mac096.3,v 2.2 2025/01/28 19:21:40 jon Exp $
+.Id $Id: m3mac096.3,v 2.2 2025/01/29 00:16:11 jon Exp $
 .Im MicroEmacs command|shell
 .so me.tni
 .TH keep-next-buffer 3
@@ -23,6 +23,9 @@ generate the buffer (such as
 and
 .Ht grep 3 )
 is rerun, the current buffer will not be deleted.
+.PP
+This command is useful when the current buffer is time consuming to generate and another compile or grep is needed 
+before it has been fully processed.
 .SH NOTES
 The command returns and error if the current buffer is not a 'next' command buffer, leaving the buffer name 
 unchanged.

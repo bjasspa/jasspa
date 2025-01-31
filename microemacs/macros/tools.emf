@@ -134,10 +134,11 @@ define-macro compile
       set-variable #l3 1
       !tjump &exi &spr ":*compile*%d:" &inc #l3 1 0
       change-buffer-name &spr "*compile*%d" #l3
-      find-buffer "*compile*"
     !else
-      ipipe-kill
+      !force 0 delete-buffer "*compile*"
     !endif
+    find-buffer "*compile*"
+    set-variable $buffer-fname #l2
   !endif
   !if &band @# 8
     popup-window "*compile*"

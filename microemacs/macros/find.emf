@@ -688,7 +688,7 @@ define-macro grep-for-region
   !iif &seq #l9 ""  -8 ml-write "Grep Error: No current single-line region or word!"
   str-to-regex #l9
   set-variable #l8 &cat &rep #l9 " " "\\x20" " *"
-  !force macro-history-add #l8
+  !force macro-history-add #l8 "grep"
   grep #l8
 !emacro
 
