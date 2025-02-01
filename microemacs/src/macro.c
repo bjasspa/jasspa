@@ -148,7 +148,7 @@ executeString(int f, int n)
     return stringExec(f,n,sbuf);
 }
 
-static meMacro *
+meMacro *
 createMacro(meUByte *name)
 {
     meUByte buff[meBUF_SIZE_MAX];

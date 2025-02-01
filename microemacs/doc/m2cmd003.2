@@ -3,7 +3,7 @@
 .\" Copyright (c) 1988-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd003.2,v 2.7 2024/10/20 19:29:32 jon Exp $
+.Id $Id: m2cmd003.2,v 2.7 2025/02/01 00:20:17 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH add-file-hook 2
@@ -17,12 +17,12 @@ add-file-hook \- Declare file name context dependent configuration
 .B add-file-hook
 "\fIextensions\fR"
 "\fIfhook-name\fR"
+["\fImacro1-name\fR" "\fImacro2-name\fR" ...]
 .ad
 .SH DESCRIPTION
 .B add-file-hook
-defines a macro binding  between a file name or file type and a set of macros.
-This binding enables file type dependent screen  highlighting and key bindings
-to be performed. For a higher level introduction refer to
+defines a macro binding between a file name or file type and a set of macros. This binding enables file type dependent
+screen highlighting and key bindings to be performed. For a higher level introduction refer to
 .Hl "File Hooks" fileHooks 2 .
 .PP
 .B add-file-hook
@@ -32,14 +32,12 @@ Content recognition, by examination of the contents of the file.
 .BU
 File extension recognition.
 .BE
-Content  recognition has the highest priority and is used in preference to the
-file extension.
+Content recognition has the highest priority and is used in preference to the file extension.
 .PP
 .B add-file-hook
-is  called  multiple  times  to add  new  recognition  rules.  The  rules  are
-interrogated  in  last-in-first-out  (\s-1LIFO\s0)  order, hence the extension
-added last has a greater  precedence  than those  added  first. This  ordering
-allows default rules to be over-ridden.
+is called multiple times to add new recognition rules. The rules are interrogated in last-in-first-out (\s-1LIFO\s0)
+order, hence the extension added last has a greater precedence than those added first. This ordering allows default
+rules to be over-ridden.
 .SS "Initialization"
 .B add-file-hook
 must be initialized prior to the first call, using an invocation of the form:-
@@ -233,26 +231,26 @@ might be defined as:
 "-!-[ \\t]*makefile.*-!-"
 fhook-make
 .SH NOTES
+Optionally \fBadd-file-hook\fP can be given a list of macros, defined within the hook file
+\fBhk\fR\fIname\fR\fB.emf\fR, the command will define the macros in the same way as command
+.Ht define-macro-file 2 .
 .SS "Automatic Macro File Loading"
 .B add-file-hook
-performs an  automatic  load of a macro file if the  \fBfhook\fR  macro is not
-present in memory. The file name of the command file  containing  the macro is
-automatically  derived from the \fIname\fR  component of the \fBfhook\fR macro
-name. The  \fBfhook-\fR  part of the name is stripped off and  prepended  with
-\fBhk\fR and suffixed with \fB.emf\fR. Hence, macro  \fBfhook-doc\fR  would be
-searched for in file  \fChkdoc.emf\fR  within the  \*(mE  directory.  The
-command file is automatically loaded and executed.
+performs an automatic load of a macro file if the \fBfhook\fR macro is not present in memory. The file name of the
+command file containing the macro is automatically derived from the \fIname\fR component of the \fBfhook\fR macro
+name. The \fBfhook-\fR part of the name is stripped off and prepended with \fBhk\fR and suffixed with \fB.emf\fR.
+Hence, macro \fBfhook-doc\fR would be searched for in file \fChkdoc.emf\fR within the \*(mE directory. The command
+file is automatically loaded and executed.
 .PP
-In cases where the fhook macro is not located in an equivalent  hook file, the
-file location of the macro may be explicitly defined for auto loading via a
+In cases where the fhook macro is not located in an equivalent hook file, the file location of the macro may be
+explicitly defined for auto loading via a
 .Ht define-macro-file 2
 invocation.
 .PP
-As an example,  consider  the C-mode file hook, used to load  \fC.c\fR  files.
-The  loading of a C header  file  (\fC.h\fR)  utilizes  the same  highlighting
-modes, but it's  startup  sequence is slightly  different  when  handling  new
-files. In this case the  \fBfhook-cmode\fR  for \fC.c\fR and \fBfhook-hmode\fR
-for \fC.h\fR files are located in the same hook file namely \fChkcmode.emf\fR.
+As an example, consider the C-mode file hook, used to load \fC.c\fR files. The loading of a C header file (\fC.h\fR)
+utilizes the same highlighting modes, but it's startup sequence is slightly different when handling new files. In this
+case the \fBfhook-cmode\fR for \fC.c\fR and \fBfhook-hmode\fR for \fC.h\fR files are located in the same hook file
+namely \fChkcmode.emf\fR.
 .Me $emf-scheme
 .CS
 define-macro-file hkcmode fhook-hmode
@@ -392,6 +390,7 @@ defined.
 .Hl "Language Templates" languageTemplates 2 ,
 .Ht $buffer-bhook 5 ,
 .Ht $buffer-ehook 5 ,
-.Ht $buffer-fhook 5 .
+.Ht $buffer-fhook 5 ,
+.Ht define-macro-file 2 .
 .ad
 .FH

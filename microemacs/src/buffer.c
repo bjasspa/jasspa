@@ -92,24 +92,35 @@ addFileHook(int f, int n)
     else
     {
         meUByte buff[meBUF_SIZE_MAX] ;
+        meMacro *mac;
         
         if(((fileHookExt = meRealloc(fileHookExt,(fileHookCount+1)*sizeof(char *))) == NULL) ||
            ((fileHookFunc = meRealloc(fileHookFunc,(fileHookCount+1)*sizeof(char *))) == NULL) ||
            ((fileHookArg = meRealloc(fileHookArg,(fileHookCount+1)*sizeof(short))) == NULL))
         {
-            fileHookCount=0 ;
-            return meFALSE ;
+            fileHookCount=0;
+            return meFALSE;
         }
         if((meGetString((meUByte *)"File id",0,0,buff,meBUF_SIZE_MAX) <= 0) ||
            ((fileHookExt[fileHookCount] = meStrdup(buff)) == NULL) ||
            (meGetString((meUByte *)"Hook func",0,0,buff,meBUF_SIZE_MAX) <= 0) ||
            ((fileHookFunc[fileHookCount] = meStrdup(buff)) == NULL))
-            return meFALSE ;
+            return meFALSE;
         if(f == meFALSE)
-            fileHookArg[fileHookCount] = 0 ;
+            fileHookArg[fileHookCount] = 0;
         else
-            fileHookArg[fileHookCount] = n ;
-        fileHookCount++ ;
+            fileHookArg[fileHookCount] = n;
+        fileHookCount++;
+        if(!memcmp(buff,"fhook-",6) && (buff[6] != '\0'))
+        {
+            buff[4] = 'h';
+            buff[5] = 'k';
+            while((mac=createMacro(NULL)) != NULL)
+            {
+                mac->hlp->flag |= meMACRO_FILE;
+                mac->fname = meStrdup(buff+4);
+            }
+        }
     }
     return meTRUE ;
 }

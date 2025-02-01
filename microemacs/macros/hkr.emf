@@ -207,4 +207,6 @@ set-variable .fhook-r.item-list-r3 "Oper \ecB\\1\ecA"
   indent .hilight.r i "#"
 !endif
 
+!iif &not &exi r-rscript-setup  execute-file "rtools"
+
 buffer-init-fhook "r"

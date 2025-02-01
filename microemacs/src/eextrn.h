@@ -690,6 +690,7 @@ extern	int	endKbdMacro(int f, int n);
 extern	int	executeKbdMacro(int f, int n);
 extern	int	stringExec(int f, int n, meUByte *macro);
 extern	int	executeString(int f, int n);
+extern meMacro *createMacro(meUByte *name);
 
 /* main.c externals */
 extern  int     insertChar(register int c, register int n);
