@@ -2267,11 +2267,14 @@ special_bound:
                         while(killp != NULL)
                         {
                             ss = killp->data;
+#if MEOPT_EXTENDED
                             if(event.xselectionrequest.type == XA_STRING)
+#endif
                             {
                                 while((cc = *ss++))
                                     *dd++ = cc;
                             }
+#if MEOPT_EXTENDED
                             else
                             {
                                 while((cc = *ss++))
@@ -2304,6 +2307,7 @@ special_bound:
                                         *dd++ = cc;
                                 }
                             }
+#endif
                             killp = killp->next;
                         }
                         if((meSystemCfg & meSYSTEM_NOEMPTYANK) && (len == 0))
@@ -2379,6 +2383,7 @@ special_bound:
                 }
                 else if(((type == XA_STRING) || (type == meAtoms[meATOM_UTF8_STRING])) && (fmt == 8) && (nitems > 0))
                 {
+#if MEOPT_EXTENDED
                     if(type != XA_STRING)
                     {
                         int ss, uc;
@@ -2424,6 +2429,7 @@ special_bound:
                         }
                         buff[nitems] = '\0';
                     }
+#endif
                     if((klhead == NULL) || (klhead->kill == NULL) ||
                        (klhead->kill->next != NULL) ||
                        meStrncmp(klhead->kill->data,buff,nitems) ||

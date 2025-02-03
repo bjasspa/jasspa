@@ -332,8 +332,8 @@ timerSet(int id, meTime tim, meInt offset)
     {
         /* must increase the time to the min */
         if(tim > 0)
-            tim += TIMER_MIN - offset ;
-        offset = TIMER_MIN ;
+            tim += TIMER_MIN - offset;
+        offset = TIMER_MIN;
     }
 #ifdef _MULTI_TIMER
     {
@@ -344,14 +344,14 @@ timerSet(int id, meTime tim, meInt offset)
         if (meSystemCfg & meSYSTEM_CONSOLE)
 #endif
 #endif
-            meKillMultiTimer(id) ;
+            meKillMultiTimer(id);
 #endif
-        meSetMultiTimer(id,offset) ;
+        meSetMultiTimer(id,offset);
         if(tim == 0)
         {
-            struct meTimeval tp ;
+            struct meTimeval tp;
             /* Get the absolute time */
-            gettimeofday(&tp,NULL) ;
+            gettimeofday(&tp,NULL);
             tim = ((tp.tv_sec-startTime)*1000) + (tp.tv_usec/1000) + offset;
         }
     }
@@ -366,13 +366,13 @@ timerSet(int id, meTime tim, meInt offset)
             {
                 timers = tbp->next;
 #ifdef _SINGLE_TIMER
-                mustSet = 1 ;
+                mustSet = 1;
 #endif
             }
             else
             {
                 /* Search the list for the timer block */
-                p = timers ;
+                p = timers;
                 while(p != NULL)
                 {
                     if(p->next == tbp)
@@ -380,34 +380,34 @@ timerSet(int id, meTime tim, meInt offset)
                         p->next = tbp->next;
                         break;
                     }
-                    p = p->next ;
+                    p = p->next;
                 }
             }
         }
         
         if(tim <= 0)
         {
-            struct meTimeval tp ;
+            struct meTimeval tp;
             /* Get the absolute time */
-            gettimeofday(&tp,NULL) ;
-            tim = ((tp.tv_sec-startTime)*1000) + (tp.tv_usec/1000) + offset ;
+            gettimeofday(&tp,NULL);
+            tim = ((tp.tv_sec-startTime)*1000) + (tp.tv_usec/1000) + offset;
         }
-        tbp->abstime = tim ;
+        tbp->abstime = tim;
         /*    fprintf(fplog,"Timer %d %d Set\n",tbp->id,tbp->abstime) ;*/
         /* Insertion sort the timer block into the list. */
-        for (q = NULL, p = timers; p != NULL; p = p->next)
+        for(q = NULL, p = timers; p != NULL; p = p->next)
         {
-            if (p->abstime > tbp->abstime)
+            if(p->abstime > tbp->abstime)
                 break;
             q = p;
         }
         
-        if (q == NULL)
+        if(q == NULL)
         {
             timers = tbp;                   /* Link to the head of the list */
 #ifdef _SINGLE_TIMER
             /* Set a new timer interval */
-            meSetSingleTimer(offset) ;
+            meSetSingleTimer(offset);
             mustSet = 0 ;
 #endif
         }

@@ -2976,69 +2976,73 @@ createCallback(int f, int n)
 void
 callBackHandler(void)
 {
-    struct meTimeval tp ;
-    register meMacro *mac ;
-    register time_t tim, next=0x7fffffff ;
-    register int ii ;
+    struct meTimeval tp;
+    register meMacro *mac;
+    register time_t tim, next;
+    register int ii;
     
-    gettimeofday(&tp,NULL) ;
-    tim = ((tp.tv_sec-startTime)*1000) + (tp.tv_usec/1000) ;
-    
-    /* Loop through all the macros executing them first */
-    for(ii=CK_MAX ; ii<cmdTableSize ; ii++)
-    {
-        mac = getMacro(ii) ;
-        if((mac->callback >= 0) && (mac->callback < tim))
+    do {
+        gettimeofday(&tp,NULL);
+        tim = ((tp.tv_sec-startTime)*1000) + (tp.tv_usec/1000);
+        next = 0x7fffffff;
+        
+        /* Loop through all the macros executing them or getting the time of the next */
+        for(ii=CK_MAX ; ii<cmdTableSize ; ii++)
         {
-            mac->callback = -1 ;
-            /* If the current buffer has an input handler, that macro will
-             * receive the key "callback", this must be bound to this macro,
-             * otherwise the input handler will not know what macro to call
-             */
-            if(frameCur->windowCur->buffer->inputFunc >= 0)
+            mac = getMacro(ii);
+            if((mac->callback >= 0) && (mac->callback < next))
             {
-                /* binary chop through the key table looking for the character code.
-                ** If found then return the index into the names table.
-                */
-                register meBind *ktp;			/* Keyboard character array */
-                register int     low;			/* Lowest index in table. */
-                register int     hi;			/* Hightest index in table. */
-                register int     mid;			/* Mid value. */
-                register int     status;		/* Status of comparison. */
-                ktp = keytab ;
-                hi  = keyTableSize;			/* Set hi water to end of table */
-                low = 0;				/* Set low water to start of table */
-                do
+                if(mac->callback <= tim)
                 {
-                    mid = (low + hi) >> 1;		/* Get mid value. */
-                    if ((status=(ME_SPECIAL|SKEY_callback)-ktp[mid].code) == 0)
+                    mac->callback = -1;
+                    /* If the current buffer has an input handler, that macro will
+                     * receive the key "callback", this must be bound to this macro,
+                     * otherwise the input handler will not know what macro to call
+                     */
+                    if(frameCur->windowCur->buffer->inputFunc >= 0)
                     {
-                        /* Found - return index */
-                        ktp[mid].index = ii ;
-                        break ;
+                        /* binary chop through the key table looking for the character code.
+                        ** If found then return the index into the names table.
+                        */
+                        register meBind *ktp;			/* Keyboard character array */
+                        register int     low;			/* Lowest index in table. */
+                        register int     hi;			/* Hightest index in table. */
+                        register int     mid;			/* Mid value. */
+                        register int     status;		/* Status of comparison. */
+                        ktp = keytab ;
+                        hi  = keyTableSize;			/* Set hi water to end of table */
+                        low = 0;				/* Set low water to start of table */
+                        do
+                        {
+                            mid = (low + hi) >> 1;		/* Get mid value. */
+                            if ((status=(ME_SPECIAL|SKEY_callback)-ktp[mid].code) == 0)
+                            {
+                                /* Found - return index */
+                                ktp[mid].index = ii ;
+                                break ;
+                            }
+                            else if (status < 0)
+                                hi = mid - 1;		/* Discard bottom half */
+                            else
+                                low = mid + 1;		/* Discard top half */
+                        } while (low <= hi);		/* Until converges */
                     }
-                    else if (status < 0)
-                        hi = mid - 1;		/* Discard bottom half */
-                    else
-                        low = mid + 1;		/* Discard top half */
-                } while (low <= hi);		/* Until converges */
+                    execFuncHidden(ME_SPECIAL|SKEY_callback,ii,0);
+                    /* macro could have taken a measurable amount of time to run, so we need to update the current tim and loop through again */
+                    next = 0;
+                    break;
+                }
+                next = mac->callback;
             }
-            execFuncHidden(ME_SPECIAL|SKEY_callback,ii,0) ;
         }
-    }
-    /* Loop through all the macros to set the next */
-    for(ii=CK_MAX ; ii<cmdTableSize ; ii++)
-    {
-        mac = getMacro(ii) ;
-        if((mac->callback >= 0) && (mac->callback < next))
-            next = mac->callback ;
-    }
+    } while(!next);
+    
     if(next != 0x7fffffff)
-        timerSet(CALLB_TIMER_ID,next,(meInt) (next-tim)) ;
+        timerSet(CALLB_TIMER_ID,next,(meInt) (next-tim));
     else
-        timerClearExpired(CALLB_TIMER_ID) ;
+        timerClearExpired(CALLB_TIMER_ID);
     if(tim & 0x40000000)
-        adjustStartTime(tp.tv_sec-startTime) ;
+        adjustStartTime(tp.tv_sec-startTime);
 }
 #endif
 
