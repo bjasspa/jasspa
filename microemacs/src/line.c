@@ -42,6 +42,7 @@
 
 #include "emain.h"
 #include "efunc.h"
+#include "esearch.h"
 
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
 #include <sys/types.h>
@@ -1545,46 +1546,84 @@ yankfrom(struct meKill *pklist)
 int
 yank(int f, int n)
 {
-    register int ret ;		/* return from "yankfrom()" */
-    register int len = 0 ;	/* return from "yankfrom()" */
+    register int ret;		/* return from "yankfrom()" */
+    register int len = 0;	/* return from "yankfrom()" */
+#if MEOPT_EXTENDED
+    meUByte *ss;
+#endif
     
-    commandFlag[CK_YANK] = (comSelStart|comSelSetDot|comSelSetMark|comSelSetFix) ;
+    commandFlag[CK_YANK] = (comSelStart|comSelSetDot|comSelSetMark|comSelSetFix);
     if(n == 0)
     {
         /* place the mark on the current line */
         windowSetMark(meFALSE, meFALSE);
         /* remember that this was a yank command */
-        thisflag = meCFYANK ;
-        return meTRUE ;
+        thisflag = meCFYANK;
+        return meTRUE;
     }
     if(n < 0)
     {
-        meKill *kl ;
-        
-        while((++n <= 0) && ((kl = klhead) != NULL))
-        {
-            meKillNode *next, *kill ;
-            kill = kl->kill ;
-            while(kill != NULL)
-            {
-                next = kill->next;
-                meFree(kill);
-                kill = next;
-            }
-            klhead = kl->next ;
-            meFree(kl) ;
-        }
-        reyankLastYank = NULL ;
-        commandFlag[CK_YANK] = comSelKill ;
-        return meTRUE ;
-    }
-    
-#ifdef _CLIPBRD
-    TTgetClipboard() ;
+#if MEOPT_EXTENDED
+        if(n > -16)
 #endif
-    /* make sure there is something to yank */
-    if(klhead == NULL)
-        return mlwrite(MWABORT,(meUByte *)"[nothing to yank]");
+        {
+            meKill *kl;
+            
+            while((++n <= 0) && ((kl = klhead) != NULL))
+            {
+                meKillNode *next, *kill;
+                kill = kl->kill;
+                while(kill != NULL)
+                {
+                    next = kill->next;
+                    meFree(kill);
+                    kill = next;
+                }
+                klhead = kl->next;
+                meFree(kl);
+            }
+            reyankLastYank = NULL;
+            commandFlag[CK_YANK] = comSelKill;
+            return meTRUE;
+        }
+#if MEOPT_EXTENDED
+        if((srchLastState != meTRUE) ||
+           ((ret = -16 - n) >
+#if MEOPT_MAGIC
+            mereRegexGroupNo()
+#else
+            0
+#endif
+            ))
+            return mlwrite(MWABORT,(meUByte *)"[invalid search group yank]");
+#if MEOPT_MAGIC
+        if(ret > 0)
+        {
+            if((len=mereRegexGroupStart(ret)) >= 0)
+            {
+                ss = srchLastMatch+len;
+                len = mereRegexGroupEnd(ret) - len;
+            }
+            else
+                len = 0;
+        }
+        else
+#endif
+        {
+            ss = srchLastMatch;
+            len = -1;
+        }
+#endif
+    }
+    else
+    {
+#ifdef _CLIPBRD
+        TTgetClipboard() ;
+#endif
+        /* make sure there is something to yank */
+        if(klhead == NULL)
+            return mlwrite(MWABORT,(meUByte *)"[nothing to yank]");
+    }
     /* Check we can change the buffer */
     if((ret=bufferSetEdit()) <= 0)
         return ret ;
@@ -1592,12 +1631,42 @@ yank(int f, int n)
     /* place the mark on the current line */
     windowSetMark(meFALSE, meFALSE);
     
-    /* for each time.... */
-    while(n--)
+#if MEOPT_EXTENDED
+    if(n < 0)
     {
-        if((ret = yankfrom(klhead)) < 0)
-            break;
-        len += ret ;
+        if(len != 0)
+        {
+            meUByte cc;
+            int ll;
+            if(len > 0)
+            {
+                cc = ss[len];
+                ss[len] = '\0';
+            }
+#if MEOPT_EXTENDED
+            if((meLineGetFlag(frameCur->windowCur->dotLine) & meLINE_PROTECT) && (meStrchr(ss,meCHAR_NL) != NULL))
+            {
+                if(len > 0)
+                    ss[len] = cc;
+                return mlwrite(MWABORT,(meUByte *)"[Protected Line!]") ;
+            }
+#endif
+            ll = bufferInsertText(ss,0);
+            if(len > 0)
+                ss[len] = cc;
+            len = ll;
+        }
+    }
+    else
+#endif
+    {
+        /* for each time.... */
+        while(n--)
+        {
+            if((ret = yankfrom(klhead)) < 0)
+                break;
+            len += ret ;
+        }
     }
 #if MEOPT_UNDO
     if(len > 0)

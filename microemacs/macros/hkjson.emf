@@ -75,10 +75,7 @@ buffer-init-fhook "json"
   !if &seq @wc "\""
     forward-char
     !force search-buffer "me" "\\([^\"\\\\]\\|\\\\.\\)*\""
-    !if &not $status
-      ml-write "[JSON parse error: String format error]"
-      !abort
-    !endif
+    !iif &not $status  -8 ml-write "[JSON parse error: String format error]"
     backward-char
     copy-region
     set-registry #l0 @y
