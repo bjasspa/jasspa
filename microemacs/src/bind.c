@@ -269,8 +269,10 @@ descKey(int f, int n)	/* describe the command for a certain key */
     register int      found;	/* matched command flag */
     meUInt            arg;	/* argument */
     meUByte           outseq[40];	/* output buffer for command sequence */
+#if MEOPT_LOCALBIND
     meUShort bc;
     char mb;
+#endif
     
     /* prompt the user to type us a key to describe */
     if(n & 1)
