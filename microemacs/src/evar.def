@@ -68,6 +68,9 @@ DEFVAR ("buffer-names",        EVBNAMES)        /* buffer names access variable 
 DEFVAR ("buffer-scheme",       EVBUFSCHM)       /* Window colour  */
 #endif
 DEFVAR ("buffer-tab-width",    EVBUFTABWIDTH)   /* Buffer literal tab width */
+#if MEOPT_EXTENDED
+DEFVAR ("buffer-xlate",        EVBUFXLATE)      /* Buffer translate flags */
+#endif
 DEFVAR ("build",               EVBUILD)         /* Build OS bit & compiler info */
 #if MEOPT_EXTENDED
 DEFVAR ("command-names",       EVCNAMES)        /* command names access variable */

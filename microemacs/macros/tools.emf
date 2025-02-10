@@ -417,15 +417,52 @@ define-macro find-bfile
 define-macro find-cfile
   &bor @# 4 find-file @mna
 !emacro
+define-macro find-lfile
+  !force set-variable #l0 @1
+  !if $status
+    set-variable #l0 &stat "a" &cat &lef $buffer-fname &rsin "/" $buffer-fname #l0
+  !else
+    set-variable #l0 @ml01 "find-ufile"
+  !endif
+  !force 2 find-buffer #l0
+  !if $status
+    ml-write "[Old buffer]"
+    !return
+  !endif
+  &bor @# 24 find-file #l0 @mna
+  beginning-of-buffer
+  0 translate-buffer
+!emacs
+define-macro find-ufile
+  !force set-variable #l0 @1
+  !if $status
+    set-variable #l0 &stat "a" &cat &lef $buffer-fname &rsin "/" $buffer-fname #l0
+  !else
+    set-variable #l0 @ml01 "find-ufile"
+  !endif
+  !force 2 find-buffer #l0
+  !if $status
+    ml-write "[Old buffer]"
+    !return
+  !endif
+  &bor @# 24 find-file #l0 @mna
+  beginning-of-buffer
+  translate-buffer
+!emacro
+
 define-macro find-hfile
   set-variable @# &band @# 1
-  set-variable #l0 @mc5 "File read handler (?/b/c/C/r/t/z) ? " "bCcrtz" "(b)inary, (c)rypted, (C)rypted+(b/r), (r)educed bin, (t)ext, (z)file ? "
+  set-variable #l0 @mc5 "File read handler (?/b/c/C/l/r/t/u/z) ? " "bCclrtuz" "(b)inary, (c)rypted, (C)rypted+[blrtu], (l)ossless text (r)bin, (t)ext, (u)nicode, (z)file ? "
   !if &seq #l0 "C"
     set-variable @# &bor @# 4
-    set-variable #l0 @mc5 "CFile read handler (?/b/r/t) ? " "brt" "(b)inary, (r)educed bin, (t)ext ? "
+    set-variable #l0 @mc5 "CFile read handler (?/b/l/r/t/u) ? " "blrt" "(b)inary, (l)ossless text (r)bin, (t)ext, (u)nicode ? "
   !endif
   !if &seq #l0 "z"
     find-zfile @mna
+  !elif &seq #l0 "u"
+    @# find-ufile @mna
+  !elif &seq #l0 "l"
+    @# find-lfile @mna
   !else
     &bor @# &sin #l0 "-b-c---r" find-file @mna
   !endif

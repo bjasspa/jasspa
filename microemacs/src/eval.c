@@ -845,6 +845,9 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             fileNameSetHome(vvalue) ;
             break;
 #if MEOPT_EXTENDED
+        case EVBUFXLATE:
+            frameCur->windowCur->buffer->xlateFlag = (meByte) meAtoi(vvalue);
+            break;
         case EVSHWMDS:
             {
                 meUByte cc ;
@@ -1362,6 +1365,7 @@ handle_namesvar:
     case EVSRCHPATH:    return mePtos(searchPath);
     case EVHOMEDIR:     return mePtos(homedir);
 #if MEOPT_EXTENDED
+    case EVBUFXLATE:    return meItoa(frameCur->windowCur->buffer->xlateFlag);
     case EVMODECHRS:    return modeCode;
     case EVSHWMDS:
         {

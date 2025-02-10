@@ -471,9 +471,11 @@ extern int      ffWriteFileWrite(meIo *io, register int len,
 extern int      ffWriteFileClose(meIo *io, meUInt flags, meBuffer *bp);
 extern int      ffWriteFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp);
 #if MEOPT_EXTENDED
-extern int	ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode);
+extern int      ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode);
+extern int      translateBuffer(int f, int n);
 #else
 #define ffFileOp(s,d,f,m) 0
+#define translateBuffer notAvailable
 #endif
 
 /* frame.c externals */

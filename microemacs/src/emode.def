@@ -55,4 +55,5 @@ DEFMODE(MDTIME,   "time",   't')       /* Time stamping mode           */
 DEFMODE(MDUNDO,   "undo",   'U')       /* Undo enabled                 */
 DEFMODE(MDVIEW,   "view",   'V')       /* read-only buffer             */
 DEFMODE(MDWRAP,   "wrap",   'W')       /* word wrap                    */
+DEFMODE(MDXLATE,  "xlate",  'X')       /* translate encoding           */
 

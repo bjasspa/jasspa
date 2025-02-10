@@ -56,26 +56,26 @@ set-variable %met-level   6
 !emacro
 
 0 define-macro test-testcur
-  set-variable #g0 &cat ":met-r" :met-cpd
-  set-variable #g0 &mid &ind #g0 :met-cpw 3
-  !if &sin "X" #g0
-    !iif &seq &lef #g0 1 "X"  !iif &seq &lef :met-p1 1 "X"  !abort
-    !iif &seq &mid #g0 1 1 "X"  !iif &seq &mid :met-p1 1 1 "X"  !abort
-    !iif &seq &rig #g0 2 "X"  !iif &seq &rig :met-p1 2 "X"  !abort
+  set-variable #l0 &cat ":met-r" :met-cpd
+  set-variable #l0 &mid &ind #l0 :met-cpw 3
+  !if &sin "X" #l0
+    !iif &seq &lef #l0 1 "X"  !iif &seq &lef :met-p1 1 "X"  !abort
+    !iif &seq &mid #l0 1 1 "X"  !iif &seq &mid :met-p1 1 1 "X"  !abort
+    !iif &seq &rig #l0 2 "X"  !iif &seq &rig :met-p1 2 "X"  !abort
   !endif
-  set-variable #g0 &cat ":met-r" &add :met-cpd 1
-  set-variable #g0 &mid &ind #g0 :met-cpw 3
-  !if &sin "X" #g0
-    !iif &seq &lef #g0 1 "X"  !iif &seq &lef :met-p2 1 "X"  !abort
-    !iif &seq &mid #g0 1 1 "X"  !iif &seq &mid :met-p2 1 1 "X"  !abort
-    !iif &seq &rig #g0 2 "X"  !iif &seq &rig :met-p2 2 "X"  !abort
+  set-variable #l0 &cat ":met-r" &add :met-cpd 1
+  set-variable #l0 &mid &ind #l0 :met-cpw 3
+  !if &sin "X" #l0
+    !iif &seq &lef #l0 1 "X"  !iif &seq &lef :met-p2 1 "X"  !abort
+    !iif &seq &mid #l0 1 1 "X"  !iif &seq &mid :met-p2 1 1 "X"  !abort
+    !iif &seq &rig #l0 2 "X"  !iif &seq &rig :met-p2 2 "X"  !abort
   !endif
-  set-variable #g0 &cat ":met-r" &add :met-cpd 2
-  set-variable #g0 &mid &ind #g0 :met-cpw 3
-  !if &sin "X" #g0
-    !iif &seq &lef #g0 1 "X"  !iif &seq &lef :met-p3 1 "X"  !abort
-    !iif &seq &mid #g0 1 1 "X"  !iif &seq &mid :met-p3 1 1 "X"  !abort
-    !iif &seq &rig #g0 2 "X"  !iif &seq &rig :met-p3 2 "X"  !abort
+  set-variable #l0 &cat ":met-r" &add :met-cpd 2
+  set-variable #l0 &mid &ind #l0 :met-cpw 3
+  !if &sin "X" #l0
+    !iif &seq &lef #l0 1 "X"  !iif &seq &lef :met-p3 1 "X"  !abort
+    !iif &seq &mid #l0 1 1 "X"  !iif &seq &mid :met-p3 1 1 "X"  !abort
+    !iif &seq &rig #l0 2 "X"  !iif &seq &rig :met-p3 2 "X"  !abort
   !endif
 !emacro
 
@@ -197,39 +197,39 @@ set-variable %met-level   6
     !return
   !endif
   set-variable :met-numr 0
-  set-variable #g0 &cat ":met-r" &sub :met-cpd 1
-  !iif &seq &lef :met-p1 1 "X"  set-variable &ind #g0 &cat &lef &ind #g0 :met-cpw &cat "X" &rig &ind #g0 &add :met-cpw 1
-  !iif &seq &mid :met-p1 1 1 "X"  set-variable &ind #g0 &cat &lef &ind #g0 &add :met-cpw 1 &cat "X" &rig &ind #g0 &add :met-cpw 2
-  !iif &seq &rig :met-p1 2 "X"  set-variable &ind #g0 &cat &lef &ind #g0 &add :met-cpw 2 &cat "X" &rig &ind #g0 &add :met-cpw 3
-  !if &seq &ind #g0 " XXXXXXXXXXXX "
-    set-variable &ind #g0 "*"
+  set-variable #l0 &cat ":met-r" &sub :met-cpd 1
+  !iif &seq &lef :met-p1 1 "X"  set-variable &ind #l0 &cat &lef &ind #l0 :met-cpw &cat "X" &rig &ind #l0 &add :met-cpw 1
+  !iif &seq &mid :met-p1 1 1 "X"  set-variable &ind #l0 &cat &lef &ind #l0 &add :met-cpw 1 &cat "X" &rig &ind #l0 &add :met-cpw 2
+  !iif &seq &rig :met-p1 2 "X"  set-variable &ind #l0 &cat &lef &ind #l0 &add :met-cpw 2 &cat "X" &rig &ind #l0 &add :met-cpw 3
+  !if &seq &ind #l0 " XXXXXXXXXXXX "
+    set-variable &ind #l0 "*"
     set-variable :met-numr &add :met-numr 1
     65 screen-poke &sub &add :met-depoff :met-cpd 1 :met-widoff .scheme.met-back "**********"
   !else
-    97 screen-poke &sub &add :met-depoff :met-cpd 1 :met-widoff .scheme.met-back &mid &ind #g0 2 10
+    97 screen-poke &sub &add :met-depoff :met-cpd 1 :met-widoff .scheme.met-back &mid &ind #l0 2 10
   !endif
-  set-variable #g0 &cat ":met-r" :met-cpd
-  !iif &seq &lef :met-p2 1 "X"  set-variable &ind #g0 &cat &lef &ind #g0 :met-cpw &cat "X" &rig &ind #g0 &add :met-cpw 1
-  !iif &seq &mid :met-p2 1 1 "X"  set-variable &ind #g0 &cat &lef &ind #g0 &add :met-cpw 1 &cat "X" &rig &ind #g0 &add :met-cpw 2
-  !iif &seq &rig :met-p2 2 "X"  set-variable &ind #g0 &cat &lef &ind #g0 &add :met-cpw 2 &cat "X" &rig &ind #g0 &add :met-cpw 3
-  !if &seq &ind #g0 " XXXXXXXXXXXX "
-    set-variable &ind #g0 "*"
+  set-variable #l0 &cat ":met-r" :met-cpd
+  !iif &seq &lef :met-p2 1 "X"  set-variable &ind #l0 &cat &lef &ind #l0 :met-cpw &cat "X" &rig &ind #l0 &add :met-cpw 1
+  !iif &seq &mid :met-p2 1 1 "X"  set-variable &ind #l0 &cat &lef &ind #l0 &add :met-cpw 1 &cat "X" &rig &ind #l0 &add :met-cpw 2
+  !iif &seq &rig :met-p2 2 "X"  set-variable &ind #l0 &cat &lef &ind #l0 &add :met-cpw 2 &cat "X" &rig &ind #l0 &add :met-cpw 3
+  !if &seq &ind #l0 " XXXXXXXXXXXX "
+    set-variable &ind #l0 "*"
     set-variable :met-numr &add :met-numr 1
     65 screen-poke &add :met-depoff :met-cpd :met-widoff .scheme.met-back "**********"
   !else
-    97 screen-poke &add :met-depoff :met-cpd :met-widoff .scheme.met-back &mid &ind #g0 2 10
+    97 screen-poke &add :met-depoff :met-cpd :met-widoff .scheme.met-back &mid &ind #l0 2 10
   !endif
   !if &les :met-cpd &sub :met-depth 1
-    set-variable #g0 &cat ":met-r" &add :met-cpd 1
-    !iif &seq &lef :met-p3 1 "X"  set-variable &ind #g0 &cat &lef &ind #g0 :met-cpw &cat "X" &rig &ind #g0 &add :met-cpw 1
-    !iif &seq &mid :met-p3 1 1 "X"  set-variable &ind #g0 &cat &lef &ind #g0 &add :met-cpw 1 &cat "X" &rig &ind #g0 &add :met-cpw 2
-    !iif &seq &rig :met-p3 2 "X"  set-variable &ind #g0 &cat &lef &ind #g0 &add :met-cpw 2 &cat "X" &rig &ind #g0 &add :met-cpw 3
-    !if &seq &ind #g0 " XXXXXXXXXXXX "
-      set-variable &ind #g0 "*"
+    set-variable #l0 &cat ":met-r" &add :met-cpd 1
+    !iif &seq &lef :met-p3 1 "X"  set-variable &ind #l0 &cat &lef &ind #l0 :met-cpw &cat "X" &rig &ind #l0 &add :met-cpw 1
+    !iif &seq &mid :met-p3 1 1 "X"  set-variable &ind #l0 &cat &lef &ind #l0 &add :met-cpw 1 &cat "X" &rig &ind #l0 &add :met-cpw 2
+    !iif &seq &rig :met-p3 2 "X"  set-variable &ind #l0 &cat &lef &ind #l0 &add :met-cpw 2 &cat "X" &rig &ind #l0 &add :met-cpw 3
+    !if &seq &ind #l0 " XXXXXXXXXXXX "
+      set-variable &ind #l0 "*"
       set-variable :met-numr &add :met-numr 1
       65 screen-poke &add &add :met-depoff 1 :met-cpd :met-widoff .scheme.met-back "**********"
     !else
-      97 screen-poke &add &add :met-depoff 1 :met-cpd :met-widoff .scheme.met-back &mid &ind #g0 2 10
+      97 screen-poke &add &add :met-depoff 1 :met-cpd :met-widoff .scheme.met-back &mid &ind #l0 2 10
     !endif
   !endif
   set-variable :met-score &add :met-score 1
@@ -237,15 +237,15 @@ set-variable %met-level   6
     set-variable :met-score &add :met-score &mul :met-numr %met-level
     !if &equ :met-numr 3
       set-variable :met-score &add :met-score %met-level
-      set-variable #g0 16
-      !while &pde #g0 1
-        set-variable #g1 &mod #g0 4
-        set-variable #g2 &spr "%n" 10 &mid "|\\-/" #g1 1
-        set-variable #g1 &add 1 &mul #g1 32
-        set-variable #g3 &cond &mod &div #g0 4 2 .scheme.met-fore2 .scheme.met-fore1
-        #g1 screen-poke &sub &add :met-depoff :met-cpd 1 :met-widoff #g3 #g2
-        #g1 screen-poke      &add :met-depoff :met-cpd   :met-widoff #g3 #g2
-        #g1 screen-poke &add &add :met-depoff :met-cpd 1 :met-widoff #g3 #g2
+      set-variable #l0 16
+      !while &pde #l0 1
+        set-variable #l1 &mod #l0 4
+        set-variable #l2 &spr "%n" 10 &mid "|\\-/" #l1 1
+        set-variable #l1 &add 1 &mul #l1 32
+        set-variable #l3 &cond &mod &div #l0 4 2 .scheme.met-fore2 .scheme.met-fore1
+        #l1 screen-poke &sub &add :met-depoff :met-cpd 1 :met-widoff #l3 #l2
+        #l1 screen-poke      &add :met-depoff :met-cpd   :met-widoff #l3 #l2
+        #l1 screen-poke &add &add :met-depoff :met-cpd 1 :met-widoff #l3 #l2
         100 ml-write " 3 rows! - Bonus!!"
       !done
     !else
@@ -257,22 +257,22 @@ set-variable %met-level   6
     !while &equ :met-cpd :met-depth
       set-variable :met-cpd &sub :met-cpd 1
     !done
-    set-variable #g0 :met-cpd
+    set-variable #l0 :met-cpd
     !while :met-cpd
-      set-variable #g1 &cat ":met-r" :met-cpd  
-      !if &not &seq &ind #g1 "*"
-        set-variable :met-curw &cat ":met-r" #g0  
-        set-variable &ind :met-curw &ind #g1
-        97 screen-poke &add :met-depoff #g0 :met-widoff .scheme.met-back &mid &ind #g1 2 10
-        set-variable #g0 &sub #g0 1
+      set-variable #l1 &cat ":met-r" :met-cpd  
+      !if &not &seq &ind #l1 "*"
+        set-variable :met-curw &cat ":met-r" #l0  
+        set-variable &ind :met-curw &ind #l1
+        97 screen-poke &add :met-depoff #l0 :met-widoff .scheme.met-back &mid &ind #l1 2 10
+        set-variable #l0 &sub #l0 1
       !endif
       set-variable :met-cpd &sub :met-cpd 1
     !done
-    !while #g0
-      set-variable :met-curw &cat ":met-r" #g0  
+    !while #l0
+      set-variable :met-curw &cat ":met-r" #l0  
       set-variable &ind :met-curw " X          X "
-      1 screen-poke &add :met-depoff #g0 :met-widoff .scheme.met-back "          "
-      set-variable #g0 &sub #g0 1
+      1 screen-poke &add :met-depoff #l0 :met-widoff .scheme.met-back "          "
+      set-variable #l0 &sub #l0 1
     !done
     met-print-time
   !endif
@@ -348,12 +348,12 @@ set-variable %met-level   6
   met-print-time
   met-print-level
   !iif &band 2 :mmode  !return
-  set-variable #g0 :met-depth
+  set-variable #l0 :met-depth
   !repeat
-    set-variable #g0 &sub #g0 1
-    set-variable #g1 &cat ":met-r" #g0
-    97 screen-poke &add :met-depoff #g0 :met-widoff .scheme.met-back &mid &ind #g1 2 10
-  !until &not #g0
+    set-variable #l0 &sub #l0 1
+    set-variable #l1 &cat ":met-r" #l0
+    97 screen-poke &add :met-depoff #l0 :met-widoff .scheme.met-back &mid &ind #l1 2 10
+  !until &not #l0
   !iif :met-next  met-drwnext
   met-drwcur
 !emacro

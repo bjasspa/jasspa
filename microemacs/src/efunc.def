@@ -376,6 +376,9 @@ DEFFUNC ("start-kbd-macro",             0x42, 0xd94a2b2b, startKbdMacro,        
 DEFFUNC ("suspend-emacs",               0x00, 0xafaae4b8, suspendEmacs,         CK_SUSPEND, &__cmdArray[CK_SUSPEND+1], 0)
 #endif
 DEFFUNC ("tab",                         0x04, 0x0001fa57, meTab,                CK_DOTAB, &__cmdArray[CK_DOTAB+1], 0)
+#if MEOPT_CMDHASH || MEOPT_UNDO
+DEFFUNC ("translate-buffer",            0x42, 0x07f1aa95, translateBuffer,      CK_XLATEBUF, &__cmdArray[CK_XLATEBUF+1], 0)
+#endif
 DEFFUNC ("translate-key",               0x00, 0x486d1a84, translateKey,         CK_TRNSKEY, &__cmdArray[CK_TRNSKEY+1], 0)
 DEFFUNC ("transpose-chars",             0x04, 0x9a44f35d, transChars,           CK_TRNCHR, &__cmdArray[CK_TRNCHR+1], 0)
 DEFFUNC ("transpose-lines",             0x04, 0x9ae891e7, transLines,           CK_TRNLINE, &__cmdArray[CK_TRNLINE+1], 0)

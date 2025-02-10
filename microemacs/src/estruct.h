@@ -171,7 +171,7 @@ typedef meUInt  meStyle;
  * note that users enter the base scheme number, i.e. 0, 1, 2, ...
  * which is then multiplied by 8 and stored, i.e. 0, 8, 16, ...
  */
-typedef meUShort meScheme ;
+typedef meUShort meScheme;
 #define meSCHEME_NORMAL   0                     /* Normal style */
 #define meSCHEME_RNORMAL  1                     /* Reverse normal style */
 #define meSCHEME_CURRENT  2                     /* Current foreground colour */        
@@ -205,20 +205,20 @@ typedef meUShort meScheme ;
  * calculating the real size ourselves, see asserts in meInit which check
  * these values are correct */
 #if MEOPT_EXTENDED
-typedef meUShort meLineFlag ;                   /* In extended vers use 16 bits */
+typedef meUShort meLineFlag;                    /* In extended vers use 16 bits */
 #else
-typedef meUByte meLineFlag ;
+typedef meUByte meLineFlag;
 #endif
 
 typedef struct meLine
 {
-    struct meLine     *next ;                   /* Link to the next line        */
-    struct meLine     *prev ;                   /* Link to the previous line    */
-    meUShort           length ;                 /* Used size                    */
-    meLineFlag         flag ;                   /* Line is marked if true       */
-    meUByte            unused ;                 /* length + unused = max size   */
-    meUByte            text[1] ;                /* A bunch of characters.       */
-} meLine ;
+    struct meLine     *next;                    /* Link to the next line        */
+    struct meLine     *prev;                    /* Link to the previous line    */
+    meUShort           length;                  /* Used size                    */
+    meLineFlag         flag;                    /* Line is marked if true       */
+    meUByte            unused;                  /* length + unused = max size   */
+    meUByte            text[1];                 /* A bunch of characters.       */
+} meLine;
 
 #define meMEMORY_BOUND          8               /* the size memory is rounded up to */
 #define meLINE_ELEN_MAX         0x0fff0         /* maximum length a line can be when editing */
@@ -467,7 +467,7 @@ typedef struct  meWindow {
                                                 /* Vert Scroll bar positions    */
     meUShort           vertScrollBarMode;       /* Operating mode of window     */
 #endif
-} meWindow ;
+} meWindow;
 
 /* SWP 2002-01-09 - Windows file timestamps use 2 longs, a dwHigh and a dwLow
  *                  to count the 100 nanosecs since 1601-01-01 (why???)
@@ -476,7 +476,7 @@ typedef struct  meWindow {
  */
 #ifdef _WIN32
 
-typedef FILETIME meFiletime ;
+typedef FILETIME meFiletime;
 
 /* initialize to a recognizable duff value */
 #define meFiletimeInit(t1)            ((t1).dwHighDateTime = (t1).dwLowDateTime = -1)
@@ -516,15 +516,15 @@ typedef meUInt meFiletime;
 /* meStat Contains the file node information */
 typedef struct {
     meFiletime         stmtime;                 /* modification time of file    */
-    meUInt             stsizeHigh ;             /* File's Size (higher 4bytes)  */
-    meUInt             stsizeLow ;              /* File's Size (lower 4bytes)   */
+    meUInt             stsizeHigh;              /* File's Size (higher 4bytes)  */
+    meUInt             stsizeLow;               /* File's Size (lower 4bytes)   */
 #ifdef _UNIX
-    uid_t              stuid ;                  /* File's User id               */
-    gid_t              stgid ;                  /* File's Group id              */
-    dev_t              stdev ;                  /* Files device ID no.          */
-    ino_t              stino ;                  /* Files Inode number           */
+    uid_t              stuid;                   /* File's User id               */
+    gid_t              stgid;                   /* File's Group id              */
+    dev_t              stdev;                   /* Files device ID no.          */
+    ino_t              stino;                   /* Files Inode number           */
 #endif
-    meUShort           stmode ;                 /* file mode flags              */
+    meUShort           stmode;                  /* file mode flags              */
 } meStat;
 #define meStatCopy(dd,ss) memcpy(dd,ss,sizeof(meStat))
 
@@ -534,10 +534,10 @@ typedef struct {
  * structure to store info on an abbreviation file
  */
 typedef struct meAbbrev {
-    struct meAbbrev   *next ;                   /* Pointer to the next abrev    */
-    meLine             hlp ;                    /* head line                    */
-    meUByte            loaded ;                 /* modification time of file    */
-    meUByte            fname[1] ;               /* Users abrev file name        */
+    struct meAbbrev   *next;                    /* Pointer to the next abrev    */
+    meLine             hlp;                     /* head line                    */
+    meUByte            loaded;                  /* modification time of file    */
+    meUByte            fname[1];                /* Users abrev file name        */
 } meAbbrev;
 
 /* structure to hold user variables and their definitions */
@@ -555,20 +555,20 @@ typedef struct meVariable
 /* structure for the name binding table */
 
 typedef struct meCommand {
-    struct meCommand  *anext ;                  /* alphabetically next command  */
+    struct meCommand  *anext;                   /* alphabetically next command  */
 #if MEOPT_CMDHASH
-    struct meCommand  *hnext ;                  /* next command in hash table   */
+    struct meCommand  *hnext;                   /* next command in hash table   */
 #endif
-    meUByte           *name ;                   /* name of command              */
-    meIFuncII          func ;                   /* function name is bound to    */
+    meUByte           *name;                    /* name of command              */
+    meIFuncII          func;                    /* function name is bound to    */
 #if MEOPT_EXTENDED
-    meVariable        *varList ;                /* command variables list       */
+    meVariable        *varList;                 /* command variables list       */
 #endif
 #if MEOPT_CMDHASH
-    meUInt             hash ;                   /* next command in hash table   */
+    meUInt             hash;                    /* next command in hash table   */
 #endif
-    int                id ;                     /* command id number            */
-} meCommand ;
+    int                id;                      /* command id number            */
+} meCommand;
 
 typedef struct meMacro {
     meCommand         *anext;                   /* alphabetically next command  */
@@ -590,7 +590,7 @@ typedef struct meMacro {
 #if MEOPT_CALLBACK
     meTime             callback;                /* callback time for macro      */
 #endif
-} meMacro ;
+} meMacro;
 
 #define meMACRO_HIDE  meLINE_ANCHOR_AMARK       /* Hide the function            */
 #define meMACRO_EXEC  meLINE_ANCHOR_NARROW      /* Buffer is being executed     */
@@ -630,23 +630,23 @@ typedef struct meAnchor {
 /* A position, stores the current window, buffer, line etc which can
  * be restore later, used by push-position and pop-position */
 typedef struct mePosition {
-    struct mePosition *next ;                   /* pointer to previous position (stack)      */
-    meWindow          *window ;                 /* Current window                            */
-    struct meBuffer   *buffer ;                 /* windows buffer                            */
-    meInt              anchor ;                 /* Anchor name                               */
-    meInt              vertScroll ;             /* windows top line number                   */
-    meInt              dotLineNo ;              /* current line number                       */
+    struct mePosition *next;                    /* pointer to previous position (stack)      */
+    meWindow          *window;                  /* Current window                            */
+    struct meBuffer   *buffer;                  /* windows buffer                            */
+    meInt              anchor;                  /* Anchor name                               */
+    meInt              vertScroll;              /* windows top line number                   */
+    meInt              dotLineNo;               /* current line number                       */
     meInt              markLineNo;              /* current mark line number                  */
-    meUShort           winMinRow ;              /* Which window - store the co-ordinate      */
-    meUShort           winMinCol ;              /* so we can restore to the best matching    */
-    meUShort           winMaxRow ;              /* window on a goto - this greatly improves  */
-    meUShort           winMaxCol ;              /* its use.                                  */
-    meUShort           horzScroll ;             /* cur horizontal scroll column              */
-    meUShort           horzScrollRest ;         /* the horizontal scroll column              */
-    meUShort           dotOffset ;              /* Byte offset for "."                       */
-    meUShort           markOffset ;             /* Byte offset for "mark"       */
-    meUShort           flags ;                  /* Whats stored bit mask                     */
-    meUShort           name ;                   /* position name, (letter associated with it)*/
+    meUShort           winMinRow;               /* Which window - store the co-ordinate      */
+    meUShort           winMinCol;               /* so we can restore to the best matching    */
+    meUShort           winMaxRow;               /* window on a goto - this greatly improves  */
+    meUShort           winMaxCol;               /* its use.                                  */
+    meUShort           horzScroll;              /* cur horizontal scroll column              */
+    meUShort           horzScrollRest;          /* the horizontal scroll column              */
+    meUShort           dotOffset;               /* Byte offset for "."                       */
+    meUShort           markOffset;              /* Byte offset for "mark"       */
+    meUShort           flags;                   /* Whats stored bit mask                     */
+    meUShort           name;                    /* position name, (letter associated with it)*/
 } mePosition;
 #define mePOS_WINDOW    0x001
 #define mePOS_WINXSCRL  0x002
@@ -665,18 +665,18 @@ typedef struct mePosition {
 #if MEOPT_NARROW
 
 typedef struct meNarrow {
-    struct meNarrow   *next ;                   /* pointer to next narrow in list            */
-    struct meNarrow   *prev ;                   /* pointer to previous narrow in list        */
-    meLine            *slp ;                    /* pointer to narrow start line              */
-    meLine            *elp ;                    /* pointer to narrow end line                */
-    meLine            *markupLine ;             /* pointer to the markup line                */
-    meInt              noLines ;                /* Number of lines narrowed out              */
-    meInt              sln ;                    /* Narrows start line number                 */
-    meInt              name ;                   /* anchor name                               */
-    meInt              markupCmd ;              /* Command called to create markup line text */
-    meUByte            scheme ;                 /* Line scheme used                          */
-    meUByte            expanded ;               /* Flag whether it is temporarily expanded   */
-} meNarrow ;
+    struct meNarrow   *next;                    /* pointer to next narrow in list            */
+    struct meNarrow   *prev;                    /* pointer to previous narrow in list        */
+    meLine            *slp;                     /* pointer to narrow start line              */
+    meLine            *elp;                     /* pointer to narrow end line                */
+    meLine            *markupLine;              /* pointer to the markup line                */
+    meInt              noLines;                 /* Number of lines narrowed out              */
+    meInt              sln;                     /* Narrows start line number                 */
+    meInt              name;                    /* anchor name                               */
+    meInt              markupCmd;               /* Command called to create markup line text */
+    meUByte            scheme;                  /* Line scheme used                          */
+    meUByte            expanded;                /* Flag whether it is temporarily expanded   */
+} meNarrow;
 
 /* the following is encoded in the narrow name */
 #define meNARROW_TYPE_OUT       0x00100000
@@ -763,18 +763,19 @@ typedef struct  meBuffer {
 #endif
 #if MEOPT_HILIGHT
     meScheme           lscheme[meLINE_SCHEME_MAX]; /* line scheme index         */
-    meUByte            lschemeNext ;            /* Next line scheme index       */
+    meUByte            lschemeNext;             /* Next line scheme index       */
 #endif
     meUByte            fileFlag;                /* file type & attrib flags     */
     meUByte            intFlag;                 /* internal buffer flags        */
     meUByte            windowCount;             /* Count of windows on buffer   */
 #if MEOPT_EXTENDED
-    meUByte            isWordMask ;             /* isWord lookup table bit mask */
+    meUByte            isWordMask;              /* isWord lookup table bit mask */
+    meUByte            xlateFlag;               /* translate flags              */
 #endif
-    meUByte            modeLineFlags ;          /* buffer mode-line flags       */
+    meUByte            modeLineFlags;           /* buffer mode-line flags       */
 #if MEOPT_HILIGHT
-    meUByte            hilight ;                /* hilight number               */
-    meUByte            indent ;                 /* indent number                */
+    meUByte            hilight;                 /* hilight number               */
+    meUByte            indent;                  /* indent number                */
 #endif
 #if MEOPT_WORDPRO
     meUByte            fillmode;                /* Justification mode           */
@@ -807,15 +808,15 @@ typedef struct  {
     meInt              lineNo;                  /* Origin meLine number.        */
     meLine            *line;                    /* Origin meLine address.       */
     meUShort           offset;                  /* Origin meLine offset.        */
-} meRegion ;
+} meRegion;
 
 
 /* structure for the table of initial key bindings */
 
 typedef struct meBind {
-    meUShort           code ;                   /* Key code                     */
-    meUShort           index ;
-    meUInt             arg ;
+    meUShort           code;                    /* Key code                     */
+    meUShort           index;
+    meUInt             arg;
 } meBind;
 
 
@@ -827,7 +828,7 @@ typedef struct meBind {
 
 typedef struct meKillNode {
     struct meKillNode *next;                    /* link to next chunk, NULL if last */
-    meUByte            data[1] ;                /* First byte of the data (nil trm) */
+    meUByte            data[1];                 /* First byte of the data (nil trm) */
 } meKillNode;
 
 /*
@@ -874,8 +875,8 @@ typedef struct meKillNode {
 #define meKILL_MAX      15                      /* number of kills held in kill list       */
 
 typedef struct meKill {
-    meKillNode        *kill ;                   /* pointer to kill chunk                   */
-    struct meKill     *next ;                   /* link to next list element, NULL if last */
+    meKillNode        *kill;                    /* pointer to kill chunk                   */
+    struct meKill     *next;                    /* link to next list element, NULL if last */
 } meKill;
 
 
@@ -963,24 +964,24 @@ typedef struct meKill {
 #define meIndentSetChangeFunc(ind,v)         ((ind)->scheme = (meScheme) (v))
 
 typedef struct meHilight {
-    struct meHilight **list ;
-    meUByte           *table ; 
-    meUByte           *close ;
-    meUByte           *rtoken ;
-    meUByte           *rclose ;
-    meUShort           type ; 
-    meScheme           scheme ;
-    meUByte            tknSttOff ; 
-    meUByte            tknEndOff ; 
-    meUByte            clsSttOff ; 
-    meUByte            clsEndOff ; 
-    meUByte            tknSttTst ; 
-    meUByte            tknEndTst ; 
-    meUByte            ordSize ; 
-    meUByte            listSize ; 
-    meUByte            ignore ;
-    meUByte            token[1] ;
-} meHilight ;
+    struct meHilight **list;
+    meUByte           *table; 
+    meUByte           *close;
+    meUByte           *rtoken;
+    meUByte           *rclose;
+    meUShort           type; 
+    meScheme           scheme;
+    meUByte            tknSttOff; 
+    meUByte            tknEndOff; 
+    meUByte            clsSttOff; 
+    meUByte            clsEndOff; 
+    meUByte            tknSttTst; 
+    meUByte            tknEndTst; 
+    meUByte            ordSize; 
+    meUByte            listSize; 
+    meUByte            ignore;
+    meUByte            token[1];
+} meHilight;
 
 #define TableLower (meUByte)(' ')
 #define TableUpper (meUByte)('z')
@@ -1051,14 +1052,14 @@ typedef struct meSelection {
 
 typedef struct  meVideoLine
 {
-    meWindow          *wind ;
-    meLine            *line ;
-    meUShort           endp ;
-    meUShort           flag ;                   /* Flags */
-    meScheme           eolScheme ;              /* the EOL scheme */
+    meWindow          *wind;
+    meLine            *line;
+    meUShort           endp;
+    meUShort           flag;                    /* Flags */
+    meScheme           eolScheme;               /* the EOL scheme */
 #if MEOPT_HILIGHT
-    meUByte            hilno ;                  /* hilight-no */
-    meHilight         *bracket ;
+    meUByte            hilno;                   /* hilight-no */
+    meHilight         *bracket;
 #endif
 } meVideoLine;
 
@@ -1096,8 +1097,8 @@ typedef struct meVideo
 
 typedef struct
 {
-    meUByte           *text ;                   /* Text held on the line. */
-    meScheme          *scheme ;                 /* index to the Style (fore + back + font) of each cell */
+    meUByte           *text;                    /* Text held on the line. */
+    meScheme          *scheme;                  /* index to the Style (fore + back + font) of each cell */
 } meFrameLine;                                  /* Line of screen text */
 
 
@@ -1106,45 +1107,45 @@ typedef struct
 
 typedef struct meFrame
 {
-    struct meFrame    *next ;
-    meVideo            video ;                  /* Virtual video - see display.c   */
-    meFrameLine       *store ;
-    meWindow          *windowList ;             /* Head of list of windows         */
-    meWindow          *windowCur ;              /* Current window                  */
-    meLine            *mlLine ;                 /* message line.                   */
-    meUByte           *mlLineStore ;            /* stored message line.            */
+    struct meFrame    *next;
+    meVideo            video;                   /* Virtual video - see display.c   */
+    meFrameLine       *store;
+    meWindow          *windowList;              /* Head of list of windows         */
+    meWindow          *windowCur;               /* Current window                  */
+    meLine            *mlLine;                  /* message line.                   */
+    meUByte           *mlLineStore;             /* stored message line.            */
 #ifdef _WINDOW
-    meUByte           *titleBufferName ;        /* Name of buffer used when last updated the title bar */
+    meUByte           *titleBufferName;         /* Name of buffer used when last updated the title bar */
 #endif
-    void              *termData ;               /* generic term data pointer       */
-    int                cursorRow ;              /* Location of the cursor in frame */
-    int                cursorColumn ;           /* Location of the cursor in frame */
-    int                mainRow ;                /* Main Windows current row.       */
-    int                mainColumn ;             /* Main Windows current column     */
-    int                mlColumn ;               /* ml current column */
-    int                mlColumnStore ;          /* ml Store column */
-    int                pokeColumnMin ;          /* Minimum column extent of poke   */
-    int                pokeColumnMax ;          /* Maximum column extent of poke   */
-    int                pokeRowMin ;             /* Minimum row extent of poke      */
-    int                pokeRowMax ;             /* Maximum row extent of poke      */
+    void              *termData;                /* generic term data pointer       */
+    int                cursorRow;               /* Location of the cursor in frame */
+    int                cursorColumn;            /* Location of the cursor in frame */
+    int                mainRow;                 /* Main Windows current row.       */
+    int                mainColumn;              /* Main Windows current column     */
+    int                mlColumn;                /* ml current column */
+    int                mlColumnStore;           /* ml Store column */
+    int                pokeColumnMin;           /* Minimum column extent of poke   */
+    int                pokeColumnMax;           /* Maximum column extent of poke   */
+    int                pokeRowMin;              /* Minimum row extent of poke      */
+    int                pokeRowMax;              /* Maximum row extent of poke      */
 #if MEOPT_EXTENDED
-    meInt              id ;                     /* $frame-id                       */
+    meInt              id;                      /* $frame-id                       */
 #endif
 #if MEOPT_OSD
-    meLine            *menuLine ;               /* Menu-poke line                  */
-    meUShort           menuDepth ;              /* Terminal starting row           */
+    meLine            *menuLine;                /* Menu-poke line                  */
+    meUShort           menuDepth;               /* Terminal starting row           */
 #endif
-    meShort            windowCount ;            /* Current number of windows       */
-    meUShort           width ;                  /* Number of columns               */
-    meUShort           depth ;                  /* Number of rows                  */
-    meUShort           widthMax ;               /* Maximum number of columns       */
-    meUShort           depthMax ;               /* Maximum number of rows          */
-    meUByte            mainId ;
-    meUByte            flags ;
-    meUByte            pokeFlag ;               /* Boolean meTRUE/meFALSE flag. meTRUE
+    meShort            windowCount;             /* Current number of windows       */
+    meUShort           width;                   /* Number of columns               */
+    meUShort           depth;                   /* Number of rows                  */
+    meUShort           widthMax;                /* Maximum number of columns       */
+    meUShort           depthMax;                /* Maximum number of rows          */
+    meUByte            mainId;
+    meUByte            flags;
+    meUByte            pokeFlag;                /* Boolean meTRUE/meFALSE flag. meTRUE
                                                  * when a poke operation has been
                                                  * performed. */
-    meUByte            mlStatus ;               /* ml status
+    meUByte            mlStatus;                /* ml status
                                                  * 0=not using it,
                                                  * 1=using it.
                                                  * 2=using it & its been broken so
@@ -1168,71 +1169,71 @@ typedef struct meFrame
 #define meIPIPE_BUFIPIPE    0x80        /* Forced ipipe buffer */
 
 typedef struct meIPipe {
-    meBuffer          *bp ;
-    struct meIPipe    *next ;
-    int                pid ;
-    meInt              exitCode ;
+    meBuffer          *bp;
+    struct meIPipe    *next;
+    int                pid;
+    meInt              exitCode;
 #ifdef _WIN32
-    HANDLE             rfd ;
-    HANDLE             outWfd ;
-    HANDLE             process ;
-    DWORD              processId ;
-    HWND               childWnd ;
+    HANDLE             rfd;
+    HANDLE             outWfd;
+    HANDLE             process;
+    DWORD              processId;
+    HWND               childWnd;
     /* wait thread variables */
-    HANDLE             childActive ;
-    HANDLE             threadContinue ;
-    HANDLE             thread ;
-    DWORD              threadId ;
-    meUByte            nextChar ;
+    HANDLE             childActive;
+    HANDLE             threadContinue;
+    HANDLE             thread;
+    DWORD              threadId;
+    meUByte            nextChar;
 #else
-    int                rfd ;
-    int                outWfd ;
+    int                rfd;
+    int                outWfd;
 #endif
-    meShort            noRows ;
-    meShort            noCols ;
-    meShort            strRow ;
-    meShort            strCol ;
-    meShort            curRow ;
-    meShort            flag ;
-} meIPipe ;
+    meShort            noRows;
+    meShort            noCols;
+    meShort            strRow;
+    meShort            strCol;
+    meShort            curRow;
+    meShort            flag;
+} meIPipe;
 
 #endif
 
 #if MEOPT_UNDO
 
-typedef int meUndoCoord[2] ;
+typedef int meUndoCoord[2];
 
 typedef struct meUndoNode {
-    struct meUndoNode *next ;
+    struct meUndoNode *next;
     union {
-        meInt          dotp ;
-        meInt         *lineSort ;
-        meUndoCoord   *pos ;
-    } udata ;
-    meInt              count ;
-    meUShort           doto ;
-    meUByte            type ;
-    meUByte            str[1] ;
-} meUndoNode ;
+        meInt          dotp;
+        meInt         *lineSort;
+        meUndoCoord   *pos;
+    } udata;
+    meInt              count;
+    meUShort           doto;
+    meUByte            type;
+    meUByte            str[1];
+} meUndoNode;
 
 #if MEOPT_NARROW
 /* The following structure is used for narrow undos, the next and type members
  * must be in the same position as in the main meUndoNode, see asserts in
  * main.c */
 typedef struct meUndoNarrow {
-    struct meUndoNode *next ;
+    struct meUndoNode *next;
     union {
-        meInt          dotp ;
-        void          *dummy ;          /* Maintain structure alignment with ptr union */
-    } udata ;
-    meInt              count ;
-    meScheme           scheme ;
-    meUByte            type ;
-    meUByte            markupFlag ;
-    meInt              name ;
-    meInt              markupCmd ;
-    meUByte            str[1] ;
-} meUndoNarrow ;
+        meInt          dotp;
+        void          *dummy;           /* Maintain structure alignment with ptr union */
+    } udata;
+    meInt              count;
+    meScheme           scheme;
+    meUByte            type;
+    meUByte            markupFlag;
+    meInt              name;
+    meInt              markupCmd;
+    meUByte            str[1];
+} meUndoNarrow;
 #endif
 
 #define meUNDO_DELETE        0x01
@@ -1288,30 +1289,30 @@ typedef struct meRegister {
     meUByte            force;
     meUByte            depth;
     meUByte            nextArg;
-    meUByte            reg[meREGISTER_MAX][meBUF_SIZE_MAX] ;
-} meRegister ;
+    meUByte            reg[meREGISTER_MAX][meBUF_SIZE_MAX];
+} meRegister;
 
 
 /* Note that the first part of meDirList structure must remain
  * the same as meNamesList as it is used for $file-names variable
  */
 typedef struct {
-    int                exact ;
-    int                size ;
-    meUByte          **list ;
-    meUByte           *mask ;
-    int                curr ;
-    meUByte           *path ;
-    meFiletime         stmtime ;              /* modification time of dir */
-}  meDirList ;
+    int                exact;
+    int                size;
+    meUByte          **list;
+    meUByte           *mask;
+    int                curr;
+    meUByte           *path;
+    meFiletime         stmtime;              /* modification time of dir */
+}  meDirList;
 
 typedef struct {
-    int                exact ;
-    int                size ;
-    meUByte          **list ;
-    meUByte           *mask ;
-    int                curr ;
-} meNamesList ; 
+    int                exact;
+    int                size;
+    meUByte          **list;
+    meUByte           *mask;
+    int                curr;
+} meNamesList;
 
 #if MEOPT_REGISTRY
 /*

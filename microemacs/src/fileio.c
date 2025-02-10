@@ -190,7 +190,7 @@ meUByte charMaskFlags[]="luhs1234dpPwaAMIDkc";
 meUByte *charKeyboardMap=NULL;
 
 #define meBINARY_BPL       16   /* bytes per line */
-#define meRBIN_BPL        256   /* bytes per line */
+#define meRBIN_BPL       1024   /* bytes per line */
 
 meInt ffread;
 meInt ffremain;
@@ -2628,4 +2628,345 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
 #endif
     return rr ;
 }
+
+/* n bits:
+ * 0x0003 Based conversion type - 0 = lossless bin, 1 = utf8, 2 = utf16, 3 = utf32 
+ * 0x0004 Big-Endian utf16 or utf32 (little endian if not set)
+ * 0x0008 Check for & remove Unicode BOM or add BOM on save 
+ * 0x0100 utf - test for type (0x07 must not be set) 
+ * 0x0200 Convert to new buffer rather than replace current
+ * 0x0400 Hide output buffer (used with 0x200)
+ * 
+ * Default is 0x0100 - ID and translate a Unicode file
+ */
+static meUByte *uniBom[] = { (meUByte *) "EFBBBF",(meUByte *) "FFFE",(meUByte *) "FFFE0000",NULL,NULL,(meUByte *) "FEFF",(meUByte *) "0000FEFF" };
+int
+translateBuffer(int f, int n)
+{
+    meBuffer *bp;
+    meUByte cc, ca, cb, c1, c2, c3, c4, flg=0, *dd, *ss, buf[meBUF_SIZE_MAX];
+    meLine *lp, *elp, *blp, *plp, *nlp;
+    int ii, uc, rr, lc=0, ll;
+    
+    if(!f)
+        n = 0x0100;
+    if(n & 0x0200)
+    {
+        /* prompt for and get the new buffer name */
+        if((rr = getBufferName((meUByte *)"Output buffer",0,0,buf)) <= 0)
+            return rr;
+        if((bp=bfind(buf,BFND_CREAT|BFND_CLEAR)) == NULL)
+            return meFALSE;
+        blp = bp->baseLine;
+    }
+    else
+    {
+        bp = frameCur->windowCur->buffer;
+        if(meModeTest(bp->mode,MDEDIT)
+#if MEOPT_IPIPES
+           || meModeTest(bp->mode,MDPIPE)
+#endif
+#if MEOPT_NARROW
+           || (bp->narrow != NULL)
+#endif
+#if MEOPT_UNDO
+           || (bp->undoHead != NULL)
+#endif
+           )
+            return mlwrite(MWABORT,(meUByte *)"[Current buffer must be clean]");
+        if((blp=meLineMalloc(0,0)) == NULL)
+            return meABORT;
+    }
+    nlp = plp = blp;
+    elp = frameCur->windowCur->buffer->baseLine;
+    lp = meLineGetNext(elp);
+    ss = lp->text;
+    if((n & 0x010f) == 0x0100)
+    {
+        ii = 6;
+        do {
+            if((dd = uniBom[ii]) != NULL)
+            {
+                ll = meStrlen(dd);
+                if(!memcmp(ss,dd,ll))
+                    break;
+            }
+        } while(--ii >= 0);
+        if(ii >= 0)
+        {
+            n |= (ii+1) | 0x0008;
+            ss += ll;
+        }
+        else
+            n |= 1;
+    }
+    else if((n & 0x000f) > 0x0008)
+    {
+        dd = uniBom[(n & 0x0007) - 1];
+        ll = meStrlen(dd);
+        if(!memcmp(ss,dd,ll))
+            ss += ll;
+        else
+            n ^= 0x0008;
+    }
+    dd = ffbuf;
+    ll = 0;
+    for(;;)
+    {
+        while(((cc = *ss++) == '\0') &&
+              ((lp = meLineGetNext(lp)) != elp))
+            ss = lp->text;
+        if((lp == elp) || ((cb = *ss++) == '\0'))
+            break;
+        uc = (((cc < 'A') ? cc-'0':cc-'A'+10) << 4) | ((cb < 'A') ? cb-'0':cb-'A'+10);
+        if(n & 0x0002)
+        {
+            if(((ca = *ss++) == '\0') || ((cb = *ss++) == '\0'))
+                break;
+            c2 = (((ca < 'A') ? ca-'0':ca-'A'+10) << 4) | ((cb < 'A') ? cb-'0':cb-'A'+10);
+            if(n & 0x0001)
+            {
+                if(((ca = *ss++) == '\0') || ((cb = *ss++) == '\0'))
+                    break;
+                c3 = (((ca < 'A') ? ca-'0':ca-'A'+10) << 4) | ((cb < 'A') ? cb-'0':cb-'A'+10);
+                if(((ca = *ss++) == '\0') || ((cb = *ss++) == '\0'))
+                    break;
+                c4 = (((ca < 'A') ? ca-'0':ca-'A'+10) << 4) | ((cb < 'A') ? cb-'0':cb-'A'+10);
+                if(n & 0x0004)
+                    uc = (uc << 24) | (((int) c2) << 16) | (((int) c3) << 8) | c4;
+                else
+                    uc = (((int) c4) << 24) | (((int) c3) << 16) | (((int) c2) << 8) | uc;
+            }
+            else
+            {
+                if(n & 0x0004)
+                    uc = (uc << 8) | c2;
+                else
+                    uc = (((int) c2) << 8) | uc;
+                if(((ii=(uc & 0xff00)) >= 0xd800) && (ii <= 0xdfff))
+                {
+                    if(ii >= 0xdc00)
+                        break;
+                    while(((ca = *ss++) == '\0') &&
+                          ((lp = meLineGetNext(lp)) != elp))
+                        ss = lp->text;
+                    if((lp == elp) || ((cb = *ss++) == '\0') ||
+                       ((c3 = *ss++) == '\0') || ((c4 = *ss++) == '\0'))
+                        break;
+                    c2 = (((ca < 'A') ? ca-'0':ca-'A'+10) << 4) | ((cb < 'A') ? cb-'0':cb-'A'+10);
+                    c3 = (((c3 < 'A') ? c3-'0':c3-'A'+10) << 4) | ((c4 < 'A') ? c4-'0':c4-'A'+10);
+                    if(n & 0x0004)
+                        ii = (((int) c2) << 8) | c3;
+                    else
+                        ii = (((int) c3) << 8) | c2;
+                    if(((ii & 0xff00) < 0xdc00) || ((ii & 0xff00) > 0xdfff))
+                        break;
+                    uc = 0x10000+((uc&0x3ff)<<10)+(ii&0x3ff);
+                }
+            }
+        }
+        else if((n & 0x0001) && (uc & 0x80))
+        {
+            if((uc & 0x40) == 0)
+                break;
+            ii = 0;
+            c2 = 0x40;
+            c3 = 0;
+            do {
+                while(((ca = *ss++) == '\0') &&
+                      ((lp = meLineGetNext(lp)) != elp))
+                    ss = lp->text;
+                if((lp == elp) || ((cb = *ss++) == '\0') ||
+                   (((c1 = (((ca < 'A') ? ca-'0':ca-'A'+10) << 4) | ((cb < 'A') ? cb-'0':cb-'A'+10)) & 0xc0) != 0x80))
+                    break;
+                ii = (ii << 6) | (c1 & 0x3f);
+                c3 += 6;
+            } while((uc & (c2 >>= 1)) != 0);
+            uc = ((uc & (c2-1)) << c3) | ii;
+        }
+        if((uc == 10) || (ll >= meLINE_LLEN_MAX))
+        {
+            if((n & 0x0003) && (uc == 10))
+            {
+                if((ll > 0) && (dd[-1] == '\r'))
+                {
+                    ll--;
+                    if(flg == 0)
+                        flg = meIOFLAG_CR|meIOFLAG_LF;
+                    else if(flg != (meIOFLAG_CR|meIOFLAG_LF))
+                        flg |= meIOFLAG_LTDIFF;
+                }
+                else if(flg == 0)
+                    flg = meIOFLAG_LF;
+                else if(flg != meIOFLAG_LF)
+                    flg |= meIOFLAG_LTDIFF;
+            }
+            if((nlp=meLineMalloc(ll,0)) == NULL)
+                break;
+            memcpy(nlp->text,ffbuf,ll);
+            nlp->text[ll] = '\0';
+            plp->next = nlp;
+            nlp->prev = plp;
+            plp = nlp;
+            lc++;
+            dd = ffbuf;
+            ll = 0;
+            if(uc == 10)
+                continue;
+            nlp->flag |= meLINE_NOEOL;
+        }
+        if(uc <= 2)
+        {
+            *dd++ = 0x01;
+            *dd++ = '0';
+            *dd++ = '0';
+            *dd++ = '0'+uc;
+            ll += 4;
+        }
+        else if(!(n & 0x0003))
+        {
+            *dd++ = (meUByte) uc;
+            ll++;
+        }
+        else if((uc < 256) && ((uc < 128) || (charToUnicode[uc-128] == uc)))
+        {
+            *dd++ = (meUByte) uc;
+            ll++;
+        }
+        else
+        {
+            ii = 127;
+            while((charToUnicode[ii] != uc) && (--ii >= 0))
+                ;
+            if(ii >= 0)
+            {
+                *dd++ = (meUByte) (ii+128);
+                ll++;
+            }
+            else if(uc < 0x1000)
+            {
+                *dd++ = 0x01;
+                *dd++ = hexdigits[uc >> 8];
+                *dd++ = hexdigits[(uc >> 4) & 0x0f];
+                *dd++ = hexdigits[uc & 0x0f];
+                ll += 4;
+            }
+            else if(uc < 0x100000)
+            {
+                *dd++ = 0x02;
+                *dd++ = hexdigits[uc >> 16];
+                *dd++ = hexdigits[(uc >> 12) & 0x0f];
+                *dd++ = hexdigits[(uc >> 8) & 0x0f];
+                *dd++ = hexdigits[(uc >> 4) & 0x0f];
+                *dd++ = hexdigits[uc & 0x0f];
+                ll += 6;
+            }
+            else
+            {
+                *dd++ = meCHAR_UNDEF;
+                ll++;
+            }
+        }
+    }
+    if((cc == '\0') && (ll > 0))
+    {
+        if((nlp=meLineMalloc(ll,0)) != NULL)
+        {
+            memcpy(nlp->text,ffbuf,ll);
+            nlp->text[ll] = '\0';
+            nlp->flag |= meLINE_NOEOL;
+            plp->next = nlp;
+            nlp->prev = plp;
+            plp = nlp;
+            lc++;
+        }
+        else
+            cc = 1;
+    }
+    blp->prev = plp;
+    plp->next = blp;
+    if(cc != '\0')
+    {
+        if(n & 0x0200)
+        {
+            bp->intFlag |= BIFBLOW;
+            zotbuf(bp,clexec);
+        }
+        else
+            meLineLoopFree(blp,1);
+        if(nlp == NULL)
+            /* ran out of memory */
+            return meABORT;
+        if((uc = (int) (ss-lp->text) -2) < 0)
+            uc = 0;
+        ll = 1;
+        while((lp = meLineGetPrev(lp)) != elp)
+            ll++;
+        return mlwrite(MWABORT,(meUByte *)"[Format error in source data at line %d column %d]",ll,uc);
+    }
+    if(!(n & 0x0200))
+    {
+        meAnchor *mk;
+        while((mk=bp->anchorList) != NULL)
+        {
+            bp->anchorList = mk->next;
+            meFree(mk);
+        }
+#if MEOPT_LOCALBIND
+        if(bp->bindList != NULL)
+        {
+            meFree(bp->bindList);
+            bp->bindList = NULL;
+            bp->bindCount = 0;
+        }
+#endif
+        meLineLoopFree(bp->baseLine,1);
+        bp->baseLine = blp;
+    }
+    bp->lineCount = lc; 
+    bp->dotLine = meLineGetNext(blp);
+    bp->dotLineNo = 0;
+    bp->dotOffset = 0;
+    bp->dotLineNo = 0;
+    bp->markLine = NULL;
+    bp->markOffset = 0;
+    bp->markLineNo = 0;
+    bp->vertScroll = 0;
+    bp->tabWidth = tabWidth;
+    bp->indentWidth = indentWidth;
+#if MEOPT_FILEHOOK
+    bp->fhook = bp->dhook = bp->bhook = bp->ehook = -1;
+#endif
+#if MEOPT_HILIGHT
+    bp->hilight = 0;
+    bp->indent = 0;
+#endif
+    bp->fileFlag = (bp->fileFlag & ~(meBFFLAG_BINARY|meBFFLAG_LTDIFF)) | (flg & meIOFLAG_LTDIFF);
+    meModeSet(bp->mode,MDXLATE);
+    if(flg & meIOFLAG_CR)
+        meModeSet(bp->mode,MDCR);
+    else
+        meModeClear(bp->mode,MDCR);
+    if(flg & meIOFLAG_LF)
+        meModeSet(bp->mode,MDLF);
+    else
+        meModeClear(bp->mode,MDLF);
+    meModeClear(bp->mode,MDRBIN);
+    bp->xlateFlag = (n & 0x00ff);
+    resetBufferWindows(bp);
+    setBufferContext(bp);
+    /* the buffer's fhook could have done some really whacky things like
+     * delete the buffer. If it has avoid crashing by checking the buffer
+     * is still a buffer! */
+    {
+        meBuffer *tbp = bheadp;
+        while(tbp != bp)
+            if((tbp=tbp->next) == NULL)
+                return meFALSE;
+    }
+    if((n & 0x0600) == 0x0200)
+        meWindowPopup(bp,NULL,0,NULL);
+    return meTRUE;
+}
+
 #endif

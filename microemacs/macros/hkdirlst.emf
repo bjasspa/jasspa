@@ -533,14 +533,21 @@ define-macro file-browser-swap-buffers
 
 0 define-macro dirlst-find-file
   set-variable #l3 1
+  set-variable #l6 ""
   !if &band @# 8
-    set-variable #l0 @mc5 "File read handler (?/b/c/C/r/t/z) ? " "bCcrtz" "(b)inary, (c)rypted, (C)rypted+(b/r), (r)educed bin, (t)ext, (z)file ? "
+    set-variable #l0 @mc5 "File read handler (?/b/c/C/l/r/t/u/z) ? " "bCclrtuz" "(b)inary, (c)rypted, (C)rypted+[blrtu], (l)ossless text (r)bin, (t)ext, (u)nicode, (z)file ? "
     !if &seq #l0 "C"
       set-variable #l3 &bor #l3 4
-      set-variable #l0 @mc5 "CFile read handler (?/b/r/t) ? " "brt" "(b)inary, (r)educed bin, (t)ext ? "
+      set-variable #l0 @mc5 "CFile read handler (?/b/l/r/t/u) ? " "blrtu" "(b)inary, (l)ossless text, (r)bin, (t)ext, (u)nicode ? "
     !endif
     !if &seq #l0 "z"
       set-variable #l3 0
+    !elif &seq #l0 "u"
+      set-variable #l3 &bor #l3 8
+      set-variable #l6 0x100
+    !elif &seq #l0 "l"
+      set-variable #l3 &bor #l3 8
+      set-variable #l6 0
     !else
       set-variable #l3 &bor #l3 &sin #l0 "-b-c---r"
     !endif
@@ -557,6 +564,7 @@ define-macro file-browser-swap-buffers
     !iif &and &sin "s" %ftp-flags .toolbar.open  !force toolbar-make-tool-visible "*ftp-console*"
     set-position "\x84"
     #l3 find-file #l0 @mna
+    !iif &len #l6  #l6 translate-buffer
     set-variable #l0 $buffer-fname
     !if &not &seq &rig #l0 &rsin "/" #l0 ""
       goto-position "\x84"
@@ -645,6 +653,7 @@ define-macro file-browser-swap-buffers
     !endif
     !if #l3
       #l3 find-file #l0 @mna
+      !iif &len #l6  #l6 translate-buffer
     !else
       find-zfile #l0 @mna
     !endif
