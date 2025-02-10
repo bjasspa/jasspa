@@ -1564,7 +1564,7 @@ yank(int f, int n)
     if(n < 0)
     {
 #if MEOPT_EXTENDED
-        if(n > -16)
+        if(n > -100)
 #endif
         {
             meKill *kl;
@@ -1588,7 +1588,7 @@ yank(int f, int n)
         }
 #if MEOPT_EXTENDED
         if((srchLastState != meTRUE) ||
-           ((ret = -16 - n) >
+           ((ret = -100 - n) >
 #if MEOPT_MAGIC
             mereRegexGroupNo()
 #else

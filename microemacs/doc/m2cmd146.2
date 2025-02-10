@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd146.2,v 2.8 2025/02/10 19:02:40 jon Exp $
+.Id $Id: m2cmd146.2,v 2.8 2025/02/10 23:27:00 jon Exp $
 .Im MicroEmacs command|insert
 .ds C0 "(\fB\*cy\fR)\ \&
 .so me.tni
@@ -30,11 +30,11 @@ If \fIyank\fR is IMMEDIATELY followed by a
 then the \fIyanked\fR text is replaced by text of the next entry in the kill ring. (another \fBreyank\fR replaces the
 text with the previous reyank text and so on).
 .PP
-If an negative argument is given, \fByank\fR removes the last 0-\fIn\fR items from the kill ring unless \fIn\fR is -16
+If an negative argument is given, \fByank\fR removes the last 0-\fIn\fR items from the kill ring unless \fIn\fR is -100
 or less.
 .PP
-When \fIn\fR is -16 the last search string match is inserted/yanked into the current buffer instead. If \fIn\fR is -17
-then the matches first group is inserted, -18 the 2nd group etc., see help on
+When \fIn\fR is -100 the last search string match is inserted/yanked into the current buffer instead. If \fIn\fR is -101
+then the matches first regex group is inserted, -102 the 2nd group etc., see help on
 .Ht @s0 4
 for more information about search groups. This numerical interface can be used to avoid the 2KB variable text limit 
 imposed on all \*(mS variables when a macro needs to insert or copy these value. The text of the match or search group 

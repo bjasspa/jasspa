@@ -205,12 +205,12 @@ define-macro openai-setup
     goto-line #l3
     backward-char
     insert-string ",\n{\"role\":\"assistant\",\"content\":\""
-    -17 yank
+    -101 yank
     insert-string "\"}"
     set-variable #l3 $window-line
     find-buffer "*oaic2*"
     insert-string "\n"
-    -17 yank
+    -101 yank
     find-buffer "*oaic*"
   !done
   find-buffer "*oaic2*"
