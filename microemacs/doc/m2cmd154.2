@@ -6,7 +6,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jul 16 23:13:14 1998
 .\"
-.Id $Id: m2cmd154.2,v 2.7 2022/06/12 17:13:25 jon Exp $
+.Id $Id: m2cmd154.2,v 2.7 2025/02/10 18:52:04 jon Exp $
 .Im MicroEmacs command|registry
 .so me.tni
 .TH mark-registry 2
@@ -72,20 +72,25 @@ output.
 .IP "\fBm\fR \- Merge"
 Marks the  registry  to enable  merging, see
 .Ht read-registry 2 .
+.IP "\fBp\fR \- Password Encryption"
+Marks the registry node for encryption using a manually entered password, node must be a file root (see \fBf\fR above). The registry file is encrypted
+when saved with
+.Ht save-registry 2
+using a user entered password. This can be used in conjunction with flag \fBy\fR for increased security. The password 
+must be entered on all read and write operations.
 .IP "\fBr\fR \- Reload"
 Marks the registry to enable reload, see
 .Ht read-registry 2 . 
 .IP "\fBu\fR \- Updated"
-Marks the registry as modified.  The modified bit is removed when the registry
-file is saved. If the  modified  bit is  applied  to a registry  node the user
-will be  prompted  to save  the  registry  when it is  deleted  (or it will be
+Marks the registry as modified. The modified bit is removed when the registry file is saved. If the modified bit is
+applied to a registry node the user will be prompted to save the registry when it is deleted (or it will be
 automatically saved when the \fIAutosave\fR mode is used).
-.IP "\fBy\fR \- Encryption"
-Marks the  registry  node for  encryption.  The value of the registry  node is
-encrypted using the internal  encryption  algorithm. The value will not appear
-in plain text when using
-.Ht save-registry 2 .
-This is typically used for password information etc.
+.IP "\fBy\fR \- Auto-Encryption"
+Marks the registry node for encryption using an auto-generated encryption key, node must be a file root (see \fBf\fR
+above). The registry file is encrypted when saved with
+.Ht save-registry 2
+using an auto-generated password. This can be used in conjunction with flag \fBp\fR for increased security. Do not
+rename the physical file as the file name is used as part of the encryption key.
 .PP
 Multiple modes may be applied.
 .SH EXAMPLE

@@ -1907,11 +1907,13 @@ WinKillToClipboard(void)
                     /* Convert the end of line to CR/LF */
                     if(uc == meCHAR_NL)
                         *bufp++ = '\r';
+#if MEOPT_EXTENDED
                     /* Convert any special characters */
                     else if(uc >= 0x80)
                         uc = charToUnicode[uc-128];
                     else if((meSystemCfg & meSYSTEM_FONTFIX) && (uc < TTSPECCHARS))
                         uc = ttSpeChars[uc];
+#endif
                     /* Copy in the character */
                     *bufp++ = uc;
                 }
@@ -2025,6 +2027,7 @@ TTgetClipboard(void)
                     *dd++ = '\n';
                     ll = 0;
                 }
+#if MEOPT_EXTENDED
                 if(uc >= 0x80)
                 {
                     int ii = 127;
@@ -2036,6 +2039,7 @@ TTgetClipboard(void)
                         *dd++ = meCHAR_UNDEF;
                 }
                 else
+#endif
                     *dd++ = (meUByte) uc;
                 ll++;
             }

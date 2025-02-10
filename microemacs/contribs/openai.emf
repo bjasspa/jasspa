@@ -1,0 +1,297 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2025 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     2025-02-07
+; Synopsis:    Integrated OpenAI Completions support
+; Authors:     Steven Phillips
+;
+; Notes:       Requires OpenAI API Key, run openai-setup first.
+;
+define-macro openai-setup
+  !if &seq "" &reg "/openai" ""
+    set-variable #l1 @ml24 "OpenAI reg-file" &cat $user-name "oai"
+    !if &seq "ERROR" &set #l2 &find #l1 ".erf"
+      !iif &not &seq &rig #l1 -4 ".erf"  set-variable #l1 &cat #l1 ".erf"
+      !if &or &sin "/" #l1 &sin "\\" #l1
+        set-variable #l1 &stat a #l1
+      !else
+        set-variable #l1 &cat $user-path #l1
+      !endif
+      set-registry "/openai" #l1
+      mark-registry "/openai" "fupy"
+    !else
+      read-registry "/openai" #l1 "py" @mna
+    !endif
+  !endif
+  !if @#
+  !elif &seq "" &reg "/openai/key" ""
+  !elif &not &seq "" &reg "/openai/cmpl-mdl" ""
+    !return
+  !endif
+  set-variable #l1 @ml0 "OpenAI API Key [leave blank for no change]"
+  !if &seq "" #l1
+  !elif &or &les &len #l1 80 &not &seq "sk-" &lef #l1 3
+    -8 ml-write "[Given API key is not long enough or does not start with 'sk-']"
+  !else
+    set-registry "/openai/key" #l1
+    mark-registry "/openai/key" "!"
+    mark-registry "/openai" "u"
+  !endif
+  set-variable #l2 @ml20 "Completions model" &con &seq "" &set #l1 &reg "/openai/cmpl-mdl" "" "gpt-4o" #l1
+  !iif &seq "" #l2  -8 ml-write "[A completions model is required]"
+  !if &not &seq #l2 #l1
+    set-registry "/openai/cmpl-mdl" #l2
+    mark-registry "/openai" "u"
+  !endif
+  set-variable #l2 @ml20 "Developer prompt" &set #l1 &reg "/openai/cmpl-dev" ""
+  !if &not &seq #l2 #l1
+    set-registry "/openai/cmpl-dev" #l2
+    mark-registry "/openai" "u"
+  !endif
+  set-variable #l2 @ml19 "Store completions" &set #l1 &reg "/openai/cmpl-str" "false" "|false|true|"
+  !iif &not &lfin "|false|true|" #l2  -8 ml-write "[Store must be true or false]"
+  !if &not &seq #l2 #l1
+    set-registry "/openai/cmpl-str" #l2
+    mark-registry "/openai" "u"
+  !endif
+!emacro
+
+0 define-macro openai-cmpl-req
+  !force popup-window "*oai-cmpl-qry*"
+  !if &not $status
+    openai-cmpl-get-frame
+    -8 ml-write "[Not in OpenAI Completions frame]"
+  !elif &or &seq "" &reg "/openai/key" "" &seq "" &reg "/openai/cmpl-mdl" ""
+    -8 ml-write "[OpenAI Completions model has not been set - run openai-setup first]" 
+  !endif
+  end-of-buffer
+  set-mark
+  !while &gre $window-line 1
+    backward-line
+  !until &not &seq &trr @wl ""
+  !iif &not &seq &trr @wl ""  forward-line
+  -1 kill-region
+  !if &equ $window-line 1
+    !force 0 delete-buffer "*oai-cmpl-prm*"
+    set-variable :qry-no 0
+    set-variable $buffer-mode-line &rep $mode-line "%b" "* OpenAI Completions: Query 1 *"
+    ml-write "[Completions chat reset]"
+    !return
+  !endif
+  beginning-of-buffer
+  copy-region
+  2 change-buffer-charset "display" "utf8"
+  beginning-of-buffer
+  replace-string "\\\\" "\\\\\\\\"
+  beginning-of-buffer
+  replace-string "\"" "\\\\\""
+  beginning-of-buffer
+  replace-string "[ \t]*\n" "\\\\n"
+  beginning-of-buffer
+  set-mark
+  end-of-buffer
+  !iif &sub 2 $window-line  -8 ml-write "[Error - unexpected buffer content]"
+  kill-region
+  set-variable $buffer-mode-line &rep $mode-line "%b" &spr "* OpenAI Completions: Query %d *" &add 1 &inc :qry-no 1
+  next-window
+  find-buffer "*oai-cmpl-prm*"
+  end-of-buffer
+  !force search-buffer "beM" "}"
+  !if &set #l9 $status
+    set-variable #l1 &add $window-line 1
+    goto-matching-fence
+    beginning-of-line
+    set-mark
+    goto-line #l1
+    copy-region
+    yank
+    -1 yank
+    !if &not &seq @wc ""
+      set-mark
+      end-of-buffer
+      -1 kill-region
+    !endif
+    !force 2 search-buffer "beM" "}"
+    forward-char
+    insert-string ",\n"
+  !else
+    beginning-of-buffer
+    !if &not &seq @wc ""
+      set-mark
+      end-of-buffer
+      -1 kill-region
+    !endif
+    set-variable #l1 1
+    insert-string &spr "{\"model\":\"%s\",\"store\":%s,\"messages\": [\n" &reg "/openai/cmpl-mdl" "" &reg "/openai/cmpl-str" "false"
+    !iif &not &seq "" &set #l2 &reg "/openai/cmpl-dev" "" insert-string &spr "{\"role\":\"developer\",\"content\":\"%s\"},\n" &rep &rep #l2 "\\" "\\\\" "\"" "\\\""
+    insert-string "\n]}"
+    backward-line
+  !endif
+  insert-string "{\"role\":\"user\",\"content\":\"\n"
+  set-variable #l2 $window-line
+  yank
+  -1 yank
+  set-variable #l3 $window-line
+  goto-line #l2
+  &sub #l2 #l3 replace-string "\\\\" "\\\\\\\\"
+  goto-line #l2
+  &sub #l2 #l3 replace-string "\"" "\\\\\""
+  goto-line #l2
+  backward-delete-char
+  goto-line &dec #l3 1
+  backward-delete-char
+  insert-string "\"}"
+  goto-line #l1
+  set-mark
+  end-of-buffer
+  !force 3 narrow-buffer
+  !force 6 append-buffer &set #l2 $temp-name
+  set-variable #l4 $status
+  !force narrow-buffer
+  !iif &not #l4  -8 ml-write &spr "[Failed to write to temporary file: %s]" #l2
+  set-variable %http-header &cat "Content-Type: application/json\r\nAuthorization: Bearer " &reg "/openai/key" ""
+  set-variable %http-post-file #l2
+  !force delete-buffer "*oaic*"
+  find-buffer "*oaic*"
+  !force insert-file "https://api.openai.com/v1/chat/completions"
+  set-variable #l0 $result
+  !force 0x20 file-op #l2
+  find-buffer "*oai-cmpl-cht*"
+  end-of-buffer
+  !iif &gre &set #l8 &sub $window-width 1 128  set-variable #l8 128
+  !iif &les #l8 78 set-variable #l8 78
+  set-variable $buffer-fill-col &con &gre #l8 88 &sub #l8 20 &sub #l8 10 
+  !if &equ $window-line 1
+  !elif &not #l9
+    insert-string &spr "%n\n" #l8 "_" 
+  !endif
+  insert-string "\n"
+  set-variable #l2 $window-line
+  yank
+  -1 yank
+  goto-line #l2
+  !force 30000 ifill-paragraph "o"
+  set-mark
+  !repeat
+    backward-line
+  !until &not &seq &trr @wl ""  !break
+  forward-line
+  -1 kill-region
+  goto-line #l2
+  set-variable #l1 0
+  !while &not &seq @wc ""
+    set-variable $line-scheme .scheme.keyword
+    !iif &gre &len @wl #l1  set-variable #l1 &len @wl
+    forward-line
+  !done
+  !if &gre &set #l1 &sub #l8 #l1 0
+    goto-line #l2
+    !while &not &seq @wc ""
+      #l1 insert-space
+      beginning-of-line
+      forward-line
+    !done
+  !endif
+  !force delete-buffer "*oaic2*"
+  find-buffer "*oaic*"
+  1 buffer-mode "hide"
+  beginning-of-buffer
+  !repeat
+    !force search-buffer "me" "\"message\": *{\n *\"role\": *\"assistant\",\n *\"content\": *\"\\(\\([^\"\\\\]\\|\\\\.\\)*\\)\""
+    !iif &not $status  !break
+    find-buffer "*oai-cmpl-prm*"
+    goto-line #l3
+    backward-char
+    insert-string ",\n{\"role\":\"assistant\",\"content\":\""
+    -17 yank
+    insert-string "\"}"
+    set-variable #l3 $window-line
+    find-buffer "*oaic2*"
+    insert-string "\n"
+    -17 yank
+    find-buffer "*oaic*"
+  !done
+  find-buffer "*oaic2*"
+  1 buffer-mode "hide"
+  !iif &seq $window-line 1  insert-string "\n<no response>"
+  beginning-of-buffer
+  replace-string "\\\\n" "\n"
+  beginning-of-buffer
+  replace-string "\\\\t" "\t"
+  beginning-of-buffer
+  replace-string "\\\\\\(.\\)" "\\1"
+  4 change-buffer-charset "utf8" "display"
+  beginning-of-buffer
+  set-mark
+  end-of-buffer
+  kill-region
+  find-buffer "*oai-cmpl-cht*"
+  end-of-buffer
+  set-variable #l2 $window-line
+  yank
+  -1 yank
+  goto-line #l2
+  !force 30000 ifill-paragraph "o"
+  next-window
+  !iif &not &seq "200" #l0  ml-write &spr "[Warning - OpenAI returned: %s]" #l0
+!emacro
+
+0 define-macro openai-cmpl-get-frame
+  !if &exi .frame-id
+    set-variable #l0 $frame-id
+    !repeat
+      !iif &equ .frame-id $frame-id  !goto get-windows
+      3 next-frame
+    !until &equ #l0 $frame-id
+    unset-variable .frame-id
+  !endif
+  !iif &not @#  !abort
+  1 create-frame
+  set-variable .frame-id $frame-id
+*get-windows
+  set-variable #l0 &add $window-mode-line $window-scroll-bar
+  set-variable #l2 $window-id
+  3 next-window
+  set-variable #l1 &add $window-mode-line $window-scroll-bar
+  3 next-window
+  !if &or &sub #l2 $window-id &equ #l0 #l1
+    delete-other-windows
+    split-window-vertically
+    6 next-window
+    !if &gre $window-mode-line 40 
+      &div $window-mode-line 2 change-window-depth
+    !elif &gre $window-mode-line 21
+      &div &sub $window-mode-line 20 2 change-window-depth
+    !endif
+  !endif
+  6 next-window
+  find-buffer "*oai-cmpl-cht*"
+  set-variable $buffer-mode-line &rep $mode-line "%b" "* OpenAI Completions: Chat *"
+  !iif &exi .hilight.md  set-variable $buffer-hilight .hilight.md
+  next-window
+  find-buffer "*oai-cmpl-qry*"
+  set-variable $buffer-mode-line &rep $mode-line "%b" &spr "* OpenAI Completions: Query %d *" &add :qry-no 1
+  buffer-bind-key openai-cmpl-req "C-return"
+  !iif &seq "" &reg "/openai" ""  0 openai-setup
+!emacro
+
+define-macro openai-completions-close
+  !if &equ $frame-id &set #l1 .openai-cmpl-get-frame.frame-id
+    set-variable #l0 $frame-id
+    1 next-frame
+    !iif &equ #l0 #l1  2 next-frame
+  !endif
+!emacro
+
+define-macro openai-completions
+  ; if frame is currently visible then close notes
+  !if &equ $frame-id .openai-cmpl-get-frame.frame-id
+    openai-completions-close
+  !else
+    openai-cmpl-get-frame
+  !endif
+!emacro
+
+global-bind-key openai-completions "f9"

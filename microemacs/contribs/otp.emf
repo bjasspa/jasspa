@@ -1,0 +1,154 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2024-2025 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     2024-04-13
+; Synopsis:    Macros required to generate HOTP & TOTP keys
+; Authors:     Steven Phillips
+;
+0 define-macro base32-to-hex
+  set-variable #l0 @2
+  !while &seq "=" &rig #l0 -1
+    set-variable #l0 &lef #l0 -1
+  !done
+  !if &len &xrep #l0 "[A-Z2-7]*" ""
+    ml-write "[Invalid characters in base32 string]"
+    !abort
+  !endif
+  !if &seq "-" &set #l5 &mid .o &band &set #l3 &len #l0 7 1
+    ml-write "[Invalid base32 string length]"
+    !abort
+  !endif
+  !iif &band #l3 3  set-variable #l0 &spr "%s%n" #l0 &sub 4 &band #l3 3 "A" 
+  set-variable #l1 ""
+  !while &not &seq "" &set #l2 &lef #l0 4
+    set-variable #l4 &add &add &add &mul 32768 &sub &sin &lef #l2 1 .e 1 &mul 1024 &sub &sin &mid #l2 1 1 .e 1 &mul 32 &sub &sin &mid #l2 2 1 .e 1 &sub &sin &rig #l2 -1 .e 1
+    set-variable #l1 &spr "%s%05x" #l1 #l4
+    set-variable #l0 &rig #l0 4
+  !done
+  !iif #l5  set-variable #l1 &lef #l1 &sub 0 #l5 
+  set-variable @1 #l1
+!emacro
+set-variable .base32-to-hex.e "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
+set-variable .base32-to-hex.o "0-3-14-2"
+
+0 define-macro base64-to-hex
+  set-variable #l0 @2
+  !while &seq "=" &rig #l0 -1
+    set-variable #l0 &lef #l0 -1
+  !done
+  !if &len &xrep #l0 &spr "[%s]*" .e ""
+    ml-write "[Invalid characters in base64 string]"
+    !abort
+  !endif
+  !if &equ 1 &set #l5 &band &set #l3 &len #l0 3
+    ml-write "[Invalid base64 string length]"
+    !abort
+  !endif
+  !iif #l5  set-variable #l0 &spr "%s%n" #l0 &sub 4 #l5 "A" 
+  set-variable #l1 ""
+  !while &not &seq "" &set #l2 &lef #l0 4
+    set-variable #l4 &add &add &add &mul 262144 &sub &sin &lef #l2 1 .e 1 &mul 4096 &sub &sin &mid #l2 1 1 .e 1 &mul 64 &sub &sin &mid #l2 2 1 .e 1 &sub &sin &rig #l2 -1 .e 1
+    set-variable #l1 &spr "%s%06x" #l1 #l4
+    set-variable #l0 &rig #l0 4
+  !done
+  !iif #l5  set-variable #l1 &lef #l1 &sub &mul #l5 2 8
+  set-variable @1 #l1
+!emacro
+set-variable .base64-to-hex.e "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+
+0 define-macro hex-to-base32
+  set-variable #l0 @2
+  set-variable #l1 ""
+  !if &band &set #l3 &len #l0 1
+    ml-write "[Invalid hex string length]"
+    !abort
+  !endif
+  !iif &set #l5 &mod #l3 5  set-variable #l0 &spr "%s%n" #l0 &sub 5 #l5 "0" 
+  set-variable #l2 &div &len #l0 5
+  !while &pdec #l2 1
+    set-variable #l4 &cat "0x0" &lef #l0 5
+    set-variable #l1 &spr "%s%s%s%s%s" #l1 &mid .e &band &div #l4 32768 0x1f 1 &mid .e &band &div #l4 1024 0x1f 1 &mid .e &band &div #l4 32 0x1f 1 &mid .e &band #l4 0x1f 1
+    set-variable #l0 &rig #l0 5
+  !done
+  !iif &set #l5 &mid .o #l5 1  set-variable #l1 &lef #l1 &sub 0 #l5 
+  set-variable @1 #l1
+!emacro
+set-variable .hex-to-base32.e "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
+set-variable .hex-to-base32.o "03210"
+
+define-macro generate-totp
+  !if &seq "" &reg "/hot" ""
+    set-variable #l1 @ml01 "Hot reg-file"
+    read-registry "hot" #l1 "py" @mna
+  !endif
+  !force set-variable #l0 @1
+  !if &not $status
+    set-variable #l1 "\h"
+    set-variable #l2 0
+    !repeat
+      !iif &seq "" &set #l3 &reg &cat "/hot/" &inc #l2 1 ""  !break
+      set-variable #l1 &lins #l1 -1 #l3
+    !done
+    !if &equ #l2 1
+      ml-write "[No HOTs defined]"
+      !abort
+    !endif
+    set-variable #l0 @ml09 "HOT ID" #l1
+    !jump 2
+  !elif &not &set #l1 &add #l0 0
+    set-variable #l1 0
+    !while &not &seq "" &set #l3 &reg &cat "/hot/" &inc #l1 1 ""
+      !iif &seq #l3 #l0  !break
+    !done
+    !if &seq "" #l3
+      ml-write &spr "[Failed to find HOT with ID: %s]" #l0
+      !abort
+    !endif
+  !elif &seq "" &set #l0 &reg &cat "/hot/" #l1 ""
+    ml-write &spr "[Invalid HOT index given: %s]" #l1
+    !abort
+  !endif
+  set-variable #l3 &reg &spr "/hot/%s/key" #l1 ""
+  base32-to-hex #l2 #l3
+  ;base64-to-hex #l2 #l3
+  set-variable #l3 &spr "%016x" &div $unix-time &reg &spr "/hot/%s/p" #l1 "30"
+  &con &seq "s2" &reg &spr "/hot/%s/a" #l1 "s1" 15 31 generate-hash #l2 #l3
+  set-variable #l5 &mul 2 &cat "0x0" &rig &set #l4 $result -1
+  set-variable #l6 &spr "0x%02x%s" &band 0x7f &cat "0x" &mid #l4 #l5 2 &mid #l4 &add #l5 2 6
+  set-variable #l8 &spr "%%0%dd" &set #l7 &reg &spr "/hot/%s/d" #l1 "6"
+  set-variable .r &set @y &spr #l8 &mod #l6 &spr "1%n" #l7 "0"
+  ml-write &spr "[TOTP - %s: %s %s]" #l0 &lef .r &div #l7 2 &rig .r &div #l7 2
+!emacro
+
+define-macro add-totp
+  !if &seq "" &reg "/hot" ""
+    set-variable #l1 @ml01 "Hot reg-file"
+    read-registry "hot" #l1 "py" @mna
+  !endif
+  set-variable #l0 @ml0 "HOT ID"
+  set-variable #l1 0
+  !while &not &seq "" &set #l3 &reg &cat "/hot/" &inc #l1 1 ""
+    !iif &seq #l3 #l0  !break
+  !done
+  !iif &not &seq "" #l3  -8 ml-write &spr "[A HOT with given ID already exists: %s]" #l0
+  set-variable #l2 @ml08 "HOT Key"
+  !iif &seq #l2 ""  -8 ml-write "[The HOT key must be given]"
+  !iif &not &xseq #l2 &spr "^[%s]+$" .hex-to-base32.e  -8 ml-write "[The given HOT key is not a valid base32 encoded string]"
+  set-variable #l3 @ml20 "HOT issuer" #l0
+  set-variable #l4 @ml20 "HOT time period" "30"
+  set-variable #l5 @ml19 "HOT algorithm" "s1" "|s1|s2|"
+  set-variable #l6 @ml20 "HOT output digits" "6"
+  set-registry &set #l9 &cat "/hot/" #l1 #l0
+  set-registry &cat #l9 "/key" #l2
+  set-registry &cat #l9 "/issuer" #l3
+  !iif &not &seq #l4 "30"  set-registry &cat #l9 "/p" #l4
+  !iif &not &seq #l5 "s1"  set-registry &cat #l9 "/a" #l5
+  !iif &not &seq #l6 "6"  set-registry &cat #l9 "/d" #l5
+  mark-registry &cat #l9 "/key" "!"
+  mark-registry "/hot" "u"
+  generate-totp #l0
+!emacro
+
+;generate-totp "1"

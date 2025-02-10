@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd146.2,v 2.8 2022/06/12 17:13:25 jon Exp $
+.Id $Id: m2cmd146.2,v 2.8 2025/02/10 19:02:40 jon Exp $
 .Im MicroEmacs command|insert
 .ds C0 "(\fB\*cy\fR)\ \&
 .so me.tni
@@ -27,12 +27,18 @@ and paste from the global clip-board.
 .PP
 If \fIyank\fR is IMMEDIATELY followed by a
 .Ht reyank 2
-then the  \fIyanked\fR  text is replaced by text of the next entry in the kill
-ring. (another  \fBreyank\fR  replaces the text with the previous  reyank text
-and so on).
+then the \fIyanked\fR text is replaced by text of the next entry in the kill ring. (another \fBreyank\fR replaces the
+text with the previous reyank text and so on).
 .PP
-If an negative argument is given, \fByank\fR  removes the last 0-\fIn\fR items
-from the kill ring.
+If an negative argument is given, \fByank\fR removes the last 0-\fIn\fR items from the kill ring unless \fIn\fR is -16
+or less.
+.PP
+When \fIn\fR is -16 the last search string match is inserted/yanked into the current buffer instead. If \fIn\fR is -17
+then the matches first group is inserted, -18 the 2nd group etc., see help on
+.Ht @s0 4
+for more information about search groups. This numerical interface can be used to avoid the 2KB variable text limit 
+imposed on all \*(mS variables when a macro needs to insert or copy these value. The text of the match or search group 
+is not inserted into the kill buffer.
 .PP
 Text is inserted into the kill buffer by one of the following commands:-
 .IP
@@ -47,24 +53,20 @@ Text is inserted into the kill buffer by one of the following commands:-
 .Ht backward-delete-char 2 .
 .ad
 .LP
-All the above commands (except  \fBcopy-region\fR) cut text out of the buffer,
-the last two  character  delete  commands  require  the  presence of a numeric
-argument to add the deleted text to the kill buffer. If any of these  commands
-are executed immediately after any other (including itself) or the
+All the above commands (except \fBcopy-region\fR) cut text out of the buffer, the last two character delete commands
+require the presence of a numeric argument to add the deleted text to the kill buffer. If any of these commands are
+executed immediately after any other (including itself) or the
 .Ht @cl 4
-variable is set to one of these  command, the new kill text is appended to the
-last kill buffer text.
+variable is set to one of these command, the new kill text is appended to the last kill buffer text.
 .SH NOTES
 Windowing  systems such as X-Windows  and Microsoft  Windows  utilize a global
 windowing kill buffer allowing data to be moved between windowing applications
 .\"
-(\fIcut   buffer\fR   and   \fIclipboard\fR,   respectively).   Within   these
-environments  \*(mE  automatically  interacts with the windowing  systems kill
-buffer,  the last  \*(mE kill  buffer  entry is  immediately  available  for a
-\fIpaste\fR  operation  into  another  application  (regardless  of how it was
-inserted into the kill buffer).  Conversely, data placed in the windowing kill
-buffer  is  available  to  \*(mE,  via  \fByank\fR,  until a new item has been
-inserted into the kill buffer (the data may still be available via
+(\fIcut buffer\fR and \fIclipboard\fR, respectively). Within these environments \*(mE automatically interacts with the
+windowing systems kill buffer, the last \*(mE kill buffer entry is immediately available for a \fIpaste\fR operation
+into another application (regardless of how it was inserted into the kill buffer). Conversely, data placed in the
+windowing kill buffer is available to \*(mE, via \fByank\fR, until a new item has been inserted into the kill buffer
+(the data may still be available via
 .Ht reyank 2 ).
 .SH EXAMPLE
 The  following  example is a basic macro code implementation of the
@@ -95,7 +97,8 @@ the kill buffer, effectively tidying up after itself.
 .Ht reyank 2 ,
 .Ht yank-rectangle 2 ,
 .Ht @y 4 ,
-.Ht @cc 4 .
+.Ht @cc 4 ,
+.Ht @s0 4 .
 .ad
 .rm C0
 .FH
