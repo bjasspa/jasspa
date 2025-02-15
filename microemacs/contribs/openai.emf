@@ -270,10 +270,14 @@ define-macro openai-setup
   find-buffer "*oai-cmpl-cht*"
   set-variable $buffer-mode-line &rep $mode-line "%b" "* OpenAI Completions: Chat *"
   !iif &exi .hilight.md  set-variable $buffer-hilight .hilight.md
+  buffer-bind-key openai-completions-close "C-x k"
   next-window
   find-buffer "*oai-cmpl-qry*"
+  1 buffer-mode "wrap"
+  set-variable $buffer-fill-col &sub &con &gre $window-width 130 130 $window-width 2
   set-variable $buffer-mode-line &rep $mode-line "%b" &spr "* OpenAI Completions: Query %d *" &add :qry-no 1
   buffer-bind-key openai-cmpl-req "C-return"
+  buffer-bind-key openai-completions-close "C-x k"
   !iif &seq "" &reg "/openai" ""  0 openai-setup
 !emacro
 
