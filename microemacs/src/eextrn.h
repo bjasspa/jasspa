@@ -473,6 +473,7 @@ extern int      ffWriteFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp
 #if MEOPT_EXTENDED
 extern int      ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode);
 extern int      translateBuffer(int f, int n);
+extern meLine * translateBufferBack(meBuffer *bp, meUInt flags);
 #else
 #define ffFileOp(s,d,f,m) 0
 #define translateBuffer notAvailable
@@ -1529,8 +1530,7 @@ extern int      putenv(const char *s);
 
 #endif
 
-#define	hexToNum(c)      ((c <= '9') ? (c^0x30)   : \
-                          (c >= 'a') ? (c-'a'+10) : (c-'A'+10))
+#define	hexToNum(c)      (((c) <= '9') ? ((c)^0x30) : ((c)&7)+9)
 
 /*	Macro argument token types					*/
 

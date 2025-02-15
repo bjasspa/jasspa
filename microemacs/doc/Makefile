@@ -107,6 +107,7 @@ CMD2_150=	$(DOCDIR)m2cmd150.2 $(DOCDIR)m2cmd151.2 $(DOCDIR)m2cmd152.2\
 		$(DOCDIR)m2cmd153.2 $(DOCDIR)m2cmd154.2 $(DOCDIR)m2cmd155.2\
 		$(DOCDIR)m2cmd156.2 $(DOCDIR)m2cmd157.2 $(DOCDIR)m2cmd158.2\
 		$(DOCDIR)m2cmd159.2
+# TODO: doc translate-buffer
 CMD2_160=	$(DOCDIR)m2cmd160.2 $(DOCDIR)m2cmd161.2 $(DOCDIR)m2cmd162.2\
 		$(DOCDIR)m2cmd163.2
 #
@@ -119,6 +120,7 @@ NAR2_000=	$(DOCDIR)m2nar000.2 $(DOCDIR)m2nar001.2	$(DOCDIR)m2nar002.2 \
 		$(DOCDIR)m2nar009.2
 NAR2_010=	$(DOCDIR)m2nar010.2 $(DOCDIR)m2nar011.2 $(DOCDIR)m2nar012.2
 #
+# TODO: doc xlate mode
 MOD2_000=	$(DOCDIR)m2mod000.2 $(DOCDIR)m2mod001.2 \
 		$(DOCDIR)m2mod003.2 $(DOCDIR)m2mod004.2 $(DOCDIR)m2mod005.2\
 		$(DOCDIR)m2mod006.2 \
@@ -205,6 +207,7 @@ FIL4_030=	$(DOCDIR)m4fil030.4 $(DOCDIR)m4fil031.4 $(DOCDIR)m4fil032.4\
 		$(DOCDIR)m4fil033.4 $(DOCDIR)m4fil034.4 $(DOCDIR)m4fil035.4\
 		$(DOCDIR)m4fil036.4 $(DOCDIR)m4fil037.4 $(DOCDIR)m4fil038.4
 #
+# TODO: doc $buffer-xlate
 VAR5_000=	$(DOCDIR)m5var000.5 $(DOCDIR)m5var001.5 $(DOCDIR)m5var002.5\
 		$(DOCDIR)m5var003.5 $(DOCDIR)m5var004.5 $(DOCDIR)m5var005.5\
 		$(DOCDIR)m5var006.5 $(DOCDIR)m5var007.5 $(DOCDIR)m5var008.5\

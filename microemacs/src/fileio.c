@@ -99,7 +99,7 @@ meUByte charMaskTbl1[256] =
     0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A, 0x0A,
     0x0A,
 #endif
-          0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
+    0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
     0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
     0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
     0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A, 0x7A,
@@ -253,9 +253,9 @@ ffUrlGetType(meUByte *url)
 #define meSOCKET_TIMEOUT      115000
 #define meBUF_SOCK_SIZE_MAX   (((meSOCK_BUFF_SIZE) > (meBUF_SIZE_MAX)) ? (meSOCK_BUFF_SIZE) : (meBUF_SIZE_MAX))
 
-static meUByte *ffUrlFlagsVName[2]={(meUByte *)"http-flags",(meUByte *)"ftp-flags"} ;
-static meUByte *ffUrlFlagsVDef[2]={(meUByte *)"c",(meUByte *)"ci"} ;
-static meUByte *ffUrlConsoleBName[2]={(meUByte *)"*http-console*",(meUByte *)"*ftp-console*"} ;
+static meUByte *ffUrlFlagsVName[2]={(meUByte *)"http-flags",(meUByte *)"ftp-flags"};
+static meUByte *ffUrlFlagsVDef[2]={(meUByte *)"c",(meUByte *)"ci"};
+static meUByte *ffUrlConsoleBName[2]={(meUByte *)"*http-console*",(meUByte *)"*ftp-console*"};
 static meCookie ffUrlCookie;
 
 
@@ -282,20 +282,20 @@ ffUrlConsoleAddText(meIo *io, meUByte *str, int flags)
         meUByte buff[meBUF_SIZE_MAX], cc;
         int ii, ll;
         
-        olp = io->urlBp->dotLine ;
-        ll = ii = io->urlBp->dotOffset ;
-        meStrncpy(buff,meLineGetText(olp),ii) ;
+        olp = io->urlBp->dotLine;
+        ll = ii = io->urlBp->dotOffset;
+        meStrncpy(buff,meLineGetText(olp),ii);
         while((cc=*str++) != '\0')
-            buff[ii++] = cc ;
-        meStrcpy(buff+ii,meLineGetText(olp)+ll) ;
-        addLine(olp,buff) ;
-        nlp = meLineGetPrev(olp) ;
-        nlp->next = olp->next ;
-        olp->next->prev = nlp ;
+            buff[ii++] = cc;
+        meStrcpy(buff+ii,meLineGetText(olp)+ll);
+        addLine(olp,buff);
+        nlp = meLineGetPrev(olp);
+        nlp->next = olp->next;
+        olp->next->prev = nlp;
         if(olp->flag & meLINE_ANCHOR)
             meLineResetAnchors(meLINEANCHOR_ALWAYS|meLINEANCHOR_RETAIN,io->urlBp,
-                               olp,nlp,0,0) ;
-        meFree(olp) ;
+                               olp,nlp,0,0);
+        meFree(olp);
     }
     else
         addLineToEob(io->urlBp,str);
@@ -316,7 +316,7 @@ ffUrlConsoleAddText(meIo *io, meUByte *str, int flags)
     if(!(flags & 0x04))
     {
         if(io->urlOpts & meSOCKOPT_SHOW_CONSOLE)
-            screenUpdate(meTRUE,2-sgarbf) ;
+            screenUpdate(meTRUE,2-sgarbf);
 #ifdef _WIN32
         TTaheadFlush();
 #endif
@@ -335,7 +335,7 @@ ffCloseSockets(meIo *io, int force)
             io->urlOpts &= ~(meSOCKOPT_SHOW_STATUS|meSOCKOPT_LOG_STATUS|meSOCKOPT_LOG_ERROR|meSOCKOPT_LOG_WARNING|meSOCKOPT_LOG_DETAILS|meSOCKOPT_LOG_VERBOSE);
         else
             io->urlOpts &= ~meSOCKOPT_SHOW_STATUS;
-           
+        
         if(meSockClose(io,force))
             timerSet(SOCKET_TIMER_ID,-1,meSOCKET_TIMEOUT);
     }
@@ -349,38 +349,38 @@ ffUrlGetInfo(meIo *io, meUByte **host, meUByte **port, meUByte **user, meUByte *
     meUByte *ss;
     
     if(((root = regFind(NULL,(meUByte *)"/url")) == NULL) && ((root = regSet(NULL,(meUByte *)"/url",NULL)) == NULL))
-        return meFALSE ;
-    ss = (meUByte *) ((ffUrlTypeIsFtp(io->type)) ? "ftp":"http") ;
+        return meFALSE;
+    ss = (meUByte *) ((ffUrlTypeIsFtp(io->type)) ? "ftp":"http");
     if(((reg = regFind(root,ss)) == NULL) && ((reg = regSet(root,ss,NULL)) == NULL))
-        return meFALSE ;
+        return meFALSE;
     if(((root = regFind(reg,*host)) == NULL) && ((root = regSet(reg,*host,NULL)) == NULL))
-        return meFALSE ;
+        return meFALSE;
     
-    reg = regFind(root,(meUByte *)"user") ;
+    reg = regFind(root,(meUByte *)"user");
     if(*user != NULL)
     {
         if((*pass == NULL) && (reg != NULL) && !meStrcmp(regGetValue(reg),*user) &&
            ((reg = regFind(root,(meUByte *)"pass")) != NULL))
-            *pass = regGetValue(reg) ;
+            *pass = regGetValue(reg);
     }
     else if(reg != NULL)
     {
-        *user = regGetValue(reg) ;
+        *user = regGetValue(reg);
         if((reg = regFind(root,(meUByte *)"pass")) != NULL)
-            *pass = regGetValue(reg) ;
+            *pass = regGetValue(reg);
     }
-    io->passwdReg = NULL ;
+    io->passwdReg = NULL;
     if(*user != NULL)
     {
         if(*pass == NULL)
         {
-            meUByte buff[meSBUF_SIZE_MAX] ;
+            meUByte buff[meSBUF_SIZE_MAX];
             /* Always get the password from the user even when running a macro.
              * This is important for &stat which may trigger a password request */
             meStrcpy(buff,*user);
             meStrcat(buff,"@");
             meStrcat(buff,*host);
-            meStrcat(buff," password") ;
+            meStrcat(buff," password");
             if((meGetStringFromUser(buff, MLNOHIST|MLHIDEVAL, 0, buff, meSBUF_SIZE_MAX) <= 0) ||
                ((io->passwdReg = regSet(root,(meUByte *)"pass",buff)) == NULL) ||
                ((regGetValue(io->passwdReg) == NULL) && ((io->passwdReg->value = meStrdup(buff)) == NULL)))
@@ -402,8 +402,8 @@ ffUrlGetInfo(meIo *io, meUByte **host, meUByte **port, meUByte **user, meUByte *
             regSet(root,(meUByte *)"port",*port);
     }
     else if(reg != NULL)
-        *port = regGetValue(reg) ;
-    return meTRUE ;
+        *port = regGetValue(reg);
+    return meTRUE;
 }
 
 void
@@ -429,7 +429,7 @@ ffFtpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
         flags |= (ffUrlTypeIsFtpe(io->type)) ? meSOCKFLG_EXPLICIT_SSL:meSOCKFLG_USE_SSL;
         fl++;
     }
-    usr = psw = prt = NULL ;
+    usr = psw = prt = NULL;
     hst = dd = urlBuff;
     while(((cc=*fl++) != '\0') && (cc != '/'))
     {
@@ -475,7 +475,7 @@ ffFtpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
     }
     else
         ii = atoi((char *) prt);
-        
+    
     if(ffUrlGetInfo(io,&hst,&prt,&usr,&psw) <= 0)
         return meFALSE;
     
@@ -508,14 +508,14 @@ ffFtpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
     {
         sprintf((char *)buff,"Connected - %s %s",dd,fl);
         if(io->urlBp != NULL)
-            ffUrlConsoleAddText(io,buff,0) ;
+            ffUrlConsoleAddText(io,buff,0);
         if(io->urlOpts & meSOCKOPT_SHOW_STATUS)
             mlwrite(MWCURSOR,(meUByte *) "[%s]",buff);
     }
     if(rwflag & meRWFLAG_BACKUP)
     {
         /* try to back-up the existing file - no error checking! */
-        meUByte filename[meBUF_SIZE_MAX] ;
+        meUByte filename[meBUF_SIZE_MAX];
         
         if(createBackupName(filename,fl,'~',1) ||
            ((meSockFtpCommand(io,buff,"RNFR %s",fl) == ftpPOS_INTERMED) &&
@@ -523,7 +523,7 @@ ffFtpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
             ((meSockFtpCommand(io,buff,"DELE %s",filename) != ftpPOS_COMPLETE) ||
              (meSockFtpCommand(io,buff,"RNFR %s",fl) != ftpPOS_INTERMED) ||
              (meSockFtpCommand(io,buff,"RNTO %s",filename) != ftpPOS_COMPLETE))))
-            mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file %s]",fl) ;
+            mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file %s]",fl);
     }
     if((rwflag & meRWFLAG_DELETE) && !(rwflag & meRWFLAG_BACKUP))
     {
@@ -533,12 +533,12 @@ ffFtpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
         {
             if((meSockFtpCommand(io,buff,"CWD %s..",fl) != ftpPOS_COMPLETE) ||
                (meSockFtpCommand(io,buff,"RMD %s",fl) != ftpPOS_COMPLETE))
-                return -5 ;
+                return -5;
         }
         else if((meSockFtpCommand(io,buff,"DELE %s",fl) != ftpPOS_COMPLETE) &&
                 ((meSockFtpCommand(io,buff,"CWD %s/..",fl) != ftpPOS_COMPLETE) ||
                  (meSockFtpCommand(io,buff,"RMD %s",fl) != ftpPOS_COMPLETE)))
-            return -5 ;
+            return -5;
     }
     if(rwflag & meRWFLAG_MKDIR)
     {
@@ -590,15 +590,15 @@ ffFtpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
         *dd = '\0';
     }
     if(!(rwflag & (meRWFLAG_WRITE|meRWFLAG_READ)))
-        return meTRUE ;
+        return meTRUE;
     
-    ii = meStrlen(fl) ;
+    ii = meStrlen(fl);
     if(rwflag & meRWFLAG_FTPNLST)
-        dirlist = -1 ;
+        dirlist = -1;
     else if(fl[ii-1] == DIR_CHAR)
-        dirlist = 1 ;
+        dirlist = 1;
     else
-        dirlist = 0 ;
+        dirlist = 0;
     
     /* send the read command */
     for(;;)
@@ -635,7 +635,7 @@ ffFtpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
                      * 1) If the file name does not end in a '/' then add one and correct the buffer name
                      * 2) Add the top Directory Listing line
                      */
-                    meStrcpy(buff,"Directory listing of: ") ;
+                    meStrcpy(buff,"Directory listing of: ");
                     dd = buff+22;
                     if(ups != NULL)
                     {
@@ -658,19 +658,19 @@ ffFtpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
                         bp->fileName = NULL;
                         resetBufferNames(bp,dd);
                     }
-                    addLineToEob(bp,buff) ;
+                    addLineToEob(bp,buff);
                 }
             }
-            return meTRUE ;
+            return meTRUE;
         }
         meSockClose(io,0);
         if((rwflag & (meRWFLAG_WRITE|meRWFLAG_NODIRLIST)) || (dirlist > 0))
             break;
-        dirlist = 1 ;
+        dirlist = 1;
     }
     if(!(rwflag & meRWFLAG_SILENT))
         mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Failed to %s file]",(rwflag & meRWFLAG_WRITE) ? "write":"read");
-    return (rwflag & meRWFLAG_WRITE) ? -3:-2 ;
+    return (rwflag & meRWFLAG_WRITE) ? -3:-2;
 }
 
 static int
@@ -687,7 +687,7 @@ ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meUByte 
         flags |= meSOCKFLG_USE_SSL;
         fl++;
     }
-    usr = psw = prt = NULL ;
+    usr = psw = prt = NULL;
     hst = dd = urlBuff;
     while(((cc=*fl++) != '\0') && (cc != '/'))
     {
@@ -730,7 +730,7 @@ ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meUByte 
     }
     else
         ii = atoi((char *) prt);
-        
+    
     if(ffUrlGetInfo(io,&hst,&prt,&usr,&psw) <= 0)
         return meFALSE;
     
@@ -740,7 +740,7 @@ ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meUByte 
     if(ii == 0)
     {
         meUByte cc;
-        /* printf("Got Location: [%s]\n",ss) ;*/
+        /* printf("Got Location: [%s]\n",ss);*/
         /* if this starts with http:// https:// etc. then start again */
         meSockClose(io,0);
         io->redirect++;
@@ -810,7 +810,7 @@ ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meUByte 
             resetBufferNames(bp,url);
         }
     }
-    return meTRUE ;
+    return meTRUE;
 }
 
 static void
@@ -912,16 +912,16 @@ ffUrlFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
             free(s2);
     }
     if(ii <= 0)
-        io->urlBp = NULL ;
+        io->urlBp = NULL;
     else if((rwflag & (meRWFLAG_READ|meRWFLAG_WRITE)) && (io->urlBp != NULL))
     {
-        struct meTimeval tp ;
+        struct meTimeval tp;
         if(io->urlOpts & meSOCKOPT_SHOW_PROGRESS)
             ffUrlConsoleAddText(io,(meUByte *)"Progress: ",0x02);
         gettimeofday(&tp,NULL);
         io->startTime = (tp.tv_sec * 1000) + (tp.tv_usec/1000);
     }
-    return ii ;
+    return ii;
 }
 
 static int
@@ -936,39 +936,39 @@ ffUrlFileClose(meIo *io, meUInt rwflag)
             meSockClose(io,0);
             /* get the transfer complete */
             if(meSockFtpReadReply(io,buff) != ftpPOS_COMPLETE)
-                mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Problem occurred during download]") ;
+                mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Problem occurred during download]");
         }
         if(io->urlBp != NULL)
         {
-            struct meTimeval tp ;
-            int dwldtime, kbsec, kbhsec ;
-            gettimeofday(&tp,NULL) ;
+            struct meTimeval tp;
+            int dwldtime, kbsec, kbhsec;
+            gettimeofday(&tp,NULL);
             dwldtime = (int) (((tp.tv_sec * 1000) + (tp.tv_usec/1000)) - io->startTime);
             if(dwldtime <= 0)
-                dwldtime = 1 ;
+                dwldtime = 1;
             if(ffread > 0x1000000)
             {
-                kbsec = (ffread / 128) * 125 ;
+                kbsec = (ffread / 128) * 125;
                 if(dwldtime > 100)
-                    kbhsec = (kbsec/(dwldtime/100)) % 100 ;
+                    kbhsec = (kbsec/(dwldtime/100)) % 100;
                 else
-                    kbhsec = 0 ;
+                    kbhsec = 0;
             }
             else
             {
-                kbsec = (ffread * 125) / 128 ;
-                kbhsec = ((kbsec*100)/dwldtime) % 100 ;
+                kbsec = (ffread * 125) / 128;
+                kbhsec = ((kbsec*100)/dwldtime) % 100;
             }
-            kbsec /= dwldtime ;
+            kbsec /= dwldtime;
             sprintf((char *)buff,"Complete: %d bytes %s in %d.%02d seconds (%d.%02d Kbytes/s)",
                     (int) ffread,(rwflag & meRWFLAG_WRITE) ? "sent":"received",
-                    dwldtime/1000,(dwldtime/10) % 100,kbsec,kbhsec) ;
-            ffUrlConsoleAddText(io,buff,0) ;
-            io->urlBp = NULL ;
+                    dwldtime/1000,(dwldtime/10) % 100,kbsec,kbhsec);
+            ffUrlConsoleAddText(io,buff,0);
+            io->urlBp = NULL;
         }
     }
     ffCloseSockets(io,0);
-    return meTRUE ;
+    return meTRUE;
 }
 
 #endif
@@ -989,35 +989,35 @@ createBackupNameStrcpySub(meUByte *dd, meUByte *ss, int subCount, meUByte **subF
 {
     if(subCount != 0)
     {
-        meUByte cc ;
-        int ii, ll ;
+        meUByte cc;
+        int ii, ll;
         while((cc=*ss) != '\0')
         {
             for(ii=0 ; ii<subCount ; ii++)
             {
-                ll = meStrlen(subFrom[ii]) ;
+                ll = meStrlen(subFrom[ii]);
                 if(!meStrncmp(ss,subFrom[ii],ll))
                 {
-                    meStrcpy(dd,subTo[ii]) ;
-                    dd += meStrlen(dd) ;
-                    ss += ll ;
-                    break ;
+                    meStrcpy(dd,subTo[ii]);
+                    dd += meStrlen(dd);
+                    ss += ll;
+                    break;
                 }
             }
             if((ii == subCount) || (ll == 0))
             {
-                *dd++ = cc ;
-                ss++ ;
+                *dd++ = cc;
+                ss++;
             }
         }
-        *dd = '\0' ;
+        *dd = '\0';
     }
     else
     {
-        meStrcpy(dd,ss) ;
-        dd += meStrlen(dd) ;
+        meStrcpy(dd,ss);
+        dd += meStrlen(dd);
     }
-    return dd ;
+    return dd;
 }
 #endif
 
@@ -1053,39 +1053,39 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
                 backupPathFlag = 2;
         }
 	else
-	    backupPathFlag = -1 ;
+	    backupPathFlag = -1;
 	if(((s=meGetenv("MEBACKUPSUB")) != NULL) && (meStrlen(s) > 0))
         {
-            meUByte cc, dd ;
-            int ii ;
+            meUByte cc, dd;
+            int ii;
             
             while((dd=*s++) != '\0')
             {
                 if(dd == 's')
                 {
-                    ii=backupSubCount++ ;
+                    ii=backupSubCount++;
                     if(((dd = *s++) == '\0') ||
                        ((backupSubFrom=meRealloc(backupSubFrom,backupSubCount*sizeof(meUByte *))) == NULL) ||
                        ((backupSubTo  =meRealloc(backupSubTo  ,backupSubCount*sizeof(meUByte *))) == NULL))
                     {
-                        backupSubCount = 0 ;
-                        break ;
+                        backupSubCount = 0;
+                        break;
                     }
-                    backupSubFrom[ii] = s ;
+                    backupSubFrom[ii] = s;
                     while(((cc=*s) != '\0') && (cc != dd))
-                        s++ ;
+                        s++;
                     if(cc != '\0')
                     {
-                        *s++ = '\0' ;
-                        backupSubTo[ii] = s ;
+                        *s++ = '\0';
+                        backupSubTo[ii] = s;
                         while(((cc=*s) != '\0') && (cc != dd))
-                            s++ ;
-                        *s++ = '\0' ;
+                            s++;
+                        *s++ = '\0';
                     }
                     if(cc == '\0')
                     {
-                        backupSubCount = 0 ;
-                        break ;
+                        backupSubCount = 0;
+                        break;
                     }
                 }
             }
@@ -1261,7 +1261,7 @@ ffgetBuf(meIo *io,int offset, int len)
             return meFALSE;
         }
         if(io->urlOpts & meSOCKOPT_SHOW_PROGRESS)
-            ffUrlConsoleAddText(io,(meUByte *)"#",(meLineGetLength(io->urlBp->dotLine) >= frameCur->width - 2) ? 0x02:0x03) ;
+            ffUrlConsoleAddText(io,(meUByte *)"#",(meLineGetLength(io->urlBp->dotLine) >= frameCur->width - 2) ? 0x02:0x03);
     }
     else
 #endif
@@ -1287,7 +1287,7 @@ ffgetBuf(meIo *io,int offset, int len)
     }
 #endif
     ffread += ffremain;
-    return meTRUE ;
+    return meTRUE;
 }
 
 /*
@@ -1371,7 +1371,7 @@ ffgetline(meIo *io, meLine **line)
             {
                 ii = (io->flags & meIOFLAG_BINMOD) ? (meBINARY_BPL*4)+14 : 2*meRBIN_BPL;
                 if((lp = meLineMalloc(ii,0)) == NULL)
-                    return meABORT ;
+                    return meABORT;
             }
             if(ffremain < (bpl-len))
             {
@@ -1494,7 +1494,7 @@ ffgetline(meIo *io, meLine **line)
                 text[newl+(meBINARY_BPL*3)+14] = cc;
             }
             cpos = io->offset + (meUInt) ((ffread - ffremain - 1) & ~((meInt) (meBINARY_BPL-1)));
-            newl=8 ;
+            newl=8;
             while(--newl >= 0)
             {
                 text[newl] = hexdigits[cpos&0x0f];
@@ -1518,7 +1518,7 @@ ffgetline(meIo *io, meLine **line)
             text[len*2] = '\0';
             while(--len >= 0)
             {
-                cc = text[len] ;
+                cc = text[len];
                 text[(len*2)]   = hexdigits[cc >> 4];
                 text[(len*2)+1] = hexdigits[cc & 0x0f];
             }
@@ -1601,7 +1601,7 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
     if(ffUrlTypeIsHttpFtp(io->type))
     {
 #if MEOPT_SOCKET
-        int rr ;
+        int rr;
         io->redirect = 0;
         if((rr=ffUrlFileOpen(io,flags,fname,bp)) <= 0)
         {
@@ -1612,9 +1612,9 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
         }
 #else
 #ifdef _UNIX
-        meSigRelease() ;
+        meSigRelease();
 #endif
-        return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[No url support in this version]") ;
+        return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[No url support in this version]");
 #endif
     }
     else if (ffUrlTypeIsTfs(io->type))
@@ -1642,15 +1642,15 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
                 /* File not found.      */
                 mlwrite(MWCLEXEC,(meUByte *)"[%s: No such TFS file]",fname);
 #ifdef _UNIX
-            meSigRelease() ;
+            meSigRelease();
 #endif
-            return -2 ;
+            return -2;
         }
 #else
 #ifdef _UNIX
-        meSigRelease() ;
+        meSigRelease();
 #endif
-        return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[No tfs support in this version]") ;
+        return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[No tfs support in this version]");
 #endif
     }
     else if(!ffUrlTypeIsPipe(io->type))
@@ -1658,15 +1658,15 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
 #ifdef _WIN32
         /* On windows a file could be temporarily lock be another process (e.g. virus scanner)
          * so if the failure is ERROR_SHARING_VIOLATION wait and try again */
-        int retries=10 ;
+        int retries=10;
         for(;;)
         {
             if(((io->fp=CreateFile((const char *) fname,GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,
                                    FILE_ATTRIBUTE_NORMAL,NULL)) != INVALID_HANDLE_VALUE) ||
                (GetLastError() != ERROR_SHARING_VIOLATION) ||
                (--retries == 0))
-                break ;
-            Sleep(100) ;
+                break;
+            Sleep(100);
         }
         if(io->fp == INVALID_HANDLE_VALUE)
 #else
@@ -1677,9 +1677,9 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
                 /* File not found.      */
                 mlwrite(MWCLEXEC,(meUByte *)"[%s: No such file]", fname);
 #ifdef _UNIX
-            meSigRelease() ;
+            meSigRelease();
 #endif
-            return -2 ;
+            return -2;
         }
     }
 #if MEOPT_CRYPT
@@ -1721,7 +1721,7 @@ ffReadFileClose(meIo *io, meUInt flags)
     if(ffUrlTypeIsHttpFtp(io->type))
     {
 #if MEOPT_SOCKET
-        ffUrlFileClose(io,meRWFLAG_READ) ;
+        ffUrlFileClose(io,meRWFLAG_READ);
 #endif
     }
     else if (ffUrlTypeIsTfs(io->type))
@@ -1746,7 +1746,7 @@ ffReadFileClose(meIo *io, meUInt flags)
         io->fp = meBadFile;
     }
 #ifdef _UNIX
-    meSigRelease() ;
+    meSigRelease();
 #endif
     io->type = meIOTYPE_NONE;
 }
@@ -1755,52 +1755,52 @@ int
 ffReadFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
            meUInt uoffset, meUInt loffset, meInt length)
 {
-    meLine *lp0, *lp1, *lp2 ;
-    int   ss, nline ;
+    meLine *lp0, *lp1, *lp2;
+    int   ss, nline;
 #if MEOPT_SOCKET
-    int ff = ((bp != NULL) && (fname != NULL) && (bp->fileName == fname)) ;
+    int ff = ((bp != NULL) && (fname != NULL) && (bp->fileName == fname));
 #endif
     io->type = ffUrlGetType(fname);
     if(ffReadFileOpen(io,fname,flags,bp) <= 0)
-        return meABORT ;
+        return meABORT;
     
-    io->offset = 0 ;
+    io->offset = 0;
     if(length != 0)
     {
         /* partial reading only supported by the insert-file command on regular files */
         if(length < 0)
         {
-            meUInt fsu, fsl ;
+            meUInt fsu, fsl;
 #ifdef _WIN32
-            fsl = GetFileSize(io->fp,(DWORD *) &fsu) ;
+            fsl = GetFileSize(io->fp,(DWORD *) &fsu);
 #else
 #ifdef _LARGEFILE_SOURCE
-            off_t fs ;
-            fseeko(io->fp,0,SEEK_END) ;
-            fs = ftello(io->fp) ;
-            fsu = (meUInt) (fs >> 32) ;
-            fsl = (meUInt) fs ;
+            off_t fs;
+            fseeko(io->fp,0,SEEK_END);
+            fs = ftello(io->fp);
+            fsu = (meUInt) (fs >> 32);
+            fsl = (meUInt) fs;
 #else
-            fseek(io->fp,0,SEEK_END) ;
-            fsl = ftell(io->fp) ;
-            fsu = 0 ;
+            fseek(io->fp,0,SEEK_END);
+            fsl = ftell(io->fp);
+            fsu = 0;
 #endif
 #endif
             /* ignore the upper offset if moving from the end of the file -
              * can't be bothered to do the maths */
-            uoffset = fsu ;
+            uoffset = fsu;
             if(loffset <= fsl)
-                loffset = fsl - loffset ;
+                loffset = fsl - loffset;
             else if(fsu == 0)
-                loffset = 0 ;
+                loffset = 0;
             else
             {
-                uoffset-- ;
-                loffset = 0xffffffff - (loffset - fsl - 1) ;
+                uoffset--;
+                loffset = 0xffffffff - (loffset - fsl - 1);
             }
-            length = -length ;
+            length = -length;
         }
-        io->offset = loffset ;
+        io->offset = loffset;
         if(io->flags & (meIOFLAG_BINMOD|meIOFLAG_RBNMOD))
         {
             loffset &= (io->flags & meIOFLAG_BINMOD) ? meBINARY_BPL-1:meRBIN_BPL-1;
@@ -1808,32 +1808,32 @@ ffReadFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
             length += loffset;
         }
 #ifdef _WIN32
-        SetFilePointer(io->fp,io->offset,(PLONG) &uoffset,FILE_BEGIN) ;
+        SetFilePointer(io->fp,io->offset,(PLONG) &uoffset,FILE_BEGIN);
 #else
 #ifdef _LARGEFILE_SOURCE
-        fseeko(io->fp,(((off_t) uoffset) << 32) | ((off_t) io->offset),SEEK_SET) ;
+        fseeko(io->fp,(((off_t) uoffset) << 32) | ((off_t) io->offset),SEEK_SET);
 #else
-        fseek(io->fp,io->offset,SEEK_SET) ;
+        fseek(io->fp,io->offset,SEEK_SET);
 #endif
 #endif
     }
     
     nline = 0;
-    lp2 = hlp ;	        /* line after  insert */
-    lp0 = lp2->prev ;	/* line before insert */
+    lp2 = hlp;	        /* line after  insert */
+    lp0 = lp2->prev;	/* line before insert */
     while((ss=ffgetline(io,&lp1)) == meTRUE)
     {
         /* re-link new line between lp0 and lp1 */
         lp0->next = lp1;
         lp1->prev = lp0;
-        lp0 = lp1 ;
-        nline++ ;
+        lp0 = lp1;
+        nline++;
         if((length > 0) && ((ffread-ffremain) >= length))
-            break ;
+            break;
         if(TTbreakTest(1))
         {
-            ss = ctrlg(meFALSE,1) ;
-            break ;
+            ss = ctrlg(meFALSE,1);
+            break;
         }
     }
     /* complete the link */
@@ -1844,14 +1844,14 @@ ffReadFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
     /* loading an ftp or http file can lead to a file name change, free
      * off the old one now that we don't need it any more */
     if(ff && (bp->fileName != fname))
-        free(fname) ;
+        free(fname);
 #endif
     if(bp != NULL)
     {
-        bp->lineCount += nline ;
+        bp->lineCount += nline;
         if((flags & meRWFLAG_PRESRVFMOD) == 0)
         {
-            bp->fileFlag = io->flags & (meIOFLAG_BINARY|meIOFLAG_LTDIFF) ;
+            bp->fileFlag = io->flags & (meIOFLAG_BINARY|meIOFLAG_LTDIFF);
             if(io->type & meIOTYPE_DIR)
                 bp->fileFlag |= meBFFLAG_DIR;
             if(io->flags & meIOFLAG_CTRLZ)
@@ -1863,31 +1863,31 @@ ffReadFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
             }
             else if((io->flags & meIOFLAG_NOTSET) == 0)
             {
-                meModeClear(bp->mode,MDCTRLZ) ;
+                meModeClear(bp->mode,MDCTRLZ);
                 if(io->flags & meIOFLAG_CR)
-                    meModeSet(bp->mode,MDCR) ;
+                    meModeSet(bp->mode,MDCR);
                 else
-                    meModeClear(bp->mode,MDCR) ;
+                    meModeClear(bp->mode,MDCR);
                 if(io->flags & meIOFLAG_LF)
-                    meModeSet(bp->mode,MDLF) ;
+                    meModeSet(bp->mode,MDLF);
                 else
-                    meModeClear(bp->mode,MDLF) ;
+                    meModeClear(bp->mode,MDLF);
             }
         }
     }
     if(length > 0)
     {
-        meUInt el, eu=uoffset ;
-        el = io->offset + (meUInt) (ffread-ffremain) ;
+        meUInt el, eu=uoffset;
+        el = io->offset + (meUInt) (ffread-ffremain);
         if(el < io->offset)
         {
-            eu-- ;
-            el = 0xffffffff - (((meUInt) (ffread-ffremain)) - io->offset - 1) ;
+            eu--;
+            el = 0xffffffff - (((meUInt) (ffread-ffremain)) - io->offset - 1);
         }
-        sprintf((char *)resultStr,"|0x%x|0x%x|0x%x|0x%x|",io->offset,el,uoffset,eu) ;
+        sprintf((char *)resultStr,"|0x%x|0x%x|0x%x|0x%x|",io->offset,el,uoffset,eu);
     }
-    ffReadFileClose(io,flags) ;
-    return ss ;
+    ffReadFileClose(io,flags);
+    return ss;
 }
 
 int
@@ -1927,13 +1927,13 @@ ffputBuf(meIo *io)
             return meABORT;
         }
         else if(io->urlOpts & meSOCKOPT_SHOW_PROGRESS)
-            ffUrlConsoleAddText(io,(meUByte *)"#",(meLineGetLength(io->urlBp->dotLine) >= frameCur->width - 2) ? 0x02:0x03) ;
+            ffUrlConsoleAddText(io,(meUByte *)"#",(meLineGetLength(io->urlBp->dotLine) >= frameCur->width - 2) ? 0x02:0x03);
     }
     else
 #endif
     {
 #ifdef _WIN32
-        meInt written ;
+        meInt written;
         if((WriteFile(io->fp,ffbuf,ffremain,(DWORD *)&written,NULL) == 0) || (written != ffremain))
         {
             io->flags |= meIOFLAG_ERROR;
@@ -1962,18 +1962,18 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
     io->flags = 0;
 #if MEOPT_CRYPT
     if((bp != NULL) && meModeTest(bp->mode,MDCRYPT) && (meCryptBufferInit(bp) <= 0))
-        return meFALSE;
+       return meFALSE;
 #endif
     io->type = ffUrlGetType(fname);
     if(ffUrlTypeIsPipe(io->type))
     {
 #ifdef _WIN32
-        io->fp = GetStdHandle(STD_OUTPUT_HANDLE) ;
+        io->fp = GetStdHandle(STD_OUTPUT_HANDLE);
 #else
-        io->fp = stdout ;
+        io->fp = stdout;
 #endif
 #ifdef _UNIX
-        meSigHold() ;
+        meSigHold();
 #endif
     }
     else if(ffUrlTypeIsHttpFtp(io->type))
@@ -1984,30 +1984,30 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
             return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[Cannot write to urls of this type]");
 #ifdef _UNIX
         /* must stop any signals or the connection will fail */
-        meSigHold() ;
+        meSigHold();
 #endif
         if((ii=ffUrlFileOpen(io,(flags & (meRWFLAG_WRITE|meRWFLAG_BACKUP|meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_STAT|meRWFLAG_SILENT)),fname,bp)) <= 0)
         {
 #ifdef _UNIX
-            meSigRelease() ;
+            meSigRelease();
 #endif
-            return ii ;
+            return ii;
         }
         if(!(flags & meRWFLAG_WRITE))
         {
-            ii = ffUrlFileClose(io,flags & (meRWFLAG_WRITE|meRWFLAG_BACKUP|meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_STAT|meRWFLAG_SILENT)) ;
+            ii = ffUrlFileClose(io,flags & (meRWFLAG_WRITE|meRWFLAG_BACKUP|meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_STAT|meRWFLAG_SILENT));
 #ifdef _UNIX
-            meSigRelease() ;
+            meSigRelease();
 #endif
-            return ii ;
+            return ii;
         }
 #else
-        return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[No url support in this version]") ;
+        return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[No url support in this version]");
 #endif
     }
     else if(ffUrlTypeIsTfs(io->type))
     {
-        return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[Cannot write to TFS]") ;
+        return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[Cannot write to TFS]");
     }
     else
     {
@@ -2020,9 +2020,9 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
             io->flags |= meIOFLAG_NEWFILE;
         else if(flags & meRWFLAG_BACKUP)
         {
-            meUByte filename[meBUF_SIZE_MAX] ;
+            meUByte filename[meBUF_SIZE_MAX];
             
-            ii = createBackupName(filename,fname,'~',1) ;
+            ii = createBackupName(filename,fname,'~',1);
             if(!ii)
             {
 #ifdef _WIN32
@@ -2044,58 +2044,58 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
                  *
                  * This is done for all flavours of windows as these drives can be networked
                  */
-                meUByte filenameOldB[meBUF_SIZE_MAX], *filenameOld ;
+                meUByte filenameOldB[meBUF_SIZE_MAX], *filenameOld;
                 
                 if(!(meSystemCfg & meSYSTEM_DOSFNAMES))
                 {
-                    meStrcpy(filenameOldB,fname) ;
-                    meStrcat(filenameOldB,".~a~") ;
-                    filenameOld = filenameOldB ;
+                    meStrcpy(filenameOldB,fname);
+                    meStrcat(filenameOldB,".~a~");
+                    filenameOld = filenameOldB;
                     if(!meTestExist(filenameOld) && meUnlink(filenameOld))
-                        mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to remove backup file %s]", filenameOld) ;
+                        mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to remove backup file %s]", filenameOld);
                     else if(meRename(fname,filenameOld) && (ffFileOp(fname,filenameOld,meRWFLAG_DELETE,-1) <= 0))
-                        mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s]",filenameOld) ;
+                        mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s]",filenameOld);
                 }
                 else
-                    filenameOld = fname ;
+                    filenameOld = fname;
 #else
 #define filenameOld fname
 #endif
 #if MEOPT_EXTENDED_BACKUP
                 if(!(meSystemCfg & meSYSTEM_DOSFNAMES) && (keptVersions > 0))
                 {
-                    int ll ;
+                    int ll;
                     
-                    ll = meStrlen(filename)-1 ;
-                    filename[ll++] = '.' ;
-                    filename[ll++] = '~' ;
+                    ll = meStrlen(filename)-1;
+                    filename[ll++] = '.';
+                    filename[ll++] = '~';
                     for(ii=0 ; ii<keptVersions ; ii++)
                     {
-                        sprintf((char *)filename+ll,"%d~",ii) ;
+                        sprintf((char *)filename+ll,"%d~",ii);
                         if(meTestExist(filename))
-                            break ;
+                            break;
                     }
                     if(ii == keptVersions)
                     {
                         if(meUnlink(filename))
-                            mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to remove backup file %s]", filename) ;
-                        ii-- ;
+                            mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to remove backup file %s]", filename);
+                        ii--;
                     }
                     if(ii)
                     {
-                        meUByte filename2[meBUF_SIZE_MAX] ;
-                        meStrcpy(filename2,filename) ;
+                        meUByte filename2[meBUF_SIZE_MAX];
+                        meStrcpy(filename2,filename);
                         while(ii > 0)
                         {
-                            sprintf((char *)filename2+ll,"%d~",ii--) ;
-                            sprintf((char *)filename+ll,"%d~",ii) ;
+                            sprintf((char *)filename2+ll,"%d~",ii--);
+                            sprintf((char *)filename+ll,"%d~",ii);
                             if(meRename(filename,filename2) && (ffFileOp(filename,filename2,meRWFLAG_DELETE,-1) <= 0))
                             {
-                                mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s (%d)]",filename2,meFileGetError()) ;
+                                mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s (%d)]",filename2,meFileGetError());
                                 if(meUnlink(filename))
                                 {
-                                    mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to remove backup file %s]", filename) ;
-                                    break ;
+                                    mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to remove backup file %s]", filename);
+                                    break;
                                 }
                             }
                         }
@@ -2103,31 +2103,31 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
                 }
 #endif
                 if(!meTestExist(filename) && meUnlink(filename))
-                    mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to remove backup file %s]", filename) ;
+                    mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to remove backup file %s]", filename);
                 else if(meRename(filenameOld,filename) && (ffFileOp(filenameOld,filename,meRWFLAG_DELETE,-1) <= 0))
                     mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file to %s (%d)]",filename,meFileGetError());
                 else if(bp != NULL)
                 {
                     meUShort ss;
 #ifdef _DOS
-                    ss = bp->stats.stmode & ~(meFILE_ATTRIB_READONLY|meFILE_ATTRIB_HIDDEN) ;
+                    ss = bp->stats.stmode & ~(meFILE_ATTRIB_READONLY|meFILE_ATTRIB_HIDDEN);
                     if(meSystemCfg & meSYSTEM_HIDEBCKUP)
-                        ss |= meFILE_ATTRIB_HIDDEN ;
+                        ss |= meFILE_ATTRIB_HIDDEN;
 #endif
 #ifdef _WIN32
-                    ss = bp->stats.stmode & ~(FILE_ATTRIBUTE_HIDDEN|FILE_ATTRIBUTE_READONLY) ;
+                    ss = bp->stats.stmode & ~(FILE_ATTRIBUTE_HIDDEN|FILE_ATTRIBUTE_READONLY);
                     if((meSystemCfg & (meSYSTEM_DOSFNAMES|meSYSTEM_HIDEBCKUP)) == meSYSTEM_HIDEBCKUP)
-                        ss |= FILE_ATTRIBUTE_HIDDEN ;
+                        ss |= FILE_ATTRIBUTE_HIDDEN;
 #endif
 #ifdef _UNIX
-                    ss = bp->stats.stmode | S_IWUSR ;
+                    ss = bp->stats.stmode | S_IWUSR;
 #endif
                     if(ss != bp->stats.stmode)
-                        meFileSetAttributes(filename,ss) ;
+                        meFileSetAttributes(filename,ss);
                 }
             }
             else
-                mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file %s]",fname) ;
+                mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Unable to backup file %s]",fname);
         }
         else if(flags & meRWFLAG_DELETE)
         {
@@ -2153,11 +2153,11 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
 #endif
             }
             else
-                ii = meUnlink(fname) ;
+                ii = meUnlink(fname);
             if(ii)
             {
-                mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Failed to delete file \"%s\"]",fname) ;
-                return -5 ;
+                mlwrite(MWCLEXEC|MWABORT,(meUByte *)"[Failed to delete file \"%s\"]",fname);
+                return -5;
             }
         }
         if(!(flags & meRWFLAG_WRITE))
@@ -2175,25 +2175,25 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
 #endif
 #endif
                 {
-                    mlwrite(MWABORT,(meUByte *)"[Failed to create directory \"%s\"]",fname) ;
-                    return -4 ;
+                    mlwrite(MWABORT,(meUByte *)"[Failed to create directory \"%s\"]",fname);
+                    return -4;
                 }
             }
-            return meTRUE ;
+            return meTRUE;
         }
 #ifdef _WIN32
         {
-            DWORD create ;
+            DWORD create;
             if(flags & meRWFLAG_OPENTRUNC)
-                create = TRUNCATE_EXISTING ;
+                create = TRUNCATE_EXISTING;
             else if(flags & meRWFLAG_OPENEND)
-                create = OPEN_ALWAYS ;
+                create = OPEN_ALWAYS;
             else
-                create = CREATE_ALWAYS ;
+                create = CREATE_ALWAYS;
             
             /* Cannot write to a readonly file, and cannot write to hidden or system file if attribs dont include these flag */
             if(!(io->flags & meIOFLAG_NEWFILE) && (fa & (FILE_ATTRIBUTE_READONLY|FILE_ATTRIBUTE_HIDDEN|FILE_ATTRIBUTE_SYSTEM)))
-                meFileSetAttributes(fname,FILE_ATTRIBUTE_NORMAL) ;
+                meFileSetAttributes(fname,FILE_ATTRIBUTE_NORMAL);
             
             /* Windows must open the file with the correct permissions to support the compress attribute */
             if((io->fp=CreateFile((const char *) fname,GENERIC_READ|GENERIC_WRITE,FILE_SHARE_READ,NULL,create,
@@ -2201,56 +2201,62 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
                                   NULL)) == INVALID_HANDLE_VALUE)
             {
                 mlwrite(MWABORT,(meUByte *)"[Cannot open file \"%s\" for writing - %d]",fname,GetLastError());
-                return -3 ;
+                return -3;
             }
             if(flags & meRWFLAG_OPENEND)
-                SetFilePointer(io->fp,0,NULL,FILE_END) ;
+                SetFilePointer(io->fp,0,NULL,FILE_END);
         }
 #else
         {
-            char *ss ;
+            char *ss;
             if(flags & meRWFLAG_OPENEND)
-                ss = "ab" ;
+                ss = "ab";
             else
-                ss = "wb" ;
+                ss = "wb";
             if((io->fp=fopen((char *)fname,ss)) == NULL)
             {
                 mlwrite(MWABORT,(meUByte *)"[Cannot open file \"%s\" for writing]",fname);
-                return -3 ;
+                return -3;
             }
         }
 #endif
         mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"[%sriting %s]",
                 (flags & meRWFLAG_AUTOSAVE) ? "Auto-w":"W",fname);	/* tell us were writing */
 #ifdef _UNIX
-        meSigHold() ;
+        meSigHold();
 #endif
     }
-    ffremain = 0 ;
+    ffremain = 0;
     if(bp != NULL)
     {
-        if(meModeTest(bp->mode,MDBINARY))
-            io->flags = meIOFLAG_BINMOD;
-        else if(meModeTest(bp->mode,MDRBIN))
-            io->flags = meIOFLAG_RBNMOD;
-        else
-        {
-            io->flags = 0;
-            if(meModeTest(bp->mode,MDCR))
-                io->flags |= meIOFLAG_CR;
-            if(meModeTest(bp->mode,MDLF))
-                io->flags |= meIOFLAG_LF;
-            if(meModeTest(bp->mode,MDCTRLZ))
-                io->flags |= meIOFLAG_CTRLZ;
-        }
 #if MEOPT_CRYPT
         if(meModeTest(bp->mode,MDCRYPT))
             flags |= meRWFLAG_CRYPT;
 #endif
+        if(meModeTest(bp->mode,MDXLATE))
+            /* translateBufferBack must have been called already returned an rbin formatted line loop */
+            io->flags = meIOFLAG_RBNMOD;
+        else
+        {
+            if(meModeTest(bp->mode,MDBINARY))
+                io->flags = meIOFLAG_BINMOD;
+            else if(meModeTest(bp->mode,MDRBIN))
+                io->flags = meIOFLAG_RBNMOD;
+            else
+            {
+                io->flags = 0;
+                if(meModeTest(bp->mode,MDCR))
+                    io->flags |= meIOFLAG_CR;
+                if(meModeTest(bp->mode,MDLF))
+                    io->flags |= meIOFLAG_LF;
+                if(meModeTest(bp->mode,MDCTRLZ))
+                    io->flags |= meIOFLAG_CTRLZ;
+            }
 #if MEOPT_NARROW
-        if((bp->narrow != NULL) && !(flags & meRWFLAG_IGNRNRRW))
-            meBufferExpandNarrowAll(bp) ;
+            if((bp->narrow != NULL) && !(flags & meRWFLAG_IGNRNRRW))
+                meBufferExpandNarrowAll(bp);
 #endif
+        }
 #if MEOPT_TIMSTMP
         if(!(flags & meRWFLAG_AUTOSAVE))
             set_timestamp(bp);
@@ -2258,7 +2264,7 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
     }
     else
         io->flags = meIOFLAG_CR;
-
+    
 #if (defined _DOS)
     /* the directory time stamps on dos are not updated so the best
      * we can do is flag that the dirLists are out of date when WE
@@ -2268,10 +2274,10 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
     if(io->flags & meIOFLAG_NEWFILE)
     {
 #if MEOPT_EXTENDED
-        extern meDirList fileNames ;
-        fileNames.stmtime = 1 ;
+        extern meDirList fileNames;
+        fileNames.stmtime = 1;
 #endif
-        curDirList.stmtime = 1 ;
+        curDirList.stmtime = 1;
     }
 #endif
 #if MEOPT_CRYPT
@@ -2286,13 +2292,13 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
         io->flags |= meIOFLAG_CRYPT;
     }
 #endif
-    return meTRUE ;
+    return meTRUE;
 }
 
 int
 ffWriteFileWrite(meIo *io, int len, meUByte *buff, int eolFlag)
 {
-    meUByte cc, dd ;
+    meUByte cc, dd;
     
     if(io->flags & (meIOFLAG_BINMOD|meIOFLAG_RBNMOD))
     {
@@ -2300,36 +2306,36 @@ ffWriteFileWrite(meIo *io, int len, meUByte *buff, int eolFlag)
         {
             while(--len >= 0)
                 if(*buff++ == ':')
-                    break ;
+                    break;
             for(;;)
             {
                 while((--len >= 0) && ((cc = *buff++) == ' '))
                     ;
                 if((len < 0) || (cc == '|'))
-                    break ;
+                    break;
                 if(!isXDigit(cc) || (--len < 0) || ((dd = *buff++),!isXDigit(dd)))
                 {
                     io->flags |= meIOFLAG_ERROR;
                     return mlwrite(MWABORT|MWPAUSE,(meUByte *)"Binary format error");
                 }
-                cc = (hexToNum(cc)<<4) | hexToNum(dd) ;
+                cc = (hexToNum(cc)<<4) | hexToNum(dd);
                 if(ffputc(io,cc))
-                    return meABORT ;
+                    return meABORT;
             }
         }
         else
         {
             while(--len >= 0)
             {
-                cc = *buff++ ;
+                cc = *buff++;
                 if(!isXDigit(cc) || (--len < 0) || ((dd = *buff++),!isXDigit(dd)))
                 {
                     io->flags |= meIOFLAG_ERROR;
                     return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[rbin format error]");
                 }
-                cc = (hexToNum(cc)<<4) | hexToNum(dd) ;
+                cc = (hexToNum(cc)<<4) | hexToNum(dd);
                 if(ffputc(io,cc))
-                    return meABORT ;
+                    return meABORT;
             }
         }
     }
@@ -2344,19 +2350,19 @@ ffWriteFileWrite(meIo *io, int len, meUByte *buff, int eolFlag)
         {
             while(--len >= 0)
             {
-                cc=*buff++ ;
+                cc=*buff++;
                 if(ffputc(io,cc))
-                    return meABORT ;
+                    return meABORT;
             }
         }
         if(eolFlag)
         {
             if(((io->flags & meIOFLAG_CR) && ffputc(io,'\r')) ||
                ((io->flags & meIOFLAG_LF) && ffputc(io,'\n')))
-                return meABORT ;
+                return meABORT;
         }
     }
-    return meTRUE ;
+    return meTRUE;
 }
 
 int
@@ -2386,9 +2392,9 @@ ffWriteFileClose(meIo *io, meUInt flags, meBuffer *bp)
     if(ffUrlTypeIsHttpFtp(io->type))
     {
         if(ffUrlFileClose(io,flags) <= 0)
-            ret = meABORT ;
+            ret = meABORT;
 #ifdef _UNIX
-        meSigRelease() ;
+        meSigRelease();
 #endif
     }
     else
@@ -2405,61 +2411,68 @@ ffWriteFileClose(meIo *io, meUInt flags, meBuffer *bp)
         }
         io->fp = meBadFile;
 #ifdef _UNIX
-        meSigRelease() ;
+        meSigRelease();
 #endif
     }
     
 #if MEOPT_NARROW
     if((bp != NULL) && (bp->narrow != NULL) && !(flags & meRWFLAG_IGNRNRRW))
-        meBufferCollapseNarrowAll(bp) ;
+        meBufferCollapseNarrowAll(bp);
 #endif
-    return ret ;
+    return ret;
 }
 
 int
 ffWriteFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
 {
-    flags |= meRWFLAG_WRITE ;
-    if(ffWriteFileOpen(io,fname,flags,bp) > 0)
+    meLine *blp, *lp;
+    flags |= meRWFLAG_WRITE;
+    if((blp = translateBufferBack(bp,flags)) != NULL)
     {
-        register meLine *lp ;
-        long noLines ;
-        
-        /* store the number of lines now cos the close may narrow the buffer and the number of
-         * lines will be wrong */
-        noLines = bp->lineCount+1 ;
-        lp = meLineGetNext(bp->baseLine);            /* First line.          */
-        while(lp != bp->baseLine)
+        if(ffWriteFileOpen(io,fname,flags,bp) > 0)
         {
-#if MEOPT_EXTENDED
-            if(lp->flag & meLINE_MARKUP)
-                noLines-- ;
-            else
-#endif
+            long noLines;
+            
+            /* store the number of lines now cos the close may narrow the buffer and the number of
+             * lines will be wrong */
+            noLines = bp->lineCount+1;
+            lp = meLineGetNext(blp);            /* First line.          */
+            while(lp != blp)
             {
-                if(ffWriteFileWrite(io,meLineGetLength(lp),meLineGetText(lp),
-                                    !(lp->flag & meLINE_NOEOL)) <= 0)
-                    break ;
+#if MEOPT_EXTENDED
+                if(lp->flag & meLINE_MARKUP)
+                    noLines--;
+                else
+#endif
+                {
+                    if(ffWriteFileWrite(io,meLineGetLength(lp),meLineGetText(lp),
+                                        !(lp->flag & meLINE_NOEOL)) <= 0)
+                        break;
+                }
+                lp = meLineGetNext(lp);
             }
-            lp = meLineGetNext(lp) ;
+            if(ffWriteFileClose(io,flags,bp) > 0)
+            {
+                if(blp != bp->baseLine)
+                    meLineLoopFree(blp,1);
+                if(io->flags & meIOFLAG_NEWFILE)
+                    mlwrite(MWCLEXEC,(meUByte *)"[New file %s, Wrote %d lines]",fname,noLines);
+                else
+                    mlwrite(MWCLEXEC,(meUByte *)"[Wrote %d lines]",noLines);
+                return meTRUE;
+            }
         }
-        if(ffWriteFileClose(io,flags,bp) > 0)
-        {
-            if(io->flags & meIOFLAG_NEWFILE)
-                mlwrite(MWCLEXEC,(meUByte *)"[New file %s, Wrote %d lines]",fname,noLines);
-            else
-                mlwrite(MWCLEXEC,(meUByte *)"[Wrote %d lines]",noLines);
-            return meTRUE ;
-        }
+        if(blp != bp->baseLine)
+            meLineLoopFree(blp,1);
     }
-    return meFALSE ;
+    return meFALSE;
 }
 
 #if MEOPT_EXTENDED
 int
 ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
 {
-    int rr=meTRUE, r1 ;
+    int rr=meTRUE, r1;
     
     /* By now sfname & dfname should have had a 'file:' URL prefix removed */
     meior.type = ffUrlGetType(sfname);
@@ -2479,11 +2492,11 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
         {
             if(!meRename(sfname,dfname))
             {
-                dFlags &= ~meRWFLAG_DELETE ;
-                dfname = NULL ;
+                dFlags &= ~meRWFLAG_DELETE;
+                dfname = NULL;
             }
             else
-                rr = mlwrite(MWABORT,(meUByte *)"[Failed to rename file]") ;
+                rr = mlwrite(MWABORT,(meUByte *)"[Failed to rename file]");
         }
 #if MEOPT_SOCKET
         else if(ffUrlTypeIsFtp(meior.type) && (meior.type == meiow.type))
@@ -2535,12 +2548,12 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
                         rr = meFALSE;
                 }
                 if(rr == meFALSE)
-                    rr = mlwrite(MWABORT,(meUByte *)"[Failed to rename ftp file]") ;
+                    rr = mlwrite(MWABORT,(meUByte *)"[Failed to rename ftp file]");
 #ifdef _UNIX
-                meSigRelease() ;
+                meSigRelease();
 #endif
-                dFlags &= ~meRWFLAG_DELETE ;
-                dfname = NULL ;
+                dFlags &= ~meRWFLAG_DELETE;
+                dfname = NULL;
             }
         }
 #endif
@@ -2548,58 +2561,58 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
     if(dfname != NULL)
     {
 #ifdef _UNIX
-        struct utimbuf fileTimes ;
+        struct utimbuf fileTimes;
 #endif
 #ifdef _WIN32
-        FILETIME creationTime, lastAccessTime, lastWriteTime ;
+        FILETIME creationTime, lastAccessTime, lastWriteTime;
 #endif
-        int presTimeStamp ;
+        int presTimeStamp;
         
         if((rr=ffReadFileOpen(&meior,sfname,meRWFLAG_READ|(dFlags & (meRWFLAG_NODIRLIST|meRWFLAG_SILENT)),NULL)) <= 0)
-            return rr ;
+            return rr;
         if((rr=ffWriteFileOpen(&meiow,dfname,meRWFLAG_WRITE|(dFlags & (meRWFLAG_BACKUP|meRWFLAG_SILENT)),NULL)) <= 0)
         {
-            ffReadFileClose(&meior,meRWFLAG_READ|(dFlags & meRWFLAG_SILENT)) ;
-            return rr ;
+            ffReadFileClose(&meior,meRWFLAG_READ|(dFlags & meRWFLAG_SILENT));
+            return rr;
         }
-        presTimeStamp = ((dFlags & meRWFLAG_PRESRVTS) && (meior.fp != meBadFile) && (meiow.fp != meBadFile)) ;
+        presTimeStamp = ((dFlags & meRWFLAG_PRESRVTS) && (meior.fp != meBadFile) && (meiow.fp != meBadFile));
         if(presTimeStamp)
         {
 #ifdef _UNIX
-            struct stat stt ;
+            struct stat stt;
             if((presTimeStamp = (fstat(fileno(meior.fp),&stt) == 0)))
             {
-                fileTimes.actime = stt.st_atime ;
-                fileTimes.modtime = stt.st_mtime ;
+                fileTimes.actime = stt.st_atime;
+                fileTimes.modtime = stt.st_mtime;
             }
 #endif
 #ifdef _WIN32
-            presTimeStamp = GetFileTime(meior.fp,&creationTime,&lastAccessTime,&lastWriteTime) ;
+            presTimeStamp = GetFileTime(meior.fp,&creationTime,&lastAccessTime,&lastWriteTime);
 #endif
         }
         while(((r1=ffgetBuf(&meior,0,meFIOBUFSIZ)) > 0) && (ffremain > 0) && (ffputBuf(&meiow) >= 0))
             ;
-        ffReadFileClose(&meior,meRWFLAG_READ|(dFlags & meRWFLAG_SILENT)) ;
-        ffremain = 0 ;
+        ffReadFileClose(&meior,meRWFLAG_READ|(dFlags & meRWFLAG_SILENT));
+        ffremain = 0;
 #ifdef _WIN32
         if(presTimeStamp)
-            SetFileTime(meiow.fp,&creationTime,&lastAccessTime,&lastWriteTime) ;
+            SetFileTime(meiow.fp,&creationTime,&lastAccessTime,&lastWriteTime);
 #endif
-        rr = ffWriteFileClose(&meiow,meRWFLAG_WRITE|(dFlags & meRWFLAG_SILENT),NULL) ;
+        rr = ffWriteFileClose(&meiow,meRWFLAG_WRITE|(dFlags & meRWFLAG_SILENT),NULL);
         if(r1 < 0)
-            rr = r1 ;
+            rr = r1;
         else if((rr > 0) && (fileMode >= 0) && !ffUrlTypeIsNotFile(meiow.type))
         {
-            meFileSetAttributes(dfname,fileMode) ;
+            meFileSetAttributes(dfname,fileMode);
 #ifdef _UNIX
             if(presTimeStamp)
-                utime((char *) dfname,&fileTimes) ;
+                utime((char *) dfname,&fileTimes);
 #endif
         }
     }
     if((rr > 0) && (dFlags & (meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_STAT)))
     {
-        rr = ffWriteFileOpen(&meior,sfname,dFlags & (meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_STAT|meRWFLAG_BACKUP|meRWFLAG_SILENT),NULL) ;
+        rr = ffWriteFileOpen(&meior,sfname,dFlags & (meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_STAT|meRWFLAG_BACKUP|meRWFLAG_SILENT),NULL);
     }
 #if MEOPT_SOCKET
     /* TODO bug: could read from ftp, wait 59 seconds then write to ftp - could get into here to close read io but also closes write io, or read is not closed when it should */
@@ -2626,7 +2639,7 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
             meSockEnd();
     }
 #endif
-    return rr ;
+    return rr;
 }
 
 /* n bits:
@@ -2644,7 +2657,7 @@ int
 translateBuffer(int f, int n)
 {
     meBuffer *bp;
-    meUByte cc, ca, cb, c1, c2, c3, c4, flg=0, *dd, *ss, buf[meBUF_SIZE_MAX];
+    meUByte cc, ca, cb, c1, c2, c3, c4, flg=0, *dd, *ss;
     meLine *lp, *elp, *blp, *plp, *nlp;
     int ii, uc, rr, lc=0, ll;
     
@@ -2653,6 +2666,7 @@ translateBuffer(int f, int n)
     if(n & 0x0200)
     {
         /* prompt for and get the new buffer name */
+        meUByte buf[meBUF_SIZE_MAX];
         if((rr = getBufferName((meUByte *)"Output buffer",0,0,buf)) <= 0)
             return rr;
         if((bp=bfind(buf,BFND_CREAT|BFND_CLEAR)) == NULL)
@@ -2815,7 +2829,7 @@ translateBuffer(int f, int n)
                 continue;
             nlp->flag |= meLINE_NOEOL;
         }
-        if(uc <= 2)
+        if((uc <= 2) || (uc == 0x07))
         {
             *dd++ = 0x01;
             *dd++ = '0';
@@ -2947,10 +2961,7 @@ translateBuffer(int f, int n)
         meModeSet(bp->mode,MDCR);
     else
         meModeClear(bp->mode,MDCR);
-    if(flg & meIOFLAG_LF)
-        meModeSet(bp->mode,MDLF);
-    else
-        meModeClear(bp->mode,MDLF);
+    meModeSet(bp->mode,MDLF);
     meModeClear(bp->mode,MDRBIN);
     bp->xlateFlag = (n & 0x00ff);
     resetBufferWindows(bp);
@@ -2967,6 +2978,256 @@ translateBuffer(int f, int n)
     if((n & 0x0600) == 0x0200)
         meWindowPopup(bp,NULL,0,NULL);
     return meTRUE;
+}
+
+meLine *
+translateBufferBack(meBuffer *bp, meUInt flags)
+{
+    meLine *lp, *elp, *blp, *plp, *nlp;
+    meUByte xlt, cc, c2, *dd, *ss;
+    meUInt uc;
+    int ii, ll;
+    
+    if(!meModeTest(bp->mode,MDXLATE))
+        return bp->baseLine;
+    if((blp=meLineMalloc(0,0)) == NULL)
+        return NULL;
+    nlp = plp = blp;
+    dd = ffbuf;
+    ll = 0;
+    xlt = (bp->xlateFlag & 0x07);
+    if((bp->xlateFlag & 0x0f) > 0x08)
+    {
+        ss = uniBom[xlt - 1];
+        ll = meStrlen(ss);
+        memcpy(dd,ss,ll);
+        dd += ll;
+    }
+    elp = bp->baseLine;
+    lp = meLineGetNext(elp);
+    ss = lp->text;
+    for(;;)
+    {
+        if((uc = *ss++) == '\0')
+        {
+            if((lp->flag & meLINE_NOEOL) == 0)
+            {
+                if(meModeTest(bp->mode,MDCR))
+                {
+                    if((xlt & 6) == 6)
+                    {
+                        *dd++ = '0';
+                        *dd++ = '0';
+                        ll += 2;
+                        if(xlt & 1)
+                        {
+                            *dd++ = '0';
+                            *dd++ = '0';
+                            *dd++ = '0';
+                            *dd++ = '0';
+                            ll += 4;
+                        }
+                    }
+                    *dd++ = '0';
+                    *dd++ = 'D';
+                    ll += 2;
+                    if((xlt & 6) == 2)
+                    {
+                        *dd++ = '0';
+                        *dd++ = '0';
+                        ll += 2;
+                        if(xlt & 1)
+                        {
+                            *dd++ = '0';
+                            *dd++ = '0';
+                            *dd++ = '0';
+                            *dd++ = '0';
+                            ll += 4;
+                        }
+                    }
+                }
+                if(meModeTest(bp->mode,MDLF))
+                {
+                    if((xlt & 6) == 6)
+                    {
+                        *dd++ = '0';
+                        *dd++ = '0';
+                        ll += 2;
+                        if(xlt & 1)
+                        {
+                            *dd++ = '0';
+                            *dd++ = '0';
+                            *dd++ = '0';
+                            *dd++ = '0';
+                            ll += 4;
+                        }
+                    }
+                    *dd++ = '0';
+                    *dd++ = 'A';
+                    ll += 2;
+                    if((xlt & 6) == 2)
+                    {
+                        *dd++ = '0';
+                        *dd++ = '0';
+                        ll += 2;
+                        if(xlt & 1)
+                        {
+                            *dd++ = '0';
+                            *dd++ = '0';
+                            *dd++ = '0';
+                            *dd++ = '0';
+                            ll += 4;
+                        }
+                    }
+                }
+            }
+            if((lp = meLineGetNext(lp)) == elp)
+                break;
+            ss = lp->text;
+        }
+        else if(xlt == 0)
+        {
+            if(uc > 0x02)
+            {
+                *dd++ = hexdigits[uc >> 4];
+                *dd++ = hexdigits[uc & 0x0f];
+            }
+            else if((uc == 0x02) || (*ss++ != '0') || ((cc = *ss++),!isXDigit(cc)) || ((c2 = *ss++),!isXDigit(c2)))
+                break;
+            else
+            {
+                *dd++ = cc;
+                *dd++ = c2;
+            }
+            ll += 2;
+        }
+        else
+        {
+            if(uc <= 0x02)
+            {
+                ii = (uc == 0x02) ? 5:3;
+                uc = 0;
+                do {
+                    cc = *ss++;
+                    if(!isXDigit(cc))
+                        break;
+                    uc = (uc<<4) | hexToNum(cc);
+                } while(--ii > 0);
+                if(ii)
+                {
+                    uc = 1;
+                    break;
+                }
+            }
+            else if((uc == 0x07) || ((uc >= 128) && (((uc = charToUnicode[uc-128]) == 0) || (uc > 0x10ffff))))
+                uc = 0x0fffd;
+            if(xlt & 0x02)
+            {
+                if(xlt & 0x01)
+                    ii = 4;
+                else if(uc > 0x0ffff)
+                {
+                    uc -= 0x10000;
+                    if(xlt & 0x04)
+                        uc = 0xd800dc00 | ((uc & 0x0ffc00) << 6) | (uc & 0x0003ff);
+                    else
+                        uc = 0xdc00d800 | ((uc & 0x0ffc00) >> 10) | ((uc & 0x0003ff) << 16);
+                    ii = 4;
+                }
+                else
+                    ii = 2;
+                ll += ii << 1;
+                if(xlt & 0x04)
+                {
+                    while(--ii >= 0)
+                    {
+                        cc = uc >> (ii << 3) & 0x0ff;
+                        *dd++ = hexdigits[cc >> 4];
+                        *dd++ = hexdigits[cc & 0x0f];
+                    }
+                }
+                else
+                {
+                    do {
+                        *dd++ = hexdigits[(uc >> 4) & 0x0f];
+                        *dd++ = hexdigits[uc & 0x0f];
+                        uc >>= 8;
+                    } while(--ii > 0);
+                }
+            }
+            else if(uc < 128)
+            {
+                *dd++ = hexdigits[uc >> 4];
+                *dd++ = hexdigits[uc & 0x0f];
+                ll += 2;
+            }
+            else
+            {
+                if(uc & 0x1ff800)
+                {
+                    if(uc & 0x1f0000)
+                    {
+                        *dd++ = 'F';
+                        *dd++ = hexdigits[uc >> 18];
+                        *dd++ = hexdigits[0x08 | ((uc >> 16) & 0x03)];
+                        *dd++ = hexdigits[((uc >> 12) & 0x0f)];
+                        ll += 8;
+                    }
+                    else
+                    {
+                        *dd++ = 'E';
+                        *dd++ = hexdigits[uc >> 12];
+                        ll += 6;
+                    }
+                    *dd++ = hexdigits[0x08 | ((uc >> 10) & 0x03)];
+                }
+                else
+                {
+                    *dd++ = hexdigits[0x0c | (uc >> 10)];
+                    ll += 4;
+                }
+                *dd++ = hexdigits[((uc >> 6) & 0x0f)];
+                *dd++ = hexdigits[0x08 | ((uc >> 4) & 0x03)];
+                *dd++ = hexdigits[(uc & 0x0f)];
+            }
+        }            
+        if(ll >= meLINE_LLEN_MAX)
+        {
+            if((nlp=meLineMalloc(ll,0)) == NULL)
+                break;
+            memcpy(nlp->text,ffbuf,ll);
+            nlp->text[ll] = '\0';
+            plp->next = nlp;
+            nlp->prev = plp;
+            plp = nlp;
+            dd = ffbuf;
+            ll = 0;
+        }
+    }
+    if((uc == '\0') && (ll > 0))
+    {
+        if((nlp=meLineMalloc(ll,0)) != NULL)
+        {
+            memcpy(nlp->text,ffbuf,ll);
+            nlp->text[ll] = '\0';
+            plp->next = nlp;
+            nlp->prev = plp;
+            plp = nlp;
+        }
+        else
+            uc = 1;
+    }
+    blp->prev = plp;
+    plp->next = blp;
+    if(uc == '\0')
+        return blp;
+    meLineLoopFree(blp,1);
+    uc = (meUInt) (ss-lp->text);
+    ll = 1;
+    while((lp = meLineGetPrev(lp)) != elp)
+        ll++;
+    mlwrite(MWABORT,(meUByte *)"[Format error in source data at line %d column %d]",ll,uc);
+    return NULL;
 }
 
 #endif
