@@ -167,4 +167,6 @@ set-variable .fhook-md.item-list-r3 "H2 \ecB\\1\ecA"
   !emacro
 !endif
 
+!iif &not &exi md-export  execute-file "mdtools"
+
 buffer-init-fhook "md" 
