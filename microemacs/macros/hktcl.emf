@@ -72,6 +72,7 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
   hilight .hilight.tcl 1 "stdout"              .scheme.prepro
   hilight .hilight.tcl 1 "stderr"              .scheme.prepro
   hilight .hilight.tcl 1 "auto"                .scheme.operator
+  hilight .hilight.tcl 1 "cget"                .scheme.operator  
   hilight .hilight.tcl 1 "command"             .scheme.operator
   hilight .hilight.tcl 1 "config"              .scheme.operator
   hilight .hilight.tcl 1 "configure"           .scheme.operator
@@ -326,6 +327,7 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
   hilight .hilight.tcl 1 "my"                  .scheme.keyword
   hilight .hilight.tcl 1 "next"                .scheme.keyword
   hilight .hilight.tcl 1 "self"                .scheme.keyword
+  hilight .hilight.tcl 1 "superclass"          .scheme.keyword
   hilight .hilight.tcl 1 "-childof"            .scheme.type
   hilight .hilight.tcl 1 "-default"            .scheme.type
   hilight .hilight.tcl 1 "-getter"             .scheme.type
@@ -350,6 +352,7 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
   hilight .hilight.tcl 1 "mytypemethod"        .scheme.keyword
   hilight .hilight.tcl 1 "mytypevar"           .scheme.keyword
   hilight .hilight.tcl 1 "myvar"               .scheme.keyword
+  hilight .hilight.tcl 1 "onconfigure"         .scheme.keyword
   hilight .hilight.tcl 1 "option"              .scheme.keyword
   hilight .hilight.tcl 1 "pragma"              .scheme.keyword
   hilight .hilight.tcl 1 "to"                  .scheme.keyword
