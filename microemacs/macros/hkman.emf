@@ -16,9 +16,7 @@ define-macro fhook-man
   buffer-init-hooks
 !emacro
 ; Set up the man command.
-!if &not &exi %man-com
-  set-variable %man-com "man"
-!endif
+!iif &not &exi %man-com  set-variable %man-com "man"
 ; buffer-init variables
 set-variable .fhook-man.name "UNIX Man page"
 set-variable .fhook-man.setup &reg "/history/fhook/man" "Ughpo"
@@ -32,18 +30,14 @@ set-variable .fhook-man.command-desc  "|||\HGoto Link||\HClean Man-page|"
 set-variable .fhook-man.item-list-s1 "^\\([-A-Z][-A-Z\CH ]+\\)"
 set-variable .fhook-man.item-list-r1 "Sec \\1"
 ; must expand the item-list hilighting scheme to handle man page's ^H's
-!if &not &exi .hilight.list-item
-  !force execute-file "itemlist"
-!endif
+!iif &not &exi .hilight.list-item  !force execute-file "itemlist"
 !if &exi .hilight.list-item
   hilight .hilight.list-item 64 "\\(.\\)\CH\\1\\}[^\CH]" "\\1" .scheme.function
   hilight .hilight.list-item 64 "\\(.\\)\CH\\1\CH\\1\CH\\1\\}[^\CH]" "\\1" .scheme.function
 !endif
 
 !if &and &sin "h" .fhook-man.setup &band .hilight.flags 0x02
-  !if &not &exist .hilight.man "ERROR"
-    set-variable .hilight.man &pinc .hilight.next 1
-  !endif
+  !iif &not &exist .hilight.man  set-variable .hilight.man &pinc .hilight.next 1
   0 hilight  .hilight.man 0                                $global-scheme
   ; ignore
   hilight .hilight.man 64 ".\CH" ""                        $global-scheme
@@ -123,9 +117,7 @@ define-macro aman
   !until &inw @wc
   !repeat
     !force backward-char
-    !if &not $status
-      !return
-    !endif
+    !iif &not $status  !return
   !until &not &or &inw @wc &sin @wc "\b_"
   forward-char
 !emacro
@@ -144,8 +136,7 @@ define-macro aman
   !while &not &inw @wc
     !if &not &sin @wc "\b_"
       set-variable $window-col #l0
-      ml-write "Error! Not in a link"
-      !abort
+      -8 ml-write "Error: Not in a link!"
     !endif
     forward-char
   !done
@@ -169,9 +160,7 @@ define-macro aman
     forward-char
     !if &sin @wc "123456789"
       forward-char
-      !if &not &seq @wc ")"
-        forward-char
-      !endif
+      !iif &not &seq @wc ")"  forward-char
       !if &seq @wc ")"
         forward-char
         set-variable #l2 $window-col
@@ -213,9 +202,7 @@ define-macro man-clean
 
 define-macro man
   !force set-variable #l9 @1
-  !if &not $status
-    set-variable #l9 @ml "Man on"
-  !endif
+  !iif &not $status  set-variable #l9 @ml "Man on"
   set-variable #l0 #l9
   set-variable #l1 ""
   ; is there a section ? if so remove it
@@ -225,9 +212,7 @@ define-macro man
       set-variable #l1 &rig #l0 #l2
       set-variable #l1 &lef #l1 &sub &len #l1 1
       set-variable #l0 &lef #l0 &sub #l2 1
-      !if &seq $platform "sunos"
-        set-variable #l1 &cat "-s " #l1
-      !endif
+      !iif &seq $platform "sunos"  set-variable #l1 &cat "-s " #l1
     !endif
   !endif
   !iif &sub $MANWIDTH &set #l3 &con &les 140 &set #l3 &con &gre 70 $window-width 70 $window-width 140 #l3  set-variable $MANWIDTH #l3

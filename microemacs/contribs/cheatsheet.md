@@ -1,4 +1,4 @@
-## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2024-12-17 15:33
+## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2025-02-23 21:46
 
 Homepage: [https://github.com/bjasspa/jasspa](https://github.com/bjasspa/jasspa)
 Help pages: [https://bjasspa.github.io/jasspa/](https://bjasspa.github.io/jasspa/)
@@ -187,7 +187,7 @@ _mypython.emf_ and implemented in a file _python.eaf_ (\p sets a mark \P jumps t
 ; file ~/.config/USERNAME/mypython.emf
 buffer-abbreviation-file "python"
 ; file ~/.config/USERNAME/python.eaf
-sb "#!/usr/bin/env python3
+sb "#!/usr/bin/env python3"
 enc "# -*- coding: UTF-8 -*-\r" 
 if "if \p:\r    \r\P"
 elif "elif \p:\r    \r\P"
@@ -232,7 +232,7 @@ The steps to do this are as follows:
 <td width='40%'>
 __Variables:__
 
-- local (within macros): `#l0 #l1 ... #l9 
+- local (within macros): `#l0 #l1 ... #l9` 
 - namespace: `.local .macroname.local`
 - global: `#g0 #g1 ... #g9` - %global
 

@@ -6,6 +6,8 @@
 ; Synopsis:    Macros useful for Markdown
 ; Authors:     Detlef Groth & Steven Phillips
 ;
+!iif &not &exi fhook-md  execute-file "hkmd"
+!iif &not &exi memh-add-format  execute-file "memh"
 
 0 define-macro md-export-setup
   !if &exi %md-export-com
@@ -43,11 +45,7 @@
   !iif &band @# 2  set-variable #l4 &set &ind #l5 @ml2 &spr "md-to-%s export options" #l0 #l4
   set-variable #l3 &rig $buffer-fname &rsin "/" $buffer-fname
   set-variable #l2 &con &iseq ".md" &rig #l3 -3 &lef #l3 -3 #l3
-  !if &sin "lowdown" %md-export-com
-    set-variable #l5 &spr "-t %s -o %s.%s" #l0 #l2 #l1
-  !else
-    set-variable #l5 &spr "pandoc-options-here" #l0 #l2 #l1
-  !endif
+  set-variable #l5 &spr "-t %s -o %s.%s" #l0 #l2 #l1
   0x02 pipe-shell-command &spr "%s %s %s %s" %md-export-com #l5 #l4 #l3 "*md-export*" @nma
   !if &set #l4 $result
     popup-window "*md-export*"
@@ -70,3 +68,270 @@ define-macro md-to-htm
 define-macro md-to-latex
   @# md-export "latex" "tex"
 !emacro
+
+define-macro md-process
+  beginning-of-buffer
+  set-variable #l0 0
+  !repeat
+    !force search-buffer "me" "\\\\[]\\\\`*_{}[<>()#+\\x2d.!|]\\|<!--\\|\\*+\\|_+\\|^ *```+ *\\(\\w+\\)?\\|^ *#+ +\\|^ *=+ *\n\\|`\\|!\\[[^]]*](\\|\\[[^]]+](\\|^-+ *$\\|\\(file\\|https?\\|ftps?\\|mailto\\|news\\):[-@~_a-zA-Z#%=\\.:\\/0-9]+"
+    !iif &not $status  !break
+    !if &seq "*" &set #l1 @s0
+      !if &band #l0 1
+        backward-delete-char
+        set-variable #l0 &bxor #l0 1
+        insert-string &cat "\CC" &mid .cl #l0 1
+      !elif &not &band #l0 4
+        set-alpha-mark "\x81"
+        !force search-buffer "me" "[^*]\\*[^*]\\|^ *$"
+        set-variable #l2 &and $status &len &trr @s0
+        goto-alpha-mark "\x81"
+        !if #l2
+          backward-delete-char
+          set-variable #l0 &bxor #l0 1
+          insert-string &cat "\CC" &mid .cl #l0 1
+        !endif
+      !endif
+    !elif &seq "**" #l1
+      !if &band #l0 2
+        backward-delete-char
+        backward-delete-char
+        set-variable #l0 &bxor #l0 2
+        insert-string &cat "\CC" &mid .cl #l0 1
+      !elif &not &band #l0 8
+        set-alpha-mark "\x81"
+        !force search-buffer "me" "[^*]\\*\\*[^*]\\|^ *$"
+        set-variable #l2 &and $status &len &trr @s0
+        goto-alpha-mark "\x81"
+        !if #l2
+          backward-delete-char
+          backward-delete-char
+          set-variable #l0 &bxor #l0 2
+          insert-string &cat "\CC" &mid .cl #l0 1
+        !endif
+      !endif
+    !elif &seq "_" #l1
+      !if &band #l0 1
+      !elif &not &band #l0 4
+        !if &set #l2 &gre $window-col 1
+          2 backward-char
+          set-variable #l2 &inw @wc
+          2 forward-char
+        !endif
+        !if &not #l2
+          set-alpha-mark "\x81"
+          !force search-buffer "me" "[^_\\s]_\\W\\|^ *$"
+          set-variable #l2 &and $status &len &trr @s0
+          goto-alpha-mark "\x81"
+          !if #l2
+            backward-delete-char
+            set-variable #l0 &bxor #l0 4
+            insert-string &cat "\CC" &mid .cl #l0 1
+          !endif
+        !endif
+      !elif &not &inw @wc
+        2 backward-char
+        set-variable #l2 &sin @wc " \n\t"
+        2 forward-char
+        !if &not #l2
+          backward-delete-char
+          set-variable #l0 &bxor #l0 4
+          insert-string &cat "\CC" &mid .cl #l0 1
+        !endif
+      !endif
+    !elif &seq "__" #l1
+      !if &band #l0 2
+      !elif &not &band #l0 8
+        !if &set #l2 &gre $window-col 2
+          3 backward-char
+          set-variable #l2 &inw @wc
+          3 forward-char
+        !endif
+        !if &not #l2
+          set-alpha-mark "\x81"
+          !force search-buffer "me" "[^_\\s]__\\W\\|^ *$"
+          set-variable #l2 &and $status &len &trr @s0
+          goto-alpha-mark "\x81"
+          !if #l2
+            backward-delete-char
+            backward-delete-char
+            set-variable #l0 &bxor #l0 8
+            insert-string &cat "\CC" &mid .cl #l0 1
+          !endif
+        !endif
+      !elif &not &inw @wc
+        3 backward-char
+        set-variable #l2 &sin @wc " \n\t"
+        3 forward-char
+        !if &not #l2
+          backward-delete-char
+          backward-delete-char
+          set-variable #l0 &bxor #l0 8
+          insert-string &cat "\CC" &mid .cl #l0 1
+        !endif
+      !endif
+    !elif &seq "`" #l1
+      backward-delete-char
+      insert-string "\CCG"
+      !force search-buffer "Me" "`"
+      !if $status
+        backward-delete-char
+        insert-string &cat "\CC" &mid .cl #l0 1
+      !else
+        end-of-buffer
+      !endif
+    !elif &seq "[" &lef #l1 1
+      set-mark
+      !force search-buffer "Me" ")"
+      !if $status
+        backward-delete-char
+        kill-region
+        &len #l1 backward-char
+        forward-delete-char
+        !iif #l0  insert-string "\CCA"
+        insert-string "\CEs"
+        yank
+        -1 yank
+        insert-string "\CEm"
+        &sub &len #l1 1 forward-char
+        backward-delete-char
+        backward-delete-char
+        insert-string "\CEe"
+        !iif #l0  insert-string &cat "\CC" &mid .cl #l0 1
+      !else
+        end-of-buffer
+      !endif
+    !elif &seq "#" &lef #l1 1
+      set-mark
+      beginning-of-line
+      -1 kill-region
+      !if &not &seq @wc "\n"
+        insert-string "\CCE"
+        end-of-line
+        insert-string &cat "\CC" &mid .cl #l0 1
+      !endif
+    !elif &seq "=" &lef #l1 1
+      set-mark
+      backward-line
+      -1 kill-region
+      backward-line
+      !if &not &seq @wc "\n"
+        insert-string "\CCE"
+        end-of-line
+        insert-string &cat "\CC" &mid .cl #l0 1
+      !else
+        end-of-line
+      !endif
+    !elif &seq "\\" &lef #l1 1
+      backward-char
+      backward-delete-char
+      forward-char
+    !elif &seq "![" &lef #l1 2
+      set-mark
+      !force search-buffer "Me" ")"
+      !if $status
+        -1 kill-region
+        &len #l1 backward-char
+        forward-delete-char
+        insert-string "\CCF"
+        &sub &len #l1 1 forward-char
+        backward-delete-char
+        !if &les &len #l1 5
+          backward-char
+          insert-string "IMG"
+          forward-char
+        !endif
+        insert-string &cat "\CC" &mid .cl #l0 1
+      !else
+        end-of-buffer
+      !endif
+    !elif &seq "```" &lef &trl #l1 3
+      end-of-line
+      set-mark
+      beginning-of-line
+      -1 kill-region
+      !if &set #l9 &len &set #l2 @s1
+        set-variable #l1 &lef #l1 &sub 0 #l9
+        !force memh-add-format #l2
+      !endif
+      !if #l9
+        insert-string &cat "\CD" &itoa &add 65 #l9
+      !else
+        insert-string "\CCG"
+      !endif
+      !force search-buffer "me" &spr "^ *%s *$" &trb #l1
+      !if $status
+        set-mark
+        beginning-of-line
+        -1 kill-region
+        insert-string &con #l9 "\CDA" "\CCA"
+      !else
+        end-of-buffer
+      !endif
+    !elif &seq "-" &lef #l1 1
+      set-mark
+      beginning-of-line
+      -1 kill-region
+      insert-string &spr "%n" &sub $window-width 2 &rig $box-chars -1 
+    !elif &lfin "|file|http|ftp:|ftps|mail|news|" &lef #l1 4
+      &len #l1 backward-char
+      !iif #l0  insert-string "\CCA"
+      insert-string "\CEs\CEm"
+      &len #l1 forward-char
+      insert-string "\CEe"
+      !iif #l0  insert-string &cat "\CC" &mid .cl #l0 1
+    !elif &seq "<!--" #l1
+      4 backward-char
+      set-mark
+      !force search-buffer "Me" "-->"
+      !if $status
+        -1 kill-region
+      !else
+        end-of-buffer
+      !endif
+    !else
+      ml-write &spr "Warning - Not handling: %s" #l1
+      !abort
+    !endif
+  !done
+  beginning-of-buffer
+  ; Now wrap
+  set-variable #l3 &con &les 140 &set #l3 &con &gre 70 &set #l3 &sub $window-width 4 70 #l3 140 #l3
+  ; found largest indent in ehf was ~26 chars, MD should be less, this must be removed from the \{#\} long-line regex len 
+  set-variable #l1 &spr "\CD[B-z]\\|^\\( *\\(\\* \\)?\\).\\{%d\\}.*" &sub #l3 26
+  !repeat
+    !force search-buffer "me" #l1
+    !iif &not $status  !break
+    !if &equ &set #l5 &len @s0 2
+      !force search-buffer "Me" "\CDA"
+    !elif &seq "|" &lef &trl @s0 1
+      !force search-buffer "me" "^ *\\([^|]\\|$\\)"
+      !iif &not $status  !break
+      beginning-of-line
+      backward-char
+    !elif &gre #l5 #l3
+      set-variable #l5 &len @s1
+      !repeat
+        !force set-variable $window-acol &add #l3 1
+        !iif &not $status  !break
+        set-variable #l6 $window-col
+        !force -1 search-buffer "bme" "[^ ] "
+        !if $status
+          forward-char
+          !while &seq @wc " "
+            forward-delete-char
+          !done
+          insert-newline
+        !elif &seq "" &rep @wl &rig $box-chars -1 ""
+          !break
+        !else
+          set-variable $window-col &sub #l6 2
+          insert-string "-\n"
+        !endif
+        #l5 insert-space
+      !done
+      end-of-line
+    !endif
+  !done
+  beginning-of-buffer
+!emacro
+set-variable .md-process.cl "ACDJC_J_DJ__J___"

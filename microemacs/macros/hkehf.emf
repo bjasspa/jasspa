@@ -111,7 +111,7 @@ define-macro fhook-ehf
                 forward-delete-char
               !done
               insert-newline
-            !elif &seq "" &rep @wl "\x12" ""
+            !elif &seq "" &rep @wl &rig $box-chars -1 ""
               !break
             !else
               set-variable $window-col &sub #l6 2
@@ -151,13 +151,13 @@ set-variable .fhook-ehf.command-kbind "||||"
 set-variable .fhook-ehf.command-desc  "|\HGoto Link|Move to \HPrevious Link|Move to \HNext Link|"
 
 !if &and &sin "h" .fhook-ehf.setup &band .hilight.flags 0x01
+  !iif &not &exist .hilight.emf  execute-file "hkemf"
   !if &not &exist .hilight.ehf
     set-variable .hilight.ehf  &pinc .hilight.next 1
-    set-variable .hilight.ehfB &pinc .hilight.next 1
     set-variable .hilight.ehfL &pinc .hilight.next 1
   !endif
   
-  0 hilight  .hilight.ehf 2 50                      $global-scheme
+  0 hilight  .hilight.ehf 2 100                      $global-scheme
   hilight .hilight.ehf 0x44 "\ecA" "" "\\}\e" "" "" $global-scheme
   hilight .hilight.ehf 0x44 "\ecB" "" "\\}\e" "" "" .scheme.under   ; underline
   hilight .hilight.ehf 0x44 "\ecC" "" "\\}\e" "" "" .scheme.italic  ; italic
@@ -168,26 +168,10 @@ set-variable .fhook-ehf.command-desc  "|\HGoto Link|Move to \HPrevious Link|Move
   hilight .hilight.ehf 0xc0 "\els" "" .hilight.ehfL $global-scheme  ; link start
   hilight .hilight.ehf 0x44 "\elm" "" "\el." "" ""  .scheme.link    ; link name - use '.' as n is used for links split across lines
   hilight .hilight.ehf 0x44 "\eln" "" "\ele" "" ""  .scheme.link    ; link name
-  hilight .hilight.ehf 0xc0 "\esB" "" .hilight.ehfB $global-scheme
+  hilight .hilight.ehf 0xc0 "\esB" "" .hilight.emf  $global-scheme
   hilight .hilight.ehf 0x40 "\esA" ""               $global-scheme
   
-  0 hilight  .hilight.ehfB 2 50                     $global-scheme
-  hilight .hilight.ehfB 1  "define-help"            .scheme.keyword
-  hilight .hilight.ehfB 1  "define-macro"           .scheme.keyword
-  hilight .hilight.ehfB 1  "define-macro-file"      .scheme.keyword
-  hilight .hilight.ehfB 4  "\"" "\"" "\\"           .scheme.string
-  hilight .hilight.ehfB 2  ";"                      .scheme.comment
-  hilight .hilight.ehfB 4  "!"   "\\}\\W" ""        .scheme.keyword
-  hilight .hilight.ehfB 4  "&"   "\\}\\W" ""        .scheme.operator
-  hilight .hilight.ehfB 4  "\\." "\\}\\W" ""        .scheme.variable
-  hilight .hilight.ehfB 4  "%"   "\\}\\W" ""        .scheme.variable
-  hilight .hilight.ehfB 4  ":"   "\\}\\W" ""        .scheme.variable
-  hilight .hilight.ehfB 4  "\\$" "\\}\\W" ""        .scheme.variable
-  hilight .hilight.ehfB 4  "@"   "\\}\\W" ""        .scheme.variable
-  hilight .hilight.ehfB 1  "#[gpl][[:digit:]]"      .scheme.variable
-  hilight .hilight.ehfB 0x22 "*"                    .scheme.link
-  hilight .hilight.ehfB 0xc0 "\esA" "" .hilight.ehf $global-scheme
-  hilight .hilight.ehfB 0x40 "\esB" ""              $global-scheme
+  hilight .hilight.emf 0xc0 "\esA" "" .hilight.ehf  $global-scheme
   
   0 hilight  .hilight.ehfL 2 50                     $global-scheme
   hilight .hilight.ehfL 0x80 "\\}\elm" .hilight.ehf $global-scheme
@@ -229,9 +213,7 @@ set-variable .fhook-ehf.command-desc  "|\HGoto Link|Move to \HPrevious Link|Move
 
 0 define-macro ehf-find-help
   set-variable #l0 @1
-  !if &set #l4 &sin "|" #l0
-    set-variable #l0 &lef #l0 &sub #l4 1
-  !endif
+  !iif &set #l4 &sin "|" #l0  set-variable #l0 &lef #l0 &sub #l4 1
   !if &seq $buffer-bname "*help*"
     ; get the current page item so we can add it to the prev/next history
     beginning-of-buffer
@@ -289,12 +271,8 @@ set-variable .fhook-ehf.command-desc  "|\HGoto Link|Move to \HPrevious Link|Move
     2 forward-line
     end-of-line
     -1 buffer-mode "view"
-    !if &gre &len #l2 1
-      insert-string &spr " \els%s\elm[Prev]\ele" #l2
-    !endif
-    !if &gre &len #l3 1
-      insert-string &spr " \els%s\elm[Next]\ele" #l3
-    !endif
+    !iif &gre &len #l2 1  insert-string &spr " \els%s\elm[Prev]\ele" #l2
+    !iif &gre &len #l3 1  insert-string &spr " \els%s\elm[Next]\ele" #l3
     -1 buffer-mode "edit"
     1 buffer-mode "view"
     beginning-of-buffer
@@ -334,30 +312,26 @@ set-variable .fhook-ehf.command-desc  "|\HGoto Link|Move to \HPrevious Link|Move
   !endif
   set-variable $window-line #l1
   set-variable $window-col #l0
-  !if &inw @wc
-    ; Goto beginning of word and place mark
-    forward-char
-    backward-word
-    !if &seq @wc "c"
-      backward-char
-      !if &seq @wc "\e"
-        3 forward-char
-      !else
-        forward-char
-      !endif
+  !iif &not &inw @wc  -8 ml-write "Error: Not in a link!"
+  ; Goto beginning of word and place mark
+  forward-char
+  backward-word
+  !if &seq @wc "c"
+    backward-char
+    !if &seq @wc "\e"
+      3 forward-char
+    !else
+      forward-char
     !endif
-    set-mark
-    ; Goto end of word and copy region
-    forward-word
-    copy-region
-    set-cursor-to-mouse
-    set-variable #l2 @y
-    -1 yank
-    ehf-find-help #l2
-    !return
   !endif
-  ml-write "Error! Not in a link"
-  !abort
+  set-mark
+  ; Goto end of word and copy region
+  forward-word
+  copy-region
+  set-cursor-to-mouse
+  set-variable #l2 @y
+  -1 yank
+  ehf-find-help #l2
 !emacro
 
 0 define-macro ehf-spell-word
@@ -373,12 +347,12 @@ set-variable .fhook-ehf.command-desc  "|\HGoto Link|Move to \HPrevious Link|Move
       !if &sin @wc "s"
         forward-char
         !if &seq @wc "A"
-          ; miss-matched scheme change - problems
-          set-variable $window-col #l0
-          !abort
+          ; End of scheme change
+          forward-char
+        !else
+          ; skip the emf sections
+          search-forward "\esA"
         !endif
-        ; skip the emf sections
-        search-forward "\esA"
         set-variable .spell.check-word ""
         !return
       !elif &sin @wc "cl"
@@ -407,18 +381,13 @@ set-variable .fhook-ehf.command-desc  "|\HGoto Link|Move to \HPrevious Link|Move
     set-variable #l1 1
   !endif
   forward-char
-  !if #l1
-    set-variable $window-col #l2
-    set-variable .spell.check-word &mid @wl $window-col &sub #l0 $window-col
-    -3 show-region
-    set-variable $window-col #l0
-    3 show-region
-    !if &and &equ &len #l1 1 &sin .spell.check-word "abcdefghijklmnopqrstuvwxyz-.0123456789"
-      set-variable .spell.check-word ""
-    !endif
-    !return
-  !endif
-  !abort
+  !iif &not #l1  !abort
+  set-variable $window-col #l2
+  set-variable .spell.check-word &mid @wl $window-col &sub #l0 $window-col
+  -3 show-region
+  set-variable $window-col #l0
+  3 show-region
+  !iif &and &equ &len #l1 1 &sin .spell.check-word "abcdefghijklmnopqrstuvwxyz-.0123456789"  set-variable .spell.check-word ""
 !emacro
 
 buffer-init-fhook "ehf"

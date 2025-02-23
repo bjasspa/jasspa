@@ -1,0 +1,54 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2025 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Created:     2025-02-25
+; Synopsis:    Hilighting rules to support all formats
+; Authors:     Steven Phillips
+;
+!if &not &exist .hilight.memh
+  set-variable .hilight.memh  &pinc .hilight.next 1
+  set-variable .hilight.memhL &pinc .hilight.next 1
+!endif
+
+0 hilight  .hilight.memh 2 100                      $global-scheme
+hilight .hilight.memh 0x40 "\CCA" ""                $global-scheme
+hilight .hilight.memh 0x44 "\CCB" "" "\\}\CC" "" "" .scheme.under
+hilight .hilight.memh 0x44 "\CCC" "" "\\}\CC" "" "" .scheme.italic
+hilight .hilight.memh 0x44 "\CCD" "" "\\}\CC" "" "" .scheme.bold
+hilight .hilight.memh 0x44 "\CCE" "" "\\}\CC" "" "" .scheme.header
+hilight .hilight.memh 0x44 "\CCF" "" "\\}\CC" "" "" .scheme.comment
+hilight .hilight.memh 0x44 "\CCG" "" "\\}\CC" "" "" .scheme.type    ; TT (curior)
+hilight .hilight.memh 0x44 "\CCH" "" "\\}\CC" "" "" .scheme.italic-under
+hilight .hilight.memh 0x44 "\CCI" "" "\\}\CC" "" "" .scheme.bold-under
+hilight .hilight.memh 0x44 "\CCJ" "" "\\}\CC" "" "" .scheme.bold-italic
+hilight .hilight.memh 0x44 "\CCK" "" "\\}\CC" "" "" .scheme.bold-italic-italic
+
+hilight .hilight.memh 0x40 "\CDA" ""                $global-scheme
+hilight .hilight.memh 0xc0 "\CEs" "" .hilight.memhL $global-scheme  ; link start
+hilight .hilight.memh 0x44 "\CEm" "" "\CE." "" ""  .scheme.link     ; link name - use '.' as n is used for links split across lines
+hilight .hilight.memh 0x44 "\CEn" "" "\CEe" "" ""  .scheme.link     ; link name
+
+0 hilight  .hilight.memhL 2 50       $global-scheme
+hilight .hilight.memhL 0x80 "\\}\CEm" .hilight.memh $global-scheme
+hilight .hilight.memhL 0x40 "." ""   $global-scheme
+
+0 define-macro memh-add-format
+  set-variable #l0 @1
+  !iif &set #p9 &lfin .fl #l0  !return
+  !if &not &exi &ind &cat ".hilight." #l0
+    execute-file &cat "hk" #l0
+    !iif &not &exi &ind &cat ".hilight." #l0  -8 ml-write &spr "Error: Failed to find high-lighting definition for %s." #l0
+  !endif
+  set-variable #l1 &ind &cat ".hilight." #l0
+  hilight #l1 0xc0 "\CDA" "" .hilight.memh $global-scheme
+  ; reserve \CDB for ME emf so ehf files can migrate to this
+  !if &seq #l0 "emf"
+    set-variable .fl &lset .fl 1 #l0
+  !else
+    set-variable .fl &lins .fl -1 #l0
+  !endif
+  hilight .hilight.memh 0xc0 &cat "\CD" &itoa &add 65 &set #p9 &lfin .fl #l0 "" #l1  $global-scheme
+!emacro
+set-variable .memh-add-format.fl "\b\b"
