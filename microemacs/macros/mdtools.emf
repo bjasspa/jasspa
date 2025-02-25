@@ -249,8 +249,9 @@ define-macro md-process
       set-mark
       beginning-of-line
       -1 kill-region
-      !if &set #l9 &len &set #l2 @s1
+      !if &set #l9 &len &set #l2 &slo @s1
         set-variable #l1 &lef #l1 &sub 0 #l9
+        !iif &set #l3 &lfi "|markdown|bash|" #l2  set-variable #l2 &lget "|md|shell|" #l3
         !force memh-add-format #l2
       !endif
       !if #l9
@@ -293,45 +294,46 @@ define-macro md-process
       !abort
     !endif
   !done
-  beginning-of-buffer
-  ; Now wrap
-  set-variable #l3 &con &les 140 &set #l3 &con &gre 70 &set #l3 &sub $window-width 4 70 #l3 140 #l3
-  ; found largest indent in ehf was ~26 chars, MD should be less, this must be removed from the \{#\} long-line regex len 
-  set-variable #l1 &spr "\CD[B-z]\\|^\\( *\\(\\* \\)?\\).\\{%d\\}.*" &sub #l3 26
-  !repeat
-    !force search-buffer "me" #l1
-    !iif &not $status  !break
-    !if &equ &set #l5 &len @s0 2
-      !force search-buffer "Me" "\CDA"
-    !elif &seq "|" &lef &trl @s0 1
-      !force search-buffer "me" "^ *\\([^|]\\|$\\)"
+  ; Now wrap long lines to the fill-col
+  !if &set #l3 $buffer-fill-col
+    beginning-of-buffer
+    ; found largest indent in ehf was ~26 chars, MD should be less, this must be removed from the \{#\} long-line regex len 
+    set-variable #l1 &spr "\CD[B-z]\\|^\\( *\\(\\* \\)?\\).\\{%d\\}.*" &sub #l3 26
+    !repeat
+      !force search-buffer "me" #l1
       !iif &not $status  !break
-      beginning-of-line
-      backward-char
-    !elif &gre #l5 #l3
-      set-variable #l5 &len @s1
-      !repeat
-        !force set-variable $window-acol &add #l3 1
+      !if &equ &set #l5 &len @s0 2
+        !force search-buffer "Me" "\CDA"
+      !elif &seq "|" &lef &trl @s0 1
+        !force search-buffer "me" "^ *\\([^|]\\|$\\)"
         !iif &not $status  !break
-        set-variable #l6 $window-col
-        !force -1 search-buffer "bme" "[^ ] "
-        !if $status
-          forward-char
-          !while &seq @wc " "
-            forward-delete-char
-          !done
-          insert-newline
-        !elif &seq "" &rep @wl &rig $box-chars -1 ""
-          !break
-        !else
-          set-variable $window-col &sub #l6 2
-          insert-string "-\n"
-        !endif
-        #l5 insert-space
-      !done
-      end-of-line
-    !endif
-  !done
+        beginning-of-line
+        backward-char
+      !elif &gre #l5 #l3
+        set-variable #l5 &len @s1
+        !repeat
+          !force set-variable $window-acol &add #l3 1
+          !iif &not $status  !break
+          set-variable #l6 $window-col
+          !force -1 search-buffer "bme" "[^ ] "
+          !if $status
+            forward-char
+            !while &seq @wc " "
+              forward-delete-char
+            !done
+            insert-newline
+          !elif &seq "" &rep @wl &rig $box-chars -1 ""
+            !break
+          !else
+            set-variable $window-col &sub #l6 2
+            insert-string "-\n"
+          !endif
+          #l5 insert-space
+        !done
+        end-of-line
+      !endif
+    !done
+  !endif
   beginning-of-buffer
 !emacro
 set-variable .md-process.cl "ACDJC_J_DJ__J___"

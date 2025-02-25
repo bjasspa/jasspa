@@ -162,7 +162,7 @@ define-macro openai-setup
   end-of-buffer
   !iif &gre &set #l8 &sub $window-width 1 128  set-variable #l8 128
   !iif &les #l8 78 set-variable #l8 78
-  set-variable $buffer-fill-col &con &gre #l8 88 &sub #l8 20 &sub #l8 10 
+  set-variable $buffer-fill-col &set #l7 &con &gre #l8 88 &sub #l8 20 &sub #l8 10 
   !if &equ $window-line 1
   !elif &not #l9
     insert-string &spr "%n\n" #l8 "_" 
@@ -194,7 +194,7 @@ define-macro openai-setup
       forward-line
     !done
   !endif
-  !force delete-buffer "*oaic2*"
+  !force 0 delete-buffer "*oaic2*"
   find-buffer "*oaic*"
   1 buffer-mode "hide"
   beginning-of-buffer
@@ -214,26 +214,29 @@ define-macro openai-setup
     find-buffer "*oaic*"
   !done
   find-buffer "*oaic2*"
-  1 buffer-mode "hide"
+  set-variable $buffer-fill-col #l7
   !iif &seq $window-line 1  insert-string "\n<no response>"
   beginning-of-buffer
-  replace-string "\\\\n" "\n"
+  replace-string "\\(\\([^\\\\\n]\\|^\\)\\(\\\\\\\\\\)*\\)\\\\n" "\\1\n"
   beginning-of-buffer
-  replace-string "\\\\t" "\t"
+  replace-string "\\(\\([^\\\\\n]\\|^\\)\\(\\\\\\\\\\)*\\)\\\\t" "\\1\t"
   beginning-of-buffer
   replace-string "\\\\\\(.\\)" "\\1"
   4 change-buffer-charset "utf8" "display"
+  md-process
   beginning-of-buffer
   set-mark
   end-of-buffer
-  kill-region
+  copy-region
   find-buffer "*oai-cmpl-cht*"
+  !force 0 delete-buffer "*oaic2*"
   end-of-buffer
-  set-variable #l2 $window-line
+  set-variable #l3 $window-line
   yank
   -1 yank
-  goto-line #l2
-  !force 30000 ifill-paragraph "o"
+  goto-line #l3  
+  !iif &gre &set #l0 &sub $window-eline $window-depth &sub #l3 3 set-variable #l0 &sub #l3 3
+  set-variable $window-y-scroll #l0
   next-window
   !iif &not &seq "200" #l0  ml-write &spr "[Warning - OpenAI returned: %s]" #l0
 !emacro
@@ -269,7 +272,7 @@ define-macro openai-setup
   6 next-window
   find-buffer "*oai-cmpl-cht*"
   set-variable $buffer-mode-line &rep $mode-line "%b" "* OpenAI Completions: Chat *"
-  !iif &exi .hilight.md  set-variable $buffer-hilight .hilight.md
+  set-variable $buffer-hilight .hilight.memh
   buffer-bind-key openai-completions-close "C-x k"
   next-window
   find-buffer "*oai-cmpl-qry*"
@@ -278,6 +281,9 @@ define-macro openai-setup
   set-variable $buffer-mode-line &rep $mode-line "%b" &spr "* OpenAI Completions: Query %d *" &add :qry-no 1
   buffer-bind-key openai-cmpl-req "C-return"
   buffer-bind-key openai-completions-close "C-x k"
+  !if &exi .spell.language
+    !iif &reg "/history/spell/autospell" "0"  1 auto-spell
+  !endif
   !iif &seq "" &reg "/openai" ""  0 openai-setup
 !emacro
 
@@ -298,4 +304,5 @@ define-macro openai-completions
   !endif
 !emacro
 
+!iif &not &exi memh-add-format  execute-file "memh"
 global-bind-key openai-completions "f9"

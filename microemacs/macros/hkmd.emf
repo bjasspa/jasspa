@@ -50,7 +50,7 @@ set-variable .fhook-md.item-list-r3 "H2 \ecB\\1\ecA"
   hilight .hilight.md 4 "<!--" "-->" "" .scheme.comment
   hilight .hilight.md 2 "^#"            .scheme.header
   hilight .hilight.md 4 "\"" "\"" "\\"  .scheme.string
-  hilight .hilight.md 0 "'[^']+'"       .scheme.quote
+  ;hilight .hilight.md 0 "'[^']+'"       .scheme.quote
   hilight .hilight.md 0 "\\\\\\}[-[-]`*_{}<>()#+.!|]" .scheme.hide
   
   hilight .hilight.md 0x890 "\\*\\}\\S" .hilight.mdI .scheme.hide
@@ -123,11 +123,15 @@ set-variable .fhook-md.item-list-r3 "H2 \ecB\\1\ecA"
 
   ; Code blocks
   hilight .hilight.md 1 "`[^`]+`"     .scheme.quote
-  hilight .hilight.md 0x300 "```"
-  hilight .hilight.md 0x180 "```.*"   .hilight.mdC .scheme.hide
+  hilight .hilight.md 0x220 "```"
+  hilight .hilight.md 0x0a0 "```.*"   .hilight.mdC .scheme.hide
   
   0 hilight .hilight.mdC 0            $global-scheme
-  hilight   .hilight.mdC 0x180 "```"  .hilight.md .scheme.hide
+  hilight   .hilight.mdC 0x0a0 "```"  .hilight.md .scheme.hide
+  
+  ; Maths formulae blocks
+  hilight .hilight.md 4 "\\\\(" "\\\\)" "\\"    .scheme.quote
+  hilight .hilight.md 4 "\\\\\\[" "\\\\]" "\\"  .scheme.quote
   
   ; Allow inserts into the markdown mode. You may add to the inserts in your mymd.emf file
   0 define-macro md-add-file-support
@@ -140,10 +144,10 @@ set-variable .fhook-md.item-list-r3 "H2 \ecB\\1\ecA"
     !endif
     ; If the hilighting mode is loaded then modify it, else leave to the default code block hilighter
     !if &sin "h" &ind &spr ".fhook-%s.setup" #l0 &band .hilight.flags 0x02 
-      hilight .hilight.md 0x180 &spr "```{%s}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
-      hilight .hilight.md 0x180 &spr "```{\\.%s}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
-      hilight .hilight.md 0x180 &spr "```{%s[, ][^}]+}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
-      hilight .hilight.md 0x180 &spr "```{\\.%s[, ][^}]+}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
+      hilight .hilight.md 0x0a0 &spr "```{%s}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
+      hilight .hilight.md 0x0a0 &spr "```{\\.%s}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
+      hilight .hilight.md 0x0a0 &spr "```{%s[, ][^}]+}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
+      hilight .hilight.md 0x0a0 &spr "```{\\.%s[, ][^}]+}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
       hilight &ind &cat ".hilight." #l0 0x080 "^```" .hilight.md .scheme.hide
     !endif
   !emacro

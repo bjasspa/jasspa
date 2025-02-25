@@ -675,8 +675,7 @@ define-macro grep-for-region
     backward-word
     set-variable #l9 &mid @wl $window-col &sub #l2 $window-col
     set-variable $window-col #l1
-  !else
-    set-variable #l1 $window-col
+  !elif &set #l1 $window-col
     backward-char
     !if &inw @wc
       forward-char
@@ -685,7 +684,10 @@ define-macro grep-for-region
     !endif
     set-variable $window-col #l1
   !endif
-  !iif &seq #l9 ""  -8 ml-write "Grep Error: No current single-line region or word!"
+  !if &seq #l9 ""
+    set-variable #l9 @ml05 "grep-for"
+    !iif &seq #l9 ""  -8 ml-write "Grep Error: No grep string given!"
+  !endif
   str-to-regex #l9
   set-variable #l8 &cat &rep #l9 " " "\\x20" " *"
   !force macro-history-add #l8 "grep"
