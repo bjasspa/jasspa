@@ -683,7 +683,7 @@ bufferInsertText(meUByte *str, meInt flags)
     if(str[0] == '\0')
         return 0 ;
     
-    ccnl = (flags & meBUFINSFLAG_LITERAL) ? '\0':meCHAR_NL ;
+    ccnl = (flags & meBUFINSFLAG_LITERAL) ? '\0':meCHAR_NL;
     for(;;)
     {
         while(((cc=*ss++) != '\0') && (cc != ccnl))
@@ -692,35 +692,35 @@ bufferInsertText(meUByte *str, meInt flags)
         len = (((size_t) ss) - ((size_t) str)) ;
         if(len > meLINE_ELEN_MAX)
         {
-            mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Line too long!]") ;
-            return tlen ;
+            mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Line too long!]");
+            return tlen;
         }
         if(cc == '\0')
         {
             if(len && (lineInsertString(len,str) > 0))
-                tlen += len ;
+                tlen += len;
             break ;
         }
         if(wp->dotOffset)
         {
             assert(lineCount == 0) ;
             if(len && (lineInsertString(len,str) <= 0))
-                break ;
-            tlen += len ;
+                break;
+            tlen += len;
             if(lineInsertNewline(flags) <= 0)
-                break ;
-            tlen++ ;
+                break;
+            tlen++;
         }
         else
         {
             if(lineCount == 0)
             {
-                line = meLineGetPrev(wp->dotLine) ;
-                lineNo = wp->dotLineNo ;
+                line = meLineGetPrev(wp->dotLine);
+                lineNo = wp->dotLineNo;
             }
-            *ss = '\0' ;
+            *ss = '\0';
             status = addLine(wp->dotLine,str) ;
-            *ss = meCHAR_NL ;
+            *ss = meCHAR_NL;
             if(status <= 0)
                 break ;
             if(!tlen & !(flags & meBUFINSFLAG_UNDOCALL))
@@ -728,17 +728,17 @@ bufferInsertText(meUByte *str, meInt flags)
                 /* Update the position of any anchors at the start of the line, these are left behind */
                 if(wp->dotLine->flag & meLINE_ANCHOR)
                     meLineResetAnchors(meLINEANCHOR_IF_LESS|meLINEANCHOR_RETAIN,wp->buffer,
-                                       wp->dotLine,meLineGetNext(line),0,0) ;
+                                       wp->dotLine,meLineGetNext(line),0,0);
 #if MEOPT_EXTENDED
                 /* scheme & user set flags should remain on the top line as well - important for narrows etc */ 
                 meLineGetNext(line)->flag |= wp->dotLine->flag & (meLINE_MARKUP|meLINE_PROTECT|meLINE_SET_MASK|meLINE_SCHEME_MASK) ;
-                wp->dotLine->flag &= ~(meLINE_MARKUP|meLINE_PROTECT|meLINE_SET_MASK|meLINE_SCHEME_MASK) ;
+                wp->dotLine->flag &= ~(meLINE_MARKUP|meLINE_PROTECT|meLINE_SET_MASK|meLINE_SCHEME_MASK);
 #endif
             }
-            tlen += len+1 ;
-            lineCount++ ;
+            tlen += len+1;
+            lineCount++;
         }
-        str = ++ss ;
+        str = ++ss;
     }
     if(lineCount > 0)
     {
@@ -753,18 +753,18 @@ bufferInsertText(meUByte *str, meInt flags)
                 if(wp->buffer == bp)
                 {
                     if(wp->vertScroll > lineNo)
-                        wp->vertScroll += lineCount ;
+                        wp->vertScroll += lineCount;
                     if(wp->dotLineNo >= lineNo)
-                        wp->dotLineNo += lineCount ;
+                        wp->dotLineNo += lineCount;
                     if(wp->markLineNo >= lineNo)
                     {
                         if((wp->markLineNo == lineNo) && (wp->markOffset == 0))
                             /* the mark gets left behind */
-                            wp->markLine = meLineGetNext(line) ;
+                            wp->markLine = meLineGetNext(line);
                         else
-                            wp->markLineNo += lineCount ;
+                            wp->markLineNo += lineCount;
                     }
-                    wp->updateFlags |= WFMOVEL|WFMAIN|WFSBOX ;
+                    wp->updateFlags |= WFMOVEL|WFMAIN|WFSBOX;
                 }
                 wp = wp->next;
             }
@@ -1524,7 +1524,7 @@ yankfrom(struct meKill *pklist)
         while(killp != NULL)
         {
             if(meStrchr(killp->data,meCHAR_NL) != NULL)
-                return mlwrite(MWABORT,(meUByte *)"[Protected Line!]") ;
+                return mlwrite(MWABORT,(meUByte *)"[Protected Line!]");
             killp = killp->next;
         }
     }
@@ -1532,10 +1532,10 @@ yankfrom(struct meKill *pklist)
     killp = pklist->kill;
     while (killp != NULL)
     {
-        len += bufferInsertText(killp->data,0) ;
+        len += bufferInsertText(killp->data,0);
         killp = killp->next;
     }
-    return len ;
+    return len;
 }
 
 /*
@@ -1665,20 +1665,20 @@ yank(int f, int n)
         {
             if((ret = yankfrom(klhead)) < 0)
                 break;
-            len += ret ;
+            len += ret;
         }
     }
 #if MEOPT_UNDO
     if(len > 0)
-        meUndoAddInsChars(len) ;
+        meUndoAddInsChars(len);
 #endif
     if(ret >= 0)
     {
         /* remember that this was a yank command */
-        thisflag = meCFYANK ;
-        return meTRUE ;
+        thisflag = meCFYANK;
+        return meTRUE;
     }
-    return meFALSE ;
+    return meFALSE;
 }
 
 int

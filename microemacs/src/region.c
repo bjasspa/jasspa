@@ -651,6 +651,8 @@ yankRectangle(int f, int n)
     while(--n >= 0)
         if(yankRectangleKill(klhead,col,n) <= 0)
             return meABORT;
+    /* update the current window's line etc, other windows seem to be updated okay as this does not change their current line */
+    frameCur->windowCur->updateFlags |= WFMOVEL|WFMAIN|WFSBOX;
     return meTRUE;
 }
 #endif
