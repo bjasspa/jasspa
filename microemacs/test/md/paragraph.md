@@ -13,7 +13,7 @@ on [Github](https://github.com).
 ## Short lines but not more than one space at the end
 
 In short
-I believe that you think
+I believe that you think 
 that this paragraph
 should be auto-wrapped to
 1 perhaps two lines as there
@@ -21,7 +21,7 @@ are no lines with 2 spaces.
 
 - [x] Lowdown
 - [x] Pandoc
-- [ ] Github
+- [x] Github
 
 ## Short lines with two spaces at the end
 
@@ -34,5 +34,5 @@ are all lines with 2 spaces at the end.
 
 - [x] Lowdown
 - [x] Pandoc
-- [ ] Github
+- [x] Github
 
