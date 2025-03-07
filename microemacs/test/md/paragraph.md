@@ -41,3 +41,7 @@ are all lines with 2 spaces at the end.
 Final test: let's write on two
 lines. Does this is displayed on one?
 
+- [x] Lowdown
+- [x] Pandoc
+- [x] Github
+
