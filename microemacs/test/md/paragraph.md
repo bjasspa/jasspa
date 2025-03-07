@@ -21,7 +21,7 @@ are no lines with 2 spaces.
 
 - [x] Lowdown
 - [x] Pandoc
-- [] Github
+- [ ] Github
 
 ## Short lines with two spaces at the end
 
@@ -34,5 +34,5 @@ are all lines with 2 spaces at the end.
 
 - [x] Lowdown
 - [x] Pandoc
-- [] Github
+- [ ] Github
 
