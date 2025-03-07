@@ -36,3 +36,8 @@ are all lines with 2 spaces at the end.
 - [x] Pandoc
 - [x] Github
 
+## Final paragraph
+
+Final test: let's write on two
+lines. Does this is displayed on one?
+
