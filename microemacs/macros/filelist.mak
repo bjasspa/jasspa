@@ -34,7 +34,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkdiff.emf	hkdirlst.emf	hkdirtre.emf	hkdman.emf	\
 	hkdoc.emf	hkdos.emf	hkdot.emf	\
 	hkehf.emf	hkemf.emf	hkerf.emf	hkeuphor.emf	\
-	hkf90.emf	hkfvwm.emf	\
+	hkf90.emf	hkfvwm.emf	hkgo.emf	\
 	hkhtml.emf	\
 	hkidl.emf	hkimake.emf	hkinfo.emf	hkini.emf	\
 	hkipipe.emf	hkiss.emf	\
@@ -105,7 +105,7 @@ ETFS=	asmx86.etf	asn1.etf	au3.etf		\
 	doc.etf		\
 	emf.etf		euphor.etf	\
 	f.etf		f90.etf		\
-	h.etf		hpp.etf		html.etf	\
+	h.etf		hpp.etf		html.etf	go.etf	\
 	idl.etf		imake.etf	\
 	java.etf	js.etf		jst.etf		\
 	latex.etf	\

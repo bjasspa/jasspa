@@ -173,6 +173,7 @@ add-file-hook ".r .R .Rtk" fhook-r r-doc r-exec r-format r-lint
 add-file-hook ".cfm .cfml .cfc" fhook-cfm
 add-file-hook ".iss" fhook-iss
 add-file-hook ".swift" fhook-swift
+add-file-hook ".go" fhook-go
 ; Add magic hooks
 1 add-file-hook "^#![ \t]*/.*sh" fhook-shell
 1 add-file-hook "^#![ \t]*/.*perl" fhook-perl
