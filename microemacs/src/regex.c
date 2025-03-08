@@ -576,7 +576,6 @@ back_step:
                             /* on a 0th match lazy placeholder (i.e. a \(...\)?? or \(...\)*? etc. which must now be grown */
                             if(ii == 0)
                             {
-                                meAssert(matchNo == -1);
                                 matchNo = 0;
                                 matchLen--;
                             }
@@ -603,10 +602,17 @@ back_step:
                         }
                         depth--;
                         ci = matchItem[matchLen];
-                        if((matchNo > ci->matchMin) && !(ci->flag & meREGEXITEM_FLAG_LAZY))
+                        if(matchNo > ci->matchMin)
                         {
-                            offset = matchIOff[matchLen];
-                            break;
+                            if(!(ci->flag & meREGEXITEM_FLAG_LAZY))
+                            {
+                                offset = matchIOff[matchLen];
+                                break;
+                            }
+                            /* if group with lazy match fails roll fully back */
+                            matchLen=1;
+                            while(matchItem[matchLen] != ci)
+                                matchLen++;
                         }
                     }
                 }

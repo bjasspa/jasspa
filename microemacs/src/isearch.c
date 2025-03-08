@@ -243,7 +243,7 @@ isearch(int flags)
     meShort       histNo=0;
 #if MEOPT_LOCALBIND
     /* Initialize starting conditions */
-    meUByte         oldUseMlBinds = useMlBinds;
+    meUByte       oldUseMlBinds = useMlBinds;
     useMlBinds = 1;             /* Use the ml-bind-key's             */
 #endif    
     
@@ -384,7 +384,7 @@ find_next:
                 else
                     c = windowGotoBob(0,1);          /* and move to the top       */
             }
-            else if((histPos[histNo].startoff == histPos[histNo].endoffset) &&
+            else if(histNo && (histPos[histNo].startoff == histPos[histNo].endoffset) &&
                     (histPos[histNo].startline_no == histPos[histNo].endline_no))
             {
                 /* the search string has matched a zero length string, e.g. "^"
@@ -674,4 +674,3 @@ isearchForw(int f, int n)
 }
 
 #endif
-

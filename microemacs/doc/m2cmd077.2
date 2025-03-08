@@ -3,7 +3,7 @@
 .\" Copyright (c) 1998-2009 JASSPA (www.jasspa.com)
 .\" See the file "me.nrs" for copying and conditions.
 .\"
-.Id $Id: m2cmd077.2,v 2.12 2024/07/16 16:37:01 jon Exp $
+.Id $Id: m2cmd077.2,v 2.12 2025/03/08 20:23:14 jon Exp $
 .Im MicroEmacs command|shell
 .ds C0 "(\fB\*e backslash\fR)\ \&
 .so me.tni
@@ -116,13 +116,16 @@ deleted using
 .Ht delete-buffer 2
 or when  \*(mS is  exited.  The  numeric  argument  \fIn\fR  may be used to  change  the way in which the  process  is
 terminated,  if a 0 argument is given an interrupt  signal (kill request or nice-kill) is sent, writing a \fICtrl-C\fR
-to the  \fI<stdin>\fR  pipe on \s-1UNIX\s0 or sending  \fICtrl-C\fR  key events on Windows. This is typically bound to
-\fC\*cc \*cc\fR and is likely to fail, particularly on Windows, as the signal can be ignored.
+to the  \fI<stdin>\fR  pipe on  \s-1UNIX\s0  or sending  \fICtrl-C\fR  key events on Windows.  This is likely to fail,
+particularly on Windows which does not have a robust signal  interrupt  system, however it is still typically bound to
+\fC\*cc  \*cc\fR as Windows does not offer an  alternative. On \s-1UNIX\s0  based systems \fC\*cc \*cc\fR is typically
+bound to ipipe-kill with a numeric argument of 2 which sends a \fISIGINT\fR, see
+.Hr signal 7 .  
 .PP
-On \s-1UNIX\s0 platforms, if a +ve argument is given then only the top level process is set a kill signal of the given
-value, e.g. the process  would be  terminated  with a core dump if a value of \fC3\fR was given. If a -ve  argument is
-given the process and all its children, in the same process group, will be sent a 0-n kill signal. When no argument is
-given the default used is either -9, -SIGKILL, or -15, -SIGTERM, depending on the setting of bit 0x2000000 of 
+On  \s-1UNIX\s0  platforms,  if a +ve  argument is given then only the top level  process is sent a kill signal of the
+given value, e.g. the process would be terminated  with a core dump if a value of \fC3\fR was given. If a -ve argument
+is given the process and all its children, in the same process group, will be sent a 0-n kill signal. When no argument
+is given the default used is either -9, -SIGKILL, or -15, -SIGTERM, depending on the setting of bit 0x2000000 of 
 .Ht $system 5 .
 .PP
 On Windows, if no argument or a -ve argument is given  \fBipipe-kill\fR  terminates  the process and all  non-detached
