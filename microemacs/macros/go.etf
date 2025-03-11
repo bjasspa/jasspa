@@ -7,10 +7,15 @@
 // Authors:     $USER_NAME$
 
 
-package $FILE_BASENAME$
+package main
 
-import "fmt"
+import (
+    "fmt"
+    "os"
+)
 
 func main () {
+    argv := os.Args
+    fmt.Printf("Usage: %s\n",argv[0])
     fmt.Println("Hello World!")
 }   

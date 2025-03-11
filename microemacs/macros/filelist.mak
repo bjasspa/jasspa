@@ -122,7 +122,7 @@ ETFS=	asmx86.etf	asn1.etf	au3.etf		\
 #EAFS:sh=ls *.eaf
 EAFS=	ada.eaf		asp.eaf		au3.eaf		\
 	c.eaf		cfm.eaf		cpp.eaf		\
-	emf.eaf		euphor.eaf	\
+	emf.eaf		euphor.eaf	go.eaf		\
 	hkasp.eaf	hkc.eaf		hkcpp.eaf	hkemf.eaf	\
 	hkhtml.eaf	hkjsp.eaf	hkjst.eaf	hknroff.eaf	\
 	hkphp.eaf	\
