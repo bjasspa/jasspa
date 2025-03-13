@@ -73,7 +73,7 @@ jobs:
           cd ..
           Rename-Item -Path release_readme.txt -NewName readme.txt
           $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
-          Compress-Archive -Path bin,COPYING.txt,readme.txt -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_windows_binaries
+          Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_windows_binaries
 
       - name: Create windows100 openssl download
         shell: pwsh
@@ -111,7 +111,7 @@ jobs:
           cd .\wix
           Copy-Item -Path ..\bin\windows100-intel32\mew.exe -Destination .
           Copy-Item -Path ..\bin\windows100-intel32\mec.exe -Destination .
-          Copy-Item -Path ..\COPYING.txt -Destination .
+          Copy-Item -Path ..\LICENSE -Destination .
           ..\bin\windows100-intel32\mec.exe -p "@./meigen"
           Copy-Item -Path ..\me.ehf -Destination macros
           heat dir macros -o jmeMacros.wxs -scom -frag -srd -sreg -gg -cg MacrosGroupId -dr jmeMacrosDirRef
@@ -136,9 +136,9 @@ jobs:
           cd .\mesingle
           mkdir -Path bin\windows100-intel32
           ..\bin\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mec.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mesc.exe
-          Copy-Item -Path ..\COPYING.txt -Destination .
+          Copy-Item -Path ..\LICENSE -Destination .
           Copy-Item -Path ..\readme.txt -Destination .
-          Compress-Archive -Path bin,COPYING.txt,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_mesc
+          Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_mesc
 
       - name: Compile windows100 static mew
         shell: pwsh
@@ -157,7 +157,7 @@ jobs:
           cd .\mesingle
           Remove-Item bin\windows100-intel32\mesc.exe
           ..\bin\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mew.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mesw.exe
-          Compress-Archive -Path bin,COPYING.txt,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_mesw
+          Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_mesw
 
       - name: Upload Packages
         uses: actions/upload-artifact@v4

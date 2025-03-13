@@ -172,7 +172,7 @@ support of international character encodings on UTF-8 enabled terminals.
 
 ## License
 
-GPL - see the file [COPYING.txt](microemacs/COPYING.txt)
+GPL - see the file [LICENSE](microemacs/LICENSE)
 
 ## Authors
 
