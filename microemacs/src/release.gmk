@@ -41,8 +41,8 @@ GREP	= grep
 UNIQ	= uniq
 INSTALL	= ginstall
 INSTDIR	= ../release
-DOS2UNIX= me -n "@dos2unix"
-UNIX2DOS= me -n "@unix2dos"
+DOS2UNIX= mec -p "@2unix"
+UNIX2DOS= mec -p "@2dos"
 
 OBJS	= mesrc.zip	mesrc.tar.gz	meicons.tar.gz
 
@@ -69,11 +69,11 @@ release: $(OBJS)
 	$(RM) tags
 	$(RM) .#*
 	$(RM) *~
-	$(DOS2UNIX) *.def *.[ch] *.mak *.txt *.gmk build COPYING *.xpm
+	$(DOS2UNIX) *.def *.[ch] *.mak *.txt *.gmk build LICENSE *.xpm
 	$(UNIX2DOS) build.bat *.rc win*.mak dos*.mak
 	$(RM) *~
 	$(FIND) . -depth -type f -print | $(GREP) -v -i ".*/*\.lst" | $(GREP) -v -i ".*/cvs.*" | $(GREP) -v -i ".*\.o.*" | $(GREP) -v -i "\.ziplist" | $(GREP) -v -i ".*/release\.gmk"  > $@.tmp
-	sort $@.tmp | $(GREP) -v -i ".*\.tar\.gz" | $(GREP) -v -i ".*/\.cvsignore" | $(GREP) -v -i ".*\.zip" | $(GREP) -v -i ".*\.exe" | $(UNIQ) > $@
+	sort $@.tmp | $(GREP) -v -i ".*\.tar\.gz" | $(GREP) -v -i ".*\.zip" | $(GREP) -v -i ".*\.exe" | $(UNIQ) > $@
 	$(RM) $@.tmp
 
 clean:

@@ -1,19 +1,19 @@
-##############################################################################
-# This is part of the JASSPA MicroEmacs.
-# Copyright (C) 2004-2009 JASSPA (www.jasspa.com)
-# See the file COPYING for copying and conditions.
+##-*- makefile -*-############################################################
 #
-# Created:       Thu Feb 5 21:36:24 2004
+# Copyright (C) 2004-2025 JASSPA (www.jasspa.com).
+#
+# This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+# copying information.
+#
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20090829.1807>
 #
 ##############################################################################
 
 TOPDIR=.
 include $(TOPDIR)/etc/makeinc
 # Installable text files
-TXTS	=	COPYING	license.txt change.log
+TXTS	=	LICENSE change.log
 #
 ZIPS	=	$(WWWRELDIR)/jasspa-mesrc-20$(MEYY)$(MEMM)$(MEDD).zip	\
 		$(WWWRELDIR)/jasspa-memacros-20$(MEYY)$(MEMM)$(MEDD).zip\

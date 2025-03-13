@@ -1,11 +1,12 @@
 ; -!- emf -!-
-; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2000-2023 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
 ;
-; Created:     Wed Aug 23 2000
+; Copyright (C) 2000-2023 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
 ; Synopsis:    Hilighting for diff files
-; Authors:     Jon Green + Pedro Gomes
+; Authors:     Pedro Gomes, Jon Green, Steven Phillips 
 ;
 ; Notes:
 ;     This has been extrapolated from the tools.emf file that originally

@@ -1,7 +1,8 @@
 > -!- document -!-
-> This is part of the JASSPA MicroEmacs macro files
-> Copyright (C) 2004 JASSPA (www.jasspa.com)
-> See the file COPYING for copying and conditions.
+> Copyright (C) 2004-2025 JASSPA (www.jasspa.com).
+>
+> This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+> copying information.
 >
 
 Place  your  company  wide  information  in this  directory.  The

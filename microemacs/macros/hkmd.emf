@@ -1,11 +1,12 @@
 ; -!- emf -!-
-; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1999-2024 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
 ;
-; Created:    Sun Nov 15 2020
-; Authors:    Detlef Groth
+; Copyright (C) 2020-2024 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
 ; Synopsis:   Markdown file hook (https://www.markdownguide.org/)
+; Authors:    Detlef Groth, Steven Phillips
 ;
 define-macro fhook-md
   set-variable #l0 &con &isin ".rmd" $buffer-bname "rmd" "md"

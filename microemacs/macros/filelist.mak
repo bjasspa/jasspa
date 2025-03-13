@@ -1,11 +1,12 @@
-##############################################################################
-# This is part of the JASSPA MicroEmacs.
-# Copyright (C) 2005-2023 JASSPA (www.jasspa.com)
-# See the file COPYING for copying and conditions.
+##-*- makefile -*-############################################################
 #
-# Created:       Sat Oct 6 2023
-# Synopsis:      Installation Makefile
-# Authors:       Jon Green & Steven Phillips
+# Copyright (C) 2005-2025 JASSPA (www.jasspa.com).
+#
+# This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+# copying information.
+#
+# Synopsis:    Installation Makefile
+# Authors:     Jon Green & Steven Phillips
 #
 ##############################################################################
 #
@@ -122,7 +123,7 @@ ETFS=	asmx86.etf	asn1.etf	au3.etf		\
 #EAFS:sh=ls *.eaf
 EAFS=	ada.eaf		asp.eaf		au3.eaf		\
 	c.eaf		cfm.eaf		cpp.eaf		\
-	emf.eaf		euphor.eaf	\
+	emf.eaf		euphor.eaf	go.eaf		\
 	hkasp.eaf	hkc.eaf		hkcpp.eaf	hkemf.eaf	\
 	hkhtml.eaf	hkjsp.eaf	hkjst.eaf	hknroff.eaf	\
 	hkphp.eaf	\

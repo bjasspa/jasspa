@@ -1,6 +1,11 @@
-; Generated printer scheme file for JASSPA MicroEmacs
-; Copyright (C) 1999-2009 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
+; -!- emf -!-
+;
+; Copyright (C) 1999-2025 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Generated printer scheme file for JASSPA MicroEmacs
 ; Description: Epson ESC/P Color
 set-registry "/print/scheme-flags" 3
 ; Create the colors first

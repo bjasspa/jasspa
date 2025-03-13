@@ -1,13 +1,14 @@
 ; -!- emf -!-
-; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2000-2020 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
 ;
-; Created:     Tue May 9 2000
+; Copyright (C) 2000-2020 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
 ; Synopsis:    Sets up a watch on the current buffer's file and auto-reloads
 ; Authors:     Steven Phillips
-; Description: Run watch in any file buffer and ME will automatically check
-;              for updates to this file every 10sec.
+; Description: Run watch on any file buffer and ME will automatically check
+;              for updates to the file every 10sec.
 ; Notes:
 ;   * If a watch file has been changed it will be automatically re-loaded.
 ;   * A watched buffer is only checked if it is currently visible, i.e. it

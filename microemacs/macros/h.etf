@@ -1,32 +1,13 @@
-/* -*- C -*- ****************************************************************
+/* -*- C -*- *****************************************************************
  *
- *  System        : 
- *  Module        : 
- *  Object Name   : $RCSfile$
- *  Revision      : $Revision$
- *  Date          : $Date$
- *  Author        : $Author$
- *  Created By    : $USER_NAME$
- *  Created       : $ASCII_TIME$
- *  Last Modified : <241217.1951>
+ * Copyright (C) $YEAR$ $COMPANY_REF$.
  *
- *  Description	
+ * $COMPANY_LICENSE:75$
  *
- *  Notes
+ * Synopsis:    $CURSOR$
+ * Authors:     $USER_NAME$
  *
- *  History
- *	
- ****************************************************************************
- *
- *  Copyright (c) $YEAR$ $COMPANY_NAME$.
- * 
- *  All Rights Reserved.
- * 
- * This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
- * reproduced,  translated,  or  reduced to any  electronic  medium or machine
- * readable form without prior written consent from $COMPANY_NAME$.
- *
- ****************************************************************************/
+ *****************************************************************************/
 
 #ifndef __$FILE_NAME_UD$
 #define __$FILE_NAME_UD$
@@ -34,7 +15,7 @@
 #if defined(__cplusplus) || defined(c_plusplus)
 extern "C" {
 #endif
-$CURSOR$
+
 
 #if defined(__cplusplus) || defined(c_plusplus)
 }

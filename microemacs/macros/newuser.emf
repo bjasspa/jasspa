@@ -1,12 +1,12 @@
-; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2004-2024 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
+; -!- emf -!-
+; Copyright (C) 2004-2025 JASSPA (www.jasspa.com)
 ;
-; Created:     25 Jan 2004
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
 ; Synopsis:    New User setup creation routines
 ; Authors:     Jon Green & Steven Phillips
-; Notes:
-;   For testing - simply run 'me -u new-user-name'
+; Notes:       For testing - simply run 'me -u new-user-name'
 ;
 define-macro new-user
   ; test for recursive call, probably something has gone wrong with the re-initialise - quit
@@ -222,8 +222,8 @@ set-variable .new-user.pathdiv &con &band $system 0x80 ":" ";"
     ; Therefore if the current $user-path is not a jasspa path we can
     ; create one and ME will automatically find one.
     !iif &seq &lef &set #l2 $user-path 6 "tfs://"  set-variable #l2 $home
-    !if &seq &rig #l2 &sub 0 &len &set #l0 &spr "/jasspa/%s/" $user-name #l0
-      ; ends in "/jaspa/<user>/", this is okay as is
+    !if &and &not &seq #l2 $home &seq &rig #l2 &sub 0 &len &set #l0 &spr "/%s/" $user-name #l0
+      ; ends in "/<user>/", this is okay as is
       set-variable .new-user.user-path #l2
     !else
       !if &seq &rig #l2 &sub 0 &len &set #l0 "/jasspa/" #l0

@@ -1,7 +1,9 @@
 ; -!- emf -!-
-; This is part of the JASSPA MicroEmacs macro files
+;
 ; Copyright (C) 1998-2023 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
 ;
 ; Synopsis:    To dos text file conversion routine.
 ; Authors:     Steven Phillips

@@ -58,7 +58,7 @@ jobs:
           cd ..
           mv release_readme.txt readme.txt
           export MEVER=`./bin/macos14-apple64/mec -p @contribs/ver.emf`
-          zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_macos_apple_binaries bin COPYING.txt readme.txt
+          zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_macos_apple_binaries bin LICENSE readme.txt
 
       - name: Create macos-apple mesc
         run: |
@@ -67,9 +67,9 @@ jobs:
           rm -rf bin
           mkdir -p bin/macos14-apple64
           ../bin/macos14-apple64/mec -p "@./mesgen" -f -p ../bin/macos14-apple64/mec -t ../bin/macos14-apple64/tfs -o bin/macos14-apple64/mesc
-          cp ../COPYING.txt ./
+          cp ../LICENSE ./
           cp ../readme.txt ./
-          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_apple_mesc bin COPYING.txt readme.txt
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_apple_mesc bin LICENSE readme.txt
 
       - name: Create macos-apple mesw
         run: |
@@ -78,7 +78,7 @@ jobs:
           rm -rf bin
           mkdir -p bin/macos14-apple64
           ../bin/macos14-apple64/mec -p "@./mesgen" -f -p ../bin/macos14-apple64/mew -t ../bin/macos14-apple64/tfs -o bin/macos14-apple64/mesw
-          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_apple_mesw bin COPYING.txt readme.txt
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_apple_mesw bin LICENSE readme.txt
 
       - name: Create macos-apple OpenSSL download
         run: |

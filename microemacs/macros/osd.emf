@@ -1,9 +1,10 @@
 ; -!- emf -!-
-; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1997-2024 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
 ;
-; Created:     Sat Jul 26 1997
+; Copyright (C) 1997-2024 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
 ; Synopsis:    OSD - On Screen Display main menu macros.
 ; Authors:     Jon Green & Steven Phillips
 ;

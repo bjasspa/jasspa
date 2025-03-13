@@ -1,23 +1,9 @@
-# -!- makefile -!-
+##-*- makefile -*-############################################################
 #
-# JASSPA MicroEmacs - www.jasspa.com
-# makefile - Make file for Windows using Microsoft MSVC v6.0 development kit.
+# Copyright (C) 2001-2025 JASSPA (www.jasspa.com).
 #
-# Copyright (C) 2001-2002 JASSPA (www.jasspa.com)
-#
-# This program is free software; you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by the Free
-# Software Foundation; either version 2 of the License, or (at your option)
-# any later version.
-#
-# This program is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-# more details.
-#
-# You should have received a copy of the GNU General Public License along
-# with this program; if not, write to the Free Software Foundation, Inc.,
-# 675 Mass Ave, Cambridge, MA 02139, USA.
+# This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+# copying information.
 #
 ##############################################################################
 #
@@ -26,7 +12,6 @@
 #
 # Author      : Jon Green
 # Created     : 22nd February 1997
-# Last Edited : <181230.1259>
 #
 # History     : JG  220297 Original  Constructed from emacssrc
 #

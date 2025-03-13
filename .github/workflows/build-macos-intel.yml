@@ -57,7 +57,7 @@ jobs:
           cd ..
           mv release_readme.txt readme.txt
           export MEVER=`./bin/macos13-intel64/mec -p @contribs/ver.emf`
-          zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_macos_intel_binaries bin/macos13-intel64 COPYING.txt readme.txt
+          zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_macos_intel_binaries bin/macos13-intel64 LICENSE readme.txt
 
       - name: Create macos-intel mesc
         run: |
@@ -66,9 +66,9 @@ jobs:
           rm -rf bin
           mkdir -p bin/macos13-intel64
           ../bin/macos13-intel64/mec -p "@./mesgen" -f -p ../bin/macos13-intel64/mec -t ../bin/macos13-intel64/tfs -o bin/macos13-intel64/mesc
-          cp ../COPYING.txt ./
+          cp ../LICENSE ./
           cp ../readme.txt ./
-          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_intel_mesc bin COPYING.txt readme.txt
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_intel_mesc bin LICENSE readme.txt
 
       - name: Create macos-intel mesw
         run: |
@@ -77,7 +77,7 @@ jobs:
           rm -rf bin
           mkdir -p bin/macos13-intel64
           ../bin/macos13-intel64/mec -p "@./mesgen" -f -p ../bin/macos13-intel64/mew -t ../bin/macos13-intel64/tfs -o bin/macos13-intel64/mesw
-          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_intel_mesw bin COPYING.txt readme.txt
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_intel_mesw bin LICENSE readme.txt
 
       - name: Create macos-intel OpenSSL download
         run: |

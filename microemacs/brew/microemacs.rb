@@ -4,7 +4,7 @@ class Microemacs < Formula
   homepage "https://github.com/bjasspa/jasspa"
   version "##VERSION##"
   SHRPTH="#{HOMEBREW_PREFIX}/share"
-  # get the readme and COPYING files from the macros dependency which should be in the cache
+  # get the readme and LICENSE files from the macros dependency which should be in the cache
   url "https://github.com/bjasspa/jasspa/releases/download/me_##VERSION##/Jasspa_MicroEmacs_##VERSION##_macros.zip"
   sha256 "##SHA256##"
   # Add more dependencies as needed

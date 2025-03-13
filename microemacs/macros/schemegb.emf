@@ -1,6 +1,11 @@
-; Generated color scheme file for JASSPA MicroEmacs
-; Copyright (C) 1999-2009 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
+; -!- emf -!-
+;
+; Copyright (C) 1999-2025 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Generated color scheme file for JASSPA MicroEmacs
 ; Description: General Electric Blue
 set-variable $system &bor $system 0x020
 set-variable .hilight.flags 15
