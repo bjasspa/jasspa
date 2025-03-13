@@ -21,7 +21,7 @@
       <Directory Id="ProgramFilesFolder">
         <Directory Id="INSTALLDIR" Name="Jasspa MicroEmacs">
           <Component Id="ProductFiles" Guid="8D4EC16E-3293-42A9-9936-7AA107E0C3E0">
-            <File Id="COPYING.txt" Source="COPYING.txt" KeyPath="yes" />
+            <File Id="LICENSE" Source="LICENSE" KeyPath="yes" />
           </Component>
           <Directory Id="jmeBinDir" Name="bin">
             <Component Id="ProductBinMec" Guid="8EC998F6-D0DD-4C60-80E2-B024B0065F1B">

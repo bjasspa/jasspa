@@ -1,6 +1,11 @@
-; Generated color scheme file for JASSPA MicroEmacs
-; Copyright (C) 1999-2023 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
+; -!- emf -!-
+;
+; Copyright (C) 1999-2025 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Generated color scheme file for JASSPA MicroEmacs
 ; Description: Charcoal
 ; Comment: Author: Bruno Sabin <brunosabin AT yahoo DOT com>\n\nHeavily inspired by the Trebuchet scheme I used\nto use on GNU Emacs.\nCredit, I believe, needs to go to at least\nMarius Sundbakken <marius AT fix DOT no>\nand Jan "Amos" Borsodi <jb AT ez DOT no>\n
 set-variable $system &band $system &bnot 0x020

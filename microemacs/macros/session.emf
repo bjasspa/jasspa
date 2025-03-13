@@ -1,9 +1,10 @@
 ; -!- emf -!-
-; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2006-2023 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
 ;
-; Created:     2006-05-16
+; Copyright (C) 2006-2023 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
 ; Synopsis:    ME Session saving & restoring
 ; Authors:     Steven Phillips
 ;

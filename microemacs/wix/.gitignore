@@ -1,6 +1,6 @@
 # ignore backup files, tags and build directories
 macros/
-COPYING.txt
+LICENSE
 mec.exe
 mew.exe
 jme.wixobj

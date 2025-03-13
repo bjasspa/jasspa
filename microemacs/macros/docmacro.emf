@@ -1,9 +1,10 @@
 ; -!- emf -!-
-; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2000-2023 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
 ;
-; Created:     Mon Mar 20 2000
+; Copyright (C) 2000-2023 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
 ; Synopsis:    Common document macros. 
 ; Authors:     Jon Green
 ;
@@ -46,7 +47,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <241216.1738>
+;         > Modified:     <250312.2339>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet

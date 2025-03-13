@@ -1,13 +1,12 @@
 ; -!- emf -!-
-; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2025 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
+; Copyright (C) 2025 JASSPA (www.jasspa.com).
 ;
-; Synopsis:    File hook for Go language files, 
-;              executed if a *.go file is opened
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Go language file hook (https://go.dev/)
 ; Authors:     Detlef Groth
-;;
-
+;
 define-macro fhook-go
     set-variable $buffer-mask "luh1"
     @# buffer-init "go"

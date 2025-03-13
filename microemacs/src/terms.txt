@@ -1,10 +1,12 @@
 > -!- document; fill-mode:both; fill-column:70; -!-
 >
->  Copyright 2001-2009 JASSPA (www.jasspa.com)
+> Copyright (c) 2001-2025 JASSPA (www.jasspa.com).
 >
->  Created By    : Jon Green
->  Created       : Sat Dec 22 09:09:48 2001
->  Last Modified : <090829.1802>
+> This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+> copying information.
+>
+> Synopsis:    MicroEmacs licensing terms and conditions
+> Authors:     Jon Green, Steven Phillips
 >
 
 This  document  describes  how the GPL  licence  has been  applied  to
@@ -127,8 +129,8 @@ history and application.
     authoring  history etc. must always be maintained but can be added
     to the 2nd comment block.
 
-    The source  directory MUST include the file COPYING which contains
-    the GPL license.
+    The source  directory or parent MUST include the "LICENSE" file which
+    contains the GPL license.
 
     So for example in main.c the existing header is defined as:-
 
@@ -215,25 +217,26 @@ history and application.
     Macro files are handled slightly  differently from the source code
     files. As the  files are  processed  at  runtime  then  there is a
     requirement to minimise the  information  that is contained in the
-    file. In this case we make  reference to macro file that  contains
-    the fuller  license,  i.e. me.emf  which is always  required.  The
-    copyrights  are  maintained  as per the original  file in the form
-    laid out in section 1.0.
+    file. In this case we make reference to LICENSE file that contains
+    the fuller  licensing  and  copying  information,  which is always
+    required. The  copyrights  are maintained as per the original file
+    in the form laid out in section 1.0.
 
-    In addition, the creator and create date and additional  notes may
-    be included following the short header.
+    In addition,  the synopsis,  authors and  additional  notes may be
+    included following the short header.
 
-    The  macros  directory  must  contain  the  file  "COPYING"  which
-    contains the GNU license.
+    The macros  directory  or parent must  contain the "LICENSE"  file
+    which contains the GNU license.
 
 >emf>
     ; -!- emf -!-
-    ; This is part of the JASSPA MicroEmacs macro files
-    ; Copyright (C) JASSPA 1999-2009
-    ; See the file me.emf for copying and conditions.
+    ; Copyright (c) 1999-2009 JASSPA (www.jasspa.com).
     ;
-    ; Created By: Steven Philips
-    ; Created   : Wed Jul 7 13:22:00 1999
+    ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+    ; copying information.
+    ;
+    ; Synopsis:   Abbrviations handler
+    ; Authors:    Steven Phillips
 >doc>
 
     The original file may have been defined as:-
@@ -242,7 +245,7 @@ history and application.
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;
     ;  Created By    : Steven Phillips
-    ;  Created       : Wed Jul 7 13:22:00 1999
+    ;  Created       : Wed Jul 7 1999
     ;  Last Modified : <011010.0756>
     ;
     ;  Description
@@ -253,34 +256,6 @@ history and application.
     ;
     ;  Copyright (C) 1999-2009 JASSPA (www.jasspa.com).
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
->doc>
-
-    Within  me.emf we carry a larger  notice,  this is the only  macro
-    file that carries the large notice. This file is always required.
-
->emf>
-    ; -!- emf -!-
-    ; JASSPA MicroEmacs - www.jasspa.com
-    ; me.emf - Startup file for JASSPA MicroEmacs Distribution
-    ;
-    ; Copyright (C) 1988-2009 JASSPA (www.jasspa.com)
-    ;
-    ; This program is free software; you can redistribute it and/or modify it
-    ; under the terms of the GNU General Public License as published by the Free
-    ; Software Foundation; either version 2 of the License, or (at your option)
-    ; any later version.
-    ;
-    ; This program is distributed in the hope that it will be useful, but WITHOUT
-    ; ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-    ; FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-    ; more details.
-    ;
-    ; You should have received a copy of the GNU General Public License along
-    ; with this program; if not, write to the Free Software Foundation, Inc.,
-    ; 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    ; Additional comments & notes about the rest of the code.
-    ; Any history etc. about the file can go in here.
 >doc>
 
 4.0 Documentation Files
@@ -338,8 +313,8 @@ history and application.
     .\"***************************************************************************
     .\"
 
-    The  documentation  directory  MUST include the file COPYING which
-    contains the GFDL license.
+    The  documentation  directory or parent MUST include the "LICENSE"
+    file which contains the GFDL license.
 
 5.0 Makefiles
 

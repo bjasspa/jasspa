@@ -1,0 +1,5 @@
+# Following files should always have Window/Dos style line endings
+*.bat text eol=crlf
+*.rc text eol=crlf
+dos*.mak text eol=crlf
+win*.mak text eol=crlf

@@ -1,6 +1,11 @@
-; Generated color scheme file for JASSPA MicroEmacs
-; Copyright (C) 1999-2023 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
+; -!- emf -!-
+;
+; Copyright (C) 1999-2025 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Generated color scheme file for JASSPA MicroEmacs
 ; Description: Lumina
 ; Comment: Author: Bruno Sabin <brunosabin AT yahoo DOT com>\n\nHeavily inspired by the ps_color scheme I used\nto use on Vim.\nCredit, I believe, needs to go to at least\nPan, Shi Zhu <http://vim.sourceforge.net/scripts/script.php?script_id=760>\n
 set-variable $system &band $system &bnot 0x020

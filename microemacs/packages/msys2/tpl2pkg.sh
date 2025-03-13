@@ -37,8 +37,8 @@ function tpl2pkg {
       sed -i -E "s/digest-mesw.exe/${dig}/" microemacs-package/PKGBUILD
       dig=$(sha256sum microemacs-package/readme.txt | cut -c 1-64)      
       sed -i -E "s/digest-readme.txt/${dig}/" microemacs-package/PKGBUILD
-      dig=$(sha256sum microemacs-package/COPYING.txt | cut -c 1-64)      
-      sed -i -E "s/digest-COPYING.txt/${dig}/" microemacs-package/PKGBUILD
+      dig=$(sha256sum microemacs-package/LICENSE | cut -c 1-64)      
+      sed -i -E "s/digest-LICENSE/${dig}/" microemacs-package/PKGBUILD
    fi  
 }
 

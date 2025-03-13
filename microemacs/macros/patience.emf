@@ -1,9 +1,10 @@
 ; -!- emf -!-
-; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1995-2023 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
 ;
-; Created:     24th November 1995
+; Copyright (C) 1995-2023 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
 ; Synopsis:    Patience playing card patience game
 ; Authors:     Jon Green
 ;

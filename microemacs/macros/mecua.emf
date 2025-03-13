@@ -1,12 +1,12 @@
 ; -!- emf -!-
-; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2001-2024 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
 ;
-; Created:     Wed Feb 21 2001
-; Adapted:     Gabriel Tabares-Barreiro
+; Copyright (C) 2001-2024 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
 ; Synopsis:    CUA (Standard GUI keybindings) emulation
-; Authors:     Steven Phillips, Gabriel Tabares-Barreiro
+; Authors:     Gabriel Tabares-Barreiro, Steven Phillips 
 ;
 ; Notes:
 ;     This is currently only a partical implementation created for proof

@@ -1,7 +1,12 @@
 ##-*- makefile -*-############################################################
 #
-#  Copyright (c) 2024 Detlef Groth.
-# 
+# Copyright (C) 2024-2025 JASSPA (www.jasspa.com).
+#
+# This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+# copying information.
+#
+# Synopsis:    Installation Makefile
+# Authors:     Detlef Groth.
 #
 ##############################################################################
 
@@ -31,4 +36,4 @@ readme:
 	# We need a dummy file for microemacs.rb
 	-mkdir Jasspa_MicroEmacs_$(version)_readme
 	cp microemacs/release_readme.txt Jasspa_MicroEmacs_$(version)_readme/readme.txt
-	cp microemacs/COPYING.txt Jasspa_MicroEmacs_$(version)_readme/license.txt
+	cp microemacs/LICENSE Jasspa_MicroEmacs_$(version)_readme/license.txt

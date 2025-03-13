@@ -1,12 +1,12 @@
-##############################################################################
-# This is part of the JASSPA MicroEmacs.
-# Copyright (C) 2004-2009 JASSPA (www.jasspa.com)
-# See the file COPYING for copying and conditions.
+##-*- makefile -*-############################################################
 #
-# Created:       Thu Feb 5 21:36:24 2004
+# Copyright (C) 2004-2025 JASSPA (www.jasspa.com).
+#
+# This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+# copying information.
+#
 # Synopsis:      Installation Makefile
 # Authors:       Jon Green
-# Last Modified: <20090829.1807>
 #
 ##############################################################################
 
@@ -18,7 +18,7 @@ include $(TOPDIR)/etc/makeinc
 ZIPOBJS	=	ls_dede.zip	ls_engb.zip	ls_enus.zip	\
 		ls_eses.zip	ls_frfr.zip	ls_itit.zip	\
 		ls_plpl.zip	ls_ptpt.zip	ls_fifi.zip	\
-		ls_ruye.zip	ls_ruyo.zip
+		ls_ruru.zip
 TAROBJS	=	$(ZIPOBJS:.zip=.tar.gz)
 #
 # Text files.
@@ -34,17 +34,17 @@ RELTXTS	= $(TXTOBJS:%=$(JASSPLDIR)/%)
 #
 # Dictionary files.
 #
-LSDEDE	=	lsrdede.emf	lsdmdede.edf	lsdxdede.edf
-LSENGB	=	lsrengb.emf	lsdmengb.edf	lsdxengb.edf
-LSENUS	=	lsrenus.emf	lsdmenus.edf	lsdxenus.edf
-LSESES	=	lsreses.emf	lsdmeses.edf	COPYING
-LSFIFI	=	lsrfifi.emf	lsdmfifi.edf
-LSFRFR	=	lsrfrfr.emf	lsdmfrfr.edf	COPYING
-LSITIT	=	lsritit.emf	lsdmitit.edf	COPYING
-LSPLPL	=	lsrplpl.emf	lsdmplpl.edf
-LSPTPT	=	lsrptpt.emf	lsdmptpt.edf	COPYING
-LSRUYE	=	lsrruye.emf	lsdmruye.edf
-LSRUYO	=	lsrruyo.emf	lsdmruyo.edf
+LSDEDE	=	lsrdede.emf	lsmdede.edf	LICENSE_dede.txt	README_dede.txt
+LSELGR	=	lsrelgr.emf	lsmelgr.edf	LICENSE_elgr.txt	README_elgr.txt
+LSENGB	=	lsrengb.emf	lsmengb.edf	LICENSE_engb.txt	README_engb.txt
+LSENUS	=	lsrenus.emf	lsmenus.edf	LICENSE_enus.txt	README_enus.txt
+LSESES	=	lsreses.emf	lsmeses.edf	LICENSE_eses.txt	README_eses.txt
+LSFIFI	=	lsrfifi.emf	lsmfifi.edf	LICENSE_fifi.txt	README_fifi.txt
+LSFRFR	=	lsrfrfr.emf	lsmfrfr.edf	LICENSE_frfr.txt	README_frfr.txt
+LSITIT	=	lsritit.emf	lsmitit.edf	LICENSE_itit.txt	README_itit.txt
+LSPLPL	=	lsrplpl.emf	lsmplpl.edf	LICENSE_plpl.txt	README_plpl.txt
+LSPTPT	=	lsrptpt.emf	lsmptpt.edf	LICENSE_ptpt.txt	README_ptpt.txt
+LSRURU	=	lsrruru.emf	lsmruru.edf	README_ruru.txt
 
 all:	$(TAROBJS) $(ZIPOBJS)
 
@@ -103,14 +103,10 @@ ls_ptpt.tar.gz:	$(LSPTPT)
 	$(TAR) cf - $(LSPTPT) | $(GZIP) -c > $@
 
 # Russian - Ye & Yo versions
-ls_ruye.zip:	$(LSRUYE)
-	$(ZIP) $@ $(LSRUYE)
-ls_ruye.tar.gz:	$(LSRUYE)
-	$(TAR) cf - $(LSRUYE) | $(GZIP) -c > $@
-ls_ruyo.zip:	$(LSRUYO)
-	$(ZIP) $@ $(LSRUYO)
-ls_ruyo.tar.gz:	$(LSRUYO)
-	$(TAR) cf - $(LSRUYO) | $(GZIP) -c > $@
+ls_ruru.zip:	$(LSRURU)
+	$(ZIP) $@ $(LSRURU)
+ls_ruru.tar.gz:	$(LSRURU)
+	$(TAR) cf - $(LSRURU) | $(GZIP) -c > $@
 
 #
 # Build Release

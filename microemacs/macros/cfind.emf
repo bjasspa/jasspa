@@ -1,9 +1,10 @@
 ; -!- emf -!-
-; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2007-2024 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
 ;
-; Created:     2007-10-17
+; Copyright (C) 2007-2024 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
 ; Synopsis:    Command-line wrapper for ME based find and grep commands
 ; Authors:     Steven Phillips
 ;
