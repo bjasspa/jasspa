@@ -48,7 +48,7 @@
 static int
 setAbbrev(int f, int n, meAbbrev **abrevPtr)
 {
-    register meAbbrev *abrev ;
+    register meAbbrev *abrev;
     register int status;        /* return status of name query */
     meUByte buf[meBUF_SIZE_MAX];          /* name of file to execute */
     

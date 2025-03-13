@@ -158,6 +158,7 @@ set-variable .fhook-md.item-list-r3 "H2 \ecB\\1\ecA"
   md-add-file-support "python" "py"
   md-add-file-support "sql" "sql"
   md-add-file-support "emf" "emf"
+  md-add-file-support "js" "javascript"
 !endif
 
 !if &sin "x" .fhook-md.setup
