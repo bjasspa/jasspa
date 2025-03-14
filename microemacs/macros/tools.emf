@@ -13,9 +13,9 @@
 ; One off set up of tools variables.
 !if &not &exi %diff-com
   ; Assume GNU diff utility - probably the best under all platforms !!.
-  ;set-variable %diff-com "diff -c -w"
+  set-variable %diff-com "diff -c -w"
   ; Standard diff utility
-  set-variable %diff-com "diff"
+  ;set-variable %diff-com "diff"
 !endif
 
 add-file-hook "*compile* *grep*" fhook-ipipe

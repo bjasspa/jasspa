@@ -102,9 +102,6 @@ meUByte meOptionList[]=
 #if MEOPT_OSD
     "osd\n"
 #endif
-#if MEOPT_POSITION
-    "pos\n"
-#endif
 #if MEOPT_PRINT
     "pri\n"
 #endif

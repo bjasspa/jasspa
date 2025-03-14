@@ -27,7 +27,7 @@
  *          Jon Green & Steven Phillips
  */
 
-extern  meDirList  curDirList ;
+extern  meDirList  curDirList;
 #if MEOPT_OSD
 extern  struct osdDIALOG  *osdDialogHd; /* Root of the on screen displays */
 extern  struct osdDISPLAY *osdDisplayHd;/* OSD dialog display list      */
@@ -36,17 +36,17 @@ extern  meRegister *meRegHead;          /* The register Head            */
 extern  meRegister *meRegCurr;          /* The current register set     */
 extern  meSelection selhilight;         /* Selection hilight            */
 extern  meSchemeSet  *hilBlock;         /* Hilighting colour changes    */
-extern  meColor    noColors ;           /* No defined colours           */
+extern  meColor    noColors;            /* No defined colours           */
 extern  meInt      styleTableSize;      /* Size of the colour table     */
 extern  meStyle   *styleTable;          /* Highlighting colour table    */
-extern  meStyle    defaultScheme[] ;    /* Default colour scheme        */
+extern  meStyle    defaultScheme[];     /* Default colour scheme        */
 #if MEOPT_ABBREV
-extern  meAbbrev  *globalAbbrevFile ;   /* Global Abreviation file      */
+extern  meAbbrev  *globalAbbrevFile;    /* Global Abreviation file      */
 #endif
-#if MEOPT_POSITION
-extern  mePosition *position ;          /* Position stack head          */
+#if MEOPT_EXTENDED
+extern  mePosition *position;           /* Position stack head          */
 #endif
-extern  meUShort   hilBlockS ;          /* Hilight - HilBlock array siz */
+extern  meUShort   hilBlockS;           /* Hilight - HilBlock array siz */
 extern  meInt      cursorState ;        /* Current state of cursor      */
 extern  meUByte   *meProgName ;         /* the program name (argv[0])   */
 extern  meUByte  **ModeLineStr ;        /* modeline line format         */
@@ -482,19 +482,23 @@ meStyle defaultScheme[meSCHEME_STYLES*2] = /* Default colour scheme     */
     meSTYLE_RDEFAULT,meSTYLE_NDEFAULT,            /* Current region style */
 };
 #if MEOPT_ABBREV
-meAbbrev *globalAbbrevFile = NULL ;     /* Global Abreviation file      */
+meAbbrev *globalAbbrevFile=NULL;        /* Global Abreviation file      */
 #endif
-#if MEOPT_POSITION
-mePosition *position=NULL ;             /* Position stack head          */
+#if MEOPT_EXTENDED
+mePosition *position=NULL;              /* Position stack head          */
 #endif
-meColor   noColors=0 ;                  /* No defined colours           */
-meInt     styleTableSize=2 ;            /* Size of the style table      */
+meColor   noColors=0;                   /* No defined colours           */
+meInt     styleTableSize=2;             /* Size of the style table      */
 meSchemeSet *hilBlock;                  /* Hilighting style change      */
-meInt     cursorState=0 ;               /* Current state of cursor      */
-meUByte  *meProgName=NULL ;             /* the program name (argv[0])   */
+meInt     cursorState=0;                /* Current state of cursor      */
+meUByte  *meProgName=NULL;              /* the program name (argv[0])   */
+#if MEOPT_EXTENDED
+meUByte   orgModeLineStr[]="%s%r%u%k %b %l of %n - %y%-%M%-%D %h:%m (%e) - (%f) ";
+#else
 meUByte   orgModeLineStr[]="%s%r%u " ME_SHORTNAME " (%e) - %l %b (%f) ";
+#endif
 meUByte  *modeLineStr=orgModeLineStr;   /* current modeline format      */
-meInt     autoTime=300 ;                /* auto save time in seconds    */
+meInt     autoTime=300;                 /* auto save time in seconds    */
 #if MEOPT_WORDPRO
 meUByte   fillbullet[16]="*)].-";       /* Fill bullet character class  */
 meUByte   fillbulletlen = 15;           /* Fill lookahead limit         */

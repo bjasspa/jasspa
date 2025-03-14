@@ -2611,20 +2611,20 @@ meFrameResizeWindows(meFrame *frame, int flags)
 #endif
 
 int
-frameResizeWindows (int f, int n)
+frameResizeWindows(int f, int n)
 {
     if(f == meFALSE)
-        n = meFRAMERESIZEWIN_WIDTH|meFRAMERESIZEWIN_DEPTH ;
+        n = meFRAMERESIZEWIN_WIDTH|meFRAMERESIZEWIN_DEPTH;
     else if(n > 0)
-        n = meFRAMERESIZEWIN_DEPTH ;
+        n = meFRAMERESIZEWIN_DEPTH;
     else if(n < 0)
-        n = meFRAMERESIZEWIN_WIDTH ;
+        n = meFRAMERESIZEWIN_WIDTH;
     else
         n = 0 ;
-    return meFrameResizeWindows(frameCur,n) ;
+    return meFrameResizeWindows(frameCur,n);
 }
 
-#if MEOPT_POSITION
+#if MEOPT_EXTENDED
 int
 positionSet(int f, int n)		/* save ptr to current window */
 {

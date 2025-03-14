@@ -11,7 +11,7 @@
 ; Notes:
 ;      Launchs ME with a tags generation macro file and %tag-option variable
 ;      setting to generate the tags file, typical command-line is:
-;               me "@ntags" "-v%tag-option=mrcsev"
+;               me "@ntags" "-v%tag-option=emrsvc"
 ;      Also provides a GUI front end for setting the flags and starting path,
 ;      the gui can be disabled by passing an argument of -1.
 ;
@@ -115,5 +115,4 @@ define-macro generate-tags-file
     .osd.gtf osd
   !endif
 !emacro
-set-variable .generate-tags-file.flags &rep %tag-option "c" ""
-
+set-variable .generate-tags-file.flags &con &exi %tag-option &rep %tag-option "c" "" "emrsv"

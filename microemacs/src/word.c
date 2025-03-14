@@ -1477,13 +1477,17 @@ countWords(int f, int n)
         if(nwords)
             nwchrs = ((10*nwchrs)+(nwords>>1))/nwords;
         if(n & 1)
-            outBuf += sprintf((char *)outBuf,"%s: %ld Words (%ld.%ld), %ld Chars, %d Lines",(n & 2) ? "Buffer":"Region",nwords,nwchrs/10,nwchrs%10,nchars,nlines+1);
+            outBuf += sprintf((char *)outBuf,"%s: %ld words (%ld.%ld), %ld chars, %d lines",(n & 2) ? "Buffer":"Region",nwords,nwchrs/10,nwchrs%10,nchars,nlines+1);
         else
             outBuf += sprintf((char *)outBuf,"|%ld|%ld.%ld|%ld|%d|",nwords,nwchrs/10,nwchrs%10,nchars,nlines+1);
         if((n & 6) != 6)
             break;
         if(n & 1)
+        {
             *outBuf++ = ' ';
+            *outBuf++ = '-';
+            *outBuf++ = ' ';
+        }
         else
             outBuf--;
         n ^= 2;

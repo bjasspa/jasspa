@@ -423,7 +423,6 @@
 #define MEOPT_FILEHOOK  1       /* enable File hook assigning            */
 #define MEOPT_TAGS      1       /* enable TAGS support                   */
 #define MEOPT_CMDHASH   1       /* use a hash table for command lookup   */
-#define MEOPT_POSITION  1       /* enable set & goto position            */
 #define MEOPT_EXTENDED  1       /* enable miscellaneous extended features*/
 #define MEOPT_LARGEBUF  1       /* enable large variable & fileio buffers*/
 #define MEOPT_CALLBACK  1       /* enable macro callbacks                */
@@ -501,7 +500,6 @@
 #define MEOPT_FILEHOOK  0       /* enable File hook assigning            */
 #define MEOPT_TAGS      0       /* enable TAGS support                   */
 #define MEOPT_CMDHASH   0       /* use a hash table for command lookup   */
-#define MEOPT_POSITION  0       /* enable set & goto position            */
 #define MEOPT_EXTENDED  0       /* enable miscellaneous extended features*/
 #define MEOPT_CALLBACK  0       /* enable macro callbacks                */
 #define MEOPT_SPAWN     0       /* enable spawning                       */

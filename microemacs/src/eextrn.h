@@ -1153,7 +1153,7 @@ extern	int	windowChangeWidth(int f, int n);
 #define windowSplitWidth notAvailable
 #define windowChangeWidth notAvailable
 #endif
-#if MEOPT_POSITION
+#if MEOPT_EXTENDED
 extern	int	positionSet(int f, int n);
 extern	int	positionGoto(int f, int n);
 #else

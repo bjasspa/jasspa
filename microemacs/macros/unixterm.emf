@@ -34,6 +34,9 @@ add-file-hook ".C" fhook-cpp
   0 global-bind-key suspend-emacs "C-c z"
   ; if no color - change the window chars so osd is more usable
   !iif &not &band $system 0x02  set-variable $window-chars &spr "%s=x*[>]<%s" &lef $window-chars 47 &rig $window-chars 54
+  ; Following can help fix backspace in a treminal
+  translate-key "\x7f" "backspace"
+  translate-key "C-[ [ 2 ; 5 ~" "C-backspace"
 !else
   !iif &not &seq &set #l0 &reg &spr "/history/%s/font" $platform "" ""  !force change-font #l0
   define-macro change-font-size

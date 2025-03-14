@@ -192,10 +192,8 @@ DEFFUNC ("goto-line",                   0x48, 0x36583f0e, windowGotoLine,       
 #if MEOPT_CMDHASH || MEOPT_FENCE
 DEFFUNC ("goto-matching-fence",         0x48, 0x53fc001f, gotoFence,            CK_GOFNC, &__cmdArray[CK_GOFNC+1], 0)
 #endif
-#if MEOPT_CMDHASH || MEOPT_POSITION
-DEFFUNC ("goto-position",               0x48, 0xa2756c9b, positionGoto,         CK_GOTOPOS, &__cmdArray[CK_GOTOPOS+1], 0)
-#endif
 #if MEOPT_CMDHASH || MEOPT_EXTENDED
+DEFFUNC ("goto-position",               0x48, 0xa2756c9b, positionGoto,         CK_GOTOPOS, &__cmdArray[CK_GOTOPOS+1], 0)
 DEFFUNC ("help",                        0x42, 0x003ac369, help,                 CK_HELP, &__cmdArray[CK_HELP+1], 0)
 DEFFUNC ("help-command",                0x42, 0x828e83d5, helpCommand,          CK_HELPCOM, &__cmdArray[CK_HELPCOM+1], 0)
 DEFFUNC ("help-item",                   0x42, 0x0ac42a65, helpItem,             CK_HELPITM, &__cmdArray[CK_HELPITM+1], 0)
