@@ -195,6 +195,7 @@ set-variable %user-misc-cmd  "|alias-path-setup|cc-setup|cvs-setup|file-tool-set
       !force insert-file &find "newuser" ".etf"
       ; don't save if we failed to save the reg file
       !iif &not .user-setup.save-err  save-buffer
+    !elif &seq $buffer-fname #l0
     !elif &reg "/history/edituser" "1"
       osd-xdialog "User Setup" &spr "    Edit your user Setup File %s.emf?    " #l1 2 "  \HYes  " "  \HNo  "
       !iif &equ $result 1  !force 0 find-file &cat "file:" #l0

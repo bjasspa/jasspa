@@ -149,11 +149,14 @@ set-variable .fhook-css.item-list-r1 "Item \ecB\\1\ecA"
   hilight .hilight.css 0  ":focus-within"         .scheme.operator
   hilight .hilight.css 0  ":focus-visible"        .scheme.operator
   hilight .hilight.css 0  ":hover"                .scheme.operator
+  hilight .hilight.css 0  ":invalid"              .scheme.operator
   hilight .hilight.css 0  ":lang(\\w*)"           .scheme.operator
   hilight .hilight.css 0  ":last-child"           .scheme.operator
   hilight .hilight.css 0  ":link"                 .scheme.operator
-  hilight .hilight.css 0  "::placeholder"         .scheme.operator
+  hilight .hilight.css 0  ":placeholder"          .scheme.operator
+  hilight .hilight.css 0  ":requires"             .scheme.operator
   hilight .hilight.css 0  ":target"               .scheme.operator
+  hilight .hilight.css 0  ":valid"                .scheme.operator
   hilight .hilight.css 0  ":visited"              .scheme.operator
   ; Properties
   hilight .hilight.css 1  "appearance"            .scheme.keyword

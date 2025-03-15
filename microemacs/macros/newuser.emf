@@ -191,9 +191,8 @@ set-variable .new-user.pathdiv &con &band $system 0x80 ":" ";"
   ; it will be used next time) so if the current setting of these are not correct
   ; the user will have to sort them out first.
   set-variable .new-user.search-path $search-path
-  !if &not &seq $MEPATH "ERROR"
-    !jump 2
-  !elif &not &seq $MEUSERPATH "ERROR"
+  !tjump &exi $MEPATH 2
+  !if &exi $MEUSERPATH
     ; user already has a $MEPATH or $MEUSERPATH, whatever $user-path is set to is all we can use
     ; Check that we can use it.
     set-variable .new-user.user-path $user-path
@@ -220,10 +219,10 @@ set-variable .new-user.pathdiv &con &band $system 0x80 ":" ";"
   !else
     ; user has not fixed the environment, searching paths are being used.
     ; Therefore if the current $user-path is not a jasspa path we can
-    ; create one and ME will automatically find one.
+    ; create one and ME will automatically find it.
     !iif &seq &lef &set #l2 $user-path 6 "tfs://"  set-variable #l2 $home
     !if &and &not &seq #l2 $home &seq &rig #l2 &sub 0 &len &set #l0 &spr "/%s/" $user-name #l0
-      ; ends in "/<user>/", this is okay as is
+      ; Not ~/ and ends in "/<user>/", this is okay as is
       set-variable .new-user.user-path #l2
     !else
       !if &seq &rig #l2 &sub 0 &len &set #l0 "/jasspa/" #l0
