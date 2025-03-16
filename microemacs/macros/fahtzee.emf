@@ -1,12 +1,13 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
 ;
-;  Created By    : Steven Phillips
-;  Created       : Wed Feb 9 18:31:42 2000
-;  Description   : Silly game
+; Copyright (C) 2000-2023 JASSPA (www.jasspa.com)
 ;
-;  Notes
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
 ;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Synopsis:    Silly game
+; Authors:     Steven Phillips
+;
 
 !if &not &exi .osd.fahtzee
   set-variable .osd.fahtzee  &pinc .osd.next 1

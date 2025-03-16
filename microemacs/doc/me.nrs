@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.58 2024/09/10 07:43:54 jon Exp $
+.Id $Id: me.nrs,v 2.58 2025/03/16 13:09:59 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -1115,8 +1115,34 @@ incrementally refined over a period of approximately six months.
 .\" "Copyright" is a link burnt into executable (bind.c)
 .Me "!9  Copyright - \*(mS"
 .SH COPYRIGHT
+Copyright (c) 1988-2025 JASSPA (www.jasspa.com)
+.PP
+JASSPA's \*(mS is free software; you can redistribute it and/or modify
+it under the terms of the GNU GENERAL PUBLIC LICENSE (GPL) as published by
+the Free Software Foundation; either version 2 of the License, or (at your
+option) any later version. A copy of the GPL version 2 license may be found
+in this file.
+.PP
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+more details.
+.PP
+This license is valid from January 1st 2002 and applies to the JASSPA
+Distribution of MicroEmacs only. These license terms may not be applied to
+other versions of MicroEmacs or retrospectively to older versions of JASSPA
+MicroEmacs which fall under their own licensing terms.
+.PP
+Special thanks go to Danial M. Lawrence, the original author and license
+holder of MicroEMACS, who granted JASSPA permission to move the code base
+to GPL on 19th December 2001. Permission was granted on the grounds that
+code base is nearly 14 years diverged from the original and has been
+substantially modified.
+.PP
+Jon Green & Steve Philips (JASSPA - www.jasspa.com)
+30th December 2001
 .SS "GNU General Public License (GPL)"
-All source and macro code is covered by the GPL.
+.sp
 .CS
 		    GNU GENERAL PUBLIC LICENSE
 		       Version 2, June 1991

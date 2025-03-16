@@ -640,7 +640,7 @@ me.ehf: meehf.hts
 	$(CP) ehf$(pc)me.htm ehf$(pc)me$(pc)1.htm
 	cd ehf$(pc)me$(sc) $(ME) -P "@ehftools" *.htm
 	$(CP) ehf$(pc)me$(pc)me.ehf .
-	#$(RMDIR) ehf
+	$(RMDIR) ehf
 clean::
 	$(RMDIR) ehf
 	$(RM) me.ehf

@@ -1,11 +1,12 @@
 > -!- document -!-
 >
->  JASSPA MicroEmacs README
+> Copyright (c) 2002-2005 JASSPA (www.jasspa.com).
 >
->  Created By    : Jon Green
->  Created       : Sun Dec 8 14:46:52 2002
->  Last Modified : <20240909.2146>
->  File Name     : cygwin.txt
+> This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+> copying information.
+>
+> Synopsis:    Cygwin release documentation
+> Authors:     Jon Green
 >
 
 This document describes the Cygwin release of JASSPA's MicroEmacs.

@@ -1,11 +1,11 @@
 ; -!- emf -!-
-; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 2023 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
+; Copyright (C) 2023-2024 JASSPA (www.jasspa.com)
 ;
-; Created:     2023-07-01 15:32:44
-; Authors:     bill
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
 ; Synopsis:    ME single executable boot-strap
+; Authors:     Steven Phillips
 ;
 ; Notes:       If it exists add .about.userpath first to search path so user can copy new & override files into directory
 ;

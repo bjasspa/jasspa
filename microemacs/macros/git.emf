@@ -145,8 +145,8 @@ set-variable .git.cflags &lins .git.cflags -1 "NPrS*!"
 set-variable .git.cdefs  &lins .git.cdefs  -1 "||1|0|"
 ; Command 10 - Remove
 set-variable .git.cnames &lins .git.cnames -1 "Remove"
-set-variable .git.cflags &lins .git.cflags -1 "rS*!"
-set-variable .git.cdefs  &lins .git.cdefs  -1 "|0|0|"
+set-variable .git.cflags &lins .git.cflags -1 "RrS*!"
+set-variable .git.cdefs  &lins .git.cdefs  -1 "|0|0|0|"
 ; Command 11 - Commit
 set-variable .git.cnames &lins .git.cnames -1 "Commit"
 set-variable .git.cflags &lins .git.cflags -1 "Cs*!$"
@@ -472,9 +472,8 @@ set-variable .git-revision-op.lbl13 "|\HMaster|\HHead|\HPrevious to head|\HSpeci
         osd .osd.git-osd &inc #l2 1 "fh" "    "
         osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HProcess output - adds links etc" #l0 git-osd-cbc
       !elif &seq #l1 "R"
-        ; TODO don't think this is possible with git, it always recurses
         osd .osd.git-osd &inc #l2 1 "fh" "    "
-        osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecurse into sub-directories" #l0 git-osd-cbc
+        osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecurse - required to remove directories" #l0 git-osd-cbc
       !elif &seq #l1 "r"
         osd .osd.git-osd &inc #l2 1 "fh" "    "
         osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Refresh directory \Hlisting" #l0 git-osd-cbc
@@ -1394,7 +1393,7 @@ define-macro git-move
 define-macro git-remove
   10 git-osd
   set-variable #l9 .git.values
-  set-variable #l2 &spr "%s rm -- " .git.com
+  set-variable #l2 &spr "%s rm %s-- " .git.com &con &lget #l9 1 "-r " ""
   7 git-get-file-list 0 0 #l2
   10 git-exec 3 $buffer-fname
   !if &seq $buffer-fname ""

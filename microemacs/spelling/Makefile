@@ -15,10 +15,10 @@ include $(TOPDIR)/etc/makeinc
 #
 # Compressed files.
 #
-ZIPOBJS	=	ls_dede.zip	ls_engb.zip	ls_enus.zip	\
-		ls_eses.zip	ls_frfr.zip	ls_itit.zip	\
-		ls_plpl.zip	ls_ptpt.zip	ls_fifi.zip	\
-		ls_ruru.zip
+ZIPOBJS	=	ls_dede.zip	ls_elgr.zip	ls_engb.zip	\
+		ls_enus.zip	ls_eses.zip	ls_fifi.zip	\
+		ls_frfr.zip	ls_itit.zip	ls_plpl.zip	\
+		ls_ptpt.zip	ls_ruru.zip
 TAROBJS	=	$(ZIPOBJS:.zip=.tar.gz)
 #
 # Text files.
@@ -53,6 +53,12 @@ ls_dede.zip:	$(LSDEDE)
 	$(ZIP) $@ $(LSDEDE)
 ls_dede.tar.gz:	$(LSDEDE)
 	$(TAR) cf - $(LSDEDE) | $(GZIP) -c > $@
+
+# Greek
+ls_elgr.zip:	$(LSELGR)
+	$(ZIP) $@ $(LSELGR)
+ls_elgr.tar.gz:	$(LSELGR)
+	$(TAR) cf - $(LSELGR) | $(GZIP) -c > $@
 
 # American
 ls_enus.zip:	$(LSENUS)
