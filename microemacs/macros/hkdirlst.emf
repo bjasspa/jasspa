@@ -1460,8 +1460,26 @@ define-macro delete-file
     !elif &equ $result 3
       ; failed to open dest for writing
       !if &not &band .state 2
-        set-variable #l4 @mc5 &spr "Cannot write to \"%s\", retry (?/y/n/o) ? " #l2 "nNoOyY" "(Y)es, (N)o, N(o) to All, (C-g)Abort ? "
-        !tgoto &iseq #l4 "y" retry
+        set-variable #l4 @mc5 &spr "Cannot write to \"%s\", Create missing dirs or Retry (?/c/r/n/o) ? " #l2 "nNoOcCrR" "(C)reate dirs, (R)etry, (N)o, N(o) to All, (C-g)Abort ? "
+        !tgoto &iseq #l4 "r" retry
+        !if &iseq #l4 "c"
+          set-variable #l7 0
+          set-variable #l8 &con &seq &lef #l2 2 "//" 5 2
+          !while &and &dec #l8 1 &set #l9 &sin "/" &rig #l2 #l7
+            set-variable #l7 &add #l7 #l9
+          !done
+          !while &set #l9 &sin "/" &rig #l2 #l7
+            set-variable #l7 &add #l7 #l9
+            !if &seq "X" &stat t &lef #l2 &sub #l7 1
+              !force 0x100 file-op &lef #l2 &sub #l7 1 @nma
+              !if &not $status
+                2000 ml-write &spr "Creation of \"%s\" failed." &lef #l2 &sub #l7 1
+                !break
+              !endif
+            !endif
+          !done
+          !goto retry
+        !endif
         !iif &iseq #l4 "o"  set-variable .state &bor .state 2
       !endif
       set-variable .result &lset .result 4 &add 1 &lget .result 4

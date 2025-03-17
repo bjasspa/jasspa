@@ -284,14 +284,21 @@ define-macro zfile-find-file
     !return
   !endif
   set-variable #l5 1
+  set-variable #l6 ""
   !if &band @# 8
-    set-variable #l4 @mc5 "File read handler (?/b/c/C/r/t/z) ? " "bCcrtz" "(b)inary, (c)rypted, (C)rypted+(b/r), (r)educed bin, (t)ext, (z)file ? "
+    set-variable #l4 @mc5 "File read handler (?/b/c/C/l/r/t/u/z) ? " "bCclrtuz" "(b)inary, (c)rypted, (C)rypted+[blrtu], (l)ossless text (r)bin, (t)ext, (u)nicode, (z)file ? "
     !if &seq #l4 "C"
       set-variable #l5 &bor #l5 4
-      set-variable #l4 @mc5 "CFile read handler (?/b/r/t) ? " "brt" "(b)inary, (r)educed bin, (t)ext ? "
+      set-variable #l4 @mc5 "CFile read handler (?/b/l/r/t/u) ? " "blrtu" "(b)inary, (l)ossless text, (r)bin, (t)ext, (u)nicode ? "
     !endif
     !if &seq #l4 "z"
       set-variable #l5 0
+    !elif &seq #l4 "u"
+      set-variable #l5 &bor #l5 8
+      set-variable #l6 0x100
+    !elif &seq #l4 "l"
+      set-variable #l5 &bor #l5 8
+      set-variable #l6 0
     !else
       set-variable #l5 &bor #l5 &sin #l4 "-b-c---r"
     !endif
@@ -336,6 +343,7 @@ define-macro zfile-find-file
     !if &not #l0
       !if #l5
         #l5 find-file &cat #l1 #l2 @mna
+        !iif &len #l6  #l6 translate-buffer
       !else
         find-zfile &cat #l1 #l2 @mna
       !endif
