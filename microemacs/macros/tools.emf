@@ -471,26 +471,24 @@ define-macro find-hfile
 
 ; reread-file - reloads the current buffer's file into the current buffer
 define-macro reread-file
-  !if &seq $buffer-fname ""
-    ml-write "[Invalid buffer]"
-    !bell
-    !abort
-  !endif
+  !iif &seq $buffer-fname ""  -8 ml-write "[Invalid buffer]"
   0xce set-position "\x81"
   ; are we at the end of the buffer?
   set-variable #l7 &seq @wc ""
-  ; is the file loaded in binary or crypt mode?
+  ; is the file using crypt, in binary or rbin, or xlate'd?
   set-variable #l0 &bor &cond &band @# 1 1 33 &cond &bmod "crypt" 4 0
-  !if &bmod "binary"
+  !if &set #l8 &bmod "xlate"
+    set-variable #l0 &bor #l0 8
+    set-variable #l1 $buffer-xlate
+  !elif &bmod "binary"
     set-variable #l0 &bor #l0 2
   !elif &bmod "rbin"
     set-variable #l0 &bor #l0 8
   !endif
   #l0 read-file $buffer-fname
+  !iif #l8  #l1 translate-buffer
   !force goto-position "\x81"
-  !if #l7
-    end-of-buffer
-  !endif
+  !iif #l7  end-of-buffer
 !emacro
 
 define-macro reread-all
