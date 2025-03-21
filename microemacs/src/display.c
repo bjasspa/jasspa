@@ -1367,13 +1367,14 @@ assessModeLine(meUByte *ml)
 static void
 updateModeLine(meWindow *wp)
 {
-    meTime          clock;		    /* Time in machine format. */
-    struct tm	   *time_ptr;	            /* Pointer to time frame. */
-    register meUByte *ml, *cp, *ss ;
-    register meUByte  cc, lchar ;
-    register meBuffer *bp ;
-    register int    ii ;	            /* loop index */
-    register int    lineLen ;               /* Max length of the line */
+    meTime clock;		           /* Time in machine format. */
+    struct tm *time_ptr;                   /* Pointer to time frame. */
+    register meVideoLine *vptr;            /* Pointer to the video block */
+    register meUByte *ml, *cp, *ss;
+    register meUByte  cc, lchar;
+    register meBuffer *bp;
+    register int ii;	                   /* loop index */
+    register int lineLen;                  /* Max length of the line */
 
     /* See if there's anything to do first */
     bp = wp->buffer;
@@ -1403,6 +1404,7 @@ updateModeLine(meWindow *wp)
     clock = time(NULL);                     /* Get system time */
     time_ptr = (struct tm *) localtime(&clock);	/* Get time frame */
     cp = wp->modeLine->text;
+    /* NOTE: the text array is guaranteed to be at least 11 bytes longer than needed - integer splatting makes use of this */ 
     while((lineLen > 0) && ((cc = *ml++) != '\0'))
     {
         if(cc == '%')
@@ -1412,9 +1414,9 @@ updateModeLine(meWindow *wp)
             case 's':
                 /* Horizontal split line character. Only displayed if split
                  * is enabled in the scroll bars */
-                if (gsbarmode & WMSPLIT)
+                if(gsbarmode & WMSPLIT)
                 {
-                    *cp++ = windowChars [WCHSBSPLIT];
+                    *cp++ = windowChars[WCHSBSPLIT];
                     lineLen--;
                 }
                 break;
@@ -1435,20 +1437,19 @@ updateModeLine(meWindow *wp)
 
             case 'u':
                 /* buffer changed */
-                if(meModeTest(bp->mode,MDEDIT))        /* "*" if changed. */
+                if(meModeTest(bp->mode,MDEDIT))          /* "*" if changed. */
                     *cp++ = windowChars [WCMLBCHNG];     /* Typically '*' */
-                else if (meModeTest(bp->mode,MDVIEW))  /* "%" if view. */
+                else if (meModeTest(bp->mode,MDVIEW))    /* "%" if view. */
                     *cp++ = windowChars [WCMLBVIEW];     /* Typically '%' */
                 else
                     *cp++ = lchar;
                 lineLen--;
                 break;
 
-            case 'e':
+            case 'O':
                 /* add in the mode flags */
                 for (ii = 0; ii < MDNUMMODES; ii++)
-                    if(meModeTest(modeLineDraw,ii) &&
-                       meModeTest(bp->mode,ii))
+                    if(meModeTest(modeLineDraw,ii) && meModeTest(bp->mode,ii))
                     {
                         *cp++ = modeCode[ii];
                         if (--lineLen == 0)
@@ -1457,72 +1458,29 @@ updateModeLine(meWindow *wp)
                 break;
 
             case 'k':
-                if (kbdmode == meRECORD)           /* if playing macro */
+                if(kbdmode == meRECORD)           /* if playing macro */
                 {
-                    ss = (meUByte *) "REC" ;
-                    goto model_copys ;
+                    *cp++ = 'R';
+                    *cp++ = 'E';
+                    *cp++ = 'C';
+                    lineLen -= 3;
                 }
-                break ;
+                break;
 
             case 'l':
                 ss = meItoa(wp->dotLineNo+1);
-                goto model_copys ;
+                goto model_copyi;
 
             case 'n':
                 ss = meItoa(wp->buffer->lineCount+1);
-                goto model_copys ;
+                goto model_copyi;
 
             case 'c':
-                ss = meItoa(wp->dotOffset) ;
-                goto model_copys ;
+                ss = meItoa(wp->dotOffset);
+                goto model_copyi;
 
             case 'b':
-                ss = bp->name ;
-                goto model_copys ;
-
-            case 'f':
-                if((bp->name[0] == '*') || (bp->fileName == NULL))
-                    break ;
-                ss = bp->fileName ;
-                if((ii=meStrlen(ss)) > lineLen)
-                {
-                    *cp++ = windowChars[WCDISPTXTLFT] ;
-                    if(--lineLen == 0)
-                        break ;
-                    ss += ii-lineLen ;
-                }
-                goto model_copys ;
-
-            case 'D':
-                ss = meItoa(time_ptr->tm_mday);
-                goto model_copys ;
-
-            case 'M':
-                ss = meItoa(time_ptr->tm_mon+1);
-                goto model_copys ;
-
-            case 'y':
-                ss = meItoa(1900+time_ptr->tm_year);
-                goto model_copys ;
-
-            case 'Y':
-                ss = meItoa(time_ptr->tm_year%100);
-                goto model_2n_copy ;
-
-            case 'h':
-                ss = meItoa(time_ptr->tm_hour);
-                goto model_2n_copy ;
-
-            case 'm':
-                ss = meItoa(time_ptr->tm_min);
-model_2n_copy:
-                if(ss[1] == '\0')
-                {
-                    *cp++ = '0' ;
-                    if (--lineLen == 0)
-                        break;
-                }
-model_copys:
+                ss = bp->name;
                 while((cc = *ss++) != '\0')
                 {
                     *cp++ = cc ;
@@ -1530,6 +1488,94 @@ model_copys:
                         break;
                 }
                 break ;
+
+            case 'f':
+                if((bp->name[0] == '*') || (bp->fileName == NULL))
+                    break ;
+                ss = bp->fileName;
+                if((ii=meStrlen(ss)) > lineLen)
+                {
+                    *cp++ = windowChars[WCDISPTXTLFT];
+                    if(--lineLen > 0)
+                    {
+                        memcpy(cp,ss+ii-lineLen,lineLen);
+                        lineLen = 0;
+                    }
+                }
+                else
+                {
+                    memcpy(cp,ss,ii);
+                    cp += ii;
+                    lineLen -= ii;
+                }
+                break;
+
+            case 'Y':
+                ss = meItoa(1900+time_ptr->tm_year);
+model_copyi:
+                while((cc = *ss++) != '\0')
+                {
+                    *cp++ = cc;
+                    lineLen--;
+                }
+                break;
+                
+            case 'y':
+                ss = meItoa(time_ptr->tm_year%100);
+                goto model_copy02di;
+            
+            case 'm':
+                ss = meItoa(time_ptr->tm_mon+1);
+                goto model_copy02di;
+            
+            case 'o':
+                ss = meItoa(time_ptr->tm_mon+1);
+                goto model_copy2di;
+            
+            case 'd':
+                ss = meItoa(time_ptr->tm_mday);
+                goto model_copy02di;
+            
+            case 'e':
+                ss = meItoa(time_ptr->tm_mday);
+                goto model_copy2di;
+
+            case 'H':
+                ss = meItoa(time_ptr->tm_hour);
+                goto model_copy02di;
+
+            case 'i':
+                ss = meItoa(time_ptr->tm_hour);
+                goto model_copy2di;
+
+            case 'M':
+                ss = meItoa(time_ptr->tm_min);
+model_copy02di:
+                if((cc=ss[1]) == '\0')
+                {
+                    *cp++ = '0';
+                    *cp++ = ss[0];
+                }
+                else
+                {
+                    *cp++ = ss[0];
+                    *cp++ = cc;
+                }
+                lineLen -= 2;
+                break;
+                
+            case 'N':
+                ss = meItoa(time_ptr->tm_min);
+model_copy2di:
+                *cp++ = *ss++;
+                if((cc=*ss) != '\0')
+                {
+                    *cp++ = cc;
+                    lineLen -= 2;
+                }
+                else
+                    lineLen--;
+                
             default:
                 *cp++ = cc ;
                 lineLen--;
@@ -1544,26 +1590,23 @@ model_copys:
             lineLen--;
         }
     }
-    while(lineLen-- > 0)                       /* Pad to full width. */
-        *cp++ = lchar ;
+    /* Pad to full width. */
+    while(--lineLen >= 0)
+        *cp++ = lchar;
 
-    {
-        register meVideoLine *vptr ;           /* Pointer to the video block */
-
-        /* Determine the video line position and determine the video block that
-         * is being used. */
-        ii = wp->frameRow + wp->textDepth ;
-        vptr = wp->video->lineArray + ii ;     /* Video block */
-
-        if(wp->updateFlags & WFRESIZE)
-            vptr->endp = wp->textWidth ;
-        if(frameCur->windowCur == wp)
-            vptr->flag = VFMODEL|VFCURRL ;
-        else
-            vptr->flag = VFMODEL ;
-        vptr->line = wp->modeLine ;
-        updateline(ii,vptr,wp) ;
-    }
+    /* Determine the video line position and determine the video block that
+     * is being used. */
+    ii = wp->frameRow + wp->textDepth;
+    vptr = wp->video->lineArray + ii;     /* Video block */
+    
+    if(wp->updateFlags & WFRESIZE)
+        vptr->endp = wp->textWidth;
+    if(frameCur->windowCur == wp)
+        vptr->flag = VFMODEL|VFCURRL;
+    else
+        vptr->flag = VFMODEL;
+    vptr->line = wp->modeLine;
+    updateline(ii,vptr,wp);
 }
 
 /*	reframe: check to see if the cursor is on in the window

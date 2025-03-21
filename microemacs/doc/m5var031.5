@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m5var031.5,v 2.6 2022/06/12 17:14:15 jon Exp $
+.Id $Id: m5var031.5,v 2.6 2025/03/21 19:04:50 jon Exp $
 .Im MicroEmacs variable|buffer|modeline;variable|hilight
 .so me.tni
 .TH $mode-line 5
@@ -21,24 +21,28 @@ character following a percent ('\fC%\fR') has the following effect:-
 .sp
 .RS
 .nf
-\fCD\fR Prints the current day.
-\fCM\fR Prints the current month.
-\fCY\fR Prints the current year (2 digits).
-\fCy\fR Prints the current year (4 digits).
+\fC%\fR Prints a percentage escape character.
+\fC\-\fR Prints a literal minus character ('\fC\-\fR') - see \s-1NOTES\s0.
 \fCb\fR Prints the current buffer's name.
 \fCc\fR Prints the current buffer's column number.
-\fCe\fR Prints the current buffer's editing modes.
+\fCd\fR Prints the current day (01 to 31).
+\fCe\fR Prints the current day (1 to 31).
 \fCf\fR Prints the current buffer's file name.
-\fCh\fR Prints the current hour of the day.
+\fCH\fR Prints the current hour of the day (00 to 23).
+\fCi\fR Prints the current hour of the day (0 to 23).
 \fCk\fR Prints the current keyboard macro status.
 \fCl\fR Prints the current buffer's line number.
-\fCm\fR Prints the current minute of the hour.
+\fCM\fR Prints the current minute of the hour (01 to 59).
+\fCm\fR Prints the current month (01 to 12).
 \fCn\fR Prints the current buffer's total number of lines.
+\fCN\fR Prints the current minute of the hour (1 to 59).
+\fCO\fR Prints the current buffer's shown modes - see \s-1NOTES\s0.
+\fCo\fR Prints the current month (1 to 12).
 \fCr\fR Prints the current root user status (UNIX only).
 \fCs\fR Prints the horizontal window split character.
 \fCu\fR Prints the current buffer's (un)changed or view mode flag.
-\fC%\fR Prints a percentage escape character.
-\fC\-\fR Prints a literal minus character ('\fC\-\fR') - see \s-1NOTES\s0.
+\fCY\fR Prints the current year (2 digits).
+\fCy\fR Prints the current year (4 digits).
 \fC*\fR All other characters are printed literally.
 .fi
 .RE
@@ -50,6 +54,9 @@ for the  characters  utilized  in the mode  line.  Typically  a the  '\fC-\fR'
 character  is  changed  to a  '\fC=\fR'  if it is  the  current  window.  If a
 \&'\fC-\fR' is always required, use "\fC%-\fR".
 .BU
+The buffer modes shown by \fB%O\fR is controlled by system variable
+.Ht $show-modes 5 .
+.BU
 A buffer can have its own  mode-line, and be uneffected be the global mode
 line, see
 .Ht $buffer-mode-line 5 .
@@ -58,6 +65,7 @@ line, see
 .na
 .Ht $buffer-mode-line 5 ,
 .Ht $mode-line-scheme 5 ,
+.Ht $show-modes 5 ,
 .Ht $window-chars 5 .
 .ad
 .FH

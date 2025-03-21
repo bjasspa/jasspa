@@ -140,7 +140,8 @@ meFrameChangeWidth(meFrame *frame, int ww)
         wp = loopFrame->windowList;
         while(wp != NULL)
         {
-            if((ml = meLineMalloc(ww,0)) == NULL)
+            /* make modeline 10 bytes longer so small values can be splat into modeline string without risk of overrun */
+            if((ml = meLineMalloc(ww+10,0)) == NULL)
                 return meFALSE;
             memcpy(ml,wp->modeLine,meLINE_SIZE+wp->modeLine->length);
             free(wp->modeLine);
@@ -440,8 +441,8 @@ meFrameInitWindow(meFrame *frame, meBuffer *buffer)
     meWindow *wp;
     meLine   *lp, *off;
     
-    if(((wp = meMalloc(sizeof(meWindow))) == NULL) ||
-       ((lp = meLineMalloc(frame->widthMax,0)) == NULL) ||
+    /* make modeline 10 bytes longer so small values can be splat into modeline string without risk of overrun */
+    if(((wp = meMalloc(sizeof(meWindow))) == NULL) || ((lp = meLineMalloc(frame->widthMax+10,0)) == NULL) ||
        ((off= meLineMalloc(frame->widthMax,0)) == NULL))
         return meFALSE;
     
