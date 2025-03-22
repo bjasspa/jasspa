@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac019.3,v 2.7 2024/11/10 17:13:42 jon Exp $
+.Id $Id: m3mac019.3,v 2.7 2025/03/22 16:48:00 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH ascii-time 3
@@ -28,19 +28,26 @@ which is defined using the following escape characters:
 .nf
 .na
 \fC%%\ \fR - \fC%\fR char
-\fC%Y\ \fR - 4 digit year
-\fC%y\ \fR - 2 digit year
-\fC%B\ \fR - Full month word
-\fC%b\ \fR - 3 letter month
-\fC%m\ \fR - 2 digit month
-\fC%#m\fR - 1 digit month
-\fC%d\ \fR - 2 digit day
-\fC%#d\fR - 1 digit day
-\fC%A\ \fR - Fill Week day word
-\fC%a\ \fR - 3 letter week day
-\fC%H\ \fR - 2 digit 24 hour
-\fC%M\ \fR - 2 digit minute
-\fC%S\ \fR - 2 digit second
+\fC%a\ \fR - Replaced by abbreviated week day name (3 letters)
+\fC%A\ \fR - Replaced by full week day name
+\fC%b\ \fR - Replaced by abbreviated month name (3 letters)
+\fC%B\ \fR - Replaced by full month name
+\fC%d\ \fR - Replaced by two digit day of month (01 to 31)
+\fC%e\ \fR - Replaced by day of month (1 to 31)
+\fC%H\ \fR - Replaced by two digit hour of the day (00 to 23)
+\fC%i\ \fR - Replaced by hour of the day (0 to 23)
+\fC%J\ \fR - Replaced by day of year (0 to 365)
+\fC%j\ \fR - Replaced by three digit day of year (000 to 365)
+\fC%M\ \fR - Replaced by two digit minute of the hour (00 to 59)
+\fC%m\ \fR - Replaced by two digit month (01 to 12)
+\fC%N\ \fR - Replaced by minute of the hour (0 to 59)
+\fC%o\ \fR - Replaced by month number (1 to 12)
+\fC%S\ \fR - Replaced by two digit second of the minute (00 to 59)
+\fC%v\ \fR - Replaced by second of the minute (0 to 59)
+\fC%w\ \fR - Replaced by day of the week (0 to 6 Sunday=0)
+\fC%y\ \fR - Replaced by the last two digits of the year (00 to 99)
+\fC%Y\ \fR - Replaced by the year as a decimal number (e.g. 2024)
+\fC%*\ \fR - All other characters are printed literally.
 .ad
 .fi
 .RE
@@ -49,14 +56,14 @@ The default value of
 .B .ascii-time.format
 when not defined is:
 .IP
-"\fC%a %b %d %H:%M:%S %Y\fR"
+"\fC%Y-%m-%d %H:%M:%S\fR"
 .LP
 To change the default date layout then 
 .B .ascii-time.format 
 should be defined in \fIuser\fR\|\fB.emf\fR. i.e.
 .Me $emf-scheme
 .CS
-set-variable .ascii-time.format "%H:%M:%S %Y-%m-%d"
+set-variable .ascii-time.format "%a %b %d %H:%M:%S %Y"
 .CE 0
 .Me $ehf-scheme
 .SH EXAMPLE
@@ -79,6 +86,13 @@ replacing "\fC$ASCII_TIME$\fR" with the current.
 .Me $ehf-scheme
 .SH NOTES
 \fBascii-time\fR is a macro defined in \fCutils.emf\fR.
+.PP
+The default format was changed in 2025 to be ISO 8601 compliant. Some of the escape characters, such as \fB%#d\fR, 
+were also changed to be more compliant with
+.Ht $mode-line 5
+and C's
+.Hr strftime 3
+function.
 .SH "SEE ALSO"
 .na
 .Ht $buffer-fhook 5 ,

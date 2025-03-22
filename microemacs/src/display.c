@@ -1422,7 +1422,7 @@ updateModeLine(meWindow *wp)
                 break;
             case 'r':
                 /* root user - unix only */
-#ifdef _UNIX
+#if (defined _UNIX) || (defined _WIN32)
                 /*
                  * The idea of this nastiness is that the mode line is
                  * changed to give some visual indication when running as root.

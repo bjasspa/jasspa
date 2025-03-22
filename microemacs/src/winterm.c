@@ -81,6 +81,7 @@
 
 #include <process.h>
 #include <shellapi.h>
+#include <shlobj.h>
 
 #ifndef WM_MOUSEWHEEL
 #define WM_MOUSEWHEEL (WM_MOUSELAST+1)  // message that will be supported by the OS
@@ -5465,6 +5466,7 @@ meSetupUserName(void)
     if(nn == NULL)
         nn = "user";
     meUserName = meStrdup((meUByte *) nn);
+    meUid = (IsUserAnAdmin()) ? 0:1;
 }
 
 void

@@ -193,16 +193,17 @@ extern  meUInt undoContFlag;            /* continuation of an undo      */
 #endif
 
 /* File Modes */
-#if (defined _DOS) || (defined _WIN32)
-extern  meUShort meUmask ;              /* file creation umask          */
-#endif
+extern  meUShort meUmask;               /* file creation umask          */
+#ifdef _WIN32
+extern  meUByte  meUid;                 /* current user is Administrator*/
+#endif /* _WIN32 */
+
 #ifdef _UNIX
-extern  meUShort  meUmask ;             /* file creation umask          */
-extern  mode_t    meXUmask ;            /* directory creation umask     */
-extern  uid_t     meUid ;               /* current user id              */
-extern  gid_t     meGid ;               /* current group id             */
-extern  int       meGidSize ;           /* number of groups the user belongs to   */
-extern  gid_t    *meGidList ;           /* list of group ids the user belongs to  */
+extern  mode_t    meXUmask;             /* directory creation umask     */
+extern  uid_t     meUid;                /* current user id              */
+extern  gid_t     meGid;                /* current group id             */
+extern  int       meGidSize;            /* number of groups the user belongs to   */
+extern  gid_t    *meGidList;            /* list of group ids the user belongs to  */
 #endif /* _UNIX */
 
 /* Signals */
@@ -691,8 +692,12 @@ meUInt   undoContFlag=0;                /* continuation of an undo      */
 #endif
 
 /* File Modes */
-#if (defined _DOS) || (defined _WIN32)
+#ifdef _DOS
 meUShort  meUmask=0x020;                /* file creation umask          */
+#endif
+#ifdef _WIN32
+meUShort  meUmask=0x020;                /* file creation umask          */
+meUByte   meUid;                        /* current user is Administrator*/
 #endif
 #ifdef _UNIX
 meUShort  meUmask;                      /* file creation umask          */
