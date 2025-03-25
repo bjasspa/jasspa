@@ -1,0 +1,101 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1998-2009 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.\"  Created By    : Detlef Groth & Steven Phillips
+.\"  Created       : Mon Aug 31 21:02:32 1998
+.\"
+.Id $Id: m3mac101.3,v 2.10 2025/03/24 18:49:17 dgroth Exp $
+.Im MicroEmacs command
+.so me.tni
+.TH tcl-exec 3
+.XI tcl-exec - "Executes the current Tcl buffer"
+.XI tcl-format - "Format the current Tcl buffer using tclfmt"
+.XI tcl-lint - "Check the current Python buffer using tclint"
+.XI %tclsh-com 5 "Tclsh command line path"
+.XI %tcl-format-opts 5 "Tclfmt format command options"
+.XI %tcl-lint-opts 5 "Tclint lint command options"
+.SH NAME
+.Me "|tcl-exec"
+py-exec - Executes the current Tcl buffer
+.br
+.Me "|tcl-format"
+tcl-format \- Format the current Tcl buffer using tclfmt
+.br
+.Me "|tcl-lint"
+tcl-lint \- Check the current Tcl buffer using tclint
+.br
+.Me "|%tclsh-com"
+\&%tclsh-com \- Tclsh command line path
+.br
+.Me "|%tcl-format-opts"
+\&%tcl-format-opts \- Tcl format command options
+.br
+.Me "|%tcl-lint-opts"
+\&%tcl-lint-opts \- Tcl lint command options
+.Me $a
+.SH SYNOPSIS
+.na
+\fBpy-exec\fR [ "\fIcommand-line-arguments\fR" ]
+.sp
+.I n
+\fBtcl-format\fR [ "\fIformat-options\fR" ]
+.br
+.I n
+\fBtcl-lint\fR [ "\fIlint-options\fR" ]
+.sp
+\fB%tclsh-com\fR \fIstring\fR; Default is "\fCtclsh\fR"
+.br
+\fB%tcl-format-opts\fR \fIstring\fR; Default is "\fCtclfmt --in-place\fR" 
+.br
+\fB%tcl-lint-opts\fR \fIstring\fR; Default is "tclint"
+.ad
+.SH DESCRIPTION
+The \fBpy-exec\fR macro executes the current buffer using the Tclsh on command line interpreter. Before the script is executed
+.Ht save-some-buffers 2
+is executed to allow the user to ensure that all relevant buffers are saved. If bit \fC0x01\fR of the numeric argument
+\fIn\fR is clear then all modified buffers are automatically saved, when set (the default) the user is prompted for
+each buffer. If bit 0x02 of the numeric argument is clear (the default) the user is prompted for any additional
+\fIcommand-line-arguments\fR which are passed to the Python command. The arguments given are stored in a buffer variable,
+\fB:tcl-exec-args\fR, and used as the default arguments next time the script is executed.
+.PP
+After executing the script, a \fC*tcl-exec*\fR buffer is opened with the output of the script execution.
+.PP
+The  \fBtcl-format\fR  macro  formats the current  buffer  using  \fBtclfmt\fR
+command of the Python package \fBtclint\fR. You can
+usually  install  this using the  Python's pip package  manager. However the variable
+\fB%tclsh-format-opts\fR  can be used to override  this formatter. If bit \fC0x02\fR of the numeric  argument  \fBn\fR is set or 
+the variable is undefined the user is prompted to adjust the options before executing the format command.
+.PP
+The  \fBtcl-lint\fR  macro  invokes  the Python script  \fBtclint\fR  from the
+Python package with the same name. The \fBtclint\fR module
+must be installed before using this command using the pip package manager.
+.PP
+The command opens a \fC*tcl-lint*\fR buffer with the output from tclint, any warnings or styling issues raised are 
+typically high-lighted. the buffer is configured to for
+.Ht get-next-line 2
+to make traverse through the issues as easy as possible.
+.PP
+The \fB%tcl-lint-opts\fR variable can be used to configure \fBtcl-lint\fR to the format/style you require, if the
+variable is undefined, or bit \fC0x02\fR of the numeric argument \fBn\fR is set, the user is prompted to adjust the
+options before executing \fBtclint\fR.
+.SH NOTES
+\fBtcl-exec\fR, \fBtcl-format\fR and \fBtcl-lint\fR are macros defined in \fCtcltools.emf\fR.
+.PP
+These  commands  all use  \fB%tclsh-com\fR  to launch  Tcl, if the  variable  is not  defined  \*(mS  attempts  to
+auto-configure by first searching for a \fBtclsh\fR executable, then \fBtclsh9.0\fR.
+If tclsh is not in the path, or a different command should be used, set the \fB%tclsh-com\fR user variable to the command needed to
+run Tcl scripts.
+.PP
+On Windows, the \fB%tclsh-com\fR variable is typically set to the full path to the Python interpreter within the
+program files directory.
+.SH "SEE ALSO"
+.na
+.Hr tcl 1 ,
+.Hr man 1 ,
+.Ht get-next-line 2 ,
+.Ht tcl 9 .
+.ad
+.FH

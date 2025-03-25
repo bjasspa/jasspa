@@ -391,5 +391,7 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
   indent .hilight.tcl i ";\\s*#"
 !endif
 
+!iif &not &exi tcl-tclsh-setup  execute-file "tcltools"
+
 buffer-init-fhook "tcl"
 

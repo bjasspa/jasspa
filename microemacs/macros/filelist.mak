@@ -90,7 +90,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	schemevi.emf	schemosd.emf	\
 	search.emf	session.emf	sessnstp.emf	spell.emf	\
 	spellaut.emf	spellutl.emf	ssaver.emf	sunos.emf	\
-	svn.emf		\
+	svn.emf		tcltools.emf	\
 	tcltags.emf	textags.emf	toolbar.emf	tooldef.emf	\
 	toollist.emf	tools.emf	toolstd.emf	toolstp.emf	\
 	triangle.emf	\
