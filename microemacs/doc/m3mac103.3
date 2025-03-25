@@ -7,7 +7,7 @@
 .\"  Created By    : Detlef Groth & Steven Phillips
 .\"  Created       : Mon Aug 31 21:02:32 1998
 .\"
-.Id $Id: m3mac101.3,v 2.10 2025/03/24 18:49:17 dgroth Exp $
+.Id $Id: m3mac101.3,v 2.10 2025/03/25 07:53:42 dgroth Exp $
 .Im MicroEmacs command
 .so me.tni
 .TH tcl-exec 3
@@ -19,7 +19,7 @@
 .XI %tcl-lint-opts 5 "Tclint lint command options"
 .SH NAME
 .Me "|tcl-exec"
-py-exec - Executes the current Tcl buffer
+tcl-exec - Executes the current Tcl buffer
 .br
 .Me "|tcl-format"
 tcl-format \- Format the current Tcl buffer using tclfmt
@@ -38,7 +38,7 @@ tcl-lint \- Check the current Tcl buffer using tclint
 .Me $a
 .SH SYNOPSIS
 .na
-\fBpy-exec\fR [ "\fIcommand-line-arguments\fR" ]
+\fBtcl-exec\fR [ "\fIcommand-line-arguments\fR" ]
 .sp
 .I n
 \fBtcl-format\fR [ "\fIformat-options\fR" ]
@@ -48,12 +48,12 @@ tcl-lint \- Check the current Tcl buffer using tclint
 .sp
 \fB%tclsh-com\fR \fIstring\fR; Default is "\fCtclsh\fR"
 .br
-\fB%tcl-format-opts\fR \fIstring\fR; Default is "\fCtclfmt --in-place\fR" 
+\fB%tcl-format-opts\fR \fIstring\fR; Default is "\fCtclfmt --in-place %s\fR" 
 .br
-\fB%tcl-lint-opts\fR \fIstring\fR; Default is "tclint"
+\fB%tcl-lint-opts\fR \fIstring\fR; Default is "\fCtclint %s\fR"
 .ad
 .SH DESCRIPTION
-The \fBpy-exec\fR macro executes the current buffer using the Tclsh on command line interpreter. Before the script is executed
+The \fBtcl-exec\fR macro executes the current buffer using the Tclsh on command line interpreter. Before the script is executed
 .Ht save-some-buffers 2
 is executed to allow the user to ensure that all relevant buffers are saved. If bit \fC0x01\fR of the numeric argument
 \fIn\fR is clear then all modified buffers are automatically saved, when set (the default) the user is prompted for
@@ -67,11 +67,15 @@ The  \fBtcl-format\fR  macro  formats the current  buffer  using  \fBtclfmt\fR
 command of the Python package \fBtclint\fR. You can
 usually  install  this using the  Python's pip package  manager. However the variable
 \fB%tclsh-format-opts\fR  can be used to override  this formatter. If bit \fC0x02\fR of the numeric  argument  \fBn\fR is set or 
-the variable is undefined the user is prompted to adjust the options before executing the format command.
+the  variable is undefined  the user is prompted to adjust the options  before
+executing the format command. On Windows you might set this to the path
+of your Python interpreter together with the \fB-m tclint.cli.tclfmt\fR option.
 .PP
 The  \fBtcl-lint\fR  macro  invokes  the Python script  \fBtclint\fR  from the
 Python package with the same name. The \fBtclint\fR module
 must be installed before using this command using the pip package manager.
+On Windows you might set this to the path
+of your Python interpreter together with the \fB-m tclint\fR option.
 .PP
 The command opens a \fC*tcl-lint*\fR buffer with the output from tclint, any warnings or styling issues raised are 
 typically high-lighted. the buffer is configured to for
