@@ -2646,7 +2646,7 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
  * 0x0003 Base conversion type - 0 = lossless bin, 1 = utf8, 2 = utf16, 3 = utf32 
  * 0x0004 Big-Endian utf16 or utf32 (little endian if not set)
  * 0x0008 Check for & remove Unicode BOM or add BOM on save 
- * 0x0100 utf - test for type (0x07 must not be set) 
+ * 0x0100 utf - test for type (bits 0x0f must not be set) 
  * 0x0200 Convert to new buffer rather than replace current
  * 0x0400 Hide output buffer (used with 0x200)
  * 

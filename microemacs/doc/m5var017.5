@@ -1,0 +1,51 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 2004-2025 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.Id $Id: m5var017.5,v 1.2 2025/03/25 21:19:29 jon Exp $
+.Im MicroEmacs variable|buffer|macrodevelop
+.so me.tni
+.TH $buffer-xlate 5
+.XI $buffer-xlate - "Buffer on-save translation configuration"
+.SH NAME
+.na
+$buffer-xlate \- Buffer on-save translation configuration
+.Me $a
+.ad
+.SH SYNOPSIS
+\fB$buffer-xlate\fR
+.SH DESCRIPTION
+.B $buffer-xlate
+defines the translation needed to be performed before the buffer is written to file, this variable is only ever used 
+when the 
+.Ht xlate 2m
+buffer mode is enabled. The variable is a bitwise flag where each bit has the following meaning:
+.IP \fB0x003\fR
+The lower 2 bits define the base translation, where a value of \fC0\fR indicates a lossless text file, \fC1\fR a UTF-8 
+encoded Uncode file, \fC2\fR a UTF-16 and \fC3\fR a UTF-32 encoded Unicode file.
+.IP \fB0x004\fR
+When this bit is set and converting to UTF-16 or UTF-32 then the file is written in big-endian byte order, if clear
+the file is written in little-endian byte order.
+.IP \fB0x008\fR
+When set a Unicode 'BOM' character (\fCU+FEFF\fR)is written out first.
+.SH NOTES
+The value of this variable is set by the
+.Ht translate-buffer 2
+command such that on saving the same format will be written out. As a result this value can be passed in to 
+\fBtranslate-buffer\fR if the file is re-read.  
+.PP
+The value of \fB$buffer-xlate\fR for a Unicode file can be safely changed to different formats, i.e. UTF-16 LE to 
+UTF-32 BE etc. However, changing between lossless text and Unicode formats can have unexpected results due to 
+additional Unicode character sequences and line termination styles. 
+.SH "SEE ALSO"
+.na
+.Ht translate-buffer 2 ,
+.Ht xlate 2m ,
+.Ht save-buffer 2 ,
+.Ht reread-file 3 ,
+.Ht find-hfile 3 ,
+.Ht find-ufile 3 .
+.ad
+.FH

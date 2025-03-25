@@ -1,0 +1,112 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1998-2009 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.Id $Id: m2cmd054.2,v 1.4 2025/03/25 20:24:29 jon Exp $
+.Im MicroEmacs command|file
+.so me.tni
+.TH translate-buffer 2
+.XI translate-buffer - "Translate buffer from one format to another"
+.SH NAME
+translate-buffer \- Translate buffer from one format to another
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B translate-buffer
+[ "\fIbuffer-name\fR" ]
+.ad
+.SH DESCRIPTION
+\fBtranslate-buffer\fR  converts  the text in the  current  buffer to another  format,  the  conversion  performed  is
+controlled be the given numeric argument \fIn\fR which is bit based where the bits are defined as follows:
+.IP \fB0x003\fR
+The lower 2 bits define the base conversion, see below.
+.IP \fB0x004\fR
+When this bit is set and converting from UTF-16 or UTF-32 then the buffer is in big-endian byte order, if clear
+the buffer is in little-endian byte order.
+.IP \fB0x008\fR
+When set and converting  from a Unicode UTF format the buffer start is checked for a Unicode 'BOM' character. If found
+it is removed but flagged to be readded on save, see bit \fB0x08\fR of variable
+.Ht $buffer-xlate 5 .
+.IP \fB0x100\fR
+When set \*(mS  attempts to  auto-detect  the Unicode UTF format of the current  buffer,  setting bits  \fB0x01\fR  to
+\fB0x08\fR  appropriately.  \*(mS will not  attempt to detect  when a lossless  text  format  might be best, it always
+chooses a UTF format. Note that when using this bit, bits \fB0x01\fR through \fB0x08\fR must be clear.
+.IP \fB0x200\fR
+Output the  converted  text to a new buffer with given  \fBbuffer-name\fR  rather than replace the text of the current
+buffer. With this bit is not set, the current buffer must be clean and unedited.
+.IP \fB0x400\fR
+Used with bit \fB0x200\fR, when set the new buffer is not automatically displayed.
+.PP
+The base conversion, determined by the first 2 bits, must be one of the following:
+.IP \fB0x00\fR
+Convert a Reduced-binary (see
+.Ht rbin 2m )
+formatted  buffer to a lossless text format, in this mode line  termination is always a single  \fC\\x0A\fR byte (UNIX
+style EOL) and a minimum set of bytes  (\fC\\x00\fR,  \fC\\x01\fR,  \fC\\x02\fR and \fC\\x07\fR) are protected by
+encoding to the byte sequence "\fC\\x0100#\fR" (byte \fC\\x01\fR followed by 2 ASCII '0' (\fC\\x30\fR) characters  followed by # which is the value
+of the byte being  protected,  i.e. '0', '1', '2' or '7'). In this format every byte is preserved so it can be treated
+more like a text file.  
+.IP \fB0x01\fR
+Convert a Unicode UTF-8 formatted file, loaded in rbin format, to a Unicode preserving text mode. In this mode line
+termination is auto-detected and handled as normal but the same spacial bytes as lossless text are protected. Then any
+Unicode character which as a value of \fCU+0080\fR or more is then handled in one of 4 ways, if the character is
+supported by the current \*(mS charset it is converted to that single byte value. Otherwise, if the hex value of
+the character is less than \fC0x01000\fR then it is converted to a byte sequence of "\fC\\x01###\fR" where ### is the
+hex value of the character in ASCII text, if less than \fC0x100000\fR it is converted to byte sequence of
+"\fC\\x02#####\fR", if the value is \fC0x100000\fR or greater the character is replace with a literal \fC\\x07\fR byte
+(\*(mS's undefined character) and the value is lost. At the time of writing there is no use of characters in thiis
+Unicode plane so this should not be an issue. If the file is invalid, e.g. has invalid character encodings, the 
+command throws an error and the conversion halts.
+.IP \fB0x02\fR
+As with conversion \fB0x01\fR above except the source must be in UTF-16 format, see bit \fB0x04\fR for details on 
+setting the endianness.
+.IP \fB0x03\fR
+As with conversion \fB0x01\fR above except the source must be in UTF-32 format, see bit \fB0x04\fR for details on 
+setting the endianness.
+.PP
+When omitted, the default value on \fIn\fR is \fB0x100\fR which means the buffer must be a UTF file loaded in \fBrbin\fR 
+format, \*(mS will then attempt to detect the format being used and convert the current buffer to a lossless text form.  
+.PP
+When translate-buffer is used, the resultant buffer will have 
+.Ht xlate 2m
+buffer mode enabled and variable
+.Ht $buffer-xlate 5
+set so that \*(mS can correctly convert the buffer back to its original format when it is written back out.
+.SH EXAMPLE
+The following can be used to load a Unicode file of any UTF encoding:
+.RS
+.Me $emf-scheme
+.CS
+25 find-file "unicode_file.txt"
+translate-buffer
+.CE
+.Me $ehf-scheme
+.RE
+The following can be used to load any file and preserve all bytes, i.e. lossless text mode:
+.RS
+.Me $emf-scheme
+.CS
+25 find-file "any.file"
+0 translate-buffer
+.CE 0
+.Me $ehf-scheme
+.RE
+.SH NOTES
+In lossless text mode, long strings without a UNIX new line character will be split at just under the 64KB length, 
+these lines are flagged as not having a line terminator (see bit \fB0x010\fR of variable
+.Ht $line-flags 5
+for more details) so these line breaks do not affect the saved output.
+.PP 
+It is important to avoid breaking the encoded byte sequences when editing these 'lossless' buffers, the 4 or 6 byte 
+sequences are simple text bytes and any addition or removal of bytes will alter their value.
+.SH "SEE ALSO"
+.na
+.Ht xlate 2m ,
+.Ht $buffer-xlate 5 ,
+.Ht find-file 2 ,
+.Ht rbin 2m .
+.ad
+.FH

@@ -1,0 +1,49 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1998-2009 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.Id $Id: m2mod031.2,v 2.7 2025/03/25 21:19:40 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH xlate 2m
+.XI xlate - "Translated buffer editor mode"
+.SH NAME
+xlate \- Translated buffer editor mode
+.SH SYNOPSIS
+.B "xlate Mode"
+.sp
+\fBX\fR \- mode line letter.
+.SH DESCRIPTION
+.B xlate
+mode is  enabled  when a buffer needs to be translated before saving. The mode works in conjunction with variable
+.Ht $buffer-xlate 5
+which defines the translation required.
+.PP
+The mode is typically enabled by the
+.Ht translate-buffer 2
+command which is used to convert a file loaded using \fBrbin\fR mode into a more editable form.
+.PP
+See documentation on variable
+.Ht $buffer-xlate 5
+for a better understanding of the types of translation preformed.
+.SH NOTES
+\fBxlate\fR,  \fBrbin\fR and  \fBbinary\fR  modes are mutually  exclusive, i.e. they should not be enabled at the same
+time.
+.PP
+When a file writing command is called on a buffer with \fBxlate\fR mode enabled, the command will first execute its
+normal validity checks, if these succeed the command will internally translate the buffer, as defined by
+\fB$buffer-xlate\fR, creating a temporary second copy of the buffer, it is this version that is then written out and
+then freed. This leaves the original buffer unchanged, although modes like
+.Ht edit 2m
+will have been altered as normal.
+.SH "SEE ALSO"
+.na
+.Hl "Operating Modes" Modes - ,
+.Ht translate-buffer 2 ,
+.Ht find-file 2 ,
+.Ht $buffer-xlate 5 ,
+.Ht rbin 2m .
+.ad
+.FH
