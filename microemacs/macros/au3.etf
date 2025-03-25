@@ -1,19 +1,11 @@
 ; -*- Autoit3 -*-
 ;
-;  			Copyright $YEAR$ $COMPANY_NAME$.
-;			      All Rights Reserved
+; Copyright (C) $YEAR$ $COMPANY_REF$.
 ;
-;  System        : $FILE_NAME$ : 
-;  Module        : 
-;  Object Name   : $RCS_FILE$
-;  Revision      : $REVISION$
-;  Date          : $ASCII_TIME$
-;  Author        : $USER_NAME$
-;  Created By    : $USER_NAME$, $COMPANY_NAME$
-;  Created       : $ASCII_TIME$
-;  Last Modified : <241217.1951>
+; $COMPANY_LICENSE:75$
 ;
-;  History       :
+; Synopsis:    $CURSOR$
+; Authors:     $USER_NAME$
 ;	
 
 

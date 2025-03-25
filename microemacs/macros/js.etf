@@ -1,19 +1,8 @@
 /* -*- javascript -*- 
-     Copyright $YEAR$ $COMPANY_NAME$
-     All Rights Reserved
-     System        : $FILE_NAME$ : 
-     Object Name   : $RCS_FILE$
-     Revision      : $REVISION$
-     Date          : $ASCII_TIME$
-     Created By    : $USER_NAME$, $COMPANY_NAME$
-     Created       : $ASCII_TIME$
-
-     Last Modified : <241217.1952>
-     ID            : $Id$
-     Source        : $Source$
-     Description	
-     Notes
-*/
-var ns4 = document.layers;
-var ie4 = document.all;
-var nn6 = document.getElementById && !document.all;
+ * Copyright (C) $YEAR$ $COMPANY_REF$.
+ *
+ * $COMPANY_LICENSE:75$
+ *
+ * Synopsis:    $CURSOR$
+ * Authors:     $USER_NAME$
+ */

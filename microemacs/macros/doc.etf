@@ -1,8 +1,9 @@
 > -!- document -!-
 >
->  Copyright $YEAR$ $COMPANY_NAME$.
+> Copyright (C) $YEAR$ $COMPANY_REF$.
 >
->  Created By    : $USER_NAME$
->  Created       : $ASCII_TIME$
->  Last Modified : <160495.1521>
+> $COMPANY_LICENSE:75$
+>
+> Synopsis:    $CURSOR$
+> Authors:     $USER_NAME$
 >
