@@ -7,7 +7,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd006.3,v 2.14 2024/10/20 17:14:00 jon Exp $
+.Id $Id: m3osd006.3,v 2.14 2025/03/26 12:21:51 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH "MainMenu" 3
@@ -249,24 +249,22 @@ for the subsequent lines at the given column position), executes the command
 .Ht yank-rectangle 2 .
 .\" -----------------
 .IP "\fCInsert Symbol\fR"
-Dialog  presented  to select a character  symbol for  insertion,  executes the
-command
+Dialog presented to select a character symbol for insertion, executes the command
 .Ht insert-symbol 3 .
 .IP "\fCInsert Date/Time\fR"
-Inserts  the  current  date  and time at the  cursor  position,  a sub-menu
-is used to determine the format of the insertion string.
+Inserts the current date and time at the cursor position, a sub-menu is used to determine the format of the insertion
+string. The list of date formats can be customised by setting the \fB%date-formats\fR variable, see macro file
+\fBinsdate.emf\fR.
 .IP "\fCInsert File Name\fR"
-Inserts  the name of the file at the current  cursor  position,  executes  the
-command
+Inserts the name of the file at the current cursor position, executes the command
 .Ht insert-file-name 2 .
 .IP "\fCInsert File\fR"
-Inserts  the  contents of a file into the buffer at the cursor  position,  the
-user is prompted for the name of the file to insert. Executes the command
+Inserts the contents of a file into the buffer at the cursor position, the user is prompted for the name of the file
+to insert. Executes the command
 .Ht insert-file 2 .
 .IP "\fCDraw Lines\fR"
-Moves into line  drawing  mode, the cursor  keys are used to control  the line
-drawing,  use  \fBesc-h\fR  for help, \fBreturn\fR to exit draw mode and  \fBC-g\fR to quit draw mode  without
-making changes. Executes the command
+Moves into line drawing mode, the cursor keys are used to control the line drawing, use \fBesc-h\fR for help,
+\fBreturn\fR to exit draw mode and \fBC-g\fR to quit draw mode without making changes. Executes the command
 .Ht draw 3 .
 .\" -----------------
 .IP "\fCToggle Insert Mode\fR"

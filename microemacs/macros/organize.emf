@@ -26,8 +26,6 @@
   set-variable .osd.orgw-c &pinc .osd.next 1
   set-variable .osd.orgl-p &pinc .osd.next 1
   set-variable .osd.orgl-c &pinc .osd.next 1
-  set-variable .org.months "|January|February|March|April|May|June|July|August|September|October|November|December|"
-  set-variable .org.days   "|Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|"
   set-variable .org.dinm   "|31|28|31|30|31|30|31|31|30|31|30|31|"
   ; Try and find the organizer file
   set-variable #l1 &reg "/history/organizer" $user-name
@@ -325,8 +323,6 @@ osd-bind-key .osd.org org-key-bind "C-down"
     !endif
   !endif
   read-registry "org" @1 "cb"
-  set-variable .org.months &reg "/org/set/months" .org.months
-  set-variable .org.days &reg "/org/set/days" .org.days
   set-variable .org.set &spr "%1d%1d" &reg "/org/set/1dofw" "0" &reg "/org/set/1wofy" "7"
   set-variable .org.aflag &reg "/org/set/aflag" "0x24"
   set-variable .org.naddr &reg "/org/addr/naddr" "1"

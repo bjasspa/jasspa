@@ -47,7 +47,7 @@
         !if &equ :watch-size #l2
         !elif &les #l2 :watch-size
           !force !force reread-file
-          set-variable $buffer-mode-line &rep $buffer-mode-line "%k" "%kW"
+          set-variable $buffer-mode-line &rep $buffer-mode-line "%K" "W%K"
           set-variable :watch-size #l2
           set-variable :watch "0"
           set-variable #l9 1
@@ -82,7 +82,7 @@
         !if &gre #l2 :watch
           ml-write &spr "[Watch updating %s]" $buffer-bname
           !force !force reread-file
-          set-variable $buffer-mode-line &rep $buffer-mode-line "%k" "%kW"
+          set-variable $buffer-mode-line &rep $buffer-mode-line "%K" "W%K"
           set-variable #l9 1
           set-variable :watch #l2
         !endif
@@ -115,7 +115,7 @@ define-macro watch
     !if &exi :watch
       unset-variable :watch
       !force unset-variable :watch-size
-      set-variable $buffer-mode-line &rep $buffer-mode-line "%kW" "%k"
+      set-variable $buffer-mode-line &rep $buffer-mode-line "W%K" "%K"
       !if &not &dec .count 1
         -1 create-callback watch-callback
       !endif
@@ -130,7 +130,7 @@ define-macro watch
         !abort
       !endif
       set-variable :watch #l0
-      set-variable $buffer-mode-line &rep $buffer-mode-line "%k" "%kW"
+      set-variable $buffer-mode-line &rep $buffer-mode-line "%K" "W%K"
       !if &not &pinc .count 1
         .time create-callback watch-callback
       !endif
@@ -159,7 +159,7 @@ define-macro watch-reset
         set-variable .watch.count &add .watch.count 1
       !else
         find-buffer #l0
-        set-variable $buffer-mode-line &rep $buffer-mode-line "%kW" "%k"
+        set-variable $buffer-mode-line &rep $buffer-mode-line "W%K" "%K"
         unset-variable :watch
         !force unset-variable :watch-size
       !endif

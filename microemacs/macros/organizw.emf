@@ -30,14 +30,14 @@ set-variable .org.bind-r1 "|1|1|1|1|"
     !endif
     set-variable #l4 &add #l5 #l4 
   !endif
-  osd .osd.orgw 40 "hf" &spr ": %d %s" #l4 &lget .org.months #l7
+  osd .osd.orgw 40 "hf" &spr ": %d %s" #l4 &lget .spell.months #l7
   set-variable #l6 0
   !repeat
     set-variable #l1 &add 1 &mod &add &pinc #l6 1 &lef .org.set 1 7 
     !if &and &equ #l4 .org.day &equ #l7 .org.month
-      osd .osd.orgw-c &add 100 &mul #l6 2 "GfhzHxR" .scheme.osd-entry 5 3 &spr " %s\n %2d" &lef &lget .org.days #l1 3 #l4 #l6 org-week-view-day
+      osd .osd.orgw-c &add 100 &mul #l6 2 "GfhzHxR" .scheme.osd-entry 5 3 &spr " %s\n %2d" &lef &lget .spell.days #l1 3 #l4 #l6 org-week-view-day
     !else
-      osd .osd.orgw-c &add 100 &mul #l6 2 "GfhzxR" 5 3 &spr " %s\n %2d" &lef &lget .org.days #l1 3 #l4 #l6 org-week-view-day
+      osd .osd.orgw-c &add 100 &mul #l6 2 "GfhzxR" 5 3 &spr " %s\n %2d" &lef &lget .spell.days #l1 3 #l4 #l6 org-week-view-day
     !endif
     osd .osd.orgw-c &add 101 &mul #l6 2 "ENGfxz" 56 3 "" #l6 org-week-set-notes
     !if &equ #l4 #l5
@@ -172,13 +172,13 @@ set-variable .org.bind-r1 "|1|1|1|1|"
     !endif
     set-variable #l2 &add #l5 #l2 
   !endif
-  insert-string &spr "       Week %s, %d %s %s\n\n" .org.week #l2 &lget .org.months #l3 #l4
+  insert-string &spr "       Week %s, %d %s %s\n\n" .org.week #l2 &lget .spell.months #l3 #l4
   set-variable #l6 0
   !repeat
     set-variable #l7 &reg &spr "/org/cal/%s/%s/%s" #l4 #l3 #l2 &reg &spr "/org/cal/*/%s/%s" #l3 #l2 ""
     set-variable #l8 &add $window-line 1
     set-variable #l1 &add 1 &mod &add &pinc #l6 1 &lef .org.set 1 7 
-    insert-string &spr "%2d %s %s\n" #l2 &lef &lget .org.days #l1 3 #l7
+    insert-string &spr "%2d %s %s\n" #l2 &lef &lget .spell.days #l1 3 #l7
     set-variable #l1 $window-line
     !while &not &equ $window-line #l8
       backward-line

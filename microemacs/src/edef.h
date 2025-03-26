@@ -494,7 +494,7 @@ meSchemeSet *hilBlock;                  /* Hilighting style change      */
 meInt     cursorState=0;                /* Current state of cursor      */
 meUByte  *meProgName=NULL;              /* the program name (argv[0])   */
 #if MEOPT_EXTENDED
-meUByte   orgModeLineStr[]="%s%r%u%k %b %l of %n - %Y%-%m%-%d %H:%M (%O) - (%f) ";
+meUByte   orgModeLineStr[]="%s%r%u%K %b %l of %n - %Y%-%m%-%d %H:%M (%O) - (%f) ";
 #else
 meUByte   orgModeLineStr[]="%s%r%u " ME_SHORTNAME " (%O) - %l %b (%f) ";
 #endif

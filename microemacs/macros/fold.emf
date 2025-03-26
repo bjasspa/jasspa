@@ -1,11 +1,10 @@
 ; -!- emf: fold-open: ";OPEN" ; fold-close: ";CLOSE" ; -!-
 ;
-; Copyright (C) 2000-2024 JASSPA (www.jasspa.com)
+; Copyright (C) 2002-2024 JASSPA (www.jasspa.com)
 ;
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
 ; 
-; Created:     Wed Oct 30 2002
 ; Synopsis:    Folding editor support macros
 ; Authors:     Steven Phillips
 ;

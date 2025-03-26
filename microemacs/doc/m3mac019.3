@@ -4,25 +4,23 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac019.3,v 2.7 2025/03/22 16:48:00 jon Exp $
+.Id $Id: m3mac019.3,v 2.7 2025/03/26 12:08:13 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH ascii-time 3
 .XI ascii-time - "Return the current time as a string"
-.XI .ascii-time.format 5 "Set the format of the date string"
+.XI %ascii-time 5 "Set the default format of the date string"
 .SH NAME
 ascii-time \- Return the current time as a string
 .Me $a
 .SH SYNOPSIS
 .na
-\fBascii-time\fR
+\fBascii-time\fR [ "\fIformat\fR" ]
 .ad
 .SH DESCRIPTION
-\fBascii-time\fR  returns the current time as a formatted  string in \fC#p9\fR
-which is  equivalent  to  \fC#l9\fR  for the calling  macro. The format of the
-resultant string is determined by the variable
-.B .ascii-time.format
-which is defined using the following escape characters:
+\fBascii-time\fR returns the current time as a formatted string in \fC#p9\fR which is equivalent to \fC#l9\fR for the
+calling macro. The format of the resultant string is determined by the variable the parameter \fIformat\fR, if given, 
+otherwise by the variable \fB%ascii-time\fR. The format is defined using the following escape characters:
 .RS
 .sp
 .nf
@@ -33,9 +31,10 @@ which is defined using the following escape characters:
 \fC%b\ \fR - Replaced by abbreviated month name (3 letters)
 \fC%B\ \fR - Replaced by full month name
 \fC%d\ \fR - Replaced by two digit day of month (01 to 31)
-\fC%e\ \fR - Replaced by day of month (1 to 31)
+\fC%e\ \fR - As with \fC%d\fR except a leading 0 is replaced by a space ( 1 to 31)
 \fC%H\ \fR - Replaced by two digit hour of the day (00 to 23)
-\fC%i\ \fR - Replaced by hour of the day (0 to 23)
+\fC%i\ \fR - Replaced by day of month (1 to 31)
+\fC%k\ \fR - Replaced by hour of the day (0 to 23)
 \fC%J\ \fR - Replaced by day of year (0 to 365)
 \fC%j\ \fR - Replaced by three digit day of year (000 to 365)
 \fC%M\ \fR - Replaced by two digit minute of the hour (00 to 59)
@@ -52,18 +51,14 @@ which is defined using the following escape characters:
 .fi
 .RE
 .sp
-The default value of 
-.B .ascii-time.format
-when not defined is:
+The default value of \fB%ascii-time\fR when not defined is:
 .IP
 "\fC%Y-%m-%d %H:%M:%S\fR"
 .LP
-To change the default date layout then 
-.B .ascii-time.format 
-should be defined in \fIuser\fR\|\fB.emf\fR. i.e.
+To change the default date layout then \fB%ascii-time\fR should be defined in \fIuser\fR\|\fB.emf\fR. i.e.
 .Me $emf-scheme
 .CS
-set-variable .ascii-time.format "%a %b %d %H:%M:%S %Y"
+set-variable %ascii-time "%a %b %d %H:%M:%S %Y"
 .CE 0
 .Me $ehf-scheme
 .SH EXAMPLE
@@ -93,10 +88,15 @@ were also changed to be more compliant with
 and C's
 .Hr strftime 3
 function.
+.PP
+The current date and time can be easily inserted into the current buffer by using the
+.Hl "main Edit menu" MainMenu 3 's
+\fBInsert Date/Time\fR feature.
 .SH "SEE ALSO"
 .na
 .Ht $buffer-fhook 5 ,
 .Ht insert-template 3 ,
+.Ht $mode-line 5 ,
 .Ht &find 4 .
 .ad
 .FH

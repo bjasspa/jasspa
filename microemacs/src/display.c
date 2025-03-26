@@ -1457,7 +1457,7 @@ updateModeLine(meWindow *wp)
                     }
                 break;
 
-            case 'k':
+            case 'K':
                 if(kbdmode == meRECORD)           /* if playing macro */
                 {
                     *cp++ = 'R';
@@ -1536,7 +1536,7 @@ model_copyi:
                 ss = meItoa(time_ptr->tm_mday);
                 goto model_copy02di;
             
-            case 'e':
+            case 'i':
                 ss = meItoa(time_ptr->tm_mday);
                 goto model_copy2di;
 
@@ -1544,7 +1544,7 @@ model_copyi:
                 ss = meItoa(time_ptr->tm_hour);
                 goto model_copy02di;
 
-            case 'i':
+            case 'k':
                 ss = meItoa(time_ptr->tm_hour);
                 goto model_copy2di;
 

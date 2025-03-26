@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac018.3,v 2.8 2024/12/16 18:56:10 jon Exp $
+.Id $Id: m3mac018.3,v 2.8 2025/03/26 11:59:28 jon Exp $
 .Im MicroEmacs command|file
 .so me.tni
 .TH insert-template 3
@@ -35,8 +35,8 @@ following strings in the template:
 .IP \fC$ASCII_TIME$\fR
 To the current time. Inserts the output of
 .Ht ascii-time 3 .
-The default format of the time string may be changed with 
-.Ht .ascii-time.format 5 .
+The default format of the time string may be changed by setting variable 
+.Ht %ascii-time 5 .
 .IP \fC$COMPANY_NAME$\fR
 To the value of
 .Ht %company-name 5 ,
@@ -115,7 +115,7 @@ mode is always used to perform the the  search/replace  so the replace strings
 should be appropriate for \fBmagic\fR.
 .SH "SEE ALSO"
 .na
-.Ht .ascii-time.format 5 ,
+.Ht %ascii-time 5 ,
 .Ht $buffer-fhook 5 ,
 .Ht %company-name 5 ,
 .Ht %company-url 5 ,

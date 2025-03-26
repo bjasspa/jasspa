@@ -13,6 +13,8 @@
 set-variable .spell.lang-id "|enus|engb|dede|eses|fifi|frfr|elgr|itit|plpl|ptpt|ruru|"
 set-variable .spell.lang-type "|20134|20134|204|24|20|24|3|24|0|24|1|"
 set-variable .spell.lang-name "|American|British|Deutsch|Espanol|Finnish|Francais|Greek|Italiano|Polish|Portugues|Russian|"
+set-variable .spell.months &reg "/history/months" "|January|February|March|April|May|June|July|August|September|October|November|December|"
+set-variable .spell.days &reg "/history/days" "|Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|"
 
 set-variable #l2 &lget .spell.lang-id &set #l1 &lfin .spell.lang-name &set #l0 &reg "/history/language" ""
 !if &not &seq #l2 .spell.language

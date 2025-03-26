@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.58 2025/03/16 13:09:59 jon Exp $
+.Id $Id: me.nrs,v 2.58 2025/03/26 12:09:07 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -2600,7 +2600,7 @@ and
 commands introduced to change the indentation of a region.
 .BU
 The default date format may be specified by the user with
-.Ht .ascii-time.format 5 .
+.Ht %ascii-time 5 .
 .BU
 Quick  directory  aliases such as  "\fB~proj\fR" or "\fB~work\fR"  etc. may be
 defined to a longer pathname using
