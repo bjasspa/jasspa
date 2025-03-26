@@ -14,7 +14,7 @@ define-macro fhook-go
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-go.setup &reg "/history/fhook/go" "bdfghinopx"
+set-variable .fhook-go.setup &reg "/history/fhook/go" "bdfghinopTx"
 set-variable .fhook-go.setup-mask "abdefghikmnoptux"
 set-variable .fhook-go.comment "|/*| */|*| * | * |fr|"
 
