@@ -881,12 +881,12 @@ define-macro git-push
   set-variable #l0 $buffer-bname
   4 goto-line
   insert-string " Flags   Name  <Order by Extension>\n"
-  set-variable :fmpf 9
+  set-variable :fmpf &set #l3 9
   !if &lget &lget .git.cvals 4 2
     find-buffer "*git-stt-s1*"
     4 goto-line
     !while &not &seq @wc ""
-      !if &xse @wl &spr "\\(\\u\\)\t%s\\(.*\\)" .git-status.bp
+      !if &xse @wl &spr "\\(\\u\\)\\d*\t%s\\(.*\\)" .git-status.bp
         set-variable #l1 @s1
         find-buffer #l0
         5 goto-line
@@ -899,8 +899,9 @@ define-macro git-push
           insert-string &spr " %s       %s\n" #l1 #l2
         !endif
         find-buffer "*git-stt-s1*"
-      !else
+      !elif #l3
         1000 ml-write &spr "[Unexpected line in unintegrated list: %s]" @wl
+        set-variable #l3 0
       !endif
       forward-line
     !done
