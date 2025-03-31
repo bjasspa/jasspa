@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac021.3,v 2.6 2024/07/16 17:13:42 jon Exp $
+.Id $Id: m3mac021.3,v 2.6 2025/03/30 11:06:08 jon Exp $
 .Im MicroEmacs command|delete
 .so me.tni
 .TH delete-indentation 3
@@ -19,13 +19,13 @@ delete-indentation \- Join 2 lines deleting white spaces
 .ad
 .SH DESCRIPTION
 .B delete-indentation
-deletes  all white  characters  between the  beginning of the current line and
-the end of the previous line,  including the line-feed. If the current line is
-not empty then a space is inserted to divide the two lines now joined.
+deletes all white characters between the beginning of the current line and the end of the previous line, including the
+line-feed. If the current line is not empty then a space is inserted to divide the two lines now joined.
 .PP
-If a positive  argument  \fIn\fR is given then the process is repeated \fIn\fR
-times. Note that the deleted characters are not added to a kill buffer.
-.\"TODO doc -ve arg
+If a positive argument \fIn\fR is given then the process is repeated \fIn\fR times. Note that the deleted characters
+are not added to a kill buffer.
+.PP
+If a negative argument \fIn\fR is given then lines are joined without a separating space.
 .SH NOTES
 \fBdelete-indentation\fR is a macro defined in \fCformat.emf\fR.
 .SH "SEE ALSO"

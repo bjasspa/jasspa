@@ -7,7 +7,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd000.3,v 2.23 2024/12/16 18:34:59 jon Exp $
+.Id $Id: m3osd000.3,v 2.23 2025/03/30 12:03:11 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH user-setup 3
@@ -421,10 +421,19 @@ Console platform settings are kept independent of the X interface settings.
 .IP "\fCDisplay Char Set\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCUTF-8 encode term I/O\fR"
-Enable this option if your terminal is using UTF-8 encoding.
-.\" TODO  more info required.
+Enable this option if your terminal is using UTF-8 encoding. This can usually be determined by disabling the option 
+then executing
+.Ht insert-symbol 3 ,
+if many of the characters in the second half of the table are drawn as a question mark within a diamond (\fC<?>\fR) 
+the terminal is using UTF-8 encoding and the option should be enabled.
 .IP "\fCExtend Char Set\fR"
-See \fBPlatform UNIX Setup\fR above, only supported when UTF-8 encoding is enabled.
+See \fBPlatform UNIX Setup\fR above, only supported when UTF-8 encoding is enabled. When enabled \*(mS uses specific 
+Unicode characters, typically not available in the current charset, to render the characters \fC0x00\fR to \fC0x1f\fR
+to improve the visual rendering of the
+.Ht $box-chars 5
+and
+.Ht $window-chars 5
+characters used for drawing the dialogs and menus.
 .IP "\fCTermcap Color\fR"
 This option determines  whether Termcap based colors should be used. These are
 typically the standard eight colors and may not be supported on all terminals.
