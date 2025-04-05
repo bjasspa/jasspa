@@ -1,5 +1,5 @@
 ; -!- emf -!-
-; Copyright (c) 2025 JASSPA (www.jasspa.com).
+; Copyright (c) 2024-2025 JASSPA (www.jasspa.com).
 ;
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
@@ -26,7 +26,7 @@ set-variable #g1 &cat $temp-name "/"
 0x21 copy-file #g8 #g1
 !if &not $status
   -24 ml-write &cat "Error: copy-file unexpectedly failed - " #g1
-!elif &not &seq $result "|56|0|458|0|"
+!elif &not &seq $result "|56|0|459|0|"
   -24 ml-write &spr "Error: copy-file rturn wrong %s - %s" &set #g2 $result #g1
 !elif &not &seq "D" &stat t &cat #g1 "test"
   -24 ml-write &spr "Error: copy-file output missing - %stest" #g1
@@ -156,8 +156,10 @@ delete-file #g0
 delete-file #g1
 !if &not $status
   -24 ml-write &spr "Error: delete-file unexpectedly failed - %s.../?" #g1
-!elif &not &seq $result "|57|0|458|0|"
+!elif &not &seq $result "|57|0|459|0|"
   -24 ml-write &spr "Error: delete-file return wrong %s - %ssql" &set #g2 $result #g1
 !elif &not &seq "X" &stat t #g1
   -24 ml-write &spr "Error: delete-file file missing - %ssql/sample4.sql" #g1
 !endif
+
+ml-write "Tests complete - no errors"

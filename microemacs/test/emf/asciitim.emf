@@ -1,0 +1,29 @@
+; -!- emf -!-
+; Copyright (c) 2025 JASSPA (www.jasspa.com).
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Test ascii-time format support
+; Authors:     Steven Phillips
+;
+!iif &not &exi %date-formats execute-file "insdate"
+
+0 define-macro iascii-time-test
+  set-variable %ascii-time @2
+  ascii-time
+  insert-string &spr "%s%s >>>> %s\n" @1 %ascii-time #l9
+!emacro
+
+!force 0 delete-buffer "*ascii-time-test*"
+find-buffer "*ascii-time-test*"
+!force unset-variable %ascii-time
+ascii-time
+insert-string &spr "Default:  %s\n" #l9
+
+iascii-time-test "ALL - " "Spec: %% Year: %Y %y Month: %B %b %m %o Day: %j %J %A %a %d %e %i %w Time: %H %k %M %N %S %v"
+
+set-variable #l1 0
+!while &len &set #l2 &lget %date-formats &inc #l1 1
+  iascii-time-test &spr "osd-insert-date %d: " #l1 #l2
+!done
