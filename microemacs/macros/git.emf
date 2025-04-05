@@ -844,7 +844,7 @@ define-macro git-pull
     !iif &sin " " #l2 set-variable #l2 &spr "\"%s\"" #l2
     set-variable #l2 &spr "%s %s" .git.rep #l2
   !endif
-  set-variable #l2 &spr "%s pull %s" .git.com #l2
+  set-variable #l2 &spr "%s pull --ff-only %s" .git.com #l2
   7 git-get-file-list 1 0 #l2
   2 git-exec 3 $buffer-fname
 !emacro

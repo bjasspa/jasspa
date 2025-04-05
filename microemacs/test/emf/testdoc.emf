@@ -1,31 +1,24 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; Copyright (c) 2025 JASSPA (www.jasspa.com).
 ;
-;  Author        : $Author$
-;  Created By    : MicroEmacs User
-;  Created       : Tue Sep 24 07:58:59 2024
-;  Last Modified : <240925.1145>
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
 ;
-;  Description
+; Synopsis:    Test embedded documentation definition & hilighting
+; Authors:     Steven Phillips
 ;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 2024 MicroEmacs User.
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-define-macro test
-    ml-write "test"
+define-macro test-doc
+  ml-write "test-doc!"
 !emacro
 
-define-help test 3
+define-help test-doc 3
 ## NAME
 
-__test__ - print a test message given on the terminal
+__test-doc__ - print a test message given on the terminal
   
 ## SYNOPSIS
 
-_n_ __test__ ["*argument*"]
+_n_ __test-doc__ ["*argument*"]
 
 ## DESCRIPTION
 
@@ -69,20 +62,20 @@ Now an example for MicroEmacs macro code using code fences:
 
 ## SEE ALSO
 
-Here an example link: [user-setup(3)](user-setup\(3\)), [%test(5)](%test\(5\)).
+Here an example link: [user-setup(3)](user-setup\(3\)), [%test-doc(5)](%test-doc\(5\)).
 
 !ehelp
 
-set-variable %test 42
+set-variable %test-doc 42
 
-define-help "%test" 5
+define-help "%test-doc" 5
 ## NAME
 
-__%test__ - this is a test variable
+__%test-doc__ - this is a test variable
 
 ## SYNOPSIS
 
-__%test__ "*value*"
+__%test-doc__ "*value*"
 
 ## DESCRIPTION
 
@@ -90,6 +83,6 @@ This is a test help page for a user variable, not more information here.
 
 ## SEE ALSO
 
-[test(3)](test\(3\)).
+[test-doc(3)](test-doc\(3\)).
 
 !ehelp

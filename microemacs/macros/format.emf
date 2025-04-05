@@ -127,172 +127,96 @@ define-macro delete-indentation
     !iif &not &seq @wc "\n"  #l0 insert-space
   !done
 !emacro
-; ifill-paragraph - intelligently try to fill paragraphs by spotting
-; bullet lists etc.
-0 define-macro ifill-para2
-  set-variable #l0 $window-line
-  end-of-line
-  backward-paragraph
-  ; Special case for first line
-  !if &seq &trb @wl ""
+; ifill-paragraph - intelligently try to fill paragraphs by spotting bullet lists etc.
+0 define-macro ifill-para
+  !while &seq &trr @wl ""
     forward-line
-  !endif
+  !done
+  set-variable #l0 $window-line
+  forward-paragraph
   set-variable #l1 $window-line
-  beginning-of-line
-  !while &les $window-line #l0
-    !force -1 search-forward &spr "^[ \t]*[^%s]\\{0,3\\}[%s][ \t]" .ifill-para2.bullet .ifill-para2.bullet
-    !if $status
-      2 backward-char
-      set-variable #l2 &mid @wl $window-col 1
-      beginning-of-line
-      search-forward "^[ \t]*"
-      str-to-regex #l2
-      set-variable #l2 &spr "^%s[^%s]\\{0,3\\}%s[ \t]" &lef @wl $window-col .ifill-para2.bullet #l2
-      beginning-of-line
-      forward-line
-      !force &sub &sub $window-line #l0 1 search-forward #l2
-      !if $status
-        #l0 goto-line
-        set-variable #l3 0
-        !repeat
-          !force -1 search-forward #l2
-          !if $status
-            beginning-of-line
-            set-variable #l4 $window-line
-            insert-newline
-            ifill-para2
-            !if #l3
-              search-forward "^$"
-              1 kill-line
-              -1 yank
-            !endif
-            #l4 goto-line
-            set-variable #l3 1
-          !endif
-          backward-line
-        !until &equ #l1 $window-line
-        !if &not &seq @wl ""
-          ifill-para2
-        !endif
-        !if #l3
-          search-forward "^$"
-          1 kill-line
-          -1 yank
-        !endif
-        forward-paragraph
-        beginning-of-line
-        !return
-      !endif
+  set-variable #l4 1
+  !while &gre $window-line #l0
+    !force &sub #l0 $window-line search-buffer "mb" &spr "^\\(\\([ \t]*\\)\\(\\a\\|[ivx]+\\|\\(\\d\\)\\d?\\)?\\([%s]\\)[ \t]\\|[^\\w\n]+$\\)" .b
+    !iif &not $status  !break
+    set-variable #l2 $window-line
+    backward-line
+    !if &seq @wl ""
+    !elif &seq @s3 ""
+      end-of-line
+      insert-newline
+      set-variable #l1 &add #l1 1
+      set-variable #l4 &add #l4 1
     !else
-      forward-line
+      end-of-line
+      set-variable #l3 &spr "^%s%s%s[ \t]" @s2 &con &len @s4 "\\d\\d?" &con &sub 1 &len @s3 "[ivx]+" "\\a" @s5
+      !force &sub #l0 &add $window-line 1 search-buffer "mb" #l3
+      !if $status
+        set-variable $window-line #l2
+        backward-line
+        end-of-line
+        insert-newline
+        set-variable #l1 &add #l1 1
+        set-variable #l4 &add #l4 1
+        !repeat
+          !force &sub #l0 $window-line search-buffer "mb" #l3
+          !iif &not $status  !break
+          backward-line
+          end-of-line
+          insert-newline
+          set-variable #l1 &add #l1 1
+          set-variable #l2 &add #l2 1
+          set-variable #l4 &add #l4 1
+        !done
+        set-variable $window-line #l2
+      !endif
     !endif
   !done
-  !if &len .mode
-    @# fill-paragraph .mode
-  !else
-    set-variable #l0 $recent-keys
-    @# fill-paragraph @mna
-    !if &seq #l0 &set #l1 $recent-keys
-    !elif &lfin "|a |o |" &slo &lef #l1 2
-      set-variable .mode &lef #l1 1
-    !endif
-  !endif
-!emacro
-
-0 define-macro ifill-para1
-  !force forward-paragraph
-  !if &not $status
-    !return
-  !endif
-  set-variable #l0 &sub $window-line 1
-  backward-paragraph
-  ; Special case for first line
-  !if &seq &trb @wl ""
-    forward-line
-  !endif
-  beginning-of-line
-  set-variable #l1 $window-line
-  set-variable #l2 0
+  set-variable $window-line #l0
+  set-variable #l1 0
   !repeat
-    !if &gre $window-line #l0
-      !jump 4
-    !endif
-    !force -1 search-forward "[0-9A-Za-z]"
-    !if &not $status
-      ; no alpha-numeric chars, treat this line as a divider
-      !if &gre $window-line #l1
-        set-variable #l3 $window-line
-        insert-newline
-        2 backward-line
-        @# ifill-para2
-        1 kill-line
-        -1 yank
-        set-variable #l0 &add #l0 &sub $window-line #l3
-      !endif
-      !if #l2
-        set-variable #l3 &sub $window-line 1
-        #l2 goto-line
-        1 kill-line
-        -1 yank
-        #l3 goto-line
-      !else
-        set-variable #l0 &add #l0 1
-      !endif
-      !if &equ $window-line #l0
-        !return
-      !endif
-      forward-line
-      set-variable #l2 $window-line
-      insert-newline
-      set-variable #l1 $window-line
+    !if &len .m
+      @# fill-paragraph .m
     !else
-      forward-line
-      beginning-of-line
+      set-variable #l5 $recent-keys
+      @# fill-paragraph @mna
+      !if &seq #l5 &set #l6 $recent-keys
+      !elif &lfin "|a |o |" &slo &lef #l6 2
+        set-variable .m &lef #l6 1
+      !endif
     !endif
-  !until 0
+    set-variable #l2 $window-line
+    !if #l1
+      set-variable $window-line #l1
+      forward-delete-char
+      set-variable $window-line &sub #l2 1
+    !endif
+    set-variable #l1 $window-line
+  !until &not &dec #l4 1
 !emacro
-
 define-macro ifill-paragraph
-  ; Save mark at point.
-  !if &not @?
-    set-mark
-  !endif
+  !iif &not @#  !return
+  !iif &not @?  set-alpha-mark "\xb1"
   !if &les @# 0
     set-variable #l0 -1
     set-variable @# &abs @#
-  !elif @#
-    set-variable #l0 1
   !else
-    !return
+    set-variable #l0 1
   !endif
-  set-variable .ifill-para2.mode ""
-  !if &les &len &set #l2 &rep $fill-bullet "]" "" &len $fill-bullet
-    set-variable #l2 &cat "]" #l2
-  !endif
-  !if &les &len &set #l3 &rep #l2 "\\" "" &len #l2
-    set-variable #l3 &cat #l3 "\\\\"
-  !endif
-  !if &les &len &set #l2 &rep #l3 "-" "" &len #l3
-    set-variable #l2 &cat #l2 "\\-"
-  !endif
-  set-variable .ifill-para2.bullet #l2
-  set-variable #l1 &cond &bmod "magic" 1 -1
-  1 buffer-mode "magic"
-  beginning-of-line
-  !while &gre &pdec @# 1 0
-    !force !force #l0 ifill-para1
-    !if &not $status
-      #l1 buffer-mode "magic"
-      !abort
-    !elif &seq @wc ""
-      set-variable @# 0
-    !endif
+  set-variable .ifill-para.m ""
+  set-variable #l1 ""
+  set-variable #l2 $fill-bullet
+  !while &len &set #l3 &lef #l2 1
+    set-variable #l1 &spr "%s\\x%02x" #l1 &atoi #l3
+    set-variable #l2 &rig #l2 1
   !done
-  #l1 buffer-mode "magic"
-  ; If no arguments specified then restore the cursor position.
-  !if &not @?
-    exchange-point-and-mark
-  !endif
+  set-variable .ifill-para.b #l1
+  end-of-line
+  backward-paragraph
+  !repeat
+    #l0 ifill-para
+  !until &not &dec @# 1
+  !iif &not @?  goto-alpha-mark "\xb1"
 !emacro
 ;
 0 define-macro restyle-region-int
