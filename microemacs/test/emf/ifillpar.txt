@@ -1,0 +1,78 @@
+This is a test text file for ifill-paragraph, please add any problematic example to the end with a '---' divider as a short 
+description of the error.
+   
+a) The bullet paragraph can also be as long as required and it also can
+have a bullet  list  following  (sub-bullet  list) which will also be
+filled correctly. Here is the sub-bullet list:
+    1. First  sub-bullet - again no length  restrictions,  this will be
+filled correctly.
+    2. second sub-bullet - no problems.
+    3. Third sub-bullet - again no length restrictions, this is getting
+boring.
+b) This is the second  major bullet and this can just carry on for ever,
+but all things must come to an
+c) The bullet paragraph can also be as long as required and it also
+   can have a bullet list following (sub-bullet list)
+   which will also be filled correctly. Here] is the sub-bullet list:
+--------------------
+1. First  sub-bullet - again no length  restrictions,  this will be
+filled correctly.
+2. second sub-bullet - no problems.
+
+d) second sub-bullet - no problems.
+  - Third sub-bullet - again no length restrictions, this is getting
+boring.
+  - Third sub-bullet - again no length restrictions, this is getting
+boring.
+e) This is the second major bullet and this can just carry on for ever,
+   but all things must come to an
+. First  sub-bullet - again no length  restrictions,  this will be
+filled correctly.
+* second sub-bullet - no problems.
+. Third sub-bullet - again no length restrictions, this is getting
+boring.
+
+i. The bullet paragraph can also be as long as required and it also can
+have a bullet  list  following  (sub-bullet  list) which will also be
+filled correctly. Here is the sub-bullet list:
+    1. First  sub-bullet - again no length  restrictions,  this will be
+filled correctly.
+    2. second sub-bullet - no problems.
+    3. Third sub-bullet - again no length restrictions, this is getting
+boring.
+ii. This is the second  major bullet and this can just carry on for ever,
+but all things must come to an
+iii. The bullet paragraph can also be as long as required and it also
+   can have a bullet list following (sub-bullet list)
+   which will also be filled correctly. Here] is the sub-bullet list:
+---
+1. First  sub-bullet - again no length  restrictions,  this will be
+filled correctly.
+2. second sub-bullet - no problems.
+iv. second sub-bullet - no problems.
+- Third sub-bullet - again no length restrictions, this is getting
+boring.
+- Third sub-bullet - again no length restrictions, this is getting
+boring.
+v. This is the second major bullet and this can just carry on for ever,
+   but all things must come to an
+. First  sub-bullet - again no length  restrictions,  this will be
+filled correctly.
+* second sub-bullet - no problems.
+. Third sub-bullet - again no length restrictions, this is getting
+boring.
+
+a) The bullet paragraph can also be as long as required and it also can have a bullet list following (sub-bullet list)
+   which will also be filled correctly. Here is the sub-bullet list:
+    1. First sub-bullet - again no length restrictions, this will be filled correctly.
+    2. second sub-bullet - no problems.
+    3. Third sub-bullet - again no length restrictions, this is getting boring.
+b) This is the second major bullet and this can just carry on for ever, but all things must come to an
+a) The bullet paragraph can also be as long as required and it also can have a bullet list following (sub-bullet list)
+   which will also be filled correctly. Here is the sub-bullet list:
+--------------------
+1. First sub-bullet - again no length restrictions, this will be filled correctly.
+2. second sub-bullet - no problems.
+b) second sub-bullet - no problems.
+3. Third sub-bullet - again no length restrictions, this is getting boring.
+c) This is the second major bullet and this can just carry on for ever, but all things must come to an
