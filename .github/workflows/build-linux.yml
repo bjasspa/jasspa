@@ -1,4 +1,4 @@
-name: Build linux (Ubuntu-20)
+name: Build linux (Ubuntu-22)
 
 on:
   workflow_dispatch:
