@@ -48,7 +48,7 @@ jobs:
               cd tfs
               zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_spelling_${ii} spelling
               cd ..
-              tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_ls${ii}.tfs -a ../mesingle/tfs_hd tfs
+              tfs ../../packages/Jasspa_MicroEmacs_${MEVER}_ls${ii}.tfs tfs
           done
 
       - name: Upload spelling downloads

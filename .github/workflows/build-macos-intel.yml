@@ -103,7 +103,7 @@ jobs:
           cd ../..
           zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_bin_macos_intel_openssl bin
           cd ..
-          ./bin/macos13-intel64/tfs -o ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_macos13_intel64.tfs -a ./mesingle/tfs_hd tfs
+          ./bin/macos13-intel64/tfs ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_macos13_intel64.tfs tfs
 
       - name: Upload macos-intel downloads
         uses: actions/upload-artifact@v4

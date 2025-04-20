@@ -98,7 +98,7 @@ jobs:
           cd ../..
           zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_bin_linux_openssl bin
           cd ..
-          ./bin/linux6-intel64/tfs -o ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_linux6_intel64.tfs -a ./mesingle/tfs_hd tfs
+          ./bin/linux6-intel64/tfs ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_linux6_intel64.tfs tfs
 
       - name: Generate docs
         run: |
@@ -115,7 +115,7 @@ jobs:
           cp ../../readme.txt ./
           zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_help_ehf macros LICENSE readme.txt
           cd ..
-          ../bin/linux6-intel64/tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_hlpehf.tfs -a ../mesingle/tfs_hd tfs
+          ../bin/linux6-intel64/tfs ../../packages/Jasspa_MicroEmacs_${MEVER}_hlpehf.tfs tfs
 
       - name: Generate macros
         run: |
@@ -128,7 +128,7 @@ jobs:
           cp ../../readme.txt ./
           zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_macros macros LICENSE readme.txt
           cd ..
-          ../bin/linux6-intel64/tfs -o ../../packages/Jasspa_MicroEmacs_${MEVER}_macros.tfs -a ../mesingle/tfs_hd jasspa
+          ../bin/linux6-intel64/tfs ../../packages/Jasspa_MicroEmacs_${MEVER}_macros.tfs jasspa
 
       - name: Upload linux downloads
         uses: actions/upload-artifact@v4

@@ -104,7 +104,7 @@ jobs:
           cd ../..
           zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_bin_macos_apple_openssl bin
           cd ..
-          ./bin/macos14-apple64/tfs -o ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_macos14_apple64.tfs -a ./mesingle/tfs_hd tfs
+          ./bin/macos14-apple64/tfs ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_macos14_apple64.tfs tfs
 
       - name: Upload macos-apple downloads
         uses: actions/upload-artifact@v4
