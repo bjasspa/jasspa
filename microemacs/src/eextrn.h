@@ -266,7 +266,7 @@ extern  int     mlwrite(int flags, meUByte *fmt, ...);
 #define meRSTRCMP_MATCHWHOLE 0x08
 #define meRSTRCMP_WHOLE      (meRSTRCMP_BEGBUFF|meRSTRCMP_ENDBUFF|meRSTRCMP_MATCHWHOLE)
 #define meRSTRCMP_USEMAIN    0x10
-extern  int     regexStrCmp(meUByte *str, meUByte *reg, int flags);
+extern  int     regexStrCmp(meUByte *str, meUByte *rgx, int flags);
 extern	meUByte *gtfun(register int fnum, meUByte *fname);
 extern	meVariable *getUsrLclCmdVarP(meUByte *vname, register meVariable *varList);
 extern  meUByte *getUsrLclCmdVar(meUByte *vname, register meVariable *varList);
@@ -911,19 +911,19 @@ extern int setRegistry(int f, int n);
 
 /* API registry prototypes made available for export */
 extern meRegNode *regFind(meRegNode *root, meUByte *subkey);
-#define regGetChild(reg) (reg->child)
-#define regGetNext(reg)  (reg->next)
+#define regGetChild(rNd) (rNd->child)
+#define regGetNext(rNd)  (rNd->next)
 extern meRegNode *regRead(meUByte *rname, meUByte *fname, int mode);
 extern meRegNode *regSet(meRegNode *root, meUByte *subkey, meUByte *value);
 extern meRegNode *vregFind(meRegNode *root, meUByte *fmt, ...);
 extern int  regDelete(meRegNode *root);
 extern int  regSave(meRegNode *root, meUByte *fname, int mode);
 extern int  anyChangedRegistry(void);
-#define regGetName(reg)       (reg->name)
-#define regGetValue(reg)      (reg->value)
-#define regGetValueLen(reg)   (reg->len)
-#define regGetLong(reg,def)   ((reg->value==NULL) ? def:meAtoi(reg->value))
-#define regGetString(reg,def) ((reg->value==NULL) ? def:reg->value)
+#define regGetName(rNd)       (rNd->name)
+#define regGetValue(rNd)      (rNd->value)
+#define regGetValueLen(rNd)   (rNd->len)
+#define regGetLong(rNd,def)   ((rNd->value==NULL) ? def:meAtoi(rNd->value))
+#define regGetString(rNd,def) ((rNd->value==NULL) ? def:rNd->value)
 
 #else
 #define deleteRegistry notAvailable

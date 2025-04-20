@@ -109,7 +109,7 @@ meRegex meRegexStrCmp ;
  * return -1 on error, 0 on no match 1 if matched
  */
 int
-regexStrCmp(meUByte *str, meUByte *reg, int flags)
+regexStrCmp(meUByte *str, meUByte *rgx, int flags)
 {
     meRegex *rg ;
     int ii, rr ;
@@ -122,7 +122,7 @@ regexStrCmp(meUByte *str, meUByte *reg, int flags)
     else
         rg = &meRegexStrCmp ;
     
-    if(meRegexComp(rg,reg,(flags & meRSTRCMP_ICASE)) != meREGEX_OKAY)
+    if(meRegexComp(rg,rgx,(flags & meRSTRCMP_ICASE)) != meREGEX_OKAY)
         return -1 ;
     
     ii = meStrlen(str) ;
@@ -261,7 +261,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             cc = nn[1] - '0' ;
             if(cc >= meREGISTER_MAX)
                 return mlwrite(MWABORT,(meUByte *)"[No such register %s]",vname);
-            meStrcpy(regs->reg[cc],vvalue) ;
+            meStrcpy(regs->val[cc],vvalue) ;
             break ;
         }
 #if MEOPT_EXTENDED
@@ -2089,7 +2089,7 @@ getval(meUByte *tkn)   /* find the value of a token */
                 break;
             cc = tkn[2] - '0' ;
             if(cc < meREGISTER_MAX)
-                return rp->reg[cc] ;
+                return rp->val[cc] ;
             return abortm ;
         }
         
@@ -3220,7 +3220,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
     case UFREGISTRY:
 #if MEOPT_REGISTRY
         {
-            meRegNode *reg;
+            meRegNode *rgy;
             meUByte *p = arg2;
             /*
              * Read a value from the registry.
@@ -3231,8 +3231,8 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
              * 
              * If the node cannot be found then return the result.
              */
-            if((reg = regFind (NULL, arg1)) != NULL)
-                p = regGetString (reg, p) ;
+            if((rgy = regFind (NULL, arg1)) != NULL)
+                p = regGetString (rgy, p) ;
             /* Set up the result string */
             if (p == NULL)
                 evalResult [0] = '\0';
@@ -3923,7 +3923,7 @@ listVariables(int f, int n)
     for(ii = 0; ii<meREGISTER_MAX ; ii++)
     {
         buf[1] = (int)('0') + ii;
-        showVariable(bp,'#',buf,meRegHead->reg[ii]);
+        showVariable(bp,'#',buf,meRegHead->val[ii]);
     }
     if(n & 1)
     {

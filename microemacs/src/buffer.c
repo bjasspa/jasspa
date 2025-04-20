@@ -353,9 +353,9 @@ setBufferContext(meBuffer *bp)
         {
             if(ml >= meBUF_SIZE_MAX)
                 ml = meBUF_SIZE_MAX - 1;
-            meStrncpy(meRegCurr->next->reg[9],meLineGetText(tlp)+meRegexStrCmp.group[0].start,ml);
+            meStrncpy(meRegCurr->next->val[9],meLineGetText(tlp)+meRegexStrCmp.group[0].start,ml);
         }
-        meRegCurr->next->reg[9][ml] = '\0';
+        meRegCurr->next->val[9][ml] = '\0';
         execBufferFunc(bp,bp->fhook,meEBF_ARG_GIVEN,(bp->intFlag & BIFFILE));
     }
 }

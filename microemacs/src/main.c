@@ -1466,7 +1466,7 @@ mesetup(int argc, char *argv[])
     /* Initialise the head as this is dumped in list-variables */
     carg = meREGISTER_MAX;
     while(--carg >= 0)
-        meRegHead->reg[carg][0] = '\0';
+        meRegHead->val[carg][0] = '\0';
     meRegCurr = meRegHead;
     meRegHead->depth = 0;
     meRegHead[0].next = &(meRegHead[1]);

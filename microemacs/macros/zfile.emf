@@ -93,7 +93,7 @@ define-macro find-zfile
     !if &not &set #l5 &sin "\bE" &rig #l7 &add #l4 1
       ml-write "[Error: Missing '%\"' in list command line]"
       !abort
-    !elif &not &xse &set #l6 &mid #l7 &add #l4 1 &sub #l5 1 ".*\\s.*"
+    !elif &not &xse &set #l6 &mid #l7 &add #l4 1 &sub #l5 1 ".*[\\s(].*"
     !elif &band $system 0x100
       set-variable #l6 &spr "\"%s\"" #l6
     !else
@@ -231,7 +231,7 @@ define-macro find-zfile
         backward-delete-char
         backward-delete-char
         kill-region
-        !if &not &xse &set #l3 @y ".*\\s.*"
+        !if &not &xse &set #l3 @y ".*[\\s(].*"
         !elif &band $system 0x100
           set-variable #l3 &spr "\"%s\"" #l3
         !else
@@ -256,7 +256,7 @@ define-macro find-zfile
       !if &not &set #l5 &sin "\bE" &rig #l0 &add #l4 1
         ml-write "[ZFile Error: Missing '%\"' in command line]"
         !abort
-      !elif &not &xse &set #l7 &mid #l0 &add #l4 1 &sub #l5 1 ".*\\s.*"
+      !elif &not &xse &set #l7 &mid #l0 &add #l4 1 &sub #l5 1 ".*[\\s(].*"
       !elif &band $system 0x100
         set-variable #l7 &spr "\"%s\"" #l7
       !else
@@ -319,7 +319,7 @@ define-macro zfile-find-file
       ; give command 20sec to start and read file before we delete it - can be interrupted by user
       !iif &set #l0 $status -20000 command-wait
     !elif &set #l0 &band 2 @#
-      !if &not &xse &set #l4 &cat #l1 #l2 ".*\\s.*"
+      !if &not &xse &set #l4 &cat #l1 #l2 ".*[\\s(].*"
       !elif &band $system 0x100
         set-variable #l4 &spr "\"%s\"" #l4
       !else

@@ -1289,7 +1289,7 @@ typedef struct meRegister {
     meUByte            force;
     meUByte            depth;
     meUByte            nextArg;
-    meUByte            reg[meREGISTER_MAX][meBUF_SIZE_MAX];
+    meUByte            val[meREGISTER_MAX][meBUF_SIZE_MAX];
 } meRegister;
 
 

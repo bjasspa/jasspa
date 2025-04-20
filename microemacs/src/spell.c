@@ -900,7 +900,7 @@ spellRuleAdd(int f, int n)
 static int
 meDictionarySave(meDictionary *dict, int n)
 {
-    meRegNode *reg;
+    meRegNode *rNd;
     int ii;
 
     if(!(dict->flags & DTCHNGD))
@@ -909,7 +909,7 @@ meDictionarySave(meDictionary *dict, int n)
     /* Never auto-save created dictionaries */
     if((dict->flags & DTCREATE) ||
        ((n & 0x01) &&
-        (((reg=regFind(NULL,(meUByte *)SP_REG_ROOT "/" SP_REGI_SAVE))==NULL) || (regGetLong(reg,0) == 0))))
+        (((rNd=regFind(NULL,(meUByte *)SP_REG_ROOT "/" SP_REGI_SAVE))==NULL) || (regGetLong(rNd,0) == 0))))
     {
         meUByte prompt[meBUF_SIZE_MAX];
         int  ret;

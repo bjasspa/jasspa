@@ -345,29 +345,29 @@ ffCloseSockets(meIo *io, int force)
 int
 ffUrlGetInfo(meIo *io, meUByte **host, meUByte **port, meUByte **user, meUByte **pass)
 {
-    meRegNode *root, *reg;
+    meRegNode *root, *rNd;
     meUByte *ss;
     
     if(((root = regFind(NULL,(meUByte *)"/url")) == NULL) && ((root = regSet(NULL,(meUByte *)"/url",NULL)) == NULL))
         return meFALSE;
     ss = (meUByte *) ((ffUrlTypeIsFtp(io->type)) ? "ftp":"http");
-    if(((reg = regFind(root,ss)) == NULL) && ((reg = regSet(root,ss,NULL)) == NULL))
+    if(((rNd = regFind(root,ss)) == NULL) && ((rNd = regSet(root,ss,NULL)) == NULL))
         return meFALSE;
-    if(((root = regFind(reg,*host)) == NULL) && ((root = regSet(reg,*host,NULL)) == NULL))
+    if(((root = regFind(rNd,*host)) == NULL) && ((root = regSet(rNd,*host,NULL)) == NULL))
         return meFALSE;
     
-    reg = regFind(root,(meUByte *)"user");
+    rNd = regFind(root,(meUByte *)"user");
     if(*user != NULL)
     {
-        if((*pass == NULL) && (reg != NULL) && !meStrcmp(regGetValue(reg),*user) &&
-           ((reg = regFind(root,(meUByte *)"pass")) != NULL))
-            *pass = regGetValue(reg);
+        if((*pass == NULL) && (rNd != NULL) && !meStrcmp(regGetValue(rNd),*user) &&
+           ((rNd = regFind(root,(meUByte *)"pass")) != NULL))
+            *pass = regGetValue(rNd);
     }
-    else if(reg != NULL)
+    else if(rNd != NULL)
     {
-        *user = regGetValue(reg);
-        if((reg = regFind(root,(meUByte *)"pass")) != NULL)
-            *pass = regGetValue(reg);
+        *user = regGetValue(rNd);
+        if((rNd = regFind(root,(meUByte *)"pass")) != NULL)
+            *pass = regGetValue(rNd);
     }
     io->passwdReg = NULL;
     if(*user != NULL)
@@ -388,21 +388,21 @@ ffUrlGetInfo(meIo *io, meUByte **host, meUByte **port, meUByte **user, meUByte *
             io->passwdReg->mode |= meREGMODE_INTERNAL;
             *pass = regGetValue(io->passwdReg);
         }
-        else if(((reg = regFind(root,(meUByte *)"pass")) == NULL) || meStrcmp(regGetValue(reg),*pass))
+        else if(((rNd = regFind(root,(meUByte *)"pass")) == NULL) || meStrcmp(regGetValue(rNd),*pass))
             regSet(root,(meUByte *)"pass",*pass);
-        if(((reg = regFind(root,(meUByte *)"user")) == NULL) || meStrcmp(regGetValue(reg),*user))
+        if(((rNd = regFind(root,(meUByte *)"user")) == NULL) || meStrcmp(regGetValue(rNd),*user))
             regSet(root,(meUByte *)"user",*user);
     }
-    if ((reg = regFind(root,(meUByte *)"host")) != NULL)
-        *host = regGetValue(reg);
-    reg = regFind(root,(meUByte *)"port");
+    if ((rNd = regFind(root,(meUByte *)"host")) != NULL)
+        *host = regGetValue(rNd);
+    rNd = regFind(root,(meUByte *)"port");
     if (*port != NULL)
     {
-        if((reg == NULL) || meStrcmp(regGetValue(reg),*port))
+        if((rNd == NULL) || meStrcmp(regGetValue(rNd),*port))
             regSet(root,(meUByte *)"port",*port);
     }
-    else if(reg != NULL)
-        *port = regGetValue(reg);
+    else if(rNd != NULL)
+        *port = regGetValue(rNd);
     return meTRUE;
 }
 

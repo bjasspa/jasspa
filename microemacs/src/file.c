@@ -1036,7 +1036,7 @@ gwd(meUByte drive)
     fileNameConvertDirChar(dir) ;
     makestrlow(dir) ;
 #else
-    union REGS reg ;                /* cpu register for use of DOS calls */
+    union REGS reg;                /* cpu register for use of DOS calls */
 
     if(drive == 0)
     {
@@ -3222,36 +3222,36 @@ double_url:
         p++;
         {
 #if MEOPT_REGISTRY
-            meRegNode *reg=NULL ;
+            meRegNode *rNd=NULL ;
             meUByte *pe ;
             int ll ;
 
             if((nameType == PATHNAME_PARTIAL) && (meStrchr(p,DIR_CHAR) == NULL))
             {
                 /* special case when user is entering a file name and uses complete with 'xxxx/~yy' */
-                *p1++ = '~' ;
-                meStrcpy(p1,p) ;
+                *p1++ = '~';
+                meStrcpy(p1,p);
                 if(baseName != NULL)
-                    *baseName = p1 ;
-                return ;
+                    *baseName = p1;
+                return;
             }
-            if((p[0] != '\0') && (p[0] != DIR_CHAR) && ((reg = regFind(NULL,(meUByte *)"history/" meSYSTEM_NAME "/alias-path")) != NULL) &&
-               ((reg = regGetChild(reg)) != NULL))
+            if((p[0] != '\0') && (p[0] != DIR_CHAR) && ((rNd = regFind(NULL,(meUByte *)"history/" meSYSTEM_NAME "/alias-path")) != NULL) &&
+               ((rNd = regGetChild(rNd)) != NULL))
             {
                 /* look for an alias/abbrev path */
                 if((pe = meStrchr(p,DIR_CHAR)) == NULL)
-                    ll = meStrlen(p) ;
+                    ll = meStrlen(p);
                 else
-                    ll = (int) (((size_t) pe) - ((size_t) (p))) ;
+                    ll = (int) (((size_t) pe) - ((size_t) (p)));
 
-                while((reg != NULL) && (((int) meStrlen(reg->name) != ll) || meStrncmp(p,reg->name,ll)))
-                    reg = regGetNext(reg) ;
+                while((rNd != NULL) && (((int) meStrlen(rNd->name) != ll) || meStrncmp(p,rNd->name,ll)))
+                    rNd = regGetNext(rNd);
             }
-            if(reg != NULL)
+            if(rNd != NULL)
             {
-                if(reg->value != NULL)
+                if(rNd->value != NULL)
                 {
-                    meStrcpy(p1,reg->value) ;
+                    meStrcpy(p1,rNd->value) ;
                     p1 += meStrlen(p1) - 1 ;
                     if(p1[0] != DIR_CHAR)
                         p1++ ;
@@ -3934,13 +3934,13 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
 #if MEOPT_REGISTRY
     if(pathName == upb)
     {
-        meRegNode *reg ;
+        meRegNode *rNd ;
         meUByte *ff ;
         int len ;
 
         /* add the alias/abbrev paths to the list */
-        if(((reg = regFind(NULL,(meUByte *)"history/" meSYSTEM_NAME "/alias-path")) != NULL) &&
-           ((reg = regGetChild(reg)) != NULL))
+        if(((rNd = regFind(NULL,(meUByte *)"history/" meSYSTEM_NAME "/alias-path")) != NULL) &&
+           ((rNd = regGetChild(rNd)) != NULL))
         {
             do
             {
@@ -3950,7 +3950,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                     noFiles = 0 ;
                     break ;
                 }
-                len = meStrlen(reg->name) ;
+                len = meStrlen(rNd->name) ;
                 if((ff = meMalloc(len+2)) == NULL)
                 {
                     fls = NULL ;
@@ -3958,10 +3958,10 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                     break ;
                 }
                 fls[noFiles++] = ff ;
-                meStrcpy(ff,reg->name) ;
+                meStrcpy(ff,rNd->name) ;
                 ff[len] = DIR_CHAR ;
                 ff[len+1] = '\0' ;
-            } while((reg = regGetNext(reg)) != NULL) ;
+            } while((rNd = regGetNext(rNd)) != NULL) ;
         }
         pathName = (meUByte *) "~" ;
     }
