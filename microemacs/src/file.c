@@ -41,6 +41,8 @@
 #include <sys/stat.h>
 #ifdef _WIN32
 #include <direct.h>                     /* Directory entries */
+/* number of seconds from 1 Jan. 1601 00:00 to 1 Jan 1970 00:00 UTC */
+#define EPOCH_DIFF 11644473600LL
 #else
 #ifdef _DIRENT
 #include <dirent.h>
@@ -193,8 +195,12 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
             }
 #ifdef _WIN32
             stats->stmode |= FILE_ATTRIBUTE_READONLY;
-            /* Convert the time to Windows format */
-            stats->stmtime = tfs_statbuf.ctime;
+            {
+                /* Convert the time to Windows format */
+                meULong dt=(tfs_statbuf.ctime+EPOCH_DIFF)*10000000LL;
+                stats->stmtime.dwLowDateTime = (DWORD) dt;
+                stats->stmtime.dwHighDateTime = (DWORD) (dt>>32);
+            }
 #endif
 #ifdef _DOS
             stats->stmode |= FA_RDONLY;
@@ -674,14 +680,14 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
     }
     /* if meFL_CHECKPATH and fname has a path/drive char then this is an absolute or relative
      * pathed fname, if not then this must be searched for only, correct flags appropriately */
-    if((flags & meFL_CHECKPATH) && (meStrchr(fname,DIR_CHAR) != NULL)
+    if((flags & meFL_CHECKPATH) && ((meStrchr(fname,DIR_CHAR) != NULL)
 #ifdef _CONVDIR_CHAR
        || (meStrchr(fname,_CONVDIR_CHAR) != NULL)
 #endif
 #ifdef _DRV_CHAR
        || (meStrchr(fname,_DRV_CHAR) != NULL)
 #endif
-       )
+       ))
         flags = (flags & ~(meFL_USESRCHPATH|meFL_USEPATH)) | meFL_CHECKDOT;
     if(flags & meFL_CHECKDOT)
     {
@@ -1272,7 +1278,17 @@ getDirectoryInfo(meUByte *fname)
 #ifdef _DOS
                     curFile->mtime = 0;
 #else
+#ifdef _WIN32
+
+                    {
+                        /* Convert the time to Windows format */
+                        meULong dt=(dirp->ctime+EPOCH_DIFF)*10000000LL;
+                        curFile->mtime.dwLowDateTime = (DWORD) dt;
+                        curFile->mtime.dwHighDateTime = (DWORD) (dt>>32);
+                    }
+#else
                     curFile->mtime = dirp->ctime;
+#endif
 #endif
                 }
                 while(tfs_dread(dirp,&de) > 0)
@@ -1306,7 +1322,16 @@ getDirectoryInfo(meUByte *fname)
 #ifdef _DOS
                     curFile->mtime = 0;
 #else
+#ifdef _WIN32
+                    {
+                        /* Convert the time to Windows format */
+                        meULong dt=(de.ctime+EPOCH_DIFF)*10000000LL;
+                        curFile->mtime.dwLowDateTime = (DWORD) dt;
+                        curFile->mtime.dwHighDateTime = (DWORD) (dt>>32);
+                    }
+#else
                     curFile->mtime = de.ctime;
+#endif
 #endif
                 }
                 tfs_dclose(dirp);

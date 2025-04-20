@@ -116,7 +116,7 @@ PRGFILE  = $(PRGNAME)$(EXE)
 PRGHDRS  = tfs.h 7zTypes.h 7zWindows.h Compiler.h CpuArch.h LzFind.h LzHash.h LzmaDec.h LzmaEnc.h Precomp.h \
 	   $(MAKEFILE).mak
 PRGOBJS  = $(OUTDIR)\tfsutil.o $(OUTDIR)\LzFind.o $(OUTDIR)\Lzma2Enc.o $(OUTDIR)\LzmaEnc.o $(OUTDIR)\CpuArch.o
-PRGLIBS  = $(TRDPARTY)\zlib\$(OUTDIR)\zlib$(A)
+PRGLIBS  = 
 
 TSTNAME  = tfstest
 TSTFILE  = $(TSTNAME)$(EXE)

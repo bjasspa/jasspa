@@ -323,7 +323,7 @@ tfsAddDirectory(tfsUByte *name, tfsUByte *path)
     strcpy((char *) fn,"\\*.*") ;
           
     /* Process the directory */
-    if((fh = FindFirstFile(path,&fd)) == INVALID_HANDLE_VALUE)
+    if((fh = FindFirstFile((char *) path,&fd)) == INVALID_HANDLE_VALUE)
     {
         printf("ERROR: Failed to open directory [%s]\n",path);
         return NULL;

@@ -5541,7 +5541,7 @@ meSetupPathsAndUser(void)
         appData = NULL;
     
     /* meUserPath & searchPath may not be null due to -v command-line option */ 
-    if((((ss = meUserPath) != NULL) && (ss[0] != '\0')) ||
+    if((((ss = (char *) meUserPath) != NULL) && (ss[0] != '\0')) ||
        (((ss = meGetenv("MEUSERPATH")) != NULL) && (ss[0] != '\0')))
     {
         ll = meStrlen(ss);
@@ -5631,7 +5631,7 @@ meSetupPathsAndUser(void)
         {
             /* the first path in the search-path is to be used as the user-path */
             if((ss = meStrchr(searchPath,mePATH_CHAR)) != NULL)
-                ll = ss-searchPath;
+                ll = ((size_t) ss) - ((size_t) searchPath);
             else
                 ll = meStrlen(searchPath);
             if(searchPath[ll-1] == DIR_CHAR)
@@ -5642,7 +5642,7 @@ meSetupPathsAndUser(void)
             meUserPath[ll] = '\0';
         }
         else
-            meUserPath = meStrdup("tfs://new-user/");
+            meUserPath = meStrdup((meUByte *) "tfs://new-user/");
     }
     
     if((((ss = meGetenv("HOME")) != NULL) && (ss[0] != '\0')) ||

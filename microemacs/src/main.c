@@ -1346,12 +1346,12 @@ int
 mesetupInsertTsfResource(int oargc, char **oargv[])
 {
     tfsFile *fp;
-    meInt len;
+    meUInt len;
     char *buff;
     
     if((tfsdev == NULL) || ((fp = tfs_fopen(tfsdev,(meUByte *) "/@@clo")) == NULL))
         return oargc;
-    len = fp->fileLen;
+    len = (meUInt) fp->fileLen;
     buff = (char *) meMalloc(len+1);
     if(tfs_fread(buff,len,fp) < len)
     {
