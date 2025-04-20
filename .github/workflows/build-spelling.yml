@@ -26,7 +26,7 @@ jobs:
         with:
           ref: ${{ inputs.refToBuild }}
        
-      - name: Compile linux5 mec
+      - name: Compile linux6 mec
         run: |
           mkdir downloads
           mkdir packages
@@ -35,7 +35,7 @@ jobs:
 
       - name: Generate spelling packages
         run: |
-          export PATH=`pwd`/microemacs/bin/linux5-intel64-gcc9:$PATH
+          export PATH=`pwd`/microemacs/bin/linux6-intel64-gcc11:$PATH
           export MEVER=`mec -p @microemacs/contribs/ver.emf`
           cd ./microemacs/spelling
           declare -a lsl=("dede" "elgr" "engb" "enus" "eses" "fifi" "frfr" "itit" "plpl" "ptpt" "ruru")
