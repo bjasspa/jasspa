@@ -59,7 +59,7 @@ NANOEMACS_DEFS= -D_NANOEMACS
 LDDEBUG       =
 LDOPTIMISE    =
 LDFLAGS       = 
-LIBS          = -ltfs -lzlib
+LIBS          = -ltfs
 WINDOW_LIBS   = $(MAKEWINLIBS) -L/usr/X11R6/lib -lX11
 #
 # figure out if termcap is avaiable or if ncurses should be tried

@@ -61,7 +61,7 @@ OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
 
-CCDEFS   = -m$(BIT_SIZE) -D_LINUX -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I. -I$(TRDPARTY)/tfs -I$(TRDPARTY)/zlib -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY) $(MAKECDEFS)
+CCDEFS   = -m$(BIT_SIZE) -D_LINUX -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I. -I$(TRDPARTY)/tfs -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY) $(MAKECDEFS)
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wall -Wno-uninitialized -Wno-unused-result
 CCFLAGSD = -g -Wall
 LDDEFS   = -m$(BIT_SIZE)
@@ -108,7 +108,7 @@ OPENSSLDEFS = -DMEOPT_OPENSSL=$(OPENSSLP) -D_OPENSSLLNM=libssl$(OPENSSLV).so -D_
 endif
 BCOR     = me
 BCOR_CDF = -D_SOCKET $(OPENSSLDEFS)
-PRGLIBS  = $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A) $(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A)
+PRGLIBS  = $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A)
 
 endif
 
@@ -220,19 +220,14 @@ $(OUTDIR):
 $(INSTDIR):
 	-mkdir $(INSTDIR)
 
-$(TRDPARTY)/zlib/$(BOUTDIR)/zlib$(A):
-	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG)
-
 $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A):
 	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG)
 
 clean:
 	$(RMDIR) $(OUTDIR)
 	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak clean
-	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak clean
 
 spotless: clean
 	$(RM) *~
 	$(RM) tags
 	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak spotless
-	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak spotless

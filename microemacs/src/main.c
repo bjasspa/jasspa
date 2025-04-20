@@ -1345,19 +1345,17 @@ mesetupInsertResourceFile(char *fname, int iarg, int oargc, char **oargv[])
 int
 mesetupInsertTsfResource(int oargc, char **oargv[])
 {
-    tfsstat_t st;
-    tfsfile_t fp;
+    tfsFile *fp;
     meInt len;
     char *buff;
     
-    if((tfs_stat(tfsdev,"/@@clo",&st) != 0) || (st.st_mode != TFS_TYPE_FILE) ||
-       ((fp = tfs_fopen(tfsdev,"/@@clo")) == NULL))
+    if((tfsdev == NULL) || ((fp = tfs_fopen(tfsdev,(meUByte *) "/@@clo")) == NULL))
         return oargc;
-    len = st.st_size;
+    len = fp->fileLen;
     buff = (char *) meMalloc(len+1);
-    if(tfs_fread(buff,1,len,fp) < len)
+    if(tfs_fread(buff,len,fp) < len)
     {
-        sprintf((char *)evalResult,"%s Error: Failed to read [{tfs}/@@clo]\n",(*oargv)[0]);
+        sprintf((char *)evalResult,"%s Error: Failed to read [tfs://@@clo]\n",(*oargv)[0]);
         mePrintMessage(evalResult);
         meExit(1);
     }
@@ -1496,7 +1494,7 @@ mesetup(int argc, char *argv[])
     meSetupProgname(argv[0]);
 #if MEOPT_TFS
     /* Initialise the tack-on file system. Note for speed we only check the header. */
-    if((tfsdev = tfs_mount((char *)meProgName,TFS_CHECK_HEAD)) != NULL)
+    if((tfsdev = tfs_mount(meProgName)) != NULL)
         argc = mesetupInsertTsfResource(argc,&argv);
 #endif
     

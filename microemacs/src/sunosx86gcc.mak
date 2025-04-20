@@ -52,7 +52,7 @@ NANOEMACS_DEFS= -D_NANOEMACS
 LDDEBUG       =
 LDOPTIMISE    =
 LDFLAGS       =	
-LIBS          = -ltfs -lzlib -lxnet
+LIBS          = -ltfs -lxnet
 CONSOLE_LIBS  = -ltermcap
 WINDOW_LIBS   = $(MAKEWINLIBS) -L/usr/openwin/lib -lX11
 #

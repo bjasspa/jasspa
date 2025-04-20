@@ -495,9 +495,9 @@ meSetupProgname(char *progname)
 #ifdef _MACOS
         /* following function is better on macOS as is avoids arg[0] vulnerabilities */
         ii = meBUF_SIZE_MAX;
-        if(_NSGetExecutablePath(evalResult,&ii) == 0)
+        if(_NSGetExecutablePath(resultStr,&ii) == 0)
         {
-            ;
+            fileNameCorrect(resultStr,evalResult,NULL);
         }
         else
 #endif

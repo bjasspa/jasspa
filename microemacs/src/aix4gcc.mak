@@ -52,7 +52,7 @@ NANOEMACS_DEFS= -D_NANOEMACS
 LDDEBUG       =
 LDOPTIMISE    =
 LDFLAGS       =
-LIBS          = -ltfs -lzlib
+LIBS          = -ltfs
 CONSOLE_LIBS  = -lcurses
 WINDOW_LIBS   = $(MAKEWINLIBS) -lX11
 #

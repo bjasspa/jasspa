@@ -54,7 +54,7 @@ NANOEMACS_DEFS= -D_NANOEMACS
 LDDEBUG       =
 LDOPTIMISE    =
 LDFLAGS       =
-LIBS          = -ltfs -lzlib
+LIBS          = -ltfs
 CONSOLE_LIBS  = -ltermcap
 WINDOW_LIBS   = $(MAKEWINLIBS) -L/usr/X11R6/lib -lX11
 #

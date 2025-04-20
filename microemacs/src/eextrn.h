@@ -1607,6 +1607,5 @@ extern int      putenv(const char *s);
  selhilight.flags = SELHIL_ACTIVE|SELHIL_FIXED|SELHIL_CHANGED)
 
 #if MEOPT_TFS
-extern unsigned char tfsdat[1];         /* The tack-on file system data */
-extern tfs_t tfsdev;                    /* Tack-on file system device */
+extern tfsMount *tfsdev;                    /* Tack-on file system device */
 #endif
