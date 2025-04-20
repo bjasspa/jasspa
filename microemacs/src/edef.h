@@ -876,6 +876,6 @@ struct s_DragAndDrop *dadHead = NULL;   /* Drag and drop list           */
 #endif
 
 #if MEOPT_TFS
-tfs_t tfsdev = NULL;                    /* Built-in File system mount point. */
+tfsMount *tfsdev = NULL;                /* Built-in File system mount point. */
 #endif
 #endif

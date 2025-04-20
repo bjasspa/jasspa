@@ -1494,6 +1494,6 @@ typedef struct meIo {
     meInt      chkLen;
 #endif
 #ifdef MEOPT_TFS
-    tfsfile_t  tfsp;                    /* The tack-on file system handle */
+    tfsFile   *tfsp;                    /* The tack-on file system handle */
 #endif
 } meIo;

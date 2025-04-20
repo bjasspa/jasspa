@@ -78,7 +78,7 @@ OUTDIRD  = .$(BUILDID)-debug
 INSTDIR  = ..\..\bin\$(BUILDID)
 TRDPARTY = ..
 
-CCDEFS   = /DWIN32 /D_WIN32 /D_WIN32_WINNT=0x0600 /D_$(BIT_SIZE)BIT /W3 /Zi /EHs-c- /D_HAS_EXCEPTIONS=0 /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /I$(TRDPARTY)\zlib
+CCDEFS   = /DWIN32 /D_WIN32 /D_WIN32_WINNT=0x0600 /D_$(BIT_SIZE)BIT /DZ7_ST /W3 /Zi /EHs-c- /D_HAS_EXCEPTIONS=0 /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /I.
 CCFLAGSR = $(CCLSTT) /O2 /GL /GR- /GS- /DNDEBUG=1 /D_HAS_ITERATOR_DEBUGGING=0 /D_SECURE_SCL=0
 CCFLAGSD = $(CCLSTT)d /Od /RTC1 /D_DEBUG
 !IF "$(BIT_SIZE)" == "64"
@@ -109,22 +109,27 @@ INSTPRG  = copy
 LIBNAME  = tfs
 LIBFILE  = $(LIBNAME)$(A)
 LIBHDRS  = tfs.h $(MAKEFILE).mak
-LIBOBJS  = $(OUTDIR)\tfs.o
+LIBOBJS  = $(OUTDIR)\tfs.o $(OUTDIR)\Lzma2Dec.o $(OUTDIR)\LzmaDec.o
 
 PRGNAME  = tfs
 PRGFILE  = $(PRGNAME)$(EXE)
-PRGHDRS  = tfs.h tfsutil.h $(MAKEFILE).mak
-PRGOBJS  = $(OUTDIR)\tfsutil.o $(OUTDIR)\tfs.o $(OUTDIR)\uappend.o $(OUTDIR)\ubuild.o $(OUTDIR)\ucopy.o \
-	   $(OUTDIR)\ucreate.o $(OUTDIR)\uinfo.o $(OUTDIR)\ulist.o $(OUTDIR)\ustrip.o $(OUTDIR)\utest.o \
-	   $(OUTDIR)\uxdir.o $(OUTDIR)\uxfile.o
+PRGHDRS  = tfs.h 7zTypes.h 7zWindows.h Compiler.h CpuArch.h LzFind.h LzHash.h LzmaDec.h LzmaEnc.h Precomp.h \
+	   $(MAKEFILE).mak
+PRGOBJS  = $(OUTDIR)\tfsutil.o $(OUTDIR)\LzFind.o $(OUTDIR)\Lzma2Enc.o $(OUTDIR)\LzmaEnc.o $(OUTDIR)\CpuArch.o
 PRGLIBS  = $(TRDPARTY)\zlib\$(OUTDIR)\zlib$(A)
+
+TSTNAME  = tfstest
+TSTFILE  = $(TSTNAME)$(EXE)
+TSTHDRS  = tfs.h $(MAKEFILE).mak
+TSTOBJS  = $(OUTDIR)\tfstest.o
+TSTLIBS  = $(OUTDIR)\tfs$(A)
 
 .SUFFIXES: .c .o
 
 .c{$(OUTDIR)}.o:
 	$(CC) $(CCDEFS) $(CCFLAGS) /Fd"$(OUTDIR)\vc$(TOOLKIT_VER)0.pdb" /c $< /Fo"$@"
 
-all: $(PRGLIBS) $(OUTDIR)\$(LIBFILE) $(OUTDIR)\$(PRGFILE)
+all: $(PRGLIBS) $(OUTDIR)\$(LIBFILE) $(OUTDIR)\$(PRGFILE) $(OUTDIR)\$(TSTFILE)
 
 $(OUTDIR)\$(LIBFILE): $(OUTDIR) $(LIBOBJS)
 	$(RM) $@
@@ -140,16 +145,18 @@ $(OUTDIR)\$(PRGFILE): $(OUTDIR) $(INSTDIR) $(PRGOBJS) $(PRGLIBS)
 
 $(PRGOBJS): $(PRGHDRS)
 
+$(OUTDIR)\$(TSTFILE): $(OUTDIR) $(INSTDIR) $(TSTOBJS) $(TSTLIBS)
+	$(RM) $@
+	$(LD) $(LDDEFS) $(LDFLAGS) /PDB:"$(OUTDIR)\$(TSTNAME).pdb" /MANIFESTFILE:"$@.intermediate.manifest" /OUT:"$@" $(TSTOBJS) $(TSTLIBS)
+	$(MT) -outputresource:"$@;#2" -manifest $@.intermediate.manifest
+
+$(TSTOBJS): $(TSTHDRS)
+
 $(OUTDIR):
 	if not exist $(OUTDIR)\ mkdir $(OUTDIR)
 
 $(INSTDIR):
 	if not exist $(INSTDIR)\ mkdir $(INSTDIR)
-
-$(TRDPARTY)\zlib\$(OUTDIR)\zlib$(A):
-	cd $(TRDPARTY)\zlib
-	$(MK) -f $(MAKEFILE).mak BCFG=$(BCFG)
-	cd $(MAKEDIR)
 
 clean:
 	if exist $(OUTDIRD)\ $(RMDIR) $(OUTDIRD)

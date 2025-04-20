@@ -60,6 +60,9 @@ do
         MEPROF=" BPRF=1"
     elif [ $1 = "-S" ] ; then
         OPTIONS=" spotless"
+    elif [ $1 = "-t" ] ; then
+        # ignore
+        shift
     else
         echo "Error: Unkown option $1, run build -h for help"
         echo ""

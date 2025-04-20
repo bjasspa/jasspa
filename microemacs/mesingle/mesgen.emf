@@ -178,7 +178,7 @@ define-macro mesingle-gen
       forward-line
     !done
   !done
-  ml-write &cat "Lauching:  " &set #l3 &spr "%s -o %s -a %s me" #l1 %mes-outn #l2
+  ml-write &cat "Lauching:  " &set #l3 &spr "%s %s me %s" #l1 %mes-outn #l2
   !force 5 shell-command #l3
   !if &not $status
     -2 ml-write &spr "mesgen Error: Failed to launch tfs: %s" #l3

@@ -131,26 +131,31 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
 #ifdef MEOPT_TFS
     if(ffUrlTypeIsTfs(ft))
     {
-        tfsstat_t tfs_statbuf;
-        tfs_t tfsh;
-        char *ss;
+        tfsStat tfs_statbuf;
+        tfsMount *tfsh;
+        meUByte *ss;
         int st;
-        
-        if((ss=strstr((char *) file,"?/")) != NULL)
+
+        if((ss=meStrstr(file,"?/")) != NULL)
         {
             *ss = '\0';
-            tfsh = tfs_mount((char *) (file+6),TFS_CHECK_HEAD);
+            tfsh = tfs_mount(file+6);
             *ss++ = '?';
         }
         else
         {
             tfsh = tfsdev;
-            ss = (char *) (file+5);
+            ss = file+5;
         }
-        st = tfs_stat(tfsh,ss,&tfs_statbuf);
-        if((tfsh!= NULL) && (tfsh != tfsdev))
-            tfs_umount(tfsh);            
-        if(st != 0)
+        if(tfsh != NULL)
+        {
+            st = tfs_stat(tfsh,ss,&tfs_statbuf);
+            if(tfsh != tfsdev)
+                tfs_umount(tfsh);
+        }
+        else
+            st = -1;
+        if(st < 0)
         {
             if(ss[meStrlen(ss)-1] == DIR_CHAR)
             {
@@ -160,20 +165,18 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
             }
             return (ft|meIOTYPE_NOTEXIST);
         }
-        if(tfs_statbuf.st_mode == TFS_TYPE_FILE)
-            ft |= meIOTYPE_REGULAR;
-        else if(tfs_statbuf.st_mode == TFS_TYPE_DIR)
+        if(tfs_statbuf.mode & tfsSTMODE_DIRECTORY)
         {
             if(flag & gfsERRON_DIR)
                 mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s directory]", file) ;
             ft |= meIOTYPE_DIRECTORY;
         }
         else
-            ft |= meIOTYPE_NASTY;
+            ft |= meIOTYPE_REGULAR;
         if(stats != NULL)
         {
             /* Get the file size. */
-            stats->stsizeLow = (meUInt) tfs_statbuf.st_size ;
+            stats->stsizeLow = (meUInt) tfs_statbuf.fileLen;
             /* Set the permissions. */
             stats->stmode = 0;
             if(ft & meIOTYPE_DIRECTORY)
@@ -191,18 +194,18 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
 #ifdef _WIN32
             stats->stmode |= FILE_ATTRIBUTE_READONLY;
             /* Convert the time to Windows format */
-            stats->stmtime = tfs_statbuf.st_utc_mtime ;
+            stats->stmtime = tfs_statbuf.ctime;
 #endif
 #ifdef _DOS
             stats->stmode |= FA_RDONLY;
-            stats->stmtime = tfs_statbuf.st_utc_mtime;
+            stats->stmtime = tfs_statbuf.ctime;
 #endif
 #ifdef _UNIX
             /* NOTE: TFS does not support sym-links so nothing to be gained by trying to store stdev or stino, fname cmp will be enough */
             stats->stmode |= S_IRGRP|S_IROTH|S_IRUSR;
             if(ft & meIOTYPE_REGULAR)
                 stats->stmode |= 0100000;
-            stats->stmtime = tfs_statbuf.st_utc_mtime;
+            stats->stmtime = tfs_statbuf.ctime;
 #endif
         }
         return ft;
@@ -211,11 +214,11 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
     if(ffUrlTypeIsFile(ft))
         /* skip the file: */
         file += 5;
-    
+
 #ifdef _DOS
     {
         int ii ;
-        
+
         if(((ii = meStrlen(file)) == 0) ||
            (strchr((char *) file,'*') != NULL) || (strchr((char *) file,'?') != NULL))
         {
@@ -225,7 +228,7 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
         }
         if((file[ii-1] == DIR_CHAR) || ((ii == 2) && (file[1] == _DRV_CHAR)))
             goto gft_directory;
-        
+
 #ifdef __DJGPP2__
         ii = meFileGetAttributes(file) ;
         if(ii < 0)
@@ -236,7 +239,7 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
             reg.x.ax = 0x4300 ;
             reg.x.dx = ((unsigned long) file) ;
             intdos(&reg, &reg);
-            
+
             if(reg.x.cflag)
                 return (ft|meIOTYPE_NOTEXIST);
             ii = reg.x.cx ;
@@ -266,7 +269,7 @@ gft_directory:
     {
         DWORD status;
         int len;
-        
+
         if(((len = meStrlen(file)) == 0) || (meStrchr(file,'*') != NULL) || (meStrchr(file,'?') != NULL))
         {
             if(flag & gfsERRON_ILLEGAL_NAME)
@@ -277,7 +280,7 @@ gft_directory:
         {
             HANDLE *fh;
             WIN32_FIND_DATA fd;
-            
+
             if(file[len-1] == DIR_CHAR)
             {
                 meUByte fn[meBUF_SIZE_MAX];
@@ -383,7 +386,7 @@ gft_directory:
         struct stat statbuf;
         long stmtime = -1;
         int len;
-        
+
         if((len = meStrlen(file)) == 0)
         {
             if(flag & gfsERRON_ILLEGAL_NAME)
@@ -402,7 +405,7 @@ gft_directory:
             meUByte lbuf[meBUF_SIZE_MAX], buf[meBUF_SIZE_MAX], *ss ;
             size_t ii, jj ;
             int maxi=10 ;
-            
+
             ii = meStrlen(file) ;
             meStrncpy(lbuf,file,ii) ;
             do {
@@ -428,7 +431,7 @@ gft_directory:
                     ii += jj ;
                 }
             } while(((jj=lstat((char *)lbuf, &statbuf)) == 0) && (--maxi > 0) && S_ISLNK(statbuf.st_mode)) ;
-            
+
             if(lname != NULL)
             {
                 fileNameCorrect(lbuf,lname,NULL) ;
@@ -452,7 +455,7 @@ gft_directory:
                 return (ft|meIOTYPE_NOTEXIST);
             }
         }
-        
+
         if(stats != NULL)
         {
             stats->stmode = statbuf.st_mode;
@@ -524,7 +527,7 @@ fnamecmp(meUByte *f1, meUByte *f2)
  *   0x02 Add <base-path>/<user-sub-path>
  *   0x04 Add <base-path>/<std-sub-paths>
  *   0x08 Is program name so check for <...>/bin/ or <...>/bin/<spath>/ and if found check for <...>/macros etc
- * 
+ *
  * gotPaths: 0x01 Spelling, 0x02 Macros, 0x04 Company, 0x08 User-path
  */
 int
@@ -539,7 +542,7 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int flags
     } ;
     meUByte cc, *ss, base_name[meBUF_SIZE_MAX];
     int ii, jj, ll, mm, gotPaths=*gotPathsP;
-    
+
     /* Iterate over all of the paths */
     while(*path_base != '\0')
     {
@@ -561,7 +564,7 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int flags
         if(getFileStats(base_name,0,NULL,NULL) & meIOTYPE_DIRECTORY)
         {
             /* If this is the program path, in a <bpth>/bin/ or <bpth>/bin/sub-dir/ and <bpth>/macros exists then add <bpth>/<sub-dirs> to the search path */
-            if((flags & 8) && ((gotPaths & 0x0f) != 0x0f) && (ll > 4) && 
+            if((flags & 8) && ((gotPaths & 0x0f) != 0x0f) && (ll > 4) &&
                (!memcmp((ss=base_name+ll-4),"/bin",4) || (((ss=meStrrchr(base_name+4,DIR_CHAR)) != NULL) && !memcmp((ss-=4),"/bin",4))))
             {
                 meUByte sp[256];
@@ -651,7 +654,7 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
     register meUByte *sp;    /* pointer into path spec */
     register int ii, jj, fl;
     meUByte buf[meBUF_SIZE_MAX];
-    
+
     if(extCnt)
     {
         fl = meStrlen(fname);
@@ -697,17 +700,20 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
                 {
                     if((sp=(meUByte *) strstr((char *) outName,"?/")) != NULL)
                     {
-                        tfs_t tfsh;
+                        tfsMount *tfsh;
                         int tt;
                         *sp = '\0';
-                        tfsh = tfs_mount((char *) (outName+6),TFS_CHECK_HEAD);
+                        tfsh = tfs_mount(outName+6);
                         *sp++ = '?';
-                        tt = tfs_type(tfsh,(char *) sp);
-                        tfs_umount(tfsh);
-                        if(tt == TFS_TYPE_FILE)
-                            return 1;
+                        if(tfsh != NULL)
+                        {
+                            tt = tfs_type(tfsh,sp);
+                            tfs_umount(tfsh);
+                            if(tt & tfsSTMODE_FILE)
+                                return 1;
+                        }
                     }
-                    else if(tfs_type(tfsdev,(char *)(outName+5)) == TFS_TYPE_FILE)
+                    else if((tfsdev != NULL) && (tfs_type(tfsdev,outName+5) & tfsSTMODE_FILE))
                         return 1;
                 }
                 else
@@ -716,12 +722,12 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
                 if(flags & meFL_EXEC)
                 {
                     if(!meTestExec(outName) && (getFileStats(outName,0,NULL,NULL) & meIOTYPE_REGULAR))
-                        return 1 ;
+                        return 1;
                 }
                 else
 #endif
                     if(!meTestExist(outName))
-                    return 1 ;
+                    return 1;
             }
         }
 #if MEOPT_TFS
@@ -729,17 +735,20 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
         {
             if((sp=(meUByte *) strstr((char *) outName,"?/")) != NULL)
             {
-                tfs_t tfsh;
+                tfsMount *tfsh;
                 int tt;
                 *sp = '\0';
-                tfsh = tfs_mount((char *) (outName+6),TFS_CHECK_HEAD);
+                tfsh = tfs_mount(outName+6);
                 *sp++ = '?';
-                tt = tfs_type(tfsh,(char *) sp);
-                tfs_umount(tfsh);
-                if(tt == TFS_TYPE_FILE)
-                    return 1;
+                if(tfsh != NULL)
+                {
+                    tt = tfs_type(tfsh,sp);
+                    tfs_umount(tfsh);
+                    if(tt & tfsSTMODE_FILE)
+                        return 1;
+                }
             }
-            else if(tfs_type(tfsdev,(char *)(outName+5)) == TFS_TYPE_FILE)
+            else if((tfsdev != NULL) && (tfs_type(tfsdev,outName+5) & tfsSTMODE_FILE))
                 return 1;
         }
 #endif
@@ -802,19 +811,22 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
 #if MEOPT_TFS
                     if(ffUrlTypeIsTfs(ffUrlGetType(buf)))
                     {
-                        int tt;
+                        int tt=0;
                         if((sp=(meUByte *) strstr((char *) buf,"?/")) != NULL)
                         {
-                            tfs_t tfsh;
+                            tfsMount *tfsh;
                             *sp = '\0';
-                            tfsh = tfs_mount((char *) (buf+6),TFS_CHECK_HEAD);
+                            tfsh = tfs_mount(buf+6);
                             *sp++ = '?';
-                            tt = tfs_type(tfsh,(char *) sp);
-                            tfs_umount(tfsh);
+                            if(tfsh != NULL)
+                            {
+                                tt = tfs_type(tfsh,sp);
+                                tfs_umount(tfsh);
+                            }
                         }
-                        else 
-                            tt = tfs_type(tfsdev,(char *)(buf+5));
-                        if(tt == TFS_TYPE_FILE)
+                        else if(tfsdev != NULL)
+                            tt = tfs_type(tfsdev,buf+5);
+                        if(tt & tfsSTMODE_FILE)
                         {
                             fileNameCorrect(buf,outName,NULL);
                             return 1;
@@ -843,19 +855,22 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
 #if MEOPT_TFS
             else if(ffUrlTypeIsTfs(ffUrlGetType(buf)))
             {
-                int tt;
+                int tt=0;
                 if((sp=(meUByte *) strstr((char *) buf,"?/")) != NULL)
                 {
-                    tfs_t tfsh;
+                    tfsMount *tfsh;
                     *sp = '\0';
-                    tfsh = tfs_mount((char *) (buf+6),TFS_CHECK_HEAD);
+                    tfsh = tfs_mount(buf+6);
                     *sp++ = '?';
-                    tt = tfs_type(tfsh,(char *) sp);
-                    tfs_umount(tfsh);
+                    if(tfsh != NULL)
+                    {
+                        tt = tfs_type(tfsh,sp);
+                        tfs_umount(tfsh);
+                    }
                 }
-                else 
-                    tt = tfs_type(tfsdev,(char *)(buf+5));
-                if(tt == TFS_TYPE_FILE)
+                else if(tfsdev != NULL)
+                    tt = tfs_type(tfsdev,buf+5);
+                if(tt & tfsSTMODE_FILE)
                 {
                     fileNameCorrect(buf,outName,NULL);
                     return 1;
@@ -950,14 +965,14 @@ gwd(meUByte drive)
      * system (true for VMS, MS-DOS, etc etc until someone writes them).
      */
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
-    
+
     meUByte dir[meBUF_SIZE_MAX] ;
     register int ll ;
-    
+
 #ifdef _UNIX
     meGetcwd(dir,meBUF_SIZE_MAX-2) ;
 #endif  /* _UNIX */
-    
+
 #ifdef _WIN32
     /* Change drive to the destination drive.
      * remeber so that we can get back. Note we
@@ -967,7 +982,7 @@ gwd(meUByte drive)
     if (drive != 0)
     {
         int curDrive;
-        
+
         curDrive = _getdrive ();
         drive = toUpper(drive) - 'A' + 1;
         if ((drive == curDrive) || (_chdrive(drive) != 0))
@@ -975,13 +990,13 @@ gwd(meUByte drive)
         else
             drive = curDrive;      /* Save to restore */
     }
-    
+
     /* Pick up the directory information */
     GetCurrentDirectory (meBUF_SIZE_MAX,(char *) dir);
     if (meStrlen(dir) > 2)
     {
         meUByte *p;                   /* Local character pointer */
-        
+
         /* convert all '\\' to '/' */
         p = dir+2 ;
         while((p=meStrchr(p,'\\')) != NULL)    /* got a '\\', -> '/' */
@@ -991,11 +1006,11 @@ gwd(meUByte drive)
     if (drive != 0)
         _chdrive (drive) ;
 #endif /* _WIN32 */
-    
+
 #ifdef _DOS
 #ifdef __DJGPP2__
     unsigned int curDrive=0, newDrive, availDrives ;
-    
+
     if(drive != 0)
     {
         _dos_getdrive(&curDrive) ;
@@ -1006,7 +1021,7 @@ gwd(meUByte drive)
             /* already current drive */
             curDrive = 0;
     }
-    
+
     if(getcwd((char *) dir,meBUF_SIZE_MAX) == NULL)
         dir[0] = '\0' ;
     if(curDrive != 0)
@@ -1016,7 +1031,7 @@ gwd(meUByte drive)
     makestrlow(dir) ;
 #else
     union REGS reg ;                /* cpu register for use of DOS calls */
-    
+
     if(drive == 0)
     {
         reg.h.ah = DOSI_GETDRV ;
@@ -1028,14 +1043,14 @@ gwd(meUByte drive)
     dir[0] = drive ;
     dir[1] = ':' ;
     dir[2] = DIR_CHAR ;
-    
+
     reg.h.ah = DOSI_GETDIR ;
     reg.h.dl = drive - 'a' + 1 ;
     reg.x.si = (unsigned long) (dir+3) ;
     (void) intdos(&reg, &reg);
 #endif
 #endif  /* _DOS */
-    
+
     if((ll = meStrlen(dir)) > 0)
     {
         if(dir[ll-1] != DIR_CHAR)
@@ -1045,13 +1060,13 @@ gwd(meUByte drive)
         }
         return meStrdup(dir) ;
     }
-    
+
 #endif  /* UNKNOWN */
     /*
     ** An unknown system to me - dont know what to do here.
     */
     return NULL ;
-    
+
 }
 
 meUByte *
@@ -1088,9 +1103,9 @@ inputFileName(meUByte *prompt, meUByte *fn, int corFlag)
 {
     meUByte tmp[meBUF_SIZE_MAX], *buf ;
     int s, ll ;
-    
+
     buf = (corFlag) ? tmp:fn ;
-    
+
     getFilePath(frameCur->windowCur->buffer->fileName,buf) ;
     s = meGetString(prompt,(MLFILECASE|MLNORESET|MLMACNORT), 0, buf, meBUF_SIZE_MAX) ;
     if(s > 0)
@@ -1137,24 +1152,24 @@ meTestExecutable(meUByte *fileName)
 #define FILENODE_ATTRIBLEN 4
 
 typedef struct FILENODE {
-    struct FILENODE *next;              /* Next node in the list */
+    struct FILENODE *next;                  /* Next node in the list */
     meUByte  *fname;                        /* Name of the file */
     meUByte  *lname;                        /* Linkname */
-    meUByte   attrib[FILENODE_ATTRIBLEN] ;
-    meUInt    sizeHigh ;
-    meUInt    sizeLow ;
+    meUByte   attrib[FILENODE_ATTRIBLEN];
+    meUInt    sizeHigh;
+    meUInt    sizeLow;
 #ifdef _UNIX
-    time_t  mtime ;
+    time_t  mtime;
 #endif
 #ifdef _DOS
-    time_t  mtime ;
+    time_t  mtime;
 #endif
 #ifdef _WIN32
-    FILETIME mtime ;
+    FILETIME mtime;
 #endif
 } FILENODE;
 
-FILENODE *curHead ;
+FILENODE *curHead;
 
 static FILENODE *
 addFileNode(FILENODE *cfh, FILENODE *cf)
@@ -1204,26 +1219,23 @@ getDirectoryInfo(meUByte *fname)
 {
     meUByte bfname[meBUF_SIZE_MAX];                 /* Working file name buffer */
     meUByte *fn;
-    FILENODE *curFile ;
-    FILENODE *cfh=NULL ;
+    FILENODE *curFile;
+    FILENODE *cfh=NULL;
     int noFiles=0;                        /* No files count */
-    
+
 #if MEOPT_TFS
     if(ffUrlTypeIsTfs(ffUrlGetType(fname)))
     {
-        tfs_t tfsh;
-        tfsdir_t dirp;
-        tfsdirent_t *dp;
-        tfsstat_t sbuf;
+        tfsMount *tfsh;
         meUByte *fp,*ff;
-        
+
         /* Render the list of files. */
-        curHead = NULL ;
-        meStrcpy(bfname,fname) ;
+        curHead = NULL;
+        meStrcpy(bfname,fname);
         if((fp=(meUByte *) strstr((char *) bfname,"?/")) != NULL)
         {
             *fp = '\0';
-            tfsh = tfs_mount((char *) (bfname+6),TFS_CHECK_HEAD);
+            tfsh = tfs_mount(bfname+6);
             *fp++ = '?';
         }
         else
@@ -1231,51 +1243,77 @@ getDirectoryInfo(meUByte *fname)
             tfsh = tfsdev;
             fp = bfname+5;
         }
-        if((dirp = tfs_opendir(tfsh,(char *) fp)) != NULL)
+        if(tfsh != NULL)
         {
-            fn = fp+meStrlen(fp);
-            while((dp = tfs_readdir(dirp)) != NULL)
+            tfsDirectory *dirp;
+            if((dirp = tfs_dopen(tfsh,fp)) != NULL)
             {
-                if(((noFiles & 0x0f) == 0) &&
-                   ((curHead = (FILENODE *) meRealloc(curHead,sizeof(FILENODE)*(noFiles+16))) == NULL))
+                tfsDirent de;
+                int ll=dirp->dcount+dirp->fcount, isRoot=((fp[0]=='\0') || ((fp[0]=='/') && (fp[1]=='\0')));
+                if((curHead = (FILENODE *) meMalloc(sizeof(FILENODE)*(ll+((isRoot) ? 0:1)))) == NULL)
                 {
+                    tfs_dclose(dirp);
                     if(tfsh != tfsdev)
                         tfs_umount(tfsh);
                     return NULL;
                 }
-                curFile = &(curHead[noFiles++]);
-                if((ff = malloc((dp->len + 1) * sizeof (char))) == NULL)
+                if(!isRoot && ((ff = meStrdup((meUByte *) "..")) != NULL))
                 {
-                    if(tfsh != tfsdev)
-                        tfs_umount(tfsh);
-                    return NULL;
-                }
-                meStrncpy(ff,(meUByte *)dp->name,dp->len);
-                ff[dp->len] = '\0';
-                curFile->lname = NULL;
-                curFile->fname = ff;
-                meStrcpy(fn,ff) ;
-                if (tfs_stat(tfsh,(char *) fp,&sbuf) != 0)
-                {
-                    sbuf.st_mode = TFS_TYPE_DIR;
-                    sbuf.st_size = 0;
-                }
-                /* construct attribute string */
-                curFile->attrib[0] = (sbuf.st_mode == TFS_TYPE_DIR) ? 'd' : '-' ;
-                curFile->attrib[1] = 'r';
-                curFile->attrib[2] = '-' ;
-                curFile->attrib[3] = (sbuf.st_mode == TFS_TYPE_DIR) ? 'x' : '-' ;
-                curFile->sizeHigh = 0 ;
-                curFile->sizeLow = (meUInt) sbuf.st_size ;
-                curFile->mtime = sbuf.st_utc_mtime;
+                    curFile = &(curHead[noFiles++]);
+                    /* construct attribute string */
+                    curFile->attrib[0] = 'd';
+                    curFile->attrib[1] = 'r';
+                    curFile->attrib[2] = 'w';
+                    curFile->attrib[3] = 'x';
+                    curFile->sizeHigh = 0;
+                    curFile->sizeLow = 0;
+                    curFile->lname = NULL;
+                    curFile->fname = ff;
 #ifdef _DOS
-                curFile->mtime = 0;
+                    curFile->mtime = 0;
+#else
+                    curFile->mtime = dirp->ctime;
 #endif
+                }
+                while(tfs_dread(dirp,&de) > 0)
+                {
+                    curFile = &(curHead[noFiles++]);
+                    if((ff = meStrdup(de.name)) == NULL)
+                    {
+                        tfs_dclose(dirp);
+                        if(tfsh != tfsdev)
+                            tfs_umount(tfsh);
+                        return NULL;
+                    }
+                    /* construct attribute string */
+                    curFile->attrib[1] = (de.mode & tfsSTMODE_READ) ? 'r':'-';
+                    curFile->attrib[2] = (de.mode & tfsSTMODE_WRITE) ? 'w':'-';
+                    curFile->attrib[3] = (de.mode & tfsSTMODE_EXECUTE) ? 'x':'-';
+                    if(de.mode & tfsSTMODE_DIRECTORY)
+                    {
+                        curFile->attrib[0] = 'd';
+                        curFile->sizeHigh = 0;
+                        curFile->sizeLow = 0;
+                    }
+                    else
+                    {
+                        curFile->attrib[0] = '-';
+                        curFile->sizeHigh = (meUInt) (de.fileLen>>32);
+                        curFile->sizeLow = (meUInt) (de.fileLen & 0xffffffff);
+                    }                        
+                    curFile->lname = NULL;
+                    curFile->fname = ff;
+#ifdef _DOS
+                    curFile->mtime = 0;
+#else
+                    curFile->mtime = de.ctime;
+#endif
+                }
+                tfs_dclose(dirp);
             }
-            tfs_closedir(dirp);
+            if(tfsh != tfsdev)
+               tfs_umount(tfsh);
         }
-        if(tfsh != tfsdev)
-            tfs_umount(tfsh);
     }
     else
 #endif
@@ -1290,12 +1328,12 @@ getDirectoryInfo(meUByte *fname)
         struct stat sbuf ;
         meUByte *ff;
         int llen;
-        
+
         /* Render the list of files. */
         curHead = NULL ;
         meStrcpy(bfname,fname) ;
         fn = bfname+meStrlen(bfname) ;
-        
+
         if((dirp = opendir((char *)fname)) != NULL)
         {
             while((dp = readdir(dirp)) != NULL)
@@ -1360,7 +1398,7 @@ getDirectoryInfo(meUByte *fname)
         struct ffblk fblk ;
         meUByte *ff ;
         int done ;
-        
+
         /* Render the list of files. */
         curHead = NULL ;
         meStrcpy(bfname,fname) ;
@@ -1401,7 +1439,7 @@ getDirectoryInfo(meUByte *fname)
         HANDLE          *fh ;
         WIN32_FIND_DATA  fd ;
         meUByte           *ff ;
-        
+
         /* Render the list of files. */
         curHead = NULL ;
         meStrcpy(bfname,fname) ;
@@ -1469,7 +1507,7 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
     meUByte buf[meBUF_SIZE_MAX];                  /* Working line buffer */
     meUInt totSizeHigh=0, totSizeLow=0, ui ;
     int len, dirs=0, files=0 ;
-    
+
     if((fnode=getDirectoryInfo(fname)) == NULL)
         return meABORT ;
     meStrcpy(buf,"Directory listing of: ") ;
@@ -1523,13 +1561,13 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
             len += sprintf((char *)buf+len, "%7dK ", fnode->sizeLow >> 10);
         else
             len += sprintf((char *)buf+len, "%7d  ", fnode->sizeLow);
-        
+
 #ifdef _UNIX
         if ((tmp = localtime(&fnode->mtime)) != NULL)
             len += sprintf((char *)buf+len, "%4d-%02d-%02d %02d:%02d:%02d ",
                            tmp->tm_year+1900, tmp->tm_mon+1, tmp->tm_mday,
                            tmp->tm_hour, tmp->tm_min, tmp->tm_sec);
-        
+
         else
 #endif
 #ifdef _DOS
@@ -1551,11 +1589,11 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
         else
 #endif
             len += sprintf((char *)buf+len, "XXXX-XX-XX XX:XX:XX ") ;
-        
+
         len += sprintf ((char *)buf+len, "%s", fnode->fname);
         if(fnode->attrib[0] == 'd')
             buf[len++] = '/' ;
-        
+
         if(fnode->lname != NULL)
         {
             sprintf((char *)buf+len, " -> %s", fnode->lname);
@@ -1563,7 +1601,7 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
         }
         else
             buf[len] = '\0' ;
-        
+
         bp->lineCount += addLine(blp,buf) ;
         free(fnode->fname) ;
         fnode = fnode->next ;
@@ -1606,7 +1644,7 @@ readin(register meBuffer *bp, meUByte *fname)
 {
     int   ss=meABORT ;
     meUByte lfn[meBUF_SIZE_MAX], afn[meBUF_SIZE_MAX], *fn=fname ;
-    
+
 #if MEOPT_CRYPT
     if(meCryptBufferInit(bp) <= 0)
         return meABORT;
@@ -1679,7 +1717,7 @@ readin(register meBuffer *bp, meUByte *fname)
             if(ft & meIOTYPE_NOTEXIST)
             {
                 meUByte dirbuf [meBUF_SIZE_MAX];
-                
+
                 /* See if we can write to the directory. */
                 getFilePath(fn,dirbuf);
                 if(((getFileStats(dirbuf,0,NULL,NULL) & (meIOTYPE_NOTEXIST|meIOTYPE_DIRECTORY)) != meIOTYPE_DIRECTORY)
@@ -1705,7 +1743,7 @@ readin(register meBuffer *bp, meUByte *fname)
                 bp->intFlag &= ~BIFFILE ;
                 goto newfile_end;
             }
-            
+
             /* Make sure that we can read the file. If we are root then
              * we do not test the 'stat' bits. Root is allowed to read
              * anything */
@@ -1765,7 +1803,7 @@ readin(register meBuffer *bp, meUByte *fname)
                 meModeTest(bp->mode,MDVIEW) ? " (readonly)" : "");
     }
     ss = ffReadFile(&meior,fn,meRWFLAG_READ,bp,bp->baseLine,0,0,0);
-    
+
     /*
     ** Set up the modification time field of the buffer structure.
     */
@@ -1779,13 +1817,13 @@ readin(register meBuffer *bp, meUByte *fname)
     }
     else
         meModeSet(bp->mode,MDVIEW);
-    
+
 newfile_end:
-    
+
     bp->dotLine = meLineGetNext(bp->baseLine);
     bp->dotLineNo = 0;
     bp->dotOffset = 0;
-    
+
 error_end:
     return ss;
 }
@@ -1804,16 +1842,16 @@ meBufferInsertFile(meBuffer *bp, meUByte *fname, meUInt flags,
     register meLine *lp;
     register int ss;
     register long nline;
-    
+
     meModeSet(bp->mode,MDEDIT);              /* we have changed	*/
-    
+
 #if MEOPT_CRYPT
     if(meCryptBufferInit(bp) <= 0)
         return meFALSE;
 #endif
     if(!(flags & meRWFLAG_SILENT))
         mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"[Inserting file]");
-    
+
     nline = bp->lineCount;
     lp = bp->dotLine;
 #if MEOPT_DIRLIST
@@ -1827,7 +1865,7 @@ meBufferInsertFile(meBuffer *bp, meUByte *fname, meUInt flags,
 #endif
         ss = ffReadFile(&meior,fname,flags|meRWFLAG_READ|meRWFLAG_INSERT,bp,lp,uoffset,loffset,length);
     nline = bp->lineCount-nline;
-    
+
     if(ss != meABORT)
     {
         ss = meTRUE;
@@ -1876,7 +1914,7 @@ insertFile(int f, int n)
     meUInt uoffset, loffset=0;
     meInt length=0;
     int s, flags=0;
-    
+
     if((s=inputFileName((meUByte *)"Insert file",fname,1)) <= 0)
         return s ;
     /* Allow existing or url files if not doing a partial insert */
@@ -1920,17 +1958,17 @@ insertFile(int f, int n)
     cwp->markLine = meLineGetPrev(cwp->dotLine) ;
     cwp->markOffset = 0;
     cwp->markLineNo = cwp->dotLineNo-1;
-    
+
     /* store current line in buffer */
     cwp->buffer->dotLine = cwp->dotLine;
     cwp->buffer->dotLineNo = cwp->dotLineNo;   /* must have the line no. correct */
-    
+
     if((n & 2) == 0)
         flags |= meRWFLAG_PRESRVFMOD ;
     if(n & 4)
     {
         meUByte arg[meSBUF_SIZE_MAX] ;
-        
+
         if(meGetString((meUByte *)"UOffest",0,0,arg,meSBUF_SIZE_MAX) <= 0)
             return meABORT;
         uoffset = meAtoi(arg);
@@ -1941,10 +1979,10 @@ insertFile(int f, int n)
            ((length = meAtoi(arg)) == 0))
             return meABORT;
     }
-    
+
     if(((s = meBufferInsertFile(cwp->buffer,fname,flags,uoffset,loffset,length)) > 0) && (n & 2))
         meStatCopy(&(cwp->buffer->stats),&stats);
-    
+
     /* move the mark down 1 line into the correct place */
     cwp->markLine = meLineGetNext(cwp->markLine);
     cwp->markLineNo++;
@@ -1964,7 +2002,7 @@ makename(meUByte *bname, meUByte *fname)
     register meUByte *cp1;
     register meUByte *cp2;
     int i;
-    
+
     cp1 = getFileBaseName(fname);
     cp2 = bname;
     while((*cp2++=*cp1++) != '\0')
@@ -2015,9 +2053,9 @@ findFileSingle(meUByte *fname, int bflag, meInt lineno, meUShort colno)
                 )) ||
        ((gft & meIOTYPE_NOTEXIST) && !(bflag & BFND_CREAT)))
         return 0 ;
-    
+
     bflag |= BFND_CREAT;
-    
+
     /* if this is a directory then add the '/' */
     if(gft & meIOTYPE_DIRECTORY)
     {
@@ -2081,7 +2119,7 @@ static void
 fileMaskToRegex(meUByte *dfname, meUByte *sfname)
 {
     meUByte *ss=sfname, *dd=dfname, cc ;
-    
+
     while((cc = *ss++) != '\0')
     {
         switch(cc)
@@ -2119,10 +2157,10 @@ findFileList(meUByte *fname, int bflag, meInt lineno, meUShort colno)
 {
     register int nofiles=0, ii ;
     meUByte fileName[meBUF_SIZE_MAX], *baseName, cc ;
-    
+
     bufHistNo++ ;
     fileNameCorrect(fname,fileName,&baseName) ;
-    
+
     cc = ffUrlGetType(fileName);
     if(!ffUrlTypeIsHttpFtp(cc) && fileNameWild(baseName) &&
        (ffUrlTypeIsTfs(cc) || meTestRead(fileName)))
@@ -2131,7 +2169,7 @@ findFileList(meUByte *fname, int bflag, meInt lineno, meUShort colno)
          * and a file with that exact name does not exist then load
          * any files which match the wild card mask */
         meUByte mask[meBUF_SIZE_MAX] ;
-        
+
         fileMaskToRegex(mask,baseName) ;
         cc = *baseName ;
         *baseName = '\0' ;
@@ -2161,7 +2199,7 @@ findSwapFileList(meUByte *fname, int bflag, meInt lineno, meUShort colno)
 {
     meBuffer *bp;
     int ret;
-    
+
     bufHistNo += 2;
     if(!findFileList(fname,bflag,lineno,colno))
         return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Failed to find file %s]",fname);
@@ -2186,7 +2224,7 @@ int
 findFile(int f, int n)
 {
     meUByte fname[meBUF_SIZE_MAX], prompt[16], *ss;
-    
+
     ss = prompt;
     *ss++ = 'f';
     *ss++ = 'i';
@@ -2223,7 +2261,7 @@ int
 nextWndFindFile(int f, int n)
 {
     meUByte fname[meBUF_SIZE_MAX];	/* file user wishes to find */
-    
+
     if(inputFileName((meUByte *)"Find file",fname,0) <= 0)
         return meABORT;
     if(meWindowPopup(NULL,NULL,WPOP_MKCURR,NULL) == NULL)
@@ -2238,7 +2276,7 @@ readFile(int f, int n)
 {
     meUByte fname[meBUF_SIZE_MAX];	/* file user wishes to find */
     register int s;		/* status return */
-    
+
     if(inputFileName((meUByte *)"Read file", fname,0) <= 0)
         return meABORT;
     if(n & 0x20)
@@ -2254,7 +2292,7 @@ viewFile(int f, int n)	/* visit a file in VIEW mode */
 {
     meUByte fname[meBUF_SIZE_MAX];	/* file user wishes to find */
     register int ss, vv;	/* status return */
-    
+
     if (inputFileName((meUByte *)"View file", fname,0) <= 0)
         return meABORT ;
     n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN|BFND_NOHOOK)) | BFND_MKNAM ;
@@ -2282,7 +2320,7 @@ static int
 writeCheck(meUByte *pathname, int flags, meStat *statp)
 {
     meUByte dirbuf[meBUF_SIZE_MAX], ft=ffUrlGetType(pathname);
-    
+
     if(ffUrlTypeIsNotFile(ft))
     {
 #if MEOPT_SOCKET
@@ -2320,7 +2358,7 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
     register int s;
     meStat stats;
     meUByte *fn;
-    
+
     if((sfname != NULL) &&
        (((s=getFileStats(dfname,0,NULL,NULL)) & meIOTYPE_DIRECTORY) ||
         ((s & (meIOTYPE_FTP|meIOTYPE_FTPE)) && (dfname[meStrlen(dfname)-1] == DIR_CHAR))))
@@ -2340,7 +2378,7 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
     if(flags & meWRITECHECK_CHECK)
     {
         meUByte prompt[meBUF_SIZE_MAX+48];
-        
+
         /* Check for write-out filename problems */
         if(s & meIOTYPE_REGULAR)
         {
@@ -2354,7 +2392,7 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
         /* Quick check on the file write condition */
         if(writeCheck(fn,flags,&stats) <= 0)
             return NULL;
-        
+
         if(flags & meWRITECHECK_CHECK)
         {
             /*
@@ -2362,7 +2400,7 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
              * other buffer and produce a warning if so.
              */
             meBuffer *bp=bheadp, *cbp=frameCur->windowCur->buffer;
-            
+
             while(bp != NULL)
             {
                 if((bp != cbp) &&
@@ -2411,7 +2449,7 @@ fileOp(int f, int n)
 {
     meUByte ft, sfname[meBUF_SIZE_MAX], dfname[meBUF_SIZE_MAX], lfname[meBUF_SIZE_MAX+22], *fn=NULL ;
     int ii, rr=meTRUE, dFlags=0, fileMask=-1 ;
-    
+
     if((n & (meFILEOP_FTPCLOSE|meFILEOP_DELETE|meFILEOP_MOVE|meFILEOP_COPY|meFILEOP_MKDIR|meFILEOP_CHMOD|meFILEOP_TOUCH)) == 0)
         rr = mlwrite(MWABORT,(meUByte *)"[No operation set]") ;
     else if(n & meFILEOP_DELETE)
@@ -2503,7 +2541,7 @@ fileOp(int f, int n)
         {
 #ifdef _UNIX
             struct utimbuf fileTimes ;
-            
+
             fileTimes.actime = fileTimes.modtime = time(NULL) + meAtoi(dfname) ;
             utime((char *) sfname,&fileTimes) ;
 #endif
@@ -2560,9 +2598,9 @@ void
 autowriteout(register meBuffer *bp)
 {
     meUByte fn[meBUF_SIZE_MAX], *ff;
-    
+
     bp->autoTime = -1;
-    
+
     if((ff=bp->fileName) != NULL)
     {
         meLine *blp, *lp=NULL;
@@ -2575,7 +2613,7 @@ autowriteout(register meBuffer *bp)
         if(!createBackupName(fn,ff,'#',1) &&
            ((blp = translateBufferBack(bp,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE)) != NULL))
         {
-            
+
             if(ffWriteFileOpen(&meiow,fn,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE,bp) > 0)
             {
                 lp = meLineGetNext(blp);            /* First line.          */
@@ -2615,7 +2653,7 @@ void
 autowriteremove(register meBuffer *bp)
 {
     meUByte fn[meBUF_SIZE_MAX] ;
-    
+
     if((autoTime > 0) && bufferNeedSaving(bp) &&
        !createBackupName(fn,bp->fileName,'#',0) && !meTestExist(fn))
         /* get rid of any tempory file */
@@ -2661,7 +2699,7 @@ writeOut(register meBuffer *bp, meUInt flags, meUByte *fn)
 #endif
     autowriteremove(bp) ;
     meModeClear(bp->mode,MDEDIT) ;
-    
+
     if(fn != NULL)
     {
 #ifndef _WIN32
@@ -2711,7 +2749,7 @@ static int
 writeout(register meBuffer *bp, int flags)
 {
     meUByte lname[meBUF_SIZE_MAX], *fn;
-    
+
     if(!meStrcmp(bp->name,"*stdin*"))
         fn = NULL;
     else if((bp->name[0] == '*') || (bp->fileName == NULL))
@@ -2747,7 +2785,7 @@ writeout(register meBuffer *bp, int flags)
         if(writeCheck(fn,flags,&stats) <= 0)
             return meABORT;
     }
-    
+
     return writeOut(bp,((flags & 0x02) ? meRWFLAG_IGNRNRRW:0),fn);
 }
 
@@ -2780,29 +2818,29 @@ writeBuffer(int f, int n)
 {
     register meBuffer *bp;
     meUByte fname[meBUF_SIZE_MAX], lname[meBUF_SIZE_MAX], *fn;
-    
+
     if(inputFileName((meUByte *)"Write file",fname,1) <= 0)
         return meABORT ;
-    
+
     if((bp=frameCur->windowCur->buffer)->fileName != NULL)
         fn = bp->fileName ;
     else if(bp->name[0] != '*')
         fn = bp->name ;
     else
         fn = NULL ;
-    
+
     if((n & 0x01) && (bp->fileFlag & (meBFFLAG_BINARY|meBFFLAG_LTDIFF)) &&
        (mlyesno((bp->fileFlag & meBFFLAG_BINARY) ? fileHasBinary:fileHasInLnEn) <= 0))
         return ctrlg(meFALSE,1);
     if((fn=writeFileChecks(fname,fn,lname,(n & 0x01)|meWRITECHECK_BUFFER)) == NULL)
         return meABORT ;
-    
+
     if(!writeOut(bp,((n & 0x02) ? meRWFLAG_IGNRNRRW:0),fn))
         return meFALSE ;
-    
+
     resetBufferNames(bp,fname) ;
     frameAddModeToWindows(WFMODE) ; /* and update ALL mode lines */
-    
+
     return meTRUE ;
 }
 
@@ -2817,7 +2855,7 @@ saveBuffer(int f, int n)
 {
     meBuffer *cbp=frameCur->windowCur->buffer;
     register int s;
-    
+
     /* Note that we check for existance here just incase sombody has
      * deleted it under our feet. There is nothing more annoying than the
      * editor bitching there are no changes when it's been zapped !! */
@@ -2841,7 +2879,7 @@ saveSomeBuffers(int f, int n)
     register meBuffer *bp;    /* scanning pointer to buffers */
     register int status=meTRUE ;
     meUByte prompt[meBUF_SIZE_MAX] ;
-    
+
     bp = bheadp;
     while (bp != NULL)
     {
@@ -2888,7 +2926,7 @@ appendBuffer(int f, int n)
     register meUInt flags ;
     register int ft;
     meUByte fname[meBUF_SIZE_MAX], lname[meBUF_SIZE_MAX], *fn ;
-    
+
     if(inputFileName((meUByte *)"Append to file",fname,1) <= 0)
         return meABORT ;
     if(((ft=getFileStats(fname,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE|gfsERRON_DIR,NULL,lname)) & (meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE)) ||
@@ -2930,10 +2968,10 @@ changeFileName(int f, int n)
     meBuffer *cbp;
     register int s;
     meUByte fname[meBUF_SIZE_MAX], lname[meBUF_SIZE_MAX], *fn;
-    
+
     if((s=inputFileName((meUByte *)"New file name",fname,1)) == meABORT)
         return s;
-    
+
     if((getFileStats(fname,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE|gfsERRON_DIR,NULL,lname) & (meIOTYPE_REGULAR|meIOTYPE_NOTEXIST
 #if MEOPT_SOCKET
                                                                                                |meIOTYPE_FTP|meIOTYPE_FTPE
@@ -2943,12 +2981,12 @@ changeFileName(int f, int n)
     fn = (lname[0] == '\0') ? fname:lname;
     cbp = frameCur->windowCur->buffer;
     meNullFree(cbp->fileName);
-    
+
     if(s == meFALSE)
         cbp->fileName = NULL;
     else
         cbp->fileName = meStrdup(fname);
-    
+
 #if (defined _UNIX) || (defined _DOS) || (defined _WIN32)
     if(meTestWrite(fn))
         meModeSet(cbp->mode,MDVIEW);
@@ -2956,7 +2994,7 @@ changeFileName(int f, int n)
         meModeClear(cbp->mode,MDVIEW);	/* no longer read only mode */
 #endif
     frameAddModeToWindows(WFMODE);      /* and update ALL mode lines */
-    
+
     return meTRUE;
 }
 #endif
@@ -2967,14 +3005,14 @@ _meChdir(meUByte *path)
 {
     register int s ;
     int len ;
-    
+
     len = meStrlen(path)-1 ;
-    
+
 #ifndef __DJGPP2__
     if((len > 1) && (path[1] == _DRV_CHAR))
     {
         union REGS reg ;		/* cpu register for use of DOS calls */
-        
+
         reg.h.ah = 0x0e ;
         reg.h.dl = path[0] - 'a' ;
         intdos(&reg, &reg);
@@ -3025,7 +3063,7 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
 #if (defined _DOS) || (defined _WIN32)
     meUByte *gwdbuf;
 #endif
-    
+
     fileNameConvertDirChar(oldName);
     flag = 0;
     p = p1 = oldName;
@@ -3133,7 +3171,7 @@ double_url:
         if(((p1=meStrchr(p1,DIR_CHAR)) == NULL) || (*++p1 == '\0'))
             break;
     }
-    
+
     p1 = newName ;
     if((flag == 2) || (p == NULL))
     {
@@ -3162,7 +3200,7 @@ double_url:
             meRegNode *reg=NULL ;
             meUByte *pe ;
             int ll ;
-            
+
             if((nameType == PATHNAME_PARTIAL) && (meStrchr(p,DIR_CHAR) == NULL))
             {
                 /* special case when user is entering a file name and uses complete with 'xxxx/~yy' */
@@ -3180,7 +3218,7 @@ double_url:
                     ll = meStrlen(p) ;
                 else
                     ll = (int) (((size_t) pe) - ((size_t) (p))) ;
-                
+
                 while((reg != NULL) && (((int) meStrlen(reg->name) != ll) || meStrncmp(p,reg->name,ll)))
                     reg = regGetNext(reg) ;
             }
@@ -3276,7 +3314,7 @@ double_url:
                     p = urle ;
             }
             /* else got /XXX/../YYYY */
-            
+
             p1 += 3 ;
             while((*p++ = *p1++) != '\0')
                 ;
@@ -3326,18 +3364,18 @@ void
 fileNameCorrect(meUByte *oldName, meUByte *newName, meUByte **baseName)
 {
     meUByte *bn;
-    
+
     pathNameCorrect(oldName,PATHNAME_COMPLETE,newName,&bn) ;
     if(baseName != NULL)
         *baseName = bn ;
-    
+
     if(ffUrlTypeIsNotFile(ffUrlGetType(newName)))
         return ;
-    
+
     /* ensure the drive letter is stable, make it lower case */
     if((newName[1] == _DRV_CHAR) && isLower(newName[0]))
         newName[0] = (newName[0] ^ 0x20);
-    
+
     if(!fileNameWild(bn))
     {
         /* with windows naff file name case insensitivity we must get
@@ -3377,7 +3415,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
     WIN32_FIND_DATA fd;
     HANDLE *handle;
 #endif
-    
+
     ft = ffUrlGetType(pathName);
     if(ffUrlTypeIsNotFile(ft))
     {
@@ -3446,13 +3484,12 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
 #ifdef MEOPT_TFS
         if(ffUrlTypeIsTfs(ft))
         {
-            tfs_t tfsh;
-            tfsdir_t dirp;
+            tfsMount *tfsh;
             meUByte *fn;
-            if((fn=(meUByte *) strstr((char *) pathName,"?/")) != NULL)
+            if((fn = meStrstr(pathName,"?/")) != NULL)
             {
                 *fn = '\0';
-                tfsh = tfs_mount((char *) (pathName+6),TFS_CHECK_HEAD);
+                tfsh = tfs_mount(pathName+6);
                 *fn++ = '?';
             }
             else
@@ -3460,55 +3497,45 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                 tfsh = tfsdev;
                 fn = pathName+5;
             }
-
-            if((dirp = tfs_opendir(tfsh,(char *) fn)) != NULL)
+            if(tfsh != NULL)
             {
-                tfsdirent_t *dirent;
-                meUByte *ff, fname[meBUF_SIZE_MAX];
-                
-                meStrcpy(fname,fn);
-                fn = fname + meStrlen(fname);
-                
-                while((dirent = tfs_readdir(dirp)) != NULL)
+                tfsDirectory *dirp;
+                if((dirp = tfs_dopen(tfsh,fn)) != NULL)
                 {
-                    if((((noFiles & 0x0f) == 0) &&
-                        ((fls = meRealloc(fls,sizeof(meUByte *) * (noFiles+16))) == NULL)) ||
-                       ((ff = meMalloc(dirent->len+3)) == NULL))
-                        break ;
-                    fls[noFiles++] = ff;
-                    meStrncpy(ff,dirent->name,dirent->len);
-                    ff[dirent->len] = '\0';
-                    if((ff[0] == '.') && ((ff[1] == '\0') || ((ff[1] == '.') && (ff[2] == '\0'))))
+                    tfsDirent de;
+                    meUByte *ff;
+                    int rr, ll, isRoot=((fn[0]=='\0') || ((fn[0]=='/') && (fn[1]=='\0')));
+                    if((fls = meMalloc(sizeof(meUByte *) * (dirp->dcount+dirp->fcount+((isRoot) ? 0:1)))) != NULL)
                     {
-                        ff += (ff[1] == '\0') ? 1:2;
-                        *ff++ = DIR_CHAR;
-                        *ff   = '\0';
-                    }
-                    else
-                    {
-                        meStrcpy(fn,ff);
-                        if(tfs_type(tfsh,(char *) fname) == TFS_TYPE_DIR)
+                        if(!isRoot && ((ff = meStrdup((meUByte *) "../")) != NULL))
+                            fls[noFiles++] = ff;
+                        while((rr=tfs_dread(dirp,&de)) > 0)
                         {
-                            ff += meStrlen(ff);
-                            *ff++ = DIR_CHAR;
-                            *ff   = '\0';
+                            ll = de.nameLen;
+                            if((ff = meMalloc(ll + ((de.mode & tfsSTMODE_DIRECTORY) ? 2:1))) == NULL)
+                                break;
+                            fls[noFiles++] = ff;
+                            memcpy(ff,de.name,ll);
+                            if(de.mode & tfsSTMODE_DIRECTORY)
+                                ff[ll++] = '/';
+                            ff[ll] = '\0';
+                        }
+                        if(rr != 0)
+                        {
+                            if(fls != NULL)
+                            {
+                                while(--noFiles >= 0)
+                                    meFree(fls[noFiles]);
+                                meFree(fls);
+                            }
+                            noFiles = 0;
                         }
                     }
+                    tfs_dclose(dirp);
                 }
-                tfs_closedir(dirp);
-                if(dirent != NULL)
-                {
-                    if(fls != NULL)
-                    {
-                        while(--noFiles >= 0)
-                            meFree(fls[noFiles]);
-                        meFree(fls);
-                    }
-                    noFiles = 0;
-                }
+                if(tfsh != tfsdev)
+                    tfs_umount(tfsh);
             }
-            if(tfsh != tfsdev)
-                tfs_umount(tfsh);
         }
 #endif  /* MEOPT_TFS */
         if(noFiles > 0)
@@ -3523,13 +3550,13 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         }
         return ;
     }
-    
+
 #if MEOPT_REGISTRY
     if((pathName[0] == '~') && (pathName[1] == '\0') && (homedir != NULL))
     {
         meUByte *ss ;
         int len ;
-        
+
         meStrcpy(upb,homedir) ;
         len = meStrlen(upb) ;
         upb[len-1] = '\0' ;
@@ -3553,7 +3580,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
 #ifdef _WIN32
         meUByte *ss;
         int len ;
-        
+
         if((pathName[0] == DIR_CHAR) && (pathName[1] == DIR_CHAR) &&
            (((ss=meStrchr(pathName+2,DIR_CHAR)) == NULL) ||
             (meStrchr(ss+1,DIR_CHAR) == NULL)))
@@ -3574,7 +3601,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                 extern meUByte ffbuf[];
                 NETRESOURCE nr, *rr;
                 HANDLE eh;
-                
+
                 pathName[0] = '\\';
                 pathName[1] = '\\';
                 *ss = '\0';
@@ -3624,7 +3651,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
             }
 #endif
             return;
-        }       
+        }
         meFiletimeInit(stmtime);
         if(((len = meStrlen(pathName)) > 0) && (pathName[len-1] == DIR_CHAR))
         {
@@ -3638,7 +3665,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
             pathName[len-1] = DIR_CHAR ;
         }
 #endif
-        
+
         if((dirList->path != NULL) &&
            !meStrcmp(dirList->path,pathName) &&
 #if (defined _UNIX) || (defined _WIN32)
@@ -3649,18 +3676,18 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
            )
             return;
     }
-    
+
     /* free off the old */
     meNullFree(dirList->path) ;
     freeFileList(dirList->size,dirList->list) ;
-    
+
 #ifdef _DOS
     if(pathName[0] == '\0')
     {
         union REGS reg ;		/* cpu register for use of DOS calls */
         meUByte *ff ;
         int    ii ;
-        
+
         for (ii = 1; ii <= 26; ii++)    /* Drives are a-z (1-26) */
         {
             reg.x.ax = 0x440e ;
@@ -3688,7 +3715,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         struct ffblk fblk ;
         meUByte *ff, *ee, es[4] ;
         int done ;
-        
+
         /* append the *.* - Note that this function assumes the pathName has a '/' and
          * its an array with 3 extra char larger than the string size */
         ee = pathName + meStrlen(pathName) ;
@@ -3738,10 +3765,10 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         meUByte *ff;
         int ii;
         DWORD ad, dwMask;
-        
+
         /* Get the drives */
         ad = GetLogicalDrives();
-        
+
         /* Drives are a-z (bit positions 0-25) */
         for(ii=1, dwMask=1 ; ii <= 26; ii++, dwMask <<= 1)
         {
@@ -3766,7 +3793,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
     else
     {
         meUByte *ff, *ee, es[4] ;
-        
+
         /* append the *.* - Note that this function assumes the pathName has a '/' and
          * its an array with 3 extra char larger than the string size */
         ee = pathName + meStrlen(pathName) ;
@@ -3816,7 +3843,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
 #ifdef _UNIX
     {
         DIR    *dirp ;
-        
+
         if((dirp = opendir((char *)pathName)) != NULL)
         {
 #if (defined _DIRENT)
@@ -3826,10 +3853,10 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
 #endif
             struct stat statbuf;
             meUByte *ff, *bb, fname[meBUF_SIZE_MAX] ;
-            
+
             meStrcpy(fname,pathName) ;
             bb = fname + meStrlen(fname) ;
-            
+
             while((dp = readdir(dirp)) != NULL)
             {
                 if(((noFiles & 0x0f) == 0) &&
@@ -3878,14 +3905,14 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         dirList->stmtime = stmtime ;
     }
 #endif  /* _UNIX */
-    
+
 #if MEOPT_REGISTRY
     if(pathName == upb)
     {
         meRegNode *reg ;
         meUByte *ff ;
         int len ;
-        
+
         /* add the alias/abbrev paths to the list */
         if(((reg = regFind(NULL,(meUByte *)"history/" meSYSTEM_NAME "/alias-path")) != NULL) &&
            ((reg = regGetChild(reg)) != NULL))
@@ -3914,7 +3941,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         pathName = (meUByte *) "~" ;
     }
 #endif
-    
+
     dirList->path = meStrdup(pathName) ;
     dirList->size = noFiles ;
     dirList->list = fls ;
@@ -3934,9 +3961,9 @@ freeFileList(int noStr, meUByte **files)
 {
     if(files == NULL)
         return ;
-    
+
     while (--noStr >= 0)
         meFree(files[noStr]) ;
-    
+
     meFree((void *) files) ;
 }

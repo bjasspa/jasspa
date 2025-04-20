@@ -53,10 +53,10 @@ CDEFS         = -D_CYGWIN -I. -I../3rdparty/tfs
 CONSOLE_DEFS  = -D_ME_CONSOLE
 WINDOW_DEFS   = $(MAKEWINDEFS) -D_ME_WINDOW -I/usr/X11include -I/usr/X11R6/include
 NANOEMACS_DEFS= -D_NANOEMACS
-LDDEBUG       = -L../3rdparty/tfs/.win32cygwin-debug -L../3rdparty/zlib/.win32cygwin-debug
-LDOPTIMISE    = -L../3rdparty/tfs/.win32cygwin-release -L../3rdparty/zlib/.win32cygwin-release
+LDDEBUG       = -L../3rdparty/tfs/.win32cygwin-debug
+LDOPTIMISE    = -L../3rdparty/tfs/.win32cygwin-release
 LDFLAGS       =
-LIBS          = -ltfs -lzlib
+LIBS          = -ltfs
 CONSOLE_LIBS  = -ltermcap
 WINDOW_LIBS   = -L/usr/X11R6/lib -lX11 $(MAKEWINLIBS) 
 #

@@ -1231,7 +1231,7 @@ ffgetBuf(meIo *io,int offset, int len)
 #ifdef MEOPT_TFS
     if(ffUrlTypeIsTfs(io->type))
     {
-        if((ffremain = tfs_fread(ffbuf+offset,1,len,io->tfsp)) <= 0)
+        if((ffremain = tfs_fread(ffbuf+offset,len,io->tfsp)) <= 0)
         {
             /* TODO - this does not handle errors, just assumed to work */
             return meFALSE;
@@ -1620,12 +1620,12 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
     else if (ffUrlTypeIsTfs(io->type))
     {
 #ifdef MEOPT_TFS
-        tfs_t tfsh;
+        tfsMount *tfsh;
         meUByte *fn;
-        if((fn=(meUByte *) strstr((char *) fname,"?/")) != NULL)
+        if((fn=meStrstr(fname,"?/")) != NULL)
         {
             *fn = '\0';
-            tfsh = tfs_mount((char *) (fname+6),TFS_CHECK_HEAD);
+            tfsh = tfs_mount(fname+6);
             *fn++ = '?';
         }
         else
@@ -1633,9 +1633,14 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
             tfsh = tfsdev;
             fn = fname+5;
         }
-        io->tfsp = tfs_fopen(tfsh,(char *) fn);
-        if(tfsh != tfsdev)
-            tfs_umount(tfsh);
+        if(tfsh != NULL)
+        {
+            io->tfsp = tfs_fopen(tfsh,fn);
+            if(tfsh != tfsdev)
+                tfs_umount(tfsh);
+        }
+        else
+            io->tfsp = NULL;
         if(io->tfsp == NULL)
         {
             if(!(flags & meRWFLAG_SILENT))

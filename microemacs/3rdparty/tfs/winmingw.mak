@@ -64,7 +64,7 @@ OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
 
-CCDEFS   = -m$(BIT_SIZE) -D_MINGW -D_$(BIT_SIZE)BIT -Wall -I$(TRDPARTY)/zlib
+CCDEFS   = -m$(BIT_SIZE) -D_MINGW -D_$(BIT_SIZE)BIT -DZ7_ST -Wall -I.
 CCFLAGSR = -O3 -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g
 LDDEFS   = -m$(BIT_SIZE) 
@@ -107,15 +107,20 @@ endif
 LIBNAME  = tfs
 LIBFILE  = $(LIBNAME)$(A)
 LIBHDRS  = tfs.h $(MAKEFILE).mak
-LIBOBJS  = $(OUTDIR)/tfs.o
+LIBOBJS  = $(OUTDIR)/tfs.o $(OUTDIR)/Lzma2Dec.o $(OUTDIR)/LzmaDec.o
 
 PRGNAME  = tfs
 PRGFILE  = $(PRGNAME)$(EXE)
-PRGHDRS  = tfs.h tfsutil.h $(MAKEFILE).mak
-PRGOBJS  = $(OUTDIR)/tfsutil.o $(OUTDIR)/tfs.o $(OUTDIR)/uappend.o $(OUTDIR)/ubuild.o $(OUTDIR)/ucopy.o \
-	   $(OUTDIR)/ucreate.o $(OUTDIR)/uinfo.o $(OUTDIR)/ulist.o $(OUTDIR)/ustrip.o $(OUTDIR)/utest.o \
-	   $(OUTDIR)/uxdir.o $(OUTDIR)/uxfile.o
-PRGLIBS  = $(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A)
+PRGHDRS  = tfs.h 7zTypes.h 7zWindows.h Compiler.h CpuArch.h LzFind.h LzHash.h LzmaDec.h LzmaEnc.h Precomp.h \
+	   $(MAKEFILE).mak
+PRGOBJS  = $(OUTDIR)/tfsutil.o $(OUTDIR)/LzFind.o $(OUTDIR)/Lzma2Enc.o $(OUTDIR)/LzmaEnc.o $(OUTDIR)/CpuArch.o
+PRGLIBS  = 
+
+TSTNAME  = tfs
+TSTFILE  = $(TSTNAME)$(EXE)
+TSTHDRS  = tfs.h $(MAKEFILE).mak
+TSTOBJS  = $(OUTDIR)/tfstest.o
+TSTLIBS  = $(OUTDIR)/tfs$(A)
 
 .SUFFIXES: .c .o
 
@@ -142,6 +147,13 @@ endif
 
 $(PRGOBJS): $(PRGHDRS)
 
+$(OUTDIR)/$(TSTFILE): $(OUTDIR) $(INSTDIR) $(TSTOBJS) $(TSTLIBS)
+	$(RM) $@
+	$(LD) $(LDFLAGS) $(LDPROF) -o $@ $(TSTOBJS) $(TSTLIBS)
+	$(STRIP) $@
+
+$(TSTOBJS): $(TSTHDRS)
+
 $(OUTDIR):
 	-mkdir $(OUTDIR)
 
@@ -151,10 +163,6 @@ ifeq "$(TOOLPREF)" ""
 else
 	-mkdir $(INSTDIR)
 endif
-
-$(TRDPARTY)/zlib/$(OUTDIR)/zlib$(A):
-	cd $(TRDPARTY)/zlib && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) PLATFORM_VER=$(PLATFORM_VER)
-
 
 clean:
 	$(RMDIR) $(OUTDIRD)
