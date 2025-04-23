@@ -3068,15 +3068,15 @@ fileNameConvertDirChar(meUByte *fname)
 void
 fileNameSetHome(meUByte *ss)
 {
-    int ll = meStrlen(ss) ;
-    meNullFree(homedir) ;
-    homedir = meMalloc(ll+2) ;
-    meStrcpy(homedir,ss) ;
-    fileNameConvertDirChar(homedir) ;
+    int ll = meStrlen(ss);
+    meNullFree(homedir);
+    homedir = meMalloc(ll+2);
+    meStrcpy(homedir,ss);
+    fileNameConvertDirChar(homedir);
     if(homedir[ll-1] != DIR_CHAR)
     {
-        homedir[ll++] = DIR_CHAR ;
-        homedir[ll] = '\0' ;
+        homedir[ll++] = DIR_CHAR;
+        homedir[ll] = '\0';
     }
 }
 

@@ -37,6 +37,8 @@ TOOLKIT_VER = $(shell $(CC) -dumpversion)
 ARCHITEC = intel
 ifeq "$(BIT_SIZE)" ""
 BIT_SIZE = $(shell getconf LONG_BIT)
+else
+BIT_OPT  = -m$(BIT_SIZE)
 endif
 
 PLATFORM = linux
@@ -52,10 +54,10 @@ OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
 
-CCDEFS   = -m$(BIT_SIZE) -D_LINUX -D_$(BIT_SIZE)BIT -DZ7_ST -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I.
+CCDEFS   = $(BIT_OPT) -D_LINUX -D_$(BIT_SIZE)BIT -DZ7_ST -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I.
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g
-LDDEFS   = -m$(BIT_SIZE)
+LDDEFS   = $(BIT_OPT)
 LDFLAGSR = -O3 -flto
 LDFLAGSD = -g
 ARFLAGSR = rcs

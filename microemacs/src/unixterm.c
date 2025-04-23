@@ -556,18 +556,18 @@ meSetupPathsAndUser(void)
         meUserName = meStrdup(ss) ;
     
     /* Get the user name and home directory from the password file. */
-    pwdp = getpwuid (meUid);        /* Get the password entry */
-    if (pwdp != NULL)
+    pwdp = getpwuid(meUid);         /* Get the password entry */
+    if(pwdp != NULL)
     {
         /* Copy out the string information we need and initialise the
          * string variables. */
         if(pwdp->pw_dir != NULL)
-            fileNameSetHome((meUByte *) pwdp->pw_dir) ;
+            fileNameSetHome((meUByte *) pwdp->pw_dir);
         if((pwdp->pw_name != NULL) && (meUserName == NULL))
-            meUserName = meStrdup((meUByte *) pwdp->pw_name) ;
+            meUserName = meStrdup((meUByte *) pwdp->pw_name);
         /* Shut down the password retrieval and allow system to relinquish
          * any resource it may have cached. */
-        endpwent() ;
+        endpwent();
     }
     
     /* If no name yet then set to default 'user'. */
@@ -576,7 +576,7 @@ meSetupPathsAndUser(void)
     
     /* get the users home directory, user path and search path */
     if((homedir == NULL) &&
-       (((ss = meGetenv("HOME")) != NULL) && (ss[0] != '\0')))
+       ((ss = meGetenv("HOME")) != NULL) && (ss[0] != '\0'))
         fileNameSetHome(ss);
     
     /* meUserPath & searchPath may not be null due to -v command-line option */ 

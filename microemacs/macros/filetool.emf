@@ -91,6 +91,7 @@
     !done
     ml-write &spr "[Launching: %s]" #l0
     !if &band @# 0x20
+      ; TODO: Fix update issue when loading a zip within a zip
       !force !force execute-line #l0
     !elif &band @# 0x80
       ; capture output

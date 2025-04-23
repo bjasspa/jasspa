@@ -583,7 +583,7 @@ set-variable .bragDrawCard.slb "                                Heart           
       !endif
       set-variable .Brag.hhno &add .Brag.hhno 1
       !force set-registry "/history/brag/hno" .Brag.hhno
-      !force mark-registry "/history" "u"
+      !iif &not &seq &lef &reg "/history" "" 6 "tfs://"  !force mark-registry "/history" "u"
       set-variable .Brag.stt 1
     !elif &gre .Brag.stt 9
       set-variable .Brag.stt &mod .Brag.stt 10
