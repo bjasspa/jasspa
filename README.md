@@ -11,7 +11,7 @@
 [![Docu Wiki](https://img.shields.io/badge/Docu-Wiki-blue)](https://github.com/bjasspa/jasspa/wiki)
 [![Docu Wiki](https://img.shields.io/badge/Docu-Cheatsheet-blue)](https://github.com/bjasspa/jasspa/blob/main/microemacs/contribs/cheatsheet.md)
 
-![Ubuntu](https://github.com/bjasspa/jasspa/workflows/Build%20linux%20(Ubuntu-20)/badge.svg)
+![Ubuntu](https://github.com/bjasspa/jasspa/workflows/Build%20linux(Ubuntu-22)/badge.svg)
 ![Windows](https://github.com/bjasspa/jasspa/workflows/Build%20windows%20(Win-latest)/badge.svg)
 
 ![MacOS (apple)](https://github.com/bjasspa/jasspa/workflows/Build%20macos-apple%20(macos-latest)/badge.svg)
@@ -178,7 +178,7 @@ GPL - see the file [LICENSE](microemacs/LICENSE)
 
 - Dave Conroy         1985-1986
 - Daniel M. Lawrence  1986-1988  
-- John Green          1990-2024
-- Steven Phillips     1990-2024
-- Detlef Groth        2021-2024
+- John Green          1990-2025
+- Steven Phillips     1990-2025
+- Detlef Groth        2021-2025
 

@@ -1,4 +1,4 @@
-## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2025-02-23 21:46
+## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2025-04-23 07:31
 
 Homepage: [https://github.com/bjasspa/jasspa](https://github.com/bjasspa/jasspa)
 Help pages: [https://bjasspa.github.io/jasspa/](https://bjasspa.github.io/jasspa/)
@@ -14,7 +14,7 @@ __Installation (MacOS / Linux):__
 
 __Installation (Windows):__
 
-Download and Install: [Jasspa_MicroEmacs_20241101_installer_windows.msi](https://github.com/bjasspa/jasspa/releases/download/me_20241101/Jasspa_MicroEmacs_20241101_installer_windows.msi)
+Download and Install: [Jasspa_MicroEmacs_20250301_installer_windows.msi](https://github.com/bjasspa/jasspa/releases/download/me_20250301/Jasspa_MicroEmacs_20250301_installer_windows.msi)
 
 __User Setup:__
 
