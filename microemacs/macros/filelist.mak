@@ -15,7 +15,7 @@
 # EMFS:sh=ls *.emf
 EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	abbrev.emf	abbrlist.emf	aix.emf		\
-	benchmrk.emf	bintools.emf	bookmark.emf	brag.emf	\
+	bintools.emf	bookmark.emf	brag.emf	\
 	buffinit.emf	bytecomp.emf	\
 	calc.emf	cfind.emf	charset.emf	charsutl.emf	\
 	clearcs.emf	cmacros.emf	collapse.emf	comment.emf	\

@@ -11,8 +11,8 @@
 ;
 !if &set .about.hasssn &seq "R" &stat t &spr "%s%s.emf" &set .about.userpath &lef $progname &rsin "/" $progname $user-name
   set-variable $search-path &spr "%s%s%s" &set $user-path .about.userpath &con &band $system 0x80 ":" ";" $search-path
-!elif &set .about.hasssn &seq "D" &stat t &set .about.userpath &cat &set #l0 &stat a &spr "file:%s/jasspa/" &con &seq $platform "windows" $APPDATA "~/.config" &cat $user-name "/"
-  set-variable $search-path &spr "%s%s%smacros%s%sspelling%s%s" &set $user-path .about.userpath &set #l1 &con &band $system 0x80 ":" ";" #l0 #l1 #l0 #l1 $search-path
+!elif &set .about.hasssn &seq "D" &stat t &set .about.userpath &spr "%s%s/" $progdata $user-name
+  set-variable $search-path &spr "%s%s%smacros%s%sspelling%s%s" &set $user-path .about.userpath &set #l1 &con &band $system 0x80 ":" ";" $progdata #l1 $progdata #l1 $search-path
   set-variable .about.hasssn &seq "R" &stat t &spr "%s%s.emf" $user-path $user-name
 !endif
 execute-file "me"

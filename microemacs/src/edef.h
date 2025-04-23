@@ -152,6 +152,7 @@ extern  meUInt  meSystemCfg;            /* ME system config variable    */
 #endif
 #ifdef _WIN32
 extern  meUInt meSYSTEM_MASK;           /* ME system mask - dependant on win32 flavour */
+extern  meUByte *meProgData;            /* the program data path - AppData */
 #endif
 
 #define extRegCnt 1
@@ -539,8 +540,8 @@ int       thisIndex = -1 ;              /* The cur. user executed comm  */
 meIo      meior;                        /* The current I/O Read op      */
 meIo      meiow;                        /* The current I/O Write op     */
 meUShort  thiskey ;                     /* the current key              */
-meUByte   hexdigits[] = "0123456789ABCDEF";
-meUInt    cursorBlink = 0;              /* cursor-blink blink time      */
+meUByte   hexdigits[]="0123456789ABCDEF";
+meUInt    cursorBlink=0;                /* cursor-blink blink time      */
 int       blinkState=1;                 /* cursor blink state           */
 meColor   cursorColor=meCOLOR_FDEFAULT; /* cursor color                 */
 #if MEOPT_OSD
@@ -551,20 +552,20 @@ meScheme  mdLnScheme=meSCHEME_RDEFAULT; /* Mode line color scheme       */
 meScheme  sbarScheme=meSCHEME_RDEFAULT; /* Scroll bar color scheme      */
 meScheme  globScheme=meSCHEME_NDEFAULT; /* Global color scheme          */
 meScheme  trncScheme=meSCHEME_NDEFAULT; /* Truncate color scheme        */
-int       gsbarmode = (WMUP |           /* Has upper end cap            */
-                       WMDOWN |         /* Has lower end cap            */
-                       WMBOTTM |        /* Has a mode line character    */
-                       WMSCROL |        /* Has a box on scrolling shaft */
-                       WMRVBOX          /* Reverse video on box         */
+int       gsbarmode=(WMUP    |          /* Has upper end cap            */
+                     WMDOWN  |          /* Has lower end cap            */
+                     WMBOTTM |          /* Has a mode line character    */
+                     WMSCROL |          /* Has a box on scrolling shaft */
+                     WMRVBOX            /* Reverse video on box         */
 #if MEOPT_MOUSE                         /* only enable scroll bar by    */
                                         /* default if mouse is supported*/
-                       | WMSPLIT        /* Has a splitter               */
-                       | WMVBAR         /* Window has a vertical bar    */
+                     | WMSPLIT          /* Has a splitter               */
+                     | WMVBAR           /* Window has a vertical bar    */
 #endif
-                       );               /* global scroll bar mode       */
-meUByte   boxChars[BCLEN+1] =           /* Set of box characters        */
+                     );                 /* global scroll bar mode       */
+meUByte   boxChars[BCLEN+1]=            /* Set of box characters        */
 "|+++++++++-";
-meUByte   windowChars[WCLEN+1] =        /* Set of window characters     */
+meUByte   windowChars[WCLEN+1]=         /* Set of window characters     */
 {
     '=',                                /* Mode line current sep        */
     '-',                                /* Mode libe inactive sep       */
@@ -618,7 +619,7 @@ meUByte   windowChars[WCLEN+1] =        /* Set of window characters     */
     '$',                                /* text off screen to the right */
     '\\',                               /* split line char (ipipe)      */
     0
-} ;
+};
 meUByte   displayTab=' ';               /* tab \t display character     */
 meUByte   displayNewLine=' ';           /* new-line \n display character*/
 meUByte   displaySpace=' ';             /* space ' ' display character  */
@@ -627,19 +628,19 @@ meInt	  meGetKeyFirst=-1;             /* Push input key               */
 meUByte   thisflag;                     /* Flags, this command          */
 meUByte   lastflag;                     /* Flags, last command          */
 meUByte   alarmState=0;                 /* Unix auto-save alarm time    */
-meUByte   quietMode = 1 ;               /* quiet mode (0=bell)          */
-meUByte   scrollFlag = 1 ;              /* horiz/vert scrolling method  */
-meUByte   sgarbf = meTRUE;              /* meTRUE if screen is garbage  */
-meUByte   clexec = meFALSE;             /* command line execution flag  */
-meUByte   mcStore = meFALSE;            /* storing text to macro flag   */
+meUByte   quietMode=1;                  /* quiet mode (0=bell)          */
+meUByte   scrollFlag=1;                 /* horiz/vert scrolling method  */
+meUByte   sgarbf=meTRUE;                /* meTRUE if screen is garbage  */
+meUByte   clexec=meFALSE;               /* command line execution flag  */
+meUByte   mcStore=meFALSE;              /* storing text to macro flag   */
 #if MEOPT_DEBUGM
-meUByte   macbug = 0 ;                  /* macro debuging flag          */
+meUByte   macbug=0;                     /* macro debuging flag          */
 #endif
-meUByte   cmdstatus = meTRUE;           /* last command status          */
+meUByte   cmdstatus=meTRUE;             /* last command status          */
 meUByte   kbdmode=meSTOP;               /* current keyboard macro mode  */
 meUByte   lastReplace=0;                /* set to non-zero if last was a replace */
 meUByte   modeLineFlags=                /* current modeline flags       */
-(WFMODE|WFRESIZE|WFMOVEL) ;
+(WFMODE|WFRESIZE|WFMOVEL);
 meUInt    meSystemCfg=                  /* ME system config variable    */
 #ifdef _DOS
 (meSYSTEM_CONSOLE|meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR|meSYSTEM_OSDCURSOR|meSYSTEM_MSSYSTEM|meSYSTEM_DRIVES|meSYSTEM_DOSFNAMES|meSYSTEM_TABINDANY|meSYSTEM_ALTMENU|meSYSTEM_ALTPRFX1) ;
@@ -649,7 +650,7 @@ meUInt    meSystemCfg=                  /* ME system config variable    */
 #if MEOPT_IPIPES
  |meSYSTEM_IPIPES
 #endif
- ) ;
+);
 #endif
 #ifdef _UNIX
 (meSYSTEM_RGBCOLOR|meSYSTEM_FONTS|meSYSTEM_OSDCURSOR|meSYSTEM_UNIXSYSTEM|meSYSTEM_IPIPES|meSYSTEM_TABINDANY|meSYSTEM_ALTMENU|meSYSTEM_ALTPRFX1) ;
@@ -660,7 +661,8 @@ meUInt    meSYSTEM_MASK=                /* ME system mask - dependant on win32 f
 #if !defined (_WIN32s)
  |meSYSTEM_CLNTSRVR
 #endif
- ) ;
+);
+meUByte *meProgData=NULL;               /* the program data path - AppData */
 #endif
 
 meUByte *extRegLst[extRegCnt] = {(meUByte *) ".erf"};

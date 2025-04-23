@@ -220,7 +220,7 @@ set-variable .new-user.pathdiv &con &band $system 0x80 ":" ";"
     ; user has not fixed the environment, searching paths are being used.
     ; Therefore if the current $user-path is not a jasspa path we can
     ; create one and ME will automatically find it.
-    !iif &seq &lef &set #l2 $user-path 6 "tfs://"  set-variable #l2 $home
+    !iif &seq &lef &set #l2 $user-path 6 "tfs://"  set-variable #l2 $progdata
     !if &and &not &seq #l2 $home &seq &rig #l2 &sub 0 &len &set #l0 &spr "/%s/" $user-name #l0
       ; Not ~/ and ends in "/<user>/", this is okay as is
       set-variable .new-user.user-path #l2
@@ -228,15 +228,12 @@ set-variable .new-user.pathdiv &con &band $system 0x80 ":" ";"
       !if &seq &rig #l2 &sub 0 &len &set #l0 "/jasspa/" #l0
         ; ends in "/jasspa/", we need to append user-name to ensure its user specific and will isolate from other users and mes' meuser
         set-variable .new-user.user-path &spr "%s%s/" #l2 $user-name
-      !elif &not &band $system 0x80
-        ; if not UNIX add 'jasspa/<user>/' to current $user-path.
-        set-variable .new-user.user-path &spr "%sjasspa/%s/" #l2 $user-name
-      !elif &seq #l2 &stat a "~/"
-        ; if UNIX and the current $user-path is the home directory add a .config/jasspa/<user>/
-        set-variable .new-user.user-path &spr "%s.config/jasspa/%s/" #l2 $user-name
+      !elif &len $progdata
+        ; if $progdata is set then use that
+        set-variable .new-user.user-path &spr "%s%s/" $progdata $user-name
       !else
-        ; Otherwise add 'jasspa/<user>/' to current $user-path.
-        set-variable .new-user.user-path &spr "%sjasspa/%s/" #l2 $user-name
+        ; Best we can do is use $home (~/) as a base if set, if not the local dir but that is bad but unlikely
+        set-variable .new-user.user-path &stat a &spr "%s./jasspa/%s/" $home $user-name
       !endif
       !if &seq &set #l0 &stat "t" .new-user.user-path "X"
         ; we will create this path which should mean that ME will ignore the current $user-path 

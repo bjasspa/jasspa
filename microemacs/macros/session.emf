@@ -459,7 +459,6 @@ define-macro read-session
         !while &len &set #l3 &lget @wl 1
           2 search-buffer "eM" "\b"
           set-mark
-          backward-char
           search-buffer "em" "\b$"
           backward-char
           copy-region
@@ -472,7 +471,6 @@ define-macro read-session
         !while &len &set #l3 &lget @wl 1
           2 search-buffer "eM" "\b"
           set-mark
-          backward-char
           search-buffer "em" "\b$"
           backward-char
           copy-region

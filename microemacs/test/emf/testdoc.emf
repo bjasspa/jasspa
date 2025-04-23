@@ -69,6 +69,8 @@ Here an example link: [user-setup(3)](user-setup\(3\)), [%test-doc(5)](%test-doc
 set-variable %test-doc 42
 
 define-help "%test-doc" 5
+! 3 test-txt
+!44 &tdocument
 ## NAME
 
 __%test-doc__ - this is a test variable
