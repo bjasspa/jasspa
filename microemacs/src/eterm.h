@@ -181,7 +181,6 @@ extern char  *CM, *CL;
                          (TTbreakCnt=TTBREAKCNT,TTahead(),TTbreakFlag)))
 #ifdef _ME_CONSOLE
 #ifdef _TCAP
-#include <term.h>
 
 /* Following are termcap function */
 extern int TCAPstart(void);
