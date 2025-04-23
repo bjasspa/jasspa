@@ -1179,6 +1179,9 @@ gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
     case EVMODELINE:    return modeLineStr;
     case EVPLATFORM:    return machineName;
     case EVPROGDT:
+#ifdef _WIN32
+        return mePtos(meProgData);
+#else
         if(homedir == NULL)
             return emptym;
         meStrcpy(evalResult,homedir);
@@ -1188,6 +1191,7 @@ gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
         meStrcat(evalResult,".config/jasspa/");
 #endif
         return evalResult;
+#endif
     case EVPROGNM:      return meProgName;
     case EVCURSORX:     return meItoa(frameCur->mainColumn);
     case EVCURSORY:     return meItoa(frameCur->mainRow);

@@ -5506,39 +5506,30 @@ meSetupProgname(char *progname)
 void
 meSetupPathsAndUser(void)
 {
-    char *ss, *appData, buff[meBUF_SIZE_MAX], appDataBuff[meBUF_SIZE_MAX];
-    int ii, ll, gotPaths;
-#if (defined CSIDL_APPDATA)
-    LPITEMIDLIST idList;
-#endif
+    char *ss, buff[meBUF_SIZE_MAX], pdBuf[meBUF_SIZE_MAX];
+    int pdLen, ii, ll, gotPaths;
     
 #if (defined CSIDL_APPDATA)
-    /* Get a pointer to an item ID list that represents the path of a
-     * special folder */
-    appDataBuff[0] = '\0';
-    if(SUCCEEDED(SHGetSpecialFolderLocation(NULL,CSIDL_APPDATA,&idList)) && (idList != NULL))
+#if meBUF_SIZE_MAX < MAX_PATH
+#error meBUF_SIZE_MAX too small, must be at least MAX_PATH
+#endif
+    if((SHGetFolderPath(NULL,CSIDL_APPDATA|CSIDL_FLAG_CREATE,NULL,0,pdBuf) != S_OK) || (pdBuf[0] != '\0'))
+#endif
     {
-        IMalloc *im;
-        SHGetPathFromIDList(idList, appDataBuff);
-        if(SUCCEEDED(SHGetMalloc(&im)) && (im != NULL))
-        {
-            im->lpVtbl->Free(im,idList);
-            im->lpVtbl->Release(im);
-        }
-    }
-    
-    if(appDataBuff[0] != '\0')
-        appData = appDataBuff;
-    else
-#endif
         /* get the windows user application data path */
         if(((ss = meGetenv("APPDATA")) != NULL) && (ss[0] != '\0'))
-    {
-        strcpy(appDataBuff,ss);
-        appData = appDataBuff;
+            strcpy(pdBuf,ss);
+        else
+            pdBuf[0] = '\0';
     }
-    else
-        appData = NULL;
+    if(((pdLen=strlen(pdBuf)) > 0) && ((meProgData=meMalloc(pdLen+9)) != NULL))
+    {
+        fileNameConvertDirChar(pdBuf);
+        if(pdBuf[pdLen-1] != DIR_CHAR)
+            pdBuf[pdLen++] = DIR_CHAR;
+        memcpy(pdBuf+pdLen,"jasspa/",8);
+        memcpy(meProgData,pdBuf,pdLen+8);
+    }
     
     /* meUserPath & searchPath may not be null due to -v command-line option */ 
     if((((ss = (char *) meUserPath) != NULL) && (ss[0] != '\0')) ||
@@ -5595,14 +5586,12 @@ meSetupPathsAndUser(void)
             strcpy(buff,ss);
             ll = mePathAddSearchPath(ll,evalResult,(meUByte *) buff,6,&gotPaths);
         }
-        if((appData != NULL) && (gotPaths != 0x0f))
+        if((meProgData != NULL) && (gotPaths != 0x0f))
         {
             /* look for the user's area in $APPDATA/jasspa directory - an exception here, if we find macros or spelling here
              * still look for it in the program area as this may just contain downloaded help and spelling packages */
             ii = gotPaths;
-            strcpy(buff,appData);
-            strcat(buff,"/jasspa");
-            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) buff,6,&ii);
+            ll = mePathAddSearchPath(ll,evalResult,(meUByte *) pdBuf,6,&ii);
             gotPaths |= (ii & 0x0c);
         }
         
@@ -5646,7 +5635,10 @@ meSetupPathsAndUser(void)
     }
     
     if((((ss = meGetenv("HOME")) != NULL) && (ss[0] != '\0')) ||
-       ((ss = appData) != NULL))
+#if (defined CSIDL_PROFILE)
+       ((SHGetFolderPath(NULL,CSIDL_PROFILE|CSIDL_FLAG_CREATE,NULL,0,buff) == S_OK) && ((ss=buff)[0] != '\0')) ||
+#endif
+       ((ss = meProgData) != NULL))
         fileNameSetHome((meUByte *) ss);
 }
 
