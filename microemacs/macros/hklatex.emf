@@ -58,6 +58,8 @@ set-variable .fhook-latex.item-list-s5 "^[ \t]*\\\\subsubsection\\*?{\\([^}]*\\)
 set-variable .fhook-latex.item-list-r5 "SSSc \ecB\\1\ecA"
 set-variable .fhook-latex.item-list-s6 "^[ \t]*\\\\markboth\\*?{\\([^}]*\\)}"
 set-variable .fhook-latex.item-list-r6 "Mark \ecB\\1\ecA"
+set-variable .fhook-latex.item-list-s7 "^[ \t]*\% TODO: ?\\(.*\\)"
+set-variable .fhook-latex.item-list-r7 "Todo \ecB\\1\ecA"
 
 set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*%\\|^[ \t]*$\\|^[ \t]*\\\\\\(newpag\\|section\\|chap\\|subsec\\|subsubsec\\|label\\|begin\\|paragraph\\|subparagraph\\|end\\)\\)"
 
