@@ -217,7 +217,8 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*%\\|^[ \t]*$\\|^[ \t]*\
   hilight .hilight.latex 0 "\\\\texttt"                          .scheme.operator
   hilight .hilight.latex 0 "\\\\textcolor"                       .scheme.operator
   hilight .hilight.latex 0 "\\\\textnormal"                      .scheme.operator
-  
+  ; TODO's
+  hilight .hilight.latex 18 "%\\s+[Tt][Oo][Dd][Oo]" .scheme.operator
   ;; simulation hilighting
   set-variable #l2 &rig $box-chars 10
   0 hilight .hilight.latexs 0                                           $global-scheme
