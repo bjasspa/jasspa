@@ -38,10 +38,17 @@ AR       = ar
 RM       = rm -f
 RMDIR    = rm -rf
 
+include evers.mak
+
 TOOLKIT  = gcc
 TOOLKIT_VER = $(shell $(CC) -dumpversion)
 
+ifneq "$(ARCHITEC)" ""
+else ifeq "$(shell uname -m | cut -c 1-3)" "arm"
+ARCHITEC = arm
+else
 ARCHITEC = intel
+endif
 ifeq (,$(BIT_SIZE))
 BIT_SIZE = $(shell getconf LONG_BIT)
 else
@@ -50,8 +57,6 @@ endif
 
 PLATFORM = linux
 PLATFORM_VER = $(shell uname -r | cut -f 1 -d .)
-
-include evers.mak
 
 MAKEFILE = $(PLATFORM)$(TOOLKIT)
 ifeq (1,$(BPRF))

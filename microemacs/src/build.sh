@@ -110,12 +110,7 @@ if [ -z "$MAKEFILE" ] ; then
             MAKEBAS=darwin
         fi
     elif [ $PLATFORM = "Linux" ] ; then
-        MACHINE=`uname -m | cut -c 1-3`
-        if [ $MACHINE = "arm" ] ; then
-            MAKEBAS=zaurus
-        else
-            MAKEBAS=linux
-        fi
+        MAKEBAS=linux
     elif   [ $PLATFORM = "AIX" ] ; then
         VERSION=`uname -v`
         if [ $VERSION = 5 ] ; then

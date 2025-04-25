@@ -34,8 +34,13 @@ RMDIR    = rm -rf
 TOOLKIT  = gcc
 TOOLKIT_VER = $(shell $(CC) -dumpversion)
 
+ifneq "$(ARCHITEC)" ""
+else ifeq "$(shell uname -m | cut -c 1-3)" "arm"
+ARCHITEC = arm
+else
 ARCHITEC = intel
-ifeq "$(BIT_SIZE)" ""
+endif
+ifeq (,$(BIT_SIZE))
 BIT_SIZE = $(shell getconf LONG_BIT)
 else
 BIT_OPT  = -m$(BIT_SIZE)
@@ -45,14 +50,14 @@ PLATFORM = linux
 PLATFORM_VER = $(shell uname -r | cut -f 1 -d .)
 
 MAKEFILE = $(PLATFORM)$(TOOLKIT)
-ifeq "$(BPRF)" "1"
+ifeq (1,$(BPRF))
 BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)p
 else
 BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
 endif
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
-TRDPARTY = ..
+TRDPARTY = ../3rdparty
 
 CCDEFS   = $(BIT_OPT) -D_LINUX -D_$(BIT_SIZE)BIT -DZ7_ST -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I.
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wno-uninitialized
