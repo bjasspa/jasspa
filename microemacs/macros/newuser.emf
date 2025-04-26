@@ -345,7 +345,7 @@ set-variable .new-user.pathdiv &con &band $system 0x80 ":" ";"
   ; create the user-path if required
   !if &exi .new-user.create-path
     insert-string &spr "Creating User Path: %s ... " .new-user.create-path
-    ; may need to create the ~/.config dir first
+    ; may need to create the ~/.config/jasspa dirs first
     !iif &not &seq "D" &stat "t" &set #l1 &stat a &cat .new-user.create-path "../.." !force !force 0x105 file-op #l1
     !iif &not &seq "D" &stat "t" &set #l1 &stat a &cat .new-user.create-path ".." !force !force 0x105 file-op #l1
     !force !force 0x100 file-op &lef .new-user.create-path -1

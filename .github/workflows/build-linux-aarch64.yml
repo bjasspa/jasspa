@@ -1,0 +1,100 @@
+name: Build linux aarch64 (pios-6.6)
+
+on:
+  workflow_dispatch:
+    inputs:
+      refToBuild:
+        description: 'Branch, tag or commit SHA1 to build'
+        default: ''
+        required: false
+        type: string
+
+      refToHelpAsset:
+        description: 'Run-ID of build with help-ehf asset (not used)'
+        default: ''
+        required: false
+        type: string
+
+jobs:
+  build:
+    runs-on: pios64-6.6
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+
+    steps:
+      - name: Install dependencies
+        run: |
+           echo INFO: uname -a
+           uname -a
+        
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.refToBuild }}
+
+      - name: Compile linux-aarch64 mec
+        run: |
+          mkdir downloads
+          mkdir packages
+              cd ./microemacs/src
+          ./build.sh -t c
+
+      - name: Compile linux-aarch64 mew
+        run: |
+          cd ./microemacs/src
+          ./build.sh -t w
+
+      - name: Create linux-aarch64 binaries download
+        run: |
+          cd ./microemacs/bin
+          mv linux6-aarch64-* linux6-aarch64
+          rm ./.gitignore
+          cd ..
+          mv release_readme.txt readme.txt
+          export MEVER=`./bin/linux6-aarch64/mec -p @contribs/ver.emf`
+          zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_linux_aarch_binaries bin LICENSE readme.txt
+
+      - name: Create linux-aarch mesc
+        run: |
+          export MEVER=`./microemacs/bin/linux6-aarch64/mec -p @microemacs/contribs/ver.emf`
+          cd ./microemacs/mesingle
+          rm -rf bin
+          mkdir -p bin/linux6-aarch64
+          ../bin/linux6-aarch64/mec -p "@./mesgen" -f -p ../bin/linux6-aarch64/mec -t ../bin/linux6-aarch64/tfs -o bin/linux6-aarch64/mesc
+          cp ../LICENSE ./
+          cp ../readme.txt ./
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_linux_aarch_mesc bin LICENSE readme.txt
+
+      - name: Create linux-aarch mesw
+        run: |
+          export MEVER=`./microemacs/bin/linux6-aarch64/mec -p @microemacs/contribs/ver.emf`
+          cd ./microemacs/mesingle
+          rm -rf bin
+          mkdir -p bin/linux6-aarch64
+          ../bin/linux6-aarch64/mec -p "@./mesgen" -f -p ../bin/linux6-aarch64/mew -t ../bin/linux6-aarch64/tfs -o bin/linux6-aarch64/mesw
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_linux_aarch_mesw bin LICENSE readme.txt
+
+      - name: Create linux-aarch OpenSSL download
+        run: |
+          cd ./microemacs/
+          export MEVER=`./bin/linux6-aarch64/mec -p @contribs/ver.emf`
+          rm -rf tfs
+          mkdir -p tfs/bin/linux6-aarch64
+          cd tfs/bin/linux6-aarch64
+          cp /usr/lib/aarch64-linux-gnu/libcrypto.so .
+          cp /usr/lib/aarch64-linux-gnu/libssl.so .
+          cd ../..
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_bin_linux_aarch_openssl bin
+          cd ..
+          ./bin/linux6-aarch64/tfs ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_linux6_aarch64.tfs tfs
+
+      - name: Upload linux-aarch downloads
+        uses: actions/upload-artifact@v4
+        with: 
+          name: linux-aarch-downloads
+          path: downloads
+          
+      - name: Upload linux-aarch packages
+        uses: actions/upload-artifact@v4
+        with: 
+          name: linux-aarch-packages
+          path: packages
