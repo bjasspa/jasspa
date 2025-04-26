@@ -35,8 +35,10 @@ TOOLKIT  = gcc
 TOOLKIT_VER = $(shell $(CC) -dumpversion)
 
 ifneq "$(ARCHITEC)" ""
+else ifeq "$(shell uname -m | cut -c 1-5)" "aarch"
+ARCHITEC = aarch
 else ifeq "$(shell uname -m | cut -c 1-3)" "arm"
-ARCHITEC = arm
+ARCHITEC = aarch
 else
 ARCHITEC = intel
 endif
