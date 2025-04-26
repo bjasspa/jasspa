@@ -2055,16 +2055,16 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
 
 #endif
 #ifdef _UNIX
-    ll = meStrlen(comStr) ;
+    ll = meStrlen(comStr);
     if((cl = meMalloc(ll + 17)) == NULL)
-        return meFALSE ;
+        return meFALSE;
     
     if((ss=meStrchr(comStr,'|')) == NULL)
-        ss = comStr + ll ;
+        ss = comStr + ll;
     else
-        ll = (size_t)(ss - comStr) ;
+        ll = (size_t)(ss - comStr);
     
-    meStrncpy(cl,comStr,ll) ;
+    meStrncpy(cl,comStr,ll);
     cl[ll] = '\0' ;
     /* if no data is piped in then pipe in /dev/null */
     if(meStrchr(cl,'<') == NULL)
@@ -2075,9 +2075,8 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
     /* merge stderr and stdout */
     memcpy(cl+ll," 2>&1",5);
     ll += 5;
-    meStrcpy(cl+ll,ss) ;
+    meStrcpy(cl+ll,ss);
     
-    TTclose();				/* stty to old modes    */
     /* Must flag to our sigchild handler that we are running a piped command
      * otherwise it will call waitpid with -1 and loose the exit status of
      * this process */
@@ -2086,10 +2085,9 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
     /* With no buffer fname swbuffer -> readin -> ffReadFile will assume its pipe and we must set and close meior.fp */
     meior.fp = pfp;
     if(cd)
-        meChdir(curdir) ;
-    TTopen();
+        meChdir(curdir);
     TTflush();
-    meFree(cl) ;
+    meFree(cl);
 #endif
     if((flags & LAUNCH_RAW) == 0)
     {
@@ -2276,7 +2274,6 @@ meFilter(int f, int n)
     sgarbf = meTRUE;
 #endif
 #ifdef _UNIX
-    TTclose();			/* stty to old modes	*/
     meStrcat(line," <");
     meStrcat(line,filnam1);
     meStrcat(line," >");
@@ -2289,7 +2286,6 @@ meFilter(int f, int n)
         else
             mlwrite(MWCURSOR|MWWAIT,(meUByte *)"exit status %d, errno %d",exitstatus,errno);
     }
-    TTopen();
     sgarbf = meTRUE;
     s = meTRUE;
 #endif

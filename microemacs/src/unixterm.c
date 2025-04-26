@@ -555,13 +555,16 @@ meSetupPathsAndUser(void)
        ((ss = meGetenv ("MENAME")) != NULL) && (ss[0] != '\0'))
         meUserName = meStrdup(ss) ;
     
+    /* get the users home directory, priority is to the env. var as this can be customised by user */
+    if(((ss = meGetenv("HOME")) != NULL) && (ss[0] != '\0'))
+        fileNameSetHome(ss);
+    
     /* Get the user name and home directory from the password file. */
     pwdp = getpwuid(meUid);         /* Get the password entry */
     if(pwdp != NULL)
     {
-        /* Copy out the string information we need and initialise the
-         * string variables. */
-        if(pwdp->pw_dir != NULL)
+        /* Copy out the string information we need and initialise the string variables. */
+        if((homedir == NULL) && (pwdp->pw_dir != NULL))
             fileNameSetHome((meUByte *) pwdp->pw_dir);
         if((pwdp->pw_name != NULL) && (meUserName == NULL))
             meUserName = meStrdup((meUByte *) pwdp->pw_name);
@@ -573,11 +576,6 @@ meSetupPathsAndUser(void)
     /* If no name yet then set to default 'user'. */
     if(meUserName == NULL)
         meUserName = meStrdup((meUByte *) "user");
-    
-    /* get the users home directory, user path and search path */
-    if((homedir == NULL) &&
-       ((ss = meGetenv("HOME")) != NULL) && (ss[0] != '\0'))
-        fileNameSetHome(ss);
     
     /* meUserPath & searchPath may not be null due to -v command-line option */ 
     if((((ss = meUserPath) != NULL) && (ss[0] != '\0')) ||

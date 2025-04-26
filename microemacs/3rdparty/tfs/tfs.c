@@ -18,7 +18,7 @@
 #include "Lzma2Dec.h"
 
 #ifndef NDEBUG
-#define TFS_DEBUG_ENABLE  1
+#define TFS_DEBUG_ENABLE 0
 #endif
 
 #if TFS_DEBUG_ENABLE

@@ -211,6 +211,8 @@ set-variable .new-user.pathdiv &con &band $system 0x80 ":" ";"
       insert-string "this problem by creating the directory or deleting\n"
       insert-string "the environment variable. Quit MicroEmacs, fix the\n"
       insert-string "problem and then restart.\n\nPress any key to Exit (C-g to Abort):"
+      -1 recenter
+      2 screen-update
       set-variable .new-user.exit 0
       set-variable #l0 @mc "Press any key to Exit: "
       set-variable .new-user.exit 4
@@ -232,8 +234,20 @@ set-variable .new-user.pathdiv &con &band $system 0x80 ":" ";"
         ; if $progdata is set then use that
         set-variable .new-user.user-path &spr "%s%s/" $progdata $user-name
       !else
-        ; Best we can do is use $home (~/) as a base if set, if not the local dir but that is bad but unlikely
-        set-variable .new-user.user-path &stat a &spr "%s./jasspa/%s/" $home $user-name
+        ; if $progdata is an empty string then this setup is not stable, throw error.
+        !if &seq $platform "windows"
+          insert-string "\nERROR: MicroEmacs is unable to get your application data directory.\n\n%APPDATA%/jasspa"
+        !else
+          insert-string "\nERROR: MicroEmacs is unable to get your user home directory.\n\n~/.config/jasspa"
+        !endif
+        insert-string " is the default location for your\nconfiguration files, this can be changed by setting\nthe environment variable $MEUSERPATH or $MEPATH.\n\n"
+        insert-string "Quit MicroEmacs, fix the problem and then restart.\n\nPress any key to Exit (C-g to Abort):"
+        -1 recenter
+        2 screen-update
+        set-variable .new-user.exit 0
+        set-variable #l0 @mc "Press any key to Exit: "
+        set-variable .new-user.exit 4
+        !return
       !endif
       !if &seq &set #l0 &stat "t" .new-user.user-path "X"
         ; we will create this path which should mean that ME will ignore the current $user-path 
