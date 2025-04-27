@@ -1,4 +1,4 @@
-name: Build linux aarch64 (pios-6.6)
+name: Build linux aarch 64 (pios-6.6)
 
 on:
   workflow_dispatch:

@@ -1,4 +1,4 @@
-name: Build windows (Win-latest)
+name: Build windows intel 32 (Win-latest)
 
 on:
   workflow_dispatch:
