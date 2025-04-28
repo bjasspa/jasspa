@@ -18,7 +18,8 @@ on:
 jobs:
   build:
     strategy:
-      matrix: [ pios64-6.6 ] 
+      matrix: 
+        os: [ pios64-6.6 ] 
     runs-on: ${{ matrix.os }} 
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
