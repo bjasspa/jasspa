@@ -18,7 +18,8 @@ on:
 jobs:
   build:
     strategy:
-      matrix: [ ubuntu-22.04-arm ] 
+      matrix: 
+        os: [ ubuntu-22.04-arm ] 
     runs-on: ${{ matrix.os }} 
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
