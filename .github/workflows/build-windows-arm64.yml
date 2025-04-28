@@ -1,0 +1,172 @@
+name: Build windows arm 64 (Win-latest)
+
+on:
+  workflow_dispatch:
+    inputs:
+      refToBuild:
+        description: 'Branch, tag or commit SHA1 to build'
+        default: ''
+        required: false
+        type: string
+
+      refToHelpAsset:
+        description: 'Run-ID of build with help-ehf asset'
+        default: ''
+        required: false
+        type: string
+
+jobs:
+  build:
+    runs-on: windows-latest
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+
+    steps:
+      - name: Find VS
+        shell: pwsh
+        run: |
+          $installationPath = Get-VSSetupInstance `
+            | Select-VSSetupInstance -Require Microsoft.VisualStudio.Workload.NativeDesktop -Latest `
+            | Select-Object -ExpandProperty InstallationPath
+          Write-Output "VSDEVCMD=${installationPath}\Common7\Tools\VsDevCmd.bat" `
+            | Out-File -FilePath "${Env:GITHUB_ENV}" -Append
+          cat "${Env:GITHUB_ENV}"
+          
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.refToBuild }}
+
+      - name: Download pre-built OpenSSL
+        shell: pwsh
+        run: |
+          cd .\microemacs\3rdparty
+          Invoke-WebRequest https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.5.0.zip -OutFile openssl.zip
+          Expand-Archive -Path .\openssl.zip -DestinationPath .
+          dir .
+          
+      - name: Compile windows100 mec
+        shell: pwsh
+        run: |
+          & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=x64 -no_logo && set" `
+            | % { , ($_ -Split '=', 2) } `
+            | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
+          nmake -f winmsvc.mak BTYP=c
+        working-directory: ./microemacs/src
+
+      - name: Compile windows100 mew
+        shell: pwsh
+        run: |
+          & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=x64 -no_logo && set" `
+            | % { , ($_ -Split '=', 2) } `
+            | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
+          nmake -f winmsvc.mak BTYP=w
+        working-directory: ./microemacs/src
+
+      - name: Create windows100 bin download
+        shell: pwsh
+        run: |
+          mkdir -Path downloads
+          mkdir -Path packages
+          cd .\microemacs\bin
+          Remove-Item .gitignore
+          Rename-Item -Path windows100-arm64-msvc17 -NewName windows100-arm64
+          cd ..
+          Rename-Item -Path release_readme.txt -NewName readme.txt
+          $env:MEVER=$(.\bin\windows100-arm64\mec -p @contribs/ver.emf)
+          Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_windows_binaries
+
+      - name: Create windows100 openssl download
+        shell: pwsh
+        run: |
+          cd .\microemacs
+          $env:MEVER=$(.\bin\windows100-arm64\mec -p @contribs/ver.emf)
+          cd .\3rdparty\arm64\bin
+          mkdir -Path tfs\bin\windows100-arm64
+          Copy-Item -Path libssl-3.dll -Destination tfs\bin\windows100-arm64
+          Copy-Item -Path libcrypto-3.dll -Destination tfs\bin\windows100-arm64
+          Copy-Item -Path ..\..\version.txt -Destination tfs\bin\windows100-intel32
+          Copy-Item -Path ..\..\LICENSE.txt -Destination tfs\bin\windows100-arm64
+          cd tfs
+          Compress-Archive -Path bin -DestinationPath ..\..\..\..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_windows_openssl.zip
+          cd ..
+          ..\..\..\..\bin\windows100-arm64\tfs ../../../../../packages/Jasspa_MicroEmacs_${env:MEVER}_openssl_windows100_arm64.tfs tfs
+
+      - name: Get ehf help file
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          run_id: ${{ inputs.refToHelpAsset }}
+          workflow: build-linux.yml
+          name: help-ehf
+          path: ./microemacs
+          search_artifacts: true
+
+      - name: Create windows MSI installer
+        shell: pwsh
+        run: |
+          $env:Path = $env:WIX + 'bin;' + $env:Path
+          cd .\microemacs
+          $env:MEVER=$(.\bin\windows100-arm64\mec -p @contribs/ver.emf)
+          $env:MEVERDT=$(.\bin\windows100-arm64\mec -p @contribs/ver.emf -f MEVERDT)
+          $env:MEVERYR=$(.\bin\windows100-arm64\mec -p @contribs/ver.emf -f MEVERYR)
+          cd .\wix
+          Copy-Item -Path ..\bin\windows100-arm64\mew.exe -Destination .
+          Copy-Item -Path ..\bin\windows100-arm64\mec.exe -Destination .
+          Copy-Item -Path ..\LICENSE -Destination .
+          ..\bin\windows100-arm64\mec.exe -p "@./meigen"
+          Copy-Item -Path ..\me.ehf -Destination macros
+          heat dir macros -o jmeMacros.wxs -scom -frag -srd -sreg -gg -cg MacrosGroupId -dr jmeMacrosDirRef
+          candle -ext WixUIExtension -ext WixUtilExtension jme.wxs jmeMacros.wxs
+          light -ext WixUIExtension -ext WixUtilExtension -o Jasspa_MicroEmacs_${env:MEVER}_installer_windows.msi -loc jme.wxl jme.wixobj jmeMacros.wixobj -b macros
+          Copy-Item -Path Jasspa_MicroEmacs_${env:MEVER}_installer_windows.msi -Destination ..\..\downloads
+
+      - name: Compile windows100 static mec
+        shell: pwsh
+        run: |
+          & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=x64 -no_logo && set" `
+            | % { , ($_ -Split '=', 2) } `
+            | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
+          nmake -f winmsvc.mak BTYP=c LSTT=1
+        working-directory: ./microemacs/src
+
+      - name: Create windows100 mesc
+        shell: pwsh
+        run: |
+          cd .\microemacs
+          $env:MEVER=$(.\bin\windows100-arm64\mec -p @contribs/ver.emf)
+          cd .\mesingle
+          mkdir -Path bin\windows100-arm64
+          ..\bin\windows100-arm64\mec.exe -p "@./mesgen" -f -p ..\bin\windows100-arm64-msvc17s\mec.exe -t ..\bin\windows100-arm64\tfs.exe -o bin\windows100-arm64\mesc.exe
+          Copy-Item -Path ..\LICENSE -Destination .
+          Copy-Item -Path ..\readme.txt -Destination .
+          Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_mesc
+
+      - name: Compile windows100 static mew
+        shell: pwsh
+        run: |
+          & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=x64 -no_logo && set" `
+            | % { , ($_ -Split '=', 2) } `
+            | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
+          nmake -f winmsvc.mak BTYP=w LSTT=1
+        working-directory: ./microemacs/src
+
+      - name: Create windows100 mesw
+        shell: pwsh
+        run: |
+          cd .\microemacs
+          $env:MEVER=$(.\bin\windows100-arm64\mec -p @contribs/ver.emf)
+          cd .\mesingle
+          Remove-Item bin\windows100-arm64\mesc.exe
+          ..\bin\windows100-arm64\mec.exe -p "@./mesgen" -f -p ..\bin\windows100-arm64-msvc17s\mew.exe -t ..\bin\windows100-arm64\tfs.exe -o bin\windows100-arm64\mesw.exe
+          Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_mesw
+
+      - name: Upload Packages
+        uses: actions/upload-artifact@v4
+        with: 
+          name: windows100-downloads
+          path: downloads
+
+      - name: Upload windows100 packages
+        uses: actions/upload-artifact@v4
+        with: 
+          name: windows100-packages
+          path: packages
