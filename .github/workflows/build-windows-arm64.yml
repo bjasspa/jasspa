@@ -50,7 +50,7 @@ jobs:
           & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=x64 -no_logo && set" `
             | % { , ($_ -Split '=', 2) } `
             | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
-          nmake -f winmsvc.mak BTYP=c
+          nmake -f winmsvc.mak BTYP=c BITSIZE=64 ARCHITECT=arm
         working-directory: ./microemacs/src
 
       - name: Compile windows100 mew
@@ -59,7 +59,7 @@ jobs:
           & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=x64 -no_logo && set" `
             | % { , ($_ -Split '=', 2) } `
             | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
-          nmake -f winmsvc.mak BTYP=w
+          nmake -f winmsvc.mak BTYP=w BITSIZE=64 ARCHITECT=arm
         working-directory: ./microemacs/src
 
       - name: Create windows100 bin download
@@ -84,7 +84,7 @@ jobs:
           mkdir -Path tfs\bin\windows100-arm64
           Copy-Item -Path libssl-3.dll -Destination tfs\bin\windows100-arm64
           Copy-Item -Path libcrypto-3.dll -Destination tfs\bin\windows100-arm64
-          Copy-Item -Path ..\..\version.txt -Destination tfs\bin\windows100-intel32
+          Copy-Item -Path ..\..\version.txt -Destination tfs\bin\windows100-arm64
           Copy-Item -Path ..\..\LICENSE.txt -Destination tfs\bin\windows100-arm64
           cd tfs
           Compress-Archive -Path bin -DestinationPath ..\..\..\..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_windows_openssl.zip
