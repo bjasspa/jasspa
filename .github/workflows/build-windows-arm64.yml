@@ -59,7 +59,7 @@ jobs:
           & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=x64 -no_logo && set" `
             | % { , ($_ -Split '=', 2) } `
             | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
-          nmake -f winmsvc.mak BTYP=c BITSIZE=64 ARCHITECT=arm
+          nmake -f winmsvc.mak BTYP=c BIT_SIZE=64 ARCHITEC=arm
         working-directory: ./microemacs/src
 
       - name: Compile windows100 mew
@@ -68,7 +68,7 @@ jobs:
           & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=x64 -no_logo && set" `
             | % { , ($_ -Split '=', 2) } `
             | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
-          nmake -f winmsvc.mak BTYP=w BITSIZE=64 ARCHITECT=arm
+          nmake -f winmsvc.mak BTYP=w BIT_SIZE=64 ARCHITEC=arm
         working-directory: ./microemacs/src
 
       - name: Create windows100 bin download
