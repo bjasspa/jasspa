@@ -60,9 +60,9 @@ jobs:
             | % { , ($_ -Split '=', 2) } `
             | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
           nmake -f winmsvc.mak BTYP=c BIT_SIZE=64 ARCHITEC=arm
-          dir .\windows100-arm64-msvc17-release-mec\*
-          .\windows100-arm64-msvc17-release-mec\mec.exe -V
-          .\windows100-arm64-msvc17-release-mec\mec.exe -h          
+          dir .\.windows100-arm64-msvc17-release-mec\*
+          .\.windows100-arm64-msvc17-release-mec\mec.exe -V
+          .\.windows100-arm64-msvc17-release-mec\mec.exe -h          
         working-directory: ./microemacs/src
 
       - name: Compile windows100 mew
@@ -72,7 +72,7 @@ jobs:
             | % { , ($_ -Split '=', 2) } `
             | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
           nmake -f winmsvc.mak BTYP=w BIT_SIZE=64 ARCHITEC=arm
-          .\windows100-arm64-msvc17-release-mew\mew.exe -V
+          .\.windows100-arm64-msvc17-release-mew\mew.exe -V
         working-directory: ./microemacs/src
 
       - name: Create windows100 bin download
