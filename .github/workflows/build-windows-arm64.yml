@@ -60,6 +60,7 @@ jobs:
             | % { , ($_ -Split '=', 2) } `
             | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
           nmake -f winmsvc.mak BTYP=c BIT_SIZE=64 ARCHITEC=arm
+          dir .\windows100-arm64-msvc17-release-mec\*
           .\windows100-arm64-msvc17-release-mec\mec.exe -V
           .\windows100-arm64-msvc17-release-mec\mec.exe -h          
         working-directory: ./microemacs/src
