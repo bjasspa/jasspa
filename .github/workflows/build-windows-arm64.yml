@@ -44,6 +44,15 @@ jobs:
           Expand-Archive -Path .\openssl.zip -DestinationPath .
           dir .
           
+      - name: Compile tfs mec
+        shell: pwsh
+        run: |
+          & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=x64 -no_logo && set" `
+            | % { , ($_ -Split '=', 2) } `
+            | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
+          nmake /NOLOGO -f winmsvc.mak BCFG= LSTT= BIT_SIZE=64 ARCHITECT=arm
+        working-directory: ./3rdparty/tfs
+
       - name: Compile windows100 mec
         shell: pwsh
         run: |
