@@ -1,4 +1,4 @@
-name: Build linux aarch 64 (pios-6.6)
+name: Build linux aarch 64 (ubuntu-22)
 
 on:
   workflow_dispatch:
@@ -17,10 +17,7 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix: 
-        os: [ pios64-6.6 ] 
-    runs-on: ${{ matrix.os }} 
+    runs-on: ubuntu-22.04-arm
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
     steps:
@@ -83,7 +80,7 @@ jobs:
           rm -rf tfs
           mkdir -p tfs/bin/linux6-aarch64
           cd tfs/bin/linux6-aarch64
-          cp /usr/lib/aarch64-linux-gnu/libcrypto.so .0
+          cp /usr/lib/aarch64-linux-gnu/libcrypto.so .
           cp /usr/lib/aarch64-linux-gnu/libssl.so .
           cd ../..
           zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_bin_linux_aarch_openssl bin

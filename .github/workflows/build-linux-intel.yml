@@ -1,4 +1,4 @@
-name: Build linux intel 64 (Ubuntu-22)
+name: Build linux intel 64 (ubuntu-22)
 
 on:
   workflow_dispatch:
@@ -44,17 +44,17 @@ jobs:
           cd ./nroff
           make
 
-      - name: Compile linux mec
+      - name: Compile linux-intel mec
         run: |
           cd ./microemacs/src
           ./build.sh -t c -v OPENSSLPATH=/home/linuxbrew/.linuxbrew/opt/openssl@3.0/include
 
-      - name: Compile linux mew
+      - name: Compile linux-intel mew
         run: |
           cd ./microemacs/src
           ./build.sh -t w -v OPENSSLPATH=/home/linuxbrew/.linuxbrew/opt/openssl@3.0/include
 
-      - name: Create linux binaries download
+      - name: Create linux-intel binaries download
         run: |
           cd ./microemacs/bin
           mv linux6-intel64-gcc11 linux6-intel64
@@ -62,9 +62,9 @@ jobs:
           cd ..
           mv release_readme.txt readme.txt
           export MEVER=`./bin/linux6-intel64/mec -p @contribs/ver.emf`
-          zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_linux_binaries bin LICENSE readme.txt
+          zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_linux_intel_binaries bin LICENSE readme.txt
 
-      - name: Create linux mesc
+      - name: Create linux-intel mesc
         run: |
           export MEVER=`./microemacs/bin/linux6-intel64/mec -p @microemacs/contribs/ver.emf`
           cd ./microemacs/mesingle
@@ -73,18 +73,18 @@ jobs:
           ../bin/linux6-intel64/mec -p "@./mesgen" -f -p ../bin/linux6-intel64/mec -t ../bin/linux6-intel64/tfs -o bin/linux6-intel64/mesc
           cp ../LICENSE ./
           cp ../readme.txt ./
-          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_linux_mesc bin LICENSE readme.txt
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_linux_intel_mesc bin LICENSE readme.txt
           
-      - name: Create linux mesw
+      - name: Create linux-intel mesw
         run: |
           export MEVER=`./microemacs/bin/linux6-intel64/mec -p @microemacs/contribs/ver.emf`
           cd ./microemacs/mesingle
           rm -rf bin/linux6-intel64
           mkdir -p bin/linux6-intel64
           ../bin/linux6-intel64/mec -p "@./mesgen" -f -p ../bin/linux6-intel64/mew -t ../bin/linux6-intel64/tfs -o bin/linux6-intel64/mesw
-          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_linux_mesw bin LICENSE readme.txt
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_linux_intel_mesw bin LICENSE readme.txt
 
-      - name: Create linux OpenSSL download
+      - name: Create linux-intel OpenSSL download
         run: |
           cd ./microemacs/
           export MEVER=`./bin/linux6-intel64/mec -p @contribs/ver.emf`
@@ -96,7 +96,7 @@ jobs:
           cp /home/linuxbrew/.linuxbrew/opt/openssl@3.0/LICENSE.txt .
           cp /home/linuxbrew/.linuxbrew/opt/openssl@3.0/README.md .
           cd ../..
-          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_bin_linux_openssl bin
+          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_bin_linux_intel_openssl bin
           cd ..
           ./bin/linux6-intel64/tfs ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_linux6_intel64.tfs tfs
 
@@ -130,16 +130,16 @@ jobs:
           cd ..
           ../bin/linux6-intel64/tfs ../../packages/Jasspa_MicroEmacs_${MEVER}_macros.tfs jasspa
 
-      - name: Upload linux downloads
+      - name: Upload linux-intel downloads
         uses: actions/upload-artifact@v4
         with: 
-          name: linux-downloads
+          name: linux-intel-downloads
           path: downloads
           
-      - name: Upload linux packages
+      - name: Upload linux-intel packages
         uses: actions/upload-artifact@v4
         with: 
-          name: linux-packages
+          name: linux-intel-packages
           path: packages
       
       - name: Upload help ehf

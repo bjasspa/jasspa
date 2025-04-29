@@ -129,8 +129,13 @@ if [ $PLATFORM = "Darwin" ] ; then
     fi
   fi
 elif [ $PLATFORM = "Linux" ] ; then
-  MEPLATPKG=linux
-  MEPLATFUL=linux5-intel64
+  if [ `uname -m` = "x86_64" ] ; then
+    MEPLATPKG=linux_intel
+    MEPLATFUL=linux6-intel64
+  else
+    MEPLATPKG=linux_aarch
+    MEPLATFUL=linux6-aarch64
+  fi
 fi
 if [ -z "$MEPLATPKG" ] ; then
   echo "Error: Platform '${PLATFORM}' is not currently supported - please request suport."
