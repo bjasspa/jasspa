@@ -52,6 +52,7 @@ jobs:
             | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
           nmake /NOLOGO -f winmsvc.mak BCFG= LSTT= BIT_SIZE=64 ARCHITEC=arm
           dir .
+          .\.windows100-arm64-msvc17-release\tfs.exe -h
         working-directory: ./microemacs/3rdparty/tfs
 
       - name: Compile windows100 mec
