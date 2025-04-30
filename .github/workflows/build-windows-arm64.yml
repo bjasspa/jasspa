@@ -51,8 +51,8 @@ jobs:
             | % { , ($_ -Split '=', 2) } `
             | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
           nmake /NOLOGO -f winmsvc.mak BCFG= LSTT= BIT_SIZE=64 ARCHITEC=arm
+          dir .
         working-directory: ./microemacs/3rdparty/tfs
-        dir .
 
       - name: Compile windows100 mec
         shell: pwsh
