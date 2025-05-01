@@ -44,40 +44,27 @@ jobs:
           Expand-Archive -Path .\openssl.zip -DestinationPath .
           dir .
           
-      - name: Compile windows100 tfs exe
+      - name: Compile windows-arm mec
         shell: pwsh
         run: |
-          & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=x64 -no_logo && set" `
-            | % { , ($_ -Split '=', 2) } `
-            | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
-          nmake /NOLOGO -f winmsvc.mak BCFG= LSTT= BIT_SIZE=64 ARCHITEC=arm
-          dir .
-          .\.windows100-arm64-msvc17-release\tfs.exe -h
-        working-directory: ./microemacs/3rdparty/tfs
-
-      - name: Compile windows100 mec
-        shell: pwsh
-        run: |
-          & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=x64 -no_logo && set" `
+          & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=arm64 -no_logo && set" `
             | % { , ($_ -Split '=', 2) } `
             | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
           nmake -f winmsvc.mak BTYP=c BIT_SIZE=64 ARCHITEC=arm
-          dir .\.windows100-arm64-msvc17-release-mec\*
           .\.windows100-arm64-msvc17-release-mec\mec.exe -V
-          .\.windows100-arm64-msvc17-release-mec\mec.exe -h          
         working-directory: ./microemacs/src
 
-      - name: Compile windows100 mew
+      - name: Compile windows-arm mew
         shell: pwsh
         run: |
-          & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=x64 -no_logo && set" `
+          & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=arm64 -no_logo && set" `
             | % { , ($_ -Split '=', 2) } `
             | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
           nmake -f winmsvc.mak BTYP=w BIT_SIZE=64 ARCHITEC=arm
           .\.windows100-arm64-msvc17-release-mew\mew.exe -V
         working-directory: ./microemacs/src
 
-      - name: Create windows100 bin download
+      - name: Create windows-arm bin download
         shell: pwsh
         run: |
           mkdir -Path downloads
@@ -88,9 +75,9 @@ jobs:
           cd ..
           Rename-Item -Path release_readme.txt -NewName readme.txt
           $env:MEVER=$(.\bin\windows100-arm64\mec -p @contribs/ver.emf)
-          Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_windows_binaries
+          Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_windows_arm_binaries
 
-      - name: Create windows100 openssl download
+      - name: Create windows-arm openssl download
         shell: pwsh
         run: |
           cd .\microemacs
@@ -102,7 +89,7 @@ jobs:
           Copy-Item -Path ..\..\version.txt -Destination tfs\bin\windows100-arm64
           Copy-Item -Path ..\..\LICENSE.txt -Destination tfs\bin\windows100-arm64
           cd tfs
-          Compress-Archive -Path bin -DestinationPath ..\..\..\..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_windows_openssl.zip
+          Compress-Archive -Path bin -DestinationPath ..\..\..\..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_windows_arm_openssl.zip
           cd ..
           ..\..\..\..\bin\windows100-arm64\tfs ../../../../../packages/Jasspa_MicroEmacs_${env:MEVER}_openssl_windows100_arm64.tfs tfs
 
@@ -131,19 +118,19 @@ jobs:
           Copy-Item -Path ..\me.ehf -Destination macros
           heat dir macros -o jmeMacros.wxs -scom -frag -srd -sreg -gg -cg MacrosGroupId -dr jmeMacrosDirRef
           candle -ext WixUIExtension -ext WixUtilExtension jme.wxs jmeMacros.wxs
-          light -ext WixUIExtension -ext WixUtilExtension -o Jasspa_MicroEmacs_${env:MEVER}_installer_windows.msi -loc jme.wxl jme.wixobj jmeMacros.wixobj -b macros
-          Copy-Item -Path Jasspa_MicroEmacs_${env:MEVER}_installer_windows.msi -Destination ..\..\downloads
+          light -ext WixUIExtension -ext WixUtilExtension -o Jasspa_MicroEmacs_${env:MEVER}_installer_windows_arm.msi -loc jme.wxl jme.wixobj jmeMacros.wixobj -b macros
+          Copy-Item -Path Jasspa_MicroEmacs_${env:MEVER}_installer_windows_arm.msi -Destination ..\..\downloads
 
-      - name: Compile windows100 static mec
+      - name: Compile windows-arm static mec
         shell: pwsh
         run: |
-          & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=x64 -no_logo && set" `
+          & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=arm64 -no_logo && set" `
             | % { , ($_ -Split '=', 2) } `
             | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
           nmake -f winmsvc.mak BTYP=c LSTT=1
         working-directory: ./microemacs/src
 
-      - name: Create windows100 mesc
+      - name: Create windows-arm mesc
         shell: pwsh
         run: |
           cd .\microemacs
@@ -153,18 +140,18 @@ jobs:
           ..\bin\windows100-arm64\mec.exe -p "@./mesgen" -f -p ..\bin\windows100-arm64-msvc17s\mec.exe -t ..\bin\windows100-arm64\tfs.exe -o bin\windows100-arm64\mesc.exe
           Copy-Item -Path ..\LICENSE -Destination .
           Copy-Item -Path ..\readme.txt -Destination .
-          Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_mesc
+          Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_arm_mesc
 
-      - name: Compile windows100 static mew
+      - name: Compile windows-arm static mew
         shell: pwsh
         run: |
-          & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=x64 -no_logo && set" `
+          & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=arm64 -no_logo && set" `
             | % { , ($_ -Split '=', 2) } `
             | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
           nmake -f winmsvc.mak BTYP=w LSTT=1
         working-directory: ./microemacs/src
 
-      - name: Create windows100 mesw
+      - name: Create windows-arm mesw
         shell: pwsh
         run: |
           cd .\microemacs
@@ -172,16 +159,16 @@ jobs:
           cd .\mesingle
           Remove-Item bin\windows100-arm64\mesc.exe
           ..\bin\windows100-arm64\mec.exe -p "@./mesgen" -f -p ..\bin\windows100-arm64-msvc17s\mew.exe -t ..\bin\windows100-arm64\tfs.exe -o bin\windows100-arm64\mesw.exe
-          Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_mesw
+          Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_arm_mesw
 
-      - name: Upload Packages
+      - name: Upload windows-intel downloads
         uses: actions/upload-artifact@v4
         with: 
-          name: windows100-downloads
+          name: windows-arm-downloads
           path: downloads
 
-      - name: Upload windows100 packages
+      - name: Upload windows-arm packages
         uses: actions/upload-artifact@v4
         with: 
-          name: windows100-packages
+          name: windows-intel-packages
           path: packages
