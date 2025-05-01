@@ -42,6 +42,7 @@ jobs:
           cd .\microemacs\3rdparty
           Invoke-WebRequest https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.5.0.zip -OutFile openssl.zip
           Expand-Archive -Path .\openssl.zip -DestinationPath openssl-3.5
+          gci env:
           dir .
           
       - name: Compile windows-arm mec
