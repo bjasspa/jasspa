@@ -31,7 +31,12 @@ TOOLKIT_VER=10
 !ERROR Failed to determine version of MSVC
 !ENDIF
 
+!IF "$(ARCHITEC)" != ""
+!ELSE
+# TODO auto-detect arm ARCHITEC
 ARCHITEC = intel
+!ENDIF
+
 !IF "$(BIT_SIZE)" != ""
 !ELSEIF "$(PLATFORM)" == "x64"
 BIT_SIZE = 64

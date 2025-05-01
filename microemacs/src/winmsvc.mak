@@ -52,8 +52,12 @@ TOOLKIT_VER=8
 !ERROR Failed to determine version of MSVC
 !ENDIF
 
+!IF "$(ARCHITEC)" != ""
+!ELSE
+# TODO auto-detect arm ARCHITEC
 ARCHITEC = intel
-PARCHITEC= X86
+!ENDIF
+
 !IF "$(BIT_SIZE)" != ""
 !ELSEIF "$(PLATFORM)" == "x64"
 BIT_SIZE = 64
@@ -107,11 +111,13 @@ CCFLAGSR = $(CCLSTT) /O2 /GL /GR- /GS- /DNDEBUG=1 /D_HAS_ITERATOR_DEBUGGING=0 /D
 CCFLAGSD = $(CCLSTT)d /Od /RTC1 /D_DEBUG
 !IF "$(ARCHITEC)" == "arm"
 LDDEFS   = /INCREMENTAL:NO /MACHINE:ARM64 /MANIFEST $(LDLSTT)
-PARCHITEC = ARM64
+MANPARCH = ARM64
 !ELSEIF "$(BIT_SIZE)" == "64"
 LDDEFS   = /INCREMENTAL:NO /MACHINE:X64 /MANIFEST $(LDLSTT)
+MANPARCH = X86
 !ELSE
 LDDEFS   = /INCREMENTAL:NO /MACHINE:X86 /MANIFEST $(LDLSTT)
+MANPARCH = X86
 !ENDIF
 LDFLAGSR = /OPT:REF /OPT:ICF=3 /LTCG
 LDFLAGSD = /DEBUG
@@ -219,7 +225,7 @@ all: $(PRGLIBS) $(OUTDIR)\$(PRGFILE)
 $(OUTDIR)\$(PRGFILE): $(OUTDIR) $(INSTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(RM) $@
 	$(LD) $(LDDEFS) $(BTYP_LDF) $(LDFLAGS) /PDB:"$(OUTDIR)\$(PRGNAME).pdb" /OUT:"$@" $(PRGOBJS) $(PRGLIBS) $(LDLIBS)
-	(echo ^<?xml version="1.0" encoding="UTF-8" standalone="yes"?^> & echo ^<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"^> & echo ^<assemblyIdentity version="$(meVER_YR).$(meVER_MN).$(meVER_DY).0" processorArchitecture="$(PARCHITEC)" name="$(PRGNAME).exe" type="win32"/^> & echo ^<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"^> & echo ^<security^> & echo ^<requestedPrivileges^> & echo ^<requestedExecutionLevel level="asInvoker" uiAccess="false"/^> & echo ^</requestedPrivileges^> & echo ^</security^> & echo ^</trustInfo^> & echo ^</assembly^>) > $@.manifest
+	(echo ^<?xml version="1.0" encoding="UTF-8" standalone="yes"?^> & echo ^<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"^> & echo ^<assemblyIdentity version="$(meVER_YR).$(meVER_MN).$(meVER_DY).0" processorArchitecture="$(MANPARCH)" name="$(PRGNAME).exe" type="win32"/^> & echo ^<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"^> & echo ^<security^> & echo ^<requestedPrivileges^> & echo ^<requestedExecutionLevel level="asInvoker" uiAccess="false"/^> & echo ^</requestedPrivileges^> & echo ^</security^> & echo ^</trustInfo^> & echo ^</assembly^>) > $@.manifest
 	$(MT) -manifest $@.manifest -validate_manifest
 	$(MT) -outputresource:"$@;#1" -manifest $@.manifest
 	$(INSTPRG) $@ $(INSTDIR)
@@ -234,18 +240,18 @@ $(INSTDIR):
 
 $(TRDPARTY)\tfs\$(BOUTDIR)\tfs.lib:
 	cd $(TRDPARTY)\tfs
-	$(MK) -f $(MAKEFILE).mak BCFG=$(BCFG) LSTT=$(LSTT) BIT_SIZE=$(BIT_SIZE)
+	$(MK) -f $(MAKEFILE).mak BCFG=$(BCFG) LSTT=$(LSTT) ARCHITEC=$(ARCHITEC) BIT_SIZE=$(BIT_SIZE)
 	cd $(MAKEDIR)
 
 clean:
 	if exist $(OUTDIR)\ $(RMDIR) $(OUTDIR)
 	cd $(TRDPARTY)\tfs
-	$(MK) -f $(MAKEFILE).mak clean BCFG=$(BCFG) LSTT=$(LSTT) BIT_SIZE=$(BIT_SIZE)
+	$(MK) -f $(MAKEFILE).mak clean BCFG=$(BCFG) LSTT=$(LSTT) ARCHITEC=$(ARCHITEC) BIT_SIZE=$(BIT_SIZE)
 	cd $(MAKEDIR)
 
 spotless: clean
 	$(RM) *~
 	$(RM) tags
 	cd $(TRDPARTY)\tfs
-	$(MK) -f $(MAKEFILE).mak spotless BCFG=$(BCFG) LSTT=$(LSTT) BIT_SIZE=$(BIT_SIZE)
+	$(MK) -f $(MAKEFILE).mak spotless BCFG=$(BCFG) LSTT=$(LSTT) ARCHITEC=$(ARCHITEC) BIT_SIZE=$(BIT_SIZE)
 	cd $(MAKEDIR)
