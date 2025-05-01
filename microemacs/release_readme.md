@@ -12,10 +12,12 @@ For your platform download the single-file binary zip file:
 
 | Platform      | Console/Terminal | GUI (X11 on Linux/Mac) |
 |:-------------:|:----------------:|:----------------------:|
-| Linux         | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_linux_mesc.zip)       | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_linux_mesw.zip) |
-| MacOS apple   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_macos_apple_mesc.zip) | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_macos_apple_mesw.zip) |
-| MacOS intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_macos_intel_mesc.zip) | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_macos_intel_mesw.zip) |
-| Windows       | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_windows_mesc.zip)     | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_windows_mesw.zip) |
+| Linux intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_linux_intel_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_linux_intel_mesw.zip)   |
+| Linux aarch   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_linux_aarch_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_linux_aarch_mesw.zip)   |
+| MacOS apple   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_macos_apple_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_macos_apple_mesw.zip)   |
+| MacOS intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_macos_intel_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_macos_intel_mesw.zip)   |
+| Windows intel | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_windows_intel_mesc.zip) | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_windows_intel_mesw.zip) |
+| Windows arm   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_windows_arm_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_windows_arm_mesw.zip)   |
 
 Extract the executable from the zip and run.
 
@@ -28,7 +30,7 @@ For a more complete experience execute command **init-session**, this creates a 
 
 ## INSTALLERS
 
-- **Windows:** Download and run [Jasspa_MicroEmacs_<VERSION>_installer_windows.msi](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_installer_windows.msi) installer, which contains the binaries, macros and help file, to create a fully working environment.
+- **Windows:** Download and run [Jasspa_MicroEmacs_<VERSION>_installer_windows.msi](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_installer_windows_intel.msi) installer (intel only), which contains the binaries, macros and help file, to create a fully working environment.
 
 - **UNIX:** The preferred install method is using the [microemacs-install](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/microemacs-install) script, run the following script in a terminal:
 
@@ -62,7 +64,7 @@ To build a more complete, native environment do the following:
 
 2. Download the following zip package files:
 
-    a. **Required:** Binaries for your platform (Jasspa_MicroEmacs_<VERSION>_bin_\<PLATFORM>\_binaries.zip)
+    a. **Required:** Binaries for your platform (Jasspa_MicroEmacs_<VERSION>_bin_\<PLATFORM>\_\<ARCHITECTURE>\_binaries.zip)
      
     b. **Required:** Macro files ([Jasspa_MicroEmacs_<VERSION>_macros.zip](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_macros.zip))
 
@@ -70,7 +72,7 @@ To build a more complete, native environment do the following:
 
     d. Spelling dictionaries for any language you require (Jasspa_MicroEmacs_<VERSION>_spelling_\<LANGUAGE>.zip)
      
-    e. OpenSSL dynamic libraries (Jasspa_MicroEmacs_<VERSION>_bin_\<PLATFORM>\_openssl.zip) for https/ftps support (country permitting) 
+    e. OpenSSL dynamic libraries (Jasspa_MicroEmacs_<VERSION>_bin_\<PLATFORM>\_\<ARCHITECTURE>\_openssl.zip) for https/ftps support (country permitting) 
 
 3. Extract downloaded zip files into the ~/MicroEmacs directory you created in (1), this should have created:
 
