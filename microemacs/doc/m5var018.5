@@ -1,0 +1,45 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 2025 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.Id $Id: m5var018.5,v 2.7 2025/05/01 01:09:11 jon Exp $
+.Im MicroEmacs variable|file
+.so me.tni
+.TH $home 5
+.XI $progdata - "Users program data directory"
+.SH NAME
+$progdata \- Users program data directory
+.Me $a
+.SH SYNOPSIS
+.B $progdata
+\fIdirectory\fR
+.SH DESCRIPTION
+.B $progdata
+contains the pathname of the user's system program data directory for \*(mS, this is unlikely to be the same location as
+.Ht $user-path 5 .
+.PP
+On Windows the path will be the jasspa sub-directory within the user's application data path, i.e.
+\&'\fC%AppData%/jasspa/\fR'. On UNIX systems the path will be '\fB$home/.config/jasspa/\fR' and on other systems
+it will be '\fC$home/jasspa/\fR'.
+.PP
+Note that the path may not currently exist, particularly if
+.Ht $user-path 5
+points to a different location due to one of
+.Ht $MEUSERPATH 5 ,
+.Ht $MEPATH 5
+or
+.Ht $MEINSTALLPATH 5
+variables being set.
+.SH "SEE ALSO"
+.na
+.Ht $user-path 5 ,
+.Ht $home 5 ,
+.Ht $progname 5 ,
+.Ht $MEUSERPATH 5 ,
+.Ht $MEPATH 5 ,
+.Ht $MEINSTALLPATH 5 ,
+.Hl "Variable Functions" Functions - .
+.ad
+.FH

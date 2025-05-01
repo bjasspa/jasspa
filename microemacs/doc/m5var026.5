@@ -24,20 +24,16 @@ When entering a file name:
 ~/xxx    -> $home/xxx
 ~yyy/xxx -> $home/../yyy/xxx
 .CE
-On  most  systems  this  is  automatically  set  to the  environment  variable
-"\s-1HOME\s0" if it is defined. On systems (i.e. Microsoft  Windows or MS-DOS)
-where there may be no home  defined then the system user  directory is used by
-default. The value may be  explicitly  redefined  by the user in the  start-up
-file to be a different location. If \fB$home\fR is re-defined then ensure that
-a trailing directory separator is included at the end of the pathname. 
-.PP 
-\'\fC~\fR' may be used in pathname definitions in the 
-macro files, files but must be specified as  \'\fC~\fR', it is perhaps  better
-to use \fB$home\fR.
+On most systems this is automatically set to the environment variable "\s-1HOME\s0" if it is defined. On systems (i.e.
+Microsoft Windows or MS-DOS) where there may be no home defined then the system user directory is used by default.
+.PP
+The value may be explicitly redefined by the user in the start-up file to be a different location. If \fB$home\fR is
+re-defined then ensure that a trailing directory separator is included at the end of the pathname. 
 .SH "SEE ALSO"
 .na
 .Ht $user-path 5 ,
 .Ht $user-name 5 ,
+.Ht $progdata 5 ,
 .Ht $progname 5 ,
 .Ht $MENAME 5 ,
 .Ht $MEINSTALLPATH 5 ,

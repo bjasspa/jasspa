@@ -134,4 +134,4 @@
   !force delete-buffer "*jmplst*"
   !return &not #l2
 !emacro
-set-variable .me-pinstall.purl "http://docs.asid.family/packages/"
+set-variable .me-pinstall.purl "http://docs.jasspa.com/packages/"
