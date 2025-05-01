@@ -41,7 +41,7 @@ jobs:
         run: |
           cd .\microemacs\3rdparty
           Invoke-WebRequest https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.5.0.zip -OutFile openssl.zip
-          Expand-Archive -Path .\openssl.zip -DestinationPath .
+          Expand-Archive -Path .\openssl.zip -DestinationPath openssl-3.5
           dir .
           
       - name: Compile windows-arm mec
@@ -82,10 +82,10 @@ jobs:
         run: |
           cd .\microemacs
           $env:MEVER=$(.\bin\windows100-arm64\mec -p @contribs/ver.emf)
-          cd .\3rdparty\arm64\bin
+          cd .\3rdparty\openssl-3.5\arm64\bin
           mkdir -Path tfs\bin\windows100-arm64
-          Copy-Item -Path libssl-3.dll -Destination tfs\bin\windows100-arm64
-          Copy-Item -Path libcrypto-3.dll -Destination tfs\bin\windows100-arm64
+          Copy-Item -Path libssl-3-arm64.dll -Destination tfs\bin\windows100-arm64
+          Copy-Item -Path libcrypto-3-arm64.dll -Destination tfs\bin\windows100-arm64
           Copy-Item -Path ..\..\version.txt -Destination tfs\bin\windows100-arm64
           Copy-Item -Path ..\..\LICENSE.txt -Destination tfs\bin\windows100-arm64
           cd tfs
