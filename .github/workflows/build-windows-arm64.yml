@@ -109,7 +109,7 @@ jobs:
           & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=arm64 -no_logo && set" `
             | % { , ($_ -Split '=', 2) } `
             | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
-          nmake -f winmsvc.mak BTYP=c LSTT=1
+          nmake -f winmsvc.mak BTYP=c LSTT=1 BIT_SIZE=64 ARCHITEC=arm
         working-directory: ./microemacs/src
 
       - name: Create windows-arm mesc
@@ -130,7 +130,7 @@ jobs:
           & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=arm64 -host_arch=arm64 -no_logo && set" `
             | % { , ($_ -Split '=', 2) } `
             | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
-          nmake -f winmsvc.mak BTYP=w LSTT=1
+          nmake -f winmsvc.mak BTYP=w LSTT=1 BIT_SIZE=64 ARCHITEC=arm
         working-directory: ./microemacs/src
 
       - name: Create windows-arm mesw
