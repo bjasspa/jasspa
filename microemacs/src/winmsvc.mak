@@ -53,6 +53,7 @@ TOOLKIT_VER=8
 !ENDIF
 
 ARCHITEC = intel
+PARCHITEC= X86
 !IF "$(BIT_SIZE)" != ""
 !ELSEIF "$(PLATFORM)" == "x64"
 BIT_SIZE = 64
@@ -104,7 +105,10 @@ TRDPARTY = ..\3rdparty
 CCDEFS   = /D_WIN32 /D_ARCHITEC=$(ARCHITEC) /D_TOOLKIT=$(TOOLKIT) /D_TOOLKIT_VER=$(TOOLKIT_VER) /D_PLATFORM_VER=$(PLATFORM_VER) /D_$(BIT_SIZE)BIT /D_WIN$(BIT_SIZE) /D_WIN32_WINNT=0x0600 /DWINVER=0x0600 /W3 /Zi /D_CRT_SECURE_NO_DEPRECATE /D_CRT_NONSTDC_NO_DEPRECATE /I$(TRDPARTY)\tfs /DmeVER_CN=$(meVER_CN) /DmeVER_YR=$(meVER_YR) /DmeVER_MN=$(meVER_MN) /DmeVER_DY=$(meVER_DY)
 CCFLAGSR = $(CCLSTT) /O2 /GL /GR- /GS- /DNDEBUG=1 /D_HAS_ITERATOR_DEBUGGING=0 /D_SECURE_SCL=0
 CCFLAGSD = $(CCLSTT)d /Od /RTC1 /D_DEBUG
-!IF "$(BIT_SIZE)" == "64"
+!IF "$(ARCHITEC)" == "arm"
+LDDEFS   = /INCREMENTAL:NO /MACHINE:ARM64 /MANIFEST $(LDLSTT)
+PARCHITEC = ARM64
+!ELSEIF "$(BIT_SIZE)" == "64"
 LDDEFS   = /INCREMENTAL:NO /MACHINE:X64 /MANIFEST $(LDLSTT)
 !ELSE
 LDDEFS   = /INCREMENTAL:NO /MACHINE:X86 /MANIFEST $(LDLSTT)
@@ -215,7 +219,7 @@ all: $(PRGLIBS) $(OUTDIR)\$(PRGFILE)
 $(OUTDIR)\$(PRGFILE): $(OUTDIR) $(INSTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(RM) $@
 	$(LD) $(LDDEFS) $(BTYP_LDF) $(LDFLAGS) /PDB:"$(OUTDIR)\$(PRGNAME).pdb" /OUT:"$@" $(PRGOBJS) $(PRGLIBS) $(LDLIBS)
-	(echo ^<?xml version="1.0" encoding="UTF-8" standalone="yes"?^> & echo ^<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"^> & echo ^<assemblyIdentity version="$(meVER_YR).$(meVER_MN).$(meVER_DY).0" processorArchitecture="X86" name="$(PRGNAME).exe" type="win32"/^> & echo ^<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"^> & echo ^<security^> & echo ^<requestedPrivileges^> & echo ^<requestedExecutionLevel level="asInvoker" uiAccess="false"/^> & echo ^</requestedPrivileges^> & echo ^</security^> & echo ^</trustInfo^> & echo ^</assembly^>) > $@.manifest
+	(echo ^<?xml version="1.0" encoding="UTF-8" standalone="yes"?^> & echo ^<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"^> & echo ^<assemblyIdentity version="$(meVER_YR).$(meVER_MN).$(meVER_DY).0" processorArchitecture="$(PARCHITEC)" name="$(PRGNAME).exe" type="win32"/^> & echo ^<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"^> & echo ^<security^> & echo ^<requestedPrivileges^> & echo ^<requestedExecutionLevel level="asInvoker" uiAccess="false"/^> & echo ^</requestedPrivileges^> & echo ^</security^> & echo ^</trustInfo^> & echo ^</assembly^>) > $@.manifest
 	$(MT) -manifest $@.manifest -validate_manifest
 	$(MT) -outputresource:"$@;#1" -manifest $@.manifest
 	$(INSTPRG) $@ $(INSTDIR)
