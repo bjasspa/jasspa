@@ -149,13 +149,19 @@ LDLIBS   = $(LDLIBSB)
 !ELSE
 
 !IF "$(OPENSSLP)" == ""
-!IF "$(BIT_SIZE)" == "64"
+!IF "$(ARCHITEC)" == "arm"
+OSSL_DIR = arm64
+OSSL_LIB = -arm64
+!ELSEIF "$(BIT_SIZE)" == "64"
 OSSL_DIR = x64
 OSSL_LIB = -x64
 !ELSE
 OSSL_DIR = x86
 !ENDIF
-!IF EXISTS($(TRDPARTY)\openssl-3.3\$(OSSL_DIR)\include\openssl\ssl.h)
+!IF EXISTS($(TRDPARTY)\openssl-3.5\$(OSSL_DIR)\include\openssl\ssl.h)
+OPENSSLP = $(TRDPARTY)\openssl-3.5\$(OSSL_DIR)
+OPENSSLV = -3_3$(OSSL_LIB)
+!ELSEIF EXISTS($(TRDPARTY)\openssl-3.3\$(OSSL_DIR)\include\openssl\ssl.h)
 OPENSSLP = $(TRDPARTY)\openssl-3.3\$(OSSL_DIR)
 OPENSSLV = -3_3$(OSSL_LIB)
 !ELSEIF EXISTS($(TRDPARTY)\openssl-3.2\$(OSSL_DIR)\include\openssl\ssl.h)
