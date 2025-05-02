@@ -6,9 +6,17 @@ class MicroemacsBinaries < Formula
   SHRPTH="#{HOMEBREW_PREFIX}/share"
   URLPFX="https://github.com/bjasspa/jasspa/releases/download/me_##VERSION##"
   if OS.linux?
-    ZIPPFX="bin/linux5-intel64"
-    url "#{URLPFX}/Jasspa_MicroEmacs_##VERSION##_bin_linux_binaries.zip"
-    sha256 "##SHA256##"
+    if Hardware::CPU.arm?
+        ZIPPFX="bin/linux6-aarch64"
+        url "#{URLPFX}/Jasspa_MicroEmacs_##VERSION##_bin_linux_aarch_binaries.zip"
+        sha256 "##SHA256##"
+    elsif Hardware::CPU.intel?
+        ZIPPFX="bin/linux6-intel64"
+        url "#{URLPFX}/Jasspa_MicroEmacs_##VERSION##_bin_linux_intel_binaries.zip"
+        sha256 "##SHA256##"
+    else
+      odie "Unexpected macOS Hardware, not arm or intel!"
+    end
   elsif OS.mac?
     if Hardware::CPU.arm?
       # Code for Apple Silicon (M1, M2, etc.)
