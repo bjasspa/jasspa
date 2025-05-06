@@ -81,7 +81,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	pytools.emf	rect.emf	rtools.emf	\
 	scheme.emf	schemeal.emf	schemead.emf	schemeb.emf	\
 	schemebc.emf	schemech.emf	\
-	schemecf.emf	schemecl.emf	schemecm.emf	\
+	schemecf.emf	schemecl.emf	schemecm.emf	schemecn.emf	\
 	schemebh.emf	schemed.emf	\
 	schemedp.emf	schemedr.emf	schemegb.emf	schemege.emf	\
 	schemegg.emf	schemego.emf	schemej.emf	schemelm.emf	\
