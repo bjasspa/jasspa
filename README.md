@@ -11,10 +11,10 @@
 [![Docu Wiki](https://img.shields.io/badge/Docu-Wiki-blue)](https://github.com/bjasspa/jasspa/wiki)
 [![Docu Wiki](https://img.shields.io/badge/Docu-Cheatsheet-blue)](https://github.com/bjasspa/jasspa/blob/main/microemacs/contribs/cheatsheet.md)
 
-![Ubuntu intel](https://github.com/bjasspa/jasspa/workflows/Build%20linux%20intel%2064%20(Ubuntu-22)/badge.svg)
-![Ubuntu aarch](https://github.com/bjasspa/jasspa/workflows/Build%20linux%20aarch%2064%20(Ubuntu-22)/badge.svg)
+![Ubuntu intel](https://github.com/bjasspa/jasspa/workflows/Build%20linux%20intel%2064%20(ubuntu-22)/badge.svg)
+![Ubuntu aarch](https://github.com/bjasspa/jasspa/workflows/Build%20linux%20aarch%2064%20(ubuntu-22)/badge.svg)
 
-![Windows intel](https://github.com/bjasspa/jasspa/workflows/Build%20windows%20intel%2032%20(Win-latest)/badge.svg)
+![Windows intel](https://github.com/bjasspa/jasspa/workflows/Build%20windows%20intel%2032%20(win-latest)/badge.svg)
 ![Windows arm](https://github.com/bjasspa/jasspa/workflows/Build%20windows%20arm%2064%20(Win-latest)/badge.svg)
 
 ![MacOS (intel)](https://github.com/bjasspa/jasspa/workflows/Build%20macos-intel%20(macos-13)/badge.svg)
