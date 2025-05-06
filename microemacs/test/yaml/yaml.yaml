@@ -1,0 +1,17 @@
+---
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+main:
+  id: "foo"
+  name: 'bar_test'
+  position: 1
+  underline_id: 1
+  config: |+
+      title: Test title
+      footer: Some footer title
+  property: Testbar
+  description: >
+    Some longer text written over several lines
+    can be as well added.
+---
+
+# some more text in a comment
