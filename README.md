@@ -11,11 +11,13 @@
 [![Docu Wiki](https://img.shields.io/badge/Docu-Wiki-blue)](https://github.com/bjasspa/jasspa/wiki)
 [![Docu Wiki](https://img.shields.io/badge/Docu-Cheatsheet-blue)](https://github.com/bjasspa/jasspa/blob/main/microemacs/contribs/cheatsheet.md)
 
-![Ubuntu](https://github.com/bjasspa/jasspa/workflows/Build%20linux%20(Ubuntu-22)/badge.svg)
+![Ubuntu](https://github.com/bjasspa/jasspa/workflows/Build%20linux%20intel%2064%20(Ubuntu-22)/badge.svg)
+![Ubuntu](https://github.com/bjasspa/jasspa/workflows/Build%20linux%20aarch%2064%20 (Ubuntu-22)/badge.svg)
+
 ![Windows](https://github.com/bjasspa/jasspa/workflows/Build%20windows%20(Win-latest)/badge.svg)
 
-![MacOS (apple)](https://github.com/bjasspa/jasspa/workflows/Build%20macos-apple%20(macos-latest)/badge.svg)
 ![MacOS (intel)](https://github.com/bjasspa/jasspa/workflows/Build%20macos-intel%20(macos-13)/badge.svg)
+![MacOS (apple)](https://github.com/bjasspa/jasspa/workflows/Build%20macos-apple%20(macos-latest)/badge.svg)
 
 MicroEmacs  text editor is an Emacs like text editor  suitable for 
 experienced programmers and as well beginners.
