@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ;
-; Copyright (C) 1997-2020 JASSPA (www.jasspa.com)
+; Copyright (C) 1997-2025 JASSPA (www.jasspa.com)
 ;
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
@@ -8,7 +8,7 @@
 ; Synopsis:    Microsoft Windows initalisation file hook.
 ; Authors:     Detlef Groth
 ;
-; Notes:       Typically used for Configuration files either standalone or
+; Notes:       Typically used for configuration files either standalone or
 ;              within a configuration section for instance of Markdown files
 ;              as YAML header
 ;
