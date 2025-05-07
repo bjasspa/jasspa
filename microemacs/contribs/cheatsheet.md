@@ -1,4 +1,4 @@
-## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2025-05-07 07:57
+## <img src="https://raw.githubusercontent.com/bjasspa/jasspa/main/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2025-05-07 07:59
 
 Homepage: [https://github.com/bjasspa/jasspa](https://github.com/bjasspa/jasspa)
 Help pages: [https://bjasspa.github.io/jasspa/](https://bjasspa.github.io/jasspa/)
