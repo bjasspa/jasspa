@@ -1,4 +1,4 @@
-## <img src="/home/dgroth/workspace/jasspa/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2025-04-23 07:31
+## <img src="https://raw.githubusercontent.com/bjasspa/jasspa/main/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2025-05-07 07:59
 
 Homepage: [https://github.com/bjasspa/jasspa](https://github.com/bjasspa/jasspa)
 Help pages: [https://bjasspa.github.io/jasspa/](https://bjasspa.github.io/jasspa/)
@@ -12,9 +12,9 @@ __Installation (MacOS / Linux):__
 
 `/bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)"`
 
-__Installation (Windows):__
+__Installation (Windows / Intel):__
 
-Download and Install: [Jasspa_MicroEmacs_20250301_installer_windows.msi](https://github.com/bjasspa/jasspa/releases/download/me_20250301/Jasspa_MicroEmacs_20250301_installer_windows.msi)
+Download and Install: [Jasspa_MicroEmacs_20250501_installer_windows.msi](https://github.com/bjasspa/jasspa/releases/download/me_20250501/Jasspa_MicroEmacs_20250501_installer_windows.msi)
 
 __User Setup:__
 
@@ -230,6 +230,7 @@ The steps to do this are as follows:
 <table width="100%">
 <tr>
 <td width='40%'>
+
 __Variables:__
 
 - local (within macros): `#l0 #l1 ... #l9` 
