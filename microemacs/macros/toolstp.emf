@@ -269,5 +269,5 @@ osd .osd.toolbar 50 ""  "\HStore Current State" 5 toolbar-setup-cmd
 !emacro
 
 ; load the list of available toolbar tools
-!force execute-file "toollist"
+!iif &not &exi .toolbar.tool-cmds  !force execute-file "toollist"
 

@@ -165,8 +165,7 @@ else
 endif
 
 clean:
-	$(RMDIR) $(OUTDIRD)
-	$(RMDIR) $(OUTDIRR)
+	$(RMDIR) $(OUTDIR)
 
 spotless: clean
 	$(RM) *~

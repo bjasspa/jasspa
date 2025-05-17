@@ -26,6 +26,7 @@
   hilight .hilight.abbrev-item 0x44 "\ecD" "" "\ecA" "" "" .scheme.operator
   hilight .hilight.abbrev-item 0x44 "\ecE" "" "\ecA" "" "" .scheme.variable
   hilight .hilight.abbrev-item 0x44 "\ecF" "" "\ecA" "" "" .scheme.string
+  hilight .hilight.abbrev-item 0x44 "\ecG" "" "\ecA" "" "" .scheme.comment
 !endif
 
 0 define-macro eaf-list-fold-find-close
@@ -226,7 +227,8 @@ define-macro eaf-list-goto
   end-of-buffer
   0 copy-region
   -1 find-buffer #l0
-  find-buffer @1
+  !force 0 popup-window @1
+  !iif &not $status  find-buffer @1
   yank
   -1 yank
   !force forward-delete-char

@@ -25,6 +25,21 @@ hilight .hilight.memh 0x44 "\CCH" "" "\\}\CC" "" "" .scheme.italic-under
 hilight .hilight.memh 0x44 "\CCI" "" "\\}\CC" "" "" .scheme.bold-under
 hilight .hilight.memh 0x44 "\CCJ" "" "\\}\CC" "" "" .scheme.bold-italic
 hilight .hilight.memh 0x44 "\CCK" "" "\\}\CC" "" "" .scheme.bold-italic-italic
+hilight .hilight.memh 0x44 "\CCL" "" "\\}\CC" "" "" .scheme.chg
+hilight .hilight.memh 0x44 "\CCM" "" "\\}\CC" "" "" .scheme.add
+hilight .hilight.memh 0x44 "\CCN" "" "\\}\CC" "" "" .scheme.rmv
+hilight .hilight.memh 0x44 "\CCO" "" "\\}\CC" "" "" .scheme.error
+hilight .hilight.memh 0x44 "\CCP" "" "\\}\CC" "" "" .scheme.prepro
+hilight .hilight.memh 0x44 "\CCQ" "" "\\}\CC" "" "" .scheme.function
+hilight .hilight.memh 0x44 "\CCR" "" "\\}\CC" "" "" .scheme.string
+hilight .hilight.memh 0x44 "\CCS" "" "\\}\CC" "" "" .scheme.quote
+hilight .hilight.memh 0x44 "\CCT" "" "\\}\CC" "" "" .scheme.keyword
+hilight .hilight.memh 0x44 "\CCU" "" "\\}\CC" "" "" .scheme.operator
+hilight .hilight.memh 0x44 "\CCV" "" "\\}\CC" "" "" .scheme.variable
+hilight .hilight.memh 0x44 "\CCW" "" "\\}\CC" "" "" .scheme.constant
+hilight .hilight.memh 0x44 "\CCX" "" "\\}\CC" "" "" .scheme.gdfchange
+hilight .hilight.memh 0x44 "\CCY" "" "\\}\CC" "" "" .scheme.gdfsel
+hilight .hilight.memh 0x44 "\CCZ" "" "\\}\CC" "" "" .scheme.gdfrej
 
 hilight .hilight.memh 0x40 "\CDA" ""                $global-scheme
 hilight .hilight.memh 0xc0 "\CEs" "" .hilight.memhL $global-scheme  ; link start
