@@ -1968,14 +1968,15 @@ TTsetClipboard(int cpData)
  * Pop the contents of the clipboard into the kill buffer ready for
  * a yank. */
 void
-TTgetClipboard(void)
+TTgetClipboard(int flag)
 {
     HANDLE hmem;                          /* Windows clipboard memory handle */
     
     /* Check the standard clipboard status, if owner or not got focus or it has
      * been disabled then there's nothing to do */
-    if((clipState & (CLIP_OWNER|CLIP_DISABLED)) || (kbdmode == mePLAY) || (frameCur->flags & meFRAME_NOT_FOCUS) ||
-       (meSystemCfg & meSYSTEM_NOCLIPBRD) || !OpenClipboard(baseHwnd))
+    if((clipState & (CLIP_OWNER|CLIP_DISABLED)) || (meSystemCfg & meSYSTEM_NOCLIPBRD) || 
+       (((flag & 1) == 0) && ((kbdmode == mePLAY) || (frameCur->flags & meFRAME_NOT_FOCUS))) ||
+       !OpenClipboard(baseHwnd))
         return;
     
     /* Get the data from the clipboard */

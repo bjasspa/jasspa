@@ -318,7 +318,7 @@ extern void meFrameRepositionWindow(meFrame *frame, int resize);
 
 #ifdef _CLIPBRD
 extern void TTinitClipboard(void);
-extern void TTgetClipboard(void);
+extern void TTgetClipboard(int flag);
 extern void TTsetClipboard(int cpData);
 #endif
 
@@ -490,7 +490,7 @@ extern void meFrameHideCursor(meFrame *frame);
 #define TTNbell()   MessageBeep(0xffffffff)
 
 #ifdef _CLIPBRD
-extern void TTgetClipboard(void);
+extern void TTgetClipboard(int flag);
 extern void TTsetClipboard(int cpData);
 #endif
 

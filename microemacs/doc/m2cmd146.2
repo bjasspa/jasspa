@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd146.2,v 2.8 2025/02/10 23:27:00 jon Exp $
+.Id $Id: m2cmd146.2,v 2.8 2025/05/16 12:38:05 jon Exp $
 .Im MicroEmacs command|insert
 .ds C0 "(\fB\*cy\fR)\ \&
 .so me.tni
@@ -19,20 +19,22 @@ yank \- Paste (copy) kill buffer contents into buffer
 \fByank\fR \*(C0
 .ad
 .SH DESCRIPTION
-When a non negative argument is supplied to \fByank\fR, the command copies the
-contents  of the kill  buffer  \fIn\fR  times into the  current  buffer at the
-current  cursor  position.  This does not clear the kill buffer, and therefore
-may be used to make multiple copies of a section of text. On windowing systems
-which support clip-boards, such as windows and X-terms, \*(mS will also cut to
-and paste from the global clip-board.
+When a non negative argument is supplied to \fByank\fR, the command copies the contents of the kill buffer \fIn\fR
+times into the current buffer at the current cursor position. This does not clear the kill buffer, and therefore may
+be used to make multiple copies of a section of text. On windowing systems which support clipboards, such as windows
+and X-terms, \*(mS will also cut to and paste from the global clipboard.
 .PP
 If \fIyank\fR is IMMEDIATELY followed by a
 .Ht reyank 2
 then the \fIyanked\fR text is replaced by text of the next entry in the kill ring. (another \fBreyank\fR replaces the
 text with the previous reyank text and so on).
 .PP
-If an negative argument is given, \fByank\fR removes the last 0-\fIn\fR items from the kill ring unless \fIn\fR is -100
+If an negative argument is given, \fByank\fR removes the last 0-\fIn\fR items from the kill ring unless \fIn\fR is -99
 or less.
+.PP
+When \fIn\fR is -99 yank checks for and gets the current global clipboard text regardless of whether \*(mS is
+currently running a macro, this can be useful for macros that need to interact with the system clipboard. If a system
+clipboard text is available it is inserted into the kill buffer and \fInot\fR inserted into the current buffer. 
 .PP
 When \fIn\fR is -100 the last search string match is inserted/yanked into the current buffer instead. If \fIn\fR is -101
 then the matches first regex group is inserted, -102 the 2nd group etc., see help on
@@ -63,10 +65,10 @@ variable is set to one of these command, the new kill text is appended to the la
 Windowing  systems such as X-Windows  and Microsoft  Windows  utilize a global
 windowing kill buffer allowing data to be moved between windowing applications
 .\"
-(\fIcut buffer\fR and \fIclipboard\fR, respectively). Within these environments \*(mE automatically interacts with the
-windowing systems kill buffer, the last \*(mE kill buffer entry is immediately available for a \fIpaste\fR operation
+(\fIcut buffer\fR and \fIclipboard\fR, respectively). Within these environments \*(mS automatically interacts with the
+windowing systems kill buffer, the last \*(mS kill buffer entry is immediately available for a \fIpaste\fR operation
 into another application (regardless of how it was inserted into the kill buffer). Conversely, data placed in the
-windowing kill buffer is available to \*(mE, via \fByank\fR, until a new item has been inserted into the kill buffer
+windowing kill buffer is available to \*(mS, via \fByank\fR, until a new item has been inserted into the kill buffer
 (the data may still be available via
 .Ht reyank 2 ).
 .SH EXAMPLE

@@ -2028,7 +2028,7 @@ gtarg(meUByte *tkn)
             else
             {
 #ifdef _CLIPBRD
-                TTgetClipboard() ;
+                TTgetClipboard(0);
 #endif
                 kl = klhead ;
             }

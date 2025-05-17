@@ -1567,23 +1567,32 @@ yank(int f, int n)
         if(n > -100)
 #endif
         {
-            meKill *kl;
-            
-            while((++n <= 0) && ((kl = klhead) != NULL))
+            if(n == -99)
             {
-                meKillNode *next, *kill;
-                kill = kl->kill;
-                while(kill != NULL)
-                {
-                    next = kill->next;
-                    meFree(kill);
-                    kill = next;
-                }
-                klhead = kl->next;
-                meFree(kl);
+#ifdef _CLIPBRD
+                TTgetClipboard(1);
+#endif
             }
-            reyankLastYank = NULL;
-            commandFlag[CK_YANK] = comSelKill;
+            else
+            {
+                meKill *kl;
+            
+                while((++n <= 0) && ((kl = klhead) != NULL))
+                {
+                    meKillNode *next, *kill;
+                    kill = kl->kill;
+                    while(kill != NULL)
+                    {
+                        next = kill->next;
+                        meFree(kill);
+                        kill = next;
+                    }
+                    klhead = kl->next;
+                    meFree(kl);
+                }
+                reyankLastYank = NULL;
+                commandFlag[CK_YANK] = comSelKill;
+            }
             return meTRUE;
         }
 #if MEOPT_EXTENDED
@@ -1618,7 +1627,7 @@ yank(int f, int n)
     else
     {
 #ifdef _CLIPBRD
-        TTgetClipboard() ;
+        TTgetClipboard(0);
 #endif
         /* make sure there is something to yank */
         if(klhead == NULL)

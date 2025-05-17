@@ -632,7 +632,7 @@ yankRectangle(int f, int n)
 {
     int col;
 #ifdef _CLIPBRD
-    TTgetClipboard();
+    TTgetClipboard(0);
 #endif
     /* make sure there is something to yank */
     if(klhead == NULL)

@@ -1610,7 +1610,7 @@ input_expand:
                 meKillNode *killp;
                 
 #ifdef _CLIPBRD
-                TTgetClipboard();
+                TTgetClipboard(0);
 #endif
                 if((lastYank=klhead) == (meKill*) NULL)
                 {
