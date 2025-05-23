@@ -1,24 +1,14 @@
 ##-*- makefile -*-############################################################
 #
-#  Author        : $Author$
 #  Created By    : Detlef Groth
 #  Created       : Fri May 23 07:56:16 2025
-#  Last Modified : <250523.0831>
-#
-#  Description	 :
-#
-#  Notes         :
+#  Last Modified : <250523.0932>
 #
 ##############################################################################
 #
 #  Copyright (c) 2025 Detlef Groth.
+#  License:  same as MicroEmacs
 # 
-#  All Rights Reserved.
-# 
-#  This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
-#  reproduced,  translated,  or  reduced to any  electronic  medium or machine
-#  readable form without prior written consent from Detlef Groth.
-#
 ##############################################################################
 
 CURRENT_MAKEFILE := $(lastword $(MAKEFILE_LIST))
