@@ -130,8 +130,13 @@ if [ $PLATFORM = "Darwin" ] ; then
   fi
 elif [ $PLATFORM = "Linux" ] ; then
   if [ `uname -m` = "x86_64" ] ; then
-    MEPLATPKG=linux_intel
-    MEPLATFUL=linux6-intel64
+    if [ `uname -r | grep -Eo "^[0-9]"` = "5" ]; then
+       MEPLATFUL=linux5-intel64
+       MEPLATPKG=linux5_intel
+    else
+        MEPLATPKG=linux_intel
+        MEPLATFUL=linux6-intel64
+    fi
   else
     MEPLATPKG=linux_aarch
     MEPLATFUL=linux6-aarch64
