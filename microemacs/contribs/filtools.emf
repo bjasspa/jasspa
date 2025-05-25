@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Detlef Groth, University of Potsdam, Germany
 ;  Created       : Mon Mar 24 11:14:06 2025
-;  Last Modified : <250517.1127>
+;  Last Modified : <250524.2317>
 ;
 ;  Description   : Support for editing language files with generic
 ;                  macros file-exec, file-format and file-lint using the 
@@ -17,109 +17,15 @@
 ;                set-variable %fhook-python-format "ruff format %s" ; using the ruff formatter
 ;                set-variable %fhook-python-lint   "ruff check %s"    ; using the ruff linter
 ;                set-variable %fhook-python-exec   "python3 %s"
-;                ; Go programming language it could be within mygo.emf
+;                ; for the Go programming language it could be within mygo.emf
 ;                set-variable %fhook-go-format     "go fmt %s"
 ;                set-variable %fhook-go-lint       "go vet %s"
 ;                set-variable %fhook-go-exec       "go run %s"
-;                ;  C++ code using cppcheck, astyle and g++
-;                set-variable %fhook-cpp-lint "cppcheck --quiet --enable=all --suppress=missingIncludeSystem %s"
-;                set-variable %fhook-cpp-exec "g++ %s 2>&1; ./a.out"
-;                set-variable %fhook-cpp-format "astyle %s"
 ;  History       : 2025-04-14 - first version
 ;
 ;  Copyright (c) 2025 Detlef Groth.
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-define-help "file-lint" 3
-! 3 file-exec
-! 3 file-lint
-! 3 file-format
-! 5 %fhook-python-exec
-! 5 %fhook-python-lint
-! 5 %fhook-python-format
-## NAME
-
-__file-exec__ - execute the current script using a interpreter or after compilation  
-__file-format__ - format the current file using a language dependent formatter  
-__file-lint__ - format the current file using a language dependent formatter  
-
-$a
-
-## SYNOPSIS
-
-_n_  __file-exec__  
-__file-format__  
-__file-lint__ 
-
-## DESCRIPTION
-
-The three commands described below require the definition of global variables 
-which should declare the command lines to be used for executing, linting or 
-formatting the current file. The variable names are of type:
-
-  _fhook-FHOOK-(exec|format|lint)_ 
-
-where _FHOOK_ is the file hook name of the file.  The variable declaration can be 
-added to the users configuration file, _USERNAME.emf_ or into the _myFHOOK.emf_
-file within the users configuration folder. See below for a few examples.
-
-The __file-exec__  macro executes or compiles the currently edited file using 
-a global variable which needs to be defined for the current file hook. See below
-for a few examples for defining these global variables. If a numeric argument
-is given the user is asked for possible command line arguments. After executing 
-this macro a popup-window command should appear showing the output or possible 
-errors of the code.
-
-The __file-format__ macro formats the currently edited  file using the
-a language specific formatter which needs to be defined using an user defined
-global file hook dependent variable. See below for a few examples.
-
-The __file-lint__   macro checks the currently edited file using an user an user
-defined global variable for the current file hook.
-
-After executing the macro a popup-window (`*lintr*`) displays the warning
-messages of the linter package, the user can click on the hilighted lines
-showing  warnings and jump directly to the problematic line. This requires that
-the linter defined in the variable supports the _FILENAME:LINE:CHAR:_ syntax.
-The same can jumping to the error be achieved by pressing the ENTER key on 
-the hilighted line.
-
-These three macros can be seen as simplified  versions for the Go, Python, R
-and Tcl macros like  __go-lint__ or  __go-format__ etc.
-They can be used as well to use  alternative  tools for  formatting  and linting
-allowing easy support of other programming languages.
-
-## EXAMPLE
-
-```{emf}
-  ; user-defined variables in the users emf or in the mypython.emf 
-  set-variable %fhook-python-format "ruff format %s" ; using the ruff formatter
-  set-variable %fhook-python-lint   "ruff check %s"  ; using the ruff linter
-  set-variable %fhook-python-exec   "python3 %s"
-  ; for the Go programming language it could be as well within username.emf or mygo.emf
-  set-variable %fhook-go-format     "go fmt %s"
-  set-variable %fhook-go-lint       "go vet %s"
-  set-variable %fhook-go-exec       "go run %s"
-  ; working with C++ code using cppcheck, astyle and g++
-  set-variable %fhook-cpp-lint "cppcheck --quiet --enable=all --suppress=missingIncludeSystem %s"
-  set-variable %fhook-cpp-exec "g++ %s 2>&1; ./a.out"
-  set-variable %fhook-cpp-format "astyle %s"
-  ; command execution
-  file-exec          ; executes the current file using the fhook-FHOOKNAME-exec var
-  0 file-exec        ; ask for command line arguments and calls then executes
-  file-format        ; formats and reloads the currently edited file using the formatter
-  file-lint          ; gives code advise for the currently edited file
-    
-```
-      
-## NOTES
-
-The macros __file-exec__,  __file-format__  and __file-lint__ are implemented in the file `filtools.emf`.
-  
-## SEE ALSO
-
-[file-tool-setup(3)](file-tool-setup\(3\))
-!ehelp
 define-macro fhook-file-lint
   buffer-init-hooks
 !emacro
@@ -130,7 +36,11 @@ define-macro file-lint
       !abort
   !endif
   &band @# 1 save-some-buffers @mna
-  2 pipe-shell-command &spr #l0 $buffer-fname "*file-lint*"
+  set-variable #l2 &xrep $buffer-bname "\\.[A-Za-z0-9]+$" "" ; basename ohne dir path
+  set-variable #l1 &xrep #l0 "%b" #l2
+  set-variable #l1 &xrep #l1 "%f" $buffer-fname
+  set-variable #l1 &spr #l1 $buffer-fname 
+  2 pipe-shell-command #l1 "*file-lint*"
   set-variable .buffer $buffer-bname
   next-window-find-buffer "*file-lint*"
   buffer-init "file-lint"
@@ -140,11 +50,14 @@ define-macro file-lint
 
 0 define-macro file-lint-find-line
   set-variable #l0 @wl
-  !if &xse #l0 "\\(.+\\):\\([0-9]+\\):\\([0-9]+\\):.+"
+  !if &xse #l0 "\\(.+\\):\\([0-9]+\\):\\([0-9]+\\).+"
     next-window-find-buffer .file-lint.buffer
     goto-line @s2
     beginning-of-line
-    @s3 forward-char
+    set-variable #l0 @s3 
+    ;1000 ml-write &decr #l0 1
+    set-variable #l0 &decr #l0 1
+    #l0 forward-char
   !else
     ml-write "Not an error line!"
   !endif
@@ -157,7 +70,9 @@ set-variable .fhook-file-lint.setup-mask "acfhmw"
 !if &and &sin "h" .fhook-file-lint.setup &band .hilight.flags 0x02
   !iif &not &exi .hilight.file-lint  set-variable .hilight.file-lint &pinc  .hilight.next 1
   0 hilight .hilight.file-lint 2 200                                     $global-scheme
-  hilight .hilight.file-lint   0  "[/\\.A-Za-z0-9]+:[0-9]+:[0-9]+:"      .scheme.link  
+  hilight .hilight.file-lint   0  "\\.+:[0-9]+:[0-9]+"      .scheme.link  
+  hilight .hilight.file-lint   0  "[/A-Za-z0-9]+\\.*[A-Za-z0-9]+:[0-9]+:[0-9]+"      .scheme.link    
+  ;[/\\.A-Za-z0-9]+
 !endif
 
 add-file-hook "*file-lint*" fhook-file-lint
@@ -171,7 +86,11 @@ define-macro file-format
       !abort
   !endif
   &band @# 1 save-some-buffers @mna  
-  2 pipe-shell-command &spr #l0 $buffer-fname "*command*"
+  set-variable #l2 &xrep $buffer-bname "\\.[A-Za-z0-9]+$" "" ; basename ohne dir path
+  set-variable #l1 &xrep #l0 "%b" #l2
+  set-variable #l1 &xrep #l1 "%f" $buffer-fname
+  set-variable #l1 &spr #l1 $buffer-fname 
+  2 pipe-shell-command #l1 "*command*"
   0 reread-file
 !emacro
 
@@ -189,7 +108,10 @@ define-macro file-exec
   ; command line arguments
   !iif &not &exi :file-exec-args  set-variable :file-exec-args ""
   !iif &not &band @# 2  set-variable :file-exec-args @ml2 "Additional command-line arguments" :file-exec-args 
-  set-variable #l1 &spr #l0 $buffer-fname 
+  set-variable #l2 &xrep $buffer-bname "\\.[A-Za-z0-9]+$" "" ; basename ohne dir path
+  set-variable #l1 &xrep #l0 "%b" #l2
+  set-variable #l1 &xrep #l1 "%f" $buffer-fname
+  set-variable #l1 &spr #l1 $buffer-fname 
   2 pipe-shell-command &spr "%s %s" #l1 :file-exec-args "*file-exec*"
   set-variable .buffer $buffer-bname
   next-window-find-buffer "*file-exec*"
@@ -200,13 +122,14 @@ define-macro file-exec
 
 0 define-macro file-exec-find-line
     set-variable #l0 @wl
-  !if &xse #l0 ".+:\\([0-9]+\\):\\([0-9]+\\).*"
-      next-window-find-buffer .file-exec.buffer
-      goto-line @s1
-      @s2 forward-char
-  !else
-      ml-write "Not an error line!"
-  !endif
+    1000 ml-write #l0
+    !if &xse #l0 ".+:\\([0-9]+\\):\\([0-9]+\\).*"
+        next-window-find-buffer .file-exec.buffer
+        goto-line @s1
+        @s2 forward-char
+    !else
+        ml-write "Not an error line!"
+    !endif
 !emacro
 
 set-variable .fhook-file-exec.name "File Exec"
