@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Detlef Groth, University of Potsdam, Germany
 ;  Created       : Mon Mar 24 11:14:06 2025
-;  Last Modified : <250525.1037>
+;  Last Modified : <250525.1122>
 ;
 ;  Description   : Support for editing language files with generic
 ;                  macros file-exec, file-format and file-lint using the 
@@ -132,12 +132,8 @@ define-macro file-lint
       !abort
   !endif
   &band @# 1 save-some-buffers @mna
-  set-variable #l2 &xrep $buffer-bname "\\.[A-Za-z0-9]+$" "" ; basename ohne dir path
-  set-variable #l1 &xrep #l0 "%b" #l2
-  set-variable #l1 &xrep #l1 "%f" $buffer-fname
-  set-variable #l1 &spr #l1 $buffer-fname 
-  2 pipe-shell-command #l1 "*file-lint*"
-  set-variable .buffer $buffer-bname
+  set-variable .file-lint.buffer $buffer-bname
+  0x4088 file-tool-run #l0 $buffer-fname "*file-lint*"
   next-window-find-buffer "*file-lint*"
   buffer-init "file-lint"
   set-variable :mouse-word-select file-lint-find-line
