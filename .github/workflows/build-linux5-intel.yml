@@ -80,7 +80,7 @@ jobs:
           rm -rf tfs
           mkdir -p tfs/bin/linux5-intel64
           cd tfs/bin/linux5-intel64
-          cp /usr/lib/x86_64-linux-gnu/ibcrypto.so .
+          cp /usr/lib/x86_64-linux-gnu/libcrypto.so .
           cp /usr/lib/x86_64-linux-gnu/libssl.so .
           cd ../..
           zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_bin_linux5_intel_openssl bin
