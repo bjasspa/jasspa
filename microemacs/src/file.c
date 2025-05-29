@@ -412,14 +412,14 @@ gft_directory:
             size_t ii, jj ;
             int maxi=10 ;
 
-            ii = meStrlen(file) ;
-            meStrncpy(lbuf,file,ii) ;
+            ii = meStrlen(file);
+            memcpy(lbuf,file,ii);
             do {
                 if(file[ii-1] == DIR_CHAR)
-                    ii-- ;
-                lbuf[ii] = '\0' ;
+                    ii--;
+                lbuf[ii] = '\0';
                 if(statbuf.st_mtime > stmtime)
-                    stmtime = statbuf.st_mtime ;
+                    stmtime = statbuf.st_mtime;
                 if((jj=readlink((char *)lbuf,(char *)buf, meBUF_SIZE_MAX)) <= 0)
                 {
                     if(flag & gfsERRON_BAD_FILE)
