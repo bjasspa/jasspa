@@ -5,5 +5,6 @@ if "if(\p)\r{\r\r}\r\P" "  if()"
 ef "else if(\p)\r{\r\r}\r\P" "  else if()"
 el "else\r{\r\p\r}\r\P" "  else"
 sw "switch(\p)\r{\rcase :\rdefault:\r}\r\P" "  switch()"
+fo "for (int i = 0; i < \p; i++) {\r\r}\P" "  for"
 wh "while(\p)\r{\r\r}\r\P" "  while()"
-
+ma "int main (int argc, char * argv[]) {\r\p\rreturn(0);\r}\r\P" "  main"

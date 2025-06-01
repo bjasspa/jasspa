@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Detlef Groth, University of Potsdam, Germany
 ;  Created       : Mon Mar 24 11:14:06 2025
-;  Last Modified : <250530.1103>
+;  Last Modified : <250601.1535>
 ;
 ;  Description   : Support for editing language files with generic
 ;                  macros file-exec, file-format and file-lint using the 
@@ -32,17 +32,7 @@
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; not sure how to safely load the macros from find.emf for instance
-
-0 define-macro return-get-next-line
-    !force backward-line
-    get-next-line
-!emacro
-0 define-macro mouse-get-next-line
-    set-cursor-to-mouse
-    !force backward-line
-    get-next-line
-!emacro
+define-macro-file find return-get-next-line mouse-get-next-line
 
 define-macro fhook-file-lint
   buffer-init-hooks
