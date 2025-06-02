@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m5var041.5,v 2.9 2023/12/09 14:02:58 jon Exp $
+.Id $Id: m5var041.5,v 2.9 2025/05/18 18:58:31 jon Exp $
 .Im MicroEmacs variable|shell|macrodevelop
 .so me.tni
 .TH $result 5
@@ -34,6 +34,9 @@ is used to return the results of several commands:
 .Ht file-op 2 
 \fB$result\fR is used to return an error code when the command fails.
 .TP
+.Ht find 3
+\fB$result\fR is set to whether a match was found or a match count if option \fB-c\fR is used.
+.TP
 .Ht find-registry 2 
 \fB$result\fR is used to return the name of a registry child node given the parent and index from the user.
 .TP
@@ -45,6 +48,9 @@ is used to return the results of several commands:
 .TP
 .Ht goto-alpha-mark 2
 \fB$result\fR is set to the list of all alpha marks in the current buffer when an argument of \fC0\fR is given.
+.TP
+.Ht grep 3
+\fB$result\fR is set to whether a match was found or a match count if option \fB-c\fR is used.
 .TP
 .Ht indent 2 
 \fB$result\fR is set to the indent scheme used at current location when an argument of \fC2\fR is given.
@@ -78,7 +84,7 @@ for query) and the replace with string in a list.
 return value checking can be used in a variety of ways, for example, to test the existence of a file:
 .Me $emf-scheme
 .CS
-set-variable %filename @ml"Enter file name"
+set-variable %filename @ml "Enter file name"
 shell-command &cat "test -f " %filename
 !if &equ $result 0
     ml-write "file exists"

@@ -4,19 +4,27 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac089.3,v 2.1 2025/03/16 08:57:05 jon Exp $
+.Id $Id: m3mac089.3,v 2.1 2025/05/23 00:42:14 jon Exp $
 .Im MicroEmacs command|search
 .so me.tni
 .TH grep 3
 .XI grep - "Search a file for a pattern"
+.XI grep-for-region - "Grep current directory for current region"
 .SH NAME
+.Me "|grep"
 grep \- Search a file for a pattern
+.br
+.Me "|grep-for-region"
+grep-for-region \- Grep current directory for current region
 .Me $a
 .SH SYNOPSIS
 .na
 .B grep
 "[\fIgrep-options\fR] <\fIsearch-pattern\fR> [\fIfile-mask\fR] [\fIfile-mask\fR ...]"
 ["\|\fIstarting-path\fR\|"]
+.sp
+.B grep-for-region
+[\fIsearch-pattern\fR]
 .ad
 .SH DESCRIPTION
 .B grep
@@ -161,6 +169,15 @@ starts with a "\fC*\fR".
 .IP "\fIstarting-path\fR"
 The directory  location  where the search should  commence when the \fB-p\fR option is used. The default when \fB-p\fR
 is omitted is the location of the current buffer.
+.PP
+\fBgrep\fR sets
+.Ht $result 5
+to the return of the command, which is \fC0\fR if matches were found or 1 of no match was found, unless 
+options \fB-c\fR or \fB-C\fR are used. 
+.PP
+.B grep-for-region
+uses the \fBgrep\fR command to search for the string defined by the current region within all files of the current 
+directory. If no region is defined within the current buffer the the string is prompted for. 
 .PP
 .B find-setup 
 invokes a dialogue and allows the default  \fIfile-options\fR  to be specified

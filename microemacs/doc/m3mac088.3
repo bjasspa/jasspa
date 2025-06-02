@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac088.3,v 2.1 2025/03/16 08:56:35 jon Exp $
+.Id $Id: m3mac088.3,v 2.1 2025/05/18 18:57:53 jon Exp $
 .Im MicroEmacs command|search
 .so me.tni
 .TH find 3
@@ -170,6 +170,11 @@ The files to search for e.g. \fB*.txt\fR
 .IP "\fIstarting-path\fR"
 The directory  location  where the search should  commence. The default is the
 location of the current buffer.
+.PP
+\fBfind\fR sets
+.Ht $result 5
+to the return of the command, which is \fC0\fR if matches were found or 1 of no match was found, unless 
+options \fB-c\fR or \fB-C\fR are used.
 .PP
 .B file-setup 
 invokes a dialogue and allows the default  \fIfile-options\fR  to be specified
