@@ -107,8 +107,6 @@ The MicroEmacs single file executables with macro files embedded come in two fla
 Download one of the following zip archives with the binaries  inside and place
 the executables into a folder belonging to your PATH variable.
 
-https://github.com/bjasspa/jasspa/releases/download/me_20250601/Jasspa_MicroEmacs_20250601_abin_linux_mesw.zip
-
 | Platform      | Console/Terminal | GUI (X11 on Linux/Mac) |
 |:-------------:|:----------------:|:----------------------:|
 | Linux intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20250601/Jasspa_MicroEmacs_20250601_abin_linux_intel_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20250601/Jasspa_MicroEmacs_20250601_abin_linux_intel_mesw.zip)   |
