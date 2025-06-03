@@ -71,8 +71,7 @@ _Right:_ GUI version - theme "Ayu Dark", displaying the hypertext enabled R docu
 You can compile the code yourself, or you pick one or two of the pre-compiled
 single file executables from the Release page or you install the usual mec/mew
 executables  using curl or the homebrew  package manager. For Windows you have
-as well a installer which is available [here](https://github.com/bjasspa/jasspa/releases/download/me_20250601/Jasspa_MicroEmacs_20250601_installer_windows.msi):
-
+as well a installer which is available [here](https://github.com/bjasspa/jasspa/releases/download/me_20250601/Jasspa_MicroEmacs_20250601_installer_windows_intel.msi):
 
 Installation  using  curl for Linux and MacOS by copying and pasting the  following
 command into your terminal:
