@@ -69,6 +69,10 @@ set-char-mask "k" ""
     translate-key "A-C-8 A-[" "\x5b"
     translate-key "A-C-q A-@" "\x40"
     translate-key "A-C-b A-|" "\x7c"
+    ; workaround for backslash AltGr-p
+    translate-key "A-C-p" "\\"
+    ; workaround for pipe AltGr-y    
+    translate-key "A-C-y" "|"
   !endif
 !elif &seq #l0 "Espanol"
   !if &seq $platform "windows"
