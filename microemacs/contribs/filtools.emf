@@ -2,6 +2,7 @@
 ;
 ;  Created By    : Detlef Groth, University of Potsdam, Germany
 ;  Created       : Mon Mar 24 11:14:06 2025
+;  Last Modified : <250603.1804>
 ;
 ;  Description   : Support for editing language files with generic
 ;                  macros file-exec, file-format and file-lint using the 
@@ -26,7 +27,8 @@
 ;                set-variable %fhook-c-format "astyle --indent=spaces=4 %f"
 ;  History       : 2025-04-14 - first version
 ;                  2025-05-29 - rewrite using file-tools-run anf add-next-line macros
-;               
+;                  2025-06-01 - using find.emf for the macros to locate the problematic line
+;
 ;  Copyright (c) 2025 Detlef Groth. License same as Jasspa's MicroEmacs
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -36,7 +38,6 @@ define-macro-file find return-get-next-line mouse-get-next-line
 define-macro fhook-file-lint
   buffer-init-hooks
 !emacro
-
 ; minimal defaults
 add-next-line "*file-exec*" "%f:%l:\\d+"
 add-next-line "*file-lint*" "%f:%l:\\d+"
@@ -63,7 +64,7 @@ set-variable .fhook-file-lint.setup-mask "acfhmw"
   !iif &not &exi .hilight.file-lint  set-variable .hilight.file-lint &pinc  .hilight.next 1
   0 hilight .hilight.file-lint 2 200                                     $global-scheme
   hilight .hilight.file-lint   0  "\\.+:[0-9]+:[0-9]+"      .scheme.link  
-  hilight .hilight.file-lint   0  "[/A-Za-z0-9]+\\.*[A-Za-z0-9]+:[0-9]+:[0-9]+"      .scheme.link    
+  hilight .hilight.file-lint   0  "[-/A-Za-z0-9]+\\.*[A-Za-z0-9]+:[0-9]+:[0-9]+"      .scheme.link    
 !endif
 
 add-file-hook "*file-lint*" fhook-file-lint
@@ -141,7 +142,6 @@ add-file-hook "*file-exec*" fhook-file-exec
   -1 buffer-mode "edit"
   1 buffer-mode "view"  
 !emacro
-
 define-help "file-lint" 3
 ! 3 file-exec
 ! 3 file-lint
@@ -209,24 +209,23 @@ allowing easy support of other programming languages.
 ## EXAMPLE
 
 ```{emf}
-  ; user-defined variables in the users emf or in the mypython.emf 
-  set-variable %fhook-python-format "ruff format %f" ; using the ruff formatter
-  set-variable %fhook-python-lint   "ruff check %f"  ; using the ruff linter
-  set-variable %fhook-python-exec   "python3 %f"
-  ; for the Go programming language it could be as well within username.emf or mygo.emf
-  set-variable %fhook-go-format     "go fmt %f"
-  set-variable %fhook-go-lint       "go vet %f"
-  set-variable %fhook-go-exec       "go run %f"
-  ; working with C++ code using cppcheck, astyle and g++
-  set-variable %fhook-cpp-lint "cppcheck --quiet --enable=all --suppress=missingIncludeSystem %s"
-  set-variable %fhook-cpp-exec "g++ %f 2>&1 -o %b; ./%b"
-  set-variable %fhook-cpp-format "astyle %f"
-  ; command execution
-  file-exec          ; executes the current file using the fhook-FHOOKNAME-exec var
-  0 file-exec        ; ask for command line arguments and calls then executes
-  file-format        ; formats and reloads the currently edited file using the formatter
-  file-lint          ; gives code advise for the currently edited file
-    
+    ; user-defined variables in the users emf or in the mypython.emf 
+    set-variable %fhook-python-format "ruff format %f" ; using the ruff formatter
+    set-variable %fhook-python-lint   "ruff check %f"  ; using the ruff linter
+    set-variable %fhook-python-exec   "python3 %f"
+    ; for the Go programming language it could be as well within username.emf or mygo.emf
+    set-variable %fhook-go-format     "go fmt %f"
+    set-variable %fhook-go-lint       "go vet %f"
+    set-variable %fhook-go-exec       "go run %f"
+    ; working with C++ code using cppcheck, astyle and g++
+    set-variable %fhook-cpp-lint "cppcheck --quiet --enable=all --suppress=missingIncludeSystem %f"
+    set-variable %fhook-cpp-exec "g++ %f 2>&1 -o %b; ./%b"
+    set-variable %fhook-cpp-format "astyle %f"
+    ; command execution
+    file-exec          ; executes the current file using the fhook-FHOOKNAME-exec var
+    0 file-exec        ; ask for command line arguments and calls then executes
+    file-format        ; formats and reloads the currently edited file using the formatter
+    file-lint          ; gives code advise for the currently edited file
 ```
       
 ## NOTES
