@@ -278,41 +278,41 @@ static int timeoutRcv=300 * MESOCK_TIMEO_MULT;
 static void
 strBase64Encode3(meUByte *dd, meUByte c1, meUByte c2, meUByte c3)
 {
-    static meUByte base64Table[]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/" ;
-    dd[0] = base64Table[(c1 >> 2)] ;
-    dd[1] = base64Table[((c1 << 4) & 0x30) | ((c2 >> 4) & 0x0f)] ;
-    dd[2] = base64Table[((c2 << 2) & 0x3c) | ((c3 >> 6) & 0x03)] ;
-    dd[3] = base64Table[(c3 & 0x3f)] ;
+    static meUByte base64Table[]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    dd[0] = base64Table[(c1 >> 2)];
+    dd[1] = base64Table[((c1 << 4) & 0x30) | ((c2 >> 4) & 0x0f)];
+    dd[2] = base64Table[((c2 << 2) & 0x3c) | ((c3 >> 6) & 0x03)];
+    dd[3] = base64Table[(c3 & 0x3f)];
 }
 
 static meUByte *
 strBase64Encode(meUByte *dd, meUByte *ss)
 {
-    meUByte c1, c2, c3 ;
+    meUByte c1, c2, c3;
 
     while((c1=*ss++) != '\0')
     {
         if((c2=*ss++) == '\0')
         {
-            c3 = '\0' ;
-            strBase64Encode3(dd,c1,c2,c3) ;
-            dd += 2 ;
-            *dd++ = '=' ;
-            *dd++ = '=' ;
-            break ;
+            c3 = '\0';
+            strBase64Encode3(dd,c1,c2,c3);
+            dd += 2;
+            *dd++ = '=';
+            *dd++ = '=';
+            break;
         }
         else if((c3=*ss++) == '\0')
         {
-            strBase64Encode3(dd,c1,c2,c3) ;
-            dd += 3 ;
-            *dd++ = '=' ;
-            break ;
+            strBase64Encode3(dd,c1,c2,c3);
+            dd += 3;
+            *dd++ = '=';
+            break;
         }
-        strBase64Encode3(dd,c1,c2,c3) ;
-        dd += 4 ;
+        strBase64Encode3(dd,c1,c2,c3);
+        dd += 4;
     }
-    *dd = '\0' ;
-    return dd ;
+    *dd = '\0';
+    return dd;
 }
 
 #if MEOPT_OPENSSL
@@ -373,22 +373,22 @@ meSockIsValidIp4Address(const char *str, const char *end)
     {
         int ch = *str++;
 
-        if (ch >= '0' && ch <= '9')
+        if(ch >= '0' && ch <= '9')
         {
             val = val * 10 + (ch - '0');
 
-            if (val > 255)
+            if(val > 255)
                 return 0;
-            if (!saw_digit)
+            if(!saw_digit)
             {
-                if (++octets > 4)
+                if(++octets > 4)
                     return 0;
                 saw_digit = 1;
             }
         }
-        else if (ch == '.' && saw_digit)
+        else if(ch == '.' && saw_digit)
         {
-            if (octets == 4)
+            if(octets == 4)
                 return 0;
             val = 0;
             saw_digit = 0;
@@ -396,7 +396,7 @@ meSockIsValidIp4Address(const char *str, const char *end)
         else
             return 0;
     }
-    if (octets < 4)
+    if(octets < 4)
         return 0;
 
     return 1;
@@ -422,14 +422,14 @@ meSockIsValidIp6Address(const char *str, const char *end)
     tp = 0;
     colonp = NULL;
 
-    if (str == end)
+    if(str == end)
         return 0;
 
     /* Leading :: requires some special handling. */
-    if (*str == ':')
+    if(*str == ':')
     {
         ++str;
-        if (str == end || *str != ':')
+        if(str == end || *str != ':')
             return 0;
     }
 
@@ -442,30 +442,30 @@ meSockIsValidIp6Address(const char *str, const char *end)
         int ch = *str++;
 
         /* if ch is a number, add it to val. */
-        if (c_isxdigit (ch))
+        if(c_isxdigit (ch))
         {
             val <<= 4;
             val |= XDIGIT_TO_NUM (ch);
-            if (val > 0xffff)
+            if(val > 0xffff)
                 return 0;
             saw_xdigit = 1;
             continue;
         }
 
         /* if ch is a colon ... */
-        if (ch == ':')
+        if(ch == ':')
         {
             curtok = str;
-            if (!saw_xdigit)
+            if(!saw_xdigit)
             {
-                if (colonp != NULL)
+                if(colonp != NULL)
                     return 0;
                 colonp = str + tp;
                 continue;
             }
-            else if (str == end)
+            else if(str == end)
                 return 0;
-            if (tp > ns_in6addrsz - ns_int16sz)
+            if(tp > ns_in6addrsz - ns_int16sz)
                 return 0;
             tp += ns_int16sz;
             saw_xdigit = 0;
@@ -474,8 +474,8 @@ meSockIsValidIp6Address(const char *str, const char *end)
         }
 
         /* if ch is a dot ... */
-        if (ch == '.' && (tp <= ns_in6addrsz - ns_inaddrsz)
-            && meSockIsValidIp4Address(curtok, end) == 1)
+        if((ch == '.') && (tp <= ns_in6addrsz - ns_inaddrsz) &&
+           (meSockIsValidIp4Address(curtok, end) == 1))
         {
             tp += ns_inaddrsz;
             saw_xdigit = 0;
@@ -485,21 +485,21 @@ meSockIsValidIp6Address(const char *str, const char *end)
         return 0;
     }
 
-    if (saw_xdigit)
+    if(saw_xdigit)
     {
-        if (tp > ns_in6addrsz - ns_int16sz)
+        if(tp > ns_in6addrsz - ns_int16sz)
             return 0;
         tp += ns_int16sz;
     }
 
-    if (colonp != NULL)
+    if(colonp != NULL)
     {
-        if (tp == ns_in6addrsz)
+        if(tp == ns_in6addrsz)
             return 0;
         tp = ns_in6addrsz;
     }
 
-    if (tp != ns_in6addrsz)
+    if(tp != ns_in6addrsz)
         return 0;
 
     return 1;
@@ -569,7 +569,7 @@ meSockInitSystemCaCert(meIo *io, SSL_CTX *sslCtx, char *rbuff)
             //CryptUIDlgViewContext(CERT_STORE_CERTIFICATE_CONTEXT,cCntx,NULL,NULL,0,NULL);
             ce = cCntx->pbCertEncoded;
             x509 = OPENSSLFunc(d2i_X509)(NULL,&ce,cCntx->cbCertEncoded);
-            if (x509)
+            if(x509)
             {
                 OPENSSLFunc(X509_NAME_oneline)(OPENSSLFunc(X509_get_subject_name)(x509),buf,sizeof(buf));
                 if(OPENSSLFunc(X509_STORE_add_cert)(store,x509) == 1)
@@ -600,9 +600,9 @@ meSockInit(meIo *io, meUByte *buff)
 {
 #if meSOCKFLG_USE_DLL
 #ifdef _WIN32
-    HINSTANCE libHandle ;
+    HINSTANCE libHandle;
 #else
-    void *libHandle ;
+    void *libHandle;
 #endif
 #endif
     SSL_METHOD const *meth;
@@ -801,7 +801,7 @@ meSockInit(meIo *io, meUByte *buff)
      * the entire IdentTrust PKI.
      */
     param = OPENSSLFunc(X509_VERIFY_PARAM_new)();
-    if (param)
+    if(param)
     {
         /* We only want X509_V_FLAG_PARTIAL_CHAIN, but the OpenSSL docs
          * say to use X509_V_FLAG_TRUSTED_FIRST also. It looks like
@@ -862,22 +862,22 @@ meSockPatternMatch(const char *pattern, const char *string)
     char c;
     for (; (c = tolower(*p++)) != '\0'; n++)
     {
-        if (c == '*')
+        if(c == '*')
         {
-            for (c = tolower(*p); c == '*'; c = tolower(*++p))
+            for(c = tolower(*p); c == '*'; c = tolower(*++p))
                 ;
-            for (; *n != '\0'; n++)
+            for(; *n != '\0'; n++)
             {
-                if (tolower(*n) == c && meSockPatternMatch(p, n))
+                if(tolower(*n) == c && meSockPatternMatch(p, n))
                     return 1;
 #ifdef ASTERISK_EXCLUDES_DOT
-                else if (*n == '.')
+                else if(*n == '.')
                     return 0;
 #endif
             }
             return (c == '\0');
         }
-        else if (c != tolower(*n))
+        else if(c != tolower(*n))
             return 0;
     }
     return *n == '\0';
@@ -918,7 +918,7 @@ meSockCheckCertificate(meIo *io, const char *sniHost, meUByte *rbuff)
 #if 0
     int pinsuccess = opt.pinnedpubkey == NULL;
     /* The user explicitly said to not check for the certificate.  */
-    if ((io->urlOpts == meSOCKOPT_IGN_CRT_ERR) && pinsuccess)
+    if((io->urlOpts == meSOCKOPT_IGN_CRT_ERR) && pinsuccess)
         return success;
 #else
     if(io->urlOpts == meSOCKOPT_IGN_CRT_ERR)
@@ -953,7 +953,7 @@ meSockCheckCertificate(meIo *io, const char *sniHost, meUByte *rbuff)
 
     ret = 1;
     vresult = OPENSSLFunc(SSL_get_verify_result)(io->ssl);
-    if (vresult != X509_V_OK)
+    if(vresult != X509_V_OK)
     {
         if(severityLbl != NULL)
         {
@@ -1011,20 +1011,20 @@ meSockCheckCertificate(meIo *io, const char *sniHost, meUByte *rbuff)
         for(ii=0; ii<numaltnames; ii++)
         {
             const GENERAL_NAME *name = OPENSSLFunc(sk_GENERAL_NAME_value)(subjectAltNames,ii);
-            if (name)
+            if(name)
             {
-                if (host_in_octet_string)
+                if(host_in_octet_string)
                 {
-                    if (name->type == GEN_IPADD)
+                    if(name->type == GEN_IPADD)
                     {
                         /* Check for ipAddress */
                         /* TODO: Should we convert between IPv4-mapped IPv6 addresses and IPv4 addresses? */
                         alt_name_checked = 1;
-                        if (!OPENSSLFunc(ASN1_STRING_cmp)(host_in_octet_string,name->d.iPAddress))
+                        if(!OPENSSLFunc(ASN1_STRING_cmp)(host_in_octet_string,name->d.iPAddress))
                             break;
                     }
                 }
-                else if (name->type == GEN_DNS)
+                else if(name->type == GEN_DNS)
                 {
                     /* dNSName should be IA5String (i.e. ASCII), however who does trust CA? Convert
                      * it into UTF-8 for sure. */
@@ -1033,11 +1033,11 @@ meSockCheckCertificate(meIo *io, const char *sniHost, meUByte *rbuff)
                     /* Check for dNSName */
                     alt_name_checked = 1;
 
-                    if (0 <= OPENSSLFunc(ASN1_STRING_to_UTF8)(&name_in_utf8, name->d.dNSName))
+                    if(0 <= OPENSSLFunc(ASN1_STRING_to_UTF8)(&name_in_utf8, name->d.dNSName))
                     {
                         /* Compare and check for NULL attack in ASN1_STRING */
-                        if (meSockPatternMatch((char *) name_in_utf8,sniHost) &&
-                            (strlen((char *) name_in_utf8) == (size_t) OPENSSLFunc(ASN1_STRING_length)(name->d.dNSName)))
+                        if(meSockPatternMatch((char *) name_in_utf8,sniHost) &&
+                           (strlen((char *) name_in_utf8) == (size_t) OPENSSLFunc(ASN1_STRING_length)(name->d.dNSName)))
                         {
                             OPENSSLFunc(CRYPTO_free)(name_in_utf8,OPENSSL_FILE,OPENSSL_LINE);
                             break;
@@ -1062,14 +1062,14 @@ meSockCheckCertificate(meIo *io, const char *sniHost, meUByte *rbuff)
         }
     }
 
-    if (alt_name_checked == 0)
+    if(alt_name_checked == 0)
     {
         /* Test commomName */
         X509_NAME *xname = OPENSSLFunc(X509_get_subject_name)(cert);
         common_name[0] = '\0';
         OPENSSLFunc(X509_NAME_get_text_by_NID)(xname,NID_commonName,common_name,sizeof(common_name));
 
-        if (!meSockPatternMatch(common_name,sniHost))
+        if(!meSockPatternMatch(common_name,sniHost))
         {
             if(severityLbl != NULL)
             {
@@ -1103,7 +1103,7 @@ meSockCheckCertificate(meIo *io, const char *sniHost, meUByte *rbuff)
 
             xentry = OPENSSLFunc(X509_NAME_get_entry)(xname,ii);
             sdata = OPENSSLFunc(X509_NAME_ENTRY_get_data)(xentry);
-            if (strlen(common_name) != (size_t) OPENSSLFunc(ASN1_STRING_length)(sdata))
+            if(strlen(common_name) != (size_t) OPENSSLFunc(ASN1_STRING_length)(sdata))
             {
                 if(severityLbl != NULL)
                 {
@@ -1187,7 +1187,7 @@ meSockSetup(meIo *io, meUShort flags)
 static int
 meSockReadLine(meIo *io, meUByte *buff)
 {
-    meUByte *dd=buff, cc ;
+    meUByte *dd=buff, cc;
     meInt ret, err;
     for(;;)
     {
@@ -1222,7 +1222,7 @@ meSockReadLine(meIo *io, meUByte *buff)
             return -1;
         }
         if((cc=*dd) == '\n')
-            break ;
+            break;
         if(cc != '\r')
             dd++;
     }
@@ -1325,13 +1325,13 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
         }
         if(proxyHost != NULL)
         {
-            thost = proxyHost ;
-            tport = proxyPort ;
+            thost = proxyHost;
+            tport = proxyPort;
         }
         else
         {
-            thost = host ;
-            tport = port ;
+            thost = host;
+            tport = port;
         }
 
         if(((hp = gethostbyname((char *) thost)) == NULL) ||
@@ -1550,17 +1550,17 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
     else
     {
         /* send GET message to http */
-        strcpy((char *) ss,"GET ") ;
+        strcpy((char *) ss,"GET ");
         ss += 4;
     }
     if(proxyHost == NULL)
     {
         strcpy((char *) ss,(char *) file);
-        ss += strlen((char *) ss) ;
+        ss += strlen((char *) ss);
     }
     else
     {
-        strcpy((char *) ss,"http") ;
+        strcpy((char *) ss,"http");
         ss += 4;
         if(flags & meSOCKFLG_USE_SSL)
             *ss++ = 's';
@@ -1569,10 +1569,10 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
         else
             ss += sprintf((char *) ss,"://%s%s",host,file);
     }
-    strcpy((char *) ss," HTTP/1.1\r\nHost: ") ;
+    strcpy((char *) ss," HTTP/1.1\r\nHost: ");
     ss += 17;
-    strcpy((char *) ss,(char *) host) ;
-    ss += strlen((char *) ss) ;
+    strcpy((char *) ss,(char *) host);
+    ss += strlen((char *) ss);
     if(port)
         ss += sprintf((char *) ss,":%d",port);
     if(io->urlFlags & meSOCKFLG_CLOSE)
@@ -1588,10 +1588,10 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
     if(user != NULL)
     {
         /* password supplied, encode */
-        strcpy((char *) ss,"\r\nAuthorization: Basic ") ;
-        ss += 23 ;
+        strcpy((char *) ss,"\r\nAuthorization: Basic ");
+        ss += 23;
         sprintf((char *) rbuff,"%s:%s",user,pass);
-        ss = strBase64Encode(ss,rbuff) ;
+        ss = strBase64Encode(ss,rbuff);
         strcpy((char *) io->urlUsr,(char *) user);
     }
     if(fdLen > 0)
@@ -1599,9 +1599,9 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
         pfs = ((hdr == NULL) || (strstr((char *) hdr,"Content-Type:") == NULL));
         if(pfp != NULL)
         {
-            meUByte *s1, *s2 ;
             if(pfs)
             {
+                meUByte *s1, *s2;
                 if((s1 = (meUByte *) strrchr((char *) postFName,'/')) == NULL)
                     s1 = postFName;
                 if((s2 = (meUByte *) strrchr((char *) s1,'\\')) == NULL)
@@ -1861,11 +1861,11 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
         {
             if(((ffbuf[3]|0x20) == 't') && ((ffbuf[4]|0x20) == 'e') && ((ffbuf[5]|0x20) == 'n') && ((ffbuf[6]|0x20) == 't') && (ffbuf[7] == '-') && ((ffbuf[8]|0x20) == 'l') &&
                ((ffbuf[9]|0x20) == 'e') && ((ffbuf[10]|0x20) == 'n') && ((ffbuf[11]|0x20) == 'g') && ((ffbuf[12]|0x20) == 't') && ((ffbuf[13]|0x20) == 'h') && (ffbuf[14] == ':'))
-                io->urlLen = atoi((char *) ffbuf+15) ;
+                io->urlLen = atoi((char *) ffbuf+15);
             else if(((ffbuf[3]|0x20) == 'n') && ((ffbuf[4]|0x20) == 'e') && ((ffbuf[5]|0x20) == 'c') && ((ffbuf[6]|0x20) == 't') && ((ffbuf[7]|0x20) == 'i') &&
                     ((ffbuf[9]|0x20) == 'o') && ((ffbuf[10]|0x20) == 'n') && (ffbuf[11] == ':'))
             {
-                ss = ffbuf+12 ;
+                ss = ffbuf+12;
                 while(((cc=*ss++) == ' ') || (cc == '\t'))
                     ;
                 if((cc|0x20) == 'c')
@@ -2014,7 +2014,7 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
 static meInt
 meSockControlReadLine(meIo *io, meUByte *buff)
 {
-    meUByte *dd=buff, cc ;
+    meUByte *dd=buff, cc;
     meInt ret, err, ll=meSOCK_BUFF_SIZE;
 
     for(;;)
@@ -2046,7 +2046,7 @@ meSockControlReadLine(meIo *io, meUByte *buff)
             return -1;
         }
         if((cc=*dd) == '\n')
-            break ;
+            break;
         if((cc != '\r') && (--ll > 0))
             dd++;
     }
@@ -2059,25 +2059,25 @@ meSockControlReadLine(meIo *io, meUByte *buff)
 meInt
 meSockFtpReadReply(meIo *io, meUByte *buff)
 {
-    meInt ret ;
+    meInt ret;
 
     if(io->urlOpts & meSOCKOPT_LOG_VERBOSE)
         ffSUrlLogger(io,meSOCKOPT_LOG_VERBOSE,(meUByte *) "FTP Reply:");
     if(meSockControlReadLine(io,buff) < 4)
         return ftpERROR;
 
-    ret = buff[0] - '0' ;
+    ret = buff[0] - '0';
     if(buff[3] == '-')
     {
         /* multi-line reply */
-        meUByte c0,c1,c2 ;
-        c0 = buff[0] ;
-        c1 = buff[1] ;
-        c2 = buff[2] ;
+        meUByte c0,c1,c2;
+        c0 = buff[0];
+        c1 = buff[1];
+        c2 = buff[2];
         do {
             if(meSockControlReadLine(io,buff) <= 0)
                 return ftpERROR;
-        } while((buff[0] != c0) || (buff[1] != c1) || (buff[2] != c2) || (buff[3] != ' ')) ;
+        } while((buff[0] != c0) || (buff[1] != c1) || (buff[2] != c2) || (buff[3] != ' '));
     }
     if((ret < ftpPOS_PRELIMIN) || (ret > ftpPOS_INTERMED))
         return ftpERROR;
@@ -2100,9 +2100,9 @@ meSockFtpCommand(meIo *io, meUByte *rbuff, char *fmt, ...)
         else
             ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,rbuff);
     }
-    rbuff[ii++] = '\r' ;
-    rbuff[ii++] = '\n' ;
-    rbuff[ii]   = '\0' ;
+    rbuff[ii++] = '\r';
+    rbuff[ii++] = '\n';
+    rbuff[ii]   = '\0';
 #if MEOPT_OPENSSL
     if(io->urlFlags & (meSOCKFLG_USE_SSL|meSOCKFLG_EXPLICIT_SSL))
         ret = OPENSSLFunc(SSL_write)(io->ctrlSsl,rbuff,ii);
@@ -2163,20 +2163,20 @@ meSockFtpGetDataChannel(meIo *io, meUByte *buff)
     memset(&sa,0,sizeof(sa));
     sa.sin_family = AF_INET;
     ss = (meUByte *)&(sa.sin_addr);
-    ss[0] = (meUByte) aai[0] ;
-    ss[1] = (meUByte) aai[1] ;
-    ss[2] = (meUByte) aai[2] ;
-    ss[3] = (meUByte) aai[3] ;
+    ss[0] = (meUByte) aai[0];
+    ss[1] = (meUByte) aai[1];
+    ss[2] = (meUByte) aai[2];
+    ss[3] = (meUByte) aai[3];
     ss = (meUByte *)&(sa.sin_port);
-    ss[0] = (meUByte) ppi[0] ;
-    ss[1] = (meUByte) ppi[1] ;
+    ss[0] = (meUByte) ppi[0];
+    ss[1] = (meUByte) ppi[1];
 
     /* only open and connect the plain socket at this stage, all SSL setup must be done after the sending of the command */
     if((io->sck = meSocketOpen(AF_INET,SOCK_STREAM,IPPROTO_TCP)) == meBadSocket)
     {
         if(io->urlOpts & meSOCKOPT_LOG_ERROR)
         {
-            sprintf((char *) buff,"meSock Error: Failed to open data channel - Error %d",meSocketGetError()) ;
+            sprintf((char *) buff,"meSock Error: Failed to open data channel - Error %d",meSocketGetError());
             ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,buff);
         }
         return ftpERROR;
@@ -2185,7 +2185,7 @@ meSockFtpGetDataChannel(meIo *io, meUByte *buff)
     {
         if(io->urlOpts & meSOCKOPT_LOG_ERROR)
         {
-            sprintf((char *) buff,"meSock Error: Failed to connect data channel - Error %d",meSocketGetError()) ;
+            sprintf((char *) buff,"meSock Error: Failed to connect data channel - Error %d",meSocketGetError());
             ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,buff);
         }
         return ftpERROR;
@@ -2211,7 +2211,7 @@ meSockFtpConnectData(meIo *io, meUByte *buff)
         if((io->ssl=OPENSSLFunc(SSL_new)(meSockCtx)) == NULL)
         {
             if(io->urlOpts & meSOCKOPT_LOG_ERROR)
-                ffSUrlLogger(io,meSOCKOPT_LOG_VERBOSE,(meUByte *) "meSock Error: Failed to create new data SSL");
+                ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,(meUByte *) "meSock Error: Failed to create new data SSL");
             meSockClose(io,1);
             return -12;
         }

@@ -53,9 +53,9 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 #if !defined(USE_UNCMP_PNG)
-IDI_ICON1               ICON    PRELOAD DISCARDABLE "icon_me.ico"
+IDI_ICON1               ICON    PRELOAD DISCARDABLE "me_logo.ico"
 #else
-IDI_ICON1               ICON    PRELOAD DISCARDABLE "icon_me_nc.ico"
+IDI_ICON1               ICON    PRELOAD DISCARDABLE "me_logo_nc.ico"
 #endif
 
 #ifdef APSTUDIO_INVOKED

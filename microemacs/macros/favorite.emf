@@ -10,7 +10,8 @@
 ;
 0 define-macro favorites-load
   !if &not &exi .favorites.fname
-    !iif &seq &set .favorites.fname &find $user-name ".eff" "ERROR"  set-variable .favorites.fname &spr "%s%s.eff" $user-path $user-name
+   ;TODO - Add option to session-setup to use own session favorites
+    !iif &seq &set .favorites.fname &find %session-name ".eff" "ERROR"  set-variable .favorites.fname &spr "%s%s.eff" $user-path %session-name
     set-variable .favorites.fname &cat "file:" .favorites.fname
   !endif
   !force find-file .favorites.fname

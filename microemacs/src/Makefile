@@ -40,7 +40,7 @@ PLTSRC	=	unixterm.c	dosterm.c	winterm.c	winprint.c	\
 
 PLTHDR	=	winterm.h	wintermr.h
 
-ICOSRC	=	icon_ne.ico	icon_ne_nc.ico	icon_me.ico	icon_me_nc.ico	\
+ICOSRC	=	ne_logo.ico	me_logo.ico	me_logo_nc.ico	\
 		me.bmp		ne.bmp
 
 MAKEXE	=	build
