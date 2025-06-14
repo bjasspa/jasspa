@@ -993,7 +993,7 @@ define-macro git-status
   !if $status
     goto-line #l0
     !repeat
-      !force search-buffer "me" "^commit \\h+\nAuthor: \\([^\n<]*\\).*\nDate: +\\([\\d-]+ +[\\d:]+\\)"
+      !force search-buffer "me" "^commit \\h+\n\\(Merge: [\\h ]+\n\\)?Author: \\([^\n<]*\\).*\nDate: +\\([\\d-]+ +[\\d:]+\\)"
       !if $status
         set-variable #l1 $window-line
         beginning-of-line
@@ -1011,14 +1011,19 @@ define-macro git-status
           !endif
         !done
         set-variable #l3 $window-line
-        set-variable $window-line &sub #l1 2
-        insert-string &spr "[Show]  %s  %s %n%s\n    " @s2 @s1 &sub 21 &len @s1 " " #l2
+        set-variable $window-line &sub #l1 &con &seq @s1 "" 2 3
+        insert-string &spr "[Show]  %s  %s %n%s\n    " @s3 @s2 &sub 21 &len @s2 " " #l2
         end-of-line
         insert-string &spr "    [Diff]"
         beginning-of-line
         set-mark
         forward-line
         insert-string "    "
+        !if &len @s1
+          beginning-of-line
+          forward-line
+          insert-string "    "
+        !endif
         goto-line #l3
         !force search-buffer "me" "^commit \\h+$"
         !if &not $status

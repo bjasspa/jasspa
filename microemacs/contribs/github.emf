@@ -20,7 +20,7 @@
 ;
 !iif &not &exi .git.hub-tkn  -8 ml-write "[Github Error: Github API access token variable .git.hub-tkn not set]"
 set-variable .git.hub-url "https://api.github.com/repos/bjasspa/jasspa/"
-set-variable .git.hub-bal "|build-linux-intel.yml|build-linux-aarch64.yml|build-windows-intel.yml|build-windows-arm64.yml|build-macos-intel.yml|build-macos-apple.yml|build-spelling.yml|"
+set-variable .git.hub-bal "|build-linux-intel.yml|build-linux-aarch64.yml|build-linux5-intel.yml|build-windows-intel.yml|build-windows-arm64.yml|build-macos-intel.yml|build-macos-apple.yml|build-spelling.yml|"
 set-variable .git.hub-brn "main"
 set-variable .git.hub-rtp "me_"
 set-variable .git.hub-rnp "Jasspa MicroEmacs "

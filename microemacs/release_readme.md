@@ -18,6 +18,8 @@ For your platform download the single-file binary zip file:
 | MacOS intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_macos_intel_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_macos_intel_mesw.zip)   |
 | Windows intel | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_windows_intel_mesc.zip) | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_windows_intel_mesw.zip) |
 | Windows arm   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_windows_arm_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_windows_arm_mesw.zip)   |
+| **Legacy platforms**  | **Console/Terminal** | **GUI (X11 on Linux/Mac)** |
+| Linux intel v5 kernel | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_linux5_intel_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_linux5_intel_mesw.zip)   |
 
 Extract the executable from the zip and run.
 

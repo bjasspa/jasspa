@@ -1,0 +1,34 @@
+##-*- makefile -*-############################################################
+#
+#  Created By    : Detlef Groth
+#  Created       : Fri May 23 07:56:16 2025
+#  Last Modified : <250523.0932>
+#
+##############################################################################
+#
+#  Copyright (c) 2025 Detlef Groth.
+#  License:  same as MicroEmacs
+# 
+##############################################################################
+
+CURRENT_MAKEFILE := $(lastword $(MAKEFILE_LIST))
+
+## argument delegation
+ARGS=
+
+## default: list existing tasks 
+.PHONY: tasks
+MEVER=20250501
+tasks:  ## list all tasks
+	@grep -Eo '^[a-z0-9]+:.+' $(CURRENT_MAKEFILE) | sed -E 's/:\s+##/\t- /g'
+mec:    ## build mec executable	
+	cd ./microemacs/src && \
+	  ./build.sh -t c -v OPENSSLPATH=/home/linuxbrew/.linuxbrew/opt/openssl@3.0/include
+mew:    ## build mew executable	
+	cd ./microemacs/src && \
+	  ./build.sh -t w -v OPENSSLPATH=/home/linuxbrew/.linuxbrew/opt/openssl@3.0/include
+download: ## create download file
+	cd ./microemacs/bin && if [[ -f linux5-intel64-gcc9 ]]; then mv linux5-intel64-gcc9 linux5-intel64 ; fi
+	cd ./microemacs && cp release_readme.txt readme.txt
+	cd ./microemacs && zip -x bin/.gitignore -r Jasspa_MicroEmacs_$(MEVER)_bin_linux5_intel_binaries bin LICENSE readme.txt
+
