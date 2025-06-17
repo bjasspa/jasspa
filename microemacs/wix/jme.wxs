@@ -7,7 +7,7 @@
 
     <Media Id="1" Cabinet="jme.cab" EmbedCab="yes" />
 
-    <Icon Id="ProductIcon" SourceFile="..\src\icon_me.ico" />
+    <Icon Id="ProductIcon" SourceFile="..\src\me_logo.ico" />
     
     <Property Id="jmeVersion">$(env.MEVER)</Property>
     <Property Id="ARPPRODUCTICON" Value="ProductIcon" />
