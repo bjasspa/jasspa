@@ -111,13 +111,13 @@ jobs:
           cd ./microemacs/
           export MEVER=`./bin/macos14-apple64/mec -p @contribs/ver.emf`
           cd icons/logo/
-          mkdir com.jasspa.MicroEmacs.iconset
-          cp me_logo_512_32.png MicroEmacs.iconset/me_512.png
-          cp me_logo_256_32.png MicroEmacs.iconset/me_256.png
-          cp me_logo_128_32.png MicroEmacs.iconset/me_128.png
-          cp me_logo_64.png MicroEmacs.iconset/me_64.png
-          cp me_logo_32.png MicroEmacs.iconset/me_32.png
-          cp me_logo_16.png MicroEmacs.iconset/me_16.png
+          mkdir MicroEmacs.iconset
+          cp me_logo_512_32.png MicroEmacs.iconset/icon_512.png
+          cp me_logo_256_32.png MicroEmacs.iconset/icon_256.png
+          cp me_logo_128_32.png MicroEmacs.iconset/icon_128.png
+          cp me_logo_64.png MicroEmacs.iconset/icon_64.png
+          cp me_logo_32.png MicroEmacs.iconset/icon_32.png
+          cp me_logo_16.png MicroEmacs.iconset/icon_16.png
           iconutil -c icns -o MicroEmacs.icns MicroEmacs.iconset
           mkdir tfs
           mv MicroEmacs.icns tfs/
