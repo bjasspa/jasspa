@@ -112,14 +112,15 @@ jobs:
           export MEVER=`./bin/macos14-apple64/mec -p @contribs/ver.emf`
           cd icons/logo/
           mkdir com.jasspa.MicroEmacs.iconset
-          cp me_logo_512_32.png com.jasspa.MicroEmacs.iconset/me_512.png
-          cp me_logo_256_32.png com.jasspa.MicroEmacs.iconset/me_256.png
-          cp me_logo_128_32.png com.jasspa.MicroEmacs.iconset/me_128.png
-          cp me_logo_64.png com.jasspa.MicroEmacs.iconset/me_64.png
-          cp me_logo_32.png com.jasspa.MicroEmacs.iconset/me_32.png
-          cp me_logo_16.png com.jasspa.MicroEmacs.iconset/me_16.png
+          cp me_logo_512_32.png MicroEmacs.iconset/me_512.png
+          cp me_logo_256_32.png MicroEmacs.iconset/me_256.png
+          cp me_logo_128_32.png MicroEmacs.iconset/me_128.png
+          cp me_logo_64.png MicroEmacs.iconset/me_64.png
+          cp me_logo_32.png MicroEmacs.iconset/me_32.png
+          cp me_logo_16.png MicroEmacs.iconset/me_16.png
+          iconutil -c icns -o MicroEmacs.icns MicroEmacs.iconset
           mkdir tfs
-          iconutil -c icns com.jasspa.MicroEmacs.iconset -o tfs/com.jasspa.MicroEmacs.icns
+          mv MicroEmacs.icns tfs/
           ../../bin/macos14-apple64/tfs ../../../packages/Jasspa_MicroEmacs_macos_icons.tfs tfs
 
       - name: Upload macos-apple downloads

@@ -185,7 +185,6 @@ CellMetrics eCellMetrics;               /* Cell metrics */
 RECT   ttRect;                          /* Area of screen to update */
 static int ttshowState;                 /* Show state of the window */
 static HBRUSH ttBrush = NULL;           /* Current background brush */
-static meUShort altGrKey=0;             /* Stores raw key of potential AltGr special key */
 #endif /* _ME_WINDOW */
 
 #if MEOPT_CLIENTSERVER
@@ -199,6 +198,8 @@ meUByte ttServerCheck = 0;
 
 LRESULT APIENTRY
 MainWndProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam);
+/* The following stores raw key of potential AltGr special key */
+static meUShort altGrKey=0;
 
 /***************************************************************************/
 #ifdef _ME_CONSOLE
