@@ -119,7 +119,7 @@ jobs:
           cp me_logo_32.png com.jasspa.MicroEmacs.iconset/me_32.png
           cp me_logo_16.png com.jasspa.MicroEmacs.iconset/me_16.png
           mkdir tfs
-          iconutil -c icns com.jasspa.Maxexam.iconset -o tfs/com.jasspa.Maxexam.icns
+          iconutil -c icns com.jasspa.MicroEmacs.iconset -o tfs/com.jasspa.MicroEmacs.icns
           ../../bin/macos14-apple64/tfs ../../../packages/Jasspa_MicroEmacs_macos_icons.tfs tfs
 
       - name: Upload macos-apple downloads
