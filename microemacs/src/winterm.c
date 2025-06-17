@@ -87,7 +87,7 @@
 #define WM_MOUSEWHEEL (WM_MOUSELAST+1)  // message that will be supported by the OS
 #endif
 
-#define _WIN_DEBUG_KEY   0
+#define _WIN_DEBUG_KEY   1
 #define _WIN_DEBUG_MOUSE 0
 #define _WIN_DEBUG_MSG   0
 #define _WIN_DEBUG_POS   0
@@ -185,6 +185,7 @@ CellMetrics eCellMetrics;               /* Cell metrics */
 RECT   ttRect;                          /* Area of screen to update */
 static int ttshowState;                 /* Show state of the window */
 static HBRUSH ttBrush = NULL;           /* Current background brush */
+static meUShort altGrKey=0;             /* Stores raw key of potential AltGr special key */
 #endif /* _ME_WINDOW */
 
 #if MEOPT_CLIENTSERVER
@@ -3068,12 +3069,18 @@ WinKeyboard(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
         
-        fprintf(logfp,"%s::%d(0x%08x). wParam = %d(%04x) lParam = %d(%08x) modif %x\n",
-                name, message, message, wParam, wParam, lParam, lParam, ttmodif);
+        fprintf(logfp,"%s::%d(0x%08x). wParam = %d(%04x) lParam = %d(%08x) modif %x, %x\n",
+                name, message, message, wParam, wParam, lParam, lParam, ttmodif,altGrKey);
         fflush(logfp);
     }
 #endif
-    
+    if(altGrKey && (message != WM_CHAR))
+    {
+        /* this addKeyToBuffer may not be needed, but reduces potential side effects of change to
+         * better support AltGr special key on certain keyboards such as German */
+        addKeyToBuffer(altGrKey);
+        altGrKey = 0;
+    }
     switch(message)
     {
     case WM_SYSKEYDOWN:
@@ -3243,7 +3250,7 @@ do_keydown:
              *!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
             
             if(message != WM_KEYDOWN)
-                return meFALSE;           /* NOT PROCESSED - return a false state */
+                return meFALSE;           /* WM_SYSKEYDOWN NOT PROCESSED - return a false state */
             /* found that C-1, C-2 etc come down this route */
             if((ttmodif & ME_CONTROL) && (wParam >= '0') && (wParam <= '9'))
             {
@@ -3352,9 +3359,9 @@ do_keydown:
             else if((wParam >= 'A') && (wParam <= 'Z'))
             {
                 if(ttmodif & ME_CONTROL)
-                   cc  = (ttmodif & ME_ALT) | (wParam & 0x1f);
+                   cc = (ttmodif & ME_ALT) | (wParam & 0x1f);
                 else
-                   cc  = (ttmodif & ME_ALT) | wParam | 0x20;
+                   cc = (ttmodif & ME_ALT) | wParam | 0x20;
             }
             else if((wParam >= VK_NUMPAD0) && (wParam <= VK_NUMPAD9))
             {
@@ -3447,7 +3454,11 @@ do_keydown:
                 fflush(logfp);
             }
 #endif
-            addKeyToBuffer(cc);
+            if((ttmodif & (ME_ALT|ME_CONTROL)) == (ME_ALT|ME_CONTROL))
+                altGrKey = cc;
+            else
+                /* not sure if this is still needed - what key combination gets here? */
+                addKeyToBuffer(cc);
             /* hide the mouse cursor
              * This must be done whether MEOPT_MOUSE is enabled or not */
             mouseHide();
@@ -3556,8 +3567,11 @@ do_keydown:
         }
         if(ttmodif & ME_ALT)
         {
-            /* This cannot have control pressed as well, see DISABLE_ALT_C_KEY_DETECTION above, not special, so remove ME_SHIFT and make letter lower case */
-            cc = ME_ALT | toLower(cc);
+            /* if this is the WM_CHAR following an WM_KEYDOWN where both had Alt & Ctrl pressed (i.e. AltGr)
+             * and the base char has been translated then don't add the Alt as this is a special keyboard key */
+            if(!altGrKey || ((ttmodif & (ME_ALT|ME_CONTROL)) != (ME_ALT|ME_CONTROL)) || ((altGrKey & 0xff) == (cc & 0xff)))
+                /* This cannot have control pressed as well, see DISABLE_ALT_C_KEY_DETECTION above, not special, so remove ME_SHIFT and make letter lower case */
+                cc = ME_ALT | toLower(cc);
         }
         /* Add the character to the typeahead buffer.
          * Note that we do no process (lParam & 0xff) which is the
@@ -3573,6 +3587,7 @@ do_keydown:
         /* hide the mouse cursor
          * This must be done whether MEOPT_MOUSE is enabled or not */
         mouseHide();
+        altGrKey = 0;
         break;
 return_spec:
         cc = (ME_SPECIAL | ttmodif | cc);
