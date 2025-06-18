@@ -1,0 +1,101 @@
+; -!- emf -!-
+; Copyright (c) 2025 JASSPA (www.jasspa.com).
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Create app launcher on linux & macos systems
+; Authors:     Steven Phillips
+;
+!if &not &exi .about.arg0
+  -2 ml-write "Usage Error: mec -p @crtappln -f </path-to-mew/mew> "
+  0 exit-emacs
+!endif
+0 define-macro buffer-init-fhook
+!emacro
+!force execute-file "mepinst"
+set-variable .osd.next 1
+!if &not $status
+  -2 ml-write "Error: Failed to execute macro file mepinst.emf"
+  0 exit-emacs
+!endif
+!force execute-file "hkdirlst"
+!if &not $status
+  -2 ml-write "Error: Failed to execute macro file hkdirlst.emf"
+  0 exit-emacs
+!endif
+
+define-macro create-app
+  !if &seq $platform "linux"
+    ; first check if /usr/share/applications/*.desktop files exist, if not get out
+    set-variable $file-names "/usr/share/applications/.*\\.desktop"
+    !iif &seq $file-names ""  -10 ml-write "Error: Unknown Linux desktop type, cannot create app launcher."
+    find-buffer "*ca"
+    insert-string "[Desktop Entry]\nVersion=1.0\nName=MicroEmacs\nGenericName=Text Editor\nComment=Jasspa MicroEmacs - emacs style text editor and so much more \nMimeType=text/english;text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-moc;text/x-pascal;text/x-tcl;text/x-tex;application/x-shellscript;text/x-c;text/x-c++;\nTryExec="
+    insert-string .about.arg0
+    insert-string "\nExec="
+    insert-string .about.arg0
+    insert-string " %F\nIcon=com.jasspa.MicroEmacs\nType=Application\nTerminal=false\nCategories=Utility;Development;TextEditor;\nStartupNotify=false\nStartupWMClass=MicroEmacs\nKeywords=Text;Editor;Plaintext;MicroEmacs;ME;"
+    !if &seq &lef .about.arg0 &len $home $home
+      !iif &not &seq "D" &stat "t" "~/.local" !force !force 0x105 file-op "~/.local"
+      !iif &not &seq "D" &stat "t" "~/.local/share" !force !force 0x105 file-op "~/.local/share"
+      !iif &not &seq "D" &stat "t" "~/.local/share/applications" !force !force 0x105 file-op "~/.local/share/applications"
+      !iif &not &seq "D" &stat "t" "~/.local/share/icons" !force !force 0x105 file-op "~/.local/share/icons"
+      set-variable #l1 &stat a "~/.local/share/icons/"
+      !force 0x00 write-buffer "~/.local/share/applications/com.jasspa.MicroEmacs.desktop"
+      !iif &not $status  -10 ml-write "Error: Unable to write to ~/.local/share/applications/."
+    !else
+      set-variable #l1 "/usr/share/icons/"
+      !force 0x00 write-buffer "/usr/share/applications/com.jasspa.MicroEmacs.desktop"
+      !iif &not $status  -10 ml-write "Error: Unable to write to /usr/share/applications/, rerun with root permissions."
+    !endif
+    set-variable #l4 $temp-name
+    !force 0x80 file-op &cat .me-pinstall.purl "Jasspa_MicroEmacs_linux_icons.tfs" #l4
+    !iif &not $status  -10 ml-write "Error: Failed to download linux icons package."
+    set-variable #l3 &set #l5 &cat "file:" &stat a $user-path
+    !force 0xf7 copy-file &spr "tfs://%s?/.*" #l4 #l1
+    !iif &set #l0 $status  set-variable #l0 &lget $result 3 
+    !force 0x20 file-op #l4
+    !iif &not #l0  -10 ml-write "Error: Failed to extract linux icons."
+    -2 ml-write "Successfully created Linux launcher - system may need reboot to update cache."
+  !elif &seq $platform "macos"
+    !iif &not &seq "D" &stat "t" "/Applications"  -10 ml-write "Error: Unknown macOS desktop type, cannot create app launcher."
+    !iif &seq "ERROR" &whi "xquartz"  -2 ml-write "Warning: Failed to find XQuartz - MicroEmacs GUI requires XQuartz to run."
+    !iif &seq &lef .about.arg0 &len $home $home  -10 ml-write "Error: Cannot create an App Launcher for a user only install on macOS"
+    !iif &not &seq "D" &stat "t" "/Applications/MicroEmacs.app" !force !force 0x105 file-op "/Applications/MicroEmacs.app"
+    !iif &not &seq "D" &stat "t" "/Applications/MicroEmacs.app"  -10 ml-write "Error: Failed to create App Launcher directory \"/Applications/MicroEmacs.app\", rerun with root permissions."
+    !iif &not &seq "D" &stat "t" "/Applications/MicroEmacs.app/Contents" !force !force 0x105 file-op "/Applications/MicroEmacs.app/Contents"
+    !iif &not &seq "D" &stat "t" "/Applications/MicroEmacs.app/Contents/Resources" !force !force 0x105 file-op "/Applications/MicroEmacs.app/Contents/Resources"
+    !iif &not &seq "D" &stat "t" "/Applications/MicroEmacs.app/Contents/MacOS" !force !force 0x105 file-op "/Applications/MicroEmacs.app/Contents/MacOS"
+    find-buffer "*ca"
+    insert-string "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><plist version=\"1.0\">\n  <dict>\n    <key>CFBundleExecutable</key>\n    <string>MicroEmacs</string>\n    <key>CFBundleIconFile</key>\n    <string>MicroEmacs</string>\n    <key>CFBundleIconName</key>\n    <string>MicroEmacs</string>\n    <key>CFBundleIdentifier</key>\n    <string>com.jasspa.MicroEmacs</string>\n    <key>CFBundleInfoDictionaryVersion</key>\n    <string>6.0</string>\n    <key>CFBundleName</key>\n    <string>Jasspa MicroEmacs App</string>\n    <key>CFBundlePackageType</key>\n    <string>APPL</string>\n    <key>CFBundleVersion</key>\n    <string>1.0</string>\n    <key>CFBundleShortVersionString</key>\n    <string>1.0</string>\n</dict>\n</plist>"
+    !force 0x00 write-buffer "/Applications/MicroEmacs.app/Contents/Info.plist"
+    !iif &not $status  -10 ml-write "Error: Unable to write to /Applications/MicroEmacs.app/Contents/, rerun with root permissions."
+    !force 0 delete-buffer $buffer-bname
+    find-buffer "*ca"
+    insert-string "#!/bin/sh\n# this file must be at least 28 bytes long\n"
+    insert-string .about.arg0
+    insert-string " &"
+    set-variable $buffer-fmod 493
+    !force 0x00 write-buffer "/Applications/MicroEmacs.app/Contents/MacOS/MicroEmacs"
+    !iif &not $status  -10 ml-write "Error: Unable to write to /Applications/MicroEmacs.app/Contents/MacOS/, rerun with root permissions."
+    !force 0 delete-buffer $buffer-bname
+    set-variable #l4 $temp-name
+    !force 0x80 file-op &cat .me-pinstall.purl "Jasspa_MicroEmacs_macos_icons.tfs" #l4
+    !iif &not $status  -10 ml-write "Error: Failed to download linux icons package."
+    set-variable #l3 &set #l5 &cat "file:" &stat a $user-path
+    !force 0xf7 copy-file &spr "tfs://%s?/.*" #l4 "/Applications/MicroEmacs.app/Contents/Resources/"
+    !iif &set #l0 $status  set-variable #l0 &lget $result 3 
+;    !force 0x20 file-op #l4
+    !iif &not #l0  -10 ml-write "Error: Failed to extract macOS icons."
+    -2 ml-write "Successfully created macOS App launcher."
+  !else
+    -10 ml-write &spr "Error: Unsupported platform '%s', cannot create app." $platform
+  !endif
+!emacro
+
+define-macro start-up
+  !force create-app
+  set-variable #l9 &not $status
+  4 exit-emacs #l9
+!emacro

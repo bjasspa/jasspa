@@ -175,8 +175,8 @@ MAC3_090=	$(DOCDIR)m3mac090.3 $(DOCDIR)m3mac091.3 $(DOCDIR)m3mac092.3\
 		$(DOCDIR)m3mac099.3
 MAC3_100=	$(DOCDIR)m3mac100.3 $(DOCDIR)m3mac101.3 $(DOCDIR)m3mac102.3
 # TODO: doc git interface
-# TODO: doc grep's use of $result
-# TODO: fix $result hilighting in ehf
+# TODO: fix quoting of var values in ME help pages, e.g. $result
+# TODO: doc coy-file's use of $result
 #
 OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd003.3 $(DOCDIR)m3osd004.3 $(DOCDIR)m3osd005.3\

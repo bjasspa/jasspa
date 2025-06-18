@@ -19,7 +19,8 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	buffinit.emf	bytecomp.emf	\
 	calc.emf	cfind.emf	charset.emf	charsutl.emf	\
 	clearcs.emf	cmacros.emf	collapse.emf	comment.emf	\
-	crosswd.emf	ctags.emf	cvs.emf		cygwin.emf	\
+	crosswd.emf	crtappln.emf	ctags.emf	cvs.emf		\
+	cygwin.emf	\
 	darwin.emf	dmf.emf		docmacro.emf	docutl.emf	\
 	dos.emf		draw.emf	\
 	ehftools.emf	emftags.emf	etfinsrt.emf	fahtzee.emf	\

@@ -401,6 +401,16 @@ if [ -z "$1" ] ; then
         ln -s ${INSTPATH}/jasspa/bin/microemacs-update ${BINPATH}/bin/microemacs-update
       fi
     fi
+    while true; do
+      read -p "Create Application launcher for mew ? (y/n) " rin
+      case $rin in 
+      y) ${INSTPATH}/jasspa/bin/mec -p @crtappln -f ${INSTPATH}/jasspa/bin/mec
+         break;;
+      n) break;;
+      *) echo Invalid response...;;
+      esac
+    done
+
     if [ `which mec` = "${BINPATH}/bin/mec" ] ; then
       echo "Installation complete and programmes are in your \$PATH."
       BINPATH=""

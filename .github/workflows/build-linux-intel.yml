@@ -130,6 +130,21 @@ jobs:
           cd ..
           ../bin/linux6-intel64/tfs ../../packages/Jasspa_MicroEmacs_${MEVER}_macros.tfs jasspa
 
+      - name: Generate app icon package
+        run: |
+          cd ./microemacs/icons/logo
+          mkdir -p jasspa/hicolor/16x16/apps
+          cp me_logo_16.png jasspa/hicolor/16x16/apps/com.jasspa.MicroEmacs.png
+          mkdir -p jasspa/hicolor/32x32/apps
+          cp me_logo_32.png jasspa/hicolor/32x32/apps/com.jasspa.MicroEmacs.png
+          mkdir -p jasspa/hicolor/48x48/apps
+          cp me_logo_48.png jasspa/hicolor/48x48/apps/com.jasspa.MicroEmacs.png
+          mkdir -p jasspa/hicolor/64x64/apps
+          cp me_logo_64.png jasspa/hicolor/64x64/apps/com.jasspa.MicroEmacs.png
+          mkdir -p jasspa/hicolor/128x128/apps
+          cp me_logo_128_32.png jasspa/hicolor/128x128/apps/com.jasspa.MicroEmacs.png
+          ../../bin/linux6-intel64/tfs ../../packages/Jasspa_MicroEmacs_linux_icons.tfs jasspa
+
       - name: Upload linux-intel downloads
         uses: actions/upload-artifact@v4
         with: 
