@@ -1,0 +1,30 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : Detlef Groth
+;  Created       : Wed Jun 18 15:49:08 2025
+;  Last Modified : <250618.1551>
+;
+;  Description   : Support for linting, executing and formatting
+;                  FreeBasic https://freebasic.net/ files
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 2025 Detlef Groth.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro fhook-vb-replace
+  -1 buffer-mode "view"
+  beginning-of-buffer
+  replace-string "bas(\\([0-9]+\\)) error " "bas:\\1:0 error "
+  beginning-of-buffer
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"  
+!emacro
+
+; settings for FreeBasic compiler
+set-variable %fhook-vb-lint   "fbc -c -b %f"
+set-variable %fhook-vb-format "restyle-buffer"
+set-variable %fhook-vb-exec   "fbc -b %f -x %b && ./%b"

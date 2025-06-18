@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Detlef Groth, University of Potsdam, Germany
 ;  Created       : Mon Mar 24 11:14:06 2025
-;  Last Modified : <250603.1804>
+;  Last Modified : <250618.1548>
 ;
 ;  Description   : Support for editing language files with generic
 ;                  macros file-exec, file-format and file-lint using the 
@@ -28,7 +28,13 @@
 ;  History       : 2025-04-14 - first version
 ;                  2025-05-29 - rewrite using file-tools-run anf add-next-line macros
 ;                  2025-06-01 - using find.emf for the macros to locate the problematic line
-;
+;                  2025-06-18 - split help / code file for better maintainance
+;                               automatich check for fhook-HOOKNAME-replace method
+;  Installation:
+;                - copy the file filtools.emf and filtoolh.emf into your
+;                  ME config folder, so beside your USERNAME.emf file
+;                - add the following line to your USERNAME.emf file
+;                  define-macro-file filtools file-format file-exec file-lint
 ;  Copyright (c) 2025 Detlef Groth. License same as Jasspa's MicroEmacs
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -49,8 +55,12 @@ define-macro file-lint
       !abort
   !endif
   &band @# 1 save-some-buffers @mna
+  set-variable #l2 &spr "%s-replace"  $buffer-fhook
+  delete-other-windows
   0x4088 file-tool-run #l0 $buffer-fname "*file-lint*"
-  replace-filename-parenthesis
+  !if &exi &ind #l2
+    !force execute-named-command #l2
+  !endif
   buffer-init "file-lint"
   set-variable :mouse-word-select "mouse-get-next-line"
   buffer-bind-key return-get-next-line "return"
@@ -64,7 +74,7 @@ set-variable .fhook-file-lint.setup-mask "acfhmw"
   !iif &not &exi .hilight.file-lint  set-variable .hilight.file-lint &pinc  .hilight.next 1
   0 hilight .hilight.file-lint 2 200                                     $global-scheme
   hilight .hilight.file-lint   0  "\\.+:[0-9]+:[0-9]+"      .scheme.link  
-  hilight .hilight.file-lint   0  "[-/A-Za-z0-9]+\\.*[A-Za-z0-9]+:[0-9]+:[0-9]+"      .scheme.link    
+  hilight .hilight.file-lint   0  "[-_/A-Za-z0-9]+\\.*[A-Za-z0-9]+:[0-9]+:[0-9]+"      .scheme.link    
 !endif
 
 add-file-hook "*file-lint*" fhook-file-lint
@@ -74,14 +84,19 @@ define-macro file-format
   ; C:/Program Files/GO/../go.exe fmt %s
   set-variable #l0 &ind &cat &cat "%" $buffer-fhook "-format"
   set-variable #l1 $buffer-bname
+  
   !if &seq #l0 "ERROR"
     -8 ml-write &cat &cat "Error: There is no variable %" $buffer-fhook "-format declared!"
     !abort
   !endif
   &band @# 1 save-some-buffers @mna  
-  0x4188 file-tool-run #l0 $buffer-fname "*file-format*"
-  ;next-window-find-buffer #l1
-  0 reread-file
+  !if &seq #l0 "restyle-buffer"
+    restyle-buffer
+  !else
+    0x4088 file-tool-run #l0 $buffer-fname "*file-format*"
+    ;next-window-find-buffer #l1
+    0 reread-file
+  !endif
 !emacro
 
 define-macro fhook-file-exec
@@ -100,14 +115,13 @@ define-macro file-exec
   !iif &not &exi :file-exec-args  set-variable :file-exec-args ""
   !iif &not &band @# 2  set-variable :file-exec-args @ml2 "Additional command-line arguments" :file-exec-args 
   set-variable #l0 &spr "%s %s" #l0 :file-exec-args
+  set-variable #l2 &spr "%s-replace"  $buffer-fhook
+  delete-other-windows
   0x4088 file-tool-run #l0 $buffer-fname "*file-exec*"
-  replace-filename-parenthesis
-  !if &seq #l1 "fhook-python"
-      replace-filename-python
+  !if &exi &ind #l2
+    !force !force execute-named-command #l2
   !endif
   buffer-init "file-exec"
-  ; clicking on errors does not jump to the file but openes a new 
-  ; file.ext<1> buffer
   set-variable :mouse-word-select "mouse-get-next-line"
   buffer-bind-key return-get-next-line "return"
 !emacro
@@ -119,121 +133,10 @@ set-variable .fhook-file-exec.setup-mask "acfhmw"
 !if &and &sin "h" .fhook-file-exec.setup &band .hilight.flags 0x02
   !iif &not &exi .hilight.file-exec  set-variable .hilight.file-exec &pinc  .hilight.next 1
   0 hilight .hilight.file-exec 2 200                                     $global-scheme
-  hilight .hilight.file-exec   0  "[/\\.A-Za-z0-9]+:[0-9]+:[0-9]+"      .scheme.link    
+  hilight .hilight.file-exec   0  "[-_/\\.A-Za-z0-9]+:[0-9]+:[0-9]+"      .scheme.link    
 !endif
 
 add-file-hook "*file-exec*" fhook-file-exec
 
-; workaround for filenames in parenthesis like for the c3c compiler
-0 define-macro replace-filename-parenthesis
-  -1 buffer-mode "view"
-  beginning-of-buffer
-  replace-string "^(\\(.+[0-9]\\))" "\\1"
-  beginning-of-buffer
-  -1 buffer-mode "edit"
-  1 buffer-mode "view"  
-!emacro
-
-0 define-macro replace-filename-python
-  -1 buffer-mode "view"
-  beginning-of-buffer
-  replace-string "File \"\\(.+\\)\", line \\(.+\\)," "\\1:\\2:0"
-  beginning-of-buffer
-  -1 buffer-mode "edit"
-  1 buffer-mode "view"  
-!emacro
-define-help "file-lint" 3
-! 3 file-exec
-! 3 file-lint
-! 3 file-format
-## NAME
-
-__file-exec__ - execute the current script using a interpreter or after compilation  
-__file-format__ - format the current file using a language dependent formatter  
-__file-lint__ - format the current file using a language dependent formatter  
-
-$a
-
-## SYNOPSIS
-
-_n_  __file-exec__  
-__file-format__  
-__file-lint__ 
-
-## DESCRIPTION
-
-The three commands described below require the definition of global variables 
-which should declare the command lines to be used for executing, linting or 
-formatting the current file. The variable names are of type:
-
-  _fhook-FHOOK-(exec|format|lint)_ 
-
-where _FHOOK_ is the file hook name of the file.  The variable declaration can be 
-added to the users configuration file, _USERNAME.emf_ or into the _myFHOOK.emf_
-file within the users configuration folder. These variables should point to the
-tool or compiler or interpreter and take place holders for the filename or the file
-buffer basename like this:
-
-- "%f" - the filename of the currently edited file
-- "%b" - the basename of the current file buffer name
-- "%s" - will be replaced with the filename
-
-See below for a few examples.
-
-The __file-exec__  macro executes or compiles the currently edited file using 
-a global variable which needs to be defined for the current file hook. See below
-for a few examples for defining these global variables. If a numeric argument
-is given the user is asked for possible command line arguments. After executing 
-this macro a popup-window command should appear showing the output or possible 
-errors of the code.
-
-The __file-format__ macro formats the currently edited  file using the
-a language specific formatter which needs to be defined using an user defined
-global file hook dependent variable. See below for a few examples.
-
-The __file-lint__   macro checks the currently edited file using an user an user
-defined global variable for the current file hook.
-
-After executing the macro a popup-window (`*lintr*`) displays the warning
-messages of the linter package, the user can click on the hilighted lines
-showing  warnings and jump directly to the problematic line. This requires that
-the linter defined in the variable supports the _FILENAME:LINE:CHAR:_ syntax.
-The same can jumping to the error be achieved by pressing the ENTER key on 
-the hilighted line.
-
-These three macros can be seen as simplified  versions for the Go, Python, R
-and Tcl macros like  __go-lint__ or  __go-format__ etc.
-They can be used as well to use  alternative  tools for  formatting  and linting
-allowing easy support of other programming languages.
-
-## EXAMPLE
-
-```{emf}
-    ; user-defined variables in the users emf or in the mypython.emf 
-    set-variable %fhook-python-format "ruff format %f" ; using the ruff formatter
-    set-variable %fhook-python-lint   "ruff check %f"  ; using the ruff linter
-    set-variable %fhook-python-exec   "python3 %f"
-    ; for the Go programming language it could be as well within username.emf or mygo.emf
-    set-variable %fhook-go-format     "go fmt %f"
-    set-variable %fhook-go-lint       "go vet %f"
-    set-variable %fhook-go-exec       "go run %f"
-    ; working with C++ code using cppcheck, astyle and g++
-    set-variable %fhook-cpp-lint "cppcheck --quiet --enable=all --suppress=missingIncludeSystem %f"
-    set-variable %fhook-cpp-exec "g++ %f 2>&1 -o %b; ./%b"
-    set-variable %fhook-cpp-format "astyle %f"
-    ; command execution
-    file-exec          ; executes the current file using the fhook-FHOOKNAME-exec var
-    0 file-exec        ; ask for command line arguments and calls then executes
-    file-format        ; formats and reloads the currently edited file using the formatter
-    file-lint          ; gives code advise for the currently edited file
-```
-      
-## NOTES
-
-The macros __file-exec__,  __file-format__  and __file-lint__ are implemented in the file `filtools.emf`.
-  
-## SEE ALSO
-
-[file-tool-setup(3)](file-tool-setup\(3\))
-!ehelp
-
+; load the help file
+!force execute-file "filtoolh"

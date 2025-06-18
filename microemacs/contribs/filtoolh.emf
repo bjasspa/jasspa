@@ -1,0 +1,95 @@
+define-help "file-lint" 3
+! 3 file-exec
+! 3 file-lint
+! 3 file-format
+## NAME
+
+__file-exec__ - execute the current script using a interpreter or after compilation  
+__file-format__ - format the current file using a language dependent formatter  
+__file-lint__ - format the current file using a language dependent formatter  
+
+$a
+
+## SYNOPSIS
+
+_n_  __file-exec__  
+__file-format__  
+__file-lint__ 
+
+## DESCRIPTION
+
+The three commands described below require the definition of global variables 
+which should declare the command lines to be used for executing, linting or 
+formatting the current file. The variable names are of type:
+
+  _fhook-FHOOK-(exec|format|lint)_ 
+
+where _FHOOK_ is the file hook name of the file.  The variable declaration can be 
+added to the users configuration file, _USERNAME.emf_ or into the _myFHOOK.emf_
+file within the users configuration folder. These variables should point to the
+tool or compiler or interpreter and take place holders for the filename or the file
+buffer basename like this:
+
+- "%f" - the filename of the currently edited file
+- "%b" - the basename of the current file buffer name
+- "%s" - will be replaced with the filename
+
+See below for a few examples.
+
+The __file-exec__  macro executes or compiles the currently edited file using 
+a global variable which needs to be defined for the current file hook. See below
+for a few examples for defining these global variables. If a numeric argument
+is given the user is asked for possible command line arguments. After executing 
+this macro a popup-window command should appear showing the output or possible 
+errors of the code.
+
+The __file-format__ macro formats the currently edited  file using the
+a language specific formatter which needs to be defined using an user defined
+global file hook dependent variable. See below for a few examples.
+
+The __file-lint__   macro checks the currently edited file using an user an user
+defined global variable for the current file hook.
+
+After executing the macro a popup-window (`*lintr*`) displays the warning
+messages of the linter package, the user can click on the hilighted lines
+showing  warnings and jump directly to the problematic line. This requires that
+the linter defined in the variable supports the _FILENAME:LINE:CHAR:_ syntax.
+The same can jumping to the error be achieved by pressing the ENTER key on 
+the hilighted line.
+
+These three macros can be seen as simplified  versions for the Go, Python, R
+and Tcl macros like  __go-lint__ or  __go-format__ etc.
+They can be used as well to use  alternative  tools for  formatting  and linting
+allowing easy support of other programming languages.
+
+## EXAMPLE
+
+```{emf}
+    ; user-defined variables in the users emf or in the mypython.emf 
+    set-variable %fhook-python-format "ruff format %f" ; using the ruff formatter
+    set-variable %fhook-python-lint   "ruff check %f"  ; using the ruff linter
+    set-variable %fhook-python-exec   "python3 %f"
+    ; for the Go programming language it could be as well within username.emf or mygo.emf
+    set-variable %fhook-go-format     "go fmt %f"
+    set-variable %fhook-go-lint       "go vet %f"
+    set-variable %fhook-go-exec       "go run %f"
+    ; working with C++ code using cppcheck, astyle and g++
+    set-variable %fhook-cpp-lint "cppcheck --quiet --enable=all --suppress=missingIncludeSystem %f"
+    set-variable %fhook-cpp-exec "g++ %f 2>&1 -o %b; ./%b"
+    set-variable %fhook-cpp-format "astyle %f"
+    ; command execution
+    file-exec          ; executes the current file using the fhook-FHOOKNAME-exec var
+    0 file-exec        ; ask for command line arguments and calls then executes
+    file-format        ; formats and reloads the currently edited file using the formatter
+    file-lint          ; gives code advise for the currently edited file
+```
+      
+## NOTES
+
+The macros __file-exec__,  __file-format__  and __file-lint__ are implemented in the file `filtools.emf`.
+  
+## SEE ALSO
+
+[file-tool-setup(3)](file-tool-setup\(3\))
+!ehelp
+

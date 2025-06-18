@@ -1,0 +1,35 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;  Author        : $Author$
+;  Created By    : Detlef Groth
+;  Created       : Wed Jun 18 15:52:17 2025
+;  Last Modified : <250618.1553>
+;
+;  Description
+;
+;  Notes
+;
+;  History
+;
+;  Copyright (c) 2025 Detlef Groth.
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro-file filtools file-format file-exec file-lint
+
+set-variable #l0 &which "ruff"
+!if &not &seq #l0 "ERROR"
+    set-variable %fhook-python-format "ruff format %f"
+    set-variable %fhook-python-lint   "ruff check %f"
+
+!endif
+set-variable %fhook-python-exec   "python3 %f"
+
+0 define-macro fhook-python-replace
+  -1 buffer-mode "view"
+  beginning-of-buffer
+  replace-string " *File \"\\(.+\\)\", line \\(.+\\)" "\\1:\\2:0"
+  beginning-of-buffer
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"  
+!emacro
