@@ -32,7 +32,12 @@ buffer basename like this:
 
 - "%f" - the filename of the currently edited file
 - "%b" - the basename of the current file buffer name
-- "%s" - will be replaced with the filename
+
+The variable _%fhook-FHOOK-format_ can take as well the value "restyle-buffer",
+so that the macro [restyle-buffer(3)](restyle-buffer(3)] is executed for the current 
+buffer. This is useful if there is no sophisticated formatting tool is 
+available for the programming language. See below for an example using the
+Freebasic compiler for linting and executing and ME for formatting.
 
 See below for a few examples.
 
@@ -77,6 +82,10 @@ allowing easy support of other programming languages.
     set-variable %fhook-cpp-lint "cppcheck --quiet --enable=all --suppress=missingIncludeSystem %f"
     set-variable %fhook-cpp-exec "g++ %f 2>&1 -o %b; ./%b"
     set-variable %fhook-cpp-format "astyle %f"
+    ; freebasic declarations within myvb.emf
+    set-variable %fhook-vb-lint   "fbc -c -b %f"
+    set-variable %fhook-vb-format "restyle-buffer"
+    set-variable %fhook-vb-exec   "fbc -b %f -x %b && ./%b"
     ; command execution
     file-exec          ; executes the current file using the fhook-FHOOKNAME-exec var
     0 file-exec        ; ask for command line arguments and calls then executes
