@@ -12,8 +12,9 @@
 ;
 set-variable #l1 0
 set-variable #l2 ""
+set-variable #l3 ""
 !repeat
-  !iif &pinc #l1 1  set-variable #l2 &lget &cat " " $recent-keys 1
+  !iif &pinc #l1 1  set-variable #l2 &trl &spr "%s %s" #l3 &set #l3 &lget &cat " " $recent-keys 1
   !force set-variable #l0 @mc2 &spr "Type keys, C-g to exit (%s)%n: " #l2 &sub 14 &len #l2 " "
 !until &seq #l0 "\x07"
 set-variable #g0 $recent-keys

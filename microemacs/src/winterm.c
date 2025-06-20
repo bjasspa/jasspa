@@ -87,7 +87,7 @@
 #define WM_MOUSEWHEEL (WM_MOUSELAST+1)  // message that will be supported by the OS
 #endif
 
-#define _WIN_DEBUG_KEY   1
+#define _WIN_DEBUG_KEY   0
 #define _WIN_DEBUG_MOUSE 0
 #define _WIN_DEBUG_MSG   0
 #define _WIN_DEBUG_POS   0
@@ -199,7 +199,7 @@ meUByte ttServerCheck = 0;
 LRESULT APIENTRY
 MainWndProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam);
 /* The following stores raw key of potential AltGr special key */
-static meUShort altGrKey=0;
+static meUShort keyDownChr=0;
 
 /***************************************************************************/
 #ifdef _ME_CONSOLE
@@ -1863,6 +1863,28 @@ meModifierUpdate(void)
 
 #endif /* _ME_WINDOW */
 
+/* returns 0 for not translation, -1 for dead key, -2 for key>255 else char */
+int
+WinKeyTranslate(UINT key, meUShort modif)
+{
+    BYTE keyBuf[256];
+    WCHAR buf[5];
+    int rr;
+    memset(keyBuf,0,256);
+    if(modif & ME_SHIFT)
+        keyBuf[VK_SHIFT] = 0xff;
+    if(modif & ME_ALT)
+        keyBuf[VK_MENU] = 0xff;
+    if(modif & ME_CONTROL)
+        keyBuf[VK_CONTROL] = 0xff;
+    
+    rr = ToUnicode(key,0,keyBuf,buf,5,0);
+    if((rr > 0) && ((rr = buf[0]) > 0x0ff))
+        rr = -2;
+    return rr;
+}
+
+
 /*
  * WinKillToClipboard
  * Copy the data into the clipboard from the kill buffer.
@@ -3071,17 +3093,10 @@ WinKeyboard(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         
         fprintf(logfp,"%s::%d(0x%08x). wParam = %d(%04x) lParam = %d(%08x) modif %x, %x\n",
-                name, message, message, wParam, wParam, lParam, lParam, ttmodif,altGrKey);
+                name,message,message,wParam,wParam,lParam,lParam,ttmodif,keyDownChr);
         fflush(logfp);
     }
 #endif
-    if(altGrKey && (message != WM_CHAR))
-    {
-        /* this addKeyToBuffer may not be needed, but reduces potential side effects of change to
-         * better support AltGr special key on certain keyboards such as German */
-        addKeyToBuffer(altGrKey);
-        altGrKey = 0;
-    }
     switch(message)
     {
     case WM_SYSKEYDOWN:
@@ -3103,6 +3118,7 @@ WinKeyboard(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 #endif /* _ME_WINDOW */
         }
     case WM_KEYDOWN:
+        keyDownChr = 0;
         /* Determine the special keyboard character we are handling */
         switch(wParam)
         {
@@ -3223,7 +3239,7 @@ do_keydown:
 #if _WIN_DEBUG_KEY
             if(logfp != NULL)
             {
-                fprintf(logfp,"addKeyToBuffer1 %c - %d(0x%04x)\n",cc & 0xff, cc, cc);
+                fprintf(logfp,"addKeyToBuffer1    %c - %d(0x%04x)\n",cc & 0xff, cc, cc);
                 fflush(logfp);
             }
 #endif
@@ -3234,239 +3250,65 @@ do_keydown:
             break;
             
         default:
-#ifndef DISABLE_ALT_C_KEY_DETECTION
-            /* !!!!!!!!!!!  DOUBLE KEYS - THIS MAY BE THE PROBLEM AREA !!!!!!!!!!!! */
-            /*
-             * I am not sure about this case. If this is a KEYDOWN message
-             * and bit-29 of "lParam" is non-zero then we are dealing
-             * with Alt-C characters. which do not appear in any of
-             * the other messages.  Process as normal.
-             *
-             * The Microsoft documentation (MSVC 2.0) says that this bit is always
-             * zero. However it appears that this bit is infact set when the ALT and
-             * CTRL keys are pressed together - Wierd but true !!
-             *
-             * Jon Green - 03/03/97
-             *
-             *!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-            
             if(message != WM_KEYDOWN)
                 return meFALSE;           /* WM_SYSKEYDOWN NOT PROCESSED - return a false state */
-            /* found that C-1, C-2 etc come down this route */
-            if((ttmodif & ME_CONTROL) && (wParam >= '0') && (wParam <= '9'))
-            {
-                static meUByte shiftDigits[] = ")!\"#$%^&*(";
-                if((wParam == '6') && (ttmodif == (ME_CONTROL|ME_SHIFT)))
-                    /* Windows also sends a WM_CHAR (0x1e) message for a C-S-6 (presumably because this equates to the special ^^ (0x1e) char) so don't add this one */ 
-                    return meFALSE;
-                cc  = (ttmodif & (ME_CONTROL|ME_ALT)) | ((ttmodif & ME_SHIFT) ? shiftDigits[wParam - '0'] : ((meUShort) wParam));
-            }
-            else if((lParam & (1<<29)) == 0)  /* Get out quickly - this is fastest check */
-            {
-                /* Jon 99/01/27: Another hole we are missing <Ctrl-@>,
-                 * <Ctrl-'>, etc. and they appear to be coming in here so plug
-                 * it up !! I'm not sure if there is any rational to the way
-                 * Microsoft have mapped their character set or are we doing
-                 * something terribly wrong ??
-                 *
-                 * Fail on most keys */
-                if((ttmodif & ME_ALT) || ((ttmodif & ME_CONTROL) == 0))
-                    return meFALSE;
-                
-                /* The only keys we want to process here are those that do not
-                 * come back to use as WM_CHAR. Fail on all of the others - we
-                 * will see them later as a different message type */
-                if(wParam & 0x80)
-                {
-                    wParam &= 0x7f;
-                    if((ttmodif & ME_SHIFT) == 0)
-                    {
-                        switch(wParam)
-                        {
-                            /* C-: */
-                        case 0x3a : cc = ttmodif | ';'; break;
-                            /* C-= */
-                        case 0x3b : cc = ttmodif | 0x3d; break;
-                            /* C-, */
-                        case 0x3c:
-                            /* C-= */
-                        case 0x3d:
-                            /* C-. */
-                        case 0x3e:
-                            /* C-? */
-                        case 0x3f:
-                            cc = ttmodif | (wParam & ~0x10); break;
-                            /* C-' */
-                        case 0x40: cc = ttmodif | 0x27; break;
-                            /* C-~ */
-                        case 0x5e: cc = ttmodif | 0x23; break;
-                            /* C-` */
-                        case 0x5f: cc = ttmodif | 0x5d; break;
-                            /* Other specials */
-                            /* cc = ttmodif | (wParam & 0x7f);*/
-                        default:
-                            return meFALSE;;
-                        }
-                    }
-                    else
-                    {
-                        /* Process the rest */
-                        switch(wParam)
-                        {
-                            /* C-+ */
-                        case 0x3b:
-                            cc = (~ME_SHIFT & ttmodif) | 0x2b; break;
-                            /* C-{ */
-                        case 0x5b:
-                            /* C-\ */
-                        case 0x5c:
-                            /* C-} */
-                        case 0x5d:
-                            /* C-~ */
-                        case 0x5e:
-                            cc = (~ME_SHIFT & ttmodif) | ((meUShort) wParam) | 0x20; break;
-                            /* C-: */
-                        case 0x3a:
-                            /* C-> */
-                        case 0x3c:
-                            /* C-@ */
-                        case 0x3e:
-                            /* C-? */
-                        case 0x3f:
-                            /* C-< */
-                        case 0x40:
-                            cc = (~ME_SHIFT & ttmodif) | ((meUShort) wParam); break;
-                        default:
-                            return meFALSE;
-                        }
-                    }
-                }
-                else if((wParam >= VK_NUMPAD0) && (wParam <= VK_DIVIDE))
-                {
-                    if(wParam <= VK_NUMPAD9)
-                        cc  = ttmodif | ((meUShort) ('0' + wParam - VK_NUMPAD0));
-                    else
-                        cc  = ttmodif | ((meUShort) ('*' + wParam - VK_MULTIPLY));
-                    
-                }
-                else if(wParam == VK_TAB)
-                {
-                    cc = SKEY_tab;
-                    goto return_spec;
-                }
-                else
-                    return meFALSE;
-            }
-            else if((wParam >= 'A') && (wParam <= 'Z'))
-            {
-                if(ttmodif & ME_CONTROL)
-                   cc = (ttmodif & ME_ALT) | (wParam & 0x1f);
-                else
-                   cc = (ttmodif & ME_ALT) | wParam | 0x20;
-            }
-            else if((wParam >= VK_NUMPAD0) && (wParam <= VK_NUMPAD9))
-            {
-                cc  = ttmodif | ME_SPECIAL | ((meUShort) ('0' + wParam - VK_NUMPAD0));
-            }
-            else if(wParam == VK_MULTIPLY)
-                cc  = ttmodif | '*' /* ME_SPECIAL | SKEY_kp_multiply*/;
-            else if(wParam == VK_ADD)
-                cc  = ttmodif | '+' /* ME_SPECIAL | SKEY_kp_add */;
-            else if(wParam == VK_SUBTRACT)
-                cc  = ttmodif | '-' /*| ME_SPECIAL | SKEY_kp_subtract*/;
-            else if(wParam == VK_DECIMAL)
-                cc  = ttmodif | '.' /*| ME_SPECIAL | SKEY_kp_decimal*/;
-            else if(wParam == VK_DIVIDE)
-                cc  = ttmodif  | '/' /*| ME_SPECIAL | SKEY_kp_divide */;
-            else if(wParam ==  VK_DELETE)
-                cc  = ttmodif | SKEY_delete | ME_SPECIAL /*| SKEY_kp_delete*/;
-            else if(wParam == VK_INSERT)
-                cc  = ttmodif | ME_SPECIAL | SKEY_insert /*| SKEY_kp_insert*/;
-            else if(wParam == VK_SPACE)
-                cc = ttmodif | ' ';
-            else if(wParam == VK_BACK)
-                cc  = ME_SPECIAL | SKEY_backspace | ttmodif;
-            else if(wParam & 0x80)
-            {
-                wParam &= 0x7f;
-                if((ttmodif & ME_SHIFT) == 0)
-                {
-                    switch(wParam)
-                    {
-                        /* A-C-: */
-                    case 0x3a: cc = ttmodif | 0x3b; break;
-                        /* A-C-= */
-                    case 0x3b: cc = ttmodif | 0x3d; break;
-                    case 0x3c:     /* A-C-, */
-                    case 0x3d:     /* A-C-- */
-                    case 0x3e:     /* A-C-. */
-                    case 0x3f:     /* A-C-? */
-                        cc = ttmodif | (wParam & ~0x10);
-                        break;
-                        /* A-C-' */
-                    case 0x40: cc = ttmodif | 0x27; break;
-                        /* A-C-~ */
-                    case 0x5e: cc = ttmodif | 0x23; break;
-                        /* A-C-` */
-                    case 0x5f: cc = ttmodif | 0x5d; break;
-                    default: cc = ttmodif | (wParam & 0x7f);
-                    }
-                }
-                else
-                {
-#ifdef _WIN32s
-                    /* Special case for Alt-Tab - this is not for us !! Windows does not
-                       intercept this key on win32s. */
-                    if((wParam == '\t') && ((ttmodif & (ME_CONTROL|ME_SHIFT)) == 0))
-                        return meFALSE;    /* Not processed */
-#endif
-                    /* Process the rest */
-                    switch(wParam)
-                    {
-                    case 0x3b:
-                        cc = (~ME_SHIFT & ttmodif) | 0x2b; break;
-                    case 0x3d:
-                        cc = (~ME_SHIFT & ttmodif) | 0x5f; break;
-                    case 0x5b:             /* A-C-{ */
-                    case 0x5c:             /* A-C-\ */
-                    case 0x5d:             /* A-C-} */
-                    case 0x5e:             /* A-C-~ */
-                        cc = (~ME_SHIFT & ttmodif) | ((meUShort) wParam) | 0x20;
-                        break;
-                    case 0x40:
-                        cc = (~ME_SHIFT & ttmodif) | ((meUShort) wParam);
-                        break;
-                    default:
-                        cc = (~ME_SHIFT & ttmodif) | ((meUShort) wParam);
-                        break;
-                    }
-                }
-            }
-            else
-                return meFALSE;          /* NOT PROCESSED - return a false state */
             
-            /* Add the character to the typeahead buffer.
-             * Note that we do no process (lParam & 0xff) which is the
-             * auto-repeat count. - this always appears to be 1 */
+            /* Generally, Windows sends a WM_KEYDOWN for all key presses, we then call
+             * TranslateMessage which uses the ToUnicode function (see WinKeyTranslate) to convert
+             * the Virtual-key into a char and then generate a WM_CHAR message. For a simple util
+             * the KEYDOWN msgs can be largely ignored as the CHAR msgs are all they need, but not
+             * ME. We want all key input, including some very unusual key combinations like C-#, and
+             * this creates problems.
+             * 
+             * First issue is that Windows simply grabs some key input so ME never sees it, e.g.
+             * C-S-0 ('C-)' on UK keyboard), nothing we can do about that unless we create a lower
+             * level input driver (e.g. AutoHotkey can get the key) however this type of interface
+             * can create security and permission issues and these keys are not deemed important
+             * enough to warrent that risk and complexity at this stage.
+             * 
+             * Second and the bigger problem, when many keys are translated they don't produce a
+             * 'valid' char, e.g. C-=, and Windows simply drops these, as a result ME will get a
+             * KEYDOWN message but not a CHAR msg. So our first task is to identify KEYDOWN messages
+             * that ME would want to capture but will not generate a WM_CHAR msg (e.g. the KEYDOWN
+             * of '=' when Ctrl is also already pressed, but not for example the pressing of the
+             * Ctrl on its own). These keys must be added to the Key buffer here.
+             * 
+             * Steve 2025-06-20
+             */
+            {
+                int ci;
+                ci = WinKeyTranslate(wParam,ttmodif);
+                if(ci > 0)
+                {
+                    keyDownChr = ci;
+                    return meFALSE;
+                }
+                /* Get the base key, we must pass in the Shift state as this will change the key and
+                 * we must use Windows API as this is affected by different keyboard layouts etc. */
+                ci = WinKeyTranslate(wParam,(ttmodif & ME_SHIFT));
+                if(ci > 0)
+                    cc = ci | (ttmodif & ~ME_SHIFT);
+                else if((ci = WinKeyTranslate(wParam,0)) > 0)
+                {
+                    cc = ci | ttmodif;
+                }
+                else
+                {
+                    keyDownChr = 0;
+                    return meFALSE;
+                }
 #if _WIN_DEBUG_KEY
-            if(logfp != NULL)
-            {
-                fprintf(logfp,"addKeyToBuffer2 %c - %d(0x%04x)\n",cc & 0xff, cc, cc);
-                fflush(logfp);
-            }
+                if(logfp != NULL)
+                {
+                    fprintf(logfp,"addKeyToBuffer2    %c - %d(0x%04x)\n",cc & 0xff,cc,cc);
+                    fflush(logfp);
+                }
 #endif
-            if((ttmodif & (ME_ALT|ME_CONTROL)) == (ME_ALT|ME_CONTROL))
-                altGrKey = cc;
-            else
-                /* not sure if this is still needed - what key combination gets here? */
+                keyDownChr = cc;
                 addKeyToBuffer(cc);
-            /* hide the mouse cursor
-             * This must be done whether MEOPT_MOUSE is enabled or not */
-            mouseHide();
-            
-#else  /* DISABLE_ALT_C_KEY_DETECTION */
-            return meTRUE;
-#endif /* DISABLE_ALT_C_KEY_DETECTION */
+                mouseHide();
+                
+            }
         }
         break;
         
@@ -3545,16 +3387,6 @@ do_keydown:
                 cc = SKEY_tab;
                 goto return_spec;
             }
-#if 0
-            /* Jon:991129; Moved to case above. More of the keys
-             * need to be migrated like this. */
-            if(cc == 0x0d)
-            {
-                /* Distinguish between the Number Pad and standard enter */
-                cc = ((lParam & 0x01000000) ? SKEY_kp_enter : SKEY_return);
-                goto return_spec;
-            }
-#endif
             if(cc == 0x1b)
             {
                 cc = SKEY_esc;
@@ -3566,12 +3398,49 @@ do_keydown:
                 goto return_spec;
             }
         }
+        else if((cc == 0x1c) && !(meSystemCfg & meSYSTEM_CONSOLE))
+        {
+            /* For reasons unknown, Windows miss-translates C-# on UK & DEU keyboards (key next to
+             * enter), converting it to C-\\ as per a US keyboard. Following attempts to identify
+             * and fix this in a fairly general way (i.e. does not assume its a C-#) in the hope
+             * this will work for all keyboards.
+             * 
+             * This cannot be fixed in console mode because ME does not get the original scancode!
+             * 
+             * Steve 2025-06-20
+             */
+            UINT cv;
+            int ci;
+            if(((cv=MapVirtualKey(((lParam>>16) & 0x0ff),MAPVK_VSC_TO_VK)) > 0) && 
+               ((ci = WinKeyTranslate(cv,(ttmodif & ME_SHIFT))) > 0) && (ci != cc))
+            {
+                if((ci > 0x40) && (ci < 0x60))
+                    cc = (ci & 0x3f) | (ttmodif & ME_ALT);
+                else
+                    cc = ci | (ttmodif & (ME_ALT|ME_CONTROL));
+#if _WIN_DEBUG_KEY
+                if(logfp != NULL)
+                {
+                    fprintf(logfp,"  Special handler for C-\\  %02x -> %02x -> %02x\n",cv,ci,cc);
+                    fflush(logfp);
+                }
+#endif
+            }
+        }
         if(ttmodif & ME_ALT)
         {
-            /* if this is the WM_CHAR following an WM_KEYDOWN where both had Alt & Ctrl pressed (i.e. AltGr)
-             * and the base char has been translated then don't add the Alt as this is a special keyboard key */
-            if(!altGrKey || ((ttmodif & (ME_ALT|ME_CONTROL)) != (ME_ALT|ME_CONTROL)) || ((altGrKey & 0xff) == (cc & 0xff)))
-                /* This cannot have control pressed as well, see DISABLE_ALT_C_KEY_DETECTION above, not special, so remove ME_SHIFT and make letter lower case */
+            if(meSystemCfg & meSYSTEM_CONSOLE)
+            {
+                /* the console does not get KEYDOWN msgs for each CHAR and we don't get the scancode or the
+                 * virtual-key, so the best we can do is only enable alt if control is not also pressed as
+                 * A-C- is the AltGr so could be a plain letter */
+                if(!(ttmodif & ME_CONTROL))
+                    cc = ME_ALT | toLower(cc);
+            }
+            else if(keyDownChr & ME_ALT)
+                /* if, when originally translated this could be done with the ALT pressed then we most likely
+                 * have an AltGr A-C-key -> char, common on keyboards like German. Don't add the ALT modifier
+                 * because this is just a char. */ 
                 cc = ME_ALT | toLower(cc);
         }
         /* Add the character to the typeahead buffer.
@@ -3580,7 +3449,7 @@ do_keydown:
 #if _WIN_DEBUG_KEY
         if(logfp != NULL)
         {
-            fprintf(logfp,"addKeyToBuffer3 %c - %d(0x%04x)\n",cc & 0xff, cc, cc);
+            fprintf(logfp,"addKeyToBuffer3    %c - %d(0x%04x)\n",cc & 0xff, cc, cc);
             fflush(logfp);
         }
 #endif
@@ -3588,14 +3457,13 @@ do_keydown:
         /* hide the mouse cursor
          * This must be done whether MEOPT_MOUSE is enabled or not */
         mouseHide();
-        altGrKey = 0;
         break;
 return_spec:
         cc = (ME_SPECIAL | ttmodif | cc);
 #if _WIN_DEBUG_KEY
         if(logfp != NULL)
         {
-            fprintf(logfp,"addKeyToBuffer4 %c - %d(0x%04x)\n",cc & 0xff, cc, cc);
+            fprintf(logfp,"addKeyToBuffer4    %c - %d(0x%04x)\n",cc & 0xff, cc, cc);
             fflush(logfp);
         }
 #endif
