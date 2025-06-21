@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Detlef Groth, University of Potsdam, Germany
 ;  Created       : Mon Mar 24 11:14:06 2025
-;  Last Modified : <250618.1548>
+;  Last Modified : <250621.1449>
 ;
 ;  Description   : Support for editing language files with generic
 ;                  macros file-exec, file-format and file-lint using the 
@@ -28,25 +28,23 @@
 ;  History       : 2025-04-14 - first version
 ;                  2025-05-29 - rewrite using file-tools-run anf add-next-line macros
 ;                  2025-06-01 - using find.emf for the macros to locate the problematic line
-;                  2025-06-18 - split help / code file for better maintainance
-;                               automatich check for fhook-HOOKNAME-replace method
-;  Installation:
-;                - copy the file filtools.emf and filtoolh.emf into your
-;                  ME config folder, so beside your USERNAME.emf file
-;                - add the following line to your USERNAME.emf file
-;                  define-macro-file filtools file-format file-exec file-lint
+;                  2025-06-21 - moving the global variables directly into this file to
+;                               simplify installation
+;
 ;  Copyright (c) 2025 Detlef Groth. License same as Jasspa's MicroEmacs
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+; list of formatters: https://github.com/vim-autoformat/vim-autoformat
+; list of linters: https://github.com/vim-syntastic/syntastic/tree/master/syntax_checkers
 define-macro-file find return-get-next-line mouse-get-next-line
 
 define-macro fhook-file-lint
   buffer-init-hooks
 !emacro
 ; minimal defaults
-add-next-line "*file-exec*" "%f:%l:\\d+"
-add-next-line "*file-lint*" "%f:%l:\\d+"
+add-next-line "*file-exec*" "%f:%l"
+add-next-line "*file-lint*" "%f:%l"
 
 define-macro file-lint
   set-variable #l0 &ind &cat &cat "%" $buffer-fhook "-lint"
@@ -57,7 +55,8 @@ define-macro file-lint
   &band @# 1 save-some-buffers @mna
   set-variable #l2 &spr "%s-replace"  $buffer-fhook
   delete-other-windows
-  0x4088 file-tool-run #l0 $buffer-fname "*file-lint*"
+  0x4188 file-tool-run #l0 $buffer-fname "*file-lint*"
+  next-window-find-buffer "*file-lint*"
   !if &exi &ind #l2
     !force execute-named-command #l2
   !endif
@@ -73,8 +72,8 @@ set-variable .fhook-file-lint.setup-mask "acfhmw"
 !if &and &sin "h" .fhook-file-lint.setup &band .hilight.flags 0x02
   !iif &not &exi .hilight.file-lint  set-variable .hilight.file-lint &pinc  .hilight.next 1
   0 hilight .hilight.file-lint 2 200                                     $global-scheme
-  hilight .hilight.file-lint   0  "\\.+:[0-9]+:[0-9]+"      .scheme.link  
-  hilight .hilight.file-lint   0  "[-_/A-Za-z0-9]+\\.*[A-Za-z0-9]+:[0-9]+:[0-9]+"      .scheme.link    
+  hilight .hilight.file-lint   0  "\\.+:[0-9]+:[0-9]*"      .scheme.link  
+  hilight .hilight.file-lint   0  "[-_/A-Za-z0-9]+\\.*[A-Za-z0-9]+:[0-9]+:[0-9]*"      .scheme.link    
 !endif
 
 add-file-hook "*file-lint*" fhook-file-lint
@@ -93,7 +92,7 @@ define-macro file-format
   !if &seq #l0 "restyle-buffer"
     restyle-buffer
   !else
-    0x4088 file-tool-run #l0 $buffer-fname "*file-format*"
+    0x4188 file-tool-run #l0 $buffer-fname "*file-format*"
     ;next-window-find-buffer #l1
     0 reread-file
   !endif
@@ -116,8 +115,8 @@ define-macro file-exec
   !iif &not &band @# 2  set-variable :file-exec-args @ml2 "Additional command-line arguments" :file-exec-args 
   set-variable #l0 &spr "%s %s" #l0 :file-exec-args
   set-variable #l2 &spr "%s-replace"  $buffer-fhook
-  delete-other-windows
-  0x4088 file-tool-run #l0 $buffer-fname "*file-exec*"
+  0x4188 file-tool-run #l0 $buffer-fname "*file-exec*"
+  next-window-find-buffer "*file-exec*"
   !if &exi &ind #l2
     !force !force execute-named-command #l2
   !endif
@@ -137,6 +136,207 @@ set-variable .fhook-file-exec.setup-mask "acfhmw"
 !endif
 
 add-file-hook "*file-exec*" fhook-file-exec
+; some code which should be moved into hkHOOK.emf files
 
-; load the help file
-!force execute-file "filtoolh"
+0 define-macro fhook-generic-replace
+  set-variable #l1 @1
+  set-variable #l2 @2
+  -1 buffer-mode "view"
+  beginning-of-buffer
+  replace-string #l1 #l2
+  beginning-of-buffer
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"  
+!emacro
+; ada
+!if &not &seq &which "gnat" ""
+  set-variable %fhook-ada-lint "gcc -c -x ada -fsyntax-only  -gnats -gnatef %f"
+  set-variable %fhook-ada-exec "gnatmake %f && ./%b"
+  !if &not &seq &which "gnatpp" ""
+    set-variable %fhook-ada "gnatpp %f"
+  !endif
+!endif
+
+; awk
+!if &not &seq &which "gawk" ""
+  set-variable %fhook-awk-lint "gawk --lint -f %f"
+  set-variable %fhook-awk-exec "gawk -f %f"
+  set-variable %fhook-awk-format "gawk -o%b.new -f %f && cp %b.new %f"
+  !endif
+!endif
+
+; C
+!if &not &seq &which "gcc" ""
+  set-variable %fhook-c-lint "gcc -Wall -x c -fsyntax-only %f"
+  set-variable %fhook-c-exec "gcc -Wall %f -o %b && ./%b"
+  !if &not &seq &which "astyle" ""
+    set-variable %fhook-c-format "astyle %f"
+  !elif &not &seq &which "clang-format" ""
+    set-variable %fhook-c-format "clang-format %f -- -std=c99"
+  !endif
+!endif
+
+; C++
+!if &not &seq &which "g++" ""
+  set-variable %fhook-cpp-lint "g++ -Wall -x c++ -fsyntax-only %f"
+  set-variable %fhook-cpp-exec "g++ -Wall %f -o %b && ./%b"
+  !if &not &seq &which "astyle" ""
+    set-variable %fhook-cpp-format "astyle %f"
+  !elif &not &seq &which "clang-format" ""
+    set-variable %fhook-cpp-format "clang-format %f -- -std=c++17"
+  !endif
+!endif
+
+; C3
+!if &not &seq &which "c3c" ""
+  0 define-macro fhook-c3-replace
+    fhook-generic-replace "^(\\(.+[0-9]\\))" "\\1"
+  !emacro
+  
+  set-variable #l0 &which "astyle"
+  !if &not &seq #l0 "ERROR"
+    set-variable %fhook-c3-format "astyle --indent=spaces=2 %f"
+  !endif
+  set-variable %fhook-c3-lint   "c3c compile %f -o %b"
+  set-variable %fhook-c3-exec   "c3c compile-run %f --"
+!endif
+
+; Cobol
+!if &not &seq &which "cobc" ""
+  set-variable %fhook-cobol-lint "cobc --free -fsyntax-only %f"
+  set-variable %fhook-cobol-exec "cobc --free -x %f && ./%b"
+  !endif
+!endif
+
+; Dart
+!if &not &seq &which "dart" ""
+  set-variable %fhook-dart-lint   "dart analyze %f"
+  set-variable %fhook-dart-format "dart format %f"
+  set-variable %fhook-dart-exec   "dart run %f"
+!endif
+
+; Fortran
+!if &not &seq &which "gfortran" ""
+  set-variable %fhook-f90-lint   "gfortran -fsyntax-only %f"
+  !if &not &seq &which "fprettify" ""
+    ; python program
+    ; sudo dnf install fprettify
+    ; pip3 install fprettify
+    set-variable %fhook-f90-format "fprettify %f"
+  !endif
+  set-variable %fhook-f90-exec   "gfortran %f -o %b && ./%b"
+!endif
+
+; Go
+!if &not &seq &which "go" ""
+  set-variable %fhook-go-lint "go vet %f"
+  set-variable %fhook-go-exec "go run %f"
+  set-variable %fhook-go-format "go fmt %f"
+!endif
+
+; Java
+!if &not &seq &which "javac" ""
+  set-variable %fhook-java-lint "javac -Xlint %f"
+  set-variable %fhook-java-exec "javac %f && java -cp . "
+  !if &not &seq &which "astyle" ""
+    set-variable %fhook-java-format "astyle %f"
+  !endif
+!endif
+
+; Lua
+!if &not &seq &which "lua" ""
+  set-variable %fhook-lua-lint "luac -p %f"
+  set-variable %fhook-lua-exec "lua %f "
+  ; sudo npm install -g lua-fmt
+  !if &not &seq &which "luafmt" ""
+    set-variable %fhook-lua-format "luafmt --write-mode replace %f"
+  !endif
+!endif
+
+
+; Perl
+!if &not &seq &which "perl" ""
+  set-variable %fhook-perl-lint "perl -cw %f"
+  set-variable %fhook-perl-exec "perl -w %f"
+  !if &not &seq &which "perltidy" ""
+    set-variable %fhook-perl-format "perltidy %f && cp %f.tdy %f"
+  !endif
+  ; need to fix the error line format
+  0 define-macro fhook-perl-replace
+    fhook-generic-replace "at \\(.+\\) line \\([0-9]+\\)" "at \n\\1:\\2:0"
+  !emacro
+!endif
+
+; Python
+!if &not &seq &which "python3" ""
+  !if &not &seq &which "ruff" ""
+    set-variable %fhook-python-format "ruff format %f"
+    set-variable %fhook-python-lint   "ruff check %f"
+  !else
+    !if &not &seq &which "yapf" ""
+      set-variable %fhook-python-format "yapf -i %f"
+    !elif  &not &seq &which "black" ""
+      set-variable %fhook-python-format "black -q %f"
+    !endif
+    !if &not &seq &which "pylint" ""
+      set-variable %fhook-python-lint "pylint %f"
+    !endif
+  !endif
+  set-variable %fhook-python-exec   "python3 %f"
+  0 define-macro fhook-python-replace
+    fhook-generic-replace " *File \"\\(.+\\)\", line \\(.+\\)" "\\1:\\2:0"
+  !emacro
+!endif
+
+; R
+!if &not &seq &which "Rscript" ""
+  set-variable #l0 &reg &spr "/history/%s/char-set" %platform ""
+  set-variable #l0 &xre #l0 "iso" "ISO-" #l0
+  set-variable #l0 &xre #l0 "cp" "CP" #l0    
+  set-variable #l0 &xre #l0 "microsoft-" "" #l0        
+  set-variable %fhook-r-format &spr "Rscript  -e \"options('encoding'='%s');formatR::tidy_file('%%f')\"" #l0
+  set-variable %fhook-r-exec   &spr "Rscript  --encoding=%s %%f" #l0
+  set-variable %fhook-r-lint   &spr "Rscript  -e \"options('encoding'='%s');library(lintr);lintr::lint('%%f',linters = linters_with_defaults( indentation_linter = indentation_linter(indent = 4L) ))\"" #l0
+!endif
+
+; Rust
+!if &not &seq &which "rustc" ""
+  set-variable %fhook-rust-lint    "rustc %f"
+  set-variable %fhook-rust-exec    "rustc %f -o %b && ./%b"
+  !if &not &seq &which "rustfmt" ""
+    set-variable %fhook-rust-format  "rustfmt %f"
+  !endif
+!endif
+;
+; Tcl
+!if &not &seq &which "tclsh" ""
+  ; pip3 install tclint
+  !if &not &seq &which "tclint" ""
+    set-variable %fhook-tcl-lint "tclint %f"
+  !endif
+  set-variable %fhook-tcl-exec "tclsh %f"
+  !if &not &seq &which "tclfmt" ""
+    set-variable %fhook-tcl-format "tclfmt --in-place %f"
+  !endif
+  0 define-macro fhook-tcl-replace
+    fhook-generic-replace " *(file \"\\(.+\\)\" line \\(.+\\))" "file \\1:\\2:0"
+  !emacro
+!endif
+
+; V
+!if &not &seq &which "v" ""
+  set-variable %fhook-v-lint "v vet %f"
+  set-variable %fhook-v-exec "v crun %f"
+  set-variable %fhook-v-format "v fmt -w %f"
+!endif
+
+; Zig
+!if &not &seq &which "zig" ""
+  set-variable %fhook-zig-lint    "zig ast-check %f"
+  set-variable %fhook-zig-exec    "zig run %f"
+  set-variable %fhook-zig-format  "zig fmt %f"
+!endif
+
+
+
+
