@@ -2056,13 +2056,29 @@ TTgetClipboard(int flag)
 #if MEOPT_EXTENDED
                 if(uc >= 0x80)
                 {
-                    int ii = 127;
-                    while((charToUnicode[ii] != uc) && (--ii >= 0))
-                        ;
-                    if(ii >= 0)
-                        *dd++ = (meUByte) ii+128;
+                    if(flag & 2)
+                    {
+                        if(uc & 0x0f800)
+                        {
+                            *dd++ = 0xe0 | (uc >> 12);
+                            *dd++ = 0x80 | ((uc >> 6) & 0x3f);
+                        }
+                        else
+                            *dd++ = 0xc0 | (uc >> 6);
+                        *dd++ = 0x80 | (uc & 0x3f);
+                    }
+                    else if((uc > 0xff) || (charToUnicode[uc-128] != uc))
+                    {
+                        int ii = 127;
+                        while((charToUnicode[ii] != uc) && (--ii >= 0))
+                            ;
+                        if(ii >= 0)
+                            *dd++ = (meUByte) ii+128;
+                        else
+                            *dd++ = meCHAR_UNDEF;
+                    }
                     else
-                        *dd++ = meCHAR_UNDEF;
+                        *dd++ = (meUByte) uc;
                 }
                 else
 #endif
@@ -3118,7 +3134,7 @@ WinKeyboard(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 #endif /* _ME_WINDOW */
         }
     case WM_KEYDOWN:
-        keyDownChr = 0;
+        keyDownChr = ttmodif;
         /* Determine the special keyboard character we are handling */
         switch(wParam)
         {
@@ -3195,23 +3211,6 @@ test_do_keydown:
                     goto do_keydown;
             }
             break;
-#if 0
-        case VK_LWIN:
-        case VK_RWIN:
-            /* The left/right window buttons. Note that we handle this
-             * specially in that if the key is bound then we process it, if it
-             * is not bound then we pretend that we have not processed it,
-             * this will allow the default handler to process the key */
-            {
-                meUInt arg;               /* Decode key argument */
-                
-                cc = ME_SPECIAL | ttmodif | ((wParam == VK_LWIN) ? SKEY_start_left : SKEY_start_right);
-                if(decode_key(cc,&arg) != -1)     /* Key bound ?? */
-                    goto do_addbuf;               /* Yes - allow key to be pr0ocessed */
-                return meFALSE;                   /* *IMPORTANT* Key is not processed */
-            }
-            return meFALSE;                       /* *IMPORTANT* Key is not processed */
-#endif
         case VK_F1:
             cc = SKEY_f1;
             goto do_keydown;
@@ -3293,10 +3292,7 @@ do_keydown:
                     cc = ci | ttmodif;
                 }
                 else
-                {
-                    keyDownChr = 0;
                     return meFALSE;
-                }
 #if _WIN_DEBUG_KEY
                 if(logfp != NULL)
                 {
@@ -3429,18 +3425,24 @@ do_keydown:
         }
         if(ttmodif & ME_ALT)
         {
+            /* If the ALT is pressed and the CONTROL isn't this is an A-? or A-S-? key. If ALT &
+             * CONTROL are pressed then we must be careful because this could be an AltGr extended
+             * character, e.g. A-C-e for Euro.
+             * 
+             * When not running In a console we can use the KEYDOWN msg to work this out, keyDownChr stores
+             * the best translation of the key which will not have ALT or CONTROL set if its an
+             * AltGr char.
+             * 
+             * When running in a console ME does not get KEYDOWN msgs for each CHAR and the CHAR msg
+             * doesn't have the scancode or the virtual-key, so the best we can do is only enable
+             * ALT if CONTROL is not set
+             */
             if(meSystemCfg & meSYSTEM_CONSOLE)
             {
-                /* the console does not get KEYDOWN msgs for each CHAR and we don't get the scancode or the
-                 * virtual-key, so the best we can do is only enable alt if control is not also pressed as
-                 * A-C- is the AltGr so could be a plain letter */
                 if(!(ttmodif & ME_CONTROL))
                     cc = ME_ALT | toLower(cc);
             }
             else if(keyDownChr & ME_ALT)
-                /* if, when originally translated this could be done with the ALT pressed then we most likely
-                 * have an AltGr A-C-key -> char, common on keyboards like German. Don't add the ALT modifier
-                 * because this is just a char. */ 
                 cc = ME_ALT | toLower(cc);
         }
         /* Add the character to the typeahead buffer.

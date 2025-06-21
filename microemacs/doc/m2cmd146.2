@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd146.2,v 2.8 2025/05/16 12:38:05 jon Exp $
+.Id $Id: m2cmd146.2,v 2.8 2025/06/21 11:03:56 jon Exp $
 .Im MicroEmacs command|insert
 .ds C0 "(\fB\*cy\fR)\ \&
 .so me.tni
@@ -29,12 +29,13 @@ If \fIyank\fR is IMMEDIATELY followed by a
 then the \fIyanked\fR text is replaced by text of the next entry in the kill ring. (another \fBreyank\fR replaces the
 text with the previous reyank text and so on).
 .PP
-If an negative argument is given, \fByank\fR removes the last 0-\fIn\fR items from the kill ring unless \fIn\fR is -99
+If an negative argument is given, \fByank\fR removes the last 0-\fIn\fR items from the kill ring unless \fIn\fR is -98
 or less.
 .PP
-When \fIn\fR is -99 yank checks for and gets the current global clipboard text regardless of whether \*(mS is
+When \fIn\fR is -98 or -99 yank checks for and gets the current global clipboard text regardless of whether \*(mS is
 currently running a macro, this can be useful for macros that need to interact with the system clipboard. If a system
-clipboard text is available it is inserted into the kill buffer and \fInot\fR inserted into the current buffer. 
+clipboard text is available it is inserted into the kill buffer and \fInot\fR inserted into the current buffer, if 
+\fIn\fR is -99 the text is inserted as a UTF8 encoded string rather than converted to the current \*(mS charset.
 .PP
 When \fIn\fR is -100 the last search string match is inserted/yanked into the current buffer instead. If \fIn\fR is -101
 then the matches first regex group is inserted, -102 the 2nd group etc., see help on
