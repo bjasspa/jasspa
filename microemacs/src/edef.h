@@ -271,6 +271,7 @@ extern  meUShort  breakc;               /* current abort-command char*/
 #define CLIP_RECEIVING  0x08            /* Currently receiving clipboard*/
 #define CLIP_RECEIVED   0x10            /* Clipboard has been obtained  */
 #define CLIP_DISABLED   0x20            /* Currently disabled Start&end */
+#define CLIP_UTF8       0x40            /* Keep clipboard UTF8 encoded  */
 extern  meUByte   clipState;            /* clipboard status flag        */
 #endif
 extern  meUInt    cursorBlink;          /* cursor-blink blink time      */

@@ -2333,9 +2333,9 @@ special_bound:
         if((frame = meXEventGetFrame(&event)) != NULL)
         {
             unsigned long nitems, left;
-            meUByte *buff, *dd ;
-            Atom type ;
-            int  fmt ;
+            meUByte *buff, *dd;
+            Atom type;
+            int  fmt;
             
 #if 0
              printf("Got SelectionNotify %ld, Property = %s %ld (%ld), Selection = %s %ld (%ld %ld), Target = %s %ld (%ld %ld %ld)\n",event.xselection.requestor,
@@ -2382,7 +2382,8 @@ special_bound:
                 else if(((type == XA_STRING) || (type == meAtoms[meATOM_UTF8_STRING])) && (fmt == 8) && (nitems > 0))
                 {
 #if MEOPT_EXTENDED
-                    if(type != XA_STRING)
+                    
+                    if((type != XA_STRING) && !(clipState & CLIP_UTF8))
                     {
                         int ss, uc;
                         meUByte cc, c1, bc, bm;
@@ -4309,7 +4310,7 @@ TTgetClipboard(int flag)
          * the initial size, the killInit then take ownership of the block and so we never
          * get the copy text. Take ownership at the end */
         clipState &= ~CLIP_RECEIVED;
-        clipState |= CLIP_RECEIVING;
+        clipState |= CLIP_RECEIVING | ((flag & 2) ? CLIP_UTF8:0);
         /* Request for the current Primary/Clipboard string owner to send a SelectionNotify event
          * to us giving the current string. Request preference for UTF8 and rely on ME Unicode conversion
          * to preserve as many chars as possible */
@@ -4319,7 +4320,7 @@ TTgetClipboard(int flag)
         /* Wait for the returned value, alarmState bit will be set */
         while(!TTahead() && !(clipState & CLIP_RECEIVED))
             waitForEvent(0);
-        clipState &= ~(CLIP_RECEIVING|CLIP_RECEIVED);
+        clipState &= ~(CLIP_RECEIVING|CLIP_RECEIVED|CLIP_UTF8);
         /* reset the increment clip size to zero (just incase there was an interuption) */
         meClipSize=0;
         TTsetClipboard(0);

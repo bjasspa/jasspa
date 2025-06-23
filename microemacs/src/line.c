@@ -1567,10 +1567,10 @@ yank(int f, int n)
         if(n > -100)
 #endif
         {
-            if(n == -99)
+            if(n <= -98)
             {
 #ifdef _CLIPBRD
-                TTgetClipboard(1);
+                TTgetClipboard((n == -98) ? 1:3);
 #endif
             }
             else
@@ -1590,9 +1590,9 @@ yank(int f, int n)
                     klhead = kl->next;
                     meFree(kl);
                 }
-                reyankLastYank = NULL;
-                commandFlag[CK_YANK] = comSelKill;
             }
+            reyankLastYank = NULL;
+            commandFlag[CK_YANK] = comSelKill;
             return meTRUE;
         }
 #if MEOPT_EXTENDED
