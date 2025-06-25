@@ -19,3 +19,7 @@ rgex "std::regex(\ppattern,flags)\P" "  regex"
 rsea "std::regex_search(\pstring, pattern,flags)\P" "  rsearch"
 rmat "std::regex_match(\pstring, pattern,flags)\P" "  rmatch"
 rrep "std::regex_replace(\pstring, pattern,replace,flags)\P" "  replace"
+vec "std::vector<\p> v = {};" "  std::vector"
+map "std::map<\p,> m = {};" "  std::map"
+tup "std::tuple<\p, ,> t = {};" "  std::tuple"
+
