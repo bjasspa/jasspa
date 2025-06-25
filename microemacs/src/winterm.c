@@ -3394,35 +3394,6 @@ do_keydown:
                 goto return_spec;
             }
         }
-        else if((cc == 0x1c) && !(meSystemCfg & meSYSTEM_CONSOLE))
-        {
-            /* For reasons unknown, Windows miss-translates C-# on UK & DEU keyboards (key next to
-             * enter), converting it to C-\\ as per a US keyboard. Following attempts to identify
-             * and fix this in a fairly general way (i.e. does not assume its a C-#) in the hope
-             * this will work for all keyboards.
-             * 
-             * This cannot be fixed in console mode because ME does not get the original scancode!
-             * 
-             * Steve 2025-06-20
-             */
-            UINT cv;
-            int ci;
-            if(((cv=MapVirtualKey(((lParam>>16) & 0x0ff),MAPVK_VSC_TO_VK)) > 0) && 
-               ((ci = WinKeyTranslate(cv,(ttmodif & ME_SHIFT))) > 0) && (ci != cc))
-            {
-                if((ci > 0x40) && (ci < 0x60))
-                    cc = (ci & 0x3f) | (ttmodif & ME_ALT);
-                else
-                    cc = ci | (ttmodif & (ME_ALT|ME_CONTROL));
-#if _WIN_DEBUG_KEY
-                if(logfp != NULL)
-                {
-                    fprintf(logfp,"  Special handler for C-\\  %02x -> %02x -> %02x\n",cv,ci,cc);
-                    fflush(logfp);
-                }
-#endif
-            }
-        }
         if(ttmodif & ME_ALT)
         {
             /* If the ALT is pressed and the CONTROL isn't this is an A-? or A-S-? key. If ALT &
@@ -3444,6 +3415,39 @@ do_keydown:
             }
             else if(keyDownChr & ME_ALT)
                 cc = ME_ALT | toLower(cc);
+        }
+        else if((ttmodif & ME_CONTROL) && (cc > 0x1a) && !(meSystemCfg & meSYSTEM_CONSOLE))
+        {
+            /* For reasons unknown, Windows sometimes miss-translates the base key of C-'?' when the
+             * control is pressed and not the alt, it doesn't seem to happen when SHIFT or ALT are
+             * also pressed. On UK keyboard C-# gets converted to C-\\ by the time we process the
+             * WM_CHAR. On DEU keyboard C-# also goes to C-\\, but also C-:u (u-umlaut) -> C-[,
+             * C-+ -> C-] and C-& -> C-^
+             * 
+             * Fix this by translating the base scancode of the key, without the CONTROL set, and
+             * then bor in the CONTROL flag and store this as the key.
+             * 
+             * This cannot be fixed in console mode because ME does not get the original scancode!
+             * 
+             * Steve 2025-06-20
+             */
+            UINT cv;
+            int ci;
+            if(((cv=MapVirtualKey(((lParam>>16) & 0x0ff),MAPVK_VSC_TO_VK)) > 0) && 
+               ((ci = WinKeyTranslate(cv,(ttmodif & ME_SHIFT))) > 0))
+            {
+                if((ci > 0x40) && (ci < 0x60))
+                    cc = (ci & 0x3f);
+                else
+                    cc = ci | ME_CONTROL;
+#if _WIN_DEBUG_KEY
+                if(logfp != NULL)
+                {
+                    fprintf(logfp,"  Special handler for C-<key>:  %02x -> %02x -> %02x\n",cv,ci,cc);
+                    fflush(logfp);
+                }
+#endif
+            }
         }
         /* Add the character to the typeahead buffer.
          * Note that we do no process (lParam & 0xff) which is the
