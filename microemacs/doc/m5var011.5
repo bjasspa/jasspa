@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m5var011.5,v 2.9 2022/06/12 17:14:15 jon Exp $
+.Id $Id: m5var011.5,v 2.9 2025/06/29 17:12:32 jon Exp $
 .Im MicroEmacs variable|macrodevelop|macro
 .so me.tni
 .TH $debug 5
@@ -13,9 +13,9 @@
 $debug \- Macro debugging flag
 .Me $a
 .SH SYNOPSIS
-\fB$debug\fR \fIdebugLevel\fR; Default is \fC0\fR
-.sp
--3 <= \fIdebugLevel\fR <= 3
+.na
+\fB$debug\fR \fIbitmask\fR; Default is \fC0\fR
+.ad
 .SH DESCRIPTION
 .B $debug
 is used to control  macro  debugging, it is a bit based flag where:

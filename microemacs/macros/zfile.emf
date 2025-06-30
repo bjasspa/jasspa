@@ -275,6 +275,23 @@ define-macro find-zfile
   !return #l1
 !emacro
 
+0 define-macro zfile-tmp-rm
+  set-variable #l0 &add .fcl 0
+  set-variable #l4 &add .fc 0
+  !while &les #l0 #l4
+    set-variable #l3 &ind &cat ".fn" &inc #l0 1
+    set-variable #l1 &lget #l3 1
+    set-variable #l2 &lget #l3 2
+    !repeat
+      !force !force 0x20 file-op &cat #l1 #l2 @mna
+      !iif &not &set #l3 &rsin "/" #l2  !break
+      set-variable #l2 &lef #l2 &sub #l3 1
+    !done
+    unset-variable &ind &cat ".fn" #l0
+  !done
+  set-variable .fcl #l4
+!emacro
+
 define-macro zfile-find-file
   !iif &not &exi ":zfl"  -8 ml-write "[ZFile Error: Invalid buffer!]"
   !iif &or &les $window-line 5 &les &len @wl :fmpf  -8 ml-write "[ZFile Error: Invalid line!]"
@@ -313,11 +330,11 @@ define-macro zfile-find-file
   !done
   set-variable #l2 &spr "%s/%s" &rig #l1 &rsin "/" #l1 #l2 
   set-variable #l1 &lef #l1 &rsin "/" #l1
+  ; launch the tool and don't wait, however we need to avoid deleting the tmp file before the system app has
+  ; had a chance to load it, so throw in a long delay (20sec) before the del and hope!
   !if &set #l8 &seq "R" &stat t &cat #l1 #l2
     !if &set #l0 &band 4 @#
       !force &con &band 1 @# 1 3 file-tool-exec-default &cat #l1 #l2
-      ; give command 20sec to start and read file before we delete it - can be interrupted by user
-      !iif &set #l0 $status -20000 command-wait
     !elif &set #l0 &band 2 @#
       !if &not &xse &set #l4 &cat #l1 #l2 ".*[\\s(].*"
       !elif &band $system 0x100
@@ -325,17 +342,12 @@ define-macro zfile-find-file
       !else
         set-variable #l4 &spr "\"%s\"" &rep &rep #l4 "\\" "\\\\" "\"" "\\\""
       !endif
-      ; launch system open tool and don't wait, however if we immediate continue we will delete the tmp file
-      ; before the system app has loaded, so throw in a long interruptable wait and hope!
       !if &seq $platform "windows"
         !force !force 0x20 shell-command &rep #l4 "/" "\\"
-        -20000 command-wait
       !elif &seq $platform "macos"
         !force !force 0x24 shell-command &cat "open " #l4
-        -20000 command-wait
       !elif &seq $platform "linux"
         !force !force 0x24 shell-command &cat "xdg-open " #l4
-        -20000 command-wait
       !else
         set-variable #l0 0
       !endif
@@ -351,11 +363,9 @@ define-macro zfile-find-file
       set-variable $buffer-bname #l3
     !endif
   !endif
-  !repeat
-    !force !force 0x20 file-op &cat #l1 #l2 @mna
-    !iif &not &set #l3 &rsin "/" #l2  !break
-    set-variable #l2 &lef #l2 &sub #l3 1
-  !done
+  ; delay the remove of the tmp file by 20sec to allow command to execute
+  set-variable &ind &cat ".zfile-tmp-rm.fn" &inc .zfile-tmp-rm.fc 1 &spr "|%s|%s|" #l1 #l2
+  20000 create-callback zfile-tmp-rm
   !if &not #l8
     !force goto-position "\x8a"
     ml-write &spr "[ZFile-%s Error: failed to extract requested file - command returned %s]" &reg #l7 "NID" #l9
@@ -383,7 +393,7 @@ define-macro zfile-copy-file
   set-variable #l3 $status
   !force -1 show-region
   !iif &not #l3  !abort
-  !iif &not &seq &rig #l0 -1 "/"  set-variable &cat #l0 "/"
+  !iif &not &seq &rig #l0 -1 "/"  set-variable #l0 &cat #l0 "/"
   !if &not &seq "D" &stat "t" &lef &set #l0 &stat "a" &cat "file:" #l0 -1
     ml-write &spr "[ZFile-%s Error: Destination must be an existing directory]" &reg :zfl "NID"
     !abort
