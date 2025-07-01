@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Detlef Groth
 ;  Created       : Fri Mar 6th, 2025
-;  Last Modified : <250615.1947>
+;  Last Modified : <250701.0729>
 ;
 ;  Description
 ;   V Language Template
@@ -132,9 +132,5 @@ set-variable .fhook-rust.item-list-r5 "impl \ecB\\1\ecA"
   indent .hilight.rust b "\\[" "]"
   indent .hilight.rust b "(" ")"
 !endif
-
-set-variable %fhook-rust-lint    "rustc %f"
-set-variable %fhook-rust-exec    "rustc %f -o %b && ./%b"
-set-variable %fhook-rust-format  "rustfmt %f"
 
 buffer-init-fhook "rust"

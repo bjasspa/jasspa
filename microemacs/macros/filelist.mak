@@ -50,7 +50,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkpascal.emf	hkperl.emf	hkphp.emf	hkphps.emf	\
 	hkpls.emf	hkpseudo.emf	hkpsf.emf	hkpython.emf	\
 	hkr.emf		hkrbin.emf	hkrd.emf	hkreg.emf	\
-	hkruby.emf	hkrul.emf	\
+	hkruby.emf	hkrul.emf	hkrust.emf	\
 	hksamba.emf	hkscheme.emf	hksgml.emf	hkshell.emf	\
 	hkslang.emf	hkspec.emf	hksql.emf	hkswift.emf	\
 	hktcl.emf	hktexi.emf	hktxt.emf	\
@@ -118,7 +118,7 @@ ETFS=	asmx86.etf	asn1.etf	au3.etf		\
 	pascal.etf	perl.etf	pls.etf		psf.etf		\
 	python.etf	\
 	rd.etf		rmd.etf		ruby.etf	rul.etf		\
-	spec.etf	\
+	rust.etf	spec.etf	\
 	tcl.etf		\
 	vhdl.etf	\
 	xml.etf		\
@@ -135,7 +135,8 @@ EAFS=	ada.eaf		asp.eaf		au3.eaf		\
 	latex.eaf	md.eaf		\
 	pascal.eaf	perl.eaf	php.eaf		pls.eaf		\
 	python.eaf	\
-	r.eaf		rd.eaf		shell.eaf	sgml.eaf	\
+	r.eaf		rd.eaf		rust.eaf	\
+	shell.eaf	sgml.eaf	\
 	tcl.eaf		txt.eaf		\
 	vhdl.eaf
 # ERFS:sh=ls *.erf
