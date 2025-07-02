@@ -871,6 +871,13 @@ meGetConsoleMessage(MSG *msg, int mode)
     if(ir.EventType == KEY_EVENT)
     {
         KEY_EVENT_RECORD *kr = &ir.Event.KeyEvent;
+#if _WIN_DEBUG_KEY
+        if(logfp != NULL)
+        {
+            fprintf(logfp,"ConsoleKeyMsg   %d,%d,%d,%d\n",kr->bKeyDown,kr->wVirtualKeyCode,kr->dwControlKeyState,kr->uChar.AsciiChar);
+            fflush(logfp);
+        }
+#endif
         
         /* Make message a la windows GUI */
         msg->lParam = 0;
@@ -1878,8 +1885,9 @@ WinKeyTranslate(UINT key, meUShort modif)
     if(modif & ME_CONTROL)
         keyBuf[VK_CONTROL] = 0xff;
     
-    rr = ToUnicode(key,0,keyBuf,buf,5,0);
-    if((rr > 0) && ((rr = buf[0]) > 0x0ff))
+    if((rr = ToUnicode(key,0,keyBuf,buf,5,4)) < 0)
+        rr = -1;
+    else if((rr > 0) && ((rr = buf[0]) > 0x0ff))
         rr = -2;
     return rr;
 }
@@ -3103,6 +3111,9 @@ WinKeyboard(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_CHAR:
             name = "WM_CHAR";
             break;
+        case WM_DEADCHAR:
+            name = "WM_DEADCHAR";
+            break;
         default:
             name = "?WM_UNKNOWN?";
             break;
@@ -3272,31 +3283,36 @@ do_keydown:
              * of '=' when Ctrl is also already pressed, but not for example the pressing of the
              * Ctrl on its own). These keys must be added to the Key buffer here.
              * 
+             * Care needs to be taken w.r.t. DEADCHARs (accent chars like accute or umlaut), these
+             * produce no key on the its input but will on the second key, so we must also ignore
+             * the dead key input.
+             * 
              * Steve 2025-06-20
              */
             {
                 int ci;
                 ci = WinKeyTranslate(wParam,ttmodif);
-                if(ci > 0)
+                /* if the initial key translates to anything, including ones above 255 & deadchars, return */
+                if(ci != 0)
                 {
-                    keyDownChr = ci;
+                    keyDownChr = (meUShort) (ci & 0xff);
                     return meFALSE;
                 }
                 /* Get the base key, we must pass in the Shift state as this will change the key and
                  * we must use Windows API as this is affected by different keyboard layouts etc. */
-                ci = WinKeyTranslate(wParam,(ttmodif & ME_SHIFT));
-                if(ci > 0)
+                if((ci = WinKeyTranslate(wParam,(ttmodif & ME_SHIFT))) > 0)
                     cc = ci | (ttmodif & ~ME_SHIFT);
-                else if((ci = WinKeyTranslate(wParam,0)) > 0)
-                {
+                else if((ttmodif & ME_SHIFT) && ((ci = WinKeyTranslate(wParam,0)) > 0))
                     cc = ci | ttmodif;
-                }
                 else
                     return meFALSE;
+                
+                if((ttmodif & ME_CONTROL) && (ci > 0x40) && (ci < 0x7b))
+                    cc &= 0x1f|ME_ALT|ME_SHIFT;
 #if _WIN_DEBUG_KEY
                 if(logfp != NULL)
                 {
-                    fprintf(logfp,"addKeyToBuffer2    %c - %d(0x%04x)\n",cc & 0xff,cc,cc);
+                    fprintf(logfp,"addKeyToBuffer2    %c - %d(0x%04x) 0x%04x\n",cc & 0xff,cc,cc,ci);
                     fflush(logfp);
                 }
 #endif
@@ -3437,7 +3453,7 @@ do_keydown:
                ((ci = WinKeyTranslate(cv,(ttmodif & ME_SHIFT))) > 0))
             {
                 if((ci > 0x40) && (ci < 0x60))
-                    cc = (ci & 0x3f);
+                    cc = (ci & 0x1f);
                 else
                     cc = ci | ME_CONTROL;
 #if _WIN_DEBUG_KEY
