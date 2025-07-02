@@ -22,4 +22,5 @@ rrep "std::regex_replace(\pstring, pattern,replace,flags)\P" "  replace"
 vec "std::vector<\p> v = {};" "  std::vector"
 map "std::map<\p,> m = {};" "  std::map"
 tup "std::tuple<\p, ,> t = {};" "  std::tuple"
-
+mun "auto \p = std::make_unique<Type>();\P" "  std::mk_unique"
+msh "auto \p = std::make_shared<Type>();\P" "  std::mk_shared"

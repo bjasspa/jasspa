@@ -1,0 +1,7 @@
+; -!- emf -!-
+; Notes:       To be used with filtools.emf
+; Authors:     MicroEmacs User
+;
+set-variable %fhook-dart-lint   "dart analyze %f"
+set-variable %fhook-dart-format "dart format %f"
+set-variable %fhook-dart-exec   "dart run %f"
