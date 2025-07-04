@@ -7,7 +7,7 @@
 .\"  Created By    : Detlef Groth
 .\"  Created       : Mon Mar 10 09:14:00 2025
 .\"
-.Id $Id: m9typ049.9,v 2.8 2025/07/01 07:51:52 jon Exp $
+.Id $Id: m9typ049.9,v 2.8 2025/07/04 10:58:42 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH go 9
@@ -18,6 +18,9 @@ go \- Go programming language templates
 .na
 .B hkgo.emf
 \- Go programming language hook definition
+.br
+.B go.eaf
+\- Go programming language abbreviation file
 .br
 .B go.etf
 \- Go programming language template file
@@ -62,6 +65,19 @@ line.
 (un)folds all regions in the file,
 .Ht collapse-current 3
 (un)folds the current region.
+.IP "\fBNavigation via Item List\fR"
+The Go mode offers beside folding as well support for displaying an outline of the
+functions and types and modules of the Go file for easy navigation using the 
+.Ht item-list 3
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for Go file  editing
+which  can  be  used  by  writing  short   abbreviations   like   "\fBfor\fR",
+"\fBif\fR", "\fBelif\fR" or "\fBfunc\fR" - and then pressing the key-binding for the 
+.Ht expand-abbrev-handle 3
+command.  The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mE using the 
+.Ht abbrev-list 3
+command.
 .IP "\fBWorking Environment\fR"
 .Ht compile 3
 may be invoked to rebuild the source, the user is prompted to save any files.
@@ -92,10 +108,13 @@ The short cut keys used within the buffer are:-
 The  hilighting  is  typically   extended  using  a  file   \fBmygo.emf\fR
 .SH "SEE ALSO"
 .na
+.Ht abbrev-list 3 ,
 .Ht c 9 ,
 .Ht collapse-all 3 ,
 .Ht collapse-current 3 ,
 .Ht compile 3 ,
+.Ht expand-abbrev-handle 3 ,
+.Ht item-list 3 ,
 .Ht restyle-buffer 3 ,
 .Ht restyle-region 3 ,
 .Ht time 2m .

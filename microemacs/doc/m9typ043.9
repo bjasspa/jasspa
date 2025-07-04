@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ043.9,v 1.2 2022/06/12 17:14:33 jon Exp $
+.Id $Id: m9typ043.9,v 1.2 2025/07/04 11:05:15 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH ada 9
@@ -20,6 +20,9 @@ Ada \- Ada programming language
 .na
 .B hkada.emf
 \- Ada programming language file hook definition
+.br
+.B ada.eaf
+\- Ada programming language abbreviation file
 .ad
 .SH EXTENSIONS
 .na
@@ -36,6 +39,12 @@ The \fBada\fR file type template provides simple highlighting of Ada files.
 The highlighting  features allow commands,  variables,  logical,  preprocessor
 definitions,   comments,   strings  and  characters  of  the  language  to  be
 differentiated and rendered in different colors.
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for Ada file  editing
+which  can  be  used  by  writing  short   abbreviations   like   "\fBfo\fR",
+"\fBif\fR", "\fBel\fR" or "\fBfu\fR" - and then pressing the key-binding for the 
+.Ht expand-abbrev-handle 3
+command.  
 .IP "\fBShort Cuts\fR"
 The short cut keys used within the buffer are:-
 .IP
