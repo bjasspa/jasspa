@@ -58,7 +58,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkvb.emf	hkverilg.emf	hkvhdl.emf	hkvrml.emf	\
 	hkwiki.emf	hkyaml.emf	\
 	hkxml.emf	xmlutil.emf	\
-	hkyacc.emf	\
+	hkyacc.emf	hkzig.emf	\
 	hpux.emf	htmlcore.emf	htmltool.emf	htmlutil.emf	\
 	insdate.emf	irix.emf	itemlist.emf	\
 	javatags.emf	jst2html.emf	jst2ltx.emf	jst2rtf.emf	\
@@ -123,7 +123,7 @@ ETFS=	asmx86.etf	asn1.etf	au3.etf		\
 	tcl.etf		\
 	vhdl.etf	\
 	xml.etf		\
-	yacc.etf
+	yacc.etf	zig.etf
 #EAFS:sh=ls *.eaf
 EAFS=	ada.eaf		asp.eaf		au3.eaf		\
 	c.eaf		cfm.eaf		cpp.eaf		\
@@ -140,7 +140,7 @@ EAFS=	ada.eaf		asp.eaf		au3.eaf		\
 	r.eaf		rd.eaf		rust.eaf	\
 	shell.eaf	sgml.eaf	\
 	tcl.eaf		txt.eaf		\
-	vhdl.eaf
+	vhdl.eaf	zig.eaf
 # ERFS:sh=ls *.erf
 ERFS=	jstprint.erf	newuser.erf	\
 	print.erf	printeps.erf	printhpl.erf	printwdw.erf	\

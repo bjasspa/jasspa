@@ -1,0 +1,7 @@
+; -!- emf -!-
+;
+; Authors:     MicroEmacs User
+;
+set-variable %fhook-zig-lint    "zig ast-check %f"
+set-variable %fhook-zig-exec    "zig run %f"
+set-variable %fhook-zig-format  "zig fmt %f"
