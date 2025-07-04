@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ002.9,v 2.7 2022/06/12 17:14:33 jon Exp $
+.Id $Id: m9typ002.9,v 2.7 2025/07/04 12:11:39 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH emf 9
@@ -18,6 +18,9 @@ emf \- \*(mE Macro File
 .na
 .B hkemf.emf
 \- \*(mE Macro File hook definition
+.br
+.B eaf.etf
+\- Abbreviation file
 .br
 .B emf.etf
 \- Template file
@@ -60,6 +63,20 @@ Generic  folding is enabled  within the \fBemf\fR files. The folds occur about
 (un)folds all regions in the file,
 .Ht collapse-current 3
 (un)folds the current region.
+.IP "\fBNavigation via Item List\fR"
+The Emf macro mode offers beside folding as well support for displaying an outline of the
+functions and help definitions of the Macro file for easy navigation using the 
+.Ht item-list 3
+command.
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for MicroEmacs macro file  editing
+which  can  be  used  by  writing  short   abbreviations   like   "\fB!w\fR" (while),
+"\fB!i\fR" (if) or "\fBde\fR" (define-macro)- and then pressing the key-binding for the 
+.Ht expand-abbrev-handle 3
+command.  The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mE using the 
+.Ht abbrev-list 3
+command.
 .IP "\fBShort Cuts\fR"
 The short cut keys used within the buffer are:-
 .IP
@@ -78,11 +95,14 @@ The short cut keys used within the buffer are:-
 No bugs reported
 .SH "SEE ALSO"
 .na
+.Ht abbrev-list 3 ,
 .Ht collapse-all 3 ,
 .Ht collapse-current 3 ,
 .Ht emftags 3f ,
+.Ht expand-abbrev-handle 3 ,
 .Ht find-tag 2 ,
 .Ht indent 2 ,
+.Ht item-list 3 ,
 .Ht restyle-buffer 3 ,
 .Ht restyle-region 3 ,
 .Ht time 2m .
