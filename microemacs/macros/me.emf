@@ -207,6 +207,8 @@ add-file-hook ".c3" fhook-c3
 -1 add-file-hook "-!-[ \t]*text.*-!-" fhook-txt
 -1 add-file-hook "-!-[ \t]*msvb.*-!-" fhook-vb
 -1 add-file-hook "-!-[ \t]*swift.*-!-" fhook-swift
+-1 add-file-hook "-!-[ \t]*v-lang.*-!-" fhook-v
+-1 add-file-hook "-!-[ \t]*swift.*-!-" fhook-swift
 -1 add-file-hook "^diff " fhook-diff
 
 set-variable %platform &cat $platform &cond &band $system 0x01 "c" ""
