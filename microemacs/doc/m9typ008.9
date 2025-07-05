@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ008.9,v 2.7 2022/06/12 17:14:33 jon Exp $
+.Id $Id: m9typ008.9,v 2.7 2025/07/05 07:38:28 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH ini 9
@@ -15,8 +15,11 @@
 .XI hpj - "MS-Windows Help Project File"
 .XI reg - "Registry file"
 .XI rgy - "Registry file"
+.XI toml - "Tom's obvious minimal language file"
 .SH SYNOPSIS
 ini, hpj, reg, rgy \-  MS-Windows initialization and registry files
+.br
+toml \- Tom's obvious minimal language file
 .SH FILES
 .na
 .B hkini.emf
@@ -31,11 +34,14 @@ ini, hpj, reg, rgy \-  MS-Windows initialization and registry files
 \fB.reg\fR \- Registry File
 .br
 \fB.rgy\fR \- (Other) registry File
+.br
+\fB.toml\fR \- Tom's Obvious Minimal Language File
 .ad
 .SH DESCRIPTION
 The \fBini\fR  file type  templates  provide  simple  hilighting of MS-Windows
 initialization  and registry  files. The file format is similar to a number of
-other registry type files which are also over-loaded into the same template.
+other registry type files and to toml configuration files which are also
+over-loaded into the same template.
 .IP \fBHilighting\fR
 The  template   provides  minimal   hilighting  ,  but  allows  the  different
 components of the file to be differentiated.
