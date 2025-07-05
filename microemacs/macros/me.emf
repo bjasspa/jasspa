@@ -165,6 +165,7 @@ add-file-hook ".rs" fhook-rust
 add-file-hook ".dart" fhook-dart
 add-file-hook ".yml .yaml" fhook-yaml
 add-file-hook ".zig" fhook-zig
+add-file-hook ".c3" fhook-c3
 ; Add magic hooks
 1 add-file-hook "^#![ \t]*/.*sh" fhook-shell
 1 add-file-hook "^#![ \t]*/.*perl" fhook-perl

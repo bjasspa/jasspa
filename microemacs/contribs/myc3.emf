@@ -1,0 +1,7 @@
+; for use with file-exec, file-lint and file-format
+set-variable #l0 &which "astyle"
+!if &not &seq #l0 "ERROR"
+    set-variable %fhook-c3-format "astyle --indent=spaces=2 %f"
+!endif
+set-variable %fhook-c3-lint   "c3c compile %f -o %b"
+set-variable %fhook-c3-exec   "c3c compile-run %f --"
