@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ010.9,v 2.6 2022/06/12 17:14:33 jon Exp $
+.Id $Id: m9typ010.9,v 2.6 2025/07/05 11:29:38 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH p 9
@@ -20,6 +20,9 @@ p, pas \- Pascal files
 .B hkpascal.emf
 \- Pascal hook definition
 .br
+.B pascal.eaf
+\- Pascal abbreviation file
+.br
 .B pascal.etf
 \- Pascal template file.
 .ad
@@ -30,10 +33,18 @@ p, pas \- Pascal files
 .SH DESCRIPTION
 The  \fBpascal\fR  file type  template  provides  simple  hilighting of Pascal
 files, the template provides minimal hilighting.
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for LaTeX file  editing
+which  can  be  used  by  writing   short   abbreviations   like   "\fBif\fR",
+"\fBel\fR" (else) or "\fBbe\fR" (begin/end) - and then pressing the key-binding for the 
+.Ht expand-abbrev-handle 3
+command.  
 .SH BUGS
 None reported.
 .SH "SEE ALSO"
 .na
+.Ht expand-abbrev-handle 3 ,
+.sp 1
 .Hl "Supported File Types" FileTypes -
 .ad
 .FH
