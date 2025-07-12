@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ004.9,v 2.7 2022/06/12 17:14:33 jon Exp $
+.Id $Id: m9typ004.9,v 2.7 2025/07/05 07:18:53 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH latex 9
@@ -21,6 +21,9 @@ latex \- TeX Documentation
 .na
 .B hklatex.emf
 \- Tex File hook definition
+.br
+.B latex.eaf
+\- Abbreviation file
 .br
 .B latex.etf
 \- Template file
@@ -58,6 +61,15 @@ Generic  folding is enabled,  the folds occur about
 (un)folds all regions in the file,
 .Ht collapse-current 3
 (un)folds the current region.
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for LaTeX file  editing
+which  can  be  used  by  writing  short abbreviations   like   "\fBsec\fR" (section),
+"\fBbf\fR" (textbf) or "\fBverb\fR" (verbatim environment)- and then pressing the key-binding for the 
+.Ht expand-abbrev-handle 3
+command.  The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mE using the 
+.Ht abbrev-list 3
+command.
 .IP "\fBSpelling\fR"
 Buffer spell checking is LaTeX aware.
 .IP "\fBList Items\fR"
@@ -93,6 +105,10 @@ an external process to build the text.
 No bugs reported
 .SH "SEE ALSO"
 .na
+.Ht abbrev-list 3 ,
+.Ht collapse-all 3 ,
+.Ht collapse-current 3 ,
+.Ht item-list 3 ,
 .Ht time 2m .
 .sp 1
 .Hl "Supported File Types" FileTypes -

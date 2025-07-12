@@ -33,7 +33,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkbibtex.emf	hkbinary.emf	hkblist.emf	hkbnf.emf	\
 	hkc.emf		hkcfm.emf	hkcfms.emf	hkcobol.emf	\
 	hkcpp.emf	hkcs.emf	hkcss.emf	hkcygwin.emf	\
-	hkdart.emf	\
+	hkc3.emf	hkdart.emf	\
 	hkdiff.emf	hkdirlst.emf	hkdirtre.emf	hkdman.emf	\
 	hkdoc.emf	hkdos.emf	hkdot.emf	\
 	hkehf.emf	hkemf.emf	hkerf.emf	hkeuphor.emf	\
@@ -54,11 +54,11 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkruby.emf	hkrul.emf	hkrust.emf	\
 	hksamba.emf	hkscheme.emf	hksgml.emf	hkshell.emf	\
 	hkslang.emf	hkspec.emf	hksql.emf	hkswift.emf	\
-	hktcl.emf	hktexi.emf	hktxt.emf	\
+	hktcl.emf	hktexi.emf	hktxt.emf	hkv.emf		\
 	hkvb.emf	hkverilg.emf	hkvhdl.emf	hkvrml.emf	\
 	hkwiki.emf	hkyaml.emf	\
 	hkxml.emf	xmlutil.emf	\
-	hkyacc.emf	\
+	hkyacc.emf	hkzig.emf	\
 	hpux.emf	htmlcore.emf	htmltool.emf	htmlutil.emf	\
 	insdate.emf	irix.emf	itemlist.emf	\
 	javatags.emf	jst2html.emf	jst2ltx.emf	jst2rtf.emf	\
@@ -107,7 +107,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 ETFS=	asmx86.etf	asn1.etf	au3.etf		\
 	bibtex.etf	\
 	c.etf		cfm.etf		cobol.etf	cpp.etf		\
-	dart.etf	doc.etf		\
+	c3.etf		dart.etf	doc.etf		\
 	emf.etf		euphor.etf	\
 	f.etf		f90.etf		\
 	h.etf		hpp.etf		html.etf	go.etf	\
@@ -121,12 +121,12 @@ ETFS=	asmx86.etf	asn1.etf	au3.etf		\
 	rd.etf		rmd.etf		ruby.etf	rul.etf		\
 	rust.etf	spec.etf	\
 	tcl.etf		\
-	vhdl.etf	\
+	v.etf		vhdl.etf	\
 	xml.etf		\
-	yacc.etf
+	yacc.etf	zig.etf
 #EAFS:sh=ls *.eaf
 EAFS=	ada.eaf		asp.eaf		au3.eaf		\
-	c.eaf		cfm.eaf		cpp.eaf		\
+	c.eaf		c3.eaf		cfm.eaf		cpp.eaf		\
 	dart.eaf	\
 	emf.eaf		euphor.eaf	go.eaf		\
 	hkasp.eaf	hkc.eaf		hkcpp.eaf	hkemf.eaf	\
@@ -140,7 +140,7 @@ EAFS=	ada.eaf		asp.eaf		au3.eaf		\
 	r.eaf		rd.eaf		rust.eaf	\
 	shell.eaf	sgml.eaf	\
 	tcl.eaf		txt.eaf		\
-	vhdl.eaf
+	v.eaf		vhdl.eaf	zig.eaf
 # ERFS:sh=ls *.erf
 ERFS=	jstprint.erf	newuser.erf	\
 	print.erf	printeps.erf	printhpl.erf	printwdw.erf	\

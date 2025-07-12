@@ -164,6 +164,8 @@ add-file-hook ".go" fhook-go
 add-file-hook ".rs" fhook-rust
 add-file-hook ".dart" fhook-dart
 add-file-hook ".yml .yaml" fhook-yaml
+add-file-hook ".zig" fhook-zig
+add-file-hook ".c3" fhook-c3
 ; Add magic hooks
 1 add-file-hook "^#![ \t]*/.*sh" fhook-shell
 1 add-file-hook "^#![ \t]*/.*perl" fhook-perl
@@ -204,6 +206,8 @@ add-file-hook ".yml .yaml" fhook-yaml
 -1 add-file-hook "-!-[ \t]*asmx86.*-!-" fhook-asmx86
 -1 add-file-hook "-!-[ \t]*text.*-!-" fhook-txt
 -1 add-file-hook "-!-[ \t]*msvb.*-!-" fhook-vb
+-1 add-file-hook "-!-[ \t]*swift.*-!-" fhook-swift
+-1 add-file-hook "-!-[ \t]*v-lang.*-!-" fhook-v
 -1 add-file-hook "-!-[ \t]*swift.*-!-" fhook-swift
 -1 add-file-hook "^diff " fhook-diff
 

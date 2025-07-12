@@ -1,0 +1,6 @@
+; -!- emf -!-
+; file-lint, file-exec file-format variables
+set-variable %fhook-v-lint "v vet %f"
+set-variable %fhook-v-exec "v crun %f"
+set-variable %fhook-v-format "v fmt -w %f"
+

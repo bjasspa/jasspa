@@ -1,36 +1,36 @@
 .\" -*- nroff -*-
-.\" Copyright (C) 1999-2009 JASSPA (www.jasspa.com)
+.\" Copyright (C) 1999-2025 JASSPA (www.jasspa.com)
 .\"
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
 .\"  Created By    : Detlef Groth
-.\"  Created       : Tue Jul 02 07:30:00 2025
+.\"  Created       : Tue Jul 05 09:12:00 2025
 .\"
-.Id $Id: m9typ051.9,v 2.8 2025/07/04 11:00:13 jon Exp $
+.Id $Id: m9typ052.9,v 2.8 2025/07/05 09:37:20 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
-.TH dart 9
-.XI dart - "Dart programming language"
+.TH c3 9
+.XI vlang - "V programming language"
 .SH SYNOPSIS
-Dart \- Dart programming language 
+V-lang \- V programming language 
 .SH FILES
 .na
-.B hkdart.emf
-\- Dart programming language hook definition
+.B hkv.emf
+\- V programming language hook definition
 .br
-.B dart.eaf
-\- Dart programming language abbreviation file
+.B v.eaf
+\- V programming language abbreviation file
 .br
-.B dart.etf
-\- Dart programming language template file
+.B v.etf
+\- V programming language template file
 .ad
 .SH EXTENSIONS
 .na
-\fB.dart\fR \- Dart
+\fB.v\fR \- V-lang
 .ad
 .SH DESCRIPTION
-The \fBdart\fR file type  templates share much with the 
+The \fBv\fR file type  templates share much with the 
 .Ht c 9 
 template definitions, utilising the electric 'C' features for automatic layout
 of text.
@@ -59,20 +59,23 @@ Comments  may be formatted  using  \fC\*eo\fR,  which  reformats  the  comments
 according  to  the  current  fill  paragraph.  If  a  comment  commences  with
 \fC/***...\fR then the comment is automatically formatted to a box.
 .IP "\fBFolding and Information Hiding\fR"
-Generic  folding  is  enabled  within  the Dart  file. The folds  occur  about
-functions and classes  and  a closing  curly brace at the  beginning  of a line.
+Generic  folding  is  enabled  within  the V  file. The folds  occur  about
+functions defined with the \fBfn\fR keyword and  a closing  curly brace both 
+at the  beginning  of a line.
 .Ht collapse-all 3
 (un)folds all regions in the file,
 .Ht collapse-current 3
 (un)folds the current region.
 .IP "\fBNavigation via Item List\fR"
-The Dart mode offers beside folding as well support for displaying an outline of the
-functions and classes of the Dart file for easy navigation using the 
+The V mode offers beside folding as well support for displaying an outline of the
+functions and structures of the V file for easy navigation using the 
 .Ht item-list 3
+command. Public functions are highlighted with color in the item list.
 .IP "\fBAbbreviations\fR"
-The  installation  comes with a default  abbreviation  file for Dart file  editing
+The  installation  comes with a default  abbreviation  file for V language file  editing
 which  can  be  used  by  writing  short   abbreviations   like   "\fBfor\fR",
-"\fBif\fR", "\fBelif\fR" or "\fBclass\fR" - and then pressing the key-binding for the 
+"\fBif\fR", "\fBelif\fR" (else if), "\fBstr\fR" (public structure)  or "\fBfn\fR" (function) -
+and then pressing the key-binding for the 
 .Ht expand-abbrev-handle 3
 command.  The  list  of  abbreviations  can be used  interactively  in the GUI
 version of \*(mE using the 
@@ -106,7 +109,21 @@ The short cut keys used within the buffer are:-
 .SH NOTES
 .PP
 The  hilighting  or the addition of new item list matches  is  typically
-extended  using  a  file   \fBmydart.emf\fR
+extended  using  a  file   \fBmyv.emf\fR.
+.PP
+As this language shares the same extensions as Verilog files you might be adding the add the 
+following line to your user emf file.
+.Me $emf-scheme
+.CS
+add-file-hook ".v" fhook-v
+.CE 0
+.Me $ehf-scheme
+.PP
+As an alternative you can add the following first line to your V-files so that
+they are automatically recognized as V language files and not as Verilog files.
+.CS
+// -!- v-lang -!-
+.CE 0
 .SH "SEE ALSO"
 .na
 .Ht abbrev-list 3 ,
