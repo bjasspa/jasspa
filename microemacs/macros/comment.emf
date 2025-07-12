@@ -226,13 +226,16 @@ define-macro uncomment-line
         &len #l1 backward-delete-char
         -1 yank
       !endif
-      forward-line
+      !force forward-line
+      !iif &not $status  !break
       beginning-of-line
     !done
   !else
     !while &gre &pdec @# 1 0
-      search-forward #l2
-      search-backward #l1
+      !force search-forward #l2
+      !iif &not $status  !break
+      !force search-backward #l1
+      !iif &not $status  !break
       &len #l1 forward-delete-char
       -1 yank
       search-forward #l2
@@ -244,6 +247,7 @@ define-macro uncomment-line
   !endif
   ; restore magic mode
   &cond #l3 1 -1 buffer-mode "magic"
+  !iif &gre @# -1  -8 ml-write "[No more comments/lines]"
 !emacro
 ;
 ; fill from the current column to fill-col with <comment pad> and a trailing

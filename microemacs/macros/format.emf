@@ -6,7 +6,7 @@
 ; copying information.
 ;
 ; Synopsis:    Contains buffer formating commands, namely:
-; Authors:     Steven Phillips & Jon Green
+; Authors:     Steven Phillips, Jon Green & Dan Phillips
 ;
 ; clean - clean all redundant white-spaces
 ; If an argument is given it runs in spotless mode which removes blank
@@ -96,6 +96,51 @@ define-macro sort-lines-ignore-case
     sort-lines
   !endif
   &cond #l0 1 -1 buffer-mode "exact"
+!emacro
+
+; transpose-region-line
+; Improved transpose-lines supporting a region, defaults to current line if no region
+define-macro transpose-region-line
+  !iif &not @#  !return
+  0 show-region
+  !if &band $result 0x01
+    !if &set #l0 &con &set #l0 &sub &set #l1 $window-line &set #l2 $window-mark-line #l0 &sub &set #l3 $window-col &set #l4 $window-mark-col
+      !if &les @# 0
+        !iif &or &equ #l1 1 &equ #l2 1  -8 ml-write "[top of buffer]"
+      !elif &or &gre &add #l1 2 $window-eline &gre &add #l2 2 $window-eline
+        -8 ml-write "[end of buffer]"
+      !endif
+      !if &gre #l0 0
+        !if #l3
+          beginning-of-line
+          forward-line
+        !endif
+        set-mark
+        set-variable $window-line #l2
+      !else
+        beginning-of-line
+        set-mark
+        set-variable $window-line &add #l2 &con #l4 1 0
+      !endif
+      kill-region
+      set-variable #l0 $window-line
+      !force @# forward-line
+      set-variable #l0 &sub $window-line #l0
+      yank
+      -1 yank
+      set-variable $window-line &add #l2 #l0
+      set-variable $window-col #l4
+      set-mark
+      -3 show-region
+      set-variable $window-line &add #l1 #l0
+      set-variable $window-col #l3
+      3 show-region
+      !return &equ @# #l0
+    !endif
+  !endif
+  set-variable #l0 $window-col
+  @# transpose-lines
+  set-variable $window-col #l0
 !emacro
 
 define-macro paragraph-to-line
