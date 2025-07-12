@@ -316,7 +316,7 @@ sortLines(int f, int n)
     cwp->markLineNo = sln ;
     
     meFree(list) ;
-    cwp->updateFlags |= WFMOVEL|WFMAIN ;
+    lineSetChanged(WFMOVEL|WFMAIN);
     
     return meTRUE ;
 }
@@ -575,63 +575,70 @@ transLines(int f, int n)
     meLine *ln1, *ln2;
     meInt i, j, ret;
     
-    if((n<0) && (windowBackwardLine(meTRUE, 1) <= 0))
-        return meFALSE ;
+    if(n == 0)
+        return meTRUE;
+    cwp = frameCur->windowCur;
+    if(n < 0)
+    {
+        if(windowBackwardLine(meTRUE,1) <= 0)
+            return meFALSE;
+    }
+    else if(cwp->dotLineNo+1 >= cwp->buffer->lineCount)
+        return meErrorEob();
     if((i=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return i;
     lineSetChanged(WFMAIN|WFMOVEL);
-    cwp = frameCur->windowCur;
-    cwp->dotOffset = 0 ;
+    cwp->dotOffset = 0;
     
     for(i=0,j=abs(n) ; ; )
     {
         if(((ln1 = cwp->dotLine) == cwp->buffer->baseLine) ||
            ((ln2 = meLineGetNext(ln1)) == cwp->buffer->baseLine))
-            break ;
-        meLineGetPrev(meLineGetNext(ln2)) = ln1 ;
-        meLineGetNext(meLineGetPrev(ln1)) = ln2 ;
-        meLineGetPrev(ln2) = meLineGetPrev(ln1) ;
-        meLineGetNext(ln1) = meLineGetNext(ln2) ;
-        meLineGetPrev(ln1) = ln2 ;
-        meLineGetNext(ln2) = ln1 ;
-        cwp->dotLineNo++ ;
+            break;
+        meLineGetPrev(meLineGetNext(ln2)) = ln1;
+        meLineGetNext(meLineGetPrev(ln1)) = ln2;
+        meLineGetPrev(ln2) = meLineGetPrev(ln1);
+        meLineGetNext(ln1) = meLineGetNext(ln2);
+        meLineGetPrev(ln1) = ln2;
+        meLineGetNext(ln2) = ln1;
+        cwp->dotLineNo++;
         if(++i == j)
         {
             if(n < 0)
-                windowBackwardLine(meTRUE, 1) ;
-            break ;
+                windowBackwardLine(meTRUE, 1);
+            break;
         }
         if((n<0) && (windowBackwardLine(meTRUE, 2) <= 0))  
             /* move back over one swapped aswell */
-            break ;
+            break;
     }
-    ret = (i == j) ;
+    ret = (i == j);
 #if MEOPT_UNDO
     if(i > 0)
     {
-        meInt *undoInfo ;
+        meInt *undoInfo;
         if((undoInfo = meUndoAddLineSort(i+1)) != NULL)
         {
-            j = 0 ;
             if(n < 0)
             {
-                j=0 ;
-                *undoInfo++ = i-- ;
+                j=0;
+                *undoInfo++ = i--;
             }
             else
             {
-                j=1 ;
-                undoInfo[-1] -= i ;
-                undoInfo[i] = 0 ;
+                j=1;
+                /* meUndoAddLineSort returned array[-1] == start line no, as we are at the end, ajust */
+                undoInfo[-1] -= i;
+                undoInfo[i] = 0;
             }
             do
-                *undoInfo++ = j++ ;
-            while(j<=i) ;
+                *undoInfo++ = j++;
+            while(j<=i);
         }
     }
 #endif
-    update(meFALSE) ;
-    return ret ;
+    lineSetChanged(WFMOVEL|WFMAIN);
+    return ret;
 }
 
 int

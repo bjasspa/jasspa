@@ -525,7 +525,7 @@ meUndo(int f, int n)
             if((cun == NULL) || ((n <= 0) && !meModeTest(cbp->mode,MDEDIT)))
                 break ;
             if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
-                return meABORT ;
+                return meABORT;
             cont=0 ;
             if(cun->type & meUNDO_SPECIAL)
             {
@@ -533,26 +533,26 @@ meUndo(int f, int n)
                 {
                     if(!(cun->type & meUNDO_UNSET_EDIT))
                     {
-                        autowriteremove(cbp) ;
-                        meModeClear(cbp->mode,MDEDIT) ;
-                        frameAddModeToWindows(WFMODE) ;  /* update ALL mode lines */
+                        autowriteremove(cbp);
+                        meModeClear(cbp->mode,MDEDIT);
+                        frameAddModeToWindows(WFMODE);  /* update ALL mode lines */
                     }
                 }
                 else if(meUndoIsLineSort(cun))
                 {
-                    meLine *ln, *eln, **list ;
-                    meInt *lineSort, *undoInfo, dddd ;
-                    lineSort = cun->udata.lineSort ;
-                    meWindowGotoLine(cwp,(*lineSort++) + 1) ;
+                    meLine *ln, *eln, **list;
+                    meInt *lineSort, *undoInfo, dddd;
+                    lineSort = cun->udata.lineSort;
+                    meWindowGotoLine(cwp,(*lineSort++) + 1);
                     if((list = meMalloc(cun->count * sizeof(meLine *))) == NULL)
-                        return meABORT ;
-                    undoInfo = meUndoAddLineSort(cun->count) ;
-                    eln = cwp->dotLine ;
-                    ln = meLineGetPrev(eln) ;
+                        return meABORT;
+                    undoInfo = meUndoAddLineSort(cun->count);
+                    eln = cwp->dotLine;
+                    ln = meLineGetPrev(eln);
                     for(count=0 ; count<cun->count ; eln=meLineGetNext(eln),count++)
                     {
-                        list[*lineSort++] = eln ;
-                        eln->prev = (meLine *) mePtrFromInt(count) ;
+                        list[*lineSort++] = eln;
+                        eln->prev = (meLine *) mePtrFromInt(count);
                     }
                     for(count=0 ; count<cun->count ; ln=meLineGetNext(ln),count++)
                     {
@@ -564,29 +564,30 @@ meUndo(int f, int n)
                         ln->next = list[count];
                         list[count]->prev = ln;
                     }
-                    ln->next = eln ;
-                    eln->prev = ln ;
-                    cwp->dotLine = list[0] ;
-                    meFree(list) ;
+                    ln->next = eln;
+                    eln->prev = ln;
+                    cwp->dotLine = list[0];
+                    lineSetChanged(WFMOVEL|WFMAIN);
+                    meFree(list);
                 }
 #if MEOPT_NARROW
                 else if(meUndoIsNarrow(cun))
                 {
-                    meUndoNarrow *nun = (meUndoNarrow *) cun ;
-                    meInt name ;
-                    name = nun->name ;
-                    meWindowGotoLine(cwp,nun->udata.dotp+1) ;
+                    meUndoNarrow *nun = (meUndoNarrow *) cun;
+                    meInt name;
+                    name = nun->name;
+                    meWindowGotoLine(cwp,nun->udata.dotp+1);
                     if(nun->type & meUNDO_NARROW_ADD)
                     {
-                        meNarrow *nrrw ;
-                        nrrw = cbp->narrow ;
+                        meNarrow *nrrw;
+                        nrrw = cbp->narrow;
                         while(nrrw->name != name)
-                            nrrw = nrrw->next ;
-                        cbp->dotLine = cwp->dotLine ;
-                        cbp->dotLineNo = cwp->dotLineNo ;
-                        cbp->dotOffset = 0 ;
+                            nrrw = nrrw->next;
+                        cbp->dotLine = cwp->dotLine;
+                        cbp->dotLineNo = cwp->dotLineNo;
+                        cbp->dotOffset = 0;
                         meBufferRemoveNarrow(cbp,nrrw,
-                                             (nun->markupCmd > 0) ? nun->str:NULL,1) ;
+                                             (nun->markupCmd > 0) ? nun->str:NULL,1);
                     }
                     else
                     {
@@ -595,13 +596,13 @@ meUndo(int f, int n)
                         meWindowGotoLine(cwp,ccount+1);
                         meBufferCreateNarrow(cbp,slp,cwp->dotLine,
                                              nun->udata.dotp,ccount,name,nun->scheme,
-                                             (nun->markupFlag) ? nun->str:NULL,nun->markupCmd,1) ;
+                                             (nun->markupFlag) ? nun->str:NULL,nun->markupCmd,1);
                     }
                 }
 #endif
                 if(cun->type & meUNDO_CONTINUE)
-                    cont=1 ;
-                goto meUndoNext ;
+                    cont=1;
+                goto meUndoNext;
             }
             if(cun->type & meUNDO_REPLACE)
             {
