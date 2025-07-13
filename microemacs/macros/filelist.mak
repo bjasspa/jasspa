@@ -119,7 +119,7 @@ ETFS=	asmx86.etf	asn1.etf	au3.etf		\
 	pascal.etf	perl.etf	pls.etf		psf.etf		\
 	python.etf	\
 	rd.etf		rmd.etf		ruby.etf	rul.etf		\
-	rust.etf	spec.etf	\
+	rust.etf	spec.etf	sql.etf		\
 	tcl.etf		\
 	v.etf		vhdl.etf	\
 	xml.etf		\
