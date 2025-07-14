@@ -240,6 +240,13 @@ define-macro uncomment-line
       !if $status
         &len #l1 backward-delete-char
         -1 yank
+        ; this block attempts to cope with commented out code, using comment-line, being re-indented
+        !if &not $window-col
+        !elif &les &len @wl &add 2 $window-col
+        !elif &seq "" &trl &lef @wl &add $window-col 2
+          $window-col backward-delete-char
+          -1 yank
+        !endif
       !endif
       forward-line
       beginning-of-line
@@ -249,11 +256,20 @@ define-macro uncomment-line
     !while &les $window-line @#
       !force search-buffer "Me" #l2
       !iif &not $status  !break
+      set-variable #l4 $window-line
       !force search-buffer "Meb" #l1
       !iif &not $status  -8 ml-write "[unmatched close comment]"
       !iif &not &les $window-line @#  !break 
       &len #l1 forward-delete-char
       -1 yank
+      ; this block attempts to cope with commented out code, using comment-line, being re-indented
+      !if &not $window-col
+      !elif &sub #l4 $window-line
+      !elif &les &len @wl &add 2 $window-col
+      !elif &seq "" &trl &lef @wl &add $window-col 2
+        $window-col backward-delete-char
+        -1 yank
+      !endif
       search-forward #l2
       &len #l2 backward-delete-char
       -1 yank
