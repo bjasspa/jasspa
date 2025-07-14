@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ019.9,v 2.7 2025/07/13 13:41:30 jon Exp $
+.Id $Id: m9typ019.9,v 2.7 2025/07/14 07:29:20 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH tcl 9
@@ -49,6 +49,16 @@ in the header.
 The  hilighting  features allow  commands,  variables,  logical,  preprocessor
 definitions,   comments,   strings  and  characters  of  the  language  to  be
 differentiated and rendered in different colors.
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for Tcl file  editing
+which  can  be  used  by  writing   short   abbreviations   like   "\fBif\fR",
+"\fBelse\fR" (else) or "\fBproc\fR" (procedure) - and then pressing the key-binding for the 
+.Ht expand-abbrev-handle 3
+command.  
+The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mE using the 
+.Ht abbrev-list 3
+command.
 .IP "\fBAuto Layout\fR"
 The
 .Hl "indentation mechanism" indent 2 
