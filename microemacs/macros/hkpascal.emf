@@ -127,4 +127,12 @@ set-variable .fhook-pascal.item-list-r6 "Clss \ecB\\1\ecA"
   hilight .hilight.pascal 1 "eoln"           .scheme.operator
 !endif
 
+; setup file-* tools
+add-next-line "*pascal-exec*" "^%f(%l,\\d+).+"
+add-next-line "*pascal-lint*" "^%f(%l,\\d+).+"
+set-variable .fhook-pascal.coms "\bfpc\b" 
+set-variable .fhook-pascal.exec1 "\b%v[com]\b\b\b\b\"%p%f\" && ./%b %v[args|20|Additional command-line arguments|]\b"
+set-variable .fhook-pascal.format1 "\bptop\b-h\b0\b\b %\"%f%\" temp.pas && cp temp.pas \"%f\"\bPtop\b"
+set-variable .fhook-pascal.lint1 "\bfpc\b-h\b0\b\b-Cn %\"%f%\"\bFpc -Cn\b"
+
 buffer-init-fhook "pascal"
