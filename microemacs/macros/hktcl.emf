@@ -392,6 +392,14 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \ecB\\1\ecA"
 !endif
 
 !iif &not &exi tcl-tclsh-setup  execute-file "tcltools"
+; setup file-* tools
+add-next-line "*tcl-exec*" "^ *(file \"%f\" line %l)"
+add-next-line "*tcl-lint*" "^%f:%l:\\d+: "
+set-variable .fhook-tcl.coms "\btclsh\btclsh8.6\btclsh9.0\b" 
+set-variable .fhook-tcl.exec1 "\b%v[com]\b\b\b\b\"%p%f\" %v[args|20|Additional command-line arguments|]\b"
+set-variable .fhook-tcl.format1 "\btclfmt\b-h\b0\b\b--in-place %\"%f%\"\bTclfmt\b"
+set-variable .fhook-tcl.lint1 "\btclint\b-h\b0\b\b%\"%f%\"\bTclint\b"
+
 
 buffer-init-fhook "tcl"
 
