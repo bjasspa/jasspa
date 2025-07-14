@@ -6,6 +6,7 @@
 ; Synopsis:    General utility macros for file types
 ; Authors:     Detlef Groth & Steven Phillips
 ;
+define-macro-file hkipipe fhook-ipipe
 0 define-macro file-tool-com-init
   !iif &seq "ERROR" &set #l8 &ind &spr ".%s.name" &set #l9 @1  set-variable #l8 &cat &sup &mid #l9 6 1 &rig #l9 7
   !if &not &llen &set #l0 &ind &spr ".%s.coms" #l9
