@@ -217,19 +217,19 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*%\\|^[ \t]*$\\|^[ \t]*\
   hilight .hilight.latex 0 "\\\\texttt"                          .scheme.operator
   hilight .hilight.latex 0 "\\\\textcolor"                       .scheme.operator
   hilight .hilight.latex 0 "\\\\textnormal"                      .scheme.operator
-  ; TODO's
-  hilight .hilight.latex 18 "%\\s+[Tt][Oo][Dd][Oo]" .scheme.operator
+  ; Comment TODO's
+  hilight .hilight.latex 18 "%\\s+[Tt][Oo][Dd][Oo]"              .scheme.operator
   ;; simulation hilighting
   set-variable #l2 &rig $box-chars 10
-  0 hilight .hilight.latexs 0                                           $global-scheme
+  0 hilight .hilight.latexs 0                                    $global-scheme
   ; Common hilighting components
-  hilight-latex-common                                 .hilight.latexs  $global-scheme
+  hilight-latex-common                          .hilight.latexs  $global-scheme
   ;comments
-  hilight .hilight.latexs 2 "[^\\\\]\\{%"                               .scheme.comment
-  hilight .hilight.latexs 4 "\\\\" "\\}\\W" ""                          .scheme.keyword
+  hilight .hilight.latexs 2 "[^\\\\]\\{%"                        .scheme.comment
+  hilight .hilight.latexs 4 "\\\\" "\\}\\W" ""                   .scheme.keyword
   ;headers
   hilight .hilight.latexs 68 "\\\\chapter\\*?{" "*" "}" "" ""           .scheme.header
-  hilight .hilight.latexs 68 "\\\\part\\*?{" "Part: " "}" "" ""          .scheme.header
+  hilight .hilight.latexs 68 "\\\\part\\*?{" "Part: " "}" "" ""         .scheme.header
   hilight .hilight.latexs 68 "\\\\section\\*?{" "**" "}" "" ""          .scheme.header
   hilight .hilight.latexs 68 "\\\\subsection\\*?{" "***" "}" "" ""      .scheme.header
   hilight .hilight.latexs 68 "\\\\subsubsection\\*?{" "****" "}" "" ""  .scheme.header
@@ -265,8 +265,8 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*%\\|^[ \t]*$\\|^[ \t]*\
   hilight .hilight.latexs 68 "\\\\item\\[" "" "]" "" "" .scheme.bold
   hilight .hilight.latexs 64 "\\\\ind" "    "           $global-scheme
   ; Environment
-  hilight .hilight.latexs 64 "&" "|"                     $global-scheme
-  hilight .hilight.latexs 64 "\\\\linewidth" "ˆlw|"   .scheme.italic
+  hilight .hilight.latexs 64 "&" "|"                    $global-scheme
+  hilight .hilight.latexs 64 "\\\\linewidth" "ˆlw|"     .scheme.italic
   hilight .hilight.latexs 64 "\\\\pdfimage width" "PNG*" .scheme.italic
   ; textformat
   hilight .hilight.latexs 0xc0 "\\\\textbf{" ""     .hilight.latexb .scheme.bold
@@ -376,7 +376,7 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*%\\|^[ \t]*$\\|^[ \t]*\
   ;
   ; hilight scheme for verbatim text
   ;
-  0 hilight  .hilight.latexv 2 50                                $global-scheme
+  0 hilight  .hilight.latexv 2 50                        $global-scheme
   hilight .hilight.latexv 0xc0 "\\\\end{verbatim}" "<<verbatim|" .hilight.latexs .scheme.keyword
   
   0 define-macro latex-swap-hilight

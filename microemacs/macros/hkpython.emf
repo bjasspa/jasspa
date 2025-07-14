@@ -34,10 +34,9 @@ set-variable .fhook-python.item-list-s3 "^[ \t]+def[ \t]+\\(\\w+\\)"
 set-variable .fhook-python.item-list-r3 "  df \ecB\\1\ecA"
 set-variable .fhook-python.item-list-s4 "^if __name__"
 set-variable .fhook-python.item-list-r4 "Main \ecBBlock\ecA"
+
 !if &and &sin "h" .fhook-python.setup &band .hilight.flags 0x02
-  !if &not &exist .hilight.python
-    set-variable .hilight.python &pinc .hilight.next 1
-  !endif
+  !iif &not &exist .hilight.python set-variable .hilight.python &pinc .hilight.next 1
   0 hilight .hilight.python 0                     $global-scheme
   hilight   .hilight.python 2 "^#!"               .scheme.header
   hilight   .hilight.python 2 "#"                 .scheme.comment
@@ -130,6 +129,57 @@ set-variable .fhook-python.item-list-r4 "Main \ecBBlock\ecA"
   hilight   .hilight.python 1 "\\.sort"           .scheme.operator
 !endif
 
-!iif &not &exi py-python-setup  execute-file "pytools"
+; setup file-* tools
+add-next-line "*python-exec*" "^ *File \"%f\", line %l"
+add-next-line "*python-lint*" "^%f:%l:\\d+: "
+set-variable .fhook-python.coms "\bpython3\bpython2\bpython\b" 
+set-variable .fhook-python.exec1 "\b%v[com]\b\b\b\b\"%p%f\" %v[args|20|Additional command-line arguments|]\b"
+set-variable .fhook-python.format1 "\b%v[com]\b-m ruff -h\b0\b\b-m ruff format %\"%f%\"\bRuff\b"
+set-variable .fhook-python.format2 "\b%v[com]\b-m yapf -h\b0\b\b-m yapf -i %\"%p%f%\"\bYapf\b"
+set-variable .fhook-python.format3 "\b%v[com]\b-m black -h\b0\b\b-m black -q %\"%p%f%\"\bBlack\b"
+set-variable .fhook-python.lint1 "\b%v[com]\b-m ruff -h\b0\b\b-m ruff check %\"%f%\"\bRuff\b"
+set-variable .fhook-python.lint2 "\b%v[com]\b-m pylint -h\b0\b\b-m pylint %\"%p%f%\"\bPylint\b:\\d+:\\d+: E\\d+:\b:\\d+:\\d+: W\\d+:\b:\\d+:\\d+: [CR]\\d+:\b"
+
+; Setup py-doc
+define-macro fhook-py-doc
+  buffer-init-hooks
+!emacro
+set-variable .fhook-py-doc.name "Python Doc"
+set-variable .fhook-py-doc.setup &reg "/history/fhook/py-doc" "acfhmw"
+set-variable .fhook-py-doc.setup-mask "acfhmw"
+
+set-variable .fhook-py-doc.collapse-open  "^\\([A-Z]\\|    class\\)"
+set-variable .fhook-py-doc.collapse-close "^\\([A-Z]\\|    class\\|\\'\\)"
+set-variable .fhook-py-doc.collapse-mnext "-1"
+
+set-variable .fhook-py-doc.item-list-s1 "^\\([A-Z][A-Z]\.+\\)"
+set-variable .fhook-py-doc.item-list-r1 "SECT \ecB\\1\ecA"
+set-variable .fhook-py-doc.item-list-s2 "^    class +\\([^(]+\\)"
+set-variable .fhook-py-doc.item-list-r2 "  class \ecB\\1\ecA"
+
+!if &exi .hilight.python
+  !iif &not &exi .hilight.py-doc  set-variable .hilight.py-doc &pinc .hilight.next 1
+  0 hilight .hilight.py-doc 0            .scheme.text
+  hilight .hilight.py-doc 2 "^[A-Z].+"   .scheme.header
+  hilight .hilight.py-doc 2 "^    class" .scheme.keyword
+!endif
+
+define-macro py-doc
+  !iif &not &exi %python-com  py-python-setup
+  !force set-variable #l0 @1
+  !iif &not $status  set-variable #l0 @ml00 "Python help on"
+  0 pipe-shell-command &spr "LANG=en_US %s -m pydoc %s" %python-com #l0 "*py-doc*"
+  -1 buffer-mode "view"
+  beginning-of-buffer
+  3 kill-line
+  buffer-is-utf8 #l1
+  !iif #l1  4 change-buffer-charset "utf8" "display"
+  beginning-of-buffer
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"
+  buffer-init "py-doc"
+  ; some terminals might need this
+  !iif &band $system 0x01  screen-update
+!emacro    
 
 buffer-init-fhook "python"

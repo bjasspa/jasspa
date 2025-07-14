@@ -372,7 +372,11 @@
 0 define-macro ipipe-rerun
   beginning-of-buffer
   !iif &seq &lef @wl 3 "cd "  forward-line
-  &con &bmod "wrap" 0 0x200 ipipe-shell-command @wl $buffer-bname @mna
+  !if &seq "" &set #l1 $buffer-ipipe
+    &con &bmod "wrap" 0 0x200 ipipe-shell-command @wl $buffer-bname @mna
+  !else
+    &con &bmod "wrap" 0x80 0x280 ipipe-shell-command @wl $buffer-bname #l1 @mna
+  !endif
   popup-window $buffer-bname
   ; gdb & dbx + others dont auto setup the hook, they do it manually
   !iif &not &seq $buffer-fhook "fhook-ipipe"  fhook-ipipe
@@ -410,7 +414,7 @@ define-macro fhook-ipipe
     set-variable :last-line 1
   !else
     set-variable $buffer-input ipipe-minoutput
-    !if &or &seq &lef $buffer-bname 9 "*compile*" &seq &lef $buffer-bname 6 "*grep*"
+    !if &or &or &seq &lef $buffer-bname 9 "*compile*" &seq &lef $buffer-bname 6 "*grep*" &seq $buffer-ipipe "file-tools-ipipe"
       ; Bind mouse to select the line.
       set-variable :mouse-word-select "mouse-get-next-line"
       ; Bind <return> to select the buffer - same as mouse.

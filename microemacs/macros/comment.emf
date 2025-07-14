@@ -196,9 +196,17 @@ define-macro comment-get-type
 ; comment line ie xxx -> <comment start>xxx
 ;              or xxx -> <comment start>xxx<comment end>
 define-macro comment-line
+  !iif &les @# 1  !return
   0 comment-get-def
   set-variable #l1 &lget #l9 1
   set-variable #l2 &trl &lget #l9 2
+  !if &not @?
+    0 show-region
+    !if &band $result 0x01
+      set-variable @# &add 1 &abs &sub $window-line $window-mark-line
+      !iif &les $window-mark-line $window-line  set-variable $window-line $window-mark-line
+    !endif
+  !endif
   beginning-of-line
   !while &gre &pdec @# 1 0
     insert-string #l1
@@ -214,40 +222,46 @@ define-macro comment-line
 ; uncoment line ie <comment start>xxx -> xxx
 ;               or <comment start>xxx<comment end> -> xxx
 define-macro uncomment-line
+  !iif &les @# 1  !return
+  !if &not @?
+    0 show-region
+    !if &band $result 0x01
+      set-variable @# &add 1 &abs &sub $window-line $window-mark-line
+      !iif &les $window-mark-line $window-line  set-variable $window-line $window-mark-line
+    !endif
+  !endif
+  !iif &seq @wc ""  -8 ml-write "[No more lines]"
   comment-get-def
   set-variable #l1 &lget #l9 1
-  set-variable #l3 &bmod "magic"
-  -1 buffer-mode "magic"
   !if &seq &set #l2 &trl &lget #l9 2 ""
     beginning-of-line
     !while &gre &pdec @# 1 0
-      !force -1 search-forward #l1
+      !force -1 search-buffer "Me" #l1
       !if $status
         &len #l1 backward-delete-char
         -1 yank
       !endif
-      !force forward-line
-      !iif &not $status  !break
+      forward-line
       beginning-of-line
     !done
   !else
-    !while &gre &pdec @# 1 0
-      !force search-forward #l2
+    set-variable @# &set #l3 &add @# $window-line
+    !while &les $window-line @#
+      !force search-buffer "Me" #l2
       !iif &not $status  !break
-      !force search-backward #l1
-      !iif &not $status  !break
+      !force search-buffer "Meb" #l1
+      !iif &not $status  -8 ml-write "[unmatched close comment]"
+      !iif &not &les $window-line @#  !break 
       &len #l1 forward-delete-char
       -1 yank
       search-forward #l2
       &len #l2 backward-delete-char
       -1 yank
-      beginning-of-line
-      forward-line
+      set-variable #l3 &add $window-line 1
     !done
+    set-variable $window-line &con &gre #l3 @# #l3 @#
+    -1 show-region
   !endif
-  ; restore magic mode
-  &cond #l3 1 -1 buffer-mode "magic"
-  !iif &gre @# -1  -8 ml-write "[No more comments/lines]"
 !emacro
 ;
 ; fill from the current column to fill-col with <comment pad> and a trailing

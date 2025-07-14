@@ -208,6 +208,238 @@ set-variable .fhook-r.item-list-r3 "Oper \ecB\\1\ecA"
   indent .hilight.r i "#"
 !endif
 
-!iif &not &exi r-rscript-setup  execute-file "rtools"
+add-next-line "*r-lint*" "^%f:%l:\\d+: "
+
+set-variable .fhook-r.enc &con &seq "" &set #l0 &reg &spr "/history/%s/char-set" %platform "" "" &spr "--encoding=%s " &sup &rep #l0 "iso" "ISO-"
+set-variable .fhook-r.coms "\bRscript\b" 
+set-variable .fhook-r.exec1 "\b%v[com]\b\b\b\b%v[enc]\"%p%f\" %v[args|20|Additional command-line arguments|]\b"
+set-variable .fhook-r.format1 "\b%v[com]\b-e \"formatR::tidy_file\"\b0\b\b%v[enc]-e \"formatR::tidy_file('%p%f')\"\b"
+set-variable .fhook-r.lint1 "\b%v[com]\b-e \"lintr::lint\"\b0\b\b%v[enc]-e \"library(lintr);lintr::lint('%p%f',linters = linters_with_defaults(indentation_linter = indentation_linter(indent = 4L)))\"\b\b:\\d+:\\d+: error: \b:\\d+:\\d+: warning: \b:\\d+:\\d+: style: \b"
+
+define-macro fhook-r-doc
+  buffer-init-hooks
+!emacro
+
+set-variable .fhook-r-doc.name "R Doc"
+set-variable .fhook-r-doc.setup &reg "/history/fhook/r-doc" "acfhmw"
+set-variable .fhook-r-doc.setup-mask "acfhmw"
+
+!if &and &sin "h" .fhook-r-doc.setup &band .hilight.flags 0x02
+  !iif &not &exi .hilight.r-doc  set-variable .hilight.r-doc &pinc .hilight.next 1
+  !iif &not &exi .hilight.r-docL  set-variable .hilight.r-docL &pinc .hilight.next 1
+  0 hilight .hilight.r-doc 2 200               $global-scheme
+  0 hilight .hilight.r-docL  0                 $global-scheme
+  hilight .hilight.r-doc     2 "^_"            .scheme.header
+  hilight .hilight.r-doc  0x42 "\ecE" ""       .scheme.header
+  hilight .hilight.r-doc  0x42 "\ecL" ""       .scheme.link
+  hilight .hilight.r-doc  0x40 "\esA" ""       $global-scheme
+  hilight .hilight.r-doc  0xc0 "\esR" ""       .hilight.r .scheme.header
+  hilight .hilight.r-doc  0xc0 "\esL" ""       .hilight.r-docL .scheme.header
+  hilight .hilight.r-doc     0 "^\\a[-A-Za-z0-9.$_]*\\}[\t ][\t ]" .scheme.link
+  hilight .hilight.r-doc     0 "^\\a[-A-Za-z0-9.$_]*::[-A-Za-z0-9.$_]+" .scheme.link
+  hilight .hilight.r-doc     0 "package:\\a[-A-Za-z0-9.$_]*" .scheme.link
+  hilight .hilight.r-docL    4 "'\\{\\a" "\\}'" "\\"          .scheme.link
+  hilight .hilight.r-docL 0x80 "^[A-Z].+"      .hilight.r-doc .scheme.header
+  hilight .hilight.r-docL 0xc0 "\esA" ""       .hilight.r-doc .scheme.header
+  hilight .hilight.r      0xc0 "\esA" ""       .hilight.r-doc .scheme.header
+!endif
+
+!if &sin "f" .fhook-r-doc.setup
+  ; setup emf collapsing
+  set-variable .fhook-r-doc.collapse-open  "^[A-Z][a-z]+:"
+  set-variable .fhook-r-doc.collapse-close "^\\([A-Z][a-z]+:\\|\\'\\)"
+  set-variable .fhook-r-doc.collapse-mnext "-1"
+!endif
+
+0 define-macro r-doc-back
+  !iif &not &exi ":*r-doc*1:"  -8 ml-write "[Error: No more history!]"
+  !force 0 delete-buffer "*r-doc*"
+  find-buffer "*r-doc*1"
+  -1 buffer-mode "hide"
+  change-buffer-name "*r-doc*"
+  set-variable #l1 1
+  !while &exi &spr ":*r-doc*%d:" &inc #l1 1
+    find-buffer &spr "*r-doc*%d" #l1
+    change-buffer-name &spr "*r-doc*%d" &sub #l1 1
+  !done
+  find-buffer "*r-doc*"
+!emacro
+0 define-macro r-doc-process-link
+  set-position "\x80"
+  !if &equ $window-line 1
+    r-doc-process-header-link
+    !return
+  !elif :package-overview
+    r-doc-process-package-link
+    !return
+  !endif
+  ; check first for a beginning of line link in package index
+  !force search-buffer "meb" "^s\\(.\\)"
+  !iif &not &and $status &seq @s1 "L"  -8 ml-write "Error: Not in the Method or See Also section."
+  goto-position "\x80"
+  set-variable #l1 $window-col
+  !force -1 search-buffer "meb" "'\\m"
+  !if $status
+    forward-char
+    set-variable #l2 $window-col
+    !force -1 search-buffer "Me" "'"
+    !if &not $status
+    !elif &gre $window-col #l1
+      backward-char
+      set-mark
+      set-variable $window-col #l2
+      copy-region
+      set-variable #l6 @y
+      -1 yank
+      goto-position "\x80"
+      !if &seq :package ""
+        r-doc #l6
+      !else
+        r-doc &spr "%s::%s" :package #l6
+      !endif
+      !return
+    !endif
+  !endif
+  goto-position "\x80"
+  -8 ml-write "Error: Not in a Method or See Also section link."
+!emacro
+0 define-macro r-doc-process-header-link
+  ; click on header package:pkgname or BACK
+  !force search-buffer "meb" "[ \t]"
+  !if &not $status
+  !elif &seq &mid @wl &set #l0 &add $window-col 1 7 "cLBACK"
+    goto-position "\x80"
+    r-doc-back
+    !return
+  !elif &seq &mid @wl #l0 8 "package:"
+    goto-position "\x80"
+    search-buffer "me" "\\s"
+    backward-char
+    set-variable #l6 &mid @wl #l0 &sub $window-col #l0
+    goto-position "\x80"
+    r-doc #l6
+    !return
+  !endif
+  goto-position "\x80"
+  -8 ml-write "Error: Not in a header link."
+!emacro
+0 define-macro r-doc-process-package-link
+  ; fetch links on the index part at the beginning of a line
+  set-variable #l0 $window-col
+  beginning-of-line
+  search-buffer "me" "\\s"
+  backward-char
+  !if &gre $window-col #l0
+    set-variable #l6 &lef @wl $window-col
+    goto-position "\x80"
+    !if &seq :package ""
+      r-doc #l6
+    !else
+      r-doc &spr "%s::%s" :package #l6
+    !endif
+    !return
+  !endif
+  goto-position "\x80"
+  -8 ml-write "Error: Not in an index link."
+!emacro
+
+define-macro r-doc
+  !iif &not &exi .fhook-r.com  file-tool-com-init "fhook-r"
+  !iif &not &exi %rscript-com  r-rscript-setup
+  !force set-variable #l0 @1
+  !iif &not $status  set-variable #l0 @ml00 "R help on"
+  set-variable #l0 &rep #l0 "::" ":"
+  set-variable #l5 &rep #l0 "$" "_"
+  ml-write &cat "fetching ... " #l5
+  ; sort out back history
+  !if &set #l2 &exi ":*r-doc*:"
+    set-position "\x81"
+    !force 0 delete-buffer "*r-doc*9"
+    set-variable #l1 8
+    !repeat
+      !if &exi &spr ":*r-doc*%d:" #l1
+        find-buffer &spr "*r-doc*%d" #l1
+        change-buffer-name &spr "*r-doc*%d" &add #l1 1
+      !endif
+    !until &not &dec #l1 1
+    find-buffer "*r-doc*"
+    1 buffer-mode "hide"
+    change-buffer-name "*r-doc*1"
+    goto-position "\x81"
+  !endif
+  !if &not &set #l3 &xse #l5 "\\(.+\\):\\(.+\\)"
+    set-variable #l0 &spr "help('%s')" #l5
+    set-variable #l4 ""
+  !elif &set #l3 &lfin "|library|package|" @s1
+    set-variable #l0 &spr "library(help='%s')" &set #l5 &set #l4 @s2
+  !else
+    set-variable #l0 &spr "help('%s',package='%s')" &set #l5 @s2 &set #l4 @s1
+  !endif
+*try_again
+  &con &seq $buffer-bname "*r-doc*1" 2 0 pipe-shell-command &spr "%s -e \"options(useFancyQuotes=FALSE);%s\"" .fhook-r.com #l0 "*r-doc*"
+  !iif &not &seq $buffer-bname "*r-doc*" find-buffer "*r-doc*"
+  -1 buffer-mode "view"
+  1 buffer-mode "magic"
+  beginning-of-buffer
+  set-mark
+  3 forward-line
+  !if &seq @wl "During startup - Warning messages:"
+    forward-line
+    !while &xseq @wl "\\d+: Setting LC_\\S+ failed.*"
+      forward-line
+    !done
+  !endif
+  ; if 3 or less lines then most likely a look-up failure - try removing the package as it can be wrong (e.g. ref to 'cutree' in cluster:diana) or do a search
+  !if &gre $window-eline &add $window-line 3
+  !elif &and &not #l3 &len #l4
+    set-variable #l0 &spr "help('%s')" #l5
+    set-variable #l4 ""
+    !goto try_again
+  !elif &not &seq &lef #l0 11 "help.search"
+    set-variable #l0 &spr "help.search('%s')" #l5
+    set-variable #l3 1
+    set-variable #l4 ""
+    !goto try_again
+  !endif
+  -1 kill-region
+  set-variable :cl #l0
+  !if &set :package-overview #l3
+    !iif &seq @wl ""  62 insert-space
+  !elif &len #l4
+  !elif &xse @wl ".*?\\<package:\\(\\w+\\).*"
+    set-variable #l4 @s1
+  !endif
+  set-variable :package #l4
+  set-variable @wl &cat &rep @wl " R Documentation" " R Doc  " "    \ecLBACK"
+  buffer-is-utf8 #l1
+  !iif #l1  4 change-buffer-charset "utf8" "display"
+  replace-string "^_\b\\(\\w.*:\\)$" "sAcE\\1"
+  set-variable #l1 &lget $result 1
+  beginning-of-buffer
+  replace-string "_\b" ""
+  !if &not #l1
+    beginning-of-buffer
+    !force replace-string "^\n\\([ \t]+['\\w()]+\\( ['\\w()]+\\)*\n\\)$" "\nsAcE\\1"
+    beginning-of-buffer
+    !force replace-string "^\n\\(\\w['\\w()]+\\( ['\\w()]+\\)*:\n\\)$" "\nsAcE\\1"
+  !endif
+  set-variable #l1 &cond &bmod "exact" 1 -1
+  -1 buffer-mode "exact"
+  beginning-of-buffer
+  replace-string "^sAcE\\(Usage\\|Examples\\):.*\n" "\\0sR"
+  beginning-of-buffer
+  replace-string "^sAcE\\(See Also\\|Methods\\):.*\n" "\\0sL"
+  beginning-of-buffer
+  #l1 buffer-mode "exact"
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"
+  set-variable :mouse-word-select r-doc-process-link
+  buffer-bind-create "bio" "return" "0" r-doc-process-link
+  buffer-bind-create "bio" "backspace" "0" r-doc-back
+  buffer-bind-key  "scroll-down" "space"
+  buffer-init "r-doc"
+  ; some terminals might need this
+  !iif &band $system 0x01  screen-update
+!emacro
 
 buffer-init-fhook "r"

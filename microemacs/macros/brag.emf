@@ -11,6 +11,10 @@
 ;  Best:   (9C,9S,9D) (AH,AC,AD) (KD,KH,KS)
 ;  Worst:  (2S,2H,5D) (JS,9C,3D) (JC,8S,6H)
 ;
+; Still to-do:
+;    - Improve messages on stats page
+;    - Support 4 of a kind
+;
 0 define-macro bragSetGetIdx 
   set-variable #l4 &ban 15 &set #l1 &atoi &set #l0 @1
   set-variable #l5 &ban 15 &set #l2 &atoi &mid #l0 1 1
@@ -449,13 +453,13 @@ set-variable .bragDrawCard.slb "                                Heart           
 !emacro
 
 0 define-macro brag-gen-tricky
+  2000 bragToast "Generating hand..."
   set-variable #l0 52
   !repeat
     !if &gre &inc #l0 1 42
       bragShuffle .Brag.deck
       set-variable #l0 0
     !endif
-    ; TODO fix
     bragHandSort &mid .Brag.deck #l0 9 #l1
     !tgoto &not &or &or &or &or &seq &lget #l1 1 &lget #l1 7 &seq &lget #l1 1 &lget #l1 9 &seq &lget #l1 7 &lget #l1 8 &seq &lget #l1 7 &lget #l1 9 &seq &lget #l1 8 &lget #l1 9 done
   !done
@@ -491,12 +495,17 @@ set-variable .bragDrawCard.slb "                                Heart           
 0 define-macro brag-hand-input
   !force set-variable #l0 @1
   !iif &not $status  set-variable #l0 ""
-  set-variable #l9 "Enter hand (x to exit)"
+  set-variable #l9 "Enter hand (? for help)"
   !repeat
     !force !force !force set-variable #l1 @ml20 #l9 #l0
     !if &not $status
       ml-write ""
       !return
+    !endif
+    !if &sin "?" #l1
+      osd-dialog "Brag - Input Hand" "  Enter the hand as a list of 9 cards, each card as number and  \n  then a suit, eg 4S, where:\n      T = 10, J = Jack, Q = Queen, K = King, 1 or A = Ace\n      C = Clubs, D = Diamonds, H = Hearts, S = Spades\n  Spaces, commas and round brackets are ignored, X to exit." "  \HContinue  "
+      set-variable #l0 &rep #l1 "?" ""
+      !continue
     !endif
     !if &seq &rep &set #l0 &rep &rep &rep &rep &sup #l1 " " "" "," "" "(" "" ")" "" "X" "" ""
       ml-write ""
@@ -505,7 +514,12 @@ set-variable .bragDrawCard.slb "                                Heart           
     set-variable #l1 ""
     set-variable #l4 #l0
     !while &len #l4
-      !iif &les &set #l3 &lfi .Brag.cardNumberChars &lef #l4 1 1  !break  
+      !if &set #l3 &lfi .Brag.cardNumberChars &lef #l4 1
+      !elif &seq "1" &lef #l4 1
+        set-variable #l3 &lfi .Brag.cardNumberChars "A"
+      !else
+        !break
+      !endif
       set-variable #l4 &rig #l4 1
       !iif &les &set #l2 &lfi .Brag.cardSuitChars &lef #l4 1 2  !break
       set-variable #l4 &rig #l4 1
@@ -1233,10 +1247,6 @@ define-macro Brag
   !iif &seq .Brag.h1 ""  brag-deal
   1 brag-draw
 !emacro
-; sent AS2S3S AC8C5D QSJS9D
-; TODO Input hand to use GUI
-; TODO Improve messages on stats page
-; TODO support 4 of a kind
 !iif &exi .Brag.s10  !return
 set-variable .Brag.s10 "       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9       9      58      78      78      88      88      88     176     185     185     185     244     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     254     362     410     518     538     538     596     655     655     655    1105    1262    1272    1272    1272    1555    1751    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771"
 set-variable .Brag.s11 "    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    1771    2851    7685   12061   14822   16084   16427   16427   16427   16427   16427   16427   16427   17474   18932   26085   31482   33400   33742   33742   33742   33742   33742   33742   33742   39778   41651   49457   62107   68092   69470   69470   69470   69470   69470   69470   69470   85997   93361  101713  110500  121990  126610  128331  129129  129284  129284  129284  129284  148563  164875  179162  188627  197134  207371  212325  214772  215435  215435  215435  215435  250531  270267  295951  308129  316732  324494  333851  338575  339977  339977  339977  339977  391782  422705  450480  473511  484114  491894  498720  506300  508610  508610  508610  508610  577926  623519  660033  683387  702739  712148  718908  723406  726867  726867  726867  726867  818284  878342  925529  955305  974200  989585  996930 1001322 1002916 1002916 1002916 1002916 1116345 1192909 1251715 1289926 1313034 1326935 1337162 1340436 1342012 1342012 1342012 1342012 1472076 1560812 1624203 1665505 1691538 1706089 1713867 1718326 1718326 1718326 1718326 1718326 1859748 1959524 2029316 2074278 2102505 2119399 2128177 2131912 2133313 2133313 2133313 2133313 2228735 2312263 2381904 2428408 2458692 2477004 2487031 2491276 2492517 2492517 2492517 2492517 2528183 2571441 2600421 2634851 2667759 2699215 2729084 2753019 2797319 2825180 2865564 2890384 2921683 2948189 2973519 3002535 3029180 3070223 3095897 3147027 3183453 3213162 3247938 3281533 3306904 3335542 3363455 3385325 3411238 3438809 3467718 3511277 3539836 3586812 3620125 3646968 3692273 3736132 3773919 3801632 3837466 3867451 3902847 3927214 3954882 3983430 4007869 4031309 4057140 4084307 4118665 4169476 4202169 4257394 4295851 4328999 4374916 4418689 4456086 4483637 4535804 4578936 4630109 4670623 4700274 4740978 4774726 4809189 4846642 4871733 4901000 4932917 4959938 4987796 5012538 5039696 5068554 5108479"

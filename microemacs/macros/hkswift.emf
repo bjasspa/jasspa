@@ -47,8 +47,7 @@ set-variable .fhook-swift.item-list-r2 "Clss \ecB\\2\ecA"
   hilight .hilight.swift 0 "'\\\\.'"       .scheme.quote
   hilight .hilight.swift 0 "'\\\\'"        .scheme.error
   hilight .hilight.swift 0 "'\\\\''"       .scheme.quote
-  ; Hilight TODO in a comment - Examples
-  ; i.e. /* TODO I need to do this */
+  ; Comment TODO's, i.e. /* TODO I need to do this */
   hilight .hilight.swift 20 "/\\*\\s+[Tt][Oo][Dd][Oo]" "*/" "" .scheme.error
   hilight .hilight.swift 18 "//\\s*[tT][oO][dD][oO]"           .scheme.error
   ; constants: A_CONSTANT_VARAIBLE

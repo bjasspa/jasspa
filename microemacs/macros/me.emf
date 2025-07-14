@@ -53,6 +53,7 @@ define-macro-file narrow narrow-search-forward narrow-search-backward
 define-macro-file notes notes notes-file notes-instant notes-context
 define-macro-file charsutl buffer-is-utf8 change-buffer-charset
 define-macro-file itemlist item-list item-list-close occur
+define-macro-file hktools file-exec file-format file-lint
 define-macro-file fileopen osd-file-open osd-get-file
 define-macro-file spellaut auto-spell auto-spell-menu
 define-macro-file pagefile page-file page-bfile
@@ -135,7 +136,7 @@ add-file-hook ".asn1" fhook-asn1
 add-file-hook ".mhg .mhg5" fhook-mhg
 add-file-hook ".cbl" fhook-cobol
 add-file-hook ".x86" fhook-asmx86
-add-file-hook ".py" fhook-python py-doc py-exec py-format py-lint
+add-file-hook ".py" fhook-python py-doc
 add-file-hook ".scm .sch" fhook-scheme
 add-file-hook ".mp .mf" fhook-meta
 add-file-hook ".m4" fhook-m4
@@ -156,7 +157,7 @@ add-file-hook ".mod" fhook-mod2
 add-file-hook ".dot" fhook-dot
 add-file-hook ".rb" fhook-ruby
 add-file-hook ".rd .Rd" fhook-rd
-add-file-hook ".r .R .Rtk" fhook-r r-doc r-exec r-format r-lint
+add-file-hook ".r .R .Rtk" fhook-r r-doc
 add-file-hook ".cfm .cfml .cfc" fhook-cfm
 add-file-hook ".iss" fhook-iss
 add-file-hook ".swift" fhook-swift

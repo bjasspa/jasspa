@@ -123,9 +123,7 @@ set-variable .fhook-c.item-list-r7 "Strc \ecB\\1\ecA"
   hilight .hilight.c    0 "'\\\\x\\h\\h'" .scheme.quote
   hilight .hilight.c    0 "'\\\\'"       .scheme.error
   hilight .hilight.c    0 "'\\\\''"      .scheme.quote
-  ; Hilight TODO in a comment - Examples
-  ; i.e. /* TODO I need to do this */
-  ; i.e. // TODO I need to do this */
+  ; Comment TODO's, i.e. /* TODO I need to do this */
   hilight .hilight.c   20 "/\\*\\s*[tT][oO][dD][oO]" "*/" "" .scheme.error
   hilight .hilight.c   18 "//\\s*[tT][oO][dD][oO]"           .scheme.error
   ; Function names and goto labels

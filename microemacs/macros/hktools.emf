@@ -1,0 +1,273 @@
+; -!- emf -!-
+; Copyright (c) 2025 Steven Phillips.
+;
+; All rights reserved.
+;
+; Synopsis:    General utility macros for file types
+; Authors:     Detlef Groth & Steven Phillips
+;
+0 define-macro file-tool-com-init
+  !iif &seq "ERROR" &set #l8 &ind &spr ".%s.name" &set #l9 @1  set-variable #l8 &cat &sup &mid #l9 6 1 &rig #l9 7
+  !if &not &llen &set #l0 &ind &spr ".%s.coms" #l9
+    -8 ml-write &spr "Error: Interpreter for %s files not configured, try running major-mode-tools-setup." #l8
+  !endif
+  set-variable #l1 0
+  !while &not &seq "" &set #l2 &lget #l0 &inc #l1 1
+    !if &not &seq "ERROR" &which #l2
+      set-variable &ind &spr ".%s.com" #l9 #l2
+      ml-write &spr "%s interpreter '%s' found in path" #l8 #l2
+      !return
+    !endif
+  !done
+  !if &seq $platform "windows"
+    ; TODO implement method to locate prgs on Windows, following taken from rtools to locate Rscript on windows 
+;    set-variable $file-names "C:/Program Files/R/R-\\d+\\.\\d+\\.\\d+.*/"
+;    !while &not &seq &set #l1 $file-names ""
+;      !if &seq "R" &stat t &set #l0 &spr "C:/Program Files/R/%sbin/Rscript.exe" #l1
+;        ml-write &spr "Rscript executable found: %s" #l0
+;        set-variable %rscript-com &spr "\"%s\"" #l0
+;        !return
+;      !endif
+;    !done
+    ; Add code to look for interpreter on windows
+  !endif
+  -8 ml-write &spr "Error: Failed to find interpreter for %s files, please install or run major-mode-tools-setup." #l8
+!emacro
+; process program or args string substituting %? as per file-tools
+;  @1 - file-type, @2 str, @3 file name
+0 define-macro file-proc-str
+  set-variable #l9 @1
+  set-variable #l0 &rep &rep &rep &rep &rep @2 "%%" "\bA" "%\"" "\bE" "%[" "\bB" "%|" "\bC" "%]" "\bD"
+  set-variable #l2 @3
+  !if &seq "" &set #l1 &rig #l2 &rsin "/" #l2
+    ; cope with a directory name
+    set-variable #l1 &rig #l2 &rsin "/" &lef #l2 -1
+  !endif
+  set-variable .p &lef #l2 &neg &len #l1
+  set-variable #l1 &rep #l1 "%" "\bA"
+  set-variable #l2 &rep &rep &rep &rep .p "%" "\bA" "[" "\bB" "|" "\bC" "]" "\bD"
+  set-variable #l0 &rep &rep #l0 "%p" #l2 "%P" &rep #l2 "/" .osp
+  !iif &seq &rig #l1 -1 "/"  set-variable #l1 &lef #l1 -1
+  !if &gre &set #l4 &rsin "." #l1 1
+    set-variable #l2 &lef #l1 &sub #l4 1
+    set-variable #l3 &rig #l1 &sub #l4 1
+  !else
+    set-variable #l2 #l1
+    set-variable #l3 ""
+  !endif
+  set-variable #l8 0
+  !while &set #l7 &sin "%i[" #l0
+    set-variable #l4 &rig #l0 &add #l7 2
+    !iif &not &set #l5 &sin "]" #l4  -8 ml-write "[Error: Missing ']' in %i input]"
+    set-variable #l4 &spr "\r%s\r" &rep &lef #l4 &sub #l5 1 "|" "\r"
+    set-variable #l6 &rep &rep &rep &rep #l4 "%f" #l1 "%F" &rep #l1 "/" .osp "%b" #l2 "%e" #l3
+    set-variable #l6 &rep &rep &rep &rep #l6 "\bA" "%" "\bB" "[" "\bC" "|" "\bD" "]"
+    set-variable #l5 &spr "set-variable #l6 @ml%s%s \"%s\" \"%s\"" &con &seq &lget #l6 3 "" 0 1 &lget #l6 1 &lget #l6 2 &lget #l6 3
+    execute-line #l5
+    set-variable #l6 &rep &rep &rep &rep #l6 "%" "\bA" "[" "\bB" "|" "\bC" "]" "\bD"
+    set-variable #l0 &spr "%s%s%s" &lef #l0 &sub #l7 1 #l6 &rig #l0 &add &add #l7 &len #l4 1
+    set-variable #l0 &rep #l0 &cat "%" &inc #l8 1 #l6
+  !done
+  !while &set #l7 &sin "%v[" #l0
+    set-variable #l4 &rig #l0 &add #l7 2
+    !iif &not &set #l5 &sin "]" #l4  -8 ml-write "[Error: Missing ']' in %v variable]"
+    set-variable #l4 &spr "\r%s\r" &rep &lef #l4 &sub #l5 1 "|" "\r"
+    set-variable #l6 &rep &rep &rep &rep #l4 "%f" #l1 "%F" &rep #l1 "/" .osp "%b" #l2 "%e" #l3
+    set-variable #l6 &rep &rep &rep &rep #l6 "\bA" "%" "\bB" "[" "\bC" "|" "\bD" "]"
+    !iif &xse &lef &set #l8 &lget #l6 1 1 "[0-9a-zA-Z]"  set-variable #l8 &spr ".%s.%s" #l9 #l8
+    !if &not &exi &ind #l8
+      !iif &seq "com" &lget #l6 1  file-tool-com-init #l9
+    !endif
+    !if &exi &ind #l8
+      set-variable #l5 &ind #l8
+    !elif &gre &llen #l6 3
+      set-variable #l5 &lget #l6 4
+    !elif &equ &llen #l6 2
+      set-variable #l5 &lget #l6 2
+    !else
+      -8 ml-write &spr "[Error: Variable %%v[%s] not defined and no default given]" #l8
+    !endif
+    !if &gre &llen #l6 2
+      set-variable #g1 &rep &mid #l6 &add &len &lget #l6 1 2 -1 "\r" "\" \""
+      set-variable #l5 &spr "set-variable #l6 @ml%s \"%s\" \"%s\"" &lget #l6 2 &lget #l6 3 #l5
+      execute-line #l5
+      set-variable &ind #l8 #l6
+    !else
+      set-variable #l6 #l5
+    !endif
+    set-variable #l6 &rep &rep &rep &rep #l6 "%" "\bA" "[" "\bB" "|" "\bC" "]" "\bD"
+    set-variable #l0 &spr "%s%s%s" &lef #l0 &sub #l7 1 #l6 &rig #l0 &add &add #l7 &len #l4 1
+  !done
+  set-variable #l0 &rep &rep &rep &rep #l0 "%f" #l1 "%F" &rep #l1 "/" .osp "%b" #l2 "%e" #l3
+  set-variable #l0 &rep &rep &rep &rep #l0 "\bA" "%" "\bB" "[" "\bC" "|" "\bD" "]"
+  !while &set #l4 &sin "\bE" #l0
+    !if &not &set #l5 &sin "\bE" &rig #l0 &add #l4 1
+      -8 ml-write "[Error: Missing '%\"' in command line]"
+    !elif &not &xse &set #l7 &mid #l0 &add #l4 1 &sub #l5 1 ".*\\s.*"
+    !elif &band $system 0x100
+      set-variable #l7 &spr "\"%s\"" #l7
+    !else
+      set-variable #l7 &spr "\"%s\"" &rep &rep #l7 "\\" "\\\\" "\"" "\\\""
+    !endif
+    set-variable #l0 &spr "%s%s%s" &lef #l0 &sub #l4 1 #l7 &rig #l0 &add &add #l4 #l5 2
+  !done
+  set-variable @4 #l0
+!emacro
+
+; file tool helper, @1 = tool name, returns
+;   #p1 = tool com list with #p2 = prog name, #p3 the start path, #p4 = command line (minus prog name)
+; variables #p3 & #p4 have not be expanded, i.e. may still contain %p & %f etc  
+0 define-macro file-tools-init
+  set-variable #l9 @1
+  !iif &not &seq &lef $buffer-fhook 6 "fhook-"  -8 ml-write &spr "file-%s error: Unexpected buffer fhook name (%s)" #l9 $buffer-fhook
+  !iif &seq $buffer-fname ""  -8 ml-write &spr "file-%s error: Buffer '%s' does not have a file name!" #l9 $buffer-bname
+  !if &exi &ind &spr ".%s.%s-com" $buffer-fhook #l9
+    set-variable #p1 &ind &spr ".%s.%s-com" $buffer-fhook #l9 1
+  !elif &seq "" &set #p1 &reg &spr "/history/%s/fhook/%s-%s-com" $platform &rig $buffer-fhook 6 #l9 ""
+    !iif &seq "ERROR" &set #l8 &ind &spr ".%s.name" $buffer-fhook  set-variable #l8 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
+    ml-write &spr "Configuring file-%s for %s files" #l9 #l8
+    set-variable #l0 0
+    !while &set #l5 &exi &ind &spr ".%s.%s%d" $buffer-fhook #l9 &inc #l0 1
+      set-variable #l1 &ind &spr ".%s.%s%d" $buffer-fhook #l9 #l0
+      file-proc-str $buffer-fhook &lget #l1 1 $buffer-fname #l2
+      !if &seq "ERROR" &whi #l2
+      !elif &seq "" &set #l3 &lget #l1 2
+        !break
+      !else
+        file-proc-str $buffer-fhook #l3 $buffer-fname #l3
+        shell-command &spr "%s %s" #l2 #l3
+        !iif &equ $result &lget #l1 3  !break
+      !endif
+    !done
+    !if #l5
+    !elif &gre #l0 1
+      -8 ml-write &spr "file-%s error: Failed to find a %s file interpreter, try running major-mode-tools-setup." #l9 #l8
+    !else
+      -8 ml-write &spr "Error: file-%s has not been configured for %s files, try running major-mode-tools-setup." #l9 #l8
+    !endif
+    !iif &or &seq "%p" &set #p3 &lget #l1 4 &seq "%P" #p3  set-variable #p3 ""
+    set-variable &ind &spr ".%s.%s-com" $buffer-fhook #l9 &set #p1 &spr "\b%s\b%s\b%s\b%s\b%s\b%s\b" #l2 #p3 &lget #l1 5 &lget #l1 7 &lget #l1 8 &lget #l1 9
+  !endif
+  set-variable #p2 &lget #p1 1
+  set-variable #p3 &lget #p1 2
+  set-variable #p4 &lget #p1 3
+!emacro
+
+0 define-macro file-tools-ipipe
+  !if &not &exi :ipp-last
+    set-variable :ipp-last 4
+    !if &gre 6 &len &set #l1 &ind &spr ".fhook-%s-com" &rep &lget $buffer-bname 1 "-" "."
+    !elif &gre &len &set #l1 &spr "\b%s\b%s\b%s\b" &lget #l1 4 &lget #l1 5 &lget #l1 6 4
+      set-variable :ftlh #l1
+    !endif
+  !endif
+  goto-alpha-mark "I"
+  !if &sub &set #l0 $window-line :ipp-last
+    set-variable $window-line &sub :ipp-last 1
+    !repeat
+      !force 6 get-next-line
+      !if &not $status
+        set-variable $window-line #l0
+      !elif &equ $window-line #l0
+      !elif &not &exi :ftlh
+        set-variable $line-scheme .scheme.error
+      !elif &xseq @wl &spr ".*\\(%s\\).*" &lget :ftlh 1
+        set-variable $line-scheme .scheme.error
+      !elif &xseq @wl &spr ".*\\(%s\\).*" &lget :ftlh 2
+        set-variable $line-scheme .scheme.constant
+      !elif &xseq @wl &spr ".*\\(%s\\).*" &lget :ftlh 3
+        set-variable $line-scheme .scheme.comment
+      !else
+        set-variable $line-scheme .scheme.error
+      !endif
+    !until &not &les $window-line #l0
+    set-variable :ipp-last #l0
+  !endif
+  !if &not @#
+    ; command finished - check if UTF8
+    buffer-is-utf8 #l1
+    !if #l1
+      -1 buffer-mode "view"
+      4 change-buffer-charset "utf8" "display"
+      -1 buffer-mode "edit"
+      1 buffer-mode "view"
+    !endif
+  !endif
+!emacro
+
+define-macro file-exec
+  file-tools-init "exec"
+  &band @# 1 save-some-buffers @mna
+  !iif &len #l3 file-proc-str $buffer-fhook #l3 $buffer-fname #l3
+  file-proc-str $buffer-fhook #l4 $buffer-fname #l6
+  set-variable #l0 &rig $buffer-fhook 6
+  ml-write &spr "Executing [%s %s]" #l2 #l6
+  !if &len #l3
+    set-position "\x82" 
+    !force 0 delete-buffer "*hkft1*"
+    find-buffer "*hkft1*"
+    set-variable $buffer-fname &cat #l3 &con &sin &rig #l3 -1 "\\/" "" "/"
+  !endif
+  0x80 ipipe-shell-command &spr "%s %s" #l2 #l6 &spr "*%s-exec*" #l0 file-tools-ipipe @nma
+  !if &len #l3
+    goto-position "\x82" 
+    !force 0 delete-buffer "*hkft1*"
+  !endif
+  popup-window &spr "*%s-exec*" #l0
+  fhook-ipipe
+!emacro
+
+define-macro file-format
+  file-tools-init "format"
+  !if &bmod "edit"
+    set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+    !iif &iseq #l0 "y"  save-buffer 
+  !endif
+  ; TODO change process to write buffer to tmp file, format, load, compare, update if required and feedback 
+  !iif &len #l3  file-proc-str $buffer-fhook #l3 $buffer-fname #l3
+  file-proc-str $buffer-fhook #l4 $buffer-fname #l6
+  set-variable #l0 &rig $buffer-fhook 6
+  ml-write &spr "Executing [%s %s]" #l2 #l6
+  !if &len #l3
+    set-position "\x82" 
+    !force 0 delete-buffer "*hkft1*"
+    find-buffer "*hkft1*"
+    set-variable $buffer-fname &cat #l3 &con &sin &rig #l3 -1 "\\/" "" "/"
+  !endif
+  2 pipe-shell-command &spr "%s %s" #l2 #l6 &spr "*%s-format*" #l0
+  !if $result
+    popup-window &spr "*%s-format*" #l0
+    !force 0 delete-buffer "*hkft1*"
+    !iif &seq "ERROR" &set #l8 &ind &spr ".%s.name" $buffer-fhook  set-variable #l8 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
+    -8 ml-write &spr "file-format error: %s file formatter execution failed, check for errors. Run major-mode-tools-setup to reconfigure." #l8
+  !elif &len #l3
+    goto-position "\x82" 
+    !force 0 delete-buffer "*hkft1*"
+  !endif
+  0 reread-file
+!emacro
+
+define-macro file-lint
+  file-tools-init "lint"
+  !if &bmod "edit"
+    set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+    !iif &iseq #l0 "y"  save-buffer 
+  !endif
+  !iif &len #l3  file-proc-str $buffer-fhook #l3 $buffer-fname #l3
+  file-proc-str $buffer-fhook #l4 $buffer-fname #l6
+  set-variable #l0 &rig $buffer-fhook 6
+  ml-write &spr "Executing [%s %s]" #l2 #l6
+  !if &len #l3
+    set-position "\x82" 
+    !force 0 delete-buffer "*hkft1*"
+    find-buffer "*hkft1*"
+    set-variable $buffer-fname &cat #l3 &con &sin &rig #l3 -1 "\\/" "" "/"
+  !endif
+  0x80 ipipe-shell-command &spr "%s %s" #l2 #l6 &spr "*%s-lint*" #l0 file-tools-ipipe @nma
+  !if &len #l3
+    goto-position "\x82" 
+    !force 0 delete-buffer "*hkft1*"
+  !endif
+  popup-window &spr "*%s-lint*" #l0
+  fhook-ipipe
+!emacro

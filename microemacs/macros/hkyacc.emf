@@ -90,9 +90,7 @@ set-variable .fhook-yacc.item-list-r2 "Func \ecB\\6\ecA"
   hilight .hilight.yacc    0 "'\\\\''"      .scheme.quote
   ; Special type for LEX patterns to keep hilighting in check.
   hilight .hilight.yacc    0 "\\\\[\"'ntrb(){}$/*|\\\\!]" .scheme.quote
-  ; Hilight TODO in a comment - Examples
-  ; i.e. /* TODO I need to do this */
-  ; i.e. // TODO I need to do this */
+  ; Comment TODO's, i.e. /* TODO I need to do this */
   hilight .hilight.yacc   20 "/\\*\\s*[tT][oO][dD][oO]" "*/" "" .scheme.error
   hilight .hilight.yacc   18 "//\\s*[tT][oO][dD][oO]"           .scheme.error
   ; Function names and goto labels

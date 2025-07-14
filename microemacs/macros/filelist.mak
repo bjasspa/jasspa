@@ -54,9 +54,9 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkruby.emf	hkrul.emf	hkrust.emf	\
 	hksamba.emf	hkscheme.emf	hksgml.emf	hkshell.emf	\
 	hkslang.emf	hkspec.emf	hksql.emf	hkswift.emf	\
-	hktcl.emf	hktexi.emf	hktxt.emf	hkv.emf		\
-	hkvb.emf	hkverilg.emf	hkvhdl.emf	hkvrml.emf	\
-	hkwiki.emf	hkyaml.emf	\
+	hktcl.emf	hktexi.emf	hktools.emf	hktxt.emf	\
+	hkv.emf		hkvb.emf	hkverilg.emf	hkvhdl.emf	\
+	hkvrml.emf	hkwiki.emf	hkyaml.emf	\
 	hkxml.emf	xmlutil.emf	\
 	hkyacc.emf	hkzig.emf	\
 	hpux.emf	htmlcore.emf	htmltool.emf	htmlutil.emf	\
@@ -80,7 +80,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	pagefile.emf	password.emf	patience.emf	perltags.emf	\
 	phptags.emf	print.emf	printall.emf	printd.emf	\
 	printepc.emf	printers.emf	printf.emf	printstp.emf	\
-	pytools.emf	rect.emf	rtools.emf	\
+	rect.emf	\
 	scheme.emf	schemeal.emf	schemead.emf	schemeb.emf	\
 	schemebc.emf	schemech.emf	\
 	schemecf.emf	schemecl.emf	schemecm.emf	schemecn.emf	\
