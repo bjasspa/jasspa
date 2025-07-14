@@ -134,10 +134,10 @@ add-next-line "*python-exec*" "^ *File \"%f\", line %l"
 add-next-line "*python-lint*" "^%f:%l:\\d+: "
 set-variable .fhook-python.coms "\bpython3\bpython2\bpython\b" 
 set-variable .fhook-python.exec1 "\b%v[com]\b\b\b\b\"%p%f\" %v[args|20|Additional command-line arguments|]\b"
-set-variable .fhook-python.format1 "\b%v[com]\b-m ruff -h\b0\b\b-m ruff format %\"%f%\"\bRuff\b"
+set-variable .fhook-python.format1 "\bruff\b-h\b0\b\bformat %\"%f%\"\bRuff\b"
 set-variable .fhook-python.format2 "\b%v[com]\b-m yapf -h\b0\b\b-m yapf -i %\"%p%f%\"\bYapf\b"
 set-variable .fhook-python.format3 "\b%v[com]\b-m black -h\b0\b\b-m black -q %\"%p%f%\"\bBlack\b"
-set-variable .fhook-python.lint1 "\b%v[com]\b-m ruff -h\b0\b\b-m ruff check %\"%f%\"\bRuff\b"
+set-variable .fhook-python.lint1 "\bruff\b-h\b0\b\bcheck %\"%f%\"\bRuff\b"
 set-variable .fhook-python.lint2 "\b%v[com]\b-m pylint -h\b0\b\b-m pylint %\"%p%f%\"\bPylint\b:\\d+:\\d+: E\\d+:\b:\\d+:\\d+: W\\d+:\b:\\d+:\\d+: [CR]\\d+:\b"
 
 ; Setup py-doc
