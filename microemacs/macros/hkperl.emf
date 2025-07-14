@@ -6,7 +6,7 @@
 ; copying information.
 ;
 ; Synopsis:    Perl hook - invoked when a Perl script file is loaded.
-; Authors:     Steven Phillips, Bruno Sabin & Jon Green
+; Authors:     Steven Phillips, Bruno Sabin, Jon Green & Detlef Groth
 ;
 define-macro fhook-perl
   set-variable $buffer-mask "luh1"
@@ -324,5 +324,13 @@ set-variable .fhook-perl.item-list-r1 "Sub  \ecB\\1\ecA"
   indent .hilight.perl e "\\$#" "." ""
   indent .hilight.perl i "#"  
 !endif
+
+; setup file-* tools
+add-next-line "*perl-exec*" "^.+ at %f line %l.+"
+add-next-line "*perl-lint*" "^%f:%l:\\d+: "
+set-variable .fhook-perl.coms "\bperl\b" 
+set-variable .fhook-perl.exec1 "\b%v[com]\b\b\b\b\"%p%f\" %v[args|20|Additional command-line arguments|]\b"
+set-variable .fhook-perl.format1 "\bperltidy\b-v\b0\b\b-b %\"%f%\"\bPerltidy\b"
+set-variable .fhook-perl.lint1 "\bperlcritic\b--version\b0\b\b--verbose \"%%f:%%l:%%s: %%m\\n\" %\"%f%\"\bPerlcritic\b"
 
 buffer-init-fhook "perl"
