@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ019.9,v 2.7 2022/06/12 17:14:33 jon Exp $
+.Id $Id: m9typ019.9,v 2.7 2025/07/14 07:29:20 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH tcl 9
@@ -20,6 +20,9 @@ tcl, tk \- TCL Programming language templates
 .na
 .B hktcl.emf
 \- TCL/TK programming language hook definition
+.br
+.B tcl.eaf
+\- TCL/TK programming language abbreviation file
 .br
 .B tcl.etf
 \- TCL/TK programming language template file
@@ -46,6 +49,16 @@ in the header.
 The  hilighting  features allow  commands,  variables,  logical,  preprocessor
 definitions,   comments,   strings  and  characters  of  the  language  to  be
 differentiated and rendered in different colors.
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for Tcl file  editing
+which  can  be  used  by  writing   short   abbreviations   like   "\fBif\fR",
+"\fBelse\fR" (else) or "\fBproc\fR" (procedure) - and then pressing the key-binding for the 
+.Ht expand-abbrev-handle 3
+command.  
+The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mE using the 
+.Ht abbrev-list 3
+command.
 .IP "\fBAuto Layout\fR"
 The
 .Hl "indentation mechanism" indent 2 
@@ -68,6 +81,11 @@ braces \fB{\fR...\fB}\fR located on the left-hand margin.
 .Ht collapse-current 3
 (un)folds the current region.
 Note that folding does not operate on K&R style code.
+.IP "\fBNavigation via Item List\fR"
+The Tcl mode offers beside folding as well support for displaying an outline of the
+procedures, methods and classes for easy navigation using the 
+.Ht item-list 3
+command.
 .IP "\fBShort Cuts\fR"
 The short cut keys used within the buffer are:-
 .IP
@@ -82,12 +100,19 @@ The short cut keys used within the buffer are:-
 \fBf2\fR \- (un)fold the current region
 .br
 \fBf3\fR \- (un)fold all regions
+.br
+\fBf6\fR \- List items.
+.br
+\fB\*ef6\fR \- Close item list,
 .SH "SEE ALSO"
 .na
+.Ht abbrev-list 3 ,
 .Ht collapse-all 3 ,
 .Ht collapse-current 3 ,
+.Ht expand-abbrev-handle 3 ,
 .Ht find-tag 2 ,
 .Ht indent 2 ,
+.Ht item-list 3 ,
 .Ht restyle-buffer 3 ,
 .Ht restyle-region 3 ,
 .Ht tcltags 3f ,

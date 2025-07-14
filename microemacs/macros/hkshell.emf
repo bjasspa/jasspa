@@ -32,8 +32,8 @@ define-macro fhook-shell
 
 ; buffer-init variables
 set-variable .fhook-shell.name "UNIX Shell"
-set-variable .fhook-shell.setup &reg "/history/fhook/shell" "bghiopx"
-set-variable .fhook-shell.setup-mask "aeghikmoptux"
+set-variable .fhook-shell.setup &reg "/history/fhook/shell" "bghionpx"
+set-variable .fhook-shell.setup-mask "aeghikmnoptux"
 set-variable .fhook-shell.comment "|#||#|# | #|r|"
 
 set-variable .fhook-shell.collapse-open  "^function\\s* .+ {\\s*"

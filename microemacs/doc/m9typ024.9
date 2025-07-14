@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ024.9,v 2.9 2022/06/12 17:14:33 jon Exp $
+.Id $Id: m9typ024.9,v 2.9 2025/07/14 07:37:16 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH perl 9
@@ -57,6 +57,16 @@ the header.
 The hilighting  features allow commands, variables, logical, comments, strings
 and characters of the language to be differentiated  and rendered in different
 colors.
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for Perl file  editing
+which  can  be  used  by  writing   short   abbreviations   like   "\fBif\fR",
+"\fBel\fR" (else) or "\fBsub\fR" (subroutine) - and then pressing the key-binding for the 
+.Ht expand-abbrev-handle 3
+command.  
+The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mE using the 
+.Ht abbrev-list 3
+command.
 .IP "\fBAuto Layout\fR"
 The
 .Hl "indentation mechanism" indent 2
@@ -73,6 +83,11 @@ Generic   folding  is  enabled  within  perl  files.  The  folds  occur  about
 (un)folds all regions in the file,
 .Ht collapse-current 3
 (un)folds the current region.
+.IP "\fBNavigation via Item List\fR"
+The Perl mode offers beside folding as well support for displaying an outline of the
+subroutines for easy navigation using the 
+.Ht item-list 3
+command.
 .IP "\fBShort Cuts\fR"
 The short cut keys used within the buffer are:-
 .IP
@@ -98,9 +113,12 @@ exceptions  have been caught,  however there are a few syntax  sequences  that
 involve quotation marks that can cause problems.
 .SH "SEE ALSO"
 .na
+.Ht abbrev-list 3 ,
 .Ht collapse-all 3 ,
 .Ht collapse-current 3 ,
+.Ht expand-abbrev-handle 3 ,
 .Ht indent 2 ,
+.Ht item-list 3 ,
 .Ht perldb 3 ,
 .Ht restyle-buffer 3 ,
 .Ht restyle-region 3 ,

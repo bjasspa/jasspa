@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ010.9,v 2.6 2025/07/05 11:54:14 jon Exp $
+.Id $Id: m9typ010.9,v 2.6 2025/07/13 13:35:02 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH p 9
@@ -34,7 +34,7 @@ p, pas \- Pascal files
 The  \fBpascal\fR  file type  template  provides  simple  hilighting of Pascal
 files, the template provides minimal hilighting.
 .IP "\fBAbbreviations\fR"
-The  installation  comes with a default  abbreviation  file for LaTeX file  editing
+The  installation  comes with a default  abbreviation  file for Pascal file  editing
 which  can  be  used  by  writing   short   abbreviations   like   "\fBif\fR",
 "\fBel\fR" (else) or "\fBbe\fR" (begin/end) - and then pressing the key-binding for the 
 .Ht expand-abbrev-handle 3
@@ -43,12 +43,57 @@ The  list  of  abbreviations  can be used  interactively  in the GUI
 version of \*(mE using the 
 .Ht abbrev-list 3
 command.
+.IP "\fBFolding and Information Hiding\fR"
+Generic  folding  is  enabled  within  the Pascal  file. The folds  occur  about
+functions,  procedures, record or classes as long as these declarations are on
+one line and and at a line starting with the \fBEnd;\fR keyword.
+.Ht collapse-all 3
+(un)folds all regions in the file,
+.Ht collapse-current 3
+(un)folds the current region.
+.IP "\fBNavigation via Item List\fR"
+The Pascal mode offers beside folding as well support for displaying an outline of the
+functions, procedures, records and classes or objects for easy navigation using the 
+.Ht item-list 3
+command.
+.IP "\fBWorking Environment\fR"
+.Ht compile 3
+may be invoked to rebuild the source, the user is prompted to save any files.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*cc \*cc\fR \- Comment out the current line.
+.br
+\fB\*cc \*cd\fR \- Uncomment the current line.
+.br
+\fB\*cc \*ce\fR \- Comment to the end of the line with stars (*).
+.br
+\fB\*a\*ci\fR \- Restyle the current region.
+.br
+\fB\*eq\fR \- Format a comment.
+.br
+\fB\*eo\fR \- Format a comment.
+.br
+\fBf2\fR \- (Un)fold the current region.
+.br
+\fB\*cf2\fR \- (Un)fold all regions.
+.br
+\fBf6\fR \- List items.
+.br
+\fB\*ef6\fR \- Close item list,
 .SH BUGS
 None reported.
 .SH "SEE ALSO"
 .na
 .Ht abbrev-list 3 ,
-.Ht expand-abbrev-handle 3 .
+.Ht collapse-all 3 ,
+.Ht collapse-current 3 ,
+.Ht compile 3 ,
+.Ht expand-abbrev-handle 3 ,
+.Ht item-list 3 ,
+.Ht restyle-buffer 3 ,
+.Ht restyle-region 3 ,
+.Ht time 2m .
 .sp 1
 .Hl "Supported File Types" FileTypes -
 .ad

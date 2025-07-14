@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ018.9,v 2.8 2025/03/10 08:22:33 jon Exp $
+.Id $Id: m9typ018.9,v 2.8 2025/07/13 13:38:07 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH java 9
@@ -19,6 +19,9 @@ java \- Java programming language templates
 .na
 .B hkjava.emf
 \- Java programming language hook definition
+.br
+.B java.eaf
+\- Java programming language abbreviation file
 .br
 .B java.etf
 \- Java programming language template file
@@ -41,6 +44,16 @@ the header.
 The  hilighting  features allow  commands,  variables,  logical,  preprocessor
 definitions,   comments,   strings  and  characters  of  the  language  to  be
 differentiated and rendered in different colors.
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for Java file  editing
+which  can  be  used  by  writing   short   abbreviations   like   "\fBif\fR",
+"\fBel\fR" (else) or "\fBcl\fR" (class) - and then pressing the key-binding for the 
+.Ht expand-abbrev-handle 3
+command.  
+The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mE using the 
+.Ht abbrev-list 3
+command.
 .IP "\fBAuto Layout\fR"
 The C-Mode
 .Ht indent 2
@@ -64,6 +77,11 @@ Generic folding is enabled within the Java files. The folds occur about braces
 (un)folds the current region.
 Note that  folding does not operate on K&R style code, with the trailing  open
 brace.
+.IP "\fBNavigation via Item List\fR"
+The Java mode offers beside folding as well support for displaying an outline of the
+functions and classes for easy navigation using the 
+.Ht item-list 3
+command.
 .IP "\fBTags\fR"
 A c-tags file may be  generated  within the editor using the  \fBTools\fR  \->
 \fBJava-Tools\fR \-> \fBCreate Tag File\fR.
@@ -104,6 +122,10 @@ The short cut keys used within the buffer are:-
 \fBf2\fR \- (un)fold the current region
 .br
 \fBf3\fR \- (un)fold all regions
+.br
+\fBf6\fR \- List items.
+.br
+\fB\*ef6\fR \- Close item list,
 .SH NOTES
 .PP
 The  hilighting  is  typically   extended  using  a  file   \fBmyjava.emf\fR
@@ -115,6 +137,7 @@ The  hilighting  is  typically   extended  using  a  file   \fBmyjava.emf\fR
 .Ht compile 3 ,
 .Ht find-tag 2 ,
 .Ht find-tag 2 ,
+.Ht item-list 3 ,
 .Ht javatags 3f ,
 .Ht rcs-file 2 ,
 .Ht restyle-buffer 3 ,
