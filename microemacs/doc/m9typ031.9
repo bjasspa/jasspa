@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 10 23:48:24 1999
 .\"
-.Id $Id: m9typ031.9,v 2.6 2022/06/12 17:14:33 jon Exp $
+.Id $Id: m9typ031.9,v 2.6 2025/07/15 21:07:27 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH vb 9
@@ -45,8 +45,44 @@ and
 .Ht restyle-buffer 3
 are available to reformat  (re-layout) selected sections of the buffer, or the
 whole buffer, respectively. The default indentation setting is 2.
+.IP "\fBFolding and Information Hiding\fR"
+Generic   folding  is  enabled  within  VisualBasic  files.  The  folds  occur  about
+\fIFunction\fR and \fISub\fRroutine  definitions  located  on  the  left-hand  margin  and  their
+\fIEnd\fR mark which is located at the beginning of a line.
+.Ht collapse-all 3
+(un)folds all regions in the file,
+.Ht collapse-current 3
+(un)folds the current region.
+.IP "\fBNavigation via Item List\fR"
+The VisualBasic mode offers beside folding as well support for displaying an outline of the
+Functions and Subroutines for easy navigation using the 
+.Ht item-list 3
+command.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*cc \*cc\fR \- Comment out the current line.
+.br
+\fB\*cc \*cd\fR \- Uncomment the current line.
+.br
+\fB\*cc \*e\*e\fR \- Command complete.
+.br
+\fB\*a\*ci\fR \- Restyle the current region.
+.br
+\fBf2\fR \- (Un)fold the current region.
+.br
+\fBf3\fR \- (Un)fold all regions.
+.br
+\fBf6\fR \- List items.
+.br
+\fB\*ef6\fR \- Close item list.
 .SH "SEE ALSO"
 .na
+.Ht collapse-all 3 ,
+.Ht collapse-current 3 ,
+.Ht item-list 3 ,
+.Ht restyle-region 3 ,
+.sp 1
 .Hl "Supported File Types" FileTypes -
 .ad
 .FH

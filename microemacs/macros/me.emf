@@ -108,7 +108,7 @@ add-file-hook ".htm .html .htp .hts" fhook-html
 add-file-hook ".lhtm .lhtml" fhook-lhtml
 add-file-hook ".cs" fhook-cs
 add-file-hook ".css" fhook-css
-add-file-hook ".bas .cls" fhook-vb
+add-file-hook ".bas .Bas .cls .Cls" fhook-vb
 add-file-hook ".asp" fhook-asp
 add-file-hook ".java .jav" fhook-java
 add-file-hook ".jsp" fhook-jsp
