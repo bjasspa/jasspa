@@ -80,7 +80,7 @@ jobs:
         run: |
           cd .\microemacs
           $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
-          cd .\3rdparty\openssl-3.0\x86\bin
+          cd .\3rdparty\openssl-3.5\x86\bin
           mkdir -Path tfs\bin\windows100-intel32
           Copy-Item -Path libssl-3.dll -Destination tfs\bin\windows100-intel32
           Copy-Item -Path libcrypto-3.dll -Destination tfs\bin\windows100-intel32
