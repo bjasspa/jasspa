@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ024.9,v 2.9 2025/07/14 07:37:16 jon Exp $
+.Id $Id: m9typ024.9,v 2.9 2025/07/15 18:56:17 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH perl 9
@@ -78,7 +78,8 @@ are available to reformat  (re-layout) selected sections of the buffer, or the
 whole buffer, respectively.
 .IP "\fBFolding and Information Hiding\fR"
 Generic   folding  is  enabled  within  perl  files.  The  folds  occur  about
-\fIsub\fR...\fB}\fR  located on the left-hand  margin. 
+\fIsub\fRroutine   definitions  located  on  the  left-hand  margin  and  their
+closing brace which is located at the beginning of a line.
 .Ht collapse-all 3
 (un)folds all regions in the file,
 .Ht collapse-current 3
@@ -102,6 +103,10 @@ The short cut keys used within the buffer are:-
 \fBf2\fR \- (un)fold the current region
 .br
 \fBf3\fR \- (un)fold all regions
+.br
+\fBf6\fR \- List items.
+.br
+\fB\*ef6\fR \- Close item list,
 .IP \fBDebugging\fR
 Debugging a perl script can be done inside \*(mS by using the
 .Ht perldb 3
