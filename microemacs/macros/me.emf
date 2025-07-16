@@ -98,8 +98,8 @@ add-file-hook ".sgm .sgml" fhook-sgml
 add-file-hook ".c .h .def .i" fhook-c
 add-file-hook ".cc .cpp .hpp .rc" fhook-cpp
 add-file-hook ".l .y" fhook-yacc
-add-file-hook "Makefile makefile .mak .mk .gmk" fhook-make
-add-file-hook "Imakefile imakefile" fhook-imake
+add-file-hook "makefile .mak .mk .gmk" fhook-make
+add-file-hook "imakefile" fhook-imake
 add-file-hook "smb.conf" fhook-samba
 add-file-hook "httpd.conf" fhook-apache
 add-file-hook ".sh .ksh .csh .login .bashrc .cshrc .tcshrc .zshrc .profile" fhook-shell
@@ -108,7 +108,7 @@ add-file-hook ".htm .html .htp .hts" fhook-html
 add-file-hook ".lhtm .lhtml" fhook-lhtml
 add-file-hook ".cs" fhook-cs
 add-file-hook ".css" fhook-css
-add-file-hook ".bas .Bas .cls .Cls" fhook-vb
+add-file-hook ".bas .cls" fhook-vb
 add-file-hook ".asp" fhook-asp
 add-file-hook ".java .jav" fhook-java
 add-file-hook ".jsp" fhook-jsp
@@ -140,7 +140,7 @@ add-file-hook ".py" fhook-python py-doc
 add-file-hook ".scm .sch" fhook-scheme
 add-file-hook ".mp .mf" fhook-meta
 add-file-hook ".m4" fhook-m4
-add-file-hook ".md .tmd .Rmd .rmd" fhook-md md-to-html md-to-htm md-to-latex md-process
+add-file-hook ".md .tmd .rmd" fhook-md md-to-html md-to-htm md-to-latex md-process
 add-file-hook ".texi" fhook-texi
 add-file-hook ".idl" fhook-idl
 add-file-hook ".info dir" fhook-info info info-on info-goto-link
@@ -156,8 +156,8 @@ add-file-hook ".au3" fhook-au3
 add-file-hook ".mod" fhook-mod2
 add-file-hook ".dot" fhook-dot
 add-file-hook ".rb" fhook-ruby
-add-file-hook ".rd .Rd" fhook-rd
-add-file-hook ".r .R .Rtk" fhook-r r-doc
+add-file-hook ".rd" fhook-rd
+add-file-hook ".r .rtk" fhook-r r-doc
 add-file-hook ".cfm .cfml .cfc" fhook-cfm
 add-file-hook ".iss" fhook-iss
 add-file-hook ".swift" fhook-swift
@@ -295,8 +295,13 @@ global-bind-key me-find-file           "find-file"
   global-bind-key end-of-line          "end"
   global-bind-key end-of-buffer        "C-end"
 !endif
-; execute msshift if using MS Shift style region definition and do Favorite bindings
-!iif &reg "/history/msshift" "0"  execute-file "msshift"
+; execute msshift if using MS Shift style region definition, otherwise create standard S-* bindings
+!if &reg "/history/msshift" "0"
+  execute-file "msshift"
+!else
+  1 global-bind-key transpose-region-line "C-S-down"
+  -1 global-bind-key transpose-region-line "C-S-up"
+!endif
 !if &reg "/history/bndfav" "0"
   set-variable #l0 9
   !repeat

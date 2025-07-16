@@ -129,7 +129,7 @@ addFileHook(int f, int n)
    Check the extent string for the filename extent. */
 
 static int
-checkExtent(meUByte *filename, int len, meUByte *sptr, meIFuncSSI cmpFunc)
+checkExtent(meUByte *filename, int len, meUByte *sptr)
 {
     int  extLen ;
     char cc ;
@@ -145,8 +145,8 @@ checkExtent(meUByte *filename, int len, meUByte *sptr, meIFuncSSI cmpFunc)
         extLen = 0 ;
         while(((cc=sptr[extLen]) != ' ') && ((cc=sptr[extLen]) != '\0'))
             extLen++ ;
-        if((extLen <= len) &&
-           !cmpFunc(sptr,filename-extLen,extLen))
+        /* Always ignore case as extsions are never case sensitive in file type IDing */
+        if((extLen <= len) && !meStrnicmp(sptr,filename-extLen,extLen))
             return 1 ;
         if(cc == '\0')
             return 0 ;
@@ -329,14 +329,7 @@ setBufferContext(meBuffer *bp)
             }
             ii = fileHookCount;
             while(--ii >= 0)
-                if((fileHookArg[ii] == 0) &&
-                   checkExtent(sp,ll,fileHookExt[ii],
-#ifdef _INSENSE_CASE
-                               meStrnicmp
-#else
-                               (meIFuncSSI) strncmp
-#endif
-                               ))
+                if((fileHookArg[ii] == 0) && checkExtent(sp,ll,fileHookExt[ii]))
                 {
                     hooknm = fileHookFunc[ii];
                     break;
