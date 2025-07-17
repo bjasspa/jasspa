@@ -4,8 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-% TODO: Update to include region 
-.Id $Id: m3mac060.3,v 1.7 2025/07/14 08:59:28 jon Exp $
+.Id $Id: m3mac060.3,v 1.7 2025/07/17 20:54:10 jon Exp $
 .Im MicroEmacs scuts
 .so me.tni
 .TH comment-line 3
@@ -51,35 +50,29 @@ comment-end \- End the current comment
 .B comment-end
 .ad
 .SH DESCRIPTION
-The action of the \fBcomment\fR  commands are file type specific  (comments in
-\fBC\fR  are \fC/* ... to ... */\fR where as \*(mS macro file  comments  are
-\fC; ... to the end of line\fR) so the commands  must be  configured  for each
-file   type   (see  the   NOTES   section   below).   The   configuration   is
-automatically  performed by almost all the standard  file  hooks released with
-\*(mS by the file hook so these commands should be fully functional.
+The action of the \fBcomment\fR commands are file type specific (comments in \fBC\fR are \fC/* ... to ... */\fR where
+as \*(mS macro file comments are \fC; ... to the end of line\fR) so the commands must be configured for each file type
+(see the NOTES section below). The configuration is automatically performed by almost all the standard file hooks
+released with \*(mS by the file hook so these commands should be fully functional.
 .PP
-\fBcomment-line\fR  comments out the current and next \fIn\fR-1 lines (default
-when  \fIn\fR is omitted is to comment out just the current  line). The cursor
-is then  moved to the  start of the next  line.  \fBuncomment-line\fR  behaves
-differently  depending  on whether the file type  terminates a comment with an
-end  token or  simply  by the end of the  line. If an end  token is used  then
-\fBuncomment-line\fR removes the current and next \fIn\fR comments. If the end
-of line is used \fBuncomment-line\fR  removes the first comment on the current
-and next \fIn-1\fR lines.
+\fBcomment-line\fR comments out the current region, if active and \fIn\fR is omitted, or the current and next
+\fIn\fR-1 lines (default when \fIn\fR is omitted is to comment out just the current line). The cursor is then moved to
+the start of the next line.
+.PP
+\fBuncomment-line\fR behaves in a similar way, except that for a file type that has a start and end comment token,
+like \fBC\fR, it can effect lines outside the current region or line count if a comment goes beyond the start or end
+of the defined region. Note that \fBuncomment-line\fR also attempts to undo the effects of re-indenting a line that
+has been commented out, hopefully restoring the original indentation.
 .PP
 \fBcomment-to-end-of-line\fR inserts \fIcomment-pad\fRs (see NOTES) up-to the
 .Ht $buffer-fill-col 5
-and  then   terminates   the  comment  with  the   \fIcomment-end\fR   string.
-\fBcomment-restyle\fR  reformats  the text within the  comment,  filling  text
-lines to the  \fB$buffer-fill-col\fR  and  regenerating  any boxing and divide
-lines.
+and then terminates the comment with the \fIcomment-end\fR string. \fBcomment-restyle\fR reformats the text within the
+comment, filling text lines to the \fB$buffer-fill-col\fR and regenerating any boxing and divide lines.
 .PP
-\fBcomment-start\fR  opens a new "\fB*comment*\fR"  buffer which is configured
-for writing a text comment, the user can then type in the comment with all the
-benefits of \*(mS in a plain text editor. Once the comment is complete use the
-\fBcomment-end\fR  command to insert the  comment  into the source  file, this
-comment is locally  bounded to "\fBC-c  C-c\fR". The styling of the comment is
-controlled by the \fIcomment-flag\fR setting (see NOTES).
+\fBcomment-start\fR opens a new "\fB*comment*\fR" buffer which is configured for writing a text comment, the user can
+then type in the comment with all the benefits of \*(mS in a plain text editor. Once the comment is complete use the
+\fBcomment-end\fR command to insert the comment into the source file, this comment is locally bounded 
+to "\fBC-c C-c\fR". The styling of the comment is controlled by the \fIcomment-flag\fR setting (see NOTES).
 .SH NOTES
 Consider the structure of a box comment to be as follows:
 .CS

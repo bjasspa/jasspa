@@ -1,0 +1,251 @@
+; -!- emf -!-
+;
+; Copyright (C) 2025 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    High-light differences between two lines
+; Authors:     Steven Phillips
+;
+!iif &not &exi memh-add-format  execute-file "memh"
+
+0 define-macro diff-lines-find-cont
+  set-variable #l0 $window-col
+  !if &les &sub &set #l2 #p8 $window-col 5
+    set-variable $window-col #l2
+    next-window
+    set-variable $window-col #p9
+    previous-window
+    !return
+  !endif
+  set-variable #l3 &add #p9 4
+  set-variable #l4 0
+  next-window
+  set-variable #l1 $window-col
+  previous-window
+  set-variable #l5 &cat "X" @wc
+  forward-char
+  set-variable #l5 &cat #l5 @wc
+  forward-char
+  set-variable #l5 &cat #l5 @wc
+  forward-char
+  set-variable #l5 &cat #l5 @wc
+  forward-char
+  !while &not &seq @wc "\n"
+    set-variable #l5 &cat &rig #l5 1 @wc
+    next-window
+    !force -1 search-buffer "Me" #l5
+    !if &not $status
+      previous-window
+    !elif &les $window-col #l3
+      set-variable #l3 $window-col
+      set-variable $window-col #l1
+      previous-window
+      set-variable #l4 $window-col
+      !iif &les &set #l6 &add #l0 &sub #l3 #l1 #l2  set-variable #l2 #l6
+    !else
+      set-variable $window-col #l1
+      previous-window
+    !endif
+    forward-char
+  !until &gre $window-col #l2
+  !if #l4
+    set-variable $window-col &sub #l4 4
+    next-window
+    set-variable $window-col &sub #l3 5
+  !else
+    set-variable $window-col #p8
+    next-window
+    set-variable $window-col #p9
+  !endif
+  previous-window
+!emacro
+0 define-macro diff-lines-cmp
+  set-variable #p9 -1
+  set-variable #l7 $window-line
+  !force 0 compare-windows
+  !if &gre $window-line #l7
+    set-variable #p9 0
+    !return
+  !endif
+  set-variable #l0 $window-col
+  end-of-line
+  set-variable #l4 &sub $window-col #l0
+  next-window
+  set-variable #l1 $window-col
+  end-of-line
+  !iif &les &sub $window-col #l1 #l4   set-variable #l4 &sub $window-col #l1
+  !while &pdec #l4 1
+    backward-char
+    set-variable #l2 @wc
+    previous-window
+    backward-char
+    set-variable #l3 @wc
+    !if &not &seq @wc #l2
+      forward-char
+      next-window
+      forward-char
+      !break
+    !endif
+    next-window
+  !done
+  set-variable #l9 $window-col
+  set-variable $window-col #l1
+  previous-window
+  set-variable #l8 $window-col
+  set-variable $window-col #l0
+  !if &gre #l1 #l9
+    set-variable #l8 &add #l8 &sub #l1 #l9
+    set-variable #l9 #l1
+  !elif &gre #l0 #l8
+    set-variable #l9 &add #l9 &sub #l0 #l8
+    set-variable #l8 #l0
+  !endif
+  !repeat
+    diff-lines-find-cont
+    !if &equ &set #l2 $window-col #l0
+      next-window
+      set-variable #l3 $window-col
+      insert-string "\CCA"
+      set-variable $window-col #l1
+      insert-string "\CCY"
+      set-variable $window-col &add #l3 4
+      set-variable #l9 &add #l9 4
+      previous-window
+    !else
+      next-window
+      !if &equ &set #l3 $window-col #l1
+        previous-window
+        insert-string "\CCA"
+        set-variable $window-col #l0
+        insert-string "\CCZ"
+        set-variable $window-col &add #l2 4
+        set-variable #l8 &add #l8 4
+      !else
+        insert-string "\CCA"
+        set-variable $window-col #l1
+        insert-string "\CCX"
+        set-variable $window-col &add #l3 4
+        set-variable #l9 &add #l9 4
+        previous-window
+        insert-string "\CCA"
+        set-variable $window-col #l0
+        insert-string "\CCX"
+        set-variable $window-col &add #l2 4
+        set-variable #l8 &add #l8 4
+      !endif
+    !endif
+    !force 0 compare-windows
+    !iif &gre $window-line #l7  !break
+    !iif &gre $window-col #l8  set-variable $window-col #l8
+    set-variable #l0 $window-col
+    next-window
+    !iif &gre $window-col #l9  set-variable $window-col #l9
+    set-variable #l1 $window-col
+    previous-window
+  !done
+  set-variable #p9 1
+!emacro
+; Bits in numeric arg have following behaviour 
+; 0x01 Copy lines to a new *diff-lines* buffer and show in popup window
+; 0x02 If set then use the mark position to locate 2nd line (and col if bit 0x04 set) otherwise use active region or, if none, compare with next line
+; 0x04 If set then diff from the current column, else diff from the start of the lines (was inverted 0x01)
+; 0x08 If set then don't Wrap the 2 lines, else the 2 lines will be wrapped if required
+define-macro diff-lines
+  !if &not &ban @# 2
+    0 show-region
+    set-variable @# &bor @# &con &ban $result 0x01 2 0
+  !endif
+  set-position "\x83"
+  set-variable #l8 $frame-id
+  set-variable #l7 $window-line
+  set-variable #l0 &con &ban @# 4 $window-col 0
+  !if &ban @# 2
+    exchange-point-and-mark
+    !iif &equ #l7 $window-line  -8 ml-write "[cannot diff a line with itself - change mark or cursor position]"
+  !endif
+  set-variable #l1 &con &ban @# 4 $window-col 0
+  !if &ban @# 1
+    beginning-of-line
+    set-mark
+    forward-line
+    copy-region
+    !iif &ban @# 2  set-variable $window-line #l7
+    beginning-of-line
+    set-mark
+    forward-line
+    copy-region
+    1 create-frame
+    find-buffer "*diff-lines*"
+    -1 buffer-mode "undo"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    insert-newline
+    yank
+    -1 yank
+    backward-line
+    yank
+    -1 yank
+    insert-newline
+    set-mark
+    2 backward-line
+    set-variable @# &bor @# 2
+  !else
+    1 create-frame
+  !endif
+  set-variable $window-col #l1
+  split-window-vertically
+  next-window
+  !if &ban @# 2
+    exchange-point-and-mark
+  !else
+    forward-line
+  !endif
+  set-variable $window-col #l0
+  previous-window
+  !force diff-lines-cmp
+  delete-frame
+  !while &not &seq #l8 $frame-id
+    next-frame
+  !done
+  goto-position "\x83"
+  !if &ban @# 1
+    popup-window "*diff-lines*"
+    set-variable $buffer-hilight .hilight.memh
+    beginning-of-buffer
+  !endif
+  !if &not &ban @# 8
+    set-variable #l1 &sub $window-width 1
+    !iif &ban @# 1  goto-line 4
+    !repeat
+      !force set-variable $window-acol #l1
+      !iif &seq @wc "\n"  !break
+      insert-newline
+    !done
+    !if &ban @# 1
+      goto-line 2
+    !elif &ban @# 2
+      exchange-point-and-mark
+    !else
+      forward-line
+    !endif
+    !repeat
+      !force set-variable $window-acol #l1
+      !iif &seq @wc "\n"  !break
+      insert-newline
+    !done
+    !if &ban @# 1
+      beginning-of-buffer
+    !else
+      goto-position "\x83"
+    !endif
+  !endif
+  !if &les #l9 0
+    -8 ml-write "[diff-line failed - please report with the two lines]"
+  !elif &not #l9
+    ml-write "[No differences found!]"
+  !endif
+!emacro
