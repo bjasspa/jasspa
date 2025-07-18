@@ -7,7 +7,7 @@
 .\"  Created       : Mon Jul 5 21:40:07 1999
 .\"  Last Modified : <250316.0854>
 .\"
-.Id $Id: m3fcl007.3,v 2.6 2022/06/12 17:13:41 jon Exp $
+.Id $Id: m3fcl007.3,v 2.6 2025/07/18 08:34:11 jon Exp $
 .Im MicroEmacs filter
 .so me.tni
 .TH ntags 3f
@@ -77,7 +77,7 @@ A list of source file masks to be processed when a directory is given, default
 value is "\fC:*.nrs:*.[1-9]:*.n:\fR".
 .IP \fB%tag-ignoredir\fR
 A list of  directories  to be ignored when  recursive  option is used, default
-value is "\fC:SCCS/:CVS/:\fR".
+value is "\fC:SCCS/:CVS/:.git/:.svn/:\fR".
 .PP
 These  variables  can be changed using the -v  command-line  option or via the
 "\fCmyntags.emf\fR" file
