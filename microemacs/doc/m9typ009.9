@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ009.9,v 2.6 2022/06/12 17:14:33 jon Exp $
+.Id $Id: m9typ009.9,v 2.6 2025/07/19 09:49:53 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH f 9
@@ -26,6 +26,9 @@ f, f77, f90 \- Fortran files
 .br
 .B f.etf
 \- Fortran (77) template file.
+.br
+.B f90.eaf
+\- Fortran 90 abbreviation file.
 .ad
 .SH EXTENSIONS
 .na
@@ -43,11 +46,65 @@ syntaxes, which are overloaded into the same file.
 The major  difference  between  the file  types,  apart from the new  reserved
 words, is the  comments. In Fortran 90 comments are  introduced  with  \fB!\fR,
 while the other types use a \fBc\fR in column 0.
+.IP "\fBGeneral Editing\fR"
+On creating a new file, a new header is automatically included into the file.
+.Ht time 2m
+is by default enabled, allowing the modification time-stamp to be maintained in
+the header.
+.IP \fBHilighting\fR
+The hilighting  features allow functions, subroutines, variables, logical, comments, strings
+and characters of the language to be differentiated  and rendered in different
+colors.
+.IP "\fBFolding and Information Hiding\fR"
+Generic  folding is enabled  within the \fBf90\fR files. The folds occur about
+\fBprogram\fR, \fBfunction\fR or \fBprocedure\fR keywords and their \fBend\fR text located on the left-hand margin.
+.Ht collapse-all 3
+(un)folds all regions in the file,
+.Ht collapse-current 3
+(un)folds the current region.
+.IP "\fBNavigation via Item List\fR"
+The Fortran mode offers beside folding as well support for displaying an outline of the
+functions, subroutine and program definitions of the Fortran file for easy navigation using the 
+.Ht item-list 3
+command.
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for MicroEmacs macro file  editing
+which  can  be  used  by  writing  short   abbreviations   like   "\fBwh\fR" (while),
+"\fBif\fR" (if), "\fBfu\fR" (function) or "\fBpg\fR" (program) - and then pressing the key-binding for the 
+.Ht expand-abbrev-handle 3
+command.  The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mE using the 
+.Ht abbrev-list 3
+command.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*cc \*cc\fR \- Comment out the current line.
+.br
+\fB\*cc \*cd\fR \- Uncomment the current line.
+.br
+\fB\*cc \*e\*e\fR \- Command complete.
+.br
+\fBf2\fR \- (un)fold the current region
+.br
+\fBf3\fR \- (un)fold all regions
+.br
+\fBf6\fR \- List items.
+.br
+\fB\*ef6\fR \- Close item list,
 .SH BUGS
 The Fortran hilight file is in it's infancy and a number of it's tokens may be
 misplaced.
 .SH "SEE ALSO"
 .na
+.Ht abbrev-list 3 ,
+.Ht collapse-all 3 ,
+.Ht collapse-current 3 ,
+.Ht expand-abbrev-handle 3 ,
+.Ht indent 2 ,
+.Ht item-list 3 ,
+.Ht time 2m .
+.sp 1
 .Hl "Supported File Types" FileTypes -
 .ad
 .FH
