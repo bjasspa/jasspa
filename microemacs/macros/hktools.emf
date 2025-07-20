@@ -38,7 +38,7 @@ define-macro-file hkipipe fhook-ipipe
 ;  @1 - file-type, @2 str, @3 file name
 0 define-macro file-proc-str
   set-variable #l9 @1
-  set-variable #l0 &rep &rep &rep &rep &rep @2 "%%" "\bA" "%\"" "\bE" "%[" "\bB" "%|" "\bC" "%]" "\bD"
+  set-variable #l0 &rep &rep &rep &rep &rep &rep @2 "%%" "\bA" "%&" "\bM" "%\"" "\bE" "%[" "\bB" "%|" "\bC" "%]" "\bD"
   set-variable #l2 @3
   !if &seq "" &set #l1 &rig #l2 &rsin "/" #l2
     ; cope with a directory name
@@ -62,7 +62,7 @@ define-macro-file hkipipe fhook-ipipe
     !iif &not &set #l5 &sin "]" #l4  -8 ml-write "[Error: Missing ']' in %i input]"
     set-variable #l4 &spr "\r%s\r" &rep &lef #l4 &sub #l5 1 "|" "\r"
     set-variable #l6 &rep &rep &rep &rep #l4 "%f" #l1 "%F" &rep #l1 "/" .osp "%b" #l2 "%e" #l3
-    set-variable #l6 &rep &rep &rep &rep #l6 "\bA" "%" "\bB" "[" "\bC" "|" "\bD" "]"
+    set-variable #l6 &rep &rep &rep &rep &rep #l6 "\bA" "%" "\bM" .m "\bB" "[" "\bC" "|" "\bD" "]"
     set-variable #l5 &spr "set-variable #l6 @ml%s%s \"%s\" \"%s\"" &con &seq &lget #l6 3 "" 0 1 &lget #l6 1 &lget #l6 2 &lget #l6 3
     execute-line #l5
     set-variable #l6 &rep &rep &rep &rep #l6 "%" "\bA" "[" "\bB" "|" "\bC" "]" "\bD"
@@ -74,7 +74,7 @@ define-macro-file hkipipe fhook-ipipe
     !iif &not &set #l5 &sin "]" #l4  -8 ml-write "[Error: Missing ']' in %v variable]"
     set-variable #l4 &spr "\r%s\r" &rep &lef #l4 &sub #l5 1 "|" "\r"
     set-variable #l6 &rep &rep &rep &rep #l4 "%f" #l1 "%F" &rep #l1 "/" .osp "%b" #l2 "%e" #l3
-    set-variable #l6 &rep &rep &rep &rep #l6 "\bA" "%" "\bB" "[" "\bC" "|" "\bD" "]"
+    set-variable #l6 &rep &rep &rep &rep &rep #l6 "\bA" "%" "\bM" .m "\bB" "[" "\bC" "|" "\bD" "]"
     !iif &xse &lef &set #l8 &lget #l6 1 1 "[0-9a-zA-Z]"  set-variable #l8 &spr ".%s.%s" #l9 #l8
     !if &not &exi &ind #l8
       !iif &seq "com" &lget #l6 1  file-tool-com-init #l9
@@ -100,7 +100,7 @@ define-macro-file hkipipe fhook-ipipe
     set-variable #l0 &spr "%s%s%s" &lef #l0 &sub #l7 1 #l6 &rig #l0 &add &add #l7 &len #l4 1
   !done
   set-variable #l0 &rep &rep &rep &rep #l0 "%f" #l1 "%F" &rep #l1 "/" .osp "%b" #l2 "%e" #l3
-  set-variable #l0 &rep &rep &rep &rep #l0 "\bA" "%" "\bB" "[" "\bC" "|" "\bD" "]"
+  set-variable #l0 &rep &rep &rep &rep &rep #l0 "\bA" "%" "\bM" .m "\bB" "[" "\bC" "|" "\bD" "]"
   !while &set #l4 &sin "\bE" #l0
     !if &not &set #l5 &sin "\bE" &rig #l0 &add #l4 1
       -8 ml-write "[Error: Missing '%\"' in command line]"
@@ -114,6 +114,7 @@ define-macro-file hkipipe fhook-ipipe
   !done
   set-variable @4 #l0
 !emacro
+set-variable .file-proc-str.m &con &seq $platform "windows" "&" ";"
 
 ; file tool helper, @1 = tool name, returns
 ;   #p1 = tool com list with #p2 = prog name, #p3 the start path, #p4 = command line (minus prog name)
@@ -219,33 +220,70 @@ define-macro file-exec
 !emacro
 
 define-macro file-format
+  0x6df set-position "\x82" 
   file-tools-init "format"
-  !if &bmod "edit"
-    set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-    !iif &iseq #l0 "y"  save-buffer 
+  ; Write buffer to a new temp file and format that, then read and update if required.
+  ; This means user can lost edits, so no need to prompt to save and operation and be easily undone.
+  set-variable #l5 &rsin "/" $buffer-fname
+  set-variable #l5 &con &gre &set #l6 &rsin "." $buffer-fname #l5 &rig $buffer-fname &sub #l6 1 ""
+  !repeat
+  !until &seq "X" &stat "t" &set #l7 &cat $temp-name #l5
+  4 append-buffer #l7
+  !if &len #l3
+    file-proc-str $buffer-fhook #l3 #l7 #l3
+  !else
+    set-variable #l3 &lef #l7 &rsin "/" #l7
   !endif
-  ; TODO change process to write buffer to tmp file, format, load, compare, update if required and feedback 
-  !iif &len #l3  file-proc-str $buffer-fhook #l3 $buffer-fname #l3
-  file-proc-str $buffer-fhook #l4 $buffer-fname #l6
+  file-proc-str $buffer-fhook #l4 #l7 #l6
   set-variable #l0 &rig $buffer-fhook 6
   ml-write &spr "Executing [%s %s]" #l2 #l6
-  !if &len #l3
-    set-position "\x82" 
-    !force 0 delete-buffer "*hkft1*"
-    find-buffer "*hkft1*"
-    set-variable $buffer-fname &cat #l3 &con &sin &rig #l3 -1 "\\/" "" "/"
-  !endif
+  !force 0 delete-buffer "*hkft1*"
+  find-buffer "*hkft1*"
+  set-variable $buffer-fname &cat #l3 &con &sin &rig #l3 -1 "\\/" "" "/"
   2 pipe-shell-command &spr "%s %s" #l2 #l6 &spr "*%s-format*" #l0
-  !if $result
+  set-variable #l2 $result
+  goto-position "\x82" 
+  !force 0 delete-buffer "*hkft1*"
+  !if #l2
     popup-window &spr "*%s-format*" #l0
-    !force 0 delete-buffer "*hkft1*"
+    17 goto-position "\x82" 
     !iif &seq "ERROR" &set #l8 &ind &spr ".%s.name" $buffer-fhook  set-variable #l8 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
-    -8 ml-write &spr "file-format error: %s file formatter execution failed, check for errors. Run major-mode-tools-setup to reconfigure." #l8
-  !elif &len #l3
-    goto-position "\x82" 
-    !force 0 delete-buffer "*hkft1*"
+    -8 ml-write &spr "file-format error: %s file formatter execution failed (exit code %s), check for errors. Run major-mode-tools-setup to reconfigure." #l8 #l2
   !endif
-  0 reread-file
+  set-variable #l8 $frame-id
+  1 create-frame
+  beginning-of-buffer
+  split-window-vertically
+  find-buffer "*hkft1*"
+  !force insert-file #l7
+  beginning-of-buffer
+  !force 0 compare-windows
+  !if &not &set #l2 $status
+    set-variable #l3 $window-line
+    set-variable #l4 $window-col
+    beginning-of-line
+    set-mark
+    end-of-buffer
+    copy-region
+    next-window
+    beginning-of-line
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    yank
+    -1 yank
+  !endif
+  delete-frame
+  !while &not &seq $frame-id #l8
+    next-frame
+  !done
+  !force 0 delete-buffer "*hkft1*"
+  !force goto-position "\x82" 
+  !if #l2
+    ml-write "file-format: No changes made by formatter."
+  !else
+    ml-write &spr "file-format: Buffer reformatted (first change at line %s, col %s)." #l3 #l4
+  !endif
 !emacro
 
 define-macro file-lint

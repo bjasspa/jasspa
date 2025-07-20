@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd003.2,v 2.7 2025/02/01 00:20:17 jon Exp $
+.Id $Id: m2cmd003.2,v 2.7 2025/07/16 19:29:55 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH add-file-hook 2
@@ -47,34 +47,29 @@ must be initialized prior to the first call, using an invocation of the form:-
 0 add-file-hook
 .CE
 .Me $ehf-scheme
-with a numeric argument \fIn\fR of 0, and no arguments. This invocation resets
-the file hooks by deleting all of the installed hooks. 
+with a numeric argument \fIn\fR of 0, and no arguments. This invocation resets the file hooks by deleting all of the
+installed hooks. 
 .SS "File Extension Recognition"
 .B add-file-hook 
-with no numerical argument \fIn\fR allows the extension of a file (or the base
-file name if there is no extension) to be used to determine which user defined
-setup  macro  is to be  executed.  The  \fIextensions\fR  argument  is a space
-separated list of \fIfile  endings\fR (as opposed to true  extensions)  and is
-usually  specified  with the extension  separator.  For example, the extension
-"\fC.doc\fR" may indicate that the file is a document and therefore the
+with no numerical argument \fIn\fR allows the extension of a file (or the base file name if there is no extension) to
+be used to determine which user defined setup macro is to be executed. The \fIextensions\fR argument is a space
+separated list of \fIfile endings\fR (as opposed to true extensions) and is usually specified with the extension
+separator. For example, the extension "\fC.doc\fR" may indicate that the file is a document and therefore the
 .Hl indent indent 2m ,  
 .Hl wrap wrap 2m 
 and 
 .Hl justify justify 2m 
-buffer modes are required. This may be performed  automatically  by defining a
-macro which adds these modes and adding a file hook to  automatically  execute
-this macro whenever a file "\fC*.doc\fR" is loaded.
+buffer modes are required. This may be performed automatically by defining a macro which adds these modes and adding a
+file hook to automatically execute this macro whenever a file "\fC*.doc\fR" is loaded.
 .PP
 The command arguments are defined as follows:-
 .IP \fIextensions\fR
-A space separated list of file extensions,  which are to be checked, this list
-includes the extension  separator  (typically  dot  ('\fC.\fR').  It should be
-noted that the  extension  search is actually a comparison  of the tail of the
-string, as such files such as \fImakefile\fR,  which do not have an extension,
-are specified literally.
+A space separated list of file extensions, which are to be checked, this list includes the extension separator,
+typically dot ('\fC.\fR'). It should be noted that the extension comparison is always case-insensitive and with the tail of the
+file name string. As a result, files such as \fImakefile\fR, which do not have an extension as such, can still be matched 
+using "\fCimakefile\fR".
 .IP \fIfhook-name\fR
-The name of the file hook to execute. This is the name of the macro to execute
-that initializes the buffer. 
+The name of the file hook to execute. This is the name of the macro to execute that initializes the buffer. 
 .LP
 As an example:-
 .Me $emf-scheme
@@ -88,17 +83,15 @@ define-macro fhook-doc
 add-file-hook ".doc" "fhook-doc"
 .CE
 .Me $ehf-scheme
-It is quite  possible  that the same macro should be executed for a text file,
-i.e.  "\fC*.txt\fR"  this is achieved by a single  \fBadd-file-hook\fR  as the
-space (' ') character is used as an extension separator, e.g.
+It is quite possible that the same macro should be executed for a text file, i.e. "\fC*.txt\fR" this is achieved by a
+single \fBadd-file-hook\fR as the space (' ') character is used as an extension separator, e.g.
 .Me $emf-scheme
 .CS
 add-file-hook ".doc .txt" "fhook-doc"
 .CE
 .Me $ehf-scheme
-There  are  three   special   file   hooks,   which  are   \fBfhook-binary\fR,
-\fBfhook-rbin\fR and \fBfhook-default\fR, these are not predefined, but if the
-user  defines them then they are executed  whenever a file is loaded in
+There are three special file hooks, which are \fBfhook-binary\fR, \fBfhook-rbin\fR and \fBfhook-default\fR, these are
+not predefined, but if the user defines them then they are executed whenever a file is loaded in
 .Hl binary binary 2m
 or
 .Hl "reduced binary" rbin 2m
@@ -106,13 +99,11 @@ mode (see
 .Ht buffer-mode 2 )
 or the extension does not match any of those defined.
 .PP
-Considering the  \fCfhook-XXX\fR  prefix, the initial '\fBf\fR' character must
-be present as this is changed to a \'\fBb\fR'  and an '\fBe\fR'  when  looking
-for the enter (begin)  buffer and exit buffer  hooks. These hooks are executed
-whenever the user swaps to or from a buffer (including creating and deleting).
-So for the given example, if the fill ignore characters are to be changed then
-this  operation  this  is  performed  by  defining  the   \fCbhook-XXX\fR  and
-\fCehook-XXX\fR macros, e.g.:-
+Considering the \fCfhook-XXX\fR prefix, the initial '\fBf\fR' character must be present as this is changed to a
+\'\fBb\fR' and an '\fBe\fR' when looking for the enter (begin) buffer and exit buffer hooks. These hooks are executed
+whenever the user swaps to or from a buffer (including creating and deleting). So for the given example, if the fill
+ignore characters are to be changed then this operation this is performed by defining the \fCbhook-XXX\fR
+and \fCehook-XXX\fR macros, e.g.:-
 .Me $emf-scheme
 .CS
 ; Begin hook - entering the buffer - save the current fill-ignore characters
