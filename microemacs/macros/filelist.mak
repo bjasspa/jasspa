@@ -104,7 +104,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	xfind.emf	\
 	zaurus.emf	zfile.emf
 # ETFS:sh =ls *.etf
-ETFS=	asmx86.etf	asn1.etf	au3.etf		\
+ETFS=	ada.etf		asmx86.etf	asn1.etf	au3.etf		\
 	bibtex.etf	\
 	c.etf		cfm.etf		cobol.etf	cpp.etf		\
 	c3.etf		dart.etf	doc.etf		\
