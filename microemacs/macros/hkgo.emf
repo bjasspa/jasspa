@@ -116,9 +116,9 @@ set-variable .fhook-go.item-list-r3 "type \ecB\\1\ecA"
 add-next-line "*go-exec*" "^%f:%l:\\d+.+"
 add-next-line "*go-lint*" "^vet: ./%f:%l:\\d+.+"
 set-variable .fhook-go.coms "\bgo\b" 
-set-variable .fhook-go.exec1   "\b%v[com]\bversion\b0\b\b%v[com] run %\"%f%\" %v[args|20|Additional command-line arguments|]\b"
-set-variable .fhook-go.format1 "\b%v[com]\bversion\b0\b\b%v[com] fmt %\"%f%\"\bGofmt\b"
-set-variable .fhook-go.lint1   "\b%v[com]\bversion\b0\b\b%v[com] vet %\"%f%\"\bGovet\b"
+set-variable .fhook-go.exec1   "\b%v[com]\b%v[com] version\b0\b\b%v[com] run %\"%f%\" %v[args|20|Additional command-line arguments|]\b"
+set-variable .fhook-go.format1 "\b%v[com]\b%v[com] version\b0\b\b%v[com] fmt %\"%f%\"\bGofmt\b"
+set-variable .fhook-go.lint1   "\b%v[com]\b%v[com] version\b0\b\b%v[com] vet %\"%f%\"\bGovet\b"
 
 buffer-init-fhook "go"
 

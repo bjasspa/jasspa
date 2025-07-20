@@ -117,7 +117,7 @@ define-macro-file hkipipe fhook-ipipe
 set-variable .file-proc-str.m &con &seq $platform "windows" "&" ";"
 
 ; file tool helper, @1 = tool name, returns
-;   #p1 = tool com list with #p2 = prog name, #p3 the start path, #p4 = command line (minus prog name)
+;   #p1 = tool com list with #p2 = main program, #p3 the start path, #p4 = full command line
 ; variables #p3 & #p4 have not be expanded, i.e. may still contain %p & %f etc  
 0 define-macro file-tools-init
   set-variable #l9 @1
@@ -137,7 +137,7 @@ set-variable .file-proc-str.m &con &seq $platform "windows" "&" ";"
         !break
       !else
         file-proc-str $buffer-fhook #l3 $buffer-fname #l3
-        shell-command &spr "%s %s" #l2 #l3
+        shell-command #l3
         !iif &equ $result &lget #l1 3  !break
       !endif
     !done
@@ -203,14 +203,14 @@ define-macro file-exec
   !iif &len #l3 file-proc-str $buffer-fhook #l3 $buffer-fname #l3
   file-proc-str $buffer-fhook #l4 $buffer-fname #l6
   set-variable #l0 &rig $buffer-fhook 6
-  ml-write &spr "Executing [%s %s]" #l2 #l6
+  ml-write &spr "Executing [%s]" #l6
   !if &len #l3
     set-position "\x82" 
     !force 0 delete-buffer "*hkft1*"
     find-buffer "*hkft1*"
     set-variable $buffer-fname &cat #l3 &con &sin &rig #l3 -1 "\\/" "" "/"
   !endif
-  0x80 ipipe-shell-command &spr "%s %s" #l2 #l6 &spr "*%s-exec*" #l0 file-tools-ipipe @nma
+  0x80 ipipe-shell-command #l6 &spr "*%s-exec*" #l0 file-tools-ipipe @nma
   !if &len #l3
     goto-position "\x82" 
     !force 0 delete-buffer "*hkft1*"
@@ -236,11 +236,11 @@ define-macro file-format
   !endif
   file-proc-str $buffer-fhook #l4 #l7 #l6
   set-variable #l0 &rig $buffer-fhook 6
-  ml-write &spr "Executing [%s %s]" #l2 #l6
+  ml-write &spr "Executing [%s]" #l6
   !force 0 delete-buffer "*hkft1*"
   find-buffer "*hkft1*"
   set-variable $buffer-fname &cat #l3 &con &sin &rig #l3 -1 "\\/" "" "/"
-  2 pipe-shell-command &spr "%s %s" #l2 #l6 &spr "*%s-format*" #l0
+  2 pipe-shell-command #l6 &spr "*%s-format*" #l0
   set-variable #l2 $result
   goto-position "\x82" 
   !force 0 delete-buffer "*hkft1*"
@@ -295,14 +295,14 @@ define-macro file-lint
   !iif &len #l3  file-proc-str $buffer-fhook #l3 $buffer-fname #l3
   file-proc-str $buffer-fhook #l4 $buffer-fname #l6
   set-variable #l0 &rig $buffer-fhook 6
-  ml-write &spr "Executing [%s %s]" #l2 #l6
+  ml-write &spr "Executing [%s]" #l6
   !if &len #l3
     set-position "\x82" 
     !force 0 delete-buffer "*hkft1*"
     find-buffer "*hkft1*"
     set-variable $buffer-fname &cat #l3 &con &sin &rig #l3 -1 "\\/" "" "/"
   !endif
-  0x80 ipipe-shell-command &spr "%s %s" #l2 #l6 &spr "*%s-lint*" #l0 file-tools-ipipe @nma
+  0x80 ipipe-shell-command #l6 &spr "*%s-lint*" #l0 file-tools-ipipe @nma
   !if &len #l3
     goto-position "\x82" 
     !force 0 delete-buffer "*hkft1*"

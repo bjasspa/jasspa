@@ -212,9 +212,9 @@ set-variable .fhook-r.item-list-r3 "Oper \ecB\\1\ecA"
 add-next-line "*r-lint*" "^%f:%l:\\d+: "
 set-variable .fhook-r.enc &con &seq "" &set #l0 &reg &spr "/history/%s/char-set" %platform "" "" &spr "%s" &sup &rep #l0 "iso" "ISO-"
 set-variable .fhook-r.coms "\bRscript\b" 
-set-variable .fhook-r.exec1 "\b%v[com]\b\b\b\b%v[com] --encoding=%v[enc] \"%p%f\" %v[args|20|Additional command-line arguments|]\b"
-set-variable .fhook-r.format1 "\b%v[com]\b-e \"formatR::tidy_file\"\b0\b\b%v[com] -e \"options('encoding'='%v[enc]');library(formatR);formatR::tidy_file('%p%f')\"\b"
-set-variable .fhook-r.lint1 "\b%v[com]\b-e \"lintr::lint\"\b0\b\b%v[com] -e \"options('encoding'='%v[enc]');library(lintr);lintr::lint('%p%f',linters = linters_with_defaults(indentation_linter = indentation_linter(indent = 4L)))\"\b\b:\\d+:\\d+: error: \b:\\d+:\\d+: warning: \b:\\d+:\\d+: style: \b"
+set-variable .fhook-r.exec1   "\b%v[com]\b\b\b\b%v[com] --encoding=%v[enc] \"%p%f\" %v[args|20|Additional command-line arguments|]\b"
+set-variable .fhook-r.format1 "\b%v[com]\b%v[com] -e \"formatR::tidy_file\"\b0\b\b%v[com] -e \"options('encoding'='%v[enc]');library(formatR);formatR::tidy_file('%p%f')\"\b"
+set-variable .fhook-r.lint1   "\b%v[com]\b%v[com] -e \"lintr::lint\"\b0\b\b%v[com] -e \"options('encoding'='%v[enc]');library(lintr);lintr::lint('%p%f',linters = linters_with_defaults(indentation_linter = indentation_linter(indent = 4L)))\"\b\b:\\d+:\\d+: error: \b:\\d+:\\d+: warning: \b:\\d+:\\d+: style: \b"
 
 define-macro fhook-r-doc
   buffer-init-hooks
