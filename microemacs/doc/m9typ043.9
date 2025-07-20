@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ043.9,v 1.2 2025/07/20 14:11:42 jon Exp $
+.Id $Id: m9typ043.9,v 1.2 2025/07/20 14:29:23 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH ada 9
@@ -23,6 +23,9 @@ Ada \- Ada programming language
 .br
 .B ada.eaf
 \- Ada programming language abbreviation file
+.br
+.B ada.etf
+\- Ada programming language template file
 .ad
 .SH EXTENSIONS
 .na
@@ -44,7 +47,10 @@ The  installation  comes with a default  abbreviation  file for Ada file  editin
 which  can  be  used  by  writing  short   abbreviations   like   "\fBfo\fR",
 \fBif\fR", "\fBel\fR" or "\fBfu\fR" - and then pressing the key-binding for the 
 .Ht expand-abbrev-handle 3
-command.  
+command.  The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mE using the 
+.Ht abbrev-list 3
+command.
 .IP "\fBShort Cuts\fR"
 The short cut keys used within the buffer are:-
 .IP
@@ -59,6 +65,10 @@ The short cut keys used within the buffer are:-
 \fB\*cc \*co\fR \- Format a comment
 .SH "SEE ALSO"
 .na
+.Ht abbrev-list 3 ,
+.Ht expand-abbrev-handle 3 ,
+.Ht time 2m .
+.sp 1
 .Hl "Supported File Types" FileTypes -
 .ad
 .FH
