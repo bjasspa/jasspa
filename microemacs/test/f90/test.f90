@@ -21,7 +21,7 @@ contains
 end module
 
 program hello
-    use test, only : test1
+    use test, only: test1
     integer :: y
     real :: x
     x = 3.0
