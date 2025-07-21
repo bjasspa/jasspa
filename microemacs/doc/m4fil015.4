@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil015.4,v 2.9 2025/01/28 23:38:14 jon Exp $
+.Id $Id: m4fil015.4,v 2.9 2025/07/21 23:13:27 jon Exp $
 .Im MicroEmacs macro;variable
 .so me.tni
 .TH "MessageLineVariables" 4
@@ -38,8 +38,9 @@ The \fB@mn\fR  variable  cause \*(mS to input data from the user in the default 
 the normal prompt with the normal history and completion etc. Similarly  \fB@mna\fR  causes \*(mS to input the current
 argument and any subsequent arguments in the default way.
 .PP
-The \fB@ml\fR  variable can be used to get a string (or Line) of text from the user using the  message-line  in a very
-flexible way. The first optional flag \fBf\fR is a bitwise flag where each bit has the following meaning
+The \fB@ml\fR variable can be used to get a string (or Line) of text from the user using the message-line in a very
+flexible way. The first optional flag \fBf\fR is a single character bitwise flag given in hexadecimal, where each bit
+has the following meaning
 .IP \fC0x01\fR
 The \fIdefault\fR value will be specified (except when flag \fBh\fR is \fCb\fR, see below) and this will be returned by default.
 .IP \fC0x02\fR
@@ -50,8 +51,8 @@ Auto-complete using the initial value, usually used with bit \fC0x02\fR.
 Hide the input string, the characters in the current input string are all displayed as \fC'*'\fRs.
 .PP
 If no value is specified then default value is 0 and \fBh\fR can not be specified. The \fIdefault\fR value is returned
-when the user  enters  an empty  string.  If the  \fIinitial\fR  string  is  specified  the the input  buffer  will be
-initialized to the given string instead of and empty one.
+when the user enters an empty string. If the \fIinitial\fR string is specified the input buffer will be initialized to
+the given string instead of and empty one.
 .PP
 The flag \fBh\fR specifies what type of data is to be entered, this specifies the history to be used and the semantics
 allowed, \fBh\fR can have the following values

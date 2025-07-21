@@ -63,7 +63,7 @@ define-macro-file hkipipe fhook-ipipe
     set-variable #l4 &spr "\r%s\r" &rep &lef #l4 &sub #l5 1 "|" "\r"
     set-variable #l6 &rep &rep &rep &rep #l4 "%f" #l1 "%F" &rep #l1 "/" .osp "%b" #l2 "%e" #l3
     set-variable #l6 &rep &rep &rep &rep &rep #l6 "\bA" "%" "\bM" .m "\bB" "[" "\bC" "|" "\bD" "]"
-    set-variable #l5 &spr "set-variable #l6 @ml%s%s \"%s\" \"%s\"" &con &seq &lget #l6 3 "" 0 1 &lget #l6 1 &lget #l6 2 &lget #l6 3
+    set-variable #l5 &spr "set-variable #l6 @ml%s%s \"%s\" \"%s\"" &con &gre &len &lget #l6 1 1 "" &con &gre &llen #l6 2 1 0 &lget #l6 1 &lget #l6 2 &lget #l6 3
     execute-line #l5
     set-variable #l6 &rep &rep &rep &rep #l6 "%" "\bA" "[" "\bB" "|" "\bC" "]" "\bD"
     set-variable #l0 &spr "%s%s%s" &lef #l0 &sub #l7 1 #l6 &rig #l0 &add &add #l7 &len #l4 1
@@ -89,8 +89,7 @@ define-macro-file hkipipe fhook-ipipe
       -8 ml-write &spr "[Error: Variable %%v[%s] not defined and no default given]" #l8
     !endif
     !if &gre &llen #l6 2
-      set-variable #g1 &rep &mid #l6 &add &len &lget #l6 1 2 -1 "\r" "\" \""
-      set-variable #l5 &spr "set-variable #l6 @ml%s \"%s\" \"%s\"" &lget #l6 2 &lget #l6 3 #l5
+      set-variable #l5 &spr "set-variable #l6 @ml%s%s \"%s\" \"%s\" \"%s\"" &con &gre &len &lget #l6 2 1 "" "1" &lget #l6 2 &lget #l6 3 #l5 &lget #l6 5
       execute-line #l5
       set-variable &ind #l8 #l6
     !else

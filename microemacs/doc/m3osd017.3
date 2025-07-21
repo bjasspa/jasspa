@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sun Feb 6 18:14:27 2005
 .\"
-.Id $Id: m3osd017.3,v 2.5 2022/06/12 17:14:01 jon Exp $
+.Id $Id: m3osd017.3,v 2.5 2025/07/22 00:01:28 jon Exp $
 .Im MicroEmacs command|osd;command|file
 .so me.tni
 .TH file-tool-setup 3
@@ -24,52 +24,50 @@ file-tool-setup \- Define file-browser tools
 provides a dialog  interface  for  declaring  a set of actions to act on files
 shown in the
 .Ht file-browser 3
-directory listing. Actions may be defined to interact with \fCZIP\fR files for
-both creation and  extraction,  opening of \fCPDF\fR files with Adobe Acrobat,
-opening of Microsoft Word \fCDOC\fR  files with Word or StarOffice  etc. These
+directory listing. Actions may be defined to interact with \fCZIP\fR files for both creation and extraction, opening
+of \fCPDF\fR files with Adobe Acrobat, opening of Microsoft Word \fCDOC\fR files with Word or StarOffice etc. These
 options are shown in the \fBfile-browser\fR pop-up menu under \fBTools\fR.
 .PP
 The file tools may be configured from
 .Ht user-setup 3
-in the \fBMiscellaneous\fR tab or invoked directly from the command line using
-\fBfile-tool-setup\fR,  when  invoked  then  the File  Tool  Setup  dialog  is
-displayed. The dialog allows  commands to be be matched  against  certain file
-types that are determined  using a regular  expression, if a filename  matches
-the pattern then a command line or \*(mS command may be invoked to process the
-file(s).  The command  line  includes  \fIvariables\fR  which are filled in by
-\*(mS.  The  information  is  stored  in the  registry  \fIuser.erf\fR  and is
-retained across sessions.
+in the \fBMiscellaneous\fR tab or invoked directly from the command line using \fBfile-tool-setup\fR, when invoked
+then the File Tool Setup dialog is displayed. The dialog allows commands to be be matched against certain file types
+that are determined using a regular expression, if a filename matches the pattern then a command line or \*(mS command
+may be invoked to process the file(s). The command line includes \fIvariables\fR which are filled in by \*(mS. The
+information is stored in the registry \fIuser.erf\fR and is retained across sessions.
 .PP
-The  \fBfile-tool-setup\fR  presents a list of tools, there is no limit to the
-number of tools which can be defined or to the number of tools that may map to
-a specific file type. The dialog has the following fields:
+The \fBfile-tool-setup\fR presents a list of tools, there is no limit to the number of tools which can be defined or
+to the number of tools that may map to a specific file type. The dialog has the following fields:
 .BP Name
 Declares the name of the tool as it appears in the \fBTools\fR section of the
 .Ht file-browser 3
-pop-up menu. A single menu  short-cut  key may be defined by prefixing the hot
-key with a \fC\\H\fR.
+pop-up menu. A single menu short-cut key may be defined by prefixing the hot key with a \fC\\H\fR.
 .BP "File Mask"
-A regular  expression  that is used to search for files of a given  type, this
-follows the standard \*(mS
+A regular expression that is used to search for files of a given type, this follows the standard \*(mS
 .Hl "Regular Expression" RegularExpressions 2
-syntax. As an  example  'all  files' is defined as  "\fC.*\fR",  PDF files are
-defined as \fC.*\\.pdf\fR,  image files might be defined as a set of different
-extensions \fC.*\\.\\(png\\|jpg\\|jpeg\\|bmp\\|gif\\)\fR, etc.
+syntax. As an example 'all files' is defined as "\fC.*\fR", PDF files are defined as \fC.*\\.pdf\fR, image files might
+be defined as a set of different extensions \fC.*\\.\\(png\\|jpg\\|jpeg\\|bmp\\|gif\\)\fR, etc.
 .BP Command
-Defines  the  command  line or \*(mS  command  that is executed to process the
-action. The command line  comprises  escape  characters  using the  percentage
-(\fC%\fR) character, these fields are filled in automatically by \*(mS and are
-defined as follows:
+Defines the command line or \*(mS command that is executed to process the action. The command line comprises escape
+characters using the percentage (\fC%\fR) character, these fields are filled in automatically by \*(mS and are defined
+as follows:
 .RS
+.PP
+\fB%%\fR - Replaced with a single '\fC%\fR' character.
+.TP
+\fB%;\fR - Command separator
+.\"
+Replaced with a '\fC;\fR' on UNIX or a '\fC&\fR' on Windows, used to execute two shell commands. T%he command to the left of 
+the \fB%&\fR will be executed first and it's exit code is ignore, the command to the right is then always executed. 
+Note that two ampersands ('\fB&&\fR') works in a similar way except if the exit code of the first (left hand) command 
+is non-zero, indicating an error, the other command is not executed. 
 .TP
 \fB%f\fR - Filename
 .\"
-A  replacement  for the  filename,  typically  passed in quotes to the command
-being executed as an argument. The filename is defined as a relative  pathname
-from the current  directory  location. If multiple  files are  selected in the
-\fBfile-browser\fR  then the command line is executed multiple times, once for
-each file, unless the \fB%*\fR  construct is used in conjunction with \fB%f\fR
-when multiple files may be specified with a single command invocation.
+A replacement for the filename, typically passed in quotes to the command being executed as an argument. The filename
+is defined as a relative pathname from the current directory location. If multiple files are selected in the
+\fBfile-browser\fR then the command line is executed multiple times, once for each file, unless the \fB%*\fR construct
+is used in conjunction with \fB%f\fR when multiple files may be specified with a single command invocation.
 .TP
 \fB%b\fR - Base Filename
 .\"
@@ -81,20 +79,33 @@ The file extension of the filename.
 .TP
 \fB%p\fR, \fB%P\fR - File pathname
 .\"
-The pathname of the file without the filename.  \fB%p\fR is the file path with
-\'/' forward slash directory  separators.  \fB%P\fR is the same as \fB%p\fR but
-with '\\' backslashes directory separators on Microsoft Windows and DOS.
+The pathname of the file without the filename. \fB%p\fR is the file path with \'/' forward slash directory separators.
+\fB%P\fR is the same as \fB%p\fR but with '\\' backslashes directory separators on Microsoft Windows and DOS.
 .TP
-\fB%i[\fR\|\fIh\fR\|\fB|\fR\|\fIprompt\fR\|\fB|\fR\|\fIdefault\fR\|\fB]\fR .. \fB%n\fR - User Input
+\fB%i[\fR\|\fIfh\fR\|\fB|\fR\|\fIprompt\fR\|\fB|\fR\|\fIdefault\fR\|\fB|\fR\|\fIinitial\fR\|\fB]\fR .. \fB%n\fR - User Input
 .\"
-Specifies  that the user is to be  prompted  for input from the command  line.
-Square brackets follow the \fB%i\fR which defines the command line prompt. The
-\fB%i[..]\fR  is  replaced  with the user input and may be  replicated  in the
-command line using \fB%n\fR where \fBn\fR is a digit \fC1..9\fR where \fB%1\fR
-reproduces the first \fB%i\fR, \fB%2\fR reproduces the second, ... etc.
+Specifies that the user is to be prompted for input from the command line. Square brackets follow the \fB%i\fR which
+defines the command line prompt. The \fB%i[..]\fR is replaced with the user input and may be replicated in the command
+line using \fB%n\fR where \fBn\fR is a digit \fC1..9\fR where \fB%1\fR reproduces the first \fB%i\fR, \fB%2\fR
+reproduces the second, ... etc.
 .IP
-\fIh\fR  specifies  the type of data to be entered  including  the history and
-semantics allowed. \fIh\fR may have the following values:
+\fIf\fR specifies the input flags and \fIh\fR the data type to be entered including the history and semantics allowed,
+both may be omitted, but when only one is given it is assumed to be \fIh\fR. When given, \fIf\fR is a single character
+bitwise flag given in hexadecimal, where each bit has the following meaning:
+.RS
+.IP \fC0x01\fR
+The \fIdefault\fR value will be specified and this will be returned by default. If this this bit is clear the default 
+value is completely omitted so that the \fIinitial\fR value effectively takes it's place.
+.IP \fC0x02\fR
+The \fIinitial\fR value will be specified and this will be initial value given on the input line.
+.IP \fC0x04\fR
+Auto-complete using the initial value, usually used with bit \fC0x02\fR.
+.IP \fC0x08\fR
+Hide the input string, the characters in the current input string are all displayed as \fC'*'\fRs.
+.RE
+.IP
+If \fBf\fR is not specified the flag will be set to 0 or 1 depending on whether a \fIdefault\fR value is given.
+\fIh\fR may have the following values:
 .sp
 .nf
 .na
@@ -107,19 +118,20 @@ semantics allowed. \fIh\fR may have the following values:
 \fC6\fR For a MicroEmacs mode name, with completion and history.
 \fC7\fR For a MicroEmacs variable name, with completion and history.
 \fC8\fR For a general string using no history.
-\fC9\fR For a user supplied completion list (\fCcom-list\fR).
-\fCa\fR For a user supplied completion list (\fCbuffer-name\fR).
 .ad
 .fi
 .IP
 \fIprompt\fR is the prompt string presented on the command line.
 .IP
-\fIdefault\fR is the default value that should be used. The \fB%\fR characters
-may be used and will be  replaced  with  information  from the  filename  e.g.
-\fB%b\fR would be replaced with the base file name.
+\fIdefault\fR is the default value that should be used and must be supplied when bit 1 of the \fIf\fR flag is set. The
+\fB%\fR characters may be used and will be replaced with information from the filename e.g. \fB%b\fR would be replaced
+with the base file name.
 .IP
-As an example of the user input, consider the following  command line which is
-used to unzip a \fB.zip\fR file:
+\fIinitial\fR specifies the initial value for the input buffer, it must be supplied when bit 2 of the \fIf\fR flag is
+set. The \fB%\fR characters may be used and will be replaced with information from the filename e.g. \fB%b\fR would be
+replaced with the base file name.
+.IP
+As an example of the user input, consider the following command line which is used to unzip a \fB.zip\fR file:
 .IP
 \fCunzip "%f" -d %i[4|Unzip sub-dir|%b]\fR
 .IP
@@ -132,7 +144,7 @@ Where the user input is  required in multiple  parts of the command  line then
 the \fB%1\fR syntax may be used. The following example may be used to create a
 \fB.zip\fR archive from one or more selections in the file list.
 .IP
-\fCrm -f "%i[4|Zip file name|%b].zip"; zip -r %1.zip%*[ "%f"]\fR
+\fCrm -f "%i[14|Zip file name|%b].zip"%& zip -r %1.zip%*[ "%f"]\fR
 .IP
 In this  instance  the user is prompted  for the \fCZip file name\fR and it is
 used twice in the command  line, the default name is the base file name of the
@@ -144,6 +156,21 @@ first  file.  Consider  two  files  have  been  selected   \fCfoo.txt\fR   and
 Note how the \fIbasename\fR has been used as the default for the zip file name
 to create  and this has been used in two places in the  command  line, once to
 delete the old archive if it already exists and once to form the new archive.
+.TP
+\fB%v[\fR\|\fIvariable\fR\|\fB|\fR\|\fIfh\fR\|\fB|\fR\|\fIprompt\fR\|\fB|\fR\|\fIdefault\fR\|\fB|\fR\|\fIinitial\fR\|\fB]\fR - Variable
+.\"
+Inserts the current value of \fBvariable\fR, if \fBvariable\fR just contains alpha numeric characters then it is 
+prefixed "\fC.V\fR" to create a command variable (it is the user's responsibility to avoid variable name conflicts).
+The use of \fB%v\fR is similar to the use of \fB%i\fR except its value persists to the next use, so the 
+default is only ever used once.
+.IP
+An initial value for the variable is required, which means the variable must already be defined or a \fIdefault\fR
+value must be specified. The arguments \fIfh\fR onwards are the same as \fB%i\fR's.
+.TP
+\fB%v[\fR\|\fIvariable\fR\|\fB|\fR\|\fIdefault\fR\|\fB]\fR - Variable
+.\"
+As above except the user is never prompted for a new value, if the \fBdefault\fR value is omitted the variable must 
+already be define. 
 .TP
 \fB%*[\fR\|\fIargument\fR\|\fB]\fR - Multiple file command line
 .\"
@@ -165,26 +192,22 @@ command line to add to the archive:
 .TP
 \fB%"\fR\|\fI...\fR\|\fB%"\fR - Quote text
 .\"
-Using quote tags ensures the quoted part of the  command-line  is treated as a
-single argument. For example, if the tool:
+Using quote tags ensures the quoted part of the command-line is treated as a single argument. For example, if the
+tool:
 .IP
 \fCunzip %f\fR
 .IP
-is used for the file "Test Files.zip" the command-line  becomes  \'\fCunzip\fR
-\fCTest\fR  \fCFiles.zip\fR'  which will not work correctly,  conversely using
-\fC"%f"\fR will not work for files with quotes (e.g.  '2"bolt.def').  However,
-if
+is used for the file "Test Files.zip" the command-line becomes \'\fCunzip\fR \fCTest\fR \fCFiles.zip\fR' which will
+not work correctly, conversely using \fC"%f"\fR will not work for files with quotes (e.g. '2"bolt.def'). However, if
 .IP
 \fCunzip %"%f%"\fR
 .IP
-is used  \*(mS  works  out the  best way to quote  the file  name for it to be
-properly processed.
+is used \*(mS works out the best way to quote the file name for it to be properly processed.
 .TP
 \fB*\fR\fI\*(mS-Command\fR - Internal command
 .\"
-Where the command  commences with a star character  (\fC*\fR) then the command
-is treated as a \*(mS command and is executed within the editor. As an example
-consider handling a zip file using the
+If the command starts with a star character (\fC*\fR) then the command is treated as a \*(mS command and is executed
+within the editor. As an example consider handling a zip file using the
 .Ht find-zfile 3
 command:
 .IP
@@ -193,14 +216,12 @@ command:
 For each file then \fBfind-zfile\fR is invoked to read the zip archive.
 .RE
 .BP "Default Open"
-A flag that defines whether this is the default open action. When set then the
-command   is   automatically   launched   if  the  file  is   opened   in  the
-\fBfile-browser\fR  (usually  by left  clicking  on the file name or  pressing
-"\fCreturn\fR") . When clear then the tool has to be explicitly invoked.
+A flag that defines whether this is the default open action. When set then the command is automatically launched if
+the file is opened in the \fBfile-browser\fR (usually by left clicking on the file name or pressing "\fCreturn\fR") .
+When clear then the tool has to be explicitly invoked.
 .BP "Hide Window"
-Defines the visibility of the window associated with the command, for example,
-if the  command-line  uses a \fCcmd\fR shell to launch another process the cmd
-window should be hidden. This has no effect on internal \*(mS commands.
+Defines the visibility of the window associated with the command, for example, if the command-line uses a \fCcmd\fR
+shell to launch another process the cmd window should be hidden. This has no effect on internal \*(mS commands.
 .BP "Up/Down"
 Changes the item order in the list/menu by moving it up or down.
 .BP "Add"
