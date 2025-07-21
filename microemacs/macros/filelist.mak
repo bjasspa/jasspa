@@ -21,8 +21,8 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	clearcs.emf	cmacros.emf	collapse.emf	comment.emf	\
 	crosswd.emf	crtappln.emf	ctags.emf	cvs.emf		\
 	cygwin.emf	\
-	darwin.emf	dmf.emf		docmacro.emf	docutl.emf	\
-	dos.emf		draw.emf	\
+	darwin.emf	diffline.emf    dmf.emf		docmacro.emf	\
+	docutl.emf	dos.emf		draw.emf	\
 	ehftools.emf	emftags.emf	etfinsrt.emf	fahtzee.emf	\
 	fattrib.emf	favorite.emf	fileopen.emf	filetool.emf	\
 	filetype.emf	find.emf	fold.emf	\
@@ -104,7 +104,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	xfind.emf	\
 	zaurus.emf	zfile.emf
 # ETFS:sh =ls *.etf
-ETFS=	asmx86.etf	asn1.etf	au3.etf		\
+ETFS=	ada.etf		asmx86.etf	asn1.etf	au3.etf		\
 	bibtex.etf	\
 	c.etf		cfm.etf		cobol.etf	cpp.etf		\
 	c3.etf		dart.etf	doc.etf		\
