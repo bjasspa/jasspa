@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ044.9,v 1.2 2022/06/12 17:14:33 jon Exp $
+.Id $Id: m9typ044.9,v 1.2 2025/07/22 06:58:36 jon Exp $
 .Im MicroEmacs 
 .so me.tni
 .TH php 9
@@ -32,6 +32,15 @@ general-purpose  scripting  language PHP files. PHP is typically used embedded
 within
 .Ht html 9 
 files.
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for Php file  editing
+which  can  be  used  by  writing  short   abbreviations   like   "\fBfo\fR",
+\fBif\fR", "\fBel\fR" or "\fBfu\fR" - and then pressing the key-binding for the 
+.Ht expand-abbrev-handle 3
+command.  The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mE using the 
+.Ht abbrev-list 3
+command.
 .IP "\fBList Items\fR"
 Item listing is available and the key  constructs of the file may be listed in
 the \fIitem-list\fR.
@@ -55,6 +64,10 @@ The short cut keys used within the buffer are:-
 None  reported.
 .SH "SEE ALSO"
 .na
+.Ht abbrev-list 3 ,
+.Ht expand-abbrev-handle 3 ,
+.Ht item-list 3 ,
+.sp 1
 .Hl "Supported File Types" FileTypes -
 .ad
 .FH

@@ -15,10 +15,23 @@ define-macro fhook-ada
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-ada.setup &reg "/history/fhook/ada" "bghinopx"
-set-variable .fhook-ada.setup-mask "abeghikmnoptux"
+set-variable .fhook-ada.setup &reg "/history/fhook/ada" "bfghinopx"
+set-variable .fhook-ada.setup-mask "abefghikmnoptux"
 set-variable .fhook-ada.comment "|{|}|*|* | *|fr|"
 set-variable .fhook-ada.exact -1
+
+; Set up collapse for Ada
+set-variable .fhook-ada.collapse-open  "^\\(procedure \\|function \\|type \\w+ +is\\)"
+set-variable .fhook-ada.collapse-close "^end"
+set-variable .fhook-ada.collapse-mclose "1"
+set-variable .fhook-ada.collapse-mnext "-1"
+
+set-variable .fhook-ada.item-list-s1 "^procedure[ \t]+\\([.\\w]+\\)"
+set-variable .fhook-ada.item-list-r1 "Proc \ecB\\1\ecA"
+set-variable .fhook-ada.item-list-s2 "^function[ \t]+\\([.\\w]+\\)"
+set-variable .fhook-ada.item-list-r2 "Func \ecB\\1\ecA"
+set-variable .fhook-ada.item-list-s3 "^[Tt]ype[ \t]+\\(\\w+\\)[ \t]+is"
+set-variable .fhook-ada.item-list-r3 "Rcrd \ecB\\1\ecA"
 
 !if &and &sin "h" .fhook-ada.setup &band .hilight.flags 0x02 
   ; High-light ada Mode

@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ043.9,v 1.2 2025/07/20 14:29:23 jon Exp $
+.Id $Id: m9typ043.9,v 1.2 2025/07/22 06:28:50 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH ada 9
@@ -51,6 +51,19 @@ command.  The  list  of  abbreviations  can be used  interactively  in the GUI
 version of \*(mE using the 
 .Ht abbrev-list 3
 command.
+.IP "\fBFolding and Information Hiding\fR"
+Generic  folding  is  enabled  within  the Ada  file. The folds  occur  about
+functions,  procedures or records as long as these declarations are on
+one line and and at a line starting with the \fBend;\fR keyword.
+.Ht collapse-all 3
+(un)folds all regions in the file,
+.Ht collapse-current 3
+(un)folds the current region.
+.IP "\fBNavigation via Item List\fR"
+The Ada mode offers beside folding as well support for displaying an outline of the
+functions, procedures or records for easy navigation using the 
+.Ht item-list 3
+command.
 .IP "\fBShort Cuts\fR"
 The short cut keys used within the buffer are:-
 .IP
@@ -63,10 +76,23 @@ The short cut keys used within the buffer are:-
 \fB\*cc \*ce\fR \- Comment to the end of the line with hash (#).
 .br
 \fB\*cc \*co\fR \- Format a comment
+.br
+\fBf2\fR \- (Un)fold the current region.
+.br
+\fB\*cf2\fR \- (Un)fold all regions.
+.br
+\fBf6\fR \- List items.
+.br
+\fB\*ef6\fR \- Close item list,
+.SH BUGS
+None reported.
 .SH "SEE ALSO"
 .na
 .Ht abbrev-list 3 ,
+.Ht collapse-all 3 ,
+.Ht collapse-current 3 ,
 .Ht expand-abbrev-handle 3 ,
+.Ht item-list 3 ,
 .Ht time 2m .
 .sp 1
 .Hl "Supported File Types" FileTypes -
