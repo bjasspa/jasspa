@@ -1,0 +1,58 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1998-2009 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.Id $Id: m3mac104.3,v 2.2 2025/07/23 00:44:09 jon Exp $
+.Im MicroEmacs command|comparison
+.so me.tni
+.TH diff-lines 3
+.XI diff-lines - "Highlight the differences between two lines"
+.SH NAME
+diff-lines \- Highlight the differences between two lines
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B diff-lines
+.ad
+.SH DESCRIPTION
+.B diff-lines
+opens a window showing the differences found between two lines. If there is an active region the two lines compare are 
+the lines containing the mark with the line containing the cursor. If the is no active region the current line is 
+compared with the next.
+.PP
+The  numeric  argument  \fIn\fR is used to modify the default  behavior of the
+command, where the bits are defined as follows:
+.IP \fB0x01\fR
+When set the command copies the two lines into a new \fC*diff-lines*\fR buffer and displays it in popup window. When 
+clear the command operates in the current buffer directory, in which case it is the caller's responsibility to ensure 
+the buffer's highlighting has been setup correctly, see notes below.
+.IP \fB0x02\fR
+If set the mark position is always used to locate 2nd line, regardless of whether the region is active.
+.IP \fB0x04\fR
+If set the comparison is made for the current column of the cursor (and mark if region is used) to the end of the 
+line, this can be useful when the start of the lines have an ignorable difference such a +/- diff line markers.
+.IP \fB0x08\fR
+If set then the two lines are not wrapped, if clear the lines are wrapped at the width of the display window.
+.SH NOTES
+\fBdiff-lines\fR inserts the following
+.Ht hilight 2
+tags into the two lines:
+.IP \fC\\\\CCX\fR
+Start of a region of common change.
+.IP \fC\\\\CCY\fR
+Start of a region of added text.
+.IP \fC\\\\CCZ\fR
+Start of a region of removed text.
+.IP \fC\\\\CCA\fR
+End of the current region.
+.PP
+\fBdiff-lines\fR is a macro defined in \fCdiffline.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht compare-windows 2 ,
+.Ht diff 3 .
+.ad
+.FH
