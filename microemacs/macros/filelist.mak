@@ -116,8 +116,8 @@ ETFS=	ada.etf		asmx86.etf	asn1.etf	au3.etf		\
 	latex.etf	\
 	makefile.etf	md.etf		mhg.etf		mod2.etf	\
 	newcomp.etf	newuser.etf	nroff.etf	\
-	pascal.etf	perl.etf	pls.etf		psf.etf		\
-	python.etf	\
+	pascal.etf	perl.etf	php.etf		pls.etf
+	psf.etf		python.etf	\
 	rd.etf		rmd.etf		ruby.etf	rul.etf		\
 	rust.etf	shell.etf	spec.etf	sql.etf		\
 	tcl.etf		\
