@@ -1,0 +1,79 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1999-2025 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.\"  Created By    : Detlef Groth, University of Potsdam, Germany
+.\"  Created       : Fri Jul 23 09:35:00 2025
+.\"
+.Id $Id: m3fcl014.3,v 2.6 2025/07/23 13:08:27 jon Exp $
+.Im MicroEmacs filter
+.so me.tni
+.TH jstags 3f
+.XI jstags - "Generate a Javascript tags file"
+.SH NAME
+jstags \- Generate a Javascript tags file
+.Me $a
+.SH SYNOPSIS
+.na
+\fBme\fR "@jstags" [\fI-v%tag-option=<flags>\fR] [\fIfiles\fR]
+.ad
+.SH DESCRIPTION
+The start-up file  \fCperltags.emf\fR  may be invoked from the command line to
+generate a \fBtags\fR file for Javascript files, 
+.Ht js 9 .
+.PP
+Given a list of  \fIfiles\fR  a tags file  \fCtags\fR  is  generated  in the
+current directory, which may be used by the 
+.Ht find-tag 2
+command. If no \fIfiles\fR  are specified the default file list is "\fC./\fR",
+i.e. process the current  directory. If a directory name is given (such as the
+default  "\fC./\fR")  all Javascript  files  within  the  directory  will be
+processed.
+.PP
+The value of variable  \fB%tag-option\fR is used to control the tag generation
+process,  its value  \fI<flags>\fR  can  contain  any number of the  following
+flags:
+.IP \fCa\fR
+Append  new tags to the  existing  tag  file,  note  that if also  using  flag
+\&'\fCm\fR' multiple 'tags' to the same item may be created.
+.IP \fCm\fR
+Enable  multiple  tags. This enables the existence of 2 tags with the same tag
+name, but typically with different locations. See help on
+.Ht find-tag 2
+for more information on multiple tag support.
+.IP \fCr\fR
+Enables  recursive mode, any sub-directory  found within any given directories
+will also be processed.  
+.SH NOTES
+This function is invoked from menu 
+.IP
+.B "Tools -> Javascript Tools -> Generate Tags File"
+.LP
+when the user requests a tags file to be generated.
+.PP
+The user  setup  file  "\fCmyjstags.emf\fR"  is  executed  by jstags  during
+start-up, this file can be used to over-ride any of the jstags  configuration
+variables (see below).
+.PP
+The  following  variables are set within  "\fCjstags.emf\fR"  and are used to
+control the process:-
+.IP \fB%tag-option\fR
+Tags options flag, default value is "". See above for more information.
+.IP \fB%tag-filemask\fR
+A list of source file masks to be processed when a directory is given, default
+value   is   "\fC:*.js:\fR".
+.IP \fB%tag-ignoredir\fR
+A list of  directories  to be ignored when  recursive  option is used, default
+value is "\fC:SCCS/:CVS/:.git/:.svn/:\fR".
+.PP
+These  variables  can be changed using the -v  command-line  option or via the
+"\fCmyjstags.emf\fR" file
+.SH "SEE ALSO"
+.na
+.Ht find-tag 2 ,
+.Ht start-up 3 ,
+.Ht js 9 .
+.ad
+.FH

@@ -5,32 +5,34 @@
 .\" copying information.
 .\"
 .\"  Created By    : Detlef Groth
-.\"  Created       : Tue Jul 05 09:12:00 2025
+.\"  Created       : Tue Jul 23 09:23:00 2025
 .\"
-.Id $Id: m9typ054.9,v 2.8 2025/07/23 08:56:08 jon Exp $
+.Id $Id: m9typ055.9,v 2.8 2025/07/23 13:18:49 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH c3 9
-.XI vlang - "V programming language"
+.XI js - "Javascript programming language"
+.XI javascript - "Javascript programming language"
+.XI jscript - "Javascript programming language"
 .SH SYNOPSIS
-V-lang \- V programming language 
+js \- Javascript programming language 
 .SH FILES
 .na
-.B hkv.emf
-\- V programming language hook definition
+.B hkjs.emf
+\- Javascript programming language hook definition
 .br
-.B v.eaf
-\- V programming language abbreviation file
+.B js.eaf
+\- Javascript programming language abbreviation file
 .br
-.B v.etf
-\- V programming language template file
+.B js.etf
+\- Javascript programming language template file
 .ad
 .SH EXTENSIONS
 .na
-\fB.v\fR \- V-lang
+\fB.js\fR \- Javascript language file
 .ad
 .SH DESCRIPTION
-The \fBv\fR file type  templates share much with the 
+The \fBjs\fR file type  templates share much with the 
 .Ht c 9 
 template definitions, utilising the electric 'C' features for automatic layout
 of text.
@@ -58,32 +60,37 @@ Comments  may be formatted  using  \fC\*eo\fR,  which  reformats  the  comments
 according  to  the  current  fill  paragraph.  If  a  comment  commences  with
 \fC/***...\fR then the comment is automatically formatted to a box.
 .IP "\fBFolding and Information Hiding\fR"
-Generic  folding  is  enabled  within  the V  file. The folds  occur  about
-functions defined with the \fBfn\fR keyword and  a closing  curly brace both 
+Generic  folding  is  enabled  within  the Javascrip  file. The folds  occur  about
+functions defined with the \fBfunction\fR keyword and  a closing  curly brace both 
 at the  beginning  of a line.
 .Ht collapse-all 3
 (un)folds all regions in the file,
 .Ht collapse-current 3
 (un)folds the current region.
 .IP "\fBNavigation via Item List\fR"
-The V mode offers beside folding as well support for displaying an outline of the
-functions and structures of the V file for easy navigation using the 
+The Javascript offers beside folding as well support for displaying an outline of the
+functions and classes of the Javascript file for easy navigation using the 
 .Ht item-list 3
-command. Public functions are highlighted with color in the item list.
+command. 
 .IP "\fBAbbreviations\fR"
-The  installation  comes with a default  abbreviation  file for V language file  editing
+The  installation  comes with a default  abbreviation  file for Javascript language file  editing
 which  can  be  used  by  writing  short   abbreviations   like   "\fBfor\fR",
-"\fBif\fR", "\fBelif\fR" (else if), "\fBstr\fR" (public structure)  or "\fBfn\fR" (function) -
+"\fBif\fR", "\fBelif\fR" (else if)  or "\fBfunc\fR" (function) -
 and then pressing the key-binding for the 
 .Ht expand-abbrev-handle 3
 command.  The  list  of  abbreviations  can be used  interactively  in the GUI
 version of \*(mE using the 
 .Ht abbrev-list 3
 command.
-.IP "\fBWorking Environment\fR"
-.Ht compile 3
-may be invoked to rebuild the source, the user is prompted to save any files.
-.IP "\fBShort Cuts\fR"
+.IP "\fBList Items\fR"
+Item listing is available and the key  constructs of the file may be listed in
+the \fIitem-list\fR.
+.IP "\fBTags\fR"
+A C-tags file may be generated within the editor using the \fBTools\fR \->
+\fBJavascript-Tools\fR \-> \fBGenerate Tag File\fR.
+.Ht find-tag 2
+takes the user to the file using the tag information.
+\fB\fR.IP "\fBShort Cuts\fR"
 The short cut keys used within the buffer are:-
 .IP
 \fB\*cc \*cc\fR \- Comment out the current line.
@@ -108,21 +115,7 @@ The short cut keys used within the buffer are:-
 .SH NOTES
 .PP
 The  hilighting  or the addition of new item list matches  is  typically
-extended  using  a  file   \fBmyv.emf\fR.
-.PP
-As this language shares the same extensions as Verilog files you might be adding the add the 
-following line to your user emf file.
-.Me $emf-scheme
-.CS
-add-file-hook ".v" fhook-v
-.CE 0
-.Me $ehf-scheme
-.PP
-As an alternative you can add the following first line to your V-files so that
-they are automatically recognized as V language files and not as Verilog files.
-.CS
-// -!- v-lang -!-
-.CE 0
+extended  using  a  file   \fBmyjs.emf\fR.
 .SH "SEE ALSO"
 .na
 .Ht abbrev-list 3 ,
@@ -132,6 +125,7 @@ they are automatically recognized as V language files and not as Verilog files.
 .Ht compile 3 ,
 .Ht expand-abbrev-handle 3 ,
 .Ht item-list 3 ,
+.Ht jstags 3f ,
 .Ht restyle-buffer 3 ,
 .Ht restyle-region 3 ,
 .Ht time 2m .
