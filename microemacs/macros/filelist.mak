@@ -42,7 +42,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkidl.emf	hkimake.emf	hkinfo.emf	hkini.emf	\
 	hkipipe.emf	hkiss.emf	\
 	hkjava.emf	hkjs.emf	hkjson.emf	hkjsp.emf	\
-	hkjst.emf	\
+	hkjst.emf	hkjulia.emf	\
 	hklatex.emf	hklhtml.emf	hklisp.emf	hklists.emf	\
 	hklua.emf	\
 	hkm4.emf	hkmake.emf	hkman.emf	hkmd.emf	\
@@ -112,7 +112,7 @@ ETFS=	ada.etf		asmx86.etf	asn1.etf	au3.etf		\
 	f.etf		f90.etf		\
 	h.etf		hpp.etf		html.etf	go.etf	\
 	idl.etf		imake.etf	\
-	java.etf	js.etf		jst.etf		\
+	java.etf	js.etf		jst.etf		julia.etf	\
 	latex.etf	\
 	makefile.etf	md.etf		mhg.etf		mod2.etf	\
 	newcomp.etf	newuser.etf	nroff.etf	\
@@ -134,7 +134,7 @@ EAFS=	ada.eaf		asp.eaf		au3.eaf		\
 	hkphp.eaf	\
 	html.eaf	\
 	java.eaf	js.eaf		jsp.eaf		jst.eaf		\
-	latex.eaf	md.eaf		\
+	julia.eaf	latex.eaf	md.eaf		\
 	pascal.eaf	perl.eaf	php.eaf		pls.eaf		\
 	python.eaf	\
 	r.eaf		rd.eaf		rust.eaf	\
