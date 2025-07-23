@@ -49,9 +49,6 @@
 #include <openssl/x509v3.h>
 #include <openssl/err.h>
 #include <openssl/rand.h>
-#include <openssl/bio.h>
-#include <openssl/conf.h>
-#include <openssl/engine.h>
 #endif
 
 #ifdef _WIN32
@@ -165,7 +162,6 @@ typedef int (*meSOCKF_X509_NAME_print_ex_fp)(FILE *fp, const X509_NAME *nm, int 
 typedef int (*meSOCKF_ASN1_STRING_cmp)(const ASN1_STRING *a, const ASN1_STRING *b);
 typedef int (*meSOCKF_ASN1_STRING_to_UTF8)(unsigned char **out, const ASN1_STRING *in);
 typedef int (*meSOCKF_CONF_modules_load_file)(const char *filename, const char *appname, unsigned long flags);
-typedef void (*meSOCKF_ENGINE_load_builtin_engines)(void);
 typedef int (*meSOCKF_OPENSSL_init_ssl)(uint64_t opts, const OPENSSL_INIT_SETTINGS *settings);
 typedef void (*meSOCKF_OPENSSL_load_builtin_modules)(void);
 typedef int (*meSOCKF_RAND_poll)(void);
@@ -190,7 +186,6 @@ meSOCKF_BIO_s_mem sslF_BIO_s_mem;
 meSOCKF_CONF_modules_load_file sslF_CONF_modules_load_file;
 meSOCKF_CRYPTO_free sslF_CRYPTO_free;
 meSOCKF_CRYPTO_free sslF_CRYPTO_free;
-meSOCKF_ENGINE_load_builtin_engines sslF_ENGINE_load_builtin_engines;
 meSOCKF_ERR_clear_error sslF_ERR_clear_error;
 meSOCKF_ERR_error_string sslF_ERR_error_string;
 meSOCKF_ERR_get_error sslF_ERR_get_error;
@@ -656,7 +651,6 @@ meSockInit(meIo *io, meUByte *buff)
        ((sslF_BIO_s_mem = (meSOCKF_BIO_s_mem) meSockLibGetFunc(libHandle,"BIO_s_mem")) == NULL) ||
        ((sslF_CONF_modules_load_file = (meSOCKF_CONF_modules_load_file) meSockLibGetFunc(libHandle,"CONF_modules_load_file")) == NULL) ||
        ((sslF_CRYPTO_free = (meSOCKF_CRYPTO_free) meSockLibGetFunc(libHandle,"CRYPTO_free")) == NULL) ||
-       ((sslF_ENGINE_load_builtin_engines = (meSOCKF_ENGINE_load_builtin_engines) meSockLibGetFunc(libHandle,"ENGINE_load_builtin_engines")) == NULL) ||
        ((sslF_ERR_clear_error = (meSOCKF_ERR_clear_error) meSockLibGetFunc(libHandle,"ERR_clear_error")) == NULL) ||
        ((sslF_ERR_error_string = (meSOCKF_ERR_error_string) meSockLibGetFunc(libHandle,"ERR_error_string")) == NULL) ||
        ((sslF_ERR_get_error = (meSOCKF_ERR_get_error) meSockLibGetFunc(libHandle,"ERR_get_error")) == NULL) ||
@@ -767,9 +761,6 @@ meSockInit(meIo *io, meUByte *buff)
         return -7;
 
     OPENSSLFunc(OPENSSL_load_builtin_modules)();
-#ifndef OPENSSL_NO_ENGINE
-    OPENSSLFunc(ENGINE_load_builtin_engines)();
-#endif
     OPENSSLFunc(CONF_modules_load_file)(NULL,NULL,CONF_MFLAGS_DEFAULT_SECTION|CONF_MFLAGS_IGNORE_MISSING_FILE);
     OPENSSLFunc(OPENSSL_init_ssl)(0, NULL);
 
