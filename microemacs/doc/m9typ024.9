@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ024.9,v 2.9 2025/07/15 21:03:36 jon Exp $
+.Id $Id: m9typ024.9,v 2.9 2025/07/23 08:43:46 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH perl 9
@@ -89,6 +89,11 @@ The Perl mode offers beside folding as well support for displaying an outline of
 subroutines for easy navigation using the 
 .Ht item-list 3
 command.
+.IP "\fBTags\fR"
+A C-tags file may be generated within the editor using the \fBTools\fR \->
+\fBPerl-Tools\fR \-> \fBCreate Tag File\fR.
+.Ht find-tag 2
+takes the user to the file using the tag information.
 .IP "\fBShort Cuts\fR"
 The short cut keys used within the buffer are:-
 .IP
@@ -125,6 +130,7 @@ involve quotation marks that can cause problems.
 .Ht indent 2 ,
 .Ht item-list 3 ,
 .Ht perldb 3 ,
+.Ht perltags 3f ,
 .Ht restyle-buffer 3 ,
 .Ht time 2m .
 .sp 1

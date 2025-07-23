@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 10 23:48:24 1999
 .\"
-.Id $Id: m9typ031.9,v 2.6 2025/07/15 21:07:27 jon Exp $
+.Id $Id: m9typ031.9,v 2.6 2025/07/23 08:35:25 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH vb 9
@@ -58,6 +58,11 @@ The VisualBasic mode offers beside folding as well support for displaying an out
 Functions and Subroutines for easy navigation using the 
 .Ht item-list 3
 command.
+.IP "\fBTags\fR"
+A C-tags file may be generated within the editor using the \fBTools\fR \->
+\fBVB-Tools\fR \-> \fBGenerate Tag File\fR.
+.Ht find-tag 2
+takes the user to the file using the tag information.
 .IP "\fBShort Cuts\fR"
 The short cut keys used within the buffer are:-
 .IP
@@ -82,6 +87,7 @@ The short cut keys used within the buffer are:-
 .Ht collapse-current 3 ,
 .Ht item-list 3 ,
 .Ht restyle-region 3 ,
+.Ht vbtags 3f ,
 .sp 1
 .Hl "Supported File Types" FileTypes -
 .ad

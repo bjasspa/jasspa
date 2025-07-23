@@ -1,0 +1,79 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1999-2025 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.\"  Created By    : Detlef Groth, University of Potsdam, Germany
+.\"  Created       : Fri Jul 18 10:00:00 2025
+.\"
+.Id $Id: m3fcl015.3,v 2.6 2025/07/23 08:44:48 jon Exp $
+.Im MicroEmacs filter
+.so me.tni
+.TH phptags 3f
+.XI phptags - "Generate a PHP tags file"
+.SH NAME
+phptags \- Generate a PHP tags file
+.Me $a
+.SH SYNOPSIS
+.na
+\fBme\fR "@phptags" [\fI-v%tag-option=<flags>\fR] [\fIfiles\fR]
+.ad
+.SH DESCRIPTION
+The start-up file  \fCphptags.emf\fR  may be invoked from the command line to
+generate a \fBtags\fR file for PHP files, 
+.Ht php 9 .
+.PP
+Given a list of  \fIfiles\fR  a tags file  \fCtags\fR  is  generated  in the
+current directory, which may be used by the 
+.Ht find-tag 2
+command. If no \fIfiles\fR  are specified the default file list is "\fC./\fR",
+i.e. process the current  directory. If a directory name is given (such as the
+default  "\fC./\fR")  all PHP  files  within  the  directory  will be
+processed.
+.PP
+The value of variable  \fB%tag-option\fR is used to control the tag generation
+process,  its value  \fI<flags>\fR  can  contain  any number of the  following
+flags:
+.IP \fCa\fR
+Append  new tags to the  existing  tag  file,  note  that if also  using  flag
+\&'\fCm\fR' multiple 'tags' to the same item may be created.
+.IP \fCm\fR
+Enable  multiple  tags. This enables the existence of 2 tags with the same tag
+name, but typically with different locations. See help on
+.Ht find-tag 2
+for more information on multiple tag support.
+.IP \fCr\fR
+Enables  recursive mode, any sub-directory  found within any given directories
+will also be processed.  
+.SH NOTES
+This function is invoked from menu 
+.IP
+.B "Tools -> PHP Tools -> Generate Tags File"
+.LP
+when the user requests a tags file to be generated.
+.PP
+The user  setup  file  "\fCmyphptags.emf\fR"  is  executed  by phptags  during
+start-up, this file can be used to over-ride any of the perltags  configuration
+variables (see below).
+.PP
+The  following  variables are set within  "\fCphptags.emf\fR"  and are used to
+control the process:-
+.IP \fB%tag-option\fR
+Tags options flag, default value is "". See above for more information.
+.IP \fB%tag-filemask\fR
+A list of source file masks to be processed when a directory is given, default
+value   is   "\fC:*.php:*.php3:*.php4:*.php5:*.phtml:*.inc:\fR".
+.IP \fB%tag-ignoredir\fR
+A list of  directories  to be ignored when  recursive  option is used, default
+value is "\fC:SCCS/:CVS/:.git/:.svn/:\fR".
+.PP
+These  variables  can be changed using the -v  command-line  option or via the
+"\fCmyphptags.emf\fR" file
+.SH "SEE ALSO"
+.na
+.Ht find-tag 2 ,
+.Ht start-up 3 ,
+.Ht php 9 .
+.ad
+.FH
