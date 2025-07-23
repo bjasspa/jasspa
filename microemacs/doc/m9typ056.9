@@ -1,0 +1,107 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1999-2009 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Thu Jun 24 22:02:47 1999
+.\"
+.Id $Id: m9typ056.9,v 2.6 2025/07/23 18:22:04 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH dot 9
+.XI dot - "Graphviz Dot Diagram Language File"
+.XI graphviz - "Graphviz Dot Diagram Language File"
+.SH SYNOPSIS
+dot \- Graphviz Dot Diagram Language File.
+.SH FILES
+.na
+.B hkdot.emf
+\- Graphviz Dot diagram file hook definition
+.br
+.B dot.eaf
+\- Graphviz Dot diagram abbreviation file
+.br
+.B dot.etf
+\- Graphviz Dot diagram template file
+.ad
+.SH EXTENSIONS
+.na
+\fB.dot\fR \- Graphviz dot file
+.ad
+.SH DESCRIPTION
+The  \fBGraphviz\fR  file macro  provides  simple  hilighting of Graphviz dot
+diagram files.
+.PP
+File   recognition   is   performed   using  the   standard   file   extension
+\fB.dot\fR.
+.PP
+.IP "\fBEditing Environment\fR"
+Beside  of syntax  highlighting  the file hook  offers as well  abbreviations,
+folding and support for displaying an outline of the subgraphs
+of the Dot file script for easy navigation using the 
+.Ht item-list 3
+command.  Further  is is  possible  to expand  abbreviations  either via short
+strings using the
+.Ht expand-abbrev-handle 3
+command and visual inserting abbreviations using the mouse by the
+.Ht abbrev-list 3
+macro. 
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for Graphviz dot code  editing
+which  can  be  used  by  writing  short   abbreviations   like   "\fBgr\fR" (graph)
+"\fBdg\fR" (digraph), "\fBsg\fR" (subgraph) or \fBnd\fR" (node)   - and  then  pressing  the
+key-binding  for the 
+.Ht expand-abbrev-handle 3
+command.  The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mE using the 
+.Ht abbrev-list 3
+command.
+.IP "\fBFolding and Information Hiding\fR"
+Generic  folding is enabled  within the Dot files. The folds occur about
+the \fBsubgraph\fR keywords located on the left-hand margin at the beginning 
+of the line and the closing curly brace for this subgraph. 
+The following commands are supported to show and hide the function bodies.
+.Ht collapse-all 3
+(un)folds all regions in the file,
+.Ht collapse-current 3
+(un)folds the current region.
+.IP "\fBList Items\fR"
+Item listing is available and the key  constructs of the file may be listed in
+the \fIitem-list\fR.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*cc \*cc\fR \- Comment out the current line.
+.br
+\fB\*cc \*cd\fR \- Uncomment the current line.
+.br
+\fB\*cc \*ce\fR \- Comment to the end of the line with stars (*).
+.br
+\fB\*a\*ci\fR \- Restyle the current region.
+.br
+\fBf2\fR \- (un)fold the current region
+.br
+\fBf3\fR \- (un)fold all regions
+.br
+\fBf6\fR \- list items
+.br
+\fB\*e f6\fR \- close list items
+.SH BUGS
+No serious known so far.  Indenting  after the  opening  curly  brace is not working
+sometimes.
+.SH "SEE ALSO"
+.na
+.Ht abbrev-list 3 ,
+.Ht collapse-all 3 ,
+.Ht collapse-current 3 ,
+.Ht expand-abbrev-handle 3 ,
+.Ht item-list 3 ,
+.Ht restyle-buffer 3 ,
+.Ht restyle-region 3 ,
+.sp 1
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH
+

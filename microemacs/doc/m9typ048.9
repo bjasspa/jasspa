@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.\" Copyright (C) 1999-2009 JASSPA (www.jasspa.com)
+.\" Copyright (C) 1999-2025 JASSPA (www.jasspa.com)
 .\"
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 24 22:02:47 1999
 .\"
-.Id $Id: m9typ048.9,v 2.6 2025/07/04 11:01:31 jon Exp $
+.Id $Id: m9typ048.9,v 2.6 2025/07/23 18:28:38 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH r 9
@@ -37,21 +37,23 @@ r \- R Language File.
 the  executable.  The  Rscript  files  may  be  extension-less  and  are  still
 recognized.
 .SH DESCRIPTION
-The  \fBR\fR  file type  template  provides  simple  hilighting of Python
-files, the template provides minimal hilighting.
+The  \fBR\fR  macro  file  hook  provides   simple   hilighting  of  R  files,
+inserting abbreviations and browsing the structure of the file using item-list
+and folding..
 .PP
 File  recognition  is performed  using the standard file  extension  \fB.r\fR,
 \fB.R\fR or by the magic string.
-.PP
-It offers as well folding and support for displaying an outline of the
-functions of the R script for easy navigation using the 
-.Ht item-list 3
-command.  Further  is is  possible  to expand  abbreviations  either via short
-strings using the
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for R code  editing
+which  can  be  used  by  writing  short   abbreviations   like   "\fBmain\fR"
+for a default Rscript application outline,"\fBfor\fR",
+"\fBif\fR"  or  "\fBfun\fR"  -  for  a R  function  - and  then  pressing  the
+key-binding  for the 
 .Ht expand-abbrev-handle 3
-command and visual inserting abbreviations using the mouse by the
+command.  The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mE using the 
 .Ht abbrev-list 3
-macro. 
+command.
 .IP "\fBFolding and Information Hiding\fR"
 Generic  folding is enabled  within the R files. The folds occur about
 the \fBfunction\fR keywords located on the left-hand margin at the beginning 
@@ -64,17 +66,6 @@ The following commands are supported to show and hide the function bodies.
 .IP "\fBList Items\fR"
 Item listing is available and the key  constructs of the file may be listed in
 the \fIitem-list\fR.
-.IP "\fBAbbreviations\fR"
-The  installation  comes with a default  abbreviation  file for R code  editing
-which  can  be  used  by  writing  short   abbreviations   like   "\fBmain\fR"
-for a default Rscript application outline,"\fBfor\fR",
-"\fBif\fR"  or  "\fBfun\fR"  -  for  a R  function  - and  then  pressing  the
-key-binding  for the 
-.Ht expand-abbrev-handle 3
-command.  The  list  of  abbreviations  can be used  interactively  in the GUI
-version of \*(mE using the 
-.Ht abbrev-list 3
-command.
 .IP "\fBShort Cuts\fR"
 The short cut keys used within the buffer are:-
 .IP

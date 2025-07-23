@@ -107,7 +107,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 ETFS=	ada.etf		asmx86.etf	asn1.etf	au3.etf		\
 	bibtex.etf	\
 	c.etf		cfm.etf		cobol.etf	cpp.etf		\
-	c3.etf		dart.etf	doc.etf		\
+	c3.etf		dart.etf	doc.etf		dot.etf		\
 	emf.etf		euphor.etf	\
 	f.etf		f90.etf		\
 	h.etf		hpp.etf		html.etf	go.etf	\
@@ -127,7 +127,7 @@ ETFS=	ada.etf		asmx86.etf	asn1.etf	au3.etf		\
 #EAFS:sh=ls *.eaf
 EAFS=	ada.eaf		asp.eaf		au3.eaf		\
 	c.eaf		c3.eaf		cfm.eaf		cpp.eaf		\
-	dart.eaf	\
+	dart.eaf	dot.eaf		\
 	emf.eaf		f90.eaf		euphor.eaf	go.eaf		\
 	hkasp.eaf	hkc.eaf		hkcpp.eaf	hkemf.eaf	\
 	hkhtml.eaf	hkjsp.eaf	hkjst.eaf	hknroff.eaf	\

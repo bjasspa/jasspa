@@ -1,9 +1,8 @@
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;  Created By    : Detlef Groth
 ;  Created       : Fri Mar 6th, 2025
-;  Last Modified : <250704.1123>
+;  Last Modified : <250723.1825>
 ;
 ;  Description
 ;   Zig Language Template
@@ -17,9 +16,9 @@
 
 
 define-macro fhook-zig
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "zig"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "zig"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -48,7 +47,7 @@ set-variable .fhook-zig.item-list-s7 "^// TODO: \\([\\w ]+\\)"
 set-variable .fhook-zig.item-list-r7 "todo \ecB\\1\ecA"
 
 !if &not &exist .hilight.zig
-    set-variable .hilight.zig  &pinc .hilight.next 1
+  set-variable .hilight.zig  &pinc .hilight.next 1
 !endif
 
 !if &and &sin "h" .fhook-zig.setup &band .hilight.flags 0x02
