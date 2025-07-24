@@ -95,7 +95,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v6
         with:
           run_id: ${{ inputs.refToHelpAsset }}
-          workflow: build-linux.yml
+          workflow: build-linux-intel.yml
           name: help-ehf
           path: ./microemacs
           search_artifacts: true
