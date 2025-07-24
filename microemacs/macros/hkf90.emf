@@ -140,7 +140,9 @@ set-variable .fhook-f90.item-list-r4 "Prog \ecB\\1\ecA"
 add-next-line "*f90-exec*" "^%f:%l:\\d+.+"
 add-next-line "*f90-lint*" "^%f:%l:\\d+.+"
 set-variable .fhook-f90.coms "\bgfortran\b" 
+set-variable .fhook-f90.exec1   "\b%v[com]\b%v[com].exe --version\b0\b\b%v[com] -Wall -fmax-errors=3 %f -o %b %& .\\%b %v[args|20|Additional command-line arguments|]\b"
 set-variable .fhook-f90.exec1   "\b%v[com]\b%v[com] --version\b0\b\b%v[com] -Wall -fmax-errors=3 %f -o %b && ./%b %v[args|20|Additional command-line arguments|]\b"
+; pip3 install fprettify --user
 set-variable .fhook-f90.format1 "\bfprettify\bfprettify --version\b0\b\bfprettify -i 4 %f\bfprettify\b"
 set-variable .fhook-f90.lint1   "\b%v[com]\b%v[com] --version\b0\b\b%v[com] -Wall -fmax-errors=3 -fsyntax-only %f\bCheck\b"
 

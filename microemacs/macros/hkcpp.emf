@@ -459,10 +459,12 @@ define-macro-file cmacros c-slashify c-deslashify c-hash-eval c-hash-define c-ha
 add-next-line "*cpp-exec*" "^%f:%l:\\d+.+"
 add-next-line "*cpp-lint*" "^%f:%l:\\d+.+"
 set-variable .fhook-cpp.coms "\bg++\b" 
-set-variable .fhook-cpp.exec1 "\b%v[com]\b\b\b\b%v[com] -Wall -O3 -std=c++17 \"%p%f\" -o ./%b && ./%b %v[args|20|Additional command-line arguments|]\b"
+; I do not see an advantage of these coms - how would I use v[com] in case I check for clang compiler or tcc
+set-variable .fhook-cpp.exec1 "\b%v[com]\b%v[com].exe -v\b\b\b%v[com] -Wall -O3 -std=c++17 \"%p%f\" -o %b %& .\\%b %v[args|20|Additional command-line arguments|]\b"
+set-variable .fhook-cpp.exec2 "\b%v[com]\b%v[com]  -v\b\b\b%v[com] -Wall -O3 -std=c++17 \"%p%f\" -o ./%b %& ./%b %v[args|20|Additional command-line arguments|]\b"
 set-variable .fhook-cpp.format1 "\bastyle\bastyle -h\b0\b\bastyle --indent=spaces=4 %\"%f%\"\bAstyle\b"
-set-variable .fhook-cpp.format2 "\bclang-format\bclang-format -h\b0\b\bclang-format \"%f\% -- -std=c++17\bAstyle\b"
-set-variable .fhook-cpp.lint1 "\b%v[com]\b%v[com] --version\b0\b\b%v[com] -x c++ -fsyntax-only \"%p%f\"\bG++\b"
+set-variable .fhook-cpp.format2 "\bclang-format\bclang-format -h\b0\b\bclang-format \"%f\% -- -std=c++17\bClang-format\b"
+set-variable .fhook-cpp.lint1 "\b%v[com]\b%v[com] --version\b0\b\b%v[com] -Wall -x c++ -fsyntax-only \"%p%f\"\bG++\b"
 set-variable .fhook-cpp.lint2 "\bclang-tidy\bclang-tidy --version\b0\b\bclang-tidy \"%f\" -- -std=c++17\bClang-tidy\b"
 
 buffer-init-fhook "cpp"
