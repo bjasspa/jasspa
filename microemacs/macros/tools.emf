@@ -241,6 +241,11 @@ define-macro diff-changes
   set-variable #l0 &stat "a" $buffer-fname
   ; get the backup name
   set-variable #l1 $buffer-backup
+  !if @?
+    !iif &les @# 0  -8 ml-write "[Invalid numeric argument given]"
+    !iif &not &seq &rig #l1 -3 "~0~"  -8 ml-write "[Unexpected backup file name for multi-backup support (not ending in ~0~)]"
+    set-variable #l1 &spr "%s%s~" &lef #l1 -2 @#
+  !endif
   diff #l1 #l0
 !emacro
 define-macro rdiff

@@ -525,7 +525,7 @@ TTopenClientServer(void)
         meModeSet(globMode,MDHIDE);
         meModeClear(globMode,MDWRAP);
         meModeClear(globMode,MDUNDO);
-        if(((bp=bfind((meUByte *) "*server*",BFND_CREAT)) == NULL) ||
+        if(((bp=bfind(BserverN,BFND_CREAT)) == NULL) ||
            ((ipipe = meMalloc(sizeof(meIPipe))) == NULL))
         {
             CloseHandle(clientHandle);
@@ -2030,6 +2030,10 @@ TTgetClipboard(int flag)
                 len += ll+(ll>>15)+1;
                 ll = 0;
             }
+#if MEOPT_EXTENDED
+            else if((uc >= 0x80) && (flag & 2))
+                ll += (uc & 0x0f800) ? 3:2;
+#endif
             else if((uc != '\r') || (*ss != '\n'))
                 ll++;
         }

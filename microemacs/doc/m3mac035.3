@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac035.3,v 2.9 2022/06/12 17:13:59 jon Exp $
+.Id $Id: m3mac035.3,v 2.9 2025/07/24 13:32:09 jon Exp $
 .Im MicroEmacs shell|comparison
 .so me.tni
 .TH diff 3
@@ -29,6 +29,7 @@ rdiff \- Recursively compare files or directories
 "\fInew-version\fR"
 .br
 .Me "|diff-changes"
+.I n
 .B diff-changes
 .br
 .Me "|rdiff"
@@ -45,18 +46,20 @@ executes the
 .Hr diff 1
 command with the command line set by the
 .Ht %diff-com 5
-variable and the user supplied  \fIold-version\fR and \fInew-version\fR.
-The output of the command is piped into the \fB*diff*\fR buffer
-and is hilighted to show the changes (GNU diff only).
+variable and the user supplied \fIold-version\fR and \fInew-version\fR. The output of the command is piped into the
+\fB*diff*\fR buffer and is hilighted to show the changes (GNU diff only).
 .PP
 Your version of 
 .Hr diff 1 
 will determine whether it is possible to difference directories.
 .PP
 .B diff-changes
-is a simple macro that  differences  the current buffer and the last backup of
-the  associated  file. It is a quick way to determine  what has been  modified
-recently. This macro only works if a backup file exists.
+is a simple macro that diff's the current buffer with the last backup of the associated file. It is a quick way to
+determine what has been modified recently. This macro only works if a backup file exists. The numerical argument 
+\fIn\fR can be used to diff against older backups if multiple backups are enabled (see
+.Ht $kept-versions 5 ),
+for example if \fIn\fR is \fC2\fR then the diff will with the 
+file's \fC.~2~\fR backup file. Note that this is a zero based index as the first backup has the extension \fC.~0~\fR.
 .PP
 .B rdiff
 operates in the same way as \fBdiff\fR except it launches the

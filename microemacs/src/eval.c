@@ -1048,18 +1048,22 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             meStrrep(&fileIgnore,vvalue) ;
             break ;
         case EVBNAMES:
-            buffNames.curr = 0 ;
-            meNullFree(buffNames.list) ;
-            buffNames.list = NULL ;
-            meStrrep(&buffNames.mask,vvalue) ;
+            meNullFree(buffNames.list);
+            buffNames.list = NULL;
+            buffNames.curr = 0;
+            if(meRegexComp(&meRegexStrCmp,vvalue,(buffNames.exact) ? meRSTRCMP_WHOLE:meRSTRCMP_ICASE|meRSTRCMP_WHOLE) != meREGEX_OKAY)
+                return mlwrite(MWABORT,(meUByte *)"[bad regex]");
+            meStrrep(&buffNames.mask,vvalue);
             if(buffNames.mask != NULL)
                 buffNames.size = createBuffList(&buffNames.list,0) ;
             break ;
         case EVCNAMES:
-            commNames.curr = 0 ;
-            meNullFree(commNames.list) ;
-            commNames.list = NULL ;
-            meStrrep(&commNames.mask,vvalue) ;
+            meNullFree(commNames.list);
+            commNames.list = NULL;
+            commNames.curr = 0;
+            if(meRegexComp(&meRegexStrCmp,vvalue,(commNames.exact) ? meRSTRCMP_WHOLE:meRSTRCMP_ICASE|meRSTRCMP_WHOLE) != meREGEX_OKAY)
+                return mlwrite(MWABORT,(meUByte *)"[bad regex]");
+            meStrrep(&commNames.mask,vvalue);
             if(commNames.mask != NULL)
             {
                 commNames.size = createCommList(&commNames.list,1) ;
@@ -1081,7 +1085,10 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
 #endif
                         mm = ss ;
                 }
-                meStrrep(&fileNames.mask,mm) ;
+                fileNames.curr = 0 ;
+                if(meRegexComp(&meRegexStrCmp,mm,(fileNames.exact) ? meRSTRCMP_WHOLE:meRSTRCMP_ICASE|meRSTRCMP_WHOLE) != meREGEX_OKAY)
+                    return mlwrite(MWABORT,(meUByte *)"[bad regex]");
+                meStrrep(&fileNames.mask,mm);
                 if(fileNames.mask != NULL)
                 {
                     meUByte buff[meBUF_SIZE_MAX], path[meBUF_SIZE_MAX] ;
@@ -1093,23 +1100,26 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                     {
                         *mm = '\0' ;
                         getFilePath(frameCur->windowCur->buffer->fileName,buff) ;
-                        meStrcat(buff,vvalue) ;
-                        pathNameCorrect(buff,PATHNAME_COMPLETE,path,NULL) ;
+                        meStrcat(buff,vvalue);
+                        pathNameCorrect(buff,PATHNAME_COMPLETE,path,NULL);
                     }
-                    getDirectoryList(path,&fileNames) ;
-                    meStrcpy(resultStr,path) ;
+                    getDirectoryList(path,&fileNames);
+                    meStrcpy(resultStr,path);
                 }
-                fileNames.curr = 0 ;
                 break;
             }
         case EVMNAMES:
             modeNames.curr = 0 ;
+            if(meRegexComp(&meRegexStrCmp,vvalue,(modeNames.exact) ? meRSTRCMP_WHOLE:meRSTRCMP_ICASE|meRSTRCMP_WHOLE) != meREGEX_OKAY)
+                return mlwrite(MWABORT,(meUByte *)"[bad regex]");
             meStrrep(&modeNames.mask,vvalue);
             break;
         case EVVNAMES:
-            varbNames.curr = 0;
-            freeFileList(varbNames.size,varbNames.list) ;
+            freeFileList(varbNames.size,varbNames.list);
             varbNames.list = NULL;
+            varbNames.curr = 0;
+            if(meRegexComp(&meRegexStrCmp,vvalue,(varbNames.exact) ? meRSTRCMP_WHOLE:meRSTRCMP_ICASE|meRSTRCMP_WHOLE) != meREGEX_OKAY)
+                return mlwrite(MWABORT,(meUByte *)"[bad regex]");
             meStrrep(&varbNames.mask,vvalue);
             if(varbNames.mask != NULL)
                 varbNames.size = createVarList(&varbNames.list) ;
