@@ -1,0 +1,31 @@
+diff --git a/microemacs/src/eskeys.def b/microemacs/src/eskeys.def
+index 29c2734a..dad35ccd 100755
+--- a/microemacs/src/eskeys.def
++++ b/microemacs/src/eskeys.def
+@@ -32,7 +32,7 @@
+  */
+ 
+ DEFSKEY ("",             NULL,    NULL, NULL,      SKEY_error ) /* Don't want a key with value 0x00 */
+-DEFSKEY ("backspace",    "kbs",   "kb", "\010",    SKEY_backspace )
++DEFSKEY ("backspace",    "kbs",   "kb", "\177",    SKEY_backspace )
+ #if MEOPT_CALLBACK
+ DEFSKEY ("bell",         NULL,    NULL, NULL,      SKEY_bell )
+ #endif
+@@ -43,7 +43,7 @@ DEFSKEY ("callback",     NULL,    NULL, NULL,      SKEY_callback )
+ DEFSKEY ("cancel",       NULL,    NULL, NULL,      SKEY_cancel )
+ DEFSKEY ("caps-lock",    NULL,    NULL, NULL,      SKEY_caps_lock )
+ DEFSKEY ("clear",        NULL,    NULL, NULL,      SKEY_clear )
+-DEFSKEY ("delete",       "kdch1", "kD", "\177",    SKEY_delete )
++DEFSKEY ("delete",       "kdch1", "kD", "\033[3~",    SKEY_delete )
+ DEFSKEY ("down",         "kcud1", "kd", "\033[B",  SKEY_down )
+ #if MEOPT_CALLBACK
+ DEFSKEY ("drop",         NULL,    NULL, NULL,      SKEY_drop )
+@@ -68,7 +68,7 @@ DEFSKEY ("find",         NULL,    NULL, NULL,      SKEY_find )
+ DEFSKEY ("find-file",    NULL,    NULL, NULL,      SKEY_find_file )
+ #endif
+ DEFSKEY ("help",         NULL,    NULL, NULL,      SKEY_help )
+-DEFSKEY ("home",         "khome", "kh", "\033[3~", SKEY_home )
++DEFSKEY ("home",         "khome", "kh", "\033[1~", SKEY_home )
+ #if MEOPT_CALLBACK
+ DEFSKEY ("idle-drop",    NULL,    NULL, NULL,      SKEY_idle_drop )
+ DEFSKEY ("idle-pick",    NULL,    NULL, NULL,      SKEY_idle_pick )
