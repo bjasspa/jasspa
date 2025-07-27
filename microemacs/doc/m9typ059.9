@@ -1,0 +1,118 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1999-2025 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Sat Feb 6 14:22:09 1999
+.\"  Author        : Detlef Groth
+.\"
+.Id $Id: m9typ024.9,v 2.9 2025/07/27 09:46:41 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH au3 9
+.XI au3 - "Autoit 3 Scripting Language File"
+.XI autoit - "Autoit 3 Scripting Language File"
+.SH SYNOPSIS
+au3 \- Autoit 3 Scripting Language File.
+.SH FILES
+.na
+.B hkau3.emf
+\- Autoit 3 Scripting Language file hook definition
+.br
+.B au3.etf
+\- Autoit 3 Scripting Language header template file
+.br
+.B  au3.eaf
+\- Autoit 3 Scripting Language abbreviation file
+.ad
+.SH EXTENSIONS
+.na
+\fB.au3\fR \- Autoit 3 file
+.ad
+.SH DESCRIPTION
+The  \fBautoit\fR  file type template  provides the  hilighting,  indentation,
+folding, item list and tools definitions for a perl file.
+.PP
+File  recognition  is performed  using the standard file extension  \fB.au3\fR.
+.IP "\fBGeneral Editing\fR"
+On creating a new file, a new header is automatically included into the file.
+.Ht time 2m
+is by default enabled, allowing the modification time-stamp to be maintained in
+the header.
+.IP \fBHilighting\fR
+The hilighting  features allow functions, commands, variables, logical, comments, strings
+and characters of the language to be differentiated  and rendered in different
+colors.
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for Autoit file  editing
+which  can  be  used  by  writing   short   abbreviations   like   "\fBif\fR",
+"\fBwh\fR" (while) or "\fBfu\fR" (function) - and then pressing the key-binding for the 
+.Ht expand-abbrev-handle 3
+command.  
+The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mE using the 
+.Ht abbrev-list 3
+command.
+.IP "\fBAuto Layout\fR"
+The
+.Hl "indentation mechanism" indent 2
+is enabled which performs automatic layout of the text.
+.Ht restyle-region 3
+and
+.Ht restyle-buffer 3
+are available to reformat  (re-layout) selected sections of the buffer, or the
+whole buffer, respectively.
+.IP "\fBFolding and Information Hiding\fR"
+Generic   folding  is  enabled  within  perl  files.  The  folds  occur  about
+\fIFunc\fRtion   definitions  located  on  the  left-hand  margin  and  their
+closing \fIEndFunc\fR keyword which is located as well at the beginning of a line.
+.Ht collapse-all 3
+(un)folds all regions in the file,
+.Ht collapse-current 3
+(un)folds the current region.
+.IP "\fBNavigation via Item List\fR"
+The Autoit mode offers beside folding as well support for displaying an outline of the
+functions for easy navigation using the 
+.Ht item-list 3
+command.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*cc \*cc\fR \- Comment out the current line.
+.br
+\fB\*cc \*cd\fR \- Uncomment the current line.
+.br
+\fB\*cc \*co\fR \- Restyle comment.
+.br
+\fBf2\fR \- (un)fold the current region
+.br
+\fBf3\fR \- (un)fold all regions
+.br
+\fBf6\fR \- list items
+.br
+\fB\*ef6\fR \- close item list
+.SH NOTES
+.PP
+The  hilighting  is  typically   extended  using  a  file   \fBmyau3.emf\fR.
+.SH BUGS
+None which are currently known. As the author does not use this scripting 
+language anymore, the highlighting and folding and item-list command 
+might be not working as expected in all cicrumstances and support of 
+more modern features of this scripting language on the Windows platform
+might be not available.
+.SH "SEE ALSO"
+.na
+.Ht abbrev-list 3 ,
+.Ht collapse-all 3 ,
+.Ht collapse-current 3 ,
+.Ht expand-abbrev-handle 3 ,
+.Ht indent 2 ,
+.Ht item-list 3 ,
+.Ht restyle-buffer 3 ,
+.Ht time 2m .
+.sp 1
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH
