@@ -178,6 +178,7 @@ MAC3_100=	$(DOCDIR)m3mac100.3 $(DOCDIR)m3mac101.3 $(DOCDIR)m3mac102.3\
 # TODO: doc git interface
 # TODO: fix quoting of var values in ME help pages, e.g. $result
 # TODO: doc coy-file's use of $result
+# TODO: doc file-list & filemask-to-regex
 #
 OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd003.3 $(DOCDIR)m3osd004.3 $(DOCDIR)m3osd005.3\
@@ -247,8 +248,9 @@ VAR5_080=	$(DOCDIR)m5var080.5 $(DOCDIR)m5var081.5 $(DOCDIR)m5var082.5\
 		$(DOCDIR)m5var083.5 $(DOCDIR)m5var084.5 $(DOCDIR)m5var085.5\
 		$(DOCDIR)m5var086.5 $(DOCDIR)m5var087.5 $(DOCDIR)m5var088.5\
 		$(DOCDIR)m5var089.5
-VAR5_090=	$(DOCDIR)m5var090.5 $(DOCDIR)m5var091.5 $(DOCDIR)m5var092.5 \
-		$(DOCDIR)m5var093.5 $(DOCDIR)m5var094.5 $(DOCDIR)m5var095.5
+VAR5_090=	$(DOCDIR)m5var090.5 $(DOCDIR)m5var091.5 $(DOCDIR)m5var092.5\
+		$(DOCDIR)m5var093.5 $(DOCDIR)m5var094.5 $(DOCDIR)m5var095.5\
+		$(DOCDIR)m5var096.5
 #
 FIL8_000=	$(DOCDIR)m8fil000.8 $(DOCDIR)m8fil001.8 $(DOCDIR)m8fil002.8\
 		$(DOCDIR)m8fil003.8 $(DOCDIR)m8fil004.8 $(DOCDIR)m8fil005.8\

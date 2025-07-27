@@ -91,9 +91,8 @@ global-bind-key save-buffers-exit-emacs "A-f4"
 ;
 set-variable $line-template "[0-9]+"
 set-variable $file-template "\\([a-zA-Z]:\\)?\\([-~+_{$.#@\\m\\\\/][^\\n*?\"<>|:]*[\\\\/]\\)?[-~+_{$.#@\\m]\\([^\\n\\\\/*?\"<>()|:]*([-\\m.]+)\\)*\\([^\\n\\\\/*?\"<>()|:]*[\\m_}=]\\)?"
-set-variable %xgrep-com "grep -n"
-add-next-line "*grep*" "%f: %l:"
-; These definitions are for the Microsoft MSCV 2.0+ compiler
+set-variable %os-chars "\\:;&"
+; These definitions are for the Microsoft MS VC
 set-variable %compile-com "nmake "
 0 add-next-line "*compile*"
 ; MS VS errors and warning

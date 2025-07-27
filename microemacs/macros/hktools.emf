@@ -1,5 +1,5 @@
 ; -!- emf -!-
-; Copyright (c) 2025 Steven Phillips.
+; Copyright (c) 2025 JASSPA (www.jasspa.com)
 ;
 ; All rights reserved.
 ;
@@ -20,17 +20,18 @@ define-macro-file hkipipe fhook-ipipe
       !return
     !endif
   !done
-  !if &seq $platform "windows"
-    ; TODO implement method to locate prgs on Windows, following taken from rtools to locate Rscript on windows 
-;    set-variable $file-names "C:/Program Files/R/R-\\d+\\.\\d+\\.\\d+.*/"
-;    !while &not &seq &set #l1 $file-names ""
-;      !if &seq "R" &stat t &set #l0 &spr "C:/Program Files/R/%sbin/Rscript.exe" #l1
-;        ml-write &spr "Rscript executable found: %s" #l0
-;        set-variable %rscript-com &spr "\"%s\"" #l0
-;        !return
-;      !endif
-;    !done
-    ; Add code to look for interpreter on windows
+  !if &llen &set #l0 &ind &spr ".%s.coms-%s" #l9 $platform
+    set-variable #l1 0
+    !while &not &seq "" &set #l2 &lget #l0 &inc #l1 1
+      !force file-list #l2
+      !if &not $status
+        ml-write &spr "[file-tool-init error: invalid regex in .%s.coms-%s]" #l9 $platform
+      !elif .file-list.file-count
+        set-variable &ind &spr ".%s.com" #l9 .file-list.file0
+        ml-write &spr "%s interpreter '%s' found" #l8 .file-list.file0
+        !return
+      !endif
+    !done
   !endif
   -8 ml-write &spr "Error: Failed to find interpreter for %s files, please install or run major-mode-tools-setup." #l8
 !emacro
@@ -38,7 +39,7 @@ define-macro-file hkipipe fhook-ipipe
 ;  @1 - file-type, @2 str, @3 file name
 0 define-macro file-proc-str
   set-variable #l9 @1
-  set-variable #l0 &rep &rep &rep &rep &rep &rep @2 "%%" "\bA" "%&" "\bM" "%\"" "\bE" "%[" "\bB" "%|" "\bC" "%]" "\bD"
+  set-variable #l0 &rep &rep &rep &rep &rep &rep @2 "%%" "\bA" "%&" "\bM" "%/" "\bP" "%\"" "\bE" "%[" "\bB" "%|" "\bC" "%]" "\bD"
   set-variable #l2 @3
   !if &seq "" &set #l1 &rig #l2 &rsin "/" #l2
     ; cope with a directory name
@@ -47,7 +48,7 @@ define-macro-file hkipipe fhook-ipipe
   set-variable .p &lef #l2 &neg &len #l1
   set-variable #l1 &rep #l1 "%" "\bA"
   set-variable #l2 &rep &rep &rep &rep .p "%" "\bA" "[" "\bB" "|" "\bC" "]" "\bD"
-  set-variable #l0 &rep &rep #l0 "%p" #l2 "%P" &rep #l2 "/" .osp
+  set-variable #l0 &rep &rep #l0 "%p" #l2 "%P" &rep #l2 "/" &lef %os-chars 1
   !iif &seq &rig #l1 -1 "/"  set-variable #l1 &lef #l1 -1
   !if &gre &set #l4 &rsin "." #l1 1
     set-variable #l2 &lef #l1 &sub #l4 1
@@ -61,8 +62,8 @@ define-macro-file hkipipe fhook-ipipe
     set-variable #l4 &rig #l0 &add #l7 2
     !iif &not &set #l5 &sin "]" #l4  -8 ml-write "[Error: Missing ']' in %i input]"
     set-variable #l4 &spr "\r%s\r" &rep &lef #l4 &sub #l5 1 "|" "\r"
-    set-variable #l6 &rep &rep &rep &rep #l4 "%f" #l1 "%F" &rep #l1 "/" .osp "%b" #l2 "%e" #l3
-    set-variable #l6 &rep &rep &rep &rep &rep #l6 "\bA" "%" "\bM" .m "\bB" "[" "\bC" "|" "\bD" "]"
+    set-variable #l6 &rep &rep &rep &rep #l4 "%f" #l1 "%F" &rep #l1 "/" &lef %os-chars 1 "%b" #l2 "%e" #l3
+    set-variable #l6 &rep &rep &rep &rep &rep &rep #l6 "\bA" "%" "\bM" &rig %os-chars -1 "\bP" &lef %os-chars 1 "\bB" "[" "\bC" "|" "\bD" "]"
     set-variable #l5 &spr "set-variable #l6 @ml%s%s \"%s\" \"%s\"" &con &gre &len &lget #l6 1 1 "" &con &gre &llen #l6 2 1 0 &lget #l6 1 &lget #l6 2 &lget #l6 3
     execute-line #l5
     set-variable #l6 &rep &rep &rep &rep #l6 "%" "\bA" "[" "\bB" "|" "\bC" "]" "\bD"
@@ -73,8 +74,8 @@ define-macro-file hkipipe fhook-ipipe
     set-variable #l4 &rig #l0 &add #l7 2
     !iif &not &set #l5 &sin "]" #l4  -8 ml-write "[Error: Missing ']' in %v variable]"
     set-variable #l4 &spr "\r%s\r" &rep &lef #l4 &sub #l5 1 "|" "\r"
-    set-variable #l6 &rep &rep &rep &rep #l4 "%f" #l1 "%F" &rep #l1 "/" .osp "%b" #l2 "%e" #l3
-    set-variable #l6 &rep &rep &rep &rep &rep #l6 "\bA" "%" "\bM" .m "\bB" "[" "\bC" "|" "\bD" "]"
+    set-variable #l6 &rep &rep &rep &rep #l4 "%f" #l1 "%F" &rep #l1 "/" &lef %os-chars 1 "%b" #l2 "%e" #l3
+    set-variable #l6 &rep &rep &rep &rep &rep &rep #l6 "\bA" "%" "\bM" &rig %os-chars -1 "\bP" &lef %os-chars 1 "\bB" "[" "\bC" "|" "\bD" "]"
     !iif &xse &lef &set #l8 &lget #l6 1 1 "[0-9a-zA-Z]"  set-variable #l8 &spr ".%s.%s" #l9 #l8
     !if &not &exi &ind #l8
       !iif &seq "com" &lget #l6 1  file-tool-com-init #l9
@@ -98,8 +99,8 @@ define-macro-file hkipipe fhook-ipipe
     set-variable #l6 &rep &rep &rep &rep #l6 "%" "\bA" "[" "\bB" "|" "\bC" "]" "\bD"
     set-variable #l0 &spr "%s%s%s" &lef #l0 &sub #l7 1 #l6 &rig #l0 &add &add #l7 &len #l4 1
   !done
-  set-variable #l0 &rep &rep &rep &rep #l0 "%f" #l1 "%F" &rep #l1 "/" .osp "%b" #l2 "%e" #l3
-  set-variable #l0 &rep &rep &rep &rep &rep #l0 "\bA" "%" "\bM" .m "\bB" "[" "\bC" "|" "\bD" "]"
+  set-variable #l0 &rep &rep &rep &rep #l0 "%f" #l1 "%F" &rep #l1 "/" &lef %os-chars 1 "%b" #l2 "%e" #l3
+  set-variable #l0 &rep &rep &rep &rep &rep &rep #l0 "\bA" "%" "\bM" &rig %os-chars -1 "\bP" &lef %os-chars 1 "\bB" "[" "\bC" "|" "\bD" "]"
   !while &set #l4 &sin "\bE" #l0
     !if &not &set #l5 &sin "\bE" &rig #l0 &add #l4 1
       -8 ml-write "[Error: Missing '%\"' in command line]"
@@ -113,11 +114,10 @@ define-macro-file hkipipe fhook-ipipe
   !done
   set-variable @4 #l0
 !emacro
-set-variable .file-proc-str.m &con &seq $platform "windows" "&" ";"
 
 ; file tool helper, @1 = tool name, returns
 ;   #p1 = tool com list with #p2 = main program, #p3 the start path, #p4 = full command line
-; variables #p3 & #p4 have not be expanded, i.e. may still contain %p & %f etc  
+; variables #p3 & #p4 have not be expanded, i.e. may still contain %p & %f etc
 0 define-macro file-tools-init
   set-variable #l9 @1
   !iif &not &seq &lef $buffer-fhook 6 "fhook-"  -8 ml-write &spr "file-%s error: Unexpected buffer fhook name (%s)" #l9 $buffer-fhook
@@ -204,14 +204,14 @@ define-macro file-exec
   set-variable #l0 &rig $buffer-fhook 6
   ml-write &spr "Executing [%s]" #l6
   !if &len #l3
-    set-position "\x82" 
+    set-position "\x82"
     !force 0 delete-buffer "*hkft1*"
     find-buffer "*hkft1*"
     set-variable $buffer-fname &cat #l3 &con &sin &rig #l3 -1 "\\/" "" "/"
   !endif
   0x80 ipipe-shell-command #l6 &spr "*%s-exec*" #l0 file-tools-ipipe @nma
   !if &len #l3
-    goto-position "\x82" 
+    goto-position "\x82"
     !force 0 delete-buffer "*hkft1*"
   !endif
   popup-window &spr "*%s-exec*" #l0
@@ -219,7 +219,7 @@ define-macro file-exec
 !emacro
 
 define-macro file-format
-  0x6df set-position "\x82" 
+  0x6df set-position "\x82"
   file-tools-init "format"
   ; Write buffer to a new temp file and format that, then read and update if required.
   ; This means user can lost edits, so no need to prompt to save and operation and be easily undone.
@@ -241,11 +241,11 @@ define-macro file-format
   set-variable $buffer-fname &cat #l3 &con &sin &rig #l3 -1 "\\/" "" "/"
   2 pipe-shell-command #l6 &spr "*%s-format*" #l0
   set-variable #l2 $result
-  goto-position "\x82" 
+  goto-position "\x82"
   !force 0 delete-buffer "*hkft1*"
   !if #l2
     popup-window &spr "*%s-format*" #l0
-    17 goto-position "\x82" 
+    17 goto-position "\x82"
     !iif &seq "ERROR" &set #l8 &ind &spr ".%s.name" $buffer-fhook  set-variable #l8 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
     -8 ml-write &spr "file-format error: %s file formatter execution failed (exit code %s), check for errors. Run major-mode-tools-setup to reconfigure." #l8 #l2
   !endif
@@ -277,7 +277,7 @@ define-macro file-format
     next-frame
   !done
   !force 0 delete-buffer "*hkft1*"
-  !force goto-position "\x82" 
+  !force goto-position "\x82"
   !if #l2
     ml-write "file-format: No changes made by formatter."
   !else
@@ -289,21 +289,21 @@ define-macro file-lint
   file-tools-init "lint"
   !if &bmod "edit"
     set-variable #l0 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-    !iif &iseq #l0 "y"  save-buffer 
+    !iif &iseq #l0 "y"  save-buffer
   !endif
   !iif &len #l3  file-proc-str $buffer-fhook #l3 $buffer-fname #l3
   file-proc-str $buffer-fhook #l4 $buffer-fname #l6
   set-variable #l0 &rig $buffer-fhook 6
   ml-write &spr "Executing [%s]" #l6
   !if &len #l3
-    set-position "\x82" 
+    set-position "\x82"
     !force 0 delete-buffer "*hkft1*"
     find-buffer "*hkft1*"
     set-variable $buffer-fname &cat #l3 &con &sin &rig #l3 -1 "\\/" "" "/"
   !endif
   0x80 ipipe-shell-command #l6 &spr "*%s-lint*" #l0 file-tools-ipipe @nma
   !if &len #l3
-    goto-position "\x82" 
+    goto-position "\x82"
     !force 0 delete-buffer "*hkft1*"
   !endif
   popup-window &spr "*%s-lint*" #l0

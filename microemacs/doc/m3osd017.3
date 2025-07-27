@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sun Feb 6 18:14:27 2005
 .\"
-.Id $Id: m3osd017.3,v 2.5 2025/07/22 00:01:28 jon Exp $
+.Id $Id: m3osd017.3,v 2.5 2025/07/27 16:44:47 jon Exp $
 .Im MicroEmacs command|osd;command|file
 .so me.tni
 .TH file-tool-setup 3
@@ -54,6 +54,10 @@ as follows:
 .RS
 .PP
 \fB%%\fR - Replaced with a single '\fC%\fR' character.
+.TP
+\fB%/\fR - Path character
+.\"
+Replaced with OS specific path char, i.e. '\fC/\fR' on UNIX, '\fC\\\fR' on Windows etc.
 .TP
 \fB%;\fR - Command separator
 .\"
@@ -372,7 +376,8 @@ Default Open: no
 .na
 .Ht file-browser 3 ,
 .Ht find-zfile 3 ,
-.Ht user-setup 3 .
+.Ht user-setup 3 ,
+.Ht %os-chars 5 .
 .br
 .Hl "Regular Expressions" RegularExpressions 2
 .ad

@@ -43,7 +43,6 @@ mksee "#' \r#' ## <a name='see'>SEE ALSO</a>\r#' #' - [\ptitle](https://wwwurl.o
 mkchg "#' \r#' ## <a name='changes'>CHANGES</a>\r#' \r#' - 2020-\pxx-xx Relase 0.1\r\P" "  mkchg"
 mktodo "#' \r#' ## <a name='todo'>TODO</a>\r#' \r#' - " "  mktodo"
 mkaut "#' \r#' ## <a name='authors'>AUTHOR(s)</a>\r#' \r#' The **\p...** package was written by Dr. Detlef Groth, Schwielowsee, Germany.\r\P" "  mkaut"
-mklic "#' \r#' ## <a name='license'>LICENSE AND COPYRIGHT</a>\r#' \r#' The ... package version 0.0\r#' \r#' Copyright (c) 2019-20  Dr. Detlef Groth, E-mail: <detlef(at)dgroth(dot)de>\r#' #' This library is free software; you can use, modify, and redistribute it\r#' for any purpose, provided that existing copyright notices are retained\r#' in all copies and that this notice is included verbatim in any\r#' distributions.\r#' \r#' This software is distributed WITHOUT ANY WARRANTY; without even the\r#' implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\r#'" "  mklic"
  "" ""
  "" "</FOLD><FOLD+> \ecCtcltk:\ecA"
 tktop "tt\p=tktoplevel()\P" "  tktop"

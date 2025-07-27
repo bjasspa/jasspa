@@ -67,6 +67,49 @@ set-variable .frame-handle.cmd "|delete-frame|create-frame|create-frame|next-fra
   set-variable @1 #l9
 !emacro
 
+; Given a regex filled path, separated by '/', find all matches, returned via .file-list.file-count and .file-list.file#. Throws error is the path has a bad regex
+0 define-macro file-list-ladd
+  set-variable #l0 @1
+  set-variable #l9 @2
+  !force set-variable $file-names #l0
+  !iif &not $status  -8 ml-write &spr "[invalid regex given in path: %s]" #l0
+  set-variable #l1 $result
+  !while &len &set #l2 $file-names
+    !iif &not &sin #l2 "../"  set-variable &ind &cat #l9 &pinc #p9 1 &cat #l1 #l2
+  !done
+!emacro
+0 define-macro file-list
+  set-variable #l8 &not &seq "/" &rig &set #l0 @1 -1
+  !if &seq "/" &set #l1 &lef #l0 1
+  !elif &not &set #l2 &sin "/" #l0
+    set-variable #l1 ""
+  !elif &seq "~" #l1
+    set-variable #l1 &stat a &lef #l0 #l2
+    set-variable #l0 &rig #l0 #l2
+  !else
+    set-variable #l1 ""
+  !endif
+  set-variable .file-list-ladd.l1_0 #l1
+  set-variable #l0 &rep &spr "/%s/" #l0 "//" "/"
+  !iif #l8  set-variable #l8 &llen #l0
+  set-variable #l1 0
+  set-variable #l2 1
+  !while &len &set #l4 &lget #l0 &inc #l1 1
+    !iif &sub #l1 #l8  set-variable #l4 &cat #l4 "/"
+    !if &equ &llen #l0 #l1
+      set-variable #l5 ".file-list.file"
+    !else
+      set-variable #l5 &spr ".l%s_" &add #l1 1
+    !endif
+    set-variable #l9 0
+    !while &pdec #l2 1
+      set-variable #l3 &ind &spr ".file-list-ladd.l%s_%s" #l1 #l2
+      file-list-ladd &cat #l3 #l4 #l5
+    !done
+  !until &not &set #l2 #l9
+  set-variable .file-count #l2
+!emacro
+
 ; Add given value to parent macro's history registry
 0 define-macro macro-history-add
   !force set-variable #l2 @2

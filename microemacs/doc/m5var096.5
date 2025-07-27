@@ -1,0 +1,38 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1998-2009 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.Id $Id: m5var096.5,v 2.6 2025/07/27 16:47:13 jon Exp $
+.Im MicroEmacs variable|file|shell
+.so me.tni
+.TH %os-chars 5
+.XI %os-chars - "Characters used by the OS"
+.SH NAME
+%os-chars \- Characters used by the OS
+.Me $a
+.SH SYNOPSIS
+\fB%os-chars\fR "\fIstring\fR"; Default is platform specific
+.SH DESCRIPTION
+.B %os-chars
+defines the characters used by the current operating system in specific places.
+The characters have fixed indices defined as follows:-
+.IP "Index 0"
+Directory separator character, used when giving a full path, \*(mS always uses '\fC/\fR' internally but these many 
+need to be converted for some operations.
+.IP "Index 1"
+Character used after a drive letter, typically '\fC:\fR', if the current OS does not support drives this character 
+will be a space (' ').
+.IP "Index 2"
+Path separator character, typically used in the system's PATH environment variable to separate each path.
+.IP "Index 3"
+Multiple command separator character, used to separate two commands on a system command-line where both commands are
+always run, regardless of the exit-code of the first command. Note that two ampersands ('\fB&&\fR') works in a similar
+way except if the exit code of the first (left hand) command is non-zero, indicating an error, the other command is
+not executed.
+.SH "SEE ALSO"
+.na
+.Ht file-tool-setup 3 .
+.ad
+.FH

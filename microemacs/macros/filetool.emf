@@ -43,9 +43,9 @@
     set-variable .p &lef #l2 &neg &len #l1
     set-variable #l1 &rep #l1 "%" "\bA"
   !endif
-  set-variable #l0 &rep &rep &rep &rep &rep &rep @1 "%%" "\bA" "%&" "\bM" "%\"" "\bE" "%[" "\bB" "%|" "\bC" "%]" "\bD"
+  set-variable #l0 &rep &rep &rep &rep &rep &rep @1 "%%" "\bA" "%&" "\bM" "%/" "\bP" "%\"" "\bE" "%[" "\bB" "%|" "\bC" "%]" "\bD"
   set-variable #l2 &rep &rep &rep &rep .p "%" "\bA" "[" "\bB" "|" "\bC" "]" "\bD"
-  set-variable #l0 &rep &rep #l0 "%p" #l2 "%P" &rep #l2 "/" .osp
+  set-variable #l0 &rep &rep #l0 "%p" #l2 "%P" &rep #l2 "/" &lef %os-chars 1
   !iif &seq &rig #l1 -1 "/"  set-variable #l1 &lef #l1 -1
   !if &gre &set #l4 &rsin "." #l1 1
     set-variable #l2 &lef #l1 &sub #l4 1
@@ -59,8 +59,8 @@
     set-variable #l4 &rig #l0 &add #l7 2
     !iif &not &set #l5 &sin "]" #l4  -8 ml-write "[Error: Missing ']' in %i input]"
     set-variable #l4 &spr "\r%s\r" &rep &lef #l4 &sub #l5 1 "|" "\r"
-    set-variable #l6 &rep &rep &rep &rep #l4 "%f" #l1 "%F" &rep #l1 "/" .osp "%b" #l2 "%e" #l3
-    set-variable #l6 &rep &rep &rep &rep &rep #l6 "\bA" "%" "\bM" .m "\bB" "[" "\bC" "|" "\bD" "]"
+    set-variable #l6 &rep &rep &rep &rep #l4 "%f" #l1 "%F" &rep #l1 "/" &lef %os-chars 1 "%b" #l2 "%e" #l3
+    set-variable #l6 &rep &rep &rep &rep &rep #l6 "\bA" "%" "\bM" &rig %os-chars -1 "\bP" &lef %os-chars 1 "\bB" "[" "\bC" "|" "\bD" "]"
     set-variable #l5 &spr "set-variable #l6 @ml%s%s \"%s\" \"%s\"" &con &gre &len &lget #l6 1 1 "" &con &gre &llen #l6 2 1 0 &lget #l6 1 &lget #l6 2 &lget #l6 3
     execute-line #l5
     set-variable #l6 &rep &rep &rep &rep #l6 "%" "\bA" "[" "\bB" "|" "\bC" "]" "\bD"
@@ -71,8 +71,8 @@
     set-variable #l4 &rig #l0 &add #l7 2
     !iif &not &set #l5 &sin "]" #l4  -8 ml-write "[Error: Missing ']' in %v variable]"
     set-variable #l4 &spr "\r%s\r" &rep &lef #l4 &sub #l5 1 "|" "\r"
-    set-variable #l6 &rep &rep &rep &rep #l4 "%f" #l1 "%F" &rep #l1 "/" .osp "%b" #l2 "%e" #l3
-    set-variable #l6 &rep &rep &rep &rep &rep #l6 "\bA" "%" "\bM" .m "\bB" "[" "\bC" "|" "\bD" "]"
+    set-variable #l6 &rep &rep &rep &rep #l4 "%f" #l1 "%F" &rep #l1 "/" &lef %os-chars 1 "%b" #l2 "%e" #l3
+    set-variable #l6 &rep &rep &rep &rep &rep #l6 "\bA" "%" "\bM" &rig %os-chars -1 "\bP" &lef %os-chars 1 "\bB" "[" "\bC" "|" "\bD" "]"
     !iif &xse &lef &set #l8 &lget #l6 1 1 "[0-9a-zA-Z]"  set-variable #l8 &cat ".V" #l8
     !if &exi &ind #l8
       set-variable #l5 &ind #l8
@@ -102,8 +102,8 @@
       !iif &not &sin "]" #l0  -8 ml-write "[Error: Missing ']' in %*[ multi-file command line]"
       set-variable #l0 &rep &rep #l0 "%*[" "" "]" ""
     !endif
-    set-variable #l0 &rep &rep &rep &rep #l0 "%f" #l1 "%F" &rep #l1 "/" .osp "%b" #l2 "%e" #l3
-    set-variable #l0 &rep &rep &rep &rep &rep #l0 "\bA" "%" "\bM" .m "\bB" "[" "\bC" "|" "\bD" "]"
+    set-variable #l0 &rep &rep &rep &rep #l0 "%f" #l1 "%F" &rep #l1 "/" &lef %os-chars 1 "%b" #l2 "%e" #l3
+    set-variable #l0 &rep &rep &rep &rep &rep #l0 "\bA" "%" "\bM" &rig %os-chars -1 "\bP" &lef %os-chars 1 "\bB" "[" "\bC" "|" "\bD" "]"
     !while &set #l4 &sin "\bE" #l0
       !if &not &set #l5 &sin "\bE" &rig #l0 &add #l4 1
         -8 ml-write "[Error: Missing '%\"' in command line]"
@@ -123,7 +123,7 @@
       set-variable #l4 &cond &band @# 0x200 0x25 5
       !tjump &not &band @# 0x4000 3
       set-variable #l4 &bxor #l4 1 
-      set-variable #l7 &rep &rep &rep &rep @3 "%f" #l1 "%F" &rep #l1 "/" .osp "%b" #l2 "%e" #l3
+      set-variable #l7 &rep &rep &rep &rep @3 "%f" #l1 "%F" &rep #l1 "/" &lef %os-chars 1 "%b" #l2 "%e" #l3
       !tjump &not &band @# 0x100 2
       set-variable #l4 &bor #l4 2 
       !if &band @# 0x40
@@ -146,7 +146,7 @@
     !while &les &pinc #l9 1 .find-file.file-count
       set-variable #l1 &rep &ind &cat ".find-file.file" #l9 "%" "\bA"
       !iif &seq &rig #l1 -1 "/"  set-variable #l1 &lef #l1 -1
-      set-variable #l2 &rep &rep #l4 "%f" #l1 "%F" &rep #l1 "/" .osp
+      set-variable #l2 &rep &rep #l4 "%f" #l1 "%F" &rep #l1 "/" &lef %os-chars 1
       !if &gre &set #l3 &rsin "." #l1 1
         set-variable #l2 &rep &rep #l2 "%b" &lef #l1 &sub #l3 1 "%e" &rig #l1 &sub #l3 1
       !else
@@ -159,7 +159,9 @@
     !iif &seq @wc "*"  set-variable @wc " "
     !force replace-string "\bA" "%"
     beginning-of-buffer
-    !force replace-string "\bM" .m
+    !force replace-string "\bM" &rig %os-chars -1
+    beginning-of-buffer
+    !force replace-string "\bP" &lef %os-chars 1
     beginning-of-buffer
     !force replace-string "\bB" "["
     beginning-of-buffer
@@ -215,7 +217,6 @@
   !force 0 delete-buffer "*file-tool-temp*"
   !return #l1
 !emacro
-set-variable .file-tool-run.osp &con &band $system 0x100 "\\" "/"
 
 0 define-macro file-tool-exec
   !if &set #l1 &les @# 0

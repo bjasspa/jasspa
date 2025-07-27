@@ -30,7 +30,7 @@
 0 define-macro-file langutl spell-rules-init
 0 define-macro-file filetool file-tool-run file-tool-exec file-tool-exec-default
 0 define-macro-file osd osd-main osd-find-buffer osd-dialog osd-xdialog osd-entry osd-close osd-pinstall me-find-file
-0 define-macro-file utils frame-handle ascii-time str-to-regex filemask-to-regex macro-history-add copy-registry create-file-path reread-settings return-get-next-line mouse-get-next-line
+0 define-macro-file utils frame-handle ascii-time str-to-regex filemask-to-regex file-list macro-history-add copy-registry create-file-path reread-settings return-get-next-line mouse-get-next-line
 define-macro-file format clean sort-lines-ignore-case transpose-region-line normal-tab tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph indent-increase indent-decrease
 define-macro-file tools change-company compile keep-next-buffer which diff rdiff xdiff diff-changes execute-tool uniq find-bfile find-cfile find-hfile find-lfile find-ufile reread-file reread-all save-kbd-macro
 define-macro-file clearcs cc-state cc-update cc-checkout cc-checkin cc-add cc-diff cc-uncheckout cc-annotate cc-describe cc-delete cc-move cc-merge cc-vtree cc-explorer cc-add-view cc-setup
@@ -328,6 +328,7 @@ set-variable $quiet &reg "/history/quiet" "1"
 set-variable $kept-versions &reg &spr "/history/%s/kept-vers" $platform "0"
 set-variable $file-ignore &reg &spr "/history/%s/file-ignore" $platform ""
 set-variable $scroll-bar &reg &spr "/history/%s/scroll-bar" %platform "0"
+set-variable %os-chars "/ :";
 set-variable %tag-file "tags"
 set-variable %tag-template "%[^\t]\t%[^\t]\t%[^\n]\n"
 set-variable .osd.tmp 40
