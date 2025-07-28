@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac098.3,v 2.2 2024/10/06 17:13:59 jon Exp $
+.Id $Id: m3mac098.3,v 2.2 2025/07/28 11:02:00 jon Exp $
 .Im MicroEmacs command|file|macrodevelop
 .so me.tni
 .TH copy-file 3
@@ -81,10 +81,25 @@ read-only files will be deleted.
 .IP \fB0x20\fR
 When set the file name part of \fBfile\fR is treated as a regular expression, this can be used to delete multiple 
 files.
+.PP
+Both commands return 4 counts in
+.Ht $result 5
+with the form "|\fC<ds#>\fR|\fC<df#>\fR|\fC<fs#>\fR|\fC<ff#>\fR|", a
+.Hl "\*(mS list" &lset 4 ,
+where the counts are defined as follows:
+.IP \fC<ds#>\fR
+The number of directories successfully copied, moved or deleted.
+.IP \fC<df#>\fR
+The number of directories that failed to be copied, moved or deleted.
+.IP \fC<fs#>\fR
+The number of files successfully copied, moved or deleted.
+.IP \fC<ff#>\fR
+The number of files that failed to be copied, moved or deleted.
 .SH NOTES
 \fBcopy-file\fR and \fBdelete-file\fR are macros defined in \fChkdirlst.emf\fR.
 .SH "SEE ALSO"
 .na
-.Ht file-op 2 .
+.Ht file-op 2 ,
+.Ht $result 5 .
 .ad
 .FH

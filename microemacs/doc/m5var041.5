@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m5var041.5,v 2.9 2025/05/18 18:58:31 jon Exp $
+.Id $Id: m5var041.5,v 2.9 2025/07/28 11:06:02 jon Exp $
 .Im MicroEmacs variable|shell|macrodevelop
 .so me.tni
 .TH $result 5
@@ -23,10 +23,18 @@ is used to return the results of several commands:
 \fB$result\fR is set to the same output string as printed to the message-line by this command.
 .TP
 .Ht change-font 2 
-\fB$result\fR  is used to return the current or user select font.
+\fB$result\fR is used to return the current or user select font.
+.TP
+.Ht copy-file 3
+\fB$result\fR is used to return the number of files and directories that were successfully copied or moved and the 
+number that failed.
 .TP
 .Ht count-words 2 
 \fB$result\fR is set to the same output string as printed to the message-line by this command.
+.TP
+.Ht delete-file 3 
+\fB$result\fR is used to return the number of files and directories that were successfully deleted and the number that
+failed.
 .TP
 .Ht describe-key 2 
 \fB$result\fR is set to the command bound to the given key.
@@ -123,8 +131,10 @@ should be copied before getting user input.
 .na
 .Ht buffer-info 2 ,
 .Ht change-font 2 ,
+.Ht copy-file 3 ,
 .Ht count-words 2 ,
 .Ht create-callback 2 ,
+.Ht delete-file 3 ,
 .Ht describe-key 2 ,
 .Ht file-op 2 ,
 .Ht find-registry 2 ,
