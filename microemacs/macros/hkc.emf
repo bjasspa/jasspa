@@ -525,8 +525,8 @@ set-variable .fhook-c.item-list-r7 "Strc \ecB\\1\ecA"
 !endif
 ;
 ; setup useful C fuctions to auto-load cmacros
-;set-variable .fhook-c.exec1 "\brm\b\b\b\b -f a.out %& gcc %\"%f%\" && ./a.out %v[args|20|Additional command-line arguments|]\b"
-;unset-variable .fhook-c.exec-com
+set-variable .fhook-c.exec1 "\bgcc.exe\b\b\b\bdel %\"%b.exe%\" %& gcc -o %\"%b%\" %\"%f%\" && %\"%b%\" %v[args|20|Additional command-line arguments|]\b"
+set-variable .fhook-c.exec2 "\bgcc\b\b\b\brm -f %\"%b%\" %& gcc -o %\"%b%\" %\"%f%\" && %\"./%b%\" %v[args|20|Additional command-line arguments|]\b"
 define-macro-file cmacros c-slashify c-deslashify c-hash-eval c-hash-define c-hash-undef c-hash-undo
 define-macro-file hkcpp fhook-cpp
 ;

@@ -142,7 +142,7 @@ define-macro-file hkipipe fhook-ipipe
     !done
     !if #l5
     !elif &gre #l0 1
-      -8 ml-write &spr "file-%s error: Failed to find a %s file interpreter, try running major-mode-tools-setup." #l9 #l8
+      -8 ml-write &spr "file-%s error: Failed to find a %s file %s, try running major-mode-tools-setup." #l9 #l8 &lget "|interpreter|formatter|linter|" &lfin "|exec|format|lint|" #l9
     !else
       -8 ml-write &spr "Error: file-%s has not been configured for %s files, try running major-mode-tools-setup." #l9 #l8
     !endif

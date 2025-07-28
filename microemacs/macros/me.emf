@@ -328,7 +328,7 @@ set-variable $quiet &reg "/history/quiet" "1"
 set-variable $kept-versions &reg &spr "/history/%s/kept-vers" $platform "0"
 set-variable $file-ignore &reg &spr "/history/%s/file-ignore" $platform ""
 set-variable $scroll-bar &reg &spr "/history/%s/scroll-bar" %platform "0"
-set-variable %os-chars "/ :";
+set-variable %os-chars "/ :;"
 set-variable %tag-file "tags"
 set-variable %tag-template "%[^\t]\t%[^\t]\t%[^\n]\n"
 set-variable .osd.tmp 40
