@@ -67,24 +67,32 @@
 #define DIR_CHAR  '/'   /* directory divide char, ie /bin/ */
 
 /*************************************************************************
+ * UNIX : Cyqwin on Windows                                              *
+ *************************************************************************/
+#ifdef _CYGWIN
+#define meSYSTEM_NAME  "cygwin"         /* Identity name of the system   */
+#undef  _WIN32                          /* This is not win32             */
+#define _UNIXV_BASE    1                /* Uses UNIX V as base           */
+#define _USEPOLL       1                /* use poll() for stdin polling  */
+#endif /* _CYGWIN */
+
+/*************************************************************************
+ * UNIX : MSYS on Windows                                                *
+ *************************************************************************/
+#ifdef _MSYSWIN
+#define meSYSTEM_NAME  "msyswin"        /* Identity name of the system   */
+#undef  _WIN32                          /* This is not win32             */
+#define _UNIXV_BASE    1                /* Uses UNIX V as base           */
+#define _USEPOLL       1                /* use poll() for stdin polling  */
+#endif /* _MSYSWIN */
+
+/*************************************************************************
  * UNIX : IRIX                                                           *
  *************************************************************************/
 #if (defined _IRIX5) || (defined _IRIX6)
 #define meSYSTEM_NAME  "irix"           /* Identity name of the system   */
 #define _IRIX          1                /* This is an irix box           */
-#define _UNIX          1                /* This is a UNIX system         */
-#define _USG           1                /* UNIX system V                 */
-#define _DIRENT        1                /* Use <dirent.h> for directory  */
-#define _TERMIOS       1                /* Use termios, not termio       */
-#define _XTERM         1                /* Use Xlib                      */
-#define _TCAP          1                /* Use TERMCAP                   */
-#define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
-#define _CLIENTSERVER  1                /* Client server support         */
-#define _SOCKET        1                /* Supports url reading          */
-#define _IPIPES        1                /* platform supports Inc. pipes  */
-#define _POSIX_SIGNALS 1                /* use POSIX signals             */
-#define _DRAGNDROP     1                /* Drag and drop supported.      */
-#define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
+#define _UNIXV_BASE    1                /* Uses UNIX V as base           */
 #endif
 
 /*************************************************************************
@@ -115,19 +123,7 @@
  *************************************************************************/
 #ifdef _UNIXWR1 
 #define meSYSTEM_NAME  "unixwr1"        /* Identity name of the system   */
-#define _UNIX          1                /* This is a UNIX system         */
-#define _USG           1                /* UNIX system V                 */
-#define _DIRENT        1                /* Use <dirent.h> for directory  */
-#define _TERMIOS       1                /* Use termios, not termio       */
-#define _XTERM         1                /* Use Xlib                      */
-#define _TCAP          1                /* Use TERMCAP                   */
-#define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
-#define _CLIENTSERVER  1                /* Client server support         */
-#define _SOCKET        1                /* Supports url reading          */
-#define _IPIPES        1                /* platform supports Inc. pipes  */
-#define _POSIX_SIGNALS 1                /* use POSIX signals             */
-#define _DRAGNDROP     1                /* Drag and drop supported.      */
-#define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
+#define _UNIXV_BASE    1                /* Uses UNIX V as base           */
 #endif
 
 /*************************************************************************
@@ -137,27 +133,8 @@
 #if (defined _SUNOS5) || (defined _SUNOS_X86)
 #define meSYSTEM_NAME  "sunos"          /* Identity name of the system   */
 #define _SUNOS         1                /* This is a sunos box           */
-#define _UNIX          1                /* This is a UNIX system         */
-#define _USG           1                /* UNIX system V                 */
-#define _DIRENT        1                /* Use <dirent.h> for directory  */
-#define _TERMIOS       1                /* Use termios, not termio       */
-#define _XTERM         1                /* Use Xlib                      */
-#define _TCAP          1                /* Use TERMCAP                   */
-#define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
-#define _CLIENTSERVER  1                /* Client server support         */
-#define _SOCKET        1                /* Supports url reading          */
-#define _IPIPES        1                /* platform supports Inc. pipes  */
-#define _POSIX_SIGNALS 1                /* use POSIX signals             */
 #define _PTY_MASTER    1                /* Open /dev/ptmx to get PTY     */
-#define _DRAGNDROP     1                /* Drag and drop supported.      */
-#define _METFS         1                /* Use the tack-on file system   */
-
-/* Search path for CSW Sun build. */
-#ifdef _CSW
-#define _DEFAULT_SEARCH_PATH "/opt/csw/share/jasspa"
-#else
-#define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
-#endif
+#define _UNIXV_BASE    1                /* Uses UNIX V as base           */
 #endif
 
 /*************************************************************************
@@ -190,20 +167,7 @@
 #endif
 
 #ifdef _FREEBSD_BASE
-#define _UNIX          1                /* This is a UNIX system         */
-#define _USG           1                /* UNIX system V                 */
-#define _DIRENT        1                /* Use <dirent.h> for directory  */
-#define _TERMIOS       1                /* Use termios, not termio       */
-#define _XTERM         1                /* Use Xlib                      */
-#define _TCAP          1                /* Use TERMCAP                   */
-#define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
-#define _CLIENTSERVER  1                /* Client server support         */
-#define _SOCKET        1                /* Supports url reading          */
-#define _IPIPES        1                /* platform supports Inc. pipes  */
-#define _POSIX_SIGNALS 1                /* use POSIX signals             */
-#define _DRAGNDROP     1                /* Drag and drop supported.      */
-#define _METFS         1                /* Use the tack-on file system   */
-#define _DEFAULT_SEARCH_PATH "/usr/local/share/jasspa"
+#define _UNIXV_BASE    1                /* Uses UNIX V as base           */
 #endif
 
 /*************************************************************************
@@ -211,19 +175,7 @@
  *************************************************************************/
 #ifdef _AIX
 #define meSYSTEM_NAME  "aix"            /* Identity name of the system   */
-#define _UNIX          1                /* This is a UNIX system         */
-#define _USG           1                /* UNIX system V                 */
-#define _DIRENT        1                /* Use <dirent.h> for directory  */
-#define _TERMIOS       1                /* Use termios, not termio       */
-#define _XTERM         1                /* Use Xlib                      */
-#define _TCAP          1                /* Use TERMCAP                   */
-#define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
-#define _CLIENTSERVER  1                /* Client server support         */
-#define _SOCKET        1                /* Supports url reading          */
-#define _IPIPES        1                /* platform supports Inc. pipes  */
-#define _POSIX_SIGNALS 1                /* use POSIX signals             */
-#define _DRAGNDROP     1                /* Drag and drop supported.      */
-#define _DEFAULT_SEARCH_PATH "/opt/jasspa:/usr/share/jasspa:/usr/local/jasspa"
+#define _UNIXV_BASE    1                /* Uses UNIX V as base           */
 #endif
 
 /*************************************************************************
@@ -241,44 +193,8 @@
 #endif
 
 #ifdef _LINUX_BASE
-#define _UNIX          1                /* This is a UNIX system         */
-#define _USG           1                /* UNIX system V                 */
-#define _DIRENT        1                /* Use <dirent.h> for directory  */
-#define _TERMIOS       1                /* Use termios, not termio       */
-#define _XTERM         1                /* Use Xlib                      */
-#define _TCAP          1                /* Use TERMCAP                   */
-#define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
-#define _CLIENTSERVER  1                /* Client server support         */
-#define _SOCKET        1                /* Supports url reading          */
-#define _IPIPES        1                /* platform supports Inc. pipes  */
-#define _POSIX_SIGNALS 1                /* use POSIX signals             */
-#define _DRAGNDROP     1                /* Drag and drop supported.      */
-#define _METFS         1                /* Use the tack-on file system   */
-#define _DEFAULT_SEARCH_PATH "/usr/local/share/jasspa"
+#define _UNIXV_BASE    1                /* Uses UNIX V as base           */
 #endif
-
-/*************************************************************************
- * UNIX : Cyqwin on Windows                                              *
- *************************************************************************/
-#ifdef _CYGWIN
-#define meSYSTEM_NAME  "cygwin"         /* Identity name of the system   */
-#define _UNIX          1                /* This is a UNIX system         */
-#define _USG           1                /* UNIX system V                 */
-#define _DIRENT        1                /* Use <dirent.h> for directory  */
-#define _TERMIOS       1                /* Use termios, not termio       */
-#define _TCAP          1                /* Use TERMCAP                   */
-#define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
-#undef  _WIN32                          /* This is not win32             */
-#define _POSIX_SIGNALS 1                /* use POSIX signals             */
-#define _USEPOLL       1                /* use poll() for stdin polling  */
-#define _XTERM         1                /* Use Xlib                      */
-#define _CLIENTSERVER  1                /* Client server support         */
-#define _SOCKET        1                /* Supports url reading          */
-#define _DRAGNDROP     1                /* Drag and drop supported.      */
-#define _IPIPES        1                /* platform supports Inc. pipes  */
-#define _METFS         1                /* Use the tack-on file system   */
-#define _DEFAULT_SEARCH_PATH "/usr/share/jasspa:/usr/local/jasspa:/usr/local/share/jasspa"
-#endif /* _CYGWIN */
 
 /*************************************************************************
  * UNIX : OpenStep NexT                                                  *
@@ -301,6 +217,26 @@
 #include <libc.h>
 #define _DEFAULT_SEARCH_PATH "/usr/local/jasspa"
 #endif /* _NEXT */
+
+/*************************************************************************
+ * UNIX : UNIX V based OSs                                               *
+ *************************************************************************/
+#ifdef _UNIXV_BASE
+#define _UNIX          1                /* This is a UNIX system         */
+#define _USG           1                /* UNIX system V                 */
+#define _DIRENT        1                /* Use <dirent.h> for directory  */
+#define _TERMIOS       1                /* Use termios, not termio       */
+#define _XTERM         1                /* Use Xlib                      */
+#define _TCAP          1                /* Use TERMCAP                   */
+#define _TCAPFONT      1                /* Use TERMCAP fonts to color    */
+#define _CLIENTSERVER  1                /* Client server support         */
+#define _SOCKET        1                /* Supports url reading          */
+#define _IPIPES        1                /* platform supports Inc. pipes  */
+#define _POSIX_SIGNALS 1                /* use POSIX signals             */
+#define _DRAGNDROP     1                /* Drag and drop supported.      */
+#define _METFS         1                /* Use the tack-on file system   */
+#define _DEFAULT_SEARCH_PATH "/usr/local/share/jasspa"
+#endif
 
 /*************************************************************************
  * Microsoft : DOS                                                       *

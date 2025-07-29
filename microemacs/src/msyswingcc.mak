@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# msysgcc.mak - Make file for MSYS using gcc
+# msysgcc.mak - Make file for Windows MSYS using gcc
 #
 # Copyright (C) 2001-2024 JASSPA (www.jasspa.com)
 #
@@ -29,7 +29,7 @@
 
 HASH     = \#
 A        = .a
-EXE      = 
+EXE      = .exe
 CC       = gcc
 MK       = make
 LD       = $(CC)
@@ -57,8 +57,8 @@ else
 BIT_OPT  = -m$(BIT_SIZE)
 endif
 
-PLATFORM = msys
-PLATFORM_VER = $(shell uname -a | cut -d\  -f4)
+PLATFORM = msyswin
+PLATFORM_VER = 2
 
 MAKEFILE = $(PLATFORM)$(TOOLKIT)
 ifeq (1,$(BPRF))
@@ -70,7 +70,7 @@ OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
 
-CCDEFS   = $(BIT_OPT) -D_CYGWIN -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I. -I$(TRDPARTY)/tfs -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY) $(MAKECDEFS)
+CCDEFS   = $(BIT_OPT) -D_MSYSWIN -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I. -I$(TRDPARTY)/tfs -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY) $(MAKECDEFS)
 CCFLAGSR = -O3 -DNDEBUG=1 -Wall -Wno-uninitialized -Wno-unused-result
 CCFLAGSD = -g -Wall
 LDDEFS   = $(BIT_OPT)
@@ -103,7 +103,7 @@ else
 ifneq (,$(OPENSSLP))
 else ifneq (,$(OPENSSLPATH))
 OPENSSLP = 1 -I$(OPENSSLPATH)
-else ifeq (,$(shell pkg-config --libs openssl | grep "crypto"))
+else ifneq (0,$(shell pkg-config --libs openssl > /dev/null 2> /dev/null; echo $$? ))
 $(warning WARNING: No OpenSSL support found, https support will be disabled.)
 else ifneq (,$(shell pkg-config --modversion openssl | grep "^3\..*"))
 OPENSSLP = 1
@@ -196,7 +196,6 @@ BTYP_LIB = $(CONSOLE_LIBS)
 BTYP     = c
 endif
 
-PATCH    = $(PLATFORM).patch
 OUTDIR   = $(BOUTDIR)-$(BCOR)$(BTYP)
 PRGNAME  = $(BCOR)$(BTYP)
 PRGFILE  = $(PRGNAME)$(EXE)
@@ -217,7 +216,7 @@ $(OUTDIR)/%.o : %.c
 	$(CC) $(CCDEFS) $(CCPROF) $(BCOR_CDF) $(BTYP_CDF) $(CCFLAGS) -c -o $@ $<
 
 
-all: patch $(PRGLIBS) $(OUTDIR)/$(PRGFILE)
+all: $(PRGLIBS) $(OUTDIR)/$(PRGFILE)
 
 $(OUTDIR)/$(PRGFILE): $(OUTDIR) $(INSTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(RM) $@
@@ -236,13 +235,7 @@ $(INSTDIR):
 $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A):
 	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG)
 
-patch: $(PATCH)
-	-for f in $^; do git apply --check --apply $$f; done
-
-unpatch: $(PATCH)
-	-for f in $^; do git apply --check --reverse --apply $$f; done
-
-clean: unpatch
+clean:
 	$(RMDIR) $(OUTDIR)
 	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak clean
 

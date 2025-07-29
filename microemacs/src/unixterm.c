@@ -42,10 +42,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/ioctl.h>
-#ifdef _CYGWIN
-#include <sys/socket.h>
-#include <termcap.h>
-#endif
 
 #if (defined _SUNOS5) && (defined _XTERM)
 #include <X11/Sunkeysym.h>

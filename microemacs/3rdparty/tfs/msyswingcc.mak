@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# msys2gcc.mak - Make file for MSYS using gcc
+# msys2gcc.mak - Make file for Windows MSYS using gcc
 #
 # Copyright (C) 2007-2022 JASSPA (www.jasspa.com)
 #
@@ -22,7 +22,7 @@
 ##############################################################################
 
 A        = .a
-EXE      = 
+EXE      = .exe
 CC       = gcc
 MK       = make
 LD       = $(CC)
@@ -48,8 +48,8 @@ else
 BIT_OPT  = -m$(BIT_SIZE)
 endif
 
-PLATFORM = msys
-PLATFORM_VER = $(shell uname -a | cut -d\  -f4)
+PLATFORM = msyswin
+PLATFORM_VER = 2
 
 MAKEFILE = $(PLATFORM)$(TOOLKIT)
 ifeq (1,$(BPRF))

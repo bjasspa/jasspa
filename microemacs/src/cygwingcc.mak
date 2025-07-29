@@ -24,208 +24,203 @@
 # Created:     Sat Jan 24 1998
 # Synopsis:    Make file for Cygnus Cygwin v20.1 using gcc
 # Notes:
-#       The executable produced does not currently work, for some reason ME
-#       does not receive any keyboard input and must be killed.
-#
-#	Run "make -f cygwingcc.mak"      for optimised build produces ./me
-#	Run "make -f cygwingcc.mak med"  for debug build produces     ./med
-#
-#	Run "make -f cygwingcc.mak clean"      to clean source directory
-#	Run "make -f cygwingcc.mak spotless"   to clean source directory even more
+#     Run ./build.sh to compile, ./build.sh -h for more information.
 #
 ##############################################################################
+
+HASH     = \#
+A        = .a
+EXE      = .exe
+CC       = gcc
+MK       = make
+LD       = $(CC)
+STRIP    = strip
+AR       = ar
+RM       = rm -f
+RMDIR    = rm -rf
+
+include evers.mak
+
+TOOLKIT  = gcc
+TOOLKIT_VER = $(shell $(CC) -dumpversion)
+
+ifneq "$(ARCHITEC)" ""
+else ifeq "$(shell uname -m | cut -c 1-5)" "aarch"
+ARCHITEC = aarch
+else ifeq "$(shell uname -m | cut -c 1-3)" "arm"
+ARCHITEC = aarch
+else
+ARCHITEC = intel
+endif
+ifeq (,$(BIT_SIZE))
+BIT_SIZE = $(shell getconf LONG_BIT)
+else
+BIT_OPT  = -m$(BIT_SIZE)
+endif
+
+PLATFORM = cygwin
+PLATFORM_VER = $(shell uname -r | cut -f 1 -d .)
+
+MAKEFILE = $(PLATFORM)$(TOOLKIT)
+ifeq (1,$(BPRF))
+BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)p
+else
+BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
+endif
+OUTDIRR  = .$(BUILDID)-release
+OUTDIRD  = .$(BUILDID)-debug
+TRDPARTY = ../3rdparty
+
+CCDEFS   = $(BIT_OPT) -D_CYGWIN -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I. -I$(TRDPARTY)/tfs -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY) $(MAKECDEFS)
+CCFLAGSR = -O3 -DNDEBUG=1 -Wall -Wno-uninitialized -Wno-unused-result
+CCFLAGSD = -g -Wall
+LDDEFS   = $(BIT_OPT)
+LDFLAGSR = -O3
+LDFLAGSD = -g
+LDLIBS   = -lm -ldl
+
+ifeq (debug,$(BCFG))
+BOUTDIR  = $(OUTDIRD)
+CCFLAGS  = $(CCFLAGSD)
+LDFLAGS  = $(LDFLAGSD)
+STRIP    = - echo No strip - debug 
+INSTDIR  = 
+INSTPRG  = - echo No install - debug 
+else
+BOUTDIR  = $(OUTDIRR)
+CCFLAGS  = $(CCFLAGSR)
+LDFLAGS  = $(LDFLAGSR)
+INSTDIR  = ../bin/$(BUILDID)
+INSTPRG  = cp
+endif
+
+ifeq (ne,$(BCOR))
+
+BCOR_CDF = -D_NANOEMACS
+PRGLIBS  = 
+
+else
+
+ifneq (,$(OPENSSLP))
+else ifneq (,$(OPENSSLPATH))
+OPENSSLP = 1 -I$(OPENSSLPATH)
+else ifneq (0,$(shell pkg-config --libs openssl > /dev/null 2> /dev/null; echo $$? ))
+$(warning WARNING: No OpenSSL support found, https support will be disabled.)
+else ifneq (,$(shell pkg-config --modversion openssl | grep "^3\..*"))
+OPENSSLP = 1
+OPENSSLV = -3
+else
+$(warning WARNING: Unsupported OpenSSL version, https support will be disabled.)
+endif
+ifneq (,$(OPENSSLP))
+OPENSSLDEFS = -DMEOPT_OPENSSL=$(OPENSSLP) -D_OPENSSLLNM=msys-ssl$(OPENSSLV).dll -D_OPENSSLCNM=msys-crypto$(OPENSSLV).dll
+LDLIBS := $(LDLIBS) $(shell pkg-config --libs openssl)
+endif
+BCOR     = me
+BCOR_CDF = -D_SOCKET $(OPENSSLDEFS)
+PRGLIBS  = $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A)
+
+endif
+
+ifeq (1,$(BPRF))
+CCPROF = -D_ME_PROFILE -pg
+LDPROF = -pg
+STRIP  = - echo No strip - profile 
+else
+CCPROF = 
+LDPROF = 
+endif
+
+ifneq (,$(findstring w,$(BTYP)))
+
+ifneq (,$(X11_LIBS))
+else ifeq (0,$(shell pkg-config --libs ncurses > /dev/null 2> /dev/null; echo $$? ))
+X11_LIBS = $(shell pkg-config --libs X11)
+endif
+
+ifneq (,$(WINDOW_LIBS))
+$(warning WARNING: No X11 support found, forcing build type to console only.)
+BTYP = c
+else ifeq (0,$(shell printf '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null $(X11_LIBS) -lXpm > /dev/null 2> /dev/null - ; echo $$? ))
+WINDOW_DEFS = -D_XPM
+WINDOW_LIBS = $(X11_LIBS) -lXpm
+else
+WINDOW_LIBS = $(X11_LIBS)
+endif
+
+endif
+
+ifneq (w,$(BTYP))
 #
-# Installation Directory
-INSTDIR	      = /usr/local/bin
-INSTPROGFLAGS = -s -o root -g root -m 0775
+# Preference now is to use "ncurses" rather than "termcap", figure out if ncurses is avaiable or if we must fall back to termcap.
 #
-# Local Definitions
-CP            = cp
-RM            = rm -f
-CC            = gcc
-LD            = $(CC)
-STRIP         =	strip
-EXE	      = .exe
-INSTALL       =	install
-CDEBUG        =	-g -Wall
-COPTIMISE     =	-O3 -DNDEBUG=1 -Wall -Wno-uninitialized
-CDEFS         = -D_CYGWIN -I. -I../3rdparty/tfs
-CONSOLE_DEFS  = -D_ME_CONSOLE
-WINDOW_DEFS   = $(MAKEWINDEFS) -D_ME_WINDOW -I/usr/X11include -I/usr/X11R6/include
-NANOEMACS_DEFS= -D_NANOEMACS
-LDDEBUG       = -L../3rdparty/tfs/.win32cygwin-debug
-LDOPTIMISE    = -L../3rdparty/tfs/.win32cygwin-release
-LDFLAGS       =
-LIBS          = -ltfs
+
+ifeq (0,$(shell pkg-config --libs ncurses > /dev/null 2> /dev/null; echo $$? ))
+CONSOLE_DEFS  = -D_USE_NCURSES
+CONSOLE_LIBS  := $(shell pkg-config --libs ncurses)
+CCFLAGS += $(shell pkg-config --cflags ncurses)
+else
+$(warning WARNING: No ncurses, defaulting to termcap.)
 CONSOLE_LIBS  = -ltermcap
-WINDOW_LIBS   = -L/usr/X11R6/lib -lX11 $(MAKEWINLIBS) 
+endif
+endif
+
+ifeq (cw,$(BTYP))
+BTYP_CDF = $(CONSOLE_DEFS) $(WINDOW_DEFS) -D_ME_CONSOLE -D_ME_WINDOW
+BTYP_LIB = $(CONSOLE_LIBS) $(WINDOW_LIBS)
+else ifeq (w,$(BTYP))
+BTYP_CDF = $(WINDOW_DEFS) -D_ME_WINDOW
+BTYP_LIB = $(WINDOW_LIBS)
+else
+BTYP_CDF = $(CONSOLE_DEFS) -D_ME_CONSOLE
+BTYP_LIB = $(CONSOLE_LIBS)
+BTYP     = c
+endif
+
+OUTDIR   = $(BOUTDIR)-$(BCOR)$(BTYP)
+PRGNAME  = $(BCOR)$(BTYP)
+PRGFILE  = $(PRGNAME)$(EXE)
+PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
+	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def \
+	   $(MAKEFILE).mak evers.mak
+PRGOBJS  = $(OUTDIR)/abbrev.o $(OUTDIR)/basic.o $(OUTDIR)/bind.o $(OUTDIR)/buffer.o $(OUTDIR)/crypt.o $(OUTDIR)/dirlist.o $(OUTDIR)/display.o \
+	   $(OUTDIR)/eval.o $(OUTDIR)/exec.o $(OUTDIR)/file.o $(OUTDIR)/fileio.o $(OUTDIR)/frame.o $(OUTDIR)/hash.o $(OUTDIR)/hilight.o $(OUTDIR)/history.o \
+	   $(OUTDIR)/input.o $(OUTDIR)/isearch.o $(OUTDIR)/key.o $(OUTDIR)/line.o $(OUTDIR)/macro.o $(OUTDIR)/main.o $(OUTDIR)/narrow.o $(OUTDIR)/next.o \
+	   $(OUTDIR)/osd.o $(OUTDIR)/print.o $(OUTDIR)/random.o $(OUTDIR)/regex.o $(OUTDIR)/region.o $(OUTDIR)/registry.o $(OUTDIR)/search.o $(OUTDIR)/sock.o \
+	   $(OUTDIR)/spawn.o $(OUTDIR)/spell.o $(OUTDIR)/tag.o $(OUTDIR)/termio.o $(OUTDIR)/time.o $(OUTDIR)/undo.o $(OUTDIR)/window.o $(OUTDIR)/word.o \
+	   $(OUTDIR)/unixterm.o
 #
 # Rules
-.SUFFIXES: .c .oc .ow .ob .on .ov .oe .odc .odw .odb .odn .odv .ode
+.SUFFIXES: .c .o
 
-.c.oc:
-	$(CC) $(COPTIMISE) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
+$(OUTDIR)/%.o : %.c
+	$(CC) $(CCDEFS) $(CCPROF) $(BCOR_CDF) $(BTYP_CDF) $(CCFLAGS) -c -o $@ $<
 
-.c.ow:
-	$(CC) $(COPTIMISE) $(CDEFS) $(MICROEMACS_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
 
-.c.ob:
-	$(CC) $(COPTIMISE) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
+all: $(PRGLIBS) $(OUTDIR)/$(PRGFILE)
 
-.c.on:
-	$(CC) $(COPTIMISE) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
+$(OUTDIR)/$(PRGFILE): $(OUTDIR) $(INSTDIR) $(PRGOBJS) $(PRGLIBS)
+	$(RM) $@
+	$(LD) $(LDDEFS) $(LDPROF) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS) $(BTYP_LIB) $(LDLIBS)
+	$(STRIP) $@
+	$(INSTPRG) $@ $(INSTDIR)
 
-.c.ov:
-	$(CC) $(COPTIMISE) $(CDEFS) $(NANOEMACS_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
+$(PRGOBJS): $(PRGHDRS)
 
-.c.oe:
-	$(CC) $(COPTIMISE) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
+$(OUTDIR):
+	-mkdir $(OUTDIR)
 
-# Debug Builds
-.c.odc:
-	$(CC) $(CDEBUG) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
+$(INSTDIR):
+	-mkdir $(INSTDIR)
 
-.c.odw:
-	$(CC) $(CDEBUG) $(CDEFS) $(MICROEMACS_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
-
-.c.odb:
-	$(CC) $(CDEBUG) $(CDEFS) $(MICROEMACS_DEFS) $(CONSOLE_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
-
-.c.odn:
-	$(CC) $(CDEBUG) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(MAKECDEFS) -o $@ -c $<
-
-.c.odv:
-	$(CC) $(CDEBUG) $(CDEFS) $(NANOEMACS_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
-
-.c.ode:
-	$(CC) $(CDEBUG) $(CDEFS) $(NANOEMACS_DEFS) $(CONSOLE_DEFS) $(WINDOW_DEFS) $(MAKECDEFS) -o $@ -c $<
-#
-# Source files
-STDHDR	= ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h \
-	  esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
-	  ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def
-STDSRC	= abbrev.c basic.c bind.c buffer.c crypt.c dirlist.c display.c \
-	  eval.c exec.c file.c fileio.c frame.c hilight.c history.c input.c \
-	  isearch.c key.c line.c macro.c main.c narrow.c next.c osd.c \
-	  print.c random.c regex.c region.c registry.c search.c spawn.c \
-	  spell.c tag.c termio.c time.c undo.c window.c word.c
-
-PLTHDR  =
-PLTSRC  = unixterm.c
-
-HEADERS = $(STDHDR) $(PLTHDR)
-SRC     = $(STDSRC) $(PLTSRC)
-#
-# Object files
-OBJ_C    = $(SRC:.c=.oc)
-OBJ_W    = $(SRC:.c=.ow)
-OBJ_B    = $(SRC:.c=.ob)
-OBJ_N    = $(SRC:.c=.on)
-OBJ_V    = $(SRC:.c=.ov)
-OBJ_E    = $(SRC:.c=.oe)
-
-# Debug Builds
-OBJ_DC   = $(SRC:.c=.odc)
-OBJ_DW   = $(SRC:.c=.odw)
-OBJ_DB   = $(SRC:.c=.odb)
-OBJ_DN   = $(SRC:.c=.odn)
-OBJ_DV   = $(SRC:.c=.odv)
-OBJ_DE   = $(SRC:.c=.ode)
-#
-# Targets
-all: me
-
-install: me
-	$(INSTALL) $(INSTPROGFLAGS) me $(INSTDIR)
-	@echo "install done"
+$(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A):
+	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG)
 
 clean:
-	$(RM) core me$(EXE) mec$(EXE) mew$(EXE) mecw$(EXE) ne$(EXE) nec$(EXE) new$(EXE) necw$(EXE) med$(EXE) medc$(EXE) medw$(EXE) medcw$(EXE) ned$(EXE) nedc$(EXE) nedw$(EXE) nedcw$(EXE)
-	$(RM) *.oc *.ow *.ob *.on *.ov *.oe
-	$(RM) *.odc *.odw *.odb *.odn *.odv *.ode
+	$(RMDIR) $(OUTDIR)
+	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak clean
 
 spotless: clean
-	$(RM) tags *~
-
-mec:	$(OBJ_C)
-	$(RM) $@$(EXE)
-	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o $@ $(OBJ_C) $(CONSOLE_LIBS) $(LIBS)
-	$(STRIP) $@$(EXE)
-
-mew:	$(OBJ_W)
-	$(RM) $@$(EXE)
-	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o $@ $(OBJ_W) $(WINDOW_LIBS) $(LIBS)
-	$(STRIP) $@$(EXE)
-
-mecw:	$(OBJ_B)
-	$(RM) $@$(EXE)
-	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o $@ $(OBJ_B) $(CONSOLE_LIBS) $(WINDOW_LIBS) $(LIBS)
-	$(STRIP) $@$(EXE)
-
-me:	mecw
-	$(CP) mecw$(EXE) $@$(EXE)
-
-nec:	$(OBJ_N)
-	$(RM) $@$(EXE)
-	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o $@ $(OBJ_N) $(CONSOLE_LIBS) $(LIBS)
-	$(STRIP) $@$(EXE)
-
-new:	$(OBJ_V)
-	$(RM) $@$(EXE)
-	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o $@ $(OBJ_V) $(WINDOW_LIBS) $(LIBS)
-	$(STRIP) $@$(EXE)
-
-necw:	$(OBJ_E)
-	$(RM) $@$(EXE)
-	$(LD) $(LDFLAGS) $(LDOPTIMISE) -o $@ $(OBJ_E) $(CONSOLE_LIBS) $(WINDOW_LIBS) $(LIBS)
-	$(STRIP) $@$(EXE)
-
-ne:	nec
-	$(CP) nec$(EXE) $@$(EXE)
-
-# Debug Builds
-medc:	$(OBJ_DC)
-	$(RM) $@$(EXE)
-	$(LD) $(LDFLAGS) $(LDDEBUG) -o $@ $(OBJ_DC) $(CONSOLE_LIBS) $(LIBS)
-
-medw:	$(OBJ_DW)
-	$(RM) $@$(EXE)
-	$(LD) $(LDFLAGS) $(LDDEBUG) -o $@ $(OBJ_DW) $(WINDOW_LIBS) $(LIBS)
-
-medcw:	$(OBJ_DB)
-	$(RM) $@$(EXE)
-	$(LD) $(LDFLAGS) $(LDDEBUG) -o $@ $(OBJ_DB) $(CONSOLE_LIBS) $(WINDOW_LIBS) $(LIBS)
-
-med:	medcw
-	$(CP) medcw$(EXE) $@$(EXE)
-
-nedc:	$(OBJ_DN)
-	$(RM) $@$(EXE)
-	$(LD) $(LDFLAGS) $(LDDEBUG) -o $@ $(OBJ_DN) $(CONSOLE_LIBS) $(LIBS)
-
-nedw:	$(OBJ_DV)
-	$(RM) $@$(EXE)
-	$(LD) $(LDFLAGS) $(LDDEBUG) -o $@ $(OBJ_DV) $(WINDOW_LIBS) $(LIBS)
-
-nedcw:	$(OBJ_DE)
-	$(RM) $@$(EXE)
-	$(LD) $(LDFLAGS) $(LDDEBUG) -o $@ $(OBJ_DE) $(CONSOLE_LIBS) $(WINDOW_LIBS) $(LIBS)
-
-ned:	nedc
-	$(CP) nedc$(EXE) $@$(EXE)
-#
-# Dependancies
-$(OBJ_C): $(HEADERS)
-$(OBJ_W): $(HEADERS)
-$(OBJ_B): $(HEADERS)
-$(OBJ_N): $(HEADERS)
-$(OBJ_V): $(HEADERS)
-$(OBJ_E): $(HEADERS)
-
-# Debug Builds
-$(OBJ_DC): $(HEADERS)
-$(OBJ_DW): $(HEADERS)
-$(OBJ_DB): $(HEADERS)
-$(OBJ_DN): $(HEADERS)
-$(OBJ_DV): $(HEADERS)
-$(OBJ_DE): $(HEADERS)
+	$(RM) *~
+	$(RM) tags
+	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak spotless

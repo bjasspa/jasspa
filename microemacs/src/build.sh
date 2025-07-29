@@ -121,7 +121,7 @@ if [ -z "$MAKEFILE" ] ; then
     elif [ `echo $PLATFORM | sed -e "s/^CYGWIN.*/CYGWIN/"` = "CYGWIN" ] ; then
         MAKEBAS=cygwin
     elif [ `echo $PLATFORM | sed -e "s/^MSYS.*/MSYS/"` = "MSYS" ] ; then
-        MAKEBAS=msys
+        MAKEBAS=msyswin
     elif [ $PLATFORM = "FreeBSD" ] ; then
         MAKEBAS=freebsd
     elif [ `echo $PLATFORM | sed -e "s/^MINGW.*/MINGW/"` = "MINGW" ] ; then
