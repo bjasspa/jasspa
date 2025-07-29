@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 24 22:02:47 1999
 .\"
-.Id $Id: m9typ048.9,v 2.6 2025/07/29 19:47:48 jon Exp $
+.Id $Id: m9typ048.9,v 2.6 2025/07/29 21:45:09 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH r 9
@@ -91,8 +91,8 @@ The short cut keys used within the buffer are:-
 \fB\*e f6\fR \- close list items
 .IP "\fBExecuting, Formatting and Linting R Code\fR"
 The R file hook supports the 
-.Ht file-exec 3
-, the 
+.Ht file-exec 3 , 
+the 
 .Ht file-format 3
 and the 
 .Ht file-lint 3
@@ -109,7 +109,7 @@ $ R
 user is prompted for the name of the manual page to display:-
 .CS
 R help on ?
-.CE
+.CE 0
 The command invokes the R \fBhelp\fR function,
 .Hr Rscript 1 ,
 for the R manual page entered in the message line.

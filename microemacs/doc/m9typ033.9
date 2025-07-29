@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 24 22:02:47 1999
 .\"
-.Id $Id: m9typ033.9,v 2.6 2025/07/29 19:39:13 jon Exp $
+.Id $Id: m9typ033.9,v 2.6 2025/07/29 21:44:35 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH python 9
@@ -103,8 +103,8 @@ The short cut keys used within the buffer are:-
 \fB\*e f6\fR \- close list items
 .IP "\fBExecuting, Formatting and Linting Python Code\fR"
 The Python file hook supports the 
-.Ht file-exec 3
-, the 
+.Ht file-exec 3 ,
+the 
 .Ht file-format 3
 and the 
 .Ht file-lint 3
@@ -116,7 +116,7 @@ Here an example on how to install the Python  linter and formatter  ruff using
 the pip package manager:
 .CS
 pip3 install ruff --user
-.CE
+.CE 0
 .IP "\fBpy-doc macro\fR"
 \fBpy-doc\fR provides a mechanism to display a Python manual page within \*(mS. On invoking \fBpy-doc\fR the
 user is prompted for the name of the manual page to display:-
