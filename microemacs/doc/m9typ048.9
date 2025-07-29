@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 24 22:02:47 1999
 .\"
-.Id $Id: m9typ048.9,v 2.6 2025/07/29 19:38:23 jon Exp $
+.Id $Id: m9typ048.9,v 2.6 2025/07/29 19:47:48 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH r 9
@@ -96,12 +96,12 @@ The R file hook supports the
 .Ht file-format 3
 and the 
 .Ht file-lint 3
-macros.   The  R   packages   tools   which  are   currently   supported   are
-"formatR"  and  "lintr"  which can be  installed  either  using your  standard
-package manager or for the current user using the "install.packages" function.
-Here an example on how to install these packages from within :
+macros.   The  R   packages   which  are   currently   supported   are
+"formatR"  and  "lintr". They can be  installed  either  using your  standard
+package manager system wide or, for the current user, using the "install.packages" function.
+Here an example on how to install these packages from within R :
 .CS
-§ R
+$ R
 > install.packages(c("formatR","lintr"))
 .CE
 .IP "\fBr-doc macro\fR"
