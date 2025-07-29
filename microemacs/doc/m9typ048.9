@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 24 22:02:47 1999
 .\"
-.Id $Id: m9typ048.9,v 2.6 2025/07/29 08:31:01 jon Exp $
+.Id $Id: m9typ048.9,v 2.6 2025/07/29 19:38:23 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH r 9
@@ -89,6 +89,21 @@ The short cut keys used within the buffer are:-
 \fBf6\fR \- list items
 .br
 \fB\*e f6\fR \- close list items
+.IP "\fBExecuting, Formatting and Linting R Code\fR"
+The R file hook supports the 
+.Ht file-exec 3
+, the 
+.Ht file-format 3
+and the 
+.Ht file-lint 3
+macros.   The  R   packages   tools   which  are   currently   supported   are
+"formatR"  and  "lintr"  which can be  installed  either  using your  standard
+package manager or for the current user using the "install.packages" function.
+Here an example on how to install these packages from within :
+.CS
+§ R
+> install.packages(c("formatR","lintr"))
+.CE
 .IP "\fBr-doc macro\fR"
 \fBr-doc\fR provides a mechanism to display an R manual page within \*(mS. On invoking \fBr-doc\fR the
 user is prompted for the name of the manual page to display:-
@@ -117,6 +132,9 @@ hidden internal functions within other functions.
 .Ht collapse-current 3 ,
 .Ht compile 3 ,
 .Ht expand-abbrev-handle 3 ,
+.Ht file-exec 3 ,
+.Ht file-format 3 ,
+.Ht file-lint 3 ,
 .Ht item-list 3 ,
 .Ht restyle-buffer 3 ,
 .Ht restyle-region 3 ,
