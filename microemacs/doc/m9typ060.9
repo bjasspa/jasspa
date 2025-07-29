@@ -1,0 +1,101 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1999-2025 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.\"  Created By    : Detlef Groth
+.\"  Created       : Tue Jul 29 21:00:00 2025
+.\"
+.Id $Id: m9typ060.9,v 1.2 2025/07/29 21:50:08 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH markdown 9
+.XI markdown - "Markdown Markup File"
+.XI md - "Markdown Markup File"
+.SH SYNOPSIS
+md \- Markdown Markup File.
+.SH FILES
+.na
+.B hkmd.emf
+\- Markdown file hook definition
+.br
+.B md.eaf
+\- Markdown abbreviation file
+.br
+.B md.etf
+\- Markdown template file
+.ad
+.SH EXTENSIONS
+.na
+\fB.md\fR, \fB.rmd\fR, \fB.tmd\fR \- Markdown files 
+.ad
+.SH DESCRIPTION
+The \fBMarkdown\fR file hook provides a editing  environment for Markdown
+files. The file hook  provides  highlighting,  folding  of  section,  document
+outline using  item-list and  abbreviations.  Fenced code blocks within triple
+backticks can be highlighted using the declared code block language.
+.PP
+File  recognition  is performed  using the standard file  extension  \fB.r\fR,
+\fB.R\fR or by the magic string.
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for Markdown code  editing
+which  can  be  used  by  writing  short   abbreviations   like   "\fBh1\fR"
+for a default  level 1 header,  "\fBbo\fR" for bold text,  "\fBurl\fR"  for an
+URL, or "\fBcc\fR" for a code chunk - and  then  pressing  the
+key-binding  for the 
+.Ht expand-abbrev-handle 3
+command.  The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mE using the 
+.Ht abbrev-list 3
+command.
+.IP "\fBFolding and Information Hiding\fR"
+Generic  folding is enabled  within the Markdown files. The folds occur about
+the level 2 headers, so headers  with two hash  symbols at the  beginning of a
+line. The following commands are supported to show and hide the function bodies.
+.Ht collapse-all 3
+(un)folds all regions in the file,
+.Ht collapse-current 3
+(un)folds the current region.
+.IP "\fBList Items\fR"
+Item listing is available and the level 1 and 2 headers of the file are displayed in
+the \fIitem-list\fR.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*cc \*cc\fR \- Comment out the current line.
+.br
+\fB\*cc \*cd\fR \- Uncomment the current line.
+.br
+\fBf2\fR \- (un)fold the current region
+.br
+\fBf3\fR \- (un)fold all regions
+.br
+\fBf6\fR \- list items
+.br
+\fB\*e f6\fR \- close list items
+.IP "\fBCode Chunk Highlighting\fR"
+Inside  code  chunks  as  well  syntax  hilghlighting  for  a few  programming
+languages  like Tcl (tcl), R (r), GraphViz Dot (dot), Python (py), SQL (sql),  MicroEmacs  macro code (emf)or
+Javascript (js) is available. Here an example which shoould be highlighted within a
+Markdown file using the R file hook:
+.CS
+```{r}
+x = 1
+test = function () {
+    print("Test")
+}
+```
+.CE 0
+.SH "SEE ALSO"
+.na
+.Ht abbrev-list 3 ,
+.Ht collapse-all 3 ,
+.Ht collapse-current 3 ,
+.Ht expand-abbrev-handle 3 ,
+.Ht item-list 3 ,
+.Ht wiki 9 .
+.sp 1
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH
