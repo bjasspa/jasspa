@@ -1533,27 +1533,31 @@ childSetupTty(void)
 static int
 doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, int flags)
 {
-    meIPipe  *ipipe ;
-    meBuffer *bp ;
-    meUByte   line[meBUF_SIZE_MAX] ;
-    int       cd ;
+    meIPipe  *ipipe;
+    meBuffer *bp;
+    meUByte   line[meBUF_SIZE_MAX];
+    int       cd;
 #ifdef _UNIX
     int       fds[2], outFds[2], ptyFp ;
     int       pid;                   /* Child process identity */
 #endif
 #ifdef _WIN32
-    int       rr ;
+    int       rr;
 #endif
     /* get or create the command buffer */
     if(((bp=bfind(bufName,0)) != NULL) && meModeTest(bp->mode,MDPIPE))
     {
-        sprintf((char *)line,"%s already active, kill",bufName) ;
+        cd = meStrlen(bufName);
+        if(cd > (meBUF_SIZE_MAX-22))
+            cd = meBUF_SIZE_MAX-22;
+        memcpy(line,bufName,cd);
+        meStrcpy(line+cd," already active, kill");
         if(mlyesno(line) <= 0)
-            return meFALSE ;
+            return meFALSE;
     }
     if((ipipe = meMalloc(sizeof(meIPipe))) == NULL)
-        return meFALSE ;
-    cd = (meStrcmp(path,curdir) && (meChdir(path) != -1)) ;
+        return meFALSE;
+    cd = (meStrcmp(path,curdir) && (meChdir(path) != -1));
 
 #ifdef _WIN32
     /* Launch the ipipe */

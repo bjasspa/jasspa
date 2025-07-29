@@ -71,10 +71,10 @@ OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
 
 CCDEFS   = $(BIT_OPT) -D_CYGWIN -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I. -I$(TRDPARTY)/tfs -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY) $(MAKECDEFS)
-CCFLAGSR = -O3 -fPIC -DNDEBUG=1 -Wall -Wno-uninitialized -Wno-unused-result
+CCFLAGSR = -O3 -DNDEBUG=1 -Wall -Wno-uninitialized -Wno-unused-result
 CCFLAGSD = -g -Wall
 LDDEFS   = $(BIT_OPT)
-LDFLAGSR = -O3 -fPIC
+LDFLAGSR = -O3
 LDFLAGSD = -g
 LDLIBS   = -lm -ldl
 
@@ -103,19 +103,16 @@ else
 ifneq (,$(OPENSSLP))
 else ifneq (,$(OPENSSLPATH))
 OPENSSLP = 1 -I$(OPENSSLPATH)
-else ifeq (0,$(shell printf '$(HASH)include <stdio.h>\n$(HASH)include <openssl/ssl.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null > /dev/null 2> /dev/null - ; echo $$? ))
-OPENSSLP = 1
-else ifeq (0,$(shell printf '$(HASH)include <stdio.h>\n$(HASH)include <openssl/ssl.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -I/usr/local/opt/openssl/include -o /dev/null > /dev/null 2> /dev/null - ; echo $$? ))
-OPENSSLP = 1 -I/usr/local/opt/openssl/include
-else ifeq (0,$(shell printf '$(HASH)include <stdio.h>\n$(HASH)include <openssl/ssl.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -I/home/linuxbrew/.linuxbrew/opt/openssl@3.0/include -o /dev/null > /dev/null 2> /dev/null - ; echo $$? ))
-OPENSSLP = 1 -I/home/linuxbrew/.linuxbrew/opt/openssl@3.0/include
-else ifeq (0,$(shell pkg-config --cflags --libs openssl > /dev/null 2> /dev/null; echo $$? ))
-OPENSSLP := 1 $(shell pkg-config --cflags openssl)
-endif
-ifeq (,$(OPENSSLP))
+else ifeq (,$(shell pkg-config --libs openssl | grep "crypto"))
 $(warning WARNING: No OpenSSL support found, https support will be disabled.)
+else ifneq (,$(shell pkg-config --modversion openssl | grep "^3\..*"))
+OPENSSLP = 1
+OPENSSLV = -3
 else
-OPENSSLDEFS = -DMEOPT_OPENSSL=$(OPENSSLP) -D_OPENSSLLNM=libssl$(OPENSSLV).dll -D_OPENSSLCNM=libcrypto$(OPENSSLV).dll
+$(warning WARNING: Unsupported OpenSSL version, https support will be disabled.)
+endif
+ifneq (,$(OPENSSLP))
+OPENSSLDEFS = -DMEOPT_OPENSSL=$(OPENSSLP) -D_OPENSSLLNM=msys-ssl$(OPENSSLV).dll -D_OPENSSLCNM=msys-crypto$(OPENSSLV).dll
 LDLIBS := $(LDLIBS) $(shell pkg-config --libs openssl)
 endif
 BCOR     = me
