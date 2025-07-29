@@ -443,4 +443,23 @@ define-macro r-doc
   !iif &band $system 0x01  screen-update
 !emacro
 
+0 define-macro r-rscript-setup
+  !iif &exi %rscript-com !return
+  !if &not &seq "ERROR" &which "Rscript"
+    set-variable %rscript-com "Rscript"
+    ml-write "Rscript executable found in path"
+    !return
+  !elif &seq $platform "windows"
+    set-variable $file-names "C:/Program Files/R/R-\\d+\\.\\d+\\.\\d+.*/"
+    !while &not &seq &set #l1 $file-names ""
+      !if &seq "R" &stat t &set #l0 &spr "C:/Program Files/R/%sbin/Rscript.exe" #l1
+        ml-write &spr "Rscript executable found: %s" #l0
+        set-variable %rscript-com &spr "\"%s\"" #l0
+        !return
+      !endif
+    !done
+  !endif
+  -24 ml-write "Error: Rscript executable not found, please install R or set %rscript-com"
+!emacro
+
 buffer-init-fhook "r"

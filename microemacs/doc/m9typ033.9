@@ -7,21 +7,31 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 24 22:02:47 1999
 .\"
-.Id $Id: m9typ033.9,v 2.6 2025/07/27 09:53:38 jon Exp $
+.Id $Id: m9typ033.9,v 2.6 2025/07/29 08:24:15 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH python 9
 .XI python - "Python Language File"
 .XI py - "Python Language File"
+.XI py-doc 3 - "Display Python manual page"
+.SH NAME
+.Me "|py-doc"
+py-doc \- Display Python manual page"
+.Me $a
 .SH SYNOPSIS
 python \- Python Language File.
+.br
+\fBpy-doc\fR "\fIman-page\fR"
 .SH FILES
 .na
 .B hkpython.emf
-\- Python Language file hook definition
+\- Python Language file hook definition and py-doc macro implementation
 .br
 .B python.eaf
 \- Python abbreviation file
+.br
+.B python.etf
+\- Python template file
 .ad
 .SH EXTENSIONS
 .na
@@ -91,6 +101,17 @@ The short cut keys used within the buffer are:-
 \fBf6\fR \- list items
 .br
 \fB\*e f6\fR \- close list items
+.IP "\fBpy-doc macro\fR"
+\fBpy-doc\fR provides a mechanism to display a Python manual page within \*(mS. On invoking \fBpy-doc\fR the
+user is prompted for the name of the manual page to display:-
+.CS
+Python help on ?
+.CE
+The command invokes
+.Hr Python 1
+using the \fBpydoc\fR module to generate the requested manual page in a "*py-doc*" buffer. This buffer supports
+.Ht item-list 3
+to help browse the content generated.
 .SH NOTES
 .PP
 The  hilightings  or the item-list matches are  typically   extended  using  a
