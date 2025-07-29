@@ -1,10 +1,19 @@
 ;-!- erf -!-
 "autosv" = "300"
 "company" = ""
+"cygwin" {
+ "file-ignore" = "./ ~ tags .o"
+ "kept-vers" = "10"
+}
+"cygwinc" {
+ "ext-char-set" = "1"
+ "mouse" = "19"
+ "system" = "571537541"
+}
 "dos" {
  "blink" = "13107800"
  "char-set" = "cp437"
- "file-ignore" = "~ ./"
+ "file-ignore" = "./ ~ tags .o"
  "scroll-bar" = "0x1be"
 }
 "edituser" = "1"
@@ -42,7 +51,7 @@
  "blink" = "13107800"
  "ext-char-set" = "1"
  "fence" = "3"
- "file-ignore" = "./ ~ .svn/ tags .o"
+ "file-ignore" = "./ ~ tags .o"
  "file-tool" {
   "1" = "S\\Hystem Open" {
    "cmd" = "xdg-open %\"%f%\""
@@ -90,7 +99,7 @@
  "blink" = "13107600"
  "ext-char-set" = "1"
  "fence" = "3"
- "file-ignore" = "./ ~ .svn/ tags .o"
+ "file-ignore" = "./ ~ tags .o"
  "file-tool" {
   "1" = "S\\Hystem Open" {
    "cmd" = "open %\"%f%\""
@@ -172,6 +181,15 @@
  "mouse-wup" = "10 mouse-wup-scroll"
 }
 "msshift" = "0"
+"msyswin" {
+ "file-ignore" = "./ ~ tags .o"
+ "kept-vers" = "10"
+}
+"msyswinc" {
+ "ext-char-set" = "1"
+ "mouse" = "19"
+ "system" = "571537541"
+}
 "quiet" = "1"
 "rsif-com" = "-xml"
 "spell" 2 {
@@ -186,7 +204,7 @@
  "char-set" = "cp1252"
  "ext-char-set" = "1"
  "fence" = "3"
- "file-ignore" = "./ ~ .svn/ tags .o"
+ "file-ignore" = "./ ~ tags .o"
  "file-tool" {
   "1" = "S\\Hystem Open" {
    "cmd" = "cmd /c \"%F\""

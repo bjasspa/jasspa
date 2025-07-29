@@ -113,7 +113,7 @@ else
 $(warning WARNING: Unsupported OpenSSL version, https support will be disabled.)
 endif
 ifneq (,$(OPENSSLP))
-OPENSSLDEFS = -DMEOPT_OPENSSL=$(OPENSSLP) -D_OPENSSLLNM=msys-ssl$(OPENSSLV).dll -D_OPENSSLCNM=msys-crypto$(OPENSSLV).dll
+OPENSSLDEFS = -DMEOPT_OPENSSL=$(OPENSSLP) -D_OPENSSLLNM=cygssl$(OPENSSLV).dll -D_OPENSSLCNM=cygcrypto$(OPENSSLV).dll
 LDLIBS := $(LDLIBS) $(shell pkg-config --libs openssl)
 endif
 BCOR     = me

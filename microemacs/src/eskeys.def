@@ -43,7 +43,7 @@ DEFSKEY ("callback",     NULL,    NULL, NULL,      SKEY_callback )
 DEFSKEY ("cancel",       NULL,    NULL, NULL,      SKEY_cancel )
 DEFSKEY ("caps-lock",    NULL,    NULL, NULL,      SKEY_caps_lock )
 DEFSKEY ("clear",        NULL,    NULL, NULL,      SKEY_clear )
-DEFSKEY ("delete",       "kdch1", "kD", "\177",    SKEY_delete )
+DEFSKEY ("delete",       "kdch1", "kD", "\033[3~", SKEY_delete )
 DEFSKEY ("down",         "kcud1", "kd", "\033[B",  SKEY_down )
 #if MEOPT_CALLBACK
 DEFSKEY ("drop",         NULL,    NULL, NULL,      SKEY_drop )
@@ -68,7 +68,7 @@ DEFSKEY ("find",         NULL,    NULL, NULL,      SKEY_find )
 DEFSKEY ("find-file",    NULL,    NULL, NULL,      SKEY_find_file )
 #endif
 DEFSKEY ("help",         NULL,    NULL, NULL,      SKEY_help )
-DEFSKEY ("home",         "khome", "kh", "\033[3~", SKEY_home )
+DEFSKEY ("home",         "khome", "kh", "\033[1~", SKEY_home )
 #if MEOPT_CALLBACK
 DEFSKEY ("idle-drop",    NULL,    NULL, NULL,      SKEY_idle_drop )
 DEFSKEY ("idle-pick",    NULL,    NULL, NULL,      SKEY_idle_pick )
