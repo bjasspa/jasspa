@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 24 22:02:47 1999
 .\"
-.Id $Id: m9typ033.9,v 2.6 2025/07/29 19:39:13 jon Exp $
+.Id $Id: m9typ033.9,v 2.6 2025/07/29 21:59:11 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH python 9
@@ -103,23 +103,24 @@ The short cut keys used within the buffer are:-
 \fB\*e f6\fR \- close list items
 .IP "\fBExecuting, Formatting and Linting Python Code\fR"
 The Python file hook supports the 
-.Ht file-exec 3
-, the 
+.Ht file-exec 3 ,
+the 
 .Ht file-format 3
 and the 
 .Ht file-lint 3
-macros.  The  tools  which  are  currently   supported  are  Python  3  and  2
-interpreters,  the  formatters  ruff, yapf and black and as well as the linters
-ruff and pylint.  Which can be usually  installed  using the  default  package
-manager of your system or using the pip3 package manager of Python.
-Here an example on how to install the Python  linter and formatter  ruff using
+macros. The tools which are currently supported are Python 3 and 2 interpreters, the formatters ruff, yapf and black
+and linters ruff and pylint. All of these tools can usually be installed using the default package manager of your system or
+using the pip3 package manager of Python. Here an example on how to install the Python linter and formatter ruff using
 the pip package manager:
+.RS
 .CS
 pip3 install ruff --user
-.CE
+.CE 0
+.RE
 .IP "\fBpy-doc macro\fR"
 \fBpy-doc\fR provides a mechanism to display a Python manual page within \*(mS. On invoking \fBpy-doc\fR the
 user is prompted for the name of the manual page to display:-
+.RS
 .CS
 Python help on ?
 .CE
@@ -128,6 +129,7 @@ The command invokes
 using the \fBpydoc\fR module to generate the requested manual page in a "*py-doc*" buffer. This buffer supports
 .Ht item-list 3
 to help browse the content generated.
+.RE
 .SH NOTES
 .PP
 The  hilightings  or the item-list matches are  typically   extended  using  a

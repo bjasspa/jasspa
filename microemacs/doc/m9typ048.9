@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 24 22:02:47 1999
 .\"
-.Id $Id: m9typ048.9,v 2.6 2025/07/29 19:47:48 jon Exp $
+.Id $Id: m9typ048.9,v 2.6 2025/07/29 21:50:06 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH r 9
@@ -91,22 +91,25 @@ The short cut keys used within the buffer are:-
 \fB\*e f6\fR \- close list items
 .IP "\fBExecuting, Formatting and Linting R Code\fR"
 The R file hook supports the 
-.Ht file-exec 3
-, the 
+.Ht file-exec 3 ,
+the 
 .Ht file-format 3
 and the 
 .Ht file-lint 3
 macros.   The  R   packages   which  are   currently   supported   are
 "formatR"  and  "lintr". They can be  installed  either  using your  standard
 package manager system wide or, for the current user, using the "install.packages" function.
-Here an example on how to install these packages from within R :
+Here an example on how to install these packages from within R:
+.RS
 .CS
 $ R
 > install.packages(c("formatR","lintr"))
-.CE
+.CE 0
+.RE
 .IP "\fBr-doc macro\fR"
 \fBr-doc\fR provides a mechanism to display an R manual page within \*(mS. On invoking \fBr-doc\fR the
 user is prompted for the name of the manual page to display:-
+.RS
 .CS
 R help on ?
 .CE
@@ -117,8 +120,8 @@ for the R manual page entered in the message line.
 Another R documentation page can be selected in the generated help page by either moving the cursor to the link and
 pressing return or double clicking on it with the left mouse button. \*(mS will then attempt to load and display the
 selected R manual page.
+.RE
 .SH NOTES
-.PP
 The  hilighting  or the item-list matches are  typically   extended  using  a  file   \fBmyr.emf\fR
 .SH BUGS
 Functions with using the equal operator for  assignments  are not shown in the
