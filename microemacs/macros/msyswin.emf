@@ -1,0 +1,12 @@
+; -!- emf -!-
+;
+; Copyright (C) 2001-2024 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Setup file for Windows MSYS
+; Authors:     Steven Phillips
+;
+; Load up common unix stuff (colors, templates, grep, RCS, mail)
+execute-file "unixterm"

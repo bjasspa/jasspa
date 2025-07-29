@@ -127,7 +127,7 @@ doTranslation (meUByte *dest, meUByte *str, int n)
     int cc;                             /* Character pointer */
     meUByte *p;                   /* Character pointer */
 
-    while (((cc = *str++) != '\0') && (--n >= 0))
+    while((--n >= 0) && ((cc = *str++) != '\0'))
     {
         /* Convert special characters i.e. box chars to an ASCII equivelent */
         if ((meSystemCfg & meSYSTEM_FONTFIX) && (cc < TTSPECCHARS))
@@ -138,7 +138,6 @@ doTranslation (meUByte *dest, meUByte *str, int n)
             dest [len++] = cc;
         else
         {
-
             while ((dest[len] = *p++) != '\0')
                 len++;
         }

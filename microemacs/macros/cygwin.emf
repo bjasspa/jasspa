@@ -5,7 +5,7 @@
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
 ;
-; Synopsis:    setup file for Cygwin installation boxes
+; Synopsis:    Setup file for Cygwin
 ; Authors:     Jon Green
 ;
 ; Load up common unix stuff (colors, templates, grep, RCS, mail)

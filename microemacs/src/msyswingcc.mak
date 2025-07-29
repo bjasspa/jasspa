@@ -1,7 +1,7 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# cygwingcc.mak - Make file for Cygnus Cygwin using gcc
+# msysgcc.mak - Make file for Windows MSYS using gcc
 #
 # Copyright (C) 2001-2024 JASSPA (www.jasspa.com)
 #
@@ -21,8 +21,7 @@
 #
 ##############################################################################
 #
-# Created:     Sat Jan 24 1998
-# Synopsis:    Make file for Cygnus Cygwin v20.1 using gcc
+# Synopsis:    Make file for MSYS using gcc
 # Notes:
 #     Run ./build.sh to compile, ./build.sh -h for more information.
 #
@@ -58,8 +57,8 @@ else
 BIT_OPT  = -m$(BIT_SIZE)
 endif
 
-PLATFORM = cygwin
-PLATFORM_VER = $(shell uname -r | cut -f 1 -d .)
+PLATFORM = msyswin
+PLATFORM_VER = 2
 
 MAKEFILE = $(PLATFORM)$(TOOLKIT)
 ifeq (1,$(BPRF))
@@ -71,7 +70,7 @@ OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
 
-CCDEFS   = $(BIT_OPT) -D_CYGWIN -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I. -I$(TRDPARTY)/tfs -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY) $(MAKECDEFS)
+CCDEFS   = $(BIT_OPT) -D_MSYSWIN -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I. -I$(TRDPARTY)/tfs -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY) $(MAKECDEFS)
 CCFLAGSR = -O3 -DNDEBUG=1 -Wall -Wno-uninitialized -Wno-unused-result
 CCFLAGSD = -g -Wall
 LDDEFS   = $(BIT_OPT)
@@ -133,9 +132,28 @@ endif
 
 ifneq (,$(findstring w,$(BTYP)))
 
-ifneq (,$(X11_LIBS))
-else ifeq (0,$(shell pkg-config --libs ncurses > /dev/null 2> /dev/null; echo $$? ))
-X11_LIBS = $(shell pkg-config --libs X11)
+ifeq (0,$(shell printf '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lX11 > /dev/null 2> /dev/null - ; echo $$? ))
+
+X11_LIBS = -lX11
+
+else ifeq (64,$(BIT_SIZE))
+
+ifneq (,$(wildcard /usr/lib/x86_64-linux-gnu/libX11.a))
+X11_LIBS = -L/usr/lib/x86_64-linux-gnu -lX11
+else ifneq (,$(wildcard /usr/X11R6/lib64/libX11.a))
+X11_LIBS = -L/usr/X11R6/lib64 -lX11
+else ifneq (,$(wildcard /usr/X11R6/lib/libX11.a))
+X11_LIBS = -L/usr/X11R6/lib -lX11
+endif
+
+else
+
+ifneq (,$(wildcard /usr/lib/x86_64-linux-gnux32/libX11.a))
+X11_LIBS = -L/usr/lib/x86_64-linux-gnux32 -lX11
+else ifneq (,$(wildcard /usr/X11R6/lib/libX11.a))
+X11_LIBS = -L/usr/X11R6/lib -lX11
+endif
+
 endif
 
 ifneq (,$(WINDOW_LIBS))
@@ -155,6 +173,7 @@ ifneq (w,$(BTYP))
 # Preference now is to use "ncurses" rather than "termcap", figure out if ncurses is avaiable or if we must fall back to termcap.
 #
 
+# ifeq (0,$(shell printf '$(HASH)include <stdio.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lncurses > /dev/null 2> /dev/null - ; echo $$? ))
 ifeq (0,$(shell pkg-config --libs ncurses > /dev/null 2> /dev/null; echo $$? ))
 CONSOLE_DEFS  = -D_USE_NCURSES
 CONSOLE_LIBS  := $(shell pkg-config --libs ncurses)
