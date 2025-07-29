@@ -166,7 +166,7 @@ set-variable .fhook-py-doc.item-list-r2 "  class \ecB\\1\ecA"
 !endif
 
 define-macro py-doc
-  !iif &not &exi %python-com  py-python-setup
+  !iif &not &exi .fhook-python.com  file-tool-com-init "fhook-python"
   !force set-variable #l0 @1
   !iif &not $status  set-variable #l0 @ml00 "Python help on"
   0 pipe-shell-command &spr "LANG=en_US %s -m pydoc %s" %python-com #l0 "*py-doc*"
@@ -182,21 +182,5 @@ define-macro py-doc
   ; some terminals might need this
   !iif &band $system 0x01  screen-update
 !emacro    
-
-0 define-macro py-python-setup
-  !iif &exi %python-com !return
-  set-variable #l0 0
-  !while &not &seq "" &set #l1 &lget "|python3|python2|python|" &inc #l0 1
-    !if &not &seq "ERROR" &which #l1
-      set-variable %python-com #l1
-      ml-write &spr "Python %s executable found in path" #l1
-      !return
-    !endif
-  !done
-  !if &seq $platform "windows"
-    ; Add code to look for python on windows
-  !endif
-  -24 ml-write "Error: Python executable not found, please install Python or set %python-com"
-!emacro
 
 buffer-init-fhook "python"
