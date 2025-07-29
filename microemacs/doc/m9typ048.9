@@ -7,28 +7,33 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 24 22:02:47 1999
 .\"
-.Id $Id: m9typ048.9,v 2.6 2025/07/27 09:50:50 jon Exp $
+.Id $Id: m9typ048.9,v 2.6 2025/07/29 07:23:39 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH r 9
 .XI r - "R Language File"
+.XI r-doc - "R documentation manual page viewer"
 .SH SYNOPSIS
 r \- R Language File.
+.br
+\fBr-doc\fR
+.br
+\fBr-doc\fR \fIfunction\fR
+.br
+\fBr-doc\fR \fIpackage::packagename\fR
+.br
+\fBr-doc\fR \fIpackage::function\fR
 .SH FILES
-.na
 .B hkr.emf
-\- R Language file hook definition
+\- R Language file hook and r-doc definition
 .br
 .B r.eaf
 \- R language abbreviation file
 .br
 .B r.etf
 \- R language template file
-.ad
 .SH EXTENSIONS
-.na
 \fB.r\fR \- R file
-.ad
 .SH "MAGIC STRINGS"
 .TP
 \fB^#![ \\t]*/.*env[ \\t]+Rscript\fR
@@ -84,6 +89,19 @@ The short cut keys used within the buffer are:-
 \fBf6\fR \- list items
 .br
 \fB\*e f6\fR \- close list items
+.IP "\fBr-doc Macro\fR"
+\fBr-doc\fR provides a mechanism to display an R manual page within \*(mS. On invoking \fBr-doc\fR the
+user is prompted for the name of the manual page to display:-
+.CS
+R help on ?
+.CE
+The command invokes the R \fBhelp\fR function,
+.Hr Rscript 1 ,
+for the R manual page entered in the message line.
+.PP
+Another R documentation page can be selected in the generated help page by either moving the cursor to the link and
+pressing return or double clicking on it with the left mouse button. \*(mS will then attempt to load and display the
+selected R manual page.
 .SH NOTES
 .PP
 The  hilighting  or the item-list matches are  typically   extended  using  a  file   \fBmyr.emf\fR
@@ -102,8 +120,9 @@ hidden internal functions within other functions.
 .Ht item-list 3 ,
 .Ht restyle-buffer 3 ,
 .Ht restyle-region 3 ,
-.Ht py 9 .
+.Ht py 9 ,
 .Ht sh 9 .
+.sp 1
 .Hl "Supported File Types" FileTypes -
 .ad
 .FH

@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.\" Copyright (C) 1998-2009 JASSPA (www.jasspa.com)
+.\" Copyright (C) 1998-2025 JASSPA (www.jasspa.com)
 .\"
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
@@ -7,111 +7,101 @@
 .\"  Created By    : Detlef Groth & Steven Phillips
 .\"  Created       : Mon Aug 31 21:02:32 1998
 .\"
-.Id $Id: m3mac099.3,v 2.10 2025/01/14 00:13:29 dgroth Exp $
+.Id $Id: m3mac099.3,v 2.10 2025/07/29 07:37:08 dgroth Exp $
 .Im MicroEmacs command
 .so me.tni
-.TH r-doc 3
-.XI r-doc - "R documentation manual page viewer"
-.XI r-exec - "Executes the current R buffer using Rscript"
-.XI r-format - "Format the current R buffer using the R formatR package"
-.XI r-lint - "check the current R buffer for problems using Rscript lint"
-.XI %rscript-com 5 "Rscript command line path"
-.XI %r-lint-opts 5 "Rscript lint format options"
+.TH file-exec 3
+.XI file-exec - "Executes  the  current  buffer with compiler/interpreter"
+.XI file-format - "Format the current buffer using the a formatter"
+.XI file-lint - "check the current buffer for problems using a linter"
 .SH NAME
-.Me "|r-doc"
-r-doc \- R documentation manual page viewer
+.Me "|file-exec"
+file-exec - Executes the current buffer using a compiler or interpreter
 .br
-.Me "|r-exec"
-r-exec - Executes the current R buffer using Rscript
+.Me "|file-format"
+file-format \- Format the current buffer using a dedicated formatter
 .br
-.Me "|r-format"
-r-format \- Format the current R buffer using the R formatR package
-.br
-.Me "|r-lint"
-r-lint \- check the current R buffer for problems using Rscript lint
-.br
-.Me "|%rscript-com"
-\&%rscript-com \- Rscript command line path
-.br
-.Me "|%r-lint-opts"
-\&%r-lint-opts \- Rscript lint format options
+.Me "|file-lint"
+file-lint \- check the current buffer for problems using a dedicated linter
 .Me $a
 .SH SYNOPSIS
-.na
-\fBr-doc\fR
+\fBfile-exec\fR [ "\fIcommand-line-arguments\fR" ]
 .br
-\fBr-doc\fR \fIfunction\fR
+\fBfile-format\fR
 .br
-\fBr-doc\fR \fIpackage::packagename\fR
-.br
-\fBr-doc\fR \fIpackage::function\fR
-.sp
-.I n
-\fBr-exec\fR [ "\fIcommand-line-arguments\fR" ]
-.br
-\fBr-format\fR
-.br
-\fBr-lint\fR
-.sp
-\fB%rscript-com\fR \fIstring\fR; Default is "\fCRscript\fR"
-.br
-\fB%r-lint-opts\fR \fIstring\fR; Default is "\fClinters = linters_with_defaults(indentation_linter = indentation_linter(indent = 4L))\fR"
-.ad
+\fBfile-lint\fR
 .SH DESCRIPTION
-\fBr-doc\fR provides a mechanism to display an R manual page within \*(mS. On invoking \fBr-doc\fR the
-user is prompted for the name of the manual page to display:-
-.CS
-R help on ?
-.CE
-The command invokes the R \fBhelp\fR function,
-.Hr Rscript 1 ,
-for the R manual page entered in the message line.
-.PP
-Another R documentation page can be selected in the generated help page by either moving the cursor to the link and
-pressing return or double clicking on it with the left mouse button. \*(mS will then attempt to load and display the
-selected R manual page.
-.PP
-The \fBr-exec\fR macro executes the current buffer using the Rscript command line interpreter. Before the script is executed
+The  \fBfile-exec\fR  macro for  interpreted  languages  executes  the current
+buffer using the command line  interpreter  defined for this language. In case
+of  programming  languages  which  needs  to be  compiled,  first  the code is
+compiled to machine code and then executed. Before the program is executed
 .Ht save-some-buffers 2
 is executed to allow the user to ensure that all relevant buffers are saved. If bit \fC0x01\fR of the numeric argument
 \fIn\fR is clear then all modified buffers are automatically saved, when set (the default) the user is prompted for
 each buffer. If bit 0x02 of the numeric argument is clear (the default) the user is prompted for any additional
-\fIcommand-line-arguments\fR which are passed to Rscript command. The arguments given are stored in a buffer variable,
-\fB:r-exec-args\fR, and used as the default arguments next time the script is executed.
+\fIcommand-line-arguments\fR  which are  passed to  application  or the script
+command. The arguments given are stored in a buffer variable, 
+and used as the default arguments next time the script is executed.
 .PP
-After executing the script, an \fC*r-exec*\fR buffer is opened with the output of the script execution. The script
-executes the R file using the current \*(mS character encodings.
+After executing the program, an  \fC*FHOOK-exec*\fR  buffer is opened with the
+output of the script or program. The script
+executes the current buffer if required using the current \*(mS character encodings.
 .PP
-The \fBr-format\fR macro formats the current buffer using the R library formatR. The formatR package must be pre-installed
+The  \fBfile-format\fR  macro formats the current buffer using a dedicated 
+formatting  tool for the  buffer's  programming  language.  For R for example,
+the package `formatR` must be pre-installed
 by the user, this is typically done by running `install.packages('formatR')` within an R console.
 .PP
-The  \fBr-lint\fR  macro checks the currently  edited file using the R package  `lintr` which must be installed by the
+The  \fBfile-lint\fR  macro checks the currently  edited file using a language
+specific linter, for example for R, the package  `lintr` must be installed by the
 user for instance using the usual `install.packages('lintr)` syntax from within a R console. 
 .PP
-The command opens an \fC*r-lint*\fR buffer with the output from Rscript lint, any warnings or styling issues raised are 
+The command opens an \fC*FHOOK-lint*\fR buffer with the output from the linter, warnings or styling issues raised are 
 typically high-lighted. the buffer is configured to for
 .Ht get-next-line 2
 to make traverse through the issues as easy as possible.
-.PP
-Use the \fB%r-lint-opts\fR variable to configure \fBr-lint\fR to the format/style you require. When not defined,
-the default options given to R lint are:
+.SH SETUP
+To get the  command  \fBfile-exec\fR,  \fBfile-format\fR  and  \fBfile-lint\fR
+properly  working  a setup for the  relevant  tools for the  current  buffer's
+programming  language  is  usually  required.  The  setting  are are stored in
+variables like for instance for the C++ programming language:
 .CS
-linters = linters_with_defaults(indentation_linter = indentation_linter(indent = 4L))
+; regex for highlighting and making it click aware
+add-next-line "*cpp-exec*" "^%f:%l:\\\\d+.+"
+add-next-line "*cpp-lint*" "^%f:%l:\\\\d+.+"
+; the compiler
+set-variable .fhook-cpp.coms "\\bg++\\b" 
+; try outs for  execution,  formatting  and  linting,  if 1 is fine 2 is not tried
+; fields are \\bcompiler/tool\\btest command line\\b
+; hilight error\\bhilight warning\\bcommand line\\b
+; line breaks with indentation follow ups are just for better display
+set-variable .fhook-cpp.exec1 "\\b%v[com]\\b%v[com].exe -v\\b\\b\\b
+    %v[com] -Wall -O3 -std=c++17 \\"%p%f\\" -o %b %& .\\%b
+    %v[args|20|Additional command-line arguments|]\\b"
+set-variable .fhook-cpp.exec2 "\\b%v[com]\\b%v[com]  -v\\b\\b\\
+    b%v[com] -Wall -O3 -std=c++17 \\"%p%f\\" -o ./%b %& ./%b 
+    %v[args|20|Additional command-line arguments|]\\b"
+set-variable .fhook-cpp.format1 "\\bastyle\\bastyle -h\\b0\\b\\b
+    astyle --indent=spaces=4 %\\"%f%\\"\\bAstyle\\b"
+set-variable .fhook-cpp.format2 "\\bclang-format\\bclang-format -h\\b0\\b\\b
+    clang-format \\"%f\\% -- -std=c++17\\bClang-format\\b"
+set-variable .fhook-cpp.lint1 "\\b%v[com]\\b%v[com] --version\\b0\\b\\b
+    %v[com] -Wall -x c++ -fsyntax-only \\"%p%f\\"\\bG++\\b"
+set-variable .fhook-cpp.lint2 "\\bclang-tidy\\bclang-tidy --version\\b0\\b\\b
+    clang-tidy \\"%f\\" -- -std=c++17\\bClang-tidy\\b"
 .CE 0
 .SH NOTES
-\fBr-doc\fR, \fBr-exec\fR, \fBr-format\fR and \fBr-lint\fR are macros defined in \fCrtools.emf\fR.
+\fBfile-exec\fR,  \fBfile-format\fR  and \fBfile-lint\fR are macros defined in
+\fChktools.emf\fR.  For programming lanuages like C++, Fortran and R there are
+already useful variable defaults defined in the hkHOOK.emf files, the user can
+overwrite  these settings  usually in the myHOOK.emf file or define their owns
+therin.
 .PP
-The Rscript executable must be installed and in the system path for the command to function correctly. If Rscript is
-not in the path, or a different command is used, set the \fB%rscript-com\fR user variable to the command needed to
-run Rscript.
-.PP
-On Windows, the \fB%rscript-com\fR variable is typically set to the full path to the Rscript interpreter within the
-program files directory.
+The  executables  or the  interpreters  must be usually  installed  and in the
+system  path for the command to function  correctly  or the full path might be
+given in the variable settings. 
 .SH "SEE ALSO"
-.na
 .Hr Rscript 1 ,
-.Hr man 1 ,
 .Ht get-next-line 2 ,
 .Ht r 9 .
-.ad
 .FH
