@@ -49,7 +49,7 @@ BIT_OPT  = -m$(BIT_SIZE)
 endif
 
 PLATFORM = msys
-PLATFORM_VER = $(shell uname -r | cut -f 1 -d .)
+PLATFORM_VER = $(shell uname -a | cut -d\  -f4)
 
 MAKEFILE = $(PLATFORM)$(TOOLKIT)
 ifeq (1,$(BPRF))
