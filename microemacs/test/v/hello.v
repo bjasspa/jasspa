@@ -1,6 +1,5 @@
 // -!- v-lang -!-
-import stdio
 
 fn main() {
-	println('hello world')
+	println('Hello V World!')
 }

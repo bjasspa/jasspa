@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Detlef Groth
 ;  Created       : Fri Mar 6th, 2025
-;  Last Modified : <250705.0912>
+;  Last Modified : <250730.2154>
 ;
 ;  Description
 ;   V Language Template
@@ -143,5 +143,13 @@ set-variable .fhook-v.item-list-r5 "meth \ecB\\1.\\2\ecA"
   indent .hilight.v b "\\[" "]"
   indent .hilight.v b "(" ")"
 !endif
+
+; setup file-* tools
+add-next-line "*v-exec*" "^%f:%l:\\d+.+"
+add-next-line "*v-lint*" "^%f:%l:\\d+.+"
+set-variable .fhook-v.coms "\bv\b" 
+set-variable .fhook-v.exec1   "\b%v[com]\b\b\b\b%\"%v[com]%\" run %\"%f%\" %v[args|20|Additional command-line arguments|]\b"
+set-variable .fhook-v.format1 "\b%v[com]\b%v[com] fmt -h\b0\b\b%\"%v[com]%\" fmt -w %\"%f%\"\b"
+set-variable .fhook-v.lint1   "\b%v[com]\b\b\b\b%\"%v[com]%\" vet %\"%f%\"\b"
 
 buffer-init-fhook "v"
