@@ -25,7 +25,6 @@ set-variable .git.hub-brn "main"
 set-variable .git.hub-rtp "me_"
 set-variable .git.hub-rnp "Jasspa MicroEmacs "
 set-variable .git.hub-hdr &spr "Accept: application/vnd.github+json\r\nAuthorization: Bearer %s\r\nX-GitHub-Api-Version: 2022-11-28\r\nUser-Agent: Jasspa" .git.hub-tkn
-
 set-variable %http-flags "scvwdh"
 !iif &not &exi .spell.lang-id  execute-file "language"
 !iif &not &exi json-parse  execute-file "hkjson"
@@ -33,6 +32,16 @@ set-variable %http-flags "scvwdh"
 set-variable $time -43200
 set-variable .git.hub-date &spr "%s-%02d-%02d" &lef $time 4 &mid $time 7 2 &mid $time 9 2
 set-variable $time 0
+
+0 define-macro github-log
+  set-variable #l0 @1
+  set-variable #l1 $buffer-bname
+  find-buffer "*github-log*"
+  insert-string #l0
+  insert-newline
+  find-buffer #l1
+!emacro
+
 0 define-macro github-api-call
   set-variable #l1 @1
   !force set-variable #l2 @2
@@ -177,9 +186,11 @@ define-macro github-build
   set-variable #l4 ""
   set-variable #l2 0
   !while &not &seq "" &set #l3 &lget .git.hub-bal &inc #l2 1
+    github-log &spr "  Building:  %s %s %s %s" #l0 #l3 #l1 #l4
     github-build-action #l0 #l3 #l1 #l4
     !iif &seq #l4 ""  set-variable #l4 &spr "\"refToHelpAsset\":\"%s\"" #l9
   !done
+  github-log &spr "  Building complete, output to %s" #l1
   ml-write &spr "[Github Build: Complete, output to %s]" #l1
 !emacro
 
@@ -277,11 +288,13 @@ define-macro github-release
   2 backward-delete-char
   insert-string "\"}"
   !force 0 write-buffer &set %http-post-file &stat a &spr "%s../readme.md.upl" #l1
-  github-api-json &cat "releases/" #l8 
+  github-api-json &cat "releases/" #l8
   ml-write &spr "[Github Release: Complete, uploaded %d assets]" #l5
 !emacro
 
 define-macro github-build-release
+  ascii-time
+  github-log &spr "github-build-release start: %s" #l9
   !force set-variable #l0 @1
   !iif &not $status set-variable #l0 @ml61 "Jasspa Git repository" "~/jasspa"
   !iif &not &seq "D" &stat t &set #l0 &stat a #l0  -8 ml-write &spr "[Github Release Error: Given repository is not a directory: %s]" #l0
@@ -311,8 +324,13 @@ define-macro github-build-release
   set-variable #l1 &spr "%s%02d%02d" &lef $time 4 &mid $time 7 2 #l2
   !force set-variable #l2 @mc1 &spr "New MicroEmacs version will be \"%s\", is this correct (y/n) ? " #l1 "NYny"
   !iif &not &iseq "y" #l2  -8 ml-write "[Github Release Error: Version incorrect - abort]"
+  github-log &spr "Running:  github-build \"\" %s%s" .git.hub-rtp #l1
   github-build "" &cat .git.hub-rtp #l1
+  github-log &spr "Running:  github-release %s %s %s %s" #l8 #l1 #l9 #l0
   github-release #l8 #l1 #l9 #l0
+  ascii-time
+  github-log &spr "github-build-release complete: %s" #l9
+  find-buffer "*github-log*"
 !emacro
 
 ; @# language index or not given
@@ -368,6 +386,8 @@ define-macro github-finalise-release-formula
   
 define-macro github-finalise-release
   set-position "\x80"
+  ascii-time
+  github-log &spr "github-finalise-release start: %s" #l9
   !force set-variable #l0 @1
   !iif &not $status set-variable #l0 @ml61 "Jasspa Git repository" "~/jasspa"
   !iif &not &seq "D" &stat t &set #l0 &stat a #l0  -8 ml-write &spr "[Github Release Error: Given jasspa repository is not a directory: %s]" #l0
@@ -439,5 +459,8 @@ define-macro github-finalise-release
   !force 0 delete-buffer $buffer-bname
   2 github-build-action #l0 "build-webpages.yml" #l1 ""
   goto-position "\x80"
+  ascii-time
+  github-log &spr "github-finalise-release complete: %s" #l9
+  find-buffer "*github-log*"
   ml-write "[Release Finalised - commit changes to jasspa & homebrew-jasspa repositories]" 
 !emacro
