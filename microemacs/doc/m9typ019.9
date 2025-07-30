@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ019.9,v 2.7 2025/07/23 08:39:34 jon Exp $
+.Id $Id: m9typ019.9,v 2.7 2025/07/30 08:36:03 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH tcl 9
@@ -93,7 +93,7 @@ The short cut keys used within the buffer are:-
 .br
 \fB\*cc \*cd\fR \- Uncomment the current line.
 .br
-\fB\*cc \*ce\fR \- Comment to the end of the line with stars (*).
+\fB\*cc \*ce\fR \- Comment to the end of the line with hashes (#).
 .br
 \fB\*a\*ci\fR \- Restyle the current region.
 .br
@@ -101,15 +101,35 @@ The short cut keys used within the buffer are:-
 .br
 \fBf3\fR \- (un)fold all regions
 .br
-\fBf6\fR \- List items.
+\fBf6\fR \- List items
 .br
-\fB\*ef6\fR \- Close item list,
+\fB\*ef6\fR \- Close item list
+.IP "\fBExecuting, Formatting and Linting Tcl Code\fR"
+The Tcl file hook supports the 
+.Ht file-exec 3 ,
+the 
+.Ht file-format 3
+and the 
+.Ht file-lint 3
+macros. The tools,  compilers  which are currently  supported are "tclsh" 
+the Tcl interpreter and "tclint" a Python package to lint Tcl code and 
+"tclfmt" which is a formatter as well provided by the "tclint" Python package.
+The formatter and the linter can be installed using the Python package manager
+"pip". Here an example on how to install them for the current user:
+.RS
+.CS
+pip install tclint --user
+.CE 0
+.RE
 .SH "SEE ALSO"
 .na
 .Ht abbrev-list 3 ,
 .Ht collapse-all 3 ,
 .Ht collapse-current 3 ,
 .Ht expand-abbrev-handle 3 ,
+.Ht file-exec 3 ,
+.Ht file-format 3 ,
+.Ht file-lint 3 ,
 .Ht find-tag 2 ,
 .Ht indent 2 ,
 .Ht item-list 3 ,

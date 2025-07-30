@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ009.9,v 2.6 2025/07/19 09:49:53 jon Exp $
+.Id $Id: m9typ009.9,v 2.6 2025/07/30 08:21:05 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH f 9
@@ -92,6 +92,23 @@ The short cut keys used within the buffer are:-
 \fBf6\fR \- List items.
 .br
 \fB\*ef6\fR \- Close item list,
+.IP "\fBExecuting, Formatting and Linting Fortran Code\fR"
+The Fortran file hook supports the 
+.Ht file-exec 3 ,
+the 
+.Ht file-format 3
+and the 
+.Ht file-lint 3
+macros. The tools,  compilers  which are currently  supported are "gfortran" 
+as compilers and linter and "fprettify"  as formatters.
+The formatter can be  installed  either  using  your  standard  package
+manager system wide or, for the current user, using the Python package manager
+"pip". Here an example on how to install fprettify using pip:
+.RS
+.CS
+pip install fprettify --user
+.CE 0
+.RE
 .SH BUGS
 The Fortran hilight file is in it's infancy and a number of it's tokens may be
 misplaced.
@@ -101,6 +118,9 @@ misplaced.
 .Ht collapse-all 3 ,
 .Ht collapse-current 3 ,
 .Ht expand-abbrev-handle 3 ,
+.Ht file-exec 3 ,
+.Ht file-format 3 ,
+.Ht file-lint 3 ,
 .Ht indent 2 ,
 .Ht item-list 3 ,
 .Ht time 2m .
