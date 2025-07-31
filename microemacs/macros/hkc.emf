@@ -529,7 +529,7 @@ set-variable .fhook-c.exec1 "\bgcc.exe\b\b\b\bdel %\"%b.exe%\" %& gcc -o %\"%b%\
 set-variable .fhook-c.exec2 "\bgcc\b\b\b\brm -f %\"%b%\" %& gcc -o %\"%b%\" %\"%f%\" && %\"./%b%\" %v[args|20|Additional command-line arguments|]\b"
 set-variable .fhook-c.format1 "\bastyle\bastyle -h\b0\b\bastyle --indent=spaces=4 %\"%f%\"\bAstyle\b"
 set-variable .fhook-c.format2 "\bclang-format\bclang-format -h\b0\b\bclang-format \"%f\% -- -std=c99\bClang-format\b"
-set-variable .fhook-c.lint1 "\b%v[com]\b%v[com] --version\b0\b\b%v[com] -Wall -x c -fsyntax-only \"%p%f\"\bGcc\b"
+set-variable .fhook-c.lint1 "\bgcc\bgcc --version\b0\b\bgcc -Wall -x c -fsyntax-only \"%p%f\"\bGcc\b"
 set-variable .fhook-c.lint2 "\bclang-tidy\bclang-tidy --version\b0\b\bclang-tidy \"%f\" -- -std=c99\bClang-tidy\b"
 define-macro-file cmacros c-slashify c-deslashify c-hash-eval c-hash-define c-hash-undef c-hash-undo
 define-macro-file hkcpp fhook-cpp
