@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ015.9,v 2.6 2025/07/13 12:59:40 jon Exp $
+.Id $Id: m9typ015.9,v 2.6 2025/08/01 12:21:07 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH awk 9
@@ -20,6 +20,12 @@ awk \- AWK files
 .na
 .B hkawk.emf
 \- AWK hook definition
+.br
+.B awk.etf
+\- AWK Language header template file
+.br
+.B  awk.eaf
+\- AWK Language abbreviation file
 .ad
 .SH EXTENSIONS
 .na
@@ -37,12 +43,51 @@ awk \- AWK files
 the executable. The awk files may be extensionless and are still recognised.
 .SH DESCRIPTION
 The  \fBawk\fR  file type  template  provides  simple  hilighting of AWK
-files, the template provides minimal hilighting.
+files, folding, item listing and abbreviations.
+.IP "\fBGeneral Editing\fR"
+On creating a new file, a new header is automatically included into the file.
+.Ht time 2m
+is by default enabled, allowing the modification time-stamp to be maintained in
+the header.
+.IP \fBHilighting\fR
+The hilighting  features allow keywords, variables,comments, strings
+and characters of the language to be differentiated  and rendered in different
+colors.
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for AWK file  editing
+which  can  be  used  by  writing   short   abbreviations   like   "\fBif\fR",
+"\fBel\fR" (else) or "\fBfu\fR" (function) - and then pressing the key-binding for the 
+.Ht expand-abbrev-handle 3
+command.  
+The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mE using the 
+.Ht abbrev-list 3
+command.
+.IP "\fBFolding and Information Hiding\fR"
+Generic   folding  is  enabled  within  AWK  files.  The  folds  occur  about
+\fIfunction\fR and \fIBEGIN\fR or \fIEND\fR block definitions  located  on  the  left-hand  margin  and  their
+closing brace which is located at the beginning of a line.
+.Ht collapse-all 3
+(un)folds all regions in the file,
+.Ht collapse-current 3
+(un)folds the current region.
+.IP "\fBNavigation via Item List\fR"
+The AWK mode offers beside folding as well support for displaying an outline of the
+functions and the blocks for easy navigation using the 
+.Ht item-list 3
+command.
 .SH BUGS
 None  reported.  Template  could  probably  benifit  from  some  form  of auto
 indentation.
 .SH "SEE ALSO"
 .na
+.Ht abbrev-list 3 ,
+.Ht collapse-all 3 ,
+.Ht collapse-current 3 ,
+.Ht expand-abbrev-handle 3 ,
+.Ht item-list 3 ,
+.Ht time 2m .
+.sp 1
 .Hl "Supported File Types" FileTypes -
 .ad
 .FH
