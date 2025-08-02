@@ -2818,16 +2818,19 @@ WinShutdown(void)
 void
 TTinitMouse(meInt nCfg)
 {
-    meMouseCfg = nCfg;
-    if(nCfg & meMOUSE_ENBLE)
+    if((nCfg & meMOUSE_NOBUTTONS) != 0)
+        meMouseCfg = nCfg;
+    else
+        meMouseCfg = (meMouseCfg & meMOUSE_NOBUTTONS) | nCfg;
+    if(meMouseCfg & meMOUSE_ENBLE)
     {
         int b1, b2, b3;
         
-        if(nCfg & meMOUSE_SWAPBUTTONS)
+        if(meMouseCfg & meMOUSE_SWAPBUTTONS)
             b1 = 3, b3 = 1;
         else
             b1 = 1, b3 = 3;
-        if((nCfg & meMOUSE_NOBUTTONS) > 2)
+        if((meMouseCfg & meMOUSE_NOBUTTONS) > 2)
             b2 = 2;
         else
             b2 = b3;
@@ -5964,9 +5967,9 @@ MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         
     case WM_CREATE:
 #if MEOPT_MOUSE
-        /* Set the default mouse state. Get the number of buttons. Note under windows we do not
+        /* Get and set the number of buttons on mouse. Note under windows we do not
          * need to worry about a left/right swap since that is performed beneath us. */
-        TTinitMouse(meMouseCfg | (GetSystemMetrics(SM_CMOUSEBUTTONS) & meMOUSE_NOBUTTONS));
+        TTinitMouse((meMouseCfg&~meMOUSE_NOBUTTONS) | (GetSystemMetrics(SM_CMOUSEBUTTONS) & meMOUSE_NOBUTTONS));
 #endif
         /* still must do some work if mouse is disabled */
         meCursors[meCURSOR_DEFAULT] = LoadCursor(NULL,IDC_ARROW);

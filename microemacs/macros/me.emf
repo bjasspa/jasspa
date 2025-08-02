@@ -333,7 +333,7 @@ set-variable %tag-file "tags"
 set-variable %tag-template "%[^\t]\t%[^\t]\t%[^\n]\n"
 set-variable .osd.tmp 40
 set-variable .osd.next &cond &exi .osd.next .osd.next &add .osd.tmp 1
-set-variable .expand-iso-accents.on &reg "/history/expaccent" "0"
+set-variable .expand-iso-accents.on &reg "/history/expaccent" "1"
 set-variable .expand-look-back.on &reg "/history/explookbk" "1"
 set-variable .expand-word.on &reg "/history/expword" "0"
 

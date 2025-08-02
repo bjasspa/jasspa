@@ -648,7 +648,10 @@ TTshowCur(void)
 void
 TTinitMouse(meInt nCfg)
 {
-    meMouseCfg = nCfg & (meMOUSE_ENBLE|meMOUSE_SWAPBUTTONS|meMOUSE_NOBUTTONS);
+    if((nCfg & meMOUSE_NOBUTTONS) != 0)
+        meMouseCfg = nCfg & (meMOUSE_ENBLE|meMOUSE_SWAPBUTTONS|meMOUSE_NOBUTTONS);
+    else
+        meMouseCfg = (meMouseCfg & meMOUSE_NOBUTTONS) | (nCfg & (meMOUSE_ENBLE|meMOUSE_SWAPBUTTONS));
     if(meMouseCfg & meMOUSE_ENBLE)
     {
         int b1, b2, b3 ;

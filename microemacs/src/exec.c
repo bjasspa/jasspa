@@ -391,11 +391,11 @@ meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
             if(prompt == NULL)
                 resultStr[0] = '\0';
             else
-                meStrcpy(resultStr,prompt) ;
+                meStrcpy(resultStr,prompt);
             if(lineExec(0, 1, buff) <= 0)
                 return meABORT ;
-            meStrncpy(buffer,resultStr,size-1) ;
-            buffer[size-1] = '\0' ;
+            meStrncpy(buffer,resultStr,size);
+            buffer[size-1] = '\0';
             return meTRUE ;
         }
         else if((buff[0] != '@') || (buff[1] != 'm') || (buff[2] != 'n'))

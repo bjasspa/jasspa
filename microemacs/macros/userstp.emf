@@ -556,8 +556,7 @@ set-variable .user-set-mouse.A ""
 !emacro
 
 0 define-macro user-set-cursorblink
-  set-variable #l2 &spr "/history/%s/blink" %platform
-  set-variable #l0 &reg #l2 "0"
+  set-variable #l0 &reg &set #l2 &spr "/history/%s/blink" %platform "0"
   !if &equ &abs @# 2
     set-variable #l1 &div #l0 0x10000
     !iif &not #l1  set-variable #l1 #l0

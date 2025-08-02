@@ -832,6 +832,7 @@ translateKey(int f, int n)
 meUShort
 TTgetc(void)
 {
+    meTRANSKEY *tt, *tk;
     int ci, ki, ll, kk, kl;
     meUShort cc;
     
@@ -839,10 +840,9 @@ TTgetc(void)
         if(!TTahead())
             TTwaitForChar();
         
+        tk = NULL;
         if((ci = TTtransKey.count) > 0)
         {
-            meTRANSKEY *tt, *tk=NULL;
-            
             tt = &TTtransKey;
             ki = TTnextKeyIdx;
             ll = 0;
@@ -1000,13 +1000,16 @@ TTgetc(void)
                 }
                 else
 #endif
-                if(tk->map != ME_DELETE_KEY)
+                    if(tk->map != ME_DELETE_KEY)
                 {
                     if(!ki)
                         ki = KEYBUFSIZ;
                     TTkeyBuf[--ki] = tk->map;
                     TTnoKeys++;
                 }
+                /* if ki == TTnextKeyIdx then no key has been added yet (i.e. unbound mouse-move) and any remaining keys still need translating */
+                if(ki != TTnextKeyIdx)
+                    tk = NULL;
                 while(--ll >= 0)
                 {
                     if(!ki)
@@ -1018,7 +1021,7 @@ TTgetc(void)
                 TTlastKeyIdx = ki;
             }
         }
-    } while(!TTnoKeys);
+    } while(!TTnoKeys || (tk != NULL));
     
     if(!TTnextKeyIdx)
         TTnextKeyIdx = KEYBUFSIZ;
