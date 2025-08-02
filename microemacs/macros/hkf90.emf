@@ -143,6 +143,7 @@ set-variable .fhook-f90.coms "\bgfortran\b"
 set-variable .fhook-f90.exec1   "\b%v[com]\b\b\b\b%\"%v[com]%\" -Wall -fmax-errors=3 %\"%f%\" -o %\"%b%\" && %\".%/%b%\" %v[args|20|Additional command-line arguments|]\b"
 ; pip3 install fprettify --user
 set-variable .fhook-f90.format1 "\bfprettify\b\b\b\bfprettify -i 4 %\"%f%\"\bfprettify\b"
+set-variable .fhook-f90.format2 "\b%v[com]\b%\"%v[com]%\" -m fprettify -h\b0\b\b%\"%v[com]%\" -m fprettify -i 4 %\"%p%f%\"\bPy frprettifyf\b"
 set-variable .fhook-f90.lint1   "\b%v[com]\b\b\b\b%\"%v[com]%\" -Wall -fmax-errors=3 -fsyntax-only %\"%f%\"\bCheck\b"
 
 buffer-init-fhook "f90"

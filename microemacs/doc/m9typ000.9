@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ000.9,v 2.12 2022/06/12 17:14:33 jon Exp $
+.Id $Id: m9typ000.9,v 2.12 2025/07/30 08:20:12 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH c 9
@@ -171,6 +171,25 @@ A number of additional commands are available as follows:-
 \- Unset a C/C++ \fC#define\fR
 .BE 0
 .RE
+.IP "\fBExecuting, Formatting and Linting C and C++ Code\fR"
+The C and the C++ file hooks supports the 
+.Ht file-exec 3 ,
+the 
+.Ht file-format 3
+and the 
+.Ht file-lint 3
+macros. The tools,  compilers  which are currently  supported are "gcc" and "g++"
+as compilers,   "astyle"  and  "clang-format"   (formatters)  and  "clang-tidy"
+(linter).  The tools can be  installed  either  using  your  standard  package
+manager system wide or, for the current user, using the Python package manager
+"pip". Here an example on how to install astyle and the clang tools using pip:
+.RS
+.CS
+pip install astyle-py --user
+pip install clang-format --user
+pip install clang-tidy --user
+.CE 0
+.RE
 .SH NOTES
 If the  default  language  is C++, rather than 'C' the order of the file hooks
 should be over-ridden in the users local setup, using:-
@@ -212,6 +231,9 @@ onto \fB.cpp\fR. Do not attept to re-style.
 .Ht collapse-current 3 ,
 .Ht compile 3 ,
 .Ht ctags 3f ,
+.Ht file-exec 3 ,
+.Ht file-format 3 ,
+.Ht file-lint 3 ,
 .Ht find-tag 2 ,
 .Ht rcs-file 2 ,
 .Ht restyle-buffer 3 ,

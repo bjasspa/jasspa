@@ -7,7 +7,7 @@
 .\"  Created By    : Detlef Groth & Steven Phillips
 .\"  Created       : Mon Aug 31 21:02:32 1998
 .\"
-.Id $Id: m3mac099.3,v 2.10 2025/07/29 07:37:08 dgroth Exp $
+.Id $Id: m3mac099.3,v 2.10 2025/07/30 08:28:47 dgroth Exp $
 .Im MicroEmacs command
 .so me.tni
 .TH file-exec 3
@@ -65,6 +65,7 @@ To get the  command  \fBfile-exec\fR,  \fBfile-format\fR  and  \fBfile-lint\fR
 properly  working  a setup for the  relevant  tools for the  current  buffer's
 programming  language  is  usually  required.  The  setting  are are stored in
 variables like for instance for the C++ programming language:
+.Me $emf-scheme
 .CS
 ; regex for highlighting and making it click aware
 add-next-line "*cpp-exec*" "^%f:%l:\\\\d+.+"
@@ -75,11 +76,13 @@ set-variable .fhook-cpp.coms "\\bg++\\b"
 ; fields are \\bcompiler/tool\\btest command line\\b
 ; hilight error\\bhilight warning\\bcommand line\\b
 ; line breaks with indentation follow ups are just for better display
+; we check with %v[com].exe for the Windows platform to call the build 
+; with backslash instead of slash from the current directory
 set-variable .fhook-cpp.exec1 "\\b%v[com]\\b%v[com].exe -v\\b\\b\\b
     %v[com] -Wall -O3 -std=c++17 \\"%p%f\\" -o %b %& .\\%b
     %v[args|20|Additional command-line arguments|]\\b"
-set-variable .fhook-cpp.exec2 "\\b%v[com]\\b%v[com]  -v\\b\\b\\
-    b%v[com] -Wall -O3 -std=c++17 \\"%p%f\\" -o ./%b %& ./%b 
+set-variable .fhook-cpp.exec2 "\\b%v[com]\\b%v[com]  -v\\b\\b\\b
+    %v[com] -Wall -O3 -std=c++17 \\"%p%f\\" -o ./%b %& ./%b 
     %v[args|20|Additional command-line arguments|]\\b"
 set-variable .fhook-cpp.format1 "\\bastyle\\bastyle -h\\b0\\b\\b
     astyle --indent=spaces=4 %\\"%f%\\"\\bAstyle\\b"
@@ -90,6 +93,7 @@ set-variable .fhook-cpp.lint1 "\\b%v[com]\\b%v[com] --version\\b0\\b\\b
 set-variable .fhook-cpp.lint2 "\\bclang-tidy\\bclang-tidy --version\\b0\\b\\b
     clang-tidy \\"%f\\" -- -std=c++17\\bClang-tidy\\b"
 .CE 0
+.Me $ehf-scheme
 .SH NOTES
 \fBfile-exec\fR,  \fBfile-format\fR  and \fBfile-lint\fR are macros defined in
 \fChktools.emf\fR.  For programming lanuages like C++, Fortran and R there are
@@ -101,7 +105,14 @@ The  executables  or the  interpreters  must be usually  installed  and in the
 system  path for the command to function  correctly  or the full path might be
 given in the variable settings. 
 .SH "SEE ALSO"
-.Hr Rscript 1 ,
+.Ht c 9 ,
+.Ht cpp 9 ,
+.Ht f90 9 ,
 .Ht get-next-line 2 ,
-.Ht r 9 .
+.Ht go 9 ,
+.Ht pas 9 ,
+.Ht perl 9 ,
+.Ht py 9 ,
+.Ht r 9 ,
+.Ht tcl 9 .
 .FH

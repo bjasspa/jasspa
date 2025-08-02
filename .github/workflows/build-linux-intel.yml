@@ -143,7 +143,7 @@ jobs:
           cp me_logo_64.png jasspa/hicolor/64x64/apps/com.jasspa.MicroEmacs.png
           mkdir -p jasspa/hicolor/128x128/apps
           cp me_logo_128_32.png jasspa/hicolor/128x128/apps/com.jasspa.MicroEmacs.png
-          ../../bin/linux6-intel64/tfs ../../packages/Jasspa_MicroEmacs_linux_icons.tfs jasspa
+          ../../bin/linux6-intel64/tfs ../../../packages/Jasspa_MicroEmacs_linux_icons.tfs jasspa
 
       - name: Upload linux-intel downloads
         uses: actions/upload-artifact@v4

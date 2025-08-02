@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ024.9,v 2.9 2025/07/27 09:52:23 jon Exp $
+.Id $Id: m9typ024.9,v 2.9 2025/07/30 08:27:23 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH perl 9
@@ -112,6 +112,17 @@ The short cut keys used within the buffer are:-
 \fBf6\fR \- list items
 .br
 \fB\*ef6\fR \- close item list
+.IP "\fBExecuting, Formatting and Linting Perl Code\fR"
+The Perl file hook supports the 
+.Ht file-exec 3 ,
+the 
+.Ht file-format 3
+and the 
+.Ht file-lint 3
+macros. The tools  which are currently used are the "perl" interpreter, "perltidy"
+for  formatting  and  "perlcritic"  for  linting.  The  latter  two  should be
+installable  either via your default  package manager or using the Perl "cpan"
+package manager. 
 .IP \fBDebugging\fR
 Debugging a perl script can be done inside \*(mS by using the
 .Ht perldb 3
@@ -131,6 +142,9 @@ involve quotation marks that can cause problems.
 .Ht collapse-all 3 ,
 .Ht collapse-current 3 ,
 .Ht expand-abbrev-handle 3 ,
+.Ht file-exec 3 ,
+.Ht file-format 3 ,
+.Ht file-lint 3 ,
 .Ht indent 2 ,
 .Ht find-tag 2 ,
 .Ht item-list 3 ,

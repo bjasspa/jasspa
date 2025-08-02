@@ -7,7 +7,7 @@
 .\"  Created By    : Detlef Groth
 .\"  Created       : Mon Mar 10 09:14:00 2025
 .\"
-.Id $Id: m9typ049.9,v 2.8 2025/07/27 09:50:31 jon Exp $
+.Id $Id: m9typ049.9,v 2.8 2025/07/30 08:19:56 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH go 9
@@ -103,6 +103,15 @@ The short cut keys used within the buffer are:-
 \fBf6\fR \- List items.
 .br
 \fB\*ef6\fR \- Close item list,
+.IP "\fBExecuting, Formatting and Linting Go Code\fR"
+The Go file hook supports the 
+.Ht file-exec 3 ,
+the 
+.Ht file-format 3
+and the 
+.Ht file-lint 3
+macros.  The  tools,  compilers  which  are  currently  supported  are  just the Go
+sub-commands usable for this task so "go run", "go fmt" and "go vet".
 .SH NOTES
 .PP
 The  hilighting  or the item-list matches are  typically   extended  using  a  file   \fBmygo.emf\fR
@@ -114,6 +123,9 @@ The  hilighting  or the item-list matches are  typically   extended  using  a  f
 .Ht collapse-current 3 ,
 .Ht compile 3 ,
 .Ht expand-abbrev-handle 3 ,
+.Ht file-exec 3 ,
+.Ht file-format 3 ,
+.Ht file-lint 3 ,
 .Ht item-list 3 ,
 .Ht restyle-buffer 3 ,
 .Ht restyle-region 3 ,

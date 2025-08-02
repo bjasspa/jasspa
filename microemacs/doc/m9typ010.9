@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ010.9,v 2.6 2025/07/13 13:35:02 jon Exp $
+.Id $Id: m9typ010.9,v 2.6 2025/07/30 08:22:26 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH p 9
@@ -81,6 +81,16 @@ The short cut keys used within the buffer are:-
 \fBf6\fR \- List items.
 .br
 \fB\*ef6\fR \- Close item list,
+.IP "\fBExecuting, Formatting and Linting Pascal Code\fR"
+The Pascal file hook supports the 
+.Ht file-exec 3 ,
+the 
+.Ht file-format 3
+and the 
+.Ht file-lint 3
+macros. The tools and compilers  which are currently the Free Pascal  provided
+ones, so "fpc" as compiler, used as well as linter and "ptop"
+the formatter which comes with the Free Pascal installation.
 .SH BUGS
 None reported.
 .SH "SEE ALSO"
@@ -90,6 +100,9 @@ None reported.
 .Ht collapse-current 3 ,
 .Ht compile 3 ,
 .Ht expand-abbrev-handle 3 ,
+.Ht file-exec 3 ,
+.Ht file-format 3 ,
+.Ht file-lint 3 ,
 .Ht item-list 3 ,
 .Ht restyle-buffer 3 ,
 .Ht restyle-region 3 ,
