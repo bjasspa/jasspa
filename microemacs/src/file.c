@@ -3183,7 +3183,10 @@ double_url:
                 }
             }
             else
+            {
                 p = p1;
+                flag = 0;
+            }
         }
 #ifdef _DRV_CHAR
         else if(isAlpha(p1[0]) && (p1[1] == _DRV_CHAR))
