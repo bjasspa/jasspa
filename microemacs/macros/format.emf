@@ -36,7 +36,7 @@ define-macro clean
   !done
   ;
   ; if argument given then run a 'spotless' macro, i.e.
-  ; Reduce multiple blank lines to single blanks 
+  ; Reduce multiple blank lines to single blanks
   !if @?
     !repeat
       beginning-of-buffer
@@ -323,7 +323,7 @@ define-macro restyle-buffer
 !emacro
 
 ; Increase or decrease the indent by the buffer indent.
-; 
+;
 ; Note. In order to allow the command to be symmetrical (i.e. we can increase
 ; and then decrease an indent without loosing a region) then we have to
 ; adjust the mark and point positions when they are not at column zero
@@ -331,9 +331,10 @@ define-macro restyle-buffer
 ; when the position is on white space before a character loosing a line from
 ; the region. To maintain the region then if the end point is not a column 0
 ; then we adjust the point or mark position at the end of the region such
-; that it is at the end of the line. 
+; that it is at the end of the line.
 define-macro indent-increase
   !iif &not @?  set-variable @# $buffer-indent-width
+  !iif &not @#  !return
   0 show-region
   !if &set #l0 &equ &band $result 5 5
     !iif &not &band $result 2  3 show-region
@@ -344,44 +345,20 @@ define-macro indent-increase
     set-alpha-mark "\x82"
     set-variable #l1 $window-line
     set-variable #l3 $window-col
-    !if &les #l2 #l1
-      ; Bottom to top selection, point is at top and mark is at bottom,
-      ; turn it around and make sure that the mark is at the end of the
-      ; line, if it is not then move it because we do no want to
-      ; decrease the indent and for the mark to be at column 0 as the
-      ; region looses a line (unless the region is empty). 
+    !if &set #l5 &les #l2 #l1
+      ; Bottom to top selection - switch vars
       set-variable #l1 #l2
       set-variable #l2 $window-line
       set-variable #l3 #l4
       set-variable #l4 $window-col
-      !if &gre #l4 0
-        ; Only adjust if our position is greater than 0. 
-        end-of-line
-        !if &les #l4 $window-col
-          set-alpha-mark "\x82"
-          -3 show-region
-        !endif
-      !endif
-    !else
-      ; Top to bottom selection. If point is in the middle of the line
-      ; then place it at the end, we want to make sure that we do not
-      ; loose dot to column 0. We only make an adjustment if we are not
-      ; at column 0. 
-      2 show-region
-      !if &gre #l4 0
-        end-of-line
-        3 show-region
-        set-alpha-mark "\x81"
-        set-variable #l4 $window-col
-      !endif
     !endif
-    ; Decrement the region if we are at column 0.
-    !iif &equ #l4 0  set-variable #l2 &sub #l2 1
+    ; If bottom col is 0 then last line is not included - dec the line count
+    !iif &not #l4  set-variable #l2 &sub #l2 1
+    set-variable $window-line #l1
   !else
     set-alpha-mark "\x81"
     set-variable #l1 &set #l2 $window-line
   !endif
-  set-variable $window-line #l1
   !repeat
     beginning-of-line
     search-buffer "em" "[^ \t]"
@@ -400,6 +377,15 @@ define-macro indent-increase
     forward-line
   !until &gre $window-line #l2
   !if #l0
+    !if #l4
+      ; If bottom line was include (col > 0) check it still is and if not move to first non [ \t]
+      goto-alpha-mark &con #l5 "\x82" "\x81"
+      !if &not $window-col
+        search-buffer "em" "[^ \t]"
+        backward-char
+        set-alpha-mark &con #l5 "\x82" "\x81"
+      !endif
+    !endif
     goto-alpha-mark "\x82"
     -3 show-region
     goto-alpha-mark "\x81"

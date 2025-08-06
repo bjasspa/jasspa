@@ -304,6 +304,8 @@ global-bind-key me-find-file           "find-file"
 !else
   1 global-bind-key transpose-region-line "C-S-down"
   -1 global-bind-key transpose-region-line "C-S-up"
+  global-bind-key indent-increase "C-S-right"
+  global-bind-key indent-decrease "C-S-left"
 !endif
 !if &reg "/history/bndfav" "0"
   set-variable #l0 9
