@@ -404,7 +404,7 @@ if [ -z "$1" ] ; then
     while true; do
       read -p "Create Application launcher for mew ? (y/n) " rin
       case $rin in 
-      y) ${INSTPATH}/jasspa/bin/mec -p @crtappln -f ${INSTPATH}/jasspa/bin/mec
+      y) ${INSTPATH}/jasspa/bin/mec -p @crtappln -f ${INSTPATH}/jasspa/bin/mew
          break;;
       n) break;;
       *) echo Invalid response...;;
