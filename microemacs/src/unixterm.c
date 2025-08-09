@@ -2124,6 +2124,15 @@ meXEventHandler(void)
                     goto ignore_key;
                     
                 default:
+                    if((keySym & 0xff000000) != 0)
+                    {
+                        /* if top byte == 0x01 this is a Unicode char, lower 3 bytes in range 0x000100 to 0x10ffff
+                         * if top byte in range 0x10 to 0x1f then its vendor specific, in particular:
+                         * if top 2 bytes == 0x1008 this is a XF86 key code, see XF86keysym.h
+                         * if top 2 bytes == 0x1100 this is designated for keypad KEYSYMs. 
+                         * Ignore all for now */
+                        goto ignore_key;
+                    }
                     /* printf ("This is a default %d (0x%04x)\n", ii, ii);*/
                     ii = keySym & 0xff;
                     goto done_key;
