@@ -5,52 +5,72 @@
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
 ;
-; Synopsis:    Hilighting rules to support all formats
+; Synopsis:    MicrEmacs Embedded Tag Hilighting - support most styles & schemes in one format 
 ; Authors:     Steven Phillips
 ;
-!if &not &exist .hilight.memh
-  set-variable .hilight.memh  &pinc .hilight.next 1
-  set-variable .hilight.memhL &pinc .hilight.next 1
+!if &not &exist .hilight.meth
+  set-variable .hilight.meth  &pinc .hilight.next 1
+  set-variable .hilight.methL &pinc .hilight.next 1
 !endif
 
-0 hilight  .hilight.memh 2 100                      $global-scheme
-hilight .hilight.memh 0x40 "\CCA" ""                $global-scheme
-hilight .hilight.memh 0x44 "\CCB" "" "\\}\CC" "" "" .scheme.under
-hilight .hilight.memh 0x44 "\CCC" "" "\\}\CC" "" "" .scheme.italic
-hilight .hilight.memh 0x44 "\CCD" "" "\\}\CC" "" "" .scheme.bold
-hilight .hilight.memh 0x44 "\CCE" "" "\\}\CC" "" "" .scheme.header
-hilight .hilight.memh 0x44 "\CCF" "" "\\}\CC" "" "" .scheme.comment
-hilight .hilight.memh 0x44 "\CCG" "" "\\}\CC" "" "" .scheme.type    ; TT (curior)
-hilight .hilight.memh 0x44 "\CCH" "" "\\}\CC" "" "" .scheme.italic-under
-hilight .hilight.memh 0x44 "\CCI" "" "\\}\CC" "" "" .scheme.bold-under
-hilight .hilight.memh 0x44 "\CCJ" "" "\\}\CC" "" "" .scheme.bold-italic
-hilight .hilight.memh 0x44 "\CCK" "" "\\}\CC" "" "" .scheme.bold-italic-italic
-hilight .hilight.memh 0x44 "\CCL" "" "\\}\CC" "" "" .scheme.chg
-hilight .hilight.memh 0x44 "\CCM" "" "\\}\CC" "" "" .scheme.add
-hilight .hilight.memh 0x44 "\CCN" "" "\\}\CC" "" "" .scheme.rmv
-hilight .hilight.memh 0x44 "\CCO" "" "\\}\CC" "" "" .scheme.error
-hilight .hilight.memh 0x44 "\CCP" "" "\\}\CC" "" "" .scheme.prepro
-hilight .hilight.memh 0x44 "\CCQ" "" "\\}\CC" "" "" .scheme.function
-hilight .hilight.memh 0x44 "\CCR" "" "\\}\CC" "" "" .scheme.string
-hilight .hilight.memh 0x44 "\CCS" "" "\\}\CC" "" "" .scheme.quote
-hilight .hilight.memh 0x44 "\CCT" "" "\\}\CC" "" "" .scheme.keyword
-hilight .hilight.memh 0x44 "\CCU" "" "\\}\CC" "" "" .scheme.operator
-hilight .hilight.memh 0x44 "\CCV" "" "\\}\CC" "" "" .scheme.variable
-hilight .hilight.memh 0x44 "\CCW" "" "\\}\CC" "" "" .scheme.constant
-hilight .hilight.memh 0x44 "\CCX" "" "\\}\CC" "" "" .scheme.gdfchange
-hilight .hilight.memh 0x44 "\CCY" "" "\\}\CC" "" "" .scheme.gdfsel
-hilight .hilight.memh 0x44 "\CCZ" "" "\\}\CC" "" "" .scheme.gdfrej
+0 hilight  .hilight.meth 2 100                      $global-scheme
+hilight .hilight.meth 0x200 "\CC"
+hilight .hilight.meth 0x40 "\CCA" ""                $global-scheme
+hilight .hilight.meth 0x44 "\CCB" "" "\\}\CC" "" "" .scheme.header
+hilight .hilight.meth 0x44 "\CCC" "" "\\}\CC" "" "" .scheme.link
+hilight .hilight.meth 0x44 "\CCD" "" "\\}\CC" "" "" .scheme.bold
+hilight .hilight.meth 0x44 "\CCE" "" "\\}\CC" "" "" .scheme.italic
+hilight .hilight.meth 0x44 "\CCF" "" "\\}\CC" "" "" .scheme.under
+hilight .hilight.meth 0x44 "\CCG" "" "\\}\CC" "" "" .scheme.bold-italic
+hilight .hilight.meth 0x44 "\CCH" "" "\\}\CC" "" "" .scheme.bold-under
+hilight .hilight.meth 0x44 "\CCI" "" "\\}\CC" "" "" .scheme.italic-under
+hilight .hilight.meth 0x44 "\CCJ" "" "\\}\CC" "" "" .scheme.bold-italic-italic
+hilight .hilight.meth 0x44 "\CCK" "" "\\}\CC" "" "" .scheme.code
+hilight .hilight.meth 0x44 "\CCL" "" "\\}\CC" "" "" .scheme.spell-error
+hilight .hilight.meth 0x44 "\CCM" "" "\\}\CC" "" "" .scheme.gdfchange
+hilight .hilight.meth 0x44 "\CCN" "" "\\}\CC" "" "" .scheme.gdfsel
+hilight .hilight.meth 0x44 "\CCO" "" "\\}\CC" "" "" .scheme.gdfrej
+hilight .hilight.meth 0x44 "\CCP" "" "\\}\CC" "" "" .scheme.chg
+hilight .hilight.meth 0x44 "\CCQ" "" "\\}\CC" "" "" .scheme.add
+hilight .hilight.meth 0x44 "\CCR" "" "\\}\CC" "" "" .scheme.rmv
 
-hilight .hilight.memh 0x40 "\CDA" ""                $global-scheme
-hilight .hilight.memh 0xc0 "\CEs" "" .hilight.memhL $global-scheme  ; link start
-hilight .hilight.memh 0x44 "\CEm" "" "\CE." "" ""  .scheme.link     ; link name - use '.' as n is used for links split across lines
-hilight .hilight.memh 0x44 "\CEn" "" "\CEe" "" ""  .scheme.link     ; link name
+hilight .hilight.meth 0x44 "\CCa" "" "\\}\CC" "" "" .scheme.prepro
+hilight .hilight.meth 0x44 "\CCb" "" "\\}\CC" "" "" .scheme.function
+hilight .hilight.meth 0x44 "\CCc" "" "\\}\CC" "" "" .scheme.keyword
+hilight .hilight.meth 0x44 "\CCd" "" "\\}\CC" "" "" .scheme.type
+hilight .hilight.meth 0x44 "\CCe" "" "\\}\CC" "" "" .scheme.operator
+hilight .hilight.meth 0x44 "\CCf" "" "\\}\CC" "" "" .scheme.variable
+hilight .hilight.meth 0x44 "\CCg" "" "\\}\CC" "" "" .scheme.constant
+hilight .hilight.meth 0x44 "\CCh" "" "\\}\CC" "" "" .scheme.comment
+hilight .hilight.meth 0x44 "\CCi" "" "\\}\CC" "" "" .scheme.string
+hilight .hilight.meth 0x44 "\CCj" "" "\\}\CC" "" "" .scheme.quote
+hilight .hilight.meth 0x44 "\CCk" "" "\\}\CC" "" "" .scheme.error
+hilight .hilight.meth 0x44 "\CCl" "" "\\}\CC" "" "" .scheme.warn
+hilight .hilight.meth 0x44 "\CCm" "" "\\}\CC" "" "" .scheme.info
 
-0 hilight  .hilight.memhL 2 50       $global-scheme
-hilight .hilight.memhL 0x80 "\\}\CEm" .hilight.memh $global-scheme
-hilight .hilight.memhL 0x40 "." ""   $global-scheme
+; Other file type schemes - see meth-add-format
+hilight .hilight.meth 0x200 "\CD"
+hilight .hilight.meth 0x40 "\CDA" ""                $global-scheme
+; Special hilighting tags
+hilight .hilight.meth 0x200 "\CE"
+; Hidden: \CEH<hidden...>\CEh or \CEL<hidden...\n
+hilight .hilight.meth 0xc0 "\CEH" "" .hilight.methL $global-scheme
+hilight .hilight.meth 0x40 "\CEL.*" "" $global-scheme
+; Folds: \CEO<content...>\CEF or \CEC<content...>\CEF - these are only markers, needs supporting macros which use narrow-buffer
+hilight .hilight.meth 0x40 "\CEC" "+" .scheme.dir-closed
+hilight .hilight.meth 0x40 "\CEO" "-" .scheme.dir-open
+hilight .hilight.meth 0x40 "\CEF" "" $global-scheme
+; Links: \CEs<url>\CEm<label>[\CEn\n\CEn<label-cont>]\CEe
+hilight .hilight.meth 0xc0 "\CEs" "" .hilight.methL $global-scheme
+hilight .hilight.meth 0x44 "\CEm" "" "\CE." "" ""  .scheme.link
+hilight .hilight.meth 0x44 "\CEn" "" "\CEe" "" ""  .scheme.link
 
-0 define-macro memh-add-format
+0 hilight  .hilight.methL 2 50       $global-scheme
+hilight .hilight.methL 0xc0 "\CEh" "" .hilight.meth $global-scheme
+hilight .hilight.methL 0x80 "\\}\CEm" .hilight.meth $global-scheme
+hilight .hilight.methL 0x40 "." ""   $global-scheme
+
+0 define-macro meth-add-format
   set-variable #l0 @1
   !iif &set #p9 &lfin .fl #l0  !return
   !if &not &exi &ind &cat ".hilight." #l0
@@ -58,13 +78,47 @@ hilight .hilight.memhL 0x40 "." ""   $global-scheme
     !iif &not &exi &ind &cat ".hilight." #l0  -8 ml-write &spr "Error: Failed to find high-lighting definition for %s." #l0
   !endif
   set-variable #l1 &ind &cat ".hilight." #l0
-  hilight #l1 0xc0 "\CDA" "" .hilight.memh $global-scheme
+  hilight #l1 0xc0 "\CDA" "" .hilight.meth $global-scheme
   ; reserve \CDB for ME emf so ehf files can migrate to this
   !if &seq #l0 "emf"
     set-variable .fl &lset .fl 1 #l0
   !else
     set-variable .fl &lins .fl -1 #l0
   !endif
-  hilight .hilight.memh 0xc0 &cat "\CD" &itoa &add 65 &set #p9 &lfin .fl #l0 "" #l1  $global-scheme
+  hilight .hilight.meth 0xc0 &cat "\CD" &itoa &add 65 &set #p9 &lfin .fl #l0 "" #l1  $global-scheme
 !emacro
-set-variable .memh-add-format.fl "\b\b"
+set-variable .meth-add-format.fl "\b\b"
+
+; TODO remove: conversion of memh & ehf > meth
+;A -> A
+;B -> F
+;C -> E
+;D -> D
+;E -> B
+;F -> h
+;G -> K
+
+; item-list
+;  hilight .hilight.list-item 0x44 "\ecB" "" "\ecA" "" "" .scheme.function
+;  hilight .hilight.list-item 0x44 "\ecC" "" "\ecA" "" "" .scheme.type
+; B -> b
+; C -> d
+; abbrev-list
+;  hilight .hilight.abbrev-item 0x40 ":EXSTR:.*" "" $global-scheme
+;  hilight .hilight.abbrev-item 0x40 "<FOLD\\+>" "+" .scheme.dir-closed
+;  hilight .hilight.abbrev-item 0x40 "<FOLD->" "-" .scheme.dir-open
+;  hilight .hilight.abbrev-item 0x40 "</FOLD>" "" $global-scheme
+;  hilight .hilight.abbrev-item 0x44 "\ecB" "" "\ecA" "" "" .scheme.function
+;  hilight .hilight.abbrev-item 0x44 "\ecC" "" "\ecA" "" "" .scheme.keyword  \CCc
+;  hilight .hilight.abbrev-item 0x44 "\ecD" "" "\ecA" "" "" .scheme.operator
+;  hilight .hilight.abbrev-item 0x44 "\ecE" "" "\ecA" "" "" .scheme.variable
+;  hilight .hilight.abbrev-item 0x44 "\ecF" "" "\ecA" "" "" .scheme.string
+;  hilight .hilight.abbrev-item 0x44 "\ecG" "" "\ecA" "" "" .scheme.comment
+; B -> b
+; C -> c
+; D -> e
+; E -> f
+; F -> i
+; G -> h
+;
+; Sort out links \els \elm \eln \ele

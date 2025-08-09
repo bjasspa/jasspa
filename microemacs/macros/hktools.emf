@@ -175,9 +175,9 @@ define-macro-file hkipipe fhook-ipipe
       !elif &xseq @wl &spr ".*\\(%s\\).*" &lget :ftlh 1
         set-variable $line-scheme .scheme.error
       !elif &xseq @wl &spr ".*\\(%s\\).*" &lget :ftlh 2
-        set-variable $line-scheme .scheme.constant
+        set-variable $line-scheme .scheme.warn
       !elif &xseq @wl &spr ".*\\(%s\\).*" &lget :ftlh 3
-        set-variable $line-scheme .scheme.comment
+        set-variable $line-scheme .scheme.info
       !else
         set-variable $line-scheme .scheme.error
       !endif

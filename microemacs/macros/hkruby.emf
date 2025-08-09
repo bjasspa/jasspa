@@ -27,11 +27,11 @@ set-variable .fhook-ruby.collapse-mnext "-1"
 
 ; setup item-list
 set-variable .fhook-ruby.item-list-s1 "^[\t ]*module[\t ]+\\(\\w[1-9A-Za-z_]*\\)"
-set-variable .fhook-ruby.item-list-r1 "Mod \ecB\\1\ecA"
+set-variable .fhook-ruby.item-list-r1 "Mod \CCb\\1\CCA"
 set-variable .fhook-ruby.item-list-s2 "^[\t ]*class[\t ]+\\(\\w[1-9A-Za-z_]*\\)[\t ]*<?<?[\t ]*[A-Za-z0-9_]*"
-set-variable .fhook-ruby.item-list-r2 "Cls \ecB\\1\ecA"
+set-variable .fhook-ruby.item-list-r2 "Cls \CCb\\1\CCA"
 set-variable .fhook-ruby.item-list-s3 "^[\t ]*def[\t ]+\\(\\w[1-9A-Za-z_.]*\\)[\t ]*.*$"
-set-variable .fhook-ruby.item-list-r3 "Def \ecB\\1\ecA"
+set-variable .fhook-ruby.item-list-r3 "Def \CCb\\1\CCA"
 
 !if &not &exist .hilight.ruby
   set-variable .hilight.ruby  &pinc .hilight.next 1

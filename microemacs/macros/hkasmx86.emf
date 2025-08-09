@@ -20,7 +20,7 @@ set-variable .fhook-asmx86.setup-mask "adefghikmnoptux"
 set-variable .fhook-asmx86.comment "|;||;|; | ;|r|"
 
 set-variable .fhook-asmx86.item-list-s1 "^[ \t]*proc*[ \t]+\\(\\w+\\)"
-set-variable .fhook-asmx86.item-list-r1 "Proc \ecB\\1\ecA"
+set-variable .fhook-asmx86.item-list-r1 "Proc \CCb\\1\CCA"
 
 set-variable .fhook-asmx86.collapse-open  "^proc "
 set-variable .fhook-asmx86.collapse-close "^endp"

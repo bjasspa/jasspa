@@ -30,7 +30,7 @@ set-variable .fhook-au3.collapse-mnext  "-1"
 
 ; setup item-list
 set-variable .fhook-au3.item-list-s1 "^[ \t]*Func[ \t]+\\([a-zA-Z0-9_]+\\)"
-set-variable .fhook-au3.item-list-r1 "Func \ecB\\1\ecA"
+set-variable .fhook-au3.item-list-r1 "Func \CCb\\1\CCA"
 
 !if &not &exist .hilight.au3
   set-variable .hilight.au3 &pinc .hilight.next 1

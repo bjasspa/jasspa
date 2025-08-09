@@ -42,24 +42,8 @@ set-variable .fhook-html.command-kbind &cat .fhook-html.command-kbind "C-c C-h|"
 set-variable .fhook-html.command-desc  &cat .fhook-html.command-desc  "Preview in MicroEmacs|"
 
 !if &and &sin "h" .fhook-html.setup &band .hilight.flags 0x01 
-  !if &not &exist .hilight.htmlN
-    set-variable .hilight.htmlN  &pinc .hilight.next 1
-    set-variable .hilight.htmlNL &pinc .hilight.next 1
-  !endif
-  0 hilight .hilight.htmlN 0                          $global-scheme
-  hilight .hilight.htmlN 0x44 "\ecA" "" "\\}\e" "" "" $global-scheme
-  hilight .hilight.htmlN 0x44 "\ecB" "" "\\}\e" "" "" .scheme.under    ; underline
-  hilight .hilight.htmlN 0x44 "\ecC" "" "\\}\e" "" "" .scheme.italic   ; italic
-  hilight .hilight.htmlN 0x44 "\ecD" "" "\\}\e" "" "" .scheme.bold     ; bold
-  hilight .hilight.htmlN 0x44 "\ecE" "" "\\}\e" "" "" .scheme.header   ; Header
-  hilight .hilight.htmlN 0x44 "\ecF" "" "\\}\e" "" "" .scheme.comment  ; image
-  hilight .hilight.htmlN 0x44 "\ecG" "" "\\}\e" "" "" .scheme.type     ; TT (curior)
-  hilight .hilight.htmlN 0xc0 "\els" "" .hilight.htmlNL $global-scheme ; link start
-  hilight .hilight.htmlN 0x44 "\elm" "" "\ele" "" ""  .scheme.link     ; link name
-  
-  0 hilight .hilight.htmlNL 0                         $global-scheme
-  hilight .hilight.htmlNL 0x80 "\\}\elm" .hilight.htmlN $global-scheme
-  hilight .hilight.htmlNL 0x40 "." ""                 $global-scheme
+  !iif &not &exi meth-add-format  execute-file "meth"
+  !iif &not &exi .hilight.htmlN  set-variable .hilight.htmlN .hilight.meth
 !endif
 
 define-macro-file htmltool html-to-ehf
@@ -68,14 +52,14 @@ define-macro-file htmltool html-to-ehf
   set-variable #l0 $window-col
   set-variable #l1 $window-line
   ; end of link must be found within 5 lines
-  !force -5 search-forward "\ele"
+  !force -5 search-forward "\CEe"
   !if $status
-    !force -5 search-backward "\els"
+    !force -5 search-backward "\CEs"
     !if &and $status &or &les $window-line #l1 &and &equ $window-line #l1 &not &gre $window-col #l0
-      3 forward-char
+      2 forward-char
       set-mark
-      -1 search-forward "\elm"
-      3 backward-char
+      -1 search-forward "\CEm"
+      2 backward-char
       copy-region
       set-variable #l0 @y
       -1 yank
@@ -96,7 +80,7 @@ define-macro-file htmltool html-to-ehf
         !endif
       !endif
       !if &not &seq #l8 ""
-        !force search-forward &cat #l8 "\elm"
+        !force search-forward &cat #l8 "\CEm"
         beginning-of-line
       !endif
       !return

@@ -23,13 +23,13 @@ set-variable .fhook-mod2.comment "|(* | *)|*| * | * |fr|"
 
 ; item-list setup
 set-variable .fhook-mod2.item-list-s1 "MODULE[ \t]+\\(\\w+\\)"
-set-variable .fhook-mod2.item-list-r1 "Mod  \ecB\\1\ecA"
+set-variable .fhook-mod2.item-list-r1 "Mod  \CCb\\1\CCA"
 set-variable .fhook-mod2.item-list-s2 "PROCEDURE[ \t]+\\(\\w+\\)"
-set-variable .fhook-mod2.item-list-r2 "Proc \ecB\\1\ecA"
+set-variable .fhook-mod2.item-list-r2 "Proc \CCb\\1\CCA"
 set-variable .fhook-mod2.item-list-s3 "TYPE[ \t]+\\(\\w+\\)"
-set-variable .fhook-mod2.item-list-r3 "Type \ecB\\1\ecA"
+set-variable .fhook-mod2.item-list-r3 "Type \CCb\\1\CCA"
 set-variable .fhook-mod2.item-list-s4 "CONST[ \t]+\\(\\w+\\)"
-set-variable .fhook-mod2.item-list-r4 "Cons \ecB\\1\ecA"
+set-variable .fhook-mod2.item-list-r4 "Cons \CCb\\1\CCA"
 
 ; setup collapsing
 set-variable .fhook-mod2.collapse-open  "^\\(PROCEDURE[ \t]\\|BEGIN\\)"

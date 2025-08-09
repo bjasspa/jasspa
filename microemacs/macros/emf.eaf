@@ -1,4 +1,4 @@
- "" "\ecCText Insertion:\ecA"
+ "" "\CCcText Insertion:\CCA"
 de "define-macro \p\r!emacro\T\P" "  Define macro"
    "0 define-macro \p\r!emacro\T\P" "  Define hidden macro"
 !he "define-help \"\p\" \"<section>\"\r\rNAME\r     <command> - <one line description>\r\r$a\r\rSYNOPSIS\r     n <command> args...\r\rDESCRIPTION\r     <details>\r\rDIAGNOSTICS\r     <Optional Section - Describe error messages and return values>\r\rNOTES\r     <Optional section - contains additional notes>\r\rSEE ALSO\r     <cross references>\r!ehelp\P" "  Define help EHF"

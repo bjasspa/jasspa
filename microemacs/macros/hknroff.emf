@@ -46,7 +46,7 @@ set-variable .fhook-nroff.collapse-mnext "-1"
 
 ; setup item-list
 set-variable .fhook-nroff.item-list-s1 "^\\.\\(S[SH]\\)[ \t]+\"?\\([^\"\n]*\\)"
-set-variable .fhook-nroff.item-list-r1 "\\1  \ecB\\2\ecA"
+set-variable .fhook-nroff.item-list-r1 "\\1  \CCb\\2\CCA"
 
 !if &and &sin "h" .fhook-nroff.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.nroff

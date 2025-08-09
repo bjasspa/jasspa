@@ -1,4 +1,4 @@
- "" "\ecCText Insertion\ecA"
+ "" "\CCcText Insertion\CCA"
 #i "#include <\p>\r\P" "  #include"
 #d "#define "          "  #define"
 if "if(\p)\r{\r\r}\r\P" "  if"

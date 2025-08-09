@@ -31,7 +31,7 @@ execute-file "htmlcore" "cfm"
 
 ; add cfm functions to item-list
 set-variable .fhook-cfm.item-list-s5 "^[ \t]*function[ \t]+\\(\\w[1-9A-Za-z_']*\\)"
-set-variable .fhook-cfm.item-list-r5 "Func \ecB\\1\ecA"
+set-variable .fhook-cfm.item-list-r5 "Func \CCb\\1\CCA"
 
 ; Define the <cf...> hilight tags
 !if &and &sin "h" .fhook-cfm.setup &band .hilight.flags 0x02

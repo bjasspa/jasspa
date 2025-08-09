@@ -61,14 +61,14 @@
 0 define-macro html-end-ahref
   !if &band #p5 0x10
     !if &band #p5 0x80
-      insert-string "\ele"
+      insert-string "\CEe"
       set-variable #p8 &band #p8 0xff7f
       !if #p8
-        insert-string &cat "\ec" &mid .html-to-ehf.colors #p8 1
+        insert-string &cat "\CC" &mid .html-to-ehf.colors #p8 1
       !endif
     !else
       set-mark
-      search-backward "\els"
+      search-backward "\CEs"
       -1 kill-region
     !endif
     ; Remove 10 & 80 (link and text)
@@ -193,7 +193,7 @@
               !if &band #l8 8
                 set-variable #l8 &band #l8 0xfff7
                 !if &not &band #l8 0x80
-                  insert-string &cat "\ec" &mid .colors #l8 1
+                  insert-string &cat "\CC" &mid .colors #l8 1
                 !endif
               !endif
               html-add-newline
@@ -213,7 +213,7 @@
             !if &band #l8 4
               set-variable #l8 &band #l8 0xfffb
               !if &not &band #l8 0x80
-                insert-string &cat "\ec" &mid .colors #l8 1
+                insert-string &cat "\CC" &mid .colors #l8 1
               !endif
             !endif
           !elif &iseq #l3 "DL>"
@@ -230,7 +230,7 @@
             !if &band #l8 2
               set-variable #l8 &band #l8 0xfffd
               !if &not &band #l8 0x80
-                insert-string &cat "\ec" &mid .colors #l8 1
+                insert-string &cat "\CC" &mid .colors #l8 1
               !endif
             !endif
           !elif &iseq #l3 "PRE>"
@@ -243,7 +243,7 @@
             !if &band #l8 0x20
               set-variable #l8 &band #l8 0xffdf
               !if &not &band #l8 0x80
-                insert-string &cat "\ec" &mid .colors #l8 1
+                insert-string &cat "\CC" &mid .colors #l8 1
               !endif
             !endif
           !elif &iseq #l3 "TABLE>"
@@ -256,7 +256,7 @@
             !if &band #l8 1
               set-variable #l8 &band #l8 0xfffe
               !if &not &band #l8 0x80
-                insert-string &cat "\ec" &mid .colors #l8 1
+                insert-string &cat "\CC" &mid .colors #l8 1
               !endif
             !endif
           !elif &iseq #l3 "UL>"
@@ -304,7 +304,7 @@
               !if &not &band #l8 8
                 set-variable #l8 &bor #l8 8
                 !if &not &band #l8 0x80
-                  insert-string &cat "\ec" &mid .colors #l8 1
+                  insert-string &cat "\CC" &mid .colors #l8 1
                 !endif
               !endif
             !elif &iseq #l3 "HR>"
@@ -364,7 +364,7 @@
               !if &not &band #l8 1
                 set-variable #l8 &bor #l8 0x20
                 !if &not &band #l8 0x80
-                  insert-string &cat "\ec" &mid .colors #l8 1
+                  insert-string &cat "\CC" &mid .colors #l8 1
                 !endif
               !endif
             !elif &iseq &lef #l3 5 "TABLE"
@@ -386,7 +386,7 @@
             !endif
           !elif &iseq &lef #l3 1 "A"
             !if &isin "HREF=" #l3
-              insert-string "\els"
+              insert-string "\CEs"
               set-variable #l3 &rig #l3 &add 4 &isin "HREF=" #l3
               !if &seq &lef #l3 1 "\""
                 set-variable #l3 &rig #l3 1
@@ -395,7 +395,7 @@
                 set-variable #l3 &lef #l3 &sub &len #l3 1
               !endif
               insert-string #l3
-              insert-string "\elm"
+              insert-string "\CEm"
               set-variable #l5 &bor #l5 0x10
               set-variable #l8 &bor #l8 0x80
             !endif
@@ -405,19 +405,19 @@
             !if &not &band #l8 4
               set-variable #l8 &bor #l8 4
               !if &not &band #l8 0x80
-                insert-string &cat "\ec" &mid .colors #l8 1
+                insert-string &cat "\CC" &mid .colors #l8 1
               !endif
             !endif
           !elif &iseq #l3 "I>"
             !if &not &band #l8 2
               set-variable #l8 &bor #l8 2
               !if &not &band #l8 0x80
-                insert-string &cat "\ec" &mid .colors #l8 1
+                insert-string &cat "\CC" &mid .colors #l8 1
               !endif
             !endif
           !elif &iseq &lef #l3 4 "IMG "
             !if &not &band #l8 0x80
-              insert-string &cat "\ec" &mid .colors &bor #l8 16 1
+              insert-string &cat "\CC" &mid .colors &bor #l8 16 1
             !endif
             !if &isin "ALT=" #l3
               set-variable #l3 &rig #l3 &add 3 &isin "ALT=" #l3
@@ -434,7 +434,7 @@
               set-variable #l4 &add #l4 5
             !endif
             !if &not &band #l8 0x80
-              insert-string &cat "\ec" &mid .colors #l8 1
+              insert-string &cat "\CC" &mid .colors #l8 1
             !endif
             set-variable #l5 &bor #l5 0x86
           !elif &iseq #l3 "LI>"
@@ -459,7 +459,7 @@
             !if &not &band #l8 1
               set-variable #l8 &bor #l8 1
               !if &not &band #l8 0x80
-                insert-string &cat "\ec" &mid .colors #l8 1
+                insert-string &cat "\CC" &mid .colors #l8 1
               !endif
             !endif
           !elif &iseq #l3 "UL>"

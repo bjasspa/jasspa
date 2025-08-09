@@ -28,30 +28,23 @@
 ;     allow for intial white spaces and the optional numeric argument, you really
 ;     need "^\s *[0-9]*\s *define-macro\s +\(\w+\)".
 ;
-;     To hilight the function name you need the name encased the name in a magic
-;     hilighting string, "\ecBmacro-name\ecA" where \e is an escape char, so the
-;     replace string should be "Macro \ecB\1\ecA".
+;     To hilight the function name you need to encase it in a meth magic
+;     hilighting string, "\CCBmacro-name\CCA" where \CC is a ^C char, so the
+;     replace string should be "Macro \CCB\1\CCA".
 ;
 ;     Now all thats needed is to set these variables as fhook command variables,
 ;     for macro files, the file hook command is fhook-emf, therefore the
 ;     following is required:
 ;
 ;    set-variable .fhook-emf.item-list-s1 "^[ \t]*[0-9]*[ \t]*define-macro[ \t]+\\(\\w+\\)"
-;    set-variable .fhook-emf.item-list-r1 "Macr \ecB\\1\ecA"
+;    set-variable .fhook-emf.item-list-r1 "Macr \CCB\\1\CCA"
 ;
 ;    Also note that you can have as many of these search and replace variables as you
 ;    require, i.e. .item-list-s1, .item-list-s2, .item-list-s3, ...
 ;    but the more you have the slower it will be, often a good regex can do the
 ;    job of 2 or 3.
 ;
-!if &band .hilight.flags 0x01 
-  !iif &not &exist .hilight.list-item  set-variable .hilight.list-item &pinc .hilight.next 1
-  0 hilight .hilight.list-item 0 $global-scheme
-  hilight .hilight.list-item 0x02 "Type Item"  .scheme.header
-  hilight .hilight.list-item 0x40 "^[ 0-9][ 0-9][ 0-9][ 0-9][ 0-9][ 0-9] " "" $global-scheme
-  hilight .hilight.list-item 0x44 "\ecB" "" "\ecA" "" "" .scheme.function
-  hilight .hilight.list-item 0x44 "\ecC" "" "\ecA" "" "" .scheme.type
-!endif
+!iif &not &exi meth-add-format  execute-file "meth"
 
 0 define-macro item-list-order
   !if &not @?
@@ -127,7 +120,7 @@ define-macro item-list-find
   !iif &les $window-line 2  -8 ml-write "[Invalid line!]"
   set-variable #l0 &mid :next-file 1 &sub &len :next-file 2
   beginning-of-line
-  search-forward "^ *\\([0-9]+\\)"
+  search-buffer "me" "^\CEH *\\([0-9]+\\)\CE"
   set-variable #l1 @s1
   !if @#
     popup-window #l0
@@ -188,7 +181,9 @@ define-macro item-list-create
   set-mark
   end-of-buffer
   -1 kill-region
-  insert-string "Type Item     <Order by Position>"
+  set-variable .item-list.scol &con @# "|0|0|0|" "|10|17|0|"
+  insert-string &con @# "Occurrences: " "Type Item     <Order by Position>"
+  set-variable $line-scheme .scheme.header
   ; to simple click the function
   buffer-bind-create "bio" "return" "" item-list-find
   buffer-bind-create "bio" "delete" "" item-list-close
@@ -197,19 +192,18 @@ define-macro item-list-create
   buffer-bind-create "bio" "3" "3" item-list-order
   set-variable :mouse-pick-1 item-list-mouse-pick
   set-variable :mouse-drop-1 item-list-mouse-drop
-  set-variable $buffer-hilight .hilight.list-item
+  set-variable $buffer-hilight .hilight.meth
   set-variable :next-file &spr "*%s*" #l1
   set-variable $buffer-mask #l3
   find-buffer #l1
-  set-variable #l2 &spr "|%d|%d|" &bmod "exact" &bmod "magic"
-  1 buffer-mode "magic"
-  #l9 buffer-mode "exact"
+  set-variable #l2 &cat "m" &con &equ #l9 1 "e" "E"
   set-variable #l9 1
   set-variable #l4 1
   !repeat
     beginning-of-buffer
-    !force search-forward #l0
-    !while $status
+    !repeat
+      !force search-buffer #l2 #l0
+      !iif &not $status  !break
       set-variable #l3 $window-line
       set-variable #l7 $window-col
       find-buffer #l6
@@ -228,26 +222,20 @@ define-macro item-list-create
       end-of-line
       insert-newline
       backward-line
-      insert-string &spr "%6d " #l3
+      insert-string &spr "\CEH%6d\CEh" #l3
       find-buffer #l1
       set-variable $window-line #l3
       set-variable $window-col #l7
-      !force search-forward #l0
     !done
-    !if @#
-      set-variable #l0 "ERROR"
-    !else
-      set-variable #l0 &ind &spr ".fhook-%s.item-list-s%d" #l8 &inc #l9 1
-      set-variable #l5 &ind &spr ".fhook-%s.item-list-r%d" #l8 #l9
-    !endif
-  !until &seq #l0 "ERROR"
+    !iif @#  !break
+    !iif &seq "ERROR" &set #l0 &ind &spr ".fhook-%s.item-list-s%d" #l8 &inc #l9 1  !break
+    set-variable #l5 &ind &spr ".fhook-%s.item-list-r%d" #l8 #l9
+  !done
   find-buffer #l6
   end-of-buffer
   backward-delete-char
   item-list-order
   goto-position "\x86"
-  &cond &lget #l2 1 1 -1 buffer-mode "exact"
-  &cond &lget #l2 2 1 -1 buffer-mode "magic"
 !emacro
 
 define-macro item-list-close
@@ -296,10 +284,10 @@ define-macro occur
   set-variable #l2 &spr "\\(%s\\)" #l1
   !if &not &seq &lef #l1 1 "^"
     set-variable #l2 &spr "\\(.\\{0,%d\\}\\)%s" #l6 #l2
-    set-variable #l3 &spr "\ecCOccr\ecA \\1\ecB\\2\ecA"
+    set-variable #l3 &spr "\CCdOccr\CCA \\1\CCD\\2\CCA"
     set-variable #l4 &add #l4 1
   !else
-    set-variable #l3 &spr "\ecCOccr\ecA \ecB\\1\ecA"
+    set-variable #l3 &spr "\CCdOccr\CCA \CCD\\1\CCA"
   !endif
   set-variable #l5 &rig #l1 &sub &len #l1 1
   !if &not &seq #l5 "$"
@@ -316,7 +304,6 @@ define-macro occur
 set-variable .item-list.find 0
 set-variable .item-list.bcol "|0|5|14|"
 set-variable .item-list.ecol "|4|9|33|"
-set-variable .item-list.scol "|6|11|0|"
 set-variable .item-list.order 3
 
 ;0 add-next-line "*item-list*"

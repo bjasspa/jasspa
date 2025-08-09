@@ -57,13 +57,13 @@ set-variable .fhook-jst.command-desc  "|||\HShow Current Settings|Spell Check Bu
 
 ; setup item-list
 set-variable .fhook-jst.item-list-s1 "^=c?[ \t]+\\(.*\\)"
-set-variable .fhook-jst.item-list-r1 "H1  \ecB\\1\ecA"
+set-variable .fhook-jst.item-list-r1 "H1  \CCb\\1\CCA"
 set-variable .fhook-jst.item-list-s2 "^==c?[ \t]+\\(.*\\)"
-set-variable .fhook-jst.item-list-r2 "H2  \ecB\\1\ecA"
+set-variable .fhook-jst.item-list-r2 "H2  \CCb\\1\CCA"
 set-variable .fhook-jst.item-list-s3 "^===c?[ \t]+\\(.*\\)"
-set-variable .fhook-jst.item-list-r3 "H3  \ecB\\1\ecA"
+set-variable .fhook-jst.item-list-r3 "H3  \CCb\\1\CCA"
 set-variable .fhook-jst.item-list-s4 "^====c?[ \t]+\\(.*\\)"
-set-variable .fhook-jst.item-list-r4 "H4  \ecB\\1\ecA"
+set-variable .fhook-jst.item-list-r4 "H4  \CCb\\1\CCA"
 
 !if &sin "f" .fhook-jst.setup
   set-variable .fhook-jst.collapse-open  "^=+c?[ \t]"

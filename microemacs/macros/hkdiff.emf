@@ -34,13 +34,13 @@ set-variable .fhook-diff.command-2  "|btho||diff-next-file|S-right|Next file||"
 set-variable .fhook-diff.command-3  "|btho||diff-previous-file|S-left|Previous file||"
 ; Setup item-list
 set-variable .fhook-diff.item-list-s1 "^diff\\(\\s+-[^\\s]*\\)*\\s*\\([^\\s]*\\)"
-set-variable .fhook-diff.item-list-r1 "File \ecB\\2\ecA"
+set-variable .fhook-diff.item-list-r1 "File \CCb\\2\CCA"
 set-variable .fhook-diff.item-list-s2 "^@@\\s+\\(.*\\)\\s+@@"
-set-variable .fhook-diff.item-list-r2 "Diff \ecB\\1\ecA"
+set-variable .fhook-diff.item-list-r2 "Diff \CCb\\1\CCA"
 set-variable .fhook-diff.item-list-s3 "^---\\s+\\([0-9]+,[0-9]+\\)\\s+---"
-set-variable .fhook-diff.item-list-r3 "Diff \ecB\\1\ecA"
+set-variable .fhook-diff.item-list-r3 "Diff \CCb\\1\CCA"
 set-variable .fhook-diff.item-list-s4 "^Only[^:]*:\\s*\\(.*\\)\\s*$"
-set-variable .fhook-diff.item-list-r4 "Add/Del \ecB\\1\ecA"
+set-variable .fhook-diff.item-list-r4 "Add/Del \CCb\\1\CCA"
 
 !if &not &exi .hilight.diff
   set-variable .hilight.diff  &pinc .hilight.next 1

@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Detlef Groth
 ;  Created       : Fri Mar 6th, 2025
-;  Last Modified : <250723.1825>
+;  Last Modified : <250806.0119>
 ;
 ;  Description
 ;   Zig Language Template
@@ -32,19 +32,19 @@ set-variable .fhook-zig.collapse-mclose "1"
 set-variable .fhook-zig.collapse-mnext "-1"
 
 set-variable .fhook-zig.item-list-s1 "^\\([\t ]*\\)fn[\t ]+\\(\\w[\\.1-9A-Za-z_]*\\)"
-set-variable .fhook-zig.item-list-r1 "func \\1\ecB\\2\ecA"
+set-variable .fhook-zig.item-list-r1 "func \\1\CCb\\2\CCA"
 set-variable .fhook-zig.item-list-s2 "^\\([\t ]*\\)pub [\t ]*fn[\t ]+\\(\\w[\\.1-9A-Za-z_]*\\)"
-set-variable .fhook-zig.item-list-r2 "\ecCfunc\ecA \\1\ecB\\2\ecA"
+set-variable .fhook-zig.item-list-r2 "\CCdfunc\CCA \\1\CCb\\2\CCA"
 set-variable .fhook-zig.item-list-s3 "^const[\t ]+\\(\\w[1-9A-Za-z_]*\\)[\t ]*=[\t ]*enum"
-set-variable .fhook-zig.item-list-r3 "enum \ecB\\1\ecA"
+set-variable .fhook-zig.item-list-r3 "enum \CCb\\1\CCA"
 set-variable .fhook-zig.item-list-s4 " \\(\w[1-9A-Za-z_]*\\)[\t ]*= [\t ] union[\t ]+{"
-set-variable .fhook-zig.item-list-r4 "unio \ecB\\1\ecA"
+set-variable .fhook-zig.item-list-r4 "unio \CCb\\1\CCA"
 set-variable .fhook-zig.item-list-s5 "^const[\t ]+\\(\\w[1-9A-Za-z_]*\\)[\t ]*=[\t ]*struct"
-set-variable .fhook-zig.item-list-r5 "strc \ecB\\1\ecA"
+set-variable .fhook-zig.item-list-r5 "strc \CCb\\1\CCA"
 set-variable .fhook-zig.item-list-s6 "^[\t ]*test[\t ]+\"\\([\\w ]+\\)\"[\t ]*"
-set-variable .fhook-zig.item-list-r6 "test \ecB\\1\ecA"
+set-variable .fhook-zig.item-list-r6 "test \CCb\\1\CCA"
 set-variable .fhook-zig.item-list-s7 "^// TODO: \\([\\w ]+\\)"
-set-variable .fhook-zig.item-list-r7 "todo \ecB\\1\ecA"
+set-variable .fhook-zig.item-list-r7 "todo \CCb\\1\CCA"
 
 !if &not &exist .hilight.zig
   set-variable .hilight.zig  &pinc .hilight.next 1

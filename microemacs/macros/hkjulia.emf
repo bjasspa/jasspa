@@ -26,11 +26,11 @@ set-variable .fhook-julia.collapse-mnext "-1"
 
 ; setup item-list
 set-variable .fhook-julia.item-list-s1 "^[ \t]*function[ \t]+\\(\\w+\\)"
-set-variable .fhook-julia.item-list-r1 "Func \ecB\\1\ecA"
+set-variable .fhook-julia.item-list-r1 "Func \CCb\\1\CCA"
 set-variable .fhook-julia.item-list-s2 "^[ \t]*macro*[ \t]+\\(\\w+\\)"
-set-variable .fhook-julia.item-list-r2 "Macr \ecB\\1\ecA"
+set-variable .fhook-julia.item-list-r2 "Macr \CCb\\1\CCA"
 set-variable .fhook-julia.item-list-s3 "^[ \t]*struct*[ \t]+\\(\\w+\\)"
-set-variable .fhook-julia.item-list-r3 "Strc \ecB\\1\ecA"
+set-variable .fhook-julia.item-list-r3 "Strc \CCb\\1\CCA"
 
 !if &and &sin "h" .fhook-julia.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.julia

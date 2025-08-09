@@ -45,8 +45,8 @@ set-variable .fhook-mail.command-desc  "|\HSend mail||Insert given file, method 
   hilight .hilight.mail 258 ">"        .scheme.comment
   hilight .hilight.mail 258 "----"     .scheme.header
   hilight .hilight.mail 258 "--text follows this line--" .scheme.error
-  hilight .hilight.mail 0x40 "\esA" ""                   $global-scheme
-  hilight .hilight.mail 0xc0 "\esB" "" .hilight.vmh      $global-scheme
+  hilight .hilight.mail 0x40 "\CDA" ""                   $global-scheme
+  hilight .hilight.mail 0xc0 "\CDB" "" .hilight.vmh      $global-scheme
 !endif
 ;
 ; Mail checker

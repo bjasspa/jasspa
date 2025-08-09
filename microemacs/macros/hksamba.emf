@@ -22,7 +22,7 @@ set-variable .fhook-samba.comment-1 "|;||;|; | ;|r|"
 
 ; setup item-list
 set-variable .fhook-samba.item-list-s1 "^[\t ]*\\[[\t ]*\\([1-9A-Za-z_]*\\)[\t ]*\\]"
-set-variable .fhook-samba.item-list-r1 "Ext \ecB\\1\ecA"
+set-variable .fhook-samba.item-list-r1 "Ext \CCb\\1\CCA"
 
 ; Setup collapse
 set-variable .fhook-samba.collapse-open  "^\\[[\t ]*\\(\\S+\\).*\\]"

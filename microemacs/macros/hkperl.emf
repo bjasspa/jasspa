@@ -36,7 +36,7 @@ set-variable .fhook-perl.collapse-mnext "-1"
 
 ; setup item-list
 set-variable .fhook-perl.item-list-s1 "^[ \t]*sub[ \t]+\\(\\w[1-9A-Za-z_']*\\)"
-set-variable .fhook-perl.item-list-r1 "Sub  \ecB\\1\ecA"
+set-variable .fhook-perl.item-list-r1 "Sub  \CCb\\1\CCA"
 
 !if &not &exist .hilight.perl
   set-variable .hilight.perl  &pinc .hilight.next 1

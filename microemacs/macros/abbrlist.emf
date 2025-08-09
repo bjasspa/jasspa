@@ -13,46 +13,41 @@
 ;    global-bind-key eaf-list-goto "f9"
 ;
 ; to get into the abbrev-list, then use 'return' to insert an abbrev and f2 to open/close a fold
-
-!if &band .hilight.flags 0x01
-  !iif &not &exist .hilight.abbrev-item  set-variable .hilight.abbrev-item &pinc .hilight.next 1
-  0 hilight .hilight.abbrev-item 0 $global-scheme
-  hilight .hilight.abbrev-item 0x40 ":EXSTR:.*" "" $global-scheme
-  hilight .hilight.abbrev-item 0x40 "<FOLD\\+>" "+" .scheme.dir-closed
-  hilight .hilight.abbrev-item 0x40 "<FOLD->" "-" .scheme.dir-open
-  hilight .hilight.abbrev-item 0x40 "</FOLD>" "" $global-scheme
-  hilight .hilight.abbrev-item 0x44 "\ecB" "" "\ecA" "" "" .scheme.function
-  hilight .hilight.abbrev-item 0x44 "\ecC" "" "\ecA" "" "" .scheme.keyword
-  hilight .hilight.abbrev-item 0x44 "\ecD" "" "\ecA" "" "" .scheme.operator
-  hilight .hilight.abbrev-item 0x44 "\ecE" "" "\ecA" "" "" .scheme.variable
-  hilight .hilight.abbrev-item 0x44 "\ecF" "" "\ecA" "" "" .scheme.string
-  hilight .hilight.abbrev-item 0x44 "\ecG" "" "\ecA" "" "" .scheme.comment
-!endif
+;
+!iif &not &exi meth-add-format  execute-file "meth"
 
 0 define-macro eaf-list-fold-find-close
   set-variable #l1 $window-aline
   set-variable #l0 1
   !repeat
-    !force search-forward "<FOLD[+-]>\\|</FOLD>"
-    !iif &not $status  -8 ml-write &spr  "[missing </FOLD> for <FOLD+> on line %d]" &sub #l1 3
-    !if &seq @s0 "</FOLD>"
+    !force search-buffer "me" "\CE[OCF]"
+    !iif &not $status  -8 ml-write &spr  "[missing </FOLD> for <FOLD+> on line %d]" &sub #l1 1
+    !if &seq @s0 "\CEF"
       !iif &not &dec #l0 1  !return
     !else
       set-variable #l0 &add #l0 1
     !endif
-  !until 0
+  !done
 !emacro
 
 define-macro eaf-list-execute
   0 show-region
   set-variable #l5 $result
-  !iif &set #l8 &seq &lef @cck 10 "mouse-drop"  set-variable @# &con &not &sin ":EXSTR:" @wl 2 &con &or &not &set #l0 &sin "<FOLD" @wl &les &add #l0 5 $window-col 1 2
+  set-variable #l0 &add &sin "\CEO" @wl &sin "\CEC" @wl
+  !if @?
+  !elif &not &sin "\CEL" @wl
+    set-variable @# 2
+  !elif &not #l0
+    set-variable @# 1
+  !else
+    set-variable @# &con &les #l0 $window-col 1 2
+  !endif
   !if &band @# 2
-    !if &les &set #l0 &add 4 &sin "<FOLD" @wl 5
+    !if &not #l0
       !iif #l8  goto-position "\x82"
       !return
     !endif
-    set-variable #l1 &con &seq &mid @wl #l0 1 "-" "+" "-"
+    set-variable #l1 &con &seq &mid @wl #l0 1 "O" "C" "O"
     -1 buffer-mode "view"
     set-variable #l2 $window-line
     set-variable #l9 $buffer-bname
@@ -62,7 +57,7 @@ define-macro eaf-list-execute
       set-variable $window-col #l0
       forward-delete-char
       insert-string #l1
-      !if &seq #l1 "+"
+      !if &seq #l1 "C"
         set-variable $window-line &add #l2 1
         set-mark
         !force eaf-list-fold-find-close
@@ -97,9 +92,9 @@ define-macro eaf-list-execute
     insert-string #l1
     -1 buffer-mode "edit"
     1 buffer-mode "view"
-  !elif &set #l0 &sin ":EXSTR:" @wl
-    !iif #l8  set-variable #l2 &or &seq &trb &lef &rep @wl "</FOLD>" "" &add $window-col 1 "" &seq &trb &mid @wl $window-col &sub &sub #l0 1 $window-col ""
-    set-variable #l0 &rig @wl &add #l0 6
+  !elif &set #l0 &sin "\CEL" @wl
+    !iif #l8  set-variable #l2 &or &seq &trb &lef &rep @wl "\CEF" "" &add $window-col 1 "" &seq &trb &mid @wl $window-col &sub &sub #l0 1 $window-col ""
+    set-variable #l0 &rig @wl &add #l0 1
     !if #l8
       goto-position "\x82"
     !else
@@ -174,15 +169,15 @@ define-macro eaf-list-goto
     !force insert-file &find &cat @3 #l9 ".eaf"
     ; process inserts first
     beginning-of-buffer
-    !force search-forward " +<INCLUDE: *\\([^>\n]+\\)>"
-    !while $status
+    !repeat
+      !force search-buffer "me" " +<INCLUDE: *\\([^>\n]+\\)>"
+      !iif &not $status  !break
       beginning-of-line
       set-mark
       forward-line
       -1 kill-region
       !force insert-file &find @s1 ".eaf"
       exchange-point-and-mark
-      !force search-forward " +<INCLUDE: *\\([^>\n]+\\)>"
     !done
     set-variable #l2 1
     beginning-of-buffer
@@ -196,9 +191,7 @@ define-macro eaf-list-goto
           insert-newline
         !else
           execute-line &spr "insert-string \"%s\"" #l3
-          !if &not &seq #l4 ""
-            insert-string &cat ":EXSTR:" #l4
-          !endif
+          !iif &not &seq #l4 ""  insert-string &cat "\CEL" #l4
         !endif
         find-buffer #l1
       !endif
@@ -207,18 +200,25 @@ define-macro eaf-list-goto
     !force 0 delete-buffer #l1
     find-buffer #l0
     end-of-buffer
-    !force search-backward "<FOLD\\+>"
-    !while $status
-      set-variable #l1 $window-line
-      forward-line
-      beginning-of-line
-      set-mark
-      !force eaf-list-fold-find-close
-      !if $status
-        4 narrow-buffer
+    !repeat
+      !force search-buffer "meb" "<\\(/FOLD\\|FOLD[-+]\\)>"
+      !iif &not $status  !break
+      &len @s0 forward-delete-char
+      -1 yank
+      !if &seq "+" &set #l2 &rig @s1 -1
+        insert-string "\CEC"
+        set-variable #l1 $window-line
+        set-variable #l3 $window-col
+        beginning-of-line
+        forward-line
+        set-mark
+        !force eaf-list-fold-find-close
+        !iif $status  4 narrow-buffer
+        set-variable $window-line #l1
+        set-variable $window-col #l3
+      !else
+        insert-string &con &seq #l2 "-" "\CEO" "\CEF"
       !endif
-      set-variable $window-line #l1
-      !force search-backward "<FOLD\\+>"
     !done
     -1 buffer-mode "edit"
   !endif
@@ -234,7 +234,7 @@ define-macro eaf-list-goto
   !force forward-delete-char
   beginning-of-buffer
   set-variable $line-scheme .scheme.header
-  set-variable $buffer-hilight .hilight.abbrev-item
+  set-variable $buffer-hilight .hilight.meth
   set-variable :mouse-pick-1 mouse-void
   set-variable :mouse-drop-1 eaf-list-execute
   set-variable :eaf-list #l0

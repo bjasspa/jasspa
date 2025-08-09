@@ -30,11 +30,11 @@ set-variable .fhook-vb.exact -1
 
 ; setup item-list
 set-variable .fhook-vb.item-list-s1 "^[ \t]*\\(Private[ \t]+\\|Public[ \t]+\\)?Function[ \t]+\\(\\w+\\)[ \t]*("
-set-variable .fhook-vb.item-list-r1 "Func \ecB\\2\ecA"
+set-variable .fhook-vb.item-list-r1 "Func \CCb\\2\CCA"
 set-variable .fhook-vb.item-list-s2 "^[ \t]*\\(Private[ \t]+\\|Public[ \t]+\\)?Sub[ \t]+\\(\\w+\\)[ \t]*("
-set-variable .fhook-vb.item-list-r2 "Sub  \ecB\\2\ecA"
+set-variable .fhook-vb.item-list-r2 "Sub  \CCb\\2\CCA"
 set-variable .fhook-vb.item-list-s3 "^[ \t]*\\(Private[ \t]+\\|Public[ \t]+\\)?Property[ \t]+\\(Get\\|Let\\)[ \t]+\\(\\w+\\)[ \t]*("
-set-variable .fhook-vb.item-list-r3 "Prop \ecB\\2 \\3\ecA"
+set-variable .fhook-vb.item-list-r3 "Prop \CCb\\2 \\3\CCA"
 
 set-variable .fhook-vb.collapse-open  "^\\(Private[ \t]+\\|Public[ \t]+\\)?\\(Function\\|Sub\\|Property\\)"
 set-variable .fhook-vb.collapse-close "^End[ \t]+\\(Function\\|Sub\\|Property\\)"

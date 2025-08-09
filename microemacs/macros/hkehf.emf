@@ -54,38 +54,38 @@ define-macro fhook-ehf
           forward-line
           -1 kill-region
           backward-char
-          insert-string &con #l1 "sA" "cA"
+          insert-string &con #l1 "\CDA" "\CCA"
           #l2 goto-line
           4 narrow-buffer
           backward-char
-          insert-string &con #l1 "sB" "cG"
+          insert-string &con #l1 "\CDB" "\CCK"
         !done
         6 goto-line
-        replace-string "\\([^\\\\\n]\\|^\\)\\\\\\*" "\\1cZ"
+        replace-string "\\([^\\\\\n]\\|^\\)\\\\\\*" "\\1\CE!"
         6 goto-line
-        replace-string "^#+ +\\(.*\\)" "cE\\1cA"
+        replace-string "^#+ +\\(.*\\)" "\CCB\\1\CCA"
         6 goto-line
-        replace-string "\\*\\*\\(\\([^*\\\\]\\|\\\\.\\|\\*\\\\.\\)+\\)\\*\\*" "cD\\1cA"
+        replace-string "\\*\\*\\(\\([^*\\\\]\\|\\\\.\\|\\*\\\\.\\)+\\)\\*\\*" "\CCD\\1\CCA"
         6 goto-line
-        replace-string "\\*\\(\\([^*\\\\]\\|\\\\.\\)+\\)\\*" "cC\\1cA"
+        replace-string "\\*\\(\\([^*\\\\]\\|\\\\.\\)+\\)\\*" "\CCE\\1\CCA"
         6 goto-line
-        replace-string "\\(^\\|[ \\t]\\)__\\(\\([^_\\\\]\\|\\\\.\\|_\\\\.\\)+\\)__\\($\\|\\W\\)" "\\1cD\\2cA\\4"
+        replace-string "\\(^\\|[ \\t]\\)__\\(\\([^_\\\\]\\|\\\\.\\|_\\\\.\\)+\\)__\\($\\|\\W\\)" "\\1\CCD\\2\CCA\\4"
         6 goto-line
-        replace-string "\\(^\\|[ \\t]\\)_\\(\\([^_\\\\]\\|\\\\.\\)+\\)_\\($\\|\\W\\)" "\\1cC\\2cA\\4"
+        replace-string "\\(^\\|[ \\t]\\)_\\(\\([^_\\\\]\\|\\\\.\\)+\\)_\\($\\|\\W\\)" "\\1\CCE\\2\CCA\\4"
         6 goto-line
-        replace-string "\\[\\(\\([^]\\\\]\\|\\\\.\\)+\\)](\\(\\([^)\\\\]\\|\\\\.\\)+\\))" "ls\\3lm\\1le"
+        replace-string "\\[\\(\\([^]\\\\]\\|\\\\.\\)+\\)](\\(\\([^)\\\\]\\|\\\\.\\)+\\))" "\CDs\\3\CDm\\1\CDe"
         6 goto-line
-        replace-string "\\(^\\|[ \\t]\\)\\(\\(ht\\|f\\)tps?://[-@~_a-zA-Z#%?&=\\.:\\/0-9]+\\|mailto:[-_a-zA-Z.0-9]+@[-_a-zA-Z.0-9]+\\)" "\\1lslm\\2le"
+        replace-string "\\(^\\|[ \\t]\\)\\(\\(ht\\|f\\)tps?://[-@~_a-zA-Z#%?&=\\.:\\/0-9]+\\|mailto:[-_a-zA-Z.0-9]+@[-_a-zA-Z.0-9]+\\)" "\\1\CDs\CDm\\2\CDe"
         6 goto-line
-        replace-string "\\(^\\|[ \\t]\\)`\\([^\n`]\\([^\\\\`]\\|\\\\.\\)*\\)`" "\\1cG\\2cA"
+        replace-string "\\(^\\|[ \\t]\\)`\\([^\n`]\\([^\\\\`]\\|\\\\.\\)*\\)`" "\\1\CCK\\2\CCA"
         6 goto-line
-        replace-string "cZ" "\\\\*"
+        replace-string "\CE!" "\\\\*"
         6 goto-line
         replace-string "\\\\\\(.\\)" "\\1"
         6 goto-line
         &sub $window-eline 9 replace-string "^" "    "
         6 goto-line
-        replace-string "^    cE" "cE"
+        replace-string "^    \CCB" "\CCB"
         ; Get all the code block back
         1 narrow-buffer
         6 goto-line
@@ -94,12 +94,12 @@ define-macro fhook-ehf
     !if &not &sin "nowrap" #l4
       set-variable #l3 &con &les 140 &set #l3 &con &gre 70 &set #l3 &sub $window-width 4 70 #l3 140 #l3
       ; found largest indent in ehf was ~26 chars, this must be removed from the \{#\} long-line regex len 
-      set-variable #l1 &spr "\es[B-Z]\\|^\\( *\\(\\* \\)?\\).\\{%d\\}.*" &sub #l3 26
+      set-variable #l1 &spr "\CD[B-Z]\\|^\\( *\\(\\* \\)?\\).\\{%d\\}.*" &sub #l3 26
       !repeat
         !force search-buffer "me" #l1
         !iif &not $status  !break
         !if &equ &set #l5 &len @s0 3
-          !force search-buffer "Me" "\esA"
+          !force search-buffer "Me" "\CDA"
         !elif &gre #l5 #l3
           set-variable #l5 &len @s1
           !repeat
@@ -126,9 +126,9 @@ define-macro fhook-ehf
       !done
     !endif
     beginning-of-buffer
-    !force replace-string "\\(\ecB[^\e]*\\)\n\\( *\\)" "\\1\ecA\n\\2\ecB"
+    !force replace-string "\\(\CC\\(\\m\\)[^\CC\n]*\\)\n\\( *\\)" "\\1\CCA\n\\3\CC\\2"
     beginning-of-buffer
-    !force replace-string "\\(\elm[^\e]*\\)\n\\( *\\)" "\\1\eln\n\\2\eln"
+    !force replace-string "\\(\CDm[^\CD\n]*\\)\n\\( *\\)" "\\1\CDn\n\\2\CDn"
     beginning-of-buffer
     #l0 buffer-mode "magic"
     -1 buffer-mode "edit"
@@ -153,31 +153,9 @@ set-variable .fhook-ehf.command-kbind "||||"
 set-variable .fhook-ehf.command-desc  "|\HGoto Link|Move to \HPrevious Link|Move to \HNext Link|"
 
 !if &and &sin "h" .fhook-ehf.setup &band .hilight.flags 0x01
-  !iif &not &exist .hilight.emf  execute-file "hkemf"
-  !if &not &exist .hilight.ehf
-    set-variable .hilight.ehf  &pinc .hilight.next 1
-    set-variable .hilight.ehfL &pinc .hilight.next 1
-  !endif
-  
-  0 hilight  .hilight.ehf 2 100                      $global-scheme
-  hilight .hilight.ehf 0x44 "\ecA" "" "\\}\e" "" "" $global-scheme
-  hilight .hilight.ehf 0x44 "\ecB" "" "\\}\e" "" "" .scheme.under   ; underline
-  hilight .hilight.ehf 0x44 "\ecC" "" "\\}\e" "" "" .scheme.italic  ; italic
-  hilight .hilight.ehf 0x44 "\ecD" "" "\\}\e" "" "" .scheme.bold    ; bold
-  hilight .hilight.ehf 0x44 "\ecE" "" "\\}\e" "" "" .scheme.header  ; Header
-  hilight .hilight.ehf 0x44 "\ecF" "" "\\}\e" "" "" .scheme.comment ; image
-  hilight .hilight.ehf 0x44 "\ecG" "" "\\}\e" "" "" .scheme.type    ; TT (curior)
-  hilight .hilight.ehf 0xc0 "\els" "" .hilight.ehfL $global-scheme  ; link start
-  hilight .hilight.ehf 0x44 "\elm" "" "\el." "" ""  .scheme.link    ; link name - use '.' as n is used for links split across lines
-  hilight .hilight.ehf 0x44 "\eln" "" "\ele" "" ""  .scheme.link    ; link name
-  hilight .hilight.ehf 0xc0 "\esB" "" .hilight.emf  $global-scheme
-  hilight .hilight.ehf 0x40 "\esA" ""               $global-scheme
-  
-  hilight .hilight.emf 0xc0 "\esA" "" .hilight.ehf  $global-scheme
-  
-  0 hilight  .hilight.ehfL 2 50                     $global-scheme
-  hilight .hilight.ehfL 0x80 "\\}\elm" .hilight.ehf $global-scheme
-  hilight .hilight.ehfL 0x40 "." ""                 $global-scheme
+  !iif &not &exi meth-add-format  execute-file "meth"
+  !iif &not &exi .hilight.ehf  set-variable .hilight.ehf .hilight.meth
+  meth-add-format "emf"
 !endif
 
 ; Advance to the next link in the forward direction
@@ -186,11 +164,11 @@ set-variable .fhook-ehf.command-desc  "|\HGoto Link|Move to \HPrevious Link|Move
     set-variable #l0 &sub 0 @#
     #l0 ehf-backward-link
   !endif
-  !force @# search-forward "\elm"
+  !force @# search-forward "\CEm"
   !if &not $status
     ; Not found, force wrap, search and finish
     beginning-of-buffer
-    search-forward "\elm"
+    search-forward "\CEm"
   !endif
 !emacro
 
@@ -201,14 +179,14 @@ set-variable .fhook-ehf.command-desc  "|\HGoto Link|Move to \HPrevious Link|Move
     #l0 ehf-forward-link
   !endif
   ; move back 3 chars so if we are currently on a link we do move
-  !force 3 backward-char
-  !force @# search-backward "\elm"
+  !force 2 backward-char
+  !force @# search-backward "\CEm"
   !if &not $status
     ; Not found, force wrap, search and finish
     end-of-buffer
-    search-backward "\elm"
+    search-backward "\CEm"
   !endif
-  ; move to the end of the \elm so the user can sensibly move forward
+  ; move to the end of the \CEm so the user can sensibly move forward
   ; and so that subsequent forw/back-link moves work as expected.
   2 show-region
 !emacro
@@ -219,28 +197,28 @@ set-variable .fhook-ehf.command-desc  "|\HGoto Link|Move to \HPrevious Link|Move
   !if &seq $buffer-bname "*help*"
     ; get the current page item so we can add it to the prev/next history
     beginning-of-buffer
-    set-variable #l1 &mid @wl 3 &sub &len @wl 6
+    set-variable #l1 &mid @wl 2 &sub &len @wl 4
     2 forward-line
-    !force -1 search-forward "\elm\\[Prev]"
+    !force -1 search-forward "\CEm\\[Prev]"
     !if $status
       ; this is the prev history
-      9 backward-char
+      8 backward-char
       set-mark
-      search-backward "\els"
-      3 forward-char
+      search-backward "\CEs"
+      2 forward-char
       copy-region
       set-variable #l2 @y
       -1 yank
     !else
       set-variable #l2 ""
     !endif
-    !force -1 search-forward "\elm\\[Next]"
+    !force -1 search-forward "\CEm\\[Next]"
     !if $status
       ; this is the next history
-      9 backward-char
+      8 backward-char
       set-mark
-      search-backward "\els"
-      3 forward-char
+      search-backward "\CEs"
+      2 forward-char
       copy-region
       set-variable #l3 @y
       -1 yank
@@ -273,8 +251,8 @@ set-variable .fhook-ehf.command-desc  "|\HGoto Link|Move to \HPrevious Link|Move
     2 forward-line
     end-of-line
     -1 buffer-mode "view"
-    !iif &gre &len #l2 1  insert-string &spr " \els%s\elm[Prev]\ele" #l2
-    !iif &gre &len #l3 1  insert-string &spr " \els%s\elm[Next]\ele" #l3
+    !iif &gre &len #l2 1  insert-string &spr " \CEs%s\CEm[Prev]\CEe" #l2
+    !iif &gre &len #l3 1  insert-string &spr " \CEs%s\CEm[Next]\CEe" #l3
     -1 buffer-mode "edit"
     1 buffer-mode "view"
     beginning-of-buffer
@@ -288,22 +266,22 @@ set-variable .fhook-ehf.command-desc  "|\HGoto Link|Move to \HPrevious Link|Move
   set-variable #l0 $window-col
   set-variable #l1 $window-line
   ; end of link must be found within 5 lines
-  !force -5 search-forward "\ele"
+  !force -5 search-forward "\CEe"
   !if $status
-    !force -5 search-backward "\els"
+    !force -5 search-backward "\CEs"
     !if &and $status &or &les $window-line #l1 &and &equ $window-line #l1 &not &gre $window-col #l0
-      3 forward-char
+      2 forward-char
       set-mark
-      -1 search-forward "\elm"
-      3 backward-char
+      -1 search-forward "\CEm"
+      2 backward-char
       copy-region
       set-variable #l2 @y
       -1 yank
       !if &seq #l2 ""
-        3 forward-char
+        2 forward-char
         set-mark
-        -1 search-forward "\ele"
-        3 backward-char
+        -1 search-forward "\CEe"
+        2 backward-char
         copy-region
         set-variable #l2 @y
         -1 yank
@@ -318,13 +296,9 @@ set-variable .fhook-ehf.command-desc  "|\HGoto Link|Move to \HPrevious Link|Move
   ; Goto beginning of word and place mark
   forward-char
   backward-word
-  !if &seq @wc "c"
+  !if $window-col
     backward-char
-    !if &seq @wc "\e"
-      3 forward-char
-    !else
-      forward-char
-    !endif
+    &con &seq @wc "\CC" 2 1 forward-char
   !endif
   set-mark
   ; Goto end of word and copy region
@@ -344,27 +318,22 @@ set-variable .fhook-ehf.command-desc  "|\HGoto Link|Move to \HPrevious Link|Move
   !if $window-col
     set-variable #l1 &sub #l0 $window-col
     backward-char
-    !if &and &seq @wc "\e" &gre #l1 1
+    !if &seq @wc "\CD"
       forward-char
-      !if &sin @wc "s"
+      !if &seq @wc "A"
+        ; End of scheme change
         forward-char
-        !if &seq @wc "A"
-          ; End of scheme change
-          forward-char
-        !else
-          ; skip the emf sections
-          search-forward "\esA"
-        !endif
-        set-variable .spell.check-word ""
-        !return
-      !elif &sin @wc "cl"
-        ; ehf color link or scheme change
-        2 forward-char
-        set-variable #l2 $window-col
-        set-variable #l1 1
+      !else
+        ; skip the emf sections
+        search-forward "\CDA"
       !endif
-    !else
-      forward-char
+      set-variable .spell.check-word ""
+      !return
+    !elif &sin @wc "\CC\CE"
+      ; meth link or colour scheme change
+      2 forward-char
+      set-variable #l2 $window-col
+      set-variable #l1 1
     !endif
     !if &seq &mid @wl $window-col 2 "C-"
       2 forward-char

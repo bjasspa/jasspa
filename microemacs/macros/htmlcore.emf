@@ -25,13 +25,13 @@ set-variable &ind &cat #l9 ".exact" -1
 
 ; setup item-list
 set-variable &ind &cat #l9 ".item-list-s1" "<[hH]1>\\([\t ]*<[^>]*>\\)*[\t ]*\\([^<]+\\)"
-set-variable &ind &cat #l9 ".item-list-r1" "H1   \ecB\\2\ecA"
+set-variable &ind &cat #l9 ".item-list-r1" "H1   \CCb\\2\CCA"
 set-variable &ind &cat #l9 ".item-list-s2" "<[hH]2>\\([\t ]*<[^>]*>\\)*[\t ]*\\([^<]+\\)"
-set-variable &ind &cat #l9 ".item-list-r2" "H2   \ecB\\2\ecA"
+set-variable &ind &cat #l9 ".item-list-r2" "H2   \CCb\\2\CCA"
 set-variable &ind &cat #l9 ".item-list-s3" "<[hH]3>\\([\t ]*<[^>]*>\\)*[\t ]*\\([^<]+\\)"
-set-variable &ind &cat #l9 ".item-list-r3" "H3   \ecB\\2\ecA"
+set-variable &ind &cat #l9 ".item-list-r3" "H3   \CCb\\2\CCA"
 set-variable &ind &cat #l9 ".item-list-s4" "<[hH][4-9]>\\([\t ]*<[^>]*>\\)*[\t ]*\\([^<]+\\)"
-set-variable &ind &cat #l9 ".item-list-r4" "H4+  \ecB\\2\ecA"
+set-variable &ind &cat #l9 ".item-list-r4" "H4+  \CCb\\2\CCA"
 
 !iif &not &exist fhook-vb  execute-file "hkvb"
 !iif &not &exist fhook-js  execute-file "hkjs"

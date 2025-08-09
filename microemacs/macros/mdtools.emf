@@ -9,7 +9,7 @@
 ; Authors:     Detlef Groth & Steven Phillips
 ;
 !iif &not &exi fhook-md  execute-file "hkmd"
-!iif &not &exi memh-add-format  execute-file "memh"
+!iif &not &exi meth-add-format  execute-file "meth"
 
 0 define-macro md-export-setup
   !if &exi %md-export-com
@@ -254,7 +254,7 @@ define-macro md-process
       !if &set #l9 &len &set #l2 &slo @s1
         set-variable #l1 &lef #l1 &sub 0 #l9
         !iif &set #l3 &lfi "|markdown|bash|" #l2  set-variable #l2 &lget "|md|shell|" #l3
-        !force memh-add-format #l2
+        !force meth-add-format #l2
       !endif
       !if #l9
         insert-string &cat "\CD" &itoa &add 65 #l9

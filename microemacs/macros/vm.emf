@@ -25,19 +25,19 @@ hilight .hilight.vm 0x400  9 31  $global-scheme
 hilight .hilight.vm 0x400 31 41  .scheme.prepro
 
 0 hilight  .hilight.vmh 2 100                     $global-scheme
-hilight .hilight.vmh 0x44 "\ecA" "" "\\}\e" "" "" $global-scheme
-hilight .hilight.vmh 0x44 "\ecB" "" "\\}\e" "" "" .scheme.under   ; underline
-hilight .hilight.vmh 0x44 "\ecC" "" "\\}\e" "" "" .scheme.italic  ; italic
-hilight .hilight.vmh 0x44 "\ecD" "" "\\}\e" "" "" .scheme.bold    ; bold
-hilight .hilight.vmh 0x44 "\ecE" "" "\\}\e" "" "" .scheme.header  ; Header
-hilight .hilight.vmh 0x44 "\ecF" "" "\\}\e" "" "" .scheme.comment ; image
-hilight .hilight.vmh 0xc0 "\esA" "" .hilight.mail $global-scheme
-hilight .hilight.vmh 0x40 "\esB" ""               $global-scheme
-hilight .hilight.vmh 0xc0 "\els" "" .hilight.vmhl $global-scheme ; link start
-hilight .hilight.vmh 0x44 "\elm" "" "\ele" "" ""  .scheme.link   ; link name
+hilight .hilight.vmh 0x44 "\CCA" "" "\\}\CC" "" "" $global-scheme
+hilight .hilight.vmh 0x44 "\CCF" "" "\\}\CC" "" "" .scheme.under   ; underline
+hilight .hilight.vmh 0x44 "\CCE" "" "\\}\CC" "" "" .scheme.italic  ; italic
+hilight .hilight.vmh 0x44 "\CCD" "" "\\}\CC" "" "" .scheme.bold    ; bold
+hilight .hilight.vmh 0x44 "\CCB" "" "\\}\CC" "" "" .scheme.header  ; Header
+hilight .hilight.vmh 0x44 "\CCh" "" "\\}\CC" "" "" .scheme.comment ; image
+hilight .hilight.vmh 0xc0 "\CDA" "" .hilight.mail $global-scheme
+hilight .hilight.vmh 0x40 "\CDB" ""               $global-scheme
+hilight .hilight.vmh 0xc0 "\CEs" "" .hilight.vmhl $global-scheme ; link start
+hilight .hilight.vmh 0x44 "\CEm" "" "\CEe" "" ""  .scheme.link   ; link name
 
 0 hilight .hilight.vmhl 0                         $global-scheme
-hilight .hilight.vmhl 0x80 "\\}\elm" .hilight.vmh $global-scheme
+hilight .hilight.vmhl 0x80 "\\}\CEm" .hilight.vmh $global-scheme
 hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
 
 0 define-macro vm-setup
@@ -1104,10 +1104,10 @@ define-macro-file htmltool html-to-ehf
       !force html-to-ehf
       beginning-of-buffer
       set-mark
-      insert-string "\esB"
+      insert-string "\CDB"
       end-of-buffer
       backward-char
-      insert-string "\esA"
+      insert-string "\CDA"
       forward-char
       copy-region
       !force 0 delete-buffer $buffer-bname

@@ -30,11 +30,11 @@ set-variable .fhook-r.collapse-mnext "-1"
 
 ; setup item-list
 set-variable .fhook-r.item-list-s1 "^[ \t]*\\(\\w+\\)[ \t]+<-[ \t]+function[ \t]*("
-set-variable .fhook-r.item-list-r1 "Func \ecB\\1\ecA"
+set-variable .fhook-r.item-list-r1 "Func \CCb\\1\CCA"
 set-variable .fhook-r.item-list-s2 "^#'\\s+##\\s+\\([a-zA-Z0-9.\\s\\$]*\\) *\$"
-set-variable .fhook-r.item-list-r2 "MDHE \ecB\\1\ecA"
+set-variable .fhook-r.item-list-r2 "MDHE \CCb\\1\CCA"
 set-variable .fhook-r.item-list-s3 "^\\s*\\('[%_>a-zA-Z0-9.\\$]+'\\) [-=<]+ function\\s *("
-set-variable .fhook-r.item-list-r3 "Oper \ecB\\1\ecA"
+set-variable .fhook-r.item-list-r3 "Oper \CCb\\1\CCA"
 
 !iif &not &exist .hilight.r  set-variable .hilight.r &pinc .hilight.next 1
 !if &and &sin "h" .fhook-r.setup &band .hilight.flags 0x02
@@ -231,18 +231,18 @@ set-variable .fhook-r-doc.setup-mask "acfhmw"
   0 hilight .hilight.r-doc 2 200               $global-scheme
   0 hilight .hilight.r-docL  0                 $global-scheme
   hilight .hilight.r-doc     2 "^_"            .scheme.header
-  hilight .hilight.r-doc  0x42 "\ecE" ""       .scheme.header
-  hilight .hilight.r-doc  0x42 "\ecL" ""       .scheme.link
-  hilight .hilight.r-doc  0x40 "\esA" ""       $global-scheme
-  hilight .hilight.r-doc  0xc0 "\esR" ""       .hilight.r .scheme.header
-  hilight .hilight.r-doc  0xc0 "\esL" ""       .hilight.r-docL .scheme.header
+  hilight .hilight.r-doc  0x42 "\CCB" ""       .scheme.header
+  hilight .hilight.r-doc  0x42 "\CCC" ""       .scheme.link
+  hilight .hilight.r-doc  0x40 "\CDA" ""       $global-scheme
+  hilight .hilight.r-doc  0xc0 "\CDR" ""       .hilight.r .scheme.header
+  hilight .hilight.r-doc  0xc0 "\CDL" ""       .hilight.r-docL .scheme.header
   hilight .hilight.r-doc     0 "^\\a[-A-Za-z0-9.$_]*\\}[\t ][\t ]" .scheme.link
   hilight .hilight.r-doc     0 "^\\a[-A-Za-z0-9.$_]*::[-A-Za-z0-9.$_]+" .scheme.link
   hilight .hilight.r-doc     0 "package:\\a[-A-Za-z0-9.$_]*" .scheme.link
   hilight .hilight.r-docL    4 "'\\{\\a" "\\}'" "\\"          .scheme.link
   hilight .hilight.r-docL 0x80 "^[A-Z].+"      .hilight.r-doc .scheme.header
-  hilight .hilight.r-docL 0xc0 "\esA" ""       .hilight.r-doc .scheme.header
-  hilight .hilight.r      0xc0 "\esA" ""       .hilight.r-doc .scheme.header
+  hilight .hilight.r-docL 0xc0 "\CDA" ""       .hilight.r-doc .scheme.header
+  hilight .hilight.r      0xc0 "\CDA" ""       .hilight.r-doc .scheme.header
 !endif
 
 !if &sin "f" .fhook-r-doc.setup
@@ -275,7 +275,7 @@ set-variable .fhook-r-doc.setup-mask "acfhmw"
     !return
   !endif
   ; check first for a beginning of line link in package index
-  !force search-buffer "meb" "^s\\(.\\)"
+  !force search-buffer "meb" "^\CD\\(.\\)"
   !iif &not &and $status &seq @s1 "L"  -8 ml-write "Error: Not in the Method or See Also section."
   goto-position "\x80"
   set-variable #l1 $window-col
@@ -308,7 +308,7 @@ set-variable .fhook-r-doc.setup-mask "acfhmw"
   ; click on header package:pkgname or BACK
   !force search-buffer "meb" "[ \t]"
   !if &not $status
-  !elif &seq &mid @wl &set #l0 &add $window-col 1 7 "cLBACK"
+  !elif &seq &mid @wl &set #l0 &add $window-col 1 7 "\CCCBACK"
     goto-position "\x80"
     r-doc-back
     !return
@@ -410,25 +410,25 @@ define-macro r-doc
     set-variable #l4 @s1
   !endif
   set-variable :package #l4
-  set-variable @wl &cat &rep @wl " R Documentation" " R Doc  " "    \ecLBACK"
+  set-variable @wl &cat &rep @wl " R Documentation" " R Doc  " "    \CCCBACK"
   buffer-is-utf8 #l1
   !iif #l1  4 change-buffer-charset "utf8" "display"
-  replace-string "^_\b\\(\\w.*:\\)$" "sAcE\\1"
+  replace-string "^_\b\\(\\w.*:\\)$" "\CDA\CCB\\1"
   set-variable #l1 &lget $result 1
   beginning-of-buffer
   replace-string "_\b" ""
   !if &not #l1
     beginning-of-buffer
-    !force replace-string "^\n\\([ \t]+['\\w()]+\\( ['\\w()]+\\)*\n\\)$" "\nsAcE\\1"
+    !force replace-string "^\n\\([ \t]+['\\w()]+\\( ['\\w()]+\\)*\n\\)$" "\n\CDA\CCB\\1"
     beginning-of-buffer
-    !force replace-string "^\n\\(\\w['\\w()]+\\( ['\\w()]+\\)*:\n\\)$" "\nsAcE\\1"
+    !force replace-string "^\n\\(\\w['\\w()]+\\( ['\\w()]+\\)*:\n\\)$" "\n\CDA\CCB\\1"
   !endif
   set-variable #l1 &cond &bmod "exact" 1 -1
   -1 buffer-mode "exact"
   beginning-of-buffer
-  replace-string "^sAcE\\(Usage\\|Examples\\):.*\n" "\\0sR"
+  replace-string "^\CDA\CCB\\(Usage\\|Examples\\):.*\n" "\\0\CDR"
   beginning-of-buffer
-  replace-string "^sAcE\\(See Also\\|Methods\\):.*\n" "\\0sL"
+  replace-string "^\CDA\CCB\\(See Also\\|Methods\\):.*\n" "\\0\CDL"
   beginning-of-buffer
   #l1 buffer-mode "exact"
   -1 buffer-mode "edit"

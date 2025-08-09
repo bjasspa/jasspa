@@ -8,7 +8,7 @@
 ; Synopsis:    High-light differences between two lines
 ; Authors:     Steven Phillips
 ;
-!iif &not &exi memh-add-format  execute-file "memh"
+!iif &not &exi meth-add-format  execute-file "meth"
 
 0 define-macro diff-lines-find-cont
   set-variable #l0 $window-col
@@ -109,7 +109,7 @@
       set-variable #l3 $window-col
       insert-string "\CCA"
       set-variable $window-col #l1
-      insert-string "\CCY"
+      insert-string "\CCN"
       set-variable $window-col &add #l3 4
       set-variable #l9 &add #l9 4
       previous-window
@@ -119,19 +119,19 @@
         previous-window
         insert-string "\CCA"
         set-variable $window-col #l0
-        insert-string "\CCZ"
+        insert-string "\CCO"
         set-variable $window-col &add #l2 4
         set-variable #l8 &add #l8 4
       !else
         insert-string "\CCA"
         set-variable $window-col #l1
-        insert-string "\CCX"
+        insert-string "\CCM"
         set-variable $window-col &add #l3 4
         set-variable #l9 &add #l9 4
         previous-window
         insert-string "\CCA"
         set-variable $window-col #l0
-        insert-string "\CCX"
+        insert-string "\CCM"
         set-variable $window-col &add #l2 4
         set-variable #l8 &add #l8 4
       !endif
@@ -214,7 +214,7 @@ define-macro diff-lines
   goto-position "\x83"
   !if &ban @# 1
     popup-window "*diff-lines*"
-    set-variable $buffer-hilight .hilight.memh
+    set-variable $buffer-hilight .hilight.meth
     beginning-of-buffer
   !endif
   !if &not &ban @# 8

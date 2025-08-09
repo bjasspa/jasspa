@@ -472,9 +472,9 @@ try_again:
     /* Add the header */
     {
         meUByte buff[meBUF_SIZE_MAX];
-        sprintf((char *)buff,"\033cD%s%s\033cA",lp->text+4,sect);
+        sprintf((char *)buff,"\003D%s%s\003A",lp->text+4,sect);
         addLineToEob(bp,buff);
-        addLineToEob(bp,(meUByte *)"\n\033lsMicroEmacs\033lm[Home]\033le \033lsCommand G\033lm[Commands]\033le \033lsVariable \033lm[Variables]\033le \033lsMacro Lan\033lm[Macro-Dev]\033le \033lsGlobal G\033lm[Glossary]\033le");
+        addLineToEob(bp,(meUByte *)"\n\005sMicroEmacs\005m[Home]\005e \005sCommand G\005m[Commands]\005e \005sVariable \005m[Variables]\005e \005sMacro Lan\005m[Macro-Dev]\005e \005sGlobal G\005m[Glossary]\005e");
         memset(buff,boxChars[BCEW],78);
         buff[78] = '\n';
         buff[79] = '\0';
@@ -498,7 +498,7 @@ try_again:
                     meUByte line[meBUF_SIZE_MAX], *ss;
                     if((ss = getval(item)) != NULL)
                     {
-                        addLineToEob(bp,(meUByte *)"\n\n\033cEVALUE\033cA\n");
+                        addLineToEob(bp,(meUByte *)"\n\n\003BVALUE\003A\n");
                         meStrcpy(line,"    \"");
                         meStrncpy(line+5,ss,meBUF_SIZE_MAX-13);
                         line[meBUF_SIZE_MAX-2] = '\0';
@@ -510,7 +510,7 @@ try_again:
                 {
                     meBind *ktp;
                     meUByte line[meBUF_SIZE_MAX], *ss;
-                    addLineToEob(bp,(meUByte *)"\n\n\033cEBINDINGS\033cA\n");
+                    addLineToEob(bp,(meUByte *)"\n\n\003BBINDINGS\003A\n");
                     meStrcpy(line,"    ");
                     ss = line+4;
                     for(ktp = &keytab[0] ; ktp->code != ME_INVALID_KEY ; ktp++)
@@ -541,7 +541,7 @@ try_again:
         meUByte buff[meBUF_SIZE_MAX];
         buff[0] = '\n';
         memset(buff+1,boxChars[BCEW],78);
-        sprintf((char *)buff+79,"\n\033lsCopyright\033lm%s\033le",meCopyright);
+        sprintf((char *)buff+79,"\n\005sCopyright\005m%s\005e",meCopyright);
         addLineToEob(bp,buff);
     }
     bp->dotLine = meLineGetNext(bp->baseLine);

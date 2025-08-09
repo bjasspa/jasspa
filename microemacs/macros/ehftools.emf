@@ -94,18 +94,18 @@ define-macro ehf-process-buffer
   beginning-of-buffer
   !force replace-string "\CJ\CJ\CJ\CJ" "\CJ\CJ\CJ"
   beginning-of-buffer
-  !force search-forward "\els"
+  !force search-forward "\CEs"
   !while $status
     set-mark
-    !force search-forward "\elm"
-    3 backward-char
+    !force search-forward "\CEm"
+    2 backward-char
     kill-region
     set-variable #l0 @y
     -1 yank
     set-variable #l0 &rig #l0 &rsin "/" #l0
     set-variable #l0 &lef #l0 &sub &sin ".htm" #l0 1
     insert-string #l0
-    !force search-forward "\els"
+    !force search-forward "\CEs"
   !done
   beginning-of-buffer
   insert-string &spr "#%s#%s\n" #l1 #l3
@@ -128,9 +128,9 @@ define-macro ehf-process-buffer
     !force search-forward "^|"
   !done
   beginning-of-buffer
-  !force replace-string "^\\$emf-scheme\CJ" "\esB"
+  !force replace-string "^\\$emf-scheme\CJ" "\CDB"
   beginning-of-buffer
-  !force replace-string "^\\$ehf-scheme\CJ" "\esA"
+  !force replace-string "^\\$ehf-scheme\CJ" "\CDA"
   ; strip blank lines at the top and bottom
   end-of-buffer
   backward-line
@@ -185,18 +185,19 @@ define-macro ehf-process-all
   ml-write "[Processing links - this could take some time]" 
   beginning-of-buffer
   1 buffer-mode "magic"
-  !force search-forward "\els"
-  !while $status
+  !repeat
+    !force search-forward "\CEs"
+    !if &not $status  !break
     set-alpha-mark "T"
     set-mark
-    search-forward "\elm"
-    3 backward-char
+    search-forward "\CEm"
+    2 backward-char
     kill-region
     set-variable #l3 @y
     -1 yank
-    3 forward-char
+    2 forward-char
     set-mark
-    search-forward "\e"
+    search-forward "\CE"
     backward-char
     copy-region
     set-variable #l0 @y
@@ -228,7 +229,6 @@ define-macro ehf-process-all
         goto-alpha-mark "T"
       !endif
     !endif
-    !force search-forward "\els"
   !done
   beginning-of-buffer
   set-mark
@@ -243,49 +243,25 @@ define-macro ehf-process-all
   beginning-of-buffer
   !force replace-string "esc backslash" "esc \\\\"
   ml-write "[Fixing http: links]" 
-  ; Move the http and email address curior hilighting start string (\ecG) out
+  ; Move the http and email address curior hilighting start string (\CCG) out
   ; of the way so cut and paste gets the right thing
   beginning-of-buffer
-  !force replace-string " \ecGhttp:" "\ecG http:"
+  !force replace-string " \CCGhttp:" "\CCG http:"
   beginning-of-buffer
-  !force replace-string " \ecDEmail:\ecA\ecGsupport" "\ecG Email:support"
+  !force replace-string " \CCDEmail:\CCA\CCGsupport" "\CCG Email:support"
   beginning-of-buffer
-  !force replace-string " \ecGjasspa-subscribe@" "\ecG jasspa-subscribe@"
+  !force replace-string " \CCGjasspa-subscribe@" "\CCG jasspa-subscribe@"
   beginning-of-buffer
-  !force replace-string " \ecGjasspa-unsubscribe@" "\ecG jasspa-unsubscribe@"
+  !force replace-string " \CCGjasspa-unsubscribe@" "\CCG jasspa-unsubscribe@"
   ; find and fix all split underlines
   beginning-of-buffer
-  !force search-forward "\ecB[^\e]*\n"
-  !while $status
-    2 backward-char
-    !if &seq @wc " "
-      forward-delete-char
-    !else
-      forward-char
-    !endif
-    insert-string "\ecA"
-    forward-char
-    !force search-forward " *"
-    insert-string "\ecB"
-    !force search-forward "\ecB[^\e]*\n"
-  !done
+  !force replace-string "\\(\CC\\(\\m\\)[^\CC\n]*\\)\n\\( *\\)" "\\1\CCA\n\\3\CC\\2"
   ; find and fix all split links
-  !force search-forward "\elm[^\e]*\n"
-  !while $status
-    2 backward-char
-    !if &seq @wc " "
-      forward-delete-char
-    !else
-      forward-char
-    !endif
-    insert-string "\eln"
-    forward-char
-    !force search-forward " *"
-    insert-string "\eln"
-    !force search-forward "\elm[^\e]*\n"
-  !done
   beginning-of-buffer
-  !force replace-string "\ecE\\(\ecE.+?\\)\ecE" "\\1"
+  !force replace-string "\\(\CEm[^\CE\n]*\\)\n\\( *\\)" "\\1\CEn\n\\2\CEn"
+  beginning-of-buffer
+  ; TODO: SSP this looks a little loose
+  !force replace-string "\CCE\\(\CCE.+?\\)\CCE" "\\1"
   ; clean the buffer
   clean
 !emacro

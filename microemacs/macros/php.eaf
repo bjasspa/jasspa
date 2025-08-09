@@ -1,5 +1,5 @@
  <INCLUDE: html>
- "" "<FOLD+> \ecCPHP Code (abbrev)\ecA"
+ "" "<FOLD+> \CCcPHP Code (abbrev)\CCA"
 ta "<?php\r\p\r?>\r\P" "  php-(ta)g"
 if "if (\p) {\r\r}\r\P" "  if" 
 ei "elseif (\p) {\r\r}\r\P" "  elseif"

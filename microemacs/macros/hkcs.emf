@@ -30,9 +30,9 @@ set-variable .fhook-cs.setup-flags   "|r|v|"
 set-variable .fhook-cs.setup-labels  "|Brace highlighting|Limit '(' continuation indent to 5 indent widths|"
 ; setup item-list
 set-variable .fhook-cs.item-list-s1 "^[ \t]*\\([a-zA-Z0-9_ \t]*[ \t]\\)?\\([a-zA-Z0-9_]+\\)[ \t]*([a-zA-Z0-9_,\t]*)[ \t]*{"
-set-variable .fhook-cs.item-list-r1 "Func \ecB\\2\ecA"
+set-variable .fhook-cs.item-list-r1 "Func \CCb\\2\CCA"
 set-variable .fhook-cs.item-list-s2 "^[ \t]*\\(public[ \t]+\\|private[ \t]+\\)?class[ \t]\\(\\w+\\)"
-set-variable .fhook-cs.item-list-r2 "Clss \ecB\\2\ecA"
+set-variable .fhook-cs.item-list-r2 "Clss \CCb\\2\CCA"
 
 !if &not &exist .hilight.cs
   ; hilighting uses 3 schemes (.cs, .csdoc & .pcsdoc), normal indent uses 1 scheme & alt indent uses 3 (.cs, .cs-comm & .csT) so reserve 3 hilighting/indent schemes upfront

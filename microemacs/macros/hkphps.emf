@@ -34,7 +34,7 @@ set-variable .fhook-phps.collapse-mnext "-1"
 
 ; setup item-list
 set-variable .fhook-phps.item-list-s1 "^[ \t]*\\(public[ \t]+\\|private[ \t]+\\)?function[ \t]+\\(\\w[1-9A-Za-z_']*\\)"
-set-variable .fhook-phps.item-list-r1 "Func \ecB\\2\ecA"
+set-variable .fhook-phps.item-list-r1 "Func \CCb\\2\CCA"
 
 ; Set up menu items for C++ mode.
 set-variable .fhook-phps.setup-flags   "|l|"
