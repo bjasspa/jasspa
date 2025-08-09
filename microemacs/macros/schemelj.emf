@@ -79,16 +79,19 @@ add-color-scheme .scheme.comment .col8 .col22 .col8 .col21 .col8 .col11 .col8 .c
 add-color-scheme .scheme.string .col17 .col22 .col17 .col21 .col17 .col11 .col17 .col11 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.quote .col17 .col22 .col17 .col21 .col17 .col11 .col17 .col11 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.error .col2 .col22 .col2 .col21 .col2 .col11 .col2 .col11 16 24 16 24 16 24 16 24
+add-color-scheme .scheme.warn .col13 .col22 .col13 .col21 .col13 .col11 .col13 .col11 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.info .col20 .col22 .col20 .col21 .col20 .col11 .col20 .col11 2 10 2 10 2 10 2 10
 ; Formatted Text
 add-color-scheme .scheme.header .col2 .col22 .col2 .col21 .col2 .col11 .col2 .col11 1 9 1 9 1 9 1 9
 add-color-scheme .scheme.link .col17 .col22 .col17 .col21 .col17 .col11 .col17 .col11 16 24 16 24 16 24 16 24
-add-color-scheme .scheme.bold .col7 .col22 .col7 .col21 .col7 .col11 .col7 .col11 1 9 1 9 1 9 1 9
+add-color-scheme .scheme.bold .col16 .col22 .col16 .col21 .col16 .col11 .col16 .col11 1 9 1 9 1 9 1 9
 add-color-scheme .scheme.italic .col9 .col22 .col9 .col21 .col9 .col11 .col9 .col11 2 10 2 10 2 10 2 10
 add-color-scheme .scheme.under .col1 .col22 .col1 .col21 .col1 .col11 .col1 .col11 16 24 16 24 16 24 16 24
-add-color-scheme .scheme.bold-italic .col1 .col22 .col1 .col21 .col1 .col11 .col1 .col11 3 11 3 11 3 11 3 11
-add-color-scheme .scheme.bold-under .col1 .col22 .col1 .col21 .col1 .col11 .col1 .col11 17 25 17 25 17 25 17 25
+add-color-scheme .scheme.bold-italic .col20 .col22 .col20 .col21 .col20 .col11 .col20 .col11 3 11 3 11 3 11 3 11
+add-color-scheme .scheme.bold-under .col20 .col22 .col20 .col21 .col20 .col11 .col20 .col11 17 25 17 25 17 25 17 25
 add-color-scheme .scheme.italic-under .col1 .col22 .col1 .col21 .col1 .col11 .col1 .col11 18 26 18 26 18 26 18 26
 add-color-scheme .scheme.bold-italic-under .col1 .col22 .col1 .col21 .col1 .col11 .col1 .col11 19 27 19 27 19 27 19 27
+add-color-scheme .scheme.code .col3 .col22 .col3 .col21 .col3 .col11 .col3 .col11 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.spell-error .col2 .col22 .col2 .col21 .col2 .col11 .col2 .col11 0 8 0 8 0 8 0 8
 ; Directory Listings
 add-color-scheme .scheme.file .col5 .col22 .col5 .col21 .col5 .col11 .col5 .col11 0 8 0 8 0 8 0 8

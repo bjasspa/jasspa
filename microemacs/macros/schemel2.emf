@@ -92,6 +92,8 @@ add-color-scheme .scheme.comment .col27 .col1 .col27 .col2 .col27 .col0 .col27 .
 add-color-scheme .scheme.string .col9 .col1 .col9 .col2 .col36 .col0 .col36 .col5 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.quote .col9 .col1 .col9 .col2 .col40 .col0 .col40 .col5 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.error .col8 .col1 .col21 .col2 .col8 .col0 .col8 .col5 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.warn .col10 .col1 .col10 .col2 .col37 .col0 .col37 .col5 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.info .col27 .col1 .col27 .col2 .col27 .col0 .col27 .col5 0 8 0 8 0 8 0 8
 ; Formatted Text
 add-color-scheme .scheme.header .col22 .col1 .col22 .col2 .col38 .col0 .col38 .col5 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.link .col28 .col1 .col28 .col2 .col33 .col0 .col33 .col5 16 8 0 8 0 8 0 8
@@ -102,6 +104,7 @@ add-color-scheme .scheme.bold-italic .col9 .col1 .col9 .col2 .col40 .col0 .col40
 add-color-scheme .scheme.bold-under .col9 .col1 .col9 .col2 .col40 .col0 .col40 .col5 17 8 0 8 0 8 0 8
 add-color-scheme .scheme.italic-under .col9 .col1 .col9 .col2 .col40 .col0 .col40 .col5 18 8 0 8 0 8 0 8
 add-color-scheme .scheme.bold-italic-under .col9 .col1 .col9 .col2 .col40 .col0 .col40 .col5 19 8 0 8 0 8 0 8
+add-color-scheme .scheme.code .col43 .col1 .col43 .col2 .col42 .col0 .col42 .col5 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.spell-error .col8 .col1 .col8 .col2 .col8 .col0 .col8 .col5 0 8 0 8 0 8 0 8
 ; Directory Listings
 add-color-scheme .scheme.file .col5 .col1 .col5 .col2 .col1 .col5 .col2 .col5 0 8 0 8 0 8 0 8

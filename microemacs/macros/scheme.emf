@@ -20,18 +20,14 @@ define-macro change-scheme
   !else
     !force set-variable #l0 @1
     !if &not $status
-      !if &not &exi .scheme.scheme-names
-        0 execute-file "schemes"
-      !endif
+      !iif &not &exi .scheme.scheme-names  0 execute-file "schemes"
       !if &set #l0 &lfind .scheme.scheme-files .current
         set-variable #l0 @ml19 "Color Scheme" &lget .scheme.scheme-names #l0 .scheme.scheme-names
       !else
         set-variable #l0 @ml09 "Color Scheme" .scheme.scheme-names
       !endif
     !endif
-    !if &set #l1 &lfind .scheme.scheme-names #l0
-      set-variable #l0 &lget .scheme.scheme-files #l1
-    !endif
+    !iif &set #l1 &lfind .scheme.scheme-names #l0  set-variable #l0 &lget .scheme.scheme-files #l1
   !endif
   ; Execute the required color scheme creator macro file:
   !force -1 execute-file #l0
@@ -46,7 +42,7 @@ define-macro change-scheme
   ; defined.
   ; Define the last color as a default color of white, the next macro
   ; to define a new color will trash this one !!
-  add-color-scheme &set .scheme.next 77 0 1 0 1 1 0 1 0
+  add-color-scheme &set .scheme.next 80 0 1 0 1 1 0 1 0
   set-variable .hilight.next 1
 !endif
 ; Hilight flags: 0x01=Reformating enabled, 0x2=hilighting enabled, 0x4=function name hilighting, 0x8=constants hilighting
@@ -102,36 +98,28 @@ set-variable .scheme.met-fore2  36
 ;
 ; .scheme.prepro -- Preprocessor color
 set-variable .scheme.prepro     37
-;
 ; .scheme.function -- Function definition color
 set-variable .scheme.function   38
-;
-; .scheme.comment -- Comment color
-set-variable .scheme.comment    39
-;
-; .scheme.string -- Quoted string color
-set-variable .scheme.string     40
-;
-; .scheme.quote -- Quoted character
-set-variable .scheme.quote      41
-;
-; .scheme.error -- Error hilighting color
-set-variable .scheme.error      42
-;
-; .scheme.keyword -- Primary keyword color
-; Main keywords of a language. Typically if..then..else etc. may be bold etc.
-set-variable .scheme.keyword    43
-;
+; .scheme.keyword -- Primary keyword color - Main keywords of a language. Typically if..then..else etc. may be bold etc.
+set-variable .scheme.keyword    39
 ; .scheme.type -- Language type colors. Colors of the main type definitions.
-set-variable .scheme.type       44
-;
+set-variable .scheme.type       40
 ; .scheme.operator -- Operator color. Used in languages  for keyword operators i.e. and/not/xor etc.
-set-variable .scheme.operator   45
-;
+set-variable .scheme.operator   41
 ; .scheme.variable -- Built-in Variable color
-set-variable .scheme.variable   46
+set-variable .scheme.variable   42
 ; .scheme.variable -- Constants color, e.g. numbers
-set-variable .scheme.constant   47
+set-variable .scheme.constant   43
+; .scheme.comment -- Comment color
+set-variable .scheme.comment    44
+; .scheme.string -- Quoted string color
+set-variable .scheme.string     45
+; .scheme.quote -- Quoted character
+set-variable .scheme.quote      46
+; .scheme.error -- Error/Warning/Info hilighting colors
+set-variable .scheme.error      47
+set-variable .scheme.warn       48
+set-variable .scheme.info       49
 ;
 ; Miscellaneous screens
 ; =====================
@@ -141,25 +129,25 @@ set-variable .scheme.constant   47
 ; This is the number 1 prmary color and should be legible.
 ; Typically the keyword col, but no bold or other font
 ; effects are applied.
-set-variable .scheme.no1        48
+set-variable .scheme.no1        50
 ; .scheme.no2 -- Secondary color 2
-set-variable .scheme.no2        49
+set-variable .scheme.no2        51
 ; .scheme.dmf -- Display matching fence
-set-variable .scheme.dmf        50
+set-variable .scheme.dmf        52
 
 ; FileBrower color schemes
 ; .scheme.dir -- This is the color to display directory components.
-set-variable .scheme.dir        51
+set-variable .scheme.dir        53
 ; .scheme.dir-tree -- This is the color used to display the dir tree lines
-set-variable .scheme.dir-tree   52
+set-variable .scheme.dir-tree   54
 ; .scheme.dir-slink -- This is the color of the symbolic links.
-set-variable .scheme.dir-slink  53
+set-variable .scheme.dir-slink  55
 ; .scheme.dir-select -- This is the directory selection color
-set-variable .scheme.dir-select 54
+set-variable .scheme.dir-select 56
 ; .scheme.file -- This is the color of file names
-set-variable .scheme.file       55
+set-variable .scheme.file       57
 ; .scheme.select -- This is the file selection color
-set-variable .scheme.select     56
+set-variable .scheme.select     58
 ;
 ; Formatted Text Orientated Buffers
 ; =================================
@@ -167,44 +155,45 @@ set-variable .scheme.select     56
 ; is supposed to be rendered in a bold or italic etc.
 ;
 ; .scheme.header -- Heading scheme
-set-variable .scheme.header     57
+set-variable .scheme.header     59
 ; .scheme.link -- Scheme used for hyperlinks i.e. HTML and Help
-set-variable .scheme.link       58
+set-variable .scheme.link       60
 ; Bold, Italic, Underline schemes & combinations of...
-set-variable .scheme.bold       59
-set-variable .scheme.italic     60
-set-variable .scheme.under      61
-set-variable .scheme.bold-italic 62
-set-variable .scheme.bold-under 63
-set-variable .scheme.italic-under 64
-set-variable .scheme.bold-italic-under 65
+set-variable .scheme.bold       61
+set-variable .scheme.italic     62
+set-variable .scheme.under      63
+set-variable .scheme.bold-italic 64
+set-variable .scheme.bold-under 65
+set-variable .scheme.italic-under 66
+set-variable .scheme.bold-italic-under 67
+set-variable .scheme.code       68
 ; .scheme.spell-error -- Auto spell check erroneous word hilight scheme -
 ;    hilight in ME as important but ignore when printing.
-set-variable .scheme.spell-error 66
+set-variable .scheme.spell-error 69
 ;
 ; Gdiff line schemes
 ; ==================
 ;
 ; .scheme.gdfchange -- For ! lines
-set-variable .scheme.gdfchange  67
+set-variable .scheme.gdfchange  70
 ; .scheme.gdfadd -- For + lines
-set-variable .scheme.gdfadd     68
+set-variable .scheme.gdfadd     71
 ; .scheme.gdfpad -- For padded lines
-set-variable .scheme.gdfpad     69
+set-variable .scheme.gdfpad     72
 ; .scheme.gdfsel -- For selected ! or + lines
-set-variable .scheme.gdfsel     70
+set-variable .scheme.gdfsel     73
 ; .scheme.gdfselpad -- For selected padded lines
-set-variable .scheme.gdfselpad  71
+set-variable .scheme.gdfselpad  74
 ; .scheme.gdfrej -- For rejected ! or + lines
-set-variable .scheme.gdfrej     72
+set-variable .scheme.gdfrej     75
 ; .scheme.gdfrejpad -- For rejected padded lines
-set-variable .scheme.gdfrejpad  73
+set-variable .scheme.gdfrejpad  76
 ; .scheme.chg -- more readabled scheme for neutral changes
-set-variable .scheme.chg        74
+set-variable .scheme.chg        77
 ; .scheme.add -- more readabled scheme for positive changes
-set-variable .scheme.add        75
+set-variable .scheme.add        78
 ; .scheme.chg -- more readabled scheme for negative changes
-set-variable .scheme.rmv        76
+set-variable .scheme.rmv        79
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;>>> NOTICE: Add your last color above this line and then go back and      <<<;
 ;>>>         change the .scheme.next variable to your "lastColorNumber+1". <<<;

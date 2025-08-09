@@ -13,7 +13,7 @@ set-variable .hilight.flags 7
 add-color &set .col0 0 220 220 220
 add-color &set .col1 1 0 0 0
 add-color &set .col2 2 200 0 0
-add-color &set .col3 3 0 139 0
+add-color &set .col3 3 0 169 0
 add-color &set .col4 4 200 200 0
 add-color &set .col5 5 0 0 205
 add-color &set .col6 6 171 0 171
@@ -24,10 +24,10 @@ add-color &set .col10 10 0 255 0
 add-color &set .col11 11 255 255 0
 add-color &set .col12 12 229 89 0
 add-color &set .col13 13 140 0 0
-add-color &set .col14 14 0 80 0
+add-color &set .col14 14 0 120 0
 add-color &set .col15 15 168 65 0
 add-color &set .col16 16 128 0 128
-add-color &set .col17 17 0 0 100
+add-color &set .col17 17 0 0 140
 add-color &set .col18 18 172 172 172
 add-color &set .col19 19 70 70 70
 add-color &set .col20 20 210 210 210
@@ -65,7 +65,9 @@ add-color-scheme .scheme.constant .col1 .col0 .col1 .col20 .col1 .col7 .col1 .co
 add-color-scheme .scheme.comment .col13 .col0 .col13 .col20 .col13 .col7 .col13 .col7 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.string .col16 .col0 .col16 .col20 .col16 .col7 .col16 .col7 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.quote .col16 .col0 .col16 .col20 .col16 .col7 .col16 .col7 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.error .col2 .col0 .col2 .col20 .col2 .col7 .col2 .col7 8 0 8 0 0 8 0 8
+add-color-scheme .scheme.error .col2 .col20 .col2 .col8 .col2 .col7 .col13 .col7 8 0 8 0 0 8 0 8
+add-color-scheme .scheme.warn .col20 .col15 .col8 .col15 .col15 .col7 .col15 .col7 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.info .col17 .col0 .col5 .col20 .col17 .col7 .col5 .col7 0 8 0 8 0 8 0 8
 ; Formatted Text
 add-color-scheme .scheme.header .col15 .col0 .col12 .col0 .col15 .col7 .col15 .col7 17 25 17 25 17 25 17 25
 add-color-scheme .scheme.link .col16 .col0 .col16 .col20 .col16 .col7 .col16 .col7 16 24 16 24 16 24 16 24
@@ -76,6 +78,7 @@ add-color-scheme .scheme.bold-italic .col17 .col0 .col17 .col20 .col17 .col7 .co
 add-color-scheme .scheme.bold-under .col17 .col0 .col17 .col20 .col17 .col7 .col17 .col7 17 25 17 25 17 25 17 25
 add-color-scheme .scheme.italic-under .col14 .col0 .col14 .col20 .col14 .col7 .col14 .col7 18 26 18 26 18 26 18 26
 add-color-scheme .scheme.bold-italic-under .col17 .col0 .col17 .col0 .col17 .col7 .col17 .col7 19 27 19 27 19 27 19 27
+add-color-scheme .scheme.code .col16 .col0 .col16 .col20 .col16 .col7 .col16 .col7 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.spell-error .col13 .col0 .col13 .col20 .col13 .col7 .col13 .col7 16 24 16 24 16 24 16 24
 ; Directory Listings
 add-color-scheme .scheme.file .col14 .col0 .col14 .col20 .col14 .col7 .col14 .col7 0 8 0 8 0 8 0 8
