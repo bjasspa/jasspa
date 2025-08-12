@@ -51,6 +51,7 @@ hilight .hilight.meth 0x44 "\CCm" "" "\\}\CC" "" "" .scheme.info
 ; Other file type schemes - see meth-add-format
 hilight .hilight.meth 0x200 "\CD"
 hilight .hilight.meth 0x40 "\CDA" ""                $global-scheme
+
 ; Special hilighting tags
 hilight .hilight.meth 0x200 "\CE"
 ; Hidden: \CEH<hidden...>\CEh or \CEL<hidden...\n

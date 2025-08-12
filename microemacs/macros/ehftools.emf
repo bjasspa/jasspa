@@ -246,22 +246,27 @@ define-macro ehf-process-all
   ; Move the http and email address curior hilighting start string (\CCG) out
   ; of the way so cut and paste gets the right thing
   beginning-of-buffer
-  !force replace-string " \CCGhttp:" "\CCG http:"
+  !force replace-string " \\(\CC\\m\\)http:" "\\1 http:"
   beginning-of-buffer
-  !force replace-string " \CCDEmail:\CCA\CCGsupport" "\CCG Email:support"
+  !force replace-string " \\(\CC\\m\\)Email:" "\\1 Email:"
   beginning-of-buffer
-  !force replace-string " \CCGjasspa-subscribe@" "\CCG jasspa-subscribe@"
+  !force replace-string " \\(\CC\\m\\)jasspa-subscribe@" "\\1 jasspa-subscribe@"
   beginning-of-buffer
-  !force replace-string " \CCGjasspa-unsubscribe@" "\CCG jasspa-unsubscribe@"
+  !force replace-string " \\(\CC\\m\\)jasspa-unsubscribe@" "\\1 jasspa-unsubscribe@"
   ; find and fix all split underlines
   beginning-of-buffer
   !force replace-string "\\(\CC\\(\\m\\)[^\CC\n]*\\)\n\\( *\\)" "\\1\CCA\n\\3\CC\\2"
   ; find and fix all split links
   beginning-of-buffer
   !force replace-string "\\(\CEm[^\CE\n]*\\)\n\\( *\\)" "\\1\CEn\n\\2\CEn"
-  beginning-of-buffer
-  ; TODO: SSP this looks a little loose
-  !force replace-string "\CCE\\(\CCE.+?\\)\CCE" "\\1"
+  !repeat
+    beginning-of-buffer
+    !force replace-string "\CC\\m\\(\CC\\m\\)" "\\1"
+  !until &not &lget $result 1
+  !repeat
+    beginning-of-buffer
+    !force replace-string "\CCA\\([^\CC]*\\)\CCA" "\CCA\\1"
+  !until &not &lget $result 1
   ; clean the buffer
   clean
 !emacro

@@ -48,12 +48,8 @@
     forward-line
     beginning-of-line
   !endif
-  !if &band #p5 1
-    set-variable #p1 &sub #p1 4
-  !endif
-  !if &band #p5 0x200
-    set-variable #p1 &sub #p1 2
-  !endif
+  !iif &band #p5 1  set-variable #p1 &sub #p1 4
+  !iif &band #p5 0x200  set-variable #p1 &sub #p1 2
   set-variable #p5 &band #p5 0xfcb8
   set-variable #p4 0
 !emacro
@@ -63,9 +59,7 @@
     !if &band #p5 0x80
       insert-string "\CEe"
       set-variable #p8 &band #p8 0xff7f
-      !if #p8
-        insert-string &cat "\CC" &mid .html-to-ehf.colors #p8 1
-      !endif
+      !iif #p8  insert-string &cat "\CC" &mid .html-to-ehf.colors #p8 1
     !else
       set-mark
       search-backward "\CEs"
@@ -78,12 +72,13 @@
 
 ; #l8 stores font number - works on a priority basis
 ; 00  No font
-; 01  underline TT
+; 01  underline
 ; 02  italic
 ; 04  bold
 ; 08  Heading line
 ; 10  IMG
-; 20  HREF (no color set - done automatically to color G)
+; 20  TT
+; 80  HREF (no color set - done automatically to link style)
 
 0 define-macro html-to-ehf
   -1 buffer-mode "view"
@@ -102,7 +97,7 @@
       set-variable #l5 &bor #l5 0x86
       set-variable #l4 &add #l4 1
       forward-char
-      !jump -4
+      !continue
     !elif &seq @wc "\n"
       forward-char
       !if &seq @wc ""
@@ -117,6 +112,7 @@
     !elif &sin @wc "\t "
       forward-delete-char
       !if &band #l5 0x24
+*ins_ws
         !if &and &not &band #l5 0x60 &and #l0 &gre &add #l1 #l4 $buffer-fill-col
           set-mark
           set-variable $window-col #l7
@@ -138,15 +134,15 @@
         set-variable #l7 $window-col
         set-variable #l5 &band #l5 0xfffb
       !endif
-      !jump -40
+      !continue
     !elif &seq @wc "&"
       set-variable #l3 &rig @wl $window-col
       !if &iseq &lef #l3 6 "&NBSP;"
         6 forward-delete-char
-        !jump -26
+        !goto ins_ws
       !elif &iseq &lef #l3 5 "&NBSP"
         5 forward-delete-char
-        !jump -29
+        !goto ins_ws
       !elif &iseq &lef #l3 4 "&GT;"
         4 forward-delete-char
         insert-string ">"
@@ -169,9 +165,7 @@
         !while &sin @wc "0123456789"
           forward-delete-char
         !done
-        !if &seq @wc ";"
-          forward-delete-char
-        !endif
+        !iif  &seq @wc ";"  forward-delete-char
       !else
         forward-char
       !endif
@@ -192,34 +186,24 @@
             !if &sin &mid #l3 1 1 "1234"
               !if &band #l8 8
                 set-variable #l8 &band #l8 0xfff7
-                !if &not &band #l8 0x80
-                  insert-string &cat "\CC" &mid .colors #l8 1
-                !endif
+                !iif &not &band #l8 0x80  insert-string &cat "\CC" &mid .colors #l8 1
               !endif
               html-add-newline
               html-add-newline
-              !if &iseq #l3 "H1>"
-                html-add-newline
-              !endif
+              !iif &iseq #l3 "H1>"  html-add-newline
             !endif
           !elif &iseq #l3 "A>"
             html-end-ahref
           !elif &iseq #l3 "ADDRESS>"
             html-end-ahref
-            !if &band #l5 2
-              html-add-newline
-            !endif
+            !iif &band #l5 2  html-add-newline
           !elif &iseq #l3 "B>"
             !if &band #l8 4
               set-variable #l8 &band #l8 0xfffb
-              !if &not &band #l8 0x80
-                insert-string &cat "\CC" &mid .colors #l8 1
-              !endif
+              !iif &not &band #l8 0x80  insert-string &cat "\CC" &mid .colors #l8 1
             !endif
           !elif &iseq #l3 "DL>"
-            !if &band #l5 2
-              html-add-newline
-            !endif
+            !iif &band #l5 2  html-add-newline
             !if &gre &pdec #l6 1 1
               set-variable #l1 &sub #l1 4
             !else
@@ -229,40 +213,28 @@
           !elif &iseq #l3 "I>"
             !if &band #l8 2
               set-variable #l8 &band #l8 0xfffd
-              !if &not &band #l8 0x80
-                insert-string &cat "\CC" &mid .colors #l8 1
-              !endif
+              !iif &not &band #l8 0x80  insert-string &cat "\CC" &mid .colors #l8 1
             !endif
           !elif &iseq #l3 "PRE>"
-            !if &band #l5 2
-              html-add-newline
-            !endif
+            !iif &band #l5 2  html-add-newline
             html-add-newline
             set-variable #l5 &band #l5 0xffdf
           !elif &iseq #l3 "TT>"
             !if &band #l8 0x20
               set-variable #l8 &band #l8 0xffdf
-              !if &not &band #l8 0x80
-                insert-string &cat "\CC" &mid .colors #l8 1
-              !endif
+              !iif &not &band #l8 0x80  insert-string &cat "\CC" &mid .colors #l8 1
             !endif
           !elif &iseq #l3 "TABLE>"
-            !if &band #l5 2
-              html-add-newline
-            !endif
+            !iif &band #l5 2  html-add-newline
             html-add-newline
             set-variable #l5 &band #l5 0xff9f
           !elif &iseq #l3 "U>"
             !if &band #l8 1
               set-variable #l8 &band #l8 0xfffe
-              !if &not &band #l8 0x80
-                insert-string &cat "\CC" &mid .colors #l8 1
-              !endif
+              !iif &not &band #l8 0x80  insert-string &cat "\CC" &mid .colors #l8 1
             !endif
           !elif &iseq #l3 "UL>"
-            !if &band #l5 2
-              html-add-newline
-            !endif
+            !iif &band #l5 2  html-add-newline
             !if &les #l1 5
               html-add-newline
               set-variable #l1 0
@@ -279,9 +251,7 @@
         !tjump &sin "<" #l3  -5
         !if &band @# 2
           !if &seq &lef #l3 8 "!-- Me: "
-            !if &band #l5 2
-              html-add-newline
-            !endif
+            !iif &band #l5 2  html-add-newline
             insert-string &mid #l3 8 &sub &len #l3 12
             insert-newline
           !endif
@@ -294,18 +264,12 @@
         !if &isin &lef #l3 1 "ABDHILPSTU"
           !if &iseq &lef #l3 1 "H"
             !if &sin &mid #l3 1 1 "1234"
-              !if &band #l5 2
-                html-add-newline
-              !endif
+              !iif &band #l5 2  html-add-newline
               html-add-newline
-              !if &iseq #l3 "H1>"
-                html-add-newline
-              !endif
+              !iif &iseq #l3 "H1>"  html-add-newline
               !if &not &band #l8 8
                 set-variable #l8 &bor #l8 8
-                !if &not &band #l8 0x80
-                  insert-string &cat "\CC" &mid .colors #l8 1
-                !endif
+                !iif &not &band #l8 0x80  insert-string &cat "\CC" &mid .colors #l8 1
               !endif
             !elif &iseq #l3 "HR>"
               html-add-newline
@@ -315,16 +279,12 @@
           !elif &iseq &lef #l3 1 "D"
             !if &iseq #l3 "DD>"
               !if &not &band #l5 1
-                !if &band #l5 2
-                  html-add-newline
-                !endif
+                !iif &band #l5 2  html-add-newline
                 set-variable #l5 &bor #l5 1
                 set-variable #l1 &add #l1 4
               !endif
             !elif &iseq #l3 "DL>"
-              !if &band #l5 2
-                html-add-newline
-              !endif
+              !iif &band #l5 2  html-add-newline
               !if &pinc #l6 1
                 set-variable #l1 &add #l1 4
               !else
@@ -345,9 +305,7 @@
           !elif &iseq &lef #l3 1 "S"
             !if &iseq &left #l3 6 "SCRIPT"
               !force search-forward "</SCRIPT>"
-              !if $status
-                -1 kill-region
-              !endif
+              !iif $status  -1 kill-region
             !endif
           !elif &iseq &lef #l3 1 "T"
             !if &iseq #l3 "TITLE>"
@@ -356,28 +314,20 @@
                 kill-region
                 set-variable #l3 &lef @y &sub &len @y 8
                 -1 yank
-                !if &len #l3
-                  0 change-buffer-name #l3
-                !endif
+                !iif &len #l3  0 change-buffer-name #l3
               !endif
             !elif &iseq #l3 "TT>"
               !if &not &band #l8 1
                 set-variable #l8 &bor #l8 0x20
-                !if &not &band #l8 0x80
-                  insert-string &cat "\CC" &mid .colors #l8 1
-                !endif
+                !iif &not &band #l8 0x80  insert-string &cat "\CC" &mid .colors #l8 1
               !endif
             !elif &iseq &lef #l3 5 "TABLE"
-              !if &band #l5 2
-                html-add-newline
-              !endif
+              !iif &band #l5 2  html-add-newline
               html-add-newline
             !elif &iseq &lef #l3 2 "TR"
               ; this may be used to terminate a <a href=...>, check, and if so do it
               html-end-ahref
-              !if &band #l5 2
-                html-add-newline
-              !endif
+              !iif &band #l5 2  html-add-newline
               set-variable #l5 &bor #l5 0x60
             !elif &iseq &lef #l3 2 "TD"
               ; this may be used to terminate a <a href=...>, check, and if so do it
@@ -404,21 +354,15 @@
           !elif &iseq #l3 "B>"
             !if &not &band #l8 4
               set-variable #l8 &bor #l8 4
-              !if &not &band #l8 0x80
-                insert-string &cat "\CC" &mid .colors #l8 1
-              !endif
+              !iif &not &band #l8 0x80  insert-string &cat "\CC" &mid .colors #l8 1
             !endif
           !elif &iseq #l3 "I>"
             !if &not &band #l8 2
               set-variable #l8 &bor #l8 2
-              !if &not &band #l8 0x80
-                insert-string &cat "\CC" &mid .colors #l8 1
-              !endif
+              !iif &not &band #l8 0x80  insert-string &cat "\CC" &mid .colors #l8 1
             !endif
           !elif &iseq &lef #l3 4 "IMG "
-            !if &not &band #l8 0x80
-              insert-string &cat "\CC" &mid .colors &bor #l8 16 1
-            !endif
+            !iif &not &band #l8 0x80  insert-string &cat "\CC" &mid .colors &bor #l8 16 1
             !if &isin "ALT=" #l3
               set-variable #l3 &rig #l3 &add 3 &isin "ALT=" #l3
               !if &seq &lef #l3 1 "\""
@@ -433,49 +377,33 @@
               insert-string "[IMG]"
               set-variable #l4 &add #l4 5
             !endif
-            !if &not &band #l8 0x80
-              insert-string &cat "\CC" &mid .colors #l8 1
-            !endif
+            !iif &not &band #l8 0x80  insert-string &cat "\CC" &mid .colors #l8 1
             set-variable #l5 &bor #l5 0x86
           !elif &iseq #l3 "LI>"
-            !if &band #l5 2
-              html-add-newline
-            !endif
+            !iif &band #l5 2  html-add-newline
             insert-string "* "
             set-variable #l5 &bor #l5 0x100
             set-variable #l4 &add #l4 2
           !elif &or &iseq #l3 "P>" &iseq &lef #l3 2 "P "
-            !if &band #l5 2
-              html-add-newline
-            !endif
+            !iif &band #l5 2  html-add-newline
             html-add-newline
           !elif &iseq #l3 "PRE>"
-            !if &band #l5 2
-              html-add-newline
-            !endif
+            !iif &band #l5 2  html-add-newline
             html-add-newline
             set-variable #l5 &bor #l5 0x20
           !elif &iseq #l3 "U>"
             !if &not &band #l8 1
               set-variable #l8 &bor #l8 1
-              !if &not &band #l8 0x80
-                insert-string &cat "\CC" &mid .colors #l8 1
-              !endif
+              !iif &not &band #l8 0x80  insert-string &cat "\CC" &mid .colors #l8 1
             !endif
           !elif &iseq #l3 "UL>"
-            !if &band #l5 2
-              html-add-newline
-            !endif
-            !if &not #l1
-              html-add-newline
-            !endif
+            !iif &band #l5 2  html-add-newline
+            !iif &not #l1  html-add-newline
             set-variable #l1 &add #l1 4
           !endif
         !endif
       !endif
     !endif
-  !until 0
+  !done
 !emacro
-
-set-variable .html-to-ehf.colors "ABCCDDDDEEEEEEEEFFFFFFFFFFFFFFFFGBCCDDDDEEEEEEEEFFFFFFFFFFFFFFFF"
-
+set-variable .html-to-ehf.colors "AFEIDHGJBBBBBBBBhhhhhhhhhhhhhhhhKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK"
