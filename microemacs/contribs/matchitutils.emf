@@ -1,0 +1,140 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2025 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Synopsis:    Match-It utils to generate more grids and to assess them
+; Authors:     Steven Phillip
+;
+!iif &not &exi mi-main-menu  execute-file "matchit" 
+
+0 define-macro miutl-rm-pair
+  !iif &not &seq $buffer-bname "*match-it*"  -8 ml-write "Current buffer must be *match-it*"
+  !iif &sub :mi-status 1  -8 ml-write "Invalid :mi-status value"
+  !if &len $buffer-bhook
+    set-variable $buffer-bhook ""
+    ehook-match-it
+  !endif
+  mi-uselect
+  set-variable #g4 19
+  !force mi-find-removable-from
+  !iif &not $status -8 ml-write "Failed to find pair"
+  ml-write &spr "Found pair: %d (%d) -> %d (%d) P:%d I:%s" #g4 &set #l4 &mid :mi-tiles #g4 1 #g5 &set #l5 &mid :mi-tiles #g5 1 &seq #l4 #l5 &lef #g6 2
+  set-variable :mi-game-help #g4
+  ; remove pair
+  set-variable :mi-tiles &spr "%s%s%s" &lef :mi-tiles #g4 "\xfe" &rig :mi-tiles &add #g4 1
+  set-variable :mi-tiles &spr "%s%s%s" &lef :mi-tiles #g5 "\xfe" &rig :mi-tiles &add #g5 1
+!emacro
+
+define-macro miutl-assess-grid
+  set-variable #l9 @1
+  set-variable #l8 &spr "%19s" "\xfe"
+  set-variable #l1 6
+  !repeat
+    set-variable #l8 &spr "%s%s%s" #l8 &lef #l9 16 "\xfe\xfe"
+    set-variable #l9 &rig #l9 16
+  !until &not &dec #l1 1
+  set-variable #l8 &spr "%s%17s" #l8 "\xfe"
+  !force 0 delete-buffer "*match-it*"
+  find-buffer "*match-it*"
+  set-variable :mi-sel-tile-id 254
+  set-variable :mi-tiles #l8
+  set-variable :mi-again #l8
+  set-variable :mi-internal 15
+  set-variable #l2 0
+  set-variable #l1 0
+  set-variable #l0 48
+  !repeat
+    ;ml-write &cat "Assessing: " #l0
+    set-variable #g4 19
+    !repeat
+      !if &not &seq &mid :mi-tiles #g4 1 "\xfe"
+        set-variable #g2 &sub &atoi &mid :mi-tiles #g4 1 1
+        set-variable #g5 &add #g4 1
+        !force #g2 mi-find-removable-pair-from
+        !if &not $status
+        !elif &or #l1 &equ &lef #g6 2 15
+          set-variable :mi-tiles &spr "%s%s%s" &lef :mi-tiles #g4 "\xfe" &rig :mi-tiles &add #g4 1
+          set-variable :mi-tiles &spr "%s%s%s" &lef :mi-tiles #g5 "\xfe" &rig :mi-tiles &add #g5 1
+          !break
+        !endif
+      !endif
+      !if &les &inc #g4 1 125
+      !elif #l1
+        set-variable #p9 -1
+        !return
+      !else
+        set-variable #l2 &add #l2 1
+        set-variable #l1 1
+        set-variable #g4 19
+      !endif
+    !done
+    set-variable #l1 0
+  !until &not &dec #l0 1
+  set-variable #p9 #l2
+!emacro
+
+;miutl-assess-grid "6O7A'<95536HL.//A&<@#NC**C4NL H%8B ;2(F-)IJK@>3;1%$>)=:&DIFK\"\"?OJ0M419'$+7M-0+.(!=?BG:G#E,!DE2,8"
+;set-variable #g0 #l9
+
+define-macro miutl-assess-buffer
+  set-variable #l0 $buffer-bname
+  !while &not &seq @wc ""
+    !iif &sub &len @wl 96  -8 ml-write "[invalid line length]"
+    miutl-assess-grid @wl
+    !iif &les #l9 0  -8 ml-write &spr "[unexpected return %s]" #l9
+    find-buffer #l0
+    beginning-of-line
+    insert-string &spr "%02d:" #l9
+    ml-write &spr "Assessed line %s: %2d" $window-line #l9
+    forward-line
+  !done
+!emacro
+define-macro miutl-create-grid
+  !force 0 delete-buffer "*match-it*"
+  find-buffer "*match-it*"
+  set-variable #l0 48
+  !while &pdec #l0 1
+    insert-string &spr "%s%s\n%s%s\n" &set #l2 &itoa &add #l0 32 $random #l2 $random
+  !done
+  set-mark
+  beginning-of-buffer
+  1 sort-lines
+  beginning-of-buffer
+  set-variable #l0 96
+  set-variable #l1 ""
+  !while &pdec #l0 1
+    set-variable #l1 &cat #l1 @wc
+    forward-line
+  !done
+  set-variable #p8 #l1
+!emacro
+define-macro miutl-gen-grid
+  set-variable #l0 0
+  !repeat
+    miutl-create-grid
+    miutl-assess-grid #l8
+    ;ml-write &spr "Grid %s: %s" &inc #l0 1 #l9
+  !until &gre #l9 -1
+  set-variable #p8 #l8
+  set-variable #p9 #l9
+!emacro
+
+define-macro miutl-gen
+  find-buffer "*mi*"
+  end-of-buffer
+  set-variable #l0 0
+  set-variable #l1 "|99|0|"
+  !repeat
+    @# miutl-gen-grid
+    find-buffer "*mi*"
+    insert-string &spr "%02d:%s" #l9 #l8
+    forward-char
+    !if &les #l9 &lget #l1 1
+      set-variable #l1 &lset #l1 1 #l9
+    !elif &gre #l9 &lget #l1 2
+      set-variable #l1 &lset #l1 2 #l9
+    !endif
+    ml-write &spr "Grid %s: %s - %s %s" &inc #l0 1 #l9 &lget #l1 1 &lget #l1 2
+  !until &gre #l0 99
+!emacro

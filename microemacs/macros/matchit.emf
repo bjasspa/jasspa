@@ -134,6 +134,7 @@
     !abort
   !endif
   set-variable :mi-status 0
+  set-variable #l0 :mi-level
   ;
   ; Shuffle the pack.
   ;
@@ -181,9 +182,15 @@
     change-buffer-name "*mi"
   !endif
   beginning-of-buffer
-  &mod $random 129 forward-line
-  set-variable #l7 @wl
+  !if &les &set #l7 @wl 129
+    set-variable #l7 129
+  !else
+    set-variable #l7 &con &gre &set #l0 &add 50 &mul #l0 25 #l7 #l7 #l0
+    forward-line
+  !endif
+  &mod $random #l7 forward-line
   ml-write "Allocating Tiles..."
+  set-variable #l7 @wl
   -1 find-buffer $buffer-bname
   ; Fill the table with data
   set-variable #l8 &spr "%19s" "\xfe"
@@ -1022,10 +1029,12 @@ define-macro mi-main-menu
     !endif
     change-buffer-name "*mi"
   !endif
+  beginning-of-buffer
+  !iif &les &set #l7 &add @wl 1 129  set-variable #l7 129
   set-variable #l1 1
   set-variable #l2 ""
   !repeat
-    !force &add 129 #l1 goto-line
+    !force &add #l7 #l1 goto-line
     !if &and $status &gre &len @wl 11
       set-variable #l5 &add 0 &lef @wl 7
       set-variable #l4 &add 0 &mid @wl 7 5
