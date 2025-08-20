@@ -121,5 +121,16 @@ set-variable .fhook-julia.item-list-r3 "Strc \CCb\\1\CCA"
   indent .hilight.julia    N "begin"           t
 !endif
 
+; setup file-* tools
+add-next-line "*julia-exec*" "^in expression starting at:%f:%l"
+;0 add-next-line "*julia-lint*"
+;add-next-line "*julia-lint*" "^------+ %f"
+add-next-line "*julia-lint*" "^Line %l,.+\\. %f"
+
+set-variable .fhook-julia.coms "\bjulia\b" 
+set-variable .fhook-julia.exec1   "\b%v[com]\b\b\b\b%\"%v[com]%\" \"%p%f\" %v[args|20|Additional command-line arguments|]\b"
+set-variable .fhook-julia.format1 "\brunic\brunic --version\b0\b\brunic -i %\"%f%\"\bRunic\b"
+set-variable .fhook-julia.lint1   "\bjulia\bjulia -e 'import ReLint;println(0)'\b0\b\bjulia -e 'import ReLint; ReLint.run_lint(\"%f\")'\bReLint\b"
+
 buffer-init-fhook "julia"
 
