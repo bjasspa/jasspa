@@ -7,7 +7,7 @@
 .\"  Created By    : Detlef Groth
 .\"  Created       : 2025-07-23
 .\"
-.Id $Id: m9typ057.9,v 2.6 2025/07/27 09:47:52 jon Exp $
+.Id $Id: m9typ057.9,v 2.6 2025/08/20 14:01:21 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH jl 9
@@ -43,6 +43,15 @@ The  list  of  abbreviations  can be used  interactively  in the GUI
 version of \*(mE using the 
 .Ht abbrev-list 3
 command.
+.IP "\fBAuto Layout\fR"
+The
+.Hl "indentation mechanism" indent 2
+is enabled which performs automatic layout of the text.
+.Ht restyle-region 3
+and
+.Ht restyle-buffer 3
+are available to reformat  (re-layout) selected sections of the buffer, or the
+whole buffer, respectively.
 .IP "\fBFolding and Information Hiding\fR"
 Generic  folding  is  enabled  within  the Julia  file. The folds  occur  about
 functions,  macros and structs as long as these declarations are on
