@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ009.9,v 2.6 2025/07/30 08:21:05 jon Exp $
+.Id $Id: m9typ009.9,v 2.6 2025/08/13 08:38:53 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH f 9
@@ -55,6 +55,16 @@ the header.
 The hilighting  features allow functions, subroutines, variables, logical, comments, strings
 and characters of the language to be differentiated  and rendered in different
 colors.
+.IP "\fBAuto Layout\fR"
+The 
+.Hl "indentation mechanism" indent 2 
+is enabled which performs 
+performs automatic layout of the text.
+.Ht restyle-region 3
+and
+.Ht restyle-buffer 3
+are available to reformat  (re-layout) selected sections of the buffer, or the
+whole buffer, respectively.
 .IP "\fBFolding and Information Hiding\fR"
 Generic  folding is enabled  within the \fBf90\fR files. The folds occur about
 \fBprogram\fR, \fBfunction\fR or \fBprocedure\fR keywords and their \fBend\fR text located on the left-hand margin.
@@ -123,6 +133,8 @@ misplaced.
 .Ht file-lint 3 ,
 .Ht indent 2 ,
 .Ht item-list 3 ,
+.Ht restyle-buffer 3 ,
+.Ht restyle-region 3 ,
 .Ht time 2m .
 .sp 1
 .Hl "Supported File Types" FileTypes -

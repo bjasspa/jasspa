@@ -7,7 +7,7 @@
 .\"  Created By    : Detlef Groth
 .\"  Created       : 2025-07-23
 .\"
-.Id $Id: m9typ057.9,v 2.6 2025/07/27 09:47:52 jon Exp $
+.Id $Id: m9typ057.9,v 2.6 2025/08/20 17:05:46 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH jl 9
@@ -43,6 +43,15 @@ The  list  of  abbreviations  can be used  interactively  in the GUI
 version of \*(mE using the 
 .Ht abbrev-list 3
 command.
+.IP "\fBAuto Layout\fR"
+The
+.Hl "indentation mechanism" indent 2
+is enabled which performs automatic layout of the text.
+.Ht restyle-region 3
+and
+.Ht restyle-buffer 3
+are available to reformat  (re-layout) selected sections of the buffer, or the
+whole buffer, respectively.
 .IP "\fBFolding and Information Hiding\fR"
 Generic  folding  is  enabled  within  the Julia  file. The folds  occur  about
 functions,  macros and structs as long as these declarations are on
@@ -77,10 +86,38 @@ The short cut keys used within the buffer are:-
 .br
 \fBf6\fR \- List items.
 .br
-\fB\*ef6\fR \- Close item list,
+\fB\*ef6\fR \- Close item list.
+.IP "\fBExecuting, Formatting and Linting Julia Code\fR"
+The Julia file hook supports the 
+.Ht file-exec 3 ,
+the 
+.Ht file-format 3
+and the 
+.Ht file-lint 3
+macros.   The   Julia    packages   which   are   currently    supported   for
+formatting and linting are
+"Runic" and "ReLint". The  procedure  to install the "runic" script as a standalone  application  on a Unix
+system is  like this:
+.RS
+.CS
+# Download the script into ~/.local/bin
+curl -fsSL -o ~/.local/bin/runic https://raw.githubusercontent.com/fredrikekre/Runic.jl/refs/heads/master/bin/runic
+# Make the script executable
+chmod +x ~/.local/bin/runic
+# Verify the installation
+runic --version
+.CE 0
+.RE
+The procedure to install the "ReLint" Julia linter in the julia shell is like this:
+.RS
+.CS
+import Pkg 
+Pkg.add(url="https://github.com/RelationalAI-oss/ReLint.jl")
+.CE 0
+.RE
 .SH NOTES
 .PP
-The  hilighting  is  typically   extended  using  a  file   \fBmyjl.emf\fR.
+The  hilighting  and other features are  typically   extended  using  a  file   \fBmyjl.emf\fR.
 .SH BUGS
 None reported so far.
 .SH "SEE ALSO"
@@ -89,6 +126,9 @@ None reported so far.
 .Ht collapse-all 3 ,
 .Ht collapse-current 3 ,
 .Ht expand-abbrev-handle 3 ,
+.Ht file-exec 3 ,
+.Ht file-format 3 ,
+.Ht file-lint 3 ,
 .Ht item-list 3 ,
 .Ht restyle-buffer 3 ,
 .Ht restyle-region 3 ,
