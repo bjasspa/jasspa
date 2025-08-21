@@ -89,37 +89,3 @@ hilight .hilight.methL 0x40 "." ""   $global-scheme
   hilight .hilight.meth 0xc0 &cat "\CD" &itoa &add 65 &set #p9 &lfin .fl #l0 "" #l1  $global-scheme
 !emacro
 set-variable .meth-add-format.fl "\b\b"
-
-; TODO remove: conversion of memh & ehf > meth
-;A -> A
-;B -> F
-;C -> E
-;D -> D
-;E -> B
-;F -> h
-;G -> K
-
-; item-list
-;  hilight .hilight.list-item 0x44 "\ecB" "" "\ecA" "" "" .scheme.function
-;  hilight .hilight.list-item 0x44 "\ecC" "" "\ecA" "" "" .scheme.type
-; B -> b
-; C -> d
-; abbrev-list
-;  hilight .hilight.abbrev-item 0x40 ":EXSTR:.*" "" $global-scheme
-;  hilight .hilight.abbrev-item 0x40 "<FOLD\\+>" "+" .scheme.dir-closed
-;  hilight .hilight.abbrev-item 0x40 "<FOLD->" "-" .scheme.dir-open
-;  hilight .hilight.abbrev-item 0x40 "</FOLD>" "" $global-scheme
-;  hilight .hilight.abbrev-item 0x44 "\ecB" "" "\ecA" "" "" .scheme.function
-;  hilight .hilight.abbrev-item 0x44 "\ecC" "" "\ecA" "" "" .scheme.keyword  \CCc
-;  hilight .hilight.abbrev-item 0x44 "\ecD" "" "\ecA" "" "" .scheme.operator
-;  hilight .hilight.abbrev-item 0x44 "\ecE" "" "\ecA" "" "" .scheme.variable
-;  hilight .hilight.abbrev-item 0x44 "\ecF" "" "\ecA" "" "" .scheme.string
-;  hilight .hilight.abbrev-item 0x44 "\ecG" "" "\ecA" "" "" .scheme.comment
-; B -> b
-; C -> c
-; D -> e
-; E -> f
-; F -> i
-; G -> h
-;
-; Sort out links \els \elm \eln \ele
