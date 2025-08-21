@@ -54,7 +54,8 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkruby.emf	hkrul.emf	hkrust.emf	\
 	hksamba.emf	hkscheme.emf	hksgml.emf	hkshell.emf	\
 	hkslang.emf	hkspec.emf	hksql.emf	hkswift.emf	\
-	hktcl.emf	hktexi.emf	hktools.emf	hktxt.emf	\
+	hktcl.emf	hktexi.emf	hktlsosd.emf	hktools.emf	\
+	hktxt.emf	\
 	hkv.emf		hkvb.emf	hkverilg.emf	hkvhdl.emf	\
 	hkvrml.emf	hkwiki.emf	hkyaml.emf	\
 	hkxml.emf	xmlutil.emf	\

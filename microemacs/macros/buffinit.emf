@@ -9,6 +9,7 @@
 ; Authors:     Steven Phillips
 ;
 define-macro-file collapse collapse-current collapse-all beginning-of-function end-of-function goto-function-line mark-function
+define-macro-file hktlsosd major-mode-tools-setup
 0 define-macro-file hktools file-tool-com-init
 0 define-macro-file fold fold-setup
 

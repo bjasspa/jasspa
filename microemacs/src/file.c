@@ -929,8 +929,7 @@ executableLookup(meUByte *fname, meUByte *outName)
 #if (defined _WIN32) || (defined _DOS)
     if(fileLookup(fname,extExecCnt,extExecLst,meFL_CHECKDOT|meFL_CHECKPATH|meFL_USEPATH,outName))
         return 1;
-#endif
-#ifdef _UNIX
+#else
     if(fileLookup(fname,0,NULL,meFL_CHECKPATH|meFL_USEPATH|meFL_EXEC,outName))
         return 1;
 #endif
