@@ -7,7 +7,7 @@
 .\"  Created By    : Detlef Groth
 .\"  Created       : 2025-07-24
 .\"
-.Id $Id: m9typ058.9,v 2.6 2025/07/27 09:47:20 jon Exp $
+.Id $Id: m9typ058.9,v 2.6 2025/08/22 08:07:03 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH m 9
@@ -79,17 +79,48 @@ The short cut keys used within the buffer are:-
 \fBf6\fR \- List items.
 .br
 \fB\*ef6\fR \- Close item list,
+.IP "\fBExecuting, Formatting and Linting Octave Code\fR"
+The Octave file hook supports the 
+.Ht file-exec 3 ,
+the 
+.Ht file-format 3
+and the 
+.Ht file-lint 3
+macros.   For  formatting  and linting the \fIoctave\fR  interpreter  itself is used
+using the \fI"-W"\fR option for running the  terminal  version. As Octave does
+not support  mentioning the filename in case of errors,  currently there is no
+support to click on the error messages and jump to the problematic code. For  formatting  the
+code the Python tool \fI"matlab-formatter"\fR can be used. This tool can be installed on a
+Unix system like this:
+.RS
+.CS
+## Download the script into ~/.local/bin
+curl -fsSL -o ~/.local/bin/matlab-formatter \\
+  https://raw.githubusercontent.com/mittelmark/matlab-formatter-vscode/refs/heads/master/formatter/matlab_formatter.py
+
+### Make the script executable
+chmod +x ~/.local/bin/matlab-formatter
+
+#### Verify the installation
+matlab-formatter
+.CE 0
+.RE
 .SH NOTES
 .PP
 The  hilighting  is  typically   extended  using  a  file   \fBmym.emf\fR.
 .SH BUGS
-None reported so far.
+Currenlty the next-line feature for interactive browsing of errors and warning
+for  file-lint and file-exec  does not work due to Octave limits on mentioning
+the filename for errors. 
 .SH "SEE ALSO"
 .na
 .Ht abbrev-list 3 ,
 .Ht collapse-all 3 ,
 .Ht collapse-current 3 ,
 .Ht expand-abbrev-handle 3 ,
+.Ht file-exec 3 ,
+.Ht file-format 3 ,
+.Ht file-lint 3 ,
 .Ht item-list 3 ,
 .Ht restyle-buffer 3 ,
 .Ht restyle-region 3 ,

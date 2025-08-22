@@ -112,6 +112,7 @@ set-variable .fhook-octave.item-list-r3 "Func \CCb\\1\CCA"
   
   ; types
   hilight    .hilight.octave 1 "logical"       .scheme.type
+  hilight    .hilight.octave 1 "cell array"    .scheme.type
   hilight    .hilight.octave 1 "char"          .scheme.type
   hilight    .hilight.octave 1 "False"         .scheme.type  
   hilight    .hilight.octave 1 "false"         .scheme.type    
@@ -129,6 +130,7 @@ set-variable .fhook-octave.item-list-r3 "Func \CCb\\1\CCA"
   hilight    .hilight.octave 1 "double"        .scheme.type
   hilight    .hilight.octave 1 "single"        .scheme.type
   hilight    .hilight.octave 1 "complex"       .scheme.type
+  hilight    .hilight.octave 1 "structure"     .scheme.type
 !endif
 
 !if &sin "d" .fhook-octave.setup
@@ -149,5 +151,29 @@ set-variable .fhook-octave.item-list-r3 "Func \CCb\\1\CCA"
   indent .hilight.octave    S "case"           -t
   indent .hilight.octave    S "otherwise"      -t     
 !endif
+
+; setup file-* tools
+; did not work as octave does not report the filename
+0 add-next-line "*octave-lint*"
+add-next-line "*octave-exec*" " line %l"
+add-next-line "*octave-lint*" "octave -W \"%f\""
+add-next-line "*octave-lint*" "at line %l"
+
+set-variable .fhook-octave.coms "\boctave\b" 
+set-variable .fhook-octave.exec1   "\b%v[com]\b\b\b\b%\"%v[com]%\" -W \"%f\" %v[args|20|Additional command-line arguments|]\b"
+
+
+;## Download the script into ~/.local/bin
+;curl -fsSL -o ~/.local/bin/matlab-formatter \
+;  https://raw.githubusercontent.com/mittelmark/matlab-formatter-vscode/refs/heads/master/formatter/matlab_formatter.py
+;### Make the script executable
+;chmod +x ~/.local/bin/matlab-formatter
+;#### Verify the installation
+;matlab-formatter
+
+set-variable .fhook-octave.format1   "\bmatlab-formatter\bmatlab-formatter 2>&1\b0\b\bmatlab-formatter \"%f\" --inplace=true\bmatlab-formatter\b"
+
+; no real linter is available for Octave
+set-variable .fhook-octave.lint1 "\b%v[com]\b\b\b\b%\"%v[com]%\" -W \"%f\"\bOctave Lint\b"
 
 buffer-init-fhook "octave"
