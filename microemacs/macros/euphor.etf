@@ -1,10 +1,19 @@
 ----------------------------------------------------------------------------
 --
--- Copyright (C) $YEAR$ $COMPANY_REF$.
+--  Author        : $Author$
+--  Created By    : $USER_NAME$
+--  Created       : $ASCII_TIME$
+--  Last Modified : <250818.2043>
 --
--- $COMPANY_LICENSE:75$
+--  Description
 --
--- Synopsis:    $CURSOR$
--- Authors:     $USER_NAME$
+--  Notes
+--
+--  History
+--
+--  Copyright (c) $YEAR$ $COMPANY_NAME$.
 --
 ----------------------------------------------------------------------------
+include std/io.e
+include std/types.e
+include std/regex.e as re
