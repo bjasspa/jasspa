@@ -7,7 +7,7 @@
 .\"  Created By    : Detlef Groth
 .\"  Created       : 2025-07-24
 .\"
-.Id $Id: m9typ058.9,v 2.6 2025/08/22 08:07:03 jon Exp $
+.Id $Id: m9typ058.9,v 2.6 2025/08/22 08:24:11 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH m 9
@@ -89,9 +89,12 @@ and the
 macros.   For  formatting  and linting the \fIoctave\fR  interpreter  itself is used
 using the \fI"-W"\fR option for running the  terminal  version. As Octave does
 not support  mentioning the filename in case of errors,  currently there is no
-support to click on the error messages and jump to the problematic code. For  formatting  the
-code the Python tool \fI"matlab-formatter"\fR can be used. This tool can be installed on a
-Unix system like this:
+support to click on the error  messages for and jump to the  problematic  code
+\fBfile-exec\fR. 
+For  linting a trick is used catching the error message for the current Octave
+file. For formatting  the code the Python tool \fI"matlab-formatter"\fR can be
+used.
+This tool can be installed on an Unix system like this:
 .RS
 .CS
 ## Download the script into ~/.local/bin
