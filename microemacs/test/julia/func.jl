@@ -28,3 +28,9 @@ using Printf
 
 quad1, quad2 = quadratic2(2.0, -2.0, -12.0)
 println("result 1: ", quad1)
+
+macro sayhello()
+    return :( println("Hello, macro world!") )
+end
+
+@sayhello
