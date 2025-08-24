@@ -27,7 +27,8 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	fattrib.emf	favorite.emf	fileopen.emf	filetool.emf	\
 	filetype.emf	find.emf	fold.emf	\
 	format.emf	freebsd.emf	ftp.emf		\
-	games.emf	gdiff.emf	gentags.emf	git.emf	\
+	games.emf	gdiff.emf	generict.emf	gentags.emf	\
+	git.emf	\
 	hkada.emf	hkapache.emf	hkapt.emf	hkasmx86.emf	\
 	hkasn1.emf	hkasp.emf	hkau3.emf	hkawk.emf	\
 	hkbibtex.emf	hkbinary.emf	hkblist.emf	hkbnf.emf	\
@@ -114,7 +115,7 @@ ETFS=	ada.etf		asmx86.etf	asn1.etf	au3.etf		\
 	h.etf		hpp.etf		html.etf	go.etf	\
 	idl.etf		imake.etf	\
 	java.etf	js.etf		jst.etf		julia.etf	\
-	latex.etf	\
+	latex.etf	lua.etf		\
 	makefile.etf	md.etf		mhg.etf		mod2.etf	\
 	newcomp.etf	newuser.etf	nroff.etf	octave.etf	\
 	pascal.etf	perl.etf	php.etf		pls.etf		\
@@ -135,7 +136,8 @@ EAFS=	ada.eaf		asp.eaf		au3.eaf		awk.eaf		\
 	hkphp.eaf	\
 	html.eaf	\
 	java.eaf	js.eaf		jsp.eaf		jst.eaf		\
-	julia.eaf	latex.eaf	md.eaf		octave.eaf	\
+	julia.eaf	latex.eaf	lua.eaf		\
+	md.eaf		octave.eaf	\
 	pascal.eaf	perl.eaf	php.eaf		pls.eaf		\
 	python.eaf	\
 	r.eaf		rd.eaf		rust.eaf	\

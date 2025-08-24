@@ -6,7 +6,7 @@
 ; copying information.
 ;
 ; Synopsis:    Lua hook - invoked when a Lua file is loaded.
-; Authors:     Jeremy Cowgar & Steven Phillips
+; Authors:     Jeremy Cowgar, Steven Phillips & Detlef Groth
 ;
 
 define-macro fhook-lua
@@ -43,12 +43,21 @@ set-variable .fhook-lua.collapse-mnext  "-1"
   ; define our highlighting scheme
   0 hilight .hilight.lua 1                    $global-scheme
   
-  hilight .hilight.lua 2 "--"                 .scheme.comment
+  hilight .hilight.lua 2 "--"                     .scheme.comment
+  hilight .hilight.lua 4 "--\\[\\[" "\\]\\]" ""   .scheme.comment
+  hilight .hilight.lua 4 "--\\[=\\[" "\\]=\\]" "" .scheme.comment
   
-  hilight .hilight.lua 0x804 "\"" "\"" "\\"   .scheme.string
-  hilight .hilight.lua 0x804 "'" "'" "\\"     .scheme.string
+  hilight .hilight.lua 4 "\\[\\[" "\\]\\]" ""     .scheme.string
+  hilight .hilight.lua 0x804 "\"" "\"" "\\"       .scheme.string
+  hilight .hilight.lua 0x804 "'" "'" "\\"         .scheme.string
+  
   hilight .hilight.lua 0x80 "\\[" .hilight.luaS .scheme.string
   hilight .hilight.lua 0 "\\w\\["             $global-scheme
+  
+  hilight .hilight.lua 0 "::\\w+::"           .scheme.link ; label  
+  
+  hilight .hilight.lua 2 "^#!/"         .scheme.header
+  hilight .hilight.lua 2 "require "     .scheme.prepro
   
   hilight .hilight.lua 1 "break"              .scheme.keyword
   hilight .hilight.lua 1 "do"                 .scheme.keyword
@@ -59,6 +68,7 @@ set-variable .fhook-lua.collapse-mnext  "-1"
   hilight .hilight.lua 1 "function"           .scheme.keyword
   hilight .hilight.lua 1 "if"                 .scheme.keyword
   hilight .hilight.lua 1 "in"                 .scheme.keyword
+  hilight .hilight.lua 1 "goto"               .scheme.keyword  
   hilight .hilight.lua 1 "local"              .scheme.keyword
   hilight .hilight.lua 1 "repeat"             .scheme.keyword
   hilight .hilight.lua 1 "return"             .scheme.keyword
@@ -130,5 +140,16 @@ set-variable .fhook-lua.collapse-mnext  "-1"
   ; let html based files use the lua indent for any LUA Scripts
   set-variable .indent.luascript .hilight.lua
 !endif
+
+add-next-line "*lua-exec*" "^lua: %f:%l"
+add-next-line "*lua-lint*" "^luac: %f:%l"
+
+set-variable .fhook-lua.coms    "\blua\b" 
+set-variable .fhook-lua.exec1   "\b%v[com]\b\b\b\b%\"%v[com]%\" \"%f\" %v[args|20|Additional command-line arguments|]\b"
+set-variable .fhook-lua.lint1   "\bluac\bluac -v\b0\b\bluac -p %\"%f%\"\bluac\b"
+
+;## Install Lua fmt using npm like this
+; sudo npm install -g lua-fmt
+set-variable .fhook-lua.format1 "\bluafmt\bluafmt -h\b0\bluafmt --write-mode replace %\"%f%\"\bluafmt\b"
 
 buffer-init-fhook "lua"
