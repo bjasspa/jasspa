@@ -62,10 +62,14 @@ OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
 
 CCDEFS   = $(BIT_OPT) -D_LINUX -D_$(BIT_SIZE)BIT -DZ7_ST -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I.
-CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wno-uninitialized
+LTO      = -flto
+ifeq "$(PLATFORM_VER)" "5"
+LTO      = 
+endif
+CCFLAGSR = -O3 $(LTO) -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g
 LDDEFS   = $(BIT_OPT)
-LDFLAGSR = -O3 -flto
+LDFLAGSR = -O3 $(LTO)
 LDFLAGSD = -g
 ARFLAGSR = rcs
 ARFLAGSD = rcs
