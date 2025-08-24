@@ -151,5 +151,7 @@ set-variable .fhook-lua.lint1   "\bluac\bluac -v\b0\b\bluac -p %\"%f%\"\bluac\b"
 ;## Install Lua fmt using npm like this
 ; sudo npm install -g lua-fmt
 set-variable .fhook-lua.format1 "\bluafmt\bluafmt -h\b0\bluafmt --write-mode replace %\"%f%\"\bluafmt\b"
+; https://github.com/CurtisFenner/luafmt
+set-variable .fhook-lua.format2 "\bluafmt.lua\bluafmt.lua\b0\bluafmt.lua --f %\"%f%\"\bluafmt.lua\b";
 
 buffer-init-fhook "lua"
