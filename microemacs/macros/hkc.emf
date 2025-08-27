@@ -528,11 +528,11 @@ add-next-line "*c-exec*" "^%f:%l:\\d+.+"
 add-next-line "*c-lint*" "^%f:%l:\\d+.+"
 set-variable .fhook-c.coms "\bgcc\b" 
 ; I do not see an advantage of these coms - how would I use v[com] in case I check for clang compiler or tcc
-set-variable .fhook-c.exec1 "\b%v[com]\b%v[com].exe -v\b\b\bdel %\"%b.exe%\" %& %v[com] -Wall -O3 -std=c99 --max-errors=3 %\"%p%f%\" -o %b && .%\%\%b %v[args|20|Additional command-line arguments|]\b"
-set-variable .fhook-c.exec2 "\b%v[com]\b%v[com]  -v\b\b\brm -f %\"%b%\" %& %v[com] -Wall -O3 -std=c99 --max-errors=3 %\"%p%f%\" -o ./%b && ./%b %v[args|20|Additional command-line arguments|]\b"
+set-variable .fhook-c.exec1 "\b%v[com]\b%v[com].exe -v\b0\b\bdel %\"%b.exe%\" %& %v[com] -Wall -O3 -std=c99 --max-errors=3 %\"%p%f%\" -o %b && .%\%\%b %v[args|20|Additional command-line arguments|]\b"
+set-variable .fhook-c.exec2 "\b%v[com]\b%v[com]  -v\b0\b\brm -f %\"%b%\" %& %v[com] -Wall -O3 -std=c99 --max-errors=3 %\"%p%f%\" -o ./%b && ./%b %v[args|20|Additional command-line arguments|]\b"
 set-variable .fhook-c.format1 "\bastyle\bastyle -h\b0\b\bastyle --indent=spaces=4 %\"%f%\"\bAstyle\b"
 set-variable .fhook-c.format2 "\bclang-format\bclang-format -h\b0\b\bclang-format --style=%\"{IndentWidth: 4}%\" -i %\"%f%\"\bClang-format\b"
-set-variable .fhook-c.lint1 "\b%v[com]\b%v[com] --version\b0\b\b%v[com] -Wall -x c -fsyntax-only --max-errors=3 %\"%p%f%\"\bG++\b"
+set-variable .fhook-c.lint1 "\b%v[com]\b%v[com] --version\b0\b\b%v[com] -Wall -x c -fsyntax-only --max-errors=3 %\"%p%f%\"\bGcc\b"
 set-variable .fhook-c.lint2 "\bclang-tidy\bclang-tidy --version\b0\b\bclang-tidy %\"%f%\" -- -std=c99\bClang-tidy\b"
 
 

@@ -257,7 +257,7 @@ osd .osd.hk-tool 0 "batcHIs" 4 4 74 0 -1 -1 640 .scheme.osd-title "Major Mode To
 osd .osd.hk-tool 10 ""
 osd .osd.hk-tool 100 "Sfh" "  \HExec config:      " 110
 osd .osd.hk-tool 110 "OtxmsfhHzR" .scheme.osd-entry 27 1 "" .osd.tmp hktool-setup-ecmb
-osd .osd.hk-tool 120 "BdxfHRh" .scheme.osd-ebtt &mid $window-chars 10 1 210
+osd .osd.hk-tool 120 "BdxfHRh" .scheme.osd-ebtt &mid $window-chars 10 1 110
 osd .osd.hk-tool 130 ""
 osd .osd.hk-tool 150 ""
 osd .osd.hk-tool 160 "Sfh" "      Command-line: " 170
@@ -292,14 +292,14 @@ define-macro major-mode-tools-setup
   set-variable .hktool-setup-mint.cs 0
   osd .osd.hk-tool 130 "" ""
   !force unset-variable &spr ".%s.exec-com" $buffer-fhook
-  !force file-tools-init "format"
+  !force file-tools-init "exec"
   !if $status
     set-variable .ei &add 0 &lget &set .el #l1 7
     osd .osd.hk-tool 130 "" &con &seq "" &reg &spr "/history/%s/fhook/%s-exec-com" $platform &rig $buffer-fhook 6 "" " - Found" ""
   !else
     set-variable .el &spr "\b\b\b\b\b\b\b-1\b"
     set-variable .ei &con &set #l5 &exi &spr ".%s.exec1" $buffer-fhook 0 -1
-    osd .osd.hk-tool 230 "" &con #l5 " - No tool found" ""
+    osd .osd.hk-tool 130 "" &con #l5 " - No tool found" ""
   !endif
   osd .osd.hk-tool 230 "" ""
   !force unset-variable &spr ".%s.format-com" $buffer-fhook
