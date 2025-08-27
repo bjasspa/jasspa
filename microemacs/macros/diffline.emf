@@ -138,11 +138,14 @@
     !endif
     !force 0 compare-windows
     !iif &gre $window-line #l7  !break
-    !iif &gre $window-col #l8  set-variable $window-col #l8
+    !iif &gre &set #l2 &sub $window-col #l8 0  set-variable $window-col #l8
     set-variable #l0 $window-col
     next-window
-    !iif &gre $window-col #l9  set-variable $window-col #l9
-    set-variable #l1 $window-col
+    !if &gre $window-col #l9
+      set-variable #l0 &sub #l0 &sub $window-col #l9
+      set-variable $window-col #l9
+    !endif
+    set-variable #l1 &sub $window-col &con &gre #l2 0 #l2 0
     previous-window
   !done
   set-variable #p9 1
@@ -226,6 +229,12 @@ define-macro diff-lines
       insert-newline
     !done
     !if &ban @# 1
+      goto-line 3
+      !if &les #l9 0
+        insert-string "\n    \CCk????\CCA\n"
+      !else
+        insert-string &spr "\n    \CCD%n\CCA\n" 3 &con #l9 &mid $window-chars 10 1 "="
+      !endif
       goto-line 2
     !elif &ban @# 2
       exchange-point-and-mark

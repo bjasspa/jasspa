@@ -290,7 +290,6 @@ define-macro major-mode-tools-setup
   !iif &seq "ERROR" &set #l8 &ind &spr ".%s.name" $buffer-fhook  set-variable #l8 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
   reread-settings
   set-variable .hktool-setup-mint.cs 0
-  osd .osd.hk-tool 130 "" ""
   !force unset-variable &spr ".%s.exec-com" $buffer-fhook
   !force file-tools-init "exec"
   !if $status
@@ -301,7 +300,6 @@ define-macro major-mode-tools-setup
     set-variable .ei &con &set #l5 &exi &spr ".%s.exec1" $buffer-fhook 0 -1
     osd .osd.hk-tool 130 "" &con #l5 " - No tool found" ""
   !endif
-  osd .osd.hk-tool 230 "" ""
   !force unset-variable &spr ".%s.format-com" $buffer-fhook
   !force file-tools-init "format"
   !if $status
@@ -312,7 +310,6 @@ define-macro major-mode-tools-setup
     set-variable .fi &con &set #l5 &exi &spr ".%s.format1" $buffer-fhook 0 -1
     osd .osd.hk-tool 230 "" &con #l5 " - No tool found" ""
   !endif
-  osd .osd.hk-tool 330 "" ""
   !force unset-variable &spr ".%s.lint-com" $buffer-fhook
   !force file-tools-init "lint"
   !if $status
