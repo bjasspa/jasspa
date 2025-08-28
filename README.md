@@ -191,7 +191,14 @@ Red Hat based systems like Fedora, Alma Linux:
 sudo dnf install ncurses-devel libXt-devel
 ```
 
+Arch based systems like Manjaro Linux:
 
+```
+sudo pacman -S make gcc ncurses xorg-xfontsel ttf-fira-mono
+```
+
+Fira Mono is a font  which  provides  Windows  CP1252 and it us  automatically
+indexed on Manjaro so that it can be directly used in MicroEmacs.
 
 ## License
 
