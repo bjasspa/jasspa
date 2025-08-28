@@ -225,6 +225,7 @@ define-macro diff
   !endif
   0x204 ipipe-shell-command &spr "%s%s \"%s\" \"%s\"" %diff-com &cond &band @# 2 " -r" "" #l0 #l1 "*diff*"
   !force popup-window  "*diff*"
+  buffer-bind-key diff-lines "d"
 !emacro
 define-macro diff-changes
   !if &seq $buffer-fname ""

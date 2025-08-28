@@ -4,114 +4,91 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd201.2,v 2.9 2022/06/12 17:13:25 jon Exp $
+.Id $Id: m2cmd201.2,v 2.9 2025/08/28 01:05:51 jon Exp $
 .Im MicroEmacs bindings
 .so me.tni
 .TH Compatibility 2
 .XI Compatibility - "Compatibility with the original MicroEmacs"
 .SH "COMPATIBILITY"
-JASSPA \*(mS is based on the original version of \fBMicroEMACS\fR  produced by
-Danial   Lawrence  at  revision  3.8,  the  source  files  were   obtained  in
-approximately  1990. The exact  origin of the files is unknown. In that period
-of time the  source  files  have  undergone  an awful lot of  change,  without
-reference to the  subsequent  releases  made of MicroEMACS by Danial  Lawrence
-(due to no network access). As a result the JASSPA version of \fBMicroEmacs\fR
-does not include any  modifications or features that may have been implemented
-since.  This  version  of  \fBMicroEmacs\fR  has been  tailored  to suite  the
-requirements  of a small  group of  individuals  who have used the editor on a
-daily  basis  across a  limited  number of  platforms,  for a variety  of very
-different tasks and operating requirements.
+JASSPA \*(mS is based on the original version of \fBMicroEMACS\fR produced by Danial Lawrence at revision 3.8, the
+source files were obtained in approximately 1990. The exact origin of the files is unknown. In that period of time the
+source files have undergone an awful lot of change, without reference to the subsequent releases made of MicroEMACS by
+Danial Lawrence (due to no network access). As a result the JASSPA version of \fBMicroEmacs\fR does not include any
+modifications or features that may have been implemented since. This version of \fBMicroEmacs\fR has been tailored to
+suite the requirements of a small group of individuals who have used the editor on a daily basis across a limited
+number of platforms, for a variety of very different tasks and operating requirements.
 .PP
-This   version   of  \*(mS  is  biased   towards   \s-1UNIX\s0   environments,
-\s-1MS-DOS\s0 and Microsoft Windows ports have been performed however they are
-heavily  influenced by  \s-1UNIX\s0  and inherit  \s-1UNIX\s0  characteristics
-wherever  possible.  The  intention is that  programmers,  and alike, may move
-across platforms using a common editor environment without being frustrated by
-the idiosyncrasies of different platforms. The most noticeable platform is the
-Microsoft  Windows platform which mimics the X-Windows cut and paste mechanism
-within the \*(mS environment. If you want a Windows style environment then use
+This version of \*(mS is biased towards \s-1UNIX\s0 environments, \s-1MS-DOS\s0 and Microsoft Windows ports have been
+performed however they are heavily influenced by \s-1UNIX\s0 and inherit \s-1UNIX\s0 characteristics wherever
+possible. The intention is that programmers, and alike, may move across platforms using a common editor environment
+without being frustrated by the idiosyncrasies of different platforms. The most noticeable platform is the Microsoft
+Windows platform which mimics the X-Windows cut and paste mechanism within the \*(mS environment. If you want a
+Windows style environment then use
 .Hr Notepad 1
 or
 .Hr Wordpad 1 ,
 this editor is not for you !!
 .PP
-The gross changes to \fB\*(mE\fR are summarized as follows:-
+The gross changes to \fB\*(mS\fR are summarized as follows:-
 .BS 1 1
-Macro language  interpreter  re-written  allowing an unlimited number of named
-macros to be  supported.  The macro  implementation  allows new commands to be
-created  by the user, as  opposed  to  continually  extending  the  underlying
-command set. The named macros are  transparent to the user, appearing as built
-in commands on the command line. Macro  command set  significantly  increased.
-Support for global, buffer and register variables within the macro language.
+Macro language interpreter re-written allowing an unlimited number of named macros to be supported. The macro
+implementation allows new commands to be created by the user, as opposed to continually extending the underlying
+command set. The named macros are transparent to the user, appearing as built in commands on the command line. Macro
+command set significantly increased. Support for global, buffer and register variables within the macro language.
 .BU
-Display  drivers  re-written   providing  color  hilighting  support  on  most
-platforms. A macro interface allows  information to be written directly to the
-display canvas  allowing the screen to be annotated with additional  transient
+Display drivers re-written providing color hilighting support on most platforms. A macro interface allows information
+to be written directly to the display canvas allowing the screen to be annotated with additional transient
 information.
 .BU
-Support for  X-Window  screen type in UNIX  environments.  Microsoft  Window's
-environments (3.x, '95, NT) treated in the same was as X-Windows - this may be
-unorthodox  for  existing  Window's  users,  UNIX  users  will  find  it  more
-comfortable.
+Support for X-Window screen type in UNIX environments. Microsoft Window's environments (3.x, '95, NT) treated in the
+same was as X-Windows - this may be unorthodox for existing Window's users, UNIX users will find it more comfortable.
 .BU
-Introduction of integrated  spell checker.  Support  includes  correction word
-guessing, word  auto-correction and double word detection. Ignore and personal
-dictionaries supported.
+Introduction of integrated spell checker. Support includes correction word guessing, word auto-correction and double
+word detection. Ignore and personal dictionaries supported.
 .BU
 Horizontal window splitting.
 .BU
-Introduction  of scroll bars on all platforms that support a mouse. The scroll
-bar implementation is platform independent.
+Introduction of scroll bars on all platforms that support a mouse. The scroll bar implementation is platform
+independent.
 .BU
-Command and file completion  available on all platforms. Most commands support
-a command history allowing previous command invocations to be recalled.
+Command and file completion available on all platforms. Most commands support a command history allowing previous
+command invocations to be recalled.
 .BU
-Session   history  file  kept,  allowing  the  previous  edit  session  to  be
-reinstated.
+Session history file kept, allowing the previous edit session to be reinstated.
 .BU
 Undo capability, allows previous edits to be undone when mistakes are made.
 .BU
-Backup  capability,  Includes a periodic timed backup while an editing session
-is in  progress.  The  timed  backup is  automatically  recovered  by the next
-session in situations where the system (or editor) crashes.
+Backup capability, Includes a periodic timed backup while an editing session is in progress. The timed backup is
+automatically recovered by the next session in situations where the system (or editor) crashes.
 .BU
-A regular  expression  incremental  search  becomes the default search forward
-mechanism.
+A regular expression incremental search becomes the default search forward mechanism.
 .BU
-Support for  abbreviation  files  allowing  frequently  used  constructs to be
-automatically expanded.
+Support for abbreviation files allowing frequently used constructs to be automatically expanded.
 .BU
-Automatic time stamping of files,  allowing the edit time to be  automatically
-maintained in the source file(s).
+Automatic time stamping of files, allowing the edit time to be automatically maintained in the source file(s).
 .BU
-Introduction of an electric 'C' mode. Editor intelligently  handles the layout
-of 'C' files (under user control).
+Introduction of an electric 'C' mode. Editor intelligently handles the layout of 'C' files (under user control).
 .BU
-Improved   documentation  text  mode  providing   left/right/center  and  both
-justification   methods   with   inclusion   for  bullet   points.   Automatic
-justification  may be  continually  performed  as  text  is  entered,  thereby
-maintaining the paragraph in the correct format.
+Improved documentation text mode providing left/right/center and both justification methods with inclusion for bullet
+points. Automatic justification may be continually performed as text is entered, thereby maintaining the paragraph in
+the correct format.
 .BU
-Integrated  on-line help facilities. All commands are documented  on-line. New
-macros may be  documented  within the macro  files and become part of the help
-system.
+Integrated on-line help facilities. All commands are documented on-line. New macros may be documented within the macro
+files and become part of the help system.
 .BU
-File type determination system, based on either the file name or embedded file
-text  allows  file  type  specific  macros  (hooks)  to  be  applied,  thereby
-configuring the editor into the correct mode for the file type.
+File type determination system, based on either the file name or embedded file text allows file type specific macros
+(hooks) to be applied, thereby configuring the editor into the correct mode for the file type.
 .BU
-Introduction  of  special  \*(mS  search  path  allowing  all of the  standard
-configuration files to be utilized from a shared directory.
+Introduction of special \*(mS search path allowing all of the standard configuration files to be utilized from a
+shared directory.
 .BE
 .\".BS "\&"
 .\"The  macro  lanugage  includes  a number of new
 .\".Hl "command  functions" ,
 .\".Hl "register variables"
-The name space of JASSPA \*(mS  differs from the original  MicroEMACS  and has
-become  more  compliant  with the GNU  implementation  of Emacs. A list of the
-original  MicroEMACS verses the new command name set is as follows,  executing
-the compatibility macro file  \fCmeme3_8.emf\fR  will create macro versions of
-these commands:
+The name space of JASSPA \*(mS differs from the original MicroEMACS and has become more compliant with the GNU
+implementation of Emacs. A list of the original MicroEMACS verses the new command name set is as follows, executing
+the compatibility macro file \fCmeme3_8.emf\fR will create macro versions of these commands:
 .RS
 .PP
 .B add-global-mode

@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Jan 2 00:31:47 1999
 .\"
-.Id $Id: m2nar005.2,v 2.7 2022/06/12 17:13:40 jon Exp $
+.Id $Id: m2nar005.2,v 2.7 2025/08/28 01:09:51 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH "Client-Server" 2
@@ -16,14 +16,14 @@
 This  sections  describes  how \*(mE may be interfaced to external  components
 through the \fBClient-Server\fR interface.
 .PP
-The  \fBClient-Server\fR  interface of \*(mE  provides a capability  for other
+The  \fBClient-Server\fR  interface of \*(mS  provides a capability  for other
 applications  to inject  commands into a running  version of the editor, which
 are   interpreted   and   executed.  The  interface  is  only   available  on
 multi-tasking  operating systems such as \s-1UNIX\s0 and Microsoft Windows; it
 is not available on \s-1MS-DOS\s0 systems.
 .PP
 Within the following discussions, the \fBServer\fR is a running version of the
-\*(mE  editor; the  \fBclient\fR  is the  application  (or shell  script) that
+\*(mS  editor; the  \fBclient\fR  is the  application  (or shell  script) that
 communicates a new command to the \fIserver\fR.
 .PP
 The \fBClient-Server\fR  interface may provide a bidirectional interface such
@@ -130,7 +130,7 @@ commands as they arrive on the input, an
 .Hl alpha-mark goto-alpha-mark 2
 is used to record the  processed  position  at the end of the buffer. The pipe
 handler itself decodes the client request and executes it. The default handler
-supplied with \*(mE is defined within the macro file \fCmeserver.emf\fR
+supplied with \*(mS is defined within the macro file \fCmeserver.emf\fR
 .PP
 Responses  to the  client  are  inserted  into the  response  file by  writing
 directly into the ipipe buffer (\fC*server*\fR) using the
@@ -148,7 +148,7 @@ is ignored within the context of the buffer.
 .br
 \fI$TEMP\fR\|\fB/me\fR\|\fI$MENAME\fR\|\fB.rsp\fR \- Response file.
 .SH BUGS
-The first \*(mE session that executes  becomes the editor  server,  additional
+The first \*(mS session that executes  becomes the editor  server,  additional
 editor sessions that are executed do not become server processes. In the event
 that the  \fIserver\fR  editor is terminated,  any other  sessions do not take
 over the role of server.  Subsequently  issuing a client  command may fail, or

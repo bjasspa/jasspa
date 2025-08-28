@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd069.2,v 2.10 2022/06/12 17:13:10 jon Exp $
+.Id $Id: m2cmd069.2,v 2.10 2025/08/28 00:53:22 jon Exp $
 .Im MicroEmacs command|hilight|macrodevelop
 .so me.tni
 .TH hilight 2
@@ -74,13 +74,11 @@ argument configurations is defined as follows:-
 [ "\fItrunc-scheme\fR" ] ]
 .ad
 .PP
-With an argument of \fC0\fR,  \fBhilight\fR  initializes or re-initializes the
-hilight scheme  \fIhil-no\fR  (1-255). Every buffer has a hilight  scheme, the
-default is 0 which means no hi-lighting and only the
+With an argument of \fC0\fR, \fBhilight\fR initializes or re-initializes the hilight scheme \fIhil-no\fR (1-255).
+Every buffer has a hilight scheme, the default is 0 which means no hi-lighting and only the
 .Ht $global-scheme 5
-etc. are used. The hilighting scheme must be defined before use and is used to
-specify  how the  buffer is to be  hilighted.  \*(mE  supports  the  following
-hilighting concepts:-
+etc. are used. The hilighting scheme must be defined before use and is used to specify how the buffer is to be
+hilighted. \*(mS supports the following hilighting concepts:-
 .BS
 .BR "hilight string" ,
 a user specified string is hilighted in any color scheme.

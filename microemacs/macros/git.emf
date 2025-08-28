@@ -1213,6 +1213,7 @@ define-macro git-show
   1 buffer-mode "view"
   buffer-bind-key git-diff-cmd "return"
   buffer-bind-key git-diff-cmd "space"
+  buffer-bind-key diff-lines "d"
   set-variable :mouse-word-select "git-diff-cmd"
 !emacro
 0 define-macro git-diff-file

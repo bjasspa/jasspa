@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd003.2,v 2.7 2025/07/16 19:29:55 jon Exp $
+.Id $Id: m2cmd003.2,v 2.7 2025/08/28 02:12:40 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH add-file-hook 2
@@ -194,9 +194,9 @@ text. The embedded strings take the form:
 .br
 \fC-!-\fR \fImode\fR \fC-!-\fR
 .LP
-The  \fC-*-\fR  notation  belongs  to GNU  Emacs,  but  \*(mE  recognizes  the
-construct and extracts the string  correctly. The \fC-!-\fR  notation is \*(mE
-specific  and is  provided so as not to cause  conflict  with GNU Emacs. \*(mE
+The  \fC-*-\fR  notation  belongs  to GNU  Emacs,  but  \*(mS  recognizes  the
+construct and extracts the string  correctly. The \fC-!-\fR  notation is \*(mS
+specific  and is  provided so as not to cause  conflict  with GNU Emacs. \*(mS
 searches for either construct on the first non-blank line of the file.
 .PP
 The explicit strings are defined with a negative  numerical  argument \fIn\fR,
@@ -231,7 +231,7 @@ Optionally \fBadd-file-hook\fP can be given a list of macros, defined within the
 performs an automatic load of a macro file if the \fBfhook\fR macro is not present in memory. The file name of the
 command file containing the macro is automatically derived from the \fIname\fR component of the \fBfhook\fR macro
 name. The \fBfhook-\fR part of the name is stripped off and prepended with \fBhk\fR and suffixed with \fB.emf\fR.
-Hence, macro \fBfhook-doc\fR would be searched for in file \fChkdoc.emf\fR within the \*(mE directory. The command
+Hence, macro \fBfhook-doc\fR would be searched for in file \fChkdoc.emf\fR within the \*(mS directory. The command
 file is automatically loaded and executed.
 .PP
 In cases where the fhook macro is not located in an equivalent hook file, the file location of the macro may be
@@ -253,7 +253,7 @@ add-file-hook ".h .hpp"                         "fhook-hmode"
 .Me $ehf-scheme
 In this case the
 .Hl define-macro-file define-macro-file 2
-has been used to inform \*(mE of the location of the \fBfhook-hmode\fR macro thereby overriding the automatic load of
+has been used to inform \*(mS of the location of the \fBfhook-hmode\fR macro thereby overriding the automatic load of
 a file called \fBhkhmode.emf\fR. The \fBfhook-cmode\fR macro requires no such definition as it is located in a hook
 file that matches the mode name, \fChkcmode.emf\fR.
 .SS "Extending a standard hook definition"
@@ -272,7 +272,7 @@ auto-save endings to the file hook definition.
 .PP 
 The extension separator, usually dot (\fC.\fR), is typically added to the \fIextensions\fR list, they may be omitted
 with effect where a file always ends in the same set of characters. A notable example is "\fCmakefile\fR" which
-includes no extension, as such, \*(mE applies the same hook function to a file called \fCImakefile\fR as the endings
+includes no extension, as such, \*(mS applies the same hook function to a file called \fCImakefile\fR as the endings
 are the same.
 .SS "Binary Files"
 It is sometimes useful to associate file types as binary files, so that they are immediately loaded in binary. In this
@@ -310,7 +310,7 @@ When the buffer containing the known file is exited (i.e. looses focus), then th
 executed.
 .BE 0
 .SH EXAMPLE
-The standard set of supported file types by \*(mE, at the time of writing, is defined as:-
+The standard set of supported file types by \*(mS, at the time of writing, is defined as:-
 .Me $emf-scheme
 .CS
 ; reset the file hook list

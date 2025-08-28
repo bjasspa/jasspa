@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil008.4,v 2.7 2022/06/12 17:14:03 jon Exp $
+.Id $Id: m4fil008.4,v 2.7 2025/08/28 01:57:59 jon Exp $
 .Im MicroEmacs macro;directive|miscellaneousOperators
 .so me.tni
 .TH !if 4
@@ -61,7 +61,7 @@ returning  \fCTRUE\fR or  \fCFALSE\fR.  An integer value,  non-zero  evaluates
 \fCTRUE\fR, zero evaluates to \fCFALSE\fR. A non-numerical argument, such as a
 string is always \fCFALSE\fR.
 .PP
-The  \fIconditional  body\fR may be any  \fB\*(mE\fR  function,  macro or
+The  \fIconditional  body\fR may be any  \fB\*(mS\fR  function,  macro or
 directive  with the exception of  \fBdefine-macro\fR  and  \fB!emacro\fR.  All
 directives that alter the execution of the macro are handled  correctly within
 the \fB!if\fR statement (e.g.
@@ -108,7 +108,7 @@ The first \fB!if\fR statement in the above example can be optimised to:-
 .CE 0
 .Me $ehf-scheme
 .SH NOTES
-There is a convention in \fB\*(mE\fR macro code of using 2 spaces to separate the \fIcondition\fR  from the \fIbody\fR
+There is a convention in \fB\*(mS\fR macro code of using 2 spaces to separate the \fIcondition\fR  from the \fIbody\fR
 of an \fB!iif\fR statement making it easier to locate the start of the \fIbody\fR.
 .SH "SEE ALSO"
 .na

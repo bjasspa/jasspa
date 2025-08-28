@@ -4,13 +4,13 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd203.2,v 2.7 2024/08/06 17:13:26 jon Exp $
+.Id $Id: m2cmd203.2,v 2.7 2025/08/28 02:13:29 jon Exp $
 .Im MicroEmacs bindings
 .so me.tni
 .TH keyNames 2
 .XI keyNames - "Key Binding Names"
 .SH "KEY BINDING NAMES"
-Every key which can be generated in \*(mE has a character string or name representation which can be used to bind and
+Every key which can be generated in \*(mS has a character string or name representation which can be used to bind and
 unbind the key to a command. The name of simple keys like "\fCa\fR" or "\fC$\fR" is simply the character, i.e.
 "\fCa\fR" and "\fC$\fR". Following is a list of other parts to a key name.
 .SS "Modify Keys"
@@ -20,7 +20,7 @@ and Alt keys where also pressed.
 .PP
 The Control and Alt modifiers are case insensitive so \fCC-a\fR is the same as \fCC-A\fR and \fCC-S-a\fR.
 .SS "Prefix Keys"
-Many binding are single stroke key sequences (e.g. "\fCC-a\fR" => beginning-of-line). However \*(mE has a
+Many binding are single stroke key sequences (e.g. "\fCC-a\fR" => beginning-of-line). However \*(mS has a
 .Ht prefix 2
 command which can be used to bind up to 8 single stroke keys, turning them into two stroke keys; this greatly
 increasing the number of available bindable key sequences. For example \fBprefix 1\fR is bound to the escape character

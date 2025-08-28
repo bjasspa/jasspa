@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd117.2,v 2.8 2022/06/12 17:13:25 jon Exp $
+.Id $Id: m2cmd117.2,v 2.8 2025/08/28 00:32:06 jon Exp $
 .Im MicroEmacs command|scuts
 .so me.tni
 .TH global-abbrev-file 2
@@ -75,7 +75,7 @@ from then on it reminds buffered. An abbreviation file has an abbreviation per
 line,  they  cannot  use  multiple  lines.  This  is  not a draw  back  as the
 expansion string is executed using
 .Ht execute-string 2
-so any \*(mE command may also be called.
+so any \*(mS command may also be called.
 .PP
 For   example   the   following    expansion   string   inserts   the   string
 "\fC!continue\fR"  and a  newline:-
@@ -120,7 +120,7 @@ This is particularly useful for email address, e.g.
 |JA "\\"JASSPA\\" <support@jasspa.com>"
 |
 .CE
-The following  example is \*(mE C-Mode  abbreviation  file for  constructing C
+The following  example is \*(mS C-Mode  abbreviation  file for  constructing C
 files.  Remember  \fB\\p\fR is where the cursor is  positioned  following  the
 expansion.
 .CS
@@ -133,12 +133,10 @@ wh "while(\\p)\\r{\\r\\r}\\r\\P"
 sw "switch(\\p)\\r{\\rcase :\\rdefault:\\r}\\r\\P"
 .CE 0
 .SH NOTES
-Abbreviation  files  are  given the  extension  \fB.eaf\fR  in the \*(mE  home
-directory.
+Abbreviation files are given the extension \fB.eaf\fR in the \*(mS home directory.
 .PP
-One of the easiest  ways to create more complex  abbreviations  is to record a
-keyboard  macro,  name it and then  insert the  resultant  macro. See notes on
-commands
+One of the easiest ways to create more complex abbreviations is to record a keyboard macro, name it and then insert
+the resultant macro. See notes on commands
 .Ht start-kbd-macro 2 ,
 .Ht name-kbd-macro 2 
 and

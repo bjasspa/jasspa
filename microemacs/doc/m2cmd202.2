@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd202.2,v 2.7 2024/11/10 17:13:26 jon Exp $
+.Id $Id: m2cmd202.2,v 2.7 2025/08/28 02:13:12 jon Exp $
 .Im MicroEmacs macrodevelop
 .so me.tni
 .TH fileHooks 2
@@ -42,7 +42,7 @@ add-file-hook ".c .h" "fhook-c"
 .CE
 .Me $ehf-scheme
 which binds the file hook  \fBfhook-c\fR to any files that are loaded with the
-extension  \fB.c\fR  and  \fB.h\fR.  The  operations  undertaken  by \*(mE are
+extension  \fB.c\fR  and  \fB.h\fR.  The  operations  undertaken  by \*(mS are
 defined as follows when a file \fCfoo.c\fR is loaded:-
 .BS 1 1
 Attempt to load file  \fCfoo.c\fR,  if  \fCfoo.c\fR is not found then create a
@@ -169,7 +169,7 @@ Note that in both cases the
 invocation  is defined as zero, this  merely  hides the macro from the command
 line since both are private macros not normally invoked by the user.
 .SH "FILE HOOK SELECTION"
-\*(mE may be reconfigured to operate in different modes (referred to a
+\*(mS may be reconfigured to operate in different modes (referred to a
 .I "Major Modes"
 in GNU
 .Hr emacs 1 )
@@ -179,7 +179,7 @@ The file hooks allow the working  environment to be customized for the editing
 of text of a particular sort, by importing text specific macros, key rebinding
 and highlighting.
 .PP
-\*(mE, by default,  loads a file into a buffer with default  global modes with
+\*(mS, by default,  loads a file into a buffer with default  global modes with
 no highlighting.  There are no mode specific key bindings,  variable settings,
 macros or highlights,  buffer  interaction  behaves in it's default state. The
 state of the buffer  interaction may be modified through the use of the buffer
@@ -195,13 +195,13 @@ shown  in  different  colors,  allowing  them  to be  differentiated  without
 studying the content.
 .PP
 Setting the operating  mode of the buffer would be tedious to perform from the
-command  line,  instead  \*(mE uses three  different  prioritized  criteria to
+command  line,  instead  \*(mS uses three  different  prioritized  criteria to
 endeavor to select the correct  operating  mode. The operating mode is applied
 to the buffer by  execution of a set of file  specific  macros,  referred to a
 hook  commands. The selection  criteria of the hook  commands is performed as
 follows, ordered in lowest to highest priority:-
 .IP "\fBFile Name\fR"
-\*(mE uses the filename  and/or the file  extension to select a start-up  hook
+\*(mS uses the filename  and/or the file  extension to select a start-up  hook
 command.  File names and  extensions  are bound to a set of macro  hooks in a
 space separated list e.g.
 .RS
@@ -227,7 +227,7 @@ satisfies most mode selection requirements.
 There are cases when file  extensions  may be omitted  from  files,  typically
 these files include an  identifier,  or magic string, on the first line of the
 file which is used to identify the file to the operating system or application
-e.g. shell scripts under \s-1UNIX\s0. \*(mE automatically interrogates the top
+e.g. shell scripts under \s-1UNIX\s0. \*(mS automatically interrogates the top
 of every file that is loaded to locate some form of identification string. The
 identification  strings  are  defined in a similar way to the file name hooks,
 except  instead of defining a file  extension the location and text content of
@@ -272,7 +272,7 @@ no predefined  file extensions, or conflicts  exist between files with the same
 extension containing data interpreted in a different context.
 .IP "\fBExplicit Strings\fR"
 The last method allows an explicit  identifier  string to be embedded into the
-text of the file  informing  \*(mE  which  mode it  should  adopt.
+text of the file  informing  \*(mS  which  mode it  should  adopt.
 GNU  Emacs
 supports this (see \fBMajor  Mode\fR in the GNU Emacs  documentation)  type of
 operation by insertion of strings of the form:
@@ -303,11 +303,11 @@ The definition  would detect the GNU Emacs mode defined in an Nroff file e.g.
 .RE
 .IP
 It should be  stressed  that the  \fB-*-\fR  syntax  belongs  to GNU Emacs and
-\s-1NOT\s0  \*(mE, \*(mE provides a mechanism to locate, extract and interpret
+\s-1NOT\s0  \*(mS, \*(mS provides a mechanism to locate, extract and interpret
 the  string. The  \fB-*-\fR  syntax  should  only be applied to files if it is
 known that the \fImode\fR is a GNU mode.
 .IP
-A \*(mE  specific  string is also provided,  defined as:
+A \*(mS  specific  string is also provided,  defined as:
 .RS
 .IP
 \fB-!-\fR\ \fImode\fR\ \fB-!-\fR
@@ -400,7 +400,7 @@ command and the buffer hi-lighting enabled by assignment of the
 .Ht $buffer-hilight 5
 variable.
 .SH "MODIFYING FILE HOOKS"
-The standard hook files supplied with \*(mE should not be modified, changes to
+The standard hook files supplied with \*(mS should not be modified, changes to
 the  file  hooks  may  be  applied   using  a  separate   macro  file   called
 \fBmy\fR\fIXXX.emf\fR,    this   is    automatically    executed   after   the
 \fBhk\fR\fIXXX.emf\fR file is executed. 

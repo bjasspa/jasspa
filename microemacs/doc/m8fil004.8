@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m8fil004.8,v 2.8 2022/06/12 17:14:33 jon Exp $
+.Id $Id: m8fil004.8,v 2.8 2025/08/28 02:03:54 jon Exp $
 .Im MicroEmacs files
 .so me.tni
 .TH erf 8
@@ -18,11 +18,9 @@ erf \- MicroEmacs registry file
 \fI<command>\fR ::= \fB"\fR\|\fI<identifier>\fR\|\fB"\fR [ \fB=\fR \fB"\fR\|\fI<string>\fR\|\fB"\fR ][ \fB{\fR \fI<command>\fR \fB}\fR ] *
 .ad
 .SH DESCRIPTION
-\*(mE   registry  files  are  ASCII  text  files,  given  the  file  extension
-\fB.erf\fR.   The   registry   file  is  a  simple   syntax   that  allows  an
-\fIidentifier\fR  to be associated with a \fIstring\fR. The  \fIidentifiers\fR
-are  unique  and allow a  \fIstring\fR  value to be found  when a search for a
-\fIidentifier\fR is made. The \fIstring\fR component is optional.
+\*(mS registry files are ASCII text files, given the file extension \fB.erf\fR. The registry file is a simple syntax
+that allows an \fIidentifier\fR to be associated with a \fIstring\fR. The \fIidentifiers\fR are unique and allow a
+\fIstring\fR value to be found when a search for a \fIidentifier\fR is made. The \fIstring\fR component is optional.
 .PP
 The syntax allows the \fIidentifier\fR's to be hierarchically nested, children
 of the  \fIidentifier\fR  node are  enclosed in a set of curly braces  \fB{\fR
@@ -66,8 +64,8 @@ registry file is  automatically  written at the end of a editing  session when
 the editor is closed down (or may be saved explicitly using
 .Ht save-session 3 ).
 .PP
-Every user should have their own personal history file in their personal \*(mS
-directory. The history file is located from the \*(mE search path defined by
+Every user should have their own personal history file in their personal \*(mS directory. The history file is located
+from the \*(mS search path defined by
 .Ht $user-path 5 ,
 and is named by the variable
 .Ht $user-name 5 .

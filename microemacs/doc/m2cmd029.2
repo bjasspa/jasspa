@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd029.2,v 2.6 2022/06/12 17:13:09 jon Exp $
+.Id $Id: m2cmd029.2,v 2.6 2025/08/28 00:51:20 jon Exp $
 .Im MicroEmacs command|macrodevelopment
 .so me.tni
 .TH define-macro 2
@@ -40,10 +40,10 @@ completion list.
 .PP
 See
 .Ht execute-file 2
-for a complete definition and examples of the \*(mE macro language.
+for a complete definition and examples of the \*(mS macro language.
 .PP
 Once the macro has been defined, it becomes  indistinguishable from a standard
-\*(mE command, i.e.
+\*(mS command, i.e.
 .Ht execute-named-command 2
 (\fC\*ex\fR) can be used to execute the macro and
 .Ht global-bind-key 2
@@ -51,7 +51,7 @@ can be used to globally bind the command to a key combination.
 .PP
 There  are no  restrictions  on the  number  of  macros  that may be  defined,
 provided that the name space is managed properly.  Consideration must be given
-as to when any  additional  macros  that are created are loaded into \*(mE. We
+as to when any  additional  macros  that are created are loaded into \*(mS. We
 usually like start-up to be rapid and macros are loaded as and when  requested
 by the user, or by the buffer hooks as new files are loaded (see
 .Ht add-file-hook 2
@@ -62,7 +62,7 @@ User defined macros may be documented with on-line help by including a
 .Ht define-help 2
 construct within the macro file.
 .SH EXAMPLE
-The  following  are two standard  macros  provided  with \*(mE. The first is a
+The  following  are two standard  macros  provided  with \*(mS. The first is a
 macro called  \fBclean\fR,  this strips  trailing white space from the ends of
 lines in a file and removes blank lines from the end of the file.
 .Me $emf-scheme

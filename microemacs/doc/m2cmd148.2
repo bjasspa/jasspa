@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd148.2,v 2.8 2022/06/12 16:35:40 jon Exp $
+.Id $Id: m2cmd148.2,v 2.8 2025/08/28 01:00:20 jon Exp $
 .Im MicroEmacs command|help
 .so me.tni
 .TH about 2
@@ -21,7 +21,7 @@ about \- Information About \*(mE
 displays  information about the current \*(mE editing session and includes the
 following information:-
 .BS
-Version number and date (YYYY/MM/DD) information for \*(mE.
+Version number and date (YYYY/MM/DD) information for \*(mS.
 .BU
 Global status  information  including the number of active  buffers and global
 mode status information.
@@ -31,24 +31,24 @@ Current buffer status information; buffer modes and buffer size information.
 .SH EXAMPLE
 The following is an example output from \fBabout\fR.
 .CS
-MicroEmacs 09 - Date 2009/09/09 - sunos
+MicroEmacs 25 - Date 2025-07-02 - linux
 
 Global Status:
   # buffers : 15
-  Modes on  : autosv backup cr magic tab undo
-  Modes off : binary crypt ctrlz edit exact fence hide indent justify lf lock
-              nact narrow over pipe rbin time view wrap
+  Modes on  : autosv backup lf magic tab undo
+  Modes off : binary cr crypt ctrlz edit exact fence hide indent justify lock
+              nact narrow over pipe rbin time view wrap xlate
 
 Current Buffer Status:
   Buffer    : *grep*
-  File name : /home/jon/merep/me/src/
+  File name : /home/jon/jasspa/microemacs/src/
   Lines     : Total    100, Current     26
   Characters: Total   7255, Current   1996
-  Modes on  : autosv backup cr edit magic tab undo
-  Modes off : binary crypt ctrlz exact fence hide indent justify lf lock nact
-              narrow over pipe rbin time view wrap
+  Modes on  : backup lf magic tab view
+  Modes off : autosv binary cr crypt ctrlz edit exact fence hide indent
+              justify lock nact narrow over pipe rbin time undo wrap xlate
 
-Copyright (C) 1988-2009 JASSPA (www.jasspa.com)
+Copyright (C) 1988-2025 JASSPA (www.jasspa.com)
 .CE 0
 .SH "SEE ALSO"
 .na

@@ -6,7 +6,7 @@
 .\"
 .\" Authors:    Jon Green
 .\"
-.Id $Id: m1cmd002.1,v 1.5 2024/01/16 17:13:08 jon Exp $
+.Id $Id: m1cmd002.1,v 1.5 2025/08/28 02:12:21 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH ne 1
@@ -105,8 +105,8 @@ utilities such a
 where an external editor may be invoked from other viewer.
 .IP \fB\-n\fR
 \s-1UNIX\s0  X-Windows  environments  only and  MicroSoft  Windows  NT console
-versions.  Execute   \fB\*(mE\fR  using  termcap  rather  than  X-Windows  for
-\s-1UNIX\s0; typically used within an \fBxterm\fR shell to fire up \fB\*(mE\fR
+versions.  Execute   \fB\*(mS\fR  using  termcap  rather  than  X-Windows  for
+\s-1UNIX\s0; typically used within an \fBxterm\fR shell to fire up \fB\*(mS\fR
 for a quick  edit. For  Microsoft  Windows,  a console  window is  started  as
 opposed to a GUI window.  This  option is not present if a console  version of
 the application has been built.
@@ -119,7 +119,7 @@ Read-only, all buffers will be in view mode
 .IP \fB\-s\fR\|\fIstring\fR
 Search for string "\fIstring\fR" in the current buffer. e.g.
 .C "ne -sfoo bar"
-starts  \fB\*(mE\fR,  loads file  \fCbar\fR  and  initiates  a search for
+starts  \fB\*(mS\fR,  loads file  \fCbar\fR  and  initiates  a search for
 \fIfoo\fR.  The cursor is left at the end of the string if located,  otherwise
 at the top of the buffer.
 .IP \fB\-u\fR\|\fIusername\fR
@@ -127,7 +127,7 @@ Set the current user name
 .Ht $user-name 5 
 to \fIusername\fR before \*(nS is initialized. 
 .IP \fB\-v\fR\|\fIvariable=string\fR
-Assign the \*(mE \fIvariable\fR with \fIstring\fR. The assignment is performed
+Assign the \*(mS \fIvariable\fR with \fIstring\fR. The assignment is performed
 before  the  buffers  are  loaded.  Typically  used  to  change  the  start-up
 characteristics of the startup file(s).
 .IP \fB\-V\fR
@@ -137,7 +137,7 @@ Print the name and version of \*(nS. i.e.
 .br
 \fCNanoEmacs 05 - Date 2005/02/24 - sunos\fR
 .IP \fB\-x\fR
-\s-1UNIX\s0  environments. Disable the capture of signals. \fB\*(mE\fR by
+\s-1UNIX\s0  environments. Disable the capture of signals. \fB\*(mS\fR by
 default  captures  an handles  all illicit  signal  interrupts.  The option is
 enabled when  debugging  the source code allowing  exception  conditions to be
 trapped within the debugger.
@@ -156,7 +156,7 @@ for details of this environment variable.
 is used to override the identity of the user
 .Ht $user-name 5 .
 The variable may be used to determine which start-up  configuration  to use in
-the initialization of \fB\*(mE\fR (\fI$user-name\fR.erf). This is ignored if 
+the initialization of \fB\*(mS\fR (\fI$user-name\fR.erf). This is ignored if 
 the \fB-u\fR option is specified on the command line.
 .IP
 Non-\s-1UNIX\s0  platforms  usually need to explicitly  set the  \fB$MENAME\fR
@@ -166,7 +166,7 @@ and early  versions of  Microsoft  Windows this is typically  performed in the
 .IP "\fBPATH\fR"
 The \fB$PATH\fR  environment  variable is used on most operating  systems as a
 search path for executable files. This \fB$PATH\fR  environment  variable must
-be defined with \fB\*(mE\fR on the search path. Under \s-1UNIX\s0 this is
+be defined with \fB\*(mS\fR on the search path. Under \s-1UNIX\s0 this is
 set in the \fC.login\fR, \fC.cshrc\fR or \fC.profile\fR file i.e.
 .RS
 .IP
@@ -180,7 +180,7 @@ Within  \s-1MS-DOS\s0 or Microsoft  Windows  environments it is defined in the
 set PATH=%PATH%;c:\\ne
 .RE
 .IP
-\fB\*(mE\fR  utilizes information in the \fB$PATH\fR environment variable
+\fB\*(mS\fR  utilizes information in the \fB$PATH\fR environment variable
 to locate the start-up files, dictionaries etc.
 .IP \fBTERM\fR
 The terminal identification sting. In \s-1UNIX\s0 environments the environment
@@ -238,7 +238,7 @@ is the preferred method used to defined the user directory.
 All of the macro files and  dictionaries  are located in the \fB\*(nS\fR  home
 directory. The standard file extensions that are utilized are:-
 .IP "\fB.emf\fP"
-A \fB\*(mE\fR macro file. The following classes of macro file exist:
+A \fB\*(mS\fR macro file. The following classes of macro file exist:
 .RS
 .IP "\fBne.emf\fR"
 The default startup file.

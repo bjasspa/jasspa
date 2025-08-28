@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Jul 11 13:30:15 1998
 .\"
-.Id $Id: m2nar000.2,v 2.10 2024/11/10 17:13:40 jon Exp $
+.Id $Id: m2nar000.2,v 2.10 2025/08/28 01:07:24 jon Exp $
 .Im MicroEmacs macrodevelop
 .so me.tni
 .TH languageTemplates 2
@@ -19,13 +19,13 @@ a  requirement  for users to extend this  capability  to include more obscure
 file  types,  in  addition  to  bespoke   files  found   internally   within
 organizations, or devised by the user.
 .PP
-For each file type, \*(mE may be tailored to  recognize  the file and modify
+For each file type, \*(mS may be tailored to  recognize  the file and modify
 it's hilighting, key binding  configuration,  osd display and indentation to
 accommodate the file. In addition, new shorthand  macros may be introduced to
 help deal with the contents of the file.
 .PP
 This section outlines the steps to be taken to integrate a new file language
-template into \*(mE.
+template into \*(mS.
 .Ht buffer-init 3
 automates  many of the operations  defined below and it is suggested that this
 is a preferable method to add a new language template into \*(mS.
@@ -33,7 +33,7 @@ is a preferable method to add a new language template into \*(mS.
 The  first  step is to decide  the scope of the file, this  will  determine
 where the file hook should be defined. The options are:-
 .IP "\fBA standard file type not supported\fR"
-If this is a standard  file type not  supported by \*(mE then it
+If this is a standard  file type not  supported by \*(mS then it
 should be added to \fCme.emf\fR, in addition
 .Hl "contact us" Contact -
 and we will add it to the standard  release. Any macro files  associated  with
@@ -42,13 +42,13 @@ this file type should be  available  globally and are added to the  MicroEmacs
 .IP "\fBLocal To your organization\fR"
 If it is a file type local to your organization then it should be added
 to your  \fIcompany\fR.emf  file. Any macro files  associated  with the file
-type should be added to your local company \*(mE directory.
+type should be added to your local company \*(mS directory.
 .IP "\fBLocal to an individual\fR"
 If this is a file type that is only used by a limited  number of individuals
 then it  should be added to the  \fIuser\fR.emf  file. Any files  associated
-with the file type are added to your local user \*(mE directory.
+with the file type are added to your local user \*(mS directory.
 .SS "Recognizing the File Type"
-The next  step to adding a new file type is to get \*(mE to  recognize  the
+The next  step to adding a new file type is to get \*(mS to  recognize  the
 file as the new type. Recognition is performed by the
 .Hl "File Hooks" fileHooks 2
 which perform recognition on the file extension and/or the file content.
@@ -118,7 +118,7 @@ define-macro fhook-foo
 ml-write "[MicroEmacs foo file hook loaded]"
 .CE
 .Me $ehf-scheme
-The file hook may be tested by exiting and  re-loading  \*(mE, or simply
+The file hook may be tested by exiting and  re-loading  \*(mS, or simply
 by executing the file containing the \fCadd-file-hook\fR  function. Once the
 file  bindings are  installed a \fIfoo\fR  file may be loaded and the
 hook message should be displayed.
@@ -127,7 +127,7 @@ The best way to create a new file hook is to find an  existing  file type with
 similar  support  to the new file hook you wish to create  and re-use the hook
 code to create the new one.
 .SS "Modifying an Existing file hook"
-The standard file hooks supplied with \*(mE should not be modified,  typically
+The standard file hooks supplied with \*(mS should not be modified,  typically
 a user will want to extend the  repertoire of hi-lighting  tokens to encompass
 locally defined programming  libraries or syntactical  extensions, in addition
 to extending  support  macros that are associated  with the file type. In this

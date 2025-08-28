@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd121.2,v 2.8 2022/06/12 17:13:25 jon Exp $
+.Id $Id: m2cmd121.2,v 2.8 2025/08/28 00:30:47 jon Exp $
 .Im MicroEmacs command|region
 .ds C0 "(\fB\*e\*(sP\fR)\ \&
 .so me.tni
@@ -27,7 +27,7 @@ issues the \fBset-mark\fR  command by typing  \fB\*e\*(sP\fR, moves the cursor
 to the end of the text to be deleted, and then deletes it by using the
 .Ht kill-region 2
 (\fB\*cw\fR)  command. Only one mark can be set in one window or one buffer at
-a time, and \*(mE will try to remember a mark set in an off screen buffer when
+a time, and \*(mS will try to remember a mark set in an off screen buffer when
 it is called back on screen.
 .PP
 A region is a block of text to be acted  upon by some  \*(mS  commands.  It is

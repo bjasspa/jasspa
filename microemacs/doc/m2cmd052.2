@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd052.2,v 2.7 2025/08/09 18:02:00 jon Exp $
+.Id $Id: m2cmd052.2,v 2.7 2025/08/28 00:33:24 jon Exp $
 .Im MicroEmacs command|paragraph
 .ds C0 "(\fB\*eo\fR)\ \&
 .so me.tni
@@ -20,16 +20,13 @@ fill-paragraph \- Format a paragraph
 .ad
 .SH DESCRIPTION
 .B fill-paragraph
-this takes all the text in the current  paragraph  (as defined by  surrounding
-blank lines, or a leading indent) and attempts to fill it from the left margin
-to the current fill column as defined by
+this takes all the text in the current paragraph (as defined by surrounding blank lines, or a leading indent) and
+attempts to fill it from the left margin to the current fill column as defined by
 .Ht $buffer-fill-col 5 .
-When an argument \fIn\fR is supplied \fIn\fR paragraphs are filled. If \fIn\fR
-is positive  then \*(mE  performs  indented  filling (i.e.  indentation  for a
-bullet mark etc). If \fIn\fR is negative then indented filling is disabled. If
-no  argument  \fIn\fR  is  supplied  then  the  paragraph  is  filled  and the
-\fIpoint\fR and \fImark\fR  positions are retained. This allows  paragraphs to
-be filled,  whilst in the middle of the  paragraph  and the word  position  is
+When an argument \fIn\fR is supplied \fIn\fR paragraphs are filled. If \fIn\fR is positive then \*(mS performs
+indented filling (i.e. indentation for a bullet mark etc). If \fIn\fR is negative then indented filling is disabled.
+If no argument \fIn\fR is supplied then the paragraph is filled and the \fIpoint\fR and \fImark\fR positions are
+retained. This allows paragraphs to be filled, whilst in the middle of the paragraph and the word position is
 maintained.
 .PP
 If \fBjustify mode\fR is enabled the variable

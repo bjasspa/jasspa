@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 18:16:21 1999
 .\"
-.Id $Id: m3mac059.3,v 2.5 2022/06/12 17:13:59 jon Exp $
+.Id $Id: m3mac059.3,v 2.5 2025/08/28 00:37:14 jon Exp $
 .Im MicroEmacs shell|search
 .ds C0 "(\fBF7\fR)\ \&
 .ds C1 "(\fB\*eF7\fR)\ \&
@@ -87,46 +87,41 @@ buffer. This is typically bound to a mouse or key stroke action.
 .B item-list-close
 closes the item list buffer.
 .SH EXAMPLE
-The following example works through the  \fBitem-list\fR  definition for the ME
-macros e.g. given that the ME macro definition is:
+The following example works through the \fBitem-list\fR definition for the ME macros e.g. given that the ME macro
+definition is:
 .CS
 define-macro macro-name
 .CE
-Searching for "\fCdefine-macro\ \\([a\-z\-]+\\)\fR" and replacing with
-"\fCMacro\ \\1\fR" will work most of the time. The space between
-\fCdefine-macro\fR and the name does not have to be a single space
-and the \fIname\fR does not have to contain just lower case letters,
-so these search strings should be a flexible as  possible, try
+Searching for "\fCdefine-macro\ \\([a\-z\-]+\\)\fR" and replacing with "\fCMacro\ \\1\fR" will work most of the time.
+The space between \fCdefine-macro\fR and the name does not have to be a single space and the \fIname\fR does not have
+to contain just lower case letters, so these search strings should be a flexible as possible, try:
 .CS
 "define-macro\\s\ +\\(\\w+\\)"
 .CE
-This however is not as optimal as it could be and if you have large files this
-could become slow. Performance can be greatly  increased if it can be anchored
-to the start of the line, e.g.
+This however is not as optimal as it could be and if you have large files this could become slow. Performance can be
+greatly increased if it can be anchored to the start of the line, e.g.
 .CS
 "^define-macro\\s\ +\\(\\w+\\)"
 .CE
-but to allow for initial white spaces and the optional  numeric  argument,  you
-really need
+but to allow for initial white spaces and the optional numeric argument, you really need:
 .CS
 "^\\s\ *[0\-9]*\\s\ *define\-macro\\s\ +\\(\\w+\\)"
 .CE
-To hilight the function name you need the name encased the name in a magic
-hilighting string,
+To hilight the function name you need to encase the name in a magic hilighting string:
 .CS
-"\\ecBmacro\-name\\ecA"
+"\\CCbmacro\-name\\CCA"
 .CE
-where \fC\\e\fR is an escape char, so the replace string should be
+where \fC\\CC\fR is a \fCCtrl-C\fR (\fC\\x03\fR) char, so the replace string should be:
 .CS
-"Macro \\ecB\\1\\ecA"
+"Macro \\CCb\\1\\CCA"
 .CE
-Now all thats needed is to set these variables as fhook command variables,
-for macro files, the file hook command is \fCfhook-emf\fR, therefore the
-following is required:
+.\"TODO: put link to meth for further info on the available tags
+Now all thats needed is to set these variables as fhook command variables, for macro files, the file hook command is
+\fCfhook-emf\fR, therefore the following is required:
 .Me $emf-scheme
 .CS
 set-variable .fhook-emf.item-list-s1 "^\\\\s\ *[0\-9]*\\\\s\ *define\-macro\\\\s\ +\\\\(\\\\w+\\\\)"
-set-variable .fhook-emf.item-list-r1 "Macro \\ecB\\\\1\\ecA"
+set-variable .fhook-emf.item-list-r1 "Macro \\CCb\\\\1\\CCA"
 .CE
 .Me $ehf-scheme
 Note that you can have as many of these search and replace variables as you

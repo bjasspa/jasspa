@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd065.2,v 2.6 2022/06/12 17:13:10 jon Exp $
+.Id $Id: m2cmd065.2,v 2.6 2025/08/28 00:52:54 jon Exp $
 .Im MicroEmacs command|help
 .ds C0 "(\fB\*e?\fR)\ \&
 .ds C1 "(\fB\*(cH\*cc\fR)\ \&
@@ -43,24 +43,21 @@ help-item \- Help; item information
 "\fIitem\fR" \*(C3
 .ad
 .SH DESCRIPTION
-The help commands  provide a quick on-line help facility  within \*(mE without
-invoking a third party documentation system (e.g. a browser such as
-.Hr Netscape 1
+The help commands provide a quick on-line help facility within \*(mS without invoking a third party documentation
+system (e.g. a browser such as
+.Hr firefox 1
 or
 .Hr winhelp 1 ).
 .PP
-The on-line  help is assisted by a set of macros which enable key words within
-the help buffers to be located by either tagging  (\fC\*et\fR) or by selection
-with the left mouse button. The tag mechanism supports command completion.
+The on-line help is assisted by a set of macros which enable key words within the help buffers to be located by either
+tagging (\fC\*et\fR) or by selection with the left mouse button. The tag mechanism supports command completion.
 .PP
 .B help
-provides  general help on the  philosophy  and  functionality  of \*(mE, if an
-argument \fIn\fR of 0 is given to the command it changes the current buffer to
-the internal help buffer, typically named "\fC*on-line help*\fR". This is a
+provides general help on the philosophy and functionality of \*(mS, if an argument \fIn\fR of 0 is given to the
+command it changes the current buffer to the internal help buffer, typically named "\fC*on-line help*\fR". This is a
 .Hl hidden hide 2m
-system buffer used to store all the on-line help and can be used for a variety
-of things. Note that access to this buffer must be via the \fBhelp\fR command,
-not  \fBfind-buffer\fR  and the help  command will also ensure the system help
+system buffer used to store all the on-line help and can be used for a variety of things. Note that access to this
+buffer must be via the \fBhelp\fR command, not \fBfind-buffer\fR and the help command will also ensure the system help
 file is loaded first.
 .PP
 .B help-command
@@ -71,11 +68,9 @@ Describes   the   purpose   of   the   given   \fIvariable\fR,    similar   to
 \fBhelp-command\fR, only for variables.
 .PP
 .B help-item
-Describes  the  purpose  of any given  item,  where  item  could be a command,
-variable or any aspect of \*(mE.
+Describes the purpose of any given item, where item could be a command, variable or any aspect of \*(mS.
 .SH FILES
-The help files are ASCII text files located in the \*(mE  home directory.
-The files are defined as follows:-
+The help files are ASCII text files located in the \*(mS home directory. The files are defined as follows:-
 .sp
 .na
 .nf

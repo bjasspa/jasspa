@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2mod021.2,v 2.7 2022/06/12 17:13:40 jon Exp $
+.Id $Id: m2mod021.2,v 2.7 2025/08/28 01:06:55 jon Exp $
 .Im MicroEmacs modes
 .so me.tni
 .TH lock 2m
@@ -20,9 +20,8 @@ This mode can only be used while an incremental pipe (started by
 .Ht ipipe-shell-command 2 )
 is running in the current buffer, denoted by the
 .Ht pipe 2m
-being set. When this mode is enabled  and \*(mE  buffer  cursor is at the same
-location as the process shell cursor, the buffer cursor is automatically moved
-with the shell cursor.
+being set. When this mode is enabled and \*(mS buffer cursor is at the same location as the process shell cursor, the
+buffer cursor is automatically moved with the shell cursor.
 .PP
 This mode is automatically enabled for a piped buffer.
 .SH "SEE ALSO"

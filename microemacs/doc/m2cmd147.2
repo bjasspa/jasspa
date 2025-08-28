@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd147.2,v 2.11 2022/06/12 17:13:25 jon Exp $
+.Id $Id: m2cmd147.2,v 2.11 2025/08/28 02:15:19 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH define-macro-file 2
@@ -20,7 +20,7 @@ define-macro-file \- Define macro file location
 .ad
 .SH DESCRIPTION
 Macros  are loaded as late as  possible  using an  on-demand  mechanism,  this
-speeds up the load time of \*(mE, it also keeps the  startup  file clean since
+speeds up the load time of \*(mS, it also keeps the  startup  file clean since
 macros  are not  defined  within the  start-up  file. Only when the user first
 executes a macro defined via  \fBdefine-macro-file\fR  is the file loaded, the
 macro becomes defined and is executed.  Subsequent calls to the macro will not
@@ -28,7 +28,7 @@ reload the file as the macro will now be fully defined.
 .PP
 .B define-macro-file
 binds macros  (\fImacro-name\fR  ...) to a file name  (\fIfile-name\fR).  This
-operation informs \*(mE which file should be loaded when  \fImacro-name\fR  is
+operation informs \*(mS which file should be loaded when  \fImacro-name\fR  is
 first  executed.  The  \fImacro-name\fR  arguments  may be omitted if the file
 contains only one exported macro which has the same name as \fIfile-name\fR.
 .PP

@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil025.4,v 2.6 2022/06/12 17:14:14 jon Exp $
+.Id $Id: m4fil025.4,v 2.6 2025/08/28 01:58:37 jon Exp $
 .Im MicroEmacs macro;directive|miscellaneousOperators
 .so me.tni
 .TH !nmacro 4
@@ -18,12 +18,10 @@
 .ad
 .SH DESCRIPTION
 .B !nmacro
-causes  \fIcommand\fR  to be executed as if it were initiated from the command
-line by the user, rather than from the macro  context.  When \*(mE  executes a
-macro, by default any input the command  requires is expected on the same line
-immediately  following  the command. If a line is preceded by a  \fB!nmacro\fR
-(or  \fB!nma\fR)  directive, the command is executed as if it was invoked from
-the command line by the user, as such, the rest of the line is ignored and all
+causes \fIcommand\fR to be executed as if it were initiated from the command line by the user, rather than from the
+macro context. When \*(mS executes a macro, by default any input the command requires is expected on the same line
+immediately following the command. If a line is preceded by a \fB!nmacro\fR (or \fB!nma\fR) directive, the command is
+executed as if it was invoked from the command line by the user, as such, the rest of the line is ignored and all
 input is obtained directly from the user, as per normal command interaction.
 .SH EXAMPLE
 The following example is taken from macro file \fCmeme3_8.emf\fR and shows how

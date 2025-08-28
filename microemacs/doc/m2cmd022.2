@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd022.2,v 2.7 2022/06/12 17:13:08 jon Exp $
+.Id $Id: m2cmd022.2,v 2.7 2025/08/28 00:50:40 jon Exp $
 .Im MicroEmacs command|region
 .ds C0 "(\fB\*ew\fR)\ \&
 .so me.tni
@@ -67,12 +67,10 @@ point.
 .BE
 Repeat the last two steps to insert further copies of the same text.
 .SH NOTES
-Windowing  systems such as X-Windows  and Microsoft  Windows  utilize a global
-windowing kill buffer allowing data to be moved between windowing applications
-(\fIcut   buffer\fR   and   \fIclipboard\fR,   respectively).   Within   these
-environments  \*(mE  automatically  interacts with the windowing  systems kill
-buffer, the last \*(mE \fBcopy-region\fR  entry is immediately available for a
-paste operation into another windowing application.
+Windowing systems such as X-Windows and Microsoft Windows utilize a global windowing kill buffer allowing data to be
+moved between windowing applications (\fIcut buffer\fR and \fIclipboard\fR, respectively). Within these environments
+\*(mS automatically interacts with the windowing systems kill buffer, the last \*(mS \fBcopy-region\fR entry is
+immediately available for a paste operation into another windowing application.
 .PP
 The numeric argument \fIn\fR was introduced in the '04 release.
 .SH "SEE ALSO"

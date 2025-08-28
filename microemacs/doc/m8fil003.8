@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m8fil003.8,v 2.8 2022/06/12 17:14:33 jon Exp $
+.Id $Id: m8fil003.8,v 2.8 2025/08/28 02:15:19 jon Exp $
 .Im MicroEmacs files
 .so me.tni
 .TH emf 8
@@ -15,13 +15,13 @@ emf \- MicroEmacs macro file
 .na
 .ad
 .SH DESCRIPTION
-The  \*(mE  macro  files  are  ASCII  text  files,  given  the file  extension
-\fB.emf\fR. A number of special macro files exist as follows:-
+\*(mS macro files are ASCII text files, given the file extension \fB.emf\fR. A number of special macro files exist as
+follows:-
 .TP 
 \fBme.emf\fR
 .\"
 The  start-up  macro file. This file is the first macro file to be invoked and
-is used to bootstrap \*(mE into the correct configuration.
+is used to bootstrap \*(mS into the correct configuration.
 .TP 
 \fBhk\fR\|\fI<name>\fR\|\fB.emf\fR
 .\"
@@ -45,11 +45,10 @@ Mouse interaction macros.
 .IP "\fBosd.emf\fR"
 OSD Menu configuration file.
 .SH FILES
-The default  start-up  file  \fBme.emf\fR  is located in the \*(mE  \fIhome\fR
-directory
+The default start-up file \fBme.emf\fR is located in the \*(mS \fIhome\fR directory
 .Ht $user-path 5 .
 .PP
-User's may create their own start-up and files in their local \*(mE directory.
+User's may create their own start-up and files in their local \*(mS directory.
 The users start-up file is called  
 .Hl $user-name $user-name 5 \fB.emf\fR,
 and may be used to execute other macro files defined by the user.

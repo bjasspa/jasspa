@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil007.4,v 2.7 2022/06/12 17:14:03 jon Exp $
+.Id $Id: m4fil007.4,v 2.7 2025/08/28 01:57:26 jon Exp $
 .Im MicroEmacs macro;directive|miscellaneousOperators
 .so me.tni
 .TH !force 4
@@ -19,9 +19,8 @@
 .ad
 .SH DESCRIPTION
 .B !force
-ignores the return  status of a  \fIcommand\fR  while  executing a macro. When
-\*(mE  executes a macro, if any command fails, the macro is terminated at that
-point. If a line is preceded by a \fB!force\fR  directive, execution continues
+ignores the return status of a \fIcommand\fR while executing a macro. When \*(mS executes a macro, if any command
+fails, the macro is terminated at that point. If a line is preceded by a \fB!force\fR directive, execution continues
 whether the command succeeds or not.
 .Ht $status 5
 may be used following \fB!force\fR to determine if the command failed or not.

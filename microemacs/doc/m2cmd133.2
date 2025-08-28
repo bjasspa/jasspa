@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd133.2,v 2.10 2022/06/12 17:13:25 jon Exp $
+.Id $Id: m2cmd133.2,v 2.10 2025/08/28 00:29:16 jon Exp $
 .Im MicroEmacs command|bind
 .so me.tni
 .TH translate-key 2
@@ -266,7 +266,7 @@ generated:-
 sh: ^[[2~:  not found.
 .CE
 where  \fC^[[2~\fR is the required key sequence.  Another  method of obtaining
-these key sequences is to start \*(mE, use
+these key sequences is to start \*(mS, use
 .Ht start-kbd-macro 2
 to start a macro definition, press the required keys and then use
 .Ht end-kbd-macro 2
@@ -277,9 +277,9 @@ and
 to display the keys pressed.
 .PP
 The key  sequences  generated  for these  keys are  dependent  on the  machine
-displaying \*(mE as opposed to the machine running it. Often they are the same
+displaying \*(mS as opposed to the machine running it. Often they are the same
 machine,  but when  they are not there is no easy  method of  determining  the
-displaying machine and therefore correctly configuring \*(mE.
+displaying machine and therefore correctly configuring \*(mS.
 .PP
 A better way of  obtaining  this cross  platform  consistency  is to create an
 XTerm  app-defaults  setup file with the correct VT100 key translations,  e.g.

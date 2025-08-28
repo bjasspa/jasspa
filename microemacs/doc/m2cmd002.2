@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd002.2,v 2.7 2024/05/21 17:13:08 jon Exp $
+.Id $Id: m2cmd002.2,v 2.7 2025/08/28 00:48:58 jon Exp $
 .Im MicroEmacs command|spell
 .so me.tni
 .TH add-dictionary 2
@@ -73,8 +73,7 @@ compatible list of words.
 spellutl.emf to define macro
 .Ht spell-add-word 3 .
 .IP \fB3)\fR
-Start  up  \*(mE  and  execute  the  command  \fBadd-dictionary\fR  giving  an
-appropriate new dictionary name.
+Start up \*(mS and execute the command \fBadd-dictionary\fR giving an appropriate new dictionary name.
 .IP \fB4)\fR
 Load up the file containing the words and execute the command
 .Ht spell-add-word 3
@@ -105,21 +104,16 @@ and
 .Ht restore-dictionary 3
 which enable the user to edit a dictionary.
 .SH NOTES
-\*(mE is supplied with a dictionaries  for American and British English, it is
-strongly  suggested that these  dictionaries are \fBNOT\fR modified in anyway.
-Ensure  that the  dictionary  is  protected  by loading the base  dictionaries
-first, followed by a personal dictionary. New words added during spelling will
-then be added to the personal dictionary rather than the main dictionary.
+\*(mS is supplied with dictionaries for American and British English, it is strongly suggested that these dictionaries
+are \fBNOT\fR modified in anyway. Ensure that the dictionary is protected by loading the base dictionaries first,
+followed by a personal dictionary. New words added during spelling will then be added to the personal dictionary
+rather than the main dictionary.
 .SH EXAMPLE
-The \*(mE start-up file \fBme.emf\fR executes \fBlanguage.emf\fR which in turn
-executes the user language setup file, for example  \fBamerican.emf\fR,  which
-adds the main language  dictionaries and rules.  \fBlanguage.emf\fR  then adds
-the user's dictionary, this process can be simplified to:-
+The \*(mS start-up file \fBme.emf\fR executes \fBlanguage.emf\fR which in turn executes command \fBspell-rules-init\fR
+(located in \fBlangutl.emf\fR) which adds the main language rules and dictionary. The command then adds the user's
+dictionary, this process can be simplified to:-
 .Me $emf-scheme
 .CS
-; add the main American dictionary
-add-dictionary "lsmenus"
-
 ; reset the spell rules
 0 add-spell-rule
 ; Now add the American spell rules
@@ -127,6 +121,8 @@ add-dictionary "lsmenus"
 -2 add-spell-rule "I" "" "" "in" "" ; As in disposed > indisposed
     .
     .
+; Now add the main American dictionary
+add-dictionary "lsmenus"
 ; Now add the user dictionary
 add-dictionary $MENAME
 .CE 0

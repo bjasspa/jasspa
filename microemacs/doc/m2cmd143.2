@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd143.2,v 2.7 2022/06/12 17:13:25 jon Exp $
+.Id $Id: m2cmd143.2,v 2.7 2025/08/28 00:53:33 jon Exp $
 .Im MicroEmacs command|file
 .ds C0 "(\fB\*(cX\*cw\fR)\ \&
 .so me.tni
@@ -59,11 +59,10 @@ copies of the file associated with the \fIbuffer\fR are deleted.
 The  argument  \fIn\fR  may  be  used  to  change  the  default   behavior  of
 write-buffer described above, \fIn\fR is a bit based flag where:-
 .IP \fB0x01\fR
-Enables  validity  checks  (default).  These include a check that the proposed
-file does not already exist, if so  confirmation  of writing is requested from
-the user.  Also  \*(mE  checks  all  other  current  buffers  for one with the
-proposed file name, if found, again  confirmation  is requested.  Without this
-flag the command will always succeed wherever possible.
+Enables validity checks (default). These include a check that the proposed file does not already exist, if so
+confirmation of writing is requested from the user. Also \*(mS checks all other current buffers for one with the
+proposed file name, if found, again confirmation is requested. Without this flag the command will always succeed
+wherever possible.
 .IP \fB0x02\fR
 Disables the expansion of any narrows (see
 .Ht narrow-buffer 2 )

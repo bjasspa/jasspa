@@ -6,7 +6,7 @@
 .\"
 .\" Authors:    Jon Green
 .\"
-.Id $Id: m1cmd000.1,v 2.20 2025/03/16 08:54:59 jon Exp $
+.Id $Id: m1cmd000.1,v 2.20 2025/08/28 02:11:06 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH me 1
@@ -84,7 +84,7 @@ The command line options to
 .B "\*(mS"
 are defined as follows:-
 .IP "\fB@\fR\|\fIstartFile\fR"
-Initialize  \*(mE using  \fIstartFile\fR\|[\fB.emf\fR].  The default when
+Initialize  \*(mS using  \fIstartFile\fR\|[\fB.emf\fR].  The default when
 omitted is \fBme.emf\fR. See 
 .Ht start-up 3 
 and 
@@ -138,7 +138,7 @@ mode.
 backup  mode by  default.  The  behavior  of \fB-B\fR is  therefore  different
 between the two editors. 
 .IP \fB\-c\fR[\fIsessionName\fR]
-Continuation  mode. Load the  \fB\*(mE\fR  last edit  session,  restoring  the
+Continuation  mode. Load the  \fB\*(mS\fR  last edit  session,  restoring  the
 buffers to their  previous  loaded  state when  history  mode is enabled.  The
 \fB\-c\fR    option   is   generally    used   with    windowing    interfaces
 (X-Windows/Microsoft Windows) as the shortcut icon invocation.
@@ -168,7 +168,7 @@ Stop processing command-line arguments, instead set a
 .Hl .about.arg# .about.arg1 5
 variable for all following arguments. 
 .IP \fB\-i\fR
-\s-1MS-DOS\s0  versions of  \fB\*(mE\fR  only. Insert the contents of the
+\s-1MS-DOS\s0  versions of  \fB\*(mS\fR  only. Insert the contents of the
 current screen into the \fB*scratch*\fR buffer
 .IP \fB\-k\fR[\fIkey\fR]
 Load next file as an encrypted file (uses
@@ -212,12 +212,12 @@ working directory of the active \*(mS session is unknown. The \fB\-m\fR option
 de-iconize's the existing editor session and bring it to the foreground.
 .IP \fB\-n\fR
 \s-1UNIX\s0  X-Windows  environments  only and  MicroSoft  Windows  NT console
-versions.  Execute   \fB\*(mE\fR  using  termcap  rather  than  X-Windows  for
-\s-1UNIX\s0; typically used within an \fBxterm\fR shell to fire up \fB\*(mE\fR
+versions.  Execute   \fB\*(mS\fR  using  termcap  rather  than  X-Windows  for
+\s-1UNIX\s0; typically used within an \fBxterm\fR shell to fire up \fB\*(mS\fR
 for a quick  edit. For  Microsoft  Windows,  a console  window is  started  as
 opposed to a GUI window.
 .IP "\fB\-o\fR\|\fI<file>\fR"
-Use already  running version of \*(mE to load the  \fI<file>\fR, if it exists,
+Use already  running version of \*(mS to load the  \fI<file>\fR, if it exists,
 otherwise  start a new  editor  session.  This  uses  the  \fIclient-server\fR
 interface to push the new file into the existing editor session. Refer to the 
 .Hl "Client-Server Interface" client-server 2
@@ -243,7 +243,7 @@ Read-only, all buffers will be in view mode
 .IP \fB\-s\fR\|\fIstring\fR
 Search for string "\fIstring\fR" in the current buffer. e.g.
 .C "me -sfoo bar"
-starts  \fB\*(mE\fR,  loads file  \fCbar\fR  and  initiates  a search for
+starts  \fB\*(mS\fR,  loads file  \fCbar\fR  and  initiates  a search for
 \fIfoo\fR.  The cursor is left at the end of the string if located,  otherwise
 at the top of the buffer.
 .IP \fB\-u\fR\|\fIusername\fR
@@ -251,7 +251,7 @@ Set the current user name
 .Ht $user-name 5 
 to \fIusername\fR before \*(mS is initialized. 
 .IP \fB\-v\fR\|\fIvariable=string\fR
-Assign the  \*(mE  \fIvariable\fR  with  \fIstring\fR.  The assignment is
+Assign the  \*(mS  \fIvariable\fR  with  \fIstring\fR.  The assignment is
 performed before the buffers are loaded. Typically used to change the start-up
 characteristics of the startup file(s).
 .IP \fB\-V\fR
@@ -261,7 +261,7 @@ Print the name and version of \*(mS. i.e.
 .br
 \fCMicroEmacs 06 - Date 2006/08/10 - sunos\fR
 .IP \fB\-x\fR
-\s-1UNIX\s0  environments. Disable the capture of signals. \fB\*(mE\fR by
+\s-1UNIX\s0  environments. Disable the capture of signals. \fB\*(mS\fR by
 default  captures  an handles  all illicit  signal  interrupts.  The option is
 enabled when  debugging  the source code allowing  exception  conditions to be
 trapped within the debugger.
@@ -270,7 +270,7 @@ Load next file as a reduced binary file (uses
 .Ht rbin 2m
 buffer mode).
 .SH ENVIRONMENT
-The following environment variables are used by \fB\*(mE\fR.
+The following environment variables are used by \fB\*(mS\fR.
 .IP \fBDISPLAY\fR
 \s-1UNIX\s0 environments running X-Windows only. The identity of the X-Windows
 server. Typically set to \fBunix:0.0\fR, refer to the X-Windows  documentation
@@ -280,7 +280,7 @@ for details of this environment variable.
 is used to override the identity of the user
 .Ht $user-name 5 .
 The variable may be used to determine which start-up  configuration  to use in
-the initialization of \fB\*(mE\fR (\fI$user-name\fR.erf). This is ignored if 
+the initialization of \fB\*(mS\fR (\fI$user-name\fR.erf). This is ignored if 
 the \fB-u\fR option is specified on the command line.
 .IP
 Non-\s-1UNIX\s0  platforms  usually need to explicitly  set the  \fB$MENAME\fR
@@ -290,7 +290,7 @@ and early  versions of  Microsoft  Windows this is typically  performed in the
 .IP \fBPATH\fR
 The \fB$PATH\fR  environment  variable is used on most operating  systems as a
 search path for executable files. This \fB$PATH\fR  environment  variable must
-be defined with \fB\*(mE\fR on the search path. Under \s-1UNIX\s0 this is
+be defined with \fB\*(mS\fR on the search path. Under \s-1UNIX\s0 this is
 set in the \fC.login\fR, \fC.cshrc\fR or \fC.profile\fR file i.e.
 .RS
 .IP
@@ -304,7 +304,7 @@ Within  \s-1MS-DOS\s0 or Microsoft  Windows  environments it is defined in the
 set PATH=%PATH%;c:\\me
 .RE
 .IP
-\fB\*(mE\fR  utilizes information in the \fB$PATH\fR environment variable
+\fB\*(mS\fR  utilizes information in the \fB$PATH\fR environment variable
 to locate the start-up files, dictionaries etc.
 .IP \fBTERM\fR
 The terminal identification sting. In \s-1UNIX\s0 environments the environment
@@ -359,10 +359,10 @@ the path specification.
 .Ht $MEUSERPATH 5
 is the preferred method used to defined the user directory.
 .IP \fBINFOPATH\fR
-\*(mE uses the environment  variable  \fC$INFOPATH\fR as the directory(s) used
+\*(mS uses the environment  variable  \fC$INFOPATH\fR as the directory(s) used
 to search for GNU \fBInfo\fR files. Within the \s-1UNIX\s0  \fC$INFOPATH\fR is
 a semi-colon  separated  list of directories  which are used to search for the
-\*(mE macro  files. The path is searched  from left to right. The  environment
+\*(mS macro  files. The path is searched  from left to right. The  environment
 variable is  typically  defined in the in the  \fC.login\fR,  \fC.cshrc\fR  or
 \fC.profile\fR file i.e.
 .RS
@@ -384,17 +384,17 @@ There is no default location in these environments.
 All of the macro files and  dictionaries  are located in the  \fB\*(mS\fR
 home directory. The standard file extensions that are utilized are:-
 .IP "\fB.eaf\fR"
-\fB\*(mE\fR  abbreviation file, defines completion definitions for buffer
+\fB\*(mS\fR  abbreviation file, defines completion definitions for buffer
 dependent text expansion.
 .IP "\fB.edf\fR"
-A \fB\*(mE\fR spelling dictionary. \fI<language>\fR\fB.edf\fR provide language
+A \fB\*(mS\fR spelling dictionary. \fI<language>\fR\fB.edf\fR provide language
 specific   dictionaries;   \fI$LOGNAME\fR\fB.edf\fR   is   personal   spelling
 dictionary.
 .IP "\fB.ehf\fR"
-\fB\*(mE\fR  help file  information.  On-line help information for emacs,
+\fB\*(mS\fR  help file  information.  On-line help information for emacs,
 the main file is \fCme.ehf\fR.
 .IP "\fB.emf\fR"
-A \fB\*(mE\fR macro file. The following classes of macro file exist:
+A \fB\*(mS\fR macro file. The following classes of macro file exist:
 .RS
 .IP "\fBme.emf\fR"
 The default startup file.

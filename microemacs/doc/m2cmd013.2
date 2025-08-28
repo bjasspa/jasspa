@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd013.2,v 2.9 2022/06/12 17:13:08 jon Exp $
+.Id $Id: m2cmd013.2,v 2.9 2025/08/28 02:15:19 jon Exp $
 .Im MicroEmacs command|bind
 .ds C0 "(\fB\*ek\fR)\ \&
 .ds C1 "(\fB\*e\*ck\fR)\ \&
@@ -80,8 +80,7 @@ the command
 .Ht translate-key 2
 to convert the system key binding to the standard key binding.
 .PP
-Permanent changes are done indirectly through the \fCme.emf\fR file. This is a
-file that \*(mE reads and executes (see
+Permanent changes are done indirectly through the \fCme.emf\fR file. This is a file that \*(mS reads and executes (see
 .Ht execute-file 2 )
 during  startup and hence results in the  appearance of a permanent  change in
 the key bindings. The syntax of commands in the \fCme.emf\fR file is described

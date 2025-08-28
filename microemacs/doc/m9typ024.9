@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ024.9,v 2.9 2025/07/30 08:27:23 jon Exp $
+.Id $Id: m9typ024.9,v 2.9 2025/08/28 02:15:19 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH perl 9
@@ -35,12 +35,12 @@ perl \- Practical Extraction and Report Language File.
 .TP
 \fB#![ \\t]*/.*perl\fR
 .\"
-\*(mE recognizes the magic string on the first line of the file used to locate
+\*(mS recognizes the magic string on the first line of the file used to locate
 the executable. The Perl files may be extension-less and are still recognized.
 .TP
 \fB# -*- perl -*-\fR
 .\"
-\*(mE  recognizes the standard GNU Emacs magic string on the first line of the
+\*(mS  recognizes the standard GNU Emacs magic string on the first line of the
 file. The Perl files may be extension-less and are still recognized.
 .SH DESCRIPTION
 The \fBperl\fR  file type template  provides the hilighting,  indentation  and
@@ -64,7 +64,7 @@ which  can  be  used  by  writing   short   abbreviations   like   "\fBif\fR",
 .Ht expand-abbrev-handle 3
 command.  
 The  list  of  abbreviations  can be used  interactively  in the GUI
-version of \*(mE using the 
+version of \*(mS using the 
 .Ht abbrev-list 3
 command.
 .IP "\fBAuto Layout\fR"

@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd056.2,v 2.11 2025/01/12 09:05:42 jon Exp $
+.Id $Id: m2cmd056.2,v 2.11 2025/08/28 00:34:34 jon Exp $
 .Im MicroEmacs command|file
 .ds C0 "(\fB\*(cX\*cf\fR)\ \&
 .so me.tni
@@ -54,12 +54,11 @@ file is loaded (i.e. the
 .Hl "buffer's file hook"  fileHooks  2 
 is not executed).
 .PP
-Text files are  usually thought  of as named  collections of  text residing on
-disk (or some other storage medium).  In \*(mE the disk based versions of
-files come into play only  when reading into or  writing out buffers. The link
-between the physical file and the buffer is through the associated file name.
+Text files are usually thought of as named collections of text residing on disk (or some other storage medium). In
+\*(mS the disk based versions of files come into play only when reading into or writing out buffers. The link between
+the physical file and the buffer is through the associated file name.
 .PP
-\*(mE permits full file names, i.e. you can specify:
+\*(mS permits full file names, i.e. you can specify:
 .CS
 disk:\\directories\\filename.extension
 .CE
