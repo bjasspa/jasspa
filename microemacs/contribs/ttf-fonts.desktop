@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Exec=sh .config/jasspa/ttf-fonts.sh
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[en_IN]=TTF-Fonts
+Name=TTF-Fonts
+Comment[en_IN]=
+Comment=

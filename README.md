@@ -172,6 +172,27 @@ session should start with these saved settings.
 MicroEmacs versions  before  20241001  might as require the tools luit and abduco for better
 support of international character encodings on UTF-8 enabled terminals.
 
+## Compilation
+
+In order to compile the program  yourself  here are a few hints for  different
+platforms on how to do this.
+
+### Linux systems
+
+Debian based systems like Ubuntu or MX-Linux:
+
+```
+sudo apt install ncurses-dev libssl-dev libxt-dev
+```
+
+Red Hat based systems like Fedora, Alma Linux:
+
+```
+sudo dnf install ncurses-devel libXt-devel
+```
+
+
+
 ## License
 
 GPL - see the file [LICENSE](microemacs/LICENSE)
