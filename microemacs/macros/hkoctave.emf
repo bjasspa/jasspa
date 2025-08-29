@@ -141,6 +141,12 @@ set-variable .fhook-octave.item-list-r3 "Func \CCb\\1\CCA"
   indent .hilight.octave    S "else"           -t
   indent .hilight.octave    S "elseif"         -t
   indent .hilight.octave    O "end"            -t
+  indent .hilight.octave    O "endif"          -t
+  indent .hilight.octave    O "endfor"         -t
+  indent .hilight.octave    O "endswitch"      -t
+  indent .hilight.octave    O "endwhile"       -t
+  indent .hilight.octave    O "end_try_catch"  -t
+  indent .hilight.octave    O "until"          -t
   indent .hilight.octave    N "for"             t
   indent .hilight.octave    N "while"           t
   indent .hilight.octave    N "try"             t
@@ -149,7 +155,7 @@ set-variable .fhook-octave.item-list-r3 "Func \CCb\\1\CCA"
   indent .hilight.octave    N "begin"           t
   indent .hilight.octave    N "switch"          t
   indent .hilight.octave    S "case"           -t
-  indent .hilight.octave    S "otherwise"      -t     
+  indent .hilight.octave    S "otherwise"      -t
 !endif
 
 ; setup file-* tools
@@ -159,7 +165,7 @@ add-next-line "*octave-exec*" " line %l"
 add-next-line "*octave-lint*" "Error in file: %f"
 add-next-line "*octave-lint*" "\\(near\\|at\\) line %l"
 
-set-variable .fhook-octave.coms "\boctave\b" 
+set-variable .fhook-octave.coms "\boctave\b"
 set-variable .fhook-octave.exec1   "\b%v[com]\b\b\b\b%\"%v[com]%\" -W \"%f\" %v[args|20|Additional command-line arguments|]\b"
 
 
