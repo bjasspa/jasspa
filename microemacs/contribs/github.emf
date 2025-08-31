@@ -37,6 +37,7 @@ set-variable $time 0
   set-variable #l0 @1
   set-variable #l1 $buffer-bname
   find-buffer "*github-log*"
+  !iif &band @# 2  end-of-buffer
   insert-string #l0
   insert-newline
   find-buffer #l1
@@ -294,7 +295,7 @@ define-macro github-release
 
 define-macro github-build-release
   ascii-time
-  github-log &spr "github-build-release start: %s" #l9
+  3 github-log &spr "github-build-release start: %s" #l9
   !force set-variable #l0 @1
   !iif &not $status set-variable #l0 @ml61 "Jasspa Git repository" "~/jasspa"
   !iif &not &seq "D" &stat t &set #l0 &stat a #l0  -8 ml-write &spr "[Github Release Error: Given repository is not a directory: %s]" #l0
@@ -387,7 +388,7 @@ define-macro github-finalise-release-formula
 define-macro github-finalise-release
   set-position "\x80"
   ascii-time
-  github-log &spr "github-finalise-release start: %s" #l9
+  3 github-log &spr "github-finalise-release start: %s" #l9
   !force set-variable #l0 @1
   !iif &not $status set-variable #l0 @ml61 "Jasspa Git repository" "~/jasspa"
   !iif &not &seq "D" &stat t &set #l0 &stat a #l0  -8 ml-write &spr "[Github Release Error: Given jasspa repository is not a directory: %s]" #l0
