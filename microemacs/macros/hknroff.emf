@@ -264,28 +264,25 @@ set-variable .fhook-nroff.item-list-r1 "\\1  \CCb\\2\CCA"
   0 show-region
   set-variable #l0 $result
   !if &equ &band #l0 5 5
-    ; a region is hilighted
-    !if &not &band $result 2
-      3 show-region
-    !endif
-    ; Find start/end of region.
-    -2 show-region
+    ; a region is hilighted, find start/end of region.
+    !iif &not &band $result 2  3 show-region
+    set-alpha-mark "\x86"
     set-variable #l0 $window-line
     set-variable #l1 $window-col
-    set-position "\x82"
-    2 show-region
-    set-position "\x83"
-    set-variable #l2 $window-line
+    -2 show-region
+    set-alpha-mark "\x85"
     ; Determine start of region.
-    !if &or &gre #l0 #l2 &gre $window-col $window-col
+    !if &gre #l0 $window-line
+      set-variable #l3 0
+    !elif &les #l0 $window-line
       set-variable #l3 1
     !else
-      set-variable #l3 0
+      set-variable #l3 &les #l1 $window-col
     !endif
     ; italic the region.
-    goto-position &cond #l3 "\x83" "\x82"
+    goto-alpha-mark &cond #l3 "\x86" "\x85"
     insert-string "\\fI"
-    goto-position &cond #l3 "\x82" "\x83"
+    goto-alpha-mark &cond #l3 "\x85" "\x86"
     insert-string "\\fP"
   !else
     ; No region hilighted, insert italic.
@@ -299,28 +296,25 @@ set-variable .fhook-nroff.item-list-r1 "\\1  \CCb\\2\CCA"
   0 show-region
   set-variable #l0 $result
   !if &equ &band #l0 5 5
-    ; a region is hilighted
-    !if &not &band $result 2
-      3 show-region
-    !endif
-    ; Find start/end of region.
-    -2 show-region
+    ; a region is hilighted, find start/end of region.
+    !iif &not &band $result 2  3 show-region
+    set-alpha-mark "\x86"
     set-variable #l0 $window-line
     set-variable #l1 $window-col
-    set-position "\x82"
-    2 show-region
-    set-position "\x83"
-    set-variable #l2 $window-line
+    -2 show-region
+    set-alpha-mark "\x85"
     ; Determine start of region.
-    !if &or &gre #l0 #l2 &gre $window-col $window-col
+    !if &gre #l0 $window-line
+      set-variable #l3 0
+    !elif &les #l0 $window-line
       set-variable #l3 1
     !else
-      set-variable #l3 0
+      set-variable #l3 &les #l1 $window-col
     !endif
     ; size the region.
-    goto-position &cond #l3 "\x83" "\x82"
+    goto-alpha-mark &cond #l3 "\x86" "\x85"
     insert-string "\\s-1"
-    goto-position &cond #l3 "\x82" "\x83"
+    goto-alpha-mark &cond #l3 "\x85" "\x86"
     insert-string "\\s0"
   !else
     ; No region hilighted, insert size
@@ -334,28 +328,25 @@ set-variable .fhook-nroff.item-list-r1 "\\1  \CCb\\2\CCA"
   0 show-region
   set-variable #l0 $result
   !if &equ &band #l0 5 5
-    ; a region is hilighted
-    !if &not &band $result 2
-      3 show-region
-    !endif
-    ; Find start/end of region.
-    -2 show-region
+    ; a region is hilighted, find start/end of region.
+    !iif &not &band $result 2  3 show-region
+    set-alpha-mark "\x86"
     set-variable #l0 $window-line
     set-variable #l1 $window-col
-    set-position "\x82"
-    2 show-region
-    set-position "\x83"
-    set-variable #l2 $window-line
+    -2 show-region
+    set-alpha-mark "\x85"
     ; Determine start of region.
-    !if &or &gre #l0 #l2 &gre $window-col $window-col
+    !if &gre #l0 $window-line
+      set-variable #l3 0
+    !elif &les #l0 $window-line
       set-variable #l3 1
     !else
-      set-variable #l3 0
+      set-variable #l3 &les #l1 $window-col
     !endif
     ; roman the region.
-    goto-position &cond #l3 "\x83" "\x82"
+    goto-alpha-mark &cond #l3 "\x86" "\x85"
     insert-string "\\fR"
-    goto-position &cond #l3 "\x82" "\x83"
+    goto-alpha-mark &cond #l3 "\x85" "\x86"
     insert-string "\\fP"
   !else
     ; No region hilighted, insert roman.
@@ -369,28 +360,25 @@ set-variable .fhook-nroff.item-list-r1 "\\1  \CCb\\2\CCA"
   0 show-region
   set-variable #l0 $result
   !if &equ &band #l0 5 5
-    ; a region is hilighted
-    !if &not &band $result 2
-      3 show-region
-    !endif
-    ; Find start/end of region.
-    -2 show-region
+    ; a region is hilighted, find start/end of region.
+    !iif &not &band $result 2  3 show-region
+    set-alpha-mark "\x86"
     set-variable #l0 $window-line
     set-variable #l1 $window-col
-    set-position "\x82"
-    2 show-region
-    set-position "\x83"
-    set-variable #l2 $window-line
+    -2 show-region
+    set-alpha-mark "\x85"
     ; Determine start of region.
-    !if &or &gre #l0 #l2 &gre $window-col $window-col
+    !if &gre #l0 $window-line
+      set-variable #l3 0
+    !elif &les #l0 $window-line
       set-variable #l3 1
     !else
-      set-variable #l3 0
+      set-variable #l3 &les #l1 $window-col
     !endif
     ; bold the region.
-    goto-position &cond #l3 "\x83" "\x82"
+    goto-alpha-mark &cond #l3 "\x86" "\x85"
     insert-string "\\fB"
-    goto-position &cond #l3 "\x82" "\x83"
+    goto-alpha-mark &cond #l3 "\x85" "\x86"
     insert-string "\\fP"
   !else
     ; No region hilighted, insert bold
@@ -404,28 +392,25 @@ set-variable .fhook-nroff.item-list-r1 "\\1  \CCb\\2\CCA"
   0 show-region
   set-variable #l0 $result
   !if &equ &band #l0 5 5
-    ; a region is hilighted
-    !if &not &band $result 2
-      3 show-region
-    !endif
-    ; Find start/end of region.
-    -2 show-region
+    ; a region is hilighted, find start/end of region.
+    !iif &not &band $result 2  3 show-region
+    set-alpha-mark "\x86"
     set-variable #l0 $window-line
     set-variable #l1 $window-col
-    set-position "\x82"
-    2 show-region
-    set-position "\x83"
-    set-variable #l2 $window-line
+    -2 show-region
+    set-alpha-mark "\x85"
     ; Determine start of region.
-    !if &or &gre #l0 #l2 &gre $window-col $window-col
+    !if &gre #l0 $window-line
+      set-variable #l3 0
+    !elif &les #l0 $window-line
       set-variable #l3 1
     !else
-      set-variable #l3 0
+      set-variable #l3 &les #l1 $window-col
     !endif
     ; mono the region.
-    goto-position &cond #l3 "\x83" "\x82"
+    goto-alpha-mark &cond #l3 "\x86" "\x85"
     insert-string "\\fC"
-    goto-position &cond #l3 "\x82" "\x83"
+    goto-alpha-mark &cond #l3 "\x85" "\x86"
     insert-string "\\fP"
   !else
     ; No region hilighted, insert mono.
@@ -439,28 +424,25 @@ set-variable .fhook-nroff.item-list-r1 "\\1  \CCb\\2\CCA"
   0 show-region
   set-variable #l0 $result
   !if &equ &band #l0 5 5
-    ; a region is hilighted
-    !if &not &band $result 2
-      3 show-region
-    !endif
-    ; Find start/end of region.
-    -2 show-region
+    ; a region is hilighted, find start/end of region.
+    !iif &not &band $result 2   3 show-region
+    set-alpha-mark "\x86"
     set-variable #l0 $window-line
     set-variable #l1 $window-col
-    set-position "\x82"
-    2 show-region
-    set-position "\x83"
-    set-variable #l2 $window-line
+    -2 show-region
+    set-alpha-mark "\x85"
     ; Determine start of region.
-    !if &or &gre #l0 #l2 &gre $window-col $window-col
+    !if &gre #l0 $window-line
+      set-variable #l3 0
+    !elif &les #l0 $window-line
       set-variable #l3 1
     !else
-      set-variable #l3 0
+      set-variable #l3 &les #l1 $window-col
     !endif
     ; prev the region.
-    goto-position &cond #l3 "\x83" "\x82"
+    goto-alpha-mark &cond #l3 "\x86" "\x85"
     insert-string "\\fP"
-    goto-position &cond #l3 "\x82" "\x83"
+    goto-alpha-mark &cond #l3 "\x85" "\x86"
     insert-string "\\fP"
   !else
     ; No region hilighted, insert prev.
@@ -470,9 +452,7 @@ set-variable .fhook-nroff.item-list-r1 "\\1  \CCb\\2\CCA"
 
 0 define-macro nroff-para
   ; Save mark at point.
-  !if &not @?
-    set-mark
-  !endif
+  !iif &not @?  set-mark
   beginning-of-line
   !while &gre &pdec @# 1 0
     !if &not &sequal @wc "."
@@ -502,9 +482,7 @@ set-variable .fhook-nroff.item-list-r1 "\\1  \CCb\\2\CCA"
     forward-line
   !done
   ; If no arguments specified then restore the cursor position.
-  !if &not @?
-    exchange-point-and-mark
-  !endif
+  !iif &not @?  exchange-point-and-mark
 !emacro
 
 0 define-macro nroff-italic-region
@@ -542,17 +520,13 @@ set-variable .fhook-nroff.item-list-r1 "\\1  \CCb\\2\CCA"
   ; #l1 - %off-magic
   set-variable #l0 $window-line        ; Remember line
   set-variable #l1 &not &bmode "magic"
-  !if #l1
-    1 buffer-mode "magic"                ; Add magic
-  !endif
+  !iif #l1 1 buffer-mode "magic"
   beginning-of-buffer
   replace-string "\\(\\\\f[CBIRP]\\)" "\\1\\\\&"
   beginning-of-buffer
   replace-string "\\(\\\\s[+-]?[0-9]\\)" "\\1\\\\&"
   goto-line #l0
-  !if #l1
-    -1 buffer-mode "magic"
-  !endif
+  !iif #l1  -1 buffer-mode "magic"
   screen-update
   ml-write "Added nroff padding."
 !emacro
@@ -562,17 +536,13 @@ set-variable .fhook-nroff.item-list-r1 "\\1  \CCb\\2\CCA"
   ; #l1 - %off-magic
   set-variable #l0 $window-line        ; Remember line
   set-variable #l1 &not &bmode "magic"
-  !if #l1
-    1 buffer-mode "magic"                ; Add magic
-  !endif
+  !iif #l1  1 buffer-mode "magic"
   beginning-of-buffer
   replace-string "\\(\\\\f[CBIRP]\\)\\\\&" "\\1"
   beginning-of-buffer
   replace-string "\\(\\\\s[+-]?[0-9]\\)\\\\&" "\\1"
   goto-line #l0
-  !if #l1
-    -1 buffer-mode "magic"
-  !endif
+  !iif #l1  -1 buffer-mode "magic"
   screen-update
   ml-write "Removed nroff padding."
 !emacro
@@ -583,9 +553,10 @@ define-macro tex2nr
   ;
   ; Prepare to clean up file.
   ;
-  set-variable #l0 &bmod "magic"              ; Remember we have set magic
-  1 buffer-mode "magic"                       ; Add magic
-  set-variable #l1 $window-line               ; Remember line
+  ; Remember original magic setting, set it and store start line
+  set-variable #l0 &bmod "magic"
+  1 buffer-mode "magic"
+  set-variable #l1 $window-line
   ;
   ; Get rid of trailing white space on EOL
   ;
@@ -706,9 +677,7 @@ define-macro tex2nr
   ;
   !force goto-line #l1
   ; Remove magic as we added it
-  !if &not #l0
-    -1 buffer-mode "magic"
-  !endif
+  !iif &not #l0  -1 buffer-mode "magic"
   screen-update
   ml-write "Cleaned up file."
 !emacro

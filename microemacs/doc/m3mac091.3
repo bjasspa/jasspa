@@ -4,41 +4,51 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac091.3,v 2.1 2025/03/16 08:57:50 jon Exp $
+.Id $Id: m3mac091.3,v 2.1 2025/08/31 19:09:57 jon Exp $
 .Im MicroEmacs scuts
 .so me.tni
 .TH encase 3
-.XI encase - "Encase a text region with start/end string"
+.XI encase - "Encase a region with start/end string"
 .SH NAME
-encase \- Encase a text region with start/end string
+encase \- Encase a region with start/end string
 .Me $a
 .SH SYNOPSIS
 .na
 .Me "|encase"
+.I n
 .B encase
 "\|\fIstart-string\fR\|"
 "\|\fIend-string\fR\|"
 .ad
 .SH DESCRIPTION
 .B encase
-provides  a  short  cut to  encapsulate  a  selected  region  of  text  with a
-\fIstart-string\fR  and  \fIend-string\fR  pattern.  The  command is modal and
-operates in two different operating modes as follows.
+provides a short cut to encapsulate a selected region of text with a \fIstart-string\fR and \fIend-string\fR. The
+command is modal and operates in two different operating modes as follows.
 .PP
 First run
 .B encase
-without a current region section (i.e. no selected  highlighted  text) and the
-user is prompted for the  \fIstart-string\fR and \fIend-string\fR. The user is
-also   prompted   if  the   command   has  not   been  run   before   and  the
-\fIstart-string\fR  and  \fIend-string\fR  are  undefined.
+without a current region section (i.e. no selected highlighted text) and the user is prompted for the
+\fIstart-string\fR and \fIend-string\fR. The user is also prompted if the command has not been run before and the
+\fIstart-string\fR and \fIend-string\fR are undefined.
 .PP
-With the  strings  defined  then  select a region  with the mouse or  keyboard
-(\fB\*espace\fR  and \fBmove\fR or  \fB\*smove\fR) to define the start and end
-point of the region. With a selected region then execute the
+With the strings defined then select a region with the mouse or keyboard (\fB\*espace\fR and \fBmove\fR or
+\fB\*smove\fR) to define the start and end point of the region. With a selected region then execute the
 .B encase
-command using \fB\*ex\fR  \fBencase\fR. This is most effective when bound to a
-simple key, see
+command using \fB\*ex\fR \fBencase\fR. This is most effective when bound to a simple key, see
 .Ht global-bind-key 2 .
+.PP
+The numeric argument \fIn\fR is used to modify the default behavior of the command, where the bits are defined as
+follows:
+.IP \fB0x01\fR
+When set the start and end location is determined by the position in the buffer, the start being first in the buffer. 
+When this bit is clear the start position in always the start of the region regardless of where it is in the buffer. 
+When defining the \fIstart\fR and \fIend\fR strings, i.e. no region is defined or bit \fB4\fR is set, the value of 
+this bit is used as a default for subsequent calls when no argument is given.
+.IP \fB0x02\fR
+When set the current mark and cursor positions are used as the start and end position rather than the current region, 
+this removes the need for a current region.
+.IP \fB0x04\fR
+The \fIstart\fR and \fIend\fR strings are always prompted for when this bit is set.
 .SH NOTES
 .B encase 
 is a macro defined in \fCmisc.emf\fR.

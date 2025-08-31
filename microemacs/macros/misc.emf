@@ -31,39 +31,50 @@ define-macro set-title
   !force set-variable $frame-title @1
   !iif &not $status  set-variable $frame-title @ml20 "Frame title" &con &seq $frame-title "ERROR" "" $frame-title
 !emacro
+; Note: bit 8 of @# is used internal to indicate a region insert
 define-macro encase
-  0 show-region
-  set-variable #l0 &equ &band $result 5 5
-  !iif &not &exi .s  set-variable .s @ml00 "Starting text"
-  !if &not &exi .e
-    set-variable .e @ml00 "Ending text"
-    !iif &not #l0  !return
+  !if &band @# 2
+    set-variable #l0 2
+  !else
+    0 show-region
+    set-variable #l0 &con &equ &band &set #l1 $result 5 5 8 0
   !endif
-  ; is a region is hilighted
-  !if &not #l0
-    set-variable .s @ml10 "Starting text" .s
-    set-variable .e @ml10 "Ending text" .e
-    !return
+  !if &not &exi .n
+    set-variable @# &bor &bor &band @# 1 4 #l0
+  !elif &les @# 2
+    set-variable @# &bor &con @? &band @# 1 .n #l0
+    !iif &les @# 2  set-variable @# &bor @# 4
   !endif
-  !iif &not &band $result 2  3 show-region
-  ; Find start/end of region.
-  -2 show-region
+  !if &band @# 4
+    set-variable .s @ml10 "Starting text" &con &exi .s .s ""
+    set-variable .e @ml10 "Ending text" &con &exi .e .e ""
+    set-variable .n &band @# 1
+  !endif
+  !iif &not &band @# 10  !return
+  !iif &not &or &band @# 2 &band #l1 2  3 show-region
+  set-alpha-mark "\x86"
   set-variable #l0 $window-line
   set-variable #l1 $window-col
-  set-position "\x82"
-  2 show-region
-  set-position "\x83"
-  set-variable #l2 $window-line
-  ; Determine start of region.
-  !if &or &gre #l0 #l2 &gre $window-col $window-col
+  !if &band @# 2
+    exchange-point-and-mark
+    set-alpha-mark "\x85"
+  !else
+    -2 show-region
+    set-alpha-mark "\x85"
+  !endif
+  !if &not &band @# 1
+    set-variable #l3 0
+  !elif &gre #l0 $window-line
+    set-variable #l3 0
+  !elif &les #l0 $window-line
     set-variable #l3 1
   !else
-    set-variable #l3 0
+    set-variable #l3 &les #l1 $window-col
   !endif
-  ; italic the region.
-  goto-position &cond #l3 "\x83" "\x82"
+  !iif &band @# 2  exchange-point-and-mark
+  goto-alpha-mark &cond #l3 "\x86" "\x85"
   insert-string .s
-  goto-position &cond #l3 "\x82" "\x83"
+  goto-alpha-mark &cond #l3 "\x85" "\x86"
   insert-string .e
 !emacro
 

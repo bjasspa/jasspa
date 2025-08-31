@@ -7,7 +7,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd010.3,v 2.11 2022/06/12 17:14:01 jon Exp $
+.Id $Id: m3osd010.3,v 2.11 2025/08/31 21:44:21 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH major-mode-setup 3
@@ -36,25 +36,23 @@ file,  "\fI<logname>\fR\fC.erf\fR".  Note  that  not  all  file  types  may be
 supported  by  \fBmajor-mode-setup\fR,  if not the help  menu item will not be
 available.
 .PP
-The  contents of the dialog  change,  depending  on the  features  the current
-buffer's file type  supports.  These  features are  implemented  and installed
-within the
+The contents of the dialog change, depending on the features the current buffer's file type supports. These features
+are implemented and installed within the
 .Hl  "buffer's  file hook"  fileHooks  2 .
 The following buttons are always present at the bottom of the dialog:
+.IP "\fCTools\fR"
+.\"TODO add proper link to Bmajor-mode-tools-setup
+Opens the \fBmajor-mode-tools-setup\fR dialog for the current buffer's file type.
 .IP "\fCSave\fR"
-Saves the changes made to the  configuration  back to the users registry file,
-i.e.  "\fI<Log-Name>\fR\fC.erf\fR"  but  does not  re-initialize  the  current
-buffer.  No  changes   made  will  effect  the  current   buffer   unless  the
-\fBCurrent\fR  button is pressed.  Buffers of the same type created  after the
-save may inherrit some of the changes.
-.IP "\fCCurrent\fR"
-Makes  the  current   buffer   reflect  the  changes  made,   dismissing   the
-\fBmajor-mode-setup\fR   dialog.  This  also   performs  the  above   '\fBSave\fR'
-operation. Some changes such as dialog creation changes, will only take effect
-when \*(mS is restarted.
+Saves the changes made to the configuration back to the users registry file, i.e. "\fI<Log-Name>\fR\fC.erf\fR" but
+does not re-initialize the current buffer. No changes made will effect the current buffer unless the \fBApply\fR
+button is pressed. Buffers of the same type created after the save may inherrit some of the changes.
+.IP "\fCApply\fR"
+Makes the current buffer reflect the changes made, dismissing the \fBmajor-mode-setup\fR dialog. This also performs
+the above '\fBSave\fR' operation. Some changes such as dialog creation changes, will only take effect when \*(mS is
+restarted.
 .IP "\fCCancel\fR"
-Quits major-mode-setup, if changes where not \fBSave\fRd or made \fBCurrent\fR
-they will be lost.
+Quits major-mode-setup, if changes where not \fBSave\fRd or \fBApply\fR'd they will be lost.
 .PP
 Following is a list of configurable features which may be available:
 .IP "Create Help Page"

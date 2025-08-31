@@ -191,7 +191,7 @@ define-macro major-mode-setup
   set-variable #l9 &ind &spr ".%s.name" $buffer-fhook
   !iif &seq #l9 "ERROR"  set-variable #l9 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
   -1 osd .osd.mjrmdstp
-  osd .osd.mjrmdstp 0 "batcDIHs" 9 3 58 10 -1 -1 960 970 .scheme.osd-title &cat #l9 " Major Mode Setup"
+  osd .osd.mjrmdstp 0 "batcDIHs" 9 3 58 10 -1 -1 960 970 .scheme.osd-title &cat "Major Mode Setup: " #l9
   osd .osd.mjrmdstp 5 ""
   !if &not &seq &set #l1 &ind &spr ".%s.setup-flags" $buffer-fhook "ERROR"
     set-variable #l2 &ind &spr ".%s.setup-labels" $buffer-fhook
@@ -246,13 +246,13 @@ define-macro major-mode-setup
     !endif
   !until &seq &lget .flags &inc #l0 1 ""
   osd .osd.mjrmdstp 900 "Sfh" "  Indent Width: " 905
-  osd .osd.mjrmdstp 905 "EtRxHfh" .scheme.osd-entry "########" 4 major-mode-setup-fmark
-  osd .osd.mjrmdstp 907 "Sfh" "    Tab Width: " 910
-  osd .osd.mjrmdstp 910 "EtRxHf" .scheme.osd-entry "########" 3 major-mode-setup-fmark
+  osd .osd.mjrmdstp 905 "EtRxHfh" .scheme.osd-entry "##########" 4 major-mode-setup-fmark
+  osd .osd.mjrmdstp 907 "Sfh" "  Tab Width: " 910
+  osd .osd.mjrmdstp 910 "EtRxHf" .scheme.osd-entry "##########" 3 major-mode-setup-fmark
   osd .osd.mjrmdstp 912 ""
   osd .osd.mjrmdstp 913 "Sfh" "  \HFill Column:  " 915
-  osd .osd.mjrmdstp 915 "EtRxHfh" .scheme.osd-entry "########" 5 major-mode-setup-fmark
-  osd .osd.mjrmdstp 917 "Sfh" "    Fi\Hll Mode: " 920
+  osd .osd.mjrmdstp 915 "EtRxHfh" .scheme.osd-entry "##########" 5 major-mode-setup-fmark
+  osd .osd.mjrmdstp 917 "Sfh" "  Fi\Hll Mode: " 920
   osd .osd.mjrmdstp 920 "OtxmsfhHR" .scheme.osd-entry "##############" .osd.tmp major-mode-setup-fmode
   osd .osd.mjrmdstp 921 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 920
   osd .osd.mjrmdstp 922 ""
@@ -264,12 +264,14 @@ define-macro major-mode-setup
     osd .osd.mjrmdstp 935 ""
   !endif        
   osd .osd.mjrmdstp 940 ""
+  osd .osd.mjrmdstp 942 "fh" "  "
+  osd .osd.mjrmdstp 945 "BtfHhx" .scheme.osd-ebtt " \HTools " 1 major-mode-tools-setup
   osd .osd.mjrmdstp 950 "BtrfHhx" .scheme.osd-ebtt " \HSave " &bor 2 &band @# 1 major-mode-setup-save
   osd .osd.mjrmdstp 955 "fh" "   "
   osd .osd.mjrmdstp 960 "BtrfHh"  .scheme.osd-ebtt " \HApply " &bor 6 &band @# 1 major-mode-setup-save
   osd .osd.mjrmdstp 965 "fh" "   "
   osd .osd.mjrmdstp 970 "BtrfHh"  .scheme.osd-ebtt " \HCancel " f void
-  osd .osd.mjrmdstp 975 "f" "   "
+  osd .osd.mjrmdstp 975 "f" "  "
   set-variable .nsetup .osetup
   set-variable .nedit .oedit
   .osd.mjrmdstp osd
@@ -277,7 +279,7 @@ define-macro major-mode-setup
 set-variable .major-mode-setup.ledit  "|fomark|fcmark|tab-width|indent-width|fill-col|fill-mode|"
 set-variable .major-mode-setup.flags  "|p|o|n|g|h|d|s|f|b|e|m|k|i|j|t|x|u|w|"
 set-variable .major-mode-setup.blank  "|0|0|9|0|0|0|0|9|9|2|5|2|4|4|4|4|4|13|"
-set-variable .major-mode-setup.labels "|Create Help \HPage|C\Hreate Tools Menu|Insert \HNew Template|Fence Display|Setup \HHilighting|Setup Auto In\Hdent|Setup Auto Spe\Hll|Setup \HFolding|Add A\Hbbreviations|\HExact|\HMagic|Bac\Hkup|\HIndent|\HJustify|\HTab|Time|\HUndo|\HWrap|"
+set-variable .major-mode-setup.labels "|Create Help \HPage|C\Hreate Tools Menu|Insert \HNew Template|Fence Display|Setup \HHilighting|Setup Auto In\Hdent|Setup Auto Spe\Hll|Setup \HFolding|Add A\Hbbreviations|\HExact|\HMagic|Bac\Hkup|\HIndent|\HJustify|Tab|Time|\HUndo|\HWrap|"
 set-variable .major-mode-setup.prefix "||||||||||Search Modes: ||Buffer Modes: |||||||"
 set-variable .major-mode-setup.modes  "||||||||||exact|magic|backup|indent|justify|tab|time|undo|wrap|"
 
