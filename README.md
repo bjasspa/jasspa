@@ -197,8 +197,9 @@ Arch based systems like Manjaro Linux:
 sudo pacman -S make gcc ncurses xorg-xfontsel ttf-fira-mono
 ```
 
-Fira Mono is a font  which  provides  Windows  CP1252 and it us  automatically
-indexed on Manjaro so that it can be directly used in MicroEmacs.
+Fira Mono is a font  which  provides  Windows  CP1252 encoding and it is  automatically
+indexed on Manjaro so that it can be  directly  used in  MicroEmacs  using the
+user-setup command and then the font selection tool _xfontsel_.
 
 ## License
 
