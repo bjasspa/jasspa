@@ -75,9 +75,7 @@ define-macro edit-dictionary
   set-variable #l0 @ml04 "Dictionary to edit"
   set-variable #l1 &spr "*%s*" &rig #l0 &rsin "/" #l0
   !force 0 find-buffer #l1
-  !if $status
-    !return
-  !endif
+  !iif $status  !return
   find-buffer #l1
   -1 add-dictionary #l0
   beginning-of-buffer
@@ -113,27 +111,18 @@ define-macro spell-check-list
   !while &not &seq @wl ""
     spell @wl
     !if &not &seq &rig &set #l4 $result 1 @wl
-      !if &band 2 @#
-        ml-write "[Wrong word returned]"
-        !abort
-      !endif
+      !iif &band 2 @#  -8 ml-write "[Wrong word returned]"
       !iif &not #l1  set-variable #l1 $window-line
       set-variable #l3 &add #l3 1
     !endif
     !if &seq &lef $result 1 "O"
       !if &band @# 2
-        !if &band 1 @#
-          ml-write "[Word evaluated as correct]"
-          !abort
-        !endif
+        !iif &band 1 @#  -8 ml-write "[Word evaluated as correct]"
         !iif &not #l1  set-variable #l1 $window-line
         set-variable #l2 &add #l2 1
       !endif
     !elif &not &band @# 2
-      !if &band 1 @#
-        ml-write "[Word evaluated as wrong]"
-        !abort
-      !endif
+      !iif &band 1 @#  -8 ml-write "[Word evaluated as wrong]"
       !iif &not #l1  set-variable #l1 $window-line
       set-variable #l2 &add #l2 1
     !endif
@@ -166,8 +155,7 @@ define-macro spell-check-guess
       !endif
     !elif &band @# 1
       set-variable #g0 #l3
-      ml-write &spr "[Word missing, best guess: %s]" &lget #l3 1
-      !abort
+      -8 ml-write &spr "[Word missing, best guess: %s]" &lget #l3 1
     !elif &not &pinc #l0 1
       set-variable #g0 #l3
       set-variable #l1 $window-line
@@ -187,16 +175,13 @@ define-macro ispell-convert
   !iif &not $status  set-variable .sl @ml09 "Language" .spell.lang-name
   !force set-variable #l0 @2
   !iif &not $status  set-variable #l0 @ml01 "ispell file"
-  !if &not &seq "R" &stat t &set #l0 &stat a #l0 
-    ml-write &spr "[Error: Unexpected file type - %s]" #l0
-    !abort
-  !elif &seq &rig #l0 -4 ".dic"
+  !iif &not &seq "R" &stat t &set #l0 &stat a #l0  -8 ml-write &spr "[Error: Unexpected file type - %s]" #l0
+  !if &seq &rig #l0 -4 ".dic"
     set-variable #l0 &cat &lef &set #l1 #l0 -3 "aff"
   !elif &seq &rig #l0 -4 ".aff"
     set-variable #l1 &cat &lef #l0 -3 "dic"
   !else
-    ml-write &spr "[Error: Unexpected file extension - %s]" #l0
-    !abort
+    -8 ml-write &spr "[Error: Unexpected file extension - %s]" #l0
   !endif
   set-variable #l8 &lef #l0 &rsin "/" #l0
   delete-other-windows
@@ -230,10 +215,7 @@ define-macro ispell-convert
   beginning-of-buffer
   -1 buffer-mode "edit"
   !force search-buffer "me" "[\x01\x02]"
-  !if $status
-    ml-write "[ERROR: aff file contains control chars \x01 or \x02 which are required for convertion]"
-    !abort
-  !endif
+  !iif $status  -8 ml-write "[ERROR: aff file contains control chars \x01 or \x02 which are required for convertion]"
   !force search-buffer "me" "^ *SET +\\([-\\m]+\\)"
   !if &not $status
     ml-write "[Warning: Failed to find SET line - character encoding may be wrong]"
@@ -241,8 +223,7 @@ define-macro ispell-convert
   !elif &seq &set .sc &slo @s1 "utf-8"
     set-variable .sc "utf8"
   !elif &not &lfin .change-font.cs-id .sc
-    ml-write &spr "[ERROR: aff uses unknown/unsupported character set - %s]" .sc
-    !abort
+    -8 ml-write &spr "[ERROR: aff uses unknown/unsupported character set - %s]" .sc
   !elif &seq .sl "test"
     set-variable .mc .sc
   !endif
@@ -251,14 +232,10 @@ define-macro ispell-convert
   !elif &seq .sc "utf8"
     3 forward-delete-char
   !else
-    ml-write "[ERROR: AFF charset not SET as utf-8 but aff has utf-8 signature - check encoding]"
-    !abort
+    -8 ml-write "[ERROR: AFF charset not SET as utf-8 but aff has utf-8 signature - check encoding]"
   !endif
   !if &not &seq .sc .mc
-    !if &seq .mc "test"
-      ml-write &spr "[ERROR: Must convert test files to correct charset first - %s %s]" .sc .mc
-      !abort
-    !endif
+    !iif &seq .mc "test"  -8 ml-write &spr "[ERROR: Must convert test files to correct charset first - %s %s]" .sc .mc
     4 change-buffer-charset .sc .mc
     !if &lget .change-buffer-charset.result 1
       beginning-of-buffer
@@ -270,8 +247,7 @@ define-macro ispell-convert
           set-variable $window-line #l6
         !endif
         beginning-of-line
-        ml-write "[Error: Unconvertable unicode characters in rules must be fixed]"
-        !abort
+        -8 ml-write "[Error: Unconvertable unicode characters in rules must be fixed]"
       !endif
     !endif
   !endif
@@ -284,16 +260,12 @@ define-macro ispell-convert
   !endif
   beginning-of-buffer
   !force search-buffer "me" "[\x01\x02]"
-  !if $status
-    ml-write "[ERROR: dic file contains control chars \x01 or \x02 which are required for convertion]"
-    !abort
-  !endif
+  !iif $status  -8 ml-write "[ERROR: dic file contains control chars \x01 or \x02 which are required for convertion]"
   !if &not &seq &lef @wl 3 "\xef\xbb\xbf"
   !elif &seq .sc "utf8"
     3 forward-delete-char
   !else
-    ml-write "[ERROR: Charset not SET as utf-8 but dic has utf-8 signature - check encoding]"
-    !abort
+    -8 ml-write "[ERROR: Charset not SET as utf-8 but dic has utf-8 signature - check encoding]"
   !endif
   ; First of all remove all Morphological analysis as these can contain unconvertable chars
   replace-string "[ \t].*" ""
@@ -311,8 +283,7 @@ define-macro ispell-convert
           set-variable #l6 $window-line
           undo
           set-variable $window-line #l6
-          ml-write "[Abort - words containing unconvertable chars must be fixed first]"
-          !abort
+          -8 ml-write "[Abort - words containing unconvertable chars must be fixed first]"
         !endif
         !repeat
           beginning-of-line
@@ -331,25 +302,15 @@ define-macro ispell-convert
   beginning-of-buffer
   !force search-buffer "me" "^[ \\t]*\\(PFX\\|SFX\\|CIRCUMFIX\\|COMPOUNDBEGIN\\|COMPOUNDEND\\|COMPOUNDMIDDLE\\|COMPOUNDPERMITFLAG\\|FORBIDDENWORD\\|KEEPCASE\\|LEMMA_PRESENT\\|NEEDAFFIX\\|NOSUGGEST\\|ONLYINCOMPOUND\\|PSEUDOROOT\\)[ \\t]+\\(\\S+\\)\\s"
   !if &not $status
-    ml-write "[Abort - no SFX or PFX rules found in aff file]"
-    !abort
+    -8 ml-write "[Abort - no SFX or PFX rules found in aff file]"
   !elif &equ &len @s2 1
     !force search-buffer "me" "^[ \\t]*\\(PFX\\|SFX\\|CIRCUMFIX\\|COMPOUNDBEGIN\\|COMPOUNDEND\\|COMPOUNDMIDDLE\\|COMPOUNDPERMITFLAG\\|FORBIDDENWORD\\|KEEPCASE\\|LEMMA_PRESENT\\|NEEDAFFIX\\|NOSUGGEST\\|ONLYINCOMPOUND\\|PSEUDOROOT\\)[ \\t]+\\S\\S"
-    !if $status
-      ml-write "[Abort - affix rule flag length inconsistent - 1 to many]"
-      !abort
-    !endif
+    !iif $status  -8 ml-write "[Abort - affix rule flag length inconsistent - 1 to many]"
   !elif &equ &len @s2 2
     !force search-buffer "me" "^[ \\t]*\\(PFX\\|SFX\\|CIRCUMFIX\\|COMPOUNDBEGIN\\|COMPOUNDEND\\|COMPOUNDMIDDLE\\|COMPOUNDPERMITFLAG\\|FORBIDDENWORD\\|KEEPCASE\\|LEMMA_PRESENT\\|NEEDAFFIX\\|NOSUGGEST\\|ONLYINCOMPOUND\\|PSEUDOROOT\\)[ \\t]+\\S\\s"
-    !if $status
-      ml-write "[Abort - affix rule flag length inconsistent - 2 to 1]"
-      !abort
-    !endif
+    !iif $status -8 ml-write "[Abort - affix rule flag length inconsistent - 2 to 1]"
     !force search-buffer "me" "^[ \\t]*\\(PFX\\|SFX\\|CIRCUMFIX\\|COMPOUNDBEGIN\\|COMPOUNDEND\\|COMPOUNDMIDDLE\\|COMPOUNDPERMITFLAG\\|FORBIDDENWORD\\|KEEPCASE\\|LEMMA_PRESENT\\|NEEDAFFIX\\|NOSUGGEST\\|ONLYINCOMPOUND\\|PSEUDOROOT\\)[ \\t]+\\S\\S\\S"
-    !if $status
-      ml-write "[Abort - affix rule flag length inconsistent - 2 to many]"
-      !abort
-    !endif
+    !iif $status  -8 ml-write "[Abort - affix rule flag length inconsistent - 2 to many]"
     set-variable #l3 32
     beginning-of-buffer
     !repeat
@@ -359,10 +320,7 @@ define-macro ispell-convert
       set-variable #l1 &xrep #l1 "[\\\\[*+.?^$]" "\\\\\\0"
       backward-char
       set-variable #l2 $window-line
-      !if &gre &inc #l3 1 255
-        ml-write "[Abort - Too many affix rule flags used - max is 235]"
-        !abort
-      !endif
+      !iif &gre &inc #l3 1 255  -8 ml-write "[Abort - Too many affix rule flags used - max is 235]"
       !if &equ #l3 92
         set-variable #l4 "\\\\\x01"
       !else
@@ -386,25 +344,20 @@ define-macro ispell-convert
     replace-string "\x01" ""
     find-buffer "*isp-aff"
   !else
-    ml-write "[Abort - affix rule flags of length greater than 2 are not supported]"
-    !abort
+    -8 ml-write "[Abort - affix rule flags of length greater than 2 are not supported]"
   !endif
   set-variable #l6 ""
   beginning-of-buffer
   set-variable .ns "\CH"
   !force search-buffer "me" "^[ \\t]*NOSUGGEST[ \\t]+\\(\\S+\\)"
-  !if &not $status
-  !elif &gre &len &set .ns @s1 1 
-    ml-write "[Abort - NOSUGGEST has more than one flag letter]"
-    !abort
+  !if $status
+    !iif &gre &len &set .ns @s1 1  -8 ml-write "[Abort - NOSUGGEST has more than one flag letter]"
   !endif
   beginning-of-buffer
   set-variable .fw "\CH"
   !force search-buffer "me" "^[ \\t]*FORBIDDENWORD[ \\t]+\\(\\S+\\)"
-  !if &not $status
-  !elif &gre &len &set .fw @s1 1 
-    ml-write "[Abort - FORBIDDENWORD has more than one flag letter]"
-    !abort
+  !if $status
+    !iif &gre &len &set .fw @s1 1  -8 ml-write "[Abort - FORBIDDENWORD has more than one flag letter]"
   !endif
   beginning-of-buffer
   !repeat
@@ -414,16 +367,9 @@ define-macro ispell-convert
     set-variable #l2 @s2
     set-variable #l3 @s4
     set-variable #l4 &mul &con &seq @s3 "N" "1" "2" &con &seq #l1 "P" -1 1
-    !if &sub &len #l2 1
-      ml-write &spr "[Error: Invalid rule flag %s]" #l2
-      !abort
-    !elif &sle #l2 "!"
-      ml-write &spr "[Error: Invalid rule flag %s]" #l2
-      !abort
-    !elif &sin #l2 #l6
-      ml-write &spr "[Error: Rule flag %s is reused]" #l2
-      !abort
-    !endif
+    !iif &sub &len #l2 1  -8 ml-write &spr "[Error: Invalid rule flag %s]" #l2
+    !iif &sle #l2 "!"  -8 ml-write &spr "[Error: Invalid rule flag %s]" #l2
+    !iif &sin #l2 #l6  -8 ml-write &spr "[Error: Rule flag %s is reused]" #l2
     set-variable #l6 &cat #l6 &cat #l2 "\n"
     set-variable #l5 &spr "[ \\t]*%sFX[ \\t]+%s%s[ \\t]+\\(\\S+\\)[ \\t]+\\([^\\s/]+\\)\\(/\\S+\\)?\\([ \\t]+\\(\\S+\\)\\([ \\t]+.*\\)?\\)?[ \\t]*$" #l1 &con &sin #l2 "-^+*.$?\\" "\\" "" #l2
     !while &pdec #l3 1
@@ -432,8 +378,7 @@ define-macro ispell-convert
         set-variable #l3 &add #l3 1
       !elif &not &xse @wl #l5
         set-variable #g1 #l5
-        ml-write &spr "[Error: Unexpected %sFX line]" #l1
-        !abort
+        -8 ml-write &spr "[Error: Unexpected %sFX line]" #l1
       !else
         find-buffer "*isp-tmp"
         insert-string &spr "%s add-spell-rule \"%s%s\" \"%s\" \"%s\" \"%s\" \"%s\"\n" #l4 &con &sin #l2 "\\\"" "\\" "" #l2 &con &seq @s5 "." "" @s5 &con &seq @s1 "0" "" @s1 &con &seq @s2 "0" "" @s2 &rig @s3 1
@@ -494,8 +439,7 @@ define-macro ispell-convert
         0x05 spell #l1 #l2
       !endif
     !elif &not &seq &trr @wl ""
-      ml-write &spr "[Error: Unexpected word line - %s]" #l1
-      !abort
+      -8 ml-write &spr "[Error: Unexpected word line - %s]" #l1
     !endif
     forward-line
   !done

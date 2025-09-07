@@ -218,7 +218,7 @@ define-macro-file hkipipe fhook-ipipe
     buffer-is-utf8 #l1
     !if #l1
       -1 buffer-mode "view"
-      4 change-buffer-charset "utf8" "display"
+      12 change-buffer-charset "utf8" "display"
       -1 buffer-mode "edit"
       1 buffer-mode "view"
     !endif
