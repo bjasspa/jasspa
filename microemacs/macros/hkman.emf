@@ -18,7 +18,7 @@ define-macro fhook-man
   buffer-init-hooks
 !emacro
 ; Set up the man command.
-!iif &not &exi %man-com  set-variable %man-com "man"
+!iif &not &exi %man-com  set-variable %man-com "MAN_KEEP_FORMATTING=1 man"
 ; buffer-init variables
 set-variable .fhook-man.name "UNIX Man page"
 set-variable .fhook-man.setup &reg "/history/fhook/man" "Ughpo"
@@ -57,44 +57,13 @@ set-variable .fhook-man.item-list-r1 "Sec \\1"
   ; bold and italic.
   hilight .hilight.man 64 "\\(.\\)\CH\\1_\CH_\\}[^\CH]" "\\1_" .scheme.bold
   
-  ; GNU/Linux/Cygwin manual page hilighting.
-  ; Linux uses some non-ASCII characters in manual pages correct.
-  ; Right single quote
-  hilight .hilight.man 64 "_\CH\xe2\x80\x99" "'"            .scheme.italic
-  hilight .hilight.man 64 "\xe2\x80\x99\CH\xe2\x80\x99" "'" .scheme.bold
-  hilight .hilight.man 64 "\xe2\x80\x99"                "'" $global-scheme
-  ; Another right single quote
-  hilight .hilight.man 64 "_\CH\xc2\xb4" "'"                .scheme.italic
-  hilight .hilight.man 64 "\xc2\xb4\CH\xc2\xb4" "'"         .scheme.bold
-  hilight .hilight.man 64 "\xc2\xb4" "'"                    $global-scheme
-  ; Left single quote
-  hilight .hilight.man 64 "_\CH\xe2\x80\x98" "`"            .scheme.italic
-  hilight .hilight.man 64 "\xe2\x80\x98\CH\xe2\x80\x98" "`" .scheme.bold
-  hilight .hilight.man 64 "\xe2\x80\x98" "`"                $global-scheme
-  ; Right double quote
-  hilight .hilight.man 64 "_\CH\xe2\x80\x9C" "\""           .scheme.italic
-  hilight .hilight.man 64 "\xe2\x80\x9C\CH\xe2\x80\x9C" "\"" .scheme.bold
-  hilight .hilight.man 64 "\xe2\x80\x9C"                "\"" $global-scheme
-  ; Left double quote
-  hilight .hilight.man 64 "_\CH\xe2\x80\x9D" "\""            .scheme.italic
-  hilight .hilight.man 64 "\xe2\x80\x9D\CH\xe2\x80\x9D" "\"" .scheme.bold
-  hilight .hilight.man 64 "\xe2\x80\x9D" "\""                $global-scheme
-  ; Bullet
-  hilight .hilight.man 64 "_\CH\xc2\xb7" "*"                .scheme.italic
-  hilight .hilight.man 64 "\xc2\xb7\CH\xc2\xb7" "*"         .scheme.bold
-  hilight .hilight.man 64 "\xc2\xb7" "*"                    $global-scheme
-  ; Hyphen
-  hilight .hilight.man 64 "_\CH\xe2\x80\x94" "-"            .scheme.italic
-  hilight .hilight.man 64 "\xe2\x80\x94\CH\xe2\x80\x94" "-" .scheme.bold
-  hilight .hilight.man 64 "\xe2\x80\x94" "-"                $global-scheme
-  ; Hypen / line continuation
-  hilight .hilight.man 64 "_\CH\xe2\x80\x90" "-"            .scheme.italic
-  hilight .hilight.man 64 "\xe2\x80\x90\CH\xe2\x80\x90" "-" .scheme.bold
-  hilight .hilight.man 64 "\xe2\x80\x90" "-"                $global-scheme
-  ; Vertical bar or pipe
-  hilight .hilight.man 64 "_\CH\xe2\x94\x82" "|"            .scheme.italic
-  hilight .hilight.man 64 "\xe2\x94\x82\CH\xe2\x94\x82" "|" .scheme.bold
-  hilight .hilight.man 64 "\xe2\x94\x82" "|"                $global-scheme
+  ; hilighting can also be done via 0x27[#m formatting strings
+  hilight .hilight.man 0x44 "\e\\[0m" "" "\\}\e\\[" "" ""  $global-scheme
+  hilight .hilight.man 0x44 "\e\\[1m" "" "\\}\e\\[" "" ""  .scheme.bold
+  hilight .hilight.man 0x44 "\e\\[4m" "" "\\}\e\\[" "" ""  .scheme.italic
+  hilight .hilight.man 0x44 "\e\\[22m" "" "\\}\e\\[" "" "" $global-scheme
+  hilight .hilight.man 0x44 "\e\\[24m" "" "\\}\e\\[" "" "" $global-scheme
+  
 !endif
 
 define-macro aman
@@ -198,6 +167,9 @@ define-macro man-clean
   
   beginning-of-buffer
   replace-string ".\CH" ""
+  ; remove \e[#m color encoding
+  beginning-of-buffer
+  replace-string "\e\\[\\d+m" ""
   beginning-of-buffer
   -1 buffer-mode "edit"
 !emacro
@@ -225,6 +197,8 @@ define-macro man
   forward-word
   beginning-of-line
   -1 kill-region
+  buffer-is-utf8 #l1
+  !iif #l1  12 change-buffer-charset "utf8" "display"
   set-variable $buffer-fhook "fhook-man"
   fhook-man
 !emacro

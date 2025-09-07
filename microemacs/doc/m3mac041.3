@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac041.3,v 2.6 2024/09/29 17:13:59 jon Exp $
+.Id $Id: m3mac041.3,v 2.6 2025/09/07 12:43:45 jon Exp $
 .Im MicroEmacs command
 .so me.tni
 .TH change-buffer-charset 3
@@ -70,6 +70,10 @@ When set, unsupported characters that cannot be preserved, or bit \fB0x04\fR is 
 is clear they are changed to the unsupported character (\fB0x07\fR).
 .IP \fB0x04\fR
 When set, unsupported characters are not preserved, when clear they are preserved, see lossless conversion above.
+.IP \fB0x08\fR
+When set, unsupported characters are, where possible, converted to a character that looks similar or may instil the 
+same meaning. This is used in preference to converting to the unsupported char or removing, but is not an accurate 
+translation. 
 .PP
 A value of  "\fCdisplay\fR"  can be given for either of the  \fIfrom-charset\fR  or  \fIfto-charset\fR  to indicate the
 user's current display character set, see

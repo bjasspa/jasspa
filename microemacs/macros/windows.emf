@@ -141,21 +141,13 @@ define-macro cygwin
 ; has not been defined in the user start-up file.
 define-macro man
   !if &not &exi %man-com
-    !if &seq %cygwin-path "ERROR"
-      ; Bitch if the environment is not defined.
-      5000 ml-write "[Error: %cygwin-path not set - see hkcygwin.emf]"
-      !abort
-      ; See if the max.exe file exists.
-    !elif &seq "R" &stat "t" &cat %cygwin-path "/bin/man.exe"
-      ; Load the macro file and execute the man file
-      set-variable %man-com &cat %cygwin-path "/bin/man.exe"
-    !else
-      5000 ml-write "[Error: Cannot find man program.]"
-      !abort
-    !endif
+    ; Bitch if the environment is not defined.
+    !iif &seq %cygwin-path "ERROR"  -24 ml-write "[Error: %cygwin-path not set - see hkcygwin.emf]"
+    ; See if the max.exe file exists.
+    !iif &not &seq "R" &stat "t" &cat %cygwin-path "/bin/man.exe"  -24 ml-write "[Error: Cannot find man program.]"
+    set-variable %man-com &cat %cygwin-path "/bin/man.exe"
   !endif
+  ; Load the macro file and execute the man file
   execute-file "hkman"
-  !if $status
-    man
-  !endif
+  !iif $status  man
 !emacro

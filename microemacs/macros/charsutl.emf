@@ -43,15 +43,18 @@ define-macro change-buffer-charset
     !return
   !endif
   set-alpha-mark "\x82"
-  set-variable #l3 13
+  set-variable #l3 3
   !repeat
-    !if &gre #l3 127
-      goto-alpha-mark "\x82"
-      -8 ml-write "[ERROR: Failed to find padding char for change-buffer-charset]"
-    !endif
     beginning-of-buffer
     !force search-buffer "Me" &set #l4 &itoa #l3
-  !until &not $status
+    !iif &not $status  !break
+    !if &gre &inc #l3 1 127
+      goto-alpha-mark "\x82"
+      -8 ml-write "[ERROR: Failed to find padding char for change-buffer-charset]"
+    !elif &equ #l3 7
+      set-variable #l3 13
+    !endif
+  !done
   ; don't assume/default a char-set
   set-variable #l2 &reg &spr "/history/%s/char-set" %platform ""
   !if &not &set #l9 &con &seq #l0 "utf8" 1 0
@@ -92,6 +95,10 @@ define-macro change-buffer-charset
         !else
           set-variable #l6 &cat "" &rig &lget #l0 2 -5
         !endif
+      !elif &and &band @# 8 &set #l6 &lfind "|2502|250c|2510|2514|2518|252c|251c|253c|2524|2534|2500|" &rig &lget #l0 2 -4
+        set-variable #l6 &spr "%s%s" &mid $box-chars &sub #l6 1 1 #l4
+      !elif &and &band @# 8 &set #l6 &lfind "|00b4|00b7|2010|2011|2012|2013|2014|2015|2018|2019|201a|201b|201c|201d|201e|201f|2022|" &rig &lget #l0 2 -4
+        set-variable #l6 &spr "%s%s" &mid " '*------'',`\"\",\"*" #l6 1 #l4
       !elif &band @# 2
         set-variable #l6 ""
       !else
