@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Feb 1 20:28:17 1999
 .\"
-.Id $Id: m3osd005.3,v 2.7 2025/08/28 02:15:19 jon Exp $
+.Id $Id: m3osd005.3,v 2.7 2025/09/05 16:00:54 jon Exp $
 .Im MicroEmacs command|osd|hilight
 .so me.tni
 .TH scheme-editor 3
@@ -63,13 +63,15 @@ The default \fIFully Enabled\fR setting enables all buffer hilighting.
 Available  when scheme is a printer type. Defines what  components of a scheme
 is to be used when printing.
 .SS Colors
-The  \fBcolors\fR  tab  allows  the basic  palette  colors of the editor to be
-created and modified. The  left-hand  side of the dialog  contains a scrolling
-window  containing  the existing  color  entries. The  right-hand  side of the
-dialog  provides  the  controls  to add and change the color  assignment.  The
-controls operate on the currently selected palette entry.
+The \fBcolors\fR tab allows the basic palette colors of the editor to be created and modified. The left-hand side of
+the dialog contains a scrolling window containing the existing color entries. The right-hand side of the dialog
+provides the controls to add and change the color assignment. The controls operate on the currently selected palette
+entry.
 .IP \fBCursor\fR
-Defines the colour of the text cursor.
+Defines the colour of the text cursor; the first colour, \fINormal\fR, defines the colour to be used when the current buffer 
+does not have
+.Ht over 2m
+mode enabled. The second colour, \fIOver\fR, is only used when the current buffer has \fBover\fR mode enabled. 
 .IP "\fBShow in Dialogs\fR"
 Defines  whether the cursor  should be displayed in the main OSD dialogs, this
 improves   usability  of  the  dialogs  when  limited  colors  are  available.

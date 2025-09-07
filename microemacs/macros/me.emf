@@ -42,9 +42,9 @@ define-macro-file osdmisc insert-symbol buffer-setup alarm browse alias-path-set
 define-macro-file abbrev expand-abbrev-handle expand-iso-accents expand-look-back expand-word iso-accents-mode
 define-macro-file comment comment-line uncomment-line comment-to-end-of-line comment-start comment-restyle
 define-macro-file find find grep grep-for-region replace-string-in-files query-replace-string-in-files
+define-macro-file games cross-word Brag Fahtzee Mahjongg Match-It Matrix Metris Patience Triangle
 define-macro-file rect string-rectangle space-rectangle copy-rectangle yank-rectangle-overwrite
 define-macro-file majormod buffer-major-mode major-mode-setup major-mode-help major-mode-tool
-define-macro-file games cross-word Brag Fahtzee Mahjongg Match-It Metris Patience Triangle
 define-macro-file favorite favorites-add favorites-edit favorites-goto favorites
 define-macro-file password password-to-phonic generate-password insert-password
 define-macro-file toolbar toolbar toolbar-close toolbar-open toolbar-mode-line

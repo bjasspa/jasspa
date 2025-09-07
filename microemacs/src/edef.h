@@ -277,7 +277,7 @@ extern  meUByte   clipState;            /* clipboard status flag        */
 extern  meUInt    cursorBlink;          /* cursor-blink blink time      */
 extern  int       blinkState;           /* cursor blink state           */
 #if MEOPT_COLOR
-extern  meColor   cursorColor;          /* cursor-color scheme          */
+extern  meColor   cursorColor[2];       /* cursor-color scheme          */
 extern  meScheme  mlScheme;             /* Message line color scheme    */
 extern  meScheme  mdLnScheme;           /* Mode line color scheme       */
 extern  meScheme  sbarScheme;           /* Scroll bar color scheme      */
@@ -544,7 +544,7 @@ meUShort  thiskey ;                     /* the current key              */
 meUByte   hexdigits[]="0123456789ABCDEF";
 meUInt    cursorBlink=0;                /* cursor-blink blink time      */
 int       blinkState=1;                 /* cursor blink state           */
-meColor   cursorColor=meCOLOR_FDEFAULT; /* cursor color                 */
+meColor   cursorColor[2] = { meCOLOR_FDEFAULT,meCOLOR_FDEFAULT };
 #if MEOPT_OSD
 meScheme  osdScheme =meSCHEME_NDEFAULT; /* Menu line color scheme       */
 #endif

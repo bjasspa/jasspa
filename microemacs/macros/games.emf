@@ -28,6 +28,10 @@ define-macro Match-It
   execute-file matchit
   Match-It
 !emacro
+define-macro Matrix
+  execute-file matrix
+  Matrix
+!emacro
 define-macro Metris
   execute-file metris
   Metris

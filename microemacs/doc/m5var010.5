@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m5var010.5,v 2.6 2022/06/12 17:14:15 jon Exp $
+.Id $Id: m5var010.5,v 2.6 2025/09/05 16:14:32 jon Exp $
 .Im MicroEmacs variable|hilight
 .so me.tni
 .TH $cursor-blink 5
@@ -36,10 +36,14 @@ The cursor blink rate can be setup in the platform section of
 .Ht user-setup 3 .
 .PP
 .B $cursor-color
-sets  the  cursor's   fore-ground  color,  and  can  greatly  improve  cursor
-visibility. \fIcolorNum\fR is a integer palette number created using
+sets the cursor's fore-ground color, and can greatly improve cursor visibility. \fIcolorNum\fR is a integer palette
+number created using
 .Ht add-color 2 ,
-the default is 0.
+the default is 0. The first 8 bits, lowest byte, of \fB$cursor-color\fR is used to define the normal cursor colour, 
+however the next 8 bits, bits \fC9\fR to \fC16\fR, are used to define the cursor colour to use when the current buffer has
+.Ht over 2m
+mode enabled; if the value is 0 (the default) then the normal cursor colour is used, otherwise it is the colour 
+palette index.  
 .SH PLATFORM
 UNIX termcap interface does not support \fB$cursor-color\fR.
 .SH EXAMPLE

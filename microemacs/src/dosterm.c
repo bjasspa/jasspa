@@ -629,16 +629,16 @@ TTshowCur(void)
     if((frameCur->cursorRow <= frameCur->depth) && (frameCur->cursorColumn < frameCur->width))
     {
         meFrameLine *flp;                     /* Frame store line pointer */
-        meScheme schm;                      /* Current colour */
-        meUByte cc ;                          /* Current cchar  */
+        meScheme schm;                        /* Current colour */
+        meUByte cc;                           /* Current cchar  */
         meUByte dcol;
 
-        flp  = frameCur->store + frameCur->cursorRow ;
-        cc   = flp->text[frameCur->cursorColumn] ;          /* Get char under cursor */
-        schm = flp->scheme[frameCur->cursorColumn] ;        /* Get colour under cursor */
+        flp  = frameCur->store + frameCur->cursorRow;
+        cc   = flp->text[frameCur->cursorColumn];          /* Get char under cursor */
+        schm = flp->scheme[frameCur->cursorColumn];        /* Get colour under cursor */
 
         dcol = TTcolorSet(colTable[meStyleGetBColor(meSchemeGetStyle(schm))],
-                          colTable[cursorColor]) ;
+                          colTable[cursorColor[(meModeTest(frameCur->windowCur->buffer->mode,MDOVER)) ? 1:0]]);
 
         ScreenPutChar(cc, dcol, frameCur->cursorColumn, frameCur->cursorRow);
     }

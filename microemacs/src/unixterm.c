@@ -3875,17 +3875,18 @@ meFrameXTermShowCursor(meFrame *frame)
     if((frame->cursorRow <= frame->depth) && (frame->cursorColumn < frame->width))
     {
         meFrameLine *flp;                     /* Frame store line pointer */
-        meUByte     *cc ;                     /* Current cchar  */
-        meScheme   schm;                    /* Current colour */
+        meScheme schm;                        /* Current colour */
+        meUByte *cc ;                         /* Current cchar  */
+        meColor cCol=cursorColor[(meModeTest(frame->windowCur->buffer->mode,MDOVER)) ? 1:0];
         
-        flp  = frame->store + frame->cursorRow ;
-        cc   = flp->text+frame->cursorColumn ;           /* Get char under cursor */
-        schm = flp->scheme[frame->cursorColumn] ;        /* Get scheme under cursor */
+        flp = frame->store + frame->cursorRow;
+        cc = flp->text+frame->cursorColumn;           /* Get char under cursor */
+        schm = flp->scheme[frame->cursorColumn];        /* Get scheme under cursor */
         
         if(!(frame->flags & meFRAME_NOT_FOCUS))
         {
-            meUInt valueMask=0 ;
-            meUByte ff ;
+            meUInt valueMask=0;
+            meUByte ff;
             ff = meStyleGetBColor(meSchemeGetStyle(schm)) ;
             if(meFrameGetXGCFCol(frame) != ff)
             {
@@ -3893,11 +3894,11 @@ meFrameXTermShowCursor(meFrame *frame)
                 meFrameGetXGCValues(frame).foreground = colTable[ff] ;
                 valueMask |= GCForeground ;
             }
-            if(meFrameGetXGCBCol(frame) != cursorColor)
+            if(meFrameGetXGCBCol(frame) != cCol)
             {
-                meFrameSetXGCBCol(frame,cursorColor) ;
-                meFrameGetXGCValues(frame).background = colTable[cursorColor] ;
-                valueMask |= GCBackground ;
+                meFrameSetXGCBCol(frame,cCol);
+                meFrameGetXGCValues(frame).background = colTable[cCol];
+                valueMask |= GCBackground;
             }
             if(mecm.fontPartF != NULL)
             {
@@ -3928,15 +3929,15 @@ meFrameXTermShowCursor(meFrame *frame)
         }
         else
         {
-            if(meFrameGetXGCFCol(frame) != cursorColor)
+            if(meFrameGetXGCFCol(frame) != cCol)
             {
-                meFrameSetXGCFCol(frame,cursorColor) ;
-                meFrameGetXGCValues(frame).foreground = colTable[cursorColor] ;
-                XChangeGC(mecm.xdisplay,meFrameGetXGC(frame),GCForeground,&meFrameGetXGCValues(frame)) ;
+                meFrameSetXGCFCol(frame,cCol);
+                meFrameGetXGCValues(frame).foreground = colTable[cCol];
+                XChangeGC(mecm.xdisplay,meFrameGetXGC(frame),GCForeground,&meFrameGetXGCValues(frame));
             }
             XDrawRectangle(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),
                            colToClient(frame->cursorColumn),
-                           rowToClientTop(frame->cursorRow),mecm.fwidth-1,mecm.fdepth-1) ;
+                           rowToClientTop(frame->cursorRow),mecm.fwidth-1,mecm.fdepth-1);
         }
     }
 }

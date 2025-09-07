@@ -1631,7 +1631,7 @@ missing_arg:
                             defaultScheme[ii] = meSTYLE_NDEFAULT;
                     }
                     /* Fix the cursor color */
-                    cursorColor = (meColor) meStyleGetFColor(defaultScheme[meSCHEME_NORMAL]);
+                    cursorColor[0] = cursorColor[1] = (meColor) meStyleGetFColor(defaultScheme[meSCHEME_NORMAL]);
                 }
                 break;
                 

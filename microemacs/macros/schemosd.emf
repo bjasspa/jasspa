@@ -218,8 +218,12 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
 
 0 define-macro schm-osd-set-cursor
   !if &gre .schm-osd.curcol -1
-    set-variable .schm-osd.cursor .schm-osd.curcol
-    osd .osd.schm-cc 13 "BdtxHf" &add 128 .schm-osd.cursor "      " f schm-osd-set-cursor
+    !if &band @# 2
+      set-variable .schm-osd.cursor &bor &band .schm-osd.cursor 0xff &mul .schm-osd.curcol 256
+    !else
+      set-variable .schm-osd.cursor &bor &band .schm-osd.cursor 0x0ff00 .schm-osd.curcol
+    !endif
+    osd .osd.schm-cc &add @# 6 "BdtxHfh" &add 128 .schm-osd.curcol "      " @# schm-osd-set-cursor
   !endif
 !emacro
 
@@ -418,8 +422,10 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
     add-color-scheme &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0 0 &add 128 #l0
     osd .osd.schmc &add 100 #l0 &cond &mod &add #l0 1 6 "Hfxhz" "Hfxz" &add 128 #l0 2 2 "" #l0 schm-osd-set-color-no
   !until &not &les &inc #l0 1 .schm-osd.nocol
-  set-variable .schm-osd.curcol .schm-osd.cursor
-  schm-osd-set-cursor
+  set-variable .schm-osd.curcol &band .schm-osd.cursor 0xff
+  1 schm-osd-set-cursor
+  !iif &set #l0 &band &div .schm-osd.cursor 256 0xff  set-variable .schm-osd.curcol #l0
+  3 schm-osd-set-cursor
   0 schm-osd-set-color-no
   1 schm-osd-set-scheme-section
 !emacro
@@ -573,7 +579,7 @@ set-variable .schm-osd-setup-flags.options "|Plain Text|Use Fonts|Use Fore Color
   !until &not &les &inc #l0 1 .schm-osd.nocol
   ; Write-out the cursor color
   insert-string "; Set the required cursor-color\n"
-  insert-string &spr "set-variable $cursor-color .col%d\n" .schm-osd.cursor
+  insert-string &spr "set-variable $cursor-color %d\n" .schm-osd.cursor
   ; write-out all the color schemes
   insert-string "; Create the color schemes\n"
   set-variable #l0 1
@@ -729,9 +735,12 @@ set-variable #l0 &mid $window-chars  6 1
 set-variable #l1 &mid $window-chars 10 1
 -1 osd .osd.schm-cc
 osd .osd.schm-cc 0   "s" 30 20 -1 -1
+osd .osd.schm-cc 4   "Sfh" "          \HNormal " 7
+osd .osd.schm-cc 5   "Sf"  "  \HOver" 9
+osd .osd.schm-cc 6   "Sfh" " Cursor:  "
+osd .osd.schm-cc 8   "fh" "  "
 osd .osd.schm-cc 10  ""
-osd .osd.schm-cc 12  "Sfh" "  C\Hursor: " 13
-osd .osd.schm-cc 14  ""
+osd .osd.schm-cc 12  ""
 osd .osd.schm-cc 15  "fh"  "  "
 osd .osd.schm-cc 16  "Ctpfx" &cat .osd.checkbox-chars "\} Sho\Hw cursor in Dialogs" f schm-osd-set-osd-cursor
 osd .osd.schm-cc 17  ""

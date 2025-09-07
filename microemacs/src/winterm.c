@@ -1408,6 +1408,7 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
     meFrameLine *flp;                   /* Frame store line pointer */
     meStyle style;                      /* Current style */
     meUByte cc;                         /* Current char  */
+    meColor cCol;
     
     /* Set up the drawing borders. */
     rline.top    = eCellMetrics.cellRowPos[frame->cursorRow];
@@ -1421,6 +1422,7 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
     flp = frame->store + frame->cursorRow;
     cc = flp->text[frame->cursorColumn];                          /* Get char under cursor */
     style = meSchemeGetStyle(flp->scheme[frame->cursorColumn]);   /* Get style under cursor */
+    cCol = cursorColor[(meModeTest(frame->windowCur->buffer->mode,MDOVER)) ? 1:0];
     
     /* Check the current character set and select the special font or convert
      * the character for the current font. Bring the appropriate font into the
@@ -1435,7 +1437,7 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
 	if(frame->flags & meFRAME_NOT_FOCUS)
 	    cref = eCellMetrics.pInfo.cPal[meStyleGetBColor(style)].cpixel;
 	else
-	    cref = eCellMetrics.pInfo.cPal[cursorColor].cpixel;
+	    cref = eCellMetrics.pInfo.cPal[cCol].cpixel;
         
 	/* Fill in the background */
 	brush = CreateSolidBrush(cref);
@@ -1455,7 +1457,7 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
 	{
 	    /* If there is no focus then put a rectangle around the
 	     * object; bring in the backgound color */
-	    pen = CreatePen(PS_SOLID, 0, eCellMetrics.pInfo.cPal[cursorColor].cpixel);
+	    pen = CreatePen(PS_SOLID, 0, eCellMetrics.pInfo.cPal[cCol].cpixel);
 	    pen = SelectObject(hdc, pen);
 	    DeleteObject(pen);
             
@@ -1475,7 +1477,7 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
     
     /* Set up the font */
     SetTextColor(hdc, eCellMetrics.pInfo.cPal[meStyleGetBColor(style)].cpixel);
-    SetBkColor(hdc, eCellMetrics.pInfo.cPal[cursorColor].cpixel);
+    SetBkColor(hdc, eCellMetrics.pInfo.cPal[cCol].cpixel);
     SelectObject(hdc, eCellMetrics.fontdef[meStyleGetFont(style)]);
     
     /* Output the character */
@@ -4135,7 +4137,7 @@ meFrameShowCursor(meFrame *frame)
             schm = flp->scheme[frame->cursorColumn];        /* Get colour under cursor */
             
             dcol = (WORD) TTcolorSet(colTable[meStyleGetBColor(meSchemeGetStyle(schm))],
-                                     colTable[cursorColor]);
+                                     colTable[cursorColor[(meModeTest(frame->windowCur->buffer->mode,MDOVER)) ? 1:0]]);
             
             ConsoleDrawString(&cc, dcol, frame->cursorColumn, frame->cursorRow, 1);
         }

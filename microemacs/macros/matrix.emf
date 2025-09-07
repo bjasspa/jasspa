@@ -1,0 +1,104 @@
+; -!- emf -!-
+; Copyright (c) 2025 Steven Phillips.
+;
+; All rights reserved.
+;
+; Synopsis:    
+; Authors:     Steven Phillips
+;`
+0 define-macro Matrixd
+  set-variable .a 1
+  set-variable #l1 $frame-width
+  !while &pdec #l1 1
+    !if &set #l2 &lget .sa &add #l1 1
+      set-variable .sa &lset .sa &add #l1 1 &sub #l2 1
+    !else
+      set-variable #l3 "0"
+      set-variable #l0 $frame-depth
+      !while &dec #l0 1
+        !if &equ #l3 &lget .h .ip
+          set-variable #l3 &con &mod $random 3 &lget .n .ic &lget .h .ic
+        !else
+          set-variable #l3 &con &equ &set #l4 @fss &sub #l0 1 #l1 &lget .n .ip &lget .n .ic #l4
+        !endif
+        3 screen-poke #l0 #l1 #l3 @fs &sub #l0 1 #l1
+      !done
+      !if &gre &set #l2 &lget .ca &add #l1 1 0
+        3 screen-poke 0 #l1 &lget .n .ic &mid .c &mod $random 62 1
+        set-variable #l2 &con &equ #l2 1 &sub -5 &mod $random 5 &sub #l2 1
+      !elif #l2
+        3 screen-poke 0 #l1 &lget .n .ic " "
+        set-variable #l2 &add #l2 1
+      !else
+        3 screen-poke 0 #l1 &con &mod $random 4 &lget .n .ic &lget .h .ic &mid .c &mod $random 62 1
+        set-variable #l2 &add 5 &mod $random 7
+      !endif
+      set-variable .ca &lset .ca &add #l1 1 #l2
+    !endif
+  !done
+  1 screen-poke 0 0 &lget .n .ic @fs 0 0
+  set-variable .ip .ic
+  set-variable .a 0
+!emacro
+set-variable .Matrixd.c "(){}'@#~;:/<>?\\!\"£$%^&*|=+0123456789abcdefghijklmnopqrstuvwxyz"
+set-variable .Matrixd.n &spr "|%d|%d|%d|%d|" .scheme.keyword .scheme.rmv .scheme.chg .scheme.add
+set-variable .Matrixd.h &spr "|%d|%d|%d|%d|" .scheme.hlblue .scheme.hlred .scheme.hlyellow .scheme.hlgreen
+0 define-macro Matrixi
+  !if &seq @cc "Matrixd"
+    set-variable #l7 $unix-time
+    !force !force !force execute-named-command @cc
+    !if &les 0 &fsub &fsub #l7 .st &mul .ht 2
+      !if &len &set #l6 &lget "|||     W h a t     | c o l o u r e d |     P i l l     |       t o       |     t a k e     |       t o       | r e t u r n ? ? ||" .ht
+        3 screen-poke 1 8 $global-scheme "                 "
+        3 screen-poke 2 8 $global-scheme #l6
+        1 screen-poke 3 8 $global-scheme "                 "
+      !endif
+      !if &gre &inc .ht 1 10
+        set-variable .st #l7
+        set-variable .ht 1
+        !tgoto &not &dec .lc 1 quit  
+      !endif
+    !endif
+    &sub 33 &fmul &fsub $unix-time #l7 1000 create-callback Matrixd
+    !tjump .Matrixd.a 2
+  !elif &seq @cc "abort-command"
+    !jump 2
+  !elif &seq @cck "space"
+    !iif &not &set .Matrixd.ic &sub .Matrixd.ip 1  set-variable .Matrixd.ic 4
+  !elif &seq @cck "return"
+    !if &equ .Matrixd.ic 2
+      set-variable .lc -1
+      !jump 4
+    !endif
+  !elif &seq @cck "q"
+*quit
+    -1 create-callback Matrixd
+    set-variable $buffer-input ""
+    1 screen-update
+    1000 ml-write &con &les .lc 0 "Welcome to Wonderland!" "The story ends... Sweet dreams!"
+  !endif
+!emacro
+define-macro Matrix
+  set-variable #l7 $unix-time
+  set-variable #l9 "|"
+  set-variable #l8 "|"
+  set-variable #l1 $frame-width
+  !while &pdec #l1 1
+    set-variable #l8 &lset #l8 0 &sub &mod $random 17 5 
+    set-variable #l9 &lset #l9 0 &mod $random 20 
+    set-variable #l0 $frame-depth
+    !while &dec #l0 1
+      !iif &sub @fss #l0 0 $mode-line-scheme  3 screen-poke #l0 #l1 &lget .Matrixd.n 4 @fs #l0 #l1
+    !done
+  !done
+  1 screen-poke 0 0 &lget .Matrixd.n 4 @fs 0 0
+  set-variable .Matrixd.sa #l9
+  set-variable .Matrixd.ca #l8
+  set-variable .Matrixi.st #l7
+  set-variable .Matrixi.ht 1
+  set-variable .Matrixi.lc 6
+  set-variable .Matrixd.ip 4
+  set-variable .Matrixd.ic 4
+  set-variable $buffer-input Matrixi
+  &sub 33 &fmul &fsub $unix-time #l7 1000 create-callback Matrixd
+!emacro

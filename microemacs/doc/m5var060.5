@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m5var060.5,v 2.6 2023/10/17 17:14:15 jon Exp $
+.Id $Id: m5var060.5,v 2.6 2025/09/06 17:07:06 jon Exp $
 .Im MicroEmacs variable
 .so me.tni
 .TH $time 5
@@ -55,17 +55,18 @@ set-variable $time "0"
 The written time would one hour ahead of the system time.
 .PP
 .B $unix-time
-is also a constantly  changing  integer, its value is a count of the number of seconds since 1970-01-01  00:00:00 UTC,
-otherwise known as the \s-1UNIX\s0 epoch time. This variable cannot be set.
+is also a constantly  changing  variable, however this variable cannot be set. Its value is a count of the number of seconds since 1970-01-01  00:00:00 UTC,
+otherwise known as the \s-1UNIX\s0 epoch time, presented as a floating point number with a guaranteed 9 decimal places 
+so its length is 20 characters. The focus of the fraction part is more on providing a sub-second timer at the highest 
+resolution the system can realistically provide, however, the actual resolution is platform specific and should only 
+be considered accurate to 10ms at best, see example section below.
 .SH EXAMPLE
-The following macro times the time taken to execute a user command:-
+The following macro uses \fB$time\fR to calculate the time taken to execute a user command:-
 .Me $emf-scheme
 .CS
 define-macro time
     !force set-variable #l2 @1
-    !if &not $status
-        set-variable #l2 @ml00 "Time command"
-    !endif
+    !iif &not $status  set-variable #l2 @ml00 "Time command"
     set-variable #l0 $time
     !force execute-line #l2
     set-variable #l1 $time
@@ -75,18 +76,44 @@ define-macro time
         set-variable #l2 &add #l2 1
         set-variable #l4 &add 1000 #l4
     !endif
-    ml-write &spr "Command took %d sec %d msec" &sub #l3 #l2 #l4
+    ml-write &spr "Command took %d.%03d sec" &sub #l3 #l2 #l4
 !emacro
 .CE
 .Me $ehf-scheme
-.Ht time 3
-is a macro defined in misc.emf.
-.PP
-.Ht organizer 3
-uses \fB$time\fR to work out the current month.
+The following implementation uses \fB$unix-time\fR and
+.Ht &fsub 4 :
+.Me $emf-scheme
+.CS
+define-macro time
+  !force set-variable #l2 @1
+  !iif &not $status  set-variable #l2 @ml00 "Time command"
+  set-variable #l0 $unix-time
+  !force execute-line #l2
+  set-variable #l1 $unix-time
+  ml-write &spr "Command took %.6f sec" &fsub #l1 #l0
+!emacro
+.CE
+.Me $ehf-scheme
+This implementation of \fB$unix-time\fR suggests a nanosecond accuracy, however this is unrealistic due to the
+granularity/limitations of the system clock, a more realistic level would be around 1 microsecond. However, at this 
+level the variability of the CPU task scheduler, the time taken to get the time and the algorithms used can all 
+degrade the actual accuracy of the measure. For example, the above macro code use floating-point maths
+(\fC&fsub\fR), Double precision floats, as used by \*(mS, only provide around 15 to 16 significant figures of
+accuracy. Consider the following:
+.Me $emf-scheme
+.CS
+set-variable #g1 &fsub "1234567890.000010000" "1234567890.000000000" 
+set-variable #g2 &fsub "1234567890.000001000" "1234567890.000000000" 
+set-variable #g3 &fsub "1234567890.000000100" "1234567890.000000000" 
+.CE
+.Me $ehf-scheme
+The answer given for \fC#g1\fR typically has an error of around 0.1%, an error of 5% for \fC#g2\fR and an answer of 0
+for \fC#g3\fR. This means if simple floating point maths is used the maximum accuracy is 1 microsecond +/- 5%.
+Attempting to measure performance down to this level is generally a waste of time, it would be far better to increase
+the length of the task (i.e. run 1000 times and divide the total time by 1000). 
 .SH "SEE ALSO"
 .na
 .Ht time 3 , 
-.Ht organizer 3 .
+.Ht &fsub 4 .
 .ad
 .FH

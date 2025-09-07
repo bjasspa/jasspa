@@ -876,9 +876,14 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             break ;
 #if MEOPT_COLOR
         case EVCURSORCOL:
-            if((cursorColor = (meColor) meAtoi(vvalue)) >= noColors)
-                cursorColor = meCOLOR_FDEFAULT ;
-            break ;
+            status = meAtoi(vvalue);
+            if((cursorColor[0] = (meColor) (status & 0xff)) >= noColors)
+                cursorColor[0] = meCOLOR_FDEFAULT;
+            if((cursorColor[1] = (meColor) ((status >> 8) & 0xff)) == 0)
+                cursorColor[1] = cursorColor[0];
+            else if(cursorColor[1] >= noColors)
+                cursorColor[1] = meCOLOR_FDEFAULT;
+            break;
         case EVMLSCHM:
             mlScheme = convertUserScheme(meAtoi(vvalue),mlScheme);
             break ;
@@ -1325,7 +1330,20 @@ handle_namesvar:
             return evalResult;
         }
     case EVUNIXTIME:
-        sprintf((char *) evalResult,"%d",(unsigned int) time(NULL));
+#ifdef CLOCK_REALTIME
+        {
+            struct timespec tm;
+            if(clock_gettime(CLOCK_REALTIME,&tm))
+            {
+                tm.tv_sec = time(NULL);
+                tm.tv_nsec = 0;
+            }
+            sprintf((char *) evalResult,"%ld.%09ld",tm.tv_sec,tm.tv_nsec);
+        }
+#else
+        /* TODO - check macOS, windows & dos */
+        sprintf((char *) evalResult,"%ld.000000000",time(NULL));
+#endif
         return evalResult;
         
     case EVRANDOM:
@@ -1403,7 +1421,7 @@ handle_namesvar:
 #endif
     case EVCURSORBLK:   return meItoa(cursorBlink);
 #if MEOPT_COLOR
-    case EVCURSORCOL:   return meItoa(cursorColor);
+    case EVCURSORCOL:   return meItoa((((int) cursorColor[1]) << 8) | ((int) cursorColor[0]));
     case EVMLSCHM:      return meItoa(mlScheme/meSCHEME_STYLES);
     case EVMDLNSCHM:    return meItoa(mdLnScheme/meSCHEME_STYLES);
     case EVSBARSCHM:    return meItoa(sbarScheme/meSCHEME_STYLES);
