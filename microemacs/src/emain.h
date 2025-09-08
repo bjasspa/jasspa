@@ -300,6 +300,11 @@
 #endif
 #endif
 #include <windows.h>                    /* Standard windows API          */
+/* Following is used for more precise timings: HNS = hundred-nanoseconds (e.g., 1 hns = 100 ns) */
+#define NS_PER_HNS      (100ULL)
+#define HNS_PER_US      (10ULL)
+#define HNS_PER_SEC     (10000000ULL)
+#include <sysinfoapi.h>
 #ifdef _DRAGNDROP
 #include <shellapi.h>                   /* Drag and drop API             */
 #endif /* _DRAGNDROP */

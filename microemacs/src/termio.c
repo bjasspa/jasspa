@@ -170,8 +170,8 @@ static INT meTimerId[NUM_TIMERS]={0}; /* Windows timer handles          */
 do {                                                                         \
     if(meTimerId[id] != 0)                                                   \
     {                                                                        \
-        KillTimer(baseHwnd,meTimerId[id]) ;                                    \
-        meTimerId[id] = 0 ;                                                  \
+        KillTimer(baseHwnd,meTimerId[id]);                                   \
+        meTimerId[id] = 0;                                                   \
     }                                                                        \
 } while(0)
 

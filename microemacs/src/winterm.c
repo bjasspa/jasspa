@@ -469,15 +469,21 @@ again:
 void
 gettimeofday(struct meTimeval *tp, struct meTimezone *tz)
 {
-    SYSTEMTIME stime;
-    UNREFERENCED_PARAMETER(tz);
+    FILETIME fts;
+    ULARGE_INTEGER fti;
     
-    /* Get the second resolution time */
-    tp->tv_sec = time(NULL);
+#if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
+    GetSystemTimePreciseAsFileTime(&fts);
+#else
+    GetSystemTimeAsFileTime(&fts);
+#endif
+    fti.LowPart = fts.dwLowDateTime;
+    fti.HighPart = fts.dwHighDateTime;
     
-    /* Get the microsecond time */
-    GetLocalTime(&stime);
-    tp->tv_usec = (long)(stime.wMilliseconds * 1000);
+    /* Convert value from 1601-01-01 based to 1970-01-01 */
+    fti.QuadPart -= (11644473600ULL * HNS_PER_SEC);
+    tp->tv_sec = (long) (fti.QuadPart / HNS_PER_SEC);
+    tp->tv_usec = (long) ((fti.QuadPart % HNS_PER_SEC) / HNS_PER_US);
 }
 
 /**************************************************************************
@@ -5096,11 +5102,7 @@ TTsleep(int msec, int intable, meVariable **waitVarList)
     /* Do not actually need the absolute time as this will
      * remain the next alarm. Ensure that the value is sane */
     if(msec >= 0)
-    {
-        if(msec < 10)
-            msec = 10;
         timerSet(SLEEP_TIMER_ID,-1,msec);
-    }
     else if(waitVarList != NULL)
         timerKill(SLEEP_TIMER_ID);              /* Kill off the timer */
     else

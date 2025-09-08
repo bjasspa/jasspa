@@ -1341,8 +1341,28 @@ handle_namesvar:
             sprintf((char *) evalResult,"%ld.%09ld",tm.tv_sec,tm.tv_nsec);
         }
 #else
-        /* TODO - check macOS, windows & dos */
+#ifdef _WIN32
+        {
+            FILETIME fts;
+            ULARGE_INTEGER fti;
+
+#if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
+            GetSystemTimePreciseAsFileTime(&fts);
+#else
+            GetSystemTimeAsFileTime(&fts);
+#endif
+            fti.LowPart = fts.dwLowDateTime;
+            fti.HighPart = fts.dwHighDateTime;
+            
+            /* Convert value from 1601-01-01 based to 1970-01-01 */
+            fti.QuadPart -= (11644473600ULL * HNS_PER_SEC);
+            sprintf((char *) evalResult,"%ld.%09ld",(long) (fti.QuadPart / HNS_PER_SEC),(long) ((fti.QuadPart % HNS_PER_SEC) * NS_PER_HNS));
+        }
+#else
+        /* On dos could use gettime in dos.h to get 100ths of a second */
+        /* TODO - check macOS & dos */
         sprintf((char *) evalResult,"%ld.000000000",time(NULL));
+#endif
 #endif
         return evalResult;
         

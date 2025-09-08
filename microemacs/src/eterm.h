@@ -169,7 +169,7 @@ do {                       \
 /* Timer definitions */
 extern void sigAlarm(SIGNAL_PROTOTYPE);
 #define	_SINGLE_TIMER 1		/* Only one itimer available  */
-#define	TIMER_MIN     10	/* Only one itimer available  */
+#define	TIMER_MIN     10
 
 /* Additional UNIX externals */
 extern char  *CM, *CL;
