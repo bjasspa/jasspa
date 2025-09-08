@@ -16,5 +16,11 @@ hello2 () {
     echo "Hello Two!"
 }
 
+hello3 () 
+{
+    echo "Hello Three!"
+}
+
 hello1
 hello2
+hello3
