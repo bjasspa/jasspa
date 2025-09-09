@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd024.2,v 2.7 2022/06/12 17:13:08 jon Exp $
+.Id $Id: m2cmd024.2,v 2.7 2025/09/09 10:38:33 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH create-callback 2
@@ -36,8 +36,38 @@ define-macro Example-callback
     600000 create-callback Example-callback
 !emacro
 Example-callback
-.CE 0
+.CE
 .Me $ehf-scheme
+The following example reimplements the test given in help page for
+.Ht command-wait 2 ,
+using \fBcreate-callback\fR in place of \fBcommand-wait\fR:
+.Me $emf-scheme
+.CS
+; change the following variable to change the target delay (in ms)
+set-variable #g9 100
+set-variable #g8 0
+set-variable #g7 $unix-time
+set-variable #g1 -1
+set-variable #g2 0
+define-macro Callback-test
+  set-variable #g0 $unix-time
+  set-variable #g8 &add #g8 #g2
+  !if &equ &inc #g1 1 100
+    ml-write &spr "Result: %d iterations took %.3fsec, average time %.2fms, average value for command-wait %.2f" #g1 &fsub #g0 #g7 &fmul 1000 &fdiv &fsub #g0 #g7 #g1 &fdiv #g8 #g1
+  !else
+    ; Do work here...
+    ml-write &spr "Loop: %4d %s" #g1 &mid #g0 7 6
+    ; This gets the current time and removes the time at the start of our work, this is then removed from our target frame-rate
+    !iif &les &set #g2 &sub #g9 &fmu 1000 &fsub $unix-time #g0 1  set-variable #g2 1
+    #g2 create-callback Callback-test
+  !endif
+!emacro
+
+Callback-test
+.CE
+.Me $ehf-scheme
+Global register variables are being used for ease but should not be for any 
+code needing to be reliable!
 .SH NOTES
 A call-back  cannot  interrupt while \*(mS is active, instead the call-back is
 delayed until \*(mS becomes  inactive. \*(mS is considered to be inactive when

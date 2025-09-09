@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd160.2,v 2.8 2022/06/12 17:13:25 jon Exp $
+.Id $Id: m2cmd160.2,v 2.8 2025/09/09 09:50:30 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH command-wait 2
@@ -137,7 +137,6 @@ define-macro pipetest-ipipe
     !endif
 !emacro
 
-
 define-macro start-up
     ml-write "Got into start-up"
     set-variable .wait 1
@@ -161,9 +160,68 @@ run:
 Use the \fB-P\fR option for additional debug lines, printed to stderr. Windows
 users  must  use a  console  capable  version  of  \*(mS,  i.e.  mec32.exe  or
 mecw32.exe.
+.SH "NOTES"
+When the given  wait time is smail the  system's  clock  frequency  can play a
+large part in the accuracy, for example on Windows the documented smallest time for
+.Hr SetTimer 3
+is 10 milisconds  (see  \fBUSER_TIMER_MINIMUM\fR)  but in practice tends to be
+more like 16ms. The  following  code can be run to test the  granularity  of a
+system:
+.Me $emf-scheme
+.CS
+set-variable #g0 $unix-time
+1 command-wait
+set-variable #g1 $unix-time
+1 command-wait
+set-variable #g2 $unix-time
+1 command-wait
+set-variable #g3 $unix-time
+1 command-wait
+set-variable #g4 $unix-time
+list-variables
+.CE
+.Me $ehf-scheme
+The values of \fC#g0\fR to \fC#g5\fR should increase by just over 0.001 (1ms), any more indicates a limitation of the
+system clock. This issue can be demonstrated by the following example which attempts to create a stable 'frame-rate'
+by allowing for the time taken by the code on each loop, the desired frequency can be adjusted by the changing the 
+first variable:
+.Me $emf-scheme
+.CS
+; change the following variable to change the target delay (in ms)
+set-variable #l9 100
+set-variable #l8 0
+set-variable #l7 $unix-time
+set-variable #l1 -1
+set-variable #l2 0
+!repeat
+  set-variable #l0 $unix-time
+  ; Do work here...
+  ml-write &spr "Loop: %4d %s" &inc #l1 1 &mid #l0 7 6
+  set-variable #l8 &add #l8 #l2
+  ; This gets the current time and removes the time at the start of our loop work, this is removed from our target frame-rate
+  !iif &les &set #l2 &sub #l9 &fmu 1000 &fsub $unix-time #l0 1  set-variable #l2 1
+  #l2 command-wait
+!until &equ #l1 100
+set-variable #l6 $unix-time
+set-variable #l8 &add #l8 #l2
+ml-write &spr "Result: %d iterations took %.3fsec, average time %.2fms, average value for command-wait %.2f" #l1 &fsub #l6 #l7 &fmul 1000 &fdiv &fsub #l6 #l7 #l1 &fdiv #l8 #l1
+.CE
+.Me $ehf-scheme
+When the desired frequency is large or the system clock frequency is large this code is accurate, but if the clock 
+frequency is, say, 16ms then a desired frequency of 20ms will typically have a large 12ms error caused by the system 
+clock (\fCcommand-wait\fR will end up waiting 2 times 16ms on each loop). If accuracy is required, use an appropriate 
+OS, such as any UNIX system.
+.PP
+the use of
+.Ht create-callback 2
+intead of \fBcommand-wait\fR typically creates a better user experience as it allows the system to continue to 
+functioning normally while waiting for the next loop. 
 .SH "SEE ALSO"
 .na
 .Ht ml-write 2 ,
+.Ht create-callback 2 ,
+.Ht $time 5 ,
+.Ht $unix-time 5 ,
 .Ht $buffer-input 5 .
 .ad
 .FH
