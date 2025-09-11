@@ -151,6 +151,7 @@ add-file-hook ".ex .exw .exu .e .ew .eu" fhook-euphor
 add-file-hook ".pls" fhook-pls
 add-file-hook ".lua" fhook-lua
 add-file-hook ".psf" fhook-psf
+add-file-hook ".ps1 .psm1" fhook-ps1
 add-file-hook ".spec" fhook-spec
 add-file-hook ".sl" fhook-slang
 add-file-hook ".au3" fhook-au3

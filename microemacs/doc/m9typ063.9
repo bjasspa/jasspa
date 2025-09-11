@@ -5,38 +5,38 @@
 .\" copying information.
 .\"
 .\"  Created By    : Detlef Groth
-.\"  Created       : 2025-08-23
+.\"  Created       : 2025-09-11
 .\"
-.Id $Id: m9typ062.9,v 2.6 2025/09/11 10:33:17 jon Exp $
+.Id $Id: m9typ062.9,v 2.6 2025/09/11 10:43:42 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
-.TH lua 9
-.XI lua - "Lua File"
+.TH ps1 9
+.XI ps1 - "PowerShell File"
+.XI PowerShell - "PowerShell Programming Language"
 .SH SYNOPSIS
-lua \- Lua files
+ps1, psm1 \- PowerShell files
 .SH FILES
 .na
-.B hklua.emf
-\- Lua hook definition
+.B hkps1.emf
+\- PowerShell hook definition
 .br
-.B lua.eaf
-\- Lua abbreviation file
+.B ps1.eaf
+\- PowerShell abbreviation file
 .br
-.B lua.etf
-\- Lua template file.
+.B ps1.etf
+\- PowerShell template file.
 .ad
 .SH EXTENSIONS
 .na
-\fB.lua\fR \- Lua file
+\fB.ps1\fR \- PowerShell file
+.br
+\fB.psm1\fR \- PowerShell module file
 .ad
 .SH DESCRIPTION
-The  \fBLua\fR  file type  editing provides  simple  hilighting of Lua
-files,  abbreviations,  folding,  item-list  support and lua function  tagging
-using the 
-.Ht luatags 3f
-command.
+The  \fBPowerShell\fR  file type  editing provides  simple  hilighting of PowerShell
+files,  abbreviations,  folding,  item-list  support 
 .IP "\fBAbbreviations\fR"
-The  installation  comes with a default  abbreviation  file for Lua file  editing
+The  installation  comes with a default  abbreviation  file for PowerShell file  editing
 which  can  be  used  by  writing   short   abbreviations   like   "\fBif\fR",
 "\fBel\fR" (else) or "\fBfu\fR" (function) - and then pressing the key-binding for the 
 .Ht expand-abbrev-handle 3
@@ -55,16 +55,16 @@ and
 are available to reformat  (re-layout) selected sections of the buffer, or the
 whole buffer, respectively.
 .IP "\fBFolding and Information Hiding\fR"
-Generic  folding  is  enabled  within  the Lua  file. The folds  occur  about
-functions as these declarations are starting at the beginning of 
-one line and ending at a line starting with the \fBend\fR keyword.
+Generic  folding  is  enabled  within  the PowerShell  file. The folds  occur  about
+functions, classes and enums if these declarations are starting at the beginning of 
+one line and ending at a line starting with a curly brace.
 .Ht collapse-all 3
 (un)folds all regions in the file,
 .Ht collapse-current 3
 (un)folds the current region.
 .IP "\fBNavigation via Item List\fR"
-The Lua mode offers beside folding as well support for displaying an outline of the
-functions for easy navigation using the 
+The PowerShell mode offers beside folding as well support for displaying an outline of the
+functions, classes and enums for easy navigation using the 
 .Ht item-list 3
 command.
 .IP "\fBShort Cuts\fR"
@@ -89,44 +89,19 @@ The short cut keys used within the buffer are:-
 \fBf6\fR \- List items.
 .br
 \fB\*ef6\fR \- Close item list.
-.IP "\fBExecuting, Formatting and Linting Lua Code\fR"
-The Lua file hook supports the 
-.Ht file-exec 3 ,
-the 
-.Ht file-format 3
-and the 
-.Ht file-lint 3
-macros. The default commands and tools are "\fIluac\fR" for linting, "\fIlua\fR" for
-execting and the  "\fIluafmt\fR"  application for formatting. The procedure to
-install the "\fIluafmt\fR" application on a Unix using the npm package manager
-system is like this:
-.RS
-.CS
-
-     sudo npm install -g lua-fmt
-
-.CE 0
-If the application \fI"luafmt"\fR is not available, the macro
-.Ht restyle-buffer 3 ,
-will be used instead.
-.RE
 .SH NOTES
 .PP
-The  hilighting  and other features are  typically extended using a file \fBmylua.emf\fR.
+The  hilighting  and other features are  typically extended using a file \fBmyps1.emf\fR.
 .SH BUGS
 None  reported so far but many  features are added just  recently and have not
-been tested throughly.
+been tested throughly as our main development platform is Linux.
 .SH "SEE ALSO"
 .na
 .Ht abbrev-list 3 ,
 .Ht collapse-all 3 ,
 .Ht collapse-current 3 ,
 .Ht expand-abbrev-handle 3 ,
-.Ht file-exec 3 ,
-.Ht file-format 3 ,
-.Ht file-lint 3 ,
 .Ht item-list 3 ,
-.Ht luatags 3f ,
 .Ht restyle-buffer 3 ,
 .Ht restyle-region 3 ,
 .Ht time 2m .
