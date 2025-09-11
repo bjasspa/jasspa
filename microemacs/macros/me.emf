@@ -118,7 +118,7 @@ add-file-hook ".json" fhook-json json-parse
 add-file-hook ".pl .pm" fhook-perl
 add-file-hook ".php .php3 .php4 .php5 .phtml .inc" fhook-php
 add-file-hook ".phps" fhook-phps
-add-file-hook ".ps1" fhook-ps1
+add-file-hook ".ps1 .psm1" fhook-ps1
 add-file-hook ".cmd .bat .btm" fhook-dos
 add-file-hook ".tcl .tk" fhook-tcl
 add-file-hook ".rul" fhook-rul

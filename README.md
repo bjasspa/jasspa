@@ -10,6 +10,7 @@
 [![Docu HTML](https://img.shields.io/badge/Docu-HTML-blue)](https://bjasspa.github.io/jasspa/)
 [![Docu Wiki](https://img.shields.io/badge/Docu-Wiki-blue)](https://github.com/bjasspa/jasspa/wiki)
 [![Docu Wiki](https://img.shields.io/badge/Docu-Cheatsheet-blue)](https://github.com/bjasspa/jasspa/blob/main/microemacs/contribs/cheatsheet.md)
+[![GitHub Repo stars](https://img.shields.io/github/stars/bjasspa/jasspa)](https://www.star-history.com/#bjasspa/jasspa&Date)
 
 ![Ubuntu intel](https://github.com/bjasspa/jasspa/workflows/Build%20linux%20intel%2064%20(ubuntu-22)/badge.svg)
 ![Ubuntu aarch](https://github.com/bjasspa/jasspa/workflows/Build%20linux%20aarch%2064%20(ubuntu-22)/badge.svg)
@@ -126,7 +127,31 @@ mesc -V
 
 This should printout the version and exit MicroEmacs.
 
+## Compilation on Linux
 
+On a Linux system you can compile the code yourself using the build scripts in
+_microemacs/src_. You need the _ncurses_ for the terminal version and _libxt_ for the X-Windows version. Optionally for supporting https you might as well install the _libssel_ library. Here the procedure for a Debian based system like Ubuntu:
+
+```bash
+### install required packages
+sudo apt install libssl-dev libz-dev libncurses-dev libxt-dev git
+### download the current source code
+git clone https://github.com/bjasspa/jasspa.git
+cd jasspa/microemacs/src
+### compile the barebone executables
+bash build.sh -t c
+bash build.sh -t w
+### the executables are now in a folder .linux-PLATFORM-GCCVERSION-release-meX
+### and in a folder bin in the parent directory
+### create a standalone executable with embedded macro files
+cd ../mesingle
+PATH=`pwd`/../bin/linux6-intel64-gcc14:$PATH bash mesgen.sh \
+    -p ../bin/linux6-intel64-gcc14/mec -o mesc
+PATH=`pwd`/../bin/linux6-intel64-gcc14:$PATH bash mesgen.sh \
+    -p ../bin/linux6-intel64-gcc14/mew -o mesw
+```
+
+You should replace the LINUX-PLATFORM-GCC part with your kernel, platform and GCC versions you are usng
 ## Documentation & Help
 
 Jasspa's  MicroEmacs  ships with a comprehensive  set of  documentation  which

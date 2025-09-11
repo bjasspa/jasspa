@@ -6,7 +6,7 @@
 ; copying information.
 ;
 ; Synopsis:    MS PowerShell script file hook
-; Authors:     Steven Phillips
+; Authors:     Steven Phillips & Detlef Groth
 ;
 set-char-mask "3" "-$"
 
@@ -18,8 +18,8 @@ define-macro fhook-ps1
 
 ; buffer-init variables
 set-variable .fhook-ps1.name "MS PowerShell Script"
-set-variable .fhook-ps1.setup &reg "/history/fhook/ps1" "dfghnopx"
-set-variable .fhook-ps1.setup-mask "adefghikmoptux"
+set-variable .fhook-ps1.setup &reg "/history/fhook/ps1" "bdfghnopx"
+set-variable .fhook-ps1.setup-mask "abdefghikmoptux"
 set-variable .fhook-ps1.comment "|#||#|# | #|r|"
 set-variable .fhook-ps1.comment-1 "|<#|#>|#|## | # |f|"
 ; Set up collapse for ps1
@@ -30,42 +30,79 @@ set-variable .fhook-ps1.collapse-mnext "-1"
 ; setup item-list
 set-variable .fhook-ps1.item-list-s1 "^[ \t]*function[ \t]+\\(\\w+\\)"
 set-variable .fhook-ps1.item-list-r1 "Func \CCb\\1\CCA"
+set-variable .fhook-ps1.item-list-s2 "^enum +\\(\\w+\\)[ \t]*{"
+set-variable .fhook-ps1.item-list-r2 "Enum \CCb\\1\CCA"
+set-variable .fhook-ps1.item-list-s3 "^class +\\(\\w+\\)[ \t]*{"
+set-variable .fhook-ps1.item-list-r3 "Clss \CCb\\1\CCA"
 
 !if &and &sin "h" .fhook-ps1.setup &band .hilight.flags 0x02 
   !iif &not &exist .hilight.ps1  set-variable .hilight.ps1 &pinc .hilight.next 1
   0 hilight .hilight.ps1 3 50
   hilight .hilight.ps1 2 "#"            .scheme.comment
   hilight .hilight.ps1 20 "<#" "#>" ""  .scheme.comment
+  hilight .hilight.ps1 18 "# *TODO"     .scheme.error
   hilight .hilight.ps1 20 "@\"" "\"@" "" .scheme.string
   hilight .hilight.ps1 256 "\"@"        .scheme.string
   hilight .hilight.ps1 4 "\"" "\"" "`" .scheme.string
   hilight .hilight.ps1 4 "'" "'" "`"   .scheme.quote
-  hilight .hilight.ps1 0 "\\[\\a\\w+]"     .scheme.prepro
   !if &band .hilight.flags 0x04
     hilight .hilight.ps1 0x20 "function\\s+\\w*" .scheme.function
   !else
     hilight .hilight.ps1 1 "function" .scheme.function
   !endif
+  hilight .hilight.ps1 0 "\\[\\a\\w+]"     .scheme.type
   hilight .hilight.ps1 4 "\\$" "\\}\\W" "" .scheme.variable
+  hilight .hilight.ps1 0x804 "\\${" "}" "" .scheme.variable
+  hilight .hilight.ps1 35 "using"       .scheme.prepro
+  hilight .hilight.ps1 1 "!"            .scheme.operator
   hilight .hilight.ps1 1 "-and"         .scheme.operator
+  hilight .hilight.ps1 1 "-as"          .scheme.operator
   hilight .hilight.ps1 1 "-contains"    .scheme.operator
   hilight .hilight.ps1 1 "-eq"          .scheme.operator
-  hilight .hilight.ps1 1 "-or"          .scheme.operator
-  hilight .hilight.ps1 1 "-ne"          .scheme.operator
-  hilight .hilight.ps1 1 "-not"         .scheme.operator
+  hilight .hilight.ps1 1 "-ge"          .scheme.operator
+  hilight .hilight.ps1 1 "-gt"          .scheme.operator
+  hilight .hilight.ps1 1 "-in"          .scheme.operator
+  hilight .hilight.ps1 1 "-is"          .scheme.operator
+  hilight .hilight.ps1 1 "-isnot"       .scheme.operator
+  hilight .hilight.ps1 1 "-le"          .scheme.operator
+  hilight .hilight.ps1 1 "-lt"          .scheme.operator
   hilight .hilight.ps1 1 "-match"       .scheme.operator
+  hilight .hilight.ps1 1 "-ne"          .scheme.operator
+  hilight .hilight.ps1 1 "-nomatch"     .scheme.operator
+  hilight .hilight.ps1 1 "-not"         .scheme.operator
+  hilight .hilight.ps1 1 "-notcontains" .scheme.operator
+  hilight .hilight.ps1 1 "-notin"       .scheme.operator
+  hilight .hilight.ps1 1 "-or"          .scheme.operator
+  hilight .hilight.ps1 1 "-split"       .scheme.operator
+  hilight .hilight.ps1 1 "-xor"         .scheme.operator
+  hilight .hilight.ps1 1 "begin"        .scheme.keyword
+  hilight .hilight.ps1 1 "break"        .scheme.keyword
   hilight .hilight.ps1 1 "catch"        .scheme.keyword
+  hilight .hilight.ps1 1 "class"        .scheme.keyword
+  hilight .hilight.ps1 1 "clean"        .scheme.keyword
+  hilight .hilight.ps1 1 "continue"     .scheme.keyword
+  hilight .hilight.ps1 1 "data"         .scheme.keyword
+  hilight .hilight.ps1 1 "default"      .scheme.keyword
+  hilight .hilight.ps1 1 "do"           .scheme.keyword
+  hilight .hilight.ps1 1 "dynamicparam" .scheme.keyword
   hilight .hilight.ps1 1 "else"         .scheme.keyword
   hilight .hilight.ps1 1 "elseif"       .scheme.keyword
+  hilight .hilight.ps1 1 "enum"         .scheme.keyword
   hilight .hilight.ps1 1 "exit"         .scheme.keyword
+  hilight .hilight.ps1 1 "finally"      .scheme.keyword
+  hilight .hilight.ps1 1 "for"          .scheme.keyword
   hilight .hilight.ps1 1 "foreach"      .scheme.keyword
   hilight .hilight.ps1 1 "if"           .scheme.keyword
+  hilight .hilight.ps1 1 "param"        .scheme.keyword
+  hilight .hilight.ps1 1 "process"      .scheme.keyword
   hilight .hilight.ps1 1 "return"       .scheme.keyword
+  hilight .hilight.ps1 1 "static"       .scheme.type
+  hilight .hilight.ps1 1 "switch"       .scheme.keyword
   hilight .hilight.ps1 1 "throw"        .scheme.keyword
+  hilight .hilight.ps1 1 "trap"         .scheme.keyword
   hilight .hilight.ps1 1 "try"          .scheme.keyword
+  hilight .hilight.ps1 1 "until"        .scheme.keyword
   hilight .hilight.ps1 1 "while"        .scheme.keyword
-  hilight .hilight.ps1 1 "Write-Host"   .scheme.function
-  hilight .hilight.ps1 1 "Write-Output" .scheme.function
   !if &band .hilight.flags 0x08
     ; hilight constants, e.g. numbers
     hilight .hilight.ps1 1 "\\d+"       .scheme.constant
@@ -79,6 +116,9 @@ set-variable .fhook-ps1.item-list-r1 "Func \CCb\\1\CCA"
   !endif
   hilight .hilight.ps1 1 "\\$false"     .scheme.constant
   hilight .hilight.ps1 1 "\\$true"      .scheme.constant
+  hilight .hilight.ps1 1 "\\$null"      .scheme.constant
+  hilight .hilight.ps1 1 "Write-Host"   .scheme.function
+  hilight .hilight.ps1 1 "Write-Output" .scheme.function
 !endif
 !if &sin "d" .fhook-ps1.setup
   ; create a simple indentation scheme for javascript embeded in html based files

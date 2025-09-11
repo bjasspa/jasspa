@@ -50,9 +50,10 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkmeta.emf	hkmhg.emf	hkmod2.emf	\
 	hknroff.emf	hkoctave.emf	\
 	hkpascal.emf	hkperl.emf	hkphp.emf	hkphps.emf	\
-	hkpls.emf	hkpseudo.emf	hkpsf.emf	hkpython.emf	\
-	hkps1.emf	hkr.emf		hkrbin.emf	hkrd.emf	\
-	hkreg.emf	hkruby.emf	hkrul.emf	hkrust.emf	\
+	hkpls.emf	hkps1.emf	hkpseudo.emf	hkpsf.emf	\
+	hkpython.emf	\
+	hkr.emf		hkrbin.emf	hkrd.emf	hkreg.emf	\
+	hkruby.emf	hkrul.emf	hkrust.emf	\
 	hksamba.emf	hkscheme.emf	hksgml.emf	hkshell.emf	\
 	hkslang.emf	hkspec.emf	hksql.emf	hkswift.emf	\
 	hktcl.emf	hktexi.emf	hktlsosd.emf	hktools.emf	\
@@ -119,7 +120,7 @@ ETFS=	ada.etf		asmx86.etf	asn1.etf	au3.etf		\
 	makefile.etf	md.etf		mhg.etf		mod2.etf	\
 	newcomp.etf	newuser.etf	nroff.etf	octave.etf	\
 	pascal.etf	perl.etf	php.etf		pls.etf		\
-	psf.etf		python.etf	\
+	ps1.etf		psf.etf		python.etf	\
 	rd.etf		rmd.etf		ruby.etf	rul.etf		\
 	rust.etf	shell.etf	spec.etf	sql.etf		\
 	tcl.etf		\
@@ -139,7 +140,7 @@ EAFS=	ada.eaf		asp.eaf		au3.eaf		awk.eaf		\
 	julia.eaf	latex.eaf	lua.eaf		\
 	md.eaf		octave.eaf	\
 	pascal.eaf	perl.eaf	php.eaf		pls.eaf		\
-	python.eaf	\
+	ps1.eaf		python.eaf	\
 	r.eaf		rd.eaf		rust.eaf	\
 	shell.eaf	sgml.eaf	\
 	tcl.eaf		txt.eaf		\
