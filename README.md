@@ -10,6 +10,7 @@
 [![Docu HTML](https://img.shields.io/badge/Docu-HTML-blue)](https://bjasspa.github.io/jasspa/)
 [![Docu Wiki](https://img.shields.io/badge/Docu-Wiki-blue)](https://github.com/bjasspa/jasspa/wiki)
 [![Docu Wiki](https://img.shields.io/badge/Docu-Cheatsheet-blue)](https://github.com/bjasspa/jasspa/blob/main/microemacs/contribs/cheatsheet.md)
+[![GitHub Repo stars](https://img.shields.io/github/stars/bjasspa/jasspa)](https://www.star-history.com/#bjasspa/jasspa&Date)
 
 ![Ubuntu intel](https://github.com/bjasspa/jasspa/workflows/Build%20linux%20intel%2064%20(ubuntu-22)/badge.svg)
 ![Ubuntu aarch](https://github.com/bjasspa/jasspa/workflows/Build%20linux%20aarch%2064%20(ubuntu-22)/badge.svg)
