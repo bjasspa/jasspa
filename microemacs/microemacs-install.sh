@@ -3,7 +3,7 @@
 MEBASEURL=https://github.com/bjasspa/jasspa
 INSTPATH=""
 BINPATH=""
-RMSG=""
+ERRMSG=""
 RC=""
 
 install_path_check(){
@@ -185,7 +185,7 @@ MEURL=$MEBASEURL/releases/download/me_${MEVER}
 # Now work out where to install/upgrade
 if [ -n "${INSTPATH}" ] ; then
 
-  # Install path given by user - remove traliing '/jasspa/' '/' & check permissions etc
+  # Install path given by user - remove trailing '/jasspa/' '/' & check permissions etc
   case ${INSTPATH} in
   */jasspa/) INSTPATH=${INSTPATH%"/jasspa/"};;
   */jasspa) INSTPATH=${INSTPATH%"/jasspa"};;
@@ -307,9 +307,9 @@ else
       printf "Select (a) to install to \"${ainpth}\" for all users.\n\n" | fold -s
     fi
     if [ $uicerr -ne 0 ] ; then
-      printf "Select (u) to install to \"${uinpth}\" for all users, however note:\n${uermsg}\n\n" | fold -s
+      printf "Select (u) to install to \"${uinpth}\" for current user, however note:\n${uermsg}\n\n" | fold -s
     else
-      printf "Select (u) to install to \"${uinpth}\" for all users.\n\n" | fold -s
+      printf "Select (u) to install to \"${uinpth}\" for current user.\n\n" | fold -s
     fi
     while true; do
       read -p "How do you want to continue or (q) to quit? (a/u/q) " auq
@@ -458,10 +458,7 @@ else
   pkg=`echo "$1" | sed "s/-/_/g"`
 
   case $pkg in
-    binaries )
-      echo "Jasspa MicroEmacs - Installing package $pkg"
-      install_package "" binaries;;
-    help | macros | spelling_*)
+    binaries | help_ehf | macros | spelling_*)
       echo "Jasspa MicroEmacs - Installing package $pkg"
       install_package "" $pkg;;
     *)

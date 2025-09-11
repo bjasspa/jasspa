@@ -106,9 +106,7 @@ set-variable .fhook-c.item-list-r6 "Clss \CCd\\1\CCA"
 set-variable .fhook-c.item-list-s7 "^[ \t]*struct[ \t]+\\(\\w+\\)[ \t]+{"
 set-variable .fhook-c.item-list-r7 "Strc \CCd\\1\CCA"
 
-!if &not &exi .hilight.c
-  set-variable .hilight.c &pinc .hilight.next 1
-!endif
+!iif &not &exi .hilight.c  set-variable .hilight.c &pinc .hilight.next 1
 !if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02
   ; Hi-light C Mode
   0 hilight .hilight.c  2 50
