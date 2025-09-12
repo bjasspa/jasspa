@@ -2443,8 +2443,8 @@ special_bound:
                         killInit(0);
                         if((dd = killAddNode(nitems)) != NULL)
                         {
-                            meStrncpy(dd,buff,nitems) ;
-                            dd[nitems] = '\0' ;
+                            memcpy(dd,buff,nitems);
+                            dd[nitems] = '\0';
                         }
                         thisflag = meCFKILL;
                     }
@@ -2725,7 +2725,7 @@ TCAPstart(void)
     if(tcaptab[TCAPasbd].code.str == NULL)
         tcaptab[TCAPasbe].code.str = NULL;
     
-    TCAPgetWinSize() ;
+    TCAPgetWinSize();
     TTdepthDefault = TTnewHig;
     TTwidthDefault = TTnewWid;
     
@@ -2770,7 +2770,7 @@ TCAPstart(void)
                 translateKeyAdd(&TTtransKey,charListToShorts(sl,(meUByte *) ss),
                                 TTtransKey.time,sl,(ii|ME_SPECIAL));
             else
-                tcapSpecKeyStrs[ii] = NULL ;
+                tcapSpecKeyStrs[ii] = NULL;
         }
         /* page_up/down tries key-p/npage (kpp/kP & knp/kN) first, if this fails try key_previous/next */
 #ifdef _USE_NCURSES
@@ -2827,6 +2827,11 @@ TCAPstart(void)
         }
         }
     }
+#ifdef _USE_NCURSES
+    /* if we failed to get any of the 4 bracket paste strings then make sure we don't use it */ 
+    if((tcaptab[TCAPbpd].code.str == NULL) || (tcapSpecKeyStrs[SKEY_bps] == NULL) || (tcapSpecKeyStrs[SKEY_bpe] == NULL))
+        tcaptab[TCAPbpe].code.str = NULL;
+#endif
     /* Switch off the vertical window scroll bar */
     gsbarmode &= ~WMVBAR;
     {
@@ -2935,6 +2940,11 @@ TCAPopen(void)
     /* if have both asbe & asbd then enable alt-screen-buffer */
     if(tcaptab[TCAPasbe].code.str != NULL)
         putpad(tcaptab[TCAPasbe].code.str);
+#ifdef _USE_NCURSES
+    /* if have all 4 bracketed paste strings enable bracketed paste */
+    if(tcaptab[TCAPbpe].code.str != NULL)
+        putpad(tcaptab[TCAPbpe].code.str);
+#endif
 
     /* If automatic margins are enabled then try to disable them */
     if ((tcaptab[TCAPam].code.value > 0) && (tcaptab[TCAPrmam].code.str != NULL) &&
@@ -2979,6 +2989,11 @@ TCAPclose(void)
         tcaptab[TCAPam].code.value = meTCAPgetflag(tcaptab[TCAPam].capKey);
         TTaMarginsDisabled = 0;
     }
+#ifdef _USE_NCURSES
+    /* if have all 4 bracketed paste strings enable bracketed paste */
+    if(tcaptab[TCAPbpd].code.str != NULL)
+        putpad(tcaptab[TCAPbpd].code.str);
+#endif
     if(tcaptab[TCAPasbe].code.str != NULL)
         putpad(tcaptab[TCAPasbd].code.str);
     if(tcaptab[TCAPsmkx].code.str != NULL)

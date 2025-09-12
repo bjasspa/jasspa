@@ -834,6 +834,9 @@ TTgetc(void)
 {
     meTRANSKEY *tt, *tk;
     int ci, ki, ll, kk, kl;
+#ifdef _USE_NCURSES
+    int bp=0;
+#endif
     meUShort cc;
     
     do {
@@ -884,7 +887,52 @@ TTgetc(void)
                 TTnoKeys = ll;
                 ki = TTnextKeyIdx;
 #ifdef _USE_NCURSES
-                if((tt->map == (ME_SPECIAL|SKEY_mouse_move))
+                if(tt->map == (ME_SPECIAL|SKEY_bpe))
+                {
+                    if(bp)
+                    {
+                        meUByte *dd;
+                        bp--;
+                        if((dd = killAddNode(bp)) != NULL)
+                        {
+                            memcpy(dd,ffbuf+1,bp);
+                            dd[bp] = '\0';
+                        }
+                        thisflag = meCFKILL;
+                        bp = 0;
+                        if(!ki)
+                            ki = KEYBUFSIZ;
+                        TTkeyBuf[--ki] = tk->map;
+                        TTnoKeys++;
+                    }
+                }
+                else if(bp)
+                {
+                    /* in the middle of a bracketed paste, these 'keys' are part of the paste so don't tanslate */
+                    if((kl == 1) && (tt->map == (ME_SPECIAL|SKEY_return)))
+                    {
+                        ffbuf[bp++] = meCHAR_NL;
+                        TTnextKeyIdx--;
+                    }
+                    else
+                    {
+                        do
+                            ffbuf[bp++] = TTkeyBuf[--TTnextKeyIdx];
+                        while(--kl);
+                    }
+                    continue;
+                }
+                else if(tt->map == (ME_SPECIAL|SKEY_bps))
+                {
+                    /* this is the start of a paste, all the following text, until the paste end,
+                     * should be treated as part of the 'clipboard', so no translation */
+                    bp = 1;
+                    TTnextKeyIdx -= kl;
+                    /* always new kill, don't want to glue 'em together */
+                    killInit(0);
+                    continue;
+                }
+                else if((tt->map == (ME_SPECIAL|SKEY_mouse_move))
 #ifdef _ME_WINDOW
                    && (meSystemCfg & meSYSTEM_CONSOLE)
 #endif
@@ -1020,8 +1068,37 @@ TTgetc(void)
                 }
                 TTlastKeyIdx = ki;
             }
+            else if(bp)
+            {
+                /* In the middle of a bracketed paste - one gotcha, a new-line is sent as a 0x0d (i.e. 'return' key)
+                 * rather than 0x0a which is what ME uses as a new-line char (i.e. meCHAR_NL) */
+                meUByte cc;
+                if(!TTnextKeyIdx)
+                    TTnextKeyIdx = KEYBUFSIZ;
+                if((cc = TTkeyBuf[--TTnextKeyIdx]) == 0x0d)
+                    cc = meCHAR_NL;
+                ffbuf[bp] = cc;
+                if(bp > (meFIOBUFSIZ>>1))
+                {
+                    /* Unlikely to happen but if very large paste then avoid ffbuf overrun */
+                    meUByte *dd;
+                    if((dd = killAddNode(bp)) != NULL)
+                    {
+                        memcpy(dd,ffbuf+1,bp);
+                        dd[bp] = '\0';
+                    }
+                    thisflag = meCFKILL;
+                    bp = 0;
+                }
+                bp++;
+                TTnoKeys--;
+            }
         }
-    } while(!TTnoKeys || (tk != NULL));
+    } while(!TTnoKeys ||
+#ifdef _USE_NCURSES
+            bp ||
+#endif
+            (tk != NULL));
     
     if(!TTnextKeyIdx)
         TTnextKeyIdx = KEYBUFSIZ;

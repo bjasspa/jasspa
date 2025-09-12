@@ -108,11 +108,19 @@ TCAP_STRING(TCAPrmam, "rmam", "RA")
 /* enter_am_mode/smam/SA/Turn on automatic margins */
 TCAP_STRING(TCAPsmam, "smam", "SA")
 
+#ifdef _USE_NCURSES
+/* The following are not supported by termcap */
+
+/* Enable/Disable bracket paste - NOTE: these are coupled with SKEY_bps & SKEY_bpe */
+TCAP_STRING(TCAPbpe, "BE", NULL)
+TCAP_STRING(TCAPbpd, "BD", NULL)
+
+#if MEOPT_MOUSE
+/* Enable/Disable mouse events - NOTE: This works with kmous eskeys, */
+TCAP_STRING(TCAPxm, "XM", NULL)
+#endif
+#endif
+
 /* Enable/Disable alternate screen buffer - NOTE: these must be last 2 */
 TCAP_STRING(TCAPasbe, "smcup", "ti")
 TCAP_STRING(TCAPasbd, "rmcup", "te")
-
-#if MEOPT_MOUSE
-/* Enable/Disable mouse events - NOTE: This works with kmous eskeys, don't think XM is suported in termcap */
-TCAP_STRING(TCAPxm, "XM", "XM")
-#endif

@@ -3625,7 +3625,6 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
 #if MEOPT_EXTENDED
             if(ss != NULL)
             {
-                extern meUByte ffbuf[];
                 NETRESOURCE nr, *rr;
                 HANDLE eh;
 

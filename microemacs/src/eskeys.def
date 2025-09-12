@@ -36,6 +36,10 @@ DEFSKEY ("backspace",    "kbs",   "kb", "\010",    SKEY_backspace )
 #if MEOPT_CALLBACK
 DEFSKEY ("bell",         NULL,    NULL, NULL,      SKEY_bell )
 #endif
+#ifdef _USE_NCURSES
+DEFSKEY ("bp-start",     "PS",    NULL, NULL,      SKEY_bps )
+DEFSKEY ("bp-end",       "PE",    NULL, NULL,      SKEY_bpe )
+#endif
 DEFSKEY ("break",        NULL,    NULL, NULL,      SKEY_break )
 #if MEOPT_CALLBACK
 DEFSKEY ("callback",     NULL,    NULL, NULL,      SKEY_callback )
@@ -96,7 +100,7 @@ DEFSKEY ("mouse-drop-2", NULL,    NULL, NULL,      SKEY_mouse_drop_2 )
 DEFSKEY ("mouse-drop-3", NULL,    NULL, NULL,      SKEY_mouse_drop_3 )
 DEFSKEY ("mouse-drop-4", NULL,    NULL, NULL,      SKEY_mouse_drop_4 )
 DEFSKEY ("mouse-drop-5", NULL,    NULL, NULL,      SKEY_mouse_drop_5 )
-DEFSKEY ("mouse-move",   "kmous", "Km", NULL,      SKEY_mouse_move )
+DEFSKEY ("mouse-move",   "kmous", NULL, NULL,      SKEY_mouse_move )
 DEFSKEY ("mouse-move-1", NULL,    NULL, NULL,      SKEY_mouse_move_1 )
 DEFSKEY ("mouse-move-2", NULL,    NULL, NULL,      SKEY_mouse_move_2 )
 DEFSKEY ("mouse-move-3", NULL,    NULL, NULL,      SKEY_mouse_move_3 )

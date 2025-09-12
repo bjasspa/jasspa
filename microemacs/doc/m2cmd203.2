@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd203.2,v 2.7 2025/08/28 02:13:29 jon Exp $
+.Id $Id: m2cmd203.2,v 2.7 2025/09/12 17:51:43 jon Exp $
 .Im MicroEmacs bindings
 .so me.tni
 .TH keyNames 2
@@ -100,6 +100,15 @@ normal keys to allow the user to handle the events properly themselves. Followin
 generated pseudo keys:- 
 .IP \fBbell\fR
 The pseudo key is generated when the bell is rung.
+.IP "\fBbp-start\fR, \fBbp-end\fR"
+These keys are only define and used by \fIncurses\fR enabled UNIX console versions. When pasting into a UNIX console 
+it is advantageous for the console program to know the text entered is part of a block-text paste as it allows the editor to 
+format the text correctly (for more information see \fBWikipedia\fR page on \fIBracketed paste\fR). \fBbp-start\fR is bound to 
+.Ht void 2 ,
+however the key is use to trigger the start of a paste, \fBbp-end\fR is use by the system to indicated the end of the 
+paste. \*(mS converts the text in between into a kill buffer and as bp-end is bound to
+.Ht yank 2
+it also yanks the text into the current buffer.     
 .IP \fBcallback\fR
 The pseudo key when a
 .Ht create-callback 2

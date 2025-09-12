@@ -66,6 +66,10 @@
         DEFBIND (ME_CONTROL|' ',	0, CK_SETMRK)
 
         DEFBIND (ME_SPECIAL|SKEY_backspace,	0, CK_DELBAK)
+#ifdef _USE_NCURSES
+        DEFBIND (ME_SPECIAL|SKEY_bps,	0, CK_VOIDFUNC)
+        DEFBIND (ME_SPECIAL|SKEY_bpe,	0, CK_YANK)
+#endif
 #if MEOPT_CALLBACK
         DEFBIND (ME_SPECIAL|SKEY_callback,	0, CK_VOIDFUNC)
 #endif
