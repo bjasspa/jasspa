@@ -1,16 +1,16 @@
 ; -!- emf -!-
-; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1999-2025 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
+; Copyright (c) 2025 JASSPA (www.jasspa.com).
 ;
-; Created:     2025-07-24
-; Synopsis:    Matlab/Octave Language hook
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Matlab/Octave language support
 ; Authors:     Detlef Groth
 ;
 define-macro fhook-octave
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "octave"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "octave"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables

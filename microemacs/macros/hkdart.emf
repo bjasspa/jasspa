@@ -1,19 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; Copyright (c) 2025 JASSPA (www.jasspa.com).
 ;
-;  Created By    : Detlef Groth
-;  Created       : Fri Mar 6th, 2025
-;  Last Modified : <250915.2114>
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
 ;
-;  Description
-;   Dart Language Template
-;   https://go.dev/
+; Synopsis:    Dart language support
+; Authors:     Detlef Groth
 ;
-;  Notes
-;
-;  History: 2025-03-07 first version
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 define-macro fhook-dart
   set-variable $buffer-mask "luh1"

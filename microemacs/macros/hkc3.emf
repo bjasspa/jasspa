@@ -1,25 +1,17 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; Copyright (c) 2025 JASSPA (www.jasspa.com).
 ;
-;  Created By    : Detlef Groth
-;  Created       : Fri Mar 6th, 2025
-;  Last Modified : <250915.2114>
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
 ;
-;  Description
-;   C3 Language Template
-;   https://c3-lang.org
+; Synopsis:    C3 Language support (https://c3-lang.org)
+; Authors:     Detlef Groth
 ;
-;  Notes
-;
-;  History: 2025-07-05 first version
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
 define-macro fhook-c3
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "c3"
-    set-variable $buffer-indent-width 2
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "c3"
+  set-variable $buffer-indent-width 2
+  buffer-init-hooks
 !emacro
 
 set-variable .fhook-c3.setup &reg "/history/fhook/c3" "bdfghinopTx"
@@ -35,7 +27,7 @@ set-variable .fhook-c3.item-list-s1 "^fn +\\(\\w+[ \t]+\\)\\(\\w+\\)[ \t]*("
 set-variable .fhook-c3.item-list-r1 "Func \CCb\\2\CCA"
 
 !if &not &exist .hilight.c3
-    set-variable .hilight.c3  &pinc .hilight.next 1
+  set-variable .hilight.c3  &pinc .hilight.next 1
 !endif
 
 !if &and &sin "h" .fhook-c3.setup &band .hilight.flags 0x02
@@ -144,6 +136,5 @@ set-variable .fhook-c3.item-list-r1 "Func \CCb\\2\CCA"
   -1 buffer-mode "edit"
   1 buffer-mode "view"
 !emacro
-
 
 buffer-init-fhook "c3"

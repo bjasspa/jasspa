@@ -1,19 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; Copyright (c) 2025 JASSPA (www.jasspa.com).
 ;
-;  Author        : $Author$
-;  Created By    : dgroth
-;  Created       : Wed Aug 20 06:49:55 2025
-;  Last Modified : <250915.2114>
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
 ;
-;  Description
+; Synopsis:    TODO
+; Authors:     Detlef Groth
 ;
-;  Notes
-;
-;  History
-;
-;  Copyright (c) 2025 dgroth.
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro gentags-parse-tags
   ml-write "All done! Parsing tags file."
   beginning-of-buffer

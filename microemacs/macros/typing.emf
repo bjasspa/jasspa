@@ -153,7 +153,6 @@
       set-variable :err-lst 0
     !else
 *ent-err
-    ml-write "set HERE"
       2000 create-callback Typing-input
       screen-poke &add $window-line &sub $frame-depth &add $window-depth 2 &add $window-acol &sub $window-scroll-bar $window-width .scheme.rmv @cck
       !if :err-lst

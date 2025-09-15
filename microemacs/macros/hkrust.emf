@@ -1,24 +1,16 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; Copyright (c) 2025 JASSPA (www.jasspa.com).
 ;
-;  Created By    : Detlef Groth
-;  Created       : Fri Mar 6th, 2025
-;  Last Modified : <250915.2114>
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
 ;
-;  Description
-;   V Language Template
-;   https://vlang.io/
+; Synopsis:    Rust language support
+; Authors:     Detlef Groth
 ;
-;  Notes: Based on the Go language defintion
-;
-;  History: 2025-06-15 first version
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
 define-macro fhook-rust
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "rust"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "rust"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -46,7 +38,7 @@ set-variable .fhook-rust.item-list-s6 "^[\t ]*mod[\t ]+\\(\\w[\\.1-9A-Za-z_]*\\)
 set-variable .fhook-rust.item-list-r6 "modl \CCb\\1\CCA"
 
 !if &not &exist .hilight.rust
-    set-variable .hilight.rust  &pinc .hilight.next 1
+  set-variable .hilight.rust  &pinc .hilight.next 1
 !endif
 
 !if &and &sin "h" .fhook-rust.setup &band .hilight.flags 0x02

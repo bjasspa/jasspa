@@ -1,19 +1,13 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; Copyright (c) 2025 JASSPA (www.jasspa.com).
 ;
-;  Created By    : Detlef Groth, University of Potsdam, Germany
-;  Created       : Mon Mar 24 11:14:06 2025
-;  Last Modified : <250915.2114>
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
 ;
-;  Description   : Support for editing Tcl files with
-;                  macros tcl-exec, tcl-format and tcl-lint
-;  Notes         : should we use pytools macros - %python-com -m tclint ??
-;                  for tcl-lint and tcl-format
+; Synopsis:    TCL support tools
+; Authors:     Detlef Groth
 ;
-;  History
-;
-;  Copyright (c) 2025 Detlef Groth.
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; TODO Is this still needed
 define-macro fhook-tcl-lint
   buffer-init-hooks
 !emacro
@@ -68,7 +62,7 @@ define-macro tcl-format
   ; on Windows the syntax for tcl-format-opts might be
   ; C:/Program Files/Python/../python.exe -m tclfmt
   !if &and &not &exi %tcl-format-opts &seq &which "tclfmt" "ERROR"
-      -8 ml-write "Python package tclint for tclfmt not installed but required!"
+    -8 ml-write "Python package tclint for tclfmt not installed but required!"
   !endif
   &band @# 1 save-some-buffers @mna
   !force set-variable #l1 %tcl-format-opts
@@ -77,8 +71,8 @@ define-macro tcl-format
     set-variable %tcl-format-opts #l1
   !endif
   !if &not &seq $buffer-fhook "fhook-tcl"
-      ml-write &spr "Error: '%s' is not a Tcl file!" $buffer-bname
-      !abort
+    ml-write &spr "Error: '%s' is not a Tcl file!" $buffer-bname
+    !abort
   !endif
   2 pipe-shell-command &spr %tcl-format-opts $buffer-fname "*command*"
   0 reread-file
@@ -91,8 +85,8 @@ define-macro fhook-tcl-exec
 define-macro tcl-exec
   !iif &not &exi %tclsh-com  tcl-tclsh-setup
   !if &not &seq $buffer-fhook "fhook-tcl"
-      ml-write &spr "Error: '%s' is not a Tcl file!" $buffer-bname
-      !abort
+    ml-write &spr "Error: '%s' is not a Tcl file!" $buffer-bname
+    !abort
   !endif
   &band @# 1 save-some-buffers @mna
   ; command line arguments
@@ -107,24 +101,24 @@ define-macro tcl-exec
 !emacro
 
 0 define-macro tcl-exec-find-line
-    set-variable #l0 @wl
+  set-variable #l0 @wl
   !if &xse #l0 ".+file .+line \\([0-9]+\\)).*"
-      next-window-find-buffer .tcl-exec.buffer
-      goto-line @s1
+    next-window-find-buffer .tcl-exec.buffer
+    goto-line @s1
   !elif &xse #l0 ".+procedure \"\\(.+\\)\" line \\([0-9]+\\)).*"
-      set-variable #l1 @s1
-      set-variable #l2 @s2
-      next-window-find-buffer .tcl-exec.buffer
-      beginning-of-buffer
-      !force search-forward &spr "proc %s" #l1
-      !if $status
-          backward-line
-          #l2 forward-line
-      !else
-          ml-write &spr "Error: proc '%s' not found!"
-      !endif
+    set-variable #l1 @s1
+    set-variable #l2 @s2
+    next-window-find-buffer .tcl-exec.buffer
+    beginning-of-buffer
+    !force search-forward &spr "proc %s" #l1
+    !if $status
+      backward-line
+      #l2 forward-line
+    !else
+      ml-write &spr "Error: proc '%s' not found!"
+    !endif
   !else
-      ml-write "Not a error line!"
+    ml-write "Not a error line!"
   !endif
 !emacro
 

@@ -8,9 +8,9 @@
 ; Authors:     Detlef Groth
 ;
 define-macro fhook-go
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "go"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "go"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -31,7 +31,7 @@ set-variable .fhook-go.item-list-s3 "^[\t ]*type[\t ]+\\(\\w[1-9A-Za-z_]*\\)"
 set-variable .fhook-go.item-list-r3 "type \CCb\\1\CCA"
 
 !if &not &exist .hilight.go
-    set-variable .hilight.go  &pinc .hilight.next 1
+  set-variable .hilight.go  &pinc .hilight.next 1
 !endif
 
 !if &and &sin "h" .fhook-go.setup &band .hilight.flags 0x02

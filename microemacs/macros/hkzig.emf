@@ -1,20 +1,12 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; Copyright (c) 2025 JASSPA (www.jasspa.com).
 ;
-;  Created By    : Detlef Groth
-;  Created       : Fri Mar 6th, 2025
-;  Last Modified : <250915.2114>
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
 ;
-;  Description
-;   Zig Language Template
-;   https://ziglang.org/
+; Synopsis:    Zig language support (https://ziglang.org/)
+; Authors:     Detlef Groth
 ;
-;  Notes: Based on the Go language defintion
-;
-;  History: 2025-06-17 first version
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
 define-macro fhook-zig
   set-variable $buffer-mask "luh1"
   @# buffer-init "zig"

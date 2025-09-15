@@ -1,24 +1,16 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; Copyright (c) 2025 JASSPA (www.jasspa.com).
 ;
-;  Created By    : Detlef Groth
-;  Created       : Fri Mar 6th, 2025
-;  Last Modified : <250915.2114>
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
 ;
-;  Description
-;   V Language Template
-;   https://vlang.io/
+; Synopsis:    V language support
+; Authors:     Detlef Groth
 ;
-;  Notes: Based on the Go language defintion
-;
-;  History: 2025-06-11 first version
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
 define-macro fhook-v
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "v"
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "v"
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
@@ -44,7 +36,7 @@ set-variable .fhook-v.item-list-s5 "^[\t ]*fn[\t ]+(\\w* +\\([1-9A-Za-z_]*\\)) *
 set-variable .fhook-v.item-list-r5 "meth \CCb\\1.\\2\CCA"
 
 !if &not &exist .hilight.v
-    set-variable .hilight.v  &pinc .hilight.next 1
+  set-variable .hilight.v  &pinc .hilight.next 1
 !endif
 
 !if &and &sin "h" .fhook-v.setup &band .hilight.flags 0x02

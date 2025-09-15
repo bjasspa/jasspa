@@ -1,25 +1,17 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; Copyright (c) 2025 JASSPA (www.jasspa.com).
 ;
-;  Created By    : Detlef Groth
-;  Created       : Fri Mar 6th, 2025
-;  Last Modified : <250915.2114>
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
 ;
-;  Description
-;   Go Language Template
-;   https://go.dev/
+; Synopsis:    Vala language support
+; Authors:     Detlef Groth
 ;
-;  Notes
-;
-;  History: 2025-03-07 first version
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
 define-macro fhook-vala
-    set-variable $buffer-mask "luh1"
-    @# buffer-init "vala"
-    set-variable $buffer-indent-width 2
-    buffer-init-hooks
+  set-variable $buffer-mask "luh1"
+  @# buffer-init "vala"
+  set-variable $buffer-indent-width 2
+  buffer-init-hooks
 !emacro
 
 set-variable .fhook-vala.setup &reg "/history/fhook/vala" "bdfghinopTx"
@@ -43,7 +35,7 @@ set-variable .fhook-vala.item-list-s4 "^[ \t]*enum[ \t]+\\(\\w+\\)[ \t]+{"
 set-variable .fhook-vala.item-list-r4 "Enum \CCb\\1\CCA"
 
 !if &not &exist .hilight.vala
-    set-variable .hilight.vala  &pinc .hilight.next 1
+  set-variable .hilight.vala  &pinc .hilight.next 1
 !endif
 
 !if &and &sin "h" .fhook-vala.setup &band .hilight.flags 0x02
