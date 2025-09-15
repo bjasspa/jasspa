@@ -26,10 +26,10 @@ set-variable .fhook-jsp.command-desc  "|"
 
 ; load in Java & the html core
 !iif &not &exist fhook-java  execute-file "hkjava"
-execute-file "htmlcore" "jsp" 
+execute-file "htmlcore" "jsp"
 
 ; add the <% %> java script support
-!if &and &sin "h" .fhook-jsp.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-jsp.setup &band .hilight.flags 0x02
   ; add JSP html extensions
   hilight .hilight.jsp 4 "<%--" "%>" ""     .scheme.comment
   hilight .hilight.jsp 4 "<%@" "%>" ""      .scheme.prepro
@@ -42,7 +42,7 @@ execute-file "htmlcore" "jsp"
   -1 hilight .hilight.jsp 0x80 "<script\\s+language=\"?javascript[^>]*>"
   hilight .hilight.jsp 0x80 "<script\\s+language\{=javascript" .hilight.jspjs .scheme.prepro
   hilight .hilight.jsp 0x80 "<script\\s+language\{=\"javascript\"" .hilight.jspjs .scheme.prepro
-  
+
   0 hilight .hilight.jspjs 1                          $global-scheme
   hilight .hilight.jspjs 4 "=\\{\"" "\"" "\\"         .scheme.string
   hilight .hilight.jspjs 4 "=\\{" "\\}[ \t\n>]" ""    .scheme.string
@@ -51,7 +51,7 @@ execute-file "htmlcore" "jsp"
   hilight .hilight.jspjs 1 "type"                     .scheme.operator
   hilight .hilight.jspjs 1 "src"                      .scheme.operator
   hilight .hilight.jspjs 0x80 ">" .hilight.javascript .scheme.keyword
-  
+
   !if &exist .hilight.java
     hilight .hilight.jsp        0x80 "<%" .hilight.java .scheme.prepro
     hilight .hilight.jsptag     0x80 "<%" .hilight.java .scheme.prepro
@@ -67,7 +67,7 @@ execute-file "htmlcore" "jsp"
   !if &exist .indent.java
     indent .hilight.jsptag t "<%" .indent.java
     indent .hilight.jsptag t "%>" .hilight.jsp
-    
+
     indent .hilight.jsp x "^<%" 0 .indent.java
     indent .hilight.jsp x ".<%" t .indent.java
     indent .indent.java w "%>" -t 0

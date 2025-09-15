@@ -19,7 +19,7 @@
 ;     Searching for "define-macro \([a-z-]+\)" and replacing with "Macro \1" will
 ;     work... most of the time. The space between define-macro and the name does
 ;     not have to be a single space and the name does not have to contain just
-;     lower case latters, so these search strings should be a flexible as 
+;     lower case latters, so these search strings should be a flexible as
 ;     possible, try "define-macro\s +\(\w+\)".
 ;
 ;     This however is not as optimal as it could be and if you have large files
@@ -49,9 +49,9 @@
 0 define-macro item-list-order
   !if &not @?
   !elif &equ @# .item-list.order
-    set-variable .item-list.order &sub 0 @# 
+    set-variable .item-list.order &sub 0 @#
   !else
-    set-variable .item-list.order @# 
+    set-variable .item-list.order @#
   !endif
   -1 buffer-mode "view"
   2 goto-line
@@ -310,4 +310,3 @@ set-variable .item-list.order 3
 ;add-next-line "*item-list*" "^ *%l "
 0 add-next-line "*occur*"
 add-next-line "*occur*" "^ *%l "
-

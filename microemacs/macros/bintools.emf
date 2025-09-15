@@ -51,7 +51,7 @@ define-macro bin-hex-to-txt
   set-variable $result #l4
 !emacro
 
-0 define-macro bin-get-line-info 
+0 define-macro bin-get-line-info
   !if &seq &trb @wl ""
     !if &not @?
       set-variable #p9 "||||"
@@ -128,7 +128,7 @@ define-macro bin-move-backward
     &sub #l1 $window-line backward-char
     &sub #l2 $window-line backward-char
   !endif
-!emacro       
+!emacro
 
 define-macro bin-move-forward
   !if &bmo "binary"
@@ -161,7 +161,7 @@ define-macro bin-move-forward
     &sub $window-line #l1 forward-char
     &sub $window-line #l2 forward-char
   !endif
-!emacro       
+!emacro
 
 define-macro bin-yank-to-hex
   set-position "\x82"
@@ -248,7 +248,7 @@ define-macro bin-hex-yank-bin-insert
   !else
     set-variable #l0 "????????"
   !endif
-  !while &not &seq @wc "" 
+  !while &not &seq @wc ""
     end-of-line
     !if &band $window-col 1
       !force 0 delete-buffer "*bin-tmp*"

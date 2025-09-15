@@ -5,7 +5,7 @@
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
 ;
-; Synopsis:    MicrEmacs Embedded Tag Hilighting - support most styles & schemes in one format 
+; Synopsis:    MicrEmacs Embedded Tag Hilighting - support most styles & schemes in one format
 ; Authors:     Steven Phillips
 ;
 !if &not &exist .hilight.meth

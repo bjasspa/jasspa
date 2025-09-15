@@ -120,7 +120,7 @@ define-macro xfind
   ; Use the popup-window to manage our buffers, this will keep the *xfind*
   ; buffer on screen and split the window if this is the only window. Once
   ; the file is loaded (if found) then we delete the temporary popup window
-  ; again. 
+  ; again.
   popup-window "*xfind-temp*"
   !force find-file #l0 @nma
   delete-buffer "*xfind-temp*"

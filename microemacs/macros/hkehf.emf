@@ -46,7 +46,7 @@ define-macro fhook-ehf
           -1 kill-region
           !force search-buffer "me" "^```"
           !if &not $status
-            100 ml-write &spr "[Error: failed to find close to ``` on around line %d]" $window-line 
+            100 ml-write &spr "[Error: failed to find close to ``` on around line %d]" $window-line
             !break
           !endif
           beginning-of-line
@@ -93,7 +93,7 @@ define-macro fhook-ehf
     !endif
     !if &not &sin "nowrap" #l4
       set-variable #l3 &con &les 140 &set #l3 &con &gre 70 &set #l3 &sub $window-width 4 70 #l3 140 #l3
-      ; found largest indent in ehf was ~26 chars, this must be removed from the \{#\} long-line regex len 
+      ; found largest indent in ehf was ~26 chars, this must be removed from the \{#\} long-line regex len
       set-variable #l1 &spr "\CD[B-Z]\\|^\\( *\\(\\* \\)?\\).\\{%d\\}.*" &sub #l3 26
       !repeat
         !force search-buffer "me" #l1

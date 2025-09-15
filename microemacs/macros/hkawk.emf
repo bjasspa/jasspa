@@ -31,7 +31,7 @@ set-variable .fhook-awk.item-list-r2 "Blck \CCb\\1\CCA"
 set-variable .fhook-awk.item-list-s3 "^\/\\(\\w+\\)\/"
 set-variable .fhook-awk.item-list-r3 "Regx \CCb\\1\CCA"
 
-!if &and &sin "h" .fhook-awk.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-awk.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.awk
     set-variable .hilight.awk &pinc .hilight.next 1
   !endif
@@ -46,7 +46,7 @@ set-variable .fhook-awk.item-list-r3 "Regx \CCb\\1\CCA"
   hilight   .hilight.awk 1 "BEGIN"        .scheme.variable
   hilight   .hilight.awk 1 "END"          .scheme.variable
   hilight   .hilight.awk 1 "ENVIRON"      .scheme.variable
-  hilight   .hilight.awk 1 "FILENAME"     .scheme.variable  
+  hilight   .hilight.awk 1 "FILENAME"     .scheme.variable
   hilight   .hilight.awk 1 "FNR"          .scheme.variable
   hilight   .hilight.awk 1 "FS"           .scheme.variable
   hilight   .hilight.awk 1 "IGNORECASE"   .scheme.variable

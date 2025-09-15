@@ -44,4 +44,3 @@ define-macro screen-saver
   !endif
   set-variable %screen-saver &sub %screen-saver 1
 !emacro
-

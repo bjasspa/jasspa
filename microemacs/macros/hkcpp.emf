@@ -161,14 +161,14 @@ set-variable .fhook-cpp.item-list-r8 "Dtor \CCb\\1\CCA"
   hilight .hilight.cpp    1 "char"         .scheme.type
   hilight .hilight.cpp    1 "class"        .scheme.type
   hilight .hilight.cpp    1 "complex"      .scheme.type
-  hilight .hilight.cpp    1 "concept"      .scheme.type  
+  hilight .hilight.cpp    1 "concept"      .scheme.type
   hilight .hilight.cpp    1 "const"        .scheme.type
   hilight .hilight.cpp    1 "consteval"    .scheme.type
   hilight .hilight.cpp    1 "constinit"    .scheme.type
   hilight .hilight.cpp    1 "double"       .scheme.type
   hilight .hilight.cpp    1 "enum"         .scheme.type
   hilight .hilight.cpp    1 "extern"       .scheme.type
-  hilight .hilight.cpp    1 "final"        .scheme.type  
+  hilight .hilight.cpp    1 "final"        .scheme.type
   hilight .hilight.cpp    1 "float"        .scheme.type
   hilight .hilight.cpp    1 "friend"       .scheme.type
   hilight .hilight.cpp    1 "inline"       .scheme.type
@@ -190,10 +190,10 @@ set-variable .fhook-cpp.item-list-r8 "Dtor \CCb\\1\CCA"
   hilight .hilight.cpp    1 "virtual"      .scheme.type
   hilight .hilight.cpp    1 "void"         .scheme.type
   hilight .hilight.cpp    1 "volatile"     .scheme.type
-  
+
   hilight .hilight.cpp    1 "true"         .scheme.constant
   hilight .hilight.cpp    1 "false"        .scheme.constant
-  
+
   ;
   hilight .hilight.cpp    1 "static_cast"      .scheme.type
   hilight .hilight.cpp    1 "dynamic_cast"     .scheme.type
@@ -212,8 +212,8 @@ set-variable .fhook-cpp.item-list-r8 "Dtor \CCb\\1\CCA"
   hilight .hilight.cpp    0 "__TIME__"     .scheme.prepro
   hilight .hilight.cpp    0 "NULL"         .scheme.prepro
   hilight .hilight.cpp    2 "^module"      .scheme.prepro
-  hilight .hilight.cpp    2 "^import"      .scheme.prepro  
-  
+  hilight .hilight.cpp    2 "^import"      .scheme.prepro
+
   !if &band .hilight.flags 0x08
     ; hilight constants, e.g. numbers
     hilight .hilight.cpp 1 "\\d+"          .scheme.constant
@@ -225,7 +225,7 @@ set-variable .fhook-cpp.item-list-r8 "Dtor \CCb\\1\CCA"
     hilight .hilight.cpp 1 "\\d+\\.\\d+f"  .scheme.constant
     hilight .hilight.cpp 1 "-\\d+\\.\\d+f" .scheme.constant
   !endif
-  
+
   ; Doxygen highlighting extensions. Highlights keywords in Doxygen
   !if &sin "l" .fhook-cpp.setup
     ; Create a new doxygen hilighting scheme
@@ -305,7 +305,7 @@ set-variable .fhook-cpp.item-list-r8 "Dtor \CCb\\1\CCA"
     ; We must return to C when we see the close of comment "*/"
     hilight .hilight.pcppdoxygen 0x80 "$" .hilight.cpp .scheme.error
   !endif
-  
+
   ; Extend the hilighting for the IEEE Std 1003.1 <stdint.h>
   ; See http://www.opengroup.org/onlinepubs/007904975/basedefs/stdint.h.html
   !if &sin "q" .fhook-cpp.setup
@@ -410,14 +410,14 @@ set-variable .fhook-cpp.item-list-r8 "Dtor \CCb\\1\CCA"
     hilight .hilight.cpp    1 "WINT_MIN"         .scheme.prepro
     hilight .hilight.cpp    1 "WINT_MAX"         .scheme.prepro
   !endif
-  
+
   ; Hilight curly braces used when it is difficult to differentiate between
   ; a round bracket and curly brace.
   !if &sin "r" .fhook-cpp.setup
     hilight .hilight.cpp 1 "{"                             .scheme.keyword
     hilight .hilight.cpp 1 "}"                             .scheme.keyword
   !endif
-  
+
   ; Pick up bogus C++ constructs extension
   !if &sin "v" .fhook-cpp.setup
     ; Detect a for loop with no body - put semi-colon on next line, i.e.
@@ -450,7 +450,7 @@ set-variable .fhook-cpp.item-list-r8 "Dtor \CCb\\1\CCA"
     indent .hilight.cpp "e" t
     indent .hilight.cpp "a" -t
     indent .hilight.cpp "w" 0
-  !endif        
+  !endif
 !endif
 ;
 ; setup fuctions to auto-load from cmacros
@@ -458,7 +458,7 @@ define-macro-file cmacros c-slashify c-deslashify c-hash-eval c-hash-define c-ha
 
 add-next-line "*cpp-exec*" "^%f:%l:\\d+.+"
 add-next-line "*cpp-lint*" "^%f:%l:\\d+.+"
-set-variable .fhook-cpp.coms "\bg++\b" 
+set-variable .fhook-cpp.coms "\bg++\b"
 set-variable .fhook-cpp.exec1 "\b%v[com].exe\bdel %\"%b.exe%\" %& %v[com].exe -v\b\b\b%v[com] -Wall -O3 -std=c++17 --max-errors=3 %\"%p%f%\" -o %b && .\\%b %v[args|20|Additional command-line arguments|]\b"
 set-variable .fhook-cpp.exec2 "\b%v[com]\b%v[com]  -v\b\b\brm -f %\"%b%\" %& %v[com] -Wall -O3 -std=c++17 --max-errors=3 %\"%p%f%\" -o ./%b && ./%b %v[args|20|Additional command-line arguments|]\b"
 set-variable .fhook-cpp.format1 "\bastyle\bastyle -h\b0\b\bastyle --indent=spaces=4 %\"%f%\"\bAstyle\b"

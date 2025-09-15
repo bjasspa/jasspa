@@ -23,7 +23,7 @@ set-variable .fhook-sql.comment "|/*| */|*| * | * |fr|"
 set-variable .fhook-sql.comment-1 "|--||-|-- | --||"
 set-variable .fhook-sql.comment-2 "|rem|||rem |||"
 
-!if &and &sin "h" .fhook-sql.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-sql.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.sql
     set-variable .hilight.sql &pinc .hilight.next 1
   !endif
@@ -35,7 +35,7 @@ set-variable .fhook-sql.comment-2 "|rem|||rem |||"
   hilight .hilight.sql 0x22 "rem"            .scheme.comment
   hilight .hilight.sql 4 "'" "'" "\\"        .scheme.string
   hilight .hilight.sql 4 "\"" "\"" "\\"      .scheme.string
-  
+
   hilight .hilight.sql 4 "@" "\\}\\W" ""     .scheme.variable
   hilight .hilight.sql 4 "@@" "\\}\\W" ""    .scheme.prepro
   hilight .hilight.sql 1 "absolute"          .scheme.keyword

@@ -32,7 +32,7 @@ set-variable .fhook-rul.collapse-mnext "-1"
   set-variable .hilight.rul &pinc .hilight.next 1
 !endif
 
-!if &and &sin "h" .fhook-rul.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-rul.setup &band .hilight.flags 0x02
   0 hilight .hilight.rul 3 20            $global-scheme
   hilight .hilight.rul 0x1a "#" "\\"     .scheme.prepro
   hilight .hilight.rul 2  "//"           .scheme.comment
@@ -72,7 +72,7 @@ set-variable .fhook-rul.collapse-mnext "-1"
   hilight .hilight.rul 1 "typedef"      .scheme.keyword
   hilight .hilight.rul 1 "until"        .scheme.keyword
   hilight .hilight.rul 1 "while"        .scheme.keyword
-  
+
   hilight .hilight.rul 1 "after"        .scheme.operator
   hilight .hilight.rul 1 "append"       .scheme.operator
   hilight .hilight.rul 1 "before"       .scheme.operator
@@ -140,4 +140,3 @@ set-variable .fhook-rul.collapse-mnext "-1"
 !endif
 
 buffer-init-fhook "rul"
-

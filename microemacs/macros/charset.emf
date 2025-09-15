@@ -10,8 +10,8 @@
 ; Authors:     Steven Phillips
 ;
 ; Notes:       The internal default is ISO-8859 (1-...).
-;               All spelling dictionaries (to date anyway) are encoded 
-;               with this character format and rules are required to 
+;               All spelling dictionaries (to date anyway) are encoded
+;               with this character format and rules are required to
 ;               translate characters into and out of this set.
 ;
 ; Define the list  of supported charsets and if windows then the font type

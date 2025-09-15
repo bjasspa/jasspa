@@ -5,7 +5,7 @@
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
 ;
-; Synopsis:    Insert the date string into the current buffer. 
+; Synopsis:    Insert the date string into the current buffer.
 ; Authors:     Steven Phillips
 ;
 ; Formats are in list at the end and can be customised in your own user-setup emf,
@@ -19,8 +19,8 @@
   -1 osd @#
   osd @# 0 "b"
   set-variable #l1 0
-  !if &not &exi %ascii-time 
-  !elif &not &lfin %date-formats %ascii-time 
+  !if &not &exi %ascii-time
+  !elif &not &lfin %date-formats %ascii-time
     ascii-time
     osd @# &inc #l1 1 "" &spr "\H%s %s" &itoa &add #l1 64 #l9 f osd-insert-date-exec
   !endif

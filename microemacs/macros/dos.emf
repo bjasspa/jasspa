@@ -23,7 +23,7 @@ define-macro reset-def
     reset-50
   !elif &seq $TERM "E80x25"
     reset-25
-  !else    
+  !else
     change-font &reg &spr "/history/%s/font" %platform "3" &reg &spr "/history/%s/font-dbl" $platform "1"
   !endif
 !emacro
@@ -39,4 +39,3 @@ set-variable %os-chars "\\:;&"
 0 add-next-line "*compile*"
 add-next-line "*compile*" "^ *%f(%l): \\(Error\\|Warn\\)"
 add-next-line "*compile*" "^ *%f:%l:\\(\\d+:\\)? \\(fatal error\\|error\\|warning\\)"
-

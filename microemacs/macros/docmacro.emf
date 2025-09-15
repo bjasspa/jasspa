@@ -5,7 +5,7 @@
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
 ;
-; Synopsis:    Common document macros. 
+; Synopsis:    Common document macros.
 ; Authors:     Jon Green
 ;
 ; Notes:
@@ -47,7 +47,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <250312.2339>
+;         > Modified:     <250915.2114>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -120,15 +120,15 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
   hilight .hilight.doc 0 "ftp:[-_a-zA-Z@%.:\\/0-9]+"          .scheme.link
   hilight .hilight.doc 0 "ftps:[-_a-zA-Z@%.:\\/0-9]+"         .scheme.link
   hilight .hilight.doc 0 "mailto:[-_a-zA-Z@%.:\\/0-9]+"       .scheme.link
-  hilight .hilight.doc 0 "news:[-_a-zA-Z@%.:\\\\/@0-9]+"      .scheme.link 
+  hilight .hilight.doc 0 "news:[-_a-zA-Z@%.:\\\\/@0-9]+"      .scheme.link
   ; @ block
   0 hilight .hilight.doc1 0                                   .scheme.no2
   hilight   .hilight.doc1 0x80 "^[ \t]*\n" .hilight.doc       $global-scheme
   hilight   .hilight.doc1 0x80 "^\n"       .hilight.doc       $global-scheme
-  
+
   ; Allow inserts into the documentation mode. You may add to the
   ; available inserts by adding to your mydoc.emf file
-  
+
   ; Allow MicroEmacs Macro .emf inserts
   ; Force the ".emf" scheme to be loaded into the context of the document
   ; scheme. We delimit the .emf scheme with a pair of markers ">emf>" and
@@ -139,11 +139,11 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     !force execute-file "hkemf"
   !endif
   ; If the hilighting mode is loaded then modify it.
-  !if &and &sin "h" .fhook-emf.setup &band .hilight.flags 0x02 
+  !if &and &sin "h" .fhook-emf.setup &band .hilight.flags 0x02
     hilight .hilight.doc 0x80 "^>emf>" .hilight.emf .scheme.hide
     hilight .hilight.emf 0x80 "^>doc>" .hilight.doc .scheme.hide
   !endif
-  
+
   ; Allow Pseudo Code inserts
   ; Force the ".pseudo" scheme to be loaded into the context of the document
   ; scheme. We delimit the .emf scheme with a pair of markers ">pseudo>" and
@@ -158,7 +158,7 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     hilight .hilight.doc 0x80 "^>pseudo>" .hilight.pseudo .scheme.hide
     hilight .hilight.pseudo 0x80 "^>doc>" .hilight.doc .scheme.hide
   !endif
-  
+
   ; Allow BNF inserts
   ; Force the ".bnf" scheme to be loaded into the context of the document
   ; scheme. We delimit the .emf scheme with a pair of markers ">bnf>" and
@@ -169,11 +169,11 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     !force execute-file "hkbnf"
   !endif
   ; If the hilighting mode is loaded then modify it.
-  !if &and &sin "h" .fhook-bnf.setup &band .hilight.flags 0x02 
+  !if &and &sin "h" .fhook-bnf.setup &band .hilight.flags 0x02
     hilight .hilight.doc 0x80 "^>bnf>" .hilight.bnf .scheme.hide
     hilight .hilight.bnf 0x80 "^>doc>" .hilight.doc .scheme.hide
   !endif
-  
+
   ; Allow C Code inserts
   ; Force the ".c" scheme to be loaded into the context of the document
   ; scheme. We delimit the .emf scheme with a pair of markers ">c>" and
@@ -184,16 +184,16 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     !force execute-file "hkc"
   !endif
   ; If the hilighting mode is loaded then modify it.
-  !if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02 
+  !if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02
     hilight .hilight.doc 0x80 "^>c>"   .hilight.c   .scheme.hide
     hilight .hilight.c   0x80 "^>doc>" .hilight.doc .scheme.hide
   !endif
-  
+
   ; Allow C++ Code inserts ...
   !if &not &exi .hilight.cpp
     !force execute-file "hkcpp"
   !endif
-  !if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02 
+  !if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02
     hilight .hilight.doc 0x80 "^>cpp>"     .hilight.cpp .scheme.hide
     hilight .hilight.doc 0x80 "^>c\\+\\+>" .hilight.cpp .scheme.hide
     hilight .hilight.cpp 0x80 "^>doc>"     .hilight.doc .scheme.hide
@@ -202,7 +202,7 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
   !if &not &exi .hilight.perl
     !force execute-file "hkperl"
   !endif
-  !if &and &sin "h" .fhook-perl.setup &band .hilight.flags 0x02 
+  !if &and &sin "h" .fhook-perl.setup &band .hilight.flags 0x02
     hilight .hilight.doc  0x80 "^>perl>" .hilight.perl .scheme.hide
     hilight .hilight.doc  0x80 "^>pl>"   .hilight.perl .scheme.hide
     hilight .hilight.perl 0x80 "^>doc>"  .hilight.doc  .scheme.hide
@@ -211,7 +211,7 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
   !if &not &exi .hilight.tcl
     !force execute-file "hktcl"
   !endif
-  !if &and &sin "h" .fhook-tcl.setup &band .hilight.flags 0x02 
+  !if &and &sin "h" .fhook-tcl.setup &band .hilight.flags 0x02
     hilight .hilight.doc 0x80 "^>tcl>" .hilight.tcl .scheme.hide
     hilight .hilight.tcl 0x80 "^>doc>" .hilight.doc .scheme.hide
   !endif
@@ -224,7 +224,7 @@ execute-file "docutl"
 define-macro doc-fhook-body
   set-variable #l1 @1
   ; if arg is 0 this is a new file so add template
-  @# buffer-init #l1 
+  @# buffer-init #l1
   ; Over-ride any special document modes
   set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
   !force set-variable #l2 @2
@@ -244,7 +244,7 @@ define-macro doc-fhook-body
         beginning-of-line
       !endif
       ; Search for fill-mode: <string>
-      !force -1 search-buffer "em" "fill-mode[ \t]*:[ \t]*\\([a-zA-Z]+\\)[ \t]*[-;]"            
+      !force -1 search-buffer "em" "fill-mode[ \t]*:[ \t]*\\([a-zA-Z]+\\)[ \t]*[-;]"
       !if $status
         set-variable #l0 @s1
         !if &iseq #l0 "left"
@@ -263,7 +263,7 @@ define-macro doc-fhook-body
         beginning-of-line
       !endif
       ; Add any others in here.
-      
+
       ; Back to the start of the buffer
       beginning-of-buffer
     !endif

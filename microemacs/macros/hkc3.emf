@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Detlef Groth
 ;  Created       : Fri Mar 6th, 2025
-;  Last Modified : <250806.0118>
+;  Last Modified : <250915.2114>
 ;
 ;  Description
 ;   C3 Language Template
@@ -47,14 +47,14 @@ set-variable .fhook-c3.item-list-r1 "Func \CCb\\2\CCA"
   ; Comment TODO's
   hilight .hilight.c3 20 "/\\*\\s+[Tt][Oo][Dd][Oo]" "*/" "" .scheme.error
   hilight .hilight.c3 18 "//\\s*[tT][oO][dD][oO]"           .scheme.error
-  
+
   ; Strings
   hilight .hilight.c3  4 "\"" "\"" "\\"  .scheme.string
   hilight .hilight.c3  4 "\'" "\'" "\\"  .scheme.string
   hilight .hilight.c3  4 "\"\"\"" "\"\"\"" "\\"  .scheme.quote
   ; go string literal /.foo[0-9]\s*bar/ hiligh gets confused with simple division.
   ;hilight .hilight.c3  4 "/" "/" "" .scheme.quote
-  
+
   ; constants: A_CONSTANT_VARAIBLE
   hilight .hilight.c3 1    "[A-Z_]+"        .scheme.constant
   ; package keywords
@@ -142,7 +142,7 @@ set-variable .fhook-c3.item-list-r1 "Func \CCb\\2\CCA"
   replace-string "^(\\(.+[0-9]\\))" "\\1"
   beginning-of-buffer
   -1 buffer-mode "edit"
-  1 buffer-mode "view"  
+  1 buffer-mode "view"
 !emacro
 
 

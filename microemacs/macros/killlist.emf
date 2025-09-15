@@ -100,7 +100,7 @@
 
 0 define-macro kill-list-create
   set-position "\x86"
-  find-buffer "*kill-list*" 
+  find-buffer "*kill-list*"
   -1 buffer-mode "undo"
   -1 buffer-mode "view"
   beginning-of-buffer

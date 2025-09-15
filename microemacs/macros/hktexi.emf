@@ -5,7 +5,7 @@
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
 ;
-; Synopsis:    Quick hilight for texinfo files. 
+; Synopsis:    Quick hilight for texinfo files.
 ; Authors:     Jon Green
 ;
 ; Notes:       Could benifit with some tools.
@@ -21,7 +21,7 @@ set-variable .fhook-texi.setup &reg "/history/fhook/texi" "bghiopx"
 set-variable .fhook-texi.setup-mask "abeghikmoptux"
 set-variable .fhook-texi.comment "|@c |||@c |||"
 
-!if &and &sin "h" .fhook-texi.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-texi.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.texi
     set-variable .hilight.texi  &pinc .hilight.next 1
   !endif
@@ -31,4 +31,3 @@ set-variable .fhook-texi.comment "|@c |||@c |||"
 !endif
 
 buffer-init-fhook "texi"
-

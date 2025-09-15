@@ -26,7 +26,7 @@ define-macro delete-mode
     !nma -1 buffer-mode
   !endif
 !emacro
-define-macro add-global-mode 
+define-macro add-global-mode
   !force 1 global-mode @1
   !if &not $status
     !nma 1 global-mode
@@ -269,4 +269,3 @@ define-macro write-message
     !nma ml-write
   !endif
 !emacro
-

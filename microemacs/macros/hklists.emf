@@ -27,7 +27,7 @@ set-variable .fhook-lists.command-nbind "||"
 set-variable .fhook-lists.command-kbind "|return|"
 set-variable .fhook-lists.command-desc  "|\HGet Help on Item|"
 
-!if &and &sin "h" .fhook-lists.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-lists.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.lists
     set-variable .hilight.lists &pinc .hilight.next 1
   !endif
@@ -63,13 +63,13 @@ define-macro-file hkehf ehf-process-link ehf-find-help
   ; "C-x" ......................... 2 prefix
   ;
   !force -1 search-backward " \\([#$@]?[-a-zA-Z0-9]+\\) *$"
-  !if $status 
+  !if $status
     ehf-find-help @s1
     !return
   !endif
   ; Search for the string at the start of the line.
   ; Handles *variables* and *commads* buffers.
-  ; 
+  ;
   ;     $buffer-bname ................. "hklists.emf"
   ;
   ;     backward-char ................. "C-b"

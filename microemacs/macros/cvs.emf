@@ -83,14 +83,14 @@ set-variable #l0 0
   hilight .hilight.cvs-state 0x102 "\\[\\*\\*\\*\\* CVS exited with code 0" .scheme.no1
   hilight .hilight.cvs-state 0x102 "\\[\\*\\*\\*\\* CVS exited"             .scheme.error
   set-variable .cvs.schemes &lset .cvs.schemes &lfind .cvs.names "State" .hilight.cvs-state
-  
+
   !iif &not &exi .hilight.diff  !force execute-file "hkdiff"
   set-variable .cvs.schemes &lset .cvs.schemes &lfind .cvs.names "Diff" .hilight.diff
-  
+
   0 hilight .hilight.cvscon 2 100 $global-scheme
   hilight .hilight.cvscon 0x102 "\\[\\*\\*\\*\\* CVS exited with code 0" .scheme.no1
   hilight .hilight.cvscon 0x102 "\\[\\*\\*\\*\\* CVS exited"             .scheme.error
-  
+
   ; fix the *files* buffer hilighting for cvs additions
   hilight .hilight.dirlst 0x012 "[0-9][0-9]:[0-9][0-9] [0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9] [0-9][0-9]:[0-9][0-9] \\{" .scheme.file
   hilight .hilight.dirlst 0x112 " dA"       .scheme.add
@@ -179,7 +179,7 @@ set-variable #l0 0
   forward-line
   set-alpha-mark "\x81"
   str-to-regex #l1
-  set-variable #l0 &spr "-\n%s.*\n%s" #l0 #l1 
+  set-variable #l0 &spr "-\n%s.*\n%s" #l0 #l1
   !force search-forward #l0
   !while $status
     -2 show-region
@@ -357,7 +357,7 @@ define-macro cvs-log-list
     ; .cvs.cwd has a trailing '/', #l1 does not
 *rm_dir_test
     !if &set #l3 &rsin "/" #l1
-      set-variable #l4 &sub &len #l2 &sub &len #l1 &dec #l3 1 
+      set-variable #l4 &sub &len #l2 &sub &len #l1 &dec #l3 1
       !if &seq &cat &rig #l1 #l3 "/" &rig #l2 &sub #l4 1
         set-variable #l0 &cat &rig #l2 #l4 #l0
         set-variable #l1 &lef #l1 #l3
@@ -390,7 +390,7 @@ define-macro cvs-log-list
 0 define-macro cvs-get-message-template
   !force 0 find-file "./CVS/Template"
   !if &and $status &gre $window-eline 1
-  !elif &not &seq &set #l0 &find "cvsci" ".etf" "ERROR" 
+  !elif &not &seq &set #l0 &find "cvsci" ".etf" "ERROR"
     !iif $status  0 delete-buffer $buffer-bname
     !force 0 find-file #l0
   !endif
@@ -579,13 +579,13 @@ define-macro cvs-log-list
     beginning-of-line
   !endif
   !iif &seq $buffer-bname "*cvs-state*"  !force 0 cvs-exec-state-ipipe
-  !if &set #l3 &seq &set #l1 $buffer-bname "*cvs-console*" 
+  !if &set #l3 &seq &set #l1 $buffer-bname "*cvs-console*"
     set-variable #l1 "*cvs-last-cmd*"
     !force 0 delete-buffer #l1
     change-buffer-name #l1
-    1 buffer-mode "hide" 
+    1 buffer-mode "hide"
     find-buffer "*cvs-console-safe*"
-    change-buffer-name "*cvs-console*" 
+    change-buffer-name "*cvs-console*"
     set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
     find-buffer #l1
     !jump 2
@@ -1473,9 +1473,9 @@ define-macro cvs-resolve-conflicts
     !endif
     -1 buffer-mode "view"
     !if &lget .fhook-dirlst.mode 2
-      set-variable #l7 &cat #l7 " - Filtered" 
+      set-variable #l7 &cat #l7 " - Filtered"
     !else
-      set-variable #l7 &cat #l7 " - Not-Filtered" 
+      set-variable #l7 &cat #l7 " - Not-Filtered"
     !endif
     2 goto-line
     end-of-line
@@ -1518,7 +1518,7 @@ define-macro cvs-resolve-conflicts
         2 forward-char
         insert-string #l7
         set-variable $window-col 8
-        insert-string #l8  
+        insert-string #l8
         insert-string #l9
         beginning-of-line
         forward-line
@@ -1777,4 +1777,4 @@ osd .osd.cvshlp 29 ""  "  R  Removed  - file flagged to be removed"
 osd .osd.cvshlp 30 ""  "  U  Updated  - repository version has changed"
 osd .osd.cvshlp 91 ""
 osd .osd.cvshlp 92 ""
-osd .osd.cvshlp 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
+osd .osd.cvshlp 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void

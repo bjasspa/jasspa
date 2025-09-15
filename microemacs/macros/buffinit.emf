@@ -137,7 +137,7 @@ define-macro-file hktlsosd major-mode-tools-setup
   buffer-init-modes
   set-variable #l7 0
   !if &sin "h" #l0
-    !if &band .hilight.flags 0x02 
+    !if &band .hilight.flags 0x02
       !jump 2
     !else &and &band .hilight.flags 0x01 &sin "1" &ind &spr ".%s.setup-mask" $buffer-fhook
       set-variable #l7 1
@@ -178,8 +178,8 @@ define-macro-file hktlsosd major-mode-tools-setup
     !force 0 fold-setup #l9
     !iif &not $status !jump 2
   !elif &sin "f" #l0
-    buffer-bind-create "b" "f2" "" collapse-current 
-    buffer-bind-create "b" "C-f2" "" collapse-all 
+    buffer-bind-create "b" "f2" "" collapse-current
+    buffer-bind-create "b" "C-f2" "" collapse-all
     buffer-bind-create "b" "esc C-a" "" beginning-of-function
     buffer-bind-create "b" "esc C-e" "" end-of-function
     buffer-bind-create "b" "esc C-h" "" mark-function

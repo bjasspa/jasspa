@@ -156,7 +156,7 @@ set-variable .fhook-nroff.item-list-r1 "\\1  \CCb\\2\CCA"
   hilight .hilight.nroff 3   "^[.']SS"               .scheme.header
   hilight .hilight.nroff 3   "^[.']Me"               .scheme.prepro
   hilight .hilight.nroff 3   "^[.']vs"               .scheme.keyword
-  
+
   0 hilight  .hilight.roffR 2 40                     $global-scheme
   hilight-nroff-common                    .hilight.roffR $global-scheme
   hilight .hilight.roffR 0x040 "\\\\fP" ""           $global-scheme
@@ -225,23 +225,23 @@ set-variable .fhook-nroff.item-list-r1 "\\1  \CCb\\2\CCA"
   hilight .hilight.roffR 0x42  "^[.']SH " ""         .scheme.header
   hilight .hilight.roffR 0x42  "^[.']SS " ""         .scheme.header
   hilight .hilight.roffR 0xc3  "^[.']CS" "" .hilight.roffC .scheme.string
-  
+
   0 hilight .hilight.roffB 0                             .scheme.bold
   hilight-nroff-common                    .hilight.roffB .scheme.bold
   hilight .hilight.roffB 0x080 "\\}\\\\f" .hilight.roffR $global-scheme
-  
+
   0 hilight .hilight.roffI 0                             .scheme.italic
   hilight-nroff-common                    .hilight.roffI .scheme.italic
   hilight .hilight.roffI 0x080 "\\}\\\\f" .hilight.roffR $global-scheme
-  
+
   0 hilight .hilight.roffM 0                             .scheme.string
   hilight-nroff-common                    .hilight.roffM .scheme.string
   hilight .hilight.roffM 0x080 "\\}\\\\f" .hilight.roffR $global-scheme
-  
+
   0 hilight .hilight.roffC 0                              .scheme.string
   hilight .hilight.roffC 0x040 "\\\\." "\\1"              .scheme.string
   hilight .hilight.roffC 0x0c0 "[.']CE" "" .hilight.roffR .scheme.string
-  
+
   0 define-macro nroff-swap-hilight
     !if &equal $buffer-hilight .hilight.nroff
       set-variable $buffer-hilight .hilight.roffR

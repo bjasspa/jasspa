@@ -33,7 +33,7 @@ set-variable .fhook-ada.item-list-r2 "Func \CCb\\1\CCA"
 set-variable .fhook-ada.item-list-s3 "^[Tt]ype[ \t]+\\(\\w+\\)[ \t]+is"
 set-variable .fhook-ada.item-list-r3 "Rcrd \CCb\\1\CCA"
 
-!if &and &sin "h" .fhook-ada.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-ada.setup &band .hilight.flags 0x02
   ; High-light ada Mode
   !if &not &exist .hilight.ada
     set-variable .hilight.ada &pinc .hilight.next 1
@@ -43,7 +43,7 @@ set-variable .fhook-ada.item-list-r3 "Rcrd \CCb\\1\CCA"
   hilight .hilight.ada 4 "(\\*" "*)" ""   .scheme.comment
   hilight .hilight.ada 2 "//"             .scheme.comment
   hilight .hilight.ada 2 "--"             .scheme.comment
-  
+
   hilight .hilight.ada 1 "asm"            .scheme.keyword
   hilight .hilight.ada 1 "begin"          .scheme.keyword
   hilight .hilight.ada 1 "case"           .scheme.keyword
@@ -88,7 +88,7 @@ set-variable .fhook-ada.item-list-r3 "Rcrd \CCb\\1\CCA"
   hilight .hilight.ada 1 "private"        .scheme.keyword
   hilight .hilight.ada 1 "loop"           .scheme.keyword
   hilight .hilight.ada 1 "body"           .scheme.keyword
-  
+
   hilight .hilight.ada 1 "array"          .scheme.type
   hilight .hilight.ada 1 "boolean"        .scheme.type
   hilight .hilight.ada 1 "byte"           .scheme.type
@@ -106,7 +106,7 @@ set-variable .fhook-ada.item-list-r3 "Rcrd \CCb\\1\CCA"
   hilight .hilight.ada 1 "string"         .scheme.type
   hilight .hilight.ada 1 "text"           .scheme.type
   hilight .hilight.ada 1 "word"           .scheme.type
-  
+
   hilight .hilight.ada 1 "and"            .scheme.operator
   hilight .hilight.ada 1 "div"            .scheme.operator
   hilight .hilight.ada 1 "mod"            .scheme.operator
@@ -116,18 +116,18 @@ set-variable .fhook-ada.item-list-r3 "Rcrd \CCb\\1\CCA"
   hilight .hilight.ada 1 "shr"            .scheme.operator
   hilight .hilight.ada 1 "xor"            .scheme.operator
   hilight .hilight.ada 1 "\.\."           .scheme.operator
-  
+
   hilight .hilight.ada 1 "false"          .scheme.operator
   hilight .hilight.ada 1 "true"           .scheme.operator
   hilight .hilight.ada 1 "null"           .scheme.operator
-  
+
   hilight .hilight.ada 1 "eof"            .scheme.operator
   hilight .hilight.ada 1 "eoln"           .scheme.operator
-  
+
   hilight .hilight.ada 1 "'class"         .scheme.operator
   hilight .hilight.ada 1 "'first"         .scheme.operator
   hilight .hilight.ada 1 "'last"          .scheme.operator
-  
+
   hilight .hilight.ada 4 "'" "'" ""       .scheme.string
 !endif
 

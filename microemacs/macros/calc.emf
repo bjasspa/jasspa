@@ -18,7 +18,7 @@
 *mlpt
   set-variable #l2 .calc.flg
   !if &set #l0 &sin &set #l3 &lef &set #l1 &trl #l1 1 "~!"
-    ; will 'incorrectly' get into here if empty string, but will fail to get number next 
+    ; will 'incorrectly' get into here if empty string, but will fail to get number next
     set-variable #l3 &lef &set #l1 &trl &rig #l1 1 1
     set-variable #l8 &lset #l8 1 &spr "\g%d\g%d\g0\g\g" &sub &mul #l0 16 15 &len #l1
   !endif
@@ -96,7 +96,7 @@
     !if &len &set #l6 &lget #l8 #l0
       set-variable #l7 &lget #l6 1
       !if &band 2 &set #l2 &bor &lget #l6 3 #l2
-        !if &not &equ #l2 2 
+        !if &not &equ #l2 2
           set-variable .calc.er &spr "\b%d\bInvalid mix of floating point and boolean\b" &lget #l6 2
           !abort
         !elif &equ #l7 2
@@ -235,7 +235,7 @@
         set-variable #l3 &bxor &lget #l6 4 #l3
       !elif &equ #l7 9
         set-variable #l3 &bor &lget #l6 4 #l3
-      !endif          
+      !endif
       set-variable #l8 &lset #l8 #l0 ""
     !endif
   !until &gre &inc #l0 1 #l5
@@ -301,11 +301,11 @@ define-macro calc-op
   !elif &band #l6 2
     !if &seq #l3 ""
       set-variable #l8 #l9
-      ; calc 12/3+4.2 will incorrectly return 8.2 because the first div was done as integer - force whole calc to be fp 
+      ; calc 12/3+4.2 will incorrectly return 8.2 because the first div was done as integer - force whole calc to be fp
       set-variable .calc.flg 2
       !force calc-intl #l1
       !iif &not $status  set-variable #l9 #l8
-    !elif &not &seq #l3 "f"  
+    !elif &not &seq #l3 "f"
       set-variable .calc.result &spr "\b%d\bCannot output floating point number in integer format (%s)\b" #l2 #l3
       !abort
     !endif
@@ -313,7 +313,7 @@ define-macro calc-op
       set-variable .calc.result &spr "\b%d\bNumber overflow\b" #l2
       !abort
     !endif
-    set-variable .calc.result &set .calc.answer &xrep #l5 "e\\+?\\(-\\)?0*" "e\\1" 
+    set-variable .calc.result &set .calc.answer &xrep #l5 "e\\+?\\(-\\)?0*" "e\\1"
   !elif &seq #l3 "d"
     set-variable .calc.result &set .calc.answer &spr "%d" &lget #l9 2
   !elif &seq #l3 "x"
@@ -341,7 +341,7 @@ define-macro calc-op
       set-variable .calc.result &spr "\b%d\bNumber overflow\b" #l2
       !abort
     !end
-    !if &not &seq #l4 &set .calc.answer &xrep #l5 "e\\+?\\(-\\)?0*" "e\\1" 
+    !if &not &seq #l4 &set .calc.answer &xrep #l5 "e\\+?\\(-\\)?0*" "e\\1"
       set-variable .calc.result &spr "%s (%s)" #l5 #l4
     !else
       set-variable .calc.result .calc.answer

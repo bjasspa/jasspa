@@ -102,7 +102,7 @@
             set-variable $buffer-fname #l4
             !force find-buffer &cat #l0 "-cmd"
             set-variable $buffer-fname #l5
-            ; must set the old one as well - the starting path is not 
+            ; must set the old one as well - the starting path is not
             ; automatically stored
             !if &seq &mid #l5 1 1 ":"
               set-variable &ind &cat ":dir-" &slo &lef #l5 1 #l5
@@ -127,7 +127,7 @@
           !force find-buffer &cat #l0 "-cmd"
           set-variable $buffer-fname #l5
           !if &or &band $system 0x100 &seq $platform "cygwin"
-            ; must set the old one as well - the starting path is not 
+            ; must set the old one as well - the starting path is not
             ; automatically stored
             !iif &seq &mid #l5 1 1 ":"  set-variable &ind &cat ":dir-" &slo &lef #l5 1 #l5
             !iif &seq &mid #l4 1 1 ":"  set-variable &ind &cat ":dir-" &slo &lef #l4 1 #l4
@@ -213,7 +213,7 @@
       !iif &seq @wc ""  set-variable :cmd #l3
       !force !force execute-string #l1
       set-variable #l3 @wl
-      !iif &seq @wc ""  set-variable #l3 :cmd 
+      !iif &seq @wc ""  set-variable #l3 :cmd
       !force find-buffer &cat #l0 "-cmd"
       beginning-of-buffer
       insert-string #l3
@@ -289,12 +289,12 @@
   !endif
 !emacro
 
-0 define-macro ipipe-output 
+0 define-macro ipipe-output
   set-variable #l2 @cck
   set-variable #l3 @cc
   !if &les &len #l3 2
     set-variable #l1 #l3
-    ;    !elif &and &band $system 0x100 &seq #l3 "newline" 
+    ;    !elif &and &band $system 0x100 &seq #l3 "newline"
     ; For Windows we need a \r\n sequence - over-ride the default.
     ;        set-variable #l1 "\CM\CJ"
   !elif &set #l0 &lfi "|tab|backward-delete-char|newline|beginning-of-line|backward-char|forward-delete-char|end-of-line|forward-char|kill-line|recenter|forward-line|backward-line|expand-abbrev|forward-word|backward-word|" #l3
@@ -322,7 +322,7 @@
     !iif &or &band $system 0x100 &seq $platform "cygwin"  set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
     ipipe-write #l1
   !endif
-!emacro 
+!emacro
 
 0 define-macro ipipe-mode
   !if &not @?
@@ -441,7 +441,7 @@ define-macro ishell
       ; shell (!c!) and run a detached process (!d!). Optionally allow
       ; the user to run a different command shell %comspec2. This must
       ; be a 32-bit app, so if you use a 16-bit 4DOS as the default
-      ; command shell, you will need to set %comspec2 to "command.com" 
+      ; command shell, you will need to set %comspec2 to "command.com"
       4 ipipe-shell-command &cond &seq $ME_ISHELL "ERROR" $COMSPEC $ME_ISHELL "*shell*"
     !else
       0 ipipe-shell-command $COMSPEC "*shell*"
@@ -449,7 +449,7 @@ define-macro ishell
   !elif &seq $platform "cygwin"
     ; For cygwin then convert the COMSPEC path into a cygwin path for
     ; pipe execution. This is executed in cygwin space rather than MS-DOS
-    ; space. 
+    ; space.
     set-variable #l1 &xir $COMSPEC "^\\([a-z]\\):" "/cygdrive/\\1"
     set-variable #l1 &xir #l1 "\\\\" "/"
     0 ipipe-shell-command #l1  "*shell*"

@@ -73,7 +73,7 @@ define-macro luatags-add-file
 define-macro luatags-parse-tags
   gentags-parse-tags
 !emacro
-    
+
 define-macro luatags-process-buffers
   gentags-process-buffers "lua"
 !emacro
@@ -83,7 +83,7 @@ define-macro luatags
   luatags-process-buffers
   luatags-parse-tags
 !emacro
-  
+
 0 define-macro start-up
   luatags
   quick-exit

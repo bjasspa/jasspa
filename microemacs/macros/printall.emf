@@ -27,5 +27,3 @@ define-macro start-up
   print-all-buffers
   quick-exit
 !emacro
-
-

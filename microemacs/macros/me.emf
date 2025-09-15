@@ -12,7 +12,7 @@
   5000 ml-write "[Warning: The MicroEmacs executable is not compatible with this macro release]"
 !endif
 !if &band @# 2
-  ; This is a reinit via user-setup, no point reloading erf (and if readonly it may be wrong) 
+  ; This is a reinit via user-setup, no point reloading erf (and if readonly it may be wrong)
 !elif &seq &set #l0 &find $user-name ".erf" "ERROR"
   ; If <$user-name>.erf registry file isn't found then this is a new user
   !force read-registry "/history" "newuser" "cb"
@@ -237,7 +237,7 @@ set-variable #l0 &reg &spr "/history/%s/fence" %platform "1"
   set-variable .display-matching-fence.dmf &lget "|0|37|45|61|" #l0
   0 global-bind-key display-matching-fence "idle-pick"
 !endif
-; key bindings - all prefixes first in case an emulation is in use 
+; key bindings - all prefixes first in case an emulation is in use
 1 global-bind-key prefix               "esc"
 2 global-bind-key prefix               "C-x"
 3 global-bind-key prefix               "C-h"
@@ -375,7 +375,7 @@ execute-file $platform
 !if &not &seq &set #l1 &reg "/history/setup-file" "" ""
   execute-file #l1
   !if &sin #l0 "-"
-    !iif &exi %no-company-url  set-variable %company-url %no-company-url 
+    !iif &exi %no-company-url  set-variable %company-url %no-company-url
     !iif &exi %no-company-license  set-variable %company-license %no-company-license
   !endif
 !endif

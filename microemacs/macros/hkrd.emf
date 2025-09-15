@@ -7,7 +7,7 @@
 ;
 ; Synopsis:    R-doc file hook (https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Rd-format)
 ; Authors:     Detlef Groth
-; 
+;
 define-macro fhook-rd
   @# buffer-init "rd"
   buffer-init-hooks
@@ -32,7 +32,7 @@ set-variable .fhook-rd.comment "|%||%|% | %||"
   0 hilight .hilight.rd 0                 .scheme.text
   hilight .hilight.rd 2 "%"               .scheme.comment
   hilight .hilight.rd 4 "\"" "\"" "\\"    .scheme.string
-  hilight .hilight.rd 0 "\\\\[^{]*"       .scheme.keyword   
+  hilight .hilight.rd 0 "\\\\[^{]*"       .scheme.keyword
 !endif
 
 ; rd-spell-word; modify the spelling rules so that the speller does not complain about commands.

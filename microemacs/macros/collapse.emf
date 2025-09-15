@@ -11,7 +11,7 @@
 ; History:
 ;
 ; Steven Phillips - 14th Jan 1999 - Generic file folding.
-; 
+;
 ; Took Jon's version and made it generic, also hacked at the notes below to
 ; make them more applicable.
 ;
@@ -60,7 +60,7 @@
 ;
 ;   'f2'        fold-current - Fold/Unfold the current section.
 ;   'f3'        fold-all     - Fold/unfold the whole file.
-;   'C-mouse-1  fold-current - Fold/unfold the current section. 
+;   'C-mouse-1  fold-current - Fold/unfold the current section.
 ;
 ; Steven Phillips - 31st Oct 2002 - Changed fold to collapse.
 ;
@@ -75,13 +75,13 @@
 ;       and 'fold-all' should' be supported in hkfold.emf and be bound to the
 ;       above keys for consistancy.
 ;
-;       The mouse binding is useful because we can browse the file with 
-;       the mouse and open and close at our lesiure. I was considering 
+;       The mouse binding is useful because we can browse the file with
+;       the mouse and open and close at our lesiure. I was considering
 ;       simply binding the left-mouse-drop to unfold - a simple check in the
-;       mouse code for $line-scheme being a fold scheme color would tell 
+;       mouse code for $line-scheme being a fold scheme color would tell
 ;       us to unfold. Unfortunatly re-perfoming the fold is a little more
-;       difficult as there is nothing to tell us that the user was moving 
-;       the cursor to a new position or requesting a fold operation. 
+;       difficult as there is nothing to tell us that the user was moving
+;       the cursor to a new position or requesting a fold operation.
 ;       Hence for consistency I simply use C-mouse-1 which always means
 ;       toggle the fold state.
 ;
@@ -91,7 +91,7 @@
   set-variable #l1 &spr ".fhook-%s." #l0
   set-variable #p9 &ind &cat #l1 "collapse-open"
   set-variable #p8 &ind &cat #l1 "collapse-close"
-  !iif &or &seq #p9 "ERROR" &seq #p8 "ERROR"  -8 ml-write &spr "[Collapse not available for %s]" #l0 
+  !iif &or &seq #p9 "ERROR" &seq #p8 "ERROR"  -8 ml-write &spr "[Collapse not available for %s]" #l0
   set-variable #p7 &ind &cat #l1 "collapse-mopen"
   set-variable #p6 &ind &cat #l1 "collapse-mclose"
   set-variable #p5 &ind &cat #l1 "collapse-mnext"

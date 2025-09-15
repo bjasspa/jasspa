@@ -11,7 +11,7 @@
 ; Notes:
 ;     This is currently only a partical implementation created for proof
 ;     of concept, please feel free to improve and submit correction.
-;     An emulation requires: 
+;     An emulation requires:
 ;        * Additional entries added to %emulate-names ("The full name")
 ;          and %emulate-value ("label" - should be 5 or less chars).
 ;        * An "melabel.emf" macro file like this one. This is executed
@@ -113,4 +113,3 @@ set-variable .buffer-bind-key.map-to   "|C-b|C-u|"
 execute-file msshift
 ; redo the mouse
 execute-file mouse
-

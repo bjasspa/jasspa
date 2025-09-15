@@ -20,7 +20,7 @@ set-variable .fhook-make.setup &reg "/history/fhook/make" "ghinopTx"
 set-variable .fhook-make.setup-mask "aeghikmnoptux"
 set-variable .fhook-make.comment "|#||#|# | #|r|"
 
-!if &and &sin "h" .fhook-make.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-make.setup &band .hilight.flags 0x02
   ; Make file highlighting
   !if &not &exist .hilight.make
     set-variable .hilight.make &pinc .hilight.next 1

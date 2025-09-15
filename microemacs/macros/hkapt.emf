@@ -29,7 +29,7 @@ execute-file "docmacro" "apt"
 
 !if &and &sin "h" .fhook-apt.setup &band .hilight.flags 0x02
   0 hilight .hilight.apt 0x00 $global-scheme
-  
+
   set-variable #l0 .hilight.apt
   ; Title
   hilight #l0 4 "^\\s+---+" "^\\s*$" "" .scheme.comment

@@ -26,7 +26,7 @@ set-variable .fhook-lisp.indent-width 2
   set-variable .hilight.lisp &pinc .hilight.next 1
 !endif
 
-!if &and &sin "h" .fhook-lisp.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-lisp.setup &band .hilight.flags 0x02
   0 hilight .hilight.lisp 2 50                     $global-scheme
   hilight .hilight.lisp 0x804  "\"" "\"" "\\"      .scheme.string
   hilight .hilight.lisp 20 "#|" "|#" ""            .scheme.comment

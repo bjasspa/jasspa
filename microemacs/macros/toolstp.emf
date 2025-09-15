@@ -32,7 +32,7 @@
         !endif
       !done
       set-variable .toolbar.flag &lset .toolbar.flag @# 0
-      set-variable .toolbar.flag &lset .toolbar.flag 5 &sub &lget .toolbar.flag 5 1 
+      set-variable .toolbar.flag &lset .toolbar.flag 5 &sub &lget .toolbar.flag 5 1
     !else
       ; add the toolbar
       set-variable .toolbar.tool-name &lins .toolbar.tool-name -1 "Toolbar"
@@ -42,7 +42,7 @@
       set-variable .toolbar.tool-flag &lins .toolbar.tool-flag -1 &bor 1 &lget .toolbar.conv @#
       set-variable .toolbar.tool-cmd  &lins .toolbar.tool-cmd  -1 "toolbar-default"
       set-variable .toolbar.flag &lset .toolbar.flag @# 1
-      set-variable .toolbar.flag &lset .toolbar.flag 5 &add &lget .toolbar.flag 5 1 
+      set-variable .toolbar.flag &lset .toolbar.flag 5 &add &lget .toolbar.flag 5 1
     !endif
   !elif &equ @# 5
     ; store all the current state
@@ -115,7 +115,7 @@
       set-variable .toolbar.tool-size &ldel .toolbar.tool-size #l0
       set-variable .toolbar.tool-flag &ldel .toolbar.tool-flag #l0
       set-variable .toolbar.tool-cmd  &ldel .toolbar.tool-cmd  #l0
-      set-variable .toolbar.flag &lset .toolbar.flag #l2 &sub &lget .toolbar.flag #l2 1 
+      set-variable .toolbar.flag &lset .toolbar.flag #l2 &sub &lget .toolbar.flag #l2 1
     !endif
     !if &equ @# -7
       !return
@@ -142,7 +142,7 @@
         set-variable .toolbar.tool-size &lins .toolbar.tool-size &add #l1 1 &lget .toolbar.tool-size #l1
         set-variable .toolbar.tool-flag &lins .toolbar.tool-flag &add #l1 1 #l3
         set-variable .toolbar.tool-cmd  &lins .toolbar.tool-cmd  &add #l1 1 &lget .toolbar.tool-cmds #l0
-        set-variable .toolbar.flag &lset .toolbar.flag #l2 &add &lget .toolbar.flag #l2 1 
+        set-variable .toolbar.flag &lset .toolbar.flag #l2 &add &lget .toolbar.flag #l2 1
         !if &seq &lget .toolbar.tool-cmd #l1 "toolbar-default"
           ; remove the dummy tool
           -7 toolbar-setup-cmd
@@ -270,4 +270,3 @@ osd .osd.toolbar 50 ""  "\HStore Current State" 5 toolbar-setup-cmd
 
 ; load the list of available toolbar tools
 !iif &not &exi .toolbar.tool-cmds  !force execute-file "toollist"
-

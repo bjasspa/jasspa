@@ -13,7 +13,7 @@
   goto-position "\x85"
   set-variable #l0 &mid $buffer-bname 9 &sub &len $buffer-bname 10
   set-variable #l1 &cond &gre $window-depth $window-width "\n" " "
-  find-buffer &spr "*toolbar-%s*" #l0 
+  find-buffer &spr "*toolbar-%s*" #l0
   -1 buffer-mode "undo"
   -1 buffer-mode "view"
   beginning-of-buffer

@@ -10,7 +10,7 @@
 ;
 ; Rebind the keys according to the GNU Emacs key binding. We cannot
 ; reproduced all of the bindings literally (obviously otherwise MicroEmacs
-; will be huge) but retain the best compatibility that we can. 
+; will be huge) but retain the best compatibility that we can.
 ;
 ; create wrapper macros for commands which are differently named and create
 ; some missing commands, see GNU Emacs docs for help on these commands.
@@ -30,7 +30,7 @@ define-macro previous-line
 define-macro delete-horizontal-space
   !while &sin @wc " \t"
     forward-delete-char
-  !done   
+  !done
   !force backward-char
   !if $status
     !while &sin @wc " \t"

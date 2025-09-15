@@ -42,7 +42,7 @@ set-variable .fhook-cfm.item-list-r5 "Func \CCb\\1\CCA"
   !if &not &exist .hilight.cfmsetags
     set-variable .hilight.cfmsetags &pinc .hilight.next 1
   !endif
-  
+
   ; <CFxxx enclosure hilighting> - Case insensitive scheme
   0 hilight .hilight.cfmtags 3 50                          $global-scheme
   ; Include the base hilighting
@@ -50,7 +50,7 @@ set-variable .fhook-cfm.item-list-r5 "Func \CCb\\1\CCA"
   hilight .hilight.cfmtags 1 "\\w+\\s*\\}="                .scheme.operator
   hilight .hilight.cfmtags 4 "#" "#" ""                    .scheme.variable
   hilight .hilight.cfmtags   0x80 "/?>" .hilight.cfm       .scheme.keyword
-  
+
   ; <CFSET enclosure hilighting> - variable assignment
   0 hilight .hilight.cfmsetags 3 50                        $global-scheme
   cfm-set-hilight .hilight.cfmsetags
@@ -69,7 +69,7 @@ set-variable .fhook-cfm.item-list-r5 "Func \CCb\\1\CCA"
     hilight .hilight.cfm       0x80 "</cf\\w+" .hilight.cfmtags .scheme.keyword
     ; the next tag fixes hilighting problems caused by strings spanning
     ; multiple lines by resetting the hilight on the next blank line during
-    ; the look-back. 
+    ; the look-back.
     hilight .hilight.cfm 0xa80 "^\\s*\\{$" .hilight.cfm $global-scheme
     ; Jump to the new <cfset...> tags scheme
     hilight .hilight.cfm       0x80 "<cfset"      .hilight.cfmsetags .scheme.keyword
@@ -80,8 +80,8 @@ set-variable .fhook-cfm.item-list-r5 "Func \CCb\\1\CCA"
     hilight .hilight.cfm       0x80 "<cfscript>"  .hilight.cfmscript .scheme.prepro
     hilight .hilight.cfmscript 0x80 "</cfscript>" 0   .scheme.prepro
   !endif
-  ; Set up the cfmsql hilighting 
-  
+  ; Set up the cfmsql hilighting
+
 !endif
 
 !if &sin "d" .fhook-cfm.setup
@@ -100,7 +100,7 @@ set-variable .fhook-cfm.item-list-r5 "Func \CCb\\1\CCA"
     indent .hilight.cfm o "</cfcase>" -t
     indent .hilight.cfm n "<cfdefaultcase" 3/2t
     indent .hilight.cfm o "</cfdefaultcase>" -t
-    ; Loops 
+    ; Loops
     indent .hilight.cfm n "<cfloop" 3/2t
     indent .hilight.cfm o "</cfloop>" -t
     indent .hilight.cfm n "<cfoutput" 3/2t
@@ -120,7 +120,7 @@ set-variable .fhook-cfm.item-list-r5 "Func \CCb\\1\CCA"
     indent .hilight.cfm n "<cfdocument" 3/2t
     indent .hilight.cfm o "</cfdocument>" -t
     ; Ignore <cfDocumentItem> single/paired form
-    ; item form. 
+    ; item form.
     indent .hilight.cfm n "<cfdocumentsection" 3/2t
     indent .hilight.cfm o "</cfdocumentsection>" -t
     ; Execute
@@ -195,15 +195,15 @@ set-variable .fhook-cfm.item-list-r5 "Func \CCb\\1\CCA"
     ; Try
     indent .hilight.cfm n "<cftry" 3/2t
     indent .hilight.cfm o "</cftry>" -t
-    
+
     ; Switch to the script indentation
     indent .hilight.cfmscript w "</cfscript>" -t .hilight.cfm
     indent .hilight.cfm w "</cfscript>" -t .hilight.cfm
-    
+
     ; picking up the </script> seems wrong, but the look-back cfmtag can incorrectly
     ; identify javascript as cfm, this limits the damage (hopefully)
     indent .hilight.cfmscript w "</script>" -t .hilight.cfm
-    
+
     ; Quick lookback items
     indent .hilight.cfmtag t "<cfscript>"       .indent.cfmscript
     ;        indent .hilight.cfmscript t "</cfscript>" 0

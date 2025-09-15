@@ -39,7 +39,7 @@ set-variable .fhook-css.item-list-r1 "Item \CCb\\1\CCA"
 !if &and &sin "h" .fhook-css.setup &band .hilight.flags 0x02
   ; css file highlighting
   0 hilight .hilight.css 3 50                     $global-scheme
-  ; jump to value hilighting on a ':' 
+  ; jump to value hilighting on a ':'
   hilight .hilight.css 0x80 ":" .hilight.cssv     $global-scheme
   ; Comments.
   hilight .hilight.css 20 "/\\*" "*/" ""          .scheme.comment
@@ -324,13 +324,13 @@ set-variable .fhook-css.item-list-r1 "Item \CCb\\1\CCA"
   hilight .hilight.css 1  "-moz-user-select"      .scheme.keyword
   ; Webkit properties
   hilight .hilight.css 1  "-webkit-text-size-adjust" .scheme.keyword
-  
+
   0 hilight .hilight.cssc 1                       $global-scheme
   hilight .hilight.cssc 0x80 "\\.\\w+" .hilight.css .scheme.type
   hilight .hilight.cssc 0x80 "\\}." .hilight.css    $global-scheme
-  
+
   0 hilight .hilight.cssv 1                       $global-scheme
-  ; jump back to property hilighting on a ';' 
+  ; jump back to property hilighting on a ';'
   hilight .hilight.cssv 0x80 ";" .hilight.css     $global-scheme
   ; Comments.
   hilight .hilight.cssv 20 "/\\*" "*/" ""         .scheme.comment

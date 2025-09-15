@@ -55,15 +55,15 @@
   !endif
   !if &band $system 0x80
     ; unix system
-    set-variable #l2 &cat #l2 &cond &band $buffer-fmod 256 "r" "-"  
-    set-variable #l2 &cat #l2 &cond &band $buffer-fmod 128 "w" "-"  
-    set-variable #l2 &cat #l2 &cond &band $buffer-fmod  64 "x" "-"  
-    set-variable #l2 &cat #l2 &cond &band $buffer-fmod  32 "r" "-"  
-    set-variable #l2 &cat #l2 &cond &band $buffer-fmod  16 "w" "-"  
-    set-variable #l2 &cat #l2 &cond &band $buffer-fmod   8 "x" "-"  
-    set-variable #l2 &cat #l2 &cond &band $buffer-fmod   4 "r" "-"  
-    set-variable #l2 &cat #l2 &cond &band $buffer-fmod   2 "w" "-"  
-    set-variable #l2 &cat #l2 &cond &band $buffer-fmod   1 "x" "-"  
+    set-variable #l2 &cat #l2 &cond &band $buffer-fmod 256 "r" "-"
+    set-variable #l2 &cat #l2 &cond &band $buffer-fmod 128 "w" "-"
+    set-variable #l2 &cat #l2 &cond &band $buffer-fmod  64 "x" "-"
+    set-variable #l2 &cat #l2 &cond &band $buffer-fmod  32 "r" "-"
+    set-variable #l2 &cat #l2 &cond &band $buffer-fmod  16 "w" "-"
+    set-variable #l2 &cat #l2 &cond &band $buffer-fmod   8 "x" "-"
+    set-variable #l2 &cat #l2 &cond &band $buffer-fmod   4 "r" "-"
+    set-variable #l2 &cat #l2 &cond &band $buffer-fmod   2 "w" "-"
+    set-variable #l2 &cat #l2 &cond &band $buffer-fmod   1 "x" "-"
   !else
     ; MS system (probably)
     set-variable #l2 &cat #l2 &cond &band $buffer-fmod  1 "-" "w"
@@ -98,7 +98,7 @@
     !endif
     set-variable #l4 &spr "%s (%s)" #l4 &rig $buffer-fhook 6
   !endif
-  find-buffer "*buffer-info*" 
+  find-buffer "*buffer-info*"
   -1 buffer-mode "undo"
   -1 buffer-mode "view"
   beginning-of-buffer
@@ -340,7 +340,7 @@
 
 0 define-macro buffer-tab-list-create
   set-position "\x86"
-  find-buffer "*toolbar-buffer-tab*" 
+  find-buffer "*toolbar-buffer-tab*"
   -1 buffer-mode "undo"
   -1 buffer-mode "view"
   beginning-of-buffer

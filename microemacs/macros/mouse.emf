@@ -5,7 +5,7 @@
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
 ;
-; Synopsis:    Macros to implement typical Mouse functionality 
+; Synopsis:    Macros to implement typical Mouse functionality
 ; Authors:     Steven Phillips
 ;
 ; mark-window
@@ -679,10 +679,10 @@
       toolbar-mode-line
     !elif &equ $frame-id .notes.frame-id
       notes-mode-line
-    !elif &and &band $scroll-bar 0x80 &equ .mouse-event.x &sub $window-scroll-bar $window-width 
+    !elif &and &band $scroll-bar 0x80 &equ .mouse-event.x &sub $window-scroll-bar $window-width
       !force 1 split-window-horizontally
       !if $status
-        ; Set to the minimum size and change the mode to a 
+        ; Set to the minimum size and change the mode to a
         ; horizontal re-size.
         !force change-window-width 4
         set-variable .mouse-event.mode &bor 3 &band $mouse-pos 0x30
@@ -709,11 +709,11 @@
   !elif &equ #l0 4
     ; ml-write "Mouse on split"
     ; Mouse on the buffer vertical divider. Split the window into two
-    ; and then assume a 'grow window' with the new window. Force the 
+    ; and then assume a 'grow window' with the new window. Force the
     ; mode to re-size operation.
     !force 1 split-window-vertically
     !if $status
-      !force change-window-depth 2 
+      !force change-window-depth 2
       set-variable .mouse-event.mode &bor 2 &band $mouse-pos 0x30
       global-bind-key mouse-grow-window &spr .mouse-event.mask "move"
       !force set-variable .toolbar.disable 1
@@ -772,7 +772,7 @@
   !if .msshift
     set-variable .msshift &sub .msshift 1
   !endif
-  ; force the unbind of the last pick time or move - do this on pick and drop as a safety mechanism 
+  ; force the unbind of the last pick time or move - do this on pick and drop as a safety mechanism
   !force global-unbind-key &spr .mask "time"
   !force global-unbind-key &spr .mask "move"
   !force set-variable .toolbar.disable 0
@@ -787,7 +787,7 @@
     ; drop key command
     set-variable #l0 "ERROR"
     !if &band .mode 15
-      ; Not in the text window 
+      ; Not in the text window
       !if &reg &cat "/history/mouse/" &spr .mask "auto" "0"
         ; do the scroll bar stuff
         set-variable #l0 "mouse-auto-pick-event"
@@ -869,7 +869,7 @@ set-variable #l9 &reg &spr "/history/%s/mouse2to3" $platform 0
       ml-bind-key backward-line #l1
     !endif
     ; only windows supports the wheel keys directly, unix systems must
-    ; translate a button event to the wheel event, usually 4 or 5 
+    ; translate a button event to the wheel event, usually 4 or 5
     !if &not &seq $platform "windows"
       set-variable #l1 &lef #l1 #l2
       translate-key &spr "%spick-4 %sdrop-4" #l1 #l1 &cat #l1 "wup"
@@ -883,7 +883,7 @@ set-variable #l9 &reg &spr "/history/%s/mouse2to3" $platform 0
       ml-bind-key forward-line #l1
     !endif
     ; only windows supports the wheel keys directly, unix systems must
-    ; translate a button event to the wheel event, usually 4 or 5 
+    ; translate a button event to the wheel event, usually 4 or 5
     !if &not &seq $platform "windows"
       set-variable #l1 &lef #l1 #l2
       translate-key &spr "%spick-5 %sdrop-5" #l1 #l1 &cat #l1 "wdown"
@@ -904,10 +904,10 @@ set-variable #l9 &reg &spr "/history/%s/mouse2to3" $platform 0
         !if &set #l3 &sin "2" #l1
           set-variable #l4 &lef #l2 &sub #l3 1
           set-variable #l3 &lef #l1 &sub #l3 1
-          10 translate-key &spr "%s1 %s3" #l3 #l3 #l1 
-          10 translate-key &spr "%s3 %s1" #l3 #l3 #l1 
-          10 translate-key &spr "%s1 %s3" #l4 #l4 #l2 
-          10 translate-key &spr "%s3 %s1" #l4 #l4 #l2 
+          10 translate-key &spr "%s1 %s3" #l3 #l3 #l1
+          10 translate-key &spr "%s3 %s1" #l3 #l3 #l1
+          10 translate-key &spr "%s1 %s3" #l4 #l4 #l2
+          10 translate-key &spr "%s3 %s1" #l4 #l4 #l2
         !endif
       !endif
     !endif

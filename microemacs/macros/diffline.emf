@@ -150,7 +150,7 @@
   !done
   set-variable #p9 1
 !emacro
-; Bits in numeric arg have following behaviour 
+; Bits in numeric arg have following behaviour
 ; 0x01 Copy lines to a new *diff-lines* buffer and show in popup window
 ; 0x02 If set then use the mark position to locate 2nd line (and col if bit 0x04 set) otherwise use active region or, if none, compare with next line
 ; 0x04 If set then diff from the current column, else diff from the start of the lines (was inverted 0x01)

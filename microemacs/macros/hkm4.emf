@@ -19,7 +19,7 @@ set-variable .fhook-m4.setup &reg "/history/fhook/m4" "ghinox"
 set-variable .fhook-m4.setup-mask "aeghikmnotux"
 set-variable .fhook-m4.comment "|#||#|# | #|r|"
 
-!if &and &sin "h" .fhook-m4.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-m4.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.m4
     set-variable .hilight.m4 &pinc .hilight.next 1
   !endif
@@ -84,4 +84,3 @@ set-variable .fhook-m4.comment "|#||#|# | #|r|"
 !endif
 
 buffer-init-fhook "m4"
-

@@ -5,7 +5,7 @@
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
 ;
-; Synopsis:    Common document macros. 
+; Synopsis:    Common document macros.
 ; Authors:     Jon Green & Steven Phillips
 ;
 ; Notes:       broken out of docmacro.emf
@@ -15,13 +15,13 @@
 !endif
 -1 osd .osd.doc-stat
 osd .osd.doc-stat 0  "batcDH" 9 3 99 .scheme.osd-title "Current Mode Settings"
-osd .osd.doc-stat 3  "" 
-osd .osd.doc-stat 7  "" 
-osd .osd.doc-stat 11 "" 
-osd .osd.doc-stat 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
+osd .osd.doc-stat 3  ""
+osd .osd.doc-stat 7  ""
+osd .osd.doc-stat 11 ""
+osd .osd.doc-stat 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void
 
 define-macro doc-mode-state
-  osd .osd.doc-stat 4  "" &spr " Filling to column : %d " $buffer-fill-col 
+  osd .osd.doc-stat 4  "" &spr " Filling to column : %d " $buffer-fill-col
   osd .osd.doc-stat 5  "" &spr " Justification Mode: %s " $buffer-fill-mode
   set-variable #l0 "Unknown mode, default to left:NAuto-detect All (L/R/C):OAuto-detect One for word-processor:BAuto-detect Both (R/C):LAuto-detect Left:RAuto-detect Right:CAuto-detect Center:nNone:bBoth justify (L/R):lLeft:rRight:cCenter:oOne for word-processor:"
   set-variable #l0 &rig #l0 &add 1 &sin &cat ":" $buffer-fill-mode #l0
@@ -72,4 +72,3 @@ define-macro fill-paragraph-gutter
   !force !force @# fill-paragraph @mna
   set-variable $buffer-fill-mode #l1
 !emacro
-

@@ -79,7 +79,7 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
   !endif
   !iif &not @#  !abort
   !repeat
-    set-variable #l3 1 
+    set-variable #l3 1
     6 next-window
     !force 2 next-window
     !if &not $status
@@ -89,7 +89,7 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
       next-window
     !elif &sub #l1 &sub $window-mode-line $window-depth
       delete-window
-      set-variable #l3 0 
+      set-variable #l3 0
     !endif
   !until #l3
   !repeat
@@ -207,7 +207,7 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
     find-buffer #l1
     !abort
   !endif
-  @# notes-create-note #l0    
+  @# notes-create-note #l0
 !emacro
 
 0 define-macro notes-tree-forward-note
@@ -593,7 +593,7 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
   1 buffer-mode "view"
   set-variable #l3 $window-line
   next-window
-  set-variable :notes-cur #l3 
+  set-variable :notes-cur #l3
   !force narrow-buffer
   beginning-of-buffer
   !force search-buffer "me" &spr "^\b\benf\b\bdivider\b\b%s$" #l0
@@ -654,10 +654,10 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
           !goto backward-note
 *beg-of-buff
           beginning-of-buffer
-          execute-line &spr "isearch-backward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\"" 
+          execute-line &spr "isearch-backward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\""
         !else
           2 show-region
-          execute-line &spr "0 isearch-backward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\"" 
+          execute-line &spr "0 isearch-backward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\""
         !endif
       !else
         set-variable #l2 &xrep #l1 "\\(.\\)" " \"\\1\""
@@ -765,7 +765,7 @@ define-macro notes-tree-isearch-backward
       set-variable #l2 1
     !endif
     !if &seq &set #l3 &reg &cat "/enf/" #l2 "" ""
-      ml-write &spr "[Error: Bad reg value for node \"/end/%d\"]" #l2 
+      ml-write &spr "[Error: Bad reg value for node \"/end/%d\"]" #l2
       !abort
     !endif
     !force 0 find-buffer #l3
@@ -983,7 +983,7 @@ define-macro note-setup
     1 buffer-mode "hide"
     &cond &lget #l9 1 1 -1 buffer-mode "crypt"
     !iif &not &len #l8  &cond &lget #l9 2 1 -1 buffer-mode "edit"
-    set-variable $buffer-mode-line &rep $mode-line "%b" &spr "*%s: %s*" #l1 &reg #l4 "" 
+    set-variable $buffer-mode-line &rep $mode-line "%b" &spr "*%s: %s*" #l1 &reg #l4 ""
     set-variable $buffer-ehook notes-ehook
     buffer-bind-key notes-close "f10"
     buffer-bind-key notes-backward-note "C-page-up"
@@ -1027,7 +1027,7 @@ define-macro notes-file
         delete-buffer $buffer-bname
 *cryptf
         !force set-variable #l4 @ml88 &spr "Password for %s" #l0
-        !if &not &and $status &len #l4 
+        !if &not &and $status &len #l4
           ml-write &spr "[Error: failed to load file \"%s\"]" #l1
           !abort
         !endif

@@ -189,7 +189,7 @@ set-variable .fhook-c.item-list-r7 "Strc \CCd\\1\CCA"
     hilight .hilight.c 1 "false"          .scheme.constant
     hilight .hilight.c 1 "true"          .scheme.constant
   !endif
-  
+
   ; JASSPA MicroEmacs specific tokens for source editing. This is a special
   ; flag for 'C', see .fhook-c.setup-flags and .fhook-c.setup-labels above.
   ; The hilighting is enabled through the major mode setup flags, set via
@@ -267,7 +267,7 @@ set-variable .fhook-c.item-list-r7 "Strc \CCd\\1\CCA"
     hilight .hilight.c 1 "osdCONTEXT"     .scheme.type
     hilight .hilight.c 1 "osdDISPLAY"     .scheme.type
   !endif
-  
+
   ; Doxygen highlighting extensions. Highlights keywords in Doxygen
   !if &sin "l" .fhook-c.setup
     ; Create a new doxygen hilighting scheme
@@ -319,8 +319,8 @@ set-variable .fhook-c.item-list-r7 "Strc \CCd\\1\CCA"
     ; Special hilighting for a 'C' parameter - branch from the doxygen
     ; space into scheme for the parameter. Note that @param is defined
     ; after the generic '@' definitions.
-    ; 
-    ; Special for @param, @see, @retval   
+    ;
+    ; Special for @param, @see, @retval
     hilight .hilight.cdoxygen 0x80 "[\\\\@]file"   .hilight.pdoxygen .scheme.keyword
     hilight .hilight.cdoxygen 0x80 "[\\\\@]struct" .hilight.pdoxygen .scheme.keyword
     hilight .hilight.cdoxygen 0x80 "[\\\\@]param"  .hilight.pdoxygen .scheme.keyword
@@ -346,8 +346,8 @@ set-variable .fhook-c.item-list-r7 "Strc \CCd\\1\CCA"
     ; space into scheme for the parameter. Note that @param is defined
     ; after
     ; the generic '@' definitions.
-    ; 
-    ; Special for @param, @see, @retval   
+    ;
+    ; Special for @param, @see, @retval
     hilight .hilight.cdoxygencpp 0x80 "[\\\\@]a"      .hilight.pdoxygencpp .scheme.keyword
     hilight .hilight.cdoxygencpp 0x80 "[\\\\@]file"   .hilight.pdoxygencpp .scheme.keyword
     hilight .hilight.cdoxygencpp 0x80 "[\\\\@]struct" .hilight.pdoxygencpp .scheme.keyword
@@ -367,7 +367,7 @@ set-variable .fhook-c.item-list-r7 "Strc \CCd\\1\CCA"
     ; We must return to C when we see the close of comment "*/"
     hilight .hilight.pdoxygencpp 0x80 "$" .hilight.c .scheme.error
   !endif
-  
+
   ; Extend the hilighting for the IEEE Std 1003.1 <stdint.h>
   ; See http://www.opengroup.org/onlinepubs/007904975/basedefs/stdint.h.html
   !if &sin "q" .fhook-c.setup
@@ -472,7 +472,7 @@ set-variable .fhook-c.item-list-r7 "Strc \CCd\\1\CCA"
     hilight .hilight.c    1 "WINT_MIN"         .scheme.prepro
     hilight .hilight.c    1 "WINT_MAX"         .scheme.prepro
   !endif
-  
+
   ; Hilight curly braces used when it is difficult to differentiate between a
   ; round bracket and curly brace.
   !if &sin "r" .fhook-c.setup
@@ -480,7 +480,7 @@ set-variable .fhook-c.item-list-r7 "Strc \CCd\\1\CCA"
     hilight .hilight.c 1 "{"                   .scheme.keyword
     hilight .hilight.c 1 "}"                   .scheme.keyword
   !endif
-  
+
   ; Pick up bogus 'C' constructs extension
   !if &sin "v" .fhook-c.setup
     ; Detect a for loop with no body - put semi-colon on next line, i.e.
@@ -506,7 +506,7 @@ set-variable .fhook-c.item-list-r7 "Strc \CCd\\1\CCA"
     ;           "Duff string continuation";
     hilight .hilight.c 2 "\\\\$"               .scheme.hlred
   !endif
-  
+
 !endif
 !if &sin "d" .fhook-c.setup
   ; Allman style
@@ -519,7 +519,7 @@ set-variable .fhook-c.item-list-r7 "Strc \CCd\\1\CCA"
     indent .hilight.c "e" t
     indent .hilight.c "a" -t
     indent .hilight.c "w" 0
-  !endif        
+  !endif
 !endif
 ; setup file-*
 add-next-line "*c-exec*" "^%f:%l:\\d+.+"

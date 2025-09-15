@@ -113,7 +113,7 @@ set-variable #l9 .cc-init.count
   hilight .hilight.dirlst 0x052 "\eC-........................" ""   $global-scheme
   hilight .hilight.dirlst 0x052 "*d\\(.\\)\\(.\\)\\(.\\)\\(.\\) \eCd........................" "*d\\1\\2\\3\\4 " .scheme.dir-select
   hilight .hilight.dirlst 0x052 "*-\\(.\\)\\(.\\)\\(.\\)\\(.\\) \eC-........................" "*-\\1\\2\\3\\4 " .scheme.select
-  
+
   !if &not &exi .hilight.cc-state
     set-variable .hilight.cc-state &pinc .hilight.next 1
     set-variable .hilight.cc-con &pinc .hilight.next 1
@@ -126,7 +126,7 @@ set-variable #l9 .cc-init.count
   hilight .hilight.cc-state 0x102 "[ *]M " .scheme.hlred
   hilight .hilight.cc-state 0x102 "\\[\\*\\*\\*\\* ClearCase [^ ]+ completed successfully" .scheme.no1
   hilight .hilight.cc-state 0x102 "\\[\\*\\*\\*\\* ClearCase" .scheme.error
-  
+
   0 hilight .hilight.cc-con 2 100 $global-scheme
   hilight .hilight.cc-con 0x102 "\\[\\*\\*\\*\\* ClearCase [^ ]+ completed successfully" .scheme.no1
   hilight .hilight.cc-con 0x102 "\\[\\*\\*\\*\\* ClearCase" .scheme.error
@@ -575,7 +575,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
       set-variable #l0 &rig $buffer-fname &len #l2
       !if &seq #l0 ""
       !elif &set #l3 &sin "/" #l0
-        set-variable @1 &cat #l2 &lef #l0 #l3 
+        set-variable @1 &cat #l2 &lef #l0 #l3
         !return
       !endif
       !abort
@@ -865,11 +865,11 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
   set-variable .cc-init.lock @#
   set-variable #l1 @1
   set-variable #l2 @2
-  ml-write &spr "[ClearCase %s: Processing...]" &lget .cc-init.names @# 
+  ml-write &spr "[ClearCase %s: Processing...]" &lget .cc-init.names @#
   !if &set #l9 &sin "*" &lget .cc-init.flags @#
     set-variable #l0 "*cc-console*"
   !else
-    set-variable #l0 &spr "*cc-%s*" &slo &lget .cc-init.names @# 
+    set-variable #l0 &spr "*cc-%s*" &slo &lget .cc-init.names @#
   !endif
   !force 0 popup-window #l0
   !if &not $status
@@ -938,9 +938,9 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
       !if &not &exi .exit
         ml-write "[ClearCase Error: cleartool exit status not set]"
       !elif &equ .exit -9999
-        ml-write &spr "[ClearCase Warning: %s operation terminated]" &lget .cc-init.names @# 
+        ml-write &spr "[ClearCase Warning: %s operation terminated]" &lget .cc-init.names @#
       !elif &equ .exit -9998
-        ml-write &spr "[ClearCase Warning: %s operation exited with unknow status]" &lget .cc-init.names @# 
+        ml-write &spr "[ClearCase Warning: %s operation exited with unknow status]" &lget .cc-init.names @#
       !else
         ml-write &spr "[ClearCase Warning: cleartool exited with code %d]" .exit
       !endif
@@ -1291,7 +1291,7 @@ define-macro cc-add
     beginning-of-buffer
     -1 insert-string #l2
     goto-position "\x82"
-    set-variable #l4 &con #l5 0 3        
+    set-variable #l4 &con #l5 0 3
     5 cc-cleartool #l4 $buffer-fname
     !if #l5
       find-buffer "*cc-cmdline*"
@@ -1650,7 +1650,7 @@ define-macro cc-merge
     insert-string " -type d"
     -1 insert-string #l3
     goto-position "\x82"
-    set-variable #l4 &con #l5 0 3        
+    set-variable #l4 &con #l5 0 3
     13 cc-cleartool #l4 $buffer-fname
     !if #l5
       find-buffer "*cc-cmdline*"
@@ -1789,7 +1789,7 @@ define-macro cc-config-spec
     buffer-bind-create "bio" "C-x C-s" "" cc-config-spec-set
   !endif
   goto-position "\x82"
-  !force popup-window #l1 
+  !force popup-window #l1
 !emacro
 
 ; ClearCase clear console ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1819,7 +1819,7 @@ define-macro cc-add-view
     !endif
   !done
   set-registry &cat "/history/clearcase/" #l1 #l0
-!emacro    
+!emacro
 
 0 define-macro cc-setup-del-view
   set-variable #l0 $result
@@ -2163,4 +2163,4 @@ osd .osd.ccshlp 29 ""  "  p  Private     - The file is a new, unmanaged file"
 osd .osd.ccshlp 30 ""  "  ?  ???         - Strange unsupported state - please report"
 osd .osd.ccshlp 91 ""
 osd .osd.ccshlp 92 ""
-osd .osd.ccshlp 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
+osd .osd.ccshlp 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void

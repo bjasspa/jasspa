@@ -118,12 +118,12 @@ set-variable %met-level   6
   !iif &seq &mid :met-p1 1 1 "X"  :met-cpf screen-poke &sub :met-curd 1 &add :met-curw 1 :met-cps " "
   !iif &seq &rig :met-p1 2 "X"  :met-cpf screen-poke &sub :met-curd 1 &add :met-curw 2 :met-cps " "
   !if &not &seq :met-p1 :met-p2
-    !iif &not &seq &lef :met-p2 1 &lef :met-p1 1  :met-cpf screen-poke :met-curd :met-curw :met-cps &lef :met-p1 1 
+    !iif &not &seq &lef :met-p2 1 &lef :met-p1 1  :met-cpf screen-poke :met-curd :met-curw :met-cps &lef :met-p1 1
     !iif &not &seq &mid :met-p2 1 1 &mid :met-p1 1 1  :met-cpf screen-poke :met-curd &add :met-curw 1 :met-cps &mid :met-p1 1 1
     !iif &not &seq &rig :met-p2 2 &rig :met-p1 2  :met-cpf screen-poke :met-curd &add :met-curw 2 :met-cps &rig :met-p1 2
   !endif
   !if &not &seq :met-p2 :met-p3
-    !iif &not &seq &lef :met-p3 1 &lef :met-p2 1  :met-cpf screen-poke &add :met-curd 1 :met-curw :met-cps &lef :met-p2 1 
+    !iif &not &seq &lef :met-p3 1 &lef :met-p2 1  :met-cpf screen-poke &add :met-curd 1 :met-curw :met-cps &lef :met-p2 1
     !iif &not &seq &mid :met-p3 1 1 &mid :met-p2 1 1  :met-cpf screen-poke &add :met-curd 1 &add :met-curw 1 :met-cps &mid :met-p2 1 1
     !iif &not &seq &rig :met-p3 2 &rig :met-p2 2  :met-cpf screen-poke &add :met-curd 1 &add :met-curw 2 :met-cps &rig :met-p2 2
   !endif
@@ -150,7 +150,7 @@ set-variable %met-level   6
   set-variable :met-cps :met-nps
   met-select-piece
   !iif :met-next  met-drwnext
-  
+
   set-variable :met-cpd 0
   set-variable :met-cpw &add 1 &div :met-width 2
   set-variable :met-curd :met-depoff
@@ -262,9 +262,9 @@ set-variable %met-level   6
     !done
     set-variable #l0 :met-cpd
     !while :met-cpd
-      set-variable #l1 &cat ":met-r" :met-cpd  
+      set-variable #l1 &cat ":met-r" :met-cpd
       !if &not &seq &ind #l1 "*"
-        set-variable :met-curw &cat ":met-r" #l0  
+        set-variable :met-curw &cat ":met-r" #l0
         set-variable &ind :met-curw &ind #l1
         97 screen-poke &add :met-depoff #l0 :met-widoff .scheme.met-back &mid &ind #l1 2 10
         set-variable #l0 &sub #l0 1
@@ -272,7 +272,7 @@ set-variable %met-level   6
       set-variable :met-cpd &sub :met-cpd 1
     !done
     !while #l0
-      set-variable :met-curw &cat ":met-r" #l0  
+      set-variable :met-curw &cat ":met-r" #l0
       set-variable &ind :met-curw " X          X "
       1 screen-poke &add :met-depoff #l0 :met-widoff .scheme.met-back "          "
       set-variable #l0 &sub #l0 1
@@ -315,10 +315,10 @@ set-variable %met-level   6
   set-variable :met-tp2 :met-p2
   set-variable :met-tp3 :met-p3
   met-delcur
-  
-  set-variable :met-p1 &cat &rig :met-tp1 2   &cat &rig :met-tp2 2   &rig :met-tp3 2 
-  set-variable :met-p2 &cat &mid :met-tp1 1 1 &cat &mid :met-tp2 1 1 &mid :met-tp3 1 1 
-  set-variable :met-p3 &cat &lef :met-tp1 1   &cat &lef :met-tp2 1   &lef :met-tp3 1 
+
+  set-variable :met-p1 &cat &rig :met-tp1 2   &cat &rig :met-tp2 2   &rig :met-tp3 2
+  set-variable :met-p2 &cat &mid :met-tp1 1 1 &cat &mid :met-tp2 1 1 &mid :met-tp3 1 1
+  set-variable :met-p3 &cat &lef :met-tp1 1   &cat &lef :met-tp2 1   &lef :met-tp3 1
   !force test-testcur
   !if &not $status
     set-variable :met-p1 :met-tp1

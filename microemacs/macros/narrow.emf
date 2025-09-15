@@ -12,12 +12,12 @@
 ; string, search through all narrowed text as well. Command should behave in
 ; an identical fashion to the main search-forward command (numeric argument
 ; etc) except for its ability to search through narrowed out text.
-; 
+;
 ; Utilizes a feature of MEs undo which restores narrows, the command 'edits'
 ; the current buffer, expands all narrows, searches for string - if found
 ; stores location, then undoes initial 'edit' thereby restoring the narrows.
 ; If the string was found it returns to the location but setting the
-; absolution line number which will expand a narrow containing the line 
+; absolution line number which will expand a narrow containing the line
 define-macro narrow-search-forward
   !force set-variable #l0 @1
   !if &not $status
@@ -27,11 +27,11 @@ define-macro narrow-search-forward
     @# search-forward #l0 @nma
     !return
   !endif
-  set-variable #l1 &bmod "view" 
-  set-variable #l2 &bmod "edit" 
-  set-variable #l3 &bmod "undo" 
-  -1 buffer-mode view 
-  1 buffer-mode undo 
+  set-variable #l1 &bmod "view"
+  set-variable #l2 &bmod "edit"
+  set-variable #l3 &bmod "undo"
+  -1 buffer-mode view
+  1 buffer-mode undo
   insert-string ""
   1 narrow-buffer
   !force !force search-forward #l0 @nma
@@ -41,9 +41,9 @@ define-macro narrow-search-forward
     set-variable #l6 $window-col
   !endif
   undo
-  &cond #l3 1 -1 buffer-mode "undo" 
-  &cond #l2 1 -1 buffer-mode "edit" 
-  &cond #l1 1 -1 buffer-mode "view" 
+  &cond #l3 1 -1 buffer-mode "undo"
+  &cond #l2 1 -1 buffer-mode "edit"
+  &cond #l1 1 -1 buffer-mode "view"
   !if #l4
     set-variable $window-aline #l5
     set-variable $window-col #l6
@@ -65,11 +65,11 @@ define-macro narrow-search-backward
     @# search-backward #l0 @nma
     !return
   !endif
-  set-variable #l1 &bmod "view" 
-  set-variable #l2 &bmod "edit" 
-  set-variable #l3 &bmod "undo" 
-  -1 buffer-mode view 
-  1 buffer-mode undo 
+  set-variable #l1 &bmod "view"
+  set-variable #l2 &bmod "edit"
+  set-variable #l3 &bmod "undo"
+  -1 buffer-mode view
+  1 buffer-mode undo
   insert-string ""
   1 narrow-buffer
   !force !force search-backward #l0 @nma
@@ -79,9 +79,9 @@ define-macro narrow-search-backward
     set-variable #l6 $window-col
   !endif
   undo
-  &cond #l3 1 -1 buffer-mode "undo" 
-  &cond #l2 1 -1 buffer-mode "edit" 
-  &cond #l1 1 -1 buffer-mode "view" 
+  &cond #l3 1 -1 buffer-mode "undo"
+  &cond #l2 1 -1 buffer-mode "edit"
+  &cond #l1 1 -1 buffer-mode "view"
   !if #l4
     set-variable $window-aline #l5
     set-variable $window-col #l6

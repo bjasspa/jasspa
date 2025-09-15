@@ -11,7 +11,7 @@
 ; Notes:
 ;     See the value of %keyboard-names for a list of currently supported
 ;     keyboards. Note that translate-keys are not automatically removed
-;     if another keyboard is used, you may have to exit and restart ME 
+;     if another keyboard is used, you may have to exit and restart ME
 ;
 !if &les @# 1
   ; if executed with an argument of 0 or less, return the list

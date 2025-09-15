@@ -62,7 +62,7 @@ set-variable .fhook-slang.collapse-mnext "-1"
   hilight .hilight.slang    1 "\<X_USER_BLOCK[0-4]\>"  .scheme.keyword
   hilight .hilight.slang    1 "NULL"                   .scheme.keyword
   hilight .hilight.slang    1 "case"                   .scheme.keyword
-  
+
   hilight .hilight.slang    1 "do"                     .scheme.keyword
   hilight .hilight.slang    1 "forever"                .scheme.keyword
   hilight .hilight.slang    1 "else"                   .scheme.keyword
@@ -74,7 +74,7 @@ set-variable .fhook-slang.collapse-mnext "-1"
   hilight .hilight.slang    1 "return"                 .scheme.keyword
   hilight .hilight.slang    1 "switch"                 .scheme.keyword
   hilight .hilight.slang    1 "while"                  .scheme.keyword
-  
+
   hilight .hilight.slang    1 "sizeof"                 .scheme.operator
   hilight .hilight.slang    1 "or"                     .scheme.operator
   hilight .hilight.slang    1 "and"                    .scheme.operator
@@ -85,7 +85,7 @@ set-variable .fhook-slang.collapse-mnext "-1"
   hilight .hilight.slang    1 "xor"                    .scheme.operator
   hilight .hilight.slang    1 "not"                    .scheme.operator
   hilight .hilight.slang    1 "[-%+/&*=<>|!~^@]"       .scheme.operator
-  
+
   hilight .hilight.slang    1 "define"                 .scheme.type
   hilight .hilight.slang    1 "struct"                 .scheme.type
   hilight .hilight.slang    1 "typedef"                .scheme.type

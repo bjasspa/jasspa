@@ -6,7 +6,7 @@
 ; copying information.
 ;
 ; Synopsis:    CUA (Standard GUI keybindings) emulation
-; Authors:     Gabriel Tabares-Barreiro, Steven Phillips 
+; Authors:     Gabriel Tabares-Barreiro, Steven Phillips
 ;
 ; Notes:
 ;     This is currently only a partical implementation created for proof
@@ -20,7 +20,7 @@ define-macro-file osdhelp osd-help
 
 ; cua-get-region - turn the current show-region into the current ME region,
 ; command aborts if no valid hilight region, argument n is a bitwise flag
-; modifying the behaviour: 
+; modifying the behaviour:
 ;   0x01 - if set then report failure
 ;   0x02 - cursor does not have to be in region
 0 define-macro cua-get-region
@@ -69,7 +69,7 @@ define-macro copy
   goto-position "\x81"
   show-region
 !emacro
-; paste must remove the hilight region first if there is one 
+; paste must remove the hilight region first if there is one
 define-macro paste
   !force 0 cua-get-region
   !if $status

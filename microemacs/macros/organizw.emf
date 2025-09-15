@@ -9,9 +9,9 @@
 ; Authors:     Steven Phillips
 ;
 ; Key binding definitions
-set-variable .org.bind-k1 "|C-left|C-right|C-up|C-down|" 
-set-variable .org.bind-c1 "|-1 org-week-inc-week|1 org-week-inc-week|-1 org-week-inc-year|1 org-week-inc-year|" 
-set-variable .org.bind-r1 "|1|1|1|1|" 
+set-variable .org.bind-k1 "|C-left|C-right|C-up|C-down|"
+set-variable .org.bind-c1 "|-1 org-week-inc-week|1 org-week-inc-week|-1 org-week-inc-year|1 org-week-inc-year|"
+set-variable .org.bind-r1 "|1|1|1|1|"
 
 ; Create the current week osd dialog
 0 define-macro org-week-init
@@ -28,12 +28,12 @@ set-variable .org.bind-r1 "|1|1|1|1|"
     !if &not &dec #l7 1
       set-variable #l7 12
     !endif
-    set-variable #l4 &add #l5 #l4 
+    set-variable #l4 &add #l5 #l4
   !endif
   osd .osd.orgw 40 "hf" &spr ": %d %s" #l4 &lget .spell.months #l7
   set-variable #l6 0
   !repeat
-    set-variable #l1 &add 1 &mod &add &pinc #l6 1 &lef .org.set 1 7 
+    set-variable #l1 &add 1 &mod &add &pinc #l6 1 &lef .org.set 1 7
     !if &and &equ #l4 .org.day &equ #l7 .org.month
       osd .osd.orgw-c &add 100 &mul #l6 2 "GfhzHxR" .scheme.osd-entry 5 3 &spr " %s\n %2d" &lef &lget .spell.days #l1 3 #l4 #l6 org-week-view-day
     !else
@@ -51,7 +51,7 @@ set-variable .org.bind-r1 "|1|1|1|1|"
       set-variable #l4 &add #l4 1
     !endif
   !until &equ #l6 7
-!emacro     
+!emacro
 
 0 define-macro org-week-inc-week
   !if &les @# 0
@@ -131,7 +131,7 @@ set-variable .org.bind-r1 "|1|1|1|1|"
       set-variable #l4 &sub #l4 1
       set-variable #l3 12
     !endif
-    set-variable #l2 &add &lget .org.dinm #l3 #l2 
+    set-variable #l2 &add &lget .org.dinm #l3 #l2
   !elif &gre #l2 &lef .org.info 2
     set-variable #l2 &sub #l2 &lef .org.info 2
     !if &equ #l3 12
@@ -170,14 +170,14 @@ set-variable .org.bind-r1 "|1|1|1|1|"
       set-variable #l4 &sub #l4 1
       set-variable #l3 12
     !endif
-    set-variable #l2 &add #l5 #l2 
+    set-variable #l2 &add #l5 #l2
   !endif
   insert-string &spr "       Week %s, %d %s %s\n\n" .org.week #l2 &lget .spell.months #l3 #l4
   set-variable #l6 0
   !repeat
     set-variable #l7 &reg &spr "/org/cal/%s/%s/%s" #l4 #l3 #l2 &reg &spr "/org/cal/*/%s/%s" #l3 #l2 ""
     set-variable #l8 &add $window-line 1
-    set-variable #l1 &add 1 &mod &add &pinc #l6 1 &lef .org.set 1 7 
+    set-variable #l1 &add 1 &mod &add &pinc #l6 1 &lef .org.set 1 7
     insert-string &spr "%2d %s %s\n" #l2 &lef &lget .spell.days #l1 3 #l7
     set-variable #l1 $window-line
     !while &not &equ $window-line #l8
@@ -215,10 +215,9 @@ osd .osd.orgw 30 "fh" ": Week "
 osd .osd.orgw 35 "Etxfh" "###" f org-week-change-week
 osd .osd.orgw 50 "BtxrfRhT" " -\H> "  1 org-week-inc-week
 osd .osd.orgw 55 "rf" "    "
-osd .osd.orgw 100 "" 
+osd .osd.orgw 100 ""
 osd .osd.orgw 110 "Itc" .osd.orgw-c
-osd .osd.orgw 600 "" 
+osd .osd.orgw 600 ""
 osd .osd.orgw 610 "BtxhcfH" .scheme.osd-ebtt " \HSave "    f organizer-save
 osd .osd.orgw 620 "BtxhcfH" .scheme.osd-ebtt " Week to \HBuffer "  f org-week-buffer
 osd .osd.orgw 630 "BtcfH"   .scheme.osd-ebtt " \HClose "    1 void
-

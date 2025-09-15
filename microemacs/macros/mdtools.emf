@@ -36,7 +36,7 @@
   !if &not &bmod "edit"
   !elif &band @# 1
     set-variable #l2 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-    !tjump &iseq #l2 "y" 2 
+    !tjump &iseq #l2 "y" 2
   !else
     save-buffer @nma
   !endif
@@ -54,7 +54,7 @@
     -8 ml-write &cat "Warning: MD export command exited with error code " #l4
   !elif &band @# 4
     popup-window "*md-export*"
-    find-file &spr "./%s.%s" #l2 #l1 @mna 
+    find-file &spr "./%s.%s" #l2 #l1 @mna
   !endif
   ml-write &spr "MD export to %s.%s complete and successful" #l2 #l1
 !emacro
@@ -274,7 +274,7 @@ define-macro md-process
       set-mark
       beginning-of-line
       -1 kill-region
-      insert-string &spr "%n" &sub $window-width 2 &rig $box-chars -1 
+      insert-string &spr "%n" &sub $window-width 2 &rig $box-chars -1
     !elif &lfin "|file|http|ftp:|ftps|mail|news|" &lef #l1 4
       &len #l1 backward-char
       !iif #l0  insert-string "\CCA"
@@ -299,7 +299,7 @@ define-macro md-process
   ; Now wrap long lines to the fill-col
   !if &set #l3 $buffer-fill-col
     beginning-of-buffer
-    ; found largest indent in ehf was ~26 chars, MD should be less, this must be removed from the \{#\} long-line regex len 
+    ; found largest indent in ehf was ~26 chars, MD should be less, this must be removed from the \{#\} long-line regex len
     set-variable #l1 &spr "\CD[B-z]\\|^\\( *\\(\\* \\)?\\).\\{%d\\}.*" &sub #l3 26
     !repeat
       !force search-buffer "me" #l1

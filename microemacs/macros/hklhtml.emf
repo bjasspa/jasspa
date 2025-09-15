@@ -27,10 +27,10 @@ set-variable .fhook-lhtml.indent-width 2
 
 ; load in lua script & the html core
 !iif &not &exist fhook-lua  execute-file "hklua"
-execute-file "htmlcore" "lhtml" 
+execute-file "htmlcore" "lhtml"
 
 ; add the <?lua ?> lua script support
-!if &and &sin "h" .fhook-lhtml.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-lhtml.setup &band .hilight.flags 0x02
   hilight .hilight.lhtmltag 4 "=\\{[^ \t\n<>]*<\\?lua" "\\?>[^ \t\n>]*" ""  .scheme.string
   hilight .hilight.lhtmltag 4 "=\\{\"[^\"\n<]*<\\?lua" "\\?>[^\"]*\"" ""  .scheme.string
   !if &exist .hilight.luascript
@@ -48,7 +48,7 @@ execute-file "htmlcore" "lhtml"
     indent .hilight.lhtmltag t "\\?>" .hilight.lhtml
     indent .hilight.lhtmltag t "<%" .indent.luascript
     indent .hilight.lhtmltag t "%>" .hilight.lhtml
-    
+
     indent .hilight.lhtml x "<\\?lua" t .indent.luascript
     indent .hilight.lhtml x "<%" t .indent.luascript
     indent .indent.luascript w "\\?>" -t 0

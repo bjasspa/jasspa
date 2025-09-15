@@ -107,7 +107,7 @@
       set-variable #l5 0
       set-variable #l4 0
       !while &not &equ &inc #l4 1 .org.month
-        set-variable #l5 &add #l5 &lget .org.dinm #l4 
+        set-variable #l5 &add #l5 &lget .org.dinm #l4
       !done
       ; set #l3 to the start weekday offset
       set-variable #l3 &mod #l5 7
@@ -152,11 +152,11 @@
   !endif
   ; are we using the .org.week or the .org.month?
   !if &not .org.week
-    ; calc the 1st day of the month in the year 
+    ; calc the 1st day of the month in the year
     set-variable #l5 0
     set-variable #l4 0
     !while &not &equ &inc #l4 1 .org.month
-      set-variable #l5 &add #l5 &lget .org.dinm #l4 
+      set-variable #l5 &add #l5 &lget .org.dinm #l4
     !done
     !if &and #l0 &gre .org.month 2
       set-variable #l5 &add #l5 1
@@ -186,7 +186,7 @@
     !if &les #l3 0
       set-variable #l3 &add #l3 7
     !endif
-    ; set #l6 to the same as #l3 except allowing for the user set week offset 
+    ; set #l6 to the same as #l3 except allowing for the user set week offset
     set-variable #l6 &sub #l3 &lef .org.set 1
     !if &les #l6 0
       set-variable #l6 &add #l6 7
@@ -212,7 +212,7 @@
   !endif
   ; calc the year day no for the first day of the current week - check and fix if week-no too big
   set-variable #l7 &add #l1 &mul &sub .org.week 1 7
-  set-variable #l1 &sub &add #l0 364 &sub 7 &mid .org.set 1 1 
+  set-variable #l1 &sub &add #l0 364 &sub 7 &mid .org.set 1 1
   !while &gre #l7 #l1
     set-variable .org.week &sub .org.week 1
     set-variable #l7 &sub #l7 7
@@ -222,7 +222,7 @@
     set-variable #l5 .org.day
     set-variable #l4 0
     !while &not &equ &inc #l4 1 .org.month
-      set-variable #l5 &add #l5 &lget .org.dinm #l4 
+      set-variable #l5 &add #l5 &lget .org.dinm #l4
     !done
     !if &and #l0 &gre .org.month 2
       set-variable #l5 &add #l5 1
@@ -234,9 +234,9 @@
   !if .org.day
     set-variable #l5 &sub #l5 .org.day
     ; calulate the day of the month the 1st day of the week is
-    set-variable #l7 &add 1 &sub #l7 #l5 
+    set-variable #l7 &add 1 &sub #l7 #l5
   !else
-    ; calc the current month and the 1st day of the month in the year 
+    ; calc the current month and the 1st day of the month in the year
     set-variable .org.month 0
     set-variable #l4 0
     !repeat
@@ -248,7 +248,7 @@
       !endif
     !until &les #l7 #l4
     ; calulate the day of the month the 1st day of the week is
-    set-variable #l7 &add 1 &sub #l7 #l5 
+    set-variable #l7 &add 1 &sub #l7 #l5
   !endif
   ; set #l4 to the number of days in the first day's month
   !if &gre #l7 0
@@ -346,9 +346,8 @@ define-macro organizer
   osd .osd.org-n 100 "It" &add .osd.orgm &reg "/org/set/initpage" "0"
   set-variable #l2 $time
   set-variable .org.year  &lef #l2 4
-  set-variable .org.month &trb &mid #l2 7 2 
+  set-variable .org.month &trb &mid #l2 7 2
   set-variable .org.day   &trb &mid #l2 9 2
   org-set-week &mid #l2 4 3 &mid #l2 11 1
   .osd.org osd
 !emacro
-

@@ -82,7 +82,7 @@ set-variable .fhook-julia.item-list-r3 "Strc \CCb\\1\CCA"
   hilight    .hilight.julia 1 "try"           .scheme.keyword
   hilight    .hilight.julia 1 "while"         .scheme.keyword
   ; types
-  
+
   hilight    .hilight.julia 1 "Array"         .scheme.type
   hilight    .hilight.julia 1 "Float16"       .scheme.type
   hilight    .hilight.julia 1 "Float32"       .scheme.type
@@ -119,9 +119,9 @@ set-variable .fhook-julia.item-list-r3 "Strc \CCb\\1\CCA"
   indent .hilight.julia    S "catch"          -t
   indent .hilight.julia    N "do"              t
   indent .hilight.julia    N "begin"           t
-  indent .hilight.julia    i "#"              
+  indent .hilight.julia    i "#"
   indent .hilight.julia    e "\"" "\"" "\\"
-  
+
 !endif
 
 ; setup file-* tools
@@ -130,10 +130,9 @@ add-next-line "*julia-exec*" "^in expression starting at:%f:%l"
 ;add-next-line "*julia-lint*" "^------+ %f"
 add-next-line "*julia-lint*" "^Line %l,.+\\. %f"
 
-set-variable .fhook-julia.coms "\bjulia\b" 
+set-variable .fhook-julia.coms "\bjulia\b"
 set-variable .fhook-julia.exec1   "\b%v[com]\b\b\b\b%\"%v[com]%\" \"%p%f\" %v[args|20|Additional command-line arguments|]\b"
 set-variable .fhook-julia.format1 "\brunic\brunic --version\b0\b\brunic -i %\"%f%\"\bRunic\b"
 set-variable .fhook-julia.lint1   "\bjulia\bjulia -e 'import ReLint;println(0)'\b0\b\bjulia -e 'import ReLint; ReLint.run_lint(\"%f\")'\bReLint\b"
 
 buffer-init-fhook "julia"
-

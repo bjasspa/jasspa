@@ -25,7 +25,7 @@ set-variable .ishell.noecho "1"
 !endif
 ; Try to find cygwin automatically. We need to identify where cygwin exists
 ; in the file system as information received from BASH is DOS drive
-; information that is converted into cygwin space. 
+; information that is converted into cygwin space.
 !if &not &exi %cygwin-path
   !if &seq "D" &stat "t" "c:/cygwin"
     set-variable %cygwin-path "c:/cygwin"

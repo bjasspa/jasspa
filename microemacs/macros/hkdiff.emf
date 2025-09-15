@@ -6,7 +6,7 @@
 ; copying information.
 ;
 ; Synopsis:    Hilighting for diff files
-; Authors:     Pedro Gomes, Jon Green, Steven Phillips 
+; Authors:     Pedro Gomes, Jon Green, Steven Phillips
 ;
 ; Notes:
 ;     This has been extrapolated from the tools.emf file that originally

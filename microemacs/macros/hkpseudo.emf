@@ -11,8 +11,8 @@
 ;     This file contains simple pseudo code style tokens
 ;     which are typically used for defining pseudo code
 ;     fragments. These tokens were removed from the
-;     documentation template following the newly adopted 
-;     convention of splicing and swapping hilighting 
+;     documentation template following the newly adopted
+;     convention of splicing and swapping hilighting
 ;     pioneered by Detlef.
 ;
 ; Notes:
@@ -108,7 +108,7 @@ set-variable .fhook-pseudo.setup &reg "/history/fhook/pseudo" "h"
   ; pseudo code comment
   hilight .hilight.pseudo 0x2  "//"                     .scheme.comment
   hilight .hilight.pseudo 20 "/\\*" "*/" ""             .scheme.comment
-  
+
   !if &band .hilight.flags 0x08
     ; hilight constants, e.g. numbers
     hilight .hilight.pseudo 1 "[[:digit:]]+"          .scheme.constant
@@ -120,4 +120,3 @@ set-variable .fhook-pseudo.setup &reg "/history/fhook/pseudo" "h"
     hilight .hilight.pseudo 1 "-[[:digit:]]+\\.[[:digit:]]+f" .scheme.constant
   !endif
 !endif
-

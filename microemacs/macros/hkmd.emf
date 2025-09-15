@@ -53,7 +53,7 @@ set-variable .fhook-md.item-list-r3 "H2 \CCb\\1\CCA"
   hilight .hilight.md 4 "\"" "\"" "\\"  .scheme.string
   ;hilight .hilight.md 0 "'[^']+'"       .scheme.quote
   hilight .hilight.md 0 "\\\\\\}[-[-]`*_{}<>()#+.!|]" .scheme.hide
-  
+
   hilight .hilight.md 0x890 "\\*\\}\\S" .hilight.mdI .scheme.hide
   hilight .hilight.md 0x890 "\\W\\{_\\}\\S" .hilight.mdI .scheme.hide
   hilight .hilight.md 0x890 "\\*\\*\\}\\S" .hilight.mdB .scheme.hide
@@ -65,7 +65,7 @@ set-variable .fhook-md.item-list-r3 "H2 \CCb\\1\CCA"
 
   hilight .hilight.md 0x890 "==\\}\\S"  .hilight.mdH .scheme.hide
   hilight .hilight.md 0 "===+"          $global-scheme
-  
+
   ; HTTP links etc.
   hilight .hilight.md 0 "file:[-@~_a-zA-Z#%=\\.:\\/0-9]+"    .scheme.link
   hilight .hilight.md 0 "http:[-@~_a-zA-Z#%?&=\\.:\\/0-9]+"  .scheme.link
@@ -73,7 +73,7 @@ set-variable .fhook-md.item-list-r3 "H2 \CCb\\1\CCA"
   hilight .hilight.md 0 "ftp:[-@~_a-zA-Z#%\\.:\\/0-9]+"      .scheme.link
   hilight .hilight.md 0 "ftps:[-@~_a-zA-Z#%\\.:\\/0-9]+"     .scheme.link
   hilight .hilight.md 0 "mailto:[-@~_a-zA-Z#%\\.:\\/0-9]+"   .scheme.link
-  hilight .hilight.md 0 "news:[-@~_a-zA-Z#%\\.:\\/0-9]+"     .scheme.link 
+  hilight .hilight.md 0 "news:[-@~_a-zA-Z#%\\.:\\/0-9]+"     .scheme.link
   ; bullet and item lists
   hilight .hilight.md 0x20 "\\-\\} "                   .scheme.keyword
   hilight .hilight.md 0x20 "\\d+\\.\\} "               .scheme.keyword
@@ -82,28 +82,28 @@ set-variable .fhook-md.item-list-r3 "H2 \CCb\\1\CCA"
   hilight .hilight.md 0x20 "\\[^\\d+]:"                .scheme.bold
   hilight .hilight.md 0x20 "- \\{\\[ ] "               .scheme.bold
   hilight .hilight.md 0x20 "- \\{\\[X] "               .scheme.bold
-  
+
   0 hilight .hilight.mdB 0                             .scheme.bold
   hilight   .hilight.mdB 0 "\\\\."                     .scheme.bold
   hilight   .hilight.mdB 0x80 "\\*\\*" .hilight.md     .scheme.hide
   hilight   .hilight.mdB 0x80 "__\\}\\W" .hilight.md   .scheme.hide
   hilight   .hilight.mdB 0x80 "\\*" .hilight.mdBI      .scheme.hide
   hilight   .hilight.mdB 0x80 "\\W\\{_\\}\\S" .hilight.mdBI .scheme.hide
-  
+
   0 hilight .hilight.mdI 0                             .scheme.italic
   hilight   .hilight.mdI 0 "\\\\."                     .scheme.italic
   hilight   .hilight.mdI 0x80 "\\*" .hilight.md        .scheme.hide
   hilight   .hilight.mdI 0x80 "_\\}\\W" .hilight.md    .scheme.hide
   hilight   .hilight.mdI 0x80 "\\*\\*" .hilight.mdBI   .scheme.hide
   hilight   .hilight.mdI 0x80 "\\W\\{__\\}\\S" .hilight.mdBI .scheme.hide
-  
+
   0 hilight .hilight.mdBI 0                            .scheme.bold-italic
   hilight   .hilight.mdBI 0 "\\\\."                    .scheme.bold-italic
   hilight   .hilight.mdBI 0x80 "\\*\\*" .hilight.mdI   .scheme.hide
   hilight   .hilight.mdBI 0x80 "__\\}\\W" .hilight.mdI .scheme.hide
   hilight   .hilight.mdBI 0x80 "\\*" .hilight.mdB      .scheme.hide
   hilight   .hilight.mdBI 0x80 "_\\}\\W" .hilight.mdB  .scheme.hide
-  
+
   0 hilight .hilight.mdH 0                             .scheme.hlblue
   hilight   .hilight.mdH 0 "\\\\."                     .scheme.bold
   hilight   .hilight.mdH 0x80 "==" .hilight.md         .scheme.hide
@@ -112,7 +112,7 @@ set-variable .fhook-md.item-list-r3 "H2 \CCb\\1\CCA"
   hilight   .hilight.mdA 0 "\\\\."                     .scheme.link
   hilight   .hilight.mdA 0x80 "](" .hilight.mdU        .scheme.hide
   hilight   .hilight.mdA 0x80 "]" .hilight.md          .scheme.error
-  
+
   0 hilight .hilight.mdL 0                             .scheme.link
   hilight   .hilight.mdL 0 "\\\\."                     .scheme.link
   hilight   .hilight.mdL 0x80 "](" .hilight.mdU        .scheme.hide
@@ -126,14 +126,14 @@ set-variable .fhook-md.item-list-r3 "H2 \CCb\\1\CCA"
   hilight .hilight.md 1 "`[^`]+`"     .scheme.code
   hilight .hilight.md 0x220 "```"
   hilight .hilight.md 0x0a0 "```.*"   .hilight.mdC .scheme.hide
-  
+
   0 hilight .hilight.mdC 0            .scheme.code
   hilight   .hilight.mdC 0x0a0 "```"  .hilight.md .scheme.hide
-  
+
   ; Maths formulae blocks
   hilight .hilight.md 4 "\\\\(" "\\\\)" "\\"    .scheme.quote
   hilight .hilight.md 4 "\\\\\\[" "\\\\]" "\\"  .scheme.quote
-  
+
   ; Allow inserts into the markdown mode. You may add to the inserts in your mymd.emf file
   0 define-macro md-add-file-support
     set-variable #l0 @1
@@ -144,7 +144,7 @@ set-variable .fhook-md.item-list-r3 "H2 \CCb\\1\CCA"
       ml-write &cat "executed " #l0
     !endif
     ; If the hilighting mode is loaded then modify it, else leave to the default code block hilighter
-    !if &sin "h" &ind &spr ".fhook-%s.setup" #l0 &band .hilight.flags 0x02 
+    !if &sin "h" &ind &spr ".fhook-%s.setup" #l0 &band .hilight.flags 0x02
       hilight .hilight.md 0x0a0 &spr "```{%s}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
       hilight .hilight.md 0x0a0 &spr "```{\\.%s}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
       hilight .hilight.md 0x0a0 &spr "```{%s[, ][^}]+}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
@@ -175,4 +175,4 @@ set-variable .fhook-md.item-list-r3 "H2 \CCb\\1\CCA"
 
 !iif &not &exi md-export  execute-file "mdtools"
 
-buffer-init-fhook "md" 
+buffer-init-fhook "md"

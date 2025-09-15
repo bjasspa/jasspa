@@ -12,7 +12,7 @@
 ;
 ;    The following vars must be set (.arg0...argn via option -f):
 ;        .about.argn   - Numeric argument to give the command
-;        .about.arg0   - Must be set to find, grep or replace-string-in-files           
+;        .about.arg0   - Must be set to find, grep or replace-string-in-files
 ;        .about.arg1   - first argument for the command
 ;        .about.arg2   - second argument for the command (if required)
 ;        .about.arg3   - second argument for the command (if required etc)
@@ -36,10 +36,10 @@
   -2 ml-write &spr "Error: Failed to find ME registry for \"%s\"" $user-name
   0 exit-emacs
 !endif
-  
+
 !force read-registry "/history" $user-name "c"
 set-variable $kept-versions &reg &spr "/history/%s/kept-vers" $platform "0"
-; This check allows the ME '-v $file-ignore=...' command-line option to be used to define required value   
+; This check allows the ME '-v $file-ignore=...' command-line option to be used to define required value
 !if &seq $file-ignore ""
   set-variable $file-ignore &reg &spr "/history/%s/file-ignore" $platform ""
 !endif

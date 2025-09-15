@@ -31,7 +31,7 @@ set-variable .fhook-erf.collapse-mnext "-1"
   set-variable .hilight.erf &pinc .hilight.next 1
 !endif
 
-!if &and &sin "h" .fhook-erf.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-erf.setup &band .hilight.flags 0x02
   0 hilight  .hilight.erf 0              $global-scheme
   hilight .hilight.erf 4 "\"" "\"" "\\"  .scheme.keyword
   hilight .hilight.erf 0     "="         .scheme.operator
@@ -43,8 +43,7 @@ set-variable .fhook-erf.collapse-mnext "-1"
   indent .hilight.erf n "{"  t
   indent .hilight.erf o "}" -t
   indent .hilight.erf e "\"" "\"" "\\"
-  indent .hilight.erf i ";"  
+  indent .hilight.erf i ";"
 !endif
 
 buffer-init-fhook "erf"
-

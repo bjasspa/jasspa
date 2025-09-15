@@ -44,7 +44,7 @@ set-variable .fhook-vb.collapse-mnext "-1"
 !if &not &exist .hilight.vb
   set-variable .hilight.vb &pinc .hilight.next 1
 !endif
-!if &and &sin "h" .fhook-vb.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-vb.setup &band .hilight.flags 0x02
   ; Comments, strings & goto labels
   0 hilight .hilight.vb 3 100          $global-scheme
   hilight .hilight.vb 4 "\"" "\"" ""   .scheme.string
@@ -165,7 +165,7 @@ set-variable .fhook-vb.collapse-mnext "-1"
   indent .hilight.vb N "Select\\s+Case" 2t
   indent .hilight.vb O "ElseIf" -t
   indent .hilight.vb O "End" -t
-  ; the end in 'response.end' (common in asp) throws thing out  
+  ; the end in 'response.end' (common in asp) throws thing out
   indent .hilight.vb o "\\.End\\s" 0
   indent .hilight.vb N "Type" t
   indent .hilight.vb n "\\.Type\\s" 0

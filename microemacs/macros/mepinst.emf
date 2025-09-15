@@ -5,7 +5,7 @@
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
 ;
-; Synopsis:    MicroEmacs package installer 
+; Synopsis:    MicroEmacs package installer
 ; Authors:     Steven Phillips
 ;
 0 define-macro me-pinstall-comp
@@ -15,7 +15,7 @@
     set-variable #l0 &spr "%s%s%s" &set #l9 &con &band $system 0x200 ";" ":" $search-path #l9
     set-variable #l4 0
     !while &len &set #l5 &lget #l0 &inc #l4 1
-      !iif &not &seq &rig #l5 -1 "/"  set-variable #l5 &cat #l5 "/" 
+      !iif &not &seq &rig #l5 -1 "/"  set-variable #l5 &cat #l5 "/"
       !iif &xseq #l5 &spr ".*/%s/" #l3  !break
     !done
     !if &len #l5
@@ -33,8 +33,8 @@
       ; Useable path of right type not found, but as $MEPATH not being used we can create one at the same level and it should be found next time
       ; Exception is a bin component, such as openssl, which does not need to be on the search-path
       !while &dec #l4 1
-        !iif &not &seq &rig &set #l5 &lget #l0 #l4 -1 "/"  set-variable #l5 &cat #l5 "/" 
-        set-variable #l5 &stat a &spr "file:%s../%s/" #l5 #l3 
+        !iif &not &seq &rig &set #l5 &lget #l0 #l4 -1 "/"  set-variable #l5 &cat #l5 "/"
+        set-variable #l5 &stat a &spr "file:%s../%s/" #l5 #l3
         !force 0xf7 copy-file &spr "tfs://%s?%s" #l1 #l2 #l5
         !if &not $status
         !elif &not &set #l7 &add &lget $result 2 &lget $result 4

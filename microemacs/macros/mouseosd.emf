@@ -13,8 +13,8 @@
 0 define-macro-file osdmisc osd-line-scheme
 0 define-macro store-frame-size
   2 reread-settings
-  set-registry &spr "/history/%s/frame-width" %platform $frame-width 
-  set-registry &spr "/history/%s/frame-depth" %platform $frame-depth 
+  set-registry &spr "/history/%s/frame-width" %platform $frame-width
+  set-registry &spr "/history/%s/frame-depth" %platform $frame-depth
   save-registry "/history" ""
 !emacro
 ; MENU #23 - MODE LINE pop-up menu
@@ -26,7 +26,7 @@ osd 23 1  "M" "Buffer \HModes"    24
 osd 23 2  ""  "\HSave Buffer"      f save-buffer    ; Save the buffer
 osd 23 3  ""  "\HClose Buffer"     f osd-close      ; Close the buffer
 osd 23 4  "M" "\HBuffer "         15 osd-1-buffer   ; Set up the buffers
-osd 23 5  "M" "\HQuick Open"      11                ; Open a file. 
+osd 23 5  "M" "\HQuick Open"      11                ; Open a file.
 osd 23 6  "M" "S\Hcroll Bars"     25
 osd 23 7  ""  "Store Frame Size"  f store-frame-size
 ;
@@ -187,4 +187,3 @@ define-macro mouse-osd
   goto-position "\x82"
   0 osd
 !emacro
-

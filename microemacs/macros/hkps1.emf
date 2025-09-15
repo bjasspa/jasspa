@@ -35,7 +35,7 @@ set-variable .fhook-ps1.item-list-r2 "Enum \CCb\\1\CCA"
 set-variable .fhook-ps1.item-list-s3 "^class +\\(\\w+\\)[ \t]*{"
 set-variable .fhook-ps1.item-list-r3 "Clss \CCb\\1\CCA"
 
-!if &and &sin "h" .fhook-ps1.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-ps1.setup &band .hilight.flags 0x02
   !iif &not &exist .hilight.ps1  set-variable .hilight.ps1 &pinc .hilight.next 1
   0 hilight .hilight.ps1 3 50
   hilight .hilight.ps1 2 "#"            .scheme.comment
@@ -130,7 +130,7 @@ set-variable .fhook-ps1.item-list-r3 "Clss \CCb\\1\CCA"
   indent .hilight.ps1 b "\\[" "]"
   indent .hilight.ps1 b "(" ")"
   indent .hilight.ps1 b "/\\*" "\\*/"
-  indent .hilight.ps1 i "//"  
+  indent .hilight.ps1 i "//"
 !endif
 
 buffer-init-fhook "ps1"

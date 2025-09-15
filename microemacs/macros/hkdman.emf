@@ -66,4 +66,3 @@ ml-write "[Dman file hook loaded]"
 
 ; load in user extensions if found
 !force execute-file "mydman"
-

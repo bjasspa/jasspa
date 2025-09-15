@@ -28,13 +28,13 @@ set-variable .fhook-php.indent-width  2
 
 ; load in php script & the html core
 !iif &not &exist fhook-phps  execute-file "hkphps"
-execute-file "htmlcore" "php" 
+execute-file "htmlcore" "php"
 
 ; add php functions to item-list
 set-variable .fhook-php.item-list-s5 "^[ \t]*function[ \t]+\\(\\w[1-9A-Za-z_']*\\)"
 set-variable .fhook-php.item-list-r5 "Func \CCb\\1\CCA"
 
-!if &and &sin "h" .fhook-php.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-php.setup &band .hilight.flags 0x02
   hilight .hilight.phptag 4 "=\\{[^ \t\n<>]*<\\?php" "\\?>[^ \t\n>]*" ""  .scheme.string
   hilight .hilight.phptag 4 "=\\{\"[^\"\n<]*<\\?php" "\\?>[^\"]*\"" ""  .scheme.string
   ; use hilight scheme to handle script inside a script token
@@ -44,7 +44,7 @@ set-variable .fhook-php.item-list-r5 "Func \CCb\\1\CCA"
   -1 hilight .hilight.php 0x80 "<script\\s+language=\"?javascript[^>]*>"
   hilight .hilight.php 0x80 "<script\\s+language\{=javascript" .hilight.phpJS .scheme.prepro
   hilight .hilight.php 0x80 "<script\\s+language\{=\"javascript\"" .hilight.phpJS .scheme.prepro
-  
+
   0 hilight .hilight.phpJS 1                          $global-scheme
   hilight .hilight.phpJS 4 "=\\{\"" "\"" "\\"         .scheme.string
   hilight .hilight.phpJS 4 "=\\{" "\\}[ \t\n>]" ""    .scheme.string
@@ -53,7 +53,7 @@ set-variable .fhook-php.item-list-r5 "Func \CCb\\1\CCA"
   hilight .hilight.phpJS 1 "type"                     .scheme.operator
   hilight .hilight.phpJS 1 "src"                      .scheme.operator
   hilight .hilight.phpJS 0x80 ">" .hilight.javascript .scheme.keyword
-  
+
   ; now setup php hilighting to use phpscript hilighting
   !if &exist .hilight.phpscript
     hilight .hilight.php       0x80 "<\\?"     .hilight.phpscript .scheme.prepro
@@ -81,7 +81,7 @@ set-variable .fhook-php.item-list-r5 "Func \CCb\\1\CCA"
     indent .hilight.phptag e "'" "'" "\\"
     indent .hilight.phptag e "`" "`" "\\"
     indent .hilight.phptag e "\"" "\"" "\\"
-    
+
     indent .hilight.php x "^<\\?"    0 .indent.phpscript
     indent .hilight.php x ".<\\?"    t .indent.phpscript
     indent .hilight.phpscript w "\\?>" -t 0

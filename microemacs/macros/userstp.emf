@@ -156,7 +156,7 @@ set-variable %user-misc-cmd  "|alias-path-setup|cc-setup|cvs-setup|file-tool-set
     set-variable #l2 &llen &set #l1 &spr " %s " #l1
     !repeat
       ; ignore "" or "-" and must use &find to locate the company.emf as it could be anywhere
-      !if &sin &set #l0 &lget #l1 #l2 "-" 
+      !if &sin &set #l0 &lget #l1 #l2 "-"
       !elif &seq &find #l0 ".emf" "ERROR"
         !force 0 find-file &spr "file:%s%s.emf" $user-path #l0
         !if &not $status
@@ -219,7 +219,7 @@ set-variable %user-misc-cmd  "|alias-path-setup|cc-setup|cvs-setup|file-tool-set
 -1 osd .osd.user-miscc
 osd .osd.user-miscc 0 "sS" .scheme.osd-child 52 12 -1 -1
 set-variable #l3 0
-!while &not &seq &set #l0 &lget %user-misc-name &inc #l3 1 "" 
+!while &not &seq &set #l0 &lget %user-misc-name &inc #l3 1 ""
   osd .osd.user-miscc #l3 "Rx" #l0 #l3 user-setup-misc
 !done
 
@@ -386,7 +386,7 @@ set-variable .user-set-mouse.A ""
 
 ; The platform menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 !if &band $system 0x01
-!elif &seq $platform "windows" 
+!elif &seq $platform "windows"
   set-variable %clpbd-names "|No interaction|Interact with clipboard|"
   set-variable %clpbd-val "|8388608|0|"
   0 define-macro user-set-winfont
@@ -411,7 +411,7 @@ set-variable .user-set-mouse.A ""
       osd-dialog "User Setup Error" &spr "  Failed to run xfontsel, system returned error (%d):  \n\n    %s  " #l1 #l0 "  \HOK  "
     !elif &not &xseq #l0 "\\([\x01-\xff]*\n\\)?\\(.*\\S.*\\)"
     !elif &not &seq &lef &set #l0 &trb @s2 8 "Warning:"
-      !force 3 change-font &set #l0 &trb @s2 
+      !force 3 change-font &set #l0 &trb @s2
       !if &not $status
         osd-dialog "User Setup Error" &spr "  Failed to load selected font: %s " #l0 "  \HOK  "
       !else
@@ -706,7 +706,7 @@ set-variable $mode-names ".*"
 ; The General menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 0 define-macro user-setup-tab-indent-set
   set-variable #l0 &reg "/history/system" $system
-  set-variable #l0 &band #l0 &bnot 0x201000 
+  set-variable #l0 &band #l0 &bnot 0x201000
   set-registry "/history/system" &bor #l0 &lget "|0x1000|0x200000|0|" @#
 !emacro
 
@@ -718,7 +718,7 @@ set-variable $mode-names ".*"
     osd .osd.tmp 2 "" "\HFirst Column Only" 2 user-setup-tab-indent-set
     osd .osd.tmp 3 "" "\HNever Indent"      3 user-setup-tab-indent-set
   !else
-    set-variable #l0 &reg "/history/system" $system 
+    set-variable #l0 &reg "/history/system" $system
     !if &band #l0 0x1000
       set-variable $result "Always Indent"
     !elif &band #l0 0x200000

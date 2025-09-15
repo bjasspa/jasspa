@@ -46,13 +46,13 @@ set-variable .fhook-shell.item-list-r1 "Func \CCb\\1\CCA"
 set-variable .fhook-shell.item-list-s2 "^\\([-a-zA-Z0-9_]+\\)\\s*()\\s*{"
 set-variable .fhook-shell.item-list-r2 "Func \CCb\\1\CCA"
 
-!if &and &sin "h" .fhook-shell.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-shell.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.shell
     set-variable .hilight.shell  &pinc .hilight.next 1
     set-variable .hilight.shellS &pinc .hilight.next 1
     set-variable .hilight.shellV &pinc .hilight.next 1
   !endif
-  
+
   ; Make file highlighting
   0 hilight .hilight.shell 2 50                  $global-scheme
   ; Strings and things
@@ -62,7 +62,7 @@ set-variable .fhook-shell.item-list-r2 "Func \CCb\\1\CCA"
   ; Comments. Note "#!" is the very first line
   hilight .hilight.shell 2     "\\s\\{#"         .scheme.comment
   hilight .hilight.shell 2     "^#!"             .scheme.header
-  ; Strings are not necessarily escaped in quotes, pick up on an escaped character. 
+  ; Strings are not necessarily escaped in quotes, pick up on an escaped character.
   hilight .hilight.shell 0     "\\\\."           .scheme.string
   ; Variables.
   hilight .hilight.shell 4     "\\$" "\\}\\W" "" .scheme.variable
@@ -73,7 +73,7 @@ set-variable .fhook-shell.item-list-r2 "Func \CCb\\1\CCA"
   hilight .hilight.shell 0     "\\$\\$"          .scheme.variable
   hilight .hilight.shell 0     "\\$!"            .scheme.variable
   hilight .hilight.shell 0     "\\$\\*"          .scheme.variable
-  ; Separators 
+  ; Separators
   hilight .hilight.shell 1     "&"               .scheme.operator
   hilight .hilight.shell 1     ">"               .scheme.operator
   hilight .hilight.shell 1     "<"               .scheme.operator
@@ -184,7 +184,7 @@ set-variable .fhook-shell.item-list-r2 "Func \CCb\\1\CCA"
 !if &sin "d" .fhook-shell.setup
   0 indent .hilight.shell 1 10
   indent .hilight.shell    n "function"        t
-  indent .hilight.shell    n "{\s*$"           t  
+  indent .hilight.shell    n "{\s*$"           t
   indent .hilight.shell    o "^\\s*}"         -t
   indent .hilight.shell    n "if"              t
   indent .hilight.shell    s "then"           -t
@@ -198,9 +198,8 @@ set-variable .fhook-shell.item-list-r2 "Func \CCb\\1\CCA"
   indent .hilight.shell    n "while"           t
   indent .hilight.shell    s "do"             -t
   indent .hilight.shell    o "done"           -t
-  indent .hilight.shell    i "#"              
+  indent .hilight.shell    i "#"
   indent .hilight.shell    e "\"" "\"" "\\"
 !endif
 
 buffer-init-fhook "shell"
-

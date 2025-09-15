@@ -9,9 +9,9 @@
 ; Authors:     Steven Phillips
 ;
 ; Key binding definitions
-set-variable .org.bind-k2 "|C-left|C-right|C-up|C-down|" 
-set-variable .org.bind-c2 "|-1 org-day-inc-day|1 org-day-inc-day|-1 org-day-inc-year|1 org-day-inc-year|" 
-set-variable .org.bind-r2 "|1|1|1|1|" 
+set-variable .org.bind-k2 "|C-left|C-right|C-up|C-down|"
+set-variable .org.bind-c2 "|-1 org-day-inc-day|1 org-day-inc-day|-1 org-day-inc-year|1 org-day-inc-year|"
+set-variable .org.bind-r2 "|1|1|1|1|"
 
 0 define-macro org-day-init
   set-variable .org.page 2
@@ -29,7 +29,7 @@ set-variable .org.bind-r2 "|1|1|1|1|"
   ; set teh top line
   osd .osd.orgd 50 "fh" &spr "      %s " &lget .spell.days &add 1 &mid .org.info 4 1
   osd .osd.orgd 70 "Mdtmxsfh" &lget .spell.months .org.month .osd.org-m
-!emacro     
+!emacro
 
 0 define-macro org-day-change-year
   !if &les @# 0
@@ -53,7 +53,7 @@ set-variable .org.bind-r2 "|1|1|1|1|"
 
 0 define-macro org-day-change-month
   set-variable .org.month @#
-  !if &gre .org.day &lget .org.dinm .org.month 
+  !if &gre .org.day &lget .org.dinm .org.month
     !if &equ .org.month 2
       org-leap-year
       set-variable .org.day &add 28 #l9
@@ -67,7 +67,7 @@ set-variable .org.bind-r2 "|1|1|1|1|"
 0 define-macro org-day-change-day
   !if &les @# 0
     set-variable .org.day @ml2 "" .org.day
-    !if &gre .org.day &lget .org.dinm .org.month 
+    !if &gre .org.day &lget .org.dinm .org.month
       !if &equ .org.month 2
         org-leap-year
         set-variable .org.day &add 28 #l9
@@ -101,7 +101,7 @@ set-variable .org.bind-r2 "|1|1|1|1|"
     !else
       set-variable .org.day &lget .org.dinm .org.month
     !endif
-  !elif &gre .org.day &lget .org.dinm .org.month 
+  !elif &gre .org.day &lget .org.dinm .org.month
     !if &equ .org.month 2
       org-leap-year
       !if &gre .org.day &add 28 #l9
@@ -153,12 +153,11 @@ osd .osd.orgd 75 "fh" " "
 osd .osd.orgd 80 "Etxfh" "#####" f org-day-change-year
 osd .osd.orgd 100 "BtxrfRhT" " -\H> "  1 org-day-inc-day
 osd .osd.orgd 110 "rf" "    "
-osd .osd.orgd 120 "" 
-osd .osd.orgd 190 "Sf" "    \HNotes" 200 
+osd .osd.orgd 120 ""
+osd .osd.orgd 190 "Sf" "    \HNotes" 200
 osd .osd.orgd 200 "EtNcfHxz" .scheme.osd-entry 56 27 "" f org-day-set-notes
-osd .osd.orgd 600 "" 
-osd .osd.orgd 605 "" 
+osd .osd.orgd 600 ""
+osd .osd.orgd 605 ""
 osd .osd.orgd 610 "BtxhcfH" .scheme.osd-ebtt " \HSave "    f organizer-save
 osd .osd.orgd 620 "BtxhcfH" .scheme.osd-ebtt " Day to \HBuffer "  f org-day-buffer
 osd .osd.orgd 630 "BtcfH"   .scheme.osd-ebtt " \HClose "   1 void
-

@@ -38,9 +38,9 @@ set-variable .fhook-octave.item-list-r3 "Func \CCb\\1\CCA"
   !endif
   0 hilight .hilight.octave 0                     $global-scheme
   hilight   .hilight.octave 2 "%"                 .scheme.comment
-  hilight   .hilight.octave 2 "#"                 .scheme.comment  
-  hilight   .hilight.octave 4 "#{" "#}" ""        .scheme.comment  
-  hilight   .hilight.octave 4 "%{" "%}" ""        .scheme.comment    
+  hilight   .hilight.octave 2 "#"                 .scheme.comment
+  hilight   .hilight.octave 4 "#{" "#}" ""        .scheme.comment
+  hilight   .hilight.octave 4 "%{" "%}" ""        .scheme.comment
   hilight   .hilight.octave 4 "\"" "\"" "\\"      .scheme.string
   ; Quote
   hilight   .hilight.octave 4 "'" "'" "\\"        .scheme.string
@@ -93,13 +93,13 @@ set-variable .fhook-octave.item-list-r3 "Func \CCb\\1\CCA"
   hilight .hilight.octave 1 "unwind_protect"   .scheme.keyword
   hilight .hilight.octave 1 "unwind_protect_cleanup"  .scheme.keyword
   hilight .hilight.octave 1 "while"            .scheme.keyword
-  
+
   ; operator
-  hilight .hilight.octave 1 "all"       .scheme.operator      
-  hilight .hilight.octave 1 "any"       .scheme.operator      
-  hilight .hilight.octave 1 "and"       .scheme.operator  
-  hilight .hilight.octave 1 "not"       .scheme.operator    
-  hilight .hilight.octave 1 "or"        .scheme.operator    
+  hilight .hilight.octave 1 "all"       .scheme.operator
+  hilight .hilight.octave 1 "any"       .scheme.operator
+  hilight .hilight.octave 1 "and"       .scheme.operator
+  hilight .hilight.octave 1 "not"       .scheme.operator
+  hilight .hilight.octave 1 "or"        .scheme.operator
   hilight .hilight.octave 1 "eq"        .scheme.operator
   hilight .hilight.octave 1 "ge"        .scheme.operator
   hilight .hilight.octave 1 "gt"        .scheme.operator
@@ -108,16 +108,16 @@ set-variable .fhook-octave.item-list-r3 "Func \CCb\\1\CCA"
   hilight .hilight.octave 1 "ne"        .scheme.operator
   hilight .hilight.octave 1 "isequal"   .scheme.operator
   hilight .hilight.octave 1 "isequaln"  .scheme.operator
-  hilight .hilight.octave 1 "xor"       .scheme.operator  
-  
+  hilight .hilight.octave 1 "xor"       .scheme.operator
+
   ; types
   hilight    .hilight.octave 1 "logical"       .scheme.type
   hilight    .hilight.octave 1 "cell array"    .scheme.type
   hilight    .hilight.octave 1 "char"          .scheme.type
-  hilight    .hilight.octave 1 "False"         .scheme.type  
-  hilight    .hilight.octave 1 "false"         .scheme.type    
-  hilight    .hilight.octave 1 "True"          .scheme.type    
-  hilight    .hilight.octave 1 "true"          .scheme.type      
+  hilight    .hilight.octave 1 "False"         .scheme.type
+  hilight    .hilight.octave 1 "false"         .scheme.type
+  hilight    .hilight.octave 1 "True"          .scheme.type
+  hilight    .hilight.octave 1 "true"          .scheme.type
   hilight    .hilight.octave 1 "char"          .scheme.type
   hilight    .hilight.octave 1 "int8"          .scheme.type
   hilight    .hilight.octave 1 "int16"         .scheme.type

@@ -423,7 +423,7 @@ set-variable .spell.check-wordo ""
   set-variable #l0 @wc
   set-variable @cl undo
   undo
-  ; must call spell here to refocus the location to here 
+  ; must call spell here to refocus the location to here
   0 spell
   !if &seq #l0 "A"
     ; an auto fix, dec the counter and loop back
@@ -575,7 +575,7 @@ set-variable .spell.check-wordo ""
     !if &exi &set #l0 &cat &rig $buffer-fhook 6 "-spell-word"
       ; NOTE: buffer word adjusters should apply to these rules
       ; If no adjustment can be made, abort leave region and cursor as found
-      ; If the word can be skipped completely (or region) move the cursor to 
+      ; If the word can be skipped completely (or region) move the cursor to
       ; the end, set .spell.check-word = "" and return. NOTE that if the argument
       ; passed is 1, then its a spell-buffer call and skipping regions is okay,
       ; otherwise it is a spell-word type call, the cursor must be left where it is.
@@ -626,7 +626,7 @@ set-variable .spell.check-wordo ""
       !endif
     !elif &seq &lef $result 1 "A"
       ; Auto replace
-      3 spell-check-replace          
+      3 spell-check-replace
     !elif &seq &lef $result 1 "E"
       ; Erroneous word
       set-variable .spell.check-wordo .spell.check-word
@@ -820,18 +820,18 @@ define-macro spell-word
         !if $status
           !if &seq .spell.check-word ""
             ml-write "Not a word"
-            set-variable $window-col #l0 
+            set-variable $window-col #l0
             !return
           !endif
-          ; re-evaluate the spelling 
+          ; re-evaluate the spelling
           !force 1 spell .spell.check-word
         !endif
       !endif
     !else
-      !nma 1 spell 
+      !nma 1 spell
     !endif
   !else
-    !nma 1 spell 
+    !nma 1 spell
   !endif
   !if &seq &lef &set #l1 $result 1 "O"
     !if @#
@@ -844,10 +844,10 @@ define-macro spell-word
       !iif #l2  !force auto-spell-reset-word &rig #l1 1
     !endif
     ml-write &cat &rig $result 1 " ok"
-    set-variable $window-col #l0 
+    set-variable $window-col #l0
   !elif &seq &lef $result 1 "N"
     ml-write &cat &rig $result 1 " not a word"
-    set-variable $window-col #l0 
+    set-variable $window-col #l0
   !else
     set-variable .spell.undo -1
     set-variable .spell.check-word &rig $result 1

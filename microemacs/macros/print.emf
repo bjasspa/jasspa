@@ -12,7 +12,7 @@
   ;500 ml-write "[Setting up the printer]"
   ; get the current print scheme
   set-variable #l9 &reg "/print/scheme" ""
-  
+
   ; get the user configuration
   !if &seq &reg "/print-history" "" ""
     ; not yet loaded, search for a myprint.erf first
@@ -28,7 +28,7 @@
       !endif
     !endif
   !endif
-  
+
   ; load the driver - check this isn't the current one first
   set-variable #l0 &reg &spr "/print-history/%s/driver" $platform "printd"
   !if &not &seq &reg "/print" "" #l0
@@ -40,7 +40,7 @@
       !return
     !endif
   !endif
-  
+
   ; overlay the driver layout over /print
   set-variable #l1 &spr "%s/%s" &reg &spr "/print-history/%s/page-size" $platform "" &reg &spr "/print-history/%s/char-size" $platform ""
   !if &not &seq &reg "/print/layout" "" #l1
@@ -52,23 +52,21 @@
     !endif
     set-registry "/print/layout" #l1
   !endif
-  
+
   ;500 ml-write &spr "[Overlaying print-history]"
-  set-registry "/print/header" &reg "/print-history/header" "" 
-  set-registry "/print/footer" &reg "/print-history/footer" "" 
+  set-registry "/print/header" &reg "/print-history/header" ""
+  set-registry "/print/footer" &reg "/print-history/footer" ""
   copy-registry &cat "/print-history/" $platform "/print"
   ; remove the file flag so /print is not written
   mark-registry "/print" "F"
-  
+
   ; load the print scheme
   !if &not &seq &set #l1 &reg "/print/scheme" "printd" #l9
     ;500 ml-write &spr "[Loading print scheme %s]" #l1
     execute-file #l1
   !endif
-  
+
   ; set /print and /print/setup to reflect this config
   set-registry "/print" #l0
   set-registry "/print/setup" 1
 !endif
-
-

@@ -16,4 +16,3 @@ add-next-line "*compile*" "\"%f\", line %l:"
 add-next-line "*compile*" "^cfe: Error: \\.\\./%f, line %l"
 add-next-line "*compile*" "^cfe: Warning [0-9]*: %f, line %l"
 add-next-line "*compile*" "^cfe: Error: %f, line %l"
-

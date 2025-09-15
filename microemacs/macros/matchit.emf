@@ -27,7 +27,7 @@
     !iif &not &seq &mid :mi-tiles &add @# 18 1 "\xfe"  set-variable #g1 &add #g1 0x80
     !iif &not &seq &mid :mi-tiles &add @# 19 1 "\xfe"  set-variable #g1 &add #g1 0x100
   !endif
-!emacro    
+!emacro
 
 0 define-macro mi-get-corner-char
   !if &band #g2 0x01
@@ -66,11 +66,11 @@
   ; a tile position.
   set-variable #g0 &mid :mi-tiles @# 1
   @# mi-get-bit-square
-  
+
   ; Get the column and row. #g9 = col X; #g8 = row Y
   set-variable #g9 &add &mul 5 &mod @# 18 :mi-x0
   set-variable #g8 &add &mul 5 &div @# 18 :mi-y0
-  
+
   !if &band #g1 0x10
     set-variable #g5 .scheme.mi2
     set-variable #g7 $box-chars
@@ -110,7 +110,7 @@
     set-variable #g8 &sub #g8 4
   !endif
   set-variable #g9 &add #g9 1
-  
+
   !if &band #g1 0x10
     set-variable #g0 &sub &atoi #g0 1
     set-variable #g0 &mul #g0 4       ; Get tile index
@@ -204,7 +204,7 @@
     set-variable #l8 &cat #l8 "\xfe\xfe"
   !done
   set-variable #l8 &spr "%s%17s" #l8 "\xfe"
-  
+
   set-variable :mi-sel-tile-id 254   ; No tile selected
   set-variable :mi-tiles #l8         ; Allocate the tiles.
   set-variable :mi-again #l8         ; Remember the tiles.
@@ -365,11 +365,11 @@
   35 screen-poke 0 &add :mi-x0 70 .scheme.mi1 &spr "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
   35 screen-poke 1 &add :mi-x0 70 .scheme.mi1 &spr "%sQuit%s" &lef $box-chars 1 &lef $box-chars 1
   35 screen-poke 2 &add :mi-x0 70 .scheme.mi1 &spr "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-  
+
   35 screen-poke 0 &add :mi-x0 80 .scheme.mi1 &spr "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
   35 screen-poke 1 &add :mi-x0 80 .scheme.mi1 &spr "%sBoss%s" &lef $box-chars 1 &lef $box-chars 1
   35 screen-poke 2 &add :mi-x0 80 .scheme.mi1 &spr "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-  
+
   mi-draw-score
 !emacro
 ;
@@ -427,7 +427,7 @@
 !emacro
 
 ; Test if the path from the source position in #g7 is clear
-; The path taken is #g3 moves vertically then #g2 horizontally 
+; The path taken is #g3 moves vertically then #g2 horizontally
 0 define-macro mi-path-clear-vh
   set-variable #l8 #g7
   ; first arg is vertical move
@@ -457,7 +457,7 @@
 !emacro
 
 ; Test if the path from the source position in #g7 is clear
-; The path taken is #g2 moves horizontally then #g3 vertically 
+; The path taken is #g2 moves horizontally then #g3 vertically
 0 define-macro mi-path-clear-hv
   set-variable #l8 #g7
   ; first arg is horizontal move
@@ -488,7 +488,7 @@
 
 ; draw a path indicator tile where:
 ;   #g8 is the column, #g9 is the row and
-;   if #g0 is true then it draws it else it removes it  
+;   if #g0 is true then it draws it else it removes it
 0 define-macro mi-draw-path-tile
   !if #g0
     35 screen-poke      #g8   #g9 .scheme.mi2 " ## "
@@ -506,7 +506,7 @@
 !emacro
 ; draw a horizontal path of size #g1 where
 ;   #g8 is the column, #g9 is the start row and
-;   if #g0 is true then it draws it else it removes it  
+;   if #g0 is true then it draws it else it removes it
 0 define-macro mi-draw-path-h
   !if &gre #g1 0
     mi-draw-path-tile
@@ -520,7 +520,7 @@
 !emacro
 ; draw a vertical path of size #g1 where
 ;   #g8 is the start column, #g9 is the row and
-;   if #g0 is true then it draws it else it removes it  
+;   if #g0 is true then it draws it else it removes it
 0 define-macro mi-draw-path-v
   !if &gre #g1 0
     mi-draw-path-tile
@@ -540,7 +540,7 @@
     ; Get the column and row. #g9 = col X; #g8 = row Y
     set-variable #g9 &add 1 &add &mul 5 &mod #g4 18 :mi-x0   ; The row.
     set-variable #g8 &add 1 &add &mul 5 &div #g4 18 :mi-y0   ; The column
-    
+
     set-variable #g0 @#
     set-variable #g1 &mid #g6 4 3
     !if #g1
@@ -702,7 +702,7 @@
 0 define-macro mi-find-removable-pair-from
   !while &les #g5 126
     !if &not &seq &set #g3 &mid :mi-tiles #g5 1 "\xfe"
-      !if &equ @# &set #g3 &sub &atoi #g3 1 
+      !if &equ @# &set #g3 &sub &atoi #g3 1
         !force mi-test-path
         !iif $status  !return
       !elif &les @# 8
@@ -771,7 +771,7 @@
 ; and if the first arg is true then its hilighted else its de-hilighted
 0 define-macro mi-hilight-tile
   set-variable #l0 &mid :mi-tiles @# 1
-  
+
   ; Get the column and row. #l9 = col X; #l8 = row Y
   set-variable #l9 &add &add &mul 5 &mod @# 18 :mi-x0 1
   set-variable #l8 &add &add &mul 5 &div @# 18 :mi-y0 1
@@ -792,10 +792,10 @@
 0 define-macro mi-new-pos
   ; Check if we are unselecting the position
   !iif &equ :mi-sel-tile-id @#  !return
-  
+
   set-variable #g3 &atoi &mid :mi-tiles &set #g5 @# 1
   !iif &equ #g3 254  !return
-  
+
   ; Hilight tile so the user knows
   @# mi-hilight-tile 1
   ; Try selecting the tile.
@@ -912,7 +912,7 @@
   !if &equ :mi-sel-tile-id 254
     set-variable #l0 &sub $mouse-x :mi-x0
     set-variable #l1 &sub $mouse-y :mi-y0
-    !if &and &gre #l0 0 &gre #l1 0 
+    !if &and &gre #l0 0 &gre #l1 0
       set-variable #l1 &atoi &mid :mi-tiles &add &mul &div #l1 5 18 &div #l0 5 1
       !if &not &equ #l1 254
         set-variable :mi-right-help #l1
@@ -998,15 +998,15 @@
   35 screen-poke 15 70 .scheme.mi1 &spr "%s%4s%s"  &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
   35 screen-poke 16 70 .scheme.mi1 &spr "%sNew %s" &lef $box-chars 1 &lef $box-chars 1
   35 screen-poke 17 70 .scheme.mi1 &spr "%s%4s%s"  &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-  
+
   35 screen-poke 20 70 .scheme.mi1 &spr "%s%4s%s"  &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
   35 screen-poke 21 70 .scheme.mi1 &spr "%sQuit%s" &lef $box-chars 1 &lef $box-chars 1
   35 screen-poke 22 70 .scheme.mi1 &spr "%s%4s%s"  &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-  
+
   35 screen-poke 25 70 .scheme.mi1 &spr "%s%4s%s"  &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
   35 screen-poke 26 70 .scheme.mi1 &spr "%sHelp%s" &lef $box-chars 1 &lef $box-chars 1
   35 screen-poke 27 70 .scheme.mi1 &spr "%s%4s%s"  &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-  
+
   35 screen-poke 17 10 .scheme.mi1 "Pos Name                       Level   Score"
   set-variable #l1 0
   !repeat

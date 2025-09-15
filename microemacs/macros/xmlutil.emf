@@ -97,12 +97,12 @@ define-macro xml-backward-tag
   !endif
   forward-char
   !repeat
-    set-variable #l2 1 
+    set-variable #l2 1
     !force search-buffer "em" "[<>\"]"
     !if &not $status
     !elif &seq &mid @wl &sub $window-col 1 1 "\""
       !force search-buffer "eM" "\""
-      set-variable #l2 &not $status  
+      set-variable #l2 &not $status
     !endif
   !until #l2
   set-variable #l4 &mid @wl &sub $window-col 3 3
@@ -170,9 +170,9 @@ define-macro xml-backward-tag
           set-variable #l4 0
         !elif &sin @wc " \t\n"
           !if &equ #l4 2
-            set-variable #l4 1                        
+            set-variable #l4 1
           !elif &equ #l4 3
-            set-variable #l4 4                        
+            set-variable #l4 4
           !endif
         !elif &equ #l4 1
           !if &inw @wc

@@ -3,7 +3,7 @@
 ;
 ; All rights reserved.
 ;
-; Synopsis:    
+; Synopsis:
 ; Authors:     Steven Phillips
 ;`
 0 define-macro Matrixd
@@ -56,7 +56,7 @@ set-variable .Matrixd.h &spr "|%d|%d|%d|%d|" .scheme.hlblue .scheme.hlred .schem
       !if &gre &inc .ht 1 10
         set-variable .st #l7
         set-variable .ht 1
-        !tgoto &not &dec .lc 1 quit  
+        !tgoto &not &dec .lc 1 quit
       !endif
     !endif
     &sub 33 &fmul &fsub $unix-time #l7 1000 create-callback Matrixd
@@ -84,8 +84,8 @@ define-macro Matrix
   set-variable #l8 "|"
   set-variable #l1 $frame-width
   !while &pdec #l1 1
-    set-variable #l8 &lset #l8 0 &sub &mod $random 17 5 
-    set-variable #l9 &lset #l9 0 &mod $random 20 
+    set-variable #l8 &lset #l8 0 &sub &mod $random 17 5
+    set-variable #l9 &lset #l9 0 &mod $random 20
     set-variable #l0 $frame-depth
     !while &dec #l0 1
       !iif &sub @fss #l0 0 $mode-line-scheme  3 screen-poke #l0 #l1 &lget .Matrixd.n 4 @fs #l0 #l1

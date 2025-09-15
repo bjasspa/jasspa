@@ -321,13 +321,13 @@ set-variable .fhook-cfms.item-list-r1 "Func \CCb\\1\CCA"
   hilight .hilight.cfms 20 "<!---" "--->" ""     .scheme.comment
   hilight .hilight.cfms 18 "//"                   .scheme.comment
   hilight .hilight.cfms 18 "//\\s*[tT][oO][dD][oO]"  .scheme.error
-  
+
   hilight .hilight.cfms 20 "<!---\\s*[tT][oO][dD][oO]" "--->" "" .scheme.error
   ; hilight .hilight.cfms 0xa80 "^\\s*\\{$" .hilight.cfms $global-scheme
-  
+
   ; Include the base hilighting
   cfm-set-hilight .hilight.cfms
-  
+
   hilight .hilight.cfms 0x804 "`" "`" "\\"       .scheme.prepro
   hilight .hilight.cfms 1    "<[^ \t\n>]*>"      .scheme.prepro
   ; Keywords
@@ -339,14 +339,14 @@ set-variable .fhook-cfms.item-list-r1 "Func \CCb\\1\CCA"
   ; Functions
   hilight .hilight.cfms 1 "function"             .scheme.function
   hilight .hilight.cfms 1 "return"               .scheme.keyword
-  
+
   !if &band .hilight.flags 0x08
     ; hilight constants, e.g. numbers
     hilight .hilight.cfms 1 "[[:digit:]]+"       .scheme.constant
     hilight .hilight.cfms 1 "-[[:digit:]]+"      .scheme.constant
     hilight .hilight.cfms 1 "0[xX][[:xdigit:]]+" .scheme.constant
   !endif
-  
+
   ; String hilighting
   0 hilight .hilight.cfmsS 0                     .scheme.string
   hilight .hilight.cfmsS 0    "\\\\."            .scheme.string
@@ -355,7 +355,7 @@ set-variable .fhook-cfms.item-list-r1 "Func \CCb\\1\CCA"
   ; the next tag fixes hilighting problems caused by strings spanning
   ; multiple lines by resetting the hilight on the next blank line during
   ; the look-back.
-  
+
   ; let html based files use the cfms hilight for any cfm scripts
   set-variable .hilight.cfmscript .hilight.cfms
 !endif
@@ -400,15 +400,15 @@ set-variable .fhook-cfms.item-list-r1 "Func \CCb\\1\CCA"
   !if &not &exist .hilight.cfmsqlfind
     set-variable .hilight.cfmsqlfind &pinc .hilight.next 1
   !endif
-  
+
   ; <CFxx enclosure hilighting> - variable assignment
-  
+
   0 hilight .hilight.cfmsqltags 3 100                        $global-scheme
   cfm-set-hilight .hilight.cfmsqltags
   hilight .hilight.cfmsqltags 4 "#" "#" ""                  .scheme.variable
   hilight .hilight.cfmsqltags 1 "\\w+\\s*\\}="              .scheme.operator
   hilight .hilight.cfmsqltags 0x80 "/?>" .hilight.cfmsql    .scheme.keyword
-  
+
   ; cfmsql file highlighting
   0 hilight .hilight.cfmsql 3 75                   $global-scheme
   hilight .hilight.cfmsql 4 "<!---" "--->" ""      .scheme.comment
@@ -652,14 +652,14 @@ set-variable .fhook-cfms.item-list-r1 "Func \CCb\\1\CCA"
   hilight .hilight.cfmsql 1 "write"                .scheme.keyword
   hilight .hilight.cfmsql 1 "year"                 .scheme.keyword
   hilight .hilight.cfmsql 1 "zone"                 .scheme.keyword
-  
+
   !if &band .hilight.flags 0x08
     ; hilight constants, e.g. numbers
     hilight .hilight.cfmsql 1 "[[:digit:]]+"       .scheme.constant
     hilight .hilight.cfmsql 1 "-[[:digit:]]+"      .scheme.constant
     hilight .hilight.cfmsql 1 "0[xX][[:xdigit:]]+" .scheme.constant
   !endif
-  
+
   0 indent .hilight.cfmsql 1 100
   indent .hilight.cfmsql b "(" ")"
   ; Indentation rules for ColdFusion tags embedded in the SQL. Note that
@@ -674,6 +674,6 @@ set-variable .fhook-cfms.item-list-r1 "Func \CCb\\1\CCA"
   indent .hilight.cfmsql u "<cfelse" -1t 1t
   indent .hilight.cfmsql o "</cfif>" -1t
   indent .hilight.cfmsql w "</cfquery>" -1t 0
-  
+
 !endif
 buffer-init-fhook "cfms"

@@ -7,7 +7,7 @@
 ;
 ; Synopsis:    Misc OSD macros
 ; Authors:     Steven Phillips
-; Notes:       Many have come from removing OSD from search.emf 
+; Notes:       Many have come from removing OSD from search.emf
 ;
 !if &not &exi .osd.symbol
   0 define-macro-file majormod major-mode
@@ -246,7 +246,7 @@ set-variable .osd.ftagd 16
   find-buffer "*osd-find-tag*"
   set-variable .osd-find-tag-parse.state 3
   -1 osd .osd.ftagc
-  osd .osd.ftagc 0 "fsS" .scheme.osd-child .osd.ftagw .osd.ftagd 0 -1 
+  osd .osd.ftagc 0 "fsS" .scheme.osd-child .osd.ftagw .osd.ftagd 0 -1
   set-variable #l0 0
   set-variable #l1 ""
   beginning-of-buffer
@@ -317,7 +317,7 @@ set-variable .osd.ftagd 16
   ml-write "[Processing tags file...]"
   set-variable .state 2
   -1 osd .osd.ftagc
-  osd .osd.ftagc 0 "fsS" .scheme.osd-child .osd.ftagw .osd.ftagd 0 -1 
+  osd .osd.ftagc 0 "fsS" .scheme.osd-child .osd.ftagw .osd.ftagd 0 -1
   set-variable #l0 0
   set-variable #l1 ""
   beginning-of-buffer
@@ -547,7 +547,7 @@ define-macro osd-search
   !if &not @?
     ; remove all line hilighting
     beginning-of-buffer
-    !repeat 
+    !repeat
       ; Protect folded lines.
       !iif &not &or &equ $line-scheme .scheme.fold-close &equ $line-scheme .scheme.fold-open  set-variable $line-scheme -1
       !force forward-line
@@ -560,38 +560,38 @@ define-macro osd-search
     set-variable #l8 &lget .osd-search.hilschms .osd-search.scheme
     set-variable #l8 &cond &equ #l8 $global-scheme -1 #l8
     !if &equ @# 5
-      ; Type 5 - Handle all of the buffer 
+      ; Type 5 - Handle all of the buffer
       beginning-of-buffer
       !goto forward-search
     !elif &equ @# 4
-      ; Type 4 - Handle to the end of the buffer 
-*forward-search            
+      ; Type 4 - Handle to the end of the buffer
+*forward-search
       set-variable #l2 0
       !repeat
         !force search-forward .osd-search.search
         set-variable #l0 $status
-        !if #l0 
+        !if #l0
           ; Protect folded lines.
           !iif &not &or &equ $line-scheme .scheme.fold-close &equ $line-scheme .scheme.fold-open  set-variable $line-scheme #l8
           set-variable #l2 &add #l2 1
         !endif
       !until &not #l0
       goto-position "\x81"
-      osd .osd.sar-hll 70 "c" &spr "%d match%s found" #l2 &cond &equ #l2 1 "" "es" 
+      osd .osd.sar-hll 70 "c" &spr "%d match%s found" #l2 &cond &equ #l2 1 "" "es"
     !elif &equ @# -4
       ; Type -4 - handle to the top of the buffer
       set-variable #l2 0
       !repeat
         !force search-backward .osd-search.search
         set-variable #l0 $status
-        !if #l0 
+        !if #l0
           ; Protect folded lines.
           !iif &not &or &equ $line-scheme .scheme.fold-close &equ $line-scheme .scheme.fold-open  set-variable $line-scheme #l8
           set-variable #l2 &add #l2 1
         !endif
       !until &not #l0
       goto-position "\x81"
-      osd .osd.sar-hll 70 "c"  &spr "%d match%s found" #l2 &cond &equ #l2 1 "" "es" 
+      osd .osd.sar-hll 70 "c"  &spr "%d match%s found" #l2 &cond &equ #l2 1 "" "es"
     !else
       ; Type 1 3 or -1 - First, Next or Prev
       @# osd-search-search
@@ -873,11 +873,11 @@ define-macro delete-hilight-lines
   set-position "\x81"
   ; remove all line hilighting
   beginning-of-buffer
-  !repeat 
+  !repeat
     ; Protect folded lines.
     !if &or &equ $line-scheme -1 &or &equ $line-scheme .scheme.fold-close &equ $line-scheme .scheme.fold-open
       !force forward-line
-      !if &not $status 
+      !if &not $status
         goto-position "\x81"
         !return
       !endif
@@ -895,7 +895,7 @@ define-macro delete-hilight-lines
   ; remove all line hilighting
   beginning-of-buffer
   set-variable #l0 1
-  !repeat 
+  !repeat
     !if &or &les $line-scheme .scheme.hlwhite &gre $line-scheme .scheme.hlcyan
     !else
       !if &les #l0 $window-line
@@ -988,7 +988,7 @@ set-variable .alarm.no 0
 
 ; Browse
 osd .osd.browse-help 0  "batcDH" 9 3 99 .scheme.osd-title "Browse Mode Help"
-osd .osd.browse-help 3  "" 
+osd .osd.browse-help 3  ""
 osd .osd.browse-help 4  ""  " esc h     - View this help page"
 osd .osd.browse-help 5  ""  " C-g       - Exit browse mode"
 osd .osd.browse-help 6  ""  " C-x k     - Delete buffer & exit browse mode"
@@ -1001,7 +1001,7 @@ osd .osd.browse-help 12 ""
 osd .osd.browse-help 14 ""  " Normal cursor movement and searching"
 osd .osd.browse-help 15 ""  " key bindings can be used."
 osd .osd.browse-help 16 ""
-osd .osd.browse-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
+osd .osd.browse-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void
 
 define-macro browse-wrap-line
   !repeat
@@ -1049,7 +1049,7 @@ define-macro browse-wrap-change
     !jump 2
   !elif &bxor #l0 #l1
     !if #l1
-      set-variable .mode &spr "|%d|%d|" &bmod "undo" &bmod "view" 
+      set-variable .mode &spr "|%d|%d|" &bmod "undo" &bmod "view"
       -1 buffer-mode "view"
       1 buffer-mode "undo"
       set-variable @cl void
@@ -1058,8 +1058,8 @@ define-macro browse-wrap-change
       set-alpha-mark "\x81"
       undo
       goto-alpha-mark "\x81"
-      &cond &lget .mode 1 1 -1 buffer-mode "undo" 
-      &cond &lget .mode 2 1 -1 buffer-mode "view" 
+      &cond &lget .mode 1 1 -1 buffer-mode "undo"
+      &cond &lget .mode 2 1 -1 buffer-mode "view"
     !endif
   !endif
   !iif &band @# 0x20  set-variable .browse.wrap #l1
@@ -1149,7 +1149,7 @@ set-variable .browse.wrap 0
     !force find-registry &spr "/history/%s/alias-path" $platform &sub @# 1
     !if $status
       set-variable .alias-path-setup.alias $result
-      set-variable .alias-path-setup.path &reg &spr "/history/%s/alias-path/%s" $platform $result "" 
+      set-variable .alias-path-setup.path &reg &spr "/history/%s/alias-path/%s" $platform $result ""
       osd .osd.alias-path 620 "BfhxHt" .scheme.osd-ebtt " \HModify " 2 alias-path-setup-com
       osd .osd.alias-path 630 "BfhxHt" .scheme.osd-ebtt " \HDelete " 3 alias-path-setup-com
       !return
@@ -1198,10 +1198,10 @@ set-variable .browse.wrap 0
     #l0 alias-path-set-flds
   !else
     !if &seq .alias-path-setup.alias ""
-      ml-write "[Alias field is empty]" 
+      ml-write "[Alias field is empty]"
       !return
     !elif &seq .alias-path-setup.path ""
-      ml-write "[Path field is empty]" 
+      ml-write "[Path field is empty]"
       !return
     !endif
     !if &equ @# 1
@@ -1212,7 +1212,7 @@ set-variable .browse.wrap 0
     !else
       !force find-registry &spr "/history/%s/alias-path" $platform &sub .alias-path-setup.cur 1
       !if &not $status
-        ml-write "[ERROR: Failed to get current alias]" 
+        ml-write "[ERROR: Failed to get current alias]"
         !return
       !endif
       !iif &not &seq .alias-path-setup.alias &set #l0 $result  2 set-registry &spr "/history/%s/alias-path/%s" $platform #l0 .alias-path-setup.alias
@@ -1292,7 +1292,7 @@ define-macro alias-path-setup
   set-variable #l4 &reg "/history/file-type" "\b"
   set-variable #l5 &reg "/history/file-mask" "\b"
   !if &gre &len #l4 1
-    !while &not &seq &set #l0 &lget #l4 &inc #l3 1 "" 
+    !while &not &seq &set #l0 &lget #l4 &inc #l3 1 ""
       set-variable #l1 &lget #l5 #l3
       osd .osd.file-typec #l3 "Rx" &spr "%s%n  %s%n  %s" #l3 &sub 3 &len #l3 " " #l0 &sub 16 &len #l0 " " #l1 #l3 file-type-set-fields
     !done
@@ -1324,24 +1324,24 @@ define-macro alias-path-setup
   !if &equ @# 3
     ; delete the entry
     !if &not .idx
-      ml-write "[No entry selected]" 
+      ml-write "[No entry selected]"
       !return
     !endif
     set-variable #l4 &lde #l4 .idx
     set-variable #l5 &lde #l5 .idx
   !else
     !if &seq .type ""
-      ml-write "[Type field is empty]" 
+      ml-write "[Type field is empty]"
       !return
     !endif
     !if &seq .mask ""
-      ml-write "[Mask field is empty]" 
+      ml-write "[Mask field is empty]"
       !return
     !endif
     !if &equ @# 2
       ; change the entry
       !if &not .idx
-        ml-write "[No entry selected]" 
+        ml-write "[No entry selected]"
         !return
       !endif
       ; delete the old
@@ -1436,7 +1436,7 @@ define-macro file-tool-menu
       set-variable #l5 .find-file.file-count
     !endif
     !if #l5
-    !elif &seq &lef $buffer-bname 1 "*" 
+    !elif &seq &lef $buffer-bname 1 "*"
       set-variable #l6 $buffer-bname
     !else
       set-variable #l6 $buffer-fname
@@ -1446,17 +1446,17 @@ define-macro file-tool-menu
     set-variable #l4 0
     !while &not &seq &set #l2 &reg &set #l1 &spr "/history/%s/file-tool/%d" $platform &inc #l0 1 "" ""
       !if &band 0x1000 &set #l3 &reg &cat #l1 "/flag" "0x240"
-      !elif &or &not #l7 &band #l7 #l3  
+      !elif &or &not #l7 &band #l7 #l3
         set-variable #l1 &reg &cat #l1 "/mask" ""
         !if #l5
           set-variable #l3 .find-file.file-count
           !if &xis &ind &cat ".find-file.file" &pdec #l3 1 #l1
             !tjump #l3 -1
-            execute-line &spr "set-variable #l2 \"%s\"" #l2 
+            execute-line &spr "set-variable #l2 \"%s\"" #l2
             osd @# &inc #l4 1 "" #l2 #l0 file-tool-exec
           !endif
         !elif &xis #l6 #l1
-          execute-line &spr "set-variable #l2 \"%s\"" #l2 
+          execute-line &spr "set-variable #l2 \"%s\"" #l2
           osd @# &inc #l4 1 "" #l2 &neg #l0 file-tool-exec
         !endif
       !endif
@@ -1474,10 +1474,10 @@ define-macro file-tool-menu
   !if &les @# 0
   !elif &set .file-tool-setup.cur @#
     set-variable .file-tool-setup.name &reg &set #l1 &spr "/history/%s/file-tool/%d" $platform @# ""
-    set-variable .file-tool-setup.mask &reg &cat #l1 "/mask" "" 
-    set-variable .file-tool-setup.cmd  &reg &cat #l1 "/cmd"  "" 
-    set-variable .file-tool-setup.flag &reg &cat #l1 "/flag" "0x240" 
-    set-variable .file-tool-setup.bname &reg &cat #l1 "/bname" "" 
+    set-variable .file-tool-setup.mask &reg &cat #l1 "/mask" ""
+    set-variable .file-tool-setup.cmd  &reg &cat #l1 "/cmd"  ""
+    set-variable .file-tool-setup.flag &reg &cat #l1 "/flag" "0x240"
+    set-variable .file-tool-setup.bname &reg &cat #l1 "/bname" ""
   !else
     set-variable .file-tool-setup.name ""
     set-variable .file-tool-setup.mask ".*\\..*"
@@ -1623,13 +1623,13 @@ set-variable .file-tool-setup-post.msk "|0|1024|"
     #l0 file-tool-set-flds
   !else
     !if &seq .file-tool-setup.name ""
-      ml-write "[Name field is empty]" 
+      ml-write "[Name field is empty]"
       !return
     !elif &seq .file-tool-setup.mask ""
-      ml-write "[Mask field is empty]" 
+      ml-write "[Mask field is empty]"
       !return
     !elif &seq .file-tool-setup.cmd ""
-      ml-write "[Command field is empty]" 
+      ml-write "[Command field is empty]"
       !return
     !endif
     !iif &equ @# 1  set-variable .file-tool-setup.cur &inc .file-tool-setup.count 1

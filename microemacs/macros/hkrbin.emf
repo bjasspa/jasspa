@@ -41,7 +41,7 @@ set-variable .fhook-rbin.command-nbind "|||||||||||||"
 set-variable .fhook-rbin.command-kbind "|C-left|C-right|S-up|S-down|C-x s|esc s|||||A-C-w|A-C-y|"
 set-variable .fhook-rbin.command-desc  "|Backward 16 bytes|Forward 16 bytes|Move \Hbackward|Move \Hforward|\HSearch forward (txt)|Search forward (he\Hx)||\HInsert string|Insert \Hhex string||Binary \Hcopy region|Binary \Hyank|"
 
-!if &and &sin "h" .fhook-rbin.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-rbin.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.rbin
     set-variable .hilight.rbin &pinc .hilight.next 1
   !endif
@@ -62,7 +62,7 @@ define-macro rbin-backward-word
     backward-char
   !endif
   &sub $window-col &mul 32 &div $window-col 32 backward-char
-!emacro       
+!emacro
 
 define-macro rbin-forward-word
   !if &seq @wc "\n"
@@ -71,7 +71,7 @@ define-macro rbin-forward-word
   set-variable $window-col &sub &mul 32 &add 1 &div $window-col 32 1
   ; make sure the last command is a forward-char to preserve region hilighting if shown
   forward-char
-!emacro       
+!emacro
 
 ; try to bind these globally if key is not already bound as these can be used in any buffer
 0 describe-key "A-C-y"

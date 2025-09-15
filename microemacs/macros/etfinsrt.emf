@@ -157,5 +157,5 @@ define-macro insert-template
   ; Reset magic mode if we added it, flag buffer as unedited and goto end
   &cond &rig #l1 1 1 -1 buffer-mode "magic"
   &cond &lef #l1 1 1 -1 buffer-mode "edit"
-;  !iif &len #l6  ml-write &spr "[Template may be improved if you defined:%s]" &rig #l6 1 
+;  !iif &len #l6  ml-write &spr "[Template may be improved if you defined:%s]" &rig #l6 1
 !emacro

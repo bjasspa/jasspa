@@ -36,7 +36,7 @@
 ;    \bPN....\bpN  - Paragraph - justification none
 ;    \bPR....\bpR  - Paragraph - justification right
 ;    \bH#....\bh#  - Heading, e.g. \bH1....\bh1
-;    \bBI\bB?...\bb?\bB?...\bb?\bbI  - Item list start and end tags 
+;    \bBI\bB?...\bb?\bB?...\bb?\bbI  - Item list start and end tags
 ;    \bBB....\bbB  - Bullet item
 ;    \bBN#\bBn....\bbN - item # in numbered item list
 ;    \bBU#\bBu....\bbU - item # in uppercase letter item list
@@ -115,7 +115,7 @@
     !endif
     backward-char
     -1 kill-region
-  !until &seq @wc "]" 
+  !until &seq @wc "]"
   forward-delete-char
   set-variable #l1 &lef .a0 1
   !if &seq #l1 "c"
@@ -128,7 +128,7 @@
     !endif
     insert-string &spr "\bTA%s\btA" .a1
   !elif &seq #l1 "d"
-    ; dump 
+    ; dump
     !if &sub #l0 3
       set-variable #p9 "Wrong number of arguments for dump tag"
       !return 0
@@ -241,7 +241,7 @@
     insert-string &spr "\bTL%s\btL" .a1
     set-variable .link 1
   !elif &seq #l1 "o"
-    ; output dump 
+    ; output dump
     !if &sub #l0 3
       set-variable #p9 "Wrong number of arguments for output dump tag"
       !return 0
@@ -452,7 +452,7 @@
   ; #l3 is the string to be inserted at the start of each paragraph
   ; #l4 is the string to be inserted at the end of each paragraph
   ; #l5 is a flag, if -ve its a table cell, elif not 0 the paragraph is to be quoted
-  
+
   ; close down any item lists and tables that the indent level of this paragraph closes
   set-variable #l8 #l0
   !if &gre $window-line 2
@@ -540,7 +540,7 @@
         set-variable #p9 "Invalid table column size"
         !return 0
       !elif &seq &lget #l1 3 "?"
-        set-variable #l1 &lset #l1 3 -1                
+        set-variable #l1 &lset #l1 3 -1
       !elif &les &lget #l1 3 1
         set-variable #p9 "Invalid table row size"
         !return 0
@@ -561,7 +561,7 @@
             !return 0
           !endif
           set-variable #l5 &add #l5 #l7
-          set-variable #l3 &lin #l3 -1 #l7 
+          set-variable #l3 &lin #l3 -1 #l7
         !done
         !if &sin "-" #l3
           !if &and #l4 &gre #l5 99
@@ -682,7 +682,7 @@
     !endif
     !return
   !endif
-  
+
   !if &gre #l8 #l0
     !if &sub &lget .item-ind .item-count #l0
       set-variable #p9 "Isolated item list item"
@@ -895,7 +895,7 @@
       !endif
     !endif
   !endif
-  set-variable @1 #l1 
+  set-variable @1 #l1
   ml-write &spr "[Exporting to %s]" #l1
 !emacro
 
@@ -915,7 +915,7 @@
   set-variable :JVoutput-path &lef #l0 &rsin "/" #l0
   set-variable #l1 &rig $buffer-fname &len :JVoutput-path
   !if &set #l2 &rsin "." #l1
-    set-variable #l2 &sub #l2 1 
+    set-variable #l2 &sub #l2 1
   !else
     set-variable #l2 &len #l2
   !endif
@@ -1026,7 +1026,7 @@
     set-variable #l1 &lef $buffer-fname &rsin "/" $buffer-fname
     set-variable #l2 &rig $buffer-fname &len #l1
     !if &set #l3 &rsin "." #l2
-      set-variable #l3 &sub #l3 1 
+      set-variable #l3 &sub #l3 1
     !else
       set-variable #l3 &len #l2
     !endif
@@ -1161,7 +1161,7 @@
   !repeat
     !force search-buffer "me" "\b\\(FM\\|fM\\|DD\\(\bDF\\h+\\)?\\(\bDB\\h+\\)?\bdD\\|Dd\\)"
     !if $status
-      !if &seq "FM" &set #l6 &lef @s1 2 
+      !if &seq "FM" &set #l6 &lef @s1 2
         set-variable #l3 "font-family: monospace"
       !elif &seq "fM" #l6
         set-variable #l3 ""

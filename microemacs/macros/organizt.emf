@@ -20,7 +20,7 @@ set-variable .org.set-day 1
   org-setup-day
   org-setup-1dofw
   set-variable .org.aflag &reg "/org/set/aflag" "0x34"
-!emacro     
+!emacro
 
 0 define-macro org-setup-file
   set-variable #l1 &reg "/org" .org.dfile
@@ -220,8 +220,7 @@ osd .osd.orgt 430 "hf" "              "
 osd .osd.orgt 440 "Cfxpt"  &cat .osd.checkbox-chars "\} Matc\Hh Case" 0x10 org-setup-aflag-check
 osd .osd.orgt 450 "hf" "              "
 osd .osd.orgt 460 "Cfxpt"  &cat .osd.checkbox-chars "\} \HMagic mode" 0x20 org-setup-aflag-check
-osd .osd.orgt 600 "" 
-osd .osd.orgt 605 "" 
+osd .osd.orgt 600 ""
+osd .osd.orgt 605 ""
 osd .osd.orgt 610 "BtxhcfH" .scheme.osd-ebtt " \HSave " f organizer-save
 osd .osd.orgt 620 "BtcfH"   .scheme.osd-ebtt " \HCancel " 1 void
-

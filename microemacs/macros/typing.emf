@@ -195,8 +195,8 @@
     !goto ent-err
   !elif &seq @cck "return"
     set-variable @cck " "
-    !tgoto &not &seq @wc " "  ent-err 
-    !tgoto &equ &sub &len @wl 1 $window-col ent-cor 
+    !tgoto &not &seq @wc " "  ent-err
+    !tgoto &equ &sub &len @wl 1 $window-col ent-cor
     !goto ent-bad
   !elif &seq @cck "backspace"
     !if :txt-idx

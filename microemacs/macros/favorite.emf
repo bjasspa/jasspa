@@ -44,10 +44,10 @@ define-macro favorites-add
   !endif
   set-variable #l6 ""
   3 favorites-load
-  ; @? = false add to end, or @# = 0 Add to start, @# > 35 error else replace hotkey, @# < 0 replace fav abs(@#) (abs(@#) <= (num favs)+1) 
+  ; @? = false add to end, or @# = 0 Add to start, @# > 35 error else replace hotkey, @# < 0 replace fav abs(@#) (abs(@#) <= (num favs)+1)
   ; sort of hotkey first, looking for an existing entry with the same hotkey
   !if &not @?
-    set-variable #l1 &con &gre $window-eline 70 0 &div &add 1 $window-eline 2 
+    set-variable #l1 &con &gre $window-eline 70 0 &div &add 1 $window-eline 2
   !elif &not @#
     set-variable #l1 1
   !elif &les @# 0
@@ -195,7 +195,7 @@ define-macro favorites-goto
     !return
   !endif
   set-variable #l0 $buffer-bname
-  find-buffer "*favorites*" 
+  find-buffer "*favorites*"
   -1 buffer-mode "undo"
   -1 buffer-mode "view"
   beginning-of-buffer
@@ -212,7 +212,7 @@ define-macro favorites-goto
     insert-string #l1
     find-buffer #l0
   !done
-  find-buffer "*favorites*" 
+  find-buffer "*favorites*"
   beginning-of-buffer
   set-variable :mouse-pick-1 toolbar-favorites-pick
   set-variable :mouse-drop-1 toolbar-favorites-drop

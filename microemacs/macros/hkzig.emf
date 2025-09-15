@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Detlef Groth
 ;  Created       : Fri Mar 6th, 2025
-;  Last Modified : <250806.0119>
+;  Last Modified : <250915.2114>
 ;
 ;  Description
 ;   Zig Language Template
@@ -56,12 +56,12 @@ set-variable .fhook-zig.item-list-r7 "todo \CCb\\1\CCA"
   hilight .hilight.zig  2 "//"           .scheme.comment
   ; Comment TODO's
   hilight .hilight.zig 18 "//\\s*[tT][oO][dD][oO]"           .scheme.error
-  
+
   ; Strings
   hilight .hilight.zig  4 "\"" "\"" "\\"  .scheme.string
   hilight .hilight.zig  4 "\'" "\'" "\\"  .scheme.string
   hilight .hilight.zig  4 "\"\"\"" "\"\"\"" "\\"  .scheme.quote
-  
+
   ; constants: A_CONSTANT_VARAIBLE
   hilight .hilight.zig 1    "[A-Z_]+"        .scheme.constant
   ; package keywords
@@ -107,7 +107,7 @@ set-variable .fhook-zig.item-list-r7 "todo \CCb\\1\CCA"
   hilight .hilight.zig 1    "var"            .scheme.keyword
   hilight .hilight.zig 1    "volatile"       .scheme.keyword
   hilight .hilight.zig 1    "while"          .scheme.keyword
-  hilight .hilight.zig 1    "false"          .scheme.operator  
+  hilight .hilight.zig 1    "false"          .scheme.operator
   hilight .hilight.zig 1    "true"           .scheme.operator
   hilight .hilight.zig 1    "anyerror"       .scheme.type
   hilight .hilight.zig 1    "bool"           .scheme.type

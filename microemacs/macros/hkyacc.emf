@@ -24,7 +24,7 @@ set-variable .fhook-yacc.comment "|/*| */|*| * | * |f|"
 set-variable .fhook-yacc.comment-1 "|//!<|||//!< |||"
 ; Doxygen comment - //! ... text ...
 ;                   //! ... text ...
-set-variable .fhook-yacc.comment-2 "|//!|||//! |||" 
+set-variable .fhook-yacc.comment-2 "|//!|||//! |||"
 ; Doxygen comment - ///< ... text ...
 ;                   ///< ... text ...
 set-variable .fhook-yacc.comment-3 "|///<||/|///< | ///||"
@@ -53,9 +53,9 @@ set-variable .fhook-yacc.comment-9 "|/*| */|*|** | * |f|"
 ;           \*/
 set-variable .fhook-yacc.comment-10 "|/*\\|\\*/|*| * | * |f|"
 ; Standard comment - We repeat here incase the default comment style is
-; over-ridden. 
+; over-ridden.
 ; Standard C - /*
-;               * ... comment ... 
+;               * ... comment ...
 ;               */
 set-variable .fhook-yacc.comment-11 "|/*| */|*| * | * |f|"
 ; Standard C++ comment.
@@ -71,7 +71,7 @@ set-variable .fhook-yacc.item-list-r1 "Rule \CCb\\1\CCA"
 set-variable .fhook-yacc.item-list-s2 "^\\(static[ \t]+\\|extern[ \t]+\\)?\\(const[ \t]+\\)?\\(union[ \t]+\\)?\\(struct[ \t]+\\)?\\(\\w+[\\* \\t]+\\)?\\(\\w+\\)[ \t]*("
 set-variable .fhook-yacc.item-list-r2 "Func \CCb\\6\CCA"
 
-!if &and &sin "h" .fhook-yacc.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-yacc.setup &band .hilight.flags 0x02
   ; Hi-light LEX/YACC Mode
   !if &not &exi .hilight.yacc
     set-variable .hilight.yacc &pinc .hilight.next 1
@@ -174,7 +174,7 @@ set-variable .fhook-yacc.item-list-r2 "Func \CCb\\6\CCA"
     hilight .hilight.yacc 1 "d+\\.d+f"    .scheme.constant
     hilight .hilight.yacc 1 "-d+\\.d+f"   .scheme.constant
   !endif
-  
+
   ; Doxygen highlighting extensions. Highlights keywords in Doxygen
   !if &sin "l" .fhook-yacc.setup
     ; Create a new doxygen hilighting scheme
@@ -221,7 +221,7 @@ set-variable .fhook-yacc.item-list-r2 "Func \CCb\\6\CCA"
     ; We must return to C when we see the close of comment "*/"
     hilight .hilight.yaccppdoxygen 0x80 "\n" .hilight.yacc   .scheme.comment
   !endif
-  
+
   ; Extend the hilighting for the IEEE Std 1003.1 <stdint.h>
   ; See http://www.opengroup.org/onlinepubs/007904975/basedefs/stdint.h.html
   !if &sin "q" .fhook-yacc.setup
@@ -326,7 +326,7 @@ set-variable .fhook-yacc.item-list-r2 "Func \CCb\\6\CCA"
     hilight .hilight.yacc    1 "WINT_MIN"         .scheme.prepro
     hilight .hilight.yacc    1 "WINT_MAX"         .scheme.prepro
   !endif
-  
+
   ; Hilight curly braces used when it is difficult to differentiate between a
   ; round bracket and curly brace.
   !if &sin "r" .fhook-yacc.setup
@@ -334,7 +334,7 @@ set-variable .fhook-yacc.item-list-r2 "Func \CCb\\6\CCA"
     hilight .hilight.yacc 1 "{"                             .scheme.keyword
     hilight .hilight.yacc 1 "}"                             .scheme.keyword
   !endif
-  
+
   ; Pick up bogus 'C' constructs extension
   !if &sin "v" .fhook-yacc.setup
     ; Detect a for loop with no body - put semi-colon on next line, i.e.

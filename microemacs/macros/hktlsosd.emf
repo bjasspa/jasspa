@@ -3,7 +3,7 @@
 ;
 ; All rights reserved.
 ;
-; Synopsis:    
+; Synopsis:
 ; Authors:     Steven Phillips
 ;
 !iif &not &exi file-tools-init  execute-file "hktools"
@@ -114,7 +114,7 @@
     osd .osd.tmp 0 "bs" 29 0 0 0
     set-variable #l0 0
     !while &llen &set #l1 &ind &spr ".%s.exec%d" $buffer-fhook &inc #l0 1
-      !iif &seq "" &set #l2 &lget #l1 6  set-variable #l2 "Default interpreter"  
+      !iif &seq "" &set #l2 &lget #l1 6  set-variable #l2 "Default interpreter"
       osd .osd.tmp #l0 "" #l2 #l0 hktool-set-ecmb
     !done
     osd .osd.tmp &add #l0 1 "" "Manual" -1 hktool-set-ecmb
@@ -124,7 +124,7 @@
     set-variable $result "Not configured"
   !elif &llen &set #l1 &ind &spr ".%s.exec%d" $buffer-fhook #l0
     set-variable $result &spr "%s" &con &seq "" &lget #l1 6 "Default interpreter" &lget #l1 6
-    !iif &not &seq &lget #l1 5 &lget .major-mode-tools-setup.el 3  osd .osd.hk-tool 130 "" " - Modified" 
+    !iif &not &seq &lget #l1 5 &lget .major-mode-tools-setup.el 3  osd .osd.hk-tool 130 "" " - Modified"
   !else
     set-variable $result "Tool no longer supported"
   !endif
@@ -156,7 +156,7 @@
     osd .osd.tmp 0 "bs" 29 0 0 0
     set-variable #l0 0
     !while &llen &set #l1 &ind &spr ".%s.format%d" $buffer-fhook &inc #l0 1
-      !iif &seq "" &set #l2 &lget #l1 6  set-variable #l2 "Default formatter"  
+      !iif &seq "" &set #l2 &lget #l1 6  set-variable #l2 "Default formatter"
       osd .osd.tmp #l0 "" #l2 #l0 hktool-set-fcmb
     !done
     osd .osd.tmp &add #l0 1 "" "Manual" -1 hktool-set-fcmb
@@ -166,7 +166,7 @@
     set-variable $result "Not configured"
   !elif &llen &set #l1 &ind &spr ".%s.format%d" $buffer-fhook #l0
     set-variable $result &spr "%s" &con &seq "" &lget #l1 6 "Default formatter" &lget #l1 6
-    !iif &not &seq &lget #l1 5 &lget .major-mode-tools-setup.fl 3  osd .osd.hk-tool 230 "" " - Modified" 
+    !iif &not &seq &lget #l1 5 &lget .major-mode-tools-setup.fl 3  osd .osd.hk-tool 230 "" " - Modified"
   !else
     set-variable $result "Tool no longer supported"
   !endif
@@ -198,7 +198,7 @@
     osd .osd.tmp 0 "bs" 29 0 0 0
     set-variable #l0 0
     !while &llen &set #l1 &ind &spr ".%s.lint%d" $buffer-fhook &inc #l0 1
-      !iif &seq "" &set #l2 &lget #l1 6  set-variable #l2 "Default linter"  
+      !iif &seq "" &set #l2 &lget #l1 6  set-variable #l2 "Default linter"
       osd .osd.tmp #l0 "" #l2 #l0 hktool-set-lcmb
     !done
     osd .osd.tmp &add #l0 1 "" "Manual" -1 hktool-set-lcmb
@@ -208,7 +208,7 @@
     set-variable $result "Not configured"
   !elif &llen &set #l1 &ind &spr ".%s.lint%d" $buffer-fhook #l0
     set-variable $result &spr "%s" &con &seq "" &lget #l1 6 "Default linter" &lget #l1 6
-    !iif &not &seq &lget #l1 5 &lget .major-mode-tools-setup.ll 3  osd .osd.hk-tool 330 "" " - Modified" 
+    !iif &not &seq &lget #l1 5 &lget .major-mode-tools-setup.ll 3  osd .osd.hk-tool 330 "" " - Modified"
   !else
     set-variable $result "Tool no longer supported"
   !endif

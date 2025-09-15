@@ -276,7 +276,7 @@ define-macro page-file-scroll-up
       !endif
     !endif
     goto-position "\x81"
-    set-variable $window-y-scroll &sub $window-line #l0 
+    set-variable $window-y-scroll &sub $window-line #l0
     !if @?
       !force @# scroll-up
     !else
@@ -302,7 +302,7 @@ define-macro page-file-backward-line
       !endif
     !endif
     goto-position "\x81"
-    set-variable $window-y-scroll &sub $window-line #l0 
+    set-variable $window-y-scroll &sub $window-line #l0
     !if @?
       !force @# backward-line
     !else
@@ -325,7 +325,7 @@ define-macro page-file-scroll-down
       !if &equ $window-line $window-eline
         goto-position "\x81"
         backward-line
-        set-variable #l0 &sub #l0 1 
+        set-variable #l0 &sub #l0 1
         0x13f set-position "\x81"
       !endif
       !force page-file-page-down
@@ -335,7 +335,7 @@ define-macro page-file-scroll-down
       !endif
     !endif
     goto-position "\x81"
-    set-variable $window-y-scroll &sub $window-line #l0 
+    set-variable $window-y-scroll &sub $window-line #l0
     !if @?
       @# scroll-down
     !else
@@ -358,7 +358,7 @@ define-macro page-file-forward-line
       !if &equ $window-line $window-eline
         goto-position "\x81"
         backward-line
-        set-variable #l0 &sub #l0 1 
+        set-variable #l0 &sub #l0 1
         0x13f set-position "\x81"
       !endif
       !force page-file-page-down
@@ -368,7 +368,7 @@ define-macro page-file-forward-line
       !endif
     !endif
     goto-position "\x81"
-    set-variable $window-y-scroll &sub $window-line #l0 
+    set-variable $window-y-scroll &sub $window-line #l0
     !if @?
       @# forward-line
     !else
@@ -467,13 +467,13 @@ define-macro page-file-search-buffer
             !goto next-page-back
           !endif
 *beg-of-buff
-          execute-line &spr "isearch-backward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\"" 
+          execute-line &spr "isearch-backward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\""
         !else
           2 show-region
-          execute-line &spr "0 isearch-backward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\"" 
+          execute-line &spr "0 isearch-backward %s @mna" &xrep #l1 "\\(.\\)" " \"\\1\""
         !endif
       !else
-        set-variable #l2 &xrep #l1 "\\(.\\)" " \"\\1\"" 
+        set-variable #l2 &xrep #l1 "\\(.\\)" " \"\\1\""
         !force search-forward #l1
         !if &not $status
           end-of-buffer
@@ -575,7 +575,7 @@ define-macro page-file
     ml-write "[Unsupported file type - must be a regular file]"
     !abort
   !endif
-  set-variable #l4 &stat "s" #l0 
+  set-variable #l4 &stat "s" #l0
   !if &les #l4 &mul .page-file.page-size 4
     ml-write "[File < page-size * 4 - whats the point]"
     !abort
@@ -589,7 +589,7 @@ define-macro page-file
       !if &seq $buffer-fname #l0
         screen-update
         set-variable #l3 @mc5 "File already paged, create a new page buffer (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
-        !if &not &iseq #l3 "y" 
+        !if &not &iseq #l3 "y"
           !return
         !endif
         set-variable $buffer-names ""

@@ -32,7 +32,7 @@ set-variable .fhook-ini.collapse-open  "^\\["
 set-variable .fhook-ini.collapse-close "^\\[\\|\\'"
 set-variable .fhook-ini.collapse-mnext "-1"
 
-!if &and &sin "h" .fhook-ini.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-ini.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.ini
     set-variable .hilight.ini &pinc .hilight.next 1
   !endif
@@ -52,4 +52,3 @@ set-variable .fhook-ini.collapse-mnext "-1"
 !endif
 
 buffer-init-fhook "ini"
-

@@ -3,7 +3,7 @@
 ;  Author        : $Author$
 ;  Created By    : dgroth
 ;  Created       : Wed Aug 20 06:49:55 2025
-;  Last Modified : <250820.0652>
+;  Last Modified : <250915.2114>
 ;
 ;  Description
 ;
@@ -22,7 +22,7 @@
   end-of-buffer
   sort-lines
 !emacro
-    
+
 0 define-macro gentags-process-buffers
   set-variable #l5 @1
   !repeat
@@ -39,7 +39,7 @@
       set-variable #l2 $buffer-fname
       set-variable #l3 0
       !while &not &seq &set #l4 &lget %tag-filemask &inc #l3 1 ""
-        !force find-file &cat #l2 #l4 
+        !force find-file &cat #l2 #l4
       !done
     !else
       beginning-of-buffer
@@ -64,7 +64,7 @@
   find-buffer "*scratch*"
   set-variable #l0 &stat "a" "."
   find-file %tag-file
-  set-variable %tag-bname $buffer-bname 
+  set-variable %tag-bname $buffer-bname
   -1 buffer-mode "view"
   !force 0 delete-buffer "*scratch*"
   set-variable #g1 &rsin "/" $buffer-fname
@@ -87,4 +87,3 @@
     !force find-file #l0
   !endif
 !emacro
-

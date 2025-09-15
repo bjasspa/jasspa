@@ -22,7 +22,7 @@
 ;
 ;     3)  The variable .describe-word.<language>-search must be set to the
 ;         magic search string which will find the word and meaning in the
-;         resultant output the required text should be enclosed in magic 
+;         resultant output the required text should be enclosed in magic
 ;         group 1. This is search for multiple times to handle multiple
 ;         meanings.
 ;         If the search variable is not set then describe-word assumes that
@@ -109,7 +109,7 @@ define-macro describe-word-find
           !force delete-buffer "*describe-word*"
         !endif
       !endif
-    !endif    
+    !endif
     !if &not .describe-word.descn
       osd .osd.wordc 1 "" &cond #l1 "Failed to find" "Aborted"
     !endif
@@ -210,4 +210,3 @@ define-macro describe-word
     !done
   !endif
 !emacro
-

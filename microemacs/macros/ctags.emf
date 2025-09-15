@@ -440,7 +440,7 @@ define-macro ctags
   find-buffer "*scratch*"
   set-variable #l0 &stat "a" "."
   find-file %tag-file
-  set-variable %tag-bname $buffer-bname 
+  set-variable %tag-bname $buffer-bname
   -1 buffer-mode "view"
   !force 0 delete-buffer "*scratch*"
   set-variable %tag-path &lef $buffer-fname &set %tag-plen &rsin "/" $buffer-fname

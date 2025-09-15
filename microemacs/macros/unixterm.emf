@@ -52,7 +52,7 @@ add-file-hook ".C" fhook-cpp
       -8 ml-write "[Current font name cannot be broken down]"
     !endif
     ; try up to five times to increase/decrease font actual size (given in $result)
-    2 change-font      
+    2 change-font
     set-variable #l2 &lget $result 5
     set-variable #l3 5
     !repeat

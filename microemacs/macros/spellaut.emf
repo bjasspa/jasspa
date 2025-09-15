@@ -225,8 +225,8 @@ define-macro auto-spell
       set-variable $buffer-hilight 0
     !endif
   !elif &seq $buffer-input ""
-    ; Invoke the rules to setup spell, but don't invoke to check as this 
-    ; will typically slow down start-up time 
+    ; Invoke the rules to setup spell, but don't invoke to check as this
+    ; will typically slow down start-up time
     0 spell-rules-init
     ; install auto-spell
     set-variable $buffer-input auto-spell-input
@@ -300,7 +300,7 @@ define-macro auto-spell
         osd @# 1 "" "<no suggestions>"
         set-variable #l0 2
       !else
-        osd @# 130 "M" "Auto \HCorrect " .osd.tmp auto-spell-osdac 
+        osd @# 130 "M" "Auto \HCorrect " .osd.tmp auto-spell-osdac
       !endif
     !else
       set-variable .list "|"
@@ -322,11 +322,11 @@ define-macro auto-spell
     osd @# 140 "" "\HSpell Word"     3 auto-spell-osdcmd
     osd @# 150 "-"
     osd @# 160 "" "Spell \HBuffer"   f spell-buffer
-    osd @# 170 "" "A\Huto Spell Buffer" f auto-spell-buffer 
-    osd @# 180 "" "Auto Spell \HReset"  f auto-spell-reset 
+    osd @# 170 "" "A\Huto Spell Buffer" f auto-spell-buffer
+    osd @# 180 "" "Auto Spell \HReset"  f auto-spell-reset
     set-variable .lword .word
   !endif
-  osd @# 190 "" &cat &cond &seq $buffer-input "auto-spell-input" "\HDisable" "\HEnable" " Auto Spell"  0 auto-spell 
+  osd @# 190 "" &cat &cond &seq $buffer-input "auto-spell-input" "\HDisable" "\HEnable" " Auto Spell"  0 auto-spell
 !emacro
 set-variable .auto-spell-osd.lword ""
 

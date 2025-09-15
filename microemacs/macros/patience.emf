@@ -220,11 +220,11 @@
   65 screen-poke &add :pat-row  1 &add :pat-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
   65 screen-poke &add :pat-row  2 &add :pat-x0 72 .scheme.cardback &sprint "%sDeal%s" &lef $box-chars 1 &lef $box-chars 1
   65 screen-poke &add :pat-row  3 &add :pat-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-  
+
   65 screen-poke &add :pat-row  4 &add :pat-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
   65 screen-poke &add :pat-row  5 &add :pat-x0 72 .scheme.cardback &sprint "%sQuit%s" &lef $box-chars 1 &lef $box-chars 1
   65 screen-poke &add :pat-row  6 &add :pat-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-  
+
   65 screen-poke &add :pat-row  7 &add :pat-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
   65 screen-poke &add :pat-row  8 &add :pat-x0 72 .scheme.cardback &sprint "%sHelp%s" &lef $box-chars 1 &lef $box-chars 1
   65 screen-poke &add :pat-row  9 &add :pat-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
@@ -352,9 +352,9 @@
   set-variable :pat-hom2 ""
   set-variable :pat-hom3 ""
   set-variable :pat-hom4 ""
-  
+
   set-variable #g1 1
-  
+
   !repeat
     set-variable #g5 &sprint ":pat-col%ddn" #g1
     ; Deal down facing cards
@@ -759,14 +759,14 @@ define-macro Patience
     set-variable :pat-card-lab  "HeartDimndClub Spade"
     set-variable :pat-label-home "hdcs"
     set-variable $buffer-scheme .scheme.cardback
-    
+
     buffer-bind-key pat-mouse-pick-left "mouse-pick-1"
     buffer-bind-key pat-mouse-drop-left "mouse-drop-1"
     buffer-bind-key void "mouse-pick-2"
     buffer-bind-key void "mouse-drop-2"
     buffer-bind-key void "mouse-pick-3"
     buffer-bind-key void "mouse-drop-3"
-    
+
     buffer-bind-create "bo" "esc h" "" pat-help
     buffer-bind-create "bo" "C-c C-c" "" pat-deal
     buffer-bind-key pat-deal "backspace"

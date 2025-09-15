@@ -135,7 +135,7 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*%\\|^[ \t]*$\\|^[ \t]*\
     hilight #l1 64 "\\\\textgreater" ">" #l2
     hilight #l1 64 "\\\\textasciicircum" "^" #l2
     hilight #l1 64 "\\\\textasciitilde" "~" #l2
-    
+
     ; Umlauts only examples, use gsar.exe for umlauts
     ; tranlations during compiling
     hilight #l1 64 "\"a" "ä" #l2
@@ -195,7 +195,7 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*%\\|^[ \t]*$\\|^[ \t]*\
     ; hilight #l1 68 "|" "" "|" "" "" .scheme.string
     hilight #l1 64 "\\\\\\\\$" "" #l2
   !emacro
-  
+
   0 hilight .hilight.latex 0                                     $global-scheme
   ; take out the \% token first so we can hilight comments correctly
   hilight .hilight.latex 0 "\\\\%"                               .scheme.prepro
@@ -378,7 +378,7 @@ set-variable .fhook-latex.paragraph-srch "\\(^$\\|^[ \t]*%\\|^[ \t]*$\\|^[ \t]*\
   ;
   0 hilight  .hilight.latexv 2 50                        $global-scheme
   hilight .hilight.latexv 0xc0 "\\\\end{verbatim}" "<<verbatim|" .hilight.latexs .scheme.keyword
-  
+
   0 define-macro latex-swap-hilight
     !if &equal $buffer-hilight .hilight.latex
       set-variable $buffer-hilight .hilight.latexs
@@ -755,7 +755,7 @@ define-macro latex-popup
       set-variable #l1 @s1
       set-variable #l2 @s2
       ; ml-write &spr "Found[%d] \\%s{%s}:%d" #l9 #l1 #l2 $window-line
-      
+
       ; Make sure we are not in a comment.
       !if &gre $window-col 0
         !force -1 search-buffer "bem" "\\(^%\\|[^\\\\]%\\)"
@@ -764,7 +764,7 @@ define-macro latex-popup
           set-variable #l5 "c"
         !endif
       !endif
-      
+
       ; Process the search.
       !if &seq #l5 "c"
         set-variable #l5 "o"
@@ -845,7 +845,7 @@ define-macro latex-popup
       set-variable #l2 @s2
       set-variable #l4 &add #l4 1
       ; ml-write &spr "Processing[%05d/%d] \\%s{%s}:%d" #l4 #l9 #l1 #l2 $window-line
-      
+
       ; Make sure we are not in a comment.
       set-position "\x82"
       !if &gre $window-col 0
@@ -857,7 +857,7 @@ define-macro latex-popup
         !endif
       !endif
       goto-position "\x82"
-      
+
       ; Process the search.
       !if &seq #l5 "c"
         set-variable #l5 "o"
@@ -930,7 +930,7 @@ define-macro latex-popup
       set-variable #l4 &add #l4 1
       ; ml-write &spr "Processing[%05d/%d] %s:%d \"%s\" \"%s\" \"%s\"" #l4 #l9 #l1 $window-line #l8 #l7 #l6
       ; 1 screen-update
-      
+
       ; Make sure we are not in a comment.
       !if &gre $window-col 1
         set-variable #l3 $window-col
@@ -942,7 +942,7 @@ define-macro latex-popup
         !endif
         set-variable $window-col #l3
       !endif
-      
+
       ; Process the search.
       !if &seq #l5 "c"
         set-variable #l5 "o"
@@ -969,7 +969,7 @@ define-macro latex-popup
         !else
           forward-char
         !endif
-        
+
         ; Determine if skipping.
         !if &seq #l5 "q"
         !elif &seq #l5 "s"
@@ -1019,7 +1019,7 @@ define-macro latex-popup
             2 forward-char
           !endif
         !endif
-        
+
         ; Simple test to see if '{' is escaped '\{'.
         !if &and &seq #l1 "{" &gre $window-col 1
           2 backward-char
@@ -1079,7 +1079,7 @@ define-macro latex-popup
             2 forward-char
           !endif
         !endif
-        
+
         ; Process the close bracket.
         !if &seq #l5 "s"
           set-variable #l5 "o"
@@ -1105,7 +1105,7 @@ define-macro latex-popup
           !endif
           2 forward-char
         !endif
-        
+
         ; Precheck.
         !if &seq #l5 "s"
           set-variable #l5 "o"
@@ -1174,7 +1174,7 @@ define-macro latex-popup
       set-variable #l4 &add #l4 1
       ; 1 screen-update
       ; 50 ml-write &spr "Processing[%05d/%d] %s:%d \"%s\" \"%s\" \"%s\"" #l4 #l9 #l1 $window-line #l8 #l7 #l6
-      
+
       ; Make sure we are not in a comment.
       set-position "\x82"
       !if &gre $window-col 1
@@ -1186,7 +1186,7 @@ define-macro latex-popup
         !endif
       !endif
       goto-position "\x82"
-      
+
       ; Process the search.
       !if &seq #l5 "c"
         !if &equ $window-col 0
@@ -1208,7 +1208,7 @@ define-macro latex-popup
             set-variable #l5 "s"
           !endif
         !endif
-        
+
         ; Determine if skipping.
         !if &seq #l5 "s"
           set-variable #l5 "b"
@@ -1252,7 +1252,7 @@ define-macro latex-popup
           !endif
           forward-char
         !endif
-        
+
         ; Precheck.
         !if &not &seq #l5 "s"
           ; Push onto the stack.
@@ -1303,7 +1303,7 @@ define-macro latex-popup
           !endif
           forward-char
         !endif
-        
+
         ; Process the close bracket.
         !if &seq #l5 "s"
           set-variable #l5 "o"
@@ -1329,7 +1329,7 @@ define-macro latex-popup
           !endif
           forward-char
         !endif
-        
+
         ; Precheck.
         !if &seq #l5 "s"
           set-variable #l5 "o"

@@ -446,5 +446,3 @@ define-macro cross-word
   .osd.crosswd osd
 !emacro
 set-variable .crosswd.noword ""
-
-

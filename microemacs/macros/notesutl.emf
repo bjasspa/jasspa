@@ -5,7 +5,7 @@
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
 ;
-; Synopsis:    
+; Synopsis:
 ; Authors:     Jon Green
 ;
 
@@ -46,7 +46,7 @@
   !if &not $status
     set-variable #l0 @ml01 "Output path"
   !endif
-  !if &not &seq "D" &stat t &set #l0 &stat a #l0 
+  !if &not &seq "D" &stat t &set #l0 &stat a #l0
     ml-write &spr "[Error: Given ouput path \"%s\" is not a directory]" #l0
     !abort
   !endif
@@ -115,7 +115,7 @@ define-macro notes-to-eView
   !if &not $status
     set-variable #l0 @ml01 "Output path"
   !endif
-  !if &not &seq "D" &stat t &set #l0 &stat a #l0 
+  !if &not &seq "D" &stat t &set #l0 &stat a #l0
     ml-write &spr "[Error: Given ouput path \"%s\" is not a directory]" #l0
     !abort
   !endif
@@ -210,7 +210,7 @@ define-macro notes-single-to-multi
   !if &seq "/" &rig &set #l0 &stat a #l0 -1
     set-variable #l0 &lef #l0 -1
   !endif
-  !if &not &seq "D" &stat t &set #l1 &lef #l0 &rsin "/" #l0 
+  !if &not &seq "D" &stat t &set #l1 &lef #l0 &rsin "/" #l0
     ml-write &spr "[Error: Parent \"%s\" of given ouput path is not a directory]" #l1
     !abort
   !elif &seq "X" &set #l2 &stat t #l0
@@ -348,7 +348,7 @@ define-macro notes-import-skwyrul
     insert-string &spr "%n}\n" &dec #l1 1 " "
   !until &not #l1
   insert-string &spr "\"id-next\" = \"%d\"\n" &add #l9 1
-  set-variable #l1 $window-line 
+  set-variable #l1 $window-line
   set-variable #l0 @ml21 "Skwyrul data file (skwyrul_r.htm)" &rep #l0 "_l.htm" "_r.htm"
   insert-file #l0
   !if &equ $window-line #l1

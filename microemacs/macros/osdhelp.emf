@@ -237,9 +237,9 @@
   osd .osd.ohlpc  0 "sI"   &sub .w 4 &sub .d 6 -1 -1 20 osd-help-cont-list-crt
   osd .osd.ohlpi  0 "sI"   &sub .w 4 &sub .d 6 -1 -1 60 osd-help-index-crt
   osd .osd.ohlps  0 "sDI"  &sub .w 4 &sub .d 6 -1 -1 55 40
-  osd .osd.ohlpcl 0 "sSf"  .scheme.osd-child &sub .w 8 &sub .d 10 0 -1 
-  osd .osd.ohlpil 0 "AfsS" .scheme.osd-child &sub .w 8 &sub .d 10 0 -1 
-  osd .osd.ohlpsl 0 "sSf"  .scheme.osd-child &sub .w 8 &sub .d 14 0 -1 
+  osd .osd.ohlpcl 0 "sSf"  .scheme.osd-child &sub .w 8 &sub .d 10 0 -1
+  osd .osd.ohlpil 0 "AfsS" .scheme.osd-child &sub .w 8 &sub .d 10 0 -1
+  osd .osd.ohlpsl 0 "sSf"  .scheme.osd-child &sub .w 8 &sub .d 14 0 -1
   osd .osd.ohlpc 20 "IbHct" .scheme.osd-sbar &sub .w 8 &sub .d 10 .osd.ohlpcl
   osd .osd.ohlpi 60 "IbHct" .scheme.osd-sbar &sub .w 8 &sub .d 10 .osd.ohlpil
   osd .osd.ohlps 90 "IbHct" .scheme.osd-sbar &sub .w 8 &sub .d 14 .osd.ohlpsl
@@ -297,7 +297,7 @@ set-variable .osd-help-scope.list "|\HAll|\HModes|\HCommands|\HVariables|Mac\Hro
 0 define-macro osd-help-search-list-crt
   !if &not &seq .osd-help-search-list-crt.search ""
     .flag osd-help-create-slist .osd.ohlpsl .osd-help-search-list-crt.search
-    osd .osd.ohlpsl 0 "sSf" .scheme.osd-child &sub .osd-help-set-size.w 8 &sub .osd-help-set-size.d 14 0 -1 
+    osd .osd.ohlpsl 0 "sSf" .scheme.osd-child &sub .osd-help-set-size.w 8 &sub .osd-help-set-size.d 14 0 -1
   !endif
 !emacro
 set-variable .osd-help-search-list-crt.flag   0
@@ -332,9 +332,9 @@ osd .osd.ohlps 100 ""
   !if &sub .scope .osd-help.scope
     set-variable .scope .osd-help.scope
     osd-help-create-list .osd.ohlpil
-    osd .osd.ohlpil 0 "AfsS" .scheme.osd-child &sub .osd-help-set-size.w 8 &sub .osd-help-set-size.d 10 0 -1 
+    osd .osd.ohlpil 0 "AfsS" .scheme.osd-child &sub .osd-help-set-size.w 8 &sub .osd-help-set-size.d 10 0 -1
   !endif
-!emacro    
+!emacro
 set-variable .osd-help-index-crt.scope 0
 0 define-macro osd-help-index-scope
   @# osd-help-scope
@@ -378,12 +378,12 @@ osd .osd.ohlpi 70  ""
     1 buffer-mode "magic"
     set-variable #l4 0
     -1 osd .osd.ohlpcl
-    osd .osd.ohlpcl 0 "sS" .scheme.osd-child &sub .osd-help-set-size.w 8 &sub .osd-help-set-size.d 10  0 -1 
+    osd .osd.ohlpcl 0 "sS" .scheme.osd-child &sub .osd-help-set-size.w 8 &sub .osd-help-set-size.d 10  0 -1
     !force search-buffer "em" "^!   Contents$"
     !if $status
       beginning-of-line
       forward-line
-      set-variable .osd-help-content-goto.line $window-line 
+      set-variable .osd-help-content-goto.line $window-line
       !while &seq @wc "|"
         set-variable #l5 &rig @wl 1
         forward-line

@@ -111,9 +111,9 @@ define-macro osd-fo-filelist
       !endif
     !endif
     !if #l1
-      set-variable .osd.fo-path &cat .osd.fo-path &lef .osd.fo-file #l1 
+      set-variable .osd.fo-path &cat .osd.fo-path &lef .osd.fo-file #l1
       osd-fo-dirlist
-      set-variable .osd.fo-file &rig .osd.fo-file #l1 
+      set-variable .osd.fo-file &rig .osd.fo-file #l1
     !endif
     0 osd-fo-filelist
   !else
@@ -296,7 +296,7 @@ osd .osd.fom 6  "It" .osd.fobm
   !if &seq .osd.fodv "ERROR"
     set-variable .osd.fodv &add .osd.fodc 1
     !if &band $system 0x200
-      osd .osd.fodv 0 "bs" -1 0 22 0 
+      osd .osd.fodv 0 "bs" -1 0 22 0
       set-variable #l0 0
       set-variable $file-names ".:/"
       !while &not &seq &set #l1 $file-names ""
@@ -310,7 +310,7 @@ osd .osd.fom 6  "It" .osd.fobm
     set-variable .file-mask &cat "\b*" &reg "/history/file-mask" "\b"
   !endif
   -1 osd .osd.foft
-  osd .osd.foft 0 "bs" -1 0 22 0 
+  osd .osd.foft 0 "bs" -1 0 22 0
   set-variable #l0 0
   !while &not &seq &set #l1 &lget .file-type &inc #l0 1 ""
     osd .osd.foft #l0 "" #l1 #l0 "osd-fo-masksel"
@@ -353,4 +353,3 @@ define-macro osd-file-open
   !return #l0
 !emacro
 set-variable .osd-file-open.ft 1
-

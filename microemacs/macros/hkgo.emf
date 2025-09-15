@@ -42,14 +42,14 @@ set-variable .fhook-go.item-list-r3 "type \CCb\\1\CCA"
   ; Comment TODO's
   hilight .hilight.go 20 "/\\*\\s+[Tt][Oo][Dd][Oo]" "*/" "" .scheme.error
   hilight .hilight.go 18 "//\\s*[tT][oO][dD][oO]"           .scheme.error
-  
+
   ; Strings
   hilight .hilight.go  4 "\"" "\"" "\\"  .scheme.string
   hilight .hilight.go  4 "\'" "\'" "\\"  .scheme.string
   hilight .hilight.go  4 "\"\"\"" "\"\"\"" "\\"  .scheme.quote
   ; go string literal /.foo[0-9]\s*bar/ hiligh gets confused with simple division.
   ;hilight .hilight.go  4 "/" "/" "" .scheme.quote
-  
+
   ; constants: A_CONSTANT_VARAIBLE
   hilight .hilight.go 1    "[A-Z_]+"        .scheme.constant
   ; package keywords
@@ -60,11 +60,11 @@ set-variable .fhook-go.item-list-r3 "type \CCb\\1\CCA"
   hilight .hilight.go 1    "case"           .scheme.keyword
   hilight .hilight.go 1    "chan"           .scheme.keyword
   hilight .hilight.go 1    "const"          .scheme.keyword
-  hilight .hilight.go 1    "continue"       .scheme.keyword    
+  hilight .hilight.go 1    "continue"       .scheme.keyword
   hilight .hilight.go 1    "default"        .scheme.keyword
   hilight .hilight.go 1    "defer"          .scheme.keyword
   hilight .hilight.go 1    "else"           .scheme.keyword
-  hilight .hilight.go 1    "fallthrough"    .scheme.keyword    
+  hilight .hilight.go 1    "fallthrough"    .scheme.keyword
   hilight .hilight.go 1    "for"            .scheme.keyword
   hilight .hilight.go 1    "func"           .scheme.keyword
   hilight .hilight.go 1    "go"             .scheme.keyword
@@ -80,27 +80,27 @@ set-variable .fhook-go.item-list-r3 "type \CCb\\1\CCA"
   hilight .hilight.go 1    "type"           .scheme.keyword
   hilight .hilight.go 1    "var"            .scheme.keyword
   hilight .hilight.go 1    "false"          .scheme.operator
-  hilight .hilight.go 1    "iotae"          .scheme.operator  
+  hilight .hilight.go 1    "iotae"          .scheme.operator
   hilight .hilight.go 1    "true"           .scheme.operator
   hilight .hilight.go 1    "bool"           .scheme.type
-  hilight .hilight.go 1    "byte"           .scheme.type  
-  hilight .hilight.go 1    "complex64"      .scheme.type    
-  hilight .hilight.go 1    "complex128"     .scheme.type      
-  hilight .hilight.go 1    "float32"        .scheme.type        
-  hilight .hilight.go 1    "float64"        .scheme.type          
+  hilight .hilight.go 1    "byte"           .scheme.type
+  hilight .hilight.go 1    "complex64"      .scheme.type
+  hilight .hilight.go 1    "complex128"     .scheme.type
+  hilight .hilight.go 1    "float32"        .scheme.type
+  hilight .hilight.go 1    "float64"        .scheme.type
   hilight .hilight.go 1    "int"            .scheme.type
   hilight .hilight.go 1    "int8"           .scheme.type
   hilight .hilight.go 1    "int16"          .scheme.type
   hilight .hilight.go 1    "int32"          .scheme.type
   hilight .hilight.go 1    "int64"          .scheme.type
-  hilight .hilight.go 1    "rune"           .scheme.type  
+  hilight .hilight.go 1    "rune"           .scheme.type
   hilight .hilight.go 1    "string"         .scheme.type
   hilight .hilight.go 1    "uint"           .scheme.type
   hilight .hilight.go 1    "uint8"          .scheme.type
   hilight .hilight.go 1    "uint16"         .scheme.type
   hilight .hilight.go 1    "uint32"         .scheme.type
   hilight .hilight.go 1    "uint64"         .scheme.type
-  hilight .hilight.go 1    "uintptr"        .scheme.type  
+  hilight .hilight.go 1    "uintptr"        .scheme.type
 !endif
 
 !if &sin "d" .fhook-go.setup
@@ -115,12 +115,10 @@ set-variable .fhook-go.item-list-r3 "type \CCb\\1\CCA"
 ; setup file-* tools
 add-next-line "*go-exec*" "^%f:%l:\\d+.+"
 add-next-line "*go-lint*" "^vet: ./%f:%l:\\d+.+"
-set-variable .fhook-go.coms "\bgo\b" 
+set-variable .fhook-go.coms "\bgo\b"
 set-variable .fhook-go.coms-windows "\bC:/Go/bin/go\.exe\b"
 set-variable .fhook-go.exec1   "\b%v[com]\b\b\b\b%\"%v[com]%\" run %\"%f%\" %v[args|20|Additional command-line arguments|]\b"
 set-variable .fhook-go.format1 "\b%v[com]\b\b\b\b%\"%v[com]%\" fmt %\"%f%\"\b"
 set-variable .fhook-go.lint1   "\b%v[com]\b\b\b\b%\"%v[com]%\" vet %\"%f%\"\b"
 
 buffer-init-fhook "go"
-
-

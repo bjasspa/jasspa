@@ -65,7 +65,7 @@ set-variable .fhook-ruby.item-list-r3 "Def \CCb\\1\CCA"
   hilight .hilight.ruby    0 "%r{\\{[^}]*\\}}"         .scheme.variable
   hilight .hilight.ruby    0 "%r(\\{[^)]*\\})"         .scheme.variable
   hilight .hilight.ruby    0 "%r\\(.\\)\\{\\!1*\\}\\1" .scheme.variable
-  
+
   hilight .hilight.ruby    0x20 "include" .scheme.prepro
   ; Reserved Words
   hilight .hilight.ruby    1 "BEGIN"      .scheme.keyword
@@ -116,13 +116,13 @@ set-variable .fhook-ruby.item-list-r3 "Def \CCb\\1\CCA"
   hilight .hilight.ruby    1 "and"        .scheme.operator
   hilight .hilight.ruby    1 "in"         .scheme.operator
   hilight .hilight.ruby    1 "defined\\?" .scheme.operator
-  
+
   ; Global variables
   hilight .hilight.ruby    4 "\\$" "\\}\\W" "" .scheme.variable
   ; Instance Variables
   ; hilight .hilight.ruby    4 "@" "\\}\\W" ""  .scheme.variable
   hilight .hilight.ruby    0 "@"              .scheme.variable
-  
+
   !if &band .hilight.flags 0x08
     ; hilight constants, e.g. numbers
     hilight .hilight.ruby 1 "[[:digit:]]+"       .scheme.constant
@@ -162,12 +162,12 @@ set-variable .fhook-ruby.item-list-r3 "Def \CCb\\1\CCA"
   indent .hilight.ruby N "^[ \t]*unless" t
   ; 'while' is tricky becuase it may appear as modifier 'expr while expr'
   ; There is also another case of 'while expr do' where we want a single
-  ; indent to 2. 
+  ; indent to 2.
   indent .hilight.ruby N "^[ \t]*while.*do" t
   indent .hilight.ruby N "^[ \t]*while" t
   ; 'until' is tricky becuase it may appear as modifier 'expr until expr'
   ; There is also another case of 'until expr do' where we want a single
-  ; indent to 2. 
+  ; indent to 2.
   indent .hilight.ruby N "^[ \t]*until.*do" t
   indent .hilight.ruby N "^[ \t]*until" t
   ;

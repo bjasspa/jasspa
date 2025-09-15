@@ -57,7 +57,7 @@ set-variable .Fahtzee.dices "|\n  X|   X\n\n X|   X\n  X\n X| X X\n\n X X| X X\n
 0 define-macro fahtzee-setup
   set-variable #l1 &cond .Fahtzee.curp "Player " "High "
   -1 osd .osd.fahtzeen
-  osd .osd.fahtzeen 0  "N" 
+  osd .osd.fahtzeen 0  "N"
   set-variable #l0 1
   !repeat
     osd .osd.fahtzeen #l0 "Psf" &cat #l1 #l0 &add .osd.fahtzeec #l0
@@ -262,7 +262,7 @@ set-variable .Fahtzee.dices "|\n  X|   X\n\n X|   X\n  X\n X| X X\n\n X X| X X\n
 set-variable .fahtzee-throw.fixed "|5|5|5|5|5|"
 
 0 define-macro fahtzee-hold
-  set-variable .Fahtzee.held &lset .Fahtzee.held @# &bxor 1 &lget .Fahtzee.held @# 
+  set-variable .Fahtzee.held &lset .Fahtzee.held @# &bxor 1 &lget .Fahtzee.held @#
 !emacro
 
 0 define-macro fahtzee-set-dice
@@ -331,7 +331,7 @@ set-variable .fahtzee-throw.fixed "|5|5|5|5|5|"
       set-variable #l0 &add .Fahtzee.curg 10
       !repeat
         !iif &seq &reg &cat .Fahtzee.visr #l0 "" ""  osd .osd.fahtzeec #l0 "ExGfh" "     " #l0 fahtzee-entry
-      !until &gre &inc #l0 10 190    
+      !until &gre &inc #l0 10 190
     !endif
   !endif
 !emacro
@@ -443,7 +443,7 @@ osd .osd.fahtzeed 15 "Sfc" "\H2" 20
 osd .osd.fahtzeed 25 "Sfc" "\H3" 30
 osd .osd.fahtzeed 35 "Sfc" "\H4" 40
 osd .osd.fahtzeed 45 "Sfc" "\H5" 50
-osd .osd.fahtzeed 55 "" 
+osd .osd.fahtzeed 55 ""
 osd .osd.fahtzeed 60 "BxcfH" .scheme.osd-dbtt " THROW "
 
 osd .osd.fahtzee 00 "batcH" 6 3 .scheme.osd-title "Fahtzee"
@@ -462,8 +462,7 @@ set-variable #l0 10
     osd .osd.fahtzeec &add #l0 #l1 "ESGfh" "     " &add #l0 #l1 fahtzee-entry
   !done
   osd .osd.fahtzeec &add #l0 7 "f"
-!until &equ &inc #l0 10 190    
+!until &equ &inc #l0 10 190
 
 osd-bind-key .osd.fahtzee void "mouse-pick-3"
 osd-bind-key .osd.fahtzee fahtzee-throw "mouse-drop-3"
-

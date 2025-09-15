@@ -13,7 +13,7 @@ define-macro fhook-wiki
   &cond &sin "c" .fhook-wiki.setup 1 0 wiki-edit-mode
   buffer-init-hooks
   wiki-add-to-last
-!emacro    
+!emacro
 
 ; buffer-init variables
 set-variable .fhook-wiki.name "GNU Wiki"
@@ -32,13 +32,13 @@ set-variable .fhook-wiki.collapse-close "^\\*+[\t ]*\\S\\|\\'"
 set-variable .fhook-wiki.collapse-mnext "-1"
 
 ; Quick check to make sure that hilighting is required.
-!if &and &sin "h" .fhook-wiki.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-wiki.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.wiki
     set-variable .hilight.wiki &pinc .hilight.next 1
     set-variable .hilight.wikiL &pinc .hilight.next 1
     set-variable .hilight.wikiE &pinc .hilight.next 1
   !endif
-  
+
   ; Non-authoring mode hilight
   0 hilight .hilight.wiki  0                        $global-scheme
   hilight .hilight.wiki 2 "^-\\*-\\s*mode:\\s*wiki"  .scheme.hide
@@ -47,10 +47,10 @@ set-variable .fhook-wiki.collapse-mnext "-1"
   hilight .hilight.wiki 0xc0 ":#\\}\\w" ""          .hilight.wikiL .scheme.link
   hilight .hilight.wiki 0xc0 ":\\w[^:#]*#\\}\\w" "" .hilight.wikiL .scheme.link
   hilight .hilight.wiki 0xc0 ":\\}\\w" ""           .hilight.wikiL .scheme.link
-  
+
   0 hilight .hilight.wikiL 0                        .scheme.link
   hilight .hilight.wikiL 0xc0 ":" "" .hilight.wiki  .scheme.link
-  
+
   ; authoring mode hilight
   0 hilight .hilight.wikiE  0                $global-scheme
   hilight .hilight.wikiE 2 "^-\\*-\\s*mode:\\s*wiki" .scheme.hide
@@ -68,9 +68,9 @@ set-variable .fhook-wiki.collapse-mnext "-1"
     !elif &set #l0 &lfin "|space|delete|backspace|return|tab|" @cck
       set-variable #l1 &lget "|insert-space|forward-delete-char|backward-delete-char|newline|tab|" #l0
       !if @2
-        @3 execute-named-command #l1 @mna 
+        @3 execute-named-command #l1 @mna
       !else
-        execute-named-command #l1 @mna 
+        execute-named-command #l1 @mna
       !endif
       !return
     !elif &and &equ &len @cck 4 &seq &lef @cck 2 "\\x"

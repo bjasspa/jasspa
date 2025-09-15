@@ -367,4 +367,3 @@ define-macro print-setup
 
 ; load the list of available printer drivers and schemes
 execute-file "printers"
-

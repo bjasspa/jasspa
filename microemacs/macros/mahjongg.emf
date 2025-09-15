@@ -66,7 +66,7 @@
   ; a tile position.
   ; A quick check to make sure we are in range.
   !iif &or &les @# 0 &gre @# 134  !return
-  
+
   ; Compute the special cases
   !if &gre @# 119
     ;        set-variable $debug 1
@@ -100,13 +100,13 @@
     !endif
     !return
   !endif
-  
+
   set-variable #g0 &mul @# 5
   ; Workout if the tile is vacant map 0..5.
   set-variable #g1 &sin "\xfe" &mid :mjg-tiles #g0 5
   set-variable #g1 &cond &equ #g1 0 "5" &sub #g1 1
   set-variable #g2 #g1
-  
+
   ; Work out the top line.
   !if &les #g0 75
     set-variable #g2 &cat #g2 "000"
@@ -200,18 +200,18 @@
   ; a tile position.
   ; A quick check to make sure we are in range.
   !iif &or &les @# 0 &gre @# 134  !return
-  
+
   ; Get the adjacenty information
   @# mjg-adjacent     ; Get the adjacency list.
-  
+
   ; Determine if the centre pixel is zero. If so then allocate
   ; a blank set of box characters.
   set-variable #g3 &lef #g2 1           ; Centre pixel
   set-variable #g7 &cond &equ #g3 0 "           " $box-chars
-  
+
   ; Get the tile index.
   set-variable #g0 &mul @# 5
-  
+
   ; Set up for the color
   !if &gre #g3 2                       ; last 2
     set-variable :mjg-cps .scheme.mjg2
@@ -220,14 +220,14 @@
     set-variable :mjg-cps .scheme.mjg1
     set-variable :mjg-cpf &add 35 &mul #g3 32
   !endif
-  
+
   ; Get the row and column. #g8 = row; #g9 = column
   set-variable #g8 &mul 5 &div #g0 75   ; The row.
   set-variable #g9 &add 1 &mod #g0 75   ; The column
   ; Add the origin
   set-variable #g8 &add #g8 :mjg-y0     ; Add row base
   set-variable #g9 &add #g9 :mjg-x0     ; Add colunm base
-  
+
   !if &gre #g0 599                     ; Check out the special tiles.
     set-variable #g8 &add 18 :mjg-y0 ; The row
     !if &equ @# 120                 ; West single
@@ -277,7 +277,7 @@
   set-variable #g4 &mid #g2 4 1         ; W tile
   set-variable #g5 &mid #g2 1 1         ; NW tile
   set-variable #g6 &mid #g2 2 1         ; N tile
-  
+
   ; Compute the West side wall and put the pixel edge.
   !if &not &les #g3 #g4                 ; if (C >= W) render edge.
     :mjg-cpf screen-poke &add #g8 1 &sub #g9 1 :mjg-cps &lef #g7 1
@@ -285,7 +285,7 @@
     :mjg-cpf screen-poke &add #g8 3 &sub #g9 1 :mjg-cps &lef #g7 1
     :mjg-cpf screen-poke &add #g8 4 &sub #g9 1 :mjg-cps &lef #g7 1
   !endif
-  
+
   ; Compute the North-West corner and put the pixel edge.
   !if &or &or &les #g3 #g4 &les #g3 #g5 &les #g3 #g6
     set-variable #g1 ""              ; Failed the corner.
@@ -299,16 +299,16 @@
     set-variable #g1 &mid #g7 7 1     ; Use a cross.
   !endif
   !iif &not &seq #g1 ""  :mjg-cpf screen-poke #g8 &sub #g9 1 :mjg-cps #g1
-  
+
   ; Compute the North side wall and put the pixel edge.
   !if &not &les #g3 #g6                 ; if (C >= N) render edge.
     :mjg-cpf screen-poke #g8 #g9 :mjg-cps &sprint "%4s" &rig #g7 10
   !endif
-  
+
   ; Set up for the upper right side.
   set-variable #g4 &mid #g2 5 1         ; E tile.
   set-variable #g5 &mid #g2 3 1         ; NE tile.
-  
+
   ; Compute the North-East corner and put the pixel edge.
   !if &or &or &les #g3 #g4 &les #g3 #g5 &les #g3 #g6
     set-variable #g1 ""              ; Failed the corner.
@@ -322,7 +322,7 @@
     set-variable #g1 &mid #g7 7 1     ; Use a cross.
   !endif
   !iif &not &seq #g1 ""  :mjg-cpf screen-poke #g8 &add #g9 4 :mjg-cps #g1
-  
+
   ; Compute the East side wall and put the pixel edge.
   !if &not &les #g3 #g4                 ; if (C >= E) render edge.
     :mjg-cpf screen-poke &add #g8 1 &add #g9 4 :mjg-cps &lef #g7 1
@@ -330,11 +330,11 @@
     :mjg-cpf screen-poke &add #g8 3 &add #g9 4 :mjg-cps &lef #g7 1
     :mjg-cpf screen-poke &add #g8 4 &add #g9 4 :mjg-cps &lef #g7 1
   !endif
-  
+
   ; Set up for the lower right side
   set-variable #g5 &mid #g2 8 1         ; SE tile
   set-variable #g6 &mid #g2 7 1         ; S tile
-  
+
   ; Compute the South-East corner and put the pixel edge.
   !if &or &or &les #g3 #g4 &les #g3 #g5 &les #g3 #g6
     set-variable #g1 ""              ; Failed the corner.
@@ -348,16 +348,16 @@
     set-variable #g1 &mid #g7 7 1     ; Use a cross.
   !endif
   !iif &not &seq #g1 ""  :mjg-cpf screen-poke &add #g8 5 &add #g9 4 :mjg-cps #g1
-  
+
   ; Compute the South side wall and put the pixel edge.
   !if &not &les #g3 #g6                 ; if (C >= S) render edge.
     :mjg-cpf screen-poke &add #g8 5 #g9 :mjg-cps &sprint "%4s" &rig #g7 10
   !endif
-  
+
   ; Set up for the lower left side
   set-variable #g4 &mid #g2 4 1         ; W tile
   set-variable #g5 &mid #g2 6 1         ; SW tile
-  
+
   ; Compute the South-West corner and put the pixel edge.
   !if &or &or &les #g3 #g4 &les #g3 #g5 &les #g3 #g6
     set-variable #g1 ""              ; Failed the corner.
@@ -371,7 +371,7 @@
     set-variable #g1 &mid #g7 7 1     ; Use a cross.
   !endif
   !iif &not &seq #g1 ""  :mjg-cpf screen-poke &add #g8 5 &sub #g9 1 :mjg-cps #g1
-  
+
 *fill-centre
   ; Fill in the centre with data
   !if &equ #g3 0
@@ -444,7 +444,7 @@
     forward-line
     set-variable #g9 &cat #g9 &itoa &lef #g1 3
   !until &equ &len #g9 144
-  
+
   ml-write "Allocating Tiles..."
   ; Fill the 3D table with data
   set-variable #g8 &sprint "%675s" "\xfe" ; Table size is 600
@@ -471,13 +471,13 @@
   ;
   mjg-fill 258  2       ; [3,6,3] = 258. Level 3 - line 3.
   mjg-fill 333  2       ; [4,6,3] = 333. Level 3 - line 4.
-  
+
   ; Add the special mid tiles.
   mjg-fill 600  1       ; Special West
   mjg-fill 639  1       ; Special Centre
   mjg-fill 665  1       ; Special East 1
   mjg-fill 670  1       ; Special East 2
-  
+
   set-variable :mjg-sel-tile-id 255   ; No tile selected
   set-variable :mjg-tiles #g8          ; Allocate the tiles.
   set-variable :mjg-again #g8          ; Remember the tiles.
@@ -506,15 +506,15 @@
   3 screen-poke &add :mjg-y0  3 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
   3 screen-poke &add :mjg-y0  4 &add :mjg-x0 70 .scheme.mjg1 &sprint "%sNew %s" &lef $box-chars 1 &lef $box-chars 1
   3 screen-poke &add :mjg-y0  5 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-  
+
   3 screen-poke &add :mjg-y0  6 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
   3 screen-poke &add :mjg-y0  7 &add :mjg-x0 70 .scheme.mjg1 &sprint "%sSame%s" &lef $box-chars 1 &lef $box-chars 1
   3 screen-poke &add :mjg-y0  8 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-  
+
   3 screen-poke &add :mjg-y0  9 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
   3 screen-poke &add :mjg-y0 10 &add :mjg-x0 70 .scheme.mjg1 &sprint "%sQuit%s" &lef $box-chars 1 &lef $box-chars 1
   3 screen-poke &add :mjg-y0 11 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-  
+
   3 screen-poke &add :mjg-y0 12 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
   3 screen-poke &add :mjg-y0 13 &add :mjg-x0 70 .scheme.mjg1 &sprint "%sHelp%s" &lef $box-chars 1 &lef $box-chars 1
   3 screen-poke &add :mjg-y0 14 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
@@ -524,7 +524,7 @@
   3 screen-poke &add :mjg-y0 30 &add :mjg-x0 66 .scheme.mjg2 " Level 3 "
   99 screen-poke &add :mjg-y0 31 &add :mjg-x0 66 .scheme.mjg1 " Level 2 "
   67 screen-poke &add :mjg-y0 32 &add :mjg-x0 66 .scheme.mjg1 " Level 1 "
-  
+
   1 screen-poke &add :mjg-y0 1 &add :mjg-x0 71 .scheme.mjg1 &sprint "%3d" :mjg-togo
 !emacro
 ;
@@ -543,7 +543,7 @@
   set-variable :mjg-y0 &sub &div $frame-depth 2 1
   set-variable :mjg-y0 &sub :mjg-y0 &div 41 2
   set-variable :mjg-y0 &cond &les :mjg-y0 0 0 :mjg-y0
-  
+
   set-variable :mjg-temp 0
   !repeat
     :mjg-temp mjg-draw-tile
@@ -589,7 +589,7 @@
     &add @# 15 mjg-draw-tile
     &add @# 16 mjg-draw-tile
     ; Redraw the specials
-    
+
     ; Check West
     !iif &not &seq &mid :mjg-tiles 600 1 "\xfe"  120 mjg-draw-tile
     ; Check centre
@@ -614,19 +614,19 @@
   ; a tile position.
   set-variable :mjg-temp1 @#
   set-variable :mjg-temp2 :mjg-sel-tile-id
-  
+
   ; Get current tile type.
   set-variable #g0 &mul @# 5
   set-variable #g0 &add #g0 &sub &lef @1 1 1
   set-variable #g2 &atoi &mid :mjg-tiles #g0 1
   set-variable #g2 &sub #g2 1
-  
+
   ; Get selected tile type.
   set-variable #g1 &mul :mjg-sel-tile-id 5
   set-variable #g1 &add #g1 &sub :mjg-sel-pos 1
   set-variable #g3 &atoi &mid :mjg-tiles #g1 1
   set-variable #g3 &sub #g3 1
-  
+
   ; Test if the tiles are from the same set
   !if &equ &div #g2 4 &div #g3 4
     set-variable :mjg-tiles &sprint "%s%s%s" &lef :mjg-tiles #g0 "\xfe" &rig :mjg-tiles &add #g0 1
@@ -666,7 +666,7 @@
 0 define-macro mjg-mouse
   set-variable #g0 &sub $mouse-x :mjg-x0
   set-variable #g1 &sub $mouse-y :mjg-y0
-  
+
   ; Check X min/X max
   !if &or &les #g0 1 &gre #g0 75
     ;       ml-write &sprint "Failed invalid tile position (%d,%d)." #g0 #g1
@@ -696,7 +696,7 @@
       !return
     !endif
   !endif
-  
+
   ; Check for a special mid tile
   !if &and &gre #g1 18 &les #g1 23
     ; Check West
@@ -717,7 +717,7 @@
       !goto do-adjacent
     !endif
   !endif
-  
+
   ; The mouse is on the grid. Get the tile position
   ; Check the Y - we must be in the middle of a tile.
   set-variable #g1 &sub #g1 1
@@ -729,7 +729,7 @@
   ; Turn the mouse position into a tile address.
   set-variable #g9 &add &mul &div #g1 5 15 &div #g0 5
 *do-adjacent
-  
+
   ; Check if we are unselecting the position
   !if &equ :mjg-sel-tile-id #g9
     set-variable :mjg-sel-tile-id 255
@@ -739,7 +739,7 @@
   ; Get the adjaceny information. We want to know if
   ; the tile position is valid. Result in #g2
   #g9 mjg-adjacent
-  
+
   ; Test for a blank tile or edge adjacency
   set-variable #g0 &lef #g2 1
   !if &equ #g0 0
@@ -747,7 +747,7 @@
   !elif &not &or &gre #g0 &mid #g2 4 1 &gre #g0 &mid #g2 5 1
     !return       ; Fail the tile not on edge
   !endif
-  
+
   ; Test special cases.
   ; Special centre; Level 4 - test for presense of level 5.
   !if &and &equ #g0 4 &not &seq &mid :mjg-tiles 639 1 "\xfe"
@@ -762,7 +762,7 @@
   !elif &and &or &equ #g9 57 &equ #g9 72 &not &seq &mid :mjg-tiles 665 1 "\xfe"
     !return
   !endif
-  
+
   ; Try selecting the tile.
   !if &equ :mjg-sel-tile-id 255
     set-variable :mjg-sel-tile-id #g9    ; Record the tile identity
@@ -920,7 +920,7 @@ define-macro Mahjongg
     set-variable :mjg-tile-r1 &sprint "%s%s %s "  :mjg-tile-r1 &lef $box-chars 1   &lef $box-chars 1
     set-variable :mjg-tile-r2 &sprint "%s%3s "    :mjg-tile-r2 &lef $box-chars 1
     set-variable :mjg-tile-r3 &sprint "%s%s%s%s " :mjg-tile-r3 &mid $box-chars 3 1 &mid $box-chars 9 1 &mid $box-chars 4 1
-    
+
     set-variable $buffer-scheme .scheme.mjg1
     ; Set up the bindings
     buffer-bind-key mjg-draw    "redraw"

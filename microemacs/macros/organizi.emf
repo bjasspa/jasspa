@@ -8,7 +8,7 @@
 ; Synopsis:    Organizer address book import/export macros.
 ; Authors:     Steven Phillips
 ;
-; Uncomment the following if you want to use Android's extended VCARD fields 
+; Uncomment the following if you want to use Android's extended VCARD fields
 ;set-variable .org.android 1
 ;
 !if &seq .osd-get-file.cmd "ERROR"
@@ -31,7 +31,7 @@
     set-variable #p9 &add #p9 1
     set-mark
     !if &seq @wc .org.dlmt
-      !repeat 
+      !repeat
         forward-char
         search-forward &cat "\\" .org.dlmt
       !until &not &seq @wc .org.dlmt
@@ -68,7 +68,7 @@
     set-variable #p9 &add #p9 1
     set-mark
     !if &seq @wc .org.dlmt
-      !repeat 
+      !repeat
         forward-char
         search-forward &cat "\\" .org.dlmt
       !until &not &seq @wc .org.dlmt
@@ -146,7 +146,7 @@
 
 0 define-macro org-aimp-select-field
   set-variable .org.aimp-field @#
-  set-variable #l0 &lef &lget .org.imp-field-nms @# 15 
+  set-variable #l0 &lef &lget .org.imp-field-nms @# 15
   osd .osd.org-aimp 50  "Hfhz" .scheme.osd-entry 15 1 #l0
   !if &gre &set #l0 &lget .org.imp-field-map @# 0
     osd .osd.org-aimp 70  "MdtmxsfHzh" .scheme.osd-entry 20 1 &lget .org.addr-lbl #l0 .osd.org-m
@@ -220,7 +220,7 @@
   set-registry &spr "/org/set/%s-endrec" .org.aie-type &ind &spr ".org.%s-endrec" .org.aie-type
   set-registry &spr "/org/set/%s-endfld" .org.aie-type &ind &spr ".org.%s-endfld" .org.aie-type
   set-registry &spr "/org/set/%s-delimit" .org.aie-type &ind &spr ".org.%s-delimit" .org.aie-type
-  !if &seq .org.aie-type "aexp" 
+  !if &seq .org.aie-type "aexp"
     set-registry &spr "/org/set/%s-addrfld" .org.aie-type &ind &spr ".org.%s-addrfld" .org.aie-type
   !endif
   mark-registry "/org" "u"
@@ -248,14 +248,14 @@ osd .osd.org-aieo 160 "BcfH"   .scheme.osd-ebtt "  \HOk  "  1 void
     osd .osd.org-aieo 120 "D"
     osd .osd.org-aieo 130 "D"
     osd .osd.org-aieo 135 "D"
-    set-variable .org.aie-type "aimp" 
+    set-variable .org.aie-type "aimp"
   !else
     osd .osd.org-aieo 0   "batcDHs" 3 6 36 0 -1 -1 160 .scheme.osd-title "Export Options"
     osd .osd.org-aieo 20  "Shf" "    Export Record Header  " 100
     osd .osd.org-aieo 120 "Shf" "     Export Addresses to  " 130
     osd .osd.org-aieo 130 "ExfHh" .scheme.osd-entry "####" 4 org-aie-options-set
     osd .osd.org-aieo 135 "f" " fields    "
-    set-variable .org.aie-type "aexp" 
+    set-variable .org.aie-type "aexp"
   !endif
   .osd.org-aieo osd
 !emacro
@@ -619,7 +619,7 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " \HCancel  "   f void
     !repeat
       org-addr-inc-recno
       !if &not &seq .org.addr "*"
-        !if &or &not .org.aexp-select &seq "*" &reg &spr "/org/addr/%d/slct" .org.addr "" 
+        !if &or &not .org.aexp-select &seq "*" &reg &spr "/org/addr/%d/slct" .org.addr ""
           set-variable #l2 &add #l2 1
           set-variable #l3 0
           !while &not &seq &set #l4 &lget .org.addr-reg &inc #l3 1 ""

@@ -13,4 +13,3 @@ execute-file "unixterm"
 ;
 ; AIX Compile stuff
 add-next-line "*compile*" "\"%f\", line %l"
-

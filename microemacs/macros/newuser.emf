@@ -69,7 +69,7 @@ set-variable .new-user.pathdiv &con &band $system 0x80 ":" ";"
     insert-string &spr "ERROR: Macro file \"%s\" already exists.\nIt should be deleted and re-created.\n" #l1
     !abort
   !endif
-  ; Try to create a new file. 
+  ; Try to create a new file.
   !force find-file #l1
   !if &not $status
     insert-string "[ERROR]\n"
@@ -110,7 +110,7 @@ set-variable .new-user.pathdiv &con &band $system 0x80 ":" ";"
     insert-string &spr "ERROR: Macro file \"%s\" already exists.\nIt should be deleted and re-created.\n" #l1
     !abort
   !endif
-  ; Try to create a new file. 
+  ; Try to create a new file.
   !force find-file #l1
   !if &not $status
     insert-string "[ERROR]\n"
@@ -250,7 +250,7 @@ set-variable .new-user.pathdiv &con &band $system 0x80 ":" ";"
         !return
       !endif
       !if &seq &set #l0 &stat "t" .new-user.user-path "X"
-        ; we will create this path which should mean that ME will ignore the current $user-path 
+        ; we will create this path which should mean that ME will ignore the current $user-path
         set-variable .new-user.create-path .new-user.user-path
         !if &seq &set #l1 &cat #l2 .new-user.pathdiv &lef .new-user.search-path &len #l1
           set-variable .new-user.search-path &rig .new-user.search-path &len #l1
@@ -284,22 +284,22 @@ set-variable .new-user.pathdiv &con &band $system 0x80 ":" ";"
     !return
   !endif
   insert-string "[y]\n\n"
-  
+
   ; Get the user name
   insert-string "Enter your full name (i.e. \"John Smith\"): "
   -1 recenter
   2 screen-update
   set-variable .new-user.fullname @ml "Full name"
   insert-string &spr "[%s]\n\n" .new-user.fullname
-  
+
   ; Get a user setup-file name - must not conflict with system emf files
   set-variable #l1 0
   set-variable .new-user.setup-file $user-name
   !while &not &seq &find .new-user.setup-file ".emf" "ERROR"
     set-variable .new-user.setup-file &spr "%d%s" &inc #l1 1 $user-name
   !done
-  insert-string &spr "User setup file: %s.emf\n\n" .new-user.setup-file 
-  
+  insert-string &spr "User setup file: %s.emf\n\n" .new-user.setup-file
+
   !if 0
     ; dont do company config here, easy to setup later with user-setup
     set-variable #l1 &reg "/history/company" "company"
@@ -358,13 +358,13 @@ set-variable .new-user.pathdiv &con &band $system 0x80 ":" ";"
     set-variable $user-path .new-user.create-path
     set-variable $search-path .new-user.search-path
   !endif
-  
+
   new-user-makeerf
   new-user-makeemf
   !if 0
     new-user-makecompany
   !endif
-  
+
   insert-string "\nRe-initialsing using new configuration ... "
   !force !force execute-file "me"
   !if &not $status
@@ -375,7 +375,7 @@ set-variable .new-user.pathdiv &con &band $system 0x80 ":" ";"
     !return
   !endif
   insert-string "[OK]\n"
-  ; 
+  ;
   ; Finished.
   insert-string "\n"
   insert-string "\n"

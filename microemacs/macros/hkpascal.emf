@@ -38,7 +38,7 @@ set-variable .fhook-pascal.item-list-r4 "Objc \CCb\\1\CCA"
 set-variable .fhook-pascal.item-list-s5 "^[Tt]ype[ \t]+\\(\\w+\\) = [Cc]lass"
 set-variable .fhook-pascal.item-list-r6 "Clss \CCb\\1\CCA"
 
-!if &and &sin "h" .fhook-pascal.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-pascal.setup &band .hilight.flags 0x02
   ; High-light Pascal Mode
   !if &not &exist .hilight.pascal
     set-variable .hilight.pascal &pinc .hilight.next 1
@@ -48,11 +48,11 @@ set-variable .fhook-pascal.item-list-r6 "Clss \CCb\\1\CCA"
   hilight .hilight.pascal 4 "(\\*" "*)" ""   .scheme.comment
   hilight .hilight.pascal 2 "//"             .scheme.comment
   hilight .hilight.pascal 0x1004 "'" "'" ""  .scheme.string
-  
+
   hilight .hilight.pascal 1 "asm"            .scheme.keyword
   hilight .hilight.pascal 1 "begin"          .scheme.keyword
   hilight .hilight.pascal 1 "case"           .scheme.keyword
-  hilight .hilight.pascal 1 "class"          .scheme.keyword  
+  hilight .hilight.pascal 1 "class"          .scheme.keyword
   hilight .hilight.pascal 1 "const"          .scheme.keyword
   hilight .hilight.pascal 1 "constructor"    .scheme.keyword
   hilight .hilight.pascal 1 "destructor"     .scheme.keyword
@@ -89,7 +89,7 @@ set-variable .fhook-pascal.item-list-r6 "Clss \CCb\\1\CCA"
   hilight .hilight.pascal 1 "var"            .scheme.keyword
   hilight .hilight.pascal 1 "while"          .scheme.keyword
   hilight .hilight.pascal 1 "with"           .scheme.keyword
-  
+
   hilight .hilight.pascal 1 "array"          .scheme.type
   hilight .hilight.pascal 1 "boolean"        .scheme.type
   hilight .hilight.pascal 1 "byte"           .scheme.type
@@ -98,9 +98,9 @@ set-variable .fhook-pascal.item-list-r6 "Clss \CCb\\1\CCA"
   hilight .hilight.pascal 1 "double"         .scheme.type
   hilight .hilight.pascal 1 "extended"       .scheme.type
   hilight .hilight.pascal 1 "integer"        .scheme.type
-  hilight .hilight.pascal 1 "int64"          .scheme.type  
+  hilight .hilight.pascal 1 "int64"          .scheme.type
   hilight .hilight.pascal 1 "longint"        .scheme.type
-  hilight .hilight.pascal 1 "longword"       .scheme.type  
+  hilight .hilight.pascal 1 "longword"       .scheme.type
   hilight .hilight.pascal 1 "packed"         .scheme.type
   hilight .hilight.pascal 1 "real"           .scheme.type
   hilight .hilight.pascal 1 "record"         .scheme.type
@@ -108,9 +108,9 @@ set-variable .fhook-pascal.item-list-r6 "Clss \CCb\\1\CCA"
   hilight .hilight.pascal 1 "single"         .scheme.type
   hilight .hilight.pascal 1 "string"         .scheme.type
   hilight .hilight.pascal 1 "text"           .scheme.type
-  hilight .hilight.pascal 1 "variant"        .scheme.type  
+  hilight .hilight.pascal 1 "variant"        .scheme.type
   hilight .hilight.pascal 1 "word"           .scheme.type
-  
+
   hilight .hilight.pascal 1 "and"            .scheme.operator
   hilight .hilight.pascal 1 "div"            .scheme.operator
   hilight .hilight.pascal 1 "mod"            .scheme.operator
@@ -119,10 +119,10 @@ set-variable .fhook-pascal.item-list-r6 "Clss \CCb\\1\CCA"
   hilight .hilight.pascal 1 "shl"            .scheme.operator
   hilight .hilight.pascal 1 "shr"            .scheme.operator
   hilight .hilight.pascal 1 "xor"            .scheme.operator
-  
+
   hilight .hilight.pascal 1 "false"          .scheme.operator
   hilight .hilight.pascal 1 "true"           .scheme.operator
-  
+
   hilight .hilight.pascal 1 "eof"            .scheme.operator
   hilight .hilight.pascal 1 "eoln"           .scheme.operator
 !endif
@@ -130,7 +130,7 @@ set-variable .fhook-pascal.item-list-r6 "Clss \CCb\\1\CCA"
 ; setup file-* tools
 add-next-line "*pascal-exec*" "^%f(%l,\\d+).+"
 add-next-line "*pascal-lint*" "^%f(%l,\\d+).+"
-set-variable .fhook-pascal.coms "\bfpc\b" 
+set-variable .fhook-pascal.coms "\bfpc\b"
 set-variable .fhook-pascal.exec1   "\b%v[com]\b\b\b\b%\"%v[com]%\" %\"%p%f%\" %& .%/%b %v[args|20|Additional command-line arguments|]\b"
 ; input-output can be the same file for ptop !! does inline replacement
 set-variable .fhook-pascal.format1 "\bptop\b\b\b\bptop %\"%f%\" %\"%f%\"\bPtop\b"

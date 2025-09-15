@@ -167,8 +167,8 @@ set-variable .fhook-java.item-list-r2 "Clss \CCb\\2\CCA"
   ; Special hilighting for a JavaDoc parameter - branch from the JavaDoc
   ; space into scheme for the parameter. Note that @param is defined after
   ; the generic '@' definitions.
-  ; 
-  ; Special for @param, @throws, @exception and @see 
+  ;
+  ; Special for @param, @throws, @exception and @see
   hilight .hilight.javadoc 0x80 "@param"     .hilight.pjavadoc .scheme.keyword
   hilight .hilight.javadoc 0x80 "@throws"    .hilight.pjavadoc .scheme.keyword
   hilight .hilight.javadoc 0x80 "@exception" .hilight.pjavadoc .scheme.keyword
@@ -182,7 +182,7 @@ set-variable .fhook-java.item-list-r2 "Clss \CCb\\2\CCA"
 !endif
 !if &sin "d" .fhook-java.setup
   !if &sin "l" .fhook-java.setup
-    ; TODO: With improvements to native C indenter to support C++ & Java, not sure if this is required 
+    ; TODO: With improvements to native C indenter to support C++ & Java, not sure if this is required
     ; Alternative java indentation scheme to handle more
     ; situations. We also define a "java comment" indentation scheme,
     ; this will help with comment content from intefering with the code

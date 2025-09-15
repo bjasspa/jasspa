@@ -199,12 +199,12 @@
   67 screen-poke &add :tri-row  2 &add :tri-x0 72 .scheme.cardback &sprint "%sDeal%s" &lef $box-chars 1 &lef $box-chars 1
   99 screen-poke &add :tri-row  2 &add :tri-x0 73 .scheme.cardback "D"
   67 screen-poke &add :tri-row  3 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-  
+
   67 screen-poke &add :tri-row  4 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
   67 screen-poke &add :tri-row  5 &add :tri-x0 72 .scheme.cardback &sprint "%sExit%s" &lef $box-chars 1 &lef $box-chars 1
   99 screen-poke &add :tri-row  5 &add :tri-x0 74 .scheme.cardback "x"
   67 screen-poke &add :tri-row  6 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-  
+
   67 screen-poke &add :tri-row  7 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
   67 screen-poke &add :tri-row  8 &add :tri-x0 72 .scheme.cardback &sprint "%sHelp%s" &lef $box-chars 1 &lef $box-chars 1
   99 screen-poke &add :tri-row  8 &add :tri-x0 73 .scheme.cardback "H"
@@ -314,9 +314,9 @@
   set-variable :tri-hom2 ""
   set-variable :tri-hom3 ""
   set-variable :tri-hom4 ""
-  
+
   set-variable #g1 1
-  
+
   !repeat
     ; Deal down facing cards
     set-variable #g0 &sub #g1 1
@@ -574,7 +574,7 @@
   ;
   set-variable #g0 $mouse-x
   set-variable #g1 $mouse-y
-  
+
   !if &and &not &gre #g1 :tri-rowdealdnmax &gre #g1 :tri-rowdealdnmin
     ;
     ; Off home bases
@@ -668,7 +668,7 @@
 
 0 define-macro bhook-triangle
   ; Turn off the cursor & menu
-  -1 show-cursor                                
+  -1 show-cursor
   !force osd -1 0
   ; Disable the scroll bars and toolbar.
   set-variable :scroll-bar $scroll-bar
@@ -770,7 +770,7 @@ define-macro Triangle
     !force buffer-bind-key void "mouse-drop-2"
     !force buffer-bind-key tri-mouse-pick-right "mouse-pick-3"
     !force buffer-bind-key tri-mouse-drop-right "mouse-drop-3"
-    
+
     buffer-bind-create "bo" "esc h" "" tri-help
     buffer-bind-create "bo" "C-c C-c" "" tri-deal
     buffer-bind-key tri-deal "d"
@@ -791,7 +791,7 @@ define-macro Triangle
     5 buffer-bind-key tri-tip "t"
     6 buffer-bind-key tri-tip "y"
     7 buffer-bind-key tri-tip "u"
-    
+
     1 buffer-bind-key tri-draw "C-l"  ; Redraw the screen
     buffer-bind-key tri-draw "redraw"
     set-variable $buffer-bhook bhook-triangle

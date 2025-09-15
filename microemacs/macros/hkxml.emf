@@ -43,7 +43,7 @@ set-variable .fhook-xml.exact -1
   set-variable .hilight.xml   &pinc .hilight.next 1
   set-variable .hilight.xmlT  &pinc .hilight.next 1
 !endif
-!if &and &sin "h" .fhook-xml.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-xml.setup &band .hilight.flags 0x02
   0 hilight .hilight.xml 3 200                        $global-scheme
   hilight .hilight.xml 0x80 "<[\\t ]*[-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
   hilight .hilight.xml 0x80 "<\\?[\\t ]*[-/.:a-zA-Z0-9_]+" .hilight.xmlT .scheme.keyword
@@ -54,13 +54,13 @@ set-variable .fhook-xml.exact -1
   hilight .hilight.xml 0 "&\\w\\w\\w;"                .scheme.operator
   hilight .hilight.xml 0 "&\\w\\w\\w\\w;"             .scheme.operator
   hilight .hilight.xml 0x804 "\"" "\"" ""             .scheme.string
-  
+
   0 hilight .hilight.xmlT 0                           $global-scheme
   hilight .hilight.xmlT 4  "\"" "\"" ""               .scheme.string
   hilight .hilight.xmlT 0x80 ">" .hilight.xml         .scheme.keyword
   hilight .hilight.xmlT 0x80 "/>" .hilight.xml        .scheme.keyword
   hilight .hilight.xmlT 0x80 "\\?>" .hilight.xml      .scheme.keyword
-  
+
   !if &exist .hilight.javascript
     hilight .hilight.xml 0x80 "<script\\s+type=\"text/javascript[^>]*>" .hilight.javascript .scheme.prepro
     hilight .hilight.javascript 0x80 "</script>" 0  .scheme.prepro
@@ -99,10 +99,10 @@ set-variable .fhook-xml.exact -1
   indent .hilight.xml e "\"" "\"" ""
   indent .hilight.xml b "<!--" "-->"
   indent .hilight.xml b "<\\?" "\\?>"
-  indent .hilight.xml n "<[^/!]" t 
-  indent .hilight.xml o "</"    -t 
-  indent .hilight.xml n "/>"    -t 
-  indent .hilight.xml o "^\\s*/>"    -t 
+  indent .hilight.xml n "<[^/!]" t
+  indent .hilight.xml o "</"    -t
+  indent .hilight.xml n "/>"    -t
+  indent .hilight.xml o "^\\s*/>"    -t
 !endif
 
 0 define-macro chook-xml

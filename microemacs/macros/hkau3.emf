@@ -4,7 +4,7 @@
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
 ;
-; Synopsis:    Autoit V 3 
+; Synopsis:    Autoit V 3
 ; Authors:     Dr. Detlef Groth;
 ;
 set-char-mask "3" "_$@."
@@ -35,12 +35,12 @@ set-variable .fhook-au3.item-list-r1 "Func \CCb\\1\CCA"
 !if &not &exist .hilight.au3
   set-variable .hilight.au3 &pinc .hilight.next 1
 !endif
-!if &and &sin "h" .fhook-au3.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-au3.setup &band .hilight.flags 0x02
   ; High-light js Mode
   0 hilight .hilight.au3 3 50 $global-scheme
   hilight .hilight.au3 0  ";.*" .scheme.comment
   hilight .hilight.au3 4  "\\$" "\\}\\W" "" .scheme.variable
-  
+
   hilight .hilight.au3 4 "\"" "\"" "\\" .scheme.string
   hilight .hilight.au3 0x804 "\\W\\{'" "'" "\\" .scheme.quote
   hilight .hilight.au3 1 "and" .scheme.keyword
@@ -418,4 +418,3 @@ set-variable .fhook-au3.item-list-r1 "Func \CCb\\1\CCA"
 !endif
 
 buffer-init-fhook "au3"
-

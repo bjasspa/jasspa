@@ -15,7 +15,7 @@
 ;    - Improve messages on stats page
 ;    - Support 4 of a kind
 ;
-0 define-macro bragSetGetIdx 
+0 define-macro bragSetGetIdx
   set-variable #l4 &ban 15 &set #l1 &atoi &set #l0 @1
   set-variable #l5 &ban 15 &set #l2 &atoi &mid #l0 1 1
   set-variable #l6 &ban 15 &set #l3 &atoi &rig #l0 -1
@@ -63,14 +63,14 @@
         set-variable @2 697
       !endif
     !elif #l0
-      set-variable @2 &add &add &add 421 &lget .Brag.highSetOff &add #l4 1 &lget .Brag.triangNo #l5 #l6 
+      set-variable @2 &add &add &add 421 &lget .Brag.highSetOff &add #l4 1 &lget .Brag.triangNo #l5 #l6
     !else
-      set-variable @2 &add &add &lget .Brag.highSetOff &add #l4 1 &lget .Brag.triangNo #l5 #l6 
+      set-variable @2 &add &add &lget .Brag.highSetOff &add #l4 1 &lget .Brag.triangNo #l5 #l6
     !endif
   !endif
 !emacro
 
-0 define-macro bragSetGetData 
+0 define-macro bragSetGetData
   set-variable #l4 &ban 15 &set #l1 &atoi &set #l0 @1
   set-variable #l5 &ban 15 &set #l2 &atoi &mid #l0 1 1
   set-variable #l6 &ban 15 &set #l3 &atoi &rig #l0 -1
@@ -124,10 +124,10 @@
         set-variable @3 &spr "%s%s%sOne-Two-Three" &itoa #l1 &itoa #l3 &itoa #l2
       !endif
     !elif #l0
-      set-variable @2 &add &add &add 421 &lget .Brag.highSetOff &add #l4 1 &lget .Brag.triangNo #l5 #l6 
+      set-variable @2 &add &add &add 421 &lget .Brag.highSetOff &add #l4 1 &lget .Brag.triangNo #l5 #l6
       set-variable @3 &spr "%s%s%s%s flush" &itoa #l1 &itoa #l2 &itoa #l3 &lget .Brag.cardNumberNames &add #l4 1
     !else
-      set-variable @2 &add &add &lget .Brag.highSetOff &add #l4 1 &lget .Brag.triangNo #l5 #l6 
+      set-variable @2 &add &add &lget .Brag.highSetOff &add #l4 1 &lget .Brag.triangNo #l5 #l6
       set-variable @3 &spr "%s%s%s%s high" &itoa #l1 &itoa #l2 &itoa #l3 &lget .Brag.cardNumberNames &add #l4 1
     !endif
   !endif
@@ -269,7 +269,7 @@
   !if &equ #l3 7
     set-variable #l9 &cat #l9 "7|All-rounder|"
   !elif &equ #l3 4
-    set-variable #l9 &cat #l9 "4|Balanced|" 
+    set-variable #l9 &cat #l9 "4|Balanced|"
   !elif &band #l3 4
     set-variable #l9 &spr "%s%s|Balanced %s|" #l9 #l3 &con &band #l3 1 "attack" "defence"
   !elif &equ #l3 3
@@ -277,9 +277,9 @@
   !elif &equ #l3 2
     set-variable #l9 &cat #l9 "2|All-out defence|"
   !elif &equ #l3 1
-    set-variable #l9 &cat #l9 "1|All-out attack|" 
+    set-variable #l9 &cat #l9 "1|All-out attack|"
   !else
-    set-variable #l9 &cat &cat #l9 #l2 "|Statistically best|" 
+    set-variable #l9 &cat &cat #l9 #l2 "|Statistically best|"
   !endif
   bragHandOrder #l4 #l5 #l6
   set-variable @2 &spr "|%s%s%s|" #l5 #l9 #l6
@@ -294,7 +294,7 @@
   3 screen-poke 27 4 .scheme.cardback #l1
   3 screen-poke 28 4 .scheme.cardback #l1
 !emacro
-  
+
 0 define-macro bragToast
   set-variable .len &add 6 &set #l2 &len &set #l1 @1
   99 screen-poke 24 4 .scheme.cardfore &spr "%s%n%s" &mid $box-chars 1 1 &add #l2 4 &rig $box-chars 10 &mid $box-chars 2 1
@@ -469,7 +469,7 @@ set-variable .bragDrawCard.slb "                                Heart           
   set-variable .Brag.h2 &mid .Brag.deck 9 9
   set-variable .Brag.h1s "\b\b\b\b\b\b"
   set-variable .Brag.stt 0
-!emacro  
+!emacro
 
 0 define-macro brag-help
   !force help-command "Brag"
@@ -479,7 +479,7 @@ set-variable .bragDrawCard.slb "                                Heart           
 !emacro
 0 define-macro bhook-brag
   ; Turn off the cursor & menu
-  -1 show-cursor                                
+  -1 show-cursor
   !force osd -1 0
   ; Disable the scroll bars and toolbar.
   set-variable :scroll-bar $scroll-bar
@@ -995,7 +995,7 @@ set-variable .bragDrawCard.slb "                                Heart           
         67 screen-poke &add #l9 4 73 .scheme.cardback "L"
         67 screen-poke &add #l9 4 105 .scheme.cardback "L"
       !endif
-    !endif 
+    !endif
   !endif
   !if &not &band 2 #l1
     set-variable #l9 &add #l9 11
@@ -1038,7 +1038,7 @@ set-variable .bragDrawCard.slb "                                Heart           
         67 screen-poke &add #l9 4 73 .scheme.cardback "L"
         67 screen-poke &add #l9 4 105 .scheme.cardback "L"
       !endif
-    !endif 
+    !endif
   !endif
   !if &not &band 4 #l1
     set-variable #l9 &add #l9 11
@@ -1076,7 +1076,7 @@ set-variable .bragDrawCard.slb "                                Heart           
         67 screen-poke &add #l9 4 73 .scheme.cardback "L"
         67 screen-poke &add #l9 4 105 .scheme.cardback "L"
       !endif
-    !endif 
+    !endif
   !endif
 !emacro
 
@@ -1152,11 +1152,11 @@ set-variable .bragDrawCard.slb "                                Heart           
     67 screen-poke  9 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
     67 screen-poke 10 110 .scheme.cardback &spr "%s  Copy Hand  %s" &lef $box-chars 1 &lef $box-chars 1
     67 screen-poke 11 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-    brag-draw-details    
+    brag-draw-details
   !elif &gre .Brag.stt 9
     brag-draw-stats
   !elif .Brag.stt
-    brag-draw-unveil    
+    brag-draw-unveil
   !else
     3 screen-poke   2 14 .scheme.cardback "1         2         3         4         5         6         7         8         9"
     3 screen-poke  22 19 .scheme.cardback "Q         W         E                   R         T         Y"
@@ -1184,7 +1184,7 @@ set-variable .bragDrawCard.slb "                                Heart           
     67 screen-poke 43 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
     set-variable #l4 0
     !repeat
-      !if &set #l6 &sin &set #l5 &mid .Brag.h1 #l4 1 .Brag.h1s 
+      !if &set #l6 &sin &set #l5 &mid .Brag.h1 #l4 1 .Brag.h1s
         bragDrawCard &atoi #l5 13 &add 5 &add &mul 10 #l6 &mul 10 &div &sub #l6 1 3
         !iif &not @# bragDrawCard 0 3 &add 10 &mul #l4 10
       !else
@@ -1201,7 +1201,7 @@ set-variable .bragDrawCard.slb "                                Heart           
     &con &band @# 16 2000 1000 bragToast #l0
   !endif
 !emacro
-  
+
 define-macro Brag
   delete-other-windows
   find-buffer "*Brag*"

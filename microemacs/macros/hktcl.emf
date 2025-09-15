@@ -51,7 +51,7 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \CCb\\1\CCA"
 !if &not &exist .hilight.tcl
   set-variable .hilight.tcl &pinc .hilight.next 1
 !endif
-!if &and &sin "h" .fhook-tcl.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-tcl.setup &band .hilight.flags 0x02
   ; High-light Tcl Mode
   0 hilight .hilight.tcl 0                     $global-scheme
   hilight .hilight.tcl 0x22 "#"                .scheme.comment
@@ -74,7 +74,7 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \CCb\\1\CCA"
   hilight .hilight.tcl 1 "stdout"              .scheme.prepro
   hilight .hilight.tcl 1 "stderr"              .scheme.prepro
   hilight .hilight.tcl 1 "auto"                .scheme.operator
-  hilight .hilight.tcl 1 "cget"                .scheme.operator  
+  hilight .hilight.tcl 1 "cget"                .scheme.operator
   hilight .hilight.tcl 1 "command"             .scheme.operator
   hilight .hilight.tcl 1 "config"              .scheme.operator
   hilight .hilight.tcl 1 "configure"           .scheme.operator
@@ -106,7 +106,7 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \CCb\\1\CCA"
   hilight .hilight.tcl 1 "true"                .scheme.operator
   hilight .hilight.tcl 1 "winfo"               .scheme.operator
   hilight .hilight.tcl 1 "withdraw"            .scheme.operator
-  
+
   hilight .hilight.tcl 1 "add"                 .scheme.keyword
   hilight .hilight.tcl 1 "after"               .scheme.keyword
   hilight .hilight.tcl 1 "append"              .scheme.keyword
@@ -178,7 +178,7 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \CCb\\1\CCA"
   hilight .hilight.tcl 1 "variable"            .scheme.keyword
   hilight .hilight.tcl 1 "while"               .scheme.keyword
   hilight .hilight.tcl 1 "wm"                  .scheme.keyword
-  
+
   hilight .hilight.tcl 0x200 "-"
   hilight .hilight.tcl 1 "-accelerator"        .scheme.type
   hilight .hilight.tcl 1 "-activatecmd"        .scheme.type
@@ -337,7 +337,7 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \CCb\\1\CCA"
   hilight .hilight.tcl 1 "-setter"             .scheme.type
   ; thingy: one keyword for an onliner oo
   hilight .hilight.tcl 1 "thingy"              .scheme.keyword
-  ; snit 
+  ; snit
   hilight .hilight.tcl 1 "as"                  .scheme.keyword
   hilight .hilight.tcl 1 "component"           .scheme.keyword
   hilight .hilight.tcl 1 "configurelist"       .scheme.keyword
@@ -363,7 +363,7 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \CCb\\1\CCA"
   hilight .hilight.tcl 1 "typemethod"          .scheme.keyword
   hilight .hilight.tcl 1 "typevariable"        .scheme.keyword
   hilight .hilight.tcl 1 "using"               .scheme.keyword
-  
+
   hilight .hilight.tcl 1 "-cgetmethod"         .scheme.type
   hilight .hilight.tcl 1 "-configuremethod"    .scheme.type
   hilight .hilight.tcl 1 "-default"            .scheme.type
@@ -371,7 +371,7 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \CCb\\1\CCA"
   hilight .hilight.tcl 1 "-public"             .scheme.type
   hilight .hilight.tcl 1 "-readonly"           .scheme.type
   hilight .hilight.tcl 1 "-validatemethod"     .scheme.type
-  
+
   !if &band .hilight.flags 0x08
     ; hilight constants, e.g. numbers
     hilight .hilight.tcl 1 "[[:digit:]]+"    .scheme.constant
@@ -395,11 +395,10 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \CCb\\1\CCA"
 ; setup file-* tools
 add-next-line "*tcl-exec*" "^ *(file \"%f\" line %l)"
 add-next-line "*tcl-lint*" "^%f:%l:\\d+: "
-set-variable .fhook-tcl.coms "\btclsh\btclsh8.6\btclsh9.0\b" 
+set-variable .fhook-tcl.coms "\btclsh\btclsh8.6\btclsh9.0\b"
 set-variable .fhook-tcl.exec1   "\b%v[com]\b\b\b\b%v[com] %\"%f%\" %v[args|20|Additional command-line arguments|]\b"
 set-variable .fhook-tcl.format1 "\btclfmt\b\b\b\btclfmt --in-place %\"%f%\"\bTclfmt\b"
 set-variable .fhook-tcl.lint1   "\btclint\b\b\b\btclint %\"%f%\"\bTclint\b"
 
 
 buffer-init-fhook "tcl"
-

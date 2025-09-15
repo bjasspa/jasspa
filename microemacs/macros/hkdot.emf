@@ -38,7 +38,7 @@ set-variable .fhook-dot.item-list-r2 "DiGr \CCb\\1\CCA"
 !if &not &exist .hilight.dot
   set-variable .hilight.dot &pinc .hilight.next 1
 !endif
-!if &and &sin "h" .fhook-dot.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-dot.setup &band .hilight.flags 0x02
   0 hilight .hilight.dot 0                 $global-scheme
   hilight .hilight.dot   20 "/\\*" "*/" "" .scheme.comment
   hilight .hilight.dot 2  "//"             .scheme.comment
@@ -49,8 +49,8 @@ set-variable .fhook-dot.item-list-r2 "DiGr \CCb\\1\CCA"
   hilight .hilight.dot 1 "nodesep"         .scheme.keyword
   hilight .hilight.dot 1 "rankdir"         .scheme.keyword
   hilight .hilight.dot 1 "node"            .scheme.keyword
-  
-  
+
+
   ; arrowhead
   hilight .hilight.dot 1 "normal"          .scheme.keyword
   hilight .hilight.dot 1 "dot"             .scheme.keyword
@@ -83,12 +83,12 @@ set-variable .fhook-dot.item-list-r2 "DiGr \CCb\\1\CCA"
   hilight .hilight.dot 1 "egg"             .scheme.prepro
   hilight .hilight.dot 1 "plaintext"       .scheme.prepro
   hilight .hilight.dot 1 "diamond"         .scheme.prepro
-  
+
   ; operators
   hilight .hilight.dot 0 "->"              .scheme.operator
   hilight .hilight.dot 1 "true"            .scheme.prepro
   hilight .hilight.dot 1 "false"           .scheme.prepro
-  
+
 !endif
 !if &sin "d" .fhook-dot.setup
   0 indent  .hilight.dot 0 10
@@ -96,7 +96,7 @@ set-variable .fhook-dot.item-list-r2 "DiGr \CCb\\1\CCA"
   indent .hilight.dot o "}" -t
   indent .hilight.dot c "\\\\\\s " 3/2t
   indent .hilight.dot b "\\[" "]"
-  indent .hilight.dot i "//"  
-  indent .hilight.dot b "/\\*" "\\*/" 
+  indent .hilight.dot i "//"
+  indent .hilight.dot b "/\\*" "\\*/"
 !endif
 buffer-init-fhook "dot"

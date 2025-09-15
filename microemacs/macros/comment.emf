@@ -30,7 +30,7 @@
 ; style is determined with a chook macro. Once the comment base hook has been
 ; determined then try to find the appropriate comment type for this block.
 ; Comments take the form ".fhook-xxx.comment-n" where 'n' goes from 0 to n.
-; 
+;
 ; @param  #p0 The name of the hook to use.
 ; @return #p9 The comment definition to get.
 ;
@@ -79,7 +79,7 @@ define-macro comment-get-type
         set-variable #l7 0
         !continue
       !endif
-      ; See if we can match 'mid' 
+      ; See if we can match 'mid'
       set-variable #l4 &lget #l9 4
       beginning-of-line
       !force -1 search-forward #l4
@@ -90,7 +90,7 @@ define-macro comment-get-type
       !endif
       ; Try the previous line.
       !force backward-line
-      !if $status 
+      !if $status
         beginning-of-line
         !force -1 search-forward #l4
         !if $status
@@ -102,7 +102,7 @@ define-macro comment-get-type
       ; Try the next line.
       goto-alpha-mark "\x80"
       !force forward-line
-      !if $status 
+      !if $status
         beginning-of-line
         !force -1 search-forward #l4
         !if $status
@@ -157,7 +157,7 @@ define-macro comment-get-type
     ; Final confirmation, check the end marker exact column match. If we
     ; get and exact end column match then this is the comment type. If it
     ; is correct, but the white space is different then we make this a
-    ; better choice. 
+    ; better choice.
     !force search-forward &lget #l9 2
     !if $status
       ; If exact match - this is the type.
@@ -173,7 +173,7 @@ define-macro comment-get-type
   ; restore position and magic mode
   goto-alpha-mark "\x80"
   &cond #l3 1 -1 buffer-mode "magic"
-  ; Use the current comment or the best one if it does not exist. 
+  ; Use the current comment or the best one if it does not exist.
   !iif &seq &lget #l9 1 ""  set-variable #l9 :comment-best
   set-variable #p9 #l9
 !emacro
@@ -259,7 +259,7 @@ define-macro uncomment-line
       set-variable #l4 $window-line
       !force search-buffer "Meb" #l1
       !iif &not $status  -8 ml-write "[unmatched close comment]"
-      !iif &not &les $window-line @#  !break 
+      !iif &not &les $window-line @#  !break
       &len #l1 forward-delete-char
       -1 yank
       ; this block attempts to cope with commented out code, using comment-line, being re-indented
@@ -281,7 +281,7 @@ define-macro uncomment-line
 !emacro
 ;
 ; fill from the current column to fill-col with <comment pad> and a trailing
-; <comment end> 
+; <comment end>
 define-macro comment-to-end-of-line
   comment-get-def
   !iif &not &len &set #l1 &lget #l9 3  set-variable #l1 " "
@@ -318,7 +318,7 @@ define-macro comment-start
 define-macro comment-end
   clean
   ; Add an extra space at end if required as clean removes spaces from the
-  ; end. 
+  ; end.
   !if &sin "ff" &lget :comment 6
     end-of-buffer
     insert-newline
@@ -343,7 +343,7 @@ define-macro comment-end
     !endif
     insert-newline
   !else
-    ; if the line starts with a fill string don't insert any white spaces etc 
+    ; if the line starts with a fill string don't insert any white spaces etc
     set-variable #l1 &or &sin #l8 " " &not &seq &mid @wl $window-col &len #l8 #l8
     !if &sin "b" &lget :comment 6
       end-of-line
@@ -482,7 +482,7 @@ define-macro comment-end
   search-backward #p7
   ; Add a dummy space before the end comment. This ensures that the line
   ; does not go empty and we loose the footer. The comment reformatting with
-  ; trim white space. 
+  ; trim white space.
   insert-string " "
   -1 kill-region
   beginning-of-buffer
@@ -574,7 +574,7 @@ define-macro comment-end
     set-variable #l3 &cat #l3 "f"
   !else
     ; Adjust the fill length if there is no footer and we have an end
-    ; comment marker. 
+    ; comment marker.
     set-variable $buffer-fill-col &sub $buffer-fill-col &add 1 &trl #l7
     end-of-buffer
     backward-line
@@ -588,7 +588,7 @@ define-macro comment-end
       !force backward-line
       ; Use 'ff' if a double footer is required. This compensates for
       ; using 'clean' which removes all white space from the end of the
-      ; buffer. 
+      ; buffer.
       !iif &and $status &seq &trl @wl ""  set-variable #l3 &cat #l3 "f"
       set-variable #l3 &cat #l3 "fF"
     !endif
@@ -644,7 +644,7 @@ define-macro comment-restyle
       set-variable #l4 $window-line
       ; Search for start marker.
       !force search-backward #l1
-      !if $status 
+      !if $status
         set-variable #l5 $window-line
         !if &not &gre #l5 #l6
           ; Search forward again for the end marker.

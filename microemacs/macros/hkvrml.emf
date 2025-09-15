@@ -22,7 +22,7 @@ set-variable .fhook-vrml.indent-width 2
 !if &not &exist .hilight.vrml
   set-variable .hilight.vrml &pinc .hilight.next 1
 !endif
-!if &and &sin "h" .fhook-vrml.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-vrml.setup &band .hilight.flags 0x02
   ; High-light VRML Mode
   0 hilight .hilight.vrml 0                              $global-scheme
   hilight   .hilight.vrml 2 "#"                          .scheme.comment
@@ -150,4 +150,3 @@ set-variable .fhook-vrml.indent-width 2
 !endif
 
 buffer-init-fhook "vrml"
-

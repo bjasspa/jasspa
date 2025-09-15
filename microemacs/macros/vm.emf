@@ -474,7 +474,7 @@ hilight .hilight.vmhl 0x40 "." ""                 $global-scheme
   find-buffer &cat %vm-curbuf "-list"
   goto-line &ind %vm-curmcur
   next-window
-  !force 0 delete-buffer %vm-curbuf 
+  !force 0 delete-buffer %vm-curbuf
   find-buffer %vm-curbuf
   -1 buffer-mode "undo"
   -1 buffer-mode "exact"
@@ -1371,7 +1371,7 @@ define-macro vm
 !emacro
 
 osd .osd.vm-help 0  "batcDH" 9 3 99 .scheme.osd-title "View Mail Help"
-osd .osd.vm-help 3  "" 
+osd .osd.vm-help 3  ""
 osd .osd.vm-help 4  ""  " esc h   - View this help page"
 osd .osd.vm-help 5  ""  " delete  - Hide VM windows"
 osd .osd.vm-help 6  ""  " return  - Swap between message and list window"
@@ -1401,7 +1401,7 @@ osd .osd.vm-help 31 ""  " x       - Extract the next embedded data in the curren
 osd .osd.vm-help 32 ""  "           (copes with uuencoded and metamail sections)"
 osd .osd.vm-help 33 ""  " z       - Forward current message to someone else"
 osd .osd.vm-help 34 ""
-osd .osd.vm-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
+osd .osd.vm-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void
 
 0 define-macro vm-input
   set-variable #l2 @cck
@@ -1488,7 +1488,7 @@ osd .osd.vm-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void
   set-variable #l5 &reg &cat .mail-filter.reg "match" "\b"
   set-variable #l6 &reg &cat .mail-filter.reg "box"   "\b"
   !if &gre &len #l4 1
-    !while &not &seq &set #l0 &lget #l4 &inc #l3 1 "" 
+    !while &not &seq &set #l0 &lget #l4 &inc #l3 1 ""
       set-variable #l1 &lget #l5 #l3
       set-variable #l2 &lget #l6 #l3
       osd .osd.mailfc #l3 "x" &spr "%2d  %s%n %s%n  %s" #l3 #l0 &sub 9 &len #l0 " " #l1 &sub 22 &len #l1 " " #l2 #l3 mailf-set-fields
@@ -1505,7 +1505,7 @@ osd .osd.vm-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void
   !if &equ @# 3
     ; delete the entry
     !if &not .mail-filter.cur
-      ml-write "[No entry selected]" 
+      ml-write "[No entry selected]"
       !return
     !endif
     set-variable #l4 &lde #l4 .mail-filter.cur
@@ -1513,13 +1513,13 @@ osd .osd.vm-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void
     set-variable #l6 &lde #l6 .mail-filter.cur
   !else
     !if &seq .mail-filter.match ""
-      ml-write "[Match field is empty]" 
+      ml-write "[Match field is empty]"
       !return
     !endif
     !if &equ @# 2
       ; change the entry
       !if &not .mail-filter.cur
-        ml-write "[No entry selected]" 
+        ml-write "[No entry selected]"
         !return
       !endif
       set-variable #l4 &lse #l4 .mail-filter.cur .mail-filter.field

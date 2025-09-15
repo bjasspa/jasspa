@@ -160,7 +160,7 @@
     osd .osd.orgl 130 "BHcfh" .scheme.osd-dbtt " Insert "
     osd .osd.orgl 140 "BHcf"  .scheme.osd-dbtt " Delete "
   !endif
-!emacro     
+!emacro
 
 0 define-macro org-list-buffer
   beginning-of-line
@@ -193,17 +193,17 @@
 
 -1 osd .osd.orgl
 osd .osd.orgl  10 ""
-osd .osd.orgl  20 "Shf" "  \HList: " 30 
-osd .osd.orgl  34 "hf" " " 
+osd .osd.orgl  20 "Shf" "  \HList: " 30
+osd .osd.orgl  34 "hf" " "
 osd .osd.orgl  36 "BtxhfH" .scheme.osd-ebtt " Ne\Hw " f org-list-new
-osd .osd.orgl  38 "hf" " " 
+osd .osd.orgl  38 "hf" " "
 osd .osd.orgl  40 "BtxhfH" .scheme.osd-ebtt " Del " f org-list-del
 osd .osd.orgl  45 "Shf" " Item Lines: " 50
 osd .osd.orgl  50 "EtxfH" .scheme.osd-entry "####" f org-list-nolines
-osd .osd.orgl  60 "" 
-osd .osd.orgl 300 "" 
+osd .osd.orgl  60 ""
+osd .osd.orgl 300 ""
 osd .osd.orgl 310 "Ibtc" 60 25 .osd.orgl-c
-osd .osd.orgl 600 "" 
+osd .osd.orgl 600 ""
 osd .osd.orgl 610 "BtxhcfH" .scheme.osd-ebtt " \HSave "    f organizer-save
 osd .osd.orgl 620 "BtxhcfH" .scheme.osd-ebtt " List to \HBuffer "  f org-list-buffer
 osd .osd.orgl 630 "BtcfH"   .scheme.osd-ebtt " \HClose "    1 void

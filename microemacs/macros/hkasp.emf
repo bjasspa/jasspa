@@ -26,7 +26,7 @@ set-variable .fhook-asp.command-desc  "|"
 set-variable .fhook-asp.indent-width 2
 
 ; load in the html core
-execute-file "htmlcore" "asp" 
+execute-file "htmlcore" "asp"
 
 !if &not &sin "html-insert" .fhook-vb.command-name
   set-variable .fhook-vb.command-flag  &cat .fhook-vb.command-flag  "thb|thb|"
@@ -36,7 +36,7 @@ execute-file "htmlcore" "asp"
   set-variable .fhook-vb.command-desc  &cat .fhook-vb.command-desc  "Insert strong block|Insert emphasis block|"
 !endif
 ; add the <% %> vb script support
-!if &and &sin "h" .fhook-asp.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-asp.setup &band .hilight.flags 0x02
   hilight .hilight.asptag 4 "=\\{[^ \t\n<>]*<%" "%>[^ \t\n>]*" ""  .scheme.string
   hilight .hilight.asptag 4 "=\\{\"[^\"\n<]*<%" "%>[^\"]*\"" ""  .scheme.string
   !if &exist .hilight.vbscript
@@ -46,7 +46,7 @@ execute-file "htmlcore" "asp"
     hilight .hilight.asp      0xa0 "End Sub$" .hilight.vbscript .scheme.keyword
     hilight .hilight.asptag   0x80 "<%" .hilight.vbscript .scheme.prepro
     hilight .hilight.vbscript 0x80 "%>" 0 .scheme.prepro
-    
+
     hilight .hilight.vbscript 1 "Request.Cookies" .scheme.function
     hilight .hilight.vbscript 1 "Request.Form" .scheme.function
     hilight .hilight.vbscript 1 "Request.QueryString" .scheme.function
@@ -69,7 +69,7 @@ execute-file "htmlcore" "asp"
     indent .hilight.asptag t "^[\t ]*End Function$" .hilight.vbscript
     indent .hilight.asptag t "^[\t ]*End Sub$" .hilight.vbscript
     indent .hilight.asptag t "%>" .hilight.asp
-    
+
     indent .hilight.asp x "^<%" 0 .indent.vbscript
     indent .hilight.asp x ".<%" t .indent.vbscript
     indent .indent.vbscript w "%>" -t 0

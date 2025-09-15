@@ -182,7 +182,7 @@ define-macro ehf-process-all
     0 delete-buffer $buffer-bname
   !done
   ; now convert all the page names to something sensible
-  ml-write "[Processing links - this could take some time]" 
+  ml-write "[Processing links - this could take some time]"
   beginning-of-buffer
   1 buffer-mode "magic"
   !repeat
@@ -236,13 +236,13 @@ define-macro ehf-process-all
   beginning-of-line
   kill-region
   ; Apply special fixes
-  ml-write "[Fixing @hash]" 
+  ml-write "[Fixing @hash]"
   beginning-of-buffer
   !force replace-string "@hash" "@#"
-  ml-write "[Fixing esc backslash]" 
+  ml-write "[Fixing esc backslash]"
   beginning-of-buffer
   !force replace-string "esc backslash" "esc \\\\"
-  ml-write "[Fixing http: links]" 
+  ml-write "[Fixing http: links]"
   ; Move the http and email address curior hilighting start string (\CCG) out
   ; of the way so cut and paste gets the right thing
   beginning-of-buffer

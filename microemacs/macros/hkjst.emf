@@ -36,7 +36,7 @@ define-macro fhook-jst
       beginning-of-line
     !endif
     ; Add any others in here.
-    
+
     ; Back to the start of the buffer
     beginning-of-buffer
   !endif
@@ -71,7 +71,7 @@ set-variable .fhook-jst.item-list-r4 "H4  \CCb\\1\CCA"
   set-variable .fhook-jst.collapse-mnext "-1"
 !endif
 
-!if &and &sin "h" .fhook-jst.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-jst.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.jst
     set-variable .hilight.jst  &pinc .hilight.next 1
     set-variable .hilight.jstT &pinc .hilight.next 1
@@ -187,7 +187,7 @@ set-variable .fhook-jst.item-list-r4 "H4  \CCb\\1\CCA"
   0 hilight .hilight.jstT 0                                   .scheme.variable
   hilight .hilight.jstT 0x80 "]" .hilight.jst                 .scheme.no1
   hilight .hilight.jstT 0x804 "\"" "\"" "\\"                  .scheme.variable
-  
+
   ; Item lists
   hilight .hilight.jst 0x20 "\\.\\} "                         .scheme.keyword
   hilight .hilight.jst 0x20 "\\*\\.\\} "                      .scheme.keyword
@@ -197,7 +197,7 @@ set-variable .fhook-jst.item-list-r4 "H4  \CCb\\1\CCA"
   hilight .hilight.jst 0x20 "[ivx]+\\.\\} "                   .scheme.keyword
   hilight .hilight.jst 0x20 "[IVX]+\\.\\} "                   .scheme.keyword
   hilight .hilight.jst 0x32 ":\\.\\} "                        .scheme.keyword
-  
+
   ; HTTP links etc.
   hilight .hilight.jst 0 "file:[-@~_a-zA-Z#%=\\.:\\/0-9]+"    .scheme.link
   hilight .hilight.jst 0 "http:[-@~_a-zA-Z#%?&=\\.:\\/0-9]+"  .scheme.link
@@ -205,7 +205,7 @@ set-variable .fhook-jst.item-list-r4 "H4  \CCb\\1\CCA"
   hilight .hilight.jst 0 "ftp:[-@~_a-zA-Z#%\\.:\\/0-9]+"      .scheme.link
   hilight .hilight.jst 0 "ftps:[-@~_a-zA-Z#%\\.:\\/0-9]+"     .scheme.link
   hilight .hilight.jst 0 "mailto:[-@~_a-zA-Z#%\\.:\\/0-9]+"   .scheme.link
-  hilight .hilight.jst 0 "news:[-@~_a-zA-Z#%\\.:\\/0-9]+"     .scheme.link 
+  hilight .hilight.jst 0 "news:[-@~_a-zA-Z#%\\.:\\/0-9]+"     .scheme.link
   ; Style schemes
   0 hilight .hilight.jstM 0                                   .scheme.no2
   hilight   .hilight.jstM 0 "\\\\."                           .scheme.no2
@@ -276,10 +276,10 @@ set-variable .fhook-jst.item-list-r4 "H4  \CCb\\1\CCA"
   hilight   .hilight.jstBIU 0x804 "\"\"" "\"\"" ""            .scheme.bold-italic-under
   hilight   .hilight.jstBIU 0x80 "^>end>" .hilight.jst        .scheme.hide
   hilight   .hilight.jstBIU 0x80 "^!end!" .hilight.jst        .scheme.hide
-  
+
   ; Allow inserts into the jst mode. You may add to the
   ; available inserts by adding to your myjst.emf file
-  
+
   0 define-macro jst-add-file-support
     set-variable #l0 @1
     ; Force the hilighting mode to load if not already loaded.
@@ -288,7 +288,7 @@ set-variable .fhook-jst.item-list-r4 "H4  \CCb\\1\CCA"
       ml-write &cat "executed " #l0
     !endif
     ; If the hilighting mode is loaded then modify it.
-    !if &and &sin "h" &ind &spr ".fhook-%s.setup" #l0 &band .hilight.flags 0x02 
+    !if &and &sin "h" &ind &spr ".fhook-%s.setup" #l0 &band .hilight.flags 0x02
       hilight .hilight.jst 0xa0 &spr ">%s>" #l0 &ind &cat ".hilight." #l0 .scheme.hide
       hilight &ind &cat ".hilight." #l0 0x80 "^>end>" .hilight.jst .scheme.hide
     !else
@@ -297,7 +297,7 @@ set-variable .fhook-jst.item-list-r4 "H4  \CCb\\1\CCA"
     ; handle single paragraph style
     hilight .hilight.jst 0x024 &spr ">%s> ." #l0 "^\\s*$" ""    .scheme.quote
   !emacro
-  
+
   ; Allow MicroEmacs Macro .emf inserts
   ; Force the ".emf" scheme to be loaded into the context of the jst
   ; scheme. We delimit the .emf scheme with a pair of markers ">emf>" and
@@ -319,11 +319,11 @@ set-variable .fhook-jst.item-list-r4 "H4  \CCb\\1\CCA"
   jst-add-file-support "tcl"
   ; Allow Shell script inserts ...
   jst-add-file-support "shell"
-  ; Allow Java inserts 
+  ; Allow Java inserts
   jst-add-file-support "java"
-  ; Allow Windows INI file inserts 
+  ; Allow Windows INI file inserts
   jst-add-file-support "ini"
-  ; Allow PHP inserts 
+  ; Allow PHP inserts
   jst-add-file-support "php"
   ; Allow make inserts
   jst-add-file-support "make"
@@ -331,7 +331,7 @@ set-variable .fhook-jst.item-list-r4 "H4  \CCb\\1\CCA"
   jst-add-file-support "xml"
 !endif
 
-; must replace the normal fill-paragraph with one which will skip inserts 
+; must replace the normal fill-paragraph with one which will skip inserts
 0 define-macro jst-fill-paragraphi
   set-variable #l1 &cond &les @# 0 -1 1
   set-variable #l2 &abs @#
@@ -372,7 +372,7 @@ define-macro jst-fill-paragraph
   set-position "\x81"
   ; Save the starting paragraph separator state - if the numeric argument
   ; is false then this will be used to determine if we restore the current
-  ; position. 
+  ; position.
   set-variable #l9 &seq &trr @wl ""
   !force search-buffer "bem" "^[ \t]*\\(>[^ \t\n]*\\)[ \t]*$"
   !if &not $status

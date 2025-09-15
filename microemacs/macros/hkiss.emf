@@ -38,15 +38,15 @@ set-variable .fhook-iss.collapse-mnext "-1"
   hilight .hilight.iss 0x20 "\\m+\\s*\\}:"      .scheme.keyword
   hilight .hilight.iss 0x00 ";\\{\\s*\\m+\\s*\\}:" .scheme.keyword
   ; Variables
-  hilight .hilight.iss 0x01 "{\\m+}"            .scheme.variable 
+  hilight .hilight.iss 0x01 "{\\m+}"            .scheme.variable
   ; Registry values
-  hilight .hilight.iss 0x01 "HKCR"              .scheme.prepro 
-  hilight .hilight.iss 0x01 "HKCU"              .scheme.prepro 
-  hilight .hilight.iss 0x01 "HKLM"              .scheme.prepro 
-  hilight .hilight.iss 0x01 "HKU"               .scheme.prepro 
-  hilight .hilight.iss 0x01 "HKCC"              .scheme.prepro 
+  hilight .hilight.iss 0x01 "HKCR"              .scheme.prepro
+  hilight .hilight.iss 0x01 "HKCU"              .scheme.prepro
+  hilight .hilight.iss 0x01 "HKLM"              .scheme.prepro
+  hilight .hilight.iss 0x01 "HKU"               .scheme.prepro
+  hilight .hilight.iss 0x01 "HKCC"              .scheme.prepro
   ; Setup - Obsolete. These directives are obsolete and should not be used
-  ; in any new scripts. 
+  ; in any new scripts.
   hilight .hilight.iss 0x20 "AlwaysCreateUninstallIcon\\s*\\}="  .scheme.error
   hilight .hilight.iss 0x20 "DisableAppendDir\\s*\\}="           .scheme.error
   hilight .hilight.iss 0x20 "DontMergeDuplicateFiles\\s*\\}="    .scheme.error
@@ -56,6 +56,6 @@ set-variable .fhook-iss.collapse-mnext "-1"
   hilight .hilight.iss 0x20 "UninstallStyle\\s*\\}="             .scheme.error
   hilight .hilight.iss 0x20 "WizardSmallImageBackColor\\s*\\}="  .scheme.error
   hilight .hilight.iss 0x20 "WizardStyle\\s*\\}="                .scheme.error
-!endif    
+!endif
 
 buffer-init-fhook "iss"

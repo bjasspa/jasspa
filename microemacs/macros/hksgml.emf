@@ -39,12 +39,12 @@ set-variable .fhook-sgml.exact -1
   hilight .hilight.sgml 4 "<!--" "-->" ""            .scheme.comment
   hilight .hilight.sgml 0 "&\\w+;"                   .scheme.variable
   hilight .hilight.sgml 0x804 "\"" "\"" "\\"         .scheme.string
-  
+
   0 hilight .hilight.sgmlT 1                         $global-scheme
   hilight .hilight.sgmlT 4  "=\\{\"" "\"" "\\"       .scheme.string
   hilight .hilight.sgmlT 4  "=\\{" "\\}[ \t\n>]" ""  .scheme.string
   hilight .hilight.sgmlT 0x80 ">" .hilight.sgml      .scheme.keyword
-  
+
 !endif
 
 !if &sin "d" .fhook-sgml.setup
@@ -96,7 +96,7 @@ set-variable .fhook-sgml.exact -1
   indent .hilight.sgml o "</tgroup>"            -t
   indent .hilight.sgml n "<row[^>]*>"            t
   indent .hilight.sgml o "</row>"               -t
-  
+
   indent .hilight.sgml o "</td>"                -t
   indent .hilight.sgml n "<td[^>]*>"             t
   indent .hilight.sgml o "</select>"            -t

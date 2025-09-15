@@ -17,7 +17,7 @@
 ;           the flag is bitwise defined as follows:
 ;           0x001 - Call the update command on tool creation
 ;           0x002 - Call the update command on a redraw
-;           0x004 - Call the update command if the current buffer type changes 
+;           0x004 - Call the update command if the current buffer type changes
 ;           0x008 - Call the update command if the current buffer changes
 ;           0x010 - Call the update command if the current buffer is modified/saved
 ;           0x080 - Perform update checks
@@ -49,8 +49,8 @@
 ;
 ;     The update command is always called when the toolbar is opened, from then on
 ;     the command is only called when required (determined by the 0x02 & 0x04 bits
-;     of the flag. 
-;                             
+;     of the flag.
+;
 0 define-macro-file toolstp toolbar-setup
 
 0 define-macro toolbar-redraw-mode
@@ -71,7 +71,7 @@
       set-variable #l8 &cat &sup &lef .toolbar-redraw.bt 1 &rig .toolbar-redraw.bt 1
     !endif
     set-variable #l1 &spr "%s %s" #l8 #l1
-  !endif        
+  !endif
   !iif &band 0x20000 #l9  set-variable #l1 &spr "%s (%s)" #l1 .toolbar-redraw.bn
   !if &band 0x40000 #l9
     !if &not &seq $buffer-fname ""
@@ -80,9 +80,9 @@
         set-variable #l1 &spr "%s (%s%s)" #l1 &mid $window-chars 55 1 &rig $buffer-fname &sub &len $buffer-fname #l4
       !else
         set-variable #l1 &spr "%s (%s)" #l1 $buffer-fname
-      !endif        
-    !endif        
-  !endif        
+      !endif
+    !endif
+  !endif
   !if &les $window-width 8
     set-variable $buffer-mode-line &spr "%s%n%s%s" &lef #l1 #l0 &sub #l0 &len #l1 " " &mid $window-chars 27 1 &mid $window-chars 31 1
   !else
@@ -174,7 +174,7 @@
       set-variable :buffer-info &lset "||" 1 "E"
       set-variable .bc &bor .bc 0x010
     !elif &not &sin "E" &lget :buffer-info 1
-      set-variable :buffer-info &lset :buffer-info 1 &cat &lget :buffer-info 1 "E" 
+      set-variable :buffer-info &lset :buffer-info 1 &cat &lget :buffer-info 1 "E"
       set-variable .bc &bor .bc 0x010
     !endif
   !else
@@ -182,7 +182,7 @@
       set-variable :buffer-info "||"
       set-variable .bc &bor .bc 0x010
     !elif &sin "E" &lget :buffer-info 1
-      set-variable :buffer-info &lset :buffer-info 1 &rep &lget :buffer-info 1 "E" "" 
+      set-variable :buffer-info &lset :buffer-info 1 &rep &lget :buffer-info 1 "E" ""
       set-variable .bc &bor .bc 0x010
     !endif
   !endif
@@ -364,7 +364,7 @@ define-macro toolbar-open
           next-window
         !endif
         set-variable .toolbar.tool-wid &lset .toolbar.tool-wid #l0 $window-id
-        set-variable $window-flags &cond &band #l1 0x100 0x11ff &sub 0x11fe &band #l2 1 
+        set-variable $window-flags &cond &band #l1 0x100 0x11ff &sub 0x11fe &band #l2 1
         find-buffer &lget .toolbar.tool-buff #l0
         set-variable #l8 &lset #l8 #l2 &lget .toolbar.tool-size #l0
         set-variable #l6 &lset #l6 #l2 $buffer-bname

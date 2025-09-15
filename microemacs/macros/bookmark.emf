@@ -8,7 +8,7 @@
 ; Synopsis:    Bookmarks for the toolbar
 ; Authors:     Steven Phillips
 ;
-!if &band .hilight.flags 0x01 
+!if &band .hilight.flags 0x01
   !if &not &exist .hilight.bookmark
     set-variable .hilight.bookmark &pinc .hilight.next 1
   !endif

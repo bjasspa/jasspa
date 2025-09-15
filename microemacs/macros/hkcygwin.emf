@@ -13,14 +13,14 @@
 ;     %cygwin-path must be set to the cygwin directory,
 ;     this should be saved in the user setup file ($user-name.emf),
 ;     this will typically be:
-;                  
+;
 ;         set-variable %cygwin-path "c:/cygwin"
 ;
-;     If cygwin is in the normal "c:/cygwin" directory then it 
-;     will be located automatically. 
+;     If cygwin is in the normal "c:/cygwin" directory then it
+;     will be located automatically.
 ;
 ;     This file assumes that a standard cygwin install has
-;     been performed and the cygwin variables are *NOT* 
+;     been performed and the cygwin variables are *NOT*
 ;     defined in the DOS environment space. If they are then
 ;     you do not need to push the cygwin environment variables
 ;     within the "cygwin" macro.
@@ -39,41 +39,41 @@
 ;
 ;  Notes:
 ;      Jon 2005-05-14
-;      
-;      This file is now used by mecygwin to provide a BASH shell in the 
-;      the UNIX build environment. The notes above reply to run a bash 
-;      shell. The cygwin environment is initialised by settings in 
+;
+;      This file is now used by mecygwin to provide a BASH shell in the
+;      the UNIX build environment. The notes above reply to run a bash
+;      shell. The cygwin environment is initialised by settings in
 ;      cygwin.emf these are similar to the windows.emf start up script.
 ;
-;      Jon 2004-02-21 
-; 
+;      Jon 2004-02-21
+;
 ;      The old version of cygnus ishell in the B18 era worked well as
-;      BASH acted like a regular UNIX shell and echoed the output. 
+;      BASH acted like a regular UNIX shell and echoed the output.
 ;      We then went through a phase with cygwin where the shell did
-;      not work at all - possibly for a period of 1 year, reported 
-;      "readline" failures. With the latest releases then the shell 
-;      does work, but has not lost it's echo. So as a result the 
-;      DOS completion has been added in. In addition we now run 
-;      BASH in an EMACS term. (Fishing through the source code of 
-;      BASH there is a horrible little EMACS hack for a EMACS 
+;      not work at all - possibly for a period of 1 year, reported
+;      "readline" failures. With the latest releases then the shell
+;      does work, but has not lost it's echo. So as a result the
+;      DOS completion has been added in. In addition we now run
+;      BASH in an EMACS term. (Fishing through the source code of
+;      BASH there is a horrible little EMACS hack for a EMACS
 ;      terminal - this allows us to determine the working direcotory
-;      of BASH. To exploit this hack then we set the environment 
+;      of BASH. To exploit this hack then we set the environment
 ;      variable $TERM to be "EMACS" and set $EMACS to be "*term*".)
 ;
-;      To get around the echo problem then we have borrowed the 
+;      To get around the echo problem then we have borrowed the
 ;      command completion from the DOS ishell. This is more than
 ;      a little hairy. This kind of works OK however it does not
-;      fully understand the cygwin environment yet, especially 
-;      going across environments. More work is needed to get 
-;      this working correctly, but it is not going to happen 
+;      fully understand the cygwin environment yet, especially
+;      going across environments. More work is needed to get
+;      this working correctly, but it is not going to happen
 ;      for the early 2004 release.
-; 
-;      The hilighting has been extended for the likes of ls --color
-;      so the hilighting colorizes and takes out the colored 
-;      tokens that otherwise leave a nice mess. 
 ;
-;      All of the functions are now called 'cygwin' as opposed to 
-;      "cygnus". The folks at RedHat seem to have settled on this 
+;      The hilighting has been extended for the likes of ls --color
+;      so the hilighting colorizes and takes out the colored
+;      tokens that otherwise leave a nice mess.
+;
+;      All of the functions are now called 'cygwin' as opposed to
+;      "cygnus". The folks at RedHat seem to have settled on this
 ;      as a name so we change the name to cygwin.
 ;
 ;      Cygwin is at "www.cygwin.com"
@@ -190,7 +190,7 @@ define-macro cygpipe-break
   !if &not &seq "//cygdrive/" &lef #l1 11
     ; See if this is a DOS directory.
     !if &xseq #l1 "^[a-zA-Z]:.*"
-      ; This is a DOS path. 
+      ; This is a DOS path.
       set-variable .cygwin.dosdir #l1
       set-variable .cygwin.cygdir #l1
       set-variable $buffer-fname
@@ -206,9 +206,9 @@ define-macro cygpipe-break
   set-variable #l2 &rep #l2 "/" "\\"
   set-variable .cygwin.dosdir #l2
   ; Change the buffer file name to directory, add trailing '/'
-  set-variable #l2 &cat #l2 "\\" 
+  set-variable #l2 &cat #l2 "\\"
   set-variable $buffer-fname &rep #l2 "\\" "/"
-  ; Backslash spaces 
+  ; Backslash spaces
   set-variable #l3 &rep #l1 " " "\\ "
   set-variable .cygwin.cygdir &rig #l3 1
   ; 5000 ml-write &cat "Cygdir = " .cygwin.cygdir
@@ -299,7 +299,7 @@ define-macro cygpipe-break
             set-variable $buffer-fname #l4
             !force find-buffer &cat #l0 "-cmd"
             set-variable $buffer-fname #l5
-            ; must set the old one as well - the starting path is not 
+            ; must set the old one as well - the starting path is not
             ; automatically stored
             !if &seq &mid #l5 1 1 ":"
               set-variable &ind &cat ":dir-" &slo &lef #l5 1 #l5
@@ -386,7 +386,7 @@ define-macro cygpipe-break
       !force !force execute-string #l1
       set-variable #l3 @wl
       !if &seq @wc ""
-        set-variable #l3 :cmd 
+        set-variable #l3 :cmd
       !endif
       !force find-buffer &cat #l0 "-cmd"
       beginning-of-buffer
@@ -505,7 +505,7 @@ define-macro cygpipe-break
   set-mark
   end-of-buffer
   kill-region
-!emacro    
+!emacro
 
 0 define-macro cygpipe-input
   !if &not @#
@@ -519,8 +519,8 @@ define-macro cygpipe-break
   !else
     set-variable .cygwin.input &add .cygwin.input 1
   !endif
-  ; Use the BASH shell information to determine our current 
-  ; directory. We hook this out of the output from BASH and 
+  ; Use the BASH shell information to determine our current
+  ; directory. We hook this out of the output from BASH and
   ; then remove it from the buffer.
   set-position "\x83"
   !force -2 search-backward "\x1a"
@@ -563,7 +563,7 @@ define-macro cygwin
   !if &and $status &bmod "pipe"
     ; Cygus buffer is found. Find another buffer.
     set-variable #l9 1
-*again        
+*again
     set-variable #l8 &spr "*cygwin%d*"&pinc #l9 1
     !force 0 find-buffer #l8
     !if $status

@@ -89,7 +89,7 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
   set-variable .hilight.phps  &pinc .hilight.next 1
 !endif
 
-!if &and &sin "h" .fhook-phps.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-phps.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.phpsD
     set-variable .hilight.phpsS &pinc .hilight.next 1
     set-variable .hilight.phpsD &pinc .hilight.next 1
@@ -100,9 +100,9 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
   ; Hilight the documentation backets
   hilight .hilight.phps 4    "^=head" "=cut" ""  .scheme.string
   ; Strings and things
-  hilight .hilight.phps 0 "\\\\'"                $global-scheme 
-  hilight .hilight.phps 0 "\\\\`"                $global-scheme 
-  hilight .hilight.phps 0 "\\\\\""               $global-scheme 
+  hilight .hilight.phps 0 "\\\\'"                $global-scheme
+  hilight .hilight.phps 0 "\\\\`"                $global-scheme
+  hilight .hilight.phps 0 "\\\\\""               $global-scheme
   hilight .hilight.phps 0x80 "\'" .hilight.phpsS .scheme.string
   hilight .hilight.phps 0x80 "\"" .hilight.phpsD .scheme.string
   hilight .hilight.phps 20 "/\\*\\s*[tT][oO][dD][oO]" "*/" "" .scheme.error
@@ -126,7 +126,7 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
     hilight .hilight.phps 0 "^\\s*\\{sub\\s+\\w[1-9A-Za-z_']*" .scheme.function
   !endif
   ; Labels
-  
+
   hilight .hilight.phps 1    "PHP_[A-Z_]+"       .scheme.prepro
   hilight .hilight.phps 1    "STDIN"             .scheme.prepro
   hilight .hilight.phps 1    "STDOUT"            .scheme.prepro
@@ -180,7 +180,7 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
   hilight .hilight.phps 1    "\\$this"           .scheme.operator
   hilight .hilight.phps 1    "xor"               .scheme.operator
   hilight .hilight.phps 1    "undef"             .scheme.operator
-  
+
   hilight .hilight.phps 0x804 "`" "`" "\\"       .scheme.prepro
   hilight .hilight.phps 1    "<[^ \t\n>]*>"      .scheme.prepro
   ; Keywords
@@ -246,7 +246,7 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
   hilight .hilight.phps 1    "use"               .scheme.keyword
   hilight .hilight.phps 1    "var"               .scheme.keyword
   hilight .hilight.phps 1    "while"             .scheme.keyword
-  
+
   ;Core Constants
   hilight .hilight.phps 1 "NULL"                 .scheme.constant
   hilight .hilight.phps 1 "PHP_VERSION"          .scheme.constant
@@ -275,8 +275,8 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
   hilight .hilight.phps 1 "E_USER_ERROR"         .scheme.constant
   hilight .hilight.phps 1 "E_USER_WARNING"       .scheme.constant
   hilight .hilight.phps 1 "E_USER_NOTICE"        .scheme.constant
-  hilight .hilight.phps 1 "E_ALL"                .scheme.constant    
-  
+  hilight .hilight.phps 1 "E_ALL"                .scheme.constant
+
   ;Standard constants
   hilight .hilight.phps 1 "EXTR_OVERWRITE"       .scheme.constant
   hilight .hilight.phps 1 "EXTR_SKIP"            .scheme.constant
@@ -476,7 +476,7 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
   hilight .hilight.phps 1 "LOG_NDELAY"           .scheme.constant
   hilight .hilight.phps 1 "LOG_NOWAIT"           .scheme.constant
   hilight .hilight.phps 1 "LOG_PERROR"           .scheme.constant
-  
+
   !if &band .hilight.flags 0x08
     ; hilight constants, e.g. numbers
     hilight .hilight.phps 1 "[[:digit:]]+"       .scheme.constant
@@ -499,7 +499,7 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
   hilight .hilight.phpsD 0x80 "\"" .hilight.phps .scheme.string
   ; the next tag fixes hilighting problems caused by strings spanning
   ; multiple lines by resetting the hilight on the next blank line during
-  ; the look-back. 
+  ; the look-back.
   hilight .hilight.phpsD 0xa80 "^\\s*\\{$" .hilight.phps $global-scheme
   ; Shell variable hilighting
   0 hilight .hilight.phpsV 0                     .scheme.variable
@@ -509,7 +509,7 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
   hilight .hilight.phpsV 4   "\"" "\"" ""        .scheme.string
   hilight .hilight.phpsV 4   "\\${" "}" ""       .scheme.variable
   hilight .hilight.phpsV 0x80 "}" .hilight.phps  .scheme.variable
-  
+
   ; Doxygen highlighting extensions. Highlights keywords in Doxygen
   !if &sin "l" .fhook-phps.setup
     ; Create a new doxygen hilighting scheme
@@ -544,8 +544,8 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
     ; Special hilighting for a 'C' parameter - branch from the doxygen
     ; space into scheme for the parameter. Note that @param is defined
     ; after the generic '@' definitions.
-    ; 
-    ; Special for @param, @see, @retval   
+    ;
+    ; Special for @param, @see, @retval
     hilight .hilight.phpsdoxygenc 0x80 "[\\\\@]file"   .hilight.phpsdoxygencp .scheme.keyword
     hilight .hilight.phpsdoxygenc 0x80 "[\\\\@]struct" .hilight.phpsdoxygencp .scheme.keyword
     hilight .hilight.phpsdoxygenc 0x80 "[\\\\@]param"  .hilight.phpsdoxygencp .scheme.keyword
@@ -588,8 +588,8 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
     ; space into scheme for the parameter. Note that @param is defined
     ; after
     ; the generic '@' definitions.
-    ; 
-    ; Special for @param, @see, @retval   
+    ;
+    ; Special for @param, @see, @retval
     hilight .hilight.phpsdoxygen 0x80 "[\\\\@]a"      .hilight.phpsdoxygenp .scheme.keyword
     hilight .hilight.phpsdoxygen 0x80 "[\\\\@]file"   .hilight.phpsdoxygenp .scheme.keyword
     hilight .hilight.phpsdoxygen 0x80 "[\\\\@]struct" .hilight.phpsdoxygenp .scheme.keyword
@@ -609,7 +609,7 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
     ; We must return to C when we see the close of comment "*/"
     hilight .hilight.phpsdoxygenp 0x80 "$" .hilight.c .scheme.error
   !endif
-  
+
   ; let html based files use the phps hilight for any php scripts
   set-variable .hilight.phpscript .hilight.phps
 !endif

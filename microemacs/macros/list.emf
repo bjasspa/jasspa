@@ -5,7 +5,7 @@
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
 ;
-; Synopsis:    Generic unlimited list manipulation macros 
+; Synopsis:    Generic unlimited list manipulation macros
 ; Authors:     Steven Phillips
 ;
 ; dummy macro for variable store
@@ -105,7 +105,7 @@ define-macro list-ins
   !if &gre #l7 .list.init-len
     ml-write "[List value length too long]"
     !abort
-  !endif        
+  !endif
   !if &gre #l7 &lget #l6 2
     !if &equ #l1 1
       ; inserting at the start, create a new variable before this one and add to the new
@@ -120,10 +120,10 @@ define-macro list-ins
       set-variable #l5 0
       set-variable #l6 &ind #l4
     !else
-      
+
       ml-write "Arrgghhhh"
       !abort
-      
+
       set-variable #l1 0
       set-variable #l7 &div &sub .list.init-len &lget #l6 2 2
       !while &gre &sub #l7 &set #l2 &add 1 &len &lget #l6 &add #l1 2 0
@@ -134,7 +134,7 @@ define-macro list-ins
         set-variable #l7 &sub #l7 #l2
         set-variable #l1 1
       !endif
-      
+
       set-variable #l1 #l8
       !goto ins_try_again
     !endif
@@ -279,7 +279,7 @@ define-macro find-print
   !endif
   !force list-remove "find"
   list-create "find"
-  list-ins "find" 0 #l0 
+  list-ins "find" 0 #l0
   !force delete-buffer "*find*"
   popup-window "*find*"
   set-variable #l3 0

@@ -521,7 +521,7 @@ osd .osd.ftp 640 "f" "  "
 
 !if &not &exi .ftp.url-file
   !if &not &seq &set .ftp.url-file &reg "/history/url-file" "" ""
-    !force read-registry "/url" .ftp.url-file "y" 
+    !force read-registry "/url" .ftp.url-file "y"
     !if &not $status
       ; set ftp erf file is missing
       set-registry "/url" &stat "a" &spr "%s%s.erf" $user-path .ftp.url-file

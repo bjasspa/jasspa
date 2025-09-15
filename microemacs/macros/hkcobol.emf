@@ -21,7 +21,7 @@ set-variable .fhook-cobol.setup-mask "aebghikmnoptux"
 set-variable .fhook-cobol.comment "|*||*|* | *|r|"
 set-variable .fhook-cobol.exact -1
 
-!if &and &sin "h" .fhook-cobol.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-cobol.setup &band .hilight.flags 0x02
   ; High-light COBOL-85
   !if &not &exist .hilight.cobol
     set-variable .hilight.cobol &pinc .hilight.next 1
@@ -30,14 +30,14 @@ set-variable .fhook-cobol.exact -1
   hilight .hilight.cobol 4 "'" "'" ""                   .scheme.string
   hilight .hilight.cobol 4 "\"" "\"" ""                 .scheme.string
   hilight .hilight.cobol 0x102 "*"                      .scheme.comment
-  
+
   hilight .hilight.cobol 1 "data"                       .scheme.keyword
   hilight .hilight.cobol 1 "division"                   .scheme.keyword
   hilight .hilight.cobol 1 "end program"                .scheme.keyword
   hilight .hilight.cobol 1 "exit"                       .scheme.keyword
   hilight .hilight.cobol 1 "program-id"                 .scheme.keyword
   hilight .hilight.cobol 1 "section"                    .scheme.keyword
-  
+
   hilight .hilight.cobol 1 "access"                     .scheme.keyword
   hilight .hilight.cobol 1 "all"                        .scheme.keyword
   hilight .hilight.cobol 1 "alternate"                  .scheme.keyword
@@ -108,7 +108,7 @@ set-variable .fhook-cobol.exact -1
   hilight .hilight.cobol 1 "thru"                       .scheme.keyword
   hilight .hilight.cobol 1 "with"                       .scheme.keyword
   hilight .hilight.cobol 1 "words"                      .scheme.keyword
-  
+
   hilight .hilight.cobol 1 "accept"                     .scheme.keyword
   hilight .hilight.cobol 1 "after"                      .scheme.keyword
   hilight .hilight.cobol 1 "are"                        .scheme.keyword
@@ -165,7 +165,7 @@ set-variable .fhook-cobol.exact -1
   hilight .hilight.cobol 1 "when set to"                .scheme.keyword
   hilight .hilight.cobol 1 "zero"                       .scheme.keyword
   hilight .hilight.cobol 1 "zeros"                      .scheme.keyword
-  
+
   hilight .hilight.cobol 1 "close"                      .scheme.keyword
   hilight .hilight.cobol 1 "delete file"                .scheme.keyword
   hilight .hilight.cobol 1 "delete"                     .scheme.keyword
@@ -186,7 +186,7 @@ set-variable .fhook-cobol.exact -1
   hilight .hilight.cobol 1 "replacing all"              .scheme.keyword
   hilight .hilight.cobol 1 "stop run"                   .scheme.keyword
   hilight .hilight.cobol 1 "write"                      .scheme.keyword
-  
+
   hilight .hilight.cobol 1 "display"                    .scheme.keyword
   hilight .hilight.cobol 1 "erase eos"                  .scheme.keyword
   hilight .hilight.cobol 1 "erase eol"                  .scheme.keyword
@@ -195,10 +195,10 @@ set-variable .fhook-cobol.exact -1
   hilight .hilight.cobol 1 "line"                       .scheme.keyword
   hilight .hilight.cobol 1 "perform"                    .scheme.keyword
   hilight .hilight.cobol 1 "to"                         .scheme.keyword
-  
+
   hilight .hilight.cobol 1 "end-"                       .scheme.keyword
   ; end-xxx delimiter, present in RM/COBOL-85, dont know if its standard-85 ??
-  
+
   hilight .hilight.cobol 1 "("                          .scheme.operator
   hilight .hilight.cobol 1 ")"                          .scheme.operator
   hilight .hilight.cobol 1 "\\."                        .scheme.operator
@@ -209,8 +209,8 @@ set-variable .fhook-cobol.exact -1
   hilight .hilight.cobol 1 "not"                        .scheme.operator
   hilight .hilight.cobol 1 "and"                        .scheme.operator
   hilight .hilight.cobol 1 "or"                         .scheme.operator
-  
-  
+
+
   hilight .hilight.cobol 1 "binary"                     .scheme.type
   hilight .hilight.cobol 1 "comp"                       .scheme.type
   hilight .hilight.cobol 1 "comp-1"                     .scheme.type

@@ -882,29 +882,29 @@ osd .osd.gdiff 160 ""   "Gdiff \HHelp"       .osd.gdiff-help osd
 osd .osd.gdiff 170 ""   "E\Hxit Gdiff"       f gdiff-exit
 
 osd .osd.gdiff-help 0  "batcDH" 9 3 99 .scheme.osd-title "Graphical Diff Help"
-osd .osd.gdiff-help 3  "" 
+osd .osd.gdiff-help 3  ""
 osd .osd.gdiff-help 4  ""  "  esc h     - View this help page"
-osd .osd.gdiff-help 5  "" 
+osd .osd.gdiff-help 5  ""
 osd .osd.gdiff-help 6  ""  "  tab       - Swap between buffers"
 osd .osd.gdiff-help 6  ""  "  p, C-up   - Move to previous difference"
 osd .osd.gdiff-help 7  ""  "  n, C-down - Move to next difference"
-osd .osd.gdiff-help 8  "" 
+osd .osd.gdiff-help 8  ""
 osd .osd.gdiff-help 9  ""  "  g         - Global: Select all differences from active buffer"
 osd .osd.gdiff-help 10 ""  "  G         - Global: Select no version (remove difference text)"
-osd .osd.gdiff-help 11 "" 
+osd .osd.gdiff-help 11 ""
 osd .osd.gdiff-help 13 ""  "  r, space  - Region: Select current difference from active buffer  "
 osd .osd.gdiff-help 14 ""  "  R         - Region: Select no version (remove difference text)"
-osd .osd.gdiff-help 15 "" 
+osd .osd.gdiff-help 15 ""
 osd .osd.gdiff-help 16 ""  "  l         - Line: Select current difference from active buffer"
 osd .osd.gdiff-help 17 ""  "  L         - Line: Select no version (remove difference text)"
-osd .osd.gdiff-help 18 "" 
+osd .osd.gdiff-help 18 ""
 osd .osd.gdiff-help 19 ""  "  C-x C-s   - Save as active buffer"
 osd .osd.gdiff-help 20 ""  "  C-x C-w   - Save as..."
 osd .osd.gdiff-help 22 ""  "  C-x k     - Exit graphical diff"
-osd .osd.gdiff-help 23 "" 
+osd .osd.gdiff-help 23 ""
 osd .osd.gdiff-help 24 ""  "  menu, esc + or right mouse button activates a context menu"
-osd .osd.gdiff-help 25 "" 
-osd .osd.gdiff-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
+osd .osd.gdiff-help 25 ""
+osd .osd.gdiff-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void
 
 set-variable .gdiff.bndiff "*gdiff diff*"
 set-variable .gdiff.bnold  "*gdiff left*"
@@ -913,12 +913,12 @@ set-variable .gdiff.bncom  "*gdiff com*"
 
 !if .start-up
   define-macro start-up
-    ; Delete all of the windows. We use 2 to force this as there may be a toolbar present. 
+    ; Delete all of the windows. We use 2 to force this as there may be a toolbar present.
     !force 2 delete-other-windows
     set-variable #l0 &set #l1 ""
     set-variable #l2 $buffer-bname
     !repeat
-      !if &seq "*" &lef $buffer-bname 1 
+      !if &seq "*" &lef $buffer-bname 1
       !elif &seq $buffer-fname ""
       !elif &seq #l0 ""
         ; first file
@@ -930,7 +930,7 @@ set-variable .gdiff.bncom  "*gdiff com*"
         ; more than 2 files given - error
         5000 ml-write "[Usage error: me \"@gdiff\" <old> <new>]"
         0 quick-exit
-      !endif 
+      !endif
       next-buffer
     !until &seq $buffer-bname #l2
     !if &seq #l1 ""
@@ -941,4 +941,3 @@ set-variable .gdiff.bncom  "*gdiff com*"
     0 quick-exit
   !emacro
 !endif
-

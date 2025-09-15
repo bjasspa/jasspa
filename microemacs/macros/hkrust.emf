@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Detlef Groth
 ;  Created       : Fri Mar 6th, 2025
-;  Last Modified : <250806.0119>
+;  Last Modified : <250915.2114>
 ;
 ;  Description
 ;   V Language Template
@@ -57,12 +57,12 @@ set-variable .fhook-rust.item-list-r6 "modl \CCb\\1\CCA"
   ; Comment TODO's
   hilight .hilight.rust 20 "/\\*\\s+[Tt][Oo][Dd][Oo]" "*/" "" .scheme.error
   hilight .hilight.rust 18 "//\\s*[tT][oO][dD][oO]"           .scheme.error
-  
+
   ; Strings
   hilight .hilight.rust  4 "\"" "\"" "\\"  .scheme.string
   hilight .hilight.rust  4 "\'" "\'" "\\"  .scheme.string
   hilight .hilight.rust  4 "\"\"\"" "\"\"\"" "\\"  .scheme.quote
-  
+
   ; constants: A_CONSTANT_VARAIBLE
   hilight .hilight.rust 1    "[A-Z_]+"        .scheme.constant
   ; package keywords
@@ -111,16 +111,16 @@ set-variable .fhook-rust.item-list-r6 "modl \CCb\\1\CCA"
   hilight .hilight.rust 1    "i16"            .scheme.type
   hilight .hilight.rust 1    "i32"            .scheme.type
   hilight .hilight.rust 1    "i64"            .scheme.type
-  hilight .hilight.rust 1    "i128"           .scheme.type  
+  hilight .hilight.rust 1    "i128"           .scheme.type
   hilight .hilight.rust 1    "isize"          .scheme.type
   hilight .hilight.rust 1    "str"            .scheme.type
   hilight .hilight.rust 1    "static"         .scheme.type
-  hilight .hilight.rust 1    "struct"         .scheme.type  
+  hilight .hilight.rust 1    "struct"         .scheme.type
   hilight .hilight.rust 1    "u8"             .scheme.type
   hilight .hilight.rust 1    "u16"            .scheme.type
   hilight .hilight.rust 1    "u32"            .scheme.type
   hilight .hilight.rust 1    "u64"            .scheme.type
-  hilight .hilight.rust 1    "u128"           .scheme.type  
+  hilight .hilight.rust 1    "u128"           .scheme.type
   hilight .hilight.rust 1    "usize"          .scheme.type
   hilight .hilight.rust 1    "union"          .scheme.type
   hilight .hilight.rust 1    "unsafe"         .scheme.type

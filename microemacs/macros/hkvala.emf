@@ -2,7 +2,7 @@
 ;
 ;  Created By    : Detlef Groth
 ;  Created       : Fri Mar 6th, 2025
-;  Last Modified : <250915.1321>
+;  Last Modified : <250915.2114>
 ;
 ;  Description
 ;   Go Language Template
@@ -61,7 +61,7 @@ set-variable .fhook-vala.item-list-r4 "Enum \CCb\\1\CCA"
   hilight .hilight.vala  4 "\"\"\"" "\"\"\"" "\\"  .scheme.quote
   ; go string literal /.foo[0-9]\s*bar/ hiligh gets confused with simple division.
   ;hilight .hilight.vala  4 "/" "/" "" .scheme.quote
-  
+
   ; constants: A_CONSTANT_VARAIBLE
   hilight .hilight.vala 1    "[A-Z_]+"        .scheme.constant
   ; package keywords
@@ -148,7 +148,7 @@ set-variable .fhook-vala.item-list-r4 "Enum \CCb\\1\CCA"
   hilight .hilight.vala 1    "unichar"  .scheme.type
   hilight .hilight.vala 1    "ushort"   .scheme.type
   hilight .hilight.vala 1    "var"      .scheme.type
-  hilight .hilight.vala 1    "void"      .scheme.type  
+  hilight .hilight.vala 1    "void"      .scheme.type
 !endif
 
 !if &sin "d" .fhook-vala.setup

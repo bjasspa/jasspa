@@ -37,7 +37,7 @@ define-macro change-buffer-charset
     set-variable #l0 .change-charset-set.from
     set-variable #l1 .change-charset-set.to
     set-variable @# &bor &band @# 1 &mul .change-charset-us.n 2
-  !endif    
+  !endif
   !if &seq #l0 #l1
     ml-write "[From & To are the same - nothing to do!]"
     !return
@@ -177,7 +177,7 @@ define-macro change-buffer-charset
   !force !force execute-file "language"
   -8 ml-write "[Command Aborted!]"
 !emacro
-  
+
 0 define-macro change-charset-set
   !if &band @# 0x8000
     set-variable #l0 "utf8"

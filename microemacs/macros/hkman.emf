@@ -56,14 +56,14 @@ set-variable .fhook-man.item-list-r1 "Sec \\1"
   ; Note that we do a .^H._^H_ check first to ensure we do not mix
   ; bold and italic.
   hilight .hilight.man 64 "\\(.\\)\CH\\1_\CH_\\}[^\CH]" "\\1_" .scheme.bold
-  
+
   ; hilighting can also be done via 0x27[#m formatting strings
   hilight .hilight.man 0x44 "\e\\[0m" "" "\\}\e\\[" "" ""  $global-scheme
   hilight .hilight.man 0x44 "\e\\[1m" "" "\\}\e\\[" "" ""  .scheme.bold
   hilight .hilight.man 0x44 "\e\\[4m" "" "\\}\e\\[" "" ""  .scheme.italic
   hilight .hilight.man 0x44 "\e\\[22m" "" "\\}\e\\[" "" "" $global-scheme
   hilight .hilight.man 0x44 "\e\\[24m" "" "\\}\e\\[" "" "" $global-scheme
-  
+
 !endif
 
 define-macro aman
@@ -151,20 +151,20 @@ define-macro man-clean
   replace-string ".\CH_\CH\(.\)\CH.\CH.\CH." "\\1"
   beginning-of-buffer
   replace-string ".\CH_\CH\(.\)" "\1"
-  
+
   beginning-of-buffer
   replace-string "_\CH.\CH.\CH.\CH\(.\)" "\\1"
-  
+
   beginning-of-buffer
   replace-string ".\CH.\CH.\CH\(.\)" "\\1"
   beginning-of-buffer
   replace-string "_\CH_\CH_\CH_" "_"
-  
+
   beginning-of-buffer
   replace-string "\(.\)\CH_" "\\1"
   beginning-of-buffer
   replace-string "_\CH\(.\)" "\\1"
-  
+
   beginning-of-buffer
   replace-string ".\CH" ""
   ; remove \e[#m color encoding

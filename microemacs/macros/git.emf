@@ -43,7 +43,7 @@
     set-variable .hilight.git-blm &pinc .hilight.next 1
     set-variable .hilight.git-log &pinc .hilight.next 1
   !endif
-  
+
   0 hilight .hilight.git-status 0 $global-scheme
   hilight .hilight.git-status 0x102 "[ *]\\u  " .scheme.prepro
   hilight .hilight.git-status 0x102 "[ *]\\u"   .scheme.hlred
@@ -59,7 +59,7 @@
   hilight .hilight.git-status 0x102 " Flags  "  .scheme.no1
   hilight .hilight.git-status 0x102 "\\[\\*\\*\\*\\* Git [^ ]+ completed successfully" .scheme.no1
   hilight .hilight.git-status 0x102 "\\[\\*\\*\\*\\* Git" .scheme.error
-  
+
   0 hilight .hilight.git-log 0 $global-scheme
   hilight .hilight.git-log 0x100 "\\[Hide]" $mode-line-scheme
   hilight .hilight.git-log 0x100 "\\[Show]" $mode-line-scheme
@@ -72,7 +72,7 @@
   hilight .hilight.git-log 0x102 "M\t"  .scheme.chg
   hilight .hilight.git-log 0x102 "\\[\\*\\*\\*\\* Git [^ ]+ completed successfully" .scheme.no1
   hilight .hilight.git-log 0x102 "\\[\\*\\*\\*\\* Git" .scheme.error
-  
+
   ; fix the *files* buffer hilighting for git additions
   ; todo
   hilight .hilight.dirlst 0x112 " dA-" .scheme.add
@@ -709,7 +709,7 @@ set-variable .git-revision-op.lbl13 "|\HMaster|\HHead|\HPrevious to head|\HSpeci
 ; @# svn command number for command flags & options and lock info
 ; @1 is a bit flag:
 ;   0x01 if set then delete the "*git-cmdline*" temp buffer
-;   0x02 Used with "!" command flag (wait for complete) to insert cmd exit info 
+;   0x02 Used with "!" command flag (wait for complete) to insert cmd exit info
 0 define-macro git-exec
   set-variable .git.lock @#
   set-variable #l1 @1
@@ -1146,7 +1146,7 @@ define-macro git-log
     set-variable #l1 :ch
     !if &les $window-col &len @s1
       set-variable #l9 &lget .git.cvals 6
-      set-variable .git.cvals &lset .git.cvals 6 &lset #l9 2 &bxo &lget #l9 2 1 
+      set-variable .git.cvals &lset .git.cvals 6 &lset #l9 2 &bxo &lget #l9 2 1
     !else
       set-variable #l1 &cat #l1 "~"
     !endif
@@ -1249,7 +1249,7 @@ define-macro git-show
     !abort
   !endif
   !iif &set #l3 &sin " " #l0  set-variable #l0 &lef #l0 &sub #l3 1
-  set-variable #l9 @s3 
+  set-variable #l9 @s3
   ; Note: Cannot use the simple <commit>~#..<commit> as ~# refers to the actual previous commit, not the last commit the file was changed in
   ; So we must get the current diff's commit hashes, if doing a Diff-prev then hash of (a) and then we can use <com>~..<com>
   ; If doing Diff-next then we need hash of (b) but then must work out the hash of the next commit

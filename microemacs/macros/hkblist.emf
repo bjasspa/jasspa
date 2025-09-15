@@ -165,4 +165,3 @@ set-variable .fhook-blist.command-desc  "|Refresh Buffer \HList||Switch to Buffe
 !emacro
 
 buffer-init-fhook "blist"
-

@@ -9,9 +9,9 @@
 ; Authors:     Steven Phillips
 ;
 ; Key binding definitions
-set-variable .org.bind-k0 "|C-left|C-right|C-up|C-down|" 
-set-variable .org.bind-c0 "|-1 org-month-inc-month|1 org-month-inc-month|-1 org-month-inc-year|1 org-month-inc-year|" 
-set-variable .org.bind-r0 "|1|1|1|1|" 
+set-variable .org.bind-k0 "|C-left|C-right|C-up|C-down|"
+set-variable .org.bind-c0 "|-1 org-month-inc-month|1 org-month-inc-month|-1 org-month-inc-year|1 org-month-inc-year|"
+set-variable .org.bind-r0 "|1|1|1|1|"
 
 ; Create the current month osd dialog
 0 define-macro org-month-init-day
@@ -61,7 +61,7 @@ set-variable .org.bind-r0 "|1|1|1|1|"
       #l6 org-month-init-day
     !endif
   !until &equ &inc #l2 1 43
-!emacro     
+!emacro
 
 0 define-macro org-month-change-year
   !if &les @# 0
@@ -170,14 +170,13 @@ osd .osd.orgm 35 "fh" " "
 osd .osd.orgm 40 "Etxfh" "#####" f org-month-change-year
 osd .osd.orgm 50 "BtxrfRhT" " -\H> "  1 org-month-inc-month
 osd .osd.orgm 55 "rf" "       "
-osd .osd.orgm 100 "" 
+osd .osd.orgm 100 ""
 osd .osd.orgm 110 "Itc" .osd.orgm-c
-osd .osd.orgm 200 "" 
+osd .osd.orgm 200 ""
 osd .osd.orgm 210 "Sf" "       \HNotes" 220
 osd .osd.orgm 220 "EtNcxHfz" .scheme.osd-entry 50 5 "" 1 org-month-set-notes
-osd .osd.orgm 600 "" 
-osd .osd.orgm 605 "" 
+osd .osd.orgm 600 ""
+osd .osd.orgm 605 ""
 osd .osd.orgm 610 "BtxhcfH" .scheme.osd-ebtt " \HSave "    f organizer-save
 osd .osd.orgm 620 "BtxhcfH" .scheme.osd-ebtt " Month to \HBuffer "  f org-month-buffer
 osd .osd.orgm 630 "BtcfH"   .scheme.osd-ebtt " \HClose "   1 void
-

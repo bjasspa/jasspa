@@ -5,11 +5,11 @@
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
 ;
-; Synopsis:    Hilighting for ISO 7498 ASN.1. 
+; Synopsis:    Hilighting for ISO 7498 ASN.1.
 ; Authors:     Jon Green
 ;
 ; Notes:
-;     The hilight tokens in this document were derived from the 
+;     The hilight tokens in this document were derived from the
 ;     ITU-T Recommendation X.208 - Specification of Abstract Syntax
 ;     Notation One (ASN.1) (Extract from the Blue Book).
 ;
@@ -27,7 +27,7 @@ set-variable .fhook-asn1.comment "|--||=|-- | --|r|"
   set-variable .hilight.asn1  &pinc .hilight.next 1
   set-variable .hilight.asn1C &pinc .hilight.next 1
 !endif
-!if &and &sin "h" .fhook-asn1.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-asn1.setup &band .hilight.flags 0x02
   ; Hilight ASN.1 Mode
   0 hilight  .hilight.asn1  0                   $global-scheme
   hilight .hilight.asn1  0x80 "--" .hilight.asn1C .scheme.comment
@@ -62,7 +62,7 @@ set-variable .fhook-asn1.comment "|--||=|-- | --|r|"
   hilight .hilight.asn1  1 "MINUS-INFINITY"  .scheme.keyword
   hilight .hilight.asn1  1 "NULL"            .scheme.type
   hilight .hilight.asn1  1 "OBJECT"          .scheme.type
-  hilight .hilight.asn1  1 "OCTET"           .scheme.type 
+  hilight .hilight.asn1  1 "OCTET"           .scheme.type
   hilight .hilight.asn1  1 "OF"              .scheme.keyword
   hilight .hilight.asn1  1 "OPTIONAL"        .scheme.keyword
   hilight .hilight.asn1  1 "PLUS-INFINITY"   .scheme.keyword

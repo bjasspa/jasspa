@@ -14,7 +14,7 @@
 define-macro start-up
   delete-other-windows
   !while &not &seq $buffer-bname "*scratch*"
-    set-variable #l1 &rig $buffer-fname -59 
+    set-variable #l1 &rig $buffer-fname -59
     ml-write &spr "Processing [%s]" #l1
     ; what type of file is it
     set-variable #l2 ""

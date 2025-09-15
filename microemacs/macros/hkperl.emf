@@ -42,7 +42,7 @@ set-variable .fhook-perl.item-list-r1 "Sub  \CCb\\1\CCA"
   set-variable .hilight.perl  &pinc .hilight.next 1
 !endif
 
-!if &and &sin "h" .fhook-perl.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-perl.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.perlR
     set-variable .hilight.perlR &pinc .hilight.next 1
     set-variable .hilight.perlS &pinc .hilight.next 1
@@ -54,12 +54,12 @@ set-variable .fhook-perl.item-list-r1 "Sub  \CCb\\1\CCA"
   ; Hilight the documentation backets
   hilight .hilight.perl 4    "^=head" "=cut" ""  .scheme.string
   ; Strings and things
-  hilight .hilight.perl 0 "\\\\'"                $global-scheme 
-  hilight .hilight.perl 0 "\\\\`"                $global-scheme 
+  hilight .hilight.perl 0 "\\\\'"                $global-scheme
+  hilight .hilight.perl 0 "\\\\`"                $global-scheme
   hilight .hilight.perl 0x804 "\\W\\{'" "'" "\\" .scheme.string
   hilight .hilight.perl 0x80 "\\W\\{\""        .hilight.perlS .scheme.string
   hilight .hilight.perl 0x80 "[^\\\\]\\{\""    .hilight.perlS .scheme.string
-  ; Replace strings 
+  ; Replace strings
   hilight .hilight.perl 0 "=~\\{[ \t]*s\\(.\\)\\!1*\\1\\!1*\\1" .scheme.string
   hilight .hilight.perl 0 "!~\\{[ \t]*s\\(.\\)\\!1*\\1\\!1*\\1" .scheme.string
   hilight .hilight.perl 0x80 "=~\\{[ \t]*s/"   .hilight.perlR .scheme.string
@@ -76,15 +76,15 @@ set-variable .fhook-perl.item-list-r1 "Sub  \CCb\\1\CCA"
   hilight .hilight.perl 0x80 "=~\\{[ \t]*y/"   .hilight.perlR .scheme.string
   hilight .hilight.perl 0x80 "!~\\{[ \t]*y/"   .hilight.perlR .scheme.string
   hilight .hilight.perl 0x80 "\\W\\{y/"        .hilight.perlR .scheme.string
-  ; Search strings 
+  ; Search strings
   hilight .hilight.perl 0 "=~\\{[ \t]*\\([^st]\\)\\!1*\\1" .scheme.string
   hilight .hilight.perl 0 "!~\\{[ \t]*\\([^st]\\)\\!1*\\1" .scheme.string
   hilight .hilight.perl 0x80 "=~\\{[ \t]*/" .hilight.perlX .scheme.string
   hilight .hilight.perl 0x80 "!~\\{[ \t]*/" .hilight.perlX .scheme.string
   hilight .hilight.perl 0x80 "\\W\\{/"      .hilight.perlX .scheme.string
   ; The following causes problems for the search /'s
-  ; printf LOGFILE "Average = %f\n", ($Total / $Count); 
-  hilight .hilight.perl 0    "\\W\\{/[^/]*\\}$"            $global-scheme 
+  ; printf LOGFILE "Average = %f\n", ($Total / $Count);
+  hilight .hilight.perl 0    "\\W\\{/[^/]*\\}$"            $global-scheme
   hilight .hilight.perl 0 "=~\\{[ \t]*m\\([^st]\\)\\!1*\\1" .scheme.string
   hilight .hilight.perl 0 "!~\\{[ \t]*m\\([^st]\\)\\!1*\\1" .scheme.string
   hilight .hilight.perl 0x80 "=~\\{[ \t]*m/" .hilight.perlX .scheme.string
@@ -211,13 +211,13 @@ set-variable .fhook-perl.item-list-r1 "Sub  \CCb\\1\CCA"
   hilight .hilight.perl 1    "local"             .scheme.keyword
   hilight .hilight.perl 1    "lstat"             .scheme.keyword
   hilight .hilight.perl 1    "mkdir"             .scheme.keyword
-  hilight .hilight.perl 1    "my"                .scheme.keyword  
+  hilight .hilight.perl 1    "my"                .scheme.keyword
   hilight .hilight.perl 1    "next"              .scheme.keyword
   hilight .hilight.perl 1    "oct"               .scheme.keyword
   hilight .hilight.perl 1    "open"              .scheme.keyword
   hilight .hilight.perl 1    "opendir"           .scheme.keyword
   hilight .hilight.perl 1    "ord"               .scheme.keyword
-  hilight .hilight.perl 1    "our"               .scheme.keyword  
+  hilight .hilight.perl 1    "our"               .scheme.keyword
   hilight .hilight.perl 1    "pack"              .scheme.keyword
   hilight .hilight.perl 1    "pop"               .scheme.keyword
   hilight .hilight.perl 1    "print"             .scheme.keyword
@@ -315,20 +315,20 @@ set-variable .fhook-perl.item-list-r1 "Sub  \CCb\\1\CCA"
   indent .hilight.perl e "!~\\s*tr/" "/" "\\"
   indent .hilight.perl e "!~\\s*y/" "/" "\\"
   ; The following causes problems for the search /'s
-  ; printf LOGFILE "Average = %f\n", ($Total / $Count); 
+  ; printf LOGFILE "Average = %f\n", ($Total / $Count);
   ; return;   # This line formats wrongly!
   ;indent .hilight.perl e "/" "/" "\\"
   indent .hilight.perl b "\\[" "]"
   indent .hilight.perl b "(" ")"
   indent .hilight.perl s "<[^ \t\n>]*>" 0
   indent .hilight.perl e "\\$#" "." ""
-  indent .hilight.perl i "#"  
+  indent .hilight.perl i "#"
 !endif
 
 ; setup file-* tools
 add-next-line "*perl-exec*" "^.+ at %f line %l.+"
 add-next-line "*perl-lint*" "^%f:%l:\\d+: "
-set-variable .fhook-perl.coms "\bperl\b" 
+set-variable .fhook-perl.coms "\bperl\b"
 set-variable .fhook-perl.exec1   "\b%v[com]\b\b\b\b%v[com] %\"%f%\" %v[args|20|Additional command-line arguments|]\b"
 set-variable .fhook-perl.format1 "\bperltidy\b\b\b\bperltidy -b %\"%f%\"\bPerltidy\b"
 set-variable .fhook-perl.lint1   "\bperlcritic\b\b\b\bperlcritic --verbose \"%%f:%%l:%%s: %%m\\n\" %\"%f%\"\bPerlcritic\b"

@@ -96,7 +96,7 @@ set-variable .fhook-asmx86.collapse-mnext "-1"
   hilight   .hilight.asmx86 1 "use16"        .scheme.prepro
   hilight   .hilight.asmx86 1 "use32"        .scheme.prepro
   hilight   .hilight.asmx86 1 "stdcall"      .scheme.prepro
-  ; Operators    
+  ; Operators
   hilight   .hilight.asmx86 1 "+"            .scheme.operator
   hilight   .hilight.asmx86 1 "-"            .scheme.operator
   hilight   .hilight.asmx86 1 "/"            .scheme.operator
@@ -146,7 +146,7 @@ set-variable .fhook-asmx86.collapse-mnext "-1"
   hilight   .hilight.asmx86 1 "cbw"          .scheme.keyword
   hilight   .hilight.asmx86 1 "cwd"          .scheme.keyword
   hilight   .hilight.asmx86 1 "cwde"         .scheme.keyword
-  hilight   .hilight.asmx86 1 "dec"          .scheme.keyword    
+  hilight   .hilight.asmx86 1 "dec"          .scheme.keyword
   hilight   .hilight.asmx86 1 "div"          .scheme.keyword
   hilight   .hilight.asmx86 1 "enter"        .scheme.keyword
   hilight   .hilight.asmx86 1 "idiv"         .scheme.keyword
@@ -199,7 +199,7 @@ set-variable .fhook-asmx86.collapse-mnext "-1"
   hilight   .hilight.asmx86 1 "shl"          .scheme.keyword
   hilight   .hilight.asmx86 1 "shr"          .scheme.keyword
   hilight   .hilight.asmx86 1 "sub"          .scheme.keyword
-  hilight   .hilight.asmx86 1 "test"         .scheme.keyword 
+  hilight   .hilight.asmx86 1 "test"         .scheme.keyword
   hilight   .hilight.asmx86 1 "xor"          .scheme.keyword
   hilight   .hilight.asmx86 1 "ja"           .scheme.keyword
   hilight   .hilight.asmx86 1 "jae"          .scheme.keyword
@@ -209,7 +209,7 @@ set-variable .fhook-asmx86.collapse-mnext "-1"
   hilight   .hilight.asmx86 1 "jnae"         .scheme.keyword
   hilight   .hilight.asmx86 1 "jnb"          .scheme.keyword
   hilight   .hilight.asmx86 1 "jnbe"         .scheme.keyword
-  ; Types    
+  ; Types
   hilight   .hilight.asmx86 1 "byte"         .scheme.type
   hilight   .hilight.asmx86 1 "db"           .scheme.type
   hilight   .hilight.asmx86 1 "dd"           .scheme.type
@@ -229,7 +229,7 @@ set-variable .fhook-asmx86.collapse-mnext "-1"
   hilight   .hilight.asmx86 1 "seg"          .scheme.type
   hilight   .hilight.asmx86 1 "segment"      .scheme.type
   hilight   .hilight.asmx86 1 "short"        .scheme.type
-  hilight   .hilight.asmx86 1 "word"         .scheme.type   
+  hilight   .hilight.asmx86 1 "word"         .scheme.type
   ; hilight constants, e.g. numbers
   !if &band .hilight.flags 0x08
     hilight .hilight.asmx86 1 "[[:digit:]]+"       .scheme.constant

@@ -4,14 +4,14 @@
 ;
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
-; 
+;
 ; Synopsis: JavaScript Object Notation file hook.
 ; Authors:  Steven Phillips
-; 
+;
 ; Notes:    Basic hilight and indentation rules, hook
 ;           also has a json-parse while load json data
 ;           into a given ME registry node
-; 
+;
 ; To use json-parse move cursor to the start of the json data, this should be a value (such as a '[' for array, '{'
 ; for object etc) then execute json-parse giving it the path to the required reg node. Cursor is moved to the end of
 ; the value or point of first error.
@@ -34,7 +34,7 @@ set-variable .fhook-json.command-nbind "|||"
 set-variable .fhook-json.command-kbind "|||"
 set-variable .fhook-json.command-desc  "|JSON \Hparse||"
 
-!if &and &sin "h" .fhook-json.setup &band .hilight.flags 0x02 
+!if &and &sin "h" .fhook-json.setup &band .hilight.flags 0x02
   !if &not &exist .hilight.json
     set-variable .hilight.json &pinc .hilight.next 1
   !endif
@@ -79,12 +79,12 @@ buffer-init-fhook "json"
         !iif &not $status  -8 ml-write "[JSON parse error: Value too long, cannot find end]"
         set-variable #l0 $line-flags
         insert-newline
-        !iif &band #l0 16  set-variable $line-flags &bor $line-flags 16 
+        !iif &band #l0 16  set-variable $line-flags &bor $line-flags 16
         backward-line
         beginning-of-line
         !force backward-delete-char
         !iif &not $status  -8 ml-write "[JSON parse error: Value too long, cannot join line]"
-        set-variable $line-flags &band $line-flags &bnot 16 
+        set-variable $line-flags &band $line-flags &bnot 16
         backward-line
       !endif
       beginning-of-line

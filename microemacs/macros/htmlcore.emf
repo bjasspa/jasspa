@@ -112,7 +112,7 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
   hilight #l1 0 "\""                       .scheme.string
   hilight #l1 4 "<script" "</script>" ""   .scheme.keyword
   hilight #l1 4 "<%" "%>" ""               .scheme.keyword
-  
+
   0 hilight #l2 1                         $global-scheme
   hilight #l2 4  "=\\{\"" "\"" "\\"       .scheme.string
   hilight #l2 4  "=\\{" "\\}[ \t\n>]" ""  .scheme.string
@@ -304,7 +304,7 @@ set-variable #l2 &ind &spr ".hilight.%stag" #l0
   hilight #l2 0  "\\w+"                   .scheme.error
   hilight #l2 0x80 "/>" #l1               .scheme.keyword
   hilight #l2 0x80 ">" #l1                .scheme.keyword
-  
+
   !if &exist .hilight.javascript
     hilight #l1 0x80 "<script>" .hilight.javascript .scheme.prepro
     hilight #l1 0x80 "<script\\s+language=\"?javascript[^>]*>"  .hilight.javascript .scheme.prepro

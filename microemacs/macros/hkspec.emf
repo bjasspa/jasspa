@@ -25,7 +25,7 @@ set-variable .fhook-spec.comment "|#||#|# | #||"
   !if &not &exist .hilight.spec
     set-variable .hilight.spec  &pinc .hilight.next 1
   !endif
-  
+
   ; Make file highlighting
   0 hilight .hilight.spec 2 50                  $global-scheme
   hilight .hilight.spec 2     "#"               .scheme.comment

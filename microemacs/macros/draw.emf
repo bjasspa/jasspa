@@ -155,7 +155,7 @@ hilight .hilight.draw 0 "="  .scheme.no2
 !emacro
 
 osd .osd.draw-help 0  "batcDH" 9 3 99 .scheme.osd-title "Draw Mode Help"
-osd .osd.draw-help 3  "" 
+osd .osd.draw-help 3  ""
 osd .osd.draw-help 4  ""  " esc h   - View this help page"
 osd .osd.draw-help 5  ""  " C-g     - Abort draw - discard drawing"
 osd .osd.draw-help 6  ""  " return  - Exit drawing, insert drawing"
@@ -169,7 +169,7 @@ osd .osd.draw-help 13 ""
 osd .osd.draw-help 14 ""  " Use normal cursor keys to 'draw' in the"
 osd .osd.draw-help 15 ""  " current mode."
 osd .osd.draw-help 16 ""
-osd .osd.draw-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void 
+osd .osd.draw-help 99 "BcfH" .scheme.osd-ebtt "  \HOK  " f void
 
 define-macro draw
   !force 0 find-buffer  "*draw*"
@@ -253,4 +253,3 @@ define-macro draw
     !endif
   !until 0
 !emacro
-

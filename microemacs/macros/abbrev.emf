@@ -24,7 +24,7 @@ define-macro expand-abbrev-handle
   !force expand-abbrev
   !if $status
     !return
-  !endif        
+  !endif
   ; if buffer has an fhook specific pre abbrev expander use that
   !if &exi &set #l0 &cat &rig $buffer-fhook 6 "-pre-expand-abbrev"
     !if &seq @p ""
@@ -212,4 +212,3 @@ define-macro expand-word
   !endif
 !emacro
 set-variable .expand-word.on &cond &exi .expand-word.on .expand-word.on 0
-
