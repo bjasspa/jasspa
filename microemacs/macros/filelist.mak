@@ -57,7 +57,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hksamba.emf	hkscheme.emf	hksgml.emf	hkshell.emf	\
 	hkslang.emf	hkspec.emf	hksql.emf	hkswift.emf	\
 	hktcl.emf	hktexi.emf	hktlsosd.emf	hktools.emf	\
-	hktxt.emf	\
+	hktxt.emf	hkvala.emf	\
 	hkv.emf		hkvb.emf	hkverilg.emf	hkvhdl.emf	\
 	hkvrml.emf	hkwiki.emf	hkyaml.emf	\
 	hkxml.emf	xmlutil.emf	\
@@ -124,7 +124,7 @@ ETFS=	ada.etf		asmx86.etf	asn1.etf	au3.etf		\
 	rd.etf		rmd.etf		ruby.etf	rul.etf		\
 	rust.etf	shell.etf	spec.etf	sql.etf		\
 	tcl.etf		\
-	v.etf		vhdl.etf	\
+	vala.etf	v.etf		vhdl.etf	\
 	xml.etf		\
 	yacc.etf	zig.etf
 #EAFS:sh=ls *.eaf
@@ -144,7 +144,7 @@ EAFS=	ada.eaf		asp.eaf		au3.eaf		awk.eaf		\
 	r.eaf		rd.eaf		rust.eaf	\
 	shell.eaf	sgml.eaf	\
 	tcl.eaf		txt.eaf		\
-	v.eaf		vhdl.eaf	zig.eaf
+	vala.eaf	v.eaf		vhdl.eaf	zig.eaf
 # ERFS:sh=ls *.erf
 ERFS=	jstprint.erf	newuser.erf	\
 	print.erf	printeps.erf	printhpl.erf	printwdw.erf	\
