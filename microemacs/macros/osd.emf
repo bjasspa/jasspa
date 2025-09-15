@@ -70,8 +70,8 @@ define-macro-file osdhelp osd-help
   !repeat
     !force 0 find-buffer &set #l1 &spr "new%d" #l0
     !if $status
-    !elif &not &seq "X" &stat "t" &set #l2 &cat $user-path #l1 
-    !elif &seq "X" &stat "t" &cat #l2 "#" 
+    !elif &not &seq "X" &stat "t" &set #l2 &cat $user-path #l1
+    !elif &seq "X" &stat "t" &cat #l2 "#"
       find-file #l2
       !return
     !endif
@@ -99,9 +99,7 @@ define-macro-file osdhelp osd-help
     !if &not &nbmod #l3 "hide"
       osd 17 1 "" #l3 0 osd-1-buffer-select
       set-variable #l4 &add #l4 1
-      !if &gre #l6 #l5
-        set-variable #l5 #l6
-      !endif
+      !iif &gre #l6 #l5  set-variable #l5 #l6
     !endif
   !done
   !if &gre #l4 &sub $frame-depth 2
@@ -110,9 +108,7 @@ define-macro-file osdhelp osd-help
     osd @# 10 "IbHt" .scheme.osd-sbar #l5 &sub $frame-depth 2 17
     osd 17 0 &cond &band $system 0x100 "Aifs" "Afs" #l5 &sub $frame-depth 2 -1 -1
   !else
-    !if &not #l4
-      osd 17 1 "" "<none found>"
-    !endif
+    !iif &not #l4  osd 17 1 "" "<none found>"
     -1 osd @#
     osd @# 0 "sIb" 0 0 0 0 10
     osd @# 10 "IHt" .scheme.osd-sbar 17
@@ -138,9 +134,7 @@ define-macro-file osdhelp osd-help
   !while &set #l6 &len &set #l3 $file-names
     osd 17 1 ""  #l3 0 osd-1-file-select
     set-variable #l4 &add #l4 1
-    !if &gre #l6 #l5
-      set-variable #l5 #l6
-    !endif
+    !iif &gre #l6 #l5  set-variable #l5 #l6
   !done
   !if &gre #l4 &sub $frame-depth 2
     -1 osd @#
@@ -148,9 +142,7 @@ define-macro-file osdhelp osd-help
     osd @# 10 "IbHt" .scheme.osd-sbar #l5 &sub $frame-depth 2 17
     osd 17 0 &cond &band $system 0x100 "Aifs" "Afs" #l5 &sub $frame-depth 2 -1 -1
   !else
-    !if &not #l4
-      osd 17 1 "" "<none found>"
-    !endif
+    !iif &not #l4  osd 17 1 "" "<none found>"
     -1 osd @#
     osd @# 0 "sIb" 0 0 0 0 10
     osd @# 10 "IHt" .scheme.osd-sbar 17
@@ -177,9 +169,7 @@ define-macro-file osdhelp osd-help
     !abort
   !elif &sequ &stat "t" #l0 "R"
     3 osd-xdialog "Save Buffer As" "  Over-write existing file?  " 1 10 6 " \HYes " " \HNo "
-    !if &equ $result 2
-      !abort
-    !endif
+    !iif &equ $result 2  !abort
   !endif
   0 write-buffer #l0
 !emacro
@@ -198,9 +188,7 @@ define-macro-file osdhelp osd-help
       !elif &equ $result 1
         find-buffer #l0
         !force osd-save
-        !if &not $status
-          !goto try-again
-        !endif
+        !iif &not $status  !goto try-again
         find-buffer #l2
       !endif
     !endif
@@ -228,9 +216,7 @@ define-macro-file osdhelp osd-help
   !if &bmod "pipe"
     set-variable #l0 &spr "Buffer \"%s\" has active process" $buffer-bname
     3 osd-xdialog "Buffer Close" #l0 1 10 6 " \HKill " " \HCancel "
-    !if &equ $result 2
-      !abort
-    !endif
+    !iif &equ $result 2  !abort
   !endif
   0 delete-buffer $buffer-bname @mna
 !emacro
@@ -246,35 +232,26 @@ define-macro-file osdhelp osd-help
 !emacro
 0 define-macro osd-redo
   !if &seq @cl "osd-redo"
-    !if &not .undo.count
-      ml-write "[Nothing left to redo]"
-      !abort
-    !endif
+    !iif &not .undo.count  -8 ml-write "[Nothing left to redo]"
     set-variable @cl undo
   !elif &not &seq @cl "undo"
-    ml-write "[Undo was not the last operation]"
     set-variable @cc void
-    !abort
+    -8 ml-write "[Undo was not the last operation]"
   !elif &les .undo.count 1
-    ml-write "[osd-undo must be used for osd-redo to work]"
     set-variable @cc void
-    !abort
+    -8 ml-write "[osd-undo must be used for osd-redo to work]"
   !else
     set-variable .undo.count &sub 0 .undo.count
   !endif
   undo
-  !if &inc .undo.count 1
-    set-variable @cc osd-redo
-  !endif
+  !iif &inc .undo.count 1  set-variable @cc osd-redo
 !emacro
 set-variable .undo.count 0
 0 define-macro osd-narrow-buffer
   !if @#
     set-variable #l0 $window-line
     exchange-point-and-mark
-    !if &les #l0 $window-line
-      exchange-point-and-mark
-    !endif
+    !iif &les #l0 $window-line  exchange-point-and-mark
     0x34 narrow-buffer .scheme.fold-close &cat &lef @wl 60 " ..."
   !else
     0x33 narrow-buffer .scheme.fold-close "{{{" "}}}"
@@ -388,9 +365,7 @@ osd 4 160 "i" "\HMain Menu"                      f display-main-menu
 osd 4 170 "i" "\HScroll Bars"                    f "&set $scroll-bar &bxor $scroll-bar 0x100"
 osd 4 180 ""  "\HToolbar               S-f11"    f toolbar
 osd 4 190 ""  "\HWhitespaces           f11"      f display-whitespaces
-!if &reg "/history/find-buffer" "0"
-  osd 4 110 "M" "Bu\Hffer (by type)"          14
-!endif
+!iif &reg "/history/find-buffer" "0"  osd 4 110 "M" "Bu\Hffer (by type)" 14
 ;
 ; MENU #5 - FORMAT sub-menu
 ;
@@ -541,6 +516,7 @@ osd 21 50  ""  "Matri\Hx"     f Matrix
 osd 21 60  ""  "M\Hetris"     f Metris
 osd 21 70  ""  "\HPatience"   f Patience
 osd 21 80  ""  "\HTriangle"   f Triangle
+osd 21 90  ""  "T\Hyping"     f Typing
 ;
 ; n osd-xdialog "title" "prompt" default [x-pos y-pos] "But1" "but2" ...
 ;
@@ -573,15 +549,11 @@ osd 21 80  ""  "\HTriangle"   f Triangle
   !done
   set-variable #l0 @1
   set-variable #l6 &spr "%s %d 0 0 0 " #l6 #l4
-  !if &set #l1 @3
-    set-variable #l6 &spr "I%s %d" #l6 &mul #l1 10
-  !endif
+  !iif &set #l1 @3  set-variable #l6 &spr "I%s %d" #l6 &mul #l1 10
   execute-line &spr "osd %d 0 \"bstcH%s %d \"%s\"" .osd.tmp #l6 .scheme.osd-title #l0
   !force !force .osd.tmp osd
   !if &not $status
-    !if &band @# 1
-      !abort
-    !endif
+    !iif &band @# 1  !abort
     set-variable $result -1
   !endif
 !emacro
@@ -672,7 +644,7 @@ osd 21 80  ""  "\HTriangle"   f Triangle
 0 define-macro me-find-file
   !if &seq "me.ehf" &set #l1 $result
     osd-pinstall "hlpehf" "Online Help"
-    !iif &seq "ERROR" &set $result &find "me" ".ehf"  !abort 
+    !iif &seq "ERROR" &set $result &find "me" ".ehf"  !abort
   !elif &lfin "|libssl|libcry|" &lef &set #l1 $result 6
     !if &seq "R" &stat t &set #l0 &cat $user-path &set #l3 &spr "bin/%s%s-%s%s/%s" &lget $build 1 &lget $build 2 &lget $build 3 &lget $build 4 #l1
     !elif &not &seq "R" &stat t &set #l0 &stat a &spr "%s../%s" $user-path #l3

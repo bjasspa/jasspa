@@ -187,7 +187,7 @@ define-macro ehf-process-all
   1 buffer-mode "magic"
   !repeat
     !force search-forward "\CEs"
-    !if &not $status  !break
+    !iif &not $status  !break
     set-alpha-mark "T"
     set-mark
     search-forward "\CEm"

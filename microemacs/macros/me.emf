@@ -41,8 +41,8 @@ define-macro-file git git git-setup git-add git-blame git-checkout git-commit gi
 define-macro-file osdmisc insert-symbol buffer-setup alarm browse alias-path-setup file-type-setup file-tool-setup file-tool-menu shell-tool-setup find-setup
 define-macro-file abbrev expand-abbrev-handle expand-iso-accents expand-look-back expand-word iso-accents-mode
 define-macro-file comment comment-line uncomment-line comment-to-end-of-line comment-start comment-restyle
+define-macro-file games cross-word Brag Fahtzee Mahjongg Match-It Matrix Metris Patience Triangle Typing
 define-macro-file find find grep grep-for-region replace-string-in-files query-replace-string-in-files
-define-macro-file games cross-word Brag Fahtzee Mahjongg Match-It Matrix Metris Patience Triangle
 define-macro-file rect string-rectangle space-rectangle copy-rectangle yank-rectangle-overwrite
 define-macro-file majormod buffer-major-mode major-mode-setup major-mode-help major-mode-tool
 define-macro-file favorite favorites-add favorites-edit favorites-goto favorites

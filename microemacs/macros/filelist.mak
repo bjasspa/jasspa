@@ -100,7 +100,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	svn.emf		tcltools.emf	\
 	tcltags.emf	textags.emf	toolbar.emf	tooldef.emf	\
 	toollist.emf	tools.emf	toolstd.emf	toolstp.emf	\
-	triangle.emf	\
+	triangle.emf	typing.emf	\
 	unixterm.emf	userstp.emf	utils.emf	\
 	vbtags.emf	vm.emf		\
 	watch.emf	windows.emf	word.emf	\

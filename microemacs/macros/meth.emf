@@ -48,6 +48,15 @@ hilight .hilight.meth 0x44 "\CCk" "" "\\}\CC" "" "" .scheme.error
 hilight .hilight.meth 0x44 "\CCl" "" "\\}\CC" "" "" .scheme.warn
 hilight .hilight.meth 0x44 "\CCm" "" "\\}\CC" "" "" .scheme.info
 
+hilight .hilight.meth 0x44 "\CCs" "" "\\}\CC" "" "" .scheme.hlwhite
+hilight .hilight.meth 0x44 "\CCt" "" "\\}\CC" "" "" .scheme.hlblack
+hilight .hilight.meth 0x44 "\CCu" "" "\\}\CC" "" "" .scheme.hlred
+hilight .hilight.meth 0x44 "\CCv" "" "\\}\CC" "" "" .scheme.hlgreen
+hilight .hilight.meth 0x44 "\CCw" "" "\\}\CC" "" "" .scheme.hlyellow
+hilight .hilight.meth 0x44 "\CCx" "" "\\}\CC" "" "" .scheme.hlblue
+hilight .hilight.meth 0x44 "\CCy" "" "\\}\CC" "" "" .scheme.hlmagenta
+hilight .hilight.meth 0x44 "\CCz" "" "\\}\CC" "" "" .scheme.hlcyan
+
 ; Other file type schemes - see meth-add-format
 hilight .hilight.meth 0x200 "\CD"
 hilight .hilight.meth 0x40 "\CDA" ""                $global-scheme

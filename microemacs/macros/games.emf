@@ -44,3 +44,7 @@ define-macro Triangle
   execute-file triangle
   Triangle
 !emacro
+define-macro Typing
+  execute-file typing
+  Typing
+!emacro

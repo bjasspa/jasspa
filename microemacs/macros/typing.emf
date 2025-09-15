@@ -1,0 +1,242 @@
+; -!- emf -!-
+; Copyright (c) 2025 Steven Phillips.
+;
+; All rights reserved.
+;
+; Synopsis:    Touch-typing practice
+; Authors:     Daniel Phillips, Steven Phillips
+;
+; Notes:       Looks for typing.lst word file first, if not found password.lst is used
+;              The first line of typing.lst must be 2 numbers: <total-wrd-cnt>,<words-per-line>
+;              see password.lst for an example.
+!iif &not &exi meth-add-format  execute-file "meth"
+
+0 define-macro Typing-bhook
+  !if :pause
+    set-variable :tim-start $unix-time
+    unset-variable :pause
+  !endif
+!emacro
+0 define-macro Typing-ehook
+  set-variable :tim-add &fadd :tim-add &fsub $unix-time :tim-start
+  set-variable :pause 1
+!emacro
+0 define-macro Typing-init-txt
+  set-position "\x82"
+  find-buffer "*typing-wl*"
+  !if &les $window-eline 3
+    !force 0 delete-buffer "*typing-wl*"
+    !iif &seq "ERROR" &set #l1 &fin "typing" ".lst"  set-variable #l1 &fin "password" ".lst"
+    find-buffer "*typing-wl*"
+    insert-file #l1
+    1 buffer-mode "hide"
+  !endif
+  beginning-of-buffer
+  !if &not &xseq @wl "\\(\\d+\\),\\(\\d+\\)"
+    goto-position "\x82"
+    -8 ml-write "[Typing Error: Failed to load typing word list]"
+  !elif &les &set #l6 @s1 100
+    goto-position "\x82"
+    -8 ml-write &spr "[Typing Error: Not enough words in typing word list: %s]" #l6
+  !elif &les $window-eline &add &div &sub #l6 1 &set #l5 @s2 3
+    goto-position "\x82"
+    -8 ml-write &spr "[Typing Error: Not enough lines in typing word list: %s,%s]" $window-eline &add &div &sub #l6 1 #l5 3
+  !endif
+  set-variable #l1 ""
+  !repeat
+    set-variable #l8 &mod &div $random 0x80 #l6
+    goto-line &add 1 &div #l8 #l5
+    &mod #l8 #l5 search-buffer "Me" " "
+    set-mark
+    forward-word
+    copy-region
+    set-variable #l1 &spr "%s %s" #l1 &trb @y
+    -1 yank
+  !until &gre &len #l1 @#
+  set-variable :*typing*:txt-len &set #l1 &len &set #l0 &set :*typing*:txt &trb #l1
+  set-variable #l3 "\b"
+  !while &gre #l1 .Typing.chr-lin
+    !if &not &set #l2 &rsin " " &lef #l0 .Typing.chr-lin
+      !iif &not &set #l2 &sin " " #l0  !break
+    !endif
+    set-variable #l3 &lin #l3 -1 &lef #l0 &sub #l2 1
+    set-variable #l1 &len &set #l0 &rig #l0 #l2
+  !done
+  set-variable :*typing*:txt-l &lin #l3 -1 #l0
+  goto-position "\x82"
+!emacro
+0 define-macro Typing-show-key
+  !if &exi :kb-cur
+    set-variable #l1 &lget :kb-cur 1
+    set-variable #l2 &lget :kb-cur 2
+    screen-poke #l2 #l1 $global-scheme @fs #l2 #l1
+    screen-poke #l2 &inc #l1 1 $global-scheme @fs #l2 #l1
+    screen-poke #l2 &inc #l1 1 $global-scheme @fs #l2 #l1
+    unset-variable :kb-cur
+  !endif
+  !if &seq @wc " "
+  !elif :kbl
+    set-variable #l0 0
+    set-variable #l2 &sup @wc
+    !while &not &seq "ERROR" &set #l3 &ind &cat ":kb" &inc #l0 1
+      !iif &set #l1 &sin #l2 #l3  !break
+    !done
+    !if #l1
+      set-variable #l2 &add :kbl &mul #l0 2
+      set-variable :kb-cur &spr "|%s|%s|" #l1 #l2
+      screen-poke #l2 #l1 .scheme.hlgreen @fs #l2 #l1
+      screen-poke #l2 &inc #l1 1 .scheme.hlgreen @fs #l2 #l1
+      screen-poke #l2 &inc #l1 1 .scheme.hlgreen @fs #l2 #l1
+    !endif
+  !endif
+!emacro
+0 define-macro Typing-reset
+  beginning-of-buffer
+  set-mark
+  end-of-buffer
+  -1 kill-region
+  set-variable $buffer-hilight .hilight.meth
+  !iif &gre &set #l0 &div &sub $window-width :chr-lin 2 10  set-variable #l0 10
+  insert-string "\n\CCcType the following:\CCA\n"
+  insert-string &rep &lef :txt-l -1 "\b" &spr " \n%n" #l0 " "
+  insert-string &spr "\n\n\CCh%d characters, %.1f words\CCA" :txt-len &fdiv &mul :txt-len 10 .Typing.chr-dwrd
+  !if &gre $window-depth &add $window-line 14
+    set-variable :kbl &add $window-line 1
+    set-variable :kb2 "   A   S   D   F   G   H   J   K   L   ;   '   # "
+    set-variable :kb1 "  Q   W   E   R   T   Y   U   I   O   P   [   ] "
+    set-variable :kb3 "\\   Z   X   C   V   B   N   M   ,   .   / "
+    insert-string "\n\n"
+    insert-string &rep &rep &rep &rep "  b---f---f---f---f---f---f---f---f---f---f---f---c\n" "-" &rig $box-chars -1 "b" &mid $box-chars 1 1 "c" &mid $box-chars 2 1 "f" &mid $box-chars 5 1
+    insert-string &rep "  | Q | W | E | R | T | Y | U | I | O | P | [ | ] |\n" "|" &lef $box-chars 1
+    insert-string &rep &rep &rep &rep &rep "  df--jf--jf--jf--jf--jf--jf--jf--jf--jf--jf--jf--jc\n" "-" &rig $box-chars -1 "c" &mid $box-chars 2 1 "d" &mid $box-chars 3 1 "f" &mid $box-chars 5 1 "j" &mid $box-chars 9 1
+    insert-string &rep "   | A | S | D | F | G | H | J | K | L | ; | ' | # |\n" "|" &lef $box-chars 1
+    insert-string &rep &rep &rep &rep &rep "b--jf--jf--jf--jf--jf--jf--jf--jf--jf--jf--jf--j---e\n" "-" &rig $box-chars -1 "b" &mid $box-chars 1 1 "e" &mid $box-chars 4 1 "f" &mid $box-chars 5 1 "j" &mid $box-chars 9 1
+    insert-string &rep "| \\ | Z | X | C | V | B | N | M | , | . | / |\n" "|" &lef $box-chars 1
+    insert-string &rep &rep &rep &rep "d---j---j---j---j---j---j---j---j---j---j---e\n" "-" &rig $box-chars -1 "d" &mid $box-chars 3 1 "e" &mid $box-chars 4 1 "j" &mid $box-chars 9 1
+  !else
+    set-variable :kbl 0
+  !endif
+  set-variable $window-line 4
+  set-variable $window-col #l0
+  set-variable $window-x-scroll 0
+  set-variable $window-y-scroll 0
+  set-variable :txt-idx 0
+  set-variable :cor-cnt 0
+  set-variable :err-cnt 0
+  set-variable :tim-add 0
+  set-variable :tim-start $unix-time
+  screen-update
+  set-variable $buffer-input Typing-input
+  set-variable $buffer-bhook Typing-bhook
+  set-variable $buffer-ehook Typing-ehook
+  Typing-show-key
+!emacro
+0 define-macro Typing-input
+  !if &seq @cck "redraw"
+    @# screen-update
+    Typing-show-key
+  !elif &lfin "|recenter|Typing-input|" @cc
+    1 screen-update
+    Typing-show-key
+  !elif &lfin "|find-buffer|delete-buffer|abort-command|" @cc
+    !force !force !force set-variable #l1 @mc5 "Pause, Quit or Continue typing (p/q/c) ? " "qQpPcC" "(P)ause, (Q)uit, (C)ontinue ?"
+    !if &iseq #l1 "q"
+      !force 0 delete-buffer "*typing*"
+    !elif &iseq #l1 "p"
+      -1 find-buffer "*typing*"
+    !endif
+  !elif &and &equ &len @cck 1 &seq @cc @cck
+    !if &seq @wc @cck
+*ent-cor
+      insert-string "\CCN"
+      set-variable :cor-cnt &add :cor-cnt 1
+      set-variable :err-lst 0
+    !else
+*ent-err
+    ml-write "set HERE"
+      2000 create-callback Typing-input
+      screen-poke &add $window-line &sub $frame-depth &add $window-depth 2 &add $window-acol &sub $window-scroll-bar $window-width .scheme.rmv @cck
+      !if :err-lst
+        !iif &equ 2 &inc :err-lst 1  set-variable :err-cnt &add :err-cnt 1
+        screen-poke &add $window-line &sub $frame-depth &add $window-depth 3 &add $window-acol &sub $window-scroll-bar $window-width .scheme.rmv @wc
+        !return
+      !endif
+      insert-string "\CCO"
+      set-variable :err-cnt &add :err-cnt 1
+      set-variable :err-lst 1
+    !endif
+    forward-char
+    insert-string "\CCA"
+    !if &equ :txt-len &set :txt-idx &add :txt-idx 1
+      screen-update
+      set-variable #l1 &fadd :tim-add &fsub $unix-time :tim-start
+      set-variable #l3 &fdiv &fdiv &fmul :txt-len 600 .Typing.chr-dwrd #l1
+      set-variable #l0 &spr "  Accuracy: %5.1f%%    (%d error%s, %d correct)  \n\n  Speed:    %5.1fwpm  (%d chars in %.0f secs)  \n" &fdiv &mul :cor-cnt 100 &add :cor-cnt :err-cnt :err-cnt &con &equ :err-cnt 1 "" "s" :cor-cnt #l3 :txt-len #l1
+      !force !force !force 2 osd-xdialog "Typing - Complete" #l0 0 &add 4 &sub $window-scroll-bar $window-width &add $window-line 2 " \HRetry " " \HNew " " \HQuit "
+      !iif &not $status  set-variable $result 3
+      !if &equ $result 1
+        Typing-reset
+      !elif &equ $result 2
+        Typing
+      !else
+        delete-buffer $buffer-bname
+      !endif
+    !else
+      !if &seq @wc "\n"
+        !repeat
+          forward-char
+        !until &not &seq @wc " "
+      !endif
+      Typing-show-key
+    !endif
+  !elif &seq @cck "space"
+    set-variable @cck " "
+    !tgoto &seq @wc " "  ent-cor
+    !goto ent-err
+  !elif &seq @cck "return"
+    set-variable @cck " "
+    !tgoto &not &seq @wc " "  ent-err 
+    !tgoto &equ &sub &len @wl 1 $window-col ent-cor 
+    !goto ent-bad
+  !elif &seq @cck "backspace"
+    !if :txt-idx
+      set-variable :txt-idx &sub :txt-idx 1
+      backward-char
+      !if &seq @wc " "
+        beginning-of-line
+        2 backward-char
+      !endif
+      forward-delete-char
+      backward-delete-char
+      backward-char
+      backward-delete-char
+      backward-delete-char
+      set-variable :err-lst 0
+      Typing-show-key
+    !endif
+  !elif &lfin "|display-matching-fence|" @cc
+  !else
+    ml-write &spr "%s: %s" @cck @cc
+  !endif
+!emacro
+
+define-macro Typing
+  delete-other-windows
+  !iif &les $window-width &add .chr-lin 2  -8 ml-write &spr "Typing error: Window too narrow, must be at least %s chars" .chr-lin
+  !iif &les $window-depth 10  -8 ml-write "Typing error: Window not tall enough, must be at least 10 lines"
+  !if &exi :*typing*:pause
+    find-buffer "*typing*"
+    !return
+  !endif
+  set-variable .wrd-cnt @ml1 "Number of words" .wrd-cnt
+  !iif &les .wrd-cnt 1  set-variable .wrd-cnt 15
+  !iif &gre .wrd-cnt 30  set-variable .wrd-cnt 30
+  !force !force 0 delete-buffer "*typing*"
+  find-buffer "*typing*"
+  &div &mul .wrd-cnt .chr-dwrd 10 Typing-init-txt
+  Typing-reset
+!emacro
+set-variable .Typing.wrd-cnt 15
+set-variable .Typing.chr-lin 44
+; 5.7 allows for the space too
+set-variable .Typing.chr-dwrd 57
