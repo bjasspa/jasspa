@@ -1068,6 +1068,7 @@ TTgetc(void)
                 }
                 TTlastKeyIdx = ki;
             }
+#ifdef _USE_NCURSES
             else if(bp)
             {
                 /* In the middle of a bracketed paste - one gotcha, a new-line is sent as a 0x0d (i.e. 'return' key)
@@ -1093,6 +1094,7 @@ TTgetc(void)
                 bp++;
                 TTnoKeys--;
             }
+#endif
         }
     } while(!TTnoKeys ||
 #ifdef _USE_NCURSES
