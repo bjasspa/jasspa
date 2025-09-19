@@ -1,0 +1,21 @@
+#set page(
+  paper: "a4",
+  margin: (inside: 2.5cm, outside: 2cm, y: 1.75cm),
+)
+#set text(size: 22pt)
+#set align(center)
+
+Typst Tutorial
+
+#set text(size: 15pt)
+
+Max Musterman\
+University of Mustercity
+
+#set text(size: 11pt)
+
+#set align(left)
+
+#set par(justify: true)
+
+Hello World!

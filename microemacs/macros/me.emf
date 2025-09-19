@@ -172,6 +172,7 @@ add-file-hook ".c3" fhook-c3
 add-file-hook ".jl" fhook-julia
 add-file-hook ".m"  fhook-octave
 add-file-hook ".vala"  fhook-vala
+add-file-hook ".typ .typst"  fhook-typst
 ; Add magic hooks
 1 add-file-hook "^#![ \t]*/.*sh" fhook-shell
 1 add-file-hook "^#![ \t]*/.*perl" fhook-perl
