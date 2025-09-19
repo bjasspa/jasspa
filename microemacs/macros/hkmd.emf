@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ;
-; Copyright (C) 2020-2024 JASSPA (www.jasspa.com)
+; Copyright (C) 2020-2025 JASSPA (www.jasspa.com)
 ;
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
@@ -145,6 +145,7 @@ set-variable .fhook-md.item-list-r3 "H2 \CCb\\1\CCA"
     !endif
     ; If the hilighting mode is loaded then modify it, else leave to the default code block hilighter
     !if &sin "h" &ind &spr ".fhook-%s.setup" #l0 &band .hilight.flags 0x02
+      hilight .hilight.md 0x080 &spr "^```%s" #l1 &ind &cat ".hilight." #l0 .scheme.hide
       hilight .hilight.md 0x0a0 &spr "```{%s}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
       hilight .hilight.md 0x0a0 &spr "```{\\.%s}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
       hilight .hilight.md 0x0a0 &spr "```{%s[, ][^}]+}" #l1 &ind &cat ".hilight." #l0 .scheme.hide

@@ -1,11 +1,12 @@
 ; -!- emf -!-
-; This is part of the JASSPA MicroEmacs macro files
-; Copyright (C) 1999-2009 JASSPA (www.jasspa.com)
-; See the file me.emf for copying and conditions.
 ;
-; Created:    Sun Nov 15 2020
-; Authors:    Detlef Groth
-; Synopsis:   Markdown file hook (https://www.markdownguide.org/)
+; Copyright (C) 2025 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Typst Markup file hook (https://typst.app/docs/reference/syntax/)
+; Authors:     Steven Phillips & Detlef Groth
 ;
 define-macro fhook-typst
   @# buffer-init "typst"
@@ -42,20 +43,20 @@ set-variable .fhook-typst.item-list-r3 "H2 \CCb\\1\CCA"
   hilight .hilight.typst 2 "//"           .scheme.comment
 
   hilight .hilight.typst 2 "^= "            .scheme.header
-  hilight .hilight.typst 2 "^== "           .scheme.header  
+  hilight .hilight.typst 2 "^== "           .scheme.header
   hilight .hilight.typst 2 "^=== "           .scheme.bold
   hilight .hilight.typst 2 "^```"          .scheme.string
   hilight .hilight.typst 4 "\"" "\"" "\\"  .scheme.string
-  hilight .hilight.typst 4 "\\$" "\\$" "\\"  .scheme.string  
+  hilight .hilight.typst 4 "\\$" "\\$" "\\"  .scheme.string
   hilight .hilight.typst 1 "\*[^\*]+\*"     .scheme.bold
   hilight .hilight.typst 1 "_[^_]+_"       .scheme.italic
   hilight .hilight.typst 1 "`[^`]+`"       .scheme.quote
   hilight .hilight.typst 4  "#"   "\\}\\W" ""           .scheme.keyword
   hilight .hilight.typst 4  "@"   "\\}\\W" ""           .scheme.link
-  hilight .hilight.typst 4  "<"   ">\\}\\W" ">"           .scheme.link  
+  hilight .hilight.typst 4  "<"   ">\\}\\W" ">"           .scheme.link
   hilight .hilight.typst 0x300 "```{"
   hilight .hilight.typst 0x300 "```{\\."
-  
+
   ; Allow inserts into the markdown mode. You may add to the inserts in your mymd.emf file
   0 define-macro typst-add-file-support
     set-variable #l0 @1
@@ -71,7 +72,7 @@ set-variable .fhook-typst.item-list-r3 "H2 \CCb\\1\CCA"
       ml-write &cat "executed " #l0
     !endif
     ; If the hilighting mode is loaded then modify it.
-    !if &sin "h" &ind &spr ".fhook-%s.setup" #l0 &band .hilight.flags 0x02 
+    !if &sin "h" &ind &spr ".fhook-%s.setup" #l0 &band .hilight.flags 0x02
       hilight .hilight.typst 0x080 &spr "^```%s" #l1 &ind &cat ".hilight." #l0 .scheme.hide
       hilight .hilight.typst 0x080 &spr "^```{%s}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
       hilight .hilight.typst 0x080 &spr "^```{\\.%s}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
@@ -79,7 +80,7 @@ set-variable .fhook-typst.item-list-r3 "H2 \CCb\\1\CCA"
       hilight .hilight.typst 0x080 &spr "^```{\\.%s[, ][^}]+}" #l1 &ind &cat ".hilight." #l0 .scheme.hide
       hilight &ind &cat ".hilight." #l0 0x080 "^```" .hilight.typst .scheme.hide
     !else
-      hilight .hilight.typst 0x104 &spr "```%s" #l1 "```" "" .scheme.quote      
+      hilight .hilight.typst 0x104 &spr "```%s" #l1 "```" "" .scheme.quote
       hilight .hilight.typst 0x104 &spr "```{%s}" #l1 "```" "" .scheme.quote
       hilight .hilight.typst 0x104 &spr "```{\\.%s}" #l1 "```" "" .scheme.quote
       hilight .hilight.typst 0x104 &spr "```{%s[, ][^}]+}" #l1 "```" "" .scheme.quote
@@ -91,7 +92,7 @@ set-variable .fhook-typst.item-list-r3 "H2 \CCb\\1\CCA"
   typst-add-file-support "r"
   typst-add-file-support "dot"
   typst-add-file-support "python"
-  typst-add-file-support "py"  
+  typst-add-file-support "py"
   typst-add-file-support "sql"
 !endif
 
@@ -111,10 +112,10 @@ set-variable .fhook-typst.item-list-r3 "H2 \CCb\\1\CCA"
     indent .hilight.typst n "{"  t
     indent .hilight.typst o "}" -t
     indent .hilight.typst e "\"" "\"" "\\"
-    indent .hilight.typst b "\\[" "]" 
-    indent .hilight.typst b "(" ")" 
+    indent .hilight.typst b "\\[" "]"
+    indent .hilight.typst b "(" ")"
     indent .hilight.typst c "\\\\\\s*$" 3/2t
     indent .hilight.typst i "^\\s*//"
 !endif
-buffer-init-fhook "typst" 
+buffer-init-fhook "typst"
 
