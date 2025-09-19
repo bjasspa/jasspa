@@ -132,7 +132,7 @@
   set-variable :cor-cnt 0
   set-variable :err-cnt 0
   set-variable :tim-add 0
-  set-variable :tim-start $unix-time
+  set-variable :tim-start 0
   screen-update
   set-variable $buffer-input Typing-input
   set-variable $buffer-bhook Typing-bhook
@@ -154,6 +154,7 @@
       -1 find-buffer "*typing*"
     !endif
   !elif &and &equ &len @cck 1 &seq @cc @cck
+    !iif &not :tim-start  set-variable :tim-start $unix-time
     !if &seq @wc @cck
 *ent-cor
       insert-string "\CCN"

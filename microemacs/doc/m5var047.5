@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m5var047.5,v 2.10 2024/09/25 10:59:13 jon Exp $
+.Id $Id: m5var047.5,v 2.10 2025/09/19 15:16:35 jon Exp $
 .Im MicroEmacs variable|hilight|macrodevelop
 .so me.tni
 .TH $system 5
@@ -65,7 +65,7 @@ If this bit is set then the current system supports and uses
 when  required.  For systems  such as  \s-1DOS\s0  which cannot  support  ipipes, this bit will be clear and cannot be
 altered. For systems which do support ipipes, this bit can be cleared to disable their use.
 .IP \fB0x1000\fR
-If this bit set, the then execution of the
+If this bit set, then the execution of the
 .Ht tab 2
 command (bound to \fCtab\fR) always checks and adjusts the indentation of the current line when the current buffer has
 an
@@ -186,7 +186,7 @@ to draw the white spaces, the characters used are set with the variable
 Enables  hiding \*(mS  generated  backup files. On Windows and Dos platforms the Hidden file attribute is used to hide
 the file, whereas on UNIX the backup file name is prepended with a '\fC.\fR'.
 .IP \fB0x200000\fR
-If this bit set, the then execution of the
+If this bit set, then the execution of the
 .Ht tab 2
 command (bound to \fCtab\fR)  checks and adjusts the indentation of the current line when the cursor is in column zero
 and current buffer has an
@@ -222,7 +222,8 @@ selection buffers when the kill-buffer is changed. When not set only one buffer 
 \fB0x4000000\fR.  Note  that  this  bit  is  ignore  if  the  use of the  external  clipboard  is  disabled,  see  bit
 \fB0x800000\fR.
 .IP \fB0x10000000\fR
-When  this  bit is set the use of the alternative screen buffer is disabled, see command-line \fB-A\fR option.
+When this bit is set on a \s-1UNIX\s0 Console system the use of the alternative screen buffer is disabled, see
+command-line \fB-A\fR option.
 .IP \fB0x20000000\fR
 When  this  bit is set \*(mS UTF-8  encodes all  terminal  output and UTF-8  decodes all  terminal  input, this bit is
 currently  only used when \*(mS is running in a UNIX  terminal,  other  interfaces  such as XTerm and  Windows  handle

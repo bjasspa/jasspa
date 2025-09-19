@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 17 22:26:42 1999
 .\"
-.Id $Id: m2nar006.2,v 2.9 2024/09/17 17:13:41 jon Exp $
+.Id $Id: m2nar006.2,v 2.9 2025/09/19 15:08:28 jon Exp $
 .Im MicroEmacs search
 .so me.tni
 .TH "RegularExpressions" 2
@@ -466,11 +466,9 @@ In the  replacement  pattern  up-cases  the string,  where  \fBD\fR is a digit
 \fC0-9\fR  or  \fC&\fR,  stands for  whatever  matched  the Dth  parenthesized
 grouping (\fC\\(..\\)\fR) in search pattern.
 .SS "Searching and Case"
-Searching may be either case sensitive or case  insensitive, and is controlled
-by the
+Searching may be either case sensitive or case insensitive, and is controlled by the
 .Ht exact 2m
-mode. When  \fIexact\fR  mode is enabled  (default) the then searches are case
-sensitive; disabled then case is ignored. The
+mode. When \fIexact\fR mode is enabled (default) searches are case sensitive; disabled then case is ignored. The
 .Ht exact 2m
 mode is set on a per-buffer basis.
 .SH "NOTES"
