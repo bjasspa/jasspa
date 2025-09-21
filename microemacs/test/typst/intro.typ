@@ -31,12 +31,12 @@ of these natural structures.
 As an example for a *glacier* see Figure @glaciers. 
 
 #figure(
-        image("glacier.png",width: 70%),
-        caption: [
-                  _Glaciers_ form an important part of the earth's climate
-                  system.
-                  ]
-        ) <glaciers> 
+  image("glacier.png",width: 70%),
+  caption: [
+    _Glaciers_ form an important part of the earth's climate
+    system.
+  ]
+) <glaciers> 
 
 
 = Methods

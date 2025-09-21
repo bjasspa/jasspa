@@ -5,14 +5,14 @@
 
 #set par(justify: true)
 #set text(
- font: "Libertinus Serif",
- size: 17pt)
+  font: "Libertinus Serif",
+  size: 17pt)
 
 This is a title.
 
 #set text(
- font: "Libertinus Serif",
- size: 11pt,
+  font: "Libertinus Serif",
+  size: 11pt,
 )
 
 Hello Typst World!
