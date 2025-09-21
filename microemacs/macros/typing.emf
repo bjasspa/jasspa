@@ -76,11 +76,10 @@
   !endif
   !if :kbl
     set-variable #l0 0
-    set-variable #l2 &sup @wc
     !while &not &seq "ERROR" &set #l3 &ind &cat ":kb" &inc #l0 1
-      !iif &set #l1 &sin #l2 #l3  !break
+      !iif &set #l1 &isin @wc #l3  !break
     !done
-    !if #l1
+    !if &pdec #l1 2
       set-variable #l4 &add .scheme.hlwhite &sub &atoi &mid &ind &cat ":ks" #l0 &sub #l1 1 1 &atoi "s"
       set-variable #l2 &add :kbl &mul #l0 2
       set-variable :kb-cur &spr "|%s|%s|" #l1 #l2
@@ -102,22 +101,27 @@
   insert-string &spr "\n\n\CCh%d characters, %.1f words\CCA" :txt-len &fdiv &mul :txt-len 10 .Typing.chr-dwrd
   !if &gre $window-depth &add $window-line 11
     set-variable :kbl &add $window-line 1
-    set-variable :kb1 "__Q___W___E___R___T___Y___U___I___O___P___[___]"
-    set-variable :kb2 "___A___S___D___F___G___H___J___K___L___;___'___#"
-    set-variable :kb3 "\\___Z___X___C___V___B___N___M___,___.___/"
-    set-variable :kb4 "_____________________ "
+    set-variable :kb1 "____Q___W___E___R___T___Y___U___I___O___P___[___]_"
+    set-variable :kb2 "_____A___S___D___F___G___H___J___K___L___;___'___#_"
+    set-variable :kb3 "__\\___Z___X___C___V___B___N___M___,___.___/_"
+    set-variable :kb4 "_______________________ "
     set-variable :ks1 "__w___u___y___v___v___z___z___y___u___w___w___w"
     set-variable :ks2 "___w___u___y___v___v___z___z___y___u___w___w___w"
     set-variable :ks3 "w___w___u___y___v___v___z___z___y___u___w"
     set-variable :ks4 "_____________________x"
+    !if &seq "Deutsch" &set #l1 &reg "/history/keyboard" ""
+      set-variable :kb1 &rep :kb1 "Y" "Z"
+      set-variable :kb3 &rep :kb3 "Z" "Y"
+    !endif
+    set-variable #l1 &cat &lef $box-chars 1 " \\1 "
     insert-string "\n\n"
     insert-string &rep &rep &rep &rep "  b---f---f---f---f---f---f---f---f---f---f---f---c\n" "-" &rig $box-chars -1 "b" &mid $box-chars 1 1 "c" &mid $box-chars 2 1 "f" &mid $box-chars 5 1
-    insert-string &rep "  | Q | W | E | R | T | Y | U | I | O | P | [ | ] |\n" "|" &lef $box-chars 1
-    insert-string &rep &rep &rep &rep &rep "  df--jf--jf--jf--jf--jf--jf--jf--jf--jf--jf--jf--jc\n" "-" &rig $box-chars -1 "c" &mid $box-chars 2 1 "d" &mid $box-chars 3 1 "f" &mid $box-chars 5 1 "j" &mid $box-chars 9 1
-    insert-string &rep "   | A | S | D | F | G | H | J | K | L | ; | ' | # |\n" "|" &lef $box-chars 1
-    insert-string &rep &rep &rep &rep &rep "b--jf--jf--jf--jf--jf--jf--jf--jf--jf--jf--jf--j---e\n" "-" &rig $box-chars -1 "b" &mid $box-chars 1 1 "e" &mid $box-chars 4 1 "f" &mid $box-chars 5 1 "j" &mid $box-chars 9 1
-    insert-string &rep "| \\ | Z | X | C | V | B | N | M | , | . | / |\n" "|" &lef $box-chars 1
-    insert-string &rep &rep &rep &rep &rep "d---j---j---j--fj---j---j---j--fj---j---j---e\n" "-" &rig $box-chars -1 "d" &mid $box-chars 3 1 "e" &mid $box-chars 4 1 "f" &mid $box-chars 5 1 "j" &mid $box-chars 9 1
+    insert-string &cat &rep &xrep :kb1 "__\\([^_]\\)_" #l1 "_" " " &lef $box-chars 1 
+    insert-string &rep &rep &rep &rep &rep "\n  df--jf--jf--jf--jf--jf--jf--jf--jf--jf--jf--jf--jc\n" "-" &rig $box-chars -1 "c" &mid $box-chars 2 1 "d" &mid $box-chars 3 1 "f" &mid $box-chars 5 1 "j" &mid $box-chars 9 1
+    insert-string &cat &rep &xrep :kb2 "__\\([^_]\\)_" #l1 "_" " " &lef $box-chars 1 
+    insert-string &rep &rep &rep &rep &rep "\nb--jf--jf--jf--jf--jf--jf--jf--jf--jf--jf--jf--j---e\n" "-" &rig $box-chars -1 "b" &mid $box-chars 1 1 "e" &mid $box-chars 4 1 "f" &mid $box-chars 5 1 "j" &mid $box-chars 9 1
+    insert-string &cat &rep &xrep :kb3 "__\\([^_]\\)_" #l1 "_" " " &lef $box-chars 1 
+    insert-string &rep &rep &rep &rep &rep "\nd---j---j---j--fj---j---j---j--fj---j---j---e\n" "-" &rig $box-chars -1 "d" &mid $box-chars 3 1 "e" &mid $box-chars 4 1 "f" &mid $box-chars 5 1 "j" &mid $box-chars 9 1
     insert-string &rep "               |               |\n" "|" &lef $box-chars 1
     insert-string &rep &rep &rep "               d---------------e\n" "-" &rig $box-chars -1 "d" &mid $box-chars 3 1 "e" &mid $box-chars 4 1
     insert-string "\n \CCw \CCA Little  \CCu \CCA Ring  \CCy \CCA Middle \CCv \CCA L Index  \CCz \CCA R Index"
