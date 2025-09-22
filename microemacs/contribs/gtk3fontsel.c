@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
 
     gtk_font_chooser_set_filter_func(GTK_FONT_CHOOSER(font_button),
         filter_monospace, NULL, NULL);
-
+    gtk_font_chooser_set_font(GTK_FONT_CHOOSER(font_button), "Monospace 12");
     g_signal_connect(font_button, "font-set", G_CALLBACK(on_font_set), label);
 
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
