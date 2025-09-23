@@ -115,6 +115,7 @@ int main(int argc, char *argv[]) {
         if (!(strstr(family_name, "Mon") ||
               strstr(family_name, "Courier") ||
               strstr(family_name, "Code") ||
+              strstr(family_name, "Inconsolata") ||              
               strstr(family_name, "Typewriter") ||              
               strstr(family_name, "Terminus") ||                            
               strstr(family_name, "Proggy") ||                            
