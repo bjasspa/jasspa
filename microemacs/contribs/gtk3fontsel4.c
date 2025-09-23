@@ -112,10 +112,13 @@ int main(int argc, char *argv[]) {
         const char *family_name = pango_font_family_get_name(families[i]);
         if (!pango_font_family_is_monospace(families[i]))
             continue;
-        if (!(strstr(family_name, "Mono") ||
+        if (!(strstr(family_name, "Mon") ||
               strstr(family_name, "Courier") ||
               strstr(family_name, "Code") ||
-              strstr(family_name, "Console")))
+              strstr(family_name, "Typewriter") ||              
+              strstr(family_name, "Terminus") ||                            
+              strstr(family_name, "Proggy") ||                            
+              strstr(family_name, "Consol")))
             continue;
         GtkWidget *row_label = gtk_label_new(family_name);
         GtkWidget *row = gtk_list_box_row_new();
