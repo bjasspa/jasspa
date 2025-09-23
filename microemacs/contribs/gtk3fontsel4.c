@@ -79,7 +79,10 @@ void on_family_selected(GtkListBox *box, GtkListBoxRow *row, gpointer user_data)
     gtk_widget_show_all(GTK_WIDGET(style_listbox));
     update_preview();
 }
-
+static void on_close_button_clicked(GtkButton *button, gpointer user_data) {
+    GtkWindow *window = GTK_WINDOW(user_data);
+    gtk_window_close(window);
+}
 // Main function
 int main(int argc, char *argv[]) {
     gtk_init(&argc, &argv);
@@ -145,11 +148,17 @@ int main(int argc, char *argv[]) {
     gtk_combo_box_set_active(GTK_COMBO_BOX(size_combo), 4);
     gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(size_combo), FALSE, FALSE, 0);
     g_signal_connect(size_combo, "changed", G_CALLBACK(on_size_changed), NULL);
+    GtkWidget *button = gtk_button_new_with_label("Close Window");
+    g_signal_connect(button, "clicked", G_CALLBACK(on_close_button_clicked), window);
+    //gtk_window_set_child(GTK_WINDOW(window), button);
+
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     // Preview Label
     preview_label = GTK_LABEL(gtk_label_new(""));
     gtk_label_set_justify(preview_label, GTK_JUSTIFY_CENTER);
-    gtk_box_pack_end(GTK_BOX(vbox), GTK_WIDGET(preview_label), FALSE, FALSE, 8);
+    gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(preview_label), FALSE, FALSE, 8);
+    gtk_box_pack_end(GTK_BOX(vbox), GTK_WIDGET(button), FALSE, FALSE, 0);
 
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
