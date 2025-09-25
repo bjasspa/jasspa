@@ -5,41 +5,46 @@
 .\" copying information.
 .\"
 .\"  Created By    : Detlef Groth
-.\"  Created       : Tue Sep 19 07:00:00 2025
+.\"  Created       : Thu Sep 25 07:00:00 2025
 .\"
-.Id $Id: m9typ065.9,v 1.2 2025/09/25 07:19:56 jon Exp $
+.Id $Id: m9typ066.9,v 1.2 2025/09/25 06:58:29 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
-.TH typst 9
-.XI typst - "Typst Markup File"
-.XI typ - "Typst Markup File"
+.TH adoc 9
+.XI adoc - "AsciiDoc Markup File"
+.XI asciidoc - "AsciiDoc Markup File"
 .SH SYNOPSIS
-typ, typst \- Typst Markup File.
+asciidoc, adoc \- AsciiDoc Markup File.
 .SH FILES
 .na
-.B hktypst.emf
-\- Typst file hook definition
+.B hkadoc.emf
+\- AsciiDoc file hook definition
 .br
-.B typst.eaf
-\- Typst abbreviation file
+.B adoc.eaf
+\- AsciiDoc abbreviation file
 .br
-.B typst.etf
-\- Typst template file
+.B adoc.etf
+\- AsciiDoc template file
 .ad
 .SH EXTENSIONS
 .na
-\fB.typ\fR, \fB.typst\fR \- Typst files 
+\fB.asciidoc\fR, \fB.adoc\fR \- AsciiDoc files 
 .ad
+.SH "MAGIC STRINGS"
+.TP 
+\fB-!- asciidoc -!-\fR
+.\"
+\*(mS recognizes the magic string on any of the first 4 lines of the file. The
+HTML files may be extension-less and are still recognized.
 .SH DESCRIPTION
-The \fBTypst\fR file hook provides a editing  environment for Typst
-files. The file hook  provides  highlighting,  folding  of  section,  document
-outline using  item-list and  abbreviations.  Fenced code blocks within triple
-backticks can be highlighted using the declared code block language.
+The \fBAsciiDoc\fR file hook provides a editing  environment for AsciiDoc
+files. The file hook  provides  highlighting,  folding  of  sections,  document
+outline using  item-list and  abbreviations. 
 .PP
-File  recognition  is performed  using the standard file  extension  \fB.typ\fR,
-\fB.typst\fR.
+File  recognition  is performed  using the standard file  extension  \fB.adoc\fR,
+\fB.adoc\fR or by the magic string.
 .IP "\fBAbbreviations\fR"
-The  installation  comes with a default  abbreviation  file for Typst code  editing
+The  installation  comes with a default  abbreviation  file for AsciiDoc code  editing
 which  can  be  used  by  writing  short   abbreviations   like   "\fBfig\fR"
 for a figure environment,  "\fBbib\fR" for a bibliography file,  "\fBimg\fR"  for an
 image file, or "\fBco\fR" for a code chunk - and  then  pressing  the
@@ -50,7 +55,7 @@ version of \*(mS using the
 .Ht abbrev-list 3
 command.
 .IP "\fBFolding and Information Hiding\fR"
-Generic  folding is enabled  within the Typst files. The folds occur about
+Generic  folding is enabled  within the AsciiDoc files. The folds occur about
 the level 1 and 2 headers, so headers  with one or two equal  symbols at the  beginning of a
 line. The following commands are supported to show and hide the function bodies.
 .Ht collapse-all 3
@@ -58,8 +63,9 @@ line. The following commands are supported to show and hide the function bodies.
 .Ht collapse-current 3
 (un)folds the current region.
 .IP "\fBList Items\fR"
-Item listing is available and the level 1 and 2 headers of the file are displayed in
-the \fIitem-list\fR.
+Item listing is available for level 1 and 2 headers as well as for lines starting
+with TODO. These items of the file are displayed using the 
+the \fIitem-list\fR command.
 .IP "\fBShort Cuts\fR"
 The short cut keys used within the buffer are:-
 .IP
@@ -74,21 +80,6 @@ The short cut keys used within the buffer are:-
 \fBf6\fR \- list items
 .br
 \fB\*e f6\fR \- close list items
-.IP "\fBCode Chunk Highlighting\fR"
-Inside  code  chunks  as  well  syntax  hilghlighting  for  a few  programming
-languages  like Tcl (tcl), R (r), GraphViz Dot (dot), Python (py), SQL (sql),  MicroEmacs  macro code (emf)or
-Javascript (js) is available. Here an example which should be highlighted within a
-Typst file using the R file hook:
-.RS
-.CS
-```r
-x = 1
-test = function () {
-    print("Test")
-}
-```
-.CE 0
-.RE
 .SH "SEE ALSO"
 .na
 .Ht abbrev-list 3 ,
@@ -96,8 +87,8 @@ test = function () {
 .Ht collapse-current 3 ,
 .Ht expand-abbrev-handle 3 ,
 .Ht item-list 3 ,
-.Ht adoc 9 ,
 .Ht md 9 ,
+.Ht typst 9 ,
 .Ht wiki 9
 .sp 1
 .Hl "Supported File Types" FileTypes -

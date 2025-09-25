@@ -1,0 +1,22 @@
+// -!- asciidoc -!-
+= The Title
+:Author: Max Musterman
+:Date: 2025-09-25
+:icons: font
+:toc:
+
+== Abstract
+
+== Introduction
+
+== Material and Methods
+
+== Results 
+
+== Discussion
+
+== References
+
+TODO: Add Content
+
+

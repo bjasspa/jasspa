@@ -1,0 +1,127 @@
+= Simple Paper Template
+:Author: Max Musterman - University of Potsdam - Germany
+:Date: 2025-09-24
+:Email: <musterman@mustercity.com>
+:Revision: v0.0.1
+:ME: Jasspa's MicroEmacs
+:icons: font
+:toc:
+
+== Abstract
+
+NOTE: Remember the milk.
+
+This is an abstract.  See  <<References>>  for more. This  document was written
+with {ME}.
+
+.Optional Title
+[NOTE]
+This is an example
+single-paragraph note.
+
+== Introduction
+
+This is the introduction.
+
+You can  create  HTML and PDF  versions  of this  article  with the  following
+commands:
+
+----
+asciidoctor hello.adoc
+asciidoctor-pdf hello.ado
+----
+
+The tools can be installed on a Fedora system like this:
+
+----
+sudo dnf install rubygem-asciidoctor-pdf rubygem-asciidoctor
+----
+
+
+TODO: This is something we must do now!
+
+.Sidebar Example
+****
+This is a note for a *sidebar*.
+
+****
+
+////
+Comment Block which will be not shown in the output.
+Can split over several lines.
+////
+
+forced +
+linebreak.
+
+No line
+break.
+
+[[anchor]]
+
+Let's jump to <<anchor,the anchor>>!
+
+== Data and Methods
+
+Here comes a data section where we describe how to say hello.
+
+[,tcl]
+----
+include::hello.tcl[]
+----
+
+Tcl:: Tool Command Language - general purpose scripting language
+
+== Tables
+
+.CSV data, 15% each column
+[format="csv",width="60%",cols="4"]
+[frame="ends",grid="none"]
+|======
+X1,X2,X3,X4
+
+1,2,3,4
+a,b,c,d
+A,B,C,D
+|======
+
+== Results
+
+=== Videos
+
+video::EhXpJo3YbKg[youtube,width=640,height=480]
+
+== Discussion
+
+WARNING: Do not embed long examples!!
+
+====
+This is an example of an example block.
+
+Where we can write more in one line.
+====
+
+But now we are back in paragraph mode.
+
+== Formatting
+
+Basic formatting is *bold*, _italics_ and I think as well `typewriter` like.
+
+We can as well create *_bold italic_*.
+
+== Literature 
+
+References are more or less free form. Here an example:
+
+_The Pragmatic Programmer_ <<pp>> should be required reading for all developers.
+To learn all about design patterns, refer to the book by the "`Gang of Four`" <<gof>>.
+
+[bibliography]
+== References
+
+* [[[pp]]] Andy Hunt & Dave Thomas. _The Pragmatic Programmer: From Journeyman
+to Master._  Addison-Wesley. 1999.
+* [[[gof,gang]]] Erich Gamma, Richard Helm, Ralph Johnson & John Vlissides.
+_Design Patterns: Elements of Reusable Object-Oriented Software._ Addison-Wesley. 1994.
+
+So let's go back to the <<Introduction>>.

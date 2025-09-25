@@ -29,7 +29,8 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	format.emf	freebsd.emf	ftp.emf		\
 	games.emf	gdiff.emf	generict.emf	gentags.emf	\
 	git.emf	\
-	hkada.emf	hkapache.emf	hkapt.emf	hkasmx86.emf	\
+	hkada.emf	hkadoc.emf	hkapache.emf	hkapt.emf	\
+	hkasmx86.emf	\
 	hkasn1.emf	hkasp.emf	hkau3.emf	hkawk.emf	\
 	hkbibtex.emf	hkbinary.emf	hkblist.emf	hkbnf.emf	\
 	hkc.emf		hkcfm.emf	hkcfms.emf	hkcobol.emf	\
@@ -107,8 +108,8 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	xfind.emf	\
 	zaurus.emf	zfile.emf
 # ETFS:sh =ls *.etf
-ETFS=	ada.etf		asmx86.etf	asn1.etf	au3.etf		\
-	awk.etf		bibtex.etf	\
+ETFS=	ada.etf		adoc.etf	asmx86.etf	asn1.etf	\
+	au3.etf		awk.etf		bibtex.etf	\
 	c.etf		cfm.etf		cobol.etf	cpp.etf		\
 	c3.etf		dart.etf	doc.etf		dot.etf		\
 	emf.etf		euphor.etf	\
@@ -128,7 +129,8 @@ ETFS=	ada.etf		asmx86.etf	asn1.etf	au3.etf		\
 	xml.etf		\
 	yacc.etf	zig.etf
 #EAFS:sh=ls *.eaf
-EAFS=	ada.eaf		asp.eaf		au3.eaf		awk.eaf		\
+EAFS=	ada.eaf		adoc.eaf	asp.eaf		au3.eaf		\
+	awk.eaf		\
 	c.eaf		c3.eaf		cfm.eaf		cpp.eaf		\
 	dart.eaf	dot.eaf		emf.eaf		\
 	euphor.eaf	f90.eaf		euphor.eaf	go.eaf		\
