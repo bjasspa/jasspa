@@ -85,8 +85,8 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	phptags.emf	print.emf	printall.emf	printd.emf	\
 	printepc.emf	printers.emf	printf.emf	printstp.emf	\
 	rect.emf	\
-	scheme.emf	schemeal.emf	schemead.emf	schemeb.emf	\
-	schemebc.emf	schemech.emf	\
+	scheme.emf	schemeaw.emf	schemeal.emf	schemead.emf	\
+	schemeb.emf	schemebc.emf	schemech.emf	\
 	schemecf.emf	schemecl.emf	schemecm.emf	schemecn.emf	\
 	schemebh.emf	schemed.emf	\
 	schemedp.emf	schemedr.emf	schemegb.emf	schemege.emf	\
@@ -94,7 +94,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	schemel.emf	schemel2.emf	schemelj.emf	schememd.emf	\
 	schememw.emf	schememx.emf	schemepd.emf	schemepl.emf	\
 	schemes.emf	schemesf.emf	schemetb.emf	schemetw.emf	\
-	schemesd.emf	schemesl.emf	\
+	schemesd.emf	schemesl.emf	schemetn.emf	\
 	schemevi.emf	schemosd.emf	\
 	search.emf	session.emf	sessnstp.emf	spell.emf	\
 	spellaut.emf	spellutl.emf	ssaver.emf	sunos.emf	\
