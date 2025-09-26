@@ -1,0 +1,64 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1998-2025 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.Id $Id: m3mac105.3,v 2.2 2025/09/26 06:45:17 jon Exp $
+.Im MicroEmacs command|shell
+.so me.tni
+.TH xrdb-scheme 3
+.XI xrdb-scheme - "Load a XRDB scheme file from the user's config folder"
+.SH NAME
+xrdb-scheme \- Load a XRDB scheme file from the user's config folder
+.Me $a
+.SH SYNOPSIS
+.na
+.B xrdb-scheme 
+"\fI[scheme-name...\fR]"
+.ad
+.SH DESCRIPTION
+.B xrdb-scheme 
+"\fI[scheme-name...]\fR"
+.na
+loads from the themes folder within the users config  directory the given xrdb
+scheme file. The scheme name should be given without extension. If no argument
+is given, the user can interactively select the scheme from the command line.
+.ad
+.SH NOTES
+The command  allows to use  different  editor editor themes  without  creating
+individual  scheme macro  files. A web resource  which  currently  has more  than 400 color
+schemes and their xrdb files that are usable with \*(mS is:-
+.IP
+.C https://github.com/mbadolato/iTerm2-Color-Schemes
+.LP
+The user has to download the raw xrdb files from that side and place them into
+a themes  folder  within the users \*(mS config  folder.  Below is a little  example
+command line for Unix systems to download 3 color schemes:
+.RS
+.CS
+mkdir ~/.config/jasspa/meuser/themes
+wget -O ~/.config/jasspa/meuser/themes/mathias.xrdb \\
+  https://github.com/mbadolato/iTerm2-Color-Schemes/raw/master/xrdb/Mathias.xrdb
+wget -O ~/.config/jasspa/meuser/themes/material-light.xrdb \\
+  https://github.com/mbadolato/iTerm2-Color-Schemes/raw/master/xrdb/Material.xrdb
+wget -O ~/.config/jasspa/meuser/themes/material-dark.xrdb \\
+  https://github.com/mbadolato/iTerm2-Color-Schemes/raw/master/xrdb/Material%20Dark.xrdb
+.CE 0
+.RE
+.PP
+After you executed these commands you should be able to use the downloaded
+themes after executing: \fBEsc x\fR and \fBxrdb-scheme\fR and then pressing two
+times   the   TAB   key.   Feel   free  to   browse   that   README   on  the
+\fBiTerm2-Color-Schemes\fR  project  page and then  replace the wget code with
+the theme names. 
+.PP
+Please note that to change the  appearance  of these  schemes
+you can't use the \fBscheme-editor(3)\fR command,
+but you have to change the color values directly within the xrdb file.
+.SH "SEE ALSO"
+.na
+.Ht scheme-editor 3 ,
+.Ht user-setup 3 .
+.ad
+.FH

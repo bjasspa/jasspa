@@ -105,7 +105,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	unixterm.emf	userstp.emf	utils.emf	\
 	vbtags.emf	vm.emf		\
 	watch.emf	windows.emf	word.emf	\
-	xfind.emf	\
+	xfind.emf	xrdb.emf	\
 	zaurus.emf	zfile.emf
 # ETFS:sh =ls *.etf
 ETFS=	ada.etf		adoc.etf	asmx86.etf	asn1.etf	\

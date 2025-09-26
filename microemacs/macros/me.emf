@@ -76,6 +76,7 @@ define-macro-file watch
 define-macro-file gdiff
 define-macro-file draw
 define-macro-file ftp
+define-macro-file xrdb xrdb-scheme
 ;
 ; File hooks - reset the file hook list first
 0 add-file-hook
