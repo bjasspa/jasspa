@@ -50,5 +50,9 @@ define-macro start-up
   set-variable #l1 &cat #l1 "/"
   !iif &not &seq "D" &stat t &set #l2 &stat a &cat #l0 "../macros"  -10 ml-write "[ERROR: Failed to create macros directory]"
   !force !force mei-gen #l2 #l1
+  !iif &not $status  4 exit-emacs 2
+  find-buffer "*mei*"
+  insert-string &spr "%s\nbinaries\nmacros\nhelp_ehf" $MEVER
+  !force 0 write-buffer &cat #l0 "meinfo"
   4 exit-emacs &not $status
 !emacro

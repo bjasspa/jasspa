@@ -23,12 +23,18 @@
           <Component Id="ProductFiles" Guid="8D4EC16E-3293-42A9-9936-7AA107E0C3E0">
             <File Id="LICENSE" Source="LICENSE" KeyPath="yes" />
           </Component>
+          <Component Id="ProductMeinfo" Guid="B0D870DB-84CD-44D2-B1CD-041527285E7F">
+            <File Id="meinfo" Source="meinfo" KeyPath="yes" />
+          </Component>
           <Directory Id="jmeBinDir" Name="bin">
             <Component Id="ProductBinMec" Guid="8EC998F6-D0DD-4C60-80E2-B024B0065F1B">
               <File Id="mec.exe" Source="mec.exe" KeyPath="yes" Checksum="yes" />
             </Component>
             <Component Id="ProductBinMew" Guid="67216E5F-7C38-4DFA-95B6-1982413000F1">
               <File Id="mew.exe" Source="mew.exe" KeyPath="yes" Checksum="yes" />
+            </Component>
+            <Component Id="ProductBinMeUpd" Guid="56AB717A-FAF7-42C9-B6F9-A22533E829AB">
+              <File Id="microemacsupdateps1" Source="microemacs-update.ps1" KeyPath="yes" Checksum="yes" />
             </Component>
           </Directory>
           
@@ -179,8 +185,10 @@
     
     <Feature Id="DefaultFeature" Level="1">
       <ComponentRef Id="ProductFiles" />
+      <ComponentRef Id="ProductMeinfo" />
       <ComponentRef Id="ProductBinMec" />
       <ComponentRef Id="ProductBinMew" />
+      <ComponentRef Id="ProductBinMeUpd" />
       <ComponentGroupRef Id="MacrosGroupId" /> 
       <ComponentRef Id="ProductDesktopShortcuts" />
       <ComponentRef Id="ProductMenuShortcuts" />

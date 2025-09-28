@@ -1,10 +1,12 @@
 # ignore backup files, tags and build directories
 macros/
 LICENSE
+meinfo
 mec.exe
 mew.exe
 jme.wixobj
-jmeMacros.wixobj
 jmeMacros.wxs
+jmeMacros.wixobj
+microemacs-update.ps1
 Jasspa_MicroEmacs_*.wixpdb
 Jasspa_MicroEmacs_*.msi

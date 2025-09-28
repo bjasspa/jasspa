@@ -32,9 +32,11 @@ $arch = $env:PROCESSOR_ARCHITECTURE
 if ($arch -eq 'ARM64') {
   $meplatful = 'windows100-arm64'
   $meplatpkg = 'windows_arm'
+  $mevcruntm = 'arm64'
 } elseif ($arch -eq 'AMD64') {
   $meplatful = 'windows100-intel32'
   $meplatpkg = 'windows_intel'
+  $mevcruntm = 'x86'
 } else {
   Write-Host "Error: Architecture '$arch' is not currently supported - please request suport."
   exit 1
@@ -45,43 +47,17 @@ function install_path_check([string]$bpath,[string]$pInd) {
   $errmsg=""
   $rc=0
   if($isupdt) {
-    if(-not (Test-Path "$bpath\jasspa\meinfo")) {
-      $errmsg = "${pInd}Error: Installation found at `"$bpath\jasspa`" was not created by the microemacs-install script, please re-install first."
+    if(-not (Test-Path "${bpath}\meinfo")) {
+      $errmsg = "${pInd}Error: Installation found at `"$bpath`" was not created by the microemacs-install script, please re-install first."
       $rc = 1
     }
     else {
       Try {
-        [io.file]::OpenWrite("$bpath\jasspa\meinfo").close()
+        [io.file]::OpenWrite("${bpath}\meinfo").close()
       }
       Catch {
-        $errmsg = "${pInd}Error: Cannot write to install path `"$bpath\jasspa`", either change ownership/permissions or rerun with sudo."
+        $errmsg = "${pInd}Error: Cannot write to install path `"$bpath`", either change ownership/permissions or rerun with sudo."
         $rc = 1
-      }
-    }
-  }
-  elseif(Test-Path "$bpath\jasspa") {
-    if(-not (Test-Path -Path "$bpath\jasspa")) {
-      $errmsg = "${pInd}Error: Install path `"$bpath\jasspa`" already exists but isn't a directory."
-      $rc = 1
-    }
-    else {
-      Try { 
-        [io.file]::OpenWrite("$bpath\jasspa\jasspa.tmp").close()
-        Remove-Item -Path "$bpath\jasspa\jasspa.tmp"
-      }
-      Catch {
-        $errmsg = "${pInd}Error: Cannot write to install path `"$bpath\jasspa`", either change ownership/permissions or rerun as Administrator."
-        $rc = 1
-      }
-      if($rc -eq 0) {
-        if(Test-Path "$bpath\jasspa\meinfo") {
-          $errmsg = "${pInd}Warning: MicroEmacs already installed to `"$bpath\jasspa`", consider using microemacs-update instead."
-          $rc = 2
-        }
-        elseif((Test-Path "$bpath\jasspa\macros") -or (Test-Path "$bpath\jasspa\bin")) {
-          $errmsg = "${pInd}Warning: Install path `"instpath\jasspa`" was not created by this installer, continuing will overwrite existing installation."
-          $rc = 2
-        }
       }
     }
   }
@@ -91,30 +67,60 @@ function install_path_check([string]$bpath,[string]$pInd) {
       $rc = 1
     }
     else {
-      Try {
+      Try { 
         [io.file]::OpenWrite("$bpath\jasspa.tmp").close()
         Remove-Item -Path "$bpath\jasspa.tmp"
       }
       Catch {
-        $errmsg = "${pInd}Error: Cannot write to path `"$bpath`", either create directory `"$bpath\jasspa`" or rerun as Administrator."
+        $errmsg = "${pInd}Error: Cannot write to install path `"$bpath`", either change ownership/permissions or rerun as Administrator."
         $rc = 1
+      }
+      if($rc -eq 0) {
+        if(Test-Path "$bpath\meinfo") {
+          $errmsg = "${pInd}Warning: MicroEmacs already installed to `"$bpath`", consider using microemacs-update instead."
+          $rc = 2
+        }
+        elseif((Test-Path "$bpath\macros") -or (Test-Path "$bpath\bin")) {
+          $errmsg = "${pInd}Warning: Install path `"instpath`" was not created by this installer, continuing will overwrite existing installation."
+          $rc = 2
+        }
       }
     }
   }
   else {
-    Try {
-      New-Item -Path $bpath -ItemType Directory -Force > $null
-      if(Test-Path -Path $bpath) {
-        Remove-Item $bpath -Force
-      }
-      else {
-        $errmsg = "${pInd}Error: Cannot create install base path `"$bpath`", either create directory `"$bpath\jasspa`" or rerun as Administrator."
+    $ppath = Split-Path -parent $bpath
+    if(Test-Path "$ppath") {
+      if(-not (Test-Path -Path "$ppath")) {
+        $errmsg = "${pInd}Error: Install path `"$ppath`" already exists but isn't a directory."
         $rc = 1
       }
+      else {
+        Try {
+          [io.file]::OpenWrite("$ppath\jasspa.tmp").close()
+          Remove-Item -Path "$ppath\jasspa.tmp"
+        }
+        Catch {
+          $errmsg = "${pInd}Error: Cannot write to path `"$ppath`", either create directory `"$bpath`" or rerun as Administrator."
+          $rc = 1
+        }
+      }
     }
-    Catch {
-      $errmsg = "${pInd}Error: Cannot create install base path `"$bpath`", either create directory `"$bpath\jasspa`" or rerun as Administrator."
-      $rc = 1
+    else {
+      #TODO should also pass in upgrade as no dir should be created here
+      Try {
+        New-Item -Path $ppath -ItemType Directory -Force > $null
+        if(Test-Path -Path $ppath) {
+          Remove-Item $ppath -Force
+        }
+        else {
+          $errmsg = "${pInd}Error: Cannot create install base path `"$ppath`", either create directory `"$bpath`" or rerun as Administrator."
+          $rc = 1
+        }
+      }
+      Catch {
+        $errmsg = "${pInd}Error: Cannot create install base path `"$ppath`", either create directory `"$bpath`" or rerun as Administrator."
+        $rc = 1
+      }
     }
   }
   return @{
@@ -189,8 +195,10 @@ if($prefix -ne "") {
   if($instpath -match "\\$") {
     $instpath = $instpath.Substring(0,$instpath.Length - 1)
   }
-  if($instpath -match "\\jasspa$") {
-    $instpath = $instpath.Substring(0,$instpath.Length - 7)
+  if(($instpath -match "\\jasspa$") -or ($instpath -match "\\microemacs$") -or ($instpath -match "\\jasspa microemacs$") -or ($instpath -match "\\me$")) {
+  }
+  else {
+      $instpath = "$(instpath)\jasspa"
   }
   $rr = install_path_check $instpath ""
   if($rr.rc -eq 1) {
@@ -199,10 +207,10 @@ if($prefix -ne "") {
   }
   $instpath = $rr.instpath
   if($isupdt) {
-    Write-Host "Jasspa MicroEmacs - Updating `"${instpath}\jasspa`" to version ${mever}"
+    Write-Host "Jasspa MicroEmacs - Updating `"${instpath}`" to version ${mever}"
   }
   else {
-    Write-Host "Jasspa MicroEmacs - Installing version ${mever} to `"${instpath}\jasspa`""
+    Write-Host "Jasspa MicroEmacs - Installing version ${mever} to `"${instpath}`""
     if($rr.rc -ne 0) {
       Write-Host $rr.errmsg
     }
@@ -223,15 +231,12 @@ if($prefix -ne "") {
 elseif($isupdt) {
   # No path given, this is an update so get the path from the location of the script
   $instpath = $PSScriptRoot
-  # script should be in a \jasspa\bin directory, remove those first
+  # script should be in a \jasspa\bin directory, remove \bin first
   if($instpath -match "\\$") {
     $instpath = $instpath.Substring(0,$instpath.Length - 1)
   }
   if($instpath -match "\\bin$") {
     $instpath = $instpath.Substring(0,$instpath.Length - 4)
-  }
-  if($instpath -match "\\jasspa$") {
-    $instpath = $instpath.Substring(0,$instpath.Length - 7)
   }
   $rr = install_path_check $instpath ""
   if($rr.rc -eq 0) {
@@ -240,23 +245,29 @@ elseif($isupdt) {
   else {
     # script not run from within the release, check the 2 default places before giving up
     $rr = ${env:ProgramFiles(x86)}
-    $rr = install_path_check $rr ""
+    $rr = install_path_check "${rr}\Jasspa MicroEmacs" ""
     if($rr.rc -eq 0) {
       $instpath = $rr.instpath
     }
     else {
-      $rr = $env:APPDATA
-      $rr = install_path_check $rr ""
+      $rr = install_path_check "${rr}\jasspa" ""
       if($rr.rc -eq 0) {
         $instpath = $rr.instpath
       }
       else {
-        Write-Host "`nError: Failed to locate the Jasspa MicroEmacs installation directory, run with --prefix to set the location.`n"
-        exit 1
+        $rr = $env:APPDATA
+        $rr = install_path_check "${rr}\jasspa" ""
+        if($rr.rc -eq 0) {
+          $instpath = $rr.instpath
+        }
+        else {
+          Write-Host "`nError: Failed to locate the Jasspa MicroEmacs installation directory, run with --prefix to set the location.`n"
+          exit 1
+        }
       }
     }
   }
-  Write-Host "Jasspa MicroEmacs - Updating `"${instpath}\jasspa`" to version ${mever}"
+  Write-Host "Jasspa MicroEmacs - Updating `"${instpath}`" to version ${mever}"
 }
 else {
   # No path given, this is an install, check ProgramFiles for all and AppData for user
@@ -266,27 +277,27 @@ else {
   else {
     $rr = ${env:ProgramFiles}
   }
-  $rr = install_path_check $rr "    "
+  $rr = install_path_check "${rr}\Jasspa MicroEmacs" "    "
   $aicerr = $rr.rc
   $aermsg = $rr.errmsg
   $ainpth = $rr.instpath
   $rr = $env:APPDATA
-  $rr = install_path_check $rr "    "
+  $rr = install_path_check "${rr}\jasspa" "    "
   $uicerr = $rr.rc
   $uermsg = $rr.errmsg
   $uinpth = $rr.instpath
   
   if($aicerr -eq 1) {
-    Write-Host "Cannot install to `"${ainpth}\jasspa`" for all users:`n`n${aermsg}`n"
+    Write-Host "Cannot install to `"${ainpth}`" for all users:`n`n${aermsg}`n"
     
     if($uicerr -eq 1) {
-      Write-Host "Cannot install to `"${uinpth}\jasspa`" for current user:`n`n${uermsg}`n"
+      Write-Host "Cannot install to `"${uinpth}`" for current user:`n`n${uermsg}`n"
       Write-Host "Please resolve issues for one of the above or use --prefix option to set install location`n"
       exit 1
     }
     
     $instpath=${uinpth}
-    Write-Host "Install Jasspa MicroEmacs version ${mever} to `"${instpath}\jasspa`":"
+    Write-Host "Install Jasspa MicroEmacs version ${mever} to `"${instpath}`":"
     if($uicerr -ne 0) {
       Write-Host "`n${uermsg}`n"
     }
@@ -301,10 +312,10 @@ else {
     }
   }
   elseif($uicerr -eq 1) {
-    Write-Host "Cannot install to `"${uinpth}\jasspa`" for current user:`n`n${uermsg}`n"
+    Write-Host "Cannot install to `"${uinpth}`" for current user:`n`n${uermsg}`n"
     $instpath = ${ainpth}
     $scopeMch = $true
-    Write-Host "Install Jasspa MicroEmacs version ${MEVER} to `"${instpath}\jasspa`":"
+    Write-Host "Install Jasspa MicroEmacs version ${MEVER} to `"${instpath}`":"
     if($aicerr -ne 0) {
       Write-Host "`n${aermsg}"
     }
@@ -356,23 +367,23 @@ else {
 if($package -eq "") {
   if($isupdt) {
     $onVer=$true
-    foreach($ln in Get-Content "${instpath}\jasspa\meinfo") {
+    foreach($ln in Get-Content "${instpath}\meinfo") {
       if($onVer) {
         if($ln -eq $mever) {
           Write-Host "`nNote: Installation is already version ${mever} - nothing to do.`n"
           exit 0
         }
         Write-Host "Updating Jasspa MicroEmacs installation from v${ln} to v${mever}"
-        Set-Content -Path "${instpath}\jasspa\meinfo.upd" -Value "${mever}"
+        Set-Content -Path "${instpath}\meinfo.upd" -Value "${mever}"
         $onVer=$false
       }
       else {
-        install_package ".upd" $ln "${instpath}\jasspa"
+        install_package ".upd" $ln "${instpath}"
       }
     }
-    Move-Item -Path "${instpath}\jasspa\meinfo.upd" -Destination "${instpath}\jasspa\meinfo" -Force
+    Move-Item -Path "${instpath}\meinfo.upd" -Destination "${instpath}\meinfo" -Force
     try {
-      Invoke-WebRequest -Uri "$mebaseurl/releases/latest/download/microemacs-install.ps1" -OutFile "${instpath}\jasspa\bin\microemacs-update.ps1"
+      Invoke-WebRequest -Uri "$mebaseurl/releases/latest/download/microemacs-install.ps1" -OutFile "${instpath}\bin\microemacs-update.ps1"
     }
     catch {
       Write-Host "Error: Failed to download latest update script `"$mebaseurl/releases/latest/download/microemacs-install.ps1`":`n    $($_.Exception.Message)"
@@ -381,22 +392,22 @@ if($package -eq "") {
     Write-Host "Update to ${mever} complete and successful.`n"
   }
   else {
-    Write-Host "`nInstallating Jasspa MicroEmacs v${mever} to `"${instpath}\jasspa`""
-    if(-not (Test-Path -Path "${instpath}\jasspa")) {
-      New-Item -Path "${instpath}\jasspa" -ItemType Directory -Force > $null
-      if(-not (Test-Path -Path "${instpath}\jasspa")) {
-        Write-Host "`nError: Failed to create install path `"${instpath}\jasspa`", either create directory `"${instpath}\jasspa`" or rerun as Administrator.`n"
+    Write-Host "`nInstallating Jasspa MicroEmacs v${mever} to `"${instpath}`""
+    if(-not (Test-Path -Path "${instpath}")) {
+      New-Item -Path "${instpath}" -ItemType Directory -Force > $null
+      if(-not (Test-Path -Path "${instpath}")) {
+        Write-Host "`nError: Failed to create install path `"${instpath}`", either create directory `"${instpath}`" or rerun as Administrator.`n"
         exit 1
       }
     }
-    Set-Content -Path "${instpath}\jasspa\meinfo" -Value "${mever}"
+    Set-Content -Path "${instpath}\meinfo" -Value "${mever}"
     
     #install the core
-    install_package "" "binaries" "${instpath}\jasspa"
-    install_package "" "macros" "${instpath}\jasspa"
-    install_package "" "help_ehf" "${instpath}\jasspa"
+    install_package "" "binaries" "${instpath}"
+    install_package "" "macros" "${instpath}"
+    install_package "" "help_ehf" "${instpath}"
     try {
-      Invoke-WebRequest -Uri "$mebaseurl/releases/latest/download/microemacs-install.ps1" -OutFile "${instpath}\jasspa\bin\microemacs-update.ps1"
+      Invoke-WebRequest -Uri "$mebaseurl/releases/latest/download/microemacs-install.ps1" -OutFile "${instpath}\bin\microemacs-update.ps1"
     }
     catch {
       Write-Host "Error: Failed to download latest update script `"$mebaseurl/releases/latest/download/microemacs-install.ps1`":`n    $($_.Exception.Message)"
@@ -415,9 +426,9 @@ if($package -eq "") {
     if($ii -eq 2) {
       $ii = [System.IO.Path]::Combine([Environment]::GetFolderPath("Desktop"),"Jasspa MicroEmacs.lnk")
       $sc = $wScrO.CreateShortcut($ii)
-      $sc.TargetPath = "${instpath}\jasspa\bin\mew.exe"
-      $sc.WorkingDirectory = "${instpath}\jasspa"
-      $sc.IconLocation = "${instpath}\jasspa\bin\mew.exe"
+      $sc.TargetPath = "${instpath}\bin\mew.exe"
+      $sc.WorkingDirectory = "${instpath}"
+      $sc.IconLocation = "${instpath}\bin\mew.exe"
       $sc.Save()
     }
     $ii = 0
@@ -437,9 +448,9 @@ if($package -eq "") {
         $ii = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Jasspa MicroEmacs.lnk"
       }
       $sc = $wScrO.CreateShortcut($ii)
-      $sc.TargetPath = "${instpath}\jasspa\bin\mew.exe"
-      $sc.WorkingDirectory = "${instpath}\jasspa"
-      $sc.IconLocation = "${instpath}\jasspa\bin\mew.exe"
+      $sc.TargetPath = "${instpath}\bin\mew.exe"
+      $sc.WorkingDirectory = "${instpath}"
+      $sc.IconLocation = "${instpath}\bin\mew.exe"
       $sc.Save()
     }
     <# For some reason the New-ItemProperty in the following simply hangs with no info - shame!
@@ -456,7 +467,7 @@ if($package -eq "") {
       if($ii -eq 2) {
         try{
           New-Item -Path "Registry::HKEY_CLASSES_ROOT\*\shell\Edit with MicroEmacs" -Force > $null
-          New-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\*\shell\Edit with MicroEmacs" -Name "command" -Value "`"${instpath}\jasspa\bin\mew.exe`" -c -o `"%1`"" -PropertyType String -Force
+          New-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\*\shell\Edit with MicroEmacs" -Name "command" -Value "`"${instpath}\bin\mew.exe`" -c -o `"%1`"" -PropertyType String -Force
         }
         catch {
           Write-Host "Warning: Failed to create Explorer menu item:`n    $($_.Exception.Message)"
@@ -465,7 +476,7 @@ if($package -eq "") {
     }
     #>
     $pl = $env:Path -split ";"
-    if($pl -contains "${instpath}\jasspa\bin") {
+    if($pl -contains "${instpath}\bin") {
       Write-Host "Installation complete and programmes are in your PATH."
       $binpath = ""
     }
@@ -483,23 +494,22 @@ if($package -eq "") {
       if($ii -eq 2) {
         if($scopeMch) {
           try {
-            [Environment]::SetEnvironmentVariable("Path",$env:Path + ";${instpath}\jasspa\bin",[EnvironmentVariableTarget]::Machine)
+            [Environment]::SetEnvironmentVariable("Path",$env:Path + ";${instpath}\bin",[EnvironmentVariableTarget]::Machine)
           }
           catch {
             $scopeMch = $false
           }
         }
         if(-not $scopeMch) {
-          [Environment]::SetEnvironmentVariable("Path",$env:Path + ";${instpath}\jasspa\bin",[EnvironmentVariableTarget]::User)
+          [Environment]::SetEnvironmentVariable("Path",$env:Path + ";${instpath}\bin",[EnvironmentVariableTarget]::User)
         }
-        $env:Path += ";${instpath}\jasspa\bin"
+        $env:Path += ";${instpath}\bin"
         $binpath = ""
       }
       else {
-        $binpath = "${instpath}\jasspa\bin\"
+        $binpath = "${instpath}\bin\"
       }
     }
-    # Create start-up shortcut
     Write-Host "To install spelling support for a language run:"
     Write-Host ""
     Write-Host "   ${binpath}microemacs-update <lang-id>"
@@ -517,21 +527,28 @@ if($package -eq "") {
     Write-Host ""
     Write-Host "   ${binpath}mew"
     Write-Host ""
+    $vcv = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Installer\Dependencies\VC,redist.${mevcruntm},*" -Name Version).Version
+    if($vcv -eq $null) {
+        Write-Host "NOTE: You will need to install Microsoft Visual C++ runtime libraries for ${mevcruntm} before you can run Microemacs, see:`n`n    https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170`n`n"
+    }
+    elseif([int] $vcv.Substring(0,3) -lt 14) {
+        Write-Host "NOTE: You may need to install the latest version of Microsoft Visual C++ runtime libraries for ${mevcruntm} before you can run Microemacs, see:`n`n    https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170`n`n"
+    }
   }
 }       
 elseif($package -eq "openssl") {
   Write-Host "Jasspa MicroEmacs - Installing OpenSSL libraries"
-  install_package "" "openssl" "${instpath}\jasspa"
+  install_package "" "openssl" "${instpath}"
 }
 elseif($package.Length -eq 4) {
   Write-Host "Jasspa MicroEmacs - Installing spelling $package"
-  install_package "" "spelling_$package" "${instpath}\jasspa"
+  install_package "" "spelling_$package" "${instpath}"
 }
 else {
   $pkg = $package.Replace("-","_")
   if(($pkg -eq "binaries") -or ($pkg -eq "help_ehf") -or ($pkg -eq "macros") -or ($pkg -match "spelling_.*")) {
     Write-Host "Jasspa MicroEmacs - Installing package $pkg"
-    install_package "" $pkg "${instpath}\jasspa"
+    install_package "" $pkg "${instpath}"
   }
   else {
     Write-Host "Error: Unknown install package `"$package`"."

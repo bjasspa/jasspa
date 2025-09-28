@@ -40,7 +40,7 @@ jobs:
         shell: pwsh
         run: |
           cd .\microemacs\3rdparty
-          Invoke-WebRequest https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.5.1.zip -OutFile openssl.zip
+          Invoke-WebRequest https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.5.3.zip -OutFile openssl.zip
           Expand-Archive -Path .\openssl.zip -DestinationPath openssl-3.5
           dir .\openssl-3.5
           
@@ -111,6 +111,7 @@ jobs:
           cd .\wix
           Copy-Item -Path ..\bin\windows100-intel32\mew.exe -Destination .
           Copy-Item -Path ..\bin\windows100-intel32\mec.exe -Destination .
+          Copy-Item -Path ..\microemacs-install.ps1 -Destination .\microemacs-update.ps1
           Copy-Item -Path ..\LICENSE -Destination .
           ..\bin\windows100-intel32\mec.exe -p "@./meigen"
           Copy-Item -Path ..\me.ehf -Destination macros
