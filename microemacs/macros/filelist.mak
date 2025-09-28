@@ -44,7 +44,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkidl.emf	hkimake.emf	hkinfo.emf	hkini.emf	\
 	hkipipe.emf	hkiss.emf	\
 	hkjava.emf	hkjs.emf	hkjson.emf	hkjsp.emf	\
-	hkjst.emf	hkjulia.emf	\
+	hkjst.emf	hkjulia.emf	hkkotlin.emf	\
 	hklatex.emf	hklhtml.emf	hklisp.emf	hklists.emf	\
 	hklua.emf	\
 	hkm4.emf	hkmake.emf	hkman.emf	hkmd.emf	\
@@ -117,7 +117,7 @@ ETFS=	ada.etf		adoc.etf	asmx86.etf	asn1.etf	\
 	h.etf		hpp.etf		html.etf	go.etf	\
 	idl.etf		imake.etf	\
 	java.etf	js.etf		jst.etf		julia.etf	\
-	latex.etf	lua.etf		\
+	kotlin.eaf	latex.etf	lua.etf		\
 	makefile.etf	md.etf		mhg.etf		mod2.etf	\
 	newcomp.etf	newuser.etf	nroff.etf	octave.etf	\
 	pascal.etf	perl.etf	php.etf		pls.etf		\
@@ -139,7 +139,7 @@ EAFS=	ada.eaf		adoc.eaf	asp.eaf		au3.eaf		\
 	hkphp.eaf	\
 	html.eaf	\
 	java.eaf	js.eaf		jsp.eaf		jst.eaf		\
-	julia.eaf	latex.eaf	lua.eaf		\
+	julia.eaf	kotlin.eaf	latex.eaf	lua.eaf		\
 	md.eaf		octave.eaf	\
 	pascal.eaf	perl.eaf	php.eaf		pls.eaf		\
 	ps1.eaf		python.eaf	\
