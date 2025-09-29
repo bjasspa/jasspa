@@ -33,7 +33,7 @@ add-color 19 220 138 120 ; Cursor
 add-color 20 172 176 190 ; Selection Background
 add-color 21 76 79 105 ; Selection Foreground
 ; Set the required cursor-color
-set-variable $cursor-color .col19
+set-variable $cursor-color 19
 ; Create the color schemes
 ; Standard
 add-color-scheme $global-scheme 18 17 1 16 0 9 17 9 0 8 0 8 0 8 0 8

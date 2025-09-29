@@ -23,7 +23,7 @@ add-color 9 75 75 75
 add-color 10 255 255 255
 add-color 11 210 0 0
 ; Set the required cursor-color
-set-variable $cursor-color .col5
+set-variable $cursor-color 5
 ; Create the color schemes
 ; Standard
 add-color-scheme $global-scheme 0 1 2 3 0 4 2 4 0 8 1 9 0 8 1 9
