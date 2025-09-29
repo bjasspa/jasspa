@@ -38,23 +38,28 @@ docs and spelling dictionaries for numerous languages.
 INSTALLERS
 ----------
 
-- Windows: Jasspa_MicroEmacs_<VERSION>_installer_windows.msi contains the binaries for Windows, the macros and help file, 
-  simply download and run to create a fully working environment.
+- UNIX: The preferred install method is using the microemacs-install script, run the following script in a terminal:
 
-- UNIX: The preferred install method is using the script:
+    /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)"
 
-    https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/microemacs-install
-    
-  download and run locally or run the following in a terminal:
+  Or download the script first and run locally, note that this will always install the latest release. If the script
+  encounters issues during the installation processes, typically insufficient permissions, please follow the
+  instructions given.
 
-      /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)"
-    
-  Note that this will always install the latest release. If the script encounters issues during the installation
-  processes, typically insufficient permissions, please follow the instructions given.
-  
-  Once successfully installed a `microemacs-update` script can be used to update the installation to the latest
-  version or to install spelling languages, e.g. run:
-  
+- Windows: All Windows platforms can use the microemacs-install.ps1 PowerShell script, run the following in a PowerShell:
+
+    Invoke-RestMethod -Uri https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install.ps1 | Invoke-Expression
+
+  Or download the script first and run locally, note that this will always install the latest release and to install
+  for all users the PowerShell needs to be run as Administrator. If the script encounters issues during the
+  installation processes, typically insufficient permissions, please follow the instructions given.
+
+- Windows intel: Download and run Jasspa_MicroEmacs_<VERSION>_installer_windows.msi installer (intel only), which
+  contains the binaries, macros and help file, to create a fully working environment.
+
+Once successfully installed a microemacs-update script (or microemacs-update.ps1 on Windows) can be used to update the
+installation to the latest version or to install other components such as spelling languages, e.g. run:
+
       microemacs-update enus
    
 - UNIX - Homebrew: For users familiar with brew we also provide a brew installer. In a terminal run:

@@ -1,3 +1,8 @@
+## New in this Release
+
+- TBC
+
+
 ## INTRODUCTION
 
 MicroEmacs is an Emacs like text editor for developers, its great strength is its speed, fast key-bindings and powerful macro language. If you are looking for a menu driven editor this is probably not for you!
@@ -5,6 +10,7 @@ MicroEmacs is an Emacs like text editor for developers, its great strength is it
 Jasspa MicroEmacs also has a couple of other base limitations, firstly, no real Unicode support - so you you are constantly editing multi-language files this is probably not the best tool for you. MicroEmacs also does not support long line wrapping in its rendering, one line of a file will always be represented as one line on the screen regardless of how long the line is - this is *Micro*Emacs, if these issues are blockers to you, try Emacs.
 
 For move information visit our [Github repository](https://github.com/bjasspa/jasspa/).
+
 
 ## VERY QUICK START GUIDE
 
@@ -32,15 +38,21 @@ For a more complete experience execute command **init-session**, this creates a 
 
 ## INSTALLERS
 
-- **Windows:** Download and run [Jasspa_MicroEmacs_<VERSION>_installer_windows.msi](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_installer_windows_intel.msi) installer (intel only), which contains the binaries, macros and help file, to create a fully working environment.
-
 - **UNIX:** The preferred install method is using the [microemacs-install](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/microemacs-install) script, run the following script in a terminal:
 
       /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)"
     
   Or download the script first and run locally, note that this will always install the latest release. If the script encounters issues during the installation processes, typically insufficient permissions, please follow the instructions given.
+
+- **Windows:** All Windows platforms can use the [microemacs-install.ps1](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/microemacs-install.ps1) PowerShell script, run the following in a PowerShell:
+
+      Invoke-RestMethod -Uri https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install.ps1 | Invoke-Expression
+    
+  Or download the script first and run locally, note that this will always install the latest release and to install for all users the PowerShell needs to be run as Administrator. If the script encounters issues during the installation processes, typically insufficient permissions, please follow the instructions given.
+
+- **Windows intel:** Download and run [Jasspa_MicroEmacs_<VERSION>_installer_windows.msi](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_installer_windows_intel.msi) installer (intel only), which contains the binaries, macros and help file, to create a fully working environment.
   
-  Once successfully installed a `microemacs-update` script can be used to update the installation to the latest version or to install spelling languages, e.g. run:
+Once successfully installed a `microemacs-update`  script (or `microemacs-update.ps1` on Windows) can be used to update the installation to the latest version or to install other components such as spelling languages, e.g. run:
   
       microemacs-update enus
    

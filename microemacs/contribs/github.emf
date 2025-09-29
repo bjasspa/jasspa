@@ -276,6 +276,15 @@ define-macro github-release
   !force insert-file &cat #l2 "microemacs-install"
   !iif &not $status  -8 ml-write &spr "[Github Release Error: Failed to upload asset %smicroemacs-install]" #l1
   set-variable #l5 &add #l5 1
+  find-file &cat @4 "microemacs/microemacs-install.ps1"
+  beginning-of-buffer
+  replace-string "<VERSION>" #l9
+  !force 0 write-buffer &set %http-post-file &stat a &spr "%s../microemacs-install.ps1" #l1
+  set-variable %http-header &cat .git.hub-hdr "\r\nContent-Type: application/octet-stream"
+  find-buffer "*ghrc*"
+  !force insert-file &cat #l2 "microemacs-install.ps1"
+  !iif &not $status  -8 ml-write &spr "[Github Release Error: Failed to upload asset %smicroemacs-install.ps1]" #l1
+  set-variable #l5 &add #l5 1
   find-file &cat @4 "microemacs/release_readme.md"
   beginning-of-buffer
   replace-string "<VERSION>" #l9

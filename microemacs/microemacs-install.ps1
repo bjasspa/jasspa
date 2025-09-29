@@ -1,4 +1,5 @@
 #Requires -Version 5.1
+# Jasspa MicroEmacs install/update script - version <VERSION>
 
 param(
   [string]$package,
