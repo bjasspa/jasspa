@@ -1111,44 +1111,43 @@ get_scheme:
 
 #define findTokenCharTest(ret,lastChar,srcText,tokTest,testStr)              \
 do {                                                                         \
-    meUByte *__ts, ftctcc ;                                                  \
+    meUByte *__ts, ftctcc;                                                   \
     lastChar='\0';                                                           \
-    if((ftctcc=*srcText++) == '\0') ftctcc=meCHAR_NL ;                       \
+    if((ftctcc=*srcText++) == '\0') ftctcc=meCHAR_NL;                        \
     switch(tokTest & meHIL_TEST_MASK)                                        \
     {                                                                        \
     case meHIL_TEST_BACKREF:                                                 \
-        __ts = testStr ;                                                     \
-        ret = (varTable[*testStr++] == ftctcc) ;                             \
-        break ;                                                              \
+        __ts = testStr;                                                      \
+        ret = (varTable[*testStr++] == ftctcc);                              \
+        break;                                                               \
     case meHIL_TEST_SINGLE:                                                  \
-        __ts = testStr ;                                                     \
-        ret = (*testStr++ == ftctcc) ;                                       \
-        break ;                                                              \
+        __ts = testStr;                                                      \
+        ret = (*testStr++ == ftctcc);                                        \
+        break;                                                               \
     case meHIL_TEST_CLASS:                                                   \
         {                                                                    \
-            meUByte rc, nrc ;                                                \
-            __ts = testStr ;                                                 \
+            meUByte rc, nrc;                                                 \
+            __ts = testStr;                                                  \
             for(ret=*testStr++ ; ret>0 ; ret--)                              \
             {                                                                \
-                rc=*testStr++ ;                                              \
-                nrc = *testStr ;                                             \
-                if((nrc == '-') && (ret > 1))                                \
+                rc=*testStr++;                                               \
+                if((ret > 2) && (*testStr == '-'))                           \
                 {                                                            \
                     /* range */                                              \
-                    testStr++ ;                                              \
-                    nrc = *testStr++ ;                                       \
-                    ret -= 2 ;                                               \
+                    testStr++;                                               \
+                    nrc = *testStr++;                                        \
+                    ret -= 2;                                                \
                     if((ftctcc >= rc) && (ftctcc <= nrc))                    \
                     {                                                        \
-                        testStr += ret - 1 ;                                 \
-                        break ;                                              \
+                        testStr += ret - 1;                                  \
+                        break;                                               \
                     }                                                        \
                 }                                                            \
                 /* single char compare */                                    \
                 else if(ftctcc == rc)                                        \
                 {                                                            \
-                    testStr += ret - 1 ;                                     \
-                    break ;                                                  \
+                    testStr += ret - 1;                                      \
+                    break;                                                   \
                 }                                                            \
             }                                                                \
             break ;                                                          \
@@ -2873,14 +2872,14 @@ indentLine(int *inComment)
     /* the flag is used only to set the current line, do the select hilighting
      * and flag the next line as changed if in a bracket, therefore init to
      * 0 and forget about */
-    vps[0].wind = wp ;
-    vps[0].line = lp ;
-    vps[0].hilno = indent ;
-    vps[0].bracket = NULL ;
-    vps[0].flag = 0 ;
+    vps[0].flag = 0;
+    vps[0].wind = wp;
+    vps[0].line = lp;
+    vps[1].hilno = vps[0].hilno = indent;
+    vps[1].bracket = vps[0].bracket = NULL;
 
-    noColChng = hilightLine(vps,0) ;
-    blkp = hilBlock + 1 ;
+    noColChng = hilightLine(vps,0);
+    blkp = hilBlock + 1;
     /* printf("Got %d colour changes\n",noColChng);*/
     /* for(ii=0 ; ii<noColChng ; ii++)*/
     /*   printf("  CColour change %d is to 0x%x at column %d\n",ii,blkp[ii].scheme,blkp[ii].column);*/

@@ -1435,7 +1435,7 @@ loop_round:
                 break;
             
             case DRWHILEF:
-                if((lpLStk[lpCnt] != NULL) && (lpFStk[lpCnt] == lp)) 
+                if((lpFStk[lpCnt] == lp) && (lpLStk[lpCnt] != NULL)) 
                 {
                     lp = lpLStk[lpCnt];
                     execlevel -= 2;

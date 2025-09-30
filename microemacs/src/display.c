@@ -75,9 +75,9 @@ convertUserScheme(int n, int defaultStyle)
     if ((n < 0) || (n >= styleTableSize))
     {
         mlwrite (MWABORT|MWPAUSE,(meUByte *)"[Invalid color-scheme index %d]", n);
-        return defaultStyle ;
+        return defaultStyle;
     }
-    return (n*meSCHEME_STYLES) ;
+    return (n*meSCHEME_STYLES);
 }
 
 /*
@@ -788,9 +788,9 @@ hideLineJump:
             if(meSchemeTestStyleHasFont(scheme))
             {
                 /* remove the fonts as these can effect the next char which will probably be the scroll bar */
-                scheme = meSchemeSetNoFont(scheme) ;
+                scheme = meSchemeSetNoFont(scheme);
             }
-            s1[ncol-1] = windowChars[WCDISPTXTRIG] ;
+            s1[ncol-1] = windowChars[WCDISPTXTRIG];
             blkp[noColChng].column = ncol ;
             blkp[noColChng].scheme = scheme | (blkp[noColChng-1].scheme & (meSCHEME_CURRENT|meSCHEME_SELECT)) ;
             noColChng++ ;
@@ -800,28 +800,28 @@ hideLineJump:
             /* An extra space is added to the last column so that
              * the cursor will be the right colour */
             if(vp1->line != bp->baseLine)
-                s1[blkp[noColChng-1].column] = displayNewLine ;
+                s1[blkp[noColChng-1].column] = displayNewLine;
             else
-                s1[blkp[noColChng-1].column] = ' ' ;
+                s1[blkp[noColChng-1].column] = ' ';
             if(meSchemeTestStyleHasFont(blkp[noColChng-1].scheme))
             {
                 /* remove the fonts as these can effect the next char which will probably be the scroll bar */
                 if(((noColChng == 1) && (blkp[0].column == 0)) ||
                    ((noColChng > 1) && (blkp[noColChng-1].column == blkp[noColChng-2].column)))
                 {
-                    blkp[noColChng-1].column++ ;
-                    blkp[noColChng-1].scheme = meSchemeSetNoFont(blkp[noColChng-1].scheme) ;
+                    blkp[noColChng-1].column++;
+                    blkp[noColChng-1].scheme = meSchemeSetNoFont(blkp[noColChng-1].scheme);
                 }
                 else
                 {
-                    blkp[noColChng].column = blkp[noColChng-1].column+1 ;
-                    blkp[noColChng].scheme = meSchemeSetNoFont(blkp[noColChng-1].scheme) ;
-                    noColChng++ ;
+                    blkp[noColChng].column = blkp[noColChng-1].column+1;
+                    blkp[noColChng].scheme = meSchemeSetNoFont(blkp[noColChng-1].scheme);
+                    noColChng++;
                 }
             }
             else
             {
-                blkp[noColChng-1].column++ ;
+                blkp[noColChng-1].column++;
             }
         }
     }
@@ -861,7 +861,7 @@ hideLineJump:
 
         TCAPmove(row,scol);	/* Go to start of line. */
 
-        col = 0 ;
+        col = 0;
         for(cno=0 ; cno<noColChng ; cno++)
         {
             scheme = blkp->scheme;
@@ -912,71 +912,69 @@ hideLineJump:
         /********************************************************************
          * X-WINDOWS                                                        *
          ********************************************************************/
-        register int ii, len, col, cno ;
-        register meScheme scheme ;
+        register int ii, len, col, cno;
+        register meScheme scheme;
 
-        row = rowToClient(row) ;
-        col = cno = 0 ;                 /* Virtual column start */
+        row = rowToClient(row);
+        col = cno = 0;                 /* Virtual column start */
 
-        if (meSystemCfg & meSYSTEM_FONTFIX)
+        if(meSystemCfg & meSYSTEM_FONTFIX)
         {
             meUByte cc, *sfstp=fstp;
-            int spFlag, ccol ;
             do {
-                scheme = blkp->scheme ;
-                meFrameXTermSetScheme(frameCur,scheme) ;
-                ii = blkp->column ;
-                ii -= col;
-                len = ii ;
-                blkp++ ;
-                ccol = col ;
-                spFlag = 0 ;
-                /* Maintain the frame store and copy the string into
-                 * the frame store with the colour information
-                 * copy a space in place of special chars, they are
-                 * drawn separately after the XDraw, the spaces are
-                 * replaced with the correct chars */
-                while (--len >= 0)
+                scheme = blkp->scheme;
+                meFrameXTermSetScheme(frameCur,scheme);
+                if((ii = blkp->column - col) > 0)
                 {
-                    *fssp++ = scheme;
-                    if(((cc=s1[col++]) & 0xe0) == 0)
+                    int spFlag=0, ccol=col;
+                    len = ii;
+                    /* Maintain the frame store and copy the string into the frame store with the
+                     * colour information copy a space in place of special chars, they are drawn
+                     * separately after the XDraw, the spaces are replaced with the correct chars */
+                    while (--len >= 0)
                     {
-                        cc = ' ' ;
-                        spFlag++ ;
+                        *fssp++ = scheme;
+                        if(((cc=s1[col++]) & 0xe0) == 0)
+                        {
+                            cc = ' ';
+                            spFlag++;
+                        }
+                        *fstp++ = cc;
                     }
-                    *fstp++ = cc ;
+                    meFrameXTermDrawString(frameCur,colToClient(scol+ccol),row,(char *)sfstp+ccol,ii);
+                    while(--spFlag >= 0)
+                    {
+                        while (((cc=s1[ccol]) & 0xe0) != 0)
+                            ccol++;
+                        sfstp[ccol] = cc;
+                        meFrameXTermDrawSpecialChar(frameCur,colToClient(scol+ccol),row-mecm.ascent,cc);
+                        ccol++;
+                    }
                 }
-                meFrameXTermDrawString(frameCur,colToClient(scol+ccol),row,(char *)sfstp+ccol,ii);
-                while(--spFlag >= 0)
-                {
-                    while (((cc=s1[ccol]) & 0xe0) != 0)
-                        ccol++ ;
-                    sfstp[ccol] = cc ;
-                    meFrameXTermDrawSpecialChar(frameCur,colToClient(scol+ccol),row-mecm.ascent,cc) ;
-                    ccol++ ;
-                }
-            } while(++cno < noColChng) ;
+                blkp++;
+            } while(++cno < noColChng);
         }
         else
         {
             do {
-                scheme = blkp->scheme ;
-                meFrameXTermSetScheme(frameCur,scheme) ;
-                ii = blkp->column ;
-                len = ii-col;
-                meFrameXTermDrawString(frameCur,colToClient(scol+col),row,(char *)s1+col,len);
-                blkp++ ;
-
-                /* Maintain the frame store and copy the string into
-                 * the frame store with the colour information */
-                while (--len >= 0)
+                scheme = blkp->scheme;
+                meFrameXTermSetScheme(frameCur,scheme);
+                ii = blkp->column;
+                if((len = ii-col) > 0)
                 {
-                    *fssp++ = scheme;
-                    *fstp++ = s1[col++];
+                    meFrameXTermDrawString(frameCur,colToClient(scol+col),row,(char *)s1+col,len);
+                    /* Maintain the frame store and copy the string into
+                     * the frame store with the colour information */
+                    while (--len >= 0)
+                    {
+                        *fssp++ = scheme;
+                        *fstp++ = s1[col++];
+                    }
                 }
-            } while(++cno < noColChng) ;
+                blkp++;
+            } while(++cno < noColChng);
         }
-        if (meStyleCmpBColor(meSchemeGetStyle(vp1->eolScheme),meSchemeGetStyle(scheme)))
+        if(meStyleCmpBColor(meSchemeGetStyle(vp1->eolScheme),meSchemeGetStyle(scheme)))
         {
             ii = ncol ;
             vp1->eolScheme = scheme;
@@ -998,12 +996,12 @@ hideLineJump:
                 *fstp++ = ' ';         /* Frame store space fill */
                 *fssp++ = scheme;      /* Frame store colour fill */
             }
-            while(--cno) ;
+            while(--cno);
             meFrameXTermDrawString(frameCur,colToClient(scol+col),row,(char *)buff,ii);
         }
 #if DEBUGGING
         else
-            ii = 0 ;
+            ii = 0;
         meFrameXTermDrawString(frameCur,colToClient(scol+col+ii-1),row,&drawno,1);
 #endif
 #endif /* _XTERM */
@@ -1856,7 +1854,7 @@ updateScrollBar (meWindow *wp)
                  ************************************************************/
                 meFrameXTermSetScheme(frameCur,scheme);
 
-                if (meSystemCfg & meSYSTEM_FONTFIX)
+                if(meSystemCfg & meSYSTEM_FONTFIX)
                 {
                     meUByte cc;
                     fssp[0] = scheme;  /* Assign the colour */
@@ -2355,35 +2353,32 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
     int drawCursor ;
 #endif
 
-    /* Normalise to the screen rows */
-    if((row < 0) || (row > frameCur->depth))     /* Off the screen in Y ?? */
-        return ;                        /* Yes - quit */
+    if((row < 0) || (row > frameCur->depth) || ((cc = *(ss=str)) == '\0'))
+        return;
 
     /* Normalise to the screen columns. Chop the string up if necessary
      * and change any bad chars to '.'s
      */
-    len = 0 ;
-    ss = str ;
-    while((cc = *ss) != '\0')
+    len = 0;
+    do
     {
-        len++ ;
+        len++;
         if(!isPokable(cc))
-            *ss = '.' ;
-        ss++ ;
-    }
+            *ss = '.';
+    } while((cc=*++ss) != '\0');
     if(col < 0)
     {
         if((len += col) <= 0)
-            return ;
-        str -= col ;
+            return;
+        str -= col;
 #if MEOPT_EXTENDED
         if(flags & POKE_COLORS)
-            scheme -= col ;
+            scheme -= col;
 #endif
-        col = 0 ;
+        col = 0;
     }
     else if(col >= frameCur->width)
-        return ;
+        return;
     if((col+len) >= frameCur->width)
         len = frameCur->width - col ;
 
@@ -2626,16 +2621,16 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
                 meUByte cc, *sfstp, *fstp ;
                 int ii, spFlag=0 ;
 
-                ii = len ;
+                ii = len;
                 sfstp = fstp = &(frameCur->store[row].text[col]) ;
-                row = rowToClient(row) ;
-                while (--len >= 0)
+                row = rowToClient(row);
+                while(--len >= 0)
                 {
-                    *fssp++ = schm ;
+                    *fssp++ = schm;
                     if(((cc=*fstp++) & 0xe0) == 0)
                     {
-                        spFlag++ ;
-                        fstp[-1] = ' ' ;
+                        spFlag++;
+                        fstp[-1] = ' ';
                     }
                 }
                 meFrameXTermDrawString(frameCur,colToClient(col),row,sfstp,ii);

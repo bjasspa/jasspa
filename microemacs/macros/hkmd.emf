@@ -38,6 +38,7 @@ set-variable .fhook-md.item-list-r3 "H2 \CCb\\1\CCA"
 !if &and &sin "h" .fhook-md.setup &band .hilight.flags 0x02
   !if &not &exi .hilight.md
     set-variable .hilight.md &pinc .hilight.next 1
+    set-variable .hilight.mdE &pinc .hilight.next 1
     set-variable .hilight.mdB &pinc .hilight.next 1
     set-variable .hilight.mdI &pinc .hilight.next 1
     set-variable .hilight.mdBI &pinc .hilight.next 1
@@ -52,7 +53,7 @@ set-variable .fhook-md.item-list-r3 "H2 \CCb\\1\CCA"
   hilight .hilight.md 2 "^#"            .scheme.header
   hilight .hilight.md 4 "\"" "\"" "\\"  .scheme.string
   ;hilight .hilight.md 0 "'[^']+'"       .scheme.quote
-  hilight .hilight.md 0 "\\\\\\}[-[-]`*_{}<>()#+.!|]" .scheme.hide
+  hilight .hilight.md 0x890 "\\\\\\}[-[\\\\\\x5d`*_{}<>()#+.!|]" .hilight.mdE .scheme.hide
 
   hilight .hilight.md 0x890 "\\*\\}\\S" .hilight.mdI .scheme.hide
   hilight .hilight.md 0x890 "\\W\\{_\\}\\S" .hilight.mdI .scheme.hide
@@ -82,7 +83,10 @@ set-variable .fhook-md.item-list-r3 "H2 \CCb\\1\CCA"
   hilight .hilight.md 0x20 "\\[^\\d+]:"                .scheme.bold
   hilight .hilight.md 0x20 "- \\{\\[ ] "               .scheme.bold
   hilight .hilight.md 0x20 "- \\{\\[X] "               .scheme.bold
-
+  
+  0 hilight .hilight.mdE 0                             $global-scheme
+  hilight   .hilight.mdE 0x80 "." .hilight.md          $global-scheme
+  
   0 hilight .hilight.mdB 0                             .scheme.bold
   hilight   .hilight.mdB 0 "\\\\."                     .scheme.bold
   hilight   .hilight.mdB 0x80 "\\*\\*" .hilight.md     .scheme.hide

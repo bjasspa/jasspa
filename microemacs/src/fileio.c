@@ -2479,9 +2479,12 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
 {
     int rr=meTRUE, r1;
     
-    /* By now sfname & dfname should have had a 'file:' URL prefix removed */
-    meior.type = ffUrlGetType(sfname);
-    meAssert((meior.type & meIOTYPE_FILE) == 0);
+    if((dfname != NULL) || ((dFlags & (meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_STAT)) != 0))
+    {
+        /* By now sfname & dfname should have had a 'file:' URL prefix removed */
+        meior.type = ffUrlGetType(sfname);
+        meAssert((meior.type & meIOTYPE_FILE) == 0);
+    }
     if((dfname != NULL) && (dFlags & meRWFLAG_DELETE))
     {
         /* simply move the file if the source is to be deleted and they are regular files,

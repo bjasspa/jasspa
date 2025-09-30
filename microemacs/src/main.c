@@ -765,7 +765,7 @@ exitEmacs(int f, int n)
             }
             for(ii=0 ; ii<CK_MAX ; ii++)
             {
-                cuv = cmdTable[ii]->varList.head;
+                cuv = cmdTable[ii]->varList;
                 while(cuv != NULL)
                 {
                     nuv = cuv->next;
@@ -780,7 +780,7 @@ exitEmacs(int f, int n)
                 meFree(mac->name);
                 meNullFree(mac->fname);
                 meLineLoopFree(mac->hlp,1);
-                cuv = mac->varList.head;
+                cuv = mac->varList;
                 while(cuv != NULL)
                 {
                     nuv = cuv->next;
@@ -792,7 +792,7 @@ exitEmacs(int f, int n)
             }
             if(cmdTable != __cmdTable)
                 free(cmdTable);
-            cuv = usrVarList.head;
+            cuv = usrVarList;
             while(cuv != NULL)
             {
                 nuv = cuv->next;
