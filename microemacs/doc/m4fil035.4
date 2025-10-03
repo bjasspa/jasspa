@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil035.4,v 1.4 2024/05/21 17:14:14 jon Exp $
+.Id $Id: m4fil035.4,v 1.4 2025/10/03 22:37:35 jon Exp $
 .Im MicroEmacs macro;function;miscellaneous
 .so me.tni
 .TH &opt 4
@@ -108,9 +108,6 @@ Location list stepping (see
 .IP "osd - MEOPT_OSD"
 On Screen Display GUI support (see
 .Ht osd 2 ).
-.IP "pos - MEOPT_POSITION"
-Position storing and returning (see
-.Ht set-position 2 ).
 .IP "pri - MEOPT_PRINT"
 Printing support (see
 .Ht print-buffer 2 ).
@@ -164,10 +161,16 @@ an error:
 .CE 0
 .Me $ehf-scheme
 .SH "NOTES"
-For the secure URL support to work the binary be built with  \fBMEOPT_OPENSSL\fR and the appropriate  \fClibssl\fP and
-\fClibcrypto\fP runtime libraries must be available; \fB&opt\fR does not confirm the availability of the libraries. 
+The output of command
+.Ht about 2
+includes a full list of all available optional features.
+.PP
+For secure URL (https) support to work the binary must be built with \fBMEOPT_OPENSSL\fR and the appropriate
+\fClibssl\fP and \fClibcrypto\fP runtime libraries must be available; \fB&opt\fR does not confirm the availability of
+the libraries.
 .SH "SEE ALSO"
 .na
+.Ht about 2 ,
 .Hl "Building \*(mS" Build 2 .
 .ad
 .FH

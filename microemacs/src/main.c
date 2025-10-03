@@ -472,13 +472,14 @@ meUByte meCopyright[]="Copyright (C) 1988-" meCENTURY meYEAR " " ME_COMPANY_NAME
 int
 meAbout(int f, int n)
 {
+    extern meUByte meOptionList[];
     meWindow *wp;
     meBuffer *bp, *tbp;
     meInt   numchars;		/* # of chars in file */
     meInt   numlines;		/* # of lines in file */
     meInt   predchars;		/* # chars preceding point */
     meInt   predlines;		/* # lines preceding point */
-    meUByte buf[meBUF_SIZE_MAX];
+    meUByte *ss, *dd, buf[meBUF_SIZE_MAX];
     int     ii;
     
     if((wp = meWindowPopup(NULL,BaboutN,BFND_CREAT|BFND_CLEAR|WPOP_USESTR,NULL)) == NULL)
@@ -510,6 +511,27 @@ meAbout(int f, int n)
     addLineToEob(bp,buf);
     
     addModesLists(bp,buf,tbp->mode);
+    meStrcpy(buf,"Options:");
+    ii = 78;
+    ss = meOptionList;
+    dd = buf+8;
+    do {
+        if(ii > 75)
+        {
+            *dd++ = '\n';
+            *dd++ = ' ';
+            ii = 1;
+        }
+        *dd++ = ' ';
+        memcpy(dd,ss,3);
+        dd += 3;
+        ss += 4;
+        ii += 4;
+    }
+    while(*ss != '\0');
+    *dd++ = '\n';
+    *dd = '\0';
+    addLineToEob(bp,buf);
     addLineToEob(bp,meCopyright);
 #if KEY_TEST
     fnctest(bp);

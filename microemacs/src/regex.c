@@ -1068,6 +1068,7 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
     }
     else if(cc == '[')
     {
+        static char *classChar="aAdDhHlLmMsSuUwW";
         int inv;
         item->type = meREGEXITEM_CLASS;
         meRegexClassClearAll(item->data.cclass);
@@ -1085,7 +1086,6 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
                 return meREGEX_ERROR_OCLASS;
             if(cc == '\\')
             {
-                static char *classChar="aAdDhHlLmMsSuUwW";
                 char *ss;
                 cc = *rs++;
                 if((ss=strchr(classChar,cc)) != NULL)
@@ -1127,6 +1127,8 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
                 if(dd == '\\')
                 {
                     dd = *rs++;
+                    if(strchr(classChar,dd) != NULL)
+                        return meREGEX_ERROR_CLASS;
                     meRegexItemGetBackslashChar(rs,dd);
                 }
                 if(dd < cc)

@@ -919,7 +919,7 @@ TTsleep(int msec, int intable, meVariable **waitVarList)
 }
 
 
-#if	MEOPT_TYPEAH
+#if MEOPT_TYPEAH
 /* TTahead:	Check to see if any characters are already in the
 		keyboard buffer
 */

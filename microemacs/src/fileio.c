@@ -1228,7 +1228,7 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
 int
 ffgetBuf(meIo *io,int offset, int len)
 {
-#ifdef MEOPT_TFS
+#if MEOPT_TFS
     if(ffUrlTypeIsTfs(io->type))
     {
         if((ffremain = tfs_fread(ffbuf+offset,len,io->tfsp)) <= 0)
@@ -1619,7 +1619,7 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
     }
     else if (ffUrlTypeIsTfs(io->type))
     {
-#ifdef MEOPT_TFS
+#if MEOPT_TFS
         tfsMount *tfsh;
         meUByte *fn;
         if((fn=meStrstr(fname,"?/")) != NULL)

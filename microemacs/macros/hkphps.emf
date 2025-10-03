@@ -556,7 +556,7 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
     ; Doxygen parameter hilighting space.
     0 hilight .hilight.phpsdoxygencp 2 50 .scheme.error
     ; Hilight the next word and finish.
-    hilight .hilight.phpsdoxygencp 0x80 "\\s+[a-zA-Z0-9.()!_\\.]+" .hilight.phpsdoxygenc .scheme.prepro
+    hilight .hilight.phpsdoxygencp 0x80 "\\s+[a-zA-Z0-9.()!_.]+" .hilight.phpsdoxygenc .scheme.prepro
     ; Hilight the optional parameter definitions.
     hilight .hilight.phpsdoxygencp 0 "\\s*\\[\\s*in\\s*\\]" .scheme.variable
     hilight .hilight.phpsdoxygencp 0 "\\s*\\[\\s*out\\s*\\]" .scheme.variable
@@ -600,7 +600,7 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
     ; Doxygen parameter hilighting space.
     0 hilight .hilight.phpsdoxygenp 2 50 .scheme.error
     ; Hilight the next word and finish.
-    hilight .hilight.phpsdoxygenp 0x80 "\\S+[a-zA-Z0-9.()!_\\.]+" .hilight.phpsdoxygen .scheme.prepro
+    hilight .hilight.phpsdoxygenp 0x80 "\\S+[a-zA-Z0-9.()!_.]+" .hilight.phpsdoxygen .scheme.prepro
     ; Hilight the optional parameter definitions.
     hilight .hilight.phpsdoxygenp 0 "\\s*\\[\\s*in\\s*\\]" .scheme.variable
     hilight .hilight.phpsdoxygenp 0 "\\s*\\[\\s*out\\s*\\]" .scheme.variable

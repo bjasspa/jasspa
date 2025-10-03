@@ -68,13 +68,13 @@ set-variable .fhook-md.item-list-r3 "H2 \CCb\\1\CCA"
   hilight .hilight.md 0 "===+"          $global-scheme
 
   ; HTTP links etc.
-  hilight .hilight.md 0 "file:[-@~_a-zA-Z#%=\\.:\\/0-9]+"    .scheme.link
-  hilight .hilight.md 0 "http:[-@~_a-zA-Z#%?&=\\.:\\/0-9]+"  .scheme.link
-  hilight .hilight.md 0 "https:[-@~_a-zA-Z#%?&=\\.:\\/0-9]+" .scheme.link
-  hilight .hilight.md 0 "ftp:[-@~_a-zA-Z#%\\.:\\/0-9]+"      .scheme.link
-  hilight .hilight.md 0 "ftps:[-@~_a-zA-Z#%\\.:\\/0-9]+"     .scheme.link
-  hilight .hilight.md 0 "mailto:[-@~_a-zA-Z#%\\.:\\/0-9]+"   .scheme.link
-  hilight .hilight.md 0 "news:[-@~_a-zA-Z#%\\.:\\/0-9]+"     .scheme.link
+  hilight .hilight.md 0 "file:[-@~_a-zA-Z#%=\\\\.:\\/0-9]+"  .scheme.link
+  hilight .hilight.md 0 "http://[-@~_a-zA-Z#%?&=.:\\/0-9]+"  .scheme.link
+  hilight .hilight.md 0 "https://[-@~_a-zA-Z#%?&=.:\\/0-9]+" .scheme.link
+  hilight .hilight.md 0 "ftp://[-@~_a-zA-Z#%.:\\/0-9]+"      .scheme.link
+  hilight .hilight.md 0 "ftps://[-@~_a-zA-Z#%.:\\/0-9]+"     .scheme.link
+  hilight .hilight.md 0 "mailto:[-@~_a-zA-Z#%.:\\/0-9]+"     .scheme.link
+  hilight .hilight.md 0 "news:[-@~_a-zA-Z#%.:\\/0-9]+"       .scheme.link
   ; bullet and item lists
   hilight .hilight.md 0x20 "\\-\\} "                   .scheme.keyword
   hilight .hilight.md 0x20 "\\d+\\.\\} "               .scheme.keyword

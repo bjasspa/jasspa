@@ -145,7 +145,7 @@ set-variable .fhook-scheme.comment "|;||;|; | ;|r|"
   hilight   .hilight.scheme 1 "letrec"                         .scheme.keyword
   hilight   .hilight.scheme 1 "letrec-syntax"                  .scheme.keyword
   hilight   .hilight.scheme 1 "list"                           .scheme.keyword
-  hilight   .hilight.scheme 1 "list->string[ \\t]+string-copy" .scheme.keyword
+  hilight   .hilight.scheme 1 "list->string[ \t]+string-copy"  .scheme.keyword
   hilight   .hilight.scheme 1 "list->vector"                   .scheme.keyword
   hilight   .hilight.scheme 1 "list-ref"                       .scheme.keyword
   hilight   .hilight.scheme 1 "list-tail"                      .scheme.keyword
@@ -187,7 +187,7 @@ set-variable .fhook-scheme.comment "|;||;|; | ;|r|"
   hilight   .hilight.scheme 1 "quotient"                       .scheme.keyword
   hilight   .hilight.scheme 1 "rational?"                      .scheme.keyword
   hilight   .hilight.scheme 1 "rationalize"                    .scheme.keyword
-  hilight   .hilight.scheme 1 "read[ \\t]+read-char"           .scheme.keyword
+  hilight   .hilight.scheme 1 "read[ \t]+read-char"            .scheme.keyword
   hilight   .hilight.scheme 1 "real-part"                      .scheme.keyword
   hilight   .hilight.scheme 1 "real?"                          .scheme.keyword
   hilight   .hilight.scheme 1 "remainder"                      .scheme.keyword

@@ -516,7 +516,7 @@ windowGotoEob(int f, int n)
     return meTRUE;
 }
 
-#if	MEOPT_WORDPRO
+#if MEOPT_WORDPRO
 
 /* go back to the beginning of the current paragraph here we look for a
  * <NL><NL> or <NL><TAB> or <NL><SPACE> combination to delimit the beginning

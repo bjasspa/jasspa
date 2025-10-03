@@ -176,7 +176,7 @@ set-variable .fhook-java.item-list-r2 "Clss \CCb\\2\CCA"
   ; JavaDoc parameter hilighting space.
   0 hilight .hilight.pjavadoc 2 50 .scheme.error
   ; Hilight the next word and finish.
-  hilight .hilight.pjavadoc 0x80 "[#a-zA-Z][\\.#a-zA-Z0-9(),]*" .hilight.javadoc .scheme.prepro
+  hilight .hilight.pjavadoc 0x80 "[#a-zA-Z][.#a-zA-Z0-9(),]*" .hilight.javadoc .scheme.prepro
   ; We must return to Java when we see the close of comment "*/"
   hilight .hilight.pjavadoc 0x80 "\\*/" .hilight.java .scheme.error
 !endif
@@ -222,7 +222,7 @@ set-variable .fhook-java.item-list-r2 "Clss \CCb\\2\CCA"
     indent .hilight.java n "(" 3/2t
     indent .hilight.java o ")" -3/2t
     ; line continuation
-    indent .hilight.java s "^\\s*[\\.\\+-/%][^\\*/]" t
+    indent .hilight.java s "^\\s*[.+-/%][^*/]" t
     ; switch to comment indentation mode
     indent .indent.javaT t "/\\*"   .indent.java-comm
     indent .hilight.java  x "/\\*" 1 .indent.java-comm

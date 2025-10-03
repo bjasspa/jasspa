@@ -3519,7 +3519,7 @@ get_flag:
                     }
                     else
                     {
-#ifdef MEOPT_TFS
+#if MEOPT_TFS
                         v1 = (ftype & meIOTYPE_TFS) ? 'T':'L';
 #else
                         v1 = 'L';
