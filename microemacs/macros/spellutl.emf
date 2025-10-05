@@ -148,8 +148,7 @@ define-macro spell-check-guess
           !elif &sin " " #l5
           !elif &not &sin "-" #l5
             set-variable #g0 #l3
-            ml-write &spr "[Bad word returned in guess list: %s]" #l5
-            !abort
+            -8 ml-write &spr "[Bad word returned in guess list: %s]" #l5
           !endif
         !done
       !endif

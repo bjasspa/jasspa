@@ -28,8 +28,6 @@ set-variable .fhook-sql.comment-2 "|rem|||rem |||"
     set-variable .hilight.sql &pinc .hilight.next 1
   !endif
   0 hilight .hilight.sql 3 50                $global-scheme
-  ; What is this ?? Remove it does not appear to be standard
-  ; hilight .hilight.sql 4 "<[[:alpha:]]" ">" "" .scheme.keyword
   hilight .hilight.sql 20 "/\\*" "*/" ""     .scheme.comment
   hilight .hilight.sql 2 "--"                .scheme.comment
   hilight .hilight.sql 0x22 "rem"            .scheme.comment
@@ -380,7 +378,7 @@ set-variable .fhook-sql.comment-2 "|rem|||rem |||"
   hilight .hilight.sql 1 "zone"              .scheme.keyword
   !if &band .hilight.flags 0x08
     ; hilight constants, e.g. numbers
-    hilight .hilight.sql 1 "[[:digit:]]+"  .scheme.constant
+    hilight .hilight.sql 1 "\\d+" .scheme.constant
   !endif
 !endif
 

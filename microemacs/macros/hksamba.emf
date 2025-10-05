@@ -381,13 +381,13 @@ set-variable .fhook-samba.collapse-mnext "-1"
   ; Special variables.
   hilight .hilight.samba    0 "%[SPugUGHvhmLMNpRdaIT]" .scheme.operator
   hilight .hilight.samba    4 "%\\$(" ")" "" .scheme.variable
-  hilight .hilight.samba    0 "="            .scheme.bold
+  hilight .hilight.samba    0 "="       .scheme.bold
   ; Numeric constants
   !if &band .hilight.flags 0x08
     ; hilight constants, e.g. numbers
-    hilight .hilight.samba 1 "[[:digit:]]+" .scheme.constant
-    hilight .hilight.samba 1 "-[[:digit:]]+" .scheme.constant
-    hilight .hilight.samba 1 "0[x][[:xdigit:]]+" .scheme.constant
+    hilight .hilight.samba 1 "\\d+"     .scheme.constant
+    hilight .hilight.samba 1 "-\\d+"    .scheme.constant
+    hilight .hilight.samba 1 "0[x]\\h+" .scheme.constant
   !endif
 !endif
 

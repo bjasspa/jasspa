@@ -224,7 +224,7 @@ set-variable .fhook-scheme.comment "|;||;|; | ;|r|"
   hilight   .hilight.scheme 1 "symbol?"                        .scheme.keyword
   hilight   .hilight.scheme 1 "syntax-rules"                   .scheme.keyword
   hilight   .hilight.scheme 1 "tan"                            .scheme.keyword
-  hilight   .hilight.scheme 1 "transcript-off[ \\t]+eval"      .scheme.keyword
+  hilight   .hilight.scheme 1 "transcript-off[ \t]+eval"       .scheme.keyword
   hilight   .hilight.scheme 1 "transcript-on"                  .scheme.keyword
   hilight   .hilight.scheme 1 "truncate"                       .scheme.keyword
   hilight   .hilight.scheme 1 "unquote"                        .scheme.keyword

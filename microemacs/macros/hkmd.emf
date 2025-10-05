@@ -53,7 +53,7 @@ set-variable .fhook-md.item-list-r3 "H2 \CCb\\1\CCA"
   hilight .hilight.md 2 "^#"            .scheme.header
   hilight .hilight.md 4 "\"" "\"" "\\"  .scheme.string
   ;hilight .hilight.md 0 "'[^']+'"       .scheme.quote
-  hilight .hilight.md 0x890 "\\\\\\}[-[\\\\\\x5d`*_{}<>()#+.!|]" .hilight.mdE .scheme.hide
+  hilight .hilight.md 0x890 "\\\\\\}[-[-\\]`*_{}<>()#+.!|]" .hilight.mdE .scheme.hide
 
   hilight .hilight.md 0x890 "\\*\\}\\S" .hilight.mdI .scheme.hide
   hilight .hilight.md 0x890 "\\W\\{_\\}\\S" .hilight.mdI .scheme.hide
@@ -136,7 +136,6 @@ set-variable .fhook-md.item-list-r3 "H2 \CCb\\1\CCA"
 
   ; Maths formulae blocks
   hilight .hilight.md 4 "\\\\(" "\\\\)" "\\"    .scheme.quote
-  hilight .hilight.md 4 "\\\\\\[" "\\\\]" "\\"  .scheme.quote
 
   ; Allow inserts into the markdown mode. You may add to the inserts in your mymd.emf file
   0 define-macro md-add-file-support

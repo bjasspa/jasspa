@@ -258,9 +258,9 @@ set-variable .fhook-apache.collapse-mnext "-1"
   ; Numeric constants
   !if &band .hilight.flags 0x08
     ; hilight constants, e.g. numbers
-    hilight .hilight.apache 1 "[[:digit:]]+" .scheme.constant
-    hilight .hilight.apache 1 "-[[:digit:]]+" .scheme.constant
-    hilight .hilight.apache 1 "0[x][[:xdigit:]]+" .scheme.constant
+    hilight .hilight.apache 1 "\\d+" .scheme.constant
+    hilight .hilight.apache 1 "-\\d+" .scheme.constant
+    hilight .hilight.apache 1 "0[x]\\h+" .scheme.constant
   !endif
 !endif
 
