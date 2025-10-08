@@ -27,7 +27,7 @@ jobs:
            uname -a
            echo INFO: sw_vers
            sw_vers
-           brew add brew tap bjasspa/jasspa
+           brew tap bjasspa/jasspa
            brew install microemacs
            mec -V
         
