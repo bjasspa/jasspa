@@ -27,7 +27,8 @@ jobs:
            uname -a
            echo INFO: sw_vers
            sw_vers
-           sudo chown -R $(whoami) /opt/homebrew
+           sudo chown -R $(whoami) /opt/homebrew/
+           sudo chown -R $(whoami) /Users/runner/Library/Caches/Homebrew
            brew tap bjasspa/jasspa
            brew install microemacs
            mec -V
