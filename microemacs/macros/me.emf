@@ -144,6 +144,7 @@ add-file-hook ".scm .sch" fhook-scheme
 add-file-hook ".mp .mf" fhook-meta
 add-file-hook ".m4" fhook-m4
 add-file-hook ".md .tmd .rmd" fhook-md md-to-html md-to-htm md-to-latex md-process
+add-file-hook ".qd" fhook-md
 add-file-hook ".texi" fhook-texi
 add-file-hook ".idl" fhook-idl
 add-file-hook ".info dir" fhook-info info info-on info-goto-link

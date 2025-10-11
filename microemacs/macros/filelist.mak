@@ -122,7 +122,7 @@ ETFS=	ada.etf		adoc.etf	asmx86.etf	asn1.etf	\
 	makefile.etf	md.etf		mhg.etf		mod2.etf	\
 	newcomp.etf	newuser.etf	nroff.etf	octave.etf	\
 	pascal.etf	perl.etf	php.etf		pls.etf		\
-	ps1.etf		psf.etf		python.etf	\
+	ps1.etf		psf.etf		python.etf	qd.etf		\
 	rd.etf		rmd.etf		ruby.etf	rul.etf		\
 	rust.etf	shell.etf	spec.etf	sql.etf		\
 	tcl.etf		typst.etf	\

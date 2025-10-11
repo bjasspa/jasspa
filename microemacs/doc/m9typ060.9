@@ -7,12 +7,16 @@
 .\"  Created By    : Detlef Groth
 .\"  Created       : Tue Jul 29 21:00:00 2025
 .\"
-.Id $Id: m9typ060.9,v 1.2 2025/09/19 08:53:02 jon Exp $
+.Id $Id: m9typ060.9,v 1.2 2025/10/11 17:18:19 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH markdown 9
 .XI markdown - "Markdown Markup File"
+.XI rmarkdown - "R-Markdown Markup File"
+.XI quarkdown - "Quarkdown Markup File"
 .XI md - "Markdown Markup File"
+.XI qd - "Quarkdown Markup File"
+.XI rmd - "R-Markdown Markup File"
 .SH SYNOPSIS
 md \- Markdown Markup File.
 .SH FILES
@@ -25,10 +29,16 @@ md \- Markdown Markup File.
 .br
 .B md.etf
 \- Markdown template file
+.br
+.B qd.etf
+\- Quarkdown template file
+.br
+.B rmd.etf
+\- R-Markdown template file
 .ad
-.SH EXTENSIONS
+.SH EXTENSIONS	
 .na
-\fB.md\fR, \fB.rmd\fR, \fB.tmd\fR \- Markdown files 
+\fB.md\fR, \fB.qd\fR  \fB.rmd\fR, \fB.tmd\fR \- Markdown, R-Markdown and Quarkdown files 
 .ad
 .SH DESCRIPTION
 The \fBMarkdown\fR file hook provides a editing  environment for Markdown
@@ -37,7 +47,9 @@ outline using  item-list and  abbreviations.  Fenced code blocks within triple
 backticks can be highlighted using the declared code block language.
 .PP
 File  recognition  is performed  using the standard file  extension  \fB.md\fR,
-\fB.tmd\fR or \fB.rmd\fR.
+\fB.tmd\fR,  \fB.rmd\fR or \fB.qd\fR. The \fB.qd\fR file extension is reserved
+for Quarkdown  files which  provided a few more  highlightings  for quaurkdown
+commands at the beginning of a line starting with a dot. 
 .IP "\fBAbbreviations\fR"
 The  installation  comes with a default  abbreviation  file for Markdown code  editing
 which  can  be  used  by  writing  short   abbreviations   like   "\fBh1\fR"
@@ -92,10 +104,12 @@ test = function () {
 .SH "SEE ALSO"
 .na
 .Ht abbrev-list 3 ,
+.Ht adoc 9 ,
 .Ht collapse-all 3 ,
 .Ht collapse-current 3 ,
 .Ht expand-abbrev-handle 3 ,
 .Ht item-list 3 ,
+.Ht typst 9 ,
 .Ht wiki 9 .
 .sp 1
 .Hl "Supported File Types" FileTypes -
