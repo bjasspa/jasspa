@@ -1,0 +1,162 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2025 JASSPA (www.jasspa.com), Detlef Groth
+; See the file me.emf for copying and conditions.
+;
+; Created:     2025-10-08
+; Synopsis:    Nim Language hook - https://nim-lang.org/
+;              curl https://nim-lang.org/choosenim/init.sh -sSf | sh
+;              nimble install nph  ## source code formatter
+;              nimble install classes ## Python like OO
+; Author:     Detlef Groth, University of Potsdam
+;
+define-macro fhook-nim
+    set-variable $buffer-mask "luh1"
+    @# buffer-init "nim"
+    set-variable $buffer-indent-width 2
+    buffer-init-hooks
+!emacro
+
+; buffer-init variables
+set-variable .fhook-nim.setup &reg "/history/fhook/nim" "bfghinopx"
+set-variable .fhook-nim.setup-mask "aefghikmnoptux"
+set-variable .fhook-nim.comment "|#||#|# | #|r|"
+
+; Set up collapse for nim
+set-variable .fhook-nim.collapse-open  "^\\(type \\|proc \\)"
+set-variable .fhook-nim.collapse-close "^[a-z]\\|\\'"
+set-variable .fhook-nim.collapse-mclose "0"
+set-variable .fhook-nim.collapse-mnext "-1"
+
+; setup item-list
+set-variable .fhook-nim.item-list-s1 "^[ \t]*proc[ \t]+\\(\\w+\\)"
+set-variable .fhook-nim.item-list-r1 "Proc \CCb\\1\CCA"
+set-variable .fhook-nim.item-list-s2 "^[ \t]*\\(\\w+\\).+=.+[ \t]*object"
+set-variable .fhook-nim.item-list-r2 "Type \CCb\\1\CCA"
+set-variable .fhook-nim.item-list-s3 "^class[ \t]+\\(\\w+\\).*:"
+set-variable .fhook-nim.item-list-r3 "Clss \CCb\\1\CCA"
+set-variable .fhook-nim.item-list-s4 "^[ \t]+method[ \t]+\\(\\w+\\).+:"
+set-variable .fhook-nim.item-list-r4 "Meth \CCb\\1\CCA"
+set-variable .fhook-nim.item-list-s5 "^[ \t]*macro[ \t]+\\(\\w+\\)"
+set-variable .fhook-nim.item-list-r5 "Macr \CCb\\1\CCA"
+
+!if &and &sin "h" .fhook-nim.setup &band .hilight.flags 0x02
+    !if &not &exist .hilight.nim
+        set-variable .hilight.nim &pinc .hilight.next 1
+    !endif
+    0 hilight .hilight.nim 0                 $global-scheme
+    hilight .hilight.nim 2 "#"               .scheme.comment
+    hilight .hilight.nim 4 "#\\[" "\\]#" ""  .scheme.comment
+    hilight .hilight.nim 2 "^#!"             .scheme.header
+    hilight .hilight.nim 4 "\"" "\"" "\\"    .scheme.string
+    ; Quote
+    hilight .hilight.nim 4 "'" "'" "\\"      .scheme.quote
+    ; Variables
+    hilight .hilight.nim 1 "isMainModule"    .scheme.variable
+    ; Keywords
+    hilight .hilight.nim 1 "addr"       .scheme.keyword
+    hilight .hilight.nim 1 "and"        .scheme.keyword
+    hilight .hilight.nim 1 "as"         .scheme.keyword
+    hilight .hilight.nim 1 "asm"        .scheme.keyword
+    hilight .hilight.nim 1 "bind"       .scheme.keyword
+    hilight .hilight.nim 1 "block"      .scheme.keyword
+    hilight .hilight.nim 1 "break"      .scheme.keyword
+    hilight .hilight.nim 1 "case"       .scheme.keyword
+    hilight .hilight.nim 1 "cast"       .scheme.keyword
+    hilight .hilight.nim 1 "class"      .scheme.keyword ; https://github.com/jjv360/nim-classes
+    hilight .hilight.nim 1 "concept"    .scheme.keyword
+    hilight .hilight.nim 1 "const"      .scheme.keyword
+    hilight .hilight.nim 1 "continue"   .scheme.keyword
+    hilight .hilight.nim 1 "converter"  .scheme.keyword
+    hilight .hilight.nim 1 "defer"      .scheme.keyword
+    hilight .hilight.nim 1 "discard"    .scheme.keyword
+    hilight .hilight.nim 1 "distinct"   .scheme.keyword
+    hilight .hilight.nim 1 "div"        .scheme.keyword
+    hilight .hilight.nim 1 "do"         .scheme.keyword
+    hilight .hilight.nim 1 "elif"       .scheme.keyword
+    hilight .hilight.nim 1 "else"       .scheme.keyword
+    hilight .hilight.nim 1 "end"        .scheme.keyword
+    hilight .hilight.nim 1 "enum"       .scheme.keyword
+    hilight .hilight.nim 1 "except"     .scheme.keyword
+    hilight .hilight.nim 1 "export"     .scheme.keyword
+    hilight .hilight.nim 1 "finally"    .scheme.keyword
+    hilight .hilight.nim 1 "for"        .scheme.keyword
+    hilight .hilight.nim 1 "from"       .scheme.keyword
+    hilight .hilight.nim 1 "func"       .scheme.keyword
+    hilight .hilight.nim 1 "if"         .scheme.keyword
+    hilight .hilight.nim 2 "^import"    .scheme.prepro
+    hilight .hilight.nim 1 "in"         .scheme.keyword
+    hilight .hilight.nim 1 "include"    .scheme.keyword
+    hilight .hilight.nim 1 "interface"  .scheme.keyword
+    hilight .hilight.nim 1 "is"         .scheme.keyword
+    hilight .hilight.nim 1 "isnot"      .scheme.keyword
+    hilight .hilight.nim 1 "iterator"   .scheme.keyword
+    hilight .hilight.nim 1 "let"        .scheme.keyword
+    hilight .hilight.nim 1 "macro"      .scheme.keyword
+    hilight .hilight.nim 1 "method"     .scheme.keyword
+    hilight .hilight.nim 1 "mixin"      .scheme.keyword
+    hilight .hilight.nim 1 "mod"        .scheme.keyword
+    hilight .hilight.nim 1 "nil"        .scheme.keyword
+    hilight .hilight.nim 1 "not"        .scheme.keyword
+    hilight .hilight.nim 1 "notin"      .scheme.keyword
+    hilight .hilight.nim 1 "object"     .scheme.keyword
+    hilight .hilight.nim 1 "of"         .scheme.keyword
+    hilight .hilight.nim 1 "or"         .scheme.keyword
+    hilight .hilight.nim 1 "out"        .scheme.keyword
+    hilight .hilight.nim 1 "proc"       .scheme.keyword
+    hilight .hilight.nim 1 "ptr"        .scheme.keyword
+    hilight .hilight.nim 1 "raise"      .scheme.keyword
+    hilight .hilight.nim 1 "ref"        .scheme.keyword
+    hilight .hilight.nim 1 "return"     .scheme.keyword
+    hilight .hilight.nim 1 "shl"        .scheme.keyword
+    hilight .hilight.nim 1 "shr"        .scheme.keyword
+    hilight .hilight.nim 1 "static"     .scheme.keyword
+    hilight .hilight.nim 1 "template"   .scheme.keyword
+    hilight .hilight.nim 1 "try"        .scheme.keyword
+    hilight .hilight.nim 1 "tuple"      .scheme.keyword
+    hilight .hilight.nim 1 "type"       .scheme.keyword
+    hilight .hilight.nim 1 "using"      .scheme.keyword
+    hilight .hilight.nim 1 "var"        .scheme.keyword
+    hilight .hilight.nim 1 "when"       .scheme.keyword
+    hilight .hilight.nim 1 "while"      .scheme.keyword
+    hilight .hilight.nim 1 "xor"        .scheme.keyword
+    hilight .hilight.nim 1 "yield"      .scheme.keyword
+    ; types
+    hilight .hilight.nim 1 "float"      .scheme.type
+    hilight .hilight.nim 1 "float32"    .scheme.type
+    hilight .hilight.nim 1 "float64"    .scheme.type
+    hilight .hilight.nim 1 "int"        .scheme.type
+    hilight .hilight.nim 1 "int8"       .scheme.type
+    hilight .hilight.nim 1 "int16"      .scheme.type
+    hilight .hilight.nim 1 "int32"      .scheme.type
+    hilight .hilight.nim 1 "int64"      .scheme.type
+    hilight .hilight.nim 1 "uint"       .scheme.type
+    hilight .hilight.nim 1 "uint8"      .scheme.type
+    hilight .hilight.nim 1 "uint16"     .scheme.type
+    hilight .hilight.nim 1 "uint32"     .scheme.type
+    hilight .hilight.nim 1 "uint64"     .scheme.type
+    hilight .hilight.nim 1 "false"      .scheme.type
+    hilight .hilight.nim 1 "true"       .scheme.type
+    hilight .hilight.nim 1 "char"       .scheme.type
+    hilight .hilight.nim 1 "string"     .scheme.type
+    hilight .hilight.nim 1 "cstring"    .scheme.type
+    hilight .hilight.nim 1 "array"      .scheme.type
+    hilight .hilight.nim 1 "openarray"  .scheme.type
+    hilight .hilight.nim 1 "seq"        .scheme.type
+    hilight .hilight.nim 1 "varargs"    .scheme.type
+    hilight .hilight.nim 1 "File"       .scheme.type
+    hilight .hilight.nim 1 "stdin"      .scheme.prepro
+    hilight .hilight.nim 1 "stdout"     .scheme.prepro
+    hilight .hilight.nim 1 "stderr"     .scheme.prepro
+!endif
+
+add-next-line "*nim-exec*" "^%f(%l, \\d+).+"
+add-next-line "*nim-lint*" "^%f(%l, \\d+).+"
+
+set-variable .fhook-nim.coms    "\bnim\b"
+set-variable .fhook-nim.exec1   "\b%v[com]\b\b\b\b%\"%v[com]%\" r --verbosity:0 %\"%f%\" %v[args|20|Additional command-line arguments|]\b"
+set-variable .fhook-nim.lint1   "\b%v[com]\b\b\b\b%\"%v[com]%\" compile --verbosity:0 %\"%f%\"\bcompile\b"
+set-variable .fhook-nim.format1 "\bnph\bnph --version\b0\b\bnph %\"%f%\"\bnph\b"
+set-variable .fhook-nim.format2 "\bnimpretty\bnimpretty --version\b0\b\bnimpretty %\"%f%\"\bnimpretty\b"
+
+buffer-init-fhook "nim"
