@@ -24,7 +24,7 @@ define-macro narrow-search-forward
     set-variable #l0 @ml15 "NSearch" @h4 0
   !endif
   !if &not &bmod "narrow"
-    @# search-forward #l0 @nma
+    @# search-forward #l0 @mna
     !return
   !endif
   set-variable #l1 &bmod "view"
@@ -34,7 +34,7 @@ define-macro narrow-search-forward
   1 buffer-mode undo
   insert-string ""
   1 narrow-buffer
-  !force !force search-forward #l0 @nma
+  !force !force search-forward #l0 @mna
   !if &set #l4 $status
     -2 show-region
     set-variable #l5 $window-aline
@@ -47,7 +47,7 @@ define-macro narrow-search-forward
   !if #l4
     set-variable $window-aline #l5
     set-variable $window-col #l6
-    !force !force -1 search-forward #l0 @nma
+    !force !force -1 search-forward #l0 @mna
     !return
   !endif
   ml-write "[Not Found]"
@@ -62,7 +62,7 @@ define-macro narrow-search-backward
     set-variable #l0 @ml15 "Reverse NSearch" @h4 0
   !endif
   !if &not &bmod "narrow"
-    @# search-backward #l0 @nma
+    @# search-backward #l0 @mna
     !return
   !endif
   set-variable #l1 &bmod "view"
@@ -72,7 +72,7 @@ define-macro narrow-search-backward
   1 buffer-mode undo
   insert-string ""
   1 narrow-buffer
-  !force !force search-backward #l0 @nma
+  !force !force search-backward #l0 @mna
   !if &set #l4 $status
     2 show-region
     set-variable #l5 $window-aline
@@ -85,7 +85,7 @@ define-macro narrow-search-backward
   !if #l4
     set-variable $window-aline #l5
     set-variable $window-col #l6
-    !force !force -1 search-backward #l0 @nma
+    !force !force -1 search-backward #l0 @mna
     !return
   !endif
   ml-write "[Not Found]"

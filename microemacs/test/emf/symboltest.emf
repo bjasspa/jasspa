@@ -1,0 +1,14 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2024 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; symboltest.emf: Create a simple OSD gui showing the first 32 chars 
+;
+-1 osd .osd.tmp
+osd .osd.tmp 0 "GntH" .scheme.osd-title "Symbol Test"
+set-variable #l0 0
+!repeat
+    osd .osd.tmp &add #l0 2 "Bdxfh" &itoa #l0 f void
+!until &equ &inc #l0 1 32
+!force !force .osd.tmp osd

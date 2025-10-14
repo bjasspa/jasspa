@@ -238,7 +238,7 @@ define-macro file-exec
     find-buffer "*hkft1*"
     set-variable $buffer-fname &cat #l2 &con &sin &rig #l2 -1 "\\/" "" "/"
   !endif
-  0x80 ipipe-shell-command #l6 &spr "*%s-exec*" #l0 file-tools-ipipe @nma
+  0x80 ipipe-shell-command #l6 &spr "*%s-exec*" #l0 file-tools-ipipe @mna
   !if &len #l2
     goto-position "\x82"
     !force 0 delete-buffer "*hkft1*"
@@ -330,7 +330,7 @@ define-macro file-lint
     find-buffer "*hkft1*"
     set-variable $buffer-fname &cat #l2 &con &sin &rig #l2 -1 "\\/" "" "/"
   !endif
-  0x80 ipipe-shell-command #l6 &spr "*%s-lint*" #l0 file-tools-ipipe @nma
+  0x80 ipipe-shell-command #l6 &spr "*%s-lint*" #l0 file-tools-ipipe @mna
   !if &len #l2
     goto-position "\x82"
     !force 0 delete-buffer "*hkft1*"

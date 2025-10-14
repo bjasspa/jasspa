@@ -38,7 +38,7 @@
     set-variable #l2 @mc5 "Save buffer first (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
     !tjump &iseq #l2 "y" 2
   !else
-    save-buffer @nma
+    save-buffer @mna
   !endif
   !if &seq "ERROR" &set #l4 &ind &set #l5 &spr ":md-%s-export-opts" #l0
     set-variable #l4 &set &ind #l5 ""
@@ -48,7 +48,7 @@
   set-variable #l3 &rig $buffer-fname &rsin "/" $buffer-fname
   set-variable #l2 &con &iseq ".md" &rig #l3 -3 &lef #l3 -3 #l3
   set-variable #l5 &spr "-t %s -o %s.%s" #l0 #l2 #l1
-  0x02 pipe-shell-command &spr "%s %s %s %s" %md-export-com #l5 #l4 #l3 "*md-export*" @nma
+  0x02 pipe-shell-command &spr "%s %s %s %s" %md-export-com #l5 #l4 #l3 "*md-export*" @mna
   !if &set #l4 $result
     popup-window "*md-export*"
     -8 ml-write &cat "Warning: MD export command exited with error code " #l4

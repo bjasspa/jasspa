@@ -108,7 +108,7 @@ define-macro compile
       set-variable #l0 &con &bmod "backup" 1 -1
       -1 buffer-mode "backup"
       1 buffer-mode "edit"
-      save-buffer @nma
+      save-buffer @mna
       #l0 buffer-mode "backup"
     !endif
     goto-position "\x81"

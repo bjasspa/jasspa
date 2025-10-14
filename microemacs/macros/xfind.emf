@@ -122,7 +122,7 @@ define-macro xfind
   ; the file is loaded (if found) then we delete the temporary popup window
   ; again.
   popup-window "*xfind-temp*"
-  !force find-file #l0 @nma
+  !force find-file #l0 @mna
   delete-buffer "*xfind-temp*"
 !emacro
 ; Handle a tar file being read.
