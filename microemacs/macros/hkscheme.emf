@@ -145,7 +145,7 @@ set-variable .fhook-scheme.comment "|;||;|; | ;|r|"
   hilight   .hilight.scheme 1 "letrec"                         .scheme.keyword
   hilight   .hilight.scheme 1 "letrec-syntax"                  .scheme.keyword
   hilight   .hilight.scheme 1 "list"                           .scheme.keyword
-  hilight   .hilight.scheme 1 "list->string[ \\t]+string-copy" .scheme.keyword
+  hilight   .hilight.scheme 1 "list->string[ \t]+string-copy"  .scheme.keyword
   hilight   .hilight.scheme 1 "list->vector"                   .scheme.keyword
   hilight   .hilight.scheme 1 "list-ref"                       .scheme.keyword
   hilight   .hilight.scheme 1 "list-tail"                      .scheme.keyword
@@ -187,7 +187,7 @@ set-variable .fhook-scheme.comment "|;||;|; | ;|r|"
   hilight   .hilight.scheme 1 "quotient"                       .scheme.keyword
   hilight   .hilight.scheme 1 "rational?"                      .scheme.keyword
   hilight   .hilight.scheme 1 "rationalize"                    .scheme.keyword
-  hilight   .hilight.scheme 1 "read[ \\t]+read-char"           .scheme.keyword
+  hilight   .hilight.scheme 1 "read[ \t]+read-char"            .scheme.keyword
   hilight   .hilight.scheme 1 "real-part"                      .scheme.keyword
   hilight   .hilight.scheme 1 "real?"                          .scheme.keyword
   hilight   .hilight.scheme 1 "remainder"                      .scheme.keyword
@@ -224,7 +224,7 @@ set-variable .fhook-scheme.comment "|;||;|; | ;|r|"
   hilight   .hilight.scheme 1 "symbol?"                        .scheme.keyword
   hilight   .hilight.scheme 1 "syntax-rules"                   .scheme.keyword
   hilight   .hilight.scheme 1 "tan"                            .scheme.keyword
-  hilight   .hilight.scheme 1 "transcript-off[ \\t]+eval"      .scheme.keyword
+  hilight   .hilight.scheme 1 "transcript-off[ \t]+eval"       .scheme.keyword
   hilight   .hilight.scheme 1 "transcript-on"                  .scheme.keyword
   hilight   .hilight.scheme 1 "truncate"                       .scheme.keyword
   hilight   .hilight.scheme 1 "unquote"                        .scheme.keyword

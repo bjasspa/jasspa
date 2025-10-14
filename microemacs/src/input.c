@@ -1758,7 +1758,7 @@ ml_yank:
                 TTbell();
             break;
 #endif
-#if MEOPT_MOUSE            
+#if MEOPT_MOUSE
         case CK_CTOMOUSE:
             /* a binding to set-cursor-to-mouse is used to handle mouse
              * events, needs to handle osd pick and normal completion lists */

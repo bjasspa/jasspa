@@ -66,7 +66,7 @@ add-color-scheme .scheme.quote 6 17 14 16 6 9 14 9 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.error 2 17 10 16 2 9 10 9 0 8 0 8 0 8 0 8
 ; Formatted Text
 add-color-scheme .scheme.header 4 17 12 16 4 9 12 9 1 9 1 9 1 9 1 9
-add-color-scheme .scheme.link 6 17 14 16 6 9 14 9 16 24 16 24 16 24 16 24
+add-color-scheme .scheme.link 6 17 14 16 14 9 14 9 16 24 16 24 16 24 16 24
 add-color-scheme .scheme.bold 7 17 15 16 7 9 15 9 1 9 1 9 1 9 1 9
 add-color-scheme .scheme.italic 3 17 11 16 3 9 11 9 2 10 2 10 2 10 2 10
 add-color-scheme .scheme.under 2 17 10 1 2 9 10 9 16 24 16 24 16 24 16 24
@@ -74,6 +74,7 @@ add-color-scheme .scheme.bold-italic 7 17 15 16 7 9 15 9 3 11 3 11 3 11 3 11
 add-color-scheme .scheme.bold-under 5 17 13 16 5 9 13 9 17 25 17 25 17 25 17 25
 add-color-scheme .scheme.italic-under 3 17 11 16 3 9 11 9 18 26 18 26 18 26 18 26
 add-color-scheme .scheme.bold-italic-under 7 17 15 16 7 9 15 9 19 27 19 27 19 27 19 27
+add-color-scheme .scheme.code 1 17 1 16 17 8 17 8 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.spell-error 2 17 10 16 2 9 10 9 0 8 0 8 0 8 0 8
 ; Directory Listings
 add-color-scheme .scheme.file 3 17 11 16 3 9 11 9 0 8 0 8 0 8 0 8

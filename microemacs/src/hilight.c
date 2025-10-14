@@ -396,55 +396,106 @@ meHiltItemCompile(meUByte *dest, meUByte **token,
         meUByte *s1, *dd ;
         meUByte tt, ii=0 ;
 
-        *dest++ = meCHAR_LEADER ;
-        tt = meHIL_TEST_VALID ;
+        *dest++ = meCHAR_LEADER;
+        tt = meHIL_TEST_VALID;
         if(*ss == '^')
         {
-            tt |= meHIL_TEST_INVERT ;
-            ss++ ;
+            tt |= meHIL_TEST_INVERT;
+            ss++;
         }
         if(((cc = *ss++) == '[') && (*ss == ':'))
         {
-            s1 = ss ;
+            s1 = ss;
             while(*++s1 != '\0')
             {
                 if(*s1 == ']')
                 {
                     if((s1[1] == ']') && (*--s1 == ':'))
                     {
-                        *s1 = '\0' ;
+                        *s1 = '\0';
                         for(ii=0 ; ii<meHIL_TEST_NOCLASS ; ii++)
                             if(!meStrcmp(ss+1,meHilTestNames[ii]))
-                                break ;
+                                break;
                         if(ii == meHIL_TEST_NOCLASS)
                         {
                             /* this is an unknown char class return an error */
                             mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown hilight class %s]",ss+1);
-                            *s1 = ':' ;
-                            return NULL ;
+                            *s1 = ':';
+                            return NULL;
                         }
-                        *s1 = ':' ;
-                        ss = s1+3 ;
-                        ii += meHIL_TEST_SPACE ;
+                        *s1 = ':';
+                        ss = s1+3;
+                        ii += meHIL_TEST_SPACE;
                     }
-                    break ;
+                    break;
                 }
             }
         }
-        *dest++ = ((ii == 0) ? meHIL_TEST_CLASS:ii)|tt ;
-        *dest++ = meHIL_TEST_DEF_GROUP ;
+        *dest++ = ((ii == 0) ? meHIL_TEST_CLASS:ii)|tt;
+        *dest++ = meHIL_TEST_DEF_GROUP;
         if(ii == 0)
         {
-            dd = dest++ ;
+            static char *classChar="aAdDhHlLmMsSuUwW";
+            static char *bkslshFChr="efgnrtv";
+            static char *bkslshTChr="\x1b\x0c\x07\x0a\x0d\x09\x0b";
+            dd = dest++;
             do {
                 if(cc == '\0')
                 {
-                    mlwrite(MWABORT|MWWAIT,(meUByte *)"[Open []");
-                    return NULL ;
+                    mlwrite(MWABORT|MWWAIT,(meUByte *)"[Open class [...]");
+                    return NULL;
                 }
-                *dest++ = cc ;
-            } while((cc=*ss++) != ']') ;
-            *dd = (meUByte) (dest-dd-1) ;
+                else if(cc == '\\')
+                {
+                    cc = *ss++;
+                    if((cc == '\0') || (strchr(classChar,cc) != NULL) ||
+                       ((cc == 'x') && (!isXDigit(ss[0]) || !isXDigit(ss[1]))))
+                    {
+                        mlwrite(MWABORT|MWWAIT,(meUByte *)"[Bad class ([...])]");
+                        return NULL;
+                    }
+                    if(cc == 'x')
+                    {
+                        cc = *ss++;
+                        tt = *ss++;
+                        cc = (hexToNum(cc) << 4) | hexToNum(tt);
+                    }
+                    else if((s1 = meStrchr(bkslshFChr,cc)) != NULL)
+                        cc = bkslshTChr[((size_t) s1) - ((size_t) bkslshFChr)];
+                }
+                *dest++ = cc;
+                if(((cc=*ss++) == '-') && (*ss != ']'))
+                {
+                    cc = *ss++;
+                    if(cc == '\\')
+                    {
+                        cc = *ss++;
+                        if((cc == '\0') || (strchr(classChar,cc) != NULL) ||
+                           ((cc == 'x') && (!isXDigit(ss[0]) || !isXDigit(ss[1]))))
+                        {
+                            mlwrite(MWABORT|MWWAIT,(meUByte *)"[Bad class ([...])]");
+                            return NULL;
+                        }
+                        if(cc == 'x')
+                        {
+                            cc = *ss++;
+                            tt = *ss++;
+                            cc = (hexToNum(cc) << 4) | hexToNum(tt);
+                        }
+                        else if((s1 = meStrchr(bkslshFChr,cc)) != NULL)
+                            cc = bkslshTChr[((size_t) s1) - ((size_t) bkslshFChr)];
+                    }
+                    if(dest[-1] > cc)
+                    {
+                        mlwrite(MWABORT|MWWAIT,(meUByte *)"[Bad class ([...])]");
+                        return NULL;
+                    }
+                    *dest++ = '-';
+                    *dest++ = cc;
+                    cc = *ss++;
+                }
+            } while(cc != ']');
+            *dd = (meUByte) (dest-dd-1);
         }
     }
     else if(cc == '\\')
@@ -1111,44 +1162,43 @@ get_scheme:
 
 #define findTokenCharTest(ret,lastChar,srcText,tokTest,testStr)              \
 do {                                                                         \
-    meUByte *__ts, ftctcc ;                                                  \
+    meUByte *__ts, ftctcc;                                                   \
     lastChar='\0';                                                           \
-    if((ftctcc=*srcText++) == '\0') ftctcc=meCHAR_NL ;                       \
+    if((ftctcc=*srcText++) == '\0') ftctcc=meCHAR_NL;                        \
     switch(tokTest & meHIL_TEST_MASK)                                        \
     {                                                                        \
     case meHIL_TEST_BACKREF:                                                 \
-        __ts = testStr ;                                                     \
-        ret = (varTable[*testStr++] == ftctcc) ;                             \
-        break ;                                                              \
+        __ts = testStr;                                                      \
+        ret = (varTable[*testStr++] == ftctcc);                              \
+        break;                                                               \
     case meHIL_TEST_SINGLE:                                                  \
-        __ts = testStr ;                                                     \
-        ret = (*testStr++ == ftctcc) ;                                       \
-        break ;                                                              \
+        __ts = testStr;                                                      \
+        ret = (*testStr++ == ftctcc);                                        \
+        break;                                                               \
     case meHIL_TEST_CLASS:                                                   \
         {                                                                    \
-            meUByte rc, nrc ;                                                \
-            __ts = testStr ;                                                 \
+            meUByte rc, nrc;                                                 \
+            __ts = testStr;                                                  \
             for(ret=*testStr++ ; ret>0 ; ret--)                              \
             {                                                                \
-                rc=*testStr++ ;                                              \
-                nrc = *testStr ;                                             \
-                if((nrc == '-') && (ret > 1))                                \
+                rc=*testStr++;                                               \
+                if((ret > 2) && (*testStr == '-'))                           \
                 {                                                            \
                     /* range */                                              \
-                    testStr++ ;                                              \
-                    nrc = *testStr++ ;                                       \
-                    ret -= 2 ;                                               \
+                    testStr++;                                               \
+                    nrc = *testStr++;                                        \
+                    ret -= 2;                                                \
                     if((ftctcc >= rc) && (ftctcc <= nrc))                    \
                     {                                                        \
-                        testStr += ret - 1 ;                                 \
-                        break ;                                              \
+                        testStr += ret - 1;                                  \
+                        break;                                               \
                     }                                                        \
                 }                                                            \
                 /* single char compare */                                    \
                 else if(ftctcc == rc)                                        \
                 {                                                            \
-                    testStr += ret - 1 ;                                     \
-                    break ;                                                  \
+                    testStr += ret - 1;                                      \
+                    break;                                                   \
                 }                                                            \
             }                                                                \
             break ;                                                          \
@@ -2873,14 +2923,14 @@ indentLine(int *inComment)
     /* the flag is used only to set the current line, do the select hilighting
      * and flag the next line as changed if in a bracket, therefore init to
      * 0 and forget about */
-    vps[0].wind = wp ;
-    vps[0].line = lp ;
-    vps[0].hilno = indent ;
-    vps[0].bracket = NULL ;
-    vps[0].flag = 0 ;
+    vps[0].flag = 0;
+    vps[0].wind = wp;
+    vps[0].line = lp;
+    vps[1].hilno = vps[0].hilno = indent;
+    vps[1].bracket = vps[0].bracket = NULL;
 
-    noColChng = hilightLine(vps,0) ;
-    blkp = hilBlock + 1 ;
+    noColChng = hilightLine(vps,0);
+    blkp = hilBlock + 1;
     /* printf("Got %d colour changes\n",noColChng);*/
     /* for(ii=0 ; ii<noColChng ; ii++)*/
     /*   printf("  CColour change %d is to 0x%x at column %d\n",ii,blkp[ii].scheme,blkp[ii].column);*/

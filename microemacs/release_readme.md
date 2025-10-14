@@ -96,7 +96,7 @@ To build a more complete, native environment do the following:
 
     `~/MicroEmacs/bin` - containing platform directories for each of the binary packages you downloaded and extracted.
 
-    `~/MicroEmacs/macros` - containing many macro files (*.emf), the me.ehf help file and other supporting files.
+    `~/MicroEmacs/macros` - containing many macro files (\*.emf), the me.ehf help file and other supporting files.
 
     `~/MicroEmacs/spelling` - containing the dictionaries of the languages you downloaded.
 

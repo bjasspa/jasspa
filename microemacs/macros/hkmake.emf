@@ -28,7 +28,7 @@ set-variable .fhook-make.comment "|#||#|# | #|r|"
   0 hilight  .hilight.make 0                 $global-scheme
   hilight .hilight.make 0  ":"               .scheme.variable
   hilight .hilight.make 4  ":\\{\"" "\"" "\\" .scheme.string
-  hilight .hilight.make 4  "[^\\]\\{\"" "\"" "\\" .scheme.string
+  hilight .hilight.make 4  "[^\\\\]\\{\"" "\"" "\\" .scheme.string
   hilight .hilight.make 0  "/\\*\\."         $global-scheme
   hilight .hilight.make 2  "#"               .scheme.comment
   hilight .hilight.make 4  "\\$(" ")" ""     .scheme.variable

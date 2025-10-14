@@ -328,28 +328,28 @@ set-variable .fhook-cfms.item-list-r1 "Func \CCb\\1\CCA"
   ; Include the base hilighting
   cfm-set-hilight .hilight.cfms
 
-  hilight .hilight.cfms 0x804 "`" "`" "\\"       .scheme.prepro
-  hilight .hilight.cfms 1    "<[^ \t\n>]*>"      .scheme.prepro
+  hilight .hilight.cfms 0x804 "`" "`" "\\"  .scheme.prepro
+  hilight .hilight.cfms 1    "<[^ \t\n>]*>" .scheme.prepro
   ; Keywords
-  hilight .hilight.cfms 1 "if"                   .scheme.keyword
-  hilight .hilight.cfms 1 "else"                 .scheme.keyword
-  hilight .hilight.cfms 1 "elseif"               .scheme.keyword
-  hilight .hilight.cfms 1 "while"                .scheme.keyword
-  hilight .hilight.cfms 1 "for"                  .scheme.keyword
+  hilight .hilight.cfms 1 "if"              .scheme.keyword
+  hilight .hilight.cfms 1 "else"            .scheme.keyword
+  hilight .hilight.cfms 1 "elseif"          .scheme.keyword
+  hilight .hilight.cfms 1 "while"           .scheme.keyword
+  hilight .hilight.cfms 1 "for"             .scheme.keyword
   ; Functions
-  hilight .hilight.cfms 1 "function"             .scheme.function
-  hilight .hilight.cfms 1 "return"               .scheme.keyword
+  hilight .hilight.cfms 1 "function"        .scheme.function
+  hilight .hilight.cfms 1 "return"          .scheme.keyword
 
   !if &band .hilight.flags 0x08
     ; hilight constants, e.g. numbers
-    hilight .hilight.cfms 1 "[[:digit:]]+"       .scheme.constant
-    hilight .hilight.cfms 1 "-[[:digit:]]+"      .scheme.constant
-    hilight .hilight.cfms 1 "0[xX][[:xdigit:]]+" .scheme.constant
+    hilight .hilight.cfms 1 "\\d+"          .scheme.constant
+    hilight .hilight.cfms 1 "-\\d+"         .scheme.constant
+    hilight .hilight.cfms 1 "0[xX]\\h+"     .scheme.constant
   !endif
 
   ; String hilighting
-  0 hilight .hilight.cfmsS 0                     .scheme.string
-  hilight .hilight.cfmsS 0    "\\\\."            .scheme.string
+  0 hilight .hilight.cfmsS 0                .scheme.string
+  hilight .hilight.cfmsS 0    "\\\\."       .scheme.string
   hilight .hilight.cfmsS 0x80 "\"" .hilight.cfms .scheme.string
   hilight .hilight.cfmsS 0xa80 "^\\s*\\{$" .hilight.cfmsS $global-scheme
   ; the next tag fixes hilighting problems caused by strings spanning
@@ -655,9 +655,9 @@ set-variable .fhook-cfms.item-list-r1 "Func \CCb\\1\CCA"
 
   !if &band .hilight.flags 0x08
     ; hilight constants, e.g. numbers
-    hilight .hilight.cfmsql 1 "[[:digit:]]+"       .scheme.constant
-    hilight .hilight.cfmsql 1 "-[[:digit:]]+"      .scheme.constant
-    hilight .hilight.cfmsql 1 "0[xX][[:xdigit:]]+" .scheme.constant
+    hilight .hilight.cfmsql 1 "\\d+"       .scheme.constant
+    hilight .hilight.cfmsql 1 "-\\d+"      .scheme.constant
+    hilight .hilight.cfmsql 1 "0[xX]\\h+"  .scheme.constant
   !endif
 
   0 indent .hilight.cfmsql 1 100

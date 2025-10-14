@@ -125,15 +125,15 @@ set-variable .fhook-ruby.item-list-r3 "Def \CCb\\1\CCA"
 
   !if &band .hilight.flags 0x08
     ; hilight constants, e.g. numbers
-    hilight .hilight.ruby 1 "[[:digit:]]+"       .scheme.constant
-    hilight .hilight.ruby 1 "-[[:digit:]]+"      .scheme.constant
-    hilight .hilight.ruby 1 "0[x][[:xdigit:]]+" .scheme.constant
+    hilight .hilight.ruby 1 "\\d+"     .scheme.constant
+    hilight .hilight.ruby 1 "-\\d+"    .scheme.constant
+    hilight .hilight.ruby 1 "0[x]\\h+" .scheme.constant
     ; Binary notation.
-    hilight .hilight.ruby 1 "0b[01]+" .scheme.constant
+    hilight .hilight.ruby 1 "0b[01]+"  .scheme.constant
     ; Allow numbers with underscore !
     hilight .hilight.ruby 1 "[0-9._]+" .scheme.constant
     ; Floating point number.
-    hilight .hilight.ruby 1 "[-+]?[0-9.]+e[-+]?[0-9]+" .scheme.constant
+    hilight .hilight.ruby 1 "[-+]?[0-9.]+e[-+]?\\d+" .scheme.constant
     ; ASCII Code
     hilight .hilight.ruby 1 "\\?[a-zA-z]" .scheme.constant
     ; Control-a

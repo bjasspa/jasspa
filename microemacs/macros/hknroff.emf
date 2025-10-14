@@ -72,13 +72,13 @@ set-variable .fhook-nroff.item-list-r1 "\\1  \CCb\\2\CCA"
     hilight #l1 0x040 "\\\\s0" ""               #l2
     hilight #l1 0x040 "\\\\ " " "               #l2
     hilight #l1 0x040 "\\\\-" "-"               #l2
-    hilight #l1 0x040 "\\\\s[-+][[:digit:]]" "" #l2
+    hilight #l1 0x040 "\\\\s[-+]\\d" ""         #l2
     hilight #l1 0     "\\\\\\*\\w"              .scheme.variable
     hilight #l1 0     "\\\\\\*(\\w\\w"          .scheme.variable
   !emacro
   0 hilight  .hilight.nroff 4                        $global-scheme
   hilight .hilight.nroff 0   "\\\\s0"                .scheme.variable
-  hilight .hilight.nroff 0   "\\\\s[-+][[:digit:]]"  .scheme.variable
+  hilight .hilight.nroff 0   "\\\\s[-+]\\d"          .scheme.variable
   hilight .hilight.nroff 0   "\\\\fP"                .scheme.variable
   hilight .hilight.nroff 0   "\\\\fI"                .scheme.variable
   hilight .hilight.nroff 0   "\\\\f2"                .scheme.variable

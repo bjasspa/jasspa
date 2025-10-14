@@ -1301,7 +1301,7 @@ loop_round:
                 status = domstore(tline) ;
             else
                 status = docmd(tline,tkn) ;
-#if     MEOPT_DEBUGM
+#if MEOPT_DEBUGM
             if(debug)
             {
                 macbug = debug ;
@@ -1435,7 +1435,7 @@ loop_round:
                 break;
             
             case DRWHILEF:
-                if((lpLStk[lpCnt] != NULL) && (lpFStk[lpCnt] == lp)) 
+                if((lpFStk[lpCnt] == lp) && (lpLStk[lpCnt] != NULL)) 
                 {
                     lp = lpLStk[lpCnt];
                     execlevel -= 2;
@@ -1466,7 +1466,7 @@ loop_round:
         {
             /* in any case set the buffer . */
             errorLine = lp;
-#if     MEOPT_DEBUGM
+#if MEOPT_DEBUGM
             if(macbug & 0x01)
             {
                 /* check if the failure is handled by a !force */
@@ -1484,7 +1484,7 @@ loop_round:
 #endif
             goto dobuf_exit ;
         }
-#if     MEOPT_DEBUGM
+#if MEOPT_DEBUGM
         if(macbug & 0x80)
         {
             errorLine = lp;

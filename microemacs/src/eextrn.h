@@ -198,7 +198,7 @@ extern	int	addColorScheme(int f, int n);
 #define addColor notAvailable
 #define addColorScheme notAvailable
 #endif
-extern  int     convertUserScheme(int n, int defaultScheme);
+extern  int     convertUserScheme(int n, int defaultStyle);
 extern  meUByte assessModeLine(meUByte *ml);
 extern  meUByte *windCurLineOffsetEval(meWindow *wp);
 extern  void    reframe(meWindow *wp);

@@ -54,9 +54,9 @@ define-macro create-app
     !iif &not $status  -10 ml-write "Error: Failed to download linux icons package."
     set-variable #l3 &set #l5 &cat "file:" &stat a $user-path
     !force 0xf7 copy-file &spr "tfs://%s?/.*" #l4 #l1
-    !iif &set #l0 $status  set-variable #l0 &lget &set #g0 $result 3
+    !iif &set #l0 $status  set-variable #l0 &lget $result 3
     ;!force 0x20 file-op #l4
-    !iif &not #l0  -10 ml-write &spr "Error: Failed to extract linux icons. %s%s" #g0 #l4
+    !iif &not #l0  -10 ml-write &spr "Error: Failed to extract linux icons. %s" #l4
     -2 ml-write "Successfully created Linux launcher - system may need reboot to update cache."
   !elif &seq $platform "macos"
     !iif &not &seq "D" &stat "t" "/Applications"  -10 ml-write "Error: Unknown macOS desktop type, cannot create app launcher."

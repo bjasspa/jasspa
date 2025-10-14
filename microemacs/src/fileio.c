@@ -1228,7 +1228,7 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
 int
 ffgetBuf(meIo *io,int offset, int len)
 {
-#ifdef MEOPT_TFS
+#if MEOPT_TFS
     if(ffUrlTypeIsTfs(io->type))
     {
         if((ffremain = tfs_fread(ffbuf+offset,len,io->tfsp)) <= 0)
@@ -1619,7 +1619,7 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
     }
     else if (ffUrlTypeIsTfs(io->type))
     {
-#ifdef MEOPT_TFS
+#if MEOPT_TFS
         tfsMount *tfsh;
         meUByte *fn;
         if((fn=meStrstr(fname,"?/")) != NULL)
@@ -2479,9 +2479,12 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
 {
     int rr=meTRUE, r1;
     
-    /* By now sfname & dfname should have had a 'file:' URL prefix removed */
-    meior.type = ffUrlGetType(sfname);
-    meAssert((meior.type & meIOTYPE_FILE) == 0);
+    if((dfname != NULL) || ((dFlags & (meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_STAT)) != 0))
+    {
+        /* By now sfname & dfname should have had a 'file:' URL prefix removed */
+        meior.type = ffUrlGetType(sfname);
+        meAssert((meior.type & meIOTYPE_FILE) == 0);
+    }
     if((dfname != NULL) && (dFlags & meRWFLAG_DELETE))
     {
         /* simply move the file if the source is to be deleted and they are regular files,

@@ -374,9 +374,9 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \CCb\\1\CCA"
 
   !if &band .hilight.flags 0x08
     ; hilight constants, e.g. numbers
-    hilight .hilight.tcl 1 "[[:digit:]]+"    .scheme.constant
-    hilight .hilight.tcl 1 "-[[:digit:]]+"   .scheme.constant
-    hilight .hilight.tcl 1 "0[xX][[:xdigit:]]+" .scheme.constant
+    hilight .hilight.tcl 1 "\\d+"      .scheme.constant
+    hilight .hilight.tcl 1 "-\\d+"     .scheme.constant
+    hilight .hilight.tcl 1 "0[xX]\\h+" .scheme.constant
   !endif
 !endif
 !if &sin "d" .fhook-tcl.setup

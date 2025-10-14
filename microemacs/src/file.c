@@ -130,7 +130,7 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
     ft = ffUrlGetType(file);
     if(ffUrlTypeIsHttpFtp(ft))
         return ft;
-#ifdef MEOPT_TFS
+#if MEOPT_TFS
     if(ffUrlTypeIsTfs(ft))
     {
         tfsStat tfs_statbuf;
@@ -3508,7 +3508,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
             }
         }
 #endif
-#ifdef MEOPT_TFS
+#if MEOPT_TFS
         if(ffUrlTypeIsTfs(ft))
         {
             tfsMount *tfsh;

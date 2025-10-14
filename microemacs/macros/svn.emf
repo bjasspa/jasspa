@@ -365,16 +365,13 @@ set-variable #l9 .svn.ccount
   !if &not $status
     set-variable .svn.cignrmsk ""
   !else
-    set-variable #g0 #l2
     set-variable #l2 &spr "\n%s\n\n" &rep &trb #l2 "\r\n" "\n"
-    set-variable #g1 #l2
     !if #l1
       set-variable #l0 0
       !while &les &pinc #l0 1 #l1
         !iif &not &lfin #l2 &set #l3 &ind &cat ".find-file.file" #l0  set-variable #l2 &spr "%s%s\n" #l2 #l3
       !done
     !endif
-    set-variable #g2 #l2
     set-variable .svn.cignrmsk &cat &trb #l2 "\n"
   !endif
 !emacro

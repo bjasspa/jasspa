@@ -35,7 +35,7 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
   hilight .hilight.enft  0x101 "*\\{-"         .scheme.dir-open
   hilight .hilight.enft  0x001 &cat #l0 "\\{-" .scheme.dir-open
   hilight .hilight.enft  0x001 &cat #l1 "\\{-" .scheme.dir-open
-  hilight .hilight.enft  0x44 " \"[[:xdigit:]]+\" = \"" " " "\"$" "" "" $global-scheme
+  hilight .hilight.enft  0x44 " \"\\h+\" = \"" " " "\"$" "" "" $global-scheme
 !endif
 
 0 define-macro mark-registry-tree

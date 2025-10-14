@@ -1,0 +1,35 @@
+name: Homebrew check on macos apple 64 (macos-latest)
+
+on:
+  workflow_dispatch:
+    inputs:
+      refToBuild:
+        description: 'Branch, tag or commit SHA1 to build'
+        default: ''
+        required: false
+        type: string
+
+      refToHelpAsset:
+        description: 'Run-ID of build with help-ehf asset (not used)'
+        default: ''
+        required: false
+        type: string
+
+jobs:
+  build:
+    runs-on: macos-latest
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+
+    steps:
+      - name: Check Brew install ME
+        run: |
+           echo INFO: uname -a
+           uname -a
+           echo INFO: sw_vers
+           sw_vers
+           sudo chown -R $(whoami) /opt/homebrew/
+           sudo chown -R $(whoami) /Users/runner/Library/Caches/Homebrew
+           brew tap bjasspa/jasspa
+           brew install microemacs
+           mec -V
+        

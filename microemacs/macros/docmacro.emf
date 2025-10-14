@@ -47,7 +47,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <250915.2114>
+;         > Modified:     <251005.1328>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -102,25 +102,25 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
   hilight .hilight.doc 0x21 "\\d+\\a)"                        .scheme.no1
   hilight .hilight.doc 1 "\\*[A-Za-z_]+\\*"                   .scheme.bold
   hilight .hilight.doc 1 "<[A-Za-z_]+>"                       .scheme.italic
-  hilight .hilight.doc 1 "_[A-Za-z0-9]+_"                     .scheme.under
+  hilight .hilight.doc 1 "_\\m+_"                             .scheme.under
   hilight .hilight.doc 0 "^\\s*\\[\\w*\\]"                    .scheme.no1
-  hilight .hilight.doc 0x22 "[0-9]+\\.[0-9.]*[ \t]+\\w"       .scheme.header
+  hilight .hilight.doc 0x22 "\\d+\\.[0-9.]*[ \t]+\\w"         .scheme.header
   hilight .hilight.doc 0x804 "\"" "\"" "\\"                   .scheme.string
   hilight .hilight.doc 0x804 "`" "'" ""                       .scheme.no1
   hilight .hilight.doc 0    "'.'"                             .scheme.quote
   hilight .hilight.doc 0    "'\\\\.'"                         .scheme.quote
-  hilight .hilight.doc 0x22 "^[ \t]*Appendix [[:alpha:]]"     .scheme.header
+  hilight .hilight.doc 0x22 "^[ \t]*Appendix \\a"             .scheme.header
   hilight .hilight.doc 0x22 "_\\W"                            .scheme.comment
   hilight .hilight.doc 0x22 ">"                               .scheme.comment
   hilight .hilight.doc 0x80 "^[ \t]+@" .hilight.doc1          .scheme.no2
   ; HTTP links etc.
-  hilight .hilight.doc 0 "file:[-@~_a-zA-Z#%=\\.:\\/0-9]+"    .scheme.link
-  hilight .hilight.doc 0 "http:[-@~_a-zA-Z#%?&=\\.:\\/0-9]+"  .scheme.link
-  hilight .hilight.doc 0 "https:[-@~_a-zA-Z#%?&=\\.:\\/0-9]+" .scheme.link
-  hilight .hilight.doc 0 "ftp:[-_a-zA-Z@%.:\\/0-9]+"          .scheme.link
-  hilight .hilight.doc 0 "ftps:[-_a-zA-Z@%.:\\/0-9]+"         .scheme.link
-  hilight .hilight.doc 0 "mailto:[-_a-zA-Z@%.:\\/0-9]+"       .scheme.link
-  hilight .hilight.doc 0 "news:[-_a-zA-Z@%.:\\\\/@0-9]+"      .scheme.link
+  hilight .hilight.doc 0 "file:[-@~_a-zA-Z#%=\\\\.:\\/0-9]+"  .scheme.link
+  hilight .hilight.doc 0 "http://[-@~_a-zA-Z#%?&=.:\\/0-9]+"  .scheme.link
+  hilight .hilight.doc 0 "https://[-@~_a-zA-Z#%?&=.:\\/0-9]+" .scheme.link
+  hilight .hilight.doc 0 "ftp://[-@~_a-zA-Z#%.:\\/0-9]+"      .scheme.link
+  hilight .hilight.doc 0 "ftps://[-@~_a-zA-Z#%.:\\/0-9]+"     .scheme.link
+  hilight .hilight.doc 0 "mailto:[-@~_a-zA-Z#%.:\\/0-9]+"     .scheme.link
+  hilight .hilight.doc 0 "news:[-@~_a-zA-Z#%.:\\/0-9]+"       .scheme.link
   ; @ block
   0 hilight .hilight.doc1 0                                   .scheme.no2
   hilight   .hilight.doc1 0x80 "^[ \t]*\n" .hilight.doc       $global-scheme

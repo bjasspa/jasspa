@@ -85,18 +85,18 @@ set-variable .fhook-verilg.comment-1 "|/*| */|*| * | * |f|"
 
   !if &band .hilight.flags 0x08
     ; hilight constants, e.g. numbers
-    hilight .hilight.verilg 1 "[[:digit:]]+"       .scheme.constant
-    hilight .hilight.verilg 1 "-[[:digit:]]+"      .scheme.constant
-    hilight .hilight.verilg 1 "'[hH][ \t]*[[:xdigit:]]+" .scheme.constant
-    hilight .hilight.verilg 1 "[[:digit:]]+'[hH][ \t]*[[:xdigit:]]+" .scheme.constant
-    hilight .hilight.verilg 1 "'[dD][ \t]*[[:digit:]]+" .scheme.constant
-    hilight .hilight.verilg 1 "[[:digit:]]+'[dD][ \t]*[[:digit:]]+" .scheme.constant
+    hilight .hilight.verilg 1 "\\d+" .scheme.constant
+    hilight .hilight.verilg 1 "-\\d+" .scheme.constant
+    hilight .hilight.verilg 1 "'[hH][ \t]*\\h+" .scheme.constant
+    hilight .hilight.verilg 1 "\\d+'[hH][ \t]*\\h+" .scheme.constant
+    hilight .hilight.verilg 1 "'[dD][ \t]*\\d+" .scheme.constant
+    hilight .hilight.verilg 1 "\\d+'[dD][ \t]*\\d+" .scheme.constant
     hilight .hilight.verilg 1 "'[bB][ \t]*[01]+" .scheme.constant
-    hilight .hilight.verilg 1 "[[:digit:]]+'[bB][ \t]*[01]+" .scheme.constant
+    hilight .hilight.verilg 1 "\\d+'[bB][ \t]*[01]+" .scheme.constant
     hilight .hilight.verilg 1 "'[bB][ \t]*[xz]" .scheme.constant
-    hilight .hilight.verilg 1 "[[:digit:]]+'[bB][ \t]*[xz]" .scheme.constant
-    hilight .hilight.verilg 1 "[[:digit:]]+\\.[[:digit:]]+"  .scheme.constant
-    hilight .hilight.verilg 1 "-[[:digit:]]+\\.[[:digit:]]+" .scheme.constant
+    hilight .hilight.verilg 1 "\\d+'[bB][ \t]*[xz]" .scheme.constant
+    hilight .hilight.verilg 1 "\\d+\\.\\d+" .scheme.constant
+    hilight .hilight.verilg 1 "-\\d+\\.\\d+" .scheme.constant
   !endif
 !endif
 

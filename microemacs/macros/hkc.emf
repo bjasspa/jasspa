@@ -331,7 +331,7 @@ set-variable .fhook-c.item-list-r7 "Strc \CCd\\1\CCA"
     ; Doxygen parameter hilighting space.
     0 hilight .hilight.pdoxygen 2 50 .scheme.error
     ; Hilight the next word and finish.
-    hilight .hilight.pdoxygen 0x80 "\\s+[-+a-zA-Z0-9.()!_\\.]+" .hilight.cdoxygen .scheme.prepro
+    hilight .hilight.pdoxygen 0x80 "\\s+[-+a-zA-Z0-9.()!_.]+" .hilight.cdoxygen .scheme.prepro
     ; Hilight the optional parameter definitions.
     hilight .hilight.pdoxygen 0 "\\s*\\[\\s*in\\s*\\]" .scheme.variable
     hilight .hilight.pdoxygen 0 "\\s*\\[\\s*out\\s*\\]" .scheme.variable
@@ -358,7 +358,7 @@ set-variable .fhook-c.item-list-r7 "Strc \CCd\\1\CCA"
     ; Doxygen parameter hilighting space.
     0 hilight .hilight.pdoxygencpp 2 50 .scheme.error
     ; Hilight the next word and finish.
-    hilight .hilight.pdoxygencpp 0x80 "\\S+[a-zA-Z0-9.()!_\\.]+" .hilight.cdoxygencpp .scheme.prepro
+    hilight .hilight.pdoxygencpp 0x80 "\\S+[a-zA-Z0-9.()!_.]+" .hilight.cdoxygencpp .scheme.prepro
     ; Hilight the optional parameter definitions.
     hilight .hilight.pdoxygencpp 0 "\\s*\\[\\s*in\\s*\\]" .scheme.variable
     hilight .hilight.pdoxygencpp 0 "\\s*\\[\\s*out\\s*\\]" .scheme.variable

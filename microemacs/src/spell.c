@@ -745,7 +745,7 @@ spellRuleAdd(int f, int n)
                    ((rr = meMalloc(sizeof(meSpellRule)+(ll=meStrlen(buff)))) == NULL))
                     return meABORT;
                 rr->ending = rr->subRule;
-                memcpy(rr->ending,buff,ll);
+                memcpy(rr->ending,buff,ll+1);
                 rr->remove = NULL;
                 rr->append = NULL;
                 rr->endingLen = 0;
@@ -2031,7 +2031,7 @@ wordGuessAddToList(meUByte *word, int wlen, int curScr, meWordBuf *words, int *s
             break;
         }
         /* check for duplicate */
-        if((curScr == scores[ii]) && (words[ii][wlen] == '\0') && !memcmp(words[ii],word,wlen))
+        if((curScr == scores[ii]) && !memcmp(words[ii],word,wlen) && (words[ii][wlen] == '\0'))
             break;
     }
 }

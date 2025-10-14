@@ -479,36 +479,36 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
 
   !if &band .hilight.flags 0x08
     ; hilight constants, e.g. numbers
-    hilight .hilight.phps 1 "[[:digit:]]+"       .scheme.constant
-    hilight .hilight.phps 1 "-[[:digit:]]+"      .scheme.constant
-    hilight .hilight.phps 1 "0[xX][[:xdigit:]]+" .scheme.constant
+    hilight .hilight.phps 1 "\\d+"       .scheme.constant
+    hilight .hilight.phps 1 "-\\d+"      .scheme.constant
+    hilight .hilight.phps 1 "0[xX]\\h+"  .scheme.constant
   !endif
   ; Single quote string hilighting
-  0 hilight .hilight.phpsS 0                     .scheme.string
-  hilight .hilight.phpsS 0    "\\\\'"            .scheme.string
-  hilight .hilight.phpsS 0    "\\\\\\\\"         .scheme.string
-  hilight .hilight.phpsS 0    "\\\\."            .scheme.error
+  0 hilight .hilight.phpsS 0             .scheme.string
+  hilight .hilight.phpsS 0 "\\\\'"       .scheme.string
+  hilight .hilight.phpsS 0 "\\\\\\\\"    .scheme.string
+  hilight .hilight.phpsS 0 "\\\\."       .scheme.error
   hilight .hilight.phpsS 0x80 "\'" .hilight.phps .scheme.string
   ; Double quote string hilighting
-  0 hilight .hilight.phpsD 0                     .scheme.string
-  hilight .hilight.phpsD 0    "\\\\."            .scheme.string
-  hilight .hilight.phpsD 4    "@" "\\}\\W" ""    .scheme.variable
-  hilight .hilight.phpsD 4    "\\$" "\\}\\W" ""  .scheme.variable
-  hilight .hilight.phpsD 4    "\\${" "}" ""      .scheme.variable
-  hilight .hilight.phpsD 4    "\\$(" ")" ""      .scheme.variable
+  0 hilight .hilight.phpsD 0             .scheme.string
+  hilight .hilight.phpsD 0 "\\\\."       .scheme.string
+  hilight .hilight.phpsD 4 "@" "\\}\\W" "" .scheme.variable
+  hilight .hilight.phpsD 4 "\\$" "\\}\\W" "" .scheme.variable
+  hilight .hilight.phpsD 4 "\\${" "}" "" .scheme.variable
+  hilight .hilight.phpsD 4 "\\$(" ")" "" .scheme.variable
   hilight .hilight.phpsD 0x80 "\"" .hilight.phps .scheme.string
   ; the next tag fixes hilighting problems caused by strings spanning
   ; multiple lines by resetting the hilight on the next blank line during
   ; the look-back.
   hilight .hilight.phpsD 0xa80 "^\\s*\\{$" .hilight.phps $global-scheme
   ; Shell variable hilighting
-  0 hilight .hilight.phpsV 0                     .scheme.variable
-  hilight .hilight.phpsV 0   ":-"                $global-scheme
-  hilight .hilight.phpsV 0   ":="                $global-scheme
-  hilight .hilight.phpsV 0   ":\\?"              $global-scheme
-  hilight .hilight.phpsV 4   "\"" "\"" ""        .scheme.string
-  hilight .hilight.phpsV 4   "\\${" "}" ""       .scheme.variable
-  hilight .hilight.phpsV 0x80 "}" .hilight.phps  .scheme.variable
+  0 hilight .hilight.phpsV 0             .scheme.variable
+  hilight .hilight.phpsV 0   ":-"        $global-scheme
+  hilight .hilight.phpsV 0   ":="        $global-scheme
+  hilight .hilight.phpsV 0   ":\\?"      $global-scheme
+  hilight .hilight.phpsV 4   "\"" "\"" "" .scheme.string
+  hilight .hilight.phpsV 4   "\\${" "}" "" .scheme.variable
+  hilight .hilight.phpsV 0x80 "}" .hilight.phps .scheme.variable
 
   ; Doxygen highlighting extensions. Highlights keywords in Doxygen
   !if &sin "l" .fhook-phps.setup
@@ -556,7 +556,7 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
     ; Doxygen parameter hilighting space.
     0 hilight .hilight.phpsdoxygencp 2 50 .scheme.error
     ; Hilight the next word and finish.
-    hilight .hilight.phpsdoxygencp 0x80 "\\s+[a-zA-Z0-9.()!_\\.]+" .hilight.phpsdoxygenc .scheme.prepro
+    hilight .hilight.phpsdoxygencp 0x80 "\\s+[a-zA-Z0-9.()!_.]+" .hilight.phpsdoxygenc .scheme.prepro
     ; Hilight the optional parameter definitions.
     hilight .hilight.phpsdoxygencp 0 "\\s*\\[\\s*in\\s*\\]" .scheme.variable
     hilight .hilight.phpsdoxygencp 0 "\\s*\\[\\s*out\\s*\\]" .scheme.variable
@@ -600,7 +600,7 @@ set-variable .fhook-phps.comment-12 "|//||/|// | //||"
     ; Doxygen parameter hilighting space.
     0 hilight .hilight.phpsdoxygenp 2 50 .scheme.error
     ; Hilight the next word and finish.
-    hilight .hilight.phpsdoxygenp 0x80 "\\S+[a-zA-Z0-9.()!_\\.]+" .hilight.phpsdoxygen .scheme.prepro
+    hilight .hilight.phpsdoxygenp 0x80 "\\S+[a-zA-Z0-9.()!_.]+" .hilight.phpsdoxygen .scheme.prepro
     ; Hilight the optional parameter definitions.
     hilight .hilight.phpsdoxygenp 0 "\\s*\\[\\s*in\\s*\\]" .scheme.variable
     hilight .hilight.phpsdoxygenp 0 "\\s*\\[\\s*out\\s*\\]" .scheme.variable

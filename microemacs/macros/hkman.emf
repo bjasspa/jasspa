@@ -72,7 +72,7 @@ define-macro aman
     !iif &iseq #l0 "y"  save-buffer
   !endif
   set-variable #l1 &con &les 140 &set #l1 &con &gre 70 &set #l1 &sub $window-width 10 70 #l1 140 #l1
-  pipe-shell-command &set #g1 &spr "soelim %s | tbl -TX | neqn | nroff -man -rLL=%dn | col -x" $buffer-fname #l1
+  pipe-shell-command &spr "soelim %s | tbl -TX | neqn | nroff -man -rLL=%dn | col -x" $buffer-fname #l1
   -1 buffer-mode "view"
   set-mark
   2 forward-line

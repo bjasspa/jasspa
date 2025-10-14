@@ -469,7 +469,7 @@ meFrameInitWindow(meFrame *frame, meBuffer *buffer)
     return meTRUE;
 }
 
-#if MEOPT_FRAME ||  (defined _ME_FREE_ALL_MEMORY)
+#if MEOPT_FRAME || (defined _ME_FREE_ALL_MEMORY)
 void
 meFrameFree(meFrame *frame)
 {
