@@ -48,7 +48,11 @@ For a more complete experience execute command **init-session**, this creates a 
 
       Invoke-RestMethod -Uri https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install.ps1 | Invoke-Expression
     
-  Or download the script first and run locally, note that this will always install the latest release and to install for all users the PowerShell needs to be run as Administrator. If the script encounters issues during the installation processes, typically insufficient permissions, please follow the instructions given.
+  Or download the script first and run locally, if you get the error `cannot be loaded because running scripts is disabled on this system`, run the script as follows:
+
+      powershell -ExecutionPolicy Bypass -File microemacs-install.ps1
+
+  Note that this will always install the latest release and to install for all users the PowerShell needs to be run as Administrator. If the script encounters issues during the installation processes, typically insufficient permissions, please follow the instructions given.
 
 - **Windows intel:** Download and run [Jasspa_MicroEmacs_<VERSION>_installer_windows.msi](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_installer_windows_intel.msi) installer (intel only), which contains the binaries, macros and help file, to create a fully working environment.
   

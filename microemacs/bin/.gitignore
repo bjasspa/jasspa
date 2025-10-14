@@ -1,5 +1,7 @@
 # ignore backup files, tags and build directories
+cygwin[1-9]-*/
 linux[1-9]-*/
 macos[1-9][0-9]-*/
+msyswin[1-9]-*/
 windows[1-9][0-9]-*/
 windows1[0-9][0-9]-*/

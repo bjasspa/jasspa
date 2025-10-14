@@ -2609,6 +2609,8 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
     }
     else
     {
+        if(sysRet != NULL)
+            *sysRet = -1000;
         mlwrite(0,(meUByte *)"[Failed to run \"%s\"]",cp);
         status = meFALSE;
     }

@@ -212,52 +212,52 @@ meShell(int f, int n)
 int
 doShellCommand(meUByte *cmdstr, int flags)
 {
-    meUByte path[meBUF_SIZE_MAX] ;	/* pathfrom where to execute */
-    meInt systemRet ;                   /* return value of last system  */
-    int cd, ss ;
+    meUByte path[meBUF_SIZE_MAX];      /* pathfrom where to execute */
+    meInt systemRet;                   /* return value of last system  */
+    int cd, ss;
 #ifdef _UNIX
     meWAIT_STATUS ws;
-    meUByte *cmdline, *pp ; 
+    meUByte *cmdline, *pp; 
 #endif
 
-    getFilePath(frameCur->windowCur->buffer->fileName,path) ;
-    cd = (meStrcmp(path,curdir) && (meChdir(path) != -1)) ;
+    getFilePath(frameCur->windowCur->buffer->fileName,path);
+    cd = (meStrcmp(path,curdir) && (meChdir(path) != -1));
 
 #ifdef _WIN32
     ss = WinLaunchProgram(cmdstr,LAUNCH_SYSTEM|flags, NULL, NULL, 
 #if MEOPT_IPIPES
                           NULL,
 #endif
-                          &systemRet) ;
+                          &systemRet);
 #else
 #ifdef _UNIX
     /* if no data is piped in then pipe in /dev/null */
     if(((pp=meStrchr(cmdstr,'<')) == NULL) || (flags & LAUNCH_NOWAIT))
     {
         if((cmdline = meMalloc(meStrlen(cmdstr)+16)) == NULL)
-            return meFALSE ;
-        meStrcpy(cmdline,cmdstr) ;
+            return meFALSE;
+        meStrcpy(cmdline,cmdstr);
         if(pp == NULL)
-            meStrcat(cmdline," </dev/null") ;
+            meStrcat(cmdline," </dev/null");
         if(flags & LAUNCH_NOWAIT)
-            meStrcat(cmdline," &") ;
+            meStrcat(cmdline," &");
     }
     else
-        cmdline = cmdstr ;
-    ss = system((char *)cmdline) ;
+        cmdline = cmdstr;
+    ss = system((char *)cmdline);
     ws = (meWAIT_STATUS)(ss);
     if(WIFEXITED(ws))
     {
-        systemRet = WEXITSTATUS(ws) ;
-        ss = meTRUE ;
+        systemRet = WEXITSTATUS(ws);
+        ss = meTRUE;
     }
     else
     {
-        systemRet = -1 ;
-        ss = meFALSE ;
+        systemRet = -1000;
+        ss = meFALSE;
     }
     if(cmdline != cmdstr)
-        meFree(cmdline) ;
+        meFree(cmdline);
 #else
     systemRet = system((char *) cmdstr);
 #ifdef _DOS
@@ -268,16 +268,16 @@ doShellCommand(meUByte *cmdstr, int flags)
      * We might check all states, but with hidden things like flashing etc.
      * its not worth the effort - sorry, you do it if you want.
      */
-    TTopen() ;
+    TTopen();
 #endif
     ss = (systemRet < 0) ? meFALSE:meTRUE;
 #endif
 #endif
 
     if(cd)
-        meChdir(curdir) ;
-    meStrcpy(resultStr,meItoa(systemRet)) ;
-    return ss ;
+        meChdir(curdir);
+    meStrcpy(resultStr,meItoa(systemRet));
+    return ss;
 }
 
 int
@@ -568,7 +568,7 @@ void
 ipipeRemove(meIPipe *ipipe)
 {
 #ifndef _WIN32
-    meSigHold() ;
+    meSigHold();
 #endif
     if(ipipe->pid > 0)
 #ifdef _WIN32
@@ -578,53 +578,53 @@ ipipeRemove(meIPipe *ipipe)
 #endif
 
     if(ipipe == ipipes)
-        ipipes = ipipe->next ;
+        ipipes = ipipe->next;
     else
     {
         meIPipe *pp ;
 
         pp = ipipes ;
             while(pp->next != ipipe)
-                pp = pp->next ;
-        pp->next = ipipe->next ;
+                pp = pp->next;
+        pp->next = ipipe->next;
     }
     noIpipes-- ;
     if(ipipe->bp != NULL)
     {
-        meModeClear(ipipe->bp->mode,MDPIPE) ;
-        meModeClear(ipipe->bp->mode,MDLOCK) ;
+        meModeClear(ipipe->bp->mode,MDPIPE);
+        meModeClear(ipipe->bp->mode,MDLOCK);
     }
 #ifdef _WIN32
     /* if we're using a child activity thread the close it down */
     if(ipipe->thread != NULL)
     {
-        DWORD exitCode ;
+        DWORD exitCode;
 
         if(GetExitCodeThread(ipipe->thread,&exitCode) && (exitCode == STILL_ACTIVE))
         {
             /* get the thread going again */
-            ipipe->flag |= meIPIPE_CHILD_EXIT ;
-            SetEvent(ipipe->threadContinue) ;
+            ipipe->flag |= meIPIPE_CHILD_EXIT;
+            SetEvent(ipipe->threadContinue);
             if(WaitForSingleObject(ipipe->thread,200) != WAIT_OBJECT_0)
-                TerminateThread(ipipe->thread,0) ;
+                TerminateThread(ipipe->thread,0);
         }
 #ifndef USE_BEGINTHREAD
         CloseHandle (ipipe->thread);
 #endif
     }
     if(ipipe->threadContinue != NULL)
-        CloseHandle(ipipe->threadContinue) ;
+        CloseHandle(ipipe->threadContinue);
     if(ipipe->childActive != NULL)
-        CloseHandle(ipipe->childActive) ;
-    CloseHandle(ipipe->rfd) ;
-    CloseHandle(ipipe->outWfd) ;
+        CloseHandle(ipipe->childActive);
+    CloseHandle(ipipe->rfd);
+    CloseHandle(ipipe->outWfd);
 #else
     close(ipipe->rfd) ;
     if(ipipe->rfd != ipipe->outWfd)
-        close(ipipe->outWfd) ;
-    meSigRelease() ;
+        close(ipipe->outWfd);
+    meSigRelease();
 #endif
-    free(ipipe) ;
+    free(ipipe);
 }
 
 #ifdef _WIN32
@@ -826,44 +826,53 @@ ipipeRead(meIPipe *ipipe)
         {
 
             if(ipipe->pid == -4)
-                sprintf((char *) p1,"[EXIT %d]",(int) ipipe->exitCode) ;
+                sprintf((char *) p1,"[EXIT %d]",(int) ipipe->exitCode);
             else
             {
                 meUByte *ins ;
                 if(ipipe->pid == -5)
-                    ins = (meUByte *)"[TERMINATED]" ;
+                {
+                    ipipe->exitCode = -1000-15;
+                    ins = (meUByte *)"[TERMINATED]";
+                }
                 else if(ipipe->pid == -3)
-                    ins = (meUByte *)"[KILLED]" ;
+                {
+                    ipipe->exitCode = -1000-9;
+                    ins = (meUByte *)"[KILLED]";
+                }
                 else if(ipipe->pid == -2)
-                    ins = (meUByte *)"[CORE DUMP]" ;
+                {
+                    ipipe->exitCode = -1000-11;
+                    ins = (meUByte *)"[CORE DUMP]";
+                }
                 else
                     /* none left to read */
-                    break ;
-                meStrcpy(p1,ins) ;
+                    break;
+                meStrcpy(p1,ins);
             }
             ipipe->pid = -1 ;
             /* Do not annotate the end of the ipipe in raw mode */
-            if ((ipipe->flag & meIPIPE_RAW) != 0)
+            if((ipipe->flag & meIPIPE_RAW) != 0)
             {
-                *p1 = '\0' ;
+                *p1 = '\0';
                 cc = 0;
             }
             else
-                cc = meCHAR_NL ;
+                cc = meCHAR_NL;
         }
         switch(cc)
         {
         case 0: /* ignore */
-            break ;
+            break;
         case 7:
-            TTbell() ;
-            break ;
+            TTbell();
+            break;
         case 8:
             if(p1 != buff)
             {
                 p1-- ;
                 len-- ;
-                curOff = getcol(buff,len,bp->tabWidth) ;
+                curOff = getcol(buff,len,bp->tabWidth);
             }
             break ;
         case '\r':
@@ -1202,7 +1211,10 @@ cant_handle_this:
 #endif
     
     if((ii=ipipe->pid) < 0)
-        ipipeRemove(ipipe) ;
+    {
+        curOff = ipipe->exitCode;
+        ipipeRemove(ipipe);
+    }
 #ifdef _WIN32
     else if(ipipe->thread != NULL)
         /* get the thread going again */
@@ -1221,8 +1233,17 @@ cant_handle_this:
     
     meAnchorSet(bp,'I',bp->dotLine,bp->dotLineNo,bp->dotOffset,1);
     if(bp->ipipeFunc >= 0)
-        /* If the process has ended the argument will be 0, else 1 */
-        execBufferFunc(bp,bp->ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),(ii >= 0)) ;
+    {
+        /* If the process has ended the argument will be 0 with $result set to the exitCode, else 1 */
+        if(ii < 0)
+        {
+            strcpy(rbuff,resultStr);
+            sprintf(resultStr,"%d",curOff);
+        }
+        execBufferFunc(bp,bp->ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),(ii >= 0));
+        if(ii < 0)
+            strcpy(resultStr,rbuff);
+    }
     else if ((ii < 0) && (bp->intFlag & BIFLOCK))
     {
         meWindow *wp ;
@@ -1973,21 +1994,21 @@ int
 doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, int flags, meRegister *regs)
 {
     register meBuffer *bp;	/* pointer to buffer to zot */
-    meUByte buff[meBUF_SIZE_MAX+3] ;
-    meInt systemRet ;
-    int cd, ret ;
+    meUByte buff[meBUF_SIZE_MAX+3];
+    meInt systemRet;
+    int cd, ret;
 #ifdef _DOS
-    static meByte pipeStderr=0 ;
-    meUByte cc, *dd, *cl, *ss ;
-    int gotPipe=0 ;
+    static meByte pipeStderr=0;
+    meUByte cc, *dd, *cl, *ss;
+    int gotPipe=0;
 #endif
 #ifdef _UNIX
     FILE *pfp;
     meWAIT_STATUS ws;
-    meUByte *cl, *ss ;
-    size_t ll ;
+    meUByte *cl, *ss;
+    size_t ll;
 #else
-    meUByte filnam[meBUF_SIZE_MAX] ;
+    meUByte filnam[meBUF_SIZE_MAX];
 
     mkTempName(filnam,NULL,NULL);
 #endif
@@ -1997,17 +2018,17 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
         flags = (flags & ~LAUNCH_BUFIPIPE) | LAUNCH_RAW;
     else if((bp=bfind(bufName,BFND_CREAT|BFND_CLEAR)) == NULL)
         return meFALSE ;
-    cd = (meStrcmp(path,curdir) && (meChdir(path) != -1)) ;
+    cd = (meStrcmp(path,curdir) && (meChdir(path) != -1));
 
 #ifdef _DOS
     if(!pipeStderr)
-        pipeStderr = (meGetenv("ME_PIPE_STDERR") != NULL) ? 1 : -1 ;
+        pipeStderr = (meGetenv("ME_PIPE_STDERR") != NULL) ? 1 : -1;
     
     if((cl = meMalloc(meStrlen(comStr) + meStrlen(filnam) + 4)) == NULL)
-        return meFALSE ;
+        return meFALSE;
         
-    dd = cl ;
-    ss = comStr ;
+    dd = cl;
+    ss = comStr;
     /* convert '/' to '\' in program name */
     while((cc=*ss++) && (cc != ' '))
     {
@@ -2036,9 +2057,9 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
     }
     if((flags & LAUNCH_SILENT) == 0)
         mlerase(MWERASE|MWCURSOR);
-    systemRet = system((char *) cl) ;
+    systemRet = system((char *) cl);
     if(cd)
-        meChdir(curdir) ;
+        meChdir(curdir);
     /* Call TTopen as we can't guarantee whats happend to the terminal */
     TTopen();
     meFree(cl) ;
@@ -2051,11 +2072,11 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
 #if MEOPT_IPIPES
                            NULL, 
 #endif
-                           &systemRet) ;
+                           &systemRet);
     if(cd)
-        meChdir(curdir) ;
+        meChdir(curdir);
     if(ret == meFALSE)
-        return meFALSE ;
+        return meFALSE;
 
 #endif
 #ifdef _UNIX
@@ -2107,26 +2128,26 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
 #if MEOPT_IPIPES
         bp->ipipeFunc = ipipeFunc;
 #endif
-        execBufferFunc(bp,ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),1) ;
+        execBufferFunc(bp,ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),1);
     }
     /* and read the stuff in */
 #ifdef _UNIX
     if(flags & LAUNCH_TO_VAR)
         ret = ffReadFileToBuffer(NULL,buff,meBUF_SIZE_MAX);
     else
-        ret = meBufferInsertFile(bp,NULL,meRWFLAG_SILENT|meRWFLAG_PRESRVFMOD,0,0,0) ;
+        ret = meBufferInsertFile(bp,NULL,meRWFLAG_SILENT|meRWFLAG_PRESRVFMOD,0,0,0);
     /* close the pipe and get exit status */
     ws = (meWAIT_STATUS) pclose(pfp);
     if(WIFEXITED(ws))
-        systemRet = WEXITSTATUS(ws) ;
+        systemRet = WEXITSTATUS(ws);
     else
-        systemRet = -1 ;
-    alarmState &= ~meALARM_PIPE_COMMAND ;
+        systemRet = -1000;
+    alarmState &= ~meALARM_PIPE_COMMAND;
 #else
     if(flags & LAUNCH_TO_VAR)
         ret = ffReadFileToBuffer(filnam,buff,meBUF_SIZE_MAX);
     else
-        ret = meBufferInsertFile(bp,filnam,meRWFLAG_SILENT|meRWFLAG_PRESRVFMOD,0,0,0) ;
+        ret = meBufferInsertFile(bp,filnam,meRWFLAG_SILENT|meRWFLAG_PRESRVFMOD,0,0,0);
     /* and get rid of the temporary file */
     meUnlinkNT(filnam);
 #endif
