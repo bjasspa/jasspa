@@ -326,6 +326,9 @@
 #include <X11/StringDefs.h>     /* Standard Name-String definitions      */
 #include <X11/keysym.h>         /* Keyboard symbols                      */
 #include <X11/Xutil.h>
+#if MEOPT_XFT
+#include <X11/Xft/Xft.h>
+#endif
 #endif /* _XTERM */
 
 #ifndef _ME_CONSOLE             /* window only mode?                     */

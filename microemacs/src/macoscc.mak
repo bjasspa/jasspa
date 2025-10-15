@@ -150,22 +150,30 @@ ifneq (,$(findstring w,$(BTYP)))
 ifeq "$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lX11 > /dev/null 2> /dev/null - ; echo $$? )" "0"
 X11_LIBS = -lX11
 else ifneq (,$(wildcard /opt/X11/lib/libX11.dylib))
-X11_INCL = -I/opt/X11/include
+X11_INCL = -I/opt/X11/include -I/opt/X11/include/freetype2
 X11_LIBS = -L/opt/X11/lib -lX11
 else ifneq (,$(wildcard /usr/X11R6/lib/libX11.dylib))
-X11_INCL = -I/usr/X11R6/include
+X11_INCL = -I/usr/X11R6/include -I/usr/X11R6/include/freetype2
 X11_LIBS = -L/usr/X11R6/lib -lX11
 endif
 
 ifeq "$(X11_LIBS)" ""
 $(warning WARNING: No X11 support found, forcing build type to console only.)
 override BTYP = c
-else ifeq "$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) $(X11_INCL) -o /dev/null $(X11_LIBS) -lXpm > /dev/null 2> /dev/null - ; echo $$? )" "0"
+else
+
+ifeq "$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) $(X11_INCL) -o /dev/null $(X11_LIBS) -lXpm > /dev/null 2> /dev/null - ; echo $$? )" "0"
 WINDOW_DEFS = $(X11_INCL) -D_XPM
 WINDOW_LIBS = $(X11_LIBS) -lXpm
 else
 WINDOW_DEFS = $(X11_INCL)
 WINDOW_LIBS = $(X11_LIBS)
+endif
+ifeq "$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\n\n$(HASH)include <X11/Xft/Xft.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) $(X11_INCL) -o /dev/null $(X11_LIBS) -lXft > /dev/null 2> /dev/null - ; echo $$? )" "0"
+WINDOW_DEFS += -DMEOPT_XFT=1 
+WINDOW_LIBS += -lXft
+endif
+
 endif
 
 endif

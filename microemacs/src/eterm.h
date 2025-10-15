@@ -79,7 +79,11 @@ extern meUShort   TTwidthDefault;       /* Default no. of cols per frame*/
 extern meUShort   TTdepthDefault;       /* Default no. of rows per frame*/
 extern meUShort   TTkeyBuf[KEYBUFSIZ];  /* Key beuffer/pending keys     */
 extern meUByte  ttSpeChars[TTSPECCHARS];/* Special characters           */
+#ifdef _UNIX
+#ifdef _ME_CONSOLE
 extern meUShort ttSpeUChars[TTSPECCHARS];/* Unciode ver of Special chars*/
+#endif
+#endif
 extern meUByte    TTnextKeyIdx;         /* Circular buffer index        */
 extern meUByte    TTlastKeyIdx;         /* Key buffer - last index.     */
 extern meUByte    TTnoKeys;             /* Number of keys in buffer     */
@@ -224,17 +228,27 @@ extern void TCAPschemeReset(void);
 
 #ifdef _ME_WINDOW
 /* Display information */
+#define meXFONT_MASK         (meFONT_BOLD|meFONT_ITALIC|meFONT_LIGHT)
+#define meXFONT_MAX          (meFONT_LIGHT << 1)
+#define meStyleGetXFont(ss)  (((ss)>>16) & meXFONT_MASK)
+#define meStyleGetXFontWithUnderline(ss)  (((ss)>>16) & (meXFONT_MASK|meFONT_UNDERLINE))
 
 typedef struct
 {
     Window    xwindow;                  /* the x window */
     GC        xgc;                      /* the x draw style */
     XGCValues xgcv;                     /* X colour values */
+    Font      fontId;                   /* Font X id */
+#if MEOPT_XFT
+    XftFont  *ftFont;
+    XftDraw  *xdraw;
+    XftColor *xfcol;
+    XftColor *xbcol;
+#endif
+    int       xmap;                     /* Frame is mapped */
     meUByte   fcol;                     /* Foreground color */
     meUByte   bcol;                     /* Background color */
     meUByte   font;                     /* Font style */
-    Font      fontId;                   /* Font X id */
-    int       xmap;                     /* Frame is mapped */
 } meFrameData;
 
 #define meFrameGetXWindow(ff)     (((meFrameData *) ff->termData)->xwindow)
@@ -248,6 +262,20 @@ typedef struct
 #define meFrameSetXGCBCol(ff,v)   (((meFrameData *) ff->termData)->bcol = (v))
 #define meFrameSetXGCFont(ff,v)   (((meFrameData *) ff->termData)->font = (v))
 #define meFrameSetXGCFontId(ff,v) (((meFrameData *) ff->termData)->fontId = (v))
+#if MEOPT_XFT
+#define meXftUsed()               (mecm.fontTbl[0] == 0)
+#define meXftSize()               (mecm.size)
+#define meFrameGetXftDraw(ff)     (((meFrameData *) ff->termData)->xdraw)
+#define meFrameGetFgColor(ff)     (((meFrameData *) ff->termData)->xfcol)
+#define meFrameGetBgColor(ff)     (((meFrameData *) ff->termData)->xbcol)
+#define meFrameGetXftFont(ff)     (((meFrameData *) ff->termData)->ftFont)
+#define meFrameSetFgColor(ff,v)   (((meFrameData *) ff->termData)->xfcol = (v))
+#define meFrameSetBgColor(ff,v)   (((meFrameData *) ff->termData)->xbcol = (v))
+#define meFrameSetXftFont(ff,v)   (((meFrameData *) ff->termData)->ftFont = (v))
+#else
+#define meXftUsed()               (0)
+#define meXftSize()               (-1)
+#endif
 /* Mapped window state */
 #define meXMAP_FONT      -1             /* Unmapped and requires font change */
 #define meXMAP_UNMAP      0             /* Unmapped, no font change required */
@@ -258,30 +286,30 @@ typedef struct
 typedef struct
 {
     Display  *xdisplay;                 /* the x display */
-    Font      fontId;                   /* Font X id */
+#if MEOPT_XFT
+    XftFont  *ftFontTbl[meXFONT_MAX];   /* table of XftFont pointer for diff styles */
+    int       size;                     /* Xft Font size */
+#endif
     int       fwidth;                   /* Font width in pixels */
     int       fdepth;                   /* Font depth in pixels */
     int       fhwidth;                  /* Font half width in pixels */
     int       fhdepth;                  /* Font half depth in pixels */
     int       fadepth;                  /* Font up-arrow depth in pixels */
     int       ascent;                   /* Font ascent */
-    int       descent;                  /* Font descent */
     int       underline;                /* The underline position */
     meUByte  *fontName;                 /* The current Font name */
     meUByte  *fontPartF;                /* pointers to parts in fontname - First */
     meUByte  *fontPartW;                /* pointers to parts in fontname - Weight */
     meUByte  *fontPartS;                /* pointers to parts in fontname - Slant */
     meUByte  *fontPartR;                /* pointers to parts in fontname - Rest */
-    Font      fontTbl[meFONT_MAX];      /* table of font X ids for diff styles */
-    meUByte   fontFlag[meFONT_MAX];     /* Font loaded ? */
+    Font      fontTbl[meXFONT_MAX];     /* table of font X ids for diff styles */
 } meCellMetrics;                        /* The character cell metrics */
 
 extern meCellMetrics mecm;
 
 /* Set of macros to interchange pixel and character spaces coordinates */
 #define colToClient(x)    (mecm.fwidth*(x))                /* Convert column char => pixel */
-#define rowToClient(y)    ((mecm.fdepth*(y))+mecm.ascent)  /* Convert row char => pixel (for text drawing) */
-#define rowToClientTop(y) (mecm.fdepth*(y))                /* Convert row char => pixel (top of row) */
+#define rowToClient(y)    (mecm.fdepth*(y))                /* Convert row char => pixel (top of row) */
 #define clientToRow(y)    ((y)/mecm.fdepth)                /* Convert row pixel => char */
 #define clientToCol(x)    ((x)/mecm.fwidth)                /* Convert column pixel => char */
 
@@ -296,12 +324,34 @@ extern void meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc
 #define meFrameXTermDrawString(frame,col,row,str,len)                              \
 do {                                                                               \
     XDrawImageString(mecm.xdisplay,meFrameGetXWindow(frame),                       \
-                     meFrameGetXGC(frame),(col),(row),(char *)(str),(len));        \
+                meFrameGetXGC(frame),(col),(row)+mecm.ascent,(char *)(str),(len)); \
     if(meFrameGetXGCFont(frame) & meFONT_UNDERLINE)                                \
         XDrawLine(mecm.xdisplay,meFrameGetXWindow(frame),                          \
                   meFrameGetXGC(frame),(col),(row)+mecm.underline,                 \
                   (col)+colToClient(len)-1,(row)+mecm.underline);                  \
 } while(0)
+
+#if MEOPT_XFT
+#define meFrameXftDrawBackground(ff,cl,rw,ll)                                      \
+    XftDrawRect(meFrameGetXftDraw(ff),meFrameGetBgColor(ff),(cl),(rw),colToClient(ll),mecm.fdepth)
+#define meFrameXftDrawString8(ff,cl,rw,ss,ll)                                      \
+    XftDrawString8(meFrameGetXftDraw(frameCur),meFrameGetFgColor(ff),meFrameGetXftFont(ff),(cl),(rw)+mecm.ascent,(ss),(ll))
+#define meFrameXftDrawString(ff,cl,rw,ss,ll)                                       \
+do {                                                                               \
+    meFrameXftDrawString8(ff,cl,(rw),ss,ll);                                       \
+    if(meFrameGetXGCFont(ff) & meFONT_UNDERLINE)                                   \
+        XftDrawRect(meFrameGetXftDraw(frameCur),meFrameGetFgColor(ff),(cl),(rw)+mecm.underline,colToClient(ll),1); \
+} while(0)
+#define meFrameXftDrawString16(ff,cl,rw,ss,ll)                                     \
+    XftDrawString16(meFrameGetXftDraw(frameCur),meFrameGetFgColor(ff),meFrameGetXftFont(ff),(cl),(rw)+mecm.ascent,(ss),(ll))
+#define meFrameXftDrawWString(ff,cl,rw,ss,ll)                                      \
+do {                                                                               \
+    meFrameXftDrawString16(ff,cl,rw,ss,ll);                                        \
+    if(meFrameGetXGCFont(ff) & meFONT_UNDERLINE)                                   \
+        XftDrawRect(meFrameGetXftDraw(frameCur),meFrameGetFgColor(ff),cl,(rw)+mecm.underline,colToClient(ll),1); \
+} while(0)
+#define meFrameXftDrawSpecialChar meFrameXTermDrawSpecialChar
+#endif
 
 extern int  XTERMstart(void);
 extern void XTERMmove(int r, int c);

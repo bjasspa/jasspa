@@ -72,10 +72,10 @@ TRDPARTY = ../3rdparty
 
 CCDEFS   = $(BIT_OPT) -D_LINUX -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I. -I$(TRDPARTY)/tfs -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY) $(MAKECDEFS)
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wall -Wno-uninitialized -Wno-unused-result
-CCFLAGSD = -g -Wall
+CCFLAGSD = -g -O0 -Wall
 LDDEFS   = $(BIT_OPT)
 LDFLAGSR = -O3 -flto=auto
-LDFLAGSD = -g
+LDFLAGSD = -g -O0
 LDLIBS   = -lm -ldl
 
 ifeq (debug,$(BCFG))
@@ -159,11 +159,19 @@ endif
 ifneq (,$(WINDOW_LIBS))
 $(warning WARNING: No X11 support found, forcing build type to console only.)
 BTYP = c
-else ifeq (0,$(shell printf '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null $(X11_LIBS) -lXpm > /dev/null 2> /dev/null - ; echo $$? ))
-WINDOW_DEFS = -D_XPM
+else
+
+ifeq (0,$(shell printf '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null $(X11_LIBS) -lXpm > /dev/null 2> /dev/null - ; echo $$? ))
+WINDOW_DEFS = -D_XPM 
 WINDOW_LIBS = $(X11_LIBS) -lXpm
 else
 WINDOW_LIBS = $(X11_LIBS)
+endif
+ifeq (0,$(shell pkg-config --exists xft; echo $$? ))
+WINDOW_DEFS += -DMEOPT_XFT=1 $(shell pkg-config --cflags xft)  
+WINDOW_LIBS += $(shell pkg-config --libs xft)
+endif
+
 endif
 
 endif

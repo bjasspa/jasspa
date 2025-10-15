@@ -90,7 +90,14 @@ static char termOutBuf [TERMOUT_BUFSIZ];
 #endif
 
 #if MEOPT_COLOR
-meUInt *colTable=NULL ;
+#if MEOPT_XFT
+XftColor *colTable=NULL;
+#define meXftColorGet(cc) &(colTable[cc])
+#define meXColorGet(cc) colTable[cc].pixel
+#else
+meUInt *colTable=NULL;
+#define meXColorGet(cc) colTable[cc]
+#endif
 #endif
 
 #ifdef _ME_CONSOLE
@@ -306,14 +313,18 @@ static int xdndClientMessage (XEvent *xevent, meFrame *frame);
 #endif /* (defined _DRAGNDROP) */
 
 /* Setup the xterm variables and things */
-meCellMetrics mecm ;
+meCellMetrics mecm;
 
 static int disableResize = 0;           /* Flag to disable screen resize */
 
-Colormap xcmap ;
-int      xscreen ;
-XSizeHints sizeHints ;
-int meStdin ;
+Colormap xcmap;
+int      xscreen;
+XSizeHints sizeHints;
+int meStdin;
+#if MEOPT_XFT
+Visual *xvisual=NULL;
+XftDraw *xdraw=NULL;
+#endif
 #define meATOM_WM_DELETE_WINDOW 0
 #define meATOM_WM_SAVE_YOURSELF 1
 #define meATOM_WM_PROTOCOLS     2
@@ -525,7 +536,7 @@ meSetupProgname(char *progname)
     {
 #ifdef _ME_FREE_ALL_MEMORY
         /* stops problems on exit */
-        meProgName = meStrdup(progname);
+        meProgName = meStrdup((meUByte *) progname);
 #else
         meProgName = (meUByte *) progname;
 #endif
@@ -945,6 +956,15 @@ sigSize(SIGNAL_PROTOTYPE)
 void
 TCAPinitDrawChar(void)
 {
+#if MEOPT_COLOR
+    if(meSystemCfg & meSYSTEM_ANSICOLOR)
+    {
+        if(tcaptab[TCAPcolors].code.value < 8)
+            meSystemCfg &= ~(meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR);
+        else if(tcaptab[TCAPcolors].code.value > 8)
+            meSystemCfg |= meSYSTEM_XANSICOLOR;
+    }
+#endif
     if(meSystemCfg & meSYSTEM_IO_UTF8)
         TTutf8Char = 0x7f;
     else
@@ -993,100 +1013,167 @@ TCAPdrawChar(meUByte cc)
 
 #ifdef _XTERM
 
+#if MEOPT_XFT
+
+XftFont *
+__meXftFontGet(meUByte font)
+{
+    char *fn=(char *) mecm.fontName, buff[256];
+    XftFont *ftFont;
+    int ll;
+    
+    if(strstr(fn,":style=") != NULL)
+        ftFont = mecm.ftFontTbl[0];
+    else
+    {
+        ll = meStrlen(fn);
+        memcpy(buff,fn,ll);
+        fn = buff+ll;
+        memcpy(fn,":style=",7);
+        fn += 7;
+        if(font & meFONT_BOLD)
+        {
+            memcpy(fn,"Bold",4);
+            fn += 4;
+        }
+        else if(font & meFONT_LIGHT)
+        {
+            memcpy(fn,"Thin",4);
+            fn += 4;
+        }
+        if(font & meFONT_ITALIC)
+        {
+            if(font & (meFONT_BOLD|meFONT_LIGHT))
+                *fn++ = ' ';
+            memcpy(fn,"Italic",6);
+            fn += 6;
+        }
+        *fn = '\0';
+        if((ftFont = XftFontOpenName(mecm.xdisplay,xscreen,buff)) != NULL)
+        {
+            XGlyphInfo ext;
+            ll = (ftFont->height > ftFont->ascent) ? ftFont->height:(ftFont->ascent + ftFont->descent);
+            XftTextExtentsUtf8(mecm.xdisplay,ftFont,(const FcChar8 *) "W",1,&ext);
+            if((ext.xOff != mecm.fwidth) || (ll != mecm.fdepth))
+            {
+                /* size is different, unsafe to use! */
+                printf("WARNING XftFont size different for [%s]: %d,%d %d,%d\n",buff,ext.xOff,mecm.fwidth,ll,mecm.fdepth);
+                XftFontClose(mecm.xdisplay,ftFont);
+                ftFont = mecm.ftFontTbl[0];
+            }
+        }
+    }
+    mecm.ftFontTbl[font] = ftFont;
+    return ftFont;
+}
+#define meXftFontGet(font) \
+((mecm.ftFontTbl[font] == NULL) ? __meXftFontGet(font):mecm.ftFontTbl[font])
+
+#endif
+
 static Font
 __XTERMfontGetId(meUByte font)
 {
-    meUByte fontNU ;
+    /* font can only have bits meFONT_BOLD, meFONT_ITALIC & meFONT_LIGHT set at this stage,
+     * the underline is drawn on after using the fcol so does not affect the GC */
+    XFontStruct *fontQ;
+    char *weight;
+    char *slant;
+    char buf[meBUF_SIZE_MAX];              /* Local name buffer */
     
-    /* remove the underline as this is not a different font,
-     * the underline is drawn on after */
-    fontNU = (font & ~meFONT_UNDERLINE) ;
-    if(mecm.fontTbl[fontNU] == BadName)
+    /* Process the bold field. If the X font specifier (weight) is
+     * medium or undefined and this is a bold field identifier then
+     * specify a bold font */
+    if(font & meFONT_BOLD)
+        weight = "bold";
+    else if(font & meFONT_LIGHT)
+        weight = "light";
+    else
+        weight = (char *) mecm.fontPartW;
+    
+    /* Process the italic field. If the X font specified (slant) is r
+     * or undefined and this is a italic field identifier then specify
+     * an italic font. */
+    if(font & meFONT_ITALIC)
+        slant = "o";
+    else
+        slant = (char *) mecm.fontPartS;
+    
+    /* Construct the new font name */
+    sprintf(buf,"%s-%s-%s-%s",mecm.fontPartF,weight,slant,mecm.fontPartR);
+    
+    if((fontQ=XLoadQueryFont(mecm.xdisplay,buf)) == NULL)
+        mecm.fontTbl[font] = mecm.fontTbl[0];
+    else
     {
-        XFontStruct *fontQ ;
-        char *weight;
-        char *slant;
-        char buf[meBUF_SIZE_MAX];              /* Local name buffer */
-        
-        /* Process the bold field. If the X font specifier (weight) is
-         * medium or undefined and this is a bold field identifier then
-         * specify a bold font */
-        if(fontNU & meFONT_BOLD)
-            weight = "bold";
-        else if(fontNU & meFONT_LIGHT)
-            weight = "light";
-        else
-            weight = (char *) mecm.fontPartW;
-        
-        /* Process the italic field. If the X font specified (slant) is r
-         * or undefined and this is a italic field identifier then specify
-         * an italic font. */
-        if(fontNU & meFONT_ITALIC)
-            slant = "o";
-        else
-            slant = (char *) mecm.fontPartS;
-        
-        /* Construct the new font name */
-        sprintf(buf,"%s-%s-%s-%s",mecm.fontPartF,weight,slant,mecm.fontPartR);
-        
-        if((fontQ=XLoadQueryFont(mecm.xdisplay,buf)) == NULL)
-            mecm.fontTbl[fontNU] = mecm.fontTbl[0] ;
-        else
+        if(((fontQ->ascent + fontQ->descent) != mecm.fdepth) ||
+           (fontQ->max_bounds.width != mecm.fwidth))
         {
-            if(((fontQ->ascent + fontQ->descent) != mecm.fdepth) ||
-               (fontQ->max_bounds.width != mecm.fwidth))
-                mecm.fontTbl[fontNU] = mecm.fontTbl[0] ;
-            else
-            {
-                mecm.fontTbl[fontNU] = fontQ->fid ;
-                mecm.fontFlag[fontNU] = 1 ;
-            }
-            XFreeFontInfo(NULL,fontQ,1) ;
+            /* sizes are different - don't use this */
+            XUnloadFont(mecm.xdisplay,fontQ->fid);
+            mecm.fontTbl[font] = mecm.fontTbl[0];
         }
+        else
+            mecm.fontTbl[font] = fontQ->fid;
+        XFreeFontInfo(NULL,fontQ,1);
     }
-    mecm.fontTbl[font] = mecm.fontTbl[fontNU] ;
-    return mecm.fontTbl[font] ;
+    return mecm.fontTbl[font];
 }
 
 #define XTERMfontGetId(font) \
-((mecm.fontTbl[font] == BadName) ? __XTERMfontGetId(font):mecm.fontTbl[font])
+((mecm.fontTbl[font] == 0) ? __XTERMfontGetId(font):mecm.fontTbl[font])
 
 void
 meFrameXTermSetScheme(meFrame *frame, meScheme scheme)
 {
-    meUInt valueMask = 0 ;
-    meUByte cc ;
+    meStyle style=meSchemeGetStyle(scheme);
+    meUInt valueMask=0;
+    meUByte cc, ff;
     
-    cc = meStyleGetFColor(meSchemeGetStyle(scheme)) ;
+    cc = meStyleGetFColor(style);
     if(meFrameGetXGCFCol(frame) != cc)
     {
-        meFrameSetXGCFCol(frame,cc) ;
-        meFrameGetXGCValues(frame).foreground = colTable[cc] ;
-        valueMask |= GCForeground ;
+#if MEOPT_XFT
+        meFrameSetFgColor(frame,meXftColorGet(cc));
+#endif
+        meFrameSetXGCFCol(frame,cc);
+        meFrameGetXGCValues(frame).foreground = meXColorGet(cc);
+        valueMask |= GCForeground;
     }
-    cc = meStyleGetBColor(meSchemeGetStyle(scheme)) ;
-    if(meFrameGetXGCBCol(frame) != cc)
+    cc = meStyleGetBColor(style);
+    if(meSchemeTestNoFont(scheme))
+        ff = 0;
+    else
+        ff = meStyleGetXFontWithUnderline(style);
+#if MEOPT_XFT
+    if(meXftUsed())
     {
-        meFrameSetXGCBCol(frame,cc) ;
-        meFrameGetXGCValues(frame).background = colTable[cc] ;
-        valueMask |= GCBackground ;
+        /* With Xft, X11 GC is only used to draw special chars (0x01-0x1f) which only uses fg color */
+        meFrameSetBgColor(frame,meXftColorGet(cc));
+        meFrameSetXftFont(frame,meXftFontGet(ff & meXFONT_MASK));
     }
-    if(mecm.fontPartF != NULL)
+    else
+#endif
     {
-        cc = meStyleGetFont(meSchemeGetStyle(scheme)) ;
-        if(meSchemeTestNoFont(scheme))
-            cc &= ~(meFONT_BOLD|meFONT_ITALIC|meFONT_UNDERLINE) ;
-        if(meFrameGetXGCFont(frame) != cc)
+        if(meFrameGetXGCBCol(frame) != cc)
         {
-            meFrameSetXGCFont(frame,cc) ;
-            meFrameSetXGCFontId(frame,XTERMfontGetId(cc)) ;
+            meFrameSetXGCBCol(frame,cc);
+            meFrameGetXGCValues(frame).background = meXColorGet(cc);
+            valueMask |= GCBackground;
+        }
+        if(mecm.fontPartF == NULL)
+            ff &= meFONT_UNDERLINE;
+        else if((cc=(ff & meXFONT_MASK)) != (meFrameGetXGCFont(frame) & meXFONT_MASK))
+        {
+            meFrameSetXGCFontId(frame,XTERMfontGetId(cc));
             if(meFrameGetXGCValues(frame).font != meFrameGetXGCFontId(frame))
             {
-                meFrameGetXGCValues(frame).font = meFrameGetXGCFontId(frame) ;
-                valueMask |= GCFont ;
+                meFrameGetXGCValues(frame).font = meFrameGetXGCFontId(frame);
+                valueMask |= GCFont;
             }
         }
     }
+    meFrameSetXGCFont(frame,ff);
     if(valueMask)
         XChangeGC(mecm.xdisplay,meFrameGetXGC(frame),valueMask,&meFrameGetXGCValues(frame)) ;
 }
@@ -1151,15 +1238,8 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
                   x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth,
                   x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
-        points[0].x = x ;
-        points[0].y = y + mecm.fhdepth - mecm.fhwidth + 2 ;
-        points[1].x = x ;
-        points[1].y = y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth - 1 ;
-        points[2].x = x + mecm.fwidth ;
-        points[2].y = y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth - 1 ;
-        points[3].x = x + mecm.fwidth ;
-        points[3].y = y + mecm.fhdepth - mecm.fhwidth + 2 ;
-        XFillPolygon(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), points, 4, Convex, CoordModeOrigin) ;
+        XFillRectangle(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),
+                       x,y+mecm.fhdepth-mecm.fhwidth+2,mecm.fwidth,mecm.fwidth-3);
         break;
         
     case 0x06:          /* checkbox right side (]) */
@@ -1378,51 +1458,118 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
  * ecol - End column
  */
 void
-meFrameXTermDraw(meFrame *frame, int srow, int scol, int erow, int ecol)
+meFrameXTermDraw(meFrame *frame, int row, int scol, int erow, int ecol)
 {
     meFrameLine *flp;                   /* Frame store line pointer */
-    meScheme  *fssp;                    /* Frame store colour pointer */
-    meUByte     *fstp;                  /* Frame store text pointer */
-    meScheme   schm;                    /* Current colour */
+    meScheme *fssp;                     /* Frame store colour pointer */
+    meUByte *fstp;                      /* Frame store text pointer */
+    meScheme schm;                      /* Current colour */
     int col;                            /* Current column position */
-    int row;                            /* Current row screen position */
     int tcol;                           /* Text column start */
     int length;                         /* Length of string */
     
+    if((ecol <= scol) || ((erow -= row) <= 0))
+        return;
     /* Process each row in turn until we reach the end of the line */
-    if (meSystemCfg & meSYSTEM_FONTFIX)
+    flp = frame->store + row;
+#if MEOPT_XFT
+    if(meXftUsed())
     {
-        meUByte cc, *sfstp, buff[meBUF_SIZE_MAX] ;
-        int spFlag ;
+        meUShort wc, wb[meBUF_SIZE_MAX];
+        meUByte lc, cc;
         
-        for (flp = frame->store + srow; srow < erow; srow++, flp++)
-        {
+        row = rowToClient(row);
+        do {
+            /* for each row draw the background first as the bg col does not change as much */
+            fssp = flp->scheme;
+            fstp = flp->text;
+            tcol = col = scol;
+            schm = fssp[col];
+            lc = meStyleGetBColor(meSchemeGetStyle(schm));
+            meFrameXTermSetScheme(frameCur,schm);
+            while(++col < ecol)
+            {
+                schm = fssp[col];
+                cc = meStyleGetBColor(meSchemeGetStyle(schm));
+                if(cc != lc)
+                {
+                    meFrameXftDrawBackground(frameCur,colToClient(tcol),row,col-tcol);
+                    meFrameXTermSetScheme(frameCur,schm);
+                    tcol = col;
+                    lc = cc;
+                }
+            }
+            meFrameXftDrawBackground(frameCur,colToClient(tcol),row,col-tcol);
+            tcol = col = scol;
+            schm = fssp[col];
+            meFrameXTermSetScheme(frameCur,schm);
+            for(;;)
+            {
+                cc = fstp[col];
+                if((cc & 0xe0) == 0)
+                {
+                    /* as the bg has been drawn and a space can sit on top, we can draw the spec char now */
+                    meFrameXftDrawSpecialChar(frameCur,colToClient(col),row,cc);
+                    wb[col] = ' ';
+                }
+                else if((cc & 0x80) == 0)
+                    wb[col] = cc;
+                else if((wc = charToUnicode[cc & 0x7f]) == 0)
+                {
+                    meFrameXftDrawSpecialChar(frameCur,colToClient(col),row,'\x13');
+                    wb[col] = ' ';
+                }
+                else
+                    wb[col] = wc;
+                col++;
+                if((col == ecol) || (fssp[col] != schm))
+                {
+                    meFrameXftDrawWString(frameCur,colToClient(tcol),row,wb+tcol,col-tcol);
+                    if(col == ecol)
+                        break;
+                    schm = fssp[col];
+                    meFrameXTermSetScheme(frameCur,schm);
+                    tcol = col;
+                }
+            }
+            flp++;
+            row += mecm.fdepth;
+        } while(--erow > 0);
+    }
+    else
+#endif
+    if(meSystemCfg & meSYSTEM_FONTFIX)
+    {
+        meUByte cc, *sfstp, buff[meBUF_SIZE_MAX];
+        int spFlag;
+        
+        row = rowToClient(row);
+        do {
             length = 0;                     /* Initialise the string length */
             col = scol;                     /* Current column becomes start column */
             tcol = col;                     /* Start of the text column */
-            row = rowToClient(srow) ;
             
             /* Get pointers aligned into the frame store */
             sfstp = flp->text ;
             fstp = sfstp + scol ;           /* Point to text block */
             fssp = flp->scheme + scol ;     /* Point to colour block */
             schm = *fssp;                   /* Get the initial scheme */
-            spFlag = 0 ;
+            spFlag = 0;
             while (col < ecol)
             {
-                if (*fssp++ != schm)        /* Change in colour ?? */
+                if(*fssp++ != schm)        /* Change in colour ?? */
                 {
                     /* Output the current text item */
-                    meFrameXTermSetScheme(frame,schm) ;
+                    meFrameXTermSetScheme(frame,schm);
                     meFrameXTermDrawString(frame,colToClient(tcol),row,buff,length);
                     while(--spFlag >= 0)
                     {
                         while (((cc=sfstp[tcol]) & 0xe0) != 0)
-                            tcol++ ;
-                        meFrameXTermDrawSpecialChar(frame,tcol*mecm.fwidth,row-mecm.ascent,cc) ;
-                        tcol++ ;
+                            tcol++;
+                        meFrameXTermDrawSpecialChar(frame,tcol*mecm.fwidth,row,cc);
+                        tcol++;
                     }
-                    spFlag = 0 ;
+                    spFlag = 0;
                     tcol = col;             /* Move the text position */
                     length = 0;             /* Reset the length */
                     schm = fssp[-1];        /* Get the next colour */
@@ -1437,24 +1584,23 @@ meFrameXTermDraw(meFrame *frame, int srow, int scol, int erow, int ecol)
             }
             
             /* Output the remaining text item */
-            if (length > 0)
+            meFrameXTermSetScheme(frame,schm) ;
+            meFrameXTermDrawString(frame,colToClient(tcol),row,buff,length);
+            while(--spFlag >= 0)
             {
-                meFrameXTermSetScheme(frame,schm) ;
-                meFrameXTermDrawString(frame,colToClient(tcol),row,buff,length);
-                while(--spFlag >= 0)
-                {
-                    while (((cc=sfstp[tcol]) & 0xe0) != 0)
-                        tcol++ ;
-                    meFrameXTermDrawSpecialChar(frame,tcol*mecm.fwidth,row-mecm.ascent,cc) ;
+                while (((cc=sfstp[tcol]) & 0xe0) != 0)
                     tcol++ ;
-                }
+                meFrameXTermDrawSpecialChar(frame,tcol*mecm.fwidth,row,cc) ;
+                tcol++ ;
             }
-        }
+            flp++;
+            row += mecm.fdepth;
+        } while(--erow > 0);
     }
     else
     {
-        for (flp = frame->store + srow; srow < erow; srow++, flp++)
-        {
+        row = rowToClient(row);
+        do {
             length = 0;                     /* Initialise the string length */
             col = scol;                     /* Current column becomes start column */
             tcol = col;                     /* Start of the text column */
@@ -1470,7 +1616,7 @@ meFrameXTermDraw(meFrame *frame, int srow, int scol, int erow, int ecol)
                 {
                     /* Output the current text item */
                     meFrameXTermSetScheme(frame,schm) ;
-                    meFrameXTermDrawString(frame,colToClient(tcol),rowToClient(srow),fstp,length);
+                    meFrameXTermDrawString(frame,colToClient(tcol),row,fstp,length);
                     fstp += length;         /* Move the text pointer */
                     tcol = col;             /* Move the text position */
                     length = 0;             /* Reset the length */
@@ -1481,12 +1627,11 @@ meFrameXTermDraw(meFrame *frame, int srow, int scol, int erow, int ecol)
             }
             
             /* Output the remaining text item */
-            if (length > 0)
-            {
-                meFrameXTermSetScheme(frame,schm) ;
-                meFrameXTermDrawString(frame,colToClient(tcol),rowToClient(srow),fstp,length);
-            }
-        }
+            meFrameXTermSetScheme(frame,schm);
+            meFrameXTermDrawString(frame,colToClient(tcol),row,fstp,length);
+            flp++;
+            row += mecm.fdepth;
+        } while(--erow > 0);
     }
 }
 
@@ -1588,6 +1733,7 @@ meXEventHandler(void)
         if((frame = meXEventGetFrame(&event)) != NULL)
         {
 #if 0
+            /* disabled - see related comment in changeFont */
             /* Search for meXMAP_FONT to find comment on why disabled */
             int state = meFrameGetXMapState(frame);
             
@@ -1705,7 +1851,7 @@ meXEventHandler(void)
          */
         if((frame = meXEventGetFrame(&event)) != NULL)
         {
-            static int sscol= -1;       /* History - Start column */
+            static int sscol=-1;        /* History - Start column */
             static int ssrow;           /* History - Start row */
             static int secol;           /* History - End column */
             static int serow;           /* History - End row */
@@ -1915,7 +2061,8 @@ meXEventHandler(void)
                 case XK_Tab:            ii = SKEY_tab; goto special_key;
                 case XK_Linefeed:       ii = SKEY_linefeed; goto special_key;
                 case XK_Clear:          ii = SKEY_clear; goto special_key;
-                case XK_Return:         ii = SKEY_return; goto special_key;
+                case XK_Return:
+                    ii = SKEY_return; goto special_key;
                     /* Pause, hold */
 #if (defined _SUNOS5)
                 case XK_F21:
@@ -3231,7 +3378,7 @@ TCAPschemeSet(meScheme scheme)
         meUByte col;
         
         /* Foreground color */
-        col = colTable[meStyleGetFColor(nstyle)];
+        col = meXColorGet(meStyleGetFColor(nstyle));
         if(oschemeFcol != col)
         {
             if(tcaptab[TCAPsetaf].code.str != NULL)
@@ -3249,7 +3396,7 @@ TCAPschemeSet(meScheme scheme)
         }
         
         /* Background color */
-        col = colTable[meStyleGetBColor(nstyle)];
+        col = meXColorGet(meStyleGetBColor(nstyle));
         if(oschemeBcol != col)
         {
             if (tcaptab[TCAPsetab].code.str != NULL)
@@ -3421,8 +3568,11 @@ TTinitMouse(meInt nCfg)
 static int
 XTERMsetFont(int n, char *fontName)
 {
+#if MEOPT_XFT
+    XftFont *ftFont;
+#endif
     XFontStruct *font;
-    char fontBuf[64];
+    char fontBuf[256];
     meUByte *fp;
     int ii, jj;
     
@@ -3430,9 +3580,149 @@ XTERMsetFont(int n, char *fontName)
     {
         /* cannot get here first time round due to init in XTERMstart so mecm is initialised */
         if((n & 0x04) == 0)
-            sprintf((char *) resultStr,"||||%d|%d|||%s|",mecm.fwidth,mecm.fdepth,(mecm.fontName == NULL) ? "":(char *) mecm.fontName);
+            sprintf((char *) resultStr,"||||%d|%d||%d|%s|",mecm.fwidth,mecm.fdepth,meXftSize(),(mecm.fontName == NULL) ? "":(char *) mecm.fontName);
         return meTRUE;
     }
+#if MEOPT_XFT
+    if((fontName == NULL) || (fontName[0] != '-'))
+    {
+        char *ss;
+        int sz;
+        /* SWP: This is not as easy as I think it should be, adding :spacing=100 actually breaks monospace on linux (e.g. when given "monospace:spacing=100"
+         * fontconfig selects a dual-spaced 'Noto Sans Mono' so rendered font width is twice as wide, basically 'X '), if given "<font>-10:size20" the font
+         * size will be 10, the :size= is ignored, if given '<font>:style=bold italic' the selected font will be bold-italic (if available), if given
+         * '<font>:style=italic bold' it will be regular. If given just "monospace" on linux the returned font (Noto Sans Mono) has max_advance_width
+         * set to 3 times the width of a 'W' (which is the same as the width of a ' '). So care is needed!
+         * 6 basic principles:
+         * a. If given font starts with '-' assume its old-school X11 server fonts wanted.
+         * b. If no font is specified use 'monospace'.
+         * c. Use :size=# instead of <font>-# as its easier to identify.
+         * d. Always specify a size so macros can id that Xft is used, find and set the size easily and keeps font stable.
+         * e. Always use the measured width of a 'W' as hte font width, compare that with the width of a ' ' to determine if monospaced.
+         * f. If :style= is given in the base font then don't attempt the use of fonts.
+         */
+        if((ss=fontName) == NULL)
+            strcpy(fontBuf,"monospace:lang=en");
+        else
+        {
+            strcpy(fontBuf,ss);
+            if((ss=strstr(fontBuf,":size=")) == NULL)
+            {
+                if((ss = strchr(fontBuf,':')) == NULL)
+                    ss = fontBuf + strlen(fontBuf);
+                ss--;
+                if(isDigit(ss[0]))
+                {
+                    do
+                        ss--;
+                    while(isDigit(ss[0]));
+                    if(ss[0] == '-')
+                    {
+                        /* size is tacked onto the end of the name, convert to a :size= to standardise */
+                        char *dd=fontName+(ss-fontBuf)+1;
+                        sz = atoi(dd);
+                        memcpy(ss,":size=",6);
+                        ss += 6;
+                        strcpy(ss,dd);
+                    }
+                    else
+                        ss = NULL;
+                }
+                else
+                    ss = NULL;
+            }
+            else
+                sz = atoi(ss+6);
+        }
+        if(ss == NULL)
+        {
+            /* no size specified, try to choose a sane default, this also ensures :size will always be in the font name */
+            ss = fontBuf + strlen(fontBuf);
+            sz = sizeHints.max_height/95;
+            sprintf(ss,":size=%d",sz);
+        }
+        if((ftFont = XftFontOpenName(mecm.xdisplay,xscreen,fontBuf)) != NULL)
+        {
+            XGlyphInfo ext;
+            jj = (ftFont->height > ftFont->ascent) ? ftFont->height:(ftFont->ascent + ftFont->descent);
+            XftTextExtentsUtf8(mecm.xdisplay,ftFont,(const FcChar8 *) "W",1,&ext);
+            ii = ext.xOff;
+            if((n & 0x04) == 0)
+            {
+                /* Save the values in $result */
+                XftTextExtentsUtf8(mecm.xdisplay,ftFont,(const FcChar8 *) " ",1,&ext);
+                sprintf((char *) resultStr,"|%c|||%d|%d||%d|%s|",((ii == ext.xOff) ? '0':'1'),ii,jj,sz,fontBuf);
+            }
+            if((n & 0x02) || (ii <= 0) || (jj <= 0))
+            {
+                /* Don't apply the font so free and get out */
+                XftFontClose(mecm.xdisplay,ftFont);
+                return meTRUE;
+            }
+            
+            /* Font is acceptable - continue to load. */
+            mecm.size = sz;
+            mecm.fwidth = ii;
+            mecm.fdepth = jj;
+            /* SWP: On Debian, font 'Noto Mono:lang=en:size=11' has a height of 18, ascent of 15 and descent of 4,
+             * The actual height is 18 but all 18 pixels are used and if drawn at 0+15 (i.e. using ascent) the bottom
+             * pixel is outside the 18 pixel high box so is clipped or leaves debris whereas 0+18-4 seems to work.
+             * This could be just luck and the next font favours the other way, may need flags or find a dynamic way
+             * to work out */
+            mecm.ascent = jj - ftFont->descent;
+            mecm.fhwidth = ii >> 1;
+            mecm.fhdepth = jj >> 1;
+            if((mecm.underline = mecm.ascent + 2) >= mecm.fdepth)
+                mecm.underline = mecm.fdepth - 1;
+            
+            if((mecm.fadepth = ii+1) > jj)
+                mecm.fadepth = jj;
+            
+            sizeHints.width_inc = ii;
+            sizeHints.height_inc = jj;
+            sizeHints.min_width = ii*10;
+            sizeHints.min_height = jj*4;
+            sizeHints.base_width = TTwidthDefault*ii;
+            sizeHints.base_height = TTdepthDefault*jj;
+            
+            /* Clean up the font table for the existing font. Unload all of the
+             * previously loaded fonts */
+            if(mecm.ftFontTbl[0] != NULL)
+            {
+                ii = meXFONT_MAX-1 ;
+                do {
+                    if((mecm.ftFontTbl[ii] != NULL) && (mecm.ftFontTbl[ii] != mecm.ftFontTbl[0]))
+                        XftFontClose(mecm.xdisplay,mecm.ftFontTbl[ii]);
+                    mecm.ftFontTbl[ii] = NULL;
+                } while(--ii > 0);
+                XftFontClose(mecm.xdisplay,mecm.ftFontTbl[0]);
+                mecm.ftFontTbl[0] = NULL;
+            }
+            else if(mecm.fontTbl[0] != 0)
+            {
+                ii = meXFONT_MAX-1 ;
+                do {
+                    if(mecm.fontTbl[ii] && (mecm.fontTbl[ii] != mecm.fontTbl[0]))
+                        XUnloadFont(mecm.xdisplay,mecm.fontTbl[ii]);
+                    mecm.fontTbl[ii] = 0;
+                } while(--ii > 0);
+                XUnloadFont(mecm.xdisplay,mecm.fontTbl[0]);
+                mecm.fontTbl[0] = 0;
+            }
+            /* Assign the base font */
+            mecm.ftFontTbl[0] = ftFont;
+            if(mecm.fontName != NULL)
+                free(mecm.fontName);
+            mecm.fontName = meStrdup((meUByte *) fontBuf);
+            if(mecm.fontPartF != NULL)
+            {
+                free(mecm.fontPartF);
+                mecm.fontPartF = NULL;
+            }
+            return meTRUE;
+        }
+    }
+#endif
     if((fontName == NULL) || (fontName[0] == '\0'))
     {
         /* No font has been specified. Attempt to find a font that we know
@@ -3496,7 +3786,11 @@ XTERMsetFont(int n, char *fontName)
     jj = font->ascent + font->descent;
     if((n & 0x04) == 0)
         /* Save the values in $result */
-        sprintf((char *) resultStr,"|%c|||%d|%d|||%s|",((font->min_bounds.width == font->max_bounds.width) ? '0':'1'),ii,jj,fontName);
+        sprintf((char *) resultStr,"|%c|||%d|%d||"
+#if MEOPT_XFT
+                "0"
+#endif
+                "|%s|",((font->min_bounds.width == font->max_bounds.width) ? '0':'1'),ii,jj,fontName);
     if((n & 0x02) || (ii <= 0) || (jj <= 0))
     {
         /* Don't apply the font so free and get out */
@@ -3505,13 +3799,16 @@ XTERMsetFont(int n, char *fontName)
     }
     
     /* Font is acceptable - continue to load. */
+#if MEOPT_XFT
+    mecm.size = 0;
+#endif
     mecm.ascent  = font->ascent;
-    mecm.descent = font->descent;
     mecm.fwidth  = ii;
     mecm.fdepth  = jj;
     mecm.fhwidth = ii >> 1;
     mecm.fhdepth = jj >> 1;
-    mecm.underline = jj - mecm.ascent - 1;
+    if((mecm.underline = mecm.ascent + 2) >= mecm.fdepth)
+        mecm.underline = mecm.fdepth - 1;
     
     if((mecm.fadepth = ii+1) > jj)
         mecm.fadepth = jj;
@@ -3523,22 +3820,36 @@ XTERMsetFont(int n, char *fontName)
     sizeHints.base_width = TTwidthDefault*ii;
     sizeHints.base_height = TTdepthDefault*jj;
     
-    /* Clean up the font table for the existing font. Unload all of the
-     * previously loaded fonts */
-    for (ii = 0; ii < meFONT_MAX ; ii++)
+    /* Clean up the font table for the existing font. Unload all of the previously loaded fonts */
+#if MEOPT_XFT
+    if(mecm.ftFontTbl[0] != NULL)
     {
-        if(mecm.fontFlag[ii])
-            XUnloadFont (mecm.xdisplay, mecm.fontTbl[ii]);
-        mecm.fontTbl[ii] = BadName;
-        mecm.fontFlag[ii] = 0 ;
+        ii = meXFONT_MAX-1 ;
+        do {
+            if((mecm.ftFontTbl[ii] != NULL) && (mecm.ftFontTbl[ii] != mecm.ftFontTbl[0]))
+                XftFontClose(mecm.xdisplay,mecm.ftFontTbl[ii]);
+            mecm.ftFontTbl[ii] = NULL;
+        } while(--ii > 0);
+        XftFontClose(mecm.xdisplay,mecm.ftFontTbl[0]);
+        mecm.ftFontTbl[0] = NULL;
+    }
+    else
+#endif
+    if(mecm.fontTbl[0] != 0)
+    {
+        ii = meXFONT_MAX-1 ;
+        do {
+            if(mecm.fontTbl[ii] && (mecm.fontTbl[ii] != mecm.fontTbl[0]))
+                XUnloadFont(mecm.xdisplay,mecm.fontTbl[ii]);
+            mecm.fontTbl[ii] = 0;
+        } while(--ii > 0);
+        XUnloadFont(mecm.xdisplay,mecm.fontTbl[0]);
+        mecm.fontTbl[0] = 0;
     }
     
     /* Assign the base font */
-    mecm.fontTbl[0] = font->fid ;
-    mecm.fontFlag[0] = 1;
-    mecm.fontId = font->fid ;
-    
-    XFreeFontInfo(NULL,font,1) ;
+    mecm.fontTbl[0] = font->fid;
+    XFreeFontInfo(NULL,font,1);
     
     if(mecm.fontName != NULL)
         free(mecm.fontName) ;
@@ -3573,12 +3884,12 @@ XTERMsetFont(int n, char *fontName)
 static meFrameData *
 XTERMcreateWindow(meUShort width, meUShort depth)
 {
-    meFrameData *frameData ;
-    XClassHint *classHint ;
+    meFrameData *frameData;
+    XClassHint *classHint;
     
     if((frameData = meMalloc(sizeof(meFrameData))) == NULL)
         return NULL ;
-    
+    memset(frameData,0,sizeof(meFrameData));
     sizeHints.x = TTdefaultPosX ;
     sizeHints.y = TTdefaultPosY ;
     sizeHints.width  = width*mecm.fwidth ;
@@ -3600,17 +3911,22 @@ XTERMcreateWindow(meUShort width, meUShort depth)
     XSetWMProtocols(mecm.xdisplay,frameData->xwindow,meAtoms,2) ;
     
     /* Make the window DND aware */
-    xdndAware (frameData->xwindow);
+    xdndAware(frameData->xwindow);
     
     /* Set the iconic name of the program and icon itself */
     XSetIconName(mecm.xdisplay,frameData->xwindow,meIconName);
-    meSetIconState (mecm.xdisplay,frameData->xwindow);
+    meSetIconState(mecm.xdisplay,frameData->xwindow);
     
+    frameData->fcol = meCOLOR_INVALID;
+    frameData->bcol = meCOLOR_INVALID;
     frameData->font = 0 ;
-    frameData->fontId = mecm.fontId ;
-    frameData->xgcv.font = mecm.fontId ;
-    frameData->xgc = XCreateGC(mecm.xdisplay,frameData->xwindow,GCFont,&frameData->xgcv) ;
-    
+    frameData->xgcv.font = frameData->fontId = mecm.fontTbl[0];
+    frameData->xgc = XCreateGC(mecm.xdisplay,frameData->xwindow,(meXftUsed()) ? 0:GCFont,&frameData->xgcv);
+#if MEOPT_XFT
+    frameData->ftFont = mecm.ftFontTbl[0];
+    if(meXftUsed())
+        frameData->xdraw = XftDrawCreate(mecm.xdisplay,frameData->xwindow,xvisual,xcmap);
+#endif
     /* To get the mouse positional information then we register for
      * "PointerMotionMask" events. */
     /* olwm on sunos has a Focus bug, it does not sent the FocusIn
@@ -3634,7 +3950,7 @@ XTERMcreateWindow(meUShort width, meUShort depth)
      */
     XMapWindow(mecm.xdisplay,frameData->xwindow) ;
     
-    return frameData ;
+    return frameData;
 }
 
 static meFrameData *firstFrameData=NULL ;
@@ -3679,9 +3995,9 @@ meFrameXTermFree(meFrame *frame, meFrame *sibling)
 {
     if(sibling == NULL)
     {
-        XDestroyWindow(mecm.xdisplay,meFrameGetXWindow(frame)) ;
-        XFreeGC(mecm.xdisplay,meFrameGetXGC(frame)) ;
-        free(frame->termData) ;
+        XDestroyWindow(mecm.xdisplay,meFrameGetXWindow(frame));
+        XFreeGC(mecm.xdisplay,meFrameGetXGC(frame));
+        free(frame->termData);
     }
 }
 
@@ -3729,6 +4045,9 @@ XTERMstart(void)
     meStdin = ConnectionNumber(mecm.xdisplay);
     xscreen = DefaultScreen(mecm.xdisplay);
     xcmap   = DefaultColormap(mecm.xdisplay,xscreen);
+#if MEOPT_XFT
+    xvisual = DefaultVisual(mecm.xdisplay,xscreen);
+#endif
     
     sizeHints.flags = PSize | PResizeInc | PMinSize | PBaseSize;
     sizeHints.max_height = DisplayHeight(mecm.xdisplay,xscreen);
@@ -3859,25 +4178,44 @@ XTERMstart(void)
 void
 meFrameXTermHideCursor(meFrame *frame)
 {
-    if((frame->cursorRow <= frame->depth) && (frame->cursorColumn < frame->width))
+    int rw, cl;
+    if(((rw=frame->cursorRow) <= frame->depth) && ((cl=frame->cursorColumn) < frame->width))
     {
-        meFrameLine *flp;                     /* Frame store line pointer */
-        meUByte     *cc ;                     /* Current cchar  */
-        meScheme   schm;                    /* Current colour */
+        meFrameLine *flp;                 /* Frame store line pointer */
+        meUByte cc;                       /* Current cchar  */
+        meScheme schm;                    /* Current colour */
         
-        flp  = frame->store + frame->cursorRow ;
-        cc   = flp->text+frame->cursorColumn ;           /* Get char under cursor */
-        schm = flp->scheme[frame->cursorColumn] ;        /* Get scheme under cursor */
+        flp  = frame->store + rw;
+        /* Get char & scheme under cursor */
+        cc = flp->text[cl];           
+        schm = flp->scheme[cl];
         
-        meFrameXTermSetScheme(frame,schm) ;
-        if ((meSystemCfg & meSYSTEM_FONTFIX) && !((*cc) & 0xe0))
+        cl = colToClient(cl);
+        rw = rowToClient(rw);
+        meFrameXTermSetScheme(frame,schm);
+#if MEOPT_XFT
+        if(meXftUsed())
         {
-            static char ss[1]={' '} ;
-            meFrameXTermDrawString(frame,colToClient(frame->cursorColumn),rowToClient(frame->cursorRow),ss,1);
-            meFrameXTermDrawSpecialChar(frame,colToClient(frame->cursorColumn),rowToClientTop(frame->cursorRow),*cc) ;
+            meUShort wc;
+            
+            meFrameXftDrawBackground(frameCur,cl,rw,1);
+            if((cc & 0xe0) == 0)
+                meFrameXftDrawSpecialChar(frameCur,cl,rw,cc);
+            else if(((wc = cc) & 0x80) && ((wc = charToUnicode[cc-128]) == 0))
+                meFrameXftDrawSpecialChar(frameCur,cl,rw,'\x13');
+            else
+                meFrameXftDrawWString(frameCur,cl,rw,&wc,1);
         }
         else
-            meFrameXTermDrawString(frame,colToClient(frame->cursorColumn),rowToClient(frame->cursorRow),cc,1);
+#endif
+        if((meSystemCfg & meSYSTEM_FONTFIX) && !(cc & 0xe0))
+        {
+            static char ss[1]={' '} ;
+            meFrameXTermDrawString(frame,cl,rw,ss,1);
+            meFrameXTermDrawSpecialChar(frame,cl,rw,cc);
+        }
+        else
+            meFrameXTermDrawString(frame,cl,rw,&cc,1);
     }
 }
 
@@ -3887,72 +4225,105 @@ meFrameXTermHideCursor(meFrame *frame)
 void
 meFrameXTermShowCursor(meFrame *frame)
 {
-    if((frame->cursorRow <= frame->depth) && (frame->cursorColumn < frame->width))
+    int rw, cl;
+    if(((rw=frame->cursorRow) <= frame->depth) && ((cl=frame->cursorColumn) < frame->width))
     {
         meFrameLine *flp;                     /* Frame store line pointer */
         meScheme schm;                        /* Current colour */
-        meUByte *cc ;                         /* Current cchar  */
+        meUByte cc;                           /* Current cchar  */
         meColor cCol=cursorColor[(meModeTest(frame->windowCur->buffer->mode,MDOVER)) ? 1:0];
         
-        flp = frame->store + frame->cursorRow;
-        cc = flp->text+frame->cursorColumn;           /* Get char under cursor */
-        schm = flp->scheme[frame->cursorColumn];        /* Get scheme under cursor */
-        
+        flp = frame->store + rw;
+        cc = flp->text[cl];            /* Get char under cursor */
+        schm = flp->scheme[cl];        /* Get scheme under cursor */
+        cl = colToClient(cl);
+        rw = rowToClient(rw);        
         if(!(frame->flags & meFRAME_NOT_FOCUS))
         {
             meUInt valueMask=0;
-            meUByte ff;
-            ff = meStyleGetBColor(meSchemeGetStyle(schm)) ;
+            meUByte fu, ff;
+            ff = meStyleGetBColor(meSchemeGetStyle(schm));
             if(meFrameGetXGCFCol(frame) != ff)
             {
-                meFrameSetXGCFCol(frame,ff) ;
-                meFrameGetXGCValues(frame).foreground = colTable[ff] ;
-                valueMask |= GCForeground ;
+#if MEOPT_XFT
+                meFrameSetFgColor(frame,meXftColorGet(ff));
+#endif
+                meFrameSetXGCFCol(frame,ff);
+                meFrameGetXGCValues(frame).foreground = meXColorGet(ff);
+                valueMask |= GCForeground;
             }
-            if(meFrameGetXGCBCol(frame) != cCol)
+            if(meSchemeTestNoFont(schm))
+                fu = 0;
+            else
+                fu = meStyleGetXFontWithUnderline(meSchemeGetStyle(schm));
+#if MEOPT_XFT
+            if(meXftUsed())
             {
-                meFrameSetXGCBCol(frame,cCol);
-                meFrameGetXGCValues(frame).background = colTable[cCol];
-                valueMask |= GCBackground;
+                /* With Xft, X11 GC is only used to draw special chars (0x01-0x1f) which only uses fg color */
+                meFrameSetBgColor(frame,meXftColorGet(cCol));
+                meFrameSetXftFont(frame,meXftFontGet(ff & meXFONT_MASK));
             }
-            if(mecm.fontPartF != NULL)
+            else
+#endif
             {
-                ff = meStyleGetFont(meSchemeGetStyle(schm)) ;
-                if(meSchemeTestNoFont(schm))
-                    ff &= ~(meFONT_BOLD|meFONT_ITALIC|meFONT_UNDERLINE) ;
-                if(meFrameGetXGCFont(frame) != ff)
+                if(meFrameGetXGCBCol(frame) != cCol)
                 {
-                    meFrameSetXGCFont(frame,ff) ;
-                    meFrameSetXGCFontId(frame,XTERMfontGetId(ff)) ;
+                    meFrameSetXGCBCol(frame,cCol);
+                    meFrameGetXGCValues(frame).background = meXColorGet(cCol);
+                    valueMask |= GCBackground;
+                }
+                if(mecm.fontPartF == NULL)
+                    fu &= meFONT_UNDERLINE;
+                else if((ff=(fu & meXFONT_MASK)) != (meFrameGetXGCFont(frame) & meXFONT_MASK))
+                {
+                    meFrameSetXGCFontId(frame,XTERMfontGetId(ff));
                     if(meFrameGetXGCValues(frame).font != meFrameGetXGCFontId(frame))
                     {
-                        meFrameGetXGCValues(frame).font = meFrameGetXGCFontId(frame) ;
-                        valueMask |= GCFont ;
+                        meFrameGetXGCValues(frame).font = meFrameGetXGCFontId(frame);
+                        valueMask |= GCFont;
                     }
                 }
             }
+            meFrameSetXGCFont(frame,fu);
             if(valueMask)
-                XChangeGC(mecm.xdisplay,meFrameGetXGC(frame),valueMask,&meFrameGetXGCValues(frame)) ;
-            if ((meSystemCfg & meSYSTEM_FONTFIX) && !((*cc) & 0xe0))
+                XChangeGC(mecm.xdisplay,meFrameGetXGC(frame),valueMask,&meFrameGetXGCValues(frame));
+#if MEOPT_XFT
+            if(meXftUsed())
             {
-                static char ss[1]={' '} ;
-                meFrameXTermDrawString(frame,colToClient(frame->cursorColumn),rowToClient(frame->cursorRow),ss,1);
-                meFrameXTermDrawSpecialChar(frame,colToClient(frame->cursorColumn),rowToClientTop(frame->cursorRow),*cc) ;
+                meUShort wc;
+                
+                meFrameXftDrawBackground(frameCur,cl,rw,1);
+                if((cc & 0xe0) == 0)
+                    meFrameXftDrawSpecialChar(frameCur,cl,rw,cc);
+                else if(((wc = cc) & 0x80) && ((wc = charToUnicode[cc-128]) == 0))
+                    meFrameXftDrawSpecialChar(frameCur,cl,rw,'\x13');
+                else
+                    meFrameXftDrawWString(frameCur,cl,rw,&wc,1);
             }
             else
-                meFrameXTermDrawString(frame,colToClient(frame->cursorColumn),rowToClient(frame->cursorRow),cc,1);
+#endif
+            if((meSystemCfg & meSYSTEM_FONTFIX) && !(cc & 0xe0))
+            {
+                static char ss[1]={' '} ;
+                meFrameXTermDrawString(frame,cl,rw,ss,1);
+                meFrameXTermDrawSpecialChar(frame,cl,rw,cc);
+            }
+            else
+                meFrameXTermDrawString(frame,cl,rw,&cc,1);
         }
         else
         {
             if(meFrameGetXGCFCol(frame) != cCol)
             {
+#if MEOPT_XFT
+                meFrameSetFgColor(frame,meXftColorGet(cCol));
+#endif
                 meFrameSetXGCFCol(frame,cCol);
-                meFrameGetXGCValues(frame).foreground = colTable[cCol];
+                meFrameGetXGCValues(frame).foreground = meXColorGet(cCol);
                 XChangeGC(mecm.xdisplay,meFrameGetXGC(frame),GCForeground,&meFrameGetXGCValues(frame));
             }
             XDrawRectangle(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),
-                           colToClient(frame->cursorColumn),
-                           rowToClientTop(frame->cursorRow),mecm.fwidth-1,mecm.fdepth-1);
+                           cl,rw,mecm.fwidth-1,mecm.fdepth-1);
         }
     }
 }
@@ -3984,12 +4355,19 @@ changeFont(int f, int n)
     
         meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN);
         
-        /* Make the current font invalid and force a complete redraw */
         meFrameSetXGCFont(loopFrame,0);
-        meFrameSetXGCFontId(loopFrame,mecm.fontId);
-        meFrameGetXGCValues(loopFrame).font = mecm.fontId;
-        XChangeGC(mecm.xdisplay,meFrameGetXGC(loopFrame),GCFont,&meFrameGetXGCValues(loopFrame));
-        
+#if MEOPT_XFT
+        meFrameSetXftFont(loopFrame,mecm.ftFontTbl[0]);
+#endif
+        if(meFrameGetXGCFontId(loopFrame) != mecm.fontTbl[0])
+        {
+            meFrameSetXGCFontId(loopFrame,mecm.fontTbl[0]);
+            meFrameGetXGCValues(loopFrame).font = mecm.fontTbl[0];
+#if MEOPT_XFT
+            if(!meXftUsed())
+#endif
+                XChangeGC(mecm.xdisplay,meFrameGetXGC(loopFrame),GCFont,&meFrameGetXGCValues(loopFrame));
+        }
         /* The old sizeHints will restrict the window size based on the w/h_inc which may exclude our new desired size.
          * So set the new hints first and then the window size */
 #if 0
@@ -4032,18 +4410,34 @@ changeFont(int f, int n)
 int
 XTERMaddColor(meColor index, meUByte r, meUByte g, meUByte b)
 {
+#if MEOPT_XFT
+    XRenderColor rcol;
+#endif
     XColor col;
-    
     if(noColors <= index)
     {
+#if MEOPT_XFT
+        colTable = meRealloc(colTable,(index+1)*sizeof(XftColor));
+        memset(colTable+noColors,0,(index-noColors+1)*sizeof(XftColor));
+#else
         colTable = meRealloc(colTable,(index+1)*sizeof(meUInt));
         memset(colTable+noColors,0,(index-noColors+1)*sizeof(meUInt));
+#endif
         noColors = index+1;
     }
-    col.red   = ((meUShort) r) << 8;
-    col.green = ((meUShort) g) << 8;
-    col.blue  = ((meUShort) b) << 8;
+#if MEOPT_XFT
+    /* regardless of whether we are currently using Xft, always use Xft to allocate colors in case we change the font renderer */
+    rcol.red   = (((meUShort) r) << 8)|((meUShort) r);
+    rcol.green = (((meUShort) g) << 8)|((meUShort) g);
+    rcol.blue  = (((meUShort) b) << 8)|((meUShort) b);
+    rcol.alpha = 0xffff;
+    if(!XftColorAllocValue(mecm.xdisplay,xvisual,xcmap,&rcol,meXftColorGet(index)))
+#else
+    col.red   = (((meUShort) r) << 8)|((meUShort) r);
+    col.green = (((meUShort) g) << 8)|((meUShort) g);
+    col.blue  = (((meUShort) b) << 8)|((meUShort) b);
     if(!XAllocColor(mecm.xdisplay,xcmap,&col))
+#endif
     {
         static int noCells=-1;
         static meUByte *cells=NULL;
@@ -4051,25 +4445,22 @@ XTERMaddColor(meColor index, meUByte r, meUByte g, meUByte b)
         int ii, diff;
         int bDiff= 256*256*3;          /* Smallest least squares. */
         
-        if(noCells < 0)
+        /* printf("Warning: Failed to allocate colors, looking up closest\n");*/
+        if((noCells < 0) && 
+           ((noCells = DisplayCells(mecm.xdisplay,xscreen)) > 2) &&
+           ((cells = meMalloc(noCells*3*sizeof(meUByte))) != NULL))
         {
-            /* printf("Warning: Failed to allocate colors, looking up closest\n");*/
-            if(((noCells = DisplayCells(mecm.xdisplay,xscreen)) > 0) &&
-               ((cells = meMalloc(noCells*3*sizeof(meUByte))) != NULL))
+            ii = noCells;
+            ss = cells;
+            for(ii=0 ; ii<noCells ; ii++)
             {
-                ii = noCells;
-                ss = cells;
-                for(ii=0 ; ii<noCells ; ii++)
-                {
-                    col.pixel = ii;
-                    XQueryColor(mecm.xdisplay,xcmap,&col);
-                    *ss++ = (col.red   >> 8);
-                    *ss++ = (col.green >> 8);
-                    *ss++ = (col.blue  >> 8);
-                }
+                col.pixel = ii;
+                XQueryColor(mecm.xdisplay,xcmap,&col);
+                *ss++ = (col.red   >> 8);
+                *ss++ = (col.green >> 8);
+                *ss++ = (col.blue  >> 8);
             }
         }
-        col.pixel = BlackPixel(mecm.xdisplay,xscreen);
         /* To find the nearest color then use a least squares method. This
          * produces a better approximation than a straight forward color
          * differencing algorithm as it takes into account the variance. */
@@ -4094,12 +4485,28 @@ XTERMaddColor(meColor index, meUByte r, meUByte g, meUByte b)
                 }
             }
         }
+        else if((r+g+b) < (255+128))
+            col.pixel = BlackPixel(mecm.xdisplay,xscreen);
+        else
+            col.pixel = WhitePixel(mecm.xdisplay,xscreen);
         XQueryColor(mecm.xdisplay,xcmap,&col);
+#if MEOPT_XFT
+        /* regardless of whether we are currently using Xft, always use Xft to allocate colors in case we change the font renderer */
+        rcol.red   = col.red;
+        rcol.green = col.green;
+        rcol.blue  = col.blue;
+        rcol.alpha = 0xffff;
+        if(!XftColorAllocValue(mecm.xdisplay,xvisual,xcmap,&rcol,meXftColorGet(index)))
+#else
         if(!XAllocColor(mecm.xdisplay,xcmap,&col))
+#endif
             printf("Warning: Failed to allocate closest color\n");
         
     }
+#if MEOPT_XFT
+#else
     colTable[index] = col.pixel;
+#endif
     
     /* the default colors are created before the first frame is so check there is a frame */
     if(frameCur != NULL)
@@ -4126,7 +4533,7 @@ XTERMsetBgcol(void)
     meFrameLoopContinue(loopFrame->flags & meFRAME_HIDDEN);
     
     /* change the background */
-    XSetWindowBackground(mecm.xdisplay,meFrameGetXWindow(loopFrame),colTable[meStyleGetBColor(meSchemeGetStyle(globScheme))]);
+    XSetWindowBackground(mecm.xdisplay,meFrameGetXWindow(loopFrame),meXColorGet(meStyleGetBColor(meSchemeGetStyle(globScheme))));
     
     meFrameLoopEnd();
 }

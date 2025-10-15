@@ -1237,12 +1237,12 @@ cant_handle_this:
         /* If the process has ended the argument will be 0 with $result set to the exitCode, else 1 */
         if(ii < 0)
         {
-            strcpy(rbuff,resultStr);
-            sprintf(resultStr,"%d",curOff);
+            meStrcpy(rbuff,resultStr);
+            sprintf((char *)resultStr,"%d",curOff);
         }
         execBufferFunc(bp,bp->ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),(ii >= 0));
         if(ii < 0)
-            strcpy(resultStr,rbuff);
+            meStrcpy(resultStr,rbuff);
     }
     else if ((ii < 0) && (bp->intFlag & BIFLOCK))
     {

@@ -1,0 +1,21 @@
+; -!- emf -!-
+; Copyright (c) 2025 JASSPA (www.jasspa.com).
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Test multi-scheme poke
+; Authors:     Steven Phillips
+;
+set-variable #l0 &spr "%s%s%s%s%s%s" &itoa .scheme.hlred &itoa .scheme.hlyellow &itoa .scheme.hlgreen &itoa .scheme.hlcyan &itoa .scheme.hlblue &itoa .scheme.hlmagenta
+set-variable #l0 &cat &cat #l0 #l0 #l0 
+0x07 screen-poke 2 2 #l0 "Shift0µŒÉ¶ï€" 
+0x17 screen-poke 3 2 #l0 "Shift1µŒÉ¶ï€" 
+0x27 screen-poke 4 2 #l0 "Shift2\x0dµŒÉ¶ï€" 
+0x47 screen-poke 5 2 #l0 "Shift4µŒÉ¶ï€" 
+0x85 screen-poke 6 2 #l0 "Shift8	µŒÉ¶ï€"
+0x03 screen-poke 7 2 .scheme.hlred "Shift0µŒÉ¶ï€" 
+0x13 screen-poke 8 2 .scheme.hlyellow "Shift1µŒÉ¶ï€" 
+0x23 screen-poke 9 2 .scheme.hlgreen "Shift2\x0dµŒÉ¶ï€" 
+0x43 screen-poke 10 2 .scheme.hlcyan "Shift4µŒÉ¶ï€" 
+0x81 screen-poke 11 2 .scheme.hlmagenta "Shift8	µŒÉ¶ï€"
