@@ -31,6 +31,8 @@ jobs:
            ls /home/linuxbrew/.linuxbrew/opt/openssl@3.0/
            echo INFO: OpenSSL 2
            ls /home/linuxbrew/.linuxbrew/opt/openssl@3.0/lib
+           sudo apt install libxft-dev
+           pkg-config --cflags xft
            
       - name: Checkout code
         uses: actions/checkout@v4
