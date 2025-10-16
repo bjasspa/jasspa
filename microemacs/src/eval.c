@@ -555,7 +555,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 if(!(meSystemCfg & meSYSTEM_CONSOLE))
 #endif
                 {
-                    meSystemCfg = (meSystemCfg & ~(meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR)|meSYSTEM_FONTFIX;
+                    meSystemCfg = (meSystemCfg & ~(meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR))|meSYSTEM_FONTFIX;
                     TTinitClipboard();
                 }
 #ifdef _ME_CONSOLE

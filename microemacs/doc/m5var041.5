@@ -63,29 +63,8 @@ failed.
 .Ht indent 2 
 \fB$result\fR is set to the indent scheme used at current location when an argument of \fC2\fR is given.
 .TP
-.Ht mark-registry 2
-\fB$result\fR is used to return the full name of the given registry node.
-.TP
-.Ht replace-string 2
-.Ht query-replace-string 2
-.IP
-\fB$result\fR is used to return the number of substitutions, the final replace mode ('a' for all, 'l' for last or 'q'
-for query) and the replace with string in a list.
-.TP
-.Ht osd 2 
-.IP
-\fB$result\fR is used to give and return information to osd item commands, information depends on the type of
-\fBosd\fR item.
-.TP
-.Ht osd-dialog 3
-.Ht osd-xdialog 3
-.IP
-\fB$result\fR  is used to return the button pressed by the user.
-.TP
-.Ht set-char-mask 2 
-.IP
-\fB$result\fR is set to the characters in the given set.
-.TP
+.Ht ipipe-shell-command 2 
+.Ht pipe-shell-command 2 
 .Ht shell-command 2 
 .IP
 \fB$result\fR is set to the exit status of the \fBsystem\fR call. The combination of \fBshell-command\fR calls and
@@ -99,8 +78,34 @@ shell-command &cat "test -f " %filename
 !else
     ml-write "file does not exists"
 !endif
-.CE 0
+.CE
 .Me $ehf-scheme
+In the case of \fBipipe-shell-command\fR, \fB$result\fR is only set to the exit status of the \fBsystem\fR process 
+during the final call to the \fIbuffer-ipipe-command\fR, for more information see help for variable
+.Ht $buffer-ipipe 5 .
+.TP
+.Ht mark-registry 2
+\fB$result\fR is used to return the full name of the given registry node.
+.TP
+.Ht osd 2 
+.IP
+\fB$result\fR is used to give and return information to osd item commands, information depends on the type of
+\fBosd\fR item.
+.TP
+.Ht osd-dialog 3
+.Ht osd-xdialog 3
+.IP
+\fB$result\fR  is used to return the button pressed by the user.
+.TP
+.Ht replace-string 2
+.Ht query-replace-string 2
+.IP
+\fB$result\fR is used to return the number of substitutions, the final replace mode ('a' for all, 'l' for last or 'q'
+for query) and the replace with string in a list.
+.TP
+.Ht set-char-mask 2 
+.IP
+\fB$result\fR is set to the characters in the given set.
 .TP
 .Ht show-region 2 
 .IP
@@ -141,9 +146,12 @@ should be copied before getting user input.
 .Ht generate-hash 2 ,
 .Ht goto-alpha-mark 2 ,
 .Ht indent 2 ,
+.Ht ipipe-shell-command 2 ,
 .Ht mark-registry 2 ,
-.Ht query-replace-string 2 ,
 .Ht osd 2 ,
+.Ht pipe-shell-command 2 ,
+.Ht query-replace-string 2 ,
+.Ht replace-string 2 ,
 .Ht set-char-mask 2 ,
 .Ht shell-command 2 ,
 .Ht show-region 2 ,

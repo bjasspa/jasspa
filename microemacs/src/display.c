@@ -999,64 +999,41 @@ hideLineJump:
         {
             register int ii, len, col=0, cno=0;
             register meScheme scheme;
+            meUByte cc, *sfstp=fstp;
             
             row = rowToClient(row);
-            if(meSystemCfg & meSYSTEM_FONTFIX)
-            {
-                meUByte cc, *sfstp=fstp;
-                do {
-                    scheme = blkp->scheme;
-                    meFrameXTermSetScheme(frameCur,scheme);
-                    if((ii = blkp->column - col) > 0)
+            do {
+                scheme = blkp->scheme;
+                meFrameXTermSetScheme(frameCur,scheme);
+                if((ii = blkp->column - col) > 0)
+                {
+                    int spFlag=0, ccol=col;
+                    len = ii;
+                    /* Maintain the frame store and copy the string into the frame store with the
+                     * colour information copy a space in place of special chars, they are drawn
+                     * separately after the XDraw, the spaces are replaced with the correct chars */
+                    while (--len >= 0)
                     {
-                        int spFlag=0, ccol=col;
-                        len = ii;
-                        /* Maintain the frame store and copy the string into the frame store with the
-                         * colour information copy a space in place of special chars, they are drawn
-                         * separately after the XDraw, the spaces are replaced with the correct chars */
-                        while (--len >= 0)
+                        *fssp++ = scheme;
+                        if(((cc=s1[col++]) & 0xe0) == 0)
                         {
-                            *fssp++ = scheme;
-                            if(((cc=s1[col++]) & 0xe0) == 0)
-                            {
-                                cc = ' ';
-                                spFlag++;
-                            }
-                            *fstp++ = cc;
+                            cc = ' ';
+                            spFlag++;
                         }
-                        meFrameXTermDrawString(frameCur,colToClient(scol+ccol),row,(char *)sfstp+ccol,ii);
-                        while(--spFlag >= 0)
-                        {
-                            while (((cc=s1[ccol]) & 0xe0) != 0)
-                                ccol++;
-                            sfstp[ccol] = cc;
-                            meFrameXTermDrawSpecialChar(frameCur,colToClient(scol+ccol),row,cc);
+                        *fstp++ = cc;
+                    }
+                    meFrameXTermDrawString(frameCur,colToClient(scol+ccol),row,(char *)sfstp+ccol,ii);
+                    while(--spFlag >= 0)
+                    {
+                        while (((cc=s1[ccol]) & 0xe0) != 0)
                             ccol++;
-                        }
+                        sfstp[ccol] = cc;
+                        meFrameXTermDrawSpecialChar(frameCur,colToClient(scol+ccol),row,cc);
+                        ccol++;
                     }
-                    blkp++;
-                } while(++cno < noColChng);
-            }
-            else
-            {
-                do {
-                    scheme = blkp->scheme;
-                    meFrameXTermSetScheme(frameCur,scheme);
-                    ii = blkp->column;
-                    if((len = ii-col) > 0)
-                    {
-                        meFrameXTermDrawString(frameCur,colToClient(scol+col),row,(char *)s1+col,len);
-                        /* Maintain the frame store and copy the string into
-                         * the frame store with the colour information */
-                        while (--len >= 0)
-                        {
-                            *fssp++ = scheme;
-                            *fstp++ = s1[col++];
-                        }
-                    }
-                    blkp++;
-                } while(++cno < noColChng);
-            }
+                }
+                blkp++;
+            } while(++cno < noColChng);
             if(meStyleCmpBColor(meSchemeGetStyle(vp1->eolScheme),meSchemeGetStyle(scheme)))
             {
                 ii = ncol;
@@ -1971,47 +1948,32 @@ updateScrollBar(meWindow *wp)
                 else
 #endif
                 {
+                    meUByte c0, c1;
                     meFrameXTermSetScheme(frameCur,scheme);
-                    
-                    if(meSystemCfg & meSYSTEM_FONTFIX)
-                    {
-                        meUByte c0, c1;
-                        fssp[0] = scheme;
-                        if(((c0 = *wbase) & 0xe0) == 0)
-                            fstp[0] = ' ';
-                        else
-                            fstp[0] = c0;
-                        
-                        if(len > 1)
-                        {
-                            fssp[1] = scheme;
-                            if(((c1 = wbase[1]) & 0xe0) == 0)
-                                fstp[1] = ' ';
-                            else
-                                fstp[1] = c1;
-                        }
-                        meFrameXTermDrawString(frameCur,cl,rw,fstp,len);
-                        if((c0 & 0xe0) == 0)
-                        {
-                            meFrameXTermDrawSpecialChar(frameCur,cl,rw,c0);
-                            fstp[0] = c0;     /* Assign the text */
-                        }
-                        if((len > 1) && ((c1 & 0xe0) == 0))
-                        {
-                            meFrameXTermDrawSpecialChar(frameCur,cl+colToClient(1),rw,c1);
-                            fstp[1] = c1;     /* Assign the text */
-                        }
-                    }
+                    fssp[0] = scheme;
+                    if(((c0 = *wbase) & 0xe0) == 0)
+                        fstp[0] = ' ';
                     else
+                        fstp[0] = c0;
+                    
+                    if(len > 1)
                     {
-                        fssp[0] = scheme;     /* Assign the colour */
-                        fstp[0] = *wbase;     /* Assign the text */
-                        if(len > 1)
-                        {
-                            fssp[1] = scheme; /* Assign the colour */
-                            fstp[1] = wbase[1];
-                        }
-                        meFrameXTermDrawString(frameCur,colToClient(col),rw,wbase,len);
+                        fssp[1] = scheme;
+                        if(((c1 = wbase[1]) & 0xe0) == 0)
+                            fstp[1] = ' ';
+                        else
+                            fstp[1] = c1;
+                    }
+                    meFrameXTermDrawString(frameCur,cl,rw,fstp,len);
+                    if((c0 & 0xe0) == 0)
+                    {
+                        meFrameXTermDrawSpecialChar(frameCur,cl,rw,c0);
+                        fstp[0] = c0;     /* Assign the text */
+                    }
+                    if((len > 1) && ((c1 & 0xe0) == 0))
+                    {
+                        meFrameXTermDrawSpecialChar(frameCur,cl+colToClient(1),rw,c1);
+                        fstp[1] = c1;     /* Assign the text */
                     }
                 }
 #endif /* _XTERM */
@@ -2620,52 +2582,31 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
             else
 #endif
             {
+                meUByte cc;
                 col = colToClient(col);
                 row = rowToClient(row);
                 
-                if (meSystemCfg & meSYSTEM_FONTFIX)
+                str--;
+                while(len--)
                 {
-                    meUByte cc;
-                    str--;
-                    while(len--)
-                    {
-                        schm = *scheme++;
-                        if((schm == meCHAR_LEADER) && ((schm = *scheme++) == meCHAR_TRAIL_NULL))
-                            schm = 0;
-                        else
-                            schm = meSchemeCheck(schm)*meSCHEME_STYLES;
-                        schm += off;
-                        /* Update the frame store colour */
-                        *fssp++ = schm ;
-                        meFrameXTermSetScheme(frameCur,schm);
-                        if((cc=*++str) & 0xe0)
-                            meFrameXTermDrawString(frameCur,col,row,str,1);
-                        else
-                        {
-                            static char ss[1]={' '};
-                            meFrameXTermDrawString(frameCur,col,row,ss,1);
-                            meFrameXTermDrawSpecialChar(frameCur,col,row,cc);
-                        }
-                        col += mecm.fwidth;
-                    }
-                }
-                else
-                {
-                    while(len--)
-                    {
-                        schm = *scheme++;
-                        if((schm == meCHAR_LEADER) && ((schm = *scheme++) == meCHAR_TRAIL_NULL))
-                            schm = 0;
-                        else
-                            schm = meSchemeCheck(schm)*meSCHEME_STYLES;
-                        schm += off;
-                        /* Update the frame store colour */
-                        *fssp++ = schm;
-                        meFrameXTermSetScheme(frameCur,schm);
+                    schm = *scheme++;
+                    if((schm == meCHAR_LEADER) && ((schm = *scheme++) == meCHAR_TRAIL_NULL))
+                        schm = 0;
+                    else
+                        schm = meSchemeCheck(schm)*meSCHEME_STYLES;
+                    schm += off;
+                    /* Update the frame store colour */
+                    *fssp++ = schm ;
+                    meFrameXTermSetScheme(frameCur,schm);
+                    if((cc=*++str) & 0xe0)
                         meFrameXTermDrawString(frameCur,col,row,str,1);
-                        str++;
-                        col += mecm.fwidth;
+                    else
+                    {
+                        static char ss[1]={' '};
+                        meFrameXTermDrawString(frameCur,col,row,ss,1);
+                        meFrameXTermDrawSpecialChar(frameCur,col,row,cc);
                     }
+                    col += mecm.fwidth;
                 }
             }
 #endif /* _XTERM */
@@ -2807,7 +2748,6 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
             }
             else
 #endif
-                if (meSystemCfg & meSYSTEM_FONTFIX)
             {
                 meUByte cc, *sfstp, *fstp ;
                 int ii, spFlag=0 ;
@@ -2834,13 +2774,6 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
                     meFrameXTermDrawSpecialChar(frameCur,colToClient(col+ii),row,cc) ;
                     ii++ ;
                 }
-            }
-            else
-            {
-                meFrameXTermDrawString(frameCur,colToClient(col),rowToClient(row),str,len);
-                /* Update the frame store colour */
-                while (--len >= 0)
-                    *fssp++ = schm ;
             }
 #endif /* _XTERM */
         }

@@ -1538,7 +1538,6 @@ meFrameXTermDraw(meFrame *frame, int row, int scol, int erow, int ecol)
     }
     else
 #endif
-    if(meSystemCfg & meSYSTEM_FONTFIX)
     {
         meUByte cc, *sfstp, buff[meBUF_SIZE_MAX];
         int spFlag;
@@ -1593,42 +1592,6 @@ meFrameXTermDraw(meFrame *frame, int row, int scol, int erow, int ecol)
                 meFrameXTermDrawSpecialChar(frame,tcol*mecm.fwidth,row,cc) ;
                 tcol++ ;
             }
-            flp++;
-            row += mecm.fdepth;
-        } while(--erow > 0);
-    }
-    else
-    {
-        row = rowToClient(row);
-        do {
-            length = 0;                     /* Initialise the string length */
-            col = scol;                     /* Current column becomes start column */
-            tcol = col;                     /* Start of the text column */
-            
-            /* Get pointers aligned into the frame store */
-            fstp = flp->text + scol ;       /* Point to text block */
-            fssp = flp->scheme + scol ;     /* Point to colour block */
-            schm = *fssp;                   /* Get the initial scheme */
-            
-            while (col < ecol)
-            {
-                if (*fssp++ != schm)        /* Change in colour ?? */
-                {
-                    /* Output the current text item */
-                    meFrameXTermSetScheme(frame,schm) ;
-                    meFrameXTermDrawString(frame,colToClient(tcol),row,fstp,length);
-                    fstp += length;         /* Move the text pointer */
-                    tcol = col;             /* Move the text position */
-                    length = 0;             /* Reset the length */
-                    schm = fssp[-1];        /* Get the next colour */
-                }
-                length++;                   /* Increment the string length */
-                col++;                      /* Next colunm */
-            }
-            
-            /* Output the remaining text item */
-            meFrameXTermSetScheme(frame,schm);
-            meFrameXTermDrawString(frame,colToClient(tcol),row,fstp,length);
             flp++;
             row += mecm.fdepth;
         } while(--erow > 0);
@@ -4208,7 +4171,7 @@ meFrameXTermHideCursor(meFrame *frame)
         }
         else
 #endif
-        if((meSystemCfg & meSYSTEM_FONTFIX) && !(cc & 0xe0))
+            if((cc & 0xe0) == 0)
         {
             static char ss[1]={' '} ;
             meFrameXTermDrawString(frame,cl,rw,ss,1);
@@ -4302,9 +4265,9 @@ meFrameXTermShowCursor(meFrame *frame)
             }
             else
 #endif
-            if((meSystemCfg & meSYSTEM_FONTFIX) && !(cc & 0xe0))
+            if((cc & 0xe0) == 0)
             {
-                static char ss[1]={' '} ;
+                static char ss[1]={' '};
                 meFrameXTermDrawString(frame,cl,rw,ss,1);
                 meFrameXTermDrawSpecialChar(frame,cl,rw,cc);
             }

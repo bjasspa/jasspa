@@ -82,19 +82,20 @@ hilight .hilight.methL 0x40 "." ""   $global-scheme
 
 0 define-macro meth-add-format
   set-variable #l0 @1
-  !iif &set #p9 &lfin .fl #l0  !return
-  !if &not &exi &ind &cat ".hilight." #l0
-    execute-file &cat "hk" #l0
-    !iif &not &exi &ind &cat ".hilight." #l0  -8 ml-write &spr "Error: Failed to find high-lighting definition for %s." #l0
+  !if &not &lfin .fl #l0
+    !if &not &exi &ind &cat ".hilight." #l0
+      execute-file &cat "hk" #l0
+      !iif &not &exi &ind &cat ".hilight." #l0  -8 ml-write &spr "Error: Failed to find high-lighting definition for %s." #l0
+    !endif
+    ; reserve \CDB for ME emf so ehf files can migrate to this
+    !if &seq #l0 "emf"
+      set-variable .fl &lset .fl 1 #l0
+    !else
+      set-variable .fl &lins .fl -1 #l0
+    !endif
   !endif
   set-variable #l1 &ind &cat ".hilight." #l0
   hilight #l1 0xc0 "\CDA" "" .hilight.meth $global-scheme
-  ; reserve \CDB for ME emf so ehf files can migrate to this
-  !if &seq #l0 "emf"
-    set-variable .fl &lset .fl 1 #l0
-  !else
-    set-variable .fl &lins .fl -1 #l0
-  !endif
   hilight .hilight.meth 0xc0 &cat "\CD" &itoa &add 65 &set #p9 &lfin .fl #l0 "" #l1  $global-scheme
 !emacro
 set-variable .meth-add-format.fl "\b\b"

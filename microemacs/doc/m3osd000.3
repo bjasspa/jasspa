@@ -7,7 +7,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd000.3,v 2.23 2025/08/28 02:15:19 jon Exp $
+.Id $Id: m3osd000.3,v 2.23 2025/10/16 22:34:38 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH user-setup 3
@@ -301,16 +301,7 @@ also changes the definition of variables
 and
 .Ht $window-chars 5
 to their best values for the given font.
-.IP "\fCExtend Char Set\fR"
-When enabled \*(mS replaces the display of characters \fC0x00\fR to \fC0x1f\fR
-with forms which are useful for  variables
-.Ht $box-chars 5
-and
-.Ht $window-chars 5
-greatly improving the look of
-.Ht osd 2
-dialogs, the scroll bars etc.
-.IP "\fCUse Fonts\fR"
+.IP "\fCUse Font Styles\fR"
 When enabled the bold, italic, light and underline characteristics of the font
 will be used depending on their  availability and the Color Scheme being used.
 This indirectly sets bit \fC0x10\fR of the
@@ -427,13 +418,14 @@ then executing
 if many of the characters in the second half of the table are drawn as a question mark within a diamond (\fC<?>\fR) 
 the terminal is using UTF-8 encoding and the option should be enabled.
 .IP "\fCExtend Char Set\fR"
-See \fBPlatform UNIX Setup\fR above, only supported when UTF-8 encoding is enabled. When enabled \*(mS uses specific 
-Unicode characters, typically not available in the current charset, to render the characters \fC0x00\fR to \fC0x1f\fR
-to improve the visual rendering of the
+When enabled \*(mS replaces the display of characters \fC0x00\fR to \fC0x1f\fR with specific Unicode characters,
+typically not available in the current charset, which are useful for variables
 .Ht $box-chars 5
 and
 .Ht $window-chars 5
-characters used for drawing the dialogs and menus.
+greatly improving the look of
+.Ht osd 2
+dialogs, the scroll bars etc. This option is only supported when UTF-8 encoding is enabled.
 .IP "\fCTermcap Color\fR"
 This option determines  whether Termcap based colors should be used. These are
 typically the standard eight colors and may not be supported on all terminals.
@@ -441,7 +433,7 @@ If this option is disabled  Termcap  fonts (such as bold) are used  instead to
 create a primitive hi-lighting. This indirectly sets bit 0x004 of the
 .Ht $system 5
 variable.
-.IP "\fCUse Fonts\fR"
+.IP "\fCUse Font Styles\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCDraw White Spaces\fR"
 See \fBPlatform UNIX Setup\fR above.
@@ -491,11 +483,9 @@ the range -11 .. -14 generally produce reasonably sized fonts. The \fIhight\fR
 and  \fIwidth\fR  may be specified as positive  values and allow explicit font
 dimensions  to be  specified,  generally  used to achieve a precise  font size
 requirement.
-.IP "\fCFonts\fR"
-See \fCUse Fonts\fR in \fBPlatform UNIX Setup\fR above.
-.IP "\fCDisplay Char Set\fR"
+.IP "\fCUse Font Styles\fR"
 See \fBPlatform UNIX Setup\fR above.
-.IP "\fCExtend Char Set\fR"
+.IP "\fCDisplay Char Set\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCChoose Font\fR"
 Opens a windows  dialog  allowing the user to select a font, the  selection is
