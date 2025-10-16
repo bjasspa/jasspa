@@ -551,11 +551,11 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
 #ifdef _UNIX
 #ifdef _ME_WINDOW
 #ifdef _ME_CONSOLE
-                /* on unix, if using x-window then can't set ANSI || XANSI bits, and update clipboard settings */
+                /* on unix, if using x-window then can't set ANSI | XANSI bits and FONTFIX must be set, and update clipboard settings */
                 if(!(meSystemCfg & meSYSTEM_CONSOLE))
 #endif
                 {
-                    meSystemCfg &= ~(meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR);
+                    meSystemCfg = (meSystemCfg & ~(meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR)|meSYSTEM_FONTFIX;
                     TTinitClipboard();
                 }
 #ifdef _ME_CONSOLE
@@ -564,6 +564,21 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
 #endif
 #ifdef _ME_CONSOLE
                     TCAPinitDrawChar();
+#endif
+#endif
+#ifdef _WIN32
+                /* on Windows FONTFIX must be set for mew and clear for mec */
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
+                if(!(meSystemCfg & meSYSTEM_CONSOLE))
+#endif
+                    meSystemCfg |= meSYSTEM_FONTFIX;
+#ifdef _ME_CONSOLE
+                else
+#endif
+#endif
+#ifdef _ME_CONSOLE
+                    meSystemCfg &= ~meSYSTEM_FONTFIX;
 #endif
 #endif
 #if MEOPT_CLIENTSERVER

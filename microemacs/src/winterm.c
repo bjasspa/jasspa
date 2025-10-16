@@ -1433,7 +1433,7 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
     /* Check the current character set and select the special font or convert
      * the character for the current font. Bring the appropriate font into the
      * device context. */
-    if(((cc & 0xe0) == 0) && (meSystemCfg & meSYSTEM_FONTFIX))
+    if((cc & 0xe0) == 0)
     {
 	HBRUSH brush;
 	HPEN pen;                   /* Foreground pen */
@@ -1744,7 +1744,7 @@ meFrameDraw(meFrame *frame)
             do
             {
                 cc = ftext[col];
-                if((meSystemCfg & meSYSTEM_FONTFIX) && ((cc & 0xe0) == 0))
+                if((cc & 0xe0) == 0)
                 {
                     spFlag++;
                     cc = ' ';
@@ -1950,9 +1950,9 @@ WinKillToClipboard(void)
                         *bufp++ = '\r';
 #if MEOPT_EXTENDED
                     /* Convert any special characters */
-                    else if(uc >= 0x80)
+                    else if((uc & 0x80) != 0)
                         uc = charToUnicode[uc-128];
-                    else if((meSystemCfg & meSYSTEM_FONTFIX) && (uc < TTSPECCHARS))
+                    else if((uc & 0xe0) == 0)
                         uc = ttSpeChars[uc];
 #endif
                     /* Copy in the character */
