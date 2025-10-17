@@ -25,6 +25,8 @@ jobs:
         run: |
            echo INFO: uname -a
            uname -a
+           sudo apt install -y libxft-dev
+           pkg-config --cflags xft
         
       - name: Checkout code
         uses: actions/checkout@v4
