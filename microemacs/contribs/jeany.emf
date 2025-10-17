@@ -3,7 +3,7 @@
 ;  Author        : Detlef Groth
 ;  Created By    : Detlef groth
 ;  Created       : Mon Mar 25 17:52:20 2024
-;  Last Modified : <241011.1623>
+;  Last Modified : <251017.0625>
 ;
 ;  Description   : CUA like bindings behind the C-j prefix. See help at then end.
 ;
@@ -51,12 +51,14 @@ define-macro jeany-bindings
 !emacro
 
 define-macro jeany-osd
-    osd 1 10  ""  "\HNew           C-j C-o"   f osd-new-buffer ; Create a new document
-    osd 1 20  ""  "\HOpen...       C-j C-o"   f osd-file-open  ; Find a new file
-    osd 1 50  ""  "\HClose         C-j C-w"   f osd-close
-    osd 1 80  ""  "\HSave          C-j C-s"   f osd-save       ; Save the buffer
-    osd 1 140 ""  "\HPrint         C-j C-p"   f print-buffer   ; Print
-    osd 1 210 ""  "E\Hxit          C-j C-q"   f save-buffers-exit-emacs
+    osd 1 0   "bo" 1 0
+    osd 1 10  ""  "\HNew             C-j C-o"   f osd-new-buffer ; Create a new document
+    osd 1 20  ""  "\HOpen...         C-j C-o"   f osd-file-open  ; Find a new file
+    osd 1 50  ""  "\HClose           C-j C-w"   f osd-close
+    osd 1 80  ""  "\HSave            C-j C-s"   f osd-save       ; Save the buffer
+    osd 1 140 ""  "\HPrint           C-j C-p"   f print-buffer   ; Print
+    osd 1 210 ""  "E\Hxit            C-j C-q"   f save-buffers-exit-emacs
+
     ; edit menu
     osd 2 10  ""  "\HUndo                C-j C-z"   1 osd-undo       ; Undo the last command
     osd 2 50  ""  "Cu\Ht                 C-j C-x"   f kill-region    ; Kill off the region
@@ -72,6 +74,8 @@ define-macro jeany-osd
     osd 3 60  ""  "Find \HPrevious        C-j G"    f hunt-backward
     osd 3 70  ""  "\HReplace              C-j C-h"  2 osd-search
     osd 3 150 ""  "Goto \HLine...         C-j C-l"  f osd-goto-line
+    -3 osd
+    1000 ml-write "menu for jeany bindings updated"
 !emacro
 
 define-macro jeany-osd-undo
@@ -98,6 +102,8 @@ define-macro jeany-osd-undo
   osd 3 60  ""  "Find \HPrev            C-x C-h"   f hunt-backward
   osd 3 70  ""  "\HReplace...           esc C-r"   2 osd-search
   osd 3 150 ""  "Goto \HLine...         esc g"     f osd-goto-line    
+  -3 osd
+  1000 ml-write "menu as default reset"
 !emacro
   
 define-help "jeany-bindings" "3"  
@@ -186,7 +192,6 @@ $a
   following line to your `USERNAME.emf` file:
   
        define-macro-file jeany jeany-bindings
-  
 
 ## SEE ALSO
 
