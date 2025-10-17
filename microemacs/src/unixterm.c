@@ -1018,49 +1018,46 @@ TCAPdrawChar(meUByte cc)
 XftFont *
 __meXftFontGet(meUByte font)
 {
-    char *fn=(char *) mecm.fontName, buff[256];
+    char *fn=(char *) mecm.fontName, buff[256], *bf, *ss;
     XftFont *ftFont;
     int ll;
     
-    if(strstr(fn,":style=") != NULL)
+    ll = meStrlen(fn);
+    memcpy(buff,fn,ll);
+    bf = ss = buff+ll;
+    if(strstr(fn,":weight=") != NULL)
+        ;
+    else if(font & meFONT_BOLD)
+    {
+        memcpy(ss,":weight=bold",12);
+        ss += 12;
+    }
+    else if(font & meFONT_LIGHT)
+    {
+        memcpy(ss,":weight=light",13);
+        ss += 13;
+    }
+    if(strstr(fn,":slant=") != NULL)
+        ;
+    else if(font & meFONT_ITALIC)
+    {
+        memcpy(ss,":slant=italic",13);
+        ss += 13;
+    }
+    *ss = '\0';
+    if((ss == bf) || ((ftFont = XftFontOpenName(mecm.xdisplay,xscreen,buff)) == NULL))
         ftFont = mecm.ftFontTbl[0];
     else
     {
-        ll = meStrlen(fn);
-        memcpy(buff,fn,ll);
-        fn = buff+ll;
-        memcpy(fn,":style=",7);
-        fn += 7;
-        if(font & meFONT_BOLD)
+        XGlyphInfo ext;
+        ll = (ftFont->height > ftFont->ascent) ? ftFont->height:(ftFont->ascent + ftFont->descent);
+        XftTextExtentsUtf8(mecm.xdisplay,ftFont,(const FcChar8 *) "W",1,&ext);
+        if((ext.xOff != mecm.fwidth) || (ll != mecm.fdepth))
         {
-            memcpy(fn,"Bold",4);
-            fn += 4;
-        }
-        else if(font & meFONT_LIGHT)
-        {
-            memcpy(fn,"Thin",4);
-            fn += 4;
-        }
-        if(font & meFONT_ITALIC)
-        {
-            if(font & (meFONT_BOLD|meFONT_LIGHT))
-                *fn++ = ' ';
-            memcpy(fn,"Italic",6);
-            fn += 6;
-        }
-        *fn = '\0';
-        if((ftFont = XftFontOpenName(mecm.xdisplay,xscreen,buff)) != NULL)
-        {
-            XGlyphInfo ext;
-            ll = (ftFont->height > ftFont->ascent) ? ftFont->height:(ftFont->ascent + ftFont->descent);
-            XftTextExtentsUtf8(mecm.xdisplay,ftFont,(const FcChar8 *) "W",1,&ext);
-            if((ext.xOff != mecm.fwidth) || (ll != mecm.fdepth))
-            {
-                /* size is different, unsafe to use! */
-                printf("WARNING XftFont size different for [%s]: %d,%d %d,%d\n",buff,ext.xOff,mecm.fwidth,ll,mecm.fdepth);
-                XftFontClose(mecm.xdisplay,ftFont);
-                ftFont = mecm.ftFontTbl[0];
-            }
+            /* size is different, unsafe to use! */
+            printf("WARNING XftFont size different for [%s]: %d,%d %d,%d\n",buff,ext.xOff,mecm.fwidth,ll,mecm.fdepth);
+            XftFontClose(mecm.xdisplay,ftFont);
+            ftFont = mecm.ftFontTbl[0];
         }
     }
     mecm.ftFontTbl[font] = ftFont;
