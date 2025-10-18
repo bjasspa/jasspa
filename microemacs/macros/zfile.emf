@@ -482,7 +482,7 @@ define-macro zfile-setup
   !endif
   set-registry &spr "/history/%s/zfl/1" $platform "7z"
   set-registry &spr "/history/%s/zfl/1/list" $platform &cat #l1 " l %\"%zf%\""
-  set-registry &spr "/history/%s/zfl/1/mask" $platform "\\(7z\\|zip\\|rar\\|tar\\|iso\\|msi\\|cab\\|apk\\|ar[cj]?\\|bz2\\|epub\\|deb\\|dmg\\|rpm\\|ntfs\\|t?[bgx]?z\\)"
+  set-registry &spr "/history/%s/zfl/1/mask" $platform "\\(7z\\|zip\\|rar\\|tar\\|iso\\|apk\\|msi\\|cab\\|apk\\|ar[cj]?\\|bz2\\|epub\\|deb\\|dmg\\|rpm\\|ntfs\\|t?[bgx]?z\\)"
   set-registry &spr "/history/%s/zfl/1/rm-top" $platform "^----[- ]+----\n"
   set-registry &spr "/history/%s/zfl/1/rm-bot" $platform "^----[- ]+----\n"
   set-registry &spr "/history/%s/zfl/1/line-s1" $platform "^\\(\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d\\) \\([.][.\\u]\\{4\\}\\) \\( *\\d+\\) [ \\d]\\{12\\}  \\(.+\\)$"
