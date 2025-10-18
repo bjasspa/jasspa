@@ -136,17 +136,17 @@ findTagSearch(meUByte *key, meUByte *file, meUByte *patt)
      *   'r' == recursive ascent.
      *   'c' == continue (multi-tag processing)
      */
-    tagOption = 0 ;
-    if ((tt = getUsrVar((meUByte *)"tag-option")) != errorm)
+    if((tt = getUsrVar((meUByte *)"tag-option")) != errorm)
     {
+        tagOption = (meStrchr(tt,'m') != NULL) ? 4:0;
         /* 'c' automatically adds 'r' */
         if(meStrchr(tt,'c') != NULL)
-            tagOption |= 3 ;
+            tagOption |= 3;
         else if(meStrchr(tt,'r') != NULL)
-            tagOption |= 1 ;
-        if(meStrchr(tt,'m') != NULL)
-            tagOption |= 4 ;
+            tagOption |= 1;
     }
+    else
+        tagOption = 7;
     
     /* Get the current directory location of our file and use this to locate
      * the tag file. */

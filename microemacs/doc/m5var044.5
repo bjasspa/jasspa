@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m5var044.5,v 2.6 2022/06/12 17:14:15 jon Exp $
+.Id $Id: m5var044.5,v 2.6 2025/10/18 00:51:05 jon Exp $
 .Im MicroEmacs variable|scuts
 .so me.tni
 .TH %tag-file 5
@@ -70,27 +70,22 @@ The  variable  fields  are  expected  to be in  conventional  order  of
 .B %tag-option
 is a user defined variable that modifies the behavior of 
 .Ht find-tag 2 .
-This is defined as a string, where each  character  identifies an option, when
-undefined then default  behavior is assumed.  The options are defined as:-
+This is defined as a string, where each  character  identifies an option, the options are defined as:
 .IP "\fBm\fR \- Enable multiple tags support"
-Allows a single tag to be present  multiple  times in the tag file,  typically
-used when a function is defined  multiple  times. When enabled  \fBfind-tag\fR
-can be used to loop through all definitions of a given tag. 
+Allows a single tag to be present multiple times in the tag file, typically used when a function is defined multiple
+times. When enabled \fBfind-tag\fR can be used to loop through all definitions of a given tag. 
 .IP "\fBr\fR \- recursive tags file"
-By default, the \fBtags\fR file is assumed to reside in the current  directory
-location.  The \fBr\fR  option  enables an ascending  search up the  directory
-hierarchy  from the  current  directory  position  in search of a  recursively
-generated tags file.
+By default, the \fBtags\fR file is assumed to reside in the current directory location. The \fBr\fR option enables an
+ascending search up the directory hierarchy from the current directory position in search of a recursively generated
+tags file.
 .IP "\fBc\fR \- Continue recursive tag search"
-Used in  conjunction  with flag  \fBr\fR; when not  specified,  the  recursive
-searching  of a tag stops at the first tag file found,  regardless  of whether
-the given tag was located in the found tag file. If this flag is given and the
-tag was not found in the first tag file, the recursive search  continues. This
-allows local tag files to be created and regularly maintained, yet still being
-able to access a higher level tag file when required.
+Used in conjunction with flag \fBr\fR; when not specified, the recursive searching of a tag stops at the first tag
+file found, regardless of whether the given tag was located in the found tag file. If this flag is given and the tag
+was not found in the first tag file, the recursive search continues. This allows local tag files to be created and
+regularly maintained, yet still being able to access a higher level tag file when required.
 .LP
-Modifications  to this  variable  should be made in the  \fIuser\fR.emf  file,
-e.g. To enable multi recursive ascent tag searching define:-
+When not defined the default value is "\fCmrc\fR". Modifications to this variable should be made in the \fIuser\fR.emf
+file, e.g. To enable multi recursive ascent tag searching define:-
 .Me $emf-scheme
 .CS
 set-variable %tag-option  "mrc"
