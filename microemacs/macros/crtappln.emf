@@ -73,7 +73,7 @@ define-macro create-app
     !iif &not $status  -10 ml-write "Error: Unable to write to /Applications/MicroEmacs.app/Contents/, rerun with root permissions."
     !force 0 delete-buffer $buffer-bname
     find-buffer "*ca"
-    insert-string "#!/bin/sh\n# this file must be at least 28 bytes long\n"
+    insert-string "#!/bin/sh\n# this file must be at least 28 bytes long\ncd ~/\n"
     insert-string .about.arg0
     insert-string " &"
     set-variable $buffer-fmod 493

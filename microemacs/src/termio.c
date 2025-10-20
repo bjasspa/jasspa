@@ -84,10 +84,10 @@ meUShort ttSpeUChars[TTSPECCHARS] =
     ' ', /*  0/0x00 - Undefined */
     0x25c7, /*  1/0x01 - Unicode tag - 3 byte encode */
     0x25c6, /*  2/0x02 - Unicode tag - 5 byte encode */
-    ' ', /*  3/0x03 - Checkbox left side */
+    ' ',    /*  3/0x03 - Checkbox left side */
     0x25A1, /*  4/0x04 - Checkbox center not selected */
     0x25A3, /*  5/0x05 - Checkbox center selected */
-    ' ', /*  6/0x06 - Checkbox right side */
+    ' ',    /*  6/0x06 - Checkbox right side */
     0xfffd, /*  7/0x07 - unsupported/undefined char meCHAR_UNDEF (i.e. \uFFFD) */
     0x00b7, /*  8/0x08 - backspace char, used for visible space */
     0x2192, /*  9/0x09 - Tab character */
@@ -97,8 +97,8 @@ meUShort ttSpeUChars[TTSPECCHARS] =
     0x250c, /* 13/0x0d - Line Drawing / Top left */
     0x2514, /* 14/0x0e - Line Drawing / Bottom left |_ */
     0x253c, /* 15/0x0f - Line Drawing / Centre cross + */
-    0x2bc8, /* 16/0x10 - Cursor Arrows / Right */
-    0x2bc7, /* 17/0x11 - Cursor Arrows / Left */
+    '>',    /* 16/0x10 - Cursor Arrows / Right */
+    '<',    /* 17/0x11 - Cursor Arrows / Left */
     0x2500, /* 18/0x12 - Line Drawing / Horizontal line - */
     0x2610, /* 19/0x13 - Cross box empty [ ] */
     0x2612, /* 20/0x14 - Cross box [X] */
@@ -111,8 +111,8 @@ meUShort ttSpeUChars[TTSPECCHARS] =
     0x2592, /* 27/0x1b - Scroll box - vertical */
     0x0020, /* 28/0x1c - Not used */
     0x2592, /* 29/0x1d - Scroll box - horizontal */
-    0x2bc5, /* 30/0x1e - Cursor Arrows / Up */
-    0x2bc6  /* 31/0x1f - Cursor Arrows / Down */
+    '^',    /* 30/0x1e - Cursor Arrows / Up */
+    'v'     /* 31/0x1f - Cursor Arrows / Down */
 };
 #endif
 #endif

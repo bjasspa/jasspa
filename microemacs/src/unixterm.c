@@ -1050,9 +1050,11 @@ __meXftFontGet(meUByte font)
     else
     {
         XGlyphInfo ext;
-        ll = (ftFont->height > ftFont->ascent) ? ftFont->height:(ftFont->ascent + ftFont->descent);
+        ll = ftFont->ascent + ftFont->descent;
+        if(ftFont->height < ll)
+            ll = ftFont->height;
         XftTextExtentsUtf8(mecm.xdisplay,ftFont,(const FcChar8 *) "W",1,&ext);
-        if((ext.xOff != mecm.fwidth) || (ll != mecm.fdepth))
+        if((ext.xOff != mecm.fwidth) || (ll > mecm.fdepth))
         {
             /* size is different, unsafe to use! */
             printf("WARNING XftFont size different for [%s]: %d,%d %d,%d\n",buff,ext.xOff,mecm.fwidth,ll,mecm.fdepth);
@@ -3611,7 +3613,14 @@ XTERMsetFont(int n, char *fontName)
         if((ftFont = XftFontOpenName(mecm.xdisplay,xscreen,fontBuf)) != NULL)
         {
             XGlyphInfo ext;
-            jj = (ftFont->height > ftFont->ascent) ? ftFont->height:(ftFont->ascent + ftFont->descent);
+            jj = ftFont->ascent + ftFont->descent;
+            if(n & 0x08)
+            {
+                if(ftFont->height < jj)
+                    jj = ftFont->height;
+            }
+            else if(ftFont->height > jj)
+                jj = ftFont->height;
             XftTextExtentsUtf8(mecm.xdisplay,ftFont,(const FcChar8 *) "W",1,&ext);
             ii = ext.xOff;
             if((n & 0x04) == 0)
@@ -3631,11 +3640,10 @@ XTERMsetFont(int n, char *fontName)
             mecm.size = sz;
             mecm.fwidth = ii;
             mecm.fdepth = jj;
-            /* SWP: On Debian, font 'Noto Mono:lang=en:size=11' has a height of 18, ascent of 15 and descent of 4,
-             * The actual height is 18 but all 18 pixels are used and if drawn at 0+15 (i.e. using ascent) the bottom
-             * pixel is outside the 18 pixel high box so is clipped or leaves debris whereas 0+18-4 seems to work.
-             * This could be just luck and the next font favours the other way, may need flags or find a dynamic way
-             * to work out */
+            /* SWP: Some fonts have height == (ascent+descent+1), e.g. font 'Noto Mono:lang=en:size=11' on Debian, or 'Menlo:lang=en:size=9' on macOS.
+             * If bit 0x08 is set then use the smaller value, but this can leave debris, attempt to minimize this by pitching the ascent rather than
+             * descent as space at the top is typically left for accents etc. which are less common.
+             */
             mecm.ascent = jj - ftFont->descent;
             mecm.fhwidth = ii >> 1;
             mecm.fhdepth = jj >> 1;
