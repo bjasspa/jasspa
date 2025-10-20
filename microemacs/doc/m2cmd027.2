@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd027.2,v 2.8 2024/08/27 19:15:46 jon Exp $
+.Id $Id: m2cmd027.2,v 2.8 2025/10/20 23:02:30 jon Exp $
 .Im MicroEmacs command|hilight
 .so me.tni
 .TH change-font 2
@@ -50,13 +50,25 @@ font X name and the font will change if it is available.  The window size change
 of rows and  columns so ensure  that when  changing  to a larger font then there is enough room (or a way) to resize a
 window which is larger than the actual screen.
 .PP
-The X font string  describes the  attributes of the font in terms of it's size
-name etc. as follows:-
+On systems that support FreeType fonts, if the font name does not start with a '\fC-\fR' it is identified as a
+FreeType font, otherwise, if the font starts with a '\fC-\fR' it is treated as an X11 core font name. If the name is 
+an empty string ("") the default FreeType monospace font is used. 
+.PP
+FreeType font names can include attributes of the form \fC:<name>=value>\fR at the end of the font name, attributes 
+include \fC:lang\fR and \fC:style\fR etc. When specifying the font size the \fC:size=#\fR attribute should be used, 
+rather than the shorter '\fC<font-name>-#\fR', so that supporting macros can more reliably identify the name and size. 
+\*(mS uses the \fC:weight\fR and \fC:slant\fR attributes when bit \fB0x10\fR of
+.Ht $system 5
+is set, see \fBUse Font Styles\fR in
+.Ht user-setup 3
+for more information.
+.PP
+The X core font string describes the attributes of the font in terms of it's size name etc. as follows:-
 .sp
 .ps 8
 .vs 10
 .nf
-\-\fIfoundry\fR\-\fIfamily\fR\-\fIweight\fR\-\fIslant\fR\-\fIwidth\fR\-\-\fIpixels\fR\-\fIpoint\fR\-\fIhres\fR\-\fIvres\fR\-\fIspace\fR\-\fIav\fR\-\fIset\fR
+\-\fIfoundry\fR\-\fIfamily\fR\-\fIweight\fR\-\fIslant\fR\-\fIwidth\fR\-\fIadstyl\fR\-\fIpixels\fR\-\fIpoint\fR\-\fIhres\fR\-\fIvres\fR\-\fIspace\fR\-\fIav\fR\-\fIset\fR
 .sp
 .fi
 .vs 12
@@ -75,6 +87,8 @@ Determines  the  orientation of the font.  \fIslant\fR is usually  \fBr\fRoman
 .IP \fIwidth\fR
 Describes  the  proportionate  width  of  the  font.  Typical  widths  include
 \fBnormal\fR, \fBcondensed\fR, \fBnarrow\fR, \fBdouble\fR.
+.IP \fIadstyl\fR
+Describes the additional style of the font, such as serif or sans serif etc. This is often an empty field.
 .IP \fIpixels\fR
 Pixel size of the font
 .IP \fIpoint\fR
@@ -124,10 +138,17 @@ When set the command does not alter the value of variable
 .Ht $result 5 .
 When not set \fB$result\fR is set to the following information about the font in a \*(mS list format:
 .CS
-"|<flg>|||<pixel-width>|<pixel-height>|||<fontName>|"
-.CE
+"|<flg>|||<pixel-width>|<pixel-height>||<font-size>|<fontName>|"
+.CE 0
+.IP
 The  \fB<flg>\fR  is an  bitwise  integer  value  where bit 1  indicates  the font is not fixed  width,  i.e. the font
-\fIspace\fR is of type \fBp\fRroportional.
+spacing is proportional; the <flg> value is only given when the font name is given (i.e. bit \fB0x01\fR of 
+argument \fBn\fR is set). The \fB<font-size>\fR will be set to 0 for X11 core fonts, or the font size for FreeType 
+fonts, this field is empty on systems that do not support FreeType fonts.   
+.IP \fB0x08\fR
+When set and the reported font height and sum of the ascent and descent differ, the smaller of the two values is used,
+however this may cause rendering issues ('debris' in the window). When clear, the larger value is used to minimise
+rendering issues. 
 .SS "IBM-PC / MS-DOS"
 \s-1MS-DOS\s0 may only change the screen resolution, the standard screen resolution is either 80 columns by 25 rows or
 80 by 50. A more advanced  graphics card can typically  support up to 132 by 60, MicroEmacs in theory has no limit but

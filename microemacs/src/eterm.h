@@ -264,7 +264,6 @@ typedef struct
 #define meFrameSetXGCFontId(ff,v) (((meFrameData *) ff->termData)->fontId = (v))
 #if MEOPT_XFT
 #define meXftUsed()               (mecm.fontTbl[0] == 0)
-#define meXftSize()               (mecm.size)
 #define meFrameGetXftDraw(ff)     (((meFrameData *) ff->termData)->xdraw)
 #define meFrameGetFgColor(ff)     (((meFrameData *) ff->termData)->xfcol)
 #define meFrameGetBgColor(ff)     (((meFrameData *) ff->termData)->xbcol)
@@ -272,9 +271,6 @@ typedef struct
 #define meFrameSetFgColor(ff,v)   (((meFrameData *) ff->termData)->xfcol = (v))
 #define meFrameSetBgColor(ff,v)   (((meFrameData *) ff->termData)->xbcol = (v))
 #define meFrameSetXftFont(ff,v)   (((meFrameData *) ff->termData)->ftFont = (v))
-#else
-#define meXftUsed()               (0)
-#define meXftSize()               (-1)
 #endif
 /* Mapped window state */
 #define meXMAP_FONT      -1             /* Unmapped and requires font change */

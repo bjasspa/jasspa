@@ -127,7 +127,7 @@ set-variable .svn.cdefs6  "|0|0|"
 ; 7 Diff - flags: ZRxWwpvS
 set-variable .svn.cdefs7  "|0|1|0|1|0|1|3|"
 ; 8 Log - flags: ZVpf
-set-variable .svn.cdefs8  "|0|0|1|"
+set-variable .svn.cdefs8  "|0|1|1|"
 ; 9 Move - flags: NPrS*!
 set-variable .svn.cdefs9  "||1|0|"
 ; 10 Status - flags: ZRAIuwS

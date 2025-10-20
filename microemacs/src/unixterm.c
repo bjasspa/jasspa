@@ -3549,7 +3549,11 @@ XTERMsetFont(int n, char *fontName)
     {
         /* cannot get here first time round due to init in XTERMstart so mecm is initialised */
         if((n & 0x04) == 0)
-            sprintf((char *) resultStr,"||||%d|%d||%d|%s|",mecm.fwidth,mecm.fdepth,meXftSize(),(mecm.fontName == NULL) ? "":(char *) mecm.fontName);
+#if MEOPT_XFT
+            sprintf((char *) resultStr,"||||%d|%d||%d|%s|",mecm.fwidth,mecm.fdepth,mecm.size,(mecm.fontName == NULL) ? "":(char *) mecm.fontName);
+#else
+            sprintf((char *) resultStr,"||||%d|%d|||%s|",mecm.fwidth,mecm.fdepth,(mecm.fontName == NULL) ? "":(char *) mecm.fontName);
+#endif
         return meTRUE;
     }
 #if MEOPT_XFT
@@ -3896,7 +3900,11 @@ XTERMcreateWindow(meUShort width, meUShort depth)
     frameData->bcol = meCOLOR_INVALID;
     frameData->font = 0 ;
     frameData->xgcv.font = frameData->fontId = mecm.fontTbl[0];
-    frameData->xgc = XCreateGC(mecm.xdisplay,frameData->xwindow,(meXftUsed()) ? 0:GCFont,&frameData->xgcv);
+    frameData->xgc = XCreateGC(mecm.xdisplay,frameData->xwindow,
+#if MEOPT_XFT
+                               (meXftUsed()) ? 0:
+#endif
+                               GCFont,&frameData->xgcv);
 #if MEOPT_XFT
     frameData->ftFont = mecm.ftFontTbl[0];
     if(meXftUsed())
