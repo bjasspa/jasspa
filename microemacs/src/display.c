@@ -981,7 +981,7 @@ hideLineJump:
                             wb[ll++] = cc;
                         else if((ii = (int) charToUnicode[cc & 0x7f]) == 0)
                         {
-                            meFrameXftDrawSpecialChar(frameCur,colToClient(scol+col+ll),row,'\x13');
+                            meFrameXftDrawSpecialChar(frameCur,colToClient(scol+col+ll),row,meCHAR_UNDEF);
                             wb[ll++] = ' ';
                         }
                         else
@@ -1928,7 +1928,7 @@ updateScrollBar(meWindow *wp)
                     if((cc & 0xe0) == 0)
                         meFrameXftDrawSpecialChar(frameCur,cl,rw,cc);
                     else if(((wc = cc) & 0x80) && ((wc = charToUnicode[cc-128]) == 0))
-                        meFrameXftDrawSpecialChar(frameCur,cl,rw,'\x13');
+                        meFrameXftDrawSpecialChar(frameCur,cl,rw,meCHAR_UNDEF);
                     else
                         meFrameXftDrawString16(frameCur,cl,rw,&wc,1);
                     if(len > 1)
@@ -1940,7 +1940,7 @@ updateScrollBar(meWindow *wp)
                         if((cc & 0xe0) == 0)
                             meFrameXftDrawSpecialChar(frameCur,cl,rw,cc);
                         else if(((wc = cc) & 0x80) && ((wc = charToUnicode[cc-128]) == 0))
-                            meFrameXftDrawSpecialChar(frameCur,cl,rw,'\x13');
+                            meFrameXftDrawSpecialChar(frameCur,cl,rw,meCHAR_UNDEF);
                         else
                             meFrameXftDrawString16(frameCur,cl,rw,&wc,1);
                     }
@@ -2572,7 +2572,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
                     else if((cc & 0x80) == 0)
                         meFrameXftDrawString(frameCur,col,row,str,1);
                     else if((wc = charToUnicode[cc & 0x7f]) == 0)
-                        meFrameXftDrawSpecialChar(frameCur,col,row,'\x13');
+                        meFrameXftDrawSpecialChar(frameCur,col,row,meCHAR_UNDEF);
                     else
                         meFrameXftDrawWString(frameCur,col,row,&wc,1);
                     col += mecm.fwidth;
@@ -2738,7 +2738,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
                         wb[off] = cc;
                     else if((wc = charToUnicode[cc & 0x7f]) == 0)
                     {
-                        meFrameXftDrawSpecialChar(frameCur,col+colToClient(off),row,'\x13');
+                        meFrameXftDrawSpecialChar(frameCur,col+colToClient(off),row,meCHAR_UNDEF);
                         wb[off] = ' ';
                     }
                     else

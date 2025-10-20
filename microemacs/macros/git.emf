@@ -787,7 +787,7 @@ set-variable .git-revision-op.lbl14 "|\HMaster|\HHead|\HPrevious to head|\HSpeci
       1 goto-position "\x82"
       ml-write &spr "[Git Warning: %s operation terminated]" &lget .git.cnames @#
       !return 0
-    !elif &band @#1 4
+    !elif &band #l1 4
       unset-variable .git.lock
       ml-write &spr "[Git %s successful]" &lget .git.cnames @#
     !elif &band #l1 2

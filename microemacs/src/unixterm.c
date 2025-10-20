@@ -1515,7 +1515,7 @@ meFrameXTermDraw(meFrame *frame, int row, int scol, int erow, int ecol)
                     wb[col] = cc;
                 else if((wc = charToUnicode[cc & 0x7f]) == 0)
                 {
-                    meFrameXftDrawSpecialChar(frameCur,colToClient(col),row,'\x13');
+                    meFrameXftDrawSpecialChar(frameCur,colToClient(col),row,meCHAR_UNDEF);
                     wb[col] = ' ';
                 }
                 else
@@ -2167,17 +2167,21 @@ meXEventHandler(void)
                     
                     /* foreign keyboard accent keys */
 #ifdef XK_dead_circumflex
-                case XK_dead_circumflex: ii = '^'; goto done_key;
-#endif
-#ifdef XK_dead_diaeresis
-                case XK_dead_diaeresis: ii = 0xa8; goto done_key;
-#endif
-#ifdef XK_dead_acute
-               /* that works only with CP1252 correctly */
-                case XK_dead_acute: ii = 0xb4; goto done_key;
+                case XK_dead_circumflex:ii = '^';goto done_key;
 #endif
 #ifdef XK_dead_grave
                 case XK_dead_grave: ii = 0x60; goto done_key;
+#endif
+#ifdef XK_dead_diaeresis
+                case XK_dead_diaeresis:
+                    ii = (charToUnicode[0xa8-128] == 0xa8) ? 0xa8:meCHAR_UNDEF;
+                    goto done_key;
+#endif
+#ifdef XK_dead_acute
+                case XK_dead_acute:
+                    /* that works only with CP1252 correctly */
+                    ii = (charToUnicode[0xb4-128] == 0xb4) ? 0xb4:meCHAR_UNDEF;
+                    goto done_key;
 #endif
                     
                     /* Auxilliary Functions; note the duplicate definitions
@@ -4185,7 +4189,7 @@ meFrameXTermHideCursor(meFrame *frame)
             if((cc & 0xe0) == 0)
                 meFrameXftDrawSpecialChar(frameCur,cl,rw,cc);
             else if(((wc = cc) & 0x80) && ((wc = charToUnicode[cc-128]) == 0))
-                meFrameXftDrawSpecialChar(frameCur,cl,rw,'\x13');
+                meFrameXftDrawSpecialChar(frameCur,cl,rw,meCHAR_UNDEF);
             else
                 meFrameXftDrawWString(frameCur,cl,rw,&wc,1);
         }
@@ -4279,7 +4283,7 @@ meFrameXTermShowCursor(meFrame *frame)
                 if((cc & 0xe0) == 0)
                     meFrameXftDrawSpecialChar(frameCur,cl,rw,cc);
                 else if(((wc = cc) & 0x80) && ((wc = charToUnicode[cc-128]) == 0))
-                    meFrameXftDrawSpecialChar(frameCur,cl,rw,'\x13');
+                    meFrameXftDrawSpecialChar(frameCur,cl,rw,meCHAR_UNDEF);
                 else
                     meFrameXftDrawWString(frameCur,cl,rw,&wc,1);
             }
@@ -4949,7 +4953,7 @@ TTahead(void)
                     {
                         /* ME only supports unicode chars upto 0xffff, so 4 byte UTF-8 cannot be supported */
                         read(meStdin,&uc,3);
-                        uc = 0x07;
+                        uc = meCHAR_UNDEF;
                     }
                     else if((cc & 0xf0) == 0xe0)
                     {
@@ -4957,7 +4961,7 @@ TTahead(void)
                         if((read(meStdin,&c2,1) > 0) && (read(meStdin,&c3,1) > 0))
                             uc = (((int) (cc & 0x0f)) << 12) | (((int) (c2 & 0x3f)) << 6) | (c3 & 0x3f);
                         else
-                            uc = 0x07;
+                            uc = meCHAR_UNDEF;
                     }
                     else if((cc & 0xe0) == 0xc0)
                     {
@@ -4965,12 +4969,12 @@ TTahead(void)
                         if(read(meStdin,&c2,1) > 0)
                             uc = (((int) (cc & 0x1f)) << 6) | (c2 & 0x3f);
                         else
-                            uc = 0x07;
+                            uc = meCHAR_UNDEF;
                     }
                     else
                     {
                         printf("ERROR: Invalid UTF-8 character encoding - leader char: 0x%02x\n",(int) cc);
-                        uc = 0x07;
+                        uc = meCHAR_UNDEF;
                     }
                     if((uc > 0x7f) && ((uc > 0x0ff) || (charToUnicode[uc-128] != uc)))
                     {
@@ -4978,7 +4982,7 @@ TTahead(void)
                         while((charToUnicode[jj] != uc) && (--jj >= 0))
                             ;
                         if(jj < 0)
-                            uc = 0x07;
+                            uc = meCHAR_UNDEF;
                         else
                             uc = jj+128;
                     }
