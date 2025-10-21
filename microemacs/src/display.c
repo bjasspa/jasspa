@@ -930,16 +930,19 @@ hideLineJump:
             while(++cno < noColChng)
             {
                 bb++;
-                scheme = bb->scheme;
-                cc = meStyleGetBColor(meSchemeGetStyle(scheme));
-                if((cc != lc) && ((len = ii-col) > 0))
+                if(bb->column > ii)
                 {
-                    meFrameXftDrawBackground(frameCur,colToClient(scol+col),row,len);
-                    meFrameXTermSetScheme(frameCur,scheme);
-                    col = ii;
+                    scheme = bb->scheme;
+                    cc = meStyleGetBColor(meSchemeGetStyle(scheme));
+                    if((cc != lc) && ((len = ii-col) > 0))
+                    {
+                        meFrameXftDrawBackground(frameCur,colToClient(scol+col),row,len);
+                        meFrameXTermSetScheme(frameCur,scheme);
+                        col = ii;
+                    }
+                    lc = cc;
+                    ii = bb->column;
                 }
-                lc = cc;
-                ii = bb->column;
             }
             if(meStyleGetBColor(meSchemeGetStyle(vp1->eolScheme)) != lc)
             {
