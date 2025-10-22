@@ -2179,14 +2179,14 @@ meXEventHandler(void)
 #endif
 #ifdef XK_dead_acute
                 case XK_dead_acute:
-                    /* that works only with CP1252 correctly */
+                    /* few code pages support the acute accent as a single char, most noteable one is Windows CP1252 at 0xb4 */
                     ii = (charToUnicode[0xb4-128] == 0xb4) ? 0xb4:meCHAR_UNDEF;
                     goto done_key;
 #endif
 #ifdef XK_EuroSign
                 case XK_EuroSign:
-                    /* that works with CP1252 with ISO-8859-15 - I would thought not to flip the 0xa4/0x80 expression ??*/
-                    ii = (charToUnicode[0x80-128] == 0x80) ? 0xa4 : ((charToUnicode[0xa4-128] == 0xa4) ? 0x80:meCHAR_UNDEF );
+                    /* Most Windows CP125# code pages support the euro symbol (U+20AC) at 0x80, ISO8859-15 at 0xa4, check both of these */
+                    ii = (charToUnicode[0x80-128] == 0x20ac) ? 0x80:((charToUnicode[0xa4-128] == 0x20ac) ? 0xa4:meCHAR_UNDEF);
                     goto done_key;
 #endif
                     
