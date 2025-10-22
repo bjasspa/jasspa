@@ -2183,6 +2183,12 @@ meXEventHandler(void)
                     ii = (charToUnicode[0xb4-128] == 0xb4) ? 0xb4:meCHAR_UNDEF;
                     goto done_key;
 #endif
+#ifdef XK_EuroSign
+                case XK_EuroSign:
+                    /* that works with CP1252 with ISO-8859-15 - I would thought not to flip the 0xa4/0x80 expression ??*/
+                    ii = (charToUnicode[0x80-128] == 0x80) ? 0xa4 : ((charToUnicode[0xa4-128] == 0xa4) ? 0x80:meCHAR_UNDEF );
+                    goto done_key;
+#endif
                     
                     /* Auxilliary Functions; note the duplicate definitions
                      * for left and right function keys; Sun keyboards and a
