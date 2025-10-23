@@ -37,11 +37,11 @@ add-file-hook ".C" fhook-cpp
   ; Following can help fix backspace in a treminal
   ;translate-key "\x7f" "backspace"
 !else
-  !iif &not &seq &set #l0 &reg &spr "/history/%s/font" $platform "" ""  !force change-font #l0
+  !iif &not &seq &set #l0 &reg &spr "/history/%s/font" $platform "" ""  !force &con &reg &spr "/history/%s/font-ymin" $platform "0" 9 1 change-font #l0
   define-macro change-font-size
     !if &not &and @? @#
       !iif &gre 1 &set .csz &lget .ofnt 7  set-variable .csz &lget .ofnt 5
-      5 change-font &lget .ofnt 8
+      &con &reg &spr "/history/%s/font-ymin" $platform "0" 13 5 change-font &lget .ofnt 8
       ml-write &spr "[Text Zoom reset  (%dx%d)]" &lget .ofnt 4 &lget .ofnt 5
       !return
     !elif &exi .font
@@ -55,12 +55,13 @@ add-file-hook ".C" fhook-cpp
     !endif
     ; try up to five times to increase/decrease font actual size (given in $result)
     2 change-font
+    set-variable #l5 &con &reg &spr "/history/%s/font-ymin" $platform "0" 9 1
     set-variable #l2 &lget $result 5
     set-variable #l3 5
     !repeat
       !iif &les &set #l0 &add .csz @# 5  -8 ml-write "[Text too small]"
       set-variable .csz #l0
-      !force change-font &spr #l1 #l0
+      !force #l5 change-font &spr #l1 #l0
       !if &not $status
       !elif &sub &lget &set #l4 $result 5 #l2
         ml-write &spr "[Text Zoom: %d%%  (%dx%d)]" &div &mul &lget #l4 5 100 &lget .ofnt 5 &lget #l4 4 &lget #l4 5

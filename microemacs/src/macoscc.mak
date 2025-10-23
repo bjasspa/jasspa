@@ -147,7 +147,7 @@ endif
 
 ifneq (,$(findstring w,$(BTYP)))
 
-ifeq "$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lX11 > /dev/null 2> /dev/null - ; echo $$? )" "0"
+ifeq "$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) -o /dev/null -lX11 > /dev/null 2> /dev/null - ; echo $$? )" "0"
 X11_LIBS = -lX11
 else ifneq (,$(wildcard /opt/X11/lib/libX11.dylib))
 X11_INCL = -I/opt/X11/include -I/opt/X11/include/freetype2
@@ -162,14 +162,14 @@ $(warning WARNING: No X11 support found, forcing build type to console only.)
 override BTYP = c
 else
 
-ifeq "$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) $(X11_INCL) -o /dev/null $(X11_LIBS) -lXpm > /dev/null 2> /dev/null - ; echo $$? )" "0"
+ifeq "$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(X11_INCL) -o /dev/null $(X11_LIBS) -lXpm > /dev/null 2> /dev/null - ; echo $$? )" "0"
 WINDOW_DEFS = $(X11_INCL) -D_XPM
 WINDOW_LIBS = $(X11_LIBS) -lXpm
 else
 WINDOW_DEFS = $(X11_INCL)
 WINDOW_LIBS = $(X11_LIBS)
 endif
-ifeq "$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\n\n$(HASH)include <X11/Xft/Xft.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) $(X11_INCL) -o /dev/null $(X11_LIBS) -lXft > /dev/null 2> /dev/null - ; echo $$? )" "0"
+ifeq "$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\n$(HASH)include <X11/Xft/Xft.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(X11_INCL) -o /dev/null $(X11_LIBS) -lXft > /dev/null 2> /dev/null - ; echo $$? )" "0"
 WINDOW_DEFS += -DMEOPT_XFT=1 
 WINDOW_LIBS += -lXft
 endif
@@ -182,7 +182,7 @@ ifneq "$(BTYP)" "w"
 #
 # Preference now is to use "ncurses" rather than "termcap", figure out if ncurses is avaiable or if we must fall back to termcap.
 #
-ifeq "$(shell echo '$(HASH)include <stdio.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o _tmptst.out -lncurses > /dev/null 2> /dev/null - ; echo $$? )" "0"
+ifeq "$(shell echo '$(HASH)include <stdio.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) -o _tmptst.out -lncurses > /dev/null 2> /dev/null - ; echo $$? )" "0"
 CONSOLE_LIBS  = -lncurses
 CONSOLE_DEFS  = -D_USE_NCURSES
 else

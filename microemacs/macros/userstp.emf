@@ -106,8 +106,8 @@ set-variable %user-misc-cmd  "|alias-path-setup|cc-setup|cvs-setup|file-tool-set
 !emacro
 
 0 define-macro user-set-cpfcheckbox
-  set-variable #l2 &spr "/history/%s/%s" %platform &lget "|font-dbl|ext-char-set|toolbar|" &abs @#
-  set-variable #l0 &lget "|0|0|0|" &abs @#
+  set-variable #l2 &spr "/history/%s/%s" %platform &lget "|font-dbl|ext-char-set|toolbar|font-ymin|" &abs @#
+  set-variable #l0 &lget "|0|0|0|0|" &abs @#
   set-variable #l0 &reg #l2 #l0
   !if &les @# 0
     set-variable #l0 &bxor #l0 1
@@ -773,7 +773,6 @@ osd .osd.user-plat 311 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 310
 osd .osd.user-plat 400 "fh" "    "
 osd .osd.user-plat 410 "Ctfxph" &cat .osd.checkbox-chars "\} Draw \HWhite Spaces" 0x80000 user-set-system
 osd .osd.user-plat 420 ""
-osd .osd.user-plat 490 ""
 osd .osd.user-plat 500 "fh" "    "
 osd .osd.user-plat 501 "Cftxph" &cat .osd.checkbox-chars "\} Enable Toolbar" 3 user-set-cpfcheckbox
 osd .osd.user-plat 509 ""
@@ -801,7 +800,7 @@ osd .osd.user-plat 820 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.tmp user-setu
 osd .osd.user-plat 821 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 820
 !if &seq $platform "dos"
   osd .osd.user-plat 50  "Sfh" "  Graphic Mode \H#:    " 60
-  osd .osd.user-plat 60  "EtxHf" .scheme.osd-entry "####" 1 user-set-cpfentry
+  osd .osd.user-plat 60  "EtxHf" .scheme.osd-entry "#####" 1 user-set-cpfentry
   osd .osd.user-plat 320 "fh"  "    "
   osd .osd.user-plat 330 "Ctxfp" &cat .osd.checkbox-chars "\} Double Lines" 1 user-set-cpfcheckbox
 !elif &seq $platform "windows"
@@ -850,12 +849,15 @@ osd .osd.user-plat 821 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 820
     osd .osd.user-plat 60  "EtxHf" .scheme.osd-entry "################################" 1 user-set-cpfentry
     osd .osd.user-plat 320 "fh" "    "
     osd .osd.user-plat 330 "Ctfxp" &cat .osd.checkbox-chars "\} Use Font St\Hyles" 0x10 user-set-system
-    osd .osd.user-plat 420 "fh" "           "
+    osd .osd.user-plat 340 "fh" "    "
+    osd .osd.user-plat 350 "Ctfxph" &cat .osd.checkbox-chars "\} Minimi\Hze Font Height" 4 user-set-cpfcheckbox
+    osd .osd.user-plat 360 "fh" "        "
     !if &opt "xft"
-      osd .osd.user-plat 430 "BtfxHR" .scheme.osd-ebtt " Choose Font.. " f user-set-xftfont
+      osd .osd.user-plat 370 "BtfxHR" .scheme.osd-ebtt " Choose Font.. " f user-set-xftfont
     !else
-      osd .osd.user-plat 430 "BtfxHR" .scheme.osd-ebtt " Choose Font.. " f user-set-xcrfont
+      osd .osd.user-plat 370 "BtfxHR" .scheme.osd-ebtt " Choose Font.. " f user-set-xcrfont
     !endif
+    osd .osd.user-plat 430 ""
     osd .osd.user-plat 650 "Sfh" "  \HSystem Clipboard:  " 660
     osd .osd.user-plat 660 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.tmp user-setup-clipboard
     osd .osd.user-plat 661 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 660
@@ -951,6 +953,7 @@ osd .osd.user-gener 324 "fh" "   "
 osd .osd.user-gener 325 "Ctfxhp" &cat .osd.checkbox-chars "\}Lookback" 13 user-set-checkbox
 osd .osd.user-gener 326 "fh"  " "
 osd .osd.user-gener 327 "Ctfxp" &cat .osd.checkbox-chars "\}Dict'n"  14 user-set-checkbox
+osd .osd.user-gener 329 ""
 osd .osd.user-gener 330 "Sfh" "  Tab To \HIndent:  " 340
 osd .osd.user-gener 340 "OtxmsfhHzR" .scheme.osd-entry 18 1 "" .osd.tmp user-setup-tab-indent
 osd .osd.user-gener 341 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 340
@@ -1031,6 +1034,7 @@ osd .osd.user-start 120 "EtxHf" .scheme.osd-entry "############################"
 osd .osd.user-start 130 "Sfh" "  \HEmulation:    " 140
 osd .osd.user-start 140 "OtxmsfhHzR" .scheme.osd-entry 27 1 "" .osd.tmp user-setup-emulate
 osd .osd.user-start 141 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 140
+osd .osd.user-start 147 ""
 osd .osd.user-start 150 "fh" "  Key Bindings: "
 osd .osd.user-start 160 "Ctpfx" &cat .osd.checkbox-chars "\} \HRebind Home Keys" 16 user-set-checkbox
 osd .osd.user-start 170 "fh" "                "

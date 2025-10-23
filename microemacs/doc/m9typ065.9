@@ -7,7 +7,7 @@
 .\"  Created By    : Detlef Groth
 .\"  Created       : Tue Sep 19 07:00:00 2025
 .\"
-.Id $Id: m9typ065.9,v 1.2 2025/09/25 07:19:56 jon Exp $
+.Id $Id: m9typ065.9,v 1.2 2025/10/20 05:57:29 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH typst 9
@@ -28,7 +28,7 @@ typ, typst \- Typst Markup File.
 .ad
 .SH EXTENSIONS
 .na
-\fB.typ\fR, \fB.typst\fR \- Typst files 
+\fB.typ\fR, \fB.typst\fR, \fB.ttyp\fR, \fB.ttypst\fR \- Typst files 
 .ad
 .SH DESCRIPTION
 The \fBTypst\fR file hook provides a editing  environment for Typst
@@ -37,7 +37,11 @@ outline using  item-list and  abbreviations.  Fenced code blocks within triple
 backticks can be highlighted using the declared code block language.
 .PP
 File  recognition  is performed  using the standard file  extension  \fB.typ\fR,
-\fB.typst\fR.
+\fB.typst\fR or the extensions  \fB.ttyp\fR and  \fB.ttypst\fR. The latter two
+file extensions indicate  there are non-Typst  based  extensions for instance to embed code of
+other  programming  languages  like R or Tcl within the file which needs to be
+processed with tools like \fItmdoc\fR before the document can be compiled with 
+the \fITypst\fR compiler.
 .IP "\fBAbbreviations\fR"
 The  installation  comes with a default  abbreviation  file for Typst code  editing
 which  can  be  used  by  writing  short   abbreviations   like   "\fBfig\fR"

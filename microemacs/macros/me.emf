@@ -143,8 +143,7 @@ add-file-hook ".py" fhook-python py-doc
 add-file-hook ".scm .sch" fhook-scheme
 add-file-hook ".mp .mf" fhook-meta
 add-file-hook ".m4" fhook-m4
-add-file-hook ".md .tmd .rmd" fhook-md md-to-html md-to-htm md-to-latex md-process
-add-file-hook ".qd" fhook-md
+add-file-hook ".md .tmd .rmd .tqd .qd" fhook-md md-to-html md-to-htm md-to-latex md-process
 add-file-hook ".texi" fhook-texi
 add-file-hook ".idl" fhook-idl
 add-file-hook ".info dir" fhook-info info info-on info-goto-link
@@ -173,11 +172,11 @@ add-file-hook ".zig" fhook-zig
 add-file-hook ".c3" fhook-c3
 add-file-hook ".jl" fhook-julia
 add-file-hook ".m"  fhook-octave
-add-file-hook ".vala"  fhook-vala
-add-file-hook ".typ .typst"  fhook-typst
-add-file-hook ".tdoc .adoc .asciidoc"  fhook-adoc
-add-file-hook ".kt .ktm .kts"  fhook-kotlin
-add-file-hook ".nim"  fhook-nim
+add-file-hook ".vala" fhook-vala
+add-file-hook ".typ .typst .ttyp .ttypst" fhook-typst
+add-file-hook ".tdoc .adoc .asciidoc" fhook-adoc
+add-file-hook ".kt .ktm .kts" fhook-kotlin
+add-file-hook ".nim" fhook-nim
 ; Add magic hooks
 1 add-file-hook "^#![ \t]*/.*sh" fhook-shell
 1 add-file-hook "^#![ \t]*/.*perl" fhook-perl

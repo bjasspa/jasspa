@@ -7,7 +7,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd000.3,v 2.23 2025/10/16 22:34:38 jon Exp $
+.Id $Id: m3osd000.3,v 2.23 2025/10/20 18:48:41 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH user-setup 3
@@ -284,12 +284,15 @@ variable. This indirectly sets the
 variable.
 .SS "Platform - UNIX XTerm Setup"
 Only present on UNIX platforms using the X interface, see below for the Console setup.
-.IP "\fCFont\fR"
+.IP "\fCFont Name\fR"
 Sets the X font name to be used. This indirectly executes
 .Ht change-font 2
 with the given font name. e.g.
 .IP
 \fC"-*-fixed-medium-r-normal--15-*-*-*-c-90-*"\fR
+.IP
+On systems which support FreeType fonts, if the font name does not start with a '\fC-\fR' then a FreeType font is assumed 
+(including the default "" empty string), otherwise the font is assumed to be an X11 core font.
 .IP "\fCDisplay Char Set\fR"
 Selects the display character set being used by the system to render the \*(mS
 window,  dependent  on the  \fBFont\fR  being used. The setting of this option
@@ -307,17 +310,24 @@ will be used depending on their  availability and the Color Scheme being used.
 This indirectly sets bit \fC0x10\fR of the
 .Ht $system 5
 variable.
+.IP "\fCMinimize Font Height\fR"
+Some fonts, for some sizes, report a font height that is typically 1 pixel smaller than the sum of the font ascent and 
+descent. When this occurs and this option is selected, \*(mS will use the smaller font height value, however this can 
+lead to an unacceptable amount of debris left in the window during normal use. By default this option is not selected, 
+minimising rendering issues. This option has no effect when the two height calculations agree.
+.IP "\fCChoose Font\fR"
+If the current system supports FreeType fonts, \*(mS will open a font selection dialog, the \fBFont Name\fR drop-down lists all 
+FreeType monospaced fonts found on the system that support the current language (see \fBGeneral\fR tab). Clicking the
+\fBCore Fonts\fR will close the dialog and run the XTerm command
+.Hr xfontsel 1 
+which opens a dialog  allowing the user to select an X11 core font, the current font name is passed back to \*(mS if the  \fBquit\fR
+button is press, the font name is not altered if \fBxfontsel\fR is exited using the title bar close button.
 .IP "\fCDraw White Spaces\fR"
 Enables the drawing of visible white  spaces, i.e. space, tab and new-line
 characters. This indirectly sets bit
 \fC0x80000\fR of the
 .Ht $system 5
 variable.
-.IP "\fCChoose Font\fR"
-Runs XTerm command
-.Hr xfontsel 1 
-which opens a dialog  allowing the user to select a font, the current font name is passed back to \*(mS if the  \fBquit\fR
-button is press, the font name is not altered if \fBxfontsel\fR is exited using the title bar close button.
 .IP "\fCEnable Toolbar\fR"
 Enables the Toolbar - configurable, managed windows giving easy access to many
 features  and tools.  When  enabled  the  toolbar is opened and  displayed  at
