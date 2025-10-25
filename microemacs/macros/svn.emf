@@ -42,6 +42,7 @@
     set-variable .hilight.svn-status &pinc .hilight.next 1
     set-variable .hilight.svn-blm &pinc .hilight.next 1
     set-variable .hilight.svn-log &pinc .hilight.next 1
+    set-variable .hilight.svn-logl &pinc .hilight.next 1
   !endif
   0 hilight .hilight.svn-status 0 $global-scheme
   hilight .hilight.svn-status 0x102 "[ *]A" .scheme.add
@@ -72,9 +73,11 @@
   0 hilight .hilight.svn-log 0 $global-scheme
   hilight .hilight.svn-log 0x100 "\\[Hide]" $mode-line-scheme
   hilight .hilight.svn-log 0x100 "\\[Show]" $mode-line-scheme
-  hilight .hilight.svn-log 0x102 "   A" .scheme.add
-  hilight .hilight.svn-log 0x102 "   D" .scheme.rmv
-  hilight .hilight.svn-log 0x102 "   M" .scheme.chg
+  hilight .hilight.svn-log 0x180 "\\[Diff]" .hilight.svn-logl $mode-line-scheme
+  0 hilight .hilight.svn-logl 0 $global-scheme
+  hilight .hilight.svn-logl 0x80 "  A.*" 0 .scheme.add
+  hilight .hilight.svn-logl 0x80 "  D.*" 0 .scheme.rmv
+  hilight .hilight.svn-logl 0x80 "  M.*" 0 .scheme.chg
 
   ; fix the *files* buffer hilighting for svn additions
   hilight .hilight.dirlst 0x112 " dA"       .scheme.add
@@ -110,8 +113,8 @@ set-variable .fhook-svn-status.command-desc  &rig &lset &lset &lset &lset &lset 
 set-variable .fhook-svn-status.refresh "svn-status-refresh"
 
 ; * = Console, ! = wait, $ = no file select
-set-variable .svn.cnames  "|Add|Blame|Checkout|Commit|Copy|Delete|Diff|Log|Move|Status|Update|Server Copy|Server Move|Resolve|Ignore|Info|XDiff|Commit Log|"
-set-variable .svn.cflags  "|RIS*!|Vhpvs|UR$|CRS*!|NPrS*!|KrS*!|ZRxWwpvS|ZVpf|NPrS*!|ZRAIuwS|ZRMS*|nCPs*!|nCPs*!|ZRaS*|iD!|sD^!|ZtS|pv$|"
+set-variable .svn.cnames  "|Add|Blame|Checkout|Commit|Copy|Delete|Diff|Log|Move|Status|Update|Server Copy|Server Move|Resolve|Ignore|Info|XDiff|Commit Log|Cat|"
+set-variable .svn.cflags  "|RIS*!|Vhpvs|UR$|CRS*!|NPrS*!|KrS*!|ZRxWwpvS|ZVpf|NPrS*!|ZRAIuwS|ZRMS*|nCPs*!|nCPs*!|ZRaS*|iD!|sD^!|ZtS|pv$|vs!|"
 ; 1 Add - flags: RIS*!
 set-variable .svn.cdefs1  "|1|0|"
 ; 2 Blame - flags: Vhpvs
@@ -148,7 +151,9 @@ set-variable .svn.cdefs16 "|"
 set-variable .svn.cdefs17 "|0|1|"
 ; 18 Commit Log - flags: pv$
 set-variable .svn.cdefs18 "|1|6|"
-set-variable .svn.ccount  18
+; 2 Cat - flags: vs
+set-variable .svn.cdefs19 "|5|"
+set-variable .svn.ccount  19
 
 set-variable .svn.com &reg &spr "/history/%s/svn/com" $platform "svn"
 !iif &sin " " .svn.com  set-variable .svn.com &spr "\"%s\"" .svn.com
@@ -771,17 +776,14 @@ set-variable .svn-revision-op.lbl "|Base \Hto Head|\HHead|\HBase|\HCommitted|\HP
     backward-line
   !until &not &seq &trb @wl "" -1
   !if &seq @wl "[TERMINATED]"
-    set-variable .svn-exec.exit -9999
     set-variable #l0 "was terminated"
   !elif &xse @wl "\\[EXIT \\(.*\\)]"
-    set-variable .svn-exec.exit @s1
     !if @s1
       set-variable #l0 &cat "exited with code " @s1
     !else
       set-variable #l0 "completed successfully"
     !endif
   !else
-    set-variable .svn-exec.exit -9998
     set-variable #l0 "exited with unknown status"
     forward-line
   !endif
@@ -821,6 +823,7 @@ set-variable .svn-revision-op.lbl "|Base \Hto Head|\HHead|\HBase|\HCommitted|\HP
 !emacro
 
 0 define-macro svn-exec-ipipe
+  !iif &not @#  set-variable .svn-exec.exit $result
   !if &not &exi :lock
     set-variable :lock .svn.lock
     !if &sin "%c" $mode-line
@@ -904,7 +907,7 @@ set-variable .svn-revision-op.lbl "|Base \Hto Head|\HHead|\HBase|\HCommitted|\HP
   !force 0 delete-buffer #l0
   set-variable $buffer-fname #l2
   set-variable .wait &sin "!" &lget .svn.cflags @#
-  !force !force !force 0x386 ipipe-shell-command "*svn-cmdline*" #l0 svn-exec-ipipe
+  !force !force !force &con &band #l1 4 0x3c6 0x386 ipipe-shell-command "*svn-cmdline*" #l0 svn-exec-ipipe
   set-variable #l2 $status
   !iif &band #l1 1  !force 0 delete-buffer "*svn-cmdline*"
   find-buffer #l0
@@ -921,31 +924,23 @@ set-variable .svn-revision-op.lbl "|Base \Hto Head|\HHead|\HBase|\HCommitted|\HP
       !force 0 delete-buffer $buffer-bname
       find-buffer "*svn-console*"
     !endif
-    !if &equ .exit -9999
-      !jump 2
-    !elif &not &or &band #l1 4 &seq .exit "0"
-      unset-variable .svn.lock
-      1 goto-position "\x82"
-      !if &not &exi .exit
-        ml-write "[SVN Error: svn exit status not set]"
-      !elif &equ .exit -9999
-        ml-write &spr "[SVN Warning: %s operation terminated]" &lget .svn.cnames @#
-      !elif &equ .exit -9998
-        ml-write &spr "[SVN Warning: %s operation exited with unknown status]" &lget .svn.cnames @#
-      !else
-        ml-write &spr "[SVN Warning: svn exited with code %d]" .exit
-      !endif
-      !return 0
-    !elif &band #l1 2
-      !force unset-variable .svn.lock
-      !if &seq .exit "0"
+    !force unset-variable .svn.lock
+    !if &les .exit -9999
+      ml-write &spr "[SVN Warning: %s operation terminated]" &lget .svn.cnames @#
+    !elif &not &exi .exit
+      ml-write "[SVN Error: svn exit status not set]"
+    !elif &not .exit
+      !if &band #l1 2
         end-of-buffer
         -1 buffer-mode "view"
         insert-string &spr "\n[**** SVN %s completed successfully ****]" &lget .svn.cnames @#
-        beginning-of-line
         -1 buffer-mode "edit"
         1 buffer-mode "view"
       !endif
+      ml-write &spr "[SVN %s completed successfully]" &lget .svn.cnames @#
+    !else
+      ml-write &spr "[SVN Warning: svn %s exited with code %d]" &lget .svn.cnames @# .exit
+    !endif
       ml-write &spr "[SVN %s successful]" &lget .svn.cnames @#
     !endif
   !else
@@ -1029,7 +1024,7 @@ define-macro svn-add
 !emacro
 define-macro svn-blame
   2 svn-osd
-  !if &les &lget .svn.cvalues2 4 5
+  !if &les &lget .svn.cvalues2 4 6
     set-variable #l3 &lget "|HEAD|HEAD|BASE|COMMITTED|PREV|" &lget .svn.cvalues2 4
   !elif &les &set #l3 .svn.cfver 1
     osd-dialog "Subversion - Blame" "    The specific revision number must be given!    " "  \HAbort  "
@@ -1100,6 +1095,8 @@ define-macro svn-commit
         beginning-of-line
         set-variable #l3 $window-line
         kill-region
+        goto-line &add #l2 2
+        &sub 0 #l1 replace-string "^   " "[Diff]  "
         goto-line #l2
         end-of-line
         !iif &gre &len &set #l4 &trb &rep @y "\n" " " 100  set-variable #l4 &cat &lef #l4 97 "..."
@@ -1149,6 +1146,8 @@ define-macro svn-commit
       forward-line
       beginning-of-line
       kill-region
+      goto-line &add #l0 2
+      &sub 0 #l1 replace-string "^   " "[Diff]  "
       goto-line #l0
       end-of-line
       insert-string &spr "  Items: %s" #l1
@@ -1170,10 +1169,7 @@ define-macro svn-commit
 !emacro
 0 define-macro svn-log-cmd
   !if &xseq @wl "^\\[\\(\\u\\l+\\)\\] .*$"
-    !if &gre $window-col &add &len &set #l2 @s1 2
-      ml-write "[ERROR: Not in log show/hide button]"
-      !abort
-    !elif &seq #l2 "Show"
+    !if &seq &set #l2 @s1 "Show"
       -1 buffer-mode "view"
       set-variable @wl &rep @wl "[Show]" "[Hide]"
       set-variable #l1 $window-line
@@ -1193,9 +1189,23 @@ define-macro svn-commit
       -1 buffer-mode "edit"
       1 buffer-mode "view"
       goto-line #l1
+    !elif &not &seq #l2 "Diff"
+      -8 ml-write "[ERROR: Unexpected log button]"
+    !elif &and &gre $window-col 5 &les $window-col 10
     !else
-      ml-write "[ERROR: Unexpected log button]"
-      !abort
+      set-variable #l1 &rig @wl 10
+      set-position "\x82"
+      !force search-buffer "meb" "^\\(\\[\\(Show\\|Hide\\)]  \\)?r\\(\\d+\\) "
+      !iif &not $status  -8 ml-write "[ERROR: Failed to find revision number]"
+      set-variable #l2 @s3
+      goto-position "\x82"
+      !force svn-get-base-url
+      !iif &not $status  -8 ml-write "[ERROR: Failed to get svn base url]"
+      !if &les $window-col 8
+        svn-diff-file &cat .svn.crep-rot #l1 &spr "%s:%s" &sub #l2 1 #l2
+      !else
+        svn-cat &cat .svn.crep-rot #l1 #l2
+      !endif
     !endif
   !elif &xseq @wl "^   [MAD] \\(.*\\)$"
     set-position "\x82"
@@ -1225,7 +1235,7 @@ define-macro svn-commit
 !emacro
 define-macro svn-commit-log
   18 svn-osd
-  !if &les &lget .svn.cvalues18 2 5
+  !if &les &lget .svn.cvalues18 2 6
     set-variable #l3 &lget "|HEAD|HEAD|BASE|COMMITTED|PREV|" &lget .svn.cvalues18 2
   !elif &les &set #l3 .svn.cfver 1
     osd-dialog "Subversion - Commit Log" "    The specific revision number must be given!    " "  \HAbort  "
@@ -1237,6 +1247,45 @@ define-macro svn-commit-log
   18 svn-exec 1 $buffer-fname
   popup-window "*svn-commit-log*"
   beginning-of-buffer
+!emacro
+
+;; SVN Cat ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro svn-cat
+  !force set-variable #l3 @2
+  !if $status
+    set-variable #l1 @1
+    !iif &set #l2 &rsin "/" &lef &set #l4 #l1 -1  set-variable #l4 &rig #l4 #l2
+    set-variable #l4 &spr "*%s:%s" #l4 #l3
+    !iif &not &exi &spr ":%s:" #l4  7 svn-get-file-list 1 0 &spr "%s cat -r %s \"%s\"" .svn.com #l3 #l1
+  !else
+    19 svn-osd
+    !if &les &lget .svn.cvalues19 1 6
+      set-variable #l3 &lget "|HEAD|HEAD|BASE|COMMITTED|PREV|" &lget .svn.cvalues2 4
+    !elif &les &set #l3 .svn.cfver 1
+      osd-dialog "Subversion - Cat" "    The specific revision number must be given!    " "  \HAbort  "
+      !abort
+    !endif
+    set-variable #l2 &spr "%s cat -r %s " .svn.com #l3
+    7 svn-get-file-list 0 0 #l2
+    find-buffer "*svn-cmdline*"
+    beginning-of-buffer
+    set-variable #l4 &trb &rig @wl &len #l2
+    goto-position "\x82"
+    !iif &seq "\"" &lef #l4 1  set-variable #l4 &mid #l4 1 -1
+    !iif &set #l2 &rsin "/" &lef #l4 -1  set-variable #l4 &rig #l4 #l2
+    set-variable #l4 &spr "*%s:%s" #l4 #l3
+  !endif
+  !if &exi &spr ":%s:" #l4
+    !force 0 delete-buffer "*svn-cmdline*"
+    popup-window #l4
+    ml-write "[View of file version already exists!]"
+  !else
+    19 svn-exec 5 $buffer-fname
+    popup-window "*svn-cat*"
+    beginning-of-buffer
+    change-buffer-name #l4
+  !endif
 !emacro
 
 ;; SVN Copy ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

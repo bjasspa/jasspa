@@ -73,10 +73,10 @@ TRDPARTY = ../3rdparty
 
 CCDEFS   = -m$(BIT_SIZE) $(ARCFLAGS) -D_MACOS -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -Wall -I$(TRDPARTY)/tfs -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY)
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wno-uninitialized
-CCFLAGSD = -g
+CCFLAGSD = -g -O0
 LDDEFS   = -m$(BIT_SIZE) $(ARCFLAGS)
 LDFLAGSR = -O3 -flto=auto
-LDFLAGSD = -g
+LDFLAGSD = -g -O0
 LDLIBS   = 
 ARFLAGSR = rcs
 ARFLAGSD = rcs
@@ -96,6 +96,11 @@ LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
 INSTDIR  = ../bin/$(BUILDID)
 INSTPRG  = cp
+endif
+
+ifneq "$(DMALLOC)" ""
+CCDEFS  += -DDMALLOC -DDMALLOC_FUNC_CHECK
+LDLIBS  += -ldmalloc
 endif
 
 ifeq "$(BCOR)" "ne"

@@ -2015,7 +2015,7 @@ TTgetClipboard(int flag)
     /* Check the standard clipboard status, if owner or not got focus or it has
      * been disabled then there's nothing to do */
     if((clipState & (CLIP_OWNER|CLIP_DISABLED)) || (meSystemCfg & meSYSTEM_NOCLIPBRD) || 
-       (((flag & 1) == 0) && ((kbdmode == mePLAY) || (frameCur->flags & meFRAME_NOT_FOCUS))) ||
+       (((flag & 1) == 0) && ((clexec != meFALSE) || (kbdmode == mePLAY) || (frameCur->flags & meFRAME_NOT_FOCUS))) ||
        !OpenClipboard(baseHwnd))
         return;
     
