@@ -1584,7 +1584,7 @@ define-macro git-show-file
     popup-window #l4
     ml-write "[View of file version already exists!]"
   !else
-    14 git-exec 7 $buffer-fname
+    14 git-exec 5 $buffer-fname
     popup-window "*git-show-file*"
     beginning-of-buffer
     change-buffer-name #l4

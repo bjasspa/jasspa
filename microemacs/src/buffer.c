@@ -870,27 +870,30 @@ bclear(register meBuffer *bp)
     }
     
 #if MEOPT_FILEHOOK
-    /* There is a problem when we kill a buffer, if it is the current
-     * buffer (frameCur->windowCur) then the end hook needs to be executed before
-     * the local variables are blown away. It would seem sensible that
-     * it is done here. Execute the end hook and then kill off the end
-     * hook to ensure that it is not executed again. On a re-read of
-     * a file the file hooks are re-assigned so this should not cause
-     * a problem - I hope !!.
-     * 
-     * Note that this problem has been introduced by local variables
-     * it is not a problem if global variables are used.
-     * 
-     * zotbuf() calls bclear; hence any operation to delete a buffer
-     * will cause the end hook to be executed.
-     */
-    if((frameCur->windowCur->buffer == bp) && (bp->ehook >= 0))
+    if(!meModeTest(bp->mode,MDNACT))
     {
-        execBufferFunc(bp,bp->ehook,0,1);       /* Execute the end hook */
-        bp->ehook = -1;                         /* Disable the end hook */
+        /* There is a problem when we kill a buffer, if it is the current
+         * buffer (frameCur->windowCur) then the end hook needs to be executed before
+         * the local variables are blown away. It would seem sensible that
+         * it is done here. Execute the end hook and then kill off the end
+         * hook to ensure that it is not executed again. On a re-read of
+         * a file the file hooks are re-assigned so this should not cause
+         * a problem - I hope !!.
+         * 
+         * Note that this problem has been introduced by local variables
+         * it is not a problem if global variables are used.
+         * 
+         * zotbuf() calls bclear; hence any operation to delete a buffer
+         * will cause the end hook to be executed.
+         */
+        if((bp->ehook >= 0) && (frameCur->windowCur->buffer == bp))
+        {
+            execBufferFunc(bp,bp->ehook,0,1);       /* Execute the end hook */
+            bp->ehook = -1;                         /* Disable the end hook */
+        }
+        if(bp->dhook >= 0)
+            execBufferFunc(bp,bp->dhook,0,1);       /* Execute the delete hook */
     }
-    if(!meModeTest(bp->mode,MDNACT) && (bp->dhook >= 0))
-        execBufferFunc(bp,bp->dhook,0,1);       /* Execute the delete hook */
 #endif    
     /* Continue the destruction of the buffer space. */
     /* The following modes to preserve are: MDBINARY, MDRBIN, MDCRYPT, MDDEL */

@@ -64,6 +64,8 @@ do
     elif [ $1 = "-D" ] ; then
         shift
         MAKECDEFS="$MAKECDEFS -D$1"
+    elif [ $1 = "-DM" ] ; then
+        OPTIONS=" $OPTIONS DMALLOC=1"
     elif [ $1 = "-d" ] ; then
         MEDEBUG=" BCFG=debug"
     elif [ $1 = "-l" ] ; then

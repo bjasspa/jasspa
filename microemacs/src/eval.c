@@ -2072,43 +2072,36 @@ gtarg(meUByte *tkn)
         
     case 'y':
         {
-            meUByte *ss, *dd, cc ;
+            meUByte *ss, *dd, cc;
             meKillNode *killp;
-            meKill *kl ;
-            int ii ;
+            meKill *kl;
+            int ii;
             
             if(alarmState & meALARM_VARIABLE)
-                return tkn ;
+                return tkn;
             
-            if(isDigit(tkn[2]))
+            kl = klhead;
+            if(tkn[2] != '\0')
             {
                 /* Don't use the X or windows clipboard in this case */
-                ii = meAtoi(tkn+2) ;
-                kl = klhead ;
+                ii = meAtoi(tkn+2);
                 while((kl != NULL) && (--ii >= 0))
-                    kl = kl->next ;
+                    kl = kl->next;
             }
-            else
-            {
-#ifdef _CLIPBRD
-                TTgetClipboard(0);
-#endif
-                kl = klhead ;
-            }
-            if(kl == (meKill*) NULL)
-                return abortm ;
-            dd = evalResult ;
-            killp = kl->kill ;
-            ii = meBUF_SIZE_MAX-1 ;
+            if(kl == NULL)
+                return abortm;
+            dd = evalResult;
+            killp = kl->kill;
+            ii = meBUF_SIZE_MAX-1;
             while(ii && (killp != NULL))
             {
-                ss = killp->data ;
+                ss = killp->data;
                 while(((cc=*ss++) != '\0') && (--ii >= 0))
-                    *dd++ = cc ;
+                    *dd++ = cc;
                 killp = killp->next;
             }
-            *dd = '\0' ;
-            return evalResult ;
+            *dd = '\0';
+            return evalResult;
         }
         
     default:

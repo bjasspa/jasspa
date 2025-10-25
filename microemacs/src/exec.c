@@ -1573,12 +1573,12 @@ execFunc(register int index, int f, int n)
     
     if(index < CK_MAX)
     {
-        thisflag = 0 ;
-        status = cmdTable[index]->func(f,n) ;
+        thisflag = 0;
+        status = cmdTable[index]->func(f,n);
         if(isComIgnore(index))
         {
-            thisflag = lastflag ;
-            return status ;
+            thisflag = lastflag;
+            return status;
         }
         lastflag = thisflag;
         if(selhilight.uFlags)
@@ -1587,8 +1587,8 @@ execFunc(register int index, int f, int n)
             {
                 if(isComSelKill(index))
                 {
-                    selhilight.bp = NULL ;
-                    selhilight.flags = 0 ;
+                    selhilight.bp = NULL;
+                    selhilight.flags = 0;
                 }
                 else
                 {
@@ -1596,12 +1596,12 @@ execFunc(register int index, int f, int n)
                     if(isComSelStart(index))
                     {
                         selhilight.bp = cwp->buffer;                  /* Select the current buffer */
-                        selhilight.flags = SELHIL_ACTIVE|SELHIL_CHANGED ;
+                        selhilight.flags = SELHIL_ACTIVE|SELHIL_CHANGED;
                     }
                     if(selhilight.flags & SELHIL_FIXED)
                     {
                         if(!(selhilight.flags & SELHIL_KEEP) && isComSelDelFix(index))
-                            selhilight.flags &= ~SELHIL_ACTIVE ;
+                            selhilight.flags &= ~SELHIL_ACTIVE;
                     }
                     else if(selhilight.flags & SELHIL_ACTIVE)
                     {
@@ -1609,7 +1609,7 @@ execFunc(register int index, int f, int n)
                            ((selhilight.markOffset != cwp->markOffset) ||
                             (selhilight.markLineNo != cwp->markLineNo)))
                         {
-                            selhilight.flags |= SELHIL_CHANGED ;
+                            selhilight.flags |= SELHIL_CHANGED;
                             selhilight.markOffset = cwp->markOffset;
                             selhilight.markLineNo = cwp->markLineNo;
                         }
@@ -1617,18 +1617,18 @@ execFunc(register int index, int f, int n)
                            ((selhilight.dotOffset != cwp->dotOffset) ||
                             (selhilight.dotLineNo != cwp->dotLineNo)))
                         {
-                            selhilight.flags |= SELHIL_CHANGED ;
+                            selhilight.flags |= SELHIL_CHANGED;
                             selhilight.dotOffset = cwp->dotOffset;
                             selhilight.dotLineNo = cwp->dotLineNo;
                         }
                         if(isComSelSetFix(index))
                         {
-                            selhilight.flags |= SELHIL_FIXED ;
+                            selhilight.flags |= SELHIL_FIXED;
                             if(selhilight.uFlags & SELHILU_KEEP)
-                                selhilight.flags |= SELHIL_KEEP ;
+                                selhilight.flags |= SELHIL_KEEP;
                         }
                         if(isComSelStop(index))
-                            selhilight.flags &= ~SELHIL_ACTIVE ;
+                            selhilight.flags &= ~SELHIL_ACTIVE;
                         if(selhilight.flags & SELHIL_CHANGED)
                         {
                             if(selhilight.bp->windowCount > 1)
@@ -1640,43 +1640,43 @@ execFunc(register int index, int f, int n)
                 }
             }
             else if(!meRegCurr->force && ((selhilight.flags & (SELHIL_ACTIVE|SELHIL_KEEP)) == SELHIL_ACTIVE))
-                selhilight.flags &= ~SELHIL_ACTIVE ;
+                selhilight.flags &= ~SELHIL_ACTIVE;
         }
     }
     else
     {
-        register meMacro *mac = getMacro(index) ;
+        register meMacro *mac = getMacro(index);
 #if MEOPT_EXTENDED
-        register meLine *hlp ;
+        register meLine *hlp;
         
-        hlp = mac->hlp ;
+        hlp = mac->hlp;
         if(hlp->flag & meMACRO_EXEC)
-            status = donbuf(hlp,&mac->varList,mac->name,f,n) ;
+            status = donbuf(hlp,&mac->varList,mac->name,f,n);
         else
         {
             if(hlp->flag & meMACRO_FILE)
             {
                 if(mac->fname != NULL)
-                    execFile(mac->fname,0,1) ;
+                    execFile(mac->fname,0,1);
                 else
-                    execFile(mac->name,0,1) ;
-                hlp = mac->hlp ;
+                    execFile(mac->name,0,1);
+                hlp = mac->hlp;
                 if(hlp->flag & meMACRO_FILE)
                     return mlwrite(MWABORT,(meUByte *)"[file-macro %s not defined]",mac->name);
             }
             hlp->flag |= meMACRO_EXEC;
             status = donbuf(hlp,&mac->varList,mac->name,f,n);
             if(mac->hlp != hlp)
-                meLineLoopFree(hlp,1) ;
+                meLineLoopFree(hlp,1);
             else
                 hlp->flag &= ~meMACRO_EXEC;
         }
 #else
-        status = donbuf(mac->hlp,NULL,mac->name,f,n) ;
+        status = donbuf(mac->hlp,NULL,mac->name,f,n);
 #endif
     }
     
-    return status ;
+    return status;
 }
 
 /* Execute the given command, but in a hidden way, i.e.

@@ -4724,7 +4724,7 @@ TTgetClipboard(int flag)
 {
     if(!(meSystemCfg & (meSYSTEM_CONSOLE|meSYSTEM_NOCLIPBRD)) &&
        !(clipState & (CLIP_OWNER|CLIP_DISABLED)) &&
-       ((flag & 1) || ((kbdmode != mePLAY) && !(frameCur->flags & meFRAME_NOT_FOCUS))))
+       ((flag & 1) || ((clexec == meFALSE) && (kbdmode != mePLAY) && !(frameCur->flags & meFRAME_NOT_FOCUS))))
     {
         /* Add the CLIP_RECEIVING flag. This is really important if increment
          * copy texts are being used. If they are and this flag is set after receiving

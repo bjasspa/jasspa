@@ -44,13 +44,15 @@
 #define __EMAIN_H__
 
 /* the following 3 defines are used for debugging and memory leak checking,
+ * _ME_USE_STD_MALLOC   - Use standard C malloc commands directly
  * _ME_WIN32_FULL_DEBUG - Enables Windows debugging
  * _ME_FREE_ALL_MEMORY  - Frees all memory before exiting
- * _ME_USE_STD_MALLOC   - Use standard C malloc commands directly
  */
-/*#define _ME_WIN32_FULL_DEBUG*/
-/*#define _ME_FREE_ALL_MEMORY*/
 /*#define _ME_USE_STD_MALLOC*/
+/*#define _ME_WIN32_FULL_DEBUG*/
+#if (defined _ME_WIN32_FULL_DEBUG) || (defined DMALLOC)
+#define _ME_FREE_ALL_MEMORY
+#endif
 
 /* These next define is platform specific, but as all supported 
  * platforms use these and all future ones should I've put them here
@@ -547,6 +549,9 @@ typedef   time_t       meTime;
 
 #if MEOPT_TFS
 #include <tfs.h>        /* Tack-on file system defs.     */
+#endif
+#ifdef DMALLOC
+#include "dmalloc.h"
 #endif
 
 #ifdef NDEBUG
