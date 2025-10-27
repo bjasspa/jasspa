@@ -2223,6 +2223,9 @@ commandWait(int f, int n)
 int
 main(int argc, char *argv[])
 {
+#ifdef DMALLOC
+    dmalloc_debug_setup(getenv("DMALLOC_OPTIONS"));
+#endif
     mesetup(argc,argv);
     while(1)
     {

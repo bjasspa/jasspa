@@ -99,8 +99,8 @@ INSTPRG  = cp
 endif
 
 ifneq "$(DMALLOC)" ""
-CCDEFS  += -DDMALLOC -DDMALLOC_FUNC_CHECK
-LDLIBS  += -ldmalloc
+CCDEFS  += -DDMALLOC -DDMALLOC_FUNC_CHECK -I$(TRDPARTY)/dmalloc 
+LDLIBS  += -L$(TRDPARTY)/dmalloc -ldmalloc
 endif
 
 ifeq "$(BCOR)" "ne"
