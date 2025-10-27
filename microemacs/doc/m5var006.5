@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m5var006.5,v 2.7 2025/10/16 23:04:20 jon Exp $
+.Id $Id: m5var006.5,v 2.7 2025/10/27 19:40:56 jon Exp $
 .Im MicroEmacs variable|shell|macrodevelop
 .so me.tni
 .TH $buffer-ipipe 5
@@ -27,7 +27,7 @@ denotes the end.
 When the ipiped command exits the \fIcommandName\fR is called with a numeric argument of 0 and the
 .Ht $result 5
 variable is set to the exit code of the process, this will be the last call of the command. The following values of 
-\fB$result\fR have significant meaning:
+\fB$result\fR are also used by \*(mS:
 .IP \fB-1000\fR
 The ipiped process did not exit normally, cause unknown.
 .IP \fB-1009\fR
