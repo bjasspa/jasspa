@@ -10,7 +10,6 @@
 ;
 define-macro-file hkman man
 define-macro-file hkipipe ishell gdb dbx perldb
-add-file-hook ".C" fhook-cpp
 0 define-macro pipe-me
   !if &not &exi .mcmd
     !if &seq "mec" &mid &set #l0 $progname &set #l3 &rsin "/" #l0 3

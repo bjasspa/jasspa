@@ -1608,9 +1608,8 @@ input_expand:
             {
                 register meUByte *pp, cy;
                 meKillNode *killp;
-                
 #ifdef _CLIPBRD
-                TTgetClipboard(1);
+                TTgetClipboard((kbdmode == mePLAY) ? 0:1);
 #endif
                 if((lastYank=klhead) == (meKill*) NULL)
                 {

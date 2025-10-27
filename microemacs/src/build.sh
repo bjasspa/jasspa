@@ -29,6 +29,9 @@ do
         echo "   -D <define>[=<value>]"
         echo "        : Build with given define, (e.g. -D _USETPARM)."
         echo "   -d   : For debug build."
+        echo "   -dmalloc"
+        echo "        : Build with debug malloc (see https://dmalloc.com/), the dmalloc"
+        echo "          library must be installed or in ../3rdparty/."
         echo "   -h   : For this help page."
         echo "   -l <logfile>"
         echo "        : Set the compile log file"
@@ -64,7 +67,7 @@ do
     elif [ $1 = "-D" ] ; then
         shift
         MAKECDEFS="$MAKECDEFS -D$1"
-    elif [ $1 = "-DM" ] ; then
+    elif [ $1 = "-dmalloc" ] ; then
         OPTIONS=" $OPTIONS DMALLOC=1"
     elif [ $1 = "-d" ] ; then
         MEDEBUG=" BCFG=debug"

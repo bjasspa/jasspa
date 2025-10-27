@@ -4000,6 +4000,13 @@ meFrameXTermMakeCur(meFrame *frame)
     XRaiseWindow(mecm.xdisplay, meFrameGetXWindow(frame)) ;
 }
 
+static int
+meXIODie(Display *display)
+{
+    mlwrite(MWABORT|MWSTDERRWRT,(meUByte *)"[Error: Fatal X I/O Error - exiting!]");
+    return meDie();
+}
+
 /* Heres the xterm equivalent, note that its done in two stages */
 int
 XTERMstart(void)
@@ -4023,7 +4030,8 @@ XTERMstart(void)
 #endif
     
     /* Configure X-Windows */
-    XSetLocaleModifiers ("");
+    XSetIOErrorHandler(meXIODie);
+    XSetLocaleModifiers("");
     {
         char *disp ;
         if((disp=meGetenv("DISPLAY")) == NULL)
