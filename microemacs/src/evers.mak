@@ -32,4 +32,4 @@
 meVER_CN = 20
 meVER_YR = 25
 meVER_MN = 10
-meVER_DY = 1
+meVER_DY = 2
