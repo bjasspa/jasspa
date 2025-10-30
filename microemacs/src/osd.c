@@ -2151,32 +2151,41 @@ menuRenderLine(osdDISPLAY *md, int x, int y, meScheme scheme,
     }
     /* Fill in the remainer of the line */
     if(type == 4)
-        cc = windowChars[WCOSDTTLBR] ;
-    else if(type == 0)
-        cc = ' ' ;
-    else
-        cc = boxChars [BCEW] ;
-    while (--len >= 0)
     {
-        *colp++ = scheme ;
-        *txtp++ = cc ;
+        cc = windowChars[WCOSDTTLBR];
+        do
+        {
+            *colp++ = scheme;
+            *txtp++ = cc;
+        }
+        while(--len >= 0);
+        txtp[-2] = windowChars[WCOSDTTLKLL];
     }
-    
-    /* Add the righthand character */
-    if((type == 4) || drawBoarder)
+    else
     {
-        *colp = scheme;
-        if(type == 4)
-            cc = windowChars[WCOSDTTLKLL] ;
-        else if(type == 3)
-            cc = boxChars[BCNW] ;
-        else if(type == 2)
-            cc = boxChars[BCSW] ;
-        else if(type == 1)
-            cc = boxChars[BCNSW] ;
+        if(type == 0)
+            cc = ' ' ;
         else
-            cc = boxChars[BCNS] ;
-        *txtp = cc ;
+            cc = boxChars [BCEW] ;
+        while(--len >= 0)
+        {
+            *colp++ = scheme ;
+            *txtp++ = cc ;
+        }
+        /* Add the righthand character */
+        if(drawBoarder)
+        {
+            *colp = scheme;
+            if(type == 3)
+                cc = boxChars[BCNW] ;
+            else if(type == 2)
+                cc = boxChars[BCSW] ;
+            else if(type == 1)
+                cc = boxChars[BCNSW] ;
+            else
+                cc = boxChars[BCNS] ;
+            *txtp = cc ;
+        }
     }
 }
 
@@ -2486,23 +2495,23 @@ menuRender (osdDISPLAY *md)
         colWidth = md->width-2 ;
         
         /* Render the title bar */
-        menuRenderLine (md,1,0,scheme,1,colWidth,4) ;
+        menuRenderLine(md,1,0,scheme,1,colWidth,4) ;
         if((ss = md->dialog->strData) != NULL)
         {
             meUByte *txtp ;
             int   ll ;
             
             /* We know the color is correct so just splat in the text */
-            txtp = md->drawnText ;
-            ll = meStrlen(ss) ;
-            if(ll > colWidth)
-                ll = colWidth ;
+            txtp = md->drawnText;
+            ll = meStrlen(ss);
+            if(ll >= colWidth)
+                ll = colWidth-1;
             else if(md->flags & RF_CENTER)
-                txtp += (colWidth-ll) >> 1 ;
+                txtp += (colWidth-ll) >> 1;
             else if(md->flags & RF_RIGHT)
-                txtp += colWidth-ll ;
+                txtp += colWidth-ll;
             while(ll--)
-                *txtp++ = *ss++ ;
+                *txtp++ = *ss++;
         }
     }
 }
@@ -4054,7 +4063,7 @@ osdDisplayGetMousePosition(osdDISPLAY *md, meShort xx, meShort yy, int leftPick)
         if(yy == 0)
         {
             /* if this is the kill 'x' then return 3 */
-            if(xx == (md->width - 1))
+            if(xx >= (md->width - 2))
             {
                 if(md->flags & RF_DISABLE)
                     return 0 ;

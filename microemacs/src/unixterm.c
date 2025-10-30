@@ -1194,9 +1194,9 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fwidth-1, y, x+mecm.fwidth-1, y+mecm.fdepth-1);
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fwidth-1, y+mecm.fdepth-1, x, y+mecm.fdepth-1);
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y+mecm.fdepth-1, x, y);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+2, y+4, x+2, y+mecm.fdepth-4);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+2, y+mecm.fhdepth-4, x+2, y+mecm.fdepth-4);
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+3, y+mecm.fdepth-3, x+mecm.fwidth-4, y+mecm.fdepth-3);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fwidth-3, y+4, x+mecm.fwidth-3, y+mecm.fdepth-4);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fwidth-3, y+mecm.fhdepth-4, x+mecm.fwidth-3, y+mecm.fdepth-4);
         break;
         
     case 0x02:          /* unicode tag - 5 byte encode [U] */
@@ -1208,50 +1208,8 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+3, y+mecm.fdepth-3, x+mecm.fwidth-4, y+mecm.fdepth-3);
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fwidth-3, y+2, x+mecm.fwidth-3, y+mecm.fdepth-4);
         break;
-    
-    case 0x03:          /* checkbox left side ([) */
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x + mecm.fwidth - 2, y + mecm.fhdepth - mecm.fhwidth,
-                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth) ;
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x + mecm.fwidth - 2, y + mecm.fhdepth - mecm.fhwidth,
-                  x + mecm.fwidth - 2, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x + mecm.fwidth - 2, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth,
-                  x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
-        break;
         
-    case 0x04:          /* checkbox center not selected */
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x, y + mecm.fhdepth - mecm.fhwidth,
-                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth,
-                  x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
-        break;
-        
-    case 0x05:          /* checkbox center selected */
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x, y + mecm.fhdepth - mecm.fhwidth,
-                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth,
-                  x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
-        XFillRectangle(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),
-                       x,y+mecm.fhdepth-mecm.fhwidth+2,mecm.fwidth,mecm.fwidth-3);
-        break;
-        
-    case 0x06:          /* checkbox right side (]) */
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x, y + mecm.fhdepth - mecm.fhwidth,
-                  x + 1, y + mecm.fhdepth - mecm.fhwidth) ;
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x + 1, y + mecm.fhdepth - mecm.fhwidth,
-                  x + 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x + 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth,
-                  x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
-        break;
+        /* 0x03 to 0x06 no longer used */
         
     case 0x07:          /* meCHAR_UNDEF, undefined char - can be generated during X11 clipboard get or charset change <+> */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y + mecm.fhdepth, x + mecm.fhwidth, y);
@@ -1346,36 +1304,34 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y + mecm.fhdepth, x + mecm.fwidth - 1, y + mecm.fhdepth);
         break;
         
-    case 0x13:          /* cross box empty ([ ]) */
+    case 0x13:          /* Unticked/empty checkbox ([ ]) */
         XDrawLine(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),
-                  x, y + mecm.fhdepth - mecm.fhwidth + 1, x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth + 1);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame),meFrameGetXGC(frame),
-                  x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth, x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame),meFrameGetXGC(frame),
-                  x, y + mecm.fhdepth - mecm.fhwidth + 1, x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame),meFrameGetXGC(frame),
-                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth + 1, x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+                  x, y + mecm.fhdepth - mecm.fhwidth, x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth);
+        XDrawLine(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),
+                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth, x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+        XDrawLine(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),
+                  x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth, x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+        XDrawLine(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),
+                  x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth, x, y + mecm.fhdepth - mecm.fhwidth);
         break;
         
-    case 0x14:          /* cross box ([X]) */
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x, y + mecm.fhdepth - mecm.fhwidth + 1,
-                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth + 1);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth,
-                  x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x, y + mecm.fhdepth - mecm.fhwidth + 1,
-                  x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth + 1,
-                  x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x, y + mecm.fhdepth - mecm.fhwidth + 1,
-                  x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame),
-                  x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth,
-                  x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth + 1);
+    case 0x14:          /* Ticked checkbox ([X]) */
+        if(mecm.fwidth > 6)
+        {
+            XDrawLine(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),
+                      x, y + mecm.fhdepth - mecm.fhwidth, x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth);
+            XDrawLine(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),
+                      x + mecm.fwidth - 1, y + mecm.fhdepth - mecm.fhwidth, x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+            XDrawLine(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),
+                      x + mecm.fwidth - 1, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth, x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth);
+            XDrawLine(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),
+                      x, y + mecm.fhdepth + mecm.fwidth - mecm.fhwidth, x, y + mecm.fhdepth - mecm.fhwidth);
+            XFillRectangle(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),
+                           x+2,y+mecm.fhdepth-mecm.fhwidth+2,mecm.fwidth-4,mecm.fwidth-3);
+        }
+        else
+            XFillRectangle(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),
+                           x,y+mecm.fhdepth-mecm.fhwidth,mecm.fwidth,mecm.fwidth+1);
         break;
         
     case 0x15:          /* Line Drawing / Left Tee |- */

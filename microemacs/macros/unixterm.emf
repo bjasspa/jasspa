@@ -32,7 +32,7 @@ define-macro-file hkipipe ishell gdb dbx perldb
   ; Not using X
   0 global-bind-key suspend-emacs "C-c z"
   ; if no color - change the window chars so osd is more usable
-  !iif &not &band $system 0x02  set-variable $window-chars &spr "%s=x*[>]<%s" &lef $window-chars 47 &rig $window-chars 54
+  !iif &not &band $system 0x02  set-variable $window-chars &spr "%s=X*[>]<%s" &lef $window-chars 47 &rig $window-chars 54
   ; Following can help fix backspace in a treminal
   ;translate-key "\x7f" "backspace"
 !else
