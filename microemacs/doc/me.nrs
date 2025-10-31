@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.58 2025/03/26 12:09:07 jon Exp $
+.Id $Id: me.nrs,v 2.58 2025/10/31 08:21:44 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -1049,6 +1049,7 @@ Martin House
 \fBJon Green\fR \- \fICurrent Maintainer\fR
 Callen McNally
 \fBSteven Phillips\fR \- \fICurrent Maintainer\fR
+\fBDetlef Groth\fR \- \fICurrent Maintainer\fR
 .ad
 .fi
 .PP
