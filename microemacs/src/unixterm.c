@@ -38,6 +38,7 @@
 #include <assert.h>
 #include <fcntl.h>
 #include <pwd.h>
+#include <locale.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -1586,6 +1587,8 @@ meFrameGainFocus(meFrame *frame)
         if(frameCur != frame)
             frameFocus = frame ;
 #endif
+        if(meFrameGetXIC(frame) != NULL)
+            XSetICFocus(meFrameGetXIC(frame));
         if((cursorState >= 0) && blinkState)
         {
             if(cursorBlink)
@@ -1608,6 +1611,8 @@ meFrameKillFocus(meFrame *frame)
         if(frameFocus == frame)
             frameFocus = NULL ;
 #endif
+        if(meFrameGetXIC(frame) != NULL)
+            XUnsetICFocus(meFrameGetXIC(frame));
         if(cursorState >= 0)
         {
             /* because the cursor is a part of the solid cursor we must
@@ -1635,6 +1640,9 @@ meXEventHandler(void)
     
     /* Get the next event - wait if necesary */
     XNextEvent(mecm.xdisplay,&event);
+    
+    if(XFilterEvent(&event,meFrameGetXWindow(frameCur)))
+        return; 
     
     /* printf("Got event %d\n",event.type) ; */
     switch(event.type)
@@ -1960,19 +1968,64 @@ meXEventHandler(void)
 #endif
         
     case KeyPress:
+        if((frame = meXEventGetFrame(&event)) != NULL)
         {
-            meUShort ii, ss ;
-            KeySym keySym ;
-            char   keyStr[20];
+            meUShort ii, ss;
+            meUByte keyStr[20];
+            KeySym keySym;
+            Status st;
+            int    nn;
             
-            ss = event.xkey.state ;
-            XLookupString(&event.xkey,keyStr,20,&keySym,NULL);
+            ss = event.xkey.state;
+            if(meFrameGetXIC(frame) != NULL)
+                nn = Xutf8LookupString(meFrameGetXIC(frame),&event.xkey,(char *) keyStr,19,&keySym,&st);
+            else
+                nn = XLookupString(&event.xkey,(char *) keyStr,19,&keySym,NULL);
+            
             /* printf("#1 got key %x, ss=%x \n",(unsigned int) keySym, ss) ;*/
-            /* keyStr[19] = '\0' ;*/
-            /* printf("got key %x, ss=%x [%s]\n",(unsigned int) keySym, ss, keyStr) ;*/
+            /* keyStr[nn] = '\0' ;*/
+            /* printf("got key %x, ss=%x %d:%02x %02x [%s]\n",(unsigned int) keySym,ss,nn,keyStr[0],keyStr[1],keyStr);*/
             /* printf("#2 got key %x, ss=%x \n",(unsigned int) keySym, ss) ;*/
-            if(keySym > 0xff)
+            if(nn > 1)
             {
+                meUByte cc, c1, c2;
+                if((((cc=keyStr[0]) & 0xf0) > 0xe0) || (((c1=keyStr[1]) & 0xc0) != 0x80))
+                    /* ME only supports unicode chars upto 0xffff, so 4 byte UTF-8 cannot be supported */
+                    ii = meCHAR_UNDEF;
+                else if((cc & 0xf0) == 0xe0)
+                {
+                    if(((c2=keyStr[2]) & 0xc0) == 0x80)
+                        ii = (((int) (cc & 0x0f)) << 12) | (((int) (c1 & 0x3f)) << 6) | (c2 & 0x3f);
+                    else
+                        ii = meCHAR_UNDEF;
+                }
+                else if((cc & 0xe0) == 0xc0)
+                    ii = (((int) (cc & 0x1f)) << 6) | (c1 & 0x3f);
+                else
+                    ii = meCHAR_UNDEF;
+                /* if ii <= 0x7f it must be the UNDEF char, don't add modifiers */
+                if(ii > 0x7f)
+                {
+                    if((ii > 0x0ff) || (charToUnicode[ii-128] != ii))
+                    {
+                        nn = 127;
+                        while((charToUnicode[nn] != ii) && (--nn >= 0))
+                            ;
+                        if(nn < 0)
+                            ii = meCHAR_UNDEF;
+                        else
+                            ii = nn+128;
+                    }
+                    if(ControlMask & ss)
+                        ii |= ME_CONTROL;
+                    if(Mod1Mask & ss)
+                        ii |= ME_ALT;
+                }
+            }
+            else if(keySym > 0xff)
+            {
+                if(((keySym >= XK_dead_grave) && (keySym <= XK_dead_currency)) || (keySym == XK_Multi_key))
+                    return;
                 switch (keySym)
                 {
                 case XK_BackSpace:      ii = SKEY_backspace; goto special_key;
@@ -2120,31 +2173,6 @@ meXEventHandler(void)
                 case XK_KP_7:           ii = '7'; goto done_key;
                 case XK_KP_8:           ii = '8'; goto done_key;
                 case XK_KP_9:           ii = '9'; goto done_key;
-                    
-                    /* foreign keyboard accent keys */
-#ifdef XK_dead_circumflex
-                case XK_dead_circumflex:ii = '^';goto done_key;
-#endif
-#ifdef XK_dead_grave
-                case XK_dead_grave: ii = 0x60; goto done_key;
-#endif
-#ifdef XK_dead_diaeresis
-                case XK_dead_diaeresis:
-                    ii = (charToUnicode[0xa8-128] == 0xa8) ? 0xa8:meCHAR_UNDEF;
-                    goto done_key;
-#endif
-#ifdef XK_dead_acute
-                case XK_dead_acute:
-                    /* few code pages support the acute accent as a single char, most noteable one is Windows CP1252 at 0xb4 */
-                    ii = (charToUnicode[0xb4-128] == 0xb4) ? 0xb4:meCHAR_UNDEF;
-                    goto done_key;
-#endif
-#ifdef XK_EuroSign
-                case XK_EuroSign:
-                    /* Most Windows CP125# code pages support the euro symbol (U+20AC) at 0x80, ISO8859-15 at 0xa4, check both of these */
-                    ii = (charToUnicode[0x80-128] == 0x20ac) ? 0x80:((charToUnicode[0xa4-128] == 0x20ac) ? 0xa4:meCHAR_UNDEF);
-                    goto done_key;
-#endif
                     
                     /* Auxilliary Functions; note the duplicate definitions
                      * for left and right function keys; Sun keyboards and a
@@ -3831,6 +3859,7 @@ XTERMcreateWindow(meUShort width, meUShort depth)
 {
     meFrameData *frameData;
     XClassHint *classHint;
+    unsigned long mask=0;                                            
     
     if((frameData = meMalloc(sizeof(meFrameData))) == NULL)
         return NULL ;
@@ -3876,6 +3905,10 @@ XTERMcreateWindow(meUShort width, meUShort depth)
     if(meXftUsed())
         frameData->xdraw = XftDrawCreate(mecm.xdisplay,frameData->xwindow,xvisual,xcmap);
 #endif
+    if((mecm.xim != NULL) &&
+       ((frameData->xic = XCreateIC(mecm.xim,XNInputStyle,XIMPreeditNothing|XIMStatusNothing,
+                                    XNClientWindow,frameData->xwindow,NULL)) != NULL))
+        XGetICValues(frameData->xic,XNFilterEvents,&mask,NULL);
     /* To get the mouse positional information then we register for
      * "PointerMotionMask" events. */
     /* olwm on sunos has a Focus bug, it does not sent the FocusIn
@@ -3883,7 +3916,7 @@ XTERMcreateWindow(meUShort width, meUShort depth)
      * and LeaveNotify events. use this to check the Focus state
      * as well - SWP 17/8/99
      */
-    XSelectInput(mecm.xdisplay,frameData->xwindow,
+    XSelectInput(mecm.xdisplay,frameData->xwindow,mask|
                  (ExposureMask|StructureNotifyMask|KeyPressMask|ButtonPressMask|
                   ButtonReleaseMask|PointerMotionMask|FocusChangeMask|
                   PropertyChangeMask|LeaveWindowMask|EnterWindowMask)) ;
@@ -3944,6 +3977,8 @@ meFrameXTermFree(meFrame *frame, meFrame *sibling)
 {
     if(sibling == NULL)
     {
+        if(meFrameGetXIC(frame) != NULL)
+            XDestroyIC(meFrameGetXIC(frame));
         XDestroyWindow(mecm.xdisplay,meFrameGetXWindow(frame));
         XFreeGC(mecm.xdisplay,meFrameGetXGC(frame));
         free(frame->termData);
@@ -3986,8 +4021,9 @@ XTERMstart(void)
 #endif
     
     /* Configure X-Windows */
+    setlocale(LC_ALL, "");
+    XSetLocaleModifiers("@im=none");
     XSetIOErrorHandler(meXIODie);
-    XSetLocaleModifiers("");
     {
         char *disp ;
         if((disp=meGetenv("DISPLAY")) == NULL)
@@ -4005,6 +4041,7 @@ XTERMstart(void)
 #if MEOPT_XFT
     xvisual = DefaultVisual(mecm.xdisplay,xscreen);
 #endif
+    mecm.xim = XOpenIM(mecm.xdisplay,NULL,NULL,NULL);
     
     sizeHints.flags = PSize | PResizeInc | PMinSize | PBaseSize;
     sizeHints.max_height = DisplayHeight(mecm.xdisplay,xscreen);
@@ -4127,6 +4164,29 @@ XTERMstart(void)
 #endif /* _ME_CONSOLE */
     
     return meTRUE ;
+}
+
+int
+XTERMend(void)
+{
+#if MEOPT_XFT
+    if(mecm.ftFontTbl[0] != NULL)
+    {
+        int ii = meXFONT_MAX-1 ;
+        do {
+            if((mecm.ftFontTbl[ii] != NULL) && (mecm.ftFontTbl[ii] != mecm.ftFontTbl[0]))
+                XftFontClose(mecm.xdisplay,mecm.ftFontTbl[ii]);
+            mecm.ftFontTbl[ii] = NULL;
+        } while(--ii > 0);
+        XftFontClose(mecm.xdisplay,mecm.ftFontTbl[0]);
+        mecm.ftFontTbl[0] = NULL;
+    }
+#endif
+    if(mecm.xim != NULL)
+       XCloseIM(mecm.xim);
+    XCloseDisplay(mecm.xdisplay);
+                       
+    return meTRUE;
 }
 
 /*

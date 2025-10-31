@@ -239,6 +239,7 @@ typedef struct
     GC        xgc;                      /* the x draw style */
     XGCValues xgcv;                     /* X colour values */
     Font      fontId;                   /* Font X id */
+    XIC       xic;
 #if MEOPT_XFT
     XftFont  *ftFont;
     XftDraw  *xdraw;
@@ -253,6 +254,7 @@ typedef struct
 
 #define meFrameGetXWindow(ff)     (((meFrameData *) ff->termData)->xwindow)
 #define meFrameGetXGC(ff)         (((meFrameData *) ff->termData)->xgc)
+#define meFrameGetXIC(ff)         (((meFrameData *) ff->termData)->xic)
 #define meFrameGetXGCValues(ff)   (((meFrameData *) ff->termData)->xgcv)
 #define meFrameGetXGCFCol(ff)     (((meFrameData *) ff->termData)->fcol)
 #define meFrameGetXGCBCol(ff)     (((meFrameData *) ff->termData)->bcol)
@@ -282,6 +284,7 @@ typedef struct
 typedef struct
 {
     Display  *xdisplay;                 /* the x display */
+    XIM       xim;
 #if MEOPT_XFT
     XftFont  *ftFontTbl[meXFONT_MAX];   /* table of XftFont pointer for diff styles */
     int       size;                     /* Xft Font size */
@@ -350,6 +353,7 @@ do {                                                                            
 #endif
 
 extern int  XTERMstart(void);
+extern int  XTERMend(void);
 extern void XTERMmove(int r, int c);
 extern void XTERMclear(void);
 extern int  XTERMaddColor(meColor index, meUByte r, meUByte g, meUByte b);
@@ -372,7 +376,7 @@ extern void TTsetClipboard(int cpData);
 
 /* If both console and window must test which one should be used */
 extern int  TTstart(void);
-#define TTend()               ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPclose():0)
+#define TTend()               ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPclose():XTERMend())
 #define TTopen()              ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPopen():0)
 #define TTclose()             ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPclose():0)
 #define TTflush()             ((meSystemCfg & meSYSTEM_CONSOLE) ? TCAPflush():(XFlush(mecm.xdisplay),1))
@@ -388,7 +392,7 @@ extern int  TTstart(void);
 
 /* If no console then just use the window ones */
 #define TTstart()             XTERMstart()
-#define TTend()     
+#define TTend()               XTERMend()
 #define TTopen()    
 #define TTclose()   
 #define TTflush()             XFlush(mecm.xdisplay)
