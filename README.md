@@ -69,10 +69,11 @@ _Right:_ GUI version - theme "Ayu Dark", displaying the hypertext enabled R docu
 
 ## Installation
 
+### Linux/MacOS
+
 You can compile the code yourself, or you pick one or two of the pre-compiled
 single file executables from the Release page or you install the usual mec/mew
-executables  using curl or the homebrew  package manager. For Windows you have
-as well a installer which is available [here](https://github.com/bjasspa/jasspa/releases/download/me_20251001/Jasspa_MicroEmacs_20251001_installer_windows_intel.msi):
+executables  using curl or the homebrew  package manager. 
 
 Installation  using  curl for Linux and MacOS by copying and pasting the  following
 command into your terminal:
@@ -96,9 +97,33 @@ brew tap bjasspa/jasspa
 brew install microemacs
 ```
 
-These two install methods will provide you with the terminal  version of MicroEmacs  (mec)
+These install methods mentioned above will provide you with the terminal  version of MicroEmacs  (mec)
 and the GUI  version  (mew)  which  requires  X11 on Linux  MacOS  (using  for
 instance [XQuartz](https://www.xquartz.org/).
+
+### Windows 
+
+For Windows you have an installer which is available [here](https://github.com/bjasspa/jasspa/releases/download/me_20251001/Jasspa_MicroEmacs_20251001_installer_windows_intel.msi)
+or you can use as well the `microemacs-install.ps1` PowerShell script, run the following in a PowerShell:
+
+`Invoke-RestMethod -Uri https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install.ps1 | Invoke-Expression`
+
+Or download  the script  first and run locally, if you get the error cannot be
+loaded because  running  scripts is disabled on this system, run the script as
+follows:
+
+`powershell -ExecutionPolicy Bypass -File microemacs-install.ps1`
+
+Note that this will always  install the latest  release and to install for all
+users  the  PowerShell  needs  to be  run  as  Administrator.  If  the  script
+encounters issues during the installation  processes,  typically  insufficient
+permissions, please follow the instructions given.
+
+This will  install  as well a terminal  version of  MicroEmacs,  `mec` and GUI
+version,  `mew`. For the latter you should have as well an entry in your start
+menu after installation.
+
+### Single File Executables
 
 The MicroEmacs single file executables with macro files embedded come in two flavors:
 
@@ -134,7 +159,7 @@ _microemacs/src_. You need the _ncurses_ for the terminal version and _libxt_ fo
 
 ```bash
 ### install required packages
-sudo apt install libssl-dev libz-dev libncurses-dev libxt-dev git
+sudo apt install libssl-dev libz-dev libncurses-dev libxt-dev libxft-dev git
 ### download the current source code
 git clone https://github.com/bjasspa/jasspa.git
 cd jasspa/microemacs/src
@@ -152,6 +177,7 @@ PATH=`pwd`/../bin/linux6-intel64-gcc14:$PATH bash mesgen.sh \
 ```
 
 You should replace the LINUX-PLATFORM-GCC part with your kernel, platform and GCC versions you are usng
+
 ## Documentation & Help
 
 Jasspa's  MicroEmacs  ships with a comprehensive  set of  documentation  which
@@ -191,8 +217,10 @@ session should start with these saved settings.
     - _iconv_ - encoding converter
 - X11 (macOS, Linux):
     - _xclip_ - importing text from the primary selection to the clipboard
-    - _xfontsel_ - to interactively select fonts from within your ME session
-    - _mkfontscale_ - if you like to add your own TTF fonts as available fonts
+- X11 (macOS, Linux) if you like to use the old legacy X11 fonts, optional since version  20251001 as ME now can use directly  TrueType ond
+    OpenType fonts: 
+    - _xfontsel_ - to  interactively  select old legacy X11 fonts from within your ME session
+    - _mkfontscale_ - if you like to index and use your own TTF fonts as available fonts
 
 MicroEmacs versions  before  20241001  might as require the tools luit and abduco for better
 support of international character encodings on UTF-8 enabled terminals.
@@ -207,13 +235,13 @@ platforms on how to do this.
 Debian based systems like Ubuntu or MX-Linux:
 
 ```
-sudo apt install ncurses-dev libssl-dev libxt-dev
+sudo apt install ncurses-dev libssl-dev libxt-dev libxft-dev
 ```
 
 Red Hat based systems like Fedora, Alma Linux:
 
 ```
-sudo dnf install ncurses-devel libXt-devel
+sudo dnf install ncurses-devel libXt-devel libXft-devel
 ```
 
 Arch based systems like Manjaro Linux:
