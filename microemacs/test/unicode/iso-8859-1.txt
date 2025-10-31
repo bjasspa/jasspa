@@ -15,7 +15,7 @@ knows back and forward ticks which are sometimes used to `quote´ things.
 If we like to write the Euro symbol we have in ISO-8859-1 as well use Unicode,
 the Euro has the symbol '20ac' and can be written like here: '\u20ac'.
 
-Using the little python script  ascii2utf8.py which is in the contribs folder,
+Using the little Python script  ascii2utf8.py which is in the contribs folder,
 we can convert this file to an UTF-8 encoded text file like this;
 
 

@@ -1103,11 +1103,11 @@ WinSpecialChar(HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol
         LineTo(hdc,x+cm->sizeX-1,y+cm->sizeY-1);
         LineTo(hdc,x,y+cm->sizeY-1);
         LineTo(hdc,x,y);
-        MoveToEx(hdc,x+2,y+4,NULL);
+        MoveToEx(hdc,x+2,y+cm->midY-1,NULL);
         LineTo(hdc,x+2,y+cm->sizeY-3);
         MoveToEx(hdc,x+3,y+cm->sizeY-3,NULL);
         LineTo(hdc,x+cm->sizeX-3,y+cm->sizeY-3);
-        MoveToEx(hdc,x+cm->sizeX-3,y+4,NULL);
+        MoveToEx(hdc,x+cm->sizeX-3,y+cm->midY-1,NULL);
         LineTo(hdc,x+cm->sizeX-3,y+cm->sizeY-3);
         break;
         
@@ -1125,54 +1125,7 @@ WinSpecialChar(HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol
         LineTo(hdc,x+cm->sizeX-3,y+cm->sizeY-3);
         break;
     
-    case 0x03:          /* checkbox left side ([) */
-        MoveToEx (hdc, x + cm->sizeX - 1, y + 1, NULL);
-        LineTo(hdc, x + cm->sizeX - 2, y + 1);
-        LineTo(hdc, x + cm->sizeX - 2, y + cm->sizeY - 2);
-        LineTo(hdc, x + cm->sizeX, y + cm->sizeY - 2);
-        break;
-        
-    case 0x04:          /* checkbox center not selected */
-        MoveToEx (hdc, x, y + 1, NULL);
-        LineTo(hdc, x + cm->sizeX, y + 1);
-        MoveToEx (hdc, x, y + cm->sizeY - 2, NULL);
-        LineTo(hdc, x + cm->sizeX, y + cm->sizeY - 2);
-        break;
-        
-    case 0x05:          /* checkbox center selected */
-        {
-            HBRUSH obrush;
-            HBRUSH fbrush;
-            
-            MoveToEx (hdc, x, y + 1, NULL);
-            LineTo(hdc, x + cm->sizeX, y + 1);
-            MoveToEx(hdc, x, y + cm->sizeY - 2, NULL);
-            LineTo(hdc, x + cm->sizeX, y + cm->sizeY - 2);
-            
-            points[0].x = x;
-            points[0].y = y + 3;
-            points[1].x = x;
-            points[1].y = y + cm->sizeY - 4;
-            points[2].x = x + cm->sizeX - 1;
-            points[2].y = y + cm->sizeY - 4;
-            points[3].x = x + cm->sizeX - 1;
-            points[3].y = y + 3;
-            
-            fbrush = CreateSolidBrush(fcol);
-            obrush = (HBRUSH) SelectObject(hdc, fbrush);
-            SetPolyFillMode(hdc, WINDING);
-            Polygon(hdc, points, 4);
-            SelectObject(hdc, obrush);
-            DeleteObject(fbrush);
-        }
-        break;
-        
-    case 0x06:          /* checkbox right side (]) */
-        MoveToEx(hdc, x, y + 1, NULL);
-        LineTo(hdc, x + 1, y + 1);
-        LineTo(hdc, x + 1, y + cm->sizeY - 2);
-        LineTo(hdc, x - 1, y + cm->sizeY - 2);
-        break;
+        /* 0x03 to 0x06 no longer used */
         
     case 0x07:          /* meCHAR_UNDEF, undefined char - can be generated during X11 clipboard get or charset change <+> */
         MoveToEx(hdc, x, y + cm->midY, NULL);
@@ -1200,6 +1153,7 @@ WinSpecialChar(HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol
         points[1].y = y + cm->midY;
         points[2].x = x + cm->sizeX - cm->midX - 1;
         points[2].y = y + cm->midY + ii;
+        ii = 3;
         goto makePoly;
         
     case 0x0a:          /* Line & Poly / CR <-| */
@@ -1213,6 +1167,7 @@ WinSpecialChar(HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol
         points[1].y = y + cm->midY + ii;
         points[2].x = x + 1;
         points[2].y = y + cm->midY;
+        ii = 3;
         goto makePoly;
         
     case 0x0b:          /* Line Drawing / Bottom right _| */
@@ -1256,6 +1211,7 @@ WinSpecialChar(HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol
         points[1].y = y + cm->midY + ii;
         points[2].x = x + ii + 1;
         points[2].y = y + cm->midY;
+        ii = 3;
         goto makePoly;
         
     case 0x11:          /* Cursor Arrows / Left */
@@ -1268,6 +1224,7 @@ WinSpecialChar(HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol
         points[1].y = y + cm->midY - ii;
         points[2].x = x + cm->sizeX - 2 - ii;
         points[2].y = y + cm->midY;
+        ii = 3;
         goto makePoly;
         
     case 0x12:          /* Line Drawing / Horizontal line - */
@@ -1275,7 +1232,7 @@ WinSpecialChar(HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol
         LineTo(hdc, x + cm->sizeX, y + cm->midY);
         break;
         
-    case 0x13:          /* cross box empty ([ ]) */
+    case 0x13:          /* Unticked/empty checkbox ([ ]) */
         MoveToEx(hdc, x, y + cm->midY - cm->midX, NULL);
         LineTo(hdc, x + cm->sizeX - 1, y + cm->midY - cm->midX);
         LineTo(hdc, x + cm->sizeX - 1, y + cm->midY + cm->sizeX - cm->midX);
@@ -1283,15 +1240,38 @@ WinSpecialChar(HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol
         LineTo(hdc, x, y + cm->midY - cm->midX);
         break;
         
-    case 0x14:          /* cross box ([X]) */
-        MoveToEx(hdc, x, y + cm->midY - cm->midX, NULL);
-        LineTo(hdc, x + cm->sizeX - 1, y + cm->midY - cm->midX);
-        LineTo(hdc, x + cm->sizeX - 1, y + cm->midY + cm->sizeX - cm->midX);
-        LineTo(hdc, x, y + cm->midY + cm->sizeX - cm->midX);
-        LineTo(hdc, x, y + cm->midY - cm->midX);
-        LineTo(hdc, x + cm->sizeX - 1, y + cm->midY + cm->sizeX - cm->midX);
-        MoveToEx(hdc, x + cm->sizeX - 1, y + cm->midY - cm->midX,NULL);
-        LineTo(hdc, x, y + cm->midY + cm->sizeX - cm->midX);
+    case 0x14:          /* Ticked checkbox ([X]) */
+        if(cm->sizeX > 6)
+        {
+            MoveToEx(hdc, x, y + cm->midY - cm->midX, NULL);
+            LineTo(hdc, x + cm->sizeX - 1, y + cm->midY - cm->midX);
+            LineTo(hdc, x + cm->sizeX - 1, y + cm->midY + cm->sizeX - cm->midX);
+            LineTo(hdc, x, y + cm->midY + cm->sizeX - cm->midX);
+            LineTo(hdc, x, y + cm->midY - cm->midX);
+            points[0].x = x + 2;
+            points[0].y = y + cm->midY + 2 - cm->midX;
+            points[1].x = x + 2;
+            points[1].y = y + cm->midY - 2 + cm->sizeX - cm->midX;
+            points[2].x = x + cm->sizeX - 3;
+            points[2].y = y + cm->midY - 2 + cm->sizeX - cm->midX;
+            points[3].x = x + cm->sizeX - 3;
+            points[3].y = y + cm->midY + 2 - cm->midX;
+            ii = 4;
+            goto makePoly;
+        }
+        else
+        {
+            points[0].x = x;
+            points[0].y = y + cm->midY - cm->midX;
+            points[1].x = x;
+            points[1].y = y + cm->midY + cm->sizeX - cm->midX;
+            points[2].x = x + cm->sizeX - 1;
+            points[2].y = y + cm->midY + cm->sizeX - cm->midX;
+            points[3].x = x + cm->sizeX - 1;
+            points[3].y = y + cm->midY - cm->midX;
+            ii = 4;
+            goto makePoly;
+        }
         break;
         
     case 0x15:          /* Line Drawing / Left Tee |- */
@@ -1370,24 +1350,23 @@ WinSpecialChar(HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol
             points[1].y = y + cm->sizeY - 2;
             points[2].x = x;
             points[2].y = y + cm->sizeY - 2;
+            ii = 3;
             goto makePoly;
         }
         
     case 0x1f:          /* Cursor Arrows / Down */
-        {
-            int hh;
-            if((hh = cm->sizeX+1) >= cm->sizeY)
-                hh = cm->sizeY-1;
-            
-            points[0].x = x;
-            points[0].y = y + 1;
-            points[1].x = x + cm->sizeX - 1;
-            points[1].y = y + 1;
-            points[2].x = x + cm->midX;
-            points[2].y = y + hh;
-        }
-        /* Construct the polygon */
+        if((ii = cm->sizeX+1) >= cm->sizeY)
+            ii = cm->sizeY-1;
+        
+        points[0].x = x;
+        points[0].y = y + 1;
+        points[1].x = x + cm->sizeX - 1;
+        points[1].y = y + 1;
+        points[2].x = x + cm->midX;
+        points[2].y = y + ii;
+        ii = 3;
 makePoly:
+        /* Construct the polygon */
         {
             HBRUSH obrush;
             HBRUSH fbrush;
@@ -1395,7 +1374,7 @@ makePoly:
             fbrush = CreateSolidBrush(fcol);
             obrush = (HBRUSH) SelectObject(hdc, fbrush);
             SetPolyFillMode(hdc, WINDING);
-            Polygon(hdc, points, 3);
+            Polygon(hdc, points, ii);
             SelectObject(hdc, obrush);
             DeleteObject(fbrush);
         }
