@@ -37,7 +37,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkcpp.emf	hkcs.emf	hkcss.emf	hkcygwin.emf	\
 	hkc3.emf	hkdart.emf	\
 	hkdiff.emf	hkdirlst.emf	hkdirtre.emf	hkdman.emf	\
-	hkdoc.emf	hkdos.emf	hkdot.emf	\
+	hkdoc.emf	hkdos.emf	hkdot.emf	hkdtools.emf	\
 	hkehf.emf	hkemf.emf	hkerf.emf	hkeuphor.emf	\
 	hkf90.emf	hkfvwm.emf	hkgo.emf	\
 	hkhtml.emf	\
@@ -112,7 +112,7 @@ ETFS=	ada.etf		adoc.etf	asmx86.etf	asn1.etf	\
 	au3.etf		awk.etf		bibtex.etf	\
 	c.etf		cfm.etf		cobol.etf	cpp.etf		\
 	cs.etf		c3.etf\
-	dart.etf	doc.etf		dot.etf		\
+	dart.etf	doc.etf		dot.etf		dtools.etf	\
 	emf.etf		euphor.etf	\
 	f.etf		f90.etf		\
 	h.etf		hpp.etf		html.etf	go.etf	\
@@ -135,7 +135,7 @@ EAFS=	ada.eaf		adoc.eaf	asp.eaf		au3.eaf		\
 	awk.eaf		\
 	c.eaf		c3.eaf		cfm.eaf		cpp.eaf		\
 	cs.eaf		\
-	dart.eaf	dot.eaf		emf.eaf		\
+	dart.eaf	dot.eaf		dtools.eaf	emf.eaf		\
 	euphor.eaf	f90.eaf		euphor.eaf	go.eaf		\
 	hkasp.eaf	hkc.eaf		hkcpp.eaf	hkemf.eaf	\
 	hkhtml.eaf	hkjsp.eaf	hkjst.eaf	hknroff.eaf	\
