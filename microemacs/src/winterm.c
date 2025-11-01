@@ -4697,10 +4697,8 @@ TTstart(void)
         meSystemCfg = (meSystemCfg & ~(meSYSTEM_FONTS|meSYSTEM_FONTFIX|meSYSTEM_RGBCOLOR)) | (meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR);
         /* TODO Could consider using SetConsoleOutputCP to make console use Unicode, what implace would that have in input? */
         if(GetConsoleCP() == 65001)
-        {
-            meSYSTEM_MASK |= meSYSTEM_FONTFIX;
             meSystemCfg |= meSYSTEM_FONTFIX;
-        }
+        
         /* This will allocate a console if started from
          * the windows NT program manager. */
         AllocConsole();
