@@ -15,12 +15,12 @@
 ;               translate characters into and out of this set.
 ;
 ; Define the list  of supported charsets and if windows then the font type
-set-variable .change-font.cs-id "|cp1252|iso8859-1|iso8859-15|cp1250|iso8859-2|iso8859-16|cp1251|iso8859-5|cp866|koi8-f|cp1253|iso8859-7|cp1254|iso8859-9|cp850|cp437|plain-text|"
-set-variable .change-font.cs-type "2220001111334422-"
+set-variable .change-font.cs-id "|cp1252|iso8859-1|iso8859-15|cp850|cp1250|iso8859-2|iso8859-16|cp1251|iso8859-5|cp866|koi8-f|cp1253|iso8859-7|cp1254|iso8859-9|cp437|plain-text|"
+set-variable .change-font.cs-type "2222000111133442-"
 set-variable .change-font.cs-wftp "|0|||238|||204||||161||162|||255||"
 !if &les @# 1
   ; if executed with an argument of 0 or less, define the charset names and return
-  set-variable .change-font.cs-name "|Western Europe - Win CP-1252|Western Europe - ISO-8859-1|Western Europe - ISO-8859-15|Central Europe - Win CP-1250|Central Europe - ISO-8859-2|Southeast Europe - ISO-8859-16|Cyrillic - Windows CP-1251|Cyrillic - ISO-8859-5|Cyrillic - DOS CP-866|Cyrillic - KOI8-F|Greek - Windows CP-1253|Greek - ISO-8859-7|Turkish - Windows CP-1254|Turkish - ISO-8859-9|Western - Win Console CP-850|Western Europe - DOS CP-437|Plain Text|"
+  set-variable .change-font.cs-name "|Western Europe - Win CP-1252|Western Europe - ISO-8859-1|Western Europe - ISO-8859-15|Western Europe - DOS CP-850|Central Europe - Win CP-1250|Central Europe - ISO-8859-2|Southeast Europe - ISO-8859-16|Cyrillic - Windows CP-1251|Cyrillic - ISO-8859-5|Cyrillic - DOS CP-866|Cyrillic - KOI8-F|Greek - Windows CP-1253|Greek - ISO-8859-7|Turkish - Windows CP-1254|Turkish - ISO-8859-9|Western - DOS CP-437|Plain Text|"
   !return
 !endif
 ; get the users display char set

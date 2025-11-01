@@ -739,8 +739,12 @@ ConsolePaint(void)
         coordUpdateBegin.Y = consolePaintArea.Top;
         
         /* Write to console */
-        WriteConsoleOutput(hOutput, ciScreenBuffer, coordBufferSize,
-                           coordUpdateBegin, &consolePaintArea);
+        if(meSystemCfg & meSYSTEM_FONTFIX)
+            WriteConsoleOutputW(hOutput, ciScreenBuffer, coordBufferSize,
+                                coordUpdateBegin, &consolePaintArea);
+        else
+            WriteConsoleOutputA(hOutput, ciScreenBuffer, coordBufferSize,
+                                coordUpdateBegin, &consolePaintArea);
         
         /* Remove the region, as we just updated it */
         consolePaintArea.Right = consolePaintArea.Bottom = 0;
@@ -757,22 +761,48 @@ ConsoleDrawString(meUByte *ss, WORD wAttribute, int x, int y, int len)
     BOOL bAny = meFALSE;  /* Anything to refresh? */
     meUByte cc;
     int r=x+len;
+    WCHAR uc;
     
     /* Get pointer to correct location in screen buffer */
     pCI = &ciScreenBuffer[(y * frameCur->width) + x];
     
     /* Copy the string to the screen buffer memory, and flag any changes */
-    while(--len >= 0)
+    if(meSystemCfg & meSYSTEM_FONTFIX)
     {
-        if(((cc=*ss++) != pCI->Char.AsciiChar) || (wAttribute != pCI->Attributes))
+        while(--len >= 0)
         {
-            bAny = meTRUE;
-            pCI->Char.AsciiChar = cc;
-            pCI->Attributes = wAttribute;
+            if(((cc=*ss++) & 0xe0) == 0)
+                uc = ttSpeUChars[cc];
+            else if((cc & 0x80) == 0)
+                uc = cc;
+            else if((uc = (WCHAR) charToUnicode[cc-128]) == 0)
+                uc = ttSpeUChars[meCHAR_UNDEF];
+            if(uc != pCI->Char.UnicodeChar)
+            {
+                pCI->Char.UnicodeChar = uc;
+                bAny = meTRUE;
+            }
+            if(wAttribute != pCI->Attributes)
+            {
+                pCI->Attributes = wAttribute;
+                bAny = meTRUE;
+            }
+            pCI++;
         }
-        pCI++;
     }
-    
+    else
+    {
+        while(--len >= 0)
+        {
+            if(((cc=*ss++) != pCI->Char.AsciiChar) || (wAttribute != pCI->Attributes))
+            {
+                pCI->Char.AsciiChar = cc;
+                pCI->Attributes = wAttribute;
+                bAny = meTRUE;
+            }
+            pCI++;
+        }
+    }
     /* Adjust the current update region */
     if(bAny)
     {
@@ -4664,8 +4694,13 @@ TTstart(void)
         
         /* console can't support fonts and only has XANSI */
         meSYSTEM_MASK &= ~meSYSTEM_FONTS;
-        meSystemCfg = (meSystemCfg & ~(meSYSTEM_FONTS|meSYSTEM_RGBCOLOR)) | (meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR);
-        
+        meSystemCfg = (meSystemCfg & ~(meSYSTEM_FONTS|meSYSTEM_FONTFIX|meSYSTEM_RGBCOLOR)) | (meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR);
+        /* TODO Could consider using SetConsoleOutputCP to make console use Unicode, what implace would that have in input? */
+        if(GetConsoleCP() == 65001)
+        {
+            meSYSTEM_MASK |= meSYSTEM_FONTFIX;
+            meSystemCfg |= meSYSTEM_FONTFIX;
+        }
         /* This will allocate a console if started from
          * the windows NT program manager. */
         AllocConsole();

@@ -79,7 +79,7 @@ extern meUShort   TTwidthDefault;       /* Default no. of cols per frame*/
 extern meUShort   TTdepthDefault;       /* Default no. of rows per frame*/
 extern meUShort   TTkeyBuf[KEYBUFSIZ];  /* Key beuffer/pending keys     */
 extern meUByte  ttSpeChars[TTSPECCHARS];/* Special characters           */
-#ifdef _UNIX
+#if (defined _UNIX) || (defined _WIN32)
 #ifdef _ME_CONSOLE
 extern meUShort ttSpeUChars[TTSPECCHARS];/* Unciode ver of Special chars*/
 #endif
