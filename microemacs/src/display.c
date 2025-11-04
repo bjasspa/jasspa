@@ -474,9 +474,9 @@ updCursor(register meWindow *wp)
 
     frameCur->mainRow = wp->frameRow + (wp->dotLineNo - wp->vertScroll) ;
     frameCur->mainColumn = wp->frameColumn + ii ;
-    if(wp->horzScroll != (int) jj)         /* Screen scroll correct ?? */
+    if(wp->horzScroll != (meInt) jj)         /* Screen scroll correct ?? */
     {
-        wp->horzScroll = (meUShort) jj;    /* Scrolled line offset */
+        wp->horzScroll = (meInt) jj;    /* Scrolled line offset */
         wp->updateFlags |= WFDOT ;
         /* must make sure the disLineBuff is at least as long as the current scroll
          * otherwise if the horizontal scroll is set to 2 and the first line is short
@@ -484,9 +484,9 @@ updCursor(register meWindow *wp)
         if(((int) jj) >= disLineSize)
         {
             do
-                disLineSize += 512 ;
-            while(disLineSize < ((int) jj)) ;
-            disLineBuff = meRealloc(disLineBuff,disLineSize+32) ;
+                disLineSize += 512;
+            while(disLineSize < ((int) jj));
+            disLineBuff = meRealloc(disLineBuff,disLineSize+32);
         }
     }
     switch(scrollFlag & 0x0f)
@@ -495,7 +495,7 @@ updCursor(register meWindow *wp)
         if(wp->horzScrollRest)
         {
             /* Reset scroll column */
-            wp->horzScrollRest = 0 ;            /* Set scroll column to base position */
+            wp->horzScrollRest = 0;             /* Set scroll column to base position */
             wp->updateFlags |= WFREDRAW;        /* Force a screen update */
         }
         break ;
@@ -503,15 +503,15 @@ updCursor(register meWindow *wp)
         if((wp->horzScrollRest != (int) jj) && wp->horzScrollRest)
         {
             /* Reset scroll column */
-            wp->horzScrollRest = 0 ;            /* Set scroll column to base position */
+            wp->horzScrollRest = 0;             /* Set scroll column to base position */
             wp->updateFlags |= WFREDRAW;        /* Force a screen update */
         }
         break ;
     case 2:
-        if(wp->horzScrollRest != (int) jj)
+        if(wp->horzScrollRest != (meInt) jj)
         {
             /* Reset scroll column */
-            wp->horzScrollRest = (meUShort) jj ;/* Set scroll column to base position */
+            wp->horzScrollRest = (meInt) jj;    /* Set scroll column to base position */
             wp->updateFlags |= WFREDRAW;        /* Force a screen update */
         }
         break ;
@@ -521,7 +521,7 @@ updCursor(register meWindow *wp)
 
 #define DEBUGGING 0
 #if DEBUGGING
-static char drawno = 'A' ;
+static char drawno = 'A';
 #endif
 
 /*
@@ -532,7 +532,7 @@ int
 renderLine (meUByte *s1, int len, int wid, meBuffer *bp)
 {
     register meUByte cc;
-    register meUByte *s2 ;
+    register meUByte *s2;
 
     s2 = disLineBuff + wid;
     while(len-- > 0)
@@ -648,7 +648,7 @@ updateline(register int row, register meVideoLine *vp1, meWindow *window)
         else
 #endif
         {
-            meUShort lineLen;
+            meInt lineLen;
 
 #if MEOPT_COLOR
             scheme = bp->scheme;
@@ -679,13 +679,13 @@ hideLineJump:
                 }
                 else
                 {
-                    register meUShort wid, len ;
+                    meInt wid, len ;
 
                     /* Region hilight commences in this line */
                     if((flag & VFSHBEG) && (selhilight.soff > 0))
                     {
                         len = selhilight.soff;
-                        wid = renderLine (s1,len,0,bp);
+                        wid = renderLine(s1,len,0,bp);
                         blkp[0].scheme = scheme;
                         blkp[0].column = wid;
                         noColChng = 1;
@@ -736,7 +736,8 @@ hideLineJump:
 
         s1 = disLineBuff;
         {
-            register meUShort scroll;
+            /* Note: while the line length max in chars must be less than 65536 (UShort), as every char could be a tab the scroll could be 8 times larger */
+            meInt scroll;
 
             if (flag & VFCURRL)
                 scroll = window->horzScroll;   /* Current line scroll */
@@ -744,7 +745,7 @@ hideLineJump:
                 scroll = window->horzScrollRest;    /* Hard window scroll */
             if(scroll != 0)
             {
-                register meUShort ii;
+                meInt ii;
 
                 /* Line is scrolled. The effect we want is if any text at all
                  * is on the line we place a dollar at the start of the line
@@ -856,7 +857,7 @@ hideLineJump:
          * TERMCAP                                                          *
          ********************************************************************/
         meScheme scheme;
-        register int ii, col, cno;
+        meInt ii, col, cno;
         meUByte cc;
 
         TCAPmove(row,scol);	/* Go to start of line. */
@@ -1000,8 +1001,8 @@ hideLineJump:
         else
 #endif
         {
-            register int ii, len, col=0, cno=0;
-            register meScheme scheme;
+            meInt ii, len, col=0, cno=0;
+            meScheme scheme;
             meUByte cc, *sfstp=fstp;
             
             row = rowToClient(row);
@@ -1010,7 +1011,7 @@ hideLineJump:
                 meFrameXTermSetScheme(frameCur,scheme);
                 if((ii = blkp->column - col) > 0)
                 {
-                    int spFlag=0, ccol=col;
+                    meInt spFlag=0, ccol=col;
                     len = ii;
                     /* Maintain the frame store and copy the string into the frame store with the
                      * colour information copy a space in place of special chars, they are drawn
@@ -1082,9 +1083,9 @@ hideLineJump:
      ***********************************************************************/
 #ifdef _DOS
     {
-        register meScheme scheme ;
-        register meUShort ii, len ;
-        register meUByte  cc ;
+        meScheme scheme;
+        meInt ii, len;
+        meUByte  cc;
 
         ii = 0 ;
         do {
@@ -1136,10 +1137,9 @@ hideLineJump:
     if (meSystemCfg & meSYSTEM_CONSOLE)
 #endif /* _ME_WINDOW */
     {
-        register meScheme scheme ;
-        register meUShort ii, ccol ;
-        register WORD  cc ;
-        register int ll ;
+        meScheme scheme;
+        meInt ll, ii, ccol;
+        WORD  cc;
 
         ccol = 0 ;
         do {
@@ -1197,9 +1197,9 @@ hideLineJump:
 #endif /* _ME_CONSOLE */
 #ifdef _ME_WINDOW
     {
-        register meScheme scheme ;
-        int offset;                     /* Offset into the line */
-        int len;                        /* Local line column */
+        register meScheme scheme;
+        meInt offset;                     /* Offset into the line */
+        meInt len;                        /* Local line column */
 
         /* Iterate through the colour changes */
         len = 0;
@@ -1266,11 +1266,11 @@ hideLineJump:
 static void
 updateWindow(meWindow *wp)
 {
-    meBuffer *bp = wp->buffer ;
-    meVideoLine   *vptr;                  /* Pointer to the video block */
-    register meLine *lp ;                 /* Line to update */
-    register int   row, nrows ;           /* physical screen line to update */
-    register meUByte force ;
+    meBuffer *bp = wp->buffer;
+    meVideoLine *vptr;              /* Pointer to the video block */
+    meLine *lp;                     /* Line to update */
+    int row, nrows;                 /* physical screen line to update */
+    meUByte force;
 
     force = (meUByte) (wp->updateFlags & (WFREDRAW|WFRESIZE)) ;
     /* Determine the video line position and determine the video block that
@@ -1281,7 +1281,7 @@ updateWindow(meWindow *wp)
 
     /* Search down the lines, updating them */
     {
-        int ii ;
+        int ii;
         ii = (wp->dotLineNo - wp->vertScroll) ;
         lp = wp->dotLine ;
         while(--ii >= 0)

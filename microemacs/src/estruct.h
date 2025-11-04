@@ -442,6 +442,8 @@ typedef struct  meWindow {
     meLine            *modeLine;                /* window's mode-line buffer    */
     meLine            *dotCharOffset;           /* Current lines char offsets   */
     meInt              vertScroll;              /* windows top line number      */
+    meInt              horzScroll;              /* cur horizontal scroll column */
+    meInt              horzScrollRest;          /* the horizontal scroll column */
     meInt              dotLineNo;               /* current line number          */
     meInt              markLineNo;              /* current mark line number     */
 #if MEOPT_EXTENDED
@@ -456,8 +458,6 @@ typedef struct  meWindow {
     meUShort           depth;                   /* Window number text rows      */
     meUShort           textDepth;               /* # of rows of text in window  */
     meUShort           textWidth;               /* Video number of columns      */
-    meUShort           horzScroll;              /* cur horizontal scroll column */
-    meUShort           horzScrollRest;          /* the horizontal scroll column */
     meUShort           marginWidth;             /* The margin for the window    */
 #if MEOPT_EXTENDED
     meUShort           flags;                   /* $window-flags                */
@@ -635,14 +635,14 @@ typedef struct mePosition {
     struct meBuffer   *buffer;                  /* windows buffer                            */
     meInt              anchor;                  /* Anchor name                               */
     meInt              vertScroll;              /* windows top line number                   */
+    meInt              horzScroll;              /* cur horizontal scroll column              */
+    meInt              horzScrollRest;          /* the horizontal scroll column              */
     meInt              dotLineNo;               /* current line number                       */
     meInt              markLineNo;              /* current mark line number                  */
     meUShort           winMinRow;               /* Which window - store the co-ordinate      */
     meUShort           winMinCol;               /* so we can restore to the best matching    */
     meUShort           winMaxRow;               /* window on a goto - this greatly improves  */
     meUShort           winMaxCol;               /* its use.                                  */
-    meUShort           horzScroll;              /* cur horizontal scroll column              */
-    meUShort           horzScrollRest;          /* the horizontal scroll column              */
     meUShort           dotOffset;               /* Byte offset for "."                       */
     meUShort           markOffset;              /* Byte offset for "mark"       */
     meUShort           flags;                   /* Whats stored bit mask                     */
@@ -716,7 +716,7 @@ typedef struct  meBuffer {
 #endif
     meStat             stats;                   /* file stats - inc. mod time   */
     meLine            *dotLine;                 /* Link to "." meLine structure */
-    meLine            *markLine;                /* The same as the above two,   */
+    meLine            *markLine;                /* Link to mark meLine          */
     meLine            *baseLine;                /* Link to the header meLine    */
     meUByte           *fileName;                /* File name                    */
     meUByte           *name;                    /* Buffer name                  */
@@ -750,10 +750,10 @@ typedef struct  meBuffer {
 #endif
     meInt              histNo;                  /* Buff switch hist no.         */
     meMode             mode;                    /* editor mode of this buffer   */
-    meUShort           dotOffset;               /* Offset of "." in above meLine*/
-    meUShort           markOffset;              /* but for the "mark"           */
+    meUShort           dotOffset;               /* Offset of "." in dot meLine  */
+    meUShort           markOffset;              /* Offset of mark in mark Line  */
 #if MEOPT_LOCALBIND
-    meUShort           bindCount;               /* but for the "mark"           */
+    meUShort           bindCount;
 #endif
 #if MEOPT_WORDPRO
     meUShort           fillcol;                 /* Current fill column          */
@@ -1003,7 +1003,7 @@ typedef struct meHilight {
  * (front and back color + font) and the column on which the style ends.
  */
 typedef struct {
-    meUShort           column;                  /* change column */
+    meInt              column;                  /* change column */
     meScheme           scheme;                  /* style index */
 } meSchemeSet;    
 
