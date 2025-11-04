@@ -1,0 +1,95 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1999-2025 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.\"  Created By    : Detlef Groth
+.\"  Created       : Tue Nov 1 13:00:00 2025
+.\"
+.Id $Id: m9typ070.9,v 1.2 2025/11/01 15:13:02 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH doctools 9
+.XI doctools - "Tcl Doctools Markup File"
+.XI tman - "Tcl Doctools Markup File"
+.SH SYNOPSIS
+tman, man \- Tcl Doctools Markup File.
+.SH FILES
+.na
+.B hkdtools.emf
+\- Tcl Doctools file hook definition
+.br
+.B dtools.eaf
+\- Tcl Doctools abbreviation file
+.br
+.B dtools.etf
+\- Tcl Doctools template file
+.ad
+.SH EXTENSIONS
+.na
+\fB.tman\fR \- Tcl Doctools files 
+.ad
+.SH "MAGIC STRINGS"
+.TP
+\fB -[*!]- doctools\fR
+.\"
+\*(mS  recognizes  the  magic  string  on the  first  line of the file used to
+indicate  the file type. The files may be extension  less or have an extension
+like .man and are still recognized.
+.SH DESCRIPTION
+The \fBTcl Doctools\fR file hook provides a editing  environment for Tcl doctools
+files. The file hook  provides  highlighting,  folding  of  section,  document
+outline using  item-list and  abbreviations.  
+.PP
+File   recognition   is   performed   using  the   standard   file   extension
+\fB.tman\fR.
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for Typst code  editing
+which  can  be  used  by  writing  short   abbreviations   like   "\fBse\fR"
+for a section  header,  "\fBex\fR"  for an  example  block,  "\fBdl\fR"  for a
+definition list, or "\fBli\fR" for an item list - and  then  pressing  the
+key-binding  for the 
+.Ht expand-abbrev-handle 3
+command.  The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mS using the 
+.Ht abbrev-list 3
+command.
+.IP "\fBFolding and Information Hiding\fR"
+Generic  folding is enabled  within the Tcl doctools files. The folds occur about
+the section lines. The following commands are supported to show and hide the function bodies.
+.Ht collapse-all 3
+(un)folds all regions in the file,
+.Ht collapse-current 3
+(un)folds the current region.
+.IP "\fBList Items\fR"
+Item listing is available and the section headers of the file are displayed in
+the \fIitem-list\fR.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*cc \*cc\fR \- Comment out the current line.
+.br
+\fB\*cc \*cd\fR \- Uncomment the current line.
+.br
+\fBf2\fR \- (un)fold the current region
+.br
+\fBf3\fR \- (un)fold all regions
+.br
+\fBf6\fR \- list items
+.br
+\fB\*e f6\fR \- close list items
+.SH "SEE ALSO"
+.na
+.Ht abbrev-list 3 ,
+.Ht collapse-all 3 ,
+.Ht collapse-current 3 ,
+.Ht expand-abbrev-handle 3 ,
+.Ht item-list 3 ,
+.Ht adoc 9 ,
+.Ht md 9 ,
+.Ht wiki 9
+.sp 1
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH

@@ -566,21 +566,6 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                     TCAPinitDrawChar();
 #endif
 #endif
-#ifdef _WIN32
-                /* on Windows FONTFIX must be set for mew and clear for mec */
-#ifdef _ME_WINDOW
-#ifdef _ME_CONSOLE
-                if(!(meSystemCfg & meSYSTEM_CONSOLE))
-#endif
-                    meSystemCfg |= meSYSTEM_FONTFIX;
-#ifdef _ME_CONSOLE
-                else
-#endif
-#endif
-#ifdef _ME_CONSOLE
-                    meSystemCfg &= ~meSYSTEM_FONTFIX;
-#endif
-#endif
 #if MEOPT_CLIENTSERVER
                 /* open or close the client server files */
                 if(meSystemCfg & meSYSTEM_CLNTSRVR)

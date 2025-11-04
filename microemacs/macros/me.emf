@@ -177,6 +177,7 @@ add-file-hook ".typ .typst .ttyp .ttypst" fhook-typst
 add-file-hook ".tdoc .adoc .asciidoc" fhook-adoc
 add-file-hook ".kt .ktm .kts" fhook-kotlin
 add-file-hook ".nim" fhook-nim
+add-file-hook ".tman" fhook-dtools
 ; Add magic hooks
 1 add-file-hook "^#![ \t]*/.*sh" fhook-shell
 1 add-file-hook "^#![ \t]*/.*perl" fhook-perl
@@ -221,6 +222,7 @@ add-file-hook ".nim" fhook-nim
 -1 add-file-hook "-!-[ \t]*v-lang.*-!-" fhook-v
 -1 add-file-hook "-!-[ \t]*asciidoc.*-!-" fhook-adoc
 -1 add-file-hook "-!-[ \t]*adoc.*-!-" fhook-adoc
+-1 add-file-hook "-[*!]-[ \t]*doctools " fhook-dtools
 -1 add-file-hook "^diff " fhook-diff
 
 set-variable %platform &cat $platform &cond &band $system 0x01 "c" ""

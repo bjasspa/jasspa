@@ -986,7 +986,7 @@ TCAPdrawChar(meUByte cc)
     if(cc > TTutf8Char)
     {
         if((uc = (int) charToUnicode[cc-128]) == 0)
-            uc = ttSpeUChars[0];
+            uc = ttSpeUChars[meCHAR_UNDEF];
     }
     else if(cc < TTspecChar)
         uc = ttSpeUChars[cc];

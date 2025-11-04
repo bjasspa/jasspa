@@ -283,6 +283,7 @@ TYP9_060=	$(DOCDIR)m9typ060.9 $(DOCDIR)m9typ061.9 $(DOCDIR)m9typ062.9\
 		$(DOCDIR)m9typ063.9 $(DOCDIR)m9typ064.9 $(DOCDIR)m9typ065.9\
 		$(DOCDIR)m9typ066.9 $(DOCDIR)m9typ067.9 $(DOCDIR)m9typ068.9\
 		$(DOCDIR)m9typ069.9
+TYP9_070=	$(DOCDIR)m9typ070.9 
 #
 TNIS	=	me.tni
 
@@ -304,7 +305,7 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 		var5_080.sm	var5_090.sm \
 		fil8_000.sm \
 		typ9_000.sm	typ9_010.sm	typ9_020.sm	typ9_030.sm \
-		typ9_040.sm	typ9_050.sm 	typ9_060.sm	\
+		typ9_040.sm	typ9_050.sm 	typ9_060.sm	typ9_070.sm \
 		faq.2
 
 all:	$(HTSS) $(HLPS) $(SMS) $(EHFS) $(TXTS) $(CATMAN1)
@@ -493,6 +494,8 @@ typ9_050.sm:	$(FIL9_050)
 	$(SUPERMAN) -o $@ $(TYP9_050)
 typ9_060.sm:	$(FIL9_060)
 	$(SUPERMAN) -o $@ $(TYP9_060)
+typ9_070.sm:	$(FIL9_070)
+	$(SUPERMAN) -o $@ $(TYP9_070)
 # Narratives
 nar2_000.sm:	$(NAR2_000)
 	$(SUPERMAN) -o $@ $(NAR2_000)

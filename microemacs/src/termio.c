@@ -77,17 +77,17 @@ meUByte ttSpeChars[TTSPECCHARS] =
     '^', /* 30/0x1e - Cursor Arrows / Up */
     'v'  /* 31/0x1f - Cursor Arrows / Down */
 };
-#ifdef _UNIX
+#if (defined _UNIX) || (defined _WIN32)
 #ifdef _ME_CONSOLE
 meUShort ttSpeUChars[TTSPECCHARS] =
 {
     ' ', /*  0/0x00 - Undefined */
     0x25c7, /*  1/0x01 - Unicode tag - 3 byte encode */
     0x25c6, /*  2/0x02 - Unicode tag - 5 byte encode */
-    ' ',    /*  3/0x03 - Checkbox left side */
-    0x25A1, /*  4/0x04 - Checkbox center not selected */
-    0x25A3, /*  5/0x05 - Checkbox center selected */
-    ' ',    /*  6/0x06 - Checkbox right side */
+    ' ',    /*  3/0x03 - Not used */
+    ' ',    /*  4/0x04 - Not used */
+    ' ', /*  5/0x05 - Not used */
+    ' ',    /*  6/0x06 - Not used */
     0xfffd, /*  7/0x07 - unsupported/undefined char meCHAR_UNDEF (i.e. \uFFFD) */
     0x00b7, /*  8/0x08 - backspace char, used for visible space */
     0x2192, /*  9/0x09 - Tab character */
@@ -100,8 +100,8 @@ meUShort ttSpeUChars[TTSPECCHARS] =
     '>',    /* 16/0x10 - Cursor Arrows / Right */
     '<',    /* 17/0x11 - Cursor Arrows / Left */
     0x2500, /* 18/0x12 - Line Drawing / Horizontal line - */
-    0x2610, /* 19/0x13 - Cross box empty [ ] */
-    0x2612, /* 20/0x14 - Cross box [X] */
+    0x25A1, /* 19/0x13 - Checkbox / Unticked, empty [ ] */
+    0x25A3, /* 20/0x14 - Checkbox / Ticked ,crossed [X] */
     0x251c, /* 21/0x15 - Line Drawing / Left Tee |- */
     0x2524, /* 22/0x16 - Line Drawing / Right Tee -| */
     0x2534, /* 23/0x17 - Line Drawing / Bottom Tee _|_ */
@@ -109,7 +109,7 @@ meUShort ttSpeUChars[TTSPECCHARS] =
     0x2502, /* 25/0x19 - Line Drawing / Vertical Line | */
     0x002a, /* 26/0x1a - Line Drawing / Bottom right _| with resize */
     0x2592, /* 27/0x1b - Scroll box - vertical */
-    0x0020, /* 28/0x1c - Not used */
+    ' ',    /* 28/0x1c - Not used */
     0x2592, /* 29/0x1d - Scroll box - horizontal */
     '^',    /* 30/0x1e - Cursor Arrows / Up */
     'v'     /* 31/0x1f - Cursor Arrows / Down */
