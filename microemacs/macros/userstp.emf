@@ -504,17 +504,17 @@ set-variable .user-set-mouse.A ""
       -2 osd
     !emacro
     0 define-macro user-set-xftf
-      !if &not &set #l0 .user-set-xftfname.fl
+      !if &les &set #l0 .user-set-xftfname.fl 2
+        !iif &les #l0 0 !return
         set-variable #l1 "monospace"
-      !elif &les #l0 0
-        !return
+        set-variable #l2 ""
       !else
         find-buffer "*xftl-tmp*"
         goto-line #l0
         !iif &set #l2 &sin "\x01" &set #l1 @wl  set-variable #l1 &lef #l1 &sub #l2 1
         goto-position "\x82"
+        !iif &len &set #l2 .user-set-xftstyle.fs  set-variable #l2 &cat ":style=" #l2
       !endif
-      !iif &len &set #l2 .user-set-xftstyle.fs  set-variable #l2 &cat ":style=" #l2
       set-registry &spr "/history/%s/font" %platform &spr "%s:lang=%s%s:size=%d" #l1 &lef &cat &con &exi .spell.language .spell.language "" "en" 2 #l2 .user-set-xftfsize.fz
     !emacro
     0 define-macro user-set-xftfont
@@ -553,18 +553,23 @@ set-variable .user-set-mouse.A ""
           !until &equ #l1 $window-eline
           beginning-of-buffer
           insert-string "<default>\n"
+          set-variable #l7 0
           set-variable #l6 11
           set-variable #l5 ""
           !if &seq "" &set #l2 &reg &spr "/history/%s/font" %platform ""
-            set-variable #l7 1
-          !elif &seq &lef #l2 1 "-"  
-            set-variable #l7 0
-          !else
+            0 change-font
+            set-variable #l2 &lget $result 8
+          !endif
+          !if &not &seq &lef #l2 1 "-"  
             !iif &xse #l2 ".*:size=\\(\\d+\\).*"  set-variable #l6 @s1
             !iif &xse #l2 ".*:style=\\([^:]+\\).*"  set-variable #l5 @s1
             !iif &set #l3 &sin ":" #l2  set-variable #l2 &lef #l2 &sub #l3 1
             !force search-buffer "mE" &spr "^%s\x01" #l2
-            !iif $status  set-variable #l7 $window-line
+            !if $status
+              set-variable #l7 $window-line
+            !elif &seq #l2 "monospace"
+              set-variable #l7 1
+            !endif
           !endif
         !endif
       !endif
