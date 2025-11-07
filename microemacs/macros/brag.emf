@@ -288,20 +288,20 @@
 0 define-macro bragToastRmv
   !iif &not .bragToast.len  !return
   set-variable #l1 &spr "%n" .bragToast.len " "
-  3 screen-poke 24 4 .scheme.cardback #l1
-  3 screen-poke 25 4 .scheme.cardback #l1
-  3 screen-poke 26 4 .scheme.cardback #l1
-  3 screen-poke 27 4 .scheme.cardback #l1
-  3 screen-poke 28 4 .scheme.cardback #l1
+  3 screen-poke 17 4 .scheme.cardback #l1
+  3 screen-poke 18 4 .scheme.cardback #l1
+  3 screen-poke 19 4 .scheme.cardback #l1
+  3 screen-poke 20 4 .scheme.cardback #l1
+  3 screen-poke 21 4 .scheme.cardback #l1
 !emacro
 
 0 define-macro bragToast
   set-variable .len &add 6 &set #l2 &len &set #l1 @1
-  99 screen-poke 24 4 .scheme.cardfore &spr "%s%n%s" &mid $box-chars 1 1 &add #l2 4 &rig $box-chars 10 &mid $box-chars 2 1
-  99 screen-poke 25 4 .scheme.cardfore &spr "%s  %n  %s" &lef $box-chars 1 #l2 " " &lef $box-chars 1
-  99 screen-poke 26 4 .scheme.cardfore &spr "%s  %s  %s" &lef $box-chars 1 #l1 &lef $box-chars 1
-  99 screen-poke 27 4 .scheme.cardfore &spr "%s  %n  %s" &lef $box-chars 1 #l2 " " &lef $box-chars 1
-  99 screen-poke 28 4 .scheme.cardfore &spr "%s%n%s" &mid $box-chars 3 1 &add #l2 4 &rig $box-chars 10 &mid $box-chars 4 1
+  99 screen-poke 17 4 .scheme.cardfore &spr "%s%n%s" &mid $box-chars 1 1 &add #l2 4 &rig $box-chars 10 &mid $box-chars 2 1
+  99 screen-poke 18 4 .scheme.cardfore &spr "%s  %n  %s" &lef $box-chars 1 #l2 " " &lef $box-chars 1
+  99 screen-poke 19 4 .scheme.cardfore &spr "%s  %s  %s" &lef $box-chars 1 #l1 &lef $box-chars 1
+  99 screen-poke 20 4 .scheme.cardfore &spr "%s  %n  %s" &lef $box-chars 1 #l2 " " &lef $box-chars 1
+  99 screen-poke 21 4 .scheme.cardfore &spr "%s%n%s" &mid $box-chars 3 1 &add #l2 4 &rig $box-chars 10 &mid $box-chars 4 1
   @# create-callback bragToastRmv
 !emacro
 
@@ -350,6 +350,7 @@
     3 screen-poke &inc #l2 1 #l3 .scheme.cardback .hl1
     3 screen-poke &inc #l2 1 #l3 .scheme.cardback .bot
   !endif
+;  set-variable $debug 2
 !emacro
 set-variable .bragDrawCard.top &spr "%s%7s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
 set-variable .bragDrawCard.bot &spr "%s%7s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
@@ -545,10 +546,10 @@ set-variable .bragDrawCard.slb "                                Heart           
   !if &not @#
   !elif &equ @# 26
     !force delete-buffer "*Brag*"
-  !elif &equ @# 29
+  !elif &equ @# 28
     brag-gen-tricky
     4 brag-draw
-  !elif &equ @# 30
+  !elif &equ @# 29
     brag-hand-input
     1 brag-draw
   !elif &equ @# 25
@@ -616,7 +617,7 @@ set-variable .bragDrawCard.slb "                                Heart           
     !endif
     #l9 brag-draw
   !elif .Brag.stt
-    !if &equ @# 20
+    !if &equ @# 21
       !if &equ .Brag.stt 4
         set-variable .Brag.stt 5
         1 brag-draw
@@ -643,15 +644,15 @@ set-variable .bragDrawCard.slb "                                Heart           
     !if &not &set #l2 &sin "\b" .Brag.h1s
     !elif &not &sin &set #l3 &mid .Brag.h1 &sub @# 1 1 .Brag.h1s
       set-variable .Brag.h1s &cat &cat &lef .Brag.h1s &sub #l2 1 #l3 &rig .Brag.h1s #l2
-      bragDrawCard 0 3 &mul @# 10
-      bragDrawCard &atoi #l3 13 &add 5 &add &mul 10 #l2 &mul 10 &div &sub #l2 1 3
+      bragDrawCard 0 0 &mul @# 10
+      bragDrawCard &atoi #l3 8 &add 5 &add &mul 10 #l2 &mul 10 &div &sub #l2 1 3
       1 screen-poke 1 1 .scheme.cardback " "
     !endif
   !elif &les @# 20
     !if &not &seq "\b" &set #l2 &mid .Brag.h1s &set #l3 &sub @# 11 1
       set-variable .Brag.h1s &rep .Brag.h1s #l2 "\b"
-      bragDrawCard 0 13 &add 5 &add &mul 10 &inc #l3 1 &mul 10 &div &sub #l3 1 3
-      bragDrawCard &atoi #l2 3 &mul &sin #l2 .Brag.h1 10
+      bragDrawCard 0 8 &add 5 &add &mul 10 &inc #l3 1 &mul 10 &div &sub #l3 1 3
+      bragDrawCard &atoi #l2 0 &mul &sin #l2 .Brag.h1 10
       1 screen-poke 1 1 .scheme.cardback " "
     !endif
   !elif &equ @# 21
@@ -674,9 +675,9 @@ set-variable .bragDrawCard.slb "                                Heart           
   set-variable #l0 $mouse-x
   set-variable #l1 $mouse-y
   !if &les #l0 110
-    !if &gre #l1 10
-      !if &gre #l1 20
-      !elif &gre #l1 12
+    !if &gre #l1 7
+      !if &gre #l1 15
+      !elif &gre #l1 8
         !if &equ &mod &set #l2 &sub #l0 5 10 9
           set-variable @1 #l9
           !return
@@ -686,7 +687,7 @@ set-variable .bragDrawCard.slb "                                Heart           
           set-variable #l9 &add 9 #l2
         !endif
       !endif
-    !elif &gre #l1 2
+    !elif &gre #l1 0
       !if &equ &mod #l0 10 9
       !elif &and &set #l2 &div #l0 10 &les #l2 10
         set-variable #l9 #l2
@@ -694,7 +695,7 @@ set-variable .bragDrawCard.slb "                                Heart           
     !endif
   !elif &les #l0 124
     !if &mod #l1 4
-      set-variable #l9 &add 20 &div #l1 4
+      set-variable #l9 &add 21 &div #l1 4
     !endif
   !endif
   set-variable @1 #l9
@@ -713,100 +714,100 @@ set-variable .bragDrawCard.slb "                                Heart           
   set-variable #l3 &con &gre .Brag.stt 4 .Brag.h1c .Brag.h1i
   set-variable #l4 0
   !repeat
-    bragDrawCard &atoi &mid #l2 #l4 1 13 &add 35 &mul #l4 10
-    bragDrawCard &atoi &mid .Brag.h2 #l4 1 31 &add 35 &mul #l4 10
+    bragDrawCard &atoi &mid #l2 #l4 1 8 &add 35 &mul #l4 10
+    bragDrawCard &atoi &mid .Brag.h2 #l4 1 18 &add 35 &mul #l4 10
   !until &equ &inc #l4 1 3
-  67 screen-poke 22 &add 35 &div &sub 30 &len &lget #l3 4 2 .scheme.cardback &lget #l3 4
-  67 screen-poke 30 &add 35 &div &sub 30 &len &lget .Brag.h2i 4 2 .scheme.cardback &lget .Brag.h2i 4
+  67 screen-poke 8 &add 35 &div &sub 30 &len &lget #l3 4 2 .scheme.cardback &lget #l3 4
+  67 screen-poke 26 &add 35 &div &sub 30 &len &lget .Brag.h2i 4 2 .scheme.cardback &lget .Brag.h2i 4
   set-variable #l5 4
   !if &gre &lget #l3 1 &lget .Brag.h2i 1
     set-variable #l5 &inc #l5 1
-    67 screen-poke 17 30 .scheme.cardback "WIN"
-    67 screen-poke 17 66 .scheme.cardback "WIN"
-    67 screen-poke 35 30 .scheme.cardback "DOH"
-    67 screen-poke 35 66 .scheme.cardback "DOH"
+    67 screen-poke 12 30 .scheme.cardback "WIN"
+    67 screen-poke 12 66 .scheme.cardback "WIN"
+    67 screen-poke 22 30 .scheme.cardback "DOH"
+    67 screen-poke 22 66 .scheme.cardback "DOH"
   !elif &les &lget #l3 1 &lget .Brag.h2i 1
     set-variable #l5 &dec #l5 1
-    67 screen-poke 17 30 .scheme.cardback "DOH"
-    67 screen-poke 17 66 .scheme.cardback "DOH"
-    67 screen-poke 35 30 .scheme.cardback "WIN"
-    67 screen-poke 35 66 .scheme.cardback "WIN"
+    67 screen-poke 12 30 .scheme.cardback "DOH"
+    67 screen-poke 12 66 .scheme.cardback "DOH"
+    67 screen-poke 22 30 .scheme.cardback "WIN"
+    67 screen-poke 22 66 .scheme.cardback "WIN"
   !endif
   !if &gre .Brag.stt 1
     !repeat
-      bragDrawCard &atoi &mid #l2 #l4 1  3 &sub &mul #l4 10 20
-      bragDrawCard &atoi &mid .Brag.h2 #l4 1 41 &sub &mul #l4 10 20
+      bragDrawCard &atoi &mid #l2 #l4 1 0 &sub &mul #l4 10 20
+      bragDrawCard &atoi &mid .Brag.h2 #l4 1 26 &sub &mul #l4 10 20
     !until &equ &inc #l4 1 6
-    67 screen-poke 12 &add 10 &div &sub 30 &len &lget #l3 5 2 .scheme.cardback &lget #l3 5
-    67 screen-poke 40 &add 10 &div &sub 30 &len &lget .Brag.h2i 5 2 .scheme.cardback &lget .Brag.h2i 5
+    67 screen-poke 0 &add 10 &div &sub 30 &len &lget #l3 5 2 .scheme.cardback &lget #l3 5
+    67 screen-poke 34 &add 10 &div &sub 30 &len &lget .Brag.h2i 5 2 .scheme.cardback &lget .Brag.h2i 5
     !if &gre &lget #l3 2 &lget .Brag.h2i 2
       set-variable #l5 &inc #l5 1
-      67 screen-poke  7  5 .scheme.cardback "WIN"
-      67 screen-poke  7 41 .scheme.cardback "WIN"
-      67 screen-poke 45  5 .scheme.cardback "DOH"
-      67 screen-poke 45 41 .scheme.cardback "DOH"
+      67 screen-poke  4  5 .scheme.cardback "WIN"
+      67 screen-poke  4 41 .scheme.cardback "WIN"
+      67 screen-poke 30  5 .scheme.cardback "DOH"
+      67 screen-poke 30 41 .scheme.cardback "DOH"
     !elif &les &lget #l3 2 &lget .Brag.h2i 2
       set-variable #l5 &dec #l5 1
-      67 screen-poke  7  5 .scheme.cardback "DOH"
-      67 screen-poke  7 41 .scheme.cardback "DOH"
-      67 screen-poke 45  5 .scheme.cardback "WIN"
-      67 screen-poke 45 41 .scheme.cardback "WIN"
+      67 screen-poke  4  5 .scheme.cardback "DOH"
+      67 screen-poke  4 41 .scheme.cardback "DOH"
+      67 screen-poke 30  5 .scheme.cardback "WIN"
+      67 screen-poke 30 41 .scheme.cardback "WIN"
     !endif
   !else
     !repeat
-      bragDrawCard 1  3 &sub &mul #l4 10 20
-      bragDrawCard 1 41 &sub &mul #l4 10 20
+      bragDrawCard 1  0 &sub &mul #l4 10 20
+      bragDrawCard 1 26 &sub &mul #l4 10 20
     !until &equ &inc #l4 1 6
   !endif
   !if &gre .Brag.stt 2
     !repeat
-      bragDrawCard &atoi &mid #l2 #l4 1  3 &mul #l4 10
-      bragDrawCard &atoi &mid .Brag.h2 #l4 1 41 &mul #l4 10
+      bragDrawCard &atoi &mid #l2 #l4 1  0 &mul #l4 10
+      bragDrawCard &atoi &mid .Brag.h2 #l4 1 26 &mul #l4 10
     !until &equ &inc #l4 1 9
-    67 screen-poke 12 &add 60 &div &sub 30 &len &lget #l3 6 2 .scheme.cardback &lget #l3 6
-    67 screen-poke 40 &add 60 &div &sub 30 &len &lget .Brag.h2i 6 2 .scheme.cardback &lget .Brag.h2i 6
+    67 screen-poke 0 &add 60 &div &sub 30 &len &lget #l3 6 2 .scheme.cardback &lget #l3 6
+    67 screen-poke 34 &add 60 &div &sub 30 &len &lget .Brag.h2i 6 2 .scheme.cardback &lget .Brag.h2i 6
     !if &gre &lget #l3 3 &lget .Brag.h2i 3
       set-variable #l5 &inc #l5 1
-      67 screen-poke  7 55 .scheme.cardback "WIN"
-      67 screen-poke  7 91 .scheme.cardback "WIN"
+      67 screen-poke  4 55 .scheme.cardback "WIN"
+      67 screen-poke  4 91 .scheme.cardback "WIN"
       !if &and &les .Brag.stt 5 &equ #l5 7
-        67 screen-poke 45 55 .scheme.cardback "POO"
-        67 screen-poke 45 91 .scheme.cardback "POO"
-        99 screen-poke 24 40 .scheme.cardfore &spr "%s%17s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-        99 screen-poke 25 40 .scheme.cardfore &spr "%s *************** %s" &lef $box-chars 1 &lef $box-chars 1
-        99 screen-poke 26 40 .scheme.cardfore &spr "%s **  You Won  ** %s" &lef $box-chars 1 &lef $box-chars 1
-        99 screen-poke 27 40 .scheme.cardfore &spr "%s *************** %s" &lef $box-chars 1 &lef $box-chars 1
-        99 screen-poke 28 40 .scheme.cardfore &spr "%s%17s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+        67 screen-poke 30 55 .scheme.cardback "POO"
+        67 screen-poke 30 91 .scheme.cardback "POO"
+        99 screen-poke 10 4 .scheme.cardfore &spr "%s%17s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+        99 screen-poke 11 4 .scheme.cardfore &spr "%s *************** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 12 4 .scheme.cardfore &spr "%s **  You Won  ** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 13 4 .scheme.cardfore &spr "%s *************** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 14 4 .scheme.cardfore &spr "%s%17s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
       !else
-        67 screen-poke 45 55 .scheme.cardback "DOH"
-        67 screen-poke 45 91 .scheme.cardback "DOH"
+        67 screen-poke 30 55 .scheme.cardback "DOH"
+        67 screen-poke 30 91 .scheme.cardback "DOH"
       !endif
     !elif &les &lget #l3 3 &lget .Brag.h2i 3
       set-variable #l5 &dec #l5 1
-      67 screen-poke 45 55 .scheme.cardback "WIN"
-      67 screen-poke 45 91 .scheme.cardback "WIN"
+      67 screen-poke 30 55 .scheme.cardback "WIN"
+      67 screen-poke 30 91 .scheme.cardback "WIN"
       !if &and &les .Brag.stt 5 &equ #l5 1
-        67 screen-poke  7 55 .scheme.cardback "POO"
-        67 screen-poke  7 91 .scheme.cardback "POO"
-        99 screen-poke 24 40 .scheme.cardfore &spr "%s%17s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-        99 screen-poke 25 40 .scheme.cardfore &spr "%s *************** %s" &lef $box-chars 1 &lef $box-chars 1
-        99 screen-poke 26 40 .scheme.cardfore &spr "%s ** You Lost! ** %s" &lef $box-chars 1 &lef $box-chars 1
-        99 screen-poke 27 40 .scheme.cardfore &spr "%s *************** %s" &lef $box-chars 1 &lef $box-chars 1
-        99 screen-poke 28 40 .scheme.cardfore &spr "%s%17s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+        67 screen-poke 4 55 .scheme.cardback "POO"
+        67 screen-poke 4 91 .scheme.cardback "POO"
+        99 screen-poke 10 4 .scheme.cardfore &spr "%s%17s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+        99 screen-poke 11 4 .scheme.cardfore &spr "%s *************** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 12 4 .scheme.cardfore &spr "%s ** You Lost! ** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 13 4 .scheme.cardfore &spr "%s *************** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 14 4 .scheme.cardfore &spr "%s%17s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
       !else
         67 screen-poke  7 55 .scheme.cardback "DOH"
         67 screen-poke  7 91 .scheme.cardback "DOH"
       !endif
     !endif
     67 screen-poke 50 5 .scheme.cardback &spr "Computer played: %s" &lget .Brag.h2d 19
-    67 screen-poke 13 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-    67 screen-poke 14 110 .scheme.cardback &spr "%s   Details   %s" &lef $box-chars 1 &lef $box-chars 1
-    99 screen-poke 14 114 .scheme.cardback "D"
-    67 screen-poke 15 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+    67 screen-poke  9 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    67 screen-poke 10 110 .scheme.cardback &spr "%s   Details   %s" &lef $box-chars 1 &lef $box-chars 1
+    99 screen-poke 10 114 .scheme.cardback "D"
+    67 screen-poke 11 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
     !if &gre .Brag.stt 4
-      67 screen-poke  2 5 .scheme.cardback "Showing hand sorted by computer."
+      67 screen-poke 17 5 .scheme.cardback "Showing hand sorted by computer."
     !elif &seq &lef .Brag.h1i 13 &lef .Brag.h1c 13
-      67 screen-poke  2 5 .scheme.cardback "Computer would have played the hand the same."
+      67 screen-poke 17 5 .scheme.cardback "Computer would have played the hand the same."
     !else
       set-variable .Brag.stt 4
       set-variable #l4 4
@@ -832,7 +833,8 @@ set-variable .bragDrawCard.slb "                                Heart           
       !else
         set-variable #l3 ", the outcome would have been the same."
       !endif
-      67 screen-poke  2 5 .scheme.cardback &spr "Computer would have played differently (%s)%s" &lget .Brag.h1d 19 #l3
+      set-variable #l3 &spr "Computer would have played differently (%s)%s" &lget .Brag.h1d 19 #l3
+      67 screen-poke 17 5 .scheme.cardback #l3
       67 screen-poke  1 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
       67 screen-poke  2 110 .scheme.cardback &spr "%s   Show Me   %s" &lef $box-chars 1 &lef $box-chars 1
       99 screen-poke  2 119 .scheme.cardback "M"
@@ -841,24 +843,24 @@ set-variable .bragDrawCard.slb "                                Heart           
       set-variable #l3 &add &sub &lget .Brag.h1d 10 &lget .Brag.h1i 7 &sub &lget .Brag.h1d 14 &lget .Brag.h1i 8
       ;67 screen-poke  26 1 .scheme.cardback &spr "%s: %.4f" #l3 &fmul #l3 0.000000001
       !if &gre #l3 50000000
-        99 screen-poke 13 88 .scheme.cardfore &spr "%s%18s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-        99 screen-poke 14 88 .scheme.cardfore &spr "%s **************** %s" &lef $box-chars 1 &lef $box-chars 1
-        99 screen-poke 15 88 .scheme.cardfore &spr "%s ** You missed ** %s" &lef $box-chars 1 &lef $box-chars 1
-        99 screen-poke 16 88 .scheme.cardfore &spr "%s **  a trick!  ** %s" &lef $box-chars 1 &lef $box-chars 1
-        99 screen-poke 17 88 .scheme.cardfore &spr "%s **************** %s" &lef $box-chars 1 &lef $box-chars 1
-        99 screen-poke 18 88 .scheme.cardfore &spr "%s%18s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+        99 screen-poke  9 88 .scheme.cardfore &spr "%s%18s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+        99 screen-poke 10 88 .scheme.cardfore &spr "%s **************** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 11 88 .scheme.cardfore &spr "%s ** You missed ** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 12 88 .scheme.cardfore &spr "%s **  a trick!  ** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 13 88 .scheme.cardfore &spr "%s **************** %s" &lef $box-chars 1 &lef $box-chars 1
+        99 screen-poke 14 88 .scheme.cardfore &spr "%s%18s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
       !endif
     !endif
   !else
     !repeat
-      bragDrawCard 1  3 &mul #l4 10
-      bragDrawCard 1 41 &mul #l4 10
+      bragDrawCard 1  0 &mul #l4 10
+      bragDrawCard 1 26 &mul #l4 10
     !until &equ &inc #l4 1 9
   !endif
 !emacro
 0 define-macro brag-draw-details
   !if &les .Brag.stt 30
-    67 screen-poke 2 2 .scheme.cardback &spr "Computer hand - played:  %s" &lget .Brag.h2d 19
+    67 screen-poke 0 2 .scheme.cardback &spr "Computer hand - played:  %s" &lget .Brag.h2d 19
     set-variable #l1 .Brag.h2
     !iif &seq &lget .Brag.h1i 7 ""  bragHandInfoAddProbs .Brag.h1i
     set-variable #l2 .Brag.h1
@@ -875,83 +877,83 @@ set-variable .bragDrawCard.slb "                                Heart           
     !else
       set-variable #l3 "same odds"
     !endif
-    67 screen-poke 14 2 .scheme.cardback &spr "You played  -  Prb  Win: %.4f   Lose: %.4f   (%s)" &fmul &lget #l5 7 0.000000001 &fsub 1 &fmul &lget #l5 8 0.000000001 #l3
+    67 screen-poke 10 2 .scheme.cardback &spr "You played  -  Prb  Win: %.4f   Lose: %.4f   (%s)" &fmul &lget #l5 7 0.000000001 &fsub 1 &fmul &lget #l5 8 0.000000001 #l3
   !else
-    67 screen-poke 2 2 .scheme.cardback "Hand entered:"
+    67 screen-poke 0 2 .scheme.cardback "Hand entered:"
     set-variable #l1 .Brag.hm
     set-variable #l2 .Brag.hmo
     set-variable #l5 .Brag.hmi
-    67 screen-poke 14 2 .scheme.cardback &spr "Hand played as entered  -  Prb  Win: %.4f   Lose: %.4f" &fmul &lget #l5 7 0.000000001 &fsub 1 &fmul &lget #l5 8 0.000000001
+    67 screen-poke 10 2 .scheme.cardback &spr "Hand played as entered  -  Prb  Win: %.4f   Lose: %.4f" &fmul &lget #l5 7 0.000000001 &fsub 1 &fmul &lget #l5 8 0.000000001
     set-variable #l0 .Brag.hmd
     set-variable #l4 &lget .Brag.hmd 20
   !endif
   set-variable #l3 &lget #l0 1
-  67 screen-poke 25 2 .scheme.cardback &spr "Computer would have played:  %s  -  Prb  Win: %.4f   Lose: %.4f" &lget #l0 19 &fmul &lget #l0 10 0.000000001 &fsub 1 &fmul &lget #l0 14 0.000000001
+  67 screen-poke 20 2 .scheme.cardback &spr "Computer would have played:  %s  -  Prb  Win: %.4f   Lose: %.4f" &lget #l0 19 &fmul &lget #l0 10 0.000000001 &fsub 1 &fmul &lget #l0 14 0.000000001
   set-variable #l7 0
   set-variable #l8 5
   !repeat
-    bragDrawCard &atoi &mid #l1 #l7 1  3 #l8
-    bragDrawCard &atoi &mid #l2 #l7 1 15 #l8
-    bragDrawCard &atoi &mid #l3 #l7 1 26 #l8
+    bragDrawCard &atoi &mid #l1 #l7 1  0 #l8
+    bragDrawCard &atoi &mid #l2 #l7 1 10 #l8
+    bragDrawCard &atoi &mid #l3 #l7 1 20 #l8
     set-variable #l8 &add &add #l8 10 &con &mod &add #l7 1 3 0 5
   !until &equ &inc #l7 1 9
   !if &les .Brag.stt 30
     !if &gre &lget .Brag.h1i 1 &lget .Brag.h2i 1
-      67 screen-poke 19  3 .scheme.cardback "W"
-      67 screen-poke 19 35 .scheme.cardback "W"
+      67 screen-poke 14  3 .scheme.cardback "W"
+      67 screen-poke 14 35 .scheme.cardback "W"
     !elif &les &lget .Brag.h1i 1 &lget .Brag.h2i 1
-      67 screen-poke 19  3 .scheme.cardback "L"
-      67 screen-poke 19 35 .scheme.cardback "L"
+      67 screen-poke 14  3 .scheme.cardback "L"
+      67 screen-poke 14 35 .scheme.cardback "L"
     !endif
     !if &gre &lget .Brag.h1i 2 &lget .Brag.h2i 2
-      67 screen-poke 19 38 .scheme.cardback "W"
-      67 screen-poke 19 70 .scheme.cardback "W"
+      67 screen-poke 14 38 .scheme.cardback "W"
+      67 screen-poke 14 70 .scheme.cardback "W"
     !elif &les &lget .Brag.h1i 2 &lget .Brag.h2i 2
-      67 screen-poke 19 38 .scheme.cardback "L"
-      67 screen-poke 19 70 .scheme.cardback "L"
+      67 screen-poke 14 38 .scheme.cardback "L"
+      67 screen-poke 14 70 .scheme.cardback "L"
     !endif
     !if &gre &lget .Brag.h1i 3 &lget .Brag.h2i 3
-      67 screen-poke 19 73 .scheme.cardback "W"
-      67 screen-poke 19 105 .scheme.cardback "W"
+      67 screen-poke 14 73 .scheme.cardback "W"
+      67 screen-poke 14 105 .scheme.cardback "W"
     !elif &les &lget .Brag.h1i 3 &lget .Brag.h2i 3
-      67 screen-poke 19 73 .scheme.cardback "L"
-      67 screen-poke 19 105 .scheme.cardback "L"
+      67 screen-poke 14 73 .scheme.cardback "L"
+      67 screen-poke 14 105 .scheme.cardback "L"
     !endif
     !if &gre &lget .Brag.h1c 1 &lget .Brag.h2i 1
-      67 screen-poke 29  3 .scheme.cardback "W"
-      67 screen-poke 29 35 .scheme.cardback "W"
+      67 screen-poke 24  3 .scheme.cardback "W"
+      67 screen-poke 24 35 .scheme.cardback "W"
     !elif &les &lget .Brag.h1c 1 &lget .Brag.h2i 1
-      67 screen-poke 29  3 .scheme.cardback "L"
-      67 screen-poke 29 35 .scheme.cardback "L"
+      67 screen-poke 24  3 .scheme.cardback "L"
+      67 screen-poke 24 35 .scheme.cardback "L"
     !endif
     !if &gre &lget .Brag.h1c 2 &lget .Brag.h2i 2
-      67 screen-poke 29 38 .scheme.cardback "W"
-      67 screen-poke 29 70 .scheme.cardback "W"
+      67 screen-poke 24 38 .scheme.cardback "W"
+      67 screen-poke 24 70 .scheme.cardback "W"
     !elif &les &lget .Brag.h1c 2 &lget .Brag.h2i 2
-      67 screen-poke 29 38 .scheme.cardback "L"
-      67 screen-poke 29 70 .scheme.cardback "L"
+      67 screen-poke 24 38 .scheme.cardback "L"
+      67 screen-poke 24 70 .scheme.cardback "L"
     !endif
     !if &gre &lget .Brag.h1c 3 &lget .Brag.h2i 3
-      67 screen-poke 29 73 .scheme.cardback "W"
-      67 screen-poke 29 105 .scheme.cardback "W"
+      67 screen-poke 24 73 .scheme.cardback "W"
+      67 screen-poke 24 105 .scheme.cardback "W"
     !elif &les &lget .Brag.h1c 3 &lget .Brag.h2i 3
-      67 screen-poke 29 73 .scheme.cardback "L"
-      67 screen-poke 29 105 .scheme.cardback "L"
+      67 screen-poke 24 73 .scheme.cardback "L"
+      67 screen-poke 24 105 .scheme.cardback "L"
     !endif
-    67 screen-poke 11 &add 5 &div &sub 30 &len &lget .Brag.h2i 4 2 .scheme.cardback &lget .Brag.h2i 4
-    67 screen-poke 11 &add 40 &div &sub 30 &len &lget .Brag.h2i 5 2 .scheme.cardback &lget .Brag.h2i 5
-    67 screen-poke 11 &add 75 &div &sub 30 &len &lget .Brag.h2i 6 2 .scheme.cardback &lget .Brag.h2i 6
+    67 screen-poke 8 &add 5 &div &sub 30 &len &lget .Brag.h2i 4 2 .scheme.cardback &lget .Brag.h2i 4
+    67 screen-poke 8 &add 40 &div &sub 30 &len &lget .Brag.h2i 5 2 .scheme.cardback &lget .Brag.h2i 5
+    67 screen-poke 8 &add 75 &div &sub 30 &len &lget .Brag.h2i 6 2 .scheme.cardback &lget .Brag.h2i 6
   !endif
-  67 screen-poke 23 &add 5 &div &sub 30 &len &lget #l5 4 2 .scheme.cardback &lget #l5 4
-  67 screen-poke 23 &add 40 &div &sub 30 &len &lget #l5 5 2 .scheme.cardback &lget #l5 5
-  67 screen-poke 23 &add 75 &div &sub 30 &len &lget #l5 6 2 .scheme.cardback &lget #l5 6
-  67 screen-poke 34 &add 5 &div &sub 30 &len &lget #l4 4 2 .scheme.cardback &lget #l4 4
-  67 screen-poke 34 &add 40 &div &sub 30 &len &lget #l4 5 2 .scheme.cardback &lget #l4 5
-  67 screen-poke 34 &add 75 &div &sub 30 &len &lget #l4 6 2 .scheme.cardback &lget #l4 6
-  set-variable #l9 26
+  67 screen-poke 18 &add 5 &div &sub 30 &len &lget #l5 4 2 .scheme.cardback &lget #l5 4
+  67 screen-poke 18 &add 40 &div &sub 30 &len &lget #l5 5 2 .scheme.cardback &lget #l5 5
+  67 screen-poke 18 &add 75 &div &sub 30 &len &lget #l5 6 2 .scheme.cardback &lget #l5 6
+  67 screen-poke 28 &add 5 &div &sub 30 &len &lget #l4 4 2 .scheme.cardback &lget #l4 4
+  67 screen-poke 28 &add 40 &div &sub 30 &len &lget #l4 5 2 .scheme.cardback &lget #l4 5
+  67 screen-poke 28 &add 75 &div &sub 30 &len &lget #l4 6 2 .scheme.cardback &lget #l4 6
+  set-variable #l9 20
   set-variable #l1 &lget #l0 18
   !if &not &band 1 #l1
-    set-variable #l9 &add #l9 11
+    set-variable #l9 &add #l9 10
     set-variable #l2 &lget #l0 7
     set-variable #l3 ""
     !if &seq #l2 &lget #l0 9
@@ -962,7 +964,7 @@ set-variable .bragDrawCard.slb "                                Heart           
       set-variable #l3 ": Defensive attack"
       set-variable #l1 &bor #l1 2
     !endif
-    67 screen-poke &sub #l9 1 2 .scheme.cardback &spr "Best attacking%s  -  Prb  Win: %.4f   Lose: %.4f" #l3 &fmul &lget #l0 11 0.000000001 &fsub 1 &fmul &lget #l0 15 0.000000001
+    67 screen-poke #l9 2 .scheme.cardback &spr "Best attacking%s  -  Prb  Win: %.4f   Lose: %.4f" #l3 &fmul &lget #l0 11 0.000000001 &fsub 1 &fmul &lget #l0 15 0.000000001
     bragHandOrder #l2 #l3 #l4
     set-variable #l7 0
     set-variable #l8 5
@@ -1140,61 +1142,61 @@ set-variable .bragDrawCard.slb "                                Heart           
   ;ml-write &cat "brag-draw " @#
   set-variable .bragToast.len 0
   !iif @#  screen-update
-  67 screen-poke 17 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-  67 screen-poke 18 110 .scheme.cardback &spr "%s  Continue   %s" &lef $box-chars 1 &lef $box-chars 1
-  99 screen-poke 18 113 .scheme.cardback "C"
-  67 screen-poke 19 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-  67 screen-poke 25 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-  67 screen-poke 26 110 .scheme.cardback &spr "%s    Exit     %s" &lef $box-chars 1 &lef $box-chars 1
-  99 screen-poke 26 116 .scheme.cardback "x"
-  67 screen-poke 27 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  67 screen-poke 13 110 .scheme.cardback &set #l0 &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  67 screen-poke 14 110 .scheme.cardback &spr "%s  Continue   %s" &lef $box-chars 1 &lef $box-chars 1
+  99 screen-poke 14 113 .scheme.cardback "C"
+  67 screen-poke 15 110 .scheme.cardback &set #l1 &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  67 screen-poke 21 110 .scheme.cardback #l0
+  67 screen-poke 22 110 .scheme.cardback &spr "%s    Exit     %s" &lef $box-chars 1 &lef $box-chars 1
+  99 screen-poke 22 116 .scheme.cardback "x"
+  67 screen-poke 23 110 .scheme.cardback #l1
   !if &gre .Brag.stt 19
-    67 screen-poke  9 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-    67 screen-poke 10 110 .scheme.cardback &spr "%s  Copy Hand  %s" &lef $box-chars 1 &lef $box-chars 1
-    67 screen-poke 11 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+    67 screen-poke  5 110 .scheme.cardback #l0
+    67 screen-poke  6 110 .scheme.cardback &spr "%s  Copy Hand  %s" &lef $box-chars 1 &lef $box-chars 1
+    67 screen-poke  7 110 .scheme.cardback #l1
     brag-draw-details
   !elif &gre .Brag.stt 9
     brag-draw-stats
   !elif .Brag.stt
     brag-draw-unveil
   !else
-    3 screen-poke   2 14 .scheme.cardback "1         2         3         4         5         6         7         8         9"
-    3 screen-poke  22 19 .scheme.cardback "Q         W         E                   R         T         Y"
-    67 screen-poke  5 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-    67 screen-poke  6 110 .scheme.cardback &spr "%sSort Ace High%s" &lef $box-chars 1 &lef $box-chars 1
-    99 screen-poke  6 116 .scheme.cardback "A"
-    67 screen-poke  7 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-    67 screen-poke  9 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-    67 screen-poke 10 110 .scheme.cardback &spr "%sSort Ace Low %s" &lef $box-chars 1 &lef $box-chars 1
-    99 screen-poke 10 111 .scheme.cardback "Z"
-    67 screen-poke 11 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-    67 screen-poke 13 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-    67 screen-poke 14 110 .scheme.cardback &spr "%sSort By Suit %s" &lef $box-chars 1 &lef $box-chars 1
-    99 screen-poke 14 119 .scheme.cardback "S"
-    67 screen-poke 15 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-    67 screen-poke 21 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-    67 screen-poke 22 110 .scheme.cardback &spr "%s Statistics  %s" &lef $box-chars 1 &lef $box-chars 1
-    99 screen-poke 22 116 .scheme.cardback "i"
-    67 screen-poke 23 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-    67 screen-poke 37 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-    67 screen-poke 38 110 .scheme.cardback &spr "%s Tricky Hand %s" &lef $box-chars 1 &lef $box-chars 1
-    67 screen-poke 39 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-    67 screen-poke 41 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-    67 screen-poke 42 110 .scheme.cardback &spr "%s Enter Hand  %s" &lef $box-chars 1 &lef $box-chars 1
-    67 screen-poke 43 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+    3 screen-poke   0 14 .scheme.cardback "1         2         3         4         5         6         7         8         9"
+    3 screen-poke  16 19 .scheme.cardback "Q         W         E                   R         T         Y"
+    67 screen-poke  1 110 .scheme.cardback #l0
+    67 screen-poke  2 110 .scheme.cardback &spr "%sSort Ace High%s" &lef $box-chars 1 &lef $box-chars 1
+    99 screen-poke  2 116 .scheme.cardback "A"
+    67 screen-poke  3 110 .scheme.cardback #l1
+    67 screen-poke  5 110 .scheme.cardback #l0
+    67 screen-poke  6 110 .scheme.cardback &spr "%sSort Ace Low %s" &lef $box-chars 1 &lef $box-chars 1
+    99 screen-poke  6 111 .scheme.cardback "Z"
+    67 screen-poke  7 110 .scheme.cardback #l1
+    67 screen-poke  9 110 .scheme.cardback #l0
+    67 screen-poke 10 110 .scheme.cardback &spr "%sSort By Suit %s" &lef $box-chars 1 &lef $box-chars 1
+    99 screen-poke 10 119 .scheme.cardback "S"
+    67 screen-poke 11 110 .scheme.cardback #l1
+    67 screen-poke 17 110 .scheme.cardback #l0
+    67 screen-poke 18 110 .scheme.cardback &spr "%s Statistics  %s" &lef $box-chars 1 &lef $box-chars 1
+    99 screen-poke 18 116 .scheme.cardback "i"
+    67 screen-poke 19 110 .scheme.cardback #l1
+    67 screen-poke 29 110 .scheme.cardback #l0
+    67 screen-poke 30 110 .scheme.cardback &spr "%s Tricky Hand %s" &lef $box-chars 1 &lef $box-chars 1
+    67 screen-poke 31 110 .scheme.cardback #l1
+    67 screen-poke 33 110 .scheme.cardback #l0
+    67 screen-poke 34 110 .scheme.cardback &spr "%s Enter Hand  %s" &lef $box-chars 1 &lef $box-chars 1
+    67 screen-poke 35 110 .scheme.cardback #l1
     set-variable #l4 0
     !repeat
       !if &set #l6 &sin &set #l5 &mid .Brag.h1 #l4 1 .Brag.h1s
-        bragDrawCard &atoi #l5 13 &add 5 &add &mul 10 #l6 &mul 10 &div &sub #l6 1 3
-        !iif &not @# bragDrawCard 0 3 &add 10 &mul #l4 10
+        bragDrawCard &atoi #l5 8 &add 5 &add &mul 10 #l6 &mul 10 &div &sub #l6 1 3
+        !iif &not @# bragDrawCard 0 0 &add 10 &mul #l4 10
       !else
-        bragDrawCard &atoi #l5 3 &add 10 &mul #l4 10
+        bragDrawCard &atoi #l5 0 &add 10 &mul #l4 10
       !endif
-      bragDrawCard 1 41 &add 10 &mul #l4 10
+      bragDrawCard 1 26 &add 10 &mul #l4 10
     !until &equ &inc #l4 1 9
   !endif
-  67 screen-poke 30 110 .scheme.cardback &spr "Hands: %d" .Brag.chno
-  65 screen-poke 32 110 .scheme.cardback &spr "Score: %d - %d" .Brag.ciw1 .Brag.ciw2
+  67 screen-poke 25 110 .scheme.cardback &spr "Hands: %d" .Brag.chno
+  65 screen-poke 27 110 .scheme.cardback &spr "Score: %d - %d" .Brag.ciw1 .Brag.ciw2
   !if &band @# 48
     set-variable #l0 &con &band @# 16 "Prial played - shuffling... " ""
     !iif &band @# 32  set-variable #l0 &cat #l0 &con &band @# 64 "Computer deal" "Your deal"
@@ -1229,7 +1231,7 @@ define-macro Brag
     14 buffer-bind-key brag-command "r"
     15 buffer-bind-key brag-command "t"
     16 buffer-bind-key brag-command "y"
-    20 buffer-bind-key brag-command "m"
+    21 buffer-bind-key brag-command "m"
     21 buffer-bind-key brag-command "a"
     22 buffer-bind-key brag-command "z"
     23 buffer-bind-key brag-command "s"
