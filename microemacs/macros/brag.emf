@@ -795,8 +795,8 @@ set-variable .bragDrawCard.slb "                                Heart           
         99 screen-poke 13 4 .scheme.cardfore &spr "%s *************** %s" &lef $box-chars 1 &lef $box-chars 1
         99 screen-poke 14 4 .scheme.cardfore &spr "%s%17s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
       !else
-        67 screen-poke  7 55 .scheme.cardback "DOH"
-        67 screen-poke  7 91 .scheme.cardback "DOH"
+        67 screen-poke  4 55 .scheme.cardback "DOH"
+        67 screen-poke  4 91 .scheme.cardback "DOH"
       !endif
     !endif
     67 screen-poke 50 5 .scheme.cardback &spr "Computer played: %s" &lget .Brag.h2d 19

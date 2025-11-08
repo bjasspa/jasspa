@@ -738,13 +738,15 @@ ConsolePaint(void)
         coordUpdateBegin.X = consolePaintArea.Left;
         coordUpdateBegin.Y = consolePaintArea.Top;
         
+#ifdef ME_DONT_FORCE_UNICODE
         /* Write to console */
         if(meSystemCfg & meSYSTEM_FONTFIX)
-            WriteConsoleOutputW(hOutput, ciScreenBuffer, coordBufferSize,
-                                coordUpdateBegin, &consolePaintArea);
+#endif
+            WriteConsoleOutputW(hOutput,ciScreenBuffer,coordBufferSize,coordUpdateBegin,&consolePaintArea);
+#ifdef ME_DONT_FORCE_UNICODE
         else
-            WriteConsoleOutputA(hOutput, ciScreenBuffer, coordBufferSize,
-                                coordUpdateBegin, &consolePaintArea);
+            WriteConsoleOutputA(hOutput,ciScreenBuffer,coordBufferSize,coordUpdateBegin,&consolePaintArea);
+#endif
         
         /* Remove the region, as we just updated it */
         consolePaintArea.Right = consolePaintArea.Bottom = 0;
@@ -767,8 +769,10 @@ ConsoleDrawString(meUByte *ss, WORD wAttribute, int x, int y, int len)
     pCI = &ciScreenBuffer[(y * frameCur->width) + x];
     
     /* Copy the string to the screen buffer memory, and flag any changes */
+#ifdef ME_DONT_FORCE_UNICODE
     if(meSystemCfg & meSYSTEM_FONTFIX)
     {
+#endif
         while(--len >= 0)
         {
             if(((cc=*ss++) & 0xe0) == 0)
@@ -789,6 +793,7 @@ ConsoleDrawString(meUByte *ss, WORD wAttribute, int x, int y, int len)
             }
             pCI++;
         }
+#ifdef ME_DONT_FORCE_UNICODE
     }
     else
     {
@@ -803,6 +808,7 @@ ConsoleDrawString(meUByte *ss, WORD wAttribute, int x, int y, int len)
             pCI++;
         }
     }
+#endif
     /* Adjust the current update region */
     if(bAny)
     {
@@ -859,13 +865,18 @@ TTend(void)
         if((alarmState & meALARM_PIPED) == 0)
 #endif
         {
-            /* restore the console buffer size */
-            SetConsoleScreenBufferSize(hOutput, OldConsoleSize);
-            
+            if(OldConsoleSize.Y > TTdepthDefault)
+            {
+                SMALL_RECT rect = { 0, 0,TTwidthDefault - 1,TTdepthDefault - 1 };
+                /* restore the console buffer & window size */
+                OldConsoleSize.X = TTwidthDefault;
+                SetConsoleScreenBufferSize(hOutput,OldConsoleSize);
+                SetConsoleWindowInfo(hOutput,TRUE,&rect);
+            }
             /* Set cursor to bottom of screen, and print a newline */
             dwCursorPosition.X = 0;
             dwCursorPosition.Y = TTdepthDefault - 1;
-            SetConsoleCursorPosition(hOutput, dwCursorPosition);
+            SetConsoleCursorPosition(hOutput,dwCursorPosition);
             putchar('\n');
         }
         SetConsoleTitle(chConsoleTitle);
@@ -1055,11 +1066,11 @@ meGetConsoleMessage(MSG *msg, int mode)
         CONSOLE_SCREEN_BUFFER_INFO Console;
         COORD size;
         
-        GetConsoleScreenBufferInfo(hOutput, &Console);
+        GetConsoleScreenBufferInfo(hOutput,&Console);
         /* this should be the window size, not the buffer size
          * as this needs the scroll-bar to use */
-        size.X = Console.srWindow.Right-Console.srWindow.Left+1;
-        size.Y = Console.srWindow.Bottom-Console.srWindow.Top+1;
+        size.X = TTwidthDefault = Console.srWindow.Right-Console.srWindow.Left+1;
+        size.Y = TTdepthDefault = Console.srWindow.Bottom-Console.srWindow.Top+1;
         
 #if MEOPT_EXTENDED
         if((alarmState & meALARM_PIPED) == 0)
@@ -4694,11 +4705,15 @@ TTstart(void)
         
         /* console can't support fonts and only has XANSI */
         meSYSTEM_MASK &= ~meSYSTEM_FONTS;
+#ifdef ME_DONT_FORCE_UNICODE
         meSystemCfg = (meSystemCfg & ~(meSYSTEM_FONTS|meSYSTEM_FONTFIX|meSYSTEM_RGBCOLOR)) | (meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR);
         /* TODO Could consider using SetConsoleOutputCP to make console use Unicode, what implace would that have in input? */
         if(GetConsoleCP() == 65001)
             meSystemCfg |= meSYSTEM_FONTFIX;
-        
+#else
+        /* windows console always supports unicode which is far more flexible and supports FONTFIX */
+        meSystemCfg = (meSystemCfg & ~(meSYSTEM_FONTS|meSYSTEM_RGBCOLOR)) | (meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR|meSYSTEM_FONTFIX);
+#endif        
         /* This will allocate a console if started from
          * the windows NT program manager. */
         AllocConsole();
@@ -4746,11 +4761,15 @@ TTstart(void)
         if((alarmState & meALARM_PIPED) == 0)
 #endif
         {
-            /* now fix the window buffer size to this window size to
-             * get rid of the horrid scroll bars! */
+            SMALL_RECT rect = { 0, 0,TTwidthDefault - 1,TTdepthDefault - 1 };
+            /* now fix the window buffer size to this window size to get rid of the horrid scrollbars! */
             coord.X = TTwidthDefault;
             coord.Y = TTdepthDefault;
             SetConsoleScreenBufferSize(hOutput,coord);
+            /* But this leaves a problem, the window is still large enough for the scrollbar which is no longer actively drawn, if
+             * the user changes the window size we get the new size without allowance for the scrollbar so when we exit the scrollbar
+             * will be lost. Fix this by setting the window size now, this will shrink to remove bars, and set size again on exit. */
+            SetConsoleWindowInfo(hOutput,TRUE,&rect);
         }
         consolePaintArea.Right = consolePaintArea.Bottom = 0;
         consolePaintArea.Left = consolePaintArea.Top = (SHORT) 0x7fff;

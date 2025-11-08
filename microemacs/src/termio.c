@@ -601,46 +601,46 @@ meUByte  TTbreakFlag = 0;
 meUByte  TTbreakCnt = TTBREAKCNT;
 meUByte  TTallKeys = 0;           /* Report all keys */
 
-meUShort TTwidthDefault=0 ;      /* Default no. of cols per frame*/
-meUShort TTdepthDefault=0 ;      /* Default no. of rows per frame*/
+meUShort TTwidthDefault=0;        /* Default no. of cols per frame*/
+meUShort TTdepthDefault=0;        /* Default no. of rows per frame*/
 
 
 void
 TThandleBlink(int initFlag)
 {
     if((cursorState < 0) || (frameCur->flags & meFRAME_NOT_FOCUS))
-        timerClearExpired(CURSOR_TIMER_ID) ;
+        timerClearExpired(CURSOR_TIMER_ID);
     else
     {
-        int ii ;
+        int ii;
         
         if(initFlag && blinkState)
         {
             if(initFlag & 2)
             {
                 /* The cursor must be redrawn */
-                TTshowCur() ;
-                TTflush() ;
+                TTshowCur();
+                TTflush();
             }
-            ii = cursorBlink & 0xffff ;
+            ii = cursorBlink & 0xffff;
         }
         else
         {
-            blinkState ^= 1 ;
+            blinkState ^= 1;
             if(blinkState)
             {
-                TTshowCur() ;
-                ii = cursorBlink & 0xffff ;
+                TTshowCur();
+                ii = cursorBlink & 0xffff;
             }
             else
             {
-                TThideCur() ;
+                TThideCur();
                 if((ii = cursorBlink >> 16) == 0)
-                    ii = cursorBlink ;
+                    ii = cursorBlink;
             }
-            TTflush() ;
+            TTflush();
         }
-        timerSet (CURSOR_TIMER_ID,-1,ii) ;
+        timerSet(CURSOR_TIMER_ID,-1,ii);
     }
 }
 
