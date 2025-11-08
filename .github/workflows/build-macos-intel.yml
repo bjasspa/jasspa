@@ -17,7 +17,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-13
+    runs-on: macos-15-intel
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
     steps:
@@ -53,39 +53,39 @@ jobs:
       - name: Create macos-intel binaries download
         run: |
           cd ./microemacs/bin
-          mv macos13-intel64-* macos13-intel64
+          mv macos15-intel64-* macos15-intel64
           cd ..
           mv release_readme.txt readme.txt
-          export MEVER=`./bin/macos13-intel64/mec -p @contribs/ver.emf`
-          zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_macos_intel_binaries bin/macos13-intel64 LICENSE readme.txt
+          export MEVER=`./bin/macos15-intel64/mec -p @contribs/ver.emf`
+          zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_macos_intel_binaries bin/macos15-intel64 LICENSE readme.txt
 
       - name: Create macos-intel mesc
         run: |
-          export MEVER=`./microemacs/bin/macos13-intel64/mec -p @microemacs/contribs/ver.emf`
+          export MEVER=`./microemacs/bin/macos15-intel64/mec -p @microemacs/contribs/ver.emf`
           cd ./microemacs/mesingle
           rm -rf bin
-          mkdir -p bin/macos13-intel64
-          ../bin/macos13-intel64/mec -p "@./mesgen" -f -p ../bin/macos13-intel64/mec -t ../bin/macos13-intel64/tfs -o bin/macos13-intel64/mesc
+          mkdir -p bin/macos15-intel64
+          ../bin/macos15-intel64/mec -p "@./mesgen" -f -p ../bin/macos15-intel64/mec -t ../bin/macos15-intel64/tfs -o bin/macos15-intel64/mesc
           cp ../LICENSE ./
           cp ../readme.txt ./
           zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_intel_mesc bin LICENSE readme.txt
 
       - name: Create macos-intel mesw
         run: |
-          export MEVER=`./microemacs/bin/macos13-intel64/mec -p @microemacs/contribs/ver.emf`
+          export MEVER=`./microemacs/bin/macos15-intel64/mec -p @microemacs/contribs/ver.emf`
           cd ./microemacs/mesingle
           rm -rf bin
-          mkdir -p bin/macos13-intel64
-          ../bin/macos13-intel64/mec -p "@./mesgen" -f -p ../bin/macos13-intel64/mew -t ../bin/macos13-intel64/tfs -o bin/macos13-intel64/mesw
+          mkdir -p bin/macos15-intel64
+          ../bin/macos15-intel64/mec -p "@./mesgen" -f -p ../bin/macos15-intel64/mew -t ../bin/macos15-intel64/tfs -o bin/macos15-intel64/mesw
           zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_intel_mesw bin LICENSE readme.txt
 
       - name: Create macos-intel OpenSSL download
         run: |
           cd ./microemacs/
-          export MEVER=`./bin/macos13-intel64/mec -p @contribs/ver.emf`
+          export MEVER=`./bin/macos15-intel64/mec -p @contribs/ver.emf`
           rm -rf tfs
-          mkdir -p tfs/bin/macos13-intel64
-          cd tfs/bin/macos13-intel64
+          mkdir -p tfs/bin/macos15-intel64
+          cd tfs/bin/macos15-intel64
           cp /usr/local/opt/openssl@3/lib/libcrypto.3.dylib .
           cp /usr/local/opt/openssl@3/lib/libssl.3.dylib .
           cp /usr/local/opt/openssl@3/LICENSE.txt .
@@ -103,7 +103,7 @@ jobs:
           cd ../..
           zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_bin_macos_intel_openssl bin
           cd ..
-          ./bin/macos13-intel64/tfs ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_macos13_intel64.tfs tfs
+          ./bin/macos15-intel64/tfs ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_macos15_intel64.tfs tfs
 
       - name: Upload macos-intel downloads
         uses: actions/upload-artifact@v4

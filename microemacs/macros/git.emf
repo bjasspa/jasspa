@@ -888,6 +888,8 @@ define-macro git-push
 0 define-macro git-exec-complete4
   1 buffer-mode "magic"
   3 goto-line
+  replace-string "^\\(R[?! \\u]\\|[?! \\u]R\\) \\(.*\\) -> \\(.*\\)" "\\1 \\3 <- \\2"
+  3 goto-line
   replace-string &cat "^\\([?! \\u][?! \\u]\\) " .git-status.bp "  \\1     "
   set-variable #l0 $buffer-bname
   4 goto-line
