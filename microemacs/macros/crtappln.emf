@@ -73,9 +73,9 @@ define-macro create-app
     !iif &not $status  -10 ml-write "Error: Unable to write to /Applications/MicroEmacs.app/Contents/, rerun with root permissions."
     !force 0 delete-buffer $buffer-bname
     find-buffer "*ca"
-    insert-string "#!/bin/sh\n# this file must be at least 28 bytes long\ncd ~/\n"
+    insert-string "#!/bin/sh\n# this file must be at least 28 bytes long\nset -e\neval \"$(/usr/libexec/path_helper -s)\"\nif command -v launchctl >/dev/null 2>&1; then\n  d=\"$(launchctl getenv DISPLAY || true)\"\n  [ -n \"$d\" ] && export DISPLAY=\"$d\"\nfi\nUSER_SHELL=\"${SHELL:-$(dscl . -read /Users/$USER UserShell | awk '{print $2}')}\"\n[ -x \"$USER_SHELL\" ] || USER_SHELL=\"/bin/zsh\"\nexec \"$USER_SHELL\" -l -c 'cd ~/ && "
     insert-string .about.arg0
-    insert-string " &"
+    insert-string " \"$@\"'"
     set-variable $buffer-fmod 493
     !force 0x00 write-buffer "/Applications/MicroEmacs.app/Contents/MacOS/MicroEmacs"
     !iif &not $status  -10 ml-write "Error: Unable to write to /Applications/MicroEmacs.app/Contents/MacOS/, rerun with root permissions."
