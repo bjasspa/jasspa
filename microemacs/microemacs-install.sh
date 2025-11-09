@@ -122,10 +122,10 @@ if [ $PLATFORM = "Darwin" ] ; then
   if [ $VERSION -gt 15 ] ; then
     if [ `uname -p` = "i386" ] ; then
       MEPLATPKG=macos_intel
-      MEPLATFUL=macos13-intel64
+      MEPLATFUL=macos15-intel64
     else
       MEPLATPKG=macos_apple
-      MEPLATFUL=macos14-apple64
+      MEPLATFUL=macos15-apple64
     fi
   fi
 elif [ $PLATFORM = "Linux" ] ; then
