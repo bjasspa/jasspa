@@ -1364,14 +1364,17 @@ getDirectoryInfo(meUByte *fname)
             {
                 if(((noFiles & 0x0f) == 0) &&
                    ((curHead = (FILENODE *) meRealloc(curHead,sizeof(FILENODE)*(noFiles+16))) == NULL))
-                    return NULL ;
-                curFile = &(curHead[noFiles++]) ;
+                    return NULL;
+                curFile = &(curHead[noFiles++]);
                 if((ff = meStrdup((meUByte *) dp->d_name)) == NULL)
-                    return NULL ;
-                curFile->lname = NULL ;
-                curFile->fname = ff ;
-                meStrcpy(fn,dp->d_name) ;
-                stat((char *)bfname,&sbuf) ;
+                    return NULL;
+                curFile->lname = NULL;
+                curFile->fname = ff;
+                meStrcpy(fn,dp->d_name);
+                /* if a symbolic link and the link does not point to a valid file, or user does not
+                 * have access to it, then get info on the link */
+                if(stat((char *)bfname,&sbuf) != 0)
+                    lstat((char *)bfname,&sbuf);
                 if(sbuf.st_uid != meUid)
                 {
                     /* remove the user modes */
