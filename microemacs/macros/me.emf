@@ -178,6 +178,7 @@ add-file-hook ".tdoc .adoc .asciidoc" fhook-adoc
 add-file-hook ".kt .ktm .kts" fhook-kotlin
 add-file-hook ".nim" fhook-nim
 add-file-hook ".tman" fhook-dtools
+add-file-hook ".hs" fhook-hask
 ; Add magic hooks
 1 add-file-hook "^#![ \t]*/.*sh" fhook-shell
 1 add-file-hook "^#![ \t]*/.*perl" fhook-perl
