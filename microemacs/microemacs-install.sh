@@ -105,8 +105,8 @@ install_package(){
   fi
   rm Jasspa_MicroEmacs_${MEVER}_$ip.zip
   if [ $ip != $2 ]; then
-    mv ${INSTPATH}/jasspa/bin/${MEPLATFUL}/* ${INSTPATH}/jasspa/bin/
-    rmdir ${INSTPATH}/jasspa/bin/${MEPLATFUL}
+    mv ${INSTPATH}/jasspa/bin/${MEPLATMSK}/* ${INSTPATH}/jasspa/bin/
+    rmdir ${INSTPATH}/jasspa/bin/${MEPLATMSK}
   fi
   if grep -q $2 ${INSTPATH}/jasspa/meinfo$1; then
     :
@@ -122,24 +122,24 @@ if [ $PLATFORM = "Darwin" ] ; then
   if [ $VERSION -gt 15 ] ; then
     if [ `uname -p` = "i386" ] ; then
       MEPLATPKG=macos_intel
-      MEPLATFUL=macos15-intel64
+      MEPLATMSK=macos*-intel64
     else
       MEPLATPKG=macos_apple
-      MEPLATFUL=macos15-apple64
+      MEPLATMSK=macos*-apple64
     fi
   fi
 elif [ $PLATFORM = "Linux" ] ; then
   if [ `uname -m` = "x86_64" ] ; then
     if [ `uname -r | grep -Eo "^[0-9]"` = "5" ]; then
-       MEPLATFUL=linux5-intel64
        MEPLATPKG=linux5_intel
+       MEPLATMSK=linux*-intel64
     else
         MEPLATPKG=linux_intel
-        MEPLATFUL=linux6-intel64
+        MEPLATMSK=linux*-intel64
     fi
   else
     MEPLATPKG=linux_aarch
-    MEPLATFUL=linux6-aarch64
+    MEPLATMSK=linux*-aarch64
   fi
 fi
 if [ -z "$MEPLATPKG" ] ; then
