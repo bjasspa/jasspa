@@ -17,3 +17,12 @@
 ; to be C++ then add a .c extension to the string.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;add-file-hook ".h .def"  fhook-cpp 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; uncomment the following lines if you encounter problems with
+; your backspace key in the terminal, for instance on MacOS
+; and you would like to fix that (linuxc is for Linux terminal)
+; !if &seq %platform "macosc"
+;   translate-key "\x7f" "backspace"
+; !endif
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
