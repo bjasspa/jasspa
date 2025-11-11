@@ -1,4 +1,4 @@
-## <img src="https://raw.githubusercontent.com/bjasspa/jasspa/main/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2025-10-14 06:49
+## <img src="https://raw.githubusercontent.com/bjasspa/jasspa/main/microemacs/graphics/me_m.png" /> MicroEmacs Cheatsheet - 2025-11-11 06:36
 
 Homepage: [https://github.com/bjasspa/jasspa](https://github.com/bjasspa/jasspa)
 Help pages: [https://bjasspa.github.io/jasspa/](https://bjasspa.github.io/jasspa/)
@@ -14,7 +14,7 @@ __Installation (MacOS / Linux):__
 
 __Installation (Windows / Intel):__
 
-Download and Install: [Jasspa_MicroEmacs_20250901_installer_windows_intel.msi](https://github.com/bjasspa/jasspa/releases/download/me_20250901/Jasspa_MicroEmacs_20250901_installer_windows_intel.msi)
+Download and Install: [Jasspa_MicroEmacs_20251101_installer_windows_intel.msi](https://github.com/bjasspa/jasspa/releases/download/me_20251101/Jasspa_MicroEmacs_20251101_installer_windows_intel.msi)
 
 Or via Powershell: 
 

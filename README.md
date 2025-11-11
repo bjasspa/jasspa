@@ -155,7 +155,10 @@ This should printout the version and exit MicroEmacs.
 ## Compilation on Linux
 
 On a Linux system you can compile the code yourself using the build scripts in
-_microemacs/src_. You need the _ncurses_ for the terminal version and _libxt_ for the X-Windows version. Optionally for supporting https you might as well install the _libssel_ library. Here the procedure for a Debian based system like Ubuntu:
+_microemacs/src_.  You need the _ncurses_  library for the terminal version and
+the  _libxt_  and the  __libxft__  libraries for  the  X-Windows  version.   Optionally  for
+supporting  the https protocol you might as well  install the _libssl_  library.  Here the
+procedure for a Debian based system like Ubuntu or MX Linux:
 
 ```bash
 ### install required packages
