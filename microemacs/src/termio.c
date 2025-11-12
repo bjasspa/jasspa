@@ -817,6 +817,28 @@ translateKey(int f, int n)
 
         if(n == -1)
             c_to[0] = ME_INVALID_KEY;
+#if MEOPT_EXTENDED
+        else if(n == -2)
+        {
+            meTRANSKEY *tk=&TTtransKey;
+            f = 0;
+            do
+            {
+                n = tk->count;
+                while((--n >= 0) && (tk->child[n].key != c_from[f]))
+                    ;
+                if(n < 0)
+                    return meFALSE;
+                tk = &(tk->child[n]);
+                f++;
+            } while(f < ii);
+            if(tk->map == ME_DELETE_KEY)
+                resultStr[0] = '\0';
+            else
+                resultStr[meGetStringFromChar(tk->map,resultStr)] = '\0';
+            return meTRUE;
+        }
+#endif
         else
         {
             if(f == meFALSE)

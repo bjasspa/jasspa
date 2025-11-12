@@ -33,7 +33,7 @@ define-macro-file hkipipe ishell gdb dbx perldb
   0 global-bind-key suspend-emacs "C-c z"
   ; if no color - change the window chars so osd is more usable
   !iif &not &band $system 0x02  set-variable $window-chars &spr "%s=X*[>]<%s" &lef $window-chars 47 &rig $window-chars 54
-  ; Following can help fix backspace in a treminal
+  ; Following can help fix backspace in a terminal
   ;translate-key "\x7f" "backspace"
 !else
   !iif &not &seq &set #l0 &reg &spr "/history/%s/font" $platform "" ""  !force &con &reg &spr "/history/%s/font-ymin" $platform "0" 9 1 change-font #l0

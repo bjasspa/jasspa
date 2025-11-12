@@ -739,6 +739,7 @@ ConsolePaint(void)
         coordUpdateBegin.Y = consolePaintArea.Top;
         
 #ifdef ME_DONT_FORCE_UNICODE
+        /* THIS CODE CAN BE REMOVED ONCE WE CONFIRM THE USE OF UNICODE FOR OUTPUT IS UNIVERSALLY WORKING */
         /* Write to console */
         if(meSystemCfg & meSYSTEM_FONTFIX)
 #endif
@@ -770,6 +771,7 @@ ConsoleDrawString(meUByte *ss, WORD wAttribute, int x, int y, int len)
     
     /* Copy the string to the screen buffer memory, and flag any changes */
 #ifdef ME_DONT_FORCE_UNICODE
+    /* THIS CODE CAN BE REMOVED ONCE WE CONFIRM THE USE OF UNICODE FOR OUTPUT IS UNIVERSALLY WORKING */
     if(meSystemCfg & meSYSTEM_FONTFIX)
     {
 #endif
@@ -4706,6 +4708,7 @@ TTstart(void)
         /* console can't support fonts and only has XANSI */
         meSYSTEM_MASK &= ~meSYSTEM_FONTS;
 #ifdef ME_DONT_FORCE_UNICODE
+        /* THIS CODE CAN BE REMOVED ONCE WE CONFIRM THE USE OF UNICODE FOR OUTPUT IS UNIVERSALLY WORKING */
         meSystemCfg = (meSystemCfg & ~(meSYSTEM_FONTS|meSYSTEM_FONTFIX|meSYSTEM_RGBCOLOR)) | (meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR);
         /* TODO Could consider using SetConsoleOutputCP to make console use Unicode, what implace would that have in input? */
         if(GetConsoleCP() == 65001)
