@@ -2146,7 +2146,7 @@ screenUpdate(int f, int n)
 #endif
     meWindow *wp, *cwp;
     int force;
-
+    
 #if DEBUGGING
     if(drawno++ == 'Z')
         drawno = 'A' ;
@@ -2156,6 +2156,12 @@ screenUpdate(int f, int n)
         screenUpdateDisabledCount = n;
         return meTRUE;
     }
+    /* When OSD dialog is displayed macros will be executed to get entry values, but this will lead 
+     * the macro processor to call TTbreakTest which will eventually call TTahead which will eventually
+     * call functions that check if the system has updated like window resize, which will call screenUdate
+     * and boom! this function is not geared to being called within itself.
+     * We need to avoid this, so set the TTbreakCnt count to something stupidly large and adjust back after */
+    TTbreakCnt += 0x8000;
     cwp = frameCur->windowCur;
     if(n == 3)
     {
@@ -2179,6 +2185,7 @@ screenUpdate(int f, int n)
 
         /* check the horizontal scroll and cursor position */
         updCursor(cwp);
+        TTbreakCnt = (TTbreakCnt > 0x8000) ? (TTbreakCnt - 0x8000):1;
         return meTRUE;
     }
 
@@ -2360,6 +2367,7 @@ screenUpdate(int f, int n)
 #else
     /* else required to keep the auto-indent right */
 #endif
+    TTbreakCnt = (TTbreakCnt > 0x8000) ? (TTbreakCnt - 0x8000):1;
 
     return meTRUE;
 }

@@ -598,8 +598,8 @@ meUByte  TTnextKeyIdx = KEYBUFSIZ;
 meUByte  TTlastKeyIdx = KEYBUFSIZ;
 meUByte  TTnoKeys = 0;
 meUByte  TTbreakFlag = 0;
-meUByte  TTbreakCnt = TTBREAKCNT;
 meUByte  TTallKeys = 0;           /* Report all keys */
+meUShort TTbreakCnt = TTBREAKCNT;
 
 meUShort TTwidthDefault=0;        /* Default no. of cols per frame*/
 meUShort TTdepthDefault=0;        /* Default no. of rows per frame*/
@@ -783,7 +783,7 @@ translateKeyShow(meTRANSKEY *tcapKeys, meBuffer *bp, meUByte *key, int depth)
 int
 translateKey(int f, int n)
 {
-    static meUByte tnkyPrompt[]="translate-tcap-key code" ;
+    static meUByte tnkyPrompt[]="translate-key code" ;
     meUShort c_from[20], c_to[20];
     meUByte buf[128];
     int ii;
@@ -810,7 +810,7 @@ translateKey(int f, int n)
     else
 #endif
     {
-        meStrcpy(tnkyPrompt+19,"code");
+        meStrcpy(tnkyPrompt+14,"code");
         if((meGetString(tnkyPrompt,0,0,buf,128) <= 0) ||
            ((ii=keyListToShorts(c_from,buf)) <= 0))
             return meFALSE;
@@ -843,7 +843,7 @@ translateKey(int f, int n)
         {
             if(f == meFALSE)
                 n = TTtransKey.time;
-            meStrcpy(tnkyPrompt+19,"to");
+            meStrcpy(tnkyPrompt+14,"to");
             if((meGetString(tnkyPrompt,0,0,buf,128) <= 0) ||
                ((f=keyListToShorts(c_to,buf)) < 0))
                 return meFALSE;

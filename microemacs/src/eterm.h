@@ -88,8 +88,8 @@ extern meUByte    TTnextKeyIdx;         /* Circular buffer index        */
 extern meUByte    TTlastKeyIdx;         /* Key buffer - last index.     */
 extern meUByte    TTnoKeys;             /* Number of keys in buffer     */
 extern meUByte    TTbreakFlag;          /* Break outstanding on input   */
-extern meUByte    TTbreakCnt;           /* Number breaks outsanding     */
 extern meUByte    TTallKeys;            /* Report all keys              */
+extern meUShort   TTbreakCnt;           /* Number breaks outsanding     */
 
 extern meUShort   TTgetc(void);
 extern void       TThandleBlink(int initFlag);
