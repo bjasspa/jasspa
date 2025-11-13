@@ -612,7 +612,7 @@ meUByte   windowChars[WCLEN+1]=         /* Set of window characters     */
     '>','>',                            /* Scroll bar right             */
     '*','*',                            /* Scroll bar/mode line point   */
     ' ',                                /* OSD title bar char           */
-    'X',                                /* OSD Title bar kill char      */
+    'x',                                /* OSD Title bar kill char      */
     '*',                                /* OSD resize char              */
     ' ',                                /* OSD button start char e.g. '[' */
     '>',                                /* OSD default button start char e.g. '>' */
