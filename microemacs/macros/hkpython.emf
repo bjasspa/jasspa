@@ -127,6 +127,10 @@ set-variable .fhook-python.item-list-r4 "Main \CCbBlock\CCA"
   hilight   .hilight.python 1 "\\.remove"         .scheme.operator
   hilight   .hilight.python 1 "\\.reverse"        .scheme.operator
   hilight   .hilight.python 1 "\\.sort"           .scheme.operator
+ ; True/False boolean constant
+  hilight   .hilight.python 1 "False"             .scheme.constant
+  hilight   .hilight.python 1 "True"              .scheme.constant
+  
 !endif
 
 ; setup file-* tools
