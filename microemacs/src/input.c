@@ -1879,21 +1879,19 @@ input_addexpand:
     }
     if(mlgsOldCwp != NULL)
     {
-        meWindow *cwp=frameCur->windowCur;
-        meBuffer *cbp=cwp->buffer;
+        meBuffer *cbp=frameCur->windowCur->buffer;
         if(mlgsOldWBp == NULL)
         {
             /* was no replacement so the window was split */
             windowDelete(meFALSE,1);
-            cwp->vertScroll = mlgsSingWind-1;
+            frameCur->windowCur->vertScroll = mlgsSingWind-1;
         }
         else
         {
-            swbuffer(cwp,mlgsOldWBp);
+            swbuffer(frameCur->windowCur,mlgsOldWBp);
             meWindowMakeCurrent(mlgsOldCwp);
         }
         zotbuf(cbp,1);
-        mlgsOldCwp = NULL;
     }
 #if MEOPT_EXTENDED
     if(oldCursorState < 0)

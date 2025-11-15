@@ -1,11 +1,12 @@
 @echo off
 rem JASSPA MicroEmacs - www.jasspa.com
 rem build - JASSPA MicroEmacs build script for MS windows and dos platforms
-rem Copyright (C) 2001-2009 JASSPA (www.jasspa.com)
+rem Copyright (C) 2001-2025 JASSPA (www.jasspa.com)
 rem See the file main.c for copying and conditions.
 set BITSIZE=
 set LOGFILE=
 set LOGFILEA=
+set MEASAN=
 set MEDEBUG=
 set MELSTT=
 set MEPROF=
@@ -15,6 +16,7 @@ set OPTIONS=
 if "%1." == "."    goto build_cont
 if "%1" == "-32"   set  BITSIZE= BIT_SIZE=32
 if "%1" == "-64"   set  BITSIZE= BIT_SIZE=64
+if "%1" == "-asan" set  MEASAN= ASAN=1
 if "%1" == "-C"    set  OPTIONS= clean
 if "%1" == "-d"    set  MEDEBUG= BCFG=debug
 if "%1" == "-h"    goto build_help
@@ -47,7 +49,7 @@ goto build_option
 
 :build_cont
 
-set OPTIONS=%MEDEBUG%%MEPROF%%MELSTT%%BITSIZE%%OPTIONS%
+set OPTIONS=%MEASAN%%MEDEBUG%%MEPROF%%MELSTT%%BITSIZE%%OPTIONS%
 
 if NOT "%MAKEFILE%." == "." goto build_got_makefile
 if NOT "%VisualStudioVersion%." == "." set MAKEFILE=winmsvc.mak & goto build_got_makefile
@@ -98,6 +100,7 @@ echo.
 echo Where options can be:-
 echo     -32  : Build 32bit binary.
 echo     -64  : Build 64bit binary.
+echo     -asan: Build with Address Sanitizer debugging (MSVC only).
 echo     -C   : Build clean.
 echo     -d   : For debug build (output is med* or ned*)
 echo     -h   : For this help page
