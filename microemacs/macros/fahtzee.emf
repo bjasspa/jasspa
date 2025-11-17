@@ -21,6 +21,10 @@
 !endif
 
 define-macro Fahtzee
+  !if &les $frame-depth 44
+    osd-dialog "Fahtzee" "Error: Frame size too small, at least 44 rows required!" "  \HOK  "
+    !return
+  !endif
   !if &seq &reg "/fahtzee" "" ""
     set-variable .file &find "fahtzee" ".eof"
     !if &seq &set .file &find "fahtzee" ".eof" "ERROR"
@@ -57,7 +61,7 @@ set-variable .Fahtzee.dices "|\n  X|   X\n\n X|   X\n  X\n X| X X\n\n X X| X X\n
 0 define-macro fahtzee-setup
   set-variable #l1 &cond .Fahtzee.curp "Player " "High "
   -1 osd .osd.fahtzeen
-  osd .osd.fahtzeen 0  "N"
+  osd .osd.fahtzeen 0 "Ns" -1 -1 60 43
   set-variable #l0 1
   !repeat
     osd .osd.fahtzeen #l0 "Psf" &cat #l1 #l0 &add .osd.fahtzeec #l0
@@ -249,7 +253,7 @@ set-variable .Fahtzee.dices "|\n  X|   X\n\n X|   X\n  X\n X| X X\n\n X X| X X\n
   ; if pick then get the drop!
   !iif &seq &lef #l0 10 "mouse-pick"  set-variable #l0 @cgk
   -1 create-callback fahtzee-dice-shake
-  !if &and &exi .fixed &seq #l0 "f"
+  !if &and &exi .fixed &seq #l0 "C-f"
     set-variable .Fahtzee.dice .fixed
   !else
     fahtzee-dice-turn
@@ -258,8 +262,7 @@ set-variable .Fahtzee.dices "|\n  X|   X\n\n X|   X\n  X\n X| X X\n\n X X| X X\n
   fahtzee-set-dice
   -2 osd
 !emacro
-
-set-variable .fahtzee-throw.fixed "|5|5|5|5|5|"
+;set-variable .fahtzee-throw.fixed "|5|5|5|5|5|"
 
 0 define-macro fahtzee-hold
   set-variable .Fahtzee.held &lset .Fahtzee.held @# &bxor 1 &lget .Fahtzee.held @#
@@ -281,8 +284,8 @@ set-variable .fahtzee-throw.fixed "|5|5|5|5|5|"
       !endif
     !endif
     !if &les .Fahtzee.throw 4
-      osd .osd.fahtzeed  6 "BxcfH" .scheme.osd-ebtt " \HTHROW "   f fahtzee-throw
-      osd .osd.fahtzeed 60 "BxcfH" .scheme.osd-ebtt " \HTHROW "   f fahtzee-throw
+      osd .osd.fahtzeed  6 "BxcfH" .scheme.osd-ebtt " THR\HOW "   f fahtzee-throw
+      osd .osd.fahtzeed 60 "BxcfH" .scheme.osd-ebtt " THR\HOW "   f fahtzee-throw
       !if &gre .Fahtzee.throw 1
         osd .osd.fahtzeed  3 "c" &cat &sub .Fahtzee.throw 1 "\n"
         set-variable #l0 5
@@ -397,27 +400,39 @@ set-variable .fahtzee-throw.fixed "|5|5|5|5|5|"
   fahtzee-setup
 !emacro
 
+0 define-macro fahtzee-hotkey
+  set-variable #l0 &add &mul @# 10 .Fahtzee.curg 
+  !if &seq "" &set #l1 &reg &cat .Fahtzee.visr #l0 ""
+    &sub 0 #l0 fahtzee-entry
+  !elif &and &equ @# 15 &not &seq &trb #l1 "-"
+    ; The one exception - the double fahtzee
+    &sub 0 #l0 fahtzee-entry
+  !else
+    ml-write "Error: Cell already used."
+  !endif
+!emacro
+
 -1 osd .osd.fahtzeec
-osd .osd.fahtzeec   0 "Gk"
+osd .osd.fahtzeec   0 "Gks" -1 -1 58 39
 osd .osd.fahtzeec   2 "fh" "    Player's Name  "
 osd .osd.fahtzeec   6 "fh" "    "
 osd .osd.fahtzeec   8 "EHSf" .scheme.osd-entry "      " 8 fahtzee-entry
-osd .osd.fahtzeec  10 "Gfh" "             Ones  "
-osd .osd.fahtzeec  20 "Gfh" "             Twos  "
-osd .osd.fahtzeec  30 "Gfh" "           Threes  "
-osd .osd.fahtzeec  40 "Gfh" "            Fours  "
-osd .osd.fahtzeec  50 "Gfh" "            Fives  "
-osd .osd.fahtzeec  60 "Gfh" "            Sixes  "
-osd .osd.fahtzeec  70 "Gfh" "            Total  "
-osd .osd.fahtzeec  80 "Gfh" "            Bonus  "
+osd .osd.fahtzeec  10 "Gfhux" "\HQ            Ones  " 1 fahtzee-hotkey
+osd .osd.fahtzeec  20 "Gfhux" "\HW            Twos  " 2 fahtzee-hotkey
+osd .osd.fahtzeec  30 "Gfhux" "\HE          Threes  " 3 fahtzee-hotkey
+osd .osd.fahtzeec  40 "Gfhux" "\HR           Fours  " 4 fahtzee-hotkey
+osd .osd.fahtzeec  50 "Gfhux" "\HT           Fives  " 5 fahtzee-hotkey
+osd .osd.fahtzeec  60 "Gfhux" "\HY           Sixes  " 6 fahtzee-hotkey
+osd .osd.fahtzeec  70 "Gfh" "        Sub Total  "
+osd .osd.fahtzeec  80 "Gfh" "      Bonus (>62)  "
 osd .osd.fahtzeec  90 "Gfh" "    Section Total  "
-osd .osd.fahtzeec 100 "Gfh" "  Three of a Kind  "
-osd .osd.fahtzeec 110 "Gfh" "   Four of a Kind  "
-osd .osd.fahtzeec 120 "Gfh" "       Full House  "
-osd .osd.fahtzeec 130 "Gfh" "     Low Straight  "
-osd .osd.fahtzeec 140 "Gfh" "    High Straight  "
-osd .osd.fahtzeec 150 "Gfh" "          Fahtzee  "
-osd .osd.fahtzeec 160 "Gfh" "           Chance  "
+osd .osd.fahtzeec 100 "Gfhux" "\HA Three of a Kind  " 10 fahtzee-hotkey
+osd .osd.fahtzeec 110 "Gfhux" "\HS  Four of a Kind  " 11 fahtzee-hotkey
+osd .osd.fahtzeec 120 "Gfhux" "\HD      Full House  " 12 fahtzee-hotkey
+osd .osd.fahtzeec 130 "Gfhux" "\HF    Low Straight  " 13 fahtzee-hotkey
+osd .osd.fahtzeec 140 "Gfhux" "\HG   High Straight  " 14 fahtzee-hotkey
+osd .osd.fahtzeec 150 "Gfhux" "\HH         Fahtzee  " 15 fahtzee-hotkey
+osd .osd.fahtzeec 160 "Gfhux" "\HJ          Chance  " 16 fahtzee-hotkey
 osd .osd.fahtzeec 170 "Gfh" "    Section Total  "
 osd .osd.fahtzeec 180 "Gfh" "       Game Total  "
 
@@ -434,7 +449,7 @@ osd .osd.fahtzee4 0  "" fahtzee-set-player4
 osd .osd.fahtzee4 10 "It" .osd.fahtzeec
 
 -1 osd .osd.fahtzeed
-osd .osd.fahtzeed  0 "Gs" 11 0 -1 -1
+osd .osd.fahtzeed  0 "Gs" -1 -1 11 42
 osd .osd.fahtzeed  1 ""
 osd .osd.fahtzeed  3 "c" "\n"
 osd .osd.fahtzeed  6 "BxcfH" .scheme.osd-dbtt " THROW "
@@ -446,9 +461,9 @@ osd .osd.fahtzeed 45 "Sfc" "\H5" 50
 osd .osd.fahtzeed 55 ""
 osd .osd.fahtzeed 60 "BxcfH" .scheme.osd-dbtt " THROW "
 
-osd .osd.fahtzee 00 "batcH" 6 3 .scheme.osd-title "Fahtzee"
-osd .osd.fahtzee 10 "Ih" .osd.fahtzeen
-osd .osd.fahtzee 20 "I"  .osd.fahtzeed
+osd .osd.fahtzee   0 "batcHs" 6 3 -1 -1 73 47 .scheme.osd-title "Fahtzee"
+osd .osd.fahtzee  10 "Ih" .osd.fahtzeen
+osd .osd.fahtzee  20 "I"  .osd.fahtzeed
 osd .osd.fahtzee 600 ""
 osd .osd.fahtzee 610 "BxhcfH" .scheme.osd-ebtt " \HNew Game "   f fahtzee-new
 osd .osd.fahtzee 620 "BxhcfH" .scheme.osd-dbtt " Abort Game "
