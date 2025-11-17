@@ -2032,6 +2032,7 @@ TTsetClipboard(int cpData)
 void
 TTgetClipboard(int flag)
 {
+    meKillNode *kn=NULL;
     HANDLE hmem;                          /* Windows clipboard memory handle */
     
     /* Check the standard clipboard status, if owner or not got focus or it has
@@ -2044,7 +2045,6 @@ TTgetClipboard(int flag)
     /* Get the data from the clipboard */
     if((hmem = GetClipboardData(CF_UNICODETEXT)) != NULL)
     {
-        meKillNode *kn;
         WCHAR *cb, *ss, uc;
         meUByte *dd;
         int ll, len;
@@ -2067,83 +2067,85 @@ TTgetClipboard(int flag)
             else if((uc != '\r') || (*ss != '\n'))
                 ll++;
         }
-        len += ll+(ll>>15);
-        
-        if((kn = (meKillNode *) meMalloc(((size_t) (&(((meKillNode *) 0)->data[1])))+len)) == NULL)
-            goto do_unlock;             /* Failed memory allocation */
-        
-        ss = cb;                        /* Start of clipboard data */
-        dd = kn->data;                  /* Start of the kill buffer */
-        ll = 0;
-        while((uc = *ss++) != '\0')
+        if(((len += ll+(ll>>15)) > 0) &&
+           ((kn = (meKillNode *) meMalloc(((size_t) (&(((meKillNode *) 0)->data[1])))+len)) != NULL))
         {
-            if((uc == '\r') && (*ss == '\n'))
+            ss = cb;                        /* Start of clipboard data */
+            dd = kn->data;                  /* Start of the kill buffer */
+            ll = 0;
+            while((uc = *ss++) != '\0')
             {
-                ss++;
-                *dd++ = '\n';
-                ll = 0;
-            }
-            else if(uc == '\n')
-            {
-                *dd++ = '\n';
-                ll = 0;
-            }
-            else
-            {
-                if(ll == meLINE_ELEN_MAX)
+                if((uc == '\r') && (*ss == '\n'))
+                {
+                    ss++;
+                    *dd++ = '\n';
+                    ll = 0;
+                }
+                else if(uc == '\n')
                 {
                     *dd++ = '\n';
                     ll = 0;
                 }
-#if MEOPT_EXTENDED
-                if(uc >= 0x80)
+                else
                 {
-                    if(flag & 2)
+                    if(ll == meLINE_ELEN_MAX)
                     {
-                        if(uc & 0x0f800)
+                        *dd++ = '\n';
+                        ll = 0;
+                    }
+#if MEOPT_EXTENDED
+                    if(uc >= 0x80)
+                    {
+                        if(flag & 2)
                         {
-                            *dd++ = 0xe0 | (uc >> 12);
-                            *dd++ = 0x80 | ((uc >> 6) & 0x3f);
+                            if(uc & 0x0f800)
+                            {
+                                *dd++ = 0xe0 | (uc >> 12);
+                                *dd++ = 0x80 | ((uc >> 6) & 0x3f);
+                            }
+                            else
+                                *dd++ = 0xc0 | (uc >> 6);
+                            *dd++ = 0x80 | (uc & 0x3f);
+                        }
+                        else if((uc > 0xff) || (charToUnicode[uc-128] != uc))
+                        {
+                            int ii = 127;
+                            while((charToUnicode[ii] != uc) && (--ii >= 0))
+                                ;
+                            if(ii >= 0)
+                                *dd++ = (meUByte) ii+128;
+                            else
+                                *dd++ = meCHAR_UNDEF;
                         }
                         else
-                            *dd++ = 0xc0 | (uc >> 6);
-                        *dd++ = 0x80 | (uc & 0x3f);
-                    }
-                    else if((uc > 0xff) || (charToUnicode[uc-128] != uc))
-                    {
-                        int ii = 127;
-                        while((charToUnicode[ii] != uc) && (--ii >= 0))
-                            ;
-                        if(ii >= 0)
-                            *dd++ = (meUByte) ii+128;
-                        else
-                            *dd++ = meCHAR_UNDEF;
+                            *dd++ = (meUByte) uc;
                     }
                     else
-                        *dd++ = (meUByte) uc;
-                }
-                else
 #endif
-                    *dd++ = (meUByte) uc;
-                ll++;
+                        *dd++ = (meUByte) uc;
+                    ll++;
+                }
+            }
+            *dd = '\0';
+        
+            /* Make sure that it is not the same as the current save buffer head */
+            if((klhead != NULL) && (klhead->kill != NULL) && (klhead->kill->next == NULL) &&
+               !meStrcmp(klhead->kill->data,kn->data))
+            {
+                meFree(kn);
+                kn = NULL;
             }
         }
-        *dd = '\0';
-        
-        /* Make sure that it is not the same as the current save buffer head */
-        if((len == 0) || (klhead == NULL) || (klhead->kill == NULL) ||
-           (klhead->kill->next != NULL) || (meStrcmp(klhead->kill->data,kn->data)))
-        {
-            /* Always new kill, don't want to glue them together */
-            killInit(0);
-            killInsertNode(kn);
-        }
-        else
-            meFree(kn);                /* Relinquish temp buffer */
-do_unlock:
         GlobalUnlock(cb);              /* Unlock clipboard data */
     }
     CloseClipboard();
+    /* Calls to GlobalUnlock & CloseClipboard must be called before killInit as killInit calls TTsetClipboard which calls SetClipboardData which frees this locked memory */
+    if(kn != NULL)
+    {
+        /* Always new kill, don't want to glue them together */
+        killInit(0);
+        killInsertNode(kn);
+    }  
 }
 
 #if MEOPT_IPIPES

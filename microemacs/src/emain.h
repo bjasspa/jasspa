@@ -50,7 +50,7 @@
  */
 /*#define _ME_USE_STD_MALLOC*/
 /*#define _ME_WIN32_FULL_DEBUG*/
-#if (defined _ME_WIN32_FULL_DEBUG) || (defined DMALLOC)
+#if (defined _ME_WIN32_FULL_DEBUG) || (defined DMALLOC) || (defined DASAN)
 #define _ME_FREE_ALL_MEMORY
 #endif
 

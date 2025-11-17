@@ -78,7 +78,7 @@ BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT
 CCLSTT   = /MD
 LDLSTT   = 
 !ENDIF
-!IF "$(ASAN)" == "1"
+!IF "$(DASAN)" == "1"
 BUILDID  = $(BUILDID)a
 !ENDIF
 OUTDIRR  = .$(BUILDID)-release
@@ -115,7 +115,7 @@ LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
 INSTPRG  = copy
 !ENDIF
-!IF "$(ASAN)" == "1"
+!IF "$(DASAN)" == "1"
 CCFLAGS  = $(CCFLAGS) /fsanitize=address
 !ENDIF
 

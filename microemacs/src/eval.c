@@ -1359,9 +1359,11 @@ handle_namesvar:
             sprintf((char *) evalResult,"%ld.%09ld",(long) (fti.QuadPart / HNS_PER_SEC),(long) ((fti.QuadPart % HNS_PER_SEC) * NS_PER_HNS));
         }
 #else
-        /* On dos could use gettime in dos.h to get 100ths of a second */
-        /* TODO - check macOS & dos */
-        sprintf((char *) evalResult,"%ld.000000000",time(NULL));
+        {
+            struct meTimeval tp;
+            gettimeofday(&tp,NULL);
+            sprintf((char *) evalResult,"%ld.%06ld000",(long) tp.tv_sec,(long) tp.tv_usec);
+        }
 #endif
 #endif
         return evalResult;

@@ -36,6 +36,7 @@ INSTDIR	 = c:\emacs
 INSTPROGFLAGS = 
 #
 # Local Definitions
+EXE      = .exe
 CP       = copy
 CC       = gcc
 LD       = $(CC)
@@ -110,7 +111,7 @@ $(OUTDIR)/%.o : %.c
 all: $(PRGLIBS) $(OUTDIR)/$(PRGFILE)
 
 $(OUTDIR)/$(PRGFILE): $(OUTDIR) $(PRGOBJS) $(PRGLIBS)
-	$(RM) $@
+	$(RM) $(OUTDIR)\$(PRGFILE)
 	$(LD) $(LDDEFS) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS) $(BTYP_LIB) $(LDLIBS)
 	$(STRIP) $@
 
