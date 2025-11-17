@@ -130,6 +130,7 @@ set-variable .fhook-python.item-list-r4 "Main \CCbBlock\CCA"
  ; True/False boolean constant
   hilight   .hilight.python 1 "False"             .scheme.constant
   hilight   .hilight.python 1 "True"              .scheme.constant
+  hilight   .hilight.python 1 "None"              .scheme.constant  
   
 !endif
 
