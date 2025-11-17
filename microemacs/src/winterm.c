@@ -2069,7 +2069,7 @@ TTgetClipboard(int flag)
         }
         len += ll+(ll>>15);
         
-        if((kn = (meKillNode *) meMalloc(sizeof(meKillNode)+len)) == NULL)
+        if((kn = (meKillNode *) meMalloc(((size_t) (&(((meKillNode *) 0)->data[1])))+len)) == NULL)
             goto do_unlock;             /* Failed memory allocation */
         
         ss = cb;                        /* Start of clipboard data */

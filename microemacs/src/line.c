@@ -974,7 +974,7 @@ killAddNode(meInt count)
 {
     meKillNode *nbl;
     
-    if((nbl = (meKillNode*) meMalloc(sizeof(meKillNode)+count)) == NULL)
+    if((nbl = (meKillNode*) meMalloc(((size_t) (&(((meKillNode *) 0)->data[1])))+count)) == NULL)
         return NULL;
     nbl->next = NULL;
     nbl->data[count] = '\0';
