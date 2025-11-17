@@ -117,8 +117,8 @@ set-variable .git.cflags &lins .git.cflags -1 "Bs*!$"
 set-variable .git.cdefs  &lins .git.cdefs  -1 "||"
 ; Command 2 - Pull
 set-variable .git.cnames &lins .git.cnames -1 "Pull"
-set-variable .git.cflags &lins .git.cflags -1 "BTs*!$"
-set-variable .git.cdefs  &lins .git.cdefs  -1 "||0|"
+set-variable .git.cflags &lins .git.cflags -1 "BTos*!$"
+set-variable .git.cdefs  &lins .git.cdefs  -1 "||0|1|"
 ; Command 3 - Push
 set-variable .git.cnames &lins .git.cnames -1 "Push"
 set-variable .git.cflags &lins .git.cflags -1 "Bs*!$"
@@ -474,6 +474,9 @@ set-variable .git-revision-op.lbl14 "|\HMaster|\HHead|\HPrevious to head|\HSpeci
         osd .osd.git-osd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 60 1 "" 3 git-osd-gstr
         set-variable #l3 &con #l3 #l3 #l2
         osd .osd.git-osd &inc #l2 1 "f"  "    "
+      !elif &seq #l1 "o"
+        osd .osd.git-osd &inc #l2 1 "fh" "        "
+        osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HPop stash after" #l0 git-osd-cbc
       !elif &seq #l1 "P"
         osd .osd.git-osd &inc #l2 1 "fh" "    "
         osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Create \Hintermediate directories" #l0 git-osd-cbc
@@ -826,13 +829,14 @@ define-macro git-fetch
 !emacro
 
 ;; GIT Pull ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 define-macro git-pull
+  !force git-dirlst-detect
+  !iif &not $status  -8 ml-write "[Current path does not appear to be within a Git repository]"
   2 git-osd
   !if &lget &set #l9 .git-osd.values 2
     set-variable #l0 $buffer-bname
     !force 0 delete-buffer "*git-pll-s1*"
-    6 pipe-shell-command &set .uc &spr "%s stash -- %s" .git.com .git-dirlst-detect.ld "*git-pll-s1*"
+    6 pipe-shell-command &spr "%s stash -- %s" .git.com .git-dirlst-detect.ld "*git-pll-s1*"
     set-variable #l3 $result
     find-buffer "*git-pll-s1*"
     beginning-of-buffer
@@ -858,6 +862,31 @@ define-macro git-pull
   set-variable #l2 &spr "%s pull --ff-only %s" .git.com #l2
   7 git-get-file-list 1 0 #l2
   2 git-exec 3 $buffer-fname
+  !if &not &and &lget .git-osd.values 2 &lget .git-osd.values 3
+  !elif .git-exec.exit
+    -16 ml-write "[git pull failed - run `git stash pop` manually when ready]"
+  !else
+    set-variable #l0 $buffer-bname
+    !force 0 delete-buffer "*git-pll-s1*"
+    6 pipe-shell-command &spr "%s stash pop" .git.com "*git-pll-s1*"
+    set-variable #l3 $result
+    find-buffer "*git-pll-s1*"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    copy-region
+    !force 0 delete-buffer $buffer-bname
+    find-buffer "*git-console*"
+    end-of-buffer
+    -1 buffer-mode "view"
+    !iif &gre $window-line 1  insert-newline
+    yank
+    -1 yank
+    insert-string &spr "\n[**** Git Stash Pop %s ****]" &con #l3 &cat "exited with code " #l3 "completed successfully"
+    -1 buffer-mode "edit"
+    1 buffer-mode "view"
+    find-buffer #l0
+  !endif
 !emacro
 
 ;; GIT Pull ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -978,10 +1007,7 @@ define-macro git-push
 
 define-macro git-status
   !force git-dirlst-detect
-  !if &not $status
-    ml-write "[Current path does not appear to be within a Git repository]"
-    !abort
-  !endif
+  !iif &not $status  -8 ml-write "[Current path does not appear to be within a Git repository]"
   set-variable #l0 &rig $buffer-fname &len .git-dirlst-detect.ld
   set-variable .bp &lef #l0 &rsin "/" #l0
   4 git-osd
