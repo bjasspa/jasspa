@@ -4182,9 +4182,11 @@ XTERMend(void)
         mecm.ftFontTbl[0] = NULL;
     }
 #endif
+#ifndef _ME_FREE_ALL_MEMORY
     if(mecm.xim != NULL)
        XCloseIM(mecm.xim);
     XCloseDisplay(mecm.xdisplay);
+#endif
                        
     return meTRUE;
 }

@@ -724,6 +724,8 @@ exitEmacs(int f, int n)
             meAbbrev     *abrev;
             int           ii, jj;
             
+            /* Avoid unwanted callbacks - see same line in display.c:screenUpdate */
+            TTbreakCnt += 0x8000;
             /* remove all but a simple *scratch* */
             bc = bheadp;
             while(bc != NULL)
@@ -924,6 +926,14 @@ exitEmacs(int f, int n)
              * don't need a replacement so ztbuf does the lot! */
             bheadp->intFlag |= BIFBLOW;
             zotbuf(bheadp,1);
+#ifdef _XTERM
+            if((meSystemCfg & meSYSTEM_CONSOLE) == 0)
+            {
+                if(mecm.xim != NULL)
+                    XCloseIM(mecm.xim);
+                XCloseDisplay(mecm.xdisplay);
+            }
+#endif
         }
 #endif
 #ifdef _ME_WIN32_FULL_DEBUG
