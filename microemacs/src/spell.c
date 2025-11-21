@@ -2057,9 +2057,8 @@ wordGuessScoreSuffixRules(meUByte *word, int olen)
             while(rr != NULL)
             {
                 rr->rule = maxScore;
-                if((jj = rr->appendLen) >= olen)
-                    rr->score = maxScore;
-                else
+                rr->score = maxScore;
+                if((jj = rr->appendLen) < olen)
                 {
                     if((scr = wordGuessCalcScore(word+olen-jj,jj,rr->append,jj,1)) < maxScore)
                     {
@@ -2165,7 +2164,6 @@ wordGuessAddAffixRulesToList(meUByte *sword, int slen, meUByte *bword, int blen,
             while(rr != NULL)
             {
                 /* TODO? this does not support P1(S1)<base>S1(bs)S2(S1) */
-
                 if(((rwl = blen+rr->changeLen) <= guessWordLenMax) &&
                    ((bScr+rr->score < scores[meGUESS_MAX-1]) || ((srf == 0) && (bScr+rr->rule < scores[meGUESS_MAX-1])) ||
                     ((prf == 0) && ((meRuleFlags[ii] & RULE_MIXABLE) || ((meRuleFlags[ii] & RULE_SUBR_USEP) && rr->subRuleLen)))) &&
@@ -2812,6 +2810,7 @@ spellWord(int f, int n)
             {
                 if(wordApplySuffixRule(wd,len,rr) != NULL)
                 {
+                    wd[len+rr->changeLen] = '\0';
                     spellWordToDisplayCharset((meUByte *) resultStr,wd);
                     return meTRUE;
                 }

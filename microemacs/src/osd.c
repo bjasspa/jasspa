@@ -438,49 +438,53 @@ dialogConstruct (int id)
     return rp;                          /* Return the new node */
 }
 
-static void displayDestruct (osdDISPLAY *md) ;
+static void displayDestruct(osdDISPLAY *md);
 
 static void
 displayDestructChild(osdCHILD *child)
 {
     if(child->vertSBar != NULL)
-        free(child->vertSBar) ;
+        free(child->vertSBar);
     if(child->horzSBar != NULL)
-        free(child->horzSBar) ;
+        free(child->horzSBar);
     if(child->display != NULL)
-        displayDestruct(child->display) ;
-    free(child) ;
+        displayDestruct(child->display);
+    free(child);
 }
 
 static void
-displayDestruct (osdDISPLAY *md)
+displayDestruct(osdDISPLAY *md)
 {
     osdDISPLAY *tmd ;
     int ii ;
     
     /* if this is the current display, set osdCurMd to the previous */
-    if (md == osdCurMd)
+    if(md == osdCurMd)
     {
-        osdCurChild = osdCurMd = md->prev ;
+        osdCurChild = osdCurMd = md->prev;
         if(osdCurChild != NULL)
         {
             while((osdCurChild->curContext >= 0) &&
                   (osdCurChild->context[osdCurChild->curContext].menu->flags & MF_CHILD))
-                osdCurChild = osdCurChild->context[osdCurChild->curContext].child->display ;
+                osdCurChild = osdCurChild->context[osdCurChild->curContext].child->display;
         }
     }
-    if (md == osdNewMd)
+    else if(md == osdCurChild)
+        osdCurChild = osdCurMd;
+    if(md == osdNewMd)
     {
-        osdNewChild = osdNewMd = md->prev ;
+        osdNewChild = osdNewMd = md->prev;
         if(osdNewChild != NULL)
         {
             while((osdNewChild->newContext >= 0) &&
                   (osdNewChild->context[osdNewChild->newContext].menu->flags & MF_CHILD))
-                osdNewChild = osdNewChild->context[osdNewChild->newContext].child->display ;
+                osdNewChild = osdNewChild->context[osdNewChild->newContext].child->display;
         }
     }
+    else if(md == osdNewChild)
+        osdNewChild = osdCurMd;
     if((tmd=md->dialog->displays) == md)
-        md->dialog->displays = md->displays ;
+        md->dialog->displays = md->displays;
     else
     {
         while(tmd->displays != md)
@@ -2545,7 +2549,7 @@ osdDisplayUpdate(osdDISPLAY *md, int flags)
  * Pop the display frame off the stack
  */
 static void
-osdDisplayPop (osdDISPLAY *md)
+osdDisplayPop(osdDISPLAY *md)
 {
     osdDISPLAY *tmd, *pmd ;             /* Temporary display frame */
     
@@ -2554,7 +2558,7 @@ osdDisplayPop (osdDISPLAY *md)
     
     /* unlink md */
     if (md->prev == NULL)
-        osdDisplayHd = NULL;                /* Root of the list */
+        osdDisplayHd = NULL;            /* Root of the list */
     else
         md->prev->next = NULL;          /* Terminate end of list */
     
@@ -2687,10 +2691,10 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
         if(ii > md->numContexts)
         {  
             /* realloc a larger memory block and zero */
-            osdDISPLAY *nmd ;
-            if((nmd = meMalloc (sizeof (osdDISPLAY) + (sizeof (osdCONTEXT) * (ii-1)))) == NULL)
+            osdDISPLAY *nmd, *tmd;
+            if((nmd = meMalloc(sizeof(osdDISPLAY) + (sizeof(osdCONTEXT) * (ii-1)))) == NULL)
                 return NULL ;
-            jj = sizeof(osdDISPLAY) + (sizeof (osdCONTEXT) * (md->numContexts - 1)) ;
+            jj = sizeof(osdDISPLAY) + (sizeof(osdCONTEXT) * (md->numContexts - 1)) ;
             memcpy (nmd,md,jj) ;
             memset (((char *) nmd)+jj,0,(sizeof(osdCONTEXT) * (ii - md->numContexts)));
             /* link in the new and free off the old */
@@ -2701,12 +2705,11 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
             
             if(child)
 	    {
-                osdDISPLAY *tmd ;    
-                tmd = md->prev ;
-                jj = tmd->numContexts ;
+                tmd = md->prev;
+                jj = tmd->numContexts;
                 while(--jj >= 0)
                     if((tmd->context[jj].child != NULL) && (tmd->context[jj].child->display == md))
-                        tmd->context[jj].child->display = nmd ;
+                        tmd->context[jj].child->display = nmd;
             }
             else
             {
@@ -2715,27 +2718,26 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
                 if(nmd->next != NULL)
                     nmd->next->prev = nmd;
                 if(osdDisplayHd == md)
-                    osdDisplayHd = nmd ;
+                    osdDisplayHd = nmd;
                 if(osdCurMd == md)
-                    osdCurMd = nmd ;
+                    osdCurMd = nmd;
                 if(osdNewMd == md)
-                    osdNewMd = nmd ;
+                    osdNewMd = nmd;
             }
             if(osdCurChild == md)
-                osdCurChild = nmd ;
+                osdCurChild = nmd;
             if(osdNewChild == md)
-                osdNewChild = nmd ;
-            if(rp->displays == md)
-                rp->displays = nmd ;
+                osdNewChild = nmd;
+            if((tmd=rp->displays) == md)
+                rp->displays = nmd;
             else
             {
-                osdDISPLAY *tmd=rp->displays ;
                 while(tmd->displays != md)
-                    tmd = tmd->displays ;
-                tmd->displays = nmd ;
+                    tmd = tmd->displays;
+                tmd->displays = nmd;
             }
-            free(md) ;
-            md = nmd ;
+            free(md);
+            md = nmd;
         }
         /* md->focalX[0] = md->focalX[1] = 0 ;*/
         /* md->focalY[0] = md->focalY[1] = 0 ;*/
@@ -2828,8 +2830,8 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
                 {
                     /* the current child is displaying a different dialog, we must
                      * burn this one and start again */
-                    displayDestruct(child->display) ;
-                    child->display = NULL ;
+                    displayDestruct(child->display);
+                    child->display = NULL;
                 }
                 if(mp->flags & MF_SCRLBOX)
                 {
@@ -3097,7 +3099,12 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
         /* any items that we have prepared but can't be rendered must be freed */
         for(ii=jj ; ii<md->numContexts ; ii++)
             if(md->context[ii].child != NULL)
-                displayDestructChild(md->context[ii].child) ;
+            {
+                displayDestructChild(md->context[ii].child);
+                md->context[ii].child = NULL;
+                if(md->curContext == ii)
+                    md->curContext = -1;
+            }
         
         md->numContexts = jj ;   /* Number of items to render */
     }
@@ -3316,7 +3323,7 @@ osdDisplayPush(int id, int flags)
     
     initItem = (id & 0xffff0000) >> 16 ;
     id &= 0x0ffff ;
-    if ((rp = dialogFind (id)) == NULL)   /* Find the root of the menu */
+    if ((rp = dialogFind(id)) == NULL)    /* Find the root of the menu */
     {
         mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Cannot find osd object identity %d]", id);
         return NULL;
@@ -5177,46 +5184,56 @@ execute_item:
         if(!(mp->flags & (MF_SUBMNU|MF_COMBO)) &&
            ((state & meOSD_EXECUTE_MENU) || ((state & meOSD_KEY_MOVE) && (mp->flags & (MF_ENTRY|MF_NBPAGE)))))
         {
-            osdDISPLAY *nem, *nec ;
-            osdCONTEXT *nep ;
-            int         necflags ;
+            osdDISPLAY *nem, *nec;
+            osdCONTEXT *nep;
+            int         necflags;
             
             /* we are about to execute an item which is not a sub-menu
              * look back for a non-exit item point
              */
-            nem = osdNewMd ;
-            nec = nem ;
+            nem = osdNewMd;
+            nec = nem;
             for(;;)
             {
-                nep = &nec->context[nec->newContext] ;
+                if(nec->newContext < 0)
+                {
+                    nec = NULL;
+                    break;
+                }
+                nep = &nec->context[nec->newContext];
                 if((necflags = nep->menu->flags) & MF_NOEXIT)
-                    break ;
+                    break;
                 if(nep->child == NULL)
                 {
-                    nec = NULL ;
-                    break ;
+                    nec = NULL;
+                    break;
                 }
-                nec = nep->child->display ;
+                nec = nep->child->display;
             }
             while((nec == NULL) && ((nem = nem->prev) != NULL))
             {
                 if(nem->flags & RF_DISABLE)
                 {
-                    nem = NULL ;
-                    break ;
+                    nem = NULL;
+                    break;
                 }
-                nec = nem ;
+                nec = nem;
                 for(;;)
                 {
-                    nep = &nec->context[nec->curContext] ;
+                    if(nec->curContext < 0)
+                    {
+                        nec = NULL;
+                        break;
+                    }
+                    nep = &nec->context[nec->curContext];
                     if((necflags = nep->menu->flags) & MF_NOEXIT)
-                        break ;
+                        break;
                     if(nep->child == NULL)
                     {
-                        nec = NULL ;
-                        break ;
+                        nec = NULL;
+                        break;
                     }
-                    nec = nep->child->display ;
+                    nec = nep->child->display;
                 }
             }
             
@@ -5292,42 +5309,47 @@ execute_item:
 int
 osd (int f, int n)
 {
-    meUByte oldAllKeys=TTallKeys ;
+    meUByte oldAllKeys=TTallKeys;
     osdITEM    *mp;                     /* Pointer to the menu */
     osdDISPLAY *md, *pmd;               /* Pointer to the osdDisplayHd */
     meUByte oldClexec;	                /* command line execution flag	*/
     meUByte buf [meBUF_SIZE_MAX];       /* Reply buffer */
-    int   noDis, ii, jj ;               /* Status of the invocation */
+    int   noDis, ii, jj;                /* Status of the invocation */
     
     /* If no arguments are defined then a menu is being
      * defined. */
     if((f == meFALSE) || (n < 0))
     {
         osdDIALOG *rp;                  /* Pointer to container root */
-        meUByte txtbuf [meBUF_SIZE_MAX];          /* Text string buffer */
-        meUByte cc, *dd, *bb, iflags ;
-        int   id, item, flags ;
+        meUByte txtbuf[meBUF_SIZE_MAX]; /* Text string buffer */
+        meUByte cc, *dd, *bb, iflags;
+        int   id, item, flags;
         int   txtlen, cmdlen;           /* Command length */
-        int   argc, namidx, scheme ;
-        meShort width, depth ;
+        int   argc, namidx, scheme;
+        meShort width, depth;
         
         if(n < -1)
         {
-            if(((pmd = osdCurMd) == NULL) ||
-               ((n == -4) && !(pmd->flags & RF_NOPOP)))
-                return meABORT ;
+            if(((pmd = osdCurMd) == NULL) || ((n == -4) && !(pmd->flags & RF_NOPOP)))
+                return meABORT;
             if(n == -2)
-                pmd->flags |= RF_REDRAW ;
+                pmd->flags |= RF_REDRAW;
             else if(n == -3)
-                osdDisplayHd->flags |= RF_REDRAW ;
+                osdDisplayHd->flags |= RF_REDRAW;
             if(osdDisplayRedraw() < 0)
                 /* Failed to redraw - quit */
-                return meABORT ;
+                return meABORT;
             if(n == -4)
             {
-                pmd = pmd->prev ;
-                noDis = 0 ;
-                goto do_control_inter ;
+                md = pmd = pmd->prev;
+                noDis = 0;
+                f = 0;
+                while(md != NULL)
+                {
+                    f++;
+                    md = md->prev;
+                }
+                goto do_control_inter;
             }
             return meTRUE ;
         }
@@ -5360,7 +5382,7 @@ osd (int f, int n)
                 frameSetupMenuLine (0);             /* Delete the existing window */
                 if(osdMainMenuMd != NULL)
                 {
-                    displayDestruct(osdMainMenuMd) ;
+                    displayDestruct(osdMainMenuMd);
                     osdMainMenuMd = NULL ;
                 }
                 osdMainMenuId = -1 ;
@@ -5654,13 +5676,13 @@ osd (int f, int n)
         if ((mp = itemFind (rp, item, (flags & MF_CHECK) ? dd+6:dd)) == NULL)
         {
             if ((mp = (osdITEM *) meMalloc(sizeof(osdITEM))) == NULL)
-                return meABORT ;
-            mp->item = item ;
-            mp->flags = flags ;
-            mp->iflags = iflags ;
-            mp->strData = dd ;
+                return meABORT;
+            mp->item = item;
+            mp->flags = flags;
+            mp->iflags = iflags;
+            mp->strData = dd;
             /* Add new item */
-            itemAdd(rp, mp) ;
+            itemAdd(rp,mp);
         }
         else
         {
@@ -5701,31 +5723,32 @@ osd (int f, int n)
             mp->len = 3 ;
             return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Entry size is too small]");
         }
-        
         return meTRUE ;
     }
     
-    noDis = 0 ;
-    pmd = NULL ;
-    md = osdDisplayHd ;
+    f = 0;
+    noDis = 0;
+    pmd = NULL;
+    md = osdDisplayHd;
     while(md != NULL)
     {
         if(!(md->flags & RF_DISABLE))
         {
-            md->flags |= RF_DISABLE ;
-            noDis++ ;
+            md->flags |= RF_DISABLE;
+            noDis++;
         }
-        pmd = md ;
-        md = md->next ;
+        f++;
+        pmd = md;
+        md = md->next;
     }
     
     /* Argument supplied  - render the menu */
     /* Flag that we're in osd */
-    TTallKeys = 1 ;                     /* Enable all keys */
+    TTallKeys = 1;                     /* Enable all keys */
     if(osdDisplayPush(n,meOSD_FOCUS_MENU) == NULL)
     {
-        TTallKeys = oldAllKeys ;
-        return meABORT ;
+        TTallKeys = oldAllKeys;
+        return meABORT;
     }
 do_control_inter:
     /* we must set the clexec flag to false to ensure we execute
@@ -5738,40 +5761,56 @@ do_control_inter:
      * 2.  If a command like find-file is executed (not as a string) it would
      *     not get the argument of the user and fail if this flag was set.
      */
-    oldClexec = clexec ;
-    clexec = meFALSE ;
-    md = (pmd != NULL) ? pmd->next:osdDisplayHd ;
-    if(!(md->flags & RF_NOPOP) &&
-       (md->dialog->cntIndex >= 0))
+    oldClexec = clexec;
+    clexec = meFALSE;
+    md = (pmd != NULL) ? pmd->next:osdDisplayHd;
+    if(!(md->flags & RF_NOPOP) && (md->dialog->cntIndex >= 0))
     {
-        osdCurMd->flags |= RF_NOPOP ;
-        ii = execFunc((int) osdCurMd->dialog->cntIndex,0,1) ;
-        md = (pmd != NULL) ? pmd->next:osdDisplayHd ;
+        osdCurMd->flags |= RF_NOPOP;
+        ii = execFunc((int) osdCurMd->dialog->cntIndex,0,1);
+        md = (pmd != NULL) ? pmd->next:osdDisplayHd;
         osdDisplayPop(md);             /* Crash the list and clean up */
     }
     else
     {
-        char oldUseMlBinds = useMlBinds ;
-        useMlBinds = 1 ;
-        mp = menuInteraction(&ii) ;
+        char oldUseMlBinds = useMlBinds;
+        useMlBinds = 1;
+        mp = menuInteraction(&ii);
         /* remove the osd flag */
-        useMlBinds = oldUseMlBinds ;
-        md = (pmd != NULL) ? pmd->next:osdDisplayHd ;
+        useMlBinds = oldUseMlBinds;
+        
+        /* while in menuInteraction a lot can happen - if the user changes the screen size all
+         * the dialogs may have been resized which means all the pointer could be different.
+         * Trust nothing, best we can do is go down the chain the same number os steps. */
+        if(f)
+        {
+            pmd = osdDisplayHd;
+            while(--f && ((pmd = pmd->next) != NULL))
+                ;
+            md = (pmd == NULL) ? NULL:pmd->next;
+        }
+        else
+        {
+            pmd = NULL;
+            md = osdDisplayHd;
+        }
+        if(md == NULL)
+            return meABORT;
         if(!(md->flags & RF_NOPOP))
             osdDisplayPop(md);             /* Crash the list and clean up */
         if(mp != NULL)
-            ii = menuExecute(mp,ii,-1) ;
+            ii = menuExecute(mp,ii,-1);
     }
     while(--noDis >= 0)
     {
-        pmd->flags &= ~RF_DISABLE ;
-        pmd = pmd->prev ;
+        pmd->flags &= ~RF_DISABLE;
+        pmd = pmd->prev;
     }
-    clexec = oldClexec ;
-    TTallKeys = oldAllKeys ;
-    TTallKeysFlush() ;
+    clexec = oldClexec;
+    TTallKeys = oldAllKeys;
+    TTallKeysFlush();
     
-    return ii ;
+    return ii;
 }
 
 
