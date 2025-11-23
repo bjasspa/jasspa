@@ -20,6 +20,13 @@
 !if &not &exi .osd.git-osd
   set-variable .osd.git-osd &pinc .osd.next 1
   set-variable .osd.git-hlp &pinc .osd.next 1
+  set-variable .osd.git-tlc &pinc .osd.next 1
+  set-variable .osd.git-tll &pinc .osd.next 1
+  set-variable .osd.git-tlo &pinc .osd.next 1
+  set-variable .osd.git-tl  &pinc .osd.next 1
+  set-variable .osd.git-gen &pinc .osd.next 1
+  set-variable .osd.git-nb  &pinc .osd.next 1
+  set-variable .osd.git-stp &pinc .osd.next 1
   define-macro git
   !emacro
 !endif
@@ -52,6 +59,7 @@
   hilight .hilight.git-status 0x102 "[ *] A "   .scheme.add
   hilight .hilight.git-status 0x102 "[ *] AM"   .scheme.add
   hilight .hilight.git-status 0x102 "[ *] D "   .scheme.rmv
+  hilight .hilight.git-status 0x102 "[ *]  D"   .scheme.rmv
   hilight .hilight.git-status 0x102 "[ *] R "   .scheme.chg
   hilight .hilight.git-status 0x102 "[ *] M "   .scheme.chg
   hilight .hilight.git-status 0x102 "[ *] MM"   .scheme.chg
@@ -176,11 +184,11 @@ set-variable .git.cstrv3 ""
 set-variable .git.cstrv4 ""
 
 ; Add these to git-setup
-set-variable .git.rep "origin"
-set-variable .git.brc &set .git.brd "main"
+set-variable .git.rep &reg &spr "/history/%s/git/def-rep" $platform "origin"
+set-variable .git.brc &reg &spr "/history/%s/git/def-brc" $platform "main"
 set-variable .git.com &reg &spr "/history/%s/git/com" $platform "git"
 !iif &sin " " .git.com  set-variable .git.com &spr "\"%s\"" .git.com
-!iif &not &seq "" &set #l9 &trb &reg &spr "/history/%s/git/garg" $platform "--no-pager"  set-variable .git.com &cat &cat .git.com " " #l9
+!iif &len &set #l9 &trb &reg &spr "/history/%s/git/garg" $platform "--no-pager"  set-variable .git.com &cat &cat .git.com " " #l9
 set-variable #l9 .git.ccount
 !repeat
   set-variable #l8 &lget .git.cflags #l9
@@ -211,7 +219,7 @@ set-variable #l9 .git.ccount
     ml-write "[Git: processing directory...]"
     set-position "\x83"
     set-variable #l1 $buffer-bname
-    0x46 pipe-shell-command &spr "%s status --porcelain %s." .git.com &con &lget .fhook-dirlst.mode 2 "" "--ignored " "*git-temp*"
+    0x46 pipe-shell-command &spr "%s status --porcelain %s-- ." .git.com &con &lget .fhook-dirlst.mode 2 "" "--ignored " "*git-temp*"
     find-buffer "*git-temp*"
     beginning-of-buffer
     !if &seq &lef @wl 6 "fatal:"
@@ -426,10 +434,7 @@ set-variable .git-revision-op.lbl14 "|\HMaster|\HHead|\HPrevious to head|\HSpeci
     !if &not &sin #l1 "DSs*!$@"
       set-variable #l2 &mul #l0 100
       osd .osd.git-osd &inc #l2 1 ""
-      !if &seq #l1 "A"
-        osd .osd.git-osd &inc #l2 1 "fh" "    "
-        osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HApply stash after pull" #l0 git-osd-cbc
-      !elif &seq #l1 "B"
+      !if &seq #l1 "B"
         osd .osd.git-osd &inc #l2 1 "Sfh" "    \HBranch:     " &add #l2 1
         osd .osd.git-osd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 40 1 "" 1 git-osd-gstr
         osd .osd.git-osd &inc #l2 1 "f"  "    "
@@ -482,7 +487,7 @@ set-variable .git-revision-op.lbl14 "|\HMaster|\HHead|\HPrevious to head|\HSpeci
         osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Create \Hintermediate directories" #l0 git-osd-cbc
       !elif &seq #l1 "p"
         osd .osd.git-osd &inc #l2 1 "fh" "    "
-        osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HProcess output - adds links etc" #l0 git-osd-cbc
+        osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HProcess output - adds buttons etc" #l0 git-osd-cbc
       !elif &seq #l1 "R"
         osd .osd.git-osd &inc #l2 1 "fh" "    "
         osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecurse - required to remove directories" #l0 git-osd-cbc
@@ -1436,11 +1441,8 @@ define-macro git-move
     osd-dialog "Git - Move" "    A valid destination name must be given!    " "  \HAbort  "
     !abort
   !endif
-  !if &lget &set #l9 .git.values 2
-    ; TODO implement creation of intemediate directories (eqiv of svn add --parents)
-    ml-write "[Git create intermediate directories not yet implemented]"
-    !abort
-  !endif
+  ; TODO implement creation of intemediate directories (eqiv of svn add --parents)
+  !if &lget &set #l9 .git.values 2  -8 ml-write "[Git create intermediate directories not yet implemented]"
   set-variable #l2 &spr "%s mv -- " .git.com
   7 git-get-file-list 0 0 #l2
   find-buffer "*git-cmdline*"
@@ -1616,6 +1618,204 @@ define-macro git-show-file
     popup-window "*git-show-file*"
     beginning-of-buffer
     change-buffer-name #l4
+  !endif
+!emacro
+
+;; GIT setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+0 define-macro git-setup-entry
+  set-variable #l2 &spr "/history/%s/git/%s" $platform &lget "|com|garg|def-rep|def-brc|" &abs @#
+  set-variable #l0 &reg #l2 &set #l3 &lget "|git|--no-pager|origin|main|" &abs @#
+  !if &les @# 0
+    set-variable #l1 @ml2 "" #l0
+    !if &seq #l0 #l1
+    !elif &seq #l1 #l3
+      !force delete-registry #l2
+    !else
+      set-registry #l2 #l1
+    !endif
+  !else
+    set-variable $result #l0
+  !endif
+!emacro
+
+0 define-macro git-setup-ctf
+  set-variable #l2 &spr "/history/git/%d_C" &abs @#
+  set-variable #l0 &reg #l2 ""
+  !if &les @# 0
+    set-variable #l1 @ml24 "" #l0
+    !if &seq #l0 #l1
+    !elif &seq #l1 ""
+      !force delete-registry #l2
+    !else
+      set-registry #l2 #l1
+    !endif
+  !else
+    set-variable $result #l0
+  !endif
+!emacro
+0 define-macro git-setup-cbc
+  set-variable #l0 &band &abs @# 0x0fff
+  set-variable #l1 &div  &abs @# 0x1000
+  set-variable #l2 &lget .git.cdefs #l1
+  !if &les @# 0
+    set-variable #l2 &lset #l2 #l0 &set #l3 &bxor 1 &lget #l2 #l0
+    set-variable .git.cdefs &lset .git.cdefs #l1 #l2
+    set-registry &spr "/history/git/%d_%s" #l1 &mid &lget .git.cflags #l1 &sub #l0 1 1 #l3
+  !elif &not &lget #l2 #l0
+    !abort
+  !endif
+!emacro
+0 define-macro git-setup-gcbc
+  set-variable #l0 &cat "/history/git/" &lget "|en-strt|" &abs @#
+  set-variable #l1 &reg #l0 "0"
+  !if &les @# 0
+    set-registry #l0 &bxor #l1 1
+  !elif &not #l1
+    !abort
+  !endif
+!emacro
+
+0 define-macro git-setup-page
+  !iif &exi .cur  osd .osd.git-tlc &lget .order .cur "RxBd" &lget .git.cnames .cur .cur git-setup-page
+  set-variable .cur @#
+  osd .osd.git-tlc &lget .order @# "RxBdH" .scheme.osd-entry &lget .git.cnames @# @# git-setup-page
+  set-variable #l9 &lget .git.cflags @#
+  -1 osd &set #l8 .osd.git-tlo
+  osd #l8 0 "s" 49 15 -1 -1
+  osd #l8 1 ""
+  osd #l8 2 "" &spr "  %s Default Settings:" &lget .git.cnames @#
+  set-variable #l0 0
+  set-variable #l4 &mul @# 0x1000
+  !while &not &seq "" &set #l1 &mid #l9 &pinc #l0 1 1
+    !if &not &sin #l1 "BDfNSsv*!$@"
+      set-variable #l2 &mul #l0 100
+      osd #l8 &inc #l2 1 ""
+      !if &seq #l1 "b"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Create a \Hnew branch" &bor #l4 #l0 git-setup-cbc
+      !elif &seq #l1 "C"
+        osd #l8 &inc #l2 1 "Sf" "    \HComment template file:" &add #l2 2
+        osd #l8 &inc #l2 1 "fh" "        "
+        osd #l8 &inc #l2 1 "EtxHfz" .scheme.osd-entry 36 1 "" @# git-setup-ctf
+      !elif &seq #l1 "d"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Include \Hdiff of changes" &bor #l4 #l0 git-setup-cbc
+      !elif &seq #l1 "F"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Full file list for each commit" &bor #l4 #l0 git-setup-cbc
+      !elif &seq #l1 "h"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} R\Haw out, remove header etc" &bor #l4 #l0 git-setup-cbc
+      !elif &seq #l1 "I"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HInclude ignored files" &bor #l4 #l0 git-setup-cbc
+      !elif &seq #l1 "l"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HInclude list of affected files" &bor #l4 #l0 git-setup-cbc
+      !elif &seq #l1 "o"
+        osd #l8 &inc #l2 1 "fh" "        "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HPop stash after" &bor #l4 #l0 git-setup-cbc
+      !elif &seq #l1 "P"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Create \Hintermediate directories" &bor #l4 #l0 git-setup-cbc
+      !elif &seq #l1 "p"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HProcess output - add buttons etc" &bor #l4 #l0 git-setup-cbc
+      !elif &seq #l1 "R"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecurse - required to remove directories" &bor #l4 #l0 git-setup-cbc
+      !elif &seq #l1 "r"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Refresh directory \Hlisting" &bor #l4 #l0 git-setup-cbc
+      !elif &seq #l1 "T"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HStash local changes first" &bor #l4 #l0 git-setup-cbc
+      !elif &seq #l1 "t"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HTrack the branch" &bor #l4 #l0 git-setup-cbc
+      !elif &seq #l1 "u"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &spr "%s\} List unintegrated changes from %s" .osd.checkbox-chars .git.rep &bor #l4 #l0 git-setup-cbc
+      !elif &seq #l1 "V"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HVerbose output" &bor #l4 #l0 git-setup-cbc
+      !elif &seq #l1 "W"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Ignore \Hwhite spaces" &bor #l4 #l0 git-setup-cbc
+      !elif &seq #l1 "w"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use \Hsingle window" &bor #l4 #l0 git-setup-cbc
+      !elif &seq #l1 "Z"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Operate on \Hdirectory (ignore selection)" &bor #l4 #l0 git-setup-cbc
+      !else
+        osd #l8 &inc #l2 1 "" &cat "flag " #l1
+      !endif
+    !endif
+  !done
+!emacro
+set-variable .git-setup-page.order "||||14|7|12|5|1|8|11|4|3|2|13|"
+-1 osd .osd.git-tlc
+osd .osd.git-tlc 0 "sS" .scheme.osd-child 12 12 -1 -1
+set-variable #l9 .git.ccount
+!repeat
+  !iif &not &seq "" &set #l8 &lget .git-setup-page.order #l9  osd .osd.git-tlc #l8 "RxBd" &lget .git.cnames #l9 #l9 git-setup-page
+!until &not &dec #l9 1
+
+osd .osd.git-tll 0 "s" 17 16 -1 -1
+osd .osd.git-tll 10 "" ""
+osd .osd.git-tll 20 "S" "  Select Tool:" 50
+osd .osd.git-tll 40 "fh" " "
+osd .osd.git-tll 50 "IbHt" .scheme.osd-sbar 12 12 .osd.git-tlc
+
+osd .osd.git-tl 0 "s" 66 16 -1 -1
+osd .osd.git-tl 20 "Ith" .osd.git-tll
+osd .osd.git-tl 40 "It" .osd.git-tlo
+
+osd .osd.git-gen 0 "s" 66 16 -1 -1
+osd .osd.git-gen 10  "" ""
+osd .osd.git-gen 20  "Sfh" "  GIT \HCommand:    " 30
+osd .osd.git-gen 30  "EtxHfz" .scheme.osd-entry 42 1 "" 1 git-setup-entry
+osd .osd.git-gen 35  "" ""
+osd .osd.git-gen 40  "Sfh" "    \HGlobal opts:  " 50
+osd .osd.git-gen 50  "EtxHfz" .scheme.osd-entry 42 1 "" 2 git-setup-entry
+osd .osd.git-gen 60  "" ""
+osd .osd.git-gen 70  "Sfh" "  Default \HRep:    " 80
+osd .osd.git-gen 80  "EtxHfz" .scheme.osd-entry 42 1 "" 3 git-setup-entry
+osd .osd.git-gen 90  "" ""
+osd .osd.git-gen 100 "Sfh" "  Default \HBranch: " 110
+osd .osd.git-gen 110 "EtxHfz" .scheme.osd-entry 42 1 "" 4 git-setup-entry
+osd .osd.git-gen 120 "" ""
+osd .osd.git-gen 130 "fh" "    "
+osd .osd.git-gen 140 "Cptfx" &cat .osd.checkbox-chars "\} \HEnable Support on Start-Up" 1 git-setup-gcbc
+osd .osd.git-gen 150 "" ""
+;osd .osd.git-gen 160 "fh" "    "
+;osd .osd.git-gen 170 "Cptfx" &cat .osd.checkbox-chars "\} \HQuick browser mode (no out-of-date check)" 2 git-setup-gcbc
+;osd .osd.git-gen 180 "" ""
+
+osd .osd.git-nb 0 "NsI" 68 20 -1 -1 1
+osd .osd.git-nb 1 "Pft" "General" .osd.git-gen
+osd .osd.git-nb 2 "Pft" "Tools" .osd.git-tl
+osd .osd.git-nb 100 "It" .osd.git-gen
+
+osd .osd.git-stp 0 "batcDIHs" 5 4 70 24 -1 -1 2010 100 .scheme.osd-title "GIT Setup"
+osd .osd.git-stp 100 "It" .osd.git-nb
+osd .osd.git-stp 2000 ""
+osd .osd.git-stp 2010 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
+
+define-macro git-setup
+  ; reread the setup if not run from user-setup
+  !iif &band @# 1  reread-settings
+  !iif &not &exi .git-setup-page.cur  8 git-setup-page
+  !force !force .osd.git-stp osd
+  !if &band @# 1
+    !if $status
+      save-registry "/history" ""
+    !else
+      0 reread-settings
+    !endif
+    execute-file "git"
   !endif
 !emacro
 

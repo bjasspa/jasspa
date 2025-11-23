@@ -2296,5 +2296,6 @@ set-variable .toolbar-file-list-create.filter 1
 
 !iif &reg "/history/clearcase/en-strt" "0"  cc-init
 !iif &reg "/history/cvs/en-strt" "0"  execute-file "cvs"
+!iif &reg "/history/git/en-strt" "0"  execute-file "git"
 !iif &reg "/history/svn/en-strt" "0"  execute-file "svn"
 buffer-init-fhook "dirlst"

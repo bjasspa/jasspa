@@ -313,37 +313,41 @@ dialogResetDisplays(osdDIALOG *rp, int type)
         {
             if(!(md->flags & RF_CONFIG))
             {
-                md->flags |= RF_REDRAW ;
+                md->flags |= RF_REDRAW;
                 if(md == osdMainMenuMd)
                     frameCur->video.lineArray[0].flag |= VFCHNGD ;
                 if(type == 2)
                 {
-                    md->curContext = -1 ;
-                    md->newContext = -1 ;
-                    md->defContext = -1 ;
+                    md->curContext = -1;
+                    md->newContext = -1;
+                    md->defContext = -1;
                 }
                 else if(type == 1)
                 {
                     if((md->curContext >= 0) && (md->context[md->curContext].menu->flags & (MF_DISABLE|MF_SEP)))
-                        md->curContext = -1 ;
+                        md->curContext = -1;
                     if((md->newContext >= 0) && (md->context[md->newContext].menu->flags & (MF_DISABLE|MF_SEP)))
-                        md->newContext = -1 ;
+                        md->newContext = -1;
                     if((md->defContext >= 0) && (md->context[md->defContext].menu->flags & (MF_DISABLE|MF_SEP)))
-                        md->defContext = -1 ;
+                        md->defContext = -1;
                 }
                 if(md->flags & RF_CHILD)
                 {
-                    osdDISPLAY *tmd ;    
+                    osdDISPLAY *tmd;    
                     if(type == 2)
                     {
-                        md->x = 0 ;
-                        md->y = 0 ;
+                        md->x = 0;
+                        md->y = 0;
                     }
                     tmd = md ;
-                    do {
-                        tmd = tmd->prev ;
-                    } while(tmd->flags & RF_CHILD) ;
-                    tmd->flags |= RF_REDRAW ;
+                    while((tmd = tmd->prev) != NULL)
+                    {
+                        if((tmd->flags & RF_CHILD) == 0)
+                        {
+                            tmd->flags |= RF_REDRAW;
+                            break;
+                        }
+                    }
                 }
             }
             md = md->displays ;
@@ -2822,7 +2826,10 @@ menuConfigure(osdDIALOG *rp, osdDISPLAY *md, int child)
                 menuExecute(mp,md->flags,-1);
                 /* Find the root of the sub-menu */
                 if((crp = dialogFind(mp->argc)) == NULL)
-                    return NULL ;
+                {
+                    mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Cannot find osd object identity %d]",mp->argc);
+                    return NULL;
+                }
                 if(crp->cmdIndex >= 0)
                     execFunc((int) crp->cmdIndex,0,1) ;
                 if((child->display != NULL) && 
@@ -3325,7 +3332,7 @@ osdDisplayPush(int id, int flags)
     id &= 0x0ffff ;
     if ((rp = dialogFind(id)) == NULL)    /* Find the root of the menu */
     {
-        mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Cannot find osd object identity %d]", id);
+        mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Cannot find osd object identity %d]",id);
         return NULL;
     }
     /* Execute the initialization command if present */
@@ -5375,15 +5382,15 @@ osd (int f, int n)
                 return meABORT ;
             flags = meAtoi(buf) ;
             if (flags == 0)
-                return frameSetupMenuLine (0) ;         /* hide the menu return whether it existed */
+                return frameSetupMenuLine(0);         /* hide the menu return whether it existed */
             if (flags < 0)
             {
                 /* Destruct the old line */
-                frameSetupMenuLine (0);             /* Delete the existing window */
+                frameSetupMenuLine(0);             /* Delete the existing window */
                 if(osdMainMenuMd != NULL)
                 {
                     displayDestruct(osdMainMenuMd);
-                    osdMainMenuMd = NULL ;
+                    osdMainMenuMd = NULL;
                 }
                 osdMainMenuId = -1 ;
             }
@@ -5397,7 +5404,7 @@ osd (int f, int n)
                 /* Flag the line as changed */
                 frameCur->video.lineArray[0].flag |= VFCHNGD ;
             }
-            return meTRUE ;              /* Finished */
+            return meTRUE;              /* Finished */
         }
         
         if(id > 32767)
@@ -5406,8 +5413,8 @@ osd (int f, int n)
         
         if(n < 0)
         {
-            dialogDestruct (id);          /* Destruct the root */
-            return meTRUE ;
+            dialogDestruct(id);          /* Destruct the root */
+            return meTRUE;
         }
         
         /* Get the menu index */
