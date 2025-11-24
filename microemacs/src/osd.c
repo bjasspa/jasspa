@@ -3712,86 +3712,86 @@ osdDisplayMove(osdDISPLAY *md, int dx, int dy)
 static void
 osdDisplayResize(int dx, int dy)
 {
-    osdDISPLAY *md ;                      /* The osdDisplayHd to move */
-    int xx, yy ;
+    osdDISPLAY *md;                      /* The osdDisplayHd to move */
+    int xx, yy;
     
-    /* ZZZZ - Dont cope with this not being the last osdDisplayHd */
+    /* Only handles this being the last osdDisplayHd */
     if((md=osdCurMd)->next != NULL)
-        return ;
+        return;
     
     /* Store the old size */
-    xx = md->width ;
-    yy = md->depth ;
+    xx = md->width;
+    yy = md->depth;
     
     if(dx > frameCur->width)
-        dx = frameCur->width ;
+        dx = frameCur->width;
     if(dy > frameCur->depth)
-        dy = frameCur->depth+1 ;
+        dy = frameCur->depth+1;
     
     /* Construct the $result string */
-    sprintf((char *)resultStr,"%4d%4d",dx,dy) ;
+    sprintf((char *)resultStr,"%4d%4d",dx,dy);
     
     /* Can the macro resize okay */
     if(execFunc((int) md->dialog->rszIndex,0,1) <= 0)
-        return ;
+        return;
     
     /* restore the screen underneath */
-    osdDisplaySnapshotRestore(md) ;
+    osdDisplaySnapshotRestore(md);
     
     /* Find the root and reconstruct the menu */
     if((md = menuConfigure(md->dialog,md,0)) == NULL)
-        return ;
+        return;
     
     /* Position the menu */
     menuPosition(md,1);
-    osdDisplaySetDefaultContext(md) ;
-    osdDisplayUpdate(md,0) ;
+    osdDisplaySetDefaultContext(md);
+    osdDisplayUpdate(md,0);
     
     /* Snapshot the region occupied by the menu. */
-    osdDisplaySnapshotStore(md) ;
+    osdDisplaySnapshotStore(md);
     
     /* Render it to screen */
-    osdDisplaySnapshotDraw(md,0,0,md->width,md->depth,0) ;
+    osdDisplaySnapshotDraw(md,0,0,md->width,md->depth,0);
     if(md->width > xx)
-        xx = md->width ;
+        xx = md->width;
     if(md->depth > yy)
-        yy = md->depth ;
-    menuRenderArea(md->x,md->y,xx,yy) ;
+        yy = md->depth;
+    menuRenderArea(md->x,md->y,xx,yy);
 }
 
 
 static void
 osdDisplayMouseMove(osdDISPLAY *md)
 {
-    meUByte oldAllKeys=TTallKeys ;
-    meShort mmx, mmy ;
-    int cc, osdCursorState ;
+    meUByte oldAllKeys=TTallKeys;
+    meShort mmx, mmy;
+    int cc, osdCursorState;
     
-    osdCursorState = cursorState ;
+    osdCursorState = cursorState;
     if(cursorState >= 0)
-        showCursor(meTRUE,-1-cursorState) ;
+        showCursor(meTRUE,-1-cursorState);
     
     /* Enable all mouse movements - important if we've come from meGetStringFromUser */
-    TTallKeys = 1 ;
-    mmx = mouse_X ;
-    mmy = mouse_Y ;
-    for( ; (cc=meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT)) != (ME_SPECIAL|SKEY_mouse_drop_1) ; )
+    TTallKeys = 1;
+    mmx = mouse_X;
+    mmy = mouse_Y;
+    while((cc=meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT)) != (ME_SPECIAL|SKEY_mouse_drop_1))
     {
         if(cc == (ME_SPECIAL|SKEY_mouse_move_1))
         {
             if((mmx != mouse_X) || (mmy != mouse_Y))
             {
-                osdDisplayMove(md,mouse_X-mmx,mouse_Y-mmy) ;
-                mmx = mouse_X ;
-                mmy = mouse_Y ;
-                TTflush() ;
+                osdDisplayMove(md,mouse_X-mmx,mouse_Y-mmy);
+                mmx = mouse_X;
+                mmy = mouse_Y;
+                TTflush();
             }
         }
     }
     /* Restore state */
     if(osdCursorState != cursorState)
-        showCursor(meTRUE,osdCursorState-cursorState) ;
-    TTallKeys = oldAllKeys ;
+        showCursor(meTRUE,osdCursorState-cursorState);
+    TTallKeys = oldAllKeys;
 }
 
 static void

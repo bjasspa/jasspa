@@ -2787,7 +2787,6 @@ WinExit(int status)
 void
 WinShutdown(void)
 {
-    /* ZZZZ - should this have console support */
 #if MEOPT_CLIENTSERVER
     /* Close & delete the client file */
     TTkillClientServer();
@@ -2825,23 +2824,6 @@ WinShutdown(void)
         }
     }
 #endif /* _ME_WINDOW */
-    
-    /* Save any buffers as an emergency quit */
-#ifdef WE_SHOULD_NOT_NEED_THIS_HERE
-    /* Save any buffers as an emergency quit */
-    {
-        register meBuffer *bp;    /* scanning pointer to buffers */
-        
-        bp = bheadp;
-        while(bp != NULL)
-        {
-            if(bufferNeedSaving(bp))
-                autowriteout(bp);
-            bp = bp->next;            /* on to the next buffer */
-        }
-        saveHistory(meTRUE,0);
-    }
-#endif
 }
 
 #if MEOPT_MOUSE

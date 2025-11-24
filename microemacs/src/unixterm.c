@@ -5663,7 +5663,6 @@ xdndClientMessage (XEvent *xevent, meFrame *frame)
         xdndReset (&dnd);
         dnd.dragger_window = XDND_ENTER_SOURCE_WIN (xevent);
         dnd.dropper_window = xevent->xany.window;
-        /* TODO: Check the types */
         dnd.dragging_version = XDND_ENTER_VERSION (xevent);
         dnd.stage = XDND_DROP_STAGE_ENTERED;
         processed = 1;

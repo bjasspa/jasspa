@@ -1527,10 +1527,8 @@ hash_skip:
                         cwp->dotOffset--;
                         if(findfence('/',forwFlag,depth) <= 0)
                             return 0;
-                        /* ZZZZ - note that at this point we should check for
-                         * a # at the start of the line and do the right
-                         * stuff
-                         */
+                        /* TODO - note that at this point we should check for a # at the start of
+                         * the line and do the right stuff */
                         continue;
                     }
                 }

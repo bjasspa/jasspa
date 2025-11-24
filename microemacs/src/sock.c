@@ -1889,7 +1889,6 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
                             io->urlFlags |= meSOCKFLG_CLOSE;
                         else
                             io->timeout = (ll * 1000) - 500;
-                        printf("Keep-alive timeout: %d\n",io->timeout);
                         break;
                     }
                 }
