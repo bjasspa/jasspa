@@ -1269,6 +1269,7 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
     }
     io->urlLen = -1;
     io->chkLen = 0;
+    io->timeout = meSOCKET_TIMEOUT;
     if(meSockIsInUse(io))
     {
         io->urlFlags = (io->urlFlags & meSOCKFLG_CTRL_SHUTDOWN) | flags;
@@ -1839,160 +1840,199 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
             }
             return err;
         }
-        if(((cc=(ffbuf[0]|0x20)) == 'h') && ((ffbuf[1]|0x20) == 't') && ((ffbuf[2]|0x20) == 't') && ((ffbuf[3]|0x20) == 'p') &&
-           (ffbuf[4] == '/') && (ffbuf[5] >= '1') && (ffbuf[5] <= '9'))
+        cc = (ffbuf[0]|0x20);
+        if(cc == 'h')
         {
-            ss = ffbuf+5;
-            while(((cc=*++ss) != '\0') && (cc != ' ') && (cc != '\t'))
-                ;
-            if((err = atoi((char *) ss)) <= 0)
-                err = 1;
-        }
-        else if((cc == 'c') && ((ffbuf[1]|0x20) == 'o') && ((ffbuf[2]|0x20) == 'n'))
-        {
-            if(((ffbuf[3]|0x20) == 't') && ((ffbuf[4]|0x20) == 'e') && ((ffbuf[5]|0x20) == 'n') && ((ffbuf[6]|0x20) == 't') && (ffbuf[7] == '-') && ((ffbuf[8]|0x20) == 'l') &&
-               ((ffbuf[9]|0x20) == 'e') && ((ffbuf[10]|0x20) == 'n') && ((ffbuf[11]|0x20) == 'g') && ((ffbuf[12]|0x20) == 't') && ((ffbuf[13]|0x20) == 'h') && (ffbuf[14] == ':'))
-                io->urlLen = atoi((char *) ffbuf+15);
-            else if(((ffbuf[3]|0x20) == 'n') && ((ffbuf[4]|0x20) == 'e') && ((ffbuf[5]|0x20) == 'c') && ((ffbuf[6]|0x20) == 't') && ((ffbuf[7]|0x20) == 'i') &&
-                    ((ffbuf[9]|0x20) == 'o') && ((ffbuf[10]|0x20) == 'n') && (ffbuf[11] == ':'))
+            if(((ffbuf[1]|0x20) == 't') && ((ffbuf[2]|0x20) == 't') && ((ffbuf[3]|0x20) == 'p') &&
+               (ffbuf[4] == '/') && (ffbuf[5] >= '1') && (ffbuf[5] <= '9'))
             {
-                ss = ffbuf+12;
-                while(((cc=*ss++) == ' ') || (cc == '\t'))
+                ss = ffbuf+5;
+                while(((cc=*++ss) != '\0') && (cc != ' ') && (cc != '\t'))
                     ;
-                if((cc|0x20) == 'c')
-                    /* Connection: close */
-                    io->urlFlags |= meSOCKFLG_CLOSE;
+                if((err = atoi((char *) ss)) <= 0)
+                    err = 1;
             }
         }
-        else if((cc == 'l') && ((ffbuf[1]|0x20) == 'o') && ((ffbuf[2]|0x20) == 'c') && ((ffbuf[3]|0x20) == 'a') && ((ffbuf[4]|0x20) == 't') &&
+        else if(cc == 'c')
+        {
+            if(((ffbuf[1]|0x20) == 'o') && ((ffbuf[2]|0x20) == 'n'))
+            {
+                if(((ffbuf[3]|0x20) == 't') && ((ffbuf[4]|0x20) == 'e') && ((ffbuf[5]|0x20) == 'n') && ((ffbuf[6]|0x20) == 't') && (ffbuf[7] == '-') && ((ffbuf[8]|0x20) == 'l') &&
+                   ((ffbuf[9]|0x20) == 'e') && ((ffbuf[10]|0x20) == 'n') && ((ffbuf[11]|0x20) == 'g') && ((ffbuf[12]|0x20) == 't') && ((ffbuf[13]|0x20) == 'h') && (ffbuf[14] == ':'))
+                    io->urlLen = atoi((char *) ffbuf+15);
+                else if(((ffbuf[3]|0x20) == 'n') && ((ffbuf[4]|0x20) == 'e') && ((ffbuf[5]|0x20) == 'c') && ((ffbuf[6]|0x20) == 't') && ((ffbuf[7]|0x20) == 'i') &&
+                        ((ffbuf[9]|0x20) == 'o') && ((ffbuf[10]|0x20) == 'n') && (ffbuf[11] == ':'))
+                {
+                    ss = ffbuf+12;
+                    while(((cc=*ss++) == ' ') || (cc == '\t'))
+                        ;
+                    if((cc|0x20) == 'c')
+                        /* Connection: close */
+                        io->urlFlags |= meSOCKFLG_CLOSE;
+                }
+            }
+        }
+        else if(cc == 'k')
+        {
+            if(((ffbuf[1]|0x20) == 'e') && ((ffbuf[2]|0x20) == 'e') && ((ffbuf[3]|0x20) == 'p') && (ffbuf[4] == '-') &&
+               ((ffbuf[5]|0x20) == 'a') && ((ffbuf[6]|0x20) == 'l') && ((ffbuf[7]|0x20) == 'i') && ((ffbuf[8]|0x20) == 'v') &&
+               ((ffbuf[9]|0x20) == 'e') && (ffbuf[10] == ':'))
+            {
+                ss = ffbuf+11;
+                while((cc=*ss++) != '\0')
+                {
+                    if(((cc|0x20) == 't') && ((ss[0]|0x20) == 'i') && ((ss[1]|0x20) == 'm') && ((ss[2]|0x20) == 'e') &&
+                       ((ss[3]|0x20) == 'o') && ((ss[4]|0x20) == 'u') && ((ss[5]|0x20) == 't') && (ss[6] == '='))
+                    {
+                        ll = atoi((char *) ss+7);
+                        if(ll <= 0)
+                            io->urlFlags |= meSOCKFLG_CLOSE;
+                        else
+                            io->timeout = (ll * 1000) - 500;
+                        printf("Keep-alive timeout: %d\n",io->timeout);
+                        break;
+                    }
+                }
+            }
+        }
+        else if(cc == 'l')
+        {
+            if(((ffbuf[1]|0x20) == 'o') && ((ffbuf[2]|0x20) == 'c') && ((ffbuf[3]|0x20) == 'a') && ((ffbuf[4]|0x20) == 't') &&
                 ((ffbuf[5]|0x20) == 'i') && ((ffbuf[6]|0x20) == 'o') && ((ffbuf[7]|0x20) == 'n') && (ffbuf[8] == ':'))
-        {
-            /* The requested file is not here, its at the given location - could/should check the http return code (stored in err) to check its a 3?? */
-            ss = ffbuf+9;
-            while(((cc=*ss) == ' ') || (cc == '\t'))
-                ss++;
-            if(cc != '\0')
             {
-                strcpy((char *) rbuff,(char *) ss);
-                /* This is only a redirection if the HTTP response status code returned is 3##, e.g. if its 201 created, 
-                 * then this URL is the location of the new resource and not to be redirected to. */
-                if((err == 1) || ((err >= 300) && (err < 400)))
-                    err = 0;
+                /* The requested file is not here, its at the given location - could/should check the http return code (stored in err) to check its a 3?? */
+                ss = ffbuf+9;
+                while(((cc=*ss) == ' ') || (cc == '\t'))
+                    ss++;
+                if(cc != '\0')
+                {
+                    strcpy((char *) rbuff,(char *) ss);
+                    /* This is only a redirection if the HTTP response status code returned is 3##, e.g. if its 201 created, 
+                     * then this URL is the location of the new resource and not to be redirected to. */
+                    if((err == 1) || ((err >= 300) && (err < 400)))
+                        err = 0;
+                }
             }
         }
-        else if((cc == 't') && ((ffbuf[1]|0x20) == 'r') && ((ffbuf[2]|0x20) == 'a') && ((ffbuf[3]|0x20) == 'n') && ((ffbuf[4]|0x20) == 's') &&
-                ((ffbuf[5]|0x20) == 'f') && ((ffbuf[6]|0x20) == 'e') && ((ffbuf[7]|0x20) == 'r') && (ffbuf[8] == '-') && ((ffbuf[9]|0x20) == 'e') &&
-                ((ffbuf[10]|0x20) == 'n') && ((ffbuf[11]|0x20) == 'c') && ((ffbuf[12]|0x20) == 'o') && ((ffbuf[13]|0x20) == 'd') && ((ffbuf[14]|0x20) == 'i') &&
-                ((ffbuf[15]|0x20) == 'n') && ((ffbuf[16]|0x20) == 'g') && (ffbuf[17] == ':'))
+        else if(cc == 't')
         {
-            ss = ffbuf+18;
-            while(((cc=*ss++) == ' ') || (cc == '\t'))
-                ;
-            if((cc == 'c') && ((ss[0]|0x20) == 'h') && ((ss[1]|0x20) == 'u') && ((ss[2]|0x20) == 'n') && ((ss[3]|0x20) == 'k') && ((ss[4]|0x20) == 'e') && ((ss[5]|0x20) == 'd'))
+            if(((ffbuf[1]|0x20) == 'r') && ((ffbuf[2]|0x20) == 'a') && ((ffbuf[3]|0x20) == 'n') && ((ffbuf[4]|0x20) == 's') &&
+               ((ffbuf[5]|0x20) == 'f') && ((ffbuf[6]|0x20) == 'e') && ((ffbuf[7]|0x20) == 'r') && (ffbuf[8] == '-') && ((ffbuf[9]|0x20) == 'e') &&
+               ((ffbuf[10]|0x20) == 'n') && ((ffbuf[11]|0x20) == 'c') && ((ffbuf[12]|0x20) == 'o') && ((ffbuf[13]|0x20) == 'd') && ((ffbuf[14]|0x20) == 'i') &&
+               ((ffbuf[15]|0x20) == 'n') && ((ffbuf[16]|0x20) == 'g') && (ffbuf[17] == ':'))
             {
-                io->urlFlags |= meSOCKFLG_CHUNKED;
-                io->chkLen = -1;
-                ss += 6;
+                ss = ffbuf+18;
                 while(((cc=*ss++) == ' ') || (cc == '\t'))
                     ;
-            }
-            if(cc != '\0')
-            {
-                if(io->urlOpts & meSOCKOPT_LOG_ERROR)
+                if((cc == 'c') && ((ss[0]|0x20) == 'h') && ((ss[1]|0x20) == 'u') && ((ss[2]|0x20) == 'n') && ((ss[3]|0x20) == 'k') && ((ss[4]|0x20) == 'e') && ((ss[5]|0x20) == 'd'))
                 {
-                    snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: Unsupported transfer encoding: %s",ss-1);
-                    ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,rbuff);
+                    io->urlFlags |= meSOCKFLG_CHUNKED;
+                    io->chkLen = -1;
+                    ss += 6;
+                    while(((cc=*ss++) == ' ') || (cc == '\t'))
+                        ;
                 }
-                err = -26;
-                break;
+                if(cc != '\0')
+                {
+                    if(io->urlOpts & meSOCKOPT_LOG_ERROR)
+                    {
+                        snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: Unsupported transfer encoding: %s",ss-1);
+                        ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,rbuff);
+                    }
+                    err = -26;
+                    break;
+                }
             }
         }
-        else if((cookie != NULL) && (cc == 's') && ((ffbuf[1]|0x20) == 'e') && ((ffbuf[2]|0x20) == 't') && (ffbuf[3] == '-') && ((ffbuf[4]|0x20) == 'c') &&
-                ((ffbuf[5]|0x20) == 'o') && ((ffbuf[6]|0x20) == 'o') && ((ffbuf[7]|0x20) == 'k') && ((ffbuf[8]|0x20) == 'i') && ((ffbuf[9]|0x20) == 'e') && (ffbuf[10] == ':'))
+        else if(cc == 's')
         {
-            meUByte *vv, *ee, *dd, *de;
-            ss = ffbuf+11;
-            while(((cc=*ss) == ' ') || (cc == '\t'))
-                ss++;
-            if((cc != '\0') && (cc != '=') && ((vv = (meUByte *) strchr((char *) ss,'=')) != NULL) && ((ee = (meUByte *) strchr((char *) vv,';')) != NULL))
+            if((cookie != NULL) && ((ffbuf[1]|0x20) == 'e') && ((ffbuf[2]|0x20) == 't') && (ffbuf[3] == '-') && ((ffbuf[4]|0x20) == 'c') &&
+               ((ffbuf[5]|0x20) == 'o') && ((ffbuf[6]|0x20) == 'o') && ((ffbuf[7]|0x20) == 'k') && ((ffbuf[8]|0x20) == 'i') && ((ffbuf[9]|0x20) == 'e') && (ffbuf[10] == ':'))
             {
-                vv++;
-                *ee = '\0';
-                if((cookie->value != NULL) && (cookie->value[0] != '\0'))
+                meUByte *vv, *ee, *dd, *de;
+                ss = ffbuf+11;
+                while(((cc=*ss) == ' ') || (cc == '\t'))
+                    ss++;
+                if((cc != '\0') && (cc != '=') && ((vv = (meUByte *) strchr((char *) ss,'=')) != NULL) && ((ee = (meUByte *) strchr((char *) vv,';')) != NULL))
                 {
-                    ll = vv - ss;
-                    if(strncmp((char *) cookie->value,(char *) ss,ll))
+                    vv++;
+                    *ee = '\0';
+                    if((cookie->value != NULL) && (cookie->value[0] != '\0'))
                     {
-                        cc = *vv;
-                        *vv = '\0';
-                        ss[-2] = ';';
-                        ss[-1] = ' ';
-                        if((dd=(meUByte *) strstr((char *) cookie->value,(char *) (ss-2))) != NULL)
+                        ll = vv - ss;
+                        if(strncmp((char *) cookie->value,(char *) ss,ll))
                         {
-                            if((de = (meUByte *) strchr((char *) (dd+ll+2),';')) != NULL)
+                            cc = *vv;
+                            *vv = '\0';
+                            ss[-2] = ';';
+                            ss[-1] = ' ';
+                            if((dd=(meUByte *) strstr((char *) cookie->value,(char *) (ss-2))) != NULL)
                             {
-                                while((*dd++ = *de++) != '\0')
-                                    ;
+                                if((de = (meUByte *) strchr((char *) (dd+ll+2),';')) != NULL)
+                                {
+                                    while((*dd++ = *de++) != '\0')
+                                        ;
+                                }
+                                else
+                                    *dd = '\0';
                             }
-                            else
-                                *dd = '\0';
+                            *vv = cc;
+                            de = cookie->value;
                         }
-                        *vv = cc;
-                        de = cookie->value;
+                        else if((de = (meUByte *) strchr((char *) (cookie->value+ll),';')) != NULL)
+                            de += 2;
                     }
-                    else if((de = (meUByte *) strchr((char *) (cookie->value+ll),';')) != NULL)
-                        de += 2;
-                }
-                else
-                    de = NULL;
-                if(*vv != '\0')
-                {
-                    meUByte *ov=NULL;
-                    ll = strlen((char *) ss)+1;
-                    if(de != NULL)
-                        ll += strlen((char *) de)+2;
-                    if(ll > cookie->buffLen)
+                    else
+                        de = NULL;
+                    if(*vv != '\0')
                     {
-                        ov = cookie->value;
-                        ll = ((ll + 256) & ~15);
-                        if((cookie->value = (meUByte *) malloc(ll)) == NULL)
-                        {
-                            if(io->urlOpts & meSOCKOPT_LOG_WARNING)
-                                ffSUrlLogger(io,meSOCKOPT_LOG_WARNING,(meUByte *) "meSock Error: Cookie malloc failure");
-                            ll = 0;
-                        }
-                        cookie->buffLen = ll;
-                    }
-                    if((dd = cookie->value) != NULL)
-                    {
+                        meUByte *ov=NULL;
+                        ll = strlen((char *) ss)+1;
                         if(de != NULL)
+                            ll += strlen((char *) de)+2;
+                        if(ll > cookie->buffLen)
                         {
-                            if(de == dd)
+                            ov = cookie->value;
+                            ll = ((ll + 256) & ~15);
+                            if((cookie->value = (meUByte *) malloc(ll)) == NULL)
                             {
-                                while(*dd++ != '\0')
-                                    ;
+                                if(io->urlOpts & meSOCKOPT_LOG_WARNING)
+                                    ffSUrlLogger(io,meSOCKOPT_LOG_WARNING,(meUByte *) "meSock Error: Cookie malloc failure");
+                                ll = 0;
                             }
-                            else
-                            {
-                                while((*dd++ = *de++) != '\0')
-                                    ;
-                            }
-                            dd[-1] = ';';
-                            *dd++ = ' ';
+                            cookie->buffLen = ll;
                         }
-                        while((*dd++ = *ss++) != '\0')
+                        if((dd = cookie->value) != NULL)
+                        {
+                            if(de != NULL)
+                            {
+                                if(de == dd)
+                                {
+                                    while(*dd++ != '\0')
+                                        ;
+                                }
+                                else
+                                {
+                                    while((*dd++ = *de++) != '\0')
+                                        ;
+                                }
+                                dd[-1] = ';';
+                                *dd++ = ' ';
+                            }
+                            while((*dd++ = *ss++) != '\0')
+                                ;
+                        }
+                        if(ov != NULL)
+                            free(ov);
+                    }
+                    else if(de == NULL)
+                        cookie->value[0] = '\0';
+                    else if(de != cookie->value)
+                    {
+                        dd = cookie->value;
+                        while((*dd++ = *de++) != '\0')
                             ;
                     }
-                    if(ov != NULL)
-                        free(ov);
-                }
-                else if(de == NULL)
-                    cookie->value[0] = '\0';
-                else if(de != cookie->value)
-                {
-                    dd = cookie->value;
-                    while((*dd++ = *de++) != '\0')
-                        ;
                 }
             }
         }
@@ -2283,6 +2323,7 @@ meSockFtpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *user
         meSockClose(io,1);
     io->urlLen = -2;
     io->chkLen = 0;
+    io->timeout = meSOCKET_TIMEOUT;
     if(meSockIsInUse(io))
     {
         io->urlFlags = (io->urlFlags & (meSOCKFLG_USE_SSL|meSOCKFLG_EXPLICIT_SSL|meSOCKFLG_CTRL_SHUTDOWN)) | (flags & ~(meSOCKFLG_USE_SSL|meSOCKFLG_EXPLICIT_SSL));

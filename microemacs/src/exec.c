@@ -329,8 +329,8 @@ meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
                     {
                         while((*ss))
                         {
-                            ss++ ;
-                            size-- ;
+                            ss++;
+                            size--;
                         }
                     }
                     if(len >= size)
@@ -401,52 +401,52 @@ meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
         else if((buff[0] != '@') || (buff[1] != 'm') || (buff[2] != 'n'))
         {
             /* evaluate it */
-            res = getval(buff) ;
+            res = getval(buff);
 #if MEOPT_BYTECOMP
 chk_cpy_res:
 #endif
             if(res != (meUByte *) abortm)
             {
-                ss = buffer ;
+                ss = buffer;
                 if(option & MLMACNORT)
                 {
                     while((*ss))
                     {
-                        ss++ ;
-                        size-- ;
+                        ss++;
+                        size--;
                     }
                 }
                 if(option & MLFFZERO)
                 {
                     while((--size > 0) && ((cc = *res++) != '\0'))
-                        *ss++ = cc ;
+                        *ss++ = cc;
                 }
                 else
                 {
-                    for(; ((--size) > 0) && ((cc = *res++) != '\0') ; )
+                    for( ; ((--size) > 0) && ((cc = *res++) != '\0') ; )
                     {
                         if((cc == meCHAR_LEADER) && ((cc = *res++) != meCHAR_TRAIL_LEADER))
-                            break ;
-                        *ss++ = cc ;
+                            break;
+                        *ss++ = cc;
                     }
                 }
-                *ss = '\0' ;
-                return meTRUE ;
+                *ss = '\0';
+                return meTRUE;
             }
             if(((buff[0] != '\0') && (buff[0] != ';')) || (option & MLEXECNOUSER))
             {
-                *buffer = '\0' ;
-                return meFALSE ;
+                *buffer = '\0';
+                return meFALSE;
             }
         }
         /* if @mna (get all input from user) then rewind the execstr */
         else if(buff[3] == 'a')
-            execstr = ss ;
+            execstr = ss;
     }
     if(prompt == NULL)
     {
-        *buffer = '\0' ;
-        return ctrlg(meFALSE,1) ;
+        *buffer = '\0';
+        return ctrlg(meFALSE,1);
     }
     return meGetStringFromUser(prompt, option, defnum, buffer, size) ;
 }

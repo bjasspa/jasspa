@@ -1426,6 +1426,8 @@ struct s_DragAndDrop
 #define meSOCKFLG_CHUNKED       0x0400
 #define meSOCKFLG_CLOSE         meSOCKOPT_CLOSE
 
+#define meSOCKET_TIMEOUT        115000
+
 #define ftpERROR        -1
 #define ftpPOS_PRELIMIN  1
 #define ftpPOS_COMPLETE  2
@@ -1478,6 +1480,7 @@ typedef struct meIo {
     meRegNode *passwdReg;
     meBuffer  *urlBp;
     time_t     startTime;
+    int        timeout;
     int        length;
 
     meUShort   urlOpts;                 /* Option flags such as logging etc */

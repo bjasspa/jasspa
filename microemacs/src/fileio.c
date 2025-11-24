@@ -250,7 +250,6 @@ ffUrlGetType(meUByte *url)
 
 #include <stdarg.h>
 
-#define meSOCKET_TIMEOUT      115000
 #define meBUF_SOCK_SIZE_MAX   (((meSOCK_BUFF_SIZE) > (meBUF_SIZE_MAX)) ? (meSOCK_BUFF_SIZE) : (meBUF_SIZE_MAX))
 
 static meUByte *ffUrlFlagsVName[2]={(meUByte *)"http-flags",(meUByte *)"ftp-flags"};
@@ -337,7 +336,10 @@ ffCloseSockets(meIo *io, int force)
             io->urlOpts &= ~meSOCKOPT_SHOW_STATUS;
         
         if(meSockClose(io,force))
-            timerSet(SOCKET_TIMER_ID,-1,meSOCKET_TIMEOUT);
+            /* TODO: If user is using socket comms for both read & write this can go wrong, most likely way is a
+             * http read with, say, a 5sec timeout, which sets the timeout to 4.5sec, followed by an ftp write with
+             * a default timeout, 115sec and the initial 4.5sec timeout is lost. Should check and choose lowest */
+            timerSet(SOCKET_TIMER_ID,-1,io->timeout);
     }
     ffremain = 0;
 }
