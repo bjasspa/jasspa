@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd003.2,v 2.7 2025/08/28 02:12:40 jon Exp $
+.Id $Id: m2cmd003.2,v 2.7 2025/11/25 00:46:08 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH add-file-hook 2
@@ -70,6 +70,8 @@ file name string. As a result, files such as \fImakefile\fR, which do not have a
 using "\fCimakefile\fR".
 .IP \fIfhook-name\fR
 The name of the file hook to execute. This is the name of the macro to execute that initializes the buffer. 
+.IP \fImacro1-name\fR
+Optional list of additional supporting macros located in the hook definition file, see notes section below.
 .LP
 As an example:-
 .Me $emf-scheme
@@ -166,12 +168,12 @@ A regular expression string defining the text to be searched for.
 .IP \fIfhook-name\fR
 The name of the file hook to execute. This is the name of the macro to execute
 that will initialize the buffer. 
+.IP \fImacro1-name\fR
+Optional list of additional supporting macros located in the hook definition file, see notes section below.
 .LP
-The search commences from the first non-blank line in the file, if the regular
-expression,  defined  by  \fIextensions\fR  is  located  then  the  file  hook
-\fIfhook-name\fR is invoked. This is typically used to identify files which do
-not have file  extensions i.e.  \s-1UNIX\s0  shell script files. To identify a
-shell script file which commences with:-
+The search commences from the first non-blank line in the file, if the regular expression, defined by \fIextensions\fR
+is located then the file hook \fIfhook-name\fR is invoked. This is typically used to identify files which do not have
+file extensions i.e. \s-1UNIX\s0 shell script files. To identify a shell script file which commences with:-
 .LP
 .CS 0
 #!/bin/sh
@@ -226,6 +228,19 @@ fhook-make
 Optionally \fBadd-file-hook\fP can be given a list of macros, defined within the hook file
 \fBhk\fR\fIname\fR\fB.emf\fR, the command will define the macros in the same way as command
 .Ht define-macro-file 2 .
+Only macros useful before a file of the given type is created or loaded should be defined as loading the hook will 
+define all macros within it.
+.PP
+The numeric argument given when the \fB$buffer-fhook\fR macro is executed is a bit based flag where the bits have the 
+following meaning:
+.IP \fB0x01\fR
+When this bit is set the buffer is for a file that already exists, when clear the buffer is for a new file so the 
+\fBfhook\fR should handle the insertion of any required file templates etc.
+.IP \fB0x02\fR
+If this bit is set a file content hook was used to identify the file type and registry variable
+.Hl #l9 Variables 4
+will be set to the matched magic string. This can be useful as the magic string often contains configuration values such as 
+the tab and indent width.
 .SS "Automatic Macro File Loading"
 .B add-file-hook
 performs an automatic load of a macro file if the \fBfhook\fR macro is not present in memory. The file name of the

@@ -47,7 +47,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <251005.1328>
+;         > Modified:     <251125.0022>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -223,7 +223,8 @@ execute-file "docutl"
 ; Defualt body of a fhook
 define-macro doc-fhook-body
   set-variable #l1 @1
-  ; if arg is 0 this is a new file so add template
+  set-variable #l9 &con &band @# 2 #p9 ""
+  ; if bit 1 of arg is clear this is a new file so add template
   @# buffer-init #l1
   ; Over-ride any special document modes
   set-variable #l0 &ind &spr ".fhook-%s.setup" #l1

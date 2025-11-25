@@ -14,7 +14,7 @@
   1 buffer-mode "wrap"
   1 buffer-mode "indent"
   1 buffer-mode "justify"
-  @# buffer-init "mail"
+  buffer-init "mail"
   ; Must explictily setup the auto-spell reset and abbrev as there is no fhook
   set-variable :auto-spell-reset "mail"
   buffer-init-hooks

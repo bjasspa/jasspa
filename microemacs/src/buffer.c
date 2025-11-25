@@ -342,14 +342,16 @@ setBufferContext(meBuffer *bp)
     if(bp->fhook >= 0)
     {
         /* copy the magic string identifier or "" to fhook's #l9 */
+        ii = (bp->intFlag & BIFFILE) ? 1:0;
         if(ml)
         {
             if(ml >= meBUF_SIZE_MAX)
                 ml = meBUF_SIZE_MAX - 1;
-            meStrncpy(meRegCurr->next->val[9],meLineGetText(tlp)+meRegexStrCmp.group[0].start,ml);
+            memcpy(meRegCurr->next->val[9],meLineGetText(tlp)+meRegexStrCmp.group[0].start,ml);
+            ii |= 2;
         }
         meRegCurr->next->val[9][ml] = '\0';
-        execBufferFunc(bp,bp->fhook,meEBF_ARG_GIVEN,(bp->intFlag & BIFFILE));
+        execBufferFunc(bp,bp->fhook,meEBF_ARG_GIVEN,ii);
     }
 }
 #endif

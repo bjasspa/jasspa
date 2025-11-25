@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m5var002.5,v 2.6 2024/10/20 17:14:14 jon Exp $
+.Id $Id: m5var002.5,v 2.6 2025/11/24 19:27:35 jon Exp $
 .Im MicroEmacs variable|macrodevelop
 .so me.tni
 .TH $buffer-fhook 5
@@ -50,15 +50,13 @@ When the buffer is swapped out from being the current buffer.
 .LP
 The variable \fB$buffer-fhook\fR is largely redundant as the file hook is executed only once and before it can be
 set. Its main use is within macros which wish to ascertain what type of buffer it is executing on, i.e. if a command
-was to be executed only on c file then the follow ensures that this is the case:
+was to be executed only on C files then the follow ensures that this is the case:
 .Me $emf-scheme
 .CS
-!if &not &seq $buffer-fhook "fhook-cmode"
-    !abort
-!endif
+!iif &not &seq $buffer-fhook "fhook-c"  !abort
 .CE
 .Me $ehf-scheme
-Where the command \fIfhook-cmode\fR is the c file hook.
+Where the command \fIfhook-c\fR is the C file hook.
 .PP
 \fBdhooks\fR are executed when a buffer is deleted, but before the contents of the buffer are lost. Note that dhooks
 will not be called if the buffer never becomes active, or if \*(mS quits due to the receipt of a panic signal.

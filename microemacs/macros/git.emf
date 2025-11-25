@@ -960,7 +960,7 @@ define-macro git-push
   !endif
   1 buffer-mode "view"
   -1 buffer-mode "edit"
-  @# buffer-init "git-status"
+  buffer-init "git-status"
   set-variable :sc &lfind .fhook-dirlst.sc-detect "git-dirlst-detect"
   set-variable :tag-count 0
   set-variable :mouse-pick-1 dirlst-mouse-pick-1

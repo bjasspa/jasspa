@@ -1624,7 +1624,7 @@ set-variable .svn-resolve.av "|base|working|mine-full|theirs-full|"
     !endif
     -1 buffer-mode "edit"
     1 buffer-mode "view"
-    @# buffer-init "svn-status"
+    buffer-init "svn-status"
     set-variable :sc &lfind .fhook-dirlst.sc-detect "svn-dirlst-detect"
     set-variable :tag-count 0
     set-variable :mouse-pick-1 dirlst-mouse-pick-1

@@ -583,7 +583,7 @@ define-macro grep
   !if &sin "&" &lget #l9 1
     @# find-proc-spawn "*grep*" "grep" #l5 #l8
     popup-window "*grep*"
-    1 buffer-init "grep"
+    buffer-init "grep"
     set-variable :mouse-word-select "mouse-get-next-line"
     buffer-init-hooks
     !return
@@ -630,7 +630,7 @@ define-macro grep
     !done
   !else
     set-variable $window-line 3
-    1 buffer-init "grep"
+    buffer-init "grep"
     set-variable :mouse-word-select "mouse-get-next-line"
     buffer-init-hooks
     ml-write #l0
@@ -704,7 +704,7 @@ define-macro find
   !if &sin "&" &lget #l9 1
     @# find-proc-spawn "*find*" "find" #l5 #l8
     popup-window "*find*"
-    1 buffer-init "find"
+    buffer-init "find"
     set-variable :tag-count 0
     set-variable :mouse-pick-1 dirlst-mouse-pick-1
     set-variable :mouse-drop-1 dirlst-mouse-drop-1
@@ -777,7 +777,7 @@ define-macro find
   !else
     -1 buffer-mode "edit"
     1 buffer-mode "view"
-    1 buffer-init "find"
+    buffer-init "find"
     set-variable :tag-count 0
     set-variable :mouse-pick-1 dirlst-mouse-pick-1
     set-variable :mouse-drop-1 dirlst-mouse-drop-1

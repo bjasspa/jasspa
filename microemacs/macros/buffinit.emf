@@ -103,16 +103,19 @@ define-macro-file hktlsosd major-mode-tools-setup
 !emacro
 
 0 define-macro buffer-init
-  set-variable #l9 #p9
+  !if &band @# 2
+    set-variable #l9 #p9
+  !else
+    set-variable #l9 ""
+  !endif
   set-variable $buffer-fhook &cat "fhook-" &set #l8 @1
   buffer-command-setup
   set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
-  !if &not @#
-    !if &sin "n" #l0
-      !force set-variable #l1 @2
-      !iif &not $status  set-variable #l1 #l8
-      !force 0 insert-template #l1
-    !endif
+  !if &band @# 1
+  !elif &sin "n" #l0
+    !force set-variable #l1 @2
+    !iif &not $status  set-variable #l1 #l8
+    !force 0 insert-template #l1
   !endif
   !if &set #l1 &reg &spr "/history/fhook/%s-tab-width" #l8 "0"
     set-variable $buffer-tab-width #l1
@@ -176,7 +179,7 @@ define-macro-file hktlsosd major-mode-tools-setup
   !endif
   !if &or &exi &ind &spr ".%s.fold" $buffer-fhook &sin "fold-open:" #l9
     !force 0 fold-setup #l9
-    !iif &not $status !jump 2
+    !tjump &not $status 2
   !elif &sin "f" #l0
     buffer-bind-create "b" "f2" "" collapse-current
     buffer-bind-create "b" "C-f2" "" collapse-all

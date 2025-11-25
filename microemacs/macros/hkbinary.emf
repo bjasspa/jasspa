@@ -11,14 +11,8 @@
 define-macro-file bintools bin-move-backward bin-move-forward bin-copy-region bin-yank bin-insert-hex-string bin-insert-string bin-hex-search-forward bin-search-forward
 define-macro fhook-binary
   !if &not &bmod "binary"
-    !if &seq $buffer-fname ""
-      ml-write "[Buffer has no file name]"
-      !abort
-    !endif
-    !if &bmod "edit"
-      ml-write "[Buffer has been changed]"
-      !abort
-    !endif
+    !iif &seq $buffer-fname ""  -8 ml-write "[Buffer has no file name]"
+    !iif &bmod "edit"  -8 ml-write "[Buffer has been changed]"
     beginning-of-buffer
     set-mark
     end-of-buffer
@@ -42,21 +36,18 @@ set-variable .fhook-binary.command-kbind "|tab||S-up|S-down|C-x s|esc s|||||A-C-
 set-variable .fhook-binary.command-desc  "|S\Hwap section||Move \Hbackward|Move \Hforward|\HSearch forward (txt)|Search forward (he\Hx)||\HInsert string|Insert \Hhex string||Binary \Hcopy region|Binary \Hyank|"
 
 !if &and &sin "h" .fhook-binary.setup &band .hilight.flags 0x02
-  !if &not &exist .hilight.binary
-    set-variable .hilight.binary &pinc .hilight.next 1
-  !endif
-  0 hilight .hilight.binary 0         $global-scheme
+  !iif &not &exist .hilight.binary  set-variable .hilight.binary &pinc .hilight.next 1
+  0 hilight .hilight.binary 0 $global-scheme
   hilight .hilight.binary 0x400  0  9 .scheme.no2
   hilight .hilight.binary 0x400 58 78 .scheme.no1
 !endif
 
 define-macro bin-swap-section
-  !if &gre $window-col 9
-    !if &les $window-col 62
-      set-variable $window-col &add 62 &div &sub $window-col 10 3
-    !else
-      set-variable $window-col &add 10 &mul &sub $window-col 62 3
-    !endif
+  !if &les $window-col 10
+  !elif &les $window-col 62
+    set-variable $window-col &add 62 &div &sub $window-col 10 3
+  !else
+    set-variable $window-col &add 10 &mul &sub $window-col 62 3
   !endif
 !emacro
 

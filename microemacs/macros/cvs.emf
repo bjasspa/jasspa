@@ -1201,7 +1201,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     !if &seq #l6 "*cvs-state*"
       set-variable $window-line 3
       insert-string "\n Attr Name  <Order by Extension>"
-      @# buffer-init "cvs-state"
+      buffer-init "cvs-state"
       set-variable :sc &lfind .fhook-dirlst.sc-detect "cvs-dirlst-detect"
       set-variable :fmpf 6
       set-variable :tag-count 0

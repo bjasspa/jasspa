@@ -974,7 +974,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
     insert-string "\n Attr Name  <Order by Extension>"
     -1 buffer-mode "edit"
     1 buffer-mode "view"
-    @# buffer-init "cc-state"
+    buffer-init "cc-state"
     set-variable :sc &lfind .fhook-dirlst.sc-detect "cc-dirlst-detect"
     set-variable :fmpf 6
     set-variable :tag-count 0
