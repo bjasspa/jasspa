@@ -126,7 +126,7 @@ define-macro fhook-ehf
       !done
     !endif
     beginning-of-buffer
-    !force replace-string "\\(\CC\\(\\m\\)[^\CC\n]*\\)\n\\( *\\)" "\\1\CCA\n\\3\CC\\2"
+    !force replace-string "\\(\CC\\([B-z]\\)[^\CC\n]*\\)\n\\( *\\)" "\\1\CCA\n\\3\CC\\2"
     beginning-of-buffer
     !force replace-string "\\(\CDm[^\CD\n]*\\)\n\\( *\\)" "\\1\CDn\n\\2\CDn"
     beginning-of-buffer
