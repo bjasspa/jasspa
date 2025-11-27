@@ -139,7 +139,8 @@ set-variable .fhook-md.item-list-r3 "H2 \CCb\\1\CCA"
   hilight   .hilight.mdU 0x80 ")" .hilight.md          .scheme.hide
 
   ; Code blocks
-  hilight .hilight.md 1 "`[^`]+`"     .scheme.code
+  hilight .hilight.md 1 "`[^`]+`"         .scheme.code
+  hilight .hilight.md 1 "`` `[^`]+` ``"   .scheme.code  ; backticks in backticks
   hilight .hilight.md 0x220 "```"
   hilight .hilight.md 0x0a0 "```.*"   .hilight.mdC .scheme.hide
 
