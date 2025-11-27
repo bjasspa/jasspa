@@ -8,74 +8,25 @@
 ; Synopsis:    Command-line macro for creating a macros (emf) tags file
 ; Authors:     Steven Phillips
 ;
-; Usage:
-;      me "@emftags" [<files> <dirs>] [-f -o<options> -t<tag_file> -m<file_mask> -i<ignore_files>]
+; Notes:       See gentagsc.emf for usage & info
 ;
-; Options:
-;      r - recurse, a - append, m - multiple links to a tag, p - prototypes
-;
-set-variable %tag-option   ""
-set-variable %tag-file     "tags"
+set-variable %tag-id "emf"
 set-variable %tag-filemask ":*.emf:"
-set-variable %tag-ignore   ":SCCS/:CVS/:.git/:.svn/:"
-; set $auto-time to 0 to stop issues with any existing <file># files
-set-variable $auto-time 0
-
-set-variable #l0 0
-!while &exi &cat ".about.arg" #l0
-  set-variable #l2 &ind &cat ".about.arg" &pinc #l0 1
-  set-variable #l1 &lef #l2 2
-  set-variable #l2 &rig #l2 2
-  !if &seq #l1 "-o"
-    set-variable %tag-option #l2
-  !elif &seq #l1 "-t"
-    set-variable %tag-file #l2
-  !elif &seq #l1 "-m"
-    set-variable %tag-filemask #l2
-  !elif &seq #l1 "-i"
-    set-variable %tag-ignore #l2
-  !endif
-!done
-
+!iif &not &exi gentags  execute-file "gentagsc"
 set-char-mask "2" "-$&#!%:@"
-
-define-macro emftags-add-tag
-  forward-word
-  set-variable #l1 $window-col
-  backward-word
-  set-variable #l1 &mid @wl $window-col &sub #l1 $window-col
-  set-variable #l3 @wl
-  next-window
-  !tjump &sin "m" %tag-option 4
-  beginning-of-buffer
-  !force search-forward &spr "^%s\t" #l1
-  !if &not $status
-    end-of-buffer
-    insert-string #l1
-    insert-string "\t"
-    insert-string #p9
-    insert-string "\t/^"
-    insert-string #l3
-    insert-string "$/"
-  !endif
-  next-window
-!emacro
 
 define-macro emftags-add-file
   set-variable $buffer-mask "luh12"
   set-variable #l9 $buffer-fname
-  !if &seq &lef #l9 %tag-plen %tag-path
-    set-variable #l9 &rig #l9 %tag-plen
-  !endif
+  !iif &seq &lef #l9 %tag-plen %tag-path  set-variable #l9 &rig #l9 %tag-plen
   ml-write &spr "[Parsing file %s]" #l9
   1 buffer-mode "magic"
   beginning-of-buffer
   !repeat
-    !force search-forward "^[ \t]*[01]?[ \t]*define-macro[ \t]"
-    !if $status
-      emftags-add-tag
-    !endif
-  !until &not $status
+    !force search-buffer "me" "^[ \t]*[01]?[ \t]*define-macro[ \t]\\(\\w+\\)"
+    !iif &not $status !break
+    gentags-add-tag @s1
+  !done
   !if &sin "p" %tag-option
     beginning-of-buffer
     !repeat
@@ -86,94 +37,20 @@ define-macro emftags-add-file
         !if $status
           !iif &not &equ #l0 $window-line  backward-word
         !endif
-        backward-word
         !repeat
-          emftags-add-tag
-          !force 2 forward-word
-          !iif &sub #l0 $window-line  !break
           backward-word
-        !done
+          set-mark
+          forward-word
+          copy-region
+          set-variable #l1 @y
+          -1 yank
+          gentags-add-tag #l1
+          !force forward-word
+        !until &gre $window-line #l0
         beginning-of-line
       !endif
     !until &not $status
   !endif
-!emacro
-
-define-macro emftags-parse-tags
-  ml-write "All done! Parsing tags file."
-  beginning-of-buffer
-  set-mark
-  replace-string "\\\\" "\\\\\\\\"
-  end-of-buffer
-  sort-lines
-!emacro
-
-define-macro emftags-process-buffers
-  !repeat
-    set-variable #l0 $buffer-bname
-    !if &xse #l0 "^.*<[0-9]*>$"
-      set-variable #l1 &lef #l0 &sub &rsin "<" #l0 1
-    !else
-      set-variable #l1 #l0
-    !endif
-    !if &iseq #l1 %tag-bname
-      !return
-    !elif &lfind %tag-ignore #l1
-    !elif &band $buffer-fmod 0x10000
-      set-variable #l2 $buffer-fname
-      set-variable #l3 0
-      !while &not &seq &set #l4 &lget %tag-filemask &inc #l3 1 ""
-        !force find-file &cat #l2 #l4
-        !iif &seq $buffer-fname &cat #l2 #l4  !force 0 delete-buffer $buffer-bname
-      !done
-    !else
-      beginning-of-buffer
-      !force emftags-add-file
-      !if &not $status
-        ml-write &spr "[Warning: emftags-add-file failed on \"%s\"]" $buffer-fname
-        !bell
-        ;set-variable #l9 @cq
-      !endif
-    !endif
-    0 delete-buffer #l0
-  !until 0
-!emacro
-
-define-macro emftags
-  !iif &seq &lget %tag-filemask 1 ""  -8 ml-write "[No input file mask set!]"
-  delete-other-windows
-  split-window-vertically
-  find-buffer "*scratch*"
-  set-variable #l0 &stat "a" "."
-  find-file %tag-file
-  set-variable %tag-bname $buffer-bname
-  -1 buffer-mode "view"
-  !force 0 delete-buffer "*scratch*"
-  set-variable %tag-path &lef $buffer-fname &set %tag-plen &rsin "/" $buffer-fname
-  !if &not &sin "a" %tag-option
-    beginning-of-buffer
-    set-mark
-    end-of-buffer
-    -1 kill-region
-  !else
-    end-of-buffer
-  !endif
-  !if &sin "r" %tag-option
-    set-variable %tag-filemask &lins %tag-filemask -1 "[^.]*/"
-  !endif
-  1 buffer-mode "magic"
-  1 buffer-mode "exact"
-  next-window
-  !if &iseq $buffer-bname %tag-bname
-    !force find-file #l0
-  !endif
-  emftags-process-buffers
-  emftags-parse-tags
-!emacro
-
-define-macro start-up
-  emftags
-  quick-exit
 !emacro
 
 ; load in user extensions if found

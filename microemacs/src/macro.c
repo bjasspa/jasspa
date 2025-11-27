@@ -495,14 +495,16 @@ try_again:
             {
                 if(sect[1] == '5')
                 {
-                    meUByte line[meBUF_SIZE_MAX], *ss;
+                    meUByte line[meBUF_SIZE_MAX+16], *ss;
                     if((ss = getval(item)) != NULL)
                     {
-                        addLineToEob(bp,(meUByte *)"\n\n\003BVALUE\003A\n");
+                        addLineToEob(bp,(meUByte *)"\n\n\003BVALUE\003A\n\004B");
                         meStrcpy(line,"    \"");
-                        meStrncpy(line+5,ss,meBUF_SIZE_MAX-13);
-                        line[meBUF_SIZE_MAX-2] = '\0';
-                        meStrcat(line,"\"");
+                        ii = expandexp(-1,ss,meBUF_SIZE_MAX+16-9,5,line,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO) ;
+                        line[ii++] = '"';
+                        line[ii++] = '\x04';
+                        line[ii++] = 'A';
+                        line[ii] = '\0';
                         addLineToEob(bp,line);
                     }
                 }

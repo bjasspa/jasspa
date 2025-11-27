@@ -1,0 +1,130 @@
+; -!- emf -!-
+; Copyright (c) 2025 JASSPA (www.jasspa.com).
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Frame work for generating tags file
+; Authors:     Steven Phillips & Detlef Groth
+;
+; Usage:
+;      me "@<tag-id>tags" [<files> <dirs>] [-f -o<options> -t<tag_file> -m<file_mask> -i<ignore_files>]
+;
+; Options:
+;      r - recurse, a - append, m - multiple links to a tag, p - prototypes
+;
+!iif &not &exi %tag-file  set-variable %tag-file "tags"
+!iif &not &exi %tag-ignore  set-variable %tag-ignore ":SCCS/:CVS/:.git/:.svn/:"
+!iif &not &exi %tag-option  set-variable %tag-option ""
+; set $auto-time to 0 to stop issues with any existing <file># files
+set-variable $auto-time 0
+
+set-variable #l0 0
+!while &exi &cat ".about.arg" #l0
+  set-variable #l2 &ind &cat ".about.arg" &pinc #l0 1
+  set-variable #l1 &lef #l2 2
+  set-variable #l2 &rig #l2 2
+  !if &seq #l1 "-o"
+    set-variable %tag-option #l2
+  !elif &seq #l1 "-t"
+    set-variable %tag-file #l2
+  !elif &seq #l1 "-m"
+    set-variable %tag-filemask #l2
+  !elif &seq #l1 "-i"
+    set-variable %tag-ignore #l2
+  !endif
+!done
+
+; @1 = the tag to add, cursor (dot) must be on the right line and #p9 = file name 
+define-macro gentags-add-tag
+  set-variable #l1 @1
+  set-variable #l3 @wl
+  next-window
+  !if &not &sin "m" %tag-option
+    beginning-of-buffer
+    !force search-buffer "me" &spr "^%s\t" &xrep #l1 "[\\\\[*+.?^$]" "\\\\\\0"
+    !if &status
+      next-window
+      !return
+    !endif
+  !endif
+  end-of-buffer
+  insert-string #l1
+  insert-string "\t"
+  insert-string #p9
+  insert-string "\t/^"
+  !if &gre &len #l3 1000
+    insert-string &lef #l3 1000
+    insert-string "/"
+  !else
+    insert-string #l3
+    insert-string "$/"
+  !endif
+  next-window
+!emacro
+
+define-macro gentags-parse-tags
+  ml-write "All done! Parsing tags file."
+  beginning-of-buffer
+  set-mark
+  replace-string "\\\\" "\\\\\\\\"
+  end-of-buffer
+  sort-lines
+!emacro
+
+define-macro gentags-process-buffers
+  !while &not &seq &set #l0 $buffer-bname %tag-bname
+    !if &xse #l0 "^.*<[0-9]*>$"
+      set-variable #l1 &lef #l0 &sub &rsin "<" #l0 1
+    !else
+      set-variable #l1 #l0
+    !endif
+    !if &lfind %tag-ignore #l1
+    !elif &band $buffer-fmod 0x10000
+      set-variable #l2 $buffer-fname
+      set-variable #l3 0
+      !while &not &seq &set #l4 &lget %tag-filemask &inc #l3 1 ""
+        !force find-file &cat #l2 #l4
+        !iif &seq $buffer-fname &cat #l2 #l4  !force 0 delete-buffer $buffer-bname
+      !done
+    !else
+      beginning-of-buffer
+      !force execute-named-command &cat %tag-id "tags-add-file"
+      !iif &not $status  !force -8 ml-write &spr "[Warning: %stags-add-file failed on \"%s\"]" %tag-id $buffer-fname
+    !endif
+    0 delete-buffer #l0
+  !done 0
+!emacro
+
+define-macro gentags
+  !iif &seq &lget %tag-filemask 1 ""  -8 ml-write "[No input file mask set!]"
+  delete-other-windows
+  split-window-vertically
+  find-buffer "*scratch*"
+  set-variable #l0 &stat "a" "."
+  find-file %tag-file
+  set-variable %tag-bname $buffer-bname
+  -1 buffer-mode "view"
+  !force 0 delete-buffer "*scratch*"
+  set-variable %tag-path &lef $buffer-fname &set %tag-plen &rsin "/" $buffer-fname
+  !if &sin "a" %tag-option
+    end-of-buffer
+  !else
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+  !endif
+  !iif &sin "r" %tag-option  set-variable %tag-filemask &lins %tag-filemask -1 "[^.]*/"
+  1 buffer-mode "magic"
+  1 buffer-mode "exact"
+  next-window
+  !iif &seq $buffer-bname %tag-bname  !force find-file #l0
+  gentags-process-buffers
+  gentags-parse-tags
+!emacro
+
+0 define-macro start-up
+  !force !force !force gentags
+  quick-exit
+!emacro

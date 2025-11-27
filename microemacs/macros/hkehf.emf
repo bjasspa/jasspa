@@ -98,7 +98,7 @@ define-macro fhook-ehf
       !repeat
         !force search-buffer "me" #l1
         !iif &not $status  !break
-        !if &equ &set #l5 &len @s0 3
+        !if &equ &set #l5 &len @s0 2
           !force search-buffer "Me" "\CDA"
         !elif &gre #l5 #l3
           set-variable #l5 &len @s1
