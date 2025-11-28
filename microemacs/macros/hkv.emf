@@ -14,10 +14,10 @@ define-macro fhook-v
 !emacro
 
 ; buffer-init variables
-; TODO: disable Tab mode
 set-variable .fhook-v.setup &reg "/history/fhook/v" "bdfghinopTx"
-set-variable .fhook-v.setup-mask "abdefghikmnopux"
+set-variable .fhook-v.setup-mask "abdefghikmnoptux"
 set-variable .fhook-v.comment "|/*| */|*| * | * |fr|"
+set-variable .fhook-v.tab-width 4
 
 set-variable .fhook-v.collapse-open  "^fn"
 set-variable .fhook-v.collapse-close "^}"
@@ -35,9 +35,7 @@ set-variable .fhook-v.item-list-r4 "\CCdstrc\CCA \CCb\\1\CCA"
 set-variable .fhook-v.item-list-s5 "^[\t ]*fn[\t ]+(\\w* +\\([1-9A-Za-z_]*\\)) *\\(\\w[1-9A-Za-z_]*\\)"
 set-variable .fhook-v.item-list-r5 "meth \CCb\\1.\\2\CCA"
 
-!if &not &exist .hilight.v
-  set-variable .hilight.v  &pinc .hilight.next 1
-!endif
+!iif &not &exist .hilight.v  set-variable .hilight.v  &pinc .hilight.next 1
 
 !if &and &sin "h" .fhook-v.setup &band .hilight.flags 0x02
   0 hilight .hilight.v 0x00 $global-scheme

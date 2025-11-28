@@ -490,7 +490,7 @@ set-variable .git-revision-op.lbl14 "|\HMaster|\HHead|\HPrevious to head|\HSpeci
         osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HProcess output - adds buttons etc" #l0 git-osd-cbc
       !elif &seq #l1 "R"
         osd .osd.git-osd &inc #l2 1 "fh" "    "
-        osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecurse - required to remove directories" #l0 git-osd-cbc
+        osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecurse - required to remove directories    " #l0 git-osd-cbc
       !elif &seq #l1 "r"
         osd .osd.git-osd &inc #l2 1 "fh" "    "
         osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Refresh directory \Hlisting" #l0 git-osd-cbc
@@ -1867,30 +1867,25 @@ define-macro git
   !endif
   osd @# 1  "" "Current \HStatus"    f git-status
   osd @# 5  "" "Check\Hout files"    f git-checkout
-  ; osd @# 10 "" "\HUpdate files"      f git-update
-  osd @# 30 "" "\HDiff files"        f git-diff
   osd @# 20 "" "\HCommit files"      f git-commit
+  osd @# 30 "" "\HDiff files"        f git-diff
   osd @# 100 "-"
   osd @# 160 "" "Clear \HGit console" f git-clear-console
   osd @# 170 "" "Git Setup"           f git-setup
   !if :tag-count
-    ;    osd @# 55 "" "\HCopy items"      f git-copy
+    osd @# 40 "" "Item \HLog"          f git-log
     osd @# 60 "" "\HMove items"      f git-move
     osd @# 70 "" "\HAdd items"       f git-add
     osd @# 80 "" "Remove items"      f git-remove
-    osd @# 120 "" "\HResolve conflicts" f git-resolve
   !else
-    ;    osd @# 55 "" "Copy items"
+    osd @# 40 "" "Item Log"
     osd @# 60 "" "Move items"
     osd @# 70 "" "Add items"
     osd @# 80 "" "Remove items"
-    osd @# 120 "" "Resolve conflicts"
   !endif
   !if &equ :tag-count 1
-    osd @# 40 "" "Item \HLog"          f git-log
     osd @# 50 "" "Item \HBlame"        f git-blame
   !else
-    osd @# 40 "" "Item Log"
     osd @# 50 "" "Item Blame"
   !endif
 !emacro

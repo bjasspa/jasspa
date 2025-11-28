@@ -391,7 +391,6 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \CCb\\1\CCA"
   indent .hilight.tcl i ";\\s*#"
 !endif
 
-!iif &not &exi tcl-tclsh-setup  execute-file "tcltools"
 ; setup file-* tools
 add-next-line "*tcl-exec*" "^ *(file \"%f\" line %l)"
 add-next-line "*tcl-lint*" "^%f:%l:\\d+: "
@@ -399,6 +398,5 @@ set-variable .fhook-tcl.coms "\btclsh\btclsh8.6\btclsh9.0\b"
 set-variable .fhook-tcl.exec1   "\b%v[com]\b\b\b\b%v[com] %\"%f%\" %v[args|20|Additional command-line arguments|]\b"
 set-variable .fhook-tcl.format1 "\btclfmt\b\b\b\btclfmt --in-place %\"%f%\"\bTclfmt\b"
 set-variable .fhook-tcl.lint1   "\btclint\b\b\b\btclint %\"%f%\"\bTclint\b"
-
 
 buffer-init-fhook "tcl"

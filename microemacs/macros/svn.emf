@@ -2123,8 +2123,8 @@ define-macro svn
   osd @# 1  "" "Current \HStatus"    f svn-status
   osd @# 5  "" "Check\Hout files"    f svn-checkout
   osd @# 10 "" "\HUpdate files"      f svn-update
-  osd @# 30 "" "\HDiff files"        f svn-diff
   osd @# 20 "" "\HCommit files"      f svn-commit
+  osd @# 30 "" "\HDiff files"        f svn-diff
   osd @# 100 "-"
   osd @# 160 "" "Clear S\HVN console" f svn-clear-console
   osd @# 170 "" "SVN Setup"           f svn-setup

@@ -14,7 +14,6 @@ define-macro fhook-rust
 !emacro
 
 ; buffer-init variables
-; TODO: disable Tab mode
 set-variable .fhook-rust.setup &reg "/history/fhook/rust" "bdfghinoptx"
 set-variable .fhook-rust.setup-mask "abdefghikmnoptux"
 set-variable .fhook-rust.comment "|/*| */|*| * | * |fr|"
