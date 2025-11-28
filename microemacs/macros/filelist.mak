@@ -27,7 +27,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	fattrib.emf	favorite.emf	fileopen.emf	filetool.emf	\
 	filetype.emf	find.emf	fold.emf	\
 	format.emf	freebsd.emf	ftp.emf		\
-	games.emf	gdiff.emf	generict.emf	gentags.emf	\
+	games.emf	gdiff.emf	gentagsc.emf	gentags.emf	\
 	git.emf	\
 	hkada.emf	hkadoc.emf	hkapache.emf	hkapt.emf	\
 	hkasmx86.emf	\
