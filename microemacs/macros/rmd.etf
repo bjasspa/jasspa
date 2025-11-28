@@ -2,78 +2,13 @@
 title: Long Title
 author: $USER_NAME$
 date: 2023-11-01 18:22
-include-before: |
-    <style>
-    body { max-width: 1000px; font-family: Candara, sans-serif; margin: auto; }
-    pre  { font-family: Consolas; monospaced;  }
-    table { 
-        min-width: 400px; border-spacing: 5px;  
-        border-collapse: collapse; 
-        border-bottom: 2px solid #333333;
-    }
-    td, th { padding: 10px 20px; }
-    th { background-color: #eeeeee; border: 2px 0px; }
-    thead { border-top: 2px solid #333333; border-bottom: 2px solid #333333; }  
-    #abstract {
-        margin: 2.5em;
-        font-size: 90%;
-    }
-    h1, p.date, p.author { text-align: center }
-    </style>
 ---
 
-This document can be processed to HTML like this:
-
-```
-echo "library(knitr);knitr::knit('filename.Rmd',output='filename.md')" | Rscript -
-pandoc -o filename.html filename.md -s
-```
-
-```{r include=FALSE}
-knitr::opts_chunk$set(comment = "###")
-```
-
-```{r label=loading,results="hide",echo=TRUE}
-### load required packages:
-library(knitr)
-```
-**Abstract**
-
-<div id="abstract">
-Some text.
-</div>
-
-## Introduction
-
-Text
-
-## Data and Methods
-
-Text
-
-## Statistical Analysis
-
-Text
-
-## Results
-
-Text 
-
-## Discussion
-
-Text
-
-## Acknowledgment
-
-Text
-
-## References
-
-Text
+Delete the text which follows as it is just some example code for basic feature
+of writing reports in R Markdown.
 
 ## R Examples
 
-Delete the text which follows at the end:
 
 Data loading
 
@@ -85,6 +20,7 @@ summary(iris)
 Table example:
 
 ```{r label=table,results="asis"}
+library(knitr)
 knitr::kable(head(iris))
 ```
 
