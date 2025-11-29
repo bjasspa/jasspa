@@ -7,13 +7,14 @@
 .\"  Created By    : Detlef Groth & Steven Phillips
 .\"  Created       : Mon Aug 31 21:02:32 1998
 .\"
-.Id $Id: m3mac099.3,v 2.10 2025/07/30 08:28:47 dgroth Exp $
+.Id $Id: m3mac099.3,v 2.10 2025/11/28 22:31:04 dgroth Exp $
 .Im MicroEmacs command
 .so me.tni
 .TH file-exec 3
 .XI file-exec - "Executes  the  current  buffer with compiler/interpreter"
 .XI file-format - "Format the current buffer using the a formatter"
 .XI file-lint - "check the current buffer for problems using a linter"
+.XI major-mode-tools-setup - "File major-mode tool setup"
 .SH NAME
 .Me "|file-exec"
 file-exec - Executes the current buffer using a compiler or interpreter
@@ -23,6 +24,9 @@ file-format \- Format the current buffer using a dedicated formatter
 .br
 .Me "|file-lint"
 file-lint \- check the current buffer for problems using a dedicated linter
+.br
+.Me "|major-mode-tools-setup"
+major-mode-tools-setup \- File major-mode tool setup
 .Me $a
 .SH SYNOPSIS
 \fBfile-exec\fR [ "\fIcommand-line-arguments\fR" ]
@@ -30,41 +34,52 @@ file-lint \- check the current buffer for problems using a dedicated linter
 \fBfile-format\fR
 .br
 \fBfile-lint\fR
+.br
+\fBmajor-mode-tools-setup\fR
 .SH DESCRIPTION
-The  \fBfile-exec\fR  macro for  interpreted  languages  executes  the current
-buffer using the command line  interpreter  defined for this language. In case
-of  programming  languages  which  needs  to be  compiled,  first  the code is
-compiled to machine code and then executed. Before the program is executed
+The \fBfile-exec\fR macro for interpreted languages executes the current buffer using the command line interpreter
+defined for this language. In case of programming languages which needs to be compiled, first the code is compiled to
+machine code and then executed. Before the program is executed
 .Ht save-some-buffers 2
 is executed to allow the user to ensure that all relevant buffers are saved. If bit \fC0x01\fR of the numeric argument
 \fIn\fR is clear then all modified buffers are automatically saved, when set (the default) the user is prompted for
 each buffer. If bit 0x02 of the numeric argument is clear (the default) the user is prompted for any additional
-\fIcommand-line-arguments\fR  which are  passed to  application  or the script
-command. The arguments given are stored in a buffer variable, 
-and used as the default arguments next time the script is executed.
+\fIcommand-line-arguments\fR which are passed to application or the script command. The arguments given are stored in
+a buffer variable, and used as the default arguments next time the script is executed.
 .PP
-After executing the program, an  \fC*FHOOK-exec*\fR  buffer is opened with the
-output of the script or program. The script
-executes the current buffer if required using the current \*(mS character encodings.
+After executing the program, an \fC*FHOOK-exec*\fR buffer is opened with the output of the script or program. The
+script executes the current buffer if required using the current \*(mS character encodings.
 .PP
 The  \fBfile-format\fR  macro formats the current buffer using a dedicated 
 formatting  tool for the  buffer's  programming  language.  For R for example,
 the package `formatR` must be pre-installed
 by the user, this is typically done by running `install.packages('formatR')` within an R console.
 .PP
-The  \fBfile-lint\fR  macro checks the currently  edited file using a language
-specific linter, for example for R, the package  `lintr` must be installed by the
-user for instance using the usual `install.packages('lintr)` syntax from within a R console. 
+The \fBfile-lint\fR macro checks the currently edited file using a language specific linter, for example for R, the
+package `lintr` must be installed by the user for instance using the usual `install.packages('lintr)` syntax from
+within a R console. 
 .PP
 The command opens an \fC*FHOOK-lint*\fR buffer with the output from the linter, warnings or styling issues raised are 
 typically high-lighted. the buffer is configured to for
 .Ht get-next-line 2
 to make traverse through the issues as easy as possible.
 .SH SETUP
-To get the  command  \fBfile-exec\fR,  \fBfile-format\fR  and  \fBfile-lint\fR
-properly  working  a setup for the  relevant  tools for the  current  buffer's
-programming  language  is  usually  required.  The  setting  are are stored in
-variables like for instance for the C++ programming language:
+The \fBmajor-mode-tools-setup\fR command can be used to configure the three tools for the current file's major mode, 
+this dialog can be accessed by clicking on the bottom left \fBTools\fR button in the
+.Ht major-mode-setup 3
+dialog. Note, however, that as the tool configurations should work with all files of the same major-mode, the
+command-lines should use tags (\fC%\fR\fIl\fR...) rather than literal file names. Of particular importance are the
+\fB%f\fR, \fB%p\fR and \fB%"\fR tags, for further details see the documentation for the \fBCommand\fR field of
+.Ht file-tool-setup 3 ,
+which uses the same format.
+.PP
+For creators of \*(mS file hooks, the file tools can also support the use of multiple interpreters/tools, e.g.
+\fCclang\fR and \fCgcc\fR to compile a C file. The configuration of each tool can include tests to verify the
+availability of the tool on the current computer as well as the required command-line to run.
+.PP
+To get the command \fBfile-exec\fR, \fBfile-format\fR and \fBfile-lint\fR properly working a setup for the relevant
+tools for the current buffer's programming language is usually required. The setting are stored in variables like for
+instance for the C++ programming language:
 .Me $emf-scheme
 .CS
 ; regex for highlighting and making it click aware
@@ -95,20 +110,19 @@ set-variable .fhook-cpp.lint2 "\\bclang-tidy\\bclang-tidy --version\\b0\\b\\b
 .CE 0
 .Me $ehf-scheme
 .SH NOTES
-\fBfile-exec\fR,  \fBfile-format\fR  and \fBfile-lint\fR are macros defined in
-\fChktools.emf\fR.  For programming lanuages like C++, Fortran and R there are
-already useful variable defaults defined in the hkHOOK.emf files, the user can
-overwrite  these settings  usually in the myHOOK.emf file or define their owns
-therin.
+\fBfile-exec\fR, \fBfile-format\fR and \fBfile-lint\fR are macros defined in \fChktools.emf\fR. For programming
+lanuages like C++, Fortran and R there are already useful variable defaults defined in the hkHOOK.emf files, the user
+can overwrite these settings using \fBmajor-mode-tools-setup\fR.
 .PP
-The  executables  or the  interpreters  must be usually  installed  and in the
-system  path for the command to function  correctly  or the full path might be
-given in the variable settings. 
+The executables or the interpreters must be usually installed and in the system path for the command to function
+correctly or the full path might be given in the variable settings. 
 .SH "SEE ALSO"
+.Ht get-next-line 2 ,
+.Ht file-tool-setup 3 ,
+.Ht major-mode-setup 3
 .Ht c 9 ,
 .Ht cpp 9 ,
 .Ht f90 9 ,
-.Ht get-next-line 2 ,
 .Ht go 9 ,
 .Ht pas 9 ,
 .Ht perl 9 ,

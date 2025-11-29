@@ -7,14 +7,15 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 18:16:21 1999
 .\"
-.Id $Id: m3mac093.3,v 2.12 2024/08/06 21:45:56 jon Exp $
+.Id $Id: m3mac093.3,v 2.12 2025/11/29 00:57:27 jon Exp $
 .Im MicroEmacs shell|command
 .so me.tni
-.TH cvs 3
+.TH svn 3
 .XI svn - "\*(mS Subversion interface"
 .XI svn-setup - "\*(mS SVN interface setup"
 .XI svn-add - "\*(mS SVN interface - add items"
 .XI svn-blame - "\*(mS SVN interface - annotate a file"
+.XI svn-cat - "\*(mS SVN interface - output specific version of a file"
 .XI svn-checkout - "\*(mS SVN interface - checkout a working copy"
 .XI svn-commit - "\*(mS SVN interface - commit changes back"
 .XI svn-commit-log - "\*(mS SVN interface - get log for a commit"
@@ -43,6 +44,9 @@ svn-add \- \*(mS SVN interface - add items
 .br
 .Me "|svn-blame"
 svn-blame \- \*(mS SVN interface - annotate a file
+.br
+.Me "|svn-cat"
+svn-cat \- \*(mS SVN interface - output specific version of a file
 .br
 .Me "|svn-checkout"
 svn-checkout \- \*(mS SVN interface - checkout a working copy
@@ -103,6 +107,8 @@ svn-xdiff \- \*(mS SVN interface - external diff changes
 .br
 .B svn-blame
 .br
+.B svn-cat
+.br
 .B svn-checkout
 .br
 .B svn-commit
@@ -161,10 +167,10 @@ Executes the svn-status command.
 Executes the svn-checkout command.
 .IP "\fBUpdate files\fR"
 Executes the svn-update command.
-.IP "\fBDiff files\fR"
-Executes the svn-diff command.
 .IP "\fBCommit files\fR"
 Executes the svn-commit command.
+.IP "\fBDiff files\fR"
+Executes the svn-diff command.
 .IP "\fBItem Log\fR"
 Executes the svn-log command, one item must be selected.
 .IP "\fBItem Blame\fR"
@@ -190,6 +196,9 @@ performs the local addition, a \fISVN\fR \fIcommit\fR is required to make the ad
 .PP
 The \fBsvn-blame\fR  command opens a \fI*svn-blame*\fR window annotating the revision and author of each line in the current
 buffer or single selected file.
+.PP
+The \fBsvn-cat\fR  command opens a \fI*<file-name>:<revision>\fR window with the contents set to the specified revision of a 
+selected file.
 .PP
 The  \fBsvn-checkout\fR  command checks out a working copy of an item (file or directory)  from a repository  into the
 current directory. The user specifies the item via an SVN repository URL.
@@ -264,16 +273,15 @@ repository.
 may also be accessed from 
 .Ht user-setup 3 
 from  the  \fBMiscellaneous\fR  configuration.  The the  dialog  provides  the
-following configuration controls:
+following configuration tabs and controls:
 .PP
-\fBSVN Command Setup\fR
+\fBGeneral\fR
 .RS
 .IP "\fCSVN Command\fR"
 Sets the svn command-line program name, this can be an absolute path.
 .IP "\fCGlobal opts\fR"
 Sets  command-line  arguments which are to be always given to the svn command, the default of  \fC--non-interactive\fR
 informs SVN that the program is being run in the background so cannot interact with the user.
-rsh.
 .IP "\fCDef Rep URL\fR"
 Defines the default SVN repository URL, this is only used when using the \fBsvn-checkout\fR command.
 .IP "\fCEnable Support on Start-Up\fR"
@@ -286,9 +294,9 @@ to get the update  information. This can make a big improvement to performance, 
 server is slow. In Quick mode the status of locally  unmodified  files is set to '\fCQ\fR'  indicating  the repository
 state of the file has not been ascertained. The full SVN  information  can be  obtained by  executing  the
 command \fBsvn-full-reread\fR, typically bound to \fCC-f5\fR.
-.IP "\fCTools\fR"
-In this tab each sub-command can be selected a their default option settings changed as required.
 .RE
+.IP "\fBTools\fR"
+In this tab each sub-command can be selected and their default option settings changed as required.
 .SH NOTES
 \fBsvn\fR and sub-commands are macros defined in file \fCsvn.emf\fR.
 .PP
@@ -300,7 +308,10 @@ are also removed by the filter. Use
 in the buffer to enable/disable the filter.
 .SH "SEE ALSO"
 .na
+.Ht git 3 ,
+.Ht cvs 3 ,
 .Ht ClearCase 3 ,
-.Ht file-browser 3 .
+.Ht file-browser 3 ,
+.Ht $rcs-file 5 .
 .ad
 .FH

@@ -7,7 +7,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd010.3,v 2.11 2025/08/31 21:44:21 jon Exp $
+.Id $Id: m3osd010.3,v 2.11 2025/11/28 22:33:40 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH major-mode-setup 3
@@ -41,8 +41,9 @@ are implemented and installed within the
 .Hl  "buffer's  file hook"  fileHooks  2 .
 The following buttons are always present at the bottom of the dialog:
 .IP "\fCTools\fR"
-.\"TODO add proper link to Bmajor-mode-tools-setup
-Opens the \fBmajor-mode-tools-setup\fR dialog for the current buffer's file type.
+Opens the 
+.Ht major-mode-tools-setup 3
+dialog for the current buffer's file type.
 .IP "\fCSave\fR"
 Saves the changes made to the configuration back to the users registry file, i.e. "\fI<Log-Name>\fR\fC.erf\fR" but
 does not re-initialize the current buffer. No changes made will effect the current buffer unless the \fBApply\fR
@@ -165,6 +166,7 @@ defined in  \fCmajormod.emf\fR.  This macro configures the user settings of the
 .na
 .Ht buffer-init 3 ,
 .Ht major-mode-help 3 ,
+.Ht major-mode-tools-setup 3 ,
 .Ht user-setup 3 .
 .Hl "File Hooks" fileHooks 2 .
 .ad

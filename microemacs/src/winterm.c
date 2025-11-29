@@ -4694,7 +4694,7 @@ TTstart(void)
 #ifdef ME_DONT_FORCE_UNICODE
         /* THIS CODE CAN BE REMOVED ONCE WE CONFIRM THE USE OF UNICODE FOR OUTPUT IS UNIVERSALLY WORKING */
         meSystemCfg = (meSystemCfg & ~(meSYSTEM_FONTS|meSYSTEM_FONTFIX|meSYSTEM_RGBCOLOR)) | (meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR);
-        /* TODO Could consider using SetConsoleOutputCP to make console use Unicode, what implace would that have in input? */
+        /* TODO Could consider using SetConsoleOutputCP to make console use Unicode, what impact would that have in input? */
         if(GetConsoleCP() == 65001)
             meSystemCfg |= meSYSTEM_FONTFIX;
 #else
