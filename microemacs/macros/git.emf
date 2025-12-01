@@ -835,6 +835,7 @@ define-macro git-fetch
 
 ;; GIT Pull ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 define-macro git-pull
+  ;TODO: If there are no local changes, stash succeeds but doesn't do anything, so the match pop is not needed - this must not be done.
   !force git-dirlst-detect
   !iif &not $status  -8 ml-write "[Current path does not appear to be within a Git repository]"
   2 git-osd
