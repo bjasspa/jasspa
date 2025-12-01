@@ -78,11 +78,11 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \CCb\\1\CCA"
   hilight .hilight.tcl 1 "command"             .scheme.operator
   hilight .hilight.tcl 1 "config"              .scheme.operator
   hilight .hilight.tcl 1 "configure"           .scheme.operator
+  hilight .hilight.tcl 1 "const"               .scheme.operator
   hilight .hilight.tcl 1 "curselection"        .scheme.operator
   hilight .hilight.tcl 1 "exists"              .scheme.operator
   hilight .hilight.tcl 1 "extended"            .scheme.operator
   hilight .hilight.tcl 1 "false"               .scheme.operator
-  hilight .hilight.tcl 1 "format"              .scheme.operator
   hilight .hilight.tcl 1 "geometry"            .scheme.operator
   hilight .hilight.tcl 1 "get"                 .scheme.operator
   hilight .hilight.tcl 1 "getimage"            .scheme.operator
@@ -90,15 +90,15 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \CCb\\1\CCA"
   hilight .hilight.tcl 1 "iconname"            .scheme.operator
   hilight .hilight.tcl 1 "image"               .scheme.operator
   hilight .hilight.tcl 1 "imagetext"           .scheme.operator
-  hilight .hilight.tcl 1 "lappend"             .scheme.operator
+  hilight .hilight.tcl 1 "in"                  .scheme.operator  
+  hilight .hilight.tcl 1 "index"               .scheme.operator
   hilight .hilight.tcl 1 "last"                .scheme.operator
   hilight .hilight.tcl 1 "line"                .scheme.operator
   hilight .hilight.tcl 1 "message"             .scheme.operator
+  hilight .hilight.tcl 1 "ni"                  .scheme.operator  
   hilight .hilight.tcl 1 "polygon"             .scheme.operator
   hilight .hilight.tcl 1 "progress"            .scheme.operator
   hilight .hilight.tcl 1 "radio"               .scheme.operator
-  hilight .hilight.tcl 1 "regexp"              .scheme.operator
-  hilight .hilight.tcl 1 "string"              .scheme.operator
   hilight .hilight.tcl 1 "subwidget"           .scheme.operator
   hilight .hilight.tcl 1 "sunken"              .scheme.operator
   hilight .hilight.tcl 1 "text"                .scheme.operator
@@ -110,74 +110,140 @@ set-variable .fhook-tcl.item-list-r8 "Nmsp \CCb\\1\CCA"
   hilight .hilight.tcl 1 "add"                 .scheme.keyword
   hilight .hilight.tcl 1 "after"               .scheme.keyword
   hilight .hilight.tcl 1 "append"              .scheme.keyword
+  hilight .hilight.tcl 1 "apply"               .scheme.keyword
   hilight .hilight.tcl 1 "array"               .scheme.keyword
+  hilight .hilight.tcl 1 "bgerror"             .scheme.keyword
+  hilight .hilight.tcl 1 "binary"              .scheme.keyword
   hilight .hilight.tcl 1 "bind"                .scheme.keyword
   hilight .hilight.tcl 1 "break"               .scheme.keyword
   hilight .hilight.tcl 1 "button"              .scheme.keyword
   hilight .hilight.tcl 1 "canvas"              .scheme.keyword
   hilight .hilight.tcl 1 "catch"               .scheme.keyword
+  hilight .hilight.tcl 1 "cd"                  .scheme.keyword
+  hilight .hilight.tcl 1 "chan"                .scheme.keyword
   hilight .hilight.tcl 1 "checkbutton"         .scheme.keyword
+  hilight .hilight.tcl 1 "clock"               .scheme.keyword
   hilight .hilight.tcl 1 "close"               .scheme.keyword
+  hilight .hilight.tcl 1 "concat"              .scheme.keyword
   hilight .hilight.tcl 1 "continue"            .scheme.keyword
   hilight .hilight.tcl 1 "coords"              .scheme.keyword
+  hilight .hilight.tcl 1 "coroinject"          .scheme.keyword
+  hilight .hilight.tcl 1 "coroprobe"           .scheme.keyword
+  hilight .hilight.tcl 1 "coroutine"           .scheme.keyword
   hilight .hilight.tcl 1 "create"              .scheme.keyword
+  hilight .hilight.tcl 1 "dde"                 .scheme.keyword
   hilight .hilight.tcl 1 "delete"              .scheme.keyword
   hilight .hilight.tcl 1 "destroy"             .scheme.keyword
   hilight .hilight.tcl 1 "dict"                .scheme.keyword
   hilight .hilight.tcl 1 "dpos"                .scheme.keyword
   hilight .hilight.tcl 1 "else"                .scheme.keyword
   hilight .hilight.tcl 1 "elseif"              .scheme.keyword
+  hilight .hilight.tcl 1 "encoding"            .scheme.keyword
   hilight .hilight.tcl 1 "entry"               .scheme.keyword
+  hilight .hilight.tcl 1 "eof"                 .scheme.keyword
   hilight .hilight.tcl 1 "error"               .scheme.keyword
   hilight .hilight.tcl 1 "eval"                .scheme.keyword
   hilight .hilight.tcl 1 "exec"                .scheme.keyword
+  hilight .hilight.tcl 1 "exit"                .scheme.keyword
   hilight .hilight.tcl 1 "expr"                .scheme.keyword
+  hilight .hilight.tcl 1 "fconfigure"          .scheme.keyword
+  hilight .hilight.tcl 1 "fcopy"               .scheme.keyword
   hilight .hilight.tcl 1 "file"                .scheme.keyword
   hilight .hilight.tcl 1 "flush"               .scheme.keyword
   hilight .hilight.tcl 1 "focus"               .scheme.keyword
   hilight .hilight.tcl 1 "for"                 .scheme.keyword
   hilight .hilight.tcl 1 "foreach"             .scheme.keyword
+  hilight .hilight.tcl 1 "format"              .scheme.keyword
   hilight .hilight.tcl 1 "frame"               .scheme.keyword
   hilight .hilight.tcl 1 "gets"                .scheme.keyword
+  hilight .hilight.tcl 1 "glob"                .scheme.keyword
   hilight .hilight.tcl 1 "global"              .scheme.keyword
+  hilight .hilight.tcl 1 "history"             .scheme.keyword
   hilight .hilight.tcl 1 "idletasks"           .scheme.keyword
   hilight .hilight.tcl 1 "if"                  .scheme.keyword
   hilight .hilight.tcl 1 "incr"                .scheme.keyword
-  hilight .hilight.tcl 1 "index"               .scheme.keyword
   hilight .hilight.tcl 1 "info"                .scheme.keyword
   hilight .hilight.tcl 1 "insert"              .scheme.keyword
   hilight .hilight.tcl 1 "interp"              .scheme.keyword
   hilight .hilight.tcl 1 "invoke"              .scheme.keyword
   hilight .hilight.tcl 1 "item"                .scheme.keyword
+  hilight .hilight.tcl 1 "join"                .scheme.keyword
   hilight .hilight.tcl 1 "label"               .scheme.keyword
+  hilight .hilight.tcl 1 "lappend"             .scheme.keyword
   hilight .hilight.tcl 1 "lassign"             .scheme.keyword
+  hilight .hilight.tcl 1 "ledit"               .scheme.keyword
   hilight .hilight.tcl 1 "lindex"              .scheme.keyword
+  hilight .hilight.tcl 1 "linsert"             .scheme.keyword
+  hilight .hilight.tcl 1 "list"                .scheme.keyword
   hilight .hilight.tcl 1 "listbox"             .scheme.keyword
   hilight .hilight.tcl 1 "llength"             .scheme.keyword
+  hilight .hilight.tcl 1 "lmap"                .scheme.keyword
+  hilight .hilight.tcl 1 "load"                .scheme.keyword
+  hilight .hilight.tcl 1 "lpop"                .scheme.keyword
+  hilight .hilight.tcl 1 "lrange"              .scheme.keyword
+  hilight .hilight.tcl 1 "lremove"             .scheme.keyword
+  hilight .hilight.tcl 1 "lrepeat"             .scheme.keyword
   hilight .hilight.tcl 1 "lreplace"            .scheme.keyword
+  hilight .hilight.tcl 1 "lreverse"            .scheme.keyword
   hilight .hilight.tcl 1 "lsearch"             .scheme.keyword
+  hilight .hilight.tcl 1 "lseq"                .scheme.keyword
+  hilight .hilight.tcl 1 "lset"                .scheme.keyword
   hilight .hilight.tcl 1 "lsort"               .scheme.keyword
+  hilight .hilight.tcl 1 "memory"              .scheme.keyword
   hilight .hilight.tcl 1 "menu"                .scheme.keyword
   hilight .hilight.tcl 1 "menubutton"          .scheme.keyword
+  hilight .hilight.tcl 1 "namespace"           .scheme.keyword
+  hilight .hilight.tcl 1 "oo::class"           .scheme.keyword
+  hilight .hilight.tcl 1 "oo::copy"            .scheme.keyword
+  hilight .hilight.tcl 1 "oo::define"          .scheme.keyword
+  hilight .hilight.tcl 1 "oo::objdefine"       .scheme.keyword
+  hilight .hilight.tcl 1 "oo::object"          .scheme.keyword
   hilight .hilight.tcl 1 "open"                .scheme.keyword
   hilight .hilight.tcl 1 "pack"                .scheme.keyword
+  hilight .hilight.tcl 1 "parray"              .scheme.keyword
+  hilight .hilight.tcl 1 "pid"                 .scheme.keyword
+  hilight .hilight.tcl 1 "prefix"              .scheme.keyword
+  hilight .hilight.tcl 1 "proc"                .scheme.keyword
   hilight .hilight.tcl 1 "puts"                .scheme.keyword
+  hilight .hilight.tcl 1 "pwd"                 .scheme.keyword
   hilight .hilight.tcl 1 "radiobutton"         .scheme.keyword
+  hilight .hilight.tcl 1 "read"                .scheme.keyword
+  hilight .hilight.tcl 1 "readFile"            .scheme.keyword
+  hilight .hilight.tcl 1 "regexp"              .scheme.keyword
   hilight .hilight.tcl 1 "regsub"              .scheme.keyword
   hilight .hilight.tcl 1 "rename"              .scheme.keyword
   hilight .hilight.tcl 1 "return"              .scheme.keyword
+  hilight .hilight.tcl 1 "scan"                .scheme.keyword
   hilight .hilight.tcl 1 "scrollbar"           .scheme.keyword
   hilight .hilight.tcl 1 "see"                 .scheme.keyword
+  hilight .hilight.tcl 1 "seek"                .scheme.keyword
   hilight .hilight.tcl 1 "set"                 .scheme.keyword
+  hilight .hilight.tcl 1 "socket"              .scheme.keyword
+  hilight .hilight.tcl 1 "source"              .scheme.keyword
+  hilight .hilight.tcl 1 "split"               .scheme.keyword
+  hilight .hilight.tcl 1 "string"              .scheme.keyword
+  hilight .hilight.tcl 1 "subst"               .scheme.keyword
   hilight .hilight.tcl 1 "switch"              .scheme.keyword
+  hilight .hilight.tcl 1 "tailcall"            .scheme.keyword
+  hilight .hilight.tcl 1 "tell"                .scheme.keyword
+  hilight .hilight.tcl 1 "throw"               .scheme.keyword
+  hilight .hilight.tcl 1 "time"                .scheme.keyword
   hilight .hilight.tcl 1 "tk_menuBar"          .scheme.keyword
   hilight .hilight.tcl 1 "toplevel"            .scheme.keyword
+  hilight .hilight.tcl 1 "trace"               .scheme.keyword
+  hilight .hilight.tcl 1 "try"                 .scheme.keyword
+  hilight .hilight.tcl 1 "unload"              .scheme.keyword
+  hilight .hilight.tcl 1 "unset"               .scheme.keyword
   hilight .hilight.tcl 1 "update"              .scheme.keyword
   hilight .hilight.tcl 1 "uplevel"             .scheme.keyword
   hilight .hilight.tcl 1 "upvar"               .scheme.keyword
   hilight .hilight.tcl 1 "variable"            .scheme.keyword
+  hilight .hilight.tcl 1 "vwait"               .scheme.keyword
   hilight .hilight.tcl 1 "while"               .scheme.keyword
   hilight .hilight.tcl 1 "wm"                  .scheme.keyword
+  hilight .hilight.tcl 1 "yield"               .scheme.keyword
+  hilight .hilight.tcl 1 "yieldto"             .scheme.keyword
+  hilight .hilight.tcl 1 "zip"                 .scheme.keyword
 
   hilight .hilight.tcl 0x200 "-"
   hilight .hilight.tcl 1 "-accelerator"        .scheme.type
