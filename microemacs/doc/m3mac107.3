@@ -1,0 +1,58 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1999-2009 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Wed Jan 20 21:57:53 1999
+.\"
+.Id $Id: m3mac036.3,v 2.9 2025/12/01 13:20:33 jon Exp $
+.Im MicroEmacs command|macrodevelop|search
+.so me.tni
+.TH str-to-regex 3
+.XI str-to-regex - "Generate regex safe variant of a string"
+.XI filemask-to-regex - "Convert a file mask to a regex"
+.SH NAME
+.Me "|str-to-regex"
+str-to-regex \- Generate regex safe variant of a string
+.br
+.Me "|filemask-to-regex"
+filemask-to-regex \- Convert a file mask to a regex
+.Me $a
+.SH SYNOPSIS
+.na
+.B str-to-regex
+"\fIin-out-var\fR"
+.br
+.B filemask-to-regex
+"\fIin-out-var\fR"
+.ad
+.SH DESCRIPTION
+.B str-to-regex
+converts a given string to a regex-safe variant so that it can be used as part of a regex search. Regular expressions 
+use several special characters, such as '\fC.\fR', '\fC*\fR', '\fC[\fR' and str-to-regex inserts a '\fC\\\fR' quote 
+character to make it a literal string. For example "\fCA.B*C\\\fP" will be converted to "\fCA\\.B\\*C\\\\\fP".
+.PP
+.B filemask-to-regex
+converts a typical file mask, used by command-line tools in a console, to a regex. This typically involves the 
+conversion of '\fC?\fR' to '\fC.\fR', '\fC*\fR' to '\fC.*\fR' and the quoting of other regular expression special 
+characters, such as '\fC.\fR' to '\fC\\.\fR'.  
+.SH NOTES
+Both of these macros take a single argument, \fIin-out-var\fP, which must be the name of a variable. The initial value 
+of this variable is used as the string to be converted and on completion the value of the variable is updated to the 
+output regex string.
+.PP 
+The
+\fBstr-to-regex\fR and \fBfilemask-to-regex\fR commands are implemented in \fCutils.emf\fR and are not publically
+available from the command line, but may be used within macros.
+.SH "SEE ALSO"
+.na
+.Ht search-buffer 2 ,
+.Ht file-list 3 ,
+.Ht $file-names 5 ,
+.Ht &xsequal 4 .
+.br
+.Hl "Regular Expressions" RegularExpressions 2
+.ad
+.FH

@@ -9,9 +9,9 @@
 ; Authors:     Steven Phillips
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-!if &not &exi .osd.sssnc
-  set-variable .osd.sssn &pinc .osd.next 1
-!endif
+
+!iif &not &exi .scheme.scheme-names  0 execute-file "schemes"
+!iif &not &exi .osd.sssn  set-variable .osd.sssn &pinc .osd.next 1
 
 0 define-macro session-setup-entry
   !if &les @# 0
@@ -20,8 +20,23 @@
     set-variable $result %session-name
   !endif
 !emacro
+0 define-macro session-setup-css
+  set-variable .session-setup.scheme &lget .scheme.scheme-files @#
+!emacro
+0 define-macro session-setup-cs
+  !if &les @# 0
+    -1 osd .osd.tmp
+    osd .osd.tmp 0 "bs" 32 0 0 0
+    set-variable #l0 0
+    !while &not &seq "" &set #l1 &lget .scheme.scheme-names &inc #l0 1
+      osd .osd.tmp #l0 "" #l1 #l0 session-setup-css
+    !done
+  !else
+    set-variable $result &lget .scheme.scheme-names &lfind .scheme.scheme-files .session-setup.scheme
+  !endif
+!emacro
 0 define-macro session-setup-cb
-  set-variable #l0 &ind &set #l1 &cat ".session." &lget "|kill|amark|update|" &abs @#
+  set-variable #l0 &ind &set #l1 &cat ".session." &lget "|kill|amark|update|ownfavs|" &abs @#
   !if &les @# 0
     set-variable &ind #l1 &bxor #l0 1
   !elif &not #l0
@@ -33,24 +48,38 @@
 osd .osd.sssn 0  "batcDHs" 3 6 52 8 -1 -1 520 .scheme.osd-title "Session Setup"
 osd .osd.sssn 10  ""
 osd .osd.sssn 15  ""
-osd .osd.sssn 20  "Sfh" "  \HName: " 30
+osd .osd.sssn 20  "Sfh" "          \HName: " 30
 osd .osd.sssn 30  "EtxHf" .scheme.osd-entry "###############################" 1 session-setup-entry
-osd .osd.sssn 50  ""
-osd .osd.sssn 60  "hf" "       "
-osd .osd.sssn 70  "Ctpfx" &cat .osd.checkbox-chars "\} Save \Hkill chain" 1 session-setup-cb
+osd .osd.sssn 40  ""
+osd .osd.sssn 50  "Sfh" "  Colo\Hr Scheme: " 51
+osd .osd.sssn 51  "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.tmp session-setup-cs
+osd .osd.sssn 52  "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 51
+osd .osd.sssn 60  ""
+osd .osd.sssn 70  "hf" "       "
+osd .osd.sssn 71  "Ctpfx" &cat .osd.checkbox-chars "\} Use session specific \Hfavorites" 4 session-setup-cb
 osd .osd.sssn 80  ""
 osd .osd.sssn 90  "hf" "       "
-osd .osd.sssn 100 "Ctpfx" &cat .osd.checkbox-chars "\} Save buffer \Hbookmarks" 2 session-setup-cb
+osd .osd.sssn 100  "Ctpfx" &cat .osd.checkbox-chars "\} Save \Hkill chain" 1 session-setup-cb
 osd .osd.sssn 110  ""
-osd .osd.sssn 120 "hf" "       "
-osd .osd.sssn 130 "Ctpfx" &cat .osd.checkbox-chars "\} Auto \HUpdate" 3 session-setup-cb
+osd .osd.sssn 120  "hf" "       "
+osd .osd.sssn 130 "Ctpfx" &cat .osd.checkbox-chars "\} Save buffer \Hbookmarks" 2 session-setup-cb
+osd .osd.sssn 140  ""
+osd .osd.sssn 150 "hf" "       "
+osd .osd.sssn 160 "Ctpfx" &cat .osd.checkbox-chars "\} Auto \HUpdate" 3 session-setup-cb
 osd .osd.sssn 500 ""
 osd .osd.sssn 510 ""
 osd .osd.sssn 520 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
 
 define-macro session-setup
-  !if &not &exi %session-name
-    set-variable %session-name $user-name
-  !endif
+  !iif &not &exi %session-name  set-variable %session-name $user-name
+  set-variable #l1 &set .scheme .change-scheme.current
+  set-variable #l2 .session.ownfavs
   !force .osd.sssn osd
+  !if $status
+    !if &not &seq #l1 .scheme
+      !force -1 execute-file .scheme
+      set-variable .change-scheme.current .scheme
+    !endif
+    !iif &sub .session.ownfavs #l2  !force unset-variable .favorites.fname
+  !endif
 !emacro

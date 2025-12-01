@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac081.3,v 2.4 2024/10/21 17:13:59 jon Exp $
+.Id $Id: m3mac081.3,v 2.4 2025/11/30 23:46:30 jon Exp $
 .Im MicroEmacs command|scuts
 .so me.tni
 .TH read-session 3
@@ -54,13 +54,15 @@ Reference should be made to the notes included in
 .Ht erf 8
 as to how the history file may be edited and effected in the same \*(mS session.
 .PP
-The user may now have multiple sessions, this is useful when one is working on
+The user may have multiple sessions, this is useful when one is working on
 different  projects, the sessions are created using
 .Ht save-session 3
-using a new session name.  Starting the editor with a different  session means
+using a new session name or by using the \fB-c\fR command line option.  Starting the editor with a different  session means
 that the hilighting  scheme may be different  between different  sessions i.e.
 "\fIBlue\fR \fIHue\fR" and "\fISherwoord\fR \fIForest\fR". Note that the color
 scheme should be changed with
+.Ht session-setup 3
+or
 .Ht change-scheme 3
 and not with
 .Ht user-setup 3

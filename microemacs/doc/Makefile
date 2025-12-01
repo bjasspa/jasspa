@@ -174,8 +174,8 @@ MAC3_090=	$(DOCDIR)m3mac090.3 $(DOCDIR)m3mac091.3 $(DOCDIR)m3mac092.3\
 		$(DOCDIR)m3mac096.3 $(DOCDIR)m3mac097.3 $(DOCDIR)m3mac098.3\
 		$(DOCDIR)m3mac099.3
 MAC3_100=	$(DOCDIR)m3mac100.3 $(DOCDIR)m3mac102.3	$(DOCDIR)m3mac103.3\
-		$(DOCDIR)m3mac104.3 $(DOCDIR)m3mac105.3 $(DOCDIR)m3mac106.3
-# TODO: doc str-to-regex, filemask-to-regex & file-list
+		$(DOCDIR)m3mac104.3 $(DOCDIR)m3mac105.3 $(DOCDIR)m3mac106.3\
+		$(DOCDIR)m3mac107.3 $(DOCDIR)m3mac108.3
 #
 OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd003.3 $(DOCDIR)m3osd004.3 $(DOCDIR)m3osd005.3\

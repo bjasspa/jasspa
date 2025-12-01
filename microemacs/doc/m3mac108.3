@@ -1,0 +1,68 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1999-2009 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Wed Jan 20 21:57:53 1999
+.\"
+.Id $Id: m3mac036.3,v 2.9 2025/12/01 13:20:37 jon Exp $
+.Im MicroEmacs command|macrodevelop|search
+.so me.tni
+.TH file-list 3
+.XI file-list - "Generate list of matching file names"
+.SH NAME
+file-list \- Generate list of matching file names
+.SH SYNOPSIS
+.na
+.B file-list
+"\fIfile-path-regex\fR"
+.ad
+.SH DESCRIPTION
+.B file-list
+is a macro  language  construct  only  that  performs  a  recursive search for all files and directories that match 
+the given \fIfile-path-regex\fR. Unlike
+.Ht $file-names 5 ,
+the \fIfile-path-regex\fR argument can have a regex at any point in the path, enabling the command to locate matching
+files in multiple locations.
+.PP
+The one restriction is that regex classes and special characters cannot and will not
+include the path separator character, i.e. giving the command a mask of "\fC/foo/[a-z/]*/bar\fR" to find any \fCbar\fR
+within \fC/foo\fR is not supported and the '\fC.*\fR' in "\fC/foo/.*/bar\fR" will only match files and directories in 
+\fC/foo\fR. The only exception to this rule is for a trailing class which can contain a path character, e.g. the mask
+can end with "\fC[^/]\fR" to filter out any directories from the result.
+.PP
+On completion, the macro sets the command variable \fB.file-list.file-count\fR to the number of matches found, and the 
+variables \fB.file-list.file0\fR, \fB.file-list.file1\fR, ..., \fB.file-list.file\fR\fIn\fR to each match, where 
+\fIn\fR is the number of matches minus one, i.e. \fB.file-list.file-count\fR\fC-1\fR.
+.SH EXAMPLE
+The  following  example can be used to locate the
+.Hr Rscript 1
+interpreter on Windows, which is typically installed into \fCC:\\Program Files\\R\\R-<version>\\bin\\\fR folder:
+.Me "$emf-scheme"
+.CS
+file-list "C:/Program Files/R/R-\\\\d+\\\\.\\\\d+\\\\.\\\\d.*/bin/Rscript.exe"
+!if &not .file-list.file-count
+  ml-write "ERROR: Failed to locate the Rscript interpreter" 
+  !abort
+!endif
+set-variable #l0 .file-list.file0
+!iif &gre .file-count 1  ml-write &cat "Warning: Multiple Rscript interpreters found, using " #l0
+.CE 0
+.Me "$ehf-scheme"
+.SH NOTES 
+The \fBfile-list\fR command is not publically available from the command line, but may be used within macros to
+perform the copy.
+.PP
+This command is implemented as a recursive macro in \fCutils.emf\fR.
+.SH "SEE ALSO"
+.na
+.Ht str-to-regex 3 ,
+.Ht filemask-to-regex 3 ,
+.Ht $file-names 5 ,
+.Ht &xsequal 4 .
+.br
+.Hl "Regular Expressions" RegularExpressions 2
+.ad
+.FH

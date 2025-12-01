@@ -79,7 +79,13 @@ set-variable .frame-handle.cmd "|delete-frame|create-frame|create-frame|next-fra
   !done
 !emacro
 0 define-macro file-list
-  set-variable #l8 &not &seq "/" &rig &set #l0 @1 -1
+  !if &set #l8 &not &seq "/" &rig &set #l0 @1 -1
+    !if &not &seq "]" &rig #l0 -1
+    !elif &set #l1 &rsin "[" #l0
+      ; convert any '/' in a trailing class to \x2f to avoid treating as a path separator
+      set-variable #l0 &cat &lef #l0 #l1 &rep &rig #l0 #l1 "/" "\\x2f"
+    !endif
+  !endif
   !if &seq "/" &set #l1 &lef #l0 1
   !elif &not &set #l2 &sin "/" #l0
     set-variable #l1 ""

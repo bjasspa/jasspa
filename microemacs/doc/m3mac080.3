@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac080.3,v 2.3 2024/10/21 17:13:59 jon Exp $
+.Id $Id: m3mac080.3,v 2.3 2025/12/01 00:07:24 jon Exp $
 .Im MicroEmacs command|scuts
 .so me.tni
 .TH save-session 3
@@ -35,8 +35,17 @@ can set a default session file in which case the session is automatically writte
 zero is given; the user is not prompted for a file. \*(mS automatically tries to write the default session whenever it
 is exited.
 .PP
-The \fBsession-setp\fR command opens a simple dialog to configure the current session. The saving of the kill chain 
-and bookmarks can be extremely useful, but can also greatly increase the size of a session file and the time 
+The \fBsession-setp\fR command opens a simple dialog to configure the current session. The session name will be put
+into the window title, if using a window based version of \*(mS, and using a different color scheme can help in
+distinguishing between different sessions.
+.PP
+By default, each session will create its own favorites list, see Favorites section within 
+the File section on the
+.Hl "main menu" MainMenu 3 ,
+which will be saved to \fIsession-name\fR\fC.eff\fR. If the \fBUse session specific favorites\fR option is disaled a 
+shared favorites file is used instead which will be saved to \fI$user-name\fR\fC.eff\fR
+.PP
+The saving of the kill chain and bookmarks can be extremely useful, but can also greatly increase the size of a session file and the time 
 taken to read and write it.
 .SH NOTES
 The session information is saved in a ascii format file (see

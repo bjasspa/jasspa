@@ -1235,7 +1235,8 @@ ffgetBuf(meIo *io,int offset, int len)
     {
         if((ffremain = tfs_fread(ffbuf+offset,len,io->tfsp)) <= 0)
         {
-            /* TODO - this does not handle errors, just assumed to work */
+            if(ffremain < 0)
+                return mlwrite(MWABORT,(meUByte *)"[TFS file read error]");
             return meFALSE;
         }
     }
