@@ -136,7 +136,7 @@ set-variable .fhook-python.item-list-r4 "Main \CCbBlock\CCA"
 
 ; setup file-* tools
 add-next-line "*python-exec*" "^ *File \"%f\", line %l"
-add-next-line "*python-lint*" "^%f:%l:\\d+: "
+add-next-line "*python-lint*" "^\\(  --> \\|\\)%f:%l:\\d+"
 set-variable .fhook-python.coms "\bpython3\bpython2\bpython\b"
 set-variable .fhook-python.coms-windows "\b~/AppData/Local/Programs/Python/Python\\d+\\(-\\d+\\)?/python.exe\bC:/Python\\d+\\(-\\d+\\)?/python.exe\b"
 set-variable .fhook-python.exec1   "\b%v[com]\b\b\b\b%\"%v[com]%\" \"%p%f\" %v[args|20|Additional command-line arguments|]\b"
