@@ -636,8 +636,7 @@ findBuffer(int f, int n)
         }
         if(bp == NULL)
         {
-            if(((n & 5) != 5) ||
-               ((bp = bfind(bufn,BFND_CREAT)) == NULL))
+            if(((n & 5) != 5) || ((bp = bfind(bufn,BFND_CREAT)) == NULL))
                 return meFALSE;
             meModeSet(bp->mode,MDNACT);
             bp->fileName = meStrdup(bufn);
@@ -1556,26 +1555,24 @@ createBuffer(register meUByte *bname)
 
 
 /*
- * Find a buffer, by name. Return a pointer
- * to the meBuffer structure associated with it.
- * If the buffer is not found
- * and the "cflag" is meTRUE, create it. The "bflag" is
+ * Find a buffer, by name. Return a pointer to the meBuffer structure associated with it.
+ * If the buffer is not found and the "cflag" is meTRUE, create it. The "bflag" is
  * the settings for the flags in in buffer.
  */
 meBuffer *
 bfind(register meUByte *bname, int cflag)
 {
     meBuffer *bp;
-    meMode  sglobMode ;
-    meUByte intFlag=0 ;
-    meUByte *bnm ;
-    meUByte bn[meBUF_SIZE_MAX] ;
-    int ii ;
+    meMode  sglobMode;
+    meUByte intFlag=0;
+    meUByte *bnm;
+    meUByte bn[meBUF_SIZE_MAX];
+    int ii;
     
     if(cflag & BFND_MKNAM)
     {
-        makename(bn,bname) ;
-        bnm = bn ;
+        makename(bn,bname);
+        bnm = bn;
     }
     else
     {
@@ -1590,50 +1587,52 @@ bfind(register meUByte *bname, int cflag)
             {
                 if(cflag & BFND_CLEAR)
                 {
-                    bp->intFlag |= BIFBLOW ;             /* Don't complain!      */
-                    bclear(bp) ;
+                    bp->intFlag |= BIFBLOW;             /* Don't complain!      */
+                    bclear(bp);
                     /* The BFND_CLEAR functionality is only used for system buffers
                      * such as *help* *command* etc. i.e. not user loaded buffer. 
                      * These buffers do not and must not be linked to a filename.
                      * This can happen if the user renames "./foo" to *compile* say
                      * and then runs another compile, it its still linked to foo then
                      * it gets loaded */
-                    bp->intFlag &= ~BIFFILE ;
+                    bp->intFlag &= ~BIFFILE;
                     if(bp->fileName != NULL)
                     {
-                        meFree(bp->fileName) ;
-                        bp->fileName = NULL ;
+                        meFree(bp->fileName);
+                        bp->fileName = NULL;
                     }
                     /* set the modes correctly */
                     if(cflag & BFND_BINARY)
-                        meModeSet(bp->mode,MDBINARY) ;
+                        meModeSet(bp->mode,MDBINARY);
                     else if(cflag & BFND_RBIN)
-                        meModeSet(bp->mode,MDRBIN) ;
+                        meModeSet(bp->mode,MDRBIN);
                     if(cflag & BFND_CRYPT)
-                        meModeSet(bp->mode,MDCRYPT) ;
+                        meModeSet(bp->mode,MDCRYPT);
                 }
-                return bp ;
+                return bp;
             }
             if(ii>0)
-                break ;
+                break;
             bp = bp->next;
         }
         if(!cflag)
-            return NULL ;
-        bnm = bname ;
+            return NULL;
+        bnm = bname;
     }
-    meModeCopy(sglobMode,globMode) ;
+    meModeCopy(sglobMode,globMode);
     if(cflag & BFND_BINARY)
-        meModeSet(globMode,MDBINARY) ;
+        meModeSet(globMode,MDBINARY);
     else if(cflag & BFND_RBIN)
-        meModeSet(globMode,MDRBIN) ;
+        meModeSet(globMode,MDRBIN);
     if(cflag & BFND_CRYPT)
-        meModeSet(globMode,MDCRYPT) ;
-    bp = createBuffer(bnm) ;
-    bp->intFlag |= intFlag ;
+        meModeSet(globMode,MDCRYPT);
+    /* don't create a view only buffer, global view mode only applies to files, see findFileSingle */
+    meModeClear(globMode,MDVIEW);
+    bp = createBuffer(bnm);
+    bp->intFlag |= intFlag;
     if(cflag & BFND_NOHOOK)
-        bp->intFlag |= BIFNOHOOK ;
-    meModeCopy(globMode,sglobMode) ;
+        bp->intFlag |= BIFNOHOOK;
+    meModeCopy(globMode,sglobMode);
     return bp ;
 }
 

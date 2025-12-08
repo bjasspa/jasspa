@@ -109,7 +109,7 @@ static char meHelpPage[]=
 "  -p      : Piped mode, no user interactivity\n"
 #endif
 "  -R      : Reverse the default color scheme\n"
-"  -r      : Read-only, all buffers will be in view mode\n"
+"  -r      : Read-only, all file buffers will be in view mode\n"
 "  -s <s>  : Search for string <s> in the next given file\n"
 "  -u <n>  : Set user name to <n> (sets $user-name)\n"
 "  -V      : Display Version info and exit\n"
@@ -355,14 +355,10 @@ execute(register int c, register int f, register int n)
     
     cwp = frameCur->windowCur;
 #if MEOPT_WORDPRO
-    /* If a space was  typed, fill column is  defined, the argument is non-
-     * negative, wrap mode is enabled, and we are now past fill column, and
-     * we are not read-only, perform word wrap. */
-    
-    if(meModeTest(cwp->buffer->mode,MDWRAP) &&
-       ((c == ' ') || (meStrchr(filleos,c) != NULL)) &&
-       (cwp->buffer->fillcol > 0) && (n >= 0) &&
-       (getwcol(cwp) > cwp->buffer->fillcol) &&
+    /* If a space was typed, fill column is defined, the argument is non- negative, wrap mode is
+     * enabled, and we are now past fill column, and we are not read-only, perform word wrap. */
+    if(meModeTest(cwp->buffer->mode,MDWRAP) && ((c == ' ') || (meStrchr(filleos,c) != NULL)) &&
+       (cwp->buffer->fillcol > 0) && (n >= 0) && (getwcol(cwp) > cwp->buffer->fillcol) &&
        !meModeTest(cwp->buffer->mode,MDVIEW))
         wrapWord(meFALSE,1);
 #endif
@@ -1941,13 +1937,6 @@ missing_arg:
     /* initalize *scratch* colors & modes to global defaults & check for a hook */
     if((mainbp=bfind(BmainN,0)) != NULL)
     {
-        meModeCopy(mainbp->mode,globMode);
-#if MEOPT_COLOR
-        mainbp->scheme = globScheme;
-#endif
-#if MEOPT_FILEHOOK
-        setBufferContext(mainbp);
-#endif
         /* make *scratch*'s history number very low so any other
          * buffer is preferable */
         mainbp->histNo = -1;
