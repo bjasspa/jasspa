@@ -835,11 +835,11 @@ define-macro git-fetch
 
 ;; GIT Pull ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 define-macro git-pull
-  ;TODO: If there are no local changes, stash succeeds but doesn't do anything, so the match pop is not needed - this must not be done.
   !force git-dirlst-detect
   !iif &not $status  -8 ml-write "[Current path does not appear to be within a Git repository]"
   2 git-osd
-  !if &lget &set #l9 .git-osd.values 2
+  !if &set #l7 &lget &set #l9 .git-osd.values 2
+    set-variable #l7 &lget .git-osd.values 3
     set-variable #l0 $buffer-bname
     !force 0 delete-buffer "*git-pll-s1*"
     6 pipe-shell-command &spr "%s stash -- %s" .git.com .git-dirlst-detect.ld "*git-pll-s1*"
@@ -856,6 +856,9 @@ define-macro git-pull
     !iif &gre $window-line 1  insert-newline
     yank
     -1 yank
+    backward-line
+    !iif &seq @wl "No local changes to save"  set-variable #l7 0
+    forward-line
     insert-string &spr "\n[**** Git Stash %s ****]" &con #l3 &cat "exited with code " #l3 "completed successfully"
     -1 buffer-mode "edit"
     1 buffer-mode "view"
@@ -868,7 +871,7 @@ define-macro git-pull
   set-variable #l2 &spr "%s pull --ff-only %s" .git.com #l2
   7 git-get-file-list 1 0 #l2
   2 git-exec 3 $buffer-fname
-  !if &not &and &lget .git-osd.values 2 &lget .git-osd.values 3
+  !if &not #l7
   !elif .git-exec.exit
     -16 ml-write "[git pull failed - run `git stash pop` manually when ready]"
   !else
