@@ -1,0 +1,32 @@
+; -!- emf -!-
+; Copyright (c) 2025 Steven Phillips.
+;
+; All rights reserved.
+;
+; Synopsis:    
+; Authors:     Steven Phillips
+;
+define-macro Cmd-Wait-ipipe
+  !if &not @#
+    ml-write &cat  "Command-wait-ipipe: END - " $result 
+    set-variable .Cmd-Wait.wait 0
+  !else
+    ml-write &cat "Command-wait-ipipe: called " &inc #g0 1
+  !endif
+!emacro
+
+define-macro Cmd-Wait
+  !if &and @? @#
+    @# command-wait
+  !else
+    set-variable #g0 0
+    set-variable .wait 1
+    0x81 ipipe-shell-command "./cmdwait"  Cmd-Wait-ipipe
+    !if @?
+      !force !force !force 0 command-wait
+    !else
+      !force !force !force command-wait
+    !endif
+  !endif
+  -16 ml-write &cat "Command-wait returned: " $status
+!emacro

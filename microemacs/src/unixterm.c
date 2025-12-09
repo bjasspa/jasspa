@@ -748,7 +748,8 @@ waitForEvent(int mode)
     /* While no input keys and ipipe or alarm signals. */
     for(;;)
     {
-        if(TTahead() ||
+        /* if waiting for .wait, not key input then don't break if a key is waiting */
+        if((TTahead() && ((mode & 2) == 0)) ||
 #ifdef _CLIPBRD
            (clipState & CLIP_RECEIVED) ||
 #endif
@@ -4850,7 +4851,8 @@ TTwaitForChar(void)
             break;
         if(sgarbf == meTRUE)
         {
-            update(meFALSE);
+            /* we're waiting for a key, if we don't for the update waitForEvent will bail out leading to CPU burn */
+            update(meTRUE);
             mlerase(MWCLEXEC);
         }
 #if MEOPT_MWFRAME
@@ -4899,7 +4901,7 @@ TTsleep(int  msec, int  intable, meVariable **waitVarList)
             break;
         sgarbfOld |= sgarbf;
         sgarbf = meFALSE;
-        waitForEvent(1);
+        waitForEvent((intable) ? 1:2);
     } while(!isTimerExpired(SLEEP_TIMER_ID));
     timerKill(SLEEP_TIMER_ID);             /* Kill off the timer */
     sgarbf |= sgarbfOld;
