@@ -1,7 +1,7 @@
 ---
 title: Examples for undesired wrapping in MicroEmacs
 author: Detlef Groth
-date: 2025-12-11 08:03
+date: 2025-12-11 13:59
 ---
 
 ## Examples
@@ -48,3 +48,27 @@ __Wrapped:__
 - _Right:_     GUI     version     -    of    the     Ayu     themes,     [Ayu
   Dark](https://github.com/ayu-theme),  displaying  the  hypertext  enabled  R
   documentation browser defined with the r-doc command
+
+## Code chunks
+
+There  should be no wrapping in code chunks.  Please your cursor at the end of
+the first chunk line. And enter a space, that then ugly wraps the code.
+
+```{r}
+data = read.table("../data-2023/20230123-1k-combined_Otu_Tax.csv",header=TRUE,sep=",")
+season=rep("Wet",nrow(data))
+season[data$month %in% c("January","February","March","April","November","December")]="Dry"
+```
+
+That is the wrapped code.
+
+```{r}
+data                                                                         =
+read.table("../data-2023/20230123-1k-combined_Otu_Tax.csv",header=TRUE,sep=",") 
+season=rep("Wet",nrow(data))
+season[data$month                                                         %in%
+c("January","February","March","April","November","December")]="Dry" 
+```
+
+
+
