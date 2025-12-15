@@ -58,7 +58,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hksamba.emf	hkscheme.emf	hksgml.emf	hkshell.emf	\
 	hkslang.emf	hkspec.emf	hksql.emf	hkswift.emf	\
 	hktcl.emf	hktexi.emf	hktlsosd.emf	hktools.emf	\
-	hktxt.emf	hktypst.emf	hkvala.emf	\
+	hkts.emf	hktxt.emf	hktypst.emf	hkvala.emf	\
 	hkv.emf		hkvb.emf	hkverilg.emf	hkvhdl.emf	\
 	hkvrml.emf	hkwiki.emf	hkyaml.emf	\
 	hkxml.emf	xmlutil.emf	\
@@ -126,7 +126,7 @@ ETFS=	ada.etf		adoc.etf	asmx86.etf	asn1.etf	\
 	ps1.etf		psf.etf		python.etf	qd.etf		\
 	rd.etf		rmd.etf		ruby.etf	rul.etf		\
 	rust.etf	shell.etf	spec.etf	sql.etf		\
-	tcl.etf		typst.etf	\
+	tcl.etf		ts.etf		typst.etf	\
 	vala.etf	v.etf		vhdl.etf	\
 	xml.etf		\
 	yacc.etf	zig.etf
@@ -149,7 +149,7 @@ EAFS=	ada.eaf		adoc.eaf	asp.eaf		au3.eaf		\
 	ps1.eaf		python.eaf	\
 	r.eaf		rd.eaf		rust.eaf	\
 	shell.eaf	sgml.eaf	\
-	tcl.eaf		txt.eaf		typst.eaf	\
+	tcl.eaf		ts.eaf		txt.eaf		typst.eaf	\
 	vala.eaf	v.eaf		vhdl.eaf	zig.eaf
 # ERFS:sh=ls *.erf
 ERFS=	jstprint.erf	newuser.erf	\
