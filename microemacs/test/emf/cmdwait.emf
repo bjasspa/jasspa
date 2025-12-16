@@ -30,3 +30,13 @@ define-macro Cmd-Wait
   !endif
   -16 ml-write &cat "Command-wait returned: " $status
 !emacro
+
+define-macro Cmd-Spin
+  set-variable #l0 1
+  set-variable #l1 &abs @#
+  !repeat
+    100 command-wait
+    !iif &les @# 0  -1 command-wait
+  !until &gre &inc #l0 1 #l1
+  -16 ml-write &cat "Cmd-Spin complete: " $status
+!emacro

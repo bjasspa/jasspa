@@ -12,7 +12,7 @@ set-variable $system &band $system &bnot 0x020
 set-variable .hilight.flags 15
 ; Create the colors first
 add-color 0 0 0 0
-add-color 1 40 40 40
+add-color 1 30 30 30
 add-color 2 210 210 210
 add-color 3 230 230 230
 add-color 4 250 205 40

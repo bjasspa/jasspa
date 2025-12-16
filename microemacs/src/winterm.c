@@ -215,10 +215,27 @@ static CHAR_INFO *ciScreenBuffer=NULL;		/* Copy of screen buffer memory */
 static COORD OldConsoleSize;
 meUInt *colTable=NULL;				/* Currently allocated colour table */
 #define consoleNumColors 16			/* Number of colours in console window */
+/* Note: These colors can be customised so the numbers below are not meant to be accurate as they
+ * cannot be, they are meant to promote sensible color selection for the different ME color schemes */
 static meUByte consoleColors[consoleNumColors*3] =
 {
-    0,0,0,    0,0,200, 0,200,0, 0,200,200, 200,0,0, 200,0,200, 200,200,0, 200,200,200,
-    75,75,75, 0,0,255, 0,255,0, 0,255,255, 255,0,0, 255,0,255, 255,255,0, 255,255,255
+    0,    0,  0,                        /* Black */
+    0,    0,170,                        /* Blue */
+    0,  170,  0,                        /* Green */
+    0,  170,170,                        /* Cyan */
+    170,  0,  0,                        /* Red */
+    170,  0,170,                        /* Magenta */
+    170,170,  0,                        /* Yellow */
+    190,190,190,                        /* White */
+    /* second 8 are the lighter variants */
+    120,120,120,                        /* Black */
+    100,100,255,                        /* Blue */
+    100,255,100,                        /* Green */
+    100,255,255,                        /* Cyan */
+    255,100,100,                        /* Red */
+    255,100,255,                        /* Magenta */
+    255,255,100,                        /* Yellow */
+    255,255,255,                        /* White */
 };
 
 /* Function prototypes */
@@ -3549,19 +3566,22 @@ TTaddColor(meColor index, meUByte r, meUByte g, meUByte b)
 #endif /* _ME_WINDOW */
     {
         meUByte *ss;
-        int ii, jj, idif, jdif;
+        int ii, jj, dif, bi,bdif;
         
-        jdif = 256+256+256;
+        bdif = 256*256*3;
         ss = consoleColors;
         for(ii=0 ; ii<consoleNumColors ; ii++)
         {
-            idif  = abs(r - *ss++);
-            idif += abs(g - *ss++);
-            idif += abs(b - *ss++);
-            if(idif < jdif)
+            jj = r - *ss++;
+            dif = jj*jj;
+            jj = g - *ss++;
+            dif += jj*jj;
+            jj = b - *ss++;
+            dif += jj*jj;
+            if(dif < bdif)
             {
-                jdif = idif;
-                jj = ii;
+                bdif = dif;
+                bi = ii;
             }
         }
         
@@ -3571,7 +3591,7 @@ TTaddColor(meColor index, meUByte r, meUByte g, meUByte b)
             memset(colTable+noColors,0,(index-noColors+1)*sizeof(meUInt));
             noColors = index+1;
         }
-        colTable[index] = jj;
+        colTable[index] = bi;
     }
 #ifdef _ME_WINDOW
     else
