@@ -126,7 +126,7 @@ ETFS=	ada.etf		adoc.etf	asmx86.etf	asn1.etf	\
 	ps1.etf		psf.etf		python.etf	qd.etf		\
 	rd.etf		rmd.etf		ruby.etf	rul.etf		\
 	rust.etf	shell.etf	spec.etf	sql.etf		\
-	tcl.etf		ts.etf		typst.etf	\
+	swift.etf	tcl.etf		ts.etf		typst.etf	\
 	vala.etf	v.etf		vhdl.etf	\
 	xml.etf		\
 	yacc.etf	zig.etf
@@ -148,7 +148,7 @@ EAFS=	ada.eaf		adoc.eaf	asp.eaf		au3.eaf		\
 	pascal.eaf	perl.eaf	php.eaf		pls.eaf		\
 	ps1.eaf		python.eaf	\
 	r.eaf		rd.eaf		rust.eaf	\
-	shell.eaf	sgml.eaf	\
+	shell.eaf	sgml.eaf	swift.eaf	\
 	tcl.eaf		ts.eaf		txt.eaf		typst.eaf	\
 	vala.eaf	v.eaf		vhdl.eaf	zig.eaf
 # ERFS:sh=ls *.erf
