@@ -1,0 +1,54 @@
+---
+title: Long Title
+author: MicroEmacs User
+date: 2025-12-16 09:45
+---
+
+Delete the text which follows as it is just some example code for basic feature
+of writing reports in R Markdown.
+
+## R Examples
+
+
+Data loading
+
+```{r label=data}
+data(iris)
+summary(iris)
+```
+
+Table example:
+
+```{r label=table,results="asis"}
+library(knitr)
+knitr::kable(head(iris))
+```
+
+Figure example:
+
+```{r label=fig1,fig.width=9,fig.height=6,out.width=800}
+with(iris,boxplot(Sepal.Length ~ Species,col=2:4))
+```
+
+Inline code example: We have `r nrow(iris)` plants in the dataset.
+
+## Markdown formatting
+
+* list item
+* list item
+
+__bold__, __italic__, `typewriter`
+
+> indented
+
+> * indented list
+  * indented list
+
+| col1  | col2 | col 3 |
+|:-----:|:----:|:-----:|
+|   1   |  2   | 3    |
+|   4   |  5   | 6    |
+
+
+Some more text then here ...
+
