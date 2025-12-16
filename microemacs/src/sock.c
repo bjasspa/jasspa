@@ -30,6 +30,8 @@
 #endif
 #endif
 #endif
+
+#include "evers.h"
 #include "emain.h"
 
 #if MEOPT_SOCKET
@@ -2656,6 +2658,197 @@ meSockFtpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *user
     return 1;
 }
 
+meInt
+meSockDictReadReply(meIo *io, meUByte *buff)
+{
+    meInt ret;
+
+    if(meSockReadLine(io,buff+12) < 0)
+        return ftpERROR;
+    ret = atoi((char *) buff+12);
+    if(io->urlOpts & meSOCKOPT_LOG_VERBOSE)
+    {
+        memcpy(buff,"Dict Reply: ",12);
+        ffSUrlLogger(io,meSOCKOPT_LOG_VERBOSE,buff);
+    }
+    return ret;
+}
+
+meInt
+meSockDictOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *dict, meUByte *word, meUByte *rbuff)
+{
+    meUByte *ss=ffbuf;
+    meInt ret, err, ll, inUse;
+    meSOCKET sck;
+    
+    if(meSockSetup(io,flags) < 0)
+        return -1;
+    
+    flags = (flags & ~(meSOCKFLG_USE_SSL|meSOCKFLG_EXPLICIT_SSL|meSOCKFLG_CTRL_INUSE)) | (io->urlFlags & meSOCKFLG_CLOSE) | (meSOCKFLG_INUSE|meSOCKFLG_DICT);
+    if(!port)
+        port = 2628;
+
+    if(meSockIsInUse(io) && (((io->urlFlags & (meSOCKFLG_CLOSE|meSOCKFLG_DICT|meSOCKFLG_CTRL_INUSE)) != (meSOCKFLG_DICT|meSOCKFLG_CTRL_INUSE)) || (io->urlPrt != port) || 
+                             (io->urlLen < 0) || ((sck=io->sck) == meBadSocket) || strcmp((char *) io->urlHst,(char *) host)))
+        meSockClose(io,1);
+    io->urlLen = -1;
+    io->chkLen = 0;
+    io->timeout = meSOCKET_TIMEOUT;
+    if((inUse=meSockIsInUse(io)))
+        io->urlFlags = (io->urlFlags & meSOCKFLG_CTRL_SHUTDOWN) | flags;
+    else
+    {
+        struct sockaddr_in sa;
+        struct hostent *hp;
+
+        io->urlHome = NULL;
+        io->sck = meBadSocket;
+        io->ctrlSck = meBadSocket;
+#if MEOPT_OPENSSL
+        io->ssl = NULL;
+        io->ctrlSsl = NULL;
+#endif
+        io->urlPrt = -1;
+        if(io->urlOpts & meSOCKOPT_LOG_STATUS)
+        {
+            snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"Connecting to %s:%d",host,port);
+            ffSUrlLogger(io,meSOCKOPT_LOG_STATUS,rbuff);
+        }
+        if(((hp = gethostbyname((char *) host)) == NULL) ||
+           (hp->h_length > ((int) sizeof(struct in_addr))) ||
+           (hp->h_addrtype != AF_INET))
+        {
+            if(io->urlOpts & meSOCKOPT_LOG_ERROR)
+            {
+                snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: Failed to get host [%s] - error %d",host,(hp == NULL) ? meSocketGetError():-1);
+                ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,rbuff);
+            }
+            return -11;
+        }
+        memset(&sa,0,sizeof(sa));
+        sa.sin_family = AF_INET;
+        memcpy(&sa.sin_addr.s_addr,hp->h_addr,hp->h_length);
+        sa.sin_port = htons(port);
+
+        if((sck=meSocketOpen(AF_INET,SOCK_STREAM,IPPROTO_TCP)) == meBadSocket)
+        {
+            if(io->urlOpts & meSOCKOPT_LOG_ERROR)
+                ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,(meUByte *) "meSock Error: Failed to create socket");
+            return -14;
+        }
+        io->sck = sck;
+        io->urlFlags = flags;
+        if(timeoutSnd > 0)
+        {
+#ifdef _WIN32
+            DWORD to=timeoutSnd;
+#else
+            struct timeval to;
+            to.tv_sec = timeoutSnd;
+            to.tv_usec = 0;
+#endif
+            if((ret=setsockopt(sck,SOL_SOCKET,SO_SNDTIMEO,(char *) &to,sizeof(to))) < 0)
+            {
+                if(io->urlOpts & meSOCKOPT_LOG_WARNING)
+                {
+                    snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Warning: Failed to set send timeout %d,%d",ret,meSocketGetError());
+                    ffSUrlLogger(io,meSOCKOPT_LOG_WARNING,rbuff);
+                }
+            }
+        }
+        if(timeoutRcv > 0)
+        {
+#ifdef _WIN32
+            DWORD to=timeoutRcv;
+#else
+            struct timeval to;
+            to.tv_sec = timeoutRcv;
+            to.tv_usec = 0;
+#endif
+            if((ret=setsockopt(sck,SOL_SOCKET,SO_RCVTIMEO,(char *) &to,sizeof(to))) < 0)
+            {
+                if(io->urlOpts & meSOCKOPT_LOG_WARNING)
+                {
+                    snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Warning: Failed to set recv timeout %d,%d",ret,meSocketGetError());
+                    ffSUrlLogger(io,meSOCKOPT_LOG_WARNING,rbuff);
+                }
+            }
+        }
+        /* Connect to the server, TCP/IP layer,*/
+        if(meSocketConnect(sck,(struct sockaddr*) &sa,sizeof(sa)) != 0)
+        {
+            if(io->urlOpts & meSOCKOPT_LOG_ERROR)
+            {
+                snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: Failed to connect socket - error %d",meSocketGetError());
+                ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,rbuff);
+            }
+            meSockClose(io,1);
+            return -16;
+        }
+        if(io->urlOpts & meSOCKOPT_LOG_DETAILS)
+        {
+            snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"Connected on socket %x",sck);
+            ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,rbuff);
+        }
+        if(meSockDictReadReply(io,rbuff) != 220)
+        {
+            meSockClose(io,1);
+            return -17;
+        }
+        strcpy((char *) io->urlHst,(char *) host);
+        io->urlPrt = port;
+        meStrcpy((char *) ss,"CLIENT " ME_FULLNAME " " meVERSION_CODE "\r\n");
+        ss += meStrlen(ss);
+    }
+    ss += sprintf((char *) ss,"DEFINE %s %s\r\n",((dict == NULL) ? "!":(char *) dict),word);
+    if(io->urlOpts & meSOCKOPT_LOG_DETAILS)
+    {
+        ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,(meUByte *) "Dict Request:");
+        ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,ffbuf);
+    }
+    ll = ss-ffbuf;
+    ss = ffbuf;
+    for(;;)
+    {
+        ret = meSocketWrite(sck,(char *) ss,ll,0);
+        if(ret <= 0)
+        {
+            err = meSocketGetError();
+#ifndef _WIN32
+            if(err == EPIPE)
+            {
+                if(io->urlOpts & meSOCKOPT_LOG_DETAILS)
+                    ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,(meUByte *) "meSock Info: Closing connection as server shutdown");
+                meSockClose(io,1);
+                return meSockDictOpen(io,flags,host,port,dict,word,rbuff);
+            }
+#endif
+            if(io->urlOpts & meSOCKOPT_LOG_ERROR)
+            {
+                snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"meSock Error: Dict define write error %d,%d",ret,err);
+                ffSUrlLogger(io,meSOCKOPT_LOG_ERROR,rbuff);
+            }
+            meSockClose(io,1);
+            return -20;
+        }
+        if((ll -= ret) <= 0)
+            break;
+        ss += ret;
+    }
+    /* get the initial message */
+    if(!inUse && (meSockDictReadReply(io,rbuff) != 250))
+    {
+        meSockClose(io,1);
+        return -21;
+    }
+    if(meSockDictReadReply(io,rbuff) != 150)
+    {
+        meSockClose(io,1);
+        return -31;
+    }
+    return 1;
+}
+
 
 int
 meSockRead(meIo *io, int sz, meUByte *buff, int offs)
@@ -2705,6 +2898,11 @@ meSockRead(meIo *io, int sz, meUByte *buff, int offs)
                         }
                         ii = -2;
                     }
+                    else if(ll > 0x00ffffff)
+                    {
+                        ll = -7;
+                        break;
+                    }
                     else if((bb >= '0') && (bb <= '9'))
                         ll = (ll << 4) | (bb - '0');
                     else if((bb >= 'A') && (bb <= 'F'))
@@ -2716,11 +2914,7 @@ meSockRead(meIo *io, int sz, meUByte *buff, int offs)
                         ll = -4;
                         break;
                     }
-                    if(++ii > 7)
-                    {
-                        ll = -7;
-                        break;
-                    }
+                    ii++;
                 }
             }
         }
@@ -2809,7 +3003,36 @@ meSockRead(meIo *io, int sz, meUByte *buff, int offs)
     else
     {
         if((ret = meSocketRead(io->sck,(char *) (buff+offs),sz,0)) > 0)
+        {
+            if(io->urlFlags & meSOCKFLG_DICT)
+            {
+                /* almost certainly the end of the definition is at the end of the buffer, this is a line starting with 250 */
+                meUByte *ss;
+                buff[offs+ret] = '\0';
+                if((ss=meStrstr(buff,"\n250 ")) != NULL)
+                {
+                    ss++;
+                    ret = ss-buff;
+                    if(io->urlOpts & meSOCKOPT_LOG_VERBOSE)
+                    {
+                        if(ret > 12)
+                        {
+                            meUByte bs[12];
+                            memcpy(bs,ss-12,12);
+                            memcpy(ss-12,"Dict Reply: ",12);
+                            ffSUrlLogger(io,meSOCKOPT_LOG_VERBOSE,ss-12);
+                            memcpy(ss-12,bs,12);
+                        }
+                        else
+                            ffSUrlLogger(io,meSOCKOPT_LOG_VERBOSE,ss);
+                    }
+                    ret -= offs;
+                    io->urlLen = 0;
+                    io->length = -2;
+                }
+            }
             return ret;
+        }
         if(ret < 0)
             err = meSocketGetError();
         else if(io->urlLen == -1)
@@ -2913,6 +3136,16 @@ meSockClose(meIo *io, int force)
 #endif
         if(io->sck != meBadSocket)
         {
+            if(io->urlFlags & meSOCKFLG_DICT)
+            {
+                if(io->urlOpts & meSOCKOPT_LOG_VERBOSE)
+                    ffSUrlLogger(io,meSOCKOPT_LOG_VERBOSE,(meUByte *) "Dict Request: QUIT");
+                if(meSocketWrite(io->sck,"QUIT\r\n",6,0) == 6)
+                {
+                    meUByte buff[meSOCK_BUFF_SIZE];
+                    meSockDictReadReply(io,buff);
+                }
+            }
             meSocketClose(io->sck);
             io->sck = meBadSocket;
         }

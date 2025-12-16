@@ -11,22 +11,22 @@
 set-variable $system &band $system &bnot 0x020
 set-variable .hilight.flags 15
 ; Create the colors first
-add-color 0 20 20 20
+add-color 0 0 0 0
 add-color 1 40 40 40
 add-color 2 210 210 210
 add-color 3 230 230 230
 add-color 4 250 205 40
 add-color 5 100 149 237
-add-color 6 139 235 179
+add-color 6 139 245 159
 add-color 7 135 206 250
 add-color 8 144 146 255
 add-color 9 145 182 199
 add-color 10 240 230 140
 add-color 11 255 165 0
 add-color 12 148 148 148
-add-color 13 220 170 220
-add-color 14 250 180 175
-add-color 15 255 100 100
+add-color 13 240 160 240
+add-color 14 255 180 175
+add-color 15 255 130 130
 add-color 16 0 0 0
 add-color 17 255 255 255
 add-color 18 170 0 0
@@ -45,8 +45,8 @@ set-variable $cursor-color 3844
 ; Standard
 add-color-scheme $global-scheme 2 0 3 1 0 2 1 3 0 8 0 8 0 8 0 8
 add-color-scheme $ml-scheme 2 0 3 1 0 2 1 3 0 8 0 8 0 8 0 8
-add-color-scheme $mode-line-scheme 2 0 3 16 0 2 1 3 8 0 8 0 0 8 0 8
-add-color-scheme $scroll-bar-scheme 2 1 3 16 1 2 16 3 8 0 8 0 0 8 0 8
+add-color-scheme $mode-line-scheme 2 0 3 0 0 2 1 3 8 0 8 0 0 8 0 8
+add-color-scheme $scroll-bar-scheme 2 1 3 1 1 2 1 3 8 0 8 0 0 8 0 8
 add-color-scheme $trunc-scheme 2 0 3 1 0 2 1 3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.dmf 2 21 3 21 2 18 3 18 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.no1 24 0 24 1 0 2 1 3 0 8 0 8 0 8 0 8
@@ -61,7 +61,7 @@ add-color-scheme .scheme.osd-ebtt 17 0 25 0 1 17 1 25 0 8 16 24 8 0 24 16
 add-color-scheme .scheme.osd-dbtt 12 0 26 0 1 12 1 26 0 8 0 8 8 0 8 0
 add-color-scheme .scheme.osd-title 26 3 26 17 3 26 17 26 8 0 8 0 0 8 0 8
 add-color-scheme .scheme.osd-child 10 0 10 1 20 4 20 10 0 8 0 8 8 0 8 0
-add-color-scheme .scheme.osd-sbar 2 16 3 16 16 2 16 3 8 0 8 0 0 8 0 8
+add-color-scheme .scheme.osd-sbar 2 1 3 1 1 2 1 3 8 0 8 0 0 8 0 8
 ; Programming Langs
 add-color-scheme .scheme.prepro 5 0 5 1 0 2 1 3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.function 6 0 6 1 0 2 1 3 17 25 17 25 17 25 17 25
@@ -97,14 +97,14 @@ add-color-scheme .scheme.dir-slink 11 0 4 1 0 2 1 3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.dir-tree 2 0 3 1 0 2 1 3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.dir-open 18 2 18 2 0 2 1 3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.dir-closed 19 2 19 2 0 2 1 3 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.dir-uknown 4 27 10 12 0 2 1 3 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.dir-uknown 4 12 10 12 0 2 1 3 0 8 0 8 0 8 0 8
 ; Line Schemes
-add-color-scheme .scheme.hide 27 0 12 1 0 2 1 3 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.fold-close 1 7 16 7 0 2 1 3 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.fold-open 1 6 16 6 0 2 1 3 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.hide 12 0 12 1 0 2 1 3 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.fold-close 0 7 27 7 0 2 1 3 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.fold-open 0 6 27 6 0 2 1 3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.trace 0 13 1 13 0 2 1 3 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.hlwhite 1 17 16 17 0 2 1 3 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.hlblack 3 16 17 16 0 2 1 3 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.hlwhite 1 17 0 17 0 2 1 3 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.hlblack 3 1 17 0 0 2 1 3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.hlred 0 15 0 14 0 2 0 3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.hlgreen 0 6 27 6 0 2 1 3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.hlyellow 0 4 0 10 0 2 0 3 0 8 0 8 0 8 0 8
@@ -112,21 +112,21 @@ add-color-scheme .scheme.hlblue 0 5 0 9 0 2 0 3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.hlmagenta 0 25 0 13 0 2 0 3 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.hlcyan 0 24 0 7 0 2 0 3 0 8 0 8 0 8 0 8
 ; Graphical Diff
-add-color-scheme .scheme.gdfchange 16 10 0 10 0 2 1 3 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.gdfadd 16 9 0 9 0 2 1 3 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.gdfpad 0 7 16 7 0 2 1 3 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.gdfsel 0 6 16 6 0 2 1 3 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.gdfselpad 0 6 16 6 0 2 1 3 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.gdfrej 16 13 0 13 0 2 1 3 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.gdfrejpad 0 13 16 13 0 2 1 3 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.gdfchange 0 10 27 10 0 2 1 3 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.gdfadd 0 9 27 9 0 2 1 3 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.gdfpad 0 7 27 7 0 2 1 3 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.gdfsel 0 6 27 6 0 2 1 3 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.gdfselpad 0 6 27 6 0 2 1 3 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.gdfrej 0 13 27 13 0 2 1 3 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.gdfrejpad 0 13 27 13 0 2 1 3 0 8 0 8 0 8 0 8
 ; Games
 add-color-scheme .scheme.cardback 27 0 2 0 17 0 25 0 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.cardfore 16 2 18 2 4 22 24 20 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.cardfore 0 2 18 2 4 22 24 20 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.mjg1 24 20 11 20 0 7 0 13 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.mjg2 0 6 0 10 0 14 0 2 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.mi1 11 20 24 20 16 10 1 11 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.mi2 11 10 25 20 16 10 20 11 0 8 0 8 0 8 0 8
-add-color-scheme .scheme.mi3 16 24 16 18 18 10 18 11 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.mi1 11 20 24 20 0 10 1 11 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.mi2 11 10 25 20 0 10 20 11 0 8 0 8 0 8 0 8
+add-color-scheme .scheme.mi3 0 24 0 18 18 10 18 11 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.met-back 11 0 2 0 18 0 5 0 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.met-fore1 11 0 7 0 14 0 13 0 0 8 0 8 0 8 0 8
 add-color-scheme .scheme.met-fore2 6 0 8 0 10 0 25 0 0 8 0 8 0 8 0 8

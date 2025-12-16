@@ -128,7 +128,7 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
 #endif
     }
     ft = ffUrlGetType(file);
-    if(ffUrlTypeIsHttpFtp(ft))
+    if(ffUrlTypeIsHttpFtpDict(ft))
         return ft;
 #if MEOPT_TFS
     if(ffUrlTypeIsTfs(ft))
@@ -945,7 +945,7 @@ bufferOutOfDate(meBuffer *bp)
     if(bp->fileName == NULL)
         return 0;
     ft = getFileStats(bp->fileName,0,&stats,NULL);
-    if(ft & (meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE))
+    if(ft & (meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE|meIOTYPE_DICT))
         return 0;
     if(ft & meIOTYPE_NOTEXIST)
         return ((meFiletimeIsSet(bp->stats.stmtime)) ? -1:0);
@@ -1688,7 +1688,7 @@ readin(register meBuffer *bp, meUByte *fname)
 #endif
         meStat stats;
         int ft, aft;
-        if((ft=getFileStats(fn,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE,&(bp->stats),lfn)) & meIOTYPE_HTTP)
+        if((ft=getFileStats(fn,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE,&(bp->stats),lfn)) & (meIOTYPE_HTTP|meIOTYPE_DICT))
             meModeSet(bp->mode,MDVIEW);
         else if((ft & (meIOTYPE_FTP|meIOTYPE_FTPE)) == 0)
         {
@@ -1955,7 +1955,7 @@ insertFile(int f, int n)
              |meIOTYPE_TFS
 #endif
 #if MEOPT_SOCKET
-             |meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE
+             |meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE|meIOTYPE_DICT
 #endif
              )) == 0)
         return mlwrite(MWABORT,(meUByte *)"[Given file type not supported]");
@@ -2075,7 +2075,7 @@ findFileSingle(meUByte *fname, int bflag, meInt lineno, meUShort colno)
                 |meIOTYPE_TFS
 #endif
 #if (MEOPT_SOCKET == 0)
-                |meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE
+                |meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE|meIOTYPE_DICT
 #endif
                 )) ||
        ((gft & meIOTYPE_NOTEXIST) && !(bflag & BFND_CREAT)))
@@ -2192,7 +2192,7 @@ findFileList(meUByte *fname, int bflag, meInt lineno, meUShort colno)
     fileNameCorrect(fname,fileName,&baseName) ;
 
     cc = ffUrlGetType(fileName);
-    if(!ffUrlTypeIsHttpFtp(cc) && fileNameWild(baseName) &&
+    if(!ffUrlTypeIsHttpFtpDict(cc) && fileNameWild(baseName) &&
        (ffUrlTypeIsTfs(cc) || meTestRead(fileName)))
     {
         /* if the base name has a wild card letter (i.e. *, ? '[')
@@ -2486,7 +2486,7 @@ fileOp(int f, int n)
     {
         if(inputFileName((meUByte *)"Delete file",sfname,1) <= 0)
             rr = 0 ;
-        else if((ft=ffUrlGetType(sfname)) & (meIOTYPE_SSL|meIOTYPE_TFS|meIOTYPE_HTTP))
+        else if((ft=ffUrlGetType(sfname)) & (meIOTYPE_SSL|meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_DICT))
             rr = mlwrite(MWABORT,(meUByte *)"[Cannot delete %s]",sfname);
         else if((n & meFILEOP_CHECK) && !ffUrlTypeIsFtp(ft))
         {
@@ -2556,7 +2556,7 @@ fileOp(int f, int n)
            (meGetString((meUByte *)"To",0,0,dfname,meBUF_SIZE_MAX) <= 0))
             rr = 0;
         /* check that nothing of that name currently exists */
-        else if((((ii=getFileStats(sfname,0,NULL,NULL)) & (meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE)) != 0) ||
+        else if((((ii=getFileStats(sfname,0,NULL,NULL)) & (meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE|meIOTYPE_DICT)) != 0) ||
                 ((ii & (meIOTYPE_REGULAR|meIOTYPE_DIRECTORY)) == 0))
         {
             mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[%s not a local file or directory]",sfname);
@@ -2959,7 +2959,7 @@ appendBuffer(int f, int n)
 
     if(inputFileName((meUByte *)"Append to file",fname,1) <= 0)
         return meABORT ;
-    if(((ft=getFileStats(fname,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE|gfsERRON_DIR,NULL,lname)) & (meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE)) ||
+    if(((ft=getFileStats(fname,gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE|gfsERRON_DIR,NULL,lname)) & (meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE|meIOTYPE_DICT)) ||
        ((ft & (meIOTYPE_REGULAR|meIOTYPE_NOTEXIST)) == 0))
         return mlwrite(MWABORT,(meUByte *)"[Unsupported file type to append to]");
     fn = (lname[0] == '\0') ? fname:lname ;
@@ -3100,6 +3100,7 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
     /* search for
      * 1) set to root,  xxxx/http:// -> http://  (for urls)
      * 2) set to root,  xxxx/ftp://  -> ftp://   (for urls)
+     * 2) set to root,  xxxx/dict:// -> dict://  (for urls)
      * 3) set to root,  xxxx/tfs://  -> tfs://   (for urls)
      * 4) set to root,  xxxx/file:yy -> yy       (for urls)
      * 5) set to root,  xxxx///yyyyy -> //yyyyy  (for network drives)
@@ -3109,10 +3110,10 @@ pathNameCorrect(meUByte *oldName, int nameType, meUByte *newName, meUByte **base
      */
     for(;;)
     {
-        if(((ft = ffUrlGetType(p1)) & (meIOTYPE_FILE|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE|meIOTYPE_TFS)) != 0)
+        if(((ft = ffUrlGetType(p1)) & (meIOTYPE_FILE|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE|meIOTYPE_DICT|meIOTYPE_TFS)) != 0)
         {
 double_url:
-            if(ffUrlTypeIsHttp(ft))
+            if(ffUrlTypeIsHttpDict(ft))
             {
                 flag = 2;
                 urls = p1;
@@ -3142,7 +3143,7 @@ double_url:
             }
             if((p=meStrchr(urle,DIR_CHAR)) == NULL)
                 break;
-            if((p[-1] == ':') && (((ft = ffUrlGetType(urle)) & (meIOTYPE_FILE|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE|meIOTYPE_TFS)) != 0))
+            if((p[-1] == ':') && (((ft = ffUrlGetType(urle)) & (meIOTYPE_FILE|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE|meIOTYPE_DICT|meIOTYPE_TFS)) != 0))
             {
                 p1 = urle;
                 goto double_url;

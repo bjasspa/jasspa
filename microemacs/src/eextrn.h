@@ -409,13 +409,14 @@ extern int      createBackupName(meUByte *filename, meUByte *fn, meUByte backl, 
 #define meIOTYPE_HTTP      0x0010
 #define meIOTYPE_FTP       0x0020
 #define meIOTYPE_FTPE      0x0040
+#define meIOTYPE_DICT      0x0080
 /* the following is only used in fileio to ensure meBFFLAG_DIR is added */
-#define meIOTYPE_DIR       0x0080
+#define meIOTYPE_DIR       0x0100
 /* the following are added to the URL type by getFileStats */ 
-#define meIOTYPE_NASTY     0x0100
-#define meIOTYPE_NOTEXIST  0x0200
-#define meIOTYPE_REGULAR   0x0400
-#define meIOTYPE_DIRECTORY 0x0800
+#define meIOTYPE_NASTY     0x0200
+#define meIOTYPE_NOTEXIST  0x0400
+#define meIOTYPE_REGULAR   0x0800
+#define meIOTYPE_DIRECTORY 0x1000
 
 /* meIOTYPE_PIPE is returned if url is NULL, meIOTYPE_NONE is returned if url does not start with a known URL, this is interpreted as a standard file name */ 
 extern meUByte ffUrlGetType(meUByte *url);
@@ -424,13 +425,17 @@ extern void ffSUrlLogger(meIo *io, meUByte type, meUByte *txt);
 #define ffUrlTypeIsPipe(ft)     ((ft) & meIOTYPE_PIPE)
 #define ffUrlTypeIsFile(ft)     ((ft) & meIOTYPE_FILE)
 #define ffUrlTypeIsHttp(ft)     ((ft) & meIOTYPE_HTTP)
+#define ffUrlTypeIsDict(ft)     ((ft) & meIOTYPE_DICT)
+#define ffUrlTypeIsHttpDict(ft) ((ft) & (meIOTYPE_HTTP|meIOTYPE_DICT))
 #define ffUrlTypeIsFtp(ft)      ((ft) & (meIOTYPE_FTP|meIOTYPE_FTPE))
+#define ffUrlTypeIsFtpDict(ft)  ((ft) & (meIOTYPE_FTP|meIOTYPE_FTPE|meIOTYPE_DICT))
 #define ffUrlTypeIsTfs(ft)      ((ft) & meIOTYPE_TFS)
 #define ffUrlTypeIsFtpe(ft)     ((ft) & meIOTYPE_FTPE)
 #define ffUrlTypeIsFtps(ft)     (((ft) & (meIOTYPE_FTP|meIOTYPE_SSL)) == (meIOTYPE_FTP|meIOTYPE_SSL))
 #define ffUrlTypeIsFtpu(ft)     (((ft) & (meIOTYPE_FTP|meIOTYPE_SSL)) == meIOTYPE_FTP)
 #define ffUrlTypeIsHttpFtp(ft)  ((ft) & (meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE))
-#define ffUrlTypeIsNotFile(ft)  ((ft) & (meIOTYPE_PIPE|meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE))
+#define ffUrlTypeIsHttpFtpDict(ft) ((ft) & (meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE|meIOTYPE_DICT))
+#define ffUrlTypeIsNotFile(ft)  ((ft) & (meIOTYPE_PIPE|meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE|meIOTYPE_DICT))
 
 /* the following internal functions can be used to replace standard fopen/fread to read files from anywhere including tfs - use with extreme care */
 extern meInt ffremain;
@@ -976,6 +981,8 @@ meSockFtpGetDataChannel(meIo *io, meUByte *buff);
 meInt
 meSockFtpConnectData(meIo *io, meUByte *buff);
 
+int
+meSockDictOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *dict, meUByte *word, meUByte *rbuff);
 
 int
 meSockRead(meIo *io, int sz, meUByte *rbuff, int rOffset);

@@ -3486,7 +3486,8 @@ get_flag:
                     int v4=-1;
                     
                     v7[0] = '\0';
-                    if(ftype & meIOTYPE_HTTP)
+                    if(ftype & (meIOTYPE_HTTP|meIOTYPE_DICT))
+                        /* For simplicity treat dict:// as a http type file */
                         v1 = v2 = 'H';
                     else if(ftype & (meIOTYPE_FTP|meIOTYPE_FTPE))
                     {
@@ -3647,7 +3648,7 @@ get_flag:
                 if(ftype & (meIOTYPE_NASTY|meIOTYPE_NOTEXIST))
                     return meLtoa(0);
                 /* If its a url then do we support url ? */
-                if(ftype & (meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE))
+                if(ftype & (meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE|meIOTYPE_DICT))
 #if MEOPT_SOCKET
                     return meLtoa(1);
 #else
@@ -3675,8 +3676,8 @@ get_flag:
                     evalResult[0] = 'X';
                 else if(ftype & (meIOTYPE_REGULAR|meIOTYPE_DIRECTORY))
                     evalResult[0] = (ftype & meIOTYPE_REGULAR) ? 'R':'D';
-                else if(ftype & (meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE))
-                    evalResult[0] = (ftype & meIOTYPE_HTTP) ? 'H':'F';
+                else if(ftype & (meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE|meIOTYPE_DICT))
+                    evalResult[0] = (ftype & (meIOTYPE_HTTP|meIOTYPE_DICT)) ? 'H':'F';
                 else
                     evalResult[0] = 'N';
                 evalResult[1] = '\0';
@@ -3684,7 +3685,7 @@ get_flag:
                 
             case 'w':
                 /* File write permission - If nasty or url - no */
-                if(ftype & (meIOTYPE_NASTY|meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE))
+                if(ftype & (meIOTYPE_NASTY|meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE|meIOTYPE_DICT))
                     return meLtoa(0);
                 
                 /* if it doesnt exist or its an DOS/WIN directory - yes */
@@ -3699,7 +3700,7 @@ get_flag:
             case 'x':
                 /* File execute permission */
                 /* If nasty or doesnt exist, or url then no */
-                if(ftype & (meIOTYPE_NASTY|meIOTYPE_NOTEXIST|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE))
+                if(ftype & (meIOTYPE_NASTY|meIOTYPE_NOTEXIST|meIOTYPE_HTTP|meIOTYPE_FTP|meIOTYPE_FTPE|meIOTYPE_DICT))
                     return meLtoa(0);
 #if (defined _DOS) || (defined _WIN32)
                 /* If directory, simulate unix style execute flag and return yes */

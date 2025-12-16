@@ -196,25 +196,27 @@ static char tcapbuf[TCAPSLEN];
 #define tcapColorSysCnt 16
 #define tcapColorGryOff 232
 #define tcapColorGryCnt 24
+/* Note: These color numbers are not meant to be accurate, they are meant to promote sensible color
+ * selection for the different ME color schemes */
 static meUByte tcapColorSys[tcapColorSysCnt*3] =
 {
     /* first 8 are the darker variants */
     0,    0,  0,                        /* Black */
-    128,  0,  0,                        /* Red */
-    0,  128,  0,                        /* Green */
-    128,128,  0,                        /* Yellow */
-    0,    0,128,                        /* Blue */
-    128,  0,128,                        /* Magenta */
-    0,  128,128,                        /* Cyan */
-    192,192,192,                        /* White */
+    170,  0,  0,                        /* Red */
+    0,  170,  0,                        /* Green */
+    170,170,  0,                        /* Yellow */
+    0,    0,170,                        /* Blue */
+    170,  0,170,                        /* Magenta */
+    0,  170,170,                        /* Cyan */
+    190,190,190,                        /* White */
     /* second 8 are the lighter variants */
-    128,128,128,                        /* Black */
-    255,  0,  0,                        /* Red */
-    0,  255,  0,                        /* Green */
-    255,255,  0,                        /* Yellow */
-    0,    0,255,                        /* Blue */
-    255,  0,255,                        /* Magenta */
-    0,  255,255,                        /* Cyan */
+    120,120,120,                        /* Black */
+    255,100,100,                        /* Red */
+    100,255,100,                        /* Green */
+    255,255,100,                        /* Yellow */
+    100,100,255,                        /* Blue */
+    255,100,255,                        /* Magenta */
+    100,255,255,                        /* Cyan */
     255,255,255,                        /* White */
 } ;
 
@@ -3197,7 +3199,10 @@ TCAPaddColor(meUByte index, meUByte r, meUByte g, meUByte b)
     for(ii=0 ; ii<ci ; ii++)
     {
         cdif = r - *ss++;
-        idif = (cdif * cdif);
+        /* Note that the main 16 system colours can and are often customised so we don't know what
+         * they really are so add a fixed error to them, the 256 stepped color has a color
+         * difference of 40 so make this error around that size */
+        idif = 1500+(cdif * cdif);
         cdif = g - *ss++;
         idif += (cdif * cdif);
         cdif = b - *ss++;

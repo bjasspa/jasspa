@@ -1132,7 +1132,7 @@ input_expand:
                 if(buf[ilen-1] != DIR_CHAR)
                     *base = '\0';
                 ft = ffUrlGetType(fname);
-                if(ffUrlTypeIsHttp(ft))
+                if(ffUrlTypeIsHttpDict(ft))
                     strList = NULL;
                 else
                 {

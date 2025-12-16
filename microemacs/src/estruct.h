@@ -1423,6 +1423,7 @@ struct s_DragAndDrop
 #define meSOCKFLG_CTRL_INUSE    0x0040
 #define meSOCKFLG_CTRL_NO_QUIT  0x0080
 #define meSOCKFLG_CTRL_SHUTDOWN 0x0100
+#define meSOCKFLG_DICT          0x0200
 #define meSOCKFLG_CHUNKED       0x0400
 #define meSOCKFLG_CLOSE         meSOCKOPT_CLOSE
 

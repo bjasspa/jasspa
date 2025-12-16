@@ -241,6 +241,11 @@ ffUrlGetType(meUByte *url)
         if((*url++ == 'f') && (*url++ == 's') && (*url++ == ':'))
             type = meIOTYPE_TFS;
     }
+    else if(cc == 'd')
+    {
+        if((*url++ == 'i') && (*url++ == 'c') && (*url++ == 't') && (*url++ == ':'))
+            type = meIOTYPE_DICT;
+    }
     if((type == meIOTYPE_NONE) || (*url++ != '/') || (*url != '/'))
         return meIOTYPE_NONE;
     return type;
@@ -352,7 +357,7 @@ ffUrlGetInfo(meIo *io, meUByte **host, meUByte **port, meUByte **user, meUByte *
     
     if(((root = regFind(NULL,(meUByte *)"/url")) == NULL) && ((root = regSet(NULL,(meUByte *)"/url",NULL)) == NULL))
         return meFALSE;
-    ss = (meUByte *) ((ffUrlTypeIsFtp(io->type)) ? "ftp":"http");
+    ss = (meUByte *) ((ffUrlTypeIsHttp(io->type)) ? "http":"ftp");
     if(((rNd = regFind(root,ss)) == NULL) && ((rNd = regSet(root,ss,NULL)) == NULL))
         return meFALSE;
     if(((root = regFind(rNd,*host)) == NULL) && ((root = regSet(rNd,*host,NULL)) == NULL))
@@ -815,6 +820,55 @@ ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meUByte 
     return meTRUE;
 }
 
+static int
+ffDictFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
+{
+    meUByte buff[meBUF_SOCK_SIZE_MAX], urlBuff[meBUF_SIZE_MAX], *hst, *prt, *wrd, *dct, *dd, cc;
+    meUShort flags;
+    meInt ii;
+    
+    wrd = url + 7;
+    flags = 0;
+    dct = prt = NULL;
+    hst = dd = urlBuff;
+    while(((cc=*wrd++) != '\0') && (cc != '/'))
+    {
+        if((cc == ':') && (prt == NULL))
+        {
+            *dd++ = '\0';
+            prt = dd;
+        }
+        else
+            *dd++ = cc;
+    }
+    if((cc != '/') || (*wrd++ != 'd') || (*wrd++ != ':') || ((cc=*wrd) == '\0') || (cc == ':'))
+        return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Invalid URL, expecting dict://<host>/d:<word>[:<dict>]]",url);
+    *dd++ = '\0';
+    if((dct=meStrchr(wrd,':')) != NULL)
+    {
+        ii = dct-wrd;
+        memcpy(dd,wrd,ii);
+        dd[ii] = '\0';
+        wrd = dd;
+        if(*++dct == '\0')
+            dct = NULL;
+    }
+    if((prt == NULL) || (prt[0] == '\0'))
+    {
+        ii = 0;
+        prt = (meUByte *) "2628";
+    }
+    else
+        ii = atoi((char *) prt);
+    
+    if((ii=meSockDictOpen(io,flags,hst,ii,dct,wrd,buff)) < 0)
+        return meFALSE;
+    
+    meStrcpy(resultStr,meItoa(ii));
+    io->length = io->urlLen;
+    return meTRUE;
+}
+
 static void
 ffUrlFileSetupFlags(meIo *io, meUInt rwflag)
 {
@@ -870,11 +924,7 @@ ffUrlFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
     ffUrlFileSetupFlags(io,rwflag);
     
     /* is it a http: or ftp: */
-    if(ffUrlTypeIsFtp(io->type))
-    {
-        ii = ffFtpFileOpen(io,rwflag,url,bp);
-    }
-    else
+    if(!ffUrlTypeIsFtpDict(io->type))
     {
         meCookie *cookie;
         meVariable *vp;
@@ -913,6 +963,10 @@ ffUrlFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
         if(s2 != NULL)
             free(s2);
     }
+    else if(ffUrlTypeIsFtp(io->type))
+        ii = ffFtpFileOpen(io,rwflag,url,bp);
+    else
+        ii = ffDictFileOpen(io,rwflag,url,bp);
     if(ii <= 0)
         io->urlBp = NULL;
     else if((rwflag & (meRWFLAG_READ|meRWFLAG_WRITE)) && (io->urlBp != NULL))
@@ -1098,7 +1152,7 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
     if(ffUrlTypeIsPipe(ft))
         return 1;
 #if MEOPT_SOCKET
-    if((backl == '#') && ffUrlTypeIsHttpFtp(ft))
+    if((backl == '#') && ffUrlTypeIsHttpFtpDict(ft))
     {
         meUByte tmp[meBUF_SIZE_MAX];
         s = getFileBaseName(fn);
@@ -1111,7 +1165,7 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
     else
 #endif
 #if MEOPT_EXTENDED_BACKUP
-        if((backupPathFlag > 0) && !ffUrlTypeIsHttpFtp(ft))
+        if((backupPathFlag > 0) && !ffUrlTypeIsHttpFtpDict(ft))
     {
         if(backupPathFlag == 1)
         {
@@ -1243,19 +1297,21 @@ ffgetBuf(meIo *io,int offset, int len)
     else
 #endif
 #if MEOPT_SOCKET
-        if(ffUrlTypeIsHttpFtp(io->type))
+        if(ffUrlTypeIsHttpFtpDict(io->type))
     {
         if(io->length < 0)
         {
             if(io->length == -2)
                 return meFALSE;
-            ffremain = meFIOBUFSIZ;
+            ffremain = meFIOBUFSIZ-offset;
         }
         else if((ffremain = io->length-ffread) <= 0)
             return meFALSE;
+        else if(ffremain > (meFIOBUFSIZ-offset))
+            ffremain = meFIOBUFSIZ-offset;
         if(ffremain > len)
             ffremain = len;
-        ffremain = meSockRead(io,ffremain,ffbuf+offset,0);
+        ffremain = meSockRead(io,ffremain,ffbuf,offset);
         if(ffremain <= 0)
         {
             if(io->length != -1)
@@ -1601,7 +1657,7 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
     meSigHold();
 #endif
     /* If meIOTYPE_PIPE the fp handle must be already set, if file type should be NONE as any file: prefix should have been removed by now */
-    if(ffUrlTypeIsHttpFtp(io->type))
+    if(ffUrlTypeIsHttpFtpDict(io->type))
     {
 #if MEOPT_SOCKET
         int rr;
@@ -1726,7 +1782,7 @@ ffReadFileClose(meIo *io, meUInt flags)
      * The output file has been set up as a temporary file with the
      * 'delete when closed' flag.
      */
-    if(ffUrlTypeIsHttpFtp(io->type))
+    if(ffUrlTypeIsHttpFtpDict(io->type))
     {
 #if MEOPT_SOCKET
         ffUrlFileClose(io,meRWFLAG_READ);
@@ -1984,11 +2040,11 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
         meSigHold();
 #endif
     }
-    else if(ffUrlTypeIsHttpFtp(io->type))
+    else if(ffUrlTypeIsHttpFtpDict(io->type))
     {
 #if MEOPT_SOCKET
         io->redirect = 0;
-        if(io->type & meIOTYPE_HTTP)
+        if(io->type & (meIOTYPE_HTTP|meIOTYPE_DICT))
             return mlwrite(MWABORT|MWPAUSE,(meUByte *) "[Cannot write to urls of this type]");
 #ifdef _UNIX
         /* must stop any signals or the connection will fail */
@@ -2397,7 +2453,7 @@ ffWriteFileClose(meIo *io, meUInt flags, meBuffer *bp)
     }
     
 #if MEOPT_SOCKET
-    if(ffUrlTypeIsHttpFtp(io->type))
+    if(ffUrlTypeIsHttpFtpDict(io->type))
     {
         if(ffUrlFileClose(io,flags) <= 0)
             ret = meABORT;

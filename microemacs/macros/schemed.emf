@@ -19,13 +19,13 @@ add-color 5 30 30 255
 add-color 6 200 0 200
 add-color 7 0 200 200
 add-color 8 255 255 255
-add-color 9 75 75 75
-add-color 10 255 0 0
-add-color 11 0 255 0
-add-color 12 255 255 0
-add-color 13 60 60 255
-add-color 14 255 0 255
-add-color 15 0 255 255
+add-color 9 130 130 130
+add-color 10 255 50 50
+add-color 11 50 255 50
+add-color 12 255 255 50
+add-color 13 70 70 255
+add-color 14 255 50 255
+add-color 15 50 255 255
 add-color 16 20 20 140
 ; Set the required cursor-color
 set-variable $cursor-color 12
