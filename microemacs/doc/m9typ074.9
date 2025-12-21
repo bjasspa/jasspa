@@ -5,24 +5,30 @@
 .\" copying information.
 .\"
 .\"  Created By    : Detlef Groth
-.\"  Created       : Sun Dec 16 07:00:00 2025
+.\"  Created       : Sun Dec 21 13:00:00 2025
 .\"
-.Id $Id: m9typ073.9,v 2.8 2025/12/21 14:52:38 jon Exp $
+.Id $Id: m9typ074.9,v 2.8 2025/12/21 14:56:08 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
-.TH swift 9
-.XI swift - "Swift programming language"
+.TH scala 9
+.XI scala - "Scala programming language"
 .SH SYNOPSIS
-swift \- Swift programming language
+scala \- Scala programming language
 .SH FILES
 .na
-.B hkswift.emf
-\- Swift programming language hook definition
+.B hkscala.emf
+\- Scala programming language hook definition
+.br
+.B scala.eaf
+\- Scala abbreviation file
+.br
+.B scala.etf
+\- Scala template file
 .br
 .ad
 .SH EXTENSIONS
 .na
-\fB.swift\fR \- Swift
+\fB.scala\fR \- Scala
 .ad
 .SH DESCRIPTION
 .IP "\fBGeneral Editing\fR"
@@ -31,7 +37,7 @@ On creating a new file, a new header is automatically included into the file.
 is by default enabled, allowing the modification time-stamp to be maintained in
 the header.
 .IP "\fBHilighting\fR"
-The  hilighting  features allow  commands,  functions, classes variables,  logical, comments,   
+The  hilighting  features allow  commands,  functions, object,s traits, classes variables,  logical, comments,   
 strings  and  characters  of  the  language  to  be
 differentiated and rendered in different colors.
 .IP "\fBAuto Layout\fR"
@@ -43,7 +49,7 @@ Comments  may be formatted  using  \fC\*eo\fR,  which  reformats  the  comments
 according  to  the  current  fill  paragraph.  If  a  comment  commences  with
 \fC/***...\fR then the comment is automatically formatted to a box.
 .IP "\fBFolding and Information Hiding\fR"
-Generic  folding  is  enabled  within  the Swift file. The folds  occur  about
+Generic  folding  is  enabled  within  the Scala file. The folds  occur  about
 lines with leading characters and an open curly brace at the end of a line and are continued
 until the next line with an closing curly brace.
 .Ht collapse-all 3
@@ -51,11 +57,11 @@ until the next line with an closing curly brace.
 .Ht collapse-current 3
 (un)folds the current region.
 .IP "\fBNavigation via Item List\fR"
-The Swift mode offers beside folding as well support for displaying an outline of the
-functions, classes and enums. These can be explored with easy navigation using the 
+The Scala mode offers beside folding as well support for displaying an outline of the
+functions, objects, classes and traits. These can be explored with easy navigation using the 
 .Ht item-list 3
 .IP "\fBAbbreviations\fR"
-The  installation  comes with a default  abbreviation  file for Swift file  editing
+The  installation  comes with a default  abbreviation  file for Scala file  editing
 which  can  be  used  by  writing  short   abbreviations   like   "\fBfo\fR" (for),
 "\fBif\fR", "\fBei\fR" (else if) or "\fBcl\fR" (class) - and then pressing the key-binding for the 
 .Ht expand-abbrev-handle 3
@@ -89,7 +95,7 @@ The short cut keys used within the buffer are:-
 .SH NOTES
 .PP
 The  hilighting  or the addition of new item list matches  is  typically
-extended  using  a  file   \fBmyswift.emf\fR.
+extended  using  a  file   \fBmyscala.emf\fR.
 .SH "SEE ALSO"
 .na
 .Ht abbrev-list 3 ,
