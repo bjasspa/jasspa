@@ -28,9 +28,14 @@ define-macro fhook-md
 
 ; buffer-init variables
 set-variable .fhook-md.name "Markdown"
-set-variable .fhook-md.setup &reg "/history/fhook/md" "bfghijnopswx"
+set-variable .fhook-md.setup &reg "/history/fhook/md" "bfghijnopsx"
 set-variable .fhook-md.setup-mask "abefghijkmnopstuwx"
 set-variable .fhook-md.comment "|<!---|-->|-|  -- | --||"
+set-variable .fhook-md.command-flag  "|thbo|bo|thbo|thbo|"
+set-variable .fhook-md.command-name  "|md-fill-paragraph|md-fill-paragraph|md-fill-paragraph|md-fill-paragraph|"
+set-variable .fhook-md.command-nbind "|||999999|-999999|"
+set-variable .fhook-md.command-kbind "|esc q|esc o|||"
+set-variable .fhook-md.command-desc  "|\HFill Paragraph||Fill \HAll Paragraphs|All Paragraphs to Li\Hnes|"
 
 ; setup item-list
 set-variable .fhook-md.item-list-s1 "^# \\(\\w\.+\\)"
@@ -189,6 +194,216 @@ set-variable .fhook-md.item-list-r3 "H2 \CCb\\1\CCA"
     set-variable $timestamp .bhook-md.timestamp
   !emacro
 !endif
+
+; MD is a very poorly defined 'language', the only way to know if we are in normal text or
+; a code block is to go right back to the start of the file and work through it.
+0 define-macro md-para-move-to-start
+  set-variable #l0 $window-line
+  beginning-of-buffer
+  !while &les $window-line #l0
+    !force &sub $window-line #l0 search-buffer "me" "^\\(\\([`~]\\)\\2\\2+\\)"
+    !iif &not $status  !break
+    set-variable #l1 $window-line
+    !force &sub $window-line #l0 search-buffer "me" &cat "^" @s1
+    !if &not $status
+      beginning-of-line
+      !return
+    !endif
+  !done
+  !while &les $window-line #l0
+    !force &sub $window-line #l0 search-buffer "me" "^[ \t]*\n"
+  !until &not $status
+  !iif $window-col   forward-line
+  beginning-of-line
+!emacro
+define-macro md-fill-paragraph
+  !iif &not &set #l0 &abs @#  !return
+  !iif &not @?  set-mark
+  md-para-move-to-start
+  !while &pdec #l0 1
+    set-variable #l9 0
+    !force search-buffer "me" "^\\([ \t]*\\)\\(\\S.\\{,15\\}\\)"
+    !if &not $status
+      end-of-buffer
+      -8 ml-write "[end of buffer]"
+    !elif &gre &set #l1 &len &rep &set #l2 @s1 "\t" "    " 3
+      !repeat
+        beginning-of-line
+        forward-line
+        !force -1 search-buffer "me" "\\S"
+        !iif &not $status  !break
+      !until &les $window-acol 4
+    !elif &seq &lef &set #l3 @s2 1 "#"
+      ; Title should be at the start of the line and can only be one line
+      beginning-of-line
+      !if &len #l2
+        &len #l2 backward-delete-char
+        -1 yank
+      !endif
+      !if &not &seq " " &lef &rep #l3 "#" "" 1
+        !repeat
+          forward-char
+        !until &not &seq @wc "#"
+        insert-space
+      !endif
+      forward-line
+    !elif &seq &lef #l3 1 "|"
+      ; In MD's infinite stupidity tables don't have to have the initial '|'s so how does one realiably identiy a
+      ; table? One might think on having 3 '-' on second line, but no, different renderer pick up on different
+      ; things, so do we care? stick to strict definition to ensures all renderers will work... 
+      forward-line
+      !tgoto &not &xse @wl "^[ \t]*|[- \t:|]*?---[- \t:|]*$" std-line
+      backward-line
+      !jump 2
+    !elif &seq &lef #l3 1 ">"
+      set-variable #l2 &cat #l2 &set #l1 &lef #l3 1
+      !repeat
+        beginning-of-line
+        forward-line
+        !if &not &seq &lef @wl &len #l2 #l2
+          !force -1 search-buffer "me" "\\S"
+          !iif &not $status  !break
+          backward-char
+          !iif &gre $window-acol 3  !break
+          !iif &not &seq @wc #l1  !break
+          forward-char
+          $window-col backward-delete-char
+          -1 yank
+          insert-string #l2
+        !endif
+      !done
+    !elif &xse #l3 "\\(\\([`~]\\)\\2\\2+\\).*"
+      set-variable #l4 @s1
+      !force search-buffer "me" &cat "^\\([ \t]*\\)" #l4
+      !iif &not $status  -8 ml-write "[Error: Open fenced code block]"
+      !tjump &gre &len &rep @s1 "\t" "    " 3 -2
+      forward-line
+    !elif &and &and &sin &lef #l3 1 "*-_" &gre &sub &len @wl &len &set #l4 &rep @wl &lef #l3 1 "" 2 &seq "" &trr #l4
+      ; Horizontal rule
+      forward-line
+    !else
+*std-line
+      ; Check if this is a title line denoted by the second line...
+      forward-line
+      !if &and &and &len &set #l4 &trb @wl &sin &lef #l4 1 "=-" &seq "" &rep #l4 &lef #l4 1 ""
+        set-variable #l4 &cat #l2 &lef #l4 1
+        !iif &not &seq #l4 &lef @wl &len #l4  set-variable @wl &cat #l2 &trl @wl
+        forward-line
+      !else
+        ; normal paragraph, glue all lines together, remove multiple spaces, then reformat...
+        backward-line
+        !repeat
+          forward-line
+          set-variable #l4 &lef &trl @wl 16
+          backward-line
+          end-of-line
+          !if &seq #l4 ""
+            !jump 4
+          !elif &xse #l4 "\\([-*+>#]\\|\\d+\\.\\) .*"
+            set-variable #l9 1
+            set-variable #l0 &add #l0 1
+            backward-char
+            !while &seq @wc " "
+              forward-delete-char
+              backward-char
+            !done
+            !break
+          !elif &gre $window-col 2
+            backward-char
+            set-variable #l4 @wc
+            backward-char
+            !if &seq &cat @wc #l4 "  "
+              set-variable #l9 2
+              set-variable #l0 &add #l0 1
+              !break
+            !else
+              end-of-line
+              insert-space
+              forward-delete-char
+            !endif
+          !else
+            insert-space
+            forward-delete-char
+          !endif
+        !done
+        set-variable $window-col &len #l2
+        -1 replace-string "[ \t][ \t]+" " "
+        !if &equ #l9 2
+          insert-space
+        !else
+          end-of-line
+          backward-char
+          !iif &seq @wc " "  forward-delete-char
+        !endif
+        !if &les @# 0
+          forward-line
+        !elif &gre &len @wl $buffer-fill-col
+          !iif &xse @wl "^[ \t]*\\(\\([-*+]\\|\\d+\\.\\)[ \t]+\\).*"  set-variable #l2 &spr "%s%n" #l2 &len @s1 " "
+          !repeat
+            !force set-variable $window-col $buffer-fill-col
+            !iif &seq @wc "\n"  !break
+            forward-char
+            backward-word
+            !iif &les $window-col &div $buffer-fill-col 2  forward-word
+            !iif &seq "" &trr &rig @wl $window-col  !break
+            !if &band 1 &sub &len &set #l4 &xre &lef @wl $window-col "\\\\." "XX" &len &rep #l4 "`" ""
+              set-variable $window-col &rsin "`" #l4
+              !if &les $window-col &div $buffer-fill-col 2
+                !force -1 search-buffer "me" "[^\\\\]\\(\\\\.\\)*`[ \t]*"
+                !iif &not $status  -8 ml-write "[Error: Open code block]"
+                !iif &seq @wc "\n"  !break
+                set-variable #l4 &xre &lef @wl $window-col "\\\\." "XX"
+              !else
+                backward-char
+              !endif
+              ; Note that a code block can be in a link label! 
+              set-variable #l4 &lef #l4 $window-col
+            !endif
+            !if &sin "[" #l4
+              ; there may be links on the line; the flimspy link format 'spec' of MD is so poor that great care is needed - can't think
+              ; of an alternative to using regex to find each link starting before our wrap point to check the wrap is not within a link.
+              set-variable #l5 $window-col
+              beginning-of-line
+              !repeat
+                !force -1 search-buffer "me" "!?\\[\\([^]\\\\\n]\\|\\\\.\\)*](\\([^)\\\\\n]\\|\\\\.\\)*)"
+                !iif &not $status  !break
+                !if &gre $window-col #l5
+                  !iif &not &les &set #l6 &sub $window-col &len @s0 #l5  !break
+                  !iif &gre #l6 &div $buffer-fill-col 2  set-variable $window-col #l6
+                  set-variable #l5 $window-col
+                  set-variable #l4 &xre &lef @wl $window-col "\\\\." "XX"
+                  !break
+                !endif
+              !done
+              set-variable $window-col #l5
+            !endif
+            ; last thing to check, are we going to create a 'special' line if we insert a newline here, if so don't, move on...
+            !while &xseq &mid @wl $window-col 16 "^\\([ \t]*\\([-*+#=>]\\|\\d+\\.\\)\\)[ \t].*"
+              &len @s1 forward-char
+            !done
+            backward-char
+            !iif &not &seq @wc " "  forward-char
+            !iif &seq "" &trr &rig @wl $window-col  !break
+            !iif &seq @wc " "  forward-delete-char
+            insert-newline
+            insert-string #l2
+          !done
+          forward-line
+        !else
+          forward-line
+        !endif
+      !endif
+    !endif
+    beginning-of-line
+    !if #l9
+    !elif &len &trr @wl
+      insert-newline
+      backward-line
+    !endif
+  !done
+  ; If no arguments specified then restore the cursor position.
+;  !iif &not @?  exchange-point-and-mark
+!emacro
 
 !iif &not &exi md-export  execute-file "mdtools"
 

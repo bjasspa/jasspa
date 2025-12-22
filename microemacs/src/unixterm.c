@@ -1224,8 +1224,9 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x + mecm.fhwidth, y, x + mecm.fhwidth, y + mecm.fdepth - 1);
         break;
         
-    case 0x08:          /* Line space '.' */
-        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fhwidth, y+mecm.fhdepth, x+mecm.fhwidth+1, y+mecm.fhdepth);
+    case 0x08:          /* Visible space - mid height dot '.' */
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fhwidth-1, y+mecm.fhdepth-2, x+mecm.fhwidth+1, y+mecm.fhdepth-2);
+        XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fhwidth, y+mecm.fhdepth-3, x+mecm.fhwidth, y+mecm.fhdepth-1);
         break;
     
     case 0x09:          /* Tab character -> */
