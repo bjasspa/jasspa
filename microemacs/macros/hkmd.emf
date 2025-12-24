@@ -220,20 +220,31 @@ define-macro md-fill-paragraph
   !iif &not &set #l0 &abs @#  !return
   !iif &not @?  set-mark
   md-para-move-to-start
+  ; Another nasty - the previous 'paragraph' might be an item list which means the initial indent limit could be 7
+  ; not 3, but how can we know for sure? We would have to parse from the last fenced code block, add to
+  ; md-para-move-to-start? ignore for now... 
+  set-variable #l8 3
   !while &pdec #l0 1
     set-variable #l9 0
     !force search-buffer "me" "^\\([ \t]*\\)\\(\\S.\\{,15\\}\\)"
     !if &not $status
       end-of-buffer
       -8 ml-write "[end of buffer]"
-    !elif &gre &set #l1 &len &rep &set #l2 @s1 "\t" "    " 3
+    !endif
+    set-variable $window-col &len &set #l2 @s1
+    !if &gre &set #l1 $window-acol #l8
       !repeat
         beginning-of-line
         forward-line
         !force -1 search-buffer "me" "\\S"
         !iif &not $status  !break
-      !until &les $window-acol 4
-    !elif &seq &lef &set #l3 @s2 1 "#"
+      !until &les $window-acol &add #l8 1
+      !goto end-p
+    !endif
+    !while &gre &sub #l8 4 #l1
+      set-variable #l8 &sub #l8 4
+    !done
+    !if &seq &lef &set #l3 @s2 1 "#"
       ; Title should be at the start of the line and can only be one line
       beginning-of-line
       !if &len #l2
@@ -249,13 +260,14 @@ define-macro md-fill-paragraph
       forward-line
     !elif &seq &lef #l3 1 "|"
       ; In MD's infinite stupidity tables don't have to have the initial '|'s so how does one realiably identiy a
-      ; table? One might think on having 3 '-' on second line, but no, different renderer pick up on different
+      ; table? One might think on having 3 '-' on second line, but no, different renderers pick up on different
       ; things, so do we care? stick to strict definition to ensures all renderers will work... 
       forward-line
       !tgoto &not &xse @wl "^[ \t]*|[- \t:|]*?---[- \t:|]*$" std-line
       backward-line
       !jump 2
     !elif &seq &lef #l3 1 ">"
+      ; Blockquote
       set-variable #l2 &cat #l2 &set #l1 &lef #l3 1
       !repeat
         beginning-of-line
@@ -264,7 +276,7 @@ define-macro md-fill-paragraph
           !force -1 search-buffer "me" "\\S"
           !iif &not $status  !break
           backward-char
-          !iif &gre $window-acol 3  !break
+          !iif &gre $window-acol #l8  !break
           !iif &not &seq @wc #l1  !break
           forward-char
           $window-col backward-delete-char
@@ -273,10 +285,11 @@ define-macro md-fill-paragraph
         !endif
       !done
     !elif &xse #l3 "\\(\\([`~]\\)\\2\\2+\\).*"
+      ; fenced code block
       set-variable #l4 @s1
       !force search-buffer "me" &cat "^\\([ \t]*\\)" #l4
       !iif &not $status  -8 ml-write "[Error: Open fenced code block]"
-      !tjump &gre &len &rep @s1 "\t" "    " 3 -2
+      !tjump &gre &len &rep @s1 "\t" "    " #l8 -2
       forward-line
     !elif &and &and &sin &lef #l3 1 "*-_" &gre &sub &len @wl &len &set #l4 &rep @wl &lef #l3 1 "" 2 &seq "" &trr #l4
       ; Horizontal rule
@@ -347,20 +360,65 @@ define-macro md-fill-paragraph
             !iif &les $window-col &div $buffer-fill-col 2  forward-word
             !iif &seq "" &trr &rig @wl $window-col  !break
             !if &band 1 &sub &len &set #l4 &xre &lef @wl $window-col "\\\\." "XX" &len &rep #l4 "`" ""
+              ; Note that a code block can be in a link label, bold & italic text etc.
               set-variable $window-col &rsin "`" #l4
               !if &les $window-col &div $buffer-fill-col 2
                 !force -1 search-buffer "me" "[^\\\\]\\(\\\\.\\)*`[ \t]*"
                 !iif &not $status  -8 ml-write "[Error: Open code block]"
-                !iif &seq @wc "\n"  !break
-                set-variable #l4 &xre &lef @wl $window-col "\\\\." "XX"
+                !iif &seq "\n" @wc  !break
               !else
                 backward-char
               !endif
-              ; Note that a code block can be in a link label! 
-              set-variable #l4 &lef #l4 $window-col
+              set-variable #l4 &xre &lef @wl $window-col "\\\\." "XX"
+            !endif
+            !if &band 1 &sub &len #l4 &len &rep #l4 "**" "B"
+              set-variable $window-col &rsin " " &lef #l4 &rsin "**" #l4
+              !if &les $window-col &div $buffer-fill-col 2
+                !force -1 search-buffer "me" "[^\\\\]\\(\\\\.\\)*\\*\\*.*?\\s"
+                !iif &not $status  -8 ml-write "[Error: Open '**' bold]"
+                backward-char
+                !iif &seq "" &trr &rig @wl $window-col  !break
+              !endif
+              set-variable #l4 &xre &lef @wl $window-col "\\\\." "XX"
+            !endif
+            !if &band 1 &sub &len &set #l4 &rep #l4 "**" "BB" &len &rep #l4 "*" ""
+              set-variable $window-col &rsin " " &lef #l4 &rsin "*" #l4
+              !if &les $window-col &div $buffer-fill-col 2
+                !force -1 search-buffer "me" "[^\\\\]\\(\\\\.\\)*\\*.*?\\s"
+                !iif &not $status  -8 ml-write "[Error: Open '*' italic]"
+                backward-char
+                !iif &seq "" &trr &rig @wl $window-col  !break
+              !endif
+              set-variable #l4 &xre &lef @wl $window-col "\\\\." "XX"
+            !endif
+            ; MD is such a brain dead format that use of '_' is a total mess, rather than having to escape '_'s so their use is consistent
+            ; and predictable, different tools apply different rules on whether to ignore them or not (consider: __A __ D__ or __A __C D__ or "__A__B__" vs "__A__"__")
+            ; there's no good solution here because the best solution depends on the end tool being used
+            ; So lets play safe and try not to break anything - this is only a line wrapper! so first ignore all w_w & w__w underscores as more interpreter do and then treat
+            ; the rest like *s.
+            !if &band 1 &sub &len #l4 &len &rep &set #l4 &xrep &xrep &xrep #l4 "\\(\\w\\)_\\(\\w\\)" "\\1U\\2" "\\(\\w\\)__\\(\\w\\)" "\\1UU\\2" "\\(\\w\\)___\\(\\w\\)" "\\1UUU\\2" "__" "B"
+              set-variable $window-col &rsin " " &lef #l4 &rsin "__" #l4
+              !if &les $window-col &div $buffer-fill-col 2
+                !force -1 search-buffer "me" "[^\\\\]\\(\\\\.\\)*\\S__\\(\\s\\|\\W.*?\\s\\)"
+                !iif &not $status  -8 ml-write "[Error: Open '__' bold]"
+                backward-char
+                !iif &seq "" &trr &rig @wl $window-col  !break
+              !endif
+              set-variable #l4 &xrep &xrep &xrep &xre &lef @wl $window-col "\\\\." "XX" "\\(\\w\\)_\\(\\w\\)" "\\1U\\2" "\\(\\w\\)__\\(\\w\\)" "\\1UU\\2" "\\(\\w\\)___\\(\\w\\)" "\\1UUU\\2"
+            !endif
+            !if &band 1 &sub &len &set #l4 &rep #l4 "__" "BB" &len &rep #l4 "_" ""
+              set-variable $window-col &rsin " " &lef #l4 &rsin "_" #l4
+              !if &les $window-col &div $buffer-fill-col 2
+                !force -1 search-buffer "me" "[^\\\\]\\(\\\\.\\)*\\S_\\(\\s\\|\\W.*?\\s\\)"
+                !iif &not $status  -8 ml-write "[Error: Open '_' italic]"
+                backward-char
+                !iif &seq "" &trr &rig @wl $window-col  !break
+              !endif
+              set-variable #l4 &xre &lef @wl $window-col "\\\\." "XX"
             !endif
             !if &sin "[" #l4
-              ; there may be links on the line; the flimspy link format 'spec' of MD is so poor that great care is needed - can't think
+              ; there may be links on the line; the flimspy link format 'spec' of MD is so poor that great care is needed, its not an error to have a broken link, it then
+              ; becomes normal text, its this lack of a strict format with errors that make this all such an ambiguous format. Can't think
               ; of an alternative to using regex to find each link starting before our wrap point to check the wrap is not within a link.
               set-variable #l5 $window-col
               beginning-of-line
@@ -392,8 +450,11 @@ define-macro md-fill-paragraph
         !else
           forward-line
         !endif
+        ; check if was an item list item, if so inc the allowed indent 
+        !iif &xse #l3 "\\([-*+]\\|\\d+\\.\\) .*"  set-variable #l8 &add #l8 4
       !endif
     !endif
+*end-p
     beginning-of-line
     !if #l9
     !elif &len &trr @wl
@@ -402,7 +463,7 @@ define-macro md-fill-paragraph
     !endif
   !done
   ; If no arguments specified then restore the cursor position.
-;  !iif &not @?  exchange-point-and-mark
+  !iif &not @?  exchange-point-and-mark
 !emacro
 
 !iif &not &exi md-export  execute-file "mdtools"
