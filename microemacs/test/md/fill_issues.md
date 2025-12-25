@@ -2,7 +2,7 @@
 <!-- -!- md; fill-col:78; -!- -->
 title: "MD examples which causes fill issues"
 author: Steven Phillips
-date: 2025-12-24 17:19
+date: 2025-12-25 19:23
 abstract: >
     Some abstract ...
     on several lines...
@@ -53,6 +53,12 @@ abstract: >
     - Before starting to sync files, you must _link an account in the Synchronize_ sub-menu.
 
         The file synchronization will keep one file of the "_work_space synced with one_", or multiple files in _Google_Drive, Dropbox_ or _GitHub_.
+
+### Problem 3
+
+what to do with embedded html tags? treat like code blocks?
+
+<a href="http://www.youtube.com/watch_something" target="_blank"> <img src="http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg" alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10"> </a>
 
 ### Problem Next...
 
