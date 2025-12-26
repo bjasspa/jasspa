@@ -391,9 +391,9 @@ gft_directory:
     {
         struct stat statbuf;
         long stmtime = -1;
-        int len;
+        int ii;
 
-        if((len = meStrlen(file)) == 0)
+        if((ii = meStrlen(file)) == 0)
         {
             if(flag & gfsERRON_ILLEGAL_NAME)
                 mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s illegal name]", file);
@@ -402,39 +402,40 @@ gft_directory:
         if((lname == NULL) && (stats == NULL))
         {
             if(stat((char *)file,&statbuf) != 0)
-                return ft | ((file[len-1] == DIR_CHAR) ? (meIOTYPE_DIRECTORY|meIOTYPE_NOTEXIST):meIOTYPE_NOTEXIST);
+                return ft | ((file[ii-1] == DIR_CHAR) ? (meIOTYPE_DIRECTORY|meIOTYPE_NOTEXIST):meIOTYPE_NOTEXIST);
         }
         else if(lstat((char *)file, &statbuf) != 0)
-            return ft | ((file[len-1] == DIR_CHAR) ? (meIOTYPE_DIRECTORY|meIOTYPE_NOTEXIST):meIOTYPE_NOTEXIST);
+            return ft | ((file[ii-1] == DIR_CHAR) ? (meIOTYPE_DIRECTORY|meIOTYPE_NOTEXIST):meIOTYPE_NOTEXIST);
         else if(S_ISLNK(statbuf.st_mode))
         {
             meUByte lbuf[meBUF_SIZE_MAX], buf[meBUF_SIZE_MAX], *ss ;
-            size_t ii, jj ;
-            int maxi=10 ;
+            int jj, maxi=10;
 
-            ii = meStrlen(file);
             memcpy(lbuf,file,ii);
             do {
-                if(file[ii-1] == DIR_CHAR)
+                if(lbuf[ii-1] == DIR_CHAR)
                     ii--;
                 lbuf[ii] = '\0';
                 if(statbuf.st_mtime > stmtime)
                     stmtime = statbuf.st_mtime;
-                if((jj=readlink((char *)lbuf,(char *)buf, meBUF_SIZE_MAX)) <= 0)
+                if((jj=(int) readlink((char *)lbuf,(char *) buf,meBUF_SIZE_MAX)) <= 0)
                 {
                     if(flag & gfsERRON_BAD_FILE)
-                        mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s symbolic link problems]", file);
+                        mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s symbolic link problems]",file);
                     return (ft|meIOTYPE_NASTY);
                 }
-                buf[jj] = '\0' ;
+                buf[jj] = '\0';
                 if((buf[0] == DIR_CHAR) || ((ss=meStrrchr(lbuf,DIR_CHAR)) == NULL))
-                    meStrcpy(lbuf,buf) ;
+                {
+                    memcpy(ss,buf,jj+1);
+                    ii = jj;
+                }
                 else
                 {
                     ss++ ;
-                    ii = (size_t)(ss - lbuf) ;
-                    meStrcpy(ss,buf) ;
-                    ii += jj ;
+                    ii = (int) (ss - lbuf);
+                    memcpy(ss,buf,jj+1);
+                    ii += jj;
                 }
             } while(((jj=lstat((char *)lbuf, &statbuf)) == 0) && (--maxi > 0) && S_ISLNK(statbuf.st_mode)) ;
 
