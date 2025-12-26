@@ -47,7 +47,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <251125.0022>
+;         > Modified:     <251226.2152>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -87,14 +87,12 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
     set-variable .hilight.doc  &pinc .hilight.next 1
     set-variable .hilight.doc1 &pinc .hilight.next 1
   !endif
-  !if &not &exist &ind &cat ".hilight." #l1
-    set-variable  &ind &cat ".hilight." #l1 .hilight.doc
-  !endif
+  !iif &not &exist &ind &cat ".hilight." #l1  set-variable  &ind &cat ".hilight." #l1 .hilight.doc
   ; Define the hilighting. Note that we use a look back so that
   ; we can process the inserted schemes if necessary. Ordinarily
   ; we do not need it. This will only hurt branch tokens, as there
   ; are none below then there is no adverse effect.
-  0 hilight  .hilight.doc 2 100                               $global-scheme
+  0 hilight .hilight.doc 2 100                                $global-scheme
   hilight .hilight.doc 0x20 "*\\}[ \t]+\\w"                   .scheme.no1
   hilight .hilight.doc 0x21 "\\m)"                            .scheme.no1
   hilight .hilight.doc 0x21 "\\m\\m)"                         .scheme.no1
@@ -135,9 +133,7 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
   ; ">doc>"
   ;
   ; Force the hilighting mode to load if not already loaded.
-  !if &not &exi .hilight.emf
-    !force execute-file "hkemf"
-  !endif
+  !iif &not &exi .hilight.emf  !force execute-file "hkemf"
   ; If the hilighting mode is loaded then modify it.
   !if &and &sin "h" .fhook-emf.setup &band .hilight.flags 0x02
     hilight .hilight.doc 0x80 "^>emf>" .hilight.emf .scheme.hide
@@ -150,9 +146,7 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
   ; ">doc>"
   ;
   ; Force the hilighting mode to load if not already loaded.
-  !if &not &exi .hilight.pseudo
-    !force execute-file "hkpseudo"
-  !endif
+  !iif &not &exi .hilight.pseudo  !force execute-file "hkpseudo"
   ; If the hilighting mode is loaded then modify it.
   !if &exi .hilight.pseudo
     hilight .hilight.doc 0x80 "^>pseudo>" .hilight.pseudo .scheme.hide
@@ -165,9 +159,7 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
   ; ">doc>"
   ;
   ; Force the hilighting mode to load if not already loaded.
-  !if &not &exi .hilight.bnf
-    !force execute-file "hkbnf"
-  !endif
+  !iif &not &exi .hilight.bnf  !force execute-file "hkbnf"
   ; If the hilighting mode is loaded then modify it.
   !if &and &sin "h" .fhook-bnf.setup &band .hilight.flags 0x02
     hilight .hilight.doc 0x80 "^>bnf>" .hilight.bnf .scheme.hide
@@ -180,9 +172,7 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
   ; ">doc>"
   ;
   ; Force the hilighting mode to load if not already loaded.
-  !if &not &exi .hilight.c
-    !force execute-file "hkc"
-  !endif
+  !iif &not &exi .hilight.c  !force execute-file "hkc"
   ; If the hilighting mode is loaded then modify it.
   !if &and &sin "h" .fhook-c.setup &band .hilight.flags 0x02
     hilight .hilight.doc 0x80 "^>c>"   .hilight.c   .scheme.hide
@@ -190,27 +180,21 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
   !endif
 
   ; Allow C++ Code inserts ...
-  !if &not &exi .hilight.cpp
-    !force execute-file "hkcpp"
-  !endif
+  !iif &not &exi .hilight.cpp  !force execute-file "hkcpp"
   !if &and &sin "h" .fhook-cpp.setup &band .hilight.flags 0x02
     hilight .hilight.doc 0x80 "^>cpp>"     .hilight.cpp .scheme.hide
     hilight .hilight.doc 0x80 "^>c\\+\\+>" .hilight.cpp .scheme.hide
     hilight .hilight.cpp 0x80 "^>doc>"     .hilight.doc .scheme.hide
   !endif
   ; Allow Perl Code inserts ...
-  !if &not &exi .hilight.perl
-    !force execute-file "hkperl"
-  !endif
+  !iif &not &exi .hilight.perl  !force execute-file "hkperl"
   !if &and &sin "h" .fhook-perl.setup &band .hilight.flags 0x02
     hilight .hilight.doc  0x80 "^>perl>" .hilight.perl .scheme.hide
     hilight .hilight.doc  0x80 "^>pl>"   .hilight.perl .scheme.hide
     hilight .hilight.perl 0x80 "^>doc>"  .hilight.doc  .scheme.hide
   !endif
   ; Allow TCL Code inserts ...
-  !if &not &exi .hilight.tcl
-    !force execute-file "hktcl"
-  !endif
+  !iif &not &exi .hilight.tcl  !force execute-file "hktcl"
   !if &and &sin "h" .fhook-tcl.setup &band .hilight.flags 0x02
     hilight .hilight.doc 0x80 "^>tcl>" .hilight.tcl .scheme.hide
     hilight .hilight.tcl 0x80 "^>doc>" .hilight.doc .scheme.hide

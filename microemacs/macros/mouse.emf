@@ -94,9 +94,7 @@
           !while &gre &pdec #l2 1 0
             next-window
           !done
-          !if &gre $window-mode-line #l0
-            !force 0 previous-window
-          !endif
+          !iif &gre $window-mode-line #l0  !force 0 previous-window
         !else
           ; failed to grow, one of the next windows must be too small, delete it
           ; set #l1 to the min depth
@@ -133,9 +131,7 @@
       !force #l2 change-window-width
       !if $status
         ; update the toolbar mode lines
-        !if &exi .toolbar-redraw.bc
-          set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
-        !endif
+        !iif &exi .toolbar-redraw.bc  set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x080
       !elif &band $scroll-bar 0x80
         ; resizing failed, is this a request to delete the window?? Which way are we moving
         !if &les #l2 0
@@ -159,9 +155,7 @@
           !while &gre &pdec #l2 1 0
             next-window
           !done
-          !if &gre $window-scroll-bar #l0
-            !force 0 previous-window
-          !endif
+          !iif &gre $window-scroll-bar #l0  !force 0 previous-window
         !else
           ; failed to grow, one of the next windows must be too small, delete it
           ; set #l1 to the min width
@@ -240,13 +234,9 @@
     !if @#
       !force forward-char
       backward-word
-      !if #l0
-        forward-word
-      !endif
+      !iif #l0  forward-word
       !if $window-xcl-scroll
-        !if &les $window-acol &add $window-xcl-scroll 1
-          &sub $window-acol &add $window-xcl-scroll 1 scroll-right
-        !endif
+        !iif &les $window-acol &add $window-xcl-scroll 1  &sub $window-acol &add $window-xcl-scroll 1 scroll-right
       !endif
     !else
       !force backward-char
@@ -255,9 +245,7 @@
       !elif #l0
         backward-word
       !endif
-      !if &gre &add $window-acol 2 &add $window-xcl-scroll $window-width
-        &sub &add $window-acol 2 &add $window-xcl-scroll $window-width scroll-right
-      !endif
+      !iif &gre &add $window-acol 2 &add $window-xcl-scroll $window-width  &sub &add $window-acol 2 &add $window-xcl-scroll $window-width scroll-right
     !endif
   !elif .mouse-drop-t1.type
     !if @#
@@ -339,9 +327,7 @@
   set-variable $buffer-input .input
   -1 create-callback mouse-drop-t1
   !if &and &equ #l0 $window-line &equ #l1 $window-col
-    !if &seq @cck "callback"
-      !return
-    !endif
+    !iif &seq @cck "callback"  !return
     ; abort to tell ME to handle the actual input
     set-variable .status "0"
     !abort
@@ -363,9 +349,7 @@
   copy-region
   ; reset the last command to the copy-region
   set-variable @cl copy-region
-  !if &seq @cck "callback"
-    !return
-  !endif
+  !iif &seq @cck "callback"  !return
   ; abort to tell ME to handle the actual input
   set-variable .status "0"
   !abort
@@ -425,9 +409,7 @@
     set-variable #l1 "[ \t\n]"
     !force search-buffer "mb" "[ \t\n\"'([{<]"
     !if $status
-      !if &set #l2 &sin @wc "\"'([{<"
-        set-variable #l1 &mid " \"')]}>" #l2 1
-      !endif
+      !iif &set #l2 &sin @wc "\"'([{<"  set-variable #l1 &mid " \"')]}>" #l2 1
       forward-char
       set-variable #l0 $window-col
     !else
@@ -457,9 +439,7 @@
     -1 yank
     set-cursor-to-mouse
     !force file-tool-exec-default #l1
-    !if &not $status
-      !force find-file #l1
-    !endif
+    !iif &not $status  !force find-file #l1
     !return
   !endif
   ml-write "[mouse location changed - not loading link]"
@@ -603,9 +583,7 @@
     ; if we were scrolling in the current window then don't retore the old position
     !force goto-position "\x82"
   !endif
-  !if &equ &band .mouse-event.r 7 5
-    4 show-region
-  !endif
+  !iif &equ &band .mouse-event.r 7 5  4 show-region
 !emacro
 0 define-macro mouse-wdown-scroll
   !if @?
@@ -619,9 +597,7 @@
     ; if we were scrolling in the current window then don't retore the old position
     !force goto-position "\x82"
   !endif
-  !if &equ &band .mouse-event.r 7 5
-    4 show-region
-  !endif
+  !iif &equ &band .mouse-event.r 7 5  4 show-region
 !emacro
 0 define-macro mouse-wleft-scroll
   !force @# scroll-left
@@ -631,9 +607,7 @@
     ; if we were scrolling in the current window then don't retore the old position
     !force goto-position "\x82"
   !endif
-  !if &equ &band .mouse-event.r 7 5
-    4 show-region
-  !endif
+  !iif &equ &band .mouse-event.r 7 5  4 show-region
 !emacro
 0 define-macro mouse-wright-scroll
   !force @# scroll-right
@@ -643,18 +617,14 @@
     ; if we were scrolling in the current window then don't retore the old position
     !force goto-position "\x82"
   !endif
-  !if &equ &band .mouse-event.r 7 5
-    4 show-region
-  !endif
+  !iif &equ &band .mouse-event.r 7 5  4 show-region
 !emacro
 
 0 define-macro mouse-void
   0 show-region
   set-variable #l2 $result
   goto-position "\x82"
-  !if &band #l2 1
-    !force show-region
-  !endif
+  !iif &band #l2 1  !force show-region
 !emacro
 
 0 define-macro mouse-auto-pick-dclick
@@ -765,13 +735,9 @@
   set-variable .x $mouse-x
   set-variable .y $mouse-y
   set-variable #l1 @cck
-  !if &equ &band .r 7 5
-    3 show-region
-  !endif
+  !iif &equ &band .r 7 5  3 show-region
   ; decrement the msshift
-  !if .msshift
-    set-variable .msshift &sub .msshift 1
-  !endif
+  !iif .msshift  set-variable .msshift &sub .msshift 1
   ; force the unbind of the last pick time or move - do this on pick and drop as a safety mechanism
   !force global-unbind-key &spr .mask "time"
   !force global-unbind-key &spr .mask "move"
@@ -818,9 +784,7 @@
   !else
     !return
   !endif
-  !if &band .r 1
-    !force show-region
-  !endif
+  !iif &band .r 1  !force show-region
   !if &not &seq #l0 ""
     !force !force execute-line #l0
     set-variable #l3 $status
@@ -831,9 +795,7 @@
     set-variable #l3 1
   !endif
   ; was the region showing, if so make sure it is
-  !if &band .r 1
-    !force show-region
-  !endif
+  !iif &band .r 1  !force show-region
   !return #l3
 !emacro
 set-variable .mouse-event.msshift 0
