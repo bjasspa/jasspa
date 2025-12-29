@@ -90,6 +90,18 @@ set-variable .fhook-info.exact -1
   #l1 goto-line
 !emacro
 
+0 define-macro file-exists
+  set-variable #l1 @1
+  set-variable $file-names #l1
+  set-variable #l0 &spr "%s" $file-names
+  !if &and &not &seq #l0 "" &sin #l0 #l1
+    set-variable $result 1
+  !else
+    set-variable $result 0
+  !endif
+!emacro
+
+
 0 define-macro info-load-file
   !force set-variable #l0 @1
   !if &not &exi .info.path
@@ -97,7 +109,12 @@ set-variable .fhook-info.exact -1
       set-variable .info.path "c:/info"
       set-variable #l1 ";"
     !else
-      set-variable .info.path "/usr/local/info"
+      file-exists "/usr/share/info/dir"
+      !if &equ $result 1
+        set-variable .info.path "/usr/share/info"
+      !else
+        set-variable .info.path "/usr/local/info"
+      !endif
       set-variable #l1 ":"
     !endif
     !iif &not &seq $INFOPATH "ERROR"  set-variable .info.path &spr "%s%s%s" $INFOPATH #l1 .info.path
@@ -164,6 +181,8 @@ set-variable .fhook-info.exact -1
       info-load-indirect-file
     !done
   !endif
+  buffer-is-utf8 #l1
+  !iif #l1  12 change-buffer-charset "utf8" "display"
   -1 buffer-mode "edit"
   1 buffer-mode "view"
   beginning-of-buffer
