@@ -1,0 +1,7 @@
+public static class HelloFu {
+    // Returns a greeting message.
+    public static string GetMessage()  {
+        return "Hello, world!";
+    }
+}
+

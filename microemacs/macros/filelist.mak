@@ -40,7 +40,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkdoc.emf	hkdos.emf	hkdot.emf	hkdtools.emf	\
 	hkehf.emf	hkemf.emf	hkerf.emf	hkeuphor.emf	\
 	hkf90.emf	hkfvwm.emf	hkgo.emf	hkgroovy.emf	\
-	hkhask.emf	hkhtml.emf	\
+	hkfusion.emf	hkhask.emf	hkhtml.emf	\
 	hkidl.emf	hkimake.emf	hkinfo.emf	hkini.emf	\
 	hkipipe.emf	hkiss.emf	\
 	hkjava.emf	hkjs.emf	hkjson.emf	hkjsp.emf	\
@@ -114,7 +114,7 @@ ETFS=	ada.etf		adoc.etf	asmx86.etf	asn1.etf	\
 	cs.etf		c3.etf\
 	dart.etf	doc.etf		dot.etf		dtools.etf	\
 	emf.etf		euphor.etf	\
-	f.etf		f90.etf		hask.etf	\
+	f.etf		f90.etf		fusion.etf	hask.etf	\
 	h.etf		hpp.etf		html.etf	go.etf	\
 	idl.etf		imake.etf	\
 	java.etf	js.etf		jst.etf		julia.etf	\
@@ -137,8 +137,8 @@ EAFS=	ada.eaf		adoc.eaf	asp.eaf		au3.eaf		\
 	c.eaf		c3.eaf		cfm.eaf		cpp.eaf		\
 	cs.eaf		\
 	dart.eaf	dot.eaf		dtools.eaf	emf.eaf		\
-	euphor.eaf	f90.eaf		euphor.eaf	go.eaf		\
-	groovy.eaf	hask.eaf	\
+	euphor.eaf	f90.eaf		fusion.eaf	\
+	euphor.eaf	go.eaf		groovy.eaf	hask.eaf	\
 	hkasp.eaf	hkc.eaf		hkcpp.eaf	hkemf.eaf	\
 	hkhtml.eaf	hkjsp.eaf	hkjst.eaf	hknroff.eaf	\
 	hkphp.eaf	\

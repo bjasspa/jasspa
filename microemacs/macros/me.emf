@@ -182,6 +182,7 @@ add-file-hook ".hs" fhook-hask
 add-file-hook ".ts" fhook-ts
 add-file-hook ".sc .scala" fhook-scala
 add-file-hook ".gy .gsh .gvy .groovy" fhook-groovy
+add-file-hook ".fu" fhook-fusion
 ; Add magic hooks
 1 add-file-hook "^#![ \t]*/.*sh" fhook-shell
 1 add-file-hook "^#![ \t]*/.*perl" fhook-perl
