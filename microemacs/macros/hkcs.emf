@@ -33,6 +33,8 @@ set-variable .fhook-cs.item-list-s1 "^[ \t]*\\([a-zA-Z0-9_ \t]*[ \t]\\)?\\([a-zA
 set-variable .fhook-cs.item-list-r1 "Func \CCb\\2\CCA"
 set-variable .fhook-cs.item-list-s2 "^[ \t]*\\(public[ \t]+\\|private[ \t]+\\)?class[ \t]\\(\\w+\\)"
 set-variable .fhook-cs.item-list-r2 "Clss \CCb\\2\CCA"
+set-variable .fhook-cs.item-list-s3 "^enum[ \t]+\\(\\w+\\)"
+set-variable .fhook-cs.item-list-r3 "Enum \CCb\\1\CCA"
 
 !if &not &exist .hilight.cs
   ; hilighting uses 3 schemes (.cs, .csdoc & .pcsdoc), normal indent uses 1 scheme & alt indent uses 3 (.cs, .cs-comm & .csT) so reserve 3 hilighting/indent schemes upfront
