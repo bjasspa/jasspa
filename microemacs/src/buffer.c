@@ -272,7 +272,7 @@ majorMode(int f, int n)
             {
                 if(meStrcmp(mm->id,lbl) && ((mm->cidLabel = meStrdup(lbl)) == NULL))
                    return meFALSE;
-                mm->cidLabelLen = meStrlen(lbl);
+                mm->cidLabelLen = (meUByte) meStrlen(lbl);
             }
             else
                 mm->cidLabelLen = 0;

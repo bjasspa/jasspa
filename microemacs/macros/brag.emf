@@ -869,26 +869,26 @@ set-variable .bragDrawCard.slb "                                Heart           
     set-variable #l4 .Brag.h1c
     set-variable #l3 &add &sub &lget #l0 10 &lget #l5 7 &sub &lget #l0 14 &lget #l5 8
     !if &les #l3 0
-      set-variable #l3 &spr "%.4f better" &fmul &abs #l3 0.000000001
+      set-variable #l3 &spr "%.2f%% better" &fmul &abs #l3 0.0000001
     !elif &gre #l3 0
-      set-variable #l3 &spr "%.4f worse" &fmul #l3 0.000000001
+      set-variable #l3 &spr "%.2f%% worse" &fmul #l3 0.0000001
     !elif &seq &lef #l5 13 &lef #l4 13
       set-variable #l3 "same hand"
     !else
       set-variable #l3 "same odds"
     !endif
-    67 screen-poke 10 2 .scheme.cardback &spr "You played  -  Prb  Win: %.4f   Lose: %.4f   (%s)" &fmul &lget #l5 7 0.000000001 &fsub 1 &fmul &lget #l5 8 0.000000001 #l3
+    67 screen-poke 10 2 .scheme.cardback &spr "You played  -  Win: %.2f%%   Lose: %.2f%%   (%s)" &fmul &lget #l5 7 0.0000001 &fsub 100 &fmul &lget #l5 8 0.0000001 #l3
   !else
     67 screen-poke 0 2 .scheme.cardback "Hand entered:"
     set-variable #l1 .Brag.hm
     set-variable #l2 .Brag.hmo
     set-variable #l5 .Brag.hmi
-    67 screen-poke 10 2 .scheme.cardback &spr "Hand played as entered  -  Prb  Win: %.4f   Lose: %.4f" &fmul &lget #l5 7 0.000000001 &fsub 1 &fmul &lget #l5 8 0.000000001
+    67 screen-poke 10 2 .scheme.cardback &spr "Hand played as entered  -  Win: %.2f%%   Lose: %.2f%%" &fmul &lget #l5 7 0.0000001 &fsub 100 &fmul &lget #l5 8 0.0000001
     set-variable #l0 .Brag.hmd
     set-variable #l4 &lget .Brag.hmd 20
   !endif
   set-variable #l3 &lget #l0 1
-  67 screen-poke 20 2 .scheme.cardback &spr "Computer would have played:  %s  -  Prb  Win: %.4f   Lose: %.4f" &lget #l0 19 &fmul &lget #l0 10 0.000000001 &fsub 1 &fmul &lget #l0 14 0.000000001
+  67 screen-poke 20 2 .scheme.cardback &spr "Computer would have played:  %s  -  Win: %.2f%%   Lose: %.2f%%" &lget #l0 19 &fmul &lget #l0 10 0.0000001 &fsub 100 &fmul &lget #l0 14 0.0000001
   set-variable #l7 0
   set-variable #l8 5
   !repeat
@@ -964,7 +964,7 @@ set-variable .bragDrawCard.slb "                                Heart           
       set-variable #l3 ": Defensive attack"
       set-variable #l1 &bor #l1 2
     !endif
-    67 screen-poke #l9 2 .scheme.cardback &spr "Best attacking%s  -  Prb  Win: %.4f   Lose: %.4f" #l3 &fmul &lget #l0 11 0.000000001 &fsub 1 &fmul &lget #l0 15 0.000000001
+    67 screen-poke #l9 2 .scheme.cardback &spr "Best attacking%s  -  Win: %.2f%%   Lose: %.2f%%" #l3 &fmul &lget #l0 11 0.0000001 &fsub 100 &fmul &lget #l0 15 0.0000001
     bragHandOrder #l2 #l3 #l4
     set-variable #l7 0
     set-variable #l8 5
@@ -1007,7 +1007,7 @@ set-variable .bragDrawCard.slb "                                Heart           
       set-variable #l3 ": Balanced defence"
       set-variable #l1 &bor #l1 4
     !endif
-    67 screen-poke &sub #l9 1 2 .scheme.cardback &spr "Best defensive%s  -  Prb  Win: %.4f   Lose: %.4f" #l3 &fmul &lget #l0 12 0.000000001 &fsub 1 &fmul &lget #l0 16 0.000000001
+    67 screen-poke &sub #l9 1 2 .scheme.cardback &spr "Best defensive%s  -  Win: %.2f%%   Lose: %.2f%%" #l3 &fmul &lget #l0 12 0.0000001 &fsub 100 &fmul &lget #l0 16 0.0000001
     bragHandOrder #l2 #l3 #l4
     set-variable #l7 0
     set-variable #l8 5
@@ -1046,7 +1046,7 @@ set-variable .bragDrawCard.slb "                                Heart           
     set-variable #l9 &add #l9 11
     set-variable #l2 &lget #l0 9
     bragHandOrder #l2 #l3 #l4
-    67 screen-poke &sub #l9 1 2 .scheme.cardback &spr "Best balanced  -  Prb  Win: %.4f   Lose: %.4f" &fmul &lget #l0 13 0.000000001 &fsub 1 &fmul &lget #l0 17 0.000000001
+    67 screen-poke &sub #l9 1 2 .scheme.cardback &spr "Best balanced  -  Win: %.2f%%   Lose: %.2f%%" &fmul &lget #l0 13 0.0000001 &fsub 100 &fmul &lget #l0 17 0.0000001
     set-variable #l7 0
     set-variable #l8 5
     !repeat
