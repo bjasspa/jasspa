@@ -14,12 +14,11 @@
 
 define-macro fhook-phps
   set-variable $buffer-mask "luh1"
-  @# buffer-init "phps"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-phps.name "PHP Script"
 set-variable .fhook-phps.setup &reg "/history/fhook/phps" "bdfghinopxl"
 set-variable .fhook-phps.setup-mask "abdefghikmnoptuxl#"
 set-variable .fhook-phps.comment "|//||/|// | //|r|"

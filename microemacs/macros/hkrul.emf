@@ -12,10 +12,10 @@ set-char-mask "3" "@"
 
 define-macro fhook-rul
   set-variable $buffer-mask "luh13"
-  @# buffer-init "rul"
+  @# buffer-init
   buffer-init-hooks
 !emacro
-set-variable .fhook-rul.name "Install Shield Rul"
+
 set-variable .fhook-rul.setup &reg "/history/fhook/rul" "bdfghnopx"
 set-variable .fhook-rul.setup-mask "abdefghikmnoptux"
 set-variable .fhook-rul.comment "|/*| */|*| * | * |fr|"

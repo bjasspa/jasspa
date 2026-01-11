@@ -9,7 +9,7 @@
 ; Authors:     Steven Phillips
 ;
 define-macro fhook-info
-  @# buffer-init "info"
+  @# buffer-init
   set-variable :mouse-pick-1 info-mouse-pick-1
   set-variable :mouse-drop-1 info-mouse-drop-1
   set-variable :node ""
@@ -17,7 +17,6 @@ define-macro fhook-info
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-info.name "GNU Info"
 set-variable .fhook-info.setup &reg "/history/fhook/info" "EUmghop"
 set-variable .fhook-info.setup-mask "aghkop"
 set-variable .fhook-info.command-flag  "|bio|thbio|thbio|thbio|bio|thbio|bio|th|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|"
@@ -186,8 +185,7 @@ set-variable .fhook-info.exact -1
   -1 buffer-mode "edit"
   1 buffer-mode "view"
   beginning-of-buffer
-  set-variable $buffer-fhook "fhook-info"
-  fhook-info
+  major-mode "info"
 !emacro
 
 0 define-macro info-jump-link

@@ -1,4 +1,4 @@
-[comment {-*- mode: tcl ; fill-column: 80 -*- doctools manpage}]
+[comment {-*- tcl-doctools ; fill-column: 80 -*- }]
 [vset VERSION 0.0.1]
 [manpage_begin appname n [vset VERSION]]
 [copyright {20YY-20YY, Firstname Lastname <user(at)abc(minus)def(dot)com>}]

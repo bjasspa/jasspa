@@ -30,14 +30,15 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	games.emf	gdiff.emf	gentagsc.emf	gentags.emf	\
 	git.emf	\
 	hkada.emf	hkadoc.emf	hkapache.emf	hkapt.emf	\
-	hkasmx86.emf	\
-	hkasn1.emf	hkasp.emf	hkau3.emf	hkawk.emf	\
-	hkbibtex.emf	hkbinary.emf	hkblist.emf	hkbnf.emf	\
-	hkc.emf		hkcfm.emf	hkcfms.emf	hkcobol.emf	\
+	hkasm.emf	\
+	hkasn1.emf	hkasp.emf	hkautoit.emf	hkawk.emf	\
+	hkbat.emf	hkbibtex.emf	hkbinary.emf	hkbison.emf	\
+	hkblist.emf	hkbnf.emf	\
+	hkc.emf		hkcfml.emf	hkcfms.emf	hkcobol.emf	\
 	hkcpp.emf	hkcs.emf	hkcss.emf	hkcygwin.emf	\
 	hkc3.emf	hkdart.emf	\
-	hkdiff.emf	hkdirlst.emf	hkdirtre.emf	hkdman.emf	\
-	hkdoc.emf	hkdos.emf	hkdot.emf	hkdtools.emf	\
+	hkdiff.emf	hkdirlst.emf	hkdirtre.emf	\
+	hkdoc.emf	hkdot.emf	\
 	hkehf.emf	hkemf.emf	hkerf.emf	hkeuphor.emf	\
 	hkf90.emf	hkfvwm.emf	hkgo.emf	hkhask.emf	\
 	hkhtml.emf	\
@@ -48,21 +49,20 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hklatex.emf	hklhtml.emf	hklisp.emf	hklists.emf	\
 	hklua.emf	\
 	hkm4.emf	hkmake.emf	hkman.emf	hkmd.emf	\
-	hkmeta.emf	hkmhg.emf	hkmod2.emf	hknim.emf	\
-	hknroff.emf	hkoctave.emf	\
+	hkmereg.emf	hkmeta.emf	hkmhg.emf	hkmod2.emf	\
+	hknim.emf	hknroff.emf	hkoctave.emf	\
 	hkpascal.emf	hkperl.emf	hkphp.emf	hkphps.emf	\
-	hkpls.emf	hkps1.emf	hkpseudo.emf	hkpsf.emf	\
+	hkplsql.emf	hkps1.emf	hkpseudo.emf	hkpsf.emf	\
 	hkpython.emf	\
-	hkr.emf		hkrbin.emf	hkrd.emf	hkreg.emf	\
+	hkr.emf		hkrbin.emf	hkrd.emf	\
 	hkruby.emf	hkrul.emf	hkrust.emf	hkscala.emf	\
 	hksamba.emf	hkscheme.emf	hksgml.emf	hkshell.emf	\
 	hkslang.emf	hkspec.emf	hksql.emf	hkswift.emf	\
-	hktcl.emf	hktexi.emf	hktlsosd.emf	hktools.emf	\
-	hkts.emf	hktxt.emf	hktypst.emf	hkvala.emf	\
-	hkv.emf		hkvb.emf	hkverilg.emf	hkvhdl.emf	\
-	hkvrml.emf	hkwiki.emf	hkyaml.emf	\
-	hkxml.emf	xmlutil.emf	\
-	hkyacc.emf	hkzig.emf	\
+	hktcl.emf	hktcldoc.emf	hktexi.emf	hktlsosd.emf	\
+	hktools.emf	hkts.emf	hktxt.emf	hktypst.emf	\
+	hkvala.emf	hkvb.emf	hkverilg.emf	hkvhdl.emf	\
+	hkvlang.emf	hkvrml.emf	hkwiki.emf	\
+	hkxml.emf	hkyaml.emf	hkzig.emf	\
 	hpux.emf	htmlcore.emf	htmltool.emf	htmlutil.emf	\
 	info.emf	insdate.emf	irix.emf	itemlist.emf	\
 	javatags.emf	jst2html.emf	jst2ltx.emf	jst2rtf.emf	\
@@ -105,14 +105,14 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	unixterm.emf	userstp.emf	utils.emf	\
 	vbtags.emf	vm.emf		\
 	watch.emf	windows.emf	word.emf	\
-	xfind.emf	xrdb.emf	\
+	xfind.emf	xmlutil.emf	xrdb.emf	\
 	zaurus.emf	zfile.emf
 # ETFS:sh =ls *.etf
-ETFS=	ada.etf		adoc.etf	asmx86.etf	asn1.etf	\
-	au3.etf		awk.etf		bibtex.etf	\
-	c.etf		cfm.etf		cobol.etf	cpp.etf		\
+ETFS=	ada.etf		adoc.etf	asm.etf		asn1.etf	\
+	autoit.etf	awk.etf		bibtex.etf	bison.etf	\
+	c.etf		cfml.etf	cobol.etf	cpp.etf		\
 	cs.etf		c3.etf\
-	dart.etf	doc.etf		dot.etf		dtools.etf	\
+	dart.etf	doc.etf		dot.etf		\
 	emf.etf		euphor.etf	\
 	f.etf		f90.etf		hask.etf	\
 	h.etf		hpp.etf		html.etf	go.etf	\
@@ -122,23 +122,23 @@ ETFS=	ada.etf		adoc.etf	asmx86.etf	asn1.etf	\
 	makefile.etf	md.etf		mhg.etf		mod2.etf	\
 	newcomp.etf	newuser.etf	nim.etf		\
 	nroff.etf	octave.etf	\
-	pascal.etf	perl.etf	php.etf		pls.etf		\
+	pascal.etf	perl.etf	php.etf		plsql.etf	\
 	ps1.etf		psf.etf		python.etf	qd.etf		\
 	rd.etf		rmd.etf		ruby.etf	rul.etf		\
 	rust.etf	\
-	scala.etf	shell.etf	spec.etf	sql.etf		\
-	swift.etf	tcl.etf		ts.etf		typst.etf	\
-	vala.etf	v.etf		vhdl.etf	\
+	scala.etf	sh.etf		spec.etf	sql.etf		\
+	swift.etf	\
+	tcl.etf		tcldoc.etf	ts.etf		typst.etf	\
+	vala.etf	vlang.etf	vhdl.etf	\
 	xml.etf		\
-	yacc.etf	zig.etf
+	zig.etf
 #EAFS:sh=ls *.eaf
-EAFS=	ada.eaf		adoc.eaf	asp.eaf		au3.eaf		\
+EAFS=	ada.eaf		adoc.eaf	asp.eaf		autoit.eaf	\
 	awk.eaf		\
-	c.eaf		c3.eaf		cfm.eaf		cpp.eaf		\
+	c.eaf		c3.eaf		cfml.eaf	cpp.eaf		\
 	cs.eaf		\
-	dart.eaf	dot.eaf		dtools.eaf	emf.eaf		\
-	euphor.eaf	f90.eaf		euphor.eaf	go.eaf		\
-	hask.eaf	\
+	dart.eaf	dot.eaf		emf.eaf		euphor.eaf	\
+	f.eaf		go.eaf		hask.eaf	\
 	hkasp.eaf	hkc.eaf		hkcpp.eaf	hkemf.eaf	\
 	hkhtml.eaf	hkjsp.eaf	hkjst.eaf	hknroff.eaf	\
 	hkphp.eaf	\
@@ -146,12 +146,13 @@ EAFS=	ada.eaf		adoc.eaf	asp.eaf		au3.eaf		\
 	java.eaf	js.eaf		jsp.eaf		jst.eaf		\
 	julia.eaf	kotlin.eaf	latex.eaf	lua.eaf		\
 	md.eaf		nim.eaf		octave.eaf	\
-	pascal.eaf	perl.eaf	php.eaf		pls.eaf		\
+	pascal.eaf	perl.eaf	php.eaf		plsql.eaf	\
 	ps1.eaf		python.eaf	\
 	r.eaf		rd.eaf		rust.eaf	scala.eaf	\
-	shell.eaf	sgml.eaf	swift.eaf	\
-	tcl.eaf		ts.eaf		txt.eaf		typst.eaf	\
-	vala.eaf	v.eaf		vhdl.eaf	zig.eaf
+	sh.eaf		sgml.eaf	swift.eaf	\
+	tcl.eaf		tcldoc.eaf	ts.eaf		txt.eaf		\
+	typst.eaf	\
+	vala.eaf	vlang.eaf	vhdl.eaf	zig.eaf
 # ERFS:sh=ls *.erf
 ERFS=	jstprint.erf	newuser.erf	\
 	print.erf	printeps.erf	printhpl.erf	printwdw.erf	\

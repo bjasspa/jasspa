@@ -8,7 +8,7 @@
 ; Authors:     Steven Phillips & Jon Green
 ;
 ; Is this macro release compatible with the binary?
-!if &les $version "20240701"
+!if &les $version "20260100"
   5000 ml-write "[Warning: The MicroEmacs executable is not compatible with this macro release]"
 !endif
 !if &band @# 2
@@ -78,155 +78,118 @@ define-macro-file draw
 define-macro-file ftp
 define-macro-file xrdb xrdb-scheme
 ;
-; File hooks - reset the file hook list first
-0 add-file-hook
-; Add file extension hooks. Files loaded in binary mode do not need hook as fixed
-add-file-hook "*help* *about* .ehf" fhook-ehf
-add-file-hook "*bindings* *commands* *variables*" fhook-lists
-add-file-hook "*buffers*" fhook-blist
-add-file-hook "/ *files*" fhook-dirlst copy-file delete-file file-browser file-browser-close file-browser-swap-buffers
-add-file-hook "*directory*" fhook-dirtre
-add-file-hook "*registry*" fhook-reg
-add-file-hook "*icommand* *shell*" fhook-ipipe
-add-file-hook ".emf" fhook-emf
-add-file-hook ".doc" fhook-doc
-add-file-hook ".apt" fhook-apt
-add-file-hook ".txt" fhook-txt
-add-file-hook ".jst" fhook-jst
-add-file-hook ".tex .sty" fhook-latex
-add-file-hook ".bib" fhook-bibtex
-add-file-hook ".n .1 .2 .3 .4 .5 .6 .7 .8 .9 .so .tni .sm" fhook-nroff
-add-file-hook ".sgm .sgml" fhook-sgml
-add-file-hook ".c .h .def .i" fhook-c
-add-file-hook ".cc .cpp .hpp .rc" fhook-cpp
-add-file-hook ".l .y" fhook-yacc
-add-file-hook "makefile .mak .mk .gmk" fhook-make
-add-file-hook "imakefile" fhook-imake
-add-file-hook "smb.conf" fhook-samba
-add-file-hook "httpd.conf" fhook-apache
-add-file-hook ".sh .ksh .csh .login .bashrc .cshrc .tcshrc .zshrc .profile" fhook-shell
-add-file-hook ".ini .hpj .reg .rgy .toml" fhook-ini
-add-file-hook ".htm .html .htp .hts" fhook-html
-add-file-hook ".lhtm .lhtml" fhook-lhtml
-add-file-hook ".cs" fhook-cs
-add-file-hook ".css" fhook-css
-add-file-hook ".bas .cls" fhook-vb
-add-file-hook ".asp" fhook-asp
-add-file-hook ".java .jav" fhook-java
-add-file-hook ".jsp" fhook-jsp
-add-file-hook ".js" fhook-js
-add-file-hook ".json" fhook-json json-parse
-add-file-hook ".pl .pm" fhook-perl
-add-file-hook ".php .php3 .php4 .php5 .phtml .inc" fhook-php
-add-file-hook ".phps" fhook-phps
-add-file-hook ".ps1 .psm1" fhook-ps1
-add-file-hook ".cmd .bat .btm" fhook-dos
-add-file-hook ".tcl .tk" fhook-tcl
-add-file-hook ".rul" fhook-rul
-add-file-hook ".awk .nawk .gawk" fhook-awk
-add-file-hook ".ada .adb .ads" fhook-ada
-add-file-hook ".f .f77 .f90" fhook-f90
-add-file-hook ".p .pas" fhook-pascal
-add-file-hook ".el" fhook-lisp
-add-file-hook ".vhdl .vhd" fhook-vhdl
-add-file-hook ".v" fhook-verilg
-add-file-hook ".fvwm .fvwm2rc" fhook-fvwm
-add-file-hook ".nsr" fhook-nsr
-add-file-hook ".erf" fhook-erf
-add-file-hook ".bnf" fhook-bnf
-add-file-hook ".sql" fhook-sql sql-format
-add-file-hook ".asn1" fhook-asn1
-add-file-hook ".mhg .mhg5" fhook-mhg
-add-file-hook ".cbl" fhook-cobol
-add-file-hook ".x86" fhook-asmx86
-add-file-hook ".py" fhook-python py-doc
-add-file-hook ".scm .sch" fhook-scheme
-add-file-hook ".mp .mf" fhook-meta
-add-file-hook ".m4" fhook-m4
-add-file-hook ".md .tmd .rmd .tqd .qd" fhook-md md-to-html md-to-htm md-to-latex md-process
-add-file-hook ".texi" fhook-texi
-add-file-hook ".idl" fhook-idl
-add-file-hook ".info dir" fhook-info info info-on info-goto-link
-add-file-hook ".diff .dif *diff*" fhook-diff
-add-file-hook ".xml .xsl .xul .xaml" fhook-xml
-add-file-hook ".ex .exw .exu .e .ew .eu" fhook-euphor
-add-file-hook ".pls" fhook-pls
-add-file-hook ".lua" fhook-lua
-add-file-hook ".psf" fhook-psf
-add-file-hook ".spec" fhook-spec
-add-file-hook ".sl" fhook-slang
-add-file-hook ".au3" fhook-au3
-add-file-hook ".mod" fhook-mod2
-add-file-hook ".dot" fhook-dot
-add-file-hook ".rb" fhook-ruby
-add-file-hook ".rd" fhook-rd
-add-file-hook ".r .rtk" fhook-r r-doc
-add-file-hook ".cfm .cfml .cfc" fhook-cfm
-add-file-hook ".iss" fhook-iss
-add-file-hook ".swift" fhook-swift
-add-file-hook ".go" fhook-go
-add-file-hook ".rs" fhook-rust
-add-file-hook ".dart" fhook-dart
-add-file-hook ".yml .yaml" fhook-yaml
-add-file-hook ".zig" fhook-zig
-add-file-hook ".c3" fhook-c3
-add-file-hook ".jl" fhook-julia
-add-file-hook ".m"  fhook-octave
-add-file-hook ".vala" fhook-vala
-add-file-hook ".typ .typst .ttyp .ttypst" fhook-typst
-add-file-hook ".tdoc .adoc .asciidoc" fhook-adoc
-add-file-hook ".kt .ktm .kts" fhook-kotlin
-add-file-hook ".nim" fhook-nim
-add-file-hook ".tman" fhook-dtools
-add-file-hook ".hs" fhook-hask
-add-file-hook ".ts" fhook-ts
-add-file-hook ".sc .scala" fhook-scala
-; Add magic hooks
-1 add-file-hook "^#![ \t]*/.*sh" fhook-shell
-1 add-file-hook "^#![ \t]*/.*perl" fhook-perl
-1 add-file-hook "^#![ \t]*/.*\\(wish\\|tclsh\\)" fhook-tcl
-1 add-file-hook "^#![ \t]*/.*awk" fhook-awk
-1 add-file-hook "^#![ \t]*/.*python" fhook-python
-1 add-file-hook "^#![ \t]*/.*ruby" fhook-ruby
-1 add-file-hook "^#![ \t]*/.*Rscript" fhook-r
-1 add-file-hook "^#![ \t]*/.*make" fhook-make
-4 add-file-hook "^[ \t]*exec[ \t]*\\(wish\\|tclsh\\)" fhook-tcl
-1 add-file-hook "^#VRML" fhook-vrml
-1 add-file-hook "^#Inventor" fhook-vrml
--2 add-file-hook "This is Info file" fhook-info
--1 add-file-hook "<\\?xml" fhook-xml
--1 add-file-hook "-[*!]-[ \t]*c.*-[*!]-" fhook-c
--1 add-file-hook "-[*!]-[ \t]*c\\+\\+.*-[*!]-" fhook-cpp
--1 add-file-hook "-[*!]-[ \t]*f.*-[*!]-" fhook-f90
--1 add-file-hook "-[*!]-[ \t]*perl.*-[*!]-" fhook-perl
--1 add-file-hook "-[*!]-[ \t]*texinfo.*-[*!]-" fhook-texi
--1 add-file-hook "-[*!]-[ \t]*nroff.*-[*!]-" fhook-nroff
--1 add-file-hook "-[*!]-[ \t]*cobol.*-[*!]-" fhook-cobol
--1 add-file-hook "-[*!]-[ \t]*pl/?sq?l?.*-[*!]-" fhook-pls
--1 add-file-hook "-[*!]-[ \t]*makefile.*-[*!]-" fhook-make
--1 add-file-hook "-[*!]-[ \t]*sh\\(ell\\)?.*-[*!]-" fhook-shell
--1 add-file-hook "-[*!]-[ \t]*mode: wiki.*-[*!]-" fhook-wiki
--1 add-file-hook "-[*!]-[ \t]*ruby.*-[*!]-" fhook-ruby
--1 add-file-hook "-!-[ \t]*mhg.*-!-" fhook-mhg
--1 add-file-hook "-!-[ \t]*msdos.*-!-" fhook-dos
--1 add-file-hook "-!-[ \t]*imakefile.*-!-" fhook-imake
--1 add-file-hook "-!-[ \t]*document.*-!-" fhook-doc
--1 add-file-hook "-!-[ \t]*jst.*-!-" fhook-jst
--1 add-file-hook "-[*!]-[ \t]*sgml.*-[*!]-" fhook-sgml
--1 add-file-hook "DTD DocBook" fhook-sgml
--1 add-file-hook "-!-[ \t]*fvwm.*-!-" fhook-fvwm
--1 add-file-hook "-!-[ \t]*emf.*-!-" fhook-emf
--1 add-file-hook "-!-[ \t]*erf.*-!-" fhook-erf
--1 add-file-hook "-!-[ \t]*asn\\.1.*-!-" fhook-asn1
--1 add-file-hook "-!-[ \t]*asmx86.*-!-" fhook-asmx86
--1 add-file-hook "-!-[ \t]*text.*-!-" fhook-txt
--1 add-file-hook "-!-[ \t]*msvb.*-!-" fhook-vb
--1 add-file-hook "-!-[ \t]*swift.*-!-" fhook-swift
--1 add-file-hook "-!-[ \t]*v-lang.*-!-" fhook-v
--1 add-file-hook "-!-[ \t]*asciidoc.*-!-" fhook-adoc
--1 add-file-hook "-!-[ \t]*adoc.*-!-" fhook-adoc
--1 add-file-hook "-[*!]-[ \t]*doctools " fhook-dtools
--1 add-file-hook "^diff " fhook-diff
+; Define list of supported major-modes, start with modes that define content-ids as the order is more important
+29 major-mode "sh" ".sh .ksh .csh .login .bashrc .cshrc .tcshrc .zshrc .profile" "UNIX Shell script" 1 "^#![ \t]*/.*sh"
+16 major-mode "\\1" 1 "^#![ \t]*/.*\\(perl\\|awk\\|python\\|ruby\\)"
+23 major-mode "make" "makefile" "makefile .mak .mk .gmk" 1 "^#![ \t]*/.*make"
+29 major-mode "tcl" ".tcl .tk" "Tcl/Tk" 1 "^#![ \t]*/.*\\(wish\\|tclsh\\)"
+29 major-mode "r" ".r .rtk" "R/S-Plus" -1 "^#![ \t]*/.*Rscript" r-doc
+16 major-mode "\\1" -2 "-[*!]-[ \t]*\\([^ \t\n:;]+\\).*?-[*!]-"
+16 major-mode "\\1" -2 "-[*!]-[ \t]*mode:[ \t]*\\([^ \t\n:;]+\\).*?-[*!]-"
+21 major-mode "xml" ".xml .xsl .xul .xaml" -1 "<\\?xml"
+5 major-mode "ada" ".ada .adb .ads"
+5 major-mode "adoc" ".tdoc .adoc .asciidoc"
+; TODO httpd.conf & smb.conf are very specific and apache can used different names, would be better to have more generic hondlers
+5 major-mode "apache" "httpd.conf"
+9 major-mode "apt" "Maven APT"
+7 major-mode "asm" "assembler" ".asm .x86"
+1 major-mode "asn1"
+9 major-mode "asp" "ASP"
+13 major-mode "autoit" ".au3" "AutoIt"
+5 major-mode "awk" ".awk .nawk .gawk"
+13 major-mode "bat" ".bat .btm .cmd" "Win/DOS Batch"
+13 major-mode "bibtex" ".bib" "BibTeX"
+5 major-mode "binary" ""
+13 major-mode "bison" ".l .ll .lxx .y .yy yxx" "Bison (Lex/Yacc)"
+13 major-mode "blist" "*buffers*" "Buffer List"
+1 major-mode "bnf"
+5 major-mode "c" ".c .h .def .i"
+1 major-mode "c3"
+5 major-mode "cfml" ".cfm .cfml .cfc"
+5 major-mode "cobol" ".cbl"
+7 major-mode "cpp" "c++" ".cc .cpp .cxx .hh .hpp .hxx .rc"
+1 major-mode "cs"
+1 major-mode "css"
+1 major-mode "dart"
+29 major-mode "diff" "*diff* .diff .dif" "Diff File" 1 "^diff"
+13 major-mode "dirlst" "/ *files*" "Directory List" copy-file delete-file file-browser file-browser-close file-browser-swap-buffers
+13 major-mode "dirtre" "*directory*" "Directory Tree"
+; TODO Need to sort out doc & txt for best support across editors.
+7 major-mode "doc" "document" ".doc"
+9 major-mode "dot" "Dot/Neato"
+13 major-mode "ehf" "*help* *about*" "ME Help"
+9 major-mode "emf" "ME Macro"
+9 major-mode "erf" "ME Registry"
+7 major-mode "euphor" "euphoria" ".ex .exw .exu .e .ew .eu"
+7 major-mode "f" "fortran" ".f .f77 .f90"
+5 major-mode "fvwm" ".fvwm .fvwm2rc"
+1 major-mode "go"
+5 major-mode "hask" ".hs"
+5 major-mode "html" ".htm .html .htp .hts"
+9 major-mode "idl" "OMG IDL"
+3 major-mode "imake" "imakefile"
+13 major-mode "info" ".info /dir" "GNU Info" info info-on info-goto-link
+5 major-mode "ini" ".ini .hpj .reg .rgy .toml"
+5 major-mode "ipipe" "*compile* *icommand* *shell*"
+9 major-mode "iss" "Inno Setup Script"
+5 major-mode "java" ".java .jav"
+9 major-mode "js" "JavaScript"
+13 major-mode "json" ".json" "JSON" json-parse
+1 major-mode "jsp"
+1 major-mode "jst"
+5 major-mode "julia" ".jl"
+5 major-mode "kotlin" ".kt .ktm .kts"
+13 major-mode "latex" ".tex .sty" "LaTeX"
+13 major-mode "lhtml" ".lhtm .lhtml" "LUA-HTML"
+5 major-mode "lisp" ".el"
+13 major-mode "lists" "*bindings* *commands* *variables*" "ME List"
+1 major-mode "lua"
+1 major-mode "m4"
+15 major-mode "man" "" "" "UNIX Man page" man aman
+7 major-mode "md" "markdown" ".md .tmd .rmd .tqd .qd" md-to-html md-to-htm md-to-latex md-process
+15 major-mode "mereg" "" "*registry*" "ME Registry"
+13 major-mode "meta" ".mp .mf" "MetaPost/Font"
+13 major-mode "mhg" ".mhg .mhg5" "MHEG"
+7 major-mode "mod2" "modula-2" ".mod"
+1 major-mode "nim"
+5 major-mode "nroff" ".n .1 .2 .3 .4 .5 .6 .7 .8 .9 .so .tni .sm"
+5 major-mode "octave" ".m"
+5 major-mode "pascal" ".p .pas"
+5 major-mode "perl" ".pl .pm"
+5 major-mode "php" ".php .php3 .php4 .php5 .phtml .inc"
+9 major-mode "phps" "PHP Script"
+13 major-mode "plsql" ".pls" "PL/SQL"
+15 major-mode "ps1" "powershell" ".ps1 .psm1" "PowerShell Script"
+1 major-mode "psf"
+5 major-mode "python" ".py" py-doc
+5 major-mode "rbin" ""
+1 major-mode "rd"
+5 major-mode "ruby" ".rb"
+9 major-mode "rul" "Install Shield Rul"
+5 major-mode "rust" ".rs"
+5 major-mode "samba" "smb.conf"
+5 major-mode "scala" ".sc .scala"
+5 major-mode "scheme" ".scm .sch"
+5 major-mode "sgml" ".sgm .sgml .dtd"
+5 major-mode "slang" ".sl"
+1 major-mode "spec"
+1 major-mode "sql" sql-format
+1 major-mode "swift"
+15 major-mode "tcldoc" "tcl-doctools" ".tman" "TCL doctools"
+3 major-mode "texi" "texinfo"
+9 major-mode "ts" "TypeScript"
+3 major-mode "txt" "text"
+7 major-mode "typst" "typescript" ".typ .typst .ttyp .ttypst"
+1 major-mode "vala"
+15 major-mode "vb" "visual-basic" ".bas .cls" "Visual Basic"
+; TODO need ftest-verlg & ftest-vlang to determine which a .v file is
+13 major-mode "vlang" ".v" "V"
+7 major-mode "verilg" "verlog" ".v"
+5 major-mode "vhdl" ".vhdl .vhd"
+5 major-mode "vrml" ".wrl"
+13 major-mode "wiki" "" "GNU Wiki"
+5 major-mode "yaml" ".yml .yaml"
+1 major-mode "zig"
 
 set-variable %platform &cat $platform &cond &band $system 0x01 "c" ""
 set-variable $system &bor &band $system &bnot 0x0030f000 &band 0x0030f000 &reg "/history/system" 0x007000

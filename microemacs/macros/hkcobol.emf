@@ -10,12 +10,11 @@
 ;
 define-macro fhook-cobol
   set-variable $buffer-mask "luh1"
-  @# buffer-init "cobol"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-cobol.name "Cobol-85"
 set-variable .fhook-cobol.setup &reg "/history/fhook/cobol" "bghinopx"
 set-variable .fhook-cobol.setup-mask "aebghikmnoptux"
 set-variable .fhook-cobol.comment "|*||*|* | *|r|"

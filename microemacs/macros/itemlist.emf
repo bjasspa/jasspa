@@ -153,7 +153,7 @@ define-macro item-list-create
   !else
     !if &exi :chook
       set-variable #l8 :chook
-    !elif &seq &set #l8 &rig $buffer-fhook 6 ""
+    !elif &seq &set #l8 $buffer-major-mode ""
       set-variable #l8 "default"
     !endif
     !if &not &exi &ind &spr ".fhook-%s.item-list-s1" #l8

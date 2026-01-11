@@ -92,11 +92,8 @@
   !if &seq $buffer-fhook ""
     set-variable #l4 "<unknown>"
   !else
-    set-variable #l4 &ind &spr ".%s.name" $buffer-fhook
-    !if &seq #l4 "ERROR"
-      set-variable #l4 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
-    !endif
-    set-variable #l4 &spr "%s (%s)" #l4 &rig $buffer-fhook 6
+    0 major-mode $buffer-major-mode
+    set-variable #l4 &spr "%s (%s)" &lget $result 5 $buffer-major-mode
   !endif
   find-buffer "*buffer-info*"
   -1 buffer-mode "undo"

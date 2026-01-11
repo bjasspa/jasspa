@@ -9,7 +9,7 @@
 ; Authors:     Steven Phillips, Jon Green
 ;
 define-macro fhook-dirtre
-  @# buffer-init "dirtre"
+  @# buffer-init
   set-variable :mouse-pick-1 void
   set-variable :mouse-drop-1 dirtre-mouse-drop-1
   set-variable :mouse-pick-3 void
@@ -18,7 +18,6 @@ define-macro fhook-dirtre
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-dirtre.name "Directory Tree"
 set-variable .fhook-dirtre.setup &reg "/history/fhook/dirtre" "ghmop"
 set-variable .fhook-dirtre.setup-mask "aeghop"
 set-variable .fhook-dirtre.command-flag  "|thbio|thbio|thbio|th|thbio|thbio|bio|thbio|bio|thbio|thbio|bio|"

@@ -101,8 +101,18 @@
   hilight .hilight.dirlst 0x112 " -~"       .scheme.hlred
 !endif
 0 define-macro fhook-svn-status
+  buffer-init
+  set-variable :sc &lfind .fhook-dirlst.sc-detect "svn-dirlst-detect"
+  set-variable :tag-count 0
+  set-variable :mouse-pick-1 dirlst-mouse-pick-1
+  set-variable :mouse-drop-1 dirlst-mouse-drop-1
+  set-variable :mouse-pick-3 dirlst-mouse-pick-3
+  set-variable :mouse-drop-3 dirlst-mouse-drop-3
+  set-variable :dirlst-mode .fhook-dirlst.mode
+  set-variable $window-line 5
+  buffer-init-hooks
 !emacro
-set-variable .fhook-svn-status.name "Subversion Status"
+15 major-mode "svn-status" "" "" "Subversion Status"
 set-variable .fhook-svn-status.setup &reg "/history/fhook/svn-status" "ghmop"
 set-variable .fhook-svn-status.setup-mask    "aceghlopq"
 set-variable .fhook-svn-status.command-flag  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-flag  1 "" 2 "" 3 "t" 4 "thbio" 5 "thbio" 6 "bio" 2
@@ -1624,16 +1634,7 @@ set-variable .svn-resolve.av "|base|working|mine-full|theirs-full|"
     !endif
     -1 buffer-mode "edit"
     1 buffer-mode "view"
-    buffer-init "svn-status"
-    set-variable :sc &lfind .fhook-dirlst.sc-detect "svn-dirlst-detect"
-    set-variable :tag-count 0
-    set-variable :mouse-pick-1 dirlst-mouse-pick-1
-    set-variable :mouse-drop-1 dirlst-mouse-drop-1
-    set-variable :mouse-pick-3 dirlst-mouse-pick-3
-    set-variable :mouse-drop-3 dirlst-mouse-drop-3
-    set-variable :dirlst-mode .fhook-dirlst.mode
-    set-variable $window-line 5
-    buffer-init-hooks
+    major-mode "svn-status"
     set-variable :svn-last 5
   !endif
   goto-alpha-mark "I"

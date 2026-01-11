@@ -26,7 +26,7 @@ define-macro expand-abbrev-handle
     !return
   !endif
   ; if buffer has an fhook specific pre abbrev expander use that
-  !if &exi &set #l0 &cat &rig $buffer-fhook 6 "-pre-expand-abbrev"
+  !if &exi &set #l0 &cat $buffer-major-mode "-pre-expand-abbrev"
     !if &seq @p ""
       ml-write &spr "[Using %s]" #l0
     !endif
@@ -63,7 +63,7 @@ define-macro expand-abbrev-handle
       ml-write &spr "[Using %s]" :expand-abbrev
     !endif
     !force execute-named-command :expand-abbrev
-  !elif &exi &set #l0 &cat &rig $buffer-fhook 6 "-expand-abbrev"
+  !elif &exi &set #l0 &cat $buffer-major-mode "-expand-abbrev"
     ; if buffer has an fhook specific abbrev expander use that
     !if &seq @p ""
       ml-write &spr "[Using %s]" #l0

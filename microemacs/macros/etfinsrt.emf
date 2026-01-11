@@ -30,8 +30,9 @@
 set-variable .insert-template-rt.tl "\bFILE_NAME\bFILE_BASENAME\bFILE_NAME_UD\bASCII_TIME\bYEAR\bUSER_NAME\bCOMPANY_NAME\bCOMPANY_URL\bCOMPANY_REF\b"
 
 define-macro insert-template
-  !iif &seq "" &set #l0 &rig $buffer-fhook 6  -8 ml-write "[Error: Invalid $buffer-fhook]"
-  !iif &seq &set #l8 &ind &spr ".fhook-%s.name" #l0 "ERROR"  set-variable #l8 #l0
+  !iif &seq "" &set #l0 $buffer-major-mode  -8 ml-write "[Error: Invalid $buffer-fhook]"
+  0 major-mode #l0
+  set-variable #l8 &lget $result 5
   !force set-variable #l4 @1
   !if $status
     set-variable #l2 &con &seq ".etf" &rig #l4 -4 &lef #l4 -4 #l4

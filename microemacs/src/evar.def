@@ -59,6 +59,9 @@ DEFVAR ("buffer-input",        EVBUFINP)        /* buffer input handler */
 #if MEOPT_IPIPES
 DEFVAR ("buffer-ipipe",        EVBUFIPIPE)      /* buffer ipipe input handler */
 #endif
+#if MEOPT_FILEHOOK
+DEFVAR ("buffer-major-mode",   EVBUFMJRMOD)     /* Buffer major mode  */
+#endif
 DEFVAR ("buffer-mask",         EVBUFMASK)       /* buffer isWord mask */
 #if MEOPT_EXTENDED
 DEFVAR ("buffer-mode-line",    EVBMDLINE)       /* buffer mode-line format string */

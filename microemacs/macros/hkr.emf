@@ -13,12 +13,11 @@ set-char-mask "3" "-$."
 
 define-macro fhook-r
   set-variable $buffer-mask "luh13"
-  @# buffer-init "r"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-r.name "R/S-Plus"
 set-variable .fhook-r.setup &reg "/history/fhook/r" "bdfghopx"
 set-variable .fhook-r.setup-mask "adefghikmoptux"
 set-variable .fhook-r.comment "|#||#|# | #|r|"
@@ -218,8 +217,14 @@ set-variable .fhook-r.format1 "\b%v[com]\b%\"%v[com]%\" -e \"formatR::tidy_file\
 set-variable .fhook-r.lint1   "\b%v[com]\b%\"%v[com]%\" -e \"lintr::lint\"\b0\b\b%\"%v[com]%\" -e \"options('encoding'='%v[enc]');library(lintr);lintr::lint('%p%f',linters = linters_with_defaults(indentation_linter = indentation_linter(indent = 4L)))\"\b\b:\\d+:\\d+: error: \b:\\d+:\\d+: warning: \b:\\d+:\\d+: style: \b"
 
 define-macro fhook-r-doc
+  buffer-init
+  set-variable :mouse-word-select r-doc-process-link
+  buffer-bind-create "bio" "return" "0" r-doc-process-link
+  buffer-bind-create "bio" "backspace" "0" r-doc-back
+  buffer-bind-key "scroll-down" "space"
   buffer-init-hooks
 !emacro
+15 major-mode "r-doc" "" "" "R Doc"
 
 set-variable .fhook-r-doc.name "R Doc"
 set-variable .fhook-r-doc.setup &reg "/history/fhook/r-doc" "acfhmw"
@@ -433,11 +438,7 @@ define-macro r-doc
   #l1 buffer-mode "exact"
   -1 buffer-mode "edit"
   1 buffer-mode "view"
-  set-variable :mouse-word-select r-doc-process-link
-  buffer-bind-create "bio" "return" "0" r-doc-process-link
-  buffer-bind-create "bio" "backspace" "0" r-doc-back
-  buffer-bind-key  "scroll-down" "space"
-  buffer-init "r-doc"
+  major-mode "r-doc"
   ; some terminals might need this
   !iif &band $system 0x01  screen-update
 !emacro

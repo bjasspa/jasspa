@@ -66,11 +66,11 @@
   !endif
   !if &band 0x10000 #l9
     !if &seq .toolbar-redraw.bt ""
-      set-variable #l8 "Default"
-    !elif &seq &set #l8 &ind &spr ".fhook-%s.name" .toolbar-redraw.bt "ERROR"
-      set-variable #l8 &cat &sup &lef .toolbar-redraw.bt 1 &rig .toolbar-redraw.bt 1
+      set-variable #l1 &cat "Default " #l1
+    !else
+      0 major-mode .toolbar-redraw.bt
+      set-variable #l1 &spr "%s %s" &lget $result 5 #l1
     !endif
-    set-variable #l1 &spr "%s %s" #l8 #l1
   !endif
   !iif &band 0x20000 #l9  set-variable #l1 &spr "%s (%s)" #l1 .toolbar-redraw.bn
   !if &band 0x40000 #l9
@@ -152,7 +152,7 @@
     @# screen-update
     !return
   !elif &seq @cl "recenter"
-    !iif &exi &set #l0 &cat "chook-" &rig $buffer-fhook 6  !force execute-named-command #l0
+    !iif &exi &set #l0 &cat "chook-" $buffer-major-mode  !force execute-named-command #l0
     set-variable .bc &bor .bc 0x080
   !elif &les @# 1
     @# screen-update
@@ -194,7 +194,7 @@
   !if &exi :chook
     set-variable #l0 :chook
   !else
-    set-variable #l0 &rig $buffer-fhook 6
+    set-variable #l0 $buffer-major-mode
   !endif
   !if &not &seq .bt #l0
     set-variable .bc &bor .bc 0x004

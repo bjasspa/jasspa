@@ -5,7 +5,7 @@
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
 ;
-; Synopsis:    Compile, xgrep and macro to wrap the diff utility.
+; Synopsis:    Compile, diff and various other useful tools
 ; Authors:     Steven Phillips & Jon Green
 ;
 ; Notes:       There may be a bit too much color in the diff!
@@ -18,7 +18,6 @@
   ;set-variable %diff-com "diff"
 !endif
 
-add-file-hook "*compile* *grep*" fhook-ipipe
 -1 add-next-line "*compile*" "^->"
 
 0 define-macro compile-ipipe

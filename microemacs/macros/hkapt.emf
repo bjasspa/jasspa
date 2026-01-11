@@ -11,26 +11,21 @@
 ; Notes:       See docmacro.emf for documentation
 ;
 define-macro fhook-apt
-  ; use the document fhook in docmacro
-  @# doc-fhook-body "apt" "apt"
+  @# buffer-init
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-apt.name "Maven APT"
 set-variable .fhook-apt.setup &reg "/history/fhook/apt" "ghijopsw"
 set-variable .fhook-apt.setup-mask "aefghijkmnopstuwx"
 
-; load docmacro.emf passing the doc setup flags
+; load docmacro.emf passing the apt setup flags
 execute-file "docmacro" "apt"
 
-!if &not &exist .hilight.apt
-  set-variable .hilight.apt  &pinc .hilight.next 1
-!endif
-
 !if &and &sin "h" .fhook-apt.setup &band .hilight.flags 0x02
-  0 hilight .hilight.apt 0x00 $global-scheme
+  !iif &not &exist .hilight.apt  set-variable .hilight.apt  &pinc .hilight.next 1
 
-  set-variable #l0 .hilight.apt
+  0 hilight &set #l0 .hilight.apt 0x00 $global-scheme
   ; Title
   hilight #l0 4 "^\\s+---+" "^\\s*$" "" .scheme.comment
   ; Headings

@@ -36,8 +36,19 @@
 0 define-macro cc-init
 !emacro
 0 define-macro fhook-cc-state
+  buffer-init
+  set-variable :sc &lfind .fhook-dirlst.sc-detect "cc-dirlst-detect"
+  set-variable :fmpf 6
+  set-variable :tag-count 0
+  set-variable :mouse-pick-1 dirlst-mouse-pick-1
+  set-variable :mouse-drop-1 dirlst-mouse-drop-1
+  set-variable :mouse-pick-3 dirlst-mouse-pick-3
+  set-variable :mouse-drop-3 dirlst-mouse-drop-3
+  set-variable :dirlst-mode .fhook-dirlst.mode
+  set-variable $window-line 5
+  buffer-init-hooks
 !emacro
-set-variable .fhook-cc-state.name "ClearCase State"
+15 major-mode "cc-status" "" "" "ClearCase State"
 set-variable .fhook-cc-state.setup &reg "/history/fhook/cc-state" "ghmop"
 set-variable .fhook-cc-state.setup-mask    "aceghlopq"
 set-variable .fhook-cc-state.command-flag  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-flag  1 "" 2 "" 3 "t" 4 "thbio" 5 "thbio" 6 "bio" 2
@@ -974,17 +985,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
     insert-string "\n Attr Name  <Order by Extension>"
     -1 buffer-mode "edit"
     1 buffer-mode "view"
-    buffer-init "cc-state"
-    set-variable :sc &lfind .fhook-dirlst.sc-detect "cc-dirlst-detect"
-    set-variable :fmpf 6
-    set-variable :tag-count 0
-    set-variable :mouse-pick-1 dirlst-mouse-pick-1
-    set-variable :mouse-drop-1 dirlst-mouse-drop-1
-    set-variable :mouse-pick-3 dirlst-mouse-pick-3
-    set-variable :mouse-drop-3 dirlst-mouse-drop-3
-    set-variable :dirlst-mode .fhook-dirlst.mode
-    set-variable $window-line 5
-    buffer-init-hooks
+    major-mode "cc-state"
     set-variable :ccs-last 5
   !endif
   goto-alpha-mark "I"

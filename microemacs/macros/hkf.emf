@@ -1,0 +1,180 @@
+; -!- emf -!-
+;
+; Copyright (C) 1999-2025 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Fortran 77/90 hook
+; Authors:     Jon Green, Detlef Groth
+;
+define-macro fhook-f
+  ; Is this a f77 or other fortran file ??
+  set-variable #l0 &con &isin ".f90" $buffer-bname "f90" "f"
+  set-variable $buffer-mask "luh1"
+  @# buffer-init #l0
+  buffer-init-hooks
+!emacro
+
+; buffer-init variables
+set-variable .fhook-f.setup &reg "/history/fhook/f" "bdfghinopx"
+set-variable .fhook-f.setup-mask "abdefghikmnoptux"
+set-variable .fhook-f.comment "|!||!|! | !|r|"
+set-variable .fhook-f.exact -1
+
+set-variable .fhook-f.collapse-open  "^\\(program[ \t]+\\|module[ \t]+\\|function\\|[ \ta-zA-Z0-9()]+ function \\|subroutine\\|[ \ta-zA-Z0-9()]+ subroutine \\)"
+set-variable .fhook-f.collapse-close "^\\(end[ \t]+program\\|contains\\|[\t ]*end function\\|[\t ]*end subroutine\\)"
+set-variable .fhook-f.collapse-mclose "1"
+set-variable .fhook-f.collapse-mnext "-1"
+
+; setup item-list
+set-variable .fhook-f.item-list-s1 "^module[ \t]+\\([_\\w]+\\)"
+set-variable .fhook-f.item-list-r1 "Modl \CCb\\1\CCA"
+set-variable .fhook-f.item-list-s2 "^\\([ \t][ \t]\\)?\\([ \ta-zA-Z0-9()]+\\)?function[ \t]+\\([_\\w]+\\)"
+set-variable .fhook-f.item-list-r2 "Func \\1\CCb\\3\CCA"
+set-variable .fhook-f.item-list-s3 "^\\([ \t][ \t]\\)?\\([ \ta-zA-Z0-9()]+\\)?subroutine[ \t]+\\([_\\w]+\\)"
+set-variable .fhook-f.item-list-r3 "Subr \\1\CCb\\3\CCA"
+set-variable .fhook-f.item-list-s4 "^program[ \t]+\\([_\\w]+\\)"
+set-variable .fhook-f.item-list-r4 "Prog \CCb\\1\CCA"
+
+!if &and &sin "h" .fhook-f.setup &band .hilight.flags 0x02
+  !if &not &exist .hilight.f
+    set-variable .hilight.f &pinc .hilight.next 1
+  !endif
+  ; High-light Fortran 90
+  0 hilight  .hilight.f 1               $global-scheme
+  hilight .hilight.f 4 "'" "'" ""       .scheme.string
+  hilight .hilight.f 4 "\"" "\"" ""     .scheme.string
+  hilight .hilight.f 2 "!"              .scheme.comment
+  ; Older fortran comment
+  hilight .hilight.f 0x102 "c"          .scheme.comment
+
+  hilight .hilight.f 1 "recursive"      .scheme.keyword
+  hilight .hilight.f 1 "allocate"       .scheme.keyword
+  hilight .hilight.f 1 "block data"     .scheme.keyword
+  hilight .hilight.f 1 "call"           .scheme.keyword
+  hilight .hilight.f 1 "case"           .scheme.keyword
+  hilight .hilight.f 1 "common"         .scheme.keyword
+  hilight .hilight.f 1 "contains"       .scheme.keyword
+  hilight .hilight.f 1 "continue"       .scheme.keyword
+  hilight .hilight.f 1 "default"        .scheme.keyword
+  hilight .hilight.f 1 "do"             .scheme.keyword
+  hilight .hilight.f 1 "elemental"      .scheme.keyword
+  hilight .hilight.f 1 "else"           .scheme.keyword
+  hilight .hilight.f 1 "elseif"         .scheme.keyword
+  hilight .hilight.f 1 "elsewhere"      .scheme.keyword
+  hilight .hilight.f 1 "end"            .scheme.keyword
+  hilight .hilight.f 1 "enddo"          .scheme.keyword
+  hilight .hilight.f 1 "endif"          .scheme.keyword
+  hilight .hilight.f 1 "exit"           .scheme.keyword
+  hilight .hilight.f 1 "external"       .scheme.keyword
+  hilight .hilight.f 1 "format"         .scheme.keyword
+  hilight .hilight.f 1 "function"       .scheme.keyword
+  hilight .hilight.f 1 "goto"           .scheme.keyword
+  hilight .hilight.f 1 "if"             .scheme.keyword
+  hilight .hilight.f 1 "implicit"       .scheme.keyword
+  hilight .hilight.f 1 "kind"           .scheme.keyword
+  hilight .hilight.f 1 "module"         .scheme.keyword
+  hilight .hilight.f 1 "only"           .scheme.keyword
+  hilight .hilight.f 1 "print"          .scheme.keyword
+  hilight .hilight.f 1 "private"        .scheme.keyword
+  hilight .hilight.f 1 "procedure"      .scheme.keyword
+  hilight .hilight.f 1 "program"        .scheme.keyword
+  hilight .hilight.f 1 "public"         .scheme.keyword
+  hilight .hilight.f 1 "pure"           .scheme.keyword
+  hilight .hilight.f 1 "read"           .scheme.keyword
+  hilight .hilight.f 1 "return"         .scheme.keyword
+  hilight .hilight.f 1 "select"         .scheme.keyword
+  hilight .hilight.f 1 "step"           .scheme.keyword
+  hilight .hilight.f 1 "stop"           .scheme.keyword
+  hilight .hilight.f 1 "subroutine"     .scheme.keyword
+  hilight .hilight.f 1 "then"           .scheme.keyword
+  hilight .hilight.f 1 "type"           .scheme.keyword
+  hilight .hilight.f 1 "use"            .scheme.keyword
+  hilight .hilight.f 1 "where"          .scheme.keyword
+  hilight .hilight.f 1 "while"          .scheme.keyword
+  hilight .hilight.f 1 "write"          .scheme.keyword
+
+  hilight .hilight.f 1 "\\.and\\."      .scheme.operator
+  hilight .hilight.f 1 "\\.eq\\."       .scheme.operator
+  hilight .hilight.f 1 "\\.false\\."    .scheme.operator
+  hilight .hilight.f 1 "\\.ge\\."       .scheme.operator
+  hilight .hilight.f 1 "\\.gt\\."       .scheme.operator
+  hilight .hilight.f 1 "\\.le\\."       .scheme.operator
+  hilight .hilight.f 1 "\\.lt\\."       .scheme.operator
+  hilight .hilight.f 1 "\\.ne\\."       .scheme.operator
+  hilight .hilight.f 1 "\\.neqv\\."     .scheme.operator
+  hilight .hilight.f 1 "\\.not\\."      .scheme.operator
+  hilight .hilight.f 1 "\\.or\\."       .scheme.operator
+  hilight .hilight.f 1 "\\.true\\."     .scheme.operator
+
+  hilight .hilight.f 1 "allocatable"    .scheme.type
+  hilight .hilight.f 1 "character"      .scheme.type
+  hilight .hilight.f 1 "complex"        .scheme.type
+  hilight .hilight.f 1 "cmplx"          .scheme.type
+  hilight .hilight.f 1 "data"           .scheme.type
+  hilight .hilight.f 1 "digits"         .scheme.type
+  hilight .hilight.f 1 "dimension"      .scheme.type
+  hilight .hilight.f 1 "double"         .scheme.type
+  hilight .hilight.f 1 "epsilon"        .scheme.type
+  hilight .hilight.f 1 "huge"           .scheme.type
+  hilight .hilight.f 1 "in"             .scheme.type
+  hilight .hilight.f 1 "inout"          .scheme.type
+  hilight .hilight.f 1 "integer"        .scheme.type
+  hilight .hilight.f 1 "intent"         .scheme.type
+  hilight .hilight.f 1 "interface"      .scheme.type
+  hilight .hilight.f 1 "logical"        .scheme.type
+  hilight .hilight.f 1 "maxexponent"    .scheme.type
+  hilight .hilight.f 1 "minexponent"    .scheme.type
+  hilight .hilight.f 1 "none"           .scheme.type
+  hilight .hilight.f 1 "operator"       .scheme.type
+  hilight .hilight.f 1 "parameter"      .scheme.type
+  hilight .hilight.f 1 "pointer"        .scheme.type
+  hilight .hilight.f 1 "precision"      .scheme.type
+  hilight .hilight.f 1 "radix"          .scheme.type
+  hilight .hilight.f 1 "range"          .scheme.type
+  hilight .hilight.f 1 "real"           .scheme.type
+  hilight .hilight.f 1 "tiny"           .scheme.type
+  hilight .hilight.f 1 "type"           .scheme.type
+!endif
+
+; setup file-* tools
+add-next-line "*f-exec*" "^%f:%l:\\d+.+"
+add-next-line "*f-lint*" "^%f:%l:\\d+.+"
+set-variable .fhook-f.coms "\bgfortran\b"
+set-variable .fhook-f.exec1   "\b%v[com]\b\b\b\b%\"%v[com]%\" -Wall -fmax-errors=3 %\"%f%\" -o %\"%b%\" && %\".%/%b%\" %v[args|20|Additional command-line arguments|]\b"
+; pip3 install fprettify --user
+set-variable .fhook-f.format1 "\bfprettify\b\b\b\bfprettify -i 4 %\"%f%\"\bfprettify\b"
+set-variable .fhook-f.format2 "\b%v[com]\b%\"%v[com]%\" -m fprettify -h\b0\b\b%\"%v[com]%\" -m fprettify -i 4 %\"%p%f%\"\bPy frprettifyf\b"
+set-variable .fhook-f.lint1   "\b%v[com]\b\b\b\b%\"%v[com]%\" -Wall -fmax-errors=3 -fsyntax-only %\"%f%\"\bCheck\b"
+
+!if &sin "d" .fhook-f.setup
+  0 indent .hilight.f 1 10
+  indent .hilight.f    N "program"         t
+  indent .hilight.f    O "end program"    -t
+  indent .hilight.f    N "module"          t
+  indent .hilight.f    S "contains"       -t
+  indent .hilight.f    O "end module"     -t
+  indent .hilight.f    N "function"        t
+  indent .hilight.f    O "end function"   -t
+  indent .hilight.f    N "subroutine"      t
+  indent .hilight.f    O "end subroutine" -t
+  indent .hilight.f    N "type"            t
+  indent .hilight.f    O "end type"       -t
+  indent .hilight.f    N "do"              t
+  indent .hilight.f    O "enddo"          -t
+  indent .hilight.f    O "end do"         -t
+  indent .hilight.f    N "if"              t
+  indent .hilight.f    S "else"           -t
+  indent .hilight.f    S "else if"        -t
+  indent .hilight.f    S "elseif "        -t
+  indent .hilight.f    O "end if"         -t
+  indent .hilight.f    O "endif"          -t
+  indent .hilight.f    N "select case"     t
+  indent .hilight.f    S "case"           -t
+  indent .hilight.f    S "case default"   -t
+  indent .hilight.f    O "end select"     -t
+  indent .hilight.f    i "!"
+!endif
+
+buffer-init-fhook "f"

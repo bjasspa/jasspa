@@ -10,7 +10,7 @@
 ;
 define-macro fhook-vrml
   set-variable $buffer-mask "luh1"
-  @# buffer-init "vrml"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 

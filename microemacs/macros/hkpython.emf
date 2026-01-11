@@ -10,7 +10,7 @@
 ;
 define-macro fhook-python
   set-variable $buffer-mask "luh1"
-  @# buffer-init "python"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
@@ -149,8 +149,11 @@ set-variable .fhook-python.lint2   "\b%v[com]\b%\"%v[com]%\" -m pylint -h\b0\b\b
 
 ; Setup py-doc
 define-macro fhook-py-doc
+  buffer-init
   buffer-init-hooks
 !emacro
+15 major-mode "py-doc" "" "" "Python Doc"
+
 set-variable .fhook-py-doc.name "Python Doc"
 set-variable .fhook-py-doc.setup &reg "/history/fhook/py-doc" "acfhmw"
 set-variable .fhook-py-doc.setup-mask "acfhmw"
@@ -184,7 +187,7 @@ define-macro py-doc
   beginning-of-buffer
   -1 buffer-mode "edit"
   1 buffer-mode "view"
-  buffer-init "py-doc"
+  major-mode "py-doc"
   ; some terminals might need this
   !iif &band $system 0x01  screen-update
 !emacro

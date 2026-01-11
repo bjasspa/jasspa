@@ -13,12 +13,11 @@
 ;
 define-macro fhook-idl
   set-variable $buffer-mask "luh1"
-  @# buffer-init "idl"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-idl.name "OMG IDL"
 set-variable .fhook-idl.setup &reg "/history/fhook/idl" "dfghnopx"
 set-variable .fhook-idl.setup-mask "adefghikmnoptux"
 set-variable .fhook-idl.comment "|//||*|// | //|r|"

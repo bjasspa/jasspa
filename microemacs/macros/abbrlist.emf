@@ -104,7 +104,7 @@ define-macro eaf-list-execute
         !repeat
           3 next-window
           !iif &equ #l4 $window-id  !break
-          !iif &or &seq :chook #l3 &seq &rig $buffer-fhook 6 #l3  set-variable #l5 &con &equ #l5 -1 $window-id -2
+          !iif &or &seq :chook #l3 &seq $buffer-major-mode #l3  set-variable #l5 &con &equ #l5 -1 $window-id -2
         !done
       !endif
       !if &les #l5 0
@@ -137,7 +137,7 @@ define-macro eaf-list-goto
   set-position "\x86"
   !if &exi :chook
     set-variable #l9 :chook
-  !elif &seq &set #l9 &rig $buffer-fhook 6 ""
+  !elif &seq &set #l9 $buffer-major-mode ""
     set-variable #l9 "default"
   !endif
   set-variable #l0 &cat "*eaf-list*" &cat @3 #l9
@@ -158,13 +158,9 @@ define-macro eaf-list-goto
     1 buffer-mode "hide"
     1 buffer-mode "magic"
     -1 buffer-mode "undo"
-    set-variable #l7 &ind &spr ".fhook-%s.name" #l9
-    !if &seq #l7 "ERROR"
-      set-variable #l7 &cat &sup &lef #l9 1 &rig #l9 1
-    !endif
-    insert-string &spr "%s %s\n" #l7 @2
-    set-variable #l1 "*eaf-list-tmp*"
-    !force 0 delete-buffer #l1
+    0 major-mode #l9
+    insert-string &spr "%s %s\n" &lget $result 5 @2
+    !force 0 delete-buffer &set #l1 "*eaf-list-tmp*"
     find-buffer #l1
     !force insert-file &find &cat @3 #l9 ".eaf"
     ; process inserts first

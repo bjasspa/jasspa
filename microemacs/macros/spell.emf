@@ -572,7 +572,7 @@ set-variable .spell.check-wordo ""
     !endif
     set-variable .spell.check-word &rig $result 1
     ; if the buffer has a word checker, e.g. nroff adjust the word
-    !if &exi &set #l0 &cat &rig $buffer-fhook 6 "-spell-word"
+    !if &exi &set #l0 &cat $buffer-major-mode "-spell-word"
       ; NOTE: buffer word adjusters should apply to these rules
       ; If no adjustment can be made, abort leave region and cursor as found
       ; If the word can be skipped completely (or region) move the cursor to
@@ -813,7 +813,7 @@ define-macro spell-word
     !if $status
       set-variable @# 0
       ; if the buffer has a word checker, e.g. nroff adjust the word
-      !if &exi &set #l1 &cat &rig $buffer-fhook 6 "-spell-word"
+      !if &exi &set #l1 &cat $buffer-major-mode "-spell-word"
         set-variable .spell.check-word &rig $result 1
         2 show-region
         !force 0 execute-named-command #l1

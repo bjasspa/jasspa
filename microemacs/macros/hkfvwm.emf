@@ -10,12 +10,11 @@
 ;
 define-macro fhook-fvwm
   set-variable $buffer-mask "luh1"
-  @# buffer-init "fvwm"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-fvwm.name "FVWM"
 set-variable .fhook-fvwm.setup &reg "/history/fhook/fvwm" "ghiopx"
 set-variable .fhook-fvwm.setup-mask "aeghikmoptux"
 set-variable .fhook-fvwm.comment "|#||#|# | #|r|"

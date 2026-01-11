@@ -10,12 +10,11 @@
 ;
 define-macro fhook-vb
   set-variable $buffer-mask "luh1"
-  @# buffer-init "vb"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-vb.name "Visual Basic"
 set-variable .fhook-vb.setup &reg "/history/fhook/vb" "dfghiopx"
 set-variable .fhook-vb.setup-mask "adefghikmoptux"
 set-variable .fhook-vb.command-flag  "|"

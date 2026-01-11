@@ -1,0 +1,206 @@
+; -!- emf -!-
+;
+; Copyright (C) 2006-2020 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Coldfusion Markup Language (CFML) Hook File
+; Authors:     Jon Green
+;
+define-macro fhook-cfml
+  set-variable $buffer-mask "luh1"
+  @# buffer-init
+  buffer-init-hooks
+!emacro
+
+; buffer-init variables
+set-variable .fhook-cfml.setup &reg "/history/fhook/cfm" "cdfghinopsx"
+set-variable .fhook-cfml.setup-mask "acdefghikmnopstux"
+set-variable .fhook-cfml.command-flag  "|"
+set-variable .fhook-cfml.command-name  "|"
+set-variable .fhook-cfml.command-nbind "|"
+set-variable .fhook-cfml.command-kbind "|"
+set-variable .fhook-cfml.command-desc  "|"
+set-variable .fhook-cfml.indent-width  2
+
+; load in cfm script & the html core
+!iif &not &exist fhook-cfms  execute-file "hkcfms"
+execute-file "htmlcore" "cfml"
+
+; add cfm functions to item-list
+set-variable .fhook-cfml.item-list-s5 "^[ \t]*function[ \t]+\\(\\w[1-9A-Za-z_']*\\)"
+set-variable .fhook-cfml.item-list-r5 "Func \CCb\\1\CCA"
+
+; Define the <cf...> hilight tags
+!if &and &sin "h" .fhook-cfml.setup &band .hilight.flags 0x02
+  ; Create the new hilighting scheme.
+  !iif &not &exist .hilight.cfmtags set-variable .hilight.cfmtags &pinc .hilight.next 1
+  !iif &not &exist .hilight.cfmsetags  set-variable .hilight.cfmsetags &pinc .hilight.next 1
+
+  ; <CFxxx enclosure hilighting> - Case insensitive scheme
+  0 hilight .hilight.cfmtags 3 50                    $global-scheme
+  ; Include the base hilighting
+  cfm-set-hilight .hilight.cfmtags
+  hilight .hilight.cfmtags 1 "\\w+\\s*\\}="          .scheme.operator
+  hilight .hilight.cfmtags 4 "#" "#" ""              .scheme.variable
+  hilight .hilight.cfmtags 0x80 "/?>" .hilight.cfml   .scheme.keyword
+
+  ; <CFSET enclosure hilighting> - variable assignment
+  0 hilight .hilight.cfmsetags 3 50                  $global-scheme
+  cfm-set-hilight .hilight.cfmsetags
+  hilight .hilight.cfmsetags 4 "#" "#" ""            .scheme.variable
+  hilight .hilight.cfmsetags 1 "\\w+\\s*\\}="        .scheme.variable
+  hilight .hilight.cfmsetags 0x80 "/?>" .hilight.cfml .scheme.keyword
+!endif
+
+!if &not &and &sin "h" .fhook-cfml.setup &band .hilight.flags 0x02
+!elif &exist .hilight.cfmscript
+  ; now setup cfm hilighting to use cfmscript hilighting
+  ; Coldfusion embedded variables may occur in HTML etc.
+  hilight .hilight.cfml 4 "#" "#" ""             .scheme.variable
+  ; Jump to the new <cf...> tags scheme
+  hilight .hilight.cfml       0x80 "<cf\\w+"  .hilight.cfmtags .scheme.keyword
+  hilight .hilight.cfml       0x80 "</cf\\w+" .hilight.cfmtags .scheme.keyword
+  ; the next tag fixes hilighting problems caused by strings spanning
+  ; multiple lines by resetting the hilight on the next blank line during
+  ; the look-back.
+  hilight .hilight.cfml 0xa80 "^\\s*\\{$" .hilight.cfml $global-scheme
+  ; Jump to the new <cfset...> tags scheme
+  hilight .hilight.cfml       0x80 "<cfset"      .hilight.cfmsetags .scheme.keyword
+  ; Jump to the new <cfquery...> SQL tags scheme
+  hilight .hilight.cfml        0x80 "<cfquery" .hilight.cfmsqltags  .scheme.keyword
+  hilight .hilight.cfmsql     0x80 "</cfquery>"  .hilight.cfml      .scheme.keyword
+  ;
+  hilight .hilight.cfml       0x80 "<cfscript>"  .hilight.cfmscript .scheme.prepro
+  hilight .hilight.cfmscript 0x80 "</cfscript>" 0   .scheme.prepro
+!endif
+
+!if &not &sin "d" .fhook-cfml.setup
+!elif &exist .indent.cfmscript
+  ; Close of brace of our <cfstatement ...  >
+  indent .hilight.cfml n ">" -1/2t
+  ; Conditional
+  indent .hilight.cfml n "<cfif" 3/2t
+  indent .hilight.cfml u "<cfelseif" -t 3/2t
+  indent .hilight.cfml u "<cfelse" -t 3/2t
+  indent .hilight.cfml o "</cfif>" -t
+  ; Switch statement
+  indent .hilight.cfml n "<cfswitch" 3/2t
+  indent .hilight.cfml o "</cfswitch>" -t
+  indent .hilight.cfml n "<cfcase" 3/2t
+  indent .hilight.cfml o "</cfcase>" -t
+  indent .hilight.cfml n "<cfdefaultcase" 3/2t
+  indent .hilight.cfml o "</cfdefaultcase>" -t
+  ; Loops
+  indent .hilight.cfml n "<cfloop" 3/2t
+  indent .hilight.cfml o "</cfloop>" -t
+  indent .hilight.cfml n "<cfoutput" 3/2t
+  indent .hilight.cfml o "</cfoutput>" -t
+  ; Catch
+  indent .hilight.cfml n "<cfcatch" 3/2t
+  indent .hilight.cfml o "</cfcatch>" -t
+  ; Chart
+  indent .hilight.cfml n "<cfchart" 3/2t
+  indent .hilight.cfml o "</cfchart>" -t
+  indent .hilight.cfml n "<cfchartseries" 3/2t
+  indent .hilight.cfml o "</cfchartseries>" -t
+  ; Component
+  indent .hilight.cfml n "<cfcomponent" 3/2t
+  indent .hilight.cfml o "</cfcomponent>" -t
+  ; Document
+  indent .hilight.cfml n "<cfdocument" 3/2t
+  indent .hilight.cfml o "</cfdocument>" -t
+  ; Ignore <cfDocumentItem> single/paired form
+  ; item form.
+  indent .hilight.cfml n "<cfdocumentsection" 3/2t
+  indent .hilight.cfml o "</cfdocumentsection>" -t
+  ; Execute
+  indent .hilight.cfml n "<cfexecute" 3/2t
+  indent .hilight.cfml o "</cfexecute>" -t
+  ; Form
+  indent .hilight.cfml n "<cfform" 3/2t
+  indent .hilight.cfml o "</cfform>" -t
+  indent .hilight.cfml n "<cfformgroup" 3/2t
+  indent .hilight.cfml o "</cfformgroup>" -t
+  ; Ignore <cformitem> single/paired form
+  ; Function
+  indent .hilight.cfml n "<cffunction" 3/2t
+  indent .hilight.cfml o "</cffunction>" -t
+  ; Grid
+  indent .hilight.cfml n "<cfgrid" 3/2t
+  indent .hilight.cfml o "</cfgrid>" -t
+  ; http
+  indent .hilight.cfml n "<cfhttp" 3/2t
+  indent .hilight.cfml o "</cfhttp>" -t
+  ; Lock
+  indent .hilight.cfml n "<cflock" 3/2t
+  indent .hilight.cfml o "</cflock>" -t
+  ; Login
+  indent .hilight.cfml n "<cflogin" 3/2t
+  indent .hilight.cfml o "</cflogin>" -t
+  ; Mail
+  indent .hilight.cfml n "<cfmail" 3/2t
+  indent .hilight.cfml o "</cfmail>" -t
+  indent .hilight.cfml n "<cfmailpart" 3/2t
+  indent .hilight.cfml o "</cfdmailpart>" -1t
+  ; Output
+  indent .hilight.cfml n "<cfoutput" 3/2t
+  indent .hilight.cfml o "</cfoutput>" -1t
+  ; <CFProcessingDirective> is single or pair - ignore.
+  ; Query - jump to new indent scheme
+  indent .hilight.cfml t "<cfquery" .hilight.cfmsql
+  indent .hilight.cfml t "</cfquery>" .hilight.cfml
+  indent .hilight.cfml x "<cfquery" 1t .hilight.cfmsql
+  indent .hilight.cfml w "</cfquery>" -1t .hilight.cfml
+  indent .hilight.cfmsql w "</cfquery>" -1t 0
+  ; Report
+  indent .hilight.cfml n "<cfreport" 3/2t
+  indent .hilight.cfml o "</cfreport>" -t
+  ; Save content
+  indent .hilight.cfml n "<cfsavecontent" 3/2t
+  indent .hilight.cfml o "</cfsavecontent>" -t
+  ; Select
+  indent .hilight.cfml n "<cfselect" 3/2t
+  indent .hilight.cfml o "</cfselect>" -t
+  ; Silent
+  indent .hilight.cfml n "<cfsilent" 3/2t
+  indent .hilight.cfml o "</cfsilent>" -t
+  ; Table
+  indent .hilight.cfml n "<cftable" 3/2t
+  indent .hilight.cfml o "</cftable>" -t
+  ; Text area
+  indent .hilight.cfml n "<cftextarea" 3/2t
+  indent .hilight.cfml o "</cftextarea>" -t
+  ; Timer
+  indent .hilight.cfml n "<cftimer" 3/2t
+  indent .hilight.cfml o "</cftimer>" -t
+  ; Trace
+  indent .hilight.cfml n "<cftrace" 3/2t
+  indent .hilight.cfml o "</cftrace>" -t
+  ; Transaction
+  indent .hilight.cfml n "<cftransaction" 3/2t
+  indent .hilight.cfml o "</cftransaction>" -t
+  ; Tree
+  indent .hilight.cfml n "<cftree" 3/2t
+  indent .hilight.cfml o "</cftree>" -t
+  ; Try
+  indent .hilight.cfml n "<cftry" 3/2t
+  indent .hilight.cfml o "</cftry>" -t
+  
+  ; Switch to the script indentation
+  indent .hilight.cfmscript w "</cfscript>" -t .hilight.cfml
+  indent .hilight.cfml w "</cfscript>" -t .hilight.cfml
+  
+  ; picking up the </script> seems wrong, but the look-back cfmtag can incorrectly
+  ; identify javascript as cfm, this limits the damage (hopefully)
+  indent .hilight.cfmscript w "</script>" -t .hilight.cfml
+  
+  ; Quick lookback items
+  indent .hilight.cfml t "<cfscript>"       .indent.cfmscript
+  ;        indent .hilight.cfmscript t "</cfscript>" 0
+  indent .hilight.cfml t "</cfscript>" 0
+  indent .hilight.cfml x "<cfscript>" t        .indent.cfmscript
+!endif
+
+buffer-init-fhook "cfml"

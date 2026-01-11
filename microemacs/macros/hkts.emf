@@ -10,13 +10,12 @@
 ;
 define-macro fhook-ts
   set-variable $buffer-mask "luh1"
-  @# buffer-init "ts"
+  @# buffer-init
   buffer-init-hooks
   set-variable $buffer-indent-width 2
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-ts.name "TypeScript"
 set-variable .fhook-ts.setup &reg "/history/fhook/ts" "bdfghnopx"
 set-variable .fhook-ts.setup-mask "abdefghikmnoptux"
 set-variable .fhook-ts.comment "|/*|*/|*| * | * |fr|"

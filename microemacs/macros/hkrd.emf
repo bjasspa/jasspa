@@ -9,12 +9,11 @@
 ; Authors:     Detlef Groth
 ;
 define-macro fhook-rd
-  @# buffer-init "rd"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-rd.name "Rd"
 set-variable .fhook-rd.setup &reg "/history/fhook/rd" "bfghinopx"
 set-variable .fhook-rd.setup-mask "abefghijkmnpstuwx"
 set-variable .fhook-rd.comment "|%||%|% | %||"

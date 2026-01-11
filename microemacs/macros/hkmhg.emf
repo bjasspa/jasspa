@@ -11,12 +11,11 @@
 ;
 define-macro fhook-mhg
   set-variable $buffer-mask "luh1"
-  @# buffer-init "mhg"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-mhg.name "MHEG"
 set-variable .fhook-mhg.setup &reg "/history/fhook/mhg" "fghinopx"
 set-variable .fhook-mhg.setup-mask "aefghikmnoptux"
 set-variable .fhook-mhg.comment "|//||/|// | //||"

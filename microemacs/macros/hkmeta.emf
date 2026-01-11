@@ -10,12 +10,11 @@
 ;
 define-macro fhook-meta
   set-variable $buffer-mask "luh1"
-  @# buffer-init "meta"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-meta.name "MetaPost/Font"
 set-variable .fhook-meta.setup &reg "/history/fhook/meta" "ghiopx"
 set-variable .fhook-meta.setup-mask "aeghikmoptux"
 set-variable .fhook-meta.comment "|%||%|% | %||"

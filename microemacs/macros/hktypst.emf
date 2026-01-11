@@ -9,12 +9,11 @@
 ; Authors:     Steven Phillips & Detlef Groth
 ;
 define-macro fhook-typst
-  @# buffer-init "typst"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-typst.name "Typst"
 set-variable .fhook-typst.setup &reg "/history/fhook/typst" "bdfghijnopswx"
 set-variable .fhook-typst.setup-mask "abdefghijkmnopstuwx"
 set-variable .fhook-typst.comment "|/*| */|*| * | * ||"

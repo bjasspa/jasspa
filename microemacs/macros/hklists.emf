@@ -12,13 +12,12 @@ set-char-mask "2" "-$&#!%:@."
 
 define-macro fhook-lists
   set-variable $buffer-mask "luh12"
-  @# buffer-init "lists"
+  @# buffer-init
   set-variable :mouse-word-select ehf-process-link
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-lists.name "ME List"
 set-variable .fhook-lists.setup &reg "/history/fhook/lists" "ghop"
 set-variable .fhook-lists.setup-mask "aeghop"
 set-variable .fhook-lists.command-flag  "|thbio|"

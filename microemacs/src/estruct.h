@@ -662,6 +662,21 @@ typedef struct mePosition {
 #define mePOS_DEFAULT   \
 (mePOS_WINDOW|mePOS_WINXSCRL|mePOS_WINXCSCRL|mePOS_WINYSCRL|mePOS_BUFFER|mePOS_LINEMRK)
 
+#if MEOPT_FILEHOOK
+typedef struct meMajorMode
+{
+    struct meMajorMode *next;
+    meUByte *cidLabel;
+    meUByte *extList;
+    meUByte *name;
+    meUByte cidLabelLen;
+    meUByte flags;
+    meUByte id[1];
+} meMajorMode;
+#define meMAJORMODE_ID_SIZE 16
+#define meMAJORMODE_CIDL_SIZE 32
+#endif
+
 #if MEOPT_NARROW
 
 typedef struct meNarrow {
@@ -707,6 +722,9 @@ typedef struct  meBuffer {
     meAnchor          *anchorList;              /* pointer to the mark list     */
 #if MEOPT_LOCALBIND
     struct meBind     *bindList;                /* pointer to local bindings    */
+#endif
+#if MEOPT_FILEHOOK
+    meMajorMode       *majorMode;               /* pointer to major-mode        */
 #endif
 #if MEOPT_NARROW
     meNarrow          *narrow;                  /* pointer to narrow structures */

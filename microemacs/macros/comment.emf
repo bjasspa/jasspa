@@ -181,7 +181,7 @@ define-macro comment-get-type
 ; macro to find the comment type. If the macro is passed an argument then use
 ; this as the comment type
 0 define-macro comment-get-def
-  !iif &exi &set #l1 &cat "chook-" &set #l0 &rig $buffer-fhook 6  !force execute-named-command #l1
+  !iif &exi &set #l1 &cat "chook-" &set #l0 $buffer-major-mode  !force execute-named-command #l1
   !iif &exi :chook  set-variable #l0 :chook
   ; Get the standard comment style.
   set-variable #p9 &ind &spr ".fhook-%s.comment" #l0

@@ -3,7 +3,7 @@
 ;
 ; All rights reserved.
 ;
-; Synopsis:    General utility macros for file types
+; Synopsis:    General utility macros for major-mode tools
 ; Authors:     Detlef Groth & Steven Phillips
 ;
 define-macro-file hkipipe fhook-ipipe
@@ -131,10 +131,10 @@ define-macro-file hkipipe fhook-ipipe
     set-variable #p2 &lget #p1 2
     set-variable #p3 &lget #p1 3
     !return
-  !elif &seq "" &set #p1 &reg &spr "/history/%s/fhook/%s-%s-com" $platform &rig $buffer-fhook 6 #l9 ""
+  !elif &seq "" &set #p1 &reg &spr "/history/%s/fhook/%s-%s-com" $platform $buffer-major-mode #l9 ""
 *spec-init
-    !iif &seq "ERROR" &set #l8 &ind &spr ".%s.name" $buffer-fhook  set-variable #l8 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
-    ml-write &spr "Configuring file-%s for %s files" #l9 #l8
+    0 major-mode $buffer-major-mode
+    ml-write &spr "Configuring file-%s for %s files" #l9 &set #l8 &lget $result 5
     set-variable #l0 @#
     !while &set #l5 &exi &ind &spr ".%s.%s%d" $buffer-fhook #l9 #l0
       set-variable #l1 &ind &spr ".%s.%s%d" $buffer-fhook #l9 #l0
@@ -230,7 +230,7 @@ define-macro file-exec
   &band @# 1 save-some-buffers @mna
   !iif &len #l2 file-proc-str $buffer-fhook #l2 $buffer-fname #l2
   file-proc-str $buffer-fhook #l3 $buffer-fname #l6
-  set-variable #l0 &rig $buffer-fhook 6
+  set-variable #l0 $buffer-major-mode
   ml-write &spr "Executing [%s]" #l6
   !if &len #l2
     set-position "\x82"
@@ -263,7 +263,7 @@ define-macro file-format
     set-variable #l2 &lef #l7 &rsin "/" #l7
   !endif
   file-proc-str $buffer-fhook #l3 #l7 #l6
-  set-variable #l0 &rig $buffer-fhook 6
+  set-variable #l0 $buffer-major-mode
   ml-write &spr "Executing [%s]" #l6
   !force 0 delete-buffer "*hkft1*"
   find-buffer "*hkft1*"
@@ -275,8 +275,8 @@ define-macro file-format
   !if #l2
     popup-window &spr "*%s-format*" #l0
     17 goto-position "\x82"
-    !iif &seq "ERROR" &set #l8 &ind &spr ".%s.name" $buffer-fhook  set-variable #l8 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
-    -8 ml-write &spr "file-format error: %s file formatter execution failed (exit code %s), check for errors. Run major-mode-tools-setup to reconfigure." #l8 #l2
+    0 major-mode $buffer-major-mode
+    -8 ml-write &spr "file-format error: %s file formatter execution failed (exit code %s), check for errors. Run major-mode-tools-setup to reconfigure." &lget $result 5 #l2
   !endif
   set-variable #l8 $frame-id
   1 create-frame
@@ -322,7 +322,7 @@ define-macro file-lint
   !endif
   !iif &len #l2  file-proc-str $buffer-fhook #l2 $buffer-fname #l2
   file-proc-str $buffer-fhook #l3 $buffer-fname #l6
-  set-variable #l0 &rig $buffer-fhook 6
+  set-variable #l0 $buffer-major-mode
   ml-write &spr "Executing [%s]" #l6
   !if &len #l2
     set-position "\x82"

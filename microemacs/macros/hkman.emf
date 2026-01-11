@@ -12,7 +12,7 @@ set-char-mask "3" "-._"
 
 define-macro fhook-man
   set-variable $buffer-mask "luh13"
-  @# buffer-init "man"
+  @# buffer-init
   1 buffer-mode "view"
   set-variable :mouse-word-select man-process-link
   buffer-init-hooks
@@ -20,7 +20,6 @@ define-macro fhook-man
 ; Set up the man command.
 !iif &not &exi %man-com  set-variable %man-com "MAN_KEEP_FORMATTING=1 man"
 ; buffer-init variables
-set-variable .fhook-man.name "UNIX Man page"
 set-variable .fhook-man.setup &reg "/history/fhook/man" "Ughpo"
 set-variable .fhook-man.setup-mask "aeghmpo1"
 set-variable .fhook-man.command-flag  "|bo|bo|thbio|th|th|"
@@ -199,8 +198,7 @@ define-macro man
   -1 kill-region
   buffer-is-utf8 #l1
   !iif #l1  12 change-buffer-charset "utf8" "display"
-  set-variable $buffer-fhook "fhook-man"
-  fhook-man
+  major-mode "man"
 !emacro
 
 buffer-init-fhook "man"

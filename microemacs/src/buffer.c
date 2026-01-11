@@ -55,71 +55,282 @@ getBufferName(meUByte *prompt, int opt, int defH, meUByte *buf)
 }
 
 #if MEOPT_FILEHOOK
-static meUByte    fileHookCount;
-static meUByte  **fileHookExt;
-static meUByte  **fileHookFunc;
-static meShort   *fileHookArg;
-static meUByte    defaultHookName[] = "fhook-default";
-static meUByte    binaryHookName[] = "fhook-binary";
-static meUByte    rbinHookName[] = "fhook-rbin";
-static meUByte    triedDefault=0;
-static meUByte    triedBinary=0;
-static meUByte    triedRbin=0;
+static meMajorMode  *majorModeHead;
+static meUByte       fileCidCount;
+static meUByte     **fileCidRegex;
+static meMajorMode **fileCidMjrMd;
+static meUShort     *fileCidFlags;
+static meMajorMode  *mmDefault;
+static meMajorMode  *mmBinary;
+static meMajorMode  *mmRbin;
+static meUByte       mmDefaultId[] = "default";
+static meUByte       mmBinaryId[] = "binary";
+static meUByte       mmRbinId[] = "rbin";
+
+/*
+ * assignMajorMode.
+ * Given a buffer and a major-mode:
+ * - Check the mode is define, if not load.
+ * - If matched via extension and mode has ftest then test and return result if not a definite match.
+ * - Assign f/b/e & d hooks associated with the mode.
+ */
+static int
+assignMajorMode(meBuffer *bp, meMajorMode *mm, int tstF)
+{
+    meUByte buff[32];
+    int fhook;
+    memcpy(buff,"fhook-",6);
+    meStrcpy(buff+6,mm->id);
+    if(mm->flags == 0)
+    {
+        mm->flags |= 1;
+        if((fhook = decode_fncname(buff,1)) == -1)
+        {
+            meUByte fn[meBUF_SIZE_MAX];
+        
+            buff[4] = 'h';
+            buff[5] = 'k';
+            if(!fileLookup(buff+4,extMacroCnt,extMacroLst,meFL_CHECKPATH|meFL_USESRCHPATH,fn))
+                return mlwrite(MWABORT|MWWAIT,(meUByte *)"Failed to find major-mode file [%s]",buff+4);
+            execFile(fn,0,1);
+            buff[4] = 'k';
+            buff[5] = '-';
+            if((fhook = decode_fncname(buff,1)) == -1)
+                return mlwrite(MWABORT|MWWAIT,(meUByte *)"Major-mode file [%s] failed to define fhook-%s",fn,buff+6);
+            mm->flags |= 2;
+        }
+        else
+            mm->flags |= 2;
+    }
+    else if(((mm->flags & 2) == 0) || ((fhook = decode_fncname(buff,1)) == -1))
+        return meABORT;
+    /* TODO tstF */
+    
+    if(bp->ehook >= 0)
+        execBufferFunc(bp,bp->ehook,0,1);
+    bp->majorMode = mm;
+    bp->fhook = fhook;
+    buff[0] = 'b';
+    bp->bhook = decode_fncname(buff,1);
+    buff[0] = 'd';
+    bp->dhook = decode_fncname(buff,1);
+    buff[0] = 'e';
+    bp->ehook = decode_fncname(buff,1);
+    return meTRUE;
+}
 
 int
-addFileHook(int f, int n)
+majorMode(int f, int n)
 {
-    if(n == 0)
+    meMajorMode *mm;
+    meUByte id[meMAJORMODE_ID_SIZE], lbl[meMAJORMODE_CIDL_SIZE], extList[128], name[128], cidr[256];
+    int cidl;
+
+    if(!f)
     {
-        /* arg of 0 frees all hooks off */
-        if(fileHookCount)
+        meBuffer *bp=frameCur->windowCur->buffer;
+        if((mm = bp->majorMode) != NULL)
         {
-            n = fileHookCount ;
-            while(--n >= 0)
-            {
-                free(fileHookExt[n]) ;
-                free(fileHookFunc[n]) ;
-            }
-            free(fileHookExt) ;
-            free(fileHookFunc) ;
-            free(fileHookArg) ;
-            fileHookCount=0 ;
-            fileHookExt=NULL ;
-            fileHookFunc=NULL ;
-            fileHookArg=NULL ;
+            addHistory(0,mm->id,meFALSE);
+            cidl = 1;
         }
+        else
+            cidl = 0;
+        if(meGetString((meUByte *)"Major-mode",0,cidl,id,meMAJORMODE_ID_SIZE) <= 0)
+            return meFALSE;
+        if(id[0] == '\0')
+        {
+            if(mm == NULL)
+                return mlwrite(0,(meUByte *) "Current major-mode is default (not defined)");
+            if(bp->ehook >= 0)
+                execBufferFunc(bp,bp->ehook,0,1);
+            bp->majorMode = NULL;
+            bp->fhook = -1;
+            bp->bhook = -1;
+            bp->dhook = -1;
+            bp->ehook = -1;
+            return meTRUE;
+        }
+        else if((mm != NULL) && !meStrcmp(id,mm->id))
+        {
+            f = sprintf((char *) cidr,"Current major-mode is %s",mm->name);
+            if(mm->cidLabelLen)
+                f += sprintf((char *) cidr+f," (%s)",(mm->cidLabel != NULL) ? mm->cidLabel:mm->id);
+            if(meStrchr(mm->id,'-') == NULL)
+                sprintf((char *) cidr+f,", defined in hk%s.emf",mm->id);
+            return mlwrite(MWSPEC,cidr);
+        }
+    }
+    else if((meGetString((meUByte *)"Major-mode",0,0,id,32) <= 0) || (id[0] == '\0'))
+        return meFALSE;
+    if(((n & 2) && (meGetString((meUByte *)"CID label",0,0,lbl,meMAJORMODE_CIDL_SIZE) <= 0)) ||
+       ((n & 4) && (meGetString((meUByte *)"Extension list",0,0,extList,128) <= 0)) ||
+       ((n & 8) && (meGetString((meUByte *)"Name",0,0,name,128) <= 0)) ||
+       ((n & 16) && ((meGetString((meUByte *)"CID lines",0,0,cidr,16) <= 0) || ((cidl = meAtoi(cidr)) == 0) ||
+                     (cidl < -255) || (cidl > 255) ||
+                     (meGetString((meUByte *)"CID regex",0,0,cidr,256) <= 0))))
+        return meFALSE;
+    if((n & 16) && (cidl < 0))
+        cidl = 0x08000 | (0-cidl);
+    
+    if((n == 16) && (id[0] =='\\') && (id[2] == '\0'))
+    {
+        /* This is a regex replace based content regex-id, handle separately */
+        if(((f = ((int) id[1]) - '0') < 0) || (f > 7))
+            return meFALSE;
+        cidl |= (f << 8);
+        mm = NULL;
     }
     else
     {
-        meUByte buff[meBUF_SIZE_MAX] ;
-        meMacro *mac;
-        
-        if(((fileHookExt = meRealloc(fileHookExt,(fileHookCount+1)*sizeof(char *))) == NULL) ||
-           ((fileHookFunc = meRealloc(fileHookFunc,(fileHookCount+1)*sizeof(char *))) == NULL) ||
-           ((fileHookArg = meRealloc(fileHookArg,(fileHookCount+1)*sizeof(short))) == NULL))
+        meMajorMode *pmm=NULL;
+        mm = majorModeHead;
+        while((mm != NULL) && meStrcmp(mm->id,id))
+            mm = (pmm = mm)->next;
+        if(mm == NULL)
         {
-            fileHookCount=0;
-            return meFALSE;
-        }
-        if((meGetString((meUByte *)"File id",0,0,buff,meBUF_SIZE_MAX) <= 0) ||
-           ((fileHookExt[fileHookCount] = meStrdup(buff)) == NULL) ||
-           (meGetString((meUByte *)"Hook func",0,0,buff,meBUF_SIZE_MAX) <= 0) ||
-           ((fileHookFunc[fileHookCount] = meStrdup(buff)) == NULL))
-            return meFALSE;
-        if(f == meFALSE)
-            fileHookArg[fileHookCount] = 0;
-        else
-            fileHookArg[fileHookCount] = n;
-        fileHookCount++;
-        if(!memcmp(buff,"fhook-",6) && (buff[6] != '\0'))
-        {
-            buff[4] = 'h';
-            buff[5] = 'k';
-            while((mac=createMacro(NULL)) != NULL)
+            if((f == 0) || ((n & 1) == 0))
+                return mlwrite(MWABORT,(meUByte *) "[Error: Major-mode \"%s\" not defined]",id);
+            f = meStrlen(id);
+            if((mm = (meMajorMode*) meMalloc(((size_t) (&(((meMajorMode *) 0)->id[1])))+f)) == NULL)
+                return meFALSE;
+            /* add to the head as newer modes have higher priority */
+            mm->next = majorModeHead;
+            mm->cidLabel = NULL;
+            mm->extList = NULL;
+            mm->name = NULL;
+            mm->flags = 0;
+            memcpy(mm->id,id,f+1);
+            majorModeHead = mm;
+            if(f == 5)
             {
-                mac->hlp->flag |= meMACRO_FILE;
-                mac->fname = meStrdup(buff+4);
+                if((mmRbin == NULL) && !memcmp(id,mmRbinId,5))
+                    mmRbin = mm;
             }
+            else if(f == 6)
+            {
+                if((mmBinary == NULL) && !memcmp(id,mmBinaryId,6))
+                    mmBinary = mm;
+            }
+            else if((f == 7) && (mmDefault == NULL) && !memcmp(id,mmDefaultId,7))
+                mmDefault = mm;
+            mm->cidLabelLen = ((n & 2) == 0) ? f:0;
+            if((n & 4) == 0)
+            {
+                extList[0] = '.';
+                memcpy(extList+1,id,f+1);
+                n |= 4;
+            }
+            if((n & 8) == 0)
+            {
+                meUByte cc,*dd=name,*ss=((n & 2) && (lbl[0] != '\0')) ? lbl:id;
+                cc = *ss;
+                *dd++ = toUpper(cc);
+                if((meStrchr(ss,'a') != NULL) || (meStrchr(ss,'e') != NULL) || (meStrchr(ss,'i') != NULL) || (meStrchr(ss,'o') != NULL) || (meStrchr(ss,'u') != NULL))
+                    meStrcpy(dd,ss+1);
+                else
+                {
+                    while((cc=*++ss) != '\0')
+                        *dd++ = toUpper(cc);
+                    *dd = '\0';
+                }
+                n |= 8;
+            }
+        }
+        else if(f == 0)
+        {
+            meBuffer *bp=frameCur->windowCur->buffer;
+            if(assignMajorMode(bp,mm,0) <= 0)
+                return meFALSE;
+            meRegCurr->next->val[9][0] = '\0';
+            return execBufferFunc(bp,bp->fhook,meEBF_ARG_GIVEN,(bp->intFlag & BIFFILE) ? 1:0);
+        }
+        else if(n == 0)
+        {
+            sprintf((char *) resultStr,"\x08%s\x08%d\x08%s\x08%s\x08%s\x08",mm->id,mm->flags,(mm->cidLabelLen == 0) ? "":(char *) ((mm->cidLabel != NULL) ? mm->cidLabel:mm->id),(mm->extList != NULL) ? (char *) mm->extList:"",(mm->name != NULL) ? (char *) mm->name:"");
+            return meTRUE;
+        }
+        else if((n & 1) && (pmm != NULL))
+        {
+            /* push this back to the head so it takes priority */
+            pmm->next = mm->next;
+            mm->next = majorModeHead;
+            majorModeHead = mm;
+        }
+    }
+    if(n & 2)
+    {
+        if(((lbl[0] != '\0') || (mm->cidLabelLen > 0)) &&
+           ((lbl[0] == '\0') || (mm->cidLabelLen == 0) || meStrcmp((mm->cidLabel != NULL) ? mm->cidLabel:mm->id,lbl)))
+        {
+            if(mm->cidLabel != NULL)
+            {
+                meFree(mm->cidLabel);
+                mm->cidLabel = NULL;
+            }
+            if(lbl[0] != '\0')
+            {
+                if(meStrcmp(mm->id,lbl) && ((mm->cidLabel = meStrdup(lbl)) == NULL))
+                   return meFALSE;
+                mm->cidLabelLen = meStrlen(lbl);
+            }
+            else
+                mm->cidLabelLen = 0;
+            mm->flags = 0;
+        }
+    }
+    if(n & 4)
+    {
+        if((mm->extList != NULL) && ((extList[0] == '\0') || meStrcmp(mm->extList,extList)))
+        {
+            meFree(mm->extList);
+            mm->extList = NULL;
+        }
+        if((mm->extList == NULL) && (extList[0] != '\0') && ((mm->extList = meStrdup(extList)) == NULL))
+            return meFALSE;
+    }
+    if(n & 8)
+    {
+        if((mm->name != NULL) && ((name[0] == '\0') || meStrcmp(mm->name,name)))
+        {
+            meFree(mm->name);
+            mm->name = NULL;
+        }
+        if((mm->name == NULL) && (name[0] != '\0') && ((mm->name = meStrdup(name)) == NULL))
+            return meFALSE;
+    }
+    if(n & 16)
+    {
+        f = fileCidCount;
+        while((--f >= 0) && meStrcmp(fileCidRegex[f],cidr))
+            ;
+        if(f < 0)
+        {
+            if((((f=fileCidCount) & 0x07) == 0) &&
+               (((fileCidRegex = meRealloc(fileCidRegex,(f+8)*sizeof(meUByte *))) == NULL) ||
+                ((fileCidMjrMd = meRealloc(fileCidMjrMd,(f+8)*sizeof(meMajorMode *))) == NULL) ||
+                ((fileCidFlags = meRealloc(fileCidFlags,(f+8)*sizeof(meUShort))) == NULL)))
+            {
+                fileCidCount=0;
+                return meFALSE;
+            }
+            if((fileCidRegex[f] = meStrdup(cidr)) == NULL)
+                return meFALSE;
+            fileCidCount++;
+        }
+        fileCidMjrMd[f] = mm;
+        fileCidFlags[f] = cidl;
+    }
+    if(n & 1)
+    {
+        meMacro *mac;
+        name[0] = 'h';
+        name[1] = 'k';
+        meStrcpy(name+2,mm->id);
+        while((mac=createMacro(NULL)) != NULL)
+        {
+            mac->hlp->flag |= meMACRO_FILE;
+            mac->fname = meStrdup(name);
         }
     }
     return meTRUE ;
@@ -127,87 +338,43 @@ addFileHook(int f, int n)
 
 /* Check extent.
    Check the extent string for the filename extent. */
-
 static int
 checkExtent(meUByte *filename, int len, meUByte *sptr)
 {
-    int  extLen ;
-    char cc ;
+    meUByte cs, ce, *fe;
+    int extLen;
     
     if(sptr == NULL)
         return 0 ;              /* Exit - fail */
-    filename += len ;
+    fe = filename + len;
     /*---       Run through the list, checking the extents as we go. */
     for(;;)
     {
-        while(*sptr == ' ')
-            sptr++ ;
-        extLen = 0 ;
-        while(((cc=sptr[extLen]) != ' ') && ((cc=sptr[extLen]) != '\0'))
-            extLen++ ;
+        for(;;)
+        {
+            if((cs=*sptr) == '\0')
+                return 0;
+            if(cs != ' ')
+                break;
+            sptr++;
+        }
+        extLen = 1;
+        while(((ce=sptr[extLen]) != '\0') && (ce != ' '))
+            extLen++;
         /* Always ignore case as extsions are never case sensitive in file type IDing */
-        if((extLen <= len) && !meStrnicmp(sptr,filename-extLen,extLen))
-            return 1 ;
-        if(cc == '\0')
-            return 0 ;
-        sptr += extLen+1 ;
-    }
-}
-
-/*
- * assignHooks.
- * Given a buffer and a hook name, determine the file
- * hooks associated with the file and assign.
- *
- * Note that the hookname (hooknm) is modified, ultimatly
- * returning the 'f' prefixed name.
- */
-static void
-assignHooks(meBuffer *bp, meUByte *hooknm)
-{
-    int fhook;                          /* File hook indentity */
-    
-    /* Get the identity of the hook */
-    fhook = decode_fncname(hooknm,1);
-    
-    /* Get the file into memory if we have to */
-    if((fhook == -1) &&
-       ((hooknm != defaultHookName) || !triedDefault) &&
-       ((hooknm != binaryHookName) || !triedBinary) &&
-       ((hooknm != rbinHookName) || !triedRbin) &&
-       (meStrlen(hooknm) > 6))
-    {
-        meUByte fn[meBUF_SIZE_MAX], buff[meBUF_SIZE_MAX] ;             /* Temporary buffer */
-        
-        buff[0] = 'h';
-        buff[1] = 'k';
-        meStrcpy(buff+2,hooknm+6);
-        if(!fileLookup(buff,extMacroCnt,extMacroLst,meFL_CHECKPATH|meFL_USESRCHPATH,fn))
+        if((extLen > 1) && ((cs == '/') || (cs == '^')))
         {
-            if(hooknm == defaultHookName)
-                triedDefault++;
-            else if(hooknm == binaryHookName)
-                triedBinary++;
-            else if(hooknm == rbinHookName)
-                triedRbin++;
-            else
-                mlwrite(MWABORT|MWWAIT,(meUByte *)"Failed to find file [%s]",buff);
+            sptr++;
+            extLen--;
+            if((extLen <= len) && ((cs == '^') || (extLen == len)) && !meStrnicmp(sptr,filename,extLen))
+                return 1;
         }
-        else
-        {
-            execFile(fn,0,1);
-            bp->fhook = decode_fncname(hooknm,1);
-        }
+        else if((extLen <= len) && !meStrnicmp(sptr,fe-extLen,extLen))
+            return 1;
+        if(ce == '\0')
+            return 0;
+        sptr += extLen+1;
     }
-    bp->fhook = decode_fncname(hooknm,1);
-    *hooknm   = 'b' ;
-    bp->bhook = decode_fncname(hooknm,1);
-    *hooknm   = 'd' ;
-    bp->dhook = decode_fncname(hooknm,1);
-    *hooknm   = 'e' ;
-    bp->ehook = decode_fncname(hooknm,1);
-    *hooknm   = 'f';
-    return;
 }
 
 /*
@@ -232,6 +399,7 @@ void
 setBufferContext(meBuffer *bp)
 {
     meLine *lp, *tlp;
+    meMajorMode *mm=NULL;
     int ii, ml=0;
     
 #if MEOPT_COLOR
@@ -242,56 +410,69 @@ setBufferContext(meBuffer *bp)
     /* Search the buffer for alternative hook information */
     if ((bp->intFlag & BIFFILE) && !meModeTest(bp->mode,MDBINARY) &&
         !meModeTest(bp->mode,MDRBIN) && ((bp->fileFlag & meBFFLAG_DIR) == 0) &&
-        ((ii = fileHookCount) > 0))
+        ((ii = fileCidCount) > 0))
     {
         meUByte *pp, cc;
-        int nn;
+        int nn, si, ll;
         
         /* search for the first non-blank line */
-        for(lp=meLineGetNext(bp->baseLine) ; lp != bp->baseLine ; lp = meLineGetNext(lp))
+        lp = meLineGetNext(bp->baseLine);
+        while(lp != bp->baseLine)
         {
-            for (pp = lp->text; (cc=*pp++) != '\0' ; )
+            pp = lp->text;
+            while(((cc = *pp++) != '\0') && isSpace(cc))
+                ;
+            if(cc != '\0')
             {
-                if(!isSpace(cc))
+                ii--;
+                do
                 {
-                    while(--ii >= 0)
+                    if(meRegexComp(&meRegexStrCmp,fileCidRegex[ii],(fileCidFlags[ii] & 0x08000) ? meREGEX_ICASE:0) == meREGEX_OKAY)
                     {
-                        if(((nn=fileHookArg[ii]) != 0) &&
-                           (meRegexComp(&meRegexStrCmp,fileHookExt[ii],(nn < 0) ? meREGEX_ICASE:0) == meREGEX_OKAY))
-                        {
-                            if(nn < 0)
-                                nn = -nn;
-                            tlp = lp;
-                            do {
-                                if(meRegexMatch(&meRegexStrCmp,meLineGetText(tlp),
-                                                meLineGetLength(tlp),0,meLineGetLength(tlp),0))
+                        nn = (fileCidFlags[ii] & 0x000ff);
+                        tlp = lp;
+                        do {
+                            if(meRegexMatch(&meRegexStrCmp,meLineGetText(tlp),meLineGetLength(tlp),0,meLineGetLength(tlp),0))
+                            {
+                                if(((mm = fileCidMjrMd[ii]) == NULL) &&
+                                   ((nn=(fileCidFlags[ii] & 0x00f00) >> 8),((si=meRegexStrCmp.group[nn].start) >= 0)) &&
+                                   ((ll = meRegexStrCmp.group[nn].end - si) > 0) && (ll < meMAJORMODE_ID_SIZE))
                                 {
-                                    assignHooks(bp,fileHookFunc[ii]);
+                                    meIFuncSSI cmpF=(fileCidFlags[ii] & 0x08000) ? meStrnicmp:(meIFuncSSI) memcmp;
+                                    if(nn)
+                                        si += meRegexStrCmp.group[0].start;
+                                    pp = meLineGetText(tlp) + si;
+                                    mm = majorModeHead;
+                                    while((mm != NULL) && ((mm->cidLabelLen != ll) || cmpF((mm->cidLabel != NULL) ? mm->cidLabel:mm->id,pp,ll)))
+                                        mm = mm->next;
+                                }
+                                if((mm != NULL) && (assignMajorMode(bp,mm,0) > 0))
+                                {
                                     ml = meRegexStrCmp.group[0].end - meRegexStrCmp.group[0].start;
                                     ii = 0;
                                     break;
                                 }
-                            } while((--nn > 0) && ((tlp=meLineGetNext(tlp)) != bp->baseLine));
-                        }
+                            }
+                        } while((--nn > 0) && ((tlp=meLineGetNext(tlp)) != bp->baseLine));
                     }
-                    break;
-                }
+                } while((mm == NULL) && (--ii >= 0));
+                break;
             }
+            lp = meLineGetNext(lp);
         }
     }
-    if(bp->fhook < 0)
+    if(mm == NULL)
     {
-        meUByte *hooknm;
-        
+        meMajorMode *pmm=NULL;
         /* Do file hooks */
         if(meModeTest(bp->mode,MDBINARY))
-            hooknm = binaryHookName;
+            pmm = mmBinary;
         else if(meModeTest(bp->mode,MDRBIN))
-            hooknm = rbinHookName;
+            pmm = mmRbin;
         else
         {
-            meUByte *sp, *bn;
-            int ll, bnll;
+            meUByte *bn, *sp;
+            int ll, bnll, mmmf=0;
             
             /* Find the length of the string to pass into check_extension.
              * Check if its name has a <?> and/or a backup ~, if so reduce
@@ -314,7 +495,7 @@ setBufferContext(meBuffer *bp)
                 }
                 else if(isDigit(cc))
                 {
-                    int ii=ll-2;
+                    ii = ll-2;
                     while(ii > 0)
                     {
                         cc = sp[ii--];
@@ -327,19 +508,35 @@ setBufferContext(meBuffer *bp)
                     }
                 }
             }
-            ii = fileHookCount;
-            while(--ii >= 0)
-                if((fileHookArg[ii] == 0) && checkExtent(sp,ll,fileHookExt[ii]))
+            mm = majorModeHead;
+            while(mm != NULL)
+            {
+                if((mm->extList != NULL) && checkExtent(sp,ll,mm->extList) &&
+                   ((ii=assignMajorMode(bp,mm,1)) >= 0))
                 {
-                    hooknm = fileHookFunc[ii];
-                    break;
+                    if(ii > 0)
+                        break;
+                    if(pmm != NULL)
+                        mmmf = 1;
+                    pmm = mm;
                 }
-            if(ii < 0)
-                hooknm = defaultHookName;
+                mm = mm->next;
+            }
+            if(mm == NULL)
+            {
+                if(pmm == NULL)
+                    pmm = mmDefault;
+                else if(mmmf)
+                {
+                    mlwrite(MWABORT,(meUByte *) "Warning - file name maps to multiple major-modes, execute major-mode manually");
+                    pmm = NULL;
+                }
+            }
         }
-        assignHooks(bp,hooknm);
+        if((mm == NULL) && (pmm != NULL) && (assignMajorMode(bp,pmm,0) > 0))
+            mm = pmm;
     }
-    if(bp->fhook >= 0)
+    if(mm != NULL)
     {
         /* copy the magic string identifier or "" to fhook's #l9 */
         ii = (bp->intFlag & BIFFILE) ? 1:0;

@@ -10,12 +10,11 @@
 ;
 define-macro fhook-imake
   set-variable $buffer-mask "luh1"
-  @# buffer-init "imake"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-imake.name "Imakefile"
 set-variable .fhook-imake.setup &reg "/history/fhook/imake" "ghinopTx"
 set-variable .fhook-imake.setup-mask "aeghikmnoptux"
 set-variable .fhook-imake.comment "|/*| */|*| * | * |fr|"

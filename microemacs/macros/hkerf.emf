@@ -10,12 +10,11 @@
 ;
 define-macro fhook-erf
   set-variable $buffer-mask "luh1"
-  @# buffer-init "erf"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-erf.name "ME Registry"
 set-variable .fhook-erf.setup &reg "/history/fhook/erf" "dfghiopx"
 set-variable .fhook-erf.setup-mask "adefghikmoptux"
 set-variable .fhook-erf.comment "|;||;|; | ;|r|"

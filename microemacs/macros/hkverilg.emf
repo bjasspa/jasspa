@@ -10,12 +10,11 @@
 ;
 define-macro fhook-verilg
   set-variable $buffer-mask "luh1"
-  @# buffer-init "verilg"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-verilg.name "Verilog"
 set-variable .fhook-verilg.setup &reg "/history/fhook/verilg" "ghopx"
 set-variable .fhook-verilg.setup-mask "aeghikmoptux"
 set-variable .fhook-verilg.comment "|//||/|// | //|r|"

@@ -11,12 +11,11 @@
 
 define-macro fhook-euphor
   set-variable $buffer-mask "luh1"
-  @# buffer-init "euphor"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-euphor.name "Euphoria"
 set-variable .fhook-euphor.setup &reg "/history/fhook/euphor" "bdfghinopx"
 set-variable .fhook-euphor.setup-mask "abdefghikmnoptux"
 set-variable .fhook-euphor.comment "|--||--|-- | --|r|"

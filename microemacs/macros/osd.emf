@@ -45,8 +45,8 @@ define-macro-file osdhelp osd-help
     osd 9 10 "D"
   !endif
   !if &sin "o" #l0
-    !iif &seq "ERROR" &set #l9 &ind &spr ".%s.name" $buffer-fhook  set-variable #l9 &cat &sup &mid $buffer-fhook 6 1 &rig $buffer-fhook 7
-    osd 6 10 "M" &cat #l9 " \HTools" .osd.tmp major-mode-tool
+    0 major-mode $buffer-major-mode
+    osd 6 10 "M" &cat &lget $result 5 " \HTools" .osd.tmp major-mode-tool
     osd 6 20 "-"
   !else
     osd 6 10 "D"
@@ -58,8 +58,8 @@ define-macro-file osdhelp osd-help
     osd 6 190 "" "\HMajor Mode Setup..." f major-mode-setup
   !endif
   ; let the current buffer type modify the menu
-  !if &exi &set #l0 &cat "osd-ohook-" &rig $buffer-fhook 6
-    set-variable .chook &cat "osd-chook-" &rig $buffer-fhook 6
+  !if &exi &set #l0 &cat "osd-ohook-" $buffer-major-mode
+    set-variable .chook &cat "osd-chook-" $buffer-major-mode
     execute-named-command #l0
   !endif
   !iif &band #l2 1  show-region

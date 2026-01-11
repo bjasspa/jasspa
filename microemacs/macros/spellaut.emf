@@ -67,7 +67,7 @@
       ;ml-write $result
       2 show-region
       !if &sin &lef $result 1 "AE"
-        !if &exi &set #l2 &cat &rig $buffer-fhook 6 "-spell-word"
+        !if &exi &set #l2 &cat $buffer-major-mode "-spell-word"
           set-variable .spell.check-word &rig $result 1
           !force 0 execute-named-command #l2
           !tgoto &not $status add-word
@@ -198,7 +198,7 @@ define-macro auto-spell-reset
       set-variable #l0 $status
     !elif &not &seq $buffer-fhook ""
       ; else the only thing we can do is try to execute the hk macro
-      !force execute-file &cat "hk" &rig $buffer-fhook 6
+      !force execute-file &cat "hk" $buffer-major-mode
       set-variable #l0 $status
     !else
       set-variable #l0 0

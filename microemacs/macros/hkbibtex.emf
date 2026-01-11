@@ -9,12 +9,11 @@
 ; Authors:     Detlef Groth, Steve Phillips & Jon Green
 ;
 define-macro fhook-bibtex
-  @# buffer-init "bibtex"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-bibtex.name "BibTeX"
 set-variable .fhook-bibtex.setup &reg "/history/fhook/bibtex" "fghinsx"
 set-variable .fhook-bibtex.setup-mask "aefghikmnstux"
 set-variable .fhook-bibtex.command-flag  "|thbH|"

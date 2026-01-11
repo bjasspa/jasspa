@@ -12,20 +12,19 @@
 define-macro fhook-md
   ; quarkdown check
   !if &isin ".qd" $buffer-bname
-    @# buffer-init "md" "qd"
+    @# buffer-init "qd"
     hilight .hilight.md 2 "^\\.doc" .scheme.prepro
     hilight .hilight.md 2 "^\\.theme" .scheme.prepro
     hilight .hilight.md 2 "^\\.var" .scheme.prepro    
     hilight .hilight.md 2 "^\\.tableofcontents" .scheme.prepro        
     hilight .hilight.md 2 "^\\.function"  .scheme.keyword
   !else
-    @# buffer-init "md" &con &isin ".rmd" $buffer-bname "rmd" "md"
+    @# buffer-init &con &isin ".rmd" $buffer-bname "rmd" "md"
   !endif
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-md.name "Markdown"
 set-variable .fhook-md.setup &reg "/history/fhook/md" "bfghijnopsx"
 set-variable .fhook-md.setup-mask "abefghijkmnopstuwx"
 set-variable .fhook-md.comment "|<!---|-->|-|  -- | --||"

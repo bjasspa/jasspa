@@ -8,7 +8,6 @@
 ; Synopsis:    Common unix setup file
 ; Authors:     Steven Phillips
 ;
-define-macro-file hkman man
 define-macro-file hkipipe ishell gdb dbx perldb
 0 define-macro pipe-me
   !if &not &exi .mcmd
@@ -91,11 +90,3 @@ set-variable $line-template "[0-9]+"
 add-next-line "*compile*" "^ *\\(\\[\\m+\\] \\)?%f:%l:\\(\\d+:\\)? \\(fatal error\\|error\\|warning\\)"
 ; Grep stuff
 set-variable %xgrep-com "grep -n"
-; RCS stuff
-set-variable $rcs-file     "RCS/%f,v"
-set-variable $rcs-co-com   "co %f"
-set-variable $rcs-cou-com  "co -l %f"
-set-variable $rcs-ci-com   "ci -u -m\"%m\" %f"
-;set-variable $rcs-cif-com  "ci -u -m\"%m\" %f"
-; Declare the .dir file found in X11 font directory, this is not an info file.
-add-file-hook ".dir" fhook-txt

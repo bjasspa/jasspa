@@ -11,7 +11,7 @@
 ; Notes:       broken out of hkdoc.emf and docmacro.emf
 ;
 define-macro fhook-jst
-  @# buffer-init "jst"
+  @# buffer-init
   ; Over-ride any special document modes
   ; Search for additional modes in a:
   ;     -!- jst; fill-column: <digit> ; fill-mode: <mode> -!-
@@ -318,7 +318,7 @@ set-variable .fhook-jst.item-list-r4 "H4  \CCb\\1\CCA"
   ; Allow TCL Code inserts ...
   jst-add-file-support "tcl"
   ; Allow Shell script inserts ...
-  jst-add-file-support "shell"
+  jst-add-file-support "sh"
   ; Allow Java inserts
   jst-add-file-support "java"
   ; Allow Windows INI file inserts

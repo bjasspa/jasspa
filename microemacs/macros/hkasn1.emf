@@ -14,7 +14,7 @@
 ;     Notation One (ASN.1) (Extract from the Blue Book).
 ;
 define-macro fhook-asn1
-  @# buffer-init "asn1"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 

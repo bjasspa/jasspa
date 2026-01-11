@@ -9,12 +9,11 @@
 ; Authors:     Jon Green
 ;
 define-macro fhook-bnf
-  @# buffer-init "bnf"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-bnf.name "BNF"
 set-variable .fhook-bnf.setup &reg "/history/fhook/bnf" "ghix"
 set-variable .fhook-bnf.setup-mask "aeghikmtux"
 

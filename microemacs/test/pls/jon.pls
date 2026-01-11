@@ -1,4 +1,4 @@
-/* -*- pls; tabwidth:4; tabsize:5; -*- **************************************
+/* -*- plsql; tabwidth:4; tabsize:5; -*- **************************************
  *
  *  			Copyright 2002 Jon Green.
  *			      All Rights Reserved

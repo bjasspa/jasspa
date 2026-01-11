@@ -8,45 +8,45 @@
 ; Synopsis:    Macros used for sending e-mails
 ; Authors:     Steven Phillips
 ;
-0 define-macro fhook-mail
-  set-variable $buffer-fhook fhook-mail
+0 define-macro fhook-me-mail
   -1 buffer-mode "edit"
   1 buffer-mode "wrap"
   1 buffer-mode "indent"
   1 buffer-mode "justify"
-  buffer-init "mail"
+  buffer-init
   ; Must explictily setup the auto-spell reset and abbrev as there is no fhook
   set-variable :auto-spell-reset "mail"
   buffer-init-hooks
 !emacro
 
-set-variable .fhook-mail.setup &reg "/history/fhook/mail" "bghijnopsw"
-set-variable .fhook-mail.setup-mask "abeghijkmnopstuwx"
-set-variable .fhook-mail.command-flag  "|thb|th|thb|thb|h|h|h|h|h|h|"
-set-variable .fhook-mail.command-name  "|mail-send||mail-data-insert|mail-data-insert|||||||"
-set-variable .fhook-mail.command-nbind "|||1|2|||||||"
-set-variable .fhook-mail.command-kbind "|C-c C-c||C-c C-i|C-c C-z|||||||"
-set-variable .fhook-mail.command-desc  "|\HSend mail||Insert given file, method 1|Insert given file, method 2||Abbreviation file is set to mail.eaf, mail also uses|the organizer(3) address book||Execute mail-setup to setup the command-lines|Windows mail can use postie or blat|"
+7 major-mode "me-mail" "" ""
+set-variable .fhook-me-mail.setup &reg "/history/fhook/me-mail" "bghijnopsw"
+set-variable .fhook-me-mail.setup-mask "abeghijkmnopstuwx"
+set-variable .fhook-me-mail.command-flag  "|thb|th|thb|thb|h|h|h|h|h|h|"
+set-variable .fhook-me-mail.command-name  "|mail-send||mail-data-insert|mail-data-insert|||||||"
+set-variable .fhook-me-mail.command-nbind "|||1|2|||||||"
+set-variable .fhook-me-mail.command-kbind "|C-c C-c||C-c C-i|C-c C-z|||||||"
+set-variable .fhook-me-mail.command-desc  "|\HSend mail||Insert given file, method 1|Insert given file, method 2||Abbreviation file is set to mail.eaf, mail also uses|the organizer(3) address book||Execute mail-setup to setup the command-lines|Windows mail can use postie or blat|"
 
-!if &and &sin "h" .fhook-mail.setup &band .hilight.flags 0x02
-  !if &not &exist .hilight.mail
-    set-variable .hilight.mail  &pinc .hilight.next 1
+!if &and &sin "h" .fhook-me-mail.setup &band .hilight.flags 0x02
+  !if &not &exist .hilight.me-mail
+    set-variable .hilight.me-mail  &pinc .hilight.next 1
     set-variable .hilight.vmh   &pinc .hilight.next 1
   !endif
-  0 hilight  .hilight.mail 2 100       $global-scheme
-  hilight .hilight.mail 258 "Status:"  .scheme.variable
-  hilight .hilight.mail 256 "Date:"    .scheme.keyword
-  hilight .hilight.mail 256 "From:"    .scheme.keyword
-  hilight .hilight.mail 256 "To:"      .scheme.keyword
-  hilight .hilight.mail 256 "Cc:"      .scheme.keyword
-  hilight .hilight.mail 256 "CC:"      .scheme.keyword
-  hilight .hilight.mail 258 "Subject:" .scheme.keyword
-  hilight .hilight.mail 256 "Fcc:"     .scheme.keyword
-  hilight .hilight.mail 258 ">"        .scheme.comment
-  hilight .hilight.mail 258 "----"     .scheme.header
-  hilight .hilight.mail 258 "--text follows this line--" .scheme.error
-  hilight .hilight.mail 0x40 "\CDA" ""                   $global-scheme
-  hilight .hilight.mail 0xc0 "\CDB" "" .hilight.vmh      $global-scheme
+  0 hilight  .hilight.me-mail 2 100       $global-scheme
+  hilight .hilight.me-mail 258 "Status:"  .scheme.variable
+  hilight .hilight.me-mail 256 "Date:"    .scheme.keyword
+  hilight .hilight.me-mail 256 "From:"    .scheme.keyword
+  hilight .hilight.me-mail 256 "To:"      .scheme.keyword
+  hilight .hilight.me-mail 256 "Cc:"      .scheme.keyword
+  hilight .hilight.me-mail 256 "CC:"      .scheme.keyword
+  hilight .hilight.me-mail 258 "Subject:" .scheme.keyword
+  hilight .hilight.me-mail 256 "Fcc:"     .scheme.keyword
+  hilight .hilight.me-mail 258 ">"        .scheme.comment
+  hilight .hilight.me-mail 258 "----"     .scheme.header
+  hilight .hilight.me-mail 258 "--text follows this line--" .scheme.error
+  hilight .hilight.me-mail 0x40 "\CDA" ""                   $global-scheme
+  hilight .hilight.me-mail 0xc0 "\CDB" "" .hilight.vmh      $global-scheme
 !endif
 ;
 ; Mail checker
@@ -343,36 +343,27 @@ osd .osd.mail-ad 60  "" " "
 
 define-macro mail
   !force 0 find-buffer "Mail"
-  !if $status
-    !return
-  !endif
-  !if &seq &set %vm-mail-dir &reg &spr "/history/%s/mail-dir" $platform "" ""
-    ml-write "[Mail directory not setup! Execute mail-setup to configure]"
-    !abort
-  !endif
+  !iif $status  !return
+  !iif &seq &set %vm-mail-dir &reg &spr "/history/%s/mail-dir" $platform "" ""  -8 ml-write "[Mail directory not setup! Execute mail-setup to configure]"
   find-buffer "Mail"
   set-variable #l1 &cat %vm-mail-dir "smail.new"
   set-variable $buffer-fname #l1
   1 buffer-mode "backup"
   ; save the buffer so that the previous mail is backed up
   0 save-buffer
-  set-variable $buffer-hilight .hilight.mail
+  set-variable $buffer-hilight .hilight.me-mail
   insert-string "To:      \n"
   insert-string "Subject: \n"
-  !if &not &seq &set #l1 &reg &spr "/history/%s/mail-fcc" $platform "" ""
-    insert-string &spr "Fcc:     %s%s\n" %vm-mail-dir #l1
-  !endif
+  !iif &not &seq &set #l1 &reg &spr "/history/%s/mail-fcc" $platform "" ""  insert-string &spr "Fcc:     %s%s\n" %vm-mail-dir #l1
   insert-string "--text follows this line--\n"
   !if &not &seq &set #l1 &reg &spr "/history/%s/mail-sig" $platform "" ""
     end-of-buffer
     !force insert-file &cat %vm-mail-dir #l1
-    !if &not $status
-      ml-write &spr "[Failed to insert signature file %s]" &cat %vm-mail-dir #l1
-    !endif
+    !iif &not $status  ml-write &spr "[Failed to insert signature file %s]" &cat %vm-mail-dir #l1
   !endif
   beginning-of-buffer
   end-of-line
-  fhook-mail
+  major-mode "mail"
 !emacro
 
 ; Extracts a list of addresses from the current line

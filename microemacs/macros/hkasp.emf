@@ -10,12 +10,11 @@
 ;
 define-macro fhook-asp
   set-variable $buffer-mask "luh1"
-  @# buffer-init "asp"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-asp.name "ASP"
 set-variable .fhook-asp.setup &reg "/history/fhook/asp" "cdfghinopsx"
 set-variable .fhook-asp.setup-mask "acdefghikmnopstux"
 set-variable .fhook-asp.command-flag  "|"

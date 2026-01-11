@@ -15,7 +15,7 @@ add-color 1 0 0 0
 add-color 2 200 0 0
 add-color 3 0 200 0
 add-color 4 200 200 0
-add-color 5 30 30 225
+add-color 5 30 30 255
 add-color 6 200 0 200
 add-color 7 0 200 200
 add-color 8 255 255 255
@@ -28,7 +28,7 @@ add-color 14 255 50 255
 add-color 15 50 255 255
 add-color 16 20 20 140
 ; Set the required cursor-color
-set-variable $cursor-color 12
+set-variable $cursor-color 3852
 ; Create the color schemes
 ; Standard
 add-color-scheme $global-scheme 0 1 8 1 0 16 8 16 0 8 0 8 0 8 0 8

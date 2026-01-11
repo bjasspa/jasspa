@@ -103,10 +103,19 @@
 !endif
 
 0 define-macro fhook-git-status
+  buffer-init
+  set-variable :sc &lfind .fhook-dirlst.sc-detect "git-dirlst-detect"
+  set-variable :tag-count 0
+  set-variable :mouse-pick-1 dirlst-mouse-pick-1
+  set-variable :mouse-drop-1 dirlst-mouse-drop-1
+  set-variable :mouse-pick-3 dirlst-mouse-pick-3
+  set-variable :mouse-drop-3 dirlst-mouse-drop-3
+  set-variable :dirlst-mode .fhook-dirlst.mode
+  buffer-init-hooks
 !emacro
-set-variable .fhook-git-status.name "Git Status"
+15 major-mode "git-status" "" "" "Git Status"
 set-variable .fhook-git-status.setup &reg "/history/fhook/git-status" "ghmop"
-set-variable .fhook-git-status.setup-mask    "aceghlopq"
+set-variable .fhook-git-status.setup-mask "aceghlopq"
 set-variable .fhook-git-status.command-flag  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-flag  1 "" 2 "" 3 "t" 4 "thbio" 5 "thbio" 6 "bio" 2
 set-variable .fhook-git-status.command-name  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-name  1 "" 2 "" 3 "osd" 4 "git-context-menu" 5 "git-status" 6 "git-status" 2
 set-variable .fhook-git-status.command-nbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-nbind 1 "" 2 "" 3 .osd.git-hlp 4 "" 5 "" 6 "" 2
@@ -964,15 +973,7 @@ define-macro git-push
   !endif
   1 buffer-mode "view"
   -1 buffer-mode "edit"
-  buffer-init "git-status"
-  set-variable :sc &lfind .fhook-dirlst.sc-detect "git-dirlst-detect"
-  set-variable :tag-count 0
-  set-variable :mouse-pick-1 dirlst-mouse-pick-1
-  set-variable :mouse-drop-1 dirlst-mouse-drop-1
-  set-variable :mouse-pick-3 dirlst-mouse-pick-3
-  set-variable :mouse-drop-3 dirlst-mouse-drop-3
-  set-variable :dirlst-mode .fhook-dirlst.mode
-  buffer-init-hooks
+  major-mode "git-status"
   set-variable #l4 $window-id
   !repeat
     !iif &seq $buffer-bname "*git-status*"  beginning-of-buffer

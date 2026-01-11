@@ -9,14 +9,13 @@
 ; Authors:     Steven Phillips
 ;
 define-macro fhook-wiki
-  @# buffer-init "wiki"
-  &cond &sin "c" .fhook-wiki.setup 1 0 wiki-edit-mode
+  @# buffer-init
+  &cond &sin "c" .fh
   buffer-init-hooks
   wiki-add-to-last
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-wiki.name "GNU Wiki"
 set-variable .fhook-wiki.setup &reg "/history/fhook/wiki" "fghijopsw"
 set-variable .fhook-wiki.setup-mask "acefghijkmnopstuwx"
 set-variable .fhook-wiki.setup-flags   "|c|"

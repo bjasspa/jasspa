@@ -1,0 +1,66 @@
+; -!- emf -!-
+;
+; Copyright (C) 1998-2020 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Dos batch file hook - invoked when a dos batch file is loaded.
+; Authors:     Steven Phillips & Jon Green
+;
+define-macro fhook-bat
+  set-variable $buffer-mask "luh1"
+  @# buffer-init
+  buffer-init-hooks
+!emacro
+
+; buffer-init variables
+set-variable .fhook-bat.setup &reg "/history/fhook/dos" "ghiopx"
+set-variable .fhook-bat.setup-mask "aeghikmoptux"
+set-variable .fhook-bat.comment "|rem |||rem ||r|"
+set-variable .fhook-bat.exact -1
+
+!if &and &sin "h" .fhook-bat.setup &band .hilight.flags 0x02
+  !if &not &exist .hilight.bat "ERROR"
+    set-variable .hilight.bat    &pinc .hilight.next 1
+    set-variable .hilight.batvar &pinc .hilight.next 1
+  !endif
+
+  0 hilight  .hilight.bat 1               $global-scheme
+  hilight .hilight.bat 35  "rem"          .scheme.comment
+  hilight .hilight.bat 35  "@rem"         .scheme.comment
+  hilight .hilight.bat 34  ":"            .scheme.prepro
+  hilight .hilight.bat 0   "\\^"          .scheme.prepro
+  hilight .hilight.bat 128 "%" .hilight.batvar .scheme.variable
+  hilight .hilight.bat 1   "path"         .scheme.keyword
+  hilight .hilight.bat 0   "%%"           $global-scheme
+  hilight .hilight.bat 1   "call"         .scheme.keyword
+  hilight .hilight.bat 1   "device"       .scheme.keyword
+  hilight .hilight.bat 1   "echo"         .scheme.keyword
+  hilight .hilight.bat 1   "exist"        .scheme.keyword
+  hilight .hilight.bat 1   "goto"         .scheme.keyword
+  hilight .hilight.bat 1   "if"           .scheme.keyword
+  hilight .hilight.bat 1   "iff"          .scheme.keyword
+  hilight .hilight.bat 1   "else"         .scheme.keyword
+  hilight .hilight.bat 1   "elseiff"      .scheme.keyword
+  hilight .hilight.bat 1   "endiff"       .scheme.keyword
+  hilight .hilight.bat 1   "errorlevel"   .scheme.keyword
+  hilight .hilight.bat 1   "lh"           .scheme.keyword
+  hilight .hilight.bat 1   "loadhigh"     .scheme.keyword
+  hilight .hilight.bat 1   "not"          .scheme.keyword
+  hilight .hilight.bat 1   "set"          .scheme.keyword
+  hilight .hilight.bat 1   "then"         .scheme.keyword
+
+  0 hilight .hilight.batvar 1             .scheme.variable
+  hilight .hilight.batvar 128 "%"    .hilight.bat .scheme.variable
+  hilight .hilight.batvar 128 "\\s"  .hilight.bat $global-scheme
+  hilight .hilight.batvar 128 "\\["  .hilight.bat $global-scheme
+  hilight .hilight.batvar 128 "]"    .hilight.bat $global-scheme
+  hilight .hilight.batvar 128 ","    .hilight.bat $global-scheme
+  hilight .hilight.batvar 128 "+"    .hilight.bat $global-scheme
+  hilight .hilight.batvar 128 "\\."  .hilight.bat $global-scheme
+  hilight .hilight.batvar 128 "\\\\" .hilight.bat $global-scheme
+  hilight .hilight.batvar 128 "\""   .hilight.bat $global-scheme
+!endif
+
+buffer-init-fhook "bat"

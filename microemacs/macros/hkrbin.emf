@@ -28,7 +28,7 @@ define-macro fhook-rbin
     -1 buffer-mode "edit"
     beginning-of-buffer
   !endif
-  @# buffer-init "rbin"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 

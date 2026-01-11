@@ -10,7 +10,8 @@
 ; Notes:       Many have come from removing OSD from search.emf
 ;
 !if &not &exi .osd.symbol
-  0 define-macro-file majormod major-mode
+  ; TODO SSP update
+  0 define-macro-file majormod imajor-mode
   set-variable .osd.symbol  &pinc .osd.next 1
   set-variable .osd.alarm   &pinc .osd.next 1
   set-variable .osd.ftag    &pinc .osd.next 1
@@ -84,9 +85,10 @@ define-macro insert-symbol
 
 0 define-macro buffer-setup-ms
   !if @?
+    ; TODO SSP This needs migrating
     !force unset-variable :buffer-indent
     !force unset-variable :buffer-hilight
-    buffer-major-mode &lget .major-mode.list @#
+    buffer-major &lget .major-mode.list @#
     screen-update
   !endif
   !if &or $buffer-indent &exi :buffer-indent
@@ -106,19 +108,20 @@ define-macro insert-symbol
 !emacro
 0 define-macro buffer-setup-mm
   !if &les @# 0
-    major-mode
+    ; TODO SSP This needs migrating
+    imajor-mode
     -1 osd .osd.tmp
     osd .osd.tmp 0 "Asf" 16 20 -1 -1
     set-variable #l0 0
     set-variable #l2 1
     !while &not &seq "" &set #l1 &lget .major-mode.list &inc #l0 1
       osd .osd.tmp 1 "" #l1 #l0 buffer-setup-ms
-      !iif &seq #l1 &rig $buffer-fhook 6  set-variable #l2 #l0
+      !iif &seq #l1 $buffer-major-mode  set-variable #l2 #l0
     !done
     osd .osd.tmp 0 "AsfI" 16 20 -1 -1 #l2
     ml-write &spr "[Default set to %d]" #l2
   !else
-    set-variable $result &rig $buffer-fhook 6
+    set-variable $result $buffer-major-mode
   !endif
 !emacro
 0 define-macro buffer-setup-fmode

@@ -155,7 +155,7 @@ define-macro fhook-dirlst
   !endif
   dirlst-sort-list
   beginning-of-buffer
-  @# buffer-init "dirlst"
+  @# buffer-init
   set-variable :tag-count 0
   set-variable :mouse-pick-1 dirlst-mouse-pick-1
   set-variable :mouse-drop-1 dirlst-mouse-drop-1
@@ -167,7 +167,6 @@ define-macro fhook-dirlst
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-dirlst.name "Directory List"
 set-variable .fhook-dirlst.setup &reg "/history/fhook/dirlst" "ghmop"
 set-variable .fhook-dirlst.setup-mask    "eghlop"
 set-variable .fhook-dirlst.setup-flags   "|l|"

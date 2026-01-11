@@ -31,8 +31,18 @@
 0 define-macro cvs-init
 !emacro
 0 define-macro fhook-cvs-state
+  buffer-init
+  set-variable :sc &lfind .fhook-dirlst.sc-detect "cvs-dirlst-detect"
+  set-variable :fmpf 6
+  set-variable :tag-count 0
+  set-variable :mouse-pick-1 dirlst-mouse-pick-1
+  set-variable :mouse-drop-1 dirlst-mouse-drop-1
+  set-variable :mouse-pick-3 dirlst-mouse-pick-3
+  set-variable :mouse-drop-3 dirlst-mouse-drop-3
+  set-variable :dirlst-mode .fhook-dirlst.mode
+  buffer-init-hooks
 !emacro
-set-variable .fhook-cvs-state.name "CVS State"
+15 major-mode "cvs-state" "" "" "CVS State"
 set-variable .fhook-cvs-state.setup &reg "/history/fhook/cvs-state" "ghmop"
 set-variable .fhook-cvs-state.setup-mask    "aceghlopq"
 set-variable .fhook-cvs-state.command-flag  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-flag  1 "" 2 "" 3 "t" 4 "thbio" 5 "thbio" 6 "bio" 2
@@ -1201,16 +1211,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     !if &seq #l6 "*cvs-state*"
       set-variable $window-line 3
       insert-string "\n Attr Name  <Order by Extension>"
-      buffer-init "cvs-state"
-      set-variable :sc &lfind .fhook-dirlst.sc-detect "cvs-dirlst-detect"
-      set-variable :fmpf 6
-      set-variable :tag-count 0
-      set-variable :mouse-pick-1 dirlst-mouse-pick-1
-      set-variable :mouse-drop-1 dirlst-mouse-drop-1
-      set-variable :mouse-pick-3 dirlst-mouse-pick-3
-      set-variable :mouse-drop-3 dirlst-mouse-drop-3
-      set-variable :dirlst-mode .fhook-dirlst.mode
-      buffer-init-hooks
+      major-mode "cvs-state"
       end-of-buffer
       backward-line
     !endif

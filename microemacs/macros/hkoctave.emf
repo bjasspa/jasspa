@@ -9,7 +9,7 @@
 ;
 define-macro fhook-octave
   set-variable $buffer-mask "luh1"
-  @# buffer-init "octave"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 

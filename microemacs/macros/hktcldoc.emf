@@ -1,0 +1,72 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 1999-2009 JASSPA (www.jasspa.com)
+; Copyright (C) 1999-2025 Detlef Groth
+; See the file me.emf for copying and conditions.
+;
+; Created:    Sun Nov 1 2025
+; Authors:    Detlef Groth
+; Synopsis:   Tcl Doctools file hook (https://wiki.tcl-lang.org/page/doctools)
+;
+define-macro fhook-tcldoc
+  @# buffer-init
+  buffer-init-hooks
+!emacro
+
+; buffer-init variables
+set-variable .fhook-tcldoc.setup &reg "/history/fhook/tcldoc" "bdfghijnopswx"
+set-variable .fhook-tcldoc.setup-mask "abdefghijkmnopstuwx"
+set-variable .fhook-tcldoc.comment "|[comment {|}]|||||"
+
+set-variable .fhook-tcldoc.command-flag  "|boh|"
+set-variable .fhook-tcldoc.command-name  "|fill-paragraph|"
+set-variable .fhook-tcldoc.command-nbind "||"
+set-variable .fhook-tcldoc.command-kbind "|esc q|"
+set-variable .fhook-tcldoc.command-desc  "|Fill Paragraph|"
+
+; setup item-list
+set-variable .fhook-tcldoc.item-list-s1 "^\\[section +[\"{]?\\([\\w\\s]+\\)[\"}]?"
+set-variable .fhook-tcldoc.item-list-r1 "Sect \CCb\\1\CCA"
+
+!if &sin "f" .fhook-tcldoc.setup
+  ; setup emf collapsing
+  set-variable .fhook-tcldoc.collapse-open  "^\\[section "
+  set-variable .fhook-tcldoc.collapse-close "^\\(\\[section\\|\\'\\)"
+  set-variable .fhook-tcldoc.collapse-mnext "-1"
+!endif
+
+!iif &not &exist .hilight.tcldoc  set-variable .hilight.tcldoc &pinc .hilight.next 1
+
+!if &and &sin "h" .fhook-tcldoc.setup &band .hilight.flags 0x02
+  0 hilight .hilight.tcldoc 1               $global-scheme
+  
+  hilight .hilight.tcldoc 2 "^\\[section "      .scheme.header
+  hilight .hilight.tcldoc 4 "^\\[comment {" "}\\]" ""   .scheme.comment
+  hilight .hilight.tcldoc 4 "^\\[example {" "}\\]" ""   .scheme.comment  
+  hilight .hilight.tcldoc 4 "\"" "\"" ""        .scheme.string
+  hilight .hilight.tcldoc 0 "\\[[a-z_]+"    .scheme.keyword
+  hilight .hilight.tcldoc 0 "\\]" .scheme.keyword              
+!endif  
+!if &sin "x" .fhook-tcldoc.setup
+  ; only define the b & e hooks if time stamping is enabled
+  0 define-macro bhook-tcldoc
+    set-variable .timestamp $timestamp
+    set-variable $timestamp "%Y-%M-%D %h:%m"
+  !emacro
+  0 define-macro ehook-tcldoc
+    set-variable $timestamp .bhook-tcldoc.timestamp
+  !emacro
+!endif
+
+!if &sin "d" .fhook-tcldoc.setup
+  0 indent .hilight.tcldoc 0 10
+  indent .hilight.tcldoc n "{"  t
+  indent .hilight.tcldoc o "}" -t
+  indent .hilight.tcldoc n "("  t
+  indent .hilight.tcldoc o ")" -t
+  indent .hilight.tcldoc n "\\["  t
+  indent .hilight.tcldoc o "]" -t
+  indent .hilight.tcldoc e "\"" "\"" ""
+!endif
+buffer-init-fhook "tcldoc" 
+

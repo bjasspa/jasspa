@@ -20,12 +20,11 @@
 ;
 define-macro fhook-diff
   ; Set up the buffer modes
-  @# buffer-init "diff"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; Setup the buffer
-set-variable .fhook-diff.name "Differences File"
 set-variable .fhook-diff.setup &reg "/history/fhook/diff" "UXghpo"
 set-variable .fhook-diff.setup-mask "aeghmpo"
 set-variable .fhook-diff.command-0  "|btho||diff-next-change|S-down|\HNext change||"

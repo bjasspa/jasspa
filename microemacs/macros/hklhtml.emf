@@ -10,12 +10,11 @@
 ;
 define-macro fhook-lhtml
   set-variable $buffer-mask "luh1"
-  @# buffer-init "lhtml"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-lhtml.name "LUA-HTML"
 set-variable .fhook-lhtml.setup &reg "/history/fhook/lhtml" "cdghinopsx"
 set-variable .fhook-lhtml.setup-mask "acdeghikmnopstux"
 set-variable .fhook-lhtml.command-flag  "|"

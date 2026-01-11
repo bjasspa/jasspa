@@ -10,12 +10,11 @@
 ;
 define-macro fhook-make
   set-variable $buffer-mask "luh1"
-  @# buffer-init "make" "makefile"
+  @# buffer-init "makefile"
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-make.name "Makefile"
 set-variable .fhook-make.setup &reg "/history/fhook/make" "ghinopTx"
 set-variable .fhook-make.setup-mask "aeghikmnoptux"
 set-variable .fhook-make.comment "|#||#|# | #|r|"

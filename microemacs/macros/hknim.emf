@@ -12,7 +12,7 @@
 ;
 define-macro fhook-nim
     set-variable $buffer-mask "luh1"
-    @# buffer-init "nim"
+    @# buffer-init
     set-variable $buffer-indent-width 2
     buffer-init-hooks
 !emacro

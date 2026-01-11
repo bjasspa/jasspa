@@ -12,12 +12,11 @@ set-char-mask "3" "-$."
 
 define-macro fhook-tcl
   set-variable $buffer-mask "luh13"
-  @# buffer-init "tcl"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-tcl.name "Tcl/Tk"
 set-variable .fhook-tcl.setup &reg "/history/fhook/tcl" "bdfghnopx"
 set-variable .fhook-tcl.setup-mask "abdefghikmnoptux"
 set-variable .fhook-tcl.tags "tcltags"

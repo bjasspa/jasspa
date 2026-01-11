@@ -1,0 +1,46 @@
+diff --git a/drupalorg/drupalorg.module b/drupalorg/drupalorg.module
+index 226721eabb3f8aefe17423ff578d92e846a2a006..0b78324df5d205a816591200afeb97260ef8583b 100644
+--- a/drupalorg/drupalorg.module
++++ b/drupalorg/drupalorg.module
+@@ -4202,31 +4202,21 @@ function drupalorg_node_view($node, $view_mode = 'full') {
+       }
+ 
+       $has_gitlab_account = versioncontrol_gitlab_get_user_id($GLOBALS['user']) !== FALSE;
+-      if (!$has_current_project_fork && user_is_logged_in() && (in_array($wrapper->field_project->raw(), variable_get('drupalorg_issue_fork_projects', [])) || in_array($wrapper->getIdentifier(), variable_get('drupalorg_issue_fork_issues', [])))) {
+-        if ($has_gitlab_account) {
+-          $node->content['drupalorg_issue_forks']['new_form'] = drupal_get_form('drupalorg_issue_fork_block_form', $wrapper);
+-        }
+-        else {
+-          // Placeholder for !empty($node->content['drupalorg_issue_forks']) condition. Can be removed once
+-          // drupalorg_issue_fork_projects is removed.
+-          $node->content['drupalorg_issue_forks']['new_form'] = [];
+-        }
++      if (!$has_current_project_fork && user_is_logged_in() && $has_gitlab_account) {
++        $node->content['drupalorg_issue_forks']['new_form'] = drupal_get_form('drupalorg_issue_fork_block_form', $wrapper);
++      }
++
++      if (user_is_logged_in() && !$has_gitlab_account) {
++        $node->content['drupalorg_issue_forks']['no_gitlab_account'] = [
++          '#markup' => t('<strong><a href="!url">Get a Drupal.org Git username</a></strong> to collaborate on code for this issue.', [
++            '!url' => url('user/' . $GLOBALS['user']->uid . '/git'),
++          ]),
++        ];
+       }
+ 
+-      // Do not show documentation link if there is no issue fork and no
+-      // possibility to create one. Can be removed once
+-      // drupalorg_issue_fork_projects is removed.
+       if (!empty($node->content['drupalorg_issue_forks'])) {
+         $node->content['drupalorg_issue_forks']['#prefix'] = '<div id="drupalorg-issue-forks">';
+         $node->content['drupalorg_issue_forks']['#suffix'] = '</div>';
+-
+-        if (user_is_logged_in() && !$has_gitlab_account) {
+-          $node->content['drupalorg_issue_forks']['no_gitlab_account'] = [
+-            '#markup' => t('<strong><a href="!url">Get a Drupal.org Git username</a></strong> to collaborate on code for this issue.', [
+-              '!url' => url('user/' . $GLOBALS['user']->uid . '/git'),
+-            ]),
+-          ];
+-        }
+         $node->content['drupalorg_issue_forks']['documentation'] = [
+           '#markup' => '<div class="description">' . l('About issue forks', 'node/3077705') . '</div>',
+         ];

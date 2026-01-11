@@ -8,12 +8,11 @@
 ; Synopsis:   Asciidoc file hook (https://asciidoc.org/)
 ;
 define-macro fhook-adoc
-  @# buffer-init "adoc"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-adoc.name "adoc"
 set-variable .fhook-adoc.setup &reg "/history/fhook/adoc" "bfghijnopswx"
 set-variable .fhook-adoc.setup-mask "abefghijkmnopstuwx"
 set-variable .fhook-adoc.comment "|////|////|*|* |* ||"

@@ -10,12 +10,11 @@
 ;
 define-macro fhook-php
   set-variable $buffer-mask "luh1"
-  @# buffer-init "php"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-php.name "PHP"
 set-variable .fhook-php.setup &reg "/history/fhook/php" "bcdfghinopsx"
 set-variable .fhook-php.setup-mask "abcdefghikmnopstux"
 set-variable .fhook-php.command-flag  "|"

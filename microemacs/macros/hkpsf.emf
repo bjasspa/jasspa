@@ -13,7 +13,7 @@
 ;     used so infrequently. Not all of the tags may be included.
 ;
 define-macro fhook-psf
-  @# buffer-init "psf"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 

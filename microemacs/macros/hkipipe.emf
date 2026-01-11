@@ -384,7 +384,6 @@
 
 define-macro fhook-ipipe
   set-variable $buffer-mask "luh1"
-  set-variable $buffer-fhook "fhook-ipipe"
   buffer-bind-create "bo" "C-c C-k" ""  ipipe-kill
   !if &band $system 0x80
     buffer-bind-create "bo" "C-c C-c" "2" ipipe-kill

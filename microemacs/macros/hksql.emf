@@ -10,12 +10,11 @@
 ;
 define-macro fhook-sql
   set-variable $buffer-mask "luh1"
-  @# buffer-init "sql"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-sql.name "SQL"
 set-variable .fhook-sql.setup &reg "/history/fhook/sql" "ghinx"
 set-variable .fhook-sql.setup-mask "aeghikmntux"
 set-variable .fhook-sql.exact -1

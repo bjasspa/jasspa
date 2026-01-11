@@ -9,12 +9,11 @@
 ; Authors:     Detlef Groth, Steve Phillips & Jon Green
 ;
 define-macro fhook-latex
-  @# buffer-init "latex"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; Set up the buffer.
-set-variable .fhook-latex.name "LaTeX"
 set-variable .fhook-latex.setup &reg "/history/fhook/latex" "bfghinopsx"
 set-variable .fhook-latex.setup-mask "abefghijkmnopstuwx"
 set-variable .fhook-latex.tags "textags"

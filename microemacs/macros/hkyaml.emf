@@ -16,11 +16,9 @@
 ;
 define-macro fhook-yaml
   set-variable $buffer-mask "luh1"
-  @# buffer-init "yaml"
+  @# buffer-init
   buffer-init-hooks
 !emacro
-
-add-file-hook ".yml .yaml" fhook-yaml
 
 ; buffer-init variables
 set-variable .fhook-yaml.setup &reg "/history/fhook/yaml" "fghiopx"

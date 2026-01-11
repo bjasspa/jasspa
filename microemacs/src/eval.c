@@ -921,58 +921,55 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             break;
 #if MEOPT_IPIPES
         case EVBUFIPIPE:
-            frameCur->windowCur->buffer->ipipeFunc = decode_fncname(vvalue,1) ;
-            break ;
+            frameCur->windowCur->buffer->ipipeFunc = decode_fncname(vvalue,1);
+            break;
 #endif
 #if MEOPT_FILEHOOK
         case EVBUFBHK:
-            frameCur->windowCur->buffer->bhook = decode_fncname(vvalue,1) ;
-            break ;
+            frameCur->windowCur->buffer->bhook = decode_fncname(vvalue,1);
+            break;
         case EVBUFDHK:
-            frameCur->windowCur->buffer->dhook = decode_fncname(vvalue,1) ;
-            break ;
+            frameCur->windowCur->buffer->dhook = decode_fncname(vvalue,1);
+            break;
         case EVBUFEHK:
-            frameCur->windowCur->buffer->ehook = decode_fncname(vvalue,1) ;
-            break ;
-        case EVBUFFHK:    
-            frameCur->windowCur->buffer->fhook = decode_fncname(vvalue,1) ;
-            break ;
+            frameCur->windowCur->buffer->ehook = decode_fncname(vvalue,1);
+            break;
 #endif
 #if MEOPT_EXTENDED
         case EVBUFINP:
-            frameCur->windowCur->buffer->inputFunc = decode_fncname(vvalue,1) ;
-            break ;
+            frameCur->windowCur->buffer->inputFunc = decode_fncname(vvalue,1);
+            break;
         case EVLINEFLAGS:
             frameCur->windowCur->dotLine->flag = ((meLineFlag) (meAtoi(vvalue) & meLINE_SET_MASK)) |
-                  (frameCur->windowCur->dotLine->flag & ~meLINE_SET_MASK) ;
-            break ;
+                  (frameCur->windowCur->dotLine->flag & ~meLINE_SET_MASK);
+            break;
 #endif
 #if MEOPT_HILIGHT
         case EVLINESCHM:
             {
                 meWindow *cwp=frameCur->windowCur;
-                register int ii ;
-                meScheme schm ;
+                register int ii;
+                meScheme schm;
                 
-                ii = meAtoi(vvalue) ;
+                ii = meAtoi(vvalue);
                 if(ii >= 0)
                 {
                     schm = convertUserScheme(ii,cwp->buffer->scheme);
                     for(ii=1 ; ii<meLINE_SCHEME_MAX ; ii++)
                         if(cwp->buffer->lscheme[ii] == schm)
-                            break ;
+                            break;
                     if(ii == meLINE_SCHEME_MAX)
                     {
                         if((ii=cwp->buffer->lschemeNext+1) == meLINE_SCHEME_MAX)
-                            ii = 1 ;
-                        cwp->buffer->lscheme[ii] = schm ;
-                        cwp->buffer->lschemeNext = ii ;
+                            ii = 1;
+                        cwp->buffer->lscheme[ii] = schm;
+                        cwp->buffer->lschemeNext = ii;
                     }
-                    cwp->dotLine->flag = (cwp->dotLine->flag & ~meLINE_SCHEME_MASK) | (ii << meLINE_SCHEME_SHIFT) ;
+                    cwp->dotLine->flag = (cwp->dotLine->flag & ~meLINE_SCHEME_MASK) | (ii << meLINE_SCHEME_SHIFT);
                 }
                 else if(meLineIsSchemeSet(cwp->dotLine))
-                    cwp->dotLine->flag = (cwp->dotLine->flag & ~meLINE_SCHEME_MASK) ;
-                lineSetChanged(WFMAIN) ;
+                    cwp->dotLine->flag = (cwp->dotLine->flag & ~meLINE_SCHEME_MASK);
+                lineSetChanged(WFMAIN);
                 break ;
             }
         case EVBUFHIL:
@@ -997,18 +994,18 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         case EVBUFMASK:
             {
                 int ii ;
-                isWordMask = 0 ;
+                isWordMask = 0;
                 for(ii=0 ; ii<8 ; ii++)
                     if(meStrchr(vvalue,charMaskFlags[ii]) != NULL)
-                        isWordMask |= 1<<ii ;
+                        isWordMask |= 1<<ii;
                 if(frameCur->windowCur->buffer->isWordMask != isWordMask)
                 {
-                    frameCur->windowCur->buffer->isWordMask = isWordMask ;
+                    frameCur->windowCur->buffer->isWordMask = isWordMask;
 #if MEOPT_MAGIC
-                    mereRegexClassChanged() ;
+                    mereRegexClassChanged();
 #endif
                 }
-                break ;
+                break;
             }
 #endif
 #if MEOPT_FILENEXT
@@ -1154,11 +1151,15 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 break ;
             }
         default:
-            /* default includes EVUSERNAME EVCBUFBACKUP EVSTATUS EVBUILD EVPLATFORM 
-             * EVSYSRET EVUSEX, EVVERSION, EVWMDLINE, EVEOBLINE or system dependant vars
+            /* default includes EVUSERNAME EVCBUFBACKUP EVBUFMJRMOD EVBUFFHK EVSTATUS EVBUILD
+             * EVPLATFORM EVSYSRET EVUSEX, EVVERSION, EVWMDLINE, EVEOBLINE or system dependant vars
              * where this isn't the system (e.g. use-x) which cant be set
              */
-            return meFALSE ;
+#if KEY_TEST
+            return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Attempt to set readonly variable %s]",nn);
+#else
+            return meFALSE;
+#endif
         }
         break ;
     default:
@@ -1461,6 +1462,12 @@ handle_namesvar:
         goto hook_jump ;
 #endif
 #if MEOPT_FILEHOOK
+    case EVBUFMJRMOD:
+        if(frameCur->windowCur->buffer->majorMode != NULL)
+            meStrcpy(evalResult,frameCur->windowCur->buffer->majorMode->id);
+        else
+            evalResult[0] = '\0';
+        return evalResult ;
     case EVBUFBHK:
         ii = frameCur->windowCur->buffer->bhook ;
         goto hook_jump ;
@@ -2733,12 +2740,12 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
                             cc = *rr++ ;
                             if(((cc == 'l') || (cc == 'u') || (cc == 'c')) && (*rr != '\0'))
                             {
-                                changeCase = (cc == 'l') ? -1:cc ;
-                                cc = *rr++ ;
+                                changeCase = (cc == 'l') ? -1:cc;
+                                cc = *rr++;
                             }
-                            if((cc == '&') || ((cc >= '0') && (cc <= '9') && ((((int) cc) - '0') <= meRegexStrCmp.groupNo)))
+                            if((cc == '&') || ((cc >= '0') && ((((int) cc) - '0') <= meRegexStrCmp.groupNo)))
                             {
-                                cc = (cc == '&') ? 0:(cc-'0') ;
+                                cc = (cc == '&') ? 0:(cc-'0');
                                 /* if start offset is < 0, it was a ? auto repeat which was not found,
                                    therefore replace str == "" */ 
                                 if((soff=meRegexStrCmp.group[cc].start) >= 0)

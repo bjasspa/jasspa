@@ -1,0 +1,61 @@
+#VRML V2.0 utf8
+#-----------------------------------------------------------------------------
+# boxandsphere.wrl
+#
+# A really simple VRML world consisting of a ellipsoid and a box.  The
+# ellipsoid has a marble texture mapped on to it and the box is anchored
+# to LMU's main web page.
+#-----------------------------------------------------------------------------
+
+# A light
+
+DirectionalLight {
+  direction 1 0 -1
+}
+
+# A camera
+
+PerspectiveCamera {
+  position -8.6 2.1 5.6
+  orientation -0.14 -1 -0.12 1.142
+  focalDistance 10.84
+}
+
+# A marble ellipsoid
+
+Transform {
+  translation 3 0 1
+  scale 1.5 1 0.75
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {diffuseColor 1 1 0}
+        texture ImageTexture {url "marble.jpg"}
+      }
+      geometry Sphere {
+        radius 2.3
+      }
+    }
+  ]
+}
+
+# A box with a hyperlink
+
+Transform {
+  rotation 0 0 1 3.1 
+  translation 2 2.5 1.25
+  children [
+    Anchor {
+      url "http://www.lmu.edu"
+      description "Loyola Marymount"
+      children [
+        Shape {
+          appearance Appearance {
+            material Material {emissiveColor 1 1 0}
+          }
+          geometry Box {}
+        }
+      ]
+    }
+  ]
+}

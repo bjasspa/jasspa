@@ -12,12 +12,11 @@ set-char-mask "2" "-$&#!%:@."
 
 define-macro fhook-emf
   set-variable $buffer-mask "luh12"
-  @# buffer-init "emf"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-emf.name "MicroEmacs Macro"
 set-variable .fhook-emf.setup &reg "/history/fhook/emf" "bdfghnopx"
 set-variable .fhook-emf.setup-mask "abdefghikmnoptux"
 set-variable .fhook-emf.tags "emftags"

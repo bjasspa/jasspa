@@ -731,7 +731,6 @@ exitEmacs(int f, int n)
                 zotbuf(bc,1);
                 bc = bn;
             }
-            addFileHook(meTRUE,0);
             
             dictionaryDelete(1,6);
             spellRuleAdd(1,0);
@@ -740,6 +739,7 @@ exitEmacs(int f, int n)
             osdFreeMemory();
             regFreeMemory();
             srchFreeMemory();
+/* TODO            majorModeFreeMemory();*/
             TTfreeTranslateKey();
             
             meNullFree(mlBinds);

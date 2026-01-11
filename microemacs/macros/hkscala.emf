@@ -8,13 +8,12 @@
 ;
 define-macro fhook-scala
     set-variable $buffer-mask "luh1"
-    @# buffer-init "scala"
+    @# buffer-init
     set-variable $buffer-indent-width 2
     buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-scala.name "scala"
 set-variable .fhook-scala.setup &reg "/history/fhook/scala" "bdfghnopx"
 set-variable .fhook-scala.setup-mask "abdefghikmnoptux"
 set-variable .fhook-scala.comment "|/*|*/|*| * | * |fr|"

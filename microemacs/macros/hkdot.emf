@@ -12,12 +12,11 @@ set-char-mask "3" "-$."
 
 define-macro fhook-dot
   set-variable $buffer-mask "luh13"
-  @# buffer-init "dot"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-dot.name "Dot/Neato"
 set-variable .fhook-dot.setup &reg "/history/fhook/dot" "bdfghnopx"
 set-variable .fhook-dot.setup-mask "abdefghikmnoptux"
 set-variable .fhook-dot.comment "|/*| */|*| * | * |fr|"

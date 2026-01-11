@@ -8,9 +8,9 @@
 ; Synopsis:    *registry* hook - invoked when MicroEmacs's registry is displayed
 ; Authors:     Jon Green
 ;
-define-macro fhook-reg
+define-macro fhook-mereg
   set-variable $buffer-mask "luh1"
-  @# buffer-init "reg"
+  @# buffer-init
   set-variable :mouse-pick-1 void
   set-variable :mouse-drop-1 reg-toggle-hidden
   set-variable :mouse-pick-3 void
@@ -19,34 +19,33 @@ define-macro fhook-reg
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-reg.name "ME Registry"
-set-variable .fhook-reg.setup &reg "/history/fhook/reg" "ghmop"
-set-variable .fhook-reg.setup-mask "aeghkop"
-set-variable .fhook-reg.command-flag  "|thbio|thbio|thbio|thbio|thbio|bio|thbio|bio|"
-set-variable .fhook-reg.command-name  "|reg-toggle-hidden|reg-set-node|reg-copy-node|reg-move-node|reg-delete-node|reg-delete-node|reg-insert-node|reg-insert-node|"
-set-variable .fhook-reg.command-nbind "|||||||||"
-set-variable .fhook-reg.command-kbind "|space|return|c|m|d|delete|i|insert|"
-set-variable .fhook-reg.command-desc  "|\HToggle Tree Visibility|\HSet Value of Current Node|\HCopy Current Node|\HMove Current Node|\HDelete Current Node||\HInsert New Node||"
+set-variable .fhook-mereg.setup &reg "/history/fhook/reg" "ghmop"
+set-variable .fhook-mereg.setup-mask "aeghkop"
+set-variable .fhook-mereg.command-flag  "|thbio|thbio|thbio|thbio|thbio|bio|thbio|bio|"
+set-variable .fhook-mereg.command-name  "|reg-toggle-hidden|reg-set-node|reg-copy-node|reg-move-node|reg-delete-node|reg-delete-node|reg-insert-node|reg-insert-node|"
+set-variable .fhook-mereg.command-nbind "|||||||||"
+set-variable .fhook-mereg.command-kbind "|space|return|c|m|d|delete|i|insert|"
+set-variable .fhook-mereg.command-desc  "|\HToggle Tree Visibility|\HSet Value of Current Node|\HCopy Current Node|\HMove Current Node|\HDelete Current Node||\HInsert New Node||"
 
-!if &and &sin "h" .fhook-reg.setup &band .hilight.flags 0x02
-  !if &not &exist .hilight.reg
-    set-variable .hilight.reg  &pinc .hilight.next 1
+!if &and &sin "h" .fhook-mereg.setup &band .hilight.flags 0x02
+  !if &not &exist .hilight.mereg
+    set-variable .hilight.mereg  &pinc .hilight.next 1
   !endif
-  0 hilight  .hilight.reg  0                    $global-scheme
-  hilight .hilight.reg  0x101 "*"            .scheme.select
-  hilight .hilight.reg  0x001 "+"            .scheme.dir-closed
-  hilight .hilight.reg  0x001 "-"            .scheme.dir-open
-  hilight .hilight.reg  0x001 "!"            .scheme.dir-open
-  hilight .hilight.reg  0x000 "="            .scheme.keyword
-  hilight .hilight.reg  0x004 "\"" "\"" "\\" .scheme.string
+  0 hilight .hilight.mereg 0 $global-scheme
+  hilight .hilight.mereg  0x101 "*" .scheme.select
+  hilight .hilight.mereg  0x001 "+" .scheme.dir-closed
+  hilight .hilight.mereg  0x001 "-" .scheme.dir-open
+  hilight .hilight.mereg  0x001 "!" .scheme.dir-open
+  hilight .hilight.mereg  0x000 "=" .scheme.keyword
+  hilight .hilight.mereg  0x004 "\"" "\"" "\\" .scheme.string
   ; Color the directory lines if requested.
   !if &not &seq &lef $box-chars 1 "|"
-    hilight .hilight.reg 0x001 &lef $box-chars  1   .scheme.dir-tree
-    hilight .hilight.reg 0x001 &rig $box-chars 10   .scheme.dir-tree
-    hilight .hilight.reg 0x001 &mid $box-chars  3 1 .scheme.dir-tree
-    hilight .hilight.reg 0x001 &mid $box-chars  6 1 .scheme.dir-tree
+    hilight .hilight.mereg 0x001 &lef $box-chars  1   .scheme.dir-tree
+    hilight .hilight.mereg 0x001 &rig $box-chars 10   .scheme.dir-tree
+    hilight .hilight.mereg 0x001 &mid $box-chars  3 1 .scheme.dir-tree
+    hilight .hilight.mereg 0x001 &mid $box-chars  6 1 .scheme.dir-tree
   !endif
-  hilight .hilight.reg  0x002 "->"  .scheme.dirslink
+  hilight .hilight.mereg  0x002 "->"  .scheme.dirslink
 !endif
 
 0 define-macro reg-toggle-hidden
@@ -178,4 +177,4 @@ set-variable .fhook-reg.command-desc  "|\HToggle Tree Visibility|\HSet Value of 
   list-registry
 !emacro
 
-buffer-init-fhook "reg"
+buffer-init-fhook "mereg"

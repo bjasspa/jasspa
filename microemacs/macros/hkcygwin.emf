@@ -255,8 +255,7 @@ define-macro cygpipe-break
       !if &set #l1 &seq &lef #l3 1 "!"
         ; implement the unix style !com...
         !if &set #l4 &sin " " #l3
-        !elif &set #l4 &sin "\t" #l3
-        !else
+        !elif &not &set #l4 &sin "\t" #l3
           set-variable #l4 &add &len #l3 1
         !endif
         set-variable #l5 &mid #l3 1 &sub #l4 2
@@ -301,9 +300,7 @@ define-macro cygpipe-break
             set-variable $buffer-fname #l5
             ; must set the old one as well - the starting path is not
             ; automatically stored
-            !if &seq &mid #l5 1 1 ":"
-              set-variable &ind &cat ":dir-" &slo &lef #l5 1 #l5
-            !endif
+            !iif &seq &mid #l5 1 1 ":"  set-variable &ind &cat ":dir-" &slo &lef #l5 1 #l5
           !endif
         !endif
       !endif
@@ -336,17 +333,13 @@ define-macro cygpipe-break
       !if &sin @wc " \t\n"
         set-variable #l1 $window-col
         !force backward-char
-        !if &not &sin @wc " \t\n"
-          !goto complete-file
-        !endif
+        !tgoto &not &sin @wc " \t\n" complete-file
         set-variable $window-col #l1
         set-variable #l2 ""
       !else
 *complete-file
         set-variable #l2 &rsin " " &lef @wl $window-col
-        !if &not &set #l1 &sin " " &rig @wl $window-col
-          set-variable #l1 &len &rig @wl $window-col
-        !endif
+        !iif &not &set #l1 &sin " " &rig @wl $window-col  set-variable #l1 &len &rig @wl $window-col
         set-variable #l1 &add $window-col #l1
         set-variable #l2 &mid @wl #l2 &sub #l1 #l2
         set-variable $window-col #l1
@@ -380,14 +373,10 @@ define-macro cygpipe-break
       ; next/prev history
       set-variable #l3 @wl
       !force find-buffer &cat #l0 "-hist"
-      !if &seq @wc ""
-        set-variable :cmd #l3
-      !endif
+      !iif &seq @wc ""  set-variable :cmd #l3
       !force !force execute-string #l1
       set-variable #l3 @wl
-      !if &seq @wc ""
-        set-variable #l3 :cmd
-      !endif
+      !iif &seq @wc ""  set-variable #l3 :cmd
       !force find-buffer &cat #l0 "-cmd"
       beginning-of-buffer
       insert-string #l3
@@ -458,9 +447,7 @@ define-macro cygpipe-break
     cygpipe-write-prompt #l1
   !else
     goto-alpha-mark "I"
-    !if &band $system 0x100
-      set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
-    !endif
+    !iif &band $system 0x100  set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
     ipipe-write #l1
   !endif
 !emacro
@@ -484,9 +471,8 @@ define-macro cygpipe-break
     !repeat
       screen-update
       set-variable #l0 @cqk
-      !if &not &bmo "pipe"
-        !return
-      !elif &equ &len #l0 1
+      !iif &not &bmo "pipe"  !return
+      !if &equ &len #l0 1
         ipipe-write #l0
       !elif &seq #l0 "f3"
         0 cygpipe-mode
@@ -534,9 +520,7 @@ define-macro cygpipe-break
     goto-position "\x83"
     cygwin-setdir
   !endif
-  !if &equ :imode 2
-    2 screen-update
-  !endif
+  !iif &equ :imode 2  2 screen-update
 !emacro
 
 0 define-macro cygpipe-kill
@@ -546,9 +530,7 @@ define-macro cygpipe-break
 
 0 define-macro cygpipe-rerun
   beginning-of-buffer
-  !if &seq &lef @wl 3 "cd "
-    forward-line
-  !endif
+  !iif &seq &lef @wl 3 "cd "  forward-line
   0 ipipe-shell-command @wl $buffer-bname
 !emacro
 
@@ -563,27 +545,22 @@ define-macro cygwin
   !if &and $status &bmod "pipe"
     ; Cygus buffer is found. Find another buffer.
     set-variable #l9 1
-*again
-    set-variable #l8 &spr "*cygwin%d*"&pinc #l9 1
-    !force 0 find-buffer #l8
-    !if $status
-      !goto again
-    !endif
+    !repeat
+      set-variable #l8 &spr "*cygwin%d*"&pinc #l9 1
+      !force 0 find-buffer #l8
+    !until $status
   !endif
   set-variable $TERM "EMACS"
   set-variable $EMACS "*term*"
-  4 ipipe-shell-command "bash -i -m" #l8
-!endif
-; Restore the default path.
-set-variable $PATH .path
-popup-window #l8
-; find-buffer #l8
-fhook-cygwin
+  132 ipipe-shell-command "bash -i -m" #l8 "cygpipe-input"
+  ; Restore the default path.
+  set-variable $PATH .path
+  popup-window #l8
+  ; find-buffer #l8
+  major-mode "cygwin"
 !emacro
 
 0 define-macro fhook-cygwin
-  set-variable $buffer-fhook "fhook-cygwin"
-  set-variable $buffer-ipipe "cygpipe-input"
   ; Bind the keys
   buffer-bind-create "bo" "C-c C-k" ""  cygpipe-kill
   buffer-bind-create "bo" "C-c C-c" "2" cygpipe-kill
@@ -598,11 +575,10 @@ fhook-cygwin
   set-variable :mode 0
   set-variable $buffer-mask "luh1"
   ; Enable hilighting if requested.
-  !if %cygwin-hilight
-    set-variable $buffer-hilight .hilight.cygwin
-  !endif
+  !iif %cygwin-hilight  set-variable $buffer-hilight .hilight.cygwin
   1 cygpipe-mode
   buffer-init-hooks
 !emacro
+7 major-mode "cygwin" "" ""
 
 buffer-init-fhook "cygwin"

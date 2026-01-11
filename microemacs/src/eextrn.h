@@ -120,9 +120,9 @@ extern	int	setCharMask(int f, int n);
 /* buffer.c externals */
 extern  int     getBufferName(meUByte *prompt, int opt, int defH, meUByte *buf);
 #if MEOPT_FILEHOOK
-extern int      addFileHook(int f, int n);
+extern int      majorMode(int f, int n);
 #else
-#define addFileHook notAvailable
+#define majorMode notAvailable
 #endif
 #if MEOPT_EXTENDED
 extern	int	nextWndFindBuf(int f, int n);

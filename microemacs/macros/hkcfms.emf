@@ -5,7 +5,7 @@
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
 ;
-; Synopsis:    Coldfusion CFM Script Hook File
+; Synopsis:    Coldfusion Markup Script Hook File
 ; Authors:     Jon Green
 ; Note:
 ;   The main hkcfm hook handles the html side of the file,
@@ -13,12 +13,10 @@
 
 define-macro fhook-cfms
   set-variable $buffer-mask "luh1"
-  @# buffer-init "cfms"
+  @# buffer-init
   buffer-init-hooks
 !emacro
-
-; buffer-init variables
-set-variable .fhook-cfms.name "CFM Script"
+15 major-mode "cfms" "" "" "CFM Script" 
 set-variable .fhook-cfms.setup &reg "/history/fhook/cfms" "bdfghinopxl"
 set-variable .fhook-cfms.setup-mask "abdefghikmnoptuxl#"
 set-variable .fhook-cfms.indent-width 2
@@ -303,14 +301,11 @@ set-variable .fhook-cfms.item-list-r1 "Func \CCb\\1\CCA"
   hilight #l1 1 "false"                       .scheme.prepro
 !emacro
 
-!if &not &exist .hilight.cfms
-  set-variable .hilight.cfms  &pinc .hilight.next 1
-!endif
+!iif &not &exist .hilight.cfms  set-variable .hilight.cfms  &pinc .hilight.next 1
 
 !if &and &sin "h" .fhook-cfms.setup &band .hilight.flags 0x02
-  !if &not &exist .hilight.cfmsS
-    set-variable .hilight.cfmsS &pinc .hilight.next 1
-  !endif
+  !iif &not &exist .hilight.cfmsS  set-variable .hilight.cfmsS &pinc .hilight.next 1
+  
   ; cfm file highlighting
   0 hilight .hilight.cfms 3 50                   $global-scheme
   ; Strings and things
@@ -391,15 +386,9 @@ set-variable .fhook-cfms.item-list-r1 "Func \CCb\\1\CCA"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 !if &and &sin "h" .fhook-cfms.setup &band .hilight.flags 0x02
-  !if &not &exist .hilight.cfmsql
-    set-variable .hilight.cfmsql &pinc .hilight.next 1
-  !endif
-  !if &not &exist .hilight.cfmsqltags
-    set-variable .hilight.cfmsqltags &pinc .hilight.next 1
-  !endif
-  !if &not &exist .hilight.cfmsqlfind
-    set-variable .hilight.cfmsqlfind &pinc .hilight.next 1
-  !endif
+  !iif &not &exist .hilight.cfmsql  set-variable .hilight.cfmsql &pinc .hilight.next 1
+  !iif &not &exist .hilight.cfmsqltags  set-variable .hilight.cfmsqltags &pinc .hilight.next 1
+  !iif &not &exist .hilight.cfmsqlfind  set-variable .hilight.cfmsqlfind &pinc .hilight.next 1
 
   ; <CFxx enclosure hilighting> - variable assignment
 
@@ -674,6 +663,6 @@ set-variable .fhook-cfms.item-list-r1 "Func \CCb\\1\CCA"
   indent .hilight.cfmsql u "<cfelse" -1t 1t
   indent .hilight.cfmsql o "</cfif>" -1t
   indent .hilight.cfmsql w "</cfquery>" -1t 0
-
 !endif
+
 buffer-init-fhook "cfms"

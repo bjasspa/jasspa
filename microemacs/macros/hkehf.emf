@@ -12,7 +12,7 @@ set-char-mask "2" "-$&#!%:@."
 
 define-macro fhook-ehf
   set-variable $buffer-mask "luh12"
-  @# buffer-init "ehf"
+  @# buffer-init
   ; Hyperlink with the mouse.
   set-variable :mouse-word-select ehf-process-link
   !if &seq $buffer-bname "*help*"
@@ -143,7 +143,6 @@ define-macro fhook-ehf
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-ehf.name "ME Help"
 set-variable .fhook-ehf.setup &reg "/history/fhook/ehf" "ghijmopwx"
 set-variable .fhook-ehf.setup-mask "aeghijkopstuwx1"
 set-variable .fhook-ehf.command-flag  "|th|th|th|"

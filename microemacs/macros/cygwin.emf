@@ -20,16 +20,13 @@ set-variable .ishell.noecho "1"
 ;--- CYGWIN
 ; Cygwin environment may not have a $SHELL variable defined.
 ; Define the shell if not defined.
-!if &seq $SHELL "ERROR"
-  set-variable $SHELL /bin/bash
-!endif
+!iif &seq $SHELL "ERROR"  set-variable $SHELL /bin/bash
 ; Try to find cygwin automatically. We need to identify where cygwin exists
 ; in the file system as information received from BASH is DOS drive
 ; information that is converted into cygwin space.
-!if &not &exi %cygwin-path
-  !if &seq "D" &stat "t" "c:/cygwin"
-    set-variable %cygwin-path "c:/cygwin"
-  !endif
+!if &exi %cygwin-path
+!elif &seq "D" &stat "t" "c:/cygwin"
+  set-variable %cygwin-path "c:/cygwin"
 !endif
 ; Wrapper to define cygwin macro, this is based on the Win32 version, our
 ; path information is a little different so we adjust.

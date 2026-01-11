@@ -126,32 +126,25 @@ define-macro xfind
   delete-buffer "*xfind-temp*"
 !emacro
 ; Handle a tar file being read.
-define-macro fhook-xfind
+define-macro fhook-x-find
   -1 buffer-mode "view"
   -1 buffer-mode "wrap"
-  buffer-init "xfind"
+  buffer-init
   buffer-bind-create "bio" "return" "" xfind-read
   set-variable :mouse-word-select xfind-read
   buffer-init-hooks
 !emacro
-; The xfind buffer-init variables.
-set-variable .fhook-xfind.name "Find"
-set-variable .fhook-xfind.setup &reg "/history/fhook/xfind" "ghmop"
-set-variable .fhook-xfind.setup-mask    "aceghop"
+15 major-mode "x-find" "" "*xfind*" "Find"
+set-variable .fhook-x-find.setup &reg "/history/fhook/x-find" "ghmop"
+set-variable .fhook-x-find.setup-mask    "aceghop"
 ; Define the hilighting.
-!if &and &sin "h" .fhook-xfind.setup &band .hilight.flags 0x02
-  !if &not &exist .hilight.xfind
-    set-variable .hilight.xfind &pinc .hilight.next 1
-  !endif
-  0 hilight .hilight.xfind 0                  $global-scheme
-  !if &band $system 0x100
-    hilight .hilight.xfind 2   "find.exe: " .scheme.comment
-  !else
-    hilight .hilight.xfind 0x2 "find: "     .scheme.comment
-  !endif
-  hilight .hilight.xfind 0x102   "\\[EXIT"    .scheme.comment
-  hilight .hilight.xfind 0x102   "cd "        .scheme.link
+!if &and &sin "h" .fhook-x-find.setup &band .hilight.flags 0x02
+  !iif &not &exist .hilight.x-find  set-variable .hilight.x-find &pinc .hilight.next 1
+  0 hilight .hilight.x-find 0                  $global-scheme
+  hilight .hilight.x-find 2 "find: "     .scheme.comment
+  !iif &band $system 0x100   hilight .hilight.x-find 2 "find.exe: " .scheme.comment
+  hilight .hilight.x-find 0x102   "\\[EXIT"    .scheme.comment
+  hilight .hilight.x-find 0x102   "cd "        .scheme.link
 !endif
-; Add the file hook and complete buffer setup.
-add-file-hook "*xfind*" fhook-xfind
-buffer-init-fhook "xfind"
+
+buffer-init-fhook "x-find"

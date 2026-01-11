@@ -10,12 +10,11 @@
 ;
 define-macro fhook-jsp
   set-variable $buffer-mask "luh1"
-  @# buffer-init "jsp"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-jsp.name "JSP"
 set-variable .fhook-jsp.setup &reg "/history/fhook/jsp" "cdghinopsx"
 set-variable .fhook-jsp.setup-mask "acdeghikmnopstux"
 set-variable .fhook-jsp.command-flag  "|"

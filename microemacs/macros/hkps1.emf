@@ -12,12 +12,11 @@ set-char-mask "3" "-$"
 
 define-macro fhook-ps1
   set-variable $buffer-mask "luh13"
-  @# buffer-init "ps1"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-ps1.name "MS PowerShell Script"
 set-variable .fhook-ps1.setup &reg "/history/fhook/ps1" "bdfghnopx"
 set-variable .fhook-ps1.setup-mask "abdefghikmoptux"
 set-variable .fhook-ps1.comment "|#||#|# | #|r|"

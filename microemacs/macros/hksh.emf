@@ -1,0 +1,204 @@
+; -!- emf -!-
+;
+; Copyright (C) 1996-2024 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    UNIX shell hook
+; Authors:     Jon Green
+;
+; Notes:       This shell file has given me grief. It is difficult
+;              to know how much to hilight. At the moment it appears
+;              too colored - however this really does depend on the
+;              content of the file.
+;
+;              I have knocked the hilighting off the shell commands
+;              to make the file a little less busy. This seems to be
+;              a little better.
+;
+;              Maybe somebody else will come up with a more subtle
+;              scheme ??
+;
+;              There is a heavy bias towards Bourne and Korn shells.
+;              I am not a csh shell user so I have probably missed
+;              alot of csh features.
+;
+define-macro fhook-sh
+  set-variable $buffer-mask "luh1"
+  @# buffer-init
+  buffer-init-hooks
+!emacro
+
+; buffer-init variables
+set-variable .fhook-sh.setup &reg "/history/fhook/shell" "bdfghionpx"
+set-variable .fhook-sh.setup-mask "adefghikmnoptux"
+set-variable .fhook-sh.comment "|#||#|# | #|r|"
+
+set-variable .fhook-sh.collapse-open  "^\\(function \\s*[-a-zA-Z0-9_]+\\|\\([-a-zA-Z0-9_]+\\)\\s*()\\)\\s*{\\s*"
+set-variable .fhook-sh.collapse-close "^}"
+set-variable .fhook-sh.collapse-mclose "1"
+set-variable .fhook-sh.collapse-mnext "-1"
+
+set-variable .fhook-sh.item-list-s1 "^function \\s*\\([-a-zA-Z0-9_]+\\).*{"
+set-variable .fhook-sh.item-list-r1 "Func \CCb\\1\CCA"
+set-variable .fhook-sh.item-list-s2 "^\\([-a-zA-Z0-9_]+\\)\\s*()\\s*{"
+set-variable .fhook-sh.item-list-r2 "Func \CCb\\1\CCA"
+
+!if &and &sin "h" .fhook-sh.setup &band .hilight.flags 0x02
+  !if &not &exist .hilight.sh
+    set-variable .hilight.sh  &pinc .hilight.next 1
+    set-variable .hilight.shS &pinc .hilight.next 1
+    set-variable .hilight.shV &pinc .hilight.next 1
+  !endif
+
+  ; Make file highlighting
+  0 hilight .hilight.sh 2 50                  $global-scheme
+  ; Strings and things
+  hilight .hilight.sh 0x804 "'" "'" ""        .scheme.quote
+  hilight .hilight.sh 0x880 "\"" .hilight.shS .scheme.string
+  hilight .hilight.sh 0 "`"                   .scheme.prepro
+  ; Comments. Note "#!" is the very first line
+  hilight .hilight.sh 2     "\\s\\{#"         .scheme.comment
+  hilight .hilight.sh 2     "^#!"             .scheme.header
+  ; Strings are not necessarily escaped in quotes, pick up on an escaped character.
+  hilight .hilight.sh 0     "\\\\."           .scheme.string
+  ; Variables.
+  hilight .hilight.sh 4     "\\$" "\\}\\W" "" .scheme.variable
+  hilight .hilight.sh 0x80  "\\${" .hilight.shV .scheme.variable
+  hilight .hilight.sh 4     "\\$(" ")\\s" ""  .scheme.variable
+  hilight .hilight.sh 0     "\\$\\?"          .scheme.variable
+  hilight .hilight.sh 0     "\\$#"            .scheme.variable
+  hilight .hilight.sh 0     "\\$\\$"          .scheme.variable
+  hilight .hilight.sh 0     "\\$!"            .scheme.variable
+  hilight .hilight.sh 0     "\\$\\*"          .scheme.variable
+  ; Separators
+  hilight .hilight.sh 1     "&"               .scheme.operator
+  hilight .hilight.sh 1     ">"               .scheme.operator
+  hilight .hilight.sh 1     "<"               .scheme.operator
+  hilight .hilight.sh 0     "|"               .scheme.operator
+  hilight .hilight.sh 0     "&&"              .scheme.operator
+  hilight .hilight.sh 0     "||"              .scheme.operator
+  hilight .hilight.sh 0     ">>"              .scheme.operator
+  hilight .hilight.sh 0     "<<"              .scheme.operator
+  hilight .hilight.sh 0     "!="              .scheme.operator
+  hilight .hilight.sh 0     "=="              .scheme.operator
+  ; O/S commands
+  hilight .hilight.sh 1     "bg"              .scheme.keyword
+  hilight .hilight.sh 1     "cd"              .scheme.keyword
+  hilight .hilight.sh 1     "cp"              .scheme.keyword
+  hilight .hilight.sh 1     "chmod"           .scheme.keyword
+  hilight .hilight.sh 1     "chgrp"           .scheme.keyword
+  hilight .hilight.sh 1     "chown"           .scheme.keyword
+  hilight .hilight.sh 1     "ci"              .scheme.keyword
+  hilight .hilight.sh 1     "co"              .scheme.keyword
+  hilight .hilight.sh 1     "echo"            .scheme.keyword
+  hilight .hilight.sh 1     "eval"            .scheme.keyword
+  hilight .hilight.sh 1     "exec"            .scheme.keyword
+  hilight .hilight.sh 1     "expr"            .scheme.keyword
+  hilight .hilight.sh 1     "fg"              .scheme.keyword
+  hilight .hilight.sh 1     "jobs"            .scheme.keyword
+  hilight .hilight.sh 1     "kill"            .scheme.keyword
+  hilight .hilight.sh 1     "mkdir"           .scheme.keyword
+  hilight .hilight.sh 1     "mv"              .scheme.keyword
+  hilight .hilight.sh 1     "newgrp"          .scheme.keyword
+  hilight .hilight.sh 1     "pwd"             .scheme.keyword
+  hilight .hilight.sh 1     "rm"              .scheme.keyword
+  hilight .hilight.sh 1     "rmdir"           .scheme.keyword
+  hilight .hilight.sh 1     "stop"            .scheme.keyword
+  hilight .hilight.sh 1     "suspend"         .scheme.keyword
+  hilight .hilight.sh 1     "touch"           .scheme.keyword
+  hilight .hilight.sh 1     "test"            .scheme.keyword
+  hilight .hilight.sh 1     "time"            .scheme.keyword
+  hilight .hilight.sh 1     "umask"           .scheme.keyword
+  hilight .hilight.sh 1     "unset"           .scheme.keyword
+  hilight .hilight.sh 1     "wait"            .scheme.keyword
+  ; Shell commands
+  !iif &band .hilight.flags 0x04  hilight .hilight.sh 0 "^\\s*\\{function\\s+\\w[-0-9A-Za-z_]+" .scheme.function
+  hilight .hilight.sh 1     "alias"           .scheme.keyword
+  hilight .hilight.sh 1     "break"           .scheme.keyword
+  hilight .hilight.sh 1     "breaksw"         .scheme.keyword
+  hilight .hilight.sh 1     "case"            .scheme.keyword
+  hilight .hilight.sh 1     "continue"        .scheme.keyword
+  hilight .hilight.sh 1     "dirs"            .scheme.keyword
+  hilight .hilight.sh 1     "do"              .scheme.keyword
+  hilight .hilight.sh 1     "done"            .scheme.keyword
+  hilight .hilight.sh 1     "elif"            .scheme.keyword
+  hilight .hilight.sh 1     "else"            .scheme.keyword
+  hilight .hilight.sh 1     "end"             .scheme.keyword
+  hilight .hilight.sh 1     "endif"           .scheme.keyword
+  hilight .hilight.sh 1     "endsw"           .scheme.keyword
+  hilight .hilight.sh 1     "esac"            .scheme.keyword
+  hilight .hilight.sh 1     "exit"            .scheme.keyword
+  hilight .hilight.sh 1     "export"          .scheme.keyword
+  hilight .hilight.sh 1     "fi"              .scheme.keyword
+  hilight .hilight.sh 1     "for"             .scheme.keyword
+  hilight .hilight.sh 1     "foreach"         .scheme.keyword
+  hilight .hilight.sh 1     "function"        .scheme.keyword
+  hilight .hilight.sh 1     "glob"            .scheme.keyword
+  hilight .hilight.sh 1     "goto"            .scheme.keyword
+  hilight .hilight.sh 1     "hash"            .scheme.keyword
+  hilight .hilight.sh 1     "hashstat"        .scheme.keyword
+  hilight .hilight.sh 1     "history"         .scheme.keyword
+  hilight .hilight.sh 1     "if"              .scheme.keyword
+  hilight .hilight.sh 1     "in"              .scheme.keyword
+  hilight .hilight.sh 1     "limit"           .scheme.keyword
+  hilight .hilight.sh 1     "local"           .scheme.keyword
+  hilight .hilight.sh 1     "onintr"          .scheme.keyword
+  hilight .hilight.sh 1     "popd"            .scheme.keyword
+  hilight .hilight.sh 1     "pushd"           .scheme.keyword
+  hilight .hilight.sh 1     "read"            .scheme.keyword
+  hilight .hilight.sh 1     "rehash"          .scheme.keyword
+  hilight .hilight.sh 1     "return"          .scheme.keyword
+  hilight .hilight.sh 1     "set"             .scheme.keyword
+  hilight .hilight.sh 1     "setenv"          .scheme.keyword
+  hilight .hilight.sh 1     "shift"           .scheme.keyword
+  hilight .hilight.sh 1     "source"          .scheme.keyword
+  hilight .hilight.sh 1     "switch"          .scheme.keyword
+  hilight .hilight.sh 1     "then"            .scheme.keyword
+  hilight .hilight.sh 1     "trap"            .scheme.keyword
+  hilight .hilight.sh 1     "ulimit"          .scheme.keyword
+  hilight .hilight.sh 1     "unhash"          .scheme.keyword
+  hilight .hilight.sh 1     "until"           .scheme.keyword
+  hilight .hilight.sh 1     "while"           .scheme.keyword
+  ; String hilighting
+  0 hilight .hilight.shS 0                    .scheme.string
+  hilight .hilight.shS 4    "\\$" "\\}\\W" "" .scheme.variable
+  hilight .hilight.shS 4    "\\${" "}" ""     .scheme.variable
+  hilight .hilight.shS 4    "\\${([^)]*)\"" "\"}" "" .scheme.variable
+  hilight .hilight.shS 4    "\\$(" ")" ""     .scheme.variable
+  hilight .hilight.shS 4    "`" "`" ""        .scheme.operator
+  hilight .hilight.shS 0    "\\\\."           .scheme.string
+  hilight .hilight.shS 0x80 "\"" .hilight.sh .scheme.string
+  ; Shell variable hilighting
+  0 hilight  .hilight.shV 0                   .scheme.variable
+  hilight .hilight.shV 0    ":-"              $global-scheme
+  hilight .hilight.shV 0    ":="              $global-scheme
+  hilight .hilight.shV 0    ":\\?"            $global-scheme
+  hilight .hilight.shV 4    "\"" "\"" ""      .scheme.string
+  hilight .hilight.shV 4    "\\${" "}" ""     .scheme.variable
+  hilight .hilight.shV 0x80 "}"  .hilight.sh    .scheme.variable
+!endif
+
+!if &sin "d" .fhook-sh.setup
+  0 indent .hilight.sh 1 10
+  indent .hilight.sh    n "function"        t
+  indent .hilight.sh    n "^\*{\s*$"        t
+  indent .hilight.sh    o "^\\s*}"         -t
+  indent .hilight.sh    n "if"              t
+  indent .hilight.sh    s "then"           -t
+  indent .hilight.sh    o "fi"             -t
+  indent .hilight.sh    s "else"           -t
+  indent .hilight.sh    s "elif"           -t
+  indent .hilight.sh    n "case"            t
+  indent .hilight.sh    s "in"             -t
+  indent .hilight.sh    o "esac"           -t
+  indent .hilight.sh    n "for"             t
+  indent .hilight.sh    n "while"           t
+  indent .hilight.sh    s "do"             -t
+  indent .hilight.sh    o "done"           -t
+  indent .hilight.sh    i "#"
+  indent .hilight.sh    e "\"" "\"" "\\"
+!endif
+
+buffer-init-fhook "sh"

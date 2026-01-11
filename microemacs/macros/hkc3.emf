@@ -9,7 +9,7 @@
 ;
 define-macro fhook-c3
   set-variable $buffer-mask "luh1"
-  @# buffer-init "c3"
+  @# buffer-init
   set-variable $buffer-indent-width 2
   buffer-init-hooks
 !emacro

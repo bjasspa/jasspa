@@ -18,13 +18,12 @@ define-macro fhook-blist
   -1 buffer-mode "edit"
   1 buffer-mode "view"
   beginning-of-buffer
-  @# buffer-init "blist"
+  @# buffer-init
   set-variable :mouse-word-select "2 blist-command"
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-blist.name "Buffer List"
 set-variable .fhook-blist.setup &reg "/history/fhook/blist" "gop"
 set-variable .fhook-blist.setup-mask "aegmop"
 set-variable .fhook-blist.command-flag  "|thbio|th|thbio|bio|thbio|bio|thbio|h|thbio|thbio|h|thbio|thbio|th|thbio|h|"

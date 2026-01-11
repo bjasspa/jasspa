@@ -30,6 +30,6 @@
 #     manifest file.
 #
 meVER_CN = 20
-meVER_YR = 25
-meVER_MN = 12
-meVER_DY = 2
+meVER_YR = 26
+meVER_MN = 1
+meVER_DY = 0

@@ -44,9 +44,6 @@ DEFFUNC ("add-color-scheme",            0x42, 0x49584d17, addColorScheme,       
 #if MEOPT_CMDHASH || MEOPT_SPELL
 DEFFUNC ("add-dictionary",              0x00, 0x9bda0eec, dictionaryAdd,        CK_ADDDICT, &__cmdArray[CK_ADDDICT+1], &__cmdArray[CK_CRTFRAME])
 #endif
-#if MEOPT_CMDHASH || MEOPT_FILEHOOK
-DEFFUNC ("add-file-hook",               0x00, 0xb94ea094, addFileHook,          CK_FLHOOK, &__cmdArray[CK_FLHOOK+1], 0)
-#endif
 #if MEOPT_CMDHASH || MEOPT_FILENEXT
 DEFFUNC ("add-next-line",               0x00, 0x6ae5276a, addNextLine,          CK_ADNXTLN, &__cmdArray[CK_ADNXTLN+1], 0)
 #endif
@@ -248,6 +245,9 @@ DEFFUNC ("list-variables",              0x42, 0x28012342, listVariables,        
 #endif
 DEFFUNC ("lower-case-region",           0x04, 0xb69cba83, lowerRegion,          CK_RCASLOW, &__cmdArray[CK_RCASLOW+1], 0)
 DEFFUNC ("lower-case-word",             0x04, 0xf5d5ec1b, lowerWord,            CK_LOWWRD, &__cmdArray[CK_LOWWRD+1], 0)
+#if MEOPT_CMDHASH || MEOPT_FILEHOOK
+DEFFUNC ("major-mode",                  0x00, 0x1cc12a6b, majorMode,            CK_MJRMOD, &__cmdArray[CK_MJRMOD+1], 0)
+#endif
 #if MEOPT_CMDHASH || MEOPT_REGISTRY
 DEFFUNC ("mark-registry",               0x42, 0x713be0d1, markRegistry,         CK_MRKREGY, &__cmdArray[CK_MRKREGY+1], 0)
 #endif

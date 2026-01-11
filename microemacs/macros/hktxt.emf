@@ -11,16 +11,15 @@
 ; Notes:       See docmacro.emf for documentation
 ;
 define-macro fhook-txt
-  ; use the document fhook in docmacro
-  @# doc-fhook-body "txt" "text"
+  @# buffer-init
+  buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-txt.name "Text"
 set-variable .fhook-txt.setup &reg "/history/fhook/txt" "gijopsw"
 set-variable .fhook-txt.setup-mask "aefghijkmnopstuwx"
 
-; load docmacro.emf passing the doc setup flags
+; load docmacro.emf passing the txt setup flags
 execute-file "docmacro" "txt"
 
 buffer-init-fhook "txt"

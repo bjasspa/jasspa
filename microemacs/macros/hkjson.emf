@@ -20,12 +20,11 @@
 ;
 define-macro fhook-json
   set-variable $buffer-mask "luh1"
-  @# buffer-init "json"
+  @# buffer-init
   buffer-init-hooks
 !emacro
 
 ; buffer-init variables
-set-variable .fhook-json.name "JSON"
 set-variable .fhook-json.setup &reg "/history/fhook/json" "ghiop"
 set-variable .fhook-json.setup-mask "adeghikmoptu"
 set-variable .fhook-json.command-flag  "|th|th|"

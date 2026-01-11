@@ -10,10 +10,9 @@
 ;
 define-macro fhook-iss
   set-variable $buffer-mask "luh1"
-  @# buffer-init "iss"
+  @# buffer-init
   buffer-init-hooks
 !emacro
-set-variable .fhook-iss.name "Inno Setup Script"
 set-variable .fhook-iss.setup &reg "/history/fhook/iss" "fghiopx"
 set-variable .fhook-iss.setup-mask "aefghikmoptux"
 set-variable .fhook-iss.comment "|;||;|; | ;|r|"

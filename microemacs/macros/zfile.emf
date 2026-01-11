@@ -14,26 +14,34 @@
 !iif &not &lfin .fhook-dirlst.col-name "        Size"  set-variable .fhook-dirlst.col-name &lin .fhook-dirlst.col-name -1 "        Size"
 set-variable #l0 &lfin .fhook-dirlst.col-name "        Size"
 
-define-macro fhook-zfile
+define-macro fhook-z-file
+  buffer-init
+  set-variable :fmpf &reg &cat :zfl "/fmpf" &sin " Name" #l2
+  set-variable :tag-count 0
+  set-variable :mouse-pick-1 dirlst-mouse-pick-1
+  set-variable :mouse-drop-1 dirlst-mouse-drop-1
+  set-variable :mouse-pick-3 dirlst-mouse-pick-3
+  set-variable :mouse-drop-3 dirlst-mouse-drop-3
+  set-variable :dirlst-mode .fhook-dirlst.mode
+  buffer-init-hooks
 !emacro
+15 major-mode "z-file" "" "" "Z-File"
+set-variable .fhook-z-file.setup &reg "/history/fhook/z-file" "ghmop"
+set-variable .fhook-z-file.setup-mask    "eghkop"
+set-variable .fhook-z-file.command-flag  "|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|h|thbio|thbio|thbio|thbio|th|thbio|bio|"
+set-variable .fhook-z-file.command-name  "|dirlst-search|dirlst-search||dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list||dirlst-tag-toggle|dirlst-tag-mask|dirlst-tag-mask|dirlst-tag-invert|dirlst-tag-set|dirlst-tag-set||zfile-find-file||zfile-find-file|zfile-find-file|zfile-find-file|zfile-find-file||zfile-copy-file|zfile-copy-file|"
+set-variable .fhook-z-file.command-nbind &spr "||0||5|6|4|%s|2|1|||1|-1||1|-1||5||1|9|4|3||1|1|" #l0
+set-variable .fhook-z-file.command-kbind "|s|w||5|6|4|3|2|1||space|+|-|*|a|u||return||e|h|v|y||c|x|"
+set-variable .fhook-z-file.command-desc  "|\HSearch for file by name|Search by order column||Sort by Name|Sort by Extension|Sort by Modified|Sort by Size|Sort by Attribute|Sort by Selected||Toggle Cur File Select|Select Files \H+|Unselect Files \H-|Invert Selection \H*|Select \HAll|\HUnselect All||O\Hpen File|            (Default file tool or Edit file)|\HEdit File|\HHandle File|\HView File|S\Hystem Open File||\HCopy Files||"
 
-set-variable .fhook-zfile.name "Z-File"
-set-variable .fhook-zfile.setup &reg "/history/fhook/zfile" "ghmop"
-set-variable .fhook-zfile.setup-mask    "eghkop"
-set-variable .fhook-zfile.command-flag  "|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|h|thbio|thbio|thbio|thbio|th|thbio|bio|"
-set-variable .fhook-zfile.command-name  "|dirlst-search|dirlst-search||dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list||dirlst-tag-toggle|dirlst-tag-mask|dirlst-tag-mask|dirlst-tag-invert|dirlst-tag-set|dirlst-tag-set||zfile-find-file||zfile-find-file|zfile-find-file|zfile-find-file|zfile-find-file||zfile-copy-file|zfile-copy-file|"
-set-variable .fhook-zfile.command-nbind &spr "||0||5|6|4|%s|2|1|||1|-1||1|-1||5||1|9|4|3||1|1|" #l0
-set-variable .fhook-zfile.command-kbind "|s|w||5|6|4|3|2|1||space|+|-|*|a|u||return||e|h|v|y||c|x|"
-set-variable .fhook-zfile.command-desc  "|\HSearch for file by name|Search by order column||Sort by Name|Sort by Extension|Sort by Modified|Sort by Size|Sort by Attribute|Sort by Selected||Toggle Cur File Select|Select Files \H+|Unselect Files \H-|Invert Selection \H*|Select \HAll|\HUnselect All||O\Hpen File|            (Default file tool or Edit file)|\HEdit File|\HHandle File|\HView File|S\Hystem Open File||\HCopy Files||"
-
-!if &and &sin "h" .fhook-zfile.setup &band .hilight.flags 0x02
-  !iif &not &exist .hilight.zfile  set-variable .hilight.zfile &pinc .hilight.next 1
-  0 hilight .hilight.zfile 0        $global-scheme
-  hilight .hilight.zfile 0x102 "Directory: \\{" .scheme.link
-  hilight .hilight.zfile 0x102 " Attr " .scheme.header
-  hilight .hilight.zfile 0x102 " D" .scheme.dir
-  hilight .hilight.zfile 0x102 "*D" .scheme.dir-select
-  hilight .hilight.zfile 0x102 "*\\." .scheme.select
+!if &and &sin "h" .fhook-z-file.setup &band .hilight.flags 0x02
+  !iif &not &exist .hilight.z-file  set-variable .hilight.z-file &pinc .hilight.next 1
+  0 hilight .hilight.z-file 0        $global-scheme
+  hilight .hilight.z-file 0x102 "Directory: \\{" .scheme.link
+  hilight .hilight.z-file 0x102 " Attr " .scheme.header
+  hilight .hilight.z-file 0x102 " D" .scheme.dir
+  hilight .hilight.z-file 0x102 "*D" .scheme.dir-select
+  hilight .hilight.z-file 0x102 "*\\." .scheme.select
 !endif
 
 define-macro find-zfile
@@ -123,16 +131,8 @@ define-macro find-zfile
   -1 buffer-mode "edit"
   1 buffer-mode "view"
   beginning-of-buffer
-  buffer-init "zfile"
-  set-variable :fmpf &reg &cat #l9 "/fmpf" &sin " Name" #l2
-  set-variable :tag-count 0
-  set-variable :mouse-pick-1 dirlst-mouse-pick-1
-  set-variable :mouse-drop-1 dirlst-mouse-drop-1
-  set-variable :mouse-pick-3 dirlst-mouse-pick-3
-  set-variable :mouse-drop-3 dirlst-mouse-drop-3
-  set-variable :dirlst-mode .fhook-dirlst.mode
   set-variable :zfl #l9
-  buffer-init-hooks
+  major-mode "z-file"
   !iif #l4  ml-write &spr "[ZFile-%s Warning: list command returned %s]" &reg #l9 "NID" #l4
 !emacro
 

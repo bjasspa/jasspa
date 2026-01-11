@@ -9,18 +9,6 @@
 ; Authors:     Steven Phillips
 ;
 !iif &not &exist .osd.notes-tmn  set-variable .osd.notes-tmn &pinc .osd.next 1
-define-macro fhook-enf
-  @# buffer-init "enf"
-  ; Hyperlink with the mouse.
-  set-variable :mouse-pick-3 void
-  set-variable :mouse-drop-3 notes-context-menu
-  set-variable :mouse-word-select notes-process-link
-  buffer-init-hooks
-!emacro
-
-set-variable .fhook-enf.name "ME Notes"
-set-variable .fhook-enf.setup &reg "/history/fhook/enf" "ghijmopwx"
-set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
 
 !if &band .hilight.flags 0x01
   !iif &not &exist .hilight.enft  set-variable .hilight.enft &pinc .hilight.next 1
@@ -165,10 +153,7 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
 !emacro
 
 0 define-macro notes-tree-set-cur
-  !if &seq @wl ""
-    ml-write "[Error: Invalid line!]"
-    !abort
-  !endif
+  !iif &seq @wl ""  -8 ml-write "[Error: Invalid line!]"
   set-variable #l0 $window-line
   find-buffer .notes.current
   set-variable :notes-cur #l0
@@ -219,13 +204,8 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
   find-buffer .notes.current
   set-variable :notes-cur #l0
   notes-create-display
-  !if #l3
-    ml-write "[End of notes]"
-    !abort
-  !elif &not #l2
-    ml-write "[Top of notes]"
-    !abort
-  !endif
+  !iif #l3  -8 ml-write "[End of notes]"
+  !iif &not #l2  -8 ml-write "[Top of notes]"
 !emacro
 0 define-macro notes-tree-backward-note
   &neg @# notes-tree-forward-note
@@ -290,17 +270,11 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
 !emacro
 
 0 define-macro notes-tree-insert
-  !if &seq @wl ""
-    ml-write "[Error: Invalid line!]"
-    !abort
-  !endif
+  !iif &seq @wl ""  -8 ml-write "[Error: Invalid line!]"
   set-variable #l0 $window-line
   set-variable #l1 ""
   2 osd-entry "New Note" "Note \HName: " #l1 $cursor-x &add $cursor-y 1 20
-  !if &seq &trb #l1 ""
-    ml-write "[Error: Invalid name]"
-    !abort
-  !endif
+  !iif &seq &trb #l1 ""  -8 ml-write "[Error: Invalid name]"
   find-buffer .notes.current
   set-variable :notes-cur #l0
   notes-create-note #l1
@@ -331,10 +305,7 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
   beginning-of-buffer
   set-variable #l5 &rig #l0 &add 5 &rsin "/" #l0
   !force search-buffer "me" &spr "^\b\benf\b\bdivider\b\b%s$" #l5
-  !if &not $status
-    ml-write &spr "[Error: Failed to find note for node \"%s\"]" #l5
-    !abort
-  !endif
+  !iif &not $status  -8 ml-write &spr "[Error: Failed to find note for node \"%s\"]" #l5
   beginning-of-line
   set-mark
   forward-line
@@ -344,13 +315,8 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
 !emacro
 
 0 define-macro notes-tree-delete
-  !if &or &seq @wl "" &equ $window-line 1
-    ml-write "[Error: Invalid line!]"
-    !abort
-  !elif &not &xseq @wl "[^\"]* \"[0-9a-f]*\" = \"\\(.*\\)\""
-    ml-write "[Error: Strange line!]"
-    !abort
-  !endif
+  !iif &or &seq @wl "" &equ $window-line 1  -8 ml-write "[Error: Invalid line!]"
+  !iif &not &xseq @wl "[^\"]* \"[0-9a-f]*\" = \"\\(.*\\)\""  -8 ml-write "[Error: Strange line!]"
   set-variable #l1 @s1
   set-variable #l0 $window-line
   !if @#
@@ -370,10 +336,7 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
 !emacro
 
 0 define-macro notes-tree-cut
-  !if &or &seq @wl "" &equ $window-line 1
-    ml-write "[Error: Invalid line!]"
-    !abort
-  !endif
+  !iif &or &seq @wl "" &equ $window-line 1  -8 ml-write "[Error: Invalid line!]"
   set-variable #l0 $window-line
   set-position "\x81"
   find-buffer .notes.current
@@ -392,12 +355,10 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
   find-buffer .notes.current
   !if &not &exi :notes-cut
     goto-position "\x81"
-    ml-write "[Error: Note to cut has not been set!]"
-    !abort
+    -8 ml-write "[Error: Note to cut has not been set!]"
   !elif &seq "" &reg :notes-cut ""
     goto-position "\x81"
-    ml-write "[Error: Note to cut no longer exists!]"
-    !abort
+    -8 ml-write "[Error: Note to cut no longer exists!]"
   !endif
   #l0 mark-registry :notes-root "?"
   set-variable #l1 $result
@@ -414,10 +375,7 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
 0 define-macro notes-tree-move
   beginning-of-line
   -1 search-buffer "Me" "\""
-  !if &not $status
-    ml-write "[Error: Invalid line!]"
-    !abort
-  !endif
+  !iif &not $status  -8 ml-write "[Error: Invalid line!]"
   set-variable #l0 $window-col
   set-variable #l1 $window-line
   set-variable #l2 &mid @wl #l0 4
@@ -429,8 +387,7 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
     !force -1 search-buffer "Me" "\""
     !if &les $window-col #l0
       set-variable $window-line #l1
-      ml-write "[Error: Invalid line!]"
-      !abort
+      -8 ml-write "[Error: Invalid line!]"
     !elif &equ $window-col #l0
       set-variable #l3 &sub #l3 1
     !endif
@@ -452,10 +409,7 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
 !emacro
 
 0 define-macro notes-tree-sort
-  !if &seq @wl ""
-    ml-write "[Error: Invalid line!]"
-    !abort
-  !endif
+  !iif &seq @wl ""  -8 ml-write "[Error: Invalid line!]"
   set-variable #l0 $window-line
   set-variable #l9 &bmod "exact"
   find-buffer .notes.current
@@ -512,10 +466,7 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
 !emacs
 
 0 define-macro notes-tree-rename
-  !if &seq @wl ""
-    ml-write "[Error: Invalid line!]"
-    !abort
-  !endif
+  !iif &seq @wl ""  -8 ml-write "[Error: Invalid line!]"
   set-variable #l0 $window-line
   set-position "\x81"
   find-buffer .notes.current
@@ -525,10 +476,7 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
   set-variable #l3 $result
   set-variable #l1 &reg #l3 ""
   2 osd-entry "Rename Note" "Note \HName: " #l1 $cursor-x &add $cursor-y 1 50
-  !if &seq &trb #l1 ""
-    ml-write "[Error: Invalid name]"
-    !abort
-  !endif
+  !iif &seq &trb #l1 ""  -8 ml-write "[Error: Invalid name]"
   set-registry #l3 #l1
   find-buffer .notes.current
   notes-tree-update
@@ -540,10 +488,7 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
   set-variable #l9 :notes-root
   next-window
   beginning-of-line
-  !if &not &xseq @wl "[^\"]*\\([^\" ]\\) \"\\([0-9a-f]+\\)\" = \"\\(.*\\)\""
-    ml-write "[Error: Strange line!]"
-    !abort
-  !endif
+  !iif &not &xseq @wl "[^\"]*\\([^\" ]\\) \"\\([0-9a-f]+\\)\" = \"\\(.*\\)\""  -8 ml-write "[Error: Strange line!]"
   !if @#
     -1 buffer-mode "view"
     ; moving forward, if the current node is closed, open
@@ -573,10 +518,8 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
     set-variable @wc " "
     !repeat
       backward-line
-      !if &not &xseq @wl "[^\"]*\\([^\" ]\\) \"\\([0-9a-f]+\\)\" = \"\\(.*\\)\""
-        ml-write "[Error: Strange line!]"
-        !abort
-      !elif &set #l0 &seq @s1 "+"
+      !iif &not &xseq @wl "[^\"]*\\([^\" ]\\) \"\\([0-9a-f]+\\)\" = \"\\(.*\\)\""  -8 ml-write "[Error: Strange line!]"
+      !if &set #l0 &seq @s1 "+"
         set-variable #l3 $window-line
         #l3 mark-registry #l9 "?"
         set-variable #l4 $result
@@ -597,10 +540,7 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
   !force narrow-buffer
   beginning-of-buffer
   !force search-buffer "me" &spr "^\b\benf\b\bdivider\b\b%s$" #l0
-  !if &not $status
-    ml-write &spr "[Error: Failed to find note for node \"%s\"]" #l0
-    !abort
-  !endif
+  !iif &not $status  -8 ml-write &spr "[Error: Failed to find note for node \"%s\"]" #l0
   beginning-of-line
   forward-line
   set-mark
@@ -621,29 +561,18 @@ set-variable .fhook-enf.setup-mask "aeghijkopstuwx1"
 0 define-macro notes-tree-isearch
   set-variable #l0 @#
   set-variable #l8 $window-id
-  !if &seq &set #l2 &ind &spr ":%s:notes-id" .notes.current "ERROR"
-    ml-write "[Error: Current notes buffer has been deleted]"
-    !abort
-  !elif &seq $buffer-bname &cat "*" .notes.current
+  !iif &seq &set #l2 &ind &spr ":%s:notes-id" .notes.current "ERROR"  -8 ml-write "[Error: Current notes buffer has been deleted]"
+  !if &seq $buffer-bname &cat "*" .notes.current
     next-window
     set-variable #l9 &sub $window-eline 1
     next-window
-    !if &not &equ #l8 $window-id
-      ml-write "[Error: Window layout not correct]"
-      !abort
-    !endif
+    !iif &not &equ #l8 $window-id  -8 ml-write "[Error: Window layout not correct]"
   !else
     set-variable #l9 &sub $window-eline 1
     next-window
-    !if &not &seq $buffer-bname .notes.current
-      ml-write "[Error: Window layout not correct]"
-      !abort
-    !endif
+    !iif &not &seq $buffer-bname .notes.current  -8 ml-write "[Error: Window layout not correct]"
     next-window
-    !if &not &equ #l8 $window-id
-      ml-write "[Error: Window layout not correct]"
-      !abort
-    !endif
+    !iif &not &equ #l8 $window-id  -8 ml-write "[Error: Window layout not correct]"
     next-window
   !endif
   !repeat
@@ -764,10 +693,7 @@ define-macro notes-tree-isearch-backward
     !elif &gre #l2 .notes.file-id
       set-variable #l2 1
     !endif
-    !if &seq &set #l3 &reg &cat "/enf/" #l2 "" ""
-      ml-write &spr "[Error: Bad reg value for node \"/end/%d\"]" #l2
-      !abort
-    !endif
+    !iif &seq &set #l3 &reg &cat "/enf/" #l2 "" ""  -8 ml-write &spr "[Error: Bad reg value for node \"/end/%d\"]" #l2
     !force 0 find-buffer #l3
     !if $status
       !force !force notes-file $buffer-fname
@@ -836,7 +762,7 @@ define-macro note-setup
     insert-newline
     set-variable #l2 "\b\benf-info\b\b\b\b"
   !endif
-  set-variable @wl &lset &lset &lset #l2 3 &rig $buffer-fhook 6 4 $buffer-indent-width 5 $buffer-tab-width
+  set-variable @wl &lset &lset &lset #l2 3 $buffer-major-mode 4 $buffer-indent-width 5 $buffer-tab-width
   goto-position "\x81"
   notes-create-display
 !emacro
@@ -951,10 +877,7 @@ define-macro note-setup
     !force narrow-buffer
     beginning-of-buffer
     !force search-buffer "me" &spr "^\b\benf\b\bdivider\b\b%s$" #l5
-    !if &not $status
-      ml-write &spr "[Error: Failed to find note for node \"%s\"]" #l5
-      !abort
-    !endif
+    !iif &not $status  -8 ml-write &spr "[Error: Failed to find note for node \"%s\"]" #l5
     beginning-of-line
     forward-line
     !if &seq &lef @wl 11 "\b\benf-info\b"
@@ -977,7 +900,7 @@ define-macro note-setup
   !endif
   !if &len #l7
     set-variable #l6 &cond &len &lget #l7 2 &lget #l7 2 &lget #l9 3
-    buffer-major-mode #l6
+    !iif &not &seq $buffer-major-mode #l6  major-mode #l6
     !iif &lget #l7 3  set-variable $buffer-indent-width &lget #l7 3
     !iif &lget #l7 4  set-variable $buffer-tab-width &lget #l7 4
     1 buffer-mode "hide"
@@ -1027,18 +950,12 @@ define-macro notes-file
         delete-buffer $buffer-bname
 *cryptf
         !force set-variable #l4 @ml88 &spr "Password for %s" #l0
-        !if &not &and $status &len #l4
-          ml-write &spr "[Error: failed to load file \"%s\"]" #l1
-          !abort
-        !endif
+        !iif &not &and $status &len #l4  -8 ml-write &spr "[Error: failed to load file \"%s\"]" #l1
         !force 4 find-file #l1 #l4
         !force narrow-buffer
         beginning-of-buffer
       !endif
-      !if &not &seq &lef @wl 7 "-!- enf"
-        ml-write &spr "[Error: file \"%s\" does not appear to be a notes file]" #l1
-        !abort
-      !endif
+      !iif &not &seq &lef @wl 7 "-!- enf"  -8 ml-write &spr "[Error: file \"%s\" does not appear to be a notes file]" #l1
     !endif
   !else
     set-variable #l1 #l0
@@ -1067,20 +984,16 @@ define-macro notes-file
   !if &not &exi :notes-root
     !force narrow-buffer
     beginning-of-buffer
-    !if &not &xseq @wl "-!- enf\\([ \t]*; major-mode: \\(\\w+\\)\\)?[ \t]+-!-"
-      ml-write &spr "[Error: file \"%s\" does not appear to be an enf file]" #l1
-      !abort
-    !elif &seq "" &set #l3 @s2
-      set-variable #l3 "jst"
-    !endif
+    ; TODO improve?
+    !iif &not &xseq @wl "-!- enf\\([ \t]*; major-mode: \\(\\w+\\)\\)?[ \t]+-!-"  -8 ml-write &spr "[Error: file \"%s\" does not appear to be an enf file]" #l1
+    !iif &seq "" &set #l3 @s2  set-variable #l3 "jst"
     end-of-buffer
     backward-line
     !if &seq @wl "\"z-type\" = \"1\""
       set-variable :notes-dir &lef $buffer-fname &rsin "/" $buffer-fname
       set-variable :notesy &con &bmod "crypt" #l4 ""
     !elif &not &seq @wl "\b\benf\b\bdivider\b\bEND"
-      ml-write &spr "[Format Error: End divider missing]"
-      !abort
+      -8 ml-write &spr "[Format Error: End divider missing]"
     !else
       set-variable :notes-dir ""
     !endif
@@ -1091,10 +1004,7 @@ define-macro notes-file
       end-of-buffer
     !else
       !force search-buffer "me" "^\b\benf\b\bdivider\b\b"
-      !if &not &seq @wl "\b\benf\b\bdivider\b\b0"
-        ml-write "[Format Error: Initial divider missing]"
-        !abort
-      !endif
+      !iif &not &seq @wl "\b\benf\b\bdivider\b\b0"  -8 ml-write "[Format Error: Initial divider missing]"
       beginning-of-line
     !endif
     3 narrow-buffer
@@ -1106,8 +1016,7 @@ define-macro notes-file
     set-variable :notes-cur &reg &cat :notes-root "node-cur" "1"
     set-variable :notes-dmm #l3
   !elif &les :notes-cur 1
-    ml-write "[Error: variable :notes-cur not set]"
-    !abort
+    -8 ml-write "[Error: variable :notes-cur not set]"
   !endif
   set-variable .notes.current $buffer-bname
   goto-position "\x82"
@@ -1209,10 +1118,7 @@ define-macro notes-instant
 
 
 define-macro notes-context
-  !if &seq &set #l0 $buffer-fname ""
-    ml-write "[Current buffer has no file name]"
-    !abort
-  !endif
+  !iif &seq &set #l0 $buffer-fname ""  -8 ml-write "[Current buffer has no file name]"
   notes-file $user-name
   notes-set-to-root
   notes-get-create-note "Context Notes"
@@ -1239,10 +1145,7 @@ define-macro notes-context
     notes-close
     set-variable #l8 @ml2 "note-context" #l9
     set-variable #l9 &xrep &xrep &xrep #l8 "//+" "/" "^/" "" "/$" ""
-    !if &seq #l9 ""
-      ml-write &spr "Invalid context: %s]" #l8
-      !abort
-    !endif
+    !iif &seq #l9 ""  -8 ml-write &spr "Invalid context: %s]" #l8
     notes-file $user-name
   !else
     set-variable #l9 &rig #l9 1

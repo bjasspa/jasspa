@@ -18,7 +18,7 @@ define-macro fhook-c
   ; Is it an include h file or a c file?
   set-variable #l0 &con &isin ".h" $buffer-bname "h" "c"
   set-variable $buffer-mask "luh1"
-  @# buffer-init "c" #l0
+  @# buffer-init #l0
   buffer-init-hooks
 !emacro
 
@@ -237,6 +237,7 @@ set-variable .fhook-c.item-list-r7 "Strc \CCd\\1\CCA"
     hilight .hilight.c 1 "meKillNode"     .scheme.type
     hilight .hilight.c 1 "meLine"         .scheme.type
     hilight .hilight.c 1 "meMacro"        .scheme.type
+    hilight .hilight.c 1 "meMajorMode"    .scheme.type
     hilight .hilight.c 1 "meMode"         .scheme.type
     hilight .hilight.c 1 "meNamesList"    .scheme.type
     hilight .hilight.c 1 "meNarrow"       .scheme.type
@@ -540,15 +541,14 @@ define-macro-file hkcpp fhook-cpp
 ; c to cpp file converter
 define-macro c-to-cpp-convert
   beginning-of-buffer
-  1 buffer-mode "magic"
-  !force -1 search-forward "-[*!]- [Cc] -[*!]-"
+  !force -2 search-buffer "mE" "-[*!]-[ \t]*\\(mode:[ \t]*\\)?c\\([ \t:;].*-[*!]-\\)"
   !if $status
-    4 backward-char
+    &len @s2 backward-char
     insert-string "++"
   !else
-    !force -1 search-forward "-[*!]- [Cc]++ -[*!]-"
+    !force -2 search-buffer "mE" "-[*!]- c++ -[*!]-"
     !if &not $status
-      !force -1 search-forward "/\\*"
+      !force -2 search-buffer "mE" "/\\*"
       !if $status
         insert-string " -*- C++ -*- "
       !else
@@ -556,8 +556,7 @@ define-macro c-to-cpp-convert
       !endif
     !endif
   !endif
-  set-variable $buffer-fhook "fhook-cpp"
-  fhook-cpp
+  major-mode "cpp"
 !emacro
 
 buffer-init-fhook "c"

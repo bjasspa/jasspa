@@ -39,26 +39,14 @@
 0 define-macro html-toggle-mode
   !if &seq $buffer-fhook "fhook-html"
     set-variable :auto-spell &cond &seq $buffer-input "auto-spell-input" 1 -1
-    !if &sin "s" .fhook-html.setup
-      -1 auto-spell
-    !endif
-    set-variable $buffer-fhook "fhook-vb"
-    !if &sin "d" .fhook-html.setup
-      set-variable $buffer-indent .hilight.vb
-    !endif
+    !iif &sin "s" .fhook-html.setup  -1 auto-spell
+    major-mode "vb"
   !else
-    set-variable $buffer-fhook "fhook-html"
-    !if &sin "d" .fhook-html.setup
-      set-variable $buffer-indent .hilight.html
-    !endif
-    !if &sin "s" .fhook-html.setup
-      :auto-spell auto-spell
-    !endif
+    major-mode "html"
   !endif
-  !if .toolbar.open
-    ; flag that the buffer type has changed
-    set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x004
-  !endif
+  ; If toolbar is open flag that the buffer type has changed
+  ; TODO this should effectively be done by the major-mode command - check and fix
+  !iif .toolbar.open  set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x004
 !emacro
 
 0 define-macro html-get-color-schm
