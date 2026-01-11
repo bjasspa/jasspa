@@ -140,7 +140,7 @@ EAFS=	ada.eaf		adoc.eaf	asp.eaf		autoit.eaf	\
 	dart.eaf	dot.eaf		emf.eaf		euphor.eaf	\
 	f.eaf		fusion.eaf	go.eaf		groovy.eaf	\
 	hask.eaf	hkasp.eaf	hkc.eaf		hkcpp.eaf	\
-	hkemf.eaf	hkhtml.eaf	hkjsp.eaf	hkjst.eaf	
+	hkemf.eaf	hkhtml.eaf	hkjsp.eaf	hkjst.eaf	\
 	hknroff.eaf	hkphp.eaf	html.eaf	\
 	java.eaf	js.eaf		jsp.eaf		jst.eaf		\
 	julia.eaf	kotlin.eaf	latex.eaf	lua.eaf		\
