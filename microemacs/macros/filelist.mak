@@ -40,8 +40,8 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkdiff.emf	hkdirlst.emf	hkdirtre.emf	\
 	hkdoc.emf	hkdot.emf	\
 	hkehf.emf	hkemf.emf	hkerf.emf	hkeuphor.emf	\
-	hkf90.emf	hkfvwm.emf	hkgo.emf	hkhask.emf	\
-	hkhtml.emf	\
+	hkf90.emf	hkfvwm.emf	hkgo.emf	hkgroovy.emf	\
+	hkfusion.emf	hkhask.emf	hkhtml.emf	\
 	hkidl.emf	hkimake.emf	hkinfo.emf	hkini.emf	\
 	hkipipe.emf	hkiss.emf	\
 	hkjava.emf	hkjs.emf	hkjson.emf	hkjsp.emf	\
@@ -114,11 +114,11 @@ ETFS=	ada.etf		adoc.etf	asm.etf		asn1.etf	\
 	cs.etf		c3.etf\
 	dart.etf	doc.etf		dot.etf		\
 	emf.etf		euphor.etf	\
-	f.etf		f90.etf		hask.etf	\
+	f.etf		f90.etf		fusion.etf	hask.etf	\
 	h.etf		hpp.etf		html.etf	go.etf	\
 	idl.etf		imake.etf	\
 	java.etf	js.etf		jst.etf		julia.etf	\
-	kotlin.eaf	latex.etf	lua.etf		\
+	groovy.etf	kotlin.eaf	latex.etf	lua.etf		\
 	makefile.etf	md.etf		mhg.etf		mod2.etf	\
 	newcomp.etf	newuser.etf	nim.etf		\
 	nroff.etf	octave.etf	\
@@ -138,11 +138,10 @@ EAFS=	ada.eaf		adoc.eaf	asp.eaf		autoit.eaf	\
 	c.eaf		c3.eaf		cfml.eaf	cpp.eaf		\
 	cs.eaf		\
 	dart.eaf	dot.eaf		emf.eaf		euphor.eaf	\
-	f.eaf		go.eaf		hask.eaf	\
-	hkasp.eaf	hkc.eaf		hkcpp.eaf	hkemf.eaf	\
-	hkhtml.eaf	hkjsp.eaf	hkjst.eaf	hknroff.eaf	\
-	hkphp.eaf	\
-	html.eaf	\
+	f.eaf		fusion.eaf	go.eaf		groovy.eaf	\
+	hask.eaf	hkasp.eaf	hkc.eaf		hkcpp.eaf	\
+	hkemf.eaf	hkhtml.eaf	hkjsp.eaf	hkjst.eaf	
+	hknroff.eaf	hkphp.eaf	html.eaf	\
 	java.eaf	js.eaf		jsp.eaf		jst.eaf		\
 	julia.eaf	kotlin.eaf	latex.eaf	lua.eaf		\
 	md.eaf		nim.eaf		octave.eaf	\

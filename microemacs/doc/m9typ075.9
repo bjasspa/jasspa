@@ -1,34 +1,34 @@
 .\" -*- nroff -*-
-.\" Copyright (C) 1999-2025 JASSPA (www.jasspa.com)
+.\" Copyright (C) 2025 JASSPA (www.jasspa.com)
 .\"
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
 .\"  Created By    : Detlef Groth
-.\"  Created       : Tue Sep 28 11:30:00 2025
+.\"  Created       : Sun Dec 29 19:00:00 2025
 .\"
-.Id $Id: m9typ068.9,v 2.8 2026/01/09 17:13:50 jon Exp $
+.Id $Id: m9typ075.9,v 2.8 2025/12/29 19:59:04 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
-.TH C# 9
-.XI C# - "C# programming language"
-.XI cs - "C# programming language"
+.TH groovy 9
+.XI groovy - "Groovy programming language"
 .SH SYNOPSIS
-C# \- C# programming language (C sharp)
+scala \- Groovy programming language
 .SH FILES
 .na
-.B hkcs.emf
-\- C# programming language hook definition
+.B hkgroovy.emf
+\- Groovy programming language hook definition
 .br
-.B cs.eaf
-\- C# programming language abbreviation file
+.B groovy.eaf
+\- Groovy abbreviation file
 .br
-.B cs.etf
-\- C# programming language template file
+.B groovy.etf
+\- Groovy template file
+.br
 .ad
 .SH EXTENSIONS
 .na
-\fB.cs\fR \- C#
+\fB.gvy, .gy, .gsh, .groovy \fR \- Groovy
 .ad
 .SH DESCRIPTION
 .IP "\fBGeneral Editing\fR"
@@ -37,7 +37,7 @@ On creating a new file, a new header is automatically included into the file.
 is by default enabled, allowing the modification time-stamp to be maintained in
 the header.
 .IP "\fBHilighting\fR"
-The  hilighting  features allow  commands,  variables,  logical, comments,   
+The  hilighting  features allow  commands,  functions, traits, classes, variables,  logical, comments,   
 strings  and  characters  of  the  language  to  be
 differentiated and rendered in different colors.
 .IP "\fBAuto Layout\fR"
@@ -45,29 +45,23 @@ The command
 .Ht indent 2
 performs automatic layout of the text.
 .IP
-.Ht restyle-region 3
-and
-.Ht restyle-buffer 3
-are available to reformat  (re-layout) selected sections of the buffer, or the
-whole buffer, respectively.
-.IP
 Comments  may be formatted  using  \fC\*eo\fR,  which  reformats  the  comments
 according  to  the  current  fill  paragraph.  If  a  comment  commences  with
 \fC/***...\fR then the comment is automatically formatted to a box.
 .IP "\fBFolding and Information Hiding\fR"
-Generic  folding  is  enabled  within  the C# file. The folds  occur  about
-function, class and enum definitions and a closing  
-curly brace at the  beginning  of a line.
+Generic  folding  is  enabled  within  the Groovy file. The folds  occur  about
+lines with leading lowercase characters and an open curly brace at the end of a line and are continued
+until the next line with an closing curly brace.
 .Ht collapse-all 3
 (un)folds all regions in the file,
 .Ht collapse-current 3
 (un)folds the current region.
 .IP "\fBNavigation via Item List\fR"
-The C# mode offers beside folding as well support for displaying an outline of the
-functions and classes of the C# file for easy navigation using the 
+The Groovy mode offers beside folding as well support for displaying an outline of the
+functions, objects, classes and traits. These can be explored with easy navigation using the 
 .Ht item-list 3
 .IP "\fBAbbreviations\fR"
-The  installation  comes with a default  abbreviation  file for C# file  editing
+The  installation  comes with a default  abbreviation  file for Groovy file  editing
 which  can  be  used  by  writing  short   abbreviations   like   "\fBfo\fR" (for),
 "\fBif\fR", "\fBei\fR" (else if) or "\fBcl\fR" (class) - and then pressing the key-binding for the 
 .Ht expand-abbrev-handle 3
@@ -85,9 +79,7 @@ The short cut keys used within the buffer are:-
 .br
 \fB\*cc \*cd\fR \- Uncomment the current line.
 .br
-\fB\*cc \*ce\fR \- Comment to the end of the line with stars (*).
-.br
-\fB\*a\*ci\fR \- Restyle the current region.
+\fB\*cc \*ce\fR \- Comment to the end of the line with hyphens (--).
 .br
 \fB\*eq\fR \- Format a comment.
 .br
@@ -103,7 +95,7 @@ The short cut keys used within the buffer are:-
 .SH NOTES
 .PP
 The  hilighting  or the addition of new item list matches  is  typically
-extended  using  a  file   \fBmycs.emf\fR
+extended  using  a  file   \fBmygroovy.emf\fR.
 .SH "SEE ALSO"
 .na
 .Ht abbrev-list 3 ,
@@ -111,10 +103,7 @@ extended  using  a  file   \fBmycs.emf\fR
 .Ht collapse-current 3 ,
 .Ht compile 3 ,
 .Ht expand-abbrev-handle 3 ,
-.Ht java 9 ,
 .Ht item-list 3 ,
-.Ht restyle-buffer 3 ,
-.Ht restyle-region 3 ,
 .Ht time 2m .
 .sp 1
 .Hl "Supported File Types" FileTypes -

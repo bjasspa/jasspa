@@ -78,6 +78,7 @@ define-macro-file draw
 define-macro-file ftp
 define-macro-file xrdb xrdb-scheme
 ;
+<<<<<<< HEAD
 ; Define list of supported major-modes, start with modes that define content-ids as the order is more important
 29 major-mode "sh" ".sh .ksh .csh .login .bashrc .cshrc .tcshrc .zshrc .profile" "UNIX Shell script" 1 "^#![ \t]*/.*sh"
 16 major-mode "\\1" 1 "^#![ \t]*/.*\\(perl\\|awk\\|python\\|ruby\\)"
@@ -122,8 +123,10 @@ define-macro-file xrdb xrdb-scheme
 9 major-mode "erf" "ME Registry"
 7 major-mode "euphor" "euphoria" ".ex .exw .exu .e .ew .eu"
 7 major-mode "f" "fortran" ".f .f77 .f90"
+5 major-mode "fusion" ".fu"
 5 major-mode "fvwm" ".fvwm .fvwm2rc"
 1 major-mode "go"
+5 major-mode "groovy" ".gy .gsh .gvy .groovy"
 5 major-mode "hask" ".hs"
 5 major-mode "html" ".htm .html .htp .hts"
 9 major-mode "idl" "OMG IDL"

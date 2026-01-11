@@ -1,34 +1,33 @@
 .\" -*- nroff -*-
-.\" Copyright (C) 1999-2025 JASSPA (www.jasspa.com)
+.\" Copyright (C) 1999-2026 JASSPA (www.jasspa.com)
 .\"
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
 .\"  Created By    : Detlef Groth
-.\"  Created       : Tue Sep 28 11:30:00 2025
+.\"  Created       : Fri Jan 09 15:30:00 2026
 .\"
-.Id $Id: m9typ068.9,v 2.8 2026/01/09 17:13:50 jon Exp $
+.Id $Id: m9typ076.9,v 2.8 2026/01/09 16:48:14 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
-.TH C# 9
-.XI C# - "C# programming language"
-.XI cs - "C# programming language"
+.TH fusion 9
+.XI fu - "Fusion transpiler programming language"
 .SH SYNOPSIS
-C# \- C# programming language (C sharp)
+fu \- Fusion transpiler programming language
 .SH FILES
 .na
-.B hkcs.emf
-\- C# programming language hook definition
+.B hkfusion.emf
+\- Fusion programming language hook definition
 .br
-.B cs.eaf
-\- C# programming language abbreviation file
+.B fusion.eaf
+\- Fusion programming language abbreviation file
 .br
-.B cs.etf
-\- C# programming language template file
+.B fusion.etf
+\- Fusion programming language template file
 .ad
 .SH EXTENSIONS
 .na
-\fB.cs\fR \- C#
+\fB.fu\fR \- Fusion
 .ad
 .SH DESCRIPTION
 .IP "\fBGeneral Editing\fR"
@@ -37,7 +36,7 @@ On creating a new file, a new header is automatically included into the file.
 is by default enabled, allowing the modification time-stamp to be maintained in
 the header.
 .IP "\fBHilighting\fR"
-The  hilighting  features allow  commands,  variables,  logical, comments,   
+The  hilighting  features allow  commands,  variables,  logicals, comments,   
 strings  and  characters  of  the  language  to  be
 differentiated and rendered in different colors.
 .IP "\fBAuto Layout\fR"
@@ -55,19 +54,19 @@ Comments  may be formatted  using  \fC\*eo\fR,  which  reformats  the  comments
 according  to  the  current  fill  paragraph.  If  a  comment  commences  with
 \fC/***...\fR then the comment is automatically formatted to a box.
 .IP "\fBFolding and Information Hiding\fR"
-Generic  folding  is  enabled  within  the C# file. The folds  occur  about
-function, class and enum definitions and a closing  
+Generic  folding  is  enabled  within  the Fusion file. The folds  occur  about
+functions and classes  definition and their opening brace and  a closing  
 curly brace at the  beginning  of a line.
 .Ht collapse-all 3
 (un)folds all regions in the file,
 .Ht collapse-current 3
 (un)folds the current region.
 .IP "\fBNavigation via Item List\fR"
-The C# mode offers beside folding as well support for displaying an outline of the
-functions and classes of the C# file for easy navigation using the 
+The Fusion mode offers beside folding as well support for displaying an outline of the
+functions, classes and enums of the Fusion file for easy navigation using the 
 .Ht item-list 3
 .IP "\fBAbbreviations\fR"
-The  installation  comes with a default  abbreviation  file for C# file  editing
+The  installation  comes with a default  abbreviation  file for Fusion file  editing
 which  can  be  used  by  writing  short   abbreviations   like   "\fBfo\fR" (for),
 "\fBif\fR", "\fBei\fR" (else if) or "\fBcl\fR" (class) - and then pressing the key-binding for the 
 .Ht expand-abbrev-handle 3
@@ -103,7 +102,7 @@ The short cut keys used within the buffer are:-
 .SH NOTES
 .PP
 The  hilighting  or the addition of new item list matches  is  typically
-extended  using  a  file   \fBmycs.emf\fR
+extended  using  a  file   \fBmyfusion.emf\fR
 .SH "SEE ALSO"
 .na
 .Ht abbrev-list 3 ,
