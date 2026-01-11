@@ -40,7 +40,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkdiff.emf	hkdirlst.emf	hkdirtre.emf	\
 	hkdoc.emf	hkdot.emf	\
 	hkehf.emf	hkemf.emf	hkerf.emf	hkeuphor.emf	\
-	hkf90.emf	hkfvwm.emf	hkgo.emf	hkgroovy.emf	\
+	hkf.emf		hkfvwm.emf	hkgo.emf	hkgroovy.emf	\
 	hkfusion.emf	hkhask.emf	hkhtml.emf	\
 	hkidl.emf	hkimake.emf	hkinfo.emf	hkini.emf	\
 	hkipipe.emf	hkiss.emf	\
@@ -56,7 +56,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkpython.emf	\
 	hkr.emf		hkrbin.emf	hkrd.emf	\
 	hkruby.emf	hkrul.emf	hkrust.emf	hkscala.emf	\
-	hksamba.emf	hkscheme.emf	hksgml.emf	hkshell.emf	\
+	hksamba.emf	hkscheme.emf	hksgml.emf	hksh.emf	\
 	hkslang.emf	hkspec.emf	hksql.emf	hkswift.emf	\
 	hktcl.emf	hktcldoc.emf	hktexi.emf	hktlsosd.emf	\
 	hktools.emf	hkts.emf	hktxt.emf	hktypst.emf	\
