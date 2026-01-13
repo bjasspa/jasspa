@@ -273,12 +273,12 @@ define-macro-file hktlsosd major-mode-tools-setup
   !iif &exist "my-dhook-always"  my-dhook-always
 !emacro
 
-; TODO SSP sort out
 ; define the default hook
 define-macro fhook-default
   @# buffer-init
   buffer-init-hooks
 !emacro
+7 major-mode "default" "" ""
 
 ; buffer-init variables
 set-variable .fhook-default.setup &reg "/history/fhook/default" "gix"

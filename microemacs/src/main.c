@@ -841,6 +841,7 @@ exitEmacs(int f, int n)
                 extern meNamesList buffNames;
                 extern meDirList   fileNames;
                 extern meNamesList commNames;
+                extern meNamesList mjmdNames;
                 extern meNamesList modeNames;
                 extern meNamesList varbNames;
                 
@@ -849,6 +850,8 @@ exitEmacs(int f, int n)
                 meNullFree(fileNames.mask);
                 meNullFree(fileNames.path);
                 freeFileList(fileNames.size,fileNames.list);
+                meNullFree(mjmdNames.list);
+                meNullFree(mjmdNames.mask);
                 meNullFree(modeNames.mask);
                 meNullFree(commNames.list);
                 meNullFree(commNames.mask);

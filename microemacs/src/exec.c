@@ -305,7 +305,7 @@ meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
         meUByte buff[meTOKENBUF_SIZE_MAX], *res, *ss, cc;
         
         /* grab token and advance past */
-        ss = execstr ;
+        ss = execstr;
 #if MEOPT_BYTECOMP
         if((cc=*ss) & BCLEAD)
         {
@@ -324,7 +324,7 @@ meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
                     res++;
                 case TKCMD:
                 case TKLIT:
-                    ss = buffer ;
+                    ss = buffer;
                     if(option & MLMACNORT)
                     {
                         while((*ss))
@@ -354,13 +354,13 @@ meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
                                             break;
                                         *res++ = cc;
                                     }
-                                    *res = '\0' ;
+                                    *res = '\0';
                                 }
                                 break;
                             }
                         }
                     }
-                    return meTRUE ;
+                    return meTRUE;
                 }
                 memcpy(buff,res,len);
                 buff[len] = '\0';
@@ -384,7 +384,7 @@ meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
         
         if((buff[0] == '@') && (buff[1] == 'm') && (buff[2] == 'x'))
         {
-            cc = buff[3] ;
+            cc = buff[3];
             execstr = token(execstr, buff);
             if(cc == 'a')
                 execstr = ss;
@@ -393,10 +393,10 @@ meGetString(meUByte *prompt, int option, int defnum, meUByte *buffer, int size)
             else
                 meStrcpy(resultStr,prompt);
             if(lineExec(0, 1, buff) <= 0)
-                return meABORT ;
+                return meABORT;
             meStrncpy(buffer,resultStr,size);
             buffer[size-1] = '\0';
-            return meTRUE ;
+            return meTRUE;
         }
         else if((buff[0] != '@') || (buff[1] != 'm') || (buff[2] != 'n'))
         {
@@ -448,7 +448,7 @@ chk_cpy_res:
         *buffer = '\0';
         return ctrlg(meFALSE,1);
     }
-    return meGetStringFromUser(prompt, option, defnum, buffer, size) ;
+    return meGetStringFromUser(prompt,option,defnum,buffer,size);
 }
 
 int
@@ -459,10 +459,10 @@ macarg(meUByte *tok)               /* get a macro line argument */
     
     savcle = clexec;            /* save execution mode */
     clexec = meTRUE;              /* get the argument */
-    status = meGetString(NULL,MLNOHIST|MLFFZERO,0,tok,meBUF_SIZE_MAX) ;
+    status = meGetString(NULL,MLNOHIST|MLFFZERO,0,tok,meBUF_SIZE_MAX);
     clexec = savcle;            /* restore execution mode */
     
-    return status ;
+    return status;
 }
 
 #if KEY_TEST
@@ -518,13 +518,13 @@ fnctest(meBuffer *bp)
 #endif
     
     /* test the command alphabetically ordered list */
-    cmd = cmdHead ;
+    cmd = cmdHead;
     while(cmd->anext != NULL)
     {
         if(meStrcmp(cmd->anext->name,cmd->name) < 0)
         {
             count++;
-            sprintf((char *) resultStr,"cmdHead Error: [%s] should be before [%s]",cmd->anext->name,cmd->name) ;
+            sprintf((char *) resultStr,"cmdHead Error: [%s] should be before [%s]",cmd->anext->name,cmd->name);
             addLineToEob(bp,resultStr);
         }
         cmd = cmd->anext;
@@ -606,16 +606,16 @@ domstore(meUByte *cline)
         /* check to see if this line ends definition */
         if(meStrncmp(cline, "!ehe",4) == 0)
         {
-            helpBufferReset(lpStoreBp) ;
-            mcStore = 0 ;
+            helpBufferReset(lpStoreBp);
+            mcStore = 0;
             lpStore = NULL;
-            return meTRUE ;
+            return meTRUE;
         }
 #endif
         if(addLine(lpStore,cline) <= 0)
-            return meFALSE ;
-        lpStoreBp->lineCount++ ;
-        return meTRUE ;
+            return meFALSE;
+        lpStoreBp->lineCount++;
+        return meTRUE;
     }
     cc = *cline;
 #if MEOPT_BYTECOMP
@@ -625,8 +625,8 @@ domstore(meUByte *cline)
         {
             mcStore = meFALSE;
             lpStore = NULL;
-            execlevel = 0 ;
-            return meTRUE ;
+            execlevel = 0;
+            return meTRUE;
         }
         ss = cline+1;
         if((cc == (BCLEAD|BCSTRF|1)) && isDigit(*ss))
@@ -635,38 +635,38 @@ domstore(meUByte *cline)
             ss++;
         }
         if((cc == (BCLEAD|BCSTRF|12)) && !memcmp(ss,getCommandName(CK_DEFMAC),12))
-            execlevel++ ;
-        return addLine(lpStore,cline) ;
+            execlevel++;
+        return addLine(lpStore,cline);
     }
 #endif
     /* eat leading spaces */
     while((cc == ' ') || (cc == '\t'))
-        cc = *++cline ;
+        cc = *++cline;
     
     /* dump comments and empties here */
     if((cc == ';') || (cc == '\0'))
-        return meTRUE ;
+        return meTRUE;
     /* check to see if this line turns macro storage off */
     if((cc == '!') && !meStrncmp(cline+1, "ema", 3) && !execlevel--)
     {
         mcStore = meFALSE;
         lpStore = NULL;
-        execlevel = 0 ;
-        return meTRUE ;
+        execlevel = 0;
+        return meTRUE;
     }
-    ss = cline ;
+    ss = cline;
     if(isDigit(cc))
     {
         do
-            cc = *++ss ;
-        while(isDigit(cc)) ;
+            cc = *++ss;
+        while(isDigit(cc));
         while((cc == ' ') || (cc == '\t'))
-            cc = *++ss ;
+            cc = *++ss;
     }
     if((cc == 'd') && !meStrncmp(ss,getCommandName(CK_DEFMAC),12) &&
        (((cc=ss[12]) == ' ') || (cc == '\t') || (cc == ';') || (cc == '\0')))
-        execlevel++ ;
-    return addLine(lpStore,cline) ;
+        execlevel++;
+    return addLine(lpStore,cline);
 }
 
 

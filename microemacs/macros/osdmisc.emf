@@ -10,8 +10,6 @@
 ; Notes:       Many have come from removing OSD from search.emf
 ;
 !if &not &exi .osd.symbol
-  ; TODO SSP update
-  0 define-macro-file majormod imajor-mode
   set-variable .osd.symbol  &pinc .osd.next 1
   set-variable .osd.alarm   &pinc .osd.next 1
   set-variable .osd.ftag    &pinc .osd.next 1
@@ -85,10 +83,9 @@ define-macro insert-symbol
 
 0 define-macro buffer-setup-ms
   !if @?
-    ; TODO SSP This needs migrating
     !force unset-variable :buffer-indent
     !force unset-variable :buffer-hilight
-    buffer-major &lget .major-mode.list @#
+    major-mode &lget .major-mode.ids @#
     screen-update
   !endif
   !if &or $buffer-indent &exi :buffer-indent
@@ -108,20 +105,24 @@ define-macro insert-symbol
 !emacro
 0 define-macro buffer-setup-mm
   !if &les @# 0
-    ; TODO SSP This needs migrating
-    imajor-mode
     -1 osd .osd.tmp
-    osd .osd.tmp 0 "Asf" 16 20 -1 -1
-    set-variable #l0 0
-    set-variable #l2 1
-    !while &not &seq "" &set #l1 &lget .major-mode.list &inc #l0 1
-      osd .osd.tmp 1 "" #l1 #l0 buffer-setup-ms
-      !iif &seq #l1 $buffer-major-mode  set-variable #l2 #l0
+    osd .osd.tmp 0 "Asf" 37 20 -1 -1
+    set-variable #l0 "\b"
+    set-variable #l3 &set #l1 0
+    set-variable $major-mode-ids ".*"
+    !while &not &seq "" &set #l2 $major-mode-ids
+      set-variable #l0 &lins #l0 &inc #l1 1 #l2
+      !iif &seq #l2 $buffer-major-mode  set-variable #l3 #l1
+      0 major-mode #l2
+      osd .osd.tmp 1 "" &lget $result 5 #l1 buffer-setup-ms
     !done
-    osd .osd.tmp 0 "AsfI" 16 20 -1 -1 #l2
-    ml-write &spr "[Default set to %d]" #l2
+    !iif #l3  osd .osd.tmp 0 "AsfI" 37 20 -1 -1 #l3
+    set-variable .major-mode.ids #l0
+  !elif &seq "" $buffer-major-mode
+    set-variable $result "Not set"
   !else
-    set-variable $result $buffer-major-mode
+    0 major-mode $buffer-major-mode
+    set-variable $result &lget $result 5
   !endif
 !emacro
 0 define-macro buffer-setup-fmode
@@ -176,14 +177,14 @@ set-variable .buffer-setup-fmode.name "|Unknown|Auto/Both|Auto/Center|Auto/Left|
   !endif
 !emacro
 -1 osd .osd.buffstpm
-osd .osd.buffstpm 0 "osI" -1 0 18 0 0 0 10
-osd .osd.buffstpm 10 "IbHt" .scheme.osd-sbar 16 20 .osd.tmp
+osd .osd.buffstpm 0 "osI" -1 0 39 0 0 0 10
+osd .osd.buffstpm 10 "IbHt" .scheme.osd-sbar 37 20 .osd.tmp
 
 -1 osd .osd.buffstp
 osd .osd.buffstp  0 "batcDIHs" 9 3 40 10 -1 -1 510 510 .scheme.osd-title "Buffer Setup"
 osd .osd.buffstp 10  ""
 osd .osd.buffstp 20  "Sfh" "  \HMajor Mode:   " 30
-osd .osd.buffstp 30  "OtxmsfhHzR" .scheme.osd-entry 16 1 "" .osd.buffstpm buffer-setup-mm
+osd .osd.buffstp 30  "OtxmsfhHzR" .scheme.osd-entry 37 1 "" .osd.buffstpm buffer-setup-mm
 osd .osd.buffstp 40  "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 30
 osd .osd.buffstp 50  ""
 osd .osd.buffstp 60  "Sfh" "  \HIndent Width: " 70

@@ -55,7 +55,6 @@ getBufferName(meUByte *prompt, int opt, int defH, meUByte *buf)
 }
 
 #if MEOPT_FILEHOOK
-static meMajorMode  *majorModeHead;
 static meUByte       fileCidCount;
 static meUByte     **fileCidRegex;
 static meMajorMode **fileCidMjrMd;
@@ -136,7 +135,7 @@ majorMode(int f, int n)
         }
         else
             cidl = 0;
-        if(meGetString((meUByte *)"Major-mode",0,cidl,id,meMAJORMODE_ID_SIZE) <= 0)
+        if(meGetString((meUByte *)"Major-mode",MLLOWER|MLMAJORMODE,cidl,id,meMAJORMODE_ID_SIZE) <= 0)
             return meFALSE;
         if(id[0] == '\0')
         {
@@ -161,7 +160,7 @@ majorMode(int f, int n)
             return mlwrite(MWSPEC,cidr);
         }
     }
-    else if((meGetString((meUByte *)"Major-mode",0,0,id,32) <= 0) || (id[0] == '\0'))
+    else if((meGetString((meUByte *)"Major-mode",MLLOWER|MLMAJORMODE,0,id,32) <= 0) || (id[0] == '\0'))
         return meFALSE;
     if(((n & 2) && (meGetString((meUByte *)"CID label",0,0,lbl,meMAJORMODE_CIDL_SIZE) <= 0)) ||
        ((n & 4) && (meGetString((meUByte *)"Extension list",0,0,extList,128) <= 0)) ||
@@ -1877,7 +1876,7 @@ adjustMode(meBuffer *bp, int nn)  /* change the editor mode status */
         mlgsStrListSize = MDNUMMODES ;
         
         /* prompt the user and get an answer */
-        if(meGetString(prompt, MLLOWER|MLUSER, 0, cbuf, meSBUF_SIZE_MAX) == meABORT)
+        if(meGetString(prompt,MLLOWER|MLMODE,0,cbuf,meSBUF_SIZE_MAX) == meABORT)
             return meFALSE ;
         
         /* test it against the modes we know */

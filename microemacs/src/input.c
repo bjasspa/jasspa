@@ -677,6 +677,32 @@ createBuffList(meUByte ***listPtr, int noHidden)
 }
     
 int
+createMajorModeList(meUByte ***listPtr)
+{
+    meMajorMode *mp=majorModeHead;
+    meUByte **list;
+    int ii;
+
+    ii = 0;
+    while(mp != NULL)
+    {
+        ii++;
+        mp = mp->next;
+    }
+    if((list = (meUByte **) meMalloc(ii*sizeof(meUByte *))) == NULL)
+        return 0;
+    mp = majorModeHead;
+    ii = 0;
+    while(mp != NULL)
+    {
+        list[ii++] = mp->id;
+        mp = mp->next;
+    }
+    *listPtr = list;
+    return ii;
+}
+
+int
 createVarList(meUByte ***listPtr)
 {
     int ii;
@@ -912,11 +938,13 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
         noStrs = createVarList(&strList);
     else if(option & MLCOMMAND)
         noStrs = createCommList(&strList,1);
-    else if(option & MLUSER)
+    else if(option & MLMODE)
     {
         strList = mlgsStrList;
         noStrs = mlgsStrListSize;
     }
+    else if(option & MLMAJORMODE)
+        noStrs = createMajorModeList(&strList);
     else
     {
         strList = NULL;
@@ -1104,7 +1132,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
 #endif
         case CK_INSTAB:
             cc = '\t' ;    /* ^I for search strings */
-            if(!(option & (MLCOMMAND | MLFILE | MLBUFFER | MLVARBL | MLUSER)))
+            if(!(option & (MLCOMMAND | MLFILE | MLBUFFER | MLVARBL | MLMODE | MLMAJORMODE)))
                 goto input_addexpand;
 input_expand:
             if(option & MLFILE)
@@ -1496,7 +1524,7 @@ input_expand:
             
 #if MEOPT_EXTENDED
         case CK_SCLNXT:    /* M-N : Got to next in completion list */
-            if((option & (MLCOMMAND | MLFILE | MLBUFFER | MLVARBL | MLUSER)) &&
+            if((option & (MLCOMMAND | MLFILE | MLBUFFER | MLVARBL | MLMODE | MLMAJORMODE)) &&
                (strList != NULL) && !changed && gotPos)
             {
                 if(fstPos == lstPos)
@@ -1513,7 +1541,7 @@ input_expand:
             break;
             
         case CK_SCLPRV:    /* M-N : Got to prev in completion list */
-            if((option & (MLCOMMAND | MLFILE | MLBUFFER | MLVARBL | MLUSER)) &&
+            if((option & (MLCOMMAND | MLFILE | MLBUFFER | MLVARBL | MLMODE | MLMAJORMODE)) &&
                (strList != NULL) && !changed && gotPos)
             {
                 if(fstPos == lstPos)
@@ -1811,7 +1839,7 @@ ml_yank:
             
             if (cc == ' ')    /* space */
             {
-                if(option & (MLCOMMAND | MLFILE | MLBUFFER | MLVARBL | MLUSER))
+                if(option & (MLCOMMAND | MLFILE | MLBUFFER | MLVARBL | MLMODE | MLMAJORMODE))
                     goto input_expand;
                 if(option & MLNOSPACE)
                 {

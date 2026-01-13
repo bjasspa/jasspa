@@ -60,30 +60,6 @@
 ;
 !iif &not &exi .osd.mjrmdstp  set-variable .osd.mjrmdstp &pinc .osd.next 1
 
-; TODO SSP update/remove
-0 define-macro imajor-mode
-  !if &not &and @# &exi .list
-    set-variable .list "\b"
-    set-variable #l0 &con &band $system 0x200 ";" ":"
-    set-variable #l1 $search-path
-    !while &not &seq #l1 ""
-      !if &set #l3 &sin #l0 #l1
-        set-variable #l2 &lef #l1 &sub #l3 1
-        set-variable #l1 &rig #l1 #l3
-      !else
-        set-variable #l2 #l1
-        set-variable #l1 ""
-      !endif
-      !if &not &seq #l2 ""
-        set-variable $file-names &spr "%s%shk.*\\.em[bf]" #l2 &cond &seq "/" &rig #l2 -1 "" "/"
-        !while &not &seq &set #l3 $file-names ""
-          !iif &not &lfin .list &set #l4 &rig &lef #l3 -4 2  set-variable .list &lins .list -2 #l4
-        !done
-      !endif
-    !done
-  !endif
-!emacro
-
 0 define-macro major-mode-setup-option
   set-variable #l9 &abs @#
   !if &gre #l9 20
@@ -160,19 +136,9 @@ set-variable .major-mode-setup-fmode.name "|Unknown|Default|Auto/Both|Auto/Cente
     set-variable .major-mode-setup.oedit .major-mode-setup.nedit
     set-variable #l0 1
   !endif
-  !if &and #l0 &band @# 1
-    ; save changes if not run from user-setup
-    save-registry "/history" ""
-  !endif
-  !if &band @# 4
-    set-variable #l1 $buffer-major-mode
-    !force execute-file &cat "hk" #l1
-    !if $status
-      buffer-major-mode #l1
-    !else
-      osd-dialog "Major Mode Setup" "Failed to re-initialize buffer hook!" "  \HOK  "
-    !endif
-  !endif
+  ; save changes if not run from user-setup
+  !iif &and #l0 &band @# 1  save-registry "/history" ""
+  !iif &band @# 4  execute-named-command $buffer-fhook
 !emacro
 define-macro major-mode-setup
   ; reread the setup if not run from user-setup
@@ -534,27 +500,4 @@ define-macro major-mode-help
   !done
   major-mode ""
   0 ml-write
-!emacro
-
-define-macro buffer-major-mode
-  !if &les @# 0
-    set-variable #l0 ""
-  !elif @#
-    !force set-variable #l0 @1
-    !if &not $status
-      imajor-mode
-      set-variable #l0 @ml09 "New major mode" .major-mode.list
-    !endif
-  !else
-    set-variable #l0 "default"
-  !endif
-  !iif &not &seq $buffer-fhook ""  buffer-major-mode-remove
-  !if &not &seq #l0 ""
-    !iif &not &exi &set #l1 &cat "fhook-" #l0  execute-file &cat "hk" #l0
-    !if &not &exi #l1
-      ml-write &spr "[Failed to locate definition of major mode \"%s\"]" #l0
-      !abort
-    !endif
-    execute-named-command #l1
-  !endif
 !emacro

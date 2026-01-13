@@ -70,6 +70,7 @@ meNamesList buffNames={1,0,NULL,NULL,0} ;
 meDirList  fileNames={1,0,NULL,NULL,0,NULL,0} ;
 #endif
 meNamesList commNames={1,0,NULL,NULL,0} ;
+meNamesList mjmdNames={0,0,NULL,NULL,0} ;
 meNamesList modeNames={0,MDNUMMODES,modeName,NULL,0} ;
 meNamesList varbNames={1,0,NULL,NULL,0} ;
 
@@ -1101,7 +1102,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
 #endif
                     {
                         *mm = '\0' ;
-                        getFilePath(frameCur->windowCur->buffer->fileName,buff) ;
+                        getFilePath(frameCur->windowCur->buffer->fileName,buff);
                         meStrcat(buff,vvalue);
                         pathNameCorrect(buff,PATHNAME_COMPLETE,path,NULL);
                     }
@@ -1110,8 +1111,18 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 }
                 break;
             }
+        case EVMMNAMES:
+            meNullFree(mjmdNames.list);
+            mjmdNames.list = NULL;
+            mjmdNames.curr = 0;
+            if(meRegexComp(&meRegexStrCmp,vvalue,(mjmdNames.exact) ? meRSTRCMP_WHOLE:meRSTRCMP_ICASE|meRSTRCMP_WHOLE) != meREGEX_OKAY)
+                return mlwrite(MWABORT,(meUByte *)"[bad regex]");
+            meStrrep(&mjmdNames.mask,vvalue);
+            if(mjmdNames.mask != NULL)
+                mjmdNames.size = createMajorModeList(&mjmdNames.list);
+            break;
         case EVMNAMES:
-            modeNames.curr = 0 ;
+            modeNames.curr = 0;
             if(meRegexComp(&meRegexStrCmp,vvalue,(modeNames.exact) ? meRSTRCMP_WHOLE:meRSTRCMP_ICASE|meRSTRCMP_WHOLE) != meREGEX_OKAY)
                 return mlwrite(MWABORT,(meUByte *)"[bad regex]");
             meStrrep(&modeNames.mask,vvalue);
@@ -1124,7 +1135,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 return mlwrite(MWABORT,(meUByte *)"[bad regex]");
             meStrrep(&varbNames.mask,vvalue);
             if(varbNames.mask != NULL)
-                varbNames.size = createVarList(&varbNames.list) ;
+                varbNames.size = createVarList(&varbNames.list);
             break;
 #endif
 #if MEOPT_SPELL
@@ -1248,6 +1259,9 @@ gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
         goto handle_namesvar ;
     case EVMNAMES:
         mv = &modeNames ;
+        goto handle_namesvar ;
+    case EVMMNAMES:
+        mv = &mjmdNames ;
         goto handle_namesvar ;
     case EVVNAMES:
         mv = &varbNames ;

@@ -570,13 +570,14 @@ extern	int	getexecCommand(void);
 extern	meUShort  meGetKeyFromUser(int f, int n, int flag);
 extern  int     createBuffList(meUByte ***listPtr, int noHidden);
 extern  int     createCommList(meUByte ***listPtr, int noHidden);
+extern  int     createMajorModeList(meUByte ***listPtr);
 extern  int     createVarList(meUByte ***listPtr);
 #define MLBUFFER     0x00001		/* entering a buffer name	     */
 #define MLCOMMAND    0x00002		/* entering a command		     */
 #define MLFILE       0x00004		/* entering a filename		     */
 #define MLSEARCH     0x00008		/* entering a search string          */
-#define	MLVARBL      0x00010		/* entering a variable               */
-#define	MLUSER       0x00020		/* entering a mode                   */
+#define MLVARBL      0x00010		/* entering a variable               */
+#define MLMODE       0x00020		/* entering a mode                   */ 
 #define MLNOHIST     0x00040            /* Don't use the history (wont store */
 #define MLUPPER      0x00080		/* convert chars to uppercase	     */
 #define MLLOWER      0x00100		/* convert chars to lowercase	     */
@@ -591,6 +592,7 @@ extern  int     createVarList(meUByte ***listPtr);
 #define MLHIDEVAL    0x20000            /* Hide the value using '*'s         */
 #define MLEXECNOUSER 0x40000            /* Don't get val from user if macro  */
 #define MLHISTLIST   0x80000            /* user supplied history-list        */
+#define MLMAJORMODE  0x100000           /* entering a major-mode             */
 
 /* setup a #define with the correct flags for getting a filename, this must
  * consider where the platform file system only has one case and where it
@@ -611,9 +613,9 @@ extern  int     createVarList(meUByte ***listPtr);
 #define MLBUFFERCASE MLBUFFER
 #endif
 #endif
-/* Following must be setup when using MLUSER, mlgsStrList must be an
- * array of completion strings, and mlgsStrListSize must be a count
- * of the number of completions. Not the completion array is sorted!
+/* Following must be setup when using MLMODE, mlgsStrList must be an array of completion strings,
+ * and mlgsStrListSize must be a count of the number of completions. Not the completion array is
+ * sorted!
  */
 extern meUByte **mlgsStrList;
 extern int mlgsStrListSize;

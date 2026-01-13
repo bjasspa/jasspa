@@ -44,10 +44,10 @@ define-macro-file comment comment-line uncomment-line comment-to-end-of-line com
 define-macro-file games cross-word Brag Fahtzee Mahjongg Match-It Matrix Metris Patience Triangle Typing
 define-macro-file find find grep grep-for-region replace-string-in-files query-replace-string-in-files
 define-macro-file rect string-rectangle space-rectangle copy-rectangle yank-rectangle-overwrite
-define-macro-file majormod buffer-major-mode major-mode-setup major-mode-help major-mode-tool
 define-macro-file favorite favorites-add favorites-edit favorites-goto favorites
 define-macro-file password password-to-phonic generate-password insert-password
 define-macro-file toolbar toolbar toolbar-close toolbar-open toolbar-mode-line
+define-macro-file majormod major-mode-setup major-mode-help major-mode-tool
 define-macro-file spell spell-word spell-buffer spell-edit-word find-word
 define-macro-file narrow narrow-search-forward narrow-search-backward
 define-macro-file notes notes notes-file notes-instant notes-context
