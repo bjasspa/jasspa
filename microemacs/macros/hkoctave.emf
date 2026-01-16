@@ -43,7 +43,7 @@ set-variable .fhook-octave.item-list-r3 "Func \CCb\\1\CCA"
   hilight   .hilight.octave 4 "%{" "%}" ""        .scheme.comment
   hilight   .hilight.octave 4 "\"" "\"" "\\"      .scheme.string
   ; Quote
-  hilight   .hilight.octave 4 "'" "'" "\\"        .scheme.string
+  ;hilight   .hilight.octave 4 "'" "'" "\\"        .scheme.string
   ; Variables
   ;hilight   .hilight.octave 1 "\\.real"           .scheme.variable
   hilight .hilight.octave 4  "\\$" "\\}\\W" ""    .scheme.variable
