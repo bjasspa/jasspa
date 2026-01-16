@@ -7,6 +7,18 @@
 ; Synopsis:    V language support
 ; Authors:     Detlef Groth
 ;
+define-macro ftest-vlang
+  beginning-of-buffer
+  !force -150 search-buffer "me" "^[ \t]*import\\>"
+  set-variable #l0 &add 1 $status
+  !force -150 search-buffer "me" "^[ \t]*struct\\>"
+  set-variable #l0 &add #l0 $status
+  !force -150 search-buffer "me" "^[ \t]*fn\\>"
+  set-variable #l0 &add #l0 $status
+  ; return value between 5 & 20 - same as verilog
+  set-variable .result &mul #l0 5
+  beginning-of-buffer
+!emacro
 define-macro fhook-vlang
   set-variable $buffer-mask "luh1"
   @# buffer-init
@@ -58,9 +70,9 @@ set-variable .fhook-vlang.item-list-r5 "meth \CCb\\1.\\2\CCA"
   hilight .hilight.vlang 1    "^\\s*import"    .scheme.prepro
   ; keywords
   hilight .hilight.vlang 1    "as"             .scheme.keyword
-  hilight .hilight.vlang 1    "assert"            .scheme.keyword
+  hilight .hilight.vlang 1    "assert"         .scheme.keyword
   hilight .hilight.vlang 1    "asm"            .scheme.keyword
-  hilight .hilight.vlang 1    "atomic"            .scheme.keyword
+  hilight .hilight.vlang 1    "atomic"         .scheme.keyword
   hilight .hilight.vlang 1    "break"          .scheme.keyword
   hilight .hilight.vlang 1    "const"          .scheme.keyword
   hilight .hilight.vlang 1    "continue"       .scheme.keyword

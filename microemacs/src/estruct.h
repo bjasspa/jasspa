@@ -669,9 +669,13 @@ typedef struct meMajorMode
     meUByte *cidLabel;
     meUByte *extList;
     meUByte *name;
-    meUByte cidLabelLen;
-    meUByte flags;
-    meUByte id[1];
+    meInt    ftest;
+    meInt    fhook;
+    meInt    bhook;
+    meInt    ehook;
+    meInt    dhook;
+    meUByte  cidLabelLen;
+    meUByte  id[1];
 } meMajorMode;
 #define meMAJORMODE_ID_SIZE 16
 #define meMAJORMODE_CIDL_SIZE 32

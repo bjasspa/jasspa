@@ -1,4 +1,4 @@
-// -!- v-lang -!-
+// -!- vlang -!-
 
 fn main () {
 	    

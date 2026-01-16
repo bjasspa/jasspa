@@ -711,6 +711,7 @@ exitEmacs(int f, int n)
             extern void TTfreeTranslateKey(void);
             extern meUInt *colTable;
             mePosition   *pos;
+            meMajorMode  *mjm;
             meBuffer     *bc, *bn;
             meFrame      *fc, *fn;
             meMacro      *mac;
@@ -739,7 +740,6 @@ exitEmacs(int f, int n)
             osdFreeMemory();
             regFreeMemory();
             srchFreeMemory();
-/* TODO            majorModeFreeMemory();*/
             TTfreeTranslateKey();
             
             meNullFree(mlBinds);
@@ -782,6 +782,14 @@ exitEmacs(int f, int n)
             {
                 position = pos->next;
                 free(pos);
+            }
+            while((mjm=majorModeHead) != NULL)
+            {
+                majorModeHead = mjm->next;
+                meNullFree(mjm->cidLabel);
+                meNullFree(mjm->extList);
+                meNullFree(mjm->name);
+                free(mjm);
             }
             for(ii=0 ; ii<CK_MAX ; ii++)
             {

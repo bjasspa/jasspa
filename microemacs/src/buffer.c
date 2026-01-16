@@ -76,14 +76,13 @@ static meUByte       mmRbinId[] = "rbin";
 static int
 assignMajorMode(meBuffer *bp, meMajorMode *mm, int tstF)
 {
-    meUByte buff[32];
-    int fhook;
-    memcpy(buff,"fhook-",6);
-    meStrcpy(buff+6,mm->id);
-    if(mm->flags == 0)
+    /* the hook must be a macro so must have ID > 0 */
+    if(mm->fhook <= 0)
     {
-        mm->flags |= 1;
-        if((fhook = decode_fncname(buff,1)) == -1)
+        meUByte buff[meMAJORMODE_ID_SIZE+6];
+        memcpy(buff,"fhook-",6);
+        meStrcpy(buff+6,mm->id);
+        if((mm->fhook = decode_fncname(buff,1)) <= 0)
         {
             meUByte fn[meBUF_SIZE_MAX];
         
@@ -94,28 +93,39 @@ assignMajorMode(meBuffer *bp, meMajorMode *mm, int tstF)
             execFile(fn,0,1);
             buff[4] = 'k';
             buff[5] = '-';
-            if((fhook = decode_fncname(buff,1)) == -1)
+            if((mm->fhook = decode_fncname(buff,1)) <= 0)
                 return mlwrite(MWABORT|MWWAIT,(meUByte *)"Major-mode file [%s] failed to define fhook-%s",fn,buff+6);
-            mm->flags |= 2;
         }
-        else
-            mm->flags |= 2;
+        buff[0] = 'b';
+        mm->bhook = decode_fncname(buff,1);
+        buff[0] = 'e';
+        mm->ehook = decode_fncname(buff,1);
+        buff[0] = 'd';
+        mm->dhook = decode_fncname(buff,1);
+        buff[0] = 'f';
+        buff[1] = 't';
+        buff[2] = 'e';
+        buff[3] = 's';
+        buff[4] = 't';
+        mm->ftest = decode_fncname(buff,1);
     }
-    else if(((mm->flags & 2) == 0) || ((fhook = decode_fncname(buff,1)) == -1))
-        return meABORT;
-    /* TODO tstF */
-    
+    if(tstF && (mm->ftest > 0))
+    {
+        meUByte *vv;
+        int rr;
+        if(!execBufferFunc(bp,mm->ftest,0,1))
+            return -1;
+        if(((vv=getUsrLclCmdVar((meUByte *)"result",cmdTable[mm->ftest]->varList)) != errorm) && ((rr=meAtoi(vv)) < 100))
+            return (rr <= 0) ? -1:rr;
+    }
     if(bp->ehook >= 0)
         execBufferFunc(bp,bp->ehook,0,1);
     bp->majorMode = mm;
-    bp->fhook = fhook;
-    buff[0] = 'b';
-    bp->bhook = decode_fncname(buff,1);
-    buff[0] = 'd';
-    bp->dhook = decode_fncname(buff,1);
-    buff[0] = 'e';
-    bp->ehook = decode_fncname(buff,1);
-    return meTRUE;
+    bp->fhook = mm->fhook;
+    bp->bhook = mm->bhook;
+    bp->ehook = mm->ehook;
+    bp->dhook = mm->dhook;
+    return 0;
 }
 
 int
@@ -198,7 +208,7 @@ majorMode(int f, int n)
             mm->cidLabel = NULL;
             mm->extList = NULL;
             mm->name = NULL;
-            mm->flags = 0;
+            mm->fhook = 0;
             memcpy(mm->id,id,f+1);
             majorModeHead = mm;
             if(f == 5)
@@ -239,14 +249,18 @@ majorMode(int f, int n)
         else if(f == 0)
         {
             meBuffer *bp=frameCur->windowCur->buffer;
-            if(assignMajorMode(bp,mm,0) <= 0)
+            if(assignMajorMode(bp,mm,0) != 0)
                 return meFALSE;
             meRegCurr->next->val[9][0] = '\0';
             return execBufferFunc(bp,bp->fhook,meEBF_ARG_GIVEN,(bp->intFlag & BIFFILE) ? 1:0);
         }
         else if(n == 0)
         {
-            sprintf((char *) resultStr,"\x08%s\x08%d\x08%s\x08%s\x08%s\x08",mm->id,mm->flags,(mm->cidLabelLen == 0) ? "":(char *) ((mm->cidLabel != NULL) ? mm->cidLabel:mm->id),(mm->extList != NULL) ? (char *) mm->extList:"",(mm->name != NULL) ? (char *) mm->name:"");
+            if(mm->fhook > 0)
+                n = 5 + ((mm->ftest > 0) ? 2:0) + ((mm->bhook > 0) ? 8:0) + ((mm->ehook > 0) ? 16:0) + ((mm->bhook > 0) ? 32:0);
+            else if(mm->fhook < 0)
+                n = 1;
+            sprintf((char *) resultStr,"\x08%s\x08%d\x08%s\x08%s\x08%s\x08",mm->id,n,(mm->cidLabelLen == 0) ? "":(char *) ((mm->cidLabel != NULL) ? mm->cidLabel:mm->id),(mm->extList != NULL) ? (char *) mm->extList:"",(mm->name != NULL) ? (char *) mm->name:"");
             return meTRUE;
         }
         else if((n & 1) && (pmm != NULL))
@@ -275,7 +289,7 @@ majorMode(int f, int n)
             }
             else
                 mm->cidLabelLen = 0;
-            mm->flags = 0;
+            mm->fhook = 0;
         }
     }
     if(n & 4)
@@ -445,7 +459,7 @@ setBufferContext(meBuffer *bp)
                                     while((mm != NULL) && ((mm->cidLabelLen != ll) || cmpF((mm->cidLabel != NULL) ? mm->cidLabel:mm->id,pp,ll)))
                                         mm = mm->next;
                                 }
-                                if((mm != NULL) && (assignMajorMode(bp,mm,0) > 0))
+                                if((mm != NULL) && (assignMajorMode(bp,mm,0) == 0))
                                 {
                                     ml = meRegexStrCmp.group[0].end - meRegexStrCmp.group[0].start;
                                     ii = 0;
@@ -462,16 +476,16 @@ setBufferContext(meBuffer *bp)
     }
     if(mm == NULL)
     {
-        meMajorMode *pmm=NULL;
+        meMajorMode *bmm=NULL;
         /* Do file hooks */
         if(meModeTest(bp->mode,MDBINARY))
-            pmm = mmBinary;
+            bmm = mmBinary;
         else if(meModeTest(bp->mode,MDRBIN))
-            pmm = mmRbin;
+            bmm = mmRbin;
         else
         {
             meUByte *bn, *sp;
-            int ll, bnll, mmmf=0;
+            int ll, bnll, bmms=0, pmmc=0;
             
             /* Find the length of the string to pass into check_extension.
              * Check if its name has a <?> and/or a backup ~, if so reduce
@@ -513,27 +527,27 @@ setBufferContext(meBuffer *bp)
                 if((mm->extList != NULL) && checkExtent(sp,ll,mm->extList) &&
                    ((ii=assignMajorMode(bp,mm,1)) >= 0))
                 {
-                    if(ii > 0)
+                    if(ii == 0)
                         break;
-                    if(pmm != NULL)
-                        mmmf = 1;
-                    pmm = mm;
+                    if((bmm == NULL) || (ii > bmms))
+                    {
+                        bmm = mm;
+                        bmms = ii;
+                    }
+                    pmmc++;
                 }
                 mm = mm->next;
             }
             if(mm == NULL)
             {
-                if(pmm == NULL)
-                    pmm = mmDefault;
-                else if(mmmf)
-                {
-                    mlwrite(MWABORT,(meUByte *) "Warning - file name maps to multiple major-modes, execute major-mode manually");
-                    pmm = NULL;
-                }
+                if(bmm == NULL)
+                    bmm = mmDefault;
+                else if(pmmc > 1)
+                    mlwrite(0,(meUByte *) "Warning - file name maps to multiple major-modes, use major-mode to change");
             }
         }
-        if((mm == NULL) && (pmm != NULL) && (assignMajorMode(bp,pmm,0) > 0))
-            mm = pmm;
+        if((mm == NULL) && (bmm != NULL) && (assignMajorMode(bp,bmm,0) == 0))
+            mm = bmm;
     }
     if(mm != NULL)
     {

@@ -1,4 +1,4 @@
-// -!- v-lang -!-
+// -!- vlang -!-
 
 // class like struct
 struct User {

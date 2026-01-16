@@ -8,6 +8,19 @@
 ; Synopsis:    Verilog language support.
 ; Authors:     Steven Phillips
 ;
+define-macro ftest-verilg
+  beginning-of-buffer
+  !force 2 search-buffer "me" ";[ \t]*$"
+  set-variable #l0 &add 1 $status
+  beginning-of-buffer
+  !force -150 search-buffer "me" "^[ \t]*input\\>"
+  set-variable #l0 &add #l0 $status
+  !force -150 search-buffer "me" "^[ \t]*output\\>"
+  set-variable #l0 &add #l0 $status
+  ; return value between 5 & 20 - same as vlang
+  set-variable .result &mul #l0 5
+  beginning-of-buffer
+!emacro
 define-macro fhook-verilg
   set-variable $buffer-mask "luh1"
   @# buffer-init
@@ -24,9 +37,12 @@ set-variable .fhook-verilg.comment-1 "|/*| */|*| * | * |f|"
   set-variable .hilight.verilg &pinc .hilight.next 1
 !endif
 !if &and &sin "h" .fhook-verilg.setup &band .hilight.flags 0x02
-  0 hilight .hilight.verilg 0                        $global-scheme
+  0 hilight .hilight.verilg 0 $global-scheme
   !if &band .hilight.flags 0x04
-    hilight .hilight.verilg 0 "^module\\s+\\w+"  .scheme.function
+    hilight .hilight.verilg 0x101 "module\\s+\\w+" .scheme.function
+    hilight .hilight.verilg 0x101 "primitive\\s+\\w+" .scheme.function
+    hilight .hilight.verilg 0x101 "endmodule" .scheme.function
+    hilight .hilight.verilg 0x101 "endprimitive" .scheme.function
   !endif
   hilight .hilight.verilg 18 "//"           .scheme.comment
   hilight .hilight.verilg 20 "/\\*" "*/" "" .scheme.comment
@@ -34,7 +50,7 @@ set-variable .fhook-verilg.comment-1 "|/*| */|*| * | * |f|"
 
   hilight .hilight.verilg 1  "assign" .scheme.keyword
   hilight .hilight.verilg 1  "module" .scheme.keyword
-
+  hilight .hilight.verilg 1  "primitive" .scheme.keyword
 
   hilight .hilight.verilg 1  "initial" .scheme.keyword
   hilight .hilight.verilg 1  "begin" .scheme.keyword
@@ -50,7 +66,10 @@ set-variable .fhook-verilg.comment-1 "|/*| */|*| * | * |f|"
   hilight .hilight.verilg 1  "output" .scheme.keyword
   hilight .hilight.verilg 1  "begin" .scheme.keyword
   hilight .hilight.verilg 1  "end" .scheme.keyword
-  hilight .hilight.verilg 1  "endmodule" .scheme.keyword
+  hilight .hilight.verilg 1  "table" .scheme.keyword
+  hilight .hilight.verilg 1  "endtable" .scheme.keyword
+  hilight .hilight.verilg 1  "endmodul[e]" .scheme.keyword
+  hilight .hilight.verilg 1  "endprimitiv[e]" .scheme.keyword
 
   hilight .hilight.verilg 1  "reg" .scheme.type
   hilight .hilight.verilg 1  "time" .scheme.type
