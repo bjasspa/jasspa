@@ -82,8 +82,10 @@
   hilight .hilight.git-log 0x102 "\\[\\*\\*\\*\\* Git" .scheme.error
   0 hilight .hilight.git-logl 0 $global-scheme
   hilight .hilight.git-logl 0x80 "A\t.*" 0 .scheme.add
+  hilight .hilight.git-logl 0x80 "C\\d\\d\\d\t.*" 0 .scheme.add
   hilight .hilight.git-logl 0x80 "D\t.*" 0 .scheme.rmv
   hilight .hilight.git-logl 0x80 "M\t.*" 0 .scheme.chg
+  hilight .hilight.git-logl 0x80 "R\\d\\d\\d\t.*" 0 .scheme.chg
   
   ; fix the *files* buffer hilighting for git additions
   ; todo
@@ -1142,10 +1144,21 @@ define-macro git-status
         git-show-file &spr "%s:%s" #l3 &rig @wl 10
       !endif
     !endif
-  !elif &xseq @wl "^ *commit \\(\\h+\\)\\( +\\[Diff]  \\[View]\\)?$"
+  !elif &xseq @wl "^ *commit \\(\\h+\\) +\\(\\[Diff]  \\[View]\\|\\[Prev]\\)?$"
     set-position "\x82"
     set-variable #l1 @s1
-    !if &gre &set #l2 &sub &len @wl $window-col &len @s2
+    !if &seq @s2 "[Prev]"
+      ; this is a git show buffer
+      set-position "\x82"
+      set-variable #l1 @s1
+      !if &gre &sub &len @wl $window-col 6
+        set-variable #l9 &lget .git.cvals 6
+        set-variable .git.cvals &lset .git.cvals 6 &lset #l9 2 &bxo &lget #l9 2 1
+      !else
+        set-variable #l1 &cat #l1 "~"
+      !endif
+      git-show-commit #l1
+    !elif &gre &set #l2 &sub &len @wl $window-col &len @s2
       git-show-commit #l1
     !elif &les #l2 1
     !elif &les #l2 7
@@ -1201,38 +1214,20 @@ define-macro git-log
   !if &equ $buffer-hilight .hilight.diff
     git-exec-complete7
   !else
-    buffer-bind-key git-show-cmd "return"
-    buffer-bind-key git-show-cmd "space"
-    set-variable :mouse-word-select "git-show-cmd"
+    !force search-buffer "me" "^$"
+    !force search-buffer "me" "^\n[ACDMRTUXB]"
+    beginning-of-line
+    !while &sin @wc "ACDMRTUXB"
+      insert-string "[Diff]  "
+      beginning-of-line
+      forward-line
+    !done
+    buffer-bind-key git-log-cmd "return"
+    buffer-bind-key git-log-cmd "space"
+    set-variable :mouse-word-select "git-log-cmd"
   !endif
   -1 buffer-mode "edit"
   1 buffer-mode "view"
-!emacro
-0 define-macro git-show-cmd
-  !if &not &exi :ch
-    ml-write "[ERROR: Show buffer has not been processed]"
-    !abort
-  !elif &xseq @wl "^[AMR]\t\\(.+\\)$"
-    set-variable #l2 @s1
-    git-diff-file #l2 &spr "%s~..%s" :ch :ch
-  !elif &xseq @wl "^\\(commit \\h+ *\\)\\(\\[Prev]\\)?$"
-    set-position "\x82"
-    set-variable #l1 :ch
-    !if &les $window-col &len @s1
-      set-variable #l9 &lget .git.cvals 6
-      set-variable .git.cvals &lset .git.cvals 6 &lset #l9 2 &bxo &lget #l9 2 1
-    !else
-      set-variable #l1 &cat #l1 "~"
-    !endif
-    git-show-commit #l1
-  !else
-    ml-write "[ERROR: Invalid log line]"
-    !abort
-  !endif
-  popup-window "*git-show*"
-  !force git-dirlst-detect
-  set-variable $buffer-fname .git-dirlst-detect.ld
-  beginning-of-buffer
 !emacro
 0 define-macro git-exec-complete6
   set-variable #l9 &lget .git.cvals 6
@@ -1312,15 +1307,11 @@ define-macro git-show
 ; to get full blob hash: &spr "%s -C %s rev-parse --verify %s" .git.com #l3 #l7 #l0
 0 define-macro git-diff-cmd
   !if &not &xseq @wl "^\\(---\\|\\+\\+\\+\\) \\([ab]\\)/\\([^\n]+\\)\\(  \\[[-\\m]+\\]\\)+$" &lef @wl 4
-    !if &not &seq $buffer-bname "*git-show*"
-      ml-write "[ERROR: Invalid diff line]"
-      !abort
-    !endif
-    git-show-cmd
+    !iif &not &seq $buffer-bname "*git-show*"  -8 ml-write "[ERROR: Invalid diff line]"
+    git-log-cmd
     !return
   !elif &or &sin @wc " \n" &not &seq "[Diff-" &lef &set #l0 &rig @wl &rsin " " &lef @wl $window-col 6
-    ml-write "[ERROR: Not in diff command]"
-    !abort
+    -8 ml-write "[ERROR: Not in diff command]"
   !endif
   !iif &set #l3 &sin " " #l0  set-variable #l0 &lef #l0 &sub #l3 1
   set-variable #l9 @s3
@@ -1331,10 +1322,7 @@ define-macro git-show
   ; we must use the blob hashs in the index line to work out the current commit hash!
   set-position "\x82"
   &con &set #l8 &seq @s2 "a" 1 2 backward-line
-  !if &not &xseq @wl "^index \\(\\h+\\)\\.\\.\\(\\h+\\) \\d+$"
-    ml-write &spr "[ERROR: Unexpected index line for diff: %s]" @wl
-    !abort
-  !endif
+  !iif &not &xseq @wl "^index \\(\\h+\\)\\.\\.\\(\\h+\\) \\d+$"  -8 ml-write &spr "[ERROR: Unexpected index line for diff: %s]" @wl
   set-variable #l7 &con #l8 @s1 @s2
   set-variable $window-line 2
   !if &xseq @wl ".* show --date=iso.* \\(\\h\\h\\h\\h+\\)"
@@ -1359,8 +1347,7 @@ define-macro git-show
     !if &not $status
       goto-position "\x82"
       !force 0 delete-buffer "*git-tmp1*"
-      ml-write &spr "[ERROR: Failed to find commit hash in file log: %s %s]" #l2 #l9
-      !abort
+      -8 ml-write &spr "[ERROR: Failed to find commit hash in file log: %s %s]" #l2 #l9
     !endif
   !else
     ; can't use the previous command to get a usable starting hash, we must use the blob hash
@@ -1378,8 +1365,7 @@ define-macro git-show
     !if &not #l1
       goto-position "\x82"
       !force 0 delete-buffer "*git-tmp1*"
-      ml-write &spr "[ERROR: Failed to find comit for blob hash: %s]" #l7
-      !abort
+      -8 ml-write &spr "[ERROR: Failed to find comit for blob hash: %s]" #l7
     !endif
     find-buffer "*git-tmp1*"
   !endif
@@ -1392,10 +1378,7 @@ define-macro git-show
   !endif
   goto-position "\x82"
   !force 0 delete-buffer "*git-tmp1*"
-  !if &seq #l5 ""
-    ml-write &spr "[ERROR: Current commit is the %s for file: %s]" &con #l8 "first" "latest" #l9
-    !abort
-  !endif
+  !iif &seq #l5 ""  -8 ml-write &spr "[ERROR: Current commit is the %s for file: %s]" &con #l8 "first" "latest" #l9
   git-diff-file #l9 &spr "%s..%s" #l4 #l5
 !emacro
 define-macro git-diff
@@ -1410,10 +1393,7 @@ define-macro git-diff
       !abort
     !else
       !force 0x404 pipe-shell-command &spr "%s log -1 --pretty=format:%%h -- %s" .git.com .find-file.file1 #l3
-      !if &or &not $status &not &xse #l3 "\\h+"
-        ml-write &spr "[ERROR: Failed to get last commit hash for: %s - %s]" .find-file.file1 #l3
-        !abort
-      !endif
+      !iif &or &not $status &not &xse #l3 "\\h+"  -8 ml-write &spr "[ERROR: Failed to get last commit hash for: %s - %s]" .find-file.file1 #l3
       set-variable #l3 &spr "%s~..%s" #l3 #l3
     !endif
   !elif &seq "" &set #l3 &trl .git.cstrv2
