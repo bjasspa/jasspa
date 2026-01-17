@@ -366,7 +366,7 @@
 #define MEOPT_REGISTRY  1       /* enable registry functionality         */
 #define MEOPT_OSD       1       /* enable OSD functionality              */
 #define MEOPT_DIRLIST   1       /* enable Directory tree and listing     */
-#define MEOPT_FILEHOOK  1       /* enable File hook assigning            */
+#define MEOPT_MAJORMODE 1       /* enable File hook assigning            */
 #define MEOPT_TAGS      1       /* enable TAGS support                   */
 #define MEOPT_CMDHASH   1       /* use a hash table for command lookup   */
 #define MEOPT_EXTENDED  1       /* enable miscellaneous extended features*/
@@ -443,7 +443,7 @@
 #define MEOPT_REGISTRY  0       /* enable registry functionality         */
 #define MEOPT_OSD       0       /* enable OSD functionality              */
 #define MEOPT_DIRLIST   0       /* enable Directory tree and listing     */
-#define MEOPT_FILEHOOK  0       /* enable File hook assigning            */
+#define MEOPT_MAJORMODE 0       /* enable File hook assigning            */
 #define MEOPT_TAGS      0       /* enable TAGS support                   */
 #define MEOPT_CMDHASH   0       /* use a hash table for command lookup   */
 #define MEOPT_EXTENDED  0       /* enable miscellaneous extended features*/

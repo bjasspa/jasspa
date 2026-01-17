@@ -662,7 +662,7 @@ typedef struct mePosition {
 #define mePOS_DEFAULT   \
 (mePOS_WINDOW|mePOS_WINXSCRL|mePOS_WINXCSCRL|mePOS_WINYSCRL|mePOS_BUFFER|mePOS_LINEMRK)
 
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
 typedef struct meMajorMode
 {
     struct meMajorMode *next;
@@ -727,7 +727,7 @@ typedef struct  meBuffer {
 #if MEOPT_LOCALBIND
     struct meBind     *bindList;                /* pointer to local bindings    */
 #endif
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
     meMajorMode       *majorMode;               /* pointer to major-mode        */
 #endif
 #if MEOPT_NARROW
@@ -758,7 +758,7 @@ typedef struct  meBuffer {
     meInt              dotLineNo;               /* current line number          */
     meInt              markLineNo;              /* current mark line number     */
     meInt              lineCount;               /* end line number              */
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
     meInt              fhook;                   /* file hook function           */
     meInt              bhook;                   /* b buffer hook function       */
     meInt              dhook;                   /* d buffer hook function       */

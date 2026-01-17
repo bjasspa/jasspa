@@ -60,7 +60,7 @@ meUByte meOptionList[]=
 #if MEOPT_FENCE
     "fen\n"
 #endif
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
     "fho\n"
 #endif
 #if MEOPT_FRAME

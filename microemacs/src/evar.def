@@ -35,11 +35,11 @@
 DEFVAR ("auto-time",           EVAUTOTIME)      /* auto save buffer time */
 DEFVAR ("box-chars",           EVBOXCHRS)       /* Box character set */
 DEFVAR ("buffer-backup",       EVCBUFBACKUP)    /* current buffer backup name */
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
 DEFVAR ("buffer-bhook",        EVBUFBHK)        /* Buffer bhook  */
 #endif
 DEFVAR ("buffer-bname",        EVCBUFNAME)      /* current buffer name */
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
 DEFVAR ("buffer-dhook",        EVBUFDHK)        /* Buffer dhook  */
 DEFVAR ("buffer-ehook",        EVBUFEHK)        /* Buffer ehook  */
 DEFVAR ("buffer-fhook",        EVBUFFHK)        /* Buffer fhook  */
@@ -59,7 +59,7 @@ DEFVAR ("buffer-input",        EVBUFINP)        /* buffer input handler */
 #if MEOPT_IPIPES
 DEFVAR ("buffer-ipipe",        EVBUFIPIPE)      /* buffer ipipe input handler */
 #endif
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
 DEFVAR ("buffer-major-mode",   EVBUFMJRMOD)     /* Buffer major mode  */
 #endif
 DEFVAR ("buffer-mask",         EVBUFMASK)       /* buffer isWord mask */

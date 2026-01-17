@@ -3015,7 +3015,7 @@ translateBuffer(int f, int n)
     bp->vertScroll = 0;
     bp->tabWidth = tabWidth;
     bp->indentWidth = indentWidth;
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
     bp->fhook = bp->dhook = bp->bhook = bp->ehook = -1;
 #endif
 #if MEOPT_HILIGHT

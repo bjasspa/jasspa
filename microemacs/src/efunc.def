@@ -245,7 +245,7 @@ DEFFUNC ("list-variables",              0x42, 0x28012342, listVariables,        
 #endif
 DEFFUNC ("lower-case-region",           0x04, 0xb69cba83, lowerRegion,          CK_RCASLOW, &__cmdArray[CK_RCASLOW+1], 0)
 DEFFUNC ("lower-case-word",             0x04, 0xf5d5ec1b, lowerWord,            CK_LOWWRD, &__cmdArray[CK_LOWWRD+1], 0)
-#if MEOPT_CMDHASH || MEOPT_FILEHOOK
+#if MEOPT_CMDHASH || MEOPT_MAJORMODE
 DEFFUNC ("major-mode",                  0x00, 0x1cc12a6b, majorMode,            CK_MJRMOD, &__cmdArray[CK_MJRMOD+1], 0)
 #endif
 #if MEOPT_CMDHASH || MEOPT_REGISTRY

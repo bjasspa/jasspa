@@ -54,7 +54,7 @@ getBufferName(meUByte *prompt, int opt, int defH, meUByte *buf)
     return meGetString(prompt,opt|MLBUFFERCASE,defH,buf,meBUF_SIZE_MAX);
 }
 
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
 static meUByte       fileCidCount;
 static meUByte     **fileCidRegex;
 static meMajorMode **fileCidMjrMd;
@@ -604,7 +604,7 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
             }
         }
         meModeClear(bp->mode,MDNACT) ;
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
         /* Now set the buffer context */
         if((bp->intFlag & BIFNOHOOK) == 0)
         {
@@ -620,7 +620,7 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
 #endif
     }
     tbp = wp->buffer;
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
     /* If this is an out-of-date reload find-file, the call to bclear will
      * have executed the ehook and dhook so do do this now. */
     if((wp == frameCur->windowCur) && !reload && (tbp->ehook >= 0))
@@ -728,7 +728,7 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
        ((wp == frameCur->windowCur) || (bp->windowCount == 1)))
         ipipeSetSize(wp,bp);
 #endif        
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
     if((wp == frameCur->windowCur) && (bp->bhook >= 0))
         execBufferFunc(bp,bp->bhook,0,1);
 #endif        
@@ -788,7 +788,7 @@ HideBuffer(meBuffer *bp, int forceAll)
                             /* this is true if only *scratch* is left, ensure
                              * the buffer hooks are correctly setup and
                              * executed */
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
                             setBufferContext(bp);
 #endif
                             return meFALSE ;
@@ -1080,7 +1080,7 @@ bclear(register meBuffer *bp)
         autowriteremove(bp);
     }
     
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
     if(!meModeTest(bp->mode,MDNACT))
     {
         /* There is a problem when we kill a buffer, if it is the current
@@ -1135,7 +1135,7 @@ bclear(register meBuffer *bp)
     bp->fillcol = fillcol;
     bp->fillmode = fillmode;
 #endif
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
     bp->fhook = bp->dhook = bp->bhook = bp->ehook = -1;
 #endif
 #if MEOPT_HILIGHT
@@ -1741,7 +1741,7 @@ createBuffer(register meUByte *bname)
     bp->inputFunc = -1 ;
     bp->isWordMask = CHRMSK_DEFWORDMSK ;
 #endif
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
     bp->fhook = -1 ;
     bp->bhook = -1 ;
     bp->dhook = -1 ;

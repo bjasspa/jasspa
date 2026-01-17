@@ -119,7 +119,7 @@ extern	int	setCharMask(int f, int n);
 
 /* buffer.c externals */
 extern  int     getBufferName(meUByte *prompt, int opt, int defH, meUByte *buf);
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
 extern int      majorMode(int f, int n);
 #else
 #define majorMode notAvailable

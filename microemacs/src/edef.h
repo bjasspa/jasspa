@@ -81,7 +81,7 @@ extern  meUByte    fillmode;            /* Justify mode                 */
 #endif
 extern  meUByte    indentWidth;         /* Virtual Tab size             */
 extern  meUByte    tabWidth;            /* Real TAB size                */
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
 extern meMajorMode  *majorModeHead;     /* list of major-modes          */
 #endif
 extern  meUByte   *homedir;             /* Home directory               */
@@ -529,7 +529,7 @@ meShort   pauseTime = 2000;             /* Fence matching sleep length  */
 #endif
 meUByte   indentWidth = 4;              /* Virtual Tab size             */
 meUByte   tabWidth = 8;                 /* Real TAB size                */
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
 meMajorMode *majorModeHead=NULL;        /* list of major-modes          */
 #endif
 meUByte  *searchPath=NULL;              /* emf search path              */

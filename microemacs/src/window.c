@@ -471,7 +471,7 @@ meWindowMakeCurrent(meWindow *nwp)
     meWindow *owp=frameCur->windowCur;
     if(owp == nwp)
         return;
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
     /* Process the exit hook of the old buffer.
      * Force mode line / scroll bar update on old window */
     if(owp->buffer->ehook >= 0)
@@ -490,7 +490,7 @@ meWindowMakeCurrent(meWindow *nwp)
 #endif
     }
 #endif
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
     /* Process the entry hook of the new buffer.
      * Force mode line / scroll bar update on new window */
     if(nwp->buffer->bhook >= 0)

@@ -925,7 +925,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             frameCur->windowCur->buffer->ipipeFunc = decode_fncname(vvalue,1);
             break;
 #endif
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
         case EVBUFBHK:
             frameCur->windowCur->buffer->bhook = decode_fncname(vvalue,1);
             break;
@@ -1475,7 +1475,7 @@ handle_namesvar:
         ii = frameCur->windowCur->buffer->ipipeFunc ;
         goto hook_jump ;
 #endif
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
     case EVBUFMJRMOD:
         if(frameCur->windowCur->buffer->majorMode != NULL)
             meStrcpy(evalResult,frameCur->windowCur->buffer->majorMode->id);

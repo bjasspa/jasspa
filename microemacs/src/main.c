@@ -658,7 +658,7 @@ exitEmacs(int f, int n)
         while(ipipes != NULL)
             ipipeRemove(ipipes);
 #endif
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
         /* execute ehooks for all current buffers */
         meFrameLoopBegin();
         if((bp=loopFrame->windowCur->buffer)->ehook >= 0)
@@ -670,7 +670,7 @@ exitEmacs(int f, int n)
         while(bp != NULL)
         {
             nbp = bp->next;
-#if MEOPT_FILEHOOK
+#if MEOPT_MAJORMODE
             if(!meModeTest(bp->mode,MDNACT) && (bp->dhook >= 0))
                 execBufferFunc(bp,bp->dhook,0,1);     /* Execute the delete hook */
 #endif
