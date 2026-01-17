@@ -159,7 +159,7 @@ define-macro-file xrdb xrdb-scheme
 5 major-mode "pascal" ".p .pas"
 5 major-mode "perl" ".pl .pm"
 5 major-mode "php" ".php .php3 .php4 .php5 .phtml .inc"
-9 major-mode "phps" "PHP Script"
+15 major-mode "phps" "" "" "PHP Script"
 13 major-mode "plsql" ".pls" "PL/SQL"
 15 major-mode "ps1" "powershell" ".ps1 .psm1" "PowerShell Script"
 1 major-mode "psf"
