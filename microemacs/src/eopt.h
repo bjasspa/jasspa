@@ -60,9 +60,6 @@ meUByte meOptionList[]=
 #if MEOPT_FENCE
     "fen\n"
 #endif
-#if MEOPT_MAJORMODE
-    "fho\n"
-#endif
 #if MEOPT_FRAME
     "fra\n"
 #endif
@@ -86,6 +83,9 @@ meUByte meOptionList[]=
 #endif
 #if MEOPT_MAGIC
     "mag\n"
+#endif
+#if MEOPT_MAJORMODE
+    "mjm\n"
 #endif
 #if MEOPT_MOUSE
     "mou\n"
