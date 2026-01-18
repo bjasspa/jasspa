@@ -92,7 +92,7 @@ define-macro-file xrdb xrdb-scheme
 ; TODO httpd.conf & smb.conf are very specific and apache can used different names, would be better to have more generic hondlers
 5 major-mode "apache" "httpd.conf"
 9 major-mode "apt" "Maven APT"
-7 major-mode "asm" "assembler" ".asm .x86"
+7 major-mode "asm" "assembler" ".asm .s .x86"
 1 major-mode "asn1"
 9 major-mode "asp" "ASP"
 13 major-mode "autoit" ".au3" "AutoIt"

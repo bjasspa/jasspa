@@ -504,6 +504,6 @@ define-macro major-mode-help
 ; Migration helper: add-file-hook was replaced with built in major-mode command in 20260101
 ; The following macro informs the user and avoids the blow-up
 ; TODO remove soon
-define-macro add-file-hook
+0 define-macro add-file-hook
   -16 ml-write &spr "Error: Calls to add-file-hook need to be updated to use major-mode."
 !emacro
