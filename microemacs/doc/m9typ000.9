@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ000.9,v 2.12 2025/08/28 02:05:37 jon Exp $
+.Id $Id: m9typ000.9,v 2.12 2026/01/17 21:37:12 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH c 9
@@ -191,19 +191,18 @@ pip install clang-tidy --user
 .CE 0
 .RE
 .SH NOTES
-If the  default  language  is C++, rather than 'C' the order of the file hooks
-should be over-ridden in the users local setup, using:-
+If the default language is C++, rather than 'C' the extension list and priority of the \fCcpp\fR major-mode should be
+over-ridden in the users local setup, using:-
 .Me $emf-scheme
 .CS
-add-file-hook ".c "                                  fhook-c
-add-file-hook ".cc .cpp .hpp .rc .h .def .l .y .i"   fhook-cpp
+4 major-mode "cpp" ".cc .cpp .hpp .h .def .rc .l .y .i"
 .CE 
 .Me $ehf-scheme
-This defaults all \fB.h\fR and \fB.def\fR files etc. to be C++ rather than C.
+This defaults all \fB.h\fR and \fB.def\fR files etc. to be C++ rather than C, and redefining it after \fCC\fR mode 
+raises its relative priority.
 .PP
-The  hilighting  is  typically   extended  using  a  file   \fBmyc.emf\fR  (or
-\fBmycpp.emf\fR)  i.e. to include the usual extended types of \fBint32\fR etc,
-\fBmyc.emf\fR might be defined as:-
+The hilighting is typically extended using a file \fBmyc.emf\fR (or \fBmycpp.emf\fR) i.e. to include the usual
+extended types of \fBint32\fR etc, \fBmyc.emf\fR might be defined as:-
 .Me $emf-scheme
 .CS
 hilight .hilight.c 1 "uint8"    .scheme.type

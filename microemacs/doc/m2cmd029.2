@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd029.2,v 2.6 2025/08/28 00:51:20 jon Exp $
+.Id $Id: m2cmd029.2,v 2.6 2026/01/17 19:36:28 jon Exp $
 .Im MicroEmacs command|macrodevelopment
 .so me.tni
 .TH define-macro 2
@@ -49,12 +49,11 @@ Once the macro has been defined, it becomes  indistinguishable from a standard
 .Ht global-bind-key 2
 can be used to globally bind the command to a key combination.
 .PP
-There  are no  restrictions  on the  number  of  macros  that may be  defined,
-provided that the name space is managed properly.  Consideration must be given
-as to when any  additional  macros  that are created are loaded into \*(mS. We
-usually like start-up to be rapid and macros are loaded as and when  requested
-by the user, or by the buffer hooks as new files are loaded (see
-.Ht add-file-hook 2
+There are no restrictions on the number of macros that may be defined, provided that the name space is managed
+properly. Consideration must be given as to when any additional macros that are created are loaded into \*(mS. We
+usually like start-up to be rapid and macros are loaded as and when requested by the user, or by the buffer
+major-modes as new files are loaded (see
+.Ht major-mode 2
 and
 .Ht define-macro-file 2 ).
 .PP
@@ -186,7 +185,7 @@ for details macro termination.
 .PP
 .na
 .Ht !emacro 4 ,
-.Ht add-file-hook 2 ,
+.Ht major-mode 2 ,
 .Ht define-macro-file 2 ,
 .Ht define-help 2 ,
 .Ht describe-bindings 2 ,

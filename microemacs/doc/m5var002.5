@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m5var002.5,v 2.6 2025/11/24 19:27:35 jon Exp $
+.Id $Id: m5var002.5,v 2.6 2026/01/18 14:24:24 jon Exp $
 .Im MicroEmacs variable|macrodevelop
 .so me.tni
 .TH $buffer-fhook 5
@@ -38,25 +38,29 @@ $buffer-ehook - Buffer macro hook command name (buffer swapped)
 .B $buffer-ehook
 .I FunctionName
 .SH DESCRIPTION
-Sets the buffer create, delete, begin and end hook command which are executed:
-.IP \fBbuffer-fhook\fR
+Defines the buffer create, delete, begin and end hook command which are executed:
+.IP \fB$buffer-fhook\fR
 When the buffer is created.
-.IP \fBbuffer-dhook\fR
+.IP \fB$buffer-dhook\fR
 When the buffer is deleted.
-.IP \fBbuffer-bhook\fR
+.IP \fB$buffer-bhook\fR
 When the buffer becomes the current buffer.
-.IP \fBbuffer-ehook\fR
+.IP \fB$buffer-ehook\fR
 When the buffer is swapped out from being the current buffer.
 .LP
-The variable \fB$buffer-fhook\fR is largely redundant as the file hook is executed only once and before it can be
-set. Its main use is within macros which wish to ascertain what type of buffer it is executing on, i.e. if a command
-was to be executed only on C files then the follow ensures that this is the case:
+The variable \fB$buffer-fhook\fR cannot be directly set and is largely redundant as the file hook is executed only
+when the buffer's
+.Ht major-mode 2
+is first assigned. Its main use is within macros which wish to ascertain what type of buffer it is executing on, i.e.
+if a command was to be executed only on C files then the follow ensures that this is the case:
 .Me $emf-scheme
 .CS
 !iif &not &seq $buffer-fhook "fhook-c"  !abort
 .CE
 .Me $ehf-scheme
-Where the command \fIfhook-c\fR is the C file hook.
+Where the command \fIfhook-c\fR is the C major-mode file hook, note that the
+.Ht $buffer-major-mode 5
+can often be used for the same purposes.
 .PP
 \fBdhooks\fR are executed when a buffer is deleted, but before the contents of the buffer are lost. Note that dhooks
 will not be called if the buffer never becomes active, or if \*(mS quits due to the receipt of a panic signal.
@@ -64,11 +68,17 @@ will not be called if the buffer never becomes active, or if \*(mS quits due to 
 \fBbhooks\fR and \fBehooks\fR are usually used to set and restore global variables which require different setting in
 the current buffer.
 .PP
-These variables are set by the system when the buffer first becomes active, the order, or priority, of the different
-file hooks is determined by the command
-.Ht add-file-hook 2 .
+These variables are initially set by the system when the buffer first becomes active, when the buffer's
+.Ht major-mode 2
+is determined. After this point the \fBdhook\fR, \fBbhook\fR & \fBehook\fR variables can be set to any function the user 
+wishes, however the \fB$buffer-fhook\fR variable can only be changed by calls to \fBmajor-mode\fR as the value of the 
+variable must stay in sync with
+.Ht $buffer-major-mode 5 .
 .SH "SEE ALSO"
 .na
-.Ht add-file-hook 2 .
+.Ht major-mode 2 ,
+.Ht buffer-init 3 ,
+.Ht $buffer-major-mode 5 ,
+.Hl "Language Templates" languageTemplates 2 
 .ad
 .FH

@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sun Aug 23 15:42:05 1998
 .\"
-.Id $Id: m2nar003.2,v 2.11 2025/08/28 01:08:59 jon Exp $
+.Id $Id: m2nar003.2,v 2.11 2026/01/17 23:14:26 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH "User Profiles" 2
@@ -139,26 +139,24 @@ Setup registry and previous session history
 .Hl $user-name $user-name 5 .erf
 (see
 .Ht erf 8 ).
-This stores the  \fBuser-setup\fR  settings and the context from previous edit
-sessions.
+This stores the \fBuser-setup\fR settings and the context from previous edit sessions.
 .BU
 Users start-up file
 .Hl $user-name $user-name 5 .emf
 (see
 .Ht emf 8 ).
-This is typically referred to as "\|\fIuser.emf\fR\|" in the documentation and
-means the users  private \*(mS macro file. The user may make local  changes to
-\*(mS in this file, this may include  definition of new key bindings, defining
-new hook  functions etc. You should  override the standard \*(mS settings from
-your start-up file rather than modifying the standard \*(mS files.
+This is typically referred to as "\|\fIuser.emf\fR\|" in the documentation and means the users private \*(mS macro
+file. The user may make local changes to \*(mS in this file, this may include definition of new key bindings, defining
+new major-mode functions etc. You should override the standard \*(mS settings from your start-up file rather than
+modifying the standard \*(mS files.
 .BU
-Personal spelling dictionary \fBlsdp\fR\|\fIlang\fR\|.edf (see
+Personal spelling dictionary \fBlsp\fR\|\fIlang\fR\|.edf (see
 .Ht edf 8 ).
-Multiple  spelling  dictionaries  may be created, one for each  language.  Any
-words that are added to the spelling dictionary are stored in these files.
+Multiple spelling dictionaries may be created, one for each language. Any words that are added to the spelling
+dictionary are stored in these files.
 .BE
-In addition to the above, if new private macro files are constructed then they
-should be added to this directory (if they are not global to the company).
+In addition to the above, if new private macro files are constructed then they should be added to this directory (if
+they are not global to the company).
 .SH EXAMPLE
 The following are examples of some individuals start-up files:-
 .Me $emf-scheme
@@ -251,17 +249,10 @@ set-variable %gdiff-com "diff --context --ignore-space-change -w"
     set-variable %cygwin-path "c:/cygwin"
     set-variable %cygwin-hilight 1
 !endif
-; Set up the ftp flags. The letters have the following meaning:
-; c   - Create a console (*ftp-console* for ftp, *http-console* for http)
-; s   - Show the console
-; p   - Show download progress ('#' every 2KB downloaded)
-set-variable %ftp-flags "csp"
-; Info files
-;To hilight the .info and also the dir file
-add-file-hook ".info dir"                                   fhook-info   ; Info-files
-;To hilight all info files without the extension .info
-;but starting with the text "This is info file..
--2 add-file-hook "This is Info file"                        fhook-info
+; Set up the http flags.
+set-variable %http-flags "cspw"
+; Add Jasspa MicroEmacs File (JMF) support:
+11 major-mode "jmf" "jm-file" "Jasspa ME File"
 
 ; Finished
 ml-write "Configured to Jon's requirements"
@@ -277,6 +268,7 @@ ml-write "Configured to Jon's requirements"
 .Ht $MENAME 5 ,
 .Ht $MEPATH 5 ,
 .Ht $MEUSERPATH 5 ,
+.Ht major-mode 2 ,
 .Hl "Company Profiles" companyProfiles 2 ,
 .Hl "File Hooks" fileHooks 2 ,
 .Hl "File Language Templates" languageTemplates 2 ,

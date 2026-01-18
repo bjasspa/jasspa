@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd084.2,v 2.9 2022/06/12 17:13:25 jon Exp $
+.Id $Id: m2cmd084.2,v 2.9 2026/01/17 19:43:27 jon Exp $
 .Im MicroEmacs command|bind
 .so me.tni
 .TH buffer-bind-key 2
@@ -30,10 +30,9 @@ buffer-unbind-key \- Remove local key binding for current buffer
 .ad
 .SH DESCRIPTION
 .B buffer-bind-key
-creates a key  binding  local to the  current  buffer,  binding  the  command
-\fIcommand\fR  to the keyboard input  \fIkey\fR. This command is particularly
-useful in conjunction with file loading hooks (see
-.Ht add-file-hook 2 )
+creates a key binding local to the current buffer, binding the command \fIcommand\fR to the keyboard input \fIkey\fR.
+This command is particularly useful in conjunction with \fBmajor-mode\fR file hook (see
+.Ht major-mode 2 )
 allowing local key bindings dependent upon the context of the buffer.
 .PP
 The message line input is not effected by the current buffers local bindings.
@@ -51,6 +50,7 @@ Key response time linearly increases with each local binding added.
 .Ht global-bind-key 2 ,
 .Ht ml-bind-key 2 ,
 .Ht osd-bind-key 2 ,
+.Ht major-mode 2 ,
 .Ht global-unbind-key 2 .
 .ad
 .FH

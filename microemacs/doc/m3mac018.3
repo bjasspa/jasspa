@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac018.3,v 2.8 2025/03/26 11:59:28 jon Exp $
+.Id $Id: m3mac018.3,v 2.8 2026/01/18 14:18:47 jon Exp $
 .Im MicroEmacs command|file
 .so me.tni
 .TH insert-template 3
@@ -26,6 +26,8 @@ insert-template \- Insert template file into current buffer
 .SH DESCRIPTION
 \fBinsert-template\fR is generally called by file hooks when the new buffer has been created as opposed to loaded from
 a file (see
+.Ht major-mode 2
+and
 .Ht $buffer-fhook 5 ).
 .PP
 \fBinsert-template\fR uses
@@ -115,6 +117,7 @@ mode is always used to perform the the  search/replace  so the replace strings
 should be appropriate for \fBmagic\fR.
 .SH "SEE ALSO"
 .na
+.Ht major-mode 2
 .Ht %ascii-time 5 ,
 .Ht $buffer-fhook 5 ,
 .Ht %company-name 5 ,

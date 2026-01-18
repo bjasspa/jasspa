@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu May 27 15:30:14 1999
 .\"
-.Id $Id: faq.2,v 2.17 2025/08/28 00:27:35 jon Exp $
+.Id $Id: faq.2,v 2.17 2026/01/17 19:06:47 jon Exp $
 .Im MicroEmacs faq
 .so me.tni
 .TH "FAQs" 0f
@@ -132,19 +132,17 @@ We would be open to suggestions.
 .SH "QUESTION (\*(Qn)"
 \*(Qu
 .SH ANSWER
-If your main programming language is C++, then you will require the \fC.def\fR
-and \fC\.h\fR  files to be loaded in C++ mode by default,  rather than 'C'. To
-modify this hen the order of the file hooks has to be re-defined.
+If your main programming language is C++, then you will require the \fC.def\fR and \fC\.h\fR files to be loaded in C++
+mode by default, rather than 'C'. To modify this hen the extension list and priority of the \fCcpp\fR major-mode needs
+adjusting.
 .PP
-Within your  \fI<user>.emf\fR,  over-ride the default  ordering by including the
-line:-
+Within your \fI<user>.emf\fR, over-ride the default extension list and priority by adding the line:-
 .Me $emf-scheme
 .CS
-add-file-hook ".h .def"                                     fhook-cpp
+4 major-mode "cpp" ".cc .cpp .cxx .def .h .hh .hpp .hxx .rc"
 .CE
 .Me $ehf-scheme
-This adds a newer binding for "\fC.h\fR" and "\fC.def\fR" to C++,  over-riding
-the existing 'C' binding.
+This redefines the C++ major-mode extension list to include "\fC.h\fR" and "\fC.def\fR" and makes it highest priority.
 .PP
 .Hl "[FAQ Index]" faq - .
 .\">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

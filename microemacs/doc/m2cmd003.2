@@ -4,22 +4,36 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd003.2,v 2.7 2025/11/25 00:46:08 jon Exp $
+.Id $Id: m2cmd003.2,v 2.7 2026/01/18 14:29:20 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
-.TH add-file-hook 2
-.XI add-file-hook - "Declare file name context dependent configuration"
+.TH major-mode 2
+.XI major-mode - "Declare or set a buffer major mode"
+.XI add-file-hook - "Depreciated"
 .SH NAME
-add-file-hook \- Declare file name context dependent configuration
+.br
+.Me "|major-mode"
+major-mode \- Declare or set a buffer major mode
+.br
+.Me "|add-file-hook"
+add-file-hook \- Depreciated, update to major-mode
 .Me $a
 .SH SYNOPSIS
 .na
-.I n
-.B add-file-hook
-"\fIextensions\fR"
-"\fIfhook-name\fR"
+\fBmajor-mode\fR \fIid\fR
+.br
+\fI0\fR \fBmajor-mode\fR \fIid\fR
+.br
+\fIn\fR \fBmajor-mode\fR \fIid\fR
+["\fIcid-label\fR"]
+["\fIextension-list\fR"]
+["\fIfull-name\fR"]
+[\fIcid-line-count\fR "\fIcid-regex\fR"]
 ["\fImacro1-name\fR" "\fImacro2-name\fR" ...]
+.br
+\fI16\fR \fBmajor-mode\fR \fIid\fR [\fIcid-line-count\fR "\fIcid-regex\fR"]
 .ad
+.\" TODO SSP need to finish
 .SH DESCRIPTION
 .B add-file-hook
 defines a macro binding between a file name or file type and a set of macros. This binding enables file type dependent
@@ -395,8 +409,7 @@ defined.
 .na
 .Hl "File Hooks" fileHooks 2 ,
 .Hl "Language Templates" languageTemplates 2 ,
-.Ht $buffer-bhook 5 ,
-.Ht $buffer-ehook 5 ,
+.Ht $buffer-major-mode 5 ,
 .Ht $buffer-fhook 5 ,
 .Ht define-macro-file 2 .
 .ad

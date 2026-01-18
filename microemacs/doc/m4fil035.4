@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil035.4,v 1.4 2025/10/03 22:37:35 jon Exp $
+.Id $Id: m4fil035.4,v 1.4 2026/01/17 22:28:33 jon Exp $
 .Im MicroEmacs macro;function;miscellaneous
 .so me.tni
 .TH &opt 4
@@ -17,14 +17,14 @@
 .I str
 .ad
 .SH DESCRIPTION
-This  function  can be used to test the  availability  of  optional  features  in the  current  session of \*(mS. Some
-features,  like  spelling  checker  support, are a  compilation  option, other  options like mouse support may also be
+This function can be used to test the availability of optional features in the current session of \*(mS. Some
+features, like spelling checker support, are a compilation option, other options like mouse support may also be
 unavailable on some platforms. The \fB&opt\fR function can be used by macros to check that required base functionality
 is available.
 .PP
 The function  returns  \fC1\fR in the given  feature  "\fIstr\fR"  is supported,  otherwise it returns  \fC0\fR if the
 feature is unknown or not supported in the running version.
-.SH NOTES
+.PP
 Optional   components   of  \*(mS  are   enabled/disabled   at  compile   time,  most   options  are   configured   by
 \fCMEOPT_\fR\fI<NAME>\fR  \fC#define\fR's  within  the source  file  \fCemain.h\fR.  Following  is a complete  list of
 options, giving the \fBopt\fR string and \fC#define\fR label:
@@ -63,9 +63,6 @@ Fence matching (see
 .Ht user-setup 3
 and
 .Ht fence 2m ).
-.IP "fho - MEOPT_FILEHOOK"
-File type auto-detection and configuration (see
-.Ht add-file-hook 2 ).
 .IP "fra - MEOPT_FRAME"
 Multiple frames (Internal or external, see opt "\fBmwf\fR" and command
 .Ht create-frame 2 ).
@@ -94,6 +91,9 @@ Buffer, message-line and OSD local binding overrides (see
 Regular expression search engine (see
 .Ht magic 2m
 mode).
+.IP "mjm - MEOPT_MAJORMODE"
+File major-mode auto-detection and configuration (see
+.Ht major-mode 2 ).
 .IP "mou - MEOPT_MOUSE"
 Mouse support (see
 .Ht $mouse 5 ).
@@ -160,7 +160,7 @@ an error:
 !endif
 .CE 0
 .Me $ehf-scheme
-.SH "NOTES"
+.SH NOTES
 The output of command
 .Ht about 2
 includes a full list of all available optional features.

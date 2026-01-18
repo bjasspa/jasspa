@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd069.2,v 2.10 2025/08/28 00:53:22 jon Exp $
+.Id $Id: m2cmd069.2,v 2.10 2026/01/17 19:41:20 jon Exp $
 .Im MicroEmacs command|hilight|macrodevelop
 .so me.tni
 .TH hilight 2
@@ -164,9 +164,11 @@ line truncation scheme, when omitted the value of
 is used.
 .PP
 The hi-lighting  scheme required is based on the type of file being edited and
-so is  usually  directly  related  to  the  file  extension,  thus  it  can be
-automatically set using file hooks (see
-.Ht add-file-hook 2 ).
+so is  usually  directly  related  to  the
+.Ht major-mode 2 ,
+which is typically automatically determined by the file's extension or content (see
+.Ht major-mode 2
+for more information on file type identification).
 .SS "Hilight Scheme Token Creation"
 .na
 .sp 1
@@ -686,7 +688,7 @@ supported hilight mode.
 .Hl "Regular Expressions" RegularExpressions 2 ,
 .Hl "File Language Templates" languageTemplates 2 ,
 .Ht $buffer-hilight 5 ,
-.Ht add-file-hook 2 ,
+.Ht major-mode 2 ,
 .Ht add-color-scheme 2 ,
 .Ht print-scheme 2 ,
 .Ht indent 2 ,

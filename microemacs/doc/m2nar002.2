@@ -7,17 +7,16 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sun Aug 23 15:42:05 1998
 .\"
-.Id $Id: m2nar002.2,v 2.7 2025/08/28 01:08:33 jon Exp $
+.\" TODO This needs update - templates are often standard with the company.emf defining the license. doesn't reflect change-company
+.Id $Id: m2nar002.2,v 2.7 2026/01/17 23:00:50 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH CompanyProfiles 2
 .XI CompanyProfiles - "Defining a company profile"
 .SH "COMPANY PROFILES"
-This section  describes  how a company  profile  should be  incorporated  into
-\*(mE. A company  profile  defines a set of  extensions  to  MicroEmacs  which
-encapsulate  settings  which are used on a company  wide  basis.  This type of
-configuration is typically used with a networked  (shared)  installation.  The
-company profile would typically include:-
+This section describes how a company profile should be incorporated into \*(mS. A company profile defines a set of
+extensions to \*(mS which encapsulate settings which are used on a company wide basis. This type of configuration is
+typically used with a networked (shared) installation. The company profile would typically include:-
 .BS
 Name of the company.
 .BU
@@ -28,63 +27,54 @@ Standard file layouts
 Company defined language extensions.
 .BE 0
 .SS "Location Of The Company Information"
-It is  suggested  that all of the  company  extensions  applied  to \*(mS  are
-performed  in a separate  directory  location  which  shadows  the  MicroEmacs
-standard macro file  directory.  This enables the original files to be sourced
-if a user does not want to include the company  files. This method also allows
-MicroEmacs to be updated in the future,  whilst  retaining the company  files.
+It is suggested that all of the company extensions applied to \*(mS are performed in a separate directory location
+which shadows the MicroEmacs standard macro file directory. This enables the original files to be sourced if a user
+does not want to include the company files. This method also allows \*(mS to be updated in the future, whilst
+retaining the company files.
 .PP
-The company  files are  generally  placed in the  \fCcompany\fR  sub-directory
-described in the installation notes.
+The company files are generally placed in the \fCcompany\fR sub-directory described in the installation notes.
 .SS "Content Of The Company Information"
 .BP "Company macro file"
-The   company   file  is   typically   called  by  the   company   name  (i.e.
-\fCjasspa.emf\fR)  create a new company file. The file  includes  your company
-name and hook  functions for any new file types that have been defined for the
-company, an example  company file for \fBJasspa\fR might be defined as:-
+The company file is typically called by the company name (i.e. \fCjasspa.emf\fR) create a new company file. The file
+includes your company name and hook functions for any new file types that have been defined for the company, an
+example company file for \fBJasspa\fR might be defined as:-
 .RS
 .Me $emf-scheme
 .CS
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; -!- emf -!-
+; Copyright (C) 2025 JASSPA (www.jasspa.com).
 ;
-;  Author        : Jasspa
-;  Created       : Thu Jul 24 09:44:49 1997
-;  Last Modified : <250316.0854>
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
 ;
-;  Description     Extensions for Jasspa
+; Synopsis:    JASSPA company setup file
+; Authors:     Steven Phillips
 ;
-;  Notes
-;
-;  History
-;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Define the name & url of the company.
+; Define the name, url & license of the company.
 set-variable %company-name "Jasspa"
 set-variable %company-url "www.jasspa.com"
+set-variable %company-license "This is part of JASSPA's MicroEmacs, ..."
 ; Add Jasspa specific file hooks
-; Make-up foo file hook
-add-file-hook ".foo"    fhook-foo
-1 add-file-hook "-!-[ \\t]*foobar.*-!-" fhook-foo ; -!- foobar -!-
+; Make-up foo major-mode and file hook
+1 major-mode "foo"
 ; Override the make with localised build command
 set-variable %compile-com "build"
 .CE
 .Me $ehf-scheme
-The file contains company specific file hooks and the name of the company.
+The file contains company specific major-modes and the name of the company.
 .RE
 .BP "Other Company Files"
-Files defined on behalf of the company are included in the company  directory.
-These would include:-
+Files defined on behalf of the company are included in the company directory. These would include:-
 .RS
 .BS
 Template header files
 .Ht etf 8 .
 .BU
-Hook  file  definitions  (\fBhk\fR\fIXXX\fR\fB.emf\fR)  for  company  specific
-files, see
-.Ht add-file-hook 2 .
+Major-mode file hook definitions (\fBhk\fR\fIXXX\fR\fB.emf\fR) for company specific files, see
+.Ht major-mode 2 .
 .BU
-Extensions to the standard hook definitions  (\fBmy\fR\fIXXX\fR\fB.emf\fR) for
-company specific language extensions to the standard hook files. See
+Extensions to the standard hook definitions (\fBmy\fR\fIXXX\fR\fB.emf\fR) for company specific language extensions to
+the standard hook files. See
 .Hl "File Hooks" fileHooks 2
 and
 .Hl "File Language Templates" languageTemplates 2 .
@@ -96,6 +86,7 @@ and
 .Ht $MENAME 5 ,
 .Ht $MEPATH 5 ,
 .Hl "File Hooks" fileHooks 2 ,
+.Ht major-mode 2 ,
 .Hl "File Language Templates" languageTemplates 2 ,
 .Hl "Installation" Installation 1 ,
 .Ht user-setup 3 ,

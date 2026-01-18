@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: m9typ030.9,v 2.6 2024/07/16 17:14:33 jon Exp $
+.Id $Id: m9typ030.9,v 2.6 2026/01/17 21:43:49 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH asm 9
@@ -22,18 +22,15 @@ asm, s \- Assembler File
 \fB.asm\fR \- Platform specific assembler file.
 .ad
 .SH DESCRIPTION
-The standard assembler file extensions  \fB.s\fR and \fB.asm\fR are by default
-not bound to any hook functions as they are platform specific. The user should
-define a default  binding for the assembler  file types as  appropriate to the
-current platform and assembler  development. i.e. for the Windows  environment
-the
+.\" TODO asmx86 was the only asm and who writes asm any more? Renamed asmx86 to asm as a generic asm with the hope a single hook can be made to work it out  
+The standard assembler file extensions \fB.s\fR and \fB.asm\fR are by default not bound to any hook functions as they
+are platform specific. The user should define a default binding for the assembler file types as appropriate to the
+current platform and assembler development. i.e. for the Windows environment the
 .Ht x86 9
 file type would be conditionally bound to the file e.g.
 .Me $emf-scheme
 .CS
-!if &seq $platform "windows"
-    add-file-hook ".s .asm"             fhook-asmx86
-!endif
+!iif &seq $platform "windows"  major-mode "asm" ".asm .s .x86"
 .CE 0
 .Me $ehf-scheme
 .SH "SEE ALSO"

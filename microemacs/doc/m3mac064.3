@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac064.3,v 1.17 2024/11/10 17:13:59 jon Exp $
+.Id $Id: m3mac064.3,v 1.17 2026/01/18 14:34:40 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH buffer-init 3
@@ -25,7 +25,6 @@ buffer-init-fhook \- Initialize the buffer file hooks.
 .na
 .I n
 .B buffer-init
-.I name
 [\|\fIetf\fR\|]
 .br
 .B buffer-init-hooks
@@ -36,11 +35,10 @@ buffer-init-fhook \- Initialize the buffer file hooks.
 .SH DESCRIPTION
 The
 .B buff-init
-commands  prepare  the  operating  modes of a buffer for a language  template.
-These   commands   operate  with   variables   defined  in  the  template  and
-automatically  configure \*(mS to use the template.
+commands prepare the operating modes and binding of a buffer for the assigned major-mode. These commands operate with variables
+defined in the major-mode's hook and automatically configure \*(mS to use the template.
 .PP
-The commands are used in the hook files (hkXXX.emf - see
+The commands are used in the major-mode hook files (hkXXX.emf - see
 .Hl "File Hooks" fileHooks 2 )
 and simply the setting up of
 .Hl "File Language Templates" languageTemplates 2
@@ -48,20 +46,22 @@ by automating common actions and integrating the configuration settings
 made via
 .Ht buffer-setup 3 .
 .PP
-The hook file is declared from  \fCme.emf\fR or the user start up file binding
-a file extension or magic string association with the hook file. i.e.
+The hook file is defined by a call to
+.Ht major-mode 2
+which is typically declared in  \fCme.emf\fR or the user start up file, binding
+a file extension or a content identifier to the major-mode. i.e.
 .RS
 .Me $emf-scheme
 .CS
--1 add-file-hook "-[*!]-[ \\t]*XXX.*-[*!]-"    fhook-XXX
- 1 add-file-hook "^#!/.*XXX"                  fhook-XXX
+5 major-mode "XXX" ".XX1 .XX2"
+13 major-mode "YYY" ".YY1 .YY2" "^#!/.*YYY"
 .CE
 .Me $ehf-scheme
 .RE
-The first time a file is loaded that that is bound to \fBfhook-XXX\fR via an
-.Ht add-file-hook 2
+The first time a file is loaded that is bound to \fBfhook-XXX\fR via a
+.Ht major-mode 2
 definition,  the  \fChkXXX.emf\fR macro  file is  executed and then the \fBfhook-XXX\fR command is executed
-with the file's buffer current so that the template is applied to it. Only the execution of \fBfhook-XXX\fR is done on 
+with the file's buffer current so that the file hook is applied to it. Only the execution of \fBfhook-XXX\fR is done on 
 subsequent loading of files of this type.
 .PP
 When the \fBfhook-XXX\fR command is executed it's
@@ -1196,7 +1196,7 @@ syntax was introduced in June 2005 to simplify the command list definitions.
 .na
 .Ht $buffer-hilight 5 ,
 .Ht $buffer-indent 5 ,
-.Ht add-file-hook 2 ,
+.Ht major-mode 2 ,
 .Ht buffer-abbrev-file 2 ,
 .Ht buffer-setup 3 ,
 .Ht collapse-all 3 ,
