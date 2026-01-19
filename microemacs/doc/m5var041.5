@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m5var041.5,v 2.9 2025/07/28 11:06:02 jon Exp $
+.Id $Id: m5var041.5,v 2.9 2026/01/19 13:04:56 jon Exp $
 .Im MicroEmacs variable|shell|macrodevelop
 .so me.tni
 .TH $result 5
@@ -84,6 +84,9 @@ In the case of \fBipipe-shell-command\fR, \fB$result\fR is only set to the exit 
 during the final call to the \fIbuffer-ipipe-command\fR, for more information see help for variable
 .Ht $buffer-ipipe 5 .
 .TP
+.Ht major-mode 2
+\fB$result\fR is used to return information about a given major-mode.
+.TP
 .Ht mark-registry 2
 \fB$result\fR is used to return the full name of the given registry node.
 .TP
@@ -147,6 +150,7 @@ should be copied before getting user input.
 .Ht goto-alpha-mark 2 ,
 .Ht indent 2 ,
 .Ht ipipe-shell-command 2 ,
+.Ht major-mode 2 ,
 .Ht mark-registry 2 ,
 .Ht osd 2 ,
 .Ht pipe-shell-command 2 ,

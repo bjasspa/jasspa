@@ -257,7 +257,7 @@ majorMode(int f, int n)
         else if(n == 0)
         {
             if(mm->fhook > 0)
-                n = 5 + ((mm->ftest > 0) ? 2:0) + ((mm->bhook > 0) ? 8:0) + ((mm->ehook > 0) ? 16:0) + ((mm->bhook > 0) ? 32:0);
+                n = 3 + ((mm->ftest > 0) ? 4:0) + ((mm->bhook > 0) ? 8:0) + ((mm->ehook > 0) ? 16:0) + ((mm->dhook > 0) ? 32:0);
             else if(mm->fhook < 0)
                 n = 1;
             sprintf((char *) resultStr,"\x08%s\x08%d\x08%s\x08%s\x08%s\x08",mm->id,n,(mm->cidLabelLen == 0) ? "":(char *) ((mm->cidLabel != NULL) ? mm->cidLabel:mm->id),(mm->extList != NULL) ? (char *) mm->extList:"",(mm->name != NULL) ? (char *) mm->name:"");
