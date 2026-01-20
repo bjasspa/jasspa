@@ -52,6 +52,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkmereg.emf	hkmeta.emf	hkmhg.emf	hkmod2.emf	\
 	hknim.emf	hknroff.emf	hkoctave.emf	\
 	hkpascal.emf	hkperl.emf	hkphp.emf	hkphps.emf	\
+	hkpuml.emf	\
 	hkplsql.emf	hkps1.emf	hkpseudo.emf	hkpsf.emf	\
 	hkpython.emf	\
 	hkr.emf		hkrbin.emf	hkrd.emf	\
