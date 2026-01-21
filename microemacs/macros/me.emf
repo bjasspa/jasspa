@@ -117,7 +117,6 @@ define-macro-file xrdb xrdb-scheme
 ; TODO Need to sort out doc & txt for best support across editors.
 7 major-mode "doc" "document" ".doc"
 9 major-mode "dot" "Dot/Neato"
-; TODO 7 major-mode "puml" "PlantUML" ".pml .puml"
 13 major-mode "ehf" "*help* *about*" "ME Help"
 9 major-mode "emf" "ME Macro"
 9 major-mode "erf" "ME Registry"
@@ -164,6 +163,7 @@ define-macro-file xrdb xrdb-scheme
 13 major-mode "plsql" ".pls" "PL/SQL"
 15 major-mode "ps1" "powershell" ".ps1 .psm1" "PowerShell Script"
 1 major-mode "psf"
+7 major-mode "puml" "PlantUML" ".pml .puml"
 5 major-mode "python" ".py" py-doc
 5 major-mode "rbin" ""
 1 major-mode "rd"

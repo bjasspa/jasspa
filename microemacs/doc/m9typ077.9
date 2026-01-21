@@ -1,0 +1,99 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1999-2026 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.\"  Created By    : Detlef Groth
+.\"  Created       : Wed Jan 21 13:30:47 2026
+.\"
+.Id $Id: m9typ056.9,v 2.6 2026/01/21 13:44:37 jon Exp $
+.Im MicroEmacs filetype
+.so me.tni
+.TH puml 9
+.XI pml - "PlantUML Diagram Language File"
+.XI plantuml - "PlantUML Diagram Language File"
+.SH SYNOPSIS
+puml \- Graphviz Dot Diagram Language File.
+.SH FILES
+.na
+.B hkpuml.emf
+\- PlantUML diagram file hook definition
+.br
+.B puml.eaf
+\- PlantUML diagram abbreviation file
+.br
+.B puml.etf
+\- PlantUML diagram template file
+.ad
+.SH EXTENSIONS
+.na
+\fB.puml\fR, \fB.pml\fR \- PlantUML file
+.ad
+.SH DESCRIPTION
+The  \fBPlantUML\fR  file macro  provides  simple  hilighting of PlantUML
+diagram files.
+.PP
+File   recognition   is   performed   using  the   standard   file   extension
+\fB.puml\fR or \fB.pml\fR.
+.IP "\fBEditing Environment\fR"
+Beside  of syntax  highlighting  the file hook  offers as well  abbreviations,
+folding for the style section of the file. Further  is is  possible  to expand  abbreviations  either via short
+strings using the
+.Ht expand-abbrev-handle 3
+command and visual inserting abbreviations using the mouse by the
+.Ht abbrev-list 3
+macro. 
+.IP "\fBAbbreviations\fR"
+The  installation  comes with a default  abbreviation  file for PlantUML code  editing
+which  can  be  used  by   writing   short   abbreviations   like   "\fBum\fR"
+(start/enduml environment)
+"\fBmm\fR" (mindmap environment) or "\fBst\fR" (style section) - and  then  pressing  the
+key-binding  for the 
+.Ht expand-abbrev-handle 3
+command.  The  list  of  abbreviations  can be used  interactively  in the GUI
+version of \*(mS using the 
+.Ht abbrev-list 3
+command.
+.IP "\fBFolding and Information Hiding\fR"
+Generic  folding is enabled  within the PlantUML files. The folds occur about
+the \fBstyle\fR sectionss located on the left-hand margin at the beginning 
+of the line and the closing style tag. 
+The following commands are supported to show and hide the function bodies.
+.Ht collapse-all 3
+(un)folds all regions in the file,
+.Ht collapse-current 3
+(un)folds the current region.
+.IP "\fBShort Cuts\fR"
+The short cut keys used within the buffer are:-
+.IP
+\fB\*cc \*cc\fR \- Comment out the current line.
+.br
+\fB\*cc \*cd\fR \- Uncomment the current line.
+.br
+\fB\*cc \*ce\fR \- Comment to the end of the line with stars (*).
+.br
+\fB\*a\*ci\fR \- Restyle the current region.
+.br
+\fBf2\fR \- (un)fold the current region
+.br
+\fBf3\fR \- (un)fold all regions
+.SH NOTES
+.PP
+The  hilighting  is  typically   extended  using  a  file   \fBmypuml.emf\fR.
+.SH BUGS
+No serious known so far.
+.SH "SEE ALSO"
+.na
+.Ht abbrev-list 3 ,
+.Ht collapse-all 3 ,
+.Ht collapse-current 3 ,
+.Ht dot 9 ,
+.Ht expand-abbrev-handle 3 ,
+.Ht restyle-buffer 3 ,
+.Ht restyle-region 3 ,
+.sp 1
+.Hl "Supported File Types" FileTypes -
+.ad
+.FH
+

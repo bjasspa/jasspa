@@ -53,7 +53,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hknim.emf	hknroff.emf	hkoctave.emf	\
 	hkpascal.emf	hkperl.emf	hkphp.emf	hkphps.emf	\
 	hkplsql.emf	hkps1.emf	hkpseudo.emf	hkpsf.emf	\
-	hkpython.emf	\
+	hkpuml.emf	hkpython.emf	\
 	hkr.emf		hkrbin.emf	hkrd.emf	\
 	hkruby.emf	hkrul.emf	hkrust.emf	hkscala.emf	\
 	hksamba.emf	hkscheme.emf	hksgml.emf	hksh.emf	\
@@ -123,7 +123,8 @@ ETFS=	ada.etf		adoc.etf	asm.etf		asn1.etf	\
 	newcomp.etf	newuser.etf	nim.etf		\
 	nroff.etf	octave.etf	\
 	pascal.etf	perl.etf	php.etf		plsql.etf	\
-	ps1.etf		psf.etf		python.etf	qd.etf		\
+	ps1.etf		psf.etf		puml.etf	python.etf	\
+	qd.etf		\
 	rd.etf		rmd.etf		ruby.etf	rul.etf		\
 	rust.etf	\
 	scala.etf	sh.etf		spec.etf	sql.etf		\
@@ -146,7 +147,7 @@ EAFS=	ada.eaf		adoc.eaf	asp.eaf		autoit.eaf	\
 	julia.eaf	kotlin.eaf	latex.eaf	lua.eaf		\
 	md.eaf		nim.eaf		octave.eaf	\
 	pascal.eaf	perl.eaf	php.eaf		plsql.eaf	\
-	ps1.eaf		python.eaf	\
+	ps1.eaf		puml.eaf	python.eaf	\
 	r.eaf		rd.eaf		rust.eaf	scala.eaf	\
 	sh.eaf		sgml.eaf	swift.eaf	\
 	tcl.eaf		tcldoc.eaf	ts.eaf		txt.eaf		\
