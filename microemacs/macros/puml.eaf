@@ -1,0 +1,2 @@
+mm "@startmindmap\r<style>\r  node {\r  BackgroundColor: cornsilk\r  MinimumWidth: 100\r  HorizontalAlignment: center\r}\r</style>\r+  item 1\r++ subitem\r+++[#ccddee] subsubitem\r* item 2\r@endmindmap\r" " \CCDmm\\CCA - mindmap"
+
