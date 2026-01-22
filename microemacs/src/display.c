@@ -916,7 +916,7 @@ hideLineJump:
 #if MEOPT_XFT
         if(meXftUsed())
         {
-            meUShort wb[meBUF_SIZE_MAX];
+            meUShort wb[meFRAME_WIDTH_MAX];
             meSchemeSet *bb=blkp;          /* Style change list */
             meScheme scheme;
             meUByte cc, lc;
@@ -1049,7 +1049,7 @@ hideLineJump:
             
             if(ii > col)
             {
-                char buff[meBUF_SIZE_MAX] ;
+                char buff[meFRAME_WIDTH_MAX];
                 
                 ii -= col;
                 cno = ii;
@@ -2728,7 +2728,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
 #if MEOPT_XFT
             if(meXftUsed())
             {
-                meUShort wc, wb[meBUF_SIZE_MAX];
+                meUShort wc, wb[meFRAME_WIDTH_MAX];
                 meUByte cc;
                 
                 col = colToClient(col);
@@ -2850,19 +2850,19 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
 int
 screenPoke(int f, int n)
 {
-    int row, col ;
-    meUByte fbuf[meBUF_SIZE_MAX] ;
-    meUByte sbuf[meBUF_SIZE_MAX] ;
+    int row, col;
+    meUByte fbuf[meBUF_SIZE_MAX];
+    meUByte sbuf[meBUF_SIZE_MAX];
 
     if((meGetString((meUByte *)"row",0,0,fbuf,meBUF_SIZE_MAX) <= 0) ||
        ((row = meAtoi(fbuf)),(meGetString((meUByte *)"col",0,0,fbuf,meBUF_SIZE_MAX) <= 0)) ||
        ((col = meAtoi(fbuf)),(meGetString((meUByte *)"scheme",0,0,fbuf,meBUF_SIZE_MAX) <= 0)) ||
        (meGetString((meUByte *)"string",0,0,sbuf,meBUF_SIZE_MAX) <= 0))
-        return meFALSE ;
+        return meFALSE;
     if((n & POKE_COLORS) == 0)
-        fbuf[0] = (meUByte) meAtoi(fbuf) ;
-    pokeScreen(n,row,col,fbuf,sbuf) ;
-    return meTRUE ;
+        fbuf[0] = (meUByte) meAtoi(fbuf);
+    pokeScreen(n,row,col,fbuf,sbuf);
+    return meTRUE;
 }
 #endif
 

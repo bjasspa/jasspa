@@ -1126,6 +1126,8 @@ typedef struct
 
 #define meFRAME_HIDDEN     0x01
 #define meFRAME_NOT_FOCUS  0x02
+#define meFRAME_WIDTH_MAX  512
+#define meFRAME_DEPTH_MAX  400
 
 typedef struct meFrame
 {

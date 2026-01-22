@@ -66,8 +66,8 @@ meFrameChangeWidth(meFrame *frame, int ww)
     /* ensure the value is in range */
     if(ww < 8)
         ww = 8;
-    else if(ww > 400)
-        ww = 400;
+    else if(ww > meFRAME_WIDTH_MAX)
+        ww = meFRAME_WIDTH_MAX;
     
     /* Already this size ?? Nothing to do */
     if(frame->width == ww)
@@ -176,9 +176,9 @@ meFrameChangeDepth(meFrame *frame, int dd)
     /* ensure the value is in range */
     if(dd < 4)
         dd = 4;
-    else if(dd > 400)
-        dd = 400;
-        
+    else if(dd > meFRAME_DEPTH_MAX)
+        dd = meFRAME_DEPTH_MAX;
+    
     /* Already this size ?? Nothing to do */
     if((frame->depth+1) == dd)
         return meTRUE;
@@ -281,7 +281,7 @@ frameChangeWidth(int f, int n)
         /* n is a delta, add this to the current width to get the new width */
         n = frameCur->width + n;
     
-    if((n < 8) || (n > 400))            /* In range ?? */
+    if((n < 8) || (n > meFRAME_WIDTH_MAX))            /* In range ?? */
         return mlwrite(MWABORT,(meUByte *)"Screen width %d out of range", n);
     if(n == frameCur->width)                    /* Already this size ?? */
         return meTRUE;
@@ -314,7 +314,7 @@ frameChangeDepth(int f, int n)
     else
         /* n is a delta, add this to the current width to get the new width */
         n = frameCur->depth + 1 + n;
-    if ((n < 4) || (n > 400))           /* Argument in range ?? */
+    if ((n < 4) || (n > meFRAME_DEPTH_MAX))           /* Argument in range ?? */
         return mlwrite(MWABORT,(meUByte *)"[Screen depth %d out of range]", n);
     if (n == (frameCur->depth+1))
         return meTRUE;                  /* Already the right size */

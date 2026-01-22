@@ -1435,7 +1435,7 @@ meFrameXTermDraw(meFrame *frame, int row, int scol, int erow, int ecol)
 #if MEOPT_XFT
     if(meXftUsed())
     {
-        meUShort wc, wb[meBUF_SIZE_MAX];
+        meUShort wc, wb[meFRAME_WIDTH_MAX];
         meUByte lc, cc;
         
         row = rowToClient(row);
@@ -1499,7 +1499,7 @@ meFrameXTermDraw(meFrame *frame, int row, int scol, int erow, int ecol)
     else
 #endif
     {
-        meUByte cc, *sfstp, buff[meBUF_SIZE_MAX];
+        meUByte cc, *sfstp, buff[meFRAME_WIDTH_MAX];
         int spFlag;
         
         row = rowToClient(row);
