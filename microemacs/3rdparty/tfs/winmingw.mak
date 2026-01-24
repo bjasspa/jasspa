@@ -32,12 +32,22 @@ AR       = $(TOOLPREF)ar
 RM       = rm -f
 RMDIR    = rm -rf
 
+ifneq "$(TOOLPREF)" ""
+UNX_SHLL = 1
+else ifeq (,$(MSYSTEM))
+UNX_SHLL = 0
+else
+UNX_SHLL = 1
+endif
+
 TOOLKIT  = mingw
 TOOLKIT_VER = $(subst -win32,,$(word 1,$(subst ., ,$(shell $(CC) -dumpversion))))
 
 ARCHITEC = intel
 ifneq "$(BIT_SIZE)" ""
 else ifeq "$(PLATFORM)" "x64"
+BIT_SIZE = 64
+else ifeq "$(MSYSTEM_CARCH)" "x86_64"
 BIT_SIZE = 64
 else
 BIT_SIZE = 32
@@ -46,7 +56,11 @@ endif
 PLATFORM = windows
 ifneq "$(PLATFORM_VER)" ""
 else ifeq "$(TOOLPREF)" ""
+ifeq "$(UNX_SHLL)" "0"
 WINDOWS_VER = $(subst ., ,$(shell ver))
+else
+WINDOWS_VER = $(subst ., ,$(shell cmd /c ver))
+endif
 WINDOWS_MNV = $(word 5,$(WINDOWS_VER))
 $(eval WINDOWS_MNR := $$$(WINDOWS_MNV))
 PLATFORM_VER = $(word 4,$(WINDOWS_VER))$(subst $(WINDOWS_MNR),,$(WINDOWS_MNV))
@@ -88,7 +102,7 @@ CCFLAGS  = $(CCFLAGSR)
 LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
 INSTDIR  = ../../bin/$(BUILDID)
-ifeq "$(TOOLPREF)" ""
+ifeq "$(UNX_SHLL)" "0"
 INSTPRG  = copy
 else
 INSTPRG  = cp
@@ -116,7 +130,7 @@ PRGHDRS  = tfs.h 7zTypes.h 7zWindows.h Compiler.h CpuArch.h LzFind.h LzHash.h Lz
 PRGOBJS  = $(OUTDIR)/tfsutil.o $(OUTDIR)/LzFind.o $(OUTDIR)/Lzma2Enc.o $(OUTDIR)/LzmaEnc.o $(OUTDIR)/CpuArch.o
 PRGLIBS  = 
 
-TSTNAME  = tfs
+TSTNAME  = tfstest
 TSTFILE  = $(TSTNAME)$(EXE)
 TSTHDRS  = tfs.h $(MAKEFILE).mak
 TSTOBJS  = $(OUTDIR)/tfstest.o
@@ -137,9 +151,9 @@ $(LIBOBJS): $(LIBHDRS)
 
 $(OUTDIR)/$(PRGFILE): $(OUTDIR) $(INSTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(RM) $@
-	$(LD) $(LDFLAGS) $(LDPROF) -o $@ $(PRGOBJS) $(PRGLIBS)
+	$(LD) $(LDDEFS) $(LDFLAGS) $(LDPROF) -o $@ $(PRGOBJS) $(PRGLIBS)
 	$(STRIP) $@
-ifeq "$(TOOLPREF)" ""
+ifeq "$(UNX_SHLL)" "0"
 	$(INSTPRG) $(subst /,\\,$@ $(INSTDIR))
 else
 	$(INSTPRG) $@ $(INSTDIR)
@@ -149,7 +163,7 @@ $(PRGOBJS): $(PRGHDRS)
 
 $(OUTDIR)/$(TSTFILE): $(OUTDIR) $(INSTDIR) $(TSTOBJS) $(TSTLIBS)
 	$(RM) $@
-	$(LD) $(LDFLAGS) $(LDPROF) -o $@ $(TSTOBJS) $(TSTLIBS)
+	$(LD) $(LDDEFS) $(LDFLAGS) $(LDPROF) -o $@ $(TSTOBJS) $(TSTLIBS)
 	$(STRIP) $@
 
 $(TSTOBJS): $(TSTHDRS)
@@ -158,7 +172,7 @@ $(OUTDIR):
 	-mkdir $(OUTDIR)
 
 $(INSTDIR):
-ifeq "$(TOOLPREF)" ""
+ifeq "$(UNX_SHLL)" "0"
 	-mkdir $(subst /,\\,$(INSTDIR))
 else
 	-mkdir $(INSTDIR)

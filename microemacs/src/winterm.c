@@ -169,7 +169,6 @@ typedef struct
     PaletteInfo pInfo;                  /* Emacs colour palette tables */
     meShort *cellRowPos;                /* Character cell position in Y */
     meShort *cellColPos;                /* Character cell position in X */
-    meUByte *cellColTmpPos;             /* Temporary X position */
     INT     *cellSpacing;               /* Spacing of cells */
     meShort  cellDepthCount;            /* Screen cell number of rows */
     meShort  cellWidthCount;            /* Screen cell number of columns */
@@ -1452,6 +1451,7 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
     int clientCol;                      /* Text region col start - client units */
     meFrameLine *flp;                   /* Frame store line pointer */
     meStyle style;                      /* Current style */
+    WCHAR uc;
     meUByte cc;                         /* Current char  */
     meColor cCol;
     
@@ -1519,6 +1519,10 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
 	/* Finished !! */
 	return;
     }
+    else if((cc & 0x80) == 0)
+        uc = cc;
+    else if((uc = (WCHAR) charToUnicode[cc-128]) == 0)
+        uc = 0xFFFD;
     
     /* Set up the font */
     SetTextColor(hdc, eCellMetrics.pInfo.cPal[meStyleGetBColor(style)].cpixel);
@@ -1526,14 +1530,14 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
     SelectObject(hdc, eCellMetrics.fontdef[meStyleGetFont(style)]);
     
     /* Output the character */
-    ExtTextOut(hdc,
-               clientCol,                /* Text start position */
-               clientRow,
-               ETO_OPAQUE|ETO_CLIPPED,   /* Fill background */
-               &rline,                   /* Background area */
-               (LPCSTR) &cc,             /* Text string */
-               1,                        /* Length of string */
-               eCellMetrics.cellSpacing);
+    ExtTextOutW(hdc,
+                clientCol,                /* Text start position */
+                clientRow,
+                ETO_OPAQUE|ETO_CLIPPED,   /* Fill background */
+                &rline,                   /* Background area */
+                (LPCWSTR) &uc,            /* Text string */
+                1,                        /* Length of string */
+                eCellMetrics.cellSpacing);
     
     if(frame->flags & meFRAME_NOT_FOCUS)
     {
@@ -1547,14 +1551,14 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
         rline.left++;
         rline.right--;
         
-        ExtTextOut(hdc,
-                   clientCol,      /* Text start position */
-                   clientRow,
-                   ETO_CLIPPED,    /* Clip char to smaller rectangle */
-                   &rline,         /* Background area */
-                   (LPCSTR) &cc,   /* Text string */
-                   1,              /* Length of string */
-                   eCellMetrics.cellSpacing);
+        ExtTextOutW(hdc,
+                    clientCol,      /* Text start position */
+                    clientRow,
+                    ETO_CLIPPED,    /* Clip char to smaller rectangle */
+                    &rline,         /* Background area */
+                    (LPCWSTR) &uc,  /* Text string */
+                    1,              /* Length of string */
+                    eCellMetrics.cellSpacing);
     }
 }
 
@@ -1690,8 +1694,8 @@ meFrameDraw(meFrame *frame)
     for(flp = frame->store + srow; srow <= erow; srow++, flp++)
     {
         meScheme *fschm;
-        meUByte *tbp, cc;
-        meUByte *ftext;
+        WCHAR uc, tbp[meFRAME_WIDTH_MAX];
+        meUByte cc, *ftext;
         int length;
         int tcol, spFlag;
         
@@ -1707,7 +1711,6 @@ meFrameDraw(meFrame *frame)
          * purposes. */
         meFrameDataGetWinPaintStartCol(fd)[srow] = frame->width;
         meFrameDataGetWinPaintEndCol(fd)[srow] = 0;
-        tbp = eCellMetrics.cellColTmpPos;
         
         /* Set up the drawing borders. */
         rline.top    = eCellMetrics.cellRowPos[srow];
@@ -1786,9 +1789,13 @@ meFrameDraw(meFrame *frame)
                 if((cc & 0xe0) == 0)
                 {
                     spFlag++;
-                    cc = ' ';
+                    uc = ' ';
                 }
-                tbp[col] = cc;
+                else if((cc & 0x80) == 0)
+                    uc = cc;
+                else if((uc = (WCHAR) charToUnicode[cc-128]) == 0)
+                    uc = 0xFFFD;
+                tbp[col] = uc;
             } while((--col >= scol) && (*--fschm == schm));
             
             /* Output the current text item. Set up the current left margin
@@ -1798,15 +1805,15 @@ meFrameDraw(meFrame *frame)
             rline.left = eCellMetrics.cellColPos[col];
             
             /* Output regular text */
-            ExtTextOut(ps.hdc,
-                       eCellMetrics.cellColPos[col], /* Text start position */
-                       clientRow,
-                       etoOpt,         /* Fill background & may be clip */
-                       &rline,         /* Background area */
-                       (LPCSTR)tbp+col,/* Text string */
-                       length,         /* Length of string */
-                       eCellMetrics.cellSpacing);
-            col--;                     /* Restore position */
+            ExtTextOutW(ps.hdc,
+                        eCellMetrics.cellColPos[col], /* Text start position */
+                        clientRow,
+                        etoOpt,          /* Fill background & may be clip */
+                        &rline,          /* Background area */
+                        (LPCWSTR)tbp+col,/* Text string */
+                        length,          /* Length of string */
+                        eCellMetrics.cellSpacing);
+            col--;                       /* Restore position */
             
             /* Special characters */
             if(spFlag != 0)
@@ -5218,8 +5225,6 @@ meFrameSetWindowSizeInternal(meFrame *frame)
         eCellMetrics.cellColPos = meRealloc(eCellMetrics.cellColPos,sizeof(meShort) * (width + 1));
         /* Construct the cell spacing. This is the  width of the characters. */
         eCellMetrics.cellSpacing = meRealloc(eCellMetrics.cellSpacing,sizeof(INT) * (width + 1));
-        /* Construct the temporary rendering buffer */
-        eCellMetrics.cellColTmpPos = meRealloc(eCellMetrics.cellColTmpPos, width+1);
         eCellMetrics.cellWidthCount = width;
     }
     /* Initialise the column cell LUT tables - this must always be done as only the font may have changed. */
@@ -5482,7 +5487,7 @@ meSetupPathsAndUser(void)
     }
     if(((pdLen=strlen(pdBuf)) > 0) && ((meProgData=meMalloc(pdLen+9)) != NULL))
     {
-        fileNameConvertDirChar(pdBuf);
+        fileNameConvertDirChar((meUByte *) pdBuf);
         if(pdBuf[pdLen-1] != DIR_CHAR)
             pdBuf[pdLen++] = DIR_CHAR;
         memcpy(pdBuf+pdLen,"jasspa/",8);
@@ -5596,7 +5601,7 @@ meSetupPathsAndUser(void)
 #if (defined CSIDL_PROFILE)
        ((SHGetFolderPath(NULL,CSIDL_PROFILE|CSIDL_FLAG_CREATE,NULL,0,buff) == S_OK) && ((ss=buff)[0] != '\0')) ||
 #endif
-       ((ss = meProgData) != NULL))
+       ((ss = (char *) meProgData) != NULL))
         fileNameSetHome((meUByte *) ss);
 }
 

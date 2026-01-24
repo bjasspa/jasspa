@@ -1353,7 +1353,7 @@ handle_namesvar:
                 tm.tv_sec = time(NULL);
                 tm.tv_nsec = 0;
             }
-            sprintf((char *) evalResult,"%ld.%09ld",tm.tv_sec,tm.tv_nsec);
+            sprintf((char *) evalResult,"%ld.%09ld",(long) tm.tv_sec,tm.tv_nsec);
         }
 #else
 #ifdef _WIN32

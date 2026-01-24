@@ -49,12 +49,22 @@ AR       = $(TOOLPREF)ar
 RM       = rm -f
 RMDIR    = rm -r -f
 
+ifneq "$(TOOLPREF)" ""
+UNX_SHLL = 1
+else ifeq (,$(MSYSTEM))
+UNX_SHLL = 0
+else
+UNX_SHLL = 1
+endif
+
 TOOLKIT  = mingw
 TOOLKIT_VER = $(subst -win32,,$(word 1,$(subst ., ,$(shell $(CC) -dumpversion))))
 
 ARCHITEC = intel
 ifneq "$(BIT_SIZE)" ""
 else ifeq "$(PLATFORM)" "x64"
+BIT_SIZE = 64
+else ifeq "$(MSYSTEM_CARCH)" "x86_64"
 BIT_SIZE = 64
 else
 BIT_SIZE = 32
@@ -63,7 +73,11 @@ endif
 PLATFORM = windows
 ifneq "$(PLATFORM_VER)" ""
 else ifeq "$(TOOLPREF)" ""
+ifeq "$(UNX_SHLL)" "0"
 WINDOWS_VER = $(subst ., ,$(shell ver))
+else
+WINDOWS_VER = $(subst ., ,$(shell cmd /c ver))
+endif
 WINDOWS_MNV = $(word 5,$(WINDOWS_VER))
 $(eval WINDOWS_MNR := $$$(WINDOWS_MNV))
 PLATFORM_VER = $(word 4,$(WINDOWS_VER))$(subst $(WINDOWS_MNR),,$(WINDOWS_MNV))
@@ -108,7 +122,7 @@ CCFLAGS  = $(CCFLAGSR)
 LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
 INSTDIR  = ../bin/$(BUILDID)
-ifeq "$(TOOLPREF)" ""
+ifeq "$(UNX_SHLL)" "0"
 INSTPRG  = copy
 else
 INSTPRG  = cp
@@ -212,7 +226,7 @@ $(OUTDIR)/$(PRGFILE): $(OUTDIR) $(INSTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(RM) $@
 	$(LD) $(LDDEFS) $(LDPROF) $(BTYP_LDF) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS) $(LDLIBS)
 	$(STRIP) $@
-ifeq "$(TOOLPREF)" ""
+ifeq "$(UNX_SHLL)" "0"
 	$(INSTPRG) $(subst /,\\,$@ $(INSTDIR))
 else
 	$(INSTPRG) $@ $(INSTDIR)
@@ -224,7 +238,7 @@ $(OUTDIR):
 	-mkdir $(OUTDIR)
 
 $(INSTDIR):
-ifeq "$(TOOLPREF)" ""
+ifeq "$(UNX_SHLL)" "0"
 	-mkdir $(subst /,\\,$(INSTDIR))
 else
 	-mkdir $(INSTDIR)
