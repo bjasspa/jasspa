@@ -505,5 +505,12 @@ define-macro major-mode-help
 ; The following macro informs the user and avoids the blow-up
 ; TODO remove soon
 0 define-macro add-file-hook
-  -16 ml-write &spr "Error: Calls to add-file-hook need to be updated to use major-mode."
+  !if &not &exi .p
+    set-variable .p 1
+    !if &not &exi start-up
+      define-macro start-up
+        3 osd-dialog "Error: Migration Required" "  Calls to add-file-hook need to be updated to use major-mode.  \n\n  See Migration section of help page for command major-mode.  " 4 2 "  OK  "
+      !emacro
+    !endif
+  !endif
 !emacro
