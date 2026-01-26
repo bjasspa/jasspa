@@ -20,7 +20,7 @@ define-macro fhook-info
 set-variable .fhook-info.setup &reg "/history/fhook/info" "EUmghop"
 set-variable .fhook-info.setup-mask "aghkop"
 set-variable .fhook-info.command-flag  "|bio|thbio|thbio|thbio|bio|thbio|bio|th|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|"
-set-variable .fhook-info.command-name  "|major-mode-help|info-jump-link|scroll-down|scroll-up|scroll-up|beginning-of-buffer|beginning-of-buffer||info-jump-link|info-jump-link|info-jump-link|info-jump-last||info-node-menu|info-goto-link|info-jump-link|info-jump-link|info-jump-link|info-follow-line|"
+set-variable .fhook-info.command-name  "|major-mode-help|info-jump-link|scroll-down|scroll-up|scroll-up|beginning-of-buffer|beginning-of-buffer||info-jump-link|info-jump-link|info-jump-link|info-jump-last||info-node-menu|info-goto-link|info-link|info-jump-link|info-jump-link|info-follow-line|"
 set-variable .fhook-info.command-nbind "||5|||||||6|4|3||||||2|1||"
 set-variable .fhook-info.command-kbind "|?|h|space|backspace|delete|b|.||d|t|u|l||m|g|return|p|n|f|"
 set-variable .fhook-info.command-desc  "||View \HInfo Help|Page Down Node|Page Up Node||Top of Node|||\HDirectory node|\HTop Node|\HUp Node|\HLast Node||\HMenu of Nodes|\HGoto Node|\HJump to Node|\HPrevious Node|\HNext Node|\HFollow Cross Reference|"
@@ -47,6 +47,8 @@ set-variable .fhook-info.exact -1
   ; Notes appear embedded in text and may span multiple
   ; lines, again these are branches.
   hilight .hilight.info 4 "*\\{Note" "\\}:" ""   .scheme.link
+  hilight .hilight.info 0x44 "*Note " "" "::" "" "" .scheme.link
+  hilight .hilight.info 0x44 "*Note$" "" "::" "" "" .scheme.link
   ; Hilighted items are in a open/close quote pairs, these
   ; can span multiple lines so use a branch.
   hilight .hilight.info 4 "`" "'"  ""            .scheme.bold
@@ -67,20 +69,37 @@ set-variable .fhook-info.exact -1
   forward-line
   -1 kill-region
   !iif &set #l1 &sin ":" #l0  set-variable #l0 &lef #l0 &sub #l1 1
-  !force insert-file #l0
-  !if &not $status
-    ; Try a .gz file
-    set-variable #l9 $temp-name
-    !force shell-command &spr "gunzip -c \"%s.gz\" > %s" #l0 #l9
-    !iif $result  !return
-    !force insert-file #l9
-    !force shell-command &cat &cond &band $system 0x100 "erase " "rm " #l9
+  set-variable #l2 &cat &lef $buffer-fname &rsin "/" $buffer-fname #l0
+  !if &seq "R" &stat t #l2
+    !force insert-file #l2
+  !elif &seq "R" &stat t &cat #l2 ".gz"
+    set-variable #l4 $buffer-bname
+    !force 5 find-zfile &cat #l2 ".gz"
+    !if &not $status
+      0x42 pipe-shell-command &cat "gunzip -c " #l2 "*infind1*"
+      !if &not $status
+        ml-write &spr "[Failed to load indirect info file %s]" #l2
+        !return
+      !endif
+      find-buffer "*infind1*"
+    !endif
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    copy-region
+    !force 0 delete-buffer $buffer-bname
+    find-buffer #l4
+    yank
+    -1 yank
+  !else
+    ml-write &spr "[Failed to find indirect info file %s]" #l0
+    !return
   !endif
   set-variable #l1 $window-line
   exchange-point-and-mark
   set-variable #l2 $window-line
   set-mark
-  !force &sub #l2 #l1 search-forward "\C_\n"
+  !force &sub #l2 #l1 search-buffer "Me" "\C_\n"
   !if $status
     !iif #l2  backward-line
     set-variable #l1 &sub #l1 &sub $window-line #l2
@@ -89,55 +108,43 @@ set-variable .fhook-info.exact -1
   #l1 goto-line
 !emacro
 
-0 define-macro file-exists
-  set-variable #l1 @1
-  set-variable $file-names #l1
-  set-variable #l0 &spr "%s" $file-names
-  !if &and &not &seq #l0 "" &sin #l0 #l1
-    set-variable $result 1
-  !else
-    set-variable $result 0
-  !endif
-!emacro
-
-
 0 define-macro info-load-file
   !force set-variable #l0 @1
+  !iif &not $status  !abort
+  !iif &seq "" &set #l0 &rep #l0 "\\" "/"  !abort
   !if &not &exi .info.path
     !if &band $system 0x100
-      set-variable .info.path "c:/info"
       set-variable #l1 ";"
+      set-variable #l2 ";C:/cygwin64/usr/share/info;C:/cygwin/usr/share/info;C:/msys64/usr/share/info;" 
     !else
-      file-exists "/usr/share/info/dir"
-      !if &equ $result 1
-        set-variable .info.path "/usr/share/info"
-      !else
-        set-variable .info.path "/usr/local/info"
-      !endif
       set-variable #l1 ":"
+      set-variable #l2 ":/usr/share/info:/usr/local/share/info:/usr/info:"
     !endif
-    !iif &not &seq $INFOPATH "ERROR"  set-variable .info.path &spr "%s%s%s" $INFOPATH #l1 .info.path
+    !iif &not &seq &set #l4 $INFOPATH "ERROR"  set-variable #l1 &spr "%s%s%s" #l1 #l4 &lef #l1 1
+    set-variable #l3 0
+    !while &len &set #l4 &lget #l2 &inc #l3 1
+      !iif &seq "D" &stat t #l4  set-variable #l1 &spr "%s%s%s" #l1 #l4 &lef #l1 1
+    !done
+    set-variable .info.path &mid #l1 1 -1
   !endif
-  set-variable #l2 $search-path
-  set-variable #l3 ""
-  set-variable $search-path .info.path
-  !force set-variable #l1 &find #l0 ""
-  !if &seq #l1 "ERROR"
-    !force set-variable #l1 &find #l0 ".info"
-    ; Search for .gz equivelents of the files.
-    !if &seq #l1 "ERROR"
-      !force set-variable #l1 &find #l0 ".gz"
-      !iif &seq #l1 "ERROR"  !force set-variable #l1 &find &cat #l0 ".info" ".gz"
-      ; Save the .gz name in #l3, set #l1 to the non.gz name
-      !if &not &seq #l1 "ERROR"
-        set-variable #l3 #l1
-        set-variable #l1 &lef #l1 &sub &len #l1 3
-      !endif
+  !if &seq "R" &stat t &set #l1 &set #l2 &stat a &cat &lef $buffer-fname &rsin "/" $buffer-fname #l0 
+  !elif &seq "R" &stat t &set #l1 &cat #l2 ".info"
+  !elif &seq "R" &stat t &set #l1 &cat #l2 ".gz"
+  !elif &seq "R" &stat t &set #l1 &cat #l2 ".info.gz"
+  !else
+    set-variable #l2 $search-path
+    set-variable #l3 ""
+    set-variable $search-path .info.path
+    !if &not &seq "ERROR" &set #l1 &find #l0 ""
+    !elif &not &seq "ERROR" &set #l1 &find #l0 ".info"
+    !elif &not &seq "ERROR" &set #l1 &find #l0 ".gz"
+    !elif &not &seq "ERROR" &set #l1 &find #l0 ".info.gz"
+    !else
+      set-variable $search-path #l2
+      -8 ml-write &spr "[Failed to find info on %s]" #l0
     !endif
+    set-variable $search-path #l2
   !endif
-  set-variable $search-path #l2
-  !iif &seq #l1 "ERROR"  -8 ml-write &spr "[Failed to find info on %s]" #l0
-  ml-write &spr "[found info in %s]" #l1
   set-variable #l0 &rig #l1 &rsin "/" #l1
   set-variable #l2 &cat "*info " #l0
   !force 0 find-buffer #l2
@@ -146,32 +153,33 @@ set-variable .fhook-info.exact -1
     beginning-of-buffer
     !return
   !endif
-  find-buffer #l2
-  -1 buffer-mode "exact"
-  -1 buffer-mode "undo"
-  1 buffer-mode "magic"
-  set-variable $buffer-fname &lef #l1 &rsin "/" #l1
-  ; Read in the file.
-  !if &seq #l3 ""
-    insert-file #l1
+  !if &set #l3 &seq ".gz" &rig #l1 -3
+    ; Ideally use find-zfile to load file, else try to pipe the gz'd file into the buffer
+    !force 5 find-zfile #l1
+    !tjump &not $status 3
+    change-buffer-name #l2
   !else
-    ; Pipe the gzip file into the buffer
-    0x02 pipe-shell-command &cat "gunzip -c " #l3 #l2
-    -1 buffer-mode "view"
-    beginning-of-buffer
-    ; Kill off the 1st 3 lines
-    set-mark
-    3 forward-line
-    kill-region
+    find-buffer #l2
+    set-variable $buffer-fname &lef #l1 &rsin "/" #l1
+    !if #l3
+      0x42 pipe-shell-command &cat "gunzip -c " #l1 #l2
+      set-variable #l3 $result
+    !else
+      insert-file #l1
+    !endif
   !endif
+  -1 buffer-mode "view"
+  -1 buffer-mode "undo"
   beginning-of-buffer
   set-mark
-  !force search-forward "\C_\n"
+  !force search-buffer "me" "\C_\n"
   !if &not $status
     !force 0 delete-buffer #l2
+    !iif #l3  -8 ml-write &spr "[Failed to uncompress info file %s]" #l1
     -8 ml-write &spr "[%s does not appear to be an info file]" #l1
   !endif
   -1 kill-region
+  ml-write &spr "[found info in %s]" #l1
   !if &seq &lef @wl 9 "Indirect:"
     set-mark
     forward-line
@@ -239,10 +247,10 @@ set-variable .fhook-info.exact -1
   set-variable #l0 $window-line
   set-variable #l1 $window-col
   !if &equ #l0 1
-    !force -1 search-backward ":"
+    !force -1 search-buffer "Meb" ":"
     !if $status
       set-variable #l2 $window-col
-      !force -1 search-forward ","
+      !force -1 search-buffer "Me" ","
       !if $status
         backward-char
       !else
@@ -262,10 +270,10 @@ set-variable .fhook-info.exact -1
       !endif
     !endif
   !else
-    !force -2 search-backward "\\*"
+    !force -2 search-buffer "Meb" "\\*"
     !if $status
       !if &iseq &mid &cat @wl " " $window-col 6 "*Note "
-        !force -2 search-forward ":"
+        !force -2 search-buffer "Me" ":"
         !if &les $window-line #l0
           -3 show-region
         !elif &les $window-col #l1
@@ -273,9 +281,9 @@ set-variable .fhook-info.exact -1
         !else
           backward-char
           set-alpha-mark "t"
-          !force -2 search-backward "\\*Note"
+          !force -2 search-buffer "MEb" "*Note"
           5 forward-char
-          search-forward "[^ \t\n]"
+          search-buffer "me" "[^ \t\n]"
           goto-alpha-mark "t"
           3 show-region
         !endif
@@ -289,7 +297,7 @@ set-variable .fhook-info.exact -1
         !if &not &seq &set #l0 &trb #l0 ""
           forward-char
           !iif &seq @wc " "  forward-char
-          search-forward "[^:]*"
+          search-buffer "me" "[^:]*"
         !endif
       !endif
     !endif
@@ -302,33 +310,29 @@ set-variable .fhook-info.exact -1
   !if &seq @wc ":"
     backward-char
     set-mark
-    !force -2 search-backward "\\*Note"
-    6 forward-char
+    !force -2 search-buffer "MEb" "*Note"
+    !iif $status  6 forward-char
   !else
     forward-char
     set-mark
-    !force -2 search-forward "\\."
-    backward-char
+    !force -2 search-buffer "Me" "."
+    !iif $status  backward-char
   !endif
   copy-region
-  set-variable #l0 &rep @y "\n" " "
+  set-variable #l0 &trb &rep @y "\n" " "
   -1 yank
-  !repeat
-    set-variable #l1 &len #l0
-    set-variable #l0 &rep #l0 "  " " "
-  !until &equ #l1 &len #l0
-  !iif &seq &set #l0 &trb #l0 ""  -8 ml-write "[Invalid link]"
+  !iif &seq #l0 ""  -8 ml-write "[Invalid link]"
+  set-variable #l0 &xrep #l0 "  +" " "
   info-goto-link #l0
 !emacro
 
-0 define-macro info-mouse-drop-1
-  set-variable #l0 $window-line
+0 define-macro info-link
   set-variable #l1 $window-col
-  !if &equ #l0 1
-    !force -1 search-backward ":"
+  !if &equ 1 &set #l0 $window-line
+    !force -1 search-buffer "Meb" ":"
     !if $status
       set-variable #l2 $window-col
-      !force -1 search-forward ","
+      !force -1 search-buffer "Me" ","
       !if $status
         backward-char
       !else
@@ -347,41 +351,42 @@ set-variable .fhook-info.exact -1
         !endif
       !endif
     !endif
-    ml-write "[Invalid link]"
-    !abort
+    -8 ml-write "[Invalid link]"
   !else
-    !force -2 search-backward "\\*"
+    !force -2 search-buffer "Meb" "*"
     !if &iseq &mid &cat @wl " " $window-col 6 "*Note "
-      !force -2 search-forward ":"
-      !if &les $window-line #l0
-        !jump 2
-      !elif &les $window-col #l1
-        ml-write "[Invalid cross reference]"
-        !abort
-      !endif
+      !force -2 search-buffer "Me" ":"
+      !iif &les $window-line #l0  -8 ml-write "[Invalid cross reference]"
+      !iif &les $window-col #l1  -8 ml-write "[Invalid cross reference]"
       info-follow-goto
     !else
-      set-cursor-to-mouse
+      set-variable $window-line #l0
+      set-variable $window-col #l1
       info-jump-link
     !endif
   !endif
 !emacro
 
+0 define-macro info-mouse-drop-1
+  info-link
+!emacro
+  
+  
 0 define-macro info-follow-line
   set-variable #l0 $window-line
   set-variable #l1 $window-col
-  !force -2 search-backward "\\*Note[ \n]"
+  !force -2 search-buffer "MEb" "\\*Note[ \n]"
   !if $status
-    !force -2 search-forward ":"
+    !force -2 search-buffer "Me" ":"
     !if &and $status &not &les $window-line #l0
       info-follow-goto
       !return
     !endif
   !endif
   set-variable $window-line #l0
-  !force -1 search-forward "\\*Note[ \n]"
+  !force -1 search-buffer "mE" "\\*Note[ \n]"
   !if $status
-    !force -2 search-forward ":"
+    !force -2 search-buffer "Me" ":"
     !if $status
       info-follow-goto
       !return
@@ -403,14 +408,14 @@ set-variable .fhook-info.exact -1
   find-buffer #l2
   set-alpha-mark "t"
   beginning-of-buffer
-  !force search-forward "^\\*.*:."
+  !force search-buffer "me" "^\\*.*:."
   !while $status
     set-variable #l1 &mid @wl 1 &sub &sin ":" @wl 2
     find-buffer "*info-menu*"
     insert-string &trb #l1
     forward-line
     find-buffer #l2
-    !force search-forward "^\\*.*:"
+    !force search-buffer "me" "^\\*.*:"
   !done
   goto-alpha-mark "t"
   !force set-variable #l1 @ml0a "Goto node" "*info-menu*"
@@ -418,7 +423,7 @@ set-variable .fhook-info.exact -1
   !force 0 delete-buffer "*info-menu*"
   !iif &not #l0  !abort
   beginning-of-buffer
-  !force search-forward &spr "^\\*[ \t]*%s[ \t]*:" #l1
+  !force search-buffer "me" &spr "^\\*[ \t]*%s[ \t]*:" #l1
   !if $status
     beginning-of-line
     info-jump-link
@@ -443,7 +448,7 @@ define-macro info-goto-link
   !endif
   !iif &seq #l0 ""  set-variable #l0 "Top"
   str-to-regex #l0
-  !force search-forward &spr "^File: .* Node:[ \t]+%s[,\n]" #l0
+  !force search-buffer "me" &spr "^File: .* Node:[ \t]+%s[,\n]" #l0
   !if &not $status
     !if &seq #l0 "Top"
     !elif &seq #l0 :node
@@ -455,7 +460,7 @@ define-macro info-goto-link
   !endif
   beginning-of-line
   set-mark
-  !force search-forward "\C_\n"
+  !force search-buffer "Me" "\C_\n"
   !if $status
     backward-line
   !else
