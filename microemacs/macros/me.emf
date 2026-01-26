@@ -52,13 +52,13 @@ define-macro-file spell spell-word spell-buffer spell-edit-word find-word
 define-macro-file narrow narrow-search-forward narrow-search-backward
 define-macro-file notes notes notes-file notes-instant notes-context
 define-macro-file charsutl buffer-is-utf8 change-buffer-charset
+define-macro-file zfile find-zfile zfile-setup zfile-reset
 define-macro-file itemlist item-list item-list-close occur
 define-macro-file hktools file-exec file-format file-lint
 define-macro-file fileopen osd-file-open osd-get-file
 define-macro-file spellaut auto-spell auto-spell-menu
 define-macro-file pagefile page-file page-bfile
 define-macro-file calc calc-op calc insert-calc
-define-macro-file zfile find-zfile zfile-setup
 define-macro-file gentags generate-tags-file
 define-macro-file dmf display-matching-fence
 define-macro-file etfinsrt insert-template

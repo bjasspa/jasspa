@@ -827,10 +827,13 @@ define-macro file-browser-swap-buffers
   forward-line
   !iif &seq &rig @wl :fmpf "../"  forward-line
   set-mark
-  !force search-buffer "em" "^[ *]-"
-  !iif &not $status  set-variable $window-line #l7
-  dirlst-sort-list-section #l5 #l4 #l6
-  set-mark
+  !if &not &exi :mltd
+    !force search-buffer "em" "^[ *]-"
+    !if $status
+      dirlst-sort-list-section #l5 #l4 #l6
+      set-mark
+    !endif
+  !endif
   set-variable $window-line #l7
   dirlst-sort-list-section #l5 #l4 #l6
   !iif &band #l2 8  dirlst-sort-list-del-ext

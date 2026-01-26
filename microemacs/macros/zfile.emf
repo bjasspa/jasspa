@@ -11,8 +11,8 @@
 ;
 !iif &not &exi dirlst-sort-list  0 execute-file "hkdirlst"
 !iif &not &exi .file-tool-run.osp  0 execute-file "filetool"
-!iif &not &lfin .fhook-dirlst.col-name "        Size"  set-variable .fhook-dirlst.col-name &lin .fhook-dirlst.col-name -1 "        Size"
-set-variable #l0 &lfin .fhook-dirlst.col-name "        Size"
+!iif &not &lfin .fhook-dirlst.col-name "       Size"  set-variable .fhook-dirlst.col-name &lin .fhook-dirlst.col-name -1 "       Size"
+set-variable #l0 &lfin .fhook-dirlst.col-name "       Size"
 
 define-macro fhook-z-file
   buffer-init
@@ -40,6 +40,8 @@ set-variable .fhook-z-file.command-desc  "|\HSearch for file by name|Search by o
   hilight .hilight.z-file 0x102 " Attr " .scheme.header
   hilight .hilight.z-file 0x102 " D" .scheme.dir
   hilight .hilight.z-file 0x102 "*D" .scheme.dir-select
+  hilight .hilight.z-file 0x102 " d" .scheme.dir
+  hilight .hilight.z-file 0x102 "*d" .scheme.dir-select
   hilight .hilight.z-file 0x102 "*\\." .scheme.select
 !endif
 
@@ -50,21 +52,28 @@ define-macro find-zfile
   !else
     set-variable #l0 @ml01 "find-zfile"
   !endif
-  !iif &not &set #l1 &rsin "." #l0  -8 ml-write &spr "[find-zfile Error: file \"%s\" has no extension]" #l0
-  !iif &not &seq "R" &set #l8 &stat "t" #l0  -8 ml-write &spr "[find-zfile Error: \"%s\" %s]" #l0 &con &seq #l8 "X" "does not exist" "is not a regular file"
-  set-variable #l8 &rig #l0 #l1
-  set-variable #l1 0
-  !repeat
-    !force find-registry &spr "/history/%s/zfl" $platform &pinc #l1 1
-    !iif &not $status  -8 ml-write &spr "[find-zfile Error: Unknown file type \"%s\", run zfile-setup]" #l8
-    !iif &xse #l8 &reg &cat &set #l9 &spr "/history/%s/zfl/%s" $platform $result "/mask" "\\."  !break
-  !done
   ; see if this has already been loaded
   !force 2 find-buffer #l0
   !iif $status  !return
-  !iif &seq "" &set #l7 &reg &cat #l9 "/list" ""  -8 ml-write &spr "[ZFile-%s Error: List command not set, run zfile-setup]" &reg #l9 "NID"
-  ; create a unique buffer name
+  !iif &not &seq "R" &set #l8 &stat "t" #l0  -8 ml-write &spr "[find-zfile Error: \"%s\" %s]" #l0 &con &seq #l8 "X" "does not exist" "is not a regular file"
   set-variable #l2 &rig #l0 &rsin "/" #l0
+  ; Last added has highest priority, but as we don't know how many there are, loop through them all.
+  set-variable #l9 ""
+  set-variable #l1 0
+  !while &len &reg &set #l3 &spr "/history/%s/zfl/%s" $platform &inc #l1 1 ""
+    !if &xse #l2 &spr ".*\\.\\(%s\\)" &reg &cat #l3 "/mask" ""
+      set-variable #l9 #l3
+      set-variable #l8 @s1
+    !endif
+  !done
+  !iif &seq #l9 ""  -8 ml-write &spr "[find-zfile Error: Unknown file type \"%s\", run zfile-setup]" #l2
+  !if &set #l1 &seq "" &set #l7 &reg &cat #l9 "/list" ""
+    !iif &seq "" &set #l7 &reg &cat #l9 "/xpipe" ""  -8 ml-write &spr "[ZFile-%s Error: List & xpipe commands not set, run zfile-setup]" &reg #l9 "NID"
+    !iif &band 2 @#  -8 ml-write &spr "[ZFile-%s Error: File is not a multi-file compression file]" &reg #l9 "NID"
+  !elif &band 4 @#
+    -8 ml-write &spr "[ZFile-%s Error: File is not a single compressed file]" &reg #l9 "NID"
+  !endif
+  ; create a unique buffer name
   set-variable #l3 #l2
   set-variable #l4 0
   !repeat
@@ -90,17 +99,22 @@ define-macro find-zfile
     !endif
     set-variable #l7 &spr "%s%s%s" &lef #l7 &sub #l4 1 #l6 &rig #l7 &add &add #l4 #l5 2
   !done
-  4 pipe-shell-command #l7 #l3 @mna
+  0x44 pipe-shell-command #l7 #l3 @mna
   set-variable #l4 $result
   set-variable $buffer-fname #l0
+  !if #l1
+    !iif #l4  ml-write &spr "[ZFile-%s Warning: Extract command returned %s]" &reg #l9 "NID" #l4
+    !return
+  !endif
   -1 buffer-mode "view"
   1 buffer-mode "magic"
   beginning-of-buffer
-  !iif &seq "" &set #l7 &reg &cat #l9 "/rm-top" ""  -8 ml-write &spr "[ZFile-%s missing top remove setting]" &reg #l9 "NID"
-  set-mark
-  !force search-buffer "me" #l7
-  !iif &not $status  -8 ml-write &spr "[ZFile-%s list command failed - top header not found]" &reg #l9 "NID"
-  -1 kill-region
+  !if &len &set #l7 &reg &cat #l9 "/rm-top" ""
+    set-mark
+    !force search-buffer "me" #l7
+    !iif &not $status  -8 ml-write &spr "[ZFile-%s list command failed - top header not found]" &reg #l9 "NID"
+    -1 kill-region
+  !endif
   !if &not &seq "" &set #l6 &reg &cat #l9 "/smry-bot-s" ""
     end-of-buffer
     !force search-buffer "meb" #l6
@@ -126,10 +140,17 @@ define-macro find-zfile
     replace-string "\\\\" "/"
   !endif
   beginning-of-buffer
+  !if &seq #l6 ""
+    0 search-buffer "me" "/$"
+    set-variable #l6 &spr "    %d files, %d dirs" &sub &sub $window-eline $result 1 $result
+    beginning-of-buffer
+  !endif
   insert-string &spr "ZFile-%s: %s\n%s\n\n%s\n" &reg #l9 "NID" #l0 #l6 &set #l2 &reg &cat #l9 "/header" ""
   -1 buffer-mode "edit"
   1 buffer-mode "view"
   beginning-of-buffer
+  ; assume all non-single-file compress files have mulitple directories
+  set-variable :mltd 1
   set-variable :fmpf &reg &cat &set :zfl #l9 "/fmpf" &sin " Name" #l2
   major-mode "z-file"
   !iif #l4  ml-write &spr "[ZFile-%s Warning: list command returned %s]" &reg #l9 "NID" #l4
@@ -411,33 +432,61 @@ define-macro zfile-setup
   set-variable #l1 @ml2 &spr "ZFile-%s extract command (%%zp,%%zP,%%zf,%%zb,%%ze,%%p,%%f,%%[..],%%\")" #l0 &reg &cat #l9 "/xtrct" ""
   set-registry &cat #l9 "/xtrct" #l1
 !emacro
+define-macro zfile-reset
+  !if &band @# 1
+    set-variable #l0 @mc5 &spr "This will reset all zfile settings for %s - continue (?/y/n) ? " $platform "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+    !iif &not &iseq #l0 "y" !abort
+  !endif
+  !force delete-registry &spr "/history/%s/zfl" $platform
+  execute-file "zfile"
+!emacro
 
 !force find-registry &spr "/history/%s/zfl" $platform 0
-!if &not $status
+!if &not &set #l0 $status
   !if &not &seq &whi &set #l1 "7z" "ERROR"
-  !elif &not &seq &whi "7za" "ERROR"
-    set-variable #l1 "7za"
-  !elif &not &seq &whi "7zz" "ERROR"
-    set-variable #l1 "7zz"
-  !elif &not &seq &whi "7zzs" "ERROR"
-    set-variable #l1 "7zzs"
+  !elif &not &seq &whi &set #l1 "7za" "ERROR"
+  !elif &not &seq &whi &set #l1 "7zz" "ERROR"
+  !elif &not &seq &whi &set #l1 "7zzs" "ERROR"
+  !else
+    set-variable #l1 ""
   !endif
-  set-registry &spr "/history/%s/zfl/1" $platform "7z"
-  set-registry &spr "/history/%s/zfl/1/list" $platform &cat #l1 " l %\"%zf%\""
-  set-registry &spr "/history/%s/zfl/1/mask" $platform "\\(7z\\|zip\\|rar\\|tar\\|iso\\|apk\\|msi\\|cab\\|apk\\|ar[cj]?\\|bz2\\|epub\\|deb\\|dmg\\|rpm\\|ntfs\\|t?[bgx]?z\\)"
-  set-registry &spr "/history/%s/zfl/1/rm-top" $platform "^----[- ]+----\n"
-  set-registry &spr "/history/%s/zfl/1/rm-bot" $platform "^----[- ]+----\n"
-  set-registry &spr "/history/%s/zfl/1/line-s1" $platform "^\\(\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d\\) \\([.][.\\u]\\{4\\}\\) \\( *\\d+\\) [ \\d]\\{12\\}  \\(.+\\)$"
-  set-registry &spr "/history/%s/zfl/1/line-r1" $platform " \\2 \\3  \\1 \\4"
-  set-registry &spr "/history/%s/zfl/1/line-s2" $platform "^\\(\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d\\) D\\([.\\u]\\{4\\}\\) \\( *\\d+\\) [ \\d]\\{12\\}  \\(.+\\)$"
-  set-registry &spr "/history/%s/zfl/1/line-r2" $platform " D\\2 \\3  \\1 \\4/"
-  set-registry &spr "/history/%s/zfl/1/line-s3" $platform "^\\(\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d\\) D\\([.\\u]\\{4\\}\\) \\( \\{12\\}\\) [ \\d]\\{12\\}  \\(.+\\)$"
-  set-registry &spr "/history/%s/zfl/1/line-r3" $platform " D\\2            -  \\1 \\4/"
-  set-registry &spr "/history/%s/zfl/1/line-s4" $platform "^\\( \\{19\\}\\) \\([.][.\\u]\\{4\\}\\) \\([ \\d]\\{12\\}\\) [ \\d]\\{12\\}  \\(.+\\)$"
-  set-registry &spr "/history/%s/zfl/1/line-r4" $platform " \\2 \\3  XXXX-XX-XX XX:XX:XX \\4"
-  set-registry &spr "/history/%s/zfl/1/rplc-bckslsh" $platform "1"
-  set-registry &spr "/history/%s/zfl/1/smry-bot-s" $platform "^\\(\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d\\) +\\(\\d+\\) +\\(\\d+\\) +\\(.+\\)$"
-  set-registry &spr "/history/%s/zfl/1/smry-bot-r" $platform "    \\2 used in \\4 (Compressed to \\3)"
-  set-registry &spr "/history/%s/zfl/1/header" $platform " Attr          Size             Modified Name  <Order by Extension>"
-  set-registry &spr "/history/%s/zfl/1/xtrct" $platform &cat #l1 " x %\"%zf%\" %\"-o%p%\" -y --%*[ %\"%f%\"]"
+  !if &len #l1
+    ; Add single-file handle first (no list cmd), then zfiles containing multiple files 
+    set-registry &set #l2 &spr "/history/%s/zfl/%d" $platform &inc #l0 1 "7zs"
+    set-registry &cat #l2 "/mask" "\\([bgx]?z\\|bz2\\)"
+    set-registry &cat #l2 "/xpipe" &cat #l1 " e -so %\"%zf%\""
+    set-registry &cat #l2 "/xtrct" &cat #l1 " x %\"%zf%\" %\"-o%p%\" -y"
+
+    set-registry &set #l2 &spr "/history/%s/zfl/%d" $platform &inc #l0 1 "7z"
+    set-registry &cat #l2 "/list" &cat #l1 " l %\"%zf%\""
+    set-registry &cat #l2 "/mask" "\\(7z\\|zip\\|rar\\|tar\\|iso\\|apk\\|msi\\|cab\\|apk\\|ar[cj]?\\|epub\\|deb\\|dmg\\|rpm\\|ntfs\\|t[bgx]z\\)"
+    set-registry &cat #l2 "/rm-top" "^----[- ]+----\n"
+    set-registry &cat #l2 "/rm-bot" "^----[- ]+----\n"
+    set-registry &cat #l2 "/line-s1" "^\\(\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d\\) \\([.][.\\u]\\{4\\}\\) \\([ \\d]\\{11\\}\\d\\) [ \\d]\\{12\\}  \\(.+\\)$"
+    set-registry &cat #l2 "/line-r1" " \\2 \\3  \\1 \\4"
+    set-registry &cat #l2 "/line-s2" "^\\(\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d\\) D\\([.\\u]\\{4\\}\\) \\([ \\d]\\{11\\}\\d\\) [ \\d]\\{12\\}  \\(.+\\)$"
+    set-registry &cat #l2 "/line-r2" " D\\2 \\3  \\1 \\4/"
+    set-registry &cat #l2 "/line-s3" "^\\(\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d\\) D\\([.\\u]\\{4\\}\\) \\( \\{12\\}\\) [ \\d]\\{12\\}  \\(.+\\)$"
+    set-registry &cat #l2 "/line-r3" " D\\2            -  \\1 \\4/"
+    set-registry &cat #l2 "/line-s4" "^\\( \\{19\\}\\) \\([.][.\\u]\\{4\\}\\) \\([ \\d]\\{11\\}\\d\\) [ \\d]\\{12\\}  \\(.+\\)$"
+    set-registry &cat #l2 "/line-r4" " \\2 \\3  XXXX-XX-XX XX:XX:XX \\4"
+    set-registry &cat #l2 "/rplc-bckslsh" "1"
+    set-registry &cat #l2 "/smry-bot-s" "^\\(\\d\\d\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d\\) +\\(\\d+\\) +\\(\\d+\\) +\\(.+\\)$"
+    set-registry &cat #l2 "/smry-bot-r" "    \\2 used in \\4 (Compressed to \\3)"
+    set-registry &cat #l2 "/header" " Attr          Size             Modified Name  <Order by Extension>"
+    set-registry &cat #l2 "/xtrct" &cat #l1 " x %\"%zf%\" %\"-o%p%\" -y --%*[ %\"%f%\"]"
+  !elif &not &seq &whi "gunzip" "ERROR"
+    set-registry &set #l2 &spr "/history/%s/zfl/%d" $platform &inc #l0 1 "Gzip"
+    set-registry &cat #l2 "/mask" "gz"
+    set-registry &cat #l2 "/xpipe" "gunzip -c %\"%zf%\""
+  !endif
+  !if &not &seq &whi "tar" "ERROR"
+    set-registry &set #l2 &spr "/history/%s/zfl/%d" $platform &inc #l0 1 "tar"
+    set-registry &cat #l2 "/list" "tar -tvf %\"%zf%\""
+    set-registry &cat #l2 "/mask" "\\(tar\\|t[bgx]z\\|tar.[bgx]?z\\|tar.bz2\\)"
+    set-registry &cat #l2 "/line-s1" "^\\([-\\l]\\{10\\}\\) .\\{10\\}\\(.\\{10\\}\\)\\(.*\\)$"
+    set-registry &cat #l2 "/line-r1" " \\1  \\2  \\3"
+    set-registry &cat #l2 "/header" " Attr             Size           Modified Name  <Order by Extension>"
+    set-registry &cat #l2 "/xtrct" "tar xf %\"%zf%\" -C %\"%p%\"%*[ %\"%f%\"]"
+  !endif
 !endif
