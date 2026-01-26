@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m5var041.5,v 2.9 2026/01/19 13:04:56 jon Exp $
+.Id $Id: m5var041.5,v 2.9 2026/01/25 10:19:44 jon Exp $
 .Im MicroEmacs variable|shell|macrodevelop
 .so me.tni
 .TH $result 5
@@ -106,6 +106,10 @@ during the final call to the \fIbuffer-ipipe-command\fR, for more information se
 \fB$result\fR is used to return the number of substitutions, the final replace mode ('a' for all, 'l' for last or 'q'
 for query) and the replace with string in a list.
 .TP
+.Ht search-buffer 2 
+.IP
+\fB$result\fR is set to the number of matches found when numeric argument is 0.
+.TP
 .Ht set-char-mask 2 
 .IP
 \fB$result\fR is set to the characters in the given set.
@@ -156,6 +160,7 @@ should be copied before getting user input.
 .Ht pipe-shell-command 2 ,
 .Ht query-replace-string 2 ,
 .Ht replace-string 2 ,
+.Ht search-buffer 2 ,
 .Ht set-char-mask 2 ,
 .Ht shell-command 2 ,
 .Ht show-region 2 ,

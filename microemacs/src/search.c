@@ -1454,7 +1454,14 @@ searchBuffer(int f, int n)
             meModeTest(frameCur->windowCur->buffer->mode,MDMAGIC)))
             flags |= ISCANNER_MAGIC ;
 #endif
-        if(n <= 0)
+        if(n == 0)
+        {
+            while(iscanner(srchPat,0,flags,NULL) > 0)
+                n++;
+            sprintf((char *)resultStr,"%d",n);
+            return meTRUE;
+        }
+        else if(n <= 0)
         {
             f = -n;
             n = 1;
@@ -1462,10 +1469,10 @@ searchBuffer(int f, int n)
         else
             f = 0;
         do
-            rr = iscanner(srchPat,f,flags,NULL) ;
-        while ((rr > 0) && (--n > 0)) ;
+            rr = iscanner(srchPat,f,flags,NULL);
+        while ((rr > 0) && (--n > 0));
     }
-    return rr ;
+    return rr;
 }
 
 #ifdef _ME_FREE_ALL_MEMORY

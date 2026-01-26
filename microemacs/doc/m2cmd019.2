@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd019.2,v 2.10 2022/06/12 17:13:08 jon Exp $
+.Id $Id: m2cmd019.2,v 2.10 2026/01/26 19:30:02 jon Exp $
 .Im MicroEmacs command|macrodevelop|search
 .so me.tni
 .TH search-buffer 2
@@ -74,9 +74,13 @@ explicitly specified unless the buffer modes are to be inherited.
 .ne 7
 The numeric argument \fIn\fR is interpreted in the same way as a
 .Ht search-forward 2
-command:-
+command, except when 0 is given:-
 .IP "\fBn > 0\fR"
 The \fIn\fRth occurrence of the \fIstring\fR is located.
+.IP "\fBn = 0\fR"
+All occurrences of the \fIstring\fR, from the current location, are counted and returned in
+.Ht $result 5 .
+The cursor is left at the location of the last occurrence.
 .IP "\fBn < 0\fR"
 The first occurrence of the \fIstring\fR is located in the next \fIn\fR lines.
 .SH DIAGNOSTICS
@@ -160,7 +164,8 @@ behaviour of a search operation.
 .Ht magic 2m ,
 .Ht replace-string 2 ,
 .Ht search-backward 2 ,
-.Ht search-forward 2 .
+.Ht search-forward 2 ,
+.Ht $result 5 .
 .br
 .Hl "Regular Expressions" RegularExpressions 2
 .ad
