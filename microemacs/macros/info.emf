@@ -1,36 +1,22 @@
 ; -!- emf -!-
-; Copyright (C) 2025 Jasspa, Detlef Groth, University of Potsdam, Germany
+; Copyright (c) 2026 JASSPA (www.jasspa.com).
 ;
-; License:    As Jasspa Microemacs, see file LICENSE
-; 
-; Name:        MicroEmacs as Info Reader
-; Synopsis:    mec @info [PAGE]
-; Example:     mec @info gzip
-; Authors:     Detlef Groth, University of Potsdam
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
 ;
-define-macro-file hkinfo file-exists
+; Synopsis:    Command-line wrapper for ME based Unix info
+; Authors:     Detlef Groth, Steven Phillips
+; Usage:       mec @info [topic]
+;
+execute-file "me"
+
 define-macro start-up
-  execute-file "me"
   delete-other-windows
-  set-variable #l0 0
-  
-  !while &not &seq $buffer-bname "*scratch*"
-    file-exists $buffer-bname
-    ; if file does not exist we assume that a info topic was
-    ; given on the command line
-    !if &equ $result 0
-      info-on $buffer-bname
-      beginning-of-buffer
-      set-variable #l0 1
-    !endif
-    ; TODO: handle info.gz/info loading as info file
-  !done
-  !if &equ #l0 0
-    ; no arguments seems to be given on the command line
-    ; load default info page
+  !if &not &seq &set #l0 $buffer-bname "*scratch*"
+    !force 0 delete-buffer #l0
+    info-on #l0
+  !else
+    ; no topic seems to be given on the command line, load default info page
     info
-    ; TODO: does not work moving to the beginning
-    find-buffer "*info-dir"
-    beginning-of-buffer
   !endif
 !emacro

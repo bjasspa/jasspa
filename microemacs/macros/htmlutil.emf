@@ -45,7 +45,6 @@
     major-mode "html"
   !endif
   ; If toolbar is open flag that the buffer type has changed
-  ; TODO this should effectively be done by the major-mode command - check and fix
   !iif .toolbar.open  set-variable .toolbar-redraw.bc &bor .toolbar-redraw.bc 0x004
 !emacro
 

@@ -151,9 +151,9 @@
     !endif
     @# screen-update
     !return
-  !elif &seq @cl "recenter"
+  !elif &set #l1 &lfind "|recenter|major-mode|" @cl
     !iif &exi &set #l0 &cat "chook-" $buffer-major-mode  !force execute-named-command #l0
-    set-variable .bc &bor .bc 0x080
+    set-variable .bc &bor .bc &con &equ #l1 1 0x080 0x004
   !elif &les @# 1
     @# screen-update
     !return

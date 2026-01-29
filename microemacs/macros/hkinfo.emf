@@ -172,7 +172,7 @@ set-variable .fhook-info.exact -1
   -1 buffer-mode "undo"
   beginning-of-buffer
   set-mark
-  !force search-buffer "me" "\C_\n"
+  !force search-buffer "Me" "\C_\n"
   !if &not $status
     !force 0 delete-buffer #l2
     !iif #l3  -8 ml-write &spr "[Failed to uncompress info file %s]" #l1
@@ -270,7 +270,7 @@ set-variable .fhook-info.exact -1
       !endif
     !endif
   !else
-    !force -2 search-buffer "Meb" "\\*"
+    !force -2 search-buffer "Meb" "*"
     !if $status
       !if &iseq &mid &cat @wl " " $window-col 6 "*Note "
         !force -2 search-buffer "Me" ":"
@@ -375,7 +375,7 @@ set-variable .fhook-info.exact -1
 0 define-macro info-follow-line
   set-variable #l0 $window-line
   set-variable #l1 $window-col
-  !force -2 search-buffer "MEb" "\\*Note[ \n]"
+  !force -2 search-buffer "mEb" "\\*Note[ \n]"
   !if $status
     !force -2 search-buffer "Me" ":"
     !if &and $status &not &les $window-line #l0
@@ -423,7 +423,7 @@ set-variable .fhook-info.exact -1
   !force 0 delete-buffer "*info-menu*"
   !iif &not #l0  !abort
   beginning-of-buffer
-  !force search-buffer "me" &spr "^\\*[ \t]*%s[ \t]*:" #l1
+  !force search-buffer "mE" &spr "^\\*[ \t]*%s[ \t]*:" #l1
   !if $status
     beginning-of-line
     info-jump-link
@@ -448,7 +448,7 @@ define-macro info-goto-link
   !endif
   !iif &seq #l0 ""  set-variable #l0 "Top"
   str-to-regex #l0
-  !force search-buffer "me" &spr "^File: .* Node:[ \t]+%s[,\n]" #l0
+  !force search-buffer "mE" &spr "^File: .* Node:[ \t]+%s[,\n]" #l0
   !if &not $status
     !if &seq #l0 "Top"
     !elif &seq #l0 :node
@@ -459,14 +459,16 @@ define-macro info-goto-link
     !endif
   !endif
   beginning-of-line
+  set-variable #l1 &sub $window-line 1
   set-mark
   !force search-buffer "Me" "\C_\n"
   !if $status
     backward-line
-  !else
+    3 narrow-buffer
+  !elif #l1
     end-of-buffer
+    3 narrow-buffer
   !endif
-  3 narrow-buffer
   beginning-of-buffer
   set-variable :node #l0
   !if @#

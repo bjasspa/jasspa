@@ -1997,6 +1997,8 @@ executeNamedCommand(int f, int n)
     if((idx = decode_fncname(buf,0)) < 0)
         return(meFALSE);
     
+    /* set @cc to this command, but @cck remains esc-X */
+    thisIndex = idx;
     /* and then execute the command */
     return execFunc(idx,f,n) ;
 }

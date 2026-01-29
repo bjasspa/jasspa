@@ -984,7 +984,6 @@ define-macro notes-file
   !if &not &exi :notes-root
     !force narrow-buffer
     beginning-of-buffer
-    ; TODO improve?
     !iif &not &xseq @wl "-!- enf\\([ \t]*; major-mode: \\(\\w+\\)\\)?[ \t]+-!-"  -8 ml-write &spr "[Error: file \"%s\" does not appear to be an enf file]" #l1
     !iif &seq "" &set #l3 @s2  set-variable #l3 "jst"
     end-of-buffer

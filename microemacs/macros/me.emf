@@ -89,7 +89,6 @@ define-macro-file xrdb xrdb-scheme
 21 major-mode "xml" ".xml .xsl .xul .xaml" -1 "<\\?xml"
 5 major-mode "ada" ".ada .adb .ads"
 5 major-mode "adoc" ".tdoc .adoc .asciidoc"
-; TODO httpd.conf & smb.conf are very specific and apache can used different names, would be better to have more generic hondlers
 5 major-mode "apache" "httpd.conf"
 9 major-mode "apt" "Maven APT"
 7 major-mode "asm" "assembler" ".asm .s .x86"
@@ -114,7 +113,6 @@ define-macro-file xrdb xrdb-scheme
 29 major-mode "diff" "*diff* .diff .dif" "Diff File" 1 "^diff"
 13 major-mode "dirlst" "/ *files*" "Directory List" copy-file delete-file file-browser file-browser-close file-browser-swap-buffers
 13 major-mode "dirtre" "*directory*" "Directory Tree"
-; TODO Need to sort out doc & txt for best support across editors.
 7 major-mode "doc" "document" ".doc"
 9 major-mode "dot" "Dot/Neato"
 13 major-mode "ehf" "*help* *about*" "ME Help"
@@ -185,7 +183,6 @@ define-macro-file xrdb xrdb-scheme
 7 major-mode "typst" "typescript" ".typ .typst .ttyp .ttypst"
 1 major-mode "vala"
 15 major-mode "vb" "visual-basic" ".bas .cls" "Visual Basic"
-; TODO need ftest-verlg & ftest-vlang to determine which a .v file is
 13 major-mode "vlang" ".v" "V"
 7 major-mode "verilg" "verlog" ".v"
 5 major-mode "vhdl" ".vhdl .vhd"
