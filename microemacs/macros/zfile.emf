@@ -398,13 +398,24 @@ define-macro zfile-setup
   set-variable #l1 @ml2 &spr "ZFile-%s extension regex" #l0 &reg &cat #l9 "/mask" ""
   !iif &seq #l1 ""  -8 ml-write "[ZFile Error: A file extension regex must be given]"
   set-variable #l2 @ml2 &spr "ZFile-%s list command (%%zp,%%zP,%%zf,%%zb,%%ze,%%\")" #l0 &reg &cat #l9 "/list" ""
-  !iif &seq #l2 ""  -8 ml-write "[ZFile Error: The list command line must be given]"
+  !if &seq #l2 ""
+    set-variable #l2 @ml2 &spr "ZFile-%s piped extract" #l0 &reg &cat #l9 "/xpipe" ""
+    !iif &seq #l2 "" -8 ml-write "[ZFile Error: The list or piped extract command line must be given]"
+    set-registry #l9 #l0
+    set-registry &cat #l9 "/mask" #l1
+    !force delete-registry &cat #l9 "/list"
+    set-registry &cat #l9 "/xpipe" #l2
+    !return
+  !endif
   set-variable #l3 @ml2 &spr "ZFile-%s top cut-to regex" #l0 &reg &cat #l9 "/rm-top" ""
-  !iif &seq #l3 ""  -8 ml-write "[ZFile Error: A top cut to regex must be given]"
   set-registry #l9 #l0
   set-registry &cat #l9 "/mask" #l1
   set-registry &cat #l9 "/list" #l2
-  set-registry &cat #l9 "/rm-top" #l3
+  !if &len #l3
+    set-registry &cat #l9 "/rm-top" #l3
+  !else
+    !force delete-registry &cat #l9 "/rm-top"
+  !endif
   set-variable #l1 @ml2 &spr "ZFile-%s bottom cut-to regex" #l0 &reg &cat #l9 "/rm-bot" ""
   set-registry &cat #l9 "/rm-bot" #l1
   set-variable #l1 1
@@ -484,9 +495,13 @@ define-macro zfile-reset
     set-registry &set #l2 &spr "/history/%s/zfl/%d" $platform &inc #l0 1 "tar"
     set-registry &cat #l2 "/list" "tar -tvf %\"%zf%\""
     set-registry &cat #l2 "/mask" "\\(tar\\|t[bgx]z\\|tar.[bgx]?z\\|tar.bz2\\)"
-    set-registry &cat #l2 "/line-s1" "^\\([-\\l]\\{10\\}\\) .\\{10\\}\\(.\\{10\\}\\)\\(.*\\)$"
+    set-registry &cat #l2 "/line-s1" "^\\([-\\l]\\{10\\}\\) .\\{10\\}\\([ \\d]\\{10\\}\\) \\(.*\\)$"
     set-registry &cat #l2 "/line-r1" " \\1  \\2  \\3"
+    set-registry &cat #l2 "/line-s2" "^\\([-\\l]\\{10\\}\\) +\\d+ +\\S+ +\\S+\\([ \\d]\\{9\\}\\) \\(.*\\)$"
+    set-registry &cat #l2 "/line-r2" " \\1  \\2       \\3"
+    set-registry &cat #l2 "/line-s3" "^\\([-\\l]\\{10\\}\\) +\\d+ +\\S+ +\\S+\\([ \\d]\\{5\\}\\) \\(.*\\)$"
+    set-registry &cat #l2 "/line-r3" " \\1      \\2       \\3"
     set-registry &cat #l2 "/header" " Attr             Size           Modified Name  <Order by Extension>"
-    set-registry &cat #l2 "/xtrct" "tar xf %\"%zf%\" -C %\"%p%\"%*[ %\"%f%\"]"
+    set-registry &cat #l2 "/xtrct" "tar -xf %\"%zf%\" -C %\"%p%\"%*[ %\"%f%\"]"
   !endif
 !endif
