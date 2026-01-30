@@ -10,7 +10,6 @@
 ; Authors:     Steven Phillips & Jon Green
 ;
 !iif &not &exi dirlst-sort-list  0 execute-file "hkdirlst"
-!iif &not &exi .file-tool-run.osp  0 execute-file "filetool"
 !iif &not &lfin .fhook-dirlst.col-name "       Size"  set-variable .fhook-dirlst.col-name &lin .fhook-dirlst.col-name -1 "       Size"
 set-variable #l0 &lfin .fhook-dirlst.col-name "       Size"
 
@@ -61,7 +60,7 @@ define-macro find-zfile
   set-variable #l9 ""
   set-variable #l1 0
   !while &len &reg &set #l3 &spr "/history/%s/zfl/%s" $platform &inc #l1 1 ""
-    !if &xse #l2 &spr ".*\\.\\(%s\\)" &reg &cat #l3 "/mask" ""
+    !if &xise #l2 &spr ".*\\.\\(%s\\)" &reg &cat #l3 "/mask" ""
       set-variable #l9 #l3
       set-variable #l8 @s1
     !endif
@@ -87,7 +86,7 @@ define-macro find-zfile
   set-variable $buffer-fname #l0
   ; execute the list command into the buffer
   set-variable #l7 &rep &rep &rep #l7 "%%" "\bA" "%\"" "\bE" "%zf" #l2
-  !iif &sin "%" #l7  set-variable #l7 &rep &rep &rep &rep #l7 "%zp" &set #l6 &lef #l0 &sub 0 &len #l2 "%zP" &rep #l6 "/" .file-tool-run.osp "%zb" &lef #l2 &sub -1 &len #l8 "%ze" #l8
+  !iif &sin "%" #l7  set-variable #l7 &rep &rep &rep &rep #l7 "%zp" &set #l6 &lef #l0 &sub 0 &len #l2 "%zP" &rep #l6 "/" &lef %os-chars 1 "%zb" &lef #l2 &sub -1 &len #l8 "%ze" #l8
   set-variable #l7 &rep #l7 "\bA" "%"
   !while &set #l4 &sin "\bE" #l7
     !iif &not &set #l5 &sin "\bE" &rig #l7 &add #l4 1  -8 ml-write "[Error: Missing '%\"' in list command line]"
@@ -174,7 +173,7 @@ define-macro find-zfile
   !else
     set-variable #l4 @1
   !endif
-  set-variable #l0 &rep &rep &rep &rep &rep #l0 "%zp" #l1 "%zP" &rep #l1 "/" .file-tool-run.osp "%zf" #l2 "%ze" #l3 "%zb" &lef #l2 &sub -1 &len #l3
+  set-variable #l0 &rep &rep &rep &rep &rep #l0 "%zp" #l1 "%zP" &rep #l1 "/" &lef %os-chars 1 "%zf" #l2 "%ze" #l3 "%zb" &lef #l2 &sub -1 &len #l3
   set-position "\x8a"
   !force 0 delete-buffer "*zfile-tmp*"
   find-buffer "*zfile-tmp*"

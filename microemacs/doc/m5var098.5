@@ -1,0 +1,49 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1998-2009 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.Id $Id: m5var065.5,v 2.6 2026/01/30 18:06:17 jon Exp $
+.Im MicroEmacs variable|buffer|macrodevelop
+.so me.tni
+.TH $major-mode-ids 5
+.XI $major-mode-ids - "Filtered major-mode ID list"
+.SH NAME
+$major-mode-ids \- Filtered major-mode ID list
+.SH SYNOPSIS
+.B $major-mode-ids
+.I MajorModeId
+.SH DESCRIPTION
+.B $major-mode-ids 
+must first be initialized to the required filter string, if the variable is evaluated before it is initialized the
+value will be set to "\fIABORT\fR" and the command will fail. The filter takes the form of a
+.Hl "regex" RegularExpressions 2 .
+.PP
+Once initialized, evaluating \fB$major-mode-ids\fR returns the name of the next major-mode which matches the filter
+until no more major-modes are found, in which case an empty string is returned.
+.SH EXAMPLE
+The following example prints out the full name of all major-modes to the massage line one at a time. Note that 
+.Ht &set 4
+is used on the
+.Ht !while 4
+statement to avoid evaluating \fB$major-mode-ids\fR twice per loop.
+.Me "$emf-scheme"
+.CS
+set-variable $major-mode-ids ".*"
+!while &not &seq "" &set #l0 $major-mode-ids
+  0 major-mode #l0
+  set-variable #l1 $result
+  100 ml-write &spr "mode %s: %s" #l0 &lget #l1 5
+!done
+.CE 0
+.Me "$ehf-scheme"
+.SH "SEE ALSO"
+.na
+.Ht major-mode 2 ,
+.Ht $buffer-major-mode 5 ,
+.Ht $mode-names 5 ,
+.Ht $command-names 5 ,
+.Hl "Regular Expressions" RegularExpressions 2 .
+.ad
+.FH
