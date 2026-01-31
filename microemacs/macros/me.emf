@@ -8,7 +8,7 @@
 ; Authors:     Steven Phillips & Jon Green
 ;
 ; Is this macro release compatible with the binary?
-!if &les $version "20260100"
+!if &les $version "20260101"
   5000 ml-write "[Warning: The MicroEmacs executable is not compatible with this macro release]"
 !endif
 !if &band @# 2
