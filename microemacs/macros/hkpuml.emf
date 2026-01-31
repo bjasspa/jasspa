@@ -42,6 +42,7 @@ set-variable .fhook-puml.collapse-mnext "-1"
   hilight .hilight.puml 2 "!define"        .scheme.prepro
   hilight .hilight.puml 2 "!pragma"        .scheme.prepro
   hilight .hilight.puml 2 "!theme"         .scheme.prepro
+  hilight .hilight.puml 2 "!option"        .scheme.prepro  
   hilight .hilight.puml 2 "skinparam"      .scheme.prepro
   hilight .hilight.puml 4 "\\$" "\\}\\W" "" .scheme.variable
   hilight .hilight.puml 4 "#" "\\}\\W" ""  .scheme.variable
