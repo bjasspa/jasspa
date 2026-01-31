@@ -207,25 +207,44 @@ set-variable .fhook-md.item-list-r3 "H2 \CCb\\1\CCA"
       !return
     !endif
   !done
+  set-variable #l2 0
+  set-variable #l3 0
   !while &les $window-line #l0
     !force &sub $window-line #l0 search-buffer "me" "^[ \t]*\n"
-  !until &not $status
+    !iif &not $status  !break
+    set-variable #l2 #l3
+    set-variable #l3 $window-line
+  !done
   !iif $window-col   forward-line
   beginning-of-line
+  set-variable #p9 #l2
 !emacro
 define-macro md-fill-paragraph
   !iif &not &set #l0 &abs @#  !return
   !iif &not @?  set-mark
   md-para-move-to-start
   ; Another nasty - the previous 'paragraph' might be an item list which means the initial indent limit could be 7
-  ; not 3, but how can we know for sure? We would have to parse from the last fenced code block, add to
-  ; md-para-move-to-start? ignore for now... 
+  ; not 3, but how can we know for sure? We would have to parse from the last fenced code block... For now lets assume
+  ; the user executes this command from a sensible location so use the start of the previous para to set the starting indent
   set-variable #l8 3
+  !if #l9
+    set-variable #l1 $window-line
+    !repeat
+      backward-line
+      !if &xse @wl "\\([ \t]*\\)\\([-*+] \\|\\d+\\. \\)?[ \t]*\\S.*"
+        set-variable #l8 &add 3 &mul &div &len @s1 4 4
+        !iif &len @s2  set-variable #l8 &add #l8 4
+        !break
+      !endif
+    !until &equ $window-line #l9
+    set-variable $window-line #l1
+  !endif
   !while &pdec #l0 1
     set-variable #l9 0
     !force search-buffer "me" "^\\([ \t]*\\)\\(\\S.\\{,15\\}\\)"
     !if &not $status
       end-of-buffer
+      !iif &len @p !abort
       -8 ml-write "[end of buffer]"
     !endif
     set-variable $window-col &len &set #l2 @s1
@@ -265,22 +284,40 @@ define-macro md-fill-paragraph
       !jump 2
     !elif &seq &lef #l3 1 ">"
       ; Blockquote
-      set-variable #l2 &cat #l2 &set #l1 &lef #l3 1
+      set-variable #l6 $buffer-bname
+      !force 0 delete-buffer "*mdfp-tmp1*"
+      set-variable #l1 &xrep @wl "^\\( *>\\( \\{,4\\}>\\)*\\).*" "\\1"
       !repeat
+        set-variable #l4 $window-line
+        set-variable #l2 &sub &set #l3 &len #l1 &len &rep #l1 ">" ""
         beginning-of-line
-        forward-line
-        !if &not &seq &lef @wl &len #l2 #l2
-          !force -1 search-buffer "me" "\\S"
-          !iif &not $status  !break
-          backward-char
-          !iif &gre $window-acol #l8  !break
-          !iif &not &seq @wc #l1  !break
-          forward-char
-          $window-col backward-delete-char
+        !repeat
+          #l3 forward-delete-char
           -1 yank
-          insert-string #l2
-        !endif
-      !done
+          forward-line
+        !until &sub #l2 &sub &len &set #l5 &xrep @wl "^\\( *>\\( \\{,4\\}>\\)*\\).*" "\\1" &len &rep #l5 ">" ""
+        set-mark
+        set-variable $window-line #l4
+        kill-region
+        find-buffer "*mdfp-tmp1*"
+        -1 buffer-mode "undo"
+        yank
+        -1 yank
+        beginning-of-buffer
+        !force 99999 md-fill-paragraph
+        beginning-of-buffer
+        set-mark
+        end-of-buffer
+        backward-line
+        string-rectangle #l1
+        forward-line
+        kill-region
+        !force 0 delete-buffer "*mdfp-tmp1*"
+        find-buffer #l6
+        set-variable $window-line #l4
+        yank
+        -1 yank
+      !until &seq "" &set #l1 #l5 
     !elif &xse #l3 "\\(\\([`~]\\)\\2\\2+\\).*"
       ; fenced code block
       set-variable #l4 @s1
@@ -310,7 +347,7 @@ define-macro md-fill-paragraph
           end-of-line
           !if &seq #l4 ""
             !jump 4
-          !elif &xse #l4 "\\([-*+>#]\\|\\d+\\.\\) .*"
+          !elif &xse #l4 "\\([-*+]\\|\\d+\\.\\) .*"
             set-variable #l9 1
             set-variable #l0 &add #l0 1
             backward-char
@@ -361,7 +398,7 @@ define-macro md-fill-paragraph
               ; Note that a code block can be in a link label, bold & italic text etc.
               set-variable $window-col &rsin "`" #l4
               !if &les $window-col &div $buffer-fill-col 2
-                !force -1 search-buffer "me" "[^\\\\]\\(\\\\.\\)*`[ \t]*"
+                !force -1 search-buffer "me" "[^\\\\\n]\\(\\\\.\\)*`[ \t]*"
                 !iif &not $status  -8 ml-write "[Error: Open code block]"
                 !iif &seq "\n" @wc  !break
               !else
@@ -372,17 +409,17 @@ define-macro md-fill-paragraph
             !if &band 1 &sub &len #l4 &len &rep #l4 "**" "B"
               set-variable $window-col &rsin " " &lef #l4 &rsin "**" #l4
               !if &les $window-col &div $buffer-fill-col 2
-                !force -1 search-buffer "me" "[^\\\\]\\(\\\\.\\)*\\*\\*.*?\\s"
+                !force -1 search-buffer "me" "[^\\\\\n]\\(\\\\.\\)*\\*\\*.*?\\s"
                 !iif &not $status  -8 ml-write "[Error: Open '**' bold]"
                 backward-char
                 !iif &seq "" &trr &rig @wl $window-col  !break
               !endif
               set-variable #l4 &xre &lef @wl $window-col "\\\\." "XX"
             !endif
-            !if &band 1 &sub &len &set #l4 &rep #l4 "**" "BB" &len &rep #l4 "*" ""
+            !if &band 1 &sub &len &set #l4 &xrep &rep #l4 "**" "BB" "^\\( *\\)\\* " "\\1+ " &len &rep #l4 "*" ""
               set-variable $window-col &rsin " " &lef #l4 &rsin "*" #l4
               !if &les $window-col &div $buffer-fill-col 2
-                !force -1 search-buffer "me" "[^\\\\]\\(\\\\.\\)*\\*.*?\\s"
+                !force -1 search-buffer "me" "[^\\\\\n]\\(\\\\.\\)*\\*.*?\\s"
                 !iif &not $status  -8 ml-write "[Error: Open '*' italic]"
                 backward-char
                 !iif &seq "" &trr &rig @wl $window-col  !break
@@ -397,7 +434,7 @@ define-macro md-fill-paragraph
             !if &band 1 &sub &len #l4 &len &rep &set #l4 &xrep &xrep &xrep #l4 "\\(\\w\\)_\\(\\w\\)" "\\1U\\2" "\\(\\w\\)__\\(\\w\\)" "\\1UU\\2" "\\(\\w\\)___\\(\\w\\)" "\\1UUU\\2" "__" "B"
               set-variable $window-col &rsin " " &lef #l4 &rsin "__" #l4
               !if &les $window-col &div $buffer-fill-col 2
-                !force -1 search-buffer "me" "[^\\\\]\\(\\\\.\\)*\\S__\\(\\s\\|\\W.*?\\s\\)"
+                !force -1 search-buffer "me" "[^\\\\\n]\\(\\\\.\\)*\\S__\\(\\s\\|\\W.*?\\s\\)"
                 !iif &not $status  -8 ml-write "[Error: Open '__' bold]"
                 backward-char
                 !iif &seq "" &trr &rig @wl $window-col  !break
@@ -407,7 +444,7 @@ define-macro md-fill-paragraph
             !if &band 1 &sub &len &set #l4 &rep #l4 "__" "BB" &len &rep #l4 "_" ""
               set-variable $window-col &rsin " " &lef #l4 &rsin "_" #l4
               !if &les $window-col &div $buffer-fill-col 2
-                !force -1 search-buffer "me" "[^\\\\]\\(\\\\.\\)*\\S_\\(\\s\\|\\W.*?\\s\\)"
+                !force -1 search-buffer "me" "[^\\\\\n]\\(\\\\.\\)*\\S_\\(\\s\\|\\W.*?\\s\\)"
                 !iif &not $status  -8 ml-write "[Error: Open '_' italic]"
                 backward-char
                 !iif &seq "" &trr &rig @wl $window-col  !break

@@ -1,5 +1,5 @@
 ---
-# <!-- -!- md; fill-column:78; -!- -->
+# <!-- -!- markdown; fill-column:78; -!- -->
 title: "MD examples which causes fill issues"
 author: Steven Phillips
 date: 2025-12-25 19:23
@@ -59,6 +59,18 @@ abstract: >
 what to do with embedded html tags? treat like code blocks?
 
 <a href="http://www.youtube.com/watch_something" target="_blank"> <img src="http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg" alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10"> </a>
+
+### Problem 4
+
+* [pantcl.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/mittelmark/pantcl/master/pantcl.html) - main documentation
+* [pantcl-tutorial.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/mittelmark/pantcl/master/pantcl-tutorial.html) - more extensive tutorial
+
+#### Expected
+
+* [pantcl.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/mittelmark/pantcl/master/pantcl.html) - 
+  main documentation
+* [pantcl-tutorial.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/mittelmark/pantcl/master/pantcl-tutorial.html) - 
+  more extensive tutorial
 
 ### Problem Next...
 
