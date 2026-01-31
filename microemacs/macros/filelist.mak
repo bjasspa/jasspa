@@ -84,6 +84,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	pagefile.emf	password.emf	patience.emf	perltags.emf	\
 	phptags.emf	print.emf	printall.emf	printd.emf	\
 	printepc.emf	printers.emf	printf.emf	printstp.emf	\
+	pydoc.emf	\
 	rect.emf	\
 	scheme.emf	schemeaw.emf	schemeal.emf	schemead.emf	\
 	schemeay.emf	schemeb.emf	schemebc.emf	schemech.emf	\
