@@ -12,7 +12,7 @@
  *  Author        : $Author: jon $
  *  Created By    : <unknown>
  *  Created       : Mon Mar 17 23:42:07 2003
- *  Last Modified : <030318.0038>
+ *  Last Modified : <260202.2006>
  *
  *  Description	
  *
@@ -91,7 +91,7 @@ main (int argc, char *argv[])
                 int len;
                 int jj;
                 
-                for (jj = 0; jj < sizeof (buf)/sizeof (long) ; jj++)
+                for (jj = 0; jj < sizeof (buf)/sizeof (buf[0]) ; jj++)
                     buf[jj] = rand();
                 
                 len = fwrite (buf, 1, sizeof (buf), fp);
