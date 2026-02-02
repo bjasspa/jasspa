@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.4 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040207.1916>
+ *  Last Modified : <260202.1417>
  *
  *  Description
  *
@@ -288,7 +288,7 @@ handleFmarker (char *filename)
 
                 if (fo != NULL) {
                     if (htmlEofStr != NULL)
-                        fprintf (fo, htmlEofStr);
+                        fprintf (fo, "%s", htmlEofStr);
                     fclose (fo);
                 }
                 uVerbose (3, "Opening Output file [%s].\n", fname);
@@ -525,7 +525,7 @@ void processFile (char *fname)
                 {
                     if (fo != NULL) {
                         if (htmlEofStr != NULL)
-                            fprintf (fo, htmlEofStr);
+                            fprintf (fo, "%s", htmlEofStr);
                         fclose (fo);
                         fo = NULL;
                     }
@@ -538,7 +538,7 @@ void processFile (char *fname)
                 continue;
             if (c == '\n') {
                 lineNo++;
-                fprintf (fo, htmlEolStr);
+                fprintf (fo, "%s", htmlEolStr);
                 continue;
             }
             fputc (c, fo);
@@ -588,7 +588,7 @@ void processFile (char *fname)
         }
         if ((fo != NULL) && (opdata != NULL)) {
             uVerbose (6, "opdata = %s\n", opdata);
-            fprintf (fo, opdata);
+            fprintf (fo, "%s", opdata);
         }
         else if (fo == NULL)
             uVerbose (6, "FO = NULL\n");
@@ -772,7 +772,7 @@ int main (int argc, char *argv [])
 
     if (fo != NULL) {
         if (htmlEofStr != NULL)
-            fprintf (fo, htmlEofStr);
+            fprintf (fo, "%s", htmlEofStr);
         fclose (fo);
     }
     uCloseErrorChannel ();

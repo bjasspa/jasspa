@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.3 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040207.1921>
+ *  Last Modified : <260202.1550>
  *
  *  Description
  *
@@ -1292,6 +1292,7 @@ usage (void)
     fprintf (stdout, "-o <file>      : Output to <file> default is <files>.out\n");
     fprintf (stdout, "-q             : Quiet mode\n");
     fprintf (stdout, "-r <file>      : Standard response file\n");
+    fprintf (stdout, "-v <level>     : Verbose level.\n");
     exit (1);
 }
 
@@ -1333,13 +1334,14 @@ int main (int argc, char *argv [])
     /* Configure the error reporting */
     uErrorSet (0, &ecount);             /* Max Num entries + counter */
     uWarnSet (&wcount);                 /* Warning count */
+    uVerboseSet (1);                    /* Verbose setting */
     uUtilitySet (progname);             /* Set name of program */
     
     searchInitialise ();
     sprintf (defaultNroffString, "%s %s", ".Ht", nroffNoDescriptionString);
 
     while (1) {
-        c = getopt (argc, argv, "ac:de:E:h?i:Im:n:o:qr:");
+        c = getopt (argc, argv, "ac:de:E:h?i:Im:n:o:qr:v:");
         if (c == EOF)
             break;
         switch (c) {
@@ -1387,6 +1389,9 @@ int main (int argc, char *argv [])
             responseFile = optarg;
             nroffResponse = 1;
             break;
+        case 'v':
+            uVerboseSet (optarg[0] - '0'); 
+            break;
         default:
             uError ("Cannot understand option [-%c]\n", c);
             usage();
@@ -1417,7 +1422,7 @@ int main (int argc, char *argv [])
         nroff (nrfp, NROFF_MODE_DEFAULT);        /* Set up the conversion */
     }
 
-/*    uDebugSet (15);*/
+    /*    uDebugSet (15);*/
     uDebug (1, ("Loaded data - starting search"));
 
     /* Initialise the key table */

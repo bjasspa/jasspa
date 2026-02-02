@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.3 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <231205.1334>
+ *  Last Modified : <260202.1607>
  *
  *  Description
  *
@@ -2609,7 +2609,7 @@ if_func (void)
         instr++;
         status = 0;
     }
-    else if (strncmp (instr, isGroffStr, strlen (isGroffStr) == 0))
+    else if (strncmp (instr, isGroffStr, (size_t) strlen (isGroffStr)) == 0)
     {
         instr = &instr [strlen (isGroffStr)];
         status = 0;
@@ -2838,11 +2838,15 @@ readLine (char **cbuf)
     for (;;)
     {
         c = fgetc (nrfp->fp);
-        if ((c == EOF)
-#ifndef _UNIX
-            || (c == 0x1A)
+        if
+#ifdef _UNIX
+          /* *NIX */
+          (c == EOF) 
+#else
+          /* Windows/DOS */
+          ((c == EOF) || (c == 0x1A))
 #endif
-            ) {
+        {
             if ((nrFilePop() == NULL) && (len == 0)) {
                 buffer [0] = '\0';
                 return (-1);

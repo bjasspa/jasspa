@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.4 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040207.1922>
+ *  Last Modified : <260202.1522>
  *
  *  Description
  *
@@ -63,7 +63,6 @@ static char *outFile = NULL;
 static int  useBase = 0;                /* Use the base name */
 
 static FILE *fo;                        /* Output File Pointer */
-static int  curVerbose = 1;             /* Current verbose level */
 #ifdef _UNIX
 static char *eolStr = "\n";
 static char eofStr [2] = {0, 0};
@@ -220,7 +219,7 @@ processFile (int pass, char *filename)
                     if (i == 0x1A)
                         break;
                     if (i == '\n') {
-                        fprintf (fo, eolStr);
+                        fprintf (fo, "%s", eolStr);
                         isCleanLine = 1;
                         lineNo++;
                     }
@@ -231,7 +230,7 @@ processFile (int pass, char *filename)
                 } while ((i = fgetc (fp)) != EOF);
 
                 if (isCleanLine == 0)
-                    fprintf (fo, eolStr);
+                    fprintf (fo, "%s", eolStr);
                 fprintf (fo, ".SUPERMANEND %s%s", bname, eolStr);
             }
             fclose (fp);
@@ -297,7 +296,8 @@ int main (int argc, char *argv [])
             uInteractiveSet (0);        /* Disable interactive mode */
             break;
         case 'v':
-            curVerbose = (optarg[0] - '0');
+            /* Verbose setting */
+            uVerboseSet (optarg[0] - '0'); 
             break;
         default:
             uError ("Cannot understand option [-%c]\n", i);

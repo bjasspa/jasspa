@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.4 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <231205.1208>
+ *  Last Modified : <260202.1421>
  *
  *  Description
  *
@@ -155,6 +155,8 @@ static int  tsBox = 0;                     /* box line type */
 static char tsTab = '\t';                  /* tab character */
 static int  tsLine = 1;                    /* box line size */
 
+/* NOT USED */
+#if 0
 /*
  * rowConstruct
  * Construct a new row format element and add to tail of the row list.
@@ -198,6 +200,7 @@ rowDestruct (nrRow **head)
         free (r);
     }
 }
+#endif
 
 /*
  * nrTSoptions
