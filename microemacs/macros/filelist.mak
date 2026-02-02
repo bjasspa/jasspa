@@ -119,7 +119,7 @@ ETFS=	ada.etf		adoc.etf	asm.etf		asn1.etf	\
 	h.etf		hpp.etf		html.etf	go.etf	\
 	idl.etf		imake.etf	\
 	java.etf	js.etf		jst.etf		julia.etf	\
-	groovy.etf	kotlin.eaf	latex.etf	lua.etf		\
+	groovy.etf	kotlin.etf	latex.etf	lua.etf		\
 	makefile.etf	md.etf		mhg.etf		mod2.etf	\
 	newcomp.etf	newuser.etf	nim.etf		\
 	nroff.etf	octave.etf	\
