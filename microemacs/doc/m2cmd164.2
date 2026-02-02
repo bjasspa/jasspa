@@ -1,0 +1,308 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1988-2009 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.Id $Id: m2cmd003.2,v 2.7 2026/02/02 16:23:58 jon Exp $
+.Im MicroEmacs command|macrodevelop
+.so me.tni
+.TH major-mode 2
+.XI major-mode - "Declare or set a buffer major mode"
+.SH NAME
+.br
+major-mode \- Declare or set a buffer major mode
+.Me $a
+.SH SYNOPSIS
+.na
+\fBmajor-mode\fR \fIid\fR
+.br
+\fI0\fR \fBmajor-mode\fR \fIid\fR
+.br
+\fIn\fR \fBmajor-mode\fR \fIid\fR
+["\fIcid-label\fR"]
+["\fIextension-list\fR"]
+["\fIfull-name\fR"]
+[\fIcid-line-count\fR "\fIcid-regex\fR"]
+["\fImacro1-name\fR" "\fImacro2-name\fR" ...]
+.br
+\fI16\fR \fBmajor-mode\fR \fIid\fR [\fIcid-line-count\fR "\fIcid-regex\fR"]
+.ad
+.\" TODO SSP need to finish
+.SH DESCRIPTION
+The
+.B major-mode 
+command is used to define the main content \fItype\fR of a buffer, such as
+\fCC\fR or \fCHTML\fR etc. The command changes the \fImajor-mode\fR assignment
+of the current buffer, defines or modifies the \fImajor-mode\fR properties
+i.e. the file extension list etc.
+.PP
+When the \fImajor-mode\fR of a buffer is assigned, the buffer variables 
+.Ht $buffer-major-mode 5
+and
+.Ht $buffer-fhook 5
+are updated and the \fB$buffer-fhook\fR macro is executed. The
+\fB$buffer-fhook\fR macro (and hook file that it is defined in) configure the
+major mode features such as hilighting, indentation rules, etc.
+.PP
+\fBmajor-mode\fR, with no argument \fIn\fR, prompts for a new major mode
+\fIid\fR and is immediately applied. If \fIid\fR matches the buffers current
+\fImajor-mode\fR identity then the command prints the full name of the current
+\fImajor-mode\fR, the content label (if enabled) and name of the hook file.
+.PP
+\fBmajor-mode\fR, with a positive numeric argument \fIn\fR modifies the major
+mode settings, the \fIid\fR argument must be supplied and the effect of the
+numeric argument \fIn\fR bits are as follows:
+.IP \fB0x01\fR
+When set, the \fImajor-mode\fR is created if it does not already exist. An
+error is returned if the bit is clear and the major-mode \fIid\fR does not
+exist.
+.IP \fB0x02\fR
+When set, the \fIcontent-ID label\fR of the \fImajor-mode\fR is assigned the
+argument value \fIcid-label\fR. If \fIcid-label\fR is an empty string (i.e.
+"") the feature is disabled. 
+.IP
+When clear, the \fIcontent-ID label\fR remains unchanged unless the call is
+creating the \fImajor-mode\fR, in this case, the \fIcid-label\fR is set to the
+same value as the \fIid\fR.
+.IP
+Refer to the \fBNotes\fR section below for more information on the use of the
+\fIcontent-ID label\fR. 
+.IP \fB0x04\fR
+When set, the file extensions associated with the major-mode are set to
+\fIextension-list\fR. \fIextension-list\fR is a space separated list of
+\fIfile endings\fR (as opposed to true file extensions) and are usually
+specified with the extension separator. For example, the extension list
+"\fC.c\fR \fC.h\fR" maybe used for C major-mode to associate files ending in
+\fC.c\fR or \fC.h\fR.
+.IP
+A forward slash ('\fC/\fR') character at the start of an extension forces the
+match of the whole file name, for example, the Unix \fBinfo\fR system often
+has directories with a '\fCdir\fR' file, an extension-list value of
+"\fC.info\fR \fC/dir\fR" matches any file ending in \fC.info\fR and a file
+with the name \fCdir\fR. 
+.IP
+A caret ('\fC^\fR') character at the start of an extension matches the start
+of the filename with the extension. 
+.IP
+If \fIextension-list\fR is the empty string then the feature is disable. 
+.IP
+When bit \fB0x04\fR is clear, the value remains unchanged unless this is the
+initial creation call, in which case the value is set to ".\fIid\fR".
+.IP
+Extension-list values are not concatenated when the \fIextension-list\fR is
+redefined, the full list of extensions must always be provided. The extension
+comparison is always case insensitive to ensure consistent behaviour across
+all platforms.
+.IP \fB0x08\fR
+When set, the full name of the major-mode is set to \fIfull-name\fR. When this
+bit is clear the value remains unchanged unless the call is also creating the
+major-mode, when the name is set to the capitalised value of \fBcid-label\fR,
+if set, or \fBid\fR. The name is forced to uppercase if the value does not
+contain a vowel e.g. \fCHTML\fR.
+.IP \fB0x10\fR
+When set, the \fIcid-line-count\fR and \fIcid-regex\fR parameters are used to
+define a content based identifier which recognises the file type from the
+contents of the file. A file to be identified must have content within the
+first \fIcid-line-count\fR non-blank lines matching the \fIcid-regex\fR. If
+the line count \fIcid-line-count\fR is positive the regular expression search
+is case sensitive, if the line count is negative, the count is negated and the
+search is case insensitive.
+.IP
+When bit \fB0x10\fR is used on its own, a special 'regex replace' form of the
+\fIid\fR can be used, see the \fBNotes\fR section below for more information. 
+.PP
+The order the major-modes are defined is used when there is a conflict in
+assignment, for example, both C and C++ may use the \fB.h\fR extension.
+Priority is given to the \fBlast\fR defined major-mode, i.e. the first defined
+major-mode has the lowest priority, ensuring that any user created major-modes
+have the highest priority. The order may be manipulated by simply redefining
+the major-mode with an argument of \fC1\fR. For example, adding the following
+line to the end a user macro file would make the shell script major-mode
+the highest priority:
+.Me $emf-scheme
+.CS
+1 major-mode "sh"
+.CE
+.Me $ehf-scheme
+If a numerical argument of 0 is given to \fBmajor-mode\fR the command uses the
+variable
+.Ht $result 5
+to return information about the given \fIid\fR major-mode in the following \*(mS
+.Hl list &lget 4
+format:
+.CS
+\\b<id>\\b<flags>\\b<cid-label>\\b<extension-list>\\b<full-name>\\b
+.CE
+Where '\fC\\b\fR' is the list value separator character. The \fI<flags>\fR
+member is an integer interpreted as a bit flag with the following values:
+.IP \fB0x01\fR
+If set, initialisation of the major-mode has been attempted, if bit \fB0x02\fR
+is also set then the attempt was successful and the major-mode would have been
+applied to a buffer, if bit \fB0x02\fR is clear then \*(mS failed to locate
+the major-mode \fCfhook-\fR\fI<id>\fR macro and aborted.
+.IP \fB0x02\fR
+If set, the major-mode has been successfully initialised and the
+\fCfhook-\fR\fI<id>\fR macro was located.
+.IP \fB0x04\fR
+If set, the major-mode has an \fCftest-\fR\fI<id>\fR macro, this macro will be
+invoked to resolve major-mode assignment conflicts based solely on the file
+extension. This bit is always clear until the hook has successfully
+initialised.
+.IP \fB0x08\fR
+If set, the major-mode has a \fCbhook-\fR\fI<id>\fR macro, see
+.Ht $buffer-bhook 5 .
+This bit is always clear until the hook has successfully initialised.
+.IP \fB0x10\fR
+If set, the major-mode has an \fCehook-\fR\fI<id>\fR macro, see
+.Ht $buffer-ehook 5 .
+This bit is always clear until the hook has successfully initialised.
+.IP \fB0x20\fR
+If set, the major-mode has a \fCdhook-\fR\fI<id>\fR macro, see
+.Ht $buffer-dhook 5 .
+This bit is always clear until the hook has successfully initialised.
+.PP
+When \fBmajor-mode\fR is called with a numeric argument of 16, a special
+\&'regex replace' style of \fIid\fR may be used, for example:
+.Me $emf-scheme
+.CS
+16 major-mode "\\\\1" -2 "-[*!]- *\\\\(\\\\m+\\\\).*?-[*!]-"
+.CE
+.Me $ehf-scheme
+In this form the \fIid\fR string must be a '\\' character followed by a digit
+between \fC0\fR and \fC7\fR which must refer to a group within the
+\fIcid-regex\fR. When a match is found, the value of the group is compared
+with all major-mode content-id labels (\fIcid-label\fR) and if a match is
+found that mode is applied. This has the major advantage of being able to
+support all major-modes in a single regex search, greatly reducing the
+performance impact of content based identification.
+.SH NOTES
+The major-mode has a very specific order of event execution which is defined 
+in the following paragraphs:
+.PP
+The common major-modes must be defined first and this occurs in the main
+\fBme.emf\fR macro file,  user and company created major-modes are typically
+defined in the user and company macro files. The definitions at this stage are
+minimal to enable \*(mS to start-up as quickly as possible, a single call to
+\fBmajor-mode\fR will usually suffice.
+.PP
+When the user loads a file \*(mS loops through all of the major-modes, in
+order, checking every defined \fIcontent-id\fR from the start of the first
+non-blank line of the loading file. If a match is found in the buffer then the
+major-mode is initialised (if not already initialised - see below) and
+assigned to the buffer.
+.PP
+If no content-id based match was found, \*(mS loops through all major-modes,
+in order, checking every defined extension list. If a match is found the
+major-mode is initialised, if required, and checked for the existence of a
+\fCftest-\fR\fI<id>\fR macro. If the macro exists it is executed and the
+return status assessed, if there was no match then the buffer is assigned the
+major mode of the file extension. If the buffer content matches the
+\fCftest-\fR\fI<id>\fR type the major-mode is immediately assigned and the
+search halted, otherwise the probability of the buffer being of that type is
+stored and the search is continued. If, by the end of the search, no
+definitive match has been found, the most likely major-mode is assigned, or
+the \fCdefault\fR major-mode where no match was found.
+.PP
+If a major-mode has been assigned, the major-modes 
+.Ht $buffer-fhook 5
+function (named \fCfhook-\fR\fI<id>\fR) is executed within the current buffer.
+The hook macros configure settings such as the hilighting, indentation
+schemes, buffer based binding and modes etc.
+.PP
+A major-mode is deemed initialised if the main \fCfhook-\fR\fI<id>\fR macro is
+defined, if it is not, \*(mS attempts to locate and execute the associated
+hook file, \fChk\fR\fI<id>\fR\fC.emf\fR. If the file is not found or, having
+executed the file, the main \fCfhook-\fR\fI<id>\fR macro is still not defined
+the initialisation is considered failed and the major-mode becomes unusable.
+.SS Migration
+In January 2026 the existing command \fBadd-file-hook\fR was replaced with
+\fBmajor-mode\fR with the aim to consolidating the major-mode concept and
+improving compatibility with Emacs. As a result, all existing calls to
+\fBadd-file-hook\fR need to be migrated to \fBmajor-mode\fR.
+.PP
+Calls to \fBadd-file-hook\fR take one of two different forms:
+.IP "File Extension Recognition"
+Calls without a numeric argument were used to bind a list of extensions to a
+file-hook macro. To migrate these definitions, first determine if the hook is
+a standard system hook by locating the \fChk\fR\fI<id>\fR\fC.emf\fR file and
+if so whether the extensions are now supported by checking the relevant call
+to \fBmajor-mode\fR in the current \fCme.emf\fR. If the hook is a system one
+and all extensions are listed then the existing call to add-file-hook maybe
+removed.
+.IP
+If the hook is a system one but not all extensions are listed, replace the
+add-file-hook line with one like the following:
+.RS
+.Me $emf-scheme
+.CS
+4 major-mode "<id>" "<combined-full-extension-list>"
+.CE
+.Me $ehf-scheme
+Where <id> is taken from the hook macro name which should have the form
+\fCfhook-\fR\fI<id>\fR. If it is not a system hook, replace the line with one
+like the following:
+.Me $emf-scheme
+.CS
+5 major-mode "<id>" "<extension-list>"
+.CE
+.Me $ehf-scheme
+If the hook file contains a user friendly name for the hook, e.g. contains a
+line like the following:
+.Me $emf-scheme
+.CS
+set-variable .fhook-<id>.name "<File-type-name>"
+.CE
+.Me $ehf-scheme
+Then remove this line from the hook file and change the call to major-mode to:
+.Me $emf-scheme
+.CS
+13 major-mode "<id>" "<extension-list>" "<File-type-name>"
+.CE 0
+.Me $ehf-scheme
+.RE
+.IP "File Content Recognition"
+Calls with a numeric argument to add-file-hook were used to define a content
+based identifier, given in the form of a regex search pattern. Many of these
+\fIcontent-IDs\fR take the form of "\fC-*- <id> -*-\fR" or "\fC-!- <id> -!-\fR", 
+these are generally no longer required as the new major-mode
+\fIcid-label\fR feature automatically performs the same function. If the label
+used in the content-ID is something other than \fI<id>\fR then the call to
+add-file-line can usually be replaced with:
+.RS
+.Me $emf-scheme
+.CS
+3 major-mode "<id>" "<cid-label>"
+.CE
+.Me $ehf-scheme
+If this is not a system hook then this can be combined with an extension-based
+major-mode definition, i.e. a single call to major-mode like one of the
+following:
+.Me $emf-scheme
+.CS
+7  major-mode "<id>" "<cid-label>" "<extension-list>"
+15 major-mode "<id>" "<cid-label>" "<extension-list>" "<File-type-name>"
+.CE
+.Me $ehf-scheme
+However, if there is more than one label or the content-ID does not take this
+form then replace the call to add-file-hook with a line of the following form:
+.Me $emf-scheme
+.CS
+17 major-mode "<id>" n "<regex>"
+.CE
+.Me $ehf-scheme
+Where \fI<id>\fR is taken from the hook macro name which should have the form
+\fCfhook-\fR\fI<id>\fR, \fIn\fR is the numeric argument given and
+\fI<regex>\fR is the first argument given. Again, if this is not a system hook
+this line can be combined with the major-mode definition call unless there are
+more than one.
+.RE
+.SH "SEE ALSO"
+.na
+.Hl "File Hooks" fileHooks 2 ,
+.Hl "Language Templates" languageTemplates 2 ,
+.Ht $buffer-major-mode 5 ,
+.Ht $buffer-fhook 5 ,
+.Ht define-macro-file 2 .
+.ad
+.FH
