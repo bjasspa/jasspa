@@ -12,7 +12,7 @@
  *  Author        : $Author: jon $
  *  Created By    : Jon Green
  *  Created       : Sun Jul 27 17:43:46 2003
- *  Last Modified : <030822.2354>
+ *  Last Modified : <260202.1353>
  *
  *  Description	
  *
@@ -39,6 +39,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define PROGNAME "unix2dos"
 
