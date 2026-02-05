@@ -1039,26 +1039,88 @@ replaces(int kind, int ff, int nn)
                     (tmpc == '\\') && 
                     (i+1 < rlength))                   /* Not too long ?? */
                 {
-                    int jj, kk, changeCase=0 ;
+                    int jj, kk, ll, rng=0, changeCase=0 ;
                     
-                    tmpc = rpat[++i] ;
+                    tmpc = rpat[++i];
+                    if((i+7 < rlength) && (tmpc == '{'))
+                    {
+                        rng=1;
+                        tmpc = rpat[++i];
+                    }
                     if((i+1 < rlength) && ((tmpc == 'l') || (tmpc == 'u') || (tmpc == 'c')))
                     {
-                        changeCase = (tmpc == 'l') ? -1:tmpc ;
-                        tmpc = rpat[++i] ;
+                        changeCase = (tmpc == 'l') ? -1:tmpc;
+                        tmpc = rpat[++i];
                     }
-                    if ((tmpc == '&') ||
-                        ((tmpc >= '0') && (tmpc <= '9') && ((int)(tmpc-'0' <= mereRegexGroupNo()))))
+                    if(tmpc == '*')
                     {
-                        /* Found auto repeat char replacement */
-                        tmpc -= (tmpc == '&') ? '&':'0' ;
-                        
-                        /* if start offset is < 0, it was a ? auto repeat which was not found,
-                           therefore replace str == "" */ 
-                        if((jj=mereRegexGroupStart(tmpc)) >= 0)
+                        if(i != 1)
+                            status = mlwrite(MWABORT,(meUByte *)"[ERROR: Replace \\*<macro> exec must be first]");
+                        else if(lineExec(0,1,rpat+2) <= 0)
+                            status = mlwrite(MWABORT,(meUByte *)"[ERROR: Replace \\*<macro> returned error]");
+                        else if((i = bufferInsertText(resultStr,0)) < 0)
+                            status = i;
+                        else
                         {
-                            for(kk=mereRegexGroupEnd(tmpc) ;
-                                ((jj < kk) && (status > 0)); ilength++)
+                            ilength += i-1;
+                            i = rlength;
+                        }
+                    }
+                    else if((tmpc == '&') || ((tmpc >= '0') && ((int)(tmpc-'0' <= mereRegexGroupNo()))))
+                    {
+                        meUByte lchr, rchr, cc;
+                        /* Found auto repeat char replacement */
+                        tmpc = (tmpc == '&') ? 0:tmpc-'0' ;
+                        
+                        /* if start offset is < 0, it was a ? auto repeat which was not found, therefore replace str == "" */ 
+                        jj = mereRegexGroupStart(tmpc);
+                        kk = mereRegexGroupEnd(tmpc);                        
+                        if(rng)
+                        {
+                            tmpc = rpat[++i];
+                            if((lchr=rpat[++i]) == tmpc)
+                                lchr = '\0';
+                            else if(rpat[++i] != tmpc)
+                                rng = -1;
+                            if(rng < 0)
+                                ;
+                            else if((rchr=rpat[++i]) == tmpc)
+                                rchr = '\0';
+                            else if(rpat[++i] != tmpc)
+                                rng = -1;
+                            if(rng > 0)
+                            {
+                                rng = 0;
+                                while(((cc=rpat[++i]) >= '0') && (cc <= '9'))
+                                    rng = (rng * 10) + cc - '0';
+                            }
+                            if((rng <= 0) || (cc != '\\') || (rpat[++i] != '}') || ((lchr == '\0') && (rchr == '\0')))
+                            {
+                                mlwrite(MWABORT,(meUByte *)"[ERROR: Invalid replace \\{...\\} interval]");
+                                status = -1;
+                                rng = -1;
+                            }
+                            else if(jj >= 0)
+                                rng = rng + jj - kk;
+                            if((rng > 0) && (lchr != '\0') && ((ll = (rchr == '\0') ? rng:(rng>>1)) > 0))
+                            {
+                                rng -= ll;
+                                if(lchr == meCHAR_NL)
+                                {
+                                    do {
+                                        if((status = lineInsertNewline(0)) <= 0)
+                                            break;
+                                        ilength++;
+                                    } while(--ll);
+                                }
+                                else if((status = lineInsertChar(ll,lchr)) > 0)
+                                    ilength += ll;
+                            }
+                        }
+                            
+                        if(jj >= 0)
+                        {
+                            for( ; ((jj < kk) && (status > 0)) ; ilength++)
                             {
                                 tmpc = dpat[jj++] ;
                                 if(changeCase)
@@ -1072,25 +1134,39 @@ replaces(int kind, int ff, int nn)
                                     else
                                         tmpc = toLower(tmpc) ;
                                 }
-                                if(tmpc != meCHAR_NL)
-                                    status = lineInsertChar(1, tmpc);
-                                else
+                                if(tmpc == meCHAR_NL)
                                     status = lineInsertNewline(0);
+                                else
+                                    status = lineInsertChar(1, tmpc);
                             }
+                        }
+                        if((rng > 0) && (status > 0))
+                        {
+                            if(rchr == meCHAR_NL)
+                            {
+                                do {
+                                    if((status = lineInsertNewline(0)) <= 0)
+                                        break;
+                                    ilength++;
+                                } while(--rng);
+                            }
+                            else if((status = lineInsertChar(rng,rchr)) > 0)
+                                ilength += rng;
                         }
                         /* subtract one from insert length as one is added at
                          * the end of the for loop */
-                        ilength-- ;
+                        if(status > 0)
+                            ilength--;
                     }
                     else
                     {
                         if(tmpc == 'n')
-                            tmpc = '\n' ;
+                            tmpc = '\n';
                         else if(tmpc == 'r')
-                            tmpc = '\r' ;
+                            tmpc = '\r';
                         else if(tmpc == 't')
-                            tmpc = '\t' ;
-                        if (tmpc != meCHAR_NL)
+                            tmpc = '\t';
+                        if(tmpc != meCHAR_NL)
                             status = lineInsertChar(1, tmpc);
                         else
                             status = lineInsertNewline(0);
@@ -1098,14 +1174,12 @@ replaces(int kind, int ff, int nn)
                 }
                 else
 #endif
-                {
-                    if (tmpc != meCHAR_NL)
-                        status = lineInsertChar(1, tmpc);
-                    else
-                        status = lineInsertNewline(0);
-                }
+                    if (tmpc == meCHAR_NL)
+                    status = lineInsertNewline(0);
+                else
+                    status = lineInsertChar(1, tmpc);
                 /* Insertion error ? */
-                if (status <= 0) 
+                if(status <= 0) 
                     break ;
                 /* insertion succeeded increment length */
                 ilength++;

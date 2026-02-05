@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 17 22:26:42 1999
 .\"
-.Id $Id: m2nar006.2,v 2.9 2025/09/19 15:08:28 jon Exp $
+.Id $Id: m2nar006.2,v 2.9 2026/02/05 00:32:26 jon Exp $
 .Im MicroEmacs search
 .so me.tni
 .TH "RegularExpressions" 2
@@ -414,14 +414,14 @@ A regular expression replacement,
 .Ht query-replace-string 2
 command (with
 .Ht magic 2m
-mode  enabled),  replaces  exact  matches for a single  string or pattern. The
-replacement  pattern  may be a  constant;  it may also refer to all or part of
-what is matched by the regular expression search string.
+mode enabled), replaces exact matches for a single string or pattern. The replacement pattern may be a constant; it
+may also refer to all or part of what is matched by the regular expression search string. The following replacement 
+constructs are supported:
 .TP
 \fB\\&\fR
 .\"
 In the  replacement  pattern,  \fB\\&\fR  stands  for the entire  match  being
-replaced. (as does \fC\\0\fR).
+replaced (as does \fC\\0\fR).
 .TP
 \fB\\D\fR
 .\"
@@ -465,6 +465,30 @@ grouping (\fC\\(..\\)\fR) in search pattern.
 In the  replacement  pattern  up-cases  the string,  where  \fBD\fR is a digit
 \fC0-9\fR  or  \fC&\fR,  stands for  whatever  matched  the Dth  parenthesized
 grouping (\fC\\(..\\)\fR) in search pattern.
+.TP
+\fB\\{\fID\fC,L,R,N\fB\\}\fR
+.\"
+In the  replacement  pattern the \fB\\{...\\}\fR qualifier can be used to enforce a minimum length for a group string, 
+where \fID\fR is the group number, \fCl\fR is the left pad character, \fCR\fR the right pad, and \fCN\fR the minimum 
+length. If the group string to be inserted is already \fCN\fR characters or longer then no padding characters are 
+inserted, otherwise an equal number of \fCL\fR and \fCR\fR characters are inserted to pad the inserted string to 
+\fBN\fR character, effectively centring the group. If \fCL\fR is omitted the inserted group will be effectively left 
+aligned, if \fBR\fR is omitted instead the group with be right aligned. Note the '\fC,\fR' separator character 
+can be changed to any character that is not \fCL\fR or \fCR\fR.
+.TP
+\fB\\{c\fID\fC,L,R,N\fB\\}\fR, \fB\\{l\fID\fC,L,R,N\fB\\}\fR, \fB\\{u\fID\fC,L,R,N\fB\\}\fR
+.\"
+As with \fB\\{\fID\fC,L,R,N\fB\\}\fR except the case of the group string is altered accordingly.
+.TP
+\fB\\*\fImacro-name\fR [ \fIarg1 arg2 ...\fR ]
+The string to be inserted is dynamically generated be the given \fImacro-name\fR, this must be at the start and the only 
+content of the replacement pattern. The given macro can use the given arguments and the 
+.Ht @s1 4
+group variables to obtain the match string, it must set the
+.Ht $result 5
+variable to the fully expanded replacement string to be inserted. Note that the macro should not change the current 
+window, buffer, cursor position or edit the current buffer in any way, the effect of doing so is undefined but a crash 
+is likely. 
 .SS "Searching and Case"
 Searching may be either case sensitive or case insensitive, and is controlled by the
 .Ht exact 2m
@@ -504,14 +528,13 @@ this means you should order the alternative  forms in preference,  typically  lo
 match '\fCok\fR' or '\fCokay\fR' the pattern should be '\fC\\(okay\\|ok\\)\fR' and not '\fC\\(ok\\|okay\\)\fR' as this
 will only ever match the 'ok' in an 'okay'.
 .SH HISTORY
-As of March 2005 then the existing  Emacs search string syntax of "\fC\\s?\fR"
-and  "\fC\\S?\fR"  has been  discarded  in favor of Perl's  simpler  syntax of
-"\fC\\s\fR"  and  "\fC\\S\fR"  for a  whitespace  character  class.  Added new
-character  classes  "\fC\\d\fR" = digits,  "\fC\\D\fR" != digits "\fC\\h\fR" =
-hexdigits  "\fC\\H\fR"  != hexdigits  "\fC\\l\fR" = lowercase  "\fC\\L\fR"  !=
-lowercase  "\fC\\u\fR" = uppercase and  "\fC\\U\fR" != uppercase.  The regular
-expression replacement string characters include "\fC\\c#\fR" "\fC\\l#\fR" and
-"\fC\\u#\fR" to change the case of groups.
+As of March 2005 then the existing Emacs search string syntax of "\fC\\s?\fR" and "\fC\\S?\fR" has been discarded in
+favor of Perl's simpler syntax of "\fC\\s\fR" and "\fC\\S\fR" for a whitespace character class. Added new character
+classes "\fC\\d\fR" = digits, "\fC\\D\fR" != digits, "\fC\\h\fR" = hexdigits, "\fC\\H\fR" != hexdigits, "\fC\\l\fR" =
+lowercase, "\fC\\L\fR" != lowercase, "\fC\\u\fR" = uppercase and "\fC\\U\fR" != uppercase. The regular expression
+replacement string characters include "\fC\\c#\fR" "\fC\\l#\fR" and "\fC\\u#\fR" to change the case of groups.
+.PP
+In January 2026 the \fC\\{...\\}\fR and \fC\\*\fImacro\fR replacement construct where added.
 .SH "SEE ALSO"
 .na
 .Ht search-forward 2 ,

@@ -723,7 +723,7 @@ bufferInsertText(meUByte *str, meInt flags)
             *ss = meCHAR_NL;
             if(status <= 0)
                 break ;
-            if(!tlen & !(flags & meBUFINSFLAG_UNDOCALL))
+            if((tlen == 0) && !(flags & meBUFINSFLAG_UNDOCALL))
             {
                 /* Update the position of any anchors at the start of the line, these are left behind */
                 if(wp->dotLine->flag & meLINE_ANCHOR)

@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd109.2,v 2.7 2022/06/12 17:13:25 jon Exp $
+.Id $Id: m2cmd109.2,v 2.7 2026/02/04 23:35:20 jon Exp $
 .Im MicroEmacs command|search
 .ds C0 "(\fB\*er\fR)\ \&
 .so me.tni
@@ -20,18 +20,20 @@ replace-string \- Replace string with new string
 .ad
 .SH DESCRIPTION
 .B replace-string
-replaces all  occurrences of one string with another  string. The  replacement
-starts  at the  current  location  of the  cursor  and  goes to the end of the
-current buffer.
+replaces all occurrences of one string with another string. The replacement starts at the current location of the
+cursor and goes to the end of the current buffer.
 .PP
-A numeric  argument  positive \fIn\fR limits the number of strings replaced to
-\fIn\fR. A negative  argument  \fIn\fR limits the number of lines in which the
-replacement  may take place, e.g. a value of -15 restricts the  replacement of
+A numeric argument positive \fIn\fR limits the number of strings replaced to \fIn\fR. A negative argument \fIn\fR
+limits the number of lines in which the replacement may take place, e.g. a value of -15 restricts the replacement of
 the string to the next 15 lines from the current cursor position.
 .PP
 .Ht $result 5
-is set to a list giving the number of substitutions, a replace mode of 'a' for
-all and the replace with string.
+is set to a list giving the number of substitutions, a replace mode of 'a' for all and the replace with string.
+.SH NOTES
+When using
+.Hl "regular expressions" RegularExpressions 2
+the replacement string can be dynamically generated creating a far more powerful tool for automating complex changes, 
+see section on \fISyntax of Replacement Expressions\fR.
 .SH "SEE ALSO"
 See
 .Hl "Operating Modes" Modes -
