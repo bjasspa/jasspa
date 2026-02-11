@@ -11,6 +11,7 @@ MEDEBUG=
 MAKEFILE=
 MAKECDEFS=
 OPTIONS=
+MAKE=make
 
 while [ -n "$1" ]
 do
@@ -126,6 +127,8 @@ if [ -z "$MAKEFILE" ] ; then
     elif [ $PLATFORM = "OSF1" ] ; then
         MAKEBAS=osf1
     elif [ $PLATFORM = "SunOS" ] ; then
+        # Force the use of gmake as SunOS has another make by default.
+        MAKE=gmake
         # Test for x86 version of Solaris
         VERSION=`uname -p`
         if [ $VERSION = "i386" ] ; then
@@ -168,7 +171,6 @@ if [ -z "$MAKEFILE" ] ; then
     fi
 fi
 
-MAKE=make
 if [ "$MAKEFILE" = "winmingw.mak" ] ; then
     # when cross compiling the system gnu make can be used
     if [ "`type mingw32-make | cut -b 1-15`" = "mingw32-make is" ] ; then
