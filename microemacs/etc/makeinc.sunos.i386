@@ -1,4 +1,4 @@
 # -*- Makefile -*-
 # Make rules for SunOS(i396)
 # 
-INSTALL=	install
+INSTALL=	ginstall
