@@ -7,7 +7,7 @@ fo "for (int i = \p; i < ...; i++) {\r\r}\r\P" "  \CCDfo\CCAr"
 fu "/// Documentation text.\rpublic void \p () {\r\r};\r\P" "  \CCDfu\CCAnction"
 sfu "/// Documentation text.\rpublic static void \p () {\r\r};\r\P" "  \CCDsfu\CCAnction"
 if "if (\p)\r{\r\r}\r\P" "  \CCDif\CCA"
-ma "public static void Main () {\r\pConsole.WriteLine("Hello World!")\r}\r\P" "  \CCDma\CCAin"
+ma "public static void Main () {\r\pConsole.WriteLine(\"Hello World!\")\r}\r\P" "  \CCDma\CCAin"
 sw "switch (\p)\r{\rcase ...:\rdefault:\r\r}\r\P "  \CCDsw\CCAitch"
 wh "while (\p) {\r\r}\r\P" "  \CCDwh\CCAile"
 
