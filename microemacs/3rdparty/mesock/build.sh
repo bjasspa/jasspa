@@ -12,6 +12,7 @@ MAKECDEFS=
 SSL_MAKEPTH=
 X11_MAKEINC=/usr/include
 X11_MAKELIB=
+MAKE=make
 
 while [ -n "$1" ]
 do
@@ -137,6 +138,8 @@ if [ -z "$MAKEFILE" ] ; then
         X11_MAKEINC=/usr/X11R6/include
         X11_MAKELIB=/usr/X11R6/lib
     elif [ $PLATFORM = "SunOS" ] ; then
+        # Force the use of gmake as SunOS has another make by default.
+        MAKE=gmake
         # Test for x86 version of Solaris
         VERSION=`uname -p`
         if [ $VERSION = "i386" ] ; then
@@ -187,15 +190,15 @@ OPTIONS="$MEDEBUG$OPTIONS$SSL_MAKEPTH"
 MAKECDEFS="MAKECDEFS=$MAKECDEFS"
 if [ -r $MAKEFILE ] ; then
     if [ -n "$LOGFILE" ] ; then
-        echo "make -f $MAKEFILE $OPTIONS \"$MAKECDEFS\"" > $LOGFILE 2>&1
-        make -f $MAKEFILE $OPTIONS "$MAKECDEFS" > $LOGFILE 2>&1
+        echo "${MAKE} -f $MAKEFILE $OPTIONS \"$MAKECDEFS\"" > $LOGFILE 2>&1
+        $MAKE -f $MAKEFILE $OPTIONS "$MAKECDEFS" > $LOGFILE 2>&1
     else
         if [ -n "$LOGFILEA" ] ; then
-            echo "make -f $MAKEFILE $OPTIONS \"$MAKECDEFS\"" >> $LOGFILEA 2>&1
-            make -f $MAKEFILE $OPTIONS "$MAKECDEFS" >> $LOGFILEA 2>&1
+            echo "${MAKE} -f $MAKEFILE $OPTIONS \"$MAKECDEFS\"" >> $LOGFILEA 2>&1
+            $MAKE -f $MAKEFILE $OPTIONS "$MAKECDEFS" >> $LOGFILEA 2>&1
         else
-            echo "make -f $MAKEFILE $OPTIONS \"$MAKECDEFS\""
-            make -f $MAKEFILE $OPTIONS "$MAKECDEFS"
+            echo "${MAKE} -f $MAKEFILE $OPTIONS \"$MAKECDEFS\""
+            $MAKE -f $MAKEFILE $OPTIONS "$MAKECDEFS"
         fi
     fi
 else
