@@ -482,6 +482,7 @@ extern meLine * translateBufferBack(meBuffer *bp, meUInt flags);
 #else
 #define ffFileOp(s,d,f,m) 0
 #define translateBuffer notAvailable
+#define translateBufferBack(bp,i)  (bp)->baseLine
 #endif
 
 /* frame.c externals */
@@ -570,7 +571,9 @@ extern	int	getexecCommand(void);
 extern	meUShort  meGetKeyFromUser(int f, int n, int flag);
 extern  int     createBuffList(meUByte ***listPtr, int noHidden);
 extern  int     createCommList(meUByte ***listPtr, int noHidden);
+#if MEOPT_MAJORMODE
 extern  int     createMajorModeList(meUByte ***listPtr);
+#endif
 extern  int     createVarList(meUByte ***listPtr);
 #define MLBUFFER     0x00001		/* entering a buffer name	     */
 #define MLCOMMAND    0x00002		/* entering a command		     */

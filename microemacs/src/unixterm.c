@@ -988,7 +988,9 @@ TCAPdrawChar(meUByte cc)
     int uc;
     if(cc > TTutf8Char)
     {
+#if MEOPT_EXTENDED
         if((uc = (int) charToUnicode[cc-128]) == 0)
+#endif /* MEOPT_EXTENDED */
             uc = ttSpeUChars[meCHAR_UNDEF];
     }
     else if(cc < TTspecChar)
@@ -1474,11 +1476,13 @@ meFrameXTermDraw(meFrame *frame, int row, int scol, int erow, int ecol)
                 }
                 else if((cc & 0x80) == 0)
                     wb[col] = cc;
+#if MEOPT_EXTENDED
                 else if((wc = charToUnicode[cc & 0x7f]) == 0)
                 {
                     meFrameXftDrawSpecialChar(frameCur,colToClient(col),row,meCHAR_UNDEF);
                     wb[col] = ' ';
                 }
+#endif /* MEOPT_EXTENDED */
                 else
                     wb[col] = wc;
                 col++;
@@ -1497,7 +1501,7 @@ meFrameXTermDraw(meFrame *frame, int row, int scol, int erow, int ecol)
         } while(--erow > 0);
     }
     else
-#endif
+#endif /* MEOPT_XFT */
     {
         meUByte cc, *sfstp, buff[meFRAME_WIDTH_MAX];
         int spFlag;
@@ -2010,6 +2014,7 @@ meXEventHandler(void)
                 /* if ii <= 0x7f it must be the UNDEF char, don't add modifiers */
                 if(ii > 0x7f)
                 {
+#if MEOPT_EXTENDED
                     if((ii > 0x0ff) || (charToUnicode[ii-128] != ii))
                     {
                         nn = 127;
@@ -2020,6 +2025,9 @@ meXEventHandler(void)
                         else
                             ii = nn+128;
                     }
+#else
+                    ii = meCHAR_UNDEF;
+#endif
                     if(ControlMask & ss)
                         ii |= ME_CONTROL;
                     if(Mod1Mask & ss)
@@ -2424,7 +2432,7 @@ special_bound:
                                         *dd++ = cc;
                                 }
                             }
-#endif
+#endif /* MEOPT_EXTENDED */
                             killp = killp->next;
                         }
                         if((meSystemCfg & meSYSTEM_NOEMPTYANK) && (len == 0))
@@ -2501,7 +2509,6 @@ special_bound:
                 else if(((type == XA_STRING) || (type == meAtoms[meATOM_UTF8_STRING])) && (fmt == 8) && (nitems > 0))
                 {
 #if MEOPT_EXTENDED
-                    
                     if((type != XA_STRING) && !(clipState & CLIP_UTF8))
                     {
                         int ss, uc;
@@ -2547,7 +2554,7 @@ special_bound:
                         }
                         buff[nitems] = '\0';
                     }
-#endif
+#endif /* MEOPT_EXTENDED */
                     if((klhead == NULL) || (klhead->kill == NULL) ||
                        (klhead->kill->next != NULL) ||
                        meStrncmp(klhead->kill->data,buff,nitems) ||
@@ -4227,13 +4234,17 @@ meFrameXTermHideCursor(meFrame *frame)
             meFrameXftDrawBackground(frameCur,cl,rw,1);
             if((cc & 0xe0) == 0)
                 meFrameXftDrawSpecialChar(frameCur,cl,rw,cc);
-            else if(((wc = cc) & 0x80) && ((wc = charToUnicode[cc-128]) == 0))
+            else if(((wc = cc) & 0x80) 
+#if MEOPT_EXTENDED
+                    && ((wc = charToUnicode[cc-128]) == 0)
+#endif /* MEOPT_EXTENDED */
+                    )
                 meFrameXftDrawSpecialChar(frameCur,cl,rw,meCHAR_UNDEF);
             else
                 meFrameXftDrawWString(frameCur,cl,rw,&wc,1);
         }
         else
-#endif
+#endif /* MEOPT_XFT */
             if((cc & 0xe0) == 0)
         {
             static char ss[1]={' '} ;
@@ -4321,13 +4332,19 @@ meFrameXTermShowCursor(meFrame *frame)
                 meFrameXftDrawBackground(frameCur,cl,rw,1);
                 if((cc & 0xe0) == 0)
                     meFrameXftDrawSpecialChar(frameCur,cl,rw,cc);
-                else if(((wc = cc) & 0x80) && ((wc = charToUnicode[cc-128]) == 0))
+                else if(((wc = cc) & 0x80) 
+#if MEOPT_EXTENDED
+                        && ((wc = charToUnicode[cc-128]) == 0)
+#endif /* MEOPT_EXTENDED */
+                        )
+                {
                     meFrameXftDrawSpecialChar(frameCur,cl,rw,meCHAR_UNDEF);
+                }
                 else
                     meFrameXftDrawWString(frameCur,cl,rw,&wc,1);
             }
             else
-#endif
+#endif /* MEOPT_XFT */
             if((cc & 0xe0) == 0)
             {
                 static char ss[1]={' '};
@@ -5016,6 +5033,7 @@ TTahead(void)
                         printf("ERROR: Invalid UTF-8 character encoding - leader char: 0x%02x\n",(int) cc);
                         uc = meCHAR_UNDEF;
                     }
+#if MEOPT_EXTENDED
                     if((uc > 0x7f) && ((uc > 0x0ff) || (charToUnicode[uc-128] != uc)))
                     {
                         int jj = 127;
@@ -5026,6 +5044,12 @@ TTahead(void)
                         else
                             uc = jj+128;
                     }
+#else /* MEOPT_EXTENDED */
+                    if (uc > 0x7f)
+                    {
+                        uc = meCHAR_UNDEF;
+                    }
+#endif /* MEOPT_EXTENDED */
                     addKeyToBuffer((meUShort) uc);
                 }
                 else

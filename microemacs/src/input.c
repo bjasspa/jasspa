@@ -675,7 +675,8 @@ createBuffList(meUByte ***listPtr, int noHidden)
     *listPtr = list;
     return i;
 }
-    
+
+#if MEOPT_MAJORMODE
 int
 createMajorModeList(meUByte ***listPtr)
 {
@@ -701,6 +702,7 @@ createMajorModeList(meUByte ***listPtr)
     *listPtr = list;
     return ii;
 }
+#endif
 
 int
 createVarList(meUByte ***listPtr)
@@ -943,8 +945,10 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
         strList = mlgsStrList;
         noStrs = mlgsStrListSize;
     }
+#if MEOPT_MAJORMODE
     else if(option & MLMAJORMODE)
         noStrs = createMajorModeList(&strList);
+#endif /* MEOPT_MAJORMODE */
     else
     {
         strList = NULL;

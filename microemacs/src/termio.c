@@ -958,7 +958,9 @@ TTgetc(void)
                     killInit(0);
                     continue;
                 }
-                else if((tt->map == (ME_SPECIAL|SKEY_mouse_move))
+                else
+#if MEOPT_MOUSE
+                    if((tt->map == (ME_SPECIAL|SKEY_mouse_move))
 #ifdef _ME_WINDOW
                    && (meSystemCfg & meSYSTEM_CONSOLE)
 #endif
@@ -1073,7 +1075,8 @@ TTgetc(void)
                     }
                 }
                 else
-#endif
+#endif /* MEOPT_MOUSE */
+#endif /* _USE_NCURSES */
                     if(tk->map != ME_DELETE_KEY)
                 {
                     if(!ki)

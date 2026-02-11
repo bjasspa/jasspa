@@ -186,6 +186,12 @@ extern char  *CM, *CL;
 #ifdef _ME_CONSOLE
 #ifdef _TCAP
 
+#ifdef _SUNOS
+/* Jon required for SunOS */
+#include <curses.h>
+#include <term.h>
+#endif
+
 /* Following are termcap function */
 extern int TCAPstart(void);
 extern int TCAPopen(void);

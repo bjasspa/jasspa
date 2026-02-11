@@ -1111,6 +1111,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 }
                 break;
             }
+#if MEOPT_MAJORMODE
         case EVMMNAMES:
             meNullFree(mjmdNames.list);
             mjmdNames.list = NULL;
@@ -1121,6 +1122,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             if(mjmdNames.mask != NULL)
                 mjmdNames.size = createMajorModeList(&mjmdNames.list);
             break;
+#endif /* MEOPT_MAJORMODE */
         case EVMNAMES:
             modeNames.curr = 0;
             if(meRegexComp(&meRegexStrCmp,vvalue,(modeNames.exact) ? meRSTRCMP_WHOLE:meRSTRCMP_ICASE|meRSTRCMP_WHOLE) != meREGEX_OKAY)
