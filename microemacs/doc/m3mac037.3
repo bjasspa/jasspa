@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Feb 1 20:28:17 1999
 .\"
-.Id $Id: m3mac037.3,v 2.8 2022/06/12 17:13:59 jon Exp $
+.Id $Id: m3mac037.3,v 2.8 2026/02/17 20:30:57 jon Exp $
 .Im MicroEmacs command|osd|macrodevelop
 .so me.tni
 .TH osd-dialog 3
@@ -28,25 +28,28 @@ osd-entry \- OSD entry dialog box
 .na
 .I n
 .B osd-dialog
-"\fItitle\fR" "\fIprompt\fR" [ "\fIx-pos\fR" "\fIy-pos\fR" ]
+"\fItitle\fR"
+"\fIprompt\fR"
+[\|"\fIx-pos\fR" "\fIy-pos\fR"\|]
 "\fIbut1\fR"
 .br
 .I n
 .B osd-xdialog
-"\fItitle\fR" "\fIprompt\fR" \fIdefault\fR [ "\fIx-pos\fR" "\fIy-pos\fR" ]
-.br
-.RS
-"\fIbut1\fR" "\fIbut2\fR" \.\.\.
-.RE
+"\fItitle\fR"
+"\fIprompt\fR"
+\fIdefault\fR
+[\|"\fIx-pos\fR" "\fIy-pos\fR"\|]
+"\fIbut1\fR"
+"\fIbut2\fR" \.\.\.
 .br
 .I n
 .B osd-entry
-"\fItitle\fR" "\fIprompt\fR" \fIvariable\fR [ "\fIx-pos\fR" "\fIy-pos\fR" ]
-.br
-.RS
-[ [ "\fIentry-xsize\fR" | "\fIentry-xsize\fRx\fIentry-ysize\fR" ]
-[ "\fItype\fR" ] ]
-.RE
+"\fItitle\fR"
+"\fIprompt\fR"
+\fIvariable\fR
+[\|"\fIx-pos\fR" "\fIy-pos\fR"\|]
+[\|[\|"\fIentry-xsize\fR"\||\|"\fIentry-xsize\fR\|x\|\fIentry-ysize\fR"\|]
+[\|"\fItype\fR"\|]\|]
 .ad
 .SH DESCRIPTION
 \fBosd-dialog\fR   constructs  a  OSD  dialog   prompt  with  a  title  string

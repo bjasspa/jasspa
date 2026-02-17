@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu Jun 17 22:26:42 1999
 .\"
-.Id $Id: m2nar007.2,v 2.17 2025/08/28 01:55:36 jon Exp $
+.Id $Id: m2nar007.2,v 2.17 2026/02/16 20:52:16 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH "Build" 2
@@ -218,51 +218,53 @@ You can add the variables to your environment, you will need to expand the
 for  MS-Dev 6.0 under W2K, the  settings  will  differ  depending  on what O/S
 variant you are running and where you have installed software. The following 
 ONLY serves as an example, you need to tailor for your installation.
-.BS
+.IP \(bu
 To set up the variables then  \fBStart\fR ->  \fBSettings\fR  -> \fBControl\fR
 \fBPanel\fR which displays the Control Panel items.
-.BU
+.IP \(bu
 Select \fBSystem\fR -> \fBAdvanced\fR -> \fBEnvironment variables\fR
-.BU
+.IP \(bu
 In \fBUser  Variables for\fR  \fI<User>\fR  then \fBNew...\fR or \fBEdit...\fR
 the  \fCPATH\fR  variable. Add the command line tools  execution  paths to the
 environment  variable, this will be something  like the following (but without
 newlines):-
-.RS
-.CS
-Variable Name:  PATH
-Variable Value: %PATH%;
-                C:\\PROGRA~1\\MICROS~3\\Common\\msdev98\\BIN;
-                C:\\PROGRA~1\\MICROS~3\\VC98\\BIN;
-                C:\\PROGRA~1\\MICROS~3\\Common\\TOOLS\\WINNT;
-                C:\\PROGRA~1\\MICROS~3\\Common\\TOOLS;
-.CE 
-.RE
-.BU
+.IP
+.na
+.nf
+\fCVariable Name:  PATH\fR
+\fCVariable Value: %PATH%;\fR
+\fC                C:\\PROGRA~1\\MICROS~3\\Common\\msdev98\\BIN;\fR
+\fC                C:\\PROGRA~1\\MICROS~3\\VC98\\BIN;\fR
+\fC                C:\\PROGRA~1\\MICROS~3\\Common\\TOOLS\\WINNT;\fR
+\fC                C:\\PROGRA~1\\MICROS~3\\Common\\TOOLS;\fR
+.fi
+.ad
+.IP \(bu
 Similarly add the \fCINCLUDE\fR variable:-
-.RS
-.CS
-Variable Name:  INCLUDE
-Variable Value: C:\\PROGRA~1\\MICROS~3\\VC98\\ATL\\INCLUDE;
-                C:\\PROGRA~1\\MICROS~3\\VC98\\INCLUDE;
-                C:\\PROGRA~1\\MICROS~3\\VC98\\MFC\\INCLUDE;
-                %INCLUDE%
-.CE 
-.RE
-.BU
+.IP
+.na
+.nf
+\fCVariable Name:  INCLUDE\fR
+\fCVariable Value: C:\\PROGRA~1\\MICROS~3\\VC98\\ATL\\INCLUDE;\fR
+\fC                C:\\PROGRA~1\\MICROS~3\\VC98\\INCLUDE;\fR
+\fC                C:\\PROGRA~1\\MICROS~3\\VC98\\MFC\\INCLUDE;\fR
+\fC                %INCLUDE%\fR
+.fi
+.ad
+.IP  \(bu
 Similarly add the \fCLIB\fR variable:-
-.RS
-.CS
-Variable Name:  LIB
-Variable Value: C:\\PROGRA~1\\MICROS~3\\VC98\\LIB;
-                C:\\PROGRA~1\\MICROS~3\\VC98\\MFC\\LIB;
-                %LIB%
-.CE
-.RE
-.BU
+.IP
+.na
+.nf
+\fCVariable Name:  LIB\fR
+\fCVariable Value: C:\\PROGRA~1\\MICROS~3\\VC98\\LIB;\fR
+\fC                C:\\PROGRA~1\\MICROS~3\\VC98\\MFC\\LIB;\fR
+\fC                %LIB%\fR
+.fi
+.ad
+.IP  \(bu
 Accept the entries and close down the dialog. Start a new DOS command line and
 the variables should be set up ready for the build.
-.BE 0
 .SH NOTES
 Other  \s-1UNIX\s0  ports  should  be fairly  easy from the base set of ported
 platforms. If any new platform ports are performed by individuals  then please

@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd117.2,v 2.8 2025/08/28 00:32:06 jon Exp $
+.Id $Id: m2cmd117.2,v 2.8 2026/02/17 19:31:40 jon Exp $
 .Im MicroEmacs command|scuts
 .so me.tni
 .TH global-abbrev-file 2
@@ -55,19 +55,13 @@ Similarly for  \fBglobal-abbrev-file\fR, an argument of zero forces the global
 abbreviation file to be uncached and re-loaded on the next use.
 .PP
 An abbreviation  is a  string which  is  expanded to  an alternate  form, e.g.
-.sp
-.RS
+.IP
 \fBe.g.\fR -> \fBfor example\fR
-.RE
-.br
+.LP
 or
-.br
-.RS
+.IP
 \fBPI\fR -> \fB3.1415926536\fR
-.RE
-.br
-etc.
-.PP
+.LP
 An  abbreviation  file is an  ordinary  text file with a strict  format, it is
 loaded only once at the first call to
 .Ht expand-abbrev 2 ,
@@ -79,21 +73,17 @@ so any \*(mS command may also be called.
 .PP
 For   example   the   following    expansion   string   inserts   the   string
 "\fC!continue\fR"  and a  newline:-
-.RS
-.PP
+.IP
 "\fC!abort\\r\fR"
-.RE
-.PP
+.LP
 Note that '\fC\\r\fR' is used instead of '\fC\\n\fR' as \fBC-m\fR is bound to
 .Ht newline 2
 and not  \fBC-j\fR.  The  expansion  string  can also make use of a few useful
 abbreviations:-
-.RS
 .IP \fB\\\\p\fR
 Mark the current position (expanded to "\fCC-x C-a P\fR")
 .IP \fB\\\\P\fR
 Move cursor to the marked position (expanded to "\fCC-x a P\fR")
-.RE
 .PP
 See help on
 .Ht execute-string 2

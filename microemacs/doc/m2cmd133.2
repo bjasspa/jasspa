@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd133.2,v 2.10 2025/11/12 14:56:41 jon Exp $
+.Id $Id: m2cmd133.2,v 2.10 2026/02/17 20:25:12 jon Exp $
 .Im MicroEmacs command|bind
 .so me.tni
 .TH translate-key 2
@@ -280,22 +280,22 @@ XTerm  app-defaults  setup file with the correct VT100 key translations,  e.g.
 the setup file could contain the following
 .CS
 *vt100.translations: #override \\
-	Shift<Key>Tab:		string("\\033[Z") \\n\\
-	<Key>BackSpace:		string("\\177") \\n\\
-	<Key>Delete:		string("\\033[1~") \\n\\
-	<Key>Insert:		string("\\033[2~") \\n\\
-	<Key>Home:		string("\\033[3~") \\n\\
-	<Key>End:		string("\\033[4~") \\n\\
-	<Key>Prior:		string("\\033[5~") \\n\\
-	<Key>Next:		string("\\033[6~") \\n\\
-	Ctrl<Key>Up:		string("\\033Oa") \\n\\
-	Ctrl<Key>Down:		string("\\033Ob") \\n\\
-	Ctrl<Key>Right:		string("\\033Oc") \\n\\
-	Ctrl<Key>Left:		string("\\033Od") \\n\\
-	Shift<Key>Up:		string("\\033[a") \\n\\
-	Shift<Key>Down:		string("\\033[b") \\n\\
-	Shift<Key>Right:	string("\\033[c") \\n\\
-	Shift<Key>Left:		string("\\033[d") \\n
+        Shift<Key>Tab:          string("\\033[Z") \\n\\
+        <Key>BackSpace:         string("\\177") \\n\\
+        <Key>Delete:            string("\\033[1~") \\n\\
+        <Key>Insert:            string("\\033[2~") \\n\\
+        <Key>Home:              string("\\033[3~") \\n\\
+        <Key>End:               string("\\033[4~") \\n\\
+        <Key>Prior:             string("\\033[5~") \\n\\
+        <Key>Next:              string("\\033[6~") \\n\\
+        Ctrl<Key>Up:            string("\\033Oa") \\n\\
+        Ctrl<Key>Down:          string("\\033Ob") \\n\\
+        Ctrl<Key>Right:         string("\\033Oc") \\n\\
+        Ctrl<Key>Left:          string("\\033Od") \\n\\
+        Shift<Key>Up:           string("\\033[a") \\n\\
+        Shift<Key>Down:         string("\\033[b") \\n\\
+        Shift<Key>Right:        string("\\033[c") \\n\\
+        Shift<Key>Left:         string("\\033[d") \\n
 .CE
 By using the  environment  variable  \fIXUSERFILESEARCHPATH\fR  to ensure that
 this  configuration  file  is  found  instead  of the  system  one  (found  in

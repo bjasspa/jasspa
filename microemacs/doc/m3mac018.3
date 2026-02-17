@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac018.3,v 2.8 2026/01/18 14:18:47 jon Exp $
+.Id $Id: m3mac018.3,v 2.8 2026/02/17 20:25:14 jon Exp $
 .Im MicroEmacs command|file
 .so me.tni
 .TH insert-template 3
@@ -103,7 +103,7 @@ define-macro fhook-make
         insert-template "makefile"
     !endif
     set-variable $buffer-hilight .hilight.make
-    -1 buffer-mode "tab"		; Normal tabs please !!!
+    -1 buffer-mode "tab"                ; Normal tabs please !!!
     1 buffer-mode "indent"
     1 buffer-mode "time"
 !emacro

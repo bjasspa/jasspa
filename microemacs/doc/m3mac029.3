@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Tue Feb 2 21:10:34 1999
 .\"
-.Id $Id: m3mac029.3,v 2.10 2022/06/12 17:13:42 jon Exp $
+.Id $Id: m3mac029.3,v 2.10 2026/02/17 20:20:56 jon Exp $
 .Im MicroEmacs command
 .ds C0 "(\fBf2\fR)\ \&
 .ds C1 "(\fBf3\fR)\ \&
@@ -180,15 +180,15 @@ set-variable .fhook-nroff.collapse-mnext "-1"
 .Me "$ehf-scheme"
 Given an nroff block of text defined as:-
 .CS
-\&\.SH SYNOPSIS
-\&\.\e" Some text
-\&\.\e" Some more text
-\&\.SH DESCRIPTION
+> .SH SYNOPSIS
+> Some text
+> Some more text
+> .SH DESCRIPTION
 .CE
 Then the collapsed version appears as:
 .CS
-\&\.SH SYNOPSIS
-\&\.SH DESCRIPTION
+> .SH SYNOPSIS
+> .SH DESCRIPTION
 .CE 0
 .SS "tcl/tk"
 \fBtcl/tk\fR is configured to collapse  procedures. The collapse variables are
@@ -208,8 +208,8 @@ proc tixControl:InitWidgetRec {w} {
 
     tixChainMethod $w InitWidgetRec
 
-    set data(varInited)	  0
-    set data(serial)	0
+    set data(varInited)   0
+    set data(serial)    0
 }
 .CE
 The collapsed version of the same section appears as:-

@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd028.2,v 2.7 2022/06/12 17:13:09 jon Exp $
+.Id $Id: m2cmd028.2,v 2.7 2026/02/16 21:42:07 jon Exp $
 .Im MicroEmacs command
 .ds C0 "(\fB\*(eS\fR)\ \&
 .ds C1 "(\fB\*cx\fR)\ \&
@@ -54,8 +54,8 @@ The prefix key can only be defined using the
 passing the command the prefix number required, for example:
 .Me $emf-scheme
 .CS
-1 global-bind-key "prefix" "\*e"
-2 global-bind-key "prefix" "\*cx"
+1 global-bind-key "prefix" "esc"
+2 global-bind-key "prefix" "C-x"
 .CE
 .Me $ehf-scheme
 Binds the first prefix to the Escape key and the second prefix to Control-x.

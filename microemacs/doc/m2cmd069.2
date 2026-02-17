@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd069.2,v 2.10 2026/01/17 19:41:20 jon Exp $
+.Id $Id: m2cmd069.2,v 2.10 2026/02/17 17:14:11 jon Exp $
 .Im MicroEmacs command|hilight|macrodevelop
 .so me.tni
 .TH hilight 2
@@ -18,26 +18,19 @@ hilight \- Manage the buffer hilighting schemes
 .B hilight
 "\fIhil-no\fR"
 "\fIflags\fR"
-[ "\fInol\fR" ]
-[ "\fIbuffer-scheme\fR"
-[ "\fItrunc-scheme\fR" ] ]
-.sp
-.B hilight
-"\fIhil-no\fR"
-"\fItype\fR"
-"\fItoken\fR" [ ["\fIrtoken\fR"]
+[\|"\fInol\fR"\|]
+[\|"\fIbuffer-scheme\fR"
+[\|"\fItrunc-scheme\fR"\|]\|]
 .br
-.RS
-[ ( [ "\fIclose\fR" ["\fIrclose\fR"] "\fIignore\fR" ] ) |
+\fBhilight\fR "\fIhil-no\fR" "\fItype\fR" "\fItoken\fR" [\|[\|"\fIrtoken\fR"]
 .br
-.RS
-( ["\fIcontinue\fR"] ) |
+\ \ \ \ \ \ \ \ [\|(\|[\|"\fIclose\fR" [\|"\fIrclose\fR"\|] "\fIignore\fR"\|]\|)\||
 .br
-( ["\fIb-hil-no\fR"] ) ]
+\ \ \ \ \ \ \ \ \ \ (\|[\|"\fIcontinue\fR"\|]\|)\||
 .br
-.RE
-"\fIschemeNum\fR"
-.RE
+\ \ \ \ \ \ \ \ \ \ (\|[\|"\fIb-hil-no\fR"\|]\|)\|]
+.br
+\ \ \ \ \ \ \ \ "\fIschemeNum\fR"
 .br
 .B hilight
 "\fIhil-no\fR"
@@ -50,7 +43,7 @@ hilight \- Manage the buffer hilighting schemes
 "\fIfrom-col\fR"
 "\fIto-col\fR"
 "\fIschemeNum\fR"
-.sp
+.br
 .I -1
 .B hilight
 "\fIhil-no\fR"
@@ -62,23 +55,25 @@ The  \fBhilight\fR  command  creates  and manages the buffer  hilighting, the
 process of creating a new hilighting scheme is best described in
 .Hl "File Language Templates" languageTemplates 2 .
 The  command  takes  various  forms as defined by the  arguments.  Each of the
-argument configurations is defined as follows:-
+argument configurations is defined as follows:
 .SS "Hilight Scheme Creation"
+Hilight scheme creation uses the following command form:
+.PP
 .na
 .I 0
 .B hilight
 "\fIhil-no\fR"
 "\fIflags\fR"
-[ "\fInol\fR" ]
-[ "\fIbuffer-scheme\fR"
-[ "\fItrunc-scheme\fR" ] ]
+[\|"\fInol\fR"\|]
+[\|"\fIbuffer-scheme\fR"
+[\|"\fItrunc-scheme\fR"\|]\|]
 .ad
 .PP
 With an argument of \fC0\fR, \fBhilight\fR initializes or re-initializes the hilight scheme \fIhil-no\fR (1-255).
 Every buffer has a hilight scheme, the default is 0 which means no hi-lighting and only the
 .Ht $global-scheme 5
 etc. are used. The hilighting scheme must be defined before use and is used to specify how the buffer is to be
-hilighted. \*(mS supports the following hilighting concepts:-
+hilighted. \*(mS supports the following hilighting concepts:
 .BS
 .BR "hilight string" ,
 a user specified string is hilighted in any color scheme.
@@ -117,10 +112,10 @@ initialized.  Once a hilighting  scheme has been initialized,  hi-light tokens
 can be added to it and it  can be used by setting the current buffer's
 .Ht $buffer-hilight 5
 variable to  "\fIhil-no\fR".  The  "\fIflags\fR"  argument is a bit based flag
-setting global hi-light characteristics, where:-
+setting global hi-light characteristics, where:
 .IP \fB0x01\fR
 The hi-light scheme is case  insensitive,  i.e. the following  tokens become
-equivalent:-
+equivalent:
 .RS
 .IP
 \fChouse\fR == \fCHOUSE\fR == \fChOuSe\fR
@@ -170,24 +165,21 @@ which is typically automatically determined by the file's extension or content (
 .Ht major-mode 2
 for more information on file type identification).
 .SS "Hilight Scheme Token Creation"
+Hilight scheme token creation uses the following command forms:
+.PP
 .na
-.sp 1
 .B hilight
 "\fIhil-no\fR"
 "\fItype\fR"
-"\fItoken\fR" [ ["\fIrtoken\fR"]
+"\fItoken\fR" [\|["\fIrtoken\fR"]
 .br
-.RS
-[ ( [ "\fIclose\fR" ["\fIrclose\fR"] "\fIignore\fR" ] ) |
+\ \ \ \ \ \ [\|(\|[\|"\fIclose\fR" [\|"\fIrclose\fR"\|] "\fIignore\fR"\|]\|)\||
 .br
-.RS
-( ["\fIcontinue\fR" ["\fIrcontinue\fR"] ] ) |
+\ \ \ \ \ \ \ \ \ (\|[\|"\fIcontinue\fR" [\|"\fIrcontinue\fR"\|]\|]\|)\||
 .br
-( ["\fIb-hil-no\fR"] ) ]
+\ \ \ \ \ \ \ \ \ ( ["\fIb-hil-no\fR"] ) ]
 .br
-.RE
-"\fIschemeNum\fR"
-.RE
+\ \ \ \ \ \ "\fIschemeNum\fR"
 .br
 .B hilight
 "\fIhil-no\fR"
@@ -403,7 +395,7 @@ the types of token used, although  strange  combinations  like \fC0x006\fR may
 lead to unexpected results -- hopefully not a core dump, but not guaranteed !
 .PP
 The token and close token of brackets may contain a limited  subset of regular
-expression tokens as follows:-
+expression tokens as follows:
 .IP "\fB^\fR"
 When  specified as the first  character of the token, the token must be at the
 start of the line.
@@ -467,7 +459,7 @@ hilight 1 65 "#\\\\([gpl]\\\\)\\\\([0-9]\\\\)" "#register\\\\1\\\\2"
 .Me $ehf-scheme
 .IP
 The content of the brackets (\fB[\fR...\fB]\fR) include a set of special short
-cuts and regular expression syntax definitions as follows:-
+cuts and regular expression syntax definitions as follows:
 .RS
 .IP "\fC[abc]\fR"
 A list of characters.
@@ -596,6 +588,8 @@ the ease of use).
 .IP \fB0x100\fR
 "\fC^????\fR"
 .SS "Hilight Scheme Token Deletion"
+Deleting hilight scheme tokens use the following command form:
+.PP
 .na
 .I -1
 .B hilight
@@ -607,6 +601,7 @@ With a negative argument  \fBhilight\fR deletes the given "\fItoken\fR" from a
 hi-light color scheme  identified by  "\fIhil-no\fR".  The token  "\fItype\fR"
 must also be specified to distinguish between normal and column token types.
 .SH EXAMPLE
+Examples of different scheme hilighting follows:
 .SS "Example 1"
 Hilighting a \*(mS  character  given in hex form,  checking its validity (i.e.
 "\fC\\x??\fR" where \fC?\fR is a hex digit):

@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Fri Jan 9 00:04:42 2004
 .\"
-.Id $Id: m2nar009.2,v 1.4 2022/06/12 17:13:41 jon Exp $
+.Id $Id: m2nar009.2,v 1.4 2026/02/16 20:46:03 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH Patching 1
@@ -18,97 +18,76 @@ release without re-installing.
 .SS Windows
 Windows requires careful patching in order not to disturb the registry
 settings The following procedure should be followed.
-.BS
+.IP \(bu
 Move to the jasspa directory,
 \fCc:\\ProgramFiles\\JASSPA\\Microemacs\fR.
-.BU
+.IP \(bu
 COPY  the  executable  \fCme32.exe\fR  to a  backup,  you  MUST  copy the file
 otherwise the registry settings will change. DO NOT MOVE THE FILE.
-.RS
-.CS
-copy me32.exe me32_2002_12.exe
-.CE
-.RE
-.BU
+.IP
+\fCcopy me32.exe me32_2002_12.exe\fR
+.IP \(bu
 Save the macros directory, these may be moved i.e.
-.RS
-.CS
-rename macros macros_2002_12
-.CE
-.RE
-.BU
+.IP
+\fCrename macros macros_2002_12\fR
+.IP \(bu
 Unpack and install the new Windows executable and COPY over the original
 executable that was previously backed up i.e.
-.RS
-.CS
-copy c:\\path-to-executable\\me32-win32-20040108-rc1.exe me32.exe
-.CE
-.RE
-.BU
+.IP
+\fCcopy c:\\path-to-executable\\me32-win32-20040108-rc1.exe me32.exe\fR
+.IP \(bu
 Create a new macros  directory and install the macros into this new directory,
 do this manually or using a utility like WINZip.
-.RS
-.CS
-mkdir macros
-cd macros
-unzip c:\\path-to\\memacros-20040108-rc1.zip
-.CE
-.RE
-.BU
+.IP
+.nf
+\fCmkdir macros\fR
+\fCcd macros\fR
+\fCunzip c:\\path-to\\memacros-20040108-rc1.zip\fR
+.fi
+.IP \(bu
 The new  version of  MicroEmacs  will now  operate  with the old  installation
 environment. You may return to the old release by reversing the steps to patch
 the installation.
-.BE 0
 .SS UNIX/Linux
 For  \fB*NIX\fR  package  installations  then patching is a little easier. The
 steps are defined as follows:-
-.BS
+.IP \(bu
 Move to the jasspa directory.
-.RS
-.CS
-cd /opt/jasspa/bin
-.CE
-.RE
-.BU
+.IP
+\fCcd /opt/jasspa/bin\fR
+.IP \(bu
 Save the original executable.
-.RS
-.CS
-mv me me_200212
-.CE
-.RE
-.BU
+.IP
+\fCmv me me_200212\fR
+.IP \(bu
 Unpack the new executable and make it executable.
-.RS
-.CS
-gunzip me-sun-solaris-20040108-rc1.gz
-mv me-sun-solaris-20040108-rc1 me
-chmod a+x me
-.CE
-.RE
-.BU
+.IP
+.nf
+\fCgunzip me-sun-solaris-20040108-rc1.gz\fR
+\fCmv me-sun-solaris-20040108-rc1 me\fR
+\fCchmod a+x me\fR
+.fi
+.IP \(bu
 Save the existing macros directory.
-.RS
-.CS
-cd /opt/jasspa
-mv macros macros_200212
-.CE
-.RE
-.BU
+.IP
+.nf
+\fCcd /opt/jasspa\fR
+\fCmv macros macros_200212\fR
+.fi
+.IP \(bu
 Create a new macros directory and install the new macros:-
-.RS
-.CS
-mkdir macros
-cd macros
-unzip /path-to/memacros-20040108-rc1.zip
-.CE
-.RE
-.BU
+.IP 
+.nf
+\fCmkdir macros\fR
+\fCcd macros\fR
+\fCunzip /path-to/memacros-20040108-rc1.zip\fR
+.fi
+.IP \(bu
 Installed  packages are built with the install path built into the executable,
 this  may be  different  from  the  patch  version  of the  executable  so the
 environment variable
 .Ht $MEINSTALLPATH 5
 may be defined in the environment with the macro installation search paths.
-.BE 0
 .SH "SEE ALSO"
 .na
 .Ht $MENAME 5 ,

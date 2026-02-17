@@ -7,7 +7,7 @@
 .\"  Created By    : Detlef Groth, University of Potsdam, Germany
 .\"  Created       : Fri Jul 18 10:00:00 2025
 .\"
-.Id $Id: m3fcl015.3,v 2.6 2025/08/24 06:51:07 jon Exp $
+.Id $Id: m3fcl015.3,v 2.6 2026/02/17 20:52:51 jon Exp $
 .Im MicroEmacs filter
 .so me.tni
 .TH phptags 3f
@@ -17,7 +17,10 @@ phptags \- Generate a PHP tags file
 .Me $a
 .SH SYNOPSIS
 .na
-\fBme\fR "@phptags" [\fI-v%tag-option=<flags>\fR] [\fIfiles\fR]
+\fBme\fR
+"@phptags"
+[\|\fI-v%tag-option=<flags>\fR\|]
+[\|\fIfiles\fR\|]
 .ad
 .SH DESCRIPTION
 The start-up file  \fCphptags.emf\fR  may be invoked from the command line to
@@ -62,11 +65,15 @@ control the process:-
 .IP \fB%tag-option\fR
 Tags options flag, default value is "". See above for more information.
 .IP \fB%tag-filemask\fR
-A list of source file masks to be processed when a directory is given, default
-value   is   "\fC:*.php:*.php3:*.php4:*.php5:*.phtml:*.inc:\fR".
+A list of source  file masks to be  processed  when a directory  is given, the
+default value is:
+.sp
+"\fC:*.php:*.php3:*.php4:*.php5:*.phtml:*.inc:\fR".
 .IP \fB%tag-ignoredir\fR
 A list of  directories  to be ignored when  recursive  option is used, default
-value is "\fC:SCCS/:CVS/:.git/:.svn/:\fR".
+value is:
+.sp
+"\fC:SCCS/:CVS/:.git/:.svn/:\fR".
 .PP
 These  variables  can be changed using the -v  command-line  option or via the
 "\fCmyphptags.emf\fR" file

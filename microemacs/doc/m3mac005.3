@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac005.3,v 2.8 2022/06/12 17:13:41 jon Exp $
+.Id $Id: m3mac005.3,v 2.8 2026/02/17 16:13:31 jon Exp $
 .Im MicroEmacs command|delete
 .so me.tni
 .TH clean 3
@@ -26,10 +26,10 @@ last  character  is not a space or a tab, or the line is empty.  Note  that an
 empty line is not removed unless at the end of the buffer.
 .IP 2)
 Space  characters  are removed  when the next  character  is a tab, making the
-space  redundant,  e.g. the  strings  "\fC\tHello World\fR"  and
+space  redundant,  e.g. the  strings  "\fC\\tHello World\fR"  and
 .\"
-"\fC  \tHello  World\fR"  will  look  identical   because  the  tab  character
-('\fI\t\fR')  indents  the text to the 8th column with or without the space so
+"\fC  \\tHello  World\fR"  will  look  identical   because  the  tab  character
+('\fI\\t\fR')  indents  the text to the 8th column with or without the space so
 the space can be removed.
 .IP 3)
 Superfluous empty lines at the end of the buffer are removed, leaving only one

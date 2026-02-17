@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd027.2,v 2.8 2025/10/20 23:02:30 jon Exp $
+.Id $Id: m2cmd027.2,v 2.8 2026/02/16 21:45:23 jon Exp $
 .Im MicroEmacs command|hilight
 .so me.tni
 .TH change-font 2
@@ -63,16 +63,22 @@ is set, see \fBUse Font Styles\fR in
 .Ht user-setup 3
 for more information.
 .PP
-The X core font string describes the attributes of the font in terms of it's size name etc. as follows:-
-.sp
-.ps 8
-.vs 10
-.nf
-\-\fIfoundry\fR\-\fIfamily\fR\-\fIweight\fR\-\fIslant\fR\-\fIwidth\fR\-\fIadstyl\fR\-\fIpixels\fR\-\fIpoint\fR\-\fIhres\fR\-\fIvres\fR\-\fIspace\fR\-\fIav\fR\-\fIset\fR
-.sp
-.fi
-.vs 12
-.ps 10
+The X core font string describes the attributes of the font in terms of it's size name etc. as follows:
+.IP
+\s-2\- \fIfoundry\fR \-
+\fIfamily\fR \-
+\fIweight\fR \-
+\fIslant\fR \-
+\fIwidth\fR \-
+\fIadstyl\fR \-
+\fIpixels\fR \-
+\fIpoint\fR \-
+\fIhres\fR \-
+\fIvres\fR \-
+\fIspace\fR \-
+\fIav\fR \-
+\fIset\fR\s0
+.LP
 Where
 .IP \fIfoundry\fR
 The type of foundry that digitized and supplied the font.
@@ -108,16 +114,16 @@ Character set - this is made up of two fields, the character set standard and th
 The default  font used by \*(mS is the first font that is iso8859, of family  fixed (then clean), of point size 14, 13 or 12
 of medium or regular weight, i.e. the following are tried in order:
 .CS
-\-*-fixed-medium-r-*-*-*-140-*-*-*-*-iso8859-*
-\-*-fixed-regular-r-*-*-*-140-*-*-*-*-iso8859-*
-\-*-fixed-medium-r-*-*-*-130-*-*-*-*-iso8859-*
-\&...
-\-*-fixed-regular-r-*-*-*-120-*-*-*-*-iso8859-*
-\-*-clean-medium-r-*-*-*-140-*-*-*-*-iso8859-*
-\&...
-\-*-clean-regular-r-*-*-*-120-*-*-*-*-iso8859-*
-\-*-fixed-regular-r-*-*-*-120-*-*-*-*-*-*
-\&...
+ -*-fixed-medium-r-*-*-*-140-*-*-*-*-iso8859-*
+ -*-fixed-regular-r-*-*-*-140-*-*-*-*-iso8859-*
+ -*-fixed-medium-r-*-*-*-130-*-*-*-*-iso8859-*
+ ...
+ -*-fixed-regular-r-*-*-*-120-*-*-*-*-iso8859-*
+ -*-clean-medium-r-*-*-*-140-*-*-*-*-iso8859-*
+ ...
+ -*-clean-regular-r-*-*-*-120-*-*-*-*-iso8859-*
+ -*-fixed-regular-r-*-*-*-120-*-*-*-*-*-*
+ ...
 .CE
 Try running
 .Hr xfontsel 1

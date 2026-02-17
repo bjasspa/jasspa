@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil008.4,v 2.7 2025/08/28 01:57:59 jon Exp $
+.Id $Id: m4fil008.4,v 2.7 2026/02/17 20:23:44 jon Exp $
 .Im MicroEmacs macro;directive|miscellaneousOperators
 .so me.tni
 .TH !if 4
@@ -80,7 +80,7 @@ easier to understand then that last explanation....)
 !if &sequal %curplace "timespace vortex"
     insert-string "First, rematerialize\\n"
 !endif
-!if &sequal %planet "earth"	;If we have landed on earth...
+!if &sequal %planet "earth"     ;If we have landed on earth...
     !if &sequal %time "late 20th century"  ;and we are then
         ml-write "Contact U.N.I.T."
     !elif &sequal %time "pre 20th century"
