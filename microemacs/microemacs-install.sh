@@ -175,7 +175,7 @@ while [ -n "$1" ] ; do
 done
 
 # Get the latest release version number - no point continuing if can't access github
-MELRL=`curl -s $MERAWURL/microemacs/release_latest.txt | head -n 1`
+MEVER=`curl -s $MERAWURL/microemacs/release_latest.txt | head -n 1`
 if [ ${#MEVER} -ne 8 ] ; then
   echo "Error: Failed to obtain version number of latest release (${MELRL})."
   exit 1
