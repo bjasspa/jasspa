@@ -1,5 +1,6 @@
 #!/bin/sh
 # Jasspa MicroEmacs install/update script - version <VERSION>
+MERAWURL=https://raw.githubusercontent.com/bjasspa/jasspa/refs/heads/main
 MEBASEURL=https://github.com/bjasspa/jasspa
 INSTPATH=""
 BINPATH=""
@@ -174,8 +175,7 @@ while [ -n "$1" ] ; do
 done
 
 # Get the latest release version number - no point continuing if can't access github
-MELRL=`curl -isS $MEBASEURL/releases/latest/ | grep -i ^location:`
-MEVER=`echo "$MELRL" | sed "sX.*/bjasspa/jasspa/releases/tag/me_\\([0-9]*\\)\rX\\1X"`
+MELRL=`curl -s $MERAWURL/microemacs/release_latest.txt | head -n 1`
 if [ ${#MEVER} -ne 8 ] ; then
   echo "Error: Failed to obtain version number of latest release (${MELRL})."
   exit 1
