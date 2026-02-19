@@ -169,17 +169,14 @@ function install_package([string]$iext,[string]$pkg,[string]$ipth) {
 }
 
 try {
-  $resp = Invoke-WebRequest -Method Get -Uri "$mebaseurl/releases/latest/" -UseBasicParsing -MaximumRedirection 0 -ErrorAction SilentlyContinue
-  $melrl = $resp.Headers['Location']
-  if(-not $melrl) {
-    Write-Host "Error: Failed to obtain version number of latest release (no location header)."
-    exit 1
-  }
-  if($melrl -match 'me_(\d{8})$') {
-    $mever = $Matches[1]
+  [string]$urss=""
+  $urss = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/bjasspa/jasspa/refs/heads/main/microemacs/release_latest.txt" -UseBasicParsing
+  $ursa = $urss.Replace("`r`n","`n").Split([Environment]::NewLine)
+  if($ursa[0] -match '^\d{8}$') {
+    $mever = $ursa[0]
   }
   else {
-    Write-Host "Error: Failed to obtain version number of latest release ($melrl)."
+    Write-Host "Error: Failed to obtain version number of latest release ($($ursa[0]))."
     exit 1
   }
 } catch {
