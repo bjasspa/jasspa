@@ -2,7 +2,7 @@
 # <!-- -!- markdown; fill-column:78; -!- -->
 title: "MD examples which causes fill issues"
 author: Steven Phillips
-date: 2025-12-25 19:23
+date: 2026-02-20 15:10
 abstract: >
     Some abstract ...
     on several lines...
@@ -72,7 +72,25 @@ what to do with embedded html tags? treat like code blocks?
 * [pantcl-tutorial.html](https://htmlpreview.github.io/?https://raw.githubusercontent.com/mittelmark/pantcl/master/pantcl-tutorial.html) - 
   more extensive tutorial
 
-### Problem Next...
+### Problem 5 - breaking text in parenthesis
+
+We use here $buffer-fill-col = 78.
+
+Some text with later will be filled with some abbreviations written in (parenthesis) and then some more text.
+
+Output:
+
+Some text with later will be filled with some abbreviations written in (
+parenthesis) and then some more text.
+
+Expected output:
+
+Some text with later will be filled with some abbreviations written in
+(parenthesis) and then some more text.
+
+
+### Problem Next ...
+
 
 
 
