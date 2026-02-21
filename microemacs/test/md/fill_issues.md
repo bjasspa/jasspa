@@ -2,7 +2,7 @@
 # <!-- -!- markdown; fill-column:78; -!- -->
 title: "MD examples which causes fill issues"
 author: Steven Phillips
-date: 2026-02-20 15:10
+date: 2026-02-21 17:50
 abstract: >
     Some abstract ...
     on several lines...
@@ -78,12 +78,7 @@ We use here $buffer-fill-col = 78.
 
 Some text with later will be filled with some abbreviations written in (parenthesis) and then some more text.
 
-Output:
-
-Some text with later will be filled with some abbreviations written in (
-parenthesis) and then some more text.
-
-Expected output:
+#### Expected
 
 Some text with later will be filled with some abbreviations written in
 (parenthesis) and then some more text.

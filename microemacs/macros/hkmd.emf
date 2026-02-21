@@ -232,7 +232,7 @@ define-macro md-fill-paragraph
     !repeat
       backward-line
       !if &xse @wl "\\([ \t]*\\)\\([-*+] \\|\\d+\\. \\)?[ \t]*\\S.*"
-        set-variable #l8 &add 3 &mul &div &len @s1 4 4
+        set-variable #l8 &add 3 &mul &div &add 2 &len @s1 4 4
         !iif &len @s2  set-variable #l8 &add #l8 4
         !break
       !endif
@@ -390,10 +390,18 @@ define-macro md-fill-paragraph
           !repeat
             !force set-variable $window-col $buffer-fill-col
             !iif &seq @wc "\n"  !break
-            forward-char
-            backward-word
-            !iif &les $window-col &div $buffer-fill-col 2  forward-word
+            set-variable #l4 &div $buffer-fill-col 2
+            !while &not &sin @wc " \t"
+              !if &les $window-col #l4
+                !repeat
+                  forward-char
+                !until &sin @wc " \t\n"
+                !break
+              !endif
+              backward-char
+            !done
             !iif &seq "" &trr &rig @wl $window-col  !break
+            forward-char
             !if &band 1 &sub &len &set #l4 &xre &lef @wl $window-col "\\\\." "XX" &len &rep #l4 "`" ""
               ; Note that a code block can be in a link label, bold & italic text etc.
               set-variable $window-col &rsin "`" #l4

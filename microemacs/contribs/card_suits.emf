@@ -1,0 +1,34 @@
+; -!- emf -!-
+; Copyright (C) 2026 Maxinity Software Ltd (maxinity.co.uk).
+;
+; All rights reserved.
+; 
+; This document may not, in whole or in part, be copied, photocopied,
+; reproduced, translated, or reduced to any electronic medium or machine
+; readable form without prior written consent from Maxinity Software Ltd.
+;
+; Synopsis:    Test concept of a custom code-page
+; Authors:     Steven Phillips
+; Notes:
+;
+; Map 8d-90 to H,C,D,S - if executed the char in the brackets should be the suits:
+;   [çéèê]
+; So the following should make sense: Jç Qé Kè Aê
+
+define-macro bhook-suits
+  0 set-char-mask "c"
+  set-char-mask "c" &spr "%s2665266326662660%s" &lef #g1 52 &rig #g1 68
+!emacro
+define-macro ehook-suits
+  0 set-char-mask "c"
+  set-char-mask "c" &spr "%s%s%s" &lef #g1 52 .omap &rig #g1 68
+!emacro
+!if &not &exi .ehook-suits.omap
+  0 set-char-mask "c"
+  set-variable #g1 $result
+  set-variable .ehook-suits.omap &mid #g1 52 16
+!endif
+set-variable $buffer-bhook bhook-suits
+set-variable $buffer-ehook ehook-suits
+bhook-suits
+screen-update
