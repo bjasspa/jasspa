@@ -340,8 +340,10 @@ define-macro github-build-release
   beginning-of-buffer
   !iif &not &seq @wl #l1  -8 ml-write &spr "[Github Release Error: release_latest.txt file incorrect, first line should be '%s']" #l1
   set-variable $buffer-fname #l0
-  shell-command &spr "%s diff-index --quiet HEAD -- " &con &exi .git.com .git.com "git"
+  shell-command &spr "%s diff-index --quiet HEAD -- " &con &exi .git.com .git.com "git --no-pager"
   !iif $result  -8 ml-write &spr "[Github Release Error: Local repository is not clean - commit and push all shanges back first]" #l1
+  0x404 pipe-shell-command &spr "%s push -n" &con &exi .git.com .git.com "git --no-pager" #l4
+  !iif &not &seq &trb #l4 "Everything up-to-date"  -8 ml-write &spr "[Github Release Error: Commits to local repository need pushing back first]" #l1
   !force 0 delete-buffer "*ghmv"
   github-log &spr "Running:  github-build \"\" %s%s" .git.hub-rtp #l1
   github-build "" &cat .git.hub-rtp #l1
