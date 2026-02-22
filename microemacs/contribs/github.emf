@@ -309,6 +309,7 @@ define-macro github-build-release
   !iif &not $status set-variable #l0 @ml61 "Jasspa Git repository" "~/jasspa"
   !iif &not &seq "D" &stat t &set #l0 &stat a #l0  -8 ml-write &spr "[Github Release Error: Given repository is not a directory: %s]" #l0
   !iif &not &seq "R" &stat t &set #l1 &cat #l0 "microemacs/src/evers.mak"  -8 ml-write &spr "[Github Release Error: Cannot locate ver file: %s]" #l1
+  !iif &not &seq "R" &stat t &set #l4 &cat #l0 "microemacs/release_latest.txt"  -8 ml-write &spr "[Github Release Error: Cannot locate release_latest.txt file: %s]" #l1
   !iif &not &seq "R" &stat t &set #l3 &cat #l0 "microemacs/microemacs-install.sh"  -8 ml-write &spr "[Github Release Error: Cannot locate the install script %s]" #l3
   !iif &not &seq "R" &stat t &set #l3 &cat #l0 "microemacs/release_readme.md"  -8 ml-write &spr "[Github Release Error: Cannot locate the release readme template: %s]" #l3
   !force 0 delete-buffer "*ghmv"
@@ -334,6 +335,14 @@ define-macro github-build-release
   set-variable #l1 &spr "%s%02d%02d" &lef $time 4 &mid $time 7 2 #l2
   !force set-variable #l2 @mc1 &spr "New MicroEmacs version will be \"%s\", is this correct (y/n) ? " #l1 "NYny"
   !iif &not &iseq "y" #l2  -8 ml-write "[Github Release Error: Version incorrect - abort]"
+  find-buffer "*ghmv"
+  insert-file #l4
+  beginning-of-buffer
+  !iif &not &seq @wl #l1  -8 ml-write &spr "[Github Release Error: release_latest.txt file incorrect, first line should be '%s']" #l1
+  set-variable $buffer-fname #l0
+  shell-command &spr "%s diff-index --quiet HEAD -- " &con &exi .git.com .git.com "git"
+  !iif $result  -8 ml-write &spr "[Github Release Error: Local repository is not clean - commit and push all shanges back first]" #l1
+  !force 0 delete-buffer "*ghmv"
   github-log &spr "Running:  github-build \"\" %s%s" .git.hub-rtp #l1
   github-build "" &cat .git.hub-rtp #l1
   github-log &spr "Running:  github-release %s %s %s %s" #l8 #l1 #l9 #l0

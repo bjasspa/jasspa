@@ -17,16 +17,19 @@
 
 define-macro bhook-suits
   0 set-char-mask "c"
-  set-char-mask "c" &spr "%s2665266326662660%s" &lef #g1 52 &rig #g1 68
+  set-char-mask "c" &spr "%s2665266326662660%s" &lef $result 52 &rig $result 68
+  set-char-mask "d" ""
 !emacro
 define-macro ehook-suits
   0 set-char-mask "c"
-  set-char-mask "c" &spr "%s%s%s" &lef #g1 52 .omap &rig #g1 68
+  set-char-mask "c" &spr "%s%s%s" &lef $result 52 .omap &rig $result 68
+  -1 set-char-mask "d" .drm
 !emacro
 !if &not &exi .ehook-suits.omap
   0 set-char-mask "c"
-  set-variable #g1 $result
-  set-variable .ehook-suits.omap &mid #g1 52 16
+  set-variable .ehook-suits.omap &mid $result 52 16
+  0 set-char-mask "d"
+  set-variable .ehook-suits.drm &spr "%s%s%s%s" &con &sin "" $result "" "" &con &sin "" $result "" "" &con &sin "" $result "" "" &con &sin "" $result "" ""
 !endif
 set-variable $buffer-bhook bhook-suits
 set-variable $buffer-ehook ehook-suits
