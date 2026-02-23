@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.5 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040207.1902>
+ *  Last Modified : <260223.1530>
  *
  *  Description
  *
@@ -589,7 +589,11 @@ libFindAddReference (char *module, char *name, char *file,
                 if ((ref & nrLibItemStatus (i) & LS_DEF) != 0)
                     status = 0;
                 else
+                {
+                    if ((i != NULL) && (i->name != NULL))
+                        uVerbose (1, "Duplicate label %s\n", i->name);
                     status = 1;
+                }
                 nrLibItemStatus (i) |= ref;
             }
             return (status);
@@ -612,8 +616,57 @@ nrXlateRefStr (char *dest, char *src)
             *p++ = tolower (c);
         else if (islower (c))
             *p++ = c;
-        else if ((nrLibCurrentNameFormat == 0) && (isdigit (c)))
-            *p++ = c;
+        else if (nrLibCurrentNameFormat == 0)
+        {
+            switch (c)
+            {
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            case '_':
+            case '#':
+            case '&':
+            case '>':
+            case '<':
+            case ':':
+            case '.':
+            case ',':
+            case ';':
+            case '-':
+            case '+':
+            case '@':
+            case '\'':
+            case '`': 
+            case '"': 
+            case '~': 
+            case '(': 
+            case ')': 
+            case '{': 
+            case '}': 
+            case '[': 
+            case ']': 
+            case '?': 
+            case '|': 
+            case '=': 
+            case '*': 
+            case '\\':
+            case '/': 
+            case '!': 
+            case '%': 
+            case '^': 
+                *p++ = c;
+                break;
+            default: 
+                break;
+            }
+        }
         else if (nrLibCurrentNameFormat != 0)
         {
             switch (c)
@@ -627,12 +680,12 @@ nrXlateRefStr (char *dest, char *src)
             case '6': *p++='S'; *p++='I'; *p++='X'; break; 
             case '7': *p++='S'; *p++='E'; *p++='V'; *p++='E'; *p++='N'; break;
             case '8': *p++='E'; *p++='I'; *p++='G'; *p++='H'; *p++='T'; break;
-            case '9': *p++='N'; *p++='I'; *p++='N'; *p++='E'; *p++='T'; break;
+            case '9': *p++='N'; *p++='I'; *p++='N'; *p++='E'; break;
             case '_': *p++='U'; *p++='S'; break; 
-            case '#': *p++='H'; *p++='A'; *p++='A'; *p++='S'; *p++='H'; break;
+            case '#': *p++='H'; *p++='A'; *p++='S'; *p++='H'; break;
             case '&': *p++='A'; *p++='N'; *p++='D'; break; 
             case '>': *p++='G'; *p++='T'; break; 
-            case '<': *p++='L'; *p++='H'; break;
+            case '<': *p++='L'; *p++='T'; break;
             case ':': *p++='C'; *p++='O'; *p++='L'; *p++='O'; *p++='N'; break;
             case '.': *p++='D'; *p++='O'; *p++='T'; break;
             case ',': *p++='C'; *p++='O'; *p++='M'; *p++='M'; *p++='A'; break;
@@ -659,6 +712,7 @@ nrXlateRefStr (char *dest, char *src)
             case '!': *p++='E'; *p++='X'; break;
             case '%': *p++='P'; *p++='E'; break; 
             case '^': *p++='C'; *p++='A'; break;
+            default: break;
             }
         }
     }

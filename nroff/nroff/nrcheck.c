@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.3 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040207.1920>
+ *  Last Modified : <260223.1758>
  *
  *  Description
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 1.0.0e - JG 23/02/26 Handle the font size escape characters
  * 1.0.0d - JG 07/02/04 Ported to HP-UX 11.00
  * 1.0.0c - JG 03/01/04 Ported to Sun Solaris 9
  * 1.0.0b - JG 05/12/95 Added bullet support.
@@ -52,7 +53,7 @@
 #include "nroff.h"
 
 /* Macro Definitions */
-#define MODULE_VERSION  "1.0.0d"
+#define MODULE_VERSION  "1.0.0e"
 #define MODULE_NAME     "nrcheck"
 
 #define NORMAL_MODE 0x0000
@@ -233,6 +234,13 @@ rtfFormatStr (int lmode, char *s, int *newMode)
             break;
         case USPACE_CHAR:
             break;
+            /* Should probably check these - just handle for time being. */
+        case FONTN_CHAR:                /* Normal font size */
+            break;                      /* Ignore */
+        case FONTL_CHAR:                /* Larger font size */
+            break;                      /* Ignore */
+        case FONTS_CHAR:                /* Smaller font size */
+            break;                      /* Ignore */
         default:
             break;
         }

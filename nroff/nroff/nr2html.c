@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.6 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040207.1918>
+ *  Last Modified : <260223.1745>
  *
  *  Description	
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 1.0.2  - JG 23/02/26 Fixed cross referencing with non A-Z symbols
  * 1.0.1k - JG 07/02/04 Ported to HP-UX 11.00
  * 1.0.1j - JG 12/01/04 Corrected the generated date.
  * 1.0.1i - JG 05/01/04 Changed logo image to .png.
@@ -68,7 +69,7 @@
 #include "html.h"
 
 /* Macro Definitions */
-#define MODULE_VERSION  "1.0.1k"
+#define MODULE_VERSION  "1.0.2"
 #define MODULE_NAME     "nr2html"
 
 #define NORMAL_MODE 0x0000
@@ -400,6 +401,12 @@ htmlFormatStr (int lmode, char *s, int *newMode)
             if (newMode != NULL)
                 *newMode = (*newMode & ~FONT_MODE) | prevMode;
             break;
+        case FONTN_CHAR:                /* Normal font size */
+            break;                      /* Ignore */
+        case FONTL_CHAR:                /* Larger font size */
+            break;                      /* Ignore */
+        case FONTS_CHAR:                /* Smaller font size */
+            break;                      /* Ignore */
         case '<':
             htmlStr ("&lt;");
             break;
@@ -747,7 +754,7 @@ nrNH_func (char *id, char *num, char *title, char *xref)
         htmlEol ();
     }
     else if (xref == NULL)
-        htmlStr ("<<A%s<","&HTML&");     /* Automatically assigned name */
+        htmlStr ("<<A<","&HTML&");     /* Automatically assigned name */
     else
         htmlStr ("<<F%s&HTML&<", xref); /* Manually assigned name */
 
@@ -1429,6 +1436,7 @@ usage (void)
     fprintf (stdout, "-s        : Output to standard out.\n");
     fprintf (stdout, "-t <name:link:section>\n");
     fprintf (stdout, "-t arg    : Title to appear at top of page\n");
+    fprintf (stdout, "-v <level>: Change the verbose level 0..9, default 0=off\n");
     fprintf (stdout, "-x        : Resolve all references of module\n");
     exit (1);
 }
@@ -1539,7 +1547,7 @@ int main (int argc, char *argv [])
     uVerboseSet (0);                    /* Verbose setting */
 
     while (1) {
-        c = getopt (argc, argv, "c:be:E:H:i:Il:L:M:n:o:p:qst:x");
+        c = getopt (argc, argv, "c:be:E:H:i:Il:L:M:n:o:p:qst:v:x");
         if (c == EOF)
             break;
         switch (c) {
@@ -1596,6 +1604,15 @@ int main (int argc, char *argv [])
             break;
         case 't':
             nrTitleSet (optarg);
+            break;
+        case 'v':
+            {
+                int param = (int)('0');
+
+                if (optarg != NULL)
+                    param = (int) optarg[0] - param;
+                uVerboseSet (param);
+            }
             break;
         case 'x':
             compiling = 1;

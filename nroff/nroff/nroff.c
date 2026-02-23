@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.3 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <260202.1607>
+ *  Last Modified : <260223.1529>
  *
  *  Description
  *
@@ -625,7 +625,7 @@ char *stripBackSlash (int mode, char *s, char **next)
 
     i = inStr (0, s, '\\');             /* Look for '\' character */
     while (i >= 0) {
-/*fprintf (stderr, "StripBackSlash:[%s]\n", s);*/
+        /*fprintf (stderr, "StripBackSlash:[%s]\n", s);*/
         strOverCopy (s, i, 1);          /* Junk backslash character */
         switch (s[i])
         {
@@ -633,12 +633,23 @@ char *stripBackSlash (int mode, char *s, char **next)
             if ((s[i+1] == '+') || (s[i+1] == '-'))
             {
                 if (isdigit ((int)(s[i+2])))
-                    strOverCopy (s, i, 3);      /* Remove the 's+n' */
+                {
+                    if (s[i+2] == '0')
+                        s[i] = FONTN_CHAR;   /* Evaluates to s0 */ 
+                    else if (s[i+1] == '+')
+                        s[i] = FONTL_CHAR;   /* Larger font */
+                    else
+                        s[i] = FONTS_CHAR;   /* Smaller font */
+                    strOverCopy (s, i+1, 2);      /* Remove the 's+n' */
+                }
                 else
                     uError ("\\s[+-]n required\n");
             }
-            else if (isdigit ((int)(s[i+1])))
-                strOverCopy (s, i, 2);      /* Remove the 'sn' */
+            else if ((isdigit ((int)(s[i+1]))) && (s[i+1] == '0'))
+            {
+                s[i] = FONTN_CHAR;            /* Evaluates to s0 */ 
+                strOverCopy (s, i+1, 1);    /* Remove the 'sn' */
+            }
             else
                 uError ("Unrecognised \\s%c option\n", s[i+1]);
             break;
@@ -1292,13 +1303,17 @@ NH_func (void)
         uError ("Unexpected arguments [%s]\n", ending);
 
     uDebug (1, ("NH [%s][%s][%s]\n", sid, snum, stitle));
-    /*
-     * If we are compiling then try and resolve the xref name.
-     */
-
+#if 1
+    /* If we are compiling then try and resolve the xref name. */
+    /* Disabled, NH does not explicitly define labels */
     if (xrefname == NULL)
+    {
         nrResolveExternalReference ((nrCompiling & NROFF_MODE_COMPILE) ? LS_COMPILE : 0,
                                     sid, snum, NULL, &xrefname);
+        if (xrefname != NULL)
+            uVerbose (1, "NH_func xrefname = %s\n", xrefname);
+    }
+#endif
     /*
      * Call the user function.
      */

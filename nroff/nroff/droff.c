@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.3 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <240508.1235>
+ *  Last Modified : <260223.1755>
  *
  *  Description
  *
@@ -18,31 +18,18 @@
  *
  *  History
  * 
- * Version 1.0.0h - 07/02/04 - JG
- * Ported to HP-UX 11.00
- *
- * Version 1.0.0g - 03/01/04 - JG
- * Ported to Sun Solaris 9
- *
- * Version 1.0.0f - 14/05/97 - JG
- * Added copyright option.
- *
- * Version 1.0.0e - 06/01/95 - JG
- * Modified arguments for the new compiling option.
- * 
- * Version 1.0.0d - 05/12/95 - JG
- * Added bullet support.
- *
- * Version 1.0.0c - 15/11/95 - JG
- * Added .sp and .ne support for blank lines and space requirements
- * for pictures etc.
- *
- * Version 1.0.0b - 14/11/95 - JG
- * Corrected code to detect bad font chnages. Now produces
- * an error when a fonts are mixed badly.
- *
- * Version 1.0.0a - 04/10/95 - JG
- * Remove the sub-indent anomaly with RTF generation on .CS.
+ * 1.1.0  - JG 23/02/26 Fixed cross referencing with non-alpha symbols
+ * 1.0.0h - JG 07/02/04 Ported to HP-UX 11.00
+ * 1.0.0g - JG 03/01/04 Ported to Sun Solaris 9
+ * 1.0.0f - JG 14/05/97 Added copyright option.
+ * 1.0.0e - JG 06/01/95 Modified arguments for the new compiling option.
+ * 1.0.0d - JG 05/12/95 Added bullet support.
+ * 1.0.0c - JG 15/11/95 Added .sp and .ne support for blank lines and
+ *                      space requirements for pictures etc.
+ * 1.0.0b - JG 14/11/95 Corrected code to detect bad font chnages. Now
+ *                      produces an error when a fonts are mixed badly.
+ * 1.0.0a - JG 04/10/95 Remove the sub-indent anomaly with RTF generation
+ *                      on .CS.
  *
  ****************************************************************************
  *
@@ -77,7 +64,7 @@
 /*
  */
 
-#define MODULE_VERSION  "1.0.0h"
+#define MODULE_VERSION  "1.1.0"
 #define MODULE_NAME     "droff"
 
 #define FULL_INDENT 5
@@ -577,6 +564,12 @@ insert_word (char *s, int mode, Line *lp, int *newMode)
             break;
         case ZSPACE_CHAR:
             break;
+        case FONTN_CHAR:                /* Normal font size */
+            break;                      /* Ignore */
+        case FONTL_CHAR:                /* Larger font size */
+            break;                      /* Ignore */
+        case FONTS_CHAR:                /* Smaller font size */
+            break;                      /* Ignore */
         default:
             lp->buf [lp->pos++] = cmode | mode;
             break;

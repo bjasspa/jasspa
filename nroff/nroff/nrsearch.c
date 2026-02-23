@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.3 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <260202.1550>
+ *  Last Modified : <260223.1804>
  *
  *  Description
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 2.0.0d 23/02/26 JG Added font size escape sequence handling
  * 2.0.0c 07/02/04 JG Ported to HP-UX
  * 2.0.0b 03/01/04 JG Ported to Sun Solaris 9
  * 2.0.0a 30/05/97 JG Ported to win32.
@@ -50,7 +51,7 @@
 #include <utils.h>                      /* Standard utilities */
 #include "nroff.h"                      /* Nroff definitions */
 
-#define MODULE_VERSION  "2.0.0c"
+#define MODULE_VERSION  "2.0.0d"
 #define MODULE_NAME     "nrsearch"
 
 #define WHITE_SPACE_SKIP       1
@@ -163,6 +164,23 @@ imEntryAlloc (fItem *item, char *name, char *id, char *desc, char *comp, int lin
                     *q++ = 'C';
                 else
                     *q++ = 'P';
+                break;
+            case FONTL_CHAR:
+                *q++ = '\\';
+                *q++ = 's';
+                *q++ = '+';
+                *q++ = '1';
+                break;
+            case FONTS_CHAR:
+                *q++ = '\\';
+                *q++ = 's';
+                *q++ = '-';
+                *q++ = '1';
+                break;
+            case FONTN_CHAR:
+                *q++ = '\\';
+                *q++ = 's';
+                *q++ = '0';
                 break;
             case ESC_CHAR:
                 *q++ = '\\';

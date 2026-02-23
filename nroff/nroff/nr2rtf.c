@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.3 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040207.1919>
+ *  Last Modified : <260223.1749>
  *
  *  Description
  *
@@ -18,44 +18,20 @@
  *
  *  History
  *
- * Version 1.1.0g  - 07/02/04 - JG
- * Ported to HP-UX 11.00
- *
- * Version 1.1.0f  - 03/01/04 - JG
- * Ported to Sun Solaris 9
- *
- * Version 1.1.0e  - 03/05/97 - JG
- * Ported to win32
- *
- * Version 1.1.0d  - 16/04/97
- * Added copyright option.
- *
- * Version 1.1.0c  - 03/09/96
- * Added logo option.
- *
- * Version 1.1.0b  - 28/08/96 - JG
- * Added file handling name routines for UNIX
- *
- * Version 1.1.0a  - 06/07/96 - JG
- * Corrected header line. Lines now adjacent with image.
- *
- * Version 1.1.0  - 15/12/95 - JG
- * Added immediate mode compilation.
- *
- * Version 1.0.0e - 05/12/95 - JG
- * Added support for bullets.
- *
- * Version 1.0.0d - 16/11/95 - JG
- * Linked with new utilities library.
- *
- * Version 1.0.0c - 03/10/95 - JG
- * Remove the sub-indent anomaly with RTF generation on .CS.
- *
- * Version 1.0.0b - 03/10/95 - JG
- * Added word mode to generated rtf for word.
- *
- * Version 1.0.0a - 16/08/95 - JG
- * Added browse section number to rtf converter.
+ * 1.0.2  - JG 23/02/26 Fixed cross referencing with non-alpha symbols
+ * 1.1.0g - JG 07/02/04 Ported to HP-UX 11.00
+ * 1.1.0f - JG 03/01/04 Ported to Sun Solaris 9
+ * 1.1.0e - JG 03/05/97 Ported to win32
+ * 1.1.0d - JG 16/04/97 Added copyright option.
+ * 1.1.0c - JG 03/09/96 Added logo option.
+ * 1.1.0b - JG 28/08/96 Added file handling name routines for UNIX
+ * 1.1.0a - JG 06/07/96 Corrected header line. Lines now adjacent with image.
+ * 1.1.0  - JG 15/12/95 Added immediate mode compilation.
+ * 1.0.0e - JG 05/12/95 Added support for bullets.
+ * 1.0.0d - JG 16/11/95 Linked with new utilities library.
+ * 1.0.0c - JG 03/10/95 Remove sub-indent anomaly with RTF generation on .CS.
+ * 1.0.0b - JG 03/10/95 Added word mode to generated rtf for word.
+ * 1.0.0a - JG 16/08/95 Added browse section number to rtf converter.
  *
  ****************************************************************************
  *
@@ -90,7 +66,7 @@
 
 /* Macro Definitions */
 
-#define MODULE_VERSION  "1.1.0g"
+#define MODULE_VERSION  "1.2.0"
 #define MODULE_NAME     "nr2rtf"
 
 #define NORMAL_MODE     0x0000
@@ -419,6 +395,12 @@ rtfFormatStr (int lmode, char *s, int *newMode)
             if (newMode != NULL)
                 *newMode = (*newMode & ~FONT_MODE) | prevMode;
             break;
+        case FONTN_CHAR:                /* Normal font size */
+            break;                      /* Ignore */
+        case FONTL_CHAR:                /* Larger font size */
+            break;                      /* Ignore */
+        case FONTS_CHAR:                /* Smaller font size */
+            break;                      /* Ignore */
         case '{':
         case '}':
         case '\\':
@@ -1314,6 +1296,7 @@ usage (void)
     fprintf (stdout, "-s        : Output to standard out.\n");
     fprintf (stdout, "-t <name:link:section>\n");
     fprintf (stdout, "-t arg    : Title to appear at top of page\n");
+    fprintf (stdout, "-v <level>: Change the verbose level 0..9, default 0=off\n");
     fprintf (stdout, "-w        : MS Word output mode (no links). Man page font is enabled.\n");
     fprintf (stdout, "-x        : Resolve all references of module\n");
     exit (1);
@@ -1424,7 +1407,7 @@ main (int argc, char *argv [])
     rtfFont = &winFont;
 
     while (1) {
-        c = getopt (argc, argv, "a:c:e:E:fH:i:Il:L:mM:n:o:p:qst:wx");
+        c = getopt (argc, argv, "a:c:e:E:fH:i:Il:L:mM:n:o:p:qst:v:wx");
         if (c == EOF)
             break;
         switch (c) {
@@ -1479,10 +1462,6 @@ main (int argc, char *argv [])
         case 'p':
             logoName = optarg;
             break;
-        case 'w':
-            wordMode = 1;
-            rtfFont = &manFont;
-            break;
         case 'I':
             fprintf (stdout, "%s. Version %s. %s. %s.\n",
                      progname, MODULE_VERSION, __DATE__, nroffVersion);
@@ -1490,6 +1469,19 @@ main (int argc, char *argv [])
             break;
         case 't':
             nrTitleSet (optarg);
+            break;
+        case 'v':
+            {
+                int param = (int)('0');
+
+                if (optarg != NULL)
+                    param = (int) optarg[0] - param;
+                uVerboseSet (param);
+            }
+            break;
+        case 'w':
+            wordMode = 1;
+            rtfFont = &manFont;
             break;
         case 'x':
             compiling = 1;

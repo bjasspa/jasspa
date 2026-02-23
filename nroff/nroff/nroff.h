@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.3 $
  *  Date          : $Date: 2004-01-06 00:53:51 $
  *  Author        : $Author: jon $
- *  Last Modified : <040104.0039>
+ *  Last Modified : <260217.1611>
  *
  *  Description
  *
@@ -51,12 +51,17 @@
 #define MONO_CHAR       ((char) 5)
 #define PREV_CHAR       ((char) 6)
 #define ESC_CHAR        ((char) 7)
+#define TAB_CHAR        ((char) 9)
 #define COPYRIGHT_CHAR  ((char) 16)
 #define BULLET_CHAR     ((char) 17)
 #define MSPACE_CHAR     ((char) 18)
 #define DEGREE_CHAR     ((char) 19)
 #define CONTINUE_CHAR   ((char) 20)
 #define ZSPACE_CHAR     ((char) 21)
+/* Fonmt sizes */
+#define FONTL_CHAR      ((char) 22)     /* Larger font */
+#define FONTS_CHAR      ((char) 23)     /* Smaller font */
+#define FONTN_CHAR      ((char) 24)     /* Normal font */
 
 #define FT_P   0
 #define FT_R   1

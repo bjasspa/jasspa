@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.3 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040207.1920>
+ *  Last Modified : <260223.1750>
  *
  *  Description
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 1.1.0  JG 2026-02-23 Fixed cross referencing with non-alpha symbols
  * 1.0.0f JG 2004-02-07 Ported to HP-UX
  * 1.0.0e JG 2004-01-03 Ported to Sun Solaris 9
  * 1.0.0d JG 1999-05-29 Fixed cross reference problem with .NH sections
@@ -53,7 +54,7 @@
 #include <utils.h>
 #include "nroff.h"
 
-#define MODULE_VERSION "1.0.0f"
+#define MODULE_VERSION "1.1.0"
 #define MODULE_NAME    "nrar"
 
 typedef struct {
@@ -64,6 +65,7 @@ typedef struct {
 } xrEntry;
 
 static char *sectionName = NULL;
+static char *sectionDesc = NULL;
 static char *sectionId = NULL;
 static char *sectionModule = NULL;
 static char *sectionComponent = NULL;
@@ -153,10 +155,12 @@ nrIm_func (char *module, char *component)
 static void
 nrTH_func (char *id, char *num, char *date, char *company, char *title)
 {
-    bufFree (sectionId);
-    sectionId = bufNStr (NULL, num);
     bufFree (sectionName);
     sectionName = bufNStr (NULL, id);
+    bufFree (sectionId);
+    sectionId = bufNStr (NULL, num);
+    bufFree (sectionDesc);
+    sectionDesc = bufNStr (NULL, title);
     if (xreffile != NULL)
         free (xreffile);
     xreffile = strdup (sourceName);
@@ -180,8 +184,14 @@ nrNH_func (char *id, char *num, char *title, char *xref)
 {
     char bufName [9];                   /* Automatic file name */
     char digName [4];                   /* Digit component */
-    char *file = NULL;
 
+    bufFree (sectionName);
+    sectionName = bufNStr (NULL, id);
+    bufFree (sectionId);
+    sectionId = bufNStr (NULL, num);
+    bufFree (sectionDesc);
+    sectionDesc = bufNStr (NULL, title);
+    
     if (xref == NULL)
     {
         if (sectionModule == NULL)
@@ -206,10 +216,13 @@ nrNH_func (char *id, char *num, char *title, char *xref)
     if (xreffile != NULL)
         free (xreffile);
     xreffile = strdup (xref);
-
+    
+#if 0
+    char *file = NULL;
     if (libFindAddReference (moduleName, nrMakeXref (id, num), xref,
                              NULL, &file, NULL, LS_EXTERN|LS_DEF) == 0)
         uError ("Duplicate reference name [%s:%s]\n", xref, file);
+#endif
 }
 
 static void
@@ -247,18 +260,34 @@ _nrXIJ_func (int package, char *name, char *id, char *desc, char *comp)
     char *file = NULL;
     LibItem *li = NULL;                    /* Library item */
 
+    
+    if (name == NULL)
+        name = sectionName;
     if (id == NULL)
         id = sectionId;
+    if (desc == NULL)
+        desc = sectionDesc;
+    
     if (libFindAddReference (moduleName, nrMakeXref (name, id), xreffile,
                              NULL, &file, (void *)(&li), 
                              (package & LS_JUMP)|LS_EXTERN|LS_DEF) == 0)
     {
+        uError ("Debug: Duplicate reference name [%s]\n", nrMakeXref (name, id));
+        uError ("Debug: name=%s, id=%s, desc=%s\n", 
+                (name == NULL) ? "NULL" : name,
+                (id == NULL) ? "NULL" : id,
+                (desc == NULL) ? "NULL" : desc);
+        uError ("Debug: LibItem name = \"%s\"\n", nrLibItemName((LibItem *)(li)));
+        
         if ((((sectionName == NULL) || (name == NULL)) &&
              (sectionName != name)) || (strcmp (sectionName, name) != 0) ||
             (((sectionId == NULL) || (id == NULL)) &&
              (id != sectionId)) || (strcmp (sectionId, id) != 0))
+        {
+            uError ("Duplicate reference name = [%s]\n", nrMakeXref (name, id));
             uError ("Duplicate reference name [%s%s:%s]\n",
                     name, (id == NULL) ? "" : id, file);
+        }
     }
     /* Add the user data if not present */
     if (symbolMode && (li != NULL) && (nrLibItemData(li) == NULL))
@@ -373,6 +402,7 @@ usage (void)
     fprintf (stdout, "-o <file> : Output to <file> default is <module>.lbn\n");
     fprintf (stdout, "-q        : Quiet mode\n");
     fprintf (stdout, "-s        : Add extended symbol information to library (search tags)\n");
+    fprintf (stdout, "-v <level>: Change the verbose level 0..9, default 0=off\n");
     exit (1);
 }
 
@@ -413,11 +443,12 @@ int main (int argc, char *argv [])
     uErrorSet (0, &ecount);             /* Max Num entries + counter */
     uWarnSet (&wcount);                 /* Warning count */
     uUtilitySet (progname);             /* Set name of program */
+    uVerboseSet (0);                    /* Verbose setting */
 
     arInitialise ();
 
     while (1) {
-        c = getopt (argc, argv, "A:e:E:IhM:o:L:l:qs");
+        c = getopt (argc, argv, "A:e:E:IhM:o:L:l:qsv:");
         if (c == EOF)
             break;
         switch (c) {
@@ -457,6 +488,15 @@ int main (int argc, char *argv [])
             break;
         case 's':
             symbolMode = 1;
+            break;
+        case 'v':
+            {
+                int param = (int)('0');
+
+                if (optarg != NULL)
+                    param = (int) optarg[0] - param;
+                uVerboseSet (param);
+            }
             break;
         default:
             uError ("Cannot understand option [-%c]\n", c);
