@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil036.4,v 1.5 2022/06/12 17:14:14 jon Exp $
+.Id $Id: m4fil036.4,v 1.5 2026/02/23 18:17:38 jon Exp $
 .Im MicroEmacs macro;variable
 .so me.tni
 .TH "HistoryGroupVariables" 4
@@ -17,15 +17,15 @@
 .SH NAME
 @h0, @h1, @h2, ... @h4 \- History Group Variables.
 .SH SYNOPSIS
-.nf
-.na
 \fB@h0\fR \fIindex\fR \- General history string
+.br
 \fB@h1\fR \fIindex\fR \- Buffer history string
+.br
 \fB@h2\fR \fIindex\fR \- Command history string
+.br
 \fB@h3\fR \fIindex\fR \- File history string
+.br
 \fB@h4\fR \fIindex\fR \- Search history string
-.fi
-.ad
 .SH DESCRIPTION
 The history group variables  \fB@h\fR\|\fIn\fR  \fIindex\fR return the strings
 in the history  buffer ad a given  \fIindex\fR.  There are 5 history  buffers,

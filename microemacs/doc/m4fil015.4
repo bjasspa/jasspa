@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil015.4,v 2.9 2025/07/21 23:13:27 jon Exp $
+.Id $Id: m4fil015.4,v 2.9 2026/02/23 17:18:30 jon Exp $
 .Im MicroEmacs macro;variable
 .so me.tni
 .TH "MessageLineVariables" 4
@@ -23,14 +23,24 @@
 .br
 \fB@mna\fR
 .br
-\fB@ml\fR[\fIf\fR][\fIh\fR] "\fIprompt\fR" ["\fIdefault\fR"] ["\fIinitial\fR"]
-["\fIcom-list\fR"] ["\fIbuffer-name\fR"] ["\fIhistory-list\fR"] 
+\fB@ml\fR[\|\fIf\fR\|][\|\fIh\fR\|]
+"\fIprompt\fR"
+[\|"\fIdefault\fR"\|]
+[\|"\fIinitial\fR"\|]
+[\|"\fIcom-list\fR"\|]
+[\|"\fIbuffer-name\fR"\|]
+[\|"\fIhistory-list\fR"\|] 
 .br
-\fB@mc\fR[\fIf\fR] \fIprompt\fR [\fIvalid-list\fR] [\fIhelp-string\fR]
+\fB@mc\fR[\|\fIf\fR\|]
+\fIprompt\fR
+[\|\fIvalid-list\fR\|]
+[\|\fIhelp-string\fR\|]
 .br
-\fB@mx\fR "\fIcommand-line\fR"
+\fB@mx\fR
+"\fIcommand-line\fR"
 .br
-\fB@mxa\fR "\fIcommand-line\fR"
+\fB@mxa\fR
+"\fIcommand-line\fR"
 .ad
 .SH DESCRIPTION
 The \fBMessage Line  Variables\fR  provide a method to prompt the user for an input  returning the data to the caller.

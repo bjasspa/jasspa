@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil018.4,v 2.6 2022/06/12 17:14:14 jon Exp $
+.Id $Id: m4fil018.4,v 2.6 2026/02/23 18:19:24 jon Exp $
 .Im MicroEmacs macro;variable
 .so me.tni
 .TH "Variables" 4
@@ -19,15 +19,19 @@
 Variables \- Macro variables
 .SH SYNOPSIS
 .na
-.nf
-\fB#\fR\fItn\fR
-\fB$\fR\fIvariableName\fR
-\fB%\fR\fIvariableName\fR
-\fB.\fR\fIvariableName\fR
-\fB.\fR\fIcommandName\fR\fB.\fR\fIvariableName\fR
-\fB:\fR\fIvariableName\fR
-\fB:\fR\fIbufferName\fR\fB:\fR\fIvariableName\fR
-.fi
+\fB#\fR\|\fItn\fR
+.br
+\fB$\fR\|\fIvariableName\fR
+.br
+\fB%\fR\|\fIvariableName\fR
+.br
+\fB.\fR\|\fIvariableName\fR
+.br
+\fB.\fR\|\fIcommandName\fR\|\fB.\fR\|\fIvariableName\fR
+.br
+\fB:\fR\|\fIvariableName\fR
+.br
+\fB:\fR\|\fIbufferName\fR\|\fB:\fR\|\fIvariableName\fR
 .ad
 .SH DESCRIPTION
 Variables  are  part of \*(mS  macro  language  and may be used  wherever  an
@@ -42,15 +46,14 @@ argument is required. The variable space comprises:-
 \fB.\fR \- Command Variable
 .br
 \fB:\fR \- Buffer Variable
-.br
 .LP
 All  variables  hold  string  information,  the  interpretation  of the string
 (numeric,  string or boolean) is  determined  when the variable is used within
 the context of the command.  There are five types of variable,  \fBRegister\fR
-\fBVariables\fR   (prefixed  with  a  hash  \fB#\fR),  \fBSystem  Variables\fR
-(prefixed  with a dollar  \fB$\fR),  \fBGlobal  Variables\fR  (prefixed with a
-percentage  \fB%\fR), \fBBuffer  Variables\fR  (prefixed with a colon \fB:\fR)
-and \fBCommand Variables\fR (prefixed with a period \fB.\fR).
+\fBVariables\fR  (prefixed  with  a hash  '\fB#\fR'),  \fBSystem  Variables\fR
+(prefixed with a dollar '\fB$\fR'),  \fBGlobal  Variables\fR  (prefixed with a
+percentage   '\fB%\fR'),  \fBBuffer   Variables\fR   (prefixed  with  a  colon
+\&'\fB:\fR') and \fBCommand Variables\fR (prefixed with a period '\fB.\fR').
 .SS "Register Variables"
 Register  Variables  provide  a  set  of  10  prefixed  global  (\fB#g0\fR  ..
 \fB#g9\fR), parent (\fB#p0\fR .. \fB#p9\fR) and local (\fB#l0\fR .. \fB#l9\fR)

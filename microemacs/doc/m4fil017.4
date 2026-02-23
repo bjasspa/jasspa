@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil017.4,v 2.6 2025/08/28 01:58:22 jon Exp $
+.Id $Id: m4fil017.4,v 2.6 2026/02/23 17:21:53 jon Exp $
 .Im MicroEmacs macro;variable
 .so me.tni
 .TH "CommandVariables" 4
@@ -19,31 +19,37 @@
 .XI @cq - "Get a quoted command name from the user"
 .SH NAME
 .na
-.nf
 @clk, @cl \- Last key or command name
+.br
 @cck, @cc \- Current key or command name
+.br
 @cgk, @cg \- Get a key or command name from the user
+.br
 @cqk, @cq \- Get a quoted key or command name from the user
-.fi
 .ad
 .SH SYNOPSIS
 .na
-.nf
 \fB@clk\fR
+.br
 \fB@cl\fR
+.br
 \fB@cck\fR
+.br
 \fB@cc\fR
+.br
 \fB@cgk\fR
+.br
 \fB@cg\fR
+.br
 \fB@cqk\fR
+.br
 \fB@cq\fR
-.fi
 .ad
 .SH DESCRIPTION
 The Command Variables allow macros to obtain \*(mS input commands and keystrokes from the user. The general format of
 the command is:-
 .IP 
-\fB@c\fR\fIi\fR[\fBk\fR]
+\fB@c\fR\fIi\fR[\|\fBk\fR\|]
 .LP
 Where,
 .IP \fIi\fR

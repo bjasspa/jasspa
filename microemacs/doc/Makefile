@@ -17,7 +17,9 @@ include $(TOPDIR)/etc/makeinc
 # Build components
 #
 HTSS	=	me.hts
+PDFS	=	me.pdf
 HLPS	=	me.rtf
+TEXS	=	me.tex
 SMS	=	me.sm
 LIBS	=	me.lbn
 PSOS	=	me.pso
@@ -32,6 +34,56 @@ BUILDTXT=	build.txt
 PATCHTXT=	patch.txt
 CATMAN1=	me.1 ne.1 me.1.gz ne.1.gz
 MISCTXT=	cygwin.txt	infolist.txt
+
+#
+# LaTeX/PDF definitions
+#
+BIBTEX= bibtex
+PDFLATEX= pdflatex
+THUMBPDF= thumbpdf
+.SUFFIXES: .pdf .tex
+.tex.pdf:
+	- $(RM) $*.aux
+	- $(RM) $*.log
+	- $(RM) $*.lot
+	- $(RM) $*.out
+	- $(RM) $*.pdg
+	- $(RM) $*.doc
+	- $(RM) $*.blg
+	- $(RM) $*.bbl
+	- $(PDFLATEX) $<
+	- $(BIBTEX)   $*
+	- $(PDFLATEX) $<
+	- $(PDFLATEX) $<
+	- $(THUMBPDF) $*
+	- $(PDFLATEX) $<
+	- $(RM) $*.aux
+	- $(RM) $*.lot
+	- $(RM) $*.out
+	- $(RM) $*.pdg
+	- $(RM) $*.doc
+	- $(RM) thumb???.png
+	- $(RM) $*.out
+	- $(RM) $*.doc
+	- $(RM) $*.tpt
+	- $(RM) $*.blg
+	- $(RM) $*.bbl
+	- $(RM) thumbpdf.log
+	- $(RM) thumbpdf.pdf
+clean::
+	$(RM) $*.aux
+	$(RM) $*.lot
+	$(RM) $*.out
+	$(RM) $*.pdg
+	$(RM) $*.doc
+	$(RM) thumb???.png
+	$(RM) $*.out
+	$(RM) $*.doc
+	$(RM) $*.tpt
+	$(RM) $*.blg
+	$(RM) $*.bbl
+	$(RM) thumbpdf.log
+	$(RM) thumbpdf.pdf
 #
 # Define components
 #
@@ -308,12 +360,13 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 		typ9_040.sm	typ9_050.sm 	typ9_060.sm	typ9_070.sm \
 		faq.2
 
-all:	$(HTSS) $(HLPS) $(SMS) $(EHFS) $(TXTS) $(CATMAN1)
+all:	$(HTSS) $(HLPS) $(TEXS) $(SMS) $(EHFS) $(TXTS) $(CATMAN1)
 #
 # Release
 #
 RELWWWDOCDIR=	$(WWWRELDIR)/doc
 RELRTFS=	$(RTFS:%=$(RTFRELDIR)/%)
+RELPDFS=	$(PDFS:%=$(WWWRELDIR)/%)
 RELZIPS=	$(MEHTMZIP:%=$(WWWRELDIR)/%)
 RELTARS=	$(MEHTMLTGZ:%=$(WWWRELDIR)/%)
 RELTXTS=	$(TXTS:%=$(RELWWWDOCDIR)/%) $(TXTS:%=$(MERELDIR)/%) \
@@ -321,7 +374,7 @@ RELTXTS=	$(TXTS:%=$(RELWWWDOCDIR)/%) $(TXTS:%=$(MERELDIR)/%) \
 RELEHF=		$(JASMACDIR)/me.ehf
 RELCAT1=	$(CATMAN1:%=$(WWWRELDIR)/%)
 RELEASE=	$(RELRTFS)	$(RELZIPS)	$(RELTARS)	$(RELTXTS) \
-		$(RELEHF)	$(RELCAT1)
+		$(RELEHF)	$(RELCAT1)	$(RELPDFS)
 
 release:	$(RELEASE)
 
@@ -339,6 +392,10 @@ $(RELTARS):	$(MEHTMLTGZ)
 		$(INSTALL_FIL) $(@F) $(@D)
 # Txts
 $(RELTXTS):	$(TXTS)
+		$(MKDIR) $(@D)
+		$(INSTALL_FIL) $(@F) $(@D)
+# PDFs
+$(RELPDFS):	$(PDFS)
 		$(MKDIR) $(@D)
 		$(INSTALL_FIL) $(@F) $(@D)
 # Ehf
@@ -610,7 +667,7 @@ clean::
 	$(RM) me.0
 # Build symbol library
 me.lbn: me.sm me.0
-	$(NRAR) -E $(MANLOG) -M me me.0 me.sm
+	$(NRAR) -E $(MANLOG) -M me -v 2 me.0 me.sm
 clean::
 	$(RM) me.lbn
 # Build HTML archive
@@ -625,6 +682,7 @@ me.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.png
 		   -tVariables:VariableGlossary	\
 		   -tMacro-Dev:MacroGlossary	\
 		   -tGlossary:Glossary		\
+		   -v 2                         \
 		   me.sm me.0
 	$(HTS) -a $@ -E $(MANLOG) -s me/logo -b logo.png
 clean::
@@ -647,6 +705,25 @@ me.rtf: me.sm me.0 me.lbn me.tni forward.lbn me.hpj logo.bmp
 		    me.sm me.0
 clean::
 	$(RM) me.rtf
+# Build lAtEx Help File.
+NR2TEX=nr2tex
+me.tex: me.0 me.sm me.lbn me.tni mehead.tex metail.tex logo.png 
+	$(NR2TEX)  -E $(MANLOG)			\
+		   -c JASSPA			\
+		   -M me			\
+		   -H me			\
+		   -L. -lme 			\
+		   -o $@			\
+		   -v 1				\
+		   -a mehead.tex		\
+		   -A metail.tex		\
+		    me.0 me.sm 
+clean::
+	$(RM) me.tex
+# Build the PDF help file
+me.pdf: me.tex
+clean::
+	$(RM) me.pdf
 # Build MicroEmacs EHF file.
 me.ehf: meehf.hts
 	$(RMDIR) ehf
