@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.2 $
  *  Date          : $Date: 2004-01-06 00:52:20 $
  *  Author        : $Author: jon $
- *  Last Modified : <040104.0023>
+ *  Last Modified : <260214.1502>
  *
  *  Description
  *
@@ -44,6 +44,15 @@ typedef struct {
 
 /* External References */
 
+/* char *bufStr (char *h, char *s) 
+ * 
+ * Concatinate strings h+s =? generating hs
+ * 
+ * h - is the base string and should be NULL or a malloc() string,
+ * s - is the string to concatinate.
+ * 
+ * Returns an memory allocated buffer or NULL
+ */
 extern char *bufStr (char *h, char *s);
 extern char *bufNStr (char *h, char *s);
 extern char *bufChr (char *h, char c);
