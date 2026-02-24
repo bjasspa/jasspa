@@ -86,7 +86,7 @@ define-macro-file xrdb xrdb-scheme
 29 major-mode "r" ".r .rtk" "R/S-Plus" -1 "^#![ \t]*/.*Rscript" r-doc
 16 major-mode "\\1" -2 "-[*!]-[ \t]*\\([^ \t\n:;]+\\).*?-[*!]-"
 16 major-mode "\\1" -2 "-[*!]-[ \t]*mode:[ \t]*\\([^ \t\n:;]+\\).*?-[*!]-"
-21 major-mode "xml" ".xml .xsl .xul .xaml" -1 "<\\?xml"
+21 major-mode "xml" ".xml .xsl .xul .xaml .svg" -1 "<\\?xml"
 5 major-mode "ada" ".ada .adb .ads"
 5 major-mode "adoc" ".tdoc .adoc .asciidoc"
 5 major-mode "apache" "httpd.conf"
