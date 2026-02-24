@@ -71,10 +71,10 @@ add_tag (TagP *tagHead, TagP np)
 
     if (tagHead == NULL)
         tagHead = &__tagHead;
-#if 0
-    printf ("Add tag [%s][%s][%s][%d]\n",
-            np->name, np->section, np->file, np->line);
-#endif
+    
+    uVerbose (3, "Add tag [%s][%s][%s][%d]\n",
+              np->name, np->section, np->file, np->line);
+    
     if ((p = *tagHead) == NULL) {
         *tagHead = np;
         return (NULL);
@@ -118,10 +118,8 @@ find_tag (TagP *tagHead, char *name, char *section, int unlink)
 
     if (tagHead == NULL)
         tagHead = &__tagHead;
-#if 0
-    printf ("Find tag [%s][%s][%s]\n",
-            name, section, (unlink == 0) ? "No unlink" : "Unlink");
-#endif
+    uVerbose (3, "Find tag [%s][%s][%s]\n",
+              name, section, (unlink == 0) ? "No unlink" : "Unlink");
 
     for (p = *tagHead; p != NULL; p = p->next)
     {

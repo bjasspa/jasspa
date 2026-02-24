@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.3 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <040207.1921>
+ *  Last Modified : <260224.1906>
  *
  *  Description
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 1.0.0c JG 2026/02/24 Output to stderr
  * 1.0.0b JG 2004/02/07 Ported to HP-UX
  * 1.0.0a JG 2004/01/03 Ported to Sun Solaris 9
  * 1.0.0  JG 2000/10/21 Ported to Win32
@@ -51,7 +52,7 @@
 
 #include "nroff.h"
 
-#define MODULE_VERSION  "1.0.0b"
+#define MODULE_VERSION  "1.0.0c"
 #define MODULE_NAME     "nrorder"
 
 static int  lineMode = 0;
@@ -114,7 +115,12 @@ alpha_term (void)
 {
     TagP tp;
 
-    for (tp = tagIterateInit (NULL); tp != NULL; tp = tagIterate (tp)) {
+    for (tp = tagIterateInit (NULL); tp != NULL; tp = tagIterate (tp))
+    {
+        uVerbose (3, "%s(%s) <- %s\n",
+                  ((tp->name == NULL) ? "" : tp->name),
+                  ((tp->section == NULL) ? "" : tp->section),
+                  ((tp->file == NULL) ? "" : tp->file));
         fprintf (fpr, "%s", tp->file);
         if (lineMode)
         {
@@ -152,9 +158,10 @@ usage (void)
     fprintf (stdout, "-f        : Generate list for each file.\n");
     fprintf (stdout, "-I        : Version information.\n");
     fprintf (stdout, "-i <name> : Initialial page name.\n");
-    fprintf (stdout, "-o <file> : Output to <file> default is <files>.out\n");
+    fprintf (stdout, "-o <file> : Output to <file> default is stdout\n");
     fprintf (stdout, "-q        : Quiet mode\n");
     fprintf (stdout, "-s        : Order within sections.\n");
+    fprintf (stdout, "-v <level>: Change the verbose level 0..9, default 0=off\n");
     fprintf (stdout, "-z        : Terminate file with ctrl-z.\n");
     fprintf (stdout, "\n");
     fprintf (stdout, "This utility generates space seprated list of files sorting them into\n");
@@ -181,7 +188,7 @@ orderInitialise (void)
 
 int main (int argc, char *argv [])
 {
-    char    *oname = "nrorder.out";
+    char    *oname = NULL;              /*  "nrorder.out"; */
     nrFILE  *nrfp;
     int     ecount = 0;                 /* Error count */
     int     wcount = 0;                 /* Warn count */
@@ -194,9 +201,10 @@ int main (int argc, char *argv [])
     uErrorSet (0, &ecount);             /* Max Num entries + counter */
     uWarnSet (&wcount);                 /* Warning count */
     uUtilitySet (progname);             /* Set name of program */
+    uVerboseSet (0);                    /* Verbose setting */
 
     while (1) {
-        c = getopt (argc, argv, "1ace:E:fh?Ii:o:qsz");
+        c = getopt (argc, argv, "1ace:E:fh?Ii:o:qsv:z");
         if (c == EOF)
             break;
         switch (c) {
@@ -240,6 +248,15 @@ int main (int argc, char *argv [])
         case 's':
             sectionMode = 1;
             break;
+        case 'v':
+            {
+                int param = (int)('0');
+
+                if (optarg != NULL)
+                    param = (int) optarg[0] - param;
+                uVerboseSet (param);
+            }
+            break;
         case 'z':
             zMode = 1;
             break;
@@ -253,16 +270,28 @@ int main (int argc, char *argv [])
     uOpenErrorChannel ();
     argv = getfiles (&argc, argv, optind);
 
-    if (argc > 1) {
-        if (oname != NULL) {
-            if ((fpr = fopen (oname, appendMode)) == NULL)
+    if (argc > 1)
+    {
+        if (oname != NULL)
+        {
+            if ((oname[0] == '-') && (oname[1] == '\0'))
+                oname = NULL;
+            else if ((fpr = fopen (oname, appendMode)) == NULL)
                 uFatal ("Cannot open file [%s]\n", oname);
-            uVerbose (0, "Output in file [%s].\n", oname);
+            else
+                uVerbose (0, "Output in file [%s].\n", oname);
         }
     }
     else
         fpr = NULL;
-
+    
+    /* Default to stdout for the output */
+    if (fpr == NULL)
+    {
+        uInteractiveSet (0);            /* Disable any interactive output */
+        fpr = stdout;
+    }
+    
     /* Process all of the files */
     for (i = 1; i < argc; i++) {
         if ((nrfp = nrFilePush (argv[i])) == NULL)
@@ -273,20 +302,27 @@ int main (int argc, char *argv [])
         if (fileMode != 0)
             alpha_term ();
     }
-    if (fpr != NULL) {
-        alpha_term ();
+    if (fileMode == 0)
+    {
+        if (fpr != NULL)
+        {
+            
+            alpha_term ();
 #ifndef _UNIX
-        if (zMode) {
-            if (lineMode == 0)
-                fprintf (fpr,"\r\n");
-            fprintf (fpr,"%c", 0x1A);
-        }
+            if (zMode) {
+                if (lineMode != 0)
+                    fprintf (fpr,"\r\n");
+                fprintf (fpr,"%c", 0x1A);
+            }
 #else
-        if (lineMode == 0)
-            fprintf (fpr,"\n");
+            if (lineMode != 0)
+                fprintf (fpr,"\n");
 #endif
-
-        fclose (fpr);
+            if (fpr != stdout)
+            {
+                fclose (fpr);
+            }
+        }
     }
 
     uCloseErrorChannel ();

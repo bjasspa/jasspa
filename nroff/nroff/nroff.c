@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.3 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <260223.1529>
+ *  Last Modified : <260224.1739>
  *
  *  Description
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 1.3.4b - JG 24/02/26 Propogate fonts \sn, \s+n and \s-n
  * 1.3.4a - JG 03/01/04 Ported to Sun Solaris 9
  * 1.3.4  - JG 24/03/98 Added .Gr for graphical objects.
  * 1.3.3e - JG 30/05/97 Added .ie/.el + Id comparitor.
@@ -73,7 +74,7 @@
 #include "_nroff.h"
 #include "nroff.h"
 
-#define VERSION_STRING "1.3.4a"
+#define VERSION_STRING "1.3.4b"
 #ifdef _WIN32
 #define PLATFORM_STRING "Win32"
 #elif defined (_DOS)
