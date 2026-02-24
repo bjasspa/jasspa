@@ -34,7 +34,10 @@ BUILDTXT=	build.txt
 PATCHTXT=	patch.txt
 CATMAN1=	me.1 ne.1 me.1.gz ne.1.gz
 MISCTXT=	cygwin.txt	infolist.txt
-
+#
+# nrorder definition
+#
+NRORDER=	nrorder -s -c 
 #
 # LaTeX/PDF definitions
 #
@@ -95,6 +98,7 @@ MEHTMZIP=	jasspa-mehtm-$(meVER_CN)$(meVER_YR)$(meVER_MN)$(meVER_DY).zip
 MEHTMLTGZ=	jasspa-mehtml-$(meVER_CN)$(meVER_YR)$(meVER_MN)$(meVER_DY).tar.gz
 #
 MAN1	=	$(DOCDIR)m1cmd000.1 $(DOCDIR)m1cmd002.1
+CMD1_ALL=	$(MAN1)
 #
 CMD2_000=	$(DOCDIR)m2cmd000.2 $(DOCDIR)m2cmd001.2 $(DOCDIR)m2cmd002.2\
 		$(DOCDIR)m2cmd003.2 $(DOCDIR)m2cmd004.2 $(DOCDIR)m2cmd005.2\
@@ -166,11 +170,18 @@ CMD2_160=	$(DOCDIR)m2cmd160.2 $(DOCDIR)m2cmd161.2 $(DOCDIR)m2cmd162.2\
 CMD2_200=	$(DOCDIR)m2cmd200.2 $(DOCDIR)m2cmd201.2 $(DOCDIR)m2cmd202.2\
 		$(DOCDIR)m2cmd203.2
 #
+CMD2_All=	$(CMD2_000) $(CMD2_010) $(CMD2_020) $(CMD2_030) $(CMD2_040) \
+		$(CMD2_050) $(CMD2_060) $(CMD2_070) $(CMD2_080) $(CMD2_090) \
+		$(CMD2_100) $(CMD2_110) $(CMD2_120) $(CMD2_130) $(CMD2_140) \
+		$(CMD2_150) $(CMD2_160) $(CMD2_200)
+#
 NAR2_000=	$(DOCDIR)m2nar000.2 $(DOCDIR)m2nar001.2	$(DOCDIR)m2nar002.2\
 		$(DOCDIR)m2nar003.2 $(DOCDIR)m2nar004.2 $(DOCDIR)m2nar005.2\
 		$(DOCDIR)m2nar006.2 $(DOCDIR)m2nar007.2 $(DOCDIR)m2nar008.2\
 		$(DOCDIR)m2nar009.2
 NAR2_010=	$(DOCDIR)m2nar010.2 $(DOCDIR)m2nar011.2 $(DOCDIR)m2nar012.2
+#
+NAR2_ALL=	$(NAR2_000) $(NAR2_010)
 #
 MOD2_000=	$(DOCDIR)m2mod000.2 $(DOCDIR)m2mod001.2 $(DOCDIR)m2mod002.2\
 		$(DOCDIR)m2mod003.2 $(DOCDIR)m2mod004.2 $(DOCDIR)m2mod005.2\
@@ -184,6 +195,8 @@ MOD2_020=	$(DOCDIR)m2mod020.2 $(DOCDIR)m2mod021.2 $(DOCDIR)m2mod022.2\
 		$(DOCDIR)m2mod023.2 $(DOCDIR)m2mod024.2 $(DOCDIR)m2mod025.2\
 		$(DOCDIR)m2mod029.2
 MOD2_030=	$(DOCDIR)m2mod030.2 $(DOCDIR)m2mod031.2 $(DOCDIR)m2mod032.2
+#
+MOD2_ALL=	$(MOD2_000) $(MOD2_010) $(MOD2_020) $(MOD2_030)
 #
 MAC3_000=	$(DOCDIR)m3mac000.3 $(DOCDIR)m3mac001.3 $(DOCDIR)m3mac002.3\
 		$(DOCDIR)m3mac003.3 $(DOCDIR)m3mac004.3 $(DOCDIR)m3mac005.3\
@@ -229,6 +242,10 @@ MAC3_100=	$(DOCDIR)m3mac100.3 $(DOCDIR)m3mac102.3	$(DOCDIR)m3mac103.3\
 		$(DOCDIR)m3mac104.3 $(DOCDIR)m3mac105.3 $(DOCDIR)m3mac106.3\
 		$(DOCDIR)m3mac107.3 $(DOCDIR)m3mac108.3
 #
+MAC3_ALL=	$(MAC3_000) $(MAC3_010) $(MAC3_020) $(MAC3_030) $(MAC3_040) \
+		$(MAC3_050) $(MAC3_060) $(MAC3_070) $(MAC3_080) $(MAC3_090) \
+		$(MAC3_100)
+#
 OSD3_000=	$(DOCDIR)m3osd000.3 $(DOCDIR)m3osd001.3 $(DOCDIR)m3osd002.3\
 		$(DOCDIR)m3osd003.3 $(DOCDIR)m3osd004.3 $(DOCDIR)m3osd005.3\
 		$(DOCDIR)m3osd006.3 $(DOCDIR)m3osd007.3 $(DOCDIR)m3osd008.3\
@@ -237,6 +254,8 @@ OSD3_010=	$(DOCDIR)m3osd010.3 $(DOCDIR)m3osd011.3 $(DOCDIR)m3osd012.3\
 		$(DOCDIR)m3osd013.3 $(DOCDIR)m3osd014.3 $(DOCDIR)m3osd015.3\
 		$(DOCDIR)m3osd016.3 $(DOCDIR)m3osd017.3 $(DOCDIR)m3osd018.3
 #
+OSD3_ALL=	$(OSD3_000) $(OSD3_010)
+#
 FCL3_000=	$(DOCDIR)m3fcl001.3 $(DOCDIR)m3fcl002.3 $(DOCDIR)m3fcl003.3\
 		$(DOCDIR)m3fcl004.3 $(DOCDIR)m3fcl005.3 $(DOCDIR)m3fcl006.3\
 		$(DOCDIR)m3fcl007.3 $(DOCDIR)m3fcl008.3 $(DOCDIR)m3fcl009.3
@@ -244,6 +263,8 @@ FCL3_000=	$(DOCDIR)m3fcl001.3 $(DOCDIR)m3fcl002.3 $(DOCDIR)m3fcl003.3\
 FCL3_010=	$(DOCDIR)m3fcl010.3 $(DOCDIR)m3fcl011.3 $(DOCDIR)m3fcl012.3\
 		$(DOCDIR)m3fcl013.3 $(DOCDIR)m3fcl014.3 $(DOCDIR)m3fcl015.3\
 		$(DOCDIR)m3fcl016.3 $(DOCDIR)m3fcl017.3
+#
+FCL3_ALL=	$(FCL3_000) $(FCL3_010)
 #
 FIL4_000=	$(DOCDIR)m4fil000.4 $(DOCDIR)m4fil001.4 $(DOCDIR)m4fil002.4\
 		$(DOCDIR)m4fil003.4 $(DOCDIR)m4fil004.4 $(DOCDIR)m4fil005.4\
@@ -260,6 +281,8 @@ FIL4_020=	$(DOCDIR)m4fil020.4 $(DOCDIR)m4fil021.4 $(DOCDIR)m4fil022.4\
 FIL4_030=	$(DOCDIR)m4fil030.4 $(DOCDIR)m4fil031.4 $(DOCDIR)m4fil032.4\
 		$(DOCDIR)m4fil033.4 $(DOCDIR)m4fil034.4 $(DOCDIR)m4fil035.4\
 		$(DOCDIR)m4fil036.4 $(DOCDIR)m4fil037.4 $(DOCDIR)m4fil038.4
+#
+FIL4_ALL=	$(FIL4_000) $(FIL4_010) $(FIL4_020) $(FIL4_030)
 #
 VAR5_000=	$(DOCDIR)m5var000.5 $(DOCDIR)m5var001.5 $(DOCDIR)m5var002.5\
 		$(DOCDIR)m5var003.5 $(DOCDIR)m5var004.5 $(DOCDIR)m5var005.5\
@@ -301,9 +324,14 @@ VAR5_090=	$(DOCDIR)m5var090.5 $(DOCDIR)m5var091.5 $(DOCDIR)m5var092.5\
 		$(DOCDIR)m5var093.5 $(DOCDIR)m5var094.5 $(DOCDIR)m5var095.5\
 		$(DOCDIR)m5var096.5 $(DOCDIR)m5var097.5 $(DOCDIR)m5var098.5
 #
+VAR5_ALL=	$(VAR5_000) $(VAR5_010) $(VAR5_020) $(VAR5_030) $(VAR5_040) \
+		$(VAR5_050) $(VAR5_060) $(VAR5_070) $(VAR5_080) $(VAR5_090)
+#
 FIL8_000=	$(DOCDIR)m8fil000.8 $(DOCDIR)m8fil001.8 $(DOCDIR)m8fil002.8\
 		$(DOCDIR)m8fil003.8 $(DOCDIR)m8fil004.8 $(DOCDIR)m8fil005.8\
 		$(DOCDIR)m8fil007.8 $(DOCDIR)m8fil008.8
+#
+FIL8_ALL=	$(FIL8_000)
 #
 TYP9_000=	$(DOCDIR)m9typ000.9 $(DOCDIR)m9typ001.9 $(DOCDIR)m9typ002.9\
 		$(DOCDIR)m9typ003.9 $(DOCDIR)m9typ004.9 $(DOCDIR)m9typ005.9\
@@ -337,6 +365,9 @@ TYP9_070=	$(DOCDIR)m9typ070.9 $(DOCDIR)m9typ071.9 $(DOCDIR)m9typ072.9\
 		$(DOCDIR)m9typ073.9 $(DOCDIR)m9typ074.9 $(DOCDIR)m9typ075.9\
 		$(DOCDIR)m9typ076.9 $(DOCDIR)m9typ077.9
 #
+TYP9_ALL=	$(TYP9_000) $(TYP9_010) $(TYP9_020) $(TYP9_030) $(TYP9_040) \
+		$(TYP9_050) $(TYP9_060) $(TYP9_070)
+#
 TNIS	=	me.tni
 
 TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
@@ -357,7 +388,7 @@ TEMPSMS	=	cmd2_000.sm	cmd2_010.sm	cmd2_020.sm	cmd2_030.sm \
 		var5_080.sm	var5_090.sm \
 		fil8_000.sm \
 		typ9_000.sm	typ9_010.sm	typ9_020.sm	typ9_030.sm \
-		typ9_040.sm	typ9_050.sm 	typ9_060.sm	typ9_070.sm \
+		typ9_040.sm	typ9_050.sm	typ9_060.sm	typ9_070.sm \
 		faq.2
 
 all:	$(HTSS) $(HLPS) $(TEXS) $(SMS) $(EHFS) $(TXTS) $(CATMAN1)
@@ -419,150 +450,34 @@ spotless:: clean
 	$(RM) core
 	$(RM) *.log
 	$(RM) tags
-##############################################################################
-#
+#############################################################################
+# 
 # Build the main components.
-#
-##############################################################################
-# Commands
-cmd2_000.sm:	$(CMD2_000)
-	$(SUPERMAN) -o $@ $(CMD2_000)
-cmd2_010.sm:	$(CMD2_010)
-	$(SUPERMAN) -o $@ $(CMD2_010)
-cmd2_020.sm:	$(CMD2_020)
-	$(SUPERMAN) -o $@ $(CMD2_020)
-cmd2_030.sm:	$(CMD2_030)
-	$(SUPERMAN) -o $@ $(CMD2_030)
-cmd2_040.sm:	$(CMD2_040)
-	$(SUPERMAN) -o $@ $(CMD2_040)
-cmd2_050.sm:	$(CMD2_050)
-	$(SUPERMAN) -o $@ $(CMD2_050)
-cmd2_060.sm:	$(CMD2_060)
-	$(SUPERMAN) -o $@ $(CMD2_060)
-cmd2_070.sm:	$(CMD2_070)
-	$(SUPERMAN) -o $@ $(CMD2_070)
-cmd2_080.sm:	$(CMD2_080)
-	$(SUPERMAN) -o $@ $(CMD2_080)
-cmd2_090.sm:	$(CMD2_090)
-	$(SUPERMAN) -o $@ $(CMD2_090)
-cmd2_100.sm:	$(CMD2_100)
-	$(SUPERMAN) -o $@ $(CMD2_100)
-cmd2_110.sm:	$(CMD2_110)
-	$(SUPERMAN) -o $@ $(CMD2_110)
-cmd2_120.sm:	$(CMD2_120)
-	$(SUPERMAN) -o $@ $(CMD2_120)
-cmd2_130.sm:	$(CMD2_130)
-	$(SUPERMAN) -o $@ $(CMD2_130)
-cmd2_140.sm:	$(CMD2_140)
-	$(SUPERMAN) -o $@ $(CMD2_140)
-cmd2_150.sm:	$(CMD2_150)
-	$(SUPERMAN) -o $@ $(CMD2_150)
-cmd2_160.sm:	$(CMD2_160)
-	$(SUPERMAN) -o $@ $(CMD2_160)
-cmd2_200.sm:	$(CMD2_200)
-	$(SUPERMAN) -o $@ $(CMD2_200)
-# Modes
-mod2_000.sm:	$(MOD2_000)
-	$(SUPERMAN) -o $@ $(MOD2_000)
-mod2_010.sm:	$(MOD2_010)
-	$(SUPERMAN) -o $@ $(MOD2_010)
-mod2_020.sm:	$(MOD2_020)
-	$(SUPERMAN) -o $@ $(MOD2_020)
-mod2_030.sm:	$(MOD2_030)
-	$(SUPERMAN) -o $@ $(MOD2_030)
-# Macros
-mac3_000.sm:	$(MAC3_000)
-	$(SUPERMAN) -o $@ $(MAC3_000)
-mac3_010.sm:	$(MAC3_010)
-	$(SUPERMAN) -o $@ $(MAC3_010)
-mac3_020.sm:	$(MAC3_020)
-	$(SUPERMAN) -o $@ $(MAC3_020)
-mac3_030.sm:	$(MAC3_030)
-	$(SUPERMAN) -o $@ $(MAC3_030)
-mac3_040.sm:	$(MAC3_040)
-	$(SUPERMAN) -o $@ $(MAC3_040)
-mac3_050.sm:	$(MAC3_050)
-	$(SUPERMAN) -o $@ $(MAC3_050)
-mac3_060.sm:	$(MAC3_060)
-	$(SUPERMAN) -o $@ $(MAC3_060)
-mac3_070.sm:	$(MAC3_070)
-	$(SUPERMAN) -o $@ $(MAC3_070)
-mac3_080.sm:	$(MAC3_080)
-	$(SUPERMAN) -o $@ $(MAC3_080)
-mac3_090.sm:	$(MAC3_090)
-	$(SUPERMAN) -o $@ $(MAC3_090)
-mac3_100.sm:	$(MAC3_100)
-	$(SUPERMAN) -o $@ $(MAC3_100)
-# OSD
-osd3_000.sm:	$(OSD3_000)
-	$(SUPERMAN) -o $@ $(OSD3_000)
-osd3_010.sm:	$(OSD3_010)
-	$(SUPERMAN) -o $@ $(OSD3_010)
-#
-fcl3_000.sm:	$(FCL_000)
-	$(SUPERMAN) -o $@ $(FCL3_000)
-fcl3_010.sm:	$(FCL_010)
-	$(SUPERMAN) -o $@ $(FCL3_010)
-# File definitions
-fil4_000.sm:	$(FIL4_000)
-	$(SUPERMAN) -o $@ $(FIL4_000)
-fil4_010.sm:	$(FIL4_010)
-	$(SUPERMAN) -o $@ $(FIL4_010)
-fil4_020.sm:	$(FIL4_020)
-	$(SUPERMAN) -o $@ $(FIL4_020)
-fil4_030.sm:	$(FIL4_030)
-	$(SUPERMAN) -o $@ $(FIL4_030)
-# Variables
-var5_000.sm:	$(VAR5_000)
-	$(SUPERMAN) -o $@ $(VAR5_000)
-var5_010.sm:	$(VAR5_010)
-	$(SUPERMAN) -o $@ $(VAR5_010)
-var5_020.sm:	$(VAR5_020)
-	$(SUPERMAN) -o $@ $(VAR5_020)
-var5_030.sm:	$(VAR5_030)
-	$(SUPERMAN) -o $@ $(VAR5_030)
-var5_040.sm:	$(VAR5_040)
-	$(SUPERMAN) -o $@ $(VAR5_040)
-var5_050.sm:	$(VAR5_050)
-	$(SUPERMAN) -o $@ $(VAR5_050)
-var5_060.sm:	$(VAR5_060)
-	$(SUPERMAN) -o $@ $(VAR5_060)
-var5_070.sm:	$(VAR5_070)
-	$(SUPERMAN) -o $@ $(VAR5_070)
-var5_080.sm:	$(VAR5_080)
-	$(SUPERMAN) -o $@ $(VAR5_080)
-var5_090.sm:	$(VAR5_090)
-	$(SUPERMAN) -o $@ $(VAR5_090)
-# Files
-fil8_000.sm:	$(FIL8_000)
-	$(SUPERMAN) -o $@ $(FIL8_000)
-# Types
-typ9_000.sm:	$(FIL9_000)
-	$(SUPERMAN) -o $@ $(TYP9_000)
-typ9_010.sm:	$(FIL9_010)
-	$(SUPERMAN) -o $@ $(TYP9_010)
-typ9_020.sm:	$(FIL9_020)
-	$(SUPERMAN) -o $@ $(TYP9_020)
-typ9_030.sm:	$(FIL9_030)
-	$(SUPERMAN) -o $@ $(TYP9_030)
-typ9_040.sm:	$(FIL9_040)
-	$(SUPERMAN) -o $@ $(TYP9_040)
-typ9_050.sm:	$(FIL9_050)
-	$(SUPERMAN) -o $@ $(TYP9_050)
-typ9_060.sm:	$(FIL9_060)
-	$(SUPERMAN) -o $@ $(TYP9_060)
-typ9_070.sm:	$(FIL9_070)
-	$(SUPERMAN) -o $@ $(TYP9_070)
-# Narratives
-nar2_000.sm:	$(NAR2_000)
-	$(SUPERMAN) -o $@ $(NAR2_000)
-nar2_010.sm:	$(NAR2_010)
-	$(SUPERMAN) -o $@ $(NAR2_010)
-# Superman file
-me.sm: $(TEMPSMS) $(TNIS) $(MAN1)
-	$(SUPERMAN) -o $@ $(TNIS) $(MAN1) $(TEMPSMS)
+# 
+#############################################################################
+# Superman file - sort the page sections into alphabetic order using nrorder. 
+MESMDEPEND=	$(CMD1_ALL) $(CMD2_All) $(NAR2_ALL) \
+		$(MOD2_ALL) $(MAC3_ALL) $(OSD3_ALL) \
+		$(FCL3_ALL) $(FIL4_ALL) $(VAR5_ALL) \
+		$(FIL8_ALL) $(TYP9_ALL)
+me.sm: $(TNIS) $(MESMDEPEND) faq.2
+	$(RM) nrorder.out
+	$(NRORDER) -o nrorder.out $(CMD1_ALL) 
+	$(NRORDER) -a -o nrorder.out $(CMD2_All)
+	$(NRORDER) -a -o nrorder.out $(MOD2_ALL) 
+	$(NRORDER) -a -o nrorder.out $(MAC3_ALL) 
+	$(NRORDER) -a -o nrorder.out $(OSD3_ALL)
+	$(NRORDER) -a -o nrorder.out $(FCL3_ALL) 
+	$(NRORDER) -a -o nrorder.out $(FIL4_ALL) 
+	$(NRORDER) -a -o nrorder.out $(VAR5_ALL) 
+	$(NRORDER) -a -o nrorder.out $(FIL8_ALL) 
+	$(NRORDER) -a -o nrorder.out $(TYP9_ALL) 
+	$(NRORDER) -a -o nrorder.out $(NAR2_ALL)
+	$(SUPERMAN) -o $@ $(TNIS) `cat nrorder.out` faq.2
+	$(RM) nrorder.out	
 clean::
 	$(RM) *.sm
+	$(RM) nrorder.out
 # Zip 8.3 HTML (.htm) archive
 $(MEHTMZIP): me.hts
 	$(RMDIR) htm
@@ -707,17 +622,17 @@ clean::
 	$(RM) me.rtf
 # Build lAtEx Help File.
 NR2TEX=nr2tex
-me.tex: me.0 me.sm me.lbn me.tni mehead.tex metail.tex logo.png 
+me.tex: me.0 me.sm me.lbn me.tni mehead.tex metail.tex logo.png
 	$(NR2TEX)  -E $(MANLOG)			\
 		   -c JASSPA			\
 		   -M me			\
 		   -H me			\
-		   -L. -lme 			\
+		   -L. -lme			\
 		   -o $@			\
 		   -v 1				\
 		   -a mehead.tex		\
 		   -A metail.tex		\
-		    me.0 me.sm 
+		    me.0 me.sm
 clean::
 	$(RM) me.tex
 # Build the PDF help file
