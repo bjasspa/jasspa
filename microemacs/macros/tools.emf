@@ -428,7 +428,7 @@ define-macro find-lfile
   !if $status
     set-variable #l0 &stat "a" &cat &lef $buffer-fname &rsin "/" $buffer-fname #l0
   !else
-    set-variable #l0 @ml01 "find-ufile"
+    set-variable #l0 @ml01 "find-lfile"
   !endif
   !force 2 find-buffer #l0
   !if $status
@@ -439,6 +439,9 @@ define-macro find-lfile
   beginning-of-buffer
   0 translate-buffer
 !emacs
+define-macro find-rfile
+  &bor @# 8 find-file @mna
+!emacro
 define-macro find-ufile
   !force set-variable #l0 @1
   !if $status

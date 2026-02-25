@@ -1,6 +1,5 @@
 #Requires -Version 5.1
 # Jasspa MicroEmacs install/update script - version <VERSION>
-
 param(
   [string]$package,
   [string]$notused1,
@@ -15,7 +14,7 @@ Set-StrictMode -Version Latest
 
 if($help -or $h) {
   $sn = $MyInvocation.MyCommand.Name
-  Write-Host "Usage: $sn [-h | --help] [ --prefix=<path> ] [ <package> ]"
+  Write-Host "Usage: $sn [-h | --help] [ --prefix <path> ] [ <package> ]"
   Write-Host "Where:"
   Write-Host "  <path>     Is the install location, defaulting to %ProgramFiles%"
   Write-Host "             or %APPDATA% depending on permissions."
@@ -82,7 +81,7 @@ function install_path_check([string]$bpath,[string]$pInd) {
           $rc = 2
         }
         elseif((Test-Path "$bpath\macros") -or (Test-Path "$bpath\bin")) {
-          $errmsg = "${pInd}Warning: Install path `"instpath`" was not created by this installer, continuing will overwrite existing installation."
+          $errmsg = "${pInd}Warning: Install path `"$bpath`" was not created by this installer, continuing will overwrite existing installation."
           $rc = 2
         }
       }
@@ -171,7 +170,7 @@ function install_package([string]$iext,[string]$pkg,[string]$ipth) {
 try {
   [string]$urss=""
   $urss = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/bjasspa/jasspa/refs/heads/main/microemacs/release_latest.txt" -UseBasicParsing
-  $ursa = $urss.Replace("`r`n","`n").Split([Environment]::NewLine)
+  $ursa = $urss.Replace("`r`n","`n").Split("`n")
   if($ursa[0] -match '^\d{8}$') {
     $mever = $ursa[0]
   }
