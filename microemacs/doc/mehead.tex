@@ -23,7 +23,7 @@
 % Bring in the CVS information.
 \def\CVS$#1: #2 ${\expandafter\def\csname CVS#1\endcsname{#2}}
 \CVS$Revision: 0.01 $ % or any CVS keyword
-\CVS$Date: <20260223.1235> $
+\CVS$Date: <20260226.1515> $
 
 \usepackage{ifthen}                     % Conditional processing.
 \newboolean{Colorlinks}
@@ -43,9 +43,10 @@
 \usepackage{longtable}                  % Long split table environment.
 \usepackage{graphicx}                   % Picture import package
 \usepackage{fancyhdr}                   % Use fancy headers
-\usepackage{color}                      % Colour
+\usepackage{color,xcolor}               % Colour
 \usepackage{relsize}                    % Relative font size package
 \usepackage{calc,ifthen}
+\usepackage{datetime}                   % Date and time
 % Define the standard indent that will be used in the document
 \newlength{\MANindent}
 \setlength{\MANindent}{.5in}
@@ -131,6 +132,7 @@
   pdfsubject={\docSubject},
   pdfcreator={TeXlive 2025},
   pdfkeywords={},
+  pdfpagelayout={SinglePage},
   linkcolor={\Linkcolor},
   citecolor={\Citecolor},
   urlcolor={\Urlcolor},
@@ -181,8 +183,7 @@
 \hyperlink{macroglossary}{[Macro-Dev]}%
 \hyperlink{glossary}{[Glossary]}%
 }}
-\fancyfoot[OL,ER]{{\small www.jasspa.com} \\
-                   \textit{\small{\docReference~~v\docVersion~~\docDate}}}
+\fancyfoot[OL,ER]{\textsf{\small{www.jasspa.com}}}
 \fancyfoot[EL,OR]{\textsf{\large \textbf{\thepage}}}
 \renewcommand{\headrulewidth}{1.5pt}
 \renewcommand{\footrulewidth}{1.5pt}
@@ -205,18 +206,28 @@
 % SHsection - A .SH section
 % SSsection - A .SS section
 \makeatletter
-\newcommand\THsection{\@startsection{section}{2}%
-{0pt}{-\baselineskip}{.2\baselineskip}%
-{\bfseries\Large\centering}}
-\newcommand\NHsection{\@startsection{section}{2}%
-{0pt}{-\baselineskip}{.2\baselineskip}%
-{\bfseries\Large\centering}}
+% Hide the THsection header, this does contribute name to the title header line
+\newcommand\THsection{\@startsection{section}{2}% name, level
+{0pt}{-\baselineskip}{.01\baselineskip}% indent, beforeskip, afterskip
+{\bfseries\tiny\color{white}}}% text attributes - render white to hide.
+%{0pt}{-\baselineskip}{.1\baselineskip}%
+%{\bfseries\Large\centering}}
+% Hide the NHsection header, this does contribute name to the title header line
+\newcommand\NHsection{\@startsection{section}{2}% name, level
+{0pt}{-\baselineskip}{.01\baselineskip}% indent, beforeskip, afterskip
+{\bfseries\tiny\color{white}}}% text attributes - render white to hide.
+%{0pt}{-\baselineskip}{.2\baselineskip}%
+%{\bfseries\Large\centering}}
 \newcommand\SHsection{\@startsection{subsection}{2}%
 {0pt}{-\baselineskip}{.2\baselineskip}%
 {\bfseries\raggedright}}
 \newcommand\SSsection{\@startsection{subsubsection}{2}%
 {0pt}{-\baselineskip}{.2\baselineskip}%
 {\bfseries\raggedright}}
+% FH closes a TH/NH and we output the details of the source file.
+\newcommand\FHsection{\@startsection{subsubsection}{2}%
+{0pt}{-\baselineskip}{.2\baselineskip}%
+{\tiny\raggedright}}
 \makeatother
 
 % Start of a new page, generate any cross references.
