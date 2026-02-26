@@ -12,7 +12,7 @@
  *  Author        : $Author: jon $
  *  Created By    : Jon Green
  *  Created       : Thu Mar 7 20:45:45 2002
- *  Last Modified : <260223.1810>
+ *  Last Modified : <260226.1453>
  *
  *  Description
  *
@@ -20,6 +20,7 @@
  *
  *  History
  *
+ *  1.1.0a JG 2026-02-26 Added FH output to close file.
  *  1.1.0  JG 2026-02-23 Simplified LaTeX output to reduce constructs.
  *                       Introduced header/trailer file to define LaTeX
  *  1.0.0a JG 2004-02-07 Ported to HP-UX
@@ -56,7 +57,7 @@
 
 #include "nroff.h"
 
-#define MODULE_VERSION  "1.1.0"
+#define MODULE_VERSION  "1.1.0a"
 #define MODULE_NAME     "nr2tex"
 
 #define FULL_INDENT 1                   /* Full indent distance. */
@@ -105,6 +106,7 @@ static char *latexPrefix = NULL;        /* The leader file to load to start
 static char *latexPostfix = NULL;       /* The trailer file to load to start
                                          * the tex output file */
 static char *fileLaTeXName = NULL;
+static char *manFilename = NULL;        /* The man file name */
 static char *logoName = "logo.png";     /* Default logo name */
 static FILE *fo;
 static FILE *fpr = NULL;
@@ -654,7 +656,31 @@ nrFH_func (void)
 {
     /* Close anything that was open and output comment to effect closing */
     setAll (NORMAL_MODE);
-    latexStr ("%% .FH");
+    latexStr ("\\FHsection*{");
+    latexStr("Ref: ");
+    if (sectionDesc != NULL)
+        latexFormatStr (sectionDesc);
+    else
+    {
+        latexFormatStr (sectionName);
+        if (sectionId != NULL)
+        {
+            latexStr("(");
+            latexFormatStr (sectionId);
+            latexStr(")");
+        }
+    }
+    if (manFilename != NULL)
+    {
+        latexStr(" File: ");
+        latexFormatStr (manFilename); 
+    }
+    if (sectionDate != NULL)
+    {
+        latexStr(" Date: ");   
+        latexFormatStr (sectionDate); 
+    }
+    latexStr("}%% .FH");
     latexEol ();
 }
 
@@ -1515,10 +1541,15 @@ nrStartInc (char *fname, int *imode)
 static void
 nrStart (char *fname, int flag)
 {
+    /* Free off the old name */
+    manFilename = bufFree (manFilename);
+    manFilename = bufNStr (NULL, fname);
+      
+    /* Echo inot TeX file */
     latexStr ("%% Start File: %s", fname);
     latexEol ();
-
-    /* Set up the conversion */
+    
+    /* Set up the conversion */ 
     /* Reset the modes for the new page */
     currmode = 0;
     prevmode = 0;
