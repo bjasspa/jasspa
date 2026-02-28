@@ -1,5 +1,6 @@
 #Requires -Version 5.1
 # Jasspa MicroEmacs install/update script - version <VERSION>
+# If running scripts is disabled run: powershell -ExecutionPolicy Bypass -File microemacs-install.ps1
 param(
   [string]$package,
   [string]$notused1,
@@ -33,7 +34,7 @@ if ($arch -eq 'ARM64') {
   $meplatful = 'windows100-arm64'
   $meplatpkg = 'windows_arm'
   $mevcruntm = 'arm64'
-} elseif ($arch -eq 'AMD64') {
+} elseif (($arch -eq 'AMD64') -or ($arch -eq 'x86')) {
   $meplatful = 'windows100-intel32'
   $meplatpkg = 'windows_intel'
   $mevcruntm = 'x86'
@@ -195,7 +196,7 @@ if($prefix -ne "") {
   if(($instpath -match "\\jasspa$") -or ($instpath -match "\\microemacs$") -or ($instpath -match "\\jasspa microemacs$") -or ($instpath -match "\\me$")) {
   }
   else {
-      $instpath = "$(instpath)\jasspa"
+      $instpath = "${instpath}\jasspa"
   }
   $rr = install_path_check $instpath ""
   if($rr.rc -eq 1) {

@@ -16,6 +16,13 @@ jobs:
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
     steps:
+      - name: Install dependencies
+        run: |
+           echo INSTALL: TexLive
+           sudo apt install -y texlive
+           sudo apt install -y texlive-latex-extra
+           which pdflatex
+           
       - name: Checkout code
         uses: actions/checkout@v4
        
@@ -28,6 +35,7 @@ jobs:
         run: |
           export PATH=`pwd`/nroff/bin/linux:$PATH
           cd ./microemacs/doc
+          make me.pdf
           make web_pages/me/index.html
 
       - name: Build package store
@@ -36,6 +44,7 @@ jobs:
           curl -fsSL -o packages.zip https://github.com/bjasspa/jasspa/releases/latest/download/Jasspa_MicroEmacs_Latest_packages.zip
           cd me
           unzip ../packages.zip -d .
+          mv ../../me.pdf .
 
       - name: Upload web-pages as artifact
         uses: actions/upload-pages-artifact@v3
