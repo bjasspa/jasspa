@@ -624,7 +624,7 @@ clean::
 	$(RM) me.rtf
 # Build lAtEx Help File.
 NR2TEX=nr2tex
-me.tex: me.0 me.sm me.lbn me.tni mehead.tex metail.tex logo.png
+me.tex: me.0 me.sm me.lbn me.tni mehead.tex metail.tex texlogo.png
 	$(NR2TEX)  -E $(MANLOG)			\
 		   -c JASSPA			\
 		   -M me			\

@@ -23,7 +23,7 @@
 % Bring in the CVS information.
 \def\CVS$#1: #2 ${\expandafter\def\csname CVS#1\endcsname{#2}}
 \CVS$Revision: 0.01 $ % or any CVS keyword
-\CVS$Date: <20260226.1515> $
+\CVS$Date: <20260228.1138> $
 
 \usepackage{ifthen}                     % Conditional processing.
 \newboolean{Colorlinks}
@@ -169,7 +169,7 @@
 \newsavebox\HeaderImage
 
 % Redefine the header and footer for an alternative style.
-\savebox\HeaderImage{\includegraphics[keepaspectratio,height=30pt]{logo.png}}
+\savebox\HeaderImage{\includegraphics[keepaspectratio,height=30pt]{texlogo.png}}
 \renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
 \fancyhf{}          % Delete the current header and footer
 \fancyhead[EL,OR]{\bfseries\rightmark \\ \bfseries\docTitle } 
