@@ -37,7 +37,7 @@ MISCTXT=	cygwin.txt	infolist.txt
 #
 # nrorder definition
 #
-NRORDER=	nrorder -s -c 
+NRORDER=	nrorder 
 #
 # LaTeX/PDF definitions
 #
@@ -462,19 +462,21 @@ MESMDEPEND=	$(CMD1_ALL) $(CMD2_All) $(NAR2_ALL) \
 		$(FIL8_ALL) $(TYP9_ALL)
 me.sm: $(TNIS) $(MESMDEPEND) faq.2
 	$(RM) nrorder.out
-	$(NRORDER) -o nrorder.out $(CMD1_ALL) 
-	$(NRORDER) -a -o nrorder.out $(CMD2_All)
-	$(NRORDER) -a -o nrorder.out $(MOD2_ALL) 
-	$(NRORDER) -a -o nrorder.out $(MAC3_ALL) 
-	$(NRORDER) -a -o nrorder.out $(OSD3_ALL)
-	$(NRORDER) -a -o nrorder.out $(FCL3_ALL) 
-	$(NRORDER) -a -o nrorder.out $(FIL4_ALL) 
-	$(NRORDER) -a -o nrorder.out $(VAR5_ALL) 
-	$(NRORDER) -a -o nrorder.out $(FIL8_ALL) 
-	$(NRORDER) -a -o nrorder.out $(TYP9_ALL) 
-	$(NRORDER) -a -o nrorder.out $(NAR2_ALL)
-	$(SUPERMAN) -o $@ $(TNIS) `cat nrorder.out` faq.2
+	$(NRORDER) -s -c -1 -o nrorder.out    $(CMD1_ALL) 
+	$(NRORDER) -s -c -1 -a -o nrorder.out $(CMD2_All)
+	$(NRORDER) -s -c -1 -a -o nrorder.out $(MOD2_ALL) 
+	$(NRORDER) -s -c -1 -a -o nrorder.out $(MAC3_ALL) 
+	$(NRORDER) -s -c -1 -a -o nrorder.out $(OSD3_ALL)
+	$(NRORDER) -s -c -1 -a -o nrorder.out $(FCL3_ALL) 
+	$(NRORDER) -s -c -1 -a -o nrorder.out $(FIL4_ALL) 
+	$(NRORDER) -s -c -1 -a -o nrorder.out $(VAR5_ALL) 
+	$(NRORDER) -s -c -1 -a -o nrorder.out $(FIL8_ALL) 
+	$(NRORDER) -s -c -1 -a -o nrorder.out $(TYP9_ALL) 
+	$(NRORDER) -s -c -1 -a -o nrorder.out $(NAR2_ALL)
+	$(NRORDER) -s -c -1 -a -o nrorder.out faq.2
+	$(SUPERMAN) -v 2 -i nrorder.out -o $@ 
 	$(RM) nrorder.out	
+#	$(SUPERMAN) -o $@ $(TNIS) `cat nrorder.out` faq.2
 clean::
 	$(RM) *.sm
 	$(RM) nrorder.out
