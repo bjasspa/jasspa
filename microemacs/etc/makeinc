@@ -21,3 +21,5 @@ include $(TOPDIR)/etc/makeinc.dir
 include $(TOPDIR)/etc/makeinc.$(UNAME)
 # Package definitions
 include $(TOPDIR)/etc/makeinc.pkg
+# Version definitions
+include $(TOPDIR)/etc/makeinc.evers
