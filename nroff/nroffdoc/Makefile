@@ -12,7 +12,7 @@
 #  Author        : $Author: jon $
 #  Created By    : Jon Green
 #  Created       : Sat Feb 7 16:08:59 2004
-#  Last Modified : <040207.1616>
+#  Last Modified : <260223.2031>
 #
 #  Description	
 #
@@ -55,6 +55,7 @@ HTS	=	$(INSTBINDIR)/hts
 #____________________________________________________________________________
 #
 HTSS	=	manrun.hts
+PDFS	=	manrun.pdf
 HLPS	=	manrun.rtf
 SMSS	=	manrun.sm
 LIBS	=	manrun.lbn
@@ -82,8 +83,60 @@ TEX1	=	$(MAN1:.1=.tex)
 TEX4	=	$(MAN1:.4=.tex)
 TEX7	=	$(MAN1:.7=.tex)
 
-all:: $(HLPS) $(HTSS)
+#
+# LaTeX/PDF definitions
+#
+BIBTEX= bibtex
+PDFLATEX= pdflatex
+THUMBPDF= thumbpdf
+.SUFFIXES: .pdf .tex
+.tex.pdf:
+	- $(RM) $*.aux
+	- $(RM) $*.log
+	- $(RM) $*.lot
+	- $(RM) $*.out
+	- $(RM) $*.pdg
+	- $(RM) $*.doc
+	- $(RM) $*.blg
+	- $(RM) $*.bbl
+	- $(PDFLATEX) $<
+	- $(BIBTEX)   $*
+	- $(PDFLATEX) $<
+	- $(PDFLATEX) $<
+	- $(THUMBPDF) $*
+	- $(PDFLATEX) $<
+	- $(RM) $*.aux
+	- $(RM) $*.lot
+	- $(RM) $*.out
+	- $(RM) $*.pdg
+	- $(RM) $*.doc
+	- $(RM) thumb???.png
+	- $(RM) $*.out
+	- $(RM) $*.doc
+	- $(RM) $*.tpt
+	- $(RM) $*.blg
+	- $(RM) $*.bbl
+	- $(RM) thumbpdf.log
+	- $(RM) thumbpdf.pdf
+
+all:: $(HLPS) $(HTSS) $(PDFS)
 install:: all
+
+clean::
+	$(RM) $*.aux
+	$(RM) $*.lot
+	$(RM) $*.out
+	$(RM) $*.pdg
+	$(RM) $*.doc
+	$(RM) thumb???.png
+	$(RM) $*.out
+	$(RM) $*.doc
+	$(RM) $*.tpt
+	$(RM) $*.blg
+	$(RM) $*.bbl
+	$(RM) thumbpdf.log
+	$(RM) thumbpdf.pdf
+
 #____________________________________________________________________________
 #
 # Define the local build rules
@@ -91,8 +144,8 @@ install:: all
 #
 # Build the local index page.
 #
-manrun.1:: manrun.sm manrun.1s
-	$(NRSEARCH) -o $@ -n manrun.1s manrun.sm
+manrun.1:: manrun.sm manrun.nrs
+	$(NRSEARCH) -o $@ -n manrun.nrs manrun.sm
 manrun.lbn: manrun.sm manrun.1
 	$(NRAR) -M manrun manrun.1 manrun.sm
 clean::
@@ -122,11 +175,15 @@ manrun.rtf: manrun.sm manrun.1 manrun.lbn forward.lbn
 		  -thome:manrun \
 		  -tbuild:build \
 		  manrun.sm manrun.1
-$(TEX1):	  manrun.sm manrun.1 manrun.lbn forward.lbn
-	$(NR2TEX) -x -M manrun \
+manrun.tex:	  manrun.sm manrun.1 manrun.lbn forward.lbn manhead.tex mantail.tex
+	$(NR2TEX) -M manrun \
 		  -c JASSPA \
 		  -L. -lmanrun -lforward \
-		  manrun.sm manrun.1
+		  -o $@			 \
+		  -v 1			 \
+		  -a manhead.tex	 \
+		  -A mantail.tex	 \
+		  manrun.1 manrun.sm 
 #
 # Build the postscript print job ordering files.
 #

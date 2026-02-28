@@ -46,8 +46,6 @@ Super HTML files
 preparing  the manual pages for release in their  required  formats. The pages
 are  constructed in the UNIX  environment; a summary of the  conversions  that
 take place are defined as follows:-
-.RS
-.na
 .PP
 .ne 5
 .B "catman files (Man/Xman)"
@@ -107,8 +105,6 @@ Generated in DOS world.
 .BU
 Only released in the UNIX domain.
 .BE 0
-.RE
-.ad
 .SS sm2catman.nawk
 The
 .B sm2catman
@@ -133,9 +129,7 @@ into a platform specific tar file and compressed for release.
 .PP
 The \fIcatman\fR requirements for file naming and compression are different on
 each platform, they are defined as follows:
-.RS
 .PP
-.na
 .B "HP-UX"
 .BS
 Compressed using
@@ -162,8 +156,6 @@ File extension is \fI<manPageName>\fR.\fI<sectionNumber>\fR.
 .BU
 Reside in directory "cat\fI<sectionNumber>\fR"
 .BE
-.ad
-.RE
 The target catman file name is determined  from the options as follows,  items
 shown as \fB<bold>\fR are option derived; items in  \fI<italic>\fR  are script
 derived:
@@ -208,10 +200,8 @@ using the  \fB\-M\fR  option. If the  \fItmac.ad\fR  file is  installed in the
 specifies  the name of the output file that is generated  is a compressed  tar
 file image of the resultant  \fIcatman\fR  directory. If the option is omitted
 then a default name is generated in the form of:-
-.RS
 .IP
 \fI<baseName>\fR.catman.tar.Z
-.RE
 .IP
 Where  \fI<baseName>\fR is the name of the input \fC.sm\fR file, excluding the
 file extension.
@@ -306,11 +296,9 @@ The
 .Hr make 1
 rules for a number of different targets are defined as follows:-
 .PP
-.RS
 .ne 8
 \fIname\fR.irix.catman.tar.Z: \fIname\fR.sm sm2catman.nawk tmac.ad
 .br
-.RS
 .nf
 $(NAWK) -f sm2catman.nawk \e
 -v compressor=pack \e
@@ -320,12 +308,10 @@ $(NAWK) -f sm2catman.nawk \e
 -v nroffpath=. \e
 \fIname\fR.sm
 .fi
-.RE
 .PP
 .ne 7
 \fIname\fR.s42.catman.tar.Z: \fIname\fR.sm sm2catman.nawk tmac.ad
 .br
-.RS
 .nf
 $(NAWK) -f sm2catman.nawk \e
 -v suffix1=SN \e
@@ -334,12 +320,10 @@ $(NAWK) -f sm2catman.nawk \e
 -v nroffpath=. \e
 \fIname\fR.sm
 .fi
-.RE
 .PP
 .ne 8
 \fIname\fR.hpux.catman.tar.Z: \fIname\fR.sm sm2catman.nawk tmac.ad
 .br
-.RS
 .nf
 $(NAWK) -f sm2catman.nawk \e
 -v suffix1=SN \e
@@ -350,20 +334,16 @@ $(NAWK) -f sm2catman.nawk \e
 -v nroffpath=. \e
 \fIname\fR.sm
 .fi
-.RE
-.RE
 .ne 12
 .SS sm2ps.nawk
 The
 .Hr make 1
 rules for the postscript files are defined as:
 .PP
-.RS
 \fIname\fR.idx.ps.Z \
 .br
 \fIname\fR.man.ps.Z: \fIname\fR.sm \fIname\fR.pso \e
 .br
-.RS
 .nf
 sm2ps.nawk tmac.ad
 $(NAWK) -f sm2ps.nawk \e
@@ -374,24 +354,18 @@ $(NAWK) -f sm2ps.nawk \e
 -v psoname=\fIname\fR.pso \e
 \fIname\fR.sm
 .fi
-.RE
-.RE
 .SS hts2html.nawk
 The
 .Hr make 1
 rules for the html files are defined as:
 .PP
-.RS
 \fIname\fR.html.tar.Z: \fIname\fR.hts hts2html.nawk
 .br
-.RS
 .nf
 $(NAWK) -f hts2html.nawk \e
 -v tmpdir=$(TEMP) \e
 \fIname\fR.hts
 .fi
-.RE
-.RE
 .SH "SEE ALSO"
 .na
 .Hr groff 1 ,

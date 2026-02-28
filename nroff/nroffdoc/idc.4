@@ -5,10 +5,7 @@
 .SH NAME
 idc \- Information Database Compiler File Format.
 .SH SYNOPSIS
-.sp 1
 .na
-.ps 8
-.vs 10
 #: Comment to the end of the line.
 .sp 1
 .Hl "<Global Definitions>" idcGlobal 4
@@ -30,9 +27,6 @@ idc \- Information Database Compiler File Format.
 See
 .Hl "Formatted Text Description" idcFormat 4
 for a description of the free format text fields.
-.br
-.vs 12
-.ps 10
 .ad
 .SH DESCRIPTION
 The  \fIInformation  Database  Compiler\fR  file format is an ASCII based file
@@ -94,17 +88,14 @@ Jon Green
 Production-1.1
 .br
 .B "Summary:"
-.br
 .RS
 Driver does not initialise properly.
 .RE
 .sp 1
 .B "Description:"
-.br
 .RS
 The Driver ....
 .RE
-.br
 .B End:
 .LP
 The
@@ -198,10 +189,8 @@ The fault reports and suggestions arising from the system.
 .Ht hts 4 .
 .ad
 .NH idcGlobal 4 "idc(4) - Global Definitions"
+.XI idcGlobal - -
 .SH "GLOBAL DEFINITIONS"
-.sp
-.ps 8
-.vs 10
 .na
 \fBName:\fR \fI<name>\fR\fC[\fR|\fI<alias>\fC]*\fR
 .br
@@ -209,8 +198,6 @@ The fault reports and suggestions arising from the system.
 .br
 \fBEnd:\fR
 .ad
-.ps 10
-.vs 12
 .PP
 The global  definitions  define the  context  for the other  pages in terms of
 modules and engineer names. The definitions are defined as follows:
@@ -241,6 +228,7 @@ aliases are used for short-hand data entry.
 .IP \fBEnd:\fR
 Denotes the end of the definitions section.
 .NH idcREL 4 "idc(4) - Release Definitions"
+.XI idcREL - -
 .SH "RELEASE DEFINITIONS"
 The release  section  (\fBrel\fR)  lists the releases of the product that have
 been made,  either  internally  or  externally.  The  release is named and the
@@ -253,8 +241,6 @@ release.
 The format of the \fBRelease Definition\fR is defined as follows:
 .PP
 .RS
-.ps 8
-.vs 10
 \fBRelease No:\fR \fI<identity>\fR
 .br
 \fBDate:\fR \fI<Date>\fR
@@ -264,18 +250,14 @@ The format of the \fBRelease Definition\fR is defined as follows:
 \fBState:\fR \fC[\fRfull\fC|\fRspecified\fC|\fRpatched\fC]\fR
 .sp 1
 \fBDescription:\fR
-.br
 .RS
 .Hl "<Formatted Text Description>" idcFormat 4
-.sp 1
 .RE
 \fBSee Also:\fR \fIitem\fB(\fI<Id Number>\fB)\fR
 \fC[\fR, \fIitem\fB(\fI<Id Number>\fB)\fR\fC]\fR.
 .br
 \fBEnd:\fR
 .RE
-.vs 12
-.ps 10
 .PP
 The fields are defined as follows:
 .IP "\fBRelease No:\fR \fI<identity>\fR"
@@ -477,6 +459,7 @@ scheduled.  The bugs showing in this release are  propagations  of faults from
 previous  releases and new development  problems (i.e. bugs that do not appear
 in the product but do currently exist in the development environment).
 .NH idcINF 4 "idc(4) - Information Definitions"
+.XI idcINF - -
 .SH "INFORMATION DEFINITIONS"
 The  information   section   (\fBinf\fR)  is  provided  for  general  purpose,
 non-technical  information; typically used to hold the format of the IDC pages
@@ -485,22 +468,16 @@ practices. The format for the information section is limited and is defined as
 follows:
 .PP
 .RS
-.ps 8
-.vs 10
 \fBInfo No:\fR  \fI<identity>\fR
 .br
 \fBSummary:\fR \fI<Text Line>\fR
 .sp 1
 \fBDescription:\fR
-.br
 .RS
 .Hl "<Formatted Text Description>" idcFormat 4
-.br
 .RE
 \fBEnd:\fR
 .RE
-.vs 12
-.ps 10
 .PP
 The information fields are defined as follows:
 .IP "\fBInfo No:\fR \fI<identity>\fR"
@@ -537,6 +514,7 @@ interpreted as a command.
 See
 .Hl "Formatted Text Description" idcFormat 4
 .NH idcTEK 4 "idc(4) - Technical Notes Definitions"
+.XI idcTEK - -
 .SH "TECHNICAL NOTES DEFINITIONS"
 The Technical Notes (\fBtek\fR)  definition  provides a repository for lengthy
 reports on the product. This might include an in depth technical discussion on
@@ -546,10 +524,7 @@ reports, and answers to specific questions are made in the
 reports. The  technical  notes are  generally  detailed  explanations  of new
 features that are not covered in the manuals. The general  syntax of the field
 is defined as follows:
-.sp
 .RS
-.ps 8
-.vs 10
 .na
 \fBTechNote No:\fR \fI<identity>\fR
 .br
@@ -562,24 +537,17 @@ is defined as follows:
 \fBSummary:\fR \fI<Text>\fR
 .br
 \fBDescription:\fR
-.br
 .RS
 .Hl "<Formatted Text Description>" idcFormat 4
 .RE
-.sp 1
-.br
 \fC[\fBNotes:\fR
-.br
 .RS
 .Hl "<Formatted Text Description>" idcFormat 4
 .RE
-.br
 \fC]\fR
 .sp 1
 \fBSee Also:\fR \fIitem\fB(\fI<Id Number>\fB)\fR
 \fC[\fR, \fIitem\fB(\fI<Id Number>\fB)\fR\fC]\fR.
-.vs 12
-.ps 10
 .ad
 .RE
 .PP
@@ -680,6 +648,7 @@ Terminates the page. Typically only used at the end of a file, technical notes
 are automatically  terminated when the next "\fBTechNote  No:\fR" statement is
 encountered.
 .NH idcFAQ 4 "idc(4) - Frequently Asked Questions"
+.XI idcFAQ - -
 .SH "FREQUENTLY ASKED QUESTIONS"
 The Frequently Asked  Questions (FAQ) is  used to keep  track of questions
 asked  internally and by customers  alike. The frequently  asked  questions are
@@ -690,10 +659,7 @@ Sorted alphabetically by the \fBQuestion:\fR text.
 Sorted numerically by \fBFaq No:\fR.
 .BE
 The default is the alphabetical search. The format of the entry is defined as:-
-.sp
 .RS
-.ps 8
-.vs 10
 .na
 \fBFaq No:\fR \fI<identity>\fR
 .br
@@ -706,23 +672,17 @@ The default is the alphabetical search. The format of the entry is defined as:-
 \fBQuestion:\fR \fI<Text>\fR
 .br
 \fBAnswer:\fR
-.br
 .RS
 .Hl "<Formatted Text Description>" idcFormat 4
-.sp 1
 .RE
 \fC[\fBNotes:\fR
-.br
 .RS
 .Hl "<Formatted Text Description>" idcFormat 4
 .RE
-.br
 \fC]\fR
 .sp 1
 \fBSee Also:\fR \fIitem\fB(\fI<Id Number>\fB)\fR
 \fC[\fR, \fIitem\fB(\fI<Id Number>\fB)\fR\fC]\fR.
-.vs 12
-.ps 10
 .ad
 .RE
 .PP
@@ -848,6 +808,7 @@ End:
 .CE 0
 .\"
 .NH idcNEW 4 "idc(4) - News Definitions"
+.XI idcNEW - -
 .SH "NEWS DEFINITIONS"
 News  items  related  to the  product  that  might be of  interest.  These are
 generally technical snippets of information to keep the engineers abreast
@@ -856,10 +817,7 @@ postings by development on the state of the product etc.
 .PP
 The news items are  displayed  in a menu with the news  number and the summary
 information. The report is defined as follows:
-.sp
 .RS
-.ps 8
-.vs 10
 .na
 \fBNews No:\fR \fI<identity>\fR
 .br
@@ -870,28 +828,20 @@ information. The report is defined as follows:
 \fC[\fBRelease:\fR \fI<Release Name>\fC]\fR
 .br
 \fBSummary:\fR \fI<Text>\fR
-.br
-.sp 1
 .ne 2
 \fBDescription:\fR
-.br
 .RS
 .Hl "<Formatted Text Description>" idcFormat 4
-.sp 1
 .ne 3
 .RE
 \fC[\fBNotes:\fR
-.br
 .RS
 .Hl "<Formatted Text Description>" idcFormat 4
 .RE
-.br
 \fC]\fR
 .sp 1
 \fBSee Also:\fR \fIitem\fB(\fI<Id Number>\fB)\fR
 \fC[\fR, \fIitem\fB(\fI<Id Number>\fB)\fR\fC]\fR.
-.vs 12
-.ps 10
 .ad
 .RE
 .PP
@@ -980,6 +930,7 @@ Terminates  the page.  Typically  only used at the end of a file, news reports
 are  automatically  terminated  when the next "\fBNews\  No:\fR"  statement is
 encountered.
 .NH idcPAT 4 "idc(4) - Patch Definitions"
+.XI idcPAT - -
 .SH "PATCH DEFINITIONS"
 The Patch data entry  identifies  a patch to a released  product  that is made
 available to fix a number of problems. A patch is subtly different from a
@@ -990,10 +941,7 @@ without the base release.
 The  resultant  output from the patch  report is a list of patches  indexed by
 patch number showing the  \fISummary\fR  line of the report. The format of the
 patch entries are defined as:-
-.sp
 .RS
-.ps 8
-.vs 10
 .na
 \fBPatch No:\fR \fI<identity>\fR
 .br
@@ -1007,40 +955,30 @@ patch entries are defined as:-
 .br
 .ne 2
 \fBAffecting:\fR
-.br
 .RS
 .Hl "<Formatted Text Description>" idcFormat 4
-.sp 1
 .RE
 .ne 3
 \fC[\fBWorkaround:\fR
-.br
 .RS
 .Hl "<Formatted Text Description>" idcFormat 4
 .RE
-.br
 \fC]\fR
 .sp 1
 .ne 2
 \fBDescription:\fR
-.br
 .RS
 .Hl "<Formatted Text Description>" idcFormat 4
-.sp 1
 .ne 3
 .RE
 \fC[\fBNotes:\fR
-.br
 .RS
 .Hl "<Formatted Text Description>" idcFormat 4
 .RE
-.br
 \fC]\fR
 .sp 1
 \fBSee Also:\fR \fIitem\fB(\fI<Id Number>\fB)\fR
 \fC[\fR, \fIitem\fB(\fI<Id Number>\fB)\fR\fC]\fR.
-.vs 12
-.ps 10
 .ad
 .RE
 .PP
@@ -1139,6 +1077,7 @@ Terminates the page. Typically only used at the end of a file, patch reports are
 automatically  terminated  when  the next  "\fBPatch No:\fR"  statement  is
 encountered.
 .NH idcBUG 4 "idc(4) - Bug Definitions"
+.XI idcBUG - -
 .SH "BUG DEFINITIONS"
 The bugs data entry format for
 .Ht idc 1
@@ -1175,8 +1114,6 @@ in \fBbold\fR are "Open", \fIitalic\fR are rejected and regular text items are
 The general syntax is defined as follows:-
 .PP
 .RS
-.ps 8
-.vs 10
 \fBBug Number:\fR \fI<identity>\fR
 .br
 \fBLocal Id:\fR \fI<identity>\fR
@@ -1206,23 +1143,17 @@ The general syntax is defined as follows:-
 \fBSystem Spec:\fR \fI<Text Description>\fR
 .sp 1
 \fBDescription:\fR
-.br
 .RS
 .Hl "<Formatted Text Description>" idcFormat 4
 .RE
-.sp 1
 \fBWorkaround:\fR
-.br
 .RS
 .Hl "<Formatted Text Description>" idcFormat 4
 .RE
-.sp 1
 \fC[\fBNotes:\fR
-.br
 .RS
 .Hl "<Formatted Text Description>" idcFormat 4
 .RE
-.br
 \fC]\fR
 .sp 1
 \fBSuspend By:\fR \fI<Name>\fR
@@ -1230,11 +1161,9 @@ The general syntax is defined as follows:-
 \fBSuspend Date:\fR \fI<dd/mm/yy>\fR
 .br
 \fBSuspend Desc:\fR
-.br
 .RS
 .Hl "Formatted Text Description" idcFormat 4
 .RE
-.sp 1
 \fC[\fBPatch:\fR \fI<Patch No>\fC]\fR
 .br
 \fBFix By:\fR \fI<Name>\fR
@@ -1242,16 +1171,12 @@ The general syntax is defined as follows:-
 \fBFix Date:\fR \fI<dd/mm/yy>\fR
 .br
 \fBFix Desc:\fR
-.br
 .RS
 .Hl "<Formatted Text Description>" idcFormat 4
-.sp 1
 .RE
 \fBSee Also:\fR \fIitem\fB(\fI<Id Number>\fB)\fR
 \fC[\fR, \fIitem\fB(\fI<Id Number>\fB)\fR\fC]\fR.
 .RE
-.vs 12
-.ps 10
 .PP
 The bug report  fields are defined as follows; note that some of the allowable
 fields of the bug report form are missing, these are generally added after the
@@ -1587,6 +1512,7 @@ Fix Date:
 Fix Desc:
 .CE 0
 .NH idcFormat 4 "idc(4) - Formatted Text Description"
+.XI idcFormat - -
 .SH "FORMATTED TEXT DESCRIPTION"
 The  free  form  text  entries  allow  a  limited  capability  to  format  the
 presentation of the text. The input language to \fBidc\fR is very crude and is
@@ -1853,8 +1779,6 @@ The general syntax is defined as:-
 .RS
 .na
 .nf
-.ps 8
-.vs 10
 \fBb:\fR \fI<text>\fR
 \fBi:\fR \fI<text>\fR
 \fBc:\fR \fI<text>\fR
@@ -1865,8 +1789,6 @@ The general syntax is defined as:-
 \fBhttp:\fR \fI<http address>\fR \fC[\fI<label text>\fC]\fR
 .fi
 .ad
-.vs 12
-.ps 10
 .RE
 .PP
 The  font  specifiers   \fBb:\fR,   \fBi:\fR  and  \fBc:\fR  change  the  font
@@ -1884,7 +1806,6 @@ The field specifiers may be used in the following fields only, their effect is
 defined as follows:
 .PP
 \fBRegular Paragraph\fR
-.br
 .RS
 There are three cases as follows, in each case the bold \fBb:\fR  attribute is
 used, but the same applies for any of the font change attributes:-
@@ -1896,9 +1817,7 @@ used, but the same applies for any of the font change attributes:-
 .C text
 .fi
 .RE
-.sp
 Output:
-.br
 .RS
 text \fBBold Text\fR text
 .RE
@@ -1911,9 +1830,7 @@ text \fBBold Text\fR text
 .C "text"
 .fi
 .RE
-.sp
 Output:
-.br
 .RS
 .nf
 text
@@ -1930,9 +1847,7 @@ text
 .C "text"
 .fi
 .RE
-.sp
 Output:
-.br
 .RS
 .nf
 text \fBBold Text\fR
@@ -1950,9 +1865,7 @@ text
 .C text
 .fi
 .RE
-.sp
 Output:
-.br
 .RS
 .nf
 text
