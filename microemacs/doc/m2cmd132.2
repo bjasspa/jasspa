@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd132.2,v 2.7 2022/06/12 17:13:25 jon Exp $
+.Id $Id: m2cmd132.2,v 2.7 2026/02/28 12:59:34 jon Exp $
 .Im MicroEmacs command|hilight
 .so me.tni
 .TH show-region 2
@@ -45,24 +45,27 @@ also creates a hilight region around the current spell word. The user can also
 define their own region using the numeric argument to \fBshow-region\fR.
 .PP
 The  argument   \fIn\fR   supplied  to  the  command   indicates   the  require
-functionality and can take the following values:-
-.sp
-.RS
-.nf
+functionality and can take the following values:
+.IP
 \fC-3\fR \- Set the start position of the region.
+.br
 \fC-2\fR \- Move the cursor the  Mark position.
+.br
 \fC-1\fR \- Disable the hilighting of the current region.
-\fC 0\fR \- Return the current status of the region in
+.br
+\fC\ 0\fR \- Return the current status of the region in
 .Ht $result 5 .
-\fC 1\fR \- Enable the hilighting of the current region.
-\fC 2\fR \- Move the cursor the  Dot position.
-\fC 3\fR \- Set the end position of the region.
-\fC 4\fR \- Reactivate the current region.
-.fi
-.RE
-.PP
+.br
+\fC\ 1\fR \- Enable the hilighting of the current region.
+.br
+\fC\ 2\fR \- Move the cursor the  Dot position.
+.br
+\fC\ 3\fR \- Set the end position of the region.
+.br
+\fC\ 4\fR \- Reactivate the current region.
+.LP
 Where an  argument  of 0 is used to  return  the  current  state  the value of
-$result is a bit based flag where:-
+$result is a bit based flag where:
 .IP \fB0x01\fR
 Indicates a region is currently active (visible).
 .IP \fB0x02\fR
