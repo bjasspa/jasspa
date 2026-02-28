@@ -1,0 +1,240 @@
+%%-*- tex; tabsize:2; -*- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Copyright (C) 2026 Jon Green.
+%
+% All rights reserved.
+%
+% Synopsis:    Man page to LaTeX conversion information
+% Authors:     Jon Green
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Copyright (c) 2012-2026 Jon Green.
+%
+% All Rights Reserved.
+%
+% This  document  may  not, in  whole  or in  part, be  copied,  photocopied,
+% reproduced,  translated,  or  reduced to any  electronic  medium or machine
+% readable form without prior written consent from Jon Green.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\documentclass[11pt,a4paper,pdftex]{article}
+% Bring in the CVS information.
+\def\CVS$#1: #2 ${\expandafter\def\csname CVS#1\endcsname{#2}}
+\CVS$Revision: 0.01 $ % or any CVS keyword
+\CVS$Date: <20260228.1032> $
+
+\usepackage{ifthen}                     % Conditional processing.
+\newboolean{Colorlinks}
+\setboolean{Colorlinks}{true}           % For colored links
+
+% Document information
+\newcommand{\docAuthor}{Jon Green}
+\newcommand{\docSubject}{Man tools}
+\newcommand{\docTitle}{Man tools}
+\newcommand{\docDate}{\CVSDate}
+\newcommand{\docVersion}{\CVSRevision}
+\newcommand{\docReference}{me}
+% Import the packages.
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{pslatex}
+\usepackage{longtable}                  % Long split table environment.
+\usepackage{graphicx}                   % Picture import package
+\usepackage{fancyhdr}                   % Use fancy headers
+\usepackage{color,xcolor}               % Colour
+\usepackage{relsize}                    % Relative font size package
+\usepackage{calc,ifthen}
+\usepackage{datetime}                   % Date and time
+% Define the standard indent that will be used in the document
+\newlength{\MANindent}
+\setlength{\MANindent}{.5in}
+% 
+% List structure for man page .IP/.TP/.BU/.RS constructs.
+% We use a modified form of the generic list environment
+% such that if the label is longer then the indent then the
+% associated text is on the next line i.e.
+%
+% Longer Description:
+%         Text for the longer description follows
+%         on the next line.
+%
+% Short:  Text for the shorter description continues
+%         on the same line after being indented.
+%         
+% How?    Conditionally compare the string length with the indent
+%         and force a new line if the text is longer than the indent.   
+%
+\newlength{\Mylen}
+\newenvironment{Description}
+{\begin{list}{}%
+{\let\makelabel\Descriptionlabel%
+\setlength\labelwidth{\MANindent}%
+\setlength\leftmargin{\labelwidth+\labelsep}}}
+{\end{list}}
+\newcommand*\Descriptionlabel[1]{%
+\settowidth\Mylen{#1}% Determine width
+\ifthenelse{\lengthtest{\Mylen > \labelwidth}}%
+{\parbox[b]{\labelwidth}% term > labelwidth 
+{\makebox[0pt][l]{#1}\\\mbox{}}}%
+{#1}% term <= labelwidth
+\hfill}
+%
+% FONTS: The document is typeset in the following fonts:
+% roman:      Times-Roman
+% sans serif: Helvetica (scaled at .92)
+% typewriter: Courier
+\usepackage{courier}
+\usepackage[scaled=0.92]{helvet}
+\usepackage{charter}
+\renewcommand{\rmdefault}{ptm}  % Roman font is Times-Roman
+\renewcommand{\sfdefault}{phv}  % Sans serif font is helvetica
+\renewcommand{\ttdefault}{pcr}  % Typewriter font is courier
+% Detect, if we are using pdftex to create pdf output. The following
+% code should better be in a LaTeX package...
+\makeatletter
+\newif\ifpdfoutput
+\@ifundefined{pdfoutput}%
+  {\let\pdfoutput\@undefined}%
+  {\ifcase\pdfoutput
+     \let\pdfoutput\@undefined
+   \else
+     \pdfoutputtrue
+   \fi
+}%
+\makeatother
+
+\usepackage{geometry,mflogo,xspace,path,bm}
+\newcommand{\psext}{ps}
+\newcommand{\pdfext}{pdf}
+\newcommand{\dviext}{dvi}
+
+% Set up the default link colour
+\ifthenelse{\boolean{Colorlinks}}
+{%
+  \newcommand{\Linkcolor}{blue}
+  \newcommand{\Citecolor}{red}
+  \newcommand{\Urlcolor}{blue}
+}
+{%
+  \newcommand{\Linkcolor}{black}
+  \newcommand{\Citecolor}{black}
+  \newcommand{\Urlcolor}{black}
+}
+
+\ifpdfoutput
+\pdfcompresslevel9
+\usepackage[colorlinks,bookmarks]{hyperref}
+\hypersetup{
+  pdfauthor={\docAuthor},
+  pdftitle={\docTitle},
+  pdfsubject={\docSubject},
+  pdfcreator={TeXlive 2025},
+  pdfkeywords={},
+  pdfpagelayout={SinglePage},
+  linkcolor={\Linkcolor},
+  citecolor={\Citecolor},
+  urlcolor={\Urlcolor},
+  bookmarksnumbered=true,
+  bookmarksopen=false,
+  bookmarksopenlevel=2
+}
+\pdfadjustspacing=1                %%% force LaTeX-like character spacing
+\usepackage{thumbpdf}
+  \let\docext=\pdftext
+\else
+  \let\docext=\dviext
+  \usepackage[bookmarks]{hyperref}
+\fi
+
+% Listings package
+\usepackage{listings}
+% Change the page width
+\setlength{\marginparsep}{0pt}
+\setlength{\marginparwidth}{0pt}
+\addtolength{\textwidth}{.75in}
+\addtolength{\hoffset}{-.25in}
+
+\pagestyle{fancy}
+% Set up the page.
+% There is 1 inch at the top, reduce this to 0.4 inch.
+\addtolength{\voffset}{-.6in}
+\addtolength{\textheight}{.6in}
+% We are adding a 1/2 inch graphic adjust the page sizes.
+\setlength{\headheight}{.5in}
+% Push page length to the bottom.
+\addtolength{\textheight}{.5in}
+%% Save the header image in a box
+\newsavebox\HeaderImage
+
+% Redefine the header and footer for an alternative style.
+\savebox\HeaderImage{\includegraphics[keepaspectratio,height=30pt]{logo.png}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+\fancyhf{}          % Delete the current header and footer
+\fancyhead[EL,OR]{\bfseries\rightmark \\ \bfseries\docTitle } 
+\fancyhead[LO,RE]{%
+\usebox{\HeaderImage}
+% Include hyperlinks to main sections
+\small{%
+\hyperlink{me}{[Home]}%
+\hyperlink{commandglossary}{[Commands]}%
+\hyperlink{variableglossary}{[Variables]}%
+\hyperlink{macroglossary}{[Macro-Dev]}%
+\hyperlink{glossary}{[Glossary]}%
+}}
+\fancyfoot[OL,ER]{\textsf{\small{www.jasspa.com}}}
+\fancyfoot[EL,OR]{\textsf{\large \textbf{\thepage}}}
+\renewcommand{\headrulewidth}{1.5pt}
+\renewcommand{\footrulewidth}{1.5pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  Document body                                                            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\pagenumbering{roman}           %%% Roman page numbers for ToC
+\lstset{backgroundcolor=\color[rgb]{0.95,0.95,0.95}, commentstyle=\itshape\color[rgb]{0.0,0.6,0.0}, basicstyle=\ttfamily\footnotesize}
+
+\pagestyle{fancy}
+% Change the format of the document to European paragraph spacing.
+\setlength{\parindent}{0pt}
+%\setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
+\setlength{\parskip}{0.5ex}
+
+% Define the section styles 
+% THsection - The start of a man page
+% SHsection - A .SH section
+% SSsection - A .SS section
+\makeatletter
+% Hide the THsection header, this does contribute name to the title header line
+\newcommand\THsection{\@startsection{section}{2}% name, level
+{0pt}{-\baselineskip}{.01\baselineskip}% indent, beforeskip, afterskip
+{\bfseries\tiny\color{white}}}% text attributes - render white to hide.
+%{0pt}{-\baselineskip}{.1\baselineskip}%
+%{\bfseries\Large\centering}}
+% Hide the NHsection header, this does contribute name to the title header line
+\newcommand\NHsection{\@startsection{section}{2}% name, level
+{0pt}{-\baselineskip}{.01\baselineskip}% indent, beforeskip, afterskip
+{\bfseries\tiny\color{white}}}% text attributes - render white to hide.
+%{0pt}{-\baselineskip}{.2\baselineskip}%
+%{\bfseries\Large\centering}}
+\newcommand\SHsection{\@startsection{subsection}{2}%
+{0pt}{-\baselineskip}{.2\baselineskip}%
+{\bfseries\raggedright}}
+\newcommand\SSsection{\@startsection{subsubsection}{2}%
+{0pt}{-\baselineskip}{.2\baselineskip}%
+{\bfseries\raggedright}}
+% FH closes a TH/NH and we output the details of the source file.
+\newcommand\FHsection{\@startsection{subsubsection}{2}%
+{0pt}{-\baselineskip}{.2\baselineskip}%
+{\tiny\raggedright}}
+\makeatother
+
+% Start of a new page, generate any cross references.
+\newcommand\THreference[2]{\markboth{#1}{#1}\addcontentsline{toc}{section}{#1}}%
+\newcommand\NHreference[2]{\markboth{#1}{#1}\addcontentsline{toc}{section}{#1}}%
+
+\newcounter{pagetemp}                   % Temporary counter.
+\setcounter{pagetemp}{\value{page}}     % Snoop the Roman page numbers
+\pagenumbering{arabic}                  % From now on Arabic page numbers
+\setcounter{page}{\value{pagetemp}}     % Align with Roman
